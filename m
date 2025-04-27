@@ -2,72 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E43BC369CB
-	for <dpdk-dev@archiver.kernel.org>; Sat, 26 Apr 2025 17:08:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC26CC369CB
+	for <dpdk-dev@archiver.kernel.org>; Sun, 27 Apr 2025 01:36:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1B1B440156;
-	Sat, 26 Apr 2025 19:08:33 +0200 (CEST)
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com
- [209.85.210.179])
- by mails.dpdk.org (Postfix) with ESMTP id D241340156
- for <dev@dpdk.org>; Sat, 26 Apr 2025 19:08:31 +0200 (CEST)
-Received: by mail-pf1-f179.google.com with SMTP id
- d2e1a72fcca58-73bf1cef6ceso3399427b3a.0
- for <dev@dpdk.org>; Sat, 26 Apr 2025 10:08:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1745687311;
- x=1746292111; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=eDyTHWCCfkj3tZYFId9S8ymABd7PKfbmpDRuyKhbwTQ=;
- b=hBh3FoqoTCBzC8ANzg4GzHlEegDYQwQ9b1qHSKkgdgh9dYpbj9Z0JBDnptR61ozA7/
- GAaQxUXQYkxymkl5tPxo42u6GAJ2UYJEhj47FFJXNKCgqTJ10VJYICBcLcShkQtGDB2Y
- 7aTLCHyp80dpPlqjwQ/EUoCXZu0h6YYmngi+h8eJOXV0tOkSFtzBBReNf/Ps4arn9MKA
- +DWFICIznzCyHT9JfC3s4lkYlQxMLNA1Yl9t8WHmAD9B0YqYoNUKw/aOOhIE0mmqu+a/
- G7Ck3PsywtFj008Qs150UAYa1tGcyih7qMSX4JXMaJGrqO4IaQVNOeb1v8n6Ndl387Ui
- 7kyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1745687311; x=1746292111;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=eDyTHWCCfkj3tZYFId9S8ymABd7PKfbmpDRuyKhbwTQ=;
- b=SUZVe9KvZj0OFlbxymcemt/rOFZtg878ckd80YslAE/eB0hIBTMRTky8v+wAWuALQg
- ufWOBd5rEFrv6GcWMCp7CUH5gUQwjgh8MduC3/nrdZx2RyWcb91bt4lNLnoiwQZPsnP3
- KCQp25YmPzGXp5CK2rw9URqOoCNObQA/ULB0KD6KgdTsvurY4wEwyxIsOOQAyu4/rLzV
- vFjTwvLm0TstXpTwa6UA3aTDUhuahCRJ/oe58Jz05aeWJ8XLK/w5Z59NKS//+voX+kxF
- ggkxxVL537GBfKzSc8VbDcDqygO1ui/KwFFZJF6iD2xxud6JWJZYGybmHvJa/aHN/m/Z
- R9+g==
-X-Gm-Message-State: AOJu0Yx7JISIkgTx7cJiB21yCWMzrbmOzBvPuyXk6Fwbq4yCWL+CKwy0
- +1njtoBDtz7EoZqRgtbO3QCXlmCc/lFSkA5sfk12C+I7WwgIphfgQ7K9kBCqxCW6zUrTl1e/lBh
- R
-X-Gm-Gg: ASbGncsmcThEWA6Y1cW3Q8zuw/YyGlTFGWUFAoO1iRpU+pEWdjf9M331eVoYou2qfN3
- 2jjQgvoo0xWtpURNFqgiIfZszjCwIcooXVNp7+degaAzScuBRi1y2zV8Xg5+WunHh1LvJzpcasL
- 7V/+FOLjWTK7A+tqEoXIIosB+HEGNsL9T7dThpHayVIPI1ie54IPRcUdmyeLC+Ku+1aNxt40qMS
- tRNyjnT8thBZTC7w+6sSD4gfWQhWg1XnObUkvJwq9hwygg0oUU+xVUIjj9I2e2VZOCKfyMu4V7C
- fRdzAziJPdSEntfwH6qPvnXqELNoN6mg0T0qf6gWQOil9SsNrSB3Ix5PWU7u1ZNOxHisUbVcZGn
- uVXFS7kj1/XchGsXi5vUiDdZ0AfU=
-X-Google-Smtp-Source: AGHT+IHugFCSdhqJYAc+AhTKUSJx3yZcuSBHrYLryDozFHjTbVvR06/pt3zKxqlt6GR5uoc0kkdzZg==
-X-Received: by 2002:a05:6a00:2e83:b0:732:5276:4ac9 with SMTP id
- d2e1a72fcca58-73ff729d9dcmr3983595b3a.9.1745687310765; 
- Sat, 26 Apr 2025 10:08:30 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-73e25a6a17csm5040819b3a.111.2025.04.26.10.08.30
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 26 Apr 2025 10:08:30 -0700 (PDT)
-Date: Sat, 26 Apr 2025 10:08:29 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Jie Liu <liujie5@linkdatatechnology.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 94DCF40263;
+	Sun, 27 Apr 2025 03:36:19 +0200 (CEST)
+Received: from out28-52.mail.aliyun.com (out28-52.mail.aliyun.com
+ [115.124.28.52]) by mails.dpdk.org (Postfix) with ESMTP id 196534021F
+ for <dev@dpdk.org>; Sun, 27 Apr 2025 03:36:16 +0200 (CEST)
+Received: from localhost.localdomain(mailfrom:kyo.liu@nebula-matrix.com
+ fp:SMTPD_---.cXv3QFR_1745717773 cluster:ay29) by smtp.aliyun-inc.com;
+ Sun, 27 Apr 2025 09:36:14 +0800
+From: Kyo Liu <kyo.liu@nebula-matrix.com>
+To: kyo.liu@nebula-matrix.com, Thomas Monjalon <thomas@monjalon.net>,
+ Chenbo Xia <chenbox@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH 01/13] net/sxe: add base driver directory and doc
-Message-ID: <20250426100829.444b4018@hermes.local>
-In-Reply-To: <20250425023652.37368-1-liujie5@linkdatatechnology.com>
-References: <20250425023652.37368-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v2 1/1] bus/pci: introduce get_iova_mode for pci dev
+Date: Sun, 27 Apr 2025 01:36:11 +0000
+Message-ID: <20250427013611.150888-1-kyo.liu@nebula-matrix.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250425082228.5423-1-kyo.liu@nebula-matrix.com>
+References: <20250425082228.5423-1-kyo.liu@nebula-matrix.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,306 +39,144 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 24 Apr 2025 19:36:40 -0700
-Jie Liu <liujie5@linkdatatechnology.com> wrote:
+I propose this patch for DPDK to enable coexistence between
+DPDK and kernel drivers for regular NICs.This solution requires
+adding a new pci_ops in rte_pci_driver, through which DPDK will
+retrieve the required IOVA mode from the vendor driver.
+This mechanism is necessary to handle different IOMMU
+configurations and operating modes. Below is a detailed
+analysis of various scenarios:
 
-> From: JieLiu <liujie5@linkdatatechnology.com>
->=20
-> Adding a minimum maintainable directory structure for the
-> network driver and request maintenance of the sxe driver.
->=20
-> Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
+1. When IOMMU is enabled:
+1.1 With PT (Pass-Through) enabled:
+In this case, the domain type is IOMMU_DOMAIN_IDENTITY,
+which prevents vendor drivers from setting IOVA->PA mapping tables.
+Therefore, DPDK must use PA mode. To achieve this:
+The vendor kernel driver will register a character device (cdev) to
+communicate with DPDK. This cdev handles device operations
+(open, mmap, etc.) and ultimately
+programs the hardware registers.
 
-Cross build for windows fails:
-DPDK 25.07.0-rc0
+1.2 With PT disabled:
+Here, the vendor driver doesn't enforce specific IOVA mode requirements.
+Our implementation will:
+Integrate a mediated device (mdev) in the vendor driver.
+This mdev interacts with DPDK and manages IOVA->PA mapping configurations.
 
-  User defined options
-    Cross files: config/x86/cross-mingw
-    examples   : helloworld
+2. When IOMMU is disabled:
+The vendor driver mandates PA mode (consistent with DPDK's PA mode
+requirement in this scenario).
+A character device (cdev) will similarly be registered for DPDK
+communication.
 
-Found ninja-1.12.1 at /usr/bin/ninja
-FAILED: drivers/libtmp_rte_net_sxe.a.p/net_sxe_pf_sxe_main.c.obj=20
-x86_64-w64-mingw32-gcc -Idrivers/libtmp_rte_net_sxe.a.p -Idrivers -I../driv=
-ers -Idrivers/net/sxe -I../drivers/net/sxe -I../drivers/net/sxe/base -I../d=
-rivers/net/sxe/pf -I../drivers/net/sxe/vf -I../drivers/net/sxe/include/sxe =
--I../drivers/net/sxe/include -Ilib/ethdev -I../lib/ethdev -Ilib/eal/common =
--I../lib/eal/common -I. -I.. -Iconfig -I../config -Ilib/eal/include -I../li=
-b/eal/include -Ilib/eal/windows/include -I../lib/eal/windows/include -Ilib/=
-eal/x86/include -I../lib/eal/x86/include -Ilib/eal -I../lib/eal -Ilib/log -=
-I../lib/log -Ilib/kvargs -I../lib/kvargs -Ilib/net -I../lib/net -Ilib/mbuf =
--I../lib/mbuf -Ilib/mempool -I../lib/mempool -Ilib/ring -I../lib/ring -Ilib=
-/metrics -I../lib/metrics -Ilib/telemetry -I../lib/telemetry -Ilib/meter -I=
-../lib/meter -Idrivers/bus/pci -I../drivers/bus/pci -I../drivers/bus/pci/wi=
-ndows -Ilib/pci -I../lib/pci -Idrivers/bus/vdev -I../drivers/bus/vdev -Ilib=
-/hash -I../lib/hash -Ilib/rcu -I../lib/rcu -fdiagnostics-color=3Dalways -D_=
-FILE_OFFSET_BITS=3D64 -Wall -Winvalid-pch -Wextra -std=3Dc11 -O3 -include r=
-te_config.h -Wvla -Wcast-qual -Wdeprecated -Wformat -Wformat-nonliteral -Wf=
-ormat-security -Wmissing-declarations -Wmissing-prototypes -Wnested-externs=
- -Wold-style-definition -Wpointer-arith -Wsign-compare -Wstrict-prototypes =
--Wundef -Wwrite-strings -Wno-packed-not-aligned -Wno-missing-field-initiali=
-zers -D_GNU_SOURCE -D_WIN32_WINNT=3D0x0A00 -D__USE_MINGW_ANSI_STDIO -march=
-=3Dnative -mrtm -DALLOW_EXPERIMENTAL_API -DALLOW_INTERNAL_API -Wno-format-t=
-runcation -Wno-address-of-packed-member -DSXE_DPDK -DSXE_HOST_DRIVER -DSXE_=
-DPDK_L4_FEATURES -DSXE_DPDK_SRIOV -DSXE_DPDK_SIMD -DRTE_LOG_DEFAULT_LOGTYPE=
-=3Dpmd.net.sxe -MD -MQ drivers/libtmp_rte_net_sxe.a.p/net_sxe_pf_sxe_main.c=
-.obj -MF drivers/libtmp_rte_net_sxe.a.p/net_sxe_pf_sxe_main.c.obj.d -o driv=
-ers/libtmp_rte_net_sxe.a.p/net_sxe_pf_sxe_main.c.obj -c ../drivers/net/sxe/=
-pf/sxe_main.c
-In file included from ../drivers/net/sxe/base/sxe_hw.h:13,
-                 from ../drivers/net/sxe/pf/sxe_main.c:30:
-../drivers/net/sxe/base/sxe_compat_platform.h:32:9: warning: "min" redefined
-   32 | #define min(a, b)       RTE_MIN(a, b)
-      |         ^~~
-In file included from /usr/share/mingw-w64/include/windef.h:9,
-                 from /usr/share/mingw-w64/include/windows.h:69,
-                 from ../lib/eal/windows/include/rte_windows.h:28,
-                 from ../lib/eal/windows/include/pthread.h:17,
-                 from ../lib/ethdev/ethdev_driver.h:17,
-                 from ../drivers/net/sxe/pf/sxe_main.c:23:
-/usr/share/mingw-w64/include/minwindef.h:177:9: note: this is the location =
-of the previous definition
-  177 | #define min(a, b) (((a) < (b)) ? (a) : (b))
-      |         ^~~
-In file included from ../drivers/net/sxe/base/sxe_hw.h:16:
-../drivers/net/sxe/sxe_drv_type.h:21:14: error: conflicting types for =E2=
-=80=98BOOL=E2=80=99; have =E2=80=98_Bool=E2=80=99
-   21 | typedef bool BOOL;
-      |              ^~~~
-/usr/share/mingw-w64/include/minwindef.h:131:15: note: previous declaration=
- of =E2=80=98BOOL=E2=80=99 with type =E2=80=98BOOL=E2=80=99 {aka =E2=80=98i=
-nt=E2=80=99}
-  131 |   typedef int BOOL;
-      |               ^~~~
-In file included from ../drivers/net/sxe/pf/sxe.h:16,
-                 from ../drivers/net/sxe/pf/sxe_ethdev.h:8,
-                 from ../drivers/net/sxe/pf/sxe_main.c:31:
-../drivers/net/sxe/pf/sxe_stats.h:52:47: error: unknown type name =E2=80=98=
-ulong=E2=80=99; did you mean =E2=80=98u_long=E2=80=99?
-   52 |                                         const ulong *ids,
-      |                                               ^~~~~
-      |                                               u_long
-../drivers/net/sxe/pf/sxe_stats.h:53:41: error: unknown type name =E2=80=98=
-ulong=E2=80=99; did you mean =E2=80=98u_long=E2=80=99?
-   53 |                                         ulong *values, u32 usr_cnt);
-      |                                         ^~~~~
-      |                                         u_long
-../drivers/net/sxe/pf/sxe_stats.h:62:15: error: unknown type name =E2=80=98=
-ulong=E2=80=99; did you mean =E2=80=98u_long=E2=80=99?
-   62 |         const ulong *ids,
-      |               ^~~~~
-      |               u_long
-FAILED: drivers/libtmp_rte_net_sxe.a.p/net_sxe_pf_sxe_filter.c.obj=20
-x86_64-w64-mingw32-gcc -Idrivers/libtmp_rte_net_sxe.a.p -Idrivers -I../driv=
-ers -Idrivers/net/sxe -I../drivers/net/sxe -I../drivers/net/sxe/base -I../d=
-rivers/net/sxe/pf -I../drivers/net/sxe/vf -I../drivers/net/sxe/include/sxe =
--I../drivers/net/sxe/include -Ilib/ethdev -I../lib/ethdev -Ilib/eal/common =
--I../lib/eal/common -I. -I.. -Iconfig -I../config -Ilib/eal/include -I../li=
-b/eal/include -Ilib/eal/windows/include -I../lib/eal/windows/include -Ilib/=
-eal/x86/include -I../lib/eal/x86/include -Ilib/eal -I../lib/eal -Ilib/log -=
-I../lib/log -Ilib/kvargs -I../lib/kvargs -Ilib/net -I../lib/net -Ilib/mbuf =
--I../lib/mbuf -Ilib/mempool -I../lib/mempool -Ilib/ring -I../lib/ring -Ilib=
-/metrics -I../lib/metrics -Ilib/telemetry -I../lib/telemetry -Ilib/meter -I=
-../lib/meter -Idrivers/bus/pci -I../drivers/bus/pci -I../drivers/bus/pci/wi=
-ndows -Ilib/pci -I../lib/pci -Idrivers/bus/vdev -I../drivers/bus/vdev -Ilib=
-/hash -I../lib/hash -Ilib/rcu -I../lib/rcu -fdiagnostics-color=3Dalways -D_=
-FILE_OFFSET_BITS=3D64 -Wall -Winvalid-pch -Wextra -std=3Dc11 -O3 -include r=
-te_config.h -Wvla -Wcast-qual -Wdeprecated -Wformat -Wformat-nonliteral -Wf=
-ormat-security -Wmissing-declarations -Wmissing-prototypes -Wnested-externs=
- -Wold-style-definition -Wpointer-arith -Wsign-compare -Wstrict-prototypes =
--Wundef -Wwrite-strings -Wno-packed-not-aligned -Wno-missing-field-initiali=
-zers -D_GNU_SOURCE -D_WIN32_WINNT=3D0x0A00 -D__USE_MINGW_ANSI_STDIO -march=
-=3Dnative -mrtm -DALLOW_EXPERIMENTAL_API -DALLOW_INTERNAL_API -Wno-format-t=
-runcation -Wno-address-of-packed-member -DSXE_DPDK -DSXE_HOST_DRIVER -DSXE_=
-DPDK_L4_FEATURES -DSXE_DPDK_SRIOV -DSXE_DPDK_SIMD -DRTE_LOG_DEFAULT_LOGTYPE=
-=3Dpmd.net.sxe -MD -MQ drivers/libtmp_rte_net_sxe.a.p/net_sxe_pf_sxe_filter=
-.c.obj -MF drivers/libtmp_rte_net_sxe.a.p/net_sxe_pf_sxe_filter.c.obj.d -o =
-drivers/libtmp_rte_net_sxe.a.p/net_sxe_pf_sxe_filter.c.obj -c ../drivers/ne=
-t/sxe/pf/sxe_filter.c
-In file included from ../drivers/net/sxe/base/sxe_hw.h:13,
-                 from ../drivers/net/sxe/pf/sxe_filter.h:17,
-                 from ../drivers/net/sxe/pf/sxe_filter.c:19:
-../drivers/net/sxe/base/sxe_compat_platform.h:32:9: warning: "min" redefined
-   32 | #define min(a, b)       RTE_MIN(a, b)
-      |         ^~~
-In file included from /usr/share/mingw-w64/include/windef.h:9,
-                 from /usr/share/mingw-w64/include/windows.h:69,
-                 from ../lib/eal/windows/include/rte_windows.h:28,
-                 from ../lib/eal/windows/include/pthread.h:17,
-                 from ../lib/ethdev/ethdev_driver.h:17,
-                 from ../drivers/net/sxe/pf/sxe_filter.c:12:
-/usr/share/mingw-w64/include/minwindef.h:177:9: note: this is the location =
-of the previous definition
-  177 | #define min(a, b) (((a) < (b)) ? (a) : (b))
-      |         ^~~
-In file included from ../drivers/net/sxe/base/sxe_hw.h:16:
-../drivers/net/sxe/sxe_drv_type.h:21:14: error: conflicting types for =E2=
-=80=98BOOL=E2=80=99; have =E2=80=98_Bool=E2=80=99
-   21 | typedef bool BOOL;
-      |              ^~~~
-/usr/share/mingw-w64/include/minwindef.h:131:15: note: previous declaration=
- of =E2=80=98BOOL=E2=80=99 with type =E2=80=98BOOL=E2=80=99 {aka =E2=80=98i=
-nt=E2=80=99}
-  131 |   typedef int BOOL;
-      |               ^~~~
-In file included from ../drivers/net/sxe/pf/sxe.h:16,
-                 from ../drivers/net/sxe/pf/sxe_filter.c:21:
-../drivers/net/sxe/pf/sxe_stats.h:52:47: error: unknown type name =E2=80=98=
-ulong=E2=80=99; did you mean =E2=80=98u_long=E2=80=99?
-   52 |                                         const ulong *ids,
-      |                                               ^~~~~
-      |                                               u_long
-../drivers/net/sxe/pf/sxe_stats.h:53:41: error: unknown type name =E2=80=98=
-ulong=E2=80=99; did you mean =E2=80=98u_long=E2=80=99?
-   53 |                                         ulong *values, u32 usr_cnt);
-      |                                         ^~~~~
-      |                                         u_long
-../drivers/net/sxe/pf/sxe_stats.h:62:15: error: unknown type name =E2=80=98=
-ulong=E2=80=99; did you mean =E2=80=98u_long=E2=80=99?
-   62 |         const ulong *ids,
-      |               ^~~~~
-      |               u_long
-FAILED: drivers/libtmp_rte_net_sxe.a.p/net_sxe_pf_sxe_flow_ctrl.c.obj=20
-x86_64-w64-mingw32-gcc -Idrivers/libtmp_rte_net_sxe.a.p -Idrivers -I../driv=
-ers -Idrivers/net/sxe -I../drivers/net/sxe -I../drivers/net/sxe/base -I../d=
-rivers/net/sxe/pf -I../drivers/net/sxe/vf -I../drivers/net/sxe/include/sxe =
--I../drivers/net/sxe/include -Ilib/ethdev -I../lib/ethdev -Ilib/eal/common =
--I../lib/eal/common -I. -I.. -Iconfig -I../config -Ilib/eal/include -I../li=
-b/eal/include -Ilib/eal/windows/include -I../lib/eal/windows/include -Ilib/=
-eal/x86/include -I../lib/eal/x86/include -Ilib/eal -I../lib/eal -Ilib/log -=
-I../lib/log -Ilib/kvargs -I../lib/kvargs -Ilib/net -I../lib/net -Ilib/mbuf =
--I../lib/mbuf -Ilib/mempool -I../lib/mempool -Ilib/ring -I../lib/ring -Ilib=
-/metrics -I../lib/metrics -Ilib/telemetry -I../lib/telemetry -Ilib/meter -I=
-../lib/meter -Idrivers/bus/pci -I../drivers/bus/pci -I../drivers/bus/pci/wi=
-ndows -Ilib/pci -I../lib/pci -Idrivers/bus/vdev -I../drivers/bus/vdev -Ilib=
-/hash -I../lib/hash -Ilib/rcu -I../lib/rcu -fdiagnostics-color=3Dalways -D_=
-FILE_OFFSET_BITS=3D64 -Wall -Winvalid-pch -Wextra -std=3Dc11 -O3 -include r=
-te_config.h -Wvla -Wcast-qual -Wdeprecated -Wformat -Wformat-nonliteral -Wf=
-ormat-security -Wmissing-declarations -Wmissing-prototypes -Wnested-externs=
- -Wold-style-definition -Wpointer-arith -Wsign-compare -Wstrict-prototypes =
--Wundef -Wwrite-strings -Wno-packed-not-aligned -Wno-missing-field-initiali=
-zers -D_GNU_SOURCE -D_WIN32_WINNT=3D0x0A00 -D__USE_MINGW_ANSI_STDIO -march=
-=3Dnative -mrtm -DALLOW_EXPERIMENTAL_API -DALLOW_INTERNAL_API -Wno-format-t=
-runcation -Wno-address-of-packed-member -DSXE_DPDK -DSXE_HOST_DRIVER -DSXE_=
-DPDK_L4_FEATURES -DSXE_DPDK_SRIOV -DSXE_DPDK_SIMD -DRTE_LOG_DEFAULT_LOGTYPE=
-=3Dpmd.net.sxe -MD -MQ drivers/libtmp_rte_net_sxe.a.p/net_sxe_pf_sxe_flow_c=
-trl.c.obj -MF drivers/libtmp_rte_net_sxe.a.p/net_sxe_pf_sxe_flow_ctrl.c.obj=
-.d -o drivers/libtmp_rte_net_sxe.a.p/net_sxe_pf_sxe_flow_ctrl.c.obj -c ../d=
-rivers/net/sxe/pf/sxe_flow_ctrl.c
-In file included from ../drivers/net/sxe/base/sxe_hw.h:13,
-                 from ../drivers/net/sxe/pf/sxe_filter.h:17,
-                 from ../drivers/net/sxe/pf/sxe.h:14,
-                 from ../drivers/net/sxe/pf/sxe_flow_ctrl.c:5:
-../drivers/net/sxe/base/sxe_compat_platform.h:32:9: warning: "min" redefined
-   32 | #define min(a, b)       RTE_MIN(a, b)
-      |         ^~~
-In file included from /usr/share/mingw-w64/include/windef.h:9,
-                 from /usr/share/mingw-w64/include/windows.h:69,
-                 from ../lib/eal/windows/include/rte_windows.h:28,
-                 from ../lib/eal/windows/include/pthread.h:17,
-                 from ../lib/ethdev/ethdev_driver.h:17,
-                 from ../drivers/net/sxe/pf/sxe_filter.h:13:
-/usr/share/mingw-w64/include/minwindef.h:177:9: note: this is the location =
-of the previous definition
-  177 | #define min(a, b) (((a) < (b)) ? (a) : (b))
-      |         ^~~
-In file included from ../drivers/net/sxe/base/sxe_hw.h:16:
-../drivers/net/sxe/sxe_drv_type.h:21:14: error: conflicting types for =E2=
-=80=98BOOL=E2=80=99; have =E2=80=98_Bool=E2=80=99
-   21 | typedef bool BOOL;
-      |              ^~~~
-/usr/share/mingw-w64/include/minwindef.h:131:15: note: previous declaration=
- of =E2=80=98BOOL=E2=80=99 with type =E2=80=98BOOL=E2=80=99 {aka =E2=80=98i=
-nt=E2=80=99}
-  131 |   typedef int BOOL;
-      |               ^~~~
-In file included from ../drivers/net/sxe/pf/sxe.h:16:
-../drivers/net/sxe/pf/sxe_stats.h:52:47: error: unknown type name =E2=80=98=
-ulong=E2=80=99; did you mean =E2=80=98u_long=E2=80=99?
-   52 |                                         const ulong *ids,
-      |                                               ^~~~~
-      |                                               u_long
-../drivers/net/sxe/pf/sxe_stats.h:53:41: error: unknown type name =E2=80=98=
-ulong=E2=80=99; did you mean =E2=80=98u_long=E2=80=99?
-   53 |                                         ulong *values, u32 usr_cnt);
-      |                                         ^~~~~
-      |                                         u_long
-../drivers/net/sxe/pf/sxe_stats.h:62:15: error: unknown type name =E2=80=98=
-ulong=E2=80=99; did you mean =E2=80=98u_long=E2=80=99?
-   62 |         const ulong *ids,
-      |               ^~~~~
-      |               u_long
-FAILED: drivers/libtmp_rte_net_sxe.a.p/net_sxe_pf_sxe_irq.c.obj=20
-x86_64-w64-mingw32-gcc -Idrivers/libtmp_rte_net_sxe.a.p -Idrivers -I../driv=
-ers -Idrivers/net/sxe -I../drivers/net/sxe -I../drivers/net/sxe/base -I../d=
-rivers/net/sxe/pf -I../drivers/net/sxe/vf -I../drivers/net/sxe/include/sxe =
--I../drivers/net/sxe/include -Ilib/ethdev -I../lib/ethdev -Ilib/eal/common =
--I../lib/eal/common -I. -I.. -Iconfig -I../config -Ilib/eal/include -I../li=
-b/eal/include -Ilib/eal/windows/include -I../lib/eal/windows/include -Ilib/=
-eal/x86/include -I../lib/eal/x86/include -Ilib/eal -I../lib/eal -Ilib/log -=
-I../lib/log -Ilib/kvargs -I../lib/kvargs -Ilib/net -I../lib/net -Ilib/mbuf =
--I../lib/mbuf -Ilib/mempool -I../lib/mempool -Ilib/ring -I../lib/ring -Ilib=
-/metrics -I../lib/metrics -Ilib/telemetry -I../lib/telemetry -Ilib/meter -I=
-../lib/meter -Idrivers/bus/pci -I../drivers/bus/pci -I../drivers/bus/pci/wi=
-ndows -Ilib/pci -I../lib/pci -Idrivers/bus/vdev -I../drivers/bus/vdev -Ilib=
-/hash -I../lib/hash -Ilib/rcu -I../lib/rcu -fdiagnostics-color=3Dalways -D_=
-FILE_OFFSET_BITS=3D64 -Wall -Winvalid-pch -Wextra -std=3Dc11 -O3 -include r=
-te_config.h -Wvla -Wcast-qual -Wdeprecated -Wformat -Wformat-nonliteral -Wf=
-ormat-security -Wmissing-declarations -Wmissing-prototypes -Wnested-externs=
- -Wold-style-definition -Wpointer-arith -Wsign-compare -Wstrict-prototypes =
--Wundef -Wwrite-strings -Wno-packed-not-aligned -Wno-missing-field-initiali=
-zers -D_GNU_SOURCE -D_WIN32_WINNT=3D0x0A00 -D__USE_MINGW_ANSI_STDIO -march=
-=3Dnative -mrtm -DALLOW_EXPERIMENTAL_API -DALLOW_INTERNAL_API -Wno-format-t=
-runcation -Wno-address-of-packed-member -DSXE_DPDK -DSXE_HOST_DRIVER -DSXE_=
-DPDK_L4_FEATURES -DSXE_DPDK_SRIOV -DSXE_DPDK_SIMD -DRTE_LOG_DEFAULT_LOGTYPE=
-=3Dpmd.net.sxe -MD -MQ drivers/libtmp_rte_net_sxe.a.p/net_sxe_pf_sxe_irq.c.=
-obj -MF drivers/libtmp_rte_net_sxe.a.p/net_sxe_pf_sxe_irq.c.obj.d -o driver=
-s/libtmp_rte_net_sxe.a.p/net_sxe_pf_sxe_irq.c.obj -c ../drivers/net/sxe/pf/=
-sxe_irq.c
-In file included from ../drivers/net/sxe/pf/sxe_irq.h:15,
-                 from ../drivers/net/sxe/pf/sxe_irq.c:23:
-../drivers/net/sxe/base/sxe_compat_platform.h:32:9: warning: "min" redefined
-   32 | #define min(a, b)       RTE_MIN(a, b)
-      |         ^~~
-In file included from /usr/share/mingw-w64/include/windef.h:9,
-                 from /usr/share/mingw-w64/include/windows.h:69,
-                 from /usr/share/mingw-w64/include/winsock2.h:23,
-                 from /usr/share/mingw-w64/include/ws2tcpip.h:17,
-                 from ../lib/net/rte_ip4.h:21,
-                 from ../lib/net/rte_ip.h:9,
-                 from ../lib/ethdev/rte_flow.h:25,
-                 from ../lib/ethdev/rte_eth_ctrl.h:11,
-                 from ../lib/ethdev/rte_ethdev.h:1472,
-                 from ../drivers/net/sxe/pf/sxe_irq.c:4:
-/usr/share/mingw-w64/include/minwindef.h:177:9: note: this is the location =
-of the previous definition
-  177 | #define min(a, b) (((a) < (b)) ? (a) : (b))
-      |         ^~~
-In file included from ../drivers/net/sxe/base/sxe_hw.h:16,
-                 from ../drivers/net/sxe/pf/sxe_irq.c:26:
-../drivers/net/sxe/sxe_drv_type.h:21:14: error: conflicting types for =E2=
-=80=98BOOL=E2=80=99; have =E2=80=98_Bool=E2=80=99
-   21 | typedef bool BOOL;
-      |              ^~~~
-/usr/share/mingw-w64/include/minwindef.h:131:15: note: previous declaration=
- of =E2=80=98BOOL=E2=80=99 with type =E2=80=98BOOL=E2=80=99 {aka =E2=80=98i=
-nt=E2=80=99}
-  131 |   typedef int BOOL;
-      |               ^~~~
-In file included from ../drivers/net/sxe/pf/sxe.h:16,
-                 from ../drivers/net/sxe/pf/sxe_irq.c:27:
-../drivers/net/sxe/pf/sxe_stats.h:52:47: error: unknown type name =E2=80=98=
-ulong=E2=80=99; did you mean =E2=80=98u_long=E2=80=99?
-   52 |                                         const ulong *ids,
-      |                                               ^~~~~
-      |                                               u_long
-../drivers/net/sxe/pf/sxe_stats.h:53:41: error: unknown type name =E2=80=98=
-ulong=E2=80=99; did you mean =E2=80=98u_long=E2=80=99?
-   53 |                                         ulong *values, u32 usr_cnt);
-      |                                         ^~~~~
-      |                                         u_long
-../drivers/net/sxe/pf/sxe_stats.h:62:15: error: unknown type name =E2=80=98=
-ulong=E2=80=99; did you mean =E2=80=98u_long=E2=80=99?
-   62 |         const ulong *ids,
-      |               ^~~~~
-      |               u_long
-ninja: build stopped: subcommand failed.
+Summary:
+The solution leverages multiple technologies:
+mdev for IOVA management when IOMMU is partially enabled.
+VFIO for device passthrough operations.
+cdev for register programming coordination.
+A new pci_ops interface in DPDK to dynamically determine IOVA modes.
+This architecture enables clean coexistence by establishing standardized
+communication channels between DPDK and vendor drivers across different
+IOMMU configurations.
+
+Motivation for the Patch:
+This patch is introduced to prepare for the upcoming open-source
+contribution of our NebulaMatrix SNIC driver to DPDK. We aim to
+ensure that our SNIC can seamlessly coexist with kernel drivers
+using this mechanism. By adopting the proposed
+architecture—leveraging dynamic IOVA mode negotiation via pci_ops,
+mediated devices (mdev), and character device (cdev)
+interactions—we enable our SNIC to operate in hybrid environments
+here both DPDK and kernel drivers may manage the same hardware.
+This design aligns with DPDK’s scalability goals and ensures
+compatibility across diverse IOMMU configurations, which is critical
+for real-world deployment scenarios.
+
+Signed-off-by: Kyo Liu <kyo.liu@nebula-matrix.com>
+---
+ .mailmap                               |  2 ++
+ doc/guides/rel_notes/release_25_07.rst |  4 ++++
+ drivers/bus/pci/bus_pci_driver.h       | 11 +++++++++++
+ drivers/bus/pci/linux/pci.c            |  2 ++
+ 4 files changed, 19 insertions(+)
+
+diff --git a/.mailmap b/.mailmap
+index d8439b79ce..509ff9a16f 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -78,6 +78,7 @@ Allen Hubbe <allen.hubbe@amd.com>
+ Alok Makhariya <alok.makhariya@nxp.com>
+ Alok Prasad <palok@marvell.com>
+ Alvaro Karsz <alvaro.karsz@solid-run.com>
++Alvin Wang<alvin.wang@nebula-matrix.com>
+ Alvin Zhang <alvinx.zhang@intel.com>
+ Aman Singh <aman.deep.singh@intel.com>
+ Amaranath Somalapuram <asomalap@amd.com>
+@@ -829,6 +830,7 @@ Kumar Amber <kumar.amber@intel.com>
+ Kumara Parameshwaran <kumaraparamesh92@gmail.com> <kparameshwar@vmware.com>
+ Kumar Sanghvi <kumaras@chelsio.com>
+ Kyle Larose <klarose@sandvine.com>
++Kyo Liu <kyo.liu@nebula-matrix.com>
+ Lance Richardson <lance.richardson@broadcom.com>
+ Laszlo Ersek <lersek@redhat.com>
+ Laura Stroe <laura.stroe@intel.com>
+diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
+index 093b85d206..e220b3883f 100644
+--- a/doc/guides/rel_notes/release_25_07.rst
++++ b/doc/guides/rel_notes/release_25_07.rst
+@@ -54,6 +54,10 @@ New Features
+      This section is a comment. Do not overwrite or remove it.
+      Also, make sure to start the actual text at the margin.
+      =======================================================
++* **Added get_iova_mode for rte_pci_driver.**
++
++  Introduce `pci_get_iova_mode` rte_pci_ops for `pci_get_iova_mode`
++  to PCI bus so that PCI drivers could get their wanted iova_mode
+ 
+ 
+ Removed Items
+diff --git a/drivers/bus/pci/bus_pci_driver.h b/drivers/bus/pci/bus_pci_driver.h
+index 2cc1119072..e5e36b0a5c 100644
+--- a/drivers/bus/pci/bus_pci_driver.h
++++ b/drivers/bus/pci/bus_pci_driver.h
+@@ -125,6 +125,16 @@ typedef int (pci_dma_map_t)(struct rte_pci_device *dev, void *addr,
+ typedef int (pci_dma_unmap_t)(struct rte_pci_device *dev, void *addr,
+ 			      uint64_t iova, size_t len);
+ 
++/**
++ * retrieve the required IOVA mode from the vendor driver
++ *
++ * @param dev
++ *   Pointer to the PCI device.
++ * @return
++ *   - rte_iova_mode
++ */
++typedef int (pci_get_iova_mode)(const struct rte_pci_device *pdev);
++
+ /**
+  * A structure describing a PCI driver.
+  */
+@@ -136,6 +146,7 @@ struct rte_pci_driver {
+ 	pci_dma_map_t *dma_map;		   /**< device dma map function. */
+ 	pci_dma_unmap_t *dma_unmap;	   /**< device dma unmap function. */
+ 	const struct rte_pci_id *id_table; /**< ID table, NULL terminated. */
++	pci_get_iova_mode *get_iova_mode;  /**< Device get iova_mode function */
+ 	uint32_t drv_flags;                /**< Flags RTE_PCI_DRV_*. */
+ };
+ 
+diff --git a/drivers/bus/pci/linux/pci.c b/drivers/bus/pci/linux/pci.c
+index c20d159218..fd69a02989 100644
+--- a/drivers/bus/pci/linux/pci.c
++++ b/drivers/bus/pci/linux/pci.c
+@@ -624,6 +624,8 @@ pci_device_iova_mode(const struct rte_pci_driver *pdrv,
+ 	default:
+ 		if ((pdrv->drv_flags & RTE_PCI_DRV_NEED_IOVA_AS_VA) != 0)
+ 			iova_mode = RTE_IOVA_VA;
++		else if (pdrv->get_iova_mode)
++			iova_mode = pdrv->get_iova_mode(pdev);
+ 		break;
+ 	}
+ 	return iova_mode;
+-- 
+2.43.0
+
