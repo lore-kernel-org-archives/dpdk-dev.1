@@ -2,73 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A78CAC369D5
-	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Apr 2025 15:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D01CC3ABA4
+	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Apr 2025 15:50:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 78204402A9;
-	Mon, 28 Apr 2025 17:49:04 +0200 (CEST)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com
- [209.85.214.180])
- by mails.dpdk.org (Postfix) with ESMTP id 166014021F
- for <dev@dpdk.org>; Mon, 28 Apr 2025 17:49:04 +0200 (CEST)
-Received: by mail-pl1-f180.google.com with SMTP id
- d9443c01a7336-227cf12df27so47482905ad.0
- for <dev@dpdk.org>; Mon, 28 Apr 2025 08:49:04 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9607040678;
+	Mon, 28 Apr 2025 17:50:36 +0200 (CEST)
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com
+ [209.85.216.41]) by mails.dpdk.org (Postfix) with ESMTP id 3D90B4021F
+ for <dev@dpdk.org>; Mon, 28 Apr 2025 17:50:35 +0200 (CEST)
+Received: by mail-pj1-f41.google.com with SMTP id
+ 98e67ed59e1d1-3031354f134so4148538a91.3
+ for <dev@dpdk.org>; Mon, 28 Apr 2025 08:50:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1745855343;
- x=1746460143; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1745855434;
+ x=1746460234; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=S3wqSUDpXcXnmxxTu+hr9nomZYFBKpRv0vV/I3AjiVM=;
- b=yQ7iMp6RJlc5CpCeb5KcaOTRASqlvsZO5dj3x3qz/jcPjUUCVVkUYpwlBTSUjRV3+l
- bqZ/Tp5WspVfoJe7iC1Yph2lzmvBI0Usi80B9tfbGS31UuEFdd3Zsdw2Ft+PyyjuSopR
- JeqhPIS6xQTnu8IBKgTjtYzOvi8L2stSmkimVLUlOJTe8cHWwNcUplKR6ome8sbXRHr6
- m5GYDkLxDlNu2Scoes3uRxaUmSRJo5/yh7nw18jZyva4vBtMWODorYtX73mouK8BdPmt
- LcRwfJ7QrT5fpM2LbIAzRV7lDV3AYlagpjP46mgM7lPx00yHRQblqoVQcieYrECEE1+7
- 37Kw==
+ bh=8dXUxHf+Z7AlQ8LTj90EQdeNoM01ZPS19NE61kD3rSc=;
+ b=SDCEjDskp6yIFuRnenKt1/YxfIQ6o8SFCFXtsqHzsEJ/RtaJCb7avoBT9DA/i6pcgj
+ c9+jDEZ0Z/WNYC4Q2aHbjkvJH/G9DPoQBfdPgwpcuLf9Db9vBbmQUHIESGUiqpaBi8cB
+ ILy3lkgxJbotgmiHLr2U1zOmwxNDocNljFnX+iNrakOxmRXBoe3HkOKMixXBeS7Uxtim
+ 7wHPzpgSPqUUkUtIKJpiCdIpsXvwM2Ik++qC94kcGgnRWWhxybfkkjfkQDzlxaWCJ1yz
+ SAdmjLEuK1gMk2tmqol2iTkq71UIhsFZe4qzxZUFeXTNL4gbmQnCmfIdlEtOhZafFdow
+ nDHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1745855343; x=1746460143;
+ d=1e100.net; s=20230601; t=1745855434; x=1746460234;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=S3wqSUDpXcXnmxxTu+hr9nomZYFBKpRv0vV/I3AjiVM=;
- b=tY0nEnCQWZjh9TJ15qEB2dO3CUK7FeQ8jwPFdIvb3rGb7GLjGw7mCI4zWHPzc71Pc/
- vOV0jFoDJsRrzpgQoUlfnQ3JapnohSLNZfCtqPGS48fHuxsrVyINXNsXuW4B1zghYuYr
- 8Pps69iS6G0UynQR1v/TJ7+6RZhpcX/hfn2yXtoUDLnjFZIhka4xG8KeLpAJ6SnjCQGA
- FZSOGFFXaAlXF2f0U20+WsyF8FyzWZ1W4Z6ulXOS+KLO9shLw2BG8UwhMjJJMOPjtPo0
- jbe05fNHZQ1fKgxDyPN85LeEqtE24NCUjxIY5UpRWJSG8PbixghvX0JpUctI5DeYKoOx
- mRfw==
+ bh=8dXUxHf+Z7AlQ8LTj90EQdeNoM01ZPS19NE61kD3rSc=;
+ b=ElFxkmDmABw3UFEgB4jE8dpGW2Ft9M6RvIIoaIzTsPZsbQWkArSX7+hg75iebgCyhK
+ C9SO6qxab1zcAFs0eC/KwLAlq+j/szI31q0MH5vAK+K9OEb0I5D9XAZeCgdPIpYB9G5a
+ CQwTjT6EbNj83rJc3WnofW1kp0iuxYBN64C89hTzXzYObhUX9XdM63WsM9sPPigm9Mn5
+ 1YAkzwDYr+9EtdU/foDhZ6OBdHqUnkew/zu3iHSubLGCm/YCo9LN2ioQNTUTl2jEsl3B
+ QQ34jaL7Jx+qan+so+Aj/wZzorr5bvM11ZzTI/N5/np7oL2Zeu5xLVn9dXK+kkvMC6W3
+ 0IIg==
 X-Forwarded-Encrypted: i=1;
- AJvYcCUbS1k1cT8J3BE6beQJKaY9TXbh6+l7zQoHGBgooLwTDzNHwCde6d1YLWaFKf1Bn7QHPJo=@dpdk.org
-X-Gm-Message-State: AOJu0YwmoTHRqLvjtbFRp5GvcZbWDI2+TaaXEV9qwojHjj/NPuRU4vTz
- a/n2zDT4aTdnqjmiCNUaeI6TSlG2u6QhRlNlc3WNGd1rbAU+k1DlW0oiqqruNuY=
-X-Gm-Gg: ASbGncsnCia6jC3PeNnSOPoUBgrTMvJ64t0xLeCDoBv06j7WPuFvr3CSOACW2jWs5WS
- DS2tPgWGq+407/kkiUZqA08UygGLGd2Fy17Ag39NpxBM46ZlYcYBt/iHbE7Qx6kRonRbWFG+V86
- BDrYtJecOjYekzOkkWDWFIsGT+mXgSf6DZ31yZWHCIQ5MN4KUH8h6J0n3+VXHnuBGEma6fYorv/
- Q1p2dFEpnkjyuDBMcafj/uhGXSKlAf38AbOGiXXs1z4Q2hskBMOM7/HyG8U3b6zzR36vlpCtyyY
- 5hojax7SiLAEU/wzbBg95WLXjm9fZspT16IOTDYVTDGKB4nFsMz7WatkXqiS9VAnpxHMPodfGyl
- J2a+4EUpjjLNw6kBX
-X-Google-Smtp-Source: AGHT+IGc+QEc32VUYONDS/rPuV3ny8O612nTcrmeV6jC0/7WVX7SeTh8oRiYNfgzB4p0GSy/hOgcjg==
-X-Received: by 2002:a17:902:f70f:b0:224:24d3:60fb with SMTP id
- d9443c01a7336-22db47f56damr239851615ad.10.1745855343073; 
- Mon, 28 Apr 2025 08:49:03 -0700 (PDT)
+ AJvYcCVYFC2cVPF5vQ8J5fbaFAXeegukPm/OjVU3kJxTGEdo5FMHK2EnQ/DnnGPwNzpnmKHSg5I=@dpdk.org
+X-Gm-Message-State: AOJu0YyOJfjzXXdlZAQyZ7WKE+PVG/1UeG4exWXsLju3ZBU4v/yhvDSV
+ IFn4GHufMuT/2pZwEkHephC+bIPuHRiEJHx+h2WZKF1xxcNedGJuvL/Ldpk2/U4=
+X-Gm-Gg: ASbGnctcrjizi8R1xi9UhrTEQHiLMPd10WnjfSlwLQtcHhkESFu2g8XZqy59axTF/u7
+ u3ivuspDk0U9A8RUsgxaTv6FHD8VRhP7ude0Yz4fv7gTUFnFkTmWnHF4N6UtoWy6WhbeZx6mhMi
+ 1iJM4z+8mA+jojA/kR4N889YRWgdqk6pkW2agDwi9SlGGuxBuv/voVUKej0tJ+2cgVsJxqAc8ki
+ Kf2Y+yzrc6dLNa1pqWMeKL8DQKnJFLD5XF+PZ6KF/aWFie2xxPcXJBz/MVqX4Nyuqhe+n6IRXX8
+ qHfARrp2d/9zsbBFmOYRYc7nExYL9FhTNl6OMefC/tiv+WRaFYCiXofu6LoC92Tkuoq2TSy8L9l
+ 9VX391nzYN9E45htF
+X-Google-Smtp-Source: AGHT+IH6dCjXZ9qptda7RtSmNlHOHssGdIhKlwg2y3P1tFtFXYaXjefxqfsY6KugE9AT6t1WegPrag==
+X-Received: by 2002:a17:90b:5704:b0:309:fe2b:306f with SMTP id
+ 98e67ed59e1d1-30a2158ed1bmr338530a91.26.1745855434337; 
+ Mon, 28 Apr 2025 08:50:34 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-22db50e75d4sm84079115ad.148.2025.04.28.08.49.02
+ 98e67ed59e1d1-309f7763edbsm7353191a91.22.2025.04.28.08.50.33
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 28 Apr 2025 08:49:02 -0700 (PDT)
-Date: Mon, 28 Apr 2025 08:49:01 -0700
+ Mon, 28 Apr 2025 08:50:34 -0700 (PDT)
+Date: Mon, 28 Apr 2025 08:50:32 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: fengchengwen <fengchengwen@huawei.com>
-Cc: thomas Monjalon <thomas@monjalon.net>, "dev@dpdk.org" <dev@dpdk.org>
-Subject: Re: add one example of DPI ?
-Message-ID: <20250428084901.0aeeee04@hermes.local>
-In-Reply-To: <2c503191-c235-4fbc-ae7a-d21dbe83d2a7@huawei.com>
-References: <2c503191-c235-4fbc-ae7a-d21dbe83d2a7@huawei.com>
+To: Kyo Liu <kyo.liu@nebula-matrix.com>
+Cc: Thomas Monjalon <thomas@monjalon.net>, Chenbo Xia <chenbox@nvidia.com>,
+ Nipun Gupta <nipun.gupta@amd.com>, dev@dpdk.org
+Subject: Re: [PATCH v3 1/1] bus/pci: introduce get_iova_mode for pci dev
+Message-ID: <20250428085032.0c48239a@hermes.local>
+In-Reply-To: <20250427022734.151043-1-kyo.liu@nebula-matrix.com>
+References: <20250427013611.150888-1-kyo.liu>
+ <20250427022734.151043-1-kyo.liu@nebula-matrix.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,34 +83,63 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 28 Apr 2025 16:20:22 +0800
-fengchengwen <fengchengwen@huawei.com> wrote:
+On Sun, 27 Apr 2025 02:27:34 +0000
+Kyo Liu <kyo.liu@nebula-matrix.com> wrote:
 
-> Hi all,
-> 
-> Currently, we supported several DPI application scenarios performance tuning,
-> in these scenarios, the DPDK library ethdev, ring, mbuf and hash APIs are used.
-> 
-> One of the scenarios is:
-> 
->     ------------------------                           -------------------------
->     |                      |       rte_ring-0          |                       |
->     |  packet-recv-process | ===>  rte_ring-1  ===>    | packet-detect-process |
->     |                      |         ...               |                       |
->     |                      |       rte_ring-n          |                       |
->     ------------------------                           -------------------------
-> 
->     packet-recv-process dispatch flow to different rings by such 'rte_hash_crc' function.
->     packet-detect-process build flow context based on rte_hash library.
-> 
-> I think it is necessary to add a DPI example to show that DPDK has the basic
-> capability of building DPI applications and provides best performance practices.
-> 
-> Hope to listen to the community's opinions.
-> 
-> Thanks
-> 
+> I propose this patch for DPDK to enable coexistence between
+> DPDK and kernel drivers for regular NICs.This solution requires
+> adding a new pci_ops in rte_pci_driver, through which DPDK will
+> retrieve the required IOVA mode from the vendor driver.
+> This mechanism is necessary to handle different IOMMU
+> configurations and operating modes. Below is a detailed
+> analysis of various scenarios:
+>=20
+> 1. When IOMMU is enabled:
+> 1.1 With PT (Pass-Through) enabled:
+> In this case, the domain type is IOMMU_DOMAIN_IDENTITY,
+> which prevents vendor drivers from setting IOVA->PA mapping tables.
+> Therefore, DPDK must use PA mode. To achieve this:
+> The vendor kernel driver will register a character device (cdev) to
+> communicate with DPDK. This cdev handles device operations
+> (open, mmap, etc.) and ultimately
+> programs the hardware registers.
+>=20
+> 1.2 With PT disabled:
+> Here, the vendor driver doesn't enforce specific IOVA mode requirements.
+> Our implementation will:
+> Integrate a mediated device (mdev) in the vendor driver.
+> This mdev interacts with DPDK and manages IOVA->PA mapping configurations.
+>=20
+> 2. When IOMMU is disabled:
+> The vendor driver mandates PA mode (consistent with DPDK's PA mode
+> requirement in this scenario).
+> A character device (cdev) will similarly be registered for DPDK
+> communication.
+>=20
+> Summary:
+> The solution leverages multiple technologies:
+> mdev for IOVA management when IOMMU is partially enabled.
+> VFIO for device passthrough operations.
+> cdev for register programming coordination.
+> A new pci_ops interface in DPDK to dynamically determine IOVA modes.
+> This architecture enables clean coexistence by establishing standardized
+> communication channels between DPDK and vendor drivers across different
+> IOMMU configurations.
+>=20
+> Motivation for the Patch:
+> This patch is introduced to prepare for the upcoming open-source
+> contribution of our NebulaMatrix SNIC driver to DPDK. We aim to
+> ensure that our SNIC can seamlessly coexist with kernel drivers
+> using this mechanism. By adopting the proposed
+> architecture=E2=80=94leveraging dynamic IOVA mode negotiation via pci_ops,
+> mediated devices (mdev), and character device (cdev)
+> interactions=E2=80=94we enable our SNIC to operate in hybrid environments
+> here both DPDK and kernel drivers may manage the same hardware.
+> This design aligns with DPDK=E2=80=99s scalability goals and ensures
+> compatibility across diverse IOMMU configurations, which is critical
+> for real-world deployment scenarios.
+>=20
+> Signed-off-by: Kyo Liu <kyo.liu@nebula-matrix.com>
 
-Did you consider the impact of CPU cache on this scenario.
-When you process the packet in two different threads, it ends up adding
-an additional data cache miss which can cut performance in half.
+Looks like this might also end up being ABI change so may have
+to wait for 25.11
