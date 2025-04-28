@@ -2,37 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA846C369D3
-	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Apr 2025 08:20:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EC15C369D3
+	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Apr 2025 09:22:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0D6704021F;
-	Mon, 28 Apr 2025 10:20:27 +0200 (CEST)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
- by mails.dpdk.org (Postfix) with ESMTP id 6A43740156
- for <dev@dpdk.org>; Mon, 28 Apr 2025 10:20:25 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.88.194])
- by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4ZmGZG0wR1z1d0nV;
- Mon, 28 Apr 2025 16:19:18 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 5B81D1402DF;
- Mon, 28 Apr 2025 16:20:23 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 28 Apr 2025 16:20:22 +0800
-Message-ID: <2c503191-c235-4fbc-ae7a-d21dbe83d2a7@huawei.com>
-Date: Mon, 28 Apr 2025 16:20:22 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id 152744064A;
+	Mon, 28 Apr 2025 11:22:06 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 6A11140156
+ for <dev@dpdk.org>; Mon, 28 Apr 2025 11:22:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1745832125; x=1777368125;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=uadRAMfp+gwv5LTyb2QPIkhUlZJM/7EB48PZLA4CfkU=;
+ b=Yl5OH0ALsYqnkggHL9LdN7bPV3uJNWlso7buRPFNmCDza8oI2RpwJVwb
+ qrt9bEb8DgGqdyAwaf+RJFFof4LLMwA1nhE+NOoKiuM758TuDqmfazUgg
+ x3GrW4MIaEEUZYGU3GZxbRbnYovQ26dvSyOZRHnTny3FcVAbtLgu9G73R
+ h//gsvbQLJuirF9No4if4vCMd7MhjQEDCSEE9fMmu3zwJ8snHwAskIgvm
+ a0jcscyHH6SLSeCzGjyr2XKLt5vT4hJAC0d+4Zs0C/sUdy08GxiPWrQJr
+ UNagWUANMh2igjCvAh54v7yQr7AhoDTwgaVBAjtah4t9WEntMipMHFVXU w==;
+X-CSE-ConnectionGUID: YLZUEt9wTGGrc4uNrmz90Q==
+X-CSE-MsgGUID: 2Gr68sZtTPCOVai7IHpBPw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11416"; a="47300800"
+X-IronPort-AV: E=Sophos;i="6.15,245,1739865600"; d="scan'208";a="47300800"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+ by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 28 Apr 2025 02:20:35 -0700
+X-CSE-ConnectionGUID: pyy0qjwJSuqlyTkYvsHM9A==
+X-CSE-MsgGUID: Yagh8Bb2SKWFyrxdANFy7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,245,1739865600"; d="scan'208";a="133352882"
+Received: from unknown (HELO srv24..) ([10.138.182.231])
+ by fmviesa006.fm.intel.com with ESMTP; 28 Apr 2025 02:20:33 -0700
+From: Shaiq Wani <shaiq.wani@intel.com>
+To: dev@dpdk.org,
+	bruce.richardson@intel.com,
+	aman.deep.singh@intel.com
+Subject: [PATCH v8 0/4] net/intel: using common functions in idpf driver
+Date: Mon, 28 Apr 2025 14:51:31 +0530
+Message-Id: <20250428092135.1058532-1-shaiq.wani@intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250312155351.409879-1-shaiq.wani@intel.com>
+References: <20250312155351.409879-1-shaiq.wani@intel.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: fengchengwen <fengchengwen@huawei.com>
-Subject: add one example of DPI ?
-To: thomas Monjalon <thomas@monjalon.net>, "dev@dpdk.org" <dev@dpdk.org>
-Content-Language: en-US
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -46,27 +60,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi all,
+reworked the drivers to use the common functions
+and structures from drivers/net/intel/common.
 
-Currently, we supported several DPI application scenarios performance tuning,
-in these scenarios, the DPDK library ethdev, ring, mbuf and hash APIs are used.
+v8: fixed idpf_desc_done fn.
+v7: rebased on top of latest main branch for a clean apply.
 
-One of the scenarios is:
+Shaiq Wani (4):
+  net/intel: align Tx queue struct field names
+  net/intel: use common Tx entry structure
+  net/intel: use common Tx queue structure
+  net/idpf: use common Tx free fn in idpf
 
-    ------------------------                           -------------------------
-    |                      |       rte_ring-0          |                       |
-    |  packet-recv-process | ===>  rte_ring-1  ===>    | packet-detect-process |
-    |                      |         ...               |                       |
-    |                      |       rte_ring-n          |                       |
-    ------------------------                           -------------------------
+ drivers/net/intel/common/tx.h                 |  18 +
+ drivers/net/intel/cpfl/cpfl_ethdev.c          |   3 +-
+ drivers/net/intel/cpfl/cpfl_ethdev.h          |   2 +-
+ drivers/net/intel/cpfl/cpfl_rxtx.c            |  66 ++--
+ drivers/net/intel/cpfl/cpfl_rxtx.h            |   3 +-
+ drivers/net/intel/cpfl/cpfl_rxtx_vec_common.h |   6 +-
+ drivers/net/intel/idpf/idpf_common_rxtx.c     | 108 +++---
+ drivers/net/intel/idpf/idpf_common_rxtx.h     |  69 +---
+ .../net/intel/idpf/idpf_common_rxtx_avx2.c    | 108 ++----
+ .../net/intel/idpf/idpf_common_rxtx_avx512.c  | 316 +++---------------
+ drivers/net/intel/idpf/idpf_common_virtchnl.c |   8 +-
+ drivers/net/intel/idpf/idpf_common_virtchnl.h |   2 +-
+ drivers/net/intel/idpf/idpf_ethdev.c          |   3 +-
+ drivers/net/intel/idpf/idpf_rxtx.c            |  47 ++-
+ drivers/net/intel/idpf/idpf_rxtx.h            |   1 +
+ drivers/net/intel/idpf/idpf_rxtx_vec_common.h |  21 +-
+ 16 files changed, 235 insertions(+), 546 deletions(-)
 
-    packet-recv-process dispatch flow to different rings by such 'rte_hash_crc' function.
-    packet-detect-process build flow context based on rte_hash library.
-
-I think it is necessary to add a DPI example to show that DPDK has the basic
-capability of building DPI applications and provides best performance practices.
-
-Hope to listen to the community's opinions.
-
-Thanks
+-- 
+2.34.1
 
