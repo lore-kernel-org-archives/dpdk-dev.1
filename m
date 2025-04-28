@@ -2,72 +2,146 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ADADC36005
-	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Apr 2025 10:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 549CCC369DC
+	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Apr 2025 14:14:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AD3554065B;
-	Mon, 28 Apr 2025 12:42:21 +0200 (CEST)
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com
- [209.85.221.171])
- by mails.dpdk.org (Postfix) with ESMTP id 9BC944021F
- for <dev@dpdk.org>; Mon, 28 Apr 2025 12:42:19 +0200 (CEST)
-Received: by mail-vk1-f171.google.com with SMTP id
- 71dfb90a1353d-525da75d902so1766921e0c.3
- for <dev@dpdk.org>; Mon, 28 Apr 2025 03:42:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1745836939; x=1746441739; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=TyrI6TVX1RQVi5Yw6yOspQ3uJTP09ExK3bnXaT3ut0c=;
- b=PH84J635dL7LBklpqdO6A5zD6QfUxQTJTr4vlox2klBPIufS5pjgq0rl8WMKTT7Idg
- NZD9jcyCptTf5QSG8GGO8NAHETydQLpoEEm+zJtwiU0sRXuWm7u7RTaCgT+oXY8sEttb
- M3bqa3Iwh0hBNErP+9c5t6n44J72o97Si8hEdlU1wnIUL4Sa9b8R6/+3b3HHgAu+BN1u
- juwdC0XRRFRzVz1qpKMEaS9rOiwdod7bje922+u3LjVfWIUC+PwGwVEIMENAD4cZPwNo
- QNt4yVN9LsFJq8n/W+FavtK8asISsi0ld41Z8nj8sceev/pcohDkww7UGWUljzbZhciH
- KYzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1745836939; x=1746441739;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=TyrI6TVX1RQVi5Yw6yOspQ3uJTP09ExK3bnXaT3ut0c=;
- b=Ta8jWz4O1llTIFD7tdyR0TyzZjqpcilU5xDO00Te+C01VSG3BK99t06hOyVUG2ZDm+
- vz78CCimed/mi+x9RgYSdYYDRba+eTRqPgW/qioMpSN0tRzD/4kgflW9eNf8raFcQ8Rq
- pYlXKVfY+TW8Pzok+e0o1w5UfW3z+V/lCeclN+axt9JP2dNFxVEoxB2YORcoAmhzhbdZ
- ys8jGvtPPtg1/oyCLdEcedtIiMZ9pfX4gOFlc7+DadtNeHnDPgLRT0Qhq0mI5UQfGjTr
- IKiJ3Oqu1fGXOJ/DdXoCf3u4kG+SXJLBdPB2Bx4YRXcRXgCm1Ry7FUIk/BW2nhP3Xayh
- BcwQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCX0xYf5erMQsm4nO+Oi3JMc+1Ufz8MBgCG/hx4Yr1tq+pyPRgIsRPxie4AGuYrewvsxkKs=@dpdk.org
-X-Gm-Message-State: AOJu0YxZj8PZv9HVWUIw5QFxq/SoQ0otcWJW7WMzMgVoam2iHdut9xc8
- MWZQlTJpd9+ZkhOsQz/7VZPnmCK2PjFCCZkzxevNNhWAkKoC0WQOGhih/Www/wUuU+pMSvrDi8p
- QYvmGOu2d2S8ySmK7olNIXpQ1nTI=
-X-Gm-Gg: ASbGncsv8vQDs8SME9AF56uMRostFafcBIPy72Cth5wxHX7mxZ0PjYiHVI+YDTUslTJ
- ZTmvPE9dz4YC4xFUW3Z43v3Epea3AsLD+uDB04Bxalutk36foapsjTUat5zMJwtb393qwi9Ethm
- JuSsG6QtsynwQPdc9BLid/3Zo=
-X-Google-Smtp-Source: AGHT+IEXhi7PDRm0k7HbxrHxiaPOQB4H18pX8MH0FtA2Ucy78q8EVlQtsDsb2QQ0o8NAA7ha0DkNQOsDzQGk5lU103M=
-X-Received: by 2002:a05:6122:250f:b0:528:4f4b:f0c0 with SMTP id
- 71dfb90a1353d-52a89de1270mr6929366e0c.5.1745836938759; Mon, 28 Apr 2025
- 03:42:18 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1F983402A9;
+	Mon, 28 Apr 2025 16:14:07 +0200 (CEST)
+Received: from MA0PR01CU009.outbound.protection.outlook.com
+ (mail-southindiaazon11020115.outbound.protection.outlook.com
+ [52.101.227.115])
+ by mails.dpdk.org (Postfix) with ESMTP id 373DF4021F
+ for <dev@dpdk.org>; Mon, 28 Apr 2025 16:14:05 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kXUyHjOKtCKTl6zBdCjNJ2yWZLAB2At0FZ9cRvhFilGKlMKk5mm+Q5ytfYzNbEtalqRoetUzgzvvsMHV67t/vxoSDwz/Qyx9cZcZc2cpb0oiEYXhNEUuMjUUZPPpiO80pJhR8YbySQnD2qN/mjq//Dw3VPzCAe3F4NLSuqzXvZYBjxPxjiYcSkfPKzzRbvF5YM7T5pukbqeA2x3xTNs/XwJEZ979YKn0f+xiEgZnzhFua2yB2INnD9Pg7yvPSZuQjTk3elwjgDpdkeAjsp1YmqTYXKwr1Ug/f4YcIzTrNoDzQW8dJ8x4h290stckEQuh5EDQW/uCm5dQUy/HvnjlKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OZ8/tqty8SxsC6AZC5QRow7c/c+8VRFFUJ9NM65IhCw=;
+ b=G6z5z4hbVdHkOXPZhF5pbckfoH2uREfNzcEI9izGwTOhD8dpPoQOYt4sExg3ptkvFi51OBX+brNF3dohTrUKARVHq3quFJ/kE/TF0wCVj6MYbSI/9fIEzPNA26+YuHmMjVzy331SDuw/CTo7krrryWyzzDMcMcDWTVCad0bAhu2NVfMYvrN+kSoq5ftU5oBIt8jO6xZLUa01t8hi/ZCRmmmNl6A8JQICqSd6GxZ92qb+SU0PyD4vzn1F1YPZLX6zJ6Z2V/pVIthGHAeabXHtNW7AIg9wWoC4MTmhNij1t0zMlrejLpY+hCF+GLmUxfni8LyUd+XFJOCdmucNX/4u/Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=iwave-global.com; dmarc=pass action=none
+ header.from=iwave-global.com; dkim=pass header.d=iwave-global.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iwave-global.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OZ8/tqty8SxsC6AZC5QRow7c/c+8VRFFUJ9NM65IhCw=;
+ b=E9AKqTZD7vy6v3HD7YJII8TFN872e23LK0V8Y44QcJFwJAf7tYuKCmpnMVyXvV4kGdHheZI5x5iqnbzLkKvITqpbnpki54UWTOBN6COPYQhhK/NIAJ8VEqw3zTOfyfSDtsatyuvcsVivgDaesVsaV+m0GRUXvNctbezBC0Y590xjD1xmyBuRwpP8w/JVLZ709ojx/qX8ayNOPg+4IEb63090MJdSWgIrVWsVKm3RNCNj3zejjQIG4mF2l+SmJYrcdg+cxUDdfLWCJIg0AMLExgGWTocUA1wo9MLYzXsZiMXRHGqwIV9o0kHXfGZAWanF5pTe7TRpk5X0tmLVXuBywQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=iwave-global.com;
+Received: from PN0P287MB2531.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1ff::6)
+ by PN0P287MB0701.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:164::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.33; Mon, 28 Apr
+ 2025 14:14:02 +0000
+Received: from PN0P287MB2531.INDP287.PROD.OUTLOOK.COM
+ ([fe80::1c15:d45a:75b0:af44]) by PN0P287MB2531.INDP287.PROD.OUTLOOK.COM
+ ([fe80::1c15:d45a:75b0:af44%5]) with mapi id 15.20.8678.028; Mon, 28 Apr 2025
+ 14:14:01 +0000
+Message-ID: <fb27d286-cfff-e70e-651b-fb72d80cfb22@iwave-global.com>
+Date: Mon, 28 Apr 2025 19:44:01 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Content-Language: en-US
+To: dev@dpdk.org
+From: Ayshathul Thuhara <ayshathul.thuhara@iwave-global.com>
+Subject: Virtio-PMD speed limits to 100Gbps, while hardware supports 200Gbps
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PN4P287CA0114.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:2ad::6) To PN0P287MB2531.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:1ff::6)
 MIME-Version: 1.0
-References: <20250401042053.3518757-1-nsaxena@marvell.com>
- <20250409135554.2180390-1-nsaxena@marvell.com>
- <20250409135554.2180390-2-nsaxena@marvell.com>
- <CO6PR18MB4084AB7880F9D37F0862C636DEBF2@CO6PR18MB4084.namprd18.prod.outlook.com>
-In-Reply-To: <CO6PR18MB4084AB7880F9D37F0862C636DEBF2@CO6PR18MB4084.namprd18.prod.outlook.com>
-From: Nitin Saxena <nsaxena16@gmail.com>
-Date: Mon, 28 Apr 2025 16:12:06 +0530
-X-Gm-Features: ATxdqUEFYnvXBLp45BAuyfUf5D6hsN2Q0vPgXrUurvzXpRq88eys2fqabbbqLIk
-Message-ID: <CAG6-93w02cgBK9m42XVz_t7VDnyemw0CZfwz=0+MR8vATMNukw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] node: add global node mbuf dynfield
-To: Pavan Nikhilesh Bhagavatula <pbhagavatula@marvell.com>
-Cc: Nitin Saxena <nsaxena@marvell.com>,
- Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>, 
- Robin Jarry <rjarry@redhat.com>, Christophe Fontaine <cfontain@redhat.com>,
- "dev@dpdk.org" <dev@dpdk.org>, Jerin Jacob <jerinj@marvell.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PN0P287MB2531:EE_|PN0P287MB0701:EE_
+X-MS-Office365-Filtering-Correlation-Id: 616e8d9d-ee6b-48fe-6241-08dd865eed04
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?VjRsREhxRmxRVUJ3UkQ1SU84bXc0ZkprZlFhZHZTR2xndi9zdDE3Z3JLZ3ZK?=
+ =?utf-8?B?Wi9hZEg1NWsxTFgyc2I3L2tXbnk1R01MTGZjWEJxTGExU3BnUk84bTVKb1dN?=
+ =?utf-8?B?UXFub1hWNVAxVlpHd08xWlNEeWVUdVR5NUdQTSt6UlFtNDZMSGJ2YlhoOUpO?=
+ =?utf-8?B?RC9zN09nTXpjS1lHekMzVXpVZGdUVlY4eHd5eStHc2xKWlplOGMvWm02by9n?=
+ =?utf-8?B?d2licXBaQ2RBbEpCN2RTcW9Bc2poeUt4dWZtVlhKMDNLWkQvNUhNU1h4cytD?=
+ =?utf-8?B?N0g4WHV1N0xHWnc3LzlLaXZSaFh3cWNwM2I4dkI4VTI0UGpWY0NRQjc4cTN6?=
+ =?utf-8?B?VEl6YkljWUlvaEFxQU55QjE0UkNaNjR2eGwybXJ1cVdETnh6cTQ2R21YSy9m?=
+ =?utf-8?B?MEJOaE5YR0ZpY0hFQzNlZGQ3a3JidmdhVXR5OGZ0VDEzWFJ6V2xaY2NBZWxX?=
+ =?utf-8?B?RGl4eWtPWjk1d2dkZWRVTHJoamF2MjZLM2lkZlljd1RNK2VJWklyVFBDeUd0?=
+ =?utf-8?B?Z0E4eDk5NjdxcmpvdnBoeDJ5N2xnRDB3azhaNFplRlhCcFhTSzJSRExrK1hm?=
+ =?utf-8?B?cmY5VUEzVFM3aWNHbzl1ZzRrbTlsM3prejdSSEJybjk3WTFLVitDMGZsaE1W?=
+ =?utf-8?B?UGRlL09kR1RCT3NISmpyOHovVkZRVytXcG8xZWhtUFpHL2Y5Nm1aSUkySUlw?=
+ =?utf-8?B?OTVzUWhqUGhqQjVFME85SHRlZTczNWpnRzJHUStLYjN5TzFuSFJIN3M2aGhT?=
+ =?utf-8?B?ZzBpd0haK05qOGg5OFJsRVN5K3krdmJZTkdRNGQ4c0VpQkRJeVRIRGFaMkYw?=
+ =?utf-8?B?V1JZeWZXeEkwUHRMc3hTNVRob01yOXVtSmRaUDQrQzIveFQ5UjBYbXlDZFlM?=
+ =?utf-8?B?U25VQkgyZ3JVd2VocnJkUXY2Ymt4NFRBUTV4bjJjVUliUmpGSWdDZnhhYzZn?=
+ =?utf-8?B?ZXhCSGZXYUU2aWdaZm5ZV2RKQ2E4ZENlZmsvWERrVVVoUzAzZE1XWnI1Mnli?=
+ =?utf-8?B?SzFjaDhnWTJhUVJkUDdpMXV0VGRFZWxGUnIrTVdncU0yTzArbk95RUFDZHpG?=
+ =?utf-8?B?dWRZYnBOZmN2dU5QdFM2QnBvRW16dk5kZUZsbzBudkVoeHVseXlsbWRnS25Z?=
+ =?utf-8?B?UEhMUXFsVFVnWVhlSFFEenZqY2tKSDZQakJrUDBCSlR1ZERrYlBzcjA4NDJm?=
+ =?utf-8?B?Szl5dUtEaCtzMCtkM0d1NTJ3S3RFOENBUEhFTXI3aU9hZmlUelVUVmZCYURT?=
+ =?utf-8?B?ZkR5a1dMRHFRQUNFaThoSDVibzBibkZZb2EzVnhLNlRGNEs3bUk2bDVKT1FN?=
+ =?utf-8?B?Vk1yWG56eVpJNXplUTVhYWY0YkxaU3h1Mm41NWdHQWphdzFYYmkzdy9RWllD?=
+ =?utf-8?B?dWcwaE1sNlYyS1lEb3VjUzhaZnNqdUluOHQzdmV1bE5oSmdlSmVTOUMrZnRI?=
+ =?utf-8?B?TFNwbTFwY2dCY3pGeldwRzd6UjV3dkJ0c21zZU9iWlRuM1FpNVJES0RnMk5q?=
+ =?utf-8?B?VjBETDFSUUFiQktDc2J2V3FVaWgwejluTG1wdDVCM3ZadDlWMWZ4OTFzRktK?=
+ =?utf-8?B?UERyekM4WGRwcGpVQ3BCaGZpQkxST3cvSzUzZUNXWE1aVWhqZldaTnVGRkVG?=
+ =?utf-8?B?SXhlSGh1NUo0UjhlbGRkampDMkQ4bTQ3d0YvTFJVUjVrVnNmaFoyeEFyS093?=
+ =?utf-8?B?K3FaNGRKL0llOERHdk1zQXE0Mlk2cGpjOHJUcjU1MEJZa3BRcmZqdXUzUlNK?=
+ =?utf-8?B?VURSTmRrMkF4SXlyNHoyajErYy9yU0V6a0FFM0pNLzdNbFlpSU5VVk00SktZ?=
+ =?utf-8?B?SmQxWklLdk9sZUt2dTh3VHNBeWFhUkN5a2ZDWG5KQ2tqRWxOWlFNTXJxRG15?=
+ =?utf-8?B?RzlPVW5XUnBpd3lqZzM4Q21Bai8wVWxhWVhnS0h4eUZqQ0crcnRRQTZiQVk1?=
+ =?utf-8?Q?asAktpOCZxI=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:PN0P287MB2531.INDP287.PROD.OUTLOOK.COM; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016); DIR:OUT; SFP:1102; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SFczNE12QVZOYWxuQkVJOXQ0TE9HU2VWbnJKdnlEdzJzY01CV3NYY3NSY09S?=
+ =?utf-8?B?TzlsTUkvbGdmQnYxL1AvWjBRSHduME02ZGg5VWFhQi83ZjBoM1YvNE5GQVF0?=
+ =?utf-8?B?QTRCekNJb0tiOFRPNCtWek40Sk9GSGhYTk9SYXNmKzNqZVhFU1VwQXo4Wm1D?=
+ =?utf-8?B?UHlma3ZqZEVNbTF6ZjlOT0Q2Z1V3K2t2NEJ3aGhqdzhXM2JPRWIxNzFtTVh0?=
+ =?utf-8?B?d0xnYUc4NnJTM0NHZnhXZWhnK2syTnZCMlExUFpRVlhLZjFUWnpZOXRZekRi?=
+ =?utf-8?B?aHk0S2RhM3B5MUJKcmpXTXpPT0JGSFlhaDJERDNsQ3JQNnVWb2FudU1DNURC?=
+ =?utf-8?B?cW5adWRKcWVvdmlqTHhGUFdqQUpsY0h6K1BHdkFTUW9zeGUwUFpFR2ZqN0Rj?=
+ =?utf-8?B?aG9JclFQNUN5WHNHLzhBVnBhUzBCSXVldllqcStFbWV4VjllZGR0YWtlb3c2?=
+ =?utf-8?B?Qlc5Q3dnTzM4Vkpubmd4YTI0dDh2bzlnWTR0LzJiK3o3V3BZU1Z0RnBXd3Zx?=
+ =?utf-8?B?ZUliSjNJekFtc2NUSm0zQ1VvVTM0aDUwU2FlekdVRStZaHZ6YVk2VHc2K3Fo?=
+ =?utf-8?B?cFlkV296cytWTEp3RFM2NDJaWXRBd0NYVWd0K0ZNMVV3d1lYYVdwU2wzWVhE?=
+ =?utf-8?B?MmZua1lxRTZYd040enRxMk13TUdpMjNSaldFNHk2eTFjRWVIbzIzRlIvVUlp?=
+ =?utf-8?B?UHJIUWNJcVN1REdhcTVIM3UvVWF6LzB0RXdhQVhqS21YUTBrcFVJVU5EdHRv?=
+ =?utf-8?B?MExaVVBaS08xaWtxSlAralplc3Z1QTFWdFlXdzRnZG9yYnFtNy81aU5pNmhN?=
+ =?utf-8?B?NTFFUWRlNFpWZXBSSkhpR2VYME9jMU45MGRuTlRkOXJjL1hUYTMzT1NteW5H?=
+ =?utf-8?B?OWlodjdBelI2TWdLRHE5N2dRNTJNd2ZGUnZUU1lXa2NJbmtoSEF4N050L0ds?=
+ =?utf-8?B?ZWlOeHFLRUxYVFJ6d2crMmgzL05NL2twQWtPSHFNR1dMTTNiZUZlV0YrK05Q?=
+ =?utf-8?B?RXNncW5nV293UzNXUS95UmhwSzAvUWt5Z1lWekJUOWpweVVldUcrRml3bVE4?=
+ =?utf-8?B?QlBwK1VXQ2FXN3FmVVlySG5La3NIUEVHY2RrLzlTMmhlbTkyYTZUdUxMVVhL?=
+ =?utf-8?B?OFFMNk5la2pheFRSTGhqUFdia0RSMXBvblg0T3M3ajduazNaWHpUMHB0Vno3?=
+ =?utf-8?B?cXZSMXUvMVJsczJRS1IzUFhpdmZ3NEpCa1ZnZnZhMFhkdGw3RnU3ajNUYmhr?=
+ =?utf-8?B?alhJRGZhaFY5Z3dIUm51QnFhRVZmc0ZWYlY2eE1kMEFTcjg5eng2elo3T3VS?=
+ =?utf-8?B?czd3TFQ0R1ZNcWlLMHNhQkxFcWFlM2VYNStsbjBUdFlFTk1pSFZ4emUySkdG?=
+ =?utf-8?B?ZjdSN1pkWGJzMTdibVdEVWhQWUg2K3l2MXlKbUt4MUZKalIyN1M1N2Myeiti?=
+ =?utf-8?B?bHMvZWNNZnlZVElpUWdkQnFscDhQWXd3clVab09CSjlESVh2TlJnbUNQL25G?=
+ =?utf-8?B?V2wxcENNQTJwMTE1MnVoR1NUUlNNeU96a29JTkpqWkQ0Ty9mRTl3U2tUL01G?=
+ =?utf-8?B?bHYzb0NhWWp6Z3NYemdxWVRyb3R5UjhKMHZIR0JLV3R5NVE0QnM3eHJNbUVX?=
+ =?utf-8?B?NG1xOWZXc09jYTJLVElYZTh4RTdMRXNLTVNHK2JSdTVYbmI3eUpjRFVYaW5Y?=
+ =?utf-8?B?Q2UySjBSRHFEWGF2L1FINE9Gb3J4UkFYNkorNUxyRkxtWjhLcUlGOGNGaTRr?=
+ =?utf-8?B?QUZRTENOM0Z5bEVXLzlpMlRvTFJRUGZMMVRaLzNONXo0STVKSDRGWXVxdUxr?=
+ =?utf-8?B?WXo4bkJIWGU4TzFGYWFIVHdxdVZNaS9aZGRtRjdIZG5VOHg0Y1RKOVVIdC9z?=
+ =?utf-8?B?TjM0Qk1zWFJRVlkvYUdWTGFyZEp3MlV6YUJScUw4STcxSlorMGJVcW56RUx4?=
+ =?utf-8?B?ZGZ2N2VqWlk5Mjh0T0FsaWNYcHFQUjh3UGJzYkd5dGxHTXd6M0VSL0xzeGcr?=
+ =?utf-8?B?TGU1WFNQaTd2cnNTcFpuNzg2cFNjRFlCVk9waDFBcmtWbXlEM1g0RHZ2a0xU?=
+ =?utf-8?B?dE9sR296TndiczhKMjFvcTZLNGdQM2Eya29OQ0ZtbnkxeVhIMi9iTjNVU1FM?=
+ =?utf-8?B?V042ajdjanFTdldCUW1pVnVEancxVmVoVHNsNWNGenlhMzdkdnRQTHROcmQz?=
+ =?utf-8?Q?HVVGB4O45AX9nZlcrNPyC7o=3D?=
+X-OriginatorOrg: iwave-global.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 616e8d9d-ee6b-48fe-6241-08dd865eed04
+X-MS-Exchange-CrossTenant-AuthSource: PN0P287MB2531.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2025 14:14:01.9207 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 507ae903-cc48-4d6e-bdb6-35278120a345
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: f78a3e+sC3R4HhZ4dg6qNVLZFYmW030/XEqHExEegWfmbLVZIcCqh8a78CV0iVEnpM49ipOajlj+Iweg2bgi8H05zPLstf9e4UdkrBs/xvBn2QvyiyOpC1Gy1zpUPQHl
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB0701
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,404 +155,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Pavan,
+Hi Team,
 
-I have incorporated your comments in patch 6
-Thanks for reviewing
+  I am using virtio-net, virtio-pci  drivers for a Bittware hardware. I 
+could see the data is sent and received with the throughput of 100Gbps.
+But the hardware supports for 200Gbps. I am not able to get the 
+throughput more than 200Gbps.
 
-Nitin
+I am using latest DPDK source files and I tested TestPMD application to 
+transfer and receive packets. I have noticed the virtio_ethdev.c 
+supports 200G, but while testing TX and RX shows 100Gbps.
+I have increase CPU cores to more than 6 for each TX and RX. Still the 
+throughput remains in 100Gbps.
 
-On Sat, Apr 19, 2025 at 12:33=E2=80=AFAM Pavan Nikhilesh Bhagavatula
-<pbhagavatula@marvell.com> wrote:
->
->
->
-> > -----Original Message-----
-> > From: Nitin Saxena <nsaxena@marvell.com>
-> > Sent: Wednesday, April 9, 2025 7:26 PM
-> > To: Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>; Pavan Nikhilesh
-> > Bhagavatula <pbhagavatula@marvell.com>; Robin Jarry
-> > <rjarry@redhat.com>; Christophe Fontaine <cfontain@redhat.com>
-> > Cc: dev@dpdk.org; Jerin Jacob <jerinj@marvell.com>; Nitin Saxena
-> > <nsaxena16@gmail.com>
-> > Subject: [PATCH v5 1/2] node: add global node mbuf dynfield
-> >
-> > This patch defines rte_node specific dynamic field structure
-> > (rte_node_mbuf_dynfield_t)
-> >
-> > rte_node_mbuf_dynfield_t structure holds two types of fields
-> > - Persistent data fields which are preserved across graph walk.
-> >   Currently size of persistent data fields is zero.
-> > - Overloadable data fields which are used by any two adjacent nodes.
-> >   Same fields can be repurposed by any other adjacent nodes
-> >
-> > This dynfield can be also be used by out-of-tree nodes.
-> >
-> > Signed-off-by: Nitin Saxena <nsaxena@marvell.com>
-> > ---
-> >  doc/api/doxy-api-index.md              |   3 +-
-> >  doc/guides/rel_notes/release_25_07.rst |   6 ++
-> >  lib/node/meson.build                   |   2 +
-> >  lib/node/node_mbuf_dynfield.c          |  57 +++++++++++
-> >  lib/node/rte_node_mbuf_dynfield.h      | 132
-> > +++++++++++++++++++++++++
-> >  5 files changed, 199 insertions(+), 1 deletion(-)
-> >  create mode 100644 lib/node/node_mbuf_dynfield.c
-> >  create mode 100644 lib/node/rte_node_mbuf_dynfield.h
-> >
-> > diff --git a/doc/api/doxy-api-index.md b/doc/api/doxy-api-index.md
-> > index 5c425a2cb9..763cfb3f3c 100644
-> > --- a/doc/api/doxy-api-index.md
-> > +++ b/doc/api/doxy-api-index.md
-> > @@ -219,7 +219,8 @@ The public API headers are grouped by topics:
-> >      [ip4_node](@ref rte_node_ip4_api.h),
-> >      [ip6_node](@ref rte_node_ip6_api.h),
-> >      [udp4_input_node](@ref rte_node_udp4_input_api.h)
-> > -
-> > +  * graph_nodes_mbuf:
-> > +    [node_mbuf_dynfield](@ref rte_node_mbuf_dynfield.h)
->
-> Missing blank line here.
-Done
+Could you please let me know what changes to be made and what debug area 
+I should look into.?
 
->
-> >  - **basic**:
-> >    [bitops](@ref rte_bitops.h),
-> >    [approx fraction](@ref rte_approx.h),
-> > diff --git a/doc/guides/rel_notes/release_25_07.rst
-> > b/doc/guides/rel_notes/release_25_07.rst
-> > index 093b85d206..2dc888e65d 100644
-> > --- a/doc/guides/rel_notes/release_25_07.rst
-> > +++ b/doc/guides/rel_notes/release_25_07.rst
-> > @@ -55,6 +55,12 @@ New Features
-> >       Also, make sure to start the actual text at the margin.
-> >       =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >
-> > +* **Added rte_node specific global mbuf dynamic field.**
-> > +
-> > +  Instead each node registering mbuf dynamic field for its own purpose=
-, a
-> > +  global structure is added which can be used/overloaded by all nodes
-> > +  (including out-of-tree nodes). This minimizes footprint of node spec=
-ific
-> > mbuf
-> > +  dynamic field.
-> >
-> >  Removed Items
-> >  -------------
-> > diff --git a/lib/node/meson.build b/lib/node/meson.build
-> > index 0bed97a96c..152fe41129 100644
-> > --- a/lib/node/meson.build
-> > +++ b/lib/node/meson.build
-> > @@ -8,6 +8,7 @@ if is_windows
-> >  endif
-> >
-> >  sources =3D files(
-> > +        'node_mbuf_dynfield.c',
-> >          'ethdev_ctrl.c',
-> >          'ethdev_rx.c',
-> >          'ethdev_tx.c',
-> > @@ -30,6 +31,7 @@ headers =3D files(
-> >          'rte_node_ip4_api.h',
-> >          'rte_node_ip6_api.h',
-> >          'rte_node_udp4_input_api.h',
-> > +        'rte_node_mbuf_dynfield.h',
-> >  )
-> >
-> >  # Strict-aliasing rules are violated by uint8_t[] to context size cast=
-s.
-> > diff --git a/lib/node/node_mbuf_dynfield.c b/lib/node/node_mbuf_dynfiel=
-d.c
-> > new file mode 100644
-> > index 0000000000..6005e72ed6
-> > --- /dev/null
-> > +++ b/lib/node/node_mbuf_dynfield.c
-> > @@ -0,0 +1,57 @@
-> > +/* SPDX-License-Identifier: BSD-3-Clause
-> > + * Copyright(C) 2025 Marvell International Ltd.
-> > + */
-> > +#include <rte_memzone.h>
-> > +#include <rte_node_mbuf_dynfield.h>
-> > +#include <node_private.h>
-> > +#include <eal_export.h>
-> > +
-> > +#define NODE_MBUF_DYNFIELD_MEMZONE_NAME
-> > "__rte_node_mbuf_dynfield"
-> > +
-> > +struct node_mbuf_dynfield_mz {
-> > +     int dynfield_offset;
-> > +};
-> > +
-> > +static const struct rte_mbuf_dynfield node_mbuf_dynfield_desc =3D {
-> > +     .name =3D "rte_node_mbuf_dynfield",
-> > +     .size =3D sizeof(rte_node_mbuf_dynfield_t),
-> > +     .align =3D alignof(rte_node_mbuf_dynfield_t),
-> > +};
-> > +
-> > +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_node_mbuf_dynfield_register,
-> > 25.07);
-> > +int rte_node_mbuf_dynfield_register(void)
-> > +{
-> > +     struct node_mbuf_dynfield_mz *f =3D NULL;
-> > +     const struct rte_memzone *mz =3D NULL;
-> > +     int dyn_offset;
-> > +
-> > +     RTE_BUILD_BUG_ON(sizeof(rte_node_mbuf_dynfield_t) <
-> > RTE_NODE_MBUF_DYNFIELD_SIZE);
-> > +     RTE_BUILD_BUG_ON(sizeof(rte_node_mbuf_overload_fields_t) <
-> > +                      RTE_NODE_MBUF_OVERLOADABLE_FIELDS_SIZE);
-> > +
-> > +     mz =3D
-> > rte_memzone_lookup(NODE_MBUF_DYNFIELD_MEMZONE_NAME);
-> > +
-> > +     if (!mz) {
-> > +             mz =3D
-> > rte_memzone_reserve_aligned(NODE_MBUF_DYNFIELD_MEMZONE_NAME,
-> > +                                              sizeof(struct
-> > node_mbuf_dynfield_mz),
-> > +                                              SOCKET_ID_ANY, 0,
-> > +                                              RTE_CACHE_LINE_SIZE);
-> > +             if (!mz) {
-> > +                     node_err("node_mbuf_dyn",
-> > "rte_memzone_reserve_aligned failed");
-> > +                     return -1;
->
-> Please return proper error codes, or set rte_errno.
-Done
+Thanks and regards,
+Ayshathul Thuhara
 
->
-> > +             }
-> > +             dyn_offset =3D
-> > rte_mbuf_dynfield_register(&node_mbuf_dynfield_desc);
-> > +             if (dyn_offset < 0) {
-> > +                     node_err("node_mbuf_dyn",
-> > "rte_mbuf_dynfield_register failed");
-> > +                     return -1;
->
-> Please return proper error codes, or set rte_errno.
-Done
-
->
-> > +             }
-> > +             f =3D (struct node_mbuf_dynfield_mz *)mz->addr;
-> > +             f->dynfield_offset =3D dyn_offset;
-> > +
-> > +             node_dbg("node_mbuf_dyn", "memzone: %s of size: %zu at
-> > offset : %d",
-> > +                      mz->name, mz->len, f->dynfield_offset);
-> > +     } else {
-> > +             f =3D (struct node_mbuf_dynfield_mz *)mz->addr;
-> > +     }
-> > +     return f->dynfield_offset;
-> > +}
-> > diff --git a/lib/node/rte_node_mbuf_dynfield.h
-> > b/lib/node/rte_node_mbuf_dynfield.h
-> > new file mode 100644
-> > index 0000000000..b5a3d6db3f
-> > --- /dev/null
-> > +++ b/lib/node/rte_node_mbuf_dynfield.h
-> > @@ -0,0 +1,132 @@
-> > +/* SPDX-License-Identifier: BSD-3-Clause
-> > + * Copyright(C) 2025 Marvell International Ltd.
-> > + */
-> > +
-> > +#ifndef _RTE_GRAPH_MBUF_DYNFIELD_H_
-> > +#define _RTE_GRAPH_MBUF_DYNFIELD_H_
-> > +
-> > +#include <rte_common.h>
-> > +#include <rte_mbuf.h>
-> > +#include <rte_mbuf_dyn.h>
-> > +
-> > +/**
-> > + * @file: rte_node_mbuf_dynfield.h
-> > + *
->
-> Please mark the file as experimental
-> i.e.,
->  * @warning
->  * @b EXPERIMENTAL:
-Done
-
->
-> > + * Defines rte_node specific mbuf dynamic field region
-> > [rte_node_mbuf_dynfield_t] which
-> > + * can used by both DPDK in-built and out-of-tree nodes for storing pe=
-r-mbuf
-> > + * fields for graph walk
-> > + */
-> > +#ifdef __cplusplus
-> > +extern "C" {
-> > +#endif
-> > +
-> > +/** Size of persistent mbuf fields */
-> > +#define RTE_NODE_MBUF_PERSISTENT_FIELDS_SIZE          (0)
-> > +/** Size of overloadable mbuf fields */
-> > +#define RTE_NODE_MBUF_OVERLOADABLE_FIELDS_SIZE        (8)
-> > +/** Size of node mbuf dynamic field */
-> > +#define RTE_NODE_MBUF_DYNFIELD_SIZE     \
-> > +     (RTE_NODE_MBUF_PERSISTENT_FIELDS_SIZE +
-> > RTE_NODE_MBUF_OVERLOADABLE_FIELDS_SIZE)
->
-> New line here.
-Done
-
->
-> > +/**
-> > + * Node mbuf overloadable data.
-> > + *
-> > + * Out-of-tree nodes can repurpose overloadable fields via
-> > + * rte_node_mbuf_overload_fields_get(mbuf). Overloadable fields are no=
-t
-> > + * preserved and typically can be used with-in two adjacent nodes in t=
-he
-> > graph.
-> > + */
-> > +typedef struct rte_node_mbuf_overload_fields {
-> > +     union {
-> > +             uint8_t
-> > data[RTE_NODE_MBUF_OVERLOADABLE_FIELDS_SIZE];
-> > +     };
-> > +} rte_node_mbuf_overload_fields_t;
-> > +
-> > +/**
-> > + * rte_node specific mbuf dynamic field structure
-> > [rte_node_mbuf_dynfield_t]
-> > + *
-> > + * It holds two types of fields:
-> > + * 1. Persistent fields: Fields which are preserved across nodes durin=
-g graph
-> > walk.
-> > + *    - Eg: rx/tx interface etc
-> > + * 2. Overloadable fields: Fields which can be repurposed by two adjac=
-ent
-> > nodes.
-> > + */
-> > +typedef struct rte_node_mbuf_dynfield {
-> > +     /**
-> > +      * Persistent mbuf region across nodes in graph walk
-> > +      *
-> > +      * These fields are preserved across graph walk and can be access=
-ed by
-> > +      * rte_node_mbuf_dynfield_get() in fast path.
-> > +      */
-> > +     union {
-> > +             uint8_t
-> > persistent_data[RTE_NODE_MBUF_PERSISTENT_FIELDS_SIZE];
-> > +     };
-> > +
-> > +     /**
-> > +      * Overloadable mbuf fields across graph walk. Fields which can
-> > change
-> > +      *
-> > +      * Two adjacent nodes (producer, consumer) can use this memory
-> > region for
-> > +      * sharing per-mbuf specific information. Once mbuf leaves a
-> > consumer node,
-> > +      * this region can be repurposed by another sets of [producer,
-> > consumer] node.
-> > +      *
-> > +      * In fast path, this region can be accessed by
-> > rte_node_mbuf_overload_fields_get()
-> > +      */
-> > +     rte_node_mbuf_overload_fields_t overloadable_data;
-> > +} rte_node_mbuf_dynfield_t;
-> > +
-> > +/**
-> > + * For a given mbuf and dynamic offset, return pointer to
-> > rte_node_mbuf_dynfield_t *
-> > + *
-> > + * @param m
-> > + *   Mbuf
-> > + * @param offset
-> > + *   Dynamic offset returned by @ref rte_node_mbuf_dynfield_register()
->
-> Missing return field in doxygen.
-Done
-
->
-> > + */
-> > +__rte_experimental
-> > +static __rte_always_inline rte_node_mbuf_dynfield_t *
-> > +rte_node_mbuf_dynfield_get(struct rte_mbuf *m, const int offset)
-> > +{
-> > +     return RTE_MBUF_DYNFIELD(m, offset, struct
-> > rte_node_mbuf_dynfield *);
-> > +}
-> > +
-> > +/**
-> > + * For a given mbuf and dynamic offset, return pointer to overloadable=
- fields
-> > + * Nodes can typecast returned pointer to reuse for their own purpose
-> > + *
-> > + * @param m
-> > + *   Mbuf
-> > + * @param offset
-> > + *   Dynamic offset returned by @ref rte_node_mbuf_dynfield_register()
->
-> Missing return field.
-Done
-
->
-> > + */
-> > +__rte_experimental
-> > +static __rte_always_inline rte_node_mbuf_overload_fields_t *
-> > +rte_node_mbuf_overload_fields_get(struct rte_mbuf *m, const int offset=
-)
-> > +{
-> > +     struct rte_node_mbuf_dynfield *f =3D NULL;
->
-> rte_node_mbuf_dynfield_t
-Done
-
->
-> > +
-> > +     f =3D RTE_MBUF_DYNFIELD(m, offset, struct rte_node_mbuf_dynfield
-> > *);
->
-> rte_node_mbuf_dynfield_t
-Done
-
->
-> > +
-> > +     return &(f->overloadable_data);
-> > +}
-> > +
-> > +/**
-> > + *  Register rte_node specific common mbuf dynamic field region. Can b=
-e
-> > called
-> > + *  in rte_node_register()->init() function to save offset in node->ct=
-x
-> > + *
-> > + *  In process() function, node->ctx can be passed to
-> > + *  - rte_node_mbuf_dynfield_get(mbuf, offset)
-> > + *  - rte_node_mbuf_overload_fields_get(mbuf, offset)
-> > + *
-> > + *  Can be called multiple times by any number of nodes in init() func=
-tion.
-> > + *  - Very first call registers dynamic field and returns offset
-> > + *  - Subsequent calls return same offset
-> > + *
-> > + *  @return
-> > + *   -1 on error
->
-> < 0 on error.
-> Please return and document proper error codes.
->
-Done
-
-> > + *   dynamic field offset on success
-> > + */
-> > +__rte_experimental
-> > +int rte_node_mbuf_dynfield_register(void);
-> > +
-> > +#ifdef __cplusplus
-> > +}
-> > +#endif
-> > +
-> > +#endif
-> > --
-> > 2.43.0
->
