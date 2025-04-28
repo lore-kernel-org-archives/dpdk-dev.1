@@ -2,218 +2,82 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E82FC369D5
-	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Apr 2025 21:35:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42EC7C369D5
+	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Apr 2025 22:10:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 04C3E40653;
-	Mon, 28 Apr 2025 23:35:28 +0200 (CEST)
-Received: from rcdn-iport-8.cisco.com (rcdn-iport-8.cisco.com [173.37.86.79])
- by mails.dpdk.org (Postfix) with ESMTP id E1F354026C
- for <dev@dpdk.org>; Mon, 28 Apr 2025 23:35:25 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4E3C5402A3;
+	Tue, 29 Apr 2025 00:10:46 +0200 (CEST)
+Received: from alln-iport-1.cisco.com (alln-iport-1.cisco.com [173.37.142.88])
+ by mails.dpdk.org (Postfix) with ESMTP id 656B44026C
+ for <dev@dpdk.org>; Tue, 29 Apr 2025 00:10:45 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cisco.com; i=@cisco.com; l=12698; q=dns/txt;
- s=iport01; t=1745876127; x=1747085727;
- h=from:to:cc:subject:date:message-id:references:
- in-reply-to:content-id:content-transfer-encoding: mime-version;
- bh=Jl9AveVVn78sznH9HVXIPmwYo1KAVS43Oig97M+Lb70=;
- b=N4LylUguD69YNJSjGaTX0CLTw7xvIZpR1r/WPG2h53QCqVW9rAjdCSzS
- 4WZMSUAj5iDZPRy9tG6d5XwSfRxM/4BOlitRYsu3kv1yo2dS0QMWJVjhA
- qV+D0cNfmHO6A6qUOwgan9MsXagmnI3t2Pd7rpqGwTeYsppDT2V76BLN6
- UallpJzlKGoZ4Z75g7wCvXhDaKt1dsaWbgSkizfdgT3/CesNPx9/owXwI
- 2CTa2badfCLqDjWrpZOscf6wiVFIiXmqJsYGpmedjiGOMevFUVfxKwlAk
- 3D7IUGBPkkOEc2+Kq2srC+ltfM+phbgHMU3vn6cr+mVOn0ocNYlauFfIp A==;
-X-CSE-ConnectionGUID: 58E3jMlKSMWDE3eNrjXfeA==
-X-CSE-MsgGUID: p69aDfx3RTi3vfne7/pAYA==
-X-IPAS-Result: =?us-ascii?q?A0AOAAAb9A9o/4r/Ja1aGwEBAQEBAQEBBQEBARIBAQEDA?=
- =?us-ascii?q?wEBAUAlgRoGAQEBCwGBcVIHghJIhFSDTAOETV+ISS0DnhMUgREDVg8BAQEOA?=
- =?us-ascii?q?UQEAQGFBwIWixoCJjQJDgECBAEBAQEDAgMBAQEBAQEBAQEBAQsBAQUBAQECA?=
- =?us-ascii?q?QcFgQ4ThUEIP4ZbAQEBAxIRBA1FEAIBCBgCAiYCAgIvFRACBA4FAgEBHoJgg?=
- =?us-ascii?q?mUDAaU8AYFAAooren8zgQHgIoEbLgGITwGBbYN/hHcnG4FJRIEVJ4EUgW8+h?=
- =?us-ascii?q?CkBGRcVgy+CaQSCLURSgUePA4IXghF8iC8JSXscA1ksAVUTFwsHBWRCQwOBD?=
- =?us-ascii?q?yNLBS4dghGFIYIPgVwDAxYQgxN0HIRmhFAtT4MvgRIBb2g+HUACAQttPTcJC?=
- =?us-ascii?q?xsGPZY5g2QGAYEOARuBXTEVHgyTIQqDbIwbjhWVEwqEG6FOBg8EL4QDjQmZS?=
- =?us-ascii?q?5h+glimMgIEAgQFAhABAQaBZzyBWXAVgyJSGQ+FHIkRFroyeDwCBwsBAQMJk?=
- =?us-ascii?q?WUBAQ?=
-IronPort-PHdr: A9a23:5UcKuR2v8UdHCCi+smDPmlBlVkEcU/3cNwoR7N8gk71RN/3l9JX5N
- 0uZ7vJo3xfFXoTevupNkPGe87vhVmoJ/YubvTgcfYZNWR4IhYRenwEpDMOfT0yuBPXrdCc9W
- s9FUTdY
-IronPort-Data: A9a23:Bzhv+KitURG80hZFWnI70/N0X161JBEKZh0ujC45NGQN5FlHY01je
- htvWj+PPfqCM2X8eNglaNu1phxXu5+HyIcwHgJvr3g3Q3ljpJueD7x1DKtf0wB+jyHnZBg6h
+ d=cisco.com; i=@cisco.com; l=12502; q=dns/txt;
+ s=iport01; t=1745878245; x=1747087845;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=hibYhsmXj5sMnzgh4+OkIH/srZ5j55kuI96E+LBBjA0=;
+ b=S+e/lGwTLllvT6yCCOhk47paQf0R3yoFxmffvvAxZMTaULQ7ZkKKgRJY
+ 5VsMykhXxynimdYReAqLy7mOXeekqth5kSAxUJBv4WDXbi2SNjwLwTcsj
+ EXjAMd1KTjb4yfH7iEgDmqNUpcRZVhlMfvP4bNzLYzJnSXqGpok80dreD
+ pObprw7LqU7/XA0AGBIUGmKrALp90Flv7/joroaT9zJjHeAa3V3CjKQI9
+ DZ1zuNzgDmUOyTQvEov46kQOLpqs64gQ8ogT1hnKcLUIATzMBENkci70/
+ NzMQdMYdf+YpkeoHBQmdz7sBND48xgqdlAgG7Sf1V8lWrBoet/ZinN01v w==;
+X-CSE-ConnectionGUID: Xm6XCPGkQR6PsJZ3YG/6Qg==
+X-CSE-MsgGUID: 4gqkXEk5TBGEFONMAqkY0w==
+X-IPAS-Result: =?us-ascii?q?A0ADAAAt/A9o/44QJK1aGQEBAQEBAQEBAQEBAQEBAQEBA?=
+ =?us-ascii?q?RIBAQEBAQEBAQEBAQGBfwQBAQEBAQsBgkqBT0NIjHCnaxSBEQNWDwEBAQ9EB?=
+ =?us-ascii?q?AEBhQcCizACJjQJDgECBAEBAQEDAgMBAQEBAQEBAQEBAQsBAQUBAQECAQcFg?=
+ =?us-ascii?q?Q4ThgiGWwIBAycLAUYQUSsrBxKDAoJlA7E2gXkzgQGEfNk4gW6BSQGNTHCEd?=
+ =?us-ascii?q?ycbgUlEhH2EKYZeBINDgUeRGos8SIEhA1ksAVUTDQoLBwWBaQMqCwwLEhwVb?=
+ =?us-ascii?q?jMdghGFIYIPggeJCoRQLU+FMYFDQAMLGA1IESw3FBsGPm4HlUODa1o1glwMk?=
+ =?us-ascii?q?yuQB6MohCWhSRozhAOmVJh+IoI2oXSEaYFnPIFZMxoIGxWDIlIZD44tFrpkK?=
+ =?us-ascii?q?jI8AgcLAQEDCZFlAQE?=
+IronPort-Data: A9a23:Xlk+AajHKVEQqSzJEypi84JNX161DxEKZh0ujC45NGQN5FlHY01je
+ htvX2qEOP+PZWOgL9skaoS+pEMPuZDXz95gHgVprHg9FipjpJueD7x1DKtf0wB+jyHnZBg6h
  ynLQoCYdKjYdleF+FH1dOCn9SQkvU2xbuKUIPbePSxsThNTRi4kiBZy88Y0mYcAbeKRW2thg
  vus5ZSCULOZ82QsaD9Mt/jT8EkHUMna4Vv0gHRvPZing3eG/5UlJMp3Db28KXL+Xr5VEoaSL
  87fzKu093/u5BwkDNWoiN7TKiXmlZaLYGBiIlIPM0STqkAqSh4ai87XB9JAAatjsAhlqvgqo
- Dl7WTNcfi9yVkHEsLx1vxC1iEiSN4UekFPMCSDXXcB+UyQqflO0q8iCAn3aMqVFqsssA0RK1
- sc9FxwgNR2lneCGzr+SH7wEasQLdKEHPasFsX1miDWcBvE8TNWbGuPB5MRT23E7gcUm8fT2P
- pVCL2EwKk6dPlsWYQd/5JEWxI9EglHldjBctFWTjaE2+GPUigd21dABNfKOJ4baHJkNzx3wS
- mTu5zqoCz0UJIel9Tve7Hyqi7CIhQrKcddHfFG/3rsw6LGJ/UQfBQM+WUO3or++kEHWZj5EA
- 1Yf9ixrqe0581amC4GkGRa5u3WD+BUbXrK8DtEH1e1E8YKNiy6xDWkfRTkHY9sj3PLajxRwv
- rNVt7sF3QBSjYA=
-IronPort-HdrOrdr: A9a23:ADi7vaG93nN9KOXGpLqFlZLXdLJyesId70hD6qkvc203TiXIra
- CTdaogtCMc0AxhJk3I+ertBEGBKUmsk6KceeEqTPmftXrdyRqVxeZZnMrfKlzbamLDH4FmpN
- 1dmsRFebnN5B1B/LnHCWqDYpYdKbu8gd2VbI7lph8HI3AJGsRdBkVCe3qm+yZNNXB77O8CZe
- GhD7181kKdkBosH6OGL0hAddLu4/fMk5XrawMHARkI1Cmi5AnD1JfKVzKj8lM7ST1g/ZcOmF
- Kpr+X+3MqemsD+7iWZ+37Y7pxQltek4MBEHtawhs8cLSipohq0Zax6Mofy/gwdkaWK0hIHgd
- PMqxAvM4BY8HXKZFy4phPrxk3JzCsu0Xn/0lWV6EGT5PARBQhKT/apt7gpNCcx2HBQ5e2UF5
- g7h15xgqAnSi8oWh6NvOQgGSsazHZc6kBS4dL7x0YvIrf2LoUh7rD2OChuYcs99OWQ0vF7LA
- ElZvuslsp+YBeUaWvUsXJox8HpVnMvHg2eSkxHocCN1SNK9UoJhXfw6fZv1kvozqhNAKVs9q
- DBKOBlhbtORsgZYeZ0A/oAW9K+DijITQjXOGyfLFz7HOVfUki956Lf8fEw/qWnaZYIxJw9lN
- DIV05Zr3c7fwbrBdeV1JNG/xjRSCG2XCjryMtZ+59l04eMCYbDIGmGUhQjgsGgq/IQDonSXO
- uyIotfB7v5IW7nCe9yrkTDsllpWA8jueEuy6EGsgi107f2w6XRx5jmTMo=
-X-Talos-CUID: 9a23:PheWk2PvcOUcXO5DBXlKr0wxHuMeV0Lx4SzdBVW6OWhkYejA
-X-Talos-MUID: 9a23:MX9WfgXWWZ9d13Pq/Cey1ThOOtcz2ZivU14Dl5hZ/NGtBAUlbg==
+ Dl7WTNcfi9yVkHEsLx1vxC1iEiSN4UekFPMCSDXXcB+UyQqflO0q8iCAn3aMqUo/7hHKllh9
+ sUidggWTCLYts3xnou0H7wEasQLdKEHPasWvnVmiDWcBvE8TNWbHuPB5MRT23E7gcUm8fT2P
+ pVCL2ExKk2eJUQTYD/7C7pm9AusrmP6fjlEr1S9rqss6G+Vxwt0uFToGIaLJYLRFZUMxi50o
+ Eqa8H36MjwZaeC15her1VSJr/bMrHvkDdd6+LqQs6QCbEeo7mAeFjUaTVe45/6jhSaWWttZb
+ VcI/SkjtoAz8lCmSp/2WBjQiGCAtxIdXttKVeg35B+AxqnV5S6YAHQJSnhKb9lOiSMtbTUu0
+ lnMm5biAiZi9eXID3mc7byT6zi1PED5MFM/WMPNdiNdi/GLnW35pkunogpLeEJtsuDIJA==
+IronPort-HdrOrdr: A9a23:WeG4I6o8SSCRdZoLkcwee/oaV5oseYIsimQD101hICG9vPb2qy
+ nIpoV96faaslcssR0b9OxofZPwI080lqQFhbX5Q43DYOCOggLBR+tfBMnZsljd8kbFmNK1u5
+ 0NT0EHMqySMbC/5vyKmTVR1L0bsb+6zJw=
+X-Talos-CUID: =?us-ascii?q?9a23=3APZXcCGjyXdM7Medowf7NV1C6QjJuQniD/FzoDEy?=
+ =?us-ascii?q?BMzhRU5+nEm6/v/1dnJ87?=
+X-Talos-MUID: 9a23:3FZKkwt6Aj1tcT5pUM2n2D57N/dF4PmSIm8gv7IgnuCdNh0oJGLI
 X-IronPort-Anti-Spam-Filtered: true
-Received: from rcdn-l-core-01.cisco.com ([173.37.255.138])
- by rcdn-iport-8.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384;
- 28 Apr 2025 21:35:25 +0000
-Received: from alln-opgw-1.cisco.com (alln-opgw-1.cisco.com [173.37.147.229])
+X-IronPort-AV: E=Sophos;i="6.15,247,1739836800"; d="scan'208";a="467638810"
+Received: from alln-l-core-05.cisco.com ([173.36.16.142])
+ by alln-iport-1.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384;
+ 28 Apr 2025 22:10:44 +0000
+Received: from eng-rtp-bld-31.cisco.com (eng-rtp-bld-31.cisco.com
+ [172.18.47.81])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by rcdn-l-core-01.cisco.com (Postfix) with ESMTPS id 9761A180001D3
- for <dev@dpdk.org>; Mon, 28 Apr 2025 21:35:24 +0000 (GMT)
-X-CSE-ConnectionGUID: r0N0BT+zSmyIVtQkZ2OobQ==
-X-CSE-MsgGUID: l/gAf+xuRQ2JPBuRrlahHw==
-Authentication-Results: alln-opgw-1.cisco.com;
- dkim=pass (signature verified) header.i=@cisco.com
-X-IronPort-AV: E=Sophos;i="6.15,247,1739836800"; d="scan'208";a="47229378"
-Received: from mail-mw2nam04lp2169.outbound.protection.outlook.com (HELO
- NAM04-MW2-obe.outbound.protection.outlook.com) ([104.47.73.169])
- by alln-opgw-1.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384;
- 28 Apr 2025 21:35:24 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fS4SsEZsQVwU6dr1yiO7r5jcDSe9Wc/3t37L9YR8i2FiQIyVI+IYELH++y9Mu+LZoqjqF6nNdBS4cWcqcIh7XMysMOa8M2Wt3ykCoxeSxfH5AwGYMKLU+lX96KI6EQJpSwsFkMjTfCrF3Q3NK8m30NOgZqD3nz0meJ2Lnk/1JlEHn1+D16gbB6Ovbv7SvEXSKmLw0F0J0uWATXw8OpOn7/j5IXyqqSGgrB2scRlBettRPourRLrjpIlCS4BOAAnmcM2v/+LHjvPptUzdmikJ/TrK1AjFMyaqREiIemojoHDoQNyXyXLxbWCDZKLUXZ1x1A81WZOvBIJcrQAt5VZ0JQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Jl9AveVVn78sznH9HVXIPmwYo1KAVS43Oig97M+Lb70=;
- b=vNhugPyRvIzCIp2njW49AJoGx9WnPra8uxUERzJOsiIDx2mEp4y/qtg/Vr/3+vta8LHEPUe19px7++NiuSdi780nOZ52XI2pX+gat5S0C7CzO0o8lo5Dh0dJZaBBTQhgdJR+gG9Il4owQQoSufb5fL7xkA+qHus9+C0R2pncFe3hr6G41KnaVNJrFouxByA99vNcouh4WEY8oSeGQ14zH70B1S/dWrFJ98XFP97pk8I8MD61mEJYOMiVwOuxz7iemXPzVOFPd6EGIzg7E+6zjaj2O7BkKZPv7gaywPB5H/pn7R8gc0kxNm5S9iHr6n+szgJwy0RwYf53Ut8Aznytwg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cisco.com; dmarc=pass action=none header.from=cisco.com;
- dkim=pass header.d=cisco.com; arc=none
-Received: from DS0PR11MB8020.namprd11.prod.outlook.com (2603:10b6:8:114::9) by
- CYXPR11MB8692.namprd11.prod.outlook.com (2603:10b6:930:e4::17) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8678.31; Mon, 28 Apr 2025 21:35:22 +0000
-Received: from DS0PR11MB8020.namprd11.prod.outlook.com
- ([fe80::e344:845b:323a:6592]) by DS0PR11MB8020.namprd11.prod.outlook.com
- ([fe80::e344:845b:323a:6592%7]) with mapi id 15.20.8678.028; Mon, 28 Apr 2025
- 21:35:22 +0000
-From: "Roger Melton (rmelton)" <rmelton@cisco.com>
-To: Bruce Richardson <bruce.richardson@intel.com>
-CC: "vladimir.medvedkin@intel.com" <vladimir.medvedkin@intel.com>,
- "anatoly.burakov@intel.com" <anatoly.burakov@intel.com>, "dev@dpdk.org"
- <dev@dpdk.org>
-Subject: Re: [PATCH v3] net/ixgbe: support Rx/Tx burst mode info
-Thread-Topic: [PATCH v3] net/ixgbe: support Rx/Tx burst mode info
-Thread-Index: AQHbrvR3YmY1Mew2hkGWsAi7CZ+05LO5Uj+AgABauoA=
-Date: Mon, 28 Apr 2025 21:35:21 +0000
-Message-ID: <dc2452e9-6cff-422c-879a-777b147fbade@cisco.com>
-References: <20250416171111.3094521-1-rmelton@cisco.com>
- <20250416172310.82448-1-rmelton@cisco.com>
- <aA-ofe1zhRsrokcU@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <aA-ofe1zhRsrokcU@bricha3-mobl1.ger.corp.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla Thunderbird
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DS0PR11MB8020:EE_|CYXPR11MB8692:EE_
-x-ms-office365-filtering-correlation-id: 56349db2-d5f7-49e4-e2b5-08dd869c946a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?c2tFd2Q1Zm9idDhid0x1RzNRNFM5dnNLYnMwU3d1MVNFTHlUQTJkNXhEeTVR?=
- =?utf-8?B?VXZmYzR3b1YzekFscVZVdDNlYnhrUEh4YW9CRlVGUTVFUytJRjNkOW8xb280?=
- =?utf-8?B?d3FteERqNklRcVpwTjFQQVB4ckZlQWNhZExsNm9ZcHNxQkw2NGtvcGlXU0lK?=
- =?utf-8?B?S2VZclhHTStaQ01hU093QTZybzNuQzhmN01ZRnZ1RDhUU09PaHZBRG9XZ1dy?=
- =?utf-8?B?ZUJ4dDlURjljRHhXc3pnR3JHQWFJNFY2V2l3dkc4RUhubnJYU0w3MmdhRTV3?=
- =?utf-8?B?MmFLc1g0R0RYdWVHekdZc0VtNTVtZHNXL3RnWWt3WVZadGZ3NFBLbnNUUUFN?=
- =?utf-8?B?MGVZd3RQRklqa0ZQeUdxeWoxSklSUTVBYnl1ZWhJZDU5bjJpdWFkaUNhMjdn?=
- =?utf-8?B?RHBFakFyNTZSdkhVNlVlZnRzUG43NTVoYWI1ZFE2R2tUdU1uZUhuV1hEUUpj?=
- =?utf-8?B?eDZyblVoOGRQS1g0Q2ZTdXpzZ3BTYzN0eFlhRURidGlGczlmdE1DNFNuT3RM?=
- =?utf-8?B?WGNzZk9BcEdvT3BuNzFyaXJOQnlEN3BnSnBDKzV4ZUdZSEkvYjd5c05ZdUJG?=
- =?utf-8?B?ZlJYeldRdnFGTG9RTDRVK1g2ME5zMnFIWkZHRTlyMHJjcUN4Y3IvUjZvYldx?=
- =?utf-8?B?aElocjRJRlQzWi9VeTZISVBiWU1qNzFxY044TjIxL3RWY29tajQxUlJSU28z?=
- =?utf-8?B?ZEY4TEw0RE14cXgzWmJnL01sMlorM1R0RkxTVlVlY3QzUXRQRUNRaXpaSXNK?=
- =?utf-8?B?UlhRWmprS1ZPM0tvYTVkZExvMDlDUklLVnRKb0FQUFJRMzhJZnpmTWhtWWFU?=
- =?utf-8?B?QUlOQW5TUVVsQktWVmMyVHBKMFRWZ1psbHhXOWxMREN3ZDR4L0owQUljdlVU?=
- =?utf-8?B?MUVERkYweUo2VmQ3QUpqaEh1V2N1MVg0Ym85WWhSUG16L0pvejVUK2hLcGN2?=
- =?utf-8?B?T09HNHdOakpmUXlXRDdSeVNETDAwM2tld0VHWE1Id1pJMU81MzZrMFdUSmt4?=
- =?utf-8?B?SnJJVzF6eFk1MHFZOEJMYWFxOTUxM0NOUEJ5QTNTdWlYRXgzQTJlNWZlcEVh?=
- =?utf-8?B?TU1rVlcvY1hCd2pYYjNxM1BWdFBhQml1Tk5wS0l6dEdQdEFBbUZtMHVMZXJZ?=
- =?utf-8?B?c2JoS2NJV2FRMXZLZWNiTzBXQ3VvOWRoc01UZDBwQ1hnVy9DV2hOSjJrUENk?=
- =?utf-8?B?cTRRNURyeng1QVpjU0h6ZVQwUDdOaXM3dXZySE9odDRSMmZhWlBYeEcrUzhW?=
- =?utf-8?B?c3Bjb1JtNExRVzhlRXQ3T3I3NGxrd0EwdE9CbGNhTmNDdEVJQmVlY0I0azJC?=
- =?utf-8?B?T0hpL3phazgweFZ2dFZDYnJka3JTU1JJMlMvMmNqSEFuYzMzRUZBWlFwRTBB?=
- =?utf-8?B?ZkEyV0RjMUlUV0R0aUlsVjZ1ZUcwUk5HUlQ1dG11VWlnQ2JGS3ZhNUcrVGpn?=
- =?utf-8?B?dnE2TFE3YVFEcTNTL3VON2ZKcnovYW91MnRaUjdING5KVnpIQW5sU3lyTFhG?=
- =?utf-8?B?Y1M0V1g1cCtFakpnWStkaUN2dzltT3BGNWNYd3VqQ3pJMFUyamJDVDM3enNx?=
- =?utf-8?B?OVcyZFV1S2lxQ1I2Um9UYlh2NUI0Vk5ZTFNzUnhJLzdiY0RpMEZXQktVaW9v?=
- =?utf-8?B?Z3k0TmFuSlpSbCtvS2tLbHJDQ3ZLNkZLeUo4ZmRKS0tlOTJxbDRCTENpL2ZN?=
- =?utf-8?B?U1VHUm9XakkyeXZ3R3JMME1vUGpVTXNnUDVUOEU1SnVqWXdtdjh6TElmSE5N?=
- =?utf-8?B?OUE2UGpvWVNvajBIb1lIWWJFT0hUU09Fd2xpUitNRW1pN3NyYXkxUkRCUzBV?=
- =?utf-8?B?bmJYQUVNSk1oM0ZWR1ZKbE1hRXRVVStFUmV3aGtGK2xRYkNMTTlPNTVvOGZX?=
- =?utf-8?B?MklFVVRYVTZBR0k4TkRzNFNCdkRGKzFqVXBTYjNybW1VcG01bjA3b29nYmtF?=
- =?utf-8?B?L2NXMWlaY0tzY29PMG9IK1RPT0VlZjE1RXNlNmlKYXlFYStlK0VtNGZ3YTFk?=
- =?utf-8?B?TDh5Z1Q5bFBnPT0=?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB8020.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(376014)(366016)(38070700018); DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?WFdZeGJydGdkOHJ1bVJ4U056YTY2cHVMYWJjMGxJWEN4VXMzRHQxd2dtUktz?=
- =?utf-8?B?U3lUWkZOcnpGb3YwVWJrT1dZZllCcnIrNGt3OEJiTDlieGtlYWtBUnZ5VUJl?=
- =?utf-8?B?STFPaHN3ZGp4L2NJWFRpMnFnYU0veW56SHhQL0d4Rjh3QmRvZ0trOGpyS3Z6?=
- =?utf-8?B?YlIrUXFjQ05VR3ZPbGFJT2tMVjVLQlIrWmVhVzhjT1JNNjFtSUloa0Fnd1Ru?=
- =?utf-8?B?ejlhUlVKZm1ndFJXaEt0SU1uSm5BbzBJQ0d3Z25NT2ZQT1dMMjVLRWJOSisw?=
- =?utf-8?B?enVKUGNQdk9GNjdXcFNEVWE3alZOQlZhaTJiZ2VXNkNGU1JJQWJPQnlUVnNR?=
- =?utf-8?B?SGZObU0wOGtFOGN2WE5Yb2QwUGI3bTZLbGJWdnlIMEN4U0dhMkZqaDZEY3Ur?=
- =?utf-8?B?NGp0cjQvU1FQRFdkRmFFYUhtcVE3VzJtMnpGWklzUXIyYm1ud05WZjc2cmta?=
- =?utf-8?B?L3hZTWpKMWNqV0o1dlRHWnBxOU45YjlzSzNwS2hlMnJaUzZtaGd3anU4SzFp?=
- =?utf-8?B?eHF0OGlGVVlURGs5YTNmeXowZTFRd0tYSWtPKy9hNzZseUJPU2cwbjZXcmJD?=
- =?utf-8?B?QVdhemVSejRValNBS24rQm9SZjUvYkhMVXdDa0YwbldKWXRJYlVzeHo5QVZD?=
- =?utf-8?B?WkZMYURkVUZKeVFJS1I5YTdnYVh0eDU0ZzU3V2JqYmh4WTc0Yk1vZHMxVEhX?=
- =?utf-8?B?dmU2NnhYWE0xUVN0Nmd4RzBtLzRYN2x3N29SU09KNGJZVnowN09Qd0ZoZyt4?=
- =?utf-8?B?bVhQYlB6dkFUeHVXTmllR1c3UmtTN1VGTzlEWGx5dWE2d2JXMHF2NHNxUVRE?=
- =?utf-8?B?TE5zSDRHRFNwUFN4TGptVUVXSGh3KzI5RXlycWFrbWlpUVcvSDlZanBzR2VN?=
- =?utf-8?B?UHJDSmRrSzU2SU0xWEdYZkRjRWs5TlplMmtWSW80c1d1MWtQWWorZHo5azdo?=
- =?utf-8?B?VEVsRkVwWHZaTjJXc284ZGQ1dTVXaFppeTFGRWkzdnl1RWNNYWhXYTl5SXNx?=
- =?utf-8?B?ZlZ3VXJXNzNMRkx2RWN0VkFJYzVQKzNkYWJlZ1ppeit6YjNGSUFXR2NwTDZ2?=
- =?utf-8?B?OGxGanpPTlB3Q00rZWRHaHVwemk1L3B1QjFLR0Y5YmlSUWR4K1AyRmdvM25F?=
- =?utf-8?B?OEZwc3Flc2RkS1grTGtJV0NEVVlNY21VT1F0RTN4K1ZoNnFsMmFqcWZMc1o0?=
- =?utf-8?B?L05WemoxTE9tQ0VqQkFDWjdyWEp2KzIrRC8zVlBWa0J0SERvMkdadkpsaFFl?=
- =?utf-8?B?aEllSkZKOU9EMFlMOW9PaHllQVlQc21aSHFIODZkVkJVWUtuUDRYamx0RWZX?=
- =?utf-8?B?NERwamZYQUpleVZ4UnpqaERjQ3Z3VFluU2VKRGRJWjMyYW5qWGNwZmpTTjcv?=
- =?utf-8?B?T1JPZkdPOHc3U0JlSjB5U1gyZEJ3Y3NFUHRhdGYxelhkbGpncXkya1ErWVpS?=
- =?utf-8?B?YURsR0dsZHVVK2t6YUVJUEhQMHR3M3R0by8yZDRSZ2xyVkZBODd4c0lyNFZ1?=
- =?utf-8?B?Rm16azRIWTlVeDgxNFcwekZ2ZmtHdk1sVnBUbG5Ra2pwMjZyZnRCS2s2WHU3?=
- =?utf-8?B?YXVJVHhXbHZJVTlDN1l5RnlxYnI4TU12RXJiLytMWjNCeS9zQ2JNeHJTRUpF?=
- =?utf-8?B?V2FMOTNOb01acmxjNFdlWHpUUHl5NFJLcjJpSFVtVloyaDBtV2kwRkh3eld5?=
- =?utf-8?B?em9hRFpGNXZXQ25kRGFQcHUrM2pLSUZiN3FKckExQnlnY0greS9PVTJ2eFJI?=
- =?utf-8?B?SWVuNVkraVhoTG5UQ1V2TEY1M0RQY1RsSEhxZ2RNT1grZVZaOWlCQU1wMkZT?=
- =?utf-8?B?QzFjb0JJeWJMcHhSL3dZRG9CblhEMlZCUzVpUG5OQ2Fxd25KRmdwdTRvNVdj?=
- =?utf-8?B?UDZESFltN1VlVnhWYmlDYy9XWk56aDZRRWJzL0ZFNEprdnhxQmM4VnUreGRs?=
- =?utf-8?B?UmRBSEw3UEwySkQ5dnVILzREQjBCTHJaT3F5OGZCemVMYzViTGJUZ3FQcW5n?=
- =?utf-8?B?RnNJUEZxKzUwd3hiYUQ0eG9tY2ZuUzlrRXQ5ZCs1SEZ3OVduODE2NGd5QXlS?=
- =?utf-8?B?N3d3NmdzOThZZklKbmptV0tKdEZWWVU5eXo0MC9VejkzelRpNk4rY0s4Qld4?=
- =?utf-8?Q?tvsanwFTtFvEIbN5tUfvTek+r?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F48FFE80589D8D46BE9E5ED14A2CEFAD@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+ by alln-l-core-05.cisco.com (Postfix) with ESMTPS id 19DD818000161;
+ Mon, 28 Apr 2025 22:10:44 +0000 (GMT)
+Received: by eng-rtp-bld-31.cisco.com (Postfix, from userid 51544)
+ id B70021406899; Mon, 28 Apr 2025 18:10:43 -0400 (EDT)
+From: Roger Melton <rmelton@cisco.com>
+To: ian.stokes@intel.com,
+	vladimir.medvedkin@intel.com
+Cc: dev@dpdk.org,
+	Roger Melton <rmelton@cisco.com>
+Subject: [PATCH v2] net/iavf: support Rx/Tx burst mode info
+Date: Mon, 28 Apr 2025 18:07:13 -0400
+Message-Id: <20250428220712.571492-1-rmelton@cisco.com>
+X-Mailer: git-send-email 2.35.6
+In-Reply-To: <20250416160219.3841018-1-rmelton@cisco.com>
+References: <20250416160219.3841018-1-rmelton@cisco.com>
 MIME-Version: 1.0
-X-OriginatorOrg: cisco.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8020.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 56349db2-d5f7-49e4-e2b5-08dd869c946a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Apr 2025 21:35:21.8906 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5ae1af62-9505-4097-a69a-c1553ef7840e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: aNbp9G4mbPWsGr1g91tRCWinQDb8dMDoiYSlgW82YG2ji/e59uMMG9Yik0ttRN6qfEX+4oxg1zm9fucBVUXV4A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR11MB8692
-X-Outbound-SMTP-Client: 173.37.147.229, alln-opgw-1.cisco.com
-X-Outbound-Node: rcdn-l-core-01.cisco.com
+Content-Transfer-Encoding: 8bit
+X-Outbound-SMTP-Client: 172.18.47.81, eng-rtp-bld-31.cisco.com
+X-Outbound-Node: alln-l-core-05.cisco.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -227,166 +91,339 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQpPbiA0LzI4LzI1IDEyOjExIFBNLCBCcnVjZSBSaWNoYXJkc29uIHdyb3RlOg0KPiBPbiBXZWQs
-IEFwciAxNiwgMjAyNSBhdCAwMToyMzoxMVBNIC0wNDAwLCBSb2dlciBNZWx0b24gd3JvdGU6DQo+
-PiBSZXR1cm4gYnVyc3QgbW9kZSBhY2NvcmRpbmcgdG8gdGhlIHNlbGVjdGVkIFJ4L1R4IGJ1cnN0
-DQo+PiBmdW5jdGlvbiBuYW1lLg0KPj4gVXBkYXRlIDI1LjA3IHJlbGVhc2Ugbm90ZXMgd2l0aCB0
-aGlzIGluZm9ybWF0aW9uLg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IFJvZ2VyIE1lbHRvbiA8cm1l
-bHRvbkBjaXNjby5jb20+DQo+PiAtLS0NCj4gR2VuZXJhbGx5IGxvb2tzIGdvb2QuIENvdXBsZSBv
-ZiBuaXRzL3N1Z2dlc3Rpb25zIGlubGluZSBiZWxvdy4gSWYgeW91IGFyZQ0KPiBoYXBweSB3aXRo
-IHRoZSBzdWdnZXN0aW9ucyBJIGNhbiBjaGFuZ2UgdGhlbSBvbiBhcHBseSBmb3IgeW91IFtvdGhl
-cndpc2UNCj4gcGxlYXNlIGRvIGEgdjRdLg0KPg0KPiBBY2tlZC1ieTogQnJ1Y2UgUmljaGFyZHNv
-biA8YnJ1Y2UucmljaGFyZHNvbkBpbnRlbC5jb20+DQoNCnY0IHBhdGNoIHNlbnQgd2l0aCB5b3Vy
-IGNoYW5nZXMgYXBwbGllZCBCcnVjZS4NCg0KVGhhbmtzIGZvciB0aGUgcmV2aWV3Lg0KDQotUm9n
-ZXINCg0KPg0KPg0KPj4gICBkb2MvZ3VpZGVzL3JlbF9ub3Rlcy9yZWxlYXNlXzI1XzA3LnJzdCAg
-ICAgICAgfCAgMyArDQo+PiAgIGRyaXZlcnMvbmV0L2ludGVsL2l4Z2JlL2l4Z2JlX2V0aGRldi5j
-ICAgICAgICB8ICA0ICsrDQo+PiAgIGRyaXZlcnMvbmV0L2ludGVsL2l4Z2JlL2l4Z2JlX2V0aGRl
-di5oICAgICAgICB8ICA0ICsrDQo+PiAgIGRyaXZlcnMvbmV0L2ludGVsL2l4Z2JlL2l4Z2JlX3J4
-dHguYyAgICAgICAgICB8IDcwICsrKysrKysrKysrKysrKysrKysNCj4+ICAgZHJpdmVycy9uZXQv
-aW50ZWwvaXhnYmUvaXhnYmVfcnh0eC5oICAgICAgICAgIHwgIDQgKysNCj4+ICAgLi4uL25ldC9p
-bnRlbC9peGdiZS9peGdiZV92Zl9yZXByZXNlbnRvci5jICAgIHwgIDQgKy0NCj4+ICAgNiBmaWxl
-cyBjaGFuZ2VkLCA4NyBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPj4NCj4+IGRpZmYg
-LS1naXQgYS9kb2MvZ3VpZGVzL3JlbF9ub3Rlcy9yZWxlYXNlXzI1XzA3LnJzdCBiL2RvYy9ndWlk
-ZXMvcmVsX25vdGVzL3JlbGVhc2VfMjVfMDcucnN0DQo+PiBpbmRleCAwOTNiODVkMjA2Li4zMGJj
-OTYyMmVlIDEwMDY0NA0KPj4gLS0tIGEvZG9jL2d1aWRlcy9yZWxfbm90ZXMvcmVsZWFzZV8yNV8w
-Ny5yc3QNCj4+ICsrKyBiL2RvYy9ndWlkZXMvcmVsX25vdGVzL3JlbGVhc2VfMjVfMDcucnN0DQo+
-PiBAQCAtNTUsNiArNTUsOSBAQCBOZXcgRmVhdHVyZXMNCj4+ICAgICAgICBBbHNvLCBtYWtlIHN1
-cmUgdG8gc3RhcnQgdGhlIGFjdHVhbCB0ZXh0IGF0IHRoZSBtYXJnaW4uDQo+PiAgICAgICAgPT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQ0KPj4g
-ICANCj4+ICsqICoqVXBkYXRlZCBJbnRlbCBpeGdiZSBkcml2ZXIuKioNCj4+ICsNCj4+ICsgICog
-QWRkZWQgc3VwcG9ydCBmb3IgcnhfYnVyc3RfbW9kZV9nZXQgYW5kIHR4X2J1cnN0X21vZGVfZ2V0
-Lg0KPj4gICANCj4+ICAgUmVtb3ZlZCBJdGVtcw0KPj4gICAtLS0tLS0tLS0tLS0tDQo+PiBkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9uZXQvaW50ZWwvaXhnYmUvaXhnYmVfZXRoZGV2LmMgYi9kcml2ZXJz
-L25ldC9pbnRlbC9peGdiZS9peGdiZV9ldGhkZXYuYw0KPj4gaW5kZXggMGZhNDg5OGFiYS4uZjFm
-ZDI3MWEwYSAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvbmV0L2ludGVsL2l4Z2JlL2l4Z2JlX2V0
-aGRldi5jDQo+PiArKysgYi9kcml2ZXJzL25ldC9pbnRlbC9peGdiZS9peGdiZV9ldGhkZXYuYw0K
-Pj4gQEAgLTUzMiw2ICs1MzIsOCBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGV0aF9kZXZfb3BzIGl4
-Z2JlX2V0aF9kZXZfb3BzID0gew0KPj4gICAJLnJ4X3F1ZXVlX3JlbGVhc2UgICAgID0gaXhnYmVf
-ZGV2X3J4X3F1ZXVlX3JlbGVhc2UsDQo+PiAgIAkudHhfcXVldWVfc2V0dXAgICAgICAgPSBpeGdi
-ZV9kZXZfdHhfcXVldWVfc2V0dXAsDQo+PiAgIAkudHhfcXVldWVfcmVsZWFzZSAgICAgPSBpeGdi
-ZV9kZXZfdHhfcXVldWVfcmVsZWFzZSwNCj4+ICsJLnJ4X2J1cnN0X21vZGVfZ2V0ICAgID0gaXhn
-YmVfcnhfYnVyc3RfbW9kZV9nZXQsDQo+PiArCS50eF9idXJzdF9tb2RlX2dldCAgICA9IGl4Z2Jl
-X3R4X2J1cnN0X21vZGVfZ2V0LA0KPj4gICAJLmRldl9sZWRfb24gICAgICAgICAgID0gaXhnYmVf
-ZGV2X2xlZF9vbiwNCj4+ICAgCS5kZXZfbGVkX29mZiAgICAgICAgICA9IGl4Z2JlX2Rldl9sZWRf
-b2ZmLA0KPj4gICAJLmZsb3dfY3RybF9nZXQgICAgICAgID0gaXhnYmVfZmxvd19jdHJsX2dldCwN
-Cj4+IEBAIC02MDUsNiArNjA3LDggQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBldGhfZGV2X29wcyBp
-eGdiZXZmX2V0aF9kZXZfb3BzID0gew0KPj4gICAJLnR4X3F1ZXVlX3JlbGVhc2UgICAgID0gaXhn
-YmVfZGV2X3R4X3F1ZXVlX3JlbGVhc2UsDQo+PiAgIAkucnhfcXVldWVfaW50cl9lbmFibGUgPSBp
-eGdiZXZmX2Rldl9yeF9xdWV1ZV9pbnRyX2VuYWJsZSwNCj4+ICAgCS5yeF9xdWV1ZV9pbnRyX2Rp
-c2FibGUgPSBpeGdiZXZmX2Rldl9yeF9xdWV1ZV9pbnRyX2Rpc2FibGUsDQo+PiArCS5yeF9idXJz
-dF9tb2RlX2dldCAgICA9IGl4Z2JlX3J4X2J1cnN0X21vZGVfZ2V0LA0KPj4gKwkudHhfYnVyc3Rf
-bW9kZV9nZXQgICAgPSBpeGdiZV90eF9idXJzdF9tb2RlX2dldCwNCj4+ICAgCS5tYWNfYWRkcl9h
-ZGQgICAgICAgICA9IGl4Z2JldmZfYWRkX21hY19hZGRyLA0KPj4gICAJLm1hY19hZGRyX3JlbW92
-ZSAgICAgID0gaXhnYmV2Zl9yZW1vdmVfbWFjX2FkZHIsDQo+PiAgIAkuc2V0X21jX2FkZHJfbGlz
-dCAgICAgPSBpeGdiZV9kZXZfc2V0X21jX2FkZHJfbGlzdCwNCj4+IGRpZmYgLS1naXQgYS9kcml2
-ZXJzL25ldC9pbnRlbC9peGdiZS9peGdiZV9ldGhkZXYuaCBiL2RyaXZlcnMvbmV0L2ludGVsL2l4
-Z2JlL2l4Z2JlX2V0aGRldi5oDQo+PiBpbmRleCA4YWQ4NDFlYTJjLi43YjFjZmUwZWE0IDEwMDY0
-NA0KPj4gLS0tIGEvZHJpdmVycy9uZXQvaW50ZWwvaXhnYmUvaXhnYmVfZXRoZGV2LmgNCj4+ICsr
-KyBiL2RyaXZlcnMvbmV0L2ludGVsL2l4Z2JlL2l4Z2JlX2V0aGRldi5oDQo+PiBAQCAtNTIzLDYg
-KzUyMywxMCBAQCBzdHJ1Y3QgaXhnYmVfdmZfcmVwcmVzZW50b3Igew0KPj4gICANCj4+ICAgaW50
-IGl4Z2JlX3ZmX3JlcHJlc2VudG9yX2luaXQoc3RydWN0IHJ0ZV9ldGhfZGV2ICpldGhkZXYsIHZv
-aWQgKmluaXRfcGFyYW1zKTsNCj4+ICAgaW50IGl4Z2JlX3ZmX3JlcHJlc2VudG9yX3VuaW5pdChz
-dHJ1Y3QgcnRlX2V0aF9kZXYgKmV0aGRldik7DQo+PiArdWludDE2X3QgaXhnYmVfdmZfcmVwcmVz
-ZW50b3JfcnhfYnVyc3QoX19ydGVfdW51c2VkIHZvaWQgKnJ4X3F1ZXVlLA0KPj4gKwlfX3J0ZV91
-bnVzZWQgc3RydWN0IHJ0ZV9tYnVmICoqcnhfcGt0cywgX19ydGVfdW51c2VkIHVpbnQxNl90IG5i
-X3BrdHMpOw0KPj4gK3VpbnQxNl90IGl4Z2JlX3ZmX3JlcHJlc2VudG9yX3R4X2J1cnN0KF9fcnRl
-X3VudXNlZCB2b2lkICp0eF9xdWV1ZSwNCj4+ICsJX19ydGVfdW51c2VkIHN0cnVjdCBydGVfbWJ1
-ZiAqKnR4X3BrdHMsIF9fcnRlX3VudXNlZCB1aW50MTZfdCBuYl9wa3RzKTsNCj4+ICAgDQo+IFRo
-ZSBfX3J0ZV91bnVzZWQgc2hvdWxkIG5vdCBiZSBuZWNlc3NhcnkgaW4gdGhlIGhlYWRlciBmaWxl
-IGRlZmluaXRpb24sIGl0cw0KPiB1c2UgaW4gdGhlIEMgZmlsZSBpcyBlbm91Z2guIFJlbW92aW5n
-IHRoZSB1bnVzZWQgYXR0cmlidXRlcyBhbGxvd3MgdGhlc2UNCj4gcHJvdG90eXBlcyB0byBhbGwg
-Zml0IG9uIG9uZSBsaW5lLCBhcyB0aGV5IGFyZSBleGFjdGx5IDEwMCBjaGFyYWN0ZXJzLg0KPg0K
-Pj4gICAjZGVmaW5lIElYR0JFX0RFVl9GRElSX0NPTkYoZGV2KSBcDQo+PiAgIAkoJigoc3RydWN0
-IGl4Z2JlX2FkYXB0ZXIgKikoZGV2KS0+ZGF0YS0+ZGV2X3ByaXZhdGUpLT5mZGlyX2NvbmYpDQo+
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvaW50ZWwvaXhnYmUvaXhnYmVfcnh0eC5jIGIvZHJp
-dmVycy9uZXQvaW50ZWwvaXhnYmUvaXhnYmVfcnh0eC5jDQo+PiBpbmRleCA3Nzc3M2Q1NmVmLi4y
-MDlkYmU2Njg1IDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9uZXQvaW50ZWwvaXhnYmUvaXhnYmVf
-cnh0eC5jDQo+PiArKysgYi9kcml2ZXJzL25ldC9pbnRlbC9peGdiZS9peGdiZV9yeHR4LmMNCj4+
-IEBAIC0yNjI2LDYgKzI2MjYsMzkgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBpeGdiZV90eHFfb3Bz
-IGRlZl90eHFfb3BzID0gew0KPj4gICAJLnJlc2V0ID0gaXhnYmVfcmVzZXRfdHhfcXVldWUsDQo+
-PiAgIH07DQo+PiAgIA0KPj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3Qgew0KPj4gKwlldGhfdHhfYnVy
-c3RfdCBwa3RfYnVyc3Q7DQo+PiArCWNvbnN0IGNoYXIgKmluZm87DQo+PiArfSBpeGdiZV90eF9i
-dXJzdF9pbmZvW10gPSB7DQo+PiArCXsJaXhnYmVfeG1pdF9wa3RzLCAiU2NhbGFyIn0sDQo+PiAr
-CXsJaXhnYmVfeG1pdF9wa3RzX3NpbXBsZSwgIlNjYWxhciBzaW1wbGUifSwNCj4+ICsJeyAgICAg
-ICBpeGdiZV92Zl9yZXByZXNlbnRvcl90eF9idXJzdCwgIlNjYWxhciByZXByZXNlbnRvciJ9LA0K
-Pj4gKyNpZmRlZiBSVEVfQVJDSF9YODYNCj4+ICsJewlpeGdiZV94bWl0X3BrdHNfdmVjLCAiVmVj
-dG9yIFNTRSJ9LA0KPj4gKyNlbGlmIGRlZmluZWQoUlRFX0FSQ0hfQVJNKQ0KPj4gKwl7CWl4Z2Jl
-X3htaXRfcGt0c192ZWMsICJWZWN0b3IgTkVPTiJ9LA0KPj4gKyNlbmRpZg0KPj4gK307DQo+PiAr
-DQo+PiAraW50DQo+PiAraXhnYmVfdHhfYnVyc3RfbW9kZV9nZXQoc3RydWN0IHJ0ZV9ldGhfZGV2
-ICpkZXYsDQo+PiArCQkJCV9fcnRlX3VudXNlZCB1aW50MTZfdCBxdWV1ZV9pZCwNCj4+ICsJCQkJ
-c3RydWN0IHJ0ZV9ldGhfYnVyc3RfbW9kZSAqbW9kZSkNCj4+ICt7DQo+PiArCWV0aF90eF9idXJz
-dF90IHBrdF9idXJzdCA9IGRldi0+dHhfcGt0X2J1cnN0Ow0KPj4gKwlzaXplX3QgaTsNCj4+ICsN
-Cj4+ICsJZm9yIChpID0gMDsgaSA8IFJURV9ESU0oaXhnYmVfdHhfYnVyc3RfaW5mbyk7IGkrKykg
-ew0KPj4gKwkJaWYgKHBrdF9idXJzdCA9PSBpeGdiZV90eF9idXJzdF9pbmZvW2ldLnBrdF9idXJz
-dCkgew0KPj4gKwkJCXNucHJpbnRmKG1vZGUtPmluZm8sIHNpemVvZihtb2RlLT5pbmZvKSwgIiVz
-IiwNCj4+ICsJCQkJIGl4Z2JlX3R4X2J1cnN0X2luZm9baV0uaW5mbyk7DQo+PiArCQkJcmV0dXJu
-IDA7DQo+PiArCQl9DQo+PiArCX0NCj4+ICsNCj4+ICsJcmV0dXJuIC1FSU5WQUw7DQo+PiArfQ0K
-Pj4gKw0KPj4gICAvKiBUYWtlcyBhbiBldGhkZXYgYW5kIGEgcXVldWUgYW5kIHNldHMgdXAgdGhl
-IHR4IGZ1bmN0aW9uIHRvIGJlIHVzZWQgYmFzZWQgb24NCj4+ICAgICogdGhlIHF1ZXVlIHBhcmFt
-ZXRlcnMuIFVzZWQgaW4gdHhfcXVldWVfc2V0dXAgYnkgcHJpbWFyeSBwcm9jZXNzIGFuZCB0aGVu
-DQo+PiAgICAqIGluIGRldl9pbml0IGJ5IHNlY29uZGFyeSBwcm9jZXNzIHdoZW4gYXR0YWNoaW5n
-IHRvIGFuIGV4aXN0aW5nIGV0aGRldi4NCj4+IEBAIC00OTM5LDYgKzQ5NzIsNDMgQEAgaXhnYmVf
-c2V0X2l2YXIoc3RydWN0IHJ0ZV9ldGhfZGV2ICpkZXYsIHU4IGVudHJ5LCB1OCB2ZWN0b3IsIHM4
-IHR5cGUpDQo+PiAgIAl9DQo+PiAgIH0NCj4+ICAgDQo+PiArc3RhdGljIGNvbnN0IHN0cnVjdCB7
-DQo+PiArCWV0aF9yeF9idXJzdF90IHBrdF9idXJzdDsNCj4+ICsJY29uc3QgY2hhciAqaW5mbzsN
-Cj4+ICt9IGl4Z2JlX3J4X2J1cnN0X2luZm9bXSA9IHsNCj4+ICsJewlpeGdiZV9yZWN2X3BrdHMs
-ICJTY2FsYXIifSwNCj4+ICsJewlpeGdiZV9yZWN2X3BrdHNfYnVsa19hbGxvYywgIlNjYWxhciBi
-dWxrIGFsbG9kIn0sDQo+IHR5cG86IHMvYWxsb2QvYWxsb2MvDQo+DQo+PiArCXsJaXhnYmVfcmVj
-dl9wa3RzX2xyb19idWxrX2FsbG9jLCAiU2NhbGFyIExSTyBidWxrIGFsbG9jIn0sDQo+PiArCXsJ
-aXhnYmVfcmVjdl9wa3RzX2xyb19zaW5nbGVfYWxsb2MsICJTY2FsYXIgTFJPIHNpbmdsZSBhbGxv
-YyJ9LA0KPj4gKwl7ICAgICAgIGl4Z2JlX3ZmX3JlcHJlc2VudG9yX3J4X2J1cnN0LCAiU2NhbGFy
-IHJlcHJlc2VudG9yIn0sDQo+PiArI2lmZGVmIFJURV9BUkNIX1g4Ng0KPj4gKwl7CWl4Z2JlX3Jl
-Y3ZfcGt0c192ZWMsICJWZWN0b3IgU1NFIn0sDQo+PiArCXsJaXhnYmVfcmVjdl9zY2F0dGVyZWRf
-cGt0c192ZWMsICJWZWN0b3IgU1NFIHNjYXR0ZXJlZCJ9LA0KPj4gKyNlbGlmIGRlZmluZWQoUlRF
-X0FSQ0hfQVJNKQ0KPj4gKwl7CWl4Z2JlX3JlY3ZfcGt0c192ZWMsICJWZWN0b3IgTkVPTiJ9LA0K
-Pj4gKwl7CWl4Z2JlX3JlY3Zfc2NhdHRlcmVkX3BrdHNfdmVjLCAiVmVjdG9yIE5FT04gc2NhdHRl
-cmVkIn0sDQo+PiArI2VuZGlmDQo+PiArfTsNCj4+ICsNCj4+ICtpbnQNCj4+ICtpeGdiZV9yeF9i
-dXJzdF9tb2RlX2dldChzdHJ1Y3QgcnRlX2V0aF9kZXYgKmRldiwNCj4+ICsJCQkJX19ydGVfdW51
-c2VkIHVpbnQxNl90IHF1ZXVlX2lkLA0KPj4gKwkJCQlzdHJ1Y3QgcnRlX2V0aF9idXJzdF9tb2Rl
-ICptb2RlKQ0KPj4gK3sNCj4+ICsJZXRoX3R4X2J1cnN0X3QgcGt0X2J1cnN0ID0gZGV2LT5yeF9w
-a3RfYnVyc3Q7DQo+PiArCXNpemVfdCBpOw0KPj4gKw0KPj4gKwlmb3IgKGkgPSAwOyBpIDwgUlRF
-X0RJTShpeGdiZV9yeF9idXJzdF9pbmZvKTsgaSsrKSB7DQo+PiArCQlpZiAocGt0X2J1cnN0ID09
-IGl4Z2JlX3J4X2J1cnN0X2luZm9baV0ucGt0X2J1cnN0KSB7DQo+PiArCQkJc25wcmludGYobW9k
-ZS0+aW5mbywgc2l6ZW9mKG1vZGUtPmluZm8pLCAiJXMiLA0KPj4gKwkJCQkgaXhnYmVfcnhfYnVy
-c3RfaW5mb1tpXS5pbmZvKTsNCj4+ICsJCQlyZXR1cm4gMDsNCj4+ICsJCX0NCj4+ICsJfQ0KPj4g
-Kw0KPj4gKwlyZXR1cm4gLUVJTlZBTDsNCj4+ICt9DQo+PiArDQo+PiAgIHZvaWQgX19ydGVfY29s
-ZA0KPj4gICBpeGdiZV9zZXRfcnhfZnVuY3Rpb24oc3RydWN0IHJ0ZV9ldGhfZGV2ICpkZXYpDQo+
-PiAgIHsNCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9pbnRlbC9peGdiZS9peGdiZV9yeHR4
-LmggYi9kcml2ZXJzL25ldC9pbnRlbC9peGdiZS9peGdiZV9yeHR4LmgNCj4+IGluZGV4IDU0NTY5
-YzdhZGUuLjM0ODcwNzNkMzAgMTAwNjQ0DQo+PiAtLS0gYS9kcml2ZXJzL25ldC9pbnRlbC9peGdi
-ZS9peGdiZV9yeHR4LmgNCj4+ICsrKyBiL2RyaXZlcnMvbmV0L2ludGVsL2l4Z2JlL2l4Z2JlX3J4
-dHguaA0KPj4gQEAgLTIwNCw2ICsyMDQsOCBAQCBzdHJ1Y3QgaXhnYmVfdHhxX29wcyB7DQo+PiAg
-ICAqIGluIGRldl9pbml0IGJ5IHNlY29uZGFyeSBwcm9jZXNzIHdoZW4gYXR0YWNoaW5nIHRvIGFu
-IGV4aXN0aW5nIGV0aGRldi4NCj4+ICAgICovDQo+PiAgIHZvaWQgaXhnYmVfc2V0X3R4X2Z1bmN0
-aW9uKHN0cnVjdCBydGVfZXRoX2RldiAqZGV2LCBzdHJ1Y3QgY2lfdHhfcXVldWUgKnR4cSk7DQo+
-PiAraW50IGl4Z2JlX3R4X2J1cnN0X21vZGVfZ2V0KHN0cnVjdCBydGVfZXRoX2RldiAqZGV2LA0K
-Pj4gKwkJX19ydGVfdW51c2VkIHVpbnQxNl90IHF1ZXVlX2lkLCBzdHJ1Y3QgcnRlX2V0aF9idXJz
-dF9tb2RlICptb2RlKTsNCj4+ICAgDQo+PiAgIC8qKg0KPj4gICAgKiBTZXRzIHRoZSByeF9wa3Rf
-YnVyc3QgY2FsbGJhY2sgaW4gdGhlIGl4Z2JlIHJ0ZV9ldGhfZGV2IGluc3RhbmNlLg0KPj4gQEAg
-LTIyMCw2ICsyMjIsOCBAQCB2b2lkIGl4Z2JlX3NldF90eF9mdW5jdGlvbihzdHJ1Y3QgcnRlX2V0
-aF9kZXYgKmRldiwgc3RydWN0IGNpX3R4X3F1ZXVlICp0eHEpOw0KPj4gICAgKiBAZGV2IHJ0ZV9l
-dGhfZGV2IGhhbmRsZQ0KPj4gICAgKi8NCj4+ICAgdm9pZCBpeGdiZV9zZXRfcnhfZnVuY3Rpb24o
-c3RydWN0IHJ0ZV9ldGhfZGV2ICpkZXYpOw0KPj4gK2ludCBpeGdiZV9yeF9idXJzdF9tb2RlX2dl
-dChzdHJ1Y3QgcnRlX2V0aF9kZXYgKmRldiwNCj4+ICsJCV9fcnRlX3VudXNlZCB1aW50MTZfdCBx
-dWV1ZV9pZCwgc3RydWN0IHJ0ZV9ldGhfYnVyc3RfbW9kZSAqbW9kZSk7DQo+PiAgIA0KPiBfX3J0
-ZV91bnVzZWQgZG9lcyBub3QgbmVlZCB0byBiZSB1c2VkIGluIHRoZXNlIHByb3RvdHlwZXMgZWl0
-aGVyLiBTYWRseSwNCj4gaG93ZXZlciwgaXQgZG9lcyBub3QgbGVhZCB0byBzaG9ydGVuaW5nIG9m
-IHRoZSBwcm90b3R5cGUgdG8gYSBzaW5nbGUgbGluZQ0KPiBpbiB0aGlzIGNhc2UuIDotKA0KPg0K
-Pj4gICBpbnQgaXhnYmVfY2hlY2tfc3VwcG9ydGVkX2xvb3BiYWNrX21vZGUoc3RydWN0IHJ0ZV9l
-dGhfZGV2ICpkZXYpOw0KPj4gICB1aW50MTZfdCBpeGdiZV9yZWN2X3BrdHNfdmVjKHZvaWQgKnJ4
-X3F1ZXVlLCBzdHJ1Y3QgcnRlX21idWYgKipyeF9wa3RzLA0KPj4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvbmV0L2ludGVsL2l4Z2JlL2l4Z2JlX3ZmX3JlcHJlc2VudG9yLmMgYi9kcml2ZXJzL25ldC9p
-bnRlbC9peGdiZS9peGdiZV92Zl9yZXByZXNlbnRvci5jDQo+PiBpbmRleCBiZDUyOGZmMzQ2Li45
-MDFkODBlNDA2IDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9uZXQvaW50ZWwvaXhnYmUvaXhnYmVf
-dmZfcmVwcmVzZW50b3IuYw0KPj4gKysrIGIvZHJpdmVycy9uZXQvaW50ZWwvaXhnYmUvaXhnYmVf
-dmZfcmVwcmVzZW50b3IuYw0KPj4gQEAgLTE1NywxNCArMTU3LDE0IEBAIHN0YXRpYyBjb25zdCBz
-dHJ1Y3QgZXRoX2Rldl9vcHMgaXhnYmVfdmZfcmVwcmVzZW50b3JfZGV2X29wcyA9IHsNCj4+ICAg
-CS5tYWNfYWRkcl9zZXQJCT0gaXhnYmVfdmZfcmVwcmVzZW50b3JfbWFjX2FkZHJfc2V0LA0KPj4g
-ICB9Ow0KPj4gICANCj4+IC1zdGF0aWMgdWludDE2X3QNCj4+ICt1aW50MTZfdA0KPj4gICBpeGdi
-ZV92Zl9yZXByZXNlbnRvcl9yeF9idXJzdChfX3J0ZV91bnVzZWQgdm9pZCAqcnhfcXVldWUsDQo+
-PiAgIAlfX3J0ZV91bnVzZWQgc3RydWN0IHJ0ZV9tYnVmICoqcnhfcGt0cywgX19ydGVfdW51c2Vk
-IHVpbnQxNl90IG5iX3BrdHMpDQo+PiAgIHsNCj4+ICAgCXJldHVybiAwOw0KPj4gICB9DQo+PiAg
-IA0KPj4gLXN0YXRpYyB1aW50MTZfdA0KPj4gK3VpbnQxNl90DQo+PiAgIGl4Z2JlX3ZmX3JlcHJl
-c2VudG9yX3R4X2J1cnN0KF9fcnRlX3VudXNlZCB2b2lkICp0eF9xdWV1ZSwNCj4+ICAgCV9fcnRl
-X3VudXNlZCBzdHJ1Y3QgcnRlX21idWYgKip0eF9wa3RzLCBfX3J0ZV91bnVzZWQgdWludDE2X3Qg
-bmJfcGt0cykNCj4+ICAgew0KPj4gLS0gDQo+PiAyLjM1LjYNCj4+DQoNCg==
+Return burst mode according to the selected Rx/Tx burst
+function name.
+Update 25.07 release notes with this information.
+
+Signed-off-by: Roger Melton <rmelton@cisco.com>
+---
+ doc/guides/rel_notes/release_25_07.rst |   3 +
+ drivers/net/intel/iavf/iavf.h          |   2 +
+ drivers/net/intel/iavf/iavf_ethdev.c   |   2 +
+ drivers/net/intel/iavf/iavf_rxtx.c     | 168 ++++++++++++++++++-------
+ drivers/net/intel/iavf/iavf_rxtx.h     |   5 +-
+ 5 files changed, 133 insertions(+), 47 deletions(-)
+
+diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
+index 093b85d206..b83f911121 100644
+--- a/doc/guides/rel_notes/release_25_07.rst
++++ b/doc/guides/rel_notes/release_25_07.rst
+@@ -55,6 +55,9 @@ New Features
+      Also, make sure to start the actual text at the margin.
+      =======================================================
+ 
++* **Updated Intel iavf driver.**
++
++  * Added support for rx_burst_mode_get and tx_burst_mode_get.
+ 
+ Removed Items
+ -------------
+diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
+index 956c60ef45..97e6b243fb 100644
+--- a/drivers/net/intel/iavf/iavf.h
++++ b/drivers/net/intel/iavf/iavf.h
+@@ -321,6 +321,7 @@ struct iavf_devargs {
+ struct iavf_security_ctx;
+ 
+ enum iavf_rx_burst_type {
++	IAVF_RX_DISABLED,
+ 	IAVF_RX_DEFAULT,
+ 	IAVF_RX_FLEX_RXD,
+ 	IAVF_RX_BULK_ALLOC,
+@@ -349,6 +350,7 @@ enum iavf_rx_burst_type {
+ };
+ 
+ enum iavf_tx_burst_type {
++	IAVF_TX_DISABLED,
+ 	IAVF_TX_DEFAULT,
+ 	IAVF_TX_SSE,
+ 	IAVF_TX_AVX2,
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index 2335746f04..b3dacbef84 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -239,6 +239,8 @@ static const struct eth_dev_ops iavf_eth_dev_ops = {
+ 	.rss_hash_conf_get          = iavf_dev_rss_hash_conf_get,
+ 	.rxq_info_get               = iavf_dev_rxq_info_get,
+ 	.txq_info_get               = iavf_dev_txq_info_get,
++	.rx_burst_mode_get          = iavf_rx_burst_mode_get,
++	.tx_burst_mode_get          = iavf_tx_burst_mode_get,
+ 	.mtu_set                    = iavf_dev_mtu_set,
+ 	.rx_queue_intr_enable       = iavf_dev_rx_queue_intr_enable,
+ 	.rx_queue_intr_disable      = iavf_dev_rx_queue_intr_disable,
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
+index 533e0c78a2..5411eb6897 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.c
++++ b/drivers/net/intel/iavf/iavf_rxtx.c
+@@ -3688,66 +3688,142 @@ iavf_prep_pkts(__rte_unused void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	return i;
+ }
+ 
+-static
+-const eth_rx_burst_t iavf_rx_pkt_burst_ops[] = {
+-	[IAVF_RX_DEFAULT] = iavf_recv_pkts,
+-	[IAVF_RX_FLEX_RXD] = iavf_recv_pkts_flex_rxd,
+-	[IAVF_RX_BULK_ALLOC] = iavf_recv_pkts_bulk_alloc,
+-	[IAVF_RX_SCATTERED] = iavf_recv_scattered_pkts,
+-	[IAVF_RX_SCATTERED_FLEX_RXD] = iavf_recv_scattered_pkts_flex_rxd,
++static uint16_t
++iavf_recv_pkts_no_poll(void *rx_queue, struct rte_mbuf **rx_pkts,
++				uint16_t nb_pkts);
++static uint16_t
++iavf_xmit_pkts_no_poll(void *tx_queue, struct rte_mbuf **tx_pkts,
++				uint16_t nb_pkts);
++
++static const struct {
++	eth_rx_burst_t pkt_burst;
++	const char *info;
++} iavf_rx_pkt_burst_ops[] = {
++	[IAVF_RX_DISABLED] = {iavf_recv_pkts_no_poll, "Disabled"},
++	[IAVF_RX_DEFAULT] = {iavf_recv_pkts, "Scalar"},
++	[IAVF_RX_FLEX_RXD] = {iavf_recv_pkts_flex_rxd, "Scalar Flex"},
++	[IAVF_RX_BULK_ALLOC] = {iavf_recv_pkts_bulk_alloc,
++		"Scalar Bulk Alloc"},
++	[IAVF_RX_SCATTERED] = {iavf_recv_scattered_pkts,
++		"Scalar Scattered"},
++	[IAVF_RX_SCATTERED_FLEX_RXD] = {iavf_recv_scattered_pkts_flex_rxd,
++		"Scalar Scattered Flex"},
+ #ifdef RTE_ARCH_X86
+-	[IAVF_RX_SSE] = iavf_recv_pkts_vec,
+-	[IAVF_RX_AVX2] = iavf_recv_pkts_vec_avx2,
+-	[IAVF_RX_AVX2_OFFLOAD] = iavf_recv_pkts_vec_avx2_offload,
+-	[IAVF_RX_SSE_FLEX_RXD] = iavf_recv_pkts_vec_flex_rxd,
+-	[IAVF_RX_AVX2_FLEX_RXD] = iavf_recv_pkts_vec_avx2_flex_rxd,
+-	[IAVF_RX_AVX2_FLEX_RXD_OFFLOAD] =
++	[IAVF_RX_SSE] = {iavf_recv_pkts_vec, "Vector SSE"},
++	[IAVF_RX_AVX2] = {iavf_recv_pkts_vec_avx2, "Vector AVX2"},
++	[IAVF_RX_AVX2_OFFLOAD] = {iavf_recv_pkts_vec_avx2_offload,
++		"Vector AVX2 Offload"},
++	[IAVF_RX_SSE_FLEX_RXD] = {iavf_recv_pkts_vec_flex_rxd,
++		"Vector Flex SSE"},
++	[IAVF_RX_AVX2_FLEX_RXD] = {iavf_recv_pkts_vec_avx2_flex_rxd,
++		"Vector AVX2 Flex"},
++	[IAVF_RX_AVX2_FLEX_RXD_OFFLOAD] = {
+ 		iavf_recv_pkts_vec_avx2_flex_rxd_offload,
+-	[IAVF_RX_SSE_SCATTERED] = iavf_recv_scattered_pkts_vec,
+-	[IAVF_RX_AVX2_SCATTERED] = iavf_recv_scattered_pkts_vec_avx2,
+-	[IAVF_RX_AVX2_SCATTERED_OFFLOAD] =
++			"Vector AVX2 Flex Offload"},
++	[IAVF_RX_SSE_SCATTERED] = {iavf_recv_scattered_pkts_vec,
++		"Vector Scattered SSE"},
++	[IAVF_RX_AVX2_SCATTERED] = {iavf_recv_scattered_pkts_vec_avx2,
++		"Vector Scattered AVX2"},
++	[IAVF_RX_AVX2_SCATTERED_OFFLOAD] = {
+ 		iavf_recv_scattered_pkts_vec_avx2_offload,
+-	[IAVF_RX_SSE_SCATTERED_FLEX_RXD] =
++		"Vector Scattered AVX2 offload"},
++	[IAVF_RX_SSE_SCATTERED_FLEX_RXD] = {
+ 		iavf_recv_scattered_pkts_vec_flex_rxd,
+-	[IAVF_RX_AVX2_SCATTERED_FLEX_RXD] =
++		"Vector Scattered SSE Flex"},
++	[IAVF_RX_AVX2_SCATTERED_FLEX_RXD] = {
+ 		iavf_recv_scattered_pkts_vec_avx2_flex_rxd,
+-	[IAVF_RX_AVX2_SCATTERED_FLEX_RXD_OFFLOAD] =
++		"Vector Scattered AVX2 Flex"},
++	[IAVF_RX_AVX2_SCATTERED_FLEX_RXD_OFFLOAD] = {
+ 		iavf_recv_scattered_pkts_vec_avx2_flex_rxd_offload,
++		"Vector Scattered AVX2 Flex Offload"},
+ #ifdef CC_AVX512_SUPPORT
+-	[IAVF_RX_AVX512] = iavf_recv_pkts_vec_avx512,
+-	[IAVF_RX_AVX512_OFFLOAD] = iavf_recv_pkts_vec_avx512_offload,
+-	[IAVF_RX_AVX512_FLEX_RXD] = iavf_recv_pkts_vec_avx512_flex_rxd,
+-	[IAVF_RX_AVX512_FLEX_RXD_OFFLOAD] =
++	[IAVF_RX_AVX512] = {iavf_recv_pkts_vec_avx512, "Vector AVX512"},
++	[IAVF_RX_AVX512_OFFLOAD] = {iavf_recv_pkts_vec_avx512_offload,
++		"Vector AVX512 Offload"},
++	[IAVF_RX_AVX512_FLEX_RXD] = {iavf_recv_pkts_vec_avx512_flex_rxd,
++		"Vector AVX512 Flex"},
++	[IAVF_RX_AVX512_FLEX_RXD_OFFLOAD] = {
+ 		iavf_recv_pkts_vec_avx512_flex_rxd_offload,
+-	[IAVF_RX_AVX512_SCATTERED] = iavf_recv_scattered_pkts_vec_avx512,
+-	[IAVF_RX_AVX512_SCATTERED_OFFLOAD] =
++		"Vector AVX512 Flex Offload"},
++	[IAVF_RX_AVX512_SCATTERED] = {iavf_recv_scattered_pkts_vec_avx512,
++		"Vector Scattered AVX512"},
++	[IAVF_RX_AVX512_SCATTERED_OFFLOAD] = {
+ 		iavf_recv_scattered_pkts_vec_avx512_offload,
+-	[IAVF_RX_AVX512_SCATTERED_FLEX_RXD] =
++		"Vector Scattered AVX512 offload"},
++	[IAVF_RX_AVX512_SCATTERED_FLEX_RXD] = {
+ 		iavf_recv_scattered_pkts_vec_avx512_flex_rxd,
+-	[IAVF_RX_AVX512_SCATTERED_FLEX_RXD_OFFLOAD] =
++		"Vector Scattered AVX512 Flex"},
++	[IAVF_RX_AVX512_SCATTERED_FLEX_RXD_OFFLOAD] = {
+ 		iavf_recv_scattered_pkts_vec_avx512_flex_rxd_offload,
++		"Vector Scattered AVX512 Flex offload"},
+ #endif
+ #elif defined RTE_ARCH_ARM
+-	[IAVF_RX_SSE] = iavf_recv_pkts_vec,
++	[IAVF_RX_SSE] = {iavf_recv_pkts_vec, "Vector Neon"},
+ #endif
+ };
+ 
+-static
+-const eth_tx_burst_t iavf_tx_pkt_burst_ops[] = {
+-	[IAVF_TX_DEFAULT] = iavf_xmit_pkts,
++int
++iavf_rx_burst_mode_get(struct rte_eth_dev *dev,
++		       __rte_unused uint16_t queue_id,
++		       struct rte_eth_burst_mode *mode)
++{
++	eth_rx_burst_t pkt_burst = dev->rx_pkt_burst;
++	size_t i;
++
++	for (i = 0; i < RTE_DIM(iavf_rx_pkt_burst_ops); i++) {
++		if (pkt_burst == iavf_rx_pkt_burst_ops[i].pkt_burst) {
++			snprintf(mode->info, sizeof(mode->info), "%s",
++				 iavf_rx_pkt_burst_ops[i].info);
++			return 0;
++		}
++	}
++
++	return -EINVAL;
++}
++
++static const struct {
++	eth_tx_burst_t pkt_burst;
++	const char *info;
++} iavf_tx_pkt_burst_ops[] = {
++	[IAVF_TX_DISABLED] = {iavf_xmit_pkts_no_poll, "Disabled"},
++	[IAVF_TX_DEFAULT] = {iavf_xmit_pkts, "Scalar"},
+ #ifdef RTE_ARCH_X86
+-	[IAVF_TX_SSE] = iavf_xmit_pkts_vec,
+-	[IAVF_TX_AVX2] = iavf_xmit_pkts_vec_avx2,
+-	[IAVF_TX_AVX2_OFFLOAD] = iavf_xmit_pkts_vec_avx2_offload,
++	[IAVF_TX_SSE] = {iavf_xmit_pkts_vec, "Vector SSE"},
++	[IAVF_TX_AVX2] = {iavf_xmit_pkts_vec_avx2, "Vector AVX2"},
++	[IAVF_TX_AVX2_OFFLOAD] = {iavf_xmit_pkts_vec_avx2_offload,
++		"Vector AVX2 Offload"},
+ #ifdef CC_AVX512_SUPPORT
+-	[IAVF_TX_AVX512] = iavf_xmit_pkts_vec_avx512,
+-	[IAVF_TX_AVX512_OFFLOAD] = iavf_xmit_pkts_vec_avx512_offload,
+-	[IAVF_TX_AVX512_CTX] = iavf_xmit_pkts_vec_avx512_ctx,
+-	[IAVF_TX_AVX512_CTX_OFFLOAD] = iavf_xmit_pkts_vec_avx512_ctx_offload,
++	[IAVF_TX_AVX512] = {iavf_xmit_pkts_vec_avx512, "Vector AVX512"},
++	[IAVF_TX_AVX512_OFFLOAD] = {iavf_xmit_pkts_vec_avx512_offload,
++		"Vector AVX512 Offload"},
++	[IAVF_TX_AVX512_CTX] = {iavf_xmit_pkts_vec_avx512_ctx,
++		"Vector AVX512 Ctx"},
++	[IAVF_TX_AVX512_CTX_OFFLOAD] = {
++		iavf_xmit_pkts_vec_avx512_ctx_offload,
++		"Vector AVX512 Ctx Offload"},
+ #endif
+ #endif
+ };
+ 
++int
++iavf_tx_burst_mode_get(struct rte_eth_dev *dev,
++		       __rte_unused uint16_t queue_id,
++		       struct rte_eth_burst_mode *mode)
++{
++	eth_tx_burst_t pkt_burst = dev->tx_pkt_burst;
++	size_t i;
++
++	for (i = 0; i < RTE_DIM(iavf_tx_pkt_burst_ops); i++) {
++		if (pkt_burst == iavf_tx_pkt_burst_ops[i].pkt_burst) {
++			snprintf(mode->info, sizeof(mode->info), "%s",
++				 iavf_tx_pkt_burst_ops[i].info);
++			return 0;
++		}
++	}
++
++	return -EINVAL;
++}
++
+ static uint16_t
+ iavf_recv_pkts_no_poll(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 				uint16_t nb_pkts)
+@@ -3760,7 +3836,7 @@ iavf_recv_pkts_no_poll(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 
+ 	rx_burst_type = rxq->vsi->adapter->rx_burst_type;
+ 
+-	return iavf_rx_pkt_burst_ops[rx_burst_type](rx_queue,
++	return iavf_rx_pkt_burst_ops[rx_burst_type].pkt_burst(rx_queue,
+ 								rx_pkts, nb_pkts);
+ }
+ 
+@@ -3776,7 +3852,7 @@ iavf_xmit_pkts_no_poll(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 
+ 	tx_burst_type = txq->iavf_vsi->adapter->tx_burst_type;
+ 
+-	return iavf_tx_pkt_burst_ops[tx_burst_type](tx_queue,
++	return iavf_tx_pkt_burst_ops[tx_burst_type].pkt_burst(tx_queue,
+ 								tx_pkts, nb_pkts);
+ }
+ 
+@@ -3861,7 +3937,7 @@ iavf_xmit_pkts_check(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 			return 0;
+ 	}
+ 
+-	return iavf_tx_pkt_burst_ops[tx_burst_type](tx_queue, tx_pkts, good_pkts);
++	return iavf_tx_pkt_burst_ops[tx_burst_type].pkt_burst(tx_queue, tx_pkts, good_pkts);
+ }
+ 
+ /* choose rx function*/
+@@ -4047,7 +4123,7 @@ iavf_set_rx_function(struct rte_eth_dev *dev)
+ 			adapter->rx_burst_type = rx_burst_type;
+ 			dev->rx_pkt_burst = iavf_recv_pkts_no_poll;
+ 		} else {
+-			dev->rx_pkt_burst = iavf_rx_pkt_burst_ops[rx_burst_type];
++			dev->rx_pkt_burst = iavf_rx_pkt_burst_ops[rx_burst_type].pkt_burst;
+ 		}
+ 		return;
+ 	}
+@@ -4069,7 +4145,7 @@ iavf_set_rx_function(struct rte_eth_dev *dev)
+ 			adapter->rx_burst_type = rx_burst_type;
+ 			dev->rx_pkt_burst = iavf_recv_pkts_no_poll;
+ 		} else {
+-			dev->rx_pkt_burst = iavf_rx_pkt_burst_ops[rx_burst_type];
++			dev->rx_pkt_burst = iavf_rx_pkt_burst_ops[rx_burst_type].pkt_burst;
+ 		}
+ 		return;
+ 	}
+@@ -4098,7 +4174,7 @@ iavf_set_rx_function(struct rte_eth_dev *dev)
+ 		adapter->rx_burst_type = rx_burst_type;
+ 		dev->rx_pkt_burst = iavf_recv_pkts_no_poll;
+ 	} else {
+-		dev->rx_pkt_burst = iavf_rx_pkt_burst_ops[rx_burst_type];
++		dev->rx_pkt_burst = iavf_rx_pkt_burst_ops[rx_burst_type].pkt_burst;
+ 	}
+ }
+ 
+@@ -4197,7 +4273,7 @@ iavf_set_tx_function(struct rte_eth_dev *dev)
+ 			adapter->tx_burst_type = tx_burst_type;
+ 			dev->tx_pkt_burst = iavf_xmit_pkts_check;
+ 		} else {
+-			dev->tx_pkt_burst = iavf_tx_pkt_burst_ops[tx_burst_type];
++			dev->tx_pkt_burst = iavf_tx_pkt_burst_ops[tx_burst_type].pkt_burst;
+ 		}
+ 		return;
+ 	}
+@@ -4215,7 +4291,7 @@ iavf_set_tx_function(struct rte_eth_dev *dev)
+ 		adapter->tx_burst_type = tx_burst_type;
+ 		dev->tx_pkt_burst = iavf_xmit_pkts_check;
+ 	} else {
+-		dev->tx_pkt_burst = iavf_tx_pkt_burst_ops[tx_burst_type];
++		dev->tx_pkt_burst = iavf_tx_pkt_burst_ops[tx_burst_type].pkt_burst;
+ 	}
+ }
+ 
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.h b/drivers/net/intel/iavf/iavf_rxtx.h
+index 823a6efa9a..0b5d67e718 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.h
++++ b/drivers/net/intel/iavf/iavf_rxtx.h
+@@ -609,7 +609,10 @@ int iavf_dev_rx_queue_setup(struct rte_eth_dev *dev,
+ int iavf_dev_rx_queue_start(struct rte_eth_dev *dev, uint16_t rx_queue_id);
+ int iavf_dev_rx_queue_stop(struct rte_eth_dev *dev, uint16_t rx_queue_id);
+ void iavf_dev_rx_queue_release(struct rte_eth_dev *dev, uint16_t qid);
+-
++int iavf_rx_burst_mode_get(struct rte_eth_dev *dev, uint16_t queue_id,
++			struct rte_eth_burst_mode *mode);
++int iavf_tx_burst_mode_get(struct rte_eth_dev *dev, uint16_t queue_id,
++			struct rte_eth_burst_mode *mode);
+ int iavf_dev_tx_queue_setup(struct rte_eth_dev *dev,
+ 			   uint16_t queue_idx,
+ 			   uint16_t nb_desc,
+-- 
+2.35.6
+
