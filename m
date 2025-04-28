@@ -2,82 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42EC7C369D5
-	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Apr 2025 22:10:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE92C369D5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Apr 2025 00:03:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4E3C5402A3;
-	Tue, 29 Apr 2025 00:10:46 +0200 (CEST)
-Received: from alln-iport-1.cisco.com (alln-iport-1.cisco.com [173.37.142.88])
- by mails.dpdk.org (Postfix) with ESMTP id 656B44026C
- for <dev@dpdk.org>; Tue, 29 Apr 2025 00:10:45 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D0611402A3;
+	Tue, 29 Apr 2025 02:03:10 +0200 (CEST)
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com
+ [209.85.215.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 20C674026C
+ for <dev@dpdk.org>; Tue, 29 Apr 2025 02:03:10 +0200 (CEST)
+Received: by mail-pg1-f178.google.com with SMTP id
+ 41be03b00d2f7-af908bb32fdso4750982a12.1
+ for <dev@dpdk.org>; Mon, 28 Apr 2025 17:03:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cisco.com; i=@cisco.com; l=12502; q=dns/txt;
- s=iport01; t=1745878245; x=1747087845;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=hibYhsmXj5sMnzgh4+OkIH/srZ5j55kuI96E+LBBjA0=;
- b=S+e/lGwTLllvT6yCCOhk47paQf0R3yoFxmffvvAxZMTaULQ7ZkKKgRJY
- 5VsMykhXxynimdYReAqLy7mOXeekqth5kSAxUJBv4WDXbi2SNjwLwTcsj
- EXjAMd1KTjb4yfH7iEgDmqNUpcRZVhlMfvP4bNzLYzJnSXqGpok80dreD
- pObprw7LqU7/XA0AGBIUGmKrALp90Flv7/joroaT9zJjHeAa3V3CjKQI9
- DZ1zuNzgDmUOyTQvEov46kQOLpqs64gQ8ogT1hnKcLUIATzMBENkci70/
- NzMQdMYdf+YpkeoHBQmdz7sBND48xgqdlAgG7Sf1V8lWrBoet/ZinN01v w==;
-X-CSE-ConnectionGUID: Xm6XCPGkQR6PsJZ3YG/6Qg==
-X-CSE-MsgGUID: 4gqkXEk5TBGEFONMAqkY0w==
-X-IPAS-Result: =?us-ascii?q?A0ADAAAt/A9o/44QJK1aGQEBAQEBAQEBAQEBAQEBAQEBA?=
- =?us-ascii?q?RIBAQEBAQEBAQEBAQGBfwQBAQEBAQsBgkqBT0NIjHCnaxSBEQNWDwEBAQ9EB?=
- =?us-ascii?q?AEBhQcCizACJjQJDgECBAEBAQEDAgMBAQEBAQEBAQEBAQsBAQUBAQECAQcFg?=
- =?us-ascii?q?Q4ThgiGWwIBAycLAUYQUSsrBxKDAoJlA7E2gXkzgQGEfNk4gW6BSQGNTHCEd?=
- =?us-ascii?q?ycbgUlEhH2EKYZeBINDgUeRGos8SIEhA1ksAVUTDQoLBwWBaQMqCwwLEhwVb?=
- =?us-ascii?q?jMdghGFIYIPggeJCoRQLU+FMYFDQAMLGA1IESw3FBsGPm4HlUODa1o1glwMk?=
- =?us-ascii?q?yuQB6MohCWhSRozhAOmVJh+IoI2oXSEaYFnPIFZMxoIGxWDIlIZD44tFrpkK?=
- =?us-ascii?q?jI8AgcLAQEDCZFlAQE?=
-IronPort-Data: A9a23:Xlk+AajHKVEQqSzJEypi84JNX161DxEKZh0ujC45NGQN5FlHY01je
- htvX2qEOP+PZWOgL9skaoS+pEMPuZDXz95gHgVprHg9FipjpJueD7x1DKtf0wB+jyHnZBg6h
- ynLQoCYdKjYdleF+FH1dOCn9SQkvU2xbuKUIPbePSxsThNTRi4kiBZy88Y0mYcAbeKRW2thg
- vus5ZSCULOZ82QsaD9Mt/jT8EkHUMna4Vv0gHRvPZing3eG/5UlJMp3Db28KXL+Xr5VEoaSL
- 87fzKu093/u5BwkDNWoiN7TKiXmlZaLYGBiIlIPM0STqkAqSh4ai87XB9JAAatjsAhlqvgqo
- Dl7WTNcfi9yVkHEsLx1vxC1iEiSN4UekFPMCSDXXcB+UyQqflO0q8iCAn3aMqUo/7hHKllh9
- sUidggWTCLYts3xnou0H7wEasQLdKEHPasWvnVmiDWcBvE8TNWbHuPB5MRT23E7gcUm8fT2P
- pVCL2ExKk2eJUQTYD/7C7pm9AusrmP6fjlEr1S9rqss6G+Vxwt0uFToGIaLJYLRFZUMxi50o
- Eqa8H36MjwZaeC15her1VSJr/bMrHvkDdd6+LqQs6QCbEeo7mAeFjUaTVe45/6jhSaWWttZb
- VcI/SkjtoAz8lCmSp/2WBjQiGCAtxIdXttKVeg35B+AxqnV5S6YAHQJSnhKb9lOiSMtbTUu0
- lnMm5biAiZi9eXID3mc7byT6zi1PED5MFM/WMPNdiNdi/GLnW35pkunogpLeEJtsuDIJA==
-IronPort-HdrOrdr: A9a23:WeG4I6o8SSCRdZoLkcwee/oaV5oseYIsimQD101hICG9vPb2qy
- nIpoV96faaslcssR0b9OxofZPwI080lqQFhbX5Q43DYOCOggLBR+tfBMnZsljd8kbFmNK1u5
- 0NT0EHMqySMbC/5vyKmTVR1L0bsb+6zJw=
-X-Talos-CUID: =?us-ascii?q?9a23=3APZXcCGjyXdM7Medowf7NV1C6QjJuQniD/FzoDEy?=
- =?us-ascii?q?BMzhRU5+nEm6/v/1dnJ87?=
-X-Talos-MUID: 9a23:3FZKkwt6Aj1tcT5pUM2n2D57N/dF4PmSIm8gv7IgnuCdNh0oJGLI
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="6.15,247,1739836800"; d="scan'208";a="467638810"
-Received: from alln-l-core-05.cisco.com ([173.36.16.142])
- by alln-iport-1.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384;
- 28 Apr 2025 22:10:44 +0000
-Received: from eng-rtp-bld-31.cisco.com (eng-rtp-bld-31.cisco.com
- [172.18.47.81])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by alln-l-core-05.cisco.com (Postfix) with ESMTPS id 19DD818000161;
- Mon, 28 Apr 2025 22:10:44 +0000 (GMT)
-Received: by eng-rtp-bld-31.cisco.com (Postfix, from userid 51544)
- id B70021406899; Mon, 28 Apr 2025 18:10:43 -0400 (EDT)
-From: Roger Melton <rmelton@cisco.com>
-To: ian.stokes@intel.com,
-	vladimir.medvedkin@intel.com
-Cc: dev@dpdk.org,
-	Roger Melton <rmelton@cisco.com>
-Subject: [PATCH v2] net/iavf: support Rx/Tx burst mode info
-Date: Mon, 28 Apr 2025 18:07:13 -0400
-Message-Id: <20250428220712.571492-1-rmelton@cisco.com>
-X-Mailer: git-send-email 2.35.6
-In-Reply-To: <20250416160219.3841018-1-rmelton@cisco.com>
-References: <20250416160219.3841018-1-rmelton@cisco.com>
+ d=iol.unh.edu; s=unh-iol; t=1745884989; x=1746489789; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=CYQ8BMBXr2P31Gx4SBXLxGKkLuEw74ggss8uWNTXSGQ=;
+ b=C47tqh5PnB456DRxHPxF9KuTnr6XNH8PBWzDaLqwK6RVOkQKyhsnHFcpgUlShwgj1x
+ TRzq8xfRgo+46+Qx1X2ZGmBRXqNLmCwLRomDcarbMXwwaxRF3002NsjY1pg6SvFjgscy
+ jEOwynW3KUiX7v7KNhw4Lkwxhk8cdW0bKuKPk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1745884989; x=1746489789;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=CYQ8BMBXr2P31Gx4SBXLxGKkLuEw74ggss8uWNTXSGQ=;
+ b=KLvf45rXCQvUCMv1feBrsQnOgNeb8+nDQFGH9+F0jmGSSo4TLKQu/kmfKt5f9aZheo
+ xXopwCp0uQUyMG/YC9fwmmUG/Ehu4habw1mrvlzm+acZMgS77OY1QHFrkkiSD1a98bIL
+ IpW1JQT8eOIXiUKF9imqvKdHdIcUe/ebRA8457kZU2QRPpdKmEBRG/X/B74caIM0+0IR
+ KRrNamDLiboai3fM1818SzaPpkP54qaARLctThy7a7c9rn7yNMRqyZ8pSImi9YRe85XK
+ WVS9Kcw4KuP7hNyW6M6lI+53ufFHZMFQNi7BhrNb8YCDC47tcEldGsw0w7zdGquDTDO9
+ xmAQ==
+X-Gm-Message-State: AOJu0Yw17YArQIMG6N8RUj/PVKphF1rBvCKdwHkyKdQBUfR7/A5f99NR
+ GDXTBWY54EubpcagQm5cIf5zawKeGUfyX9AkLSBvwqsJXKLYb7sL5thajKyKyy8QmBP6bxaKI0R
+ 1DYise8Qo7AIkbR3JIirzJE6V4+lr5T6J6kTi7w==
+X-Gm-Gg: ASbGncuKdh9hQ/LtPbBAnzYrE9L4n0TC0LIaA1T14nNhx/5PmrorEU1tVCUIbMJ2Zbo
+ TuuaxiQcngEWzZnW+hTHaayukzvpO/z0bbJ7+lJ2IdZWmltuICOHZjB7fS8nsZitDWl59W+//al
+ 5oZMVkfydkzXsNnXkmiDo4d6QwRPZ8GgRZL/HSGlovy0VbR54WB7273oA=
+X-Google-Smtp-Source: AGHT+IGkf6BqOHB8eiHKognvAQxybg6fXzbaRHJw8zsz5HnxiUNw9JEDFVD7gcpd6VgXQw7hG9hAzcn2ejWFoozbGLE=
+X-Received: by 2002:a17:90b:3504:b0:302:fc48:4f0a with SMTP id
+ 98e67ed59e1d1-30a221b8675mr1788624a91.0.1745884989037; Mon, 28 Apr 2025
+ 17:03:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Outbound-SMTP-Client: 172.18.47.81, eng-rtp-bld-31.cisco.com
-X-Outbound-Node: alln-l-core-05.cisco.com
+References: <20250427112821.108929-1-mkashani@nvidia.com>
+In-Reply-To: <20250427112821.108929-1-mkashani@nvidia.com>
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Mon, 28 Apr 2025 19:58:42 -0400
+X-Gm-Features: ATxdqUEmW3PnvjCPuEzmG0A8-CBtslSAyE7BQPNzf3dqpazQoEcQFNba2VF40bg
+Message-ID: <CAJvnSUDKizObzmGnnxMhCSLWFW2trgxqPuewvZjMxo39TaJVRA@mail.gmail.com>
+Subject: Re: [PATCH] net/mlx5/hws: fix send queue drain on FW WQE destroy
+To: Maayan Kashani <mkashani@nvidia.com>
+Cc: dev@dpdk.org
+Content-Type: multipart/alternative; boundary="0000000000009738020633df86ec"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -91,339 +68,124 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Return burst mode according to the selected Rx/Tx burst
-function name.
-Update 25.07 release notes with this information.
+--0000000000009738020633df86ec
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Roger Melton <rmelton@cisco.com>
----
- doc/guides/rel_notes/release_25_07.rst |   3 +
- drivers/net/intel/iavf/iavf.h          |   2 +
- drivers/net/intel/iavf/iavf_ethdev.c   |   2 +
- drivers/net/intel/iavf/iavf_rxtx.c     | 168 ++++++++++++++++++-------
- drivers/net/intel/iavf/iavf_rxtx.h     |   5 +-
- 5 files changed, 133 insertions(+), 47 deletions(-)
+Recheck-request: iol-intel-Performance
 
-diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
-index 093b85d206..b83f911121 100644
---- a/doc/guides/rel_notes/release_25_07.rst
-+++ b/doc/guides/rel_notes/release_25_07.rst
-@@ -55,6 +55,9 @@ New Features
-      Also, make sure to start the actual text at the margin.
-      =======================================================
- 
-+* **Updated Intel iavf driver.**
-+
-+  * Added support for rx_burst_mode_get and tx_burst_mode_get.
- 
- Removed Items
- -------------
-diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
-index 956c60ef45..97e6b243fb 100644
---- a/drivers/net/intel/iavf/iavf.h
-+++ b/drivers/net/intel/iavf/iavf.h
-@@ -321,6 +321,7 @@ struct iavf_devargs {
- struct iavf_security_ctx;
- 
- enum iavf_rx_burst_type {
-+	IAVF_RX_DISABLED,
- 	IAVF_RX_DEFAULT,
- 	IAVF_RX_FLEX_RXD,
- 	IAVF_RX_BULK_ALLOC,
-@@ -349,6 +350,7 @@ enum iavf_rx_burst_type {
- };
- 
- enum iavf_tx_burst_type {
-+	IAVF_TX_DISABLED,
- 	IAVF_TX_DEFAULT,
- 	IAVF_TX_SSE,
- 	IAVF_TX_AVX2,
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index 2335746f04..b3dacbef84 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -239,6 +239,8 @@ static const struct eth_dev_ops iavf_eth_dev_ops = {
- 	.rss_hash_conf_get          = iavf_dev_rss_hash_conf_get,
- 	.rxq_info_get               = iavf_dev_rxq_info_get,
- 	.txq_info_get               = iavf_dev_txq_info_get,
-+	.rx_burst_mode_get          = iavf_rx_burst_mode_get,
-+	.tx_burst_mode_get          = iavf_tx_burst_mode_get,
- 	.mtu_set                    = iavf_dev_mtu_set,
- 	.rx_queue_intr_enable       = iavf_dev_rx_queue_intr_enable,
- 	.rx_queue_intr_disable      = iavf_dev_rx_queue_intr_disable,
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
-index 533e0c78a2..5411eb6897 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx.c
-@@ -3688,66 +3688,142 @@ iavf_prep_pkts(__rte_unused void *tx_queue, struct rte_mbuf **tx_pkts,
- 	return i;
- }
- 
--static
--const eth_rx_burst_t iavf_rx_pkt_burst_ops[] = {
--	[IAVF_RX_DEFAULT] = iavf_recv_pkts,
--	[IAVF_RX_FLEX_RXD] = iavf_recv_pkts_flex_rxd,
--	[IAVF_RX_BULK_ALLOC] = iavf_recv_pkts_bulk_alloc,
--	[IAVF_RX_SCATTERED] = iavf_recv_scattered_pkts,
--	[IAVF_RX_SCATTERED_FLEX_RXD] = iavf_recv_scattered_pkts_flex_rxd,
-+static uint16_t
-+iavf_recv_pkts_no_poll(void *rx_queue, struct rte_mbuf **rx_pkts,
-+				uint16_t nb_pkts);
-+static uint16_t
-+iavf_xmit_pkts_no_poll(void *tx_queue, struct rte_mbuf **tx_pkts,
-+				uint16_t nb_pkts);
-+
-+static const struct {
-+	eth_rx_burst_t pkt_burst;
-+	const char *info;
-+} iavf_rx_pkt_burst_ops[] = {
-+	[IAVF_RX_DISABLED] = {iavf_recv_pkts_no_poll, "Disabled"},
-+	[IAVF_RX_DEFAULT] = {iavf_recv_pkts, "Scalar"},
-+	[IAVF_RX_FLEX_RXD] = {iavf_recv_pkts_flex_rxd, "Scalar Flex"},
-+	[IAVF_RX_BULK_ALLOC] = {iavf_recv_pkts_bulk_alloc,
-+		"Scalar Bulk Alloc"},
-+	[IAVF_RX_SCATTERED] = {iavf_recv_scattered_pkts,
-+		"Scalar Scattered"},
-+	[IAVF_RX_SCATTERED_FLEX_RXD] = {iavf_recv_scattered_pkts_flex_rxd,
-+		"Scalar Scattered Flex"},
- #ifdef RTE_ARCH_X86
--	[IAVF_RX_SSE] = iavf_recv_pkts_vec,
--	[IAVF_RX_AVX2] = iavf_recv_pkts_vec_avx2,
--	[IAVF_RX_AVX2_OFFLOAD] = iavf_recv_pkts_vec_avx2_offload,
--	[IAVF_RX_SSE_FLEX_RXD] = iavf_recv_pkts_vec_flex_rxd,
--	[IAVF_RX_AVX2_FLEX_RXD] = iavf_recv_pkts_vec_avx2_flex_rxd,
--	[IAVF_RX_AVX2_FLEX_RXD_OFFLOAD] =
-+	[IAVF_RX_SSE] = {iavf_recv_pkts_vec, "Vector SSE"},
-+	[IAVF_RX_AVX2] = {iavf_recv_pkts_vec_avx2, "Vector AVX2"},
-+	[IAVF_RX_AVX2_OFFLOAD] = {iavf_recv_pkts_vec_avx2_offload,
-+		"Vector AVX2 Offload"},
-+	[IAVF_RX_SSE_FLEX_RXD] = {iavf_recv_pkts_vec_flex_rxd,
-+		"Vector Flex SSE"},
-+	[IAVF_RX_AVX2_FLEX_RXD] = {iavf_recv_pkts_vec_avx2_flex_rxd,
-+		"Vector AVX2 Flex"},
-+	[IAVF_RX_AVX2_FLEX_RXD_OFFLOAD] = {
- 		iavf_recv_pkts_vec_avx2_flex_rxd_offload,
--	[IAVF_RX_SSE_SCATTERED] = iavf_recv_scattered_pkts_vec,
--	[IAVF_RX_AVX2_SCATTERED] = iavf_recv_scattered_pkts_vec_avx2,
--	[IAVF_RX_AVX2_SCATTERED_OFFLOAD] =
-+			"Vector AVX2 Flex Offload"},
-+	[IAVF_RX_SSE_SCATTERED] = {iavf_recv_scattered_pkts_vec,
-+		"Vector Scattered SSE"},
-+	[IAVF_RX_AVX2_SCATTERED] = {iavf_recv_scattered_pkts_vec_avx2,
-+		"Vector Scattered AVX2"},
-+	[IAVF_RX_AVX2_SCATTERED_OFFLOAD] = {
- 		iavf_recv_scattered_pkts_vec_avx2_offload,
--	[IAVF_RX_SSE_SCATTERED_FLEX_RXD] =
-+		"Vector Scattered AVX2 offload"},
-+	[IAVF_RX_SSE_SCATTERED_FLEX_RXD] = {
- 		iavf_recv_scattered_pkts_vec_flex_rxd,
--	[IAVF_RX_AVX2_SCATTERED_FLEX_RXD] =
-+		"Vector Scattered SSE Flex"},
-+	[IAVF_RX_AVX2_SCATTERED_FLEX_RXD] = {
- 		iavf_recv_scattered_pkts_vec_avx2_flex_rxd,
--	[IAVF_RX_AVX2_SCATTERED_FLEX_RXD_OFFLOAD] =
-+		"Vector Scattered AVX2 Flex"},
-+	[IAVF_RX_AVX2_SCATTERED_FLEX_RXD_OFFLOAD] = {
- 		iavf_recv_scattered_pkts_vec_avx2_flex_rxd_offload,
-+		"Vector Scattered AVX2 Flex Offload"},
- #ifdef CC_AVX512_SUPPORT
--	[IAVF_RX_AVX512] = iavf_recv_pkts_vec_avx512,
--	[IAVF_RX_AVX512_OFFLOAD] = iavf_recv_pkts_vec_avx512_offload,
--	[IAVF_RX_AVX512_FLEX_RXD] = iavf_recv_pkts_vec_avx512_flex_rxd,
--	[IAVF_RX_AVX512_FLEX_RXD_OFFLOAD] =
-+	[IAVF_RX_AVX512] = {iavf_recv_pkts_vec_avx512, "Vector AVX512"},
-+	[IAVF_RX_AVX512_OFFLOAD] = {iavf_recv_pkts_vec_avx512_offload,
-+		"Vector AVX512 Offload"},
-+	[IAVF_RX_AVX512_FLEX_RXD] = {iavf_recv_pkts_vec_avx512_flex_rxd,
-+		"Vector AVX512 Flex"},
-+	[IAVF_RX_AVX512_FLEX_RXD_OFFLOAD] = {
- 		iavf_recv_pkts_vec_avx512_flex_rxd_offload,
--	[IAVF_RX_AVX512_SCATTERED] = iavf_recv_scattered_pkts_vec_avx512,
--	[IAVF_RX_AVX512_SCATTERED_OFFLOAD] =
-+		"Vector AVX512 Flex Offload"},
-+	[IAVF_RX_AVX512_SCATTERED] = {iavf_recv_scattered_pkts_vec_avx512,
-+		"Vector Scattered AVX512"},
-+	[IAVF_RX_AVX512_SCATTERED_OFFLOAD] = {
- 		iavf_recv_scattered_pkts_vec_avx512_offload,
--	[IAVF_RX_AVX512_SCATTERED_FLEX_RXD] =
-+		"Vector Scattered AVX512 offload"},
-+	[IAVF_RX_AVX512_SCATTERED_FLEX_RXD] = {
- 		iavf_recv_scattered_pkts_vec_avx512_flex_rxd,
--	[IAVF_RX_AVX512_SCATTERED_FLEX_RXD_OFFLOAD] =
-+		"Vector Scattered AVX512 Flex"},
-+	[IAVF_RX_AVX512_SCATTERED_FLEX_RXD_OFFLOAD] = {
- 		iavf_recv_scattered_pkts_vec_avx512_flex_rxd_offload,
-+		"Vector Scattered AVX512 Flex offload"},
- #endif
- #elif defined RTE_ARCH_ARM
--	[IAVF_RX_SSE] = iavf_recv_pkts_vec,
-+	[IAVF_RX_SSE] = {iavf_recv_pkts_vec, "Vector Neon"},
- #endif
- };
- 
--static
--const eth_tx_burst_t iavf_tx_pkt_burst_ops[] = {
--	[IAVF_TX_DEFAULT] = iavf_xmit_pkts,
-+int
-+iavf_rx_burst_mode_get(struct rte_eth_dev *dev,
-+		       __rte_unused uint16_t queue_id,
-+		       struct rte_eth_burst_mode *mode)
-+{
-+	eth_rx_burst_t pkt_burst = dev->rx_pkt_burst;
-+	size_t i;
-+
-+	for (i = 0; i < RTE_DIM(iavf_rx_pkt_burst_ops); i++) {
-+		if (pkt_burst == iavf_rx_pkt_burst_ops[i].pkt_burst) {
-+			snprintf(mode->info, sizeof(mode->info), "%s",
-+				 iavf_rx_pkt_burst_ops[i].info);
-+			return 0;
-+		}
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static const struct {
-+	eth_tx_burst_t pkt_burst;
-+	const char *info;
-+} iavf_tx_pkt_burst_ops[] = {
-+	[IAVF_TX_DISABLED] = {iavf_xmit_pkts_no_poll, "Disabled"},
-+	[IAVF_TX_DEFAULT] = {iavf_xmit_pkts, "Scalar"},
- #ifdef RTE_ARCH_X86
--	[IAVF_TX_SSE] = iavf_xmit_pkts_vec,
--	[IAVF_TX_AVX2] = iavf_xmit_pkts_vec_avx2,
--	[IAVF_TX_AVX2_OFFLOAD] = iavf_xmit_pkts_vec_avx2_offload,
-+	[IAVF_TX_SSE] = {iavf_xmit_pkts_vec, "Vector SSE"},
-+	[IAVF_TX_AVX2] = {iavf_xmit_pkts_vec_avx2, "Vector AVX2"},
-+	[IAVF_TX_AVX2_OFFLOAD] = {iavf_xmit_pkts_vec_avx2_offload,
-+		"Vector AVX2 Offload"},
- #ifdef CC_AVX512_SUPPORT
--	[IAVF_TX_AVX512] = iavf_xmit_pkts_vec_avx512,
--	[IAVF_TX_AVX512_OFFLOAD] = iavf_xmit_pkts_vec_avx512_offload,
--	[IAVF_TX_AVX512_CTX] = iavf_xmit_pkts_vec_avx512_ctx,
--	[IAVF_TX_AVX512_CTX_OFFLOAD] = iavf_xmit_pkts_vec_avx512_ctx_offload,
-+	[IAVF_TX_AVX512] = {iavf_xmit_pkts_vec_avx512, "Vector AVX512"},
-+	[IAVF_TX_AVX512_OFFLOAD] = {iavf_xmit_pkts_vec_avx512_offload,
-+		"Vector AVX512 Offload"},
-+	[IAVF_TX_AVX512_CTX] = {iavf_xmit_pkts_vec_avx512_ctx,
-+		"Vector AVX512 Ctx"},
-+	[IAVF_TX_AVX512_CTX_OFFLOAD] = {
-+		iavf_xmit_pkts_vec_avx512_ctx_offload,
-+		"Vector AVX512 Ctx Offload"},
- #endif
- #endif
- };
- 
-+int
-+iavf_tx_burst_mode_get(struct rte_eth_dev *dev,
-+		       __rte_unused uint16_t queue_id,
-+		       struct rte_eth_burst_mode *mode)
-+{
-+	eth_tx_burst_t pkt_burst = dev->tx_pkt_burst;
-+	size_t i;
-+
-+	for (i = 0; i < RTE_DIM(iavf_tx_pkt_burst_ops); i++) {
-+		if (pkt_burst == iavf_tx_pkt_burst_ops[i].pkt_burst) {
-+			snprintf(mode->info, sizeof(mode->info), "%s",
-+				 iavf_tx_pkt_burst_ops[i].info);
-+			return 0;
-+		}
-+	}
-+
-+	return -EINVAL;
-+}
-+
- static uint16_t
- iavf_recv_pkts_no_poll(void *rx_queue, struct rte_mbuf **rx_pkts,
- 				uint16_t nb_pkts)
-@@ -3760,7 +3836,7 @@ iavf_recv_pkts_no_poll(void *rx_queue, struct rte_mbuf **rx_pkts,
- 
- 	rx_burst_type = rxq->vsi->adapter->rx_burst_type;
- 
--	return iavf_rx_pkt_burst_ops[rx_burst_type](rx_queue,
-+	return iavf_rx_pkt_burst_ops[rx_burst_type].pkt_burst(rx_queue,
- 								rx_pkts, nb_pkts);
- }
- 
-@@ -3776,7 +3852,7 @@ iavf_xmit_pkts_no_poll(void *tx_queue, struct rte_mbuf **tx_pkts,
- 
- 	tx_burst_type = txq->iavf_vsi->adapter->tx_burst_type;
- 
--	return iavf_tx_pkt_burst_ops[tx_burst_type](tx_queue,
-+	return iavf_tx_pkt_burst_ops[tx_burst_type].pkt_burst(tx_queue,
- 								tx_pkts, nb_pkts);
- }
- 
-@@ -3861,7 +3937,7 @@ iavf_xmit_pkts_check(void *tx_queue, struct rte_mbuf **tx_pkts,
- 			return 0;
- 	}
- 
--	return iavf_tx_pkt_burst_ops[tx_burst_type](tx_queue, tx_pkts, good_pkts);
-+	return iavf_tx_pkt_burst_ops[tx_burst_type].pkt_burst(tx_queue, tx_pkts, good_pkts);
- }
- 
- /* choose rx function*/
-@@ -4047,7 +4123,7 @@ iavf_set_rx_function(struct rte_eth_dev *dev)
- 			adapter->rx_burst_type = rx_burst_type;
- 			dev->rx_pkt_burst = iavf_recv_pkts_no_poll;
- 		} else {
--			dev->rx_pkt_burst = iavf_rx_pkt_burst_ops[rx_burst_type];
-+			dev->rx_pkt_burst = iavf_rx_pkt_burst_ops[rx_burst_type].pkt_burst;
- 		}
- 		return;
- 	}
-@@ -4069,7 +4145,7 @@ iavf_set_rx_function(struct rte_eth_dev *dev)
- 			adapter->rx_burst_type = rx_burst_type;
- 			dev->rx_pkt_burst = iavf_recv_pkts_no_poll;
- 		} else {
--			dev->rx_pkt_burst = iavf_rx_pkt_burst_ops[rx_burst_type];
-+			dev->rx_pkt_burst = iavf_rx_pkt_burst_ops[rx_burst_type].pkt_burst;
- 		}
- 		return;
- 	}
-@@ -4098,7 +4174,7 @@ iavf_set_rx_function(struct rte_eth_dev *dev)
- 		adapter->rx_burst_type = rx_burst_type;
- 		dev->rx_pkt_burst = iavf_recv_pkts_no_poll;
- 	} else {
--		dev->rx_pkt_burst = iavf_rx_pkt_burst_ops[rx_burst_type];
-+		dev->rx_pkt_burst = iavf_rx_pkt_burst_ops[rx_burst_type].pkt_burst;
- 	}
- }
- 
-@@ -4197,7 +4273,7 @@ iavf_set_tx_function(struct rte_eth_dev *dev)
- 			adapter->tx_burst_type = tx_burst_type;
- 			dev->tx_pkt_burst = iavf_xmit_pkts_check;
- 		} else {
--			dev->tx_pkt_burst = iavf_tx_pkt_burst_ops[tx_burst_type];
-+			dev->tx_pkt_burst = iavf_tx_pkt_burst_ops[tx_burst_type].pkt_burst;
- 		}
- 		return;
- 	}
-@@ -4215,7 +4291,7 @@ iavf_set_tx_function(struct rte_eth_dev *dev)
- 		adapter->tx_burst_type = tx_burst_type;
- 		dev->tx_pkt_burst = iavf_xmit_pkts_check;
- 	} else {
--		dev->tx_pkt_burst = iavf_tx_pkt_burst_ops[tx_burst_type];
-+		dev->tx_pkt_burst = iavf_tx_pkt_burst_ops[tx_burst_type].pkt_burst;
- 	}
- }
- 
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.h b/drivers/net/intel/iavf/iavf_rxtx.h
-index 823a6efa9a..0b5d67e718 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.h
-+++ b/drivers/net/intel/iavf/iavf_rxtx.h
-@@ -609,7 +609,10 @@ int iavf_dev_rx_queue_setup(struct rte_eth_dev *dev,
- int iavf_dev_rx_queue_start(struct rte_eth_dev *dev, uint16_t rx_queue_id);
- int iavf_dev_rx_queue_stop(struct rte_eth_dev *dev, uint16_t rx_queue_id);
- void iavf_dev_rx_queue_release(struct rte_eth_dev *dev, uint16_t qid);
--
-+int iavf_rx_burst_mode_get(struct rte_eth_dev *dev, uint16_t queue_id,
-+			struct rte_eth_burst_mode *mode);
-+int iavf_tx_burst_mode_get(struct rte_eth_dev *dev, uint16_t queue_id,
-+			struct rte_eth_burst_mode *mode);
- int iavf_dev_tx_queue_setup(struct rte_eth_dev *dev,
- 			   uint16_t queue_idx,
- 			   uint16_t nb_desc,
--- 
-2.35.6
+Looks like this patch was affected by an infra failure - putting in a
+retest request for the CI testing system.
 
+On Sun, Apr 27, 2025 at 7:28=E2=80=AFAM Maayan Kashani <mkashani@nvidia.com=
+> wrote:
+
+> Queue sync operation was skipped on rule destroy.
+> Unlike on fw wqe rule create in which both fence and notify_hw
+> are set to true, on destroy fence was set to false causing
+> previous queue operation to be stuck in the queue forever.
+> Example:
+>    rule_a - HW rule, rule_b - FW WQE rule.
+> Sequence:
+>    rule_a destroy, burst=3D1 (HW rule put to queue but no DB)
+>    rule_b destroy, burst=3D0 (FW WQE rule cmd but no queue sync)
+> Outcome:
+>    rule_a is stuck forever in the queue - no completion.
+>
+> Fixes: 338aaf911665 ("net/mlx5/hws: add send FW match STE using gen WQE")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Alex Vesker <valex@nvidia.com>
+> Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
+> ---
+>  drivers/net/mlx5/hws/mlx5dr_send.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/mlx5/hws/mlx5dr_send.c
+> b/drivers/net/mlx5/hws/mlx5dr_send.c
+> index e121c7f7ed5..d01fc7ef2ca 100644
+> --- a/drivers/net/mlx5/hws/mlx5dr_send.c
+> +++ b/drivers/net/mlx5/hws/mlx5dr_send.c
+> @@ -339,7 +339,7 @@ void mlx5dr_send_stes_fw(struct mlx5dr_send_engine
+> *queue,
+>         pdn =3D ctx->pd_num;
+>
+>         /* Writing through FW can't HW fence, therefore we drain the queu=
+e
+> */
+> -       if (send_attr->fence)
+> +       if (send_attr->fence || send_attr->notify_hw)
+>                 mlx5dr_send_queue_action(ctx,
+>                                          queue_id,
+>
+>  MLX5DR_SEND_QUEUE_ACTION_DRAIN_SYNC);
+> --
+> 2.21.0
+>
+>
+
+--0000000000009738020633df86ec
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Recheck-request:=C2=A0iol-intel-Performance<br><br>Looks l=
+ike this patch was affected by an infra failure - putting in a retest reque=
+st for the CI testing system.</div><br><div class=3D"gmail_quote gmail_quot=
+e_container"><div dir=3D"ltr" class=3D"gmail_attr">On Sun, Apr 27, 2025 at =
+7:28=E2=80=AFAM Maayan Kashani &lt;<a href=3D"mailto:mkashani@nvidia.com">m=
+kashani@nvidia.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote=
+" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);=
+padding-left:1ex">Queue sync operation was skipped on rule destroy.<br>
+Unlike on fw wqe rule create in which both fence and notify_hw<br>
+are set to true, on destroy fence was set to false causing<br>
+previous queue operation to be stuck in the queue forever.<br>
+Example:<br>
+=C2=A0 =C2=A0rule_a - HW rule, rule_b - FW WQE rule.<br>
+Sequence:<br>
+=C2=A0 =C2=A0rule_a destroy, burst=3D1 (HW rule put to queue but no DB)<br>
+=C2=A0 =C2=A0rule_b destroy, burst=3D0 (FW WQE rule cmd but no queue sync)<=
+br>
+Outcome:<br>
+=C2=A0 =C2=A0rule_a is stuck forever in the queue - no completion.<br>
+<br>
+Fixes: 338aaf911665 (&quot;net/mlx5/hws: add send FW match STE using gen WQ=
+E&quot;)<br>
+Cc: <a href=3D"mailto:stable@dpdk.org" target=3D"_blank">stable@dpdk.org</a=
+><br>
+<br>
+Signed-off-by: Alex Vesker &lt;<a href=3D"mailto:valex@nvidia.com" target=
+=3D"_blank">valex@nvidia.com</a>&gt;<br>
+Signed-off-by: Maayan Kashani &lt;<a href=3D"mailto:mkashani@nvidia.com" ta=
+rget=3D"_blank">mkashani@nvidia.com</a>&gt;<br>
+---<br>
+=C2=A0drivers/net/mlx5/hws/mlx5dr_send.c | 2 +-<br>
+=C2=A01 file changed, 1 insertion(+), 1 deletion(-)<br>
+<br>
+diff --git a/drivers/net/mlx5/hws/mlx5dr_send.c b/drivers/net/mlx5/hws/mlx5=
+dr_send.c<br>
+index e121c7f7ed5..d01fc7ef2ca 100644<br>
+--- a/drivers/net/mlx5/hws/mlx5dr_send.c<br>
++++ b/drivers/net/mlx5/hws/mlx5dr_send.c<br>
+@@ -339,7 +339,7 @@ void mlx5dr_send_stes_fw(struct mlx5dr_send_engine *que=
+ue,<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 pdn =3D ctx-&gt;pd_num;<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 /* Writing through FW can&#39;t HW fence, there=
+fore we drain the queue */<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0if (send_attr-&gt;fence)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0if (send_attr-&gt;fence || send_attr-&gt;notify=
+_hw)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 mlx5dr_send_queue_a=
+ction(ctx,<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0qu=
+eue_id,<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0ML=
+X5DR_SEND_QUEUE_ACTION_DRAIN_SYNC);<br>
+-- <br>
+2.21.0<br>
+<br>
+</blockquote></div>
+
+--0000000000009738020633df86ec--
