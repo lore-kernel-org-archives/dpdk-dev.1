@@ -2,70 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73D48C369DC
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Apr 2025 23:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B61A1C369DC
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Apr 2025 23:59:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D69BE402A7;
-	Wed, 30 Apr 2025 01:55:17 +0200 (CEST)
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com
- [209.85.215.175])
- by mails.dpdk.org (Postfix) with ESMTP id BC82A402A3
- for <dev@dpdk.org>; Wed, 30 Apr 2025 01:55:15 +0200 (CEST)
-Received: by mail-pg1-f175.google.com with SMTP id
- 41be03b00d2f7-b074d908e56so4955260a12.2
- for <dev@dpdk.org>; Tue, 29 Apr 2025 16:55:15 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id A06CA402A7;
+	Wed, 30 Apr 2025 01:59:57 +0200 (CEST)
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com
+ [209.85.216.43]) by mails.dpdk.org (Postfix) with ESMTP id 8625E402A3
+ for <dev@dpdk.org>; Wed, 30 Apr 2025 01:59:56 +0200 (CEST)
+Received: by mail-pj1-f43.google.com with SMTP id
+ 98e67ed59e1d1-306bf444ba2so6333354a91.1
+ for <dev@dpdk.org>; Tue, 29 Apr 2025 16:59:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1745970914;
- x=1746575714; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1745971195;
+ x=1746575995; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=2KMop5urCKZgPEgwRRGVX4IcvOShxPnVAmalkcTeHd8=;
- b=btzXlsOm4I2yM/iWuhphHx/yWAmLYa8Fxrb02oRH39PAKLzFHJQbAMKJFRrOab9Dh3
- FtkGWIAnrXCMAgySZyvjji57ED2FVf6T0aiio/HY8NHWb2/ABwzEjsYxTS0elLSE1kt9
- imfeAmGA3Uj8pSgrYxFjcUR7Urstci/LCDNgOfI0Xrb6kGgyxZWXPFSpYHvGgOJQoG+u
- x2eqaeqLg7EYVb1gG6FryYaYaXyEYJ7qhGS1tYATItq7VBvbxtrG2McXoItYf38P0RX2
- xBh0nBt+T4bJXRiK/51o2JEZP9I8l+DJ/4CkQdlaKQOg9qRwhkARPVB1PuSazL/f0eCf
- 9tXA==
+ bh=xEMtJGQVNGEGfp/6cbxiRk+yIWPihehgdnBPKd1l1BI=;
+ b=bPDJ7P+vPr1UdF2KH5QSwfI9vbzgpvZfASdF2isG8H7+7xCcRcGaXqmNo6RMUNEMiG
+ 7or6WaFRjGNoK5ZpMbOvYqu3J+vrtv6svzIMMIwwgU/wRdVRD1zhBCEdxMeoWTYVcQEu
+ i46umAy12+G3X6xpJrMa3MkGm15e0TfxUav7c1aDfV5Yr4h/KO1Kd6qso5y1EXWDnuO9
+ /RQMw1x1yvF1AcNBeuVydbRlOhS+S7HBNYtJl+bZJf47h0XfChbEAyVx2zyBobpSY/t6
+ 6aNlzJynQwqy8P42QJ0cpi+XMaCIuznPA033aRadpKwM1NL+tjlo4o73h2cUFdcvhda4
+ U9Bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1745970914; x=1746575714;
+ d=1e100.net; s=20230601; t=1745971195; x=1746575995;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=2KMop5urCKZgPEgwRRGVX4IcvOShxPnVAmalkcTeHd8=;
- b=Z1IJzi8wFXsThhi6z5Y8eTwYcRAUpjtuNKK3h3YXKwJxammY4+L07/qot1uLRStlCS
- z76NbfeImUtwwRiRuWt/Thh/G1sfaJnmg5VyfR2O/urZ/PofE0g0n8t0Fp2ARLs85XLO
- PFI+QDKucZyknEPcr6Ulvg/Zj88ZbEXaz4ZVoi8RfTOSaCl27zVxcpmpHEXGl9wXj8fV
- dWLm7u2sw3zAXSek9CixJzJuVHYhtoJnnk4t/m5SV8fiTRN0FOljrEBpdljC1FIZR0Th
- 2N83Vz1tTpuUhGaFty7FsVSlXC+2vk94Ven1DWT81Gml4VayOmqY5yJzF7R2dbdMw9hS
- ZteA==
+ bh=xEMtJGQVNGEGfp/6cbxiRk+yIWPihehgdnBPKd1l1BI=;
+ b=Rbv7kXU3LzZZ84Na3fKqVTFFPDkqTKQDsOzaQpA9IfqDYwnmFRocCBEry9Iq/bjqbx
+ lNjXbQK69RljzQKngDz+g01QhpoNve2ZS+SviF1jU72BWmZcMbTQ20QYwWxTVuDr+wZ/
+ JSKKJYAuieg6ynROOgIpZz/5z7cvZ3yw+GzCsvU7uSlRHsawsNb7Iuofu42KUxtlbn48
+ hHX9MNi3/JvXytAATEjXV+jfQ5wfo27up+MXWnW52LPWYTCFTXzMK+7YVfr93ykBO57q
+ el7/xBT3znuYdfwJmtJe4bWM8kxSlaZOvOYI86OvEWSr/GvqaYIst0j+NQ0xWtpkFVLe
+ /Vug==
 X-Forwarded-Encrypted: i=1;
- AJvYcCXqXOpiTAIU8LHSILseC4i5AZFgg7AjOAk9hsSdbRKc76DzfZbbzRTKeoBeF5hauI+Tv88=@dpdk.org
-X-Gm-Message-State: AOJu0YzzwOS0KDYexti1gXn5taTZn2oz6SvSuoLuCAEWifExZ1squ6O1
- at98kXRhZMg8DXmlrvhyNS8jMY7Cd2I3Ff666Mnd0tbSH2Bb+oN/IOi8nC4LP5U=
-X-Gm-Gg: ASbGnctcYvxSZL6QpGbIdW7OA3XhJZkpRpcBBCz18fxQdzZkp/dWyZ2XOVzcsK2n1yZ
- ZZw9sVSaaWpmXN8p1/tjBXN6uESwOc95c8Fp9c4PQE21IqXtk+HQhTRff230hfcgbKNYhU9DfHS
- 6MhUeanvNinLsT5WbdOP4sC3y4S+iDtLZc8F1VQK7le5y0rCTw52rU1Hgn6MbZiDuPR0mo7NGZs
- KtDap0mRH/uMkBnea+3DOXdQ6PEavUgg1L3Cp9Pujuh5qPaKvQhwA6ynDsMvPRQoQlIeDle5Qjh
- oe6k41FgSzz+2Buit5Qk4p+YqECP9Hy5So2OG41oDQ8WwJtt3F7+i9pKwkegnTIwJNhS6X0TCIa
- uXNP8vL07yG6FWpSS
-X-Google-Smtp-Source: AGHT+IFt98G8IyQxmrynzallG4Td5eOB6d/nCJ9jAP1M4+xI+njMYiu6TpC1pWhWUH1yFrtOzVqgZw==
-X-Received: by 2002:a17:90b:2e8e:b0:2ff:4bac:6fbf with SMTP id
- 98e67ed59e1d1-30a343ce7abmr961274a91.7.1745970914524; 
- Tue, 29 Apr 2025 16:55:14 -0700 (PDT)
+ AJvYcCXJHMrBlOzI7pUMoo/j4kRjs2cFWhhv5Ij7rtZsqDF7faGkvthGg8CMHLnOo3SM7e5gUXs=@dpdk.org
+X-Gm-Message-State: AOJu0YwqP9ve0uaH0+VtxfEC23i8kJKxRPv91A+olzvavRMMTW6A8hEx
+ RAWYRw+tg1+r1Lblcu3kXxdlxZIaRvRe8ttHQpqsyHorCgbMdhdKs0bmCpBjoOQ=
+X-Gm-Gg: ASbGncsaDsSpRKnyp5u+oDpF2oUDjtGE8Rjf6phM/bJlhzzyrDlD/Dvq8yzC5tbzzzd
+ GNbqaWfqm3N8lWWhQQDQ+5GHNNk1BuW/PulBQuRGxkRNIlBURKPEL7dgyB6flh/88iqYpsi0Kqw
+ Eit1enCb0+Xl6puqxIedvYRvrtbvCwCZWncfb93QxKaGKqjEBUaqO4T6wIz8QRa7fJq32RHuuPa
+ cugur87XqVZJvqxgb+MSaDS8lVVFcHgCn7BkwjtZk4zlwOFFDcEHQaPcutKm2P4GLpeV7ZMsuYB
+ BvHLlz8RQxEpv+l8VvpPnJyH2OUdUaIoFhSbyCw2ExBPicireHhf4B7uJNyoOsUhGlZRv+awGWn
+ /zIwoXyh1LUq9eGw3
+X-Google-Smtp-Source: AGHT+IHsFZBxL3i5zWYRZAwnK/w31PODw5tdf6hIFphO4iZAm1nC1i/brDp7/LVPrLE1LG5X6pi1dw==
+X-Received: by 2002:a17:90b:3f87:b0:309:ffa5:d526 with SMTP id
+ 98e67ed59e1d1-30a33300f70mr1443064a91.16.1745971195477; 
+ Tue, 29 Apr 2025 16:59:55 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-30a3480f0ccsm214217a91.30.2025.04.29.16.55.13
+ 98e67ed59e1d1-30a34a3990fsm159271a91.38.2025.04.29.16.59.54
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 29 Apr 2025 16:55:14 -0700 (PDT)
-Date: Tue, 29 Apr 2025 16:55:11 -0700
+ Tue, 29 Apr 2025 16:59:55 -0700 (PDT)
+Date: Tue, 29 Apr 2025 16:59:53 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: <skori@marvell.com>
 Cc: Thomas Monjalon <thomas@monjalon.net>, Ferruh Yigit
  <ferruh.yigit@amd.com>, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
  <dev@dpdk.org>
 Subject: Re: [PATCH] ethdev: remove callback checks from fast path
-Message-ID: <20250429165511.26414666@hermes.local>
+Message-ID: <20250429165953.0ff82613@hermes.local>
 In-Reply-To: <20250429181132.2544771-1-skori@marvell.com>
 References: <20250429181132.2544771-1-skori@marvell.com>
 MIME-Version: 1.0
@@ -87,21 +86,40 @@ Errors-To: dev-bounces@dpdk.org
 On Tue, 29 Apr 2025 23:41:30 +0530
 <skori@marvell.com> wrote:
 
-> @@ -7131,14 +7118,11 @@ rte_eth_tx_queue_count(uint16_t port_id, uint16_t queue_id)
->  		goto out;
->  	}
->  #endif
-> -	if (fops->tx_queue_count == NULL) {
-> -		rc = -ENOTSUP;
-> -		goto out;
-> -	}
-> -
->  	rc = fops->tx_queue_count(qd);
 >  
-> +#ifdef RTE_ETHDEV_DEBUG_TX
->  out:
-> +#endif
+> +static inline void
+> +rte_eth_set_dummy_fops(struct rte_eth_dev *eth_dev)
 
-I think you could just fix the ETHDEV_DEBUG_TX to just return.
-Other ethdev functions skip calling tracing for
-the case of errors.
+Not fastpath, do not add inline here
+
+> +{
+> +	eth_dev->rx_pkt_burst = rte_eth_pkt_burst_dummy;
+> +	eth_dev->tx_pkt_burst = rte_eth_pkt_burst_dummy;
+> +	eth_dev->tx_pkt_prepare = rte_eth_tx_pkt_prepare_dummy;
+> +	eth_dev->rx_queue_count = rte_eth_rx_queue_count_dummy;
+> +	eth_dev->tx_queue_count = rte_eth_tx_queue_count_dummy;
+> +	eth_dev->rx_descriptor_status = rte_eth_descriptor_status_dummy;
+> +	eth_dev->tx_descriptor_status = rte_eth_descriptor_status_dummy;
+> +	eth_dev->recycle_tx_mbufs_reuse = rte_eth_recycle_tx_mbufs_reuse_dummy;
+> +	eth_dev->recycle_rx_descriptors_refill = rte_eth_recycle_rx_descriptors_refill_dummy;
+> +}
+> +
+>  /**
+>   * Copy pci device info to the Ethernet device data.
+>   * Shared memory (eth_dev->data) only updated by primary process, so it is safe
+> @@ -147,6 +161,11 @@ rte_eth_dev_pci_generic_probe(struct rte_pci_device *pci_dev,
+>  	if (!eth_dev)
+>  		return -ENOMEM;
+>  
+> +	/* Update fast path ops with dummy callbacks. Driver will update
+> +	 * them with required callbacks in the init function.
+> +	 */
+> +	rte_eth_set_dummy_fops(eth_dev);
+> +
+
+What about non PCI ethdev's?
+And in PCI devices there is lots of duplicated code already initilizes these.
+Needs to be consolidated and documented. Actually the whole probe process needs more documentation.
+
+Also need to make sure secondary process setup is not broken.
+
