@@ -2,62 +2,64 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB5DC369DC
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Apr 2025 16:04:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA6CC369DC
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Apr 2025 16:15:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A1887402A3;
-	Tue, 29 Apr 2025 18:04:18 +0200 (CEST)
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com
- [209.85.216.53]) by mails.dpdk.org (Postfix) with ESMTP id 79EEB40277
- for <dev@dpdk.org>; Tue, 29 Apr 2025 18:04:17 +0200 (CEST)
-Received: by mail-pj1-f53.google.com with SMTP id
- 98e67ed59e1d1-309fac646adso3857537a91.1
- for <dev@dpdk.org>; Tue, 29 Apr 2025 09:04:17 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1F978402A3;
+	Tue, 29 Apr 2025 18:15:52 +0200 (CEST)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com
+ [209.85.218.48]) by mails.dpdk.org (Postfix) with ESMTP id 20F0440277
+ for <dev@dpdk.org>; Tue, 29 Apr 2025 18:15:50 +0200 (CEST)
+Received: by mail-ej1-f48.google.com with SMTP id
+ a640c23a62f3a-acb5cf13996so85173766b.1
+ for <dev@dpdk.org>; Tue, 29 Apr 2025 09:15:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1745942656; x=1746547456; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1745943349; x=1746548149; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=HkGhcxO1r1YMM97rwmRTM/haKUrqVJKWceniFL6pL9E=;
- b=SSDA/O27d0m7MWUMLpZtJiDxHwFMSzebPEpjAGtbMhAF+01c70T6jh8hihgd1cHs4E
- 26jKda4qCqflFAoSLyohJCmVh+j2Mdq+dUDvd/kh/5Vjrhk2vAU+BqdE7AA2a+7EkXay
- gbF1XI4hlq8YCydCywzeBVu/+tFQ3O2PEw5Jc6SSlOe9eCcamYikBQBuzlsScm1izY6/
- GMcJbKT85jF033qgoHHLlPY7tbt3wAGHwM733CqNXvZPyYTEhh0w9MKaviNlAZGLGet6
- FYr2N3x5JELd6EPr/OX+6h0YU5PRkrvrrKc1t/z2iu/CCe4uJQrr48T2fFADJYdrg81R
- Tisg==
+ bh=TfjUJDiyEbv79smmZdpzErOuCOe+NQILYIzwXVuAaO0=;
+ b=j4unquYoh3flhQTEeWWB7cjQuDJcRGrLv82PmhTPoIlsHIOYYg8fnX/Gzm8YFMOpY1
+ mBVLPb3UvO6ykxvVONGW2o4v9ojQh1oJ0mAyWGkXfBToaIfF03WxMuCWY6/1eZH+JgIZ
+ zOG2E3ayyQVddLuUBQuGFaQWQlhBHGENieguLdIpYUjr1owKaFk0aN/2jNNrTqdkeplO
+ RDGrkFHvXtkMhvd2YPg4fVYS895Pa18T/Ht4N1LEPef/YwLjp94WKf1H5BIyNBIiik7w
+ y77KHSSdzHs3xkG493dck3s3W3cYKoOwrhPYsgiCjEIxd6hL9VHsWniZG4+ZR2RjHQ4P
+ 3fRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1745942656; x=1746547456;
+ d=1e100.net; s=20230601; t=1745943349; x=1746548149;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=HkGhcxO1r1YMM97rwmRTM/haKUrqVJKWceniFL6pL9E=;
- b=Wiz7vPvTYOqUeTj+RaSpcdHYWH6EgbnGdYosK+6xr42rx3XvhHHTu59jn3uq7SApgl
- sFJycjC7ASD1FMA9bUuHh/ZGJ3nlB9eJ3PJ34TRGfzQ9sWBsyI1grX+usnRZF1NwvW3F
- WuTHKsMCInXV9bO15JR2bLZW4eVxUBdEKDH9THK4qyWeCXeaCy8Q/+eTA9aqLzxrDS+G
- SFR7QZ1C2k47hdQK9cfrYHBPNjfyBq+RRj0M1ALP5flAKsoqmoLFdpI5k912VXJMQsDN
- wGrOwj0aIxM92VyUV1IPngyjsWZQ+gTlFvEq4lqp2jFVohKcOXz968ZE70qLZHAcxU7I
- ULbQ==
-X-Gm-Message-State: AOJu0Yyc86DIEkQzDufmQJ4d0/RdjfgHAbpOGGUkwinUPXXXSnKh1sba
- eYsIdNbW0BRw8C6cdpS1hs9oGwth2VNuEscvbS/WZC8I63IYarET8K9w7SaWSWvLLvqP2gyfeJz
- N+WaKdW9TLqr3JbHnCy0Spy9xvnN3Xwb7YqyD2g==
-X-Gm-Gg: ASbGncuv05+L9GtyiVDYq2ZRFo1K2Il8CWf6alkP/r6FZx04zzJVMqJcllZ+gmcJhid
- PNWrHulEuScvSf14kT/D7joioYouq+TCT3KHTEWJWB8149TpZgKEuKBXvGexS+knCd6/72XA0RD
- hmD963gkWGqomkISvPfXVhq+Q=
-X-Google-Smtp-Source: AGHT+IFCZW8c8lVHduJ1oyZy+yp7Ap1UlZdZUbR8dXWFhO1rbgf+siGmtNXlT60Kaxh0Gj32IzQBbrpR48EHnubMxVI=
-X-Received: by 2002:a17:90b:3504:b0:2fa:42f3:e3e4 with SMTP id
- 98e67ed59e1d1-30a22444ab0mr4922058a91.3.1745942655925; Tue, 29 Apr 2025
- 09:04:15 -0700 (PDT)
+ bh=TfjUJDiyEbv79smmZdpzErOuCOe+NQILYIzwXVuAaO0=;
+ b=rT2u1cDj7xObjTRrDObx4sFPrl1ojHtWXAxFa1gZGXJwbaAqK7ITLnobCQtXawTv26
+ 0njgAHvg8+cYbKYfTfGWckdSiNdMG9+Mqrl0WB10eRTQUg9SP8AS0ekzRPg5HxDq+BdU
+ s5PvpYRiJjdt0dvQtU42pHLj1+tdLMRQkd1XtFL6TA3oJgXuXAC5Y6/IlylJaI+QWMNC
+ ofXdeYK2Ad1AghwDw+/mZ8INWKCADFdmawGOMLY5NUlzj2Voh7HHvV7fodukRuAnZcwh
+ n8wbOHtiRFuNMMhOV2XDhi9rmJqyr1yXrunPbGjjBJmxQsbm1D46c7EntJBs4SgxLqGO
+ OxxQ==
+X-Gm-Message-State: AOJu0YxOFCGbSl39YLHXKqxKkDacBaE0ArFfPxe6vnR08cQmmB1m0ktg
+ sgOuqri629MZluWH2XcWcVbD+DxWL/kpcIE7xtmOloFMc7OmGpX+TVCRKTsTVrWaM9c9d4xvaF/
+ 1MHl6CiI77ltWwwAdKcZY/Y009mH65Z33
+X-Gm-Gg: ASbGncvfmtsiC9ZYmCUugN6d4yQAsKKCWJJDXHxE4MklSRVvi1om+JZEb9hLLw2Q7+h
+ nttH1ujDPyc+kL0tMD+YaVbspruNtEBiVMzDUpPm5IT+uBwibkTt6cGwTyhNJE3wPcqpJFQvuUJ
+ EMWSDt++PLDVAck4O7uCmJ7HAN+ugrvMghV6Y/lkfgqkW0hFSCowYCZNUNV/Wa0xgPYbE=
+X-Google-Smtp-Source: AGHT+IEBqFArzq6LuUGHzu/2nTXQ5HXUJ9UVLtPPcl89JzsFIo4ogxrVx4syHfJJ0bqmtmfS0XzGwAglDo8nSIciYvE=
+X-Received: by 2002:a17:907:7e9a:b0:ac6:c179:1446 with SMTP id
+ a640c23a62f3a-ace71038c8emr561687466b.2.1745943349354; Tue, 29 Apr 2025
+ 09:15:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <CABsV3rARRuh8Qhm4q+QCDAEmA8WP+6QK241ik4qoLyGJBPFdHg@mail.gmail.com>
- <aBDSliZlrdd1hOst@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <aBDSliZlrdd1hOst@bricha3-mobl1.ger.corp.intel.com>
-From: spyroot <spyroot@gmail.com>
-Date: Tue, 29 Apr 2025 20:04:04 +0400
-X-Gm-Features: ATxdqUG3Ohpzad75zHpWE6CYcK1DANI7v_WOKHq-08MoxjKfhNN0LCPMQBfhIPU
-Message-ID: <CABsV3rCS61VvS08yh_g5wXDErV=utD=tYut8P=C1=-BCm0KTLQ@mail.gmail.com>
-Subject: Re: 810 VFIO , SRIOV, multi-process stats read DPDK testpmd.
-To: Bruce Richardson <bruce.richardson@intel.com>
+References: <CAPBAu3WOch_LYAUp_R47-=Uaos1yJLKgpRBM1ewJ+vaRysCDCQ@mail.gmail.com>
+ <20250426082843.736964ba@hermes.local>
+ <CAPBAu3WOq6_77mBvd=B8x2tso9hWpjFTyUuEeJgZazSm_y_GHQ@mail.gmail.com>
+ <20250428083712.50b2e7ce@hermes.local>
+In-Reply-To: <20250428083712.50b2e7ce@hermes.local>
+From: Prashant Upadhyaya <praupadhyaya@gmail.com>
+Date: Tue, 29 Apr 2025 21:45:36 +0530
+X-Gm-Features: ATxdqUHmpMnwA8bSxtGKV-hxAUgtip9exO2Xb34LHVrBTuGMGHhld5gviOl7pu0
+Message-ID: <CAPBAu3UDao48OmcnEMQw9-W3pesM1W2ftQsEG3EtHDxxOXCc=Q@mail.gmail.com>
+Subject: Re: Regarding Mellanox bifurcated driver on Azure
+To: Stephen Hemminger <stephen@networkplumber.org>
 Cc: dev@dpdk.org
-Content-Type: multipart/alternative; boundary="000000000000ce00f50633ecf3e7"
+Content-Type: multipart/alternative; boundary="00000000000022e8b40633ed1d3a"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -71,236 +73,252 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000ce00f50633ecf3e7
+--00000000000022e8b40633ed1d3a
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Thank you very much, Bruce, for taking the time.
-
-I'm observing odd behavior when PF either does not show stats for some VF
-or leaks VF stats from one to another.
-
-i.e., generator A sent 100 packets to VF A and generator B 100 to VF B;
-VF A and PF ICEN stats show 200 packets per VF stats.
-
-(Note each flow is destined to the corresponding MAC of VF,
-and prior to a generation, MAC entry is confirmed on the L2 switch, TX VF.
-So the packets aren't flooded, nor is it an unknown unicast frame).
-
-The second condition, PF, shows zero stats for one VFs, but two RX
-instances of testpmd
-show correct statistics. (i.e A should see 100, B should see 100, A and B
-each report 100, but PF reports 0 for either A VF or B VF).
-
-The results are the same whether tested on the same node (k8s)
-i.e lo-locate with TX PODs or on two different k8s nodes.
-
-Condition two is observed if you do a single flow (i.e., hash on RX ide
-land packets to the same RX queue). PF doesn't account for or report
-correct values if you have two readers (i.e., two DPDK instances).
-
-(Note: TX reports correct stats for A and B)
-
-i.e. A sent 100, B sent 100
-switch shows 200.
-
-TX - A - VF A -- (L2 switch) -- (RX side) VF A -- testpmd
-TX - B - VF B - - (L2 switch) -- (RX side) VF B -- testpmd.
-
-On the TX side, 3 points of measurement.
-VF TX stats, PF TX stats, L2 switch (total pkt,ppks etc) TX and outgoing
-port RX.
-
-Kind Regards,
-Mus
-
-On Tue, Apr 29, 2025 at 5:22=E2=80=AFPM Bruce Richardson <bruce.richardson@=
-intel.com>
+On Mon, 28 Apr 2025 at 21:07, Stephen Hemminger <stephen@networkplumber.org>
 wrote:
 
-> On Mon, Apr 14, 2025 at 07:21:57PM +0400, spyroot wrote:
-> >    Hi Folks,
+> On Mon, 28 Apr 2025 11:31:10 +0530
+> Prashant Upadhyaya <praupadhyaya@gmail.com> wrote:
+>
+> > On Sat, 26 Apr 2025 at 20:58, Stephen Hemminger <
+> stephen@networkplumber.org>
+> > wrote:
 > >
-> >    I'm observing some unexpected behavior related to how statistics are
-> >    retrieved from a Physical Function (PF) on an Intel 810 NIC.
-> >
-> >    Scenario: I have two dpdk-testpmd instances running in separate
-> >    Kubernetes pods (same worker node). Each instance uses the -a flag t=
-o
-> >    bind to a different VF. (i.e to have consistent port id 0)
-> >
-> >    Questions:
-> >     1. PF Statistics and 64B Line Rate:
-> >        I'm noticing that the RX packet-per-second value reported on the
-> PF
-> >        side for a given VF is higher than the theoretical maximum for
-> >        64-byte packets.
-> >           + Does the Intel 810 PMD apply any kind of optimization,
-> >             offloading, or fast path processing when two VFs (e.g., A a=
-nd
-> >             B) are on the same PF?
->
-> This wouldn't be something that the PMD does. The forwarding from VF to V=
-F,
-> or PF to VF would happen internally in the hardware.
->
-> >     2. Concurrent Stats Polling:
-> >           + When two separate dpdk-testpmd processes are running (in po=
-d
-> A
-> >             and pod B), does the PMD or driver layer support concurrent
-> >             reading of PF statistics?
->
-> Looking at the iavf PMD, the reading of stats is done by sending an admin=
-q
-> message to the PF and reading the response. Any serialization of stats
-> reading would then be done at the PF or adminq management level. The VF
-> should not need to worry about whether another VF is reading the stats at
-> the same time. [In fact it would be a serious bug if one VF needed to be
-> aware of what other VFs were doing, since different VFs could be attached
-> to different virtual machines which should be isolated from each other]
->
-> >           + Is there any locking or synchronization mechanism involved
-> >             when multiple testpmd instances attempt to pull stats from
+> > > On Fri, 25 Apr 2025 23:17:30 +0530
+> > > Prashant Upadhyaya <praupadhyaya@gmail.com> wrote:
+> > >
+> > > > Hi,
+> > > >
+> > > > I am having a VM on Azure where I have got two 'accelerated
+> networking'
+> > > > interfaces of Mellanox
+> > > > # lspci -nn|grep -i ether
+> > > > 6561:00:02.0 Ethernet controller [0200]: Mellanox Technologies
+> MT27710
+> > > > Family [ConnectX-4 Lx Virtual Function] [15b3:1016] (rev 80)
+> > > > f08c:00:02.0 Ethernet controller [0200]: Mellanox Technologies
+> MT27710
+> > > > Family [ConnectX-4 Lx Virtual Function] [15b3:1016] (rev 80)
+> > > >
+> > > > I have a DPDK application which needs to obtain 'all' packets from
 > the
-> >             same PF simultaneously? ( in essence, does a firmware/OF
-> >             support concurrent read).
+> > > NIC.
+> > > > I installed the drivers, compiled DPDK24.11 (Ubuntu20.04), my app
+> starts
+> > > > and is able to detect the NIC's.
+> > > > Everything looks good
+> > > > myapp.out -c 0x07 -a f08c:00:02.0 -a 6561:00:02.0
+> > > > EAL: Detected CPU lcores: 8
+> > > > EAL: Detected NUMA nodes: 1
+> > > > EAL: Detected shared linkage of DPDK
+> > > > EAL: Multi-process socket /var/run/dpdk/rte/mp_socket
+> > > > EAL: Selected IOVA mode 'PA'
+> > > > EAL: VFIO support initialized
+> > > > mlx5_net: Default miss action is not supported.
+> > > > mlx5_net: Default miss action is not supported.
+> > > > All Ports initialized
+> > > > Port 0 is UP (50000 Mbps)
+> > > > Port 1 is UP (50000 Mbps)
+> > > >
+> > > > The trouble is that the ARP packets are not being picked up by my
+> DPDK
+> > > > application, I see them being delivered to the kernel via the eth
+> > > interface
+> > > > corresponding to the port (MLX is a bifurcated driver, you don't
+> really
+> > > > bind to the NIC, so you still see the eth interfaces at linux level
+> and
+> > > can
+> > > > run tcpdump on those, I see ARP packets in the tcpdump there on the
+> > > > interface)
+> > > > I can receive UDP packets in my DPDK app though.
+> > > >
+> > > > My application is not setting any rte_flow rules etc. so I was
+> expecting
+> > > > that by default my dpdk app would get all the packets as is normally
+> the
+> > > > case with other NIC's
+> > > > Is there something I need to configure for Mellanox NIC somewhere
+> such
+> > > that
+> > > > I get 'all' the packets including ARP packets in my DPDK app ?
+> > > >
+> > > > Regards
+> > > > -Prashant
+> > >
+> > > The Mellanox device in Azure networking cards is only used as a VF
+> switch.
+> > > You can go back to earlier DPDK presentations for more detail.
+> > >
+> > > Three reason bifurcation won't work.
+> > >  1. Only some of the packets arrive on the VF. All non-IP show up on
+> > >     the synthetic device. The VF is only used after the TCP three way
+> > >     handshake.
+> > >  2. The Netvsc PMD doesn't handle flow rules.
+> > >  3. The VF can be removed and restored any time (by hypervisor)
+> > >     it is not a stable entity.
+> > >
+> > >
+> >  Thanks Stephen, so are we concluding that DPDK apps are unusable in
+> Azure
+> > as per my requirements, is there no work around or any other possibility
+> to
+> > use DPDK in Azure VM ? Please do send me a link to the correct
+> presentation
+> > I should refer to.
 > >
+> > Regards
+> > -Prashant
 >
-> See above.
->
-> /Bruce
->
-> >    Thank you,
-> > cd /usr/local/bin && dpdk-testpmd \
-> >   --main-lcore \$main -l \$cores -n 4 \
-> >   --socket-mem 2048 \
-> >   --proc-type auto --file-prefix testpmd_rx0 \
-> >   -a \$PCIDEVICE_INTEL_COM_DPDK \
-> >   -- --forward-mode=3Drxonly --auto-start --stats-period 1'"
-> >
-> > cd /usr/local/bin && dpdk-testpmd \
-> >   --main-lcore \$main -l \$cores -n 4 \
-> >   --socket-mem 2048 \
-> >   --proc-type auto --file-prefix testpmd_rx1 \
-> >   -a \$PCIDEVICE_INTEL_COM_DPDK \
-> >   -- --forward-mode=3Drxonly --auto-start --stats-period 1'"
+> Remember in the cloud network interfaces are free, there really is no need
+> for bifurication just create two interfaces to VM, one for DPDK, and one
+> for
+> non DPDK.
 >
 
---000000000000ce00f50633ecf3e7
+I am afraid Stephen, I am not entirely clear about your suggestion.
+When I create an Accelerated Networking interface on Azure (with the
+intention of my DPDK app fully controlling it), it is automatically giving
+one eth interface (representing slowpath) and one enp interface (presumably
+the fast path and which my dpdk app detects and operates upon). It is this
+pair that is created automatically for a single packet interface by Azure.
+The trouble is the above bifurcation because I don't get to see all the
+packets from the NIC on DPDK controlled interface -- my DPDK app wants to
+see all the packets.
+
+Regards
+-Prashant
+
+--00000000000022e8b40633ed1d3a
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"ltr"><div dir=3D"ltr">Thank you very much, Bruce, for taking th=
-e time. <br><br>I&#39;m observing odd behavior when PF either does not show=
- stats for some VF <br>or leaks VF stats from one to another.<br><br>i.e., =
-generator A sent 100 packets to VF A and generator B 100 to VF B; <br>VF A =
-and PF ICEN stats show 200 packets per VF stats. <br><br>(Note each flow is=
- destined to the corresponding MAC of VF, <br>and prior to a generation, MA=
-C entry is confirmed on the L2 switch, TX VF.=C2=A0 <br>So the packets aren=
-&#39;t flooded, nor is it an unknown unicast frame). <br><br>The second con=
-dition, PF, shows zero stats for one VFs, but two RX instances of testpmd <=
-br>show correct statistics. (i.e A should see 100, B should see 100, A and =
-B <br>each report 100, but PF reports 0 for either=C2=A0A VF or B VF).</div=
-><div dir=3D"ltr">=C2=A0=C2=A0<br>The results are the same whether tested o=
-n the same node (k8s) <br>i.e lo-locate with TX PODs or on two different k8=
-s nodes.<br><br>Condition two is observed if you do a single flow (i.e., ha=
-sh on RX ide land packets to the same RX queue). PF doesn&#39;t account for=
- or report correct values if you have two readers (i.e., two DPDK instances=
-). <br><br>(Note: TX reports correct stats for A and B) <br><br>i.e. A sent=
- 100, B sent 100<br>switch shows 200.<br><br>TX - A - VF A -- (L2 switch) -=
-- (RX side) VF A -- testpmd<br>TX - B - VF B - - (L2 switch) -- (RX side) V=
-F B -- testpmd.<br><br>On the TX side, 3 points of measurement. <br>VF TX s=
-tats, PF TX stats, L2 switch (total pkt,ppks etc) TX and outgoing port RX.<=
-br><br>Kind Regards,<br>Mus<br><br></div><div class=3D"gmail_quote gmail_qu=
-ote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, Apr 29, 2025 a=
-t 5:22=E2=80=AFPM Bruce Richardson &lt;<a href=3D"mailto:bruce.richardson@i=
-ntel.com">bruce.richardson@intel.com</a>&gt; wrote:<br></div><blockquote cl=
-ass=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid=
- rgb(204,204,204);padding-left:1ex">On Mon, Apr 14, 2025 at 07:21:57PM +040=
-0, spyroot wrote:<br>
-&gt;=C2=A0 =C2=A0 Hi Folks,<br>
-&gt; <br>
-&gt;=C2=A0 =C2=A0 I&#39;m observing some unexpected behavior related to how=
- statistics are<br>
-&gt;=C2=A0 =C2=A0 retrieved from a Physical Function (PF) on an Intel 810 N=
-IC.<br>
-&gt; <br>
-&gt;=C2=A0 =C2=A0 Scenario: I have two dpdk-testpmd instances running in se=
-parate<br>
-&gt;=C2=A0 =C2=A0 Kubernetes pods (same worker node). Each instance uses th=
-e -a flag to<br>
-&gt;=C2=A0 =C2=A0 bind to a different VF. (i.e to have consistent port id 0=
-)<br>
-&gt; <br>
-&gt;=C2=A0 =C2=A0 Questions:<br>
-&gt;=C2=A0 =C2=A0 =C2=A01. PF Statistics and 64B Line Rate:<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 I&#39;m noticing that the RX packet-per-sec=
-ond value reported on the PF<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 side for a given VF is higher than the theo=
-retical maximum for<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 64-byte packets.<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0+ Does the Intel 810 PMD apply=
- any kind of optimization,<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0offloading, or fast pat=
-h processing when two VFs (e.g., A and<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0B) are on the same PF?<=
-br>
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Mon, 28 Apr =
+2025 at 21:07, Stephen Hemminger &lt;<a href=3D"mailto:stephen@networkplumb=
+er.org">stephen@networkplumber.org</a>&gt; wrote:<br></div><blockquote clas=
+s=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid r=
+gb(204,204,204);padding-left:1ex">On Mon, 28 Apr 2025 11:31:10 +0530<br>
+Prashant Upadhyaya &lt;<a href=3D"mailto:praupadhyaya@gmail.com" target=3D"=
+_blank">praupadhyaya@gmail.com</a>&gt; wrote:<br>
 <br>
-This wouldn&#39;t be something that the PMD does. The forwarding from VF to=
- VF,<br>
-or PF to VF would happen internally in the hardware.<br>
+&gt; On Sat, 26 Apr 2025 at 20:58, Stephen Hemminger &lt;<a href=3D"mailto:=
+stephen@networkplumber.org" target=3D"_blank">stephen@networkplumber.org</a=
+>&gt;<br>
+&gt; wrote:<br>
+&gt; <br>
+&gt; &gt; On Fri, 25 Apr 2025 23:17:30 +0530<br>
+&gt; &gt; Prashant Upadhyaya &lt;<a href=3D"mailto:praupadhyaya@gmail.com" =
+target=3D"_blank">praupadhyaya@gmail.com</a>&gt; wrote:<br>
+&gt; &gt;=C2=A0 <br>
+&gt; &gt; &gt; Hi,<br>
+&gt; &gt; &gt;<br>
+&gt; &gt; &gt; I am having a VM on Azure where I have got two &#39;accelera=
+ted networking&#39;<br>
+&gt; &gt; &gt; interfaces of Mellanox<br>
+&gt; &gt; &gt; # lspci -nn|grep -i ether<br>
+&gt; &gt; &gt; 6561:00:02.0 Ethernet controller [0200]: Mellanox Technologi=
+es MT27710<br>
+&gt; &gt; &gt; Family [ConnectX-4 Lx Virtual Function] [15b3:1016] (rev 80)=
 <br>
-&gt;=C2=A0 =C2=A0 =C2=A02. Concurrent Stats Polling:<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0+ When two separate dpdk-testp=
-md processes are running (in pod A<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0and pod B), does the PM=
-D or driver layer support concurrent<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0reading of PF statistic=
-s?<br>
+&gt; &gt; &gt; f08c:00:02.0 Ethernet controller [0200]: Mellanox Technologi=
+es MT27710<br>
+&gt; &gt; &gt; Family [ConnectX-4 Lx Virtual Function] [15b3:1016] (rev 80)=
 <br>
-Looking at the iavf PMD, the reading of stats is done by sending an adminq<=
-br>
-message to the PF and reading the response. Any serialization of stats<br>
-reading would then be done at the PF or adminq management level. The VF<br>
-should not need to worry about whether another VF is reading the stats at<b=
-r>
-the same time. [In fact it would be a serious bug if one VF needed to be<br=
+&gt; &gt; &gt;<br>
+&gt; &gt; &gt; I have a DPDK application which needs to obtain &#39;all&#39=
+; packets from the=C2=A0 <br>
+&gt; &gt; NIC.=C2=A0 <br>
+&gt; &gt; &gt; I installed the drivers, compiled DPDK24.11 (Ubuntu20.04), m=
+y app starts<br>
+&gt; &gt; &gt; and is able to detect the NIC&#39;s.<br>
+&gt; &gt; &gt; Everything looks good<br>
+&gt; &gt; &gt; myapp.out -c 0x07 -a f08c:00:02.0 -a 6561:00:02.0<br>
+&gt; &gt; &gt; EAL: Detected CPU lcores: 8<br>
+&gt; &gt; &gt; EAL: Detected NUMA nodes: 1<br>
+&gt; &gt; &gt; EAL: Detected shared linkage of DPDK<br>
+&gt; &gt; &gt; EAL: Multi-process socket /var/run/dpdk/rte/mp_socket<br>
+&gt; &gt; &gt; EAL: Selected IOVA mode &#39;PA&#39;<br>
+&gt; &gt; &gt; EAL: VFIO support initialized<br>
+&gt; &gt; &gt; mlx5_net: Default miss action is not supported.<br>
+&gt; &gt; &gt; mlx5_net: Default miss action is not supported.<br>
+&gt; &gt; &gt; All Ports initialized<br>
+&gt; &gt; &gt; Port 0 is UP (50000 Mbps)<br>
+&gt; &gt; &gt; Port 1 is UP (50000 Mbps)<br>
+&gt; &gt; &gt;<br>
+&gt; &gt; &gt; The trouble is that the ARP packets are not being picked up =
+by my DPDK<br>
+&gt; &gt; &gt; application, I see them being delivered to the kernel via th=
+e eth=C2=A0 <br>
+&gt; &gt; interface=C2=A0 <br>
+&gt; &gt; &gt; corresponding to the port (MLX is a bifurcated driver, you d=
+on&#39;t really<br>
+&gt; &gt; &gt; bind to the NIC, so you still see the eth interfaces at linu=
+x level and=C2=A0 <br>
+&gt; &gt; can=C2=A0 <br>
+&gt; &gt; &gt; run tcpdump on those, I see ARP packets in the tcpdump there=
+ on the<br>
+&gt; &gt; &gt; interface)<br>
+&gt; &gt; &gt; I can receive UDP packets in my DPDK app though.<br>
+&gt; &gt; &gt;<br>
+&gt; &gt; &gt; My application is not setting any rte_flow rules etc. so I w=
+as expecting<br>
+&gt; &gt; &gt; that by default my dpdk app would get all the packets as is =
+normally the<br>
+&gt; &gt; &gt; case with other NIC&#39;s<br>
+&gt; &gt; &gt; Is there something I need to configure for Mellanox NIC some=
+where such=C2=A0 <br>
+&gt; &gt; that=C2=A0 <br>
+&gt; &gt; &gt; I get &#39;all&#39; the packets including ARP packets in my =
+DPDK app ?<br>
+&gt; &gt; &gt;<br>
+&gt; &gt; &gt; Regards<br>
+&gt; &gt; &gt; -Prashant=C2=A0 <br>
+&gt; &gt;<br>
+&gt; &gt; The Mellanox device in Azure networking cards is only used as a V=
+F switch.<br>
+&gt; &gt; You can go back to earlier DPDK presentations for more detail.<br=
 >
-aware of what other VFs were doing, since different VFs could be attached<b=
-r>
-to different virtual machines which should be isolated from each other]<br>
-<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0+ Is there any locking or sync=
-hronization mechanism involved<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0when multiple testpmd i=
-nstances attempt to pull stats from the<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0same PF simultaneously?=
- ( in essence, does a firmware/OF<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0support concurrent read=
-).<br>
+&gt; &gt;<br>
+&gt; &gt; Three reason bifurcation won&#39;t work.<br>
+&gt; &gt;=C2=A0 1. Only some of the packets arrive on the VF. All non-IP sh=
+ow up on<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0the synthetic device. The VF is only used afte=
+r the TCP three way<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0handshake.<br>
+&gt; &gt;=C2=A0 2. The Netvsc PMD doesn&#39;t handle flow rules.<br>
+&gt; &gt;=C2=A0 3. The VF can be removed and restored any time (by hypervis=
+or)<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0it is not a stable entity.<br>
+&gt; &gt;<br>
+&gt; &gt;=C2=A0 <br>
+&gt;=C2=A0 Thanks Stephen, so are we concluding that DPDK apps are unusable=
+ in Azure<br>
+&gt; as per my requirements, is there no work around or any other possibili=
+ty to<br>
+&gt; use DPDK in Azure VM ? Please do send me a link to the correct present=
+ation<br>
+&gt; I should refer to.<br>
 &gt; <br>
+&gt; Regards<br>
+&gt; -Prashant<br>
 <br>
-See above.<br>
-<br>
-/Bruce<br>
-<br>
-&gt;=C2=A0 =C2=A0 Thank you,<br>
-&gt; cd /usr/local/bin &amp;&amp; dpdk-testpmd \<br>
-&gt;=C2=A0 =C2=A0--main-lcore \$main -l \$cores -n 4 \<br>
-&gt;=C2=A0 =C2=A0--socket-mem 2048 \<br>
-&gt;=C2=A0 =C2=A0--proc-type auto --file-prefix testpmd_rx0 \<br>
-&gt;=C2=A0 =C2=A0-a \$PCIDEVICE_INTEL_COM_DPDK \<br>
-&gt;=C2=A0 =C2=A0-- --forward-mode=3Drxonly --auto-start --stats-period 1&#=
-39;&quot;<br>
-&gt; <br>
-&gt; cd /usr/local/bin &amp;&amp; dpdk-testpmd \<br>
-&gt;=C2=A0 =C2=A0--main-lcore \$main -l \$cores -n 4 \<br>
-&gt;=C2=A0 =C2=A0--socket-mem 2048 \<br>
-&gt;=C2=A0 =C2=A0--proc-type auto --file-prefix testpmd_rx1 \<br>
-&gt;=C2=A0 =C2=A0-a \$PCIDEVICE_INTEL_COM_DPDK \<br>
-&gt;=C2=A0 =C2=A0-- --forward-mode=3Drxonly --auto-start --stats-period 1&#=
-39;&quot;<br>
-</blockquote></div></div>
+Remember in the cloud network interfaces are free, there really is no need<=
+br>
+for bifurication just create two interfaces to VM, one for DPDK, and one fo=
+r<br>
+non DPDK.<br></blockquote><div><br></div><div>I am afraid Stephen, I am not=
+ entirely clear about your suggestion.</div><div>When I create an Accelerat=
+ed Networking interface on Azure (with the intention of my DPDK app fully c=
+ontrolling it), it is automatically giving one eth interface (representing =
+slowpath) and one enp interface (presumably the fast path and which my dpdk=
+ app detects and operates upon). It is this pair that is created automatica=
+lly for a single packet interface by Azure.</div><div>The trouble is the ab=
+ove bifurcation because I don&#39;t get to see all the packets from the NIC=
+ on DPDK controlled interface -- my DPDK app wants to see all the packets.<=
+/div><div><br></div><div>Regards</div><div>-Prashant</div><div><br></div><d=
+iv><br></div><div>=C2=A0</div></div></div>
 
---000000000000ce00f50633ecf3e7--
+--00000000000022e8b40633ed1d3a--
