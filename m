@@ -2,59 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE92C369D5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Apr 2025 00:03:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DAD5C369D9
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Apr 2025 01:14:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D0611402A3;
-	Tue, 29 Apr 2025 02:03:10 +0200 (CEST)
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com
- [209.85.215.178])
- by mails.dpdk.org (Postfix) with ESMTP id 20C674026C
- for <dev@dpdk.org>; Tue, 29 Apr 2025 02:03:10 +0200 (CEST)
-Received: by mail-pg1-f178.google.com with SMTP id
- 41be03b00d2f7-af908bb32fdso4750982a12.1
- for <dev@dpdk.org>; Mon, 28 Apr 2025 17:03:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1745884989; x=1746489789; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=CYQ8BMBXr2P31Gx4SBXLxGKkLuEw74ggss8uWNTXSGQ=;
- b=C47tqh5PnB456DRxHPxF9KuTnr6XNH8PBWzDaLqwK6RVOkQKyhsnHFcpgUlShwgj1x
- TRzq8xfRgo+46+Qx1X2ZGmBRXqNLmCwLRomDcarbMXwwaxRF3002NsjY1pg6SvFjgscy
- jEOwynW3KUiX7v7KNhw4Lkwxhk8cdW0bKuKPk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1745884989; x=1746489789;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=CYQ8BMBXr2P31Gx4SBXLxGKkLuEw74ggss8uWNTXSGQ=;
- b=KLvf45rXCQvUCMv1feBrsQnOgNeb8+nDQFGH9+F0jmGSSo4TLKQu/kmfKt5f9aZheo
- xXopwCp0uQUyMG/YC9fwmmUG/Ehu4habw1mrvlzm+acZMgS77OY1QHFrkkiSD1a98bIL
- IpW1JQT8eOIXiUKF9imqvKdHdIcUe/ebRA8457kZU2QRPpdKmEBRG/X/B74caIM0+0IR
- KRrNamDLiboai3fM1818SzaPpkP54qaARLctThy7a7c9rn7yNMRqyZ8pSImi9YRe85XK
- WVS9Kcw4KuP7hNyW6M6lI+53ufFHZMFQNi7BhrNb8YCDC47tcEldGsw0w7zdGquDTDO9
- xmAQ==
-X-Gm-Message-State: AOJu0Yw17YArQIMG6N8RUj/PVKphF1rBvCKdwHkyKdQBUfR7/A5f99NR
- GDXTBWY54EubpcagQm5cIf5zawKeGUfyX9AkLSBvwqsJXKLYb7sL5thajKyKyy8QmBP6bxaKI0R
- 1DYise8Qo7AIkbR3JIirzJE6V4+lr5T6J6kTi7w==
-X-Gm-Gg: ASbGncuKdh9hQ/LtPbBAnzYrE9L4n0TC0LIaA1T14nNhx/5PmrorEU1tVCUIbMJ2Zbo
- TuuaxiQcngEWzZnW+hTHaayukzvpO/z0bbJ7+lJ2IdZWmltuICOHZjB7fS8nsZitDWl59W+//al
- 5oZMVkfydkzXsNnXkmiDo4d6QwRPZ8GgRZL/HSGlovy0VbR54WB7273oA=
-X-Google-Smtp-Source: AGHT+IGkf6BqOHB8eiHKognvAQxybg6fXzbaRHJw8zsz5HnxiUNw9JEDFVD7gcpd6VgXQw7hG9hAzcn2ejWFoozbGLE=
-X-Received: by 2002:a17:90b:3504:b0:302:fc48:4f0a with SMTP id
- 98e67ed59e1d1-30a221b8675mr1788624a91.0.1745884989037; Mon, 28 Apr 2025
- 17:03:09 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6028E402A3;
+	Tue, 29 Apr 2025 03:14:56 +0200 (CEST)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+ by mails.dpdk.org (Postfix) with ESMTP id 42F904026C
+ for <dev@dpdk.org>; Tue, 29 Apr 2025 03:14:55 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+ by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Zmj2008rDzLpdg;
+ Tue, 29 Apr 2025 09:11:20 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id 28C7A18047D;
+ Tue, 29 Apr 2025 09:14:52 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 29 Apr 2025 09:14:51 +0800
+Message-ID: <15eea4ec-08d0-4b1a-92dc-a8dd7945d539@huawei.com>
+Date: Tue, 29 Apr 2025 09:14:51 +0800
 MIME-Version: 1.0
-References: <20250427112821.108929-1-mkashani@nvidia.com>
-In-Reply-To: <20250427112821.108929-1-mkashani@nvidia.com>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Mon, 28 Apr 2025 19:58:42 -0400
-X-Gm-Features: ATxdqUEmW3PnvjCPuEzmG0A8-CBtslSAyE7BQPNzf3dqpazQoEcQFNba2VF40bg
-Message-ID: <CAJvnSUDKizObzmGnnxMhCSLWFW2trgxqPuewvZjMxo39TaJVRA@mail.gmail.com>
-Subject: Re: [PATCH] net/mlx5/hws: fix send queue drain on FW WQE destroy
-To: Maayan Kashani <mkashani@nvidia.com>
-Cc: dev@dpdk.org
-Content-Type: multipart/alternative; boundary="0000000000009738020633df86ec"
+User-Agent: Mozilla Thunderbird
+Subject: Re: add one example of DPI ?
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: thomas Monjalon <thomas@monjalon.net>, "dev@dpdk.org" <dev@dpdk.org>
+References: <2c503191-c235-4fbc-ae7a-d21dbe83d2a7@huawei.com>
+ <20250428084901.0aeeee04@hermes.local>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <20250428084901.0aeeee04@hermes.local>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.161]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -68,124 +50,60 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000009738020633df86ec
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On 2025/4/28 23:49, Stephen Hemminger wrote:
+> On Mon, 28 Apr 2025 16:20:22 +0800
+> fengchengwen <fengchengwen@huawei.com> wrote:
+> 
+>> Hi all,
+>>
+>> Currently, we supported several DPI application scenarios performance tuning,
+>> in these scenarios, the DPDK library ethdev, ring, mbuf and hash APIs are used.
+>>
+>> One of the scenarios is:
+>>
+>>     ------------------------                           -------------------------
+>>     |                      |       rte_ring-0          |                       |
+>>     |  packet-recv-process | ===>  rte_ring-1  ===>    | packet-detect-process |
+>>     |                      |         ...               |                       |
+>>     |                      |       rte_ring-n          |                       |
+>>     ------------------------                           -------------------------
+>>
+>>     packet-recv-process dispatch flow to different rings by such 'rte_hash_crc' function.
+>>     packet-detect-process build flow context based on rte_hash library.
+>>
+>> I think it is necessary to add a DPI example to show that DPDK has the basic
+>> capability of building DPI applications and provides best performance practices.
+>>
+>> Hope to listen to the community's opinions.
+>>
+>> Thanks
+>>
+> 
+> Did you consider the impact of CPU cache on this scenario.
+> When you process the packet in two different threads, it ends up adding
+> an additional data cache miss which can cut performance in half.
 
-Recheck-request: iol-intel-Performance
+Yes, this model has the cache problem (it did has performance loss, but not so much). Let assume that this model is A.
 
-Looks like this patch was affected by an infra failure - putting in a
-retest request for the CI testing system.
+Another scenarios (this model is cache friendly) is:
+     --------------------------
+     |                        |
+     |  packet-detect-process |
+     |                        |
+     |  packet-recv-process   |
+     |                        |
+     --------------------------
+         |  multi-queues  |
+     --------------------------
+     |   hardware-RSS         |
+     --------------------------
+   The NIC hardware dispatch flow to different hardware queues by RSS.
+   Each threads in the process then receive and detect.
+   Let assume this model is B.
 
-On Sun, Apr 27, 2025 at 7:28=E2=80=AFAM Maayan Kashani <mkashani@nvidia.com=
-> wrote:
+Currently, there are many traffic encapsulation formats, but the NIC RSS hash always very simple (more complex
+can be implemented throught flow matching, but many NICs do not support this feature). In this case, the model
+A could be used, the software could dispatch flow by user-defined.
 
-> Queue sync operation was skipped on rule destroy.
-> Unlike on fw wqe rule create in which both fence and notify_hw
-> are set to true, on destroy fence was set to false causing
-> previous queue operation to be stuck in the queue forever.
-> Example:
->    rule_a - HW rule, rule_b - FW WQE rule.
-> Sequence:
->    rule_a destroy, burst=3D1 (HW rule put to queue but no DB)
->    rule_b destroy, burst=3D0 (FW WQE rule cmd but no queue sync)
-> Outcome:
->    rule_a is stuck forever in the queue - no completion.
->
-> Fixes: 338aaf911665 ("net/mlx5/hws: add send FW match STE using gen WQE")
-> Cc: stable@dpdk.org
->
-> Signed-off-by: Alex Vesker <valex@nvidia.com>
-> Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
-> ---
->  drivers/net/mlx5/hws/mlx5dr_send.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/mlx5/hws/mlx5dr_send.c
-> b/drivers/net/mlx5/hws/mlx5dr_send.c
-> index e121c7f7ed5..d01fc7ef2ca 100644
-> --- a/drivers/net/mlx5/hws/mlx5dr_send.c
-> +++ b/drivers/net/mlx5/hws/mlx5dr_send.c
-> @@ -339,7 +339,7 @@ void mlx5dr_send_stes_fw(struct mlx5dr_send_engine
-> *queue,
->         pdn =3D ctx->pd_num;
->
->         /* Writing through FW can't HW fence, therefore we drain the queu=
-e
-> */
-> -       if (send_attr->fence)
-> +       if (send_attr->fence || send_attr->notify_hw)
->                 mlx5dr_send_queue_action(ctx,
->                                          queue_id,
->
->  MLX5DR_SEND_QUEUE_ACTION_DRAIN_SYNC);
-> --
-> 2.21.0
->
->
+I think this example could both support the above two model.
 
---0000000000009738020633df86ec
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">Recheck-request:=C2=A0iol-intel-Performance<br><br>Looks l=
-ike this patch was affected by an infra failure - putting in a retest reque=
-st for the CI testing system.</div><br><div class=3D"gmail_quote gmail_quot=
-e_container"><div dir=3D"ltr" class=3D"gmail_attr">On Sun, Apr 27, 2025 at =
-7:28=E2=80=AFAM Maayan Kashani &lt;<a href=3D"mailto:mkashani@nvidia.com">m=
-kashani@nvidia.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote=
-" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);=
-padding-left:1ex">Queue sync operation was skipped on rule destroy.<br>
-Unlike on fw wqe rule create in which both fence and notify_hw<br>
-are set to true, on destroy fence was set to false causing<br>
-previous queue operation to be stuck in the queue forever.<br>
-Example:<br>
-=C2=A0 =C2=A0rule_a - HW rule, rule_b - FW WQE rule.<br>
-Sequence:<br>
-=C2=A0 =C2=A0rule_a destroy, burst=3D1 (HW rule put to queue but no DB)<br>
-=C2=A0 =C2=A0rule_b destroy, burst=3D0 (FW WQE rule cmd but no queue sync)<=
-br>
-Outcome:<br>
-=C2=A0 =C2=A0rule_a is stuck forever in the queue - no completion.<br>
-<br>
-Fixes: 338aaf911665 (&quot;net/mlx5/hws: add send FW match STE using gen WQ=
-E&quot;)<br>
-Cc: <a href=3D"mailto:stable@dpdk.org" target=3D"_blank">stable@dpdk.org</a=
-><br>
-<br>
-Signed-off-by: Alex Vesker &lt;<a href=3D"mailto:valex@nvidia.com" target=
-=3D"_blank">valex@nvidia.com</a>&gt;<br>
-Signed-off-by: Maayan Kashani &lt;<a href=3D"mailto:mkashani@nvidia.com" ta=
-rget=3D"_blank">mkashani@nvidia.com</a>&gt;<br>
----<br>
-=C2=A0drivers/net/mlx5/hws/mlx5dr_send.c | 2 +-<br>
-=C2=A01 file changed, 1 insertion(+), 1 deletion(-)<br>
-<br>
-diff --git a/drivers/net/mlx5/hws/mlx5dr_send.c b/drivers/net/mlx5/hws/mlx5=
-dr_send.c<br>
-index e121c7f7ed5..d01fc7ef2ca 100644<br>
---- a/drivers/net/mlx5/hws/mlx5dr_send.c<br>
-+++ b/drivers/net/mlx5/hws/mlx5dr_send.c<br>
-@@ -339,7 +339,7 @@ void mlx5dr_send_stes_fw(struct mlx5dr_send_engine *que=
-ue,<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 pdn =3D ctx-&gt;pd_num;<br>
-<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 /* Writing through FW can&#39;t HW fence, there=
-fore we drain the queue */<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0if (send_attr-&gt;fence)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0if (send_attr-&gt;fence || send_attr-&gt;notify=
-_hw)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 mlx5dr_send_queue_a=
-ction(ctx,<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0qu=
-eue_id,<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0ML=
-X5DR_SEND_QUEUE_ACTION_DRAIN_SYNC);<br>
--- <br>
-2.21.0<br>
-<br>
-</blockquote></div>
-
---0000000000009738020633df86ec--
