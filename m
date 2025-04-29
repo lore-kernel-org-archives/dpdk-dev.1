@@ -2,41 +2,102 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB06C369D5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Apr 2025 03:08:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84141C369DC
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Apr 2025 07:38:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A9B3E4026C;
-	Tue, 29 Apr 2025 05:08:20 +0200 (CEST)
-Received: from out28-123.mail.aliyun.com (out28-123.mail.aliyun.com
- [115.124.28.123])
- by mails.dpdk.org (Postfix) with ESMTP id 86D2F40263
- for <dev@dpdk.org>; Tue, 29 Apr 2025 05:08:18 +0200 (CEST)
-X-Alimail-AntiSpam: AC=CONTINUE; BC=0.08719928|-1; CH=green;
- DM=|CONTINUE|false|;
- DS=CONTINUE|ham_regular_dialog|0.0344541-0.0111217-0.954424;
- FP=16084145356564858831|0|0|0|0|-1|-1|-1;
- HT=maildocker-contentspam033045013141; MF=kyo.liu@nebula-matrix.com; NM=1;
- PH=DW; RN=5; RT=5; SR=0; TI=W4_0.2.3_214415EE_1745895037710_o7001c2034; 
-Received: from WS-web
- (kyo.liu@nebula-matrix.com[W4_0.2.3_214415EE_1745895037710_o7001c2034]
- cluster:ay29) at Tue, 29 Apr 2025 11:08:15 +0800
-Date: Tue, 29 Apr 2025 11:08:15 +0800
-From: "Kyo.Liu" <kyo.liu@nebula-matrix.com>
-To: "Stephen Hemminger" <stephen@networkplumber.org>
-Cc: "Thomas Monjalon" <thomas@monjalon.net>, "Chenbo Xia" <chenbox@nvidia.com>,
- "Nipun Gupta" <nipun.gupta@amd.com>, "dev" <dev@dpdk.org>
-Message-ID: <46ce6637-7310-48da-9491-3628fd8115f9.kyo.liu@nebula-matrix.com>
-Subject: =?UTF-8?B?5Zue5aSN77yaW1BBVENIIHYzIDEvMV0gYnVzL3BjaTogaW50cm9kdWNlIGdldF9pb3ZhX21v?=
- =?UTF-8?B?ZGUgZm9yIHBjaSBkZXY=?=
-X-Mailer: [Alimail-Mailagent revision 7][W4_0.2.3][null][Chrome]
+	by mails.dpdk.org (Postfix) with ESMTP id 5E8694026C;
+	Tue, 29 Apr 2025 09:38:42 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 1B7A540263
+ for <dev@dpdk.org>; Tue, 29 Apr 2025 09:38:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1745912320;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+ bh=9cNFb9x4S1bWbLxE+vkiWsWtasUxZ5hN0XK91C8sIaY=;
+ b=L3WZHhGRAcge0JXPDNZzPma8N0NlFQaWu3cW4LgtySbZpluz4uSniYqiZv30i7FC+g50YW
+ 4HAxM8aeabzHF9+cCvgCx0RXCsZ4ckME39Ini3UXmfyPsdPO/PHBbLimdbE7YI31hpdoXj
+ V3Mqic4jJLZXa50YNDFoGVs4yv35bBo=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-564-9XoprxekO4WDHAkRnFzCRw-1; Tue,
+ 29 Apr 2025 03:38:37 -0400
+X-MC-Unique: 9XoprxekO4WDHAkRnFzCRw-1
+X-Mimecast-MFC-AGG-ID: 9XoprxekO4WDHAkRnFzCRw_1745912317
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id C360D19560AA; Tue, 29 Apr 2025 07:38:36 +0000 (UTC)
+Received: from [10.44.22.10] (unknown [10.44.22.10])
+ by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id DB30219560A3; Tue, 29 Apr 2025 07:38:35 +0000 (UTC)
+Message-ID: <bff53d39-cd8a-4923-be95-63c01a44b38b@redhat.com>
+Date: Tue, 29 Apr 2025 09:38:32 +0200
 MIME-Version: 1.0
-x-aliyun-im-through: {"version":"v1.0"}
-References: <20250427013611.150888-1-kyo.liu>	<20250427022734.151043-1-kyo.liu@nebula-matrix.com>,
- <20250428085509.44197fba@hermes.local>
-x-aliyun-mail-creator: W4_0.2.3_null_d2lTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEwOC4wLjUzNTkuMTI1IFNhZmFyaS81MzcuMzYgZGluZ3RhbGstd2luLzEuMC4wIG53KDAuMTQuNykgRGluZ1RhbGsoNy42LjU1LVJlbGVhc2UuMjUwNDAyMDA1KSBNb2pvLzEuMC4wIE5hdGl2ZSBBcHBUeXBlKHJlbGVhc2UpIENoYW5uZWwvMjAxMjAwIEFyY2hpdGVjdHVyZS94ODZfNjQ=Gs
-In-Reply-To: <20250428085509.44197fba@hermes.local>
-Content-Type: multipart/alternative;
- boundary="----=ALIBOUNDARY_3025_7fb654ff7700_6810429f_393c3b"
+User-Agent: Mozilla Thunderbird
+Subject: Re: Virtio-PMD speed limits to 100Gbps, while hardware supports
+ 200Gbps
+To: Ayshathul Thuhara <ayshathul.thuhara@iwave-global.com>, dev@dpdk.org
+References: <fb27d286-cfff-e70e-651b-fb72d80cfb22@iwave-global.com>
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
+ xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
+ kLgBQUki3voWhUbMb69ybqdMUHOl21DGCj0BTU3lXwapYXOAnsh8q6RRM+deUpasyT+Jvf3a
+ gU35dgZcomRh5HPmKMU4KfeA38cVUebsFec1HuJAWzOb/UdtQkYyZR4rbzw8SbsOemtMtwOx
+ YdXodneQD7KuRU9IhJKiEfipwqk2pufm2VSGl570l5ANyWMA/XADNhcEXhpkZ1Iwj3TWO7XR
+ uH4xfvPl8nBsLo/EbEI7fbuUULcAnHfowQslPUm6/yaGv6cT5160SPXT1t8U9QDO6aTSo59N
+ jH519JS8oeKZB1n1eLDslCfBpIpWkW8ZElGkOGWAN0vmpLfdyiqBNNyS3eGAfMkJ6b1A24un
+ /TKc6j2QxM0QK4yZGfAxDxtvDv9LFXec8ENJYsbiR6WHRHq7wXl/n8guyh5AuBNQ3LIK44x0
+ KjGXP1FJkUhUuruGyZsMrDLBRHYi+hhDAgRjqHgoXi5XGETA1PAiNBNnQwMf5aubt+mE2Q5r
+ qLNTgwSo2dpTU3+mJ3y3KlsIfoaxYI7XNsPRXGnZi4hbxmeb2NSXgdCXhX3nELUNYm4ArKBP
+ LugOIT/zRwk0H0+RVwL2zHdMO1Tht1UOFGfOZpvuBF60jhMzbQARAQABzSxNYXhpbWUgQ29x
+ dWVsaW4gPG1heGltZS5jb3F1ZWxpbkByZWRoYXQuY29tPsLBeAQTAQIAIgUCV3u/5QIbAwYL
+ CQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQyjiNKEaHD4ma2g/+P+Hg9WkONPaY1J4AR7Uf
+ kBneosS4NO3CRy0x4WYmUSLYMLx1I3VH6SVjqZ6uBoYy6Fs6TbF6SHNc7QbB6Qjo3neqnQR1
+ 71Ua1MFvIob8vUEl3jAR/+oaE1UJKrxjWztpppQTukIk4oJOmXbL0nj3d8dA2QgHdTyttZ1H
+ xzZJWWz6vqxCrUqHU7RSH9iWg9R2iuTzii4/vk1oi4Qz7y/q8ONOq6ffOy/t5xSZOMtZCspu
+ Mll2Szzpc/trFO0pLH4LZZfz/nXh2uuUbk8qRIJBIjZH3ZQfACffgfNefLe2PxMqJZ8mFJXc
+ RQO0ONZvwoOoHL6CcnFZp2i0P5ddduzwPdGsPq1bnIXnZqJSl3dUfh3xG5ArkliZ/++zGF1O
+ wvpGvpIuOgLqjyCNNRoR7cP7y8F24gWE/HqJBXs1qzdj/5Hr68NVPV1Tu/l2D1KMOcL5sOrz
+ 2jLXauqDWn1Okk9hkXAP7+0Cmi6QwAPuBT3i6t2e8UdtMtCE4sLesWS/XohnSFFscZR6Vaf3
+ gKdWiJ/fW64L6b9gjkWtHd4jAJBAIAx1JM6xcA1xMbAFsD8gA2oDBWogHGYcScY/4riDNKXi
+ lw92d6IEHnSf6y7KJCKq8F+Jrj2BwRJiFKTJ6ChbOpyyR6nGTckzsLgday2KxBIyuh4w+hMq
+ TGDSp2rmWGJjASrOwU0EVPSbkwEQAMkaNc084Qvql+XW+wcUIY+Dn9A2D1gMr2BVwdSfVDN7
+ 0ZYxo9PvSkzh6eQmnZNQtl8WSHl3VG3IEDQzsMQ2ftZn2sxjcCadexrQQv3Lu60Tgj7YVYRM
+ H+fLYt9W5YuWduJ+FPLbjIKynBf6JCRMWr75QAOhhhaI0tsie3eDsKQBA0w7WCuPiZiheJaL
+ 4MDe9hcH4rM3ybnRW7K2dLszWNhHVoYSFlZGYh+MGpuODeQKDS035+4H2rEWgg+iaOwqD7bg
+ CQXwTZ1kSrm8NxIRVD3MBtzp9SZdUHLfmBl/tLVwDSZvHZhhvJHC6Lj6VL4jPXF5K2+Nn/Su
+ CQmEBisOmwnXZhhu8ulAZ7S2tcl94DCo60ReheDoPBU8PR2TLg8rS5f9w6mLYarvQWL7cDtT
+ d2eX3Z6TggfNINr/RTFrrAd7NHl5h3OnlXj7PQ1f0kfufduOeCQddJN4gsQfxo/qvWVB7PaE
+ 1WTIggPmWS+Xxijk7xG6x9McTdmGhYaPZBpAxewK8ypl5+yubVsE9yOOhKMVo9DoVCjh5To5
+ aph7CQWfQsV7cd9PfSJjI2lXI0dhEXhQ7lRCFpf3V3mD6CyrhpcJpV6XVGjxJvGUale7+IOp
+ sQIbPKUHpB2F+ZUPWds9yyVxGwDxD8WLqKKy0WLIjkkSsOb9UBNzgRyzrEC9lgQ/ABEBAAHC
+ wV8EGAECAAkFAlT0m5MCGwwACgkQyjiNKEaHD4nU8hAAtt0xFJAy0sOWqSmyxTc7FUcX+pbD
+ KVyPlpl6urKKMk1XtVMUPuae/+UwvIt0urk1mXi6DnrAN50TmQqvdjcPTQ6uoZ8zjgGeASZg
+ jj0/bJGhgUr9U7oG7Hh2F8vzpOqZrdd65MRkxmc7bWj1k81tOU2woR/Gy8xLzi0k0KUa8ueB
+ iYOcZcIGTcs9CssVwQjYaXRoeT65LJnTxYZif2pfNxfINFzCGw42s3EtZFteczClKcVSJ1+L
+ +QUY/J24x0/ocQX/M1PwtZbB4c/2Pg/t5FS+s6UB1Ce08xsJDcwyOPIH6O3tccZuriHgvqKP
+ yKz/Ble76+NFlTK1mpUlfM7PVhD5XzrDUEHWRTeTJSvJ8TIPL4uyfzhjHhlkCU0mw7Pscyxn
+ DE8G0UYMEaNgaZap8dcGMYH/96EfE5s/nTX0M6MXV0yots7U2BDb4soLCxLOJz4tAFDtNFtA
+ wLBhXRSvWhdBJZiig/9CG3dXmKfi2H+wdUCSvEFHRpgo7GK8/Kh3vGhgKmnnxhl8ACBaGy9n
+ fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
+ UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
+ Mwqu3GQ=
+In-Reply-To: <fb27d286-cfff-e70e-651b-fb72d80cfb22@iwave-global.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: MN9jWHUFX9TKyNi76o5ezgm2lBIUZEK3UMOurDNgCDI_1745912317
+X-Mimecast-Originator: redhat.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,68 +109,36 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-Reply-To: "Kyo.Liu" <kyo.liu@nebula-matrix.com>
 Errors-To: dev-bounces@dpdk.org
 
-------=ALIBOUNDARY_3025_7fb654ff7700_6810429f_393c3b
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Hi,
 
-VGhhbmsgeW91IGZvciByYWlzaW5nIHRoaXMgaW1wb3J0YW50IGNvbmNlcm4uIApUbyBjb25maXJt
-OiBPdXIgdmVuZG9yIGRyaXZlciAoTkJMIFBNRCkgaXMgYWN0aXZlbHkgYmVpbmcgdXBzdHJlYW1l
-ZCB0byBEUERLLiBUaGlzIHBhdGNoIGlzIHJlcXVpcmVkIGZvciBpdHMgY29leGlzdGVuY2UgaW1w
-bGVtZW50YXRpb24uIFdlIGtpbmRseSByZXF1ZXN0IHRvIG1lcmdlIHRoaXMgZm91bmRhdGlvbmFs
-IGNoYW5nZSBmaXJzdCB0byBlbmFibGUgdGhlIGRyaXZlciBzdWJtaXNzaW9uLgpXZSB3aWxsIGZv
-bGxvdyB1cCB3aXRoIHRoZSBmdWxsIE5CTCBkcml2ZXIgY29kZSB3aXRoaW4gNCB3ZWVrcy4gClRo
-YW5rIHlvdSBmb3IgeW91ciBjb25zaWRlcmF0aW9uLgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCuWPkeS7tuS6uu+8mlN0
-ZXBoZW4gSGVtbWluZ2VyIDxzdGVwaGVuQG5ldHdvcmtwbHVtYmVyLm9yZz4K5Y+R6YCB5pe26Ze0
-77yaMjAyNeW5tDTmnIgyOOaXpSjlkajkuIApIDIzOjU1CuaUtuS7tuS6uu+8miJLeW8uTGl1Ijxr
-eW8ubGl1QG5lYnVsYS1tYXRyaXguY29tPgrmioTjgIDpgIHvvJpUaG9tYXMgTW9uamFsb248dGhv
-bWFzQG1vbmphbG9uLm5ldD47IENoZW5ibyBYaWE8Y2hlbmJveEBudmlkaWEuY29tPjsgTmlwdW4g
-R3VwdGE8bmlwdW4uZ3VwdGFAYW1kLmNvbT47IGRldjxkZXZAZHBkay5vcmc+CuS4u+OAgOmimO+8
-mlJlOiBbUEFUQ0ggdjMgMS8xXSBidXMvcGNpOiBpbnRyb2R1Y2UgZ2V0X2lvdmFfbW9kZSBmb3Ig
-cGNpIGRldgoKCk9uIFN1biwgMjcgQXByIDIwMjUgMDI6Mjc6MzQgKzAwMDAKS3lvIExpdSA8a3lv
-LmxpdUBuZWJ1bGEtbWF0cml4LmNvbT4gd3JvdGU6Cgo+IEkgcHJvcG9zZSB0aGlzIHBhdGNoIGZv
-ciBEUERLIHRvIGVuYWJsZSBjb2V4aXN0ZW5jZSBiZXR3ZWVuCj4gRFBESyBhbmQga2VybmVsIGRy
-aXZlcnMgZm9yIHJlZ3VsYXIgTklDcy5UaGlzIHNvbHV0aW9uIHJlcXVpcmVzCj4gYWRkaW5nIGEg
-bmV3IHBjaV9vcHMgaW4gcnRlX3BjaV9kcml2ZXIsIHRocm91Z2ggd2hpY2ggRFBESyB3aWxsCj4g
-cmV0cmlldmUgdGhlIHJlcXVpcmVkIElPVkEgbW9kZSBmcm9tIHRoZSB2ZW5kb3IgZHJpdmVyLgo+
-IFRoaXMgbWVjaGFuaXNtIGlzIG5lY2Vzc2FyeSB0byBoYW5kbGUgZGlmZmVyZW50IElPTU1VCj4g
-Y29uZmlndXJhdGlvbnMgYW5kIG9wZXJhdGluZyBtb2Rlcy4gQmVsb3cgaXMgYSBkZXRhaWxlZAo+
-IGFuYWx5c2lzIG9mIHZhcmlvdXMgc2NlbmFyaW9zOgoKVGhlIHdvcmRzICJ2ZW5kb3IgZHJpdmVy
-IiBoYXZlIG1lIHdvcnJpZWQuCklzIHRoaXMgYSBQTUQgdGhhdCBpcyBiZWluZyBpbmNvcnBvcmF0
-ZWQgaW50byBEUERLIG9yIHNvbWUgb3V0Cm9mIHRyZWUgZHJpdmVyLiBJZiBpdCBpcyBvdXQgb2Yg
-dHJlZSwgc3VjaCBjaGFuZ2VzIHdpbGwgYmUgc3VtbWFyaWx5IHJlamVjdGVkLgpXZSBkb24ndCBh
-Y2NlcHQgY2hhbmdlcyB0aGF0IGFyZSB1bnVzZWQgaW4gdHJlZS4KCg==
-------=ALIBOUNDARY_3025_7fb654ff7700_6810429f_393c3b
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: base64
+On 4/28/25 4:14 PM, Ayshathul Thuhara wrote:
+> Hi Team,
+> 
+>   I am using virtio-net, virtio-pci  drivers for a Bittware hardware. I 
+> could see the data is sent and received with the throughput of 100Gbps.
+> But the hardware supports for 200Gbps. I am not able to get the 
+> throughput more than 200Gbps.
 
-DQo8ZGl2IHN0eWxlPSJjbGVhcjogYm90aDsiPjxzcGFuIHN0eWxlPSJmb250LXNpemU6IDEwcHg7
-IGNvbG9yOiByZ2IoMjE2LCAyMTYsIDIxNik7Ij7mnKzpgq7ku7bmiYDlkKvkv6Hmga/lj4rlhbbk
-u7vkvZXpmYTku7bkuLrkv53lr4bkv6Hmga/kuJTlj6/og73lsZ7kuo7kuJPmnInkv6Hmga/jgILk
-u7vkvZXpnZ7mjIflrprmjqXmlLbkurrlnYfml6DmnYPorr/pl67mnKzpgq7ku7bjgILlpoLmnpzm
-gqjkuI3mmK/or6Xpgq7ku7bnmoTmjIflrprmjqXmlLbkurrvvIzpgqPkuYjku7vkvZXlr7nmnKzp
-gq7ku7blhoXlrrnov5vooYzmiqvpnLLvvIzlpI3liLbmiJbkvb/nlKjnmoTooYzkuLrlnYfmmK/n
-poHmraLnmoTjgILlpoLmnpzmgqjkuI3mmK/or6Xpgq7ku7bnmoTmjIflrprmjqXmlLbkurrvvIzo
-r7fmgqjnq4vljbPpgJrov4fpgq7ku7bpgJrnn6UmbmJzcDtjb21wbGlhbmNlQG5lYnVsYS1tYXRy
-aXguY29t5bm256uL5Y2z5Yig6Zmk5oKo6ZSZ6K+v5o6l5Y+X55qE6YKu5Lu244CCPC9zcGFuPjwv
-ZGl2PjxkaXYgc3R5bGU9ImNsZWFyOiBib3RoOyI+PHNwYW4gc3R5bGU9ImZvbnQtc2l6ZTogMTBw
-eDsgY29sb3I6IHJnYigyMTYsIDIxNiwgMjE2KTsiPlRoZSZuYnNwO2luZm9ybWF0aW9uJm5ic3A7
-aW4mbmJzcDt0aGlzJm5ic3A7bWVzc2FnZSZuYnNwO2FuZCZuYnNwO2FueSZuYnNwO2F0dGFjaG1l
-bnRzJm5ic3A7aXMmbmJzcDtjb25maWRlbnRpYWwmbmJzcDthbmQmbmJzcDttYXkmbmJzcDtiZSZu
-YnNwO3ByaXZpbGVnZWQuJm5ic3A7Jm5ic3A7QWNjZXNzJm5ic3A7dG8mbmJzcDt0aGlzJm5ic3A7
-ZW1haWwmbmJzcDtieSZuYnNwO2FueW9uZSZuYnNwO290aGVyJm5ic3A7dGhhbiZuYnNwO3RoZSZu
-YnNwO2ludGVuZGVkJm5ic3A7cmVjaXBpZW50Jm5ic3A7aXMmbmJzcDtub3QmbmJzcDthdXRob3Jp
-emVkLiZuYnNwOyZuYnNwO0lmJm5ic3A7eW91Jm5ic3A7YXJlJm5ic3A7bm90Jm5ic3A7dGhlJm5i
-c3A7aW50ZW5kZWQmbmJzcDtyZWNpcGllbnQsJm5ic3A7ZGlzY2xvc3VyZSwmbmJzcDtjb3B5aW5n
-Jm5ic3A7b3ImbmJzcDt1c2UmbmJzcDtvZiZuYnNwO3RoZSZuYnNwO2NvbnRlbnRzJm5ic3A7b2Ym
-bmJzcDt0aGlzJm5ic3A7ZW1haWwmbmJzcDtpcyZuYnNwO3Byb2hpYml0ZWQuJm5ic3A7Jm5ic3A7
-SWYmbmJzcDt5b3UmbmJzcDthcmUmbmJzcDtub3QmbmJzcDt0aGUmbmJzcDtpbnRlbmRlZCZuYnNw
-O3JlY2lwaWVudCwmbmJzcDtwbGVhc2UmbmJzcDtub3RpZnkmbmJzcDsmbmJzcDtjb21wbGlhbmNl
-QG5lYnVsYS1tYXRyaXguY29tJm5ic3A7aW1tZWRpYXRlbHkmbmJzcDtieSZuYnNwO2VtYWlsLCZu
-YnNwO2FuZCZuYnNwO3BsZWFzZSZuYnNwO2Rlc3Ryb3kmbmJzcDt0aGUmbmJzcDtlbWFpbCZuYnNw
-O3lvdSZuYnNwO3JlY2VpdmVkJm5ic3A7aW4mbmJzcDtlcnJvci48L3NwYW4+PC9kaXY+
-------=ALIBOUNDARY_3025_7fb654ff7700_6810429f_393c3b--
+My understanding is you are using a physical device implementing the
+Virtio specification. I don't know Bittware, but I think you should
+reach out to them for support. We don't have 100G limitation in Virtio
+PMD AFAICT.
+
+Regards,
+Maxime
+
+> I am using latest DPDK source files and I tested TestPMD application to 
+> transfer and receive packets. I have noticed the virtio_ethdev.c 
+> supports 200G, but while testing TX and RX shows 100Gbps.
+> I have increase CPU cores to more than 6 for each TX and RX. Still the 
+> throughput remains in 100Gbps.
+> 
+> Could you please let me know what changes to be made and what debug area 
+> I should look into.?
+> 
+> Thanks and regards,
+> Ayshathul Thuhara
+> 
 
