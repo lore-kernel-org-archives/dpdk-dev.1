@@ -2,60 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20279C3ABA5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Apr 2025 21:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18296C369DC
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Apr 2025 21:34:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 11629406B8;
-	Tue, 29 Apr 2025 23:33:57 +0200 (CEST)
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com
- [209.85.215.177])
- by mails.dpdk.org (Postfix) with ESMTP id 370A940277
- for <dev@dpdk.org>; Tue, 29 Apr 2025 23:33:55 +0200 (CEST)
-Received: by mail-pg1-f177.google.com with SMTP id
- 41be03b00d2f7-7fd35b301bdso8369777a12.2
- for <dev@dpdk.org>; Tue, 29 Apr 2025 14:33:55 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6479A406B8;
+	Tue, 29 Apr 2025 23:34:53 +0200 (CEST)
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com
+ [209.85.215.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 8AE2940A6F
+ for <dev@dpdk.org>; Tue, 29 Apr 2025 23:34:51 +0200 (CEST)
+Received: by mail-pg1-f179.google.com with SMTP id
+ 41be03b00d2f7-b12b984e791so6294933a12.2
+ for <dev@dpdk.org>; Tue, 29 Apr 2025 14:34:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1745962434; x=1746567234; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1745962491; x=1746567291; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=4zqBBdfqSk5lYwIxsVmk/ShSdygr5/U1/jENQBeYOjs=;
- b=HJil4PmN4JzpmQTlFAYdcedVvG6IpAA+yIe+blOGBxvuXWQpbGxbF0ltoERsutdb8Q
- y2tkcs+KAIofWh1YJQ+OmqyLYvHF90j8/A9SUy6HbnCO4dhnqKqp2Yenv58cfQIKVEoe
- WOI322uAj5gDR5v4BbEJeoBnUj5fE9uGvequg=
+ bh=+nnH6pqPG8yqyu9P0tyL6TZaBZFZMPvlykJcyU0GDcs=;
+ b=Tz8wNN33y2adJo7pxpF1sn5xgD/WBj0zqwzMdX84Tg+Ow1bdmbrAiplhWmcIvGilks
+ 7WYe2yDbJ1gy+ef+iTCNfhQUvB8/XVtUg9i4KOwRHeXLQGRde0g/TqNhaUZRPRUNqAP0
+ NPst7wEFulWw3jhLh7M4Bow8d+5fYMa1PiKnw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1745962434; x=1746567234;
+ d=1e100.net; s=20230601; t=1745962491; x=1746567291;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=4zqBBdfqSk5lYwIxsVmk/ShSdygr5/U1/jENQBeYOjs=;
- b=rJ3ilq32MAE1AqeDptg2dzzn+iGXPGzPiQnB2HTnas03f4YyFs75IBJsqnP60YvP6V
- 4fGfc1scGcxd/kjERJYi0B3nzx8ZOa7vGyyGY8N13LFqTFzKQNHR0wcKZLZ5pWttziO1
- 6B7C46IvRyvWZQN0tapfazU1wlEz95o+U+zC/vuHTgBDw5pB1MZoBdCvmCapST8RKiUR
- 2LYLomelmKQs1lhO0AG7B1N1j0g9rpomsZ1JBYUEMAeF9/8qRP/AvF+tY7VE9tlkkgDL
- 4WmaCThtGhnfu6gco6nKW4ZvcEgT5Jl9S1lcY06t51D1iqLRWljn8dzjzQbQ73nunhbf
- tJow==
-X-Gm-Message-State: AOJu0YwDH59nqfac0iDd7nMUebdpH/V7tRDhfIdIR/Buw+fdNkLtexdQ
- 4cW+X/UQEXwfZzt7xEQehamekG6JHC+75cVWElg5/0iAzA4xilnId3OYUnNxWRMilgExZYqrfT/
- fTvhghu0T7aZXGY7MD08RB+lSnDbbfRIouHNbTw==
-X-Gm-Gg: ASbGncuzHInEhG+R2I+Y/padh5e0sII+iOwiTEG5TZmHuBv9EBqSob7Yfg6EA/B3h89
- QLWfOSA4caDNBAQ2K+T/M0yObPpeT55FL+F5jKNfuS72ZeweSCiv0Uxy4A1lnV5SIYUyNfqnic+
- +EFh4NchNylsJa1FegGUcFIfFzDgLXRKanAFLTImyKRZ3yv/8=
-X-Google-Smtp-Source: AGHT+IFfCa+MArWx0uM+oAbWbaXYFAv2gEQ1o7l6AcrXr7EobxBg6NEjds6uXTyJilH1LU8ba+tjerrsrzwPa1zRLeY=
-X-Received: by 2002:a17:90b:58ce:b0:2ee:b2e6:4276 with SMTP id
- 98e67ed59e1d1-30a34467f4amr303131a91.27.1745962434430; Tue, 29 Apr 2025
- 14:33:54 -0700 (PDT)
+ bh=+nnH6pqPG8yqyu9P0tyL6TZaBZFZMPvlykJcyU0GDcs=;
+ b=IrXWqMq+c/ApgDqsG+pgbDyRBxzffXn+890GC0neqWWWCnVgIyM2XHnjo0t3BQWQxU
+ 3WIFClhHnCjTem8Rz9FnoYaMSsXhVAoaLkpCkse4ekyt7OOaqqhCiIL98K8x4ZrqNGQ7
+ CM3Jz5353Bm1FrueGtVYzEbHS24s6+8UsEFi+oAZ8m7ZEiDk8BhCZU7hh6/4w/js4FRH
+ gCvVV0VqsuBzfK+FEs1cK3LeySiqVfmUdsEWT5R1v9OA0/8i4NlbCOtI0NhNPSnkjo3W
+ gwckwEXF+Fw4dxYZBAf6sqaZAiS0trsLFI4AUCIe63GEiAM9jLisQW4RxQacPM5THKSn
+ 2MqQ==
+X-Gm-Message-State: AOJu0YyiThdVHjeKj47GWufbxIDys8yzrvGyi1U5o6rRdrPChSJwm/E7
+ G/MOHOPM7uGU4splAJVoqCW0gTZg1ujDdrttygmbutZ3hdmKyUb0QKWvyLP6jqSlWstELWrtsoV
+ tR9pRzStaURGCIL+wrTvTvvZFbYEtSsl+hYmsbg==
+X-Gm-Gg: ASbGncva/38QvOH0UpazsuRoQJDT3yAzWjW9L50Qnp1G2RBVucVosQyJASBLb1epLpC
+ BKWjiPjl48FaGmCMUmUzycavieI2JBb0BXgzZybSodFCstXWuT0XJD3WphoVq223FBIOBoEolvP
+ yWaGXD4jg5SL8SE5sb6SP0FuDk8J2I45ZYBTdQXHkAAIsWiuE=
+X-Google-Smtp-Source: AGHT+IHVUeUuZQJSsN+6hQwdUsl/kMU4JEJOZeKVRBCnMdvKcyL5ngSQkecLtsb353bDTq2VrcNvYaRw4Pe0NwbbZw8=
+X-Received: by 2002:a17:90b:534e:b0:2ee:45fd:34f2 with SMTP id
+ 98e67ed59e1d1-30a332d60dbmr756319a91.6.1745962490743; Tue, 29 Apr 2025
+ 14:34:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <20250427112257.108544-1-mkashani@nvidia.com>
-In-Reply-To: <20250427112257.108544-1-mkashani@nvidia.com>
+References: <20250425194913.70742-1-dsosnowski@nvidia.com>
+In-Reply-To: <20250425194913.70742-1-dsosnowski@nvidia.com>
 From: Patrick Robb <probb@iol.unh.edu>
-Date: Tue, 29 Apr 2025 17:29:26 -0400
-X-Gm-Features: ATxdqUEWkK-TJtJVTioAMPns5_AU-yb1EaawivuWqWYfXDDrdyEBZb-9EjZPzmg
-Message-ID: <CAJvnSUAs9aENhPA+g0Vs6cRJZjrhbOBkUo3SErW8cf61KWS-Og@mail.gmail.com>
-Subject: Re: [PATCH 1/2] net/mlx5: non template - fix validation for GENEVE
- options
-To: Maayan Kashani <mkashani@nvidia.com>
+Date: Tue, 29 Apr 2025 17:30:23 -0400
+X-Gm-Features: ATxdqUGo5ZZEWT65RoiTi4NR3NLOmIyxXTDhAT13hqQmd66b6zVz6eqHivKHPi0
+Message-ID: <CAJvnSUB5V9PNMFmVNMjLb0oGBZ2_Vmp8JTVU0hi5K=6C1MiiNQ@mail.gmail.com>
+Subject: Re: [PATCH] net/mlx5: fix VLAN stripping on hairpin queues
+To: Dariusz Sosnowski <dsosnowski@nvidia.com>
 Cc: dev@dpdk.org
-Content-Type: multipart/alternative; boundary="000000000000b220c00633f18e1b"
+Content-Type: multipart/alternative; boundary="0000000000000d6a980633f192ea"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,7 +68,7 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000b220c00633f18e1b
+--0000000000000d6a980633f192ea
 Content-Type: text/plain; charset="UTF-8"
 
 Hi, it looks like your patch was affected by an infrastructure issue at the
@@ -78,7 +77,7 @@ Issuing a retest to correct this:
 
 Recheck-request: iol-intel-Functional
 
---000000000000b220c00633f18e1b
+--0000000000000d6a980633f192ea
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -87,4 +86,4 @@ structure issue=C2=A0at the DPDK Community Lab and has a false failure test=
  result on DPDK patchwork. Issuing a retest to correct this:=C2=A0<br><br><=
 div>Recheck-request:=C2=A0iol-intel-Functional</div></div>
 
---000000000000b220c00633f18e1b--
+--0000000000000d6a980633f192ea--
