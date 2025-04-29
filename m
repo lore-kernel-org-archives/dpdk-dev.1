@@ -2,41 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DAD5C369D9
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Apr 2025 01:14:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4F43C369D5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Apr 2025 02:34:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6028E402A3;
-	Tue, 29 Apr 2025 03:14:56 +0200 (CEST)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
- by mails.dpdk.org (Postfix) with ESMTP id 42F904026C
- for <dev@dpdk.org>; Tue, 29 Apr 2025 03:14:55 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.162.254])
- by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Zmj2008rDzLpdg;
- Tue, 29 Apr 2025 09:11:20 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 28C7A18047D;
- Tue, 29 Apr 2025 09:14:52 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 29 Apr 2025 09:14:51 +0800
-Message-ID: <15eea4ec-08d0-4b1a-92dc-a8dd7945d539@huawei.com>
-Date: Tue, 29 Apr 2025 09:14:51 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: add one example of DPI ?
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: thomas Monjalon <thomas@monjalon.net>, "dev@dpdk.org" <dev@dpdk.org>
-References: <2c503191-c235-4fbc-ae7a-d21dbe83d2a7@huawei.com>
- <20250428084901.0aeeee04@hermes.local>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20250428084901.0aeeee04@hermes.local>
-Content-Type: text/plain; charset="UTF-8"
+	by mails.dpdk.org (Postfix) with ESMTP id A8F6A4026C;
+	Tue, 29 Apr 2025 04:34:40 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id A079F40263
+ for <dev@dpdk.org>; Tue, 29 Apr 2025 04:34:39 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 6A62E46658; Tue, 29 Apr 2025 04:34:39 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/meson Bug 1702] meson: Unsupported part number for ARM Grace
+ during meson setup
+Date: Tue, 29 Apr 2025 02:34:39 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: meson
+X-Bugzilla-Version: 23.11
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: minor
+X-Bugzilla-Who: probb@iol.unh.edu
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone attachments.created
+Message-ID: <bug-1702-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17458940790.E1eAd1891.3958708
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,60 +55,230 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 2025/4/28 23:49, Stephen Hemminger wrote:
-> On Mon, 28 Apr 2025 16:20:22 +0800
-> fengchengwen <fengchengwen@huawei.com> wrote:
-> 
->> Hi all,
->>
->> Currently, we supported several DPI application scenarios performance tuning,
->> in these scenarios, the DPDK library ethdev, ring, mbuf and hash APIs are used.
->>
->> One of the scenarios is:
->>
->>     ------------------------                           -------------------------
->>     |                      |       rte_ring-0          |                       |
->>     |  packet-recv-process | ===>  rte_ring-1  ===>    | packet-detect-process |
->>     |                      |         ...               |                       |
->>     |                      |       rte_ring-n          |                       |
->>     ------------------------                           -------------------------
->>
->>     packet-recv-process dispatch flow to different rings by such 'rte_hash_crc' function.
->>     packet-detect-process build flow context based on rte_hash library.
->>
->> I think it is necessary to add a DPI example to show that DPDK has the basic
->> capability of building DPI applications and provides best performance practices.
->>
->> Hope to listen to the community's opinions.
->>
->> Thanks
->>
-> 
-> Did you consider the impact of CPU cache on this scenario.
-> When you process the packet in two different threads, it ends up adding
-> an additional data cache miss which can cut performance in half.
 
-Yes, this model has the cache problem (it did has performance loss, but not so much). Let assume that this model is A.
+--17458940790.E1eAd1891.3958708
+Date: Tue, 29 Apr 2025 04:34:39 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-Another scenarios (this model is cache friendly) is:
-     --------------------------
-     |                        |
-     |  packet-detect-process |
-     |                        |
-     |  packet-recv-process   |
-     |                        |
-     --------------------------
-         |  multi-queues  |
-     --------------------------
-     |   hardware-RSS         |
-     --------------------------
-   The NIC hardware dispatch flow to different hardware queues by RSS.
-   Each threads in the process then receive and detect.
-   Let assume this model is B.
+https://bugs.dpdk.org/show_bug.cgi?id=3D1702
 
-Currently, there are many traffic encapsulation formats, but the NIC RSS hash always very simple (more complex
-can be implemented throught flow matching, but many NICs do not support this feature). In this case, the model
-A could be used, the software could dispatch flow by user-defined.
+            Bug ID: 1702
+           Summary: meson: Unsupported part number for ARM Grace during
+                    meson setup
+           Product: DPDK
+           Version: 23.11
+          Hardware: ARM
+                OS: All
+            Status: UNCONFIRMED
+          Severity: minor
+          Priority: Normal
+         Component: meson
+          Assignee: dev@dpdk.org
+          Reporter: probb@iol.unh.edu
+  Target Milestone: ---
 
-I think this example could both support the above two model.
+Created attachment 312
+  --> https://bugs.dpdk.org/attachment.cgi?id=3D312&action=3Dedit
+meson log
 
+Hello. I am seeing an error reported by meson when attempting to run meson
+setup on 23.11.
+
+steps to reproduce:
+1. clone dpdk-stable and checkout to 23.11
+2. run "meson setup build"
+
+error:
+Message: Arm implementer: Arm
+Message: Arm part number: 0xd4f
+
+config/arm/meson.build:687:8: ERROR: Problem encountered: Unsupported part
+number 0xd4f of implementer 0x41. Please add support for it or use the gene=
+ric
+(-Dplatform=3Dgeneric) build.
+
+
+System info:
+DPDK version: 23.11
+OS: Ubuntu 24.04
+CPU: Vendor ID:                ARM
+  BIOS Vendor ID:         NVIDIA
+  Model name:             Neoverse-V2
+    BIOS Model name:      Grace A02 AOM-SCM-NV CPU @ 3.4GHz
+meson version: .53 and 1.3.2 (tried both)
+
+If you pass in -Dplatform=3Dgeneric meson (and ninja) run to completion wit=
+hout
+error. But, I imagine support for this part number should be added so that
+meson will run without this flag, so I've created this ticket.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17458940790.E1eAd1891.3958708
+Date: Tue, 29 Apr 2025 04:34:39 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - meson: Unsupported part number for ARM Grace duri=
+ng meson setup"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1702">1702</a>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Summary</th>
+          <td>meson: Unsupported part number for ARM Grace during meson set=
+up
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>23.11
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>ARM
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>minor
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>meson
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>probb&#64;iol.unh.edu
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">Created <span class=3D""><a href=
+=3D"attachment.cgi?id=3D312" name=3D"attach_312" title=3D"meson log">attach=
+ment 312</a> <a href=3D"attachment.cgi?id=3D312&amp;action=3Dedit" title=3D=
+"meson log">[details]</a></span>
+meson log
+
+Hello. I am seeing an error reported by meson when attempting to run meson
+setup on 23.11.
+
+steps to reproduce:
+1. clone dpdk-stable and checkout to 23.11
+2. run &quot;meson setup build&quot;
+
+error:
+Message: Arm implementer: Arm
+Message: Arm part number: 0xd4f
+
+config/arm/meson.build:687:8: ERROR: Problem encountered: Unsupported part
+number 0xd4f of implementer 0x41. Please add support for it or use the gene=
+ric
+(-Dplatform=3Dgeneric) build.
+
+
+System info:
+DPDK version: 23.11
+OS: Ubuntu 24.04
+CPU: Vendor ID:                ARM
+  BIOS Vendor ID:         NVIDIA
+  Model name:             Neoverse-V2
+    BIOS Model name:      Grace A02 AOM-SCM-NV CPU &#64; 3.4GHz
+meson version: .53 and 1.3.2 (tried both)
+
+If you pass in -Dplatform=3Dgeneric meson (and ninja) run to completion wit=
+hout
+error. But, I imagine support for this part number should be added so that
+meson will run without this flag, so I've created this ticket.
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1702">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17458940790.E1eAd1891.3958708--
