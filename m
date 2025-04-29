@@ -2,63 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 707C6C369D5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Apr 2025 03:00:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F5CC369D5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Apr 2025 03:04:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9A14F4026C;
-	Tue, 29 Apr 2025 05:00:23 +0200 (CEST)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com
- [205.220.178.238])
- by mails.dpdk.org (Postfix) with ESMTP id 8B94540263
- for <dev@dpdk.org>; Tue, 29 Apr 2025 05:00:21 +0200 (CEST)
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
- by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53T1eVsA005986
- for <dev@dpdk.org>; Tue, 29 Apr 2025 03:00:20 GMT
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com
- [147.11.82.252])
- by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 468pf93qg4-1
+	by mails.dpdk.org (Postfix) with ESMTP id 1E5794026C;
+	Tue, 29 Apr 2025 05:04:44 +0200 (CEST)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com
+ [205.220.166.238])
+ by mails.dpdk.org (Postfix) with ESMTP id AF81E40263
+ for <dev@dpdk.org>; Tue, 29 Apr 2025 05:04:41 +0200 (CEST)
+Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
+ by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53T1K2V5017990
+ for <dev@dpdk.org>; Mon, 28 Apr 2025 20:04:40 -0700
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com
+ [147.11.82.254])
+ by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 468y0ksdm3-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
- for <dev@dpdk.org>; Tue, 29 Apr 2025 03:00:19 +0000 (GMT)
+ for <dev@dpdk.org>; Mon, 28 Apr 2025 20:04:40 -0700 (PDT)
 Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Mon, 28 Apr 2025 20:00:18 -0700
+ 15.1.2507.43; Mon, 28 Apr 2025 20:04:39 -0700
 Received: from pek-lpg-core6.wrs.com (147.11.136.210) by
  ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Mon, 28 Apr 2025 20:00:17 -0700
+ 15.1.2507.43 via Frontend Transport; Mon, 28 Apr 2025 20:04:38 -0700
 From: <changqing.li@windriver.com>
 To: <dev@dpdk.org>
 CC: <changqing.li@windriver.com>
-Subject: [PATCH] Add new tracepoint function for type time_t
-Date: Tue, 29 Apr 2025 11:00:17 +0800
-Message-ID: <20250429030017.1126516-1-changqing.li@windriver.com>
+Subject: [PATCH V2] Add new tracepoint function for type time_t
+Date: Tue, 29 Apr 2025 11:04:37 +0800
+Message-ID: <20250429030437.1128853-1-changqing.li@windriver.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250429030017.1126516-1-changqing.li@windriver.com>
+References: <20250429030017.1126516-1-changqing.li@windriver.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: VcN2LLBuboIcquKOw2UjjfgWb_FkhJqM
-X-Authority-Analysis: v=2.4 cv=EavIQOmC c=1 sm=1 tr=0 ts=681040c3 cx=c_pps
- a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDAyMSBTYWx0ZWRfXy2+cRpTsLILB
+ hynQH96tqpS7gUgwiuXGLbwVNYgkkj29tbmYtlf8oBjr7udaW9ELQYoThfHbVs33KZ+nm8yYj5h
+ gqPNwLHMtVfpotLDovMncNhHiNQ67OM590nKbzlDA6OiCb2oa23BWeh14Z8FysyKpGV8V8hoqMw
+ Go4Z9fuziRpuiaKIAqSMl+cwUiOJBg5ir3Gyzu8U4k5QSjbvnbRj+LL26j6IE6nVQDjqMaI5OEc
+ SvdsQBLCoD0VodClVjsZZv58zHSbN5sbN3ERgkN3OoYtDWLr759ucsDT40ERfjgZMnliklEmRa6
+ j7edLgjce8rr+f2F5I7jQ5g7OH1q4nxlr4f+JQrLtXK2Gx3D/UKUk+aILOZo434VQAo62V12pVU
+ 3HLN+rS/xbWXSnYxrEt6p6WRXcMcpXjgooV3AUJVR868dvsmAEEM+/ze8l+unaswBEIyetys
+X-Proofpoint-ORIG-GUID: GU5L72nGsS6VegAidYnyX_HGtl6YlWTI
+X-Authority-Analysis: v=2.4 cv=O8A5vA9W c=1 sm=1 tr=0 ts=681041c8 cx=c_pps
+ a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17
  a=XR8D0OoHHMoA:10 a=t7CeM3EgAAAA:8 a=trrNUMtqN4mMHeMglJkA:9
  a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDAyMSBTYWx0ZWRfX8Ga3ecP/IzGw
- h0XmhYutujeIUmRcCipRVsA3IH0uwWn6db/3tALQ38bNdEcSK3PKza3yDRzhbxzanFT43qrEZnJ
- AfhTKfNZdggyrsO/uJIywuUCfRfFAhm9lcmG0VvFzSRU+GWHKhRlUr/JKCSctDM/JOYf46fbEMn
- 9OW7QWm10fR27u5xYcJfymYsTN7qfuF9UPYAJceIb205GOM0z3GsCDA6I40J515NDli0XXtiPzt
- /gMFXsNGg5/q9Gpy462DyxsTEW8OSuaIGie/wxjY2zpsI6O3b2i6F3DBK1Q7XIQM+XUBALHb2NK
- VYp1cSgvAUbp9V4sGCO0X+nBdIB7yp2B1Jq3prUbGXinodYwB4AZVV7MELXMMxQTkqqISnnaV66
- GzAyGTS7ZN4KbRfNYJkgtRCI2tQ1J2KdoCfOT6hkmuciZJ3W1CPOysJEoW2JyjmChoYCb69b
-X-Proofpoint-ORIG-GUID: VcN2LLBuboIcquKOw2UjjfgWb_FkhJqM
+X-Proofpoint-GUID: GU5L72nGsS6VegAidYnyX_HGtl6YlWTI
 X-Sensitive_Customer_Information: Yes
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-04-29_01,2025-04-24_02,2025-02-21_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  priorityscore=1501
- impostorscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0 bulkscore=0
- adultscore=0 suspectscore=0 phishscore=0 mlxscore=0 clxscore=1015
- mlxlogscore=892 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2504070000
+ spamscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1015 suspectscore=0
+ adultscore=0 mlxlogscore=904 mlxscore=0 impostorscore=0 malwarescore=0
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.21.0-2504070000
  definitions=main-2504290021
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
