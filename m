@@ -2,75 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D7E6C369DC
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Apr 2025 16:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1F5DC369DC
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Apr 2025 18:11:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 75CC4402A3;
-	Tue, 29 Apr 2025 18:24:20 +0200 (CEST)
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com
- [209.85.210.176])
- by mails.dpdk.org (Postfix) with ESMTP id F28B840277
- for <dev@dpdk.org>; Tue, 29 Apr 2025 18:24:18 +0200 (CEST)
-Received: by mail-pf1-f176.google.com with SMTP id
- d2e1a72fcca58-7394945d37eso5404073b3a.3
- for <dev@dpdk.org>; Tue, 29 Apr 2025 09:24:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1745943858;
- x=1746548658; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=IsE1+cspAbkQjxNLBSkTgjpxCD+Pcst/YGT821EhGxw=;
- b=v0jYmLq9zPcmzkN45J3/aSdlD7SP9jTzJlJxlkuav1aQTnhaoNBI9C9RfTinaMvUQ2
- N0TvoyElW4Ude7WCsvOUAAlnXfinP14fCmeWk34tWvONp1ZMyQG9wS8T1pcjjJH7SIZG
- JZt/QNRHlITx9u/sWag5akPmsId1kIoaxk0kI11XG2EWMi6Ls2cowvWW4sFx7esPaHvB
- ucDV2gwf3SFKpz1BE7YYw9FwgS3pauPVTrwFMmvKJXNrnq+6GRMD+aSJMXlwZl3cWLTo
- zgDvpjefXfYv+pN3hD3vyv7U9+H7rryxLfnmZi1Qu0dHcP7amh1fjNtnkQxTQKiwtkeO
- jOXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1745943858; x=1746548658;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=IsE1+cspAbkQjxNLBSkTgjpxCD+Pcst/YGT821EhGxw=;
- b=JwUWvril/1CZNmJeZ7d+6JXrdcNxCqxTZ6B1X4Jp0zDJQhb97rHm9KDV+0HfEv5Heg
- w40B4IqIozLJQnOaxlm1EIH53hgI/USdW7e3g56Jr7RelmI2w1yb5DehiL5R+gKtVIwX
- vtrWoQIiWMAgwmRprNNqyQH1yCjoDEyj/tw15O5SRqQfrF4JtIaPWOQcE+XVTCD0jZtg
- kfjcg0gSpx6S/4AERJQzyV0tVrlc8lOM431L2p+KVDZX62p4+lTXU8H6NZg4Og+MIsNV
- 8U5/Aot0E7OTXgblgbCtJo6O+dOn/7a9HJ7+J+LOH2T4DrdF8Frwub+P6NWlk6oeCAXC
- tVsg==
-X-Gm-Message-State: AOJu0Yy+y49v/G2BeDqZZF2OrAOdw7t4rWSqBSZbvrYRoo26Kkb/MjtJ
- t//JL2CrT8Xktc6KplAV5exYtbMep3tS4WXGhtsmgmO6BrVZUmb75JfGNIuKukQ=
-X-Gm-Gg: ASbGnct7iEaFGdx2f+Ay+12L2aSaVOvmU+nmLaYI5pfooPI3f6S+gbqt7qpGD6JxFSm
- +OsjSVomknyp8b6n3hSg+dRFpch37Xq3EYS2FjvuBPpGmN7ASvJ21vSCYPZf3mnxyZmEanY+MkA
- iriZlmjRXh3m2Y8m5DQLU9d2fBnQ1anRgZp6aV/60L1Kbbd//x7om+MHZrdS2QD0qMKvvS2pnti
- RnvhVrJXryf29NOBto1CDyKrsszcE83n06iplSHECwif9YInoDhL10GvD4tWJWbZFxMkbdQZD8S
- /uc3/OzKiE5xQ1kX+fAN2iVBiw1hm36wlLcWaGgm7YhH4nLV2/ix6zFc+6ozyljr5Y8Ly6zaBzw
- /aKgkrHzrHmWK8H7H
-X-Google-Smtp-Source: AGHT+IEAsKCTIGsc1GT0oljdUJFLKogpNc1UpzQ0P8ndVJtHhv5jLAJ7gfWSC+ifG3QHr9rCYGDgUw==
-X-Received: by 2002:a05:6a00:8c8c:b0:740:34cd:498f with SMTP id
- d2e1a72fcca58-74034cd4af6mr1050903b3a.5.1745943857634; 
- Tue, 29 Apr 2025 09:24:17 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-73e25a6ab27sm10117807b3a.110.2025.04.29.09.24.17
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 29 Apr 2025 09:24:17 -0700 (PDT)
-Date: Tue, 29 Apr 2025 09:24:15 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Prashant Upadhyaya <praupadhyaya@gmail.com>
-Cc: dev@dpdk.org
-Subject: Re: Regarding Mellanox bifurcated driver on Azure
-Message-ID: <20250429092415.2a37c090@hermes.local>
-In-Reply-To: <CAPBAu3UDao48OmcnEMQw9-W3pesM1W2ftQsEG3EtHDxxOXCc=Q@mail.gmail.com>
-References: <CAPBAu3WOch_LYAUp_R47-=Uaos1yJLKgpRBM1ewJ+vaRysCDCQ@mail.gmail.com>
- <20250426082843.736964ba@hermes.local>
- <CAPBAu3WOq6_77mBvd=B8x2tso9hWpjFTyUuEeJgZazSm_y_GHQ@mail.gmail.com>
- <20250428083712.50b2e7ce@hermes.local>
- <CAPBAu3UDao48OmcnEMQw9-W3pesM1W2ftQsEG3EtHDxxOXCc=Q@mail.gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 8B46B402A3;
+	Tue, 29 Apr 2025 20:11:44 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 26B2D40277
+ for <dev@dpdk.org>; Tue, 29 Apr 2025 20:11:43 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53THT5HH017800;
+ Tue, 29 Apr 2025 11:11:39 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=ubKbTU89EvtQYUb2buy1fmi
+ haOeIDwg3R/TzItEcNPQ=; b=IlsKmgdHqVGU7yhKiipJ0vWstx4xydYa6gyS8Gx
+ Zt0fpSOAMW7q3ysYCsuthic2GnIXBLjJwTgin+zwODjZeIusdrp7Gs0F1znoCV0w
+ d4nZvJJmcmCmyHYwhV9Z0pwPHmkiplnHaprWnIRxyGZoKUZJZ1TNbcDxA0EzkX/U
+ F1GSjGWsDQs3W0zdLUFvdiaUYttWtdfn70ZT3qX4ZcvYqoXZygDEoDPeROiW6TQ9
+ RD+xAhgBOEv/rNEtEHJntdNa4QtQQLJzzBN5nnJ6k3GGUlBTh9bUt7TegIyJriRe
+ rdN1spCc7MC/U4j3aREgqiGTFm59mRFZ+tV6v67sM4WUHuw==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 469g8adhvg-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Tue, 29 Apr 2025 11:11:39 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 29 Apr 2025 11:11:38 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 29 Apr 2025 11:11:38 -0700
+Received: from cavium-3070-BM23.. (unknown [10.28.34.25])
+ by maili.marvell.com (Postfix) with ESMTP id 129463F7060;
+ Tue, 29 Apr 2025 11:11:35 -0700 (PDT)
+From: <skori@marvell.com>
+To: Thomas Monjalon <thomas@monjalon.net>, Ferruh Yigit <ferruh.yigit@amd.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+CC: <dev@dpdk.org>, Sunil Kumar Kori <skori@marvell.com>
+Subject: [PATCH] ethdev: remove callback checks from fast path
+Date: Tue, 29 Apr 2025 23:41:30 +0530
+Message-ID: <20250429181132.2544771-1-skori@marvell.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=aeVhnQot c=1 sm=1 tr=0 ts=6811165b cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=XR8D0OoHHMoA:10 a=M5GUcnROAAAA:8 a=VMXhHCWA-yfY0gUsFDUA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: Bi6SFVcX0SF6m5q_dBXzCP6dyaiMWEIn
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDEzNCBTYWx0ZWRfX/RomYVilWdV3
+ gc4aL6C32Lb7mqHYgNGz/DLDyzQReFEqjE6PjlDKAXllcgSX8SJ/05ktFY7EVxBd9FsYi7MU+i+
+ oE8jIATvz3nwCsNHVzqRMddeBE+aBBk9WCk1uMMGtGlZQnKu3YTJi2LsnRRYLKa8LktLlsUln/Y
+ yUvK1p0o6/flyQDHqxamafyiXvWm3TaCgkD8sxyO9A4TBh4bGzIfswRl1SCj1vX3s4O7S82ydQE
+ mZdoAZh1IndqQD2p7q1AmQLfGkpPGsO0iuJw3ffIJm8HLFvQHoFBtXf8e6OHm56vFML95ifM72H
+ ZoHVPLN1J/FZ10sUTD9FV9Lnca8Lxg+UXbrBRsPZBiM21wXzUzmvN3+ZGmfi28N5xTe30g/zJPz
+ UVNtPxgT4TZenouy0IZN46WilokvMHGwJZaRYnoe2/RxtEnmlCsap7cpqyjvqA33iPeBPmH0
+X-Proofpoint-ORIG-GUID: Bi6SFVcX0SF6m5q_dBXzCP6dyaiMWEIn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-29_06,2025-04-24_02,2025-02-21_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,135 +77,285 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 29 Apr 2025 21:45:36 +0530
-Prashant Upadhyaya <praupadhyaya@gmail.com> wrote:
+From: Sunil Kumar Kori <skori@marvell.com>
 
-> On Mon, 28 Apr 2025 at 21:07, Stephen Hemminger <stephen@networkplumber.org>
-> wrote:
-> 
-> > On Mon, 28 Apr 2025 11:31:10 +0530
-> > Prashant Upadhyaya <praupadhyaya@gmail.com> wrote:
-> >  
-> > > On Sat, 26 Apr 2025 at 20:58, Stephen Hemminger <
-> > stephen@networkplumber.org>
-> > > wrote:
-> > >  
-> > > > On Fri, 25 Apr 2025 23:17:30 +0530
-> > > > Prashant Upadhyaya <praupadhyaya@gmail.com> wrote:
-> > > >  
-> > > > > Hi,
-> > > > >
-> > > > > I am having a VM on Azure where I have got two 'accelerated  
-> > networking'  
-> > > > > interfaces of Mellanox
-> > > > > # lspci -nn|grep -i ether
-> > > > > 6561:00:02.0 Ethernet controller [0200]: Mellanox Technologies  
-> > MT27710  
-> > > > > Family [ConnectX-4 Lx Virtual Function] [15b3:1016] (rev 80)
-> > > > > f08c:00:02.0 Ethernet controller [0200]: Mellanox Technologies  
-> > MT27710  
-> > > > > Family [ConnectX-4 Lx Virtual Function] [15b3:1016] (rev 80)
-> > > > >
-> > > > > I have a DPDK application which needs to obtain 'all' packets from  
-> > the  
-> > > > NIC.  
-> > > > > I installed the drivers, compiled DPDK24.11 (Ubuntu20.04), my app  
-> > starts  
-> > > > > and is able to detect the NIC's.
-> > > > > Everything looks good
-> > > > > myapp.out -c 0x07 -a f08c:00:02.0 -a 6561:00:02.0
-> > > > > EAL: Detected CPU lcores: 8
-> > > > > EAL: Detected NUMA nodes: 1
-> > > > > EAL: Detected shared linkage of DPDK
-> > > > > EAL: Multi-process socket /var/run/dpdk/rte/mp_socket
-> > > > > EAL: Selected IOVA mode 'PA'
-> > > > > EAL: VFIO support initialized
-> > > > > mlx5_net: Default miss action is not supported.
-> > > > > mlx5_net: Default miss action is not supported.
-> > > > > All Ports initialized
-> > > > > Port 0 is UP (50000 Mbps)
-> > > > > Port 1 is UP (50000 Mbps)
-> > > > >
-> > > > > The trouble is that the ARP packets are not being picked up by my  
-> > DPDK  
-> > > > > application, I see them being delivered to the kernel via the eth  
-> > > > interface  
-> > > > > corresponding to the port (MLX is a bifurcated driver, you don't  
-> > really  
-> > > > > bind to the NIC, so you still see the eth interfaces at linux level  
-> > and  
-> > > > can  
-> > > > > run tcpdump on those, I see ARP packets in the tcpdump there on the
-> > > > > interface)
-> > > > > I can receive UDP packets in my DPDK app though.
-> > > > >
-> > > > > My application is not setting any rte_flow rules etc. so I was  
-> > expecting  
-> > > > > that by default my dpdk app would get all the packets as is normally  
-> > the  
-> > > > > case with other NIC's
-> > > > > Is there something I need to configure for Mellanox NIC somewhere  
-> > such  
-> > > > that  
-> > > > > I get 'all' the packets including ARP packets in my DPDK app ?
-> > > > >
-> > > > > Regards
-> > > > > -Prashant  
-> > > >
-> > > > The Mellanox device in Azure networking cards is only used as a VF  
-> > switch.  
-> > > > You can go back to earlier DPDK presentations for more detail.
-> > > >
-> > > > Three reason bifurcation won't work.
-> > > >  1. Only some of the packets arrive on the VF. All non-IP show up on
-> > > >     the synthetic device. The VF is only used after the TCP three way
-> > > >     handshake.
-> > > >  2. The Netvsc PMD doesn't handle flow rules.
-> > > >  3. The VF can be removed and restored any time (by hypervisor)
-> > > >     it is not a stable entity.
-> > > >
-> > > >  
-> > >  Thanks Stephen, so are we concluding that DPDK apps are unusable in  
-> > Azure  
-> > > as per my requirements, is there no work around or any other possibility  
-> > to  
-> > > use DPDK in Azure VM ? Please do send me a link to the correct  
-> > presentation  
-> > > I should refer to.
-> > >
-> > > Regards
-> > > -Prashant  
-> >
-> > Remember in the cloud network interfaces are free, there really is no need
-> > for bifurication just create two interfaces to VM, one for DPDK, and one
-> > for
-> > non DPDK.
-> >  
-> 
-> I am afraid Stephen, I am not entirely clear about your suggestion.
-> When I create an Accelerated Networking interface on Azure (with the
-> intention of my DPDK app fully controlling it), it is automatically giving
-> one eth interface (representing slowpath) and one enp interface (presumably
-> the fast path and which my dpdk app detects and operates upon). It is this
-> pair that is created automatically for a single packet interface by Azure.
-> The trouble is the above bifurcation because I don't get to see all the
-> packets from the NIC on DPDK controlled interface -- my DPDK app wants to
-> see all the packets.
-> 
-> Regards
-> -Prashant
+rte_eth_fp_ops contains ops for fast path APIs. Each API
+validates availability of callback and then invoke it.
 
-With DPDK on Azure, an application should never use the VF directly.
-It needs to use either netvsc PMD which handles both the vmbus (slow path)
-and VF (fast path) combined. Or use the older vdev_netvsc/failsafe/tap combination.
-The latter uses a virtual device to make a failsafe PMD which then does
-a combination of TAP (via kernel slow path) and MLX5 VF.  The failsafe PMD
-is what is exposed for application usage.
+Removing these NULL checks instead using dummy callbacks.
 
-The limitations are not explicitly mentioned in the documentation but:
-  - don't use VF directly in application
-  - there is no support for bifurcation where some packets go to kernel
-    and some to DPDK
-  - there is only very limited support for rte_flow; that is with failsafe PMD
-    (not netvsc PMD) and the limitations are that the emulation of rte_flow
-    in the TAP device only supports a few things.
+Signed-off-by: Sunil Kumar Kori <skori@marvell.com>
+---
+ lib/ethdev/ethdev_driver.c | 47 ++++++++++++++++++++++
+ lib/ethdev/ethdev_driver.h | 82 ++++++++++++++++++++++++++++++++++++++
+ lib/ethdev/ethdev_pci.h    | 19 +++++++++
+ lib/ethdev/rte_ethdev.h    | 20 +---------
+ 4 files changed, 150 insertions(+), 18 deletions(-)
+
+diff --git a/lib/ethdev/ethdev_driver.c b/lib/ethdev/ethdev_driver.c
+index ec0c1e1176..75073f98cf 100644
+--- a/lib/ethdev/ethdev_driver.c
++++ b/lib/ethdev/ethdev_driver.c
+@@ -847,6 +847,53 @@ rte_eth_pkt_burst_dummy(void *queue __rte_unused,
+ 	return 0;
+ }
+ 
++RTE_EXPORT_INTERNAL_SYMBOL(rte_eth_tx_pkt_prepare_dummy)
++uint16_t
++rte_eth_tx_pkt_prepare_dummy(void *queue __rte_unused,
++		struct rte_mbuf **pkts __rte_unused,
++		uint16_t nb_pkts)
++{
++	return nb_pkts;
++}
++
++RTE_EXPORT_INTERNAL_SYMBOL(rte_eth_rx_queue_count_dummy)
++uint32_t
++rte_eth_rx_queue_count_dummy(void *queue __rte_unused)
++{
++	return -ENOTSUP;
++}
++
++RTE_EXPORT_INTERNAL_SYMBOL(rte_eth_tx_queue_count_dummy)
++int
++rte_eth_tx_queue_count_dummy(void *queue __rte_unused)
++{
++	return -ENOTSUP;
++}
++
++RTE_EXPORT_INTERNAL_SYMBOL(rte_eth_descriptor_status_dummy)
++int
++rte_eth_descriptor_status_dummy(void *queue __rte_unused,
++		uint16_t offset __rte_unused)
++{
++	return -ENOTSUP;
++}
++
++RTE_EXPORT_INTERNAL_SYMBOL(rte_eth_recycle_tx_mbufs_reuse_dummy)
++uint16_t
++rte_eth_recycle_tx_mbufs_reuse_dummy(void *queue __rte_unused,
++		struct rte_eth_recycle_rxq_info *recycle_rxq_info __rte_unused)
++{
++	return 0;
++}
++
++RTE_EXPORT_INTERNAL_SYMBOL(rte_eth_recycle_rx_descriptors_refill_dummy)
++void
++rte_eth_recycle_rx_descriptors_refill_dummy(void *queue __rte_unused,
++		uint16_t nb __rte_unused)
++{
++
++}
++
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_eth_representor_id_get)
+ int
+ rte_eth_representor_id_get(uint16_t port_id,
+diff --git a/lib/ethdev/ethdev_driver.h b/lib/ethdev/ethdev_driver.h
+index 2b4d2ae9c3..ec00f16ed3 100644
+--- a/lib/ethdev/ethdev_driver.h
++++ b/lib/ethdev/ethdev_driver.h
+@@ -1874,6 +1874,88 @@ rte_eth_pkt_burst_dummy(void *queue __rte_unused,
+ 		struct rte_mbuf **pkts __rte_unused,
+ 		uint16_t nb_pkts __rte_unused);
+ 
++/**
++ * @internal
++ * Dummy DPDK callback for Tx packet prepare.
++ *
++ * @param queue
++ *  Pointer to Tx queue
++ * @param pkts
++ *  Packet array
++ * @param nb_pkts
++ *  Number of packets in packet array
++ */
++__rte_internal
++uint16_t
++rte_eth_tx_pkt_prepare_dummy(void *queue __rte_unused,
++		struct rte_mbuf **pkts __rte_unused,
++		uint16_t nb_pkts __rte_unused);
++
++/**
++ * @internal
++ * Dummy DPDK callback for Rx queue count.
++ *
++ * @param queue
++ *  Pointer to Rx queue
++ */
++__rte_internal
++uint32_t
++rte_eth_rx_queue_count_dummy(void *queue __rte_unused);
++
++/**
++ * @internal
++ * Dummy DPDK callback for Tx queue count.
++ *
++ * @param queue
++ *  Pointer to Tx queue
++ */
++__rte_internal
++int
++rte_eth_tx_queue_count_dummy(void *queue __rte_unused);
++
++/**
++ * @internal
++ * Dummy DPDK callback for descriptor status.
++ *
++ * @param queue
++ *  Pointer to Rx/Tx queue
++ * @param offset
++ *  The offset of the descriptor starting from tail (0 is the next
++ *  packet to be received by the driver).
++ */
++__rte_internal
++int
++rte_eth_descriptor_status_dummy(void *queue __rte_unused,
++		uint16_t offset __rte_unused);
++
++/**
++ * @internal
++ * Dummy DPDK callback for recycle Tx mbufs reuse.
++ *
++ * @param queue
++ *  Pointer to Tx queue
++ * @param recycle_rxq_info
++ *  Pointer to recycle Rx queue info
++ */
++__rte_internal
++uint16_t
++rte_eth_recycle_tx_mbufs_reuse_dummy(void *queue __rte_unused,
++		struct rte_eth_recycle_rxq_info *recycle_rxq_info __rte_unused);
++
++/**
++ * @internal
++ * Dummy DPDK callback Rx descriptor refill.
++ *
++ * @param queue
++ *  Pointer Rx queue
++ * @param offset
++ *  number of descriptors to refill
++ */
++__rte_internal
++void
++rte_eth_recycle_rx_descriptors_refill_dummy(void *queue __rte_unused,
++		uint16_t nb __rte_unused);
++
+ /**
+  * Allocate an unique switch domain identifier.
+  *
+diff --git a/lib/ethdev/ethdev_pci.h b/lib/ethdev/ethdev_pci.h
+index 2229ffa252..1bd49ab822 100644
+--- a/lib/ethdev/ethdev_pci.h
++++ b/lib/ethdev/ethdev_pci.h
+@@ -16,6 +16,20 @@
+ extern "C" {
+ #endif
+ 
++static inline void
++rte_eth_set_dummy_fops(struct rte_eth_dev *eth_dev)
++{
++	eth_dev->rx_pkt_burst = rte_eth_pkt_burst_dummy;
++	eth_dev->tx_pkt_burst = rte_eth_pkt_burst_dummy;
++	eth_dev->tx_pkt_prepare = rte_eth_tx_pkt_prepare_dummy;
++	eth_dev->rx_queue_count = rte_eth_rx_queue_count_dummy;
++	eth_dev->tx_queue_count = rte_eth_tx_queue_count_dummy;
++	eth_dev->rx_descriptor_status = rte_eth_descriptor_status_dummy;
++	eth_dev->tx_descriptor_status = rte_eth_descriptor_status_dummy;
++	eth_dev->recycle_tx_mbufs_reuse = rte_eth_recycle_tx_mbufs_reuse_dummy;
++	eth_dev->recycle_rx_descriptors_refill = rte_eth_recycle_rx_descriptors_refill_dummy;
++}
++
+ /**
+  * Copy pci device info to the Ethernet device data.
+  * Shared memory (eth_dev->data) only updated by primary process, so it is safe
+@@ -147,6 +161,11 @@ rte_eth_dev_pci_generic_probe(struct rte_pci_device *pci_dev,
+ 	if (!eth_dev)
+ 		return -ENOMEM;
+ 
++	/* Update fast path ops with dummy callbacks. Driver will update
++	 * them with required callbacks in the init function.
++	 */
++	rte_eth_set_dummy_fops(eth_dev);
++
+ 	ret = dev_init(eth_dev);
+ 	if (ret)
+ 		rte_eth_dev_release_port(eth_dev);
+diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
+index ea7f8c4a1a..aa67b69134 100644
+--- a/lib/ethdev/rte_ethdev.h
++++ b/lib/ethdev/rte_ethdev.h
+@@ -6399,8 +6399,6 @@ rte_eth_rx_queue_count(uint16_t port_id, uint16_t queue_id)
+ 		return -EINVAL;
+ #endif
+ 
+-	if (p->rx_queue_count == NULL)
+-		return -ENOTSUP;
+ 	return (int)p->rx_queue_count(qd);
+ }
+ 
+@@ -6471,8 +6469,6 @@ rte_eth_rx_descriptor_status(uint16_t port_id, uint16_t queue_id,
+ 	if (qd == NULL)
+ 		return -ENODEV;
+ #endif
+-	if (p->rx_descriptor_status == NULL)
+-		return -ENOTSUP;
+ 	return p->rx_descriptor_status(qd, offset);
+ }
+ 
+@@ -6542,8 +6538,6 @@ static inline int rte_eth_tx_descriptor_status(uint16_t port_id,
+ 	if (qd == NULL)
+ 		return -ENODEV;
+ #endif
+-	if (p->tx_descriptor_status == NULL)
+-		return -ENOTSUP;
+ 	return p->tx_descriptor_status(qd, offset);
+ }
+ 
+@@ -6786,9 +6780,6 @@ rte_eth_tx_prepare(uint16_t port_id, uint16_t queue_id,
+ 	}
+ #endif
+ 
+-	if (!p->tx_pkt_prepare)
+-		return nb_pkts;
+-
+ 	return p->tx_pkt_prepare(qd, tx_pkts, nb_pkts);
+ }
+ 
+@@ -6985,8 +6976,6 @@ rte_eth_recycle_mbufs(uint16_t rx_port_id, uint16_t rx_queue_id,
+ 		return 0;
+ 	}
+ #endif
+-	if (p1->recycle_tx_mbufs_reuse == NULL)
+-		return 0;
+ 
+ #ifdef RTE_ETHDEV_DEBUG_RX
+ 	if (rx_port_id >= RTE_MAX_ETHPORTS ||
+@@ -7010,8 +6999,6 @@ rte_eth_recycle_mbufs(uint16_t rx_port_id, uint16_t rx_queue_id,
+ 		return 0;
+ 	}
+ #endif
+-	if (p2->recycle_rx_descriptors_refill == NULL)
+-		return 0;
+ 
+ 	/* Copy used *rte_mbuf* buffer pointers from Tx mbuf ring
+ 	 * into Rx mbuf ring.
+@@ -7131,14 +7118,11 @@ rte_eth_tx_queue_count(uint16_t port_id, uint16_t queue_id)
+ 		goto out;
+ 	}
+ #endif
+-	if (fops->tx_queue_count == NULL) {
+-		rc = -ENOTSUP;
+-		goto out;
+-	}
+-
+ 	rc = fops->tx_queue_count(qd);
+ 
++#ifdef RTE_ETHDEV_DEBUG_TX
+ out:
++#endif
+ 	rte_eth_trace_tx_queue_count(port_id, queue_id, rc);
+ 	return rc;
+ }
+-- 
+2.43.0
+
