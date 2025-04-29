@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4F43C369D5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Apr 2025 02:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94214C369D5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Apr 2025 02:38:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A8F6A4026C;
-	Tue, 29 Apr 2025 04:34:40 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 820264026C;
+	Tue, 29 Apr 2025 04:38:42 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id A079F40263
- for <dev@dpdk.org>; Tue, 29 Apr 2025 04:34:39 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id DC85240263
+ for <dev@dpdk.org>; Tue, 29 Apr 2025 04:38:40 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 6A62E46658; Tue, 29 Apr 2025 04:34:39 +0200 (CEST)
+ id C8EBA46658; Tue, 29 Apr 2025 04:38:40 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/meson Bug 1702] meson: Unsupported part number for ARM Grace
+Subject: [DPDK/meson Bug 1703] meson: Unsupported part number for ARM Grace
  during meson setup
-Date: Tue, 29 Apr 2025 02:34:39 +0000
+Date: Tue, 29 Apr 2025 02:38:40 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
 X-Bugzilla-Component: meson
-X-Bugzilla-Version: 23.11
+X-Bugzilla-Version: 22.11
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: minor
 X-Bugzilla-Who: probb@iol.unh.edu
@@ -35,8 +35,8 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone attachments.created
-Message-ID: <bug-1702-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17458940790.E1eAd1891.3958708
+Message-ID: <bug-1703-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17458943200.d54343ebA.3960939
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -56,8 +56,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17458940790.E1eAd1891.3958708
-Date: Tue, 29 Apr 2025 04:34:39 +0200
+--17458943200.d54343ebA.3960939
+Date: Tue, 29 Apr 2025 04:38:40 +0200
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -65,14 +65,14 @@ X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1702
+https://bugs.dpdk.org/show_bug.cgi?id=3D1703
 
-            Bug ID: 1702
+            Bug ID: 1703
            Summary: meson: Unsupported part number for ARM Grace during
                     meson setup
            Product: DPDK
-           Version: 23.11
-          Hardware: ARM
+           Version: 22.11
+          Hardware: All
                 OS: All
             Status: UNCONFIRMED
           Severity: minor
@@ -82,29 +82,30 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D1702
           Reporter: probb@iol.unh.edu
   Target Milestone: ---
 
-Created attachment 312
-  --> https://bugs.dpdk.org/attachment.cgi?id=3D312&action=3Dedit
+Created attachment 313
+  --> https://bugs.dpdk.org/attachment.cgi?id=3D313&action=3Dedit
 meson log
 
 Hello. I am seeing an error reported by meson when attempting to run meson
-setup on 23.11.
+setup on 22.11.
 
 steps to reproduce:
-1. clone dpdk-stable and checkout to 23.11
+1. clone dpdk-stable and checkout to 22.11
 2. run "meson setup build"
 
 error:
 Message: Arm implementer: Arm
 Message: Arm part number: 0xd4f
 
-config/arm/meson.build:687:8: ERROR: Problem encountered: Unsupported part
+config/arm/meson.build:603:8: ERROR: Problem encountered: Unsupported part
 number 0xd4f of implementer 0x41. Please add support for it or use the gene=
 ric
 (-Dplatform=3Dgeneric) build.
 
 
+
 System info:
-DPDK version: 23.11
+DPDK version: 22.11
 OS: Ubuntu 24.04
 CPU: Vendor ID:                ARM
   BIOS Vendor ID:         NVIDIA
@@ -121,8 +122,8 @@ meson will run without this flag, so I've created this ticket.
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17458940790.E1eAd1891.3958708
-Date: Tue, 29 Apr 2025 04:34:39 +0200
+--17458943200.d54343ebA.3960939
+Date: Tue, 29 Apr 2025 04:38:40 +0200
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -142,7 +143,7 @@ bz_new_table">
           bz_status_UNCONFIRMED "
    title=3D"UNCONFIRMED - meson: Unsupported part number for ARM Grace duri=
 ng meson setup"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1702">1702</a>
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1703">1703</a>
           </td>
         </tr>
 
@@ -161,13 +162,13 @@ up
 
         <tr>
           <th>Version</th>
-          <td>23.11
+          <td>22.11
           </td>
         </tr>
 
         <tr>
           <th>Hardware</th>
-          <td>ARM
+          <td>All
           </td>
         </tr>
 
@@ -221,30 +222,31 @@ up
       <p>
         <div class=3D"bz_comment_block">
           <pre class=3D"bz_comment_text">Created <span class=3D""><a href=
-=3D"attachment.cgi?id=3D312" name=3D"attach_312" title=3D"meson log">attach=
-ment 312</a> <a href=3D"attachment.cgi?id=3D312&amp;action=3Dedit" title=3D=
+=3D"attachment.cgi?id=3D313" name=3D"attach_313" title=3D"meson log">attach=
+ment 313</a> <a href=3D"attachment.cgi?id=3D313&amp;action=3Dedit" title=3D=
 "meson log">[details]</a></span>
 meson log
 
 Hello. I am seeing an error reported by meson when attempting to run meson
-setup on 23.11.
+setup on 22.11.
 
 steps to reproduce:
-1. clone dpdk-stable and checkout to 23.11
+1. clone dpdk-stable and checkout to 22.11
 2. run &quot;meson setup build&quot;
 
 error:
 Message: Arm implementer: Arm
 Message: Arm part number: 0xd4f
 
-config/arm/meson.build:687:8: ERROR: Problem encountered: Unsupported part
+config/arm/meson.build:603:8: ERROR: Problem encountered: Unsupported part
 number 0xd4f of implementer 0x41. Please add support for it or use the gene=
 ric
 (-Dplatform=3Dgeneric) build.
 
 
+
 System info:
-DPDK version: 23.11
+DPDK version: 22.11
 OS: Ubuntu 24.04
 CPU: Vendor ID:                ARM
   BIOS Vendor ID:         NVIDIA
@@ -272,7 +274,7 @@ meson will run without this flag, so I've created this ticket.
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1702">
+?id=3D1703">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -281,4 +283,4 @@ ication">
     </body>
 </html>=
 
---17458940790.E1eAd1891.3958708--
+--17458943200.d54343ebA.3960939--
