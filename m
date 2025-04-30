@@ -2,86 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 759BAC369D9
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Apr 2025 16:00:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE24C3ABA9
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Apr 2025 16:30:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 07343402B1;
-	Wed, 30 Apr 2025 18:00:00 +0200 (CEST)
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
- [209.85.214.178])
- by mails.dpdk.org (Postfix) with ESMTP id D983B402A0
- for <dev@dpdk.org>; Wed, 30 Apr 2025 17:59:58 +0200 (CEST)
-Received: by mail-pl1-f178.google.com with SMTP id
- d9443c01a7336-224019ad9edso112452305ad.1
- for <dev@dpdk.org>; Wed, 30 Apr 2025 08:59:58 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 387CD402B1;
+	Wed, 30 Apr 2025 18:30:44 +0200 (CEST)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com
+ [209.85.208.49]) by mails.dpdk.org (Postfix) with ESMTP id 883AC402A0
+ for <dev@dpdk.org>; Wed, 30 Apr 2025 18:30:42 +0200 (CEST)
+Received: by mail-ed1-f49.google.com with SMTP id
+ 4fb4d7f45d1cf-5f6f86580ecso10727a12.1
+ for <dev@dpdk.org>; Wed, 30 Apr 2025 09:30:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1746028797;
- x=1746633597; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=yTuqi9+A4Mwt8DQl8LFUgX5uevUTqTdJwARDMIKyz8Q=;
- b=N9K2vKPlozX6ZDTCQhjaJ71gFes6Daux/HJrFjK3HRkm4ZjN4fFdtKZQjazfc5ek+G
- TKKwtQTAW/uC3ffKc47eDB5kfKaRFDfkWyP0yLY0Gxajkg2/KFLOAGPcWL4r/KOqZ/KJ
- +kgCzsEtPQpO8W489do8OefX33dnxiAn7GbB+Ucip26cqMNDlpULtk1wPRODnaPl7yvi
- GO65u1gF7kZmuBaoNai6OLsZWFKpVaJ9cUtkD48opz/AYkj499oewoOiWOI2xLIjFh2A
- jdTWbGmW7IU/C+1zYKY8wehYQE98m/jRZLnDFIKd5xEIb9M3EYLvcGFFK4Ew5ChtukVV
- 9dXg==
+ d=gmail.com; s=20230601; t=1746030642; x=1746635442; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=n3bS8yf6DFNAHufLf+6Ly5fHIEELqRWHkhSXl6qhAtY=;
+ b=EpG+C9aOps5gIfyG6+XKVWVsyULRYdVAuxISibe8BhOGpoAapgWF1+N09D4RibxRxf
+ Se0wBtLHO0X1eKPzaanNuzd+Jhi/7HdsmhQ+3P+zbU12WNNi07X+mQPmQshzYhSDssvX
+ e2YSyc4UhoIx11XHHhBPjw3aOX3N3COPmyOHqcfbFTJ9FVirotq0Q0OWOwxBHQIC4vjt
+ 4xJGpCDeBUwuGosXA8w5A+M6taX4DUSZR2SVSzP1+Y7RVFf5wew0iHMdzqUDo70TADKg
+ XpbHKwajPyBPmHXpB5dcwBtlkio6FQoyXgtiy1sckR243Y8IcBWgSMo5fcl+LNBz1dJO
+ 2xfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1746028797; x=1746633597;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=yTuqi9+A4Mwt8DQl8LFUgX5uevUTqTdJwARDMIKyz8Q=;
- b=eeMjGsGhs7GRONWkzJpTnndeQV5t70bzBDPRyP+l2zqBzMyLMjI7ERduVSP3kBXKN9
- LK3DHMDMnV5k0nJVGMUa+m/9NmTXUA4bc0OPhXG6o1tYK66rN9Ry/1fm9LzwTmicBc8u
- 7yFcVtiUhBAWOvfqzURwrmu/ehcMELMlXI+P6Utl2BOc0fUhox7UB2bxKCtVOgBm/teI
- fNqKebmzumkXjvclmL54OpMzsbYr1jhekfp2SqyJUyHUZDXK8a3XafDSydHRIdQ+DkBY
- TEE/OZjw0BCSwalf8TyzrgN49gJvWIbcRt1Vj+z3tuXuVbkYw+eezcph67uOrYC5ak/m
- i1eQ==
-X-Gm-Message-State: AOJu0YwlaSDWRiuoWQlyYbluQxKIoCFA522E04aAcixcv6TvziCdophv
- LkQQdsPPcNTJbB1np4z2ZscFQ4VFxGr1sDswTlVcn4nIqdvKr5Z1vyy7sVjCgwQ=
-X-Gm-Gg: ASbGncsYT3xEOng4BANNeAov2vGG0FlivzX4ztluvomQo30tgrOwpZox4fI4f0uZkoI
- ceV+Wx29jE5nHBs2iincMC000uZzwCwyNiAh8zmplzcUoNURLt2fpni1eUCK4YRPBlaDgj+bx8z
- HIC8kIV1ce+DrV5PfSRG/CTM8iphuGjEGCXwH8UVDabogIHLomeo13PHHnt+HUg2adauiXJf0wf
- nk+7DqaagYI6aybpz1WOf0TPd9aidyOzVHWA1irNfdXT8wJuUxrWmL+k3BopCUL4800zIiFDTde
- JlBZknoMy2+rdos0Rjsp33HfehVFdasGlBix+229Bqkatm0EshLNaoNKSUaU8esDqodfqI0cSqU
- dnuEY9ROtTw8Ul2qo
-X-Google-Smtp-Source: AGHT+IHrRe9OlQLlppY83bVzraje5GdqorVltA4z4mUpEWoWFE4KJ2799cm8bmSC5gcvd7FjeOCngQ==
-X-Received: by 2002:a17:903:2307:b0:224:910:23f0 with SMTP id
- d9443c01a7336-22df35d35e0mr60484805ad.49.1746028797348; 
- Wed, 30 Apr 2025 08:59:57 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-22db4dc2119sm123955655ad.91.2025.04.30.08.59.55
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 30 Apr 2025 08:59:57 -0700 (PDT)
-Date: Wed, 30 Apr 2025 08:59:41 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Shani Peretz <shperetz@nvidia.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, Tyler Retzlaff
- <roretzla@linux.microsoft.com>, Parav Pandit <parav@nvidia.com>, Xueming Li
- <xuemingl@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal
- <nikhil.agarwal@amd.com>, Hemant Agrawal <hemant.agrawal@nxp.com>, Sachin
- Saxena <sachin.saxena@nxp.com>, Rosen Xu <rosen.xu@intel.com>, Chenbo Xia
- <chenbox@nvidia.com>, Tomasz Duszynski <tduszynski@marvell.com>, Chengwen
- Feng <fengchengwen@huawei.com>, "NBU-Contact-longli (EXTERNAL)"
- <longli@microsoft.com>, Wei Hu <weh@microsoft.com>, Bruce Richardson
- <bruce.richardson@intel.com>, Kevin Laatz <kevin.laatz@intel.com>, Jan
- Blunck <jblunck@infradead.org>
-Subject: Re: [PATCH v7 2/4] lib: fix comparison between devices
-Message-ID: <20250430085941.0d4156ed@hermes.local>
-In-Reply-To: <SA1PR12MB949189CD2B76C82E0C3F0EE2BF832@SA1PR12MB9491.namprd12.prod.outlook.com>
-References: <20250206105428.237346-1-shperetz@nvidia.com>
- <20250212163836.178976-1-shperetz@nvidia.com>
- <20250212163836.178976-2-shperetz@nvidia.com>
- <20250220103300.7148ddd8@hermes.local>
- <SA1PR12MB9491E12CFD0E551E742ABCDBBFCA2@SA1PR12MB9491.namprd12.prod.outlook.com>
- <20250317071121.4508a7e6@hermes.local>
- <SA1PR12MB949189CD2B76C82E0C3F0EE2BF832@SA1PR12MB9491.namprd12.prod.outlook.com>
+ d=1e100.net; s=20230601; t=1746030642; x=1746635442;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=n3bS8yf6DFNAHufLf+6Ly5fHIEELqRWHkhSXl6qhAtY=;
+ b=avBd+bFkbG43ZHWphf/3R+2qJb/zJlEDn1Y9yR5kgh0dpMfT79o9dqqJdXgyuiT0m+
+ tVE1g6G5oR2DeJfv1ksbOt6XCvBScVkoAtR+68wElgwqq7Aan7qZGGVG0iQ8JLQHvPZZ
+ /o/TSJ8D83fajm5A58/oJwXnM3RdrKygrS35vN/9FP1/A6hPJziaRItauzws9He2rfHj
+ hBxPGlgQZYG+K4+Zj2VBhWX6FleicOfT7KLscNrGlLQgesIWoflgdYGiqXTTzawyFTCL
+ 64LaFQUyDJLQ800EFtd3DWisoJAeJFLFCfjxIqJ8QxjmF9pchPOodpd8T911ucmsYJ/7
+ hK6A==
+X-Gm-Message-State: AOJu0YwubGkmxBFUfRpMn/MkvKjUxRHNz8/QiolCfRuecl+UeXYubJfT
+ F7TSX7vAIo+ApvG2wYkh9Xsgj5nMxYtvPhQYlDbUDCEHa7RBhY53tBe4k1s3qHADFx6ONiY1VKH
+ CNUsnIYfYE7O6aYEyy1Ddp8AKjVgV2A==
+X-Gm-Gg: ASbGncvXrQeY0nKv5Lhbry+2BQTF6i/I8P86s5gD/QhH1+GPRBx3RjumH3p0u+lFwgd
+ xaanoHlfRwWITL1widUez5QG3USTt59n6kFASLBZWNcsDdWQ7nP3PWBOHJxvVsZq9F8wTDPhhnR
+ 2omZEGXy4xsTqlSsW0V2LrjtyBnMbBH5td7fI1LULIUbq35rUq4aXpbH3X
+X-Google-Smtp-Source: AGHT+IEuBLwFNgZeG1XFKz/Kg9oRqyk8QSFkqlVvBuIbNqaAJYttKd7YBslLJlDtdh8xJrWXbfrlOJv0hw4yWxLCx5I=
+X-Received: by 2002:a17:906:dc89:b0:ac2:6bf9:e386 with SMTP id
+ a640c23a62f3a-acee21f3ae5mr118386466b.8.1746030641652; Wed, 30 Apr 2025
+ 09:30:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <CAPBAu3WOch_LYAUp_R47-=Uaos1yJLKgpRBM1ewJ+vaRysCDCQ@mail.gmail.com>
+ <20250426082843.736964ba@hermes.local>
+ <CAPBAu3WOq6_77mBvd=B8x2tso9hWpjFTyUuEeJgZazSm_y_GHQ@mail.gmail.com>
+ <20250428083712.50b2e7ce@hermes.local>
+ <CAPBAu3UDao48OmcnEMQw9-W3pesM1W2ftQsEG3EtHDxxOXCc=Q@mail.gmail.com>
+ <20250429092415.2a37c090@hermes.local>
+ <CAPBAu3XDwr82ghjdhK=QXO53OPH3MgUtkP7r3TLEwOnHe_St5w@mail.gmail.com>
+ <20250430072825.13ceae3e@hermes.local>
+In-Reply-To: <20250430072825.13ceae3e@hermes.local>
+From: Prashant Upadhyaya <praupadhyaya@gmail.com>
+Date: Wed, 30 Apr 2025 22:00:29 +0530
+X-Gm-Features: ATxdqUHsdpKgGF3_eSuJingMVIXHA7l6SugDUDyYVkUygYRR7NmzEd1JuyUny0g
+Message-ID: <CAPBAu3WPaMMErEfbVtKBsd7n-D5GGLGYARex_dURxWtrMmTtXQ@mail.gmail.com>
+Subject: Re: Regarding Mellanox bifurcated driver on Azure
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org
+Content-Type: multipart/alternative; boundary="00000000000029a81906340170cc"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,141 +77,161 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 30 Apr 2025 11:12:51 +0000
-Shani Peretz <shperetz@nvidia.com> wrote:
+--00000000000029a81906340170cc
+Content-Type: text/plain; charset="UTF-8"
 
-> Hey Stephan,
-> Apologize for the delayed response and appreciate your assistance.
-> I prepared a document outlining the bug and its flow, along with the two solutions we discussed.
-> I hope this document provides a comprehensive overview. Can you take a look?
-> 
-> Thank you!
-> 
-> https://docs.google.com/document/d/1LmMlJ31P1G77K0TGkBfXWz0DEj6zdprP0bG5p_wu77w/edit?usp=sharing
-> 
-> 
-> > -----Original Message-----
-> > From: Stephen Hemminger <stephen@networkplumber.org>
-> > Sent: Monday, 17 March 2025 16:11
-> > To: Shani Peretz <shperetz@nvidia.com>
-> > Cc: dev@dpdk.org; Tyler Retzlaff <roretzla@linux.microsoft.com>; Parav Pandit
-> > <parav@nvidia.com>; Xueming Li <xuemingl@nvidia.com>; Nipun Gupta
-> > <nipun.gupta@amd.com>; Nikhil Agarwal <nikhil.agarwal@amd.com>; Hemant
-> > Agrawal <hemant.agrawal@nxp.com>; Sachin Saxena
-> > <sachin.saxena@nxp.com>; Rosen Xu <rosen.xu@intel.com>; Chenbo Xia
-> > <chenbox@nvidia.com>; Tomasz Duszynski <tduszynski@marvell.com>;
-> > Chengwen Feng <fengchengwen@huawei.com>; NBU-Contact-longli
-> > (EXTERNAL) <longli@microsoft.com>; Wei Hu <weh@microsoft.com>; Bruce
-> > Richardson <bruce.richardson@intel.com>; Kevin Laatz
-> > <kevin.laatz@intel.com>; Jan Blunck <jblunck@infradead.org>
-> > Subject: Re: [PATCH v7 2/4] lib: fix comparison between devices
-> > 
-> > External email: Use caution opening links or attachments
-> > 
-> > 
-> > On Thu, 6 Mar 2025 16:26:50 +0000
-> > Shani Peretz <shperetz@nvidia.com> wrote:
-> >   
-> > > > -----Original Message-----
-> > > > From: Stephen Hemminger <stephen@networkplumber.org>
-> > > > Sent: Thursday, 20 February 2025 20:33
-> > > > To: Shani Peretz <shperetz@nvidia.com>
-> > > > Cc: dev@dpdk.org; Tyler Retzlaff <roretzla@linux.microsoft.com>;
-> > > > Parav Pandit <parav@nvidia.com>; Xueming Li <xuemingl@nvidia.com>;
-> > > > Nipun Gupta <nipun.gupta@amd.com>; Nikhil Agarwal
-> > > > <nikhil.agarwal@amd.com>; Hemant Agrawal <hemant.agrawal@nxp.com>;
-> > > > Sachin Saxena <sachin.saxena@nxp.com>; Rosen Xu
-> > > > <rosen.xu@intel.com>; Chenbo Xia <chenbox@nvidia.com>; Tomasz
-> > > > Duszynski <tduszynski@marvell.com>; Chengwen Feng
-> > > > <fengchengwen@huawei.com>; NBU-Contact-longli
-> > > > (EXTERNAL) <longli@microsoft.com>; Wei Hu <weh@microsoft.com>; Bruce
-> > > > Richardson <bruce.richardson@intel.com>; Kevin Laatz
-> > > > <kevin.laatz@intel.com>; Jan Blunck <jblunck@infradead.org>
-> > > > Subject: Re: [PATCH v7 2/4] lib: fix comparison between devices
-> > > >
-> > > > External email: Use caution opening links or attachments
-> > > >
-> > > >
-> > > > On Wed, 12 Feb 2025 18:38:33 +0200
-> > > > Shani Peretz <shperetz@nvidia.com> wrote:
-> > > >  
-> > > > > DPDK supports multiple formats for specifying buses, (such as
-> > > > > "0000:08:00.0" and "08:00.0" for PCI).
-> > > > > This flexibility can lead to inconsistencies when using one format
-> > > > > while running testpmd, then attempts to use the other format in a
-> > > > > later command, resulting in a failure.
-> > > > >
-> > > > > The issue arises from the find_device function, which compares the
-> > > > > user-provided string directly with the device->name in the
-> > > > > rte_device structure.
-> > > > > If we want to accurately compare these names, we'll need to bring
-> > > > > both sides to the same representation by invoking the parse
-> > > > > function on the user input.  
-> > > >
-> > > > Could you give an example where this happens please?
-> > > > Shouldn't find_device string always be changed into canonical form
-> > > > in find_device handler?  
+On Wed, 30 Apr 2025 at 19:58, Stephen Hemminger <stephen@networkplumber.org>
+wrote:
+
+> On Wed, 30 Apr 2025 13:00:53 +0530
+> Prashant Upadhyaya <praupadhyaya@gmail.com> wrote:
+>
+> > > With DPDK on Azure, an application should never use the VF directly.
+> > > It needs to use either netvsc PMD which handles both the vmbus (slow
+> path)
+> > > and VF (fast path) combined. Or use the older vdev_netvsc/failsafe/tap
+> > > combination.
+> > > The latter uses a virtual device to make a failsafe PMD which then does
+> > > a combination of TAP (via kernel slow path) and MLX5 VF.  The failsafe
+> PMD
+> > > is what is exposed for application usage.
 > > >
-> > > The flow I was dealing with was attach_port -> rte_dev_probe - >  
-> > local_dev_probe -> find_device.  
-> > > The string passed to attach_port was the short version, directly from the user.
+> > > The limitations are not explicitly mentioned in the documentation but:
+> > >   - don't use VF directly in application
+> > >   - there is no support for bifurcation where some packets go to kernel
+> > >     and some to DPDK
+> > >   - there is only very limited support for rte_flow; that is with
+> failsafe
+> > > PMD
+> > >     (not netvsc PMD) and the limitations are that the emulation of
+> rte_flow
+> > >     in the TAP device only supports a few things.
 > > >
-> > > So, to clarify - you're saying that find_device simply need to accept the string  
-> > in its canonical form? Which means we'll only need to fix local_dev_probe to
-> > bring it to the canonical form before calling find_device?  
-> > > I tried it but then I noticed that there's no function that gets the user-  
-> > provided string and returns it's string canonical form. The closest to this is
-> > parse, but what it eventually returns is not necessarily a string - it can be
-> > anything - for instance pci_parse will give you back a struct rte_pci_addr.
-> > 
-> > Not sure at this point. There are two options. One would be fixup in attach_port
-> > the other would be allowing short form in PCI part of find_device. Since the
-> > strings from command line are put in canonical form for devargs, it seems
-> > logical to do it in attach_port path.  
+> >
+> > Thanks Stephen, the above information was very instructive.
+> > If I do use the Netvsc PMD with the latest DPDK, will my DPDK app get the
+> > non IP packets like ARP, please confirm.
+> > I quickly tried the Netvsc PMD but don't seem to be getting the ARP
+> packets
+> > in still.
+> > When you mention "The failsafe PMD is what is exposed for application
+> > usage", what is the meaning of this, are the apps expected to use
+> failsafe
+> > PMD, please suggest.
+> >
+> > Regards
+> > -Prashant
+>
+> ARP handled differently in virtual network environments. The ARP packets
+> sent
+> get consumed and replied to by the network infrastructure (in all virtual
+> networks
+> not just Azure). Non-IP packets always show up on the synthetic VMBus
+> device.
+>
+> Current docs are here:
+>
+> https://learn.microsoft.com/en-us/azure/virtual-network/setup-dpdk?tabs=redhat
+>
+> See vdev_netvsc for picture.
+> https://doc.dpdk.org/guides/nics/vdev_netvsc.html
+>
+>
+> Thanks again Stephen. I finally was able to run the netvsc pmd and it is
+detecting the ports.
+However, for every accelerated networking interface of Azure, it detects
+'two' ports. This is presumably for controlling both the slow and fast path
+?
+This poses an issue for my app as it wanted to see only 'one' interface in
+its control as a lot of business logic is kind of tied to it.
+So a question -- am I observing correctly that DPDK, in case of netvsc,
+will enumerate two ports for each accelerated networking interface ?
 
-What about if testpmd just did it first?
+Regards
+-Prashant
 
-diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
-index b5f0c02261..a324225e26 100644
---- a/app/test-pmd/testpmd.c
-+++ b/app/test-pmd/testpmd.c
-@@ -3413,17 +3413,18 @@ void
- attach_port(char *identifier)
- {
-        portid_t pi;
-+       struct rte_devargs devargs = { 0 };
-        struct rte_dev_iterator iterator;
- 
-        printf("Attaching a new port...\n");
- 
--       if (identifier == NULL) {
-+       if (rte_devargs_parse(&devargs, identifier) != 0) {
-                fprintf(stderr, "Invalid parameters are specified\n");
-                return;
-        }
- 
--       if (rte_dev_probe(identifier) < 0) {
--               TESTPMD_LOG(ERR, "Failed to attach port %s\n", identifier);
-+       if (rte_dev_probe(devargs.name) < 0) {
-+               TESTPMD_LOG(ERR, "Failed to attach port %s\n", devargs.name);
-                return;
-        }
- 
-@@ -3435,14 +3436,14 @@ attach_port(char *identifier)
-        }
- 
-        /* second attach mode: iterator */
--       RTE_ETH_FOREACH_MATCHING_DEV(pi, identifier, &iterator) {
-+       RTE_ETH_FOREACH_MATCHING_DEV(pi, devargs.name, &iterator) {
-                /* setup ports matching the devargs used for probing */
-                if (port_is_forwarding(pi))
-                        continue; /* port was already attached before */
-                setup_attached_port((void *)(intptr_t)pi);
-        }
- out:
--       printf("Port %s is attached.\n", identifier);
-+       printf("Port %s is attached.\n", devargs.name);
-        printf("Done\n");
- }
- 
+--00000000000029a81906340170cc
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, 30 Apr =
+2025 at 19:58, Stephen Hemminger &lt;<a href=3D"mailto:stephen@networkplumb=
+er.org">stephen@networkplumber.org</a>&gt; wrote:<br></div><blockquote clas=
+s=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid r=
+gb(204,204,204);padding-left:1ex">On Wed, 30 Apr 2025 13:00:53 +0530<br>
+Prashant Upadhyaya &lt;<a href=3D"mailto:praupadhyaya@gmail.com" target=3D"=
+_blank">praupadhyaya@gmail.com</a>&gt; wrote:<br>
+<br>
+&gt; &gt; With DPDK on Azure, an application should never use the VF direct=
+ly.<br>
+&gt; &gt; It needs to use either netvsc PMD which handles both the vmbus (s=
+low path)<br>
+&gt; &gt; and VF (fast path) combined. Or use the older vdev_netvsc/failsaf=
+e/tap<br>
+&gt; &gt; combination.<br>
+&gt; &gt; The latter uses a virtual device to make a failsafe PMD which the=
+n does<br>
+&gt; &gt; a combination of TAP (via kernel slow path) and MLX5 VF.=C2=A0 Th=
+e failsafe PMD<br>
+&gt; &gt; is what is exposed for application usage.<br>
+&gt; &gt;<br>
+&gt; &gt; The limitations are not explicitly mentioned in the documentation=
+ but:<br>
+&gt; &gt;=C2=A0 =C2=A0- don&#39;t use VF directly in application<br>
+&gt; &gt;=C2=A0 =C2=A0- there is no support for bifurcation where some pack=
+ets go to kernel<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0and some to DPDK<br>
+&gt; &gt;=C2=A0 =C2=A0- there is only very limited support for rte_flow; th=
+at is with failsafe<br>
+&gt; &gt; PMD<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0(not netvsc PMD) and the limitations are that =
+the emulation of rte_flow<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0in the TAP device only supports a few things.<=
+br>
+&gt; &gt;=C2=A0 <br>
+&gt; <br>
+&gt; Thanks Stephen, the above information was very instructive.<br>
+&gt; If I do use the Netvsc PMD with the latest DPDK, will my DPDK app get =
+the<br>
+&gt; non IP packets like ARP, please confirm.<br>
+&gt; I quickly tried the Netvsc PMD but don&#39;t seem to be getting the AR=
+P packets<br>
+&gt; in still.<br>
+&gt; When you mention &quot;The failsafe PMD is what is exposed for applica=
+tion<br>
+&gt; usage&quot;, what is the meaning of this, are the apps expected to use=
+ failsafe<br>
+&gt; PMD, please suggest.<br>
+&gt; <br>
+&gt; Regards<br>
+&gt; -Prashant<br>
+<br>
+ARP handled differently in virtual network environments. The ARP packets se=
+nt<br>
+get consumed and replied to by the network infrastructure (in all virtual n=
+etworks<br>
+not just Azure). Non-IP packets always show up on the synthetic VMBus devic=
+e.<br>
+<br>
+Current docs are here:<br>
+<a href=3D"https://learn.microsoft.com/en-us/azure/virtual-network/setup-dp=
+dk?tabs=3Dredhat" rel=3D"noreferrer" target=3D"_blank">https://learn.micros=
+oft.com/en-us/azure/virtual-network/setup-dpdk?tabs=3Dredhat</a><br>
+<br>
+See vdev_netvsc for picture. <a href=3D"https://doc.dpdk.org/guides/nics/vd=
+ev_netvsc.html" rel=3D"noreferrer" target=3D"_blank">https://doc.dpdk.org/g=
+uides/nics/vdev_netvsc.html</a><br>
+<br>
+<br></blockquote><div>Thanks again Stephen. I finally was able to run the n=
+etvsc pmd and it is detecting the ports.</div><div>However, for every accel=
+erated networking interface of Azure, it detects &#39;two&#39; ports. This =
+is presumably for controlling both the slow and fast path ?</div><div>This =
+poses an issue for my app as it wanted to see only &#39;one&#39; interface =
+in its control as a lot of business logic is kind of tied to it.</div><div>=
+So a question -- am I observing correctly that DPDK,=C2=A0in case of netvsc=
+, will enumerate two ports for each accelerated networking interface ?</div=
+><div><br></div><div>Regards</div><div>-Prashant</div><div>=C2=A0</div></di=
+v></div>
+
+--00000000000029a81906340170cc--
