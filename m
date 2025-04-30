@@ -2,72 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01451C3ABAC
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Apr 2025 14:48:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 759BAC369D9
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Apr 2025 16:00:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4C0B2402B1;
-	Wed, 30 Apr 2025 16:48:53 +0200 (CEST)
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com
- [209.85.216.49]) by mails.dpdk.org (Postfix) with ESMTP id 32DD3402A0
- for <dev@dpdk.org>; Wed, 30 Apr 2025 16:48:52 +0200 (CEST)
-Received: by mail-pj1-f49.google.com with SMTP id
- 98e67ed59e1d1-301e05b90caso8030829a91.2
- for <dev@dpdk.org>; Wed, 30 Apr 2025 07:48:52 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 07343402B1;
+	Wed, 30 Apr 2025 18:00:00 +0200 (CEST)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
+ [209.85.214.178])
+ by mails.dpdk.org (Postfix) with ESMTP id D983B402A0
+ for <dev@dpdk.org>; Wed, 30 Apr 2025 17:59:58 +0200 (CEST)
+Received: by mail-pl1-f178.google.com with SMTP id
+ d9443c01a7336-224019ad9edso112452305ad.1
+ for <dev@dpdk.org>; Wed, 30 Apr 2025 08:59:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1746024531;
- x=1746629331; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1746028797;
+ x=1746633597; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=sapTnwdA9KGKXVMsi+Y5OOkpFlF+Za3s2CpY8AEOGFs=;
- b=KFkWIwNv22YrjFXRDGZFrYIzwEMWN6fgfHEaO52Upu+QCsna8qsvdqzeJeXDkbMXPW
- 6oRV/ZX70Sn7DzVrbjSdVBXmTCSvEHO+AjVIiMzMUagSULxSm9EmYexEKXbU7FXSJdpi
- QhXGaAqY8OA3hM0uM85IXPMuPcPZHPBFcy/Gxd2GMe1me4u6935DJcj1t+eSvoQd7Hwn
- PZpWNv94/2Hiq1Jv3n+1ZlJ7H6uEAMpMobickLXSYgtSigXQHpyxaM9FB6by7ph2dhDG
- gM28d1W/GQgXBbK2JhX5jMaV+5iPm+mUea099AsHgJTpjcyL2k9+udkylrAkkLwK4P42
- vktQ==
+ bh=yTuqi9+A4Mwt8DQl8LFUgX5uevUTqTdJwARDMIKyz8Q=;
+ b=N9K2vKPlozX6ZDTCQhjaJ71gFes6Daux/HJrFjK3HRkm4ZjN4fFdtKZQjazfc5ek+G
+ TKKwtQTAW/uC3ffKc47eDB5kfKaRFDfkWyP0yLY0Gxajkg2/KFLOAGPcWL4r/KOqZ/KJ
+ +kgCzsEtPQpO8W489do8OefX33dnxiAn7GbB+Ucip26cqMNDlpULtk1wPRODnaPl7yvi
+ GO65u1gF7kZmuBaoNai6OLsZWFKpVaJ9cUtkD48opz/AYkj499oewoOiWOI2xLIjFh2A
+ jdTWbGmW7IU/C+1zYKY8wehYQE98m/jRZLnDFIKd5xEIb9M3EYLvcGFFK4Ew5ChtukVV
+ 9dXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1746024531; x=1746629331;
+ d=1e100.net; s=20230601; t=1746028797; x=1746633597;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=sapTnwdA9KGKXVMsi+Y5OOkpFlF+Za3s2CpY8AEOGFs=;
- b=Za6YHkoUEz/SFQqO1xwEs0zoVETWuKGuO/sZG6jcCAkjAVOY64u7EXiFu+C7L44qot
- uY/dhTAOoyhdA8N7SvVWrr2dy8BAR0Prv3SPm7f8MDmmZmrEqsSTKurzzVPs/pYqepTc
- +NMBVXaP8C7Bbdn4+9CF8Q3UJ2gEhc60apQT4iRhJYe+aQQT9zeLEXC8cKxtsjdXlQJD
- 2esvfFV5KGYtx5fQPHzU9ZjQoiSQoCh+UdpTYR63i9duRQEYk9AA/HyyEPjdNkd2dWJI
- tq1JR9CLoP6jTbCW2MnmVKPD01HSWAeQYLjyB7xtyQBsQXGKeZmw6JhqBxdXJvMzN2uY
- 7rDw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUVw7N2kBlnhRqBryPEGswyyxoxDOHLPrRwC+cxGVSUwHGdJS3nJ6D3E7pUjVfbDPXQem0=@dpdk.org
-X-Gm-Message-State: AOJu0YzcCrcxiYlDlpw01M915LxAEuP4FdunATd4VPuKHnUsIq7nQ0nW
- ddueW2Ugw6T1FCO12ZOHjFxzVrTgODf7OrXqAdOPtcVgoS4FaB1aw/EWQLdpBY0=
-X-Gm-Gg: ASbGncuW0tnvz8FLmxytIfikjuSSJ797UT0T1yA3aQonsI8QRtLRnh5CaJvePDmlYw7
- KHyjhA4hrlEmskrwcPhlodtJ4OOTftPbAfuVmvNK3sTNwqGVnWgRZOMz3UmHqQLdG8agiqssAy6
- veQq88YwI6PgM0jWAnQ8pCFfPqdsN9xVVTk2SMjCUOZ6Z6FD0SbHdzT/GSJ1HhKEVAdcfQOexiQ
- lDKtmqPmvGsy1dj4V8QH8GGQEuWrB7tDInj7bMXFKg5UpPowaTCH4eSi7moG2AkWpmq6maY/1td
- GVoy2MTMkqoxhVdBFxii58EUA96DB67MvCPxf1hwt5b/FtHA/ggTIhsRaMs26CjtWXVnMowK8sB
- cZMkTjauXuT9N/guu
-X-Google-Smtp-Source: AGHT+IGWXp5F8ctVAxgvFT/4kYFQNNFvXKhgyvvcLYb+5PP/tE6tYYBc8A90l2GBbIBTyixvm4vSMQ==
-X-Received: by 2002:a17:90b:2708:b0:305:2d68:8d57 with SMTP id
- 98e67ed59e1d1-30a343e8580mr3896627a91.5.1746024530996; 
- Wed, 30 Apr 2025 07:48:50 -0700 (PDT)
+ bh=yTuqi9+A4Mwt8DQl8LFUgX5uevUTqTdJwARDMIKyz8Q=;
+ b=eeMjGsGhs7GRONWkzJpTnndeQV5t70bzBDPRyP+l2zqBzMyLMjI7ERduVSP3kBXKN9
+ LK3DHMDMnV5k0nJVGMUa+m/9NmTXUA4bc0OPhXG6o1tYK66rN9Ry/1fm9LzwTmicBc8u
+ 7yFcVtiUhBAWOvfqzURwrmu/ehcMELMlXI+P6Utl2BOc0fUhox7UB2bxKCtVOgBm/teI
+ fNqKebmzumkXjvclmL54OpMzsbYr1jhekfp2SqyJUyHUZDXK8a3XafDSydHRIdQ+DkBY
+ TEE/OZjw0BCSwalf8TyzrgN49gJvWIbcRt1Vj+z3tuXuVbkYw+eezcph67uOrYC5ak/m
+ i1eQ==
+X-Gm-Message-State: AOJu0YwlaSDWRiuoWQlyYbluQxKIoCFA522E04aAcixcv6TvziCdophv
+ LkQQdsPPcNTJbB1np4z2ZscFQ4VFxGr1sDswTlVcn4nIqdvKr5Z1vyy7sVjCgwQ=
+X-Gm-Gg: ASbGncsYT3xEOng4BANNeAov2vGG0FlivzX4ztluvomQo30tgrOwpZox4fI4f0uZkoI
+ ceV+Wx29jE5nHBs2iincMC000uZzwCwyNiAh8zmplzcUoNURLt2fpni1eUCK4YRPBlaDgj+bx8z
+ HIC8kIV1ce+DrV5PfSRG/CTM8iphuGjEGCXwH8UVDabogIHLomeo13PHHnt+HUg2adauiXJf0wf
+ nk+7DqaagYI6aybpz1WOf0TPd9aidyOzVHWA1irNfdXT8wJuUxrWmL+k3BopCUL4800zIiFDTde
+ JlBZknoMy2+rdos0Rjsp33HfehVFdasGlBix+229Bqkatm0EshLNaoNKSUaU8esDqodfqI0cSqU
+ dnuEY9ROtTw8Ul2qo
+X-Google-Smtp-Source: AGHT+IHrRe9OlQLlppY83bVzraje5GdqorVltA4z4mUpEWoWFE4KJ2799cm8bmSC5gcvd7FjeOCngQ==
+X-Received: by 2002:a17:903:2307:b0:224:910:23f0 with SMTP id
+ d9443c01a7336-22df35d35e0mr60484805ad.49.1746028797348; 
+ Wed, 30 Apr 2025 08:59:57 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-30a349ffeeasm1692707a91.13.2025.04.30.07.48.50
+ d9443c01a7336-22db4dc2119sm123955655ad.91.2025.04.30.08.59.55
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 30 Apr 2025 07:48:50 -0700 (PDT)
-Date: Wed, 30 Apr 2025 07:48:48 -0700
+ Wed, 30 Apr 2025 08:59:57 -0700 (PDT)
+Date: Wed, 30 Apr 2025 08:59:41 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: <kirankumark@marvell.com>
-Cc: Aman Singh <aman.deep.singh@intel.com>, Thomas Monjalon
- <thomas@monjalon.net>, Ferruh Yigit <ferruh.yigit@amd.com>, Andrew
- Rybchenko <andrew.rybchenko@oktetlabs.ru>, <dev@dpdk.org>
-Subject: Re: [PATCH v4 1/2] ethdev: support RSS based on RoCEv2 header
-Message-ID: <20250430074848.570fee88@hermes.local>
-In-Reply-To: <20250430102011.991865-1-kirankumark@marvell.com>
-References: <20250430091051.789240-1-kirankumark@marvell.com>
- <20250430102011.991865-1-kirankumark@marvell.com>
+To: Shani Peretz <shperetz@nvidia.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>, Tyler Retzlaff
+ <roretzla@linux.microsoft.com>, Parav Pandit <parav@nvidia.com>, Xueming Li
+ <xuemingl@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal
+ <nikhil.agarwal@amd.com>, Hemant Agrawal <hemant.agrawal@nxp.com>, Sachin
+ Saxena <sachin.saxena@nxp.com>, Rosen Xu <rosen.xu@intel.com>, Chenbo Xia
+ <chenbox@nvidia.com>, Tomasz Duszynski <tduszynski@marvell.com>, Chengwen
+ Feng <fengchengwen@huawei.com>, "NBU-Contact-longli (EXTERNAL)"
+ <longli@microsoft.com>, Wei Hu <weh@microsoft.com>, Bruce Richardson
+ <bruce.richardson@intel.com>, Kevin Laatz <kevin.laatz@intel.com>, Jan
+ Blunck <jblunck@infradead.org>
+Subject: Re: [PATCH v7 2/4] lib: fix comparison between devices
+Message-ID: <20250430085941.0d4156ed@hermes.local>
+In-Reply-To: <SA1PR12MB949189CD2B76C82E0C3F0EE2BF832@SA1PR12MB9491.namprd12.prod.outlook.com>
+References: <20250206105428.237346-1-shperetz@nvidia.com>
+ <20250212163836.178976-1-shperetz@nvidia.com>
+ <20250212163836.178976-2-shperetz@nvidia.com>
+ <20250220103300.7148ddd8@hermes.local>
+ <SA1PR12MB9491E12CFD0E551E742ABCDBBFCA2@SA1PR12MB9491.namprd12.prod.outlook.com>
+ <20250317071121.4508a7e6@hermes.local>
+ <SA1PR12MB949189CD2B76C82E0C3F0EE2BF832@SA1PR12MB9491.namprd12.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,20 +95,141 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 30 Apr 2025 15:50:10 +0530
-<kirankumark@marvell.com> wrote:
+On Wed, 30 Apr 2025 11:12:51 +0000
+Shani Peretz <shperetz@nvidia.com> wrote:
 
-> diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
-> index 093b85d206..1da999685f 100644
-> --- a/doc/guides/rel_notes/release_25_07.rst
-> +++ b/doc/guides/rel_notes/release_25_07.rst
-> @@ -54,6 +54,9 @@ New Features
->       This section is a comment. Do not overwrite or remove it.
->       Also, make sure to start the actual text at the margin.
->       =======================================================
-> +* **Added new RSS offload types for IB_BTH in RSS flow.**
-> +
-> +     Added ``RTE_ETH_RSS_IB_BTH`` macro so that the IB BTH header can be used as input set for RSS.
+> Hey Stephan,
+> Apologize for the delayed response and appreciate your assistance.
+> I prepared a document outlining the bug and its flow, along with the two solutions we discussed.
+> I hope this document provides a comprehensive overview. Can you take a look?
+> 
+> Thank you!
+> 
+> https://docs.google.com/document/d/1LmMlJ31P1G77K0TGkBfXWz0DEj6zdprP0bG5p_wu77w/edit?usp=sharing
+> 
+> 
+> > -----Original Message-----
+> > From: Stephen Hemminger <stephen@networkplumber.org>
+> > Sent: Monday, 17 March 2025 16:11
+> > To: Shani Peretz <shperetz@nvidia.com>
+> > Cc: dev@dpdk.org; Tyler Retzlaff <roretzla@linux.microsoft.com>; Parav Pandit
+> > <parav@nvidia.com>; Xueming Li <xuemingl@nvidia.com>; Nipun Gupta
+> > <nipun.gupta@amd.com>; Nikhil Agarwal <nikhil.agarwal@amd.com>; Hemant
+> > Agrawal <hemant.agrawal@nxp.com>; Sachin Saxena
+> > <sachin.saxena@nxp.com>; Rosen Xu <rosen.xu@intel.com>; Chenbo Xia
+> > <chenbox@nvidia.com>; Tomasz Duszynski <tduszynski@marvell.com>;
+> > Chengwen Feng <fengchengwen@huawei.com>; NBU-Contact-longli
+> > (EXTERNAL) <longli@microsoft.com>; Wei Hu <weh@microsoft.com>; Bruce
+> > Richardson <bruce.richardson@intel.com>; Kevin Laatz
+> > <kevin.laatz@intel.com>; Jan Blunck <jblunck@infradead.org>
+> > Subject: Re: [PATCH v7 2/4] lib: fix comparison between devices
+> > 
+> > External email: Use caution opening links or attachments
+> > 
+> > 
+> > On Thu, 6 Mar 2025 16:26:50 +0000
+> > Shani Peretz <shperetz@nvidia.com> wrote:
+> >   
+> > > > -----Original Message-----
+> > > > From: Stephen Hemminger <stephen@networkplumber.org>
+> > > > Sent: Thursday, 20 February 2025 20:33
+> > > > To: Shani Peretz <shperetz@nvidia.com>
+> > > > Cc: dev@dpdk.org; Tyler Retzlaff <roretzla@linux.microsoft.com>;
+> > > > Parav Pandit <parav@nvidia.com>; Xueming Li <xuemingl@nvidia.com>;
+> > > > Nipun Gupta <nipun.gupta@amd.com>; Nikhil Agarwal
+> > > > <nikhil.agarwal@amd.com>; Hemant Agrawal <hemant.agrawal@nxp.com>;
+> > > > Sachin Saxena <sachin.saxena@nxp.com>; Rosen Xu
+> > > > <rosen.xu@intel.com>; Chenbo Xia <chenbox@nvidia.com>; Tomasz
+> > > > Duszynski <tduszynski@marvell.com>; Chengwen Feng
+> > > > <fengchengwen@huawei.com>; NBU-Contact-longli
+> > > > (EXTERNAL) <longli@microsoft.com>; Wei Hu <weh@microsoft.com>; Bruce
+> > > > Richardson <bruce.richardson@intel.com>; Kevin Laatz
+> > > > <kevin.laatz@intel.com>; Jan Blunck <jblunck@infradead.org>
+> > > > Subject: Re: [PATCH v7 2/4] lib: fix comparison between devices
+> > > >
+> > > > External email: Use caution opening links or attachments
+> > > >
+> > > >
+> > > > On Wed, 12 Feb 2025 18:38:33 +0200
+> > > > Shani Peretz <shperetz@nvidia.com> wrote:
+> > > >  
+> > > > > DPDK supports multiple formats for specifying buses, (such as
+> > > > > "0000:08:00.0" and "08:00.0" for PCI).
+> > > > > This flexibility can lead to inconsistencies when using one format
+> > > > > while running testpmd, then attempts to use the other format in a
+> > > > > later command, resulting in a failure.
+> > > > >
+> > > > > The issue arises from the find_device function, which compares the
+> > > > > user-provided string directly with the device->name in the
+> > > > > rte_device structure.
+> > > > > If we want to accurately compare these names, we'll need to bring
+> > > > > both sides to the same representation by invoking the parse
+> > > > > function on the user input.  
+> > > >
+> > > > Could you give an example where this happens please?
+> > > > Shouldn't find_device string always be changed into canonical form
+> > > > in find_device handler?  
+> > >
+> > > The flow I was dealing with was attach_port -> rte_dev_probe - >  
+> > local_dev_probe -> find_device.  
+> > > The string passed to attach_port was the short version, directly from the user.
+> > >
+> > > So, to clarify - you're saying that find_device simply need to accept the string  
+> > in its canonical form? Which means we'll only need to fix local_dev_probe to
+> > bring it to the canonical form before calling find_device?  
+> > > I tried it but then I noticed that there's no function that gets the user-  
+> > provided string and returns it's string canonical form. The closest to this is
+> > parse, but what it eventually returns is not necessarily a string - it can be
+> > anything - for instance pci_parse will give you back a struct rte_pci_addr.
+> > 
+> > Not sure at this point. There are two options. One would be fixup in attach_port
+> > the other would be allowing short form in PCI part of find_device. Since the
+> > strings from command line are put in canonical form for devargs, it seems
+> > logical to do it in attach_port path.  
 
+What about if testpmd just did it first?
 
-Need an extra blank line. Doc build fails.
+diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
+index b5f0c02261..a324225e26 100644
+--- a/app/test-pmd/testpmd.c
++++ b/app/test-pmd/testpmd.c
+@@ -3413,17 +3413,18 @@ void
+ attach_port(char *identifier)
+ {
+        portid_t pi;
++       struct rte_devargs devargs = { 0 };
+        struct rte_dev_iterator iterator;
+ 
+        printf("Attaching a new port...\n");
+ 
+-       if (identifier == NULL) {
++       if (rte_devargs_parse(&devargs, identifier) != 0) {
+                fprintf(stderr, "Invalid parameters are specified\n");
+                return;
+        }
+ 
+-       if (rte_dev_probe(identifier) < 0) {
+-               TESTPMD_LOG(ERR, "Failed to attach port %s\n", identifier);
++       if (rte_dev_probe(devargs.name) < 0) {
++               TESTPMD_LOG(ERR, "Failed to attach port %s\n", devargs.name);
+                return;
+        }
+ 
+@@ -3435,14 +3436,14 @@ attach_port(char *identifier)
+        }
+ 
+        /* second attach mode: iterator */
+-       RTE_ETH_FOREACH_MATCHING_DEV(pi, identifier, &iterator) {
++       RTE_ETH_FOREACH_MATCHING_DEV(pi, devargs.name, &iterator) {
+                /* setup ports matching the devargs used for probing */
+                if (port_is_forwarding(pi))
+                        continue; /* port was already attached before */
+                setup_attached_port((void *)(intptr_t)pi);
+        }
+ out:
+-       printf("Port %s is attached.\n", identifier);
++       printf("Port %s is attached.\n", devargs.name);
+        printf("Done\n");
+ }
+ 
+
