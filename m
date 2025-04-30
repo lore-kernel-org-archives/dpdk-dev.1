@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D23B5C369DC
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Apr 2025 13:51:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F7ECC369D9
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Apr 2025 13:52:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8749140BA4;
-	Wed, 30 Apr 2025 15:49:40 +0200 (CEST)
-Received: from egress-ip11b.ess.de.barracuda.com
- (egress-ip11b.ess.de.barracuda.com [18.185.115.215])
- by mails.dpdk.org (Postfix) with ESMTP id E3DD54065F
- for <dev@dpdk.org>; Wed, 30 Apr 2025 15:49:26 +0200 (CEST)
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com
- (mail-db8eur05lp2106.outbound.protection.outlook.com [104.47.17.106]) by
- mx-outbound42-181.eu-central-1c.ess.aws.cudaops.com (version=TLSv1.2
+	by mails.dpdk.org (Postfix) with ESMTP id 3ABAB40DD7;
+	Wed, 30 Apr 2025 15:49:42 +0200 (CEST)
+Received: from egress-ip42b.ess.de.barracuda.com
+ (egress-ip42b.ess.de.barracuda.com [18.185.115.246])
+ by mails.dpdk.org (Postfix) with ESMTP id B224240670
+ for <dev@dpdk.org>; Wed, 30 Apr 2025 15:49:29 +0200 (CEST)
+Received: from EUR03-DBA-obe.outbound.protection.outlook.com
+ (mail-dbaeur03lp2170.outbound.protection.outlook.com [104.47.51.170]) by
+ mx-outbound23-207.eu-central-1b.ess.aws.cudaops.com (version=TLSv1.2
  cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Wed, 30 Apr 2025 13:49:22 +0000
+ Wed, 30 Apr 2025 13:49:26 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nmwBPq+curJ6y5J/qFp7KttWmtDI/lFoNK70wUMbhDpBI6tOP/3PzkjpDQHeHnkYDd0bHNVALAO5rr5RWoA4sRT2TIAJ5pRte9PfcE7+ICY6jWnkhzbKC7x2BZo9d+IV7/5D7spx/RySFmQZ/zedTX3ZPqPkwIvR5zO4UecZr1RZ1DePmI72wAkL0rxV8makFSruvc7gwlI1TZFxF3hNY7X+0836IrrXeYUWIChpirlXj+jzrhH0F1GyEmeikMlzGKqSMNN86D3WLlCx+837RkDe+OAKLBh8GqWxc3Ot6vSvV0fkmh7Nd0/hIc1KgMvu5UYpjm9aydWUmKfmxbOdxw==
+ b=fRS+yO0g1CWe8+48KQj+SyBSZEVk5HgkT8aUxyS7AbahPzKvpjWNdJbgSluLTPO9i+OSrMPo/Kd3jFoMa8kb60J+f3G2tzRdAJQDyF9OIRInyfufxJA4a1azujUj03rGVxWkRFxpo/DKIT6V3r8Lsh5WVYOuwD2tYMa30TqgPiRlrnd4GMKkBW60M5wUiICrFsgpct1gtcTvW603HNB3hehSn0fN5d+0ZKKn6Qr57NgLVJqsWn7ygEL3/18IsJ0J+5lvgwFtUDgcc5/GF8Uy2d8wFvZg7Zbhm9Cjc0PAB7Y+mOx6nxrwbJs+f3vnWRDvYcs1AGEpavbO1qf6Syp7vA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nuCjpSvwqJR4EAFLjQOjGHHtohwQTN7z9zP2c3+6uJY=;
- b=jBzcVth5eVW2PtRNWaXayu4GCOeWnYu3e3byVVet02aYYOmJ7oUBQj+Mskza88H8t+6tjnPE26cPtLIlolX8UC4UmqYO7HT3z0AwjGaqEZVde88orPRQM/oUTuTn1Kdf0u11oobk/KWBudTEZdBIkIhWdKnFq9zianmjhH70men2IFKCcZpJIMTJgccbEFctEX8avdqa5bS91FVfrwsKcpbrkxsi7rOiWTJ4tmPZ8qCNLKxPSlC/35aWoQFiQNyC7zVFaEpgbXUC2SCJtG3R2sZUWEbXUEjPwiPw8CP2PQFPQpITGVGqhFqcu0Sg/KQ+BfJrMZ45JgguVMnfJ0V+uA==
+ bh=niXypSKVv30+xWZezI/Wbm6yE0uf3ctTMNrjf5SY3YE=;
+ b=cbaM1pqQjjYH1Z9rzsmF3pLHH4s9qtkGjncPKgu2P4wNQ9WsDoPd70v9AUSEjk9UKTOPqlkZqYELf5C1ZF7Zqs86oXqxR6lXVoaX7xtWD08efb82a7iC0NyTg5bl0Mk/6WdAwLaLu8SOVGgbA0kHqmVzgXAyORuRtx3oPlF6kbBXtlgFy7gnCsvx2fR+dBRKqORytnQN7VPVFDZJHQBgViBNE951LkE5qzuekAvCjEVfQNXIG3q2mKa5KF7tHKaQ5wriBGofD8jYvmphsZmMuoGuVUMyJ96BOCO4WMm2BDqNNnonNz9X7Oij+SPTxqfj+eUnt0+8UcD2au7KYlmoqQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nuCjpSvwqJR4EAFLjQOjGHHtohwQTN7z9zP2c3+6uJY=;
- b=nHE44laEOBgthAXX/XNTfoXZoOkm4TWeMUdZ/LbxlPzvSobgKpSd8r9wEafVRihpINSStcrf/pJSOUl0FEEyISCvQv7BGlBRrTMY7qpqO25FaDCECaAaLF/cL+xvx6IkzLs9Ibz5G5UfQh9rnI4VrU3ObXQV6ygIi5hYe+1+mWw=
-Received: from AM9P193CA0002.EURP193.PROD.OUTLOOK.COM (2603:10a6:20b:21e::7)
- by AS4P190MB1999.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:51a::11) with
+ bh=niXypSKVv30+xWZezI/Wbm6yE0uf3ctTMNrjf5SY3YE=;
+ b=RzYtGx5Xq5salPB6voWMmMLWyPFp1RNMFie1lnqGti5jQPEnSqm7NfIaLZFav5vvx2uxD+XuJVhrzA+ADCVeZkdwEnzwKHfMdp0zPQ8u86UfxQ9hV+6gkEl8EfmnhNUI6pxdeIs2g0l+37SwJ5Jcn6yPkA0JepUcsBRNbX9Shkc=
+Received: from AM9P193CA0003.EURP193.PROD.OUTLOOK.COM (2603:10a6:20b:21e::8)
+ by AM9P190MB1202.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:261::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.39; Wed, 30 Apr
- 2025 13:49:21 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.19; Wed, 30 Apr
+ 2025 13:49:25 +0000
 Received: from AM4PEPF00027A69.eurprd04.prod.outlook.com
- (2603:10a6:20b:21e:cafe::8) by AM9P193CA0002.outlook.office365.com
- (2603:10a6:20b:21e::7) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.35 via Frontend Transport; Wed,
- 30 Apr 2025 13:49:21 +0000
+ (2603:10a6:20b:21e:cafe::2b) by AM9P193CA0003.outlook.office365.com
+ (2603:10a6:20b:21e::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.41 via Frontend Transport; Wed,
+ 30 Apr 2025 13:49:24 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -51,15 +51,15 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
 Received: from localhost.localdomain (178.72.21.4) by
  AM4PEPF00027A69.mail.protection.outlook.com (10.167.16.87) with Microsoft
  SMTP Server id 15.20.8699.20 via Frontend Transport; Wed, 30 Apr 2025
- 13:49:20 +0000
+ 13:49:24 +0000
 From: Oleksandr Kolomeiets <okl-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org, thomas@monjalon.net,
  Danylo Vodopianov <dvo-plv@napatech.com>
-Subject: [PATCH v1 20/25] net/ntnic: avoid divide by zero
-Date: Wed, 30 Apr 2025 15:48:32 +0200
-Message-ID: <20250430134840.402553-21-okl-plv@napatech.com>
+Subject: [PATCH v1 24/25] net/ntnic: avoid possible deadlock
+Date: Wed, 30 Apr 2025 15:48:36 +0200
+Message-ID: <20250430134840.402553-25-okl-plv@napatech.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250430134840.402553-1-okl-plv@napatech.com>
 References: <20250430134840.402553-1-okl-plv@napatech.com>
@@ -67,60 +67,60 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM4PEPF00027A69:EE_|AS4P190MB1999:EE_
+X-MS-TrafficTypeDiagnostic: AM4PEPF00027A69:EE_|AM9P190MB1202:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: f0d2464f-f5cd-4e67-f7ff-08dd87edcf48
+X-MS-Office365-Filtering-Correlation-Id: d7c27243-9b52-4db0-9634-08dd87edd19e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|36860700013|1800799024|82310400026; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?bEcl0pWTXPfmhI1/EVEuMrCh9Fgj5LvdDyDiootB5RyGF2QGePQM6lfqcaG1?=
- =?us-ascii?Q?4PsZHBhHAk/hrVa/E2Ihf7/p7uMU+dhuYCPOUpWTGCFx+A5oMHM4Ljv3mWew?=
- =?us-ascii?Q?k4dG2R31/9Y2vsnmYgFZIVo2JRC27II5UQWeJ2tbI7Jt63NOii8jDblm29uh?=
- =?us-ascii?Q?9OHSRc3hE3Y5WyonGVD3250qbIdkJ+nb2imm7OjzhszJSsTa1s2kizbpHA74?=
- =?us-ascii?Q?20Vn4G3Gch0rY4SvMSUhUYBcFnkyN3Gj67Cop046lUKGfm29la9jjKALdqKW?=
- =?us-ascii?Q?FqdjF80DOVPqBwAmif+jNX8Tutn65Ci3y7GFFeAMMySC4XyedOHQL3kWnHfg?=
- =?us-ascii?Q?/YA0WtWTyVTQTd3c+vMkSkw2fq+luojvQTgLF1OwkQcy3Igd0jAVJli/P9OK?=
- =?us-ascii?Q?2sV8dh3iM3aQ7ojgZBVMsPqFRUvMi2GaNPCL8fqA93MREHahUkNcTxFkw8Vl?=
- =?us-ascii?Q?2yX5BPdmuzgLk3Dx8B//oL8TiU7FH7GdfsZUqf27UBE/DOjRMZH4GFUIRTwH?=
- =?us-ascii?Q?1jzftkWLSqh/w58m5Y4XZyrnpqSSUvCHmrS+POxXn6G2rsyVvU2ncb3rrACY?=
- =?us-ascii?Q?jA8+HEmpBzKtD5TZyXnJZLfWKQSjA3UWsupsn0sXwDVNSec644rnL/rEQStU?=
- =?us-ascii?Q?wAOkzysoIWVfSOAD7Ml0US797/7I42Hn7W0YmdMH/Inqwm/HwtjwTZqghSbT?=
- =?us-ascii?Q?F/3t/E5fwbfqaCmNn0A8lJafXt7Ud0OXTEmIWaD8yPSJI60QVE1C8+G4xXXT?=
- =?us-ascii?Q?ZywLFSsD9kWevpiMMfQ/ueXw8S30qriGm1bTDAuo4+Q8KSV0v2onhN5TcJiu?=
- =?us-ascii?Q?11YdEbreFl31K03Fn6yGUmQbXGBzGIEZFWJpNv4g5s2N0usu1VTfGVL2w6jx?=
- =?us-ascii?Q?JR9sMB5tHtZ7UuYpXGqCyVtwH/XeWBDBDswEsvQNrNddXTot4vaw7sr9/ET3?=
- =?us-ascii?Q?tygtVOtvbefJ9cie0HEWmfyD8JulXi/a7DtnC76H2KbudK0cVXbKfTWX/xZq?=
- =?us-ascii?Q?FnvZ62Qv+Jt8EAe/lDFBQfumeXeeXkDO/j8KlKq5wf2+xqV2onNHX5LJ1vCh?=
- =?us-ascii?Q?dmb/KVofoMp5hRRSNPsVZqOa8mYUCcKLvqMahK5PbKtZ5CS0VSxz7prF8jcQ?=
- =?us-ascii?Q?EthH0PhTeepmB9KnShl+fQTuAZgtHwauYi6t4px3hU/c6wGuWArf2Yhf/N5J?=
- =?us-ascii?Q?Voi3czsDvioTKo8sN93/A4nnXpII2qr51igcUb/fNzOHzaU6k1AQsQRA8pmP?=
- =?us-ascii?Q?1AkR0104qVfbRwFRQ51IAYWFUiKxbPdXPXD/UMckj/8+wud9p/a5f8jKTsmA?=
- =?us-ascii?Q?h2ZtkFJEANWmpLQCHyTtulsu809JGdB/MGshIcdz+0emIw0X34jxGnwJ3gWX?=
- =?us-ascii?Q?H+AObk8lme7catLNyTsRFxi+CX8fSDhDiTQA01Eyq3wmTxkafyhA10LMWVaS?=
- =?us-ascii?Q?zf6ETHqt7xCmIuoFdQ3GE261BChAOcVVRsceOkvK6dFGGi5/czHjSM+GsfI8?=
- =?us-ascii?Q?8Aj/C9KgTwoGhabruxfE6c51clmd2NseV7bB?=
+ ARA:13230040|82310400026|376014|36860700013|1800799024; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?NU4DdUemQpWO09p9+HN3inm/9Oz4XjQSPM8Yxkk+6bcybjCUvJMg0J+0OxZz?=
+ =?us-ascii?Q?TGMhlm/jj3mUwxA47pW7eWEadesMgr2qpic0v1zgAN1VNZ9OLz9kxbavTnHI?=
+ =?us-ascii?Q?/HM8G9auAW6+Cqlf/lqnq4Tvaz2NEk/xwDm0aYcj4O2zaZSUUspdFiA2fvYe?=
+ =?us-ascii?Q?YG9HMB2GxwCdZczcQ3lfYqOqWOK1lUuIMfjMcr+sfmY6mLLqe3DggSquZyGj?=
+ =?us-ascii?Q?mEpi4spPRZ7O4TLPLGlQWV/KVqdqhraOjHLv1MRVlBxPHaEB6j3IMIlJtJFK?=
+ =?us-ascii?Q?iLKqmX78eAL2FQy30foO4z/c8QZJJTW3dpw9kT+jJdEARFJ8Loeime/pzHHR?=
+ =?us-ascii?Q?0PZdqUWhOnKg+Bk0xTDbvI5SKtmXNofFeY7cupP8ccraYt2KNWVDjpwIh6S5?=
+ =?us-ascii?Q?Jf0NkF2qrd8K48c/DEmdY3cT9AWtWFu8Dcs/40M5uPT+I5cZvSRmR3xN4UPS?=
+ =?us-ascii?Q?UOlabZJ2VLj4OYHs5CzAtAboW5O8izXWD7RZEroz6NHNWh1iRgwBhllik3n6?=
+ =?us-ascii?Q?NlXK8mEcshvIgtzpLhCRExINjaTEA55tLwB9PN8npQric54RRnYEpzDVWLR0?=
+ =?us-ascii?Q?s3BJzKO9jdfarPjUNSObk85LKjpskygWJfn8g8BoQkOGChpcW74IAmio4VXR?=
+ =?us-ascii?Q?eE6ot0JyMj/0KsTE442pMHgMDSxRyWVdr67CMDTyFpX2xoP9n4Du8q5wO1s6?=
+ =?us-ascii?Q?56uhq8bKsq6+Vrm51IeqnwZpjkdwHywFJx/ieLrryQJUOMCrHfGBYue6vkg3?=
+ =?us-ascii?Q?0/kQ1C4mQ50cw9joqtFRR4BXcBZr+yTWiwv4EGEZGUCR7t/t3nQJLZ6WhQpZ?=
+ =?us-ascii?Q?HpTnmynhw+c5NOwg4Z6Ntn7R7tOfwd1aHBbFnXpgVgCR1yx8rEVv1EsCBeyZ?=
+ =?us-ascii?Q?fnte1oM9a42sfowO7f6s6qyqgLybZIPMwKvAGtGlbGEZoMYm5CV8rvxwlw7n?=
+ =?us-ascii?Q?1Wtw8zOIXxVU+oUcMBvStOwILWiQUwXGpJQ9RuXMhpeioz3FNcJjNnnzWoGP?=
+ =?us-ascii?Q?YCKzS73Agd6IC7TM7VUldjIzzgVcf0hKG786YyOAYlo9Pd3V3ZzaWouN69Ta?=
+ =?us-ascii?Q?stzr5lqU9Wi5LQlpb3YcFFMAROmf1TqidH1nPpXaMk6Do4eF5vNRMhAXt+0u?=
+ =?us-ascii?Q?SL1aQn/D6GfN9uvx2YJwxg1cfV8Rs91YMAd05Qysxk5xqGrX89JBpi+Dq2Vt?=
+ =?us-ascii?Q?/WndHFOmEE2iDT8il0cu4MwnUuE3HSAyvlV3r5jdahguJlFtxjc824PkQM4Z?=
+ =?us-ascii?Q?Wa3Od6LU7ogw1bGXNVO4xF47l03KtI8RM9Nf/xtuJFtYN5rZVrViyXG5QMPC?=
+ =?us-ascii?Q?WhTuB3gA4Iv625xrYvprZtnc13ydyTT5VaJE4hg7VZT4eEhRRWsn8HJGE/Z4?=
+ =?us-ascii?Q?zn8JYE05DG0bUl7EhZOnhvw/Mb8yL+iYI5Gm7wVYUOpPahbrabDVOeKLoTWK?=
+ =?us-ascii?Q?6EcFn2RE37finLueuGxcwxVV8XOtVyKzwvJp3CqDwCBvcxgWpRYgQMz9iSZp?=
+ =?us-ascii?Q?1soZaEGu+9MJMfz69h60fu/XCP1obwVxbmo8?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);
+ CAT:NONE; SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: PnQlsyVKT9xG84kwFytEo7eixdxbUVr5nu6C6T32il6dhONknSKLNF3+fFWt4xALyOXRacPCmejoIDJ3ekZkZ/U3JOhZrcgnufrrnKhWNUX0a0rxvp/RlB0TfkReKniie1EVzalLZKEp7JnoUx07AL/v4fHSmd/r6y1MTjUKW3GiRwAXcUmLHbRvdW/iqIYsXo7LNt4mo/DY12ZsLob1wTE8lkvhLhvEOQfTDDlShdNH5GPRhz6MmUJFJgLu2truoA6lxeMRFyUuz6COI3FE6/2cNJ2dyZRB7x4nnCuJHyABBoTDe4JILNRuqB1LFQY8ZGJjHNEzgXpFHe6w1IBzilgjkn/I+/b6MnOU8EtkByt5pacKRjJmVMnZQ/d5eUetScmTVexEsWkmz/L1j7NyK4YG1beEICUJV6AHPkP3gNHhhbEmNGGSFB2B7mkFIBEdxUFaZ3bZcHWx67s4nFbDsGBO3+LfOryxiPoJWor29IwxSZ8hLpHYyyRROMT7OotaeWPGJ+XvCLPDqgl5Ykcm20HQUwzAaKtbH4PUjNF1fRLggCkc6NtUiYZ8NDjKg29hJkgsokEK+RXQGSzFr+Y+xjWXyQQoIUnwwVvZbmYOCOGQXczeY0OeQ7vCng8RD1/blGIfsAZkyHgX9+xBcasY+Q==
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 79vZ2+9m5fe+YjoHtrM07XXhEQMdRSiBmeAtU4s4hgWNeT6fDrAMxLJEFfzvsJ+LUy5kOpjTy1K9Q6g4tlch3DZsJL7WWdkwzW2zIBlh0n94FHXv2dWaOJag4StHLLY/Q/xHX5/gHJT27JnPg8Tw6NZV92t4bLt2MkbKzcZGO/rVHoTyHcPfwhPqutbCCmhPzkztpJ2+DvWnnAuZaRvaGGsbnhPjbdAmScajLNMtCEc60MFqJlmT2mEhXU6zFxsx8t3bP2iAQd/y0dL6RuGdby3LP1kvTlR3L3VWKXsUruvYYWxeo24crFevXq9TvcJHrz3b9bgxyDufBIU7jePuVfPNXY9Lk+Rv44BDklMZx/C59Vv8ZmhDH8XeClty7wz3Ejmnx95W1zf4hRgeQPmzzuj0zOxkJ8HM51FJF1IrNVRlnmKjrBfsiF40trGZ4pmyJnY4CqlkOGIXNekpMs8jddevNd1hpCspTiXs8Lmf7HLWqtAnTpPK5CYmYzqdU6RVPPDJ5ID0WM9sTN9rzqrS1WL3BtR3CUOHyMI0WzPcDW3Hmob6+HqQA4VVm023m/qiRoLmvYkQyGKlBg79ZFdoMwWmM4OITBg4YOvnnZOp4EOU3t4DUm27jhWMrq6hwQd2F+bo3FgleCQZxwHRfBvu6Q==
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Apr 2025 13:49:20.9736 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f0d2464f-f5cd-4e67-f7ff-08dd87edcf48
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Apr 2025 13:49:24.8828 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d7c27243-9b52-4db0-9634-08dd87edd19e
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: AM4PEPF00027A69.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4P190MB1999
-X-BESS-ID: 1746020962-310933-7995-578-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9P190MB1202
+X-BESS-ID: 1746020966-306095-8424-586-1
 X-BESS-VER: 2019.1_20250429.1615
-X-BESS-Apparent-Source-IP: 104.47.17.106
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoYGpqZAVgZQMC3N3DTZJNEgJS
- XV0MLS1MzCIMncItk0Nc3QMDnJIC1RqTYWAJf8z0RBAAAA
+X-BESS-Apparent-Source-IP: 104.47.51.170
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoYWpoZAVgZQ0CDR2NLANDUt0T
+ QpNcXQwiTNItHEwtjEwNTcKMnAwDhZqTYWAKKAuQ1BAAAA
 X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.264260 [from 
@@ -147,32 +147,47 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Danylo Vodopianov <dvo-plv@napatech.com>
 
-Fix CID issue 457736 divide by 0. It was avoided by
-adding adittional checking on the return value
-for function.
+Sometimes during  high flow learn performance two threads
+could cause deadlock using queue and mutex.
 
-Fixes: effa04693274 ("net/ntnic: add statistics")
+learn_ignored variable sets when flow learn and gets
+when flow removes. Hence, learn_ignore should not be protected
+as far as two thread could not access to the same flow
+at the same time.
 
 Signed-off-by: Danylo Vodopianov <dvo-plv@napatech.com>
 ---
- drivers/net/ntnic/nthw/stat/nthw_stat.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ntnic/include/flow_api_engine.h                     | 2 +-
+ .../nthw/flow_api/profile_inline/flow_api_profile_inline.c      | 2 --
+ 2 files changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/net/ntnic/nthw/stat/nthw_stat.c b/drivers/net/ntnic/nthw/stat/nthw_stat.c
-index 2ddef052a5..9bb97bf311 100644
---- a/drivers/net/ntnic/nthw/stat/nthw_stat.c
-+++ b/drivers/net/ntnic/nthw/stat/nthw_stat.c
-@@ -319,6 +319,10 @@ int nthw_stat_init(nthw_stat_t *p, nthw_fpga_t *p_fpga, int n_instance)
- 	/* Set the sliding windows size for port load */
- 	if (p->mp_fld_load_bin) {
- 		uint32_t rpp = nthw_fpga_get_product_param(p_fpga, NT_RPP_PER_PS, 0);
-+		if (rpp == 0) {
-+			NT_LOG(ERR, NTHW, "RPP has wrong value"); /* Avoid divide by 0 */
-+			return -1;
-+		}
- 		uint32_t bin =
- 			(uint32_t)(((PORT_LOAD_WINDOWS_SIZE * 1000000000000ULL) / (32ULL * rpp)) -
- 				1ULL);
+diff --git a/drivers/net/ntnic/include/flow_api_engine.h b/drivers/net/ntnic/include/flow_api_engine.h
+index 859c76656a..10b09f0297 100644
+--- a/drivers/net/ntnic/include/flow_api_engine.h
++++ b/drivers/net/ntnic/include/flow_api_engine.h
+@@ -297,7 +297,7 @@ struct flow_handle {
+ 	enum flow_handle_type type;
+ 	uint32_t flm_id;
+ 	uint16_t caller_id;
+-	uint16_t learn_ignored;
++	RTE_ATOMIC(uint16_t)learn_ignored;
+ 
+ 	struct flow_eth_dev *dev;
+ 	struct flow_handle *next;
+diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
+index 3133464675..d12bd5a4af 100644
+--- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
++++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
+@@ -518,9 +518,7 @@ static void flm_mtr_read_sta_records(struct flow_eth_dev *dev, uint32_t *data, u
+ 			uint8_t port;
+ 			bool remote_caller = is_remote_caller(caller_id, &port);
+ 
+-			rte_spinlock_lock(&dev->ndev->mtx);
+ 			((struct flow_handle *)flm_h.p)->learn_ignored = 1;
+-			rte_spinlock_unlock(&dev->ndev->mtx);
+ 			struct flm_status_event_s data = {
+ 				.flow = flm_h.p,
+ 				.learn_ignore = sta_data->lis,
 -- 
 2.47.1
 
