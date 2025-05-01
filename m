@@ -2,179 +2,179 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F7DAC369DC
-	for <dpdk-dev@archiver.kernel.org>; Thu,  1 May 2025 15:54:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B69C1C369DC
+	for <dpdk-dev@archiver.kernel.org>; Thu,  1 May 2025 15:54:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6AE0E402DE;
-	Thu,  1 May 2025 17:54:19 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id 4A3E4402D3
- for <dev@dpdk.org>; Thu,  1 May 2025 17:54:16 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E5B204060C;
+	Thu,  1 May 2025 17:54:53 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+ by mails.dpdk.org (Postfix) with ESMTP id AFC3040609
+ for <dev@dpdk.org>; Thu,  1 May 2025 17:54:51 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1746114858; x=1777650858;
+ t=1746114892; x=1777650892;
  h=message-id:date:subject:to:cc:references:from:
  in-reply-to:content-transfer-encoding:mime-version;
- bh=AK+vWs0ZWDbhAP6HcRC7hktvgL0uIAPqa4z5WzwQNqQ=;
- b=ZGfLssaYK4KbQ83A/TZXhaAy9dCYQTes9lUHP3/2oprfhsBuz3ncdZmz
- YHrUZKku+fe92wcPxqlHh2Ll/QpKc0sIEIAzgUdKFf+AFdqKlMRQK17J8
- ghh9c+k1QLRwqRd7DRj78ju0dMrsapZJWX5Flhg2n0J64mLgNkyyoCrxX
- B+SdAFNL4n0h4zT4z2ldsYt6vulfYtVArXQdWhRE2zVqEzYiDscxK4Ue/
- h154a7d/fcPD1IMCQ0zRhhGEyehWS3TeKcxuOY4RTMtsXPhp++5H4GoiX
- LNNtkGhrWO3zC8eMw3owJudYbCbMugXCBZCtpKgEmPloJp5EBsgY7yOp4 w==;
-X-CSE-ConnectionGUID: JQWRdxNoR8mS1DBBCtE3YQ==
-X-CSE-MsgGUID: v7dVcON+RHafoLDTWzRPKQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11420"; a="47671355"
-X-IronPort-AV: E=Sophos;i="6.15,254,1739865600"; d="scan'208";a="47671355"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
- by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 01 May 2025 08:54:15 -0700
-X-CSE-ConnectionGUID: qELUUcMiQGCa3S7fsT02aw==
-X-CSE-MsgGUID: k8s7eyubQuy7yIdxSCWOBQ==
+ bh=EVvhpkp89dmWno16g8G2c7Rp2kySX2cA8bFiF3ecvyk=;
+ b=WpFye8dtdBRMe6JOQvGdP7WTutcrx2rjMvOCF7faVByz8x7IECKHJHWC
+ 9Y+PLEu5qI8O+9BnVCw+sOKMpBetIZ1ZiTzYd9p5cRuBNwqhIeVmmmXdh
+ MfgWEPYjr+dlhjaQJ0Xzl2gQst5avNItZLTNUoBsilnIDwgLPsO8/cY6S
+ 3eZgWOa8cjOlyjIkIZaqgJ7IUuNxdX+MKuMwsH3x3ECqSCrWLNfpHfs+b
+ 6ugAdRBn7WdL62AuDNKj93/vOZIQKj13aiDYz0zeHWn+pmImMnsTBYMsr
+ 5Q2kp6IG2Uu5x2ToiL70HCcDe0hAwgWwLr+cTTjN6hC77hFpfR9cFmJwC g==;
+X-CSE-ConnectionGUID: KK4cuf9WQGaOPEfgyEvmfA==
+X-CSE-MsgGUID: 5VgSIujqTXOYywOdsiJCwQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11420"; a="57999658"
+X-IronPort-AV: E=Sophos;i="6.15,254,1739865600"; d="scan'208";a="57999658"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+ by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 May 2025 08:54:50 -0700
+X-CSE-ConnectionGUID: i3bDi/+HSqqvmgBStKsKTQ==
+X-CSE-MsgGUID: n0Eqx/A3TUWsQyNAmnapwg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,254,1739865600"; d="scan'208";a="157639828"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 01 May 2025 08:54:14 -0700
+X-IronPort-AV: E=Sophos;i="6.15,254,1739865600"; d="scan'208";a="135378673"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 May 2025 08:54:50 -0700
 Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 1 May 2025 08:54:49 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
  ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Thu, 1 May 2025 08:54:13 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ 15.2.1544.14 via Frontend Transport; Thu, 1 May 2025 08:54:49 -0700
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.176)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Thu, 1 May 2025 08:54:13 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.169)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Thu, 1 May 2025 08:54:13 -0700
+ 15.1.2507.44; Thu, 1 May 2025 08:54:47 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RApik9pPEecUz5PoTVtcqHjqQ3vu4ktJS7HiG9ODMbrT0rdWxQmfgU3t8ce5wRGbgiSwqqlXLidzUtNY+N6XVInlT1XSJoYl4U3eySwUjxaD9gLP6dzzOvaTa25YMIqWuWmWrNka3AzeztI0C2VAUedXfvH1ubJAPhBDSpcq4mEr5ZaqkqmO4UdWG767Ca9SS2KUmJQNKeNl77Y8ViyhG9+ktMcz2W1ZtDKwXZAj7SJC83x/ya1vw29zr3YCN0VPPNxzVsMdvHK6g6j54i60mQQpIgk7e8VVgOZ5a2Xa1QbljXKPZFgqMbvhkSt30wXKHYYDLbyEz9jXiGm9PIsXbw==
+ b=KiSHOrJwnQEQDb8b+bX13w9TZnRc3lWsjPvM8erOCMfBS5LDqF4UTYVPS5ngkRLY1bpk3oPqwtG1AFx+uO+nosDEMz9iYyFjDguvCT7efg/L7FaD8XlDeuewmU54jD1VTeYF/hXo7sINYKoKqsC6kmxZX9jg+mCtHx+QFJtNfpajWcM+F6Uf+oW/bSXBgdWP4AKgMsGCcTK7ATzrN5Eafp7P1/tOz9tppl4qqbSov5UqNnKwRLnVWMQvq21lE20vKn6QMcFEbQJxTpzKMszCUnwEF5oqWwgNjjxZ72qzXlWbfpDqUs0WCGcPT12tpnyhenQuwNDjbmSiUsJ1+PfXKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tVq5fywihCBmPzpCjt/XbkAGiQPh62svP8zspng73Ao=;
- b=A+/xTxE8Ll7ZrdzCtlTRz5UdX3L+fcNhj2eIPhCRVuwvSBJpC+7RUPaXyrIc23HFfQLadFLwMZrWW8AAtlla4y0r06TZA6uVga5ju8FiIUl6ZDDnAZYGt5OY/YeWd9QnQnp4OlwVJtlBDT0a4xzNovxRUgA15coG+hNfCg0KcDKiFLZQc+mDgEebYR2ODqF5axiHfV6MnjJ1Tkv1GyddCnM7uBFKgl/HwCKvB2nh1qymURs4+66JxMFBnxfhCxTptPESU9RuY1LN2KsyQAlg4VOy708+RZ/DebXygTrVgsR/EIgLzJxLozqeOpu+hoibSEV7fdx2iRoS6cwG2indOA==
+ bh=p6KFeqaeAIJG60ZgxV6bwN6CmLfraxD90epcESP7pE4=;
+ b=oSE5gj5Gyqid4jh3Rre6tzIfvY1ORea5g3B/pC2yOsbDT7IEFVQfc3HMkdjrrUoabe4pdksjmy4MzwY8Wr42/XHQYsaPNKnAQyGJg21k8vRJvr4iuIdw4kaVHbimpsOY00sb9qdRx0Ndj78PuQe/7vBDFM1WDw2V8bm/3njvXQYYiirt7NUBqASjOS7ezZzi9aSEGb25+bThxeawyamrMD14rwF15w2OzCM/ncDwMhSUttLRwNBA59agbNkx6oqikewPnsxqoSMq9LMPC/GPT6t70Hl8mVNfhDLYh74aKgX049ct8Y3Kbtucw9m5pDYT+GLRDyZ8vwaLMVsl07vwew==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from SJ0PR11MB5772.namprd11.prod.outlook.com (2603:10b6:a03:422::8)
- by PH7PR11MB5768.namprd11.prod.outlook.com (2603:10b6:510:131::21)
+ by PH3PPF5ACB2DC0D.namprd11.prod.outlook.com (2603:10b6:518:1::d23)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.31; Thu, 1 May
- 2025 15:54:05 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.23; Thu, 1 May
+ 2025 15:54:18 +0000
 Received: from SJ0PR11MB5772.namprd11.prod.outlook.com
  ([fe80::5851:319:3da6:850b]) by SJ0PR11MB5772.namprd11.prod.outlook.com
  ([fe80::5851:319:3da6:850b%6]) with mapi id 15.20.8678.025; Thu, 1 May 2025
- 15:54:05 +0000
-Message-ID: <07f2b368-2402-48a1-8cdb-6ed1feb7c695@intel.com>
-Date: Thu, 1 May 2025 16:54:01 +0100
+ 15:54:18 +0000
+Message-ID: <d2bd99f4-e161-4c9a-9bcd-f35d4dbf2d6c@intel.com>
+Date: Thu, 1 May 2025 16:54:15 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] doc/nics: improve structure of Intel VF section
+Subject: Re: [PATCH 2/3] doc/nics: rework notes for iavf use
 To: Bruce Richardson <bruce.richardson@intel.com>, <dev@dpdk.org>
 CC: Ian Stokes <ian.stokes@intel.com>, John McNamara <john.mcnamara@intel.com>
 References: <20250224152611.1012935-1-bruce.richardson@intel.com>
- <20250224152611.1012935-2-bruce.richardson@intel.com>
+ <20250224152611.1012935-3-bruce.richardson@intel.com>
 Content-Language: en-US
 From: "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>
-In-Reply-To: <20250224152611.1012935-2-bruce.richardson@intel.com>
+In-Reply-To: <20250224152611.1012935-3-bruce.richardson@intel.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: DB8PR04CA0020.eurprd04.prod.outlook.com
- (2603:10a6:10:110::30) To SJ0PR11MB5772.namprd11.prod.outlook.com
+X-ClientProxiedBy: DB8PR04CA0028.eurprd04.prod.outlook.com
+ (2603:10a6:10:110::38) To SJ0PR11MB5772.namprd11.prod.outlook.com
  (2603:10b6:a03:422::8)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR11MB5772:EE_|PH7PR11MB5768:EE_
-X-MS-Office365-Filtering-Correlation-Id: d7fd5186-0e4f-4d6a-78ba-08dd88c8667f
+X-MS-TrafficTypeDiagnostic: SJ0PR11MB5772:EE_|PH3PPF5ACB2DC0D:EE_
+X-MS-Office365-Filtering-Correlation-Id: bdcdddf3-fd66-4d14-4a47-08dd88c86e5d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?bHFFbk9TeThaTXdhSVJOWGhwK1F0NS9JM2dadEdFRm44Tk5xY3EwR1IzdmJX?=
- =?utf-8?B?aFhxTXJLdGJialJRQnIyR1EwVEpLVGZaQWRKa3g4UTFRR3hhZERrdHFaV3hl?=
- =?utf-8?B?M3RGWFJWY1ZhYmxYam00d3pQMXRpOGdBcm9uR3U3Tkd2cU5FVUljSExhMTBt?=
- =?utf-8?B?SXhKbHhwWDNsOTRrRmo4M0dJbDBmbmpOeS82UmpnQmdSL0paZjdIUkU4NGNv?=
- =?utf-8?B?eWhqVysxYmtpNVhlcWJCV2VXc2VmelVsWlc0QnVqVlRQYzYwZHY4dU1nMFRx?=
- =?utf-8?B?NU5TeldxRXlkRUErTnVQQ3NHYU5pUG0wZnNmSnpzSTUzQzc2TVFUL0VLdnRj?=
- =?utf-8?B?czd4ZFlldFpwQVRxeDlNaEhJemZBcTlodGpRQUJxSWdIZC95WHZWTVpOT1M0?=
- =?utf-8?B?NzFJUkQ4QVhrc21rZERnR0xLdDh0a1lnZnl6Q1RKeUxlTUtqd3AvVmMxV2Vz?=
- =?utf-8?B?VHJhUEN0RDFLWWs2V0hJeXlubmNVcEZjcm5KMk5xNzM3STZTa1VUUkREQ2pQ?=
- =?utf-8?B?anRRa1ptQnVlVEZRQ21ZMVI4UjZWUTNsQ2VmZmQzak1Ua3IyWHNRTGlIQXFS?=
- =?utf-8?B?VHdXWFFaUGk4VG9FQUxqbWk3VTRzNlhlNmh1bGVEdDlDQmpSWGJENS9UVDYr?=
- =?utf-8?B?dk1aRldUUFNVQzFIT2xGZTNVUSt1MkVnQVBqVGljU3FzWDUwZ0hXbUNoando?=
- =?utf-8?B?SEFHeGs1ZEF2VWNFMHc4Vzl6N2FJZnpQMFVaVnY0SEgyOHhDdUpxcFdSeHE0?=
- =?utf-8?B?UUp4bGZBNUc4VUhwRXZBeWI1Um9FUmFweWR5VTE5eG1wNTd5N2lNV3FaanFt?=
- =?utf-8?B?YlR5TlRsT3dQNldzd0hTcjdnWHM4b0xpTm10czd0UEZHcmhDdE04c0d3T0ZL?=
- =?utf-8?B?VDJvbkF6YzVPdTlSY2dzb2JnRTNHd0lyTEo0d1Raem4zRnA5NXpxeXQzb2dY?=
- =?utf-8?B?U2lYb3hSYmV1UUUwVWxnZW1tRW1OWnF1dUhPeC82Y2tvKzZpNGkyTkJKK3BZ?=
- =?utf-8?B?UVYvNnB1SXVZR0pZZlhMR3JJTkNWTm81ZlE0dDZKZ05aUm42WlZPd053NVFU?=
- =?utf-8?B?UTBPQURXUzV1M1puVFArdWdObm1UNHpLVGk2K1crbUtieElmanhqUUFoWitW?=
- =?utf-8?B?OWlCVWN5TTdoSHRDQ21aY1lCbjJOeUJkRHdCRnphWXcrbGR3dzVHYlpGYXQ4?=
- =?utf-8?B?c3VveGdURHBVOVhvOXo5TDFFTmtIZldEbnpKVlo0K3lpTVhGSTRWZnFsNTI4?=
- =?utf-8?B?MFQzdXl3NXNDQ3dWeCtTSFFOOGtBTCtUZldGTWl4N3Yvd3JCS3F6Y2s4NGtL?=
- =?utf-8?B?SVluK2w1K0FPaXEyNncwVWlRaU1pUHorVnpqenlvanN5Ym5HdWhjSUpCcUpq?=
- =?utf-8?B?YTR0N2w1S1lCUUNjZk1xWFpEZWQzanFSYmtEb001T01Sbm5JQSt4eUZLMnA3?=
- =?utf-8?B?a09GSVhEdkFsSC9Wa3RxYnFtcS9VZEJid29veFBYekx3SHJEclBzV2hIdzlP?=
- =?utf-8?B?eWp6UVpaZWJjRCtudVFjY3B3UHdZcVZTMWxVa2tYODhwRUswc3hFV21zMkQ5?=
- =?utf-8?B?Q0V0ZDdZWjRsaW5GRTc0eURCMEI3UGN5M3JwMEJxUVRBWWh3Mnk3ODRjdTFX?=
- =?utf-8?B?bjQ0em15cTNKMWpQRTZIUzg0UUdTSzJhV1pYSzFncktCQ0dzNjB2K2ZQbk1Q?=
- =?utf-8?B?UlEzNUdRM2grOVhsb0c1UVVpK1B5MjNlb00xdnJ1UGlYQXd1TW5HSnFjSmFv?=
- =?utf-8?B?V0s0TlI0WHZYa2RDbThhcW5mWWcwUjZTYkZwVDRSVXlLNHFRR0JKOHlKcUFU?=
- =?utf-8?B?YU9CdGRURm4xbEFiU0ZBWFcvTjI1OHZpNFlHUk1Pcjh6bEZMbk5YeSt2bU1v?=
- =?utf-8?B?REhlVWFSSkg3VFVNcXF3NDd4ekFxZzlESm1TMEtEK3VUd1VDWDNLenovOW9C?=
- =?utf-8?Q?wGZVcrRG20A=3D?=
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?MjJEaTFFRUpSRC8xTG5PcWh3Y3pQY2EzaG04Q1N2bnBIU2F5d1p1ZzJUMVBK?=
+ =?utf-8?B?NWhCMkJGcW0zNHQxNloxeUFiZGh3ZFRSNTgzME5oeFhQZFBjNkQ5ejBSd1dH?=
+ =?utf-8?B?SGFSenZqbVNxZmZjbDlTQXl4WGFNallMQlpuN2xmakZubEZ3QUFQajhPNllH?=
+ =?utf-8?B?U2wxQkp2VmcvUCtWK3FaQ2FCZzg3WXg2UUY1OHBKL0pIckVNdnhkQ2NNUnlx?=
+ =?utf-8?B?MXk0ZHltaWNxdzB4d0xDUDFQbFI1dmdOSmcwWk1qRUJKVVkvdm9mTnFjUk1U?=
+ =?utf-8?B?VjNHQmxhTlZvZFQ4d3dZUHFaMDBzV0dpc1g4MjFSZytzRG9yam80ZDM1Tkk0?=
+ =?utf-8?B?RTFwMFRsazFoQmM5RVE1Sy84cFdocWZLU1BTZVhDQ1o4VlZEQ2VJUy9FMVN5?=
+ =?utf-8?B?aU9VOXF2cmVCS0tkRXRSTUlia0tZVUJ5STRUcytScGZNZE9MRTcrcjIrOHph?=
+ =?utf-8?B?ZVI0aWNwMjZVK3ZiVW45NnhNWDYxcUkveUd5RFNXN2ZvNElVQ2NpeS8vcVZz?=
+ =?utf-8?B?c2FDcVM0WWNjRVFYSkpnbndkL0QxMUpha1ovMFFBc00xRHByazkrUEhibWNr?=
+ =?utf-8?B?djVsVVJTelZpenhoZ3BNT04yQ2Vtdmx3UlNzMUpVTFd3L2dyUXlVQzZXMnkx?=
+ =?utf-8?B?MCs5Q0xVNmc4eWNKeGUwbW9zTzNsTHRETjBIcXl0Z05ZVlEwQldwNVkwRlNw?=
+ =?utf-8?B?dXZ4NVFDOExnWllXY0pxMktIVCtBZGtrNEVVRWNuZG84L2hxbW1XSlRBdlZE?=
+ =?utf-8?B?aWtEOVZ1Skg5MmtOYUdqRUxEZmIzNnBHR3FjVVJTR2RZRjJxUTgyeXVreEFa?=
+ =?utf-8?B?dXczdG4xZkN5SGtnNUV4dHJCbGJYRlhRZlJmOGRJeUZ0dUQzc1kxc2t2RzhN?=
+ =?utf-8?B?RnNDRlVOaWtIaGEzR0NDSGZhNlUwSmsrU2haRmg4b2NGRFRPdHZLK2JjMGEv?=
+ =?utf-8?B?eUovZGI2WEJtb09QZkdvalZqVTJhOGtSaTZzRGhRM3A4a1BmZndXZVJBT1No?=
+ =?utf-8?B?U3RHZDNNZkFGM0VmeEJLNkFLUG5DTHVGekJReDlnSXMybTl0V1BtdGhZdnds?=
+ =?utf-8?B?dHJaMEtEeGV3MTYvSnF1OXNhZkNQZGxTeFVjd3MyRFdzV3gxb0JWM0RiL3A5?=
+ =?utf-8?B?dFhZbEhuZE5XN3k1S0NpVTBsK0dZWGJYUEJsTXNQalJsZTNCOWpkL2JVT1hh?=
+ =?utf-8?B?aXAyKzlVRi91NmdsL0FOVkFLZlhLQkpkUXZOUEh6Q1h0SUFtNFg5L0VJRlZv?=
+ =?utf-8?B?MTlQTDJ3akhFbnhGTEpqbmZRQmtjdmRyMEZuamZiNlBmUkdXRkxLMFduUUhk?=
+ =?utf-8?B?WWx5MTVTbUNwS2hFbWt3YzBESC94dWNFb2d4aDJLeXZOOE0rem9SdHdLZ05j?=
+ =?utf-8?B?TVJQQmZPYmpvRkhlYzZtZmVxMU1kdTNUSGJ3ZGsvVnVNSGtPbjBJV2E0cldu?=
+ =?utf-8?B?djdMcjQzcFRsTytCS3BCMmJvTVVyT2trd3I4N3YzSTg1NHptdjdCUUpYN3Qw?=
+ =?utf-8?B?VG1jSTRqaDJJRzV5aXQ0VGZJRFBaUUdmdDRheTZjZU9MNC9BK3J2RzRjbnV0?=
+ =?utf-8?B?R1kvZ01iMWcwbnp5NUdaZENTNmcvOUNwOFdjRmcwWkk4SkZPdjczMHBVMnFO?=
+ =?utf-8?B?Q09WVU85dmhqTUNNQ3Z2ZThHK3pFQW5oanFuY0VmTjNVZXlTSVlZcFJLUzkv?=
+ =?utf-8?B?ajFWWVpIbHB6ZFdnN005VEk0a3V5U01xVGRBS3pkcmxZS3VoWmgrQXVJL2Jy?=
+ =?utf-8?B?Q2JHRisxL095TnBoSWIycTJHYlZqSGFwc3cxNU44QUY3ZTZ3QjNwdjdWNjFa?=
+ =?utf-8?B?VVNCbFlhaG1NMGx5VEl2akp3RlZHMnhEL3hWa1BjR1NHNW9CWDFTMkpCTFpq?=
+ =?utf-8?B?d0lPVTZDMml2S2hDVWZ2UGkrQWQ2WjllVG16clhmcEFHekZQZnRXZm1IVFd3?=
+ =?utf-8?Q?F1G7oJ/LcvM=3D?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:SJ0PR11MB5772.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(1800799024); DIR:OUT; SFP:1101; 
+ SFS:(13230040)(1800799024)(366016)(376014); DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WjdoMmErUHdYL0ZCSmxwU0Q3bDRtZE53UHZaUVdLVkpuVy9RTmw1Z0hVaWEx?=
- =?utf-8?B?a1lDYm9LcDVxTXRONnVRa05DMmlYRkJqT0xIeUZQSXo2NG1SVXJZNEdQZUYz?=
- =?utf-8?B?WlZDUnpaVDRTclJUUnVUNXpjcURoYTFzMWwvTDlpVlF6dDc4bmpyK2g5VWlk?=
- =?utf-8?B?OGVpOXZmemI3aXRuVlFXcG5nazhOcnczczQyMG9nM1JKSUlZV2VaaG9xQWhk?=
- =?utf-8?B?SkEzYkxmdFdRUnRzbkEwK3d6aXZsL2E1U1Nod2gwSEYwbzBMcTcvMGJtOS9N?=
- =?utf-8?B?dks5THg5WUhuVVY1MzBPanFlVkY1NUNlNlN6WjJHWk00Sk5OSzhkdTZoNFFY?=
- =?utf-8?B?dUE2a1RWVThzQnNDMktiSE12YlkyeVlYbURuYkJBK21nN2doM216MUoxd1Q4?=
- =?utf-8?B?SHlSeHdjUGlFZTFnVloybzRsTkhMQUliVXBrY3hOeUROMkNNSklwWW1xM21a?=
- =?utf-8?B?aldxUis5VldIQWRPd2VYMFd0ZTRkQ29kSFl4WFMrVER3dXExZEkwZkdPMGxE?=
- =?utf-8?B?Z0UzcHBzMmtsa3M3QlAyd25JdGhhcy8rcXhuaWRQcG5rK2QvRy90SHJFME5l?=
- =?utf-8?B?d282cTNSRTdnWXdRUTR4anF3ZUJxaWFJY0R5VHB5NzFCYkFlMHJnOGNOeFda?=
- =?utf-8?B?S0lFcnk4RFhJdjArdmc0T0VCQityMlRKT0JUQW5NbGlUY1kxcGF4VXNmcStw?=
- =?utf-8?B?Wm5Wdzc5ZE5LSktaamE0Nkp0aEpkaExBZngwOWNwWXpYNTY1Rk5vZ2hEVkdU?=
- =?utf-8?B?RU94ZEV6NUlvM3RFWnB1QmpieTJkVzFGdDdwU3pjRGNFTWdreEF1Si9neHNn?=
- =?utf-8?B?dFlRM2JzVnVPU0twaGhBM29uazRETzJnTU40Q3o0ci9laU5BZzV1VjJFaDdn?=
- =?utf-8?B?YnkvZ0lNRm9ZMldVY2RVKzg0UzJaNk9zMkVOTUlxQy8vUGVMMnUyUXhmcXYr?=
- =?utf-8?B?OEpyRTFvM0tzMkluK1dMM2NwbXJZTXVZMklyUXkrVitJcTg3MmVyWVgwOXlL?=
- =?utf-8?B?NGc0UjBWeXYzT2h3VjdSRTFUcGk2eTVRZ2hRd2k3RURoY3IvaG1FUmdwS1A0?=
- =?utf-8?B?OWhUbUhuRU5vUnIyQmdDYjhyT3JuM1hKY3hTMW9JTmR2Q1VOTlhJQ3Q3aG9T?=
- =?utf-8?B?VXNyTDRqaGdQT1J5eEpYTnZDTFJyaDBLNkpLT2ZaMHlBTTRFY1NUSTVjamZ3?=
- =?utf-8?B?MDcxVkJOdVYyQ3BHYzBoNWVyTlpsa0NHemxiV2QvZXZBWlhmbHNXWVhJc1h0?=
- =?utf-8?B?Y3NSUzI2VWVTTlRBd3dqS3BxaUdDQmlsVWpZaWd5aVRnTlB4bmFBU2Nobno1?=
- =?utf-8?B?REczdCtFMUJscnRRUkJ1SnNaYkJaQWxsL2hGY2llbmovWEl5dDB2cURoWmJ2?=
- =?utf-8?B?Q1VmbjBuWHNaY1RhMDU4SEZ5a1RHRmFDVU5sRFVubnIyWXpDakxJQXFRZ0ZG?=
- =?utf-8?B?NGdKYVErOExYZTlNUFkrQXBXMkZIQmxrVklZTy9OcDVrUTk5QVROMDNHbXhI?=
- =?utf-8?B?eU5GL05BMUJudGtsUGhobE15SU5oT3Z5VTAySi9pTUVMYnppeWN0TVlNUFBX?=
- =?utf-8?B?NURTbmF0c0xTZ0NpMHplOGhBRlFIZ3lTYlgvNHJWRDFnUkpwQ2c4dHpWb3Vq?=
- =?utf-8?B?MHFrRzRna25OMW1TblBPRTFEamN1Z3QyMjYvOFV5QnJJNyt0bnpMTkt0eEFh?=
- =?utf-8?B?VGZxT0RVbG5aNFJudjBzNHB3bS8yb2h1TlgxWkxnR0hlMHVvVjExc2djamNN?=
- =?utf-8?B?cUI4VFhxZ0cvbU94KzhFMk1BWlNyTW8yTWpRbEJyQWJpMmlSK01wOUhhd3VK?=
- =?utf-8?B?Wlh1UWloMkhKRklRNldDbFI0d1FyTGh3MXZSRDlPZURNVzlKK2lRQmFsWUdW?=
- =?utf-8?B?NUI0a1JCa215VGtXK3B6SWV4U0ZjTHJlNms1dGc4TTMrQm4xckE2WnlmVVEy?=
- =?utf-8?B?SUdpZzkwMzk3TU5vcFVLNTRPSnlDUEJTenpxOThQLzNQZ28yaGQyM2I2YWRQ?=
- =?utf-8?B?STl0WHJKWG9ISzdsZlNGN1dwRDViby9iajh5YUs0WmVwMk9qamNkUzFxZ0NP?=
- =?utf-8?B?K284NVBIUjlnWGc0aXpEa2lWN3kzd3A2ajB5ZGtCemxCSFlXUTBKTTBoYVMz?=
- =?utf-8?B?WmRKN294S25BaWtsNWFwQ1hnYjhmaGF4VFg2RlozL25DK0RJclhFSFltYzNP?=
- =?utf-8?B?emc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: d7fd5186-0e4f-4d6a-78ba-08dd88c8667f
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ODJwZTgrOXZoSGFPUDQ1K0swWmw0cDRCYW9KVGdYSU1Uc1duN0FrMnpDT2ZS?=
+ =?utf-8?B?UEJ1bUlDMGFqMmpDN0U2cU9SbVM4eGhkbWduMXJpVW9ORkZLQzBWQnJaQnhw?=
+ =?utf-8?B?d1NqWUZTVUpocm5zUVVaWUhKcCs3L01IR1IwQmJiZ21tOURCWDRINEhkWVhD?=
+ =?utf-8?B?TWZqNGhmNzVRZTRLb2VEaDcvdWtyNXhkbE4zdjArQjFqY2lkc1ZWd1g2dk5z?=
+ =?utf-8?B?Y1hEOTNSUGdkdW5nbVpJam1nSEkya3JXb3laaDREaXJVUFl6TEJmbTYzNXNx?=
+ =?utf-8?B?cWJ0eGdsWEtkM2J5dU9obDZ5MWVER00wTTV4S1Q0VGlobWpMYzBLeFRLYksr?=
+ =?utf-8?B?UXBKakswbVB6NFkybmdKUGdsb3NvdlJFNTIrQWRoSGRuY21rTXVrYUsxU1oz?=
+ =?utf-8?B?bkNrOW9HTW5KZVo4ajc0NVdIOVBabmVabUk4N3lJMGx0bXNURGVlRUFWY0VK?=
+ =?utf-8?B?Q0NlU1FvRjJoWGUyRjlvVTVLSWozTHRKcDJYUGR0eVArVWFxT0FkczRCTnhm?=
+ =?utf-8?B?WEtTMGkvVWE1dUkrcEhKWitHSDZONUFkZm84cmYwQk5RVkg1bTRnelZPalVV?=
+ =?utf-8?B?VWNJQWdwOUZUMXZWcWk2cDFBUjduWkNxekZEd0x1a1YwWGo4Yyt6ekJTQU9K?=
+ =?utf-8?B?ZG5pU3hPMzUvUkVmTmYrMXZFK1pjSS9tNTJmd2tTNmx6M0g5anpMVmU5Mzhv?=
+ =?utf-8?B?RGF5Z3E4cHByL3k1U0tQQWFwQlZwWE16V291WGhsS2lnUGI3Qm1YaFJRSE1V?=
+ =?utf-8?B?QzZNWm5VZUVmWmkrUE04WXBadk5Ib2pXSFBuTThMWHBGdWZKeXcvKzZYN0I3?=
+ =?utf-8?B?a0xZS1I3UGttZFZxUitTbHF5ZG1lT1RrVlFmZXhpZGR3VnVwVzR4UVYwSUdP?=
+ =?utf-8?B?SzlNZEpSOHZJOVFIZTdvSUNoU0FKYzJCQytVMTcwTWZEcmNMRmhtUmM3eDh2?=
+ =?utf-8?B?NkZiTk1aR3FQK1RYOGhiMEVDS3plZ3U0V1IwdldCdGRQWXFyK1JaYkU5cVEw?=
+ =?utf-8?B?RlNXRVJpRlMydDVKSC9ITndOYWR3RTVaMUV3cEEzUE1IZUhiNDBkSFBDZldo?=
+ =?utf-8?B?WXZ4dzJGbmo0aG9PcmhqYkcwRm92QmtUc3QvZDZVcjVKZlZJZXZ2Q2xhR2cz?=
+ =?utf-8?B?UzlPU09RQiszNDdqNVJOcHdCRG5YRWpiRnRoMzkwbDMxVVVrTTRsRGV1a2Er?=
+ =?utf-8?B?bFFvUk1xSE1QVExydndwN1hUaTdwSUZsMEkrNWgwWVFCdTlFRkhlNWJVYTF6?=
+ =?utf-8?B?dDlVT3RKenJoU0pkVGt1RlU5UkpyUlk5cFNSY2xLMFFLSmdVNExOenRtZXpy?=
+ =?utf-8?B?RDlJeEFna0FnMnlzQkdGOHBtNHl5ZmVzOStOQ01Fd29OckhGbUhCbVJJaGFh?=
+ =?utf-8?B?WUl1UlhGTmlVcjF6RHdTMXcrNHpKS0dMUkRlVk1mQ2pEZGMxMURPZkp5T2tm?=
+ =?utf-8?B?bnp6ZmNQRSt3ZmdTeVJnZ3N6Y1VveUVUUU9neWl4QnpOTmg4RGNnRVdWM2hk?=
+ =?utf-8?B?SENQNGplRExNS0Z1TFI0TzZCOG50RTVOSjNMemh5NGpYQUxXTjFHMk04MmtE?=
+ =?utf-8?B?dGw4blpGQTBTNU5jQS9IbnNpWkt0M3pvdXZ3a2E1UzN2NC92MVBmdjNjSXI5?=
+ =?utf-8?B?eUlqb0J0aDV0Yy9SYkx1Uk5VTmpEcTkxUXdDK1pkbXpFUld2UURJOGMyekxx?=
+ =?utf-8?B?Q0VnU3JkNGVwSytrL3BmK2hyT0tIczZNYW1WVUtZUnRCV084L1k3ajlMbkdk?=
+ =?utf-8?B?UTJkTDQzdnh1UkF6emYwSVZycUtKSHpLbVZaL2RzTDZONFlDNGxWYm16RG92?=
+ =?utf-8?B?TFZKVmk5VDJGSXA0dWZra0RIcEMwMWh3MmR1VkdSL0cyOEpYYjc1MThaejdp?=
+ =?utf-8?B?SHdYN0oybTdaVW5GTklDcWlOL291WFRjcUtKRUdZSHRJZkJTcWFqclV0c3dj?=
+ =?utf-8?B?WllaTURnSVZ4UXB5eWRwcUE3UEpwbXorNy9UZXRTeGR2TVNaL3hPa0czYTFP?=
+ =?utf-8?B?K0o0UU5PS2FjM0FGOTU3ZnNqN1h4eGV0QjJOK3lRUUY0Mjh1bit0NHlWNGUr?=
+ =?utf-8?B?ckFtYjdCMHJ6M0wvQS9weitqSVBKUmRZeVpxQ2toODNPeVhxcDU3cmJ1bGx0?=
+ =?utf-8?B?QTBlUmhBeHkxYnl1NGc0Sjl0QmcvNUtsU1Nuam44Q0tISTlUNGJjZjZRcVlv?=
+ =?utf-8?B?TEE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: bdcdddf3-fd66-4d14-4a47-08dd88c86e5d
 X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB5772.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 May 2025 15:54:05.4469 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 May 2025 15:54:18.5559 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gfqBW58rlxN34O4gjWhrNo//JtCNMmOZff25IIwjazhGyEg74/5TwPkg1mjewIhFPRgEAGAuFfyEwnvE6qOI/Hip8p4RlinpXswM7ySYLcs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB5768
+X-MS-Exchange-CrossTenant-UserPrincipalName: vzc69cPTu7Y83B4VS9pOlBOaTjq6yiel5MxdEXGsjjI0L8n1tBLont8aUXjwiHgHEjdoSz8xumKDUeLQ87eG9HIS7r8op8Gkq979oWEvcWY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH3PPF5ACB2DC0D
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -192,90 +192,97 @@ Errors-To: dev-bounces@dpdk.org
 Acked-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 
 On 24/02/2025 15:26, Bruce Richardson wrote:
-> The Intel VF section in the NIC guide document had descriptions of the
-> various drivers at a very deep level of the document hierarchy. Improve
-> the structure of the doc by giving those per-driver subsections their
-> own top-level section. Also create a new top-level section for details
-> of hypervisor use of VFs.
+> When describing the iavf driver, there was a lot of text in a single
+> note block which could be clarified by splitting it up into separate
+> sections and appropriate bulletted lists.
 >
 > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 > ---
->   doc/guides/nics/intel_vf.rst | 20 ++++++++++++++------
->   1 file changed, 14 insertions(+), 6 deletions(-)
+>   doc/guides/nics/intel_vf.rst | 60 +++++++++++++++++++++---------------
+>   1 file changed, 35 insertions(+), 25 deletions(-)
 >
 > diff --git a/doc/guides/nics/intel_vf.rst b/doc/guides/nics/intel_vf.rst
-> index 4780ee7add..2b0eebcafe 100644
+> index 2b0eebcafe..708cb85417 100644
 > --- a/doc/guides/nics/intel_vf.rst
 > +++ b/doc/guides/nics/intel_vf.rst
-> @@ -68,8 +68,12 @@ and the Physical Function operates on the global resources on behalf of the Virt
->   For this out-of-band communication, an SR-IOV enabled NIC provides a memory buffer for each Virtual Function,
->   which is called a "Mailbox".
+> @@ -88,36 +88,26 @@ For more detail on SR-IOV, please refer to the following documents:
 >   
-> +Intel SR-IOV drivers
-> +--------------------
+>   *   `Intel® IAVF HAS <https://www.intel.com/content/dam/www/public/us/en/documents/product-specifications/ethernet-adaptive-virtual-function-hardware-spec.pdf>`_
+>   
+> -.. note::
+> -
+> -    To use DPDK IAVF PMD on Intel® 700 Series Ethernet Controller, the device id (0x1889) need to specified during device
+> -    assignment in hypervisor. Take qemu for example, the device assignment should carry the IAVF device id (0x1889) like
+> -    ``-device vfio-pci,x-pci-device-id=0x1889,host=03:0a.0``.
+> -
+> -    When IAVF is backed by an Intel® E810 device, the "Protocol Extraction" feature which is supported by ice PMD is also
+> -    available for IAVF PMD. The same devargs with the same parameters can be applied to IAVF PMD, for detail please reference
+> -    the section ``Protocol extraction for per queue`` of ice.rst.
+> -
+> -    Quanta size configuration is also supported when IAVF is backed by an Intel® E810 device by setting ``devargs``
+> -    parameter ``quanta_size`` like ``-a 18:00.0,quanta_size=2048``. The default value is 1024, and quanta size should be
+> -    set as the product of 64 in legacy host interface mode.
+> -
+> -    When IAVF is backed by an Intel® E810 device or an Intel® 700 Series Ethernet device, the reset watchdog is enabled
+> -    when link state changes to down. The default period is 2000us, defined by ``IAVF_DEV_WATCHDOG_PERIOD``.
+> -    Set ``devargs`` parameter ``watchdog_period`` to adjust the watchdog period in microseconds, or set it to 0 to disable the watchdog,
+> +IAVF PMD parameters
+> +^^^^^^^^^^^^^^^^^^^
 > +
-> +
->   Intel® Ethernet Adaptive Virtual Function
-> -^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->   Adaptive Virtual Function (IAVF) is a SR-IOV Virtual Function with the same device id (8086:1889) on different Intel Ethernet Controller.
->   IAVF Driver is VF driver which supports for all future Intel devices without requiring a VM update. And since this happens to be an adaptive VF driver,
->   every new drop of the VF driver would add more and more advanced features that can be turned on in the VM if the underlying HW device supports those
-> @@ -126,7 +130,7 @@ For more detail on SR-IOV, please refer to the following documents:
+> +``watchdog_period``
+> +    The reset watchdog is enabled when link state changes to down.
+> +    The default period is 2000us, defined by ``IAVF_DEV_WATCHDOG_PERIOD``.
+> +    Set ``devargs`` parameter ``watchdog_period`` to adjust the watchdog period in microseconds,
+> +    or set it to 0 to disable the watchdog,
+>       for example, ``-a 18:01.0,watchdog_period=5000`` or ``-a 18:01.0,watchdog_period=0``.
+>   
+> -    Enable VF auto-reset by setting the devargs parameter like ``-a 18:01.0,auto_reset=1``
+> -    when IAVF is backed by an Intel\ |reg| E810 device
+> -    or an Intel\ |reg| 700 Series Ethernet device.
+> +``auto_reset``
+> +    Enable VF auto-reset by setting the devargs parameter,
+> +    for example ``-a 18:01.0,auto_reset=1``,
+>   
+> +``no-poll-on-link-down``
+>       Stop polling Rx/Tx hardware queue when link is down
+> -    by setting the ``devargs`` parameter like ``-a 18:01.0,no-poll-on-link-down=1``
+> -    when IAVF is backed by an Intel\ |reg| E810 device or an Intel\ |reg| 700 Series Ethernet device.
+> +    by setting the ``devargs`` parameter like ``-a 18:01.0,no-poll-on-link-down=1``.
+>   
+> -    Similarly, when IAVF is backed by an Intel\ |reg| E810 device
+> -    or an Intel\ |reg| 700 Series Ethernet device,
+> -    set the ``devargs`` parameter ``mbuf_check`` to enable Tx diagnostics.
+> +``mbuf_check``
+> +    Set the ``devargs`` parameter ``mbuf_check`` to enable Tx diagnostics.
+>       For example, ``-a 18:01.0,mbuf_check=<case>`` or ``-a 18:01.0,mbuf_check=[<case1>,<case2>...]``.
+>       Thereafter, ``rte_eth_xstats_get()`` can be used to get the error counts,
+>       which are collected in ``tx_mbuf_error_packets`` xstats.
+> @@ -129,6 +119,26 @@ For more detail on SR-IOV, please refer to the following documents:
+>       * ``segment``: Check number of mbuf segments does not exceed HW limits.
 >       * ``offload``: Check for use of an unsupported offload flag.
 >   
+> +
+> +HW-Specific Notes For IAVF
+> +^^^^^^^^^^^^^^^^^^^^^^^^^^
+> +
+> +Intel\ |reg| 700 Series Ethernet devices:
+> +
+> +* To use DPDK IAVF PMD the device id (0x1889) need to specified during device assignment in hypervisor.
+> +  For example, on qemu, the device assignment should carry the IAVF device id (0x1889) like
+> +  ``-device vfio-pci,x-pci-device-id=0x1889,host=03:0a.0``.
+> +
+> +Intel\ |reg| E800 Series Ethernet devices:
+> +
+> +* the "Protocol Extraction" feature which is supported by ice PMD is also available for IAVF PMD. The same devargs with the same parameters can be applied to IAVF PMD.
+> +  for Detail please reference the section ``Protocol extraction for per queue`` of ice.rst.
+> +
+> +* Quanta size configuration is supported by setting ``devargs`` parameter ``quanta_size``,
+> +  for example: ``-a 18:00.0,quanta_size=2048``.
+> +  The default value is 1024, and quanta size should be set as the product of 64 in legacy host interface mode.
+> +
+> +
 >   The PCIE host-interface of Intel Ethernet Switch FM10000 Series VF infrastructure
-> -^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->   
->   In a virtualized environment, the programmer can enable a maximum of *64 Virtual Functions (VF)*
->   globally per PCIE host-interface of the Intel Ethernet Switch FM10000 Series device.
-> @@ -157,7 +161,7 @@ However:
->       The above is an important consideration to take into account when targeting specific packets to a selected port.
->   
->   Intel® X710/XL710 Gigabit Ethernet Controller VF Infrastructure
-> -^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->   
->   In a virtualized environment, the programmer can enable a maximum of *128 Virtual Functions (VF)*
->   globally per Intel® X710/XL710 Gigabit Ethernet Controller NIC device.
-> @@ -196,7 +200,7 @@ However:
->       one transmit queue. The default number of queue pairs per VF is 4, and can be 16 in maximum.
->   
->   Intel® 82599 10 Gigabit Ethernet Controller VF Infrastructure
-> -^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->   
->   The programmer can enable a maximum of *63 Virtual Functions* and there must be *one Physical Function* per Intel® 82599
->   10 Gigabit Ethernet Controller NIC port.
-> @@ -271,7 +275,7 @@ However:
->       The above is an important consideration to take into account when targeting specific packets to a selected port.
->   
->   Intel® 82576 Gigabit Ethernet Controller and Intel® Ethernet Controller I350 Family VF Infrastructure
-> -^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->   
->   In a virtualized environment, an Intel® 82576 Gigabit Ethernet Controller serves up to eight virtual machines (VMs).
->   The controller has 16 TX and 16 RX queues.
-> @@ -316,6 +320,10 @@ However:
->   
->       The above is an important consideration to take into account when targeting specific packets to a selected port.
->   
-> +
-> +Hypervisor Use of VFs
-> +---------------------
-> +
->   Validated Hypervisors
->   ~~~~~~~~~~~~~~~~~~~~~
->   
-> @@ -341,7 +349,7 @@ For supported kernel versions, refer to the *DPDK Release Notes*.
->   .. _intel_vf_kvm:
->   
->   Setting Up a KVM Virtual Machine Monitor
-> -----------------------------------------
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->   
->   The following describes a target environment:
+>   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 >   
 
 -- 
