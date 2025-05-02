@@ -2,50 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F64C3ABA3
-	for <dpdk-dev@archiver.kernel.org>; Fri,  2 May 2025 10:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0256C3ABA3
+	for <dpdk-dev@archiver.kernel.org>; Fri,  2 May 2025 10:36:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5E122402A0;
-	Fri,  2 May 2025 12:12:36 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id C1BF44029E
- for <dev@dpdk.org>; Fri,  2 May 2025 12:12:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1746180755; x=1777716755;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=tODEbnoDUDXiOy+a4/sbSMLoCcrqmpMPVavzyZtiMNE=;
- b=PHajbVmV3shnuEg6ENyDwU1XhZh+rm2fRwnOEcrmSTqYyIPLmtxfniks
- o0clGumoed0HNvP89Dbth5AiC2mFmdFTCWUTgoxPxUpViCLtEETXIxAuI
- rdS0S6gA8ij+zbiBy7vAq/YmzJm99VYyLGi5StyIUrNskVeLTmUhQEKqd
- qGIPic4UH/tTE/2emBYfuxk+H7jo37sDXYdZa7Wy1sqXhoC0MZ+OrA0bs
- 47sO8I4qIvSgQ+O7Z4GDRXqmADZqH2z87N5TxMTysDkf9P7L3XTXpJEZk
- 9xDm9IMHu2yDqO85LYOcz9U4GtWBMu2ZLkSCQ8GtowOiIWuS9NuTIby80 Q==;
-X-CSE-ConnectionGUID: qZ+2SJ7fTZGkqixfyWKGEg==
-X-CSE-MsgGUID: Puu25dsxR4CmDeiU5YZRJw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11420"; a="59223117"
-X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; d="scan'208";a="59223117"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
- by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 May 2025 03:12:34 -0700
-X-CSE-ConnectionGUID: 4mNGg2WxT7inscMHKgRcZg==
-X-CSE-MsgGUID: XiM1Q/oFQqiLqcorrTKbVA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; d="scan'208";a="134914561"
-Received: from silpixa00401013.ir.intel.com (HELO
- silpixa00401013.ger.corp.intel.com) ([10.237.223.185])
- by fmviesa008.fm.intel.com with ESMTP; 02 May 2025 03:12:33 -0700
-From: Kai Ji <kai.ji@intel.com>
-To: dev@dpdk.org
-Cc: gakhil@marvell.com,
-	Kai Ji <kai.ji@intel.com>
-Subject: [dpdk-dev v1] app/test-crypto-perf: remove decrypt test case from perf
-Date: Fri,  2 May 2025 10:12:26 +0000
-Message-Id: <20250502101226.1405274-1-kai.ji@intel.com>
-X-Mailer: git-send-email 2.34.1
+	by mails.dpdk.org (Postfix) with ESMTP id 5329D402A0;
+	Fri,  2 May 2025 12:36:17 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id C49BD4029E;
+ Fri,  2 May 2025 12:36:16 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 0F82020E82;
+ Fri,  2 May 2025 12:36:16 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: rte_control event API?
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Fri, 2 May 2025 12:36:11 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FC24@smartserver.smartshare.dk>
+In-Reply-To: <aBSLqV72om8Gkz32@bricha3-mobl1.ger.corp.intel.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: rte_control event API?
+Thread-Index: Adu7Qe6Y/EWqnKnmRpeHjvYBoGV9NQABWGeg
+References: <20250501080630.440a78ba@hermes.local>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FC23@smartserver.smartshare.dk>
+ <aBSLqV72om8Gkz32@bricha3-mobl1.ger.corp.intel.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>
+Cc: "Stephen Hemminger" <stephen@networkplumber.org>, <techboard@dpdk.org>,
+ <dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,68 +49,130 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove all decrypt test cases in aesni-mb throughput perf as the
-decrypt throughput testing only support OOP by dpdk-test-crypto-perf
+> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> Sent: Friday, 2 May 2025 11.09
+>=20
+> On Fri, May 02, 2025 at 10:56:58AM +0200, Morten Br=F8rup wrote:
+> > > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
+> > > Sent: Thursday, 1 May 2025 17.07
+> > >
+> > > There was recent discussions about drivers creating control
+> threads.
+> > > The current drivers that use rte_thread_create_internal_control
+> keeps
+> > > growing,
+> > > but it got me looking at if this could be done better.
+> > >
+> > > Rather than having multiple control threads which have potential
+> > > conflicts, why not
+> > > add a new API that has one control thread and uses epoll. The
+> current
+> > > multi-process
+> > > control thread could use epoll as well. Epoll scales much better
+> and
+> > > avoids
+> > > any possibility of lock scheduling/priority problems.
+> > >
+> > > Some ideas:
+> > >    - single control thread started (where the current MP thread is
+> > > started)
+> > >    - have control_register_fd and control_unregister_fd
+> > >    - leave rte_control_thread API for legacy uses
+> > >
+> > > Model this after well used libevent library https://libevent.org
+> > >
+> > > Open questions:
+> > >    - names are hard, using event as name leads to possible
+> confusion
+> > > with eventdev
+> > >    - do we need to support:
+> > >         - multiple control threads doing epoll?
+> > >         - priorities
+> > >         - timers?
+> > >         - signals?
+> > >         - manual activation?
+> > >         - one off events?
+> > >    - could alarm thread just be a control event
+> > >
+> > >    - should also have stats and info calls
+> > >
+> > >    - it would be good to NOT support as many features as libevent,
+> > > since
+> > >      so many options leads to bugs.
+> >
+> > I think we need both:
+> >
+> > 1. Multi threading.
+> > Multiple control threads are required for preemptive scheduling
+> between latency sensitive tasks and long-running tasks (that violate
+> the latency requirements of the former).
+> > For improved support of multi threading between driver control
+> threads and other threads (DPDK control threads and other, non-DPDK,
+> processes on the same host), we should expand the current control
+> thread APIs, e.g. by expanding the DPDK threads API with more than the
+> current two priorities ("Normal" and "Real-Time Critical").
+> > E.g. if polling ethdev counters takes 1 ms, I don't want to add 1 ms
+> jitter to my other control plane tasks, because they all have to share
+> one control thread only.
+> > I want the O/S scheduler to handle that for me. And yes, it means
+> that I need to consider locking, critical sections, and all those
+> potential problems coming with multithreading.
+> >
+> > 2. Event passing.
+> > Some threads rely on using epoll as dispatcher, some threads use
+> different designs.
+> > Dataplane threads normally use polling (or eventdev, or Service
+> Cores, or ...), i.e. non-preemptive scheduling of tiny processing
+> tasks, but may switch to epoll for power saving during low traffic.
+> > In low traffic periods, drivers may raise an RX interrupt to wake up
+> a sleeping application to start polling. DPDK currently uses an epoll
+> based design for passing this "wakeup" event (and other events, e.g.
+> "link status change").
+> >
+> > (Disclaimer: Decades have passed since I wrote Windows applications,
+> using the Win32 API, so the following might be complete nonsense...)
+> > If the "epoll" design pattern is not popular on Windows, we should
+> not force it upon Windows developers. We should instead offer =
+something
+> compatible with the Windows "message pump" standard design pattern.
+> > I think it would better to adapt some DPDK APIs to the host O/S than
+> forcing the APIs of one O/S onto another O/S, if it doesn't fit.
+> >
+> > Here's an idea related to "epoll": We could expose DPDK's internal
+> file descriptors for the application developer to use her own =
+preferred
+> epoll library, e.g. libevent. Rather this than requiring using some
+> crippled DPDK epoll library.
+> >
+> +1 for this suggestion. Let's just provide the low-level info needed =
+to
+> allow the app to work its own solution.
 
-Signed-off-by: Kai Ji <kai.ji@intel.com>
----
- .../configs/crypto-perf-aesni-mb.json         | 24 -------------------
- 1 file changed, 24 deletions(-)
+For threading and CPU affinity, DPDK provides APIs to wrap O/S =
+differences and hide the underlying (O/S specific) thread id.
+If we insist on hiding the underlying thread id, we need to expand these =
+thread management APIs to support more features required by application =
+developers, including thread prioritization.
 
-diff --git a/app/test-crypto-perf/configs/crypto-perf-aesni-mb.json b/app/test-crypto-perf/configs/crypto-perf-aesni-mb.json
-index d50e4af36c..91fbc9cfcd 100644
---- a/app/test-crypto-perf/configs/crypto-perf-aesni-mb.json
-+++ b/app/test-crypto-perf/configs/crypto-perf-aesni-mb.json
-@@ -13,13 +13,6 @@
- 				"devtype": "crypto_aesni_mb"
- 			}
- 		},
--		"AES-CBC-128 SHA1-HMAC auth-then-cipher decrypt": {
--			"cipher-algo": "aes-cbc",
--			"cipher-key-sz": "16",
--			"auth-algo": "sha1-hmac",
--			"optype": "auth-then-cipher",
--			"cipher-op": "decrypt"
--		},
- 		"AES-CBC-128 SHA1-HMAC cipher-then-auth encrypt": {
- 			"cipher-algo": "aes-cbc",
- 			"cipher-key-sz": "16",
-@@ -30,13 +23,6 @@
- 			"optype": "cipher-then-auth",
- 			"cipher-op": "encrypt"
- 		},
--		"AES-CBC-256 SHA2-256-HMAC auth-then-cipher decrypt": {
--			"cipher-algo": "aes-cbc",
--			"cipher-key-sz": "32",
--			"auth-algo": "sha2-256-hmac",
--			"optype": "auth-then-cipher",
--			"cipher-op": "decrypt"
--		},
- 		"AES-CBC-256 SHA2-256-HMAC cipher-then-auth encrypt": {
- 			"cipher-algo": "aes-cbc",
- 			"cipher-key-sz": "32",
-@@ -53,21 +39,11 @@
- 			"optype": "aead",
- 			"total-ops": "10000000"
- 		},
--		"AES-GCM-128 aead-op decrypt": {
--			"aead-algo": "aes-gcm",
--			"aead-key-sz": "16",
--			"aead-op": "decrypt"
--		},
- 		"AES-GCM-256 aead-op encrypt": {
- 			"aead-algo": "aes-gcm",
- 			"aead-key-sz": "32",
- 			"aead-op": "encrypt"
- 		},
--		"AES-GCM-256 aead-op decrypt": {
--			"aead-algo": "aes-gcm",
--			"aead-key-sz": "32",
--			"aead-op": "decrypt"
--		},
- 		"AES-GMAC 128 auth-only generate": {
- 			"auth-algo": "aes-gmac",
- 			"auth-key-sz": "16",
--- 
-2.34.1
+Alternatively - expanding on the idea of exposing internal file =
+descriptors for epoll - we could expose a few O/S specific APIs for =
+getting the underlying thread id, thereby giving the application =
+developer the flexibility to manage thread priority, CPU affinity etc. =
+using their preferred thread management library. E.g.:
+
+/lib/eal/include/rte_thread.h:
+
+#ifdef RTE_EXEC_ENV_WINDOWS
+DWORD rte_os_thread_id(const rte_thread_t thread_id);
+// With { return (DWORD)thread_id.opaque_id; } in a C file.
+#else
+pthread_t rte_os_thread_id(const rte_thread_t thread_id);
+// With { return (pthread_t)thread_id.opaque_id; } in a C file.
+#endif
+
+If we do this, we should consider that the current implementation of =
+threading in DPDK should still work, even though its threads might also =
+be managed by other libraries. I.e. DPDK should not cache information =
+about e.g. CPU sets of threads, because their CPU sets may be modified =
+by non-DPDK functions, making the cached information invalid.
 
