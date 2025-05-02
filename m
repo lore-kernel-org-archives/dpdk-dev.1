@@ -2,148 +2,179 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BA16C3ABAC
-	for <dpdk-dev@archiver.kernel.org>; Fri,  2 May 2025 13:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8ED2C3ABAA
+	for <dpdk-dev@archiver.kernel.org>; Fri,  2 May 2025 14:36:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F3E8F402A0;
-	Fri,  2 May 2025 15:59:36 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
- by mails.dpdk.org (Postfix) with ESMTP id 596BB4029E
- for <dev@dpdk.org>; Fri,  2 May 2025 15:59:35 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7F0D5402A0;
+	Fri,  2 May 2025 16:36:02 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+ by mails.dpdk.org (Postfix) with ESMTP id E15014029E
+ for <dev@dpdk.org>; Fri,  2 May 2025 16:36:00 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1746194375; x=1777730375;
- h=from:to:cc:subject:date:message-id:references:
+ t=1746196561; x=1777732561;
+ h=message-id:date:subject:to:cc:references:from:
  in-reply-to:content-transfer-encoding:mime-version;
- bh=1TWk20mZ9KFJcGWFSCPsiqIOubyZJQxGtpMzCFH8ZZQ=;
- b=XsnimI6QhuGM3Pqt1Cv4HobU0gjmnKL5jtcOqIrceybBGMZ4O1N5GlcS
- E/Zf+/JmxmVwQVSGbZJ8xKJUJQxHf5L0M+azW6h5d7IBVfLtGUdEpcRl/
- JHpD/2STLZ4oXC/P4S37T9LFAt4myra5HkbkNksc3DkmoCpgqznlmF/0F
- ubTj9MPy94n5zLAs3mZVvDLSUjalO/meFeyHBZwGUoyW7v8ieyYLPkyoF
- abJFBHpJ+phmJ7zV9a66uUtwaqt3d9nHL+chQakITmfGcqpzYWO7oL+MO
- KLNnJ+h3oUxOcbwdasuuKfetnGiOow9Tr2Gvhpi0Hqtqcf5HUkopWLMVV Q==;
-X-CSE-ConnectionGUID: N/sArCFETMmRR6Ql7hwzyw==
-X-CSE-MsgGUID: Vw+26ElxRTWx64qSwDppGQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11421"; a="47762559"
-X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; d="scan'208";a="47762559"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
- by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 May 2025 06:59:32 -0700
-X-CSE-ConnectionGUID: QRrjCjHDTRSMnIXKXTmipg==
-X-CSE-MsgGUID: K7sJz12rQxeOzdvQJGE+zg==
+ bh=seLI3TyV+bJoy2l4EvpUgwKEBPpvtLUT6zlL47N5Xbo=;
+ b=nt3Y+Rpa3W4MAHh0dRfGDEhGvdcLtSCFGVYgDNrr78T7QYH30irXkWq5
+ qaz7v+2myU1LqFIIRU4QjvJT4Es9NB4HiBivITF/XobNXLGMVgZg2DEDS
+ NPg2wmZxGsL5y37Xf444IUYnn5P7fmsl1vLUYf+bhpCNVveUG859rwkJX
+ oPGEs4LGn9Kxyuodk48mNhhXuuGIPuxnwjKTyb2JKQBHDAi88395fqbnE
+ iYfHSGlQRgp/wZnJmAUr1uDNU/UhwdGRDn+Xvye0TPdP4bFzVA2/8vt25
+ 4W+KGvAp5CiL0QK1OdwnP0rYPlk0T9bYcWYwFzEmm3h59VwoPI/HaHjcC A==;
+X-CSE-ConnectionGUID: zEpiyNmOTGy5tFZWerfX9w==
+X-CSE-MsgGUID: n/GZY0VNS7CwPeh43Z7Fdw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11421"; a="58867746"
+X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; d="scan'208";a="58867746"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+ by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 02 May 2025 07:36:00 -0700
+X-CSE-ConnectionGUID: uPf56SUNQVeMn63Y1P8LLg==
+X-CSE-MsgGUID: pYh8K8jWSe6MnMITlKdnEg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; d="scan'208";a="134600725"
+X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; d="scan'208";a="134401160"
 Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
- by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 May 2025 06:59:30 -0700
+ by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 02 May 2025 07:36:00 -0700
 Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
  ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Fri, 2 May 2025 06:59:27 -0700
+ 15.2.1544.14; Fri, 2 May 2025 07:35:58 -0700
 Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
  ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Fri, 2 May 2025 06:59:27 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.175)
+ 15.2.1544.14 via Frontend Transport; Fri, 2 May 2025 07:35:58 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.174)
  by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Fri, 2 May 2025 06:59:26 -0700
+ 15.1.2507.44; Fri, 2 May 2025 07:35:57 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uxwXbomWl9AyGKlqnYqMEdIwiLDR2qmDEgSLSNlSKuf/M9XrOrjdDNSRjMklAhp2novu4tpWr5AOV03dODbAAPoEPNpSwd9zxd2BNb/sFX2xPW2g5Q/c/OQ9KJkgOV48hAxrThxWXCqY0fqf3Kr877L57zbxDN1Nah9zGbo66DzV/Yguve0V2rQTKUw18SQYc9oQV7QHaOhr3p1WhWsMlazu8dYv1cunczeT+p7lwnhQHIl3HzaJ0XllmkcPn+LIWLy6QREsHUKekc1NXwknMLlYWMyoTbWbk+8DdeCmPT1lzt2Xw2wx7bkBUNH/doXMt4IKpCEWHAo5TETBOYuuIQ==
+ b=uZA3MIYEWdM2hnbyDfBgNdD99/BtvBWt7eY6uIUHx4/mY86iZxfaOatwqHh3+o2YK19GJT0jVbrd7NKbI4LUGmGQlgRcDwSNeocUa2t8qFrsuO7CQoBmYKEm9+Mp2F1oJR1ykOaWPuGEME2H+bdrSEPKX/w+JOfKgBuWnlFU1W/pLI5SXz2GeVkjvLyNCUVaA5LIXOUoBi7hbn+cQMgQ0YN1Kqlfg58TMik36bfnZGUB716uclpxWvvFzjGYEFetO4H1in9xVV3EDwez8d4pk8MX+c8uDwD2ipYOE5kctIRL2+HEeJJ8bKEuSPaL4mTQodFlolVUXUo+1wnOyF3Zug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FN5uquacmj70t32s6f4YPSpviL++aG2dT0/4XeEzDPY=;
- b=Jg+Asl52lIosf4W1jqlErO44tTVBbKpumpVHaSnxg9SzAcwwRbuS4LO0/ukIXHteqMcHwfOG/JkS2SZI9Wm3d1CkyvZrYLv5SdrN9saQiYlKHWOn9aPGbz1qxwUbkjwMfdKwgQdUjB+I+1WPPIsriCXYyxLhADGvrQLUZQ8wk6XJFYR89sSN0jsmnp5t/SSVoSUxAO/p/KWO8YYIb2VMlJo+BuUzIxEV+o66i0QE2m/VkB3LSX1RhCtXIe+y2tkgg4mK8jD9Yh6mu3X6QrquQUqfd83KDpNHfwSHufVi3SQrUY3vClSZboGihjITekHTVxcpc7VHbsyrwwp1kgf/YQ==
+ bh=0WNz2NCxu5dUStMKiYV5WTGwYP/XDMNK+VxIfcCnqIA=;
+ b=OYQai5JGJpiUwQ2QoFZRzAapvOGmfRsUOPHbr+0nJstAoan6k9hkwrDUh/4ALA57WDpHSrH/wuStUMG89xeKyqGedx8YEN3QhsqkVn00ZQL/8r7pdt0EAw+Qn0duBDTJ5TsvWRjdbbQwNkf3dzlikAKH2p1/Zl2ENq+w4fV8LXNo29diynn2R6gX3u2LAvYcVsgVt/z76BSmEtJQLqo/C/kleiltX1RgQk3GdxfLekNFP81G0d8KCWPVCaho2C1tzJD7StHtiTLhQvYoxSfaQeNqbscXD4E1l9zsksBAW91cXZiewIw+hTqrVh/NcbRDp7BnLsuBRqi3DWaKd+ufAQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
-Received: from PH8PR11MB6803.namprd11.prod.outlook.com (2603:10b6:510:1cb::12)
- by DM4PR11MB6167.namprd11.prod.outlook.com (2603:10b6:8:ac::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.33; Fri, 2 May
- 2025 13:58:42 +0000
-Received: from PH8PR11MB6803.namprd11.prod.outlook.com
- ([fe80::8680:ff9f:997:18b4]) by PH8PR11MB6803.namprd11.prod.outlook.com
- ([fe80::8680:ff9f:997:18b4%6]) with mapi id 15.20.8699.019; Fri, 2 May 2025
- 13:58:42 +0000
-From: "Van Haaren, Harry" <harry.van.haaren@intel.com>
-To: "Etelson, Gregory" <getelson@nvidia.com>, "Richardson, Bruce"
- <bruce.richardson@intel.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, "owen.hilyard@unh.edu"
- <owen.hilyard@unh.edu>
-Subject: Re: [PATCH] rust: RFC/demo of safe API for Dpdk Eal, Eth and Rxq
-Thread-Topic: [PATCH] rust: RFC/demo of safe API for Dpdk Eal, Eth and Rxq
-Thread-Index: AQHbr6r3ow4K3xJ6vUu8VgAr7QGxzrOoNgYAgAEJ8vWAAwUpAIAGmn3LgAULbgCABLEMgIAA3kCAgAHmrICAAAsp6Q==
-Date: Fri, 2 May 2025 13:58:42 +0000
-Message-ID: <PH8PR11MB6803B2CD0BF276C6164C3D97D78D2@PH8PR11MB6803.namprd11.prod.outlook.com>
-References: <20250417151039.186448-1-harry.van.haaren@intel.com>
- <9c4a970a-576c-7b0b-7685-791c4dd2689d@nvidia.com>
- <PH8PR11MB6803458E6348B4D167C47C91D7BF2@PH8PR11MB6803.namprd11.prod.outlook.com>
- <IA1PR12MB63308A2F69036E3ACCC605D0A5B92@IA1PR12MB6330.namprd12.prod.outlook.com>
- <PH8PR11MB680363E200616CBB39DDDCB6D7852@PH8PR11MB6803.namprd11.prod.outlook.com>
- <c5387a8c-b560-3fde-3453-c2478d8e6969@nvidia.com>
- <IA1PR12MB6330872DB96BB9D83EF7EFF2A5832@IA1PR12MB6330.namprd12.prod.outlook.com>
- <aBMmUZ2RDSXQOHXg@bricha3-mobl1.ger.corp.intel.com>
- <a1161f7d-1a55-6200-7440-d615d5a41a6c@nvidia.com>
-In-Reply-To: <a1161f7d-1a55-6200-7440-d615d5a41a6c@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-authentication-results: dkim=none (message not signed)
+Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH8PR11MB6803:EE_|DM4PR11MB6167:EE_
-x-ms-office365-filtering-correlation-id: 09fd3c3e-577f-4bc1-00ca-08dd898172a3
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|366016|376014|1800799024|38070700018;
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:9; SRV:;
- IPV:NLI; SFV:SPM; H:PH8PR11MB6803.namprd11.prod.outlook.com; PTR:; CAT:OSPM;
- SFS:(13230040)(366016)(376014)(1800799024)(38070700018); DIR:OUT; SFP:1501; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?6gsJrnrT1U+NXLBu3skwhqyPVQxJuavgW4YMx7gdePobLav8upIQpmRicu?=
- =?iso-8859-1?Q?Dbg00pO2V1tn4GZOa43QpuZW/w9kBeGhBJHwNYzkhfxe3hLlLu00kutkDO?=
- =?iso-8859-1?Q?o7wsrgeCyyHKGBNUhlnDovbG+DjrqaJZu3insQ/g1skWpTY7Hbi0bmAAtT?=
- =?iso-8859-1?Q?c1d848diBMGS8LHmKx0D5J1dbluc9XIWKhGgdxZmTXiJKavbOo399t8zFi?=
- =?iso-8859-1?Q?LFlFYdqvcVBsms1dkNEpiITb4/bFHo367iVpI1JlolJkblI8D0X7NfBLZz?=
- =?iso-8859-1?Q?4ECzhjPmIKuVkXsaK8kQ2XFchXibtLi3X0T+UqTfUiFzfc5JYWqJY+h2HQ?=
- =?iso-8859-1?Q?CrKSjM4Wc//52jFKJFSae18/Iu2BFGbfHl2PhY9XhCiGV9Onvctw/Vc+vk?=
- =?iso-8859-1?Q?LQ40saKUCubvKNVqk/ns860IjhlKtqgJMU3Ihn4IJCnrf72PJmrIdjjgg0?=
- =?iso-8859-1?Q?WP+Ahqk8Of8y0qBASKJi6cO5vwwfpU1x+wGTRJCu1qOeIvH1cA/RuUxmbT?=
- =?iso-8859-1?Q?+GSVZPLNtEvuNZWJP7zZk3x29iTb/u7z4HrZts/1pMUa/ozAK8H33C7rx0?=
- =?iso-8859-1?Q?1Cv1pXIUd8ouRJYK81cjsWzu8E7L/vUD5GuJCtMJp5rMYYPpTibWezAexG?=
- =?iso-8859-1?Q?w7c/kyNdloS4UiqFxeqHOgCDGaY3GWc5VYpGq9OUeNsSKjGa8liuHU533O?=
- =?iso-8859-1?Q?Vm+UKoCt0kIw085qT9WHo6SpdjgAr0tUgfcyqjCvi+4w3sDd8xyyqvD2ls?=
- =?iso-8859-1?Q?vzySvBWWFPgMGlpNk29X/vJelMJGEM/V38G49lneHsVoVIDMf25PgY1f6e?=
- =?iso-8859-1?Q?vqzQMQr5Fb0FlJXDhkrUHpb4+flYRBiP6/60VT/rb8Fvxjn+P6Rj9yUd61?=
- =?iso-8859-1?Q?qmasJqoojhDiuMMya2VVxDqQSIuTSVnPAmYw5/K2zEeljrtGJYwy/nPjaM?=
- =?iso-8859-1?Q?pn4WtBtUyWN9N8F+iuSpuCXDoqeCqCOxp1YnKtjd69l6zOqbtzKlv/PupX?=
- =?iso-8859-1?Q?7nGTh02vvdlS5QlDlj5aF+TtnUvAAFVF2JKGu1A7Ixe3yXZ5kg05SPIjLW?=
- =?iso-8859-1?Q?n5RLWt5zCXIKE+i6F54eDs6Pen6CnEWVDluh9M7DSzODhTixea4jF8N4LU?=
- =?iso-8859-1?Q?cTMbxvh69gNlTvjK+Galb7vPo/k/93cIXzOUDIRKuCuQmWNAcdJD55qFAi?=
- =?iso-8859-1?Q?emZ5JwdQRVtL/gCou1dl8UxFJyQFVcr6DbZZtCGGIGNo+4VDXmA69FLZfT?=
- =?iso-8859-1?Q?am+K/fbOveiwQM6AtzeW2r1np3Ee5mM5zXbNtGdsTyO2+ADyNgcCng3Lhv?=
- =?iso-8859-1?Q?ODG6N+I/hSRAoLdh/3bBSEIjd9mmmruP/qrhKewBdgoysB9SyoJYk+WYXF?=
- =?iso-8859-1?Q?gZ0x7qAtH+JPg7P9+kiG7j26b84LwCjI4vvU7R2HOsDMM/2h7kSaCMt3J4?=
- =?iso-8859-1?Q?/iVRQ2jzr5rYZXk6Q2jXYfXqZRvrt8AXm8H1eBBflKjIus163g+vVyn6Rq?=
- =?iso-8859-1?Q?A/UX/CeosLi3pOzDn8gtFfkIM+Nd71+pkrOdhSw7baG7+F6pY6wrOiJxeX?=
- =?iso-8859-1?Q?WHwRT+LII28pDkrfUcW2/bzORs0+YD4rHSe2hDV9lCe94I5Ja/mvxorAXU?=
- =?iso-8859-1?Q?1952Cvfl7yfndqxAxyqaA95RECp3BZ57KW?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
+ SN7PR11MB6604.namprd11.prod.outlook.com (2603:10b6:806:270::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.23; Fri, 2 May
+ 2025 14:35:14 +0000
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::21e4:2d98:c498:2d7a]) by DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::21e4:2d98:c498:2d7a%2]) with mapi id 15.20.8678.033; Fri, 2 May 2025
+ 14:35:14 +0000
+Message-ID: <60e02461-362c-4edd-b917-36a524670c5d@intel.com>
+Date: Fri, 2 May 2025 16:35:08 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] app/testpmd: add sleep command
+To: Bruce Richardson <bruce.richardson@intel.com>
+CC: <dev@dpdk.org>, Aman Singh <aman.deep.singh@intel.com>
+References: <7ac1444b7d2d64dc467a22e7ac65cf3cc16246dc.1746188833.git.anatoly.burakov@intel.com>
+ <aBS8e9GZkyXiCCJS@bricha3-mobl1.ger.corp.intel.com>
+Content-Language: en-US
+From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
+In-Reply-To: <aBS8e9GZkyXiCCJS@bricha3-mobl1.ger.corp.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DU2PR04CA0061.eurprd04.prod.outlook.com
+ (2603:10a6:10:232::6) To DM4PR11MB6502.namprd11.prod.outlook.com
+ (2603:10b6:8:89::7)
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|SN7PR11MB6604:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4d90d3bf-77d5-44ac-1c69-08dd89868cd0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?Zm1HWXdFcWxnRHJyY2dIOE9CVFFLMVgzSTFjZVVhc2haaitTVVZ1b2NhV3lQ?=
+ =?utf-8?B?RFBFT0RHQXRBY1FXalNtdkV5cHpHWkhVem9XclY2OWhWTHptcWdBb2VZNnFZ?=
+ =?utf-8?B?Yjh0Z01XYUdjMzZsSGlvcGkwSG55aldiWWljd2s3RFNxNmxyQS9RWFl2QzF3?=
+ =?utf-8?B?ZE9zMkpqWWZQNmdXNmZxUHo5TEtIRUNtQzNWMXVJOXBwWEszZXpnalYzTUdU?=
+ =?utf-8?B?UUZxbS9rWUhnc2h1VU0rV0FVaTBzSGFlM2dwSU9vQmU5dzhlNGxoVnRlNVdy?=
+ =?utf-8?B?UmdlNWNPRXFRT0FZUGs5ZFdrMDhrbzh3TVVBVFJGZlhTZXpGWGVsaVNuQ2lY?=
+ =?utf-8?B?UjdjdjlQSzQxdEc3dEpaZkR5UGtXQmpFQ0FaR096RUt5U1ptbEpDWXhnRUQv?=
+ =?utf-8?B?K0t4dDlYZDFvcklDczBIeFc5L3lvemVnZUhlNTRSdXBwb1FGU3U4MGR5U3JM?=
+ =?utf-8?B?elROUFJVVEV3R2pYWjJZTkdkVmVLUDByTFZVR1VmYzF4TUtYV1MvYUl2c0l3?=
+ =?utf-8?B?RGJtaGdJb2JGWDB0K2lzQ0NHRHZKODBjUU1FOUsvbndYRGdFSUFuV0w2WWdZ?=
+ =?utf-8?B?QjR4cTVxdHpiaEowaDR4d3Q4TWhiM09CS3ZKc2s3ME50VitTTWlUZFZ5SEJo?=
+ =?utf-8?B?WHV3U3FVR0dUY2ZXa0l0RUluTkhOLzZTd2xyMlZlckQ1R3pzalBDY1M2L0hY?=
+ =?utf-8?B?VEFEbWZtT0hpdmZKVFhVVVlSQloyWG40WEpHQU56cXMrS0g2amFDVXo5TWlB?=
+ =?utf-8?B?cWxka1lFSGVoL3NPQzg1L3U3cmV1SFhWMy8zSlpqQzFpUUNKd1pCUlF3U3pN?=
+ =?utf-8?B?QnVYbTFVRCtBdGZmTUJ4bkZ6ZDF1c091alF4Q0lpYm4rZ2lnMFg3WlVUVUhH?=
+ =?utf-8?B?UDBsVnladzhKMG10NmpqRmJ6eDd0NDJpZUZRUkZWV0lCb00raFZ4Z0NSNkdr?=
+ =?utf-8?B?S3grK0ljOHV4VWJFZ3VhK2dEa3FKUWdpcFRTYUlNcTBkdUtydWhhbGcyNTNT?=
+ =?utf-8?B?WWxmTFlyT2h5UVBLU2VxYU1KaWJqV3lSTmE2R0NrMXFMTitLNGgzUmVUL20y?=
+ =?utf-8?B?SEtWdms0MTZUMDBNVFlYSFB0akVNSHQwRU1BazcwQXBYYTNtcFEwNE5IRTdt?=
+ =?utf-8?B?MitsWVBDL29VZlh2SU13Vm1pTnpCREFsR2lxQnExS2ZrSm90aTRpS1p5c3I3?=
+ =?utf-8?B?NmRHaEdqQzdXd2tueGVuUW5qQnZsb3pUNjdtQWxONUlWa0pVTUJLaWxFS2kw?=
+ =?utf-8?B?V2ZrL3RwRWNYTElYaUZZQllYUzVDMTI2UjNwT3NlM0V1UURHQmZxQ3psNmxn?=
+ =?utf-8?B?NW5kTTJqbm00UVJaOEJhSXpHb1NxZXMvbDJVK3pmTmFCcFkrSmNhUVRyWi9u?=
+ =?utf-8?B?NHcyWFhZZGpIclVyOWRyaXd3QU90blpwcmRzbXRacXM4SGJSWlpQNWxsNzUv?=
+ =?utf-8?B?NDkrZHU1dVR4QzJrZXgvaEhVQ2N2bmVVTmFORy9Ta25VOEt2NUtLdTNucGhE?=
+ =?utf-8?B?eXBiS0RHUUtSOUxEbXJmMktWUXdNeHFBNlprS2w4RE91bkZlL2V2dG5vRWRE?=
+ =?utf-8?B?ZnFtWndmY3RxNmQwMlhQeHRCMExJdllmZ0t4VldwQ2tpVmxOa1pIVFZtQlZo?=
+ =?utf-8?B?UmhPSS9BVDlMZ3NLSU9JMHZEU2NQSDNwdlNzV1lsREhGei9QQTduVVlrdDFV?=
+ =?utf-8?B?K2xGZ2R0azhMajRIVEcvd3Fab0xNQ1hkWnhOTEJnUWZJNFJoSVNRVUltYUpU?=
+ =?utf-8?B?VlNoWDgyaXFDYWxXcXIyQ2sxOFREUHA0dmhwNWJMN0YreWdaZVFNYlVmL2o3?=
+ =?utf-8?B?V3ZYUmZUYWhJaE9MRDNuRE9tVGk1UmhDOE9BV3ZmRi9VS0cyMElxVWdXZXpF?=
+ =?utf-8?B?azdmRTZlOWZFS0RwYVFsMUc0dWhzUnRyUU9IL2VQRndDbUszV0x3eC9XYTAr?=
+ =?utf-8?Q?QVA/XoYIumo=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?STM5S1k5MmhlTVBWRXAxdU5Md05DcllWMndDNm9KNmZwUlR0eUlxVEk0SWdX?=
+ =?utf-8?B?TndaZ1k3bnhKSDRPTk9hVmJPNnVxRmtDaFhqU1pxK2srNGxHVVZ0c0NFMHVr?=
+ =?utf-8?B?aE53SGFpNWRvT0dMZUlyZWg0R0lwYkIzVUZMRTJzSFkreW4vMHc4TFVXSXpp?=
+ =?utf-8?B?VE5LT25WeXZZbWxWOVVaaWhUcGxkbDhLc3NpeFVoaU4vTjgrMm4zcTZsRk40?=
+ =?utf-8?B?MzdWdlc5MWRkYmZOYzRHUlp3aXZDK0IvWVNOREJ4b2J4UUxlaGR4MTRhbzdp?=
+ =?utf-8?B?UDdXZUNtTGtxb3U0WFdnNXRsSVdSakZvQ2c0bGJOYWZsaUx2S1VDVmxZZGp6?=
+ =?utf-8?B?TXRpM3VkYy9Pc2ZFa3I2VzNiaDZNRENDVEpMVTYvelc5bEpZUmR0aUtGVmZp?=
+ =?utf-8?B?MTlzSE5RdVFFMjI0bUM2VCtTMGtidWgzdG5vZ1pYRkdSOEEyTzcxdm11d2JD?=
+ =?utf-8?B?SnpVQW9KZituTUpianVreFpRSnRZRFFIYlVlMXdJWjc3KzBRMWFYYVdTUTJ6?=
+ =?utf-8?B?ZTB2NlYwaURucVN1TGFBMGxVT29rVkF4ZVB5WU1Bb210ZTRMRC8vTHgvNS9I?=
+ =?utf-8?B?U1AvSTlaVkZaL1VsNkxkM3RLdUxwWFFNVjJ5VG9UdW1raUJNUDhielRQUFc1?=
+ =?utf-8?B?ZitYNmdJRysyN2h0QklubDhGdUh0NkN3WVZBUWZ0T0JxUHBWam9WNFlZSW4y?=
+ =?utf-8?B?RjdRbjRFSFJyTnlwNEJIRkRObnFWTVExNWVJZEc2c2tmRW9RMkJ6eUdqSWFv?=
+ =?utf-8?B?N1BPMCs5TVZERG1hMnRSUkpjUXhSWUhPNEk4ZjVuVnZrMnpZMTVYNlhuNitQ?=
+ =?utf-8?B?Rnd4cC94a0ZlVWFRMjJCY3JEMFM1UVV6Z3ZRaUprSWl1aXdNY3RGcG0xS1hU?=
+ =?utf-8?B?c0ZqRkFYZk85ZENGSFB0L3g2YzFVdGgveDJEbzg5SEVWZldJa005R2c4Y0xu?=
+ =?utf-8?B?Wk9sTU9iRjRYWTM3SUIwQkZzcEFwMHIybHZsWlA1NEJKNkpzSXNBd21ZNTZu?=
+ =?utf-8?B?TGdxRkppdjRNMkZ0a2VEbmxQclZ1dUlTN3BzWHVvWmZsODhZcUpvcVU4akFV?=
+ =?utf-8?B?c050M2loSnBQeTY1a3Y4aEdTMFl5bEE3RUxuMGhQVVhOS29GdUN3K2RKbXZv?=
+ =?utf-8?B?VHlPdnR1T2VpOXY5SG1nM1lWN0ZsZnFDSEEvWGplMTBXaFZObzZPaHpwS2hK?=
+ =?utf-8?B?bTloNFpTQ1p0QldhUnhzVUp0N2k3Y285Z0xtY1ZLdk81QkFaZ2cwMFRKYlRF?=
+ =?utf-8?B?bUtqM09wZythWUFGWUpIREdQTjlOZVpLaGZUWlJvQVptb3kreDliOGZ6UHlZ?=
+ =?utf-8?B?NnJkVmY4TW5NSTBBUlBEMnpmK1NoNzRnUkNyMkxnZEFnV012Uk4rQVplM2xp?=
+ =?utf-8?B?ZTVPR0k2K1dhZUNleUh5THArbnJsNUI0Z1ZvNTBZejdpazZHRm1tajQzd1Bo?=
+ =?utf-8?B?YzkwYnFjS29vc0VRTi9EZUgwN04wRVgrMEhveGhIekR1UGtZV1FXNmF1RVlp?=
+ =?utf-8?B?ZmJqeU9nQyt3SEFRVGVKaUpOME9YS3oyNkphUXV2cGVlRjA1VGV1U2dsck10?=
+ =?utf-8?B?ODRyYStxYXplSWl2VzhVYmw2Ry9BSHlNa3ZiV0VGWlFSUytRV3JGM0xLcEZo?=
+ =?utf-8?B?ZUh0cVAyc2hybEZDS1VOdkg2RDI2anl0dE8yYzJFd1VPM1V3L3pRRWJ3K0VO?=
+ =?utf-8?B?ZjE5bzFKM1MxYjhBNVZUSUYxaFdmN3AyWFNtdHl6WGNDYVdRZGplaVpXNGNC?=
+ =?utf-8?B?NjZJMjFrVUVGRWdtTEN1Y1F3L0NKdllMN3RkMHJQRGxYRzZaSXQ5OW9MdGU5?=
+ =?utf-8?B?RUhRb1BKZzRFZTZRZjArN3IvU3BteEhJQlZ1clhkMGxTVFNuME4zMEgvbDhk?=
+ =?utf-8?B?cDExMmFseVJzb1VnUTZMNitWcisvMUZSemJpK0JSQ1EzRDdvU2FSTmlrR0J2?=
+ =?utf-8?B?bGtLOHFmeTliRGVZcnJnT2QvcFgra2JSdy9QTjAxWENsVHJKbkFRa1M2bHFN?=
+ =?utf-8?B?bis1Wkh4aVVPMjlwL3FrVmp4RnB3UlBrUFFITEtibktFbzFVSTk2R3AvYVE3?=
+ =?utf-8?B?TFF6RGR5UXpEcW9maUNuM0pWa0pGd2JYbC84MmtFNFVWZDVLUXc2VVZxckg4?=
+ =?utf-8?B?R000ZVRXd1FTTTRzTmhzY0pvNUZzeHh4THJZcnI4WU00RVhncFNZaXV3dUYw?=
+ =?utf-8?B?T0E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4d90d3bf-77d5-44ac-1c69-08dd89868cd0
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB6803.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 09fd3c3e-577f-4bc1-00ca-08dd898172a3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 May 2025 13:58:42.2956 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 2RmBvCQREuAOYVOvUuhSC0J9Zg6YoTkwOwL/8IVwcszXzzh/LWUCQE4ZiCd19SYGaymRFypR1xF8ikFlpTQGjUtcZ/5rPL89qgXgMAIp8X8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6167
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 May 2025 14:35:14.0776 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: frwvUZjQ/CBJ8jaSveUVyCChhX1Amalkj+NNtUj6p4kDPCkVhMfFgfi2rYow9HfYLCuQgI1ZlxAZxHqfYWITeu3007RdeVPUepsWdEQ9C2c=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB6604
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -158,143 +189,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Etelson, Gregory=0A=
-> Sent: Friday, May 02, 2025 1:46 PM=0A=
-> To: Richardson, Bruce=0A=
-> Cc: Gregory Etelson; Van Haaren, Harry; dev@dpdk.org; owen.hilyard@unh.ed=
-u=0A=
-> Subject: Re: [PATCH] rust: RFC/demo of safe API for Dpdk Eal, Eth and Rxq=
-=0A=
-> =0A=
-> Hello Bruce,=0A=
-=0A=
-Hi All,=0A=
-=0A=
-> > Thanks for sharing. However, IMHO using EAL for thread management in ru=
-st=0A=
-> > is the wrong interface to expose.=0A=
-> =0A=
-> EAL is a singleton object in DPDK architecture.=0A=
-> I see it as a hub for other resources.=0A=
-=0A=
-Yep, i tend to agree here; EAL is central to the rest of DPDK working corre=
-ctly.=0A=
-And given EALs implementation is heavily relying on global static variables=
-, it is=0A=
-certainly a "singleton" instance, yes.=0A=
-=0A=
-> Following that idea, the EAL structure can be divided to hold the=0A=
-> "original" resources inherited from librte_eal and new resources=0A=
-> introduced in Rust EAL.=0A=
-=0A=
-Here we can look from different perspectives. Should "Rust EAL" even exist?=
-=0A=
-If so, why? The DPDK C APIs were designed in baremetal/linux days, where=0A=
-certain "best-practices" didn't exist yet, and Rust language was pre 1.0 re=
-lease.=0A=
-=0A=
-Of course, certain parts of Rust API must depend on EAL being initialized.=
-=0A=
-There is a logical flow to DPDK initialization, these must be kept for corr=
-ect functionality.=0A=
-=0A=
-I guess I'm saying, perhaps we can do better than mirroring the concept of=
-=0A=
-"DPDK EAL in C" in to "DPDK EAL in Rust".=0A=
-=0A=
-> > Instead, I believe we should be=0A=
-> > encouraging native rust thread management, and not exposing any DPDK=0A=
-> > threading APIs except those necessary to have rust threads work with DP=
-DK,=0A=
-> > i.e. with an lcore ID. Many years ago when DPDK started, and in the C=
-=0A=
-> > world, having DPDK as a runtime environment made sense, but times have=
-=0A=
-> > changed and for Rust, there is a whole ecosystem out there already that=
- we=0A=
-> > need to "play nice with", so having Rust (not DPDK) do all thread=0A=
-> > management is the way to go (again IMHO).=0A=
-> >=0A=
-> =0A=
-> I'm not sure what exposed DPDK API you refer to.=0A=
-=0A=
-I think that's the point :) Perhaps the Rust application should decide how/=
-when to=0A=
-create threads, and how to schedule & pin them. Not the "DPDK crate for Rus=
-t".=0A=
-To give a more concrete examples, lets look at Tokio (or Monoio, or Glommio=
-, or .. )=0A=
-which are prominent players in the Rust ecosystem, particularly for network=
-ing workloads=0A=
-where request/response patterns are well served by the "async" programming =
-model (e.g HTTP server).=0A=
-=0A=
-Lets focus on Tokio first: it is an "async runtime" (two links for future r=
-eaders)=0A=
-    https://corrode.dev/blog/async/=0A=
-    https://rust-lang.github.io/async-book/08_ecosystem/00_chapter.html=0A=
-So an async runtime can run "async" Rust functions (called Futures, or Task=
-s when run independently..)=0A=
-There are lots of words/concepts, but I'll focus only on the thread creatio=
-n/control aspect, given the DPDK EAL lcore context.=0A=
-=0A=
-Tokio is a work-stealing scheduler. It spawns "worker" threads, and then gi=
-ves these "tasks"=0A=
-to various worker cores (similar to how Golang does its work-stealing sched=
-uling). Some =0A=
-DPDK crate users might like this type of workflow, where e.g. RXQ polling i=
-s a task, and the=0A=
-"tokio runtime" figures out which worker to run it on. "Spawning" a task ca=
-uses the "Future"=0A=
-to start executing. (technical Rust note: notice the "Send" bound on Future=
-: https://docs.rs/tokio/latest/tokio/task/fn.spawn.html )=0A=
-=0A=
-Other users might prefer the "thread-per-core" and CPU pinning approach (li=
-ke DPDK itself would do).=0A=
-Monoio and Glommio both serve these use cases (but in slightly different wa=
-ys!). They both spawn threads and do CPU pinning.=0A=
-Monoio and Glommio say "tasks will always remain on the local thread". In R=
-ust techie terms: "Futures are !Send and !Sync"=0A=
-    https://docs.rs/monoio/latest/monoio/fn.spawn.html =0A=
-    https://docs.rs/glommio/latest/glommio/fn.spawn_local.html=0A=
-=0A=
-So there are at least 3 different async runtimes (and I haven't even talked=
- about async-std, smol, embassy, ...) which=0A=
-all have different use-cases, and methods of running "tasks" on threads. Th=
-ese runtimes exist, and are widely used,=0A=
-and applications make use of their thread-scheduling capabilities.=0A=
-=0A=
-So "async runtimes" do thread creation (and optionally CPU pinning) for the=
- user.=0A=
-Other libraries like "Rayon" are thread-pool managers, those also have vari=
-ous CPU thread-create/pinning capabilities.=0A=
-If DPDK *also* wants to do thread creation/management and CPU-thread-to-cor=
-e pinning for the user, that creates tension.=0A=
-=0A=
-> Bruce wrote: "so having Rust (not DPDK) do all thread management is the w=
-ay to go (again IMHO)."=0A=
-=0A=
-I think I agree here, in order to make the Rust DPDK crate usable from the =
-Rust ecosystem,=0A=
-it must align itself with the existing Rust networking ecosystem.=0A=
-=0A=
-That means, the DPDK Rust crate should not FORCE the usage of lcore pinning=
-s and mappings.=0A=
-Allowing a Rust application to decide how to best handle threading (via Ray=
-on, Tokio, Monoio, etc)=0A=
-will allow much more "native" or "ergonomic" integration of DPDK into Rust =
-applications.=0A=
-=0A=
-> Regards,=0A=
-> Gregory=0A=
-=0A=
-Apologies for the long-form, "wall of text" email, but I hope it captures t=
-he nuance of threading and=0A=
-async runtimes, which I believe in the long term will be very nice to captu=
-re "async offload" use-cases=0A=
-for DPDK. To put it another way, lookaside processing can be hidden behind =
-async functions & runtimes,=0A=
-if we design the APIs right: and that would be really cool for making async=
--offload code easy to write correctly!=0A=
-=0A=
-Regards, -Harry=
+On 5/2/2025 2:37 PM, Bruce Richardson wrote:
+> On Fri, May 02, 2025 at 01:27:29PM +0100, Anatoly Burakov wrote:
+>> Test-pmd already has a way to run a list of commands from file, but there
+>> is no way to pause execution for a specified amount of time between two
+>> commands. This may be necessary for simple automation, particularly for
+>> waiting on some asynchronous operation such as link status update.
+>>
+>> Add a simple sleep command to wait until certain number of milliseconds has
+>> passed.
+>>
+>> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+>> ---
+>>   app/test-pmd/cmdline.c | 35 +++++++++++++++++++++++++++++++++++
+>>   1 file changed, 35 insertions(+)
+>>
+>> diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
+>> index d4bb3ec998..1e429e6d0a 100644
+>> --- a/app/test-pmd/cmdline.c
+>> +++ b/app/test-pmd/cmdline.c
+>> @@ -151,6 +151,9 @@ static void cmd_help_long_parsed(void *parsed_result,
+>>   
+>>   			"quit\n"
+>>   			"    Quit to prompt.\n\n"
+>> +
+>> +			"sleep ms\n"
+>> +			"    Sleep for ms milliseconds.\n\n"
+>>   		);
+>>   	}
+>>   
+> 
+> A "sleep" command, I would expect to sleep for a certain number of seconds,
+> for compatibility e.g. with terminal "sleep" command.
+> To keep this as "ms" granularity, how about making it explicit as a
+> "sleep_ms" command. Alternatively, how about adding a usleep command? [Not
+> sure "msleep" works, which is why I suggested sleep_ms instead]
+> 
+> /Bruce
+
+I have no strong opinions on what it should do. My initial version *was* 
+a "sleep in seconds" command, I just thought that maybe someone would 
+want it more flexible. I suspect that actually "sleep" and second 
+granularity is just fine.
+
+-- 
+Thanks,
+Anatoly
