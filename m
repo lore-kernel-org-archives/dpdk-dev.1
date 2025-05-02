@@ -2,52 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0213CC3ABAC
-	for <dpdk-dev@archiver.kernel.org>; Fri,  2 May 2025 15:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFFAFC3ABAA
+	for <dpdk-dev@archiver.kernel.org>; Fri,  2 May 2025 15:33:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 37224402A0;
-	Fri,  2 May 2025 17:26:09 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id 643714029E
- for <dev@dpdk.org>; Fri,  2 May 2025 17:26:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1746199567; x=1777735567;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=uRPpjI/H/zcP4z2ZgiBW1OExyvVyuhAy9GgZs3rLlc0=;
- b=gkOBsx0jPTGD7Kvca49OQ0U8eAGO36ozLs0ozf55N5GSSkmW4eFgUUeJ
- atJ4s2h4ZfpLuJJOlcev8mFp+oekBLxht1bVpCvsk+PPfaxuhBHXLMqiJ
- xwGzorkOHJNpaHziXO1lwZ1uFV4NqbaO+ZEbBi3hlQeRngjMQOl8wGW4Q
- 2xsDB0jC7jSoopQ/7tVnmiU0qE18LbACQUmHwE7AWAqQLp9pDhkq0WWdM
- IVTVm0KCeP90LFK3ZsoMXUadk0Wekx0iBjKA0q9vVrcPhuq3/fKKTu270
- GJUAQEOqKrTbqR9YDEYs+aw03AeEbdXT+4imoWH/vt9pGpkD/gc7FNmg7 g==;
-X-CSE-ConnectionGUID: Hh1eyi3eQRW+Bg1PIU/EOA==
-X-CSE-MsgGUID: oB2lK1xCReW8KZUagsnK3w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11421"; a="65412229"
-X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; d="scan'208";a="65412229"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
- by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 May 2025 08:26:06 -0700
-X-CSE-ConnectionGUID: omLdUFNRQX2p7yNSRWKdbQ==
-X-CSE-MsgGUID: 6Jif80u5RsC2OF2X+WDs6A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,256,1739865600"; d="scan'208";a="134973532"
-Received: from silpixa00401184.ir.intel.com (HELO
- silpixa00401184.ger.corp.intel.com) ([10.237.223.183])
- by fmviesa008.fm.intel.com with ESMTP; 02 May 2025 08:26:05 -0700
-From: "Pillai, Dhanya R" <dhanya.r.pillai@intel.com>
-To: Thomas Monjalon <thomas@monjalon.net>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Cc: dev@dpdk.org, timothy.miskell@intel.com,
-	"Pillai, Dhanya R" <dhanya.r.pillai@intel.com>, Pillai@dpdk.org
-Subject: [PATCH] net/ice: update log message
-Date: Fri,  2 May 2025 15:25:59 +0000
-Message-ID: <20250502152601.699443-1-dhanya.r.pillai@intel.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id 3227D4060A;
+	Fri,  2 May 2025 17:33:35 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 7839C402F0
+ for <dev@dpdk.org>; Fri,  2 May 2025 17:33:34 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 27D61209B2;
+ Fri,  2 May 2025 17:33:34 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH v1 1/1] app/testpmd: add sleep command
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Fri, 2 May 2025 17:33:31 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FC26@smartserver.smartshare.dk>
+In-Reply-To: <aBTaK9NnqTiQTP8F@bricha3-mobl1.ger.corp.intel.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v1 1/1] app/testpmd: add sleep command
+Thread-Index: Adu7cMMRBqxi0ov3TOaDZIhi+uxyrgABWwqQ
+References: <7ac1444b7d2d64dc467a22e7ac65cf3cc16246dc.1746188833.git.anatoly.burakov@intel.com>
+ <aBS8e9GZkyXiCCJS@bricha3-mobl1.ger.corp.intel.com>
+ <60e02461-362c-4edd-b917-36a524670c5d@intel.com>
+ <aBTaK9NnqTiQTP8F@bricha3-mobl1.ger.corp.intel.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>,
+ "Burakov, Anatoly" <anatoly.burakov@intel.com>
+Cc: <dev@dpdk.org>,
+	"Aman Singh" <aman.deep.singh@intel.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,41 +51,94 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Added log message for ddp package load failure.
+> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> Sent: Friday, 2 May 2025 16.44
+>=20
+> On Fri, May 02, 2025 at 04:35:08PM +0200, Burakov, Anatoly wrote:
+> > On 5/2/2025 2:37 PM, Bruce Richardson wrote:
+> > > On Fri, May 02, 2025 at 01:27:29PM +0100, Anatoly Burakov wrote:
+> > > > Test-pmd already has a way to run a list of commands from file,
+> but there
+> > > > is no way to pause execution for a specified amount of time
+> between two
+> > > > commands. This may be necessary for simple automation,
+> particularly for
+> > > > waiting on some asynchronous operation such as link status
+> update.
+> > > >
+> > > > Add a simple sleep command to wait until certain number of
+> milliseconds has
+> > > > passed.
+> > > >
+> > > > Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> > > > ---
+> > > >   app/test-pmd/cmdline.c | 35 =
++++++++++++++++++++++++++++++++++++
+> > > >   1 file changed, 35 insertions(+)
+> > > >
+> > > > diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
+> > > > index d4bb3ec998..1e429e6d0a 100644
+> > > > --- a/app/test-pmd/cmdline.c
+> > > > +++ b/app/test-pmd/cmdline.c
+> > > > @@ -151,6 +151,9 @@ static void cmd_help_long_parsed(void
+> *parsed_result,
+> > > >   			"quit\n"
+> > > >   			"    Quit to prompt.\n\n"
+> > > > +
+> > > > +			"sleep ms\n"
+> > > > +			"    Sleep for ms milliseconds.\n\n"
+> > > >   		);
+> > > >   	}
+> > >
+> > > A "sleep" command, I would expect to sleep for a certain number of
+> seconds,
+> > > for compatibility e.g. with terminal "sleep" command.
+> > > To keep this as "ms" granularity, how about making it explicit as =
+a
+> > > "sleep_ms" command. Alternatively, how about adding a usleep
+> command? [Not
+> > > sure "msleep" works, which is why I suggested sleep_ms instead]
+> > >
+> > > /Bruce
+> >
+> > I have no strong opinions on what it should do. My initial version
+> *was* a
+> > "sleep in seconds" command, I just thought that maybe someone would
+> want it
+> > more flexible. I suspect that actually "sleep" and second =
+granularity
+> is
+> > just fine.
+> >
+>=20
+> I think we do need to support sub-second sleep granularity, though. If
+> we
+> only add "sleep" with time specified in seconds, I think we'd also =
+need
+> to
+> add in usleep with micro-sec granularity too.
+>=20
+> Other alternatives:
+> - have sleep take an option 3rd parameter of time in
+>   minisecond. So "sleep 1" is to sleep for one second, but "sleep 0
+> 500" is
+>   to sleep for 1/2 sec, and "sleep 2 750" is to sleep for 2.75 =
+seconds.
+> - add floating point support to the cmdline library, and then allow
+> sleep time
+>   specified in seconds using that.
+>=20
+> /Bruce
 
-mailmap: update contributor entry
+"sleep" should take one parameter: seconds.
 
-Signed-off-by: Pillai, Dhanya R <dhanya.r.pillai@intel.com>
----
- .mailmap                           | 1 +
- drivers/net/intel/ice/ice_ethdev.c | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+It can be float, or a separate "usleep" command taking a microseconds =
+parameter can be added. This change (using float instead of int) or =
+addition (usleep command) can be added later, if you like.
 
-diff --git a/.mailmap b/.mailmap
-index d8439b79ce..0f66ad834f 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -353,6 +353,7 @@ Devendra Singh Rawat <dsinghrawat@marvell.com>
- Dex Chen <dex.chen@ruckuswireless.com>
- Dexia Li <dexia.li@jaguarmicro.com>
- Dexuan Cui <decui@microsoft.com>
-+Dhanya Pillai <dhanya.r.pillai@intel.com>
- Dharmik Thakkar <dharmikjayesh.thakkar@arm.com> <dharmik.thakkar@arm.com>
- Dheemanth Mallikarjun <dheemanthm@vmware.com>
- Dhruv Tripathi <dhruv.tripathi@arm.com>
-diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
-index 21d3795954..bd55e0e7e1 100644
---- a/drivers/net/intel/ice/ice_ethdev.c
-+++ b/drivers/net/intel/ice/ice_ethdev.c
-@@ -2026,7 +2026,7 @@ int ice_load_pkg(struct ice_adapter *adapter, bool use_dsn, uint64_t dsn)
- 
- 	err = ice_copy_and_init_pkg(hw, buf, bufsz, adapter->devargs.ddp_load_sched);
- 	if (!ice_is_init_pkg_successful(err)) {
--		PMD_INIT_LOG(ERR, "ice_copy_and_init_hw failed: %d", err);
-+		PMD_INIT_LOG(ERR, "Failed to load ddp package: %d", err);
- 		free(buf);
- 		return -1;
- 	}
--- 
-2.43.0
+Initially, I would lean towards a float parameter, but maybe it's easier =
+for scripts to use "usleep" with an integer.
+In real life, the duration will probably be either "N" (i.e. a natural =
+number) or "0.N" (i.e. less than one second), so an "usleep" might be =
+just as good.
 
