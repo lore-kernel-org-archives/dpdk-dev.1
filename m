@@ -2,70 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36366C3ABAA
-	for <dpdk-dev@archiver.kernel.org>; Fri,  2 May 2025 20:26:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B15C369D9
+	for <dpdk-dev@archiver.kernel.org>; Sat,  3 May 2025 06:09:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BC614402F0;
-	Fri,  2 May 2025 22:26:41 +0200 (CEST)
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com
- [209.85.216.42]) by mails.dpdk.org (Postfix) with ESMTP id 240E5402E6
- for <dev@dpdk.org>; Fri,  2 May 2025 22:26:39 +0200 (CEST)
-Received: by mail-pj1-f42.google.com with SMTP id
- 98e67ed59e1d1-30a5094df42so1418111a91.0
- for <dev@dpdk.org>; Fri, 02 May 2025 13:26:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1746217599;
- x=1746822399; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=mSDEuYlFVxM1Wc9entAMrAue1VxGHU1S44LNMzTSjbo=;
- b=nA5RnG4SnvSKs/BDxi9GqBHBKXolnpcJS9z322PCgI4S91VTiFBJ14EomZE41VcO5K
- Nk54r648X4S0fGck6n7doNszGpMqnnmUGb/cWi6fE4scL5Kj8xzHgMu9tM9bcIYSeeC4
- D+HtCVhDiXd9AtS9flv1gjJa6XtdbDSKci95chyXw+C37MOvVRZFZmOo41VkWYCuZuNF
- quNgLYv3hY7rRe+FoICFSHNh1RWcZsGmWjfAKUFUsKC+A+8tG89yZKWgt4RrNnSNqSSz
- LBuMFBuAo4qH1j/dqHjcRifUGU+J3yZlqbdEjV2yzYSwi0CzXX8K9L+R/QVR73GC+kBj
- HTIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1746217599; x=1746822399;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=mSDEuYlFVxM1Wc9entAMrAue1VxGHU1S44LNMzTSjbo=;
- b=v1fMttOTGEkaHtg/YON6zyirNdHQqswYrtb4WKSnZFnrc5IJEffHfMon3PONO6UCc7
- 4yZuWLJX40Gap84WMPpiXaPDl1uMyoW8l2TfCJTv5oCvW574MmBJ4A3zCgnbx6j5O73R
- hpDBi3Ms16IzLNJJJUNCLJSSeZFAq1pE+qvjHjkvQtwpC5G8uAnNwiizWsUG/jVlak5l
- TFwrEC5jIm37eptD+zMmVUmrfgVBtNflyHPpPoENircbExtxUaa+MSQLm8GKDS4qFB2s
- +ZYEUTCQWxfFurJHuk4vioEfqfX2EnnZqU8jp5yqEwr4lTQoWFvRMDjCfSt2Gef4Ouqq
- F7sw==
-X-Gm-Message-State: AOJu0YzEFH45a2YNUzdpbIlyuA2u0hCwpW8dVQAroKB4JQz4OyDXkIed
- YsAV9EzZWn9DWel5BQxoQIgcz+w1CY3NZvidCLQxTCMY+SvuZT9Isey4V/IIzBk=
-X-Gm-Gg: ASbGnctHTOQeOlAaAyLIIcwXP5Yf6VBYPJYjkZD3Sw8tsNQaZ/lUjLHB0o8dfTvId66
- hDCBPPQVFtYco/E3DvW3P3JlT4ANgfAtyWBG3/sh3KFtLxzGggRHTashCiY/7CgBK3eaVzmsHeF
- Gp74Ur1tIkFA623s+SindPjRNSeM9E7Y60XlKEo9lbR4NUqv/pwRDqPIhah4ZAsTaApgNkgsLOk
- EcuF8fcr8ySwPq4yjJLEp71bgeu5TQLZHaZZsRj8QhWVP+3wHOYso+WLzhfVqFxERznTOOpmMbQ
- 383Xa4Yr9akZxb+SpA0UxJsOWUjk2xFloL77D4M2haxH4RcXt6fuGzU8HrF9HvID3Ig0yCYIb0Q
- ZTdcQ5B0xOGnQ3HL1
-X-Google-Smtp-Source: AGHT+IH7dPxDyGfMN0nQMDHcz2AtZD0P+gPjZ45Nn3hDGipK1ZUJ03vUhnaMShBW9grb8LdvLZbvXQ==
-X-Received: by 2002:a17:90b:514b:b0:2ff:6f88:b04a with SMTP id
- 98e67ed59e1d1-30a4e5c5ec1mr6478406a91.15.1746217598790; 
- Fri, 02 May 2025 13:26:38 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-30a34826677sm6236282a91.40.2025.05.02.13.26.38
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 02 May 2025 13:26:38 -0700 (PDT)
-Date: Fri, 2 May 2025 08:42:21 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Anatoly Burakov <anatoly.burakov@intel.com>
-Cc: dev@dpdk.org, Aman Singh <aman.deep.singh@intel.com>
-Subject: Re: [PATCH v1 1/1] app/testpmd: add sleep command
-Message-ID: <20250502084213.02b1198a@hermes.local>
-In-Reply-To: <7ac1444b7d2d64dc467a22e7ac65cf3cc16246dc.1746188833.git.anatoly.burakov@intel.com>
-References: <7ac1444b7d2d64dc467a22e7ac65cf3cc16246dc.1746188833.git.anatoly.burakov@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 077D140261;
+	Sat,  3 May 2025 08:09:25 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 7A90D4025D
+ for <dev@dpdk.org>; Sat,  3 May 2025 08:09:23 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 0C2D6208EC;
+ Sat,  3 May 2025 08:09:23 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH v3 1/4] eal: deprecate old coremask-based EAL parameters
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Sat, 3 May 2025 08:09:20 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FC27@smartserver.smartshare.dk>
+In-Reply-To: <aBTsKvlL_Uw-G2wH@bricha3-mobl1.ger.corp.intel.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v3 1/4] eal: deprecate old coremask-based EAL parameters
+Thread-Index: Adu7e2SB7QAK5ek6SqmagczHi0lrGgAdM+YQ
+References: <20250313113829.1480907-1-bruce.richardson@intel.com>
+ <20250502151134.536799-1-bruce.richardson@intel.com>
+ <20250502151134.536799-2-bruce.richardson@intel.com>
+ <20250502085122.2e9db643@hermes.local>
+ <aBTsKvlL_Uw-G2wH@bricha3-mobl1.ger.corp.intel.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>,
+ "Stephen Hemminger" <stephen@networkplumber.org>
+Cc: <dev@dpdk.org>,
+	<david.marchand@redhat.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,18 +52,98 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri,  2 May 2025 13:27:29 +0100
-Anatoly Burakov <anatoly.burakov@intel.com> wrote:
+> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> Sent: Friday, 2 May 2025 18.01
+>=20
+> On Fri, May 02, 2025 at 08:51:22AM -0700, Stephen Hemminger wrote:
+> > On Fri,  2 May 2025 16:11:31 +0100
+> > Bruce Richardson <bruce.richardson@intel.com> wrote:
+> >
+> > > As the number of cores/cpus on platforms has increased over the
+> years,
+> > > the use of coremasks rather than core-lists for identifying DPDK
+> cores
+> > > has become more and more unwieldy. At this point, let's deprecate
+> the
+> > > coremask-based EAL parameters for future removal, and point users
+> to the
+> > > core-list based versions instead.
+> > >
+> > > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> >
+> > Agree.
+> >
+> > There are some more syntax options on Linux kernel command line:
+> > https://github.com/torvalds/linux/blob/master/Documentation/admin-
+> guide/kernel-parameters.rst#cpu-lists
+> >
+> > cpu lists
+> > Some kernel parameters take a list of CPUs as a value, e.g. =
+isolcpus,
+> nohz_full, irqaffinity, rcu_nocbs. The format of this list is:
+> >
+> > <cpu number>,...,<cpu number>
+> > or
+> >
+> > <cpu number>-<cpu number> (must be a positive range in ascending
+> order)
+> > or a mixture
+> >
+> > <cpu number>,...,<cpu number>-<cpu number>
+> >
+>=20
+> This we already support.
+>=20
+> > Note that for the special case of a range one can split the range
+> into equal sized groups and for each group use some amount from the
+> beginning of that group:
+> >
+> > <cpu number>-<cpu number>:<used size>/<group size>
+> > For example one can add to the command line following parameter:
+> >
+> > isolcpus=3D1,2,10-20,100-2000:2/25
+> > where the final item represents CPUs 100,101,125,126,150,151,...
+> >
+> > The value "N" can be used to represent the numerically last CPU on
+> the system, i.e "foo_cpus=3D16-N" would be equivalent to "16-31" on a =
+32
+> core system.
+> >
+> > Keep in mind that "N" is dynamic, so if system changes cause the
+> bitmap width to change, such as less cores in the CPU list, then N and
+> any ranges using N will also change. Use the same on a small 4 core
+> system, and "16-N" becomes "16-3" and now the same boot input will be
+> flagged as invalid (start > end).
+> >
+> > The special case-tolerant group name "all" has a meaning of =
+selecting
+> all CPUs, so that "nohz_full=3Dall" is the equivalent of =
+"nohz_full=3D0-N".
+> >
+> > The semantics of "N" and "all" is supported on a level of bitmaps =
+and
+> holds for all users of bitmap_parselist().
+> >
+>=20
+> Those would be good/interesting extensions to have, if someone wants =
+to
+> add
+> them to EAL. Hopefully after this patchset, adding them should be
+> easier as
+> I think we should only have one place in EAL where we parse groups =
+like
+> that:
+> "eal_parse_set()" function.
 
-> @@ -13701,6 +13735,7 @@ static cmdline_parse_ctx_t builtin_ctx[] = {
->  	&cmd_help_brief,
->  	&cmd_help_long,
->  	&cmd_quit,
-> +	&cmd_sleep,
->  	&cmd_load_from_file,
->  	&cmd_showport,
->  	&cmd_showqueue,
-> -- 
+Yes, such a syntax parser can be added later.
 
-Looks like original list was in alphabetic order.
-Please preserve that
+In the Kernel, it's a generic parser for fixed length bit arrays.
+I could imagine using it for other purposes than CPUs, e.g. VLANs or =
+ports.
+
+The "N" feature is *must have* in the Kernel, where it's used for Kernel =
+boot parameters, set before any script to determine the number of CPUs =
+on the system can be run.
+That's not the case with EAL parameters, where "N" and "all" only would =
+be *nice to have*.
+
