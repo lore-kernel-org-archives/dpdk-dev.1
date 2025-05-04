@@ -2,60 +2,61 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C388C369DC
-	for <dpdk-dev@archiver.kernel.org>; Sun,  4 May 2025 21:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB77AC369DC
+	for <dpdk-dev@archiver.kernel.org>; Sun,  4 May 2025 21:22:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3A8114025D;
-	Sun,  4 May 2025 23:21:54 +0200 (CEST)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com
- [209.85.214.175])
- by mails.dpdk.org (Postfix) with ESMTP id E0BCD40156
- for <dev@dpdk.org>; Sun,  4 May 2025 23:21:52 +0200 (CEST)
-Received: by mail-pl1-f175.google.com with SMTP id
- d9443c01a7336-224341bbc1dso47101215ad.3
- for <dev@dpdk.org>; Sun, 04 May 2025 14:21:52 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2A82B402A8;
+	Sun,  4 May 2025 23:22:25 +0200 (CEST)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
+ [209.85.214.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 686AE40156
+ for <dev@dpdk.org>; Sun,  4 May 2025 23:22:23 +0200 (CEST)
+Received: by mail-pl1-f174.google.com with SMTP id
+ d9443c01a7336-2295d78b433so36071265ad.2
+ for <dev@dpdk.org>; Sun, 04 May 2025 14:22:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1746393712; x=1746998512; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1746393742; x=1746998542; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=uLAmwolTKcCViBMnhqZCmDGhE0HizVQumKqTmq2Ygao=;
- b=Wr58VAEGUdvUO6bV3uZNzOlTea3lYYBqsKedDHn6d1C/ive3epSB/1CbjDps+VJ2LK
- sEODGZEc4Ue7fzO4pvGwVScAERYmA9onUAcyefCCiB1uSyoGM9KmUxPBpxlTU0QG2+0G
- t5mHdCxxfeXUTnG7qnPpvuHPY2JZVkSM16Ylc=
+ bh=uDBK6KDEOW1SL9TGKZp2Jr5owXTfEEtFCn2X9gE0dsY=;
+ b=aSFvZb+lg6iZD22jS0l9hcrbGl0F3t1Hdmud9bEjLJz9KmZs9w52Hv2flM2n4334q5
+ rgo8hE8e8K2PM3vhNAZQIyL6I5XStTKsCeS2dSXqfUSLmvOTJdhpaLjUOGrbFx/QSje6
+ qOmiyEVSNghkK0W/FQNmHYHoLBv+N5CRWQvfY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1746393712; x=1746998512;
+ d=1e100.net; s=20230601; t=1746393742; x=1746998542;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=uLAmwolTKcCViBMnhqZCmDGhE0HizVQumKqTmq2Ygao=;
- b=lR9ITG/nqJEAbc8TCejGsxV9SCl9JOr1y6x04ofgjV1l0kCM8ALC20V8IPy/AGHT7R
- MDRqA9muCGwZcUYBoaft0SikyauNcd+QpK4Oj2AoxfKS+aILRxswgc/0Ghg+uau5g7r+
- uau6OqemGTdCUxWRGu0XcewgLvV5Fv7VTCwJ223/oXwpgQAHq/xc5wIWH48ufBerTDfF
- tRbybcG6N8jz2ZSHEvSxPEsz8+HdUpV375xi1ZjfVdoPMhBelpGhfnMxViS8F+FmjNHH
- x8V5eIU1t7fHQEcfssKy1ifivLkJLTib3GjLeCqEws/TdmRODdU8PdrEHakQ3X7FlR09
- jmwQ==
-X-Gm-Message-State: AOJu0Yz+gevsvMzr4q08xy20luY7gxTkvNwCI0QFm65YmBcTMA275Z2c
- yMj3JLKorz53zr+SaaT3i7qPzdva5Cawscm7y+A8ZQJltWog16gMHCOe2/WK480khK6NpU5KH8e
- qiBzaY2Nqqck7+/KN+LtCX0PHmQQCN8LORT690w==
-X-Gm-Gg: ASbGncsX7LLLpztccCtSXLvOA1HoJ4YZSM0ARJoK+J9pk+S//+WVYGyUKCRUARlt0gp
- bAE5jBAeomg/VnDBc4PgbYz6QrRKyoCEty8SaJZNBbJzdvfy6e8pRimxylDA3srG169ACNbkl6r
- 5Xejd4TQMlhHgVYuKaVV/iAEXMZFXfCMPpJuvMK1hm1UKNTQnISTPXkXQ=
-X-Google-Smtp-Source: AGHT+IGOMmkkDGjGj/+eRdh3kuyzjT7/DmXXp8i48iQV4IHnRPer3zTGz/dx+QYjXhaee/t2GZVfScrMMoNtX1GAXKY=
-X-Received: by 2002:a17:902:d2c7:b0:220:ff3f:6cc0 with SMTP id
- d9443c01a7336-22e18c377c5mr110564465ad.38.1746393711910; Sun, 04 May 2025
- 14:21:51 -0700 (PDT)
+ bh=uDBK6KDEOW1SL9TGKZp2Jr5owXTfEEtFCn2X9gE0dsY=;
+ b=IPhn/vbSM31Se4rCJNPqBnzub/440Aovdi13EojXf+wUuSy7KcPJDyyw93rieMCMLe
+ SjCV9qgRJKJxfVp/ZTd62u4lJvJBBE7MMp+ghEIXdLFnosk8z6nGiNOoJM2dP3sb0ujN
+ WbuUIOQ7NnpCmJNaglv4+knpgW+B9nnltvl6eNbynjwUsoAa0AdVWXLaSla6f6mujMrV
+ W/n50yehYejLdHNFLXkguD1/2yqHZFwmEYKzDgqRn1gxmTgQgOVRs8L0//91OQDgHWeU
+ TSe9ZVkx3rccePJx5qOMOnazrr8e2T100Hin5FhOpYsWWvRjczJJM8WYSDZ1NEarV5Xq
+ JG2g==
+X-Gm-Message-State: AOJu0Yx748MIvsgAgX0sYiNfswA2hc4p4+O9sEVXC3EtVivmkZL220Aw
+ iuUnWHgaymAzIvs3TZ+r8XVZqeIYcJVK3qLW1iqZ7AjDJ+H5xyYaWioEdxW37BZIx2Y4TiyeU3P
+ xWN68W95QXF7ZsuTin6EAhCBx3qbpgq69h6O3LA==
+X-Gm-Gg: ASbGnctxcfyb40odN7YIxTdgkhl5eFUVCzkvw+NKH8xjlWj5fwqLv/MYgaQ1dHI9Hg4
+ CqxDFlAptxFajOGNCDVb+2RCFttTg2eEdUs14cnfrFTcRSn768zjceR+G7wTC128jiI5rpZ+Lw3
+ TI1f797IRGTcXcVDpyZU4VCjqLywtKbthdhryVP5HNO0ha7xxwq+nbqsA=
+X-Google-Smtp-Source: AGHT+IH9I0eqW85i0Ut5W9aCZVyUMcalsIuHGQ3qn1QKp9SRDC1bUc1ls4hOgO+kn5PrfJITLVggsSOk01WmcvwZSD4=
+X-Received: by 2002:a17:902:e750:b0:224:1221:1ab4 with SMTP id
+ d9443c01a7336-22e1e8e686bmr82391045ad.22.1746393742538; Sun, 04 May 2025
+ 14:22:22 -0700 (PDT)
 MIME-Version: 1.0
-References: <20250502101226.1405274-1-kai.ji@intel.com>
-In-Reply-To: <20250502101226.1405274-1-kai.ji@intel.com>
+References: <20250313113829.1480907-1-bruce.richardson@intel.com>
+ <20250502151134.536799-1-bruce.richardson@intel.com>
+In-Reply-To: <20250502151134.536799-1-bruce.richardson@intel.com>
 From: Patrick Robb <probb@iol.unh.edu>
-Date: Sun, 4 May 2025 17:17:18 -0400
-X-Gm-Features: ATxdqUG_MWC4QPAVFs7lx3fmIGKW6kXGpmi52FS2ODPU6TPwNQTPOPGvXGWgVSo
-Message-ID: <CAJvnSUACcmKUhZZSa_AZkn0kGChb-wbbbpiqT9m2qPOCmqnLcg@mail.gmail.com>
-Subject: Re: [dpdk-dev v1] app/test-crypto-perf: remove decrypt test case from
- perf
-To: Kai Ji <kai.ji@intel.com>
-Cc: dev@dpdk.org, gakhil@marvell.com
-Content-Type: multipart/alternative; boundary="000000000000d63791063455f88c"
+Date: Sun, 4 May 2025 17:17:49 -0400
+X-Gm-Features: ATxdqUEB-kKclZvcFyNGEE8Mr3MpM__gVP9Z_4pvfYWIaTgvLr-B84DQvkEyYEg
+Message-ID: <CAJvnSUCCtrzXMKALi6UpnpMD__M1Y+T3z8de+3TFNPJqE+LS-A@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] rework and expand EAL lcore options
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, david.marchand@redhat.com, mb@smartsharesystems.com, 
+ stephen@networkplumber.org
+Content-Type: multipart/alternative; boundary="000000000000a98b13063455fa89"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,170 +70,177 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000d63791063455f88c
+--000000000000a98b13063455fa89
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 Please disregard the Community Lab DTS failure just reported on this
 patchseries. I need to reconfigure the testbed and rerun the test.
 
-On Fri, May 2, 2025 at 6:12=E2=80=AFAM Kai Ji <kai.ji@intel.com> wrote:
+On Fri, May 2, 2025 at 11:11=E2=80=AFAM Bruce Richardson <bruce.richardson@=
+intel.com>
+wrote:
 
-> Remove all decrypt test cases in aesni-mb throughput perf as the
-> decrypt throughput testing only support OOP by dpdk-test-crypto-perf
+> Following discussion earlier on this thread on the previous RFCs and
+> patches submitted [1], this series is a slightly different take on
+> solving the same fundamental problem - making it easy to use CPU cores
+> with ids >=3D RTE_MAX_LCORE, without having massive amounts of code
+> complexity internally. As previously discussed[2] this patchset
+> implements proposal "2a" and does the following:
 >
-> Signed-off-by: Kai Ji <kai.ji@intel.com>
-> ---
->  .../configs/crypto-perf-aesni-mb.json         | 24 -------------------
->  1 file changed, 24 deletions(-)
+> * marks the old coremask parameter (-c) and service core mask (-s) as
+>   deprecated, so they can be dropped in future. Everything should now be
+>   done using core lists where possible.
+> * consolidates the, previously separate but similar, "-l" and "--lcores"
+>   flags into just short and long versions of the same thing. This does
+>   not affect the "--lcores" flag at all, but expands the scope of what
+>   was possible with "-l".
+> * a new flag, with long/short versions, is added as "-L" to allow the
+>   user to just specify a range or set of physical CPU core ids to be
+>   used by the app, and have them automatically mapped internally to a
+>   set of lcore ids starting at 0. This provides the "easy solution" to
+>   the original problem stated above.
 >
-> diff --git a/app/test-crypto-perf/configs/crypto-perf-aesni-mb.json
-> b/app/test-crypto-perf/configs/crypto-perf-aesni-mb.json
-> index d50e4af36c..91fbc9cfcd 100644
-> --- a/app/test-crypto-perf/configs/crypto-perf-aesni-mb.json
-> +++ b/app/test-crypto-perf/configs/crypto-perf-aesni-mb.json
-> @@ -13,13 +13,6 @@
->                                 "devtype": "crypto_aesni_mb"
->                         }
->                 },
-> -               "AES-CBC-128 SHA1-HMAC auth-then-cipher decrypt": {
-> -                       "cipher-algo": "aes-cbc",
-> -                       "cipher-key-sz": "16",
-> -                       "auth-algo": "sha1-hmac",
-> -                       "optype": "auth-then-cipher",
-> -                       "cipher-op": "decrypt"
-> -               },
->                 "AES-CBC-128 SHA1-HMAC cipher-then-auth encrypt": {
->                         "cipher-algo": "aes-cbc",
->                         "cipher-key-sz": "16",
-> @@ -30,13 +23,6 @@
->                         "optype": "cipher-then-auth",
->                         "cipher-op": "encrypt"
->                 },
-> -               "AES-CBC-256 SHA2-256-HMAC auth-then-cipher decrypt": {
-> -                       "cipher-algo": "aes-cbc",
-> -                       "cipher-key-sz": "32",
-> -                       "auth-algo": "sha2-256-hmac",
-> -                       "optype": "auth-then-cipher",
-> -                       "cipher-op": "decrypt"
-> -               },
->                 "AES-CBC-256 SHA2-256-HMAC cipher-then-auth encrypt": {
->                         "cipher-algo": "aes-cbc",
->                         "cipher-key-sz": "32",
-> @@ -53,21 +39,11 @@
->                         "optype": "aead",
->                         "total-ops": "10000000"
->                 },
-> -               "AES-GCM-128 aead-op decrypt": {
-> -                       "aead-algo": "aes-gcm",
-> -                       "aead-key-sz": "16",
-> -                       "aead-op": "decrypt"
-> -               },
->                 "AES-GCM-256 aead-op encrypt": {
->                         "aead-algo": "aes-gcm",
->                         "aead-key-sz": "32",
->                         "aead-op": "encrypt"
->                 },
-> -               "AES-GCM-256 aead-op decrypt": {
-> -                       "aead-algo": "aes-gcm",
-> -                       "aead-key-sz": "32",
-> -                       "aead-op": "decrypt"
-> -               },
->                 "AES-GMAC 128 auth-only generate": {
->                         "auth-algo": "aes-gmac",
->                         "auth-key-sz": "16",
+> For completeness, since it's in the same area, the previously separate
+> documentation patch, adding examples for the "--lcores" parameter, is
+> rolled into this series as patch 3.
+>
+> [1] https://patches.dpdk.org/project/dpdk/list/?series=3D34911&state=3D*
+> [2]
+> https://inbox.dpdk.org/dev/Z_PIBLQIT3eu6Ab3@bricha3-mobl1.ger.corp.intel.=
+com/#t
+>
+> Bruce Richardson (4):
+>   eal: deprecate old coremask-based EAL parameters
+>   eal: merge corelist and core mapping options
+>   doc: provide examples of using lcores EAL parameter
+>   eal: add option for auto-mapping cpu ids to low lcore ids
+>
+>  doc/guides/eventdevs/dlb2.rst                 |   6 +-
+>  doc/guides/faq/faq.rst                        |   8 +-
+>  doc/guides/linux_gsg/build_sample_apps.rst    |   7 +-
+>  doc/guides/linux_gsg/eal_args.include.rst     |  61 ++++--
+>  .../prog_guide/env_abstraction_layer.rst      |   3 +-
+>  doc/guides/prog_guide/meson_ut.rst            |   2 +-
+>  doc/guides/prog_guide/multi_proc_support.rst  |   2 +-
+>  doc/guides/prog_guide/service_cores.rst       |   8 +-
+>  doc/guides/rel_notes/deprecation.rst          |  10 +
+>  doc/guides/sample_app_ug/ip_frag.rst          |   7 +-
+>  doc/guides/sample_app_ug/ip_reassembly.rst    |   7 +-
+>  doc/guides/sample_app_ug/multi_process.rst    |  14 +-
+>  doc/guides/sample_app_ug/qos_scheduler.rst    |   2 +-
+>  doc/guides/sample_app_ug/test_pipeline.rst    |   2 +-
+>  doc/guides/tools/testbbdev.rst                |   2 +-
+>  lib/eal/common/eal_common_options.c           | 202 +++++++-----------
+>  lib/eal/common/eal_options.h                  |   6 +-
+>  lib/eal/windows/include/sched.h               |   1 +
+>  18 files changed, 168 insertions(+), 182 deletions(-)
+>
 > --
-> 2.34.1
+> 2.45.2
 >
 >
 
---000000000000d63791063455f88c
+--000000000000a98b13063455fa89
 Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: quoted-printable
 
-PGRpdiBkaXI9Imx0ciI+UGxlYXNlIGRpc3JlZ2FyZCB0aGUgQ29tbXVuaXR5IExhYiBEVFMgZmFp
-bHVyZSBqdXN0wqByZXBvcnRlZCBvbiB0aGlzIHBhdGNoc2VyaWVzLiBJIG5lZWQgdG8gcmVjb25m
-aWd1cmUgdGhlIHRlc3RiZWQgYW5kIHJlcnVuIHRoZSB0ZXN0LjwvZGl2Pjxicj48ZGl2IGNsYXNz
-PSJnbWFpbF9xdW90ZSBnbWFpbF9xdW90ZV9jb250YWluZXIiPjxkaXYgZGlyPSJsdHIiIGNsYXNz
-PSJnbWFpbF9hdHRyIj5PbiBGcmksIE1heSAyLCAyMDI1IGF0IDY6MTLigK9BTSBLYWkgSmkgJmx0
-OzxhIGhyZWY9Im1haWx0bzprYWkuamlAaW50ZWwuY29tIj5rYWkuamlAaW50ZWwuY29tPC9hPiZn
-dDsgd3JvdGU6PGJyPjwvZGl2PjxibG9ja3F1b3RlIGNsYXNzPSJnbWFpbF9xdW90ZSIgc3R5bGU9
-Im1hcmdpbjowcHggMHB4IDBweCAwLjhleDtib3JkZXItbGVmdDoxcHggc29saWQgcmdiKDIwNCwy
-MDQsMjA0KTtwYWRkaW5nLWxlZnQ6MWV4Ij5SZW1vdmUgYWxsIGRlY3J5cHQgdGVzdCBjYXNlcyBp
-biBhZXNuaS1tYiB0aHJvdWdocHV0IHBlcmYgYXMgdGhlPGJyPg0KZGVjcnlwdCB0aHJvdWdocHV0
-IHRlc3Rpbmcgb25seSBzdXBwb3J0IE9PUCBieSBkcGRrLXRlc3QtY3J5cHRvLXBlcmY8YnI+DQo8
-YnI+DQpTaWduZWQtb2ZmLWJ5OiBLYWkgSmkgJmx0OzxhIGhyZWY9Im1haWx0bzprYWkuamlAaW50
-ZWwuY29tIiB0YXJnZXQ9Il9ibGFuayI+a2FpLmppQGludGVsLmNvbTwvYT4mZ3Q7PGJyPg0KLS0t
-PGJyPg0KwqAuLi4vY29uZmlncy9jcnlwdG8tcGVyZi1hZXNuaS1tYi5qc29uwqAgwqAgwqAgwqAg
-wqB8IDI0IC0tLS0tLS0tLS0tLS0tLS0tLS08YnI+DQrCoDEgZmlsZSBjaGFuZ2VkLCAyNCBkZWxl
-dGlvbnMoLSk8YnI+DQo8YnI+DQpkaWZmIC0tZ2l0IGEvYXBwL3Rlc3QtY3J5cHRvLXBlcmYvY29u
-Zmlncy9jcnlwdG8tcGVyZi1hZXNuaS1tYi5qc29uIGIvYXBwL3Rlc3QtY3J5cHRvLXBlcmYvY29u
-Zmlncy9jcnlwdG8tcGVyZi1hZXNuaS1tYi5qc29uPGJyPg0KaW5kZXggZDUwZTRhZjM2Yy4uOTFm
-YmM5Y2ZjZCAxMDA2NDQ8YnI+DQotLS0gYS9hcHAvdGVzdC1jcnlwdG8tcGVyZi9jb25maWdzL2Ny
-eXB0by1wZXJmLWFlc25pLW1iLmpzb248YnI+DQorKysgYi9hcHAvdGVzdC1jcnlwdG8tcGVyZi9j
-b25maWdzL2NyeXB0by1wZXJmLWFlc25pLW1iLmpzb248YnI+DQpAQCAtMTMsMTMgKzEzLDYgQEA8
-YnI+DQrCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCAmcXVv
-dDtkZXZ0eXBlJnF1b3Q7OiAmcXVvdDtjcnlwdG9fYWVzbmlfbWImcXVvdDs8YnI+DQrCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCB9PGJyPg0KwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgfSw8YnI+DQotwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAmcXVvdDtBRVMtQ0JDLTEyOCBTSEEx
-LUhNQUMgYXV0aC10aGVuLWNpcGhlciBkZWNyeXB0JnF1b3Q7OiB7PGJyPg0KLcKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgJnF1b3Q7Y2lwaGVyLWFsZ28mcXVvdDs6ICZxdW90O2Fl
-cy1jYmMmcXVvdDssPGJyPg0KLcKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgJnF1
-b3Q7Y2lwaGVyLWtleS1zeiZxdW90OzogJnF1b3Q7MTYmcXVvdDssPGJyPg0KLcKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgJnF1b3Q7YXV0aC1hbGdvJnF1b3Q7OiAmcXVvdDtzaGEx
-LWhtYWMmcXVvdDssPGJyPg0KLcKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgJnF1
-b3Q7b3B0eXBlJnF1b3Q7OiAmcXVvdDthdXRoLXRoZW4tY2lwaGVyJnF1b3Q7LDxicj4NCi3CoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCZxdW90O2NpcGhlci1vcCZxdW90OzogJnF1
-b3Q7ZGVjcnlwdCZxdW90Ozxicj4NCi3CoCDCoCDCoCDCoCDCoCDCoCDCoCDCoH0sPGJyPg0KwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgJnF1b3Q7QUVTLUNCQy0xMjggU0hBMS1ITUFDIGNpcGhlci10
-aGVuLWF1dGggZW5jcnlwdCZxdW90Ozogezxicj4NCsKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgICZxdW90O2NpcGhlci1hbGdvJnF1b3Q7OiAmcXVvdDthZXMtY2JjJnF1b3Q7LDxi
-cj4NCsKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgICZxdW90O2NpcGhlci1rZXkt
-c3omcXVvdDs6ICZxdW90OzE2JnF1b3Q7LDxicj4NCkBAIC0zMCwxMyArMjMsNiBAQDxicj4NCsKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgICZxdW90O29wdHlwZSZxdW90OzogJnF1
-b3Q7Y2lwaGVyLXRoZW4tYXV0aCZxdW90Oyw8YnI+DQrCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCAmcXVvdDtjaXBoZXItb3AmcXVvdDs6ICZxdW90O2VuY3J5cHQmcXVvdDs8YnI+
-DQrCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCB9LDxicj4NCi3CoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCZxdW90O0FFUy1DQkMtMjU2IFNIQTItMjU2LUhNQUMgYXV0aC10aGVuLWNpcGhlciBkZWNyeXB0
-JnF1b3Q7OiB7PGJyPg0KLcKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgJnF1b3Q7
-Y2lwaGVyLWFsZ28mcXVvdDs6ICZxdW90O2Flcy1jYmMmcXVvdDssPGJyPg0KLcKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgJnF1b3Q7Y2lwaGVyLWtleS1zeiZxdW90OzogJnF1b3Q7
-MzImcXVvdDssPGJyPg0KLcKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgJnF1b3Q7
-YXV0aC1hbGdvJnF1b3Q7OiAmcXVvdDtzaGEyLTI1Ni1obWFjJnF1b3Q7LDxicj4NCi3CoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCZxdW90O29wdHlwZSZxdW90OzogJnF1b3Q7YXV0
-aC10aGVuLWNpcGhlciZxdW90Oyw8YnI+DQotwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAmcXVvdDtjaXBoZXItb3AmcXVvdDs6ICZxdW90O2RlY3J5cHQmcXVvdDs8YnI+DQotwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqB9LDxicj4NCsKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgICZxdW90
-O0FFUy1DQkMtMjU2IFNIQTItMjU2LUhNQUMgY2lwaGVyLXRoZW4tYXV0aCBlbmNyeXB0JnF1b3Q7
-OiB7PGJyPg0KwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgJnF1b3Q7Y2lwaGVy
-LWFsZ28mcXVvdDs6ICZxdW90O2Flcy1jYmMmcXVvdDssPGJyPg0KwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgJnF1b3Q7Y2lwaGVyLWtleS1zeiZxdW90OzogJnF1b3Q7MzImcXVv
-dDssPGJyPg0KQEAgLTUzLDIxICszOSwxMSBAQDxicj4NCsKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgICZxdW90O29wdHlwZSZxdW90OzogJnF1b3Q7YWVhZCZxdW90Oyw8YnI+DQrC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCAmcXVvdDt0b3RhbC1vcHMmcXVvdDs6
-ICZxdW90OzEwMDAwMDAwJnF1b3Q7PGJyPg0KwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgfSw8YnI+
-DQotwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAmcXVvdDtBRVMtR0NNLTEyOCBhZWFkLW9wIGRlY3J5
-cHQmcXVvdDs6IHs8YnI+DQotwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAmcXVv
-dDthZWFkLWFsZ28mcXVvdDs6ICZxdW90O2Flcy1nY20mcXVvdDssPGJyPg0KLcKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgJnF1b3Q7YWVhZC1rZXktc3omcXVvdDs6ICZxdW90OzE2
-JnF1b3Q7LDxicj4NCi3CoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCZxdW90O2Fl
-YWQtb3AmcXVvdDs6ICZxdW90O2RlY3J5cHQmcXVvdDs8YnI+DQotwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqB9LDxicj4NCsKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgICZxdW90O0FFUy1HQ00tMjU2IGFl
-YWQtb3AgZW5jcnlwdCZxdW90Ozogezxicj4NCsKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgICZxdW90O2FlYWQtYWxnbyZxdW90OzogJnF1b3Q7YWVzLWdjbSZxdW90Oyw8YnI+DQrC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCAmcXVvdDthZWFkLWtleS1zeiZxdW90
-OzogJnF1b3Q7MzImcXVvdDssPGJyPg0KwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgJnF1b3Q7YWVhZC1vcCZxdW90OzogJnF1b3Q7ZW5jcnlwdCZxdW90Ozxicj4NCsKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIH0sPGJyPg0KLcKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgJnF1b3Q7QUVT
-LUdDTS0yNTYgYWVhZC1vcCBkZWNyeXB0JnF1b3Q7OiB7PGJyPg0KLcKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgJnF1b3Q7YWVhZC1hbGdvJnF1b3Q7OiAmcXVvdDthZXMtZ2NtJnF1
-b3Q7LDxicj4NCi3CoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCZxdW90O2FlYWQt
-a2V5LXN6JnF1b3Q7OiAmcXVvdDszMiZxdW90Oyw8YnI+DQotwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAmcXVvdDthZWFkLW9wJnF1b3Q7OiAmcXVvdDtkZWNyeXB0JnF1b3Q7PGJy
-Pg0KLcKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgfSw8YnI+DQrCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCAmcXVvdDtBRVMtR01BQyAxMjggYXV0aC1vbmx5IGdlbmVyYXRlJnF1b3Q7OiB7PGJyPg0KwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgJnF1b3Q7YXV0aC1hbGdvJnF1b3Q7OiAm
-cXVvdDthZXMtZ21hYyZxdW90Oyw8YnI+DQrCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCAmcXVvdDthdXRoLWtleS1zeiZxdW90OzogJnF1b3Q7MTYmcXVvdDssPGJyPg0KLS0gPGJy
-Pg0KMi4zNC4xPGJyPg0KPGJyPg0KPC9ibG9ja3F1b3RlPjwvZGl2Pg0K
---000000000000d63791063455f88c--
+<div dir=3D"ltr">Please disregard the Community Lab DTS failure just=C2=A0r=
+eported on this patchseries. I need to reconfigure the testbed and rerun th=
+e test.</div><br><div class=3D"gmail_quote gmail_quote_container"><div dir=
+=3D"ltr" class=3D"gmail_attr">On Fri, May 2, 2025 at 11:11=E2=80=AFAM Bruce=
+ Richardson &lt;<a href=3D"mailto:bruce.richardson@intel.com">bruce.richard=
+son@intel.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" sty=
+le=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);paddi=
+ng-left:1ex">Following discussion earlier on this thread on the previous RF=
+Cs and<br>
+patches submitted [1], this series is a slightly different take on<br>
+solving the same fundamental problem - making it easy to use CPU cores<br>
+with ids &gt;=3D RTE_MAX_LCORE, without having massive amounts of code<br>
+complexity internally. As previously discussed[2] this patchset<br>
+implements proposal &quot;2a&quot; and does the following:<br>
+<br>
+* marks the old coremask parameter (-c) and service core mask (-s) as<br>
+=C2=A0 deprecated, so they can be dropped in future. Everything should now =
+be<br>
+=C2=A0 done using core lists where possible.<br>
+* consolidates the, previously separate but similar, &quot;-l&quot; and &qu=
+ot;--lcores&quot;<br>
+=C2=A0 flags into just short and long versions of the same thing. This does=
+<br>
+=C2=A0 not affect the &quot;--lcores&quot; flag at all, but expands the sco=
+pe of what<br>
+=C2=A0 was possible with &quot;-l&quot;.<br>
+* a new flag, with long/short versions, is added as &quot;-L&quot; to allow=
+ the<br>
+=C2=A0 user to just specify a range or set of physical CPU core ids to be<b=
+r>
+=C2=A0 used by the app, and have them automatically mapped internally to a<=
+br>
+=C2=A0 set of lcore ids starting at 0. This provides the &quot;easy solutio=
+n&quot; to<br>
+=C2=A0 the original problem stated above.<br>
+<br>
+For completeness, since it&#39;s in the same area, the previously separate<=
+br>
+documentation patch, adding examples for the &quot;--lcores&quot; parameter=
+, is<br>
+rolled into this series as patch 3.<br>
+<br>
+[1] <a href=3D"https://patches.dpdk.org/project/dpdk/list/?series=3D34911&a=
+mp;state=3D*" rel=3D"noreferrer" target=3D"_blank">https://patches.dpdk.org=
+/project/dpdk/list/?series=3D34911&amp;state=3D*</a><br>
+[2] <a href=3D"https://inbox.dpdk.org/dev/Z_PIBLQIT3eu6Ab3@bricha3-mobl1.ge=
+r.corp.intel.com/#t" rel=3D"noreferrer" target=3D"_blank">https://inbox.dpd=
+k.org/dev/Z_PIBLQIT3eu6Ab3@bricha3-mobl1.ger.corp.intel.com/#t</a><br>
+<br>
+Bruce Richardson (4):<br>
+=C2=A0 eal: deprecate old coremask-based EAL parameters<br>
+=C2=A0 eal: merge corelist and core mapping options<br>
+=C2=A0 doc: provide examples of using lcores EAL parameter<br>
+=C2=A0 eal: add option for auto-mapping cpu ids to low lcore ids<br>
+<br>
+=C2=A0doc/guides/eventdevs/dlb2.rst=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0|=C2=A0 =C2=A06 +-<br>
+=C2=A0doc/guides/faq/faq.rst=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 |=C2=A0 =C2=A08 +-<br>
+=C2=A0doc/guides/linux_gsg/build_sample_apps.rst=C2=A0 =C2=A0 |=C2=A0 =C2=
+=A07 +-<br>
+=C2=A0doc/guides/linux_gsg/eal_args.include.rst=C2=A0 =C2=A0 =C2=A0|=C2=A0 =
+61 ++++--<br>
+=C2=A0.../prog_guide/env_abstraction_layer.rst=C2=A0 =C2=A0 =C2=A0 |=C2=A0 =
+=C2=A03 +-<br>
+=C2=A0doc/guides/prog_guide/meson_ut.rst=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 |=C2=A0 =C2=A02 +-<br>
+=C2=A0doc/guides/prog_guide/multi_proc_support.rst=C2=A0 |=C2=A0 =C2=A02 +-=
+<br>
+=C2=A0doc/guides/prog_guide/service_cores.rst=C2=A0 =C2=A0 =C2=A0 =C2=A0|=
+=C2=A0 =C2=A08 +-<br>
+=C2=A0doc/guides/rel_notes/deprecation.rst=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 |=C2=A0 10 +<br>
+=C2=A0doc/guides/sample_app_ug/ip_frag.rst=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 |=C2=A0 =C2=A07 +-<br>
+=C2=A0doc/guides/sample_app_ug/ip_reassembly.rst=C2=A0 =C2=A0 |=C2=A0 =C2=
+=A07 +-<br>
+=C2=A0doc/guides/sample_app_ug/multi_process.rst=C2=A0 =C2=A0 |=C2=A0 14 +-=
+<br>
+=C2=A0doc/guides/sample_app_ug/qos_scheduler.rst=C2=A0 =C2=A0 |=C2=A0 =C2=
+=A02 +-<br>
+=C2=A0doc/guides/sample_app_ug/test_pipeline.rst=C2=A0 =C2=A0 |=C2=A0 =C2=
+=A02 +-<br>
+=C2=A0doc/guides/tools/testbbdev.rst=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 |=C2=A0 =C2=A02 +-<br>
+=C2=A0lib/eal/common/eal_common_options.c=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0| 202 +++++++-----------<br>
+=C2=A0lib/eal/common/eal_options.h=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 |=C2=A0 =C2=A06 +-<br>
+=C2=A0lib/eal/windows/include/sched.h=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0|=C2=A0 =C2=A01 +<br>
+=C2=A018 files changed, 168 insertions(+), 182 deletions(-)<br>
+<br>
+--<br>
+2.45.2<br>
+<br>
+</blockquote></div>
+
+--000000000000a98b13063455fa89--
