@@ -2,61 +2,63 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB77AC369DC
-	for <dpdk-dev@archiver.kernel.org>; Sun,  4 May 2025 21:22:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3BC5C369DC
+	for <dpdk-dev@archiver.kernel.org>; Sun,  4 May 2025 21:22:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2A82B402A8;
-	Sun,  4 May 2025 23:22:25 +0200 (CEST)
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
- [209.85.214.174])
- by mails.dpdk.org (Postfix) with ESMTP id 686AE40156
- for <dev@dpdk.org>; Sun,  4 May 2025 23:22:23 +0200 (CEST)
-Received: by mail-pl1-f174.google.com with SMTP id
- d9443c01a7336-2295d78b433so36071265ad.2
- for <dev@dpdk.org>; Sun, 04 May 2025 14:22:23 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2DFEF402CA;
+	Sun,  4 May 2025 23:22:38 +0200 (CEST)
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com
+ [209.85.216.52]) by mails.dpdk.org (Postfix) with ESMTP id 5E23D40156
+ for <dev@dpdk.org>; Sun,  4 May 2025 23:22:36 +0200 (CEST)
+Received: by mail-pj1-f52.google.com with SMTP id
+ 98e67ed59e1d1-2ff799d99dcso3853466a91.1
+ for <dev@dpdk.org>; Sun, 04 May 2025 14:22:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1746393742; x=1746998542; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1746393755; x=1746998555; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=uDBK6KDEOW1SL9TGKZp2Jr5owXTfEEtFCn2X9gE0dsY=;
- b=aSFvZb+lg6iZD22jS0l9hcrbGl0F3t1Hdmud9bEjLJz9KmZs9w52Hv2flM2n4334q5
- rgo8hE8e8K2PM3vhNAZQIyL6I5XStTKsCeS2dSXqfUSLmvOTJdhpaLjUOGrbFx/QSje6
- qOmiyEVSNghkK0W/FQNmHYHoLBv+N5CRWQvfY=
+ bh=BX2iYHISeJqvwLFj9oDbOchKU33y4XvJpqfUwlGQ8Jc=;
+ b=WuZUTqoLbUhb5v8PFfcUC89XW+bImKUVDuKccBAxp0CJYWG2SX0ywcGeIfijcUFLLt
+ sqTRrbBXuhWaC21qU+1y3YoMcnoz4xt/TtOnKZR93vmLWQccPABwAaXnuh2+zBuZWITJ
+ JO0MDxQ4Wmtlw4d4AjSWWVlI6unUB0uvSIelA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1746393742; x=1746998542;
+ d=1e100.net; s=20230601; t=1746393755; x=1746998555;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=uDBK6KDEOW1SL9TGKZp2Jr5owXTfEEtFCn2X9gE0dsY=;
- b=IPhn/vbSM31Se4rCJNPqBnzub/440Aovdi13EojXf+wUuSy7KcPJDyyw93rieMCMLe
- SjCV9qgRJKJxfVp/ZTd62u4lJvJBBE7MMp+ghEIXdLFnosk8z6nGiNOoJM2dP3sb0ujN
- WbuUIOQ7NnpCmJNaglv4+knpgW+B9nnltvl6eNbynjwUsoAa0AdVWXLaSla6f6mujMrV
- W/n50yehYejLdHNFLXkguD1/2yqHZFwmEYKzDgqRn1gxmTgQgOVRs8L0//91OQDgHWeU
- TSe9ZVkx3rccePJx5qOMOnazrr8e2T100Hin5FhOpYsWWvRjczJJM8WYSDZ1NEarV5Xq
- JG2g==
-X-Gm-Message-State: AOJu0Yx748MIvsgAgX0sYiNfswA2hc4p4+O9sEVXC3EtVivmkZL220Aw
- iuUnWHgaymAzIvs3TZ+r8XVZqeIYcJVK3qLW1iqZ7AjDJ+H5xyYaWioEdxW37BZIx2Y4TiyeU3P
- xWN68W95QXF7ZsuTin6EAhCBx3qbpgq69h6O3LA==
-X-Gm-Gg: ASbGnctxcfyb40odN7YIxTdgkhl5eFUVCzkvw+NKH8xjlWj5fwqLv/MYgaQ1dHI9Hg4
- CqxDFlAptxFajOGNCDVb+2RCFttTg2eEdUs14cnfrFTcRSn768zjceR+G7wTC128jiI5rpZ+Lw3
- TI1f797IRGTcXcVDpyZU4VCjqLywtKbthdhryVP5HNO0ha7xxwq+nbqsA=
-X-Google-Smtp-Source: AGHT+IH9I0eqW85i0Ut5W9aCZVyUMcalsIuHGQ3qn1QKp9SRDC1bUc1ls4hOgO+kn5PrfJITLVggsSOk01WmcvwZSD4=
-X-Received: by 2002:a17:902:e750:b0:224:1221:1ab4 with SMTP id
- d9443c01a7336-22e1e8e686bmr82391045ad.22.1746393742538; Sun, 04 May 2025
- 14:22:22 -0700 (PDT)
+ bh=BX2iYHISeJqvwLFj9oDbOchKU33y4XvJpqfUwlGQ8Jc=;
+ b=K/Q004cd46ouzIoTbP8G5cxlIFIJlJx3jokwZEkaHg/K/tBoOGOAURj+FTT3osl4NO
+ k0H1QfjSlew7KdP1yGlxi29vFIWM5aHZ+ws3BHYqqbiyXizqjaZSshpaTbNlkRCM2tKB
+ duHyEX+H8YfTjQDZeEjBMjhaUba21Z6MQvYB6KP36Skju+c0tWZxdudM78e+3MiJGzd7
+ maA9hIQm9bFa7NCg3Z1ErOl83EE6dmGMgQhhMZy21qjWZJ9TxgCc5a8rRWbSkeYjOy3r
+ B2OnKeicb/6tGYD1iQtbbk0uTStO7YtjV284VlDVSrLhBNgQO+wysrIJNId74jsqau9n
+ sk1Q==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWCRoZlmi8p+m+EIYu9jZ6Ahg0KtKJFWoskZoxERbfDsVQmvf9scea86mFtOLTScqW/rtU=@dpdk.org
+X-Gm-Message-State: AOJu0YxZEksKCD1TlxoNbLVg7dhg4HdKUme1UJeYWXSt2vhRwJSSyg8G
+ mr3G54XRwitZQkzBKoUux6+5IMiRQNVyYdBxG8LhvwhcB2aKp4R2DO3TtKt8CCStDSOiFU6jOv0
+ dtNr6WCpqGhekm4LBbsfeG1gRtkeyEGk08YvFcw==
+X-Gm-Gg: ASbGnctTIb1P+uoA50Y7ikWEYhtIKQcInRQ26Poi9UkYR2OWtCA1Wl3ND65RidVBZLV
+ oChUUGMkFWIb0HmRmF1pDoVvkMl3kXXbA6LDlEqhjvUZNX/Ifh8XgeVWtzRz+q0MIk3bmfrDC2+
+ xgEo4nT3SJK4tWf90Tns61AybOrze2FZgwEg4CObpw48vHsVmJU7/Ojho=
+X-Google-Smtp-Source: AGHT+IFDg/tDIUqynFwxPFytBdh8jIV9hsXO6BalHALJY3rNpFe5KOBUe4VtrrR4f+dAfyK79DMrFCKVxDrWbRTsNJE=
+X-Received: by 2002:a17:90b:2e41:b0:30a:4c44:cc05 with SMTP id
+ 98e67ed59e1d1-30a6198d00amr8465046a91.10.1746393755609; Sun, 04 May 2025
+ 14:22:35 -0700 (PDT)
 MIME-Version: 1.0
-References: <20250313113829.1480907-1-bruce.richardson@intel.com>
- <20250502151134.536799-1-bruce.richardson@intel.com>
-In-Reply-To: <20250502151134.536799-1-bruce.richardson@intel.com>
+References: <20250502152601.699443-1-dhanya.r.pillai@intel.com>
+In-Reply-To: <20250502152601.699443-1-dhanya.r.pillai@intel.com>
 From: Patrick Robb <probb@iol.unh.edu>
-Date: Sun, 4 May 2025 17:17:49 -0400
-X-Gm-Features: ATxdqUEB-kKclZvcFyNGEE8Mr3MpM__gVP9Z_4pvfYWIaTgvLr-B84DQvkEyYEg
-Message-ID: <CAJvnSUCCtrzXMKALi6UpnpMD__M1Y+T3z8de+3TFNPJqE+LS-A@mail.gmail.com>
-Subject: Re: [PATCH v3 0/4] rework and expand EAL lcore options
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, david.marchand@redhat.com, mb@smartsharesystems.com, 
- stephen@networkplumber.org
-Content-Type: multipart/alternative; boundary="000000000000a98b13063455fa89"
+Date: Sun, 4 May 2025 17:18:02 -0400
+X-Gm-Features: ATxdqUHSnD7mkFZzhsAlK1wfIfOLS75Q1jqBnKZzM4EHd-I49J4t2pHg9gs6VEg
+Message-ID: <CAJvnSUAweypuEGUhho4q6F6NGxotja37tpDY9yynw=EuXDpzZg@mail.gmail.com>
+Subject: Re: [PATCH] net/ice: update log message
+To: "Pillai, Dhanya R" <dhanya.r.pillai@intel.com>
+Cc: Thomas Monjalon <thomas@monjalon.net>,
+ Bruce Richardson <bruce.richardson@intel.com>, 
+ Anatoly Burakov <anatoly.burakov@intel.com>, dev@dpdk.org,
+ timothy.miskell@intel.com, Pillai@dpdk.org
+Content-Type: multipart/alternative; boundary="0000000000007101e1063455fb43"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -70,177 +72,128 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000a98b13063455fa89
+--0000000000007101e1063455fb43
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 Please disregard the Community Lab DTS failure just reported on this
 patchseries. I need to reconfigure the testbed and rerun the test.
 
-On Fri, May 2, 2025 at 11:11=E2=80=AFAM Bruce Richardson <bruce.richardson@=
-intel.com>
+On Fri, May 2, 2025 at 11:26=E2=80=AFAM Pillai, Dhanya R <dhanya.r.pillai@i=
+ntel.com>
 wrote:
 
-> Following discussion earlier on this thread on the previous RFCs and
-> patches submitted [1], this series is a slightly different take on
-> solving the same fundamental problem - making it easy to use CPU cores
-> with ids >=3D RTE_MAX_LCORE, without having massive amounts of code
-> complexity internally. As previously discussed[2] this patchset
-> implements proposal "2a" and does the following:
+> Added log message for ddp package load failure.
 >
-> * marks the old coremask parameter (-c) and service core mask (-s) as
->   deprecated, so they can be dropped in future. Everything should now be
->   done using core lists where possible.
-> * consolidates the, previously separate but similar, "-l" and "--lcores"
->   flags into just short and long versions of the same thing. This does
->   not affect the "--lcores" flag at all, but expands the scope of what
->   was possible with "-l".
-> * a new flag, with long/short versions, is added as "-L" to allow the
->   user to just specify a range or set of physical CPU core ids to be
->   used by the app, and have them automatically mapped internally to a
->   set of lcore ids starting at 0. This provides the "easy solution" to
->   the original problem stated above.
+> mailmap: update contributor entry
 >
-> For completeness, since it's in the same area, the previously separate
-> documentation patch, adding examples for the "--lcores" parameter, is
-> rolled into this series as patch 3.
+> Signed-off-by: Pillai, Dhanya R <dhanya.r.pillai@intel.com>
+> ---
+>  .mailmap                           | 1 +
+>  drivers/net/intel/ice/ice_ethdev.c | 2 +-
+>  2 files changed, 2 insertions(+), 1 deletion(-)
 >
-> [1] https://patches.dpdk.org/project/dpdk/list/?series=3D34911&state=3D*
-> [2]
-> https://inbox.dpdk.org/dev/Z_PIBLQIT3eu6Ab3@bricha3-mobl1.ger.corp.intel.=
-com/#t
+> diff --git a/.mailmap b/.mailmap
+> index d8439b79ce..0f66ad834f 100644
+> --- a/.mailmap
+> +++ b/.mailmap
+> @@ -353,6 +353,7 @@ Devendra Singh Rawat <dsinghrawat@marvell.com>
+>  Dex Chen <dex.chen@ruckuswireless.com>
+>  Dexia Li <dexia.li@jaguarmicro.com>
+>  Dexuan Cui <decui@microsoft.com>
+> +Dhanya Pillai <dhanya.r.pillai@intel.com>
+>  Dharmik Thakkar <dharmikjayesh.thakkar@arm.com> <dharmik.thakkar@arm.com=
 >
-> Bruce Richardson (4):
->   eal: deprecate old coremask-based EAL parameters
->   eal: merge corelist and core mapping options
->   doc: provide examples of using lcores EAL parameter
->   eal: add option for auto-mapping cpu ids to low lcore ids
+>  Dheemanth Mallikarjun <dheemanthm@vmware.com>
+>  Dhruv Tripathi <dhruv.tripathi@arm.com>
+> diff --git a/drivers/net/intel/ice/ice_ethdev.c
+> b/drivers/net/intel/ice/ice_ethdev.c
+> index 21d3795954..bd55e0e7e1 100644
+> --- a/drivers/net/intel/ice/ice_ethdev.c
+> +++ b/drivers/net/intel/ice/ice_ethdev.c
+> @@ -2026,7 +2026,7 @@ int ice_load_pkg(struct ice_adapter *adapter, bool
+> use_dsn, uint64_t dsn)
 >
->  doc/guides/eventdevs/dlb2.rst                 |   6 +-
->  doc/guides/faq/faq.rst                        |   8 +-
->  doc/guides/linux_gsg/build_sample_apps.rst    |   7 +-
->  doc/guides/linux_gsg/eal_args.include.rst     |  61 ++++--
->  .../prog_guide/env_abstraction_layer.rst      |   3 +-
->  doc/guides/prog_guide/meson_ut.rst            |   2 +-
->  doc/guides/prog_guide/multi_proc_support.rst  |   2 +-
->  doc/guides/prog_guide/service_cores.rst       |   8 +-
->  doc/guides/rel_notes/deprecation.rst          |  10 +
->  doc/guides/sample_app_ug/ip_frag.rst          |   7 +-
->  doc/guides/sample_app_ug/ip_reassembly.rst    |   7 +-
->  doc/guides/sample_app_ug/multi_process.rst    |  14 +-
->  doc/guides/sample_app_ug/qos_scheduler.rst    |   2 +-
->  doc/guides/sample_app_ug/test_pipeline.rst    |   2 +-
->  doc/guides/tools/testbbdev.rst                |   2 +-
->  lib/eal/common/eal_common_options.c           | 202 +++++++-----------
->  lib/eal/common/eal_options.h                  |   6 +-
->  lib/eal/windows/include/sched.h               |   1 +
->  18 files changed, 168 insertions(+), 182 deletions(-)
->
+>         err =3D ice_copy_and_init_pkg(hw, buf, bufsz,
+> adapter->devargs.ddp_load_sched);
+>         if (!ice_is_init_pkg_successful(err)) {
+> -               PMD_INIT_LOG(ERR, "ice_copy_and_init_hw failed: %d", err)=
+;
+> +               PMD_INIT_LOG(ERR, "Failed to load ddp package: %d", err);
+>                 free(buf);
+>                 return -1;
+>         }
 > --
-> 2.45.2
+> 2.43.0
 >
 >
 
---000000000000a98b13063455fa89
+--0000000000007101e1063455fb43
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 <div dir=3D"ltr">Please disregard the Community Lab DTS failure just=C2=A0r=
 eported on this patchseries. I need to reconfigure the testbed and rerun th=
 e test.</div><br><div class=3D"gmail_quote gmail_quote_container"><div dir=
-=3D"ltr" class=3D"gmail_attr">On Fri, May 2, 2025 at 11:11=E2=80=AFAM Bruce=
- Richardson &lt;<a href=3D"mailto:bruce.richardson@intel.com">bruce.richard=
-son@intel.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" sty=
-le=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);paddi=
-ng-left:1ex">Following discussion earlier on this thread on the previous RF=
-Cs and<br>
-patches submitted [1], this series is a slightly different take on<br>
-solving the same fundamental problem - making it easy to use CPU cores<br>
-with ids &gt;=3D RTE_MAX_LCORE, without having massive amounts of code<br>
-complexity internally. As previously discussed[2] this patchset<br>
-implements proposal &quot;2a&quot; and does the following:<br>
+=3D"ltr" class=3D"gmail_attr">On Fri, May 2, 2025 at 11:26=E2=80=AFAM Pilla=
+i, Dhanya R &lt;<a href=3D"mailto:dhanya.r.pillai@intel.com">dhanya.r.pilla=
+i@intel.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=
+=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding=
+-left:1ex">Added log message for ddp package load failure.<br>
 <br>
-* marks the old coremask parameter (-c) and service core mask (-s) as<br>
-=C2=A0 deprecated, so they can be dropped in future. Everything should now =
-be<br>
-=C2=A0 done using core lists where possible.<br>
-* consolidates the, previously separate but similar, &quot;-l&quot; and &qu=
-ot;--lcores&quot;<br>
-=C2=A0 flags into just short and long versions of the same thing. This does=
+mailmap: update contributor entry<br>
 <br>
-=C2=A0 not affect the &quot;--lcores&quot; flag at all, but expands the sco=
-pe of what<br>
-=C2=A0 was possible with &quot;-l&quot;.<br>
-* a new flag, with long/short versions, is added as &quot;-L&quot; to allow=
- the<br>
-=C2=A0 user to just specify a range or set of physical CPU core ids to be<b=
-r>
-=C2=A0 used by the app, and have them automatically mapped internally to a<=
-br>
-=C2=A0 set of lcore ids starting at 0. This provides the &quot;easy solutio=
-n&quot; to<br>
-=C2=A0 the original problem stated above.<br>
+Signed-off-by: Pillai, Dhanya R &lt;<a href=3D"mailto:dhanya.r.pillai@intel=
+.com" target=3D"_blank">dhanya.r.pillai@intel.com</a>&gt;<br>
+---<br>
+=C2=A0.mailmap=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0| 1 +<br>
+=C2=A0drivers/net/intel/ice/ice_ethdev.c | 2 +-<br>
+=C2=A02 files changed, 2 insertions(+), 1 deletion(-)<br>
 <br>
-For completeness, since it&#39;s in the same area, the previously separate<=
-br>
-documentation patch, adding examples for the &quot;--lcores&quot; parameter=
-, is<br>
-rolled into this series as patch 3.<br>
+diff --git a/.mailmap b/.mailmap<br>
+index d8439b79ce..0f66ad834f 100644<br>
+--- a/.mailmap<br>
++++ b/.mailmap<br>
+@@ -353,6 +353,7 @@ Devendra Singh Rawat &lt;<a href=3D"mailto:dsinghrawat@=
+marvell.com" target=3D"_blank">dsinghrawat@marvell.com</a>&gt;<br>
+=C2=A0Dex Chen &lt;<a href=3D"mailto:dex.chen@ruckuswireless.com" target=3D=
+"_blank">dex.chen@ruckuswireless.com</a>&gt;<br>
+=C2=A0Dexia Li &lt;<a href=3D"mailto:dexia.li@jaguarmicro.com" target=3D"_b=
+lank">dexia.li@jaguarmicro.com</a>&gt;<br>
+=C2=A0Dexuan Cui &lt;<a href=3D"mailto:decui@microsoft.com" target=3D"_blan=
+k">decui@microsoft.com</a>&gt;<br>
++Dhanya Pillai &lt;<a href=3D"mailto:dhanya.r.pillai@intel.com" target=3D"_=
+blank">dhanya.r.pillai@intel.com</a>&gt;<br>
+=C2=A0Dharmik Thakkar &lt;<a href=3D"mailto:dharmikjayesh.thakkar@arm.com" =
+target=3D"_blank">dharmikjayesh.thakkar@arm.com</a>&gt; &lt;<a href=3D"mail=
+to:dharmik.thakkar@arm.com" target=3D"_blank">dharmik.thakkar@arm.com</a>&g=
+t;<br>
+=C2=A0Dheemanth Mallikarjun &lt;<a href=3D"mailto:dheemanthm@vmware.com" ta=
+rget=3D"_blank">dheemanthm@vmware.com</a>&gt;<br>
+=C2=A0Dhruv Tripathi &lt;<a href=3D"mailto:dhruv.tripathi@arm.com" target=
+=3D"_blank">dhruv.tripathi@arm.com</a>&gt;<br>
+diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice=
+_ethdev.c<br>
+index 21d3795954..bd55e0e7e1 100644<br>
+--- a/drivers/net/intel/ice/ice_ethdev.c<br>
++++ b/drivers/net/intel/ice/ice_ethdev.c<br>
+@@ -2026,7 +2026,7 @@ int ice_load_pkg(struct ice_adapter *adapter, bool us=
+e_dsn, uint64_t dsn)<br>
 <br>
-[1] <a href=3D"https://patches.dpdk.org/project/dpdk/list/?series=3D34911&a=
-mp;state=3D*" rel=3D"noreferrer" target=3D"_blank">https://patches.dpdk.org=
-/project/dpdk/list/?series=3D34911&amp;state=3D*</a><br>
-[2] <a href=3D"https://inbox.dpdk.org/dev/Z_PIBLQIT3eu6Ab3@bricha3-mobl1.ge=
-r.corp.intel.com/#t" rel=3D"noreferrer" target=3D"_blank">https://inbox.dpd=
-k.org/dev/Z_PIBLQIT3eu6Ab3@bricha3-mobl1.ger.corp.intel.com/#t</a><br>
-<br>
-Bruce Richardson (4):<br>
-=C2=A0 eal: deprecate old coremask-based EAL parameters<br>
-=C2=A0 eal: merge corelist and core mapping options<br>
-=C2=A0 doc: provide examples of using lcores EAL parameter<br>
-=C2=A0 eal: add option for auto-mapping cpu ids to low lcore ids<br>
-<br>
-=C2=A0doc/guides/eventdevs/dlb2.rst=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0|=C2=A0 =C2=A06 +-<br>
-=C2=A0doc/guides/faq/faq.rst=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 |=C2=A0 =C2=A08 +-<br>
-=C2=A0doc/guides/linux_gsg/build_sample_apps.rst=C2=A0 =C2=A0 |=C2=A0 =C2=
-=A07 +-<br>
-=C2=A0doc/guides/linux_gsg/eal_args.include.rst=C2=A0 =C2=A0 =C2=A0|=C2=A0 =
-61 ++++--<br>
-=C2=A0.../prog_guide/env_abstraction_layer.rst=C2=A0 =C2=A0 =C2=A0 |=C2=A0 =
-=C2=A03 +-<br>
-=C2=A0doc/guides/prog_guide/meson_ut.rst=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 |=C2=A0 =C2=A02 +-<br>
-=C2=A0doc/guides/prog_guide/multi_proc_support.rst=C2=A0 |=C2=A0 =C2=A02 +-=
-<br>
-=C2=A0doc/guides/prog_guide/service_cores.rst=C2=A0 =C2=A0 =C2=A0 =C2=A0|=
-=C2=A0 =C2=A08 +-<br>
-=C2=A0doc/guides/rel_notes/deprecation.rst=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 |=C2=A0 10 +<br>
-=C2=A0doc/guides/sample_app_ug/ip_frag.rst=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 |=C2=A0 =C2=A07 +-<br>
-=C2=A0doc/guides/sample_app_ug/ip_reassembly.rst=C2=A0 =C2=A0 |=C2=A0 =C2=
-=A07 +-<br>
-=C2=A0doc/guides/sample_app_ug/multi_process.rst=C2=A0 =C2=A0 |=C2=A0 14 +-=
-<br>
-=C2=A0doc/guides/sample_app_ug/qos_scheduler.rst=C2=A0 =C2=A0 |=C2=A0 =C2=
-=A02 +-<br>
-=C2=A0doc/guides/sample_app_ug/test_pipeline.rst=C2=A0 =C2=A0 |=C2=A0 =C2=
-=A02 +-<br>
-=C2=A0doc/guides/tools/testbbdev.rst=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 |=C2=A0 =C2=A02 +-<br>
-=C2=A0lib/eal/common/eal_common_options.c=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0| 202 +++++++-----------<br>
-=C2=A0lib/eal/common/eal_options.h=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 |=C2=A0 =C2=A06 +-<br>
-=C2=A0lib/eal/windows/include/sched.h=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0|=C2=A0 =C2=A01 +<br>
-=C2=A018 files changed, 168 insertions(+), 182 deletions(-)<br>
-<br>
---<br>
-2.45.2<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 err =3D ice_copy_and_init_pkg(hw, buf, bufsz, a=
+dapter-&gt;devargs.ddp_load_sched);<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (!ice_is_init_pkg_successful(err)) {<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0PMD_INIT_LOG(ERR, &=
+quot;ice_copy_and_init_hw failed: %d&quot;, err);<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0PMD_INIT_LOG(ERR, &=
+quot;Failed to load ddp package: %d&quot;, err);<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 free(buf);<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return -1;<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 }<br>
+-- <br>
+2.43.0<br>
 <br>
 </blockquote></div>
 
---000000000000a98b13063455fa89--
+--0000000000007101e1063455fb43--
