@@ -2,144 +2,129 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 225CCC369C2
-	for <dpdk-dev@archiver.kernel.org>; Sat,  3 May 2025 17:13:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E62BC369DC
+	for <dpdk-dev@archiver.kernel.org>; Sun,  4 May 2025 05:24:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A59824025D;
-	Sat,  3 May 2025 19:13:53 +0200 (CEST)
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com
- (mail-mw2nam10on2131.outbound.protection.outlook.com [40.107.94.131])
- by mails.dpdk.org (Postfix) with ESMTP id C181740156
- for <dev@dpdk.org>; Sat,  3 May 2025 19:13:51 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B03704025D;
+	Sun,  4 May 2025 07:24:32 +0200 (CEST)
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com
+ (mail-dm6nam10on2053.outbound.protection.outlook.com [40.107.93.53])
+ by mails.dpdk.org (Postfix) with ESMTP id 57E5840156
+ for <dev@dpdk.org>; Sun,  4 May 2025 07:24:31 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eZldm0Deqx0WEqSCjdN130QMLJXYwbQS6byxLhLVKc+JFgf/3hDC8oHj3MkHpW5vIjXDAFLV9zXiKrDfWOhughXSsUL+BAT8DLaU+EvDA2UjHVnY2MR3EopYR2KWg6MS3ojRU/OJOmI05iFXobl/mVGOm9ZNhbMucEOX5AWu1/S+Y656gLaM+Ql6DfpU1Me9efJxIuF6M4GsNX5NHMunJp4wm+P1qPsqqyffv5WB5B/Kz9b3wd1MmYPxsH5x/LjLzHzdoAy7x4cDZsyFIufsjGYnrK30ANgolO18xJ0nPSYYfPX621LX08kaDwav7+5tl0oIHTZsS5EPWy8RUrjxQQ==
+ b=iJUtdr6m6VnIQOu0uplnwlC7GSDTkrb4E00Ty+SYmYHyMbBHHvpiDhZCrbEnpc2NwhFOmexHfCwgVpaT/WI83/kWfzNpUy+otruEpMSLO4YdoYbaOpkgiQftN2WPqPUbgy4lrfIb91pJFg/rn8+GEtdUb1PK7YNm/UEJDezXABrnJsoTcpuywq1zrG33VDm8STNcDpZuZpuGa+ZWixPMmxBAynBiWyDyE1fLxpRrcVBCrVacSW1MF8dIEFA+wVmexj/sAqw0kYh5XquXiSGeRLXzLhvWRit1hkhUN4+teiDSKvYSi0y5W9rRApyY8Zj/XSWmHlB8dUwTEOUvpQFcNQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2+oOU15RVTH1xpLt4syGh8WYU4fzaUDUeI9WLlXVlY4=;
- b=LYy8g7sBWvtlmovWkjvl0OWUpFPbwlfhXJopFrcfiWCHli0+qCIbsv+8m0wpWeCb/ts1uSnEX/PVj0TwqZpQzzuoGFxvN+YbiUWUkX3CToUDCWVYk1iq/U9xu0yutZC5U+H67AZ4rcoZpC8HNYkMluXY08pmT2V/x2NVtl0e5NA7Ov5PgG5rsGoXXW9iY59pZux1zGs2KsShdZn2eimz/5VqLbMSFkMdakGJH0ZYPdknhJX11cEG1/eSk74MbTVgJEoSfWqeO/WLaC4YcVY+eDuTIUhMGvHXB6EhqCU7X2OOPv5GEzfyhJguxs4SwSdlYwJIHo/v1G4rzf8iktWs7Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=unh.edu; dmarc=pass action=none header.from=unh.edu; dkim=pass
- header.d=unh.edu; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=unh.edu; s=selector2; 
+ bh=UlN3HtX0tbPKmyCyAXt4Sk4kGcGuTaSGt8OxRhL8Big=;
+ b=D+n2Pn+nSqXzEcfAKosYemfMfUjIdid3rgC16eeJCeT5xWWelTxl4hWmDRUwnZZWQPGC3z0gb/IuoFTcg4Nl4wTOfj1TvfMkiuksh+I6zapIw8FHniY/VTJv06nM7Sp6M1kGzXoLQXNhOQu56fy/WfPn96srD9N7pxmh7ksFiYsbhZ7AmjZcu9fRIkFSXDWX+skI1DF7FF+urIButtM6Z8XDxabVSgyEO62JsFfrjntGHkBWSRC/tvhediuVyLxgUBSWzq8N4WixcQz174glAg6AgH/43q5A2yz0wLsg7Qy5U8GvIxzvF/ID2YBUxoBWhEgtHIClWsO4zSQj3YxG8Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2+oOU15RVTH1xpLt4syGh8WYU4fzaUDUeI9WLlXVlY4=;
- b=MMYFQuREgBw4fyj26JxdampNA4Pr720CcsBeX/Gyw4+5Il0JbLOh6LPcmwv4zePE4p+kEffzOXGbcCtBSfGKuq6N3WFU3noS9W95tcxq8wZf4Yf+4bUZwFZFo6GI+VvznRlvUsQpoFJdl1StXZuvrxkOFbvEDu3svFBzc7RICa0=
-Received: from DM8P223MB0383.NAMP223.PROD.OUTLOOK.COM (2603:10b6:8:b::9) by
- SJ5PPF6327F1ED3.NAMP223.PROD.OUTLOOK.COM (2603:10b6:a0f:fc02::61a) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.24; Sat, 3 May
- 2025 17:13:47 +0000
-Received: from DM8P223MB0383.NAMP223.PROD.OUTLOOK.COM
- ([fe80::e52:6031:810f:a743]) by DM8P223MB0383.NAMP223.PROD.OUTLOOK.COM
- ([fe80::e52:6031:810f:a743%3]) with mapi id 15.20.8699.022; Sat, 3 May 2025
- 17:13:47 +0000
-From: Owen Hilyard <Owen.Hilyard@unh.edu>
-To: "Van Haaren, Harry" <harry.van.haaren@intel.com>, "Etelson, Gregory"
- <getelson@nvidia.com>, Bruce Richardson <bruce.richardson@intel.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>
-Subject: Re: [PATCH] rust: RFC/demo of safe API for Dpdk Eal, Eth and Rxq
-Thread-Topic: [PATCH] rust: RFC/demo of safe API for Dpdk Eal, Eth and Rxq
-Thread-Index: AQHbr6r0sqE17AHXak+XC2nGaMcQ/LOoNgYAgAEX6wCAAvcwAIAGwTaAgATktQCABLEMgIAA3kCAgAHmrICAABRGAIAAP/9t
-Date: Sat, 3 May 2025 17:13:47 +0000
-Message-ID: <DM8P223MB038323681A4BEA771CF92A6D8D8D2@DM8P223MB0383.NAMP223.PROD.OUTLOOK.COM>
-References: <20250417151039.186448-1-harry.van.haaren@intel.com>
- <9c4a970a-576c-7b0b-7685-791c4dd2689d@nvidia.com>
- <PH8PR11MB6803458E6348B4D167C47C91D7BF2@PH8PR11MB6803.namprd11.prod.outlook.com>
- <IA1PR12MB63308A2F69036E3ACCC605D0A5B92@IA1PR12MB6330.namprd12.prod.outlook.com>
- <PH8PR11MB680363E200616CBB39DDDCB6D7852@PH8PR11MB6803.namprd11.prod.outlook.com>
- <c5387a8c-b560-3fde-3453-c2478d8e6969@nvidia.com>
- <IA1PR12MB6330872DB96BB9D83EF7EFF2A5832@IA1PR12MB6330.namprd12.prod.outlook.com>
- <aBMmUZ2RDSXQOHXg@bricha3-mobl1.ger.corp.intel.com>
- <a1161f7d-1a55-6200-7440-d615d5a41a6c@nvidia.com>
- <PH8PR11MB6803B2CD0BF276C6164C3D97D78D2@PH8PR11MB6803.namprd11.prod.outlook.com>
-In-Reply-To: <PH8PR11MB6803B2CD0BF276C6164C3D97D78D2@PH8PR11MB6803.namprd11.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=unh.edu;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM8P223MB0383:EE_|SJ5PPF6327F1ED3:EE_
-x-ms-office365-filtering-correlation-id: a2421719-070e-4e88-5a2e-08dd8a65dde4
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|366016|1800799024|38070700018|13003099007|8096899003|7053199007;
-x-microsoft-antispam-message-info: =?iso-8859-1?Q?gfRIfIb795VkLBBp9xu7e/J1j46XUrjTsTLE77OiXz8DqpNhz76KV6pTCL?=
- =?iso-8859-1?Q?tCNi9seD1vKxBHbjyPgDJugSzFdK/7YDhWXKDOYKQaSj+oMzFmcTFiTP7u?=
- =?iso-8859-1?Q?60dOWmKwOxTgYMQQUc4/rBzUh0aKF0WtaX5T1r7SaaMhAX9JNkg8X6DToa?=
- =?iso-8859-1?Q?hOAu4tox4FAmTYfrbgAd++lg34Z1fe1WGyChSLlMKVr3eGOuhKKfDO6dCy?=
- =?iso-8859-1?Q?AuXifhdjK/txus9x8rOtmhZPDFPWtHfsmU9Ryzm3WmGjj1OFloAbgSGsi9?=
- =?iso-8859-1?Q?t+tYcd5C+motobjEUI82or7l7Yh1HfGABntKXlVQr2smwuByQOrgTX0Q9F?=
- =?iso-8859-1?Q?KGiACALbOdUW4ANrGuv3fZRrE4Z+fFHEM5+xk6lapBs/b8vQhUCaLmHYoU?=
- =?iso-8859-1?Q?/T+6Hn0pz6n0NnWdjpsN4Z/JLUbwvkIewK4GrMg3TWckSqA5iaqnkfh+jv?=
- =?iso-8859-1?Q?xwXLM9TcMwNk1cVeRUpFZ06Xwquc3FBp1L598Kq3zW8r/PatMiRfN7vvWB?=
- =?iso-8859-1?Q?vJbi913FdNQF3V08jajQ+FhIls2nW5k9TufeXdVkpTHf+z89jiDfC0Cnyb?=
- =?iso-8859-1?Q?yCZ4bZA/I2yfElZB7zCOg40kpSVfzH52MGi4uRVW6nnEAxHq//vPaEB8fg?=
- =?iso-8859-1?Q?BCL3QpzSQGVFTKb2pkgUcnh41ENoGXq6dKWDW/9ppkVH7jnE2oBIE1xIv9?=
- =?iso-8859-1?Q?8Tbzc6UYpSUlA+RtoktcrdicTjf99fqoBEIQ4/cBUXtbX/HifxapL5a/2q?=
- =?iso-8859-1?Q?HShtPIowaU8Xv+d6LwmXp9ypBWUFsn/r0kDehgjMU0PSrLtQ6E74bWvmub?=
- =?iso-8859-1?Q?A8IgyCbHCqV/9AAWldOohk5N3ElbfIrcIqssR7R4lcARDt45GUPBPBkLmu?=
- =?iso-8859-1?Q?ZZC35fqCkW3o3+fTXcLylnSNz2+jraiB4UpnMdk71LWEnv4p5bTr0tdRRf?=
- =?iso-8859-1?Q?OKalWwco1oTVDF5qrXh4KpXqm2h8nB0WiPYE+o0ooW6zHZILAc/So70Yqx?=
- =?iso-8859-1?Q?XxqzGi7g8kU5p3bcSxhHE2klS3QewvPcEAsXVCwHM0ZNgcgJWoYy4JDQhO?=
- =?iso-8859-1?Q?ghRIbmk99osGkhHhyqKsLsM6Aa1ETc19rA2Rpo/zk7MJnLG9o4fASeH7zw?=
- =?iso-8859-1?Q?GfxlKqDaEc4Anhs4A9wj7nBb28tZKMymAV0IdZ7o9mkenRHtuxgSVLwmyp?=
- =?iso-8859-1?Q?OClhLOKkeslTIh7uIru3HXMoReWvErODKM1Tdk0L8NAnjKee7ccVw088Pb?=
- =?iso-8859-1?Q?dPVdYOEpGyAT07RtirmtDK+xZd2qc9otIblopdER4x9OyVBwwoEXPmc/+V?=
- =?iso-8859-1?Q?KsSuLxQTwdQgxlV76HjU6ZPdVjXxghTt4cyTyja1xWr7AJmsQOAXDtJlRM?=
- =?iso-8859-1?Q?iEzKe0Hk1t6bsFi+1nJ+WsonluUNAAgLo2/CoDqKjLNNnXVIBsJrihrhRi?=
- =?iso-8859-1?Q?Yjj4To1H46cnaiSdvxvwXxRly8+aXdMNvbJtD8J05yvoVIElYuI8uAVApC?=
- =?iso-8859-1?Q?A=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DM8P223MB0383.NAMP223.PROD.OUTLOOK.COM; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024)(38070700018)(13003099007)(8096899003)(7053199007);
- DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?A457S9RcF+ZudOeA152Lti6TTyHbv0XWo9JBcNYo3IgGcDaCuk8MUC7c4x?=
- =?iso-8859-1?Q?tf1fHTYOhT5x49uI2FPjDmGxyPPdpeZNbXinrd4uzXwjzj0omx9ryx8a7T?=
- =?iso-8859-1?Q?PrrfPZ7XaHzAeggPQ8AR39//DmprtA/30aj9I6mcIXdKBM43rKaTGWa+gy?=
- =?iso-8859-1?Q?j6hc3zPMx5kXknmW2vJASDh9kYhwkGlzeq2gkBSiF1V0iL/TVQ4XoPlT8u?=
- =?iso-8859-1?Q?TpPLHEEg6xcqJWWHgV31BkIRoyF+KF1JwUgeY/MpPXljQak1Lm/NWoZfcF?=
- =?iso-8859-1?Q?NP7gB766aEaHpKGja7Bk8HnFxPPEmTlr/pIlxIclf0ECn74tJWF/8j0CLH?=
- =?iso-8859-1?Q?Y6XdNhFWS6Z5Dizmxt3f2B/8cd22Ct/lfaknIWwWzIifTe87wbNZ/hdEkB?=
- =?iso-8859-1?Q?kgMkrROjq8qqG6LEn44NxsPvDrUIIzaQ9ueD0oOowsciVylWI13il3Zmxk?=
- =?iso-8859-1?Q?t5dtNyRIF9ayJWtq6wi8i/8CL+ZnwFkPH3poFr78LG4F7XTGwURDKgr4pb?=
- =?iso-8859-1?Q?+Dg49USNkKb2sbHzaGgN2RW03QHxtObl5QkDQFHTDkOS4qEJKOY+IfPEr/?=
- =?iso-8859-1?Q?Tf862dsCJAtnmYYumCSBZUGhlgpPBB6LeEemFnZ9NzbFzNHYO2Ilgxv2Pq?=
- =?iso-8859-1?Q?U6Pxg6EBxl1eX3K3Z+XRC4kzwuYa+0VNAKizo5qQeu1o79I1Vvo8r/uOxG?=
- =?iso-8859-1?Q?JgdocSWmWAEXOLtEmgNXFVtAUHfL+KSHvhCpe4gmPQz5g/h5cV6WQcvrjU?=
- =?iso-8859-1?Q?2EIW7pk5gtZo+k+yF9R16jvD2XCneKS+8S0LwRKH74HMMk3HsXxPSmZwUs?=
- =?iso-8859-1?Q?Dz1rY2GBqixeAu7GdNFkQubbfnuv4DYcj6zdIEMzaTEhhfNRezE7qUWBHX?=
- =?iso-8859-1?Q?HIUp7FQtRT7JQcmMS2GMgQzRakYhhbu26Nk50NVNS7XErAkfB2PHn80yQE?=
- =?iso-8859-1?Q?mLtzcjCFXe6v3SU2vIz+k0KujmsV+RpLXldmOsYRYKDjBAQghfF4V5V1ZV?=
- =?iso-8859-1?Q?h+sHYChaK+uqEh94filnB0ALjygFXMcfBFqO+e41zegOtC6/yCDDz5TtSS?=
- =?iso-8859-1?Q?XE1OfUlx3yzPK0rNpHGG3PLdB/AjgZP653TpJgf9UultBISE8UZFkha/vW?=
- =?iso-8859-1?Q?pU/YDkAAH2e/Zi41KRahxYmr9STz5ty8QV308TW9TBNUGydR4+04O0kW76?=
- =?iso-8859-1?Q?arldzildjuH2F5gghO9ujddbEviSDQCUNo2421fFdqAX3zDnsnKyA6m0L5?=
- =?iso-8859-1?Q?KR/MgU1vpxUbOR0K7xrSdkp6egO/bkFnqAAbOIoL4AijeTCXJrH2Kom/fu?=
- =?iso-8859-1?Q?YIAXUWfmc1gPxog2kRAdofVRs4xw1r0uap7B+/KtPu0gLC1hvpSyP9ESH2?=
- =?iso-8859-1?Q?LaV03EQCHvohbIJVN4Xyx6sjzQeEmBhJabpxIVHpJ6oB3mpi581YRj4umR?=
- =?iso-8859-1?Q?/5tqyFzYiYeDc0/pjHRJ4/MzgHzpCemhGCAlAYt6LeExsL4d2ZwTAz4kjw?=
- =?iso-8859-1?Q?bpWsyNdMX3gpLXaMpm3qq/sFWrmME1bqzGP60L4C4SZU4vifckl/d+Pgqw?=
- =?iso-8859-1?Q?y5dJrHeHvbg9Rnl3Ndgk0vqqx/1P8wrbUzR8Dx4eM/5noNFExRj8gsfzKq?=
- =?iso-8859-1?Q?ndSy8VxD5a3nA=3D?=
-Content-Type: multipart/alternative;
- boundary="_000_DM8P223MB038323681A4BEA771CF92A6D8D8D2DM8P223MB0383NAMP_"
+ bh=UlN3HtX0tbPKmyCyAXt4Sk4kGcGuTaSGt8OxRhL8Big=;
+ b=UEqm/UxZhRtqqmQtwywxzoQk2Shm7xg4c6eoWMTMh/LOFk6NQldJ7UONOkcKtYs2gSMIYjn/PVC5YJEUE8OEovIXcKiw0z/vdp/iJS4j1pK2lpPK9dOo4Lwy40sVj2gFvEgpwenBNfNaqkbUuoH53+ugqX4kMiTVZiapRVykR5Fr3U6W11FZLDlXgSriU0um9yNjBa37MaaJLZnbiMmE+MKV5a5Fin9YSXInZfnn2rznSuTebup1ToTJWAEJrTIVCyqj3lEaVaEIplpDkl1VBZglOrHtqG3SB20Gcp+dHIq0aaH+2eKSf70wCWy0duAvjcqGVaCTsa60UPfj2izvpA==
+Received: from SA1P222CA0035.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:2d0::10)
+ by BL1PR12MB5921.namprd12.prod.outlook.com (2603:10b6:208:398::5)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.20; Sun, 4 May
+ 2025 05:24:21 +0000
+Received: from SA2PEPF00001509.namprd04.prod.outlook.com
+ (2603:10b6:806:2d0:cafe::b1) by SA1P222CA0035.outlook.office365.com
+ (2603:10b6:806:2d0::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.29 via Frontend Transport; Sun,
+ 4 May 2025 05:24:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SA2PEPF00001509.mail.protection.outlook.com (10.167.242.41) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8699.20 via Frontend Transport; Sun, 4 May 2025 05:24:21 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sat, 3 May 2025
+ 22:24:10 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by drhqmail201.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sat, 3 May
+ 2025 22:24:10 -0700
+Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sat, 3 May
+ 2025 22:24:05 -0700
+From: Gregory Etelson <getelson@nvidia.com>
+To: <dev@dpdk.org>
+CC: <getelson@nvidia.com>, =?UTF-8?q?=C2=A0?= <mkashani@nvidia.com>,
+ <rasland@nvidia.com>, Dariusz Sosnowski <dsosnowski@nvidia.com>, "Viacheslav
+ Ovsiienko" <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
+ <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
+ <matan@nvidia.com>, Alexander Kozyrev <akozyrev@nvidia.com>
+Subject: [PATCH] net/mlx5: fix support for meter flow action in HWS
+Date: Sun, 4 May 2025 08:23:50 +0300
+Message-ID: <20250504052350.91160-1-getelson@nvidia.com>
+X-Mailer: git-send-email 2.48.1
 MIME-Version: 1.0
-X-OriginatorOrg: unh.edu
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM8P223MB0383.NAMP223.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: a2421719-070e-4e88-5a2e-08dd8a65dde4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 May 2025 17:13:47.5394 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d6241893-512d-46dc-8d2b-be47e25f5666
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: S5BjEf2AwAucUAOMhUtWxRaQF/IAPtcvqaEtROAVhCT1n9qwwNiq8uouRUmCghuD+mYP++Q8FPIxix/2c/+8pQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF6327F1ED3
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.231.35]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00001509:EE_|BL1PR12MB5921:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0d0fd54f-0468-4959-481b-08dd8acbeccf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|82310400026|36860700013|1800799024; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?TgwanHBzLOrYMrC3pDFsodkeNlFXuT5FKr9uXslmo45f62z9enoeJSNjhNWd?=
+ =?us-ascii?Q?BfJeW7gZqLUHwdM9vc1q1MLMm6N1smizShm+FHSjrBrgLMjwRLQQ2Go5DKtc?=
+ =?us-ascii?Q?IOSGjKxucZlgAq0Bd8RTbZPrz5lIBUYaWcr+rHmBlzgJFsugGcpVCppjkHGx?=
+ =?us-ascii?Q?caA6+IZMvP2bKHdELmtY8LoADG39mEE9/nlWKnk1bI/Ldoy/OFn22+pyHgVn?=
+ =?us-ascii?Q?Eo3DZ2uvs2dBc0f8oI3e4JzLtd727sPBP3R92uQh674o4aKZbdc36D8ecXa+?=
+ =?us-ascii?Q?+jJxiEAApTgFuU1RJMBtG4OLTlRQTnAe1KPcva1MpXBBHDSthbTftIaSA8d2?=
+ =?us-ascii?Q?+zVJ+cOBzA9xIvc+dURZMvJUNqG1FGdyVmpZj4/fU8g4kCTtuNCW89/4PiqK?=
+ =?us-ascii?Q?X+dkNOG54RnNf2CrvRpvnF2DtBww8qM1U9+XKWEoTLxl91xfFYr4X49mpOAM?=
+ =?us-ascii?Q?mJGRKo5ZJJot9zGYFhsFcTfEKsUgepdXUhxJslr/F3mf494VoE3CiorOX2Sc?=
+ =?us-ascii?Q?VjoboTAxcMTnWC8syOvT55jYln9m2i95xETZyyDcrSRHFZzdncn7/ueqYSm0?=
+ =?us-ascii?Q?TD5UTrf0Z78pXSC1GtjgXhFHBXGOslgrlLCaHvs5j9MCv/No2zi7xalg1ctR?=
+ =?us-ascii?Q?6CTaRc+/raycix5hP7EQhLhwrkBt4tDJHzbm6xzJ0oxmS3RSn4HE2ee0H6Rj?=
+ =?us-ascii?Q?rFZmleru/gMX4VPSPFytKJIInXHJN98f0rWDv0XtLqXdDXL5XLG+GLP9202H?=
+ =?us-ascii?Q?7CTdY4GpD5eyayCildZ6C1h6PehO9wQywWAs+NMZjHyWJJPxN3QR+O0p6lvH?=
+ =?us-ascii?Q?7V4pkt6NIvTru/P7Sk2/p4APKYu7cTj60fQA9m5TfzRCWDv/Udd02HiOP3Wl?=
+ =?us-ascii?Q?RAXGGqsbU7tu4BBZHrwvq9vvuI1QeNMqIBKXE4l6+hwQlpPyeSLNOlu42gdb?=
+ =?us-ascii?Q?7yB8lhD+R20Gx9fFQUFFdpfMMuDl0B2CLBScCsfKPQteV8JX0NOBeNPA/uNN?=
+ =?us-ascii?Q?jVTqyuKx3NqP8rVLdjlEusnHshZlLo24FRtAK9pWux0AuRUdJmJ3RJtcAtqp?=
+ =?us-ascii?Q?k888yZjzLBv/GuIsgkqxqMpxttCzRHWvXXEw1CHA6XTjBHhdShA87NFWmvNc?=
+ =?us-ascii?Q?kh8544m7e7HodTINk0LJjTLyl+/dAF5AvdnPfNbcWGyM+a4lXg+CeU6tlUlc?=
+ =?us-ascii?Q?896zoray8A+fVgOwIWSjFaMGpsQ/G/VwWv0btTHsll8qrt6RrNx/BUSMujiV?=
+ =?us-ascii?Q?Bx1oTLrS0Jz4omCgJNH1/Y4vlubKTc9PkQ6FvSnWNNavVNeR2ZCGQ6SXEsBL?=
+ =?us-ascii?Q?GpOnan1YVnIeti2g9FemEBoK9g2bYnF6gXsXVqE6JNdG/EwkQ1uHgDFLJyBw?=
+ =?us-ascii?Q?A4yk4Fv0RN+yiH/C8fI63t3gwMjQlNeqM84v9jU2rtU1YHqKcS0wtInYvI+B?=
+ =?us-ascii?Q?usBzbj2XA9xwunBlM4gR+8lkn28FLgjtWUq4eBXqR4Hat+0vGEgKZah7q0Td?=
+ =?us-ascii?Q?5/VfyD3aijEjYA/JgtEM+Kr+GQ3b8it/ooBL?=
+X-Forefront-Antispam-Report: CIP:216.228.118.232; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc7edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 May 2025 05:24:21.1158 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d0fd54f-0468-4959-481b-08dd8acbeccf
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.118.232];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: SA2PEPF00001509.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5921
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -153,970 +138,762 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_DM8P223MB038323681A4BEA771CF92A6D8D8D2DM8P223MB0383NAMP_
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+METER flow action is not supported in MLX5 HWS mode.
+Application must use METER_MARK flow action.
 
-From: Van Haaren, Harry <harry.van.haaren@intel.com>
-Sent: Friday, May 2, 2025 9:58 AM
-To: Etelson, Gregory <getelson@nvidia.com>; Richardson, Bruce <bruce.richar=
-dson@intel.com>
-Cc: dev@dpdk.org <dev@dpdk.org>; Owen Hilyard <owen.hilyard@unh.edu>
-Subject: Re: [PATCH] rust: RFC/demo of safe API for Dpdk Eal, Eth and Rxq
+The patch removes METER action from HWS code.
 
-> From: Etelson, Gregory
-> Sent: Friday, May 02, 2025 1:46 PM
-> To: Richardson, Bruce
-> Cc: Gregory Etelson; Van Haaren, Harry; dev@dpdk.org; owen.hilyard@unh.ed=
-u
-> Subject: Re: [PATCH] rust: RFC/demo of safe API for Dpdk Eal, Eth and Rxq
->
-> Hello Bruce,
+Fixes: 48fbb0e93d06 ("net/mlx5: support flow meter mark indirect action with HWS")
+Signed-off-by: Gregory Etelson <getelson@nvidia.com>
+Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+---
+ drivers/net/mlx5/mlx5_flow_hw.c    |  85 -----
+ drivers/net/mlx5/mlx5_flow_meter.c | 552 -----------------------------
+ 2 files changed, 637 deletions(-)
 
-Hi All,
-Hi All,
+diff --git a/drivers/net/mlx5/mlx5_flow_hw.c b/drivers/net/mlx5/mlx5_flow_hw.c
+index 20d38ce414..1f192c1937 100644
+--- a/drivers/net/mlx5/mlx5_flow_hw.c
++++ b/drivers/net/mlx5/mlx5_flow_hw.c
+@@ -1784,35 +1784,6 @@ flow_hw_represented_port_compile(struct rte_eth_dev *dev,
+ 	return 0;
+ }
+ 
+-static __rte_always_inline int
+-flow_hw_meter_compile(struct rte_eth_dev *dev,
+-		      const struct mlx5_flow_template_table_cfg *cfg,
+-		      uint16_t aso_mtr_pos,
+-		      uint16_t jump_pos,
+-		      const struct rte_flow_action *action,
+-		      struct mlx5_hw_actions *acts,
+-		      struct rte_flow_error *error)
+-{
+-	struct mlx5_priv *priv = dev->data->dev_private;
+-	struct mlx5_aso_mtr *aso_mtr;
+-	const struct rte_flow_action_meter *meter = action->conf;
+-	uint32_t group = cfg->attr.flow_attr.group;
+-
+-	aso_mtr = mlx5_aso_meter_by_idx(priv, meter->mtr_id);
+-	acts->rule_acts[aso_mtr_pos].action = priv->mtr_bulk.action;
+-	acts->rule_acts[aso_mtr_pos].aso_meter.offset = aso_mtr->offset;
+-	acts->jump = flow_hw_jump_action_register
+-		(dev, cfg, aso_mtr->fm.group, error);
+-	if (!acts->jump)
+-		return -ENOMEM;
+-	acts->rule_acts[jump_pos].action = (!!group) ?
+-				    acts->jump->hws_action :
+-				    acts->jump->root_action;
+-	if (mlx5_aso_mtr_wait(priv, aso_mtr, true))
+-		return -ENOMEM;
+-	return 0;
+-}
+-
+ static __rte_always_inline int
+ flow_hw_cnt_compile(struct rte_eth_dev *dev, uint32_t  start_pos,
+ 		      struct mlx5_hw_actions *acts)
+@@ -2534,7 +2505,6 @@ __flow_hw_translate_actions_template(struct rte_eth_dev *dev,
+ 	bool reformat_used = false;
+ 	bool recom_used = false;
+ 	unsigned int of_vlan_offset;
+-	uint16_t jump_pos;
+ 	uint32_t ct_idx;
+ 	int ret, err;
+ 	uint32_t target_grp = 0;
+@@ -2802,27 +2772,6 @@ __flow_hw_translate_actions_template(struct rte_eth_dev *dev,
+ 					 masks, acts, src_pos, dr_pos, &sub_error))
+ 				goto err;
+ 			break;
+-		case RTE_FLOW_ACTION_TYPE_METER:
+-			/*
+-			 * METER action is compiled to 2 DR actions - ASO_METER and FT.
+-			 * Calculated DR offset is stored only for ASO_METER and FT
+-			 * is assumed to be the next action.
+-			 */
+-			jump_pos = dr_pos + 1;
+-			if (actions->conf && masks->conf &&
+-			    ((const struct rte_flow_action_meter *)
+-			     masks->conf)->mtr_id) {
+-				err = flow_hw_meter_compile(dev, cfg,
+-							    dr_pos, jump_pos, actions, acts,
+-							    &sub_error);
+-				if (err)
+-					goto err;
+-			} else if (__flow_hw_act_data_general_append(priv, acts,
+-								     actions->type,
+-								     src_pos,
+-								     dr_pos))
+-				goto err;
+-			break;
+ 		case RTE_FLOW_ACTION_TYPE_AGE:
+ 			ret = flow_hw_translate_group(dev, cfg, attr->group,
+ 						&target_grp, &sub_error);
+@@ -3510,7 +3459,6 @@ flow_hw_actions_construct(struct rte_eth_dev *dev,
+ 	const struct rte_flow_action_ipv6_ext_push *ipv6_push;
+ 	const struct rte_flow_item *enc_item = NULL;
+ 	const struct rte_flow_action_ethdev *port_action = NULL;
+-	const struct rte_flow_action_meter *meter = NULL;
+ 	const struct rte_flow_action_age *age = NULL;
+ 	const struct rte_flow_action_nat64 *nat64_c = NULL;
+ 	struct rte_flow_attr attr = {
+@@ -3683,28 +3631,6 @@ flow_hw_actions_construct(struct rte_eth_dev *dev,
+ 						rule_acts + act_data->action_dst,
+ 						act_data->shared_meter.id);
+ 			break;
+-		case RTE_FLOW_ACTION_TYPE_METER:
+-			meter = action->conf;
+-			mtr_id = meter->mtr_id;
+-			aso_mtr = mlx5_aso_meter_by_idx(priv, mtr_id);
+-			rule_acts[act_data->action_dst].action =
+-				priv->mtr_bulk.action;
+-			rule_acts[act_data->action_dst].aso_meter.offset =
+-								aso_mtr->offset;
+-			jump = flow_hw_jump_action_register
+-				(dev, &table->cfg, aso_mtr->fm.group, NULL);
+-			if (!jump)
+-				goto error;
+-			MLX5_ASSERT
+-				(!rule_acts[act_data->action_dst + 1].action);
+-			rule_acts[act_data->action_dst + 1].action =
+-					(!!attr.group) ? jump->hws_action :
+-							 jump->root_action;
+-			flow->jump = jump;
+-			flow->flags |= MLX5_FLOW_HW_FLOW_FLAG_FATE_JUMP;
+-			if (mlx5_aso_mtr_wait(priv, aso_mtr, true))
+-				goto error;
+-			break;
+ 		case RTE_FLOW_ACTION_TYPE_AGE:
+ 			aux = mlx5_flow_hw_aux(dev->data->port_id, flow);
+ 			age = action->conf;
+@@ -7334,10 +7260,6 @@ mlx5_flow_hw_actions_validate(struct rte_eth_dev *dev,
+ 			}
+ 			action_flags |= MLX5_FLOW_ACTION_IPV6_ROUTING_REMOVE;
+ 			break;
+-		case RTE_FLOW_ACTION_TYPE_METER:
+-			/* TODO: Validation logic */
+-			action_flags |= MLX5_FLOW_ACTION_METER;
+-			break;
+ 		case RTE_FLOW_ACTION_TYPE_METER_MARK:
+ 			ret = flow_hw_validate_action_meter_mark(dev, action, false, error);
+ 			if (ret < 0)
+@@ -7665,13 +7587,6 @@ flow_hw_parse_flow_actions_to_dr_actions(struct rte_eth_dev *dev,
+ 				action_types[mhdr_off] = type;
+ 			}
+ 			break;
+-		case RTE_FLOW_ACTION_TYPE_METER:
+-			at->dr_off[i] = curr_off;
+-			action_types[curr_off++] = MLX5DR_ACTION_TYP_ASO_METER;
+-			if (curr_off >= MLX5_HW_MAX_ACTS)
+-				goto err_actions_num;
+-			action_types[curr_off++] = MLX5DR_ACTION_TYP_TBL;
+-			break;
+ 		case RTE_FLOW_ACTION_TYPE_OF_PUSH_VLAN:
+ 			type = mlx5_hw_dr_action_types[at->actions[i].type];
+ 			at->dr_off[i] = curr_off;
+diff --git a/drivers/net/mlx5/mlx5_flow_meter.c b/drivers/net/mlx5/mlx5_flow_meter.c
+index dab3c4bf77..cd6a804593 100644
+--- a/drivers/net/mlx5/mlx5_flow_meter.c
++++ b/drivers/net/mlx5/mlx5_flow_meter.c
+@@ -1166,49 +1166,6 @@ mlx5_flow_meter_policy_validate(struct rte_eth_dev *dev,
+ 	return 0;
+ }
+ 
+-#if defined(HAVE_MLX5_HWS_SUPPORT)
+-/**
+- * Callback to check MTR policy action validate for HWS
+- *
+- * @param[in] dev
+- *   Pointer to Ethernet device.
+- * @param[in] actions
+- *   Pointer to meter policy action detail.
+- * @param[out] error
+- *   Pointer to the error structure.
+- *
+- * @return
+- *   0 on success, a negative errno value otherwise and rte_errno is set.
+- */
+-static int
+-mlx5_flow_meter_policy_hws_validate(struct rte_eth_dev *dev,
+-	struct rte_mtr_meter_policy_params *policy,
+-	struct rte_mtr_error *error)
+-{
+-	struct mlx5_priv *priv = dev->data->dev_private;
+-	const struct rte_flow_actions_template_attr attr = {
+-		.transfer = priv->sh->config.dv_esw_en ? 1 : 0 };
+-	int ret;
+-	int i;
+-
+-	if (mlx5_hws_active(dev) && !mlx5_hw_ctx_validate(dev, NULL))
+-		return -rte_mtr_error_set(error, EINVAL,
+-					  RTE_MTR_ERROR_TYPE_UNSPECIFIED, NULL,
+-					  "non-template flow engine was not configured");
+-	if (!priv->mtr_en || !priv->sh->meter_aso_en)
+-		return -rte_mtr_error_set(error, ENOTSUP,
+-				RTE_MTR_ERROR_TYPE_METER_POLICY,
+-				NULL, "meter policy unsupported.");
+-	for (i = 0; i < RTE_COLORS; i++) {
+-		ret = mlx5_flow_actions_validate(dev, &attr, policy->actions[i],
+-						 policy->actions[i], NULL);
+-		if (ret)
+-			return ret;
+-	}
+-	return 0;
+-}
+-#endif
+-
+ static int
+ __mlx5_flow_meter_policy_delete(struct rte_eth_dev *dev,
+ 			uint32_t policy_id,
+@@ -1540,334 +1497,6 @@ mlx5_flow_meter_policy_get(struct rte_eth_dev *dev,
+ 							      &policy_idx);
+ }
+ 
+-#if defined(HAVE_MLX5_HWS_SUPPORT)
+-/**
+- * Callback to delete MTR policy for HWS.
+- *
+- * @param[in] dev
+- *   Pointer to Ethernet device.
+- * @param[in] policy_id
+- *   Meter policy id.
+- * @param[out] error
+- *   Pointer to the error structure.
+- *
+- * @return
+- *   0 on success, a negative errno value otherwise and rte_errno is set.
+- */
+-static int
+-mlx5_flow_meter_policy_hws_delete(struct rte_eth_dev *dev,
+-			  uint32_t policy_id,
+-			  struct rte_mtr_error *error)
+-{
+-	struct mlx5_priv *priv = dev->data->dev_private;
+-	struct mlx5_flow_meter_policy *mtr_policy;
+-	uint32_t i, j;
+-	uint32_t nb_flows = 0;
+-	int ret;
+-	struct rte_flow_op_attr op_attr = { .postpone = 1 };
+-	struct rte_flow_op_result result[RTE_COLORS * MLX5_MTR_DOMAIN_MAX];
+-
+-	if (!priv->mtr_policy_arr)
+-		return mlx5_flow_meter_policy_delete(dev, policy_id, error);
+-	/* Meter policy must exist. */
+-	mtr_policy = mlx5_flow_meter_policy_find(dev, policy_id, NULL);
+-	if (!mtr_policy->initialized)
+-		return -rte_mtr_error_set(error, ENOENT,
+-			RTE_MTR_ERROR_TYPE_METER_POLICY_ID, NULL,
+-			"Meter policy does not exists.");
+-	/* Check policy is unused. */
+-	if (mtr_policy->ref_cnt)
+-		return -rte_mtr_error_set(error, EBUSY,
+-					  RTE_MTR_ERROR_TYPE_METER_POLICY_ID,
+-					  NULL, "Meter policy is in use.");
+-	rte_spinlock_lock(&priv->hw_ctrl_lock);
+-	for (i = 0; i < MLX5_MTR_DOMAIN_MAX; i++) {
+-		for (j = 0; j < RTE_COLORS; j++) {
+-			if (mtr_policy->hws_flow_rule[i][j]) {
+-				ret = rte_flow_async_destroy(dev->data->port_id,
+-					CTRL_QUEUE_ID(priv), &op_attr,
+-					mtr_policy->hws_flow_rule[i][j],
+-					NULL, NULL);
+-				if (ret < 0)
+-					continue;
+-				nb_flows++;
+-			}
+-		}
+-	}
+-	ret = rte_flow_push(dev->data->port_id, CTRL_QUEUE_ID(priv), NULL);
+-	while (nb_flows && (ret >= 0)) {
+-		ret = rte_flow_pull(dev->data->port_id,
+-					CTRL_QUEUE_ID(priv), result,
+-					nb_flows, NULL);
+-		nb_flows -= ret;
+-	}
+-	for (i = 0; i < MLX5_MTR_DOMAIN_MAX; i++) {
+-		if (mtr_policy->hws_flow_table[i])
+-			rte_flow_template_table_destroy(dev->data->port_id,
+-				 mtr_policy->hws_flow_table[i], NULL);
+-	}
+-	for (i = 0; i < RTE_COLORS; i++) {
+-		if (mtr_policy->hws_act_templ[i])
+-			rte_flow_actions_template_destroy(dev->data->port_id,
+-				 mtr_policy->hws_act_templ[i], NULL);
+-	}
+-	if (mtr_policy->hws_item_templ)
+-		rte_flow_pattern_template_destroy(dev->data->port_id,
+-				mtr_policy->hws_item_templ, NULL);
+-	rte_spinlock_unlock(&priv->hw_ctrl_lock);
+-	memset(mtr_policy, 0, sizeof(struct mlx5_flow_meter_policy));
+-	return 0;
+-}
+-
+-/**
+- * Callback to add MTR policy for HWS.
+- *
+- * @param[in] dev
+- *   Pointer to Ethernet device.
+- * @param[out] policy_id
+- *   Pointer to policy id
+- * @param[in] actions
+- *   Pointer to meter policy action detail.
+- * @param[out] error
+- *   Pointer to the error structure.
+- *
+- * @return
+- *   0 on success, a negative errno value otherwise and rte_errno is set.
+- */
+-static int
+-mlx5_flow_meter_policy_hws_add(struct rte_eth_dev *dev,
+-			uint32_t policy_id,
+-			struct rte_mtr_meter_policy_params *policy,
+-			struct rte_mtr_error *error)
+-{
+-	struct mlx5_priv *priv = dev->data->dev_private;
+-	struct mlx5_flow_meter_policy *mtr_policy = NULL;
+-	const struct rte_flow_action *act;
+-	const struct rte_flow_action_meter *mtr;
+-	struct mlx5_flow_meter_info *fm;
+-	struct mlx5_flow_meter_policy *plc;
+-	uint8_t domain_color = MLX5_MTR_ALL_DOMAIN_BIT;
+-	bool is_rss = false;
+-	bool is_hierarchy = false;
+-	int i, j;
+-	uint32_t nb_colors = 0;
+-	uint32_t nb_flows = 0;
+-	int color;
+-	int ret;
+-	struct rte_flow_pattern_template_attr pta = {0};
+-	struct rte_flow_actions_template_attr ata = {0};
+-	struct rte_flow_template_table_attr ta = { {0}, 0 };
+-	struct rte_flow_op_attr op_attr = { .postpone = 1 };
+-	struct rte_flow_op_result result[RTE_COLORS * MLX5_MTR_DOMAIN_MAX];
+-	const uint32_t color_mask = (UINT32_C(1) << MLX5_MTR_COLOR_BITS) - 1;
+-	int color_reg_c_idx = mlx5_flow_get_reg_id(dev, MLX5_MTR_COLOR,
+-						   0, NULL);
+-	struct rte_flow_item_tag tag_spec = {
+-		.data = 0,
+-		.index = color_reg_c_idx
+-	};
+-	struct rte_flow_item_tag tag_mask = {
+-		.data = color_mask,
+-		.index = 0xff};
+-	struct rte_flow_item pattern[] = {
+-		[0] = {
+-			.type = (enum rte_flow_item_type)
+-				MLX5_RTE_FLOW_ITEM_TYPE_TAG,
+-			.spec = &tag_spec,
+-			.mask = &tag_mask,
+-		},
+-		[1] = { .type = RTE_FLOW_ITEM_TYPE_END }
+-	};
+-
+-	if (mlx5_hws_active(dev) && !mlx5_hw_ctx_validate(dev, NULL))
+-		return -rte_mtr_error_set(error, EINVAL,
+-					  RTE_MTR_ERROR_TYPE_UNSPECIFIED, NULL,
+-					  "non-template flow engine was not configured");
+-	if (!priv->mtr_policy_arr)
+-		return mlx5_flow_meter_policy_add(dev, policy_id, policy, error);
+-	mtr_policy = mlx5_flow_meter_policy_find(dev, policy_id, NULL);
+-	if (mtr_policy->initialized)
+-		return -rte_mtr_error_set(error, EEXIST,
+-			RTE_MTR_ERROR_TYPE_METER_POLICY_ID,
+-			NULL, "Meter policy already exists.");
+-	if (!policy ||
+-	    (!policy->actions[RTE_COLOR_RED] &&
+-	    !policy->actions[RTE_COLOR_YELLOW] &&
+-	    !policy->actions[RTE_COLOR_GREEN]))
+-		return -rte_mtr_error_set(error, EINVAL,
+-					  RTE_MTR_ERROR_TYPE_METER_POLICY,
+-					  NULL, "Meter policy actions are not valid.");
+-	if (policy->actions[RTE_COLOR_RED] == RTE_FLOW_ACTION_TYPE_END)
+-		mtr_policy->skip_r = 1;
+-	if (policy->actions[RTE_COLOR_YELLOW] == RTE_FLOW_ACTION_TYPE_END)
+-		mtr_policy->skip_y = 1;
+-	if (policy->actions[RTE_COLOR_GREEN] == RTE_FLOW_ACTION_TYPE_END)
+-		mtr_policy->skip_g = 1;
+-	if (mtr_policy->skip_r && mtr_policy->skip_y && mtr_policy->skip_g)
+-		return -rte_mtr_error_set(error, ENOTSUP,
+-					  RTE_MTR_ERROR_TYPE_METER_POLICY_ID,
+-					  NULL, "Meter policy actions are empty.");
+-	for (i = 0; i < RTE_COLORS; i++) {
+-		act = policy->actions[i];
+-		while (act && act->type != RTE_FLOW_ACTION_TYPE_END) {
+-			switch (act->type) {
+-			case RTE_FLOW_ACTION_TYPE_PORT_ID:
+-				/* fall-through. */
+-			case RTE_FLOW_ACTION_TYPE_REPRESENTED_PORT:
+-				domain_color &= ~(MLX5_MTR_DOMAIN_INGRESS_BIT |
+-						  MLX5_MTR_DOMAIN_EGRESS_BIT);
+-				break;
+-			case RTE_FLOW_ACTION_TYPE_RSS:
+-				is_rss = true;
+-				/* fall-through. */
+-			case RTE_FLOW_ACTION_TYPE_QUEUE:
+-				domain_color &= ~(MLX5_MTR_DOMAIN_EGRESS_BIT |
+-						  MLX5_MTR_DOMAIN_TRANSFER_BIT);
+-				break;
+-			case RTE_FLOW_ACTION_TYPE_METER:
+-				is_hierarchy = true;
+-				mtr = act->conf;
+-				fm = mlx5_flow_meter_find(priv,
+-							  mtr->mtr_id, NULL);
+-				if (!fm)
+-					return -rte_mtr_error_set(error, EINVAL,
+-						RTE_MTR_ERROR_TYPE_MTR_ID, NULL,
+-						"Meter not found in meter hierarchy.");
+-				plc = mlx5_flow_meter_policy_find(dev,
+-								  fm->policy_id,
+-								  NULL);
+-				MLX5_ASSERT(plc);
+-				domain_color &= MLX5_MTR_ALL_DOMAIN_BIT &
+-					(plc->ingress <<
+-					 MLX5_MTR_DOMAIN_INGRESS);
+-				domain_color &= MLX5_MTR_ALL_DOMAIN_BIT &
+-					(plc->egress <<
+-					 MLX5_MTR_DOMAIN_EGRESS);
+-				domain_color &= MLX5_MTR_ALL_DOMAIN_BIT &
+-					(plc->transfer <<
+-					 MLX5_MTR_DOMAIN_TRANSFER);
+-				break;
+-			default:
+-				break;
+-			}
+-			act++;
+-		}
+-	}
+-	if (priv->sh->config.dv_esw_en)
+-		domain_color &= ~(MLX5_MTR_DOMAIN_EGRESS_BIT |
+-				  MLX5_MTR_DOMAIN_TRANSFER_BIT);
+-	else
+-		domain_color &= ~MLX5_MTR_DOMAIN_TRANSFER_BIT;
+-	if (!domain_color)
+-		return -rte_mtr_error_set(error, ENOTSUP,
+-					  RTE_MTR_ERROR_TYPE_METER_POLICY_ID,
+-					  NULL, "Meter policy domains are conflicting.");
+-	mtr_policy->is_rss = is_rss;
+-	mtr_policy->ingress = !!(domain_color & MLX5_MTR_DOMAIN_INGRESS_BIT);
+-	pta.ingress = mtr_policy->ingress;
+-	mtr_policy->egress = !!(domain_color & MLX5_MTR_DOMAIN_EGRESS_BIT);
+-	pta.egress = mtr_policy->egress;
+-	mtr_policy->transfer = !!(domain_color & MLX5_MTR_DOMAIN_TRANSFER_BIT);
+-	pta.transfer = mtr_policy->transfer;
+-	mtr_policy->group = MLX5_FLOW_TABLE_HWS_POLICY - policy_id;
+-	mtr_policy->is_hierarchy = is_hierarchy;
+-	mtr_policy->initialized = 1;
+-	rte_spinlock_lock(&priv->hw_ctrl_lock);
+-	mtr_policy->hws_item_templ =
+-		rte_flow_pattern_template_create(dev->data->port_id,
+-						 &pta, pattern, NULL);
+-	if (!mtr_policy->hws_item_templ)
+-		goto policy_add_err;
+-	for (i = 0; i < RTE_COLORS; i++) {
+-		if (mtr_policy->skip_g && i == RTE_COLOR_GREEN)
+-			continue;
+-		if (mtr_policy->skip_y && i == RTE_COLOR_YELLOW)
+-			continue;
+-		if (mtr_policy->skip_r && i == RTE_COLOR_RED)
+-			continue;
+-		mtr_policy->hws_act_templ[nb_colors] =
+-			rte_flow_actions_template_create(dev->data->port_id,
+-						&ata, policy->actions[i],
+-						policy->actions[i], NULL);
+-		if (!mtr_policy->hws_act_templ[nb_colors])
+-			goto policy_add_err;
+-		nb_colors++;
+-	}
+-	for (i = 0; i < MLX5_MTR_DOMAIN_MAX; i++) {
+-		memset(&ta, 0, sizeof(ta));
+-		ta.nb_flows = RTE_COLORS;
+-		ta.flow_attr.group = mtr_policy->group;
+-		if (i == MLX5_MTR_DOMAIN_INGRESS) {
+-			if (!mtr_policy->ingress)
+-				continue;
+-			ta.flow_attr.ingress = 1;
+-		} else if (i == MLX5_MTR_DOMAIN_EGRESS) {
+-			if (!mtr_policy->egress)
+-				continue;
+-			ta.flow_attr.egress = 1;
+-		} else if (i == MLX5_MTR_DOMAIN_TRANSFER) {
+-			if (!mtr_policy->transfer)
+-				continue;
+-			ta.flow_attr.transfer = 1;
+-		}
+-		mtr_policy->hws_flow_table[i] =
+-			rte_flow_template_table_create(dev->data->port_id,
+-					&ta, &mtr_policy->hws_item_templ, 1,
+-					mtr_policy->hws_act_templ, nb_colors,
+-					NULL);
+-		if (!mtr_policy->hws_flow_table[i])
+-			goto policy_add_err;
+-		nb_colors = 0;
+-		for (j = 0; j < RTE_COLORS; j++) {
+-			if (mtr_policy->skip_g && j == RTE_COLOR_GREEN)
+-				continue;
+-			if (mtr_policy->skip_y && j == RTE_COLOR_YELLOW)
+-				continue;
+-			if (mtr_policy->skip_r && j == RTE_COLOR_RED)
+-				continue;
+-			color = rte_col_2_mlx5_col((enum rte_color)j);
+-			tag_spec.data = color;
+-			mtr_policy->hws_flow_rule[i][j] =
+-				rte_flow_async_create(dev->data->port_id,
+-					CTRL_QUEUE_ID(priv), &op_attr,
+-					mtr_policy->hws_flow_table[i],
+-					pattern, 0, policy->actions[j],
+-					nb_colors, NULL, NULL);
+-			if (!mtr_policy->hws_flow_rule[i][j])
+-				goto policy_add_err;
+-			nb_colors++;
+-			nb_flows++;
+-		}
+-		ret = rte_flow_push(dev->data->port_id,
+-				    CTRL_QUEUE_ID(priv), NULL);
+-		if (ret < 0)
+-			goto policy_add_err;
+-		while (nb_flows) {
+-			ret = rte_flow_pull(dev->data->port_id,
+-					    CTRL_QUEUE_ID(priv), result,
+-					    nb_flows, NULL);
+-			if (ret < 0)
+-				goto policy_add_err;
+-			for (j = 0; j < ret; j++) {
+-				if (result[j].status == RTE_FLOW_OP_ERROR)
+-					goto policy_add_err;
+-			}
+-			nb_flows -= ret;
+-		}
+-	}
+-	rte_spinlock_unlock(&priv->hw_ctrl_lock);
+-	return 0;
+-policy_add_err:
+-	rte_spinlock_unlock(&priv->hw_ctrl_lock);
+-	ret = mlx5_flow_meter_policy_hws_delete(dev, policy_id, error);
+-	memset(mtr_policy, 0, sizeof(struct mlx5_flow_meter_policy));
+-	if (ret)
+-		return ret;
+-	return -rte_mtr_error_set(error, ENOTSUP,
+-				  RTE_MTR_ERROR_TYPE_UNSPECIFIED,
+-				  NULL, "Failed to create meter policy.");
+-}
+-#endif
+ /**
+  * Check meter validation.
+  *
+@@ -2239,105 +1868,6 @@ mlx5_flow_meter_create(struct rte_eth_dev *dev, uint32_t meter_id,
+ 		NULL, "Failed to create devx meter.");
+ }
+ 
+-#if defined(HAVE_MLX5_HWS_SUPPORT)
+-/**
+- * Create meter rules.
+- *
+- * @param[in] dev
+- *   Pointer to Ethernet device.
+- * @param[in] meter_id
+- *   Meter id.
+- * @param[in] params
+- *   Pointer to rte meter parameters.
+- * @param[in] shared
+- *   Meter shared with other flow or not.
+- * @param[out] error
+- *   Pointer to rte meter error structure.
+- *
+- * @return
+- *   0 on success, a negative errno value otherwise and rte_errno is set.
+- */
+-static int
+-mlx5_flow_meter_hws_create(struct rte_eth_dev *dev, uint32_t meter_id,
+-		       struct rte_mtr_params *params, int shared,
+-		       struct rte_mtr_error *error)
+-{
+-	struct mlx5_priv *priv = dev->data->dev_private;
+-	struct mlx5_flow_meter_profile *profile;
+-	struct mlx5_flow_meter_info *fm;
+-	struct mlx5_flow_meter_policy *policy = NULL;
+-	struct mlx5_aso_mtr *aso_mtr;
+-	struct mlx5_hw_q_job *job;
+-	int ret;
+-
+-	if (mlx5_hws_active(dev) && !mlx5_hw_ctx_validate(dev, NULL))
+-		return -rte_mtr_error_set(error, EINVAL,
+-					  RTE_MTR_ERROR_TYPE_UNSPECIFIED, NULL,
+-					  "non-template flow engine was not configured");
+-	if (!priv->mtr_profile_arr ||
+-	    !priv->mtr_policy_arr ||
+-	    !priv->mtr_bulk.aso)
+-		return -rte_mtr_error_set(error, ENOTSUP,
+-			RTE_MTR_ERROR_TYPE_UNSPECIFIED, NULL,
+-			"Meter bulk array is not allocated.");
+-	/* Meter profile must exist. */
+-	profile = mlx5_flow_meter_profile_find(priv, params->meter_profile_id);
+-	if (!profile->initialized)
+-		return -rte_mtr_error_set(error, ENOENT,
+-			RTE_MTR_ERROR_TYPE_METER_PROFILE_ID,
+-			NULL, "Meter profile id not valid.");
+-	/* Meter policy must exist. */
+-	policy = mlx5_flow_meter_policy_find(dev,
+-			params->meter_policy_id, NULL);
+-	if (!policy->initialized)
+-		return -rte_mtr_error_set(error, ENOENT,
+-			RTE_MTR_ERROR_TYPE_METER_POLICY_ID,
+-			NULL, "Meter policy id not valid.");
+-	/* Meter ID must be valid. */
+-	if (meter_id >= priv->mtr_config.nb_meters)
+-		return -rte_mtr_error_set(error, EINVAL,
+-			RTE_MTR_ERROR_TYPE_MTR_ID,
+-			NULL, "Meter id not valid.");
+-	/* Find ASO object. */
+-	aso_mtr = mlx5_aso_meter_by_idx(priv, meter_id);
+-	fm = &aso_mtr->fm;
+-	if (fm->initialized)
+-		return -rte_mtr_error_set(error, ENOENT,
+-					  RTE_MTR_ERROR_TYPE_MTR_ID,
+-					  NULL, "Meter object already exists.");
+-	/* Fill the flow meter parameters. */
+-	fm->meter_id = meter_id;
+-	fm->policy_id = params->meter_policy_id;
+-	fm->profile = profile;
+-	fm->meter_offset = meter_id;
+-	fm->group = policy->group;
+-	/* Add to the flow meter list. */
+-	fm->active_state = 1; /* Config meter starts as active. */
+-	fm->is_enable = params->meter_enable;
+-	fm->shared = !!shared;
+-	fm->initialized = 1;
+-	/* Update ASO flow meter by wqe. */
+-	job = mlx5_flow_action_job_init(priv, MLX5_HW_INV_QUEUE, NULL, NULL,
+-					NULL, MLX5_HW_Q_JOB_TYPE_CREATE, NULL);
+-	if (!job)
+-		return -rte_mtr_error_set(error, ENOMEM,
+-					  RTE_MTR_ERROR_TYPE_MTR_ID,
+-					  NULL, "No job context.");
+-	ret = mlx5_aso_meter_update_by_wqe(priv, MLX5_HW_INV_QUEUE, aso_mtr,
+-					   &priv->mtr_bulk, job, true);
+-	if (ret) {
+-		flow_hw_job_put(priv, job, CTRL_QUEUE_ID(priv));
+-		return -rte_mtr_error_set(error, ENOTSUP,
+-					  RTE_MTR_ERROR_TYPE_UNSPECIFIED,
+-					  NULL, "Failed to create devx meter.");
+-	}
+-	fm->active_state = params->meter_enable;
+-	rte_atomic_fetch_add_explicit(&fm->profile->ref_cnt, 1, rte_memory_order_relaxed);
+-	rte_atomic_fetch_add_explicit(&policy->ref_cnt, 1, rte_memory_order_relaxed);
+-	return 0;
+-}
+-#endif
+-
+ static int
+ mlx5_flow_meter_params_flush(struct rte_eth_dev *dev,
+ 			struct mlx5_flow_meter_info *fm,
+@@ -2444,58 +1974,6 @@ mlx5_flow_meter_destroy(struct rte_eth_dev *dev, uint32_t meter_id,
+ 	return 0;
+ }
+ 
+-/**
+- * Destroy meter rules.
+- *
+- * @param[in] dev
+- *   Pointer to Ethernet device.
+- * @param[in] meter_id
+- *   Meter id.
+- * @param[out] error
+- *   Pointer to rte meter error structure.
+- *
+- * @return
+- *   0 on success, a negative errno value otherwise and rte_errno is set.
+- */
+-static int
+-mlx5_flow_meter_hws_destroy(struct rte_eth_dev *dev, uint32_t meter_id,
+-			struct rte_mtr_error *error)
+-{
+-	struct mlx5_priv *priv = dev->data->dev_private;
+-	struct mlx5_aso_mtr *aso_mtr;
+-	struct mlx5_flow_meter_info *fm;
+-	struct mlx5_flow_meter_policy *policy;
+-
+-	if (!priv->mtr_profile_arr ||
+-	    !priv->mtr_policy_arr ||
+-	    !priv->mtr_bulk.aso)
+-		return -rte_mtr_error_set(error, ENOTSUP,
+-			RTE_MTR_ERROR_TYPE_METER_POLICY, NULL,
+-			"Meter bulk array is not allocated.");
+-	/* Find ASO object. */
+-	aso_mtr = mlx5_aso_meter_by_idx(priv, meter_id);
+-	fm = &aso_mtr->fm;
+-	if (!fm->initialized)
+-		return -rte_mtr_error_set(error, ENOENT,
+-					  RTE_MTR_ERROR_TYPE_MTR_ID,
+-					  NULL, "Meter object id not valid.");
+-	/* Meter object must not have any owner. */
+-	if (fm->ref_cnt > 0)
+-		return -rte_mtr_error_set(error, EBUSY,
+-					  RTE_MTR_ERROR_TYPE_UNSPECIFIED,
+-					  NULL, "Meter object is being used.");
+-	/* Destroy the meter profile. */
+-	rte_atomic_fetch_sub_explicit(&fm->profile->ref_cnt,
+-						1, rte_memory_order_relaxed);
+-	/* Destroy the meter policy. */
+-	policy = mlx5_flow_meter_policy_find(dev,
+-			fm->policy_id, NULL);
+-	rte_atomic_fetch_sub_explicit(&policy->ref_cnt,
+-						1, rte_memory_order_relaxed);
+-	memset(fm, 0, sizeof(struct mlx5_flow_meter_info));
+-	return 0;
+-}
+-
+ /**
+  * Modify meter state.
+  *
+@@ -2835,14 +2313,6 @@ static const struct rte_mtr_ops mlx5_flow_mtr_hws_ops = {
+ 	.meter_profile_add = mlx5_flow_meter_profile_hws_add,
+ 	.meter_profile_delete = mlx5_flow_meter_profile_hws_delete,
+ 	.meter_profile_get = mlx5_flow_meter_profile_get,
+-	.meter_policy_validate = mlx5_flow_meter_policy_hws_validate,
+-	.meter_policy_add = mlx5_flow_meter_policy_hws_add,
+-	.meter_policy_delete = mlx5_flow_meter_policy_hws_delete,
+-	.meter_policy_get = mlx5_flow_meter_policy_get,
+-	.create = mlx5_flow_meter_hws_create,
+-	.destroy = mlx5_flow_meter_hws_destroy,
+-	.meter_enable = mlx5_flow_meter_enable,
+-	.meter_disable = mlx5_flow_meter_disable,
+ 	.meter_profile_update = mlx5_flow_meter_profile_update,
+ 	.meter_dscp_table_update = NULL,
+ 	.stats_update = NULL,
+@@ -3286,14 +2756,6 @@ mlx5_flow_meter_flush(struct rte_eth_dev *dev, struct rte_mtr_error *error)
+ 				NULL, "MTR object meter profile invalid.");
+ 		}
+ 	}
+-	if (priv->mtr_bulk.aso) {
+-		for (i = 0; i < priv->mtr_config.nb_meters; i++) {
+-			aso_mtr = mlx5_aso_meter_by_idx(priv, i);
+-			fm = &aso_mtr->fm;
+-			if (fm->initialized)
+-				mlx5_flow_meter_hws_destroy(dev, i, error);
+-		}
+-	}
+ 	if (priv->policy_idx_tbl) {
+ 		MLX5_L3T_FOREACH(priv->policy_idx_tbl, i, entry) {
+ 			policy_idx = *(uint32_t *)entry;
+@@ -3319,20 +2781,6 @@ mlx5_flow_meter_flush(struct rte_eth_dev *dev, struct rte_mtr_error *error)
+ 		mlx5_l3t_destroy(priv->policy_idx_tbl);
+ 		priv->policy_idx_tbl = NULL;
+ 	}
+-#if defined(HAVE_MLX5_HWS_SUPPORT)
+-	if (priv->mtr_policy_arr) {
+-		struct mlx5_flow_meter_policy *policy;
+-
+-		for (i = 0; i < priv->mtr_config.nb_meter_policies; i++) {
+-			policy = mlx5_flow_meter_policy_find(dev, i,
+-							     &policy_idx);
+-			if (policy->initialized) {
+-				mlx5_flow_meter_policy_hws_delete(dev, i,
+-								  error);
+-			}
+-		}
+-	}
+-#endif
+ 	if (priv->mtr_profile_tbl) {
+ 		MLX5_L3T_FOREACH(priv->mtr_profile_tbl, i, entry) {
+ 			fmp = entry;
+-- 
+2.48.1
 
-> > Thanks for sharing. However, IMHO using EAL for thread management in ru=
-st
-> > is the wrong interface to expose.
->
-> EAL is a singleton object in DPDK architecture.
-> I see it as a hub for other resources.
-
-Yep, i tend to agree here; EAL is central to the rest of DPDK working corre=
-ctly.
-And given EALs implementation is heavily relying on global static variables=
-, it is
-certainly a "singleton" instance, yes.
-I think a singleton one way to implement this, but then you lose some of th=
-e RAII/automatic resource management behavior. It would, however, make some=
- APIs inherently unsafe or very unergonomic unless we were to force rte_eal=
-_cleanup to be run via atexit(3) or the platform equivalent and forbid the =
-user from running it themselves. For a lot of Rust runtimes similar to the =
-EAL (tokio, glommio, etc), once you spawn a runtime it's around until proce=
-ss exit. The other option is to have a handle which represents the state of=
- the EAL on the Rust side and runs rte_eal_init on creation and rte_eal_cle=
-anup on destruction. There are two ways we can make that safe. First, refer=
-ence counting, once the handles are created, they can be passed around easi=
-ly, and the last one runs rte_eal_cleanup when it gets dropped.  This avoid=
-s having tons of complicated lifetimes and I think that, everywhere that it=
- shouldn't affect fast path performance, we should use refcounting. The oth=
-er option is to use lifetimes. This is doable, but is going to force people=
- who are more likely to primarily be C or C++ developers to dive deep into =
-Rust's type system if they want to build abstractions over it. If we add as=
-ync into the mix, as many people are going to want to do, it's going to bec=
-ome much, much harder. As a result, I'd advocate for only using it for data=
- path components where refcounting isn't an option.
-
-> Following that idea, the EAL structure can be divided to hold the
-> "original" resources inherited from librte_eal and new resources
-> introduced in Rust EAL.
-
-Here we can look from different perspectives. Should "Rust EAL" even exist?
-If so, why? The DPDK C APIs were designed in baremetal/linux days, where
-certain "best-practices" didn't exist yet, and Rust language was pre 1.0 re=
-lease.
-
-Of course, certain parts of Rust API must depend on EAL being initialized.
-There is a logical flow to DPDK initialization, these must be kept for corr=
-ect functionality.
-
-I guess I'm saying, perhaps we can do better than mirroring the concept of
-"DPDK EAL in C" in to "DPDK EAL in Rust".
-
-I think that there will need to be some kind of runtime exposed by the libr=
-ary. A lot of the existing EAL abstractions may need to be reworked, especi=
-ally those dealing with memory, but I think a lot of things can be layered =
-on top of the C API. However, I think many of the invariants in the EAL cou=
-ld be enforced at compile time for free, which may mean the creation of a l=
-ot of "unchecked" function variants which skip over null checks and other v=
-alidation.
-
-As was mentioned before, it may also make sense for some abstractions in th=
-e C EAL to be lifted to compile time. I've spent a lot of time thinking abo=
-ut how to use something like Rust's traits for "it just works" capabilities=
- where you can declare what features you want (ex: scatter/gather) and it w=
-ill either be done in hardware or fall back to software, since you were goi=
-ng to need to do it anyway. This might lead to parameterizing a lot of user=
- code on the devices they expect to interact with and then having some "dyn=
- EthDev" as a fallback, which should be roughly equivalent to what we have =
-now. I can explain that in more detail if there's interest.
-
-> > Instead, I believe we should be
-> > encouraging native rust thread management, and not exposing any DPDK
-> > threading APIs except those necessary to have rust threads work with DP=
-DK,
-> > i.e. with an lcore ID. Many years ago when DPDK started, and in the C
-> > world, having DPDK as a runtime environment made sense, but times have
-> > changed and for Rust, there is a whole ecosystem out there already that=
- we
-> > need to "play nice with", so having Rust (not DPDK) do all thread
-> > management is the way to go (again IMHO).
-> >
->
-> I'm not sure what exposed DPDK API you refer to.
-
-I think that's the point :) Perhaps the Rust application should decide how/=
-when to
-create threads, and how to schedule & pin them. Not the "DPDK crate for Rus=
-t".
-To give a more concrete examples, lets look at Tokio (or Monoio, or Glommio=
-, or .. )
-which are prominent players in the Rust ecosystem, particularly for network=
-ing workloads
-where request/response patterns are well served by the "async" programming =
-model (e.g HTTP server).
-Rust doesn't really care about threads that much. Yes, it has std::thread a=
-s a pthread equivalent, but on Linux those literally call pthread. Enforcin=
-g the correctness of the Send and Sync traits (responsible for helping enfo=
-rce thread safety) in APIs is left to library authors. I've used Rust with =
-EAL threads and it's fine, although a slightly nicer API for launching base=
-d on a closure (which is a function pointer and a struct with the captured =
-inputs) would be nice. In Rust, I'd say that async and threads are orthogon=
-al concepts, except where runtimes force them to mix. Async is a way to wri=
-te a state machine or (with some more abstraction) an execution graph, and =
-Rust the language doesn't care whether a library decides to run some depend=
-encies in parallel. What I think Rust is more likely to want is thread per =
-core and then running either a single async runtime over all of them or an =
-async runtime per core.
-
-Lets focus on Tokio first: it is an "async runtime" (two links for future r=
-eaders)
-    <snip>
-So an async runtime can run "async" Rust functions (called Futures, or Task=
-s when run independently..)
-There are lots of words/concepts, but I'll focus only on the thread creatio=
-n/control aspect, given the DPDK EAL lcore context.
-
-Tokio is a work-stealing scheduler. It spawns "worker" threads, and then gi=
-ves these "tasks"
-to various worker cores (similar to how Golang does its work-stealing sched=
-uling). Some
-DPDK crate users might like this type of workflow, where e.g. RXQ polling i=
-s a task, and the
-"tokio runtime" figures out which worker to run it on. "Spawning" a task ca=
-uses the "Future"
-to start executing. (technical Rust note: notice the "Send" bound on Future=
-: https://docs.rs/tokio/latest/tokio/task/fn.spawn.html )
-The work stealing aspect of Tokio has also led to some issues in the Rust e=
-cosystem. What it effectively means is that every "await" is a place where =
-you might get moved to another thread. This means that it would be unsound =
-to, for example, have a queue handle on devices without MT-safe queues unle=
-ss we want to put a mutex on top of all of the device queues. I personally =
-think this is a lot of the source of people thinking that Rust async is har=
-d, because Tokio forces you to be thread safe at really weird places in you=
-r code and has issues like not being able to hold a mutex over an await poi=
-nt.
-
-Other users might prefer the "thread-per-core" and CPU pinning approach (li=
-ke DPDK itself would do).
-nit: Tokio also spawns a thread per core, it just freely moves tasks betwee=
-n cores. It doesn't pin because it's designed to interoperate with the norm=
-al kernel scheduler more nicely. I think that not needing pinned cores is n=
-ice, but we want the ability to pin for performance reasons, especially on =
-NUMA/NUCA systems (NUCA =3D Non-Uniform Cache Architecture, almost every AM=
-D EPYC above 8 cores, higher core count Intel Xeons for 3 generations, etc)=
-.
-Monoio and Glommio both serve these use cases (but in slightly different wa=
-ys!). They both spawn threads and do CPU pinning.
-Monoio and Glommio say "tasks will always remain on the local thread". In R=
-ust techie terms: "Futures are !Send and !Sync"
-    https://docs.rs/monoio/latest/monoio/fn.spawn.html
-    https://docs.rs/glommio/latest/glommio/fn.spawn_local.html
-There is also another option, one which would eliminate "service cores". We=
- provide both a work stealing pool of tasks that have to deal with being ya=
-nked between cores/EAL threads at any time, but aren't data plane tasks, an=
-d then a different API for spawning tasks onto the local thread/core for da=
-ta plane tasks (ex: something to manage a particular HTTP connection). This=
- might make writing the runtime harder, but it should provide the best of b=
-oth worlds provided we can build in a feature (Rust provides a way to "ifde=
-f out" code via features) to disable one or the other if someone doesn't wa=
-nt the overhead.
-
-So there are at least 3 different async runtimes (and I haven't even talked=
- about async-std, smol, embassy, ...) which
-all have different use-cases, and methods of running "tasks" on threads. Th=
-ese runtimes exist, and are widely used,
-and applications make use of their thread-scheduling capabilities.
-
-So "async runtimes" do thread creation (and optionally CPU pinning) for the=
- user.
-Other libraries like "Rayon" are thread-pool managers, those also have vari=
-ous CPU thread-create/pinning capabilities.
-If DPDK *also* wants to do thread creation/management and CPU-thread-to-cor=
-e pinning for the user, that creates tension.
-The other problem is that most of these async runtimes have IO very tightly=
- integrated into them. A large portion of Tokio had to be forked and rewrit=
-ten for io_uring support, and DPDK is a rather stark departure from what th=
-ey were all designed for. I know that both Tokio and Glommio have "start a =
-new async runtime on this thread" functions, and I think that Tokio has an =
-"add this thread to a multithreaded runtime" somewhere.
-
-I think the main thing that DPDK would need to be concerned about is that m=
-any of these runtimes use thread locals, and I'm not sure if that would be =
-transparently handled by the EAL thread runtime since I've always used thre=
-ad per core and then used the Rust runtime to multiplex between tasks inste=
-ad of spawning more EAL threads.
-
-Rayon should probably be thought of in a similar vein to OpenMP, since it's=
- mainly designed for batch processing. Unless someone is doing some fairly =
-heavy computation (the kind where "do we want a GPU to accelerate this?" be=
-comes a question) inside of their DPDK application, I'm having trouble thin=
-king of a use case that would want both DPDK and Rayon.
-
-> Bruce wrote: "so having Rust (not DPDK) do all thread management is the w=
-ay to go (again IMHO)."
-
-I think I agree here, in order to make the Rust DPDK crate usable from the =
-Rust ecosystem,
-it must align itself with the existing Rust networking ecosystem.
-
-That means, the DPDK Rust crate should not FORCE the usage of lcore pinning=
-s and mappings.
-Allowing a Rust application to decide how to best handle threading (via Ray=
-on, Tokio, Monoio, etc)
-will allow much more "native" or "ergonomic" integration of DPDK into Rust =
-applications.
-I'm not sure that using DPDK from Rust will be possible without either seri=
-ous performance sacrifices or rewrites of a lot of the networking libraries=
-. Tokio continues to mimic the BSD sockets API for IO, even with the io_uri=
-ng version, as does glommio. The idea of the "recv" giving you a buffer wit=
-hout you passing one in isn't really used outside of some lower-level io_ur=
-ing crates. At a bare minimum, even if DPDK managed to offer an API that wo=
-rks exactly the same ways as io_uring or epoll, we would still need to go t=
-o all of the async runtimes and get them to plumb DPDK support in or approv=
-e someone from the DPDK community maintaining support. If we don't offer th=
-at API, then we either need rewrites inside of the async runtimes or for in=
-dividual libraries to provide DPDK support, which is going to be even more =
-difficult.
-
-I agree that forcing lcore pinnings and mappings isn't good, but I think th=
-at DPDK is well within its rights to build its own async runtime which expo=
-ses a standard API. For one thing, the first thing Rust users will ask for =
-is a TCP stack, which the community has been discussing and debating for a =
-long time. I think we should figure out whether the goal is to allow DPDK a=
-pplications to be written in Rust, or to allow generic Rust applications to=
- use DPDK. The former means that the audience would likely be Rust-fluent p=
-eople who would have used DPDK regardless, and are fine dealing with mempoo=
-ls, mbufs, the eal, and ethdev configuration. The latter is a much larger a=
-udience who is likely going to be less tolerant of dpdk-rs exposing the tru=
-e complexity of using DPDK. Yes, Rust can help make the abstractions better=
-, but there's an amount of inherent complexity in "Your NIC can handle IPSe=
-c for you and can also direct all IPv6 traffic to one core" that I don't th=
-ink we can remove.
-
-I personally think that making an API for DPDK applications to be written i=
-n Rust, and then steadily adding abstractions on top of that until we arriv=
-e at something that someone who has never looked at a TCP header can use wi=
-thout too much confusion. That was part of the goal of the Iris project I p=
-itched (and then had to go finish another project so the design is still WI=
-P). I think that a move to DPDK is going to be as radical of a change as a =
-move to io_uring, however, DPDK is fast enough that I think it may be possi=
-ble to convince people to do a rewrite once we arrive at that high level AP=
-I. "Swap out your sockets and rework the functions that do network IO for a=
- 5x performance increase" is a very, very attractive offer, but for us to g=
-et there I think we need to have DPDK's full potential available in Rust, a=
-nd then build as many zero-overhead (zero cost or you couldn't write it bet=
-ter yourself) abstractions as we can on top. I want to avoid a situation wh=
-ere we build up to the high-level APIs as fast as we can and then end up in=
- a situation where you have "Easy Mode" and then "C DPDK written in Rust" a=
-s your two options.
-> Regards,
-> Gregory
-
-Apologies for the long-form, "wall of text" email, but I hope it captures t=
-he nuance of threading and
-async runtimes, which I believe in the long term will be very nice to captu=
-re "async offload" use-cases
-for DPDK. To put it another way, lookaside processing can be hidden behind =
-async functions & runtimes,
-if we design the APIs right: and that would be really cool for making async=
--offload code easy to write correctly!
-
-Regards, -Harry
-
-Sorry for my own walls of text. As a consequence of working on Iris I've sp=
-ent a lot of time thinking about how to make DPDK easier to use while keepi=
-ng the performance intact, and I was already thinking in Rust since it prov=
-ides one of the better options for these kinds of abstractions (the other o=
-ption I see is Mojo, which isn't ready yet). I want to see DPDK become more=
- accessible, but the performance and access to hardware is one of the main =
-things that make DPDK special, so I don't want to compromise that. I defini=
-tely agree that we need to force DPDK's existing APIs to justify themselves=
- in the face of the new capabilities of Rust, but I think that starting fro=
-m "How are Rust applications written today?" is a mistake.
-
-Regards,
-Owen
-
---_000_DM8P223MB038323681A4BEA771CF92A6D8D8D2DM8P223MB0383NAMP_
-Content-Type: text/html; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
-1">
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
-</head>
-<body dir=3D"ltr">
-<div id=3D"appendonsend"></div>
-<blockquote style=3D"margin-left: 0.8ex; padding-left: 1ex; border-left: 3p=
-x solid rgb(200, 200, 200);">
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-From:&nbsp;Van Haaren, Harry &lt;harry.van.haaren@intel.com&gt;</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-Sent:&nbsp;Friday, May 2, 2025 9:58 AM</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-To:&nbsp;Etelson, Gregory &lt;getelson@nvidia.com&gt;; Richardson, Bruce &l=
-t;bruce.richardson@intel.com&gt;</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-Cc:&nbsp;dev@dpdk.org &lt;dev@dpdk.org&gt;; Owen Hilyard &lt;owen.hilyard@u=
-nh.edu&gt;</div>
-</blockquote>
-<div id=3D"divRplyFwdMsg" dir=3D"ltr" class=3D"elementToProof">
-<blockquote style=3D"margin-left: 0.8ex; padding-left: 1ex; border-left: 3p=
-x solid rgb(200, 200, 200);">
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-Subject:&nbsp;Re: [PATCH] rust: RFC/demo of safe API for Dpdk Eal, Eth and =
-Rxq</div>
-</blockquote>
-</div>
-<blockquote style=3D"margin-left: 0.8ex; padding-left: 1ex; border-left: 3p=
-x solid rgb(200, 200, 200);">
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&nbsp;</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&gt; From: Etelson, Gregory</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&gt; Sent: Friday, May 02, 2025 1:46 PM</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&gt; To: Richardson, Bruce</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&gt; Cc: Gregory Etelson; Van Haaren, Harry; dev@dpdk.org; owen.hilyard@unh=
-.edu</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&gt; Subject: Re: [PATCH] rust: RFC/demo of safe API for Dpdk Eal, Eth and =
-Rxq</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&gt;</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&gt; Hello Bruce,</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-Hi All,</div>
-</blockquote>
-<div class=3D"elementToProof" style=3D"font-size: 11pt;">Hi All,</div>
-<blockquote style=3D"margin-left: 0.8ex; padding-left: 1ex; border-left: 3p=
-x solid rgb(200, 200, 200);">
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&gt; &gt; Thanks for sharing. However, IMHO using EAL for thread management=
- in rust</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&gt; &gt; is the wrong interface to expose.</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&gt;</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&gt; EAL is a singleton object in DPDK architecture.</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&gt; I see it as a hub for other resources.</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-Yep, i tend to agree here; EAL is central to the rest of DPDK working corre=
-ctly.</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-And given EALs implementation is heavily relying on global static variables=
-, it is</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-certainly a &quot;singleton&quot; instance, yes.</div>
-</blockquote>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-I think a singleton one way to implement this, but then you lose some of th=
-e RAII/automatic resource management behavior. It would, however, make some=
- APIs inherently unsafe or very unergonomic unless we were to force rte_eal=
-_cleanup to be run via atexit(3)
- or the platform equivalent and forbid the user from running it themselves.=
- For a lot of Rust runtimes similar to the EAL (tokio, glommio, etc), once =
-you spawn a runtime it's around until process exit. The other option is to =
-have a handle which represents the
- state of the EAL on the Rust side and runs rte_eal_init on creation and rt=
-e_eal_cleanup on destruction. There are two ways we can make that safe. Fir=
-st, reference counting, once the handles are created, they can be passed ar=
-ound easily, and the last one runs
- rte_eal_cleanup when it gets dropped.&nbsp; This avoids having tons of com=
-plicated lifetimes and I think that, everywhere that it shouldn't affect fa=
-st path performance, we should use refcounting. The other option is to use =
-lifetimes. This is doable, but is going
- to force people who are more likely to primarily be C or C++ developers to=
- dive deep into Rust's type system if they want to build abstractions over =
-it. If we add async into the mix, as many people are going to want to do, i=
-t's going to become much, much harder.
- As a result, I'd advocate for only using it for data path components where=
- refcounting isn't an option.&nbsp;</div>
-<blockquote style=3D"margin-left: 0.8ex; padding-left: 1ex; border-left: 3p=
-x solid rgb(200, 200, 200);">
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-&gt; Following&nbsp;that idea, the EAL structure can be divided to hold the=
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-&gt; &quot;original&quot; resources inherited from librte_eal and new resou=
-rces</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&gt; introduced in Rust EAL.</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-Here we can look from different perspectives. Should &quot;Rust EAL&quot; e=
-ven exist?</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-If so, why? The DPDK C APIs were designed in&nbsp;baremetal/linux days, whe=
-re</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-certain &quot;best-practices&quot; didn't exist yet, and Rust language was =
-pre 1.0 release.</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-Of course, certain parts of Rust API must depend on EAL being initialized.<=
-/div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-There is a logical flow to DPDK initialization, these must be kept for corr=
-ect functionality.</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-I guess I'm saying, perhaps we can do better than mirroring the concept of<=
-/div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&quot;DPDK EAL in C&quot; in to &quot;DPDK EAL in Rust&quot;.</div>
-</blockquote>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-I think that there will need to be some kind of runtime exposed by the libr=
-ary. A lot of the existing EAL abstractions may need to be reworked, especi=
-ally those dealing with memory, but I think a lot of things can be layered =
-on top of the C API. However, I
- think many of the invariants in the EAL could be enforced at compile time =
-for free, which may mean the creation of a lot of &quot;unchecked&quot; fun=
-ction variants which skip over null checks and other validation.<br>
-<br>
-As was mentioned before, it may also make sense for some abstractions in th=
-e C EAL to be lifted to compile time. I've spent a lot of time thinking abo=
-ut how to use something like Rust's traits for &quot;it just works&quot; ca=
-pabilities where you can declare what features
- you want (ex: scatter/gather) and it will either be done in hardware or fa=
-ll back to software, since you were going to need to do it anyway. This mig=
-ht lead to parameterizing a lot of user code on the devices they expect to =
-interact with and then having some
- &quot;dyn EthDev&quot; as a fallback, which should be roughly equivalent t=
-o what we have now. I can explain that in more detail if there's interest.<=
-br>
-<br>
-</div>
-<blockquote style=3D"margin-left: 0.8ex; padding-left: 1ex; border-left: 3p=
-x solid rgb(200, 200, 200);">
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-&gt; &gt; Instead, I believe we should be</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&gt; &gt; encouraging native rust thread management, and not exposing any D=
-PDK</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&gt; &gt; threading APIs except those necessary to have rust threads work w=
-ith DPDK,</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&gt; &gt; i.e. with an lcore ID. Many years ago when DPDK started, and in t=
-he C</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&gt; &gt; world, having DPDK as a runtime environment made sense, but times=
- have</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&gt; &gt; changed and for Rust, there is a whole ecosystem out there alread=
-y that we</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&gt; &gt; need to &quot;play nice with&quot;, so having Rust (not DPDK) do =
-all thread</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&gt; &gt; management is the way to go (again IMHO).</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-&gt; &gt;</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&gt;</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&gt; I'm not sure what exposed DPDK API you refer to.</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-I think that's the point :) Perhaps the Rust application should decide how/=
-when to</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-create threads, and how to schedule &amp; pin them. Not the &quot;DPDK crat=
-e for Rust&quot;.</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-To give a more concrete examples, lets look at Tokio (or Monoio, or Glommio=
-, or .. )</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-which are prominent players in the Rust ecosystem, particularly for network=
-ing workloads</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-where request/response patterns are well served by the &quot;async&quot; pr=
-ogramming model (e.g HTTP server).</div>
-</blockquote>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Rust doesn't really care about threads that much. Yes, it has std::thread a=
-s a pthread equivalent, but on Linux those literally call pthread. Enforcin=
-g the correctness of the Send and Sync traits (responsible for helping enfo=
-rce thread safety) in APIs is left
- to library authors. I've used Rust with EAL threads and it's fine, althoug=
-h a slightly nicer API for launching based on a closure (which is a functio=
-n pointer and a struct with the captured inputs) would be nice. In Rust, I'=
-d say that async and threads are
- orthogonal concepts, except where runtimes force them to mix. Async is a w=
-ay to write a state machine or (with some more abstraction) an execution gr=
-aph, and Rust the language doesn't care whether a library decides to run so=
-me dependencies in parallel. What
- I think Rust is more likely to want is thread per core&nbsp;and then runni=
-ng either a single async runtime over all of them or an async runtime per c=
-ore.</div>
-<blockquote style=3D"margin-left: 0.8ex; padding-left: 1ex; border-left: 3p=
-x solid rgb(200, 200, 200);">
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Lets focus on Tokio first: it is an &quot;async runtime&quot; (two links fo=
-r future readers)</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-&nbsp;&nbsp;&nbsp; &lt;snip&gt;</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-So an async runtime can run &quot;async&quot; Rust functions (called Future=
-s, or Tasks when run independently..)</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-There are lots of words/concepts, but I'll focus only on the thread creatio=
-n/control aspect, given the DPDK EAL lcore context.</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-Tokio is a work-stealing scheduler. It spawns &quot;worker&quot; threads, a=
-nd then gives these &quot;tasks&quot;</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-to various worker cores (similar to how Golang does&nbsp;its work-stealing =
-scheduling). Some</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-DPDK crate users might like this type of workflow, where e.g. RXQ polling i=
-s a task, and the</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&quot;tokio runtime&quot; figures out which worker to run it on. &quot;Spaw=
-ning&quot; a task causes the &quot;Future&quot;</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-to start executing. (technical Rust note: notice the &quot;Send&quot; bound=
- on Future: <a href=3D"https://docs.rs/tokio/latest/tokio/task/fn.spawn.htm=
-l" id=3D"LPlnk652562" class=3D"OWAAutoLink">
-https://docs.rs/tokio/latest/tokio/task/fn.spawn.html</a>&nbsp;)</div>
-</blockquote>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-The work stealing aspect of Tokio has also led to some issues in the Rust e=
-cosystem. What it effectively means is that every &quot;await&quot; is a pl=
-ace where you might get moved to another thread. This means that it would b=
-e unsound to, for example, have a queue handle
- on devices without MT-safe queues unless we want to put a mutex on top of =
-all of the device queues. I personally think this is a lot of the source of=
- people thinking that Rust async is hard, because Tokio forces you to be th=
-read safe at really weird places
- in your code and has issues like not being able to hold a mutex over an aw=
-ait point.<br>
-<br>
-</div>
-<blockquote style=3D"margin-left: 0.8ex; padding-left: 1ex; border-left: 3p=
-x solid rgb(200, 200, 200);">
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Other users might prefer the &quot;thread-per-core&quot; and CPU pinning ap=
-proach (like DPDK itself would do).</div>
-</blockquote>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-nit: Tokio also spawns a thread per core, it just freely moves tasks betwee=
-n cores. It doesn't pin because it's designed to interoperate with the norm=
-al kernel scheduler more nicely. I think that not needing pinned cores is n=
-ice, but we want the ability to
- pin for performance reasons, especially on NUMA/NUCA systems (NUCA =3D Non=
--Uniform Cache Architecture, almost every AMD EPYC above 8 cores, higher co=
-re count Intel Xeons for 3 generations, etc).</div>
-<blockquote style=3D"margin-left: 0.8ex; padding-left: 1ex; border-left: 3p=
-x solid rgb(200, 200, 200);">
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Monoio and Glommio both serve these use cases (but in slightly different wa=
-ys!). They both spawn threads and do CPU pinning.</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-Monoio and Glommio say &quot;tasks will always remain on the local thread&q=
-uot;. In Rust techie terms: &quot;Futures are !Send and !Sync&quot;</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-&nbsp;&nbsp;&nbsp; <a href=3D"https://docs.rs/monoio/latest/monoio/fn.spawn=
-.html" id=3D"LPlnk846468" class=3D"OWAAutoLink">
-https://docs.rs/monoio/latest/monoio/fn.spawn.html</a></div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-&nbsp;&nbsp;&nbsp; <a href=3D"https://docs.rs/glommio/latest/glommio/fn.spa=
-wn_local.html" id=3D"LPlnk988575" class=3D"OWAAutoLink">
-https://docs.rs/glommio/latest/glommio/fn.spawn_local.html</a></div>
-</blockquote>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-There is also another option, one which would eliminate &quot;service cores=
-&quot;. We provide both a work stealing pool of tasks that have to deal wit=
-h being yanked between cores/EAL threads at any time, but aren't data plane=
- tasks, and then a different API for spawning
- tasks onto the local thread/core for data plane tasks (ex: something to ma=
-nage a particular HTTP connection). This might make writing the runtime har=
-der, but it should provide the best of both worlds provided we can build in=
- a feature (Rust provides a way
- to &quot;ifdef out&quot; code via features) to disable one or the other if=
- someone doesn't want the overhead.</div>
-<blockquote style=3D"margin-left: 0.8ex; padding-left: 1ex; border-left: 3p=
-x solid rgb(200, 200, 200);">
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-So there are at least 3 different async runtimes (and I haven't even talked=
- about async-std, smol, embassy, ...) which</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-all have different use-cases, and methods of running &quot;tasks&quot; on t=
-hreads. These runtimes exist, and are widely used,</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-and applications make use of their thread-scheduling capabilities.</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-So &quot;async runtimes&quot; do thread creation (and optionally CPU pinnin=
-g) for the user.</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-Other libraries like &quot;Rayon&quot; are thread-pool managers, those also=
- have various CPU thread-create/pinning capabilities.</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-If DPDK *also* wants to do thread creation/management and CPU-thread-to-cor=
-e pinning for the user, that creates tension.</div>
-</blockquote>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-The other problem is that most of these async runtimes have IO very tightly=
- integrated into them.&nbsp;A large portion of Tokio had to be forked and r=
-ewritten for io_uring support, and DPDK is a rather stark departure&nbsp;fr=
-om what they were all designed for. I know
- that both Tokio and Glommio have &quot;start a new async runtime on this t=
-hread&quot; functions, and I think that Tokio has an &quot;add this thread =
-to a multithreaded&nbsp;runtime&quot; somewhere.<br>
-<br>
-I think the main thing that DPDK would need to be concerned about is that m=
-any of these runtimes use thread locals, and I'm not sure if that would be =
-transparently handled by the EAL thread runtime since I've always used thre=
-ad per core and then used the Rust
- runtime to multiplex between tasks instead of spawning more EAL threads.<b=
-r>
-<br>
-Rayon should probably be thought of in a similar vein to OpenMP, since it's=
- mainly designed for batch processing. Unless someone is doing some fairly =
-heavy computation (the kind where &quot;do we want a GPU to accelerate this=
-?&quot; becomes a question) inside of their
- DPDK application, I'm having trouble thinking of a use case that would wan=
-t both DPDK and Rayon.&nbsp;</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<blockquote style=3D"margin-left: 0.8ex; padding-left: 1ex; border-left: 3p=
-x solid rgb(200, 200, 200);">
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-&gt; Bruce wrote: &quot;so having Rust (not DPDK) do all thread management =
-is the way to go (again IMHO).&quot;</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-I think I agree here, in order to make the Rust DPDK crate usable from the =
-Rust ecosystem,</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-it must align itself with the existing Rust networking ecosystem.</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-That means, the DPDK Rust crate should not FORCE the usage of lcore pinning=
-s and mappings.</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-Allowing a Rust application to decide how to best handle threading (via Ray=
-on, Tokio, Monoio, etc)</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-will allow much more &quot;native&quot; or &quot;ergonomic&quot; integratio=
-n of DPDK into Rust applications.</div>
-</blockquote>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-I'm not sure that using DPDK from Rust will be possible without either seri=
-ous performance sacrifices or rewrites of a lot of the networking libraries=
-. Tokio continues to mimic the BSD sockets API for IO, even with the io_uri=
-ng version, as does glommio. The
- idea of the &quot;recv&quot; giving you a buffer without you passing one i=
-n isn't really used outside of some lower-level io_uring crates. At a bare =
-minimum, even if DPDK managed to offer an API that works exactly the same w=
-ays as io_uring or epoll, we would still need
- to go to all of the async runtimes and get them to plumb DPDK support in o=
-r approve someone from the DPDK community maintaining support. If we don't =
-offer that API, then we either need rewrites inside of the async runtimes o=
-r for individual libraries to provide
- DPDK support, which is going to be even more difficult.<br>
-<br>
-I agree that forcing lcore pinnings and mappings isn't good, but I think th=
-at DPDK is well within its rights to build its own async runtime which expo=
-ses a standard API. For one thing, the first thing Rust users will ask for =
-is a TCP stack, which the community
- has been discussing and debating for a long time. I think we should figure=
- out whether the goal is to allow DPDK applications to be written in Rust, =
-or to allow generic Rust applications to use DPDK. The former means that th=
-e audience would likely be Rust-fluent
- people who would have used DPDK regardless, and are fine dealing with memp=
-ools, mbufs, the eal, and ethdev configuration. The latter is a much larger=
- audience who is likely going to be less tolerant of dpdk-rs exposing the t=
-rue complexity of using DPDK. Yes,
- Rust can help make the abstractions better, but there's an amount of inher=
-ent complexity in &quot;Your NIC can handle IPSec for you and can also dire=
-ct all IPv6 traffic to one core&quot; that I don't think we can remove.&nbs=
-p;</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-I personally think that making an API for DPDK applications to be written i=
-n Rust, and then steadily adding abstractions on top of that until we arriv=
-e at something that someone who has never looked at a TCP header can use wi=
-thout too much confusion. That was
- part of the goal of the Iris project I pitched (and then had to go finish =
-another project so the design is still WIP). I think that a move to DPDK is=
- going to be as radical of a change as a move to io_uring, however, DPDK is=
- fast enough that I think it may
- be possible to convince people to do a rewrite once we arrive at that high=
- level API. &quot;Swap out your sockets and rework the functions that do ne=
-twork IO for a 5x performance increase&quot;&nbsp;is a very, very attractiv=
-e offer, but for us to get there I think we need
- to have DPDK's full potential available in Rust, and then build as many ze=
-ro-overhead (zero cost or you couldn't write it better yourself) abstractio=
-ns as we can on top. I want to avoid a situation where we build up to the h=
-igh-level APIs as fast as we can
- and then end up in a situation where you have &quot;Easy Mode&quot; and th=
-en &quot;C DPDK written in Rust&quot; as your two options.&nbsp;</div>
-<blockquote style=3D"margin-left: 0.8ex; padding-left: 1ex; border-left: 3p=
-x solid rgb(200, 200, 200);">
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-&gt; Regards,</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-&gt; Gregory</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Apologies for the long-form, &quot;wall of text&quot; email, but I hope it =
-captures the nuance of threading and</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-async runtimes, which I believe in the long term will be very nice to captu=
-re &quot;async offload&quot; use-cases</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-for DPDK. To put it another way, lookaside processing can be hidden behind =
-async functions &amp; runtimes,</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-if we design the APIs right: and that would&nbsp;be really cool for making =
-async-offload code easy to write correctly!</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Regards, -Harry<br>
-<br>
-</div>
-</blockquote>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Sorry for my own walls of text. As a consequence of working on Iris I've&nb=
-sp;spent a lot of time thinking about how to make DPDK easier to use while =
-keeping the performance intact, and I was already thinking in Rust since it=
- provides one of the better options for
- these kinds of abstractions (the other option I see is Mojo, which isn't r=
-eady yet). I want to see DPDK become more accessible, but the performance a=
-nd access to hardware is one of the main things that make DPDK special, so =
-I don't want to compromise that.
- I definitely agree that we need to force DPDK's existing APIs to justify t=
-hemselves in the face of the new capabilities of Rust, but I think that sta=
-rting from &quot;How are Rust applications written today?&quot; is a mistak=
-e.</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Regards,</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Owen</div>
-</body>
-</html>
-
---_000_DM8P223MB038323681A4BEA771CF92A6D8D8D2DM8P223MB0383NAMP_--
