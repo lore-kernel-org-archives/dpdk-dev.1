@@ -2,73 +2,135 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EBBDC369C2
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 06:24:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66D36C369C2
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 07:13:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DB7A440667;
-	Mon,  5 May 2025 08:24:47 +0200 (CEST)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 0156F40667
- for <dev@dpdk.org>; Mon,  5 May 2025 08:24:46 +0200 (CEST)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54530fkG011430;
- Sun, 4 May 2025 23:24:43 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=c
- DX6zVldBYsUNQVNkoztCoWLzHOyBrEnti8vB9bT0Qo=; b=dn6m+GTkp0Bw82Eut
- Co3o2aDJeVdBGw2aU5n4YHc31E1WCIL30H+R2wF8IDPBdxhDRL2t2+R1oNPpeof6
- 4VdYxwheBRYUN+cTkUz0Uxb/f46HFQR155zVnYpWihLmGvvTjMxcvnQRpvSfGJfh
- trEKlIKfLoC+UFTdQ14n07pLKpkGMcUxTQ4nPhniIGK/JSjnV/9oDdNM1Svxcsa8
- lzYljyzi7ZtO9napooniaOsIFL8qSD9I7RRB5d/M+zsqyx0JjrVVQQhB/4a73cHy
- sEn0i8sO8Hnn0by4HAykc2gLLUfnrBcWQmjfRl8Y+rjGKGHZcXiZoFEeYGXmJPlv
- 7UMDg==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46ehxprg7p-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Sun, 04 May 2025 23:24:43 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Sun, 4 May 2025 23:24:42 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Sun, 4 May 2025 23:24:42 -0700
-Received: from cavium-System-Product-Name.. (unknown [10.28.37.22])
- by maili.marvell.com (Postfix) with ESMTP id 35EFA3F7073;
- Sun,  4 May 2025 23:24:39 -0700 (PDT)
-From: <kirankumark@marvell.com>
-To: Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, 
- Nithin Dabilpuram <ndabilpuram@marvell.com>, Zhirun Yan
- <yanzhirun_163@163.com>
-CC: <dev@dpdk.org>
-Subject: [PATCH v7 3/3] test/graph: fix graph autotest second run test failure
-Date: Mon, 5 May 2025 11:54:21 +0530
-Message-ID: <20250505062422.588450-3-kirankumark@marvell.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250505062422.588450-1-kirankumark@marvell.com>
-References: <20241126044402.1209998-1-kirankumark@marvell.com>
- <20250505062422.588450-1-kirankumark@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 6276740650;
+	Mon,  5 May 2025 09:13:22 +0200 (CEST)
+Received: from egress-ip42b.ess.de.barracuda.com
+ (egress-ip42b.ess.de.barracuda.com [18.185.115.246])
+ by mails.dpdk.org (Postfix) with ESMTP id 67CB14025D
+ for <dev@dpdk.org>; Mon,  5 May 2025 09:13:21 +0200 (CEST)
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com
+ (mail-vi1eur05lp2168.outbound.protection.outlook.com [104.47.17.168]) by
+ mx-outbound45-79.eu-central-1c.ess.aws.cudaops.com (version=TLSv1.2
+ cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+ Mon, 05 May 2025 07:13:14 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rol5Sg8tQcsRHb61QD+9Z/HlWO/9KM+bavebPJFLkYc2H/tuAycKkmwdKZrqOZd25AMXyaqpo8HCByxBEkMBko29u3s0f4PxyUQwTjyxYqDBu6gYyZ6d/rZ2ocpVxpsOt4OgOYkoOVBHVfUKhIDNwGC4DDoCiQ6I/ABOtqpa0kQ1ifR5lAtcuVfocOWBRAEUniyZvO1Ma3uZVr5nD2I6eNNimr4r9qSA5PVMg9zXZk/tsubhY/9PCOC1uAEkRiKzDghWTEnSopr7rBYTejZoVzFSerG9x8E+pyByfh1ZflWd/0c4sR9d5Lox1dphrGVKEd7iwGPHGMkc3rLF6m5tEA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vy54sW1UskmLFRtQl9GxiyZEBzf4vOw5FJM+xSXU+1A=;
+ b=hNU7FYfACU7x1Xh53s4vRWhsipNIWU/Lci/+GOFIYiFO/bl6u/FBUas8l280rMTb09svnkx64Zu6NsA2eMcFDpoCHdRlv4cIiFaFUjKHh/RFMD5x2fbpSRaw8MtkUb6V87McJUAc8QMynH+R1ALuA3LOjG9df1c1oOnjZlmPYbt4g6L9k4tVDBMm9oqWEtMp62HrgLOFrjlmRGmuoHdnwM8+PYpHSjHr9Kn1+7ffGgQP/bsCbsbZHLhzZMQSG7sBrh0BVcno5AJHGuMSZF9/Vv6+GztazZaC3UCGJdLTALjLCfD8GAy+hPGwJSh84Eno4C3QiqZg/NWZQuB0CQY20A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
+ dmarc=fail (p=reject sp=reject pct=100) action=oreject
+ header.from=napatech.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vy54sW1UskmLFRtQl9GxiyZEBzf4vOw5FJM+xSXU+1A=;
+ b=dQUYjqyLiUq5mzWsoZb9XZzzSi/agZFWHmiEVljCcXbNvmKoCWWRR/TLVewF+/2ihFE4MMCcNjEtYYVsKwaWTy40JD3I43BABZOaw+Vc2cjLRYZH5Ic/g7V4Og1A3xY9sp9TSKo/gd7QLVy0vIO4OA9DHQ3gfTjNHPUnSVTSCyM=
+Received: from DU7P191CA0010.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:54e::35)
+ by AM9P190MB1332.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:26d::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.26; Mon, 5 May
+ 2025 07:13:12 +0000
+Received: from DU6PEPF00009523.eurprd02.prod.outlook.com
+ (2603:10a6:10:54e:cafe::a5) by DU7P191CA0010.outlook.office365.com
+ (2603:10a6:10:54e::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.31 via Frontend Transport; Mon,
+ 5 May 2025 07:13:12 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
+ smtp.mailfrom=napatech.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=oreject header.from=napatech.com;
+Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
+ designate 178.72.21.4 as permitted sender) receiver=protection.outlook.com;
+ client-ip=178.72.21.4; helo=localhost.localdomain;
+Received: from localhost.localdomain (178.72.21.4) by
+ DU6PEPF00009523.mail.protection.outlook.com (10.167.8.4) with Microsoft SMTP
+ Server id 15.20.8722.18 via Frontend Transport; Mon, 5 May 2025 07:13:12
+ +0000
+From: Oleksandr Kolomeiets <okl-plv@napatech.com>
+To: dev@dpdk.org
+Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
+ stephen@networkplumber.org, thomas@monjalon.net
+Subject: [PATCH v2 01/26] net/ntnic: remove usage of the variable-length arrays
+Date: Mon,  5 May 2025 09:12:41 +0200
+Message-ID: <20250505071309.586015-2-okl-plv@napatech.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250505071309.586015-1-okl-plv@napatech.com>
+References: <20250505071309.586015-1-okl-plv@napatech.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU6PEPF00009523:EE_|AM9P190MB1332:EE_
 Content-Type: text/plain
-X-Proofpoint-GUID: nmalZFYlq5QF-f_XCIntIXApashCyokr
-X-Proofpoint-ORIG-GUID: nmalZFYlq5QF-f_XCIntIXApashCyokr
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA1MDA1OCBTYWx0ZWRfX6suuhS8FcY3V
- 44jLPXTkjTdE2gM1Ov8AxAHTpfx3lRUbC6/7AXpDZHQ9jvc8xHkzaopd9Fgp0bc5kW4DWX1jaUP
- OIH5kMn8S1XQuPhyZAueS1o0PmDEJHCLLIKizfyajwrGcrengKsRv0uj+4aLzLhWQsr+gs1kSuK
- 1Bt+kqoX/m4Z9AuDhQ2xXRBG+iui495g7U5nT8n7V2OcVNbOxDq82qFSbzV5JF6TQDoSnONp11X
- XVyOgr/p1nyZxh8R9JtI8N4VKnk/5w9OlPDW2DSz1OEkYDvNyi8K4MhgPSR+9gjX91OqFYEByCJ
- BkChrk+Iz9LIvmznEofzeEZJQa628gB7ihYuDWDSk17b867+0dBBGCHGN43JlfnYdp/nhidtbGh
- nq9vxh/FzH9HW4VTxzbkvrv4900o6MOOSC7Dgqyh6cvSA3XWslMrnkcW04YPwvDLdQ37+4UO
-X-Authority-Analysis: v=2.4 cv=U+mSDfru c=1 sm=1 tr=0 ts=681859ab cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=MqI-DGuoOvG9Fh05Se8A:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-05_03,2025-04-30_01,2025-02-21_01
+X-MS-Office365-Filtering-Correlation-Id: 15cd34e1-8dc4-4901-3302-08dd8ba44c27
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|36860700013|82310400026|1800799024; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?eoas93DwgeSuPH520GvD5a0fheJbLrrkquD0wq5kbfLDBIgVW0qLfsB1IQbP?=
+ =?us-ascii?Q?T4kp4VtVNI/qJqACR7iHs25nczHYS+IWK4KWH8J/lEko+6J5li63/uqcHFDf?=
+ =?us-ascii?Q?eyLMxPUM81GQUA6BX7d+0RXIz/WZbXXA9U/e+h/L+GoLoaUpt1ZU5kt5JxWk?=
+ =?us-ascii?Q?JhyZrlmpJIEOMkQ/BgOG9sjxonQ4rmkEr8jw/FQu1LLEmI+H+5EzsEg3Xj2p?=
+ =?us-ascii?Q?wx/qYn+VWDtJDysqNgEl9cunCwunV4MXJd0Vsjd3YOX+2OKLVLc9Fclyyn3v?=
+ =?us-ascii?Q?IDyd3miKbmKoX+sM0qnGWpBagHEtK6ZutTLUUr7hNWfg6ac78VDyK9RFqayN?=
+ =?us-ascii?Q?SSz19e21SrDiy6j2/vKg70cfTB5Vm7F+dAri06Fz28q5Ck3Fkh8iUC8lzfSv?=
+ =?us-ascii?Q?DCG9WblrUsAQnPu5D/+lODes4c37ydJy7ocu+onnLGQlXzW9HVO2eSQTRJmr?=
+ =?us-ascii?Q?23TpWsJThtSTSHFWeo7B2DGRMGyljlzIVZ+kvsdYJBPfaJPnzErU0w+KveBP?=
+ =?us-ascii?Q?sWaDP/lZxRQ8MuRmnLQ5NCq927+VcGPyueuRslTVZoaPCO0yFnNxdi+HhfdB?=
+ =?us-ascii?Q?qCf6eiXdpBfeFR/FuHAGCQzxQ9TxvXi3bPhl/LYx8ZvblSMaKh1tV7XYEpKh?=
+ =?us-ascii?Q?Rc55r8sd40VT+mx567+L8XGQ93xRF3w7gouh61QgasYdVix7+bHx/hqIGa2B?=
+ =?us-ascii?Q?WQd3Hp4OkKa1horwq3zPpgGJ6HCE6iwxzp+s2lp+khwK376LfFx42DZWwL7+?=
+ =?us-ascii?Q?DpO3dNJXOaKq4QmB+tdwfOJb+Q81ED4HN9361rRJFXyZz9ABYiJ9BMPsML6W?=
+ =?us-ascii?Q?hOjmuiVkAx1x1RBvSPLlduERaa35vJAQKrx+gA3f6kkXO5/4GUJwcrIfOEzb?=
+ =?us-ascii?Q?Ubs5DmV0TAa/mL2/S3dLLwQsZF0GlMGgkNyNWIv9nzqmxHQ2f3ZT+ZWEN1oM?=
+ =?us-ascii?Q?ckFXV9flsId+y5T26p3odF7NRhAHDODXF2HQgDpraWnP+q2vzxRT+qL9Mr9X?=
+ =?us-ascii?Q?K6rdpUS7VxUsTn+8A4JeRn4vDOUJ/G/FrdjnizM++il4gQSTPfpWpGWItyx/?=
+ =?us-ascii?Q?yMT1mQIrORrtHzP8GscRK228GVYgLmdTcjBoQVcom3Z5nbErePafA2ghCkJh?=
+ =?us-ascii?Q?iVwXSTWoMruxwjcQhdUz7iNVk54sVVrHF2Ib1xJMmjMSIjpBr0JxvKhobuMT?=
+ =?us-ascii?Q?WrTUsaBjzg9xA1AMESlT3aCfol2TI3bUKIrOd434UgzX7NRFcfhzM0Ccl/mM?=
+ =?us-ascii?Q?ThBT+FkwwOqKVPB0c3wRhusAZOGVdBfj6r4rxPNye5Nx7wA1DlOEJ68TkWPz?=
+ =?us-ascii?Q?vI38qjHbBHotTrMrY+NtzJSatnMkM88L7vPGbCqw00cBX5ktNIpUP2REq3ES?=
+ =?us-ascii?Q?SSModC72r7wTfxoeZpIw2iZth6cfXCTEZS/uiyRRRiQmQoEbDeqEbq9xa42W?=
+ =?us-ascii?Q?ZMAtfee1lTkevaMkz+9hfrthfy/kRwjLNbwZZ9w4DYYTY+roomjzvEr8DoQ8?=
+ =?us-ascii?Q?zvyxtiVD279xODw3e7LvDW9z+Z0Q3UyOyIsv?=
+X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
+ CAT:NONE; SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024);
+ DIR:OUT; SFP:1102; 
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: PemTrMX9xf7qD7kBUN13GUPxvmsF1eVO1Dfx16rX6TkufOxhSIW+ih9e57DUyWCWTGf13bG7baPwnilxNHSAzvB7gPDm3pRJq0uJzhs2b0izP7XCq2uYKcunG+FdHnY/nw79GWlyqioOIMdUtmjxGIPdCMqvqUvO/haVuIZyJ2VzA5MboFRDT5Dy8daKn3EaEZ+otdAVcyZhYVShcakJc3HtPHnOmb8Iv6GWJDF/BiFnaX8EB9jpsy/A7W/rPvwAleXV/P2pn4csOYfQTY8G8fgvAqEmlUxjDnNvny5LhWubocgopn2Z96zqNZWOEM6+P4SsRsqpRjA6YPJPxMrrjxIw9OmrchTtkd53GfeAFvVuGEk6Udy3zOzHCSn6lSjm5sV8+T2YCQPsn9hc4/qX3jf7M2/ZwDZxQo6dhWjLyhZnApmPkVn4Y32B13t7/ws8fXcizd5ZDHeozFXDqWnLP7mTbqNHAcJdVerBcyxmwjCsJvb/wRPJrtoHNAK9H4FCSNt2bbReuajNVaj2TylfhJ9LBV/sqMpqndHiuAquIaWFGCZimH3lZVC4/2tjJczV+kPFc1PXwK68HPt289jQEAO5FY0Zqtrr/aManlh1qN7326z8AR7OeT1pBPa7+ltR4qojNV/WtgGvPBOQwL5kGg==
+X-OriginatorOrg: napatech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2025 07:13:12.3325 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 15cd34e1-8dc4-4901-3302-08dd8ba44c27
+X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
+ Helo=[localhost.localdomain]
+X-MS-Exchange-CrossTenant-AuthSource: DU6PEPF00009523.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9P190MB1332
+X-BESS-ID: 1746429194-311599-7747-346-1
+X-BESS-VER: 2019.1_20250429.1615
+X-BESS-Apparent-Source-IP: 104.47.17.168
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVsYWBkZAVgZQMDnVINHEwMLCzD
+ Q51dLcJDUxJdU42dDEwtTUPCUlLdlAqTYWAJp/akdBAAAA
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2,
+ rules version 3.2.2.264372 [from 
+ cloudscan21-15.eu-central-1b.ess.aws.cudaops.com]
+ Rule breakdown below
+ pts rule name              description
+ ---- ---------------------- --------------------------------
+ 0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS113687 scores of
+ KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,174 +144,106 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Kiran Kumar K <kirankumark@marvell.com>
+VLAs with known upper limits are replaced with fixed-length arrays.
+In case an upper limit of an array cannot be known in advance,
+the memory for such an array is allocated dynamically using alloca.
+In comparison to malloc family of functions, the alloca executes faster
+due to working directly with a stack instead of a heap,
+for the same reason it does not require manual memory management.
 
-The graph autotest second run test is failing due to the
-node name is already present in the node list. Adding changes
-to free nodes at the time of test cleanup.
-
-Fixes: 6b89650418fe ("test/graph: add functional tests")
-
-Signed-off-by: Kiran Kumar K <kirankumark@marvell.com>
-Acked-by: Jerin Jacob <jerinj@marvell.com>
+Signed-off-by: Oleksandr Kolomeiets <okl-plv@napatech.com>
 ---
- app/test/test_graph.c | 95 ++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 90 insertions(+), 5 deletions(-)
+ drivers/net/ntnic/meson.build                       |  2 --
+ .../flow_api/profile_inline/flow_api_hw_db_inline.c | 13 ++++++++++---
+ .../profile_inline/flow_api_profile_inline.c        |  8 ++++----
+ 3 files changed, 14 insertions(+), 9 deletions(-)
 
-diff --git a/app/test/test_graph.c b/app/test/test_graph.c
-index 2840a25b13..635b8dd527 100644
---- a/app/test/test_graph.c
-+++ b/app/test/test_graph.c
-@@ -68,6 +68,8 @@ static void *mbuf_p[MAX_NODES + 1][MBUFF_SIZE];
- static rte_graph_t graph_id;
- static uint64_t obj_stats[MAX_NODES + 1];
- static uint64_t fn_calls[MAX_NODES + 1];
-+static uint32_t dummy_nodes_id[MAX_NODES];
-+static uint32_t dummy_nodes_id_count;
-
- const char *node_patterns[] = {
- 	"test_node_source1",	   "test_node00",
-@@ -541,6 +543,66 @@ test_lookup_functions(void)
- 	return 0;
- }
-
-+static int
-+test_node_id(void)
-+{
-+	uint32_t node_id, odummy_id, dummy_id, dummy_id1;
-+
-+	node_id = rte_node_from_name("test_node00");
-+
-+	dummy_id = rte_node_clone(node_id, "test_node_id00");
-+	if (rte_node_is_invalid(dummy_id)) {
-+		printf("Got invalid id when clone\n");
+diff --git a/drivers/net/ntnic/meson.build b/drivers/net/ntnic/meson.build
+index 30a92130b5..b4c6cfe7de 100644
+--- a/drivers/net/ntnic/meson.build
++++ b/drivers/net/ntnic/meson.build
+@@ -124,5 +124,3 @@ sources = files(
+         'ntnic_vfio.c',
+         'ntnic_ethdev.c',
+ )
+-
+-cflags += no_wvla_cflag
+diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_hw_db_inline.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_hw_db_inline.c
+index a016c82458..ae72b8775e 100644
+--- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_hw_db_inline.c
++++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_hw_db_inline.c
+@@ -1343,9 +1343,11 @@ static int hw_db_inline_alloc_prioritized_cfn(struct flow_nic_dev *ndev,
+ 	struct {
+ 		uint64_t priority;
+ 		uint32_t idx;
+-	} sorted_priority[db->nb_cat];
++	} *sorted_priority;
+ 
+-	memset(sorted_priority, 0x0, sizeof(sorted_priority));
++	sorted_priority = calloc(db->nb_cat, sizeof(*sorted_priority));
++	if (!sorted_priority)
 +		return -1;
-+	}
-+
-+	dummy_id1 = rte_node_clone(node_id, "test_node_id01");
-+	if (rte_node_is_invalid(dummy_id1)) {
-+		printf("Got invalid id when clone\n");
-+		return -1;
-+	}
-+
-+	/* Expect next node id to be node_id + 1 */
-+	if ((dummy_id + 1) != dummy_id1) {
-+		printf("Node id didn't match, expected = %d got = %d\n",
-+		       dummy_id+1, dummy_id1);
-+		return -1;
-+	}
-+
-+	odummy_id = dummy_id;
-+	/* Free one of the cloned node */
-+	if (rte_node_free(dummy_id)) {
-+		printf("Failed to free node\n");
-+		return -1;
-+	}
-+
-+	/* Clone again, should get the same id, that is freed */
-+	dummy_id = rte_node_clone(node_id, "test_node_id00");
-+	if (rte_node_is_invalid(dummy_id)) {
-+		printf("Got invalid id when clone\n");
-+		return -1;
-+	}
-+
-+	if (dummy_id != odummy_id) {
-+		printf("Node id didn't match, expected = %d got = %d\n",
-+		       odummy_id, dummy_id);
-+		return -1;
-+	}
-+
-+	/* Free the node */
-+	if (rte_node_free(dummy_id)) {
-+		printf("Failed to free node\n");
-+		return -1;
-+	}
-+
-+	if (rte_node_free(dummy_id1)) {
-+		printf("Failed to free node\n");
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
- static int
- test_node_clone(void)
- {
-@@ -551,11 +613,12 @@ test_node_clone(void)
- 	node_id = rte_node_from_name("test_node00");
- 	tm->test_node[0].idx = node_id;
-
--	dummy_id = rte_node_clone(node_id, "test_node00");
--	if (rte_node_is_invalid(dummy_id)) {
-+	dummy_nodes_id[dummy_nodes_id_count] = rte_node_clone(node_id, "test_node00");
-+	if (rte_node_is_invalid(dummy_nodes_id[dummy_nodes_id_count])) {
- 		printf("Got invalid id when clone, Expecting fail\n");
+ 
+ 	uint32_t in_use_count = 0;
+ 
+@@ -1360,13 +1362,16 @@ static int hw_db_inline_alloc_prioritized_cfn(struct flow_nic_dev *ndev,
+ 		}
+ 	}
+ 
+-	if (in_use_count >= db->nb_cat - 1)
++	if (in_use_count >= db->nb_cat - 1) {
++		free(sorted_priority);
  		return -1;
- 	}
-+	dummy_nodes_id_count++;
-
- 	/* Clone with same name, should fail */
- 	dummy_id = rte_node_clone(node_id, "test_node00");
-@@ -635,15 +698,15 @@ test_create_graph(void)
- 		.nb_node_patterns = 6,
- 		.node_patterns = node_patterns_dummy,
- 	};
--	uint32_t dummy_node_id;
- 	uint32_t node_id;
-
- 	node_id = rte_node_from_name("test_node00");
--	dummy_node_id = rte_node_clone(node_id, "dummy_node");
--	if (rte_node_is_invalid(dummy_node_id)) {
-+	dummy_nodes_id[dummy_nodes_id_count] = rte_node_clone(node_id, "dummy_node");
-+	if (rte_node_is_invalid(dummy_nodes_id[dummy_nodes_id_count])) {
- 		printf("Got invalid node id\n");
- 		return -1;
- 	}
-+	dummy_nodes_id_count++;
-
- 	graph_id = rte_graph_create("worker0", &gconf);
- 	if (graph_id != RTE_GRAPH_ID_INVALID) {
-@@ -1026,17 +1089,39 @@ graph_setup(void)
- 	}
- 	printf("test_node_clone: pass\n");
-
-+	if (test_node_id()) {
-+		printf("test_node_id: fail\n");
-+		return -1;
 +	}
-+	printf("test_node_id: pass\n");
-+
- 	return 0;
+ 
+ 	if (in_use_count == 0) {
+ 		db->cfn[db_cfn_idx].ref = 1;
+ 		db->cfn[db_cfn_idx].cfn_hw = 1;
+ 		db->cfn[db_cfn_idx].priority = priority;
++		free(sorted_priority);
+ 		return db_cfn_idx;
+ 	}
+ 
+@@ -1400,6 +1405,7 @@ static int hw_db_inline_alloc_prioritized_cfn(struct flow_nic_dev *ndev,
+ 		db->cfn[db_cfn_idx].ref = 1;
+ 		db->cfn[db_cfn_idx].cfn_hw = goal;
+ 		db->cfn[db_cfn_idx].priority = priority;
++		free(sorted_priority);
+ 		return db_cfn_idx;
+ 	}
+ 
+@@ -1425,6 +1431,7 @@ static int hw_db_inline_alloc_prioritized_cfn(struct flow_nic_dev *ndev,
+ 	db->cfn[db_cfn_idx].ref = 1;
+ 	db->cfn[db_cfn_idx].cfn_hw = goal;
+ 	db->cfn[db_cfn_idx].priority = priority;
++	free(sorted_priority);
+ 
+ 	return db_cfn_idx;
  }
-
- static void
- graph_teardown(void)
- {
-+	uint32_t i;
- 	int id;
-
- 	id = rte_graph_destroy(rte_graph_from_name("worker0"));
- 	if (id)
- 		printf("Graph Destroy failed\n");
-+
-+	for (i = 1; i < MAX_NODES; i++) {
-+		if (rte_node_free(test_main.test_node[i].idx)) {
-+			printf("Node free failed\n");
-+			return;
-+		}
-+	}
-+
-+	for (i = 0; i < dummy_nodes_id_count; i++) {
-+		if (rte_node_free(dummy_nodes_id[i])) {
-+			printf("Node free failed\n");
-+			return;
-+		}
-+	}
-+	dummy_nodes_id_count = 0;
- }
-
- static struct unit_test_suite graph_testsuite = {
---
-2.48.1
+diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
+index 6824b35463..c0407574f0 100644
+--- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
++++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
+@@ -3198,15 +3198,15 @@ static void setup_db_qsl_data(struct nic_flow_def *fd, struct hw_db_inline_qsl_d
+ 	} else {
+ 		RTE_ASSERT(fd->dst_num_avail < HW_DB_INLINE_MAX_QST_PER_QSL);
+ 
+-		uint32_t ports[fd->dst_num_avail];
+-		uint32_t queues[fd->dst_num_avail];
++		uint32_t ports[HW_DB_INLINE_MAX_QST_PER_QSL];
++		uint32_t queues[HW_DB_INLINE_MAX_QST_PER_QSL];
+ 
+ 		uint32_t port_index = 0;
+ 		uint32_t queue_index = 0;
+ 		uint32_t max = num_dest_port > num_queues ? num_dest_port : num_queues;
+ 
+-		memset(ports, 0, fd->dst_num_avail);
+-		memset(queues, 0, fd->dst_num_avail);
++		memset(ports, 0, sizeof(ports));
++		memset(queues, 0, sizeof(queues));
+ 
+ 		qsl_data->table_size = max;
+ 		qsl_data->retransmit = num_dest_port > 0 ? 1 : 0;
+-- 
+2.47.1
 
