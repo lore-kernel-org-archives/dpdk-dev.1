@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B683C369C2
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 07:14:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82D09C369C2
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 07:15:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 14C0B40A87;
-	Mon,  5 May 2025 09:13:47 +0200 (CEST)
-Received: from egress-ip11b.ess.de.barracuda.com
- (egress-ip11b.ess.de.barracuda.com [18.185.115.215])
- by mails.dpdk.org (Postfix) with ESMTP id 1698E40A6E
- for <dev@dpdk.org>; Mon,  5 May 2025 09:13:42 +0200 (CEST)
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com
- (mail-dbaeur03lp2173.outbound.protection.outlook.com [104.47.51.173]) by
- mx-outbound45-79.eu-central-1c.ess.aws.cudaops.com (version=TLSv1.2
+	by mails.dpdk.org (Postfix) with ESMTP id 457D840B9C;
+	Mon,  5 May 2025 09:13:48 +0200 (CEST)
+Received: from egress-ip42a.ess.de.barracuda.com
+ (egress-ip42a.ess.de.barracuda.com [18.185.115.201])
+ by mails.dpdk.org (Postfix) with ESMTP id D8B4840A7F
+ for <dev@dpdk.org>; Mon,  5 May 2025 09:13:44 +0200 (CEST)
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com
+ (mail-am6eur05lp2112.outbound.protection.outlook.com [104.47.18.112]) by
+ mx-outbound14-199.eu-central-1a.ess.aws.cudaops.com (version=TLSv1.2
  cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Mon, 05 May 2025 07:13:27 +0000
+ Mon, 05 May 2025 07:13:20 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gwG50e3Ss+AEWL9/o5sQmp0U+7Bum+8346SSg8/cYFmyKi4b/oCqI/o+iJjHN5P7ZN+oPyM552774HjsEUqNwbOKw6yu9rzB/Nj0zQJ+FlcSQAZ9iC+eWfNsqhoLOpAGMQO66PI7UBWdQMclod4T6lfUHveIMdjULABdXS9nOxB7yOycP74/C4+3hk1/1KphAJOHsuMvpqRiaIOltdf/LbRBn8frh4TfDdtrhiRVgUCeLoisR0KOrWdN2X5kZeTfw6puG/ToDbAAkbzhKK8JwsJsTO5Xre/0/6nXxrRB8p+AtYHHq9VZC3tjYtF/vH1Y3/U1cSIscVFWzQ2G3gHnug==
+ b=K9oKqfp4TN3KZjIy/ciHl/UnzxiR7/Qj40g/wPxuSM0dfqj7mqbMV2W3bU21ne6Yu01JIAHXzPEsWnAcQbJIt3eA9aAeT2oqwbegkcci1hM7vpv1tXk5OuUG0VQR7mFkJW5sjzUGyKjmZH+k777O6+K1ryBxyxW0jMa8i2q3Ya/EpmBfDvVPRbQ/SOiSYtdkX3m/i7aeY6AcTySh6dVleZip/MMbCxrGqTiHZRWbiCqkBVTafUiSN+O+F4BjDOju1+If5xbubvMz4kXBzbjWozl4ADWb1Sg/WC/eCAS3sObZSPu+kRAXtTnPH8/DWvDlk5QmpFckUGy7aiHbGf9vDQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5W43BOKGIOibUscTbxJirEqbhWq1wapcOMO4vCPlMAo=;
- b=lEx8Bvq0HEPdZaxC2FCnHRyvuANA3Zwq7ESvZC/KelCDYb43ymOh5gMO9pnCAkIwhSD8l5YhclBeWlBpUM8gsSIuehkoQrkqA4CFKqgYr3YSj/n1NpOoYrvZ9rM79atsujYJ+88Y4c0DqXHQep852SRd9wNmbg0OwLfat4djbtKwSBWz8lWfJ6joVw0g7f5fGtk2elnvGxHQx4YYxdMTLBPtppwvQ2lpWW/cQ4Xu4bssSd/j/aZNOiYb0IqTN5Mai/N1FGtbLTehm2Xm0dWrK8T9CRzCrUb91XsPkMnFob335z7gSKNZIuUy+M9GAS7lR+gfTgekoDUyIIumGYkKZg==
+ bh=mqYYkwC3U43tlwmtP9h4dx6p3fjaeQwBcrw800RUgAE=;
+ b=DvS9/q2UJIbRaSvoAzH3yjud29zwRyDzmoUc9yEwr3YNuA4Mv//YesJs2A7PrYYfY8ve5RypHuEw0NM8M4bgD2/5mH3kKodw1InewDl20MsddLUVoCSw+2VX9yVU0L79ChZwIO4A8rPOkS5WSoL9MqzzOdSjBhjYWmpzwXHZDuphzRi57sIAVohnxlAzN/szWdYaeeZAyAi441wl9n0d9cCAqUM914bblo0YO302f/M9oAj2jS021ME6XaonFIexCmMjcfyvllkcy0ABPOfQmIPXm9fdYHrxF8Sm45n9hYbmefupVGf4J8QVnzTrtmCC3sgUQugdmXpQa3A1yAQZfA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5W43BOKGIOibUscTbxJirEqbhWq1wapcOMO4vCPlMAo=;
- b=iy04gVehxM3AsmrZFxvNU8XUTxoy6OmNYuRmHI3OnW4qp8MkBDiQWLV+yrn4hv+WkBae/LNLsejoYgfxiC4rIO9QBxXqx/S3PqLECNsDH9+9tF2MIb40cZL1NXqvmFjo6FTrGG7e1II6DbHSqz1yB0KtJkswrGHdtJkqeygq4CY=
-Received: from DU7P191CA0024.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:54e::16)
- by AM0P190MB0740.EURP190.PROD.OUTLOOK.COM (2603:10a6:208:191::24) with
+ bh=mqYYkwC3U43tlwmtP9h4dx6p3fjaeQwBcrw800RUgAE=;
+ b=doSSIjI7vX30tdH+izKeDHfH9Kby7or5s6ToKgyNQwX3+ysLBrxXwRhRGZo7/H4eUljXL9qbUG9gaX/bQFKF3qIvgE1PObtKmF3SIVy8N1p+EiIG5fg0+VmQDeBP2bEG03Nm85T9W/VbvMkv4QEMTLbm2LrdMKRzQDhbNu14OnU=
+Received: from DU7P191CA0005.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:54e::28)
+ by VI1P190MB0703.EURP190.PROD.OUTLOOK.COM (2603:10a6:800:124::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.26; Mon, 5 May
- 2025 07:13:26 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.23; Mon, 5 May
+ 2025 07:13:17 +0000
 Received: from DU6PEPF00009523.eurprd02.prod.outlook.com
- (2603:10a6:10:54e:cafe::ca) by DU7P191CA0024.outlook.office365.com
- (2603:10a6:10:54e::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.31 via Frontend Transport; Mon,
- 5 May 2025 07:13:26 +0000
+ (2603:10a6:10:54e:cafe::82) by DU7P191CA0005.outlook.office365.com
+ (2603:10a6:10:54e::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.29 via Frontend Transport; Mon,
+ 5 May 2025 07:13:16 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -50,16 +50,15 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
  client-ip=178.72.21.4; helo=localhost.localdomain;
 Received: from localhost.localdomain (178.72.21.4) by
  DU6PEPF00009523.mail.protection.outlook.com (10.167.8.4) with Microsoft SMTP
- Server id 15.20.8722.18 via Frontend Transport; Mon, 5 May 2025 07:13:25
+ Server id 15.20.8722.18 via Frontend Transport; Mon, 5 May 2025 07:13:16
  +0000
 From: Oleksandr Kolomeiets <okl-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
- stephen@networkplumber.org, thomas@monjalon.net,
- Danylo Vodopianov <dvo-plv@napatech.com>
-Subject: [PATCH v2 19/26] net/ntnic: remove redundant assignments and branching
-Date: Mon,  5 May 2025 09:12:59 +0200
-Message-ID: <20250505071309.586015-20-okl-plv@napatech.com>
+ stephen@networkplumber.org, thomas@monjalon.net
+Subject: [PATCH v2 06/26] net/ntnic: avoid misleading variable names
+Date: Mon,  5 May 2025 09:12:46 +0200
+Message-ID: <20250505071309.586015-7-okl-plv@napatech.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250505071309.586015-1-okl-plv@napatech.com>
 References: <20250505071309.586015-1-okl-plv@napatech.com>
@@ -67,71 +66,70 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU6PEPF00009523:EE_|AM0P190MB0740:EE_
+X-MS-TrafficTypeDiagnostic: DU6PEPF00009523:EE_|VI1P190MB0703:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: e6ad9d3b-3b02-435f-1b7b-08dd8ba45441
+X-MS-Office365-Filtering-Correlation-Id: 03181708-bbf9-4067-5868-08dd8ba44e94
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|376014|82310400026|36860700013; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?9ztvP/cMl0ekOjYMpRjrytBKu5w2YEG8fL5Bhs0uxfdZo+v7ZQ363m4ktn1X?=
- =?us-ascii?Q?1td/Uxftp4lo7+rgVxBWAh+lcEHtOIhiEJlqaoC7UAePX41t0Vyij59Qy5N8?=
- =?us-ascii?Q?fAOD35zwNjSEGtUY0ymjlGi4fFw1hSSqRqVNVZp0CoUEm39ykBYSqBmPNvRI?=
- =?us-ascii?Q?jVgUz4VC/GaYrhSyPkFyShSrjyaMfblpNJsS3DrL/uosvEQlt5eZ+cq6t6b9?=
- =?us-ascii?Q?HjrvfdoQRjvoe9fiEJdggriwuNh4F0NDlApTfOwcclb1CWxYjniQEN84p2Rs?=
- =?us-ascii?Q?rc0e5FdabWkHCNKPY68BA0Oha9bvYc7gXl9TwDsZiipXW6+T2WbmX8BttzdX?=
- =?us-ascii?Q?cPOGRFP4fUTcDq6TbED8MmHi/bd6lOY/hV64kmCKnX7PiYaPmKIwCZ5pyCZO?=
- =?us-ascii?Q?JDAmW78J3JE4O9xY1vlMq8ZjotOMwEts9aWu6ztcJkv6+s9aOokdklQF0RQv?=
- =?us-ascii?Q?oii4l23ELYcviOCaDOErMweziyrn/KhwwFC0yv4yhNivG/EBmCKSrIfNhjeT?=
- =?us-ascii?Q?3ucCAhvyYaE9eBMMCnARo7stImd6sDJCe2gGBDcCxVQnXccUDEZ+hTkqxKKh?=
- =?us-ascii?Q?yxl4+WDuiaaMDwjhIyp1u0vwXUk9eEsgP7+0CANuwZjrYhvYxptJ4CiTpeqL?=
- =?us-ascii?Q?bARHNie7cvSY19og9LLmJOc73Z6bcLMLo9ukkX6ZAGYtuAKiQFGr95YTriJF?=
- =?us-ascii?Q?PO+y9xe/VpcslvKsH7G/L/dpHEnPWdf1MCydrdDwpvQQEZc1ReEu5WzRtSJS?=
- =?us-ascii?Q?SBiMd8JdapiJ8b+FZVkQg60kCApqVo9DateumHOPWL+LBFUKfD1F4XhD3/nS?=
- =?us-ascii?Q?fqdBUeHVQXKEzXoJ8KdyAQm2luRcduX6y65B//2FaO9cQ3wmh/dfD/Z0n7Oo?=
- =?us-ascii?Q?tuXJHRTxorcsJkCRrD3LLam1nvgZzXlYt2Zv9N0Ktxgd9nN7vhcMwYZOhWbJ?=
- =?us-ascii?Q?1nNMV8zMoPvtDTk7iJlKeaUzOoMugZc/PNmXFXZ0phOkMBsP3sVvgRkqbgw1?=
- =?us-ascii?Q?VEB7yRg2JBRUH7F4oO6IHo8kE3xN+NSbpy0zwhQMrp7ckirVQk2I8SvDbMea?=
- =?us-ascii?Q?eeiQWgPdq4bF1bRP2sqWYoT7hu+M4oEA9dy/D88WYmDdlfZtQYlkWfpZh0ZD?=
- =?us-ascii?Q?pTU35xJQzdeH+coPjFj70SGFVW5K5rZWWE/nPpArgQtbSOt10N69epyVJ6ka?=
- =?us-ascii?Q?FGiZFabIsCYM4yj+1a/jt/wxFc9i+Imsancbwx3e5KeNI6nbY6WZd/p00XAv?=
- =?us-ascii?Q?nRi8VXnHGdVWMR5S8/CxI10cD28qOw8RGNQLYcw1VowHuD1YEU3PyGg5nzcY?=
- =?us-ascii?Q?7x+CL+YWrX5voxD06MQ7MKSFDm4lFxVQbMJ55U8yXtTo7u9h8BntNoA4k1sV?=
- =?us-ascii?Q?iiu2l6W/6QL+G/6EC6pXODaKE68+n+PZp2RzdekgZAAklN0Adk2ODWpk2Ruv?=
- =?us-ascii?Q?1PK1DydFfAlGeUhkIZvjnjNEnFQ491TFKB9LocGuwJ2a2tgxmYA1I9kGDwS1?=
- =?us-ascii?Q?GRGm5RrEf2MJIlUPwyvhl5gH+oIh8ogCxkDc?=
+ ARA:13230040|376014|1800799024|36860700013|82310400026; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?b/DKuwyFrft4lwxmnhp9zn330Lhd9MAuRmr5er3idkVCHvlhK8PLxOyxelUb?=
+ =?us-ascii?Q?Skx8PJHry8tFleKhxETFTOtj9qX45n+Bs1+oMsCs40Nz12SLfO5R7wXF4trs?=
+ =?us-ascii?Q?HLde3vjynZQbiYoCja4HbeMQcspkwde8XrvW5HPwvDkWhZ5JBfX9pXZjnbx3?=
+ =?us-ascii?Q?2fLmKxH74loDnEx4936nXqVXJN8ftRn2I0J2+PvYJcOB8RKGwyKa8AK9k7bY?=
+ =?us-ascii?Q?fHjpAZ/qQm6RpXMa0kbFdeoZXWwNYSgVrAlRpMtr25rEn1W+1P+2c3rgVS3h?=
+ =?us-ascii?Q?WgPPv+bMxlFa5M5LTsACh0vC3b9TOaTgs4KfvYVJx7AWJdwv5UeeZXYwqQQK?=
+ =?us-ascii?Q?1sJiSWQ2WqdMMja0bOqwJg/5FOaqR93QCUg2o3z1NWPXy+RSlSHqSpKVLKe3?=
+ =?us-ascii?Q?zHvN5xxY3zzYNiTDmstwzelss7EXFw/ESnFyK4GW9+nXGcIPPbIHEB0C6wfc?=
+ =?us-ascii?Q?SCP/xBVgYPWuDdtPEtptsq9Ao0jx/XvPfRT1xR83RGyh0Xu95m59QC/LTLTZ?=
+ =?us-ascii?Q?aXBAik88sMgZiDfd4WXUGDkLKzgVfU8tC/brU97OpEAXg2Z9yrux0ibaWkHa?=
+ =?us-ascii?Q?dw/Aw3bw3osPLLzPrACsDGVNaMt7BHbRog/sEcj/zsZVSf34tLca6quU6nmt?=
+ =?us-ascii?Q?OJm4rCgb+QrMp1A2nSrCyeGQHarD2W2oMabBkzmmpo4+Qw6TYLfNDPrZctVQ?=
+ =?us-ascii?Q?Ve/TersECwhMfxE/0fZyII8NZS3s56L14zJ/tD40Miqt7rzsmOW04LtauRsG?=
+ =?us-ascii?Q?xe5zsgc911fYme2TDXepOpD3ca7iD9OF0Ago+Y/G5C9ha6lgGVpMmozTLNMV?=
+ =?us-ascii?Q?BT0GxIeaKhyXaO9ItjYqX9grcEk1gYj0YbKFM5rpiziqkyalxC9gPUbL802H?=
+ =?us-ascii?Q?52yho858BPi1qiMaABfDX8EURiw7nq66atENWA9cYUcQikaEP8l95gFXLqQf?=
+ =?us-ascii?Q?0a9wQwbCqkMZtlkS+q1USjgD0Zot0yDKaVP6S34Qnl0c5gvT8XvFSquvUi/3?=
+ =?us-ascii?Q?6hSzxg/LT2UUr9aPbnzIHUJicXpitQRHQf4V3Il9NUHT4kpmJ8CHwYjYI9xL?=
+ =?us-ascii?Q?00Tx4lGpilZYMVlAle6Gv2emP+ogns9Nmt3LxzHzeBN5MPWa+F4+o4COkqAR?=
+ =?us-ascii?Q?54SinCTq7yL8sA4rvSaY7fVgoyBoXPn+dsz2cedojatMHtjKHBYtNi+gbZbK?=
+ =?us-ascii?Q?0RKGK/CZbgh3o2eLk0RathBdXqLD4Qq90i5ppsmwb64OjAQQb1hkIISGoB28?=
+ =?us-ascii?Q?EAet5DBkRndds30LA9uQ1CUYtStiiSrE8hUx2uGWv5Gg6DKqLYphPraac1Pf?=
+ =?us-ascii?Q?ArvS/75h7LzbixZoDJzZlxW8Z/gud26/FroIS4puYlZUltYtOrDLx6HiF5ca?=
+ =?us-ascii?Q?3gYiiUP7JyFZl6TZaDs88Ou1hxW7TAdtS8zQQtYH6TjMyDIguy7hROAN6kqb?=
+ =?us-ascii?Q?irDX+IwT9c7fsjJbVxi9Qo6sD85au1f2TATTP+UzaqIfOjTuSIkQF/RBWlBW?=
+ =?us-ascii?Q?/U5zpFYpwDRa5cXHtMLIIu7MGRm1W5dAZued?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);
+ CAT:NONE; SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: sJZbxu1+a4GumjBlw0fkreQGyGt5PnE2HrymzPMeLrLU1qNe4WEwY+/SsP0d02Z4sCm4d0OYT+MId+Sm/mqeh/8F3wJ+dUi06mqTpWo4JFmT1nSFFVxDWEJPRvTW131F08HSPCp2kXCb1kAyxZ4gq/zH22w94lG6+/irhWg5gS4Frbn70ksf0ZcX13HalP0LZoeo3HrzdRjR0XHKhcWc8GvGsh7BR74eVjg8LEDCPltkH/vrKWp7yLyF/th6mWQsnj0B8kHVoZUTf6Umm48rUe3n3IVoKzmMkbg250K+1MVkUiG2th3JVMrwVo9KNcestnWQihjs5DSpuuzfuXsasdgvInB07IxFOjTL9U+n3w2MHS2bAcG9RR6HVRpPnwlMQ7gkbUarKmzN+mGnEsyU5bFi8Dd5i8Bj20wy7TeV7HIOJ00WPPdQPHetMdSMdvkIQQj6EKy3aOUWeOAG0GUwEDN4DfB9784fl5ejCuXF8rlXz3yTQuPir5S76dgioGEpoGfJygFEjPW8MsCPHGuiaVPTEQ5MvjTd12XWRi7pGXeqo2n44+RVW6QgIaoJhYJNPhIMeqSYDDw59dJI+20/Kjo4elqBxANSZgTwtJGRlhJ6at6mVFuciA/KamCMruIiC3JisSW3iRnPhbIK+VZy9A==
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 6szwddRx24PkorSHyHnKF4kAFusXMc+eD2vSbgJeLKXJO/H2qApqdAivBoQaAGUImMFiO+xO06Xk5hBSL7prNsoKv+A9alattIHH4l5FaDm5Ze3aD0EhsvD7Vd0vnOKDyPKqKvh1dmjcKTKstPuoLPCVc5FpQxbx8Jfj7oNuQNvAESJ4ysGDTJK3/phKy+jUSJkaPB64tm73pd3BKkD7SuMkkyiHAvdSEXNBPcXPYWRc+2cfpbZrcMVoDepBVHQsC8C1oNcBgg/u84p+t1qmh46aTcH8yaSbSZdZ06og7JoY+/PfWaLsy+ma/BXZGpYeBcGYfHxBSE4h4R/wx/PDZlzrVS1z7vf3E7MhEwrt0bmX1rXGwYDKHah75Yw3z4hvQ1/4RopWu4UoakJD/18n1XzlpGIFZkfh0zDI9nae6bfK8LSOtmTJ1yRuDbxEyl41Hyz3+2wXtynZDBQByOfalR9XfXdOTVzrEeMWCxKa34XGtqnkN/F77/+mqrnhEoNDe8NpWUUAmgUYqTJGcslzjEXpxEMHxLajgL4OJZYm2J10yR63BIvzX/kTX1KQqV6SxuI8VfgJydF9dDY+0vnFii2lHD16KJFeF+cSJb/atEP7gf6OSyxr6s1MWhPnFsJWa2O3Iqy2K+Cs5rCd+6JIfA==
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2025 07:13:25.9034 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e6ad9d3b-3b02-435f-1b7b-08dd8ba45441
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2025 07:13:16.4026 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 03181708-bbf9-4067-5868-08dd8ba44e94
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: DU6PEPF00009523.eurprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0P190MB0740
-X-BESS-ID: 1746429207-311599-7749-347-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1P190MB0703
+X-BESS-ID: 1746429200-303783-7661-382-1
 X-BESS-VER: 2019.1_20250429.1615
-X-BESS-Apparent-Source-IP: 104.47.51.173
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKViZG5uZAVgZQ0MDIxNLAIMUs2T
- zZ0iQx2cLc3NDC0MDc1NwsOTnVIjVFqTYWADyLEINBAAAA
-X-BESS-Outbound-Spam-Score: 0.50
+X-BESS-Apparent-Source-IP: 104.47.18.112
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVhaGpsZAVgZQ0DLVJCUxLckwxT
+ jRONXY2NjS0swiKcU8MTHJwCIlMTVVqTYWAJHMHcNBAAAA
+X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.264372 [from 
- cloudscan19-189.eu-central-1b.ess.aws.cudaops.com]
+ cloudscan12-166.eu-central-1a.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
- 0.50 BSF_RULE7568M          META: Custom Rule 7568M 
  0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS113687 scores of
- KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS113687 scores of
+ KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
 X-BESS-BRTS-Status: 1
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -146,89 +144,183 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Danylo Vodopianov <dvo-plv@napatech.com>
+In the context of the NTNIC driver,
+the variables named if_index stand for the index of the PHY.
+However, the term if_index could also refer to the interface index
+assigned by the OS.
+To mitigate potential confusion these variables were renamed.
 
-Remove double if statement branching as far as it has the same fillings.
-
-Signed-off-by: Danylo Vodopianov <dvo-plv@napatech.com>
+Signed-off-by: Oleksandr Kolomeiets <okl-plv@napatech.com>
 ---
- .../link_agx_100g/nt4ga_agx_link_100g.c       | 22 ++++++-------------
- .../core/nt200a0x/reset/nthw_fpga_rst9563.c   |  1 -
- drivers/net/ntnic/nthw/nthw_rac.c             |  3 ---
- drivers/net/ntnic/nthw/stat/nthw_stat.c       |  1 -
- 4 files changed, 7 insertions(+), 20 deletions(-)
+ drivers/net/ntnic/ntnic_ethdev.c              | 24 +++++-----
+ drivers/net/ntnic/ntnic_filter/ntnic_filter.c | 44 +++++++++----------
+ 2 files changed, 34 insertions(+), 34 deletions(-)
 
-diff --git a/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c b/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
-index 64db55f6e9..6d1d01d265 100644
---- a/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
-+++ b/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
-@@ -685,21 +685,13 @@ static int nim_ready_100_gb(adapter_info_t *p_info, int port)
- 		return 1;
+diff --git a/drivers/net/ntnic/ntnic_ethdev.c b/drivers/net/ntnic/ntnic_ethdev.c
+index 6857191ef2..6ba6769e47 100644
+--- a/drivers/net/ntnic/ntnic_ethdev.c
++++ b/drivers/net/ntnic/ntnic_ethdev.c
+@@ -181,15 +181,15 @@ static int dpdk_stats_collect(struct pmd_internals *internals, struct rte_eth_st
+ 	struct ntdrv_4ga_s *p_nt_drv = &p_drv->ntdrv;
+ 	nt4ga_stat_t *p_nt4ga_stat = &p_nt_drv->adapter_info.nt4ga_stat;
+ 	nthw_stat_t *p_nthw_stat = p_nt4ga_stat->mp_nthw_stat;
+-	const int if_index = internals->n_intf_no;
++	const int n_intf_no = internals->n_intf_no;
+ 	uint64_t rx_total = 0;
+ 	uint64_t rx_total_b = 0;
+ 	uint64_t tx_total = 0;
+ 	uint64_t tx_total_b = 0;
+ 	uint64_t tx_err_total = 0;
+ 
+-	if (!p_nthw_stat || !p_nt4ga_stat || !stats || if_index < 0 ||
+-		if_index > NUM_ADAPTER_PORTS_MAX) {
++	if (!p_nthw_stat || !p_nt4ga_stat || !stats || n_intf_no < 0 ||
++		n_intf_no > NUM_ADAPTER_PORTS_MAX) {
+ 		NT_LOG_DBGX(WRN, NTNIC, "error exit");
+ 		return -1;
+ 	}
+@@ -315,8 +315,8 @@ static int eth_stats_reset(struct rte_eth_dev *eth_dev)
+ 	struct pmd_internals *internals = eth_dev->data->dev_private;
+ 	struct drv_s *p_drv = internals->p_drv;
+ 	struct ntdrv_4ga_s *p_nt_drv = &p_drv->ntdrv;
+-	const int if_index = internals->n_intf_no;
+-	dpdk_stats_reset(internals, p_nt_drv, if_index);
++	const int n_intf_no = internals->n_intf_no;
++	dpdk_stats_reset(internals, p_nt_drv, n_intf_no);
+ 	return 0;
+ }
+ 
+@@ -1529,7 +1529,7 @@ static int eth_xstats_get(struct rte_eth_dev *eth_dev, struct rte_eth_xstat *sta
+ 	struct drv_s *p_drv = internals->p_drv;
+ 	ntdrv_4ga_t *p_nt_drv = &p_drv->ntdrv;
+ 	nt4ga_stat_t *p_nt4ga_stat = &p_nt_drv->adapter_info.nt4ga_stat;
+-	int if_index = internals->n_intf_no;
++	int n_intf_no = internals->n_intf_no;
+ 	int nb_xstats;
+ 
+ 	const struct ntnic_xstats_ops *ntnic_xstats_ops = get_ntnic_xstats_ops();
+@@ -1540,7 +1540,7 @@ static int eth_xstats_get(struct rte_eth_dev *eth_dev, struct rte_eth_xstat *sta
  	}
  
--	if (port == 0) {
--		/* setTxEqualization(uint8_t intf_no, uint8_t lane, uint32_t pre_tap2,
--		 * uint32_t main_tap, uint32_t pre_tap1, uint32_t post_tap1)
--		 */
--		nthw_phy_tile_set_tx_equalization(p_phy_tile, port, 0, 0, 44, 2, 9);
--		nthw_phy_tile_set_tx_equalization(p_phy_tile, port, 1, 0, 44, 2, 9);
--		nthw_phy_tile_set_tx_equalization(p_phy_tile, port, 2, 0, 44, 2, 9);
--		nthw_phy_tile_set_tx_equalization(p_phy_tile, port, 3, 0, 44, 2, 9);
--
--	} else {
--		nthw_phy_tile_set_tx_equalization(p_phy_tile, port, 0, 0, 44, 2, 9);
--		nthw_phy_tile_set_tx_equalization(p_phy_tile, port, 1, 0, 44, 2, 9);
--		nthw_phy_tile_set_tx_equalization(p_phy_tile, port, 2, 0, 44, 2, 9);
--		nthw_phy_tile_set_tx_equalization(p_phy_tile, port, 3, 0, 44, 2, 9);
--	}
-+	/* setTxEqualization(uint8_t intf_no, uint8_t lane, uint32_t pre_tap2,
-+	 * uint32_t main_tap, uint32_t pre_tap1, uint32_t post_tap1)
-+	 */
-+	nthw_phy_tile_set_tx_equalization(p_phy_tile, port, 0, 0, 44, 2, 9);
-+	nthw_phy_tile_set_tx_equalization(p_phy_tile, port, 1, 0, 44, 2, 9);
-+	nthw_phy_tile_set_tx_equalization(p_phy_tile, port, 2, 0, 44, 2, 9);
-+	nthw_phy_tile_set_tx_equalization(p_phy_tile, port, 3, 0, 44, 2, 9);
+ 	rte_spinlock_lock(&p_nt_drv->stat_lck);
+-	nb_xstats = ntnic_xstats_ops->nthw_xstats_get(p_nt4ga_stat, stats, n, if_index);
++	nb_xstats = ntnic_xstats_ops->nthw_xstats_get(p_nt4ga_stat, stats, n, n_intf_no);
+ 	rte_spinlock_unlock(&p_nt_drv->stat_lck);
+ 	return nb_xstats;
+ }
+@@ -1554,7 +1554,7 @@ static int eth_xstats_get_by_id(struct rte_eth_dev *eth_dev,
+ 	struct drv_s *p_drv = internals->p_drv;
+ 	ntdrv_4ga_t *p_nt_drv = &p_drv->ntdrv;
+ 	nt4ga_stat_t *p_nt4ga_stat = &p_nt_drv->adapter_info.nt4ga_stat;
+-	int if_index = internals->n_intf_no;
++	int n_intf_no = internals->n_intf_no;
+ 	int nb_xstats;
  
- 	/*
- 	 * Perform a full reset. If the RX is in reset from the start this sequence will
-diff --git a/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst9563.c b/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst9563.c
-index 7b0c47e9b2..918ac71a43 100644
---- a/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst9563.c
-+++ b/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst9563.c
-@@ -59,7 +59,6 @@ static int nthw_fpga_rst9563_setup(nthw_fpga_t *p_fpga, struct nthw_fpga_rst_nt2
- 	p->mp_fld_rst_mac_rx = nthw_register_get_field(p_curr_reg, RST9563_RST_MAC_RX);
- 	p->mp_fld_rst_mac_tx = NULL;
- 	p->mp_fld_rst_ptp = nthw_register_get_field(p_curr_reg, RST9563_RST_PTP);
--	p->mp_fld_rst_ptp = nthw_register_get_field(p_curr_reg, RST9563_RST_PTP);
- 	p->mp_fld_rst_ts = nthw_register_get_field(p_curr_reg, RST9563_RST_TS);
- 	p->mp_fld_rst_ptp_mmcm = nthw_register_get_field(p_curr_reg, RST9563_RST_PTP_MMCM);
- 	p->mp_fld_rst_ts_mmcm = nthw_register_get_field(p_curr_reg, RST9563_RST_TS_MMCM);
-diff --git a/drivers/net/ntnic/nthw/nthw_rac.c b/drivers/net/ntnic/nthw/nthw_rac.c
-index 13813fe516..33e0caa581 100644
---- a/drivers/net/ntnic/nthw/nthw_rac.c
-+++ b/drivers/net/ntnic/nthw/nthw_rac.c
-@@ -93,9 +93,6 @@ int nthw_rac_init(nthw_rac_t *p, nthw_fpga_t *p_fpga, struct fpga_info_s *p_fpga
- 	if (p->mp_reg_dbg_data)
- 		p->mp_fld_dbg_data = nthw_register_query_field(p->mp_reg_dbg_data, RAC_DBG_DATA_D);
+ 	const struct ntnic_xstats_ops *ntnic_xstats_ops = get_ntnic_xstats_ops();
+@@ -1566,7 +1566,7 @@ static int eth_xstats_get_by_id(struct rte_eth_dev *eth_dev,
  
--	else
--		p->mp_reg_dbg_data = NULL;
--
- 	p->mp_reg_rab_ib_data = nthw_module_get_register(p->mp_mod_rac, RAC_RAB_IB_DATA);
- 	p->mp_fld_rab_ib_data = nthw_register_get_field(p->mp_reg_rab_ib_data, RAC_RAB_IB_DATA_D);
+ 	rte_spinlock_lock(&p_nt_drv->stat_lck);
+ 	nb_xstats =
+-		ntnic_xstats_ops->nthw_xstats_get_by_id(p_nt4ga_stat, ids, values, n, if_index);
++		ntnic_xstats_ops->nthw_xstats_get_by_id(p_nt4ga_stat, ids, values, n, n_intf_no);
+ 	rte_spinlock_unlock(&p_nt_drv->stat_lck);
+ 	return nb_xstats;
+ }
+@@ -1577,7 +1577,7 @@ static int eth_xstats_reset(struct rte_eth_dev *eth_dev)
+ 	struct drv_s *p_drv = internals->p_drv;
+ 	ntdrv_4ga_t *p_nt_drv = &p_drv->ntdrv;
+ 	nt4ga_stat_t *p_nt4ga_stat = &p_nt_drv->adapter_info.nt4ga_stat;
+-	int if_index = internals->n_intf_no;
++	int n_intf_no = internals->n_intf_no;
  
-diff --git a/drivers/net/ntnic/nthw/stat/nthw_stat.c b/drivers/net/ntnic/nthw/stat/nthw_stat.c
-index ed30173bdc..2ddef052a5 100644
---- a/drivers/net/ntnic/nthw/stat/nthw_stat.c
-+++ b/drivers/net/ntnic/nthw/stat/nthw_stat.c
-@@ -254,7 +254,6 @@ int nthw_stat_init(nthw_stat_t *p, nthw_fpga_t *p_fpga, int n_instance)
- 		p->mn_stat_layout_version = 1;
+ 	struct ntnic_xstats_ops *ntnic_xstats_ops = get_ntnic_xstats_ops();
  
- 	} else {
--		p->mn_stat_layout_version = 0;
- 		NT_LOG(ERR, NTHW, "%s: unknown module_version 0x%08lX layout=%d",
- 			p_adapter_id_str, n_module_version_packed64, p->mn_stat_layout_version);
+@@ -1587,9 +1587,9 @@ static int eth_xstats_reset(struct rte_eth_dev *eth_dev)
  	}
+ 
+ 	rte_spinlock_lock(&p_nt_drv->stat_lck);
+-	ntnic_xstats_ops->nthw_xstats_reset(p_nt4ga_stat, if_index);
++	ntnic_xstats_ops->nthw_xstats_reset(p_nt4ga_stat, n_intf_no);
+ 	rte_spinlock_unlock(&p_nt_drv->stat_lck);
+-	return dpdk_stats_reset(internals, p_nt_drv, if_index);
++	return dpdk_stats_reset(internals, p_nt_drv, n_intf_no);
+ }
+ 
+ static int eth_xstats_get_names(struct rte_eth_dev *eth_dev,
+diff --git a/drivers/net/ntnic/ntnic_filter/ntnic_filter.c b/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
+index 1beba22b9d..29bfb2a121 100644
+--- a/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
++++ b/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
+@@ -1155,10 +1155,10 @@ static int poll_statistics(struct pmd_internals *internals)
+ 	struct drv_s *p_drv = internals->p_drv;
+ 	struct ntdrv_4ga_s *p_nt_drv = &p_drv->ntdrv;
+ 	nt4ga_stat_t *p_nt4ga_stat = &p_nt_drv->adapter_info.nt4ga_stat;
+-	const int if_index = internals->n_intf_no;
++	const int n_intf_no = internals->n_intf_no;
+ 	uint64_t last_stat_rtc = 0;
+ 
+-	if (!p_nt4ga_stat || if_index < 0 || if_index >= NUM_ADAPTER_PORTS_MAX)
++	if (!p_nt4ga_stat || n_intf_no < 0 || n_intf_no >= NUM_ADAPTER_PORTS_MAX)
+ 		return -1;
+ 
+ 	RTE_ASSERT(rte_tsc_freq > 0);
+@@ -1184,36 +1184,36 @@ static int poll_statistics(struct pmd_internals *internals)
+ 	 * Add the RX statistics increments since last time we polled.
+ 	 * (No difference if physical or virtual port)
+ 	 */
+-	internals->rxq_scg[0].rx_pkts += p_nt4ga_stat->a_port_rx_packets_total[if_index] -
+-		p_nt4ga_stat->a_port_rx_packets_base[if_index];
+-	internals->rxq_scg[0].rx_bytes += p_nt4ga_stat->a_port_rx_octets_total[if_index] -
+-		p_nt4ga_stat->a_port_rx_octets_base[if_index];
++	internals->rxq_scg[0].rx_pkts += p_nt4ga_stat->a_port_rx_packets_total[n_intf_no] -
++		p_nt4ga_stat->a_port_rx_packets_base[n_intf_no];
++	internals->rxq_scg[0].rx_bytes += p_nt4ga_stat->a_port_rx_octets_total[n_intf_no] -
++		p_nt4ga_stat->a_port_rx_octets_base[n_intf_no];
+ 	internals->rxq_scg[0].err_pkts += 0;
+-	internals->rx_missed += p_nt4ga_stat->a_port_rx_drops_total[if_index] -
+-		p_nt4ga_stat->a_port_rx_drops_base[if_index];
++	internals->rx_missed += p_nt4ga_stat->a_port_rx_drops_total[n_intf_no] -
++		p_nt4ga_stat->a_port_rx_drops_base[n_intf_no];
+ 
+ 	/* Update the increment bases */
+-	p_nt4ga_stat->a_port_rx_packets_base[if_index] =
+-		p_nt4ga_stat->a_port_rx_packets_total[if_index];
+-	p_nt4ga_stat->a_port_rx_octets_base[if_index] =
+-		p_nt4ga_stat->a_port_rx_octets_total[if_index];
+-	p_nt4ga_stat->a_port_rx_drops_base[if_index] =
+-		p_nt4ga_stat->a_port_rx_drops_total[if_index];
++	p_nt4ga_stat->a_port_rx_packets_base[n_intf_no] =
++		p_nt4ga_stat->a_port_rx_packets_total[n_intf_no];
++	p_nt4ga_stat->a_port_rx_octets_base[n_intf_no] =
++		p_nt4ga_stat->a_port_rx_octets_total[n_intf_no];
++	p_nt4ga_stat->a_port_rx_drops_base[n_intf_no] =
++		p_nt4ga_stat->a_port_rx_drops_total[n_intf_no];
+ 
+ 	/* Tx (here we must distinguish between physical and virtual ports) */
+ 	if (internals->type == PORT_TYPE_PHYSICAL) {
+ 		/* Add the statistics increments since last time we polled */
+-		internals->txq_scg[0].tx_pkts += p_nt4ga_stat->a_port_tx_packets_total[if_index] -
+-			p_nt4ga_stat->a_port_tx_packets_base[if_index];
+-		internals->txq_scg[0].tx_bytes += p_nt4ga_stat->a_port_tx_octets_total[if_index] -
+-			p_nt4ga_stat->a_port_tx_octets_base[if_index];
++		internals->txq_scg[0].tx_pkts += p_nt4ga_stat->a_port_tx_packets_total[n_intf_no] -
++			p_nt4ga_stat->a_port_tx_packets_base[n_intf_no];
++		internals->txq_scg[0].tx_bytes += p_nt4ga_stat->a_port_tx_octets_total[n_intf_no] -
++			p_nt4ga_stat->a_port_tx_octets_base[n_intf_no];
+ 		internals->txq_scg[0].err_pkts += 0;
+ 
+ 		/* Update the increment bases */
+-		p_nt4ga_stat->a_port_tx_packets_base[if_index] =
+-			p_nt4ga_stat->a_port_tx_packets_total[if_index];
+-		p_nt4ga_stat->a_port_tx_octets_base[if_index] =
+-			p_nt4ga_stat->a_port_tx_octets_total[if_index];
++		p_nt4ga_stat->a_port_tx_packets_base[n_intf_no] =
++			p_nt4ga_stat->a_port_tx_packets_total[n_intf_no];
++		p_nt4ga_stat->a_port_tx_octets_base[n_intf_no] =
++			p_nt4ga_stat->a_port_tx_octets_total[n_intf_no];
+ 	}
+ 
+ 	/* Globally only once a second */
 -- 
 2.47.1
 
