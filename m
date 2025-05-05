@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 604E4C3ABAA
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 05:33:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A23CC369C2
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 05:57:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F0BEA40650;
-	Mon,  5 May 2025 07:33:18 +0200 (CEST)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 10BFD4025D
- for <dev@dpdk.org>; Mon,  5 May 2025 07:33:15 +0200 (CEST)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5450Tcfq002540;
- Sun, 4 May 2025 22:33:13 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 532614025D;
+	Mon,  5 May 2025 07:57:27 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 2B4B140156
+ for <dev@dpdk.org>; Mon,  5 May 2025 07:57:26 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5451J4qf011783;
+ Sun, 4 May 2025 22:57:23 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
  :message-id:mime-version:references:subject:to; s=pfpt0220; bh=G
- Wh8QYKHUoCqnw3QuKv2kDv5LeSMafB8oYsWx1B7Wu0=; b=OsaxDOIEKYu//uc7a
- W24QiwDh6eHZxsxapmcI/5cDQRr3hilGqYFxN/1CKa1tj3LRPFgQHQGBJraszdUy
- aShPFKKBet8zqFQpi4TVI9MfemU2AdT44xmHAe8Wzd2AUSe7IYAQpiu8+kV4PRp9
- xrxZgJ5xRcbeeMWOtBM8zve+B3aQBas6dxlDJFc3Dm4G4RY4P4qYAN3rmxuQFBKK
- ijce62GoULJW1MgqJmlDl7A5nSvhRRW7zKenANHsaWQQtgygeLy6t/WhTTkBV3Du
- oab6suQoZ8BMRxF6lC9JIcrewgXU8jl/0fee8+b9hcxKKzSw+JsA6j9m+RrnB86p
- vn/1A==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46ehxprdtb-1
+ Wh8QYKHUoCqnw3QuKv2kDv5LeSMafB8oYsWx1B7Wu0=; b=IPgAxSN5sql3zYO8m
+ WGxzuJsEbn8B3mJR9KUEyCP4Bj8Ti6wplRhrGvn7TXQFEMpTdW6VdbhgEfmOHKu2
+ JI+zbR0H7UEmxgarJlSYqJvaP8IqOggVcwgbMW2xnMCE+tlRDjPDzVBoQmkghoDf
+ 0fqOMKMcG9JXx2dTHNM+Gslm+xZCZbBFmKIjVaYsCwTT9DwTyspjiZlUBJYFCnnP
+ 02wnuvY7toExdLl3ycCFvW5QeiNhW4kzMqQFQyWqK5yVqy9+Flaf6jWoatSYZLoh
+ z4tatnjMeY+SNdTZu8m/vJyUdRxmgosKK2xv/JGR+On2CMmJczXHPcElNwrnPhlc
+ PtLJg==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46ehxkrea2-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Sun, 04 May 2025 22:33:13 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ Sun, 04 May 2025 22:57:22 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Sun, 4 May 2025 22:33:09 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Sun, 4 May 2025 22:33:09 -0700
+ 15.2.1544.4; Sun, 4 May 2025 22:57:22 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Sun, 4 May 2025 22:57:22 -0700
 Received: from cavium-System-Product-Name.. (unknown [10.28.37.22])
- by maili.marvell.com (Postfix) with ESMTP id 8CE203F7073;
- Sun,  4 May 2025 22:33:07 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id C099F3F7073;
+ Sun,  4 May 2025 22:57:19 -0700 (PDT)
 From: <kirankumark@marvell.com>
 To: Aman Singh <aman.deep.singh@intel.com>, Thomas Monjalon
  <thomas@monjalon.net>, Ferruh Yigit <ferruh.yigit@amd.com>,
  Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
 CC: <dev@dpdk.org>, Kiran Kumar K <kirankumark@marvell.com>
-Subject: [PATCH v5 1/2] ethdev: support RSS based on RoCEv2 header
-Date: Mon, 5 May 2025 11:03:03 +0530
-Message-ID: <20250505053304.3288290-1-kirankumark@marvell.com>
+Subject: [PATCH v6 1/2] ethdev: support RSS based on RoCEv2 header
+Date: Mon, 5 May 2025 11:27:15 +0530
+Message-ID: <20250505055717.3697335-1-kirankumark@marvell.com>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250430102011.991865-1-kirankumark@marvell.com>
-References: <20250430102011.991865-1-kirankumark@marvell.com>
+In-Reply-To: <20250505053304.3288290-1-kirankumark@marvell.com>
+References: <20250505053304.3288290-1-kirankumark@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: If6gLsYeQdvfCERBW5XHVUFmEmUyif0j
-X-Proofpoint-ORIG-GUID: If6gLsYeQdvfCERBW5XHVUFmEmUyif0j
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA1MDA0OSBTYWx0ZWRfX+aBfIT+weySY
- AgYe2uimBJ+5Lv18C6lZtUpjTxNi4CzEOizqo4Besch2o2djV6rXE5opVA9WeSfpBI3yszuI7Ys
- 5b4dyVmTSop+f9n56Le6tAjS340cpnJIhGULnrcGUwpSXZuDm4Y8cjoZuesh8LJlSnA9G6QsfKr
- v+COBzUlojHduFDg0ON6KNB8y6eHy4PuM/7fk0iRDkCZINty365zUaJr3CjytJOJ+5p3iCxfmNq
- MuROkg/wpv/eAaanxaeQU7qRZTjb8o4zJhpo0Em4bsiEZfDWD/9jIr5ar3E0kW/6wfUavGh5M09
- xwR9v7s54qgihyglcXNHdreHnx7yRa1tEF/E5IMkr+niSEy7OkCJEFl/DU8aXNAgOR0Kfan/xr/
- kCsPeFj1g8Ik16UUCAklfSeN39Ekq9JIIxPH9XVRljgbTe/eidzt3vCDBmhKGE6MTbBpSVbW
-X-Authority-Analysis: v=2.4 cv=U+mSDfru c=1 sm=1 tr=0 ts=68184d99 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+X-Proofpoint-ORIG-GUID: MEjtswGzpxK1tfLKDWzhzZYRYu8c8hpi
+X-Proofpoint-GUID: MEjtswGzpxK1tfLKDWzhzZYRYu8c8hpi
+X-Authority-Analysis: v=2.4 cv=QOFoRhLL c=1 sm=1 tr=0 ts=68185343 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
  a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=BX_ChJz85cp3RHIlamYA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA1MDA1MyBTYWx0ZWRfXznymjXm9kBu0
+ v0jnq1ur+wakK2ZR819/vBzTgEl/hwjDmIOLCVu+17SgjbiGoxvENP9Ejo697AzldP0S8yYwo42
+ QQ2kFT91BuAIT3bOmfwz++oTYx8kwcJF2nnwl57ju0xdvr3PgUugd1jqtN2txLLpMGg4Jk89Dww
+ jOJAUOWqhEiUJYdNiQws3S94N7uDp5d5Xht0C4sEG22SUZWLlfwlEZ8UI7Q3seczVUpmpEIQwEO
+ 4DR4MMmqVMzEKA9HSO2UtqdvY8Zrb5YawTGSmxA8jy1iG2tsl1c9B17c+mbPL4/7fDNfMDWOnzY
+ ClfiomsP1RcCR55mOG0+97WXDfi5NRcB5Mn1U3p3S10j1cE1HFoaB1CVNY20dnWXGjTFClLdw6D
+ iAH0uxrHcGqePgTQJjxquScVjxkOx2b2aDXTjGUEnyAd8hXhwFO7duhwJOvrRZ19E9RBZtA+
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-05_03,2025-04-30_01,2025-02-21_01
