@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 990A6C369C2
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 07:15:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B8CC3ABB6
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 07:16:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 107EE40B9B;
-	Mon,  5 May 2025 09:14:11 +0200 (CEST)
-Received: from egress-ip42b.ess.de.barracuda.com
- (egress-ip42b.ess.de.barracuda.com [18.185.115.246])
- by mails.dpdk.org (Postfix) with ESMTP id 9832240DF5
- for <dev@dpdk.org>; Mon,  5 May 2025 09:14:09 +0200 (CEST)
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com
- (mail-vi1eur03lp2110.outbound.protection.outlook.com [104.47.30.110]) by
- mx-outbound40-227.eu-central-1c.ess.aws.cudaops.com (version=TLSv1.2
+	by mails.dpdk.org (Postfix) with ESMTP id 0590D406BC;
+	Mon,  5 May 2025 09:14:14 +0200 (CEST)
+Received: from egress-ip11b.ess.de.barracuda.com
+ (egress-ip11b.ess.de.barracuda.com [18.185.115.215])
+ by mails.dpdk.org (Postfix) with ESMTP id E435240E03
+ for <dev@dpdk.org>; Mon,  5 May 2025 09:14:12 +0200 (CEST)
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com
+ (mail-db8eur05lp2106.outbound.protection.outlook.com [104.47.17.106]) by
+ mx-outbound45-79.eu-central-1c.ess.aws.cudaops.com (version=TLSv1.2
  cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Mon, 05 May 2025 07:13:33 +0000
+ Mon, 05 May 2025 07:13:22 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ujE+uu8dZf3RXoIlhoaanb0GhqsZX2SfF2P8FNFuABnw1xWidEFCvNShg+LxV2uJfzHlmLu72753Fv4fOd4eRXOvNqbVgpk5sB4if/bKcAmJzHXBjqbRKmr3rm6RkzYitx7s4SW0qQJiB12Qr2ocese/XjORvBvY7x3N7OFpdREDLmBakwAJ7W2uedSal1KdtJidaoK1uF9HTzZXuU1RotMQAOxn8Aur/4akfAT7aVi+LCKPev8ufCfk79wgNvcn84L+fhZMEfEujn26s/+LoulPLZxZZtsk8kKCJcc5d5fVybGue1i070j8GlyHwQiuUGmd4tOfzAiv03pVzc4QZA==
+ b=JBnSi1Tyc54hKKhBjCoSBD3vpNARFO2r2UWHj06e5Q9Xzf9ytkQpa7kPKYx5iHfLbqTs1PZ7SptSAku1qCf4zq+Tyvh+eAo76WPe/JMLymk5cV7PTHkTTs96gz0RPh9c2SCH957siw/8sB9Ghbtrj0gMcM8EiQhrcde6hQ5emsQm8Mf9o9jMW22bAL7+YLJW/b+9Cf1hoN0sgTxNuCsME6RgzRqpzR4uspRgzrUltPAg1Sb1gzO05HIElceOdR4eFEqXdERBZICuDNQh604zpb4YTC+ABRHP4eYB4h8aAVabcctUgco2R94s/rmaAwrDrpDy1dbXdJdF/gxb25Z33w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e5zK/VqeDwJfJVB9A3rgHidjowKhmjxrgN9pKgEjMMs=;
- b=ZdCh07LO0fVHynriI7L/XJkjY5akT2wvVF3YmltoLZ8ODsTNdWbNQ7cGPTl3r5poq1++Kbsc91v6REx8Ty7J/SdWQEBWTZrTbEd1blWEWRmBaVjFgvEOZeA6LJGxdm1Ql0jGhc+zof3QGxhyTrSPqWYQNEML9CTBqXDnMdvqtYL7P0n7mwMrr2HV3pTjiwV50b9HRKWHtwPqcqUpxWMLYbXCOjZ5JhZvb7bgRJHxpHz+2EeGqls8utLVDha3CDsOh9I4weOY82/25AB5kB60nRk7MbUBuwmtxgkkBa3c7vlET3moL8cZEmITmYGLIj7YGE/4hNUgmPFqVWVpT8m1Ag==
+ bh=AzV8KBtjlmStGTisTQ1DG7CQubTRMmoMcJy1qHaQtQE=;
+ b=mKiDkL/pDn9Un6oBUDQ0+bTK9b8yDMKlGS9op/a0ChUOk//b/zGsZtXsTGAbkI8hLPgHj3CxSB4cGOFUQAISJw+c5i8OaCtSG5RL8DW3ySHVouRWJiee28fKdeVSrglgfBS2oO6A3h4/jKeYiJDgfzHSf3cQZ9kkzhZSIeuy5eZU8Iy0/h+uFy64SK8CCAYCSL8B7B49UDJRBYG43aaQDCGWWU4IzOThJ9VCMNR1fSnGj8za7W6Pa/90C/ld77TZfP/D2QKmkfoF+uq5MbY414dnNv2wjcKIGc4oilhOdWXEehr0LT4nY9D6ORc+XLx+q6mkwHUkWKgGljYqIkvY/w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e5zK/VqeDwJfJVB9A3rgHidjowKhmjxrgN9pKgEjMMs=;
- b=aHh76LiH6nyagokH2ijyCixxzwc9az/rCjnO3ugCaKc/urNqKVsndNEtEkVBdePX+jJ5h8hp98XuefANDUuezZ8j+VrHocAf0aVRsrTrhFB3olJjkjzWpecVtKJHdjZnsdE0sklvDXUdbA+ejftc/fJUeftWhHs+BFMv/kpeB54=
-Received: from DUZPR01CA0325.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4ba::22) by DB8P190MB0684.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:10:12f::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.23; Mon, 5 May
- 2025 07:13:29 +0000
+ bh=AzV8KBtjlmStGTisTQ1DG7CQubTRMmoMcJy1qHaQtQE=;
+ b=Qv10kUO9m617M4paLULN1sxkqX5xMhjafDU7Ej/Z3vZkLq0/YZHIZiIMADx4cyNAVhNYO+16fMQBk9eyQv4iZxuD9h2+kINHrMtZzsGTFxNt1HaZ9jWcdvvqBxJPYieXEuTQczWu3mCvRiWJYZmVJ2X+1nNsdEy+GiA1a4/R1cs=
+Received: from DU7P191CA0019.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:54e::33)
+ by DU0P190MB2025.EURP190.PROD.OUTLOOK.COM (2603:10a6:10:3b6::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.24; Mon, 5 May
+ 2025 07:13:20 +0000
 Received: from DU6PEPF00009523.eurprd02.prod.outlook.com
- (2603:10a6:10:4ba:cafe::e5) by DUZPR01CA0325.outlook.office365.com
- (2603:10a6:10:4ba::22) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10a6:10:54e:cafe::b6) by DU7P191CA0019.outlook.office365.com
+ (2603:10a6:10:54e::33) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.30 via Frontend Transport; Mon,
- 5 May 2025 07:13:27 +0000
+ 5 May 2025 07:13:20 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -50,16 +50,16 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
  client-ip=178.72.21.4; helo=localhost.localdomain;
 Received: from localhost.localdomain (178.72.21.4) by
  DU6PEPF00009523.mail.protection.outlook.com (10.167.8.4) with Microsoft SMTP
- Server id 15.20.8722.18 via Frontend Transport; Mon, 5 May 2025 07:13:29
+ Server id 15.20.8722.18 via Frontend Transport; Mon, 5 May 2025 07:13:19
  +0000
 From: Oleksandr Kolomeiets <okl-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org, thomas@monjalon.net,
  Danylo Vodopianov <dvo-plv@napatech.com>
-Subject: [PATCH v2 24/26] net/ntnic: add null verification
-Date: Mon,  5 May 2025 09:13:04 +0200
-Message-ID: <20250505071309.586015-25-okl-plv@napatech.com>
+Subject: [PATCH v2 10/26] net/ntnic: remove usless expressions
+Date: Mon,  5 May 2025 09:12:50 +0200
+Message-ID: <20250505071309.586015-11-okl-plv@napatech.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250505071309.586015-1-okl-plv@napatech.com>
 References: <20250505071309.586015-1-okl-plv@napatech.com>
@@ -67,64 +67,64 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU6PEPF00009523:EE_|DB8P190MB0684:EE_
+X-MS-TrafficTypeDiagnostic: DU6PEPF00009523:EE_|DU0P190MB2025:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 5b8d6bf6-df6c-4a8b-2bf4-08dd8ba45686
+X-MS-Office365-Filtering-Correlation-Id: a922b425-6587-4c39-3869-08dd8ba450a9
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|36860700013|1800799024|376014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?TzrFHh1zo8bdIVUqrx4jNAn0nER9MduAMUR9ahzLuEPchT78LV0Kh2yGeDJE?=
- =?us-ascii?Q?d96VCG1QCNyuNnawOzKoZbsbbUuE2HDJwAjMEITD4BGdv7To3SzeWH78+ODc?=
- =?us-ascii?Q?jcnFA9LVadsN9GEg88FX4PiVQy8NKItcHXciXAs1+JtUwhe9lJdjtINbgdSO?=
- =?us-ascii?Q?qUSErRqEDDBiVbZYr/AoEsILzA5i4M2cCgsjfA1r4X+ysh8yIXIpPu0oE1al?=
- =?us-ascii?Q?FzelJUfekyaCiwlmpCqwnjSbD5IocmT0nUE4VRT/V11SRsPDlxv9L9pkc2cp?=
- =?us-ascii?Q?5WucQbfaSc3/q0dAIzgdpgtYXDKfS1bohg26FeJ5BGAjhi1UAIDT0ypCL+T2?=
- =?us-ascii?Q?n83d5cRPwq+Aac3hF/wyfsmEXKKAQ0kBr/niYxASNVxipJyMOB40WFPuRNpT?=
- =?us-ascii?Q?A5RJxrgH9HTPrqn0Asq/ivHjPAa08xYkLxh7BEwOOM7JcSNRP8d4SMk/0Y4v?=
- =?us-ascii?Q?i6cG35JSQ++ZOiyEKdJ+AIkZw3vR6W/7yQXgXTuT3xo83EcMf6vlQPDROREe?=
- =?us-ascii?Q?inf8lowR2G6PvUlWBDM5P8E93M+D1d6syldipfOJiaUYeQPUoi18NzwbdNhl?=
- =?us-ascii?Q?+GmJb5oJhpnypTJLRw+uK9CWsdkViIf46S85aO+HAnspNp8SObNOuGx0YJ9G?=
- =?us-ascii?Q?QuUZrMv+guabCwaGNmf2nWdQDVNINsmKXEelHDwNGCsKStTWrK0g6BN2yles?=
- =?us-ascii?Q?OnVf66a0XHWQb6lWEi0HLpRUa9bzbQx5tAR1+WgoVtZXhHcG0oqqg5CHgbAf?=
- =?us-ascii?Q?5UsSJQNqrGsXOHL1qDGWTXx6qNRA1+/4A2CAM/Xd/Ez6fmPDY2EYvyLOemtD?=
- =?us-ascii?Q?T4RUjLrteD+t/7vtnzbdGiIk264XI2hYsMiYhtW9I4aQoSwVXNhO04nT6dYd?=
- =?us-ascii?Q?+eUP7aRdydhiFgX2NtScT+h0YCvPCNP6sbfdRL1ymKJ9fvTQlrYwBaOeNvur?=
- =?us-ascii?Q?7DgzaH+mIl7YaqVCiJ90Hc/Faka8b185cgBhVVyAhyWcuQslv1PKa/kW4vm3?=
- =?us-ascii?Q?psV627zk2M/ONsapI/XrFcToq/xTpCoU1pLHDlUgA4NSekc1lKKv3o01+0A/?=
- =?us-ascii?Q?0ccO9Sftk6HDI7OxDm0DI//prSkITpxO+ebS7ZnZE68bkmq3ve96Y55Mrgdu?=
- =?us-ascii?Q?siTSe+klNMt6i+v545k4Q8Q7yrkwtr7tWnJRXv4sdWkMoo3A8Az9BqeuhoDK?=
- =?us-ascii?Q?DVHeBlw4yHSCwgmytkHvDEp0+jE3+ABLpfDk5NBGPP3Zow8jEsX64yeP0C0k?=
- =?us-ascii?Q?vrIk6JsBVIAMfSNgsmXaCdvDpTYmiAagp0GdpozqXkAmyGvWvEP0Ilzj1QRO?=
- =?us-ascii?Q?e8iq8LlQhEmQXxK+8DUsvNsyQ/GIASzG4lxWNV1lMaYdt95sPvoq9iQ11Nd2?=
- =?us-ascii?Q?t1tPwWNIpiY4YUpS4Psr0atb6Wtci36PxaPdo1thwbHa3vLi4hDquFXfbcEn?=
- =?us-ascii?Q?/DZCk4h3vPPp8sKgaNROLRoN7zu9gU3VYpeiA6jnuGGQ87dGNkLIjaQNV8N/?=
- =?us-ascii?Q?WSYYzOLjgbUHGI1ISvAAzibIbcBW84PXwo27?=
+ ARA:13230040|1800799024|376014|82310400026|36860700013; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?LkanXjYFroy3nCuD9nuh6cYSOF+1PZ7Q0rJD1GOpi5hcoaBOtWtBCKzm6kTD?=
+ =?us-ascii?Q?05isumgCGppa3AcSkk7A9smq6bXyHJYee3Cm/e2zjMTabyc37t+KG/iHJnKC?=
+ =?us-ascii?Q?k4DlFCbGQ//6cJcVpr0C8qWAseNuhYmwap8Y/Y0Gl4+o20eELoCgbKa36/Io?=
+ =?us-ascii?Q?KsSehK3C6BfPxEFkCWbykgRwvGuzX0jFEvFngJ4sIOQfRLpihzro+mgD6Bdu?=
+ =?us-ascii?Q?XItBYEqwBNEo8Jef4yw5WYOYEhtP8vy2MgP+gWTWY+95zD6T1hXp3OZRSO+l?=
+ =?us-ascii?Q?2JSGchbkETOx0oeWuw2YUZGloaSybRDGbiFjkoSOacigGrH1TlWuvWVoCHNM?=
+ =?us-ascii?Q?prY8xKze0s/xkaQ5hY9zHy5282JBGRRWDhvvkZyR77y+TcBmxQpfAwIGmhR6?=
+ =?us-ascii?Q?SaehyE+l2Xh9B9aSnqTrVivM9TnBALfKeO+bHL6CU4oGJ3eRkm11maLxturS?=
+ =?us-ascii?Q?bZSbDb+NkGFed20/PQxsY5O8Lym+KOujiCZ9jSYEBUQYCXZSSQBjeI1cTO+M?=
+ =?us-ascii?Q?7PZmRzzngRCWqPcREQII6vAM6vgIHlYjlnkqw4n2mR9KY29zMQ7/xUzeeY1E?=
+ =?us-ascii?Q?vQQxCBu9kA9GLhVPkrzhAj2vTqay47fLzFhKflTQqI5lS4BBXJovHBPq8jRx?=
+ =?us-ascii?Q?AXAYzPy3JDCNE8xaUXD5KdZejFPNs0cWWSwncn+o0K4zP4MUGIcfjYSvjSfE?=
+ =?us-ascii?Q?9yGaXejCKssvq0H4b0PK2+4jkJalKjfMWLnKW+di10JG7y/id/BcsT61oiUH?=
+ =?us-ascii?Q?qIqwVNbXk4tIqxnvm1HGhFwtMI0vAl2S8O6m48EJHxSRlvUdeWXht1cyBxYs?=
+ =?us-ascii?Q?1BmuColtYDo25uvuAtljZ0fzQejxkPeEp3WmHSpnGpYHIcp5IqQcISRS6AxM?=
+ =?us-ascii?Q?q5NqZAGz9a5dF+fkpiCh0AHLA0UbAsu0wXYJA8YrLUIUMg14FRLjktTDEj9j?=
+ =?us-ascii?Q?fdwQUcJxqtw5F0k5Noezo6i9bkq4cds8GfMWISrsok/N2K8B4DA6rIHt1L7C?=
+ =?us-ascii?Q?4epCKmD6rmwFEnxhTQDR3c+sapbcS9feEXPtaKMq2ZpzJbGQ77sWuq2ectX7?=
+ =?us-ascii?Q?2Onp7vIBopQ6c3TcUmwui1qTUuWtLvifCndsLcbVoACFMu0BdXtMq0CX1Jqk?=
+ =?us-ascii?Q?vJ/ztnkq5/q36I/ysgOuNN00m77sX4B2FhvtetiHv2NL5xCMlA2Yq8EWE0Dk?=
+ =?us-ascii?Q?sv3O2qMVim3bKAwLAh0wqYsfvFo4GnE4mfJCiQAn8fY7cO9P9L0xr21vlssS?=
+ =?us-ascii?Q?5NnsbJxxE0WayBuJOz08wrgv4UYttpQV3RF7J6/N9tghlZ5SeYdbt/9mrOMe?=
+ =?us-ascii?Q?/XYYq6UUyJUCg7SjAIINsKv8/fAaqx6a6NMRV1UBWyrMKC1GGrbMU528p1vp?=
+ =?us-ascii?Q?OQlbaESat6BFW6ivn9g8z5wvUoM5TF63T7eTYaIpE4tkuSz9xj9ISAJeEnUm?=
+ =?us-ascii?Q?vaiGrpa4tvHxA+TJB5ozcRDOJJCPSEEyxbvfpO44Vvd8oJGHrZC/Rlkw0w8L?=
+ =?us-ascii?Q?ACyKtEP9wAAlkY0oD5NopHzeDx0s9nCs/aop?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);
+ CAT:NONE; SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: Oc/NKY3krSeNyEIDxPVC4pB9Zg222puaXhHWs4qtkYxp/cfPITeyVi2sB4o9CBsok/WvGdjFKqrCCR7A7rxxv4f2c3HAuB8/1ilTPwGibikphxPyjwQrlSsKKJooU8pdRmnVwDmBWF0dpWbCJtDcreVldH4t/OIfMhpAZ2Z3q2het2+WQBJid2I/D+usQXX6hkO1QqkIjUutdXJ990YQ+V8U5Jqf3Y6zN1jVyPE4VJ0mhdDFsOTJRFIb0kc4SP3q5HUrrZhb3OZVwBxKEfGveDTPMy7r6Hm9z0bTJ1CGCw5o+xvILNyn7sN9YaU/4Bu7/QOeo4caoXalLkRWdH59n0Zq5JojtV2Wi06b2ILCaT7gQVRjwLAyCHEI2G9CHaxOd2I2XDzbztAg9KdAj9Z9cJrp5Y4cdFockKslGs7CpPxk9Sp+UesL7uZG24aVLJz3xmDIchpebF5UkMNGcRtbuG7Tfbc4hlLNi6enw5y1Vi96thedEvj87usChV1vZEVk1y53TyZVR6eSMjrFWTKJ4iqsGgX3dz9IqrbK9paRNBTaTaAzUNZt9bCSgjvbDKW+WA97RdNRI1VYrloEkQgP5iy5JjWImMm5Zy/Ru+hlkp5dYXQdd76HdKvQFiRqjF6S/duieVbnn2B8AV6jEN6KwA==
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: ZAKXqlYEvlDy2eSyAIHQtl3gEHltF6bdJLOxWf9P2JyE/6flnw4z5MA/QCaehLLMKmlthoNxtmx1XPpe3eVaaolouH1Rf8n+L/UUr7c3z8UXkhlQ8hlDEB4wx8oQF3/tn/v0ltZk3mr30O/XAFhXarNJB73fTSZfDA7i0Xe3KgUXdp02/FAlJX7orUKnxUj1+eYculk3vjpB5PyERfnGZRo3L8B+SqXSFK8fchGDYTNYCSSXEA5/f8Rqd/6TCkmQkRCF/4ES/ymUBMHjFADW8W56DP0DJd9UxgXu4YgRi3EH5gt63BgN1Upzune+VyBs2FJj4ZeVNB5UDGp+FiWEu3ZdFZU55ChTZpsqAjiMhoNbZ7z0lXuC/oPft7AmBybLEB6zNK7BH3D3pdhj4WZQOemLd2d1BFKVcGSloCFsDYcN/VnEernwo1a3ltXOSQc2D4v3TvL2s51lTsnGymItRHoWdvWJxIWS5d3gOPFtVDJ068rGFLsj1Qllqe9UdjmZQ+WKjtMvr/S8gzhGR6ow3zdNC0bLEyUAqQ/PP1U7yvNSE9jLxfwrz6TO6xmMkk0efVuKVSBfHO/F9CAr2bknwgbZoD5ppEVx+Sjovwp5V1XcO/DYfk3mAylfjTNdGeYSXjU3d8ir1MgZc25U3ge4xw==
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2025 07:13:29.7098 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b8d6bf6-df6c-4a8b-2bf4-08dd8ba45686
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2025 07:13:19.8746 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a922b425-6587-4c39-3869-08dd8ba450a9
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: DU6PEPF00009523.eurprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8P190MB0684
-X-BESS-ID: 1746429213-310467-7672-4595-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0P190MB2025
+X-BESS-ID: 1746429202-311599-7744-352-1
 X-BESS-VER: 2019.1_20250429.1615
-X-BESS-Apparent-Source-IP: 104.47.30.110
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVuZmBgZAVgZQ0NQk0TDFwMIwKd
- Ey2SjJ3DDZIMk41TjFwCjVPNXMwNxIqTYWAA1Y9R9BAAAA
+X-BESS-Apparent-Source-IP: 104.47.17.106
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoaGpoYmQGYGUNQkxdIsNdEwyT
+ jJPDEl0SjN0DjRwsww2cLS3CA5NdXMUKk2FgCQ5mn/QgAAAA==
 X-BESS-Outbound-Spam-Score: 0.50
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.264372 [from 
- cloudscan19-189.eu-central-1b.ess.aws.cudaops.com]
+ cloudscan20-254.eu-central-1b.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
@@ -148,186 +148,316 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Danylo Vodopianov <dvo-plv@napatech.com>
 
-Add verification on NULL for variables before use it in the memset.
+simplify conditionals and remove redundant checks
 
 Signed-off-by: Danylo Vodopianov <dvo-plv@napatech.com>
 ---
- drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c  |  3 +++
- .../link_mgmt/link_100g/nt4ga_link_100g.c      |  2 ++
- .../net/ntnic/nthw/flow_api/flow_id_table.c    |  3 ++-
- .../nthw/flow_api/hw_mod/hw_mod_backend.c      |  3 ++-
- .../profile_inline/flow_api_profile_inline.c   | 18 ++++++++++++------
- drivers/net/ntnic/nthw/model/nthw_fpga_model.c |  6 ++++--
- .../net/ntnic/nthw/ntnic_meter/ntnic_meter.c   |  6 ++++++
- drivers/net/ntnic/ntnic_filter/ntnic_filter.c  |  5 +++++
- 8 files changed, 36 insertions(+), 10 deletions(-)
+ drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c |  3 +-
+ .../link_agx_100g/nt4ga_agx_link_100g.c       | 16 +++++------
+ drivers/net/ntnic/nim/i2c_nim.c               |  3 +-
+ .../core/nt200a0x/reset/nthw_fpga_rst9563.c   | 10 -------
+ .../nthw/core/nt400dxx/nthw_fpga_nt400dxx.c   |  3 +-
+ drivers/net/ntnic/nthw/core/nthw_phy_tile.c   |  2 +-
+ drivers/net/ntnic/nthw/core/nthw_sdc.c        |  3 +-
+ drivers/net/ntnic/nthw/core/nthw_tsm.c        |  6 ++--
+ drivers/net/ntnic/nthw/flow_api/flow_api.c    |  3 +-
+ .../ntnic/nthw/flow_api/hw_mod/hw_mod_flm.c   |  3 --
+ .../profile_inline/flow_api_profile_inline.c  |  9 +-----
+ drivers/net/ntnic/nthw/nthw_rac.c             |  7 -----
+ drivers/net/ntnic/ntnic_ethdev.c              | 28 ++++++++-----------
+ 13 files changed, 28 insertions(+), 68 deletions(-)
 
 diff --git a/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c b/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c
-index bb775c052c..94b0c97d27 100644
+index cc09fdcc4a..c9a0580391 100644
 --- a/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c
 +++ b/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c
-@@ -911,6 +911,9 @@ static int nthw_setup_managed_virt_queue_packed(struct nthw_virt_queue *vq,
- 	RTE_ASSERT(p_packet_buffers);
+@@ -761,8 +761,7 @@ static struct nthw_virt_queue *nthw_setup_tx_virt_queue(nthw_dbs_t *p_nthw_dbs,
+ 	 */
+ 	if (irq_vector < 0) {
+ 		if (set_tx_am_data(p_nthw_dbs, index, (uint64_t)avail_struct_phys_addr,
+-				TX_AM_ENABLE, host_id, 0,
+-				irq_vector >= 0 ? 1 : 0) != 0) {
++				TX_AM_ENABLE, host_id, 0, 0) != 0) {
+ 			return NULL;
+ 		}
+ 	}
+diff --git a/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c b/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
+index f1c17ea80a..4f6be900fd 100644
+--- a/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
++++ b/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
+@@ -1010,20 +1010,18 @@ int nt4ga_agx_link_100g_ports_init(struct adapter_info_s *p_adapter_info, nthw_f
  
- 	/* clean canvas */
-+	if (p_virt_struct_area->virt_addr == NULL)
-+		return -1;
+ 		nthw_rpf_set_ts_at_eof(p_nthw_agx->p_rpf, true);
+ 
+-		if (res == 0) {
+-			p_adapter_info->nt4ga_link.speed_capa = NT_LINK_SPEED_100G;
+-			p_adapter_info->nt4ga_link.variables_initialized = true;
+-		}
 +
- 	memset(p_virt_struct_area->virt_addr, 0,
- 		sizeof(struct pvirtq_desc) * vq->queue_size +
- 		sizeof(struct pvirtq_event_suppress) * 2 + sizeof(int) * vq->queue_size);
-diff --git a/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c b/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c
-index ed9dabe27c..adb187d322 100644
---- a/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c
-+++ b/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c
-@@ -137,6 +137,8 @@ static int _link_state_build(adapter_info_t *drv, nthw_mac_pcs_t *mac_pcs,
- 	uint32_t lh_internal_local_fault;
- 	uint32_t lh_received_local_fault;
++		p_adapter_info->nt4ga_link.speed_capa = NT_LINK_SPEED_100G;
++		p_adapter_info->nt4ga_link.variables_initialized = true;
+ 	}
  
-+	RTE_ASSERT(state);
+ 	/*
+ 	 * Create state-machine thread
+ 	 */
+-	if (res == 0) {
+-		if (!monitor_task_is_running[adapter_no]) {
+-			res = rte_thread_create(&monitor_tasks[adapter_no], NULL,
+-					nt4ga_agx_link_100g_mon, p_adapter_info);
+-		}
 +
- 	memset(state, 0, sizeof(*state));
- 	state->link_disabled = is_port_disabled;
- 	nthw_mac_pcs_get_link_summary(mac_pcs, &abs, &phy_link_state, &lh_abs, &ll_phy_link_state,
-diff --git a/drivers/net/ntnic/nthw/flow_api/flow_id_table.c b/drivers/net/ntnic/nthw/flow_api/flow_id_table.c
-index a63f5542d1..c33308b5f7 100644
---- a/drivers/net/ntnic/nthw/flow_api/flow_id_table.c
-+++ b/drivers/net/ntnic/nthw/flow_api/flow_id_table.c
-@@ -114,7 +114,8 @@ void ntnic_id_table_free_id(void *id_table, uint32_t id)
++	if (!monitor_task_is_running[adapter_no]) {
++		res = rte_thread_create(&monitor_tasks[adapter_no], NULL,
++				nt4ga_agx_link_100g_mon, p_adapter_info);
+ 	}
  
- 	struct ntnic_id_table_element *current_element =
- 		ntnic_id_table_array_find_element(handle, id);
--	memset(current_element, 0, sizeof(struct ntnic_id_table_element));
-+	if (current_element)
-+		memset(current_element, 0, sizeof(struct ntnic_id_table_element));
+ 	return res;
+diff --git a/drivers/net/ntnic/nim/i2c_nim.c b/drivers/net/ntnic/nim/i2c_nim.c
+index 654e2dd80e..5e8eeb16a7 100644
+--- a/drivers/net/ntnic/nim/i2c_nim.c
++++ b/drivers/net/ntnic/nim/i2c_nim.c
+@@ -123,8 +123,7 @@ static int nim_read_write_data_lin(nim_i2c_ctx_p ctx, bool m_page_addressing, ui
+ 		 * Find out how much can be read from the current block in case of
+ 		 * single byte access
+ 		 */
+-		if (multi_byte == 1)
+-			max_seq_cnt = block_size - (lin_addr % block_size);
++		max_seq_cnt = block_size - (lin_addr % block_size);
  
- 	struct ntnic_id_table_element *element =
- 		ntnic_id_table_array_find_element(handle, handle->free_head);
-diff --git a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_backend.c b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_backend.c
-index da126fe853..490ab2a45e 100644
---- a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_backend.c
-+++ b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_backend.c
-@@ -86,7 +86,8 @@ void *nthw_callocate_mod(struct common_func_s *mod, int sets, ...)
+ 		if (m_page_addressing) {
+ 			if (lin_addr >= 128) {	/* Only page setup above this address */
+diff --git a/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst9563.c b/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst9563.c
+index ee2c2453e5..7b0c47e9b2 100644
+--- a/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst9563.c
++++ b/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst9563.c
+@@ -104,11 +104,6 @@ static int nthw_fpga_rst9563_setup(nthw_fpga_t *p_fpga, struct nthw_fpga_rst_nt2
+ 		nthw_register_get_field(p_curr_reg, RST9563_STAT_TS_MMCM_LOCKED);
+ 	p->mp_fld_stat_tsm_ref_mmcm_locked = NULL;	/* Field not present on 9563 */
  
- void nthw_zero_module_cache(struct common_func_s *mod)
- {
--	memset(mod->base, 0, mod->allocated_size);
-+	if (mod)
-+		memset(mod->base, 0, mod->allocated_size);
+-	if (!p->mp_fld_stat_tsm_ref_mmcm_locked) {
+-		NT_LOG(DBG, NTHW, "%s: No RST9563_STAT_TSM_REF_MMCM_LOCKED found",
+-			p_adapter_id_str);
+-	}
+-
+ 	nthw_register_update(p_curr_reg);
+ 
+ 	/* STICKY register field pointers */
+@@ -126,11 +121,6 @@ static int nthw_fpga_rst9563_setup(nthw_fpga_t *p_fpga, struct nthw_fpga_rst_nt2
+ 	p->mp_fld_sticky_pci_sys_mmcm_unlocked = NULL;	/* Field not present on 9563 */
+ 	p->mp_fld_sticky_tsm_ref_mmcm_unlocked = NULL;	/* Field not present on 9563 */
+ 
+-	if (!p->mp_fld_sticky_tsm_ref_mmcm_unlocked) {
+-		NT_LOG(DBG, NTHW, "%s: No RST9563_STICKY_TSM_REF_MMCM_UNLOCKED found",
+-			p_adapter_id_str);
+-	}
+-
+ 	nthw_register_update(p_curr_reg);
+ 
+ 	/* POWER register field pointers */
+diff --git a/drivers/net/ntnic/nthw/core/nt400dxx/nthw_fpga_nt400dxx.c b/drivers/net/ntnic/nthw/core/nt400dxx/nthw_fpga_nt400dxx.c
+index d610e3a7cc..e7c9fec10d 100644
+--- a/drivers/net/ntnic/nthw/core/nt400dxx/nthw_fpga_nt400dxx.c
++++ b/drivers/net/ntnic/nthw/core/nt400dxx/nthw_fpga_nt400dxx.c
+@@ -184,8 +184,7 @@ static int nthw_fpga_nt400dxx_init(struct fpga_info_s *p_fpga_info)
+ 		/* reset specific */
+ 	switch (p_fpga_info->n_fpga_prod_id) {
+ 	case 9574:
+-		if (rst9574_ops)
+-			res = rst9574_ops->nthw_fpga_rst9574_init(p_fpga_info, &rst);
++		res = rst9574_ops->nthw_fpga_rst9574_init(p_fpga_info, &rst);
+ 
+ 		if (res) {
+ 			NT_LOG(ERR, NTHW,
+diff --git a/drivers/net/ntnic/nthw/core/nthw_phy_tile.c b/drivers/net/ntnic/nthw/core/nthw_phy_tile.c
+index eea220e40b..77400d2514 100644
+--- a/drivers/net/ntnic/nthw/core/nthw_phy_tile.c
++++ b/drivers/net/ntnic/nthw/core/nthw_phy_tile.c
+@@ -806,7 +806,7 @@ static uint32_t nthw_phy_tile_cpi_request(nthw_phy_tile_t *p, uint8_t intf_no, u
+ 
+ 	nt_os_wait_usec(10000);
+ 
+-	for (int i = 20; i > 0; i--) {
++	for (int i = 20; i >= 0; i--) {
+ 		data = nthw_phy_tile_read_xcvr(p, intf_no, lane, phy_addr + lane_offset);
+ 
+ 		value =
+diff --git a/drivers/net/ntnic/nthw/core/nthw_sdc.c b/drivers/net/ntnic/nthw/core/nthw_sdc.c
+index fc73e6957c..ae967e5ed9 100644
+--- a/drivers/net/ntnic/nthw/core/nthw_sdc.c
++++ b/drivers/net/ntnic/nthw/core/nthw_sdc.c
+@@ -132,8 +132,7 @@ int nthw_sdc_get_states(nthw_sdc_t *p, uint64_t *pn_result_mask)
+ 	if (val != 0)
+ 		n_err_cnt++;
+ 
+-	if (pn_result_mask)
+-		*pn_result_mask = n_mask;
++	*pn_result_mask = n_mask;
+ 
+ 	return n_err_cnt;	/* 0 = all ok */
  }
+diff --git a/drivers/net/ntnic/nthw/core/nthw_tsm.c b/drivers/net/ntnic/nthw/core/nthw_tsm.c
+index b88dcb9b0b..a748c4e1ae 100644
+--- a/drivers/net/ntnic/nthw/core/nthw_tsm.c
++++ b/drivers/net/ntnic/nthw/core/nthw_tsm.c
+@@ -89,8 +89,7 @@ int nthw_tsm_get_ts(nthw_tsm_t *p, uint64_t *p_ts)
  
- int nthw_flow_api_backend_init(struct flow_api_backend_s *dev,
+ 	val = ((((uint64_t)n_ts_hi) << 32UL) | n_ts_lo);
+ 
+-	if (p_ts)
+-		*p_ts = val;
++	*p_ts = val;
+ 
+ 	return 0;
+ }
+@@ -108,8 +107,7 @@ int nthw_tsm_get_time(nthw_tsm_t *p, uint64_t *p_time)
+ 
+ 	val = ((((uint64_t)n_time_hi) << 32UL) | n_time_lo);
+ 
+-	if (p_time)
+-		*p_time = val;
++	*p_time = val;
+ 
+ 	return 0;
+ }
+diff --git a/drivers/net/ntnic/nthw/flow_api/flow_api.c b/drivers/net/ntnic/nthw/flow_api/flow_api.c
+index 358ea3e4fa..90fc3f51a6 100644
+--- a/drivers/net/ntnic/nthw/flow_api/flow_api.c
++++ b/drivers/net/ntnic/nthw/flow_api/flow_api.c
+@@ -829,8 +829,7 @@ struct flow_nic_dev *nthw_flow_api_create(uint8_t adapter_no,
+ 
+ err_exit:
+ 
+-	if (ndev)
+-		nthw_flow_api_done(ndev);
++	nthw_flow_api_done(ndev);
+ 
+ 	NT_LOG(DBG, FILTER, "ERR: %s", __func__);
+ 	return NULL;
+diff --git a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_flm.c b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_flm.c
+index 69dec801f2..4babc30d2b 100644
+--- a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_flm.c
++++ b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_flm.c
+@@ -834,9 +834,6 @@ int hw_mod_flm_stat_get(struct flow_api_backend_s *be, enum hw_flm_e field, uint
+ 			break;
+ 
+ 		default: {
+-			if (_VER_ < 18)
+-				return UNSUP_FIELD;
+-
+ 			switch (field) {
+ 			case HW_FLM_STAT_STA_DONE:
+ 				*value = be->flm.v25.sta_done->cnt;
 diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-index 5bf8a9a3ea..3133464675 100644
+index 6bfa471321..c674531396 100644
 --- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
 +++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-@@ -1714,15 +1714,14 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+@@ -4267,8 +4267,6 @@ int flow_destroy_locked_profile_inline(struct flow_eth_dev *dev,
+ 	RTE_ASSERT(dev);
+ 	RTE_ASSERT(fh);
  
- 	*in_port_id = UINT32_MAX;
- 
--	memset(packet_data, 0x0, sizeof(uint32_t) * 10);
--	memset(packet_mask, 0x0, sizeof(uint32_t) * 10);
--	memset(key_def, 0x0, sizeof(struct flm_flow_key_def_s));
+-	int err = 0;
 -
--	if (elem == NULL) {
-+	if (packet_data == NULL || packet_mask == NULL || key_def == NULL || elem == NULL) {
- 		nthw_flow_nic_set_error(ERR_FAILED, error);
- 		NT_LOG(ERR, FILTER, "Flow items missing");
- 		return -1;
- 	}
-+	memset(packet_data, 0x0, sizeof(uint32_t) * 10);
-+	memset(packet_mask, 0x0, sizeof(uint32_t) * 10);
-+	memset(key_def, 0x0, sizeof(struct flm_flow_key_def_s));
- 
- 	if (implicit_vlan_vid > 0) {
- 		uint32_t *sw_data = &packet_data[1 - sw_counter];
-@@ -3192,6 +3191,9 @@ static int convert_fh_to_fh_flm(struct flow_handle *fh, const uint32_t *packet_d
- static void setup_db_qsl_data(struct nic_flow_def *fd, struct hw_db_inline_qsl_data *qsl_data,
- 	uint32_t num_dest_port, uint32_t num_queues)
- {
-+	if (qsl_data == NULL)
-+		return;
-+
- 	memset(qsl_data, 0x0, sizeof(struct hw_db_inline_qsl_data));
- 
- 	if (fd->dst_num_avail <= 0) {
-@@ -3236,6 +3238,9 @@ static void setup_db_qsl_data(struct nic_flow_def *fd, struct hw_db_inline_qsl_d
- 
- static void setup_db_hsh_data(struct nic_flow_def *fd, struct hw_db_inline_hsh_data *hsh_data)
- {
-+	if (hsh_data == NULL)
-+		return;
-+
- 	memset(hsh_data, 0x0, sizeof(struct hw_db_inline_hsh_data));
- 
- 	hsh_data->func = fd->hsh.func;
-@@ -4816,7 +4821,8 @@ int flow_info_get_profile_inline(struct flow_eth_dev *dev, uint8_t caller_id,
- 	int res = 0;
- 
  	nthw_flow_nic_set_error(ERR_SUCCESS, error);
--	memset(port_info, 0, sizeof(struct rte_flow_port_info));
-+	if (port_info)
-+		memset(port_info, 0, sizeof(struct rte_flow_port_info));
  
- 	port_info->max_nb_aging_objects = dev->nb_aging_objects;
+ 	/* take flow out of ndev list - may not have been put there yet */
+@@ -4318,11 +4316,6 @@ int flow_destroy_locked_profile_inline(struct flow_eth_dev *dev,
+ 		fh->fd = NULL;
+ 	}
  
-diff --git a/drivers/net/ntnic/nthw/model/nthw_fpga_model.c b/drivers/net/ntnic/nthw/model/nthw_fpga_model.c
-index 0838527716..5256adc648 100644
---- a/drivers/net/ntnic/nthw/model/nthw_fpga_model.c
-+++ b/drivers/net/ntnic/nthw/model/nthw_fpga_model.c
-@@ -854,8 +854,10 @@ void nthw_register_flush(const nthw_register_t *p, uint32_t cnt)
+-	if (err) {
+-		NT_LOG(ERR, FILTER, "FAILED removing flow: %p", fh);
+-		nthw_flow_nic_set_error(ERR_REMOVE_FLOW_FAILED, error);
+-	}
+-
+ 	free(fh);
+ 	fh = NULL;
  
- void nthw_register_clr(nthw_register_t *p)
- {
--	memset(p->mp_shadow, 0, p->mn_len * sizeof(uint32_t));
--	nthw_register_make_dirty(p);
-+	if (p->mp_shadow) {
-+		memset(p->mp_shadow, 0, p->mn_len * sizeof(uint32_t));
-+		nthw_register_make_dirty(p);
-+	}
+@@ -4330,7 +4323,7 @@ int flow_destroy_locked_profile_inline(struct flow_eth_dev *dev,
+ 	dev->ndev->be.iface->set_debug_mode(dev->ndev->be.be_dev, FLOW_BACKEND_DEBUG_MODE_NONE);
+ #endif
+ 
+-	return err;
++	return 0;
  }
  
- /*
-diff --git a/drivers/net/ntnic/nthw/ntnic_meter/ntnic_meter.c b/drivers/net/ntnic/nthw/ntnic_meter/ntnic_meter.c
-index 66cc02a865..303c2cd51a 100644
---- a/drivers/net/ntnic/nthw/ntnic_meter/ntnic_meter.c
-+++ b/drivers/net/ntnic/nthw/ntnic_meter/ntnic_meter.c
-@@ -51,6 +51,9 @@ static int eth_mtr_capabilities_get_inline(struct rte_eth_dev *eth_dev,
- 				"Ethernet device does not support metering");
+ int flow_destroy_profile_inline(struct flow_eth_dev *dev, struct flow_handle *flow,
+diff --git a/drivers/net/ntnic/nthw/nthw_rac.c b/drivers/net/ntnic/nthw/nthw_rac.c
+index d6fdea2ddb..13813fe516 100644
+--- a/drivers/net/ntnic/nthw/nthw_rac.c
++++ b/drivers/net/ntnic/nthw/nthw_rac.c
+@@ -517,13 +517,6 @@ int nthw_rac_rab_read32_dma(nthw_rac_t *p, nthw_rab_bus_id_t bus_id, uint32_t ad
+ 		return -1;
  	}
  
-+	if (cap == NULL)
-+		return -1;
-+
- 	memset(cap, 0x0, sizeof(struct rte_mtr_capabilities));
+-	if ((word_cnt + 3) > RAB_DMA_BUF_CNT) {
+-		NT_LOG(ERR, NTHW,
+-			"%s: Failed rab dma read length check - bus: %d addr: 0x%08X wordcount: %d",
+-			p_adapter_id_str, bus_id, address, word_cnt);
+-		return -1;
+-	}
+-
+ 	if (p->m_in_free < 3) {
+ 		/*
+ 		 * No more memory available.
+diff --git a/drivers/net/ntnic/ntnic_ethdev.c b/drivers/net/ntnic/ntnic_ethdev.c
+index 156930bba8..920abd0221 100644
+--- a/drivers/net/ntnic/ntnic_ethdev.c
++++ b/drivers/net/ntnic/ntnic_ethdev.c
+@@ -1375,7 +1375,6 @@ eth_dev_set_link_up(struct rte_eth_dev *eth_dev)
+ 		return 0;
  
- 	/* MBR records use 28-bit integers */
-@@ -419,6 +422,9 @@ static int eth_mtr_stats_read_inline(struct rte_eth_dev *eth_dev,
- 				"MTR id is out of range");
+ 	RTE_ASSERT(port >= 0 && port < NUM_ADAPTER_PORTS_MAX);
+-	RTE_ASSERT(port == internals->n_intf_no);
+ 
+ 	port_ops->set_adm_state(p_adapter_info, port, true);
+ 
+@@ -1401,7 +1400,6 @@ eth_dev_set_link_down(struct rte_eth_dev *eth_dev)
+ 		return 0;
+ 
+ 	RTE_ASSERT(port >= 0 && port < NUM_ADAPTER_PORTS_MAX);
+-	RTE_ASSERT(port == internals->n_intf_no);
+ 
+ 	port_ops->set_link_status(p_adapter_info, port, false);
+ 
+@@ -2201,25 +2199,23 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
+ 		NT_LOG(DBG, NTNIC, "Meter module is not initialized");
+ 
+ 	/* Initialize the queue system */
+-	if (err == 0) {
+-		sg_ops = get_sg_ops();
+-
+-		if (sg_ops != NULL) {
+-			err = sg_ops->nthw_virt_queue_init(fpga_info);
++	sg_ops = get_sg_ops();
+ 
+-			if (err != 0) {
+-				NT_LOG(ERR, NTNIC,
+-					"%s: Cannot initialize scatter-gather queues",
+-					p_nt_drv->adapter_info.mp_adapter_id_str);
++	if (sg_ops != NULL) {
++		err = sg_ops->nthw_virt_queue_init(fpga_info);
+ 
+-			} else {
+-				NT_LOG(DBG, NTNIC, "%s: Initialized scatter-gather queues",
+-					p_nt_drv->adapter_info.mp_adapter_id_str);
+-			}
++		if (err != 0) {
++			NT_LOG(ERR, NTNIC,
++				"%s: Cannot initialize scatter-gather queues",
++				p_nt_drv->adapter_info.mp_adapter_id_str);
+ 
+ 		} else {
+-			NT_LOG_DBGX(DBG, NTNIC, "SG module is not initialized");
++			NT_LOG(DBG, NTNIC, "%s: Initialized scatter-gather queues",
++				p_nt_drv->adapter_info.mp_adapter_id_str);
+ 		}
++
++	} else {
++		NT_LOG_DBGX(DBG, NTNIC, "SG module is not initialized");
  	}
  
-+	if (stats == NULL)
-+		return -1;
-+
- 	memset(stats, 0x0, sizeof(struct rte_mtr_stats));
- 	profile_inline_ops->flm_mtr_read_stats(internals->flw_dev, caller_id, mtr_id, stats_mask,
- 		&stats->n_pkts[RTE_COLOR_GREEN],
-diff --git a/drivers/net/ntnic/ntnic_filter/ntnic_filter.c b/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
-index 5757c7c13c..fc06cf12c3 100644
---- a/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
-+++ b/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
-@@ -248,6 +248,11 @@ int nthw_interpret_raw_data(uint8_t *data, uint8_t *preserve, int size, struct r
- 
- int nthw_create_attr(struct cnv_attr_s *attribute, const struct rte_flow_attr *attr)
- {
-+	if (!attribute) {
-+		NT_LOG(ERR, FILTER, "ERROR no attribute to iterate!");
-+		return -1;
-+	}
-+
- 	memset(&attribute->attr, 0x0, sizeof(struct rte_flow_attr));
- 
- 	if (attr) {
+ 	/* Start ctrl, monitor, stat thread only for primary process. */
 -- 
 2.47.1
 
