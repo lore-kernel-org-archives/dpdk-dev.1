@@ -2,70 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AA26C369C2
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 06:21:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF7D9C369C2
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 06:24:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5B4414065F;
-	Mon,  5 May 2025 08:21:15 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 01A5040650;
+	Mon,  5 May 2025 08:24:45 +0200 (CEST)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 93C1C4065F
- for <dev@dpdk.org>; Mon,  5 May 2025 08:21:14 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5454OnBL007885;
- Sun, 4 May 2025 23:21:11 -0700
+ by mails.dpdk.org (Postfix) with ESMTP id DDE5A4025D
+ for <dev@dpdk.org>; Mon,  5 May 2025 08:24:43 +0200 (CEST)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5452eFex007254;
+ Sun, 4 May 2025 23:24:40 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=K
- qaISKzX7s2vy1TPSnxG3O1P/CeN0msW0r629uejN+I=; b=XmcS4AVGWryO1LX9X
- 0NYZRjvez3SogbkO6or23BiUUnFRAkwDTUw0GGn9Xo8++dBt0bTAhQKTI8J7DPkF
- bL0kn7BSzNL5m1+28S98RS6mm5LsXdu0jOVH0JdXn/XI4Ey+wgSBZpjWn9XzsbLq
- /4vx86NEgvLXCAaWp+dfKQAl9pdsx8yKxyIPvasu+YgJeG+tksu3ZYZGr4ExCzvR
- 6KhhvIbIqhwmpYFfEEfQW/r1pFtiyRdEskUEtJiB2AUupaOGqwfxAbiwOMYKep1G
- FyaqDbNrhcwXaNyJR4aBYLFTLsTWrUOBY1bEOl3XGJmy+LyQVYtaHkVIFAde+tji
- mGSlA==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46ehxkrffh-1
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=G
+ Kp8hXbLftVy5AgRNf8APaFnuQdGeHTPGCFoemGyEz0=; b=Xh+Fu0yRkuiIgr2A+
+ WoE3lgpPf+qwLRqlpT63yPD8Fnuev/i1pqFyE5XjdPHQHveQ2hb1qsExZ4ltgPLo
+ 0VMF04NCnGGssdJWp97mX0p20CNT9sQS4r89Q5kD2JRH4iyksqIqkroEaowQvI/F
+ 3FVMYQoXWzFiBaABcGah/zOEHJISW8QWadGP63Zo5G/6oy/gHzF+IqqcFQ3Kh74J
+ yVBfXhiaaMjH3sbPW8DaxZnl2ru6cNbF6SU2SBT9N2ZYNG+Vz4fh0L+OW2LITF1S
+ Pp5FP0I8ZGsrbPOgt/6aoM7VSmTbrS8d+GLEbBjN99SSeqxEalEBzVHI3ABIcPFm
+ J0JAQ==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46djnjj9e1-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Sun, 04 May 2025 23:21:10 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ Sun, 04 May 2025 23:24:39 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Sun, 4 May 2025 23:21:09 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Sun, 4 May 2025 23:21:09 -0700
+ 15.2.1544.4; Sun, 4 May 2025 23:24:34 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Sun, 4 May 2025 23:24:34 -0700
 Received: from cavium-System-Product-Name.. (unknown [10.28.37.22])
- by maili.marvell.com (Postfix) with ESMTP id 78E983F708A;
- Sun,  4 May 2025 23:21:07 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 532773F7073;
+ Sun,  4 May 2025 23:24:32 -0700 (PDT)
 From: <kirankumark@marvell.com>
 To: Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, 
  Nithin Dabilpuram <ndabilpuram@marvell.com>, Zhirun Yan
  <yanzhirun_163@163.com>
 CC: <dev@dpdk.org>
-Subject: [PATCH v6 3/3] test/graph: fix graph autotest second run test failure
-Date: Mon, 5 May 2025 11:50:55 +0530
-Message-ID: <20250505062056.570488-3-kirankumark@marvell.com>
+Subject: [PATCH v7 1/3] graph: avoid global node ID counter
+Date: Mon, 5 May 2025 11:54:19 +0530
+Message-ID: <20250505062422.588450-1-kirankumark@marvell.com>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250505062056.570488-1-kirankumark@marvell.com>
+In-Reply-To: <20241126044402.1209998-1-kirankumark@marvell.com>
 References: <20241126044402.1209998-1-kirankumark@marvell.com>
- <20250505062056.570488-1-kirankumark@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: cdTJ2qoNbratzRTw0cbYHp3D71CDsEmD
-X-Proofpoint-GUID: cdTJ2qoNbratzRTw0cbYHp3D71CDsEmD
-X-Authority-Analysis: v=2.4 cv=QOFoRhLL c=1 sm=1 tr=0 ts=681858d6 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=MqI-DGuoOvG9Fh05Se8A:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA1MDA1OCBTYWx0ZWRfX1C+yCn/W8RCV
+ m1qHKFwTJCZbv/wl3Pvg+8MdfF8MUhBAA0dWDiuiDZTscNh8suIUCxON5xuJXx9FgTkHUVB7+NJ
+ 2YoAHp0Qa3ub9Y/X/FPdXXvoV7gxCiEQNOwUpWAAE1cYdJj/SHko+atsi5eBuCS3ydbkQCI/0MG
+ jHjqDvWV0zUD9S7Y/7ME0d2x2i1urrgBPEfNudhg5ikVvUvugk9wA8GZsV7zOaXS53PTjc+AqT+
+ u+GhAio+2TStVyQ9vGFVTkWn165PI9uinr3uv1k4v+LRN1pTUY/KlVqBiYdH7DBcOiaSlsc84PY
+ sgnxjxvgxkeWfo0rHll4OefrY4va0lA0tglkB60rNnXVBX3rLdWVEPc+dgPLgJjYzRtjsgdBnvI
+ vQF9AZ5Gt+jVQjK+bb6OR2PckDPZYTetbgnId2C9gsUGHNEiux9bWwaC33bO5seejnn0ZmBT
+X-Proofpoint-ORIG-GUID: BJJRoB73TS8KjjyUjZN8dW-gqwqn7lj-
+X-Proofpoint-GUID: BJJRoB73TS8KjjyUjZN8dW-gqwqn7lj-
+X-Authority-Analysis: v=2.4 cv=XNwwSRhE c=1 sm=1 tr=0 ts=681859a7 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=dZ_QEZhM9UTCNBGJqFYA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA1MDA1NyBTYWx0ZWRfX4aOLI5lPsLqW
- YYiUn0xkJ6LR0YIAgCm/qiNSPP2SrCpbrY/AwzeiKw9CzFXSXv7q5ne7fFMcVIdZS7xGm7gZAXv
- 51DPqm0bls2Z2viFJnLSzJEuZWslmKUT0Ka/Gc37JT6dl7uJVMSL1wFqIrfCYeLbBuE3H8ILsgL
- k2aR86wdXaja7B1pkwIvGutM+F8WRA7mVqKDIfk+tK2JhxKG97XhPTGhC9ZUcAl6wOg1oh/zIE+
- 4DUHczRn4+Jv2rbtBl7tU8UuXAzRawB7ibvwXvH0G8ALr2XUR8HNQ0GWDx0ALxQgthp3Hgc8vIq
- 4JhhUccMsmbK5PRfyGFPmL2EKCHuwjnl4zANT5dBapM0hglDN0LS9rrdPFPy5sKw51PzIIBaMox
- l9s62gBiUhma9lM2iuy8wOMb+K7jPbnV47S4xe5BO7wX51xnzrkqpZoJpSzsZRxIU18bVK6a
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-05_03,2025-04-30_01,2025-02-21_01
@@ -84,174 +83,231 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Kiran Kumar K <kirankumark@marvell.com>
 
-The graph autotest second run test is failing due to the
-node name is already present in the node list. Adding changes
-to free nodes at the time of test cleanup.
-
-Fixes: 6b89650418fe ("test/graph: add functional tests")
+The node id is determined based on a global variable that is
+incremented every time a node is created. Adding changes to
+remove the global counter. Make sure that the node list is always
+ordered by increasing node ids. When creating a new node, pick a free
+id which is not allocated.
 
 Signed-off-by: Kiran Kumar K <kirankumark@marvell.com>
-Series-Acked-by: Jerin Jacob <jerinj@marvell.com>
+Acked-by: Jerin Jacob <jerinj@marvell.com>
 ---
-* V6 changes:
- - Rebase to latest main
- app/test/test_graph.c | 95 ++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 90 insertions(+), 5 deletions(-)
+* V7 Changes:
+ - Updated Acked-by
+ lib/graph/graph_populate.c | 11 +++--
+ lib/graph/graph_private.h  |  8 ----
+ lib/graph/node.c           | 86 ++++++++++++++++++++++++++++++++------
+ 3 files changed, 82 insertions(+), 23 deletions(-)
 
-diff --git a/app/test/test_graph.c b/app/test/test_graph.c
-index 2840a25b13..635b8dd527 100644
---- a/app/test/test_graph.c
-+++ b/app/test/test_graph.c
-@@ -68,6 +68,8 @@ static void *mbuf_p[MAX_NODES + 1][MBUFF_SIZE];
- static rte_graph_t graph_id;
- static uint64_t obj_stats[MAX_NODES + 1];
- static uint64_t fn_calls[MAX_NODES + 1];
-+static uint32_t dummy_nodes_id[MAX_NODES];
-+static uint32_t dummy_nodes_id_count;
+diff --git a/lib/graph/graph_populate.c b/lib/graph/graph_populate.c
+index 1e6b08319e..026daecb21 100644
+--- a/lib/graph/graph_populate.c
++++ b/lib/graph/graph_populate.c
+@@ -78,7 +78,6 @@ graph_nodes_populate(struct graph *_graph)
+ 	struct rte_graph *graph = _graph->graph;
+ 	struct graph_node *graph_node;
+ 	rte_edge_t count, nb_edges;
+-	const char *parent;
+ 	rte_node_t pid;
 
- const char *node_patterns[] = {
- 	"test_node_source1",	   "test_node00",
-@@ -541,6 +543,66 @@ test_lookup_functions(void)
- 	return 0;
- }
+ 	STAILQ_FOREACH(graph_node, &_graph->node_list, next) {
+@@ -94,8 +93,14 @@ graph_nodes_populate(struct graph *_graph)
+ 		memcpy(node->name, graph_node->node->name, RTE_GRAPH_NAMESIZE);
+ 		pid = graph_node->node->parent_id;
+ 		if (pid != RTE_NODE_ID_INVALID) { /* Cloned node */
+-			parent = rte_node_id_to_name(pid);
+-			memcpy(node->parent, parent, RTE_GRAPH_NAMESIZE);
++			struct node *pnode;
++
++			STAILQ_FOREACH(pnode, node_list_head_get(), next) {
++				if (pnode->id == pid) {
++					memcpy(node->parent, pnode->name, RTE_GRAPH_NAMESIZE);
++					break;
++				}
++			}
+ 		}
+ 		node->id = graph_node->node->id;
+ 		node->parent_id = pid;
+diff --git a/lib/graph/graph_private.h b/lib/graph/graph_private.h
+index 813dd78b9d..3529640abf 100644
+--- a/lib/graph/graph_private.h
++++ b/lib/graph/graph_private.h
+@@ -29,14 +29,6 @@ extern int rte_graph_logtype;
+ #define graph_info(...) GRAPH_LOG(INFO, __VA_ARGS__)
+ #define graph_dbg(...) GRAPH_LOG(DEBUG, __VA_ARGS__)
 
-+static int
-+test_node_id(void)
+-#define ID_CHECK(id, id_max)                                                   \
+-	do {                                                                   \
+-		if ((id) >= (id_max)) {                                        \
+-			rte_errno = EINVAL;                                    \
+-			goto fail;                                             \
+-		}                                                              \
+-	} while (0)
+-
+ #define SET_ERR_JMP(err, where, fmt, ...)                                      \
+ 	do {                                                                   \
+ 		graph_err(fmt, ##__VA_ARGS__);                                 \
+diff --git a/lib/graph/node.c b/lib/graph/node.c
+index 101981ec24..53a3f3f2d4 100644
+--- a/lib/graph/node.c
++++ b/lib/graph/node.c
+@@ -16,9 +16,56 @@
+ #include "graph_private.h"
+
+ static struct node_head node_list = STAILQ_HEAD_INITIALIZER(node_list);
+-static rte_node_t node_id;
+
+-#define NODE_ID_CHECK(id) ID_CHECK(id, node_id)
++static struct node *
++node_from_id(rte_node_t id)
 +{
-+	uint32_t node_id, odummy_id, dummy_id, dummy_id1;
++	struct node *node = NULL;
 +
-+	node_id = rte_node_from_name("test_node00");
-+
-+	dummy_id = rte_node_clone(node_id, "test_node_id00");
-+	if (rte_node_is_invalid(dummy_id)) {
-+		printf("Got invalid id when clone\n");
-+		return -1;
++	graph_spinlock_lock();
++	rte_errno = EINVAL;
++	STAILQ_FOREACH(node, &node_list, next) {
++		if (node->id == id) {
++			rte_errno = 0;
++			goto exit;
++		}
 +	}
-+
-+	dummy_id1 = rte_node_clone(node_id, "test_node_id01");
-+	if (rte_node_is_invalid(dummy_id1)) {
-+		printf("Got invalid id when clone\n");
-+		return -1;
-+	}
-+
-+	/* Expect next node id to be node_id + 1 */
-+	if ((dummy_id + 1) != dummy_id1) {
-+		printf("Node id didn't match, expected = %d got = %d\n",
-+		       dummy_id+1, dummy_id1);
-+		return -1;
-+	}
-+
-+	odummy_id = dummy_id;
-+	/* Free one of the cloned node */
-+	if (rte_node_free(dummy_id)) {
-+		printf("Failed to free node\n");
-+		return -1;
-+	}
-+
-+	/* Clone again, should get the same id, that is freed */
-+	dummy_id = rte_node_clone(node_id, "test_node_id00");
-+	if (rte_node_is_invalid(dummy_id)) {
-+		printf("Got invalid id when clone\n");
-+		return -1;
-+	}
-+
-+	if (dummy_id != odummy_id) {
-+		printf("Node id didn't match, expected = %d got = %d\n",
-+		       odummy_id, dummy_id);
-+		return -1;
-+	}
-+
-+	/* Free the node */
-+	if (rte_node_free(dummy_id)) {
-+		printf("Failed to free node\n");
-+		return -1;
-+	}
-+
-+	if (rte_node_free(dummy_id1)) {
-+		printf("Failed to free node\n");
-+		return -1;
-+	}
-+
-+	return 0;
++exit:
++	graph_spinlock_unlock();
++	return node;
 +}
 +
- static int
- test_node_clone(void)
++static rte_node_t
++next_next_free_id(void)
++{
++	struct node *node;
++	rte_node_t id = 0;
++
++	STAILQ_FOREACH(node, &node_list, next) {
++		if (id < node->id)
++			break;
++		id = node->id + 1;
++	}
++	return id;
++}
++
++static void
++node_insert_ordered(struct node *node)
++{
++	struct node *after, *g;
++
++	after = NULL;
++	STAILQ_FOREACH(g, &node_list, next) {
++		if (g->id < node->id)
++			after = g;
++		else if (g->id > node->id)
++			break;
++	}
++	if (after == NULL)
++		STAILQ_INSERT_HEAD(&node_list, node, next);
++	else
++		STAILQ_INSERT_AFTER(&node_list, after, node, next);
++}
+
+ /* Private functions */
+ struct node_head *
+@@ -118,10 +165,10 @@ __rte_node_register(const struct rte_node_register *reg)
+ 	}
+
+ 	node->lcore_id = RTE_MAX_LCORE;
+-	node->id = node_id++;
++	node->id = next_next_free_id();
+
+-	/* Add the node at tail */
+-	STAILQ_INSERT_TAIL(&node_list, node, next);
++	/* Add the node in ordered list */
++	node_insert_ordered(node);
+ 	graph_spinlock_unlock();
+
+ 	return node->id;
+@@ -197,7 +244,9 @@ rte_node_clone(rte_node_t id, const char *name)
  {
-@@ -551,11 +613,12 @@ test_node_clone(void)
- 	node_id = rte_node_from_name("test_node00");
- 	tm->test_node[0].idx = node_id;
+ 	struct node *node;
 
--	dummy_id = rte_node_clone(node_id, "test_node00");
--	if (rte_node_is_invalid(dummy_id)) {
-+	dummy_nodes_id[dummy_nodes_id_count] = rte_node_clone(node_id, "test_node00");
-+	if (rte_node_is_invalid(dummy_nodes_id[dummy_nodes_id_count])) {
- 		printf("Got invalid id when clone, Expecting fail\n");
- 		return -1;
- 	}
-+	dummy_nodes_id_count++;
-
- 	/* Clone with same name, should fail */
- 	dummy_id = rte_node_clone(node_id, "test_node00");
-@@ -635,15 +698,15 @@ test_create_graph(void)
- 		.nb_node_patterns = 6,
- 		.node_patterns = node_patterns_dummy,
- 	};
--	uint32_t dummy_node_id;
- 	uint32_t node_id;
-
- 	node_id = rte_node_from_name("test_node00");
--	dummy_node_id = rte_node_clone(node_id, "dummy_node");
--	if (rte_node_is_invalid(dummy_node_id)) {
-+	dummy_nodes_id[dummy_nodes_id_count] = rte_node_clone(node_id, "dummy_node");
-+	if (rte_node_is_invalid(dummy_nodes_id[dummy_nodes_id_count])) {
- 		printf("Got invalid node id\n");
- 		return -1;
- 	}
-+	dummy_nodes_id_count++;
-
- 	graph_id = rte_graph_create("worker0", &gconf);
- 	if (graph_id != RTE_GRAPH_ID_INVALID) {
-@@ -1026,17 +1089,39 @@ graph_setup(void)
- 	}
- 	printf("test_node_clone: pass\n");
-
-+	if (test_node_id()) {
-+		printf("test_node_id: fail\n");
-+		return -1;
-+	}
-+	printf("test_node_id: pass\n");
+-	NODE_ID_CHECK(id);
++	if (node_from_id(id) == NULL)
++		goto fail;
 +
- 	return 0;
- }
-
- static void
- graph_teardown(void)
+ 	STAILQ_FOREACH(node, &node_list, next)
+ 		if (node->id == id)
+ 			return node_clone(node, name);
+@@ -225,7 +274,8 @@ rte_node_id_to_name(rte_node_t id)
  {
-+	uint32_t i;
- 	int id;
+ 	struct node *node;
 
- 	id = rte_graph_destroy(rte_graph_from_name("worker0"));
- 	if (id)
- 		printf("Graph Destroy failed\n");
+-	NODE_ID_CHECK(id);
++	if (node_from_id(id) == NULL)
++		goto fail;
+ 	STAILQ_FOREACH(node, &node_list, next)
+ 		if (node->id == id)
+ 			return node->name;
+@@ -240,7 +290,8 @@ rte_node_edge_count(rte_node_t id)
+ {
+ 	struct node *node;
+
+-	NODE_ID_CHECK(id);
++	if (node_from_id(id) == NULL)
++		goto fail;
+ 	STAILQ_FOREACH(node, &node_list, next)
+ 		if (node->id == id)
+ 			return node->nb_edges;
+@@ -310,7 +361,8 @@ rte_node_edge_shrink(rte_node_t id, rte_edge_t size)
+ 	rte_edge_t rc = RTE_EDGE_ID_INVALID;
+ 	struct node *node;
+
+-	NODE_ID_CHECK(id);
++	if (node_from_id(id) == NULL)
++		goto fail;
+ 	graph_spinlock_lock();
+
+ 	STAILQ_FOREACH(node, &node_list, next) {
+@@ -338,7 +390,8 @@ rte_node_edge_update(rte_node_t id, rte_edge_t from, const char **next_nodes,
+ 	rte_edge_t rc = RTE_EDGE_ID_INVALID;
+ 	struct node *n, *prev;
+
+-	NODE_ID_CHECK(id);
++	if (node_from_id(id) == NULL)
++		goto fail;
+ 	graph_spinlock_lock();
+
+ 	prev = NULL;
+@@ -373,7 +426,8 @@ rte_node_edge_get(rte_node_t id, char *next_nodes[])
+ 	rte_node_t rc = RTE_NODE_ID_INVALID;
+ 	struct node *node;
+
+-	NODE_ID_CHECK(id);
++	if (node_from_id(id) == NULL)
++		goto fail;
+ 	graph_spinlock_lock();
+
+ 	STAILQ_FOREACH(node, &node_list, next) {
+@@ -397,7 +451,8 @@ node_scan_dump(FILE *f, rte_node_t id, bool all)
+ 	struct node *node;
+
+ 	RTE_ASSERT(f != NULL);
+-	NODE_ID_CHECK(id);
++	if (node_from_id(id) == NULL)
++		goto fail;
+
+ 	STAILQ_FOREACH(node, &node_list, next) {
+ 		if (all == true) {
+@@ -429,5 +484,12 @@ RTE_EXPORT_SYMBOL(rte_node_max_count)
+ rte_node_t
+ rte_node_max_count(void)
+ {
++	rte_node_t node_id = 0;
++	struct node *node;
 +
-+	for (i = 1; i < MAX_NODES; i++) {
-+		if (rte_node_free(test_main.test_node[i].idx)) {
-+			printf("Node free failed\n");
-+			return;
-+		}
++	STAILQ_FOREACH(node, &node_list, next) {
++		if (node_id < node->id)
++			node_id = node->id;
 +	}
-+
-+	for (i = 0; i < dummy_nodes_id_count; i++) {
-+		if (rte_node_free(dummy_nodes_id[i])) {
-+			printf("Node free failed\n");
-+			return;
-+		}
-+	}
-+	dummy_nodes_id_count = 0;
+ 	return node_id;
  }
-
- static struct unit_test_suite graph_testsuite = {
 --
 2.48.1
 
