@@ -2,24 +2,24 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 777A6C3ABAA
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 15:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69AA7C3ABB0
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 15:10:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BF6D44025D;
-	Mon,  5 May 2025 17:04:58 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 986E34025D;
+	Mon,  5 May 2025 17:10:29 +0200 (CEST)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 568374003C
- for <dev@dpdk.org>; Mon,  5 May 2025 17:04:57 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 544A44003C
+ for <dev@dpdk.org>; Mon,  5 May 2025 17:10:28 +0200 (CEST)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 81F232115DB4; Mon,  5 May 2025 08:04:56 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 81F232115DB4
+ id 442EE2115DB4; Mon,  5 May 2025 08:10:27 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 442EE2115DB4
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1746457496;
- bh=ZLHm+8z8u2EjACow6z+iGCuIZQVnekO61CCCZz3ljgg=;
+ s=default; t=1746457827;
+ bh=hjnhI+a2zBiB9M0AH5Lw2HpZ6cKUaSrcsf1cacSiFw4=;
  h=From:To:Cc:Subject:Date:From;
- b=SJGERmzs9xBH81BfuTfKa2w3v7wP1iDOafTC6A1jaPYG4CmbLa1yU2g/fRAPVm2Tg
- z5zM3trayF2L68NAGTc4SfqmCYHjS2+Iyq4mbBAR2DW67Zwivw9QQIxk+RmhvXsoxI
- bqafQXWTMst3Nd349h6AWqNj30mSh9HUk6fWhqwc=
+ b=qlEo/WwZzxxXTg+Vtl8r0YtBsKAIqYDWKOydbIYkmXgBrB3+IIV4aYWmAEWUzFwj0
+ QsgEqlprmg692mmEwH5lYjWzIMJmTG7CFjgdiNPxJCRYwyirOUqgau4/Qs8K9cuspv
+ nTf/vsoiI/TFhwSs/mKYplq+oLdtDxX1+/HWGZ50=
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: Dariusz Sosnowski <dsosnowski@nvidia.com>,
  Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
@@ -27,9 +27,9 @@ To: Dariusz Sosnowski <dsosnowski@nvidia.com>,
  Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
 Cc: dev@dpdk.org,
 	Andre Muezerie <andremue@linux.microsoft.com>
-Subject: [PATCH] net/mlx5: use portable version of __builtin_ffsl
-Date: Mon,  5 May 2025 08:04:52 -0700
-Message-Id: <1746457492-10012-1-git-send-email-andremue@linux.microsoft.com>
+Subject: [PATCH] net/mlx5: declare size of rte_v128u32_t
+Date: Mon,  5 May 2025 08:10:23 -0700
+Message-Id: <1746457823-11135-1-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -44,46 +44,77 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Builtin __builtin_ffsl is not available with MSVC therefore a
-portable replacement should be used.
+When compiling with MSVC the error below is hit:
 
-Function rte_ffs32 is already available in eal and should be used
-instead.
+drivers\net\mlx5\mlx5_tx.h(1148): error C2065: 'rte_v128u32_t':
+    undeclared identifier
+
+Turns out that with MSVC the data type rte_v128u32_t is not used, but
+its size needs to be known. This patch defines a macro to store that
+size and replaces instances of sizeof(rte_v128u32_t) with that macro.
 
 Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 ---
- drivers/net/mlx5/mlx5_tx.c    | 4 ++--
- drivers/net/mlx5/mlx5_utils.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/mlx5/mlx5_defs.h | 2 ++
+ drivers/net/mlx5/mlx5_rxtx.c | 6 +++---
+ drivers/net/mlx5/mlx5_tx.h   | 2 +-
+ 3 files changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/mlx5/mlx5_tx.c b/drivers/net/mlx5/mlx5_tx.c
-index 39afca3d64..b2522e7170 100644
---- a/drivers/net/mlx5/mlx5_tx.c
-+++ b/drivers/net/mlx5/mlx5_tx.c
-@@ -629,8 +629,8 @@ mlx5_select_tx_function(struct rte_eth_dev *dev)
- 		}
- 		if (tmp == diff) {
- 			tmp = txoff_func[i].olx ^ txoff_func[m].olx;
--			if (__builtin_ffsl(txoff_func[i].olx & ~tmp) <
--			    __builtin_ffsl(txoff_func[m].olx & ~tmp)) {
-+			if (rte_ffs32(txoff_func[i].olx & ~tmp) <
-+			    rte_ffs32(txoff_func[m].olx & ~tmp)) {
- 				/* Lighter not requested offload. */
- 				m = i;
- 			}
-diff --git a/drivers/net/mlx5/mlx5_utils.c b/drivers/net/mlx5/mlx5_utils.c
-index d882af6047..645bb118fb 100644
---- a/drivers/net/mlx5/mlx5_utils.c
-+++ b/drivers/net/mlx5/mlx5_utils.c
-@@ -84,7 +84,7 @@ mlx5_ipool_create(struct mlx5_indexed_pool_config *cfg)
- 	if (!cfg || (!cfg->malloc ^ !cfg->free) ||
- 	    (cfg->per_core_cache && cfg->release_mem_en) ||
- 	    (cfg->trunk_size && ((cfg->trunk_size & (cfg->trunk_size - 1)) ||
--	    ((__builtin_ffs(cfg->trunk_size) + TRUNK_IDX_BITS) > 32))))
-+	    ((rte_ffs32(cfg->trunk_size) + TRUNK_IDX_BITS) > 32))))
- 		return NULL;
- 	pool = mlx5_malloc(MLX5_MEM_ZERO, sizeof(*pool) + cfg->grow_trunk *
- 			   sizeof(pool->grow_tbl[0]), RTE_CACHE_LINE_SIZE,
+diff --git a/drivers/net/mlx5/mlx5_defs.h b/drivers/net/mlx5/mlx5_defs.h
+index 9c454983be..c5e2c59309 100644
+--- a/drivers/net/mlx5/mlx5_defs.h
++++ b/drivers/net/mlx5/mlx5_defs.h
+@@ -196,4 +196,6 @@
+ 
+ #define MLX5_CNT_SVC_CYCLE_TIME_DEFAULT 500
+ 
++#define MLX5_SIZEOF_V128U32_T 16
++
+ #endif /* RTE_PMD_MLX5_DEFS_H_ */
+diff --git a/drivers/net/mlx5/mlx5_rxtx.c b/drivers/net/mlx5/mlx5_rxtx.c
+index 9c075f6a56..b30d620f54 100644
+--- a/drivers/net/mlx5/mlx5_rxtx.c
++++ b/drivers/net/mlx5/mlx5_rxtx.c
+@@ -32,7 +32,7 @@ static_assert(MLX5_CQE_STATUS_HW_OWN < 0, "Must be negative value");
+ static_assert(MLX5_CQE_STATUS_SW_OWN < 0, "Must be negative value");
+ static_assert(MLX5_ESEG_MIN_INLINE_SIZE ==
+ 		(sizeof(uint16_t) +
+-		 sizeof(rte_v128u32_t)),
++		MLX5_SIZEOF_V128U32_T),
+ 		"invalid Ethernet Segment data size");
+ static_assert(MLX5_ESEG_MIN_INLINE_SIZE ==
+ 		(sizeof(uint16_t) +
+@@ -41,7 +41,7 @@ static_assert(MLX5_ESEG_MIN_INLINE_SIZE ==
+ 		"invalid Ethernet Segment data size");
+ static_assert(MLX5_ESEG_MIN_INLINE_SIZE ==
+ 		(sizeof(uint16_t) +
+-		 sizeof(rte_v128u32_t)),
++		MLX5_SIZEOF_V128U32_T),
+ 		"invalid Ethernet Segment data size");
+ static_assert(MLX5_ESEG_MIN_INLINE_SIZE ==
+ 		(sizeof(uint16_t) +
+@@ -50,7 +50,7 @@ static_assert(MLX5_ESEG_MIN_INLINE_SIZE ==
+ 		"invalid Ethernet Segment data size");
+ static_assert(MLX5_ESEG_MIN_INLINE_SIZE ==
+ 		(sizeof(uint16_t) +
+-		 sizeof(rte_v128u32_t)),
++		MLX5_SIZEOF_V128U32_T),
+ 		"invalid Ethernet Segment data size");
+ static_assert(MLX5_ESEG_MIN_INLINE_SIZE ==
+ 		(sizeof(uint16_t) +
+diff --git a/drivers/net/mlx5/mlx5_tx.h b/drivers/net/mlx5/mlx5_tx.h
+index 55568c41b1..5647f6a37d 100644
+--- a/drivers/net/mlx5/mlx5_tx.h
++++ b/drivers/net/mlx5/mlx5_tx.h
+@@ -1145,7 +1145,7 @@ mlx5_tx_eseg_data(struct mlx5_txq_data *__rte_restrict txq,
+ 	} else {
+ 		/* Fill the gap in the title WQEBB with inline data. */
+ 		rte_mov16(pdst, psrc);
+-		psrc += sizeof(rte_v128u32_t);
++		psrc += MLX5_SIZEOF_V128U32_T;
+ 	}
+ 	pdst = (uint8_t *)(es + 2);
+ 	MLX5_ASSERT(inlen >= MLX5_ESEG_MIN_INLINE_SIZE);
 -- 
-2.49.0.vfs.0.2
+2.49.0.vfs.0.0
 
