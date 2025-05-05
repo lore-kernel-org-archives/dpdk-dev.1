@@ -2,59 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33EF5C3ABB6
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 12:55:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CCE9C3ABAA
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 13:56:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DAC3341101;
-	Mon,  5 May 2025 14:51:50 +0200 (CEST)
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com
- [209.85.221.174])
- by mails.dpdk.org (Postfix) with ESMTP id 07C484021F
- for <dev@dpdk.org>; Mon, 28 Apr 2025 13:25:20 +0200 (CEST)
-Received: by mail-vk1-f174.google.com with SMTP id
- 71dfb90a1353d-5240a432462so4809850e0c.1
- for <dev@dpdk.org>; Mon, 28 Apr 2025 04:25:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1745839519; x=1746444319; darn=dpdk.org;
- h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
- :date:message-id:reply-to;
- bh=21wTbIADrIVQ+iMCczsUx+mf7967eWxkp8lrTFEeKiM=;
- b=Ma9XaJ7mroU7Y39pzLFoF2oh37iTgC6xXpMdID+4A5rVDxuiBTJGfK8SvrWqaIxlkb
- NSiUiySy0rQeW4nTWeJx/dxOfe0h9bLH/eC0ofkqxx8yUBPA49pugSoHTEIP+1vhBf8N
- gN9uuB8jbkdylsbUdkcMflFc8afC264fCsoaF3J54lg/ebYojAvzesvsI14xXaci8CdZ
- hFjQRBERS3gM/AQuhq4kDuqwrREK31ob6CUqVodOqQNhhSKUHLSzoTU0SKXbNleV4Ilj
- XCJGSFiChG54Ti7CaplEWMwjkNwON8/pKZfciAkoyZs0k61hGo2EmQ89b9cUz5zZFRU3
- PfYA==
+	by mails.dpdk.org (Postfix) with ESMTP id DBC7B40287;
+	Mon,  5 May 2025 15:56:51 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 546A74025D
+ for <dev@dpdk.org>; Mon,  5 May 2025 15:56:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1746453409;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=fk67WwS7pOOmbE3rGz9BBbBVUgFc6ELiWnw1G9y8WSg=;
+ b=FfUhsPS/4vE5nOsIPSDrgEBWE+TcjITh5GlDvjEQ0X2TwkoyoXsfkKIc8/52DToH0UszvG
+ fQH4Q3+XRkjAmCTAGKlOgG+jjngAU+daStms3w+5iQyUY5maRhCv87QyM5i1h2hhTMbvZr
+ 6PFCSWEsc/pFUPF7K9X2HwKzW/j+GXs=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-308-RdRMkvoPPGOq-9sJnFrnNg-1; Mon, 05 May 2025 09:56:47 -0400
+X-MC-Unique: RdRMkvoPPGOq-9sJnFrnNg-1
+X-Mimecast-MFC-AGG-ID: RdRMkvoPPGOq-9sJnFrnNg_1746453406
+Received: by mail-lj1-f197.google.com with SMTP id
+ 38308e7fff4ca-30bfc0f5599so17952811fa.2
+ for <dev@dpdk.org>; Mon, 05 May 2025 06:56:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1745839519; x=1746444319;
- h=to:subject:message-id:date:from:mime-version:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=21wTbIADrIVQ+iMCczsUx+mf7967eWxkp8lrTFEeKiM=;
- b=Hm2F4NdrJqPuC5dgc9D8NPl9BLi0hnO+T3fSNPEUvh2o5K2Rm4JsuIoGKVebP5ID1l
- ogmc50bJ2/GtzKD1Ioi+KGbPW/IJL3tTo4tat1BBoDTAHGu5/DCcIYHfka4+YPfH+oCs
- KK41uKIeMUsRj0rrdt0q/VIux4ohiUu9jFv//h8C/eugyr5IscrdwdJeFzglJx4HwNti
- OQdG8shimra7IQdAPCKWSXGVT2EfK9SQ2yWkBxpTKXaH7jqtHxPoPDI0CnBNFP3vqz/Q
- RanBlcfNAl33drPFIvchhaTXJ5xVSTHtnCaF7G59XX7BS/ZxiXe9nfKZO0iwbR8GAMAa
- 2//Q==
-X-Gm-Message-State: AOJu0YyuWODNTaT0NjKTJ7rpvBBerjxrIo1Xfu6gCm3eCrpD9KXYJcXU
- Nl5e9N0+NA100A/UdgnDjA7wbWfWdzjcJYcrvxuEI2bPKos+FJUlrZk2o6T+0doHhGDQmDA2mZK
- YnWNPY/lxMY1r1JOP7/u6AfRhLdJcKT3w
-X-Gm-Gg: ASbGncuMnMbX8jVbRl+Bcv/HuylWlatgkwkD0wKsg0njoFkCaRqEz+FsOZ+WpDzIFUZ
- JnI8KolxP8HOHGVQqmQm2yJCzZ5YOqE+HaponmN68HTCnCjx4IbG3bH12h4Lq0ZPRHsVoSbGULf
- 6mjIPImfthVvrHjVlnYkIQK0Y=
-X-Google-Smtp-Source: AGHT+IEOVIHg0W4O2cGtkL3uAKgP/3D+W0PbavauUxL6bsIk94Hi/FU1xdjlqtpUQToW4bps72Ur1nq5dJo3khzhiNk=
-X-Received: by 2002:ac5:cc67:0:b0:524:2fe0:3898 with SMTP id
- 71dfb90a1353d-52a79eba883mr9719471e0c.5.1745839518923; Mon, 28 Apr 2025
- 04:25:18 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1746453406; x=1747058206;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=fk67WwS7pOOmbE3rGz9BBbBVUgFc6ELiWnw1G9y8WSg=;
+ b=IrQeiLe+B4/qMyHJMKsbYJTJSLX3wLil93b/Bqkl6V5l4tzLCfrMhS6DrIGYAiCKoX
+ Dz+hUTyrnV8hgoc9jGIlWyjXVZ3MlL88aE8rfh/dJHa1KSeLK3ZZSmfE7pfKehmgh5wh
+ hMs0UWQOpXSndpiG5ovZsLHkFEw26ria0WwXBh3YFVPSQwWEi3MoBaMppZn2sQCEii+o
+ g3Rt+kL82d9WHyNsZn6Z4p/sLxDpunhfgTC4y7vgAc1huQdo0KZm7WFY40O+YQhWLyfh
+ /aZqRWjCYBIYzqh/513Tf6vfV//pXQt5lBPuX/YuGXoUqwmIxsWTctCPnCARO3Ugy9It
+ 9Xng==
+X-Gm-Message-State: AOJu0Yyy7VAg8PH9K3voAFYIlW2UawUqFokcGa+vh95WKAeCK15QB8Bb
+ p1gYSrfbMWO4kog8L6L5Ag8gSeUCLaAymkIIfWYN6sFYGDBXjyOEMb6rScQwkyYHkeF8SwgSsH/
+ mOnBTC7bMARcjzBhfmVBp6jZiPzDNLVLLG8VJNcmXOtmINiSqejaRUSiOEvgo+ivQ6q1COL2ss+
+ fJM/OE10l35VccVxo=
+X-Gm-Gg: ASbGnct0HBbaIZoi2OG5JLalNTZQenLEMpyqMyDdHRHxcvUAgF0Q1whPGROJsbWdRBl
+ SC9np2Nur6htZBSTl0rikWlvQtJeeDVKWDLa2NrzrY5Yz0+fiPqdH8Uxar9Vk0lzBZUpKk5U=
+X-Received: by 2002:a05:651c:1445:b0:30b:d44d:e76a with SMTP id
+ 38308e7fff4ca-32351f25893mr25482461fa.25.1746453405672; 
+ Mon, 05 May 2025 06:56:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHxFNvaYSspuVuLW3b8oT+M+MughPbzcY9ubCpPZEjJym4q+u4zCAcmoydZRXa4mn1eSgMqx8uVOwmjdIgnF7k=
+X-Received: by 2002:a05:651c:1445:b0:30b:d44d:e76a with SMTP id
+ 38308e7fff4ca-32351f25893mr25482331fa.25.1746453405155; Mon, 05 May 2025
+ 06:56:45 -0700 (PDT)
 MIME-Version: 1.0
-From: farooq basha <farooq.juturu@gmail.com>
-Date: Mon, 28 Apr 2025 16:55:07 +0530
-X-Gm-Features: ATxdqUGVMKWCqmgfUmnWR3JA1MCeK7OpySnI2jmR9TQapbkewnbA9SuRcWXjCKA
-Message-ID: <CA+xuiv2jL934JR_QyLC1M5A+5dGPzw5L0=4RoS98eRjueA+9-g@mail.gmail.com>
-Subject: [dpdk-dev] Regarding HQOS with run-to-completion Model
-To: dev@dpdk.org
-Content-Type: multipart/alternative; boundary="0000000000005c46680633d4f076"
-X-Mailman-Approved-At: Mon, 05 May 2025 14:51:04 +0200
+References: <20250430013431.2056969-1-changqing.li@windriver.com>
+ <20250430024403.2690306-1-robot@bytheb.org>
+ <d498a836-e6eb-43b8-9ea3-bdb98ae4aaf8@windriver.com>
+In-Reply-To: <d498a836-e6eb-43b8-9ea3-bdb98ae4aaf8@windriver.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Mon, 5 May 2025 15:56:33 +0200
+X-Gm-Features: ATxdqUHmJ5LoQO4okXB0r0bkgtiO8a_8ybnRAPf_Svy5ZSEbkcHtu67mU0vV_Q4
+Message-ID: <CAJFAV8zk=gzCagoU7c4=dsXcEFnLjiqrWxwTWANa-U77Uj=Taw@mail.gmail.com>
+Subject: Re: |FAILURE| pw153190 [PATCH V3] Add new tracepoint function for
+ type time_t
+To: Changqing Li <changqing.li@windriver.com>
+Cc: dev@dpdk.org, Stephen Hemminger <stephen@networkplumber.org>,
+ thomas@monjalon.net, Jerin Jacob Kollanukkaran <jerinj@marvell.com>,
+ Sunil Kumar Kori <skori@marvell.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: IYHdOoR9it9lbNroAZybdIJvn4ziOPRjr3tHNuiDVK4_1746453406
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -68,73 +88,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000005c46680633d4f076
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hello DevTeam,
+On Wed, Apr 30, 2025 at 7:21=E2=80=AFAM Changqing Li <changqing.li@windrive=
+r.com> wrote:
+> I'm new to this project, and have no clue about the failure,  could exper=
+ts at this project provide
+>
+> some help about the following failure?
+>
+> + sudo babeltrace /home/runner/work/dpdk/dpdk/build/app/test/suites/rte-2=
+025-04-30-AM-02-25-21
+>
+> Error: at line 2819: token "time_t": syntax error, unexpected IDENTIFIER
+> Error: Error creating AST
 
-    I am planning to use DPDK HQOS for Traffic shaping with a
-run-to-completion Model. While I was reading the dpdk-qos document, I came
-across the following statement.
+I think this time_t type you added is not described in CTF.
+Have a look at 2114521cff91 ("trace: fix size_t field emitter").
 
-"*Running enqueue and dequeue operations for the same output port from
-different cores is likely to cause significant impact on scheduler=E2=80=99=
-s
-performance and it is therefore not recommended"*
+Copying the trace framework maintainers who will have a better idea.
 
- Let's take an  example, Port1  & Port2 have 4 Rx queues and each Queue
-mapped to a different CPU. Traffic coming on port1  gets forwarded to port2
-. With the above limitation application needs to take a lock before doing
-rte_sched_port_enqueue & dequeue operation. Performance is limited to only
-1 CPU even though Traffic is coming on 4 Different CPUs.
 
-Correct me if my understanding is Wrong?
+--=20
+David Marchand
 
-Thanks
-Basha
-
---0000000000005c46680633d4f076
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr">Hello DevTeam,=C2=A0<div><br></div><div>=
-=C2=A0 =C2=A0 I am planning to use DPDK HQOS for Traffic shaping with a run=
--to-completion Model. While I was reading the dpdk-qos document, I came acr=
-oss the following statement.=C2=A0</div><div><span style=3D"background-colo=
-r:rgb(252,252,252);color:rgb(64,64,64);font-family:Lato,proxima-nova,&quot;=
-Helvetica Neue&quot;,Arial,sans-serif;font-size:16px"><br></span></div><div=
-><span style=3D"background-color:rgb(252,252,252);color:rgb(64,64,64);font-=
-family:Lato,proxima-nova,&quot;Helvetica Neue&quot;,Arial,sans-serif;font-s=
-ize:16px">&quot;</span><b style=3D"color:rgb(64,64,64);font-family:Lato,pro=
-xima-nova,&quot;Helvetica Neue&quot;,Arial,sans-serif;font-size:16px">Runni=
-ng enqueue and dequeue operations for the same output port from different c=
-ores is likely to cause significant impact on scheduler=E2=80=99s performan=
-ce and it is therefore not recommended&quot;</b></div><div><span style=3D"c=
-olor:rgb(64,64,64);font-family:Lato,proxima-nova,&quot;Helvetica Neue&quot;=
-,Arial,sans-serif;font-size:16px;background-color:rgb(252,252,252)"><b><br>=
-</b></span></div><div><font color=3D"#404040" face=3D"Lato, proxima-nova, H=
-elvetica Neue, Arial, sans-serif"><span style=3D"background-color:rgb(252,2=
-52,252)">=C2=A0Let&#39;s take an=C2=A0 example, Port1=C2=A0 &amp; Port2 hav=
-e 4 Rx queues and each Queue mapped to a different CPU. Traffic coming on p=
-ort1=C2=A0 gets forwarded to port2 . With the above limitation application =
-needs to take a lock before doing rte_sched_port_enqueue &amp; dequeue oper=
-ation. Performance is limited to only 1 CPU even though Traffic is coming o=
-n 4 Different CPUs.=C2=A0</span></font></div><div><span style=3D"background=
--color:rgb(252,252,252);color:rgb(64,64,64);font-family:Lato,proxima-nova,&=
-quot;Helvetica Neue&quot;,Arial,sans-serif"><br></span></div><div><span sty=
-le=3D"background-color:rgb(252,252,252);color:rgb(64,64,64);font-family:Lat=
-o,proxima-nova,&quot;Helvetica Neue&quot;,Arial,sans-serif">Correct me if m=
-y understanding is Wrong?=C2=A0</span></div><div><span style=3D"background-=
-color:rgb(252,252,252);color:rgb(64,64,64);font-family:Lato,proxima-nova,&q=
-uot;Helvetica Neue&quot;,Arial,sans-serif"><br></span></div><div><span styl=
-e=3D"background-color:rgb(252,252,252);color:rgb(64,64,64);font-family:Lato=
-,proxima-nova,&quot;Helvetica Neue&quot;,Arial,sans-serif">Thanks</span></d=
-iv><div><span style=3D"background-color:rgb(252,252,252);color:rgb(64,64,64=
-);font-family:Lato,proxima-nova,&quot;Helvetica Neue&quot;,Arial,sans-serif=
-">Basha=C2=A0</span></div><div><br></div><div><br></div><div><span style=3D=
-"color:rgb(64,64,64);font-family:Lato,proxima-nova,&quot;Helvetica Neue&quo=
-t;,Arial,sans-serif;font-size:16px;background-color:rgb(252,252,252)"><b><b=
-r></b></span></div></div></div>
-
---0000000000005c46680633d4f076--
