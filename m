@@ -2,76 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CCE9C3ABAA
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 13:56:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31A8FC3ABB0
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 13:58:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DBC7B40287;
-	Mon,  5 May 2025 15:56:51 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0D19540264;
+	Mon,  5 May 2025 15:58:47 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 546A74025D
- for <dev@dpdk.org>; Mon,  5 May 2025 15:56:50 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id CA3364025D
+ for <dev@dpdk.org>; Mon,  5 May 2025 15:58:44 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1746453409;
+ s=mimecast20190719; t=1746453524;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=fk67WwS7pOOmbE3rGz9BBbBVUgFc6ELiWnw1G9y8WSg=;
- b=FfUhsPS/4vE5nOsIPSDrgEBWE+TcjITh5GlDvjEQ0X2TwkoyoXsfkKIc8/52DToH0UszvG
- fQH4Q3+XRkjAmCTAGKlOgG+jjngAU+daStms3w+5iQyUY5maRhCv87QyM5i1h2hhTMbvZr
- 6PFCSWEsc/pFUPF7K9X2HwKzW/j+GXs=
+ bh=YPG4htdoPOQdYGsj+M8jUlW/ZFkgDp35ynflJSdmK6w=;
+ b=ONMYt/SGR9z7Y+08pQYgWObNQxujmqZ5AhiJVtUefhO2qLnscs5hpGJJ9YM7p9Hxl/CMVO
+ HqHtwj7jyOIsERmwkdHr1F/mVTLWZ9lrEQ+AI75elimHcZRZj53gzZAw7H+9l4kpviaTIP
+ 91079Y+1sctKeYokZntu/Q6WrpedUBg=
 Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
  [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-308-RdRMkvoPPGOq-9sJnFrnNg-1; Mon, 05 May 2025 09:56:47 -0400
-X-MC-Unique: RdRMkvoPPGOq-9sJnFrnNg-1
-X-Mimecast-MFC-AGG-ID: RdRMkvoPPGOq-9sJnFrnNg_1746453406
+ us-mta-395-BPjFoNw8Ng-qIE0FUo9Yyg-1; Mon, 05 May 2025 09:58:39 -0400
+X-MC-Unique: BPjFoNw8Ng-qIE0FUo9Yyg-1
+X-Mimecast-MFC-AGG-ID: BPjFoNw8Ng-qIE0FUo9Yyg_1746453518
 Received: by mail-lj1-f197.google.com with SMTP id
- 38308e7fff4ca-30bfc0f5599so17952811fa.2
- for <dev@dpdk.org>; Mon, 05 May 2025 06:56:46 -0700 (PDT)
+ 38308e7fff4ca-30c13a6f641so23774551fa.3
+ for <dev@dpdk.org>; Mon, 05 May 2025 06:58:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1746453406; x=1747058206;
+ d=1e100.net; s=20230601; t=1746453518; x=1747058318;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=fk67WwS7pOOmbE3rGz9BBbBVUgFc6ELiWnw1G9y8WSg=;
- b=IrQeiLe+B4/qMyHJMKsbYJTJSLX3wLil93b/Bqkl6V5l4tzLCfrMhS6DrIGYAiCKoX
- Dz+hUTyrnV8hgoc9jGIlWyjXVZ3MlL88aE8rfh/dJHa1KSeLK3ZZSmfE7pfKehmgh5wh
- hMs0UWQOpXSndpiG5ovZsLHkFEw26ria0WwXBh3YFVPSQwWEi3MoBaMppZn2sQCEii+o
- g3Rt+kL82d9WHyNsZn6Z4p/sLxDpunhfgTC4y7vgAc1huQdo0KZm7WFY40O+YQhWLyfh
- /aZqRWjCYBIYzqh/513Tf6vfV//pXQt5lBPuX/YuGXoUqwmIxsWTctCPnCARO3Ugy9It
- 9Xng==
-X-Gm-Message-State: AOJu0Yyy7VAg8PH9K3voAFYIlW2UawUqFokcGa+vh95WKAeCK15QB8Bb
- p1gYSrfbMWO4kog8L6L5Ag8gSeUCLaAymkIIfWYN6sFYGDBXjyOEMb6rScQwkyYHkeF8SwgSsH/
- mOnBTC7bMARcjzBhfmVBp6jZiPzDNLVLLG8VJNcmXOtmINiSqejaRUSiOEvgo+ivQ6q1COL2ss+
- fJM/OE10l35VccVxo=
-X-Gm-Gg: ASbGnct0HBbaIZoi2OG5JLalNTZQenLEMpyqMyDdHRHxcvUAgF0Q1whPGROJsbWdRBl
- SC9np2Nur6htZBSTl0rikWlvQtJeeDVKWDLa2NrzrY5Yz0+fiPqdH8Uxar9Vk0lzBZUpKk5U=
-X-Received: by 2002:a05:651c:1445:b0:30b:d44d:e76a with SMTP id
- 38308e7fff4ca-32351f25893mr25482461fa.25.1746453405672; 
- Mon, 05 May 2025 06:56:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHxFNvaYSspuVuLW3b8oT+M+MughPbzcY9ubCpPZEjJym4q+u4zCAcmoydZRXa4mn1eSgMqx8uVOwmjdIgnF7k=
-X-Received: by 2002:a05:651c:1445:b0:30b:d44d:e76a with SMTP id
- 38308e7fff4ca-32351f25893mr25482331fa.25.1746453405155; Mon, 05 May 2025
- 06:56:45 -0700 (PDT)
+ bh=YPG4htdoPOQdYGsj+M8jUlW/ZFkgDp35ynflJSdmK6w=;
+ b=kgnI8gesN5+EHRlf7CeBvCTn/zmjkL5lJWKHWrKGZXUizNwosPEuEUV7qfd1evawXM
+ SCexq2r/rxi45hV9AhFkehlgiuaPsXwvGWLpPBpgaa4Ax4zVrT4mYwxsy94cICTNWCET
+ sbfsPadBGqNfDeZ+6ElFSvr+3rITWb40HseuYbMQyG2SBPMo+E8jULfzj+Kvi16bW5ne
+ OuU7kJ/7hmaTyZmvV5F23vLq4DjB/grZOnPEltSMy+hskVbkEGUg0+FNV/tDx+w9ock1
+ 5X+NF28HDrcOHM9GLWH6rHcJmNZ0nM0IyG/1BIeO4AmXtYmIeKOlop59vKYvhKeK3Jzh
+ GpcA==
+X-Gm-Message-State: AOJu0Yx5Xpgcp11ztIZwCn4306vW9XW5HhjyG34wL7Q+QNLQlt5c27yB
+ xbMS0rTpqAkZx3e99Nfp5B5RGUNxIJmyNwnDD/QjGkJcZ52esXtYjRcpGi2sS4+DPGRdEd8N4c8
+ KCTnm88SNSGpgRIPXVOcfZcRhh/s1jagczHgtU/jsdjNtHcWYQB6DB5r7akEmwhKMDvnfIw57Uk
+ o+7R11GRZqhbterFQ=
+X-Gm-Gg: ASbGnctBKLsTob+3uJRtcAU2l9b9RN7uA+FKkKGSvD/bAk4/zxS/RRjM4kIALsZDPLm
+ ubRnEd/rhB6MlLsXYnwiHXlFWU7dllvYQehypQaCezQ6WduSL0LxlDBLc5TDHyVUV3VqzNkc=
+X-Received: by 2002:a05:651c:19a5:b0:309:bc3:3a71 with SMTP id
+ 38308e7fff4ca-32351f25f49mr19708621fa.31.1746453517764; 
+ Mon, 05 May 2025 06:58:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEpO9811OL0aYPcL//zzUbiNFCAQC1gtk50qkl+CNYJfVxrp925Nhof2G8iaoFxbxBmXu82nc4hIWUVLXQyFhw=
+X-Received: by 2002:a05:651c:19a5:b0:309:bc3:3a71 with SMTP id
+ 38308e7fff4ca-32351f25f49mr19708541fa.31.1746453517395; Mon, 05 May 2025
+ 06:58:37 -0700 (PDT)
 MIME-Version: 1.0
-References: <20250430013431.2056969-1-changqing.li@windriver.com>
- <20250430024403.2690306-1-robot@bytheb.org>
- <d498a836-e6eb-43b8-9ea3-bdb98ae4aaf8@windriver.com>
-In-Reply-To: <d498a836-e6eb-43b8-9ea3-bdb98ae4aaf8@windriver.com>
+References: <CAEmGFk9v4-QWRy1-N+jMkdM=iVv69xPRaKUzuxkTuD9OYJa5cQ@mail.gmail.com>
+In-Reply-To: <CAEmGFk9v4-QWRy1-N+jMkdM=iVv69xPRaKUzuxkTuD9OYJa5cQ@mail.gmail.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Mon, 5 May 2025 15:56:33 +0200
-X-Gm-Features: ATxdqUHmJ5LoQO4okXB0r0bkgtiO8a_8ybnRAPf_Svy5ZSEbkcHtu67mU0vV_Q4
-Message-ID: <CAJFAV8zk=gzCagoU7c4=dsXcEFnLjiqrWxwTWANa-U77Uj=Taw@mail.gmail.com>
-Subject: Re: |FAILURE| pw153190 [PATCH V3] Add new tracepoint function for
- type time_t
-To: Changqing Li <changqing.li@windriver.com>
-Cc: dev@dpdk.org, Stephen Hemminger <stephen@networkplumber.org>,
- thomas@monjalon.net, Jerin Jacob Kollanukkaran <jerinj@marvell.com>,
- Sunil Kumar Kori <skori@marvell.com>
+Date: Mon, 5 May 2025 15:58:24 +0200
+X-Gm-Features: ATxdqUHVpJRbTKJl-J-dkYKVdLoHth_CHqLx0kww2Gg0Voml-m2qs2A4kkMrn7I
+Message-ID: <CAJFAV8z6yA39mF963hCRnKvLMfrtZWsOgyZ3sr5UuWOOn9d=qA@mail.gmail.com>
+Subject: Re: Addressing ninja build error message
+To: vivekanandi <v.o.s.openbook@gmail.com>,
+ Ciara Loftus <ciara.loftus@intel.com>, Maryam Tahhan <mtahhan@redhat.com>
+Cc: dev@dpdk.org
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: IYHdOoR9it9lbNroAZybdIJvn4ziOPRjr3tHNuiDVK4_1746453406
+X-Mimecast-MFC-PROC-ID: s4J3Y6dKUj5p0LeI8GTZ91IHNWIwZ_JzbyOxFWoSQ0I_1746453518
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -90,23 +86,27 @@ Errors-To: dev-bounces@dpdk.org
 
 Hello,
 
-On Wed, Apr 30, 2025 at 7:21=E2=80=AFAM Changqing Li <changqing.li@windrive=
-r.com> wrote:
-> I'm new to this project, and have no clue about the failure,  could exper=
-ts at this project provide
+On Mon, May 5, 2025 at 2:55=E2=80=AFPM vivekanandi <v.o.s.openbook@gmail.co=
+m> wrote:
 >
-> some help about the following failure?
+> Hello,
+> My name is Vivek. I'm a Computer Science major from Canada.
 >
-> + sudo babeltrace /home/runner/work/dpdk/dpdk/build/app/test/suites/rte-2=
-025-04-30-AM-02-25-21
+> I was trying to install DPDK but encountered this error. I am familiar wi=
+th BPF programming so tried to look into the compat.h file but the build/af=
+_xdp directory was empty after I got the error message. I've attached a txt=
+ file that shows the terminal output
 >
-> Error: at line 2819: token "time_t": syntax error, unexpected IDENTIFIER
-> Error: Error creating AST
+> I ran the following scripts:
+> meson build
+> ninja -C build
+>
+> Could you please direct me to the right direction for building DPDK prope=
+rly? I am on Linux Mint. Are there dependencies that I should've instaslled=
+?
 
-I think this time_t type you added is not described in CTF.
-Have a look at 2114521cff91 ("trace: fix size_t field emitter").
-
-Copying the trace framework maintainers who will have a better idea.
+Ciara, Maryam, could you help Vivek?
+Thanks.
 
 
 --=20
