@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 957B1C369C2
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 07:15:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 990A6C369C2
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 07:15:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A3B144067C;
-	Mon,  5 May 2025 09:14:08 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 107EE40B9B;
+	Mon,  5 May 2025 09:14:11 +0200 (CEST)
 Received: from egress-ip42b.ess.de.barracuda.com
  (egress-ip42b.ess.de.barracuda.com [18.185.115.246])
- by mails.dpdk.org (Postfix) with ESMTP id CF5514067C
- for <dev@dpdk.org>; Mon,  5 May 2025 09:14:07 +0200 (CEST)
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com
- (mail-db8eur05lp2113.outbound.protection.outlook.com [104.47.17.113]) by
- mx-outbound45-79.eu-central-1c.ess.aws.cudaops.com (version=TLSv1.2
+ by mails.dpdk.org (Postfix) with ESMTP id 9832240DF5
+ for <dev@dpdk.org>; Mon,  5 May 2025 09:14:09 +0200 (CEST)
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com
+ (mail-vi1eur03lp2110.outbound.protection.outlook.com [104.47.30.110]) by
+ mx-outbound40-227.eu-central-1c.ess.aws.cudaops.com (version=TLSv1.2
  cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Mon, 05 May 2025 07:13:22 +0000
+ Mon, 05 May 2025 07:13:33 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DOGnPWF/vhnesqki+/JuYLJiD8XAoz5UzvSFDqx5U0ygM1k3GyOxJsGJmnIdb2WMRQkN0o4sf75AFO8gaAYLnog/FWgLAzLr7LVqIcoC7MbiyWPfw9KTWk7R9+zfhPhfm/YrG8ZAp4LT4F87AhCcUT6UDybSjDjoRgReliRnsukxfpuUEBbuSM0WNGXIoRmTbAxI1IVH7p/hiu3bp6kqYEL4hG7XbFXkHUbpkEraZTHrULIi9d6lDRSAGjewaU+t6TspXWk+aYZD8cS66A2+hMcWYY/CYRpC0bK4T37SQhPM/pHyFb0mg5BZP3yWXKQPWU5XcBxoObg5czjaItS7pw==
+ b=ujE+uu8dZf3RXoIlhoaanb0GhqsZX2SfF2P8FNFuABnw1xWidEFCvNShg+LxV2uJfzHlmLu72753Fv4fOd4eRXOvNqbVgpk5sB4if/bKcAmJzHXBjqbRKmr3rm6RkzYitx7s4SW0qQJiB12Qr2ocese/XjORvBvY7x3N7OFpdREDLmBakwAJ7W2uedSal1KdtJidaoK1uF9HTzZXuU1RotMQAOxn8Aur/4akfAT7aVi+LCKPev8ufCfk79wgNvcn84L+fhZMEfEujn26s/+LoulPLZxZZtsk8kKCJcc5d5fVybGue1i070j8GlyHwQiuUGmd4tOfzAiv03pVzc4QZA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ve8F8+aaU2oJtSlKNVauokq/p17708lGS9U6ev6ryjA=;
- b=Fk2DjXzIPubwk8jG5F/AJk+DprDUnWRVythS2D10UngZ0RhQcQHz/dUD21GuuDphAM9QfL2XIF8c6ctOOX3xw/m5XQRMSduy4x3ybna8fggIco2pWCImUgEydp43FrcB+SKSO+xqA5hlKloOFXHMS41/CNow7KLb97ejFFn4zcT4whDLLD4HPt/wrflMvyHQWYzBtQpMe9NDMm4eWEPl3r4D0eNve8JZOsjMGmLiKy04rOevHX4kUvSHQ2RobBEI4bqwVxdMqGAamVV7y9/T9XGA517p1P+mMT7me7zZQnKysdhgbqHgmq9cSvb5A51NhskDN8jCVzM+cqrKGSvZgA==
+ bh=e5zK/VqeDwJfJVB9A3rgHidjowKhmjxrgN9pKgEjMMs=;
+ b=ZdCh07LO0fVHynriI7L/XJkjY5akT2wvVF3YmltoLZ8ODsTNdWbNQ7cGPTl3r5poq1++Kbsc91v6REx8Ty7J/SdWQEBWTZrTbEd1blWEWRmBaVjFgvEOZeA6LJGxdm1Ql0jGhc+zof3QGxhyTrSPqWYQNEML9CTBqXDnMdvqtYL7P0n7mwMrr2HV3pTjiwV50b9HRKWHtwPqcqUpxWMLYbXCOjZ5JhZvb7bgRJHxpHz+2EeGqls8utLVDha3CDsOh9I4weOY82/25AB5kB60nRk7MbUBuwmtxgkkBa3c7vlET3moL8cZEmITmYGLIj7YGE/4hNUgmPFqVWVpT8m1Ag==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ve8F8+aaU2oJtSlKNVauokq/p17708lGS9U6ev6ryjA=;
- b=Eqs4YMi1xkVl4nPRyn+mqCQMy6cIqp2C8arYBNPJdVzKIvEOboU3VTRQTaLa4hsq+eDXg3d0vQOVmNiUNxCa39ERzIRntemZB/kkiJdGZ2G36gv8Z5PXkaY5M+4L6Jbkn841LJ/xpVpItrDQCR+2vxUwZ5WhGheDtzlvpdxQWxI=
-Received: from DU7P191CA0012.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:54e::23)
- by AS4P190MB1901.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:510::13) with
- Microsoft SMTP Server (version=TLS1_2,
+ bh=e5zK/VqeDwJfJVB9A3rgHidjowKhmjxrgN9pKgEjMMs=;
+ b=aHh76LiH6nyagokH2ijyCixxzwc9az/rCjnO3ugCaKc/urNqKVsndNEtEkVBdePX+jJ5h8hp98XuefANDUuezZ8j+VrHocAf0aVRsrTrhFB3olJjkjzWpecVtKJHdjZnsdE0sklvDXUdbA+ejftc/fJUeftWhHs+BFMv/kpeB54=
+Received: from DUZPR01CA0325.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4ba::22) by DB8P190MB0684.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:10:12f::14) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.23; Mon, 5 May
- 2025 07:13:20 +0000
+ 2025 07:13:29 +0000
 Received: from DU6PEPF00009523.eurprd02.prod.outlook.com
- (2603:10a6:10:54e:cafe::70) by DU7P191CA0012.outlook.office365.com
- (2603:10a6:10:54e::23) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10a6:10:4ba:cafe::e5) by DUZPR01CA0325.outlook.office365.com
+ (2603:10a6:10:4ba::22) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.30 via Frontend Transport; Mon,
- 5 May 2025 07:13:20 +0000
+ 5 May 2025 07:13:27 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -50,16 +50,16 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
  client-ip=178.72.21.4; helo=localhost.localdomain;
 Received: from localhost.localdomain (178.72.21.4) by
  DU6PEPF00009523.mail.protection.outlook.com (10.167.8.4) with Microsoft SMTP
- Server id 15.20.8722.18 via Frontend Transport; Mon, 5 May 2025 07:13:20
+ Server id 15.20.8722.18 via Frontend Transport; Mon, 5 May 2025 07:13:29
  +0000
 From: Oleksandr Kolomeiets <okl-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org, thomas@monjalon.net,
  Danylo Vodopianov <dvo-plv@napatech.com>
-Subject: [PATCH v2 11/26] net/ntnic: remove unused code
-Date: Mon,  5 May 2025 09:12:51 +0200
-Message-ID: <20250505071309.586015-12-okl-plv@napatech.com>
+Subject: [PATCH v2 24/26] net/ntnic: add null verification
+Date: Mon,  5 May 2025 09:13:04 +0200
+Message-ID: <20250505071309.586015-25-okl-plv@napatech.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250505071309.586015-1-okl-plv@napatech.com>
 References: <20250505071309.586015-1-okl-plv@napatech.com>
@@ -67,70 +67,71 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU6PEPF00009523:EE_|AS4P190MB1901:EE_
+X-MS-TrafficTypeDiagnostic: DU6PEPF00009523:EE_|DB8P190MB0684:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 35497f56-562c-43f8-7a36-08dd8ba4510a
+X-MS-Office365-Filtering-Correlation-Id: 5b8d6bf6-df6c-4a8b-2bf4-08dd8ba45686
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700013|1800799024|376014|82310400026; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Z9pwrT22/xv1xB2+5S1Et39PbnHCe/qFPnnNY21Cw5wm43fd4kECAS/61SCr?=
- =?us-ascii?Q?ZK8L3jAo0m4a2YCTTEtHRRMBb6uog38lk9NU8NNMpcrPzw/jlM0QYMVCY5ML?=
- =?us-ascii?Q?IwRQ56ry5kXxE09eWzmnQd+L7T2cvuWj0kivMxHcsmSV1JUfzBMZI75CksuL?=
- =?us-ascii?Q?9KvMQeo7e0j6c/9kXEWmeEJw7NJI6aWNZCZYpkxRS9Xj2G98smuSXFUcmvSU?=
- =?us-ascii?Q?IGfs7vFTpl2vZx7Y3BuuCnuWsJ5st+/15L8OHZIROsM5H57WtvkOY6ei+n38?=
- =?us-ascii?Q?TkGnUd0ecLIyUjcmLjmGnr2MSPDBUAacUQG6UqnTa3RHeupvOJsGA8+D/3vY?=
- =?us-ascii?Q?Qb2OXcpjPjZmEzca5Iv5niPjHOl5fiCSDOg2iRotojIS/qiwbnvjeNuFp/BF?=
- =?us-ascii?Q?b5Kau50Yv/ZCuEm3PCokFfhHgvOaRl/klhuqrzBg6p/xw7IrlT7ltiCnT3hu?=
- =?us-ascii?Q?dHgcGbIGJ91176/eTdjxQtRitQFXvEjCsaAmZwPAxkPKlWXSt2xevt+2u+Un?=
- =?us-ascii?Q?AY1GhjxmRqugEZLrgwaBUiowvqafDwwj5tKzUCa472FmkB1rz7gM5J52nWXC?=
- =?us-ascii?Q?R/gyeEWrv8IkR5c6qGyjwn6YNSwtIm2pwEVwR9Y6+tAjBuNnMFam3njvXuU5?=
- =?us-ascii?Q?htXkDDkYxpO84K7mN4Y/HJ2MdoxJvPgHnbPGwGEgOkTVNSD2RfjUPePQ7w40?=
- =?us-ascii?Q?ZTh+u6egPEzFwQLuEfgMTJh2X2+En0yT7WvBPbKawI7bm+XI+G8JVRPkM+gg?=
- =?us-ascii?Q?TzZdmhxWG5IpZe2UIUzHY+BnQtaUi+9eszOZr7337cWCWmcAKy3J7wzQpEIY?=
- =?us-ascii?Q?8/s4PZ901slEz5EzZHpTdOAo7l0xCtTYHoYspOAGvrIq3yorEu3qIVXSL4eK?=
- =?us-ascii?Q?PWA74jvReqUiC+fGw/BFXExZFhKxovj40i+u8fy7+8uH9wu8aJcZ+Zv7m2SQ?=
- =?us-ascii?Q?JxEL8V396rXZYEdMLn7rAJoe45hi+mQ+VW0Nl8jltj2YgrdMDL4vP9BtlU1/?=
- =?us-ascii?Q?Y8Thym6+FctPz7QNoaMMYhlnqZkGmz336CixN0Vfqbc1tBnmt7O9sulRtvNX?=
- =?us-ascii?Q?SwwWHSdJyiUBvw+sKZkva4oJ5Xp5hRkKExXn5iEoc/SOMr0E0Jd2v4hA7tAc?=
- =?us-ascii?Q?PJPDkbh5vH3prCmksSOfi0riKi/aeVhx5YkPnNeQ5bJmpKMWoMM5ESevO3M4?=
- =?us-ascii?Q?KSvkA/ikCoVVIDU/cvaLQd4MZvluZefTJw8RCO1vT4D6HyrYtD3MGV4YxBgS?=
- =?us-ascii?Q?wSRiVpzO8u2aT4Ksix1y+/+a7A3Itk0/6K4P4MzmhScz1T8FeOsrLzKgxeu2?=
- =?us-ascii?Q?qohd1rsc+pxPxbW71XhanmLyDbFNaLQLxNBLDn2QXQ4/pg5nliNNHfDk+rdk?=
- =?us-ascii?Q?7Lk3lVUorAvymI02paF8wxP/s5hKcUeq6q8RIW0ADObLmRAiKMzOCxzT3e9i?=
- =?us-ascii?Q?hVRm/VTB2l7G1fmh/Hj6U+r5HuGWO7q3qpNb9nkdrCauDddY1/LjbNm4e2Hn?=
- =?us-ascii?Q?mkb57DFV+mMRRzizi6a/l/bzb8QCc9Aj7ZIZ?=
+ ARA:13230040|82310400026|36860700013|1800799024|376014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?TzrFHh1zo8bdIVUqrx4jNAn0nER9MduAMUR9ahzLuEPchT78LV0Kh2yGeDJE?=
+ =?us-ascii?Q?d96VCG1QCNyuNnawOzKoZbsbbUuE2HDJwAjMEITD4BGdv7To3SzeWH78+ODc?=
+ =?us-ascii?Q?jcnFA9LVadsN9GEg88FX4PiVQy8NKItcHXciXAs1+JtUwhe9lJdjtINbgdSO?=
+ =?us-ascii?Q?qUSErRqEDDBiVbZYr/AoEsILzA5i4M2cCgsjfA1r4X+ysh8yIXIpPu0oE1al?=
+ =?us-ascii?Q?FzelJUfekyaCiwlmpCqwnjSbD5IocmT0nUE4VRT/V11SRsPDlxv9L9pkc2cp?=
+ =?us-ascii?Q?5WucQbfaSc3/q0dAIzgdpgtYXDKfS1bohg26FeJ5BGAjhi1UAIDT0ypCL+T2?=
+ =?us-ascii?Q?n83d5cRPwq+Aac3hF/wyfsmEXKKAQ0kBr/niYxASNVxipJyMOB40WFPuRNpT?=
+ =?us-ascii?Q?A5RJxrgH9HTPrqn0Asq/ivHjPAa08xYkLxh7BEwOOM7JcSNRP8d4SMk/0Y4v?=
+ =?us-ascii?Q?i6cG35JSQ++ZOiyEKdJ+AIkZw3vR6W/7yQXgXTuT3xo83EcMf6vlQPDROREe?=
+ =?us-ascii?Q?inf8lowR2G6PvUlWBDM5P8E93M+D1d6syldipfOJiaUYeQPUoi18NzwbdNhl?=
+ =?us-ascii?Q?+GmJb5oJhpnypTJLRw+uK9CWsdkViIf46S85aO+HAnspNp8SObNOuGx0YJ9G?=
+ =?us-ascii?Q?QuUZrMv+guabCwaGNmf2nWdQDVNINsmKXEelHDwNGCsKStTWrK0g6BN2yles?=
+ =?us-ascii?Q?OnVf66a0XHWQb6lWEi0HLpRUa9bzbQx5tAR1+WgoVtZXhHcG0oqqg5CHgbAf?=
+ =?us-ascii?Q?5UsSJQNqrGsXOHL1qDGWTXx6qNRA1+/4A2CAM/Xd/Ez6fmPDY2EYvyLOemtD?=
+ =?us-ascii?Q?T4RUjLrteD+t/7vtnzbdGiIk264XI2hYsMiYhtW9I4aQoSwVXNhO04nT6dYd?=
+ =?us-ascii?Q?+eUP7aRdydhiFgX2NtScT+h0YCvPCNP6sbfdRL1ymKJ9fvTQlrYwBaOeNvur?=
+ =?us-ascii?Q?7DgzaH+mIl7YaqVCiJ90Hc/Faka8b185cgBhVVyAhyWcuQslv1PKa/kW4vm3?=
+ =?us-ascii?Q?psV627zk2M/ONsapI/XrFcToq/xTpCoU1pLHDlUgA4NSekc1lKKv3o01+0A/?=
+ =?us-ascii?Q?0ccO9Sftk6HDI7OxDm0DI//prSkITpxO+ebS7ZnZE68bkmq3ve96Y55Mrgdu?=
+ =?us-ascii?Q?siTSe+klNMt6i+v545k4Q8Q7yrkwtr7tWnJRXv4sdWkMoo3A8Az9BqeuhoDK?=
+ =?us-ascii?Q?DVHeBlw4yHSCwgmytkHvDEp0+jE3+ABLpfDk5NBGPP3Zow8jEsX64yeP0C0k?=
+ =?us-ascii?Q?vrIk6JsBVIAMfSNgsmXaCdvDpTYmiAagp0GdpozqXkAmyGvWvEP0Ilzj1QRO?=
+ =?us-ascii?Q?e8iq8LlQhEmQXxK+8DUsvNsyQ/GIASzG4lxWNV1lMaYdt95sPvoq9iQ11Nd2?=
+ =?us-ascii?Q?t1tPwWNIpiY4YUpS4Psr0atb6Wtci36PxaPdo1thwbHa3vLi4hDquFXfbcEn?=
+ =?us-ascii?Q?/DZCk4h3vPPp8sKgaNROLRoN7zu9gU3VYpeiA6jnuGGQ87dGNkLIjaQNV8N/?=
+ =?us-ascii?Q?WSYYzOLjgbUHGI1ISvAAzibIbcBW84PXwo27?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);
+ CAT:NONE; SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: vykXy5eEYDvx+H46kQgikglhKe7edAiN5tpBrbtWgOkV6pajOsbtv8nTdH4xBMCz7b5kpO30qe217RukS1Xms2A2iFkfYGo7UhgBZnTamU7DHDNKjkcxWrtI1g2sThPqetMbyxVhghvVpnzJDPwxFRSWx15PMEGJNyUMKqTy6QrjrnV4Yb37y4zvogE71AUZd7fFZvf4IvnwhYN12sCQt9G/JEg/r29mwwC+vcSxUTZBoZsK9QOZySUOd8q/+BRvPl1lMoeZJoGNleJgQpi/eTyop75ES4j0if4zlkPS9Q76ASQ6Wcg6u/NCl7gn81N7ubMd/d8dvIJ5w5tSrWtK66MyImjRiIXGB6sPmqt1mTc0r22GjfKclxhgIywfBurXv9QWdN63ujDalmcm6jB8QhNBkkYIs9+UiW5PzJn9t3qkA9mdV4h8Xld/GNuZKIw39TFCiKmEiWnlGnyVuHh1zvh4woFKgfR8s+ESyEnjI37bSctXk2vmo8x3ZmyTtbf/uJzK2aNpwX2yjvT0K4Nre33JJiEJ+Ug8kqnmgs3A6cSiPRLNjbMx4iooFrxTJEuZsTS+2wnmeGhR8uh6PruLwbB/dqx8N+32ZzJXtmoT2LFsuIh64SFBFSvXgnV6NRheNrAIZOROXm8Depn9LzWuSA==
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: Oc/NKY3krSeNyEIDxPVC4pB9Zg222puaXhHWs4qtkYxp/cfPITeyVi2sB4o9CBsok/WvGdjFKqrCCR7A7rxxv4f2c3HAuB8/1ilTPwGibikphxPyjwQrlSsKKJooU8pdRmnVwDmBWF0dpWbCJtDcreVldH4t/OIfMhpAZ2Z3q2het2+WQBJid2I/D+usQXX6hkO1QqkIjUutdXJ990YQ+V8U5Jqf3Y6zN1jVyPE4VJ0mhdDFsOTJRFIb0kc4SP3q5HUrrZhb3OZVwBxKEfGveDTPMy7r6Hm9z0bTJ1CGCw5o+xvILNyn7sN9YaU/4Bu7/QOeo4caoXalLkRWdH59n0Zq5JojtV2Wi06b2ILCaT7gQVRjwLAyCHEI2G9CHaxOd2I2XDzbztAg9KdAj9Z9cJrp5Y4cdFockKslGs7CpPxk9Sp+UesL7uZG24aVLJz3xmDIchpebF5UkMNGcRtbuG7Tfbc4hlLNi6enw5y1Vi96thedEvj87usChV1vZEVk1y53TyZVR6eSMjrFWTKJ4iqsGgX3dz9IqrbK9paRNBTaTaAzUNZt9bCSgjvbDKW+WA97RdNRI1VYrloEkQgP5iy5JjWImMm5Zy/Ru+hlkp5dYXQdd76HdKvQFiRqjF6S/duieVbnn2B8AV6jEN6KwA==
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2025 07:13:20.5120 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 35497f56-562c-43f8-7a36-08dd8ba4510a
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2025 07:13:29.7098 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5b8d6bf6-df6c-4a8b-2bf4-08dd8ba45686
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: DU6PEPF00009523.eurprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4P190MB1901
-X-BESS-ID: 1746429202-311599-7746-352-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8P190MB0684
+X-BESS-ID: 1746429213-310467-7672-4595-1
 X-BESS-VER: 2019.1_20250429.1615
-X-BESS-Apparent-Source-IP: 104.47.17.113
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVobGhkYGQGYGUNQ8JTklMSU5yc
- IozTDV3NzSIMXE0NgyJdnAzNTMKNE0Wak2FgAgC46PQgAAAA==
-X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Apparent-Source-IP: 104.47.30.110
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVuZmBgZAVgZQ0NQk0TDFwMIwKd
+ Ey2SjJ3DDZIMk41TjFwCjVPNXMwNxIqTYWAA1Y9R9BAAAA
+X-BESS-Outbound-Spam-Score: 0.50
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.264372 [from 
- cloudscan18-155.eu-central-1b.ess.aws.cudaops.com]
+ cloudscan19-189.eu-central-1b.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
+ 0.50 BSF_RULE7568M          META: Custom Rule 7568M 
  0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS113687 scores of
- KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS113687 scores of
+ KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
 X-BESS-BRTS-Status: 1
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -147,340 +148,186 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Danylo Vodopianov <dvo-plv@napatech.com>
 
-Remove unused CRC calculation and simplify AVR probe logging.
-The condition is always false.
+Add verification on NULL for variables before use it in the memset.
 
 Signed-off-by: Danylo Vodopianov <dvo-plv@napatech.com>
 ---
- drivers/net/ntnic/nthw/core/nthw_fpga.c | 299 +-----------------------
- 1 file changed, 11 insertions(+), 288 deletions(-)
+ drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c  |  3 +++
+ .../link_mgmt/link_100g/nt4ga_link_100g.c      |  2 ++
+ .../net/ntnic/nthw/flow_api/flow_id_table.c    |  3 ++-
+ .../nthw/flow_api/hw_mod/hw_mod_backend.c      |  3 ++-
+ .../profile_inline/flow_api_profile_inline.c   | 18 ++++++++++++------
+ drivers/net/ntnic/nthw/model/nthw_fpga_model.c |  6 ++++--
+ .../net/ntnic/nthw/ntnic_meter/ntnic_meter.c   |  6 ++++++
+ drivers/net/ntnic/ntnic_filter/ntnic_filter.c  |  5 +++++
+ 8 files changed, 36 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/ntnic/nthw/core/nthw_fpga.c b/drivers/net/ntnic/nthw/core/nthw_fpga.c
-index 8831eeb4d3..485e912912 100644
---- a/drivers/net/ntnic/nthw/core/nthw_fpga.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_fpga.c
-@@ -152,26 +152,6 @@ int nthw_fpga_silabs_detect(nthw_fpga_t *p_fpga, const int n_instance_no, const
- 	return res;
- }
+diff --git a/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c b/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c
+index bb775c052c..94b0c97d27 100644
+--- a/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c
++++ b/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c
+@@ -911,6 +911,9 @@ static int nthw_setup_managed_virt_queue_packed(struct nthw_virt_queue *vq,
+ 	RTE_ASSERT(p_packet_buffers);
  
--/*
-- * Calculate CRC-16-CCITT of passed data
-- * CRC-16-CCITT ^16 + ^12 + ^5 + 1 (0x1021) (X.25, HDLC, XMODEM, Bluetooth,
-- *   SD, many others; known as CRC-CCITT)
-- */
--static uint16_t crc16(uint8_t *buffer, size_t length)
--{
--	uint16_t seed = 0;
--
--	while (length--) {
--		seed = (uint16_t)(seed >> 8 | seed << 8);
--		seed = (uint16_t)(seed ^ *buffer++);
--		seed = (uint16_t)(seed ^ (seed & 0xff) >> 4);
--		seed = (uint16_t)(seed ^ seed << 8 << 4);
--		seed = (uint16_t)(seed ^ (seed & 0xff) << 4 << 1);
--	}
--
--	return seed;
--}
--
- int nthw_fpga_avr_probe(nthw_fpga_t *p_fpga, const int n_instance_no)
+ 	/* clean canvas */
++	if (p_virt_struct_area->virt_addr == NULL)
++		return -1;
++
+ 	memset(p_virt_struct_area->virt_addr, 0,
+ 		sizeof(struct pvirtq_desc) * vq->queue_size +
+ 		sizeof(struct pvirtq_event_suppress) * 2 + sizeof(int) * vq->queue_size);
+diff --git a/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c b/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c
+index ed9dabe27c..adb187d322 100644
+--- a/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c
++++ b/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c
+@@ -137,6 +137,8 @@ static int _link_state_build(adapter_info_t *drv, nthw_mac_pcs_t *mac_pcs,
+ 	uint32_t lh_internal_local_fault;
+ 	uint32_t lh_received_local_fault;
+ 
++	RTE_ASSERT(state);
++
+ 	memset(state, 0, sizeof(*state));
+ 	state->link_disabled = is_port_disabled;
+ 	nthw_mac_pcs_get_link_summary(mac_pcs, &abs, &phy_link_state, &lh_abs, &ll_phy_link_state,
+diff --git a/drivers/net/ntnic/nthw/flow_api/flow_id_table.c b/drivers/net/ntnic/nthw/flow_api/flow_id_table.c
+index a63f5542d1..c33308b5f7 100644
+--- a/drivers/net/ntnic/nthw/flow_api/flow_id_table.c
++++ b/drivers/net/ntnic/nthw/flow_api/flow_id_table.c
+@@ -114,7 +114,8 @@ void ntnic_id_table_free_id(void *id_table, uint32_t id)
+ 
+ 	struct ntnic_id_table_element *current_element =
+ 		ntnic_id_table_array_find_element(handle, id);
+-	memset(current_element, 0, sizeof(struct ntnic_id_table_element));
++	if (current_element)
++		memset(current_element, 0, sizeof(struct ntnic_id_table_element));
+ 
+ 	struct ntnic_id_table_element *element =
+ 		ntnic_id_table_array_find_element(handle, handle->free_head);
+diff --git a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_backend.c b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_backend.c
+index da126fe853..490ab2a45e 100644
+--- a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_backend.c
++++ b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_backend.c
+@@ -86,7 +86,8 @@ void *nthw_callocate_mod(struct common_func_s *mod, int sets, ...)
+ 
+ void nthw_zero_module_cache(struct common_func_s *mod)
  {
- 	struct fpga_info_s *p_fpga_info = p_fpga->p_fpga_info;
-@@ -314,150 +294,15 @@ int nthw_fpga_avr_probe(nthw_fpga_t *p_fpga, const int n_instance_no)
- 		rx_buf.p_buf = &rx_data;
- 		res = nthw_spi_v3_transfer(p_avr_spi, AVR_OP_SYSINFO_2, &tx_buf, &rx_buf);
- 
--		if (res == 0 && avr_vpd_info.n_avr_spi_version >= 3 && rx_buf.size >= 16) {
--			if (rx_buf.size != 16) {
--				NT_LOG(WRN, NTHW,
--					"%s: AVR%d: SYSINFO2: reply is larger than expected: %04X %04X",
--					p_adapter_id_str, n_instance_no, rx_buf.size, 16);
--
--			} else {
--				NT_LOG(DBG, NTHW, "%s: AVR%d: SYSINFO2: OK: res=%d sz=%d",
--					p_adapter_id_str, n_instance_no, res, rx_buf.size);
--			}
--
--			avr_vpd_info.sysinfo_container_version = rx_data[0];
--			NT_LOG(DBG, NTHW, "%s: AVR%d: SYSINFO_REQ_VER: %d", p_adapter_id_str,
--				n_instance_no, avr_vpd_info.sysinfo_container_version);
--
--			memcpy(&avr_vpd_info.sysinfo_avr_libc_version, &rx_data[0 + 1],
--				sizeof(avr_vpd_info.sysinfo_avr_libc_version));
--			NT_LOG(DBG, NTHW, "%s: AVR%d: LIBC_VER: %d", p_adapter_id_str,
--				n_instance_no, avr_vpd_info.sysinfo_avr_libc_version);
--
--			avr_vpd_info.sysinfo_signature_0 = rx_data[5];
--			avr_vpd_info.sysinfo_signature_1 = rx_data[6];
--			avr_vpd_info.sysinfo_signature_2 = rx_data[7];
--			NT_LOG(DBG, NTHW, "%s: AVR%d: SIGNATURE: %02x%02x%02x", p_adapter_id_str,
--				n_instance_no, avr_vpd_info.sysinfo_signature_0,
--				avr_vpd_info.sysinfo_signature_1, avr_vpd_info.sysinfo_signature_2);
--
--			avr_vpd_info.sysinfo_spi_version = rx_data[8];
--			NT_LOG(DBG, NTHW, "%s: AVR%d: SPI_VER: %d", p_adapter_id_str,
--				n_instance_no, avr_vpd_info.sysinfo_spi_version);
--
--			avr_vpd_info.sysinfo_hw_revision = rx_data[9];
--			NT_LOG(DBG, NTHW, "%s: AVR%d: HW_REV: %d", p_adapter_id_str,
--				n_instance_no, avr_vpd_info.sysinfo_hw_revision);
--
--			avr_vpd_info.sysinfo_ticks_per_second = rx_data[10];
--			NT_LOG(DBG, NTHW, "%s: AVR%d: TICKS_PER_SEC: %d", p_adapter_id_str,
--				n_instance_no, avr_vpd_info.sysinfo_ticks_per_second);
--
--			memcpy(&avr_vpd_info.sysinfo_uptime, &rx_data[11],
--				sizeof(avr_vpd_info.sysinfo_uptime));
--			NT_LOG(DBG, NTHW, "%s: AVR%d: UPTIME: %d", p_adapter_id_str,
--				n_instance_no, avr_vpd_info.sysinfo_uptime);
--
--			avr_vpd_info.sysinfo_osccal = rx_data[15];
--			NT_LOG(DBG, NTHW, "%s: AVR%d: OSCCAL: %d", p_adapter_id_str,
--				n_instance_no, avr_vpd_info.sysinfo_osccal);
--
--			{
--				bool b_spi_ver_match = (avr_vpd_info.n_avr_spi_version ==
--						avr_vpd_info.sysinfo_spi_version);
--				(void)b_spi_ver_match;
--				NT_LOG(DBG, NTHW, "%s: AVR%d: SPI_VER_TST: %s (%d %d)",
--					p_adapter_id_str, n_instance_no,
--					(b_spi_ver_match ? "OK" : "MISMATCH"),
--					avr_vpd_info.n_avr_spi_version,
--					avr_vpd_info.sysinfo_spi_version);
--			}
--
--			/* SYSINFO2: if response: only populate hw_id not hw_id_emulated */
--			p_fpga_info->nthw_hw_info.hw_id = avr_vpd_info.sysinfo_hw_revision;
--
--		} else {
--			/* AVR_OP_SYSINFO */
--			tx_buf.size = 0;
--			tx_buf.p_buf = NULL;
--			rx_buf.size = sizeof(rx_data);
--			rx_buf.p_buf = &rx_data;
--			res = nthw_spi_v3_transfer(p_avr_spi, AVR_OP_SYSINFO, &tx_buf, &rx_buf);
--
--			if (res == 0 && avr_vpd_info.n_avr_spi_version >= 3 && rx_buf.size >= 16) {
--				if (rx_buf.size != 16) {
--					NT_LOG(WRN, NTHW,
--						"%s: AVR%d: SYSINFO: reply is larger than expected: %04X %04X",
--						p_adapter_id_str, n_instance_no, rx_buf.size, 16);
--
--				} else {
--					NT_LOG(DBG, NTHW, "%s: AVR%d: SYSINFO: OK: res=%d sz=%d",
--						p_adapter_id_str, n_instance_no, res, rx_buf.size);
--				}
--
--				avr_vpd_info.sysinfo_container_version = rx_data[0];
--				NT_LOG(DBG, NTHW, "%s: AVR%d: SYSINFO_REQ_VER: %d",
--					p_adapter_id_str, n_instance_no,
--					avr_vpd_info.sysinfo_container_version);
--
--				memcpy(&avr_vpd_info.sysinfo_avr_libc_version, &rx_data[0 + 1],
--					sizeof(avr_vpd_info.sysinfo_avr_libc_version));
--				NT_LOG(DBG, NTHW, "%s: AVR%d: LIBC_VER: %d", p_adapter_id_str,
--					n_instance_no, avr_vpd_info.sysinfo_avr_libc_version);
--
--				avr_vpd_info.sysinfo_signature_0 = rx_data[5];
--				avr_vpd_info.sysinfo_signature_1 = rx_data[6];
--				avr_vpd_info.sysinfo_signature_2 = rx_data[7];
--				NT_LOG(DBG, NTHW, "%s: AVR%d: SIGNATURE: %02x%02x%02x",
--					p_adapter_id_str, n_instance_no,
--					avr_vpd_info.sysinfo_signature_0,
--					avr_vpd_info.sysinfo_signature_1,
--					avr_vpd_info.sysinfo_signature_2);
--
--				avr_vpd_info.sysinfo_spi_version = rx_data[8];
--				NT_LOG(DBG, NTHW, "%s: AVR%d: SPI_VER: %d", p_adapter_id_str,
--					n_instance_no, avr_vpd_info.sysinfo_spi_version);
--
--				avr_vpd_info.sysinfo_hw_revision = rx_data[9];
--				NT_LOG(DBG, NTHW, "%s: AVR%d: HW_REV: %d", p_adapter_id_str,
--					n_instance_no, avr_vpd_info.sysinfo_hw_revision);
--				NT_LOG(INF, NTHW, "%s: AVR%d: HW_REV: %d", p_adapter_id_str,
--					n_instance_no, avr_vpd_info.sysinfo_hw_revision);
--
--				avr_vpd_info.sysinfo_ticks_per_second = rx_data[10];
--				NT_LOG(DBG, NTHW, "%s: AVR%d: TICKS_PER_SEC: %d",
--					p_adapter_id_str, n_instance_no,
--					avr_vpd_info.sysinfo_ticks_per_second);
--
--				memcpy(&avr_vpd_info.sysinfo_uptime, &rx_data[11],
--					sizeof(avr_vpd_info.sysinfo_uptime));
--				NT_LOG(DBG, NTHW, "%s: AVR%d: UPTIME: %d", p_adapter_id_str,
--					n_instance_no, avr_vpd_info.sysinfo_uptime);
--
--				avr_vpd_info.sysinfo_osccal = rx_data[15];
--				NT_LOG(DBG, NTHW, "%s: AVR%d: OSCCAL: %d", p_adapter_id_str,
--					n_instance_no, avr_vpd_info.sysinfo_osccal);
--
--				{
--					bool b_spi_ver_match = (avr_vpd_info.n_avr_spi_version ==
--							avr_vpd_info.sysinfo_spi_version);
--					(void)b_spi_ver_match;
--					NT_LOG(DBG, NTHW, "%s: AVR%d: SPI_VER_TST: %s (%d %d)",
--						p_adapter_id_str, n_instance_no,
--						(b_spi_ver_match ? "OK" : "MISMATCH"),
--						avr_vpd_info.n_avr_spi_version,
--						avr_vpd_info.sysinfo_spi_version);
--				}
--
--				p_fpga_info->nthw_hw_info.hw_id = avr_vpd_info.sysinfo_hw_revision;
--				p_fpga_info->nthw_hw_info.hw_id_emulated =
--					avr_vpd_info.sysinfo_hw_revision;
-+		/* AVR_OP_SYSINFO */
-+		tx_buf.size = 0;
-+		tx_buf.p_buf = NULL;
-+		rx_buf.size = sizeof(rx_data);
-+		rx_buf.p_buf = &rx_data;
-+		res = nthw_spi_v3_transfer(p_avr_spi, AVR_OP_SYSINFO, &tx_buf, &rx_buf);
- 
--			} else {
--				NT_LOG(ERR, NTHW, "%s: AVR%d: SYSINFO: NA: res=%d sz=%d",
--					p_adapter_id_str, n_instance_no, res, rx_buf.size);
--			}
--		}
-+		NT_LOG(ERR, NTHW, "%s: AVR%d: SYSINFO: NA: res=%d sz=%d",
-+				p_adapter_id_str, n_instance_no, res, rx_buf.size);
- 
- 		/* AVR_OP_VPD_READ */
- 		tx_buf.size = 0;
-@@ -466,132 +311,10 @@ int nthw_fpga_avr_probe(nthw_fpga_t *p_fpga, const int n_instance_no)
- 		rx_buf.p_buf = &rx_data;
- 		res = nthw_spi_v3_transfer(p_avr_spi, AVR_OP_VPD_READ, &tx_buf, &rx_buf);
- 
--		if (res == 0 && avr_vpd_info.n_avr_spi_version >= 3 &&
--			rx_buf.size >= GEN2_VPD_SIZE_TOTAL) {
--			avr_vpd_info.n_crc16_calced = crc16(rx_buf.p_buf, rx_buf.size - 2);
--			memcpy(&avr_vpd_info.n_crc16_stored, &rx_data[rx_buf.size - 2],
--				sizeof(avr_vpd_info.n_crc16_stored));
--			NT_LOG(DBG, NTHW, "%s: AVR%d: VPD_CRC: %04X %04X", p_adapter_id_str,
--				n_instance_no, avr_vpd_info.n_crc16_stored,
--				avr_vpd_info.n_crc16_calced);
--
--			avr_vpd_info.b_crc16_valid =
--				(avr_vpd_info.n_crc16_stored == avr_vpd_info.n_crc16_calced);
--			NT_LOG(DBG, NTHW, "%s: AVR%d: CRC_TST: %s", p_adapter_id_str,
--				n_instance_no, (avr_vpd_info.b_crc16_valid ? "OK" : "ERROR"));
--
--			if (avr_vpd_info.b_crc16_valid) {
--				memcpy(&avr_vpd_info.psu_hw_version, &rx_data[0],
--					sizeof(avr_vpd_info.psu_hw_version));
--				NT_LOG(DBG, NTHW, "%s: AVR%d: PSU_HW_VER: %d", p_adapter_id_str,
--					n_instance_no, avr_vpd_info.psu_hw_version);
--
--				memcpy(&avr_vpd_info.vpd_pn, &rx_data[0 + 1],
--					sizeof(avr_vpd_info.vpd_pn));
--				NT_LOG(DBG, NTHW, "%s: AVR%d: PN: '%.*s'", p_adapter_id_str,
--					n_instance_no, GEN2_PN_SIZE, avr_vpd_info.vpd_pn);
--
--				memcpy(&avr_vpd_info.vpd_pba, &rx_data[0 + 1 + GEN2_PN_SIZE],
--					sizeof(avr_vpd_info.vpd_pba));
--				NT_LOG(DBG, NTHW, "%s: AVR%d: PBA: '%.*s'", p_adapter_id_str,
--					n_instance_no, GEN2_PBA_SIZE, avr_vpd_info.vpd_pba);
--
--				memcpy(&avr_vpd_info.vpd_sn,
--					&rx_data[0 + 1 + GEN2_PN_SIZE + GEN2_PBA_SIZE],
--					sizeof(avr_vpd_info.vpd_sn));
--				NT_LOG(DBG, NTHW, "%s: AVR%d: SN: '%.*s", p_adapter_id_str,
--					n_instance_no, GEN2_SN_SIZE, avr_vpd_info.vpd_sn);
--
--				memcpy(&avr_vpd_info.vpd_board_name,
--					&rx_data[0 + 1 + GEN2_PN_SIZE + GEN2_PBA_SIZE +
--						GEN2_SN_SIZE],
--					sizeof(avr_vpd_info.vpd_board_name));
--				NT_LOG(DBG, NTHW, "%s: AVR%d: BN: '%.*s'", p_adapter_id_str,
--					n_instance_no, GEN2_BNAME_SIZE,
--					avr_vpd_info.vpd_board_name);
--
--				union mac_u {
--					uint8_t a_u8[8];
--					uint16_t a_u16[4];
--					uint32_t a_u32[2];
--					uint64_t a_u64[1];
--				} mac;
--
--				/* vpd_platform_section */
--				uint8_t *p_vpd_board_info =
--					(uint8_t *)(&rx_data[1 + GEN2_PN_SIZE + GEN2_PBA_SIZE +
--					GEN2_SN_SIZE + GEN2_BNAME_SIZE]);
--				memcpy(&avr_vpd_info.product_family, &p_vpd_board_info[0],
--					sizeof(avr_vpd_info.product_family));
--				NT_LOG(DBG, NTHW, "%s: AVR%d: PROD_FAM: %d", p_adapter_id_str,
--					n_instance_no, avr_vpd_info.product_family);
--
--				memcpy(&avr_vpd_info.feature_mask, &p_vpd_board_info[0 + 4],
--					sizeof(avr_vpd_info.feature_mask));
--				NT_LOG(DBG, NTHW, "%s: AVR%d: FMSK_VAL: 0x%08X",
--					p_adapter_id_str, n_instance_no, avr_vpd_info.feature_mask);
--
--				memcpy(&avr_vpd_info.invfeature_mask, &p_vpd_board_info[0 + 4 + 4],
--					sizeof(avr_vpd_info.invfeature_mask));
--				NT_LOG(DBG, NTHW, "%s: AVR%d: FMSK_INV: 0x%08X",
--					p_adapter_id_str, n_instance_no,
--					avr_vpd_info.invfeature_mask);
--
--				avr_vpd_info.b_feature_mask_valid =
--					(avr_vpd_info.feature_mask ==
--						~avr_vpd_info.invfeature_mask);
--				NT_LOG(DBG, NTHW, "%s: AVR%d: FMSK_TST: %s", p_adapter_id_str,
--					n_instance_no,
--					(avr_vpd_info.b_feature_mask_valid ? "OK" : "ERROR"));
--
--				memcpy(&avr_vpd_info.no_of_macs, &p_vpd_board_info[0 + 4 + 4 + 4],
--					sizeof(avr_vpd_info.no_of_macs));
--				NT_LOG(DBG, NTHW, "%s: AVR%d: NUM_MACS: %d", p_adapter_id_str,
--					n_instance_no, avr_vpd_info.no_of_macs);
--
--				memcpy(&avr_vpd_info.mac_address,
--					&p_vpd_board_info[0 + 4 + 4 + 4 + 1],
--					sizeof(avr_vpd_info.mac_address));
--				NT_LOG(DBG, NTHW,
--					"%s: AVR%d: MAC_ADDR: %02x:%02x:%02x:%02x:%02x:%02x",
--					p_adapter_id_str, n_instance_no,
--					avr_vpd_info.mac_address[0], avr_vpd_info.mac_address[1],
--					avr_vpd_info.mac_address[2], avr_vpd_info.mac_address[3],
--					avr_vpd_info.mac_address[4], avr_vpd_info.mac_address[5]);
--
--				mac.a_u64[0] = 0;
--				memcpy(&mac.a_u8[2], &avr_vpd_info.mac_address,
--					sizeof(avr_vpd_info.mac_address));
--				{
--					const uint32_t u1 = ntohl(mac.a_u32[0]);
--
--					if (u1 != mac.a_u32[0]) {
--						const uint32_t u0 = ntohl(mac.a_u32[1]);
--						mac.a_u32[0] = u0;
--						mac.a_u32[1] = u1;
--					}
--				}
--
--				avr_vpd_info.n_mac_val = mac.a_u64[0];
--				NT_LOG(DBG, NTHW, "%s: AVR%d: MAC_U64: %012" PRIX64 "",
--					p_adapter_id_str, n_instance_no, avr_vpd_info.n_mac_val);
--			}
--
--			p_fpga_info->nthw_hw_info.vpd_info.mn_mac_addr_count =
--				avr_vpd_info.no_of_macs;
--			p_fpga_info->nthw_hw_info.vpd_info.mn_mac_addr_value =
--				avr_vpd_info.n_mac_val;
--			memcpy(p_fpga_info->nthw_hw_info.vpd_info.ma_mac_addr_octets,
--				avr_vpd_info.mac_address,
--				ARRAY_SIZE(p_fpga_info->nthw_hw_info.vpd_info.ma_mac_addr_octets));
--
--		} else {
--			NT_LOG(ERR, NTHW, "%s:%u: res=%d", __func__, __LINE__, res);
--			NT_LOG(ERR, NTHW, "%s: AVR%d: SYSINFO2: NA: res=%d sz=%d",
--				p_adapter_id_str, n_instance_no, res, rx_buf.size);
--		}
-+		NT_LOG(ERR, NTHW, "%s:%u: res=%d", __func__, __LINE__, res);
-+		NT_LOG(ERR, NTHW, "%s: AVR%d: SYSINFO2: NA: res=%d sz=%d",
-+			p_adapter_id_str, n_instance_no, res, rx_buf.size);
- 	}
--
- 	return res;
+-	memset(mod->base, 0, mod->allocated_size);
++	if (mod)
++		memset(mod->base, 0, mod->allocated_size);
  }
  
+ int nthw_flow_api_backend_init(struct flow_api_backend_s *dev,
+diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
+index 5bf8a9a3ea..3133464675 100644
+--- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
++++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
+@@ -1714,15 +1714,14 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 
+ 	*in_port_id = UINT32_MAX;
+ 
+-	memset(packet_data, 0x0, sizeof(uint32_t) * 10);
+-	memset(packet_mask, 0x0, sizeof(uint32_t) * 10);
+-	memset(key_def, 0x0, sizeof(struct flm_flow_key_def_s));
+-
+-	if (elem == NULL) {
++	if (packet_data == NULL || packet_mask == NULL || key_def == NULL || elem == NULL) {
+ 		nthw_flow_nic_set_error(ERR_FAILED, error);
+ 		NT_LOG(ERR, FILTER, "Flow items missing");
+ 		return -1;
+ 	}
++	memset(packet_data, 0x0, sizeof(uint32_t) * 10);
++	memset(packet_mask, 0x0, sizeof(uint32_t) * 10);
++	memset(key_def, 0x0, sizeof(struct flm_flow_key_def_s));
+ 
+ 	if (implicit_vlan_vid > 0) {
+ 		uint32_t *sw_data = &packet_data[1 - sw_counter];
+@@ -3192,6 +3191,9 @@ static int convert_fh_to_fh_flm(struct flow_handle *fh, const uint32_t *packet_d
+ static void setup_db_qsl_data(struct nic_flow_def *fd, struct hw_db_inline_qsl_data *qsl_data,
+ 	uint32_t num_dest_port, uint32_t num_queues)
+ {
++	if (qsl_data == NULL)
++		return;
++
+ 	memset(qsl_data, 0x0, sizeof(struct hw_db_inline_qsl_data));
+ 
+ 	if (fd->dst_num_avail <= 0) {
+@@ -3236,6 +3238,9 @@ static void setup_db_qsl_data(struct nic_flow_def *fd, struct hw_db_inline_qsl_d
+ 
+ static void setup_db_hsh_data(struct nic_flow_def *fd, struct hw_db_inline_hsh_data *hsh_data)
+ {
++	if (hsh_data == NULL)
++		return;
++
+ 	memset(hsh_data, 0x0, sizeof(struct hw_db_inline_hsh_data));
+ 
+ 	hsh_data->func = fd->hsh.func;
+@@ -4816,7 +4821,8 @@ int flow_info_get_profile_inline(struct flow_eth_dev *dev, uint8_t caller_id,
+ 	int res = 0;
+ 
+ 	nthw_flow_nic_set_error(ERR_SUCCESS, error);
+-	memset(port_info, 0, sizeof(struct rte_flow_port_info));
++	if (port_info)
++		memset(port_info, 0, sizeof(struct rte_flow_port_info));
+ 
+ 	port_info->max_nb_aging_objects = dev->nb_aging_objects;
+ 
+diff --git a/drivers/net/ntnic/nthw/model/nthw_fpga_model.c b/drivers/net/ntnic/nthw/model/nthw_fpga_model.c
+index 0838527716..5256adc648 100644
+--- a/drivers/net/ntnic/nthw/model/nthw_fpga_model.c
++++ b/drivers/net/ntnic/nthw/model/nthw_fpga_model.c
+@@ -854,8 +854,10 @@ void nthw_register_flush(const nthw_register_t *p, uint32_t cnt)
+ 
+ void nthw_register_clr(nthw_register_t *p)
+ {
+-	memset(p->mp_shadow, 0, p->mn_len * sizeof(uint32_t));
+-	nthw_register_make_dirty(p);
++	if (p->mp_shadow) {
++		memset(p->mp_shadow, 0, p->mn_len * sizeof(uint32_t));
++		nthw_register_make_dirty(p);
++	}
+ }
+ 
+ /*
+diff --git a/drivers/net/ntnic/nthw/ntnic_meter/ntnic_meter.c b/drivers/net/ntnic/nthw/ntnic_meter/ntnic_meter.c
+index 66cc02a865..303c2cd51a 100644
+--- a/drivers/net/ntnic/nthw/ntnic_meter/ntnic_meter.c
++++ b/drivers/net/ntnic/nthw/ntnic_meter/ntnic_meter.c
+@@ -51,6 +51,9 @@ static int eth_mtr_capabilities_get_inline(struct rte_eth_dev *eth_dev,
+ 				"Ethernet device does not support metering");
+ 	}
+ 
++	if (cap == NULL)
++		return -1;
++
+ 	memset(cap, 0x0, sizeof(struct rte_mtr_capabilities));
+ 
+ 	/* MBR records use 28-bit integers */
+@@ -419,6 +422,9 @@ static int eth_mtr_stats_read_inline(struct rte_eth_dev *eth_dev,
+ 				"MTR id is out of range");
+ 	}
+ 
++	if (stats == NULL)
++		return -1;
++
+ 	memset(stats, 0x0, sizeof(struct rte_mtr_stats));
+ 	profile_inline_ops->flm_mtr_read_stats(internals->flw_dev, caller_id, mtr_id, stats_mask,
+ 		&stats->n_pkts[RTE_COLOR_GREEN],
+diff --git a/drivers/net/ntnic/ntnic_filter/ntnic_filter.c b/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
+index 5757c7c13c..fc06cf12c3 100644
+--- a/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
++++ b/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
+@@ -248,6 +248,11 @@ int nthw_interpret_raw_data(uint8_t *data, uint8_t *preserve, int size, struct r
+ 
+ int nthw_create_attr(struct cnv_attr_s *attribute, const struct rte_flow_attr *attr)
+ {
++	if (!attribute) {
++		NT_LOG(ERR, FILTER, "ERROR no attribute to iterate!");
++		return -1;
++	}
++
+ 	memset(&attribute->attr, 0x0, sizeof(struct rte_flow_attr));
+ 
+ 	if (attr) {
 -- 
 2.47.1
 
