@@ -2,31 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 221CAC3ABB8
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 14:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA877C3ABAA
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 14:57:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7DB49402A4;
-	Mon,  5 May 2025 16:46:15 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D16254025D;
+	Mon,  5 May 2025 16:57:52 +0200 (CEST)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 12D9F4025D
- for <dev@dpdk.org>; Mon,  5 May 2025 16:46:13 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 8545C4003C
+ for <dev@dpdk.org>; Mon,  5 May 2025 16:57:51 +0200 (CEST)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id EB6AB2111598; Mon,  5 May 2025 07:46:11 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EB6AB2111598
+ id 64CD22115DC1; Mon,  5 May 2025 07:57:50 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 64CD22115DC1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1746456371;
- bh=GT8ca4PlFOsb754C8BOCY17GCXJmYHmABI72pwoy+tA=;
+ s=default; t=1746457070;
+ bh=dV45KeSUtrGDuD5F/uxMJSObJRqzhitaaleNaNuYFFg=;
  h=From:To:Cc:Subject:Date:From;
- b=RH4R8wvSopI4dXgCFL+TCchpDZnYdeRuWhtw2Wl3/GFOMUIP6esIs/H06DzPloNpH
- /QcSWpiFVNDJOsCaCYMmzhVjYG3SQ3YBKy6YezUsYPn9z2P12uQconei2RsvDuMaXn
- CCCppnDHf2C1EJecjes2QFidTyA/Jq3I1OZKy00Q=
+ b=B7a0NYsjgL/yag8qRfQ27F1Uetk9odnILhEfgFk94p5Rr7B9eA+PCZBxovZAZR8cO
+ dURPIOf3ENcj9D+11kkEt5eihHKywTBerZjCGpkgw4NDk5OjX4JzJ7+SpT7WG7q17e
+ fsZvEl90SgkO2UT76fS5boxLO4z9ofqSDUgTBsVg=
 From: Andre Muezerie <andremue@linux.microsoft.com>
-To: 
+To: Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
 Cc: dev@dpdk.org,
 	Andre Muezerie <andremue@linux.microsoft.com>
-Subject: [PATCH 0/1] unresolved symbol mlx5_geneve_tlv_parser_create
-Date: Mon,  5 May 2025 07:45:36 -0700
-Message-Id: <1746456337-6278-1-git-send-email-andremue@linux.microsoft.com>
+Subject: [PATCH] common/mlx5: use intrinsics instead of inline assembly
+Date: Mon,  5 May 2025 07:57:42 -0700
+Message-Id: <1746457062-8502-1-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -41,43 +44,88 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When compiling DPDK with mlx5 using clang on Windows with
-"debug" buildtype the error below is hit:
+When compiling with MSVC the errors below are hit because msvc does not
+support inline assembly:
 
-net_mlx5_mlx5_flow_dv.c.obj : error LNK2019: unresolved external symbol
-    mlx5_geneve_tlv_parser_create referenced in function
-    flow_dv_discover_priorities
-drivers\rte_net_mlx5-25.dll : fatal error LNK1120: 1 unresolved externals
+1)
+../drivers/common/mlx5/mlx5_common.c(86): warning C4013: '__asm__'
+    undefined; assuming extern returning int
+../drivers/common/mlx5/mlx5_common.c(87): error C2143: syntax error:
+     missing ')' before ':'
 
-With a "release" buildtype the error is not seen, which explains why this
-issue was not reported earlier.
+2)
+../drivers/net/mlx5/mlx5_txpp.c(510): error C2065: '__asm__':
+    undeclared identifier
+../drivers/net/mlx5/mlx5_txpp.c(510): error C2143: syntax error:
+    missing ';' before 'volatile'
 
-The same problem will show up with MSVC, but patches which are still under
-review are needed for this to be hit with MSVC.
+The fix for (1) is to use compiler intrinsic __cpuid and for (2)
+intrinsic _InterlockedCompareExchange128 can be used.
 
-The cause of this problem seems to be that mlx5_flow_geneve.c is only
-compiled on Linux. This patch fixes the issue by compiling the file on all
-operating systems. It also sorts the file names in meson.build in
-alphabetical order.
+Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+---
+ drivers/common/mlx5/mlx5_common.c | 13 +++++++++++--
+ drivers/net/mlx5/mlx5_txpp.c      | 15 +++++++++++++++
+ 2 files changed, 26 insertions(+), 2 deletions(-)
 
-
-REPRO STEPS (On Windows)
-
-set DEVX_INC_PATH=V:\soft\MLNX_WinOF2_DevX_SDK\inc
-set DEVX_LIB_PATH=V:\soft\MLNX_WinOF2_DevX_SDK\lib
-set CFLAGS=-I"%DEVX_INC_PATH%"
-set LDFLAGS=-Wl,-LIBPATH:"%DEVX_LIB_PATH%"
-set CC=clang
-meson setup -Dexamples=helloworld build --buildtype debug
-ninja -C build
-
-
-Andre Muezerie (1):
-  net/mlx5: unresolved symbol mlx5_geneve_tlv_parser_create
-
- drivers/net/mlx5/meson.build | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
---
-2.49.0.vfs.0.0
+diff --git a/drivers/common/mlx5/mlx5_common.c b/drivers/common/mlx5/mlx5_common.c
+index 4f25127582..e1ce17559d 100644
+--- a/drivers/common/mlx5/mlx5_common.c
++++ b/drivers/common/mlx5/mlx5_common.c
+@@ -75,9 +75,18 @@ static inline void mlx5_cpu_id(unsigned int level,
+ 				unsigned int *eax, unsigned int *ebx,
+ 				unsigned int *ecx, unsigned int *edx)
+ {
++#ifdef RTE_TOOLCHAIN_MSVC
++	int data[4];
++	__cpuid(data, level);
++	*eax = data[0];
++	*ebx = data[1];
++	*ecx = data[2];
++	*edx = data[3];
++#else
+ 	__asm__("cpuid\n\t"
+-		: "=a" (*eax), "=b" (*ebx), "=c" (*ecx), "=d" (*edx)
+-		: "0" (level));
++	: "=a" (*eax), "=b" (*ebx), "=c" (*ecx), "=d" (*edx)
++	: "0" (level));
++#endif
+ }
+ #endif
+ 
+diff --git a/drivers/net/mlx5/mlx5_txpp.c b/drivers/net/mlx5/mlx5_txpp.c
+index e6d3ad83e9..5bbaf668e6 100644
+--- a/drivers/net/mlx5/mlx5_txpp.c
++++ b/drivers/net/mlx5/mlx5_txpp.c
+@@ -486,6 +486,20 @@ mlx5_txpp_cq_arm(struct mlx5_dev_ctx_shared *sh)
+ }
+ 
+ #if defined(RTE_ARCH_X86_64)
++#ifdef RTE_TOOLCHAIN_MSVC
++static inline int
++mlx5_atomic128_compare_exchange(rte_int128_t *dst,
++				rte_int128_t *exp,
++				const rte_int128_t *src)
++{
++	return (int)_InterlockedCompareExchange128(
++		(int64_t volatile *)dst,
++		src->val[1], /* exchange high */
++		src->val[0], /* exchange low */
++		(int64_t *)exp /* comparand result */
++	);
++}
++#else
+ static inline int
+ mlx5_atomic128_compare_exchange(rte_int128_t *dst,
+ 				rte_int128_t *exp,
+@@ -510,6 +524,7 @@ mlx5_atomic128_compare_exchange(rte_int128_t *dst,
+ 	return res;
+ }
+ #endif
++#endif
+ 
+ static inline void
+ mlx5_atomic_read_cqe(rte_int128_t *from, rte_int128_t *ts)
+-- 
+2.49.0.vfs.0.2
 
