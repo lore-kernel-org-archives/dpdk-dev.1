@@ -2,137 +2,60 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CC6AC3ABB0
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 16:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9884C3ABBB
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 16:13:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 70B814025D;
-	Mon,  5 May 2025 18:02:19 +0200 (CEST)
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com
- (mail-bn8nam11on2058.outbound.protection.outlook.com [40.107.236.58])
- by mails.dpdk.org (Postfix) with ESMTP id A9FB64003C;
- Mon,  5 May 2025 18:02:18 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YHuXwFRDxXLmKG/ItGpAFvCs4XX0PX9YIT3JBloTRAcpJR9RihoPe2W1p5YK1oQ121Gfn0xLe8j+HYHHXmg02NPXZ05V0a6E22Lh55VvMaB4p85+Clv1GBeN+PxXXOx5tlFRi9ZEVPzH3I4hAujfMPBXNq/VZOK/HCsajuuG85Gar6mIYCxezBrpXV8eJgHDT0oraacRKcXHpdgfXxL5ywgeZ6Qmj0WERinGU6f7xtZcozFWIPYFpUWapDVP9Wmauy8EIMZtVbVscm3amNjipGcsaZjOitlYV89zmqL+IJUMwU3oP43aeuvGl4Kmt4ZKK4vqQ+jj6eo1I8CcqSKWaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RpsIgUaNzgw9xagME3F8xjYp77jatNqhqCTv6sY+/ac=;
- b=s+dqOIR+QiCG0dIJLZzQfzpEYHLaIfUMJlUwjquh2MtDEPy5TknaGcHcgMZFbZMB2OU76kmxe8Wv+X29Qo/1rRPL2vY4xxjdcw0Xihxh7VHvcbXXGj/L+88Y3wgXoV/LaIBm5mpak/FCaVgxJbfGX4c2qB74c2rG3dQjSUWzrZdbdW9XUPW3XRDG6vWOviqMydjwcPgfRKdNH8MEqdmudK3i6FH6+Mjpcau5p+cfZGaAfunOF5yAw0oJRSCq+Yx9RB7jXwdZTeeTHIRBRKewv0RBCn5fJDp06GVkrGs3LQMa3qi8ebqYG8dxCvGX5kFW+a8+Ky2YXveycXZR2l0czQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RpsIgUaNzgw9xagME3F8xjYp77jatNqhqCTv6sY+/ac=;
- b=V5ah3YZ12/nAcyYdPWN9TaV/FKSxnj6CjfzDQo6iEQCnQ6//T4gN4j7Fv+AL669XsIwkHepsqaAwgbtfIIrdbidHFggYUI22Un9fv/0nyst2Tp3cm+3vmZEKgYC3Dnq8tJei2xvA4lxzNRnvn0y9EADHAZ1qpCknNfQrTdNy+10PP+6tbyiiJTm8hn7qZD1cUSMAZh43mZTKkMRx/J1QBwWIRIgRJlULSUcl6gXf8YgD+Y+p2wr7zY4oV+LGgXae9EvY74VIZ7QIorfxchtkvDOiZJ2Zf2NDN+J92cNmFzNBsL9ZlRImRn+CaLYO/pgLZAbzHF2FNyDrG4OFeahvBQ==
-Received: from PH7PR12MB6905.namprd12.prod.outlook.com (2603:10b6:510:1b7::18)
- by MW4PR12MB6950.namprd12.prod.outlook.com (2603:10b6:303:207::11)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.24; Mon, 5 May
- 2025 16:02:15 +0000
-Received: from PH7PR12MB6905.namprd12.prod.outlook.com
- ([fe80::33b4:19c2:2281:b662]) by PH7PR12MB6905.namprd12.prod.outlook.com
- ([fe80::33b4:19c2:2281:b662%6]) with mapi id 15.20.8699.022; Mon, 5 May 2025
- 16:02:15 +0000
-From: Bing Zhao <bingz@nvidia.com>
-To: Maayan Kashani <mkashani@nvidia.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: Dariusz Sosnowski <dsosnowski@nvidia.com>, Raslan Darawsheh
- <rasland@nvidia.com>, "stable@dpdk.org" <stable@dpdk.org>, Alex Vesker
- <valex@nvidia.com>, Slava Ovsiienko <viacheslavo@nvidia.com>, Ori Kam
- <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
- <matan@nvidia.com>
-Subject: RE: [PATCH] net/mlx5/hws: fix send queue drain on FW WQE destroy
-Thread-Topic: [PATCH] net/mlx5/hws: fix send queue drain on FW WQE destroy
-Thread-Index: AQHbt2eH/04bAB2/g06A4OvKsxy4DbPEPyPg
-Date: Mon, 5 May 2025 16:02:15 +0000
-Message-ID: <PH7PR12MB69050CE7D07D606A74BB91FAD08E2@PH7PR12MB6905.namprd12.prod.outlook.com>
-References: <20250427112821.108929-1-mkashani@nvidia.com>
-In-Reply-To: <20250427112821.108929-1-mkashani@nvidia.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH7PR12MB6905:EE_|MW4PR12MB6950:EE_
-x-ms-office365-filtering-correlation-id: 430a1f86-6b81-4bbb-2e84-08dd8bee3457
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|366016|1800799024|376014|7053199007|38070700018; 
-x-microsoft-antispam-message-info: =?us-ascii?Q?RXJIMUpjkzObYn7iw1HbAWzNqrk0UpNc2j0ZYpGMI+BUB59kdEi/NKZX7xUx?=
- =?us-ascii?Q?mI65Bk9i6TOpqm4tGhck2rmVq8VvtF1J6X6hTgYVVbVOfcHXJFjFKJnTOPAT?=
- =?us-ascii?Q?zbdciYgWhYxFkDJbVFyauTXdMA+nrSevdrgTu2STApDFa2fqNf5OPDe5QtSG?=
- =?us-ascii?Q?otxkF8kVb5iOmu0hFu8HI11SLwOF6pPAcBUqwWnrKsjG7+6KFxf+wF5sHnPo?=
- =?us-ascii?Q?AAcLGr+GyTFZz2O/zjBngs39K/AEhJ6ckiapGGeni+bzD+jqV4t25P5wc9p1?=
- =?us-ascii?Q?LB9Q4ZhzE/DDMA+cqTiQ/LCL0JfUoaQJR0tRULISESa/MduBHXuuUB9L/t3Y?=
- =?us-ascii?Q?lIlo/fiGppKFaCjsSNvGaPXNlZiPPtH+eUUYHjRRBeQ7ruZ2/dwvwZ/+jFy0?=
- =?us-ascii?Q?0+fbNFxqVCOfP4rdtkE/8X8KbE5KYLWlcuQWGkNDPoOQbWDXouQKLFrQohG0?=
- =?us-ascii?Q?7DzMTuMwcKGNJ5XM3pNyW5VX3sgB5uwXPg8vRC7JOTrImJt32pxa3CCD47RN?=
- =?us-ascii?Q?tOwIneq7erPqTeVzjaTWdLUgoybuflxZ65VYF/0z7hmxy0b1xxjrdOBb0vkz?=
- =?us-ascii?Q?0nd2m9zzWJgLJhTfjZQzcBeUbAufqwnXkJIrAu+Cx+EX4qKgYc9wJt4YiUUO?=
- =?us-ascii?Q?Zf4mU/LQr9m8ZkctBi+Z85mjY7NiQFqW2KvCzY7fYADoTL4ykk/lqNqht/op?=
- =?us-ascii?Q?3Iir9dYI6fPUaHnG94Kq1fbW8BvRaUNZFgmzsC4ggYzE9PgFZIgLUp5+OsVM?=
- =?us-ascii?Q?eLOIzbtYC01qVNZ16r/5k7rhC81eRDLmw/s3aZHu9zxr0hB53qKbiHJUhvbA?=
- =?us-ascii?Q?NGyeaSEyGkhTSvqHh+IllzHNgpaCHuDVBXfvXMuggtTaL5qEXwcU0OWgu77A?=
- =?us-ascii?Q?2h8kMdZNii3cGs6Zctxdzi0+DMBs0PnFAcZg8pvGcvguxt9j0ksHlba4nybV?=
- =?us-ascii?Q?BV+mOGicNNrcHoqSI+bDmV7iW03GwhcrpE7P7wzbYWANnQiq6TqqLbZnoGCq?=
- =?us-ascii?Q?/jdhVbolC5Z6EyMHZzkaGQ3GRFlZ/KPAfnoB1wcXa42OB/l0/F1jmX+GKDBT?=
- =?us-ascii?Q?Rz/NX8sgVVqa1YBOSRVDaMcLFMDSnZD8SsO6+CQG+o4GmbNWxw8qG44qGPRn?=
- =?us-ascii?Q?Fng6+WOGzZzpeJdWeWopNQcJh20rueQLL7LeQ4/fOY8eME5jgKD9SOrtUNzy?=
- =?us-ascii?Q?LMN36WtS5dXyJ+aaRnvg5Do3CZP7YGYmqgVaHIfwPLpXpUM9mMylqnnZhG+g?=
- =?us-ascii?Q?TfhqrshrZKsqQzP6pJFWGgsQEIbYVJ8PlVNzLxCEAGBmYz8KBPqZHxaI5+rr?=
- =?us-ascii?Q?Qap4R5s6sEqgXqx9OUd8wIlLQ6IdGyq9w2ROPtzwnflCpw6xnipJPPGIsesc?=
- =?us-ascii?Q?twAs5CtlSvOupR1LRjhum+H1zMX+d2uPRiwhQcOEe/UncDCiXA7M7B4/sbwM?=
- =?us-ascii?Q?tTP6W2BV9A0vp1B6p9JbC3I8In8kUG3a97j7jD3uHTmUHozrAeyM2ps7WYz4?=
- =?us-ascii?Q?czOvaujgum8Jxd8=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:PH7PR12MB6905.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(7053199007)(38070700018); DIR:OUT;
- SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?CjVSwUOSPiwsdPf3kxEBqBdJK5sYJwKoD3bI+5XH/WrTtkyBnb4Ny+NaHK8+?=
- =?us-ascii?Q?QqfwBPJvwaU8a4jnDHQuHTUWjOk7VRgCI8uY8cNmbNqCSpPXWqDL9r9I9Hq8?=
- =?us-ascii?Q?byaUJpInfhYeTYbDT1o/93Xj0Mb/gUZlrjY8fMptYaUUHmsNB7qldJQA90hf?=
- =?us-ascii?Q?NblW9Yx7c+O0x8RQkzppQNgoQIpZUpsEUFa874n0nN1DkRfVJMMliMNy1Qgl?=
- =?us-ascii?Q?3wKKs/yRSB+AKg/WeVnt3ekOobeFMC1fXVGiD5IGmD8uxF0QuzUyMvQbKuzy?=
- =?us-ascii?Q?3wRE0p2dOS7cnzz3eQr5+s4VMy9Y0EYOH9kRBZlQVwbBikfw84MwJjYlueZy?=
- =?us-ascii?Q?AzB+qMMVuh++UFqlFXhcby/d8xVW0aTmCX/zDpFcZC4LqOGAwuUJlOkJZRiC?=
- =?us-ascii?Q?ghmovsRFzewAkTR/SzSBIhuTqKpAeeGwthGv3FoLHAyLJS0l9tIkCtNGblDG?=
- =?us-ascii?Q?XY2YmXUHkWkU1oAaKwZOzmvShaHV+YaTv4z4SeIEbrzify6bk5E+8kJ7Wixi?=
- =?us-ascii?Q?QOdRtUII00fzdTeOybIh479Yd2LSPPKulecfFonDxNmdtNkmPN/WyNqvGc4I?=
- =?us-ascii?Q?wFoc/EN4kRq8ykAMhcpFZgayBTx8N3+7wwGJPmrHxc0euNvML7d7sRy3JCBC?=
- =?us-ascii?Q?7ldR+ooPx7gICDx4M6PeCu8AaH/2YCqfbyxLnxE9I5alSCFay/8/AR2mpXYy?=
- =?us-ascii?Q?nKUNPAOj3vJS6z+Gxo6Q6WoEgaLDCLuIODHe4MW7SDx50cEQDWguFxPVVKMC?=
- =?us-ascii?Q?RrnpuMvsvRssrF5/ULDniR+X6TKdFjd6kGT4P6AhVoPmaflMTreGw8O2Aii2?=
- =?us-ascii?Q?rkjH5tKLgCvUDyXh6vjZt/1BJGvEJtA3EaD2Mh11r32Gn1wLtjKWfVY+hRye?=
- =?us-ascii?Q?SddgS/F0m9A69voY7BW4uDumwz6vDo58EnVgHROW4qcMGjWuPBkSzZSLn8w4?=
- =?us-ascii?Q?zJJFWbdcYnUbcvafgPnrHTm5jPlLstLmDLsrJ0hLPNFyFBB+WKhDUf1kM/qZ?=
- =?us-ascii?Q?PCYynRb6gnMcOg32HnAr5rJQKXxGWG+cZdcyoQzBLb3Yv8fbk2CxH46JbU63?=
- =?us-ascii?Q?rPcjAlNdOQaTpeiDnd3Llj7dYNLIjx1W8AZAsBuU8ZjgzfOXekV0pa4Cmqgf?=
- =?us-ascii?Q?Oz07rje8LweiruhH4utMEQJjaV3kdWc/lxaG/K9X9dYkxJgT1OLecL/kWbN+?=
- =?us-ascii?Q?z2EzjQUuCG7ukPd56lgS3zhvTwI1BlM/tvgDnXFtidrLdsbgghlO08WDH47v?=
- =?us-ascii?Q?NGAAO7Q2qM5QNl8CISIGHrzNntjB53PJih8vl+q76Cp4eQLTPx48uJ3WZ/xb?=
- =?us-ascii?Q?Pf4F1sfxDS5pFH0oTkuxJHj3EitFlFZat9c7Sm6HCXdR3botLGjVvAyiEgsg?=
- =?us-ascii?Q?YpNkUS4rlpo21ge/rqAZnhD1DemfHWw8AXQ4q3uZwrgme3NqgCE9MUVgR4FQ?=
- =?us-ascii?Q?cUGj3GTa7CFSgkHvT46FeFMYwEZKIYNaOistT2/mwZocWsfk7gl/kAUzXYzl?=
- =?us-ascii?Q?35hhjf3AqR/VqPE/sdlJ+yYb91DRbcYLaMPfSpmwNXZyJ5M/14hbC+DlBe8x?=
- =?us-ascii?Q?o17pZanr+naq7TX562E=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id C176D4025D;
+	Mon,  5 May 2025 18:13:14 +0200 (CEST)
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com
+ [209.85.215.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 43D7E4003C
+ for <dev@dpdk.org>; Mon,  5 May 2025 18:13:13 +0200 (CEST)
+Received: by mail-pg1-f174.google.com with SMTP id
+ 41be03b00d2f7-b1fcb97d209so1202249a12.1
+ for <dev@dpdk.org>; Mon, 05 May 2025 09:13:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1746461592; x=1747066392; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+ :date:message-id:reply-to;
+ bh=0ee7OrYF6Q21sbYiM4LTSrtdXHuNolNL4RLGShjOm+g=;
+ b=cguPcoouZz0Mv25kJbbDvnjKbPZYmJ9S5KVlASC5Z6DDAzoo492bPDFxa44QvGlY9/
+ kE8OORfgVXFrMO31JaYMlXB9OmjJ/pwoTbfUZn1uE092ai2TUjuj+XIZ3Hs/JAiZGiiA
+ Emr/8YCcnLmsxeCUlo9HXJ74ZfAWxHIt0TlFo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1746461592; x=1747066392;
+ h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=0ee7OrYF6Q21sbYiM4LTSrtdXHuNolNL4RLGShjOm+g=;
+ b=TmqKYufNCIN9T9E9bqMV8aSZPtu3OP+OzlYGHYUNx2ZrcUJWtALJmxZrBxhPj+ve+R
+ i4qGk/H+5ZsRkOlI0qB1fbWD00dFW6A6l8QfFvmdsehlwX4DH0qmuvpTJ4S9aiX2d5U+
+ e62bDBnDBnDiw+fg6Rja2HAlLLE/4ub/X9MWm3POMjPCF4nREuE1nCXUSJykDpO1/F50
+ b/Bhuv04eUu6hURwQP6PRQcYjTNxw3Fg0sV0wvhwt75MUhuXH4KzVZ/oWpuxL0fmiGzf
+ ixKbDBKFK91lGLzGVThmep/+OQA/SOkbHD+RjisRfnUw1blhbntPc7KJvdSbdSrZfTtO
+ lI5A==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXGTZQmNxpvN184OARs5KotclJozqosP5ivQ4LFcMgF4i03ZCb8/4OBHCYoWkqyUnagXhY=@dpdk.org
+X-Gm-Message-State: AOJu0YyUwinIeokUM7dyZMB69xhYi0EFs2iAR0AnfGDy6A8XqT3gxgaR
+ k5C1odMkd6OUrRwA/qjoBK4h7zHsFSMxbHH0GnOh/5iku5NtxPpE+C+J9lypykIJmIKxJab/7Px
+ XOfSm+MEWs/akqGqdAsflqGD4P98rBLCahrJGmw==
+X-Gm-Gg: ASbGncsv8L6WluyDYv7OmX9FfB1/oa+c3LLxy7Mwp59TjaAza5OxmVIOiyTachAiW/a
+ rUCxXe7ZpF7hI6wkXcUTyQR0zVBhpTdH8OtUZf/9CBYegPC/6Uqe5wI1QEka9kIZd1FxuhMS9aV
+ TsS4iK8R7yek8QHGgj3CRpz7Z3vkFPkpREv6KC
+X-Google-Smtp-Source: AGHT+IFv9yEdGG8MWsestdL+lKcNBP6nfw4xh5mqx/PwhlQ38sWdk8I8XCPSZgUjtaUOHIGjkXr0oV1qJrdcYJxfJEA=
+X-Received: by 2002:a17:90b:2b4b:b0:2fb:fe21:4841 with SMTP id
+ 98e67ed59e1d1-30a7bad8dcamr103139a91.8.1746461592068; Mon, 05 May 2025
+ 09:13:12 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6905.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 430a1f86-6b81-4bbb-2e84-08dd8bee3457
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 May 2025 16:02:15.2894 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: AspZeS3nsIY2cNefIiujkX3OUAHY4DCD9odo169aWRVqgwxIOb8Aoyv28V9ToPPeeqmO6IS3icUk1k42kLSp0g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6950
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Mon, 5 May 2025 12:08:37 -0400
+X-Gm-Features: ATxdqUHpZWeW9Ns1xcOxj1r4OGmUvfmYmOxsahsqkuI6RJS0mNSMRUkBzd9RpQw
+Message-ID: <CAJvnSUDfGsKk0c7Mk9jsRMxh4wO6M32quitrnkDPWHHiTZEiCA@mail.gmail.com>
+Subject: Polling for patchseries in DPDK - the /series/ and /events/ endpoints
+To: Aaron Conole <aconole@redhat.com>
+Cc: ci@dpdk.org, dev <dev@dpdk.org>, Ali Alnubani <alialnu@nvidia.com>, 
+ "Brandes, Shai" <shaibran@amazon.com>, zhoumin <zhoumin@loongson.cn>, 
+ "Puttaswamy, Rajesh T" <rajesh.t.puttaswamy@intel.com>
+Content-Type: multipart/alternative; boundary="000000000000cf3e54063465c6ad"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -146,61 +69,205 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi,
+--000000000000cf3e54063465c6ad
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> -----Original Message-----
-> From: Maayan Kashani <mkashani@nvidia.com>
-> Sent: Sunday, April 27, 2025 7:28 PM
-> To: dev@dpdk.org
-> Cc: Maayan Kashani <mkashani@nvidia.com>; Dariusz Sosnowski
-> <dsosnowski@nvidia.com>; Raslan Darawsheh <rasland@nvidia.com>;
-> stable@dpdk.org; Alex Vesker <valex@nvidia.com>; Slava Ovsiienko
-> <viacheslavo@nvidia.com>; Bing Zhao <bingz@nvidia.com>; Ori Kam
-> <orika@nvidia.com>; Suanming Mou <suanmingm@nvidia.com>; Matan Azrad
-> <matan@nvidia.com>
-> Subject: [PATCH] net/mlx5/hws: fix send queue drain on FW WQE destroy
->=20
-> Queue sync operation was skipped on rule destroy.
-> Unlike on fw wqe rule create in which both fence and notify_hw are set to
-> true, on destroy fence was set to false causing previous queue operation
-> to be stuck in the queue forever.
-> Example:
->    rule_a - HW rule, rule_b - FW WQE rule.
-> Sequence:
->    rule_a destroy, burst=3D1 (HW rule put to queue but no DB)
->    rule_b destroy, burst=3D0 (FW WQE rule cmd but no queue sync)
-> Outcome:
->    rule_a is stuck forever in the queue - no completion.
->=20
-> Fixes: 338aaf911665 ("net/mlx5/hws: add send FW match STE using gen WQE")
-> Cc: stable@dpdk.org
->=20
-> Signed-off-by: Alex Vesker <valex@nvidia.com>
-> Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
-> ---
->  drivers/net/mlx5/hws/mlx5dr_send.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/net/mlx5/hws/mlx5dr_send.c
-> b/drivers/net/mlx5/hws/mlx5dr_send.c
-> index e121c7f7ed5..d01fc7ef2ca 100644
-> --- a/drivers/net/mlx5/hws/mlx5dr_send.c
-> +++ b/drivers/net/mlx5/hws/mlx5dr_send.c
-> @@ -339,7 +339,7 @@ void mlx5dr_send_stes_fw(struct mlx5dr_send_engine
-> *queue,
->  	pdn =3D ctx->pd_num;
->=20
->  	/* Writing through FW can't HW fence, therefore we drain the queue
-> */
-> -	if (send_attr->fence)
-> +	if (send_attr->fence || send_attr->notify_hw)
->  		mlx5dr_send_queue_action(ctx,
->  					 queue_id,
->  					 MLX5DR_SEND_QUEUE_ACTION_DRAIN_SYNC);
-> --
-> 2.21.0
+There was some discussion at last week's CI meeting about usage of the
+Patchwork /events/ endpoint for polling for patches, and issues with that
+process. Here is a relevant blurb, explaining some issues Aaron has run
+into using the dpdk-ci repo "poll-pw.sh" shell script:
 
-Acked-by: Bing Zhao <bingz@nvidia.com>
+----------------
 
-Thanks
+* Discussion pertaining to looking at polling for series using the events
+API. This events endpoint (with series created event) returns info that a
+series has been created, but returns a limited set of data in the payload,
+and this necessitates a followup request to patchwork. So, this seems like
+it would actually increase the amount of requests made to the patchwork
+server. Some related issues discussed are:
+   * You cannot query the events endpoint for only events from a particular
+project (this matters for patchwork instances with many projects under
+them). For DPDK there are only 4 projects under DPDK patchwork, so it=E2=80=
+=99s not
+a huge deal, but still a small issue.
+   * The datetime that the series-created event returns is the datetimes of
+one of the commits in the series, not the datetime of when the series was
+submitted. So, this means that if you amend a commit (this does not update
+commit datetime) and resubmit a patchseries, the datetime on the
+series-created record will not be =E2=80=9Cupdated=E2=80=9D. This can cause=
+ us to miss
+series when polling via the events endpoint.
 
+------------------
+
+And for context, poll-pw.sh will check the /events/ endpoint for new series
+created events like so:
+
+--------------------
+
+URL=3D"${URL}/events/?category=3D${resource_type}-completed"
+
+callcmd () # <patchwork id>
+{
+	eval $cmd
+}
+
+while true ; do
+	date_now=3D$(date --utc '+%FT%T')
+	since=3D$(date --utc '+%FT%T' -d $(cat $since_file | tr '\n' ' '))
+	page=3D1
+	while true ; do
+		ids=3D$(curl -s "${URL}&page=3D${page}&since=3D${since}" |
+			jq "try ( .[] | select( .project.name =3D=3D \"$project\" ) )" |
+			jq "try ( .payload.${resource_type}.id )")
+		[ -z "$(echo $ids | tr -d '\n')" ] && break
+		for id in $ids ; do
+			if grep -q "^${id}$" $poll_pw_ids_file ; then
+				continue
+			fi
+			callcmd $id
+			echo $id >>$poll_pw_ids_file
+
+
+-------------------
+
+But, as was discussed at the meeting, once you have the series ids, then
+you need to make a followup request to /series/{id}.
+
+UNH has a download_patchset.py polling script very much like poll-pw.sh
+except that, because we store extra info about our processed patchseries in
+a database (to facilitate lab.dpdk.org filtering functions), we use our
+database to get the most recently processed patchseries, instead of the
+"since_file." Our process (running every 10 minutes from Jenkins) is like
+this:
+
+1. get the "since_id" from our database
+2. get the "newest_id" from https://patchwork.dpdk.org/api/
+events/?category=3Dseries-completed. Get the [0] index of the json response
+(the most recent patchseries) and save that series id.
+3. for seriesID in range(since_id, newest_id): get patch from
+https://patchwork.dpdk.org/api/series/{id}.
+
+So, both poll-pw.sh and our UNH script follow the process of making a
+request to /events/, and then followup requests for /series/. Thus the
+total number of requests being made on patchwork is (number of new
+patchseries + 1).
+
+-The most consequential difference in the two implementations is that
+poll-pw.sh makes a request to /events/ with the &since=3D${since} parameter=
+,
+passing in a since datetime, and UNH does not. As Aaron explained at the CI
+meeting, because the datetime provided in the /events/ payload is not what
+one would expect (it gives the datetime of the commit, not when the series
+was submitted) this means that poll-pw-sh can miss series. With the UNH lab
+polling script we don't have this issue because we don't make use of the
+since parameter in our /events/ request. I think the options for poll-pw.sh
+going forward would be:
+1. Update patchwork so that the datetime provided in the /events/ payload
+is what is "expected" i.e. the datetime that the series was submitted at.
+2. Adopt the UNH process of discarding the &since=3D${since} parameter, and
+rely solely on tracking the most recently processed patchseries id, get the
+newest patchseries id from /events/, and traverse the range of (since_id,
+newest_id).
+
+-I agree it makes sense for /events/ to support a "project" param.
+
+Thanks Aaron for raising this conversation. We can continue the
+conversation over email, or also in person at DPDK Prague!
+
+--000000000000cf3e54063465c6ad
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div>There was some discussion at last week&#39;s CI meeti=
+ng about usage of the Patchwork /events/ endpoint for polling for patches, =
+and issues with that process. Here is a relevant blurb, explaining some iss=
+ues Aaron has run into using the dpdk-ci repo &quot;poll-pw.sh&quot; shell =
+script:=C2=A0<br><br>----------------<br><br>* Discussion pertaining to loo=
+king at polling for series using the events API. This events endpoint (with=
+ series created event) returns info that a series has been created, but ret=
+urns a limited set of data in the payload, and this necessitates a followup=
+ request to patchwork. So, this seems like it would actually increase the a=
+mount of requests made to the patchwork server. Some related issues discuss=
+ed are:<br>=C2=A0 =C2=A0* You cannot query the events endpoint for only eve=
+nts from a particular project (this matters for patchwork instances with ma=
+ny projects under them). For DPDK there are only 4 projects under DPDK patc=
+hwork, so it=E2=80=99s not a huge deal, but still a small issue.<br>=C2=A0 =
+=C2=A0* The datetime that the series-created event returns is the datetimes=
+ of one of the commits in the series, not the datetime of when the series w=
+as submitted. So, this means that if you amend a commit (this does not upda=
+te commit datetime) and resubmit a patchseries, the datetime on the series-=
+created record will not be =E2=80=9Cupdated=E2=80=9D. This can cause us to =
+miss series when polling via the events endpoint.<br><br>------------------=
+</div><div><br></div><div>And for context, poll-pw.sh will check the /event=
+s/ endpoint for new series created events like so:</div><div><br></div><div=
+>--------------------</div><div><br></div><div><pre style=3D"padding:0px;ma=
+rgin-top:0px;margin-bottom:0px;color:rgb(0,0,0);font-size:13.3333px"><code>=
+<font face=3D"arial, sans-serif">URL=3D&quot;${URL}/events/?category=3D${re=
+source_type}-completed&quot;
+
+callcmd () # &lt;patchwork id&gt;
+{
+	eval $cmd
+}
+
+while true ; do
+	date_now=3D$(date --utc &#39;+%FT%T&#39;)
+	since=3D$(date --utc &#39;+%FT%T&#39; -d $(cat $since_file | tr &#39;\n&#3=
+9; &#39; &#39;))
+	page=3D1
+	while true ; do
+		ids=3D$(curl -s &quot;${URL}&amp;page=3D${page}&amp;since=3D${since}&quot=
+; |
+			jq &quot;try ( .[] | select( .<a href=3D"http://project.name">project.na=
+me</a> =3D=3D \&quot;$project\&quot; ) )&quot; |
+			jq &quot;try ( .payload.${resource_type}.id )&quot;)
+		[ -z &quot;$(echo $ids | tr -d &#39;\n&#39;)&quot; ] &amp;&amp; break
+		for id in $ids ; do
+			if grep -q &quot;^${id}$&quot; $poll_pw_ids_file ; then
+				continue
+			fi
+			callcmd $id
+			echo $id &gt;&gt;$poll_pw_ids_file</font></code></pre></div><div><br></d=
+iv><div>-------------------</div><div><br></div><div>But, as was discussed =
+at the meeting, once you have the series ids, then you need to make a follo=
+wup request to /series/{id}.</div><div><br></div><div>UNH has a download_pa=
+tchset.py polling script very much like poll-pw.sh except that, because we =
+store extra info about our processed patchseries in a database (to facilita=
+te <a href=3D"http://lab.dpdk.org">lab.dpdk.org</a> filtering functions), w=
+e use our database to get the most recently processed patchseries, instead =
+of the &quot;since_file.&quot; Our process (running every 10 minutes from J=
+enkins) is like this:</div><div><br></div><div>1. get the &quot;since_id&qu=
+ot; from our database</div><div>2. get the &quot;newest_id&quot; from <a hr=
+ef=3D"https://patchwork.dpdk.org/api/">https://patchwork.dpdk.org/api/</a><=
+span style=3D"font-family:arial,sans-serif;color:rgb(0,0,0);font-size:13.33=
+33px">events/?category=3Dseries-completed</span>. Get the [0] index of the =
+json response (the most recent patchseries) and save that series id.<br></d=
+iv><div>3. for seriesID in range(since_id, newest_id): get patch from <a hr=
+ef=3D"https://patchwork.dpdk.org/api/series/{id}">https://patchwork.dpdk.or=
+g/api/series/{id}</a>.</div><div><br></div><div>So, both poll-pw.sh and our=
+ UNH script follow the process of making a request to /events/, and then fo=
+llowup requests for /series/. Thus the total number of requests being made =
+on patchwork is (number of new patchseries=C2=A0+ 1).</div><div><br></div><=
+div>-The most consequential difference in the two implementations is that p=
+oll-pw.sh makes a request to /events/ with the=C2=A0&amp;since=3D${since} p=
+arameter, passing in a since datetime, and UNH does not. As Aaron explained=
+ at the CI meeting, because the datetime provided in the /events/ payload i=
+s not what one would expect (it gives the datetime of the commit, not when =
+the series was submitted) this means that poll-pw-sh can miss series. With =
+the UNH lab polling script we don&#39;t have this issue because we don&#39;=
+t make use of the since parameter in our /events/ request. I think the opti=
+ons for poll-pw.sh going forward would be:</div><div>1. Update patchwork so=
+ that the datetime provided in the /events/ payload is what is &quot;expect=
+ed&quot; i.e. the datetime that the series was submitted at.</div><div>2. A=
+dopt the UNH process of discarding the=C2=A0<span style=3D"color:rgb(0,0,0)=
+;font-size:13.3333px">&amp;since=3D${since} parameter, and rely solely on t=
+racking the most recently processed patchseries id, get the newest patchser=
+ies id from /events/, and traverse the range of=C2=A0</span>(since_id, newe=
+st_id).</div><div><br></div><div>-I agree it makes sense for /events/ to su=
+pport a &quot;project&quot; param.</div><div><br></div><div>Thanks Aaron fo=
+r raising this conversation. We can continue the conversation over email, o=
+r also in person at DPDK Prague!</div><div><br></div><div><br></div></div>
+
+--000000000000cf3e54063465c6ad--
