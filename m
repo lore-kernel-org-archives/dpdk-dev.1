@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 719D1C3ABB6
-	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 07:14:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 340A0C3ABB6
+	for <dpdk-dev@archiver.kernel.org>; Mon,  5 May 2025 07:14:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BDF8740696;
-	Mon,  5 May 2025 09:13:39 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id CCC43406FF;
+	Mon,  5 May 2025 09:13:40 +0200 (CEST)
 Received: from egress-ip42b.ess.de.barracuda.com
  (egress-ip42b.ess.de.barracuda.com [18.185.115.246])
- by mails.dpdk.org (Postfix) with ESMTP id A8354406B6
+ by mails.dpdk.org (Postfix) with ESMTP id D1E4E406BA
  for <dev@dpdk.org>; Mon,  5 May 2025 09:13:38 +0200 (CEST)
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com
- (mail-db8eur05lp2106.outbound.protection.outlook.com [104.47.17.106]) by
- mx-outbound16-191.eu-central-1b.ess.aws.cudaops.com (version=TLSv1.2
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com
+ (mail-vi1eur02lp2045.outbound.protection.outlook.com [104.47.11.45]) by
+ mx-outbound18-65.eu-central-1b.ess.aws.cudaops.com (version=TLSv1.2
  cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Mon, 05 May 2025 07:13:19 +0000
+ Mon, 05 May 2025 07:13:20 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FBdjXi7IbZJwzMF3p+3TXcdfyr5m1mWIjuDKP9C6apTzTY69V9Ga3Xjueigvs8EvLPmX1zwAIYJSbHyGV37GRqEUryeN2rUb2EW9HUeodaQFjxrnrecJmA+uZDXTFbbGRgtBpVLgBU0IXvUHEcudXdNsyj+OiVCQvqx5YRqjdDenttkhump8edQQb266kUOKQ8u6inVm3zO8b1zaV4okeS58Em8xlUeG/TyYtj7e76/D6sug4v12LLasHR10gad5hmYEmff8ik6vff9Kk3KZctJigNbpr9R9iW0vHX2EWXkjTSV6mqHbmI0+7fehz8UZVaC7u5hpM/eRk3rRE8neyw==
+ b=hfp1wgu7BbUA/ybM/HOfO1KT0IaufugNZVMW7S8PCJjJ1wJ4CP/NDYhu544RrGIfKgrYTXzdaAGfJ79/qYRp08GV2dSAXmoRgz4OkpCTHe1htTpwKbgha8OKBAhJDg3ptblAW/QzjUiWS+c62zPU/aSYKmE/xbjTPriaOqw0WBzCTfT8c5WCvFj1jgmaTkB2h0oONeuhg1/6vidgR2uzvsme4ifJ5cyEikrcdLD3WvqxFoYNraZRYjxf7PhGKktHW+7cvoMqOXM+05NJKEfSUPitoa/4GO3chDgKhk7V6BXXfOJLkfNj2n1Jjt3iNiH9vtG9HQjVfAeJmh6H+f6u8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SQNu2jfNxbNMDICsJFLrc/sIt2TUmcdEbj5TBYHIhV0=;
- b=wdxfQJw5J0ZzpPibh/2DrzzxTrP6HpLbQs26mhZHnlIfONdjBoilWdcs0iGvhHPzotnqKqzQaj1Gv8H7JloFdYqwrfdKw7/+Oi7QTfdXDfYM/awiQn/QMrduifbQnoLiCMwp4F24y7tYnS07CGdmDD6Jog114yx2IHNa16JCW7UhJzobu6dmPSIW+DDcL9UqOlUbwKTjehcIgTReroT8kXDCngHZ4pRDXazzHQB9J+hhKCha71yS0RNHhhbnd0wGawxTxj1qrWvjgaVK7qCE8Ni2TiuwDakT/qEZqKPluFJtAum/HsEtdoXr94XeifZm0obTh7u373EWWJD7803H+A==
+ bh=qZWnWK7UMDkOovJxrg6iNhOn3iHIUMYvfLB3loQtDAM=;
+ b=wGx2Aqa7uXrRmnHHzoVrudfqoxPVBH3YCUnqDMHUD0Xaxydlbggv4Ii7gf3hqdOoB24+6SmG5Szuf+KPCVG5UAZbir8oR3qiFA0xksYzk79zW0gkrI9fKfPHY6Kf3RREOVwzBomr1jnl9H0aiIexyNPbveFGdKi8SCP34Bm9/crsH9Hdz/1+zvbzjhMS/w/XbdtjTKS17jQ5OWGW5C82rxcd75ct6T2avudWd08AfZwD2ay5i3QN0mvL2NsopL42d6t+esIeSUnz2YLx0gFgvIFuu79g6MsKiCBajpujxmSWl1e8fWYOBvN/7wyf2Fb6DAHl6TbJwCQIlKISZo06xQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SQNu2jfNxbNMDICsJFLrc/sIt2TUmcdEbj5TBYHIhV0=;
- b=WKF1zSgZisE8NlVnR4nXS01m9KcN4q/QDxcvBOqa3g2IQz/K8ZEGJ0HXCe8IBvxaDNCMYSmiSJYwfKyntQ7bRCqNYj/7YlBnFzYDp1sBofr+t7Obrc/FNdqGOsH/plREkJdOG0jIoH5q3O/1ep9M6vV3cQ7FeUgsIe7aVijM78E=
-Received: from DU7P191CA0003.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:54e::8) by
- DBBP190MB2033.EURP190.PROD.OUTLOOK.COM (2603:10a6:10:52a::18) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8699.20; Mon, 5 May 2025 07:13:15 +0000
+ bh=qZWnWK7UMDkOovJxrg6iNhOn3iHIUMYvfLB3loQtDAM=;
+ b=KXjFno+sHMvGtZ6rsBV8vPoQMywIWh1f5uIHmUswRW+mYQmV7SXVV2UO3HohqOPJbx2MKlHukqJxSVlyUWjWFXUM2BbD2g8K8IZwB0BTwbPk1CVKqCBeh49euRHpthaTjqwSeuy6pynaeEdHh+O2nX+gAQ5YAcd+yE8d/4ju+W4=
+Received: from DU7P191CA0014.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:54e::27)
+ by AM9P190MB1090.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:26e::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.21; Mon, 5 May
+ 2025 07:13:18 +0000
 Received: from DU6PEPF00009523.eurprd02.prod.outlook.com
- (2603:10a6:10:54e:cafe::d1) by DU7P191CA0003.outlook.office365.com
- (2603:10a6:10:54e::8) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10a6:10:54e:cafe::c3) by DU7P191CA0014.outlook.office365.com
+ (2603:10a6:10:54e::27) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.8699.31 via Frontend Transport; Mon,
- 5 May 2025 07:13:15 +0000
+ 5 May 2025 07:13:18 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -50,15 +50,15 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
  client-ip=178.72.21.4; helo=localhost.localdomain;
 Received: from localhost.localdomain (178.72.21.4) by
  DU6PEPF00009523.mail.protection.outlook.com (10.167.8.4) with Microsoft SMTP
- Server id 15.20.8722.18 via Frontend Transport; Mon, 5 May 2025 07:13:15
+ Server id 15.20.8722.18 via Frontend Transport; Mon, 5 May 2025 07:13:18
  +0000
 From: Oleksandr Kolomeiets <okl-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org, thomas@monjalon.net
-Subject: [PATCH v2 05/26] net/ntnic: include all queues into statistics
-Date: Mon,  5 May 2025 09:12:45 +0200
-Message-ID: <20250505071309.586015-6-okl-plv@napatech.com>
+Subject: [PATCH v2 08/26] net/ntnic: correct misspelled variable names
+Date: Mon,  5 May 2025 09:12:48 +0200
+Message-ID: <20250505071309.586015-9-okl-plv@napatech.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250505071309.586015-1-okl-plv@napatech.com>
 References: <20250505071309.586015-1-okl-plv@napatech.com>
@@ -66,64 +66,64 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU6PEPF00009523:EE_|DBBP190MB2033:EE_
+X-MS-TrafficTypeDiagnostic: DU6PEPF00009523:EE_|AM9P190MB1090:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 33cb315c-7da8-4ec7-9c7d-08dd8ba44e1b
+X-MS-Office365-Filtering-Correlation-Id: df236569-394b-48fb-4657-08dd8ba44fbe
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|376014|36860700013|82310400026; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?IkBx/iNr3LVP8N7OODNq74cKjEU9ob+j5AdA23qQwskJ4a2tUc2fB1aKmklY?=
- =?us-ascii?Q?4+7oQWrsftSVvWMCDPwgbzBOxmemZgFnJm2tiET33ALC+QYIUN64a9ks52yR?=
- =?us-ascii?Q?5hjpRC6gOi3DMzvPM7ZNL9DXGw//BPz+vYepuIKFUhzioxgQKmNCzEUOZ0d1?=
- =?us-ascii?Q?s6saR9pACAoe9A5K6bR2+YfmP7kZc5ZWfJBmnQRks2ia1e+y0GSmI2TWsHHE?=
- =?us-ascii?Q?UccICiO4pudBOcDRJ8yphc3BZtSUrD4hgMJFLLDZfCh6eP0nHew6TGKyzrE5?=
- =?us-ascii?Q?9MgF4/BYq5XATk91BGDY8yi+B8cwZ4TwqIpZAkzls0zppSJoK62zeCK00U/e?=
- =?us-ascii?Q?oTuQenKhuuMdvTEr4pA81XKPnvbZYAfnsuvTAUJxdwBHz0Cx1fusRVIZlfFg?=
- =?us-ascii?Q?bBincPcykZRohkRAoUzEBihARh5IG1XJHl3BYKrT/6KOK41UMwfbYTcKsNtI?=
- =?us-ascii?Q?D7Ux3n6wRRmKOuMjm14Y+ruJSb2AwyKWRYz4IfFN469xdKtYFaYeLhPekBwA?=
- =?us-ascii?Q?vwMJDjlne+Z9+GvWfSiJP6HugACcAwECW3L19ZUVzBUprK+T6yBmDfl1xvNg?=
- =?us-ascii?Q?48/wSH4Kevj4DX/LTMZuxETJ8UUsG+CuME5pByh7fG1yFtjYxh8+3g0065tL?=
- =?us-ascii?Q?Y/AGBlLEJq55r7mKVq50nCnXYkDaFxpFwxthO0WYerVmwKN38DQeYHR679YO?=
- =?us-ascii?Q?hVS/fqfZHkclwBqjl7FnlDiSlT5idDD8RtcgMfhlAC7NWQB1EotuHGtcmy0v?=
- =?us-ascii?Q?ga75ExTsACMpN/fjmGD+In4xyJ0SR18Y6MQmEuSUaGrgVlUzvtSAFvklgdNQ?=
- =?us-ascii?Q?13Ks67nledjtNeBh4z1X2T3jwSEPwHmVoSzoDiCZ1Utaj3wbJyhsINm/uvjU?=
- =?us-ascii?Q?aTQXioo2HOIS84fTetolpUhkJHATeI3FUYUnMcbUVRtpYkrnwfky6g4Muy3R?=
- =?us-ascii?Q?WX8Nj3xpewtjgVQqnLkS/RfzQi1NlVeq4lviq4HC5IKOZoFlLZaKeX3idkfZ?=
- =?us-ascii?Q?Pxu7X3n8VRJVbQSWMgneuRbkvI+WsLnxe/ZiqLjIamFw4JFRchYLRiJy9Vr+?=
- =?us-ascii?Q?LJyMKBK8Op1cwmS+BZ5bY3ONk/wflH4MPfeWly0M+8C0AP1NPw+azPu/P4wp?=
- =?us-ascii?Q?3aaGCB9ay9OhMMDmSIT3OgvWVyTW2nzgX7k3GDpnx3EOhUK/x4KFUbU/068/?=
- =?us-ascii?Q?YFKNZgH4nKKAsEGx4jIBGwIlof005U7rAKt0T8OZRQKbUPFnZhkAxQD3tvJI?=
- =?us-ascii?Q?baf5epaeWzBBINAXaMcYE0uxL+whkdzlJdyDWA0/yIJEyfwsvtlmnug6AsCH?=
- =?us-ascii?Q?RbbLOVfNT2Mdwl7qXeYTSA862eBW8Bq6pT3ZTbeMMwdsC1I5L7z9D48kJSm/?=
- =?us-ascii?Q?GQ49UCf7frqLqgKJ7O34Wa0s+TaUmBjCJH14D0o1NTWtiB+GdYUhNF7hcFya?=
- =?us-ascii?Q?su++Hds4DoDCplF13AD1aVACD7qzQZVC6xow++1ghHh6offS8senwncvktJu?=
- =?us-ascii?Q?rvzGOeHke2YQIvklLsVpIuPQv1jD6XrliEmk?=
+ ARA:13230040|36860700013|376014|1800799024|82310400026; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ZK255Elz8gXLOjkkOqe/VlXC226B89femuDbO4pf27B3u35rxoVCM6JlHuMs?=
+ =?us-ascii?Q?JZ4LomZxdZzcmBA4MyAEFmf8Fo4ccuWHPedEhBJWLQVEgChaaWnbujRB96CN?=
+ =?us-ascii?Q?7t95lGmybSzPnn34d8NiBgHiitrvgQGAoaUCvGew/YpIeKE2y/NybK6x56/Q?=
+ =?us-ascii?Q?ni+JMBeifKd3dVNfhF+9cK1U9imcr19luRuAmnhkwvnZYBR6jzDV5et6PkLB?=
+ =?us-ascii?Q?xUKSLyl5g2o3vln79xVUz8oxLLQjM4pMpb3SEzOrEs3NvhdVk8qmxj6Q0JZ2?=
+ =?us-ascii?Q?u5rerp8wmEYBcfcWxpoMRDaY+AEiVNombVeFhof52R7gQaHRrt+135dQ32/2?=
+ =?us-ascii?Q?UziPataCf8SdYm69oWxcCWD+U287UZsdek0ChuAk44/Rz1hRVw1FOndRtyVE?=
+ =?us-ascii?Q?gDrrGgx5iWe5oKIhgmlH2UExWfb2EULN9Wp2VG4yNie9T2h2F0vBDWci8WnG?=
+ =?us-ascii?Q?alAGP18axDa2O1tn8Hzkok0Fko7UGPENQq9oIWgxj9bnwMZhbWfShO3SlI/d?=
+ =?us-ascii?Q?228hnyfJIcGEis6IJBVo8F6+MMNliduH+CfSAHJ1aHyu3J8pP7XoJmVTDPYk?=
+ =?us-ascii?Q?z+V4QT3SCeH3cOX4syuEOmeCXmc3aB2Z1lQlpQ/cmdUxvCi1vhfFisv/+nho?=
+ =?us-ascii?Q?mEu9HpzrQVLmozia2IKgvuOtbAUY+yf26E/OiCz8ZKtl7t1/mauyxebbFC6R?=
+ =?us-ascii?Q?cOtZKUX4H2P1NO4oIYsWsQTtVmJ5vbgxcJz02mr3csPcR//U8cJzh/pQEXMH?=
+ =?us-ascii?Q?0K9bWPAF+JeJJS9W4KFHEBzXlujM7JY6r9nlHdytOMMaj9+KP2MVaCZk4OvD?=
+ =?us-ascii?Q?OA5aHJ0mAGxHOOdjoWEJ/xrFu+xYRJwBhdBcFGLaYBZRd1zlQjGeXm+Vpi3x?=
+ =?us-ascii?Q?3UEZdI7it8QErPMG6ilNS46rcm/L81eV9u1iR08TSQIx/Lno22Lca/ft/wfa?=
+ =?us-ascii?Q?QA0yLgggpW5RXE/KC6WQQVax6vNRcbt0Qef8JVBcDBZC2+lqRgeSPIAouAYx?=
+ =?us-ascii?Q?gtvXlFBmkxyW5bZ/HtA4PsAZ8/4hWsXClZ2ctotjjminyBD1zbwiXfLnmjCB?=
+ =?us-ascii?Q?YphB9lwV5ht3w9afVmKID2oMocselFdb0B1glKP9qsBZVoePv8MGChP7DUog?=
+ =?us-ascii?Q?XJ3wXOiHopLQpg6XvfUoFiBk0w3aoFOJLyMK420gmIjQ2azNhDXiyZIl4DEo?=
+ =?us-ascii?Q?PhrSlGjFQiK4Oi2V34T3B4QzZT50SldkL6HlrEueHlWg5STJdlpDp42n9Sgq?=
+ =?us-ascii?Q?izUS10X2GvttmyJ1yBKyw6YWlKYqBq4/+yA8y2XEVk41paP8YsNyabCi0JCV?=
+ =?us-ascii?Q?1fDNpw0FJSsDJCil7oqEFx3m/TBoRRGe1KTS++/kZ2tW5fsyAAVb4nmIu5Ds?=
+ =?us-ascii?Q?f/Q1DGaMJwP/VtZJUYUl1DbmAq0mQF/Jz7Zq3hsJUrzpJ2jdDxE0zKUOQUej?=
+ =?us-ascii?Q?hFOSLd9q8KPxVjLxOfUvre2qPxn/fWEu2J/XgQq3+oR1mvj8F7JvASiY9rMo?=
+ =?us-ascii?Q?OfS6c5Q5vZ72vkRAW8/ZMzojoKtfbaDO7nNF?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);
+ CAT:NONE; SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: +lf67nMa4wpx/A2BhM1RRHbiHDe3Pjn8vBQlgeIIVGuGsIQ7aAY1zOx+eGw5vuX7EF6xIKNuWQbrSHZz3Jxy+BTBeTRiPxRi0+rDcvQ7l1PM+tP2vjmOt+Z5Jmn+dUDRJsIA+m/HFfGzhktzWvYQKlCH/YwCxipUAnj5/kwPg6MBKrT1wTw4VwVoKUB9if1voT8Q9rIT0fSIPjFWfrO8Jz7cYJVpmeBEd7Bcpj6yRYab8I+C/iGnz6VI0nITNIQ0WS6OLgKRvWyjPLXPzocBCt7T+GwI19JTyMdHa/2vPfE8kv2vXZJ3x33t7iBJSPBYvpsgNfyn6QGLWVZhf4SnQuF7KAH3Ja+o/7yUVt6DS/mxqhju8KHKJm3XW026SQu512qucAKmj9SF0JDG9OMLn/1NuqYc7YR4xWeMHlxiNHIX5KaQk/QzEkdg3U/+1xBadKVqqwt0h6xDbSIq/3EgtFOHRhlyPi2FP0kuYCHn8M2iX/h+HxDSN4nd25YDx/1oUqsUCdV6VUbfYI12ZDSdV7xmOvzjnMP+GGMVFsb384Zqhze2dfQ1R3OHetynHB+dCd0z32O8u82roOU8flJUthoAOKOQLQVqFuaSyaWQBLDtQIt6ZMtktg3CD9pEcEUFJ/spEQyhRRIJcgiAwP2/bg==
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: KSZIBYo7TH0Fi4qtJN/ZyeBy3v88FU22j24ff6OSZGFjWzcoC4lGe+lP40WcdaiLWDd3qi/xOoPlKS6QxArMpVw1PrI5JbahQWzib77TEjz2sCcQcLNS8T37CU05cjfmpVtQpZaEOH990SRfQnY7biysRmnllnoV7vRKhFo92mkJ9LyIulSuDH70lExeq7gbcuONlV88u+UMOK8GqTOiGnkDWamv+zkB6zbQynW/zB5+/C2NjlsR+AbJ+fwVeIyRh3DpMBOgtlqrEshopcpLrqOEPv+3uq2xwx9Rxx5IF4GkLtPczsdFy2rq72DSsG5HuCBMM4w7ksaSFrDLbC/utCs725XhDZKHDZCEBSAHEAzzoVbgV3UdMvqGjvRGmjAqBO8DCpIzMpfLDDL/XaMhqSJ8/h7qOdtEVo32P5PG/dDE2tl/W20WfLmBuDsjvgfoRZ1sb7WeWwCbgzYL0MGywBresC7/6dXJftQNJM2qeYn8kouHAjqoIsB5N/LOGJDXCGuewuzZxE32plumthuTooGYSLAJzZDyt6tzUoi+L49ixO3MaWtlkFdagHomG9OmvllQIMiUYC2FBrMgGcBmVS6PEkaFkIPr+MPTAM6xEUhg9l8fBQfU8ydF9erYnhX/qWK2jvRKa6PwRn1rrynrmQ==
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2025 07:13:15.6075 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 33cb315c-7da8-4ec7-9c7d-08dd8ba44e1b
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2025 07:13:18.3520 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: df236569-394b-48fb-4657-08dd8ba44fbe
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: DU6PEPF00009523.eurprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBP190MB2033
-X-BESS-ID: 1746429198-304287-9867-4790-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9P190MB1090
+X-BESS-ID: 1746429200-304673-7659-373-1
 X-BESS-VER: 2019.1_20250429.1615
-X-BESS-Apparent-Source-IP: 104.47.17.106
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVkaGZuZAVgZQMM08Nc0gLdUi2S
- QtNTnZxCAVKJVoZpBsYWGRkpyclqhUGwsA2NcNEkEAAAA=
+X-BESS-Apparent-Source-IP: 104.47.11.45
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVkaWlhZAVgZQ0MLEwijJ0tLU2C
+ LNMs3I0szSwMzIMNUgxdDUOMXUPClRqTYWACsHzkVBAAAA
 X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.264372 [from 
- cloudscan21-15.eu-central-1b.ess.aws.cudaops.com]
+ cloudscan12-166.eu-central-1a.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
@@ -144,58 +144,80 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Queues with indices greater than or equal to RTE_ETHDEV_QUEUE_STAT_CNTRS
-are ignored when calculating per-queue statistics,
-however they should be taken into account for calculating the total.
+Rename alloced_size to allocated_size.
+Rename num_queues_alloced to num_queues_allocated.
 
 Signed-off-by: Oleksandr Kolomeiets <okl-plv@napatech.com>
 ---
- drivers/net/ntnic/ntnic_ethdev.c | 32 ++++++++++++++++++--------------
- 1 file changed, 18 insertions(+), 14 deletions(-)
+ drivers/net/ntnic/include/hw_mod_backend.h           |  2 +-
+ .../net/ntnic/nthw/flow_api/hw_mod/hw_mod_backend.c  |  4 ++--
+ drivers/net/ntnic/ntnic_ethdev.c                     | 12 ++++++------
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/net/ntnic/include/hw_mod_backend.h b/drivers/net/ntnic/include/hw_mod_backend.h
+index fcf9ebef8e..f7d4085e5c 100644
+--- a/drivers/net/ntnic/include/hw_mod_backend.h
++++ b/drivers/net/ntnic/include/hw_mod_backend.h
+@@ -145,7 +145,7 @@ enum km_flm_if_select_e {
+ #define COMMON_FUNC_INFO_S                                                                        \
+ 	int ver;                                                                                  \
+ 	void *base;                                                                               \
+-	unsigned int alloced_size;                                                                \
++	unsigned int allocated_size;                                                              \
+ 	int debug
+ 
+ enum frame_offs_e {
+diff --git a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_backend.c b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_backend.c
+index 299b9b913a..da126fe853 100644
+--- a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_backend.c
++++ b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_backend.c
+@@ -79,14 +79,14 @@ void *nthw_callocate_mod(struct common_func_s *mod, int sets, ...)
+ 	va_end(args);
+ 
+ 	mod->base = base;
+-	mod->alloced_size = total_bytes;
++	mod->allocated_size = total_bytes;
+ 
+ 	return base;
+ }
+ 
+ void nthw_zero_module_cache(struct common_func_s *mod)
+ {
+-	memset(mod->base, 0, mod->alloced_size);
++	memset(mod->base, 0, mod->allocated_size);
+ }
+ 
+ int nthw_flow_api_backend_init(struct flow_api_backend_s *dev,
 diff --git a/drivers/net/ntnic/ntnic_ethdev.c b/drivers/net/ntnic/ntnic_ethdev.c
-index f9644b5826..6857191ef2 100644
+index 6ba6769e47..f511d91e49 100644
 --- a/drivers/net/ntnic/ntnic_ethdev.c
 +++ b/drivers/net/ntnic/ntnic_ethdev.c
-@@ -200,20 +200,24 @@ static int dpdk_stats_collect(struct pmd_internals *internals, struct rte_eth_st
- 	 */
- 	ntnic_filter_ops->poll_statistics(internals);
+@@ -967,19 +967,19 @@ static void eth_rx_queue_release(struct rte_eth_dev *eth_dev, uint16_t queue_id)
+ 	deallocate_hw_virtio_queues(&rx_q->hwq);
+ }
  
--	for (i = 0; i < RTE_ETHDEV_QUEUE_STAT_CNTRS && i < internals->nb_rx_queues; i++) {
--		stats->q_ipackets[i] = internals->rxq_scg[i].rx_pkts;
--		stats->q_ibytes[i] = internals->rxq_scg[i].rx_bytes;
--		rx_total += stats->q_ipackets[i];
--		rx_total_b += stats->q_ibytes[i];
--	}
--
--	for (i = 0; i < RTE_ETHDEV_QUEUE_STAT_CNTRS && i < internals->nb_tx_queues; i++) {
--		stats->q_opackets[i] = internals->txq_scg[i].tx_pkts;
--		stats->q_obytes[i] = internals->txq_scg[i].tx_bytes;
--		stats->q_errors[i] = internals->txq_scg[i].err_pkts;
--		tx_total += stats->q_opackets[i];
--		tx_total_b += stats->q_obytes[i];
--		tx_err_total += stats->q_errors[i];
-+	for (i = 0; i < internals->nb_rx_queues; i++) {
-+		if (i < RTE_ETHDEV_QUEUE_STAT_CNTRS) {
-+			stats->q_ipackets[i] = internals->rxq_scg[i].rx_pkts;
-+			stats->q_ibytes[i] = internals->rxq_scg[i].rx_bytes;
-+		}
-+		rx_total += internals->rxq_scg[i].rx_pkts;
-+		rx_total_b += internals->rxq_scg[i].rx_bytes;
-+	}
-+
-+	for (i = 0; i < internals->nb_tx_queues; i++) {
-+		if (i < RTE_ETHDEV_QUEUE_STAT_CNTRS) {
-+			stats->q_opackets[i] = internals->txq_scg[i].tx_pkts;
-+			stats->q_obytes[i] = internals->txq_scg[i].tx_bytes;
-+			stats->q_errors[i] = internals->txq_scg[i].err_pkts;
-+		}
-+		tx_total += internals->txq_scg[i].tx_pkts;
-+		tx_total_b += internals->txq_scg[i].tx_bytes;
-+		tx_err_total += internals->txq_scg[i].err_pkts;
- 	}
+-static int num_queues_alloced;
++static int num_queues_allocated;
  
- 	stats->imissed = internals->rx_missed;
+ /* Returns num queue starting at returned queue num or -1 on fail */
+ static int allocate_queue(int num)
+ {
+-	int next_free = num_queues_alloced;
+-	NT_LOG_DBGX(DBG, NTNIC, "num_queues_alloced=%u, New queues=%u, Max queues=%u",
+-		num_queues_alloced, num, MAX_TOTAL_QUEUES);
++	int next_free = num_queues_allocated;
++	NT_LOG_DBGX(DBG, NTNIC, "num_queues_allocated=%u, New queues=%u, Max queues=%u",
++		num_queues_allocated, num, MAX_TOTAL_QUEUES);
+ 
+-	if (num_queues_alloced + num > MAX_TOTAL_QUEUES)
++	if (num_queues_allocated + num > MAX_TOTAL_QUEUES)
+ 		return -1;
+ 
+-	num_queues_alloced += num;
++	num_queues_allocated += num;
+ 	return next_free;
+ }
+ 
 -- 
 2.47.1
 
