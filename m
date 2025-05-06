@@ -2,161 +2,62 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB69C3ABAC
-	for <dpdk-dev@archiver.kernel.org>; Tue,  6 May 2025 13:38:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 884E7C3ABAC
+	for <dpdk-dev@archiver.kernel.org>; Tue,  6 May 2025 14:12:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7C4CB402F2;
-	Tue,  6 May 2025 15:38:54 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
- by mails.dpdk.org (Postfix) with ESMTP id A2233402AB
- for <dev@dpdk.org>; Tue,  6 May 2025 15:38:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1746538734; x=1778074734;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=UaCkXDoL4nM24ry8sqK49YZl6wX0zBZDcmZORp5gw2w=;
- b=XuNqLuvjefaBLgJeTtHwuLNScyXZjIcUg6arakA+UQTNexZu9pWaEnEK
- xHuQsCV5wdXf+dJeYheiCV0Z1ZCgT200xGkBRMpnfoQ3PjL38U473y67j
- vyI7tLfajFx+avlpR0/wjETOvd6Xidr7a7wuGC4j2bSOy6OQxNsnrJ0tJ
- 83XqJaSOyajVC14+5cUXQZ9/tZYcNDCPhGkzlpnmnrTjZ36aX2cgasnzB
- wykz9iq3Op//N9+4YRYOyLN/B1E6ReYx2KIV//BACJnvEMmNzbjfhUQ9S
- urgHnHi8A6eGhLo53iErkiXucZEBJVwGQUzSAzkKF9+lUZOUK3XQO9qL0 w==;
-X-CSE-ConnectionGUID: HqyntlPrRvWRjJPm7tUVYw==
-X-CSE-MsgGUID: 4B/kHL93S8+WXg/8QUYiEQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="73605247"
-X-IronPort-AV: E=Sophos;i="6.15,266,1739865600"; d="scan'208";a="73605247"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
- by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 May 2025 06:38:53 -0700
-X-CSE-ConnectionGUID: /2yfod2ZST+kcxYYsgAvQQ==
-X-CSE-MsgGUID: Hs8PnqssRb6zopJCvO8IcA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,266,1739865600"; d="scan'208";a="135524889"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 May 2025 06:38:53 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Tue, 6 May 2025 06:38:52 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Tue, 6 May 2025 06:38:52 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.43) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Tue, 6 May 2025 06:38:52 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AZUxcs8uEgr54IW8D2KtYLtisJmYdNiHhWDV8bYmHqRELwrWPXVPCYJ4EJr8vxC95PSJ/7rAPOs/Db7xm1cxsWgr64WLBowQ9vP5MWAvP7L4Vk+2Y/XVjzBfk5ElKZdiDpDoy8ga0OwrCA6B7lsqlRWlkrFK4fv/ozJPDKT5q1evhwnUZ5X+jom5IKvA1oqskI3kByu2kM1kBmTfqMwgMJMd7CX20+9Fnt4ldREwAOgWj5xZKYzuxpdVMZcesoFRikJ9JOIK/dPNF/S7Z9PT2fZrkv6+GH3Q99RMFBeupQ5NS+vRi5kK2dpizGHST68xbTo5nYwB7EzHDkSXOM02jw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KiFiVEHNAuRZs+va+XjqxP0ArBSUmLa85oXcy50QDe8=;
- b=ZIRKL8RmhKkeS+wCF1eIMFW53Zx9n9OIhI0qlBfkla6ICnDJEhP+0+ep6/cb5P5Y6JpkOh/mhrW0EkHslp9nRkBmJlaTPsBCWWSGXYUca7h2/1BtY6B4cGzWWEK6XAnUFi2qZA3Gxgvvb3wSu122sDTOXyEsd+ggVJOq+t8aQO37IRvGTzvm4GW6vHb4Tub41ZPopBrnI8LdfVjW2b4F++sTNMVT3Y9VR2KNax/93mCBAxOsXsHqR/H6Sh8GI6ZtoUV/KtzWet49tu4ZwqpoDOZv3W5gyDGSYp3yMEfYiHb4RuKFxSaUobNJ+AWUdLXzVY/natgVf2L+byrE78U6sg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by MW3PR11MB4748.namprd11.prod.outlook.com (2603:10b6:303:2e::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.26; Tue, 6 May
- 2025 13:38:45 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%5]) with mapi id 15.20.8699.022; Tue, 6 May 2025
- 13:38:45 +0000
-Date: Tue, 6 May 2025 14:38:41 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Anatoly Burakov <anatoly.burakov@intel.com>
-CC: <dev@dpdk.org>
-Subject: Re: [PATCH v2 1/2] cmdline: add floating point support
-Message-ID: <aBoQ4Z2EUlNHvoI1@bricha3-mobl1.ger.corp.intel.com>
-References: <7ac1444b7d2d64dc467a22e7ac65cf3cc16246dc.1746188833.git.anatoly.burakov@intel.com>
- <cc5198a753f4a86242c0135914affba97d7d4d1c.1746536891.git.anatoly.burakov@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <cc5198a753f4a86242c0135914affba97d7d4d1c.1746536891.git.anatoly.burakov@intel.com>
-X-ClientProxiedBy: DB7PR05CA0020.eurprd05.prod.outlook.com
- (2603:10a6:10:36::33) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id ADE6940261;
+	Tue,  6 May 2025 16:12:36 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 242E54025D
+ for <dev@dpdk.org>; Tue,  6 May 2025 16:12:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1746540754;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=vIaDD20CTwpLuHKWg+g0h8WqIM/Jh4Wxe84BBKsZSL0=;
+ b=CrsKfPf+0OtJJRaP0FGc++MtW/nyBef5P5daV6H7y218Vt3Ky4fnTUkiGMbMlbB3w3hQnL
+ 3Y1rR3+2TyDBs3MFDwAFDFFbnuwljbiAqLcqqMf6YmR4d2x+Qkb6OqDn6KQGqRYFM6Dyjq
+ OpndUg7t2Cx8fL1441/YQim4cIT9Lvw=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-686-6T3WD-BpMIy1J-2wqTX5IQ-1; Tue,
+ 06 May 2025 10:12:33 -0400
+X-MC-Unique: 6T3WD-BpMIy1J-2wqTX5IQ-1
+X-Mimecast-MFC-AGG-ID: 6T3WD-BpMIy1J-2wqTX5IQ_1746540752
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 0D0FF1800985; Tue,  6 May 2025 14:12:31 +0000 (UTC)
+Received: from RHTRH0061144 (unknown [10.44.33.241])
+ by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id BDCD11956094; Tue,  6 May 2025 14:12:26 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: Patrick Robb <probb@iol.unh.edu>
+Cc: ci@dpdk.org,  dev <dev@dpdk.org>,  Ali Alnubani <alialnu@nvidia.com>,
+ "Brandes, Shai" <shaibran@amazon.com>,  zhoumin <zhoumin@loongson.cn>,
+ "Puttaswamy, Rajesh T" <rajesh.t.puttaswamy@intel.com>
+Subject: Re: Polling for patchseries in DPDK - the /series/ and /events/
+ endpoints
+In-Reply-To: <CAJvnSUDfGsKk0c7Mk9jsRMxh4wO6M32quitrnkDPWHHiTZEiCA@mail.gmail.com>
+ (Patrick Robb's message of "Mon, 5 May 2025 12:08:37 -0400")
+References: <CAJvnSUDfGsKk0c7Mk9jsRMxh4wO6M32quitrnkDPWHHiTZEiCA@mail.gmail.com>
+Date: Tue, 06 May 2025 10:12:23 -0400
+Message-ID: <f7tzffp7rqw.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|MW3PR11MB4748:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6d421c3a-e386-4d01-83f6-08dd8ca352da
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ftGsIzifUVvJF+M4R997Y/VL5ovm2NnBwy5E38wD2Q/xMpqAV8YqgZJbnnpy?=
- =?us-ascii?Q?0eh+qYF+2Bcu/1xxGi6rM5eDyQta2GWZuFVmj3fT/sqCgNB2p4vxzjR7Z0GU?=
- =?us-ascii?Q?h/vXWPLJPY9NI4nk8eYea47jw+kBK5Q4HagEWnXWtWRJ3pbgCjnWrdst3a/y?=
- =?us-ascii?Q?N5NpDTHzEy//azqXYB4ZDxUX+0g3rLmhUFAejr7kWCWV/pC5qiEAC6qBJvER?=
- =?us-ascii?Q?NO2BijBE/6IKuOD6zru4sosdgLGI4/N0S0XEy6XMVvh75d4vJEnM9Oy43AfE?=
- =?us-ascii?Q?r7eubj17ZGBsqpeelbOxZ3giGrC+MOkd+rGwtUS2Eped7HwL9HeHzyCoYUkh?=
- =?us-ascii?Q?BaB09w0fz7WNv3QCWtDJe3QKEzqY40m0EOChCy8lFv1jouasAz9fWLBXYbuW?=
- =?us-ascii?Q?6SVS47XGvJl1RBluVgbIyTwy8wiL83ReCmidMubPLZrrarunncpOpw9vu9y0?=
- =?us-ascii?Q?kQqz4kVKc1pkvdFugmAJh0MROHmAhzS9W1ntLHduCpZ9QKjeM3p1uc8S3G+5?=
- =?us-ascii?Q?bLgP5VW58mRVIhBwxwE+YO5BKPSz5i+oeaVcaGz81hJAQlQCSSiU6BtCNo54?=
- =?us-ascii?Q?dmRZOdkK/B07bEaMPxaXZV7kE0jtgygvAQTFhh3GHe1AJmx8+tV+KlumGVrX?=
- =?us-ascii?Q?qZQe+OvQYirncsDP1M8B5oOYnpJw+k3jU6qtoPSuIFLVC6WRYujkkmQZOBdd?=
- =?us-ascii?Q?Vfl0mAyK7xJgpczzMYT0bIKVU+NTy4Cm2p65kgMbeIU9I24XvFgeN+F0frWI?=
- =?us-ascii?Q?CLdhdlJ2PQzStoignhw9I2vvmhyCLoNkNxPtQwyhwVicaFTzGoZTaeeO31NJ?=
- =?us-ascii?Q?JE9AG0dM2TC8cdRymXHqSMF7C+8u26dm5Es3gzyK+APCEizRez8571cUYYMa?=
- =?us-ascii?Q?LCJESEL9JWegIo2ebQ/PY/j5qUaR/xR7z8qzZaWUlIyvx94/BYc4jxE0wJXg?=
- =?us-ascii?Q?QtK4PQ4KbPHblrM2q12fVNW8HT34NCogRO2TSbCXzN8ZhgL6eDdc91rJRy+4?=
- =?us-ascii?Q?SCY3gqcpXavl7zWIsQRjYVIGIRGjXpK79WkJRmj9/9UyNUUTE6q67c4TrNFc?=
- =?us-ascii?Q?kDnL5iHU+QLRJiSIOrf34B5z/lK0C+O2m7LwfA539PLfUA2lEfL2V4nKs2UX?=
- =?us-ascii?Q?woYdmP4ijl8oaXy8qn+1pZxTjWHnnqQo+nivZhvloT0pgAfp/zqMq995fyWN?=
- =?us-ascii?Q?KB8Ld44GPgqOGV1k1JbdBZVJhe/hToQupQRBb+kaMdknuo1vklf+Js5OWyzp?=
- =?us-ascii?Q?49Ssc/6wMItcURdjxzrxb91XilRGwQBhst4Gn3MBkOkPb9HrWPXewHDvnZ5s?=
- =?us-ascii?Q?8fmmWk7AtXajMrJZuuvz3DPyNSzaDQBDdUAqABTwFis5Ysh288cScHRQiXns?=
- =?us-ascii?Q?Zany8Mm42sAyxffP//0OUeZWpgUIA7UaezN26c9WFwSgBQWD7JFAKoIukCHO?=
- =?us-ascii?Q?nKdhrGyrqbU=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Wk+GhRmEmDfoij9Z/eSc+Yxiwy+TPNVr6S0f1kRLUEAQ1OsBwyQHW/Odkosa?=
- =?us-ascii?Q?N3Pk4U5SaaJuNJAwrR9d2f/qCg6HyuMVfc4Kj/20BilSqJf/QXtD7NduTaUe?=
- =?us-ascii?Q?ejddw4UOMyxYXQ37AWMHSQtusL31zUxVUSLYUUHTGseCAkW1f6CDJPa6kqQL?=
- =?us-ascii?Q?yC3pcSdlKA3AoZ8qj7pPsWbtyxk9t6G7KSY+VXoIV3+q5vd0Kpq/we50VYIn?=
- =?us-ascii?Q?x+Zxr4QtVX+4JN3I11hkmTKTRx8nx9x2jeolucMmyRHo8RTwfgNzkNDOyjtu?=
- =?us-ascii?Q?sZEN0TFhM/JEjbHZRl0bk2PuhUzMd35ctwZix3VeZ3OmxbViQe/UQA9Ukyv6?=
- =?us-ascii?Q?DMFPOZ8xy9U8glnRPwOXT7o4ZWfheIk6tvhxDtXcyrMlB0QUkDKL2qm3HhWN?=
- =?us-ascii?Q?vidkpm6yVZRqpg+N1P9y98GPnpH1OoiNiQ4ucW1Ld/YYM6Jbr7TOifOmFtAH?=
- =?us-ascii?Q?aVB7NCYkd0CSqReXqCkpTRXmLoEoZt7FBvgJieKuIhjW6KDH3cFSv0Y3yv7g?=
- =?us-ascii?Q?3SaMOQB9uZHzP3QH+nwDXIdkuisPZ1K8p2p0Pz15jlTHwYuox032TUNwTTrI?=
- =?us-ascii?Q?oHJQoGtqVdDIe9eNn743oK7kTKbzMaajfyjxaBx8GSJUwIkeWaGg6xDhzaFr?=
- =?us-ascii?Q?XUr6OMQ33dKSoEEDJeOFcWQXtqNExb+IHHCvJJrnhMUlBO6RYwFjHTzbAatq?=
- =?us-ascii?Q?a006nGCiah5BTXykVvXl+E2xRMXtchyUmOtW70qzqF/vOcfzOqzwjAe9daGt?=
- =?us-ascii?Q?YXGWf3d/rmuP3PAHiyLn5hZsvh9vLySwmQ6wMXCgIAW/JPKgf1QzE0gtOGDX?=
- =?us-ascii?Q?RsFCyphfvwUeL4/AEfe6jsA0FH3/FG3XjDRLV2FBGwKWQoE5GCa4cYP18vKa?=
- =?us-ascii?Q?VUX1Bz8kks/UZ66Gfgz0eg7ryaD7s8SRSnqgwFCbENKZG4UqM4yAIgTv4L8O?=
- =?us-ascii?Q?aJskhfvdOIkib3kSk4xYC9XE9IXzPT/3VrcpiyneunO44wKI2nGhvW/+hzag?=
- =?us-ascii?Q?FrMK85B+UP84kXkg5Xbes2Cj5j7/xA/i2gu2SQ2WzX9vFCpJwrXaCs18Jirr?=
- =?us-ascii?Q?ENA0lehWGclNIOzECiWvUiaFRrw7HVk7f7HkfoCKpFtLS+MpaEbAf2FwDeZq?=
- =?us-ascii?Q?Hnel+4JRC+u+2IgyHOgy+Xyd8xW5shMrpCXls7pbwRMuNJFjf69ZbEYAunY2?=
- =?us-ascii?Q?Tc2vCjPciajKu+oijesRWnSgSrl9F/lPB61HMoIzSyBOCSNr5UjjLa41c58K?=
- =?us-ascii?Q?/23y5wSB4Kc22czwEOHQs8ye18lmTv9Z6EyqIbYkCfYIS5sANY/nkda3lGvR?=
- =?us-ascii?Q?p85dDeaElixYyhiU4PTgaLTF06gH7O2mZsrc/p7C8IoRbv2ne4CnUbGR4Fw5?=
- =?us-ascii?Q?rv7Oz5OwYTnbbKSoQ7s66Y9MCxBckxNHxK0Ixa/EjFf3DB43dVVDTLWM3gQx?=
- =?us-ascii?Q?7XFi90g5Wt4JOf0zNAo8PiAeSMVhiEb/Sa/JSPFQMRKw+rfPktXgokisw4dU?=
- =?us-ascii?Q?jrX1HAgfZwJ4aMgLABERbI/GR/o03fNHnV2neDm1l+Nv6uPqAxvbRPDWv5od?=
- =?us-ascii?Q?gJBQP0DY8E3IwmvUNa5q0sNObgAQlI1cI410DgKgIy+qZNZwMkeq8CrETUQ6?=
- =?us-ascii?Q?/A=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6d421c3a-e386-4d01-83f6-08dd8ca352da
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2025 13:38:45.5339 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: saZ7Gg8rLEEHTI6ZaQej5/z8pxwd5uYRXyExvEcPruRR9SYhCRhllh/i+INH0AFaJbyGCcw7zFyVr0GKICXMYpRNHtFcl1PqlL3vwj2/82A=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4748
-X-OriginatorOrg: intel.com
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: yGv5ImfKVfpGc7sA-90Ry38mX7yynAlVv2WWeFx6i_I_1746540752
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -170,21 +71,146 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, May 06, 2025 at 02:08:18PM +0100, Anatoly Burakov wrote:
-> Add support for parsing floating point numbers in cmdline library, as well
-> as unit tests for the new functionality. The parser supports single and
-> double precision floats, and will understand decimal fractions as well as
-> scientific notation.
-> 
-> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-> ---
->  app/test/test_cmdline_num.c     | 201 +++++++++++++++++++++++-
->  lib/cmdline/cmdline_parse_num.c | 261 ++++++++++++++++++++++++++++++++
->  lib/cmdline/cmdline_parse_num.h |   4 +-
->  3 files changed, 462 insertions(+), 4 deletions(-)
-> 
-This is great to see, thanks. Can you also look to add support to
-buildtools/dpdk-cmdline-gen.py script, to make it possible to use this from
-a cmdline list file as with many of our sample apps?
+Patrick Robb <probb@iol.unh.edu> writes:
 
-/Bruce
+> There was some discussion at last week's CI meeting about usage of the Pa=
+tchwork
+> /events/ endpoint for polling for patches, and issues with that process. =
+Here is a relevant
+> blurb, explaining some issues Aaron has run into using the dpdk-ci repo "=
+poll-pw.sh" shell
+> script:=20
+>
+> ----------------
+>
+> * Discussion pertaining to looking at polling for series using the events=
+ API. This events
+> endpoint (with series created event) returns info that a series has been =
+created, but returns
+> a limited set of data in the payload, and this necessitates a followup re=
+quest to patchwork.
+> So, this seems like it would actually increase the amount of requests mad=
+e to the patchwork
+> server. Some related issues discussed are:
+>    * You cannot query the events endpoint for only events from a particul=
+ar project (this
+> matters for patchwork instances with many projects under them). For DPDK =
+there are only 4
+> projects under DPDK patchwork, so it=E2=80=99s not a huge deal, but still=
+ a small issue.
+>    * The datetime that the series-created event returns is the datetimes =
+of one of the
+> commits in the series, not the datetime of when the series was submitted.=
+ So, this means
+> that if you amend a commit (this does not update commit datetime) and res=
+ubmit a
+> patchseries, the datetime on the series-created record will not be =E2=80=
+=9Cupdated=E2=80=9D. This can cause
+> us to miss series when polling via the events endpoint.
+
+Sorry - I think there is still a misunderstanding here.
+
+The datetime for the /series/ endpoint is what is provided in the patch
+(so could be not updated)
+
+The datetime for the /events/ endpoint is when the event fires (that is
+when the series is received).
+
+I can reply to the meeting minutes document with this as well.
+
+> ------------------
+>
+> And for context, poll-pw.sh will check the /events/ endpoint for new seri=
+es created events
+> like so:
+>
+> --------------------
+>
+> URL=3D"${URL}/events/?category=3D${resource_type}-completed"
+>
+> callcmd () # <patchwork id>
+> {
+> =09eval $cmd
+> }
+>
+> while true ; do
+> =09date_now=3D$(date --utc '+%FT%T')
+> =09since=3D$(date --utc '+%FT%T' -d $(cat $since_file | tr '\n' ' '))
+> =09page=3D1
+> =09while true ; do
+> =09=09ids=3D$(curl -s "${URL}&page=3D${page}&since=3D${since}" |
+> =09=09=09jq "try ( .[] | select( .project.name =3D=3D \"$project\" ) )" |
+> =09=09=09jq "try ( .payload.${resource_type}.id )")
+> =09=09[ -z "$(echo $ids | tr -d '\n')" ] && break
+> =09=09for id in $ids ; do
+> =09=09=09if grep -q "^${id}$" $poll_pw_ids_file ; then
+> =09=09=09=09continue
+> =09=09=09fi
+> =09=09=09callcmd $id
+> =09=09=09echo $id >>$poll_pw_ids_file
+>
+> -------------------
+>
+> But, as was discussed at the meeting, once you have the series ids, then =
+you need to make a
+> followup request to /series/{id}.
+>
+> UNH has a download_patchset.py polling script very much like poll-pw.sh e=
+xcept that,
+> because we store extra info about our processed patchseries in a database=
+ (to facilitate
+> lab.dpdk.org filtering functions), we use our database to get the most re=
+cently processed
+> patchseries, instead of the "since_file." Our process (running every 10 m=
+inutes from Jenkins)
+> is like this:
+>
+> 1. get the "since_id" from our database
+> 2. get the "newest_id" from
+> https://patchwork.dpdk.org/api/events/?category=3Dseries-completed. Get t=
+he [0] index of
+> the json response (the most recent patchseries) and save that series id.
+> 3. for seriesID in range(since_id, newest_id): get patch from
+> https://patchwork.dpdk.org/api/series/{id}.
+>
+> So, both poll-pw.sh and our UNH script follow the process of making a req=
+uest to /events/,
+> and then followup requests for /series/. Thus the total number of request=
+s being made on
+> patchwork is (number of new patchseries + 1).
+>
+> -The most consequential difference in the two implementations is that pol=
+l-pw.sh makes a
+> request to /events/ with the &since=3D${since} parameter, passing in a si=
+nce datetime, and
+> UNH does not. As Aaron explained at the CI meeting, because the datetime =
+provided in the
+> /events/ payload is not what one would expect (it gives the datetime of t=
+he commit, not
+> when the series was submitted) this means that poll-pw-sh can miss series=
+. With the UNH
+> lab polling script we don't have this issue because we don't make use of =
+the since
+> parameter in our /events/ request. I think the options for poll-pw.sh goi=
+ng forward would
+> be:
+> 1. Update patchwork so that the datetime provided in the /events/ payload=
+ is what is
+> "expected" i.e. the datetime that the series was submitted at.
+
+That already is done.
+
+> 2. Adopt the UNH process of discarding the &since=3D${since} parameter, a=
+nd rely solely on
+> tracking the most recently processed patchseries id, get the newest patch=
+series id from
+> /events/, and traverse the range of (since_id, newest_id).
+>
+> -I agree it makes sense for /events/ to support a "project" param.
+>
+> Thanks Aaron for raising this conversation. We can continue the conversat=
+ion over email, or
+> also in person at DPDK Prague!
+
+Let's keep discussing.
+
