@@ -2,34 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC105C3ABB6
-	for <dpdk-dev@archiver.kernel.org>; Tue,  6 May 2025 01:43:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA52C3ABAC
+	for <dpdk-dev@archiver.kernel.org>; Tue,  6 May 2025 06:02:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 722654025D;
-	Tue,  6 May 2025 03:43:18 +0200 (CEST)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 79EA74003C
- for <dev@dpdk.org>; Tue,  6 May 2025 03:43:16 +0200 (CEST)
-Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 71E6E2115DC2; Mon,  5 May 2025 18:43:15 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 71E6E2115DC2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1746495795;
- bh=xuta9sPuBvI9ksyQlp68fPXGtCdoJLR9/bQuCiwUups=;
- h=From:To:Cc:Subject:Date:From;
- b=h6yJRaqgpcUhEwduVtlhRbiQvlAAPvOGAH3Gdm5JwwaFSS8At/dKDXcb0OlzdNxN9
- o3vstiIf7kxiAM6ENKQwr9qhYw+rC2A72swcSoIGko78+XGJRk+GT2lIBMEfMtkc5J
- hkiXldbk6yR2qx2FbQGQQ4moimawPKahE7dWNk/A=
-From: Andre Muezerie <andremue@linux.microsoft.com>
-To: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>,
- Thomas Monjalon <thomas@monjalon.net>
-Cc: dev@dpdk.org,
-	Andre Muezerie <andremue@linux.microsoft.com>
-Subject: [PATCH] eal: add asprintf() function for Windows
-Date: Mon,  5 May 2025 18:43:09 -0700
-Message-Id: <1746495789-14101-1-git-send-email-andremue@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	by mails.dpdk.org (Postfix) with ESMTP id 92CAE4026D;
+	Tue,  6 May 2025 08:02:54 +0200 (CEST)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+ by mails.dpdk.org (Postfix) with ESMTP id D864340150
+ for <dev@dpdk.org>; Tue,  6 May 2025 08:02:52 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+ by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Zs74Y0qmzzQkSs;
+ Tue,  6 May 2025 13:58:53 +0800 (CST)
+Received: from kwepemo500011.china.huawei.com (unknown [7.202.195.194])
+ by mail.maildlp.com (Postfix) with ESMTPS id 2C53A180B61;
+ Tue,  6 May 2025 14:02:50 +0800 (CST)
+Received: from [10.67.121.193] (10.67.121.193) by
+ kwepemo500011.china.huawei.com (7.202.195.194) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 6 May 2025 14:02:49 +0800
+Message-ID: <2aad9361-59b9-461b-8a50-a02f9d907c00@huawei.com>
+Date: Tue, 6 May 2025 14:02:48 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] net: fix GTP packet parsing
+From: huangdengdui <huangdengdui@huawei.com>
+To: <dev@dpdk.org>, <songx.jiale@intel.com>
+CC: <jasvinder.singh@intel.com>, <thomas@monjalon.net>,
+ <mb@smartsharesystems.com>, <lihuisong@huawei.com>,
+ <fengchengwen@huawei.com>, <liuyonglong@huawei.com>
+References: <20250411084303.770040-1-huangdengdui@huawei.com>
+ <20250417123739.2291519-1-huangdengdui@huawei.com>
+Content-Language: en-US
+In-Reply-To: <20250417123739.2291519-1-huangdengdui@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.193]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemo500011.china.huawei.com (7.202.195.194)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -43,129 +52,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The asprintf function is not part of the C standard library but is a
-GNU extension commonly available in Unix-like systems. It dynamically
-allocates memory to store the formatted output string, similar to
-sprintf, but avoids buffer overflow issues by automatically sizing
-the buffer.
+Hi, Jiale, this patch can solve the issues[1] you reported. Can you review this patch and add a Tested-by tag?
 
-Instead of rewriting it or coming up with some other replacement, this
-patch makes use of the implementation provided by Neved4.
+[1]
+https://bugs.dpdk.org/show_bug.cgi?id=1672
 
-Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
----
- lib/eal/windows/asprintf.c         | 48 ++++++++++++++++++++++++++++++
- lib/eal/windows/include/asprintf.h | 21 +++++++++++++
- lib/eal/windows/meson.build        |  1 +
- license/exceptions.txt             |  2 ++
- 4 files changed, 72 insertions(+)
- create mode 100644 lib/eal/windows/asprintf.c
- create mode 100644 lib/eal/windows/include/asprintf.h
-
-diff --git a/lib/eal/windows/asprintf.c b/lib/eal/windows/asprintf.c
-new file mode 100644
-index 0000000000..6ebc9d0f0a
---- /dev/null
-+++ b/lib/eal/windows/asprintf.c
-@@ -0,0 +1,48 @@
-+/* SPDX-License-Identifier: MIT
-+ * Copyright(C) 2023 - 2025 Neved4
-+ * https://github.com/Neved4/asprintf/tree/main
-+ */
-+
-+#include <stdio.h>
-+#include <stdlib.h>
-+
-+#include "asprintf.h"
-+
-+#ifndef RTE_TOOLCHAIN_GCC
-+int vasprintf(char **strp, const char *fmt, va_list ap)
-+{
-+	int size, res;
-+	va_list cp;
-+
-+	va_copy(cp, ap);
-+	size = vsnprintf(NULL, 0, fmt, cp);
-+	va_end(cp);
-+
-+	if (size < 0)
-+		return -1;
-+
-+	*strp = malloc(size + 1);
-+	if (*strp == NULL)
-+		return -1;
-+
-+	res = vsnprintf(*strp, size + 1, fmt, ap);
-+	if (res < 0) {
-+		free(*strp);
-+		return -1;
-+	}
-+
-+	return res;
-+}
-+
-+int asprintf(char **s, const char *fmt, ...)
-+{
-+	int ret;
-+	va_list ap;
-+
-+	va_start(ap, fmt);
-+	ret = vasprintf(s, fmt, ap);
-+	va_end(ap);
-+
-+	return ret;
-+}
-+#endif
-diff --git a/lib/eal/windows/include/asprintf.h b/lib/eal/windows/include/asprintf.h
-new file mode 100644
-index 0000000000..36d052b808
---- /dev/null
-+++ b/lib/eal/windows/include/asprintf.h
-@@ -0,0 +1,21 @@
-+/* SPDX-License-Identifier: MIT
-+ * Copyright(C) 2023 - 2025 Neved4
-+ * https://github.com/Neved4/asprintf/tree/main
-+ */
-+
-+/**
-+ * @file
-+ * asprintf compat.
-+ *
-+ * This module provides asprintf() and vasprintf().
-+ */
-+
-+#pragma once
-+
-+#include <stdarg.h>
-+
-+#ifndef RTE_TOOLCHAIN_GCC
-+int vasprintf(char **strp, const char *fmt, va_list ap);
-+
-+int asprintf(char **s, const char *fmt, ...);
-+#endif
-diff --git a/lib/eal/windows/meson.build b/lib/eal/windows/meson.build
-index 7756d417be..06b25a3a09 100644
---- a/lib/eal/windows/meson.build
-+++ b/lib/eal/windows/meson.build
-@@ -4,6 +4,7 @@
- subdir('include')
- 
- sources += files(
-+        'asprintf.c',
-         'eal.c',
-         'eal_alarm.c',
-         'eal_debug.c',
-diff --git a/license/exceptions.txt b/license/exceptions.txt
-index d12fac2034..5ea0de5308 100644
---- a/license/exceptions.txt
-+++ b/license/exceptions.txt
-@@ -16,4 +16,6 @@ MIT                  | 10/23/2019       | 02/10/2020       | lib/eal/windows/inc
- BSD-2-Clause         | 10/23/2019       | 12/18/2019       | lib/eal/windows/include/getopt.h
- ISC AND BSD-2-Clause | 10/23/2019       | 12/18/2019       | lib/eal/windows/getopt.c
- MIT                  | 10/19/2022       | 10/18/2022       | drivers/net/gve/base/*
-+MIT                  | XX/XX/XXXX       | XX/XX/XXXX       | lib/eal/windows/include/asprintf.h
-+MIT                  | XX/XX/XXXX       | XX/XX/XXXX       | lib/eal/windows/asprintf.c
- ---------------------------------------------------------------------------------------------------
--- 
-2.49.0.vfs.0.2
-
+On 2025/4/17 20:37, Dengdui Huang wrote:
+> After parsing the GTP packet header, the next protocol type should
+> be converted from RTE_GTP_TYPE_IPV4/IPV6 to RTE_ETHER_TYPE_IPV4/IPV6.
+> Otherwise, the next protocol cannot be parsed.
+> 
+> Bugzilla ID: 1672
+> Fixes: 64ed7f854cf4 ("net: add tunnel packet type parsing")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
+> Acked-by: Jie Hai <haijie1@huawei.com>
+> ---
+>  lib/net/rte_net.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/lib/net/rte_net.c b/lib/net/rte_net.c
+> index be24690fdf..1771588a09 100644
+> --- a/lib/net/rte_net.c
+> +++ b/lib/net/rte_net.c
+> @@ -231,7 +231,13 @@ ptype_tunnel_with_udp(uint16_t *proto, const struct rte_mbuf *m,
+>  		 */
+>  		if (gh->msg_type == 0xff) {
+>  			ip_ver = *(const uint8_t *)((const char *)gh + gtp_len);
+> -			*proto = (ip_ver) & 0xf0;
+> +			ip_ver = (ip_ver) & 0xf0;
+> +			if (ip_ver == RTE_GTP_TYPE_IPV4)
+> +				*proto = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
+> +			else if (ip_ver == RTE_GTP_TYPE_IPV6)
+> +				*proto = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV6);
+> +			else
+> +				*proto = 0;
+>  		} else {
+>  			*proto = 0;
+>  		}
