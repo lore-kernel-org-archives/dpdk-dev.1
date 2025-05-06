@@ -2,50 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA2FC3ABAC
-	for <dpdk-dev@archiver.kernel.org>; Tue,  6 May 2025 13:08:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CABA1C3ABBF
+	for <dpdk-dev@archiver.kernel.org>; Tue,  6 May 2025 13:13:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2252D402D2;
-	Tue,  6 May 2025 15:08:28 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id 5A5F640150
- for <dev@dpdk.org>; Tue,  6 May 2025 15:08:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1746536905; x=1778072905;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=RzHa5of77EOJQw4EoOzRsksZ8HRb/DUzlY2mEjxjTxg=;
- b=B3+Pa/jfa63W+9fSOBQ12bPdpGxsEtjjcmWM9SqC35u+pkR6606AftJ+
- 8Emhg54mfo3EWjIehopNgaWEXgBLelNFKttocj2FymjriUW3Ck7gdkpgb
- qAjReiNoGOrfTbLB4dRBjkOpyWULSU2wIL2Iy7TVVOZvq8kM6r92A+sQC
- DNL9I6vRc5pCnazTixk1tdmCDYwud6sWYVpbfB8uaDqmYazrD/zqqZkUb
- TD0HKThdbubxBotCz3Jto9kZM0bbRgM1t67man6FYGyjC7QLa557/r/0J
- 4rpK/zEzWGQJ15aMcD3u5qeSNkD+PXECOfl69pfDfp3JsNyrq9QD933mc w==;
-X-CSE-ConnectionGUID: qR+7qyMbT5CulN4KdC3AIA==
-X-CSE-MsgGUID: s8DOI1hcQAuAEwicH9KVHQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="65612884"
-X-IronPort-AV: E=Sophos;i="6.15,266,1739865600"; d="scan'208";a="65612884"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
- by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 May 2025 06:08:24 -0700
-X-CSE-ConnectionGUID: VXe2pEEQS7qTxuNtNPM+xg==
-X-CSE-MsgGUID: DXUDLsJ3QaK/MIEb3kOAMA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,266,1739865600"; d="scan'208";a="139678034"
-Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa003.fm.intel.com with ESMTP; 06 May 2025 06:08:23 -0700
-From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org,
-	Aman Singh <aman.deep.singh@intel.com>
-Subject: [PATCH v2 2/2] app/testpmd: add sleep command
-Date: Tue,  6 May 2025 14:08:19 +0100
-Message-ID: <fecaa83e97180aac59bf0f963beab9a65d0d8570.1746536891.git.anatoly.burakov@intel.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <cc5198a753f4a86242c0135914affba97d7d4d1c.1746536891.git.anatoly.burakov@intel.com>
-References: 
+	by mails.dpdk.org (Postfix) with ESMTP id D0AC740269;
+	Tue,  6 May 2025 15:13:37 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 706AB40150
+ for <dev@dpdk.org>; Tue,  6 May 2025 15:13:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1746537215;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=b+thjQ2hf1vTt3yvBv8czo+/BGBgImglBzvYDZYwhpo=;
+ b=Md4Y2KskSRNoKutNib/2ta0rDMCbeh2Wuj/Eoo15anTmujbDbyvkvUzUx9IEIBcuARnQhd
+ Ntb2CnbojCn4rxLZ2P+vuJcUyYfWTCBtAkNzdddvmb50e/l3QHbCJ9diOaUSV/6pbCAzSc
+ zOmeGWJSwIA7UTsuAMsT+oCzCga+v9o=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-548-2OTImbOjMTWbLYxpLVMOHQ-1; Tue, 06 May 2025 09:13:34 -0400
+X-MC-Unique: 2OTImbOjMTWbLYxpLVMOHQ-1
+X-Mimecast-MFC-AGG-ID: 2OTImbOjMTWbLYxpLVMOHQ_1746537213
+Received: by mail-lf1-f71.google.com with SMTP id
+ 2adb3069b0e04-5498ec88462so2658478e87.2
+ for <dev@dpdk.org>; Tue, 06 May 2025 06:13:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1746537213; x=1747142013;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=b+thjQ2hf1vTt3yvBv8czo+/BGBgImglBzvYDZYwhpo=;
+ b=Rbp0E48WloBBvGYmeFTZyg2aRZnwzrVUzaN7HxulH3lGm2Ilvs3ciErx664sTD5+BX
+ TUH5aRZIbRl/2OuIIj8jTKkMTgosnWN5hpb45qt3tVUNQpis9AuV4MK/JvH/VOsm8eN6
+ cYoXzRuqdQsWMkTadJm948A5ekHnpH3gWILA/06h5AZePoDgeneMDlB6Se1hng5hn9RL
+ /sudjymMShHd7JjvQMscGdgX+qPSz9o0NBIh8sxP8JzvKm3Eidwe2uvVzM2I5PQJDYw1
+ D9C6+lDaGhwen3RA9F88aU7HVDwud97sUp4mP0DHmjqRChb1Bt6AscWtyALl9ZL3fPhw
+ 9+hA==
+X-Gm-Message-State: AOJu0Yz7UowMVygQctQxA4XL2GdMYaYKxAUUbIs8XPwSCmTmcBlPp26j
+ rdlk/+dgsgRE+HgEiWtN3DugVfraaIz3TzxE3T+2FaCF3UbVjOreZVN7+O399v3TPYmR04oLrpT
+ Wqjs2h8UBH6N3fBNuUtMQbr4UA4p0C8v/6uEB65vyz4c4kxrskduVyhZsKLMYrvxRXwPK6UdRRY
+ 3qhcB814VMSkAd0cM=
+X-Gm-Gg: ASbGnctfM0ovdElm9JCVv0XIAcsLA3q8vVNWci//ASmDRPVaGqwh0V/WYSpzpBZUGR2
+ SvDC5Y7d9BWp/WIl5MlBEQMUHXTzU7BTa5HHglf79Z6uFfSZTE4QCGH2CNStNRItOmvfF0VA=
+X-Received: by 2002:a05:6512:3c85:b0:54e:85bc:d150 with SMTP id
+ 2adb3069b0e04-54fa4f9b9e5mr2982978e87.53.1746537212852; 
+ Tue, 06 May 2025 06:13:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFUuwp8O76UtlAlyJQ3SGUHhlYRNAzFGqQ6ATsGnURiBAD0crjLtnyQOLt+Ff5144nKA5b9UNQCxlmG/qr0q/c=
+X-Received: by 2002:a05:6512:3c85:b0:54e:85bc:d150 with SMTP id
+ 2adb3069b0e04-54fa4f9b9e5mr2982971e87.53.1746537212428; Tue, 06 May 2025
+ 06:13:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250331161000.9886-1-bruce.richardson@intel.com>
+In-Reply-To: <20250331161000.9886-1-bruce.richardson@intel.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Tue, 6 May 2025 15:13:19 +0200
+X-Gm-Features: ATxdqUGioQ0N6SNKEUUIenFOWrIrWknxc4WEnbTni9vn1EI7rQtzo4nsOZHE8BU
+Message-ID: <CAJFAV8xq=a6unCGzoG4sr1RZREr6f=RjrQ3ytDF8o3dtkn0H2g@mail.gmail.com>
+Subject: Re: [PATCH 00/10] centralise base code handling for drivers
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 1xL0od3327M7UbmwdnnZceetxfkWIFD0AK0js2dekQY_1746537213
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,85 +83,65 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Test-pmd already has a way to run a list of commands from file, but there
-is no way to pause execution for a specified amount of time between two
-commands. This may be necessary for simple automation, particularly for
-waiting on some asynchronous operation such as link status update.
+On Mon, Mar 31, 2025 at 6:10=E2=80=AFPM Bruce Richardson
+<bruce.richardson@intel.com> wrote:
+>
+> Many DPDK drivers use the same pattern for base code handling, having
+> a meson.build file in the base code directory which optionally defines
+> some custom cflags for the base code build, then builds the code as a
+> static library and extracts the objects from it. (The reason behind this
+> is that, in meson, cflags apply per-object, so we need to have a
+> separate build object for the base code to use custom flags)
+>
+> This patchset deduplicates this logic by putting it into the
+> drivers/meson.build file, and allowing individual drivers to then just
+> specify values for "base_sources" and "base_cflags".
+>
+> Depends-on: Series-34946 ("net/intel: clean up base code build")
+>
+> Bruce Richardson (10):
+>   build: add generic support for base code in drivers
+>   common/sfc_efx: use common base code build handling
+>   net/hinic: use common base code build handling
+>   net/intel: use common base code build handling
+>   net/ngbe: use common base code build handling
+>   net/octeontx: use common base code build handling
+>   net/qede: use common base code build handling
+>   net/thunderx: use common base code build handling
+>   net/txgbe: use common base code build handling
+>   raw/ifpga: use common base code build handling
+>
+>  drivers/common/sfc_efx/base/meson.build | 18 +++---------------
+>  drivers/common/sfc_efx/meson.build      |  3 ---
+>  drivers/meson.build                     | 20 ++++++++++++++++++++
+>  drivers/net/hinic/base/meson.build      | 16 +++++-----------
+>  drivers/net/hinic/meson.build           |  1 -
+>  drivers/net/intel/e1000/meson.build     |  3 ---
+>  drivers/net/intel/fm10k/meson.build     |  3 ---
+>  drivers/net/intel/i40e/meson.build      |  2 --
+>  drivers/net/intel/iavf/meson.build      |  1 -
+>  drivers/net/intel/ice/base/meson.build  | 22 +++++++---------------
+>  drivers/net/intel/ice/meson.build       |  2 --
+>  drivers/net/intel/idpf/meson.build      |  1 -
+>  drivers/net/intel/ixgbe/meson.build     |  3 ---
+>  drivers/net/ngbe/base/meson.build       | 12 ++----------
+>  drivers/net/ngbe/meson.build            |  3 ---
+>  drivers/net/octeontx/base/meson.build   | 19 +------------------
+>  drivers/net/octeontx/meson.build        |  3 ---
+>  drivers/net/qede/base/meson.build       | 17 +++++------------
+>  drivers/net/qede/meson.build            |  1 -
+>  drivers/net/thunderx/base/meson.build   | 10 +---------
+>  drivers/net/thunderx/meson.build        |  3 ---
+>  drivers/net/txgbe/base/meson.build      | 18 ++----------------
+>  drivers/net/txgbe/meson.build           |  3 ---
+>  drivers/raw/ifpga/base/meson.build      | 21 ++-------------------
+>  drivers/raw/ifpga/meson.build           | 15 ++++++++++++---
+>  25 files changed, 60 insertions(+), 160 deletions(-)
 
-Add a simple sleep command to wait until certain number of seconds has
-passed, using the newly added cmdline library floating point support.
+Series applied.
+Thanks for this cleanup Bruce.
 
-Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
----
 
-Notes:
-    v1 -> v2:
-    - Add floating point support to cmdline
-    - Use floating point format for pause command
-
- app/test-pmd/cmdline.c | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
-
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index d4bb3ec998..b6152c07e6 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -151,6 +151,9 @@ static void cmd_help_long_parsed(void *parsed_result,
- 
- 			"quit\n"
- 			"    Quit to prompt.\n\n"
-+
-+			"sleep secs\n"
-+			"    Sleep for secs seconds (can be fractional).\n\n"
- 		);
- 	}
- 
-@@ -7768,6 +7771,37 @@ static cmdline_parse_inst_t cmd_quit = {
- 	},
- };
- 
-+/* *** SLEEP *** */
-+struct cmd_sleep_result {
-+	cmdline_fixed_string_t sleep;
-+	double secs;
-+};
-+
-+static void cmd_sleep_parsed(void *parsed_result,
-+	__rte_unused struct cmdline *cl,
-+	__rte_unused void *data)
-+{
-+	struct cmd_sleep_result *res = parsed_result;
-+
-+	rte_delay_us_sleep(res->secs * 1E6);
-+}
-+
-+static cmdline_parse_token_string_t cmd_sleep_sleep =
-+	TOKEN_STRING_INITIALIZER(struct cmd_sleep_result, sleep, "sleep");
-+static cmdline_parse_token_num_t cmd_sleep_seconds =
-+	TOKEN_NUM_INITIALIZER(struct cmd_sleep_result, secs, RTE_FLOAT_DOUBLE);
-+
-+static cmdline_parse_inst_t cmd_sleep = {
-+	.f = cmd_sleep_parsed,
-+	.data = NULL,
-+	.help_str = "sleep <secs>: Sleep for a specified number of seconds",
-+	.tokens = {
-+		(void *)&cmd_sleep_sleep,
-+		(void *)&cmd_sleep_seconds,
-+		NULL,
-+	},
-+};
-+
- /* *** ADD/REMOVE MAC ADDRESS FROM A PORT *** */
- struct cmd_mac_addr_result {
- 	cmdline_fixed_string_t mac_addr_cmd;
-@@ -13711,6 +13745,7 @@ static cmdline_parse_ctx_t builtin_ctx[] = {
- 	&cmd_showdevice,
- 	&cmd_showcfg,
- 	&cmd_showfwdall,
-+	&cmd_sleep,
- 	&cmd_start,
- 	&cmd_start_tx_first,
- 	&cmd_start_tx_first_n,
--- 
-2.47.1
+--=20
+David Marchand
 
