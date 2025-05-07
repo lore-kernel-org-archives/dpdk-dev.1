@@ -2,179 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82E49C3ABC0
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 May 2025 09:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DF85C3ABBF
+	for <dpdk-dev@archiver.kernel.org>; Wed,  7 May 2025 10:01:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 57D5F4025D;
-	Wed,  7 May 2025 11:54:01 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id E7F414025A
- for <dev@dpdk.org>; Wed,  7 May 2025 11:53:58 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id EB9324025D;
+	Wed,  7 May 2025 12:01:29 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+ by mails.dpdk.org (Postfix) with ESMTP id 0D10A4025A
+ for <dev@dpdk.org>; Wed,  7 May 2025 12:01:27 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1746611640; x=1778147640;
- h=message-id:date:subject:from:to:references:in-reply-to:
- content-transfer-encoding:mime-version;
- bh=nZ8PbWBsZbClkZMtLd/Ul466ucTQIBM55OLwetFiH38=;
- b=QqcWfprjQ+3+Bg//1eXdJZ4m1XP4uZqR1e/kC/XOEApugnTRvZ0+gefw
- hPHCmG77gbhwCZl4V1A8Myl6hbe+mC5OscMXXy4w5AFH0F1n4Nw28NGMY
- mDbDsRp9aO365QOAkPfHeWWnesfasXUvvgEwQa/B7YaimDitNkVNHRk2Y
- eKOyk/SOheFa7T6raarmmS7Hd/DU8/2f3ypt59BUW6Ni4nrGiY6Z20QQ1
- cga6I3Odiqs1Osr9sf0WR/HNwNdXpRKGJuDaGn3L9Tm0U5aYKgGpmsRx7
- j3zw9aPGXhWq2kKhcG8Rm05TIL8sKynBs7MdbOnIM1DadLIdzkeBu3sFp Q==;
-X-CSE-ConnectionGUID: I3WJqJNpR32hgRgynYYEPw==
-X-CSE-MsgGUID: tCj+AtlHQ+eaDwIcO/Q4Gg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="48342604"
-X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; d="scan'208";a="48342604"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
- by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 May 2025 02:53:54 -0700
-X-CSE-ConnectionGUID: 4kU4PiGZRs+sIG9IeCKJ0g==
-X-CSE-MsgGUID: KwJfeYyYR0uccbFHOBZdbQ==
+ t=1746612088; x=1778148088;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=kUbVHx+y8MRk4KMR1apwtOIsD8+BLsDaFP43NgWI1fo=;
+ b=FjzZ4AwFDRd0Vv24eKfbh+TP5Bccpggj/sBl/T3wbu9czIut7W2MHWHs
+ n9UUt+kQ2sM/ufR+O0MRkkOleZ2ccW2ov0N7dGje0Q+FrIITWy4mEo1id
+ ctw/QC6Szqv3VGyuejfajh+bkknmfu74dtrdRymNXUczr2EACW2gUn/4B
+ oKMnn0TtspStVwZhTfkEadQLZNiTnS8cRFCrNkxZU+vrCuSkG8+84npp6
+ 0x8DpD+1dUA1OgXWLegK96MMUd2E9IubqixPM35jthIehmeAflFBaTLQ9
+ ey3coKbC5KnzHZ73O+a4E4oP754+zDv+nvJI11KqMCumwAsvDMsVjlJUN A==;
+X-CSE-ConnectionGUID: Kqn3b/AiT6KrzblD+eXkSQ==
+X-CSE-MsgGUID: CA2DJ4nTSDK/JiaCurXWVw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="58527591"
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; d="scan'208";a="58527591"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+ by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 May 2025 03:01:27 -0700
+X-CSE-ConnectionGUID: rTscxHQNQW2xfZ7eab8uMA==
+X-CSE-MsgGUID: OI+GfVzeTNW1sYGw0BHSxQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; d="scan'208";a="136427995"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 May 2025 02:53:53 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Wed, 7 May 2025 02:53:52 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Wed, 7 May 2025 02:53:52 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.173)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Wed, 7 May 2025 02:53:52 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oB+0ynpvFSvW64mTPunUmpw+sNSLBMkg2YSzd6WodQD9xqr/3p3kzjVvbwFvJ4fhbDdOq7NzJlo3SifWzOwkIN0NOMYIw9JDpvY69bFsHcJhpIBK6YbSfTgLmoH8JoepThHRKV/VcGmd8zurTuSultzPBbSEWBWKADzrnO7Ce/Bdm+sOqqGWtSkPB/6PTn74ngHCTPU/uVowLu7pmk26pNxg5MvF9x7PA8tRCs2LIKjgMyDbZmYEjibAsfZQ18Hg1A60J+aRMdqnXDcsOFUZu2087jC1xWNRX3QP9TRUzFqcx+ZyoHp7CysWB3IRn8GOp/v0gtdKuCBfZCEP9ov1Rw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zOVSkkDfBD1ENPjVHmIRb0/FOOQw3luRZ5tpuM4G48Q=;
- b=hIAXVJywyHufzQDKXDloCkAiXY+MP2qLbmShRTe8Tv3KhYnaUaQCUVnHgQwlDTFikQF6XXNlTSXk+QYGATBuA9s1J5M9W3oE5nKXiI7gxHK2TmuZKnsRt4BuLk112bGz1AwQysAE6uByOh2IrEamZPKE6FlNouS54HNDY0ngNhP54xh81HjT5UxOstO3+MYWrHp6tcAnt+fktwHg5/1gXwYiHrTj4IoZWidTG2V89j24663rKuxcSI8j+8P4nfZZ2CR00lfqivNHnDIIkYQdFHEgkHUb8pKIu8sXH4e1lplyEePDkyxAMTkZVHH3QvmbxvAB7256Lb/CNfYDEL7TBQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
- SJ5PPF6806D69E4.namprd11.prod.outlook.com (2603:10b6:a0f:fc02::831)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.32; Wed, 7 May
- 2025 09:53:44 +0000
-Received: from DM4PR11MB6502.namprd11.prod.outlook.com
- ([fe80::21e4:2d98:c498:2d7a]) by DM4PR11MB6502.namprd11.prod.outlook.com
- ([fe80::21e4:2d98:c498:2d7a%2]) with mapi id 15.20.8678.033; Wed, 7 May 2025
- 09:53:44 +0000
-Message-ID: <99a0fe20-00b9-4cf7-b8b8-b9a80469073f@intel.com>
-Date: Wed, 7 May 2025 11:53:40 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] cmdline: add floating point support
-From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
-To: <dev@dpdk.org>
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; d="scan'208";a="159199422"
+Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
+ by fmviesa002.fm.intel.com with ESMTP; 07 May 2025 03:01:26 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org
+Subject: [PATCH v4 1/2] cmdline: add floating point support
+Date: Wed,  7 May 2025 11:01:23 +0100
+Message-ID: <e8234c26b5dd91aaa9e7b1e38887b1d6fdb2d053.1746612074.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <7ac1444b7d2d64dc467a22e7ac65cf3cc16246dc.1746188833.git.anatoly.burakov@intel.com>
 References: <7ac1444b7d2d64dc467a22e7ac65cf3cc16246dc.1746188833.git.anatoly.burakov@intel.com>
- <f9054c20d6ac09b82a4c03df268541118e8e9222.1746611372.git.anatoly.burakov@intel.com>
-Content-Language: en-US
-In-Reply-To: <f9054c20d6ac09b82a4c03df268541118e8e9222.1746611372.git.anatoly.burakov@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DB3PR06CA0031.eurprd06.prod.outlook.com (2603:10a6:8:1::44)
- To DM4PR11MB6502.namprd11.prod.outlook.com
- (2603:10b6:8:89::7)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|SJ5PPF6806D69E4:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9466f621-7c39-479d-cd18-08dd8d4d0ddc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?VXp5ZXdNUlFTYlltaDJWMzROTzIrd3lXdVgyL2VXSjhsaCsvVGtZRzRwUFl6?=
- =?utf-8?B?VkcrM0RjRjFVMDVPbUg3QytUNzdYWkhlVFhCeEg5N05iWjAyZWo5VnpRdkRz?=
- =?utf-8?B?ZWdLMzlnaHhWbDZXTmpUTkk2V25wbGE5NTZzeXk1QjBrVHhMemlXQlREYVhY?=
- =?utf-8?B?WlhiZ05KVUZwQzJUTE5OaXRkOTRxcUJlRWorVmNTR0FZa3Y5cCt6TzdDaWxZ?=
- =?utf-8?B?dllGWEtRVTVyeFB6MURteFh4dFVHQkpQcHN6c3BXMXlCSDlUemNQb0pyWlBB?=
- =?utf-8?B?cUlGVWVEa1J4Qk5iMnBidXByMUlEVitEcmwxVU1vbk51b2JDcUZGZHYrQ1VJ?=
- =?utf-8?B?d29TUGUxbzkrai9La05xYkdnclhNVlBxZXpxRnpQUCtzbXdLY2RlNWFiUTVu?=
- =?utf-8?B?cFZ3QytlWU90RnNqQmtQWFBmSCtoWkdoMVB2OCtEY1VjT3dIaG42NW8zTU1L?=
- =?utf-8?B?Ty95NjFwNkxNcm1XTlpoMXY0bC9Cc28rdEZwKy9vSGcwdDM2RXplUitvTUJY?=
- =?utf-8?B?aU04NlhUZkZwNUlKa3QwMjRURnZyUCtTWVU4bzJ1RzRtNUNrbTRWdERiYUdK?=
- =?utf-8?B?ZE4yMTEvaVd2WEtRclVMU0dDaGhjdWgwQW1pQU1wTlhGMGZkUGQvbHpnUCtl?=
- =?utf-8?B?R3c2TlVnWXp1Rms5eTgrcHZIaWVEZnpMakVLMzVXM2FudUFBYjkzOGYxU3hD?=
- =?utf-8?B?OVllWkNFZEdwT2c2VDhIdmRCN3czRUU3dmtsdlRxc0JHSFRObGVuakp6cmdl?=
- =?utf-8?B?UktqMWhkTHp3ellXaytyRWtsVlJoeFZ4b3MzRVdhUk4yZ3llR1lrb0djak1I?=
- =?utf-8?B?MEZrZk1XMmViQ003bzd3aXQ4QjdCWjFOUk0ybVRSN1laN25ESmRtOUdhZnpB?=
- =?utf-8?B?MHBrVk1zYU5IdzkwQk94QXcvazZSMGMwWlRUekVSSVpsMmd5dDM4dnhhMGRX?=
- =?utf-8?B?SjNONzUzWDVneE9kMmxVK2F2ODlEWGtZY1RpNFM4VUpOc3I3U3FZbXFJcFMy?=
- =?utf-8?B?MEMwT3lHZlR5SE1WSTBCbXRMY2pkcW9mUFpKem1UUXpJdVhJVnRqNTR0TktT?=
- =?utf-8?B?ODQ1dFQzZE1pQ2o2eWdneHJidGVheVFMR1VEK3NpRUZrMTlpbkFZNENaRkNn?=
- =?utf-8?B?SEdObjJsaXZlOWJQZTgwdDVKMUV6WTNKNzFNTTdZSUZCVjF1ck5KeHNxb1Fq?=
- =?utf-8?B?VnMrbkU0bHphNDJ3Z1lLZXBSL2lnejBwa2I1OTd3cFJISTgzSWNrZ0J0eVJP?=
- =?utf-8?B?UndiQnIrUTVmOEp5aVZWZnlKcFRRdnNIaXRkbi94SVJycFA0SXhnMFVYbXJh?=
- =?utf-8?B?YXExYS9DaXlYaXFXa1pHaVlBS2tTNStUK3Yyd1luOUFIS2Y5VTR2TklFL1dh?=
- =?utf-8?B?dlp1eFFaM0RZc1VhU0JRWjBjdGttNnRBZXJnbCt1NGJDSTNEOS9UeUFmZ3Mr?=
- =?utf-8?B?QmRjYVA2Q1NlK2drV0hXeG1lWjNsa2FhYlRTQitKL0kvR1hpNDdvaVd4VWxi?=
- =?utf-8?B?SVhTTkRNT3h1Y0RFTlduMm5LY1dURTJVMTNLR3B2cVZVdWtzblhTUDlKM2l5?=
- =?utf-8?B?WEljTm9sQU43YUJneHZuUWU4RGZmVE1iV1U2ZWErS2lKU0FJWnZtUkIvMnZ6?=
- =?utf-8?B?ZmYxNFpNYXVHQWEwWEpMNElJU01CcnEwUXhtV1Y5WDI5QlV5akg1enZPdEVV?=
- =?utf-8?B?V1cvMGM5czFJeHUxZFdlSCtrWHNncHYrOC8vcER5aGs2OVVUem9ZazRSY1Rr?=
- =?utf-8?B?NHQrYWsrWDFlRHNOT2FlL0Rib09ZbjFJTnh5alZQRzV6TTdRSE16LzEzaUZn?=
- =?utf-8?B?R2xWVUhoa21hK1J0cFBmdUx4VEtySE1iWEZhemxTQTZ2d0xCYVVDM29SRHFU?=
- =?utf-8?B?bUNsZ2FmK1hjd1dhQkRjenlaS1JhVlFSZDNKeEYxRXFjb2ZjcDFEQnEzL1RY?=
- =?utf-8?Q?1XV6trsqxkM=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NkR0MVRjdWxRTlJIb0Z6NGRqSjVzYkFqMGoxRGhITVA1MThmbWRCd2Q2TTcw?=
- =?utf-8?B?TkhLOFRYZ3VUekl3VEllb3Izb0VTaVdHa3hGMmk1cHlneFRFQ2RlblZTazR6?=
- =?utf-8?B?L3Jub2huWGEzSWduczV2RkFHRmYyQ3NqWkUyTnZpNC9kci9VUVNYdmZzckxK?=
- =?utf-8?B?dWp3eStaOHpvdCszdmNkQzlEUzVMZjN5a1FWc3hLUWVWSXFueEM1UGhUNWh6?=
- =?utf-8?B?NDdSVm9OQUdZL2hpcFpodm8vaHp5S1pxaDB4T0h2TlFGand5c1RvVHV0SXA3?=
- =?utf-8?B?bjd4Ny9vcmdBUW5GaFRVeHBWUDA0MWZCMnVRbHFvejdWNWw2SWxjYmlDZnQy?=
- =?utf-8?B?aXJmOUR2b0tPRkJIUjlFMFR4L2FoZURRbXBUNGw1am9wbzBxWHJncStQYVFM?=
- =?utf-8?B?dUQ3REcrRlNLeGh5bmtyMEhGZjh3U2NoSWNPenA4YUVyWHZxbTZkMGRKSHJZ?=
- =?utf-8?B?UmVlbm1acHduaU0rekdpZnY0cC9CdjBJektialdsRDBsdllWQXlja04rNUI0?=
- =?utf-8?B?aHgrWmF1VGIxR2J4dlNnWWRRY21nd2pzNDZMeFJpQkhLZVllamJnUzFzUjBI?=
- =?utf-8?B?ejVqQW5ob2JBV1JNeDBrZll4UXpLUURYeXhYUHlDYk1UUnEvYnlCSHAxSU9R?=
- =?utf-8?B?TUhrOVhtU1ArcHBHbTd3VDZuNmNQTW92ZUgvRGVCd0cveENCeE1DNVVudm1K?=
- =?utf-8?B?d0FNVVpwaHI4M0QrRitCNWJGSCtwWG1JTE5IbzdxNVlDTHo4dEZJY1BZdVlB?=
- =?utf-8?B?aFA0ekpMOEVoV3NMdFAxVE9tN2VnSFBaWlJ6VWlUdW9TNTZhYVZrS2xCRHhF?=
- =?utf-8?B?NThKT0RBQ2dSTzBoT1RzOTNPbEJBYmNaY0RZajVGWFQ3ODNobGlIZDRoUUMz?=
- =?utf-8?B?TWk5UVdqSnZIR3lBSGNYQXBTT1lzU0RZK2dIY3A5UStHa0lrZXJ6ajRRSHNt?=
- =?utf-8?B?UnY2clpiMk8vSlB6Y2JCOGhKaEQ5eDZuVDdxeWFmbnVSSnAzOHE4Vk9WVzBV?=
- =?utf-8?B?d2dabmxDakd5cjkyeVRjekxNanlCWmxYVEF5dlpWOWpsT05FUDBiTDRkcFlC?=
- =?utf-8?B?dVVCTDdGaU10UmdTU21udjhxNlhJckE4cmRxMHl2M3BYQ0dhUUVyNnloQk9m?=
- =?utf-8?B?SG1rMWR4UDN0ejhMbkxrVGxLMHN2b1ZRRDI2S1VNZ3ppSVAxMnBwWmRvcDBH?=
- =?utf-8?B?Mkx6eENYYVpOaWJRNFZWY3FheEVBVUpoR1V0bHFrVExRS3JhbmVQTnViNU12?=
- =?utf-8?B?S3FQNWIxMmxURUtVVEJHQjdUWWNWOVhBaThPNFdoL2pNK2htZWFPd2xmQ095?=
- =?utf-8?B?bkRzVGt3RkxacnFJNklLN0t2SWEyUTEreE1wYkN5TGZqeExRVkIxRVlHVng3?=
- =?utf-8?B?eXdOYUcrRU9Sb3dmN25sYTNKd3p6UlJwdjYxWVE0dVFOZS9MT3NyTWpZS2lr?=
- =?utf-8?B?UWtWeTdVTGtMSXBCQWZNUjFtdUVtUGI2bkJkZEZ3YjRyQzFhS3BiR0dYVDkv?=
- =?utf-8?B?elNNSnhkYXNMVzJYZEpHeXFMUzhjYStVTHFKckoyN1o1SU5xWmx5TSt4bS9M?=
- =?utf-8?B?WXhsMDBMb2cwdFVSYkV4UmlFT3hCUS9oU0xwL1ViNDVpbFAvdlhDanU0VndU?=
- =?utf-8?B?VTFUelJhczVtbHVRNWQyK0VyY2J4SHZNc09FZDFBN25UVm9PU1VNSWlvbmpE?=
- =?utf-8?B?YmMwUEVUcFhVdW03THhxMlB1eFBISUw3dUpLQy9tYlgxdm5UT3o3eWUwRWtW?=
- =?utf-8?B?K0I2SnFhc0w3d2ViNDN5cVpWbkJpeEJ6UkI3TkZtK3RPb0o5d1FhQzMydjdx?=
- =?utf-8?B?VkkySytqdlBZTUx5VlhxQzdvZnJSaXFYZ3FEam5KU2Rac2MwdWlGMkVxdndq?=
- =?utf-8?B?bFFqcWpqSEJFRTlKZHBobUo4YlRGazBNQ0RPN09FNG42aVY0akFLSkRIR3Jz?=
- =?utf-8?B?ZlpaRnhJWGxGVjRvL2ZNbFpIZTUyQUI4RS9xRHh3WjI3NDdKRVlTY3hhRzN0?=
- =?utf-8?B?Y05XeU90VVpWa0pNWW5EcTBFUXRMMjlhM1h2TGt1UVA1RnV0UlhVNWlTaTl6?=
- =?utf-8?B?UHdNL0FhdW9BaDFBWDh5aDRoODMxUjhncVNKQ2NEd0QrQnBnV2pKZTRubmtB?=
- =?utf-8?B?MS90OFFqYjVtdFdQVWJTTFRTcmlEaDBTWTNkVGNnQXdrRXRPY2dNVGM0Wk1Y?=
- =?utf-8?B?d1E9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9466f621-7c39-479d-cd18-08dd8d4d0ddc
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2025 09:53:44.2579 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eruQmTNPl9Rm4p1VwI1VSuhhYIG7e4wIUNVV6OIzX3KfGLCnzc7OuyAnDc7jZr+3UPuRml4d1fu6XmNO4PSYhLIPoxqZfZi39Oves4y53jA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF6806D69E4
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -188,23 +58,789 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 5/7/2025 11:50 AM, Anatoly Burakov wrote:
-> Add support for parsing floating point numbers in cmdline library, as well
-> as unit tests for the new functionality. The parser supports single and
-> double precision floats, and will understand decimal fractions as well as
-> scientific notation.
-> 
-> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-> ---
-Missed patchnotes:
+Add support for parsing floating point numbers in cmdline library, as well
+as unit tests for the new functionality. The parser supports single and
+double precision floats, and will understand decimal fractions as well as
+scientific notation.
 
-v2 -> v3:
-- Fixed a bug where a free-standing negative exponent ("1e-") would 
-attempt to be
-   parsed, and added unit tests for this case
-- Added support for floats in dpdk-cmdline-gen script
-- Added documentation updates to call out float support
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+---
 
+Notes:
+    v3 -> v4:
+    - Removed unnecessary check for integer overflow when parsing negative
+      floats (as we convert to double before changing sign)
+    - Make naming of float exponent states more consistent
+    
+    v2 -> v3:
+    - Fixed a bug where a free-standing negative exponent ("1e-") would attempt to be
+      parsed, and added unit tests for this case
+    - Added support for floats in dpdk-cmdline-gen script
+    - Added documentation updates to call out float support
+
+ app/test/test_cmdline_num.c            | 203 +++++++++++++++++-
+ buildtools/dpdk-cmdline-gen.py         |  24 ++-
+ doc/guides/prog_guide/cmdline.rst      |   3 +
+ doc/guides/rel_notes/release_25_07.rst |   5 +
+ lib/cmdline/cmdline_parse_num.c        | 273 +++++++++++++++++++++++++
+ lib/cmdline/cmdline_parse_num.h        |   4 +-
+ 6 files changed, 497 insertions(+), 15 deletions(-)
+
+diff --git a/app/test/test_cmdline_num.c b/app/test/test_cmdline_num.c
+index 9276de59bd..e4038271c9 100644
+--- a/app/test/test_cmdline_num.c
++++ b/app/test/test_cmdline_num.c
+@@ -5,6 +5,8 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <inttypes.h>
++#include <float.h>
++#include <math.h>
+ 
+ #include <rte_string_fns.h>
+ 
+@@ -23,6 +25,11 @@ struct num_signed_str {
+ 	int64_t result;
+ };
+ 
++struct num_float_str {
++	const char * str;
++	double result;
++};
++
+ const struct num_unsigned_str num_valid_positive_strs[] = {
+ 		/* decimal positive */
+ 		{"0", 0 },
+@@ -141,6 +148,63 @@ const struct num_signed_str num_valid_negative_strs[] = {
+ 		{"-9223372036854775808", INT64_MIN },
+ };
+ 
++const struct num_float_str num_valid_float_strs[] = {
++		/* zero */
++		{"0", 0},
++		/* parse int as float */
++		{"1", 1},
++		{"-1", -1},
++		/* fractional */
++		{"1.23", 1.23},
++		{"-1.23", -1.23},
++		{"0.123", 0.123},
++		{"-0.123", -0.123},
++		{"123.456", 123.456},
++		{"-123.456", -123.456},
++		/* positive exponent */
++		{"1e2", 1e2},
++		{"-1e2", -1e2},
++		{"1E2", 1E2},
++		{"-1E2", -1E2},
++		{"0.12e3", 0.12e3},
++		{"-0.12e3", -0.12e3},
++		{"1.23e4", 1.23e4},
++		{"-1.23e4", -1.23e4},
++		{"1.23E4", 1.23E4},
++		{"-1.23E4", -1.23E4},
++		{"123.456e7", 123.456e7},
++		{"-123.456e7", -123.456e7},
++		{"123.456E7", 123.456E7},
++		{"-123.456E7", -123.456E7},
++		/* negative exponent */
++		{"1e-2", 1e-2},
++		{"-1e-2", -1e-2},
++		{"1E-2", 1E-2},
++		{"-1E-2", -1E-2},
++		{"0.12e-3", 0.12e-3},
++		{"-0.12e-3", -0.12e-3},
++		{"1.23e-4", 1.23e-4},
++		{"-1.23e-4", -1.23e-4},
++		{"1.23E-4", 1.23E-4},
++		{"-1.23E-4", -1.23E-4},
++		{"123.456e-7", 123.456e-7},
++		{"-123.456e-7", -123.456e-7},
++		{"123.456E-7", 123.456E-7},
++		{"-123.456E-7", -123.456E-7},
++		/* try overflowing float */
++		{"2e63", 2e63},
++		{"-2e63", -2e63},
++		{"2E63", 2E63},
++		{"-2E63", -2E63},
++		{"18446744073709551615", (double) UINT64_MAX},
++		{"-9223372036854775808", (double) INT64_MIN},
++		/* try overflowing double */
++		{"2e308", HUGE_VAL},
++		{"-2e308", -HUGE_VAL},
++		{"2E308", HUGE_VAL},
++		{"-2E308", HUGE_VAL},
++};
++
+ const struct num_unsigned_str num_garbage_positive_strs[] = {
+ 		/* valid strings with garbage on the end, should still be valid */
+ 		/* decimal */
+@@ -183,6 +247,30 @@ const struct num_signed_str num_garbage_negative_strs[] = {
+ 		{"-9223372036854775808 garbage", INT64_MIN },
+ };
+ 
++const char *float_invalid_strs[] = {
++	"0.",
++	".1",
++	"1.1.",
++	"1.1.1",
++	"-0.",
++	"-.1",
++	"-1.1.",
++	"-1.1.1",
++	"e",
++	"1e",
++	"-1e",
++	"0.1e",
++	"-0.1e",
++	"1.e",
++	"-1.e",
++	"1.23e3.4",
++	"-1.23e3.4",
++	"1e1e",
++	"1e1e1",
++	"1e-",
++	"-1e-"
++};
++
+ const char * num_invalid_strs[] = {
+ 		"18446744073709551616", /* out of range unsigned */
+ 		"-9223372036854775809", /* out of range negative signed */
+@@ -202,7 +290,16 @@ const char * num_invalid_strs[] = {
+ 		/* too long (128+ chars) */
+ 		("0b1111000011110000111100001111000011110000111100001111000011110000"
+ 		  "1111000011110000111100001111000011110000111100001111000011110000"),
++		/* valid float values but should fail to parse as ints */
+ 		"1E3",
++		"-1E3",
++		"1.23",
++		"-1.23",
++		"1E-3",
++		"-1E-3",
++		"1.23E4",
++		"-1.23E4",
++		/* misc invalid values */
+ 		"0A",
+ 		"-B",
+ 		"+4",
+@@ -216,6 +313,47 @@ const char * num_invalid_strs[] = {
+ 		"\0",
+ };
+ 
++static int
++float_cmp(double expected, void *actual_p, enum cmdline_numtype type)
++{
++	double eps;
++	double actual_d;
++
++	if (type == RTE_FLOAT_SINGLE) {
++		/* read as float, convert to double */
++		actual_d = (double)*(float *)actual_p;
++		/* FLT_EPSILON is too small for some tests */
++		eps = 1e-5f;
++	} else {
++		/* read as double */
++		actual_d = *(double *)actual_p;
++		eps = DBL_EPSILON;
++	}
++	/* compare using epsilon value */
++	if (fabs(expected - actual_d) < eps)
++		return 0;
++	/* not equal */
++	return expected < actual_d ? -1 : 1;
++}
++
++static int
++can_parse_float(double expected_result, enum cmdline_numtype type)
++{
++	switch (type) {
++	case RTE_FLOAT_SINGLE:
++		if (expected_result > FLT_MAX || expected_result < -FLT_MAX)
++			return 0;
++		break;
++	case RTE_FLOAT_DOUBLE:
++		if (expected_result > DBL_MAX || expected_result < -DBL_MAX)
++			return 0;
++		break;
++	default:
++		return 1;
++	}
++	return 1;
++}
++
+ static int
+ can_parse_unsigned(uint64_t expected_result, enum cmdline_numtype type)
+ {
+@@ -371,11 +509,11 @@ test_parse_num_invalid_data(void)
+ 	int ret = 0;
+ 	unsigned i;
+ 	char buf[CMDLINE_TEST_BUFSIZE];
+-	uint64_t result; /* pick largest buffer */
+ 	cmdline_parse_token_num_t token;
+ 
+-	/* cycle through all possible parsed types */
++	/* cycle through all possible integer types */
+ 	for (type = RTE_UINT8; type <= RTE_INT64; type++) {
++		uint64_t result; /* pick largest buffer */
+ 		token.num_data.type = type;
+ 
+ 		/* test full strings */
+@@ -397,6 +535,31 @@ test_parse_num_invalid_data(void)
+ 			}
+ 		}
+ 	}
++
++	/* cycle through all possible float types */
++	for (type = RTE_FLOAT_SINGLE; type <= RTE_FLOAT_DOUBLE; type++) {
++		double result; /* pick largest buffer */
++		token.num_data.type = type;
++
++		/* test full strings */
++		for (i = 0; i < RTE_DIM(float_invalid_strs); i++) {
++
++			memset(&result, 0, sizeof(double));
++			memset(&buf, 0, sizeof(buf));
++
++			ret = cmdline_parse_num((cmdline_parse_token_hdr_t*)&token,
++					float_invalid_strs[i], (void*)&result, sizeof(result));
++			if (ret != -1) {
++				/* get some info about what we are trying to parse */
++				cmdline_get_help_num((cmdline_parse_token_hdr_t*)&token,
++						buf, sizeof(buf));
++
++				printf("Error: parsing %s as %s succeeded!\n",
++						float_invalid_strs[i], buf);
++				return -1;
++			}
++		}
++	}
+ 	return 0;
+ }
+ 
+@@ -408,13 +571,13 @@ test_parse_num_valid(void)
+ 	enum cmdline_numtype type;
+ 	unsigned i;
+ 	char buf[CMDLINE_TEST_BUFSIZE];
+-	uint64_t result;
+ 	cmdline_parse_token_num_t token;
+ 
+ 	/** valid strings **/
+ 
+ 	/* cycle through all possible parsed types */
+ 	for (type = RTE_UINT8; type <= RTE_INT64; type++) {
++		uint64_t result;
+ 		token.num_data.type = type;
+ 
+ 		/* test positive strings */
+@@ -489,10 +652,44 @@ test_parse_num_valid(void)
+ 		}
+ 	}
+ 
++	/* float values */
++	for (type = RTE_FLOAT_SINGLE; type <= RTE_FLOAT_DOUBLE; type++) {
++		double result;
++		token.num_data.type = type;
++
++		/* test all valid strings */
++		for (i = 0; i < RTE_DIM(num_valid_float_strs); i++) {
++			result = 0;
++			memset(&buf, 0, sizeof(buf));
++
++
++			cmdline_get_help_num((cmdline_parse_token_hdr_t*)&token,
++					buf, sizeof(buf));
++
++			ret = cmdline_parse_num((cmdline_parse_token_hdr_t*) &token,
++				num_valid_float_strs[i].str,
++				(void*)&result, sizeof(result));
++
++			/* if it should have passed but didn't, or if it should have failed but didn't */
++			if ((ret < 0) == (can_parse_float(num_valid_float_strs[i].result, type) > 0)) {
++				printf("Error: parser behaves unexpectedly when parsing %s as %s!\n",
++						num_valid_float_strs[i].str, buf);
++				return -1;
++			}
++			/* check if result matches */
++			if (ret > 0 && float_cmp(num_valid_float_strs[i].result, &result, type) != 0) {
++				printf("Error: parsing %s as %s failed: result mismatch!\n",
++						num_valid_float_strs[i].str, buf);
++				return -1;
++			}
++		}
++	}
++
+ 	/** garbage strings **/
+ 
+ 	/* cycle through all possible parsed types */
+ 	for (type = RTE_UINT8; type <= RTE_INT64; type++) {
++		uint64_t result;
+ 		token.num_data.type = type;
+ 
+ 		/* test positive garbage strings */
+diff --git a/buildtools/dpdk-cmdline-gen.py b/buildtools/dpdk-cmdline-gen.py
+index 7dadded783..6c76d7116a 100755
+--- a/buildtools/dpdk-cmdline-gen.py
++++ b/buildtools/dpdk-cmdline-gen.py
+@@ -17,16 +17,18 @@
+     RTE_SET_USED(cl);
+     RTE_SET_USED(data);
+ """
+-NUMERIC_TYPES = [
+-    "UINT8",
+-    "UINT16",
+-    "UINT32",
+-    "UINT64",
+-    "INT8",
+-    "INT16",
+-    "INT32",
+-    "INT64",
+-]
++NUMERIC_TYPES = {
++    "UINT8": "uint8_t",
++    "UINT16": "uint16_t",
++    "UINT32": "uint32_t",
++    "UINT64": "uint64_t",
++    "INT8": "int8_t",
++    "INT16": "int16_t",
++    "INT32": "int32_t",
++    "INT64": "int64_t",
++    "FLOAT_SINGLE": "float",
++    "FLOAT_DOUBLE": "double",
++}
+ 
+ 
+ def process_command(lineno, tokens, comment):
+@@ -70,7 +72,7 @@ def process_command(lineno, tokens, comment):
+                 f"\tTOKEN_STRING_INITIALIZER(struct cmd_{name}_result, {t_name}, {t_val});"
+             )
+         elif t_type in NUMERIC_TYPES:
+-            result_struct.append(f"\t{t_type.lower()}_t {t_name};")
++            result_struct.append(f"\t{NUMERIC_TYPES[t_type]} {t_name};")
+             initializers.append(
+                 f"static cmdline_parse_token_num_t cmd_{name}_{t_name}_tok =\n"
+                 f"\tTOKEN_NUM_INITIALIZER(struct cmd_{name}_result, {t_name}, RTE_{t_type});"
+diff --git a/doc/guides/prog_guide/cmdline.rst b/doc/guides/prog_guide/cmdline.rst
+index e20281ceb5..447a90e32e 100644
+--- a/doc/guides/prog_guide/cmdline.rst
++++ b/doc/guides/prog_guide/cmdline.rst
+@@ -22,6 +22,7 @@ The DPDK command-line library supports the following features:
+ 
+    * Strings
+    * Signed/unsigned 16/32/64-bit integers
++   * Single/double precision floats
+    * IP Addresses
+    * Ethernet Addresses
+ 
+@@ -68,6 +69,8 @@ The format of the list file must be:
+ 
+   * ``<UINT16>port_id``
+ 
++  * ``<FLOAT_SINGLE>ratio``
++
+   * ``<IP>src_ip``
+ 
+   * ``<IPv4>dst_ip4``
+diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
+index 093b85d206..54bc545110 100644
+--- a/doc/guides/rel_notes/release_25_07.rst
++++ b/doc/guides/rel_notes/release_25_07.rst
+@@ -55,6 +55,11 @@ New Features
+      Also, make sure to start the actual text at the margin.
+      =======================================================
+ 
++* **Added floating point numbers support to cmdline library.**
++
++  The cmdline library now supports parsing single- and double-precision
++  floating point numbers in interactive user commands.
++
+ 
+ Removed Items
+ -------------
+diff --git a/lib/cmdline/cmdline_parse_num.c b/lib/cmdline/cmdline_parse_num.c
+index f21796bedb..9e4d559325 100644
+--- a/lib/cmdline/cmdline_parse_num.c
++++ b/lib/cmdline/cmdline_parse_num.c
+@@ -7,6 +7,8 @@
+ #include <stdio.h>
+ #include <stdint.h>
+ #include <inttypes.h>
++#include <float.h>
++#include <math.h>
+ #include <string.h>
+ #include <eal_export.h>
+ #include <rte_string_fns.h>
+@@ -34,6 +36,10 @@ enum num_parse_state_t {
+ 	DEC_NEG,
+ 	BIN,
+ 	HEX,
++	FLOAT_POS,
++	FLOAT_NEG,
++	FLOAT_EXP_POS,
++	FLOAT_EXP_NEG,
+ 
+ 	ERROR,
+ 
+@@ -44,12 +50,27 @@ enum num_parse_state_t {
+ 	BIN_OK,
+ 	DEC_NEG_OK,
+ 	DEC_POS_OK,
++	FLOAT_POS_OK,
++	FLOAT_NEG_OK,
++	FLOAT_EXP_POS_OK,
++	FLOAT_EXP_NEG_OK,
++};
++
++struct float_parse_state {
++	uint64_t dec;
++	uint64_t frac;
++	uint64_t frac_exp;
++	uint64_t exp;
++#define FLOAT_FLAG_NEG_RES     (1 << 0)
++#define FLOAT_FLAG_NEG_EXP     (1 << 1)
++	int flags;
+ };
+ 
+ /* Keep it sync with enum in .h */
+ static const char * num_help[] = {
+ 	"UINT8", "UINT16", "UINT32", "UINT64",
+ 	"INT8", "INT16", "INT32", "INT64",
++	"SINGLE", "DOUBLE"
+ };
+ 
+ static inline int
+@@ -63,6 +84,50 @@ add_to_res(unsigned int c, uint64_t *res, unsigned int base)
+ 	return 0;
+ }
+ 
++static inline int
++check_float_result(enum cmdline_numtype res_type, struct float_parse_state *fps,
++		void *res)
++{
++	double dec, frac, exp, result;
++
++	/* extract parts */
++	dec = (double) fps->dec;
++	frac = (double) fps->frac * pow(10.0, -(double)fps->frac_exp);
++	exp = (double) fps->exp;
++
++	/* exponent might be negative */
++	if (fps->flags & FLOAT_FLAG_NEG_EXP)
++		exp = pow(10.0, -exp);
++	else
++		exp = pow(10.0, exp);
++
++	/* combine decimal, fractional, and exponent parts */
++	result = (dec + frac) * exp;
++
++	/* check for any overflows */
++	if (isinf(frac) || isinf(exp) || isinf(result))
++		return -1;
++
++	/* result is a valid double */
++
++	/* check if result needs to be negative */
++	if (fps->flags & FLOAT_FLAG_NEG_RES)
++		result = -result;
++
++	if (res_type == RTE_FLOAT_SINGLE) {
++		/* float can overflow from conversion */
++		float flt = (float)result;
++		if (isinf(flt))
++			return -1;
++		if (res) *(float *)res = flt;
++	} else if (res_type == RTE_FLOAT_DOUBLE) {
++		if (res) *(double *)res = result;
++	} else {
++		return -1;
++	}
++	return 0;
++}
++
+ static int
+ check_res_size(struct cmdline_token_num_data *nd, unsigned ressize)
+ {
+@@ -87,6 +152,14 @@ check_res_size(struct cmdline_token_num_data *nd, unsigned ressize)
+ 		if (ressize < sizeof(int64_t))
+ 			return -1;
+ 		break;
++	case RTE_FLOAT_SINGLE:
++		if (ressize < sizeof(float))
++			return -1;
++		break;
++	case RTE_FLOAT_DOUBLE:
++		if (ressize < sizeof(double))
++			return -1;
++		break;
+ 	default:
+ 		return -1;
+ 	}
+@@ -104,6 +177,7 @@ cmdline_parse_num(cmdline_parse_token_hdr_t *tk, const char *srcbuf, void *res,
+ 	const char * buf;
+ 	char c;
+ 	uint64_t res1 = 0;
++	struct float_parse_state fps = {};
+ 
+ 	if (!tk)
+ 		return -1;
+@@ -156,6 +230,10 @@ cmdline_parse_num(cmdline_parse_token_hdr_t *tk, const char *srcbuf, void *res,
+ 				else
+ 					st = OCTAL_OK;
+ 			}
++			else if (c == '.') {
++				st = FLOAT_POS;
++				break;
++			}
+ 			else  {
+ 				st = ERROR;
+ 			}
+@@ -173,11 +251,80 @@ cmdline_parse_num(cmdline_parse_token_hdr_t *tk, const char *srcbuf, void *res,
+ 			}
+ 			break;
+ 
++		case FLOAT_POS:
++			if (c >= '0' && c <= '9') {
++				if (add_to_res(c - '0', &res1, 10) < 0)
++					st = ERROR;
++				else {
++					st = FLOAT_POS_OK;
++					fps.frac_exp++;
++				}
++			}
++			else {
++				st = ERROR;
++			}
++			break;
++
++		case FLOAT_NEG:
++			if (c >= '0' && c <= '9') {
++				if (add_to_res(c - '0', &res1, 10) < 0)
++					st = ERROR;
++				else {
++					st = FLOAT_NEG_OK;
++					fps.frac_exp++;
++				}
++			}
++			else {
++				st = ERROR;
++			}
++			break;
++
++		case FLOAT_EXP_POS:
++			if (c >= '0' && c <= '9') {
++				if (add_to_res(c - '0', &res1, 10) < 0)
++					st = ERROR;
++				else
++					st = FLOAT_EXP_POS_OK;
++			}
++			else if (c == '-') {
++				st = FLOAT_EXP_NEG;
++				fps.flags |= FLOAT_FLAG_NEG_EXP;
++			}
++			else {
++				st = ERROR;
++			}
++			break;
++
++		case FLOAT_EXP_NEG:
++			if (c >= '0' && c <= '9') {
++				if (add_to_res(c - '0', &res1, 10) < 0)
++					st = ERROR;
++				else
++					st = FLOAT_EXP_NEG_OK;
++			}
++			else {
++				st = ERROR;
++			}
++			break;
++
+ 		case DEC_NEG_OK:
+ 			if (c >= '0' && c <= '9') {
+ 				if (add_to_res(c - '0', &res1, 10) < 0)
+ 					st = ERROR;
+ 			}
++			else if (c == '.') {
++				fps.dec = res1;
++				fps.flags |= FLOAT_FLAG_NEG_RES;
++				st = FLOAT_NEG;
++				/* erase result */
++				res1 = 0;
++			} else if (c == 'e' || c == 'E') {
++				fps.dec = res1;
++				fps.flags |= FLOAT_FLAG_NEG_RES;
++				st = FLOAT_EXP_POS;
++				/* erase result */
++				res1 = 0;
++			}
+ 			else {
+ 				st = ERROR;
+ 			}
+@@ -188,11 +335,75 @@ cmdline_parse_num(cmdline_parse_token_hdr_t *tk, const char *srcbuf, void *res,
+ 				if (add_to_res(c - '0', &res1, 10) < 0)
+ 					st = ERROR;
+ 			}
++			else if (c == '.') {
++				fps.dec = res1;
++				st = FLOAT_POS;
++				/* erase result */
++				res1 = 0;
++			}
++			else if (c == 'e' || c == 'E') {
++				fps.dec = res1;
++				st = FLOAT_EXP_POS;
++				/* erase result */
++				res1 = 0;
++			}
+ 			else {
+ 				st = ERROR;
+ 			}
+ 			break;
+ 
++		case FLOAT_POS_OK:
++			if (c >= '0' && c <= '9') {
++				if (add_to_res(c - '0', &res1, 10) < 0)
++					st = ERROR;
++				else
++					fps.frac_exp++;
++			} else if (c == 'e' || c == 'E') {
++				fps.frac = res1;
++				st = FLOAT_EXP_POS;
++				/* erase result */
++				res1 = 0;
++			} else {
++				st = ERROR;
++			}
++			break;
++
++		case FLOAT_NEG_OK:
++			if (c >= '0' && c <= '9') {
++				if (add_to_res(c - '0', &res1, 10) < 0)
++					st = ERROR;
++				else
++					fps.frac_exp++;
++			} else if (c == 'e' || c == 'E') {
++				fps.frac = res1;
++				st = FLOAT_EXP_POS;
++				/* erase result */
++				res1 = 0;
++			} else {
++				st = ERROR;
++			}
++			break;
++
++		case FLOAT_EXP_POS_OK:
++			/* exponent is always whole */
++			if (c >= '0' && c <= '9') {
++				if (add_to_res(c - '0', &res1, 10) < 0)
++					st = ERROR;
++			} else {
++				st = ERROR;
++			}
++			break;
++
++		case FLOAT_EXP_NEG_OK:
++			/* exponent is always whole */
++			if (c >= '0' && c <= '9') {
++				if (add_to_res(c - '0', &res1, 10) < 0)
++					st = ERROR;
++			} else {
++				st = ERROR;
++			}
++			break;
++
+ 		case HEX:
+ 			st = HEX_OK;
+ 			/* fall-through */
+@@ -282,6 +493,12 @@ cmdline_parse_num(cmdline_parse_token_hdr_t *tk, const char *srcbuf, void *res,
+ 		} else if (nd.type == RTE_UINT64) {
+ 			if (res) *(uint64_t *)res = res1;
+ 			return buf-srcbuf;
++		} else if (nd.type == RTE_FLOAT_SINGLE || nd.type == RTE_FLOAT_DOUBLE) {
++			/* parsed double from integer */
++			fps.dec = res1;
++			if (check_float_result(nd.type, &fps, res) < 0)
++				return -1;
++			return buf-srcbuf;
+ 		} else {
+ 			return -1;
+ 		}
+@@ -304,6 +521,62 @@ cmdline_parse_num(cmdline_parse_token_hdr_t *tk, const char *srcbuf, void *res,
+ 				res1 <= (uint64_t)INT64_MAX + 1) {
+ 			if (res) *(int64_t *)res = (int64_t) (-res1);
+ 			return buf-srcbuf;
++		} else if (nd.type == RTE_FLOAT_SINGLE || nd.type == RTE_FLOAT_DOUBLE) {
++			/* parsed double from negative integer */
++			fps.dec = res1;
++			fps.flags |= FLOAT_FLAG_NEG_RES;
++			if (check_float_result(nd.type, &fps, res) < 0)
++				return -1;
++			return buf-srcbuf;
++		} else {
++			return -1;
++		}
++		break;
++
++	case FLOAT_POS_OK:
++		if (nd.type == RTE_FLOAT_SINGLE || nd.type == RTE_FLOAT_DOUBLE) {
++			fps.frac = res1;
++
++			if (check_float_result(nd.type, &fps, res) < 0)
++				return -1;
++			return buf-srcbuf;
++		} else {
++			return -1;
++		}
++		break;
++
++	case FLOAT_NEG_OK:
++		if (nd.type == RTE_FLOAT_SINGLE || nd.type == RTE_FLOAT_DOUBLE) {
++			fps.frac = res1;
++
++			if (check_float_result(nd.type, &fps, res) < 0)
++				return -1;
++			return buf-srcbuf;
++		} else {
++			return -1;
++		}
++		break;
++
++	case FLOAT_EXP_POS_OK:
++		/* watch for overflow in the exponent */
++		if (nd.type == RTE_FLOAT_SINGLE || nd.type == RTE_FLOAT_DOUBLE) {
++			fps.exp = res1;
++
++			if (check_float_result(nd.type, &fps, res) < 0)
++				return -1;
++			return buf-srcbuf;
++		} else {
++			return -1;
++		}
++		break;
++
++	case FLOAT_EXP_NEG_OK:
++		if (nd.type == RTE_FLOAT_SINGLE || nd.type == RTE_FLOAT_DOUBLE) {
++			fps.exp = res1;
++
++			if (check_float_result(nd.type, &fps, res) < 0)
++				return -1;
++			return buf-srcbuf;
+ 		} else {
+ 			return -1;
+ 		}
+diff --git a/lib/cmdline/cmdline_parse_num.h b/lib/cmdline/cmdline_parse_num.h
+index bdd0267612..b2792a2d11 100644
+--- a/lib/cmdline/cmdline_parse_num.h
++++ b/lib/cmdline/cmdline_parse_num.h
+@@ -22,7 +22,9 @@ enum cmdline_numtype {
+ 	RTE_INT8,
+ 	RTE_INT16,
+ 	RTE_INT32,
+-	RTE_INT64
++	RTE_INT64,
++	RTE_FLOAT_SINGLE,
++	RTE_FLOAT_DOUBLE,
+ };
+ 
+ struct cmdline_token_num_data {
 -- 
-Thanks,
-Anatoly
+2.47.1
+
