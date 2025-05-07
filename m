@@ -2,72 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2D0AC3ABC0
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 May 2025 15:32:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2288C3ABC5
+	for <dpdk-dev@archiver.kernel.org>; Wed,  7 May 2025 16:09:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D34444025D;
-	Wed,  7 May 2025 17:32:58 +0200 (CEST)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com
- [209.85.167.51]) by mails.dpdk.org (Postfix) with ESMTP id 7244B4025A
- for <dev@dpdk.org>; Wed,  7 May 2025 17:32:57 +0200 (CEST)
-Received: by mail-lf1-f51.google.com with SMTP id
- 2adb3069b0e04-54fbd1ba65dso230168e87.0
- for <dev@dpdk.org>; Wed, 07 May 2025 08:32:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1746631977; x=1747236777; darn=dpdk.org;
- h=content-transfer-encoding:in-reply-to:from:content-language
- :references:cc:to:subject:user-agent:mime-version:date:message-id
- :from:to:cc:subject:date:message-id:reply-to;
- bh=7carhqy2x8dN4x7eGdDXrIm/W9EzQrRhTBFVpj+wiio=;
- b=Ua4qk6ExmwdOQhYscQAVODc9mmEW/+Nf7rddxnSjOA91IMWK8bjiIx/fDdRdy1ZIqz
- bRaUFkVsP0wW8twlPV4CAf0MbV6nz7QxQZJtDsBJFWlpeULFOatOF8e56nN4jQdw9K1P
- L1qRCyM0S73IOcd1VC8PKPbb9C9RMP42v+1Gdw5imPCkzpwRUbdHJu3tClld1nlO+vtY
- Y/QiEGW9KXe5fLo0IPCEGuiwic33lg00XhuLN62rtiq5TW0arShpaM3pFwUgXK+Lbe8F
- hj2EYmIVnaYynoBTfSaLZ0f0Y044pbIe+ul6NaN5RlNPzF6mtBuzDRNFLyMvk2ipM8j3
- smjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1746631977; x=1747236777;
- h=content-transfer-encoding:in-reply-to:from:content-language
- :references:cc:to:subject:user-agent:mime-version:date:message-id
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=7carhqy2x8dN4x7eGdDXrIm/W9EzQrRhTBFVpj+wiio=;
- b=vqvAMA6kYK1baI4jJoovbhFNFFxMTHcLdzrBoID0p3Ysp7CHGAdII3ECj97L7KmwGX
- T/+O3ZTPzqYRFaUSwTAVMMfn9X/GccEdWhKaoVGdfhudCuBLZkYdqrbHBhUuk25Om+nw
- rckgVc92lPSHGEjetm2M2d3deSyEHloaMYUsMcGbjFAiUzJx4QRLUqOJjphfcyBxD64o
- 3D6UrVjJI/085JcveAvWiSI2orCWEozNKWQCfuS09k1LqrHDCO18arYB42qJCdW6vuyP
- 9f+zu1DktxNNmj6m6IVRN2qAOXaxK3VupwSw5sJWAidGIeEFPnWjYOCLwj9xYNeywV+T
- Stzg==
-X-Gm-Message-State: AOJu0YzITjjzvFJOSklLht1IurfJO6YaVqMsFP5ZHEJDeZVIanIOJ/Uy
- vMK46on5+LTYTMzUQz81dP3prQD88mx7mFb1kIEfbnfZAZMh9fqF
-X-Gm-Gg: ASbGncuR2iLkkgUH9xKFus1niMVlqyxpO4EXTH9HY7A6VCkmLp6J70hmgUntM3EXGdF
- SR+fV5+YwkvFkp5r7MqFKCdTd4cL7y7iM/xc6jhbDfQYsuX7QdzcecvqOaQazkEIq8YRUalwbK1
- M6yKZnM6rf8Q+8q7RJnFjYFeJiFjBpoI4+5cwqW17bpLjAPY11TVS8AMLqKqEJ2WwZevmzZVStL
- rAcb5nFaHZS05OgrBD4qO/nnLBW8zEm5G8okXuiwSG+zxgnOEabTXxPTCnHeyIjd2H5fmowpX0s
- oP9XKeMqaVTA4ALA7xf5JHx46wnETUbl5Bn2eJFsR+Y=
-X-Google-Smtp-Source: AGHT+IHYp6YPQJtzAesVQMPZik87NpzLuxbpPCLA2F0HuDsek66hOXqArIcqcte2GCo9MCk2Rd34/A==
-X-Received: by 2002:a05:6512:3e1e:b0:54e:a2f8:73da with SMTP id
- 2adb3069b0e04-54fb95fb807mr1384051e87.18.1746631976425; 
- Wed, 07 May 2025 08:32:56 -0700 (PDT)
-Received: from [10.8.1.3] ([91.186.217.41]) by smtp.gmail.com with ESMTPSA id
- 2adb3069b0e04-54ea94b1909sm2363129e87.28.2025.05.07.08.32.55
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Wed, 07 May 2025 08:32:55 -0700 (PDT)
-Message-ID: <1cc9e0cc-70c9-4829-88d3-df41060e91a5@gmail.com>
-Date: Wed, 7 May 2025 18:32:53 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] buildtools: avoid break due to failure to cleanup
- temporary directory
-To: Andre Muezerie <andremue@linux.microsoft.com>
-Cc: dev@dpdk.org
-References: <1746474405-5056-1-git-send-email-andremue@linux.microsoft.com>
- <1746627671-28659-1-git-send-email-andremue@linux.microsoft.com>
- <1746627671-28659-2-git-send-email-andremue@linux.microsoft.com>
-Content-Language: en-US
-From: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
-In-Reply-To: <1746627671-28659-2-git-send-email-andremue@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+	by mails.dpdk.org (Postfix) with ESMTP id B13AC4025D;
+	Wed,  7 May 2025 18:09:37 +0200 (CEST)
+Received: from mx2.freebsd.org (mx2.freebsd.org [96.47.72.81])
+ by mails.dpdk.org (Postfix) with ESMTP id 50DFA4025A
+ for <dev@dpdk.org>; Wed,  7 May 2025 18:09:36 +0200 (CEST)
+Received: from mx1.freebsd.org (mx1.freebsd.org [IPv6:2610:1c1:1:606c::19:1])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits)
+ client-signature RSA-PSS (4096 bits))
+ (Client CN "mx1.freebsd.org", Issuer "R10" (verified OK))
+ by mx2.freebsd.org (Postfix) with ESMTPS id 4Zt0Zk6MBdz4nt7;
+ Wed, 07 May 2025 16:09:34 +0000 (UTC)
+ (envelope-from jfree@freebsd.org)
+Received: from smtp.freebsd.org (smtp.freebsd.org
+ [IPv6:2610:1c1:1:606c::24b:4])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+ client-signature RSA-PSS (4096 bits) client-digest SHA256)
+ (Client CN "smtp.freebsd.org", Issuer "R11" (verified OK))
+ by mx1.freebsd.org (Postfix) with ESMTPS id 4Zt0Zk5VDWz3BqM;
+ Wed, 07 May 2025 16:09:34 +0000 (UTC)
+ (envelope-from jfree@freebsd.org)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=freebsd.org; s=dkim;
+ t=1746634174;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=za45j2wuLMgC4dxq7wce29QlTTxXk7cfeUPIsPjLf4k=;
+ b=FPjRuv3HrlCEurzMU0ZzPBY5Fbrj6OF7PRF8PgnbxphIZQrE7MbhZxsFQFJQhV91N6imHi
+ F7SM/A0TJ0puO+cIsaqJA/BJwQOgCjFsV/331wXyHbLmH5iwLUKnDRysg0ke+XHv9PbkRt
+ InbZRjKvXyGLpopWIhfHl4ak7rQnLtqYFUMJ+jY5L5JuRuMm2ipRTyFuJrxPB7E9mIEjZz
+ S86l3t3/vGHQZv+QgbWsoNFCmB8VInov43Nq+qAbXIEDa1Ac5DuDVBElf7BQOzyk4Wln6Q
+ DfKpyPlWIbDRg7fRFca6YCNWZWu5dbbrccst9l3/WL0G3vLX5JbbphAxS30hMA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=freebsd.org;
+ s=dkim; t=1746634174;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=za45j2wuLMgC4dxq7wce29QlTTxXk7cfeUPIsPjLf4k=;
+ b=rk3FlVwOeUY8S3rfdO4QkigKEg/HPuG11ImgUCVWW5aKzp4JO4crOCg8Ix1U1N7yf2TJoN
+ 144ZmEE44OAP3buoDq2U6JMpZmMlX5maAd7lFLxDlfValCDXPFNsoAv6xRjG16VZxapobS
+ q+oXsTWaChJ0ewMIoMA99T3kvWIm7n74oRPEKd87gAtuYGZEBiA0kzOmq62vDojhtTvT4L
+ f2Es9ektLKStiCTBgwfggdHzcOH6fmJotg8NSRLSFsRKPQy5h5oRIE9cbRJ2ew6a3BS4yJ
+ lCGCEwGD+UyPgfi/ARAgg/m8fCgh5gE9kDUVEC3U2k8UU5ZU84CFcZe2gSCZYA==
+ARC-Seal: i=1; s=dkim; d=freebsd.org; t=1746634174; a=rsa-sha256; cv=none;
+ b=Pq/OBI59BMmD9809q8iOBoG4+ThhZiADbMQDOpziZhFqm6Rl0zihGR8pGjAw8QnRLefR66
+ 71InDetkC1YddDjvSOuKBm2dNlIhZqWIIsHA1zlQ7Ec4UdyBhLavGn2d1t2sEgLtXqGw4k
+ nfC5rK1AK5NPUKf/Kp8qaOMteEpKfPsODMUPb1K7WG+ihm9ri3v030mugb94VefuG5VwC3
+ FW9Ebi4qjxmw3Nbnh9bppTFLYa+D1rD5diH/PN+0XzNcZkr4CH1dRuY2hOT9PWtFZcaJIq
+ Bgs9DXcAL2WUeXLxD0McPeLWV1cKByc1lb7OswU1EREUh7COHkIrxPbsLXEzfA==
+ARC-Authentication-Results: i=1;
+	mx1.freebsd.org;
+	none
+Received: from localhost (67-4-147-206.mpls.qwest.net [67.4.147.206])
+ (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (Client did not present a certificate) (Authenticated sender: jfree)
+ by smtp.freebsd.org (Postfix) with ESMTPSA id 4Zt0Zk3Hqhz9j2;
+ Wed, 07 May 2025 16:09:34 +0000 (UTC)
+ (envelope-from jfree@freebsd.org)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 07 May 2025 11:09:33 -0500
+Message-Id: <D9Q252DFOH0V.1CHFLNZDP105D@freebsd.org>
+From: "Jake Freeland" <jfree@freebsd.org>
+To: "Stephen Hemminger" <stephen@networkplumber.org>
+Cc: "Anatoly Burakov" <anatoly.burakov@intel.com>, "Bruce Richardson"
+ <bruce.richardson@intel.com>, "dev" <dev@dpdk.org>
+Subject: Re: [PATCH 3/3] eal/linux: Check hugepage access permissions
+X-Mailer: aerc 0.18.2
+References: <20250506175010.1141585-1-jfree@FreeBSD.org>
+ <20250506175010.1141585-4-jfree@FreeBSD.org>
+ <CAOaVG142x9ENgVF_p2GuhYA7wRuSXN83=__4D_+kXvxghZB-mg@mail.gmail.com>
+In-Reply-To: <CAOaVG142x9ENgVF_p2GuhYA7wRuSXN83=__4D_+kXvxghZB-mg@mail.gmail.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,4 +95,69 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Acked-by: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
+On Wed May 7, 2025 at 3:52 AM CDT, Stephen Hemminger wrote:
+> Please don't split message a across multiple lines.
+> Open and access are not the same in all security checks, so not a great
+> idea.
+
+What do you mean by this? In this case, access() is just verifying that
+we can read and write to the hugepage directory. What extra security
+check does open() perform that would be needed here?
+
+Keep in mind that open() will still be used to open the hugepages and
+perform it=E2=80=99s own checks later on. The purpose of this access() call=
+ is
+to avoid saving inaccessible hugepage paths up front.
+
+> Some analyzer tools may flag as time of check, time of use issue.
+
+If this access() check succeeds (i.e. we have r/w access) and the
+permissions of the hugepage directory change to read-only before we call
+open(), then open() will fail like it does without this patch. This
+seems like reasonable behavior to me and is better than having no
+initial r/w check at all.
+
+Thanks,
+Jake Freeland
+
+>
+> On Wed, May 7, 2025, 02:50 Jake Freeland <jfree@freebsd.org> wrote:
+>
+> > Currently, hugepage mountpoints will be used irrespective of permission=
+s,
+> > leading to potential EACCES errors during memory allocation. Fix this b=
+y
+> > not using a mountpoint if we do not have read/write permissions on it.
+> >
+> > Signed-off-by: Jake Freeland <jfree@FreeBSD.org>
+> > ---
+> >  lib/eal/linux/eal_hugepage_info.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/lib/eal/linux/eal_hugepage_info.c
+> > b/lib/eal/linux/eal_hugepage_info.c
+> > index d47a19c56a..dbfa38b05c 100644
+> > --- a/lib/eal/linux/eal_hugepage_info.c
+> > +++ b/lib/eal/linux/eal_hugepage_info.c
+> > @@ -260,6 +260,12 @@ get_hugepage_dir(uint64_t hugepage_sz, char *huged=
+ir,
+> > int len)
+> >                                 continue;
+> >                 }
+> >
+> > +               if (access(splitstr[MOUNTPT], R_OK | W_OK) < 0) {
+> > +                       EAL_LOG(NOTICE, "Missing r/w permissions on hug=
+e
+> > dir: "
+> > +                           "'%s'. Skipping it", splitstr[MOUNTPT]);
+> > +                       continue;
+> > +               }
+> > +
+> >                 /*
+> >                  * If no --huge-dir option has been given, we're done.
+> >                  */
+> > -
+> >
+>
+> >
+
