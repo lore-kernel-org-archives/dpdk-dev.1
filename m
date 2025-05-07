@@ -2,45 +2,181 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C30DC3ABBF
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 May 2025 10:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98FBBC3ABBF
+	for <dpdk-dev@archiver.kernel.org>; Wed,  7 May 2025 11:07:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 683C24025D;
-	Wed,  7 May 2025 12:36:01 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 48BAC4025A
- for <dev@dpdk.org>; Wed,  7 May 2025 12:35:59 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.186.231])
- by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Zss6z0rftz6L5Zf;
- Wed,  7 May 2025 18:33:31 +0800 (CST)
-Received: from frapeml100005.china.huawei.com (unknown [7.182.85.132])
- by mail.maildlp.com (Postfix) with ESMTPS id E336C1407F9;
- Wed,  7 May 2025 18:35:57 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml100005.china.huawei.com (7.182.85.132) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id A45984025D;
+	Wed,  7 May 2025 13:07:04 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 8960B4025A
+ for <dev@dpdk.org>; Wed,  7 May 2025 13:07:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1746616022; x=1778152022;
+ h=message-id:date:subject:to:references:from:in-reply-to:
+ content-transfer-encoding:mime-version;
+ bh=UxzHbyeewuBgZbReGz8hNfbj8xOpopUYAiXsQZQ9VB0=;
+ b=C8hnvHYSa0aVzHseQPhUxlnbjP3Go+RD9wOwLCuGub/IUVdn3diFtYIm
+ DT6Amo2fxy59ZdXpAGSbKVN0R6zVAzyIzYo/5LZbQb/wU9yumpGtPI8Z/
+ TWEcBGljiMUNRIZg2jkkDPC6+5yPd56iG+VrULIsoKFXXP+dQUw13ZXPS
+ pl0sQoqPHbzrJjQ+DNcc1dq3OtiPtMdR/ewQCGR2srLWsAtZVe2meOdGv
+ hLmk0KEvxwT2Y0i7J1aa3JjMfTbfwMWgPDd+Y1dG+CGx28kU/38lhNIsz
+ gj/E+doOXStuyuOsh2hencVnE643GZ8yBHOWhZTVHRWaNkg3J87PCYhN8 Q==;
+X-CSE-ConnectionGUID: kMCY+zCJS1GKVZOhs1324A==
+X-CSE-MsgGUID: kPRrhcujSJSbCopUX3ttJA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="50985597"
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; d="scan'208";a="50985597"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+ by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 May 2025 04:07:01 -0700
+X-CSE-ConnectionGUID: PdC3kVmQQPuPXHgL0AxSCA==
+X-CSE-MsgGUID: YAYF+3fZSSmqdov8ZM9lJw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; d="scan'208";a="136439621"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 May 2025 04:07:01 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 7 May 2025 12:35:57 +0200
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Wed, 7 May 2025 12:35:57 +0200
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: Anatoly Burakov <anatoly.burakov@intel.com>, "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH v4 1/2] cmdline: add floating point support
-Thread-Topic: [PATCH v4 1/2] cmdline: add floating point support
-Thread-Index: AQHbvzcTeT1qaAd3QECXN7tR6Oj62LPG+Myg
-Date: Wed, 7 May 2025 10:35:57 +0000
-Message-ID: <73248ba4775b4b95b117890851b8257e@huawei.com>
+ 15.2.1544.14; Wed, 7 May 2025 04:07:00 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Wed, 7 May 2025 04:07:00 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.169)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Wed, 7 May 2025 04:07:00 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ua2/ioDZVq9IYeFIH4hfUKvU72iPLfuivcAauG22YoNfUA0SToomg1JQyP7wVd0mbWHZ872Q5DmUuwpKrZcSYi0aOUb9Vp+5D1KyMI3bhpGbm2T2njlWzL128lSDVEtl+jGGcBEWPXsCN3acqjSij8ueE1tS9m4n/GC1qrvhi6CUN8cLXQAwrBhBXJvDkx5BMO97g0TURjdDjoApiqOxmgW3GjDfup0KilaCG3BI0lXAtGFzun32/RvgR3sJ0q9U1fdeuWEZe/iywzR6su6s1eODY0qGfDP6gb0/wGyjPuOxKz9PtdjzHKqaoPa1VYlI4EN/uN2mpi3G2/SMbK71xw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4Y8kGzVPHqKIeAmiXvBsnyD19JLswsGDpHWFM/OMmmc=;
+ b=Fe4rOxYT3ffDEYQMH6Xd5PIAXzydGpB8uMY2n7BCenMhCydZludEeII3hrOplCdEKqNrGTOWBMuCIbpRnAptba6CJSUlp5Bu8LMuNdVkaLDJfrBdBVsBbQiWdoIRdSzKgpMCK6ypUJFZT4U/1WUeCgBtV5PLV46AHMW0bpUFEjwALGqPPxkTM8OGhRH9wyuTd/yxIn/7K+DPV7aPewzjcDv2nEQS4Fk+kYR3jND2pHXQ0aYgWt1V3gQxSOh8fZYH7SnS/FhwfI9CbIhzlNqFzVhEmXK5VVzgzFrAjqRcQA4PmImuTSdtKFK3a/8NNChBZGQtJ3t8G1tJY9O5xACs4g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
+ MW6PR11MB8391.namprd11.prod.outlook.com (2603:10b6:303:243::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.36; Wed, 7 May
+ 2025 11:06:54 +0000
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::21e4:2d98:c498:2d7a]) by DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::21e4:2d98:c498:2d7a%2]) with mapi id 15.20.8678.033; Wed, 7 May 2025
+ 11:06:54 +0000
+Message-ID: <142c9203-11ee-4310-adfc-7657fc8e224d@intel.com>
+Date: Wed, 7 May 2025 13:06:49 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] cmdline: add floating point support
+To: Konstantin Ananyev <konstantin.ananyev@huawei.com>, "dev@dpdk.org"
+ <dev@dpdk.org>
 References: <7ac1444b7d2d64dc467a22e7ac65cf3cc16246dc.1746188833.git.anatoly.burakov@intel.com>
  <e8234c26b5dd91aaa9e7b1e38887b1d6fdb2d053.1746612074.git.anatoly.burakov@intel.com>
-In-Reply-To: <e8234c26b5dd91aaa9e7b1e38887b1d6fdb2d053.1746612074.git.anatoly.burakov@intel.com>
-Accept-Language: en-GB, en-US
+ <73248ba4775b4b95b117890851b8257e@huawei.com>
 Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.195.33.35]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
+In-Reply-To: <73248ba4775b4b95b117890851b8257e@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DUZPR01CA0279.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b9::28) To DM4PR11MB6502.namprd11.prod.outlook.com
+ (2603:10b6:8:89::7)
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|MW6PR11MB8391:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2919d671-6563-49b9-40c0-08dd8d574671
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?RTYyblRjOHVKQkxyOFlEWG9FSUhuL2o0VkFIVE1namdCWEozNWdCQ1l0eUg3?=
+ =?utf-8?B?VlFyTE9qblJYOVQrcVdCc1RkTkJRVnZkZHRCMklXY0lYZkpjV3c4R3oyWjJT?=
+ =?utf-8?B?YWFlVTZwVFdXRVFjRUJyZmt1VVdXWEExcGE0QXdQZHZSUXN6Q0xBUXJLdGNi?=
+ =?utf-8?B?SmVwWUUyNXN6RlZaNnQ4dXRSRFlhWFZqR0Y2a1VEZHU4SWNtd3NOV0pIZURY?=
+ =?utf-8?B?WFJrdVdzMU1PZGxJd1dIbFVmNUcxWkF3SU1zRnpmQTJhZDFNQXFKQlhvVkFM?=
+ =?utf-8?B?TXpSU1hzNTU2ZUlWbkVtS0E1U2pjaVlvdzNiRktBSjArakM3RXg0TkVON2tq?=
+ =?utf-8?B?RVdzV3lGRnhsVGQvME5XdlFnU3pCVDdkcDR4cEVtUEpiYXRHZkdsWjB3LytJ?=
+ =?utf-8?B?R1R1bk1PWTdEUXl3MTg4b1poRHFJSHRIK0ZhbTBoYW96L3I4OTZaVjBUZWxT?=
+ =?utf-8?B?OWdEeG5ET1ZDait1ay9kRHBsZUlFRVhURCtGRXNTaXpGODdURmZrcHFXb290?=
+ =?utf-8?B?WmtxWTBZanFOUXR3TEp3WnhZT01ubnZ5eUJuWnc5MGtaQld4ZVEzQSttYk9P?=
+ =?utf-8?B?azNMRU54Y29VUncxWjNmeHZIQUQ2QUFmMHZXK2krQ0RVMFVvTUNaZ2xlTlNh?=
+ =?utf-8?B?bnVRNlB0M2NQM1R3RUtlNVpybTdmaWZXNkI0WjFnbzlxaEF5RnU1TFN5WVFt?=
+ =?utf-8?B?c2dYQ09ObjNBei9qNWF3UlVBSUVOdklVVlRKd1BLeE8wWFJCREVEMTNpL0k3?=
+ =?utf-8?B?eXRZU2cxcGRtYjZWNjE2QUxCQlRwSHQxeUN3VGROdEd5TE1LdnNDZml6L3hE?=
+ =?utf-8?B?cDBSQ3VJY0k0Vll2SExxcUlYRmNBdFVYY0w1UTd6dE1vZDRjR04xNlBxQVFJ?=
+ =?utf-8?B?NVplMDVhWmNBeWQzMjQ2UU5yVEN0UlBYYkx6bFROVU5ETFlQd0djSG9CYkI0?=
+ =?utf-8?B?c1FoaytjRzRJdWNWVGhTOXNFMkFrOFlwM2JRaU1qS0pHM3gvdWhZTmF1TzJ0?=
+ =?utf-8?B?YU5HTnN3LzU0QTRpem9VaUZDNUIxM3M0N2ZhRE1pNXJKWitzb2Z0VUtDU3FP?=
+ =?utf-8?B?WFArOG1oNTBEcXBnZTZDMmE3a01UZGd5dXhjSkR2NklLU0dPd0x0QlRuR2NP?=
+ =?utf-8?B?OFd4M00xYTVYVExmYklKZC9JYzRaMmt1UEV5a1dsWmlnYS9aNEN0SWNFM1dV?=
+ =?utf-8?B?K1NEUWl5R2IvRU1NOVlsV1cvL3dtL0xpdUEzTzByRjVXN1ZodWo0ZWthaTZD?=
+ =?utf-8?B?Mk5LRWF1cGtUTHc1MVdIUGR3K3FUUjFPbXN4LzlGMDB5ZTRvSUwwWURIWThS?=
+ =?utf-8?B?YWlMdzlFZy8wZ09OZEJNS2VWa25sRVkrTnNzTlZrTDdMUUdlai95QXFuZ2JD?=
+ =?utf-8?B?MzVZLzZDQmpSVStoOEoxQmRObEx0L3p0MWdHWm9SVDZ2bUFHazBWbGE1UDJ5?=
+ =?utf-8?B?enovNWxOaW1oeEJNZkFvZGw5NlNuL28rNUJEZEVjMVVhazdKdU1waUpPMVY4?=
+ =?utf-8?B?VHBqYU90dTBMNlhhN3lyNVIxMEVIcE1RV3VoSFhlWFhQQnpHdkVGMkxIME9j?=
+ =?utf-8?B?WFY1aHkvQUFqRWtzZGVTZko2RnU0djg2SXhGK20rRy9yZWRWOGc0V1NKNXZR?=
+ =?utf-8?B?Rk02VGIybGNNUVBRdnVsR2ptU0thYmVUNnN1a3ZKVTdCZ3paWDhJclFYTlJJ?=
+ =?utf-8?B?YlIrT0JkTXJad1dKQzhmdGZ3d0dNVVpyaFdMMFg0VWlGZ1g2N2lST2M4dURS?=
+ =?utf-8?B?TlFJMHl2b28xb210L21tUUg2ckcvZkxFVHlqQ2JodURSOVp0Ky96eWcySDlD?=
+ =?utf-8?B?VWszY0VFSXhWVERrYVE2Y1BOTCtVMFdWblk1dy82R1dNQUtWVUw3YWY0UWFh?=
+ =?utf-8?B?VGNBNWRKVGlLNUNhdkRydjJKQ0M1NUFoODJ6cEEvN0JrQlFpUVMvb2JQVEJW?=
+ =?utf-8?Q?YFneYKtLC84=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bkswd09sc3lwZk0rUy80dDR3OFRvOGloUkFkOWRrQXFNcDlKT3FGY3dLR2tV?=
+ =?utf-8?B?YWFjVGNrU3VDNmtScCtPQWZPR1J6Yy91ZTFnOG9kcFo4aXZmN0Nwbjd5TnVP?=
+ =?utf-8?B?UkR0dmhsY0NGenovKzdPaklQYlZYeE14NWtWakdHRlFFYWFRWEZMdDFFNmFR?=
+ =?utf-8?B?UnUyQjZUK1JlQVQ2L1J4a3cwVzlWVW4zTWtCWlV5a3oxYTh4bncrZi91RU9T?=
+ =?utf-8?B?YlVxY3FWRlpXbjc5a1JlcjVCbGY5eGE3Vjh1R2c3OTlSQlp0WTVPMGhFdTJR?=
+ =?utf-8?B?U3ptMGVzUXJIcTBLMW9UYk92RWx3eVlaVWxlRndwazBGV1NvVmtLbnpPVFRt?=
+ =?utf-8?B?WEQ5djczNHZCcGwwK0FWUGhuQWxWR04rWXFSTzBya1F1Z1VsNE5ZMElGck5W?=
+ =?utf-8?B?QitHd1BlekpLQ0ZvNGhNdTUzM1VBQ0xGcHhxdjhYWUFvMVRlUTJqenlMSFZE?=
+ =?utf-8?B?TzI5NEtuMUoxOVVlenVDL3p4cnpjYktPdks2NE8vOUtSdFVCNDdSOXJNaFQz?=
+ =?utf-8?B?SWo3cVgrQWpMYVVNZmNwanllcTNTd2h4NTZiQVZrYVkxdS9qWDFlWlp3R1A1?=
+ =?utf-8?B?cTRpWGczWkdJY1V6aVJrV1FWYkdCS0NSMFhRVXNLajJhaXlpYTNDK3MyTi9q?=
+ =?utf-8?B?ZmVQYXdNNGM0L1FIbXU1aXZ1RXFyUGVHMUFpQy9xb3haNStZM09aZTJOazAw?=
+ =?utf-8?B?cXJXZGJoS0hpOStHWmR6U2d5ZlNxVjE1QlhmKzhtVndwbFVyakxNTHVkQmlS?=
+ =?utf-8?B?Q09tend1Ym55THRmWGtaeUFLK1U5UE1EeWFCdXhsd3ltaGc2cFNPdXNsUUtn?=
+ =?utf-8?B?NjUyTTZSYm1SeEJjSzlpNURwREVqay9MY1VNbk1qQzJ2K3JTVEVKTU16NGVV?=
+ =?utf-8?B?ZXp0OW1jWFhlVXBoS0VVK3NxOHNscEFnOXJZZktHaG95T2VpYjFVWm9YaTk0?=
+ =?utf-8?B?K3d2UHp4TVE3Uk5rdk9jdVdBUk1yZm8wV2p5eWZnQkpSR1QzVHFmYUpFUHhD?=
+ =?utf-8?B?M1hXM0VDRW9uQXFrR1d5cjlLZUQ1T3NtUzFMNW1sdnI3a3VOb2J6TVdOZmx1?=
+ =?utf-8?B?VnlHdlltdTNmOUdqMUFib29ZQU5KcGVSaXNNNkxTc3dwOEVVcEU0MVZBY3dP?=
+ =?utf-8?B?VTRKcHpxWmpOTTM0Y2xTWUlMbnJRRHlxWlQ5cnlJTXhWZHNtK21oWmtEVkJt?=
+ =?utf-8?B?OXVFVkRzZ1ZZKzNyN1dsMzRmdjlhWUZhTzQyRnFiK3RWNjNKbGZ1M25XVWlM?=
+ =?utf-8?B?TVgyYnpSaWxZMHdEVzR2eTRrVlY2T1dIbUUzWk80Y2ViT0dvZzlkbGY3bEdN?=
+ =?utf-8?B?QnZnM1VEeUMwWnJwU05LaUJkUC90ck1FUUxHTXFFdk5uSmRtOXZpZEVtb1dB?=
+ =?utf-8?B?UTYyemJCL1dmVDhFcFpiTjRIRE03UGRuSHc1bEc0SVNKYVRPa2QrOWR4UndN?=
+ =?utf-8?B?NEpacTIzZXVVOTJybzhLbzB2TFhuQ0RsN1pjTnk4Y3F0S2JPYmRzcEpjSFlh?=
+ =?utf-8?B?UHdYRzR4ajV2cHB2Ny81VmNQQ255b1F5YlBHRWxaWlJIZkdrUGhxT244TTdB?=
+ =?utf-8?B?bkJxSDdUUmdTT2NscCttOEFEaWk4VEwrSUFLTTIvN0VEVzFsb25xNk9sTXI4?=
+ =?utf-8?B?WXBnRkloaUVBNXIvYjdtdDFsZUFjb2YrNi9Pelo1d09qam1qaHpqTGViV2No?=
+ =?utf-8?B?bTRpVTRtS3BzS0ZkNmxDTWI0REdvaC96NEZQcDVudjdwd2V5QS8wM3Bnck9V?=
+ =?utf-8?B?WlpzcWN5L0dUUXczSEQ5T2ZFbUhrc3hrU2pyT0lWYTE4bVJBQUgzRlY1VHNW?=
+ =?utf-8?B?Z2dydzVBSHBVMXNaNHVqRDdTb25XRkREOUs1ZmF5dWQ3c0RtYXVJNjFNeU43?=
+ =?utf-8?B?aUx6YlRlQkVhS2lGNWRGemtSKy9hNE01Q0s3NnR4b01wdlM2Tk9wdWtMbVJZ?=
+ =?utf-8?B?Mk9lRHllYUJtYlJxUzREdk9GYkdjZ0tlU1BmOE5DUUhUbERnZWVvVGtwWG15?=
+ =?utf-8?B?YmdhV1hqQ0gyNVhSVDVwZS8rb1k0RjJ3a2trdmg2Y3hkUFNBeVQ2OFRSLyty?=
+ =?utf-8?B?eCtUaEQ3c2tMaWxLcjVBd3FOb3gvdi92VjhqTWFtMVA5cGVxOXZ2ZDVzWnN6?=
+ =?utf-8?B?YVZIOUh2VDVDb2JmZFVVakNrd3NmeTQ0YkJzVndpTUVLZUhNYlFCaWZOWXNt?=
+ =?utf-8?B?YUE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2919d671-6563-49b9-40c0-08dd8d574671
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2025 11:06:54.2223 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VWlZ+aBTPuctie50zkWXE5SNd0FNqUmWmHepFtZPvPvWIhAv+xzK2MHfRnjf9pbMj6KJY3lfrzV4735D37hrvqcKThY2i3ko82ydXs1WjoE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR11MB8391
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,830 +190,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+On 5/7/2025 12:35 PM, Konstantin Ananyev wrote:
+> 
+> 
+>> Add support for parsing floating point numbers in cmdline library, as well
+>> as unit tests for the new functionality. The parser supports single and
+>> double precision floats, and will understand decimal fractions as well as
+>> scientific notation.
+> 
+> There are standard functions for that: strtod/strtof - can't we simply use them?
 
+I can ask the same question of the entire existence of this part of the 
+library: there are strtoull-type functions that should be available to 
+all targets, so if we're going to use them for floating point parsing, 
+we might as well remove the number parsing part of the library entirely. 
+Either way is fine by me.
 
-> Add support for parsing floating point numbers in cmdline library, as wel=
-l
-> as unit tests for the new functionality. The parser supports single and
-> double precision floats, and will understand decimal fractions as well as
-> scientific notation.
-
-There are standard functions for that: strtod/strtof - can't we simply use =
-them? =20
-
->=20
-> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-> ---
->=20
-> Notes:
->     v3 -> v4:
->     - Removed unnecessary check for integer overflow when parsing negativ=
-e
->       floats (as we convert to double before changing sign)
->     - Make naming of float exponent states more consistent
->=20
->     v2 -> v3:
->     - Fixed a bug where a free-standing negative exponent ("1e-") would a=
-ttempt to be
->       parsed, and added unit tests for this case
->     - Added support for floats in dpdk-cmdline-gen script
->     - Added documentation updates to call out float support
->=20
->  app/test/test_cmdline_num.c            | 203 +++++++++++++++++-
->  buildtools/dpdk-cmdline-gen.py         |  24 ++-
->  doc/guides/prog_guide/cmdline.rst      |   3 +
->  doc/guides/rel_notes/release_25_07.rst |   5 +
->  lib/cmdline/cmdline_parse_num.c        | 273 +++++++++++++++++++++++++
->  lib/cmdline/cmdline_parse_num.h        |   4 +-
->  6 files changed, 497 insertions(+), 15 deletions(-)
->=20
-> diff --git a/app/test/test_cmdline_num.c b/app/test/test_cmdline_num.c
-> index 9276de59bd..e4038271c9 100644
-> --- a/app/test/test_cmdline_num.c
-> +++ b/app/test/test_cmdline_num.c
-> @@ -5,6 +5,8 @@
->  #include <stdio.h>
->  #include <string.h>
->  #include <inttypes.h>
-> +#include <float.h>
-> +#include <math.h>
->=20
->  #include <rte_string_fns.h>
->=20
-> @@ -23,6 +25,11 @@ struct num_signed_str {
->  	int64_t result;
->  };
->=20
-> +struct num_float_str {
-> +	const char * str;
-> +	double result;
-> +};
-> +
->  const struct num_unsigned_str num_valid_positive_strs[] =3D {
->  		/* decimal positive */
->  		{"0", 0 },
-> @@ -141,6 +148,63 @@ const struct num_signed_str num_valid_negative_strs[=
-] =3D {
->  		{"-9223372036854775808", INT64_MIN },
->  };
->=20
-> +const struct num_float_str num_valid_float_strs[] =3D {
-> +		/* zero */
-> +		{"0", 0},
-> +		/* parse int as float */
-> +		{"1", 1},
-> +		{"-1", -1},
-> +		/* fractional */
-> +		{"1.23", 1.23},
-> +		{"-1.23", -1.23},
-> +		{"0.123", 0.123},
-> +		{"-0.123", -0.123},
-> +		{"123.456", 123.456},
-> +		{"-123.456", -123.456},
-> +		/* positive exponent */
-> +		{"1e2", 1e2},
-> +		{"-1e2", -1e2},
-> +		{"1E2", 1E2},
-> +		{"-1E2", -1E2},
-> +		{"0.12e3", 0.12e3},
-> +		{"-0.12e3", -0.12e3},
-> +		{"1.23e4", 1.23e4},
-> +		{"-1.23e4", -1.23e4},
-> +		{"1.23E4", 1.23E4},
-> +		{"-1.23E4", -1.23E4},
-> +		{"123.456e7", 123.456e7},
-> +		{"-123.456e7", -123.456e7},
-> +		{"123.456E7", 123.456E7},
-> +		{"-123.456E7", -123.456E7},
-> +		/* negative exponent */
-> +		{"1e-2", 1e-2},
-> +		{"-1e-2", -1e-2},
-> +		{"1E-2", 1E-2},
-> +		{"-1E-2", -1E-2},
-> +		{"0.12e-3", 0.12e-3},
-> +		{"-0.12e-3", -0.12e-3},
-> +		{"1.23e-4", 1.23e-4},
-> +		{"-1.23e-4", -1.23e-4},
-> +		{"1.23E-4", 1.23E-4},
-> +		{"-1.23E-4", -1.23E-4},
-> +		{"123.456e-7", 123.456e-7},
-> +		{"-123.456e-7", -123.456e-7},
-> +		{"123.456E-7", 123.456E-7},
-> +		{"-123.456E-7", -123.456E-7},
-> +		/* try overflowing float */
-> +		{"2e63", 2e63},
-> +		{"-2e63", -2e63},
-> +		{"2E63", 2E63},
-> +		{"-2E63", -2E63},
-> +		{"18446744073709551615", (double) UINT64_MAX},
-> +		{"-9223372036854775808", (double) INT64_MIN},
-> +		/* try overflowing double */
-> +		{"2e308", HUGE_VAL},
-> +		{"-2e308", -HUGE_VAL},
-> +		{"2E308", HUGE_VAL},
-> +		{"-2E308", HUGE_VAL},
-> +};
-> +
->  const struct num_unsigned_str num_garbage_positive_strs[] =3D {
->  		/* valid strings with garbage on the end, should still be valid */
->  		/* decimal */
-> @@ -183,6 +247,30 @@ const struct num_signed_str num_garbage_negative_str=
-s[] =3D {
->  		{"-9223372036854775808 garbage", INT64_MIN },
->  };
->=20
-> +const char *float_invalid_strs[] =3D {
-> +	"0.",
-> +	".1",
-> +	"1.1.",
-> +	"1.1.1",
-> +	"-0.",
-> +	"-.1",
-> +	"-1.1.",
-> +	"-1.1.1",
-> +	"e",
-> +	"1e",
-> +	"-1e",
-> +	"0.1e",
-> +	"-0.1e",
-> +	"1.e",
-> +	"-1.e",
-> +	"1.23e3.4",
-> +	"-1.23e3.4",
-> +	"1e1e",
-> +	"1e1e1",
-> +	"1e-",
-> +	"-1e-"
-> +};
-> +
->  const char * num_invalid_strs[] =3D {
->  		"18446744073709551616", /* out of range unsigned */
->  		"-9223372036854775809", /* out of range negative signed */
-> @@ -202,7 +290,16 @@ const char * num_invalid_strs[] =3D {
->  		/* too long (128+ chars) */
->  		("0b1111000011110000111100001111000011110000111100001111000011110000"
->  		  "1111000011110000111100001111000011110000111100001111000011110000"),
-> +		/* valid float values but should fail to parse as ints */
->  		"1E3",
-> +		"-1E3",
-> +		"1.23",
-> +		"-1.23",
-> +		"1E-3",
-> +		"-1E-3",
-> +		"1.23E4",
-> +		"-1.23E4",
-> +		/* misc invalid values */
->  		"0A",
->  		"-B",
->  		"+4",
-> @@ -216,6 +313,47 @@ const char * num_invalid_strs[] =3D {
->  		"\0",
->  };
->=20
-> +static int
-> +float_cmp(double expected, void *actual_p, enum cmdline_numtype type)
-> +{
-> +	double eps;
-> +	double actual_d;
-> +
-> +	if (type =3D=3D RTE_FLOAT_SINGLE) {
-> +		/* read as float, convert to double */
-> +		actual_d =3D (double)*(float *)actual_p;
-> +		/* FLT_EPSILON is too small for some tests */
-> +		eps =3D 1e-5f;
-> +	} else {
-> +		/* read as double */
-> +		actual_d =3D *(double *)actual_p;
-> +		eps =3D DBL_EPSILON;
-> +	}
-> +	/* compare using epsilon value */
-> +	if (fabs(expected - actual_d) < eps)
-> +		return 0;
-> +	/* not equal */
-> +	return expected < actual_d ? -1 : 1;
-> +}
-> +
-> +static int
-> +can_parse_float(double expected_result, enum cmdline_numtype type)
-> +{
-> +	switch (type) {
-> +	case RTE_FLOAT_SINGLE:
-> +		if (expected_result > FLT_MAX || expected_result < -FLT_MAX)
-> +			return 0;
-> +		break;
-> +	case RTE_FLOAT_DOUBLE:
-> +		if (expected_result > DBL_MAX || expected_result < -DBL_MAX)
-> +			return 0;
-> +		break;
-> +	default:
-> +		return 1;
-> +	}
-> +	return 1;
-> +}
-> +
->  static int
->  can_parse_unsigned(uint64_t expected_result, enum cmdline_numtype type)
->  {
-> @@ -371,11 +509,11 @@ test_parse_num_invalid_data(void)
->  	int ret =3D 0;
->  	unsigned i;
->  	char buf[CMDLINE_TEST_BUFSIZE];
-> -	uint64_t result; /* pick largest buffer */
->  	cmdline_parse_token_num_t token;
->=20
-> -	/* cycle through all possible parsed types */
-> +	/* cycle through all possible integer types */
->  	for (type =3D RTE_UINT8; type <=3D RTE_INT64; type++) {
-> +		uint64_t result; /* pick largest buffer */
->  		token.num_data.type =3D type;
->=20
->  		/* test full strings */
-> @@ -397,6 +535,31 @@ test_parse_num_invalid_data(void)
->  			}
->  		}
->  	}
-> +
-> +	/* cycle through all possible float types */
-> +	for (type =3D RTE_FLOAT_SINGLE; type <=3D RTE_FLOAT_DOUBLE; type++) {
-> +		double result; /* pick largest buffer */
-> +		token.num_data.type =3D type;
-> +
-> +		/* test full strings */
-> +		for (i =3D 0; i < RTE_DIM(float_invalid_strs); i++) {
-> +
-> +			memset(&result, 0, sizeof(double));
-> +			memset(&buf, 0, sizeof(buf));
-> +
-> +			ret =3D cmdline_parse_num((cmdline_parse_token_hdr_t*)&token,
-> +					float_invalid_strs[i], (void*)&result, sizeof(result));
-> +			if (ret !=3D -1) {
-> +				/* get some info about what we are trying to parse */
-> +				cmdline_get_help_num((cmdline_parse_token_hdr_t*)&token,
-> +						buf, sizeof(buf));
-> +
-> +				printf("Error: parsing %s as %s succeeded!\n",
-> +						float_invalid_strs[i], buf);
-> +				return -1;
-> +			}
-> +		}
-> +	}
->  	return 0;
->  }
->=20
-> @@ -408,13 +571,13 @@ test_parse_num_valid(void)
->  	enum cmdline_numtype type;
->  	unsigned i;
->  	char buf[CMDLINE_TEST_BUFSIZE];
-> -	uint64_t result;
->  	cmdline_parse_token_num_t token;
->=20
->  	/** valid strings **/
->=20
->  	/* cycle through all possible parsed types */
->  	for (type =3D RTE_UINT8; type <=3D RTE_INT64; type++) {
-> +		uint64_t result;
->  		token.num_data.type =3D type;
->=20
->  		/* test positive strings */
-> @@ -489,10 +652,44 @@ test_parse_num_valid(void)
->  		}
->  	}
->=20
-> +	/* float values */
-> +	for (type =3D RTE_FLOAT_SINGLE; type <=3D RTE_FLOAT_DOUBLE; type++) {
-> +		double result;
-> +		token.num_data.type =3D type;
-> +
-> +		/* test all valid strings */
-> +		for (i =3D 0; i < RTE_DIM(num_valid_float_strs); i++) {
-> +			result =3D 0;
-> +			memset(&buf, 0, sizeof(buf));
-> +
-> +
-> +			cmdline_get_help_num((cmdline_parse_token_hdr_t*)&token,
-> +					buf, sizeof(buf));
-> +
-> +			ret =3D cmdline_parse_num((cmdline_parse_token_hdr_t*) &token,
-> +				num_valid_float_strs[i].str,
-> +				(void*)&result, sizeof(result));
-> +
-> +			/* if it should have passed but didn't, or if it should have failed b=
-ut didn't */
-> +			if ((ret < 0) =3D=3D (can_parse_float(num_valid_float_strs[i].result,=
- type) > 0)) {
-> +				printf("Error: parser behaves unexpectedly when parsing %s as %s!\n"=
-,
-> +						num_valid_float_strs[i].str, buf);
-> +				return -1;
-> +			}
-> +			/* check if result matches */
-> +			if (ret > 0 && float_cmp(num_valid_float_strs[i].result, &result, typ=
-e) !=3D 0) {
-> +				printf("Error: parsing %s as %s failed: result mismatch!\n",
-> +						num_valid_float_strs[i].str, buf);
-> +				return -1;
-> +			}
-> +		}
-> +	}
-> +
->  	/** garbage strings **/
->=20
->  	/* cycle through all possible parsed types */
->  	for (type =3D RTE_UINT8; type <=3D RTE_INT64; type++) {
-> +		uint64_t result;
->  		token.num_data.type =3D type;
->=20
->  		/* test positive garbage strings */
-> diff --git a/buildtools/dpdk-cmdline-gen.py b/buildtools/dpdk-cmdline-gen=
-.py
-> index 7dadded783..6c76d7116a 100755
-> --- a/buildtools/dpdk-cmdline-gen.py
-> +++ b/buildtools/dpdk-cmdline-gen.py
-> @@ -17,16 +17,18 @@
->      RTE_SET_USED(cl);
->      RTE_SET_USED(data);
->  """
-> -NUMERIC_TYPES =3D [
-> -    "UINT8",
-> -    "UINT16",
-> -    "UINT32",
-> -    "UINT64",
-> -    "INT8",
-> -    "INT16",
-> -    "INT32",
-> -    "INT64",
-> -]
-> +NUMERIC_TYPES =3D {
-> +    "UINT8": "uint8_t",
-> +    "UINT16": "uint16_t",
-> +    "UINT32": "uint32_t",
-> +    "UINT64": "uint64_t",
-> +    "INT8": "int8_t",
-> +    "INT16": "int16_t",
-> +    "INT32": "int32_t",
-> +    "INT64": "int64_t",
-> +    "FLOAT_SINGLE": "float",
-> +    "FLOAT_DOUBLE": "double",
-> +}
->=20
->=20
->  def process_command(lineno, tokens, comment):
-> @@ -70,7 +72,7 @@ def process_command(lineno, tokens, comment):
->                  f"\tTOKEN_STRING_INITIALIZER(struct cmd_{name}_result, {=
-t_name}, {t_val});"
->              )
->          elif t_type in NUMERIC_TYPES:
-> -            result_struct.append(f"\t{t_type.lower()}_t {t_name};")
-> +            result_struct.append(f"\t{NUMERIC_TYPES[t_type]} {t_name};")
->              initializers.append(
->                  f"static cmdline_parse_token_num_t cmd_{name}_{t_name}_t=
-ok =3D\n"
->                  f"\tTOKEN_NUM_INITIALIZER(struct cmd_{name}_result, {t_n=
-ame}, RTE_{t_type});"
-> diff --git a/doc/guides/prog_guide/cmdline.rst b/doc/guides/prog_guide/cm=
-dline.rst
-> index e20281ceb5..447a90e32e 100644
-> --- a/doc/guides/prog_guide/cmdline.rst
-> +++ b/doc/guides/prog_guide/cmdline.rst
-> @@ -22,6 +22,7 @@ The DPDK command-line library supports the following fe=
-atures:
->=20
->     * Strings
->     * Signed/unsigned 16/32/64-bit integers
-> +   * Single/double precision floats
->     * IP Addresses
->     * Ethernet Addresses
->=20
-> @@ -68,6 +69,8 @@ The format of the list file must be:
->=20
->    * ``<UINT16>port_id``
->=20
-> +  * ``<FLOAT_SINGLE>ratio``
-> +
->    * ``<IP>src_ip``
->=20
->    * ``<IPv4>dst_ip4``
-> diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_note=
-s/release_25_07.rst
-> index 093b85d206..54bc545110 100644
-> --- a/doc/guides/rel_notes/release_25_07.rst
-> +++ b/doc/guides/rel_notes/release_25_07.rst
-> @@ -55,6 +55,11 @@ New Features
->       Also, make sure to start the actual text at the margin.
->       =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
->=20
-> +* **Added floating point numbers support to cmdline library.**
-> +
-> +  The cmdline library now supports parsing single- and double-precision
-> +  floating point numbers in interactive user commands.
-> +
->=20
->  Removed Items
->  -------------
-> diff --git a/lib/cmdline/cmdline_parse_num.c b/lib/cmdline/cmdline_parse_=
-num.c
-> index f21796bedb..9e4d559325 100644
-> --- a/lib/cmdline/cmdline_parse_num.c
-> +++ b/lib/cmdline/cmdline_parse_num.c
-> @@ -7,6 +7,8 @@
->  #include <stdio.h>
->  #include <stdint.h>
->  #include <inttypes.h>
-> +#include <float.h>
-> +#include <math.h>
->  #include <string.h>
->  #include <eal_export.h>
->  #include <rte_string_fns.h>
-> @@ -34,6 +36,10 @@ enum num_parse_state_t {
->  	DEC_NEG,
->  	BIN,
->  	HEX,
-> +	FLOAT_POS,
-> +	FLOAT_NEG,
-> +	FLOAT_EXP_POS,
-> +	FLOAT_EXP_NEG,
->=20
->  	ERROR,
->=20
-> @@ -44,12 +50,27 @@ enum num_parse_state_t {
->  	BIN_OK,
->  	DEC_NEG_OK,
->  	DEC_POS_OK,
-> +	FLOAT_POS_OK,
-> +	FLOAT_NEG_OK,
-> +	FLOAT_EXP_POS_OK,
-> +	FLOAT_EXP_NEG_OK,
-> +};
-> +
-> +struct float_parse_state {
-> +	uint64_t dec;
-> +	uint64_t frac;
-> +	uint64_t frac_exp;
-> +	uint64_t exp;
-> +#define FLOAT_FLAG_NEG_RES     (1 << 0)
-> +#define FLOAT_FLAG_NEG_EXP     (1 << 1)
-> +	int flags;
->  };
->=20
->  /* Keep it sync with enum in .h */
->  static const char * num_help[] =3D {
->  	"UINT8", "UINT16", "UINT32", "UINT64",
->  	"INT8", "INT16", "INT32", "INT64",
-> +	"SINGLE", "DOUBLE"
->  };
->=20
->  static inline int
-> @@ -63,6 +84,50 @@ add_to_res(unsigned int c, uint64_t *res, unsigned int=
- base)
->  	return 0;
->  }
->=20
-> +static inline int
-> +check_float_result(enum cmdline_numtype res_type, struct float_parse_sta=
-te *fps,
-> +		void *res)
-> +{
-> +	double dec, frac, exp, result;
-> +
-> +	/* extract parts */
-> +	dec =3D (double) fps->dec;
-> +	frac =3D (double) fps->frac * pow(10.0, -(double)fps->frac_exp);
-> +	exp =3D (double) fps->exp;
-> +
-> +	/* exponent might be negative */
-> +	if (fps->flags & FLOAT_FLAG_NEG_EXP)
-> +		exp =3D pow(10.0, -exp);
-> +	else
-> +		exp =3D pow(10.0, exp);
-> +
-> +	/* combine decimal, fractional, and exponent parts */
-> +	result =3D (dec + frac) * exp;
-> +
-> +	/* check for any overflows */
-> +	if (isinf(frac) || isinf(exp) || isinf(result))
-> +		return -1;
-> +
-> +	/* result is a valid double */
-> +
-> +	/* check if result needs to be negative */
-> +	if (fps->flags & FLOAT_FLAG_NEG_RES)
-> +		result =3D -result;
-> +
-> +	if (res_type =3D=3D RTE_FLOAT_SINGLE) {
-> +		/* float can overflow from conversion */
-> +		float flt =3D (float)result;
-> +		if (isinf(flt))
-> +			return -1;
-> +		if (res) *(float *)res =3D flt;
-> +	} else if (res_type =3D=3D RTE_FLOAT_DOUBLE) {
-> +		if (res) *(double *)res =3D result;
-> +	} else {
-> +		return -1;
-> +	}
-> +	return 0;
-> +}
-> +
->  static int
->  check_res_size(struct cmdline_token_num_data *nd, unsigned ressize)
->  {
-> @@ -87,6 +152,14 @@ check_res_size(struct cmdline_token_num_data *nd, uns=
-igned ressize)
->  		if (ressize < sizeof(int64_t))
->  			return -1;
->  		break;
-> +	case RTE_FLOAT_SINGLE:
-> +		if (ressize < sizeof(float))
-> +			return -1;
-> +		break;
-> +	case RTE_FLOAT_DOUBLE:
-> +		if (ressize < sizeof(double))
-> +			return -1;
-> +		break;
->  	default:
->  		return -1;
->  	}
-> @@ -104,6 +177,7 @@ cmdline_parse_num(cmdline_parse_token_hdr_t *tk, cons=
-t char *srcbuf, void *res,
->  	const char * buf;
->  	char c;
->  	uint64_t res1 =3D 0;
-> +	struct float_parse_state fps =3D {};
->=20
->  	if (!tk)
->  		return -1;
-> @@ -156,6 +230,10 @@ cmdline_parse_num(cmdline_parse_token_hdr_t *tk, con=
-st char *srcbuf, void *res,
->  				else
->  					st =3D OCTAL_OK;
->  			}
-> +			else if (c =3D=3D '.') {
-> +				st =3D FLOAT_POS;
-> +				break;
-> +			}
->  			else  {
->  				st =3D ERROR;
->  			}
-> @@ -173,11 +251,80 @@ cmdline_parse_num(cmdline_parse_token_hdr_t *tk, co=
-nst char *srcbuf, void *res,
->  			}
->  			break;
->=20
-> +		case FLOAT_POS:
-> +			if (c >=3D '0' && c <=3D '9') {
-> +				if (add_to_res(c - '0', &res1, 10) < 0)
-> +					st =3D ERROR;
-> +				else {
-> +					st =3D FLOAT_POS_OK;
-> +					fps.frac_exp++;
-> +				}
-> +			}
-> +			else {
-> +				st =3D ERROR;
-> +			}
-> +			break;
-> +
-> +		case FLOAT_NEG:
-> +			if (c >=3D '0' && c <=3D '9') {
-> +				if (add_to_res(c - '0', &res1, 10) < 0)
-> +					st =3D ERROR;
-> +				else {
-> +					st =3D FLOAT_NEG_OK;
-> +					fps.frac_exp++;
-> +				}
-> +			}
-> +			else {
-> +				st =3D ERROR;
-> +			}
-> +			break;
-> +
-> +		case FLOAT_EXP_POS:
-> +			if (c >=3D '0' && c <=3D '9') {
-> +				if (add_to_res(c - '0', &res1, 10) < 0)
-> +					st =3D ERROR;
-> +				else
-> +					st =3D FLOAT_EXP_POS_OK;
-> +			}
-> +			else if (c =3D=3D '-') {
-> +				st =3D FLOAT_EXP_NEG;
-> +				fps.flags |=3D FLOAT_FLAG_NEG_EXP;
-> +			}
-> +			else {
-> +				st =3D ERROR;
-> +			}
-> +			break;
-> +
-> +		case FLOAT_EXP_NEG:
-> +			if (c >=3D '0' && c <=3D '9') {
-> +				if (add_to_res(c - '0', &res1, 10) < 0)
-> +					st =3D ERROR;
-> +				else
-> +					st =3D FLOAT_EXP_NEG_OK;
-> +			}
-> +			else {
-> +				st =3D ERROR;
-> +			}
-> +			break;
-> +
->  		case DEC_NEG_OK:
->  			if (c >=3D '0' && c <=3D '9') {
->  				if (add_to_res(c - '0', &res1, 10) < 0)
->  					st =3D ERROR;
->  			}
-> +			else if (c =3D=3D '.') {
-> +				fps.dec =3D res1;
-> +				fps.flags |=3D FLOAT_FLAG_NEG_RES;
-> +				st =3D FLOAT_NEG;
-> +				/* erase result */
-> +				res1 =3D 0;
-> +			} else if (c =3D=3D 'e' || c =3D=3D 'E') {
-> +				fps.dec =3D res1;
-> +				fps.flags |=3D FLOAT_FLAG_NEG_RES;
-> +				st =3D FLOAT_EXP_POS;
-> +				/* erase result */
-> +				res1 =3D 0;
-> +			}
->  			else {
->  				st =3D ERROR;
->  			}
-> @@ -188,11 +335,75 @@ cmdline_parse_num(cmdline_parse_token_hdr_t *tk, co=
-nst char *srcbuf, void *res,
->  				if (add_to_res(c - '0', &res1, 10) < 0)
->  					st =3D ERROR;
->  			}
-> +			else if (c =3D=3D '.') {
-> +				fps.dec =3D res1;
-> +				st =3D FLOAT_POS;
-> +				/* erase result */
-> +				res1 =3D 0;
-> +			}
-> +			else if (c =3D=3D 'e' || c =3D=3D 'E') {
-> +				fps.dec =3D res1;
-> +				st =3D FLOAT_EXP_POS;
-> +				/* erase result */
-> +				res1 =3D 0;
-> +			}
->  			else {
->  				st =3D ERROR;
->  			}
->  			break;
->=20
-> +		case FLOAT_POS_OK:
-> +			if (c >=3D '0' && c <=3D '9') {
-> +				if (add_to_res(c - '0', &res1, 10) < 0)
-> +					st =3D ERROR;
-> +				else
-> +					fps.frac_exp++;
-> +			} else if (c =3D=3D 'e' || c =3D=3D 'E') {
-> +				fps.frac =3D res1;
-> +				st =3D FLOAT_EXP_POS;
-> +				/* erase result */
-> +				res1 =3D 0;
-> +			} else {
-> +				st =3D ERROR;
-> +			}
-> +			break;
-> +
-> +		case FLOAT_NEG_OK:
-> +			if (c >=3D '0' && c <=3D '9') {
-> +				if (add_to_res(c - '0', &res1, 10) < 0)
-> +					st =3D ERROR;
-> +				else
-> +					fps.frac_exp++;
-> +			} else if (c =3D=3D 'e' || c =3D=3D 'E') {
-> +				fps.frac =3D res1;
-> +				st =3D FLOAT_EXP_POS;
-> +				/* erase result */
-> +				res1 =3D 0;
-> +			} else {
-> +				st =3D ERROR;
-> +			}
-> +			break;
-> +
-> +		case FLOAT_EXP_POS_OK:
-> +			/* exponent is always whole */
-> +			if (c >=3D '0' && c <=3D '9') {
-> +				if (add_to_res(c - '0', &res1, 10) < 0)
-> +					st =3D ERROR;
-> +			} else {
-> +				st =3D ERROR;
-> +			}
-> +			break;
-> +
-> +		case FLOAT_EXP_NEG_OK:
-> +			/* exponent is always whole */
-> +			if (c >=3D '0' && c <=3D '9') {
-> +				if (add_to_res(c - '0', &res1, 10) < 0)
-> +					st =3D ERROR;
-> +			} else {
-> +				st =3D ERROR;
-> +			}
-> +			break;
-> +
->  		case HEX:
->  			st =3D HEX_OK;
->  			/* fall-through */
-> @@ -282,6 +493,12 @@ cmdline_parse_num(cmdline_parse_token_hdr_t *tk, con=
-st char *srcbuf, void *res,
->  		} else if (nd.type =3D=3D RTE_UINT64) {
->  			if (res) *(uint64_t *)res =3D res1;
->  			return buf-srcbuf;
-> +		} else if (nd.type =3D=3D RTE_FLOAT_SINGLE || nd.type =3D=3D RTE_FLOAT=
-_DOUBLE) {
-> +			/* parsed double from integer */
-> +			fps.dec =3D res1;
-> +			if (check_float_result(nd.type, &fps, res) < 0)
-> +				return -1;
-> +			return buf-srcbuf;
->  		} else {
->  			return -1;
->  		}
-> @@ -304,6 +521,62 @@ cmdline_parse_num(cmdline_parse_token_hdr_t *tk, con=
-st char *srcbuf, void *res,
->  				res1 <=3D (uint64_t)INT64_MAX + 1) {
->  			if (res) *(int64_t *)res =3D (int64_t) (-res1);
->  			return buf-srcbuf;
-> +		} else if (nd.type =3D=3D RTE_FLOAT_SINGLE || nd.type =3D=3D RTE_FLOAT=
-_DOUBLE) {
-> +			/* parsed double from negative integer */
-> +			fps.dec =3D res1;
-> +			fps.flags |=3D FLOAT_FLAG_NEG_RES;
-> +			if (check_float_result(nd.type, &fps, res) < 0)
-> +				return -1;
-> +			return buf-srcbuf;
-> +		} else {
-> +			return -1;
-> +		}
-> +		break;
-> +
-> +	case FLOAT_POS_OK:
-> +		if (nd.type =3D=3D RTE_FLOAT_SINGLE || nd.type =3D=3D RTE_FLOAT_DOUBLE=
-) {
-> +			fps.frac =3D res1;
-> +
-> +			if (check_float_result(nd.type, &fps, res) < 0)
-> +				return -1;
-> +			return buf-srcbuf;
-> +		} else {
-> +			return -1;
-> +		}
-> +		break;
-> +
-> +	case FLOAT_NEG_OK:
-> +		if (nd.type =3D=3D RTE_FLOAT_SINGLE || nd.type =3D=3D RTE_FLOAT_DOUBLE=
-) {
-> +			fps.frac =3D res1;
-> +
-> +			if (check_float_result(nd.type, &fps, res) < 0)
-> +				return -1;
-> +			return buf-srcbuf;
-> +		} else {
-> +			return -1;
-> +		}
-> +		break;
-> +
-> +	case FLOAT_EXP_POS_OK:
-> +		/* watch for overflow in the exponent */
-> +		if (nd.type =3D=3D RTE_FLOAT_SINGLE || nd.type =3D=3D RTE_FLOAT_DOUBLE=
-) {
-> +			fps.exp =3D res1;
-> +
-> +			if (check_float_result(nd.type, &fps, res) < 0)
-> +				return -1;
-> +			return buf-srcbuf;
-> +		} else {
-> +			return -1;
-> +		}
-> +		break;
-> +
-> +	case FLOAT_EXP_NEG_OK:
-> +		if (nd.type =3D=3D RTE_FLOAT_SINGLE || nd.type =3D=3D RTE_FLOAT_DOUBLE=
-) {
-> +			fps.exp =3D res1;
-> +
-> +			if (check_float_result(nd.type, &fps, res) < 0)
-> +				return -1;
-> +			return buf-srcbuf;
->  		} else {
->  			return -1;
->  		}
-> diff --git a/lib/cmdline/cmdline_parse_num.h b/lib/cmdline/cmdline_parse_=
-num.h
-> index bdd0267612..b2792a2d11 100644
-> --- a/lib/cmdline/cmdline_parse_num.h
-> +++ b/lib/cmdline/cmdline_parse_num.h
-> @@ -22,7 +22,9 @@ enum cmdline_numtype {
->  	RTE_INT8,
->  	RTE_INT16,
->  	RTE_INT32,
-> -	RTE_INT64
-> +	RTE_INT64,
-> +	RTE_FLOAT_SINGLE,
-> +	RTE_FLOAT_DOUBLE,
->  };
->=20
->  struct cmdline_token_num_data {
-> --
-> 2.47.1
-
+-- 
+Thanks,
+Anatoly
