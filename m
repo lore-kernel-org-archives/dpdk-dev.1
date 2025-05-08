@@ -2,86 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2288C3ABC5
-	for <dpdk-dev@archiver.kernel.org>; Wed,  7 May 2025 16:09:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B8CDC3ABC0
+	for <dpdk-dev@archiver.kernel.org>; Thu,  8 May 2025 01:44:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B13AC4025D;
-	Wed,  7 May 2025 18:09:37 +0200 (CEST)
-Received: from mx2.freebsd.org (mx2.freebsd.org [96.47.72.81])
- by mails.dpdk.org (Postfix) with ESMTP id 50DFA4025A
- for <dev@dpdk.org>; Wed,  7 May 2025 18:09:36 +0200 (CEST)
-Received: from mx1.freebsd.org (mx1.freebsd.org [IPv6:2610:1c1:1:606c::19:1])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits)
- client-signature RSA-PSS (4096 bits))
- (Client CN "mx1.freebsd.org", Issuer "R10" (verified OK))
- by mx2.freebsd.org (Postfix) with ESMTPS id 4Zt0Zk6MBdz4nt7;
- Wed, 07 May 2025 16:09:34 +0000 (UTC)
- (envelope-from jfree@freebsd.org)
-Received: from smtp.freebsd.org (smtp.freebsd.org
- [IPv6:2610:1c1:1:606c::24b:4])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
- client-signature RSA-PSS (4096 bits) client-digest SHA256)
- (Client CN "smtp.freebsd.org", Issuer "R11" (verified OK))
- by mx1.freebsd.org (Postfix) with ESMTPS id 4Zt0Zk5VDWz3BqM;
- Wed, 07 May 2025 16:09:34 +0000 (UTC)
- (envelope-from jfree@freebsd.org)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=freebsd.org; s=dkim;
- t=1746634174;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=za45j2wuLMgC4dxq7wce29QlTTxXk7cfeUPIsPjLf4k=;
- b=FPjRuv3HrlCEurzMU0ZzPBY5Fbrj6OF7PRF8PgnbxphIZQrE7MbhZxsFQFJQhV91N6imHi
- F7SM/A0TJ0puO+cIsaqJA/BJwQOgCjFsV/331wXyHbLmH5iwLUKnDRysg0ke+XHv9PbkRt
- InbZRjKvXyGLpopWIhfHl4ak7rQnLtqYFUMJ+jY5L5JuRuMm2ipRTyFuJrxPB7E9mIEjZz
- S86l3t3/vGHQZv+QgbWsoNFCmB8VInov43Nq+qAbXIEDa1Ac5DuDVBElf7BQOzyk4Wln6Q
- DfKpyPlWIbDRg7fRFca6YCNWZWu5dbbrccst9l3/WL0G3vLX5JbbphAxS30hMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=freebsd.org;
- s=dkim; t=1746634174;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=za45j2wuLMgC4dxq7wce29QlTTxXk7cfeUPIsPjLf4k=;
- b=rk3FlVwOeUY8S3rfdO4QkigKEg/HPuG11ImgUCVWW5aKzp4JO4crOCg8Ix1U1N7yf2TJoN
- 144ZmEE44OAP3buoDq2U6JMpZmMlX5maAd7lFLxDlfValCDXPFNsoAv6xRjG16VZxapobS
- q+oXsTWaChJ0ewMIoMA99T3kvWIm7n74oRPEKd87gAtuYGZEBiA0kzOmq62vDojhtTvT4L
- f2Es9ektLKStiCTBgwfggdHzcOH6fmJotg8NSRLSFsRKPQy5h5oRIE9cbRJ2ew6a3BS4yJ
- lCGCEwGD+UyPgfi/ARAgg/m8fCgh5gE9kDUVEC3U2k8UU5ZU84CFcZe2gSCZYA==
-ARC-Seal: i=1; s=dkim; d=freebsd.org; t=1746634174; a=rsa-sha256; cv=none;
- b=Pq/OBI59BMmD9809q8iOBoG4+ThhZiADbMQDOpziZhFqm6Rl0zihGR8pGjAw8QnRLefR66
- 71InDetkC1YddDjvSOuKBm2dNlIhZqWIIsHA1zlQ7Ec4UdyBhLavGn2d1t2sEgLtXqGw4k
- nfC5rK1AK5NPUKf/Kp8qaOMteEpKfPsODMUPb1K7WG+ihm9ri3v030mugb94VefuG5VwC3
- FW9Ebi4qjxmw3Nbnh9bppTFLYa+D1rD5diH/PN+0XzNcZkr4CH1dRuY2hOT9PWtFZcaJIq
- Bgs9DXcAL2WUeXLxD0McPeLWV1cKByc1lb7OswU1EREUh7COHkIrxPbsLXEzfA==
-ARC-Authentication-Results: i=1;
-	mx1.freebsd.org;
-	none
-Received: from localhost (67-4-147-206.mpls.qwest.net [67.4.147.206])
- (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (Client did not present a certificate) (Authenticated sender: jfree)
- by smtp.freebsd.org (Postfix) with ESMTPSA id 4Zt0Zk3Hqhz9j2;
- Wed, 07 May 2025 16:09:34 +0000 (UTC)
- (envelope-from jfree@freebsd.org)
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 07 May 2025 11:09:33 -0500
-Message-Id: <D9Q252DFOH0V.1CHFLNZDP105D@freebsd.org>
-From: "Jake Freeland" <jfree@freebsd.org>
-To: "Stephen Hemminger" <stephen@networkplumber.org>
-Cc: "Anatoly Burakov" <anatoly.burakov@intel.com>, "Bruce Richardson"
- <bruce.richardson@intel.com>, "dev" <dev@dpdk.org>
-Subject: Re: [PATCH 3/3] eal/linux: Check hugepage access permissions
-X-Mailer: aerc 0.18.2
-References: <20250506175010.1141585-1-jfree@FreeBSD.org>
- <20250506175010.1141585-4-jfree@FreeBSD.org>
- <CAOaVG142x9ENgVF_p2GuhYA7wRuSXN83=__4D_+kXvxghZB-mg@mail.gmail.com>
-In-Reply-To: <CAOaVG142x9ENgVF_p2GuhYA7wRuSXN83=__4D_+kXvxghZB-mg@mail.gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 31F0A4025A;
+	Thu,  8 May 2025 03:44:47 +0200 (CEST)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+ by mails.dpdk.org (Postfix) with ESMTP id A8ABB4014F
+ for <dev@dpdk.org>; Thu,  8 May 2025 03:44:45 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+ by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZtFFR0ndYzyVG3;
+ Thu,  8 May 2025 09:40:27 +0800 (CST)
+Received: from kwepemo500011.china.huawei.com (unknown [7.202.195.194])
+ by mail.maildlp.com (Postfix) with ESMTPS id C6E831401F1;
+ Thu,  8 May 2025 09:44:42 +0800 (CST)
+Received: from [10.67.121.193] (10.67.121.193) by
+ kwepemo500011.china.huawei.com (7.202.195.194) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 8 May 2025 09:44:42 +0800
+Message-ID: <17f2ab6a-c519-4cd4-87b2-24e2835aee74@huawei.com>
+Date: Thu, 8 May 2025 09:44:41 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] examples/l3fwd: adjust Tx burst size based on Rx burst
+To: Sivaprasad Tummala <sivaprasad.tummala@amd.com>, "dev@dpdk.org"
+ <dev@dpdk.org>
+CC: Sivaprasad Tummala <sivaprasad.tummala@amd.com>, <david.hunt@intel.com>,
+ <anatoly.burakov@intel.com>, <jerinj@marvell.com>, <radu.nicolau@intel.com>,
+ <gakhil@marvell.com>, <cristian.dumitrescu@intel.com>,
+ <ferruh.yigit@amd.com>, <konstantin.ananyev@huawei.com>,
+ <mb@smartsharesystems.com>, liuyonglong <liuyonglong@huawei.com>
+References: <20250212045416.2393001-1-sivaprasad.tummala@amd.com>
+Content-Language: en-US
+From: huangdengdui <huangdengdui@huawei.com>
+In-Reply-To: <20250212045416.2393001-1-sivaprasad.tummala@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.193]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemo500011.china.huawei.com (7.202.195.194)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,69 +54,119 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed May 7, 2025 at 3:52 AM CDT, Stephen Hemminger wrote:
-> Please don't split message a across multiple lines.
-> Open and access are not the same in all security checks, so not a great
-> idea.
+Tested-by: Dengdui Huang <huangdengdui@huawei.com>
 
-What do you mean by this? In this case, access() is just verifying that
-we can read and write to the hugepage directory. What extra security
-check does open() perform that would be needed here?
+The issue addressed by this patch is the same as the one fixed by the patch [1] pushed by Haijie.
+However, this patch is better, and I have already tested it on the Kunpeng platform.
+Please make the changes based on Konstantin's review comments and push the next version.
 
-Keep in mind that open() will still be used to open the hugepages and
-perform it=E2=80=99s own checks later on. The purpose of this access() call=
- is
-to avoid saving inaccessible hugepage paths up front.
+[1]
+https://patchwork.dpdk.org/project/dpdk/patch/20241204020622.977156-1-haijie1@huawei.com/
 
-> Some analyzer tools may flag as time of check, time of use issue.
-
-If this access() check succeeds (i.e. we have r/w access) and the
-permissions of the hugepage directory change to read-only before we call
-open(), then open() will fail like it does without this patch. This
-seems like reasonable behavior to me and is better than having no
-initial r/w check at all.
-
-Thanks,
-Jake Freeland
-
->
-> On Wed, May 7, 2025, 02:50 Jake Freeland <jfree@freebsd.org> wrote:
->
-> > Currently, hugepage mountpoints will be used irrespective of permission=
-s,
-> > leading to potential EACCES errors during memory allocation. Fix this b=
-y
-> > not using a mountpoint if we do not have read/write permissions on it.
-> >
-> > Signed-off-by: Jake Freeland <jfree@FreeBSD.org>
-> > ---
-> >  lib/eal/linux/eal_hugepage_info.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > diff --git a/lib/eal/linux/eal_hugepage_info.c
-> > b/lib/eal/linux/eal_hugepage_info.c
-> > index d47a19c56a..dbfa38b05c 100644
-> > --- a/lib/eal/linux/eal_hugepage_info.c
-> > +++ b/lib/eal/linux/eal_hugepage_info.c
-> > @@ -260,6 +260,12 @@ get_hugepage_dir(uint64_t hugepage_sz, char *huged=
-ir,
-> > int len)
-> >                                 continue;
-> >                 }
-> >
-> > +               if (access(splitstr[MOUNTPT], R_OK | W_OK) < 0) {
-> > +                       EAL_LOG(NOTICE, "Missing r/w permissions on hug=
-e
-> > dir: "
-> > +                           "'%s'. Skipping it", splitstr[MOUNTPT]);
-> > +                       continue;
-> > +               }
-> > +
-> >                 /*
-> >                  * If no --huge-dir option has been given, we're done.
-> >                  */
-> > -
-> >
->
-> >
-
+On 2025/2/12 12:54, Sivaprasad Tummala wrote:
+> Previously, the TX burst size was fixed at 256, leading to performance
+> degradation in certain scenarios.
+> 
+> This patch introduces logic to set the TX burst size to match the
+> configured RX burst size (--burst option, default 32, max 512)
+> for better efficiency.
+> 
+> Fixes: d5c4897ecfb2 ("examples/l3fwd: add option to set Rx burst size")
+> Cc: haijie1@huawei.com
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
+> ---
+>  examples/l3fwd/l3fwd.h        |  6 +++---
+>  examples/l3fwd/l3fwd_common.h | 11 +++++++----
+>  examples/l3fwd/main.c         |  2 ++
+>  3 files changed, 12 insertions(+), 7 deletions(-)
+> 
+> diff --git a/examples/l3fwd/l3fwd.h b/examples/l3fwd/l3fwd.h
+> index 0cce3406ee..9d7c73504b 100644
+> --- a/examples/l3fwd/l3fwd.h
+> +++ b/examples/l3fwd/l3fwd.h
+> @@ -35,7 +35,7 @@
+>  /*
+>   * Try to avoid TX buffering if we have at least MAX_TX_BURST packets to send.
+>   */
+> -#define	MAX_TX_BURST	  (MAX_PKT_BURST / 2)
+> +#define	MAX_TX_BURST	  (DEFAULT_PKT_BURST / 2)
+>  
+>  #define NB_SOCKETS        8
+>  
+> @@ -152,8 +152,8 @@ send_single_packet(struct lcore_conf *qconf,
+>  	len++;
+>  
+>  	/* enough pkts to be sent */
+> -	if (unlikely(len == MAX_PKT_BURST)) {
+> -		send_burst(qconf, MAX_PKT_BURST, port);
+> +	if (unlikely(len == nb_pkt_per_burst)) {
+> +		send_burst(qconf, nb_pkt_per_burst, port);
+>  		len = 0;
+>  	}
+>  
+> diff --git a/examples/l3fwd/l3fwd_common.h b/examples/l3fwd/l3fwd_common.h
+> index d94e5f1357..6cb7de5144 100644
+> --- a/examples/l3fwd/l3fwd_common.h
+> +++ b/examples/l3fwd/l3fwd_common.h
+> @@ -25,6 +25,9 @@
+>   */
+>  #define SENDM_PORT_OVERHEAD(x) (x)
+>  
+> +extern uint32_t nb_pkt_per_burst;
+> +extern uint32_t max_tx_burst;
+> +
+>  /*
+>   * From http://www.rfc-editor.org/rfc/rfc1812.txt section 5.2.2:
+>   * - The IP version number must be 4.
+> @@ -71,7 +74,7 @@ send_packetsx4(struct lcore_conf *qconf, uint16_t port, struct rte_mbuf *m[],
+>  	 * If TX buffer for that queue is empty, and we have enough packets,
+>  	 * then send them straightway.
+>  	 */
+> -	if (num >= MAX_TX_BURST && len == 0) {
+> +	if (num >= max_tx_burst && len == 0) {
+>  		n = rte_eth_tx_burst(port, qconf->tx_queue_id[port], m, num);
+>  		if (unlikely(n < num)) {
+>  			do {
+> @@ -86,7 +89,7 @@ send_packetsx4(struct lcore_conf *qconf, uint16_t port, struct rte_mbuf *m[],
+>  	 */
+>  
+>  	n = len + num;
+> -	n = (n > MAX_PKT_BURST) ? MAX_PKT_BURST - len : num;
+> +	n = (n > nb_pkt_per_burst) ? nb_pkt_per_burst - len : num;
+>  
+>  	j = 0;
+>  	switch (n % FWDSTEP) {
+> @@ -112,9 +115,9 @@ send_packetsx4(struct lcore_conf *qconf, uint16_t port, struct rte_mbuf *m[],
+>  	len += n;
+>  
+>  	/* enough pkts to be sent */
+> -	if (unlikely(len == MAX_PKT_BURST)) {
+> +	if (unlikely(len == nb_pkt_per_burst)) {
+>  
+> -		send_burst(qconf, MAX_PKT_BURST, port);
+> +		send_burst(qconf, nb_pkt_per_burst, port);
+>  
+>  		/* copy rest of the packets into the TX buffer. */
+>  		len = num - n;
+> diff --git a/examples/l3fwd/main.c b/examples/l3fwd/main.c
+> index 994b7dd8e5..4cabd05be2 100644
+> --- a/examples/l3fwd/main.c
+> +++ b/examples/l3fwd/main.c
+> @@ -59,6 +59,7 @@ uint16_t nb_rxd = RX_DESC_DEFAULT;
+>  uint16_t nb_txd = TX_DESC_DEFAULT;
+>  uint32_t nb_pkt_per_burst = DEFAULT_PKT_BURST;
+>  uint32_t mb_mempool_cache_size = MEMPOOL_CACHE_SIZE;
+> +uint32_t max_tx_burst = MAX_TX_BURST;
+>  
+>  /**< Ports set in promiscuous mode off by default. */
+>  static int promiscuous_on;
+> @@ -733,6 +734,7 @@ parse_pkt_burst(const char *optarg)
+>  		return;
+>  	}
+>  	nb_pkt_per_burst = burst_size;
+> +	max_tx_burst = burst_size / 2;
+>  	RTE_LOG(INFO, L3FWD, "Using PMD-provided burst value %d\n", burst_size);
+>  }
+>  
