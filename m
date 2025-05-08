@@ -2,44 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4982C3ABC0
-	for <dpdk-dev@archiver.kernel.org>; Thu,  8 May 2025 13:16:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD3B0C3ABBE
+	for <dpdk-dev@archiver.kernel.org>; Thu,  8 May 2025 13:16:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3C31C406B6;
-	Thu,  8 May 2025 15:16:11 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 27B27406BC;
+	Thu,  8 May 2025 15:16:12 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id AF2C24026B
- for <dev@dpdk.org>; Thu,  8 May 2025 15:16:08 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5BAA040691
+ for <dev@dpdk.org>; Thu,  8 May 2025 15:16:10 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1746710169; x=1778246169;
+ t=1746710171; x=1778246171;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=mr/r9eH7MiRr+tUGvcB0m10YjGkrEwOizsG78HELGoY=;
- b=QIRiUyd9ij8O6TxPn2ZOMChzl1Sat+ArJc/6wqDyxlryX5QmIHIV9Lpk
- mQB6WtA2xLSUtB4a00GwZebgSxwKgKZJlsrzRVPo1zK6QFP/zDd2Y1Qf7
- 7YlrWr1ygmKgkFOCphG69Jj1IhS0iLhaRPV15Jzny9EjDzC7lsappIYpU
- n+qdP1OQWiOFMRyjph9Z7RnNWTbx7to2IRFoqjZWNpBw3KpFpwZ7KBtVg
- shhYlIPKTzJIbNpueS+uKonGUvDJOGZjT0vBVQbcZIEq0lh7UIrMWZ/xV
- vYG72B0xgucCR9qqLAuVhQa/ckc5whZxoHwDsz7G+u4QogmH7A52XY7WY Q==;
-X-CSE-ConnectionGUID: fjy8Wdg4To27euBlEkb4HA==
-X-CSE-MsgGUID: r9hy9OFSSmWzW7gZAYbvgQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="48359607"
-X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; d="scan'208";a="48359607"
+ bh=RzHa5of77EOJQw4EoOzRsksZ8HRb/DUzlY2mEjxjTxg=;
+ b=BPS14QJgFoAevpwbTNg6Bkny2WJNI7Yf4CTrxjmEuXMalGcSztdFPxK0
+ 7uUc05wPmwS0fo8H7RibqssEPhs8204w6sO6DqathAEqhB9r2p5juAKf6
+ VLwrJIW1xWuFpFhc3l5v8QPxDIFLJuqCuzw6kyWWP/MORYUCi0hwLs7Z+
+ GM4flYCTDFWNb9SI4NsK0cMeR9EuSbhikNxdXCuEuoKKpFcyDljY9ZbkY
+ 6ltgXQsQixWUGRa9Bos+HC4sX8uR5fTRhJ/Ek1tuxPMk/zM1mL+4Ipglv
+ I5nLE/M0ySH/0/wbdgDCRZ//f7to+NVJgyLumMGK8uSNSXbKjWi2e5nei g==;
+X-CSE-ConnectionGUID: oXBx7O7jTrOdeou7xYTOug==
+X-CSE-MsgGUID: eYRT+oOIQ8K1+1I40N7n5w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="48359616"
+X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; d="scan'208";a="48359616"
 Received: from fmviesa010.fm.intel.com ([10.60.135.150])
  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 May 2025 06:16:08 -0700
-X-CSE-ConnectionGUID: bReFjAN/QPq2EcXPYSf+7A==
-X-CSE-MsgGUID: H3e7tN5gToid8xNF9pF6rA==
+ 08 May 2025 06:16:10 -0700
+X-CSE-ConnectionGUID: eLFk/juXSO6b9x2aYOykpw==
+X-CSE-MsgGUID: VUDVWR3LTiaMmTDzNaSN0g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; d="scan'208";a="136781201"
+X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; d="scan'208";a="136781211"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa010.fm.intel.com with ESMTP; 08 May 2025 06:16:07 -0700
+ by fmviesa010.fm.intel.com with ESMTP; 08 May 2025 06:16:09 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org
-Subject: [PATCH v8 2/3] cmdline: add floating point support
-Date: Thu,  8 May 2025 14:16:02 +0100
-Message-ID: <e2810384253c9c1e374eadfc70c598fa8b86d0be.1746710154.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org,
+	Aman Singh <aman.deep.singh@intel.com>
+Subject: [PATCH v8 3/3] app/testpmd: add sleep command
+Date: Thu,  8 May 2025 14:16:03 +0100
+Message-ID: <15755be6192657d1e75940284d09939e58aee5b9.1746710154.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <7bebd92be36f945c175382bb1e0482e55844c1d2.1746710154.git.anatoly.burakov@intel.com>
 References: 
@@ -58,647 +59,85 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add support for parsing floating point numbers in cmdline library, as well
-as unit tests for the new functionality. Use C library for parsing.
+Test-pmd already has a way to run a list of commands from file, but there
+is no way to pause execution for a specified amount of time between two
+commands. This may be necessary for simple automation, particularly for
+waiting on some asynchronous operation such as link status update.
+
+Add a simple sleep command to wait until certain number of seconds has
+passed, using the newly added cmdline library floating point support.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
 
 Notes:
-    v7 -> v8:
-    - Fixed leftover comment about needing bigger epsilon value
-    - Fixed debug prints to avoid indexing num_help[] array
-    
-    v6 -> v7:
-    - Fixed a bug in float compare in unit tests where a bigger epsilon
-      value than necessary was "needed" because we were comparing float
-      result to a double result
-    
-    v5 -> v6:
-    - Small refactor to reduce amount of noise
-    - Use strtof for parsing single precision floats
-    - More unit tests
-    
-    v4 -> v5:
-    - Reworked to use standard C library functions as much as possible,
-      keeping near-100% compatibility with earlier versions (the only
-      difference is that strings like "+4" are now considered valid)
-    
-    v3 -> v4:
-    - Removed unnecessary check for integer overflow when parsing negative
-      floats (as we convert to double before changing sign)
-    - Make naming of float exponent states more consistent
-    
-    v2 -> v3:
-    - Fixed a bug where a free-standing negative exponent ("1e-") would attempt to be
-      parsed, and added unit tests for this case
-    - Added support for floats in dpdk-cmdline-gen script
-    - Added documentation updates to call out float support
+    v1 -> v2:
+    - Add floating point support to cmdline
+    - Use floating point format for pause command
 
- app/test/test_cmdline_num.c            | 283 ++++++++++++++++++++++++-
- buildtools/dpdk-cmdline-gen.py         |  24 ++-
- doc/guides/prog_guide/cmdline.rst      |   3 +
- doc/guides/rel_notes/release_25_07.rst |   5 +
- lib/cmdline/cmdline_parse_num.c        |  66 +++++-
- lib/cmdline/cmdline_parse_num.h        |   4 +-
- 6 files changed, 366 insertions(+), 19 deletions(-)
+ app/test-pmd/cmdline.c | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-diff --git a/app/test/test_cmdline_num.c b/app/test/test_cmdline_num.c
-index dd70f6f824..dcccd760ed 100644
---- a/app/test/test_cmdline_num.c
-+++ b/app/test/test_cmdline_num.c
-@@ -5,6 +5,8 @@
- #include <stdio.h>
- #include <string.h>
- #include <inttypes.h>
-+#include <float.h>
-+#include <math.h>
+diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
+index d4bb3ec998..b6152c07e6 100644
+--- a/app/test-pmd/cmdline.c
++++ b/app/test-pmd/cmdline.c
+@@ -151,6 +151,9 @@ static void cmd_help_long_parsed(void *parsed_result,
  
- #include <rte_string_fns.h>
- 
-@@ -23,6 +25,11 @@ struct num_signed_str {
- 	int64_t result;
- };
- 
-+struct num_float_str {
-+	const char * str;
-+	double result;
-+};
+ 			"quit\n"
+ 			"    Quit to prompt.\n\n"
 +
- const struct num_unsigned_str num_valid_positive_strs[] = {
- 		/* decimal positive */
- 		{"0", 0 },
-@@ -143,6 +150,63 @@ const struct num_signed_str num_valid_negative_strs[] = {
- 		{"-01000000000000000000000", INT64_MIN },
- };
- 
-+const struct num_float_str float_valid_strs[] = {
-+		/* zero */
-+		{"0", 0},
-+		/* parse int as float */
-+		{"1", 1},
-+		{"-1", -1},
-+		/* fractional */
-+		{"1.23", 1.23},
-+		{"-1.23", -1.23},
-+		{"0.123", 0.123},
-+		{"-0.123", -0.123},
-+		{"123.456", 123.456},
-+		{"-123.456", -123.456},
-+		/* positive exponent */
-+		{"1e2", 1e2},
-+		{"-1e2", -1e2},
-+		{"1E2", 1E2},
-+		{"-1E2", -1E2},
-+		{"0.12e3", 0.12e3},
-+		{"-0.12e3", -0.12e3},
-+		{"1.23e4", 1.23e4},
-+		{"-1.23e4", -1.23e4},
-+		{"1.23E4", 1.23E4},
-+		{"-1.23E4", -1.23E4},
-+		{"123.456e7", 123.456e7},
-+		{"-123.456e7", -123.456e7},
-+		{"123.456E7", 123.456E7},
-+		{"-123.456E7", -123.456E7},
-+		/* negative exponent */
-+		{"1e-2", 1e-2},
-+		{"-1e-2", -1e-2},
-+		{"1E-2", 1E-2},
-+		{"-1E-2", -1E-2},
-+		{"0.12e-3", 0.12e-3},
-+		{"-0.12e-3", -0.12e-3},
-+		{"1.23e-4", 1.23e-4},
-+		{"-1.23e-4", -1.23e-4},
-+		{"1.23E-4", 1.23E-4},
-+		{"-1.23E-4", -1.23E-4},
-+		{"123.456e-7", 123.456e-7},
-+		{"-123.456e-7", -123.456e-7},
-+		{"123.456E-7", 123.456E-7},
-+		{"-123.456E-7", -123.456E-7},
-+		/* try overflowing float */
-+		{"2e63", 2e63},
-+		{"-2e63", -2e63},
-+		{"2E63", 2E63},
-+		{"-2E63", -2E63},
-+		{"18446744073709551615", (double) UINT64_MAX},
-+		{"-9223372036854775808", (double) INT64_MIN},
-+		/* try overflowing double */
-+		{"2e308", HUGE_VAL},
-+		{"-2e308", -HUGE_VAL},
-+		{"2E308", HUGE_VAL},
-+		{"-2E308", HUGE_VAL},
-+};
-+
- const struct num_unsigned_str num_garbage_positive_strs[] = {
- 		/* valid strings with garbage on the end, should still be valid */
- 		/* decimal */
-@@ -200,6 +264,71 @@ const struct num_signed_str num_garbage_negative_strs[] = {
- 		{"-01000000000000000000000 garbage", INT64_MIN },
- };
- 
-+const struct num_float_str float_garbage_strs[] = {
-+	/* valid strings with garbage on the end, should still be valid */
-+	/* positive float positive exponent */
-+	{"123.456e7\0garbage", 123.456e7},
-+	{"123.456e7\rgarbage", 123.456e7},
-+	{"123.456e7\tgarbage", 123.456e7},
-+	{"123.456e7\ngarbage", 123.456e7},
-+	{"123.456e7#garbage", 123.456e7},
-+	{"123.456e7 garbage", 123.456e7},
-+	/* negative float positive exponent */
-+	{"-123.456e7\0garbage", -123.456e7},
-+	{"-123.456e7\rgarbage", -123.456e7},
-+	{"-123.456e7\tgarbage", -123.456e7},
-+	{"-123.456e7\ngarbage", -123.456e7},
-+	{"-123.456e7#garbage", -123.456e7},
-+	{"-123.456e7 garbage", -123.456e7},
-+	/* positive float negative exponent */
-+	{"123.456e-7\0garbage", 123.456e-7},
-+	{"123.456e-7\rgarbage", 123.456e-7},
-+	{"123.456e-7\tgarbage", 123.456e-7},
-+	{"123.456e-7\ngarbage", 123.456e-7},
-+	{"123.456e-7#garbage", 123.456e-7},
-+	{"123.456e-7 garbage", 123.456e-7},
-+	/* negative float negative exponent */
-+	{"-123.456e-7\0garbage", -123.456e-7},
-+	{"-123.456e-7\rgarbage", -123.456e-7},
-+	{"-123.456e-7\tgarbage", -123.456e-7},
-+	{"-123.456e-7\ngarbage", -123.456e-7},
-+	{"-123.456e-7#garbage", -123.456e-7},
-+	{"-123.456e-7 garbage", -123.456e-7},
-+	/* float overflows */
-+	{"18446744073709551615\0garbage", (double) UINT64_MAX},
-+	{"18446744073709551615\rgarbage", (double) UINT64_MAX},
-+	{"18446744073709551615\ngarbage", (double) UINT64_MAX},
-+	{"18446744073709551615\tgarbage", (double) UINT64_MAX},
-+	{"18446744073709551615#garbage", (double) UINT64_MAX},
-+	{"18446744073709551615 garbage", (double) UINT64_MAX},
-+	{"-9223372036854775808\0garbage", (double) INT64_MIN},
-+	{"-9223372036854775808\rgarbage", (double) INT64_MIN},
-+	{"-9223372036854775808\ngarbage", (double) INT64_MIN},
-+	{"-9223372036854775808\tgarbage", (double) INT64_MIN},
-+	{"-9223372036854775808#garbage", (double) INT64_MIN},
-+	{"-9223372036854775808 garbage", (double) INT64_MIN},
-+};
-+
-+const char *float_invalid_strs[] = {
-+	"1.1.",
-+	"1.1.1",
-+	"-1.1.",
-+	"-1.1.1",
-+	"e",
-+	"1e",
-+	"-1e",
-+	"0.1e",
-+	"-0.1e",
-+	"1.e",
-+	"-1.e",
-+	"1.23e3.4",
-+	"-1.23e3.4",
-+	"1e1e",
-+	"1e1e1",
-+	"1e-",
-+	"-1e-"
-+};
-+
- const char * num_invalid_strs[] = {
- 		"18446744073709551616", /* out of range unsigned */
- 		"-9223372036854775809", /* out of range negative signed */
-@@ -218,7 +347,16 @@ const char * num_invalid_strs[] = {
- 		/* too long (128+ chars) */
- 		("0b1111000011110000111100001111000011110000111100001111000011110000"
- 		  "1111000011110000111100001111000011110000111100001111000011110000"),
-+		/* valid float values but should fail to parse as ints */
- 		"1E3",
-+		"-1E3",
-+		"1.23",
-+		"-1.23",
-+		"1E-3",
-+		"-1E-3",
-+		"1.23E4",
-+		"-1.23E4",
-+		/* misc invalid values */
- 		"0A",
- 		"-B",
- 		"1.23G",
-@@ -231,6 +369,48 @@ const char * num_invalid_strs[] = {
- 		"\0",
- };
- 
-+static int
-+float_cmp(double expected, void *actual_p, enum cmdline_numtype type)
-+{
-+	double eps;
-+	double actual_d;
-+
-+	if (type == RTE_FLOAT_SINGLE) {
-+		/* read as float, convert to double */
-+		actual_d = (double)*(float *)actual_p;
-+		/* downcast expected to float as well */
-+		expected = (double)(float)expected;
-+		eps = FLT_EPSILON;
-+	} else {
-+		/* read as double */
-+		actual_d = *(double *)actual_p;
-+		eps = DBL_EPSILON;
-+	}
-+	/* compare using epsilon value */
-+	if (fabs(expected - actual_d) < eps)
-+		return 0;
-+	/* not equal */
-+	return expected < actual_d ? -1 : 1;
-+}
-+
-+static int
-+can_parse_float(double expected_result, enum cmdline_numtype type)
-+{
-+	switch (type) {
-+	case RTE_FLOAT_SINGLE:
-+		if (expected_result > FLT_MAX || expected_result < -FLT_MAX)
-+			return 0;
-+		break;
-+	case RTE_FLOAT_DOUBLE:
-+		if (expected_result > DBL_MAX || expected_result < -DBL_MAX)
-+			return 0;
-+		break;
-+	default:
-+		return 1;
-+	}
-+	return 1;
-+}
-+
- static int
- can_parse_unsigned(uint64_t expected_result, enum cmdline_numtype type)
- {
-@@ -386,11 +566,11 @@ test_parse_num_invalid_data(void)
- 	int ret = 0;
- 	unsigned i;
- 	char buf[CMDLINE_TEST_BUFSIZE];
--	uint64_t result; /* pick largest buffer */
- 	cmdline_parse_token_num_t token;
- 
--	/* cycle through all possible parsed types */
-+	/* cycle through all possible integer types */
- 	for (type = RTE_UINT8; type <= RTE_INT64; type++) {
-+		uint64_t result; /* pick largest buffer */
- 		token.num_data.type = type;
- 
- 		/* test full strings */
-@@ -412,6 +592,31 @@ test_parse_num_invalid_data(void)
- 			}
- 		}
- 	}
-+
-+	/* cycle through all possible float types */
-+	for (type = RTE_FLOAT_SINGLE; type <= RTE_FLOAT_DOUBLE; type++) {
-+		double result; /* pick largest buffer */
-+		token.num_data.type = type;
-+
-+		/* test full strings */
-+		for (i = 0; i < RTE_DIM(float_invalid_strs); i++) {
-+
-+			memset(&result, 0, sizeof(double));
-+			memset(&buf, 0, sizeof(buf));
-+
-+			ret = cmdline_parse_num((cmdline_parse_token_hdr_t*)&token,
-+					float_invalid_strs[i], (void*)&result, sizeof(result));
-+			if (ret != -1) {
-+				/* get some info about what we are trying to parse */
-+				cmdline_get_help_num((cmdline_parse_token_hdr_t*)&token,
-+						buf, sizeof(buf));
-+
-+				printf("Error: parsing %s as %s succeeded!\n",
-+						float_invalid_strs[i], buf);
-+				return -1;
-+			}
-+		}
-+	}
- 	return 0;
- }
- 
-@@ -423,13 +628,13 @@ test_parse_num_valid(void)
- 	enum cmdline_numtype type;
- 	unsigned i;
- 	char buf[CMDLINE_TEST_BUFSIZE];
--	uint64_t result;
- 	cmdline_parse_token_num_t token;
- 
- 	/** valid strings **/
- 
--	/* cycle through all possible parsed types */
-+	/* cycle through all possible integer types */
- 	for (type = RTE_UINT8; type <= RTE_INT64; type++) {
-+		uint64_t result;
- 		token.num_data.type = type;
- 
- 		/* test positive strings */
-@@ -468,7 +673,7 @@ test_parse_num_valid(void)
- 			cmdline_get_help_num((cmdline_parse_token_hdr_t*)&token,
- 					buf, sizeof(buf));
- 
--			ret = cmdline_parse_num((cmdline_parse_token_hdr_t*) &token,
-+ 			ret = cmdline_parse_num((cmdline_parse_token_hdr_t*) &token,
- 				num_valid_negative_strs[i].str,
- 				(void*)&result, sizeof(result));
- 
-@@ -504,10 +709,44 @@ test_parse_num_valid(void)
- 		}
++			"sleep secs\n"
++			"    Sleep for secs seconds (can be fractional).\n\n"
+ 		);
  	}
  
-+	/* cycle through all possible float types */
-+	for (type = RTE_FLOAT_SINGLE; type <= RTE_FLOAT_DOUBLE; type++) {
-+		double result;
-+		token.num_data.type = type;
-+
-+		/* test all valid strings */
-+		for (i = 0; i < RTE_DIM(float_valid_strs); i++) {
-+			result = 0;
-+			memset(&buf, 0, sizeof(buf));
-+
-+
-+			cmdline_get_help_num((cmdline_parse_token_hdr_t*)&token,
-+					buf, sizeof(buf));
-+
-+			ret = cmdline_parse_num((cmdline_parse_token_hdr_t*) &token,
-+				float_valid_strs[i].str,
-+				(void*)&result, sizeof(result));
-+
-+			/* if it should have passed but didn't, or if it should have failed but didn't */
-+			if ((ret < 0) == (can_parse_float(float_valid_strs[i].result, type) > 0)) {
-+				printf("Error: parser behaves unexpectedly when parsing %s as %s!\n",
-+						float_valid_strs[i].str, buf);
-+				return -1;
-+			}
-+			/* check if result matches */
-+			if (ret > 0 && float_cmp(float_valid_strs[i].result, &result, type) != 0) {
-+				printf("Error: parsing %s as %s failed: result mismatch!\n",
-+						float_valid_strs[i].str, buf);
-+				return -1;
-+			}
-+		}
-+	}
-+
- 	/** garbage strings **/
- 
--	/* cycle through all possible parsed types */
-+	/* cycle through all possible integer types */
- 	for (type = RTE_UINT8; type <= RTE_INT64; type++) {
-+		uint64_t result;
- 		token.num_data.type = type;
- 
- 		/* test positive garbage strings */
-@@ -585,6 +824,38 @@ test_parse_num_valid(void)
- 		}
- 	}
- 
-+	/* cycle through all possible float types */
-+	for (type = RTE_FLOAT_SINGLE; type <= RTE_FLOAT_DOUBLE; type++) {
-+		double result;
-+		token.num_data.type = type;
-+
-+		/* test all valid strings */
-+		for (i = 0; i < RTE_DIM(float_garbage_strs); i++) {
-+			result = 0;
-+			memset(&buf, 0, sizeof(buf));
-+
-+			cmdline_get_help_num((cmdline_parse_token_hdr_t*)&token,
-+					buf, sizeof(buf));
-+
-+			ret = cmdline_parse_num((cmdline_parse_token_hdr_t*) &token,
-+				float_garbage_strs[i].str,
-+				(void*)&result, sizeof(result));
-+
-+			/* if it should have passed but didn't, or if it should have failed but didn't */
-+			if ((ret < 0) == (can_parse_float(float_garbage_strs[i].result, type) > 0)) {
-+				printf("Error: parser behaves unexpectedly when parsing %s as %s!\n",
-+						float_garbage_strs[i].str, buf);
-+				return -1;
-+			}
-+			/* check if result matches */
-+			if (ret > 0 && float_cmp(float_garbage_strs[i].result, &result, type) != 0) {
-+				printf("Error: parsing %s as %s failed: result mismatch!\n",
-+						float_garbage_strs[i].str, buf);
-+				return -1;
-+			}
-+		}
-+	}
-+
- 	memset(&buf, 0, sizeof(buf));
- 
- 	/* coverage! */
-diff --git a/buildtools/dpdk-cmdline-gen.py b/buildtools/dpdk-cmdline-gen.py
-index 7dadded783..6c76d7116a 100755
---- a/buildtools/dpdk-cmdline-gen.py
-+++ b/buildtools/dpdk-cmdline-gen.py
-@@ -17,16 +17,18 @@
-     RTE_SET_USED(cl);
-     RTE_SET_USED(data);
- """
--NUMERIC_TYPES = [
--    "UINT8",
--    "UINT16",
--    "UINT32",
--    "UINT64",
--    "INT8",
--    "INT16",
--    "INT32",
--    "INT64",
--]
-+NUMERIC_TYPES = {
-+    "UINT8": "uint8_t",
-+    "UINT16": "uint16_t",
-+    "UINT32": "uint32_t",
-+    "UINT64": "uint64_t",
-+    "INT8": "int8_t",
-+    "INT16": "int16_t",
-+    "INT32": "int32_t",
-+    "INT64": "int64_t",
-+    "FLOAT_SINGLE": "float",
-+    "FLOAT_DOUBLE": "double",
-+}
- 
- 
- def process_command(lineno, tokens, comment):
-@@ -70,7 +72,7 @@ def process_command(lineno, tokens, comment):
-                 f"\tTOKEN_STRING_INITIALIZER(struct cmd_{name}_result, {t_name}, {t_val});"
-             )
-         elif t_type in NUMERIC_TYPES:
--            result_struct.append(f"\t{t_type.lower()}_t {t_name};")
-+            result_struct.append(f"\t{NUMERIC_TYPES[t_type]} {t_name};")
-             initializers.append(
-                 f"static cmdline_parse_token_num_t cmd_{name}_{t_name}_tok =\n"
-                 f"\tTOKEN_NUM_INITIALIZER(struct cmd_{name}_result, {t_name}, RTE_{t_type});"
-diff --git a/doc/guides/prog_guide/cmdline.rst b/doc/guides/prog_guide/cmdline.rst
-index e20281ceb5..447a90e32e 100644
---- a/doc/guides/prog_guide/cmdline.rst
-+++ b/doc/guides/prog_guide/cmdline.rst
-@@ -22,6 +22,7 @@ The DPDK command-line library supports the following features:
- 
-    * Strings
-    * Signed/unsigned 16/32/64-bit integers
-+   * Single/double precision floats
-    * IP Addresses
-    * Ethernet Addresses
- 
-@@ -68,6 +69,8 @@ The format of the list file must be:
- 
-   * ``<UINT16>port_id``
- 
-+  * ``<FLOAT_SINGLE>ratio``
-+
-   * ``<IP>src_ip``
- 
-   * ``<IPv4>dst_ip4``
-diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
-index 093b85d206..54bc545110 100644
---- a/doc/guides/rel_notes/release_25_07.rst
-+++ b/doc/guides/rel_notes/release_25_07.rst
-@@ -55,6 +55,11 @@ New Features
-      Also, make sure to start the actual text at the margin.
-      =======================================================
- 
-+* **Added floating point numbers support to cmdline library.**
-+
-+  The cmdline library now supports parsing single- and double-precision
-+  floating point numbers in interactive user commands.
-+
- 
- Removed Items
- -------------
-diff --git a/lib/cmdline/cmdline_parse_num.c b/lib/cmdline/cmdline_parse_num.c
-index 1e04a59038..e5161de572 100644
---- a/lib/cmdline/cmdline_parse_num.c
-+++ b/lib/cmdline/cmdline_parse_num.c
-@@ -8,6 +8,8 @@
- #include <stdio.h>
- #include <stdint.h>
- #include <inttypes.h>
-+#include <float.h>
-+#include <math.h>
- #include <string.h>
- #include <eal_export.h>
- #include <rte_string_fns.h>
-@@ -34,6 +36,7 @@ struct cmdline_token_ops cmdline_token_num_ops = {
- static const char * num_help[] = {
- 	"UINT8", "UINT16", "UINT32", "UINT64",
- 	"INT8", "INT16", "INT32", "INT64",
-+	"FLOAT_SINGLE", "FLOAT_DOUBLE"
+@@ -7768,6 +7771,37 @@ static cmdline_parse_inst_t cmd_quit = {
+ 	},
  };
  
- static inline int
-@@ -71,6 +74,14 @@ check_res_size(struct cmdline_token_num_data *nd, unsigned ressize)
- 		if (ressize < sizeof(int64_t))
- 			return -1;
- 		break;
-+	case RTE_FLOAT_SINGLE:
-+		if (ressize < sizeof(float))
-+			return -1;
-+		break;
-+	case RTE_FLOAT_DOUBLE:
-+		if (ressize < sizeof(double))
-+			return -1;
-+		break;
- 	default:
- 		debug_printf("Wrong number type: %d\n", nd->type);
- 		return -1;
-@@ -151,6 +162,26 @@ parse_num(const char *srcbuf, uint64_t *resptr)
- 	return end - srcbuf;
- }
- 
-+static int
-+parse_float(const char *srcbuf, enum cmdline_numtype type, double *resptr)
++/* *** SLEEP *** */
++struct cmd_sleep_result {
++	cmdline_fixed_string_t sleep;
++	double secs;
++};
++
++static void cmd_sleep_parsed(void *parsed_result,
++	__rte_unused struct cmdline *cl,
++	__rte_unused void *data)
 +{
-+	double dres;
-+	char *end;
++	struct cmd_sleep_result *res = parsed_result;
 +
-+	if (type == RTE_FLOAT_SINGLE)
-+		dres = (double)strtof(srcbuf, &end);
-+	else if (type == RTE_FLOAT_DOUBLE)
-+		dres = strtod(srcbuf, &end);
-+	else
-+		return -1;
-+
-+	if (end == srcbuf || !cmdline_isendoftoken(*end) || isinf(dres))
-+		return -1;
-+
-+	*resptr = dres;
-+	return end - srcbuf;
++	rte_delay_us_sleep(res->secs * 1E6);
 +}
 +
- static int
- parse_bin(const char *srcbuf, uint64_t *res)
- {
-@@ -257,7 +288,24 @@ write_num(enum cmdline_numtype type, void *res, uint64_t uintres)
- 	return 0;
- }
- 
--/* parse an int */
-+static int
-+write_float(enum cmdline_numtype type, void *res, double dres)
-+{
-+	switch (type) {
-+	case RTE_FLOAT_SINGLE:
-+		*(float *)res = (float)dres;
-+		break;
-+	case RTE_FLOAT_DOUBLE:
-+		*(double *)res = dres;
-+		break;
-+	default:
-+		debug_printf("Wrong float type\n");
-+		return -1;
-+	}
-+	return 0;
-+}
++static cmdline_parse_token_string_t cmd_sleep_sleep =
++	TOKEN_STRING_INITIALIZER(struct cmd_sleep_result, sleep, "sleep");
++static cmdline_parse_token_num_t cmd_sleep_seconds =
++	TOKEN_NUM_INITIALIZER(struct cmd_sleep_result, secs, RTE_FLOAT_DOUBLE);
 +
-+/* parse a number */
- RTE_EXPORT_SYMBOL(cmdline_parse_num)
- int
- cmdline_parse_num(cmdline_parse_token_hdr_t *tk, const char *srcbuf, void *res,
-@@ -277,6 +325,7 @@ cmdline_parse_num(cmdline_parse_token_hdr_t *tk, const char *srcbuf, void *res,
- 	if (res && check_res_size(&nd, ressize) < 0)
- 		return -1;
- 
-+	/* integer parsing */
- 	if (nd.type >= RTE_UINT8 && nd.type <= RTE_INT64) {
- 		int ret, neg = *srcbuf == '-';
- 		uint64_t uintres;
-@@ -298,6 +347,21 @@ cmdline_parse_num(cmdline_parse_token_hdr_t *tk, const char *srcbuf, void *res,
- 		if (res && write_num(nd.type, res, uintres) < 0)
- 			return -1;
- 
-+		return ret;
-+	/* float parsing */
-+	} else if (nd.type >= RTE_FLOAT_SINGLE && nd.type <= RTE_FLOAT_DOUBLE) {
-+		double dres;
-+		int ret;
++static cmdline_parse_inst_t cmd_sleep = {
++	.f = cmd_sleep_parsed,
++	.data = NULL,
++	.help_str = "sleep <secs>: Sleep for a specified number of seconds",
++	.tokens = {
++		(void *)&cmd_sleep_sleep,
++		(void *)&cmd_sleep_seconds,
++		NULL,
++	},
++};
 +
-+		/* try parsing as float */
-+		ret = parse_float(srcbuf, nd.type, &dres);
-+		if (ret < 0)
-+			return -1;
-+
-+		/* parsing succeeded, write the value if necessary */
-+		if (res && write_float(nd.type, res, dres))
-+			return -1;
-+
- 		return ret;
- 	}
- 	return -1;
-diff --git a/lib/cmdline/cmdline_parse_num.h b/lib/cmdline/cmdline_parse_num.h
-index bdd0267612..b2792a2d11 100644
---- a/lib/cmdline/cmdline_parse_num.h
-+++ b/lib/cmdline/cmdline_parse_num.h
-@@ -22,7 +22,9 @@ enum cmdline_numtype {
- 	RTE_INT8,
- 	RTE_INT16,
- 	RTE_INT32,
--	RTE_INT64
-+	RTE_INT64,
-+	RTE_FLOAT_SINGLE,
-+	RTE_FLOAT_DOUBLE,
- };
- 
- struct cmdline_token_num_data {
+ /* *** ADD/REMOVE MAC ADDRESS FROM A PORT *** */
+ struct cmd_mac_addr_result {
+ 	cmdline_fixed_string_t mac_addr_cmd;
+@@ -13711,6 +13745,7 @@ static cmdline_parse_ctx_t builtin_ctx[] = {
+ 	&cmd_showdevice,
+ 	&cmd_showcfg,
+ 	&cmd_showfwdall,
++	&cmd_sleep,
+ 	&cmd_start,
+ 	&cmd_start_tx_first,
+ 	&cmd_start_tx_first_n,
 -- 
 2.47.1
 
