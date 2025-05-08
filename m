@@ -2,184 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7070C3ABBE
-	for <dpdk-dev@archiver.kernel.org>; Thu,  8 May 2025 11:41:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF37C3ABBE
+	for <dpdk-dev@archiver.kernel.org>; Thu,  8 May 2025 13:16:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B7CBA4026C;
-	Thu,  8 May 2025 13:41:13 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTP id DF0E94026B
- for <dev@dpdk.org>; Thu,  8 May 2025 13:41:11 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E8F094026C;
+	Thu,  8 May 2025 15:16:09 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 098F34026B
+ for <dev@dpdk.org>; Thu,  8 May 2025 15:16:07 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1746704472; x=1778240472;
- h=message-id:date:subject:to:cc:references:from:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=5a7wM6EuO7bKtmZlA/3jP33hL9rquDu46y4aBV28U7w=;
- b=bdwQ8qRFZGosMuGfa1zzcK7TK/oZTJUKnU0NbSNkWorpWZtQbNDzsSUB
- 7GRRxa6hs7sdjaMuz+JEuPyiGrm/mCeeENGfdamJtAgOzTyvuKFZozUVP
- HnvHvrSyFWMtyDh4zGBL/p3tf0iaMf3V8N2xS9MYlFeiyOEap2tq7c9un
- xSkGEjm+oHKyHGnXDRQfcuz/OupoYdZ03h8FgKZDmGueIMPVneB35RMe7
- FjmvxfFGJEITn2helPYMCdx5jHicfIhMMrzlLF7N2ffNEQn146LVU4TlG
- pTWHr2exc2nl6bHXGEo7oZhzXi2QfNdFn/uVU7aKAJcN1EoDwvJlFsj43 w==;
-X-CSE-ConnectionGUID: /9YY2mzAQsmGYpQmeSndTQ==
-X-CSE-MsgGUID: +0epRil4SjWkAcNTIT9xbw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="48630451"
-X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; d="scan'208";a="48630451"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
- by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 May 2025 04:41:10 -0700
-X-CSE-ConnectionGUID: sudpEl3HR6ezxXFqE8qWsw==
-X-CSE-MsgGUID: L2xU8JmVRoa49AGzj9kVUw==
+ t=1746710168; x=1778246168;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=b0TcbyJtbQnSR0YWhECuf3SoqGFwuhGMVICk1cGu+nc=;
+ b=C4599Kwnbadd0PzdoAq+bRTcdqBIqHQqpwIlpqr6H/lQFbRlQitdDX6e
+ E63Btbb78pHzly8rVF6IW2G6k0+Seyvjv/DT5llZYMEU48sW4aTQJZN1l
+ 4jMSrrtP6FsJ+EikvKjZ3fj1UOh4S2HX9KUMT3SBfp3jdFAEcQfxh0tVY
+ /DWIngMGmWVxL1BhagU1Ls4V4ICoWdjoLjyEGkLF9cOXUwj4OPeR3bUAZ
+ 3/V1gOye5vLMWzM6SCQSszK2G/1HmMHYIe8kyM8S3WhOFhJUdVYlNSUGJ
+ VTE9spHKqsh2BQBXL/k9fBbQV/2NULrwkSsh0YVT6Cw0xiFVPz8NmJQwB Q==;
+X-CSE-ConnectionGUID: YFnxrmCWTt6O8iJe7oUZLQ==
+X-CSE-MsgGUID: gyJK2HFITtugFmwgwlmwcw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="48359603"
+X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; d="scan'208";a="48359603"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+ by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 08 May 2025 06:16:07 -0700
+X-CSE-ConnectionGUID: WO0EI7WmQSSCqhmHvpZsRQ==
+X-CSE-MsgGUID: IjF0/sDETK2ENOCJ4fSMRg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; d="scan'208";a="141222535"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 May 2025 04:41:11 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Thu, 8 May 2025 04:41:09 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Thu, 8 May 2025 04:41:09 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.173)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Thu, 8 May 2025 04:41:09 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fVg7klopH70GfAeDJVYTZ3qXelYaK3w+YIPLLjyxzgObWkF66lQg5/dc1lyobMk3bkF0WT/ksINEaS1QEGd1hWeeJFZg+m7W1VuuJKk+RLyv/YThx9+RD1cc6NaWA8i/f0Ojx3yQYKmDzryE9Lme5DVdxFm4pboiXBfnFkN2O42NE1fyeZRGD04oZMSmARtVyh54Acay2ZApno3GDPua6BHOk01CmGnyEJOox8Vx1E7bmuutGrEFU49orihn2sdo1AihwNPXZWNAH0TBTO/jZiJN2akvEyRshabI/h161nhyOVY33ucvQ0hwGOEfE4jd3vRvmo+HWbcCOrf7aeJyew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=y1m6wqV9SOVuBcVfdwoaEsE1fzH05+zGtgIuRZnZpog=;
- b=cVbYPIGQmQPMZkfiqWHSnZCsI5BZ4wSzOFWJJk4umOWrqVdZb9/xwfsLxB8+qIuMK2VAAs6783B5bC7Lacn+qoT2jv9f6MhFhfkCYAc/qcRx+Yz8LIcU9fHllIWJmqnaHN8PtNRY+pZghOZQ0dUtiTzQeYgt/xDHf502wK8u8T2E9LmZCGuj2mlqD7KDjW7Z6MsgXlxl30XEHdFW7xlj8cmdzj79WL7b+zNmsIVBICLeCku3/DXeT3bax9fnv13qIF9cXTCaVXj6p7HfSt6/YT+JYz2KJqJDo6Y9n47kY0PCa8Id/wFtK+cn/Bbz408BkUAayMhoEEDIwR9RKF8eLA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
- DS0PR11MB7285.namprd11.prod.outlook.com (2603:10b6:8:13d::17) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8699.24; Thu, 8 May 2025 11:40:26 +0000
-Received: from DM4PR11MB6502.namprd11.prod.outlook.com
- ([fe80::21e4:2d98:c498:2d7a]) by DM4PR11MB6502.namprd11.prod.outlook.com
- ([fe80::21e4:2d98:c498:2d7a%2]) with mapi id 15.20.8678.033; Thu, 8 May 2025
- 11:40:26 +0000
-Message-ID: <8d6e488f-a088-4c30-bc41-15ca4d4ccb47@intel.com>
-Date: Thu, 8 May 2025 13:40:18 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mem: fix infinite loop
-To: Dengdui Huang <huangdengdui@huawei.com>, <dev@dpdk.org>
-CC: <fengchengwen@huawei.com>, <lihuisong@huawei.com>, <haijie1@huawei.com>,
- <liuyonglong@huawei.com>, <roretzla@linux.microsoft.com>,
- <stephen@networkplumber.org>, <mb@smartsharesystems.com>,
- <dmitry.kozliuk@gmail.com>
-References: <20250402124258.2299435-1-huangdengdui@huawei.com>
- <20250403025736.135846-1-huangdengdui@huawei.com>
-Content-Language: en-US
-From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
-In-Reply-To: <20250403025736.135846-1-huangdengdui@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DUZPR01CA0125.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4bc::17) To DM4PR11MB6502.namprd11.prod.outlook.com
- (2603:10b6:8:89::7)
+X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; d="scan'208";a="136781196"
+Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
+ by fmviesa010.fm.intel.com with ESMTP; 08 May 2025 06:16:06 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org
+Subject: [PATCH v8 1/3] cmdline: use C standard library as number parser
+Date: Thu,  8 May 2025 14:16:01 +0100
+Message-ID: <7bebd92be36f945c175382bb1e0482e55844c1d2.1746710154.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <7ac1444b7d2d64dc467a22e7ac65cf3cc16246dc.1746188833.git.anatoly.burakov@intel.com>
+References: <7ac1444b7d2d64dc467a22e7ac65cf3cc16246dc.1746188833.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|DS0PR11MB7285:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3e488842-d8d2-450d-f12e-08dd8e252027
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|1800799024|376014|7416014|7053199007; 
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?c3Y2dkdWeU1tOHhXTXYrNyttclJFa0Q3UEFLMklEd3JpeUZCTkQrY0QrazJI?=
- =?utf-8?B?bVdUSlZ3UkRCRnRldzV5Z2hNQlpPM3VPQnd2MEVZbXZyN1pVZTMyaHI1OFRx?=
- =?utf-8?B?RkhqRDJsK2xxaTRqa1Z6aTkwNUttSXVSSERWeDAreGU0WGJEK0w4Z0lXRCtB?=
- =?utf-8?B?ZWVBRTBSMnVSdzgvREpBcnpzaHllODdDOG1YY2NsblpXWEF2TWdRa1lKSDFR?=
- =?utf-8?B?R0o2L3lKK01LQ1BSNTdYckNvM3VjZzRmd0N4WmVvenpjcDBiRmo5V2F2dHR2?=
- =?utf-8?B?RG9haEs5OHFFZHIzRlpYaU42cU5EU25RWHFJWXFJRVNMdEhqMVRIUHhzQmp6?=
- =?utf-8?B?dS8weCtuYk1Wd3diZFZuQmNXejQ0dWxSQUJRNmhocmFMakxBeEw4NXFtSkJ5?=
- =?utf-8?B?RWJXMGNPaXFhWUpZUlRCY3Q4U1R4bWJFUDBlY3creVVmY3k0VGZtaGVzaXg2?=
- =?utf-8?B?bHdHSUk2aFJuY3lPcHNNMDEwZERvdnlQaXdybWF6WFo1UHVtZm5iZmliL0th?=
- =?utf-8?B?OTRMblFFWXpSS0JlYkZyRlM1WVRmWHNOODlseTBlek5PL2szSXlqcUdMVkFh?=
- =?utf-8?B?Q1J2SjFJbkNPNUN0WklINU1hZkhqWUsvRmw1TFRNVkZDRWxtelhGNU5ya1VZ?=
- =?utf-8?B?MndVVENhNDVQMnRVZVB4V25XUDBpelZkU0lReGFqTWQwdXlubmVGYUp3eXJm?=
- =?utf-8?B?OGVlOHVsTFlTcWtyRzY2ZHlGRWRGazVYWjQ4TWluNElYR3c5UG13L1Y3a2tx?=
- =?utf-8?B?VVduNXdkdXlmaFp0QXNnZWRGQWJSQXM4aCtiZXZ6b21iNTFQdnROczZ6NWIr?=
- =?utf-8?B?M2dkOXNtMVRyQVF3bFlYZHZZNWpkaFZLM2hUbGJEdXFYT3NDbU1zbk5NaVNW?=
- =?utf-8?B?dERMRjdrdEZML1VRTWRobWtFVXlHS1JVRXJ0bEp3MTNSS3VUS2o3dHZlZy95?=
- =?utf-8?B?SndQTFZtQ3BsV2V4OWQ0NWJ3RVcyaDE4OUVkaVlrRjFpVTN4cTNXaWJWZkFI?=
- =?utf-8?B?eUdQTUVUbXY3UjlLVzFrWmtCb1pNUCtYdFBHaDJGSmdWWHFaa01JOWdtaDNN?=
- =?utf-8?B?UjYzbEs4QlJTOFM3SjNSUHYwYWlKcmJqWEZUdFVKdHk0VFZQbXAzaitWS2RD?=
- =?utf-8?B?K3ZGTlVTNmNYaUhTZ0x0TGZoZy9xRHAzTGNRVmZBTnhCb2hlZC83R0NONDJO?=
- =?utf-8?B?NGxicVBlanVlcE55cDhEVUVDQ2hzUWFzb1RHWlpEbklKdzRSbzArM00rbkJ4?=
- =?utf-8?B?YnU2eldsZVk4STNpTU0zNzVvMk9KOTNuOHJlbkJ1S1VTWXlwVWdGSGw5WkJC?=
- =?utf-8?B?dzA3U3E4VEhjMDNJUzFiNTRlUzNZZjFUcUZxY3k2MTZ0UGltdmdBTU50SmJy?=
- =?utf-8?B?aG11azk4WjVDYjFnU21FbGF5RDNBMEVRcEpzMVNsTzQyMHhQb1dLcHZzREhD?=
- =?utf-8?B?RGVTR1BIcXJ2a2g1VHNnT2s4THJOYldhdVZocXdjSmhQVVlxaDRvNnRsUFlu?=
- =?utf-8?B?MnJsa29rVFhDc3RKK3EwZC9ZdE5GcTNDeE9WaEdWME05aFJMMnpWbFAzSjdp?=
- =?utf-8?B?UDFzY1NmelVkaUxnMnJWNUZlRjVCc3BDa2pOOWVsdmFNZkNqcjNNMWEzaWdv?=
- =?utf-8?B?bkdLY0gwcmREbWtBZG1CVnk2Q3Y2R3hQdnpzY2Q2VnFucXhaS2FFL05qWnJF?=
- =?utf-8?B?RkdoaGxBWlhNZGxHUnJCck5XUmtUcjhONnJrNEJIYTFBNDc2NVdIUTlzekZy?=
- =?utf-8?B?YUFNdHdQMDdpdmpUOFlpZWc1dWhGWEtGZVV0YWVZT1VSREF1NkUwUFZqWFdP?=
- =?utf-8?B?S1lEWVluRmhhbWo0eVN1YU1zRG84MWdsOENZRWhtTWwvald1d05zZUdwditN?=
- =?utf-8?B?YjlZMW1nL21RRDRrNzN3VENyWlJ4VXRHSm9OajZFS202S3c9PQ==?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007); DIR:OUT;
- SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?N3hTcXNkQyt4RjJCYm9yZE5DV3ZxRWM0YjF1RmdVaUZIYnprYm9lelZhWW9J?=
- =?utf-8?B?ajFzaGhOV2ZnWDRFS21WRDdtSFVnZkpoY1FpMUpVU2VJU3RTWGt0ZDM3RHlK?=
- =?utf-8?B?dHljMkFkK3R4WHdKcWpheWFWbXM4MTIrZTdUR2dkYXdTTkZGTVIxemp3bjJ6?=
- =?utf-8?B?VnpBd24vSjNTbmZFSUQ5aEwxVzltZS9pRU9VS1lNTFZQbkpyZG0vRDhZMmRs?=
- =?utf-8?B?YXFmMFlQOGNzMUdabEp5Q2JZMlB6d21Sdkh1NFhKQklaNnRUd0dpUjk1YStk?=
- =?utf-8?B?dlBCZitWQUJhbEg0bllsUFR4cy9RTjNXeW9pbm45UUgwakNGVkFFQmNOY29L?=
- =?utf-8?B?NGFTQkhCUm5CWjN1bUlzUVFNYytQY3RmaWdqM0EyTFNzWHB5MW1Lb25Oa21F?=
- =?utf-8?B?cTRyaFFVVDF3VnIzVlQwM1ZYU3hLSzFTRFVyUzJQcXowaG1rRUpGY05kdWth?=
- =?utf-8?B?NE9TSnpSQ0Z6R0FSUXNjNm14eE9TbktHMFlzT25USUNxL2FVZTRnOGxWWUdr?=
- =?utf-8?B?VFZjNHR0U0xDQ3ZtSnNBWUxSTDRWeWErYVJUbXZTemd6SkVCeHBLdUZWU3lv?=
- =?utf-8?B?L0dOWncwK3JtNnJYanUyd0RHUVNjbjByS3hVcURtRklZdytIc010cnY0VEVl?=
- =?utf-8?B?bkVPb1lKSGZ0RFp3ODlpRHB1eEhnSTRMK2xUSHgyQzc2VUd5OGl0NHBZQVh4?=
- =?utf-8?B?OEZVRUpiU3dvVTlXYkNQbmd6eFA1Tk1vdVNZOHo3eU9wV1V1L1VKeFRZbWRN?=
- =?utf-8?B?bWJIVlh1UWxKR3N3WG8rVEw0aGdaQjYwWGFQNENQNTJ4VVNtZ0xXemZyU3lS?=
- =?utf-8?B?cmNnNktuVnA0YmMzZlpiZ1lLc3ZxbVJCUFIweUJ1ZytYTXdNcVg2KzNqblU2?=
- =?utf-8?B?VTFPbFJYZUhwSmcxeWg1VFd4c3JzUDUrYjRXL1MyTThheVJwSXl0Z2tscVQ1?=
- =?utf-8?B?QVRjcXZXbWpJOEYwNVdqWElZa2tZOGs1K2FROGZwKzgvWk1VbWdNTWw0ZWNM?=
- =?utf-8?B?YjhpdmEzV2Z2SjZLUllFUktCUzFRaTZUajNLaWhCc2F6SUlCVjFrRC9QaGds?=
- =?utf-8?B?WjNrckNTS3E2RTFGWDRNaXU0ZGZLaXRjeWR0NHpMWVRXWkNaYnhUSjJJYTNK?=
- =?utf-8?B?WUdzOGtQWjIrWm1Ic1QyY2gwcDhPV2hyaktacldsOWlVV3NJWjJwQTZPdXh5?=
- =?utf-8?B?ZEhvaG1QUTNVMFF4cnp6cEFIbHZKRUhTeTcvb01DVFpaMUlxZlFMd1pFMVBJ?=
- =?utf-8?B?citQeHhnMFJQTzRqbi9tcTZtTWdFME5hVWpWampsT0JjdTluWWVUNkNVVEJ4?=
- =?utf-8?B?RmFaL1VqMHZ2aXBGVWRBRmR6N3N0aVNTTjRhL1pNNDRiQTA4a3lPODJNR2Vp?=
- =?utf-8?B?dWREa2ZsYTR6UXowSDhFaUlTc2FWUVlKYlluN2c0ckkvWVEwNXkxVDIvUmFq?=
- =?utf-8?B?ZzB1Sm5KYXl6dnU5RFRwVHZXQUY2VHZwUFhKUm15SVpObkxYdE1tZWVEekFQ?=
- =?utf-8?B?dGFqdk1oeEMxbnZyN1RKUzAxOHJVWFFjK2dLb0hNQjJKQktIRVM2NXhuQVlN?=
- =?utf-8?B?eW9qV3QvMDJVcmdnSkczdDFzL2JWQkZXbEpQR0c0ZUxzS2htMC9MZWtTNFpV?=
- =?utf-8?B?QnMvT045UzBBY0lzNUNsanhrMkkxWGtZVEc4c3BJbXNDQXlKVktaY3E4N3E3?=
- =?utf-8?B?WUVPWWRFdDdYdlRIY0tZUnNrakZwR3BVTGN4QmorT20wcCswa1ZydURxT1pV?=
- =?utf-8?B?ZmJobjBOMTZXY1VzYzlSN3l5bDY3dnN6Mm1POVZXR1RRNXZ5dE9QdnIxdDlz?=
- =?utf-8?B?RG83LzZFeTZveTd0amxobGxFVnh4clRrNy85R2lqQlFXbWFEQWVDam43ZlRK?=
- =?utf-8?B?OFBqaFRra2hvWjF3MWZlTjJoTFRVSThiMzBRc3ovTWluVk5PRVJTT21KN3E5?=
- =?utf-8?B?ODJzdFJ2ZlZkQS80SXdxQUI1dTlIL3pCdGYzSHFMT2g1TUxqU1dJNGJRY2o2?=
- =?utf-8?B?cU1EakZmZ1RXM0hranNRZ1BHQXg5cXZKT2lSUUhINTRiTE5uTm54UnBtb2hX?=
- =?utf-8?B?VTc0bmRhdm82bktCSkIrT2pDR3NzcE1jRFBuR3pZelJsTVpoN1ppNWJXdmlU?=
- =?utf-8?B?T2ZCWXE2N2VVeDlTbmlsdllUVC9sRXdmZDlkWFQ5cUJqNlpZcTVOakxTWDg3?=
- =?utf-8?B?Q1E9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e488842-d8d2-450d-f12e-08dd8e252027
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2025 11:40:26.5609 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Jq5ur1Vm2QEUGp1UCfHS+PQyez+Y51jS48qhNr0YQEcnks9A4xKf3f3PLaiZKY108B+/q77BblUQh483j//sRd1vP4/E6CPb51Qz6U9QAi4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7285
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -193,19 +58,561 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 4/3/2025 4:57 AM, Dengdui Huang wrote:
-> When the process address space is insufficient,
-> mmap will fail, which will cause an infinite loop.
-> This patch stops attempting mmap if it fails and
-> the requested size cannot be reduced.
-> 
-> Fixes: b7cc54187ea4 ("mem: move virtual area function in common directory")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
-> Acked-by: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
-> ---
-Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
+Remove custom number parser and use C standard library instead. In order to
+keep compatibility with earlier versions of the parser, we have to take
+into account a couple of quirks:
+
+- We did not consider "negative" numbers to be valid for anything other
+  than base-10 numbers, whereas C standard library does. Adjust the tests
+  to match the new behavior.
+- We did not consider numbers such as "+4" to be valid, whereas C
+  standard library does. Adjust the tests to match the new behavior.
+- C standard library's strtoull does not do range checks on negative
+  numbers, so we have to parse knowingly-negative numbers as signed.
+- C standard library does not support binary numbers, so we keep around the
+  relevant parts of the custom parser in place to support binary numbers.
+
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+---
+
+Notes:
+    v7 -> v8:
+    - Added the commented-out out-of-bounds check back
+    - Replaced debug print messages to ensure they don't attempt to
+      index the num_help[] array (should fix compile errors)
+    
+    v5 -> v6:
+    - Allowed more negative numbers (such as negative octals or hex)
+    - Updated unit tests to check new cases
+    - Small refactoring of code to reduce amount of noise
+    - More verbose debug output
+    
+    v4 -> v5:
+    - Added this commit
+
+ app/test/test_cmdline_num.c     |  19 +-
+ lib/cmdline/cmdline_parse_num.c | 367 ++++++++++++++++----------------
+ 2 files changed, 195 insertions(+), 191 deletions(-)
+
+diff --git a/app/test/test_cmdline_num.c b/app/test/test_cmdline_num.c
+index 9276de59bd..dd70f6f824 100644
+--- a/app/test/test_cmdline_num.c
++++ b/app/test/test_cmdline_num.c
+@@ -139,6 +139,8 @@ const struct num_signed_str num_valid_negative_strs[] = {
+ 		{"-2147483648", INT32_MIN },
+ 		{"-2147483649", INT32_MIN - 1LL },
+ 		{"-9223372036854775808", INT64_MIN },
++		{"-0x8000000000000000", INT64_MIN },
++		{"-01000000000000000000000", INT64_MIN },
+ };
+ 
+ const struct num_unsigned_str num_garbage_positive_strs[] = {
+@@ -175,12 +177,27 @@ const struct num_unsigned_str num_garbage_positive_strs[] = {
+ 
+ const struct num_signed_str num_garbage_negative_strs[] = {
+ 		/* valid strings with garbage on the end, should still be valid */
++		/* negative numbers */
+ 		{"-9223372036854775808\0garbage", INT64_MIN },
+ 		{"-9223372036854775808\rgarbage", INT64_MIN },
+ 		{"-9223372036854775808\tgarbage", INT64_MIN },
+ 		{"-9223372036854775808\ngarbage", INT64_MIN },
+ 		{"-9223372036854775808#garbage", INT64_MIN },
+ 		{"-9223372036854775808 garbage", INT64_MIN },
++		/* negative hex */
++		{"-0x8000000000000000\0garbage", INT64_MIN },
++		{"-0x8000000000000000\rgarbage", INT64_MIN },
++		{"-0x8000000000000000\tgarbage", INT64_MIN },
++		{"-0x8000000000000000\ngarbage", INT64_MIN },
++		{"-0x8000000000000000#garbage", INT64_MIN },
++		{"-0x8000000000000000 garbage", INT64_MIN },
++		/* negative octal */
++		{"-01000000000000000000000\0garbage", INT64_MIN },
++		{"-01000000000000000000000\rgarbage", INT64_MIN },
++		{"-01000000000000000000000\tgarbage", INT64_MIN },
++		{"-01000000000000000000000\ngarbage", INT64_MIN },
++		{"-01000000000000000000000#garbage", INT64_MIN },
++		{"-01000000000000000000000 garbage", INT64_MIN },
+ };
+ 
+ const char * num_invalid_strs[] = {
+@@ -197,7 +214,6 @@ const char * num_invalid_strs[] = {
+ 		"0b01110101017001",
+ 		/* false negative numbers */
+ 		"-12345F623",
+-		"-0x1234580A",
+ 		"-0b0111010101",
+ 		/* too long (128+ chars) */
+ 		("0b1111000011110000111100001111000011110000111100001111000011110000"
+@@ -205,7 +221,6 @@ const char * num_invalid_strs[] = {
+ 		"1E3",
+ 		"0A",
+ 		"-B",
+-		"+4",
+ 		"1.23G",
+ 		"",
+ 		" ",
+diff --git a/lib/cmdline/cmdline_parse_num.c b/lib/cmdline/cmdline_parse_num.c
+index f21796bedb..1e04a59038 100644
+--- a/lib/cmdline/cmdline_parse_num.c
++++ b/lib/cmdline/cmdline_parse_num.c
+@@ -4,6 +4,7 @@
+  * All rights reserved.
+  */
+ 
++#include <errno.h>
+ #include <stdio.h>
+ #include <stdint.h>
+ #include <inttypes.h>
+@@ -29,23 +30,6 @@ struct cmdline_token_ops cmdline_token_num_ops = {
+ 	.get_help = cmdline_get_help_num,
+ };
+ 
+-enum num_parse_state_t {
+-	START,
+-	DEC_NEG,
+-	BIN,
+-	HEX,
+-
+-	ERROR,
+-
+-	FIRST_OK, /* not used */
+-	ZERO_OK,
+-	HEX_OK,
+-	OCTAL_OK,
+-	BIN_OK,
+-	DEC_NEG_OK,
+-	DEC_POS_OK,
+-};
+-
+ /* Keep it sync with enum in .h */
+ static const char * num_help[] = {
+ 	"UINT8", "UINT16", "UINT32", "UINT64",
+@@ -53,13 +37,13 @@ static const char * num_help[] = {
+ };
+ 
+ static inline int
+-add_to_res(unsigned int c, uint64_t *res, unsigned int base)
++add_to_bin(unsigned int c, uint64_t *res)
+ {
+ 	/* overflow */
+-	if ((UINT64_MAX - c) / base < *res)
++	if ((UINT64_MAX - c) / 2 < *res)
+ 		return -1;
+ 
+-	*res = (uint64_t) (*res * base + c);
++	*res = (uint64_t) (*res * 2 + c);
+ 	return 0;
+ }
+ 
+@@ -88,138 +72,117 @@ check_res_size(struct cmdline_token_num_data *nd, unsigned ressize)
+ 			return -1;
+ 		break;
+ 	default:
++		debug_printf("Wrong number type: %d\n", nd->type);
+ 		return -1;
+ 	}
+ 	return 0;
+ }
+ 
+-/* parse an int */
+-RTE_EXPORT_SYMBOL(cmdline_parse_num)
+-int
+-cmdline_parse_num(cmdline_parse_token_hdr_t *tk, const char *srcbuf, void *res,
+-	unsigned ressize)
++static int
++check_parsed_num(enum cmdline_numtype type, int neg, uint64_t uintres)
+ {
+-	struct cmdline_token_num_data nd;
+-	enum num_parse_state_t st = START;
++	int lo_ok, hi_ok;
++
++	switch (type) {
++	case RTE_UINT8:
++		lo_ok = !neg;
++		hi_ok = uintres <= UINT8_MAX;
++		break;
++	case RTE_UINT16:
++		lo_ok = !neg;
++		hi_ok = uintres <= UINT16_MAX;
++		break;
++	case RTE_UINT32:
++		lo_ok = !neg;
++		hi_ok = uintres <= UINT32_MAX;
++		break;
++	case RTE_UINT64:
++		lo_ok = !neg;
++		hi_ok = 1; /* can't be out of range if parsed successfully */
++		break;
++	case RTE_INT8:
++		lo_ok = !neg || (int64_t)uintres >= INT8_MIN;
++		hi_ok = neg || uintres <= INT8_MAX;
++		break;
++	case RTE_INT16:
++		lo_ok = !neg || (int64_t)uintres >= INT16_MIN;
++		hi_ok = neg || uintres <= INT16_MAX;
++		break;
++	case RTE_INT32:
++		lo_ok = !neg || (int64_t)uintres >= INT32_MIN;
++		hi_ok = neg || uintres <= INT32_MAX;
++		break;
++	case RTE_INT64:
++		lo_ok = 1; /* can't be out of range if parsed successfully */
++		hi_ok = neg || uintres <= INT64_MAX;
++		break;
++	default:
++		debug_printf("Wrong number type\n");
++		return -1;
++	}
++	/* check ranges */
++	if (!lo_ok || !hi_ok)
++		return -1;
++	return 0;
++}
++
++static int
++parse_num(const char *srcbuf, uint64_t *resptr)
++{
++	uint64_t uintres;
++	char *end;
++	int neg = *srcbuf == '-';
++
++	/*
++	 * strtoull does not do range checks on negative numbers, so we need to
++	 * use strtoll if we know the value we're parsing looks like a negative
++	 * one. we use base 0 for both, 0 means autodetect base.
++	 */
++	errno = 0;
++	if (neg)
++		uintres = (uint64_t)strtoll(srcbuf, &end, 0);
++	else
++		uintres = strtoull(srcbuf, &end, 0);
++
++	if (end == srcbuf || !cmdline_isendoftoken(*end) || errno == ERANGE)
++		return -1;
++
++	*resptr = uintres;
++	return end - srcbuf;
++}
++
++static int
++parse_bin(const char *srcbuf, uint64_t *res)
++{
++	uint64_t uintres = 0;
++	enum {
++		ERROR,
++		START,
++		BIN,
++		ZERO_OK,
++		BIN_OK,
++	} st = START;
+ 	const char * buf;
+ 	char c;
+-	uint64_t res1 = 0;
+-
+-	if (!tk)
+-		return -1;
+-
+-	if (!srcbuf || !*srcbuf)
+-		return -1;
+ 
+ 	buf = srcbuf;
+ 	c = *buf;
+-
+-	memcpy(&nd, &((struct cmdline_token_num *)tk)->num_data, sizeof(nd));
+-
+-	/* check that we have enough room in res */
+-	if (res) {
+-		if (check_res_size(&nd, ressize) < 0)
+-			return -1;
+-	}
+-
+ 	while (st != ERROR && c && !cmdline_isendoftoken(c)) {
+ 		debug_printf("%c %x -> ", c, c);
+ 		switch (st) {
+ 		case START:
+-			if (c == '-') {
+-				st = DEC_NEG;
+-			}
+-			else if (c == '0') {
++			if (c == '0') {
+ 				st = ZERO_OK;
+ 			}
+-			else if (c >= '1' && c <= '9') {
+-				if (add_to_res(c - '0', &res1, 10) < 0)
+-					st = ERROR;
+-				else
+-					st = DEC_POS_OK;
+-			}
+-			else  {
++			else {
+ 				st = ERROR;
+ 			}
+ 			break;
+ 
+ 		case ZERO_OK:
+-			if (c == 'x') {
+-				st = HEX;
+-			}
+-			else if (c == 'b') {
++			if (c == 'b') {
+ 				st = BIN;
+ 			}
+-			else if (c >= '0' && c <= '7') {
+-				if (add_to_res(c - '0', &res1, 10) < 0)
+-					st = ERROR;
+-				else
+-					st = OCTAL_OK;
+-			}
+-			else  {
+-				st = ERROR;
+-			}
+-			break;
+-
+-		case DEC_NEG:
+-			if (c >= '0' && c <= '9') {
+-				if (add_to_res(c - '0', &res1, 10) < 0)
+-					st = ERROR;
+-				else
+-					st = DEC_NEG_OK;
+-			}
+-			else {
+-				st = ERROR;
+-			}
+-			break;
+-
+-		case DEC_NEG_OK:
+-			if (c >= '0' && c <= '9') {
+-				if (add_to_res(c - '0', &res1, 10) < 0)
+-					st = ERROR;
+-			}
+-			else {
+-				st = ERROR;
+-			}
+-			break;
+-
+-		case DEC_POS_OK:
+-			if (c >= '0' && c <= '9') {
+-				if (add_to_res(c - '0', &res1, 10) < 0)
+-					st = ERROR;
+-			}
+-			else {
+-				st = ERROR;
+-			}
+-			break;
+-
+-		case HEX:
+-			st = HEX_OK;
+-			/* fall-through */
+-		case HEX_OK:
+-			if (c >= '0' && c <= '9') {
+-				if (add_to_res(c - '0', &res1, 16) < 0)
+-					st = ERROR;
+-			}
+-			else if (c >= 'a' && c <= 'f') {
+-				if (add_to_res(c - 'a' + 10, &res1, 16) < 0)
+-					st = ERROR;
+-			}
+-			else if (c >= 'A' && c <= 'F') {
+-				if (add_to_res(c - 'A' + 10, &res1, 16) < 0)
+-					st = ERROR;
+-			}
+-			else {
+-				st = ERROR;
+-			}
+-			break;
+-
+-
+-		case OCTAL_OK:
+-			if (c >= '0' && c <= '7') {
+-				if (add_to_res(c - '0', &res1, 8) < 0)
+-					st = ERROR;
+-			}
+ 			else {
+ 				st = ERROR;
+ 			}
+@@ -230,7 +193,7 @@ cmdline_parse_num(cmdline_parse_token_hdr_t *tk, const char *srcbuf, void *res,
+ 			/* fall-through */
+ 		case BIN_OK:
+ 			if (c >= '0' && c <= '1') {
+-				if (add_to_res(c - '0', &res1, 2) < 0)
++				if (add_to_bin(c - '0', &uintres) < 0)
+ 					st = ERROR;
+ 			}
+ 			else {
+@@ -239,10 +202,10 @@ cmdline_parse_num(cmdline_parse_token_hdr_t *tk, const char *srcbuf, void *res,
+ 			break;
+ 		default:
+ 			debug_printf("not impl ");
+-
++			st = ERROR;
+ 		}
+ 
+-		debug_printf("(%"PRIu64")\n", res1);
++		debug_printf("(%"PRIu64")\n", uintres);
+ 
+ 		buf ++;
+ 		c = *buf;
+@@ -252,66 +215,92 @@ cmdline_parse_num(cmdline_parse_token_hdr_t *tk, const char *srcbuf, void *res,
+ 			return -1;
+ 	}
+ 
+-	switch (st) {
+-	case ZERO_OK:
+-	case DEC_POS_OK:
+-	case HEX_OK:
+-	case OCTAL_OK:
+-	case BIN_OK:
+-		if (nd.type == RTE_INT8 && res1 <= INT8_MAX) {
+-			if (res) *(int8_t *)res = (int8_t) res1;
+-			return buf-srcbuf;
+-		} else if (nd.type == RTE_INT16 && res1 <= INT16_MAX) {
+-			if (res) *(int16_t *)res = (int16_t) res1;
+-			return buf-srcbuf;
+-		} else if (nd.type == RTE_INT32 && res1 <= INT32_MAX) {
+-			if (res) *(int32_t *)res = (int32_t) res1;
+-			return buf-srcbuf;
+-		} else if (nd.type == RTE_INT64 && res1 <= INT64_MAX) {
+-			if (res) *(int64_t *)res = (int64_t) res1;
+-			return buf-srcbuf;
+-		} else if (nd.type == RTE_UINT8 && res1 <= UINT8_MAX) {
+-			if (res) *(uint8_t *)res = (uint8_t) res1;
+-			return buf-srcbuf;
+-		} else if (nd.type == RTE_UINT16  && res1 <= UINT16_MAX) {
+-			if (res) *(uint16_t *)res = (uint16_t) res1;
+-			return buf-srcbuf;
+-		} else if (nd.type == RTE_UINT32 && res1 <= UINT32_MAX) {
+-			if (res) *(uint32_t *)res = (uint32_t) res1;
+-			return buf-srcbuf;
+-		} else if (nd.type == RTE_UINT64) {
+-			if (res) *(uint64_t *)res = res1;
+-			return buf-srcbuf;
+-		} else {
+-			return -1;
+-		}
+-		break;
++	if (st != BIN_OK)
++		return -1;
++
++	*res = uintres;
++	return buf - srcbuf;
++}
+ 
+-	case DEC_NEG_OK:
+-		if (nd.type == RTE_INT8 &&
+-				res1 <= INT8_MAX + 1) {
+-			if (res) *(int8_t *)res = (int8_t) (-res1);
+-			return buf-srcbuf;
+-		} else if (nd.type == RTE_INT16 &&
+-				res1 <= (uint16_t)INT16_MAX + 1) {
+-			if (res) *(int16_t *)res = (int16_t) (-res1);
+-			return buf-srcbuf;
+-		} else if (nd.type == RTE_INT32 &&
+-				res1 <= (uint32_t)INT32_MAX + 1) {
+-			if (res) *(int32_t *)res = (int32_t) (-res1);
+-			return buf-srcbuf;
+-		} else if (nd.type == RTE_INT64 &&
+-				res1 <= (uint64_t)INT64_MAX + 1) {
+-			if (res) *(int64_t *)res = (int64_t) (-res1);
+-			return buf-srcbuf;
+-		} else {
+-			return -1;
+-		}
++static int
++write_num(enum cmdline_numtype type, void *res, uint64_t uintres)
++{
++	switch (type) {
++	case RTE_UINT8:
++		*(uint8_t *)res = (uint8_t)uintres;
++		break;
++	case RTE_UINT16:
++		*(uint16_t *)res = (uint16_t)uintres;
++		break;
++	case RTE_UINT32:
++		*(uint32_t *)res = (uint32_t)uintres;
++		break;
++	case RTE_UINT64:
++		*(uint64_t *)res = uintres;
++		break;
++	case RTE_INT8:
++		*(int8_t *)res = (int8_t)uintres;
++		break;
++	case RTE_INT16:
++		*(int16_t *)res = (int16_t)uintres;
++		break;
++	case RTE_INT32:
++		*(int32_t *)res = (int32_t)uintres;
++		break;
++	case RTE_INT64:
++		*(int64_t *)res = (int64_t)uintres;
+ 		break;
+ 	default:
+-		debug_printf("error\n");
++		debug_printf("Wrong number type\n");
+ 		return -1;
+ 	}
++	return 0;
++}
++
++/* parse an int */
++RTE_EXPORT_SYMBOL(cmdline_parse_num)
++int
++cmdline_parse_num(cmdline_parse_token_hdr_t *tk, const char *srcbuf, void *res,
++	unsigned ressize)
++{
++	struct cmdline_token_num_data nd;
++
++	if (!tk)
++		return -1;
++
++	if (!srcbuf || !*srcbuf)
++		return -1;
++
++	memcpy(&nd, &((struct cmdline_token_num *)tk)->num_data, sizeof(nd));
++
++	/* check that we have enough room in res */
++	if (res && check_res_size(&nd, ressize) < 0)
++		return -1;
++
++	if (nd.type >= RTE_UINT8 && nd.type <= RTE_INT64) {
++		int ret, neg = *srcbuf == '-';
++		uint64_t uintres;
++
++		/* try parsing as number */
++		ret = parse_num(srcbuf, &uintres);
++
++		if (ret < 0) {
++			/* parse failed, try parsing as binary */
++			ret = parse_bin(srcbuf, &uintres);
++			if (ret < 0)
++				return -1;
++		}
++		/* check if we're within valid range */
++		if (check_parsed_num(nd.type, neg, uintres) < 0)
++			return -1;
++
++		/* parsing succeeded, write the value if necessary */
++		if (res && write_num(nd.type, res, uintres) < 0)
++			return -1;
++
++		return ret;
++	}
++	return -1;
+ }
+ 
+ 
+@@ -328,9 +317,9 @@ cmdline_get_help_num(cmdline_parse_token_hdr_t *tk, char *dstbuf, unsigned int s
+ 
+ 	memcpy(&nd, &((struct cmdline_token_num *)tk)->num_data, sizeof(nd));
+ 
+-	/* should not happen.... don't so this test */
+-	/* if (nd.type >= (sizeof(num_help)/sizeof(const char *))) */
+-	/* return -1; */
++	/* ensure we have a valid help message for the given type */
++	if (nd.type >= RTE_DIM(num_help))
++		return -1;
+ 
+ 	ret = strlcpy(dstbuf, num_help[nd.type], size);
+ 	if (ret < 0)
 -- 
-Thanks,
-Anatoly
+2.47.1
+
