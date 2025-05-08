@@ -2,45 +2,130 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B8CDC3ABC0
-	for <dpdk-dev@archiver.kernel.org>; Thu,  8 May 2025 01:44:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6311BC3ABC3
+	for <dpdk-dev@archiver.kernel.org>; Thu,  8 May 2025 02:34:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 31F0A4025A;
-	Thu,  8 May 2025 03:44:47 +0200 (CEST)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
- by mails.dpdk.org (Postfix) with ESMTP id A8ABB4014F
- for <dev@dpdk.org>; Thu,  8 May 2025 03:44:45 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.88.105])
- by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZtFFR0ndYzyVG3;
- Thu,  8 May 2025 09:40:27 +0800 (CST)
-Received: from kwepemo500011.china.huawei.com (unknown [7.202.195.194])
- by mail.maildlp.com (Postfix) with ESMTPS id C6E831401F1;
- Thu,  8 May 2025 09:44:42 +0800 (CST)
-Received: from [10.67.121.193] (10.67.121.193) by
- kwepemo500011.china.huawei.com (7.202.195.194) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 8 May 2025 09:44:42 +0800
-Message-ID: <17f2ab6a-c519-4cd4-87b2-24e2835aee74@huawei.com>
-Date: Thu, 8 May 2025 09:44:41 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id 125734025A;
+	Thu,  8 May 2025 04:34:14 +0200 (CEST)
+Received: from HK3PR03CU002.outbound.protection.outlook.com
+ (mail-eastasiaazon11021075.outbound.protection.outlook.com [52.101.129.75])
+ by mails.dpdk.org (Postfix) with ESMTP id 2011C4014F
+ for <dev@dpdk.org>; Thu,  8 May 2025 04:34:13 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qpahVmLRqYVLi5LspmdpWeXl1cweNe2+aYh266sJUju84qZA4xukEbCuuAL8aSIstHhi0rKRg57kSR3FRv3GrScuK+EOsv1Yp7Key4is3VuTgtQxuTCY7P4p4p0N86goabCfYPC2K9mxfazPeS8w/PjSnFipmcU0QyUQ1JXyCh+JptmmKwHo08efgRzpnWlNaM6N4KPqSdwD4A6Ci6tLs14hBPooo/0/1W65MUCJqs9SHqnBa4SG3CylIUysehfVF/NF0N74pm1XpwfBcv4Xje9avdJ7PWSSsJvg6E2EjIyK2jS/U90Ut2FcSoVWitwSk9E285DRvufZ59/sqTwHDg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5ejsph00Xiv2U+KgMTfRgGWICYoLBBL0wmxoqQLu8Vg=;
+ b=IWR3v5Db56eUYjMZbmOuVpKJEhmidrkX9o2LloGLJMdo64b6QMEP81PRChRE57I+JRH9NafW+EzXBLe2NuZMQNfWSq2CptPxy5MtU0H1H9bod9psiy2s1MrjboMPgo1sNZTVEe6xDCSQDp3ILmApWz3dKG6JGWiu7XDJbNINMY5rsMfhnGYzhNiM9vyDpyeKdQLif9btdrBzfG9srcI3bUEabL0p48hYqkyIbdn8mnKnpmdLv1loADh1+NY6OKFgSx/ESM5jtvdNqGGSJR6Mk9Ki+370pq/TJn77qK9YdqdvlA2Ig6Y1gHzn/0CY/P+PUk+VHc1d3C0ciWQIvL0Dzg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=jaguarmicro.com; dmarc=pass action=none
+ header.from=jaguarmicro.com; dkim=pass header.d=jaguarmicro.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jaguarmicro.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5ejsph00Xiv2U+KgMTfRgGWICYoLBBL0wmxoqQLu8Vg=;
+ b=TQ+YEdcqDYfoYa7//9ZTdurElUWX2/WG8MXSJ5el3KPn3TC1xRlcoseIU5/FKP4vP1WHca4LJXvDfuP/TMPAZJcT3BQk0RHxvhCUzZtmGsJlClc11Zo9/1rxGVq0W9fOY6YtTK/BmDEsWkkJ/qtea+DtoJe5lqsHAbWR1ElOF1phMtG8WcNynZQWVbDTTnxwKnGpra25i0XEq1AvzMJNaqpvje5CnDZ7wf8nzwi4JFTOKVmblhX/siDAtI6u3+O+nq5ersrlnj18Lb3medoNBLmH2JoJhvHXzEOzX/brxlAAX7Mh/imNp1tc1C9APi3gW58wCweDUHs+FdG/nUy5aA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=jaguarmicro.com;
+Received: from KL1PR0601MB5567.apcprd06.prod.outlook.com
+ (2603:1096:820:c5::14) by SEZPR06MB5966.apcprd06.prod.outlook.com
+ (2603:1096:101:ee::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.22; Thu, 8 May
+ 2025 02:34:07 +0000
+Received: from KL1PR0601MB5567.apcprd06.prod.outlook.com
+ ([fe80::3ad3:b4d9:7e69:85cb]) by KL1PR0601MB5567.apcprd06.prod.outlook.com
+ ([fe80::3ad3:b4d9:7e69:85cb%5]) with mapi id 15.20.8722.021; Thu, 8 May 2025
+ 02:34:06 +0000
+From: Sunyang Wu <sunyang.wu@jaguarmicro.com>
+To: dev@dpdk.org
+Cc: thomas@monjalon.net, ferruh.yigit@amd.com, andrew.rybchenko@oktetlabs.ru
+Subject: [PATCH] ethdev: optimize how the values of the flag variables are
+ assigned
+Date: Thu,  8 May 2025 10:33:34 +0800
+Message-Id: <20250508023334.28416-1-sunyang.wu@jaguarmicro.com>
+X-Mailer: git-send-email 2.19.0.rc0.windows.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR06CA0184.apcprd06.prod.outlook.com (2603:1096:4:1::16)
+ To KL1PR0601MB5567.apcprd06.prod.outlook.com
+ (2603:1096:820:c5::14)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] examples/l3fwd: adjust Tx burst size based on Rx burst
-To: Sivaprasad Tummala <sivaprasad.tummala@amd.com>, "dev@dpdk.org"
- <dev@dpdk.org>
-CC: Sivaprasad Tummala <sivaprasad.tummala@amd.com>, <david.hunt@intel.com>,
- <anatoly.burakov@intel.com>, <jerinj@marvell.com>, <radu.nicolau@intel.com>,
- <gakhil@marvell.com>, <cristian.dumitrescu@intel.com>,
- <ferruh.yigit@amd.com>, <konstantin.ananyev@huawei.com>,
- <mb@smartsharesystems.com>, liuyonglong <liuyonglong@huawei.com>
-References: <20250212045416.2393001-1-sivaprasad.tummala@amd.com>
-Content-Language: en-US
-From: huangdengdui <huangdengdui@huawei.com>
-In-Reply-To: <20250212045416.2393001-1-sivaprasad.tummala@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.121.193]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemo500011.china.huawei.com (7.202.195.194)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR0601MB5567:EE_|SEZPR06MB5966:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4d480ffd-e7aa-4dbb-5e0b-08dd8dd8ce04
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|52116014|376014|366016|1800799024|38350700014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?WWTOK9U4Hqb+lZCSIB5yhiY0pOGek/fB0dUDqiaboM70N4xKjFjQYldzgyJx?=
+ =?us-ascii?Q?8S/XoXh7j92nog7GfdZym0FpIIDAj5q/xCJKavge8SNvQ00bRrjXtjDU4yjk?=
+ =?us-ascii?Q?62KcBhNdzbnBrDnZtmjSk7a4lMfQWbpWsnGQVzKTyFsLWaeUu56YC5FHk+W4?=
+ =?us-ascii?Q?A0m+i8Q9imk9egq/HXk2yl5o5+v+klYzh38rZeNC1D7HePCh0Dijp06bfDqf?=
+ =?us-ascii?Q?ajzyDU7yz7rCJZS1nzKprt7IIG/tVvLvXyioPQFh/tCI22i7KygDEdjruxgO?=
+ =?us-ascii?Q?aAYi084s2JEqGe76kYzdaqiUd5HiO8XHdomplfDvKdtGucsNF9x00v9pl4Ek?=
+ =?us-ascii?Q?rM/Q3vyIgqaKeD/eEAqeQ3u37PF9prMw0pN6dzRFN7RpuByv2/V/KJGiEhv6?=
+ =?us-ascii?Q?R5pb1RzI+FVjNiausfBRFaRn9Ix/3w3ZbAORj/ABrB9ZONhZwXgM1FqgsoMS?=
+ =?us-ascii?Q?O41nxUbzNcdv+xbty28mDP2SqwNr4YVAYuyfgDmnGtvjV9ugnrig6edlbPD/?=
+ =?us-ascii?Q?zlaWbDKIyU5Rsb93I0aE/YBV+J6ZK+vCHyFhXG/1+YWkNv9kfL4UpX4DlQhd?=
+ =?us-ascii?Q?TwLSpjfgYWc3T2h6KtTmHvyOxlSDzzVFBl0Hs0+wpxizBq4lv7asWhm2UgbL?=
+ =?us-ascii?Q?6kq6LhAVXrz5NCCZgVVrXM3aN9Pn1qBiA4TMUX5s07gTkh512txe4CmAhb5V?=
+ =?us-ascii?Q?oMknc9NSHTBNfuLNSONpF/n1lu4sJLjl0Jf+XgqXqKKIb5Y37aX0U4WNbZz5?=
+ =?us-ascii?Q?2Q3v+4MFJayRW5oWKhmvMvYKSOM8nqoltlXgTM9Di3ITCCirnc0OutBftrdE?=
+ =?us-ascii?Q?6gN2Mrc0xVU7jmTQtYRBR8JMmGjtWxIpyNamJmuMgHqmXb8AsDxULhQHTsaq?=
+ =?us-ascii?Q?sI+m4Gqjtd95ucSvohRcXOaC9jVgF7/u57DOpU6RL/Utl7EIO+7WckWJsiih?=
+ =?us-ascii?Q?xNdncH4f4VOdAab6AFsDMfMCEnl2cfATUuaZeRQmcsd8y7+qpIt1G1/4G8iv?=
+ =?us-ascii?Q?nUmAyKQ9jx9GRsd1hXZ0jRIpOAGCWpz+JUvVcd6+DlJsLyQpVoxEULy7zwwN?=
+ =?us-ascii?Q?w5z6gvJ5TBktLX8N2dxEVoYbc7w3xowMgXIuZNml9OsemrATL87bhmoLsw/X?=
+ =?us-ascii?Q?ZYdjssg8BLrLnk2KNbUtROEVzPRttdVVpb1cdbM1QIakQSA+fK0I5gIdntuG?=
+ =?us-ascii?Q?aEv483Bc7Ged5fE/RMeF1dYb27a+g0rDRnpiBFJyC//FS84PakSJKr7PyeIW?=
+ =?us-ascii?Q?b6BbgypEDWsmsUefC+B7+FBn2mD2SWkDGAyWVEyjAZwnHwMPPtg2Bam8pvKc?=
+ =?us-ascii?Q?heOWmneHBby4NfdWv5a81SdnJpYlc8dQrZBbUqd4ckERhDMNKYT1vdpnLWdV?=
+ =?us-ascii?Q?5U8djBGOJJKFuxZwU60N2GbZZfAjEzxJDkrMp+/byGXOgSF1mIDxUIvTpnap?=
+ =?us-ascii?Q?kXoxIbaNaMe8WQ/1jWYRRdDUUqkWHGsFgwEyw9XixOYSJr1U12os+g=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:KL1PR0601MB5567.apcprd06.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014); DIR:OUT;
+ SFP:1102; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Q+aDo6K9QYmKjgTOBYKZp1C2d8KIQ+PlTJtm8npLkHrdyOzIRbnju/QlR41P?=
+ =?us-ascii?Q?6u9zrot2tGNtME6Sr3yppO8PZdms7Er6WOP1TssZe7K1jRkv4mM1ILXBR2mj?=
+ =?us-ascii?Q?n/InbpFoUY+Gnn5PFPFU/UEHIyN354D/wTVzOAM8BrVx+0eCZd6bAea3Dawz?=
+ =?us-ascii?Q?yKbvXuRWuyZ13Cjj+4xhyleRX9docJOD/W5iWGf6oUfk43mXANOdue55ReAe?=
+ =?us-ascii?Q?twD8UHn+fkn8cbmRJC3Eq7b3virO/6IM1zXPNDjWF5gb7vyXHpyS9HA96aay?=
+ =?us-ascii?Q?PcYwiuyJw3ZxuieEP7j7T4YEuErFsqS7GND3pWg1ugahFtTA8MRgXWfvNRw8?=
+ =?us-ascii?Q?Exed16aRCIJBeotb223Z6lG9SFD+kRTbXfuWdOe/r11YbNu6UXilChf+gE1W?=
+ =?us-ascii?Q?V2HDcT9uE2fAa/l6t9wB33B1yvFZk3ncwHVdOOqnIjsMVxsBNg8jziZEelEQ?=
+ =?us-ascii?Q?7hoB4pwXbXrg3YAMkjRvzoqC1pkkM81s73xn7Yr49dJH8WBZ1lFXMjjDJoW7?=
+ =?us-ascii?Q?Ytxnh5zDyRLawOs6+1vTQaCPjKkDxTs92Oxzca5uhlUXCumjcVdQOVGeyI+G?=
+ =?us-ascii?Q?+poEH38tmRobScyGkhSj/4KdQZ+aM2bN4uK5FMSSBcE88vwivdZNgH6fD050?=
+ =?us-ascii?Q?dSFI04OFC963X9TWOLePLQ98PARBmsLDP3qHWSX8oqsK7MPWhejvgkEHnYxQ?=
+ =?us-ascii?Q?tMwCHhp61FrOkkPE51loS3byHL5X6t9scg1aHtJpwyrkAgdlJQrgdVW3zBrv?=
+ =?us-ascii?Q?XDhkIe6FNyruIoNxcctgxFf50DHwTutQskKgrPHV5lDhbnEHEX5T/I+gHSag?=
+ =?us-ascii?Q?3OZ58C10L3+dy9MXRy/pM8rQP+GVfS4Hr1ryLQ+B79Ku9zH4YCJGQISWM9kC?=
+ =?us-ascii?Q?tnXjEIHSb3zV8r52XD/X1EgtLLFRt8zea0HYRLpXn/opO+kuM8p2jRUuZTsa?=
+ =?us-ascii?Q?ilmlb9zpMwPOiRtE0z6XZ8xbdMY9pLl881Ae3T0wI1focNXUr+7T1sLQrVFO?=
+ =?us-ascii?Q?K/AfV+dv8u0Q2W5xKOF5jUf8ajzOJ2tikMHEYTCI2kHx+aEC0waKNQSi3kiX?=
+ =?us-ascii?Q?8QnVu9jEJ6VdgIUJcfhUSo+jrQ8/GePtPMiMOSD+6perGOqUpHbcZIXLFpR6?=
+ =?us-ascii?Q?mV0PdvDeL5Nc6nIuOV/jMgXD92TEXgOLwcdzwEV40rZqkU1JvkwqhWf0Vspd?=
+ =?us-ascii?Q?dCDudWa0myM5uxExlJdIiGWHt4r8kbvoepiaGnNuJjDRLY03uNnoPteR31l1?=
+ =?us-ascii?Q?hxrzU8pxfasQXx3NvgIbj4EJpBQfkS30oo7XE0jPkEUK74Y/F2FLRdCJ/I2l?=
+ =?us-ascii?Q?gb9fT8wCWo9U5u2ExGJYGuJy/bJzjJi65WL3GT9zvQ18ByQs3CGQ28VQnUWO?=
+ =?us-ascii?Q?Znd8C9h0LHNyX+noxS+GBFZ1Nw+idxTnAH41k81JW+Mq8neR6M7rRgUxgfXR?=
+ =?us-ascii?Q?Z1R9hz5TXxxrg0lZNVfkU5Ec4QBP9BYtvsi1fRcMJqPdUWT0u1ZkNUatkPpe?=
+ =?us-ascii?Q?VUWVCQXDDVRTBw3AZvfze8WUV4bx3l6cfEOLASHQ9QzSkcktpRRSyTTzycQg?=
+ =?us-ascii?Q?JFZsXDcPYMsxBJygkV0418aCXyEBoTa7R+iB3z0+LVFFj/fPeqZrIbu4mbFB?=
+ =?us-ascii?Q?3w=3D=3D?=
+X-OriginatorOrg: jaguarmicro.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4d480ffd-e7aa-4dbb-5e0b-08dd8dd8ce04
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR0601MB5567.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2025 02:34:06.8010 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 1e45a5c2-d3e1-46b3-a0e6-c5ebf6d8ba7b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3n1WXKVpejgBVAc5tqqUAK9UdsS+bhqGgFqKlW7kzXG4byfMWmzu3V8O1a/a6d8ppbkRe0kKQ4/zevS3uajM+DAzmxpssJtguHJWNd+mjm8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5966
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,119 +139,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Tested-by: Dengdui Huang <huangdengdui@huawei.com>
+Set the values of the promiscuous and all_multicast variables
+according to the return value.
 
-The issue addressed by this patch is the same as the one fixed by the patch [1] pushed by Haijie.
-However, this patch is better, and I have already tested it on the Kunpeng platform.
-Please make the changes based on Konstantin's review comments and push the next version.
+Signed-off-by: Sunyang Wu <sunyang.wu@jaguarmicro.com>
+---
+ lib/ethdev/rte_ethdev.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-[1]
-https://patchwork.dpdk.org/project/dpdk/patch/20241204020622.977156-1-haijie1@huawei.com/
+diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
+index d4197322a0..b1f593edc4 100644
+--- a/lib/ethdev/rte_ethdev.c
++++ b/lib/ethdev/rte_ethdev.c
+@@ -3044,10 +3044,8 @@ rte_eth_promiscuous_disable(uint16_t port_id)
+ 	if (dev->dev_ops->promiscuous_disable == NULL)
+ 		return -ENOTSUP;
+ 
+-	dev->data->promiscuous = 0;
+ 	diag = dev->dev_ops->promiscuous_disable(dev);
+-	if (diag != 0)
+-		dev->data->promiscuous = 1;
++	dev->data->promiscuous = (diag == 0) ? 0 : 1;
+ 
+ 	diag = eth_err(port_id, diag);
+ 
+@@ -3112,10 +3110,9 @@ rte_eth_allmulticast_disable(uint16_t port_id)
+ 
+ 	if (dev->dev_ops->allmulticast_disable == NULL)
+ 		return -ENOTSUP;
+-	dev->data->all_multicast = 0;
++
+ 	diag = dev->dev_ops->allmulticast_disable(dev);
+-	if (diag != 0)
+-		dev->data->all_multicast = 1;
++	dev->data->all_multicast = (diag == 0) ? 0 : 1;
+ 
+ 	diag = eth_err(port_id, diag);
+ 
+-- 
+2.19.0.rc0.windows.1
 
-On 2025/2/12 12:54, Sivaprasad Tummala wrote:
-> Previously, the TX burst size was fixed at 256, leading to performance
-> degradation in certain scenarios.
-> 
-> This patch introduces logic to set the TX burst size to match the
-> configured RX burst size (--burst option, default 32, max 512)
-> for better efficiency.
-> 
-> Fixes: d5c4897ecfb2 ("examples/l3fwd: add option to set Rx burst size")
-> Cc: haijie1@huawei.com
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
-> ---
->  examples/l3fwd/l3fwd.h        |  6 +++---
->  examples/l3fwd/l3fwd_common.h | 11 +++++++----
->  examples/l3fwd/main.c         |  2 ++
->  3 files changed, 12 insertions(+), 7 deletions(-)
-> 
-> diff --git a/examples/l3fwd/l3fwd.h b/examples/l3fwd/l3fwd.h
-> index 0cce3406ee..9d7c73504b 100644
-> --- a/examples/l3fwd/l3fwd.h
-> +++ b/examples/l3fwd/l3fwd.h
-> @@ -35,7 +35,7 @@
->  /*
->   * Try to avoid TX buffering if we have at least MAX_TX_BURST packets to send.
->   */
-> -#define	MAX_TX_BURST	  (MAX_PKT_BURST / 2)
-> +#define	MAX_TX_BURST	  (DEFAULT_PKT_BURST / 2)
->  
->  #define NB_SOCKETS        8
->  
-> @@ -152,8 +152,8 @@ send_single_packet(struct lcore_conf *qconf,
->  	len++;
->  
->  	/* enough pkts to be sent */
-> -	if (unlikely(len == MAX_PKT_BURST)) {
-> -		send_burst(qconf, MAX_PKT_BURST, port);
-> +	if (unlikely(len == nb_pkt_per_burst)) {
-> +		send_burst(qconf, nb_pkt_per_burst, port);
->  		len = 0;
->  	}
->  
-> diff --git a/examples/l3fwd/l3fwd_common.h b/examples/l3fwd/l3fwd_common.h
-> index d94e5f1357..6cb7de5144 100644
-> --- a/examples/l3fwd/l3fwd_common.h
-> +++ b/examples/l3fwd/l3fwd_common.h
-> @@ -25,6 +25,9 @@
->   */
->  #define SENDM_PORT_OVERHEAD(x) (x)
->  
-> +extern uint32_t nb_pkt_per_burst;
-> +extern uint32_t max_tx_burst;
-> +
->  /*
->   * From http://www.rfc-editor.org/rfc/rfc1812.txt section 5.2.2:
->   * - The IP version number must be 4.
-> @@ -71,7 +74,7 @@ send_packetsx4(struct lcore_conf *qconf, uint16_t port, struct rte_mbuf *m[],
->  	 * If TX buffer for that queue is empty, and we have enough packets,
->  	 * then send them straightway.
->  	 */
-> -	if (num >= MAX_TX_BURST && len == 0) {
-> +	if (num >= max_tx_burst && len == 0) {
->  		n = rte_eth_tx_burst(port, qconf->tx_queue_id[port], m, num);
->  		if (unlikely(n < num)) {
->  			do {
-> @@ -86,7 +89,7 @@ send_packetsx4(struct lcore_conf *qconf, uint16_t port, struct rte_mbuf *m[],
->  	 */
->  
->  	n = len + num;
-> -	n = (n > MAX_PKT_BURST) ? MAX_PKT_BURST - len : num;
-> +	n = (n > nb_pkt_per_burst) ? nb_pkt_per_burst - len : num;
->  
->  	j = 0;
->  	switch (n % FWDSTEP) {
-> @@ -112,9 +115,9 @@ send_packetsx4(struct lcore_conf *qconf, uint16_t port, struct rte_mbuf *m[],
->  	len += n;
->  
->  	/* enough pkts to be sent */
-> -	if (unlikely(len == MAX_PKT_BURST)) {
-> +	if (unlikely(len == nb_pkt_per_burst)) {
->  
-> -		send_burst(qconf, MAX_PKT_BURST, port);
-> +		send_burst(qconf, nb_pkt_per_burst, port);
->  
->  		/* copy rest of the packets into the TX buffer. */
->  		len = num - n;
-> diff --git a/examples/l3fwd/main.c b/examples/l3fwd/main.c
-> index 994b7dd8e5..4cabd05be2 100644
-> --- a/examples/l3fwd/main.c
-> +++ b/examples/l3fwd/main.c
-> @@ -59,6 +59,7 @@ uint16_t nb_rxd = RX_DESC_DEFAULT;
->  uint16_t nb_txd = TX_DESC_DEFAULT;
->  uint32_t nb_pkt_per_burst = DEFAULT_PKT_BURST;
->  uint32_t mb_mempool_cache_size = MEMPOOL_CACHE_SIZE;
-> +uint32_t max_tx_burst = MAX_TX_BURST;
->  
->  /**< Ports set in promiscuous mode off by default. */
->  static int promiscuous_on;
-> @@ -733,6 +734,7 @@ parse_pkt_burst(const char *optarg)
->  		return;
->  	}
->  	nb_pkt_per_burst = burst_size;
-> +	max_tx_burst = burst_size / 2;
->  	RTE_LOG(INFO, L3FWD, "Using PMD-provided burst value %d\n", burst_size);
->  }
->  
