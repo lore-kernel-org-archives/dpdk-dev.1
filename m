@@ -2,161 +2,179 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 607D9C3ABC3
-	for <dpdk-dev@archiver.kernel.org>; Fri,  9 May 2025 07:17:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B63DCC3ABC3
+	for <dpdk-dev@archiver.kernel.org>; Fri,  9 May 2025 13:03:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B6AEE402E6;
-	Fri,  9 May 2025 09:17:37 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 61C944026B
- for <dev@dpdk.org>; Fri,  9 May 2025 09:17:36 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 548NIYMG003775;
- Fri, 9 May 2025 00:17:35 -0700
-Received: from nam12-mw2-obe.outbound.protection.outlook.com
- (mail-mw2nam12lp2044.outbound.protection.outlook.com [104.47.66.44])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46h65x0qyg-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Fri, 09 May 2025 00:17:35 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 798804025D;
+	Fri,  9 May 2025 15:03:27 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+ by mails.dpdk.org (Postfix) with ESMTP id C8C8C4025A
+ for <dev@dpdk.org>; Fri,  9 May 2025 15:03:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1746795807; x=1778331807;
+ h=message-id:date:subject:from:to:references:in-reply-to:
+ content-transfer-encoding:mime-version;
+ bh=0OGs8iDCbVnIpc+Lx7gOYxQZW0fwkgIc2t9k+VrKq+k=;
+ b=T3Grxzcp+OKlu9MBcrG7/+3ThpWGpXMhsZRykxvswE1+xBW8Q4l3Vsj4
+ v8V8bBiL0+pR9vrAyFUWs0i7dlo6O+dTHMlJhY+jzVPcsxQcBZw8V4SyQ
+ 2UC5aoungm++qZTnbBgNnpggCos+Q4Wz4xvfdZWp+4DbNAKlyjb2aenOF
+ wKx1haewRm8DLTviKibfm2006nij5WL8xRL9rQxl8FhuY5n9ZnsnFAgwq
+ 6GHLSGKSiGNN5vVhnyF+ySb8EDNI3z3aA9yflZJXyRDt/TxVNmtDf0zz6
+ pisbVpTyQ4gT66NcXyRQt9j06QHiIzS9Womt54v6ImVg8PClv/2vw+nGi w==;
+X-CSE-ConnectionGUID: TGWrSDg5SQCBVZchlrvQcQ==
+X-CSE-MsgGUID: 205uEtCkQvifMmX+7/u8Kw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="48781528"
+X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; d="scan'208";a="48781528"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+ by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 May 2025 06:03:25 -0700
+X-CSE-ConnectionGUID: RuJMxaklRWqpJImpxUfG8A==
+X-CSE-MsgGUID: j8m1GACUTIifRjWwKPkjXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; d="scan'208";a="141832401"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 May 2025 06:03:23 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Fri, 9 May 2025 06:03:22 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Fri, 9 May 2025 06:03:22 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.49) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Fri, 9 May 2025 06:03:20 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PH//sUC5G3aBqqYqSigIEeeK3zFHaIZKAuWsGVT7P3pbPciWE+wFQrvMFwadAnhNTg0KVuS0uP2nSs4GhVzUy4RI9qziwP+dXActqQha4nxHzDeo4xeES//TgdnwyTH1MR3EJJkSbIPjiVy9Cjk0q/sfW+ZS5Vp+OcoHZ43r0xZkYuNaLMv/dY2hKPi8CZLEatG788hBtlJmx1n8WR/hmRZc0cQKqMdI1m9f3pNXnmeKm1x92LXo9dO6QdBGabydox5CK/z9ClQw2IPBiRd7rQ9V8pFQ7B6eNQjottUUyFEtgVWCAdxddeex7HGTJpEFb4KWKsBGCbkAtu0TMTnCKQ==
+ b=Eb5MZ7HWSIUDouQnpwNpF2UtqnODU61zko9Dy7hYi1VdqXBIRrO5WE9vqIy5dzPumIvSaclEr8bc53c559FkMSXKvJLMX09BDaml3KN2PPUIbY4f1vYdJSQIJj6MOLpwMWnJ+CeS6UNfWQOlMzP6iqZmwNFQSerY3bZXiFBwr7cIL62Sq31/VBofFlutPAbTzJcoixZDMxlByRlXEWXyp21vNlBvzOcSAFYAUnGW/i2zoZJrGI+p5nQpl3Qu1ZXWHYiYWLZ0x85stE6YWnzkkvsWaBBi+AU6hG+SkbP1E5sdcoR/fTlLkNkOds3SU/tO7NjTDZhDGU9qiE3kKTgIRA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XpVos47EE9cAWLGrPX+68wX+uNtkmqeQHmIyYMjMelU=;
- b=UWnWLRfzCykSfYgQlnx8oNOhjfKvRapN00Lijyx9wxo98ftQYabRcnqXpyT+e65K9JPIZEcb3Wq5tKOWggJXCtEpRS7+CPR1ArdNV7BLlLpxvSw+/SA/jY6UrjRsCMyhLsvdODw1Zm+T1ksimbBgpAt+LIvFr2fFmy7Ff38hceRdMCMcB5bK+tPIfKwvYLbYVuPrva/1PjqJwTHNbYkUedZB8cLMd0r+JBOn5Dz3mqdjUUl2dkXzBMhJozEK78Nyr9dgIh32HWEq4RXT1MwxmrAgPL9ORF2v8lzSsTkk3H7DTxaFeJV9k2VUZp8kKkLX75pI6B8xaMbeCwOkkYpy6Q==
+ bh=v9gFYUi/b/BcUjSGngRxqzDcdsOo4FnTNsLXc9Cv3Qw=;
+ b=ZdB7yBt3/+DehLesL3cxmaYxrstoOurnC1q+7bVWsWSqseTzM+WDJZsCXErtZAccnSv2WpPpVCcyP5HCEdS1NmgAVfBuWzTIpPcxmGUJocTnabZixOjq/l1Az7Yau8RE8ObnhSyrAHx/t9bRTLFcFvoHspXomkUfQJ3qDIXvJ+IanpUHNGk+s3mE6ddCZhA2YPoCFXrJjTZTwezYRYZ/q8LLfjG6SZjAclk58ZdzKnUnp760JNWOaoSPfUogePtJEMd9ck5VCUTZ0wQDOtaC1led/tGipKft+w+WE0gtuhoRO5S+17RITmMazRKWWqN7r4muxcLFZ13DycsEfBG7hw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XpVos47EE9cAWLGrPX+68wX+uNtkmqeQHmIyYMjMelU=;
- b=oDMZuB+B3ImWimTuoYWELlewJFLmSWhalQe/ccGCtNwUk96qWRTZXgNZBfWC2KK+uWSUx6c5sgIyfgReBgH0ksGCs8pWgnZ3Nv2q7xrHOhu8pMMM4+msnnPmh7eokkhvW/BgeoAWJzCu2txhIliz5cm6j9W4XPV+c4njpQ+ZC9U=
-Received: from PH0PR18MB4086.namprd18.prod.outlook.com (2603:10b6:510:3::9) by
- DM4PR18MB4365.namprd18.prod.outlook.com (2603:10b6:5:39a::10) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8722.21; Fri, 9 May 2025 07:17:33 +0000
-Received: from PH0PR18MB4086.namprd18.prod.outlook.com
- ([fe80::ed37:4ea0:6359:f717]) by PH0PR18MB4086.namprd18.prod.outlook.com
- ([fe80::ed37:4ea0:6359:f717%4]) with mapi id 15.20.8722.020; Fri, 9 May 2025
- 07:17:33 +0000
-From: Pavan Nikhilesh Bhagavatula <pbhagavatula@marvell.com>
-To: Nitin Saxena <nsaxena@marvell.com>, Nithin Kumar Dabilpuram
- <ndabilpuram@marvell.com>, Robin Jarry <rjarry@redhat.com>, Christophe
- Fontaine <cfontain@redhat.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, Jerin Jacob <jerinj@marvell.com>, Nitin
- Saxena <nsaxena16@gmail.com>
-Subject: RE: [PATCH v6 2/2] node: use node mbuf dynfield in ip4 nodes
-Thread-Topic: [PATCH v6 2/2] node: use node mbuf dynfield in ip4 nodes
-Thread-Index: AQHbuCmIu8evDewYqEqXTzVJ4HF4dbPJ9Hmg
-Date: Fri, 9 May 2025 07:17:32 +0000
-Message-ID: <PH0PR18MB40865BD7D541CF679E8899C7DE8AA@PH0PR18MB4086.namprd18.prod.outlook.com>
-References: <20250401042053.3518757-1-nsaxena@marvell.com>
- <20250428103711.3317231-1-nsaxena@marvell.com>
- <20250428103711.3317231-3-nsaxena@marvell.com>
-In-Reply-To: <20250428103711.3317231-3-nsaxena@marvell.com>
-Accept-Language: en-US, en-IN
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
+ LV8PR11MB8608.namprd11.prod.outlook.com (2603:10b6:408:1f0::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.23; Fri, 9 May
+ 2025 13:03:02 +0000
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::21e4:2d98:c498:2d7a]) by DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::21e4:2d98:c498:2d7a%2]) with mapi id 15.20.8678.033; Fri, 9 May 2025
+ 13:03:01 +0000
+Message-ID: <ebb1b821-0138-4f64-bdb0-d86b7eab48a8@intel.com>
+Date: Fri, 9 May 2025 15:02:56 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 1/3] cmdline: use C standard library as number parser
+From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
+To: <dev@dpdk.org>
+References: <7ac1444b7d2d64dc467a22e7ac65cf3cc16246dc.1746188833.git.anatoly.burakov@intel.com>
+ <7bebd92be36f945c175382bb1e0482e55844c1d2.1746710154.git.anatoly.burakov@intel.com>
 Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH0PR18MB4086:EE_|DM4PR18MB4365:EE_
-x-ms-office365-filtering-correlation-id: 769c01d0-6809-452b-a649-08dd8ec99110
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?oHSHJzUnmGonBnhIBaU6yCEM+L/7JdtLvvhP/LpgNVH6ATsESScBiF/+ehXq?=
- =?us-ascii?Q?Hg5NsZWDcuxlP0ciWA6rwsuw3Ps73un0rXC3LOZdj2vrLkC4B7phku17WIgy?=
- =?us-ascii?Q?5rxcqfEKZEZPYYtR1TZ5SBTw6jkqk1a8MfWB27FYp3667AmTcKQPuIZuWuvL?=
- =?us-ascii?Q?Z5Uxc8lM0v5mAQZiuw+0BW5aIntNlDGp7rrqiFSPYmrbP8Bz/99mdTd9XgII?=
- =?us-ascii?Q?Yv/7WdgkxW+APV1hpx8rdelCott5H8bqsnlgL9yvey8U1/ZGmleL39Oz4Va9?=
- =?us-ascii?Q?vS5WD1/T4VrjdZBES5CWdDBnITX8nxyGrt/xQmyO3Rrn06eCk0x1rFA7Z42o?=
- =?us-ascii?Q?rePGx4c9BviC600xtZ4dNoZvEIjNFNS72RCHSZ+0NtErZkWH1NMSRqng0IRB?=
- =?us-ascii?Q?axNsvbQbJHKxm+CluF8iwCUatxsFKP3ygzT2X8DEGYaeR2czZfeVRpIqu4Pw?=
- =?us-ascii?Q?R+2GmdmIPmqaqlt5+DOQejXjDzejibgdehHrf1/8DmteeGdAErj5EvuKX3XS?=
- =?us-ascii?Q?34WazK5vmEk1BTS26jBFKAsxmI0upX7d/r8xhCk98cy0D+440cSW4wq26Zmj?=
- =?us-ascii?Q?j/2SfLQwrkYJgldzY2nPq0OX0t4OvRv4Zt76psxrzj7gzxfKFk1bRHpm3djH?=
- =?us-ascii?Q?Q+SIO6iCV0BISklv0htQqGhXua197+av/HYPdr1FCi0JT5U3yrzlQZuN6yw4?=
- =?us-ascii?Q?C02LfNwfLRq+kh/whI8qRAph+1dlyJ+XruCjNltlBd6Xlf80nS/O3Yo/O/HM?=
- =?us-ascii?Q?Or+j6DW7D4hpC1HfY3pp/FHuisoMpuPHwehkqaaKy2MU+J2s31yKlqxE0rZ7?=
- =?us-ascii?Q?x+Q0UYfKNlJr4tIB5aGkRWt4JCZ/zcqtybA4hOjaIKYoKiT1p3EggCoIF4CY?=
- =?us-ascii?Q?Ui0Y4VrcMdM5D8g3pyzc170NUOdwQ8pmOubauAaVuSJCZAmXNtWyElKAFy/m?=
- =?us-ascii?Q?MQmedo2t1T21nbTZU7YOwEYLNiUYC8khPxxhzzf4vDCBi8GujmNxG7N1EY7e?=
- =?us-ascii?Q?nx/PzST0K3SrfMfVfllnszmA+LTBwfVs1Mewx9zTwL7d2FtryYP/KGajaPFF?=
- =?us-ascii?Q?QogNwpi8qbYFB50EnyXLWqT3P5gU8ftPq/P6Vwh+LanP2ybMo763KA95n6oo?=
- =?us-ascii?Q?1l/5PRmVayxqkHgBHvb6IpAugiAYwi6LdvjHU7aAWmhk+NRbVlSs0yreVRLg?=
- =?us-ascii?Q?Up6LrL657ecHY7WKH5tjT1UMJKXXmdDvA+XICEHMLZTzCxBMKtM7qPvcBuoD?=
- =?us-ascii?Q?nQ/7F6HuXmY7PpEDnCoJqrje6UtzpUVafk0TNKd6e45E4q9lFrIry7C7i4IA?=
- =?us-ascii?Q?jMEH+lYUJp5XhY2ZULJU2UffY022nbZZpjmjJ7UhWFGABsGTLB0fOv+ZFRuG?=
- =?us-ascii?Q?I5SSN/I9bqoHkF+5RY+gei1vqCUC6073Mb7TreQWnM5uUeuF4cli4ea3WiXw?=
- =?us-ascii?Q?5pofWsZQWxz1+LqDYL1iztayUHmkYzfp/dPjwY7Z62nxV5HARfmya4UrnjZP?=
- =?us-ascii?Q?/FpHbu42RZIYl/I=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:PH0PR18MB4086.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(38070700018); DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?BXCuF9c8wkUtJ5I0RJNzdWvZiePtjyiQvOLTOud89TKE4OCnh9Z0bJK5ozVc?=
- =?us-ascii?Q?JxaAc273E8hReVvP0lUNrKVnXU5TdbJIjtD7DYVG464zT4b3ktaHq+4RhRPV?=
- =?us-ascii?Q?0Odb0mwkEyJzW4xYqM88rALFD0paJruGTYjTWFyzn2GY8g6M8JfEKOI4eiQG?=
- =?us-ascii?Q?8hTgBdlxSwuUlDdzkhpE4EjW5ynnQuZ0iscFvSjJGLNklnSmpp0vtTKFNSWV?=
- =?us-ascii?Q?IRMCDMleP8q/WOlke4erPTdWVDGKv1DSRZlRvGueE2aZLCJjrASDPpR1A9H6?=
- =?us-ascii?Q?63YjcXiO2/1hGtLhxHWZGNZ/yJ0y8wwY+b1wytMGzYeVbBst5ADTfQJOWwXK?=
- =?us-ascii?Q?xKlUZRW1/n0/1o3tNrW+3T2gabJJ2IphwPlP6/r3aPWIOE5Cyz2KcUoXT527?=
- =?us-ascii?Q?igo0MKm9PHoDczxki/2qxVC17Sef90yFC1uXgGH0hDWNt3i7ihKgHeMj2VKF?=
- =?us-ascii?Q?tyabnUfyu48CZ17N8eN0rLtjhwD2allOEQ6LAnBUAW6SCz7h00wLKrQ1jPmh?=
- =?us-ascii?Q?60wtG5C9aDOdBc9xhz2qoM979CPb7l61nA5GBKSKTkeR3QmUrfIEdKbCPK96?=
- =?us-ascii?Q?KmQyenPz+lNjZqJRDHelilKQI60RBTVgORP7u40/sjYihPwbYRcRkdL1URx3?=
- =?us-ascii?Q?td/bj8qoZaognwqegn6NBQsrPAZFgWeD3btfygG4YW1Zrz6AWlbuvAdbw9S2?=
- =?us-ascii?Q?mPxJzvq021htlvCVzP6/rKYWo2s7bHk49uG3tp0vz42uhTim28xBgB1Hg07o?=
- =?us-ascii?Q?mhAskiOLpBiGFCGB+FQX++GL7heXyLILHiboC/Swxocart9ivxJx/z4oNQqd?=
- =?us-ascii?Q?6Zc+ZZkzqOm7Gbif5NAwPYb8Zyz/Fc1LNDu6uxr2N7XMfi71/71kJ2seiL42?=
- =?us-ascii?Q?1zp9GABH6BwhHXr0o8DIZh/M1fiKQ39ifz7YDaWOYcxH725m+CJD2tBTsMug?=
- =?us-ascii?Q?tEQQfz+s6P1HPmBisvCcO2LwQIFvh8mnECpPWeuItF7zubIHS6S3J82OzS3J?=
- =?us-ascii?Q?zmFdXqNnPO5utWjl3HYSuWyoZGjZLSmgqXYHmWtcgi5VCvxFf4icycDlVsh6?=
- =?us-ascii?Q?g3qbbtnx0Smsx423r6NCwqEqvPnCYQ3uQcH99pteCkaV85VNCiYqiOeEs/Kr?=
- =?us-ascii?Q?gdN+uqxzsmX1v0s+Ir+39AE4Tiiv4ygcCl7zYBtWVFno9Qx7VKnSWeOrH1Zh?=
- =?us-ascii?Q?8YdxFdlnraWPRiDKZlcjbY+l/LwTcYGONK278zp2JDz5b6g+gLX9bBQ7Jowu?=
- =?us-ascii?Q?ssYDvJEgIhMoxBHZiTz36ytuUz/IvkoN6xFjuD2zTjaQZQO+BVTNY+kMZ/Oh?=
- =?us-ascii?Q?m/W2YPXXRLMMKdVlHr83uUVdTBW4j39gzjt1jAKfa6Fl8baspo82b0F2O/1c?=
- =?us-ascii?Q?5h8oPdFyW9tGIQFMQWPtZAsm76lhP+ouSVHQfCUxI3szOL5JluheGfEXNzsZ?=
- =?us-ascii?Q?cu4zM6HD9DpAzlZTXWQ2cC9TlHCzA9G36rtfAAvsQchuiHpW9XfwH9+GJYSb?=
- =?us-ascii?Q?3oDQUfbpq8vGFfGajHPnnTJAsepRyvk67OjZwZDq8aMsp5KazQcfdp3g+eNd?=
- =?us-ascii?Q?T4I6MAmBGPKhGhvY33Rtyzkjzvqv9fVvpY0VudmG?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <7bebd92be36f945c175382bb1e0482e55844c1d2.1746710154.git.anatoly.burakov@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DUZP191CA0018.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:10:4f9::8) To DM4PR11MB6502.namprd11.prod.outlook.com
+ (2603:10b6:8:89::7)
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|LV8PR11MB8608:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0a37f54e-6c1c-43a2-bb8d-08dd8ef9d43b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?S2VWditVOFJPQVV2K2RBS3hNV0hQKzYycmdIM0VJbkx3UXVRa3dVNXFISVdL?=
+ =?utf-8?B?S01hYmVKT3BzaUhVV0l4TURmcEJyZjVPaDhIV0Y0Z2FFeFo2TDNWTEpYdHF2?=
+ =?utf-8?B?WEtVcTV5MkxpOTBsdnNqOW1OTFNUZmt3S0RZRm1LMHdBL2YrbzQxSHg3VjJO?=
+ =?utf-8?B?UVBweE5xWlFQa3NzUWg5R3lwNG51T29kOWZiOFE1cGRYSEFIbmdocXlUdnNP?=
+ =?utf-8?B?N2hDN1Zob2c2c2xSRHZvaDYybE5PRjR1clBoeDF1ZUdjTXZ1dFBkU1Q0UU9M?=
+ =?utf-8?B?ZGRxa3orVzJxVHVKZTRKbXNJY1NCcitaU2FTS0dyQnduR1lXcGpPdnRnb0xI?=
+ =?utf-8?B?cXl2b1lkeG9ZenBMa3dpcm0yUTdMWmZYZDIveUFGdkhzZk5wNmtVMHVkTDVt?=
+ =?utf-8?B?WksvVlVvc2daMFBTUkVXUmZ3VjR4aXUzSVhzSnBOQlJrWklvWS9TMm9mR3Ex?=
+ =?utf-8?B?NDZmL0Y4eVc1SEw2elFuSHJlVng2S3dPeDFYOU9jVlZoYnZ6eVh5c2FFRWZk?=
+ =?utf-8?B?Qk4waWFxNUh5WExERVlkM2tlV0NORXVrL1dielVOSWNTMWtlQitYaWU1UEhU?=
+ =?utf-8?B?MHpmdXNoamYwVi82RStPdmx1QmlhdDh5YVUwQnhCakpQc3RUT2x6S3lOZzlv?=
+ =?utf-8?B?K0pVb0s2ZjJPM1FQdkN6REozTGF2dkdzeXRIeXFjUFN4SXA3MEhINXlqTjZO?=
+ =?utf-8?B?MDc4TDh2cHhnenBMZlpWaDdVMGNXRlN6MGlSQ0p0bXRMVFA0T2lCaWNId1dq?=
+ =?utf-8?B?WGhuTE14ODJBcVJmQWw1SURYVmJ1OHcrMFgrVnhpVzA2TjJtcW1UdmpHbGpa?=
+ =?utf-8?B?OWU3dXRTbm5VTC9RYlNwT1VHUlZLTDQ5YUE0NFNIL05oeUlwdGJTWVFpRENh?=
+ =?utf-8?B?cTFMOXFtdmU1dDFHQ3c4QkNZUkNLbkdwSklwSSs0Vk5rd2VHV2M5dklaYVp6?=
+ =?utf-8?B?VGhjZDBkT0VwcHdRWXJDOVdYRVRRcTVZa2loYnhyYSsrM2VEb1pGRlQvNWRW?=
+ =?utf-8?B?OCtVWEhVT1VBSjlrS21tQXljOFJ1bjQyYitnbmREQno5M0p2WEphUEZYa05h?=
+ =?utf-8?B?bVdEWkdCNHdLaGxodHJnK1dkM0tjSHR3Tkk3T3FxZFJMT2VVZUo0bHlyTEVW?=
+ =?utf-8?B?dEN0MUEybXNPVmZ5MnduUndiMDNIVUpvdFRScndTY1U0ZXJqOWVlYjU2U2lN?=
+ =?utf-8?B?Q0dTNmhIbjc1UFUzTVdkZ1RMTERRVzN4UFBSbHdRK0IrUnBhWTJBUVVoM1JK?=
+ =?utf-8?B?NWNYK2xydno2NUJNRzRULzY4S2pHblBFazlENUxZakRwaUVIUlBBQ2E0NVBD?=
+ =?utf-8?B?aFZIODZOeTFSNFZEdTM1aFRXa3BHUVhkb3dCZDF1VTd6T0paQTRXZUdXQlJK?=
+ =?utf-8?B?cVBPM1h4bDZkNDRSZ25GanBPdFZ0Vy84R2R6T1VENzFYZ3VmR0RNT1J6N1FN?=
+ =?utf-8?B?Y1p1RVVQcHhuZjl4UnFmeFowSFZmNGxrNDllcGRvV0o4NTA2NWRYREF6R2px?=
+ =?utf-8?B?SFRjODFvdUliY3dmd3B2NjBPbkc3UWZmVnE1eWVKeUxKcHhtTUEzU0tRTFVP?=
+ =?utf-8?B?OVR3U25pNzFVTFpEdTkyejFRSFZQR1JKZkg3N1VXSnRlZlZ3Rm5KdDdaN1Rv?=
+ =?utf-8?B?TnBqOFJBNjR3bHpLU2lkUnArZzdaNDYxVXlyY1ZNUjZCRFZ4YU1FN1ZGTXlS?=
+ =?utf-8?B?b1VYN1pNQkdkdlV6Z0JzcjhLUzI3c1BDcUkyS05mYWJOdzlrc00xVDdCZDZh?=
+ =?utf-8?B?d3luazFkTHNoMTBYUjBQUHZkbmJkYnBkRUFXV1JobzJKSjlucE1FYSs0ejl5?=
+ =?utf-8?B?RExBbjVVVmxVR2xBZEdRL2EwdmNFVS9LdGJWSkNLUS9aZEo5RDVsVkpYYXVF?=
+ =?utf-8?B?azk2L3RkTnB2UDMyM2ZvSVV1SVN1bWhaSVU5Y0lBUG9iQ1A5dGFWbkRrMmdm?=
+ =?utf-8?Q?YbFrU4Rm+S8=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VktJbnVJMWxFaFRCRkZYWU90NHJsbUp3d0psbVRaTGgyY2RiNm1mTmExODh4?=
+ =?utf-8?B?R3E5aUJPWExBSlp4cDlLRTJOejlNOUxJa1RLdEVpblNRWFZKZVNLRVNJSTdx?=
+ =?utf-8?B?ZWQ1QUZQbXgrQlF0RUNGMTdaM1Q3WURmSmF3ZG1mTGRkN3V0ckF5K0YyTnUw?=
+ =?utf-8?B?TklBYzB5MHROcWNpYTdzQ3p6Nm9jY0x0aElKT3lPTjU5SmpmWnJNbXRQOHlm?=
+ =?utf-8?B?SkRkbkgwNGsvYkx6RU1wMytlZW1hTER3NlhKTVdQMkw1akc3QmNvOUN4czRG?=
+ =?utf-8?B?bHBkNGpJOWsyaGhNajdrQzZ1WlZuL0g5cnU5T2lscXMxb2NUcXQ0L0ZzSjZi?=
+ =?utf-8?B?dHpPN0gvU3Vadzh4TDM2T1lkWjZudUdxZjBQSE9nWHlYeTlzbDhnWFNLS3ZB?=
+ =?utf-8?B?NWlFRE5nOXJiZk0zUUJmUHErUDM1ODNWVVRURFJzNTJTZEtZUTQ1c2ZGUUx2?=
+ =?utf-8?B?eW95ZGN0dVhDYjNrR1VvZzBpbEZXcDhqY1gzNm4rYlllOVA3ZU5CSzZyN1lr?=
+ =?utf-8?B?eWlKR091NWVQcFFBdlRGM3BRK1VSa0laN3RDS0tLTmJRbGFwdDBWaG9iU1VS?=
+ =?utf-8?B?UlIwSkdLQkZ1OERXck0rRlFjKy9ucGJsa2VFNkd4WVg0b2dybU9IZHZmcGM3?=
+ =?utf-8?B?RUpSTzVFa1JrTVFJNE9haEFYNDlPN2R2M25sT2FueVJaeEYxNFlnK1VrSlZp?=
+ =?utf-8?B?YlY4WEc3bGswaVo2UFNra1hHYkhyWnhZNGRCMU9YeWxWVXpYeGxJcjhJZmJ1?=
+ =?utf-8?B?TDNpRDNjQXRyNDVJLzJzY1dMRGw1N1h0TFA5K25KVXc3alROVkhxd0UyZUQ3?=
+ =?utf-8?B?dE81dk93SlMwVlFxWXpFK3NDN0FlYnp2aXp0Um9xRGNsUUxxSGxOZnduK0Yr?=
+ =?utf-8?B?NDR4YnBtdmVJM3FrSHBWUXFTRCtZQTdwZXE3UDYxV2dvTzFpeEhLUGV2NEg5?=
+ =?utf-8?B?K3FjWTdwbENtN0orYnBTQm80Z2duOE9VRDhRSGVXb3dUQmNRTzY5R0U3ZzlW?=
+ =?utf-8?B?T3JvYStmRlNDakhPRS9MNG5sa1pYa1hqT05KdzUvVTUrQk5HOUZkbU5iOU9C?=
+ =?utf-8?B?NVZiZkJjanMwTmJwZVdja3dRRW5qWlVOTnR1U0w3amFLQTh0d3ZXOW1TZEgx?=
+ =?utf-8?B?Q29GRjcwU3l1RGFnZW01YnE2eE5SK3ZiM0xWVXZma3FmS2owanRFQWpwN0I4?=
+ =?utf-8?B?ek9xN0Q0aG9lelhXQmlPQk1POVZJUFg0dDJuQlphNGRtTjM2WVcvZ1YzQlBa?=
+ =?utf-8?B?YjArNFBYRTJNRlZCOXg1MFNqRUdXdXJlNWg5ejVEaUQ3Y0RYVGFsRjZDdzlp?=
+ =?utf-8?B?dFB5aXIwZzNFOHU4aU1YcXhkSW8zWnc0U3BkQ3FEWDVyQjhzeWJoZmVJMExO?=
+ =?utf-8?B?a2pWWkxYZTZ5RGxxNHd4WmNtWWtYWmFpeS9NdzJmRCs1QUdYRnJIVXQ3U1c2?=
+ =?utf-8?B?ZG15dXhCRjFtVHN1QVRSYnBHemZJakhaS01ucUZUWnM3ZFJCdVg3K2RqSWR4?=
+ =?utf-8?B?SldpT090c2ttUC8zbmF1T3QxeXhrWW1NdnIrZlhpaU1zY1E2dUpxMVBPV3Rs?=
+ =?utf-8?B?YnpKYzRVeW1OdlVNdmNvUFErb2xYZTVIVXNFb1VMN2xNS09VMDBjNFNzOHU2?=
+ =?utf-8?B?RlJMZmdoWmxYcXk0bXBXOGhFbnJhbzFyd21DcEpXaGpBOTRHd29waHUzVjd1?=
+ =?utf-8?B?ZkZwZWlsZWplWHZ3TVRaR2ZSRHo0WmRNTmtZVHdMQ2QveEJkV0hmSWw5SVFt?=
+ =?utf-8?B?bVE1MDFXTjd2RjBlaENnZVR0NmN2aSthUUJBaUhhSmNDdUhucjJ6RU45bm9Q?=
+ =?utf-8?B?cG8raTNEQU1vNExSQjJOOXE5TVhqTUlZNDNwQmJhWHhxRms3L2VjaCtybFU0?=
+ =?utf-8?B?MnkrNVJ0NmZGbWE4V091SWJPS0R5cUUrb2RmZlBYYTZ0dkZSUkxhbGpCYjZq?=
+ =?utf-8?B?RldIZisxQnNzMklQMnJpc1YwcllUSXhVSk85Q3I0Y0pObGFwaGsxVUs2MmhS?=
+ =?utf-8?B?MTlEanFldUt2ZTYyN1ZYTUxER1gxMDJJZVdUc09mOGhYckJRQkNKWWw0RnRS?=
+ =?utf-8?B?dG44d2ZzbmZCSE9kWlV0YjF3SmRFNFpEVkFzeDRhcG16Ukt5QXBuSDY2ZDMv?=
+ =?utf-8?B?YXVsMnR4aFNjQ3QwRFpYQ1Q1WDVBc00wcHFTSEFBWXVNY1Z2MTZGcExGVWI1?=
+ =?utf-8?B?OXc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0a37f54e-6c1c-43a2-bb8d-08dd8ef9d43b
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR18MB4086.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 769c01d0-6809-452b-a649-08dd8ec99110
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2025 07:17:32.9372 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: CF0n2FS5WwDP7N5Cp5sX/UtEowQbQCx0kiSpbOQtOoyeJE1NLYv+WuAc5rtaloaNisPrZmNc5vgd3r2B7nfLvy7i8tvmXpdb+AgwzvxdbDA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR18MB4365
-X-Authority-Analysis: v=2.4 cv=ZdsdNtVA c=1 sm=1 tr=0 ts=681dac0f cx=c_pps
- a=+tN8zt48bv3aY6W8EltW8A==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=dt9VzEwgFbYA:10 a=-AAbraWEqlQA:10 a=M5GUcnROAAAA:8 a=20KFwNOVAAAA:8
- a=8rWy6zfcAAAA:8 a=pGLkceISAAAA:8 a=m9Pp8p0MLiyia-yipyoA:9 a=CjuIK1q_8ugA:10
- a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA5MDA2OSBTYWx0ZWRfX7iG2DX20MT6g
- DQiEM1QdphKgXfJpQhSk+j2EC5AWpRWXWfms+I5g1/4TGBLaefl2aABOV1at094HEyeGH+3gslX
- q34fQANAcNGCA0ZNhpEevvgGsHP6v71gm3xNn+OwuvqJzo+ceMw9liy6a4bcpM4GLanG26mlPlT
- TVljwdsYcX4DiNYUX1ELd4/1WMDZTY0oJFCpJO+7fsL6gVBPNv2yJXLRR3NdIFbxz5GtbTGiZDB
- NM7fxa5o5kcHRD2PS2mgnQzZthsPA5ebpj7jg+TfYcimm60ThDqbsDBj6NrF22bqTGyO39ytjoc
- noiSW4/tp6Oox/x+EylLYhKj4YSTrG2YwydYmMxfnOUUNa/W/X3z7ywC255+ESd1EkjdGLWl34z
- BQ+9dDQFJNg9Bs6Lg9aNCMsVBouJdJ98tpsn6ZLY3RztLRk+4E1Go0E8kpCbUT7pbPYmk9+c
-X-Proofpoint-GUID: wXms6JXhJ30ql5i4Q328ELxi6i4sSFeu
-X-Proofpoint-ORIG-GUID: wXms6JXhJ30ql5i4Q328ELxi6i4sSFeu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-09_02,2025-05-08_04,2025-02-21_01
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2025 13:03:01.7754 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3kO33l8G+0mddY0lU1Ghz0m8ndo/kHLdFztt6dEBI0jUOEO7R3CmSct+geaKwTxIi92nM4aQevMEVKBxINlExaggUBDiqO5C6XPSNe2ZfCY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR11MB8608
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -170,286 +188,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-
-
-> -----Original Message-----
-> From: Nitin Saxena <nsaxena@marvell.com>
-> Sent: Monday, April 28, 2025 4:07 PM
-> To: Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>; Pavan Nikhilesh
-> Bhagavatula <pbhagavatula@marvell.com>; Robin Jarry
-> <rjarry@redhat.com>; Christophe Fontaine <cfontain@redhat.com>
-> Cc: dev@dpdk.org; Jerin Jacob <jerinj@marvell.com>; Nitin Saxena
-> <nsaxena16@gmail.com>
-> Subject: [PATCH v6 2/2] node: use node mbuf dynfield in ip4 nodes
->=20
-> - Used global node mbuf in ip[4|6]_lookup/rewrite nodes
-> - Redefine node_mbuf_priv1() to rte_node_mbuf_overload_fields_get()
->=20
-> Signed-off-by: Nitin Saxena <nsaxena@marvell.com>
-
-Acked-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
-
+On 5/8/2025 3:16 PM, Anatoly Burakov wrote:
+> Remove custom number parser and use C standard library instead. In order to
+> keep compatibility with earlier versions of the parser, we have to take
+> into account a couple of quirks:
+> 
+> - We did not consider "negative" numbers to be valid for anything other
+>    than base-10 numbers, whereas C standard library does. Adjust the tests
+>    to match the new behavior.
+> - We did not consider numbers such as "+4" to be valid, whereas C
+>    standard library does. Adjust the tests to match the new behavior.
+> - C standard library's strtoull does not do range checks on negative
+>    numbers, so we have to parse knowingly-negative numbers as signed.
+> - C standard library does not support binary numbers, so we keep around the
+>    relevant parts of the custom parser in place to support binary numbers.
+> 
+> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 > ---
->  lib/node/ip4_lookup.c             | 14 ++++-------
->  lib/node/ip4_rewrite.c            | 15 +++++-------
->  lib/node/ip6_lookup.c             | 15 +++++-------
->  lib/node/ip6_rewrite.c            | 14 ++++-------
->  lib/node/node_private.h           | 40 +++----------------------------
->  lib/node/rte_node_mbuf_dynfield.h |  9 +++++++
->  6 files changed, 34 insertions(+), 73 deletions(-)
->=20
-> diff --git a/lib/node/ip4_lookup.c b/lib/node/ip4_lookup.c
-> index 604fcb267a..f6db3219f0 100644
-> --- a/lib/node/ip4_lookup.c
-> +++ b/lib/node/ip4_lookup.c
-> @@ -32,8 +32,6 @@ struct ip4_lookup_node_ctx {
->  	int mbuf_priv1_off;
->  };
->=20
-> -int node_mbuf_priv1_dynfield_offset =3D -1;
-> -
->  static struct ip4_lookup_node_main ip4_lookup_nm;
->=20
->  #define IP4_LOOKUP_NODE_LPM(ctx) \
-> @@ -182,17 +180,15 @@ ip4_lookup_node_init(const struct rte_graph
-> *graph, struct rte_node *node)
->  {
->  	uint16_t socket, lcore_id;
->  	static uint8_t init_once;
-> -	int rc;
-> +	int rc, dyn;
->=20
->  	RTE_SET_USED(graph);
->  	RTE_BUILD_BUG_ON(sizeof(struct ip4_lookup_node_ctx) >
-> RTE_NODE_CTX_SZ);
->=20
-> +	dyn =3D rte_node_mbuf_dynfield_register();
-> +	if (dyn < 0)
-> +		return -rte_errno;
->  	if (!init_once) {
-> -		node_mbuf_priv1_dynfield_offset =3D
-> rte_mbuf_dynfield_register(
-> -				&node_mbuf_priv1_dynfield_desc);
-> -		if (node_mbuf_priv1_dynfield_offset < 0)
-> -			return -rte_errno;
-> -
->  		/* Setup LPM tables for all sockets */
->  		RTE_LCORE_FOREACH(lcore_id)
->  		{
-> @@ -210,7 +206,7 @@ ip4_lookup_node_init(const struct rte_graph *graph,
-> struct rte_node *node)
->=20
->  	/* Update socket's LPM and mbuf dyn priv1 offset in node ctx */
->  	IP4_LOOKUP_NODE_LPM(node->ctx) =3D
-> ip4_lookup_nm.lpm_tbl[graph->socket];
-> -	IP4_LOOKUP_NODE_PRIV1_OFF(node->ctx) =3D
-> node_mbuf_priv1_dynfield_offset;
-> +	IP4_LOOKUP_NODE_PRIV1_OFF(node->ctx) =3D dyn;
->=20
->  #if defined(__ARM_NEON) || defined(RTE_ARCH_X86)
->  	if (rte_vect_get_max_simd_bitwidth() >=3D RTE_VECT_SIMD_128)
-> diff --git a/lib/node/ip4_rewrite.c b/lib/node/ip4_rewrite.c
-> index a9ab5eaa57..dfa4382350 100644
-> --- a/lib/node/ip4_rewrite.c
-> +++ b/lib/node/ip4_rewrite.c
-> @@ -259,19 +259,16 @@ ip4_rewrite_node_process(struct rte_graph
-> *graph, struct rte_node *node,
->  static int
->  ip4_rewrite_node_init(const struct rte_graph *graph, struct rte_node *no=
-de)
->  {
-> -	static bool init_once;
-> +	int dyn;
->=20
->  	RTE_SET_USED(graph);
->  	RTE_BUILD_BUG_ON(sizeof(struct ip4_rewrite_node_ctx) >
-> RTE_NODE_CTX_SZ);
->=20
-> -	if (!init_once) {
-> -		node_mbuf_priv1_dynfield_offset =3D
-> rte_mbuf_dynfield_register(
-> -				&node_mbuf_priv1_dynfield_desc);
-> -		if (node_mbuf_priv1_dynfield_offset < 0)
-> -			return -rte_errno;
-> -		init_once =3D true;
-> -	}
-> -	IP4_REWRITE_NODE_PRIV1_OFF(node->ctx) =3D
-> node_mbuf_priv1_dynfield_offset;
-> +	dyn =3D rte_node_mbuf_dynfield_register();
-> +	if (dyn < 0)
-> +		return -rte_errno;
-> +
-> +	IP4_REWRITE_NODE_PRIV1_OFF(node->ctx) =3D dyn;
->=20
->  	node_dbg("ip4_rewrite", "Initialized ip4_rewrite node initialized");
->=20
-> diff --git a/lib/node/ip6_lookup.c b/lib/node/ip6_lookup.c
-> index 827fc2f379..83c0500c76 100644
-> --- a/lib/node/ip6_lookup.c
-> +++ b/lib/node/ip6_lookup.c
-> @@ -318,18 +318,16 @@ ip6_lookup_node_init(const struct rte_graph
-> *graph, struct rte_node *node)
->  {
->  	uint16_t socket, lcore_id;
->  	static uint8_t init_once;
-> -	int rc;
-> +	int rc, dyn;
->=20
->  	RTE_SET_USED(graph);
->  	RTE_BUILD_BUG_ON(sizeof(struct ip6_lookup_node_ctx) >
-> RTE_NODE_CTX_SZ);
->=20
-> -	if (!init_once) {
-> -		node_mbuf_priv1_dynfield_offset =3D
-> -			rte_mbuf_dynfield_register(
-> -				&node_mbuf_priv1_dynfield_desc);
-> -		if (node_mbuf_priv1_dynfield_offset < 0)
-> -			return -rte_errno;
-> +	dyn =3D rte_node_mbuf_dynfield_register();
-> +	if (dyn < 0)
-> +		return -rte_errno;
->=20
-> +	if (!init_once) {
->  		/* Setup LPM tables for all sockets */
->  		RTE_LCORE_FOREACH(lcore_id)
->  		{
-> @@ -347,8 +345,7 @@ ip6_lookup_node_init(const struct rte_graph *graph,
-> struct rte_node *node)
->=20
->  	/* Update socket's LPM and mbuf dyn priv1 offset in node ctx */
->  	IP6_LOOKUP_NODE_LPM(node->ctx) =3D
-> ip6_lookup_nm.lpm_tbl[graph->socket];
-> -	IP6_LOOKUP_NODE_PRIV1_OFF(node->ctx) =3D
-> -					node_mbuf_priv1_dynfield_offset;
-> +	IP6_LOOKUP_NODE_PRIV1_OFF(node->ctx) =3D dyn;
->=20
->  	node_dbg("ip6_lookup", "Initialized ip6_lookup node");
->=20
-> diff --git a/lib/node/ip6_rewrite.c b/lib/node/ip6_rewrite.c
-> index e157964c6a..d5488e7fa3 100644
-> --- a/lib/node/ip6_rewrite.c
-> +++ b/lib/node/ip6_rewrite.c
-> @@ -243,19 +243,15 @@ ip6_rewrite_node_process(struct rte_graph
-> *graph, struct rte_node *node,
->  static int
->  ip6_rewrite_node_init(const struct rte_graph *graph, struct rte_node *no=
-de)
->  {
-> -	static bool init_once;
-> +	int dyn;
->=20
->  	RTE_SET_USED(graph);
->  	RTE_BUILD_BUG_ON(sizeof(struct ip6_rewrite_node_ctx) >
-> RTE_NODE_CTX_SZ);
->=20
-> -	if (!init_once) {
-> -		node_mbuf_priv1_dynfield_offset =3D
-> rte_mbuf_dynfield_register(
-> -				&node_mbuf_priv1_dynfield_desc);
-> -		if (node_mbuf_priv1_dynfield_offset < 0)
-> -			return -rte_errno;
-> -		init_once =3D true;
-> -	}
-> -	IP6_REWRITE_NODE_PRIV1_OFF(node->ctx) =3D
-> node_mbuf_priv1_dynfield_offset;
-> +	dyn =3D rte_node_mbuf_dynfield_register();
-> +	if (dyn < 0)
-> +		return -rte_errno;
-> +	IP6_REWRITE_NODE_PRIV1_OFF(node->ctx) =3D dyn;
->=20
->  	node_dbg("ip6_rewrite", "Initialized ip6_rewrite node");
->=20
-> diff --git a/lib/node/node_private.h b/lib/node/node_private.h
-> index 4fafab19be..7fb2aff0b8 100644
-> --- a/lib/node/node_private.h
-> +++ b/lib/node/node_private.h
-> @@ -13,6 +13,7 @@
->  #include <rte_mbuf_dyn.h>
->=20
->  #include <rte_graph_worker_common.h>
-> +#include <rte_node_mbuf_dynfield.h>
->=20
->  extern int rte_node_logtype;
->  #define RTE_LOGTYPE_NODE rte_node_logtype
-> @@ -26,28 +27,8 @@ extern int rte_node_logtype;
->  #define node_info(node_name, ...) NODE_LOG(INFO, node_name,
-> __VA_ARGS__)
->  #define node_dbg(node_name, ...) NODE_LOG(DEBUG, node_name,
-> __VA_ARGS__)
->=20
-> -/**
-> - * Node mbuf private data to store next hop, ttl and checksum.
-> - */
-> -struct node_mbuf_priv1 {
-> -	union {
-> -		/* IP4/IP6 rewrite */
-> -		struct {
-> -			uint16_t nh;
-> -			uint16_t ttl;
-> -			uint32_t cksum;
-> -		};
-> -
-> -		uint64_t u;
-> -	};
-> -};
-> -
-> -static const struct rte_mbuf_dynfield node_mbuf_priv1_dynfield_desc =3D =
-{
-> -	.name =3D "rte_node_dynfield_priv1",
-> -	.size =3D sizeof(struct node_mbuf_priv1),
-> -	.align =3D alignof(struct node_mbuf_priv1),
-> -};
-> -extern int node_mbuf_priv1_dynfield_offset;
-> +/* define internal function used by nodes */
-> +#define node_mbuf_priv1 rte_node_mbuf_overload_fields_get
->=20
->  /**
->   * Node mbuf private area 2.
-> @@ -60,21 +41,6 @@ struct __rte_cache_aligned node_mbuf_priv2 {
->=20
->  #define OBJS_PER_CLINE (RTE_CACHE_LINE_SIZE / sizeof(void *))
->=20
-> -/**
-> - * Get mbuf_priv1 pointer from rte_mbuf.
-> - *
-> - * @param
-> - *   Pointer to the rte_mbuf.
-> - *
-> - * @return
-> - *   Pointer to the mbuf_priv1.
-> - */
-> -static __rte_always_inline struct node_mbuf_priv1 *
-> -node_mbuf_priv1(struct rte_mbuf *m, const int offset)
-> -{
-> -	return RTE_MBUF_DYNFIELD(m, offset, struct node_mbuf_priv1 *);
-> -}
-> -
->  /**
->   * Get mbuf_priv2 pointer from rte_mbuf.
->   *
-> diff --git a/lib/node/rte_node_mbuf_dynfield.h
-> b/lib/node/rte_node_mbuf_dynfield.h
-> index 4db5382f91..0b22fbf718 100644
-> --- a/lib/node/rte_node_mbuf_dynfield.h
-> +++ b/lib/node/rte_node_mbuf_dynfield.h
-> @@ -40,6 +40,15 @@ extern "C" {
->   */
->  typedef struct rte_node_mbuf_overload_fields {
->  	union {
-> +		/* Following fields used by ip[4|6]-lookup -> ip[4|6]-rewrite
-> nodes */
-> +		union {
-> +			struct {
-> +				uint16_t nh;
-> +				uint16_t ttl;
-> +				uint32_t cksum;
-> +			};
-> +			uint64_t u;
-> +		};
->  		uint8_t
-> data[RTE_NODE_MBUF_OVERLOADABLE_FIELDS_SIZE];
->  	};
->  } rte_node_mbuf_overload_fields_t;
-> --
-> 2.43.0
+> 
+> Notes:
+>      v7 -> v8:
+>      - Added the commented-out out-of-bounds check back
+>      - Replaced debug print messages to ensure they don't attempt to
+>        index the num_help[] array (should fix compile errors)
+>      
+>      v5 -> v6:
+>      - Allowed more negative numbers (such as negative octals or hex)
+>      - Updated unit tests to check new cases
+>      - Small refactoring of code to reduce amount of noise
+>      - More verbose debug output
+>      
+>      v4 -> v5:
+>      - Added this commit
 
+There is a unit test failure coming specifically from this commit, that 
+only happens on ARM. Log:
+
+Error: parsing -0b0111010101 as INT16 succeeded!
+
+That is, when confronted with a negative binary string, it seems that 
+strtoll will report success, whereas other platforms report failure. I'm 
+confused, is libc strtoll different on ARM? I don't have an ARM platform 
+available to test this so I don't know why this is happening.
+
+-- 
+Thanks,
+Anatoly
