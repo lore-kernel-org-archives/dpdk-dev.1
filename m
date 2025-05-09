@@ -2,47 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA19C3ABBC
-	for <dpdk-dev@archiver.kernel.org>; Fri,  9 May 2025 13:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8366BC3ABBC
+	for <dpdk-dev@archiver.kernel.org>; Fri,  9 May 2025 13:39:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D2A2D4025D;
-	Fri,  9 May 2025 15:39:33 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C1A4A402F1;
+	Fri,  9 May 2025 15:39:34 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
- by mails.dpdk.org (Postfix) with ESMTP id EF4894025A
- for <dev@dpdk.org>; Fri,  9 May 2025 15:39:31 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 14F6E4025A
+ for <dev@dpdk.org>; Fri,  9 May 2025 15:39:32 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1746797972; x=1778333972;
+ t=1746797973; x=1778333973;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=eV0VK3eDBUIal9ZqVf+/DuYeniEqhJi6eagOFGXwmRg=;
- b=jnMDOPAywt1A6H1bL+OpXsvFFElrLAYZz6RUb/Pr/vp/zlTTAZ86i4w9
- IiqbdnTT0jQSBO5e3FiP50j+VzsmkiCAgOKYvQkxnW+as/azYVjn+js7E
- BC5jmIb4Lb4QJ/tpPLPgpGkLfAo8zCERIWUjrl7LQcgfY/eDgOp9t+noF
- A1XklX8FAOn6T7rsKDlOyK/fp87pQd97VGA4X8JkYGXHCcrjeFnP7Z1UZ
- 8qXaHnP6MDf0v+HLnKai7FfOF/EfmTfWcFqQ2sI10gPGAUWERIDABVN/d
- /5cnGtLu8s1Q5ntVpxx2HpUi9Ch9VyWqGSQzS8omCxePJf+BDNPtdP5re A==;
-X-CSE-ConnectionGUID: nhSKjPzdQA+aoiMkZAV49A==
-X-CSE-MsgGUID: xKWEfhjwSWapi/iijKjf/Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="74007847"
-X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; d="scan'208";a="74007847"
+ bh=RPLMif6g+WI72SzpsI8tSTt4UhMKv2oW16YimHzuMn8=;
+ b=GxywbG5p7ofgsp4yZ66dmV29M0BlUyQXKNkjxBr4kn1m4Rq//M/083e3
+ duw/0sn2KuHMhwtbq6NsjdF1NPWXbw8tlSKX7D6LQ4sj+xWeg78vHBwPg
+ i6ij6k3B1wI+Vx0Vj00GRJluPs+EA9wmgEv6546wximm71IPfNnVDNbUg
+ GqafRU/HX9shC/9eUP5sfPhyu3epPhHRuH4Eq4/dV1ndvp61quBcsavuX
+ cWGRYi0aqnoZ9o3YD3SXYzXyKZrBLyVzthIxbrPTxJaAxnG1g7HhVa5Qm
+ SpjPW+Hpu6AxhyUOcpRPsH42oU73YqmvDINa4m3ehWKZ/qaeycNX1a13V A==;
+X-CSE-ConnectionGUID: hDI0/MRkRlulkM3WR402WA==
+X-CSE-MsgGUID: fN7uaEULSUqIX6OWsRANCA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="74007853"
+X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; d="scan'208";a="74007853"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 May 2025 06:39:31 -0700
-X-CSE-ConnectionGUID: s5r0bLlET5egjrtuK9tOrA==
-X-CSE-MsgGUID: gidgADYsSpKac+Z8armGNA==
+ 09 May 2025 06:39:33 -0700
+X-CSE-ConnectionGUID: Q+V6XpRzT36TEKrhCF26Uw==
+X-CSE-MsgGUID: n0afEkAfQOKq+vrQpOmWlA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; d="scan'208";a="140677212"
+X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; d="scan'208";a="140677218"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa003.fm.intel.com with ESMTP; 09 May 2025 06:39:30 -0700
+ by fmviesa003.fm.intel.com with ESMTP; 09 May 2025 06:39:31 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
-Subject: [PATCH v9 1/3] cmdline: use C standard library as number parser
-Date: Fri,  9 May 2025 14:39:25 +0100
-Message-ID: <9ea91fbec73396343179143e9c3b058148f05c5b.1746797960.git.anatoly.burakov@intel.com>
+Subject: [PATCH v9 2/3] cmdline: add floating point support
+Date: Fri,  9 May 2025 14:39:26 +0100
+Message-ID: <74cda2e475dc40f359fe8943b281b984586720f3.1746797960.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.1
-In-Reply-To: <7ac1444b7d2d64dc467a22e7ac65cf3cc16246dc.1746188833.git.anatoly.burakov@intel.com>
-References: <7ac1444b7d2d64dc467a22e7ac65cf3cc16246dc.1746188833.git.anatoly.burakov@intel.com>
+In-Reply-To: <9ea91fbec73396343179143e9c3b058148f05c5b.1746797960.git.anatoly.burakov@intel.com>
+References: 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -58,598 +58,647 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove custom number parser and use C standard library instead. In order to
-keep compatibility with earlier versions of the parser, we have to take
-into account a couple of quirks:
-
-- We did not consider "negative" numbers to be valid for anything other
-  than base-10 numbers, whereas C standard library does. Adjust the tests
-  to match the new behavior.
-- We did not consider numbers such as "+4" to be valid, whereas C
-  standard library does. Adjust the tests to match the new behavior.
-- C standard library's strtoull does not do range checks on negative
-  numbers, so we have to parse knowingly-negative numbers as signed.
-- C standard library does not support binary numbers, so we keep around the
-  relevant parts of the custom parser in place to support binary numbers.
+Add support for parsing floating point numbers in cmdline library, as well
+as unit tests for the new functionality. Use C library for parsing.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
 
 Notes:
-    v8 -> v9:
-    - glibc 2.38 supports binary formats (0bxxxx and -0bxxxx) under certain conditions,
-      so in order to ensure the same functionality on all glic versions, add support for
-      positive and negative binary formats, and adjust tests accordingly
-    
     v7 -> v8:
-    - Added the commented-out out-of-bounds check back
-    - Replaced debug print messages to ensure they don't attempt to
-      index the num_help[] array (should fix compile errors)
+    - Fixed leftover comment about needing bigger epsilon value
+    - Fixed debug prints to avoid indexing num_help[] array
+    
+    v6 -> v7:
+    - Fixed a bug in float compare in unit tests where a bigger epsilon
+      value than necessary was "needed" because we were comparing float
+      result to a double result
     
     v5 -> v6:
-    - Allowed more negative numbers (such as negative octals or hex)
-    - Updated unit tests to check new cases
-    - Small refactoring of code to reduce amount of noise
-    - More verbose debug output
+    - Small refactor to reduce amount of noise
+    - Use strtof for parsing single precision floats
+    - More unit tests
     
     v4 -> v5:
-    - Added this commit
+    - Reworked to use standard C library functions as much as possible,
+      keeping near-100% compatibility with earlier versions (the only
+      difference is that strings like "+4" are now considered valid)
+    
+    v3 -> v4:
+    - Removed unnecessary check for integer overflow when parsing negative
+      floats (as we convert to double before changing sign)
+    - Make naming of float exponent states more consistent
+    
+    v2 -> v3:
+    - Fixed a bug where a free-standing negative exponent ("1e-") would attempt to be
+      parsed, and added unit tests for this case
+    - Added support for floats in dpdk-cmdline-gen script
+    - Added documentation updates to call out float support
 
- app/test/test_cmdline_num.c     |  34 ++-
- lib/cmdline/cmdline_parse_num.c | 382 ++++++++++++++++----------------
- 2 files changed, 225 insertions(+), 191 deletions(-)
+ app/test/test_cmdline_num.c            | 283 ++++++++++++++++++++++++-
+ buildtools/dpdk-cmdline-gen.py         |  24 ++-
+ doc/guides/prog_guide/cmdline.rst      |   3 +
+ doc/guides/rel_notes/release_25_07.rst |   5 +
+ lib/cmdline/cmdline_parse_num.c        |  66 +++++-
+ lib/cmdline/cmdline_parse_num.h        |   4 +-
+ 6 files changed, 366 insertions(+), 19 deletions(-)
 
 diff --git a/app/test/test_cmdline_num.c b/app/test/test_cmdline_num.c
-index 9276de59bd..100c564188 100644
+index 100c564188..832ed3d110 100644
 --- a/app/test/test_cmdline_num.c
 +++ b/app/test/test_cmdline_num.c
-@@ -139,6 +139,9 @@ const struct num_signed_str num_valid_negative_strs[] = {
- 		{"-2147483648", INT32_MIN },
- 		{"-2147483649", INT32_MIN - 1LL },
- 		{"-9223372036854775808", INT64_MIN },
-+		{"-0x8000000000000000", INT64_MIN },
-+		{"-01000000000000000000000", INT64_MIN },
-+		{"-0b1000000000000000000000000000000000000000000000000000000000000000", INT64_MIN },
+@@ -5,6 +5,8 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <inttypes.h>
++#include <float.h>
++#include <math.h>
+ 
+ #include <rte_string_fns.h>
+ 
+@@ -23,6 +25,11 @@ struct num_signed_str {
+ 	int64_t result;
  };
  
++struct num_float_str {
++	const char * str;
++	double result;
++};
++
+ const struct num_unsigned_str num_valid_positive_strs[] = {
+ 		/* decimal positive */
+ 		{"0", 0 },
+@@ -144,6 +151,63 @@ const struct num_signed_str num_valid_negative_strs[] = {
+ 		{"-0b1000000000000000000000000000000000000000000000000000000000000000", INT64_MIN },
+ };
+ 
++const struct num_float_str float_valid_strs[] = {
++		/* zero */
++		{"0", 0},
++		/* parse int as float */
++		{"1", 1},
++		{"-1", -1},
++		/* fractional */
++		{"1.23", 1.23},
++		{"-1.23", -1.23},
++		{"0.123", 0.123},
++		{"-0.123", -0.123},
++		{"123.456", 123.456},
++		{"-123.456", -123.456},
++		/* positive exponent */
++		{"1e2", 1e2},
++		{"-1e2", -1e2},
++		{"1E2", 1E2},
++		{"-1E2", -1E2},
++		{"0.12e3", 0.12e3},
++		{"-0.12e3", -0.12e3},
++		{"1.23e4", 1.23e4},
++		{"-1.23e4", -1.23e4},
++		{"1.23E4", 1.23E4},
++		{"-1.23E4", -1.23E4},
++		{"123.456e7", 123.456e7},
++		{"-123.456e7", -123.456e7},
++		{"123.456E7", 123.456E7},
++		{"-123.456E7", -123.456E7},
++		/* negative exponent */
++		{"1e-2", 1e-2},
++		{"-1e-2", -1e-2},
++		{"1E-2", 1E-2},
++		{"-1E-2", -1E-2},
++		{"0.12e-3", 0.12e-3},
++		{"-0.12e-3", -0.12e-3},
++		{"1.23e-4", 1.23e-4},
++		{"-1.23e-4", -1.23e-4},
++		{"1.23E-4", 1.23E-4},
++		{"-1.23E-4", -1.23E-4},
++		{"123.456e-7", 123.456e-7},
++		{"-123.456e-7", -123.456e-7},
++		{"123.456E-7", 123.456E-7},
++		{"-123.456E-7", -123.456E-7},
++		/* try overflowing float */
++		{"2e63", 2e63},
++		{"-2e63", -2e63},
++		{"2E63", 2E63},
++		{"-2E63", -2E63},
++		{"18446744073709551615", (double) UINT64_MAX},
++		{"-9223372036854775808", (double) INT64_MIN},
++		/* try overflowing double */
++		{"2e308", HUGE_VAL},
++		{"-2e308", -HUGE_VAL},
++		{"2E308", HUGE_VAL},
++		{"-2E308", HUGE_VAL},
++};
++
  const struct num_unsigned_str num_garbage_positive_strs[] = {
-@@ -175,12 +178,40 @@ const struct num_unsigned_str num_garbage_positive_strs[] = {
- 
- const struct num_signed_str num_garbage_negative_strs[] = {
  		/* valid strings with garbage on the end, should still be valid */
-+		/* negative numbers */
- 		{"-9223372036854775808\0garbage", INT64_MIN },
- 		{"-9223372036854775808\rgarbage", INT64_MIN },
- 		{"-9223372036854775808\tgarbage", INT64_MIN },
- 		{"-9223372036854775808\ngarbage", INT64_MIN },
- 		{"-9223372036854775808#garbage", INT64_MIN },
- 		{"-9223372036854775808 garbage", INT64_MIN },
-+		/* negative hex */
-+		{"-0x8000000000000000\0garbage", INT64_MIN },
-+		{"-0x8000000000000000\rgarbage", INT64_MIN },
-+		{"-0x8000000000000000\tgarbage", INT64_MIN },
-+		{"-0x8000000000000000\ngarbage", INT64_MIN },
-+		{"-0x8000000000000000#garbage", INT64_MIN },
-+		{"-0x8000000000000000 garbage", INT64_MIN },
-+		/* negative binary */
-+		{"-0b1000000000000000000000000000000000000000000000000000000000000000\0garbage",
-+			INT64_MIN },
-+		{"-0b1000000000000000000000000000000000000000000000000000000000000000\rgarbage",
-+			INT64_MIN },
-+		{"-0b1000000000000000000000000000000000000000000000000000000000000000\tgarbage",
-+			INT64_MIN },
-+		{"-0b1000000000000000000000000000000000000000000000000000000000000000\ngarbage",
-+			INT64_MIN },
-+		{"-0b1000000000000000000000000000000000000000000000000000000000000000#garbage",
-+			INT64_MIN },
-+		{"-0b1000000000000000000000000000000000000000000000000000000000000000 garbage",
-+			INT64_MIN },
-+		/* negative octal */
-+		{"-01000000000000000000000\0garbage", INT64_MIN },
-+		{"-01000000000000000000000\rgarbage", INT64_MIN },
-+		{"-01000000000000000000000\tgarbage", INT64_MIN },
-+		{"-01000000000000000000000\ngarbage", INT64_MIN },
-+		{"-01000000000000000000000#garbage", INT64_MIN },
-+		{"-01000000000000000000000 garbage", INT64_MIN },
+ 		/* decimal */
+@@ -214,6 +278,71 @@ const struct num_signed_str num_garbage_negative_strs[] = {
+ 		{"-01000000000000000000000 garbage", INT64_MIN },
  };
  
++const struct num_float_str float_garbage_strs[] = {
++	/* valid strings with garbage on the end, should still be valid */
++	/* positive float positive exponent */
++	{"123.456e7\0garbage", 123.456e7},
++	{"123.456e7\rgarbage", 123.456e7},
++	{"123.456e7\tgarbage", 123.456e7},
++	{"123.456e7\ngarbage", 123.456e7},
++	{"123.456e7#garbage", 123.456e7},
++	{"123.456e7 garbage", 123.456e7},
++	/* negative float positive exponent */
++	{"-123.456e7\0garbage", -123.456e7},
++	{"-123.456e7\rgarbage", -123.456e7},
++	{"-123.456e7\tgarbage", -123.456e7},
++	{"-123.456e7\ngarbage", -123.456e7},
++	{"-123.456e7#garbage", -123.456e7},
++	{"-123.456e7 garbage", -123.456e7},
++	/* positive float negative exponent */
++	{"123.456e-7\0garbage", 123.456e-7},
++	{"123.456e-7\rgarbage", 123.456e-7},
++	{"123.456e-7\tgarbage", 123.456e-7},
++	{"123.456e-7\ngarbage", 123.456e-7},
++	{"123.456e-7#garbage", 123.456e-7},
++	{"123.456e-7 garbage", 123.456e-7},
++	/* negative float negative exponent */
++	{"-123.456e-7\0garbage", -123.456e-7},
++	{"-123.456e-7\rgarbage", -123.456e-7},
++	{"-123.456e-7\tgarbage", -123.456e-7},
++	{"-123.456e-7\ngarbage", -123.456e-7},
++	{"-123.456e-7#garbage", -123.456e-7},
++	{"-123.456e-7 garbage", -123.456e-7},
++	/* float overflows */
++	{"18446744073709551615\0garbage", (double) UINT64_MAX},
++	{"18446744073709551615\rgarbage", (double) UINT64_MAX},
++	{"18446744073709551615\ngarbage", (double) UINT64_MAX},
++	{"18446744073709551615\tgarbage", (double) UINT64_MAX},
++	{"18446744073709551615#garbage", (double) UINT64_MAX},
++	{"18446744073709551615 garbage", (double) UINT64_MAX},
++	{"-9223372036854775808\0garbage", (double) INT64_MIN},
++	{"-9223372036854775808\rgarbage", (double) INT64_MIN},
++	{"-9223372036854775808\ngarbage", (double) INT64_MIN},
++	{"-9223372036854775808\tgarbage", (double) INT64_MIN},
++	{"-9223372036854775808#garbage", (double) INT64_MIN},
++	{"-9223372036854775808 garbage", (double) INT64_MIN},
++};
++
++const char *float_invalid_strs[] = {
++	"1.1.",
++	"1.1.1",
++	"-1.1.",
++	"-1.1.1",
++	"e",
++	"1e",
++	"-1e",
++	"0.1e",
++	"-0.1e",
++	"1.e",
++	"-1.e",
++	"1.23e3.4",
++	"-1.23e3.4",
++	"1e1e",
++	"1e1e1",
++	"1e-",
++	"-1e-"
++};
++
  const char * num_invalid_strs[] = {
-@@ -197,15 +228,12 @@ const char * num_invalid_strs[] = {
- 		"0b01110101017001",
- 		/* false negative numbers */
- 		"-12345F623",
--		"-0x1234580A",
--		"-0b0111010101",
+ 		"18446744073709551616", /* out of range unsigned */
+ 		"-9223372036854775809", /* out of range negative signed */
+@@ -231,7 +360,16 @@ const char * num_invalid_strs[] = {
  		/* too long (128+ chars) */
  		("0b1111000011110000111100001111000011110000111100001111000011110000"
  		  "1111000011110000111100001111000011110000111100001111000011110000"),
++		/* valid float values but should fail to parse as ints */
  		"1E3",
++		"-1E3",
++		"1.23",
++		"-1.23",
++		"1E-3",
++		"-1E-3",
++		"1.23E4",
++		"-1.23E4",
++		/* misc invalid values */
  		"0A",
  		"-B",
--		"+4",
  		"1.23G",
- 		"",
- 		" ",
-diff --git a/lib/cmdline/cmdline_parse_num.c b/lib/cmdline/cmdline_parse_num.c
-index f21796bedb..8e5b75ff56 100644
---- a/lib/cmdline/cmdline_parse_num.c
-+++ b/lib/cmdline/cmdline_parse_num.c
-@@ -4,6 +4,7 @@
-  * All rights reserved.
-  */
- 
-+#include <errno.h>
- #include <stdio.h>
- #include <stdint.h>
- #include <inttypes.h>
-@@ -29,23 +30,6 @@ struct cmdline_token_ops cmdline_token_num_ops = {
- 	.get_help = cmdline_get_help_num,
+@@ -244,6 +382,48 @@ const char * num_invalid_strs[] = {
+ 		"\0",
  };
  
--enum num_parse_state_t {
--	START,
--	DEC_NEG,
--	BIN,
--	HEX,
--
--	ERROR,
--
--	FIRST_OK, /* not used */
--	ZERO_OK,
--	HEX_OK,
--	OCTAL_OK,
--	BIN_OK,
--	DEC_NEG_OK,
--	DEC_POS_OK,
--};
--
- /* Keep it sync with enum in .h */
- static const char * num_help[] = {
- 	"UINT8", "UINT16", "UINT32", "UINT64",
-@@ -53,13 +37,13 @@ static const char * num_help[] = {
- };
- 
- static inline int
--add_to_res(unsigned int c, uint64_t *res, unsigned int base)
-+add_to_bin(unsigned int c, uint64_t *res)
++static int
++float_cmp(double expected, void *actual_p, enum cmdline_numtype type)
++{
++	double eps;
++	double actual_d;
++
++	if (type == RTE_FLOAT_SINGLE) {
++		/* read as float, convert to double */
++		actual_d = (double)*(float *)actual_p;
++		/* downcast expected to float as well */
++		expected = (double)(float)expected;
++		eps = FLT_EPSILON;
++	} else {
++		/* read as double */
++		actual_d = *(double *)actual_p;
++		eps = DBL_EPSILON;
++	}
++	/* compare using epsilon value */
++	if (fabs(expected - actual_d) < eps)
++		return 0;
++	/* not equal */
++	return expected < actual_d ? -1 : 1;
++}
++
++static int
++can_parse_float(double expected_result, enum cmdline_numtype type)
++{
++	switch (type) {
++	case RTE_FLOAT_SINGLE:
++		if (expected_result > FLT_MAX || expected_result < -FLT_MAX)
++			return 0;
++		break;
++	case RTE_FLOAT_DOUBLE:
++		if (expected_result > DBL_MAX || expected_result < -DBL_MAX)
++			return 0;
++		break;
++	default:
++		return 1;
++	}
++	return 1;
++}
++
+ static int
+ can_parse_unsigned(uint64_t expected_result, enum cmdline_numtype type)
  {
- 	/* overflow */
--	if ((UINT64_MAX - c) / base < *res)
-+	if ((UINT64_MAX - c) / 2 < *res)
- 		return -1;
+@@ -399,11 +579,11 @@ test_parse_num_invalid_data(void)
+ 	int ret = 0;
+ 	unsigned i;
+ 	char buf[CMDLINE_TEST_BUFSIZE];
+-	uint64_t result; /* pick largest buffer */
+ 	cmdline_parse_token_num_t token;
  
--	*res = (uint64_t) (*res * base + c);
-+	*res = (uint64_t) (*res * 2 + c);
+-	/* cycle through all possible parsed types */
++	/* cycle through all possible integer types */
+ 	for (type = RTE_UINT8; type <= RTE_INT64; type++) {
++		uint64_t result; /* pick largest buffer */
+ 		token.num_data.type = type;
+ 
+ 		/* test full strings */
+@@ -425,6 +605,31 @@ test_parse_num_invalid_data(void)
+ 			}
+ 		}
+ 	}
++
++	/* cycle through all possible float types */
++	for (type = RTE_FLOAT_SINGLE; type <= RTE_FLOAT_DOUBLE; type++) {
++		double result; /* pick largest buffer */
++		token.num_data.type = type;
++
++		/* test full strings */
++		for (i = 0; i < RTE_DIM(float_invalid_strs); i++) {
++
++			memset(&result, 0, sizeof(double));
++			memset(&buf, 0, sizeof(buf));
++
++			ret = cmdline_parse_num((cmdline_parse_token_hdr_t*)&token,
++					float_invalid_strs[i], (void*)&result, sizeof(result));
++			if (ret != -1) {
++				/* get some info about what we are trying to parse */
++				cmdline_get_help_num((cmdline_parse_token_hdr_t*)&token,
++						buf, sizeof(buf));
++
++				printf("Error: parsing %s as %s succeeded!\n",
++						float_invalid_strs[i], buf);
++				return -1;
++			}
++		}
++	}
  	return 0;
  }
  
-@@ -88,138 +72,131 @@ check_res_size(struct cmdline_token_num_data *nd, unsigned ressize)
+@@ -436,13 +641,13 @@ test_parse_num_valid(void)
+ 	enum cmdline_numtype type;
+ 	unsigned i;
+ 	char buf[CMDLINE_TEST_BUFSIZE];
+-	uint64_t result;
+ 	cmdline_parse_token_num_t token;
+ 
+ 	/** valid strings **/
+ 
+-	/* cycle through all possible parsed types */
++	/* cycle through all possible integer types */
+ 	for (type = RTE_UINT8; type <= RTE_INT64; type++) {
++		uint64_t result;
+ 		token.num_data.type = type;
+ 
+ 		/* test positive strings */
+@@ -481,7 +686,7 @@ test_parse_num_valid(void)
+ 			cmdline_get_help_num((cmdline_parse_token_hdr_t*)&token,
+ 					buf, sizeof(buf));
+ 
+-			ret = cmdline_parse_num((cmdline_parse_token_hdr_t*) &token,
++ 			ret = cmdline_parse_num((cmdline_parse_token_hdr_t*) &token,
+ 				num_valid_negative_strs[i].str,
+ 				(void*)&result, sizeof(result));
+ 
+@@ -517,10 +722,44 @@ test_parse_num_valid(void)
+ 		}
+ 	}
+ 
++	/* cycle through all possible float types */
++	for (type = RTE_FLOAT_SINGLE; type <= RTE_FLOAT_DOUBLE; type++) {
++		double result;
++		token.num_data.type = type;
++
++		/* test all valid strings */
++		for (i = 0; i < RTE_DIM(float_valid_strs); i++) {
++			result = 0;
++			memset(&buf, 0, sizeof(buf));
++
++
++			cmdline_get_help_num((cmdline_parse_token_hdr_t*)&token,
++					buf, sizeof(buf));
++
++			ret = cmdline_parse_num((cmdline_parse_token_hdr_t*) &token,
++				float_valid_strs[i].str,
++				(void*)&result, sizeof(result));
++
++			/* if it should have passed but didn't, or if it should have failed but didn't */
++			if ((ret < 0) == (can_parse_float(float_valid_strs[i].result, type) > 0)) {
++				printf("Error: parser behaves unexpectedly when parsing %s as %s!\n",
++						float_valid_strs[i].str, buf);
++				return -1;
++			}
++			/* check if result matches */
++			if (ret > 0 && float_cmp(float_valid_strs[i].result, &result, type) != 0) {
++				printf("Error: parsing %s as %s failed: result mismatch!\n",
++						float_valid_strs[i].str, buf);
++				return -1;
++			}
++		}
++	}
++
+ 	/** garbage strings **/
+ 
+-	/* cycle through all possible parsed types */
++	/* cycle through all possible integer types */
+ 	for (type = RTE_UINT8; type <= RTE_INT64; type++) {
++		uint64_t result;
+ 		token.num_data.type = type;
+ 
+ 		/* test positive garbage strings */
+@@ -598,6 +837,38 @@ test_parse_num_valid(void)
+ 		}
+ 	}
+ 
++	/* cycle through all possible float types */
++	for (type = RTE_FLOAT_SINGLE; type <= RTE_FLOAT_DOUBLE; type++) {
++		double result;
++		token.num_data.type = type;
++
++		/* test all valid strings */
++		for (i = 0; i < RTE_DIM(float_garbage_strs); i++) {
++			result = 0;
++			memset(&buf, 0, sizeof(buf));
++
++			cmdline_get_help_num((cmdline_parse_token_hdr_t*)&token,
++					buf, sizeof(buf));
++
++			ret = cmdline_parse_num((cmdline_parse_token_hdr_t*) &token,
++				float_garbage_strs[i].str,
++				(void*)&result, sizeof(result));
++
++			/* if it should have passed but didn't, or if it should have failed but didn't */
++			if ((ret < 0) == (can_parse_float(float_garbage_strs[i].result, type) > 0)) {
++				printf("Error: parser behaves unexpectedly when parsing %s as %s!\n",
++						float_garbage_strs[i].str, buf);
++				return -1;
++			}
++			/* check if result matches */
++			if (ret > 0 && float_cmp(float_garbage_strs[i].result, &result, type) != 0) {
++				printf("Error: parsing %s as %s failed: result mismatch!\n",
++						float_garbage_strs[i].str, buf);
++				return -1;
++			}
++		}
++	}
++
+ 	memset(&buf, 0, sizeof(buf));
+ 
+ 	/* coverage! */
+diff --git a/buildtools/dpdk-cmdline-gen.py b/buildtools/dpdk-cmdline-gen.py
+index 7dadded783..6c76d7116a 100755
+--- a/buildtools/dpdk-cmdline-gen.py
++++ b/buildtools/dpdk-cmdline-gen.py
+@@ -17,16 +17,18 @@
+     RTE_SET_USED(cl);
+     RTE_SET_USED(data);
+ """
+-NUMERIC_TYPES = [
+-    "UINT8",
+-    "UINT16",
+-    "UINT32",
+-    "UINT64",
+-    "INT8",
+-    "INT16",
+-    "INT32",
+-    "INT64",
+-]
++NUMERIC_TYPES = {
++    "UINT8": "uint8_t",
++    "UINT16": "uint16_t",
++    "UINT32": "uint32_t",
++    "UINT64": "uint64_t",
++    "INT8": "int8_t",
++    "INT16": "int16_t",
++    "INT32": "int32_t",
++    "INT64": "int64_t",
++    "FLOAT_SINGLE": "float",
++    "FLOAT_DOUBLE": "double",
++}
+ 
+ 
+ def process_command(lineno, tokens, comment):
+@@ -70,7 +72,7 @@ def process_command(lineno, tokens, comment):
+                 f"\tTOKEN_STRING_INITIALIZER(struct cmd_{name}_result, {t_name}, {t_val});"
+             )
+         elif t_type in NUMERIC_TYPES:
+-            result_struct.append(f"\t{t_type.lower()}_t {t_name};")
++            result_struct.append(f"\t{NUMERIC_TYPES[t_type]} {t_name};")
+             initializers.append(
+                 f"static cmdline_parse_token_num_t cmd_{name}_{t_name}_tok =\n"
+                 f"\tTOKEN_NUM_INITIALIZER(struct cmd_{name}_result, {t_name}, RTE_{t_type});"
+diff --git a/doc/guides/prog_guide/cmdline.rst b/doc/guides/prog_guide/cmdline.rst
+index e20281ceb5..447a90e32e 100644
+--- a/doc/guides/prog_guide/cmdline.rst
++++ b/doc/guides/prog_guide/cmdline.rst
+@@ -22,6 +22,7 @@ The DPDK command-line library supports the following features:
+ 
+    * Strings
+    * Signed/unsigned 16/32/64-bit integers
++   * Single/double precision floats
+    * IP Addresses
+    * Ethernet Addresses
+ 
+@@ -68,6 +69,8 @@ The format of the list file must be:
+ 
+   * ``<UINT16>port_id``
+ 
++  * ``<FLOAT_SINGLE>ratio``
++
+   * ``<IP>src_ip``
+ 
+   * ``<IPv4>dst_ip4``
+diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
+index 093b85d206..54bc545110 100644
+--- a/doc/guides/rel_notes/release_25_07.rst
++++ b/doc/guides/rel_notes/release_25_07.rst
+@@ -55,6 +55,11 @@ New Features
+      Also, make sure to start the actual text at the margin.
+      =======================================================
+ 
++* **Added floating point numbers support to cmdline library.**
++
++  The cmdline library now supports parsing single- and double-precision
++  floating point numbers in interactive user commands.
++
+ 
+ Removed Items
+ -------------
+diff --git a/lib/cmdline/cmdline_parse_num.c b/lib/cmdline/cmdline_parse_num.c
+index 8e5b75ff56..28b5cd0b28 100644
+--- a/lib/cmdline/cmdline_parse_num.c
++++ b/lib/cmdline/cmdline_parse_num.c
+@@ -8,6 +8,8 @@
+ #include <stdio.h>
+ #include <stdint.h>
+ #include <inttypes.h>
++#include <float.h>
++#include <math.h>
+ #include <string.h>
+ #include <eal_export.h>
+ #include <rte_string_fns.h>
+@@ -34,6 +36,7 @@ struct cmdline_token_ops cmdline_token_num_ops = {
+ static const char * num_help[] = {
+ 	"UINT8", "UINT16", "UINT32", "UINT64",
+ 	"INT8", "INT16", "INT32", "INT64",
++	"FLOAT_SINGLE", "FLOAT_DOUBLE"
+ };
+ 
+ static inline int
+@@ -71,6 +74,14 @@ check_res_size(struct cmdline_token_num_data *nd, unsigned ressize)
+ 		if (ressize < sizeof(int64_t))
  			return -1;
  		break;
++	case RTE_FLOAT_SINGLE:
++		if (ressize < sizeof(float))
++			return -1;
++		break;
++	case RTE_FLOAT_DOUBLE:
++		if (ressize < sizeof(double))
++			return -1;
++		break;
  	default:
-+		debug_printf("Wrong number type: %d\n", nd->type);
+ 		debug_printf("Wrong number type: %d\n", nd->type);
  		return -1;
- 	}
+@@ -151,6 +162,26 @@ parse_num(const char *srcbuf, uint64_t *resptr)
+ 	return end - srcbuf;
+ }
+ 
++static int
++parse_float(const char *srcbuf, enum cmdline_numtype type, double *resptr)
++{
++	double dres;
++	char *end;
++
++	if (type == RTE_FLOAT_SINGLE)
++		dres = (double)strtof(srcbuf, &end);
++	else if (type == RTE_FLOAT_DOUBLE)
++		dres = strtod(srcbuf, &end);
++	else
++		return -1;
++
++	if (end == srcbuf || !cmdline_isendoftoken(*end) || isinf(dres))
++		return -1;
++
++	*resptr = dres;
++	return end - srcbuf;
++}
++
+ static int
+ parse_bin(const char *srcbuf, uint64_t *res)
+ {
+@@ -275,7 +306,24 @@ write_num(enum cmdline_numtype type, void *res, uint64_t uintres)
  	return 0;
  }
  
 -/* parse an int */
--RTE_EXPORT_SYMBOL(cmdline_parse_num)
--int
--cmdline_parse_num(cmdline_parse_token_hdr_t *tk, const char *srcbuf, void *res,
--	unsigned ressize)
 +static int
-+check_parsed_num(enum cmdline_numtype type, int neg, uint64_t uintres)
- {
--	struct cmdline_token_num_data nd;
--	enum num_parse_state_t st = START;
-+	int lo_ok, hi_ok;
-+
++write_float(enum cmdline_numtype type, void *res, double dres)
++{
 +	switch (type) {
-+	case RTE_UINT8:
-+		lo_ok = !neg;
-+		hi_ok = uintres <= UINT8_MAX;
++	case RTE_FLOAT_SINGLE:
++		*(float *)res = (float)dres;
 +		break;
-+	case RTE_UINT16:
-+		lo_ok = !neg;
-+		hi_ok = uintres <= UINT16_MAX;
-+		break;
-+	case RTE_UINT32:
-+		lo_ok = !neg;
-+		hi_ok = uintres <= UINT32_MAX;
-+		break;
-+	case RTE_UINT64:
-+		lo_ok = !neg;
-+		hi_ok = 1; /* can't be out of range if parsed successfully */
-+		break;
-+	case RTE_INT8:
-+		lo_ok = !neg || (int64_t)uintres >= INT8_MIN;
-+		hi_ok = neg || uintres <= INT8_MAX;
-+		break;
-+	case RTE_INT16:
-+		lo_ok = !neg || (int64_t)uintres >= INT16_MIN;
-+		hi_ok = neg || uintres <= INT16_MAX;
-+		break;
-+	case RTE_INT32:
-+		lo_ok = !neg || (int64_t)uintres >= INT32_MIN;
-+		hi_ok = neg || uintres <= INT32_MAX;
-+		break;
-+	case RTE_INT64:
-+		lo_ok = 1; /* can't be out of range if parsed successfully */
-+		hi_ok = neg || uintres <= INT64_MAX;
++	case RTE_FLOAT_DOUBLE:
++		*(double *)res = dres;
 +		break;
 +	default:
-+		debug_printf("Wrong number type\n");
++		debug_printf("Wrong float type\n");
 +		return -1;
 +	}
-+	/* check ranges */
-+	if (!lo_ok || !hi_ok)
-+		return -1;
 +	return 0;
 +}
 +
-+static int
-+parse_num(const char *srcbuf, uint64_t *resptr)
-+{
-+	uint64_t uintres;
-+	char *end;
-+	int neg = *srcbuf == '-';
-+
-+	/*
-+	 * strtoull does not do range checks on negative numbers, so we need to
-+	 * use strtoll if we know the value we're parsing looks like a negative
-+	 * one. we use base 0 for both, 0 means autodetect base.
-+	 */
-+	errno = 0;
-+	if (neg)
-+		uintres = (uint64_t)strtoll(srcbuf, &end, 0);
-+	else
-+		uintres = strtoull(srcbuf, &end, 0);
-+
-+	if (end == srcbuf || !cmdline_isendoftoken(*end) || errno == ERANGE)
-+		return -1;
-+
-+	*resptr = uintres;
-+	return end - srcbuf;
-+}
-+
-+static int
-+parse_bin(const char *srcbuf, uint64_t *res)
-+{
-+	uint64_t uintres = 0;
-+	enum {
-+		ERROR,
-+		START,
-+		BIN,
-+		NEG,
-+		ZERO_OK,
-+		BIN_OK,
-+	} st = START;
- 	const char * buf;
- 	char c;
--	uint64_t res1 = 0;
--
--	if (!tk)
--		return -1;
--
--	if (!srcbuf || !*srcbuf)
--		return -1;
-+	int neg = 0;
- 
- 	buf = srcbuf;
- 	c = *buf;
--
--	memcpy(&nd, &((struct cmdline_token_num *)tk)->num_data, sizeof(nd));
--
--	/* check that we have enough room in res */
--	if (res) {
--		if (check_res_size(&nd, ressize) < 0)
--			return -1;
--	}
--
- 	while (st != ERROR && c && !cmdline_isendoftoken(c)) {
- 		debug_printf("%c %x -> ", c, c);
- 		switch (st) {
- 		case START:
--			if (c == '-') {
--				st = DEC_NEG;
--			}
--			else if (c == '0') {
-+			if (c == '0') {
- 				st = ZERO_OK;
-+			} else if (c == '-') {
-+				neg = 1;
-+				st = NEG;
-+			}
-+			else {
-+				st = ERROR;
- 			}
--			else if (c >= '1' && c <= '9') {
--				if (add_to_res(c - '0', &res1, 10) < 0)
--					st = ERROR;
--				else
--					st = DEC_POS_OK;
-+			break;
-+
-+		case NEG:
-+			if (c == '0') {
-+				st = ZERO_OK;
- 			}
--			else  {
-+			else {
- 				st = ERROR;
- 			}
- 			break;
- 
- 		case ZERO_OK:
--			if (c == 'x') {
--				st = HEX;
--			}
--			else if (c == 'b') {
-+			if (c == 'b') {
- 				st = BIN;
- 			}
--			else if (c >= '0' && c <= '7') {
--				if (add_to_res(c - '0', &res1, 10) < 0)
--					st = ERROR;
--				else
--					st = OCTAL_OK;
--			}
--			else  {
--				st = ERROR;
--			}
--			break;
--
--		case DEC_NEG:
--			if (c >= '0' && c <= '9') {
--				if (add_to_res(c - '0', &res1, 10) < 0)
--					st = ERROR;
--				else
--					st = DEC_NEG_OK;
--			}
--			else {
--				st = ERROR;
--			}
--			break;
--
--		case DEC_NEG_OK:
--			if (c >= '0' && c <= '9') {
--				if (add_to_res(c - '0', &res1, 10) < 0)
--					st = ERROR;
--			}
--			else {
--				st = ERROR;
--			}
--			break;
--
--		case DEC_POS_OK:
--			if (c >= '0' && c <= '9') {
--				if (add_to_res(c - '0', &res1, 10) < 0)
--					st = ERROR;
--			}
--			else {
--				st = ERROR;
--			}
--			break;
--
--		case HEX:
--			st = HEX_OK;
--			/* fall-through */
--		case HEX_OK:
--			if (c >= '0' && c <= '9') {
--				if (add_to_res(c - '0', &res1, 16) < 0)
--					st = ERROR;
--			}
--			else if (c >= 'a' && c <= 'f') {
--				if (add_to_res(c - 'a' + 10, &res1, 16) < 0)
--					st = ERROR;
--			}
--			else if (c >= 'A' && c <= 'F') {
--				if (add_to_res(c - 'A' + 10, &res1, 16) < 0)
--					st = ERROR;
--			}
--			else {
--				st = ERROR;
--			}
--			break;
--
--
--		case OCTAL_OK:
--			if (c >= '0' && c <= '7') {
--				if (add_to_res(c - '0', &res1, 8) < 0)
--					st = ERROR;
--			}
- 			else {
- 				st = ERROR;
- 			}
-@@ -230,7 +207,7 @@ cmdline_parse_num(cmdline_parse_token_hdr_t *tk, const char *srcbuf, void *res,
- 			/* fall-through */
- 		case BIN_OK:
- 			if (c >= '0' && c <= '1') {
--				if (add_to_res(c - '0', &res1, 2) < 0)
-+				if (add_to_bin(c - '0', &uintres) < 0)
- 					st = ERROR;
- 			}
- 			else {
-@@ -239,10 +216,10 @@ cmdline_parse_num(cmdline_parse_token_hdr_t *tk, const char *srcbuf, void *res,
- 			break;
- 		default:
- 			debug_printf("not impl ");
--
-+			st = ERROR;
- 		}
- 
--		debug_printf("(%"PRIu64")\n", res1);
-+		debug_printf("(%"PRIu64")\n", uintres);
- 
- 		buf ++;
- 		c = *buf;
-@@ -252,68 +229,97 @@ cmdline_parse_num(cmdline_parse_token_hdr_t *tk, const char *srcbuf, void *res,
- 			return -1;
- 	}
- 
--	switch (st) {
--	case ZERO_OK:
--	case DEC_POS_OK:
--	case HEX_OK:
--	case OCTAL_OK:
--	case BIN_OK:
--		if (nd.type == RTE_INT8 && res1 <= INT8_MAX) {
--			if (res) *(int8_t *)res = (int8_t) res1;
--			return buf-srcbuf;
--		} else if (nd.type == RTE_INT16 && res1 <= INT16_MAX) {
--			if (res) *(int16_t *)res = (int16_t) res1;
--			return buf-srcbuf;
--		} else if (nd.type == RTE_INT32 && res1 <= INT32_MAX) {
--			if (res) *(int32_t *)res = (int32_t) res1;
--			return buf-srcbuf;
--		} else if (nd.type == RTE_INT64 && res1 <= INT64_MAX) {
--			if (res) *(int64_t *)res = (int64_t) res1;
--			return buf-srcbuf;
--		} else if (nd.type == RTE_UINT8 && res1 <= UINT8_MAX) {
--			if (res) *(uint8_t *)res = (uint8_t) res1;
--			return buf-srcbuf;
--		} else if (nd.type == RTE_UINT16  && res1 <= UINT16_MAX) {
--			if (res) *(uint16_t *)res = (uint16_t) res1;
--			return buf-srcbuf;
--		} else if (nd.type == RTE_UINT32 && res1 <= UINT32_MAX) {
--			if (res) *(uint32_t *)res = (uint32_t) res1;
--			return buf-srcbuf;
--		} else if (nd.type == RTE_UINT64) {
--			if (res) *(uint64_t *)res = res1;
--			return buf-srcbuf;
--		} else {
--			return -1;
--		}
--		break;
-+	if (st != BIN_OK)
-+		return -1;
-+
-+	/* was it negative? */
-+	if (neg)
-+		uintres = -uintres;
-+
-+	*res = uintres;
-+	return buf - srcbuf;
-+}
- 
--	case DEC_NEG_OK:
--		if (nd.type == RTE_INT8 &&
--				res1 <= INT8_MAX + 1) {
--			if (res) *(int8_t *)res = (int8_t) (-res1);
--			return buf-srcbuf;
--		} else if (nd.type == RTE_INT16 &&
--				res1 <= (uint16_t)INT16_MAX + 1) {
--			if (res) *(int16_t *)res = (int16_t) (-res1);
--			return buf-srcbuf;
--		} else if (nd.type == RTE_INT32 &&
--				res1 <= (uint32_t)INT32_MAX + 1) {
--			if (res) *(int32_t *)res = (int32_t) (-res1);
--			return buf-srcbuf;
--		} else if (nd.type == RTE_INT64 &&
--				res1 <= (uint64_t)INT64_MAX + 1) {
--			if (res) *(int64_t *)res = (int64_t) (-res1);
--			return buf-srcbuf;
--		} else {
--			return -1;
--		}
-+static int
-+write_num(enum cmdline_numtype type, void *res, uint64_t uintres)
-+{
-+	switch (type) {
-+	case RTE_UINT8:
-+		*(uint8_t *)res = (uint8_t)uintres;
-+		break;
-+	case RTE_UINT16:
-+		*(uint16_t *)res = (uint16_t)uintres;
-+		break;
-+	case RTE_UINT32:
-+		*(uint32_t *)res = (uint32_t)uintres;
-+		break;
-+	case RTE_UINT64:
-+		*(uint64_t *)res = uintres;
-+		break;
-+	case RTE_INT8:
-+		*(int8_t *)res = (int8_t)uintres;
-+		break;
-+	case RTE_INT16:
-+		*(int16_t *)res = (int16_t)uintres;
-+		break;
-+	case RTE_INT32:
-+		*(int32_t *)res = (int32_t)uintres;
-+		break;
-+	case RTE_INT64:
-+		*(int64_t *)res = (int64_t)uintres;
- 		break;
- 	default:
--		debug_printf("error\n");
-+		debug_printf("Wrong number type\n");
++/* parse a number */
+ RTE_EXPORT_SYMBOL(cmdline_parse_num)
+ int
+ cmdline_parse_num(cmdline_parse_token_hdr_t *tk, const char *srcbuf, void *res,
+@@ -295,6 +343,7 @@ cmdline_parse_num(cmdline_parse_token_hdr_t *tk, const char *srcbuf, void *res,
+ 	if (res && check_res_size(&nd, ressize) < 0)
  		return -1;
- 	}
-+	return 0;
- }
  
-+/* parse an int */
-+RTE_EXPORT_SYMBOL(cmdline_parse_num)
-+int
-+cmdline_parse_num(cmdline_parse_token_hdr_t *tk, const char *srcbuf, void *res,
-+	unsigned ressize)
-+{
-+	struct cmdline_token_num_data nd;
++	/* integer parsing */
+ 	if (nd.type >= RTE_UINT8 && nd.type <= RTE_INT64) {
+ 		int ret, neg = *srcbuf == '-';
+ 		uint64_t uintres;
+@@ -316,6 +365,21 @@ cmdline_parse_num(cmdline_parse_token_hdr_t *tk, const char *srcbuf, void *res,
+ 		if (res && write_num(nd.type, res, uintres) < 0)
+ 			return -1;
+ 
++		return ret;
++	/* float parsing */
++	} else if (nd.type >= RTE_FLOAT_SINGLE && nd.type <= RTE_FLOAT_DOUBLE) {
++		double dres;
++		int ret;
 +
-+	if (!tk)
-+		return -1;
-+
-+	if (!srcbuf || !*srcbuf)
-+		return -1;
-+
-+	memcpy(&nd, &((struct cmdline_token_num *)tk)->num_data, sizeof(nd));
-+
-+	/* check that we have enough room in res */
-+	if (res && check_res_size(&nd, ressize) < 0)
-+		return -1;
-+
-+	if (nd.type >= RTE_UINT8 && nd.type <= RTE_INT64) {
-+		int ret, neg = *srcbuf == '-';
-+		uint64_t uintres;
-+
-+		/* try parsing as number */
-+		ret = parse_num(srcbuf, &uintres);
-+
-+		if (ret < 0) {
-+			/* parse failed, try parsing as binary */
-+			ret = parse_bin(srcbuf, &uintres);
-+			if (ret < 0)
-+				return -1;
-+		}
-+		/* check if we're within valid range */
-+		if (check_parsed_num(nd.type, neg, uintres) < 0)
++		/* try parsing as float */
++		ret = parse_float(srcbuf, nd.type, &dres);
++		if (ret < 0)
 +			return -1;
 +
 +		/* parsing succeeded, write the value if necessary */
-+		if (res && write_num(nd.type, res, uintres) < 0)
++		if (res && write_float(nd.type, res, dres))
 +			return -1;
 +
-+		return ret;
-+	}
-+	return -1;
-+}
+ 		return ret;
+ 	}
+ 	return -1;
+diff --git a/lib/cmdline/cmdline_parse_num.h b/lib/cmdline/cmdline_parse_num.h
+index bdd0267612..b2792a2d11 100644
+--- a/lib/cmdline/cmdline_parse_num.h
++++ b/lib/cmdline/cmdline_parse_num.h
+@@ -22,7 +22,9 @@ enum cmdline_numtype {
+ 	RTE_INT8,
+ 	RTE_INT16,
+ 	RTE_INT32,
+-	RTE_INT64
++	RTE_INT64,
++	RTE_FLOAT_SINGLE,
++	RTE_FLOAT_DOUBLE,
+ };
  
- /* parse an int */
- RTE_EXPORT_SYMBOL(cmdline_get_help_num)
-@@ -328,9 +334,9 @@ cmdline_get_help_num(cmdline_parse_token_hdr_t *tk, char *dstbuf, unsigned int s
- 
- 	memcpy(&nd, &((struct cmdline_token_num *)tk)->num_data, sizeof(nd));
- 
--	/* should not happen.... don't so this test */
--	/* if (nd.type >= (sizeof(num_help)/sizeof(const char *))) */
--	/* return -1; */
-+	/* ensure we have a valid help message for the given type */
-+	if (nd.type >= RTE_DIM(num_help))
-+		return -1;
- 
- 	ret = strlcpy(dstbuf, num_help[nd.type], size);
- 	if (ret < 0)
+ struct cmdline_token_num_data {
 -- 
 2.47.1
 
