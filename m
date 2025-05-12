@@ -2,51 +2,103 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EAA3C3ABBC
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 May 2025 11:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0549C3ABC3
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 May 2025 11:53:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4E53340695;
-	Mon, 12 May 2025 12:59:13 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id 94D4940613
- for <dev@dpdk.org>; Mon, 12 May 2025 12:59:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1747047552; x=1778583552;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=4+QjB9R0wBl9S5jnkDvIpIG/0iuLmmOBNpAQ2vevqwg=;
- b=F8NWQdsEDzgwh1I+P25PFW31Kf09KkuXF0hzw1NEjy959Q+4AyODxHy+
- ZXIxk2ftOsm0ycfy430a+bMJevLshVEdwxzobldMqH7Y5axZu6lFXaQ13
- RZ/KVCZthapDkBuxscExtMjJrBC3SXRz6xFE/UeMifrk4Tlb26IA5+bJf
- c0iXqsNtG2PIX+8lnSKDpavJreH2XPBZmSAn32Jvwx7ateqtvgtCUWeVI
- LZ+2+2pPkL4ZxZazEhgYuyyMxUwR2nuf60QHSnWpQrRJwQFKl0RFz+B1S
- t9mrWpHvjeIzFexwLeH6rpGd3jEAqRHN8Il6IW7yISct40mlzcur74WMO g==;
-X-CSE-ConnectionGUID: pVK3MxUWQdKj+CxnFQh5Dw==
-X-CSE-MsgGUID: XsMrx6phSY2yfcaWqeOm0w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11430"; a="51488993"
-X-IronPort-AV: E=Sophos;i="6.15,282,1739865600"; d="scan'208";a="51488993"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
- by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 12 May 2025 03:59:11 -0700
-X-CSE-ConnectionGUID: 836qG44SQHmBe76UvmbNJQ==
-X-CSE-MsgGUID: 7MURpG3STXGulOqePE8yyg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,282,1739865600"; d="scan'208";a="142098041"
-Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by orviesa003.jf.intel.com with ESMTP; 12 May 2025 03:59:10 -0700
-From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
- Ian Stokes <ian.stokes@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v2 13/13] net/intel: add common Tx mbuf recycle
-Date: Mon, 12 May 2025 11:58:38 +0100
-Message-ID: <948febc3a463cf589440638552dc522c6df18318.1747047506.git.anatoly.burakov@intel.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <afcd4013458bdb8b970e7ed57d6a1ede0ee654b8.1747047505.git.anatoly.burakov@intel.com>
-References: 
+	by mails.dpdk.org (Postfix) with ESMTP id 68DAE402C9;
+	Mon, 12 May 2025 13:53:08 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 93D984025D
+ for <dev@dpdk.org>; Mon, 12 May 2025 13:53:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1747050786;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+ bh=JP4HX5Kdask2uLRjek2a5ft4FYRQ5G0IB5FttT15FbY=;
+ b=TR9FulY4EtD+Dxyvix46ZEZq58tCSAioR/JaT0ZtKrnbo6SKrsIhmy/cVInPJquzFFAq6C
+ SkBffos6/ZuUuM2YJTzgVrg+UMhB/F/Hy19VWEwioiVO+EhY60KTTzRmEfRqnsLgTFx9EW
+ G6YLCirKEpLxt0o8Ay8BhKL964SHbQE=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-570-e02FBHYtO6OlPoeGmItS4g-1; Mon,
+ 12 May 2025 07:53:01 -0400
+X-MC-Unique: e02FBHYtO6OlPoeGmItS4g-1
+X-Mimecast-MFC-AGG-ID: e02FBHYtO6OlPoeGmItS4g_1747050780
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id D994A195608B; Mon, 12 May 2025 11:52:59 +0000 (UTC)
+Received: from [10.44.22.18] (unknown [10.44.22.18])
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 8A099180049D; Mon, 12 May 2025 11:52:49 +0000 (UTC)
+Message-ID: <9cc1cc17-0d86-4e0b-b108-980062117378@redhat.com>
+Date: Mon, 12 May 2025 13:52:46 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] bbdev: fix possible null pointer dereference
+To: Nicolas Chautru <nicolas.chautru@intel.com>, dev@dpdk.org
+Cc: hemant.agrawal@nxp.com, hernan.vargas@intel.com
+References: <20250501221031.4569-1-nicolas.chautru@intel.com>
+ <20250501221031.4569-2-nicolas.chautru@intel.com>
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
+ xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
+ kLgBQUki3voWhUbMb69ybqdMUHOl21DGCj0BTU3lXwapYXOAnsh8q6RRM+deUpasyT+Jvf3a
+ gU35dgZcomRh5HPmKMU4KfeA38cVUebsFec1HuJAWzOb/UdtQkYyZR4rbzw8SbsOemtMtwOx
+ YdXodneQD7KuRU9IhJKiEfipwqk2pufm2VSGl570l5ANyWMA/XADNhcEXhpkZ1Iwj3TWO7XR
+ uH4xfvPl8nBsLo/EbEI7fbuUULcAnHfowQslPUm6/yaGv6cT5160SPXT1t8U9QDO6aTSo59N
+ jH519JS8oeKZB1n1eLDslCfBpIpWkW8ZElGkOGWAN0vmpLfdyiqBNNyS3eGAfMkJ6b1A24un
+ /TKc6j2QxM0QK4yZGfAxDxtvDv9LFXec8ENJYsbiR6WHRHq7wXl/n8guyh5AuBNQ3LIK44x0
+ KjGXP1FJkUhUuruGyZsMrDLBRHYi+hhDAgRjqHgoXi5XGETA1PAiNBNnQwMf5aubt+mE2Q5r
+ qLNTgwSo2dpTU3+mJ3y3KlsIfoaxYI7XNsPRXGnZi4hbxmeb2NSXgdCXhX3nELUNYm4ArKBP
+ LugOIT/zRwk0H0+RVwL2zHdMO1Tht1UOFGfOZpvuBF60jhMzbQARAQABzSxNYXhpbWUgQ29x
+ dWVsaW4gPG1heGltZS5jb3F1ZWxpbkByZWRoYXQuY29tPsLBeAQTAQIAIgUCV3u/5QIbAwYL
+ CQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQyjiNKEaHD4ma2g/+P+Hg9WkONPaY1J4AR7Uf
+ kBneosS4NO3CRy0x4WYmUSLYMLx1I3VH6SVjqZ6uBoYy6Fs6TbF6SHNc7QbB6Qjo3neqnQR1
+ 71Ua1MFvIob8vUEl3jAR/+oaE1UJKrxjWztpppQTukIk4oJOmXbL0nj3d8dA2QgHdTyttZ1H
+ xzZJWWz6vqxCrUqHU7RSH9iWg9R2iuTzii4/vk1oi4Qz7y/q8ONOq6ffOy/t5xSZOMtZCspu
+ Mll2Szzpc/trFO0pLH4LZZfz/nXh2uuUbk8qRIJBIjZH3ZQfACffgfNefLe2PxMqJZ8mFJXc
+ RQO0ONZvwoOoHL6CcnFZp2i0P5ddduzwPdGsPq1bnIXnZqJSl3dUfh3xG5ArkliZ/++zGF1O
+ wvpGvpIuOgLqjyCNNRoR7cP7y8F24gWE/HqJBXs1qzdj/5Hr68NVPV1Tu/l2D1KMOcL5sOrz
+ 2jLXauqDWn1Okk9hkXAP7+0Cmi6QwAPuBT3i6t2e8UdtMtCE4sLesWS/XohnSFFscZR6Vaf3
+ gKdWiJ/fW64L6b9gjkWtHd4jAJBAIAx1JM6xcA1xMbAFsD8gA2oDBWogHGYcScY/4riDNKXi
+ lw92d6IEHnSf6y7KJCKq8F+Jrj2BwRJiFKTJ6ChbOpyyR6nGTckzsLgday2KxBIyuh4w+hMq
+ TGDSp2rmWGJjASrOwU0EVPSbkwEQAMkaNc084Qvql+XW+wcUIY+Dn9A2D1gMr2BVwdSfVDN7
+ 0ZYxo9PvSkzh6eQmnZNQtl8WSHl3VG3IEDQzsMQ2ftZn2sxjcCadexrQQv3Lu60Tgj7YVYRM
+ H+fLYt9W5YuWduJ+FPLbjIKynBf6JCRMWr75QAOhhhaI0tsie3eDsKQBA0w7WCuPiZiheJaL
+ 4MDe9hcH4rM3ybnRW7K2dLszWNhHVoYSFlZGYh+MGpuODeQKDS035+4H2rEWgg+iaOwqD7bg
+ CQXwTZ1kSrm8NxIRVD3MBtzp9SZdUHLfmBl/tLVwDSZvHZhhvJHC6Lj6VL4jPXF5K2+Nn/Su
+ CQmEBisOmwnXZhhu8ulAZ7S2tcl94DCo60ReheDoPBU8PR2TLg8rS5f9w6mLYarvQWL7cDtT
+ d2eX3Z6TggfNINr/RTFrrAd7NHl5h3OnlXj7PQ1f0kfufduOeCQddJN4gsQfxo/qvWVB7PaE
+ 1WTIggPmWS+Xxijk7xG6x9McTdmGhYaPZBpAxewK8ypl5+yubVsE9yOOhKMVo9DoVCjh5To5
+ aph7CQWfQsV7cd9PfSJjI2lXI0dhEXhQ7lRCFpf3V3mD6CyrhpcJpV6XVGjxJvGUale7+IOp
+ sQIbPKUHpB2F+ZUPWds9yyVxGwDxD8WLqKKy0WLIjkkSsOb9UBNzgRyzrEC9lgQ/ABEBAAHC
+ wV8EGAECAAkFAlT0m5MCGwwACgkQyjiNKEaHD4nU8hAAtt0xFJAy0sOWqSmyxTc7FUcX+pbD
+ KVyPlpl6urKKMk1XtVMUPuae/+UwvIt0urk1mXi6DnrAN50TmQqvdjcPTQ6uoZ8zjgGeASZg
+ jj0/bJGhgUr9U7oG7Hh2F8vzpOqZrdd65MRkxmc7bWj1k81tOU2woR/Gy8xLzi0k0KUa8ueB
+ iYOcZcIGTcs9CssVwQjYaXRoeT65LJnTxYZif2pfNxfINFzCGw42s3EtZFteczClKcVSJ1+L
+ +QUY/J24x0/ocQX/M1PwtZbB4c/2Pg/t5FS+s6UB1Ce08xsJDcwyOPIH6O3tccZuriHgvqKP
+ yKz/Ble76+NFlTK1mpUlfM7PVhD5XzrDUEHWRTeTJSvJ8TIPL4uyfzhjHhlkCU0mw7Pscyxn
+ DE8G0UYMEaNgaZap8dcGMYH/96EfE5s/nTX0M6MXV0yots7U2BDb4soLCxLOJz4tAFDtNFtA
+ wLBhXRSvWhdBJZiig/9CG3dXmKfi2H+wdUCSvEFHRpgo7GK8/Kh3vGhgKmnnxhl8ACBaGy9n
+ fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
+ UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
+ Mwqu3GQ=
+In-Reply-To: <20250501221031.4569-2-nicolas.chautru@intel.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: BFlzjAsWHyuW4Md6zakOqMBAciiXodbMB9K8QLHWufM_1747050780
+X-Mimecast-Originator: redhat.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,338 +112,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, there are duplicate implementations of Tx mbuf recycle in some
-drivers, specifically ixgbe and i40e. Move them into a common header.
 
-Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
----
- drivers/net/intel/common/recycle_mbufs.h      | 98 +++++++++++++++++++
- drivers/net/intel/common/tx.h                 |  1 +
- .../i40e/i40e_recycle_mbufs_vec_common.c      | 88 +----------------
- .../ixgbe/ixgbe_recycle_mbufs_vec_common.c    | 89 +----------------
- 4 files changed, 107 insertions(+), 169 deletions(-)
 
-diff --git a/drivers/net/intel/common/recycle_mbufs.h b/drivers/net/intel/common/recycle_mbufs.h
-index fd31c5c1ff..88779c5aa4 100644
---- a/drivers/net/intel/common/recycle_mbufs.h
-+++ b/drivers/net/intel/common/recycle_mbufs.h
-@@ -64,4 +64,102 @@ ci_rx_recycle_mbufs(struct ci_rx_queue *rxq, const uint16_t nb_mbufs,
- 	rte_write32_wc_relaxed(rte_cpu_to_le_32(rx_id), rxq->qrx_tail);
- }
- 
-+/**
-+ * Recycle buffers on Tx. Note: the function must first perform a driver-specific
-+ * DD-bit-set check to ensure that the Tx descriptors are ready for recycling.
-+ *
-+ * @param txq Tx queue pointer
-+ * @param recycle_rxq_info recycling mbuf information
-+ *
-+ * @return how many buffers were recycled
-+ */
-+static __rte_always_inline uint16_t
-+ci_tx_recycle_mbufs(struct ci_tx_queue *txq,
-+	struct rte_eth_recycle_rxq_info *recycle_rxq_info)
-+{
-+	struct ci_tx_entry *txep;
-+	struct rte_mbuf **rxep;
-+	int i, n;
-+	uint16_t nb_recycle_mbufs;
-+	uint16_t avail = 0;
-+	uint16_t mbuf_ring_size = recycle_rxq_info->mbuf_ring_size;
-+	uint16_t mask = recycle_rxq_info->mbuf_ring_size - 1;
-+	uint16_t refill_requirement = recycle_rxq_info->refill_requirement;
-+	uint16_t refill_head = *recycle_rxq_info->refill_head;
-+	uint16_t receive_tail = *recycle_rxq_info->receive_tail;
-+
-+	/* Get available recycling Rx buffers. */
-+	avail = (mbuf_ring_size - (refill_head - receive_tail)) & mask;
-+
-+	/* Check Tx free thresh and Rx available space. */
-+	if (txq->nb_tx_free > txq->tx_free_thresh || avail <= txq->tx_rs_thresh)
-+		return 0;
-+
-+	n = txq->tx_rs_thresh;
-+	nb_recycle_mbufs = n;
-+
-+	/* Mbufs recycle mode can only support no ring buffer wrapping around.
-+	 * Two case for this:
-+	 *
-+	 * case 1: The refill head of Rx buffer ring needs to be aligned with
-+	 * mbuf ring size. In this case, the number of Tx freeing buffers
-+	 * should be equal to refill_requirement.
-+	 *
-+	 * case 2: The refill head of Rx ring buffer does not need to be aligned
-+	 * with mbuf ring size. In this case, the update of refill head can not
-+	 * exceed the Rx mbuf ring size.
-+	 */
-+	if ((refill_requirement && refill_requirement != n) ||
-+		(!refill_requirement && (refill_head + n > mbuf_ring_size)))
-+		return 0;
-+
-+	/* First buffer to free from S/W ring is at index
-+	 * tx_next_dd - (tx_rs_thresh-1).
-+	 */
-+	txep = &txq->sw_ring[txq->tx_next_dd - (n - 1)];
-+	rxep = recycle_rxq_info->mbuf_ring;
-+	rxep += refill_head;
-+
-+	/* is fast-free enabled in offloads? */
-+	if (txq->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE) {
-+		/* Avoid txq containing buffers from unexpected mempool. */
-+		if (unlikely(recycle_rxq_info->mp
-+					!= txep[0].mbuf->pool))
-+			return 0;
-+
-+		/* Directly put mbufs from Tx to Rx. */
-+		for (i = 0; i < n; i++)
-+			rxep[i] = txep[i].mbuf;
-+	} else {
-+		for (i = 0; i < n; i++) {
-+			rxep[i] = rte_pktmbuf_prefree_seg(txep[i].mbuf);
-+
-+			/* If Tx buffers are not the last reference or from
-+			 * unexpected mempool, previous copied buffers are
-+			 * considered as invalid.
-+			 */
-+			if (unlikely(rxep[i] == NULL ||
-+				recycle_rxq_info->mp != txep[i].mbuf->pool))
-+				nb_recycle_mbufs = 0;
-+		}
-+		/* If Tx buffers are not the last reference or
-+		 * from unexpected mempool, all recycled buffers
-+		 * are put into mempool.
-+		 */
-+		if (nb_recycle_mbufs == 0)
-+			for (i = 0; i < n; i++) {
-+				if (rxep[i] != NULL)
-+					rte_mempool_put(rxep[i]->pool, rxep[i]);
-+			}
-+	}
-+
-+	/* Update counters for Tx. */
-+	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free + txq->tx_rs_thresh);
-+	txq->tx_next_dd = (uint16_t)(txq->tx_next_dd + txq->tx_rs_thresh);
-+	if (txq->tx_next_dd >= txq->nb_tx_desc)
-+		txq->tx_next_dd = (uint16_t)(txq->tx_rs_thresh - 1);
-+
-+	return nb_recycle_mbufs;
-+}
-+
- #endif
-diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
-index c99bd5420f..cc70fa7db4 100644
---- a/drivers/net/intel/common/tx.h
-+++ b/drivers/net/intel/common/tx.h
-@@ -37,6 +37,7 @@ struct ci_tx_queue {
- 		volatile struct ice_tx_desc *ice_tx_ring;
- 		volatile struct idpf_base_tx_desc *idpf_tx_ring;
- 		volatile union ixgbe_adv_tx_desc *ixgbe_tx_ring;
-+		volatile void *tx_ring; /**< Generic. */
- 	};
- 	volatile uint8_t *qtx_tail;               /* register address of tail */
- 	union {
-diff --git a/drivers/net/intel/i40e/i40e_recycle_mbufs_vec_common.c b/drivers/net/intel/i40e/i40e_recycle_mbufs_vec_common.c
-index 073357bee2..19edee781d 100644
---- a/drivers/net/intel/i40e/i40e_recycle_mbufs_vec_common.c
-+++ b/drivers/net/intel/i40e/i40e_recycle_mbufs_vec_common.c
-@@ -23,92 +23,12 @@ i40e_recycle_tx_mbufs_reuse_vec(void *tx_queue,
- 	struct rte_eth_recycle_rxq_info *recycle_rxq_info)
- {
- 	struct ci_tx_queue *txq = tx_queue;
--	struct ci_tx_entry *txep;
--	struct rte_mbuf **rxep;
--	int i, n;
--	uint16_t nb_recycle_mbufs;
--	uint16_t avail = 0;
--	uint16_t mbuf_ring_size = recycle_rxq_info->mbuf_ring_size;
--	uint16_t mask = recycle_rxq_info->mbuf_ring_size - 1;
--	uint16_t refill_requirement = recycle_rxq_info->refill_requirement;
--	uint16_t refill_head = *recycle_rxq_info->refill_head;
--	uint16_t receive_tail = *recycle_rxq_info->receive_tail;
-+	const uint64_t ctob = txq->i40e_tx_ring[txq->tx_next_dd].cmd_type_offset_bsz;
- 
--	/* Get available recycling Rx buffers. */
--	avail = (mbuf_ring_size - (refill_head - receive_tail)) & mask;
--
--	/* Check Tx free thresh and Rx available space. */
--	if (txq->nb_tx_free > txq->tx_free_thresh || avail <= txq->tx_rs_thresh)
--		return 0;
--
--	/* check DD bits on threshold descriptor */
--	if ((txq->i40e_tx_ring[txq->tx_next_dd].cmd_type_offset_bsz &
--				rte_cpu_to_le_64(I40E_TXD_QW1_DTYPE_MASK)) !=
-+	/* are Tx descriptors ready for recycling? */
-+	if ((ctob & rte_cpu_to_le_64(I40E_TXD_QW1_DTYPE_MASK)) !=
- 			rte_cpu_to_le_64(I40E_TX_DESC_DTYPE_DESC_DONE))
- 		return 0;
- 
--	n = txq->tx_rs_thresh;
--	nb_recycle_mbufs = n;
--
--	/* Mbufs recycle mode can only support no ring buffer wrapping around.
--	 * Two case for this:
--	 *
--	 * case 1: The refill head of Rx buffer ring needs to be aligned with
--	 * mbuf ring size. In this case, the number of Tx freeing buffers
--	 * should be equal to refill_requirement.
--	 *
--	 * case 2: The refill head of Rx ring buffer does not need to be aligned
--	 * with mbuf ring size. In this case, the update of refill head can not
--	 * exceed the Rx mbuf ring size.
--	 */
--	if ((refill_requirement && refill_requirement != n) ||
--		(!refill_requirement && (refill_head + n > mbuf_ring_size)))
--		return 0;
--
--	/* First buffer to free from S/W ring is at index
--	 * tx_next_dd - (tx_rs_thresh-1).
--	 */
--	txep = &txq->sw_ring[txq->tx_next_dd - (n - 1)];
--	rxep = recycle_rxq_info->mbuf_ring;
--	rxep += refill_head;
--
--	if (txq->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE) {
--		/* Avoid txq contains buffers from unexpected mempool. */
--		if (unlikely(recycle_rxq_info->mp
--					!= txep[0].mbuf->pool))
--			return 0;
--
--		/* Directly put mbufs from Tx to Rx. */
--		for (i = 0; i < n; i++)
--			rxep[i] = txep[i].mbuf;
--	} else {
--		for (i = 0; i < n; i++) {
--			rxep[i] = rte_pktmbuf_prefree_seg(txep[i].mbuf);
--
--			/* If Tx buffers are not the last reference or from
--			 * unexpected mempool, previous copied buffers are
--			 * considered as invalid.
--			 */
--			if (unlikely(rxep[i] == NULL ||
--				recycle_rxq_info->mp != txep[i].mbuf->pool))
--				nb_recycle_mbufs = 0;
--		}
--		/* If Tx buffers are not the last reference or
--		 * from unexpected mempool, all recycled buffers
--		 * are put into mempool.
--		 */
--		if (nb_recycle_mbufs == 0)
--			for (i = 0; i < n; i++) {
--				if (rxep[i] != NULL)
--					rte_mempool_put(rxep[i]->pool, rxep[i]);
--			}
--	}
--
--	/* Update counters for Tx. */
--	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free + txq->tx_rs_thresh);
--	txq->tx_next_dd = (uint16_t)(txq->tx_next_dd + txq->tx_rs_thresh);
--	if (txq->tx_next_dd >= txq->nb_tx_desc)
--		txq->tx_next_dd = (uint16_t)(txq->tx_rs_thresh - 1);
--
--	return nb_recycle_mbufs;
-+	return ci_tx_recycle_mbufs(txq, recycle_rxq_info);
- }
-diff --git a/drivers/net/intel/ixgbe/ixgbe_recycle_mbufs_vec_common.c b/drivers/net/intel/ixgbe/ixgbe_recycle_mbufs_vec_common.c
-index e2c3523ed2..179205b422 100644
---- a/drivers/net/intel/ixgbe/ixgbe_recycle_mbufs_vec_common.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_recycle_mbufs_vec_common.c
-@@ -21,92 +21,11 @@ ixgbe_recycle_tx_mbufs_reuse_vec(void *tx_queue,
- 		struct rte_eth_recycle_rxq_info *recycle_rxq_info)
- {
- 	struct ci_tx_queue *txq = tx_queue;
--	struct ci_tx_entry *txep;
--	struct rte_mbuf **rxep;
--	int i, n;
--	uint32_t status;
--	uint16_t nb_recycle_mbufs;
--	uint16_t avail = 0;
--	uint16_t mbuf_ring_size = recycle_rxq_info->mbuf_ring_size;
--	uint16_t mask = recycle_rxq_info->mbuf_ring_size - 1;
--	uint16_t refill_requirement = recycle_rxq_info->refill_requirement;
--	uint16_t refill_head = *recycle_rxq_info->refill_head;
--	uint16_t receive_tail = *recycle_rxq_info->receive_tail;
-+	const uint32_t status = txq->ixgbe_tx_ring[txq->tx_next_dd].wb.status;
- 
--	/* Get available recycling Rx buffers. */
--	avail = (mbuf_ring_size - (refill_head - receive_tail)) & mask;
--
--	/* Check Tx free thresh and Rx available space. */
--	if (txq->nb_tx_free > txq->tx_free_thresh || avail <= txq->tx_rs_thresh)
--		return 0;
--
--	/* check DD bits on threshold descriptor */
--	status = txq->ixgbe_tx_ring[txq->tx_next_dd].wb.status;
--	if (!(status & IXGBE_ADVTXD_STAT_DD))
--		return 0;
--
--	n = txq->tx_rs_thresh;
--	nb_recycle_mbufs = n;
--
--	/* Mbufs recycle can only support no ring buffer wrapping around.
--	 * Two case for this:
--	 *
--	 * case 1: The refill head of Rx buffer ring needs to be aligned with
--	 * buffer ring size. In this case, the number of Tx freeing buffers
--	 * should be equal to refill_requirement.
--	 *
--	 * case 2: The refill head of Rx ring buffer does not need to be aligned
--	 * with buffer ring size. In this case, the update of refill head can not
--	 * exceed the Rx buffer ring size.
--	 */
--	if ((refill_requirement && refill_requirement != n) ||
--		(!refill_requirement && (refill_head + n > mbuf_ring_size)))
-+	/* are Tx descriptors ready for recycling? */
-+	if (!(status & rte_cpu_to_le_32(IXGBE_ADVTXD_STAT_DD)))
- 		return 0;
- 
--	/* First buffer to free from S/W ring is at index
--	 * tx_next_dd - (tx_rs_thresh-1).
--	 */
--	txep = &txq->sw_ring[txq->tx_next_dd - (n - 1)];
--	rxep = recycle_rxq_info->mbuf_ring;
--	rxep += refill_head;
--
--	if (txq->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE) {
--		/* Avoid txq contains buffers from unexpected mempool. */
--		if (unlikely(recycle_rxq_info->mp
--					!= txep[0].mbuf->pool))
--			return 0;
--
--		/* Directly put mbufs from Tx to Rx. */
--		for (i = 0; i < n; i++)
--			rxep[i] = txep[i].mbuf;
--	} else {
--		for (i = 0; i < n; i++) {
--			rxep[i] = rte_pktmbuf_prefree_seg(txep[i].mbuf);
--
--			/* If Tx buffers are not the last reference or from
--			 * unexpected mempool, previous copied buffers are
--			 * considered as invalid.
--			 */
--			if (unlikely(rxep[i] == NULL ||
--				recycle_rxq_info->mp != txep[i].mbuf->pool))
--				nb_recycle_mbufs = 0;
--		}
--		/* If Tx buffers are not the last reference or
--		 * from unexpected mempool, all recycled buffers
--		 * are put into mempool.
--		 */
--		if (nb_recycle_mbufs == 0)
--			for (i = 0; i < n; i++) {
--				if (rxep[i] != NULL)
--					rte_mempool_put(rxep[i]->pool, rxep[i]);
--			}
--	}
--
--	/* Update counters for Tx. */
--	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free + txq->tx_rs_thresh);
--	txq->tx_next_dd = (uint16_t)(txq->tx_next_dd + txq->tx_rs_thresh);
--	if (txq->tx_next_dd >= txq->nb_tx_desc)
--		txq->tx_next_dd = (uint16_t)(txq->tx_rs_thresh - 1);
--
--	return nb_recycle_mbufs;
-+	return ci_tx_recycle_mbufs(tx_queue, recycle_rxq_info);
- }
--- 
-2.47.1
+On 5/2/25 12:10 AM, Nicolas Chautru wrote:
+> This change addresses the CID 457446:  Null pointer dereferences
+> (REVERSE_INULL). Not expected to happen in practice, but the
+> config may be potentially undefined through API.
+> 
+> Coverity issue: 457446
+> Fixes: 61aa25b96e14 ("bbdev: add trace points")
+> 
+> Signed-off-by: Nicolas Chautru <nicolas.chautru@intel.com>
+> ---
+>   lib/bbdev/rte_bbdev.c | 9 +++++----
+>   1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/lib/bbdev/rte_bbdev.c b/lib/bbdev/rte_bbdev.c
+> index f341e6f3b9..56f313ee64 100644
+> --- a/lib/bbdev/rte_bbdev.c
+> +++ b/lib/bbdev/rte_bbdev.c
+> @@ -440,10 +440,6 @@ int
+>   rte_bbdev_queue_configure(uint16_t dev_id, uint16_t queue_id,
+>   		const struct rte_bbdev_queue_conf *conf)
+>   {
+> -
+> -	rte_bbdev_trace_queue_configure(dev_id, queue_id, rte_bbdev_op_type_str(conf->op_type),
+> -			conf->priority);
+> -
+>   	int ret = 0;
+>   	struct rte_bbdev_driver_info dev_info;
+>   	struct rte_bbdev *dev = get_dev(dev_id);
+> @@ -451,6 +447,11 @@ rte_bbdev_queue_configure(uint16_t dev_id, uint16_t queue_id,
+>   	struct rte_bbdev_queue_conf *stored_conf;
+>   	const char *op_type_str;
+>   	unsigned int max_priority;
+> +
+> +	rte_bbdev_trace_queue_configure(dev_id, queue_id,
+> +			conf != NULL ? rte_bbdev_op_type_str(conf->op_type) : NULL,
+> +			conf != NULL ? conf->priority : 0);
+> +
+>   	VALID_DEV_OR_RET_ERR(dev, dev_id);
+>   
+>   	VALID_DEV_OPS_OR_RET_ERR(dev, dev_id);
+
+Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+
+Thanks,
+Maxime
 
