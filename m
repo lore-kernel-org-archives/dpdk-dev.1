@@ -2,46 +2,89 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD58EC3ABC3
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 May 2025 14:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 236A8C3ABCB
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 May 2025 14:26:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B25BD402CA;
-	Mon, 12 May 2025 16:10:41 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id B081A402C9
- for <dev@dpdk.org>; Mon, 12 May 2025 16:10:40 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id A1AF34672A; Mon, 12 May 2025 16:10:40 +0200 (CEST)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/eventdev Bug 1705] DPDK fails to compile on Ubuntu 24.04 with
- BullseyeCoverage
-Date: Mon, 12 May 2025 14:10:40 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: eventdev
-X-Bugzilla-Version: 25.03
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: critical
-X-Bugzilla-Who: alaaduh@nvidia.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1705-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17470590400.bF1CA57.25635
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-MIME-Version: 1.0
+	by mails.dpdk.org (Postfix) with ESMTP id E4D96402CA;
+	Mon, 12 May 2025 16:26:47 +0200 (CEST)
+Received: from mx2.freebsd.org (mx2.freebsd.org [96.47.72.81])
+ by mails.dpdk.org (Postfix) with ESMTP id 5C2EF402C9
+ for <dev@dpdk.org>; Mon, 12 May 2025 16:26:46 +0200 (CEST)
+Received: from mx1.freebsd.org (mx1.freebsd.org [96.47.72.80])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits)
+ client-signature RSA-PSS (4096 bits))
+ (Client CN "mx1.freebsd.org", Issuer "R10" (verified OK))
+ by mx2.freebsd.org (Postfix) with ESMTPS id 4Zx23n3lZsz4PWJ;
+ Mon, 12 May 2025 14:26:45 +0000 (UTC)
+ (envelope-from jfree@freebsd.org)
+Received: from smtp.freebsd.org (smtp.freebsd.org
+ [IPv6:2610:1c1:1:606c::24b:4])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+ client-signature RSA-PSS (4096 bits) client-digest SHA256)
+ (Client CN "smtp.freebsd.org", Issuer "R11" (verified OK))
+ by mx1.freebsd.org (Postfix) with ESMTPS id 4Zx23n2sjNz45N3;
+ Mon, 12 May 2025 14:26:45 +0000 (UTC)
+ (envelope-from jfree@freebsd.org)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=freebsd.org; s=dkim;
+ t=1747060005;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=+PeTrbRHJJqYRV2P74n6rhk+BCJRBODw+O7MqwLzR70=;
+ b=gbX2OW0NhtpzQOAyUiM39R7R2LioWgLpDQWyuJhN7MkUO9786H1exZRAbPpsc+YU4D9Jk7
+ TqK3SPKF7Kvoc8GHfCCAWRRuOC9pFEjf5b2+CZ/dQ+O4jFYF7wwnxeGPoIy8cxINzUFh3J
+ 2I52jjK0+3wWmPSjVqX+5/BPbiUQ1kc3zUel3uv8SGBMTzqKpmnAaN0Ztq9SEgXw7HDyLZ
+ GzLktq2inu6BfD818qzTMBlaoUlbSfaw/w3grGcQaxJ9kZH091IuBsDdUXHP5G0X3y73wW
+ iG4j9lJoJzt5/Br75chozZa8bho7nMyWnAagqCWKNYfaVbw16D7xDKrdfkta1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=freebsd.org;
+ s=dkim; t=1747060005;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=+PeTrbRHJJqYRV2P74n6rhk+BCJRBODw+O7MqwLzR70=;
+ b=DK30Edkn+rsID1L/l0ICR8t9z/9FPde8ifQmHZ973zkFVY5JTn7+80/APJbtoFSnao0K3G
+ Y8qhjm02RxVpsWo4/IJZUhnLqyfqs4nqLPV64Hbedl5N2nOCjAr0OWTVha7URbij7Kp/F2
+ 2FHTh0vzN9eeTwHcEWE3WGhczKyKNAZFbXBlxJyGjnZdXf68cUGB2hjc2VaCb64/kCMZAA
+ TVII67neUHuWMliWJNjWcNbGNE85ovW7ZTPP8+TFnej8tK+uB1827cRVGkJwrUZDzeXNx3
+ a8+Gf/t4yFYkeSWR5PUYLQMI9rHDxJLrUHOrBT/uEcUfkw0tpFp3DIu39P6zVw==
+ARC-Seal: i=1; s=dkim; d=freebsd.org; t=1747060005; a=rsa-sha256; cv=none;
+ b=G7283DWe1m4fsBqrLbTZD0esS91dbrI8rF305dMSOZsZKJlJj9Lrfqln1F3mxC3+XHYcaW
+ EadVX03GSddJ4LK4N/tX7T6MZOTYx3KvqR5i3Z5DV928ZcFehFo6UxQFEkx7OfVnRR+2PH
+ nwkrQnvuFrrOlO3u00r+JnW9QdomcPkE6li8feRa2uCi/nM0i2DPWOvM6IYHjPsfBbez1R
+ NTTRXuj6ojsU9eWJtfbfijsSikrgmyfYL4HMqQoxnLE/yTg1sTszGyszlZgeYpcirpEd5B
+ 1PCT71Z11dcZavW9ZJj2rN0FHxnUZOAYa8i2hTCzoqKS0Uu69G3H8lFz4QzRcg==
+ARC-Authentication-Results: i=1;
+	mx1.freebsd.org;
+	none
+Received: from localhost (67-4-147-206.mpls.qwest.net [67.4.147.206])
+ (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (Client did not present a certificate) (Authenticated sender: jfree)
+ by smtp.freebsd.org (Postfix) with ESMTPSA id 4Zx23m6wvwzmnt;
+ Mon, 12 May 2025 14:26:44 +0000 (UTC)
+ (envelope-from jfree@freebsd.org)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 12 May 2025 09:26:44 -0500
+Message-Id: <D9U9327H5W8O.EKJ2V2MNZM97@freebsd.org>
+To: "Burakov, Anatoly" <anatoly.burakov@intel.com>, "Jake Freeland"
+ <jfree@FreeBSD.org>, "Chenbo Xia" <chenbox@nvidia.com>, "Nipun Gupta"
+ <nipun.gupta@amd.com>, "Tyler Retzlaff" <roretzla@linux.microsoft.com>,
+ "Bruce Richardson" <bruce.richardson@intel.com>
+Cc: <dev@dpdk.org>
+Subject: Re: [PATCH 1/4] bus/pci: Use force-noreplace flag when mapping PCI
+ resources
+From: "Jake Freeland" <jfree@freebsd.org>
+X-Mailer: aerc 0.18.2
+References: <20250506174046.1136711-1-jfree@FreeBSD.org>
+ <20250506174046.1136711-2-jfree@FreeBSD.org>
+ <53d50d81-75ae-4d23-89b2-bfd6e5733550@intel.com>
+In-Reply-To: <53d50d81-75ae-4d23-89b2-bfd6e5733550@intel.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,277 +98,109 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+On Thu May 8, 2025 at 6:32 AM CDT, Anatoly Burakov wrote:
+> On 5/6/2025 7:40 PM, Jake Freeland wrote:
+> > When mapping PCI resources in secondary processes, use the
+> > RTE_MAP_FORCE_ADDRESS_NOREPLACE flag to indicate that the
+> > mapping must be made at the provided address.
+> >=20
+> > Without this flag, the kernel might return a different address for
+> > the mapping, even if the requested region was available.
+> >=20
+> > Signed-off-by: Jake Freeland <jfree@FreeBSD.org>
+> > ---
+> >   drivers/bus/pci/pci_common_uio.c | 4 +++-
+> >   lib/eal/common/eal_private.h     | 7 ++++++-
+> >   lib/eal/include/rte_eal_paging.h | 7 ++++++-
+> >   lib/eal/unix/eal_unix_memory.c   | 8 +++++++-
+> >   4 files changed, 22 insertions(+), 4 deletions(-)
+> >=20
+> > diff --git a/drivers/bus/pci/pci_common_uio.c b/drivers/bus/pci/pci_com=
+mon_uio.c
+> > index 30503bd23a..71974e9f56 100644
+> > --- a/drivers/bus/pci/pci_common_uio.c
+> > +++ b/drivers/bus/pci/pci_common_uio.c
+> > @@ -10,6 +10,7 @@
+> >   #include <sys/mman.h>
+> >  =20
+> >   #include <rte_eal.h>
+> > +#include <rte_eal_paging.h>
+> >   #include <rte_pci.h>
+> >   #include <rte_bus_pci.h>
+> >   #include <rte_tailq.h>
+> > @@ -58,7 +59,8 @@ pci_uio_map_secondary(struct rte_pci_device *dev)
+> >  =20
+> >   			void *mapaddr =3D pci_map_resource(uio_res->maps[i].addr,
+> >   					fd, (off_t)uio_res->maps[i].offset,
+> > -					(size_t)uio_res->maps[i].size, 0);
+> > +					(size_t)uio_res->maps[i].size,
+> > +					RTE_MAP_FORCE_ADDRESS_NOREPLACE);
+> >  =20
+> >   			/* fd is not needed in secondary process, close it */
+> >   			close(fd);
+> > diff --git a/lib/eal/common/eal_private.h b/lib/eal/common/eal_private.=
+h
+> > index 04ba8ddb86..aaeb140eaf 100644
+> > --- a/lib/eal/common/eal_private.h
+> > +++ b/lib/eal/common/eal_private.h
+> > @@ -211,7 +211,12 @@ enum eal_mem_reserve_flags {
+> >   	 * @see RTE_MAP_FORCE_ADDRESS for description of possible consequenc=
+es
+> >   	 *      (although implementations are not required to use it).
+> >   	 */
+> > -	EAL_RESERVE_FORCE_ADDRESS =3D 1 << 1
+> > +	EAL_RESERVE_FORCE_ADDRESS =3D 1 << 1,
+> > +	/**
+> > +	 * Force reserving memory at the requested address, but fail if a
+> > +	 * preexisting mapping collides with the request.
+> > +	 */
+> > +	EAL_RESERVE_FORCE_ADDRESS_NOREPLACE =3D 1 << 2,
+> >   };
+> >  =20
+> >   /**
+> > diff --git a/lib/eal/include/rte_eal_paging.h b/lib/eal/include/rte_eal=
+_paging.h
+> > index c60317d0f5..7b1983b615 100644
+> > --- a/lib/eal/include/rte_eal_paging.h
+> > +++ b/lib/eal/include/rte_eal_paging.h
+> > @@ -34,7 +34,12 @@ enum rte_map_flags {
+> >   	 * may remove all other mappings in the requested region. However,
+> >   	 * it is not required to do so, thus mapping with this flag may fail=
+.
+> >   	 */
+> > -	RTE_MAP_FORCE_ADDRESS =3D 1 << 3
+> > +	RTE_MAP_FORCE_ADDRESS =3D 1 << 3,
+> > +	/**
+> > +	 * Force mapping to the requested address, but fail if a preexisting
+> > +	 * mapping collides with the request.
+> > +	 */
+> > +	RTE_MAP_FORCE_ADDRESS_NOREPLACE =3D 1 << 4,
+> >   };
+> >  =20
+> >   /**
+> > diff --git a/lib/eal/unix/eal_unix_memory.c b/lib/eal/unix/eal_unix_mem=
+ory.c
+> > index c540f1e838..61e914b8db 100644
+> > --- a/lib/eal/unix/eal_unix_memory.c
+> > +++ b/lib/eal/unix/eal_unix_memory.c
+> > @@ -17,11 +17,13 @@
+> >   #ifdef RTE_EXEC_ENV_LINUX
+> >   #define EAL_DONTDUMP MADV_DONTDUMP
+> >   #define EAL_DODUMP   MADV_DODUMP
+> > +#define EAL_FIXED_NOREPLACE MAP_FIXED_NOREPLACE
+>
+> Is this available in all supported Linux kernel versions?
 
---17470590400.bF1CA57.25635
-Date: Mon, 12 May 2025 16:10:40 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+Support for the MAP_FIXED_NOREPLACE flag was adding in Linux 4.17.
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1705
+It looks like we're still supporting DPDK 22.11 until Dec 2025. When
+22.11 was released, the most recent LTS kernel version was 5.15.
 
-            Bug ID: 1705
-           Summary: DPDK fails to compile on Ubuntu 24.04 with
-                    BullseyeCoverage
-           Product: DPDK
-           Version: 25.03
-          Hardware: x86
-                OS: Linux
-            Status: UNCONFIRMED
-          Severity: critical
-          Priority: Normal
-         Component: eventdev
-          Assignee: dev@dpdk.org
-          Reporter: alaaduh@nvidia.com
-  Target Milestone: ---
+Additionally, the man page specifies:
 
-$ export PATH=3D/auto/sw_tools/Bullseye/linux/linux64/9.11.7/amd64/bin:$PATH
-$ cov01 -1
-$ meson build-meson --werror
--Dexamples=3Dethtool,ip_fragmentation,l2fwd-crypto,l3fwd-power,link_status_=
-interrupt,multi_process/client_server_mp/mp_client,multi_process/client_ser=
-ver_mp/mp_server,multi_process/simple_mp,multi_process/symmetric_mp,vdpa
--Dprefix=3D/download/dpdk/install -Dlibdir=3Dlib64
--Denable_drivers=3D*/mlx5,mempool/bucket,mempool/ring,mempool/stack,net/fai=
-lsafe,net/mlx4,net/netvsc,bus/vmbus,net/tap,net/vdev_netvsc,crypto/openssl,=
-*/virtio*,bus/auxiliary
--Dc_args=3D'-Wimplicit-fallthrough=3D0' && ninja -C build-meson install
+"older kernels which  do not recognize the MAP_FIXED_NOREPLACE flag will
+typically (upon detecting a collision with a preexisting mapping) fall
+back to a =E2=80=9Cnon-MAP_FIXED=E2=80=9D type of behavior"
 
-
-Results=20
-
-[880/1180] Compiling C object
-app/dpdk-test-eventdev.p/test-eventdev_test_pipeline_queue.c.o
-FAILED: app/dpdk-test-eventdev.p/test-eventdev_test_pipeline_queue.c.o=20
-ccache cc -Iapp/dpdk-test-eventdev.p -Iapp -I../app -Ilib/eventdev
--I../lib/eventdev -I. -I.. -Iconfig -I../config -Ilib/eal/include
--I../lib/eal/include -Ilib/eal/linux/include -I../lib/eal/linux/include
--Ilib/eal/x86/include -I../lib/eal/x86/include -I../kernel/linux
--Ilib/eal/common -I../lib/eal/common -Ilib/eal -I../lib/eal -Ilib/kvargs
--I../lib/kvargs -Ilib/log -I../lib/log -Ilib/metrics -I../lib/metrics
--Ilib/telemetry -I../lib/telemetry -Ilib/ring -I../lib/ring -Ilib/ethdev
--I../lib/ethdev -Ilib/net -I../lib/net -Ilib/mbuf -I../lib/mbuf -Ilib/mempo=
-ol
--I../lib/mempool -Ilib/meter -I../lib/meter -Ilib/hash -I../lib/hash -Ilib/=
-rcu
--I../lib/rcu -Ilib/timer -I../lib/timer -Ilib/cryptodev -I../lib/cryptodev
--Ilib/dmadev -I../lib/dmadev -I/usr/include/x86_64-linux-gnu
--fdiagnostics-color=3Dalways -D_FILE_OFFSET_BITS=3D64 -Wall -Winvalid-pch -=
-Wextra
--Werror -std=3Dc11 -O3 -include rte_config.h -Wvla -Wcast-qual -Wdeprecated
--Wformat -Wformat-nonliteral -Wformat-security -Wmissing-declarations
--Wmissing-prototypes -Wnested-externs -Wold-style-definition -Wpointer-arith
--Wsign-compare -Wstrict-prototypes -Wundef -Wwrite-strings
--Wno-packed-not-aligned -Wno-missing-field-initializers -D_GNU_SOURCE
--Wimplicit-fallthrough=3D0 -march=3Dnative -mrtm -DALLOW_EXPERIMENTAL_API -=
-Wno-vla
--MD -MQ app/dpdk-test-eventdev.p/test-eventdev_test_pipeline_queue.c.o -MF
-app/dpdk-test-eventdev.p/test-eventdev_test_pipeline_queue.c.o.d -o
-app/dpdk-test-eventdev.p/test-eventdev_test_pipeline_queue.c.o -c
-../app/test-eventdev/test_pipeline_queue.c
-BullseyeCoverage Compile 9.6.10 Linux-x64 License 30120=20
-Copyright (c) Bullseye Testing Technology
-../app/test-eventdev/test_pipeline_queue.c: In function
-=E2=80=98pipeline_queue_worker_single_stage_burst_fwd_vector=E2=80=99:
-../app/test-eventdev/test_pipeline_queue.c:250:38: error: writing 1 byte in=
-to a
-region of size 0 [-Werror=3Dstringop-overflow=3D]
-  250 |                         ev[i].queue_id =3D tx_queue[ev[i].vec->port=
-];
-      |                         ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
-../app/test-eventdev/test_pipeline_queue.c:235:30: note: at offset 277 into
-destination object =E2=80=98ev=E2=80=99 of size 272
-  235 |         PIPELINE_WORKER_SINGLE_STAGE_BURST_INIT;
-      |                              ^~
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
-
---17470590400.bF1CA57.25635
-Date: Mon, 12 May 2025 16:10:40 +0200
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-<html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
-bz_new_table">
-        <tr>
-          <th>Bug ID</th>
-          <td><a class=3D"bz_bug_link=20
-          bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - DPDK fails to compile on Ubuntu 24.04 with Bullse=
-yeCoverage"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1705">1705</a>
-          </td>
-        </tr>
-
-        <tr>
-          <th>Summary</th>
-          <td>DPDK fails to compile on Ubuntu 24.04 with BullseyeCoverage
-          </td>
-        </tr>
-
-        <tr>
-          <th>Product</th>
-          <td>DPDK
-          </td>
-        </tr>
-
-        <tr>
-          <th>Version</th>
-          <td>25.03
-          </td>
-        </tr>
-
-        <tr>
-          <th>Hardware</th>
-          <td>x86
-          </td>
-        </tr>
-
-        <tr>
-          <th>OS</th>
-          <td>Linux
-          </td>
-        </tr>
-
-        <tr>
-          <th>Status</th>
-          <td>UNCONFIRMED
-          </td>
-        </tr>
-
-        <tr>
-          <th>Severity</th>
-          <td>critical
-          </td>
-        </tr>
-
-        <tr>
-          <th>Priority</th>
-          <td>Normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Component</th>
-          <td>eventdev
-          </td>
-        </tr>
-
-        <tr>
-          <th>Assignee</th>
-          <td>dev&#64;dpdk.org
-          </td>
-        </tr>
-
-        <tr>
-          <th>Reporter</th>
-          <td>alaaduh&#64;nvidia.com
-          </td>
-        </tr>
-
-        <tr>
-          <th>Target Milestone</th>
-          <td>---
-          </td>
-        </tr></table>
-      <p>
-        <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">$ export PATH=3D/auto/sw_tools/Bul=
-lseye/linux/linux64/9.11.7/amd64/bin:$PATH
-$ cov01 -1
-$ meson build-meson --werror
--Dexamples=3Dethtool,ip_fragmentation,l2fwd-crypto,l3fwd-power,link_status_=
-interrupt,multi_process/client_server_mp/mp_client,multi_process/client_ser=
-ver_mp/mp_server,multi_process/simple_mp,multi_process/symmetric_mp,vdpa
--Dprefix=3D/download/dpdk/install -Dlibdir=3Dlib64
--Denable_drivers=3D*/mlx5,mempool/bucket,mempool/ring,mempool/stack,net/fai=
-lsafe,net/mlx4,net/netvsc,bus/vmbus,net/tap,net/vdev_netvsc,crypto/openssl,=
-*/virtio*,bus/auxiliary
--Dc_args=3D'-Wimplicit-fallthrough=3D0' &amp;&amp; ninja -C build-meson ins=
-tall
-
-
-Results=20
-
-[880/1180] Compiling C object
-app/dpdk-test-eventdev.p/test-eventdev_test_pipeline_queue.c.o
-FAILED: app/dpdk-test-eventdev.p/test-eventdev_test_pipeline_queue.c.o=20
-ccache cc -Iapp/dpdk-test-eventdev.p -Iapp -I../app -Ilib/eventdev
--I../lib/eventdev -I. -I.. -Iconfig -I../config -Ilib/eal/include
--I../lib/eal/include -Ilib/eal/linux/include -I../lib/eal/linux/include
--Ilib/eal/x86/include -I../lib/eal/x86/include -I../kernel/linux
--Ilib/eal/common -I../lib/eal/common -Ilib/eal -I../lib/eal -Ilib/kvargs
--I../lib/kvargs -Ilib/log -I../lib/log -Ilib/metrics -I../lib/metrics
--Ilib/telemetry -I../lib/telemetry -Ilib/ring -I../lib/ring -Ilib/ethdev
--I../lib/ethdev -Ilib/net -I../lib/net -Ilib/mbuf -I../lib/mbuf -Ilib/mempo=
-ol
--I../lib/mempool -Ilib/meter -I../lib/meter -Ilib/hash -I../lib/hash -Ilib/=
-rcu
--I../lib/rcu -Ilib/timer -I../lib/timer -Ilib/cryptodev -I../lib/cryptodev
--Ilib/dmadev -I../lib/dmadev -I/usr/include/x86_64-linux-gnu
--fdiagnostics-color=3Dalways -D_FILE_OFFSET_BITS=3D64 -Wall -Winvalid-pch -=
-Wextra
--Werror -std=3Dc11 -O3 -include rte_config.h -Wvla -Wcast-qual -Wdeprecated
--Wformat -Wformat-nonliteral -Wformat-security -Wmissing-declarations
--Wmissing-prototypes -Wnested-externs -Wold-style-definition -Wpointer-arith
--Wsign-compare -Wstrict-prototypes -Wundef -Wwrite-strings
--Wno-packed-not-aligned -Wno-missing-field-initializers -D_GNU_SOURCE
--Wimplicit-fallthrough=3D0 -march=3Dnative -mrtm -DALLOW_EXPERIMENTAL_API -=
-Wno-vla
--MD -MQ app/dpdk-test-eventdev.p/test-eventdev_test_pipeline_queue.c.o -MF
-app/dpdk-test-eventdev.p/test-eventdev_test_pipeline_queue.c.o.d -o
-app/dpdk-test-eventdev.p/test-eventdev_test_pipeline_queue.c.o -c
-../app/test-eventdev/test_pipeline_queue.c
-BullseyeCoverage Compile 9.6.10 Linux-x64 License 30120=20
-Copyright (c) Bullseye Testing Technology
-../app/test-eventdev/test_pipeline_queue.c: In function
-=E2=80=98pipeline_queue_worker_single_stage_burst_fwd_vector=E2=80=99:
-../app/test-eventdev/test_pipeline_queue.c:250:38: error: writing 1 byte in=
-to a
-region of size 0 [-Werror=3Dstringop-overflow=3D]
-  250 |                         ev[i].queue_id =3D tx_queue[ev[i].vec-&gt;p=
-ort];
-      |                         ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
-../app/test-eventdev/test_pipeline_queue.c:235:30: note: at offset 277 into
-destination object =E2=80=98ev=E2=80=99 of size 272
-  235 |         PIPELINE_WORKER_SINGLE_STAGE_BURST_INIT;
-      |                              ^~
-          </pre>
-        </div>
-      </p>
-
-
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1705">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17470590400.bF1CA57.25635--
+Thanks,
+Jake Freeland
