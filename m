@@ -2,76 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42331C3ABCB
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 May 2025 15:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D889C3ABC3
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 May 2025 16:04:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0BAFC4026C;
-	Mon, 12 May 2025 17:45:22 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 960034025F
- for <dev@dpdk.org>; Mon, 12 May 2025 17:45:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1747064720;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=VmRB2WZsHgg6gksvb19uub+yPS553bRU91tFkZQcp+s=;
- b=FMfFXAannqlC/zaBvQKJdTlh06fOIO+tGBjnq6yPheTRyIBGGYht5yO8ZKtGLRt/z03gnu
- TUZlHeMQn3CG5GmzPqA3oe4jhEYmrPPE0Wl9LpuOucsIBda6+TrW86MC4vRACyWtTJBJZF
- dtyjb8XOsevdjq6j0uTjTkOoG7V39pc=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-19-996MaJbaPsCQgN2lYLnTig-1; Mon, 12 May 2025 11:45:16 -0400
-X-MC-Unique: 996MaJbaPsCQgN2lYLnTig-1
-X-Mimecast-MFC-AGG-ID: 996MaJbaPsCQgN2lYLnTig_1747064715
-Received: by mail-lj1-f197.google.com with SMTP id
- 38308e7fff4ca-30d8a6be01fso27214841fa.3
- for <dev@dpdk.org>; Mon, 12 May 2025 08:45:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1747064715; x=1747669515;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=VmRB2WZsHgg6gksvb19uub+yPS553bRU91tFkZQcp+s=;
- b=B3VOHMyXCIcw9+vbrywjv7LPIrJJvKLxi1poJICKg9b4r+bA7fZKTXdOXEduTGM+R1
- ywT0t2XO0c5s0d+GJ8wlD3+1MJwXt6+jFjRmsRvLyC8Kc7FTh1DIGJQe/WGvQLxpJuWZ
- HYQG37hrXzHj6WPjMiAq+gWQhaW68Q1hATZwJjyIjSPaUPp5WjSVL/iciy5miPvuZ4QB
- A1/lwYxba+Q8e/+mBIbqeUqGE15rnuvlLCGDMPzm9zq7cnN0csUloYyJpoPwd+DeEqxc
- KyPK207oG+AtqmpucbcVMc+r9gkLBaFdVTDx0gDbkNLj2N7NIXf3LSqBQ3tPEAckiXxh
- feHw==
-X-Gm-Message-State: AOJu0YyHR2op2R15ZucxK1A5hiKe0tZEwGfF2VWuHFaI/afkOGqjk8Ux
- pFbaDTdUizUfnXZ8It6K1OaybvDcvlo+s+2QNPSIihX4x0J6rPz5GdkmrGBNCV3cQ8M4Gktv8x5
- H1UDlunu6eurJ7H/0imkvJ8ZIdwifGE9cCKvt0qND3Az8MofrZpF1PtenyCVVf8KE8nC26wFh/s
- aVrsr4XN+fEHdLca4=
-X-Gm-Gg: ASbGncuQHGQQ+Q41lAhfAYfu+MszhNoOmOZ3wddUmrDxIMdTAJzBd/JSvbwgC9ftnqw
- cmO1PUPslkn31dfrNiSIu6+LFFtgorpmqM9pT39SHzuHBE/IxXSogzW7KKr1afH7YA622nrc=
-X-Received: by 2002:a05:651c:30c6:b0:30b:b908:ce06 with SMTP id
- 38308e7fff4ca-326c4619b5amr54606111fa.19.1747064714820; 
- Mon, 12 May 2025 08:45:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFeAKSpyF+WCkolJNqHidkO3jjpechsEqfLr5Wwq81CTZegkZzyKAg4P+xvDlrEpErGhgleOmm2JWE3aAusQTE=
-X-Received: by 2002:a05:651c:30c6:b0:30b:b908:ce06 with SMTP id
- 38308e7fff4ca-326c4619b5amr54606021fa.19.1747064714449; Mon, 12 May 2025
- 08:45:14 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E66514026C;
+	Mon, 12 May 2025 18:04:28 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id B4FFF4025F
+ for <dev@dpdk.org>; Mon, 12 May 2025 18:04:27 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 93AB82178D;
+ Mon, 12 May 2025 18:04:26 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-References: <20250508044230.133966-1-david.marchand@redhat.com>
- <aCITmVz7OAjbNvCo@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <aCITmVz7OAjbNvCo@bricha3-mobl1.ger.corp.intel.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Mon, 12 May 2025 17:45:02 +0200
-X-Gm-Features: AX0GCFvlL1GZT3dnwKTSiKq4mXdZbfhqbHtLovbmR840UK-SeC-oOm2qRFLj9x4
-Message-ID: <CAJFAV8yd2O7UVyj3gaQfd1aeQtztE+JyyNo5Qs3qpGt+_xEX9A@mail.gmail.com>
-Subject: Re: [PATCH] build: fix disabling developer mode
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, Stephen Hemminger <stephen@networkplumber.org>, 
- Bruce Richardson <bruce.richardson@intel.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: PPJe-ZXwiMKjGYpcojt7-VVZ9SzBnRhq_1hm06KMVc8_1747064715
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+	charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH v2 1/2] ethdev: remove unnecessary type conversion
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Mon, 12 May 2025 18:04:25 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FC46@smartserver.smartshare.dk>
+In-Reply-To: <20250512150732.65743-1-skori@marvell.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v2 1/2] ethdev: remove unnecessary type conversion
+Thread-Index: AdvDT6vjnJfap0mpQXyh7HmowhssTAABs/ww
+References: <20250429181132.2544771-1-skori@marvell.com>
+ <20250512150732.65743-1-skori@marvell.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: <skori@marvell.com>, "Shepard Siegel" <shepard.siegel@atomicrules.com>,
+ "Ed Czeck" <ed.czeck@atomicrules.com>,
+ "John Miller" <john.miller@atomicrules.com>,
+ "Igor Russkikh" <irusskikh@marvell.com>,
+ "Ajit Khaparde" <ajit.khaparde@broadcom.com>,
+ "Somnath Kotur" <somnath.kotur@broadcom.com>,
+ "Nithin Dabilpuram" <ndabilpuram@marvell.com>,
+ "Kiran Kumar K" <kirankumark@marvell.com>,
+ "Satha Rao" <skoteshwar@marvell.com>, "Harman Kalra" <hkalra@marvell.com>,
+ "Hemant Agrawal" <hemant.agrawal@nxp.com>,
+ "Sachin Saxena" <sachin.saxena@nxp.com>, "John Daley" <johndale@cisco.com>,
+ "Hyong Youb Kim" <hyonkim@cisco.com>, "Jie Hai" <haijie1@huawei.com>,
+ "Ian Stokes" <ian.stokes@intel.com>,
+ "Bruce Richardson" <bruce.richardson@intel.com>,
+ "Vladimir Medvedkin" <vladimir.medvedkin@intel.com>,
+ "Anatoly Burakov" <anatoly.burakov@intel.com>,
+ "Dariusz Sosnowski" <dsosnowski@nvidia.com>,
+ "Viacheslav Ovsiienko" <viacheslavo@nvidia.com>,
+ "Bing Zhao" <bingz@nvidia.com>, "Ori Kam" <orika@nvidia.com>,
+ "Suanming Mou" <suanmingm@nvidia.com>, "Matan Azrad" <matan@nvidia.com>,
+ "Long Li" <longli@microsoft.com>, "Wei Hu" <weh@microsoft.com>,
+ "Chaoyong He" <chaoyong.he@corigine.com>,
+ "Jiawen Wu" <jiawenwu@trustnetic.com>,
+ "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
+ "Jerin Jacob" <jerinj@marvell.com>, "Maciej Czekaj" <mczekaj@marvell.com>,
+ "Jian Wang" <jianwang@trustnetic.com>,
+ "Maxime Coquelin" <maxime.coquelin@redhat.com>,
+ "Chenbo Xia" <chenbox@nvidia.com>,
+ "Jochen Behrens" <jochen.behrens@broadcom.com>,
+ "Thomas Monjalon" <thomas@monjalon.net>,
+ "Ferruh Yigit" <ferruh.yigit@amd.com>
+Cc: <dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,23 +77,57 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, May 12, 2025 at 5:28=E2=80=AFPM Bruce Richardson
-<bruce.richardson@intel.com> wrote:
-> On Thu, May 08, 2025 at 06:42:29AM +0200, David Marchand wrote:
-> > A recent change broke disabling developer mode:
-> > $ meson setup plop -Ddeveloper_mode=3Ddisabled
-> > ...
-> > drivers/meson.build:150:14: ERROR: Unknown variable "fs".
-> >
-> > Fixes: 8fa3af6c05f8 ("build: add generic support for base code in drive=
-rs")
-> >
-> > Signed-off-by: David Marchand <david.marchand@redhat.com>
-> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+> From: Sunil Kumar Kori <skori@marvell.com>
+> Sent: Monday, 12 May 2025 17.07
+>=20
+> As rte_eth_rx_queue_count() returns signed value to represent
+> the error cases but internally invoked callback is returning
+> unsigned value. Hence unnecessary type conversion is done.
+>=20
+> To avoid this typecasting from signed to unsigned, fixed
+> return type of callback functions.
+>=20
+> Signed-off-by: Sunil Kumar Kori <skori@marvell.com>
 
-Applied, thanks.
+Note for other reviewers:
+The tx_queue_count callback already returns int, and doesn't need to be =
+updated.
 
+Acked-by: Morten Br=F8rup <mb@smartsharesystems.com>
 
---=20
-David Marchand
+> diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
+> index ea7f8c4a1a..b3031ab9e6 100644
+> --- a/lib/ethdev/rte_ethdev.h
+> +++ b/lib/ethdev/rte_ethdev.h
+> @@ -6401,7 +6401,7 @@ rte_eth_rx_queue_count(uint16_t port_id, =
+uint16_t
+> queue_id)
+>=20
+>  	if (p->rx_queue_count =3D=3D NULL)
+>  		return -ENOTSUP;
+> -	return (int)p->rx_queue_count(qd);
+> +	return p->rx_queue_count(qd);
+>  }
+>=20
+>  /**@{@name Rx hardware descriptor states
+> diff --git a/lib/ethdev/rte_ethdev_core.h
+> b/lib/ethdev/rte_ethdev_core.h
+> index e55fb42996..4ffae4921a 100644
+> --- a/lib/ethdev/rte_ethdev_core.h
+> +++ b/lib/ethdev/rte_ethdev_core.h
+> @@ -45,7 +45,7 @@ typedef uint16_t (*eth_tx_prep_t)(void *txq,
+>=20
+>=20
+>  /** @internal Get number of used descriptors on a receive queue. */
+> -typedef uint32_t (*eth_rx_queue_count_t)(void *rxq);
+> +typedef int (*eth_rx_queue_count_t)(void *rxq);
+>=20
+>  /** @internal Check the status of a Rx descriptor */
+>  typedef int (*eth_rx_descriptor_status_t)(void *rxq, uint16_t =
+offset);
+> --
+> 2.43.0
+
+For the ethdev library changes:
+Reviewed-by: Morten Br=F8rup <mb@smartsharesystems.com>
 
