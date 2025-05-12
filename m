@@ -2,164 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B72DC3ABCB
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 May 2025 14:46:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8B14C3ABC3
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 May 2025 14:49:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2085B402CA;
-	Mon, 12 May 2025 16:46:31 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id 2BD0E402C9
- for <dev@dpdk.org>; Mon, 12 May 2025 16:46:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1747061190; x=1778597190;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=Z8LbdXA8T9LN3vCmHvX0e4c7XLmZ95Hj3hMe4ARgnOI=;
- b=fjsCiq2xkLupqGuF37o3XYxql3/TLLpJ8LdL2GMQscWfI8l97fEhK//d
- 9ruYUT6MxFQfK69bk9JUHADX0sh221Nz8IGBFqEQiPyUwRlJ0Y8XBh+UD
- r/Ix7pF/i5OQy+AZuLX2bur1WvDlYSPxfBBUe7tbS0C6n1/7tln3mtRzU
- HeKMqrumhSHOFLPExx23+j3JpKGnEq8FoU/tFOptu+xTnv7rawqESokNt
- TzmQO0hhAVM7QHTUxiix2/QEtC2JB3g0+nwBQsD7j3KbmMwnDTMx2CVtN
- sftqs2q5634MX2XLWCjmEcbJZmZOcbdM2fAbLbUqsUIfklPyTCfJVVVr9 Q==;
-X-CSE-ConnectionGUID: P7Kod/6oT/KmCj0kJYMrqA==
-X-CSE-MsgGUID: PK1sNNkfTrmQbwhFJnA38g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11431"; a="48939796"
-X-IronPort-AV: E=Sophos;i="6.15,282,1739865600"; d="scan'208";a="48939796"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
- by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 12 May 2025 07:43:25 -0700
-X-CSE-ConnectionGUID: 9ssS10sbRdOhbAEFSVtlnw==
-X-CSE-MsgGUID: 1DIsaU3WQ0mTWExtHRPvsQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,282,1739865600"; d="scan'208";a="137100946"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 12 May 2025 07:43:23 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Mon, 12 May 2025 07:43:22 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Mon, 12 May 2025 07:43:22 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.48) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 12 May 2025 07:43:21 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=B4xTuYCJM5LNTdH1pUFeTX/ZtrDJhv2GVcgriHjsGdkQsPuX17jbDM2XkzfnlA53U4GHhw2TG4wcez8+Sw9eg8qkW96Ikl8jemN6AFh8DFW4dSYHx8A/bxo5HeLqFD3Z00qyTGidClxlrlrIuqFKEkyTYREjBijc5hiPER82U5up9ay1BYKcrn0Lh3f/Mc/uFN01Du3m3BxTU3GhVJcGlgaObtEvBmlkWIXdJjbK7my04nbdALvoaW1wkB9LCeA9in6paysglre+G9dVnBrRdknKUn6hHdt7MGkfNwl/UJRecxY4XrLlWx2wFKdbUVAk4FuPHiP11ycq2IevEzYrdA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+UNkNRjyqZ1xgdxKkpkRvTkkj9sJL6cIZiM0Fu2NeeQ=;
- b=Iajb0ykbLV3QXN59trKDDGjGRRREXj18HuiGQUjTtheclzVv1zx9nTggY9fZY6isa2JRwUQCU6S63ZqyB6eUQOwTLVjUqIX5HNd6qy+FCbRXNNhQejwhbHCo97iFQmSPdrQC1nMEZ1+2PmyCmOiZSWFrE92NEeScgXpq0Kl1h0w22RjWokuzHcKHCrge4YIcmTeGRNOtXVEP54SkUEHv92vcrWZqbQBj2dUyszwrY5jkHboJKsxyiqd0Flbdahb8Ei0gY06ncYxx2+SKbJwlTlRa7ARpifEro5DHhqqUepAtX9hCgLcCzsL3JdIqViT6eCJs6z/xlyJavTeHGToBew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by DM3PPF341F90799.namprd11.prod.outlook.com (2603:10b6:f:fc00::f19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.30; Mon, 12 May
- 2025 14:42:53 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%5]) with mapi id 15.20.8722.027; Mon, 12 May 2025
- 14:42:52 +0000
-Date: Mon, 12 May 2025 15:42:46 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: "Burakov, Anatoly" <anatoly.burakov@intel.com>
-CC: Jake Freeland <jfree@FreeBSD.org>, Chenbo Xia <chenbox@nvidia.com>, "Nipun
- Gupta" <nipun.gupta@amd.com>, Tyler Retzlaff <roretzla@linux.microsoft.com>,
- <dev@dpdk.org>
-Subject: Re: [PATCH 1/4] bus/pci: Use force-noreplace flag when mapping PCI
- resources
-Message-ID: <aCII5pgaDvgMXGvM@bricha3-mobl1.ger.corp.intel.com>
-References: <20250506174046.1136711-1-jfree@FreeBSD.org>
- <20250506174046.1136711-2-jfree@FreeBSD.org>
- <53d50d81-75ae-4d23-89b2-bfd6e5733550@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <53d50d81-75ae-4d23-89b2-bfd6e5733550@intel.com>
-X-ClientProxiedBy: DU7PR01CA0012.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:50f::15) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id B08C5402CA;
+	Mon, 12 May 2025 16:49:16 +0200 (CEST)
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com
+ [209.85.160.49]) by mails.dpdk.org (Postfix) with ESMTP id 1C14D402C9
+ for <dev@dpdk.org>; Mon, 12 May 2025 16:49:15 +0200 (CEST)
+Received: by mail-oa1-f49.google.com with SMTP id
+ 586e51a60fabf-2d4e91512b4so2914788fac.1
+ for <dev@dpdk.org>; Mon, 12 May 2025 07:49:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1747061354; x=1747666154; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=zt1fHX/Dd7AL9i5Lsa24ykAxzP5qAbV/TC15hejCio0=;
+ b=h7gkCEEaKo0bXDEm0sZfpSfRJvB9+DKF4GJMaqIoAyDBc8NeTYbDaUOvXiACVXXxJX
+ VUYCQ/Z+6HkrE6TBjowXc5tQVMRi1MaY14159uvhi8vbRPt9KTZ1chyvEZp6+pS7kaXq
+ tFgrxtdqwmywEYmqWzGN8Yfx6CdJKoO2ojJR8SO0hPbdkBAt8BAgsPrBACxPvzonOw5W
+ bnjwEMwbZWTroBnQT9LTCGN60VKUQN+SgtYI66RHx9orAyejD4Hw9zvwE454mxrdPMZ3
+ 2CT6cz/x+fCtuVJH8bQWKUYRryDbSqBZMMO0Kp6xdeiEfWWB1SC6NDNKWQQw6HhNZAKF
+ +dQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1747061354; x=1747666154;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=zt1fHX/Dd7AL9i5Lsa24ykAxzP5qAbV/TC15hejCio0=;
+ b=p+i45rIqxLObVriM3Pu9V0LtUO0D8IR4aEEzKp2yI6ZcbzAswuRuIVz/McrD2jGiv4
+ b9zr6aq5Vvq648glAFMjPy4D2nGaNJJyB1o6tEayULQEXJvJM5Huyf/1/E6cp/2egMik
+ uLbCipRPZWAWZ9/NTg1yjkg6UQu/s1EhzyVLiYB/sZ4spY0DyLsM/lykCaKi8UL3DCO8
+ pOXvuaHLV2FSeGTJ3JNZQFwT7VdLtlGXCmw/QsFWUcud3dQzYqponBMGBfdDqpaY2RtT
+ +S6SjX1nl15FBV3Z9i2uNuIGIc/qctfZiQ3jpTsJEbB96ceNZR9q60SWsBcQUQ+xppkn
+ r2JQ==
+X-Gm-Message-State: AOJu0Yw8wyaCdzNLSMrGvQ9aN9RjZ55BZDHlTlwOotP1JNm932vAOUSJ
+ qGCrDspr4VbhbGz5cDq3jYtNVcKYrYkRxB6Ddfq02Gd6FXo/YIyEyly9qDu2
+X-Gm-Gg: ASbGncvqDBdVZs3G0Jctx+Fzfk9Pngtim+DYWwft819LGek6D9Uj2NZraDa1PnWmSKd
+ B4iW8GKPr9/cNQ3lTZ2hWObwOWexDmVoNjp337ovkpJFf32HfIaERD0iSC1NRZYfDLe8RkeUZJz
+ 9qWjdyPQ81y/TUjJIURX65n3QdmHoaJ5CieFJ4TJ9/ojksvMMJjE5GF6wLO/dTEn7GDe6DaAVYW
+ RTbd3p+wpaJFGOVgNbNRQlTAPMcK7d3fqb+LxvhNHv9n/ZLBTfmA5APgxoLFEVPfyDXLq8hDWYu
+ SkPPar1yq12LMQVTycu+6fayOmgYGy99nWSjY+hXO3noT7mhqmbEfaPocL4ipGYDTo39kjV9D+y
+ PTvDNumGyueo=
+X-Google-Smtp-Source: AGHT+IGn4TSXxDXmz8WAJqsL4LFL2j6ibZBr0c4NG09rvucS8Oq8EKWMS/cK1lEuN/oQkNNnx/YNyQ==
+X-Received: by 2002:a05:6870:8908:b0:2c2:5639:3a4d with SMTP id
+ 586e51a60fabf-2dba453cbbemr7565754fac.38.1747061353382; 
+ Mon, 12 May 2025 07:49:13 -0700 (PDT)
+Received: from localhost.localdomain ([47.189.31.106])
+ by smtp.gmail.com with ESMTPSA id
+ 586e51a60fabf-2dba0625c93sm1932354fac.8.2025.05.12.07.49.12
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 12 May 2025 07:49:13 -0700 (PDT)
+From: Nandini Persad <nandinipersad361@gmail.com>
+To: Maxime Coquelin <maxime.coquelin@redhat.com>
+Cc: dev@dpdk.org
+Subject: [PATCH] doc: reword contributor's guidelines
+Date: Mon, 12 May 2025 07:48:41 -0700
+Message-Id: <20250512144842.29976-1-nandinipersad361@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DM3PPF341F90799:EE_
-X-MS-Office365-Filtering-Correlation-Id: 94374a2c-d457-492b-cb08-08dd9163465c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?7siIDl5+7Pgng/gUZt59GIrMNGKENYtnJAL6qmlezOZnvHKZJE9JqZe7DZG5?=
- =?us-ascii?Q?PHCDH1pVQsjzSE2ALYMBlojyuy1LAN7BRpFOCPcaSF2PPdqd+wJkxzL8kaee?=
- =?us-ascii?Q?amoMzL3a+FZNpIwDDcWMFdpf6vi5o/lpdI5jWKE1mghDezuaYV3X/FXAkj8g?=
- =?us-ascii?Q?begD6Moh0CSWahGW/d5nUJOavG9oaxiS/3iJoVfMiU6e3KVw+ZzDavCjy9MY?=
- =?us-ascii?Q?chp8KgQIVEE/51qgot+JDchiHkDuvCto561PeTzaAdohftvS48uPqmfS9kkh?=
- =?us-ascii?Q?EvmqRTmmGf8X83p4oKqPocIsc3bGX3BuqBZIxe8Z8o7WQi9cUH5QBgCbMox+?=
- =?us-ascii?Q?mDeAlmTa4KLVhTGo2MB4fdeWA2NRJcoHmv4AuEKZRxxaYJyUEfnEkI4wMAXn?=
- =?us-ascii?Q?0i3LEagGS4zEiN84y+4i6ZvoijD3hnc+KD5fts3SkjvZN8UpoepykypZFX1J?=
- =?us-ascii?Q?cOlXKgJ31dXvLqjCoyus/wbrGFY6xSpdILRCO//B7tViJkNX0yfeLzY9HJkv?=
- =?us-ascii?Q?kdHzZQM1b24/oa5RH6CiuKvDP+ZaxdXFtio+Xw/0E98iyoVIqW1dyP/bjgkt?=
- =?us-ascii?Q?9j7YtQmECY7uLrsvheF/eHo9tAgVmHHEBjqTN56aQvD1OXxwDKO+mA7ApRON?=
- =?us-ascii?Q?9PJ0mAnoNKQEXOSAmTE7j65g/VbA12RNjci88VDWIUhC2O5weVVsCriOzWw1?=
- =?us-ascii?Q?wSiCSoqLfU3CMBw3eUhLRWO3CXnTnKEeN8LD1ziriy3d48m0SfRep+ciF1nw?=
- =?us-ascii?Q?ft1/o1ZS2T+TJYrq9SXfcMzp82wrga7qshdgRe0N3B0RQDtxefnwVh8jqJLq?=
- =?us-ascii?Q?OUZZYouZhzvFe5JIkO6m2NWy1657reHNtxWbDRycg2G1n6djDo5NrWp2gOUy?=
- =?us-ascii?Q?SL0t5vclSX/WvWZy8kfPQnqAeC1USw08XqKLB+VIM2OUEtsJOcx8WZxbgIeu?=
- =?us-ascii?Q?3fIjRS1EIdj4q/Vc6fkc//REZDNgiwfv+KNWgLEFJw1cpjfdCK//HgF1iOej?=
- =?us-ascii?Q?EqmW9IJboXYoOpdJ1Xc2jpIdhq/0OTqVwF6vmEZFizPO0H+1vnf06vZZ5j49?=
- =?us-ascii?Q?+6oLAvrGxlNiSCy26iPGurqPfMadWyz4zIRrzmnB+5DxX4SqiRsgg+NvlG7p?=
- =?us-ascii?Q?lB8wYLH6yU0OqoM+XxMHMeg6KN/LABqnCs8Yq3WiQN8Ha5BZ7ZLoMd7sA5id?=
- =?us-ascii?Q?PLwBiuqmPU9C2T0CrDSQseaTNSD5UNDqUsueubL5d4BD9DmY2bqIqwew0LT2?=
- =?us-ascii?Q?x4655sBv23ggrcYHeIpxRPnefia3sj2+rN+UzvSok51ji1QIyKZA0dTPnY2v?=
- =?us-ascii?Q?/b5mij/iomZPS2t64Mruw7iIjdkhe5aI9zb5VMu6o37QQD7EV1dHLuzU6xUJ?=
- =?us-ascii?Q?uddKXf8=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024)(7053199007); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?L7CZGrfDvMBWswOT8oLr07hS52rzQYnZNpe/+uuOUktpvBXH+9CILFl0tGWT?=
- =?us-ascii?Q?ue6D2mSBZzDNF7MSXMM3EJTqVjh4KiVAf24S3XjSdAbXQqpEVLmmtuPl99u9?=
- =?us-ascii?Q?mdYKlYgG14dV7aE01ES4K65CPY4U8iC4uztMtqwvqteWI6Fvnn94RPkY8g/Q?=
- =?us-ascii?Q?p+EEvMNtXV3Z/bCva5s69kdyMCGM8vJBN6h5VjNpUbQu57l/l2pVLiOeI1HT?=
- =?us-ascii?Q?JMLHNdcgoEC7A7fB/SDXfBjZZWR+6u+ywH1IFMTakZLk/H52YC5VBgU19uMC?=
- =?us-ascii?Q?pfmDpGFvi4CMbnzhDrb+knCACBHtsL1rSkGIjKWoXIkIPOgQqbQojrDmyp5Q?=
- =?us-ascii?Q?7RBGHaZilj9krEtAkH1pYEegEMjr0B252TsCy2A1+XIIoT4vRw9sKvUjASyT?=
- =?us-ascii?Q?ITbpV0Jmcvu68zzQdfintFNf62afHrrmWT0SvigOqRVUjAy3lbhwe2A0yqW+?=
- =?us-ascii?Q?IHgWh2l3Il/5qu1wI+Kdrna7uPCvPKZgNucE25j7hc9YIEb9dcxW+tksmbaa?=
- =?us-ascii?Q?E4kOwB56FN5cbvkfsaCw+/1Z7/iNmjvPJLNdC35noBFH/pDn7pZkWRK66jRv?=
- =?us-ascii?Q?SvQc0JfRZTYzEJKsDrO5zq/4Z/84e0VxMI96Y8uI6mjgGIzjunU2VA9q39Wh?=
- =?us-ascii?Q?y6IZWWPyLGeaNXGuv77IN7CBdCCpZsKjVFOwvPcb4DEWl0k2a4eBwRpayEih?=
- =?us-ascii?Q?//5SNVFMTu//0jBDNq/JfH4N8DN6qqSKgKKncON1p5lTcsCxdrR1dU5isO+g?=
- =?us-ascii?Q?kF4e2uTu1ooLp71dGT+7nO9H1kU/yEU9jRH5BFLmvJNtlBpwE+CX8p3RJbv9?=
- =?us-ascii?Q?yuPwghT/NfZcs8R4cMc64FjzwxsZ9tkpWOB7cBtq1eJHPQNnzirzf4f18sEs?=
- =?us-ascii?Q?21hYSOzMjErycHqICF/16lgBG+OsKRW+ieGesDdoBMZJ4TIaOlF05W7IlNfD?=
- =?us-ascii?Q?7KHhI0vzC/XM5Fh6NCUvsh2dwvgXLE5sdBaO2hAkTgg80T2zXLUcYM5WTp8p?=
- =?us-ascii?Q?drFqp0xD0E1TNWj5OIyTx2WcMpZ5UltTUiEBXtrpvczyBlrTxlRb1mbvS+xj?=
- =?us-ascii?Q?S0MVU1NSjTlZMbbcYrNi8uwiDoJt//XDgKriDWPyltmqv18gtICHfsnqmXyv?=
- =?us-ascii?Q?rKu8jPYVoFvdMVwPuS9hrQ4odyN5EMGOaPubGsYliMaDiMJ0Vt5F8TzFKw01?=
- =?us-ascii?Q?kpXXgaOLtkWwKzAYJIG4hsXZKAwnayf0sazYwAV6ZiVdX59SNaafRgKVxTuF?=
- =?us-ascii?Q?lCHeEeBwZSj7219dmSwKx2EeDdRxvodFJUbjEywmUJUpCzG54Ta/pCopXxmT?=
- =?us-ascii?Q?/39GAPN9EPUpXYuG2SFcz52R4HbCMfhVpPBxJbHiZa40WcwHGvEtwZOafas5?=
- =?us-ascii?Q?ujeQBl7p8skGDymts4prRtZf2lz/tv9xRnCbEUrmX7nPSCeBpElh5+XBJE62?=
- =?us-ascii?Q?EfMKw1Y0mwg23u22vqAZ8Ok2ZxFB1UgicdVAReOTsTrkU0tDmCrAJMPJkMP2?=
- =?us-ascii?Q?B0rFpSRNWmCGia8j0wD8rHoIEuCwkSR2dKAe1WCpnUcNweUJ6gdMndxfh6Ib?=
- =?us-ascii?Q?/JLRDyqNjvFEGTK3J794a00x8UYhQ1pBRs2lCen3DUwB40v9jYNVtJ6suEpw?=
- =?us-ascii?Q?tg=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 94374a2c-d457-492b-cb08-08dd9163465c
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2025 14:42:52.7859 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sQ4kKO/LdjzOe+IoRszJ78SKnsoRU1I8cmYGbRychhUf41x+wpOtxQHNYSmNsdaK9Ucm9PJuDky64nBbPHhOgkVI77c7jMgMTPKFWb7hKfQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PPF341F90799
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -173,94 +76,668 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, May 08, 2025 at 01:32:50PM +0200, Burakov, Anatoly wrote:
-> On 5/6/2025 7:40 PM, Jake Freeland wrote:
-> > When mapping PCI resources in secondary processes, use the
-> > RTE_MAP_FORCE_ADDRESS_NOREPLACE flag to indicate that the
-> > mapping must be made at the provided address.
-> > 
-> > Without this flag, the kernel might return a different address for
-> > the mapping, even if the requested region was available.
-> > 
-> > Signed-off-by: Jake Freeland <jfree@FreeBSD.org>
-> > ---
-> >   drivers/bus/pci/pci_common_uio.c | 4 +++-
-> >   lib/eal/common/eal_private.h     | 7 ++++++-
-> >   lib/eal/include/rte_eal_paging.h | 7 ++++++-
-> >   lib/eal/unix/eal_unix_memory.c   | 8 +++++++-
-> >   4 files changed, 22 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/bus/pci/pci_common_uio.c b/drivers/bus/pci/pci_common_uio.c
-> > index 30503bd23a..71974e9f56 100644
-> > --- a/drivers/bus/pci/pci_common_uio.c
-> > +++ b/drivers/bus/pci/pci_common_uio.c
-> > @@ -10,6 +10,7 @@
-> >   #include <sys/mman.h>
-> >   #include <rte_eal.h>
-> > +#include <rte_eal_paging.h>
-> >   #include <rte_pci.h>
-> >   #include <rte_bus_pci.h>
-> >   #include <rte_tailq.h>
-> > @@ -58,7 +59,8 @@ pci_uio_map_secondary(struct rte_pci_device *dev)
-> >   			void *mapaddr = pci_map_resource(uio_res->maps[i].addr,
-> >   					fd, (off_t)uio_res->maps[i].offset,
-> > -					(size_t)uio_res->maps[i].size, 0);
-> > +					(size_t)uio_res->maps[i].size,
-> > +					RTE_MAP_FORCE_ADDRESS_NOREPLACE);
-> >   			/* fd is not needed in secondary process, close it */
-> >   			close(fd);
-> > diff --git a/lib/eal/common/eal_private.h b/lib/eal/common/eal_private.h
-> > index 04ba8ddb86..aaeb140eaf 100644
-> > --- a/lib/eal/common/eal_private.h
-> > +++ b/lib/eal/common/eal_private.h
-> > @@ -211,7 +211,12 @@ enum eal_mem_reserve_flags {
-> >   	 * @see RTE_MAP_FORCE_ADDRESS for description of possible consequences
-> >   	 *      (although implementations are not required to use it).
-> >   	 */
-> > -	EAL_RESERVE_FORCE_ADDRESS = 1 << 1
-> > +	EAL_RESERVE_FORCE_ADDRESS = 1 << 1,
-> > +	/**
-> > +	 * Force reserving memory at the requested address, but fail if a
-> > +	 * preexisting mapping collides with the request.
-> > +	 */
-> > +	EAL_RESERVE_FORCE_ADDRESS_NOREPLACE = 1 << 2,
-> >   };
-> >   /**
-> > diff --git a/lib/eal/include/rte_eal_paging.h b/lib/eal/include/rte_eal_paging.h
-> > index c60317d0f5..7b1983b615 100644
-> > --- a/lib/eal/include/rte_eal_paging.h
-> > +++ b/lib/eal/include/rte_eal_paging.h
-> > @@ -34,7 +34,12 @@ enum rte_map_flags {
-> >   	 * may remove all other mappings in the requested region. However,
-> >   	 * it is not required to do so, thus mapping with this flag may fail.
-> >   	 */
-> > -	RTE_MAP_FORCE_ADDRESS = 1 << 3
-> > +	RTE_MAP_FORCE_ADDRESS = 1 << 3,
-> > +	/**
-> > +	 * Force mapping to the requested address, but fail if a preexisting
-> > +	 * mapping collides with the request.
-> > +	 */
-> > +	RTE_MAP_FORCE_ADDRESS_NOREPLACE = 1 << 4,
-> >   };
-> >   /**
-> > diff --git a/lib/eal/unix/eal_unix_memory.c b/lib/eal/unix/eal_unix_memory.c
-> > index c540f1e838..61e914b8db 100644
-> > --- a/lib/eal/unix/eal_unix_memory.c
-> > +++ b/lib/eal/unix/eal_unix_memory.c
-> > @@ -17,11 +17,13 @@
-> >   #ifdef RTE_EXEC_ENV_LINUX
-> >   #define EAL_DONTDUMP MADV_DONTDUMP
-> >   #define EAL_DODUMP   MADV_DODUMP
-> > +#define EAL_FIXED_NOREPLACE MAP_FIXED_NOREPLACE
-> 
-> Is this available in all supported Linux kernel versions?
-> 
-Checking the mmap man page [1] indicates that this is available from 4.17.
-That means that it's both in the oldest supported DPDK kernel (4.19), and
-also the kernel version in the oldest supported linux distro, which should
-now be RHEL 8, with 4.18 kernel. Therefore the addition of this define
-LGTM.
+I have revised sections 9-12 for grammar and clarity.
 
-/Bruce
+Signed-off-by: Nandini Persad <nandinipersad361@gmail.com>
+---
+ doc/guides/contributing/linux_uapi.rst    |  32 ++--
+ doc/guides/contributing/patches.rst       | 177 +++++++++++-----------
+ doc/guides/contributing/stable.rst        | 163 ++++++++------------
+ doc/guides/contributing/vulnerability.rst |  59 ++++----
+ 4 files changed, 193 insertions(+), 238 deletions(-)
 
-[1] https://man7.org/linux/man-pages/man2/mmap.2.html
+diff --git a/doc/guides/contributing/linux_uapi.rst b/doc/guides/contributing/linux_uapi.rst
+index 79bedb478e..72abef2133 100644
+--- a/doc/guides/contributing/linux_uapi.rst
++++ b/doc/guides/contributing/linux_uapi.rst
+@@ -7,14 +7,14 @@ Linux uAPI header files
+ Rationale
+ ---------
+ 
+-The system a DPDK library or driver is built on is not necessarily running the
+-same Kernel version than the system that will run it.
+-Importing Linux Kernel uAPI headers enable to build features that are not
+-supported yet by the build system.
++The system used to build a DPDK library or driver may not be running the same kernel version
++as the target system where it will be deployed. To support features that are not yet available
++in the build system’s kernel, Linux kernel uAPI headers can be imported.
+ 
+-For example, the build system runs upstream Kernel v5.19 and we would like to
+-build a VDUSE application that will use VDUSE_IOTLB_GET_INFO ioctl() introduced
+-in Linux Kernel v6.0.
++For example, if the build system runs upstream Kernel v5.19, but you need to build a VDUSE application
++that uses the VDUSE_IOTLB_GET_INFO ioctl introduced in Kernel v6.0, importing the relevant uAPI headers allows this.
++
++The Linux kernel's syscall license exception permits the inclusion of unmodified uAPI header files in such cases.
+ 
+ `Linux Kernel licence exception regarding syscalls
+ <https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/plain/LICENSES/exceptions/Linux-syscall-note>`_
+@@ -23,20 +23,19 @@ enable importing unmodified Linux Kernel uAPI header files.
+ Importing or updating an uAPI header file
+ -----------------------------------------
+ 
+-In order to ensure the imported uAPI headers are both unmodified and from a
+-released version of the linux Kernel, a helper script is made available and
+-MUST be used.
++To ensure that imported uAPI headers are unmodified and sourced from an official Linux
++kernel release, a helper script is provided and must be used.
+ Below is an example to import ``linux/vduse.h`` file from Linux ``v6.10``:
+ 
+ .. code-block:: console
+ 
+    devtools/linux-uapi.sh -i linux/vduse.h -u v6.10
+ 
+-Once imported, the header files should be committed without any other change.
+-Note that all the imported headers will be updated to the requested version.
++Once imported, header files must be committed without any modifications. Note that all imported
++headers will be updated to match the specified kernel version.
+ 
+-Updating imported headers to a newer released version should only be done on
+-a need basis, it can be achieved using the same script:
++Updates to a newer released version should be performed only when necessary, and can be done
++using the same helper script.
+ 
+ .. code-block:: console
+ 
+@@ -60,8 +59,9 @@ Note that all the linux-uapi.sh script options can be combined. For example:
+ Header inclusion into library or driver
+ ---------------------------------------
+ 
+-The library or driver willing to make use of imported uAPI headers needs to
+-explicitly include the header file with ``uapi/`` prefix in C files.
++Libraries or drivers that rely on imported uAPI headers must explicitly include
++the relevant header using the ``uapi/`` prefix in their C source files.
++
+ For example to include VDUSE uAPI:
+ 
+ .. code-block:: c
+diff --git a/doc/guides/contributing/patches.rst b/doc/guides/contributing/patches.rst
+index d21ee288b2..88945b8f5d 100644
+--- a/doc/guides/contributing/patches.rst
++++ b/doc/guides/contributing/patches.rst
+@@ -5,56 +5,53 @@
+ 
+ Contributing Code to DPDK
+ =========================
++his document provides guidelines for submitting code to DPDK.
+ 
+-This document outlines the guidelines for submitting code to DPDK.
+-
+-The DPDK development process is modeled (loosely) on the Linux Kernel development model so it is worth reading the
+-Linux kernel guide on submitting patches:
++The DPDK development process is loosely based on the Linux Kernel development
++model. It is recommended to review the Linux kernel's guide:
+ `How to Get Your Change Into the Linux Kernel <https://www.kernel.org/doc/html/latest/process/submitting-patches.html>`_.
+-The rationale for many of the DPDK guidelines is explained in greater detail in the kernel guidelines.
++Many of DPDK's submissions guidelines draw from the kernel process,
++and the rationale behind them is often explained in greater depth there.
+ 
+ 
+ The DPDK Development Process
+ ----------------------------
+ 
+-The DPDK development process has the following features:
++The DPDK development process includes the following key elements:
+ 
+-* The code is hosted in a public git repository.
+-* There is a mailing list where developers submit patches.
+-* There are maintainers for hierarchical components.
++* Code is maintained in a public Git repository.
++* Developers submit patches via a public mailing list.
++* Maintainers are assigned to different components in a hierarchical structure.
+ * Patches are reviewed publicly on the mailing list.
+-* Successfully reviewed patches are merged to the repository.
+-* Patches should be sent to the target repository or sub-tree, see below.
++* Once reviewed, patches are merged into the repository.
++* Patches should be sent to the target repository or sub-tree (see below for details).
+ 
+ The mailing list for DPDK development is `dev@dpdk.org <https://mails.dpdk.org/archives/dev/>`_.
+ Contributors will need to `register for the mailing list <https://mails.dpdk.org/listinfo/dev>`_ in order to submit patches.
+-It is also worth registering for the DPDK `Patchwork <https://patches.dpdk.org/project/dpdk/list/>`_
++You should also register for DPDK `Patchwork <https://patches.dpdk.org/project/dpdk/list/>`_
+ 
+-If you are using the GitHub service, pushing to a branch will trigger GitHub
+-Actions to automatically build your changes and run unit tests and ABI checks.
++If you're using GitHub, pushing to a branch will trigger GitHub Actions
++which will build your changes and run unit tests and ABI checks.
+ 
+-The development process requires some familiarity with the ``git`` version control system.
+-Refer to the `Pro Git Book <http://www.git-scm.com/book/>`_ for further information.
++Contributing to DPDK requires a basic understanding of the Git control system.
++For more information, refer to the `Pro Git Book <http://www.git-scm.com/book/>`_.
+ 
+ Source License
+ --------------
+ 
+-The DPDK uses the Open Source BSD-3-Clause license for the core libraries and
+-drivers. The kernel components are GPL-2.0 licensed. DPDK uses single line
+-reference to Unique License Identifiers in source files as defined by the Linux
+-Foundation's `SPDX project <http://spdx.org/>`_.
++DPDK uses the Open Source BSD-3-Clause license for its core libraries and
++drivers. Kernel components are GPL-2.0 licensed.
++To identify licenses  in source files, DPDK follows the SPDX standard
++developed by the Linux Foundation `SPDX project <http://spdx.org/>`_.
+ 
+-DPDK uses first line of the file to be SPDX tag. In case of *#!* scripts, SPDX
+-tag can be placed in 2nd line of the file.
++The SPDX tag should by used on the first line of the file.
++In case of *#!* scripts, the SPDX tag should be placed on 2nd line.
+ 
+-For example, to label a file as subject to the BSD-3-Clause license,
+-the following text would be used:
++For BSD-3-Clause:
+ 
+ ``SPDX-License-Identifier: BSD-3-Clause``
+ 
+-To label a file as dual-licensed with BSD-3-Clause and GPL-2.0 (e.g., for code
+-that is shared between the kernel and userspace), the following text would be
+-used:
++For dual-licensing with BSD-3-Clause and GPL-2.0 (e.g.,shared kernel/user-space code):
+ 
+ ``SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)``
+ 
+@@ -87,37 +84,41 @@ Where:
+ 
+ Additional details are given in the ``MAINTAINERS`` file.
+ 
+-The role of the component maintainers is to:
++Component maintainers are responsible for the following:
+ 
+-* Review patches for the component or delegate the review.
++* Reviewing patches related to their component or delegating the review to others.
+   The review should be done, ideally, within 1 week of submission to the mailing list.
+-* Add an ``acked-by`` to patches, or patchsets, that are ready for committing to a tree.
+-* Reply to questions asked about the component.
++* Acknowledging patches by adding an ``acked-by`` tag to those deemed ready for merging.
++* Responding to questions regarding the component and offering guidance when needed.
++
++Maintainers can be added or removed by submitting a patch to the ``MAINTAINERS`` file.
++New maintainers should have demonstrated consistent contributions or reviews to the component area.
++Their addition should be confirmed by an ``ack`` from an established contributor.
++Multiple maintainers may be assigned to a single component, if needed.
++
++Tree Maintainer Responsibilities:
++
++Tree maintainers are responsible for ensuring the overall quality and integrity of their tree.
++Their duties include:
++
++* Conducting additional reviews, compilation checks, or other tests as needed.
++* Committing patches that have been sufficiently reviewed by component maintainers or other contributors.
++* Ensuring timely review of submitted patches.
++* Preparing the tree for integration.
++* Appointing a designated backup maintainer and coordinating handovers when unavailable.
+ 
+-Component maintainers can be added or removed by submitting a patch to the ``MAINTAINERS`` file.
+-Maintainers should have demonstrated a reasonable level of contributions or reviews to the component area.
+-The maintainer should be confirmed by an ``ack`` from an established contributor.
+-There can be more than one component maintainer if desired.
++Maintainer Changes:
+ 
+-The role of the tree maintainers is to:
++Tree maintainers can be added or removed by submitting a patch to the MAINTAINERS file.
++Proposals must justify the creation of a new sub-tree and demonstrate a significant contribution
++to the relevant area. An ack from an existing tree maintainer is required.
+ 
+-* Maintain the overall quality of their tree.
+-  This can entail additional review, compilation checks or other tests deemed necessary by the maintainer.
+-* Commit patches that have been reviewed by component maintainers and/or other contributors.
+-  The tree maintainer should determine if patches have been reviewed sufficiently.
+-* Ensure that patches are reviewed in a timely manner.
+-* Prepare the tree for integration.
+-* Ensure that there is a designated back-up maintainer and coordinate a handover for periods where the
+-  tree maintainer can't perform their role.
++In case of disputes regarding trees or maintainers, issues may be escalated to the Technical Board.
+ 
+-Tree maintainers can be added or removed by submitting a patch to the ``MAINTAINERS`` file.
+-The proposer should justify the need for a new sub-tree and should have demonstrated a sufficient level of contributions in the area or to a similar area.
+-The maintainer should be confirmed by an ``ack`` from an existing tree maintainer.
+-Disagreements on trees or maintainers can be brought to the Technical Board.
++Backup Maintainers:
+ 
+-The backup maintainer for the main tree should be selected
+-from the existing sub-tree maintainers of the project.
+-The backup maintainer for a sub-tree should be selected from among the component maintainers within that sub-tree.
++* The main tree's backup maintainer should be chosen from among existing sub-tree maintainers.
++* A sub-tree's backup should come from the component maintainers within that sub-tree.
+ 
+ 
+ Getting the Source Code
+@@ -135,63 +136,57 @@ sub-repositories (`list <https://git.dpdk.org/next>`_)::
+     git clone git://dpdk.org/next/dpdk-next-*
+     git clone https://dpdk.org/git/next/dpdk-next-*
+ 
+-Make your Changes
+------------------
+ 
+-Make your planned changes in the cloned ``dpdk`` repo. Here are some guidelines and requirements:
+ 
+-* Follow the :ref:`coding_style` guidelines.
++Make Changes
++------------
++
++Once you've cloned the DPDK repository, make your planned changes while following
++these key guidelines and requirements:
+ 
+-* If you are a new contributor, or if your mail address changed,
+-  you may update the ``.mailmap`` file.
+-  Otherwise the new name or address will be added by a maintainer.
+-  Keeping this file up-to-date will help when someone wants to contact you
+-  about the changes you contributed to.
++* Follow the :ref:`coding_style` guidelines.
++* Update ``.mailmap`` if you’re a new contributor or have changed your email address.
++  Maintainers may also handle this, but keeping it current ensures others can contact you about your contributions.
++* Update ``MAINTAINERS`` if you add new files or directories, by adding your name under the appropriate section.
+ 
+-* If you add new files or directories you should add your name to the ``MAINTAINERS`` file.
++PMD Submissions
++~~~~~~~~~~~~~~~
+ 
+-* Initial submission of new PMDs should be prepared against a corresponding repo.
++Submit new PMDs to the appropriate next repo:
+ 
+-  * Thus, for example, initial submission of a new network PMD should be
+-    prepared against dpdk-next-net repo.
++* New network PMDs → dpdk-next-net
+ 
+-  * Likewise, initial submission of a new crypto or compression PMD should be
+-    prepared against dpdk-next-crypto repo.
++* New crypto or compression PMDs → dpdk-next-crypto
+ 
+-  * For other PMDs and more info, refer to the ``MAINTAINERS`` file.
++* For other PMD types, refer to the MAINTAINERS file.
+ 
+-* New external functions should be added to the local ``version.map`` file. See
+-  the :doc:`ABI policy <abi_policy>` and :ref:`ABI versioning <abi_versioning>`
+-  guides. New external functions should also be added in alphabetical order.
++API and ABI Guidelines
++~~~~~~~~~~~~~~~~~~~~~~
+ 
+-* Any new API function should be used in ``/app`` test directory.
++* Add any new external functions to the relevant ``version.map`` file in alphabetical order.
++  Refer to the ABI policy and ABI versioning documentation.
+ 
+-* When introducing a new device API, at least one driver should implement it.
++* New API functions should be accompanied by a corresponding test in the /app/test directory.
+ 
+-* Important changes will require an addition to the release notes in ``doc/guides/rel_notes/``.
+-  See the :ref:`Release Notes section of the Documentation Guidelines <doc_guidelines>` for details.
++* When adding a new device API, ensure that at least one driver implements it.
+ 
+-* Test the compilation works with different targets, compilers and options, see :ref:`contrib_check_compilation`.
++Documentation and Release Notes
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+-* Don't break compilation between commits with forward dependencies in a patchset.
+-  Each commit should compile on its own to allow for ``git bisect`` and continuous integration testing.
++* Document new APIs using Doxygen-style comments.
+ 
+-* Add tests to the ``app/test`` unit test framework where possible.
++* If needed, provide user-facing documentation in reStructuredText (RST) format, following the Documentation Guidelines.
+ 
+-* Add documentation, if relevant, in the form of Doxygen comments or a User Guide in RST format.
+-  See the :ref:`Documentation Guidelines <doc_guidelines>`.
++* For major changes, add an entry to the release notes under doc/guides/rel_notes/.
+ 
+-* Code and related documentation must be updated atomically in the same patch.
++Compilation and Testing
++~~~~~~~~~~~~~~~~~~~~~~~
+ 
+-Once the changes have been made you should commit them to your local repo.
++* Test compilation across different targets, compilers, and build options (see Checking Compilation :ref:`contrib_check_compilation`.).
+ 
+-For small changes, that do not require specific explanations, it is better to keep things together in the
+-same patch.
+-Larger changes that require different explanations should be separated into logical patches in a patchset.
+-A good way of thinking about whether a patch should be split is to consider whether the change could be
+-applied without dependencies as a backport.
++* Each commit in a patchset must compile independently to support git bisect and CI testing.
+ 
+-As a guide to how patches should be structured run ``git log`` on similar files.
++* Include unit tests in the app/test framework wherever applicable.
+ 
+ 
+ Commit Messages: Subject Line
+@@ -229,7 +224,7 @@ It is intended as a way of getting early feedback.
+ Commit Messages: Body
+ ---------------------
+ 
+-Here are some guidelines for the body of a commit message:
++Here are guidelines for the body of a commit message:
+ 
+ * The body of the message should describe the issue being fixed or the feature being added.
+   It is important to provide enough information to allow a reviewer to understand the purpose of the patch.
+@@ -566,6 +561,10 @@ Script ``get-maintainer.sh`` can be used to select maintainers automatically::
+ 
+   git send-email --to-cmd ./devtools/get-maintainer.sh --cc dev@dpdk.org 000*.patch
+ 
++New additions can be sent without a maintainer::
++
++   git send-email --to dev@dpdk.org 000*.patch
++
+ You can test the emails by sending it to yourself or with the ``--dry-run`` option.
+ 
+ If the patch is in relation to a previous email thread you can add it to the same thread using the Message ID::
+diff --git a/doc/guides/contributing/stable.rst b/doc/guides/contributing/stable.rst
+index 808e7fa779..9e8b6d4f62 100644
+--- a/doc/guides/contributing/stable.rst
++++ b/doc/guides/contributing/stable.rst
+@@ -6,154 +6,117 @@
+ DPDK Stable Releases and Long Term Support
+ ==========================================
+ 
+-This section sets out the guidelines for the DPDK Stable Releases and the DPDK
+-Long Term Support releases (LTS).
+ 
++This section outlines the guidelines for DPDK Stable Releases and Long Term Support (LTS) Releases.
+ 
+ Introduction
+ ------------
+ 
+-The purpose of the DPDK Stable Releases is to maintain releases of DPDK with
+-backported fixes over an extended period of time. This provides downstream
+-consumers of DPDK with a stable target on which to base applications or
+-packages.
++The purpose of DPDK Stable Releases is to maintain DPDK versions with backported
++fixes over an extended period. This allows downstream users to base applications
++or packages on a stable, well-maintained version of DPDK.
+ 
+-The primary characteristics of stable releases is that they attempt to
+-fix issues and not introduce any new regressions while keeping backwards
+-compatibility with the initial release of the stable version.
+-
+-The Long Term Support release (LTS) is a designation applied to a Stable
+-Release to indicate longer term support.
++The primary goal of stable releases is to fix issues without introducing regressions,
++while preserving backward compatibility with the original version.
+ 
++LTS (Long Term Support) is a designation given to specific stable releases to indicate
++extended support duration.
+ 
+ Stable Releases
+ ---------------
+ 
+-Any release of DPDK can be designated as a Stable Release if a
+-maintainer volunteers to maintain it and there is a commitment from major
+-contributors to validate it before releases.
+-If a version is to be a "Stable Release", it should be designated as such
+-within one month of that version being initially released.
+-
+-A Stable Release is used to backport fixes from an ``N`` release back to an
+-``N-1`` release, for example, from 16.11 to 16.07.
+-
+-The duration of a stable is one complete release cycle (4 months). It can be
+-longer, up to 1 year, if a maintainer continues to support the stable branch,
+-or if users supply backported fixes, however the explicit commitment should be
+-for one release cycle.
+-
+-The release cadence is determined by the maintainer based on the number of
+-bugfixes and the criticality of the bugs. Releases should be coordinated with
+-the validation engineers to ensure that a tagged release has been tested.
++Any DPDK release may become a Stable Release if a maintainer volunteers to support it
++and major contributors commit to validating it before each release. This designation
++should ideally be made within one month of the version’s initial release.
+ 
++Stable Releases are typically used to backport fixes from an N release to an N-1 release.
++For example: from version 16.11 to 16.07.
+ 
+-LTS Release
+------------
++- The standard support duration is one full release cycle (4 months).
++- This may extend up to one year if the maintainer continues support or if users provide backported fixes.
++- The release cadence is determined by the maintainer based on the volume and criticality of fixes.
++- Releases must be coordinated with validation engineers to ensure proper testing before tagging.
+ 
+-A stable release can be designated as an LTS release based on community
+-agreement and a commitment from a maintainer. The current policy is that each
+-year's November (X.11) release will be maintained as an LTS for 3 years,
+-however that is dependent on continued community support for validation.
++LTS Releases
++------------
+ 
+-After the X.11 release, an LTS branch will be created for it at
+-https://git.dpdk.org/dpdk-stable where bugfixes will be backported to.
++A Stable Release can be promoted to an LTS Release through community agreement and a maintainer’s commitment.
+ 
+-A LTS release may align with the declaration of a new major ABI version,
+-please read the :doc:`abi_policy` for more information.
++- The current policy designates each November release (X.11) as an LTS and maintains it for 3 years,
++  contingent on community validation support.
++- After release, an LTS branch is created at: https://git.dpdk.org/dpdk-stable
++- Fixes are backported to this branch.
++- LTS Releases may coincide with the declaration of a new major ABI version. Refer to the :ref:`abi_policy` for details.
+ 
+-It is anticipated that there will be at least 3 releases per year of the LTS
+-or approximately 1 every 4 months. This is done to align with the DPDK main
+-branch releases so that fixes have already gone through validation as part of
+-the DPDK main branch release validation. However, the cadence can be shorter or
+-longer depending on the number and criticality of the backported
+-fixes. Releases should be coordinated with the validation engineers to ensure
+-that a tagged release has been tested.
++Release Cadence:
+ 
+-For a list of the currently maintained stable/LTS branches please see
+-the latest `stable roadmap <https://core.dpdk.org/roadmap/#stable>`_.
++- At least three LTS updates per year (roughly one every four months).
++- Aligned with main DPDK releases to leverage shared validation.
++- Frequency may vary depending on the urgency and volume of fixes.
++- As with stable releases, validation must be coordinated with test engineers.
+ 
+-At the end of the 3 years, a final X.11.N release will be made and at that
+-point the LTS branch will no longer be maintained with no further releases.
++For the latest list of supported Stable/LTS branches, refer to the current stable roadmap.
+ 
++At the end of the 3-year period, a final `X.11.N` release will be made, after which the LTS branch will no longer be maintained.
+ 
+-What changes should be backported
++What Changes Should Be Backported
+ ---------------------------------
+ 
+-Backporting should be limited to bug fixes. All patches accepted on the main
+-branch with a Fixes: tag should be backported to the relevant stable/LTS
+-branches, unless the submitter indicates otherwise. If there are exceptions,
+-they will be discussed on the mailing lists.
+-
+-Fixes suitable for backport should have a ``Cc: stable@dpdk.org`` tag in the
+-commit message body as follows::
+-
+-     doc: fix some parameter description
++Backports should be limited to **bug fixes**.
+ 
+-     Update the docs, fixing description of some parameter.
++All main-branch patches with a ``Fixes:`` tag should be considered for backport unless the
++submitter indicates otherwise. These patches must include a ``Cc: stable@dpdk.org`` tag in the commit message:
+ 
+-     Fixes: abcdefgh1234 ("doc: add some parameter")
+-     Cc: stable@dpdk.org
++.. code-block:: none
+ 
+-     Signed-off-by: Alex Smith <alex.smith@example.com>
++   doc: fix parameter description
+ 
++   Update the docs to fix the description of a parameter.
+ 
+-Fixes not suitable for backport should not include the ``Cc: stable@dpdk.org`` tag.
++   Fixes: abcdefgh1234 ("doc: add some parameter")
++   Cc: stable@dpdk.org
+ 
+-To support the goal of stability and not introducing regressions,
+-new code being introduced is limited to bug fixes.
+-New features should not be backported to stable releases.
++   Signed-off-by: Alex Smith <alex.smith@example.com>
+ 
+-In some limited cases, it may be acceptable to backport a new feature
+-to a stable release. Some of the factors which impact the decision by
+-stable maintainers are as follows:
++Patches **not** suitable for backport should omit the ``Cc: stable@dpdk.org`` tag.
+ 
+-* Does the feature break API/ABI?
+-* Does the feature break backwards compatibility?
+-* Is it for the latest LTS release (to avoid LTS upgrade issues)?
+-* Is there a commitment from the proposer or affiliation to validate the feature
+-  and check for regressions in related functionality?
+-* Is there a track record of the proposer or affiliation validating stable releases?
+-* Is it obvious that the feature will not impact existing functionality?
+-* How intrusive is the code change?
+-* What is the scope of the code change?
+-* Does it impact common components or vendor specific?
+-* Is there a justifiable use case (a clear user need)?
+-* Is there a community consensus about the backport?
++Backports must avoid introducing new features. However, in limited cases, a new feature may be allowed if:
+ 
+-Performance improvements are generally not considered to be fixes,
+-but may be considered in some cases where:
++- It does **not** break API or ABI.
++- It preserves **backward compatibility**.
++- It targets the latest LTS release (to help with upgrade paths).
++- The proposer commits to testing the feature and monitoring regressions.
++- The proposer or their organization has a strong track record of validating stable releases.
++- It clearly does not impact existing functionality.
++- The change is minimally invasive and scoped.
++- It affects vendor-specific components rather than common ones.
++- There is a compelling use case.
++- There is broad community support.
+ 
+-* It is fixing a performance regression that occurred previously.
+-* An existing feature in LTS is not usable as intended without it.
++Performance enhancements are generally not considered bug fixes, unless:
+ 
+-APIs marked as ``experimental`` are not considered part of the ABI version
+-and can be changed without prior notice. This is necessary for the API to be
+-improved and stabilized and become part of the ABI version in the future.
++- They resolve a performance regression.
++- They are necessary to make an existing feature usable.
+ 
+-However, in LTS releases ``experimental`` API should not be changed as there
+-will not be a future ABI version on the branch and compatibility with previous
+-release of an LTS version is of the highest importance.
++**Experimental APIs** are excluded from the ABI versioning and may be changed in mainline development.
++However, **experimental APIs must not be modified in LTS branches**, where stability and compatibility are paramount.
+ 
+ The Stable Mailing List
+ -----------------------
+ 
+-The Stable and LTS release are coordinated on the stable@dpdk.org mailing
+-list.
++Coordination for all Stable and LTS releases occurs on the ``stable@dpdk.org`` mailing list.
+ 
+-All fix patches to the main branch that are candidates for backporting
+-should also be CCed to the `stable@dpdk.org <https://mails.dpdk.org/listinfo/stable>`_
+-mailing list.
++All fix patches intended for backporting should be CCed to this list when sent to the main branch.
+ 
+ 
+ Releasing
+ ---------
+ 
+-A Stable Release will be released by:
++A Stable Release will be occur by:
+ 
+ * Tagging the release with YY.MM.n (year, month, number).
+ * Uploading a tarball of the release to dpdk.org.
+ * Sending an announcement to the `announce@dpdk.org <https://mails.dpdk.org/listinfo/announce>`_
+   list.
+ 
+-Stable releases are available on the `dpdk.org download page <https://core.dpdk.org/download/>`_.
++Stable releases are available on the `dpdk.org download page <https://core.dpdk.org/download/>`_.
+\ No newline at end of file
+diff --git a/doc/guides/contributing/vulnerability.rst b/doc/guides/contributing/vulnerability.rst
+index fc60e02e37..aee618f6ec 100644
+--- a/doc/guides/contributing/vulnerability.rst
++++ b/doc/guides/contributing/vulnerability.rst
+@@ -23,41 +23,33 @@ If in doubt, please consider the vulnerability as security sensitive.
+ At worst, the response will be to report the bug through the usual channels.
+ 
+ 
+-Finding
+--------
++Finding Security Issues
++-----------------------
+ 
+ There is no pro-active security engineering effort at the moment.
+ 
+ Please report any security issue you find in DPDK as described below.
+ 
+ 
+-Report
+-------
++Reporting Security Issues
++-------------------------
+ 
+-Do not use Bugzilla (unsecured).
+-Instead, send GPG-encrypted emails
+-to `security@dpdk.org <https://core.dpdk.org/security#contact>`_.
+-Anyone can post to this list.
+-In order to reduce the disclosure of a vulnerability in the early stages,
+-membership of this list is intentionally limited to a `small number of people
+-<https://mails.dpdk.org/roster/security>`_.
++Do not use Bugzilla to report security vulnerabilities, as it is not secured for such communication.
++Instead, send a GPG-encrypted email to `security@dpdk.org <https://core.dpdk.org/security#contact>`_.
++This address is open to all, but access to its inbox is intentionally limited to a small group
++to minimize the risk of early disclosure.
+ 
+-It is additionally encouraged to GPG-sign one-on-one conversations
+-as part of the security process.
++It is strongly recommended to GPG-sign any one-on-one correspondence related to the vulnerability
++report as part of maintaining a secure communication process.
+ 
+-As it is with any bug, the more information provided,
+-the easier it will be to diagnose and fix.
+-If you already have a fix, please include it with your report,
+-as that can speed up the process considerably.
++As with any bug report, detailed information greatly aids in diagnosing and resolving the issue.
++If you have already developed a fix, please include it in your submission to help accelerate resolution.
+ 
+-In the report, please note how you would like to be credited
+-for discovering the issue
+-and the details of any embargo you would like to impose.
++In your report, specify how you would like to be credited for the discovery and mention any embargo
++period you wish to impose.
+ 
+-If the vulnerability is not public yet,
+-no patch or information should be disclosed publicly.
+-If a fix is already published,
+-the reporting process must be followed anyway, as described below.
++If the vulnerability has not yet been made public, do not disclose patches or related information
++publicly. Even if a fix has already been published, the proper reporting process outlined here must still be followed.
+ 
+ 
+ Confirmation
+@@ -91,7 +83,7 @@ using the standard patch process, once a CVE number has been assigned.
+ 
+ The confirmation mail should be sent within **3 business days**.
+ 
+-Following information must be included in the mail:
++The following information must be included in the mail:
+ 
+ * Confirmation
+ * CVSS severity and score
+@@ -275,17 +267,18 @@ Private Disclosure Mail Template
+ Public Disclosure
+ -----------------
+ 
+-On embargo expiration, following tasks will be done simultaneously:
++When the embargo expires, the following actions will be carried out simultaneously:
+ 
+-* The assigned bug is filled by a member of the security team,
+-  with all relevant information, and it is made public.
+-* The patches are pushed to the appropriate branches.
+-* For long and short term stable branches fixed,
+-  new versions should be released.
++* A member of the security team files the assigned bug with all relevant details and makes it publicly accessible.
+ 
+-Releases on Monday to Wednesday are preferred, so that system administrators
+-do not have to deal with security updates over the weekend.
++* The associated patches are pushed to the appropriate branches.
+ 
++* Updated versions are released for all affected stable branches, both short-term and long-term.
++
++To ease adoption by system administrators, security releases are preferably
++scheduled between Monday and Wednesday, avoiding weekends.
++
++A security advisory is sent to announce@dpdk.org and the public OSS Security mailing list as soon as the patches are published.
+ The security advisory is posted
+ to `announce@dpdk.org <mailto:announce@dpdk.org>`_ and to `the public OSS-security
+ mailing list <mailto:oss-security@lists.openwall.com>` as soon as the patches
+-- 
+2.34.1
+
