@@ -2,51 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0549C3ABC3
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 May 2025 11:53:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F389BC3ABCD
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 May 2025 11:58:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 68DAE402C9;
-	Mon, 12 May 2025 13:53:08 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 26C5B402C9;
+	Mon, 12 May 2025 13:58:39 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 93D984025D
- for <dev@dpdk.org>; Mon, 12 May 2025 13:53:06 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 799874025D
+ for <dev@dpdk.org>; Mon, 12 May 2025 13:58:37 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1747050786;
+ s=mimecast20190719; t=1747051117;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=JP4HX5Kdask2uLRjek2a5ft4FYRQ5G0IB5FttT15FbY=;
- b=TR9FulY4EtD+Dxyvix46ZEZq58tCSAioR/JaT0ZtKrnbo6SKrsIhmy/cVInPJquzFFAq6C
- SkBffos6/ZuUuM2YJTzgVrg+UMhB/F/Hy19VWEwioiVO+EhY60KTTzRmEfRqnsLgTFx9EW
- G6YLCirKEpLxt0o8Ay8BhKL964SHbQE=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ bh=0ye1YmS75sWwlpfvNOJeIDl3y1HFlHIOEd/HUfszBws=;
+ b=gzOn65k2/MsJYX9yItzZuHfZ9AGQrkkhabyQ8SCo/AV3bnwEz+quR+IukAkHJKc/KgxCdg
+ Ot7zKcJhNOOdQZm1rDKlghtVUeN1G2x+vBYtcS40Eh9OX6A2Dnv+QfVKsoAVD9RYR5+gAi
+ 35BMIlHhOognOuCGnWLwvev0D2FJXCM=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-570-e02FBHYtO6OlPoeGmItS4g-1; Mon,
- 12 May 2025 07:53:01 -0400
-X-MC-Unique: e02FBHYtO6OlPoeGmItS4g-1
-X-Mimecast-MFC-AGG-ID: e02FBHYtO6OlPoeGmItS4g_1747050780
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-466-xb-jfNEuPg6UCFyY2zabXw-1; Mon,
+ 12 May 2025 07:58:35 -0400
+X-MC-Unique: xb-jfNEuPg6UCFyY2zabXw-1
+X-Mimecast-MFC-AGG-ID: xb-jfNEuPg6UCFyY2zabXw_1747051114
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id D994A195608B; Mon, 12 May 2025 11:52:59 +0000 (UTC)
+ by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id B3D1919560BD; Mon, 12 May 2025 11:58:34 +0000 (UTC)
 Received: from [10.44.22.18] (unknown [10.44.22.18])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 8A099180049D; Mon, 12 May 2025 11:52:49 +0000 (UTC)
-Message-ID: <9cc1cc17-0d86-4e0b-b108-980062117378@redhat.com>
-Date: Mon, 12 May 2025 13:52:46 +0200
+ by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 47E5519560A3; Mon, 12 May 2025 11:58:33 +0000 (UTC)
+Message-ID: <dd676044-d84d-4e7e-98a2-568cbcd8b51e@redhat.com>
+Date: Mon, 12 May 2025 13:58:29 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] bbdev: fix possible null pointer dereference
-To: Nicolas Chautru <nicolas.chautru@intel.com>, dev@dpdk.org
-Cc: hemant.agrawal@nxp.com, hernan.vargas@intel.com
-References: <20250501221031.4569-1-nicolas.chautru@intel.com>
- <20250501221031.4569-2-nicolas.chautru@intel.com>
+Subject: Re: [PATCH] net/virtio: support Rx/Tx burst mode info
+To: Roger Melton <rmelton@cisco.com>, chenbox@nvidia.com
+Cc: dev@dpdk.org
+References: <20250416173550.603338-1-rmelton@cisco.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -91,10 +90,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20250501221031.4569-2-nicolas.chautru@intel.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+In-Reply-To: <20250416173550.603338-1-rmelton@cisco.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: BFlzjAsWHyuW4Md6zakOqMBAciiXodbMB9K8QLHWufM_1747050780
+X-Mimecast-MFC-PROC-ID: 6tv6zkanuu9W22z2Eru4vb8kudLzk2mK410mhuwwMUc_1747051114
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -112,48 +111,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+Hi Roger,
 
-
-On 5/2/25 12:10 AM, Nicolas Chautru wrote:
-> This change addresses the CID 457446:  Null pointer dereferences
-> (REVERSE_INULL). Not expected to happen in practice, but the
-> config may be potentially undefined through API.
+On 4/16/25 7:35 PM, Roger Melton wrote:
+> Return burst mode according to the selected Rx/Tx burst
+> function name.
+> Update 25.07 release notes with this information.
 > 
-> Coverity issue: 457446
-> Fixes: 61aa25b96e14 ("bbdev: add trace points")
-> 
-> Signed-off-by: Nicolas Chautru <nicolas.chautru@intel.com>
+> Signed-off-by: Roger Melton <rmelton@cisco.com>
 > ---
->   lib/bbdev/rte_bbdev.c | 9 +++++----
->   1 file changed, 5 insertions(+), 4 deletions(-)
+>   doc/guides/rel_notes/release_25_07.rst |  3 +
+>   drivers/net/virtio/virtio_ethdev.c     | 76 ++++++++++++++++++++++++++
+>   2 files changed, 79 insertions(+)
 > 
-> diff --git a/lib/bbdev/rte_bbdev.c b/lib/bbdev/rte_bbdev.c
-> index f341e6f3b9..56f313ee64 100644
-> --- a/lib/bbdev/rte_bbdev.c
-> +++ b/lib/bbdev/rte_bbdev.c
-> @@ -440,10 +440,6 @@ int
->   rte_bbdev_queue_configure(uint16_t dev_id, uint16_t queue_id,
->   		const struct rte_bbdev_queue_conf *conf)
->   {
-> -
-> -	rte_bbdev_trace_queue_configure(dev_id, queue_id, rte_bbdev_op_type_str(conf->op_type),
-> -			conf->priority);
-> -
->   	int ret = 0;
->   	struct rte_bbdev_driver_info dev_info;
->   	struct rte_bbdev *dev = get_dev(dev_id);
-> @@ -451,6 +447,11 @@ rte_bbdev_queue_configure(uint16_t dev_id, uint16_t queue_id,
->   	struct rte_bbdev_queue_conf *stored_conf;
->   	const char *op_type_str;
->   	unsigned int max_priority;
-> +
-> +	rte_bbdev_trace_queue_configure(dev_id, queue_id,
-> +			conf != NULL ? rte_bbdev_op_type_str(conf->op_type) : NULL,
-> +			conf != NULL ? conf->priority : 0);
-> +
->   	VALID_DEV_OR_RET_ERR(dev, dev_id);
->   
->   	VALID_DEV_OPS_OR_RET_ERR(dev, dev_id);
+
 
 Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 
