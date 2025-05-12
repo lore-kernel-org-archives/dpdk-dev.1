@@ -2,77 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C301C3ABC3
-	for <dpdk-dev@archiver.kernel.org>; Mon, 12 May 2025 10:12:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69BE6C3ABC3
+	for <dpdk-dev@archiver.kernel.org>; Mon, 12 May 2025 10:58:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 67BE4402C9;
-	Mon, 12 May 2025 12:12:51 +0200 (CEST)
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com
- [209.85.215.175])
- by mails.dpdk.org (Postfix) with ESMTP id A59944025D
- for <dev@dpdk.org>; Mon, 12 May 2025 12:12:49 +0200 (CEST)
-Received: by mail-pg1-f175.google.com with SMTP id
- 41be03b00d2f7-7fd35b301bdso4694219a12.2
- for <dev@dpdk.org>; Mon, 12 May 2025 03:12:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1747044769; x=1747649569; darn=dpdk.org;
- h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
- :user-agent:mime-version:date:message-id:from:to:cc:subject:date
- :message-id:reply-to;
- bh=+6ZVvsgyrpkkLEjUbuoaTyayp7fnzXlD7VYm5idvztY=;
- b=QNp5FjUDPswfpYPlNMYP0y6wPOmtuSsFCCO8iqaVKE9DSjcQjnB1v7Dsrpk9J/vysL
- G3zUbCnpTuS6JOriT/XfcJ+wj8EEcVyRRIki1CZjrlnpu201J9p5SFKOD3Remiyt68yR
- VojlVglhiejW6ixirylk3X7ssC+DF0JkMwTtG0oNlw8SqTTQHwTM/DEn0lzQM1x3Rm9n
- SoMl4jxjB7pCFIO+/tTFnR8lPgqrEYXVm+ALBvZA1k0Pxi6plJ7qhLpB+4MPDCYG+wam
- E9ddXMCvz5EoSCY6de9mr9mlvhgt3EbhJVcTiU01RS772UkLnoYt4sch8cmGX95bOr3w
- XG8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1747044769; x=1747649569;
- h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
- :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
- :cc:subject:date:message-id:reply-to;
- bh=+6ZVvsgyrpkkLEjUbuoaTyayp7fnzXlD7VYm5idvztY=;
- b=dNas1x28wXJ34ZPLrk2NRqPd/GCZRx79frR0+yLPrxfc89lmr/mJJMsP7C+0yPAS69
- sok+jVeBF6u95qMI49QvqL0I+9Atlom9keHmQ9ENjL542wUXbqn1DZnGmh2+hWR4kM0m
- NMQ4QBUyStFJLn364TmRxbK80IKw76Yng1cJnuIednqEWCa5MrGi6udHL/x1oNJywewJ
- EeA6VlxYthceC+x8oCYgx0kWsvKoyyrnxTcmNuH9y43j83AQ/0tNuMlVNMiWEk7tGb6a
- 8NNT8a1fukx1t8ea7+RRXheZGtrjPhgQOeZdSzlrtWfbnSf8HqNO7IEkWsMTo1tBrP7o
- 2ItA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCX+h1Q0eHDLyT7pG1aslD/AB2ZpOsHtTfQBesRANjLegL5ZHcmej0EHSZbv3ElB+HH8uPA=@dpdk.org
-X-Gm-Message-State: AOJu0YyRDRHXPiLjViC03tlOiwN+Y4tFnj2f1b3ErQU1zwbMCQHO4Pqy
- dxIYxLQdIsLzHsQFn0wNeT4wbSS6FQ9nuwUMkap+pKpN1BV1cbHO
-X-Gm-Gg: ASbGncuChp42uYCsfeiKXs43rgLAsnslWxkLXhatgEWhDpVkVFZ2SXDycGdAbhKgz9N
- tB8xi6QoM1wZ63pDm8n1KzFbT7ydKiZQ4yPwyLzSAcoLjModSucyWfbsnlbKn2J0Lx9VJ/aHard
- SKYnqvKKeiW2lJSrdiraHv4+wDZ7MjORY2jZlBxKGx9LY+P12dJhwEZOe8U7p5srAkaQvzVbB/r
- 6noABukzaDMybdR1Ot2dMLeVPfuX26oeG0HkCE9xNi8VNKqkiTbjfnhCjAMxYESV51Ccxe70MGs
- QnL86YWd7roEngIetXdYdt2rsh6vuxHDYDjALzzmrpDOSO9sEDbTn4NFemwgbAPjzJvK8q+cRo6
- y
-X-Google-Smtp-Source: AGHT+IFxdTJ1JIZYPc/lifqXXrT7qQiW4HKPEUvIveuzEUHoPbGlaDZOkH/hJW++uOErYpAa8VbHpw==
-X-Received: by 2002:a17:902:e54f:b0:224:191d:8a79 with SMTP id
- d9443c01a7336-22fc8c7b6bbmr179891935ad.27.1747044768710; 
- Mon, 12 May 2025 03:12:48 -0700 (PDT)
-Received: from [192.168.31.141] ([183.134.173.124])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-22fc7544f9fsm60215605ad.31.2025.05.12.03.12.46
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Mon, 12 May 2025 03:12:48 -0700 (PDT)
-Message-ID: <0a6576b7-5981-4a7d-b33f-aae011b86a00@gmail.com>
-Date: Mon, 12 May 2025 18:12:45 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id D75B1402C9;
+	Mon, 12 May 2025 12:58:48 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+ by mails.dpdk.org (Postfix) with ESMTP id B04254025D
+ for <dev@dpdk.org>; Mon, 12 May 2025 12:58:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1747047528; x=1778583528;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=jbN0y6kRe3gR5yzmcGZ4NKd7Go9fDJx0EfBrn5wrpW4=;
+ b=nhvTrS+Ly4f63DTDzN6CFBb73/lfofE4ODoY9KOX+XIJ+luHvoNTSSIj
+ sYqJe0UmESBGrNIwzRnZ4QA+xczYlfmdlNT73Xv66CV1c6OBZqBsKUl8s
+ yJ1+UOcqvmYqgUyvtUCP5JxG9ufAJkUc5fPVCKm/FUk78jggebIHR0SCl
+ geuON9bBorh5URhlCmLneL6Pwe38vKq5uU+P3N7VVezrNcnV848B9w42R
+ q/gu4FS5JeRuMOvrB7Yxp8iWpXPOwzfppz3tbyQ+5RdpdUxA2uxXGW1Cp
+ Mc9+FUU337q8nPT7ODJm4WK72nPxXshg8lDLl7MAF8Fjj8XV15wknlEPX A==;
+X-CSE-ConnectionGUID: 0COtNGe6S6iQrPuGFRYOEA==
+X-CSE-MsgGUID: 3yfuWk2IRDW6A/vfkDVR8g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11430"; a="51488925"
+X-IronPort-AV: E=Sophos;i="6.15,282,1739865600"; d="scan'208";a="51488925"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+ by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 12 May 2025 03:58:46 -0700
+X-CSE-ConnectionGUID: 3wDLorRRQxmq/s4fJDDZ1Q==
+X-CSE-MsgGUID: wKM9C3vJTP6+DpmhA6ugOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,282,1739865600"; d="scan'208";a="142097800"
+Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
+ by orviesa003.jf.intel.com with ESMTP; 12 May 2025 03:58:46 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org,
+	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Cc: bruce.richardson@intel.com
+Subject: [PATCH v2 01/13] net/ixgbe: remove unused field in Rx queue struct
+Date: Mon, 12 May 2025 11:58:26 +0100
+Message-ID: <afcd4013458bdb8b970e7ed57d6a1ede0ee654b8.1747047505.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <c92131e8fcce1901018450bdf97ae004253addf7.1746538072.git.anatoly.burakov@intel.com>
+References: <c92131e8fcce1901018450bdf97ae004253addf7.1746538072.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] net/mlx5: enhance log file path
-To: Yang Ming <ming.1.yang@nokia-sbell.com>, dev@dpdk.org
-Cc: bingz@nvidia.com, dsosnowski@nvidia.com, stephen@networkplumber.org,
- julien.meunier@nokia.com
-References: <20241213092444.2987-1-ming.1.yang@nokia-sbell.com>
- <20250321132750.4237-1-ming.1.yang@nokia-sbell.com>
- <20250321132750.4237-2-ming.1.yang@nokia-sbell.com>
- <59bb400d-5e49-4ecb-941e-2513894d6930@nokia-sbell.com>
-From: Moses Young <mosesyyoung@gmail.com>
-In-Reply-To: <59bb400d-5e49-4ecb-941e-2513894d6930@nokia-sbell.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,11 +60,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Hi Experts,
->
-> is there any chance to review and accept this patch?
->
-> Brs,
->
-> Yang Ming
->
+The `rdh` (read head) field in the `ixgbe_rx_queue` struct is not used
+anywhere in the codebase, and can be removed.
+
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+---
+ drivers/net/intel/ixgbe/ixgbe_rxtx.c | 9 ++-------
+ drivers/net/intel/ixgbe/ixgbe_rxtx.h | 1 -
+ 2 files changed, 2 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.c b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+index 95c80ac1b8..0c07ce3186 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_rxtx.c
++++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+@@ -3296,17 +3296,12 @@ ixgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
+ 	/*
+ 	 * Modified to setup VFRDT for Virtual Function
+ 	 */
+-	if (ixgbe_is_vf(dev)) {
++	if (ixgbe_is_vf(dev))
+ 		rxq->rdt_reg_addr =
+ 			IXGBE_PCI_REG_ADDR(hw, IXGBE_VFRDT(queue_idx));
+-		rxq->rdh_reg_addr =
+-			IXGBE_PCI_REG_ADDR(hw, IXGBE_VFRDH(queue_idx));
+-	} else {
++	else
+ 		rxq->rdt_reg_addr =
+ 			IXGBE_PCI_REG_ADDR(hw, IXGBE_RDT(rxq->reg_idx));
+-		rxq->rdh_reg_addr =
+-			IXGBE_PCI_REG_ADDR(hw, IXGBE_RDH(rxq->reg_idx));
+-	}
+ 
+ 	rxq->rx_ring_phys_addr = rz->iova;
+ 	rxq->rx_ring = (union ixgbe_adv_rx_desc *) rz->addr;
+diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.h b/drivers/net/intel/ixgbe/ixgbe_rxtx.h
+index 641f982b01..20a5c5a0af 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_rxtx.h
++++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.h
+@@ -85,7 +85,6 @@ struct ixgbe_rx_queue {
+ 	volatile union ixgbe_adv_rx_desc *rx_ring; /**< RX ring virtual address. */
+ 	uint64_t            rx_ring_phys_addr; /**< RX ring DMA address. */
+ 	volatile uint32_t   *rdt_reg_addr; /**< RDT register address. */
+-	volatile uint32_t   *rdh_reg_addr; /**< RDH register address. */
+ 	struct ixgbe_rx_entry *sw_ring; /**< address of RX software ring. */
+ 	struct ixgbe_scattered_rx_entry *sw_sc_ring; /**< address of scattered Rx software ring. */
+ 	struct rte_mbuf *pkt_first_seg; /**< First segment of current packet. */
+-- 
+2.47.1
+
