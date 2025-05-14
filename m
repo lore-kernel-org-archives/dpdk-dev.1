@@ -2,76 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D8A7C3ABD9
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 May 2025 08:43:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47813C3ABD9
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 May 2025 09:12:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 15AC340651;
-	Wed, 14 May 2025 10:43:45 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id EDCC340650;
+	Wed, 14 May 2025 11:12:44 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 7162240041
- for <dev@dpdk.org>; Wed, 14 May 2025 10:43:43 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 2B59D4064F
+ for <dev@dpdk.org>; Wed, 14 May 2025 11:12:43 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1747212223;
+ s=mimecast20190719; t=1747213962;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=kPaMgTAp0EXZnY95Xl/yroXsLXRSxLjn0Ks/lG9kuUs=;
- b=e+PVruPNno0bbeJ66ZVjvvnoyyguRnK7uggpwhotW+VX/a6gcK0Cr5d7XdkFuuuaHvjoyV
- X8ey9aC9H4ps6Um46BZJC7m4oiekIzxGEZ2BIz33VQPWRXSgISgRXZvlOicGnzH7H+mkLU
- 7KTErKLAllJQ2F+7KD4Fn3RlG0aBIXs=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=BNQNdN3roHRKQ0KFPoGLUb1GETxwDyhG0BsOhunR1pQ=;
+ b=GlBntQNS8p3JmPBHT/jVzau6eVevi89lg315dL2Hj+x3E9Kj17F+J1YRplr8tHIClMwTRV
+ nY2sQ09mDHXJqLJFFSN5YCET2UiW3Qjyif4nSJXxsMdBCZodhhVNDsKltj/EecAjrl2WzB
+ MmVSWHABx3g7X4Xa8hqM665oJTr2rEI=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-97-aVufxOlqOUmya_kxD32MgA-1; Wed, 14 May 2025 04:43:39 -0400
-X-MC-Unique: aVufxOlqOUmya_kxD32MgA-1
-X-Mimecast-MFC-AGG-ID: aVufxOlqOUmya_kxD32MgA_1747212218
-Received: by mail-lf1-f70.google.com with SMTP id
- 2adb3069b0e04-54fc8c477fbso2771942e87.0
- for <dev@dpdk.org>; Wed, 14 May 2025 01:43:39 -0700 (PDT)
+ us-mta-278-VM274wIWN-CKe4-YpJCHaA-1; Wed, 14 May 2025 05:12:41 -0400
+X-MC-Unique: VM274wIWN-CKe4-YpJCHaA-1
+X-Mimecast-MFC-AGG-ID: VM274wIWN-CKe4-YpJCHaA_1747213960
+Received: by mail-lj1-f200.google.com with SMTP id
+ 38308e7fff4ca-326d14865beso23213971fa.1
+ for <dev@dpdk.org>; Wed, 14 May 2025 02:12:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1747212218; x=1747817018;
+ d=1e100.net; s=20230601; t=1747213959; x=1747818759;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=kPaMgTAp0EXZnY95Xl/yroXsLXRSxLjn0Ks/lG9kuUs=;
- b=OBXLKhyuQf79rkTkMVSbcq+cNpuuD+ImIKBfDXw9FnWk3tKhxKwy90MQ+KgPu/WmtF
- MXR8dOioH1n9P37RZDwkrI9poMvU/xiSbX/ZgCs3nDb2+QDRC6Xj9q+6uOdBaeJkLWg7
- KGi6HPCMVRauQf4kAOYDSsN9XrKpLN9naqzn9O6fw8frjmE0Xxt4+7DXjXtzbDm0rEbg
- IaextFsK3IlBYfWmL7ULnbSxhgL0hehxa6pCn5nQqdYx9wZ8vn8kGHB/XxVHLMCnKsZr
- vkgyLC0H+IAyh2Q4cTLNssdaiU5TYGhISkyF0Ok7p3mlERs4j/eTxE2Nqb03K8+ueUyM
- /9qQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWwrEZJTqGVOSllWFqLO9Wi5lxWmIXCuBGOw3OjVS13j6jOY2DHOtocV/H+YZR1XTo49bs=@dpdk.org
-X-Gm-Message-State: AOJu0Yyquiatx3jvfkXmZxabum4fwjsgeNXrCL1C0WvIwOCAmDHhgSC6
- wbs9BAxoYuQBsMT7BTp8Y1ayj0rV8qe9x1uYWtgl32jQiSfTGednxp+rzqtubi6zGwj9ayUKHHU
- Vi4QCSpWINShzDSqqg6ZbAfttsEOoQlISK/zjdoyxwgED5d3PoF+2ZFLY83gOTHMR6JRhsKUXmt
- jXSmjClaqEfOXh8bw=
-X-Gm-Gg: ASbGncvWtgGT/jvuKyys6UhMMXeLMCsLGYC1bwfZOJ+IWlkBs+ulp7yd+wk2mnNdYbQ
- /ZLwpk3l74hWj8PLcRtVKfx+ZR6CoHD76uOoU3oC6NMRFyr7D0XDfbDdg+DhtK3j7M9UsXbc=
-X-Received: by 2002:a05:6512:6719:b0:54a:cc75:3d81 with SMTP id
- 2adb3069b0e04-550d5fac3a8mr773161e87.4.1747212217700; 
- Wed, 14 May 2025 01:43:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF9w3gbzfhGybHvXIdZFWwyuE6BsZM7dBzFx3g2MOVHwFwJfq9fJtIUjlwfxQ6YEkodqYx/pnMW7ryc1HX6M2M=
-X-Received: by 2002:a05:6512:6719:b0:54a:cc75:3d81 with SMTP id
- 2adb3069b0e04-550d5fac3a8mr773151e87.4.1747212217274; Wed, 14 May 2025
- 01:43:37 -0700 (PDT)
+ bh=BNQNdN3roHRKQ0KFPoGLUb1GETxwDyhG0BsOhunR1pQ=;
+ b=FlkIecUBAPg2ldrlE5YTqVVGAfVUxh5aXjY2VlySbadNEwDzvQ7rvRDHbEyeCXxkXg
+ 5VIscEkydXIoNWmr1y6qI68UlHNwNcbkzF3tnTuPuBkMFYQ56vsI1YJglvVun9teIAyz
+ jm8aKWrfscFwftYElUEIfwcOKzfY+HYCqoVhhEg23zsGOTIyx9Ochwp8hCTBzDnLtCvk
+ JHM1Y2fcfRQVkwq1VQdgL9rgS+FAvyTzTM9PeoaQqi/iW4skZ/M2AbB7vLORvKqI+bxh
+ 3oZWGP4ms8bpfJPNCt9pr3sPEf8Rhv+DmJ4KjOonuKtO2syeee3dMS4T5Sb7dbHrhwcS
+ 5ikg==
+X-Gm-Message-State: AOJu0Yyh/+Au6mw2RCicUqQ62TOKkEFu6h4jWn986+ehnzDbc7Nikcxe
+ d38R1rz1xOfGvwBlL09MQaQBsFLOwzMhWSp30WDf/G/x8nEIzTHuqhoecUqIIrzanafA84B4Xzd
+ 3ZqOmyNe7v/olwFh/oq+OhLuRSsF+S5nUi8jV8U0cO6Dpn4lxBdL87rKxM9PJgTiKNWS2BwU6KO
+ rrtu60h1nOj5GUkNw=
+X-Gm-Gg: ASbGncv5HIVr+9pWYP0f32v6W1At5mqqygGenubFj6To3o/gq01/gPKjZSJlwkfpppI
+ jchtCJc9stTaMj0VrP1BnLomseLN45/E64oKVK76iPrUoZGs1stu4k7kIEih/DrPa/kbAw3M=
+X-Received: by 2002:a2e:a9a6:0:b0:30c:50fd:925e with SMTP id
+ 38308e7fff4ca-327ed09182amr9345571fa.3.1747213959581; 
+ Wed, 14 May 2025 02:12:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF2kFikjlAZwK/REWb8qLpIZKMJBZEcZPB3xNVNqNaoSWc+cB+cWqx47r0ZKwJCEpUDyAxk0j6lHWikEN6FvFY=
+X-Received: by 2002:a2e:a9a6:0:b0:30c:50fd:925e with SMTP id
+ 38308e7fff4ca-327ed09182amr9345491fa.3.1747213959180; Wed, 14 May 2025
+ 02:12:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <20250513235308.2200865-1-joshwash@google.com>
- <CALuQH+XJqOAetnTO0b_t55Wf1Qn38dQSZvgj1rf=pTKja6ozyw@mail.gmail.com>
-In-Reply-To: <CALuQH+XJqOAetnTO0b_t55Wf1Qn38dQSZvgj1rf=pTKja6ozyw@mail.gmail.com>
+References: <20250408171902.2833850-1-bruce.richardson@intel.com>
+In-Reply-To: <20250408171902.2833850-1-bruce.richardson@intel.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 14 May 2025 10:43:25 +0200
-X-Gm-Features: AX0GCFt0FF4nvSEhaNnmYaIFPWGCpXl_4jzfG_SkMtd6k_rgOzLl_Wl1ajbQAmM
-Message-ID: <CAJFAV8yubQF_YJPGBQgs2oBzatFn4_D7CBWm92Ubtc=SVqu0-A@mail.gmail.com>
-Subject: Re: [PATCH] net/gve: remove gve-specific PCI revision ID macros
-To: Joshua Washington <joshwash@google.com>,
- Thomas Monjalon <thomas@monjalon.net>
-Cc: Jeroen de Borst <jeroendb@google.com>, dev@dpdk.org, 
- Stephen Hemminger <stephen@networkplumber.org>
+Date: Wed, 14 May 2025 11:12:27 +0200
+X-Gm-Features: AX0GCFuAOjtDIWCMcT-JjmatuMjSf3bi3djYl6jAuTu3TMcxu11UDIQL4FvJy_E
+Message-ID: <CAJFAV8w2g9=-=Y5soQD14+-=xZ-eE-2pG-RekE8a+r5p=17cjQ@mail.gmail.com>
+Subject: Re: [PATCH] doc/linux_gsg: remove note referring to old pkg-config
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: tCgPNfjtLmbm-6675n1BtnMFyb6cMhG54LAeXqPB5eQ_1747212218
+X-Mimecast-MFC-PROC-ID: 1qcx43Nt09qwi7aQvf7jHFQUiz_7nX2plS2oRpTTcFE_1747213960
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -88,33 +83,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
-
-Thanks for the cleanup.
-
-On Wed, May 14, 2025 at 2:46=E2=80=AFAM Joshua Washington <joshwash@google.=
-com> wrote:
+On Tue, Apr 8, 2025 at 7:19=E2=80=AFPM Bruce Richardson
+<bruce.richardson@intel.com> wrote:
 >
-> Patch doesn't apply to the main branch of dpdk-next-net:
-> https://mails.dpdk.org/archives/test-report/2025-May/877522.html
+> Latest DPDK releases no longer officially support RHEL 7 as a target
+> platform, so remove the note about pkg-config not working on those
+> systems.
 >
-> It seems like the diffbase patch only exists in the for-main branch.
-> When is for-main expected to be merged into main, and should we be
-> building against for-main or main? Similarly, what should this
-> compilation test build against?
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 
-Stephen is out for some time (until next week?).
+Reviewed-by: David Marchand <david.marchand@redhat.com>
 
-Thomas may pull next-net soon.
-(@Thomas it would be great if this additional change was squashed in
-96a1290b6258 ("net/gve: support for gVNIC PCI revision 1 and later")
-while pulling.)
-But otherwise this cleanup can be merged after.
+I see examples still refer to this issue, could you send a patch
+cleaning this too?
+$ git grep -l check.for.broken.pkg | wc -l
+52
 
-In any case, for net drivers update, please continue basing your work
-on next-net.
-
-Thanks.
 
 --=20
 David Marchand
