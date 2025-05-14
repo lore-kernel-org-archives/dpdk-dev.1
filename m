@@ -2,47 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90793C3ABD8
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 May 2025 12:57:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C6FAC3ABCC
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 May 2025 13:02:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6F47C402E5;
-	Wed, 14 May 2025 14:57:11 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
- by mails.dpdk.org (Postfix) with ESMTP id 4A983402C8
- for <dev@dpdk.org>; Wed, 14 May 2025 14:57:10 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D04EB402E5;
+	Wed, 14 May 2025 15:02:17 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+ by mails.dpdk.org (Postfix) with ESMTP id 61A95402C8
+ for <dev@dpdk.org>; Wed, 14 May 2025 15:02:16 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1747227430; x=1778763430;
+ t=1747227736; x=1778763736;
  h=from:to:subject:date:message-id:mime-version:
  content-transfer-encoding;
- bh=Rr90Jom4NZq2w0n9eoKvEO7uLIK7hzAKiCegcvhLeI4=;
- b=fsgaBA6iw0228KRZgrJa2EqD9k7OZRqe1r6Vu+zOGUyxzlZIWWf6fTOd
- GjOleeS75m9EWp006L9AwvUftSWYM+4hUouoYH5kuxiqfQXabrxF8eTdE
- WQ+RAhdZlJLIlTWbkKDkxZpDjsOA65F8dshcMfIBFWE+KYkBr+4zBQ+/H
- PMCGPBJxEeJG4FH5CZWjQPjugb418BLEmmRnV1VfGoIhvphJp6qSzen+F
- PqBYeAqIibPhb8kPMiy/9NumL9zrIpAfE9htyv9Sg8hkqdDZMzRggpCxJ
- g8RjNGMlN6EsfbEqgj4iZzL9QJ6dqKJPcrBUeYyPz23MZoOHCR0YHwyqU Q==;
-X-CSE-ConnectionGUID: uvfEG6a1Svyk+aOQblJjhA==
-X-CSE-MsgGUID: EOuxcQUXQjaekraaxylvMw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="74520901"
-X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; d="scan'208";a="74520901"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
- by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 May 2025 05:57:09 -0700
-X-CSE-ConnectionGUID: y/kV5/DqR+S4cVD6Zgsn4A==
-X-CSE-MsgGUID: EH8q1IJ8TeGO7d4SWxHUmA==
+ bh=2dqMO8S1i/9GbhHCGnHCGkYZyH4slsGIpdd75HfhAKU=;
+ b=B6y0iM6GY+KWscdqQb5nTs4pOSOKqIOrVIK18gyF3P4uUJ2YShrHxZgx
+ b4Psagm1cFjmuelVe6AJ9ATjdZO5R0zBl9nZkSSUIEaD623dC1tpxWmK9
+ OwOSZxAg3PPOEVYmDLyPrU48vynm/lM3RyziKpn97msK6G2fddSf30eUF
+ BWwhUWrpS3goSIuVztgelamMM0GTerLusKSejfs3drKf559+TCdB6NCYl
+ 25/cdkIqoCrHyM8pTuf7vtx+fo1mZcA9UeEqPXL8ccmW9l2NgxbpRJwFD
+ ZxLO8yqaX45piuX/uE23bngGW7XdLdSqftOpGIDDpTq+0+S3TRPLvOGeK g==;
+X-CSE-ConnectionGUID: TQ0wOVu0Sq6G7yvHNYbCgg==
+X-CSE-MsgGUID: 2B0ZXqzwQH6XV+uOd7K5Xw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11433"; a="52926906"
+X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; d="scan'208";a="52926906"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+ by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 14 May 2025 06:02:15 -0700
+X-CSE-ConnectionGUID: /YIukbM7SemHepKhJiYl4Q==
+X-CSE-MsgGUID: 9SxO3la1QBOwm4iVfLs1aw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; d="scan'208";a="143152334"
-Received: from unknown (HELO srv24..) ([10.138.182.231])
- by orviesa005.jf.intel.com with ESMTP; 14 May 2025 05:57:08 -0700
-From: Shaiq Wani <shaiq.wani@intel.com>
-To: dev@dpdk.org,
-	bruce.richardson@intel.com,
-	aman.deep.singh@intel.com
-Subject: [PATCH] net/intel: reduce size of common Tx queue struct
-Date: Wed, 14 May 2025 18:27:33 +0530
-Message-Id: <20250514125733.1364644-1-shaiq.wani@intel.com>
-X-Mailer: git-send-email 2.34.1
+X-IronPort-AV: E=Sophos;i="6.15,288,1739865600"; d="scan'208";a="137921788"
+Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
+ by fmviesa006.fm.intel.com with ESMTP; 14 May 2025 06:02:15 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org, Aman Singh <aman.deep.singh@intel.com>,
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>
+Subject: [PATCH v1 1/2] app/testpmd: harmonize case in help strings
+Date: Wed, 14 May 2025 14:02:11 +0100
+Message-ID: <9d6e0ff75abe0185c5a03aecba3269668860a1f7.1747227723.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.47.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -58,331 +57,202 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Removed redundant and unused fields from the idpf pmd specific field
-in common Tx queue structure to reduce its memory footprint.
+Most testpmd help strings are lower case. Amend those that aren't.
 
-Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/common/tx.h                 |  6 +---
- drivers/net/intel/cpfl/cpfl_ethdev.c          |  6 ----
- drivers/net/intel/cpfl/cpfl_rxtx.c            | 13 ++-----
- drivers/net/intel/idpf/idpf_common_rxtx.c     | 34 +++----------------
- drivers/net/intel/idpf/idpf_common_rxtx.h     |  7 ----
- .../net/intel/idpf/idpf_common_rxtx_avx512.c  | 13 +++----
- drivers/net/intel/idpf/idpf_rxtx.c            |  9 +----
- 7 files changed, 13 insertions(+), 75 deletions(-)
+ app/test-pmd/cmdline.c    |  4 ++--
+ app/test-pmd/cmdline_tm.c | 36 ++++++++++++++++++------------------
+ 2 files changed, 20 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
-index c99bd5420f..b0a68bae44 100644
---- a/drivers/net/intel/common/tx.h
-+++ b/drivers/net/intel/common/tx.h
-@@ -106,16 +106,12 @@ struct ci_tx_queue {
- 						struct idpf_flex_tx_sched_desc *desc_ring;
- 						struct idpf_splitq_tx_compl_desc *compl_ring;
- 				};
--				const struct idpf_txq_ops *idpf_ops;
- 				struct ci_tx_queue *complq;
- 				void **txqs;   /*only valid for split queue mode*/
--				bool q_started;   /* if tx queue has been started */
--				/* only valid for split queue mode */
- 				uint32_t tx_start_qid;
- 				uint16_t sw_nb_desc;
- 				uint16_t sw_tail;
--#define IDPF_TX_CTYPE_NUM	8
--				uint16_t ctype[IDPF_TX_CTYPE_NUM];
-+				uint16_t rs_compl_count;
- 				uint8_t expected_gen_id;
- 		};
- 	};
-diff --git a/drivers/net/intel/cpfl/cpfl_ethdev.c b/drivers/net/intel/cpfl/cpfl_ethdev.c
-index c94010bc51..6d7b23ad7a 100644
---- a/drivers/net/intel/cpfl/cpfl_ethdev.c
-+++ b/drivers/net/intel/cpfl/cpfl_ethdev.c
-@@ -958,8 +958,6 @@ cpfl_start_queues(struct rte_eth_dev *dev)
- 			if (err)
- 				PMD_DRV_LOG(ERR, "Failed to switch hairpin TX queue %u on",
- 					    i);
--			else
--				cpfl_txq->base.q_started = true;
- 		}
- 	}
- 
-@@ -1273,7 +1271,6 @@ cpfl_hairpin_bind(struct rte_eth_dev *dev, uint16_t rx_port)
- 				    i);
- 			return err;
- 		}
--		cpfl_txq->base.q_started = true;
- 	}
- 
- 	err = cpfl_switch_hairpin_complq(cpfl_tx_vport, true);
-@@ -1309,17 +1306,14 @@ cpfl_hairpin_unbind(struct rte_eth_dev *dev, uint16_t rx_port)
- 	struct cpfl_vport *cpfl_tx_vport = dev->data->dev_private;
- 	struct rte_eth_dev *peer_dev = &rte_eth_devices[rx_port];
- 	struct cpfl_vport *cpfl_rx_vport = peer_dev->data->dev_private;
--	struct cpfl_tx_queue *cpfl_txq;
- 	struct cpfl_rx_queue *cpfl_rxq;
- 	int i;
- 
- 	/* disable hairpin queues */
- 	for (i = cpfl_tx_vport->nb_data_txq; i < dev->data->nb_tx_queues; i++) {
--		cpfl_txq = dev->data->tx_queues[i];
- 		cpfl_switch_hairpin_rxtx_queue(cpfl_tx_vport,
- 					       i - cpfl_tx_vport->nb_data_txq,
- 					       false, false);
--		cpfl_txq->base.q_started = false;
- 	}
- 
- 	cpfl_switch_hairpin_complq(cpfl_tx_vport, false);
-diff --git a/drivers/net/intel/cpfl/cpfl_rxtx.c b/drivers/net/intel/cpfl/cpfl_rxtx.c
-index eba0fcbb07..02e81f7f34 100644
---- a/drivers/net/intel/cpfl/cpfl_rxtx.c
-+++ b/drivers/net/intel/cpfl/cpfl_rxtx.c
-@@ -115,10 +115,6 @@ static const struct idpf_rxq_ops def_rxq_ops = {
- 	.release_mbufs = idpf_qc_rxq_mbufs_release,
- };
- 
--static const struct idpf_txq_ops def_txq_ops = {
--	.release_mbufs = idpf_qc_txq_mbufs_release,
--};
--
- static const struct rte_memzone *
- cpfl_dma_zone_reserve(struct rte_eth_dev *dev, uint16_t queue_idx,
- 		      uint16_t len, uint16_t queue_type,
-@@ -332,7 +328,7 @@ cpfl_tx_queue_release(void *txq)
- 		rte_free(q->complq);
- 	}
- 
--	q->idpf_ops->release_mbufs(q);
-+	ci_txq_release_all_mbufs(q, q->vector_tx);
- 	rte_free(q->sw_ring);
- 	rte_memzone_free(q->mz);
- 	rte_free(cpfl_txq);
-@@ -613,7 +609,6 @@ cpfl_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
- 
- 	txq->qtx_tail = hw->hw_addr + (vport->chunks_info.tx_qtail_start +
- 			queue_idx * vport->chunks_info.tx_qtail_spacing);
--	txq->idpf_ops = &def_txq_ops;
- 	cpfl_vport->nb_data_txq++;
- 	txq->q_set = true;
- 	dev->data->tx_queues[queue_idx] = cpfl_txq;
-@@ -868,8 +863,6 @@ cpfl_tx_hairpin_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
- 	txq->qtx_tail = hw->hw_addr +
- 		cpfl_hw_qtail_get(cpfl_vport->p2p_q_chunks_info->tx_qtail_start,
- 				  logic_qid, cpfl_vport->p2p_q_chunks_info->tx_qtail_spacing);
--	txq->idpf_ops = &def_txq_ops;
--
- 	if (cpfl_vport->p2p_tx_complq == NULL) {
- 		cq = rte_zmalloc_socket("cpfl hairpin cq",
- 					sizeof(struct ci_tx_queue),
-@@ -1259,7 +1252,6 @@ cpfl_tx_queue_start(struct rte_eth_dev *dev, uint16_t tx_queue_id)
- 		PMD_DRV_LOG(ERR, "Failed to switch TX queue %u on",
- 			    tx_queue_id);
- 	} else {
--		cpfl_txq->base.q_started = true;
- 		dev->data->tx_queue_state[tx_queue_id] =
- 			RTE_ETH_QUEUE_STATE_STARTED;
- 	}
-@@ -1343,8 +1335,7 @@ cpfl_tx_queue_stop(struct rte_eth_dev *dev, uint16_t tx_queue_id)
- 	}
- 
- 	txq = &cpfl_txq->base;
--	txq->q_started = false;
--	txq->idpf_ops->release_mbufs(txq);
-+	ci_txq_release_all_mbufs(txq, txq->vector_tx);
- 	if (vport->txq_model == VIRTCHNL2_QUEUE_MODEL_SINGLE) {
- 		idpf_qc_single_tx_queue_reset(txq);
- 	} else {
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
-index a734637a39..eb25b091d8 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
-@@ -93,32 +93,6 @@ idpf_qc_rxq_mbufs_release(struct idpf_rx_queue *rxq)
- 	}
- }
- 
--RTE_EXPORT_INTERNAL_SYMBOL(idpf_qc_txq_mbufs_release)
--void
--idpf_qc_txq_mbufs_release(struct ci_tx_queue *txq)
--{
--	uint16_t nb_desc, i;
--
--	if (txq == NULL || txq->sw_ring == NULL) {
--		DRV_LOG(DEBUG, "Pointer to rxq or sw_ring is NULL");
--		return;
--	}
--
--	if (txq->sw_nb_desc != 0) {
--		/* For split queue model, descriptor ring */
--		nb_desc = txq->sw_nb_desc;
--	} else {
--		/* For single queue model */
--		nb_desc = txq->nb_tx_desc;
--	}
--	for (i = 0; i < nb_desc; i++) {
--		if (txq->sw_ring[i].mbuf != NULL) {
--			rte_pktmbuf_free_seg(txq->sw_ring[i].mbuf);
--			txq->sw_ring[i].mbuf = NULL;
--		}
--	}
--}
--
- RTE_EXPORT_INTERNAL_SYMBOL(idpf_qc_split_rx_descq_reset)
- void
- idpf_qc_split_rx_descq_reset(struct idpf_rx_queue *rxq)
-@@ -250,7 +224,7 @@ idpf_qc_split_tx_descq_reset(struct ci_tx_queue *txq)
- 	txq->sw_tail = 0;
- 	txq->nb_tx_free = txq->nb_tx_desc - 1;
- 
--	memset(txq->ctype, 0, sizeof(txq->ctype));
-+	txq->rs_compl_count = 0;
- 	txq->tx_next_dd = txq->tx_rs_thresh - 1;
- 	txq->tx_next_rs = txq->tx_rs_thresh - 1;
- }
-@@ -357,7 +331,7 @@ idpf_qc_tx_queue_release(void *txq)
- 		rte_free(q->complq);
- 	}
- 
--	q->idpf_ops->release_mbufs(q);
-+	ci_txq_release_all_mbufs(q, false);
- 	rte_free(q->sw_ring);
- 	rte_memzone_free(q->mz);
- 	rte_free(q);
-@@ -893,7 +867,7 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 	uint8_t cmd_dtype;
- 	uint16_t nb_ctx;
- 
--	if (unlikely(txq == NULL) || unlikely(!txq->q_started))
-+	if (unlikely(txq == NULL))
- 		return nb_tx;
- 
- 	txr = txq->desc_ring;
-@@ -1390,7 +1364,7 @@ idpf_dp_singleq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 	nb_tx = 0;
- 	txq = tx_queue;
- 
--	if (unlikely(txq == NULL) || unlikely(!txq->q_started))
-+	if (unlikely(txq == NULL))
- 		return nb_tx;
- 
- 	sw_ring = txq->sw_ring;
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.h b/drivers/net/intel/idpf/idpf_common_rxtx.h
-index fc68dddc90..f84a760334 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx.h
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx.h
-@@ -57,7 +57,6 @@
- #define IDPF_VPMD_DESCS_PER_LOOP	4
- #define IDPF_RXQ_REARM_THRESH		64
- #define IDPD_TXQ_SCAN_CQ_THRESH	64
--#define IDPF_TX_CTYPE_NUM	8
- 
- /* MTS */
- #define GLTSYN_CMD_SYNC_0_0	(PF_TIMESYNC_BASE + 0x0)
-@@ -171,10 +170,6 @@ struct idpf_rxq_ops {
- 	void (*release_mbufs)(struct idpf_rx_queue *rxq);
- };
- 
--struct idpf_txq_ops {
--	void (*release_mbufs)(struct ci_tx_queue *txq);
--};
--
- extern int idpf_timestamp_dynfield_offset;
- extern uint64_t idpf_timestamp_dynflag;
- 
-@@ -186,8 +181,6 @@ int idpf_qc_tx_thresh_check(uint16_t nb_desc, uint16_t tx_rs_thresh,
- __rte_internal
- void idpf_qc_rxq_mbufs_release(struct idpf_rx_queue *rxq);
- __rte_internal
--void idpf_qc_txq_mbufs_release(struct ci_tx_queue *txq);
--__rte_internal
- void idpf_qc_split_rx_descq_reset(struct idpf_rx_queue *rxq);
- __rte_internal
- void idpf_qc_split_rx_bufq_reset(struct idpf_rx_queue *rxq);
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c b/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
-index 15b4c8a68e..227f2710a2 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
-@@ -1192,7 +1192,8 @@ idpf_splitq_scan_cq_ring(struct ci_tx_queue *cq)
- 		txq_qid = (rte_le_to_cpu_16(compl_ring->qid_comptype_gen) &
- 			IDPF_TXD_COMPLQ_QID_M) >> IDPF_TXD_COMPLQ_QID_S;
- 		txq = cq->txqs[txq_qid - cq->tx_start_qid];
--		txq->ctype[ctype]++;
-+		if (ctype == IDPF_TXD_COMPLT_RS)
-+			txq->rs_compl_count++;
- 		cq_qid++;
- 	}
- 
-@@ -1342,9 +1343,9 @@ idpf_splitq_xmit_pkts_vec_avx512_cmn(void *tx_queue, struct rte_mbuf **tx_pkts,
- 		uint16_t ret, num;
- 		idpf_splitq_scan_cq_ring(txq->complq);
- 
--		if (txq->ctype[IDPF_TXD_COMPLT_RS] > txq->tx_free_thresh) {
-+		if (txq->rs_compl_count > txq->tx_free_thresh) {
- 			ci_tx_free_bufs_vec(txq, idpf_tx_desc_done, false);
--			txq->ctype[IDPF_TXD_COMPLT_RS] -= txq->tx_rs_thresh;
-+			txq->rs_compl_count -= txq->tx_rs_thresh;
- 		}
- 
- 		num = (uint16_t)RTE_MIN(nb_pkts, txq->tx_rs_thresh);
-@@ -1392,10 +1393,6 @@ idpf_tx_release_mbufs_avx512(struct ci_tx_queue *txq)
- 	}
- }
- 
--static const struct idpf_txq_ops avx512_tx_vec_ops = {
--	.release_mbufs = idpf_tx_release_mbufs_avx512,
--};
--
- RTE_EXPORT_INTERNAL_SYMBOL(idpf_qc_tx_vec_avx512_setup)
- int __rte_cold
- idpf_qc_tx_vec_avx512_setup(struct ci_tx_queue *txq)
-@@ -1403,6 +1400,6 @@ idpf_qc_tx_vec_avx512_setup(struct ci_tx_queue *txq)
- 	if (!txq)
- 		return 0;
- 
--	txq->idpf_ops = &avx512_tx_vec_ops;
-+	txq->vector_tx = true;
- 	return 0;
- }
-diff --git a/drivers/net/intel/idpf/idpf_rxtx.c b/drivers/net/intel/idpf/idpf_rxtx.c
-index bf190b02ee..5510cbd30a 100644
---- a/drivers/net/intel/idpf/idpf_rxtx.c
-+++ b/drivers/net/intel/idpf/idpf_rxtx.c
-@@ -54,10 +54,6 @@ static const struct idpf_rxq_ops def_rxq_ops = {
- 	.release_mbufs = idpf_qc_rxq_mbufs_release,
- };
- 
--static const struct idpf_txq_ops def_txq_ops = {
--	.release_mbufs = idpf_qc_txq_mbufs_release,
--};
--
- static const struct rte_memzone *
- idpf_dma_zone_reserve(struct rte_eth_dev *dev, uint16_t queue_idx,
- 		      uint16_t len, uint16_t queue_type,
-@@ -486,7 +482,6 @@ idpf_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
- 
- 	txq->qtx_tail = hw->hw_addr + (vport->chunks_info.tx_qtail_start +
- 			queue_idx * vport->chunks_info.tx_qtail_spacing);
--	txq->idpf_ops = &def_txq_ops;
- 	txq->q_set = true;
- 	dev->data->tx_queues[queue_idx] = txq;
- 
-@@ -652,7 +647,6 @@ idpf_tx_queue_start(struct rte_eth_dev *dev, uint16_t tx_queue_id)
- 		PMD_DRV_LOG(ERR, "Failed to switch TX queue %u on",
- 			    tx_queue_id);
- 	} else {
--		txq->q_started = true;
- 		dev->data->tx_queue_state[tx_queue_id] =
- 			RTE_ETH_QUEUE_STATE_STARTED;
- 	}
-@@ -712,8 +706,7 @@ idpf_tx_queue_stop(struct rte_eth_dev *dev, uint16_t tx_queue_id)
- 	}
- 
- 	txq = dev->data->tx_queues[tx_queue_id];
--	txq->q_started = false;
--	txq->idpf_ops->release_mbufs(txq);
-+	ci_txq_release_all_mbufs(txq, false);
- 	if (vport->txq_model == VIRTCHNL2_QUEUE_MODEL_SINGLE) {
- 		idpf_qc_single_tx_queue_reset(txq);
- 	} else {
+diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
+index d4bb3ec998..a8f1b8ad67 100644
+--- a/app/test-pmd/cmdline.c
++++ b/app/test-pmd/cmdline.c
+@@ -8078,7 +8078,7 @@ static cmdline_parse_token_string_t cmd_operate_set_counter_name =
+ static cmdline_parse_inst_t cmd_operate_set_counter = {
+ 	.f = cmd_operate_set_counter_parsed,
+ 	.data = NULL,
+-	.help_str = "port (port_id) enable|disable <counter_name>",
++	.help_str = "port <port_id> enable|disable <counter_name>",
+ 	.tokens = {
+ 		(void *)&cmd_operate_set_counter_port,
+ 		(void *)&cmd_operate_set_counter_port_id,
+@@ -9034,7 +9034,7 @@ static cmdline_parse_token_string_t cmd_dump_dump =
+ static cmdline_parse_inst_t cmd_dump = {
+ 	.f = cmd_dump_parsed,  /* function to call */
+ 	.data = NULL,      /* 2nd arg of func */
+-	.help_str = "Dump status",
++	.help_str = "dump status",
+ 	.tokens = {        /* token list, NULL terminated */
+ 		(void *)&cmd_dump_dump,
+ 		NULL,
+diff --git a/app/test-pmd/cmdline_tm.c b/app/test-pmd/cmdline_tm.c
+index 7ade91549c..acf86c1ef0 100644
+--- a/app/test-pmd/cmdline_tm.c
++++ b/app/test-pmd/cmdline_tm.c
+@@ -327,7 +327,7 @@ static void cmd_show_port_tm_cap_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_show_port_tm_cap = {
+ 	.f = cmd_show_port_tm_cap_parsed,
+ 	.data = NULL,
+-	.help_str = "Show Port TM Capabilities",
++	.help_str = "show port tm capabilities",
+ 	.tokens = {
+ 		(void *)&cmd_show_port_tm_cap_show,
+ 		(void *)&cmd_show_port_tm_cap_port,
+@@ -475,7 +475,7 @@ static void cmd_show_port_tm_level_cap_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_show_port_tm_level_cap = {
+ 	.f = cmd_show_port_tm_level_cap_parsed,
+ 	.data = NULL,
+-	.help_str = "Show port TM hierarchical level capabilities",
++	.help_str = "show port tm hierarchical level capabilities",
+ 	.tokens = {
+ 		(void *)&cmd_show_port_tm_level_cap_show,
+ 		(void *)&cmd_show_port_tm_level_cap_port,
+@@ -598,7 +598,7 @@ static void cmd_show_port_tm_node_cap_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_show_port_tm_node_cap = {
+ 	.f = cmd_show_port_tm_node_cap_parsed,
+ 	.data = NULL,
+-	.help_str = "Show Port TM Hierarchy node capabilities",
++	.help_str = "show port tm Hierarchy node capabilities",
+ 	.tokens = {
+ 		(void *)&cmd_show_port_tm_node_cap_show,
+ 		(void *)&cmd_show_port_tm_node_cap_port,
+@@ -716,7 +716,7 @@ static void cmd_show_port_tm_node_stats_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_show_port_tm_node_stats = {
+ 	.f = cmd_show_port_tm_node_stats_parsed,
+ 	.data = NULL,
+-	.help_str = "Show port tm node stats",
++	.help_str = "show port tm node stats",
+ 	.tokens = {
+ 		(void *)&cmd_show_port_tm_node_stats_show,
+ 		(void *)&cmd_show_port_tm_node_stats_port,
+@@ -795,7 +795,7 @@ static void cmd_show_port_tm_node_type_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_show_port_tm_node_type = {
+ 	.f = cmd_show_port_tm_node_type_parsed,
+ 	.data = NULL,
+-	.help_str = "Show port tm node type",
++	.help_str = "show port tm node type",
+ 	.tokens = {
+ 		(void *)&cmd_show_port_tm_node_type_show,
+ 		(void *)&cmd_show_port_tm_node_type_port,
+@@ -942,7 +942,7 @@ static void cmd_add_port_tm_node_shaper_profile_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_add_port_tm_node_shaper_profile = {
+ 	.f = cmd_add_port_tm_node_shaper_profile_parsed,
+ 	.data = NULL,
+-	.help_str = "Add port tm node private shaper profile",
++	.help_str = "add port tm node private shaper profile",
+ 	.tokens = {
+ 		(void *)&cmd_add_port_tm_node_shaper_profile_add,
+ 		(void *)&cmd_add_port_tm_node_shaper_profile_port,
+@@ -1029,7 +1029,7 @@ static void cmd_del_port_tm_node_shaper_profile_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_del_port_tm_node_shaper_profile = {
+ 	.f = cmd_del_port_tm_node_shaper_profile_parsed,
+ 	.data = NULL,
+-	.help_str = "Delete port tm node private shaper profile",
++	.help_str = "delete port tm node private shaper profile",
+ 	.tokens = {
+ 		(void *)&cmd_del_port_tm_node_shaper_profile_del,
+ 		(void *)&cmd_del_port_tm_node_shaper_profile_port,
+@@ -1390,7 +1390,7 @@ static void cmd_add_port_tm_node_wred_profile_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_add_port_tm_node_wred_profile = {
+ 	.f = cmd_add_port_tm_node_wred_profile_parsed,
+ 	.data = NULL,
+-	.help_str = "Add port tm node wred profile",
++	.help_str = "add port tm node wred profile",
+ 	.tokens = {
+ 		(void *)&cmd_add_port_tm_node_wred_profile_add,
+ 		(void *)&cmd_add_port_tm_node_wred_profile_port,
+@@ -1483,7 +1483,7 @@ static void cmd_del_port_tm_node_wred_profile_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_del_port_tm_node_wred_profile = {
+ 	.f = cmd_del_port_tm_node_wred_profile_parsed,
+ 	.data = NULL,
+-	.help_str = "Delete port tm node wred profile",
++	.help_str = "delete port tm node wred profile",
+ 	.tokens = {
+ 		(void *)&cmd_del_port_tm_node_wred_profile_del,
+ 		(void *)&cmd_del_port_tm_node_wred_profile_port,
+@@ -1577,7 +1577,7 @@ static void cmd_set_port_tm_node_shaper_profile_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_set_port_tm_node_shaper_profile = {
+ 	.f = cmd_set_port_tm_node_shaper_profile_parsed,
+ 	.data = NULL,
+-	.help_str = "Set port tm node shaper profile",
++	.help_str = "set port tm node shaper profile",
+ 	.tokens = {
+ 		(void *)&cmd_set_port_tm_node_shaper_profile_set,
+ 		(void *)&cmd_set_port_tm_node_shaper_profile_port,
+@@ -1744,7 +1744,7 @@ static void cmd_add_port_tm_nonleaf_node_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_add_port_tm_nonleaf_node = {
+ 	.f = cmd_add_port_tm_nonleaf_node_parsed,
+ 	.data = NULL,
+-	.help_str = "Add port tm nonleaf node",
++	.help_str = "add port tm nonleaf node",
+ 	.tokens = {
+ 		(void *)&cmd_add_port_tm_nonleaf_node_add,
+ 		(void *)&cmd_add_port_tm_nonleaf_node_port,
+@@ -1911,7 +1911,7 @@ static void cmd_add_port_tm_nonleaf_node_pmode_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_add_port_tm_nonleaf_node_pmode = {
+ 	.f = cmd_add_port_tm_nonleaf_node_pmode_parsed,
+ 	.data = NULL,
+-	.help_str = "Add port tm nonleaf node pktmode",
++	.help_str = "add port tm nonleaf node pktmode",
+ 	.tokens = {
+ 		(void *)&cmd_add_port_tm_nonleaf_node_pmode_add,
+ 		(void *)&cmd_add_port_tm_nonleaf_node_pmode_port,
+@@ -2089,7 +2089,7 @@ static void cmd_add_port_tm_leaf_node_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_add_port_tm_leaf_node = {
+ 	.f = cmd_add_port_tm_leaf_node_parsed,
+ 	.data = NULL,
+-	.help_str = "Add port tm leaf node",
++	.help_str = "add port tm leaf node",
+ 	.tokens = {
+ 		(void *)&cmd_add_port_tm_leaf_node_add,
+ 		(void *)&cmd_add_port_tm_leaf_node_port,
+@@ -2301,7 +2301,7 @@ static void cmd_del_port_tm_node_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_del_port_tm_node = {
+ 	.f = cmd_del_port_tm_node_parsed,
+ 	.data = NULL,
+-	.help_str = "Delete port tm node",
++	.help_str = "delete port tm node",
+ 	.tokens = {
+ 		(void *)&cmd_del_port_tm_node_del,
+ 		(void *)&cmd_del_port_tm_node_port,
+@@ -2394,7 +2394,7 @@ static void cmd_set_port_tm_node_parent_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_set_port_tm_node_parent = {
+ 	.f = cmd_set_port_tm_node_parent_parsed,
+ 	.data = NULL,
+-	.help_str = "Set port tm node parent",
++	.help_str = "set port tm node parent",
+ 	.tokens = {
+ 		(void *)&cmd_set_port_tm_node_parent_set,
+ 		(void *)&cmd_set_port_tm_node_parent_port,
+@@ -2465,7 +2465,7 @@ static void cmd_suspend_port_tm_node_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_suspend_port_tm_node = {
+ 	.f = cmd_suspend_port_tm_node_parsed,
+ 	.data = NULL,
+-	.help_str = "Suspend port tm node",
++	.help_str = "suspend port tm node",
+ 	.tokens = {
+ 		(void *)&cmd_suspend_port_tm_node_suspend,
+ 		(void *)&cmd_suspend_port_tm_node_port,
+@@ -2530,7 +2530,7 @@ static void cmd_resume_port_tm_node_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_resume_port_tm_node = {
+ 	.f = cmd_resume_port_tm_node_parsed,
+ 	.data = NULL,
+-	.help_str = "Resume port tm node",
++	.help_str = "resume port tm node",
+ 	.tokens = {
+ 		(void *)&cmd_resume_port_tm_node_resume,
+ 		(void *)&cmd_resume_port_tm_node_port,
+@@ -2602,7 +2602,7 @@ static void cmd_port_tm_hierarchy_commit_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_port_tm_hierarchy_commit = {
+ 	.f = cmd_port_tm_hierarchy_commit_parsed,
+ 	.data = NULL,
+-	.help_str = "Commit port tm hierarchy",
++	.help_str = "commit port tm hierarchy",
+ 	.tokens = {
+ 		(void *)&cmd_port_tm_hierarchy_commit_port,
+ 		(void *)&cmd_port_tm_hierarchy_commit_tm,
 -- 
-2.34.1
+2.47.1
 
