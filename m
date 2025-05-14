@@ -2,180 +2,125 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF3DC3ABDA
-	for <dpdk-dev@archiver.kernel.org>; Wed, 14 May 2025 07:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E54C3ABD9
+	for <dpdk-dev@archiver.kernel.org>; Wed, 14 May 2025 07:56:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A64884025D;
-	Wed, 14 May 2025 09:55:41 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 2D74240041
- for <dev@dpdk.org>; Wed, 14 May 2025 09:55:40 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54E7tADF015210
- for <dev@dpdk.org>; Wed, 14 May 2025 00:55:39 -0700
-Received: from pps.reinject (localhost [127.0.0.1])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46mq72g01e-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Wed, 14 May 2025 00:55:39 -0700 (PDT)
-Received: from m0431383.ppops.net (m0431383.ppops.net [127.0.0.1])
- by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54E7tcXi016500
- for <dev@dpdk.org>; Wed, 14 May 2025 00:55:38 -0700
-Received: from nam12-bn8-obe.outbound.protection.outlook.com
- (mail-bn8nam12lp2177.outbound.protection.outlook.com [104.47.55.177])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46mq72g01d-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Wed, 14 May 2025 00:55:38 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3390D40652;
+	Wed, 14 May 2025 09:56:14 +0200 (CEST)
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com
+ (mail-dm6nam04on2083.outbound.protection.outlook.com [40.107.102.83])
+ by mails.dpdk.org (Postfix) with ESMTP id 904F340041;
+ Wed, 14 May 2025 09:56:12 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZtQSFtR+A09L2j6Zttyio/u7DNdUdtu/kZPqi1CzO8J864/F32lbDqCxm3JV4mrrAp6QgBmIWMD5mBkI2zXTl+rAYBhoPJC7+SYFk+lAikBw64iOoPn5WY4+Ob1Oali5SRYJZSg7qhyFWnWGvy0bpSu9x/0gjjphwc9cV+86pRNIGte5dDDwLQwrhI7HOlG9Jleb3UwftcA0FG69GZ+06YUz4zuLFY6KRZc6PZMtLCuGw5L8qQppgXW/mxOmr6WENy+AAl3KOTXyTAOuMiQT9N/QtJwtcAwWkmkJUXzIXCkhaMAapyS2qsh+zBmEAD2SlOrW869IMKmE0LqywQwsOw==
+ b=BKPs4LrqpQM7LdcWvUaxkPvcbEzPd/xRInQvFz9NAel1/fsTtKaCe6FKy/RTYp8VOSvz4NWcVGOBxDX0aZZ8N4XnYrbueRr29lLjQS+GkG/T7FlgXxvsb2n29mohbx4H6ayYO2MoiJqR7mYi1QIOK+XPLzYrZ/Y9nQNVZ0Q6J/HNjZrWxHpz1mlhJcN7fTZ+L5PZAUyrdaGLCLOn37jEdol/sk86ez82nU/y+Ev4kOfrlABqsU9POaMKwH6WqIbmkNeYTENoNUh2M8fRVYRKRSmgsd3liYgii1Pr5vy7R0+0iqmF7X2LL53e6uvh0V+JwhiRgdP6H/irpwjcCaW5dg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9B+VhpHT9gfg/GHVCqHq9jPecxolIzwQyLuX3eyMbH8=;
- b=hwmIZucpB7eOC+0Ylgf5u3sickSg1a/SzI9MmEmIw3RzbTbHgXnWlbh+hPnlsu4+idqHvQI5oUfQuRkrOuN5x+iyjkfiYoTaEl7czAqC7EWwj1va0al3DWA6Ea4yBrS4ihIjZz30tpPyHTJznhgTS9Z+d2guDNd3xHZ1LPAKEbuqeEUkI/84ImTo0W4w3zzf+qHqpUxhDpoi+B7kuNfB//5WU9F47gsdK6tlL9BL0w6YoneNNEwxKAX4n7dPtUA0FEnWfCnOVscAhjVVibojRsTu5YJkSib53jopLi0PCN3dODGOExQ+XIn4ApyGAh+Ceo+fZTqUKmP/XubBg2qE3Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
+ bh=JMW70wMenOq2DjmSpff6sEWrkYXrwQeBQlCYEBi92xo=;
+ b=YwJVE5wEheS1blFZDI4H6WkO1xhZH5yayKQCqmKMtaAYCt/CyininnNGK+djKdEv3xR2kuGPpCIwNzMSoE8BDXtemeKekZdlJDEZ27t8qQbUI/1/Z2S8CYAtZ1R/JvulYz/LSeGKek1fMs6Jlqo3/ik812/p9AnzF17MRAlMD6C6lRULaEWtqN7knx7yBy2EjxQWLxshBQM3AAC2fctCxh99bdBosZ4hC3RwsG7tN15/IhCzVZ11ir0ArfnIy6eog/ur6jRgB+emd9clxXZT58A9Q5bONBhvYamKR+pt2ZnulMQhB8+6WuAiW/kauD0sNvte20fRPX22cIum7eJveQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9B+VhpHT9gfg/GHVCqHq9jPecxolIzwQyLuX3eyMbH8=;
- b=oLr6iFePKiWaxaJLXLg+da6maWwyAFPrjGCRYxMFCaVbRWrAVIbuGOpI7oGjLNtgC+iKf7SjOk2nnrjblNZOyymuBpCSHephhrJ1uXw+vNVLyoGqbt3jA5hEEIm8chhig/9HI7iJiQodQl/sA82ICn13JkU6SEA9+HwxGXYmq1w=
-Received: from CO6PR18MB4484.namprd18.prod.outlook.com (2603:10b6:5:359::9) by
- MW3PR18MB3563.namprd18.prod.outlook.com (2603:10b6:303:5f::20) with
- Microsoft
+ bh=JMW70wMenOq2DjmSpff6sEWrkYXrwQeBQlCYEBi92xo=;
+ b=F+Btxuv+N3jiaLaLlVMSjSXunf0Ffi7CQFs5cPCJHkKqRpyRPXomRACfbjt+hiTyVmXl2AD5Nc2rrG6gukasdqF6Mb64si+FQCVKmvlbP9u/WdaEGAEP4mODAKhXCelQfcSTo8vHuFkAoaGfC8FcDQ2JJ+MQwdNeiGxP5GVpSqQHJz+O6zgyT6P0KjLl2u2EohaQTwswaDlD23C9n7FjauNxxTG0oAiiLVyo05VAHHiME7C1DzdEc9h9wawPAFouOC2PYy8Ezyk7sI1G0tGjJ9dl5YZeOqGg9RON/llE20lSTLOX9K9scJJ2kg5WuVhA+VQpqvAZsPPa9AZ7GARJvg==
+Received: from BN8PR03CA0012.namprd03.prod.outlook.com (2603:10b6:408:94::25)
+ by PH7PR12MB7354.namprd12.prod.outlook.com (2603:10b6:510:20d::13)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.33; Wed, 14 May
+ 2025 07:56:07 +0000
+Received: from BN1PEPF0000468E.namprd05.prod.outlook.com
+ (2603:10b6:408:94:cafe::78) by BN8PR03CA0012.outlook.office365.com
+ (2603:10b6:408:94::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8722.25 via Frontend Transport; Wed,
+ 14 May 2025 07:56:06 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BN1PEPF0000468E.mail.protection.outlook.com (10.167.243.139) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8722.31; Wed, 14 May 2025 07:55:36 +0000
-Received: from CO6PR18MB4484.namprd18.prod.outlook.com
- ([fe80::3c98:dd36:4897:a51d]) by CO6PR18MB4484.namprd18.prod.outlook.com
- ([fe80::3c98:dd36:4897:a51d%4]) with mapi id 15.20.8722.027; Wed, 14 May 2025
- 07:55:36 +0000
-From: Akhil Goyal <gakhil@marvell.com>
-To: Hanxiao Li <li.hanxiao@zte.com.cn>, "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [EXTERNAL] [PATCH v2 9/9] app/test: add zsda cryptodev test
-Thread-Topic: [EXTERNAL] [PATCH v2 9/9] app/test: add zsda cryptodev test
-Thread-Index: AQHbjBhK9Fop9nTcnkaLVJtLHXJHOLPSMsFA
-Date: Wed, 14 May 2025 07:55:36 +0000
-Message-ID: <CO6PR18MB44848BAEA9BAE01D749F406ED891A@CO6PR18MB4484.namprd18.prod.outlook.com>
-References: <20250303031644.1041177-2-li.hanxiao@zte.com.cn>
- <20250303082751.1053432-1-li.hanxiao@zte.com.cn>
- <20250303082751.1053432-10-li.hanxiao@zte.com.cn>
-In-Reply-To: <20250303082751.1053432-10-li.hanxiao@zte.com.cn>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CO6PR18MB4484:EE_|MW3PR18MB3563:EE_
-x-ms-office365-filtering-correlation-id: 90fd2511-30a4-4121-c4be-08dd92bcb617
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?UGN2clRmczYxeVN2d3ljeDQvWlJ5eHBNL2VPZGR3MXFCWEVTak05c2toV3lq?=
- =?utf-8?B?d3J4MXZPUDNJRjVEUk1LVjV3TXFydHN5Tlk0L0FZaGdLUzR3TlZyRDA4cTB2?=
- =?utf-8?B?ZFo0WXJDTHBHd1hGT0F6Tkg5ZWxiejVTWVlZSCtBK2srcHdxWGgzZi96K09s?=
- =?utf-8?B?eU1wazF5UjNPTklpU1VROXhicE16QWFHOVphL0M3Z2hrS3pmR1pTdUJsL2Rr?=
- =?utf-8?B?L2hqU01HSWYxTExKZTdwZWFKb243a0NtNVg1VlhVWmJyVWw3TENNREVIbkw2?=
- =?utf-8?B?eks3TmN3bk9ZR2xFVXdPMlVUaHVIbkRQMDBRUGNmcERXbEE0cGNpYWNkM0g2?=
- =?utf-8?B?RDlSRmZBTTdiUGdwMVd4K1RBRVUrd0NjV1dyaE5pUkxqR2Q5VFdFV0h0VmtN?=
- =?utf-8?B?TEg5S3ZONVdnbWNnaW5EdVR5WHFldVZrd0dYSWhRUmRNdnloYW9FRGpjdGtD?=
- =?utf-8?B?a29uT3JQWXdYdDdwY2tWMjRDaDdOeFF3c3p6OTFESXNjZGVwSDFKdU1lUGtr?=
- =?utf-8?B?TWpGZHloM2ZFS1B1Kzgya3U1czk3TXAxWm1SOFd0dU01cGNqT21rK1l3ODBy?=
- =?utf-8?B?SjlXbUYzZlZEcEJ3MUkxZStLbjhsY290NllEc2R1VFA5SFhKY1lObGptd1lp?=
- =?utf-8?B?K3VjVlAyak5PN1V2b0R1VXhDKzNmT0p0MTJTWFpPemJRbndDazhGeTdnSzFs?=
- =?utf-8?B?SC9oeWtBS1FNd2RXSG1pZEZSQXpTc0dnc0syZUlEVXZFdjd1UENKcUlrOVJM?=
- =?utf-8?B?K3ZXdU55M1hIOEZ5TGF5RTZMWnNUZHFqb3ZaalRBeWF6clhNTXliVEhVRng5?=
- =?utf-8?B?WnRuY2Y1RWJIQWh5YjJoZWhHVHRBRTRmMUpydHVaczc1VDZqSzRyZnJkdVov?=
- =?utf-8?B?QkNqNndMbElIOW1jeUNzVnRkQm1GSE9qK3k1M2VSWUYvbXE5dkhmemlwazNB?=
- =?utf-8?B?bkxLaENGM01UYW5vei9XWHZtN2NBOTJUUlRWZ25Kb1Z2VmUrc0JuZGZDYTdo?=
- =?utf-8?B?NDl1a3FETE1oeWI0L0g5RW5zV2xjWFljSCtkRWQ3UFNvVHRTQTV2RCt6VUs2?=
- =?utf-8?B?cVd3d0pRdWRHNEI2REJjN3hsWVppOFA3bThXblgyY1hha0lHcnJSUW1JTVB6?=
- =?utf-8?B?VWwvZnhsSzRMbWNjVjBRVFUzYzcxTmlLV1phL3JDUDd2YllZVk42Q1ZxZnYx?=
- =?utf-8?B?RHE0a2laRnRSdmxiRXdIemxjU2c1REdkblFlS3cxamZhTm4zZlFtYTVIZWlG?=
- =?utf-8?B?aEFmWlk1VjlRWWl5dUtGMStzZE1lNisxMWlZOXFxNGZiallqNkh0RUJtbmlk?=
- =?utf-8?B?Ry94NUMxVnQrcjg4Z2x3MUdSL2RFdkJsLzZyaERuL0trMXc5N0dzWVRTRDVR?=
- =?utf-8?B?bURDT3VJbEZTUW5QanNtOU5nK0JlRkF6Si9hS0FxMFh1THJTWStlaUpKR0lw?=
- =?utf-8?B?TjNPUE9XUEhGcElTd0VucWtQcEhFS3RZV045TktOTjV1QW1aazBjM0kyc3dH?=
- =?utf-8?B?UUpHMlVlZVlDaHpFUnYzWTBWL0FURFhhZkVTMVgwclhlVWVzbmFFcEZMdzdN?=
- =?utf-8?B?MkpFcWRaRVVGVHFoci8yaHBaSjZNY1VySGRJZHdsdWV3a0hoQlA3eTZsZm5k?=
- =?utf-8?B?MER3SEJkN2ZuTU5Rd3JhS1RDTkNuNGU1cXBGaXIwVFJqQzdOelNIU25wZVAy?=
- =?utf-8?B?UDNLQ3B5OHlqTjR4Qnh5MEt2L2E1byt5KytVY3Z0b3RWaVU4YkZ3MXdOUHlB?=
- =?utf-8?B?TU9hV005ZGNNbkhtcXpOamxEa01rWE5sb21rdFBhelVSN3RCV3FadDRUUDdC?=
- =?utf-8?B?bGhSTS9GUHFPdnIyRGZOTU9nS3lSNEJGVjJnTEY3eUNnTEJ6aXVVOGVyNXBF?=
- =?utf-8?B?eTg3SS93WU5JSmtPQTZpWGN6bW5GUlZ1SHdFdzl1ZlNBSnNCd1F4VmpjS0lM?=
- =?utf-8?B?d1BnY29VQlFZaUhjcUIvZ2syR2FRR0RYcVovREkwamYxSjNCYll0WXVxL29U?=
- =?utf-8?B?RWJ5R01XTGt3PT0=?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CO6PR18MB4484.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(38070700018); DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?YmFReUUrb2ZQSlgrVW9iVTB3dms1Y1FvSDJjZWJYbjh6Zmsra0FuZGU4VDdu?=
- =?utf-8?B?YVBDZEJ1NDJzTDFkb2NFYjN5YkhTc2NyQVFwZE1ueWJJMVErK0tsWkM2V2RQ?=
- =?utf-8?B?ci9oV3E3UHRjS3hVQ3VSMHJhRDYwbU93bW0zdFlycWd2U3NRVmc1TzRkUW41?=
- =?utf-8?B?TG5ld2hyZXcvcm11QTMvWFhGYzJsUVFhRVRwRlQ3S1pKRkQwOHM5UmR2bUV5?=
- =?utf-8?B?UjVEY2ZwNVRsb2dKRXdPQ3lleEk0dnYvMkpCMFpzWnRpalhjbGxCZWhkWFVY?=
- =?utf-8?B?RjhhZWVoYzFGOVM0VThEODFjaEVKTWxOcjdMZW1sY0tCK3ZrOSsydjA5VVdS?=
- =?utf-8?B?aGtNdk9lRkx1bnIzcjZlM2dWb2pIckVia0RSenNtNitqTURSak1pQVVoUGU0?=
- =?utf-8?B?OVhLTXR3SUY3TVRHdWQxVy9GZ3pVQ3VmYklGREtLL2UyZHJIWmhuU3hBVlFL?=
- =?utf-8?B?T2NTajFNRGFmcys1VWQ3WXpSbUQrdm5jRldJNUhtcmFPQjR6Wm93WlBwdG5S?=
- =?utf-8?B?ZVptZHZOWFo1TEhNSzdiZW1vTlgxRWlTbUpQVTJmVkFhV2JqV2xGellnS1Jl?=
- =?utf-8?B?YVAyQ1NGZUxqUXJNa1ZrNUUzVTN5SlBPODVkS2xHK1pqY1hoOGhwdUoyeUN2?=
- =?utf-8?B?VHA1cGpWQ1VYNFArRVRaMVRqZENKVFlwREdTcUlvU2JXZkRCcTlMWmE1UW9q?=
- =?utf-8?B?ajlzOGVieEhGSkZHNU1QMndsTEtjZzZ2UmcxdHVNdjhRWEw2bi9xOE53MU8z?=
- =?utf-8?B?czcyVFplWHl4WG1aS1JPSCtTT2JLNkJiVjFQekF6Y1lidFVvazlXbEJWWlh6?=
- =?utf-8?B?RVhkWnBDVkZQQlhsRkUzMUVOdmRPK2JjSWdVbzErTjBxclRoaUxkQ09pMGpl?=
- =?utf-8?B?OUZkSkRpdXBBK2xDd29WZ1p5VVZ4MDBpNE5PN0VsUHFJUDl4Qkk0VUlYWmxv?=
- =?utf-8?B?YmJ6bE04Y2NwSTBqallZb0ZldnppYVQxa2VhSFUyaVBmWkJqMXMxUDdZd1Fm?=
- =?utf-8?B?WTQ4QUNjVmE0Vmlub1pIeWtTK0ZQVGZ3NlhYMGJKTHl4RHM0Kyt4MGt4dDFM?=
- =?utf-8?B?SWlUcG1FOEJ1cXFsaXcrYnZGck03OUdVcG9wRXJlQTJqaXZqVENTeFI2bUJT?=
- =?utf-8?B?R2ZpTXRta0loWGMxbjV0RnlHRmxweVRZWXBxR0hKaFcxRkQyY2xrQ1RkVkZv?=
- =?utf-8?B?dk84NTVEVTZScTdsNmdobjIvNXZDazBRR0E2dmV2akJSTWRvNXdQa2wwaEMz?=
- =?utf-8?B?M0lhelBwdzlWR3FSRWVkbmloQkc1WHRqY0thcU1JL2o1eGNPT0wvUysrQmNr?=
- =?utf-8?B?U3M4N3pSUnBiVWFqTFZub1lBdGIyVzRPbUhCd0tXYXcxeitQS3M0OG56U2hC?=
- =?utf-8?B?RXI4STc5b0tGYlM2QyswNWRxNks1Y1Rrb2NHMVRjbkJYMXdIQWM5UXBFYThj?=
- =?utf-8?B?dzQ1L3J5blJPMk91SWY0dlZmbE9rK2hLTXZQcHhzTi9NUEpXaG1lU1c4a1Mw?=
- =?utf-8?B?bGNUWlpaNktKNXQzRnYva2RQZEJVYkFyN2JydEV2ZktxSGpnQm5nemVPR2xr?=
- =?utf-8?B?c3Z3cm1ITXVtMW9HTm1LUHI1OXVUYmhVYXFBTzByZTJQNXFTK3dTWTBTS0pI?=
- =?utf-8?B?Y3J6Rk1VSnUwekdWMFFZVUpxcGRhd1FrejFKV01UWXV0by9TeEVrTkhZaW1Y?=
- =?utf-8?B?Y2c4eC9acjA1eFE1a0RLNENxeG5jaFZpUmdjZkwveFlPOEdyMDl0dWYxOFRF?=
- =?utf-8?B?OURXUGNPd3p1a1doN3F3RkJockdpUVFzSDRhdGdYV25HTUY0Y1M1ZFhUc24x?=
- =?utf-8?B?NzVtMnBaNjd0d1JQcHNCQ2xiVE1hVXJaVis2RnBUZGpXRjBOek5RQTRCOFgz?=
- =?utf-8?B?VjAvMHVqL3ZIempsaFlGeVhiQUdPNEdwazNLeDAwbllTQndsa3VHTjdQZTh5?=
- =?utf-8?B?NnQ2Nll1TGw4WEJBOUZxaTYwZ2ZpNHY5MUVIQ3JWZEpiWTNqSVczN05ONkV5?=
- =?utf-8?B?cHBGUWZqeXJ2RTlsV2hYTEpVQmczNkVTYm1KYjdWaEMrN1ppOTdGU25sRG1Q?=
- =?utf-8?B?czU5WUFxT3o0Y09MUnloMWZaOTV1NkljbmZCMXBaVGxUeGlUL2tyK3MrTFZ5?=
- =?utf-8?Q?OrDQ=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ 15.20.8722.18 via Frontend Transport; Wed, 14 May 2025 07:56:06 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 14 May
+ 2025 00:55:50 -0700
+Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 14 May
+ 2025 00:55:46 -0700
+From: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
+To: <dev@dpdk.org>
+CC: <rasland@nvidia.com>, <matan@nvidia.com>, <suanmingm@nvidia.com>,
+ <stable@dpdk.org>, Edwin Brossette <edwin.brossette@6wind.com>, "Dariusz
+ Sosnowski" <dsosnowski@nvidia.com>
+Subject: [PATCH v2] net/mlx5: fix the maximal queue size query
+Date: Wed, 14 May 2025 10:55:30 +0300
+Message-ID: <20250514075530.419423-1-viacheslavo@nvidia.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CANDF9xANRqeTnkvAk61y=2TCd2fsWDQQ4YoTFdpL-RW8ksDDGQ@mail.gmail.com>
+References: <CANDF9xANRqeTnkvAk61y=2TCd2fsWDQQ4YoTFdpL-RW8ksDDGQ@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR18MB4484.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 90fd2511-30a4-4121-c4be-08dd92bcb617
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 May 2025 07:55:36.2467 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ysewlOWKfx4lt/kAuxwBso5gK2zAiOb7ps3Fpvp91IXKscarjaX3Sq7o/Z3swX9arXG4D12Ck/2YJqatMvJjLQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR18MB3563
-X-Proofpoint-GUID: 0c4cSFGsipssGDkdfrHX5BPJuo_8FdSi
-X-Authority-Analysis: v=2.4 cv=a5Mw9VSF c=1 sm=1 tr=0 ts=68244c7b cx=c_pps
- a=Odf1NfffwWNqZHMsEJ1rEg==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=dt9VzEwgFbYA:10 a=-AAbraWEqlQA:10 a=1RTuLK3dAAAA:8 a=O0eLdYTGcYNtOaTc2qgA:9
- a=QEXdDO2ut3YA:10 a=kRpfLKi8w9umh8uBmg1i:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE0MDA2OCBTYWx0ZWRfX16j93cCfLLZi
- XVMxWaDtbPBCGvm3H9/NSxAEFdnxE7vDCcZZ4c5ocM/0GGMlBlYqBYjugLWGmdeAlHh4HE9/es0
- /jL7ah4EeF2QmtIehPYIpUVolLqqJLf2kA7H65uckJL64JSIGj1b5P/3M3qdgHOm2rwprFeTWLd
- qQpTvYpaPxNHaVy6+xA1bBaxaRPzNSswzkxcSBEfDwzkdf2c2iHFGHTIf1L5Acbb/WpdyoptDEi
- 5AdjuqXa9yY7kwlotxnAGlit5LeZHgYk6ppyF8gBuDdjuKADdKTSCfgKJzJgbBKj0gnpmDfQE1c
- FjfjtAn/KaKM7vU1d/efjxOtKsmI2r+JgJ6NJ/QYf606XgzDDdLVqXNC3VqwsS2VmJnwXgonYtn
- q21cTOn9D1KZoYiM+xUtktijEMe80Ir0bagn4vj9ujsAy3AvhdgnHXXIcuqGZSNTgudqX0Pi
-X-Proofpoint-ORIG-GUID: onrTiYYL5nmnrM7DKssu_gX0x_1LBOx4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-14_02,2025-05-14_02,2025-02-21_01
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.231.35]
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF0000468E:EE_|PH7PR12MB7354:EE_
+X-MS-Office365-Filtering-Correlation-Id: 42f00032-7c41-46d6-bee0-08dd92bcc841
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|36860700013|1800799024|82310400026|376014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?HOzgtk/a1SNhFW3BYtqAPmIbP/jWyM7jWFsg2AGqc1IQoUEIHhsDRjZJrNb0?=
+ =?us-ascii?Q?+qyp5j3oO8V0rO3wqjoMwFNMoLu4vkddxyx9gT62AEmabNv2uKJZy3yo3y9z?=
+ =?us-ascii?Q?rzyKNZ8+LyJZdjNajKWJ1SvgIg4vfwogE1uXJBrqWh6w3Rie7Ha73Yh6Kz3Y?=
+ =?us-ascii?Q?4K/vav6zPvCKS9ez1a6Cd4rRfX/GRJoLpP6DEqS2paxd2wZcYSpRrPnj32+I?=
+ =?us-ascii?Q?hHsrOHs8LZBolpKfS72dpNisroUI/F0sU/NkztGVNJk1Xoo9i70M/2bmVnkS?=
+ =?us-ascii?Q?lndHimP1M5hnDkpY368siJLkU6xbs//vK0/xhK2QmaO7Pt3ZUODEStDha2Gq?=
+ =?us-ascii?Q?x3VkDR0r1sWy714dXxM9JuW9ebXetv4W46D9DJcZVs3KjY0A0wDilCToH0b3?=
+ =?us-ascii?Q?Z1KbTwHSUs+4gAAsU7Rfl8Dnpb60ikUHEZufXZHRlBeaENsACoOvqblksbFz?=
+ =?us-ascii?Q?l2drFjAu5/8uHHDW9bFsdGt93vArN9yoZ518QKBh+DwsUZHyk8w06uzJMkiL?=
+ =?us-ascii?Q?EYjXsswYLYsJ2sBO7ZaE8WE7nOG2ozqzcd5qfoHmL47HZHI3CDK4bSDQ18JG?=
+ =?us-ascii?Q?E6ujkcwPOn4SPFq4oOSajrD1TLEpmNXH5hByclspo6ocDg4U7nyeH1JNCkTy?=
+ =?us-ascii?Q?2GeKUcAPBejZpcjQb4ChTONjFHahmuIoo/Kqy67Y4GBeIQvMLRoWh4PIdcD3?=
+ =?us-ascii?Q?EHDZq4kfwlgI8xNVwLFSxS1nAI/mwHwHcyCbannye7Z6JEoji+lJIDX0mptc?=
+ =?us-ascii?Q?Ph/7WBxmSjs59/CSDWnKwfo7bxwN4d9OTk4vSG9JLXtTP4aTDTZEHV7oU1RO?=
+ =?us-ascii?Q?T0uWf2btdRTYD4twuMlw/LDJVvWJXWpS2J5ZRWIxfvqHlaEaAex09cRRAxNE?=
+ =?us-ascii?Q?lvuXiEcPmmeOApM8PJ6kCoyi0aXdQ/H/m13INx8cDJPEzHNUshBFq9Jjw7Bc?=
+ =?us-ascii?Q?MWUmbsMoIB5ramkcTd+pCKeq6lBFOFOtuKO4Wptno/FG0QCKzSnVXKl+XClu?=
+ =?us-ascii?Q?Kla1e64p8ZyUiXPJ3xwi2jdO/1bucGD9xu3cMZhUd6jbJcWM0T4CkHdVpOFp?=
+ =?us-ascii?Q?8pzYAj20GZQ8wtEi42w+F227Egk70V/WlZ0aEMqZHuEuZ6VJG9HEbi9VK1pp?=
+ =?us-ascii?Q?ks1Y7AMw4OQ15EAvJ1bZ6LSYW6rnN4PnbDh08P2Vx8gyh2D1BpCiNZ8mr+l1?=
+ =?us-ascii?Q?Cl56sT6paB1CWSTmIPKx4RstYnFqGUC7yhH7gZH3IdZKdOdhIRIxvOiF6MHu?=
+ =?us-ascii?Q?uTGQvAJfOBvZQkFoQI1ldWPFGiP6CWQ2uXq1+XQ8TEUhP57KkkZBtnPfDmHQ?=
+ =?us-ascii?Q?vXqHDnp+VPDT7u/xfKD3IddoGFLwp89RjwXdJSTA4XyOO5oIyBjBEypBI6lz?=
+ =?us-ascii?Q?r4j41zgAGLNN8Ox3mqxe33U9u88A6V2ix2KYpmcEIV754KxxX2wxJbF4TU5y?=
+ =?us-ascii?Q?pUY5BjX9Q1ofIxJpSO/XzhoHYmghQZERlykd7j3sbGsFOR2jnYprgbmQzWOS?=
+ =?us-ascii?Q?dMHPCdLDV6m4d+sbzsnyZPtytXjUsLII1sSa?=
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2025 07:56:06.5744 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 42f00032-7c41-46d6-bee0-08dd92bcc841
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN1PEPF0000468E.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7354
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -189,47 +134,215 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBBZGQgY3J5cHRvIHRlc3QgZm9yIHpzZGEgZGV2aWNlIGFuZCBkcml2ZXIuDQo+IA0KPiBTaWdu
-ZWQtb2ZmLWJ5OiBIYW54aWFvIExpIDxsaS5oYW54aWFvQHp0ZS5jb20uY24+DQo+IC0tLQ0KPiAg
-YXBwL3Rlc3QvdGVzdF9jcnlwdG9kZXYuYyAgICAgICAgfCA3ICsrKysrKysNCj4gIGFwcC90ZXN0
-L3Rlc3RfY3J5cHRvZGV2LmggICAgICAgIHwgMSArDQo+ICBkb2MvZ3VpZGVzL2NvbXByZXNzZGV2
-cy96c2RhLnJzdCB8IDYgKysrKysrDQo+ICAzIGZpbGVzIGNoYW5nZWQsIDE0IGluc2VydGlvbnMo
-KykNCj4gDQo+IGRpZmYgLS1naXQgYS9hcHAvdGVzdC90ZXN0X2NyeXB0b2Rldi5jIGIvYXBwL3Rl
-c3QvdGVzdF9jcnlwdG9kZXYuYw0KPiBpbmRleCA0NDFlY2M2YWQ1Li40NjMzNzQ4OGU0IDEwMDY0
-NA0KPiAtLS0gYS9hcHAvdGVzdC90ZXN0X2NyeXB0b2Rldi5jDQo+ICsrKyBiL2FwcC90ZXN0L3Rl
-c3RfY3J5cHRvZGV2LmMNCj4gQEAgLTIwMDQ0LDYgKzIwMDQ0LDEyIEBAIHRlc3RfY3J5cHRvZGV2
-X2RwYWFfc2VjX3Jhd19hcGkodm9pZCkNCj4gICAgICByZXR1cm4NCj4gcnVuX2NyeXB0b2Rldl9y
-YXdfdGVzdHN1aXRlKFJURV9TVFIoQ1JZUFRPREVWX05BTUVfRFBBQV9TRUNfUE1EKSk7DQo+ICB9
-DQo+IA0KPiArc3RhdGljIGludA0KPiArdGVzdF9jcnlwdG9kZXZfenNkYSh2b2lkKQ0KPiArew0K
-PiArICAgIHJldHVybg0KPiBydW5fY3J5cHRvZGV2X3Rlc3RzdWl0ZShSVEVfU1RSKENSWVBUT0RF
-Vl9OQU1FX1pTREFfU1lNX1BNRCkpOw0KPiArfQ0KPiArDQo+ICBSRUdJU1RFUl9EUklWRVJfVEVT
-VChjcnlwdG9kZXZfY24xMGtfcmF3X2FwaV9hdXRvdGVzdCwNCj4gICAgICAgICAgdGVzdF9jcnlw
-dG9kZXZfY24xMGtfcmF3X2FwaSk7DQo+ICBSRUdJU1RFUl9EUklWRVJfVEVTVChjcnlwdG9kZXZf
-ZHBhYTJfc2VjX3Jhd19hcGlfYXV0b3Rlc3QsDQo+IEBAIC0yMDA4MCwzICsyMDA4Niw0IEBADQo+
-IFJFR0lTVEVSX0RSSVZFUl9URVNUKGNyeXB0b2Rldl9uaXRyb3hfYXV0b3Rlc3QsIHRlc3RfY3J5
-cHRvZGV2X25pdHJveCk7DQo+ICBSRUdJU1RFUl9EUklWRVJfVEVTVChjcnlwdG9kZXZfYmNtZnNf
-YXV0b3Rlc3QsIHRlc3RfY3J5cHRvZGV2X2JjbWZzKTsNCj4gIFJFR0lTVEVSX0RSSVZFUl9URVNU
-KGNyeXB0b2Rldl9jbjlrX2F1dG90ZXN0LCB0ZXN0X2NyeXB0b2Rldl9jbjlrKTsNCj4gIFJFR0lT
-VEVSX0RSSVZFUl9URVNUKGNyeXB0b2Rldl9jbjEwa19hdXRvdGVzdCwgdGVzdF9jcnlwdG9kZXZf
-Y24xMGspOw0KPiArUkVHSVNURVJfRFJJVkVSX1RFU1QoY3J5cHRvZGV2X3pzZGFfYXV0b3Rlc3Qs
-IHRlc3RfY3J5cHRvZGV2X3pzZGEpOw0KPiBkaWZmIC0tZ2l0IGEvYXBwL3Rlc3QvdGVzdF9jcnlw
-dG9kZXYuaCBiL2FwcC90ZXN0L3Rlc3RfY3J5cHRvZGV2LmgNCj4gaW5kZXggYmI1NGEzM2Q2Mi4u
-ZDA0MDAyMjIxNiAxMDA2NDQNCj4gLS0tIGEvYXBwL3Rlc3QvdGVzdF9jcnlwdG9kZXYuaA0KPiAr
-KysgYi9hcHAvdGVzdC90ZXN0X2NyeXB0b2Rldi5oDQo+IEBAIC03Miw2ICs3Miw3IEBADQo+ICAj
-ZGVmaW5lIENSWVBUT0RFVl9OQU1FX0NOMTBLX1BNRCAgICBjcnlwdG9fY24xMGsNCj4gICNkZWZp
-bmUgQ1JZUFRPREVWX05BTUVfTUxYNV9QTUQgICAgICAgIGNyeXB0b19tbHg1DQo+ICAjZGVmaW5l
-IENSWVBUT0RFVl9OQU1FX1VBREtfUE1EICAgICAgICBjcnlwdG9fdWFkaw0KPiArI2RlZmluZSBD
-UllQVE9ERVZfTkFNRV9aU0RBX1NZTV9QTUQgICAgY3J5cHRvX3pzZGENCj4gDQo+IA0KPiAgZW51
-bSBjcnlwdG9kZXZfYXBpX3Rlc3RfdHlwZSB7DQo+IGRpZmYgLS1naXQgYS9kb2MvZ3VpZGVzL2Nv
-bXByZXNzZGV2cy96c2RhLnJzdA0KPiBiL2RvYy9ndWlkZXMvY29tcHJlc3NkZXZzL3pzZGEucnN0
-DQo+IGluZGV4IDM0Y2JmMjM1YWYuLjU0ZTczZTU3ODIgMTAwNjQ0DQo+IC0tLSBhL2RvYy9ndWlk
-ZXMvY29tcHJlc3NkZXZzL3pzZGEucnN0DQo+ICsrKyBiL2RvYy9ndWlkZXMvY29tcHJlc3NkZXZz
-L3pzZGEucnN0DQo+IEBAIC0xOTIsNiArMTkyLDEyIEBAIFpTREEgY29tcHJlc3Npb24gUE1EIGNh
-biBiZSB0ZXN0ZWQgYnkgcnVubmluZyB0aGUNCj4gdGVzdCBhcHBsaWNhdGlvbjo6DQo+ICAgICAu
-L2RwZGstdGVzdCAtbDEgLW4xIC1hIDx5b3VyIHpzZGEgQkRGPg0KPiAgICAgUlRFPj5jb21wcmVz
-c2Rldl9hdXRvdGVzdA0KPiANCj4gK1pTREEgU1lNIGNyeXB0byBQTUQgY2FuIGJlIHRlc3RlZCBi
-eSBydW5uaW5nIHRoZSB0ZXN0IGFwcGxpY2F0aW9uOjoNCj4gKw0KPiArICAgIGNkIC4vPGJ1aWxk
-X2Rpcj4vYXBwL3Rlc3QNCj4gKyAgICAuL2RwZGstdGVzdCAtbDEgLW4xIC1hIDx5b3VyIHpzZGEg
-YmRmPg0KPiArICAgIFJURT4+Y3J5cHRvZGV2X3pzZGFfYXV0b3Rlc3QNCj4gKw0KDQpXaHkgaXMg
-dGhpcyB1cGRhdGVkIGluIGNvbXByZXNzZGV2IGRvYz8NCg0KPiANCj4gIERlYnVnZ2luZw0KPiAg
-LS0tLS0tLS0tDQo+IC0tDQo+IDIuMjcuMA0KDQo=
+The mlx5 PMD manages the device using two modes: the Verbs API
+and the DevX API. Each API offers its own method for querying
+the maximum work queue size (in descriptors).
+
+The corrected patch enhanced the rte_eth_dev_info_get() API
+support in mlx5 PMD to return the true maximum number of descriptors.
+It also implemented a limit check during queue creation, but this
+was applied only to "DevX mode." Consequently, the "Verbs mode"
+was overlooked, leading to malfunction on legacy NICs that do
+not support DevX.
+
+This patch adds support for Verbs mode, and all limit checks are
+updated accordingly.
+
+Fixes: 4c3d7961d900 ("net/mlx5: fix reported Rx/Tx descriptor limits")
+Cc: stable@dpdk.org
+
+Reported-by: Edwin Brossette <edwin.brossette@6wind.com>
+Signed-off-by: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
+Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+
+---
+v2 - minor fix for signed/unsigned comparison in debug assert
+---
+ drivers/common/mlx5/mlx5_prm.h  |  1 +
+ drivers/net/mlx5/mlx5.h         |  1 +
+ drivers/net/mlx5/mlx5_devx.c    |  2 +-
+ drivers/net/mlx5/mlx5_ethdev.c  | 39 +++++++++++++++++++++++++++++----
+ drivers/net/mlx5/mlx5_rxq.c     |  2 +-
+ drivers/net/mlx5/mlx5_trigger.c |  4 ++--
+ drivers/net/mlx5/mlx5_txq.c     | 12 +++++-----
+ 7 files changed, 47 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/common/mlx5/mlx5_prm.h b/drivers/common/mlx5/mlx5_prm.h
+index 86b09b6d0b..1e3ff26e43 100644
+--- a/drivers/common/mlx5/mlx5_prm.h
++++ b/drivers/common/mlx5/mlx5_prm.h
+@@ -41,6 +41,7 @@
+ /* Hardware index widths. */
+ #define MLX5_CQ_INDEX_WIDTH 24
+ #define MLX5_WQ_INDEX_WIDTH 16
++#define MLX5_WQ_INDEX_MAX (1u << (MLX5_WQ_INDEX_WIDTH - 1))
+ 
+ /* WQE Segment sizes in bytes. */
+ #define MLX5_WSEG_SIZE 16u
+diff --git a/drivers/net/mlx5/mlx5.h b/drivers/net/mlx5/mlx5.h
+index 36f11b9c51..5695d0f54a 100644
+--- a/drivers/net/mlx5/mlx5.h
++++ b/drivers/net/mlx5/mlx5.h
+@@ -2303,6 +2303,7 @@ int mlx5_representor_info_get(struct rte_eth_dev *dev,
+ 		(((repr_id) >> 12) & 3)
+ uint16_t mlx5_representor_id_encode(const struct mlx5_switch_info *info,
+ 				    enum rte_eth_representor_type hpf_type);
++uint16_t mlx5_dev_get_max_wq_size(struct mlx5_dev_ctx_shared *sh);
+ int mlx5_dev_infos_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *info);
+ int mlx5_fw_version_get(struct rte_eth_dev *dev, char *fw_ver, size_t fw_size);
+ const uint32_t *mlx5_dev_supported_ptypes_get(struct rte_eth_dev *dev,
+diff --git a/drivers/net/mlx5/mlx5_devx.c b/drivers/net/mlx5/mlx5_devx.c
+index a12891a983..9711746edb 100644
+--- a/drivers/net/mlx5/mlx5_devx.c
++++ b/drivers/net/mlx5/mlx5_devx.c
+@@ -1593,7 +1593,7 @@ mlx5_txq_devx_obj_new(struct rte_eth_dev *dev, uint16_t idx)
+ 	wqe_size = RTE_ALIGN(wqe_size, MLX5_WQE_SIZE) / MLX5_WQE_SIZE;
+ 	/* Create Send Queue object with DevX. */
+ 	wqe_n = RTE_MIN((1UL << txq_data->elts_n) * wqe_size,
+-			(uint32_t)priv->sh->dev_cap.max_qp_wr);
++			(uint32_t)mlx5_dev_get_max_wq_size(priv->sh));
+ 	log_desc_n = log2above(wqe_n);
+ 	ret = mlx5_txq_create_devx_sq_resources(dev, idx, log_desc_n);
+ 	if (ret) {
+diff --git a/drivers/net/mlx5/mlx5_ethdev.c b/drivers/net/mlx5/mlx5_ethdev.c
+index 7708a0b808..a50320075c 100644
+--- a/drivers/net/mlx5/mlx5_ethdev.c
++++ b/drivers/net/mlx5/mlx5_ethdev.c
+@@ -314,6 +314,37 @@ mlx5_set_txlimit_params(struct rte_eth_dev *dev, struct rte_eth_dev_info *info)
+ 	info->tx_desc_lim.nb_mtu_seg_max = nb_max;
+ }
+ 
++/**
++ * Get maximal work queue size in WQEs
++ *
++ * @param sh
++ *   Pointer to the device shared context.
++ * @return
++ *   Maximal number of WQEs in queue
++ */
++uint16_t
++mlx5_dev_get_max_wq_size(struct mlx5_dev_ctx_shared *sh)
++{
++	uint16_t max_wqe = MLX5_WQ_INDEX_MAX;
++
++	if (sh->cdev->config.devx) {
++		/* use HCA properties for DevX config */
++		MLX5_ASSERT(sh->cdev->config.hca_attr.log_max_wq_sz != 0);
++		MLX5_ASSERT(sh->cdev->config.hca_attr.log_max_wq_sz < MLX5_WQ_INDEX_WIDTH);
++		if (sh->cdev->config.hca_attr.log_max_wq_sz != 0 &&
++		    sh->cdev->config.hca_attr.log_max_wq_sz < MLX5_WQ_INDEX_WIDTH)
++			max_wqe = 1u << sh->cdev->config.hca_attr.log_max_wq_sz;
++	} else {
++		/* use IB device capabilities */
++		MLX5_ASSERT(sh->dev_cap.max_qp_wr > 0);
++		MLX5_ASSERT((unsigned int)sh->dev_cap.max_qp_wr <= MLX5_WQ_INDEX_MAX);
++		if (sh->dev_cap.max_qp_wr > 0 &&
++		    (uint32_t)sh->dev_cap.max_qp_wr <= MLX5_WQ_INDEX_MAX)
++			max_wqe = (uint16_t)sh->dev_cap.max_qp_wr;
++	}
++	return max_wqe;
++}
++
+ /**
+  * DPDK callback to get information about the device.
+  *
+@@ -327,6 +358,7 @@ mlx5_dev_infos_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *info)
+ {
+ 	struct mlx5_priv *priv = dev->data->dev_private;
+ 	unsigned int max;
++	uint16_t max_wqe;
+ 
+ 	/* FIXME: we should ask the device for these values. */
+ 	info->min_rx_bufsize = 32;
+@@ -359,10 +391,9 @@ mlx5_dev_infos_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *info)
+ 	info->flow_type_rss_offloads = ~MLX5_RSS_HF_MASK;
+ 	mlx5_set_default_params(dev, info);
+ 	mlx5_set_txlimit_params(dev, info);
+-	info->rx_desc_lim.nb_max =
+-		1 << priv->sh->cdev->config.hca_attr.log_max_wq_sz;
+-	info->tx_desc_lim.nb_max =
+-		1 << priv->sh->cdev->config.hca_attr.log_max_wq_sz;
++	max_wqe = mlx5_dev_get_max_wq_size(priv->sh);
++	info->rx_desc_lim.nb_max = max_wqe;
++	info->tx_desc_lim.nb_max = max_wqe;
+ 	if (priv->sh->cdev->config.hca_attr.mem_rq_rmp &&
+ 	    priv->obj_ops.rxq_obj_new == devx_obj_ops.rxq_obj_new)
+ 		info->dev_capa |= RTE_ETH_DEV_CAPA_RXQ_SHARE;
+diff --git a/drivers/net/mlx5/mlx5_rxq.c b/drivers/net/mlx5/mlx5_rxq.c
+index ab29b43875..b676e5394b 100644
+--- a/drivers/net/mlx5/mlx5_rxq.c
++++ b/drivers/net/mlx5/mlx5_rxq.c
+@@ -656,7 +656,7 @@ mlx5_rx_queue_pre_setup(struct rte_eth_dev *dev, uint16_t idx, uint16_t *desc,
+ 	struct mlx5_rxq_priv *rxq;
+ 	bool empty;
+ 
+-	if (*desc > 1 << priv->sh->cdev->config.hca_attr.log_max_wq_sz) {
++	if (*desc > mlx5_dev_get_max_wq_size(priv->sh)) {
+ 		DRV_LOG(ERR,
+ 			"port %u number of descriptors requested for Rx queue"
+ 			" %u is more than supported",
+diff --git a/drivers/net/mlx5/mlx5_trigger.c b/drivers/net/mlx5/mlx5_trigger.c
+index 4ee44e9165..8145ad4233 100644
+--- a/drivers/net/mlx5/mlx5_trigger.c
++++ b/drivers/net/mlx5/mlx5_trigger.c
+@@ -217,8 +217,8 @@ mlx5_rxq_start(struct rte_eth_dev *dev)
+ 		/* Should not release Rx queues but return immediately. */
+ 		return -rte_errno;
+ 	}
+-	DRV_LOG(DEBUG, "Port %u dev_cap.max_qp_wr is %d.",
+-		dev->data->port_id, priv->sh->dev_cap.max_qp_wr);
++	DRV_LOG(DEBUG, "Port %u max work queue size is %d.",
++		dev->data->port_id, mlx5_dev_get_max_wq_size(priv->sh));
+ 	DRV_LOG(DEBUG, "Port %u dev_cap.max_sge is %d.",
+ 		dev->data->port_id, priv->sh->dev_cap.max_sge);
+ 	for (i = 0; i != priv->rxqs_n; ++i) {
+diff --git a/drivers/net/mlx5/mlx5_txq.c b/drivers/net/mlx5/mlx5_txq.c
+index ddd3a66282..5fee5bc4e8 100644
+--- a/drivers/net/mlx5/mlx5_txq.c
++++ b/drivers/net/mlx5/mlx5_txq.c
+@@ -334,7 +334,7 @@ mlx5_tx_queue_pre_setup(struct rte_eth_dev *dev, uint16_t idx, uint16_t *desc)
+ {
+ 	struct mlx5_priv *priv = dev->data->dev_private;
+ 
+-	if (*desc > 1 << priv->sh->cdev->config.hca_attr.log_max_wq_sz) {
++	if (*desc > mlx5_dev_get_max_wq_size(priv->sh)) {
+ 		DRV_LOG(ERR,
+ 			"port %u number of descriptors requested for Tx queue"
+ 			" %u is more than supported",
+@@ -728,7 +728,7 @@ txq_calc_inline_max(struct mlx5_txq_ctrl *txq_ctrl)
+ 	struct mlx5_priv *priv = txq_ctrl->priv;
+ 	unsigned int wqe_size;
+ 
+-	wqe_size = priv->sh->dev_cap.max_qp_wr / desc;
++	wqe_size = mlx5_dev_get_max_wq_size(priv->sh) / desc;
+ 	if (!wqe_size)
+ 		return 0;
+ 	/*
+@@ -1054,6 +1054,7 @@ mlx5_txq_new(struct rte_eth_dev *dev, uint16_t idx, uint16_t desc,
+ {
+ 	struct mlx5_priv *priv = dev->data->dev_private;
+ 	struct mlx5_txq_ctrl *tmpl;
++	uint16_t max_wqe;
+ 
+ 	tmpl = mlx5_malloc(MLX5_MEM_RTE | MLX5_MEM_ZERO, sizeof(*tmpl) +
+ 			   desc * sizeof(struct rte_mbuf *), 0, socket);
+@@ -1078,13 +1079,12 @@ mlx5_txq_new(struct rte_eth_dev *dev, uint16_t idx, uint16_t desc,
+ 	tmpl->txq.idx = idx;
+ 	txq_set_params(tmpl);
+ 	txq_adjust_params(tmpl);
+-	if (txq_calc_wqebb_cnt(tmpl) >
+-	    priv->sh->dev_cap.max_qp_wr) {
++	max_wqe = mlx5_dev_get_max_wq_size(priv->sh);
++	if (txq_calc_wqebb_cnt(tmpl) > max_wqe) {
+ 		DRV_LOG(ERR,
+ 			"port %u Tx WQEBB count (%d) exceeds the limit (%d),"
+ 			" try smaller queue size",
+-			dev->data->port_id, txq_calc_wqebb_cnt(tmpl),
+-			priv->sh->dev_cap.max_qp_wr);
++			dev->data->port_id, txq_calc_wqebb_cnt(tmpl), max_wqe);
+ 		rte_errno = ENOMEM;
+ 		goto error;
+ 	}
+-- 
+2.34.1
+
