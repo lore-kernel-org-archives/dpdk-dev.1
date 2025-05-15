@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 472CCC2D0CD
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 May 2025 08:06:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60453C2D0CD
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 May 2025 08:09:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5331A40B9D;
-	Thu, 15 May 2025 10:06:42 +0200 (CEST)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 158EA402C2;
- Thu, 15 May 2025 10:06:39 +0200 (CEST)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54ENSowu004920;
- Thu, 15 May 2025 01:06:39 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 9E22140B97;
+	Thu, 15 May 2025 10:09:02 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 018A7402C2
+ for <dev@dpdk.org>; Thu, 15 May 2025 10:09:00 +0200 (CEST)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54EFJlVR005870;
+ Thu, 15 May 2025 01:09:00 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=1CWrckaChQ6m++C4naF30ls
- MO+mBCovle8ZsiA+KkZ8=; b=AMC/nfEktVuIh+3yOD5Kf7JIF/ZogHHWfdE7D8R
- Qv6AZvAMUSY9UroIn+zYNtOipfLMbDGJYJpGf14JIjNSl+Lq6k5diaCAGJbk4Bsu
- UMesK33VrS8Vt7yHC8gZoHI+I/fRFt/dkKK1DTtbr7fJlvQKjVtkg6Em8azhWeu5
- RqMtDMsrHJjCjvSA9b3RtSLNStsUrO1bJHB2VJ0U+o/93E6W2/RhYZK2o5vHkPvY
- EqWbfcnmXGM5/nOkurBV0OJN31snD2OwVOCjRQNQT4qElMxl7yxYFCL2oBgJ9mx6
- 6+HwQ4TpxEKS98r+TYMagkFDuwbxTTtMw1/FiUJf/vUy1Dw==
+ :mime-version:subject:to; s=pfpt0220; bh=P8LjikhkfUY7RQic6HPD5IO
+ OY/LciJ2eUJMc+/E87wA=; b=Eo1OVd8wXZKU5C0ebAQt1jQUgeZ0JOe2/hSUFbf
+ SdEj7rF8LzYCYFBcSnSn67mRm2y57flkv+3Ps0T5SH1536qw2PVuwHXAyV4YDgwG
+ DGLvOsEd+adwkdNtdZRW8XorXPy4S68neqfkaVGRPTnRwwCgkHXy/GO3F8Ji9nAO
+ XdqB2r64ARgPl5vBOAUEO+busRjjeu7tyREDiX0Db2GL+AjQihaz/oz3GAgpCjcm
+ REzELcJWgR7e0SHGaj4TRNwCvU2qvrd9SptzQ+5MNBHK0NX2yn0Q9dkiSdbqsrAY
+ y4L3zBHnL0NQJhcOnlvZvFzRgk2A9L/3fdEmH2EWH2ZUAJw==
 Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46n4vtgu68-1
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46mbe243h2-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 15 May 2025 01:06:39 -0700 (PDT)
+ Thu, 15 May 2025 01:08:59 -0700 (PDT)
 Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
  DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 15 May 2025 01:06:37 -0700
+ 15.2.1544.4; Thu, 15 May 2025 01:08:59 -0700
 Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
  (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 15 May 2025 01:06:37 -0700
+ Transport; Thu, 15 May 2025 01:08:59 -0700
 Received: from IN-lckQE5Rwctls.marvell.com (IN-lckQE5Rwctls.marvell.com
  [10.28.163.68])
- by maili.marvell.com (Postfix) with ESMTP id 3124E3F707E;
- Thu, 15 May 2025 01:06:34 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 2349A3F707D;
+ Thu, 15 May 2025 01:08:56 -0700 (PDT)
 From: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-To: <dev@dpdk.org>, Ankur Dwivedi <adwivedi@marvell.com>, Anoob Joseph
- <anoobj@marvell.com>, Tejasree Kondoj <ktejasree@marvell.com>,
- "Gowrishankar Muthukrishnan" <gmuthukrishn@marvell.com>
-CC: Akhil Goyal <gakhil@marvell.com>, <stable@dpdk.org>
-Subject: [PATCH] crypto/cnxk: fix uninitialized scalar variable
-Date: Thu, 15 May 2025 13:36:29 +0530
-Message-ID: <20250515080632.1676-1-gmuthukrishn@marvell.com>
+To: <dev@dpdk.org>, Akhil Goyal <gakhil@marvell.com>, Fan Zhang
+ <fanzhang.oss@gmail.com>, Gowrishankar Muthukrishnan
+ <gmuthukrishn@marvell.com>
+CC: <anoobj@marvell.com>
+Subject: [PATCH] test/crypto: fix return value in RSA test
+Date: Thu, 15 May 2025 13:38:50 +0530
+Message-ID: <20250515080853.1708-1-gmuthukrishn@marvell.com>
 X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: 3ZGO1lKFTvr2ZS5y0F3wDsErKtQWVOPZ
-X-Authority-Analysis: v=2.4 cv=RMCzH5i+ c=1 sm=1 tr=0 ts=6825a08f cx=c_pps
+X-Proofpoint-ORIG-GUID: RdJkTaRrxGpY801NUIylDVCJxpJn28lA
+X-Authority-Analysis: v=2.4 cv=fbyty1QF c=1 sm=1 tr=0 ts=6825a11c cx=c_pps
  a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=dt9VzEwgFbYA:10 a=8rWy6zfcAAAA:8 a=M5GUcnROAAAA:8 a=51u6RY_R4sLumjSoTgkA:9
- a=YjdVzJdQTyZRADMV7wFX:22 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: 3ZGO1lKFTvr2ZS5y0F3wDsErKtQWVOPZ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE1MDA3OCBTYWx0ZWRfX0hHEFtv/R4Bl
- U8EzhczVmlZrn0Sasja5LAgk0747grzvJS6SIGHo5eB8dxqCoeNxi4G1tn3pPCKzWdb5u/pZr8Z
- hxliVUul21MXqnSMWw9i8A+rwSpXPrsQ69hzpbmJ2YTt5nXOw0G18YrN2jbgRuNkmu5hkMz9Ueb
- zGZ7uYM/p1MjB5ccgByySbqzuKzpTI9eia/X9BvknUZQku3dAuUUaS4sh/h0qKSiiEdrQ6YgPQq
- KClYzFM75ICx7CDjdNDQ9bg8F4HsuYddU/W/1drEl21i+7ZUwTWPeS9uD4Y1hE4Es01iM2rqZ3X
- zE2hzAOIIVoS6g9xOwmFsn97sMat8IX8WXiomEYPwHDrQMiORd6HShFfEZNkdr86Pcmr9hrYZzI
- arh53Qa2i5uty/ZMTUEqz44W8lSAyJMjRfZLQrmkNjJ14/uN+VtRXiXvRVEUpH8ULz+ZfhOW
+ a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=55YVfXhggWhydvCemTQA:9 a=zZCYzV9kfG8A:10
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: RdJkTaRrxGpY801NUIylDVCJxpJn28lA
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE1MDA3OCBTYWx0ZWRfX/lq5Pmd9UAJP
+ i1mDm3ySMpcfcbDdbmYam8yKmiTT7PoBLPYmH2foLcAy2jDIMp1mHafWdo1XppknC+EkslZSDUk
+ OAHR7h7cfjWiam9ffFwlIrV+xd+7RAAGsW9aQ/pB9IYWbKg+5QQULD16bXJHO4/l86NzIEvP6aJ
+ fYbtliOV2gYk3wIeqeoH3hwVKoEJ3KAB4OJcD0qUpdSe/ipOo9dbW+dOBb92anLniGvu7BWO1H/
+ Js2jzR1yIL0Rt45SWGmsZXFB/2hLNHttn0X4YiFd9k8NTNgTL2/9tHJftITA/04CXYB7BmBe46H
+ xEdOBFGHVVREFAMvxJGTt+Nx9zi+EPm9sLUi5joXqxI1H9/IbGFfxmNuhUSHpsjv8zNsFxmI2Ro
+ 9IW6RUlbPFx+l8a777LXPtrscp7YqRjViJLmvtzJiYN77fnk/VHLAQgkUbTzreet8oBcgiOo
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-15_03,2025-05-14_03,2025-03-28_01
@@ -79,31 +79,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This change fixes an uninitialized local variable as reported
-in coverity issue 445390.
+This patch fixes incorrect return value when RSA negative
+test scenario is validated.
 
-Coverity-issue: 445390
-Fixes: a8ebe94f8cc ("crypto/cnxk: support EdDSA")
-Cc: stable@dpdk.org
+Coverity-issue: 457463
+Fixes: 9682e8246ae ("test/crypto: add negative case for RSA verification")
 
 Signed-off-by: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
 ---
- drivers/crypto/cnxk/cnxk_ae.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ app/test/test_cryptodev_asym.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/crypto/cnxk/cnxk_ae.h b/drivers/crypto/cnxk/cnxk_ae.h
-index 75d6a536ae..8508ab8736 100644
---- a/drivers/crypto/cnxk/cnxk_ae.h
-+++ b/drivers/crypto/cnxk/cnxk_ae.h
-@@ -191,7 +191,7 @@ static __rte_always_inline int
- cnxk_ae_fill_ec_params(struct cnxk_ae_sess *sess, struct rte_crypto_asym_xform *xform)
- {
- 	struct roc_ae_ec_ctx *ec = &sess->ec_ctx;
--	union cpt_inst_w4 w4;
-+	union cpt_inst_w4 w4 = {0};
+diff --git a/app/test/test_cryptodev_asym.c b/app/test/test_cryptodev_asym.c
+index 2377a18c72..6ecbea6b40 100644
+--- a/app/test/test_cryptodev_asym.c
++++ b/app/test/test_cryptodev_asym.c
+@@ -155,6 +155,7 @@ queue_ops_rsa_sign_verify(void *sess)
+ 	if (result_op->status != RTE_CRYPTO_OP_STATUS_ERROR) {
+ 		RTE_LOG(ERR, USER1, "Failed to process sign-verify op\n");
+ 		status = TEST_FAILED;
++		goto error_exit;
+ 	}
  
- 	switch (xform->ec.curve_id) {
- 	case RTE_CRYPTO_EC_GROUP_SECP192R1:
+ 	status = TEST_SUCCESS;
 -- 
 2.25.1
 
