@@ -2,65 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D16C2D0CD
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 May 2025 21:04:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 627FCC2D0CD
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 May 2025 21:26:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 78E6A410FD;
-	Thu, 15 May 2025 23:04:05 +0200 (CEST)
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com
- [209.85.210.175])
- by mails.dpdk.org (Postfix) with ESMTP id BF574410D0
- for <dev@dpdk.org>; Thu, 15 May 2025 23:04:04 +0200 (CEST)
-Received: by mail-pf1-f175.google.com with SMTP id
- d2e1a72fcca58-739b3fe7ce8so1289620b3a.0
- for <dev@dpdk.org>; Thu, 15 May 2025 14:04:04 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D6225410F9;
+	Thu, 15 May 2025 23:26:29 +0200 (CEST)
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
+ [209.85.214.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 84D25410D0
+ for <dev@dpdk.org>; Thu, 15 May 2025 23:26:28 +0200 (CEST)
+Received: by mail-pl1-f171.google.com with SMTP id
+ d9443c01a7336-22e8461d872so13833035ad.3
+ for <dev@dpdk.org>; Thu, 15 May 2025 14:26:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1747343043; x=1747947843; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=9YosoUVA3AMXGmfrrIKB8zMOcWHxBkDHNoH7P64TDPI=;
- b=d7jWiAUEmXty4NgqeQ4vzucsowiNuIxUsjL8KPiB3ShciF6rJtTpunnHQwSWhZUqkh
- /xCcT6kvYN3ArjR3/6XyO218FloDRZDpq+WXX2zpdfk970GUCC5Zfex1j9kwB8PqiWAQ
- u0rdd/XA3rsmXChU+p1KDj+LfEmeXJlroLkxg=
+ d=iol.unh.edu; s=unh-iol; t=1747344387; x=1747949187; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+ :date:message-id:reply-to;
+ bh=cZ04/G0lJcvccDoz4jcjvfLFzNOSxwD5af48ZN5zZbw=;
+ b=NNBMkwQgEZdVbZjMAUrtwFP11rCyD5EJS9VBT+dVsKyYd0vPVsYZvwtZ/OgRhTOymZ
+ R0eGZQnFfEardSelpj0VoOzohSJzZyvtwj/gRmuW44DsV4oOrF3YuDGsbbBThfxC8lm8
+ cQtp6WPBJUdAm4MJNuASyCqwMNUGJUFB0Aw3w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1747343043; x=1747947843;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=9YosoUVA3AMXGmfrrIKB8zMOcWHxBkDHNoH7P64TDPI=;
- b=sy/okFwUWqSVk9vjnphbOhMIsss2/jPXOnsEcBK/uzDzBHvQb0FYgdV5AX6tyS9eNo
- RhpmaBG4pVJTSzIHjV0I0ZPXoQwO7gbEirUn7RyNVPceSAUlNZ18RLqSjvX6ntSDBni2
- IcbGQgtnmmFWJsIhpg8IHZsTPNsxqPn2dELPJDewTxGGiearY/B6/BrRawtIewoXLP+Z
- GWfnZLbetgfgg552lJLvjvqbN5kvVyHJWm+BwcLBZlL/4avMp1DJWEMVIeKNnu9pmmQc
- E6JfP8rOmmTIMGXM5XxeFmprqIMTwkTR5jcHHgqP25NONxjYERPYIinLtfjuogGe9mQP
- Uz9w==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXMudsdg0JBsI38KOEri78A6veA2Yr46vnPRyo9Q0KgoK/vQRL8pPTzw6h0gu4enycAsh8=@dpdk.org
-X-Gm-Message-State: AOJu0Yw/dxpSv6+pbY5wG1kLsTtI6TtWFx+wHC9/4dLyRnPK681nYg4Y
- 9W3y4XhKaAsL4LBFXv2M5yED9/D7KI7LxG20Cwc7nJVTjHSLfzIiciTxq8barLG4qLh3CI0tgPJ
- 5yJbCrampIz9USl1lXk8C5apIkd5mjqTs2nGi8qVi2w==
-X-Gm-Gg: ASbGnculsk7ihudVfPG5S36VDKVQNZF+IbR0Yp97snX/KX7fPHJl8vF6BUiacjvw0pg
- TvF8inwttYMiyf8f4d0Q7o+D/fjTs7uxWUQzt48+KH0f6kQ67sasnq3qQSsmgierBK6ylhORUlK
- 5AsRd3Qd5gtZjnOF64nNw7NMn0BVFJC/GwGJzJ649Gqr4Pb87m6Y14Tz9fgPRvQzGkdw==
-X-Google-Smtp-Source: AGHT+IGjzTf/UygCl9zynUrjTrQgoX5OpdQCx8tKKDK+yJg8LOmcXcsyWA5hWk9trmM03yXoN0rJReJx/gOg3JjEST0=
-X-Received: by 2002:a17:903:1988:b0:22e:6cc6:cf77 with SMTP id
- d9443c01a7336-231d45d938cmr10233375ad.53.1747343043491; Thu, 15 May 2025
- 14:04:03 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1747344387; x=1747949187;
+ h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=cZ04/G0lJcvccDoz4jcjvfLFzNOSxwD5af48ZN5zZbw=;
+ b=uIkspvHR6WhO7fHYpGQtDlv8eHLsqF70iNsilcuzqdKMaGxr0j+yu3t0wnhQ1xkqqo
+ zKUGkqaGDb3+W45ZrllDWEqhHlWj276U4anOkXKuyz4X0DmdoJ00P9XtJG1GRK/r0+X0
+ ghTBX+JNFXgSdiBuOCfbXiH+m4TXP4C/TqkX7z8znRhoByYTiDgrxIfp6AO4c1gnvSUU
+ TBVmXKZoKjNZi+P+e2W52f6ZR2LnpUeYX5NdYLk5MvANssxplXxbBCMeZbyHyvQtWnID
+ vxuPv78obuDVsBchY91m5JXUPNxRuBOUjE8Js9yXutpxI5mW8xYIgZz3Oh3S2G55AK0B
+ A7+A==
+X-Gm-Message-State: AOJu0YybdNiDDmzGjVXjoWrsX5107tEoETiflEms+M5OU0qjqSD9R87R
+ Oi0E6BGZ7EFVHolzEGoOjsPzXQYdFTR6a6R/5UGBQnEjJ5H2oR7oaeBmS9wVdqGMJtlRH4TLBtL
+ +XjwaYEymfrqYV/ZInhIARIuGoLiTtAaQQKCAj2/fbA==
+X-Gm-Gg: ASbGncv3rQNSEerrWCNZNGkcrUBjRn8udwyqQLHIeWS3+Jh6m6/drdw3/rWRfb4H8c5
+ 0kqE/jG+LnTJVRmJnwA9Syfu/dPicUU3kn36FrZG4Ujvc2GiOAumcXR/UX/OZbvuU3y/0biybyy
+ HQpn3NzwL7c8IEKineqPZTUr65ZGdWm1o69liuHEzot7dRv9CUiJHJT8RTT+JzeDbStvslz2/pv
+ biw
+X-Google-Smtp-Source: AGHT+IH/CI/3bKNRJWj72ucGmIzXLbaz/P7BD2TuwhySxMYFpN4ZEIzqmPtYgK7aYWvSBl5d5GNvIZFs8yvluIXJInY=
+X-Received: by 2002:a17:902:d2cd:b0:22d:b305:e097 with SMTP id
+ d9443c01a7336-231d45acb5bmr10963335ad.50.1747344386904; Thu, 15 May 2025
+ 14:26:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAJvnSUBzSvUbrTMmMDhX0+QUY7nCsW0rVBnv+q6aEB3LZQ3SSw@mail.gmail.com>
- <PAWPR08MB89094F996EAC0988995DE9899F802@PAWPR08MB8909.eurprd08.prod.outlook.com>
-In-Reply-To: <PAWPR08MB89094F996EAC0988995DE9899F802@PAWPR08MB8909.eurprd08.prod.outlook.com>
 From: Patrick Robb <probb@iol.unh.edu>
-Date: Thu, 15 May 2025 16:59:20 -0400
-X-Gm-Features: AX0GCFufa7of8YsQyJeVT5xDFSPe3psdqfHxz-uIHzzIUdy05gzbQ7VFaTISA7A
-Message-ID: <CAJvnSUD6tKB8xjiSMD7Ompy4TMGL__X682z_pNDbKAK54Vv+Lw@mail.gmail.com>
-Subject: Re: meson error on ARM Grace server 23.11/22.11
-To: Wathsala Wathawana Vithanage <wathsala.vithanage@arm.com>
-Cc: "ci@dpdk.org" <ci@dpdk.org>, dev <dev@dpdk.org>, 
- Honnappa Nagarahalli <Honnappa.Nagarahalli@arm.com>,
- "stable@dpdk.org" <stable@dpdk.org>, 
- Doug Foster <Doug.Foster@arm.com>, nd <nd@arm.com>
-Content-Type: multipart/alternative; boundary="000000000000688c6806353301df"
+Date: Thu, 15 May 2025 17:21:45 -0400
+X-Gm-Features: AX0GCFtLFOU4MhYt5fOj4J4esPINfSUA7AndwKL4UKdjlH-BoxW3xj-kfeuZ-1s
+Message-ID: <CAJvnSUD_F18_H4ZruPWBbdSBP+LRMAzU2Ot=+GDHsgtnaYY_UQ@mail.gmail.com>
+Subject: Community CI Meeting Minutes - May 15, 2025
+To: ci@dpdk.org
+Cc: dev <dev@dpdk.org>
+Content-Type: multipart/alternative; boundary="0000000000007b6ada0635335108"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -74,104 +66,268 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000688c6806353301df
+--0000000000007b6ada0635335108
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Thanks Wathsala,
+#####################################################################
+May 15, 2025
+Attendees
+1. Patrick Robb
+2. Paul Szczepanek
+3. Luca Vizzarro
+4. Manit Mahajan
+5. Aaron Conole
 
-How can we help on the UNH side? Do you want us to produce the 22.11 and
-23.11 diffs/patches, which would be based on d007038, with some
-modifications based on what you had said to Doug?
+#####################################################################
+Minutes
 
-I'm not sure what the process looks like exactly for providing backports to
-LTS maintainers.
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+General Announcements
+* DPDK Summit Prague was held May 8-9
+* From talking with Shai (AWS lab maintainer) at DPDK Summit, it sounds
+like he has an interest in the CI meetings, but that they are not a good
+time for him. Patrick should find one of those =E2=80=9Cfree timeslot polli=
+ng=E2=80=9D
+tools and send such a poll to all the maintainers to figure out a timeslot
+which would work for everyone.
 
-On Tue, Apr 29, 2025 at 12:00=E2=80=AFPM Wathsala Wathawana Vithanage <
-wathsala.vithanage@arm.com> wrote:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+CI Status
 
-> > Hi,
-> >
-> > At the DPDK Community Lab we have been running CI tests with a new ARM
-> > Grace server for the past couple of months on main and next-* branches.
-> I am
-> > trying to add LTS runs now, and ran into a snag with 23.11 and 22.11 fo=
-r
-> this
-> > system. Stable maintainers I'm not sure whether this should be addresse=
-d
-> or not
-> > for hardware which is new and didn't exist when 22.11 and 23.11 were
-> > released... but I figured I'd make the tickets and find out. I attached
-> the meson
-> > logs to the tickets and if for whatever reason you guys want to remote
-> into this
-> > machine, I'm happy to setup the VPN and SSH access.
-> >
-> > 22.11: https://bugs.dpdk.org/show_bug.cgi?id=3D1703
-> > 23.11: https://bugs.dpdk.org/show_bug.cgi?id=3D1702
->
-> +doug
->
-> neoverse-v2 is supported in the GCC 13.3 used for this build although
-> -mtune/-mcpu
-> for grace is not available in that version.
-> Adding neoverse-v2 and soc_grace with crypto extension should bring these
-> releases
-> on par with latest.
->
->
->
+---------------------------------------------------------------------
+UNH-IOL Community Lab
+* Pcapng unit test timestamp error:
+   * This is a known issue which is coming from how the unit test leverages
+the TSC timestamp register. We had conducted a simple test on this last
+year which confirmed that the TSC did not run backwards, but the
+conversation petered out. There is another failure now, so we need to take
+another look at this.
+      * Does TSC wraparound?
+      * Email:
+https://inbox.dpdk.org/ci/CAJvnSUCXns=3DJXV0FsWENqsifNzCA2NQhqJBCwDsfh=3DS4=
+BbWy2A@mail.gmail.com/T/#t
+* Bruce meson version patchseries:
+   * Adds a script which reports the minimum meson version for a given DPDK
+version, and also adds that into the .ci/linux-setup.sh script
+* Bruce is suggesting some changes for where the LTS branches live:
+   * Currently on github:
+      * DPDK Repo: contains DPDK and the tagged releases (get no backports)
+      * DPDK-stable repo: Contains the LTS releases which get backports
+   * Bruce proposes to bring the LTS releases with backports to the DPDK
+repo
+   * There should be no adverse affects on existing CI processes
+   * This should also encourage people to use the github DPDK repo more
+instead of git.dpdk.org. As a reminder, all ci labs should be doing this.
+* Patrick is back from DPDK Summit starting today, and can start to address
+a few CI lab issues which have been backlogged since last week:
+   * MLX5 DTS func tests - After some reconfiguration right before DPDK
+summit, we started to rx no packets for a few testsuites. Patrick will
+investigate today and figure out what=E2=80=99s going on.
+   * E810 performance test issues:
+      * Cody was investigating this issue and he has a solution, but
+Patrick needs to approve the new changes and merge them today.
+      * New topology: 2 E810 NICs connected against 1 E810 DUT NIC.
+      * TREX change on the single core forwarding test: Trex (not testpmd
+or DUT E810) had an issue with sending rate given a certain mix of packets
+which are used by default in the single core forwarding testsuite. Cody has
+updated the testsuite to use a uniform packet model (instead of a mix),
+which resolves the issue on the traffic generator side. The performance on
+the DUT is still good (like it always was) but it is no longer affected by
+the traffic generator issue.
+         * Patrick will review this solution today - most likely we can
+re-enable the test
 
---000000000000688c6806353301df
+---------------------------------------------------------------------
+Intel Lab
+* None
+
+---------------------------------------------------------------------
+Github Actions
+* None
+
+---------------------------------------------------------------------
+AWS
+* We met with Shai at DPDK Prague. Some takeaways:
+* He is interested in supporting the recheck framework, and would like to
+sync with us on that at an upcoming meeting.
+   * But we will have to wait 2 weeks for that, so Patrick might as well
+start the conversation over email
+* DTS: For sending packets between TG and DUT AWS EC2 instances, we cannot
+send with a mac destination address - we have to send with an IP
+destination address.
+
+---------------------------------------------------------------------
+Loongarch Lab
+* None
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+DTS Improvements & Test Development
+* DPDK-Pktgen:
+   * The Suricata guys got to chatting with Patrick at DPDK Summit about
+their DPDK-pktgen usage. They are able to use it for 100gbps+ TG
+operations, and they have shared some code showing how they use dpdk-pktgen
+in their CI testing. Patrick can share with the UNH team, and can probable
+also overview what they shared at the DTS meeting next week.
+* Flow checker tool:
+   * There was a flow rule checker tool for DPDK 22.11 which is no longer
+being maintained publicly, but the original creator still maintains it
+privately for his usage, and can push the updates if we need.
+   * Patrick will look at this tool from 22.11
+* Rte_flow: MVP testsuite is done - he is submitting to patchwork this
+morning.
+* Birds of a Feather:
+   * This was productive and there were some good suggestions:
+   * Suggestions:
+      * Code coverage reports for DTS
+      * Support smaller topologies: namely testing DTS with 1 dual port NIC
+connected in loopback.
+         * Or, run DTS from a laptop using virtual ports
+      * Write some blogs about how to use DTS this year
+      * Support other programs (user apps)
+* Reviews:
+   * Patrick will send his review of the TREX patchseries today
+   * Luca reviewed the l4 port matching series. They are conceptually fine,
+but he had a few comment or docstring nits which he left. Dean can update
+this today and resubmit.
+   * Improve port handling series:
+      * Groups all the port handling under the topology class - the
+topology class becomes the interface for port handling.
+      * Patrick and UNH guys need to review this
+   * VF patchseries:
+      * It would be better if these were integrated in the topology.
+      * May have to make the next version a depends-on the =E2=80=9Cimprove=
+ port
+handling=E2=80=9D series
+      * Confirmed that bnxt_en has the same promiscuous mdoe support
+requirement as Intel (bind to kernel driver, then set =E2=80=9Ctrust=E2=80=
+=9D mode on the
+port, then bind to vfio-pci).
+   * Patrick merged the port_stats testsuite, but it includes an error for
+building the docs. There is a simple fix which Luca suggested, and Patrick
+will submit it.
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Any other business
+* Next Meeting May 29, 2025
+
+--0000000000007b6ada0635335108
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"ltr"><div>Thanks Wathsala, <br></div><div><br></div><div>How ca=
-n we help on the UNH side? Do you want us to produce the 22.11 and 23.11 di=
-ffs/patches, which would be based on d007038, with some modifications based=
- on what you had said to Doug?</div><div><br></div><div>I&#39;m not sure wh=
-at the process looks like exactly for providing backports to LTS maintainer=
-s.</div></div><br><div class=3D"gmail_quote gmail_quote_container"><div dir=
-=3D"ltr" class=3D"gmail_attr">On Tue, Apr 29, 2025 at 12:00=E2=80=AFPM Wath=
-sala Wathawana Vithanage &lt;<a href=3D"mailto:wathsala.vithanage@arm.com">=
-wathsala.vithanage@arm.com</a>&gt; wrote:<br></div><blockquote class=3D"gma=
-il_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,2=
-04,204);padding-left:1ex">&gt; Hi,<br>
-&gt; <br>
-&gt; At the DPDK Community Lab we have been running CI tests with a new ARM=
-<br>
-&gt; Grace server for the past couple of months on main and next-* branches=
-. I am<br>
-&gt; trying to add LTS runs now, and ran into a snag with 23.11 and 22.11 f=
-or this<br>
-&gt; system. Stable maintainers I&#39;m not sure whether this should be add=
-ressed or not<br>
-&gt; for hardware which is new and didn&#39;t exist when 22.11 and 23.11 we=
-re<br>
-&gt; released... but I figured I&#39;d make the tickets and find out. I att=
-ached the meson<br>
-&gt; logs to the tickets and if for whatever reason you guys want to remote=
- into this<br>
-&gt; machine, I&#39;m happy to setup the VPN and SSH access.<br>
-&gt; <br>
-&gt; 22.11: <a href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1703" rel=3D=
-"noreferrer" target=3D"_blank">https://bugs.dpdk.org/show_bug.cgi?id=3D1703=
-</a><br>
-&gt; 23.11: <a href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1702" rel=3D=
-"noreferrer" target=3D"_blank">https://bugs.dpdk.org/show_bug.cgi?id=3D1702=
-</a><br>
-<br>
-+doug<br>
-<br>
-neoverse-v2 is supported in the GCC 13.3 used for this build although -mtun=
-e/-mcpu<br>
-for grace is not available in that version.<br>
-Adding neoverse-v2 and soc_grace with crypto extension should bring these r=
-eleases<br>
-on par with latest. <br>
-<br>
-<br>
-</blockquote></div>
+<div dir=3D"ltr">##########################################################=
+###########<br>May 15, 2025<br>Attendees<br>1. Patrick Robb<br>2. Paul Szcz=
+epanek<br>3. Luca Vizzarro<br>4. Manit Mahajan<br>5. Aaron Conole<br><br>##=
+###################################################################<br>Minu=
+tes<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>Ge=
+neral Announcements<br>* DPDK Summit Prague was held May 8-9<br>* From talk=
+ing with Shai (AWS lab maintainer) at DPDK Summit, it sounds like he has an=
+ interest in the CI meetings, but that they are not a good time for him. Pa=
+trick should find one of those =E2=80=9Cfree timeslot polling=E2=80=9D tool=
+s and send such a poll to all the maintainers to figure out a timeslot whic=
+h would work for everyone.<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D<br>CI Status<br><br>------------------------------------=
+---------------------------------<br>UNH-IOL Community Lab<br>* Pcapng unit=
+ test timestamp error:<br>=C2=A0 =C2=A0* This is a known issue which is com=
+ing from how the unit test leverages the TSC timestamp register. We had con=
+ducted a simple test on this last year which confirmed that the TSC did not=
+ run backwards, but the conversation petered out. There is another failure =
+now, so we need to take another look at this. <br>=C2=A0 =C2=A0 =C2=A0 * Do=
+es TSC wraparound?<br>=C2=A0 =C2=A0 =C2=A0 * Email: <a href=3D"https://inbo=
+x.dpdk.org/ci/CAJvnSUCXns=3DJXV0FsWENqsifNzCA2NQhqJBCwDsfh=3DS4BbWy2A@mail.=
+gmail.com/T/#t">https://inbox.dpdk.org/ci/CAJvnSUCXns=3DJXV0FsWENqsifNzCA2N=
+QhqJBCwDsfh=3DS4BbWy2A@mail.gmail.com/T/#t</a><br>* Bruce meson version pat=
+chseries:<br>=C2=A0 =C2=A0* Adds a script which reports the minimum meson v=
+ersion for a given DPDK version, and also adds that into the .ci/linux-setu=
+p.sh script<br>* Bruce is suggesting some changes for where the LTS branche=
+s live:<br>=C2=A0 =C2=A0* Currently on github:<br>=C2=A0 =C2=A0 =C2=A0 * DP=
+DK Repo: contains DPDK and the tagged releases (get no backports)<br>=C2=A0=
+ =C2=A0 =C2=A0 * DPDK-stable repo: Contains the LTS releases which get back=
+ports<br>=C2=A0 =C2=A0* Bruce proposes to bring the LTS releases with backp=
+orts to the DPDK repo<br>=C2=A0 =C2=A0* There should be no adverse affects =
+on existing CI processes<br>=C2=A0 =C2=A0* This should also encourage peopl=
+e to use the github DPDK repo more instead of <a href=3D"http://git.dpdk.or=
+g">git.dpdk.org</a>. As a reminder, all ci labs should be doing this.<br>* =
+Patrick is back from DPDK Summit starting today, and can start to address a=
+ few CI lab issues which have been backlogged since last week:<br>=C2=A0 =
+=C2=A0* MLX5 DTS func tests - After some reconfiguration right before DPDK =
+summit, we started to rx no packets for a few testsuites. Patrick will inve=
+stigate today and figure out what=E2=80=99s going on.<br>=C2=A0 =C2=A0* E81=
+0 performance test issues:<br>=C2=A0 =C2=A0 =C2=A0 * Cody was investigating=
+ this issue and he has a solution, but Patrick needs to approve the new cha=
+nges and merge them today.<br>=C2=A0 =C2=A0 =C2=A0 * New topology: 2 E810 N=
+ICs connected against 1 E810 DUT NIC.<br>=C2=A0 =C2=A0 =C2=A0 * TREX change=
+ on the single core forwarding test: Trex (not testpmd or DUT E810) had an =
+issue with sending rate given a certain mix of packets which are used by de=
+fault in the single core forwarding testsuite. Cody has updated the testsui=
+te to use a uniform packet model (instead of a mix), which resolves the iss=
+ue on the traffic generator side. The performance on the DUT is still good =
+(like it always was) but it is no longer affected by the traffic generator =
+issue.<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* Patrick will review this solu=
+tion today - most likely we can re-enable the test<br><br>-----------------=
+----------------------------------------------------<br>Intel Lab<br>* None=
+<br><br>-------------------------------------------------------------------=
+--<br>Github Actions<br>* None<br><br>-------------------------------------=
+--------------------------------<br>AWS<br>* We met with Shai at DPDK Pragu=
+e. Some takeaways:<br>* He is interested in supporting the recheck framewor=
+k, and would like to sync with us on that at an upcoming meeting. <br>=C2=
+=A0 =C2=A0* But we will have to wait 2 weeks for that, so Patrick might as =
+well start the conversation over email<br>* DTS: For sending packets betwee=
+n TG and DUT AWS EC2 instances, we cannot send with a mac destination addre=
+ss - we have to send with an IP destination address.<br><br>---------------=
+------------------------------------------------------<br>Loongarch Lab<br>=
+* None<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br=
+>DTS Improvements &amp; Test Development<br>* DPDK-Pktgen:<br>=C2=A0 =C2=A0=
+* The Suricata guys got to chatting with Patrick at DPDK Summit about their=
+ DPDK-pktgen usage. They are able to use it for 100gbps+ TG operations, and=
+ they have shared some code showing how they use dpdk-pktgen in their CI te=
+sting. Patrick can share with the UNH team, and can probable also overview =
+what they shared at the DTS meeting next week.<br>* Flow checker tool:<br>=
+=C2=A0 =C2=A0* There was a flow rule checker tool for DPDK 22.11 which is n=
+o longer being maintained publicly, but the original creator still maintain=
+s it privately for his usage, and can push the updates if we need.<br>=C2=
+=A0 =C2=A0* Patrick will look at this tool from 22.11<br>* Rte_flow: MVP te=
+stsuite is done - he is submitting to patchwork this morning.<br>* Birds of=
+ a Feather:<br>=C2=A0 =C2=A0* This was productive and there were some good =
+suggestions:<br>=C2=A0 =C2=A0* Suggestions:<br>=C2=A0 =C2=A0 =C2=A0 * Code =
+coverage reports for DTS<br>=C2=A0 =C2=A0 =C2=A0 * Support smaller topologi=
+es: namely testing DTS with 1 dual port NIC connected in loopback.<br>=C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* Or, run DTS from a laptop using virtual po=
+rts<br>=C2=A0 =C2=A0 =C2=A0 * Write some blogs about how to use DTS this ye=
+ar<br>=C2=A0 =C2=A0 =C2=A0 * Support other programs (user apps)<br>* Review=
+s:<br>=C2=A0 =C2=A0* Patrick will send his review of the TREX patchseries t=
+oday<br>=C2=A0 =C2=A0* Luca reviewed the l4 port matching series. They are =
+conceptually fine, but he had a few comment or docstring nits which he left=
+. Dean can update this today and resubmit.<br>=C2=A0 =C2=A0* Improve port h=
+andling series:<br>=C2=A0 =C2=A0 =C2=A0 * Groups all the port handling unde=
+r the topology class - the topology class becomes the interface for port ha=
+ndling.<br>=C2=A0 =C2=A0 =C2=A0 * Patrick and UNH guys need to review this<=
+br>=C2=A0 =C2=A0* VF patchseries: <br>=C2=A0 =C2=A0 =C2=A0 * It would be be=
+tter if these were integrated in the topology.<br>=C2=A0 =C2=A0 =C2=A0 * Ma=
+y have to make the next version a depends-on the =E2=80=9Cimprove port hand=
+ling=E2=80=9D series<br>=C2=A0 =C2=A0 =C2=A0 * Confirmed that bnxt_en has t=
+he same promiscuous mdoe support requirement as Intel (bind to kernel drive=
+r, then set =E2=80=9Ctrust=E2=80=9D mode on the port, then bind to vfio-pci=
+).<br>=C2=A0 =C2=A0* Patrick merged the port_stats testsuite, but it includ=
+es an error for building the docs. There is a simple fix which Luca suggest=
+ed, and Patrick will submit it.<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D<br>Any other business<br>* Next Meeting May 29, 2025<=
+/div>
 
---000000000000688c6806353301df--
+--0000000000007b6ada0635335108--
