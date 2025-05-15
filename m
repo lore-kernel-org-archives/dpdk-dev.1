@@ -2,71 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39718C54756
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 May 2025 06:58:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C32F7C54754
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 May 2025 06:59:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2CF1240A87;
-	Thu, 15 May 2025 08:58:24 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B9CB340667;
+	Thu, 15 May 2025 08:59:24 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 6E63D402B3
- for <dev@dpdk.org>; Thu, 15 May 2025 08:58:22 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 75581402C2
+ for <dev@dpdk.org>; Thu, 15 May 2025 08:59:23 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1747292301;
+ s=mimecast20190719; t=1747292363;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=E/COw5WCnYXqfcFoK55u2cWvHr16QR4nRTsmSIn7qyo=;
- b=gmILPjq3D2Q/snSYUrw0glW+XxaCKhecCADarTbXQ0rR2Mt0gyJD/JgRj8lHrC8+GmZa4U
- AKcy6UqKXlBXfPT1awLbn1aczOZlP6zi9bOrLdAo49UpXCiyFCbOWIUjV4WwLDzEPMFAH6
- VgUZ790vDpFMDCjXNtROC1J8UEkMKiY=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=lUS1RaZh0vlfA1rkpRytXVmih9Eoz+544V0Yu6fMTl8=;
+ b=Tsxi731q1MxJNfvzvrsvVCEe4b0DBbryDI8EICC+9p4hxFeEghMS3f6yGIYwrxkODpRjpc
+ lCMrcNSr7P14mtHhtzwzfnBCcOuZbDezgdAmS5TxKmbTLR5gH3er2irQZWI+cIHQ5Ncezs
+ G4E//RyB72T6lUVwYowkt6OyYXvzrPo=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-596-t_E_AKxaOhmDStYO5VO_Xg-1; Thu, 15 May 2025 02:58:20 -0400
-X-MC-Unique: t_E_AKxaOhmDStYO5VO_Xg-1
-X-Mimecast-MFC-AGG-ID: t_E_AKxaOhmDStYO5VO_Xg_1747292299
-Received: by mail-lf1-f70.google.com with SMTP id
- 2adb3069b0e04-54fcb06a3feso251013e87.3
- for <dev@dpdk.org>; Wed, 14 May 2025 23:58:19 -0700 (PDT)
+ us-mta-683-NDT8gxpEN1eAX7ej3HZqLw-1; Thu, 15 May 2025 02:59:21 -0400
+X-MC-Unique: NDT8gxpEN1eAX7ej3HZqLw-1
+X-Mimecast-MFC-AGG-ID: NDT8gxpEN1eAX7ej3HZqLw_1747292360
+Received: by mail-lj1-f200.google.com with SMTP id
+ 38308e7fff4ca-326c9f269f8so2874831fa.1
+ for <dev@dpdk.org>; Wed, 14 May 2025 23:59:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1747292298; x=1747897098;
+ d=1e100.net; s=20230601; t=1747292360; x=1747897160;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=E/COw5WCnYXqfcFoK55u2cWvHr16QR4nRTsmSIn7qyo=;
- b=jPzLZAw86YZxpVdr/Qg7eM/Uzr4jsBxrfB2hlfnBC1jhLvSUwWMisdeHRIlU9qTGoV
- iszx0wdVswJEkOn4kT6k3VDKV9SgHYSWXxgj9XC4W7ZST6alJhBzDrDgLvOOvOkL0fBd
- gk79+5o9NMLu7VySm+artqvXRA5a+BD9eQ/fK3mvVA1/1G/YdKqVlqtfbb/nxGK5UiX3
- BQUdmKEJdUnOBme4b3Ydmb+36JaHI0lQxloOG/QQVnZFtN9R5I0ljeIdtIADOhGLb+0b
- XqMDEeK70NtFIsvK7Z0uM5NM2t0kDXzq47gJ4jG938rxtQfI5XHejdfugx2M1+lZZj7k
- 6/VA==
-X-Gm-Message-State: AOJu0YyPn36iHlj8efla13Ab61jlNc+spvdCagDVzr5MDobDhGLEDph4
- gPAoe3o8Gjw4fnkC/cqpgfVUMfNaJ6H1tfGbnXrdMGFZE6NssbJRs1uGcf8op6UydDm5+DOkfwk
- tRyz0dAqVRVQihm9JltK0efopDLySNH4JrqwlPFwKUAp7vt2BnqJlvYBEisTfrz4UIwV2890gUe
- /R78YSTjRBwOgr5WY=
-X-Gm-Gg: ASbGncuvxvR0NLIwdW3nwFiqTVdyeIRoKU1uC6+PROaQCzhzC852wuEUaOmdEsGg5pB
- rD+exNta+4VxGeerw3eb2TDkm8II4sh0fhIBNFV3+NFr2mb310BkOPMXCpGbdrCKin7hPGns=
-X-Received: by 2002:a05:6512:6702:b0:545:6a2:e58 with SMTP id
- 2adb3069b0e04-550d5fc875emr2177479e87.32.1747292298529; 
- Wed, 14 May 2025 23:58:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEpbCOlDkbkEwAkVMb4f/c0cUTwbdXvAKVPYGUX+KXXvA2iDbvfcQIVD1KH8NNkrD/ZHQjZlO5bHbe3zhxP3Bs=
-X-Received: by 2002:a05:6512:6702:b0:545:6a2:e58 with SMTP id
- 2adb3069b0e04-550d5fc875emr2177471e87.32.1747292298118; Wed, 14 May 2025
- 23:58:18 -0700 (PDT)
+ bh=lUS1RaZh0vlfA1rkpRytXVmih9Eoz+544V0Yu6fMTl8=;
+ b=NIFnXHYurAcEoMUTX36CyMwMv9aoFuCLEDdWStbmAQH/AKRbGBR4krAwKgpQRmv0CM
+ awP/2wLHNDR4HCOIHpqNhRyZUkchW8SSZ0btKduhWPqWMLvxGHpFyq9VP1lKcZohUN0L
+ luD8HkeU+/oPcx8exJdkvxGU1fAqX52qjUZJSAMS36oG1lpWrTWCAKXqaNgPnLwAqQGq
+ CP7rl6ESaJaGQOGdypfDcyk14F4JpF+L52i5w1ol/f8J887NT6EbJalxbW4X4fJaIrcx
+ Ugoo9lOjzLap2eSS6YcNrzUcePnsuZ5PigQX4EqVX7locThU8/qoXvEaoc3Wo+8s2ufM
+ 2mQQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCU1dRwKM0KyRfnBfzaMp/FZ7X+TG1+oGnMRDA6rCdy4v2684m6AGZEeOdSrcJ36g2+f1zI=@dpdk.org
+X-Gm-Message-State: AOJu0YwDiH74KpIqsLxakaGObL5KB4YyimqEzRsHkaTicWgyUyRRDWen
+ alBs3+dTxmx5HIfDFhmS7PHsa3OUvvR2BFBrsbphZ6Z2X8JRULr+Dtzn7Jqqdzpz09xRAJwUdGh
+ 7wrD5FRDB5/V5Llpuwbtxeusa+6S+C7II+qkbGwiIS9+oyJimeWEIyg6mZpcSD+6frFxn4F5uZy
+ b+8UT4VbjPN6wD6kA=
+X-Gm-Gg: ASbGnct78CCI3spxZULPjNlC5akre3H/D8lw8e6iKbHt1gLXMN2TvUtKiWuL6UimK5Q
+ EP8r6tKkkWlArUQ+bDPkjVdPybFSL429Psyk5iTb7CRe3P0Ri6Z1zhkdu40pBeRp52cE4s/8=
+X-Received: by 2002:a05:651c:b08:b0:309:17:750d with SMTP id
+ 38308e7fff4ca-327ed1d934cmr25713081fa.27.1747292360085; 
+ Wed, 14 May 2025 23:59:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF79mLvPQDgQ9TR4cWIdPKoaW+vg0/uj4nPCfUvMTxcCIG/gOpX1Ec5rb89q+hKcif6z7fbQqK6nfdTABHY/Sg=
+X-Received: by 2002:a05:651c:b08:b0:309:17:750d with SMTP id
+ 38308e7fff4ca-327ed1d934cmr25712931fa.27.1747292359660; Wed, 14 May 2025
+ 23:59:19 -0700 (PDT)
 MIME-Version: 1.0
-References: <20250514100306.11717-1-bruce.richardson@intel.com>
-In-Reply-To: <20250514100306.11717-1-bruce.richardson@intel.com>
+References: <CAJFAV8x_u9-PHh_1_3qimFDGseSYLbZBprty0jhKUZxehzOo=g@mail.gmail.com>
+ <CAJvnSUDxPDuFyZytko1mxnE=6UQHvJ1OTbYBYnd1xM7zozsfsg@mail.gmail.com>
+ <20240322163430.444bed0c@hermes.local>
+ <CAJvnSUDZF9oTtj9yg12WuYRAQSVLsqxdFbdtFNu5Om1S1sWB4g@mail.gmail.com>
+ <20240401174624.124d2f2f@hermes.local>
+In-Reply-To: <20240401174624.124d2f2f@hermes.local>
 From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 15 May 2025 08:58:05 +0200
-X-Gm-Features: AX0GCFsF6HNTreEtSeeLbslWtaV6G26bPF2dO2AGn2zqsg4OOo3EDuQhG_4JZvQ
-Message-ID: <CAJFAV8zdQe_3fdfaJXxeqfdPkji_ngLWS8W4+8o0ZGyTNkEAbA@mail.gmail.com>
-Subject: Re: [PATCH] examples: remove check for old broken pkg-config
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org
+Date: Thu, 15 May 2025 08:59:07 +0200
+X-Gm-Features: AX0GCFvmUjcX8CYB36LZ0m8o-7YmPKGdJPtOdQDhirBfkIKJhfPD_lS6F7uIMR4
+Message-ID: <CAJFAV8xyZnjXVdbi3hsiSKMN5200H6tymEpxZ3O38X-Mh_dsFQ@mail.gmail.com>
+Subject: Re: pcapng_autotest unit test false positive
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: Patrick Robb <probb@iol.unh.edu>, dev <dev@dpdk.org>,
+ Aaron Conole <aconole@redhat.com>, ci@dpdk.org, 
+ Cody Cheng <ccheng@iol.unh.edu>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: BNa0FRjpHOZFIC86WWF2Yn-3JnY2mn4OuXMCGSUPJ5M_1747292299
+X-Mimecast-MFC-PROC-ID: 2OZ04btqX_oaXZtd0-k_pTjFnEP3s1-fnc0M5N85XHw_1747292360
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -83,20 +91,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, May 14, 2025 at 12:03=E2=80=AFPM Bruce Richardson
-<bruce.richardson@intel.com> wrote:
+On Tue, Apr 2, 2024 at 2:46=E2=80=AFAM Stephen Hemminger
+<stephen@networkplumber.org> wrote:
 >
-> The version of pkg-config shipped with RHEL 7 had issues reporting the
-> linker flags for DPDK, meaning we couldn't build the examples statically
-> using it. However, as RHEL 7 is no longer supported by future DPDK
-> releases, we can drop the check for this condition from all the
-> Makefiles. More recent pkg-config versions don't have this issue.
+> On Mon, 1 Apr 2024 18:26:44 -0400
+> Patrick Robb <probb@iol.unh.edu> wrote:
 >
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> > Another idea - maybe multiple timestamps are gathered from different
+> > CPU registers during the same test, and they are misaligned for that
+> > reason. Maybe we can try reducing the cores for each unit test to 1
+> > and checking whether the issue persists.
+>
+> TSC is expected to be sync'd between cores. But of course packets can
+> arrive out of order on different cores.
 
-Reviewed-by: David Marchand <david.marchand@redhat.com>
-
-Applied, thanks Bruce.
+Just a note that there was one more occurence of this false positive today.
+https://lab.dpdk.org/results/dashboard/patchsets/33170/
 
 
 --=20
