@@ -2,80 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD95C3ABC9
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 May 2025 10:32:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6E27C2D0CD
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 May 2025 10:34:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DCCA5402DC;
-	Thu, 15 May 2025 12:32:06 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 1A4B340289
- for <dev@dpdk.org>; Thu, 15 May 2025 12:32:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1747305125;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=RhSWSqq1qM2tf4/+myulPRArLzbgFCvpBNA7jr08S9w=;
- b=Mq8E9zYOGhkxOsqbEw1lcg3MiNBANmVCoMuQP0DFyvwUVWAfQl5VtJVhwNoeE31KCRMm0d
- WlZE21yXn8REqpctNZkPFU9IUPH5eXZRy8apIhqtMJuOt9nquhykhFXGLRlGs1jD9wDE0D
- dB4Rl1Bhg5YU3lzmlmqQWf2pas+PnpA=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-341-KMpX4IE4NQW9HKhhAhukXA-1; Thu, 15 May 2025 06:32:04 -0400
-X-MC-Unique: KMpX4IE4NQW9HKhhAhukXA-1
-X-Mimecast-MFC-AGG-ID: KMpX4IE4NQW9HKhhAhukXA_1747305123
-Received: by mail-wm1-f72.google.com with SMTP id
- 5b1f17b1804b1-43d4d15058dso6962655e9.0
- for <dev@dpdk.org>; Thu, 15 May 2025 03:32:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1747305123; x=1747909923;
- h=user-agent:to:from:subject:message-id:date
- :content-transfer-encoding:mime-version:x-gm-message-state:from:to
- :cc:subject:date:message-id:reply-to;
- bh=zCz3iwscsXq7F2KJaQ159kv73wrg7H5YMwkFrMleP0Y=;
- b=rFRn0yaewq3EdWpzfaeQzeWK9/6gdfp9xBkKnk8yA2JlKOThUtsy6a9mefgeDJ+1HL
- W8Sl9Bvtrv4/WGcIwKwAHA4yb0eRUot0V9OD2xDuOZPpEzzcigIl8wMSz8bZKiHLZ6A6
- f37nOG85FDrLu1ImVY+w8AfltBFAoisnA/1AMxgGYjJSbUPFyzJi6BJ6hAcb2uDJujER
- +H1PRHVONa7Oygp02WB5n7Y2l5IBrm9HoJOz9jq22FKretYEasjtN6XUHZrv1O+JWJSW
- S5EkolfBmPbkhU6NTuVyUd0wgc/HP0KJvIy2nQWNoEMg8YTRk/AsY9dTC0Gp3HrCaTvQ
- WCwg==
-X-Gm-Message-State: AOJu0YzXCwrVZtcr/6QSOE5Xrols7xhy19c68pHILcVEAr34/xkh9Y5V
- FXHBrDUCWtZASCgYne/k08nMPf32m4zD74Vh8tLRh6NsoL4b4F6HS39RoNnpqXdUrPbKPqWS8U+
- BLKWzlGqFw3TwI4oE577USaSKQkPX4IWqvwuP7kdiYSSVmGtyKYO2y7mXWnzweEXF8xuu6JgU93
- Sli2yIHGp6opCQgaP9buDRJiea
-X-Gm-Gg: ASbGncs0hpxSgeRriVLOCddBisFuoQTrBsfw8Ks0/SD9hQE873z2iGaqH6eyoUnScgo
- mmUTXams7kEvoiJFfRXleJDVLbMqYgcC6MyWs1usgfFCgaHpFU659cLPUfaHla9wMT9OgxjX3E1
- R/7Fak5Ep/X3ld7pD77ojOC9PvRSgp0WYZcme0etY2InMJYDtl6ebTOKxya5PWUocWIgORFzN1c
- FCXiTXuCdLdUuTbTV3zDJEL8f1wQ9ITHHScedMTm6j4ZdLyg7r5db7Q7dc7VCIspilav80TaULj
- +IsIzLGxBG0mplMLXKf6+mHoymOebKl34FvKIi7ru6Fe3x4dWZOMznP31z9l0pXyPXfL
-X-Received: by 2002:a05:600c:524c:b0:43c:f597:d582 with SMTP id
- 5b1f17b1804b1-442f20ba9f0mr55115205e9.1.1747305122852; 
- Thu, 15 May 2025 03:32:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF1RiqCXAlkKiLcKEaibTPcOSIhHWsNHyeKyjQostmRfbiZa+H2+FI5zh4JyYuH+UXRfnx+JQ==
-X-Received: by 2002:a05:600c:524c:b0:43c:f597:d582 with SMTP id
- 5b1f17b1804b1-442f20ba9f0mr55114855e9.1.1747305122358; 
- Thu, 15 May 2025 03:32:02 -0700 (PDT)
-Received: from localhost (2a01cb00021ec0002e23edbec21b0e73.ipv6.abo.wanadoo.fr.
- [2a01:cb00:21e:c000:2e23:edbe:c21b:e73])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-442f39e851bsm65549515e9.28.2025.05.15.03.32.01
- for <dev@dpdk.org>
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Thu, 15 May 2025 03:32:01 -0700 (PDT)
-Mime-Version: 1.0
-Date: Thu, 15 May 2025 12:32:01 +0200
-Message-Id: <D9WNYZDZHISG.3091PEP8Y34QL@redhat.com>
-Subject: Error with --no-huge when compiled with -fsanitize=address from gcc 15
-From: "Robin Jarry" <rjarry@redhat.com>
-To: <dev@dpdk.org>
-User-Agent: aerc/0.20.1-81-g060a0fd5ab70
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Y5fQd1BGxEPLR_bdCVlU7x-qxGegedNAeLBm7Upa9kA_1747305123
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+	by mails.dpdk.org (Postfix) with ESMTP id 025ED402DC;
+	Thu, 15 May 2025 12:34:32 +0200 (CEST)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
+ by mails.dpdk.org (Postfix) with ESMTP id 1460640289
+ for <dev@dpdk.org>; Thu, 15 May 2025 12:34:31 +0200 (CEST)
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZymmL3nQ3z8RTZV
+ for <dev@dpdk.org>; Thu, 15 May 2025 18:34:26 +0800 (CST)
+Received: from szxlzmapp01.zte.com.cn ([10.5.231.85])
+ by mse-fl1.zte.com.cn with SMTP id 54FAY9je015555
+ for <dev@dpdk.org>; Thu, 15 May 2025 18:34:09 +0800 (+08)
+ (envelope-from li.hanxiao@zte.com.cn)
+Received: from localhost.localdomain (unknown [192.168.6.15])
+ by smtp (Zmail) with SMTP; Thu, 15 May 2025 18:34:12 +0800
+X-Zmail-TransId: 3e816825c31a004-c97e1
+From: Hanxiao Li <li.hanxiao@zte.com.cn>
+To: dev@dpdk.org
+Subject: Re: [v3,3/9] crypto/zsda: add statistics
+Date: Thu, 15 May 2025 18:30:59 +0800
+Message-ID: <20250515103059.1926980-1-li.hanxiao@zte.com.cn>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250515101927.1926502-4-li.hanxiao@zte.com.cn>
+References: <20250515101927.1926502-4-li.hanxiao@zte.com.cn>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed;
+	boundary="=====_001_next====="
+X-MAIL: mse-fl1.zte.com.cn 54FAY9je015555
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6825C332.001/4ZymmL3nQ3z8RTZV
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,99 +50,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi folks,
 
-I recently updated to Fedora 42 that comes with GCC 15.
 
-When building with -fsanitize=3Daddress (libasan.so.8), it seems that
-the --no-huge mode (along with --no-shconf) fails at initialization for
-some obscure reason.
+--=====_001_next=====
+Content-Type: multipart/related;
+	boundary="=====_002_next====="
 
-"couldn't allocate memory due to IOVA exceeding limits of current DMA mask.=
-"
 
-I have looked around everywhere and I don't see how to get around this
-issue.
+--=====_002_next=====
+Content-Type: multipart/alternative;
+	boundary="=====_003_next====="
 
-It is working fine with GCC 14. Maybe some changes were made to libasan
-related to the address ranges exposed to the mocked allocation
-functions.
 
-Is this something that needs to be fixed in DPDK?
+--=====_003_next=====
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-Here is a reproducer:
+PiAtCS5zdGF0c19nZXQgPSBOVUxMLA0KPiAtCS5zdGF0c19yZXNldCA9IE5VTEwsDQo+ICsJLnN0
+YXRzX2dldCA9IHpzZGFfY3J5cHRvX3N0YXRzX2dldCwNCj4gKwkuc3RhdHNfcmVzZXQgPSB6c2Rh
+X2NyeXB0b19zdGF0c19yZXNldCwNCg0KSGkgQWtoaWwsDQoNCkFsdGhvdWdoIEkgd2FudCB0byBu
+YW1lIHRoZSBmdW5jdGlvbiAienNkYV9zdGF0c19nZXQiIGFzIHlvdSBzdWdnZXN0ZWQsDQoNCmJ1
+dCB0aGUgICJ6c2RhX2NyeXB0b19zdGF0c19nZXQiIHdpbGwgY2FsbCBhIGZ1bmN0aW9uICJ6c2Rh
+X3N0YXRzX2dldCIgd2hpY2ggaW4gdGhlIGNvbW1vbiBmaWxlLg0KDQpCZXNpZGVzLCAienNkYV9z
+dGF0c19nZXQiIGhhcyBhbHNvIGJlZW4gY2FsbGVkIGJ5IGNvbXByZXNzLCBzbyBJIG5hbWUgaXQg
+InpzZGFfY3J5cHRvX3N0YXRzX2dldCIgaW4gY3J5cHRvLg0KDQpJIHdhbnQgdG8gd2FpdCB1bnRp
+bCBjcnlwdG8gaXMgaW50ZWdyYXRlZCBiZWZvcmUgbWFraW5nIHVuaWZpZWQgY2hhbmdlcy4=
 
-$ meson setup build -Dtests=3Dfalse -Denable_docs=3Dfalse -Ddeveloper_mode=
-=3Ddisabled \
-=09-Denable_drivers=3Dnet/tap -Denable_libs=3Dgso -Denable_apps=3Dtest-pmd =
-\
-=09-Db_sanitize=3Daddress
-The Meson build system
-Version: 1.7.0
-Source dir: /home/rjarry/upstream/dpdk
-Build dir: /home/rjarry/upstream/dpdk/build
-Build type: native build
-Project name: DPDK
-Project version: 25.03.0
-C compiler for the host machine: ccache cc (gcc 15.1.1 "cc (GCC) 15.1.1 202=
-50425 (Red Hat 15.1.1-1)")
-C linker for the host machine: cc ld.bfd 2.44-3
-Host machine cpu family: x86_64
-Host machine cpu: x86_64
-...
-Library asan found: YES
-...
-$ ninja -C build
-ninja: Entering directory `build'
-[259/259] Linking target app/dpdk-testpmd
 
-$ ldd build/app/dpdk-testpmd | grep asan
-=09libasan.so.8 =3D> /lib64/libasan.so.8 (0x00007fac50e00000)
+--=====_003_next=====
+Content-Type: text/html ;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-$ rpm -qa *asan*
-libasan-15.1.1-1.fc42.x86_64
+Jmd0OyZuYnNwOy0mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsuc3RhdHNfZ2V0Jm5ic3A7PSZuYnNw
+O05VTEwsPGJyIC8+Jmd0OyZuYnNwOy0mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsuc3RhdHNfcmVz
+ZXQmbmJzcDs9Jm5ic3A7TlVMTCw8YnIgLz4mZ3Q7Jm5ic3A7KyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOy5zdGF0c19nZXQmbmJzcDs9Jm5ic3A7enNkYV9jcnlwdG9fc3RhdHNfZ2V0LDxiciAvPiZn
+dDsmbmJzcDsrJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7LnN0YXRzX3Jlc2V0Jm5ic3A7PSZuYnNw
+O3pzZGFfY3J5cHRvX3N0YXRzX3Jlc2V0LDxiciAvPg08YnIgLz5IaSZuYnNwO0FraGlsLDxiciAv
+Pg08YnIgLz5BbHRob3VnaCZuYnNwO0kmbmJzcDt3YW50Jm5ic3A7dG8mbmJzcDtuYW1lJm5ic3A7
+dGhlJm5ic3A7ZnVuY3Rpb24mbmJzcDsmcXVvdDt6c2RhX3N0YXRzX2dldCZxdW90OyZuYnNwO2Fz
+Jm5ic3A7eW91Jm5ic3A7c3VnZ2VzdGVkLDxiciAvPg08YnIgLz5idXQmbmJzcDt0aGUmbmJzcDsm
+bmJzcDsmcXVvdDt6c2RhX2NyeXB0b19zdGF0c19nZXQmcXVvdDsmbmJzcDt3aWxsJm5ic3A7Y2Fs
+bCZuYnNwO2EmbmJzcDtmdW5jdGlvbiZuYnNwOyZxdW90O3pzZGFfc3RhdHNfZ2V0JnF1b3Q7Jm5i
+c3A7d2hpY2gmbmJzcDtpbiZuYnNwO3RoZSZuYnNwO2NvbW1vbiZuYnNwO2ZpbGUuPGJyIC8+DTxi
+ciAvPkJlc2lkZXMsJm5ic3A7JnF1b3Q7enNkYV9zdGF0c19nZXQmcXVvdDsmbmJzcDtoYXMmbmJz
+cDthbHNvJm5ic3A7YmVlbiZuYnNwO2NhbGxlZCZuYnNwO2J5Jm5ic3A7Y29tcHJlc3MsJm5ic3A7
+c28mbmJzcDtJJm5ic3A7bmFtZSZuYnNwO2l0Jm5ic3A7JnF1b3Q7enNkYV9jcnlwdG9fc3RhdHNf
+Z2V0JnF1b3Q7Jm5ic3A7aW4mbmJzcDtjcnlwdG8uPGJyIC8+DTxiciAvPkkmbmJzcDt3YW50Jm5i
+c3A7dG8mbmJzcDt3YWl0Jm5ic3A7dW50aWwmbmJzcDtjcnlwdG8mbmJzcDtpcyZuYnNwO2ludGVn
+cmF0ZWQmbmJzcDtiZWZvcmUmbmJzcDttYWtpbmcmbmJzcDt1bmlmaWVkJm5ic3A7Y2hhbmdlcy4=
 
-$ build/app/dpdk-testpmd -l 0 --no-shconf --no-huge -m 2048 --log-level=3Dl=
-ib.eal:debug
-...
-EAL: Buses did not request a specific IOVA mode.
-EAL: Physical addresses are unavailable, selecting IOVA as VA mode.
-EAL: Selected IOVA mode 'VA'
-EAL: Probing VFIO support...
-EAL: Module /sys/module/vfio not found! error 2 (No such file or directory)
-EAL: VFIO modules not loaded, skipping VFIO support...
-EAL: Ask a virtual area of 0x2e000 bytes
-EAL: WARNING! Base virtual address hint (0x100005000 !=3D 0x7f9bc4cc1000) n=
-ot respected!
-EAL:    This may cause issues with mapping memory into secondary processes
-EAL: Virtual area found at 0x7f9bc4cc1000 (size =3D 0x2e000)
-EAL: Setting up physically contiguous memory...
-EAL: Setting maximum number of open files to 524288
-EAL: Ask a virtual area of 0x1811000 bytes
-EAL: WARNING! Base virtual address hint (0x10000b000 !=3D 0x7b9bbeae5000) n=
-ot respected!
-EAL:    This may cause issues with mapping memory into secondary processes
-EAL: Virtual area found at 0x7b9bbeae5000 (size =3D 0x1811000)
-EAL: Memseg list allocated at socket 0, page size 0x4kB
-EAL: Using memfd for anonymous memory
-EAL: Ask a virtual area of 0x80000000 bytes
-EAL: WARNING! Base virtual address hint (0x100011000 !=3D 0x7b9b3eae5000) n=
-ot respected!
-EAL:    This may cause issues with mapping memory into secondary processes
-EAL: Virtual area found at 0x7b9b3eae5000 (size =3D 0x80000000)
-EAL: VA reserved for memseg list at 0x7b9b3eae5000, size 80000000
-EAL: memseg iova 7b9b3eae5000, len 1000, out of range
-EAL: =09using dma mask fffffc0000000000
-EAL: eal_legacy_hugepage_init(): couldn't allocate memory due to IOVA excee=
-ding limits of current DMA mask.
-EAL: Cannot init memory
-EAL: Error - exiting with code: 1
-Cannot init EAL: Cannot allocate memory
+--=====_003_next=====--
 
-Does that ring a bell to anyone?
+--=====_002_next=====--
 
---=20
-Robin
-
-> Does not include installation.
+--=====_001_next=====--
 
