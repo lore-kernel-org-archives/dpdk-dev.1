@@ -2,70 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA8F3C3ABDD
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 May 2025 18:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AFA8C2D0CD
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 May 2025 19:28:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B727B410EA;
-	Thu, 15 May 2025 20:33:37 +0200 (CEST)
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com
- [209.85.222.181])
- by mails.dpdk.org (Postfix) with ESMTP id C9D4B41060
- for <dev@dpdk.org>; Thu, 15 May 2025 20:33:34 +0200 (CEST)
-Received: by mail-qk1-f181.google.com with SMTP id
- af79cd13be357-7cadc92771dso124298585a.1
- for <dev@dpdk.org>; Thu, 15 May 2025 11:33:34 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0D0D6410D0;
+	Thu, 15 May 2025 21:28:52 +0200 (CEST)
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com
+ [209.85.214.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 2537441060
+ for <dev@dpdk.org>; Thu, 15 May 2025 21:28:51 +0200 (CEST)
+Received: by mail-pl1-f179.google.com with SMTP id
+ d9443c01a7336-231c86bffc1so8919245ad.0
+ for <dev@dpdk.org>; Thu, 15 May 2025 12:28:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1747334014; x=1747938814; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=n/ucywzfv3Nd5Fz1DrOGf/y49K172+LrrxrusgMZFgo=;
- b=fGZKCWbZyK6HV8ylJItBVi/QYx+78SOAGp7PiJRogvo4Yq5zrP+f/wGPZpAnQca03C
- CSjR9lLM9e0neVBZmKAvxCkzeht7Y1/x9XP/HRHJ2iX81XkzmloqspW5WHVMGmSLK1v4
- OITlXcohE7SKHJ8nsARLsmHPDJAby6K65Zy8I=
+ d=iol.unh.edu; s=unh-iol; t=1747337330; x=1747942130; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=Ok2M4cUb5UZBzg5VqGGHDlSQOANJbrGkKbIXbaqp1iE=;
+ b=DNaW8PQH+bL2KE93rd15YlpXIb3vkNVX1FC7PBfNgLfO+YdBXEQJS9Zme++EtV1INc
+ /hhh+NnNfL0wR2d8jqtTD/8GPC5e4BGB3q88s1gj3fWbWz8+ZtGDhli0vAn9vp7KuDle
+ n9DVwZ527Oe/ioUEGV7UJy1LqyTpUasNKYuBs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1747334014; x=1747938814;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=n/ucywzfv3Nd5Fz1DrOGf/y49K172+LrrxrusgMZFgo=;
- b=LKiBz/DnOxQ5tqMtybZRZI+VQGRSeWINvw5lr1jG92yCoa5vTtF2qSfgM3jdUxBG/1
- 87ZykwLbAAKr6xHKvkYwBfD85eIAJD9TF3fYvjNewoSVEksPra2gpZX+XCERb0VI/Yra
- WGObVzvFVTruiTHgwz6IgTINhvCoS177+4ldNfr61w9H4lzDuwhmF74l4dV++KUbMSKV
- A/6l/sVj0NDEmiI+JhgqrbLEiaGoX3KJ/7j2IyMAKWcTBLrG0O+fVjIiJIqy7Wa9jM1A
- WlY+aWLJYveOERmm7waY4Y3yVNq/qiik30c72xNwU/ls9NSIyEeW1YuqijO55xSAhz94
- 8WQg==
-X-Gm-Message-State: AOJu0YxKNu1W/rOFY+fY8axGeHJl9YdhqwUzo3QTwMK24mnWl6LxK0+Q
- 8BGR/TMdqPYC51n4/Z7DkEdEtmSVpGvnTGJ0SMRPWqFxrSzKsrrAhw0kkIKL2id4pHM=
-X-Gm-Gg: ASbGncsmzMiv2Pj5/bSEWwU+1fasWQ/W3uFikFUIF10IIbB7fxt8pSV4xgiAlLeEsbp
- XxtuHQRQ6S2TqAZRutmVifSkn2duYSQO2tNDs4DyE7SXAZEeuEImqNRaN3m8a00umhy6n7ekYzr
- +TUeptW+ct4phCu+Rq3OUVURYv/VilI6TVItOTYUmS/HKUzmqwzXBl8OUPVLbb+aB961LIJBSks
- UjQ7UH6nYdQrgPanOu5Xy6aOHDygqxndVBzN3Jh5k0HilpPnpcO0xEjSWrQ1jyhZITSiIKfTVcY
- 3gvaA92IUajK5vf3pkUG5Q5fXcY3W+uE3/4L4OTmcm7KI6qAn7nL1hPBnPHMdw==
-X-Google-Smtp-Source: AGHT+IE9IVenkcLXAPakwGyI2CVjJpo1ud9syjDVS9dP2eWn+LETVXzVzOe/Pa+mUBjqIavLiBLxxQ==
-X-Received: by 2002:a05:620a:414f:b0:7c9:2383:afef with SMTP id
- af79cd13be357-7cd4677e54dmr61502785a.37.1747334013951; 
- Thu, 15 May 2025 11:33:33 -0700 (PDT)
-Received: from fedora.iol.unh.edu ([2606:4100:3880:1271:ac5d:4186:4dc6:47eb])
- by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7cd467bc7d1sm18100185a.1.2025.05.15.11.33.33
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 15 May 2025 11:33:33 -0700 (PDT)
-From: Dean Marx <dmarx@iol.unh.edu>
-To: probb@iol.unh.edu, npratte@iol.unh.edu, luca.vizzarro@arm.com,
- yoan.picchi@foss.arm.com, Honnappa.Nagarahalli@arm.com,
- paul.szczepanek@arm.com
-Cc: dev@dpdk.org,
-	Dean Marx <dmarx@iol.unh.edu>
-Subject: [PATCH v2 4/4] dts: change verification field in unified packet suite
-Date: Thu, 15 May 2025 14:33:27 -0400
-Message-ID: <20250515183327.191912-4-dmarx@iol.unh.edu>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250515183327.191912-1-dmarx@iol.unh.edu>
-References: <20250306214747.579340-1-dmarx@iol.unh.edu>
- <20250515183327.191912-1-dmarx@iol.unh.edu>
+ d=1e100.net; s=20230601; t=1747337330; x=1747942130;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=Ok2M4cUb5UZBzg5VqGGHDlSQOANJbrGkKbIXbaqp1iE=;
+ b=VUn0YaiT4c/MNys57AK3LYdgXcd+Jv0f/Ze9XrYfpOBEt7gLg4PCZkXYi0QFOsaB5a
+ 23os55UdOUVMjkAqwwm47+1A+vzIRCQEFSMOlSlXtbH5ESz8FFEOg+86P1VJafQUVaf3
+ ml16HPo7OH0PlA5dSKIl4y8unCL+UkCy1olZL3/wiQJ1Aptfiqf09Niq5t7bvtOSD5lj
+ 0mO2wLOd5nJlMiRdd0SMFLtl1M6Hi4mvniT5um4wyJks/OjRAI6wED0q+k+XybW1Qqqo
+ uYH6d7ajpCQsXMUtA9sd8oW86ZqEbnMQHkb+a7gEJGwK1g5E0xP6LGiySTeoAOinGFvb
+ c/Xw==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCV3sLTR7wLgxnr4j8PhULstJpkw6d3jeV5r6NwM/iFH7WHrpgInzHgBO5QupUav/dFtaCc=@dpdk.org
+X-Gm-Message-State: AOJu0YySlvZxpN1fRERapQkYdSt58Jq7g+c/M5YUkTX141OWmgPOWMBo
+ VCWCnfmbOwAja8/b0U6Fi5csFpA0rN1RRQG4Q+UBrGrkH2wTVGtGgZfBgbwyfuMeC1at/WJCcsw
+ 29vrgQ57u1TaAz6OHtYZ5zMX75bGRhwNG7prCbrtbCg==
+X-Gm-Gg: ASbGncto4ndX3DhG3FNkf7UyXMoXpBHals2QLTYuXeCb1I8QvkUJQBpK7W6nca2BNs3
+ 9UioBZg0DFUz0U7lRjEbspNpE+gdlzZJq7+X1C/w9j2N3AKRyaM++I08agVa22R6LnMQ1b/puCM
+ XkgBxF9lvXySbI9KM2MBxTlQGoQdIbAUrCJcFBhisLRD7FH3MmgJC4W1VvXP88vS+R2g==
+X-Google-Smtp-Source: AGHT+IEfZLFRZckQ3clF8KZ0Mr7fqcKWqJ76/aTBg3MNguLBr+L3jifeuWB3teQlUq26zMfpCQOEP24V9HKkgPqWZIQ=
+X-Received: by 2002:a17:903:1b6d:b0:22e:634b:14cd with SMTP id
+ d9443c01a7336-231d45360bamr8428875ad.39.1747337330183; Thu, 15 May 2025
+ 12:28:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250423194011.1447679-1-npratte@iol.unh.edu>
+ <20250423194011.1447679-3-npratte@iol.unh.edu>
+In-Reply-To: <20250423194011.1447679-3-npratte@iol.unh.edu>
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Thu, 15 May 2025 15:24:06 -0400
+X-Gm-Features: AX0GCFthIo8Wh-IPZoNXknKUhbIVUa88tQEpGXIB3AJcTHvxSGpHJMNeeDbgzqU
+Message-ID: <CAJvnSUDs7To7F7TBH+CPn39TwFK-hu3+jzm_DMcEKxtDPqvYyg@mail.gmail.com>
+Subject: Re: [RFC Patch v1 2/5] dts: rework traffic generator inheritance
+ structure.
+To: Nicholas Pratte <npratte@iol.unh.edu>
+Cc: ian.stokes@intel.com, yoan.picchi@foss.arm.com, paul.szczepanek@arm.com, 
+ Honnappa.Nagarahalli@arm.com, thomas@monjalon.net, luca.vizzarro@arm.com, 
+ thomas.wilks@arm.com, dmarx@iol.unh.edu, stephen@networkplumber.org, 
+ dev@dpdk.org
+Content-Type: multipart/alternative; boundary="000000000000de63ef063531ac23"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,188 +75,220 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Change the unified packet testing suite to use layer 4
-destination ports as packet verification IDs.
+--000000000000de63ef063531ac23
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
-Reviewed-by: Luca Vizzarro <luca.vizzarro@arm.com>
-Reviewed-by: Nicholas Pratte <npratte@iol.unh.edu>
----
- dts/tests/TestSuite_uni_pkt.py | 106 ++++++++++++++++-----------------
- 1 file changed, 51 insertions(+), 55 deletions(-)
+On Wed, Apr 23, 2025 at 3:40=E2=80=AFPM Nicholas Pratte <npratte@iol.unh.ed=
+u> wrote:
 
-diff --git a/dts/tests/TestSuite_uni_pkt.py b/dts/tests/TestSuite_uni_pkt.py
-index 656a69b0f1..fdb9c29059 100644
---- a/dts/tests/TestSuite_uni_pkt.py
-+++ b/dts/tests/TestSuite_uni_pkt.py
-@@ -44,7 +44,7 @@ def check_for_matching_packet(
-     ) -> bool:
-         """Returns :data:`True` if the packet in verbose output contains all specified flags."""
-         for packet in output:
--            if packet.dst_mac == "00:00:00:00:00:01":
-+            if packet.l4_dport == 50000:
-                 if flags not in packet.hw_ptype and flags not in packet.sw_ptype:
-                     return False
-         return True
-@@ -82,8 +82,8 @@ def test_l2_packet_detect(self) -> None:
-             Check that each packet has a destination MAC address matching the set ID.
-             Check the packet type fields in verbose output, verify the flags match.
-         """
--        mac_id = "00:00:00:00:00:01"
--        packet_list = [Ether(dst=mac_id, type=0x88F7) / Raw(), Ether(dst=mac_id) / ARP() / Raw()]
-+        dport_id = 50000
-+        packet_list = [Ether(type=0x88F7) / UDP(dport=dport_id) / Raw(), Ether() / ARP() / Raw()]
-         flag_list = [RtePTypes.L2_ETHER_TIMESYNC, RtePTypes.L2_ETHER_ARP]
-         with TestPmdShell() as testpmd:
-             self.setup_session(testpmd=testpmd, expected_flags=flag_list, packet_list=packet_list)
-@@ -101,14 +101,14 @@ def test_l3_l4_packet_detect(self) -> None:
-             Check that each packet has a destination MAC address matching the set ID.
-             Check the packet type fields in verbose output, verify the flags match.
-         """
--        mac_id = "00:00:00:00:00:01"
-+        dport_id = 50000
-         packet_list = [
--            Ether(dst=mac_id) / IP() / Raw(),
--            Ether(dst=mac_id) / IP() / UDP() / Raw(),
--            Ether(dst=mac_id) / IP() / TCP() / Raw(),
--            Ether(dst=mac_id) / IP() / SCTP() / Raw(),
--            Ether(dst=mac_id) / IP() / ICMP() / Raw(),
--            Ether(dst=mac_id) / IP(frag=5) / TCP() / Raw(),
-+            Ether() / UDP(dport=dport_id) / IP() / Raw(),
-+            Ether() / IP() / UDP(dport=dport_id) / Raw(),
-+            Ether() / IP() / TCP(dport=dport_id) / Raw(),
-+            Ether() / UDP(dport=dport_id) / IP() / SCTP() / Raw(),
-+            Ether() / UDP(dport=dport_id) / IP() / ICMP() / Raw(),
-+            Ether() / IP(frag=5) / TCP(dport=dport_id) / Raw(),
-         ]
-         flag_list = [
-             RtePTypes.L3_IPV4 | RtePTypes.L2_ETHER,
-@@ -134,12 +134,12 @@ def test_ipv6_l4_packet_detect(self) -> None:
-             Check that each packet has a destination MAC address matching the set ID.
-             Check the packet type fields in verbose output, verify the flags match.
-         """
--        mac_id = "00:00:00:00:00:01"
-+        dport_id = 50000
-         packet_list = [
--            Ether(dst=mac_id) / IPv6() / Raw(),
--            Ether(dst=mac_id) / IPv6() / UDP() / Raw(),
--            Ether(dst=mac_id) / IPv6() / TCP() / Raw(),
--            Ether(dst=mac_id) / IPv6() / IPv6ExtHdrFragment() / Raw(),
-+            Ether() / UDP(dport=dport_id) / IPv6() / Raw(),
-+            Ether() / IPv6() / UDP(dport=dport_id) / Raw(),
-+            Ether() / IPv6() / TCP(dport=dport_id) / Raw(),
-+            Ether() / UDP(dport=dport_id) / IPv6() / IPv6ExtHdrFragment() / Raw(),
-         ]
-         flag_list = [
-             RtePTypes.L2_ETHER | RtePTypes.L3_IPV6,
-@@ -163,15 +163,15 @@ def test_l3_tunnel_packet_detect(self) -> None:
-             Check that each packet has a destination MAC address matching the set ID.
-             Check the packet type fields in verbose output, verify the flags match.
-         """
--        mac_id = "00:00:00:00:00:01"
-+        dport_id = 50000
-         packet_list = [
--            Ether(dst=mac_id) / IP() / IP(frag=5) / UDP() / Raw(),
--            Ether(dst=mac_id) / IP() / IP() / Raw(),
--            Ether(dst=mac_id) / IP() / IP() / UDP() / Raw(),
--            Ether(dst=mac_id) / IP() / IP() / TCP() / Raw(),
--            Ether(dst=mac_id) / IP() / IP() / SCTP() / Raw(),
--            Ether(dst=mac_id) / IP() / IP() / ICMP() / Raw(),
--            Ether(dst=mac_id) / IP() / IPv6() / IPv6ExtHdrFragment() / Raw(),
-+            Ether() / IP() / IP(frag=5) / UDP(dport=dport_id) / Raw(),
-+            Ether() / UDP(dport=dport_id) / IP() / IP() / Raw(),
-+            Ether() / IP() / IP() / UDP(dport=dport_id) / Raw(),
-+            Ether() / IP() / IP() / TCP(dport=dport_id) / Raw(),
-+            Ether() / UDP(dport=dport_id) / IP() / IP() / SCTP() / Raw(),
-+            Ether() / UDP(dport=dport_id) / IP() / IP() / ICMP() / Raw(),
-+            Ether() / UDP(dport=dport_id) / IP() / IPv6() / IPv6ExtHdrFragment() / Raw(),
-         ]
-         flag_list = [
-             RtePTypes.TUNNEL_IP | RtePTypes.L3_IPV4_EXT_UNKNOWN | RtePTypes.INNER_L4_FRAG,
-@@ -198,14 +198,14 @@ def test_gre_tunnel_packet_detect(self) -> None:
-             Check that each packet has a destination MAC address matching the set ID.
-             Check the packet type fields in verbose output, verify the flags match.
-         """
--        mac_id = "00:00:00:00:00:01"
-+        dport_id = 50000
-         packet_list = [
--            Ether(dst=mac_id) / IP() / GRE() / IP(frag=5) / Raw(),
--            Ether(dst=mac_id) / IP() / GRE() / IP() / Raw(),
--            Ether(dst=mac_id) / IP() / GRE() / IP() / UDP() / Raw(),
--            Ether(dst=mac_id) / IP() / GRE() / IP() / TCP() / Raw(),
--            Ether(dst=mac_id) / IP() / GRE() / IP() / SCTP() / Raw(),
--            Ether(dst=mac_id) / IP() / GRE() / IP() / ICMP() / Raw(),
-+            Ether() / UDP(dport=dport_id) / IP() / GRE() / IP(frag=5) / Raw(),
-+            Ether() / UDP(dport=dport_id) / IP() / GRE() / IP() / Raw(),
-+            Ether() / IP() / GRE() / IP() / UDP(dport=dport_id) / Raw(),
-+            Ether() / IP() / GRE() / IP() / TCP(dport=dport_id) / Raw(),
-+            Ether() / UDP(dport=dport_id) / IP() / GRE() / IP() / SCTP() / Raw(),
-+            Ether() / UDP(dport=dport_id) / IP() / GRE() / IP() / ICMP() / Raw(),
-         ]
-         flag_list = [
-             RtePTypes.TUNNEL_GRENAT | RtePTypes.INNER_L4_FRAG | RtePTypes.INNER_L3_IPV4_EXT_UNKNOWN,
-@@ -231,15 +231,20 @@ def test_nsh_packet_detect(self) -> None:
-             Check that each packet has a destination MAC address matching the set ID.
-             Check the packet type fields in verbose output, verify the flags match.
-         """
--        mac_id = "00:00:00:00:00:01"
-+        dport_id = 50000
-         packet_list = [
--            Ether(dst=mac_id, type=0x894F) / NSH() / IP(),
--            Ether(dst=mac_id, type=0x894F) / NSH() / IP() / ICMP(),
--            Ether(dst=mac_id, type=0x894F) / NSH() / IP(frag=1, flags="MF"),
--            Ether(dst=mac_id, type=0x894F) / NSH() / IP() / TCP(),
--            Ether(dst=mac_id, type=0x894F) / NSH() / IP() / UDP(),
--            Ether(dst=mac_id, type=0x894F) / NSH() / IP() / SCTP(tag=1) / SCTPChunkData(data="x"),
--            Ether(dst=mac_id, type=0x894F) / NSH() / IPv6(),
-+            Ether(type=0x894F) / UDP(dport=dport_id) / NSH() / IP(),
-+            Ether(type=0x894F) / UDP(dport=dport_id) / NSH() / IP() / ICMP(),
-+            Ether(type=0x894F) / UDP(dport=dport_id) / NSH() / IP(frag=1, flags="MF"),
-+            Ether(type=0x894F) / NSH() / IP() / TCP(dport=dport_id),
-+            Ether(type=0x894F) / NSH() / IP() / UDP(dport=dport_id),
-+            Ether(type=0x894F)
-+            / UDP(dport=dport_id)
-+            / NSH()
-+            / IP()
-+            / SCTP(tag=1)
-+            / SCTPChunkData(data="x"),
-+            Ether(type=0x894F) / UDP(dport=dport_id) / NSH() / IPv6(),
-         ]
-         flag_list = [
-             RtePTypes.L2_ETHER_NSH | RtePTypes.L3_IPV4_EXT_UNKNOWN | RtePTypes.L4_NONFRAG,
-@@ -267,24 +272,15 @@ def test_vxlan_tunnel_packet_detect(self) -> None:
-             Check that each packet has a destination MAC address matching the set ID.
-             Check the packet type fields in verbose output, verify the flags match.
-         """
--        mac_id = "00:00:00:00:00:01"
-+        dport_id = 50000
-         packet_list = [
--            Ether(dst=mac_id) / IP() / UDP() / VXLAN() / Ether() / IP(frag=5) / Raw(),
--            Ether(dst=mac_id) / IP() / UDP() / VXLAN() / Ether() / IP() / Raw(),
--            Ether(dst=mac_id) / IP() / UDP() / VXLAN() / Ether() / IP() / UDP() / Raw(),
--            Ether(dst=mac_id) / IP() / UDP() / VXLAN() / Ether() / IP() / TCP() / Raw(),
--            Ether(dst=mac_id) / IP() / UDP() / VXLAN() / Ether() / IP() / SCTP() / Raw(),
--            Ether(dst=mac_id) / IP() / UDP() / VXLAN() / Ether() / IP() / ICMP() / Raw(),
--            (
--                Ether(dst=mac_id)
--                / IP()
--                / UDP()
--                / VXLAN()
--                / Ether()
--                / IPv6()
--                / IPv6ExtHdrFragment()
--                / Raw()
--            ),
-+            Ether() / IP() / UDP(dport=dport_id) / VXLAN() / Ether() / IP(frag=5) / Raw(),
-+            Ether() / IP() / UDP(dport=dport_id) / VXLAN() / Ether() / IP() / Raw(),
-+            Ether() / IP() / UDP(dport=dport_id) / VXLAN() / Ether() / IP() / UDP() / Raw(),
-+            Ether() / IP() / UDP(dport=dport_id) / VXLAN() / Ether() / IP() / TCP() / Raw(),
-+            Ether() / IP() / UDP(dport=dport_id) / VXLAN() / Ether() / IP() / SCTP() / Raw(),
-+            Ether() / IP() / UDP(dport=dport_id) / VXLAN() / Ether() / IP() / ICMP() / Raw(),
-+            (Ether() / IP() / UDP() / VXLAN() / Ether() / IPv6() / IPv6ExtHdrFragment() / Raw()),
-         ]
-         flag_list = [
-             RtePTypes.TUNNEL_GRENAT | RtePTypes.INNER_L4_FRAG | RtePTypes.INNER_L3_IPV4_EXT_UNKNOWN,
--- 
-2.49.0
+>
+> +
+>      def send_packets_and_capture(
+>          self,
+>          packets: list[Packet],
+> diff --git
+> a/dts/framework/testbed_model/traffic_generator/performance_traffic_gener=
+ator.py
+> b/dts/framework/testbed_model/traffic_generator/performance_traffic_gener=
+ator.py
+> new file mode 100644
+> index 0000000000..7a384cf6e0
+> --- /dev/null
+> +++
+> b/dts/framework/testbed_model/traffic_generator/performance_traffic_gener=
+ator.py
+> @@ -0,0 +1,62 @@
+> +"""Performance testing capable traffic generatiors."""
+> +
+> +from abc import ABC, abstractmethod
+> +from dataclasses import dataclass
+> +from typing import Callable
+> +
+> +from scapy.packet import Packet
+> +
+> +from framework.testbed_model.traffic_generator.traffic_generator import
+> TrafficGenerator
+>
 
+I think this can become:
+
+from .traffic_generator import TrafficGenerator
+
+
+> +
+> +
+> +@dataclass(slots=3DTrue)
+> +class PerformanceTrafficStats(ABC):
+> +    """Data structure for stats offered by a given traffic generator."""
+> +
+> +    frame_size: int
+>
+
+Do we need to add an optional number of packet descriptors attribute? I
+realize that is a SUT testpmd param, not a TREX param, but presumably when
+we gather stats, we want to store the descriptor count with it.
+
+
+> +
+> +
+> +class PerformanceTrafficGenerator(TrafficGenerator):
+> +    """An Abstract Base Class for all performance-oriented traffic
+> generators.
+> +
+> +    Provides an intermediary interface for performance-based traffic
+> generator.
+> +    """
+> +
+> +    _test_stats: list[PerformanceTrafficStats]
+> +
+> +    @property
+> +    def is_capturing(self) -> bool:
+> +        """Used for synchronization."""
+> +        return False
+> +
+> +    @property
+> +    def last_results(self) -> PerformanceTrafficStats | None:
+> +        """Get the latest set of results from TG instance.
+> +
+> +        Returns:
+> +            The most recent set of traffic statistics.
+> +        """
+> +        return self._test_stats.pop(0)
+> +
+> +    def generate_traffic_and_stats(
+> +        self,
+> +        packet: Packet,
+> +        duration: float,  # Default of 60 (in seconds).
+>
+
+Should it be float =3D 60, so the default is coming from the function, and
+not a "default" which is coming from the testsuite? If not, I guess the
+"default" comment belongs in the testsuite?
+
+
+> +    ) -> PerformanceTrafficStats:
+> +        """Send packet traffic and acquire associated statistics."""
+> +        return self._calculate_traffic_stats(packet, duration,
+> self._generate_traffic)
+> +
+> +    def setup(self, ports):
+> +        """Preliminary port setup prior to TG execution."""
+> +        for port in self._tg_node.ports:
+> +            self._tg_node.main_session.configure_port_mtu(2000, port)
+>
+
+Okay just checking... so if we do not do this, even after binding the port
+to vfio-pci we cannot send traffic up to 2000 bytes?
+
+Reviewed-by: Patrick Robb <probb@iol.unh.edu>
+
+--000000000000de63ef063531ac23
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, Apr 23,=
+ 2025 at 3:40=E2=80=AFPM Nicholas Pratte &lt;<a href=3D"mailto:npratte@iol.=
+unh.edu">npratte@iol.unh.edu</a>&gt; wrote:<br></div><blockquote class=3D"g=
+mail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204=
+,204,204);padding-left:1ex"><br>
++<br>
+=C2=A0 =C2=A0 =C2=A0def send_packets_and_capture(<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0self,<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0packets: list[Packet],<br>
+diff --git a/dts/framework/testbed_model/traffic_generator/performance_traf=
+fic_generator.py b/dts/framework/testbed_model/traffic_generator/performanc=
+e_traffic_generator.py<br>
+new file mode 100644<br>
+index 0000000000..7a384cf6e0<br>
+--- /dev/null<br>
++++ b/dts/framework/testbed_model/traffic_generator/performance_traffic_gen=
+erator.py<br>
+@@ -0,0 +1,62 @@<br>
++&quot;&quot;&quot;Performance testing capable traffic generatiors.&quot;&q=
+uot;&quot;<br>
++<br>
++from abc import ABC, abstractmethod<br>
++from dataclasses import dataclass<br>
++from typing import Callable<br>
++<br>
++from scapy.packet import Packet<br>
++<br>
++from framework.testbed_model.traffic_generator.traffic_generator import Tr=
+afficGenerator<br></blockquote><div><br></div><div>I think this can become:=
+=C2=A0</div><div><br></div><div>from .traffic_generator import TrafficGener=
+ator</div><div>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margi=
+n:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex=
+">
++<br>
++<br>
++@dataclass(slots=3DTrue)<br>
++class PerformanceTrafficStats(ABC):<br>
++=C2=A0 =C2=A0 &quot;&quot;&quot;Data structure for stats offered by a give=
+n traffic generator.&quot;&quot;&quot;<br>
++<br>
++=C2=A0 =C2=A0 frame_size: int<br></blockquote><div><br></div><div>Do we ne=
+ed to add an optional number of packet descriptors attribute? I realize tha=
+t is a SUT testpmd param, not a TREX param, but presumably when we gather s=
+tats, we want to store the descriptor count with it.</div><div>=C2=A0</div>=
+<blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-=
+left:1px solid rgb(204,204,204);padding-left:1ex">
++<br>
++<br>
++class PerformanceTrafficGenerator(TrafficGenerator):<br>
++=C2=A0 =C2=A0 &quot;&quot;&quot;An Abstract Base Class for all performance=
+-oriented traffic generators.<br>
++<br>
++=C2=A0 =C2=A0 Provides an intermediary interface for performance-based tra=
+ffic generator.<br>
++=C2=A0 =C2=A0 &quot;&quot;&quot;<br>
++<br>
++=C2=A0 =C2=A0 _test_stats: list[PerformanceTrafficStats]<br>
++<br>
++=C2=A0 =C2=A0 @property<br>
++=C2=A0 =C2=A0 def is_capturing(self) -&gt; bool:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Used for synchronization.&qu=
+ot;&quot;&quot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 return False<br>
++<br>
++=C2=A0 =C2=A0 @property<br>
++=C2=A0 =C2=A0 def last_results(self) -&gt; PerformanceTrafficStats | None:=
+<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Get the latest set of result=
+s from TG instance.<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 Returns:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 The most recent set of traffic s=
+tatistics.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 return self._test_stats.pop(0)<br>
++<br>
++=C2=A0 =C2=A0 def generate_traffic_and_stats(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 self,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 packet: Packet,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 duration: float,=C2=A0 # Default of 60 (in sec=
+onds).<br></blockquote><div><br></div><div>Should it be float =3D 60, so th=
+e default is coming from the function, and not a &quot;default&quot; which =
+is coming from the testsuite? If not, I guess the &quot;default&quot; comme=
+nt belongs in the testsuite?</div><div>=C2=A0</div><blockquote class=3D"gma=
+il_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,2=
+04,204);padding-left:1ex">
++=C2=A0 =C2=A0 ) -&gt; PerformanceTrafficStats:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Send packet traffic and acqu=
+ire associated statistics.&quot;&quot;&quot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 return self._calculate_traffic_stats(packet, d=
+uration, self._generate_traffic)<br>
++<br>
++=C2=A0 =C2=A0 def setup(self, ports):<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Preliminary port setup prior=
+ to TG execution.&quot;&quot;&quot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 for port in self._tg_node.ports:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 self._tg_node.main_session.confi=
+gure_port_mtu(2000, port)<br></blockquote><div><br></div><div>Okay just che=
+cking... so if we do not do this, even after binding the port to vfio-pci w=
+e cannot send traffic up to 2000 bytes?</div><div>=C2=A0</div><div>Reviewed=
+-by: Patrick Robb &lt;<a href=3D"mailto:probb@iol.unh.edu">probb@iol.unh.ed=
+u</a>&gt;</div></div></div>
+
+--000000000000de63ef063531ac23--
