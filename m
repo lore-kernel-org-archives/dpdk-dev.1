@@ -2,64 +2,64 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2821BC3ABDD
-	for <dpdk-dev@archiver.kernel.org>; Thu, 15 May 2025 18:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA8F3C3ABDD
+	for <dpdk-dev@archiver.kernel.org>; Thu, 15 May 2025 18:33:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A4814410DF;
-	Thu, 15 May 2025 20:33:36 +0200 (CEST)
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com
- [209.85.222.174])
- by mails.dpdk.org (Postfix) with ESMTP id 4484141060
- for <dev@dpdk.org>; Thu, 15 May 2025 20:33:33 +0200 (CEST)
-Received: by mail-qk1-f174.google.com with SMTP id
- af79cd13be357-7c54b651310so160579985a.0
- for <dev@dpdk.org>; Thu, 15 May 2025 11:33:33 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B727B410EA;
+	Thu, 15 May 2025 20:33:37 +0200 (CEST)
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com
+ [209.85.222.181])
+ by mails.dpdk.org (Postfix) with ESMTP id C9D4B41060
+ for <dev@dpdk.org>; Thu, 15 May 2025 20:33:34 +0200 (CEST)
+Received: by mail-qk1-f181.google.com with SMTP id
+ af79cd13be357-7cadc92771dso124298585a.1
+ for <dev@dpdk.org>; Thu, 15 May 2025 11:33:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1747334012; x=1747938812; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1747334014; x=1747938814; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=gtFtXM1p/zjRlelxcIx4fdpTN5GbmrbVHbesIta97CA=;
- b=TKjgBc5T7qgP9NEdKX2yyasYs3LMXMGeVm4V7Don1ZXku6QPOYutFlwi+jhrVXpyYv
- 74QM3Fmo+5pOv+twn6ZeDQsCf9c8QydT8/6x4ORTzTc9XMCFNoGpfYJ40xFOvLRE0KtW
- lNRDnWmsTwKrfJvzmDb2G1tSUajCi2K68AZdM=
+ bh=n/ucywzfv3Nd5Fz1DrOGf/y49K172+LrrxrusgMZFgo=;
+ b=fGZKCWbZyK6HV8ylJItBVi/QYx+78SOAGp7PiJRogvo4Yq5zrP+f/wGPZpAnQca03C
+ CSjR9lLM9e0neVBZmKAvxCkzeht7Y1/x9XP/HRHJ2iX81XkzmloqspW5WHVMGmSLK1v4
+ OITlXcohE7SKHJ8nsARLsmHPDJAby6K65Zy8I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1747334012; x=1747938812;
+ d=1e100.net; s=20230601; t=1747334014; x=1747938814;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=gtFtXM1p/zjRlelxcIx4fdpTN5GbmrbVHbesIta97CA=;
- b=frZr6wlOJB8DH9c+yiMAs6Qpg+2aAmU2mxmYnCMhiqWVYh6HbcUV6mWtHFsyNQhm61
- Vim7BbEIXKEVO6K+rn7O292yqKK3+og7IfTovk3AkSIt3tz7EWg0HaIvPgcciP8FnIUe
- k1DPbZc/nkAYE/E+Ap7PKOHhUjY3IiKhfJ9LIESY2cUuKyB9iojJn9MkMx3zr6HVtooZ
- ZAS5DsWC3jnM59IOhaaK03yImVhjHD7XIAdh5YWAG9u/n/CcauGUkXA3UDjcTPfSGArx
- /ZBuemoQecAnK+FnzHeLTNJDq1ZrqYDoPIRyGpYg6yVr90NQ6qu7icBUw+OGCTbmSQ9m
- oDqA==
-X-Gm-Message-State: AOJu0Yw1RDDGES0ywJjnRyH4eG7E3Cm7vSGMJWbeHvMy6gY5mBstN3rK
- kT13YBqCrt3seOoetTyaj84yO9WHZ+dCCguSo3hpcuKEfhEYEoZsHHsMzvQMbNhBoGo=
-X-Gm-Gg: ASbGnctkUHmd3i+SHCwkUNhWB35h7kIp72TBvopkubsWxQAlQoDGtmno2AF8PowNR4c
- Tu3mAyn6Flz1+a11UST9iodLAUz1G5ZiKumpBB1tGF1Q8YOADiF2JuqO8vCVfxm4NK1Qi8l3fTt
- a7QiS2z1CWMbwWTg0htVgawmCHKRjIFSQegUlCBOH0iNnLMqz+YIpulPPPuqQcotgrt2E2hpZFf
- al68fivAMpsb9Lhd+tH4XEj78fbtc0Hm/EPqB2CmBiayHBK9VeEMSgVnV8fHVRWXeIB8WankCOM
- lB7KGvfrnVPcyVHjoYdAS10XQGK+hXpb0fp6qGnNHWjswgAnDLeuSRpTp+KJ3Q==
-X-Google-Smtp-Source: AGHT+IHmeNiQbtF0AT+hO3JEOQU+w8xKbRZkCRjE1tkLlCYwGoJJhYLSx4vfw/U+3mNp6bLABrIIQQ==
-X-Received: by 2002:a05:620a:288a:b0:7ca:e971:8335 with SMTP id
- af79cd13be357-7cd46707057mr93114685a.8.1747334012606; 
- Thu, 15 May 2025 11:33:32 -0700 (PDT)
+ bh=n/ucywzfv3Nd5Fz1DrOGf/y49K172+LrrxrusgMZFgo=;
+ b=LKiBz/DnOxQ5tqMtybZRZI+VQGRSeWINvw5lr1jG92yCoa5vTtF2qSfgM3jdUxBG/1
+ 87ZykwLbAAKr6xHKvkYwBfD85eIAJD9TF3fYvjNewoSVEksPra2gpZX+XCERb0VI/Yra
+ WGObVzvFVTruiTHgwz6IgTINhvCoS177+4ldNfr61w9H4lzDuwhmF74l4dV++KUbMSKV
+ A/6l/sVj0NDEmiI+JhgqrbLEiaGoX3KJ/7j2IyMAKWcTBLrG0O+fVjIiJIqy7Wa9jM1A
+ WlY+aWLJYveOERmm7waY4Y3yVNq/qiik30c72xNwU/ls9NSIyEeW1YuqijO55xSAhz94
+ 8WQg==
+X-Gm-Message-State: AOJu0YxKNu1W/rOFY+fY8axGeHJl9YdhqwUzo3QTwMK24mnWl6LxK0+Q
+ 8BGR/TMdqPYC51n4/Z7DkEdEtmSVpGvnTGJ0SMRPWqFxrSzKsrrAhw0kkIKL2id4pHM=
+X-Gm-Gg: ASbGncsmzMiv2Pj5/bSEWwU+1fasWQ/W3uFikFUIF10IIbB7fxt8pSV4xgiAlLeEsbp
+ XxtuHQRQ6S2TqAZRutmVifSkn2duYSQO2tNDs4DyE7SXAZEeuEImqNRaN3m8a00umhy6n7ekYzr
+ +TUeptW+ct4phCu+Rq3OUVURYv/VilI6TVItOTYUmS/HKUzmqwzXBl8OUPVLbb+aB961LIJBSks
+ UjQ7UH6nYdQrgPanOu5Xy6aOHDygqxndVBzN3Jh5k0HilpPnpcO0xEjSWrQ1jyhZITSiIKfTVcY
+ 3gvaA92IUajK5vf3pkUG5Q5fXcY3W+uE3/4L4OTmcm7KI6qAn7nL1hPBnPHMdw==
+X-Google-Smtp-Source: AGHT+IE9IVenkcLXAPakwGyI2CVjJpo1ud9syjDVS9dP2eWn+LETVXzVzOe/Pa+mUBjqIavLiBLxxQ==
+X-Received: by 2002:a05:620a:414f:b0:7c9:2383:afef with SMTP id
+ af79cd13be357-7cd4677e54dmr61502785a.37.1747334013951; 
+ Thu, 15 May 2025 11:33:33 -0700 (PDT)
 Received: from fedora.iol.unh.edu ([2606:4100:3880:1271:ac5d:4186:4dc6:47eb])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7cd467bc7d1sm18100185a.1.2025.05.15.11.33.31
+ af79cd13be357-7cd467bc7d1sm18100185a.1.2025.05.15.11.33.33
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 15 May 2025 11:33:32 -0700 (PDT)
+ Thu, 15 May 2025 11:33:33 -0700 (PDT)
 From: Dean Marx <dmarx@iol.unh.edu>
 To: probb@iol.unh.edu, npratte@iol.unh.edu, luca.vizzarro@arm.com,
  yoan.picchi@foss.arm.com, Honnappa.Nagarahalli@arm.com,
  paul.szczepanek@arm.com
 Cc: dev@dpdk.org,
 	Dean Marx <dmarx@iol.unh.edu>
-Subject: [PATCH v2 3/4] dts: remove unnecessary capability requirement
-Date: Thu, 15 May 2025 14:33:26 -0400
-Message-ID: <20250515183327.191912-3-dmarx@iol.unh.edu>
+Subject: [PATCH v2 4/4] dts: change verification field in unified packet suite
+Date: Thu, 15 May 2025 14:33:27 -0400
+Message-ID: <20250515183327.191912-4-dmarx@iol.unh.edu>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250515183327.191912-1-dmarx@iol.unh.edu>
 References: <20250306214747.579340-1-dmarx@iol.unh.edu>
@@ -79,28 +79,188 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove capability requirement from checksum offload test suite
-that was not required to run the test cases.
+Change the unified packet testing suite to use layer 4
+destination ports as packet verification IDs.
 
 Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
 Reviewed-by: Luca Vizzarro <luca.vizzarro@arm.com>
 Reviewed-by: Nicholas Pratte <npratte@iol.unh.edu>
 ---
- dts/tests/TestSuite_checksum_offload.py | 1 -
- 1 file changed, 1 deletion(-)
+ dts/tests/TestSuite_uni_pkt.py | 106 ++++++++++++++++-----------------
+ 1 file changed, 51 insertions(+), 55 deletions(-)
 
-diff --git a/dts/tests/TestSuite_checksum_offload.py b/dts/tests/TestSuite_checksum_offload.py
-index 83879b0512..c9efdcaa1c 100644
---- a/dts/tests/TestSuite_checksum_offload.py
-+++ b/dts/tests/TestSuite_checksum_offload.py
-@@ -30,7 +30,6 @@
- 
- 
- @requires(topology_type=TopologyType.two_links)
--@requires(NicCapability.RX_OFFLOAD_CHECKSUM)
- @requires(NicCapability.RX_OFFLOAD_IPV4_CKSUM)
- @requires(NicCapability.RX_OFFLOAD_UDP_CKSUM)
- @requires(NicCapability.RX_OFFLOAD_TCP_CKSUM)
+diff --git a/dts/tests/TestSuite_uni_pkt.py b/dts/tests/TestSuite_uni_pkt.py
+index 656a69b0f1..fdb9c29059 100644
+--- a/dts/tests/TestSuite_uni_pkt.py
++++ b/dts/tests/TestSuite_uni_pkt.py
+@@ -44,7 +44,7 @@ def check_for_matching_packet(
+     ) -> bool:
+         """Returns :data:`True` if the packet in verbose output contains all specified flags."""
+         for packet in output:
+-            if packet.dst_mac == "00:00:00:00:00:01":
++            if packet.l4_dport == 50000:
+                 if flags not in packet.hw_ptype and flags not in packet.sw_ptype:
+                     return False
+         return True
+@@ -82,8 +82,8 @@ def test_l2_packet_detect(self) -> None:
+             Check that each packet has a destination MAC address matching the set ID.
+             Check the packet type fields in verbose output, verify the flags match.
+         """
+-        mac_id = "00:00:00:00:00:01"
+-        packet_list = [Ether(dst=mac_id, type=0x88F7) / Raw(), Ether(dst=mac_id) / ARP() / Raw()]
++        dport_id = 50000
++        packet_list = [Ether(type=0x88F7) / UDP(dport=dport_id) / Raw(), Ether() / ARP() / Raw()]
+         flag_list = [RtePTypes.L2_ETHER_TIMESYNC, RtePTypes.L2_ETHER_ARP]
+         with TestPmdShell() as testpmd:
+             self.setup_session(testpmd=testpmd, expected_flags=flag_list, packet_list=packet_list)
+@@ -101,14 +101,14 @@ def test_l3_l4_packet_detect(self) -> None:
+             Check that each packet has a destination MAC address matching the set ID.
+             Check the packet type fields in verbose output, verify the flags match.
+         """
+-        mac_id = "00:00:00:00:00:01"
++        dport_id = 50000
+         packet_list = [
+-            Ether(dst=mac_id) / IP() / Raw(),
+-            Ether(dst=mac_id) / IP() / UDP() / Raw(),
+-            Ether(dst=mac_id) / IP() / TCP() / Raw(),
+-            Ether(dst=mac_id) / IP() / SCTP() / Raw(),
+-            Ether(dst=mac_id) / IP() / ICMP() / Raw(),
+-            Ether(dst=mac_id) / IP(frag=5) / TCP() / Raw(),
++            Ether() / UDP(dport=dport_id) / IP() / Raw(),
++            Ether() / IP() / UDP(dport=dport_id) / Raw(),
++            Ether() / IP() / TCP(dport=dport_id) / Raw(),
++            Ether() / UDP(dport=dport_id) / IP() / SCTP() / Raw(),
++            Ether() / UDP(dport=dport_id) / IP() / ICMP() / Raw(),
++            Ether() / IP(frag=5) / TCP(dport=dport_id) / Raw(),
+         ]
+         flag_list = [
+             RtePTypes.L3_IPV4 | RtePTypes.L2_ETHER,
+@@ -134,12 +134,12 @@ def test_ipv6_l4_packet_detect(self) -> None:
+             Check that each packet has a destination MAC address matching the set ID.
+             Check the packet type fields in verbose output, verify the flags match.
+         """
+-        mac_id = "00:00:00:00:00:01"
++        dport_id = 50000
+         packet_list = [
+-            Ether(dst=mac_id) / IPv6() / Raw(),
+-            Ether(dst=mac_id) / IPv6() / UDP() / Raw(),
+-            Ether(dst=mac_id) / IPv6() / TCP() / Raw(),
+-            Ether(dst=mac_id) / IPv6() / IPv6ExtHdrFragment() / Raw(),
++            Ether() / UDP(dport=dport_id) / IPv6() / Raw(),
++            Ether() / IPv6() / UDP(dport=dport_id) / Raw(),
++            Ether() / IPv6() / TCP(dport=dport_id) / Raw(),
++            Ether() / UDP(dport=dport_id) / IPv6() / IPv6ExtHdrFragment() / Raw(),
+         ]
+         flag_list = [
+             RtePTypes.L2_ETHER | RtePTypes.L3_IPV6,
+@@ -163,15 +163,15 @@ def test_l3_tunnel_packet_detect(self) -> None:
+             Check that each packet has a destination MAC address matching the set ID.
+             Check the packet type fields in verbose output, verify the flags match.
+         """
+-        mac_id = "00:00:00:00:00:01"
++        dport_id = 50000
+         packet_list = [
+-            Ether(dst=mac_id) / IP() / IP(frag=5) / UDP() / Raw(),
+-            Ether(dst=mac_id) / IP() / IP() / Raw(),
+-            Ether(dst=mac_id) / IP() / IP() / UDP() / Raw(),
+-            Ether(dst=mac_id) / IP() / IP() / TCP() / Raw(),
+-            Ether(dst=mac_id) / IP() / IP() / SCTP() / Raw(),
+-            Ether(dst=mac_id) / IP() / IP() / ICMP() / Raw(),
+-            Ether(dst=mac_id) / IP() / IPv6() / IPv6ExtHdrFragment() / Raw(),
++            Ether() / IP() / IP(frag=5) / UDP(dport=dport_id) / Raw(),
++            Ether() / UDP(dport=dport_id) / IP() / IP() / Raw(),
++            Ether() / IP() / IP() / UDP(dport=dport_id) / Raw(),
++            Ether() / IP() / IP() / TCP(dport=dport_id) / Raw(),
++            Ether() / UDP(dport=dport_id) / IP() / IP() / SCTP() / Raw(),
++            Ether() / UDP(dport=dport_id) / IP() / IP() / ICMP() / Raw(),
++            Ether() / UDP(dport=dport_id) / IP() / IPv6() / IPv6ExtHdrFragment() / Raw(),
+         ]
+         flag_list = [
+             RtePTypes.TUNNEL_IP | RtePTypes.L3_IPV4_EXT_UNKNOWN | RtePTypes.INNER_L4_FRAG,
+@@ -198,14 +198,14 @@ def test_gre_tunnel_packet_detect(self) -> None:
+             Check that each packet has a destination MAC address matching the set ID.
+             Check the packet type fields in verbose output, verify the flags match.
+         """
+-        mac_id = "00:00:00:00:00:01"
++        dport_id = 50000
+         packet_list = [
+-            Ether(dst=mac_id) / IP() / GRE() / IP(frag=5) / Raw(),
+-            Ether(dst=mac_id) / IP() / GRE() / IP() / Raw(),
+-            Ether(dst=mac_id) / IP() / GRE() / IP() / UDP() / Raw(),
+-            Ether(dst=mac_id) / IP() / GRE() / IP() / TCP() / Raw(),
+-            Ether(dst=mac_id) / IP() / GRE() / IP() / SCTP() / Raw(),
+-            Ether(dst=mac_id) / IP() / GRE() / IP() / ICMP() / Raw(),
++            Ether() / UDP(dport=dport_id) / IP() / GRE() / IP(frag=5) / Raw(),
++            Ether() / UDP(dport=dport_id) / IP() / GRE() / IP() / Raw(),
++            Ether() / IP() / GRE() / IP() / UDP(dport=dport_id) / Raw(),
++            Ether() / IP() / GRE() / IP() / TCP(dport=dport_id) / Raw(),
++            Ether() / UDP(dport=dport_id) / IP() / GRE() / IP() / SCTP() / Raw(),
++            Ether() / UDP(dport=dport_id) / IP() / GRE() / IP() / ICMP() / Raw(),
+         ]
+         flag_list = [
+             RtePTypes.TUNNEL_GRENAT | RtePTypes.INNER_L4_FRAG | RtePTypes.INNER_L3_IPV4_EXT_UNKNOWN,
+@@ -231,15 +231,20 @@ def test_nsh_packet_detect(self) -> None:
+             Check that each packet has a destination MAC address matching the set ID.
+             Check the packet type fields in verbose output, verify the flags match.
+         """
+-        mac_id = "00:00:00:00:00:01"
++        dport_id = 50000
+         packet_list = [
+-            Ether(dst=mac_id, type=0x894F) / NSH() / IP(),
+-            Ether(dst=mac_id, type=0x894F) / NSH() / IP() / ICMP(),
+-            Ether(dst=mac_id, type=0x894F) / NSH() / IP(frag=1, flags="MF"),
+-            Ether(dst=mac_id, type=0x894F) / NSH() / IP() / TCP(),
+-            Ether(dst=mac_id, type=0x894F) / NSH() / IP() / UDP(),
+-            Ether(dst=mac_id, type=0x894F) / NSH() / IP() / SCTP(tag=1) / SCTPChunkData(data="x"),
+-            Ether(dst=mac_id, type=0x894F) / NSH() / IPv6(),
++            Ether(type=0x894F) / UDP(dport=dport_id) / NSH() / IP(),
++            Ether(type=0x894F) / UDP(dport=dport_id) / NSH() / IP() / ICMP(),
++            Ether(type=0x894F) / UDP(dport=dport_id) / NSH() / IP(frag=1, flags="MF"),
++            Ether(type=0x894F) / NSH() / IP() / TCP(dport=dport_id),
++            Ether(type=0x894F) / NSH() / IP() / UDP(dport=dport_id),
++            Ether(type=0x894F)
++            / UDP(dport=dport_id)
++            / NSH()
++            / IP()
++            / SCTP(tag=1)
++            / SCTPChunkData(data="x"),
++            Ether(type=0x894F) / UDP(dport=dport_id) / NSH() / IPv6(),
+         ]
+         flag_list = [
+             RtePTypes.L2_ETHER_NSH | RtePTypes.L3_IPV4_EXT_UNKNOWN | RtePTypes.L4_NONFRAG,
+@@ -267,24 +272,15 @@ def test_vxlan_tunnel_packet_detect(self) -> None:
+             Check that each packet has a destination MAC address matching the set ID.
+             Check the packet type fields in verbose output, verify the flags match.
+         """
+-        mac_id = "00:00:00:00:00:01"
++        dport_id = 50000
+         packet_list = [
+-            Ether(dst=mac_id) / IP() / UDP() / VXLAN() / Ether() / IP(frag=5) / Raw(),
+-            Ether(dst=mac_id) / IP() / UDP() / VXLAN() / Ether() / IP() / Raw(),
+-            Ether(dst=mac_id) / IP() / UDP() / VXLAN() / Ether() / IP() / UDP() / Raw(),
+-            Ether(dst=mac_id) / IP() / UDP() / VXLAN() / Ether() / IP() / TCP() / Raw(),
+-            Ether(dst=mac_id) / IP() / UDP() / VXLAN() / Ether() / IP() / SCTP() / Raw(),
+-            Ether(dst=mac_id) / IP() / UDP() / VXLAN() / Ether() / IP() / ICMP() / Raw(),
+-            (
+-                Ether(dst=mac_id)
+-                / IP()
+-                / UDP()
+-                / VXLAN()
+-                / Ether()
+-                / IPv6()
+-                / IPv6ExtHdrFragment()
+-                / Raw()
+-            ),
++            Ether() / IP() / UDP(dport=dport_id) / VXLAN() / Ether() / IP(frag=5) / Raw(),
++            Ether() / IP() / UDP(dport=dport_id) / VXLAN() / Ether() / IP() / Raw(),
++            Ether() / IP() / UDP(dport=dport_id) / VXLAN() / Ether() / IP() / UDP() / Raw(),
++            Ether() / IP() / UDP(dport=dport_id) / VXLAN() / Ether() / IP() / TCP() / Raw(),
++            Ether() / IP() / UDP(dport=dport_id) / VXLAN() / Ether() / IP() / SCTP() / Raw(),
++            Ether() / IP() / UDP(dport=dport_id) / VXLAN() / Ether() / IP() / ICMP() / Raw(),
++            (Ether() / IP() / UDP() / VXLAN() / Ether() / IPv6() / IPv6ExtHdrFragment() / Raw()),
+         ]
+         flag_list = [
+             RtePTypes.TUNNEL_GRENAT | RtePTypes.INNER_L4_FRAG | RtePTypes.INNER_L3_IPV4_EXT_UNKNOWN,
 -- 
 2.49.0
 
