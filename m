@@ -2,69 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E338BC3ABD8
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 12:10:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90295C3ABC9
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 12:50:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8B554402B1;
-	Fri, 16 May 2025 14:10:55 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 7394A40144
- for <dev@dpdk.org>; Fri, 16 May 2025 14:10:53 +0200 (CEST)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54G7vAjf008755;
- Fri, 16 May 2025 05:10:52 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=6iUm6e00fCHQyypfvEoPEz9
- Zpd//m8pmGDYvBl34gt8=; b=To+kiYJS6BylccY2EKD7dU2wODEQKop7P4VYIoK
- vmnBplKTwF0sOZb+9CDk9wpdfVABhna6921vJkng333AFCCGwZ+Gm6odyhqXE3RC
- OQSQDVJjxwS2sKqgrNCEdxaD+vSTA/HbR/8Qwr1+cax9PKCvGzQVQAnMx5yTQ23u
- aZEbpgV0/oDxH2mKws/koD6zZFgcgvv5IILr2r0+GWWV9F07aObh34UBe0OrVYey
- ny3CQi0fUldJPjUg55ZgJ3ebtiXxMq56zIwD/Us1Db8VwuPZ4fTV/XVfezQHo1gP
- v1NFN95KJNW1Of0NcPiSEw0HvZuYnIPNTnuNlAGkIiD5FeQ==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46p1du0dgj-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Fri, 16 May 2025 05:10:52 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 16 May 2025 05:10:51 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 16 May 2025 05:10:51 -0700
-Received: from cavium-SR1-T640.marvell.com (unknown [10.28.36.102])
- by maili.marvell.com (Postfix) with ESMTP id DA9D03F7051;
- Fri, 16 May 2025 05:10:48 -0700 (PDT)
-From: Akhil Goyal <gakhil@marvell.com>
-To: <dev@dpdk.org>
-CC: <suanmingm@nvidia.com>, <anoobj@marvell.com>, <kai.ji@intel.com>,
- <hemant.agrawal@nxp.com>, <brian.dooley@intel.com>, Akhil Goyal
- <gakhil@marvell.com>
-Subject: [PATCH] doc: add limitation in using segment-sz in crypto-perf
-Date: Fri, 16 May 2025 17:40:43 +0530
-Message-ID: <20250516121043.145572-1-gakhil@marvell.com>
-X-Mailer: git-send-email 2.25.1
+	by mails.dpdk.org (Postfix) with ESMTP id 61D3240292;
+	Fri, 16 May 2025 14:50:38 +0200 (CEST)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 5CE514028F
+ for <dev@dpdk.org>; Fri, 16 May 2025 14:50:36 +0200 (CEST)
+Received: by linux.microsoft.com (Postfix, from userid 1213)
+ id 10AF2201DB23; Fri, 16 May 2025 05:50:35 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 10AF2201DB23
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1747399835;
+ bh=CiOD+cqDjXef5YTuhA+/Gjc2hmvSJyahUF0FSBNAbQQ=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=rMI9V53Zn0S2KJDJx2MIHHNGsWubEm/cB/i7K2DUjxH1SsZiO1U1qsar6Z0j2DW8V
+ KrJ8qdCrffxEP+0/FuwxZyNRtymy1h9tmyVlr+IKsWStlucgSZ/m71kUPOJLqGyHLG
+ lfpjg/wYQ6nLfw9rgOIRgTW90V2A5Ye/U7rOArxY=
+Date: Fri, 16 May 2025 05:50:35 -0700
+From: Andre Muezerie <andremue@linux.microsoft.com>
+To: David Marchand <david.marchand@redhat.com>
+Cc: Ori Kam <orika@nvidia.com>, dev@dpdk.org,
+ Thomas Monjalon <thomas@monjalon.net>
+Subject: Re: [PATCH] regexdev: enable to be compiled on Windows
+Message-ID: <20250516125035.GA29027@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1746827534-19881-1-git-send-email-andremue@linux.microsoft.com>
+ <CAJFAV8y8vibAGFsAR1XPFedR0-q+KC+Rm1=2cNPyJ5vF3ATKfQ@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: d50PU7sV3I-6j2VheDeKHdSAZIaMISzv
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE2MDExNiBTYWx0ZWRfX2Y0/o6jSLAso
- OhYwAHKYeb+rOorCC4k4FEm1+19y1tCnxNsGDNBNuyAFcgxMTi3JwtM/YVMIA4gyzaOXmnRVN5J
- +5BE4EfTWjt7vWkEGOqIsf5idItMKfYMcq/8bQbcg4Nnwg5r4cYkr855OiF5gMaqKHTIz8OtmRH
- uucsu2tf/xIoijMISVb1tFxN6I6ZXz4w2Q3cBt2bvpJq3GC5tYOX8ILvC57yhd6v3NhGdBPL1gD
- CI21ahEotPcg0U+uomW+R33MILiszqJGD7IVYYkWNjx/ubTE6z5pCuCTfQH/TINqe9h6rikB2kF
- WIfqqB417ZIB6+JhRxlWQpf7wlfS6+bHmVfiveQZHzgsD2ZOT1DMMe0z8htNYbtKQmsZZaxtsmU
- a7w9xAGOa1s+qtFLQxMx4qARjvC4uoZQAosdg+m4l/LJk8BQC2ZOHwYN7QrHKO3wClI7793m
-X-Proofpoint-GUID: d50PU7sV3I-6j2VheDeKHdSAZIaMISzv
-X-Authority-Analysis: v=2.4 cv=fvPcZE4f c=1 sm=1 tr=0 ts=68272b4c cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=vdPL91twqqmzCy3sNZoA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-16_05,2025-05-16_02,2025-03-28_01
+In-Reply-To: <CAJFAV8y8vibAGFsAR1XPFedR0-q+KC+Rm1=2cNPyJ5vF3ATKfQ@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -78,35 +48,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When segment-sz is given as parameter,
-use buffer-sz in descending order.
-The reason is, same scatter gather buffer list is being used
-for all packet sizes which is initialized once in the beginning.
-Now if a small packet case is run first,
-mbuf SG list will be trimmed to a smaller number of SG and
-rest of the SGs are lost resulting in segfault.
-Buffers cannot be re-initialized as that will come in datapath and
-will be costly.
-So to workaround this, if segment-sz is passed as argument,
-use values in buffer-sz in descending order.
+On Fri, May 16, 2025 at 10:01:42AM +0200, David Marchand wrote:
+> On Fri, May 9, 2025 at 11:52 PM Andre Muezerie
+> <andremue@linux.microsoft.com> wrote:
+> >
+> > Now that mbuf is compiling on Windows, this library can be enabled as
+> > well.
+> >
+> > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+> 
+> The test-regex app can probably be compiled too.
+> Yet.. why do you want to enable this library on Windows?
+> 
+> Support for this device class is defacto deprecated, as no vendor is
+> providing recent hardware implementing this feature.
+> 
+> Also note that it was not built with clang on Windows so far (I did
+> not double check this assertion, I just based on the fact this patch
+> removes a is_windows, and not a is_ms_compiler).
+> 
+> 
 
-Signed-off-by: Akhil Goyal <gakhil@marvell.com>
----
- doc/guides/tools/cryptoperf.rst | 1 +
- 1 file changed, 1 insertion(+)
+I was not aware this code was deprecated. You're right that it was not
+being compiled with Clang. This was just part of the effort to increase
+code compatibility on Windows.
 
-diff --git a/doc/guides/tools/cryptoperf.rst b/doc/guides/tools/cryptoperf.rst
-index e53e2d0ebf..a3d35f6a50 100644
---- a/doc/guides/tools/cryptoperf.rst
-+++ b/doc/guides/tools/cryptoperf.rst
-@@ -139,6 +139,7 @@ The following are the application command-line options:
- * ``--segment-sz <n>``
- 
-         Set the size of the segment to use, for Scatter Gather List testing.
-+        Use list of values in buffer-sz in descending order if segment-sz is used.
-         By default, it is set to the size of the maximum buffer size, including the digest size,
-         so a single segment is created.
- 
--- 
-2.25.1
+I see no harm in enabling it, but at the same time, there's no clear
+benefit either. I'll let you decide what to do with this.
 
+> -- 
+> David Marchand
