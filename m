@@ -2,44 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF25C3ABC9
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 13:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A80D1C3ABD8
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 14:12:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8C024402E0;
-	Fri, 16 May 2025 15:43:34 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8705D402CD;
+	Fri, 16 May 2025 16:12:49 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 6E3B740292
- for <dev@dpdk.org>; Fri, 16 May 2025 15:43:32 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 1A85F40292
+ for <dev@dpdk.org>; Fri, 16 May 2025 16:12:48 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1747403011;
+ s=mimecast20190719; t=1747404767;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=Yt9Mv1xfbeobwHRBJnS9x6QlIG6IVf/iX1lVBgFa15Y=;
- b=VQ1BENUSvDZ1s5AffA0xUZTPJIUVuVgOZg30eQTZtFtkzPmcDypIlEviNjd5Lm0x/1djk+
- PHyRxGkTtaOqPyNohjqtW1d8DEmlfS1szZ0F/+UteMbf3C5jEllackpW0cd8/1MkatiByD
- neD3CAnTf+Ovue9Wz0GIbtJWVZ9EKxo=
+ bh=5EcL4oBCXSAfR7zCbG1OOwcGOda4+IYB+yUgPRhMOsw=;
+ b=Qm/IRmXHenIaZevOmOjKzOMQIvqQcP/rlh+uH+OBCRKEaWJy6bKIDPoQM7+XgpWg4zvQ9a
+ XHv74TBv7CDK2K6JjprHZgPKVQ/L3tGmlUOGV1s5YYIwJdcAthW90FWk6CJa6eVEHBfSJ4
+ WeinVUlj2/A1/O4eUy6VFrwe/TnMymE=
 Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-594-q_i9xPaiOIuMhiCt-OeDQg-1; Fri,
- 16 May 2025 09:43:28 -0400
-X-MC-Unique: q_i9xPaiOIuMhiCt-OeDQg-1
-X-Mimecast-MFC-AGG-ID: q_i9xPaiOIuMhiCt-OeDQg_1747403007
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-482-psAAYF91PfmzNYjVSTPN4Q-1; Fri,
+ 16 May 2025 10:12:46 -0400
+X-MC-Unique: psAAYF91PfmzNYjVSTPN4Q-1
+X-Mimecast-MFC-AGG-ID: psAAYF91PfmzNYjVSTPN4Q_1747404765
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
  by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 3B16D1800EC8; Fri, 16 May 2025 13:43:27 +0000 (UTC)
+ id 081601800ECB; Fri, 16 May 2025 14:12:43 +0000 (UTC)
 Received: from [10.45.242.18] (unknown [10.45.242.18])
- by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id D199A18003FD; Fri, 16 May 2025 13:43:24 +0000 (UTC)
-Message-ID: <84657ae7-d811-4019-a8f9-e781c87710e7@redhat.com>
-Date: Fri, 16 May 2025 15:43:20 +0200
+ by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id C89671956094; Fri, 16 May 2025 14:12:40 +0000 (UTC)
+Message-ID: <120e78ac-d449-48d1-aa72-ac1815e3cf96@redhat.com>
+Date: Fri, 16 May 2025 16:12:36 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] vhost/crypto: fix uninitialized variable
@@ -92,9 +92,9 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
 In-Reply-To: <20250515081004.1742-1-gmuthukrishn@marvell.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: ZWKAFunEVYPZQOafTtjBziwp0dtnSZHsRaReuODIYKM_1747403007
+X-Mimecast-MFC-PROC-ID: JLOB4YypfgIxl93NMZ_mZcg8IHxlNFqCIcBW5zcvUEM_1747404765
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -142,7 +142,7 @@ On 5/15/25 10:10 AM, Gowrishankar Muthukrishnan wrote:
 >   	struct virtio_crypto_inhdr *inhdr;
 >   	struct vring_desc *src_desc;
 
-Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+Applied to next-virtio/for-net-next.
 
 Thanks,
 Maxime
