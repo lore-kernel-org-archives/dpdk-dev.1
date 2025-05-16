@@ -2,57 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D706BC3ABC9
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 11:29:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D886C3ABC9
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 11:32:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0E00140144;
-	Fri, 16 May 2025 13:29:26 +0200 (CEST)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
- by mails.dpdk.org (Postfix) with ESMTP id 7F1F6400EF
- for <dev@dpdk.org>; Fri, 16 May 2025 13:29:23 +0200 (CEST)
-Received: from loongson.cn (unknown [10.20.42.143])
- by gateway (Coremail) with SMTP id _____8Bx12mQISdonWTsAA--.55647S3;
- Fri, 16 May 2025 19:29:20 +0800 (CST)
-Received: from [10.20.42.143] (unknown [10.20.42.143])
- by front1 (Coremail) with SMTP id qMiowMAxzxuJISdo8hXZAA--.43372S3;
- Fri, 16 May 2025 19:29:15 +0800 (CST)
-Subject: Re: [PATCH v3] build: automatically report minimum meson version
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
- Stephen Hemminger <stephen@networkplumber.org>,
- Patrick Robb <probb@iol.unh.edu>
-References: <20241009152417.4028297-1-bruce.richardson@intel.com>
- <20250515134647.932537-1-bruce.richardson@intel.com>
- <CAJFAV8ycKdFJgLBXr2RXcmUkHxftKywbrpOCvLtutRh6CMPujA@mail.gmail.com>
-From: zhoumin <zhoumin@loongson.cn>
-Message-ID: <a8bdadd1-57ac-b24f-8862-1d0166cab3be@loongson.cn>
-Date: Fri, 16 May 2025 19:28:04 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	by mails.dpdk.org (Postfix) with ESMTP id 6CADE40144;
+	Fri, 16 May 2025 13:32:30 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 6FD38400EF
+ for <dev@dpdk.org>; Fri, 16 May 2025 13:32:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1747395147;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=WDqEFRTnPof6ipHh2a0adLkbcurlA3qUw6KcyhQZsbs=;
+ b=i2bVtxYbq5mshjPCj/QK8KdZwlqcSRUSnuMuYJTgVL00/xFae1D5DcRbxZbngbd17k5eA8
+ 0tsSGKYxmY5t5fm7trxrZYTdVbOzhmk7TQNe0r++G5RI5S/nAdL/HNV6ucmc98CQUyth+9
+ ZG5UIZopSJKAYTsDsHMJVVRJpUn9t1E=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-481-mWqy0DidNS-t6We2i3RJMQ-1; Fri, 16 May 2025 07:32:26 -0400
+X-MC-Unique: mWqy0DidNS-t6We2i3RJMQ-1
+X-Mimecast-MFC-AGG-ID: mWqy0DidNS-t6We2i3RJMQ_1747395145
+Received: by mail-lf1-f69.google.com with SMTP id
+ 2adb3069b0e04-550ea022c07so314710e87.3
+ for <dev@dpdk.org>; Fri, 16 May 2025 04:32:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1747395145; x=1747999945;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=WDqEFRTnPof6ipHh2a0adLkbcurlA3qUw6KcyhQZsbs=;
+ b=YQPCCSLHiSlOtfVrIEl2dt4w4zVvxRCPA9749M5TyeVYxKRr+TVon0P8/pAM40gSF1
+ 4laMBTLbocKIS3sGtGulIFgtG6WsMz8FzNRpfHYuhDVTwPBz66Zk4h0IKfQuT3InpNXX
+ QaQm4e7Im2ujTMsGXx4ahlsgMGbm0YoqfOtajvvuzuWpQ2Ia5xjVDyoY5yeXzw2or9S7
+ GPF2mzcwvqhlN94fVYocH8VzBQK196GSq8hPvz8A598HgVj4BQh4+M0hDTkSTSOI5vvG
+ VYh0cVlriGX9A8dAs4cf38Hy/kwT9ol/7c0lLLkrvj1YsPfH8byo0CEkyBFPN7XditlW
+ 2B7A==
+X-Gm-Message-State: AOJu0Yw5as7pMju4H5yhiSs03X13w21AhpWN6MmZ1PHuCSRQDTaC/+7p
+ OcvPjRm/ql+TSXcfWqWJL/t1Kr2MD9NtBulY0AmXV6MxO4XxMbhZxWLmtpX6ncy7GbD1gKX2D6+
+ LR/BnvZdtEcBj8ubu6VJcqY2dgyfAd+g8FyHj2xxC0nyBr/W2hEClZGkll1Ixl3A2Q+inkwk9vN
+ 7/IErgszgEdesPYsgbj6U=
+X-Gm-Gg: ASbGncvPppWvRRVjhy5umZccqGUcGct7XeL4PBiEQIOhaQdUXljjtnik0huPpit2oKS
+ 5zxWtOGsshMgh7Ib4zvZxCKiFjwYSeQoXF4ps1n1cjYuzIi+QykxEQ9iZwKgqIqdG1/ATbeg=
+X-Received: by 2002:a05:6512:6288:b0:54f:c221:c218 with SMTP id
+ 2adb3069b0e04-550e971af19mr521951e87.2.1747395145216; 
+ Fri, 16 May 2025 04:32:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFxFdXo9reVS+HFnjydT4ICs3lDGQ37UWGn9nztGftiElMDLegKmVmGGh31eZM5MXPXKHN6upYq/c2BaS3MJU8=
+X-Received: by 2002:a05:6512:6288:b0:54f:c221:c218 with SMTP id
+ 2adb3069b0e04-550e971af19mr521945e87.2.1747395144798; Fri, 16 May 2025
+ 04:32:24 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAJFAV8ycKdFJgLBXr2RXcmUkHxftKywbrpOCvLtutRh6CMPujA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID: qMiowMAxzxuJISdo8hXZAA--.43372S3
-X-CM-SenderInfo: 52kr3ztlq6z05rqj20fqof0/1tbiAgEEAWgmdWgODQACsU
-X-Coremail-Antispam: 1Uk129KBj93XoW7ZFW5Zw47tr1DuFW8Kw18tFc_yoW8GF4Upa
- y5C3Z8tF4vqay8JFZruF18XF9YvasxW34Yqw15JrWDKr9xtF4UJrWSkayYgFWq9FyrXFsY
- 9r45C3s5G3WDu3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
- sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
- 0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
- IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
- e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
- 0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
- GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
- xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v2
- 6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67
- vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
- wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc4
- 0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
- xVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
- 1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUzZ2-UUUU
- U
+References: <20250416123426.2638250-1-maxime.coquelin@redhat.com>
+In-Reply-To: <20250416123426.2638250-1-maxime.coquelin@redhat.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Fri, 16 May 2025 13:32:13 +0200
+X-Gm-Features: AX0GCFvAdVI8_Vji0pcBumBEaI4va_lsRqKOMsIMZFI1eSvF2W_BlD7UEoQ_rew
+Message-ID: <CAJFAV8yDJd+_OArqT_T2PRcjnx3pCRboAb1hub4LwRCjZjocbg@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Linux Kernel uAPI headers import
+To: Maxime Coquelin <maxime.coquelin@redhat.com>
+Cc: dev@dpdk.org, thomas@monjalon.net
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: Ugh-GRHsJwZb6yE9ozsb8webF-mj7XSWNDqurf-hoPI_1747395145
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -66,40 +83,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello David Marchand,
+On Wed, Apr 16, 2025 at 2:34=E2=80=AFPM Maxime Coquelin
+<maxime.coquelin@redhat.com> wrote:
+>
+> This series documents the license exception granted by both
+> the technical and governing boards to import uAPI header
+> files.
+>
+> It also imports VDUSE uAPI header file from Kernel v6.14.
+>
+> David Marchand (1):
+>   ci: check licenses
+>
+> Maxime Coquelin (3):
+>   license: add exception for Linux Kernel uAPI headers
+>   uapi: import VDUSE header from v6.14 kernel
+>   vhost: use imported VDUSE uAPI header
+>
+>  .github/workflows/build.yml     |   1 +
+>  devtools/check-spdx-tag.sh      |   2 +-
+>  kernel/linux/uapi/linux/vduse.h | 353 ++++++++++++++++++++++++++++++++
+>  kernel/linux/uapi/version       |   2 +-
+>  lib/vhost/meson.build           |   5 +-
+>  lib/vhost/vduse.c               |   2 +-
+>  lib/vhost/vduse.h               |  22 --
+>  license/Linux-syscall-note      |  25 +++
+>  license/exceptions.txt          |  17 +-
+>  9 files changed, 392 insertions(+), 37 deletions(-)
+>  create mode 100644 kernel/linux/uapi/linux/vduse.h
+>  create mode 100644 license/Linux-syscall-note
 
-On Fri, May 16, 2025 at 3:33 PM, David Marchand wrote:
+For the series,
+Reviewed-by: David Marchand <david.marchand@redhat.com>
 
-> Hello Min Zhou,
->
-> On Thu, May 15, 2025 at 3:47 PM Bruce Richardson
-> <bruce.richardson@intel.com> wrote:
->> Add a script to buildtools to report the minimum meson version given in
->> our meson.build file. Then use this script in two ways:
->>
->> 1. in the .ci/linux-setup.sh script, use the auto-determined minimum
->>     version to set up the CI, rather than hard-coding it.
->> 2. in meson.build call the script to report the version. This serves as
->>     a sanity check to ensure that any changes to meson.build file do not
->>     break the script.
->>
->> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
->> Acked-by: Stephen Hemminger <stephen@networkplumber.org>
->> Reviewed-by: Patrick Robb <probb@iol.unh.edu>
->>
->> ---
->> v3: update minimum meson to 0.57.2 (from 0.57.0) to fix CI errors
->> v2: rebase to latest main
-> The LoongArch CI reported an error on this patch, but I can't find out
-> the reason:
-> https://mails.dpdk.org/archives/test-report/2025-May/877981.html
->
-> This is probably related to the meson version in the build env, since
-> this patch increases the minimum version to 0.57.2.
->
-> Can you have a look please?
-Sure. The reason for this error is related to the meson version in the 
-build environment. I will update the version of meson and retest this 
-patch.
->
+Series applied, thanks.
+
+
+--=20
+David Marchand
 
