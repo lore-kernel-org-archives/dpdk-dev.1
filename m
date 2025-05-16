@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6740C3ABD8
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 14:13:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F29C9C3ABC9
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 14:14:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3972240651;
-	Fri, 16 May 2025 16:13:57 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 56A904064C;
+	Fri, 16 May 2025 16:14:35 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 96E5440395
- for <dev@dpdk.org>; Fri, 16 May 2025 16:13:55 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 8470C4064C
+ for <dev@dpdk.org>; Fri, 16 May 2025 16:14:33 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1747404835;
+ s=mimecast20190719; t=1747404873;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=QIwhLYOg+CJWSlzovphgZ3DActbFHntMjIQ9jqAa7vM=;
- b=YoWOo4Jkt1TxdAZZFoT4JCVa7s+Mq8+3zWRmVlMPQx/d2E3lem4z1vPnNkRhuMm9Y2hdPW
- lMVWq3nbkvXn0xQqgvBlJF89A9mmHrKfs//djWwQb8+8ssy2isshDg0U8mK6ewCkacGNRv
- 5jWHKultCbw8OGwhEPDExQZBVMTxmLE=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ bh=iWkaPJgndsN6K4AodBSgE3zljT1WNGD+2aOqDkbbf/M=;
+ b=aahfAxtAewTdAmzyNfon2RNFdLRXODwvajXmVYBQq0lZ9by3nNj3AZqDlY1er9jYa8YTRg
+ AeSek1lmgvLUHfZ81fDHyU8EfOvQzmxbPMBvSEQ5893cHfWjVbbXeZp3vcZWu97mhgp/hC
+ jfI6OUEmBtNRv1ALs16nQhpriHYMMe8=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-180-I83kWOk6OvSuf6htSCogsw-1; Fri,
- 16 May 2025 10:13:54 -0400
-X-MC-Unique: I83kWOk6OvSuf6htSCogsw-1
-X-Mimecast-MFC-AGG-ID: I83kWOk6OvSuf6htSCogsw_1747404833
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-31-D_nujBbdOWiXDWwIFujAFQ-1; Fri,
+ 16 May 2025 10:14:30 -0400
+X-MC-Unique: D_nujBbdOWiXDWwIFujAFQ-1
+X-Mimecast-MFC-AGG-ID: D_nujBbdOWiXDWwIFujAFQ_1747404869
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id E5B361956094; Fri, 16 May 2025 14:13:52 +0000 (UTC)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 1DCC21800446; Fri, 16 May 2025 14:14:29 +0000 (UTC)
 Received: from [10.45.242.18] (unknown [10.45.242.18])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id F31201800359; Fri, 16 May 2025 14:13:50 +0000 (UTC)
-Message-ID: <81db727c-9d3c-4652-9514-959c2a04c15c@redhat.com>
-Date: Fri, 16 May 2025 16:13:50 +0200
+ by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 407331956066; Fri, 16 May 2025 14:14:26 +0000 (UTC)
+Message-ID: <2e0159a1-c0bd-43ac-b88b-25f8bea65932@redhat.com>
+Date: Fri, 16 May 2025 16:14:23 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] crypto/virtio: fix cipher data src length
-To: Rajesh Mudimadugula <rmudimadugul@marvell.com>, dev@dpdk.org
-Cc: jianjay.zhou@huawei.com
-References: <20250403122603.3508135-1-rmudimadugul@marvell.com>
+Subject: Re: [PATCH] vhost: fix wrapping on control virtqueue rings
+To: David Marchand <david.marchand@redhat.com>, dev@dpdk.org
+Cc: stable@dpdk.org, Chenbo Xia <chenbox@nvidia.com>
+References: <20250402065358.3612788-1-david.marchand@redhat.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -90,10 +90,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20250403122603.3508135-1-rmudimadugul@marvell.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+In-Reply-To: <20250402065358.3612788-1-david.marchand@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: vBCZmVyGuZ3wH_TWsNJLBSJC2QBLWx2k-o9yOQq9zeg_1747404833
+X-Mimecast-MFC-PROC-ID: eC_h1zqoU6DleTf0LgBJBGHLU9DYO_9lhrR7q7dTkTI_1747404869
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -113,16 +113,24 @@ Errors-To: dev-bounces@dpdk.org
 
 
 
-On 4/3/25 2:26 PM, Rajesh Mudimadugula wrote:
-> In symmetric algorithm chaining, we need to consider both
-> cipher and auth data length for cipher source.
+On 4/2/25 8:53 AM, David Marchand wrote:
+> The idx field of a virtqueue available ring is increased by the driver
+> regardless of the ring size. It is for the device to mask this index
+> modulo the ring size (2.7.6 of the virtio 1.3 specification).
+> The same applies to the used ring.
 > 
-> Fixes: 82adb12a1fce ("crypto/virtio: support burst enqueue/dequeue")
+> Failing to mask triggers:
+> - crashes when popping message received on the cvq,
+> - system lockups (in the case of VDUSE) when the virtio-net driver waits
+>    infinitely,
 > 
-> Signed-off-by: Rajesh Mudimadugula <rmudimadugul@marvell.com>
+> Fixes: 474f4d7840ad ("vhost: add control virtqueue")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
 > ---
->   drivers/crypto/virtio/virtio_rxtx.c | 20 ++++++++++++--------
->   1 file changed, 12 insertions(+), 8 deletions(-)
+>   lib/vhost/virtio_net_ctrl.c | 10 ++--------
+>   1 file changed, 2 insertions(+), 8 deletions(-)
 > 
 
 Applied to next-virtio/for-net-next.
