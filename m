@@ -2,35 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3285DC3ABD8
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 20:45:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3110C3ABD8
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 21:13:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6548640668;
-	Fri, 16 May 2025 22:45:46 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9F76C402E4;
+	Fri, 16 May 2025 23:13:15 +0200 (CEST)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id C117D40648
- for <dev@dpdk.org>; Fri, 16 May 2025 22:45:42 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id CA492402E1
+ for <dev@dpdk.org>; Fri, 16 May 2025 23:13:14 +0200 (CEST)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id A9A8D201DB36; Fri, 16 May 2025 13:45:41 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A9A8D201DB36
+ id BD3AF201DB2A; Fri, 16 May 2025 14:13:13 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BD3AF201DB2A
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1747428341;
- bh=uUYre0UyHb4E0xBPoE2MR088RLAQE9HeNqVQJ0BDId8=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=WqgL2zpoEMz7yHzLh++EpV3BvvSIWZ1NBcN7rrxI6scWbw8NvApa6p4WkSRX4tfiC
- PFhVfhnv6Y3Ltm+h2zTvBTQlzHn2m43GKfTMlgV5r3IVwN5dNrthHSS/j8kITlGVHX
- vXR7Ua3K19tDnRr7z7kI9akBbLIF7yyjYN6z77Bk=
+ s=default; t=1747429993;
+ bh=5RVMDnEo8L489b2U8wVUn0eu1vS0OQg/SBmfarjqLu0=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=pFoyNzoXMsFp8KEijVg1XrVPetlVuSW0+TyS1HNeYWxO74PbtETr5ZIr5SsWjtFbz
+ K9yhGxctcjA59OanL3/nz4W6s6UYZJz64H4HiGnd4UiL6bJhfI1+A3hhCRGkdoYpI0
+ ozROgk16imwhpD36ILBGCqT8XlN+dxtHF7SKtFmw=
+Date: Fri, 16 May 2025 14:13:13 -0700
 From: Andre Muezerie <andremue@linux.microsoft.com>
-To: andremue@linux.microsoft.com
-Cc: dev@dpdk.org,
-	vladimir.medvedkin@intel.com
-Subject: [PATCH v5 2/2] lib/fib: enable fib to be compiled with MSVC
-Date: Fri, 16 May 2025 13:45:35 -0700
-Message-Id: <1747428335-3736-3-git-send-email-andremue@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1747428335-3736-1-git-send-email-andremue@linux.microsoft.com>
-References: <1733281010-23780-1-git-send-email-andremue@linux.microsoft.com>
- <1747428335-3736-1-git-send-email-andremue@linux.microsoft.com>
+To: David Marchand <david.marchand@redhat.com>
+Cc: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>, dev@dpdk.org
+Subject: Re: [PATCH] rcu: remove VLAs
+Message-ID: <20250516211313.GA9646@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1741311613-26629-1-git-send-email-andremue@linux.microsoft.com>
+ <CAJFAV8z-FM5Jaw1tcVu0KQGoaPa7gbpvH3GjcVDEdqSF0Zn47A@mail.gmail.com>
+ <20250516130918.GB29027@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <CAJFAV8ykrMTkgmEpv6Pp1C9tULAaWMcgsmf6mL47hD14_1DH9g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJFAV8ykrMTkgmEpv6Pp1C9tULAaWMcgsmf6mL47hD14_1DH9g@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -44,31 +49,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Now that all issues related to fib are addressed it can be enabled
-for MSVC.
+On Fri, May 16, 2025 at 03:30:23PM +0200, David Marchand wrote:
+> On Fri, May 16, 2025 at 3:09 PM Andre Muezerie
+> <andremue@linux.microsoft.com> wrote:
+> >
+> > On Fri, May 16, 2025 at 11:22:05AM +0200, David Marchand wrote:
+> > > Andre,
+> > >
+> > > On Fri, Mar 7, 2025 at 2:40 AM Andre Muezerie
+> > > <andremue@linux.microsoft.com> wrote:
+> > > >
+> > > > There are two lines that were using VLAs, which are not supported by
+> > > > MSVC.
+> > > >
+> > > > 1)
+> > > > ../lib/rcu/rte_rcu_qsbr.c:326:12: warning: variable length array used [-Wvla]
+> > > >   326 |         char data[dq->esize];
+> > > >       |                   ^~~~~~~~~
+> > > > 2)
+> > > > ../lib/rcu/rte_rcu_qsbr.c:389:12: warning: variable length array used [-Wvla]
+> > > >   389 |         char data[dq->esize];
+> > > >       |                   ^~~~~~~~~
+> > > >
+> > > > The short-term fix is to use alloca, to allow progress with the msvc
+> > > > compatibility work.
+> > > > The long-term plan involves API changes and therefore can only be applied
+> > > > with a new release. This long-term plan consists of introducing some
+> > > > reasonable limitation on RCU DQ element size.
+> > > >
+> > > > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+> > >
+> > > Afaiu, enabling RCU with MSVC depends on this current patch and a fix
+> > > in test/ipfrag:
+> > > https://patchwork.dpdk.org/project/dpdk/patch/1741313581-14300-1-git-send-email-andremue@linux.microsoft.com/.
+> > > Is there anything else missing?
+> > >
+> > > If not, then I would be for doing this enabling as part of this
+> > > current patch (I can do this when applying).
+> > > WDYT?
+> > >
+> >
+> > You're correct. When enabling RCU lib, test_ipfrag is build and fails if the mentioned
+> > patch is not applied yet. If you apply that patch first, it would be great if you
+> > could enable RCU on Windows as part of this patch. Nothing else should be missing.
+> >
+> > I had not enabled it before to not break the CI build.
+> 
+> Ok, I did my checks and it looks fine, so I squashed the mention
+> change as part of this patch.
+> 
+> I see patches on lpm and fib library for which I have similar questions.
+> I must stop merging for today but could you double check those
+> libraries can be enabled too?
+> 
+> This way it will be easier for me next week.
+> 
 
-Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
----
- lib/fib/meson.build | 6 ------
- 1 file changed, 6 deletions(-)
+I updated both patches to also enable the build when using MSVC since there's
+nothing blocking that anymore.
 
-diff --git a/lib/fib/meson.build b/lib/fib/meson.build
-index da82e017a9..6992ccc040 100644
---- a/lib/fib/meson.build
-+++ b/lib/fib/meson.build
-@@ -2,12 +2,6 @@
- # Copyright(c) 2018 Vladimir Medvedkin <medvedkinv@gmail.com>
- # Copyright(c) 2019 Intel Corporation
- 
--if is_ms_compiler
--    build = false
--    reason = 'not supported building with Visual Studio Toolset'
--    subdir_done()
--endif
--
- sources = files('rte_fib.c', 'rte_fib6.c', 'dir24_8.c', 'trie.c')
- headers = files('rte_fib.h', 'rte_fib6.h')
- deps += ['rib']
--- 
-2.49.0.vfs.0.3
-
+> 
+> Thanks.
+> 
+> -- 
+> David Marchand
