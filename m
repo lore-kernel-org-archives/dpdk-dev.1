@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE491C3ABD8
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 14:13:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6740C3ABD8
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 14:13:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1ACF9402CD;
-	Fri, 16 May 2025 16:13:51 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3972240651;
+	Fri, 16 May 2025 16:13:57 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 2A14140292
- for <dev@dpdk.org>; Fri, 16 May 2025 16:13:49 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 96E5440395
+ for <dev@dpdk.org>; Fri, 16 May 2025 16:13:55 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1747404828;
+ s=mimecast20190719; t=1747404835;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=5gm0YP1776ZtMaTCzu8VWXYnqjWgsnVOfkbI9qOdSMA=;
- b=e3/mnYMzvrJZMa/gl9zzfGFf4GoLIOIuKEJp+ljF2BU/ET9wQv5Y8rOzFlAD12NhPj7yiL
- LtS5lRK/58yse6GKVitoX7InFPvOWkTWEYlXHV1rdDcsqV4gjoE8S/Q2/aQdBEbSquh03p
- Eib7t95EyHLoaP54BK/pYB3kC6p+xhE=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ bh=QIwhLYOg+CJWSlzovphgZ3DActbFHntMjIQ9jqAa7vM=;
+ b=YoWOo4Jkt1TxdAZZFoT4JCVa7s+Mq8+3zWRmVlMPQx/d2E3lem4z1vPnNkRhuMm9Y2hdPW
+ lMVWq3nbkvXn0xQqgvBlJF89A9mmHrKfs//djWwQb8+8ssy2isshDg0U8mK6ewCkacGNRv
+ 5jWHKultCbw8OGwhEPDExQZBVMTxmLE=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-447-jj1AjMYkOBGFsEnWyvz6aQ-1; Fri,
- 16 May 2025 10:13:47 -0400
-X-MC-Unique: jj1AjMYkOBGFsEnWyvz6aQ-1
-X-Mimecast-MFC-AGG-ID: jj1AjMYkOBGFsEnWyvz6aQ_1747404826
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-180-I83kWOk6OvSuf6htSCogsw-1; Fri,
+ 16 May 2025 10:13:54 -0400
+X-MC-Unique: I83kWOk6OvSuf6htSCogsw-1
+X-Mimecast-MFC-AGG-ID: I83kWOk6OvSuf6htSCogsw_1747404833
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 331DA18004AD; Fri, 16 May 2025 14:13:46 +0000 (UTC)
+ by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id E5B361956094; Fri, 16 May 2025 14:13:52 +0000 (UTC)
 Received: from [10.45.242.18] (unknown [10.45.242.18])
  by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 7D737180087A; Fri, 16 May 2025 14:13:44 +0000 (UTC)
-Message-ID: <3e60e751-7057-4230-956b-050c63ed0e7e@redhat.com>
-Date: Fri, 16 May 2025 16:13:40 +0200
+ id F31201800359; Fri, 16 May 2025 14:13:50 +0000 (UTC)
+Message-ID: <81db727c-9d3c-4652-9514-959c2a04c15c@redhat.com>
+Date: Fri, 16 May 2025 16:13:50 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] vhost: fix cipher data length
+Subject: Re: [PATCH 2/2] crypto/virtio: fix cipher data src length
 To: Rajesh Mudimadugula <rmudimadugul@marvell.com>, dev@dpdk.org
-Cc: chenbox@nvidia.com
-References: <20250403122234.3508100-1-rmudimadugul@marvell.com>
+Cc: jianjay.zhou@huawei.com
+References: <20250403122603.3508135-1-rmudimadugul@marvell.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -90,10 +90,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20250403122234.3508100-1-rmudimadugul@marvell.com>
+In-Reply-To: <20250403122603.3508135-1-rmudimadugul@marvell.com>
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: uerjK5fGuKeIu3CsjthLqIq18zCCFqMk5SLFDDZ4a2I_1747404826
+X-Mimecast-MFC-PROC-ID: vBCZmVyGuZ3wH_TWsNJLBSJC2QBLWx2k-o9yOQq9zeg_1747404833
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -113,35 +113,17 @@ Errors-To: dev-bounces@dpdk.org
 
 
 
-On 4/3/25 2:22 PM, Rajesh Mudimadugula wrote:
-> This patch fixes cipher data length, in the event of algorithm
-> chaining. When enqueuing crypto op to vhost backend
-> cipher.data.length is set correctly which is in
-> virtqueue_crypto_sym_pkt_header_arrange(). This field is computed
-> and assigned wrongly instead of using passed value. This is
-> rectified and using correct cipher data length in vhost crypto.
+On 4/3/25 2:26 PM, Rajesh Mudimadugula wrote:
+> In symmetric algorithm chaining, we need to consider both
+> cipher and auth data length for cipher source.
 > 
-> Fixes: 3bb595ecd682 ("vhost/crypto: add request handler")
+> Fixes: 82adb12a1fce ("crypto/virtio: support burst enqueue/dequeue")
 > 
 > Signed-off-by: Rajesh Mudimadugula <rmudimadugul@marvell.com>
 > ---
->   lib/vhost/vhost_crypto.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
+>   drivers/crypto/virtio/virtio_rxtx.c | 20 ++++++++++++--------
+>   1 file changed, 12 insertions(+), 8 deletions(-)
 > 
-> diff --git a/lib/vhost/vhost_crypto.c b/lib/vhost/vhost_crypto.c
-> index 3c6c5dc114..ddcd93738b 100644
-> --- a/lib/vhost/vhost_crypto.c
-> +++ b/lib/vhost/vhost_crypto.c
-> @@ -1358,8 +1358,7 @@ prepare_sym_chain_op(struct vhost_crypto *vcrypto, struct rte_crypto_op *op,
->   	op->sess_type = RTE_CRYPTO_OP_WITH_SESSION;
->   
->   	op->sym->cipher.data.offset = chain->para.cipher_start_src_offset;
-> -	op->sym->cipher.data.length = chain->para.src_data_len -
-> -			chain->para.cipher_start_src_offset;
-> +	op->sym->cipher.data.length = chain->para.len_to_cipher;
->   
->   	op->sym->auth.data.offset = chain->para.hash_start_src_offset;
->   	op->sym->auth.data.length = chain->para.len_to_hash;
 
 Applied to next-virtio/for-net-next.
 
