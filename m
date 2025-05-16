@@ -2,73 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BE83C3ABD8
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 13:19:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 307F7C3DA6D
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 13:19:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 86B9540292;
-	Fri, 16 May 2025 15:19:14 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8713D40395;
+	Fri, 16 May 2025 15:19:48 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 0F9094028F
- for <dev@dpdk.org>; Fri, 16 May 2025 15:19:12 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 25DFC402F1
+ for <dev@dpdk.org>; Fri, 16 May 2025 15:19:47 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1747401552;
+ s=mimecast20190719; t=1747401586;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=uAvG8bw2V994ECg58CRol62Hz9PMS52SqgMnF6zKcZ0=;
- b=CTgIUB3TUAOahrzAlJXilk+D9YQCPnlk++jXz0uLXl9oJP8g9QU/d0RRk7+a/0O+HGmQtc
- MrKZwZkGSlZcwZ7ts42HIke3sTWykDPuCWGxlNrzpMUrHpIwbjAIUGY729zSt5GNgPjROj
- md4tbbem/Cibxozx3wNhJfqjXgZrhQo=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=zHxuN4X8LisjOwQG0c7tQJ3UrSRBxyfcxLaEIM8hY9Y=;
+ b=DKtToOd+ypULkQZhSEsIo6haBHY4Gb0zf04kQ5KB8B6s5RT+R48BGncSITrlYJyPnrgSvc
+ VSgamaWOOXINI5F3uLqv9nqU264UL4Z2uyg4rIQi0OkSJ+cLgPeCebId0YCgAdx6/Q8Vqj
+ uIJyBnFrq9+3kWyjDP+/as4WcGRZWy0=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-187-H-lK-EUCPKG0wt1KXDSSZA-1; Fri, 16 May 2025 09:19:10 -0400
-X-MC-Unique: H-lK-EUCPKG0wt1KXDSSZA-1
-X-Mimecast-MFC-AGG-ID: H-lK-EUCPKG0wt1KXDSSZA_1747401549
-Received: by mail-lj1-f197.google.com with SMTP id
- 38308e7fff4ca-327fece80a0so7053101fa.0
- for <dev@dpdk.org>; Fri, 16 May 2025 06:19:10 -0700 (PDT)
+ us-mta-320-RTCJ-4L2NGiRHNlkg6TlXw-1; Fri, 16 May 2025 09:19:45 -0400
+X-MC-Unique: RTCJ-4L2NGiRHNlkg6TlXw-1
+X-Mimecast-MFC-AGG-ID: RTCJ-4L2NGiRHNlkg6TlXw_1747401584
+Received: by mail-lf1-f71.google.com with SMTP id
+ 2adb3069b0e04-54c2a5fd572so911024e87.1
+ for <dev@dpdk.org>; Fri, 16 May 2025 06:19:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1747401549; x=1748006349;
+ d=1e100.net; s=20230601; t=1747401584; x=1748006384;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=uAvG8bw2V994ECg58CRol62Hz9PMS52SqgMnF6zKcZ0=;
- b=U6ymW3ycPz9hkAc4DMJu1MsFrtXec783wEV6wnqh2t2AF22rluMHVqITrdZWvCkjNO
- NOmlCjzE+AU+LvPf3caXzGIR8K75XhioKbvpuLKwn1dOkCkmCzUg6lHBm3CJtDfcD3rz
- 1mZux5VtYFn7A2XmtDeQRPvnAVSUY+oR2A7oy9orrl107eZF3A6UuySnGtPYvQnFCgEo
- uec93AQwQwrhPdSmCH3a1sIPvTrsrjrecmF/TTPebkp7IlyJjGrpBNeEJSltBNvdHRpZ
- XNo+fOqrnptHHMzmTKcP8eU+zyuFqqJIKxvCHDXHB1ZJqBvbT2NwnExDgKYVOGXcYxgM
- XCwA==
+ bh=zHxuN4X8LisjOwQG0c7tQJ3UrSRBxyfcxLaEIM8hY9Y=;
+ b=OgXbUz65C2mHdxTE1xLN2ns3YYzKJK9YxPtuOOicKWOCAKObTagKxPuLERhOJ/3DAk
+ kX0sgWiZPy1nWyCcwYSD3xesr1/f7breXXWjpNA/uM3QKb+VG3iod3kqvQ//HUZgPSBi
+ KBrkPEDN/U0gwmrvoeMSJ8bMNf7rDFJhkUWMxc7D8oQzfq8+wL2eSF02uiW6M7j6k5jr
+ kP3llT+sXpJPgaKUJMOF+RDrEebgRx9ALeHCvP12bNmDB4xo01sVEc1UW8K4mVQcACVm
+ fH4EawrsML9ZSPqptg3YWbkpk/4T+irj0hZx9XoFL6StwAkSd9uxep/cn5VQAyz2NE3H
+ UTNg==
 X-Forwarded-Encrypted: i=1;
- AJvYcCVbxMHstdN8FmH7vUi2S/88avFa3+pqr2VwuidIJfdSKZEyIrTE4CcM0iBhYQ4ZpaB1Fnk=@dpdk.org
-X-Gm-Message-State: AOJu0Yw/MYsnwl/FehB+LhMilL3PRhHoiu8P/3qDEd5peX10wNjzdwDS
- fglRBZeS5glmG3tzFUvyIQpNQIJCL4uO48XrOh6IvfOJaSJBAvsfTtMQ//FqzxXUmE+JaAQZFBP
- AwZFYeleJX+ZUM9e5oMQfXacWiwS2cv68nAMdyUURKuxIJ8P3XPojExoCMyz+s7kI3arclPjLRL
- B7iJpHaPXDQeiV2acotj4=
-X-Gm-Gg: ASbGncux/7XfDwW2CYTWOwyiomYSicEsbXR7JkJpQxSWkNmt2qaytHI29ub2zcp0m/N
- zJMcagwmn8eihL/f8cdyv//DAB3vb94gTll1K7dT5jpSC1kpQBgbchje5fMkebjuC5prXmyE=
-X-Received: by 2002:a05:651c:1544:b0:326:cb09:8220 with SMTP id
- 38308e7fff4ca-327f84f686emr25910221fa.16.1747401548891; 
- Fri, 16 May 2025 06:19:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE+x1/F+guHV6c3xMxp+kzXRNUmDDpKtV7a/O8PLk9KTed9IS//F0A6GeeYMTFHj1tFEATuuNi98LaAerqTN7k=
-X-Received: by 2002:a05:651c:1544:b0:326:cb09:8220 with SMTP id
- 38308e7fff4ca-327f84f686emr25910131fa.16.1747401548475; Fri, 16 May 2025
- 06:19:08 -0700 (PDT)
+ AJvYcCVpff4zoOXrwC5WwWXGVUC91tU4Q/eBqvgAuLAI7e9JO+hULI3h5sbZZ6dvzSSc6EP4TgU=@dpdk.org
+X-Gm-Message-State: AOJu0Yyu2LUTFkXTpf1XuhkyT6CAihd9e+qHBbnxBpysifkxpxNiOPCO
+ CHODVKPyA7zplMsP4QXXc7aFqEVsl+S156UDDY5ubVePY9EznP06LTRHwEzZtc9Ry7aaz+hohEa
+ pg4r8Io/urLZU3cvi+biGIc/kmGuFXeiQ/PCCrJioD28xG2B/NdQuqOOIUK7u/+LRfObjSg+Bap
+ 7+I8Qw8qyLoIZVp7+GXhA=
+X-Gm-Gg: ASbGncuj1Ls6FZnwc0TpxwmC6F5OIaAQcssJ4xKNIE7Wzw/lbhjr3Nu3PORFNrY6xjJ
+ 9OjDJwywxETI3XRnNP18FVfs3BJQ8SblG16hnNO/ZslJyqB23ggFyypKPuKP8nO5I4xOHCPY=
+X-Received: by 2002:a05:6512:2284:b0:549:8f10:ec25 with SMTP id
+ 2adb3069b0e04-550e71e48c0mr1118771e87.31.1747401583847; 
+ Fri, 16 May 2025 06:19:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHopQPsCjYHhCTaMdQYDaKy8gIffwoTpFmKuXwAwwssJqqyL427qPcs+lha9y34HS7K4r3QWnEPTpviZ91tPbw=
+X-Received: by 2002:a05:6512:2284:b0:549:8f10:ec25 with SMTP id
+ 2adb3069b0e04-550e71e48c0mr1118762e87.31.1747401583420; Fri, 16 May 2025
+ 06:19:43 -0700 (PDT)
 MIME-Version: 1.0
-References: <1741313581-14300-1-git-send-email-andremue@linux.microsoft.com>
-In-Reply-To: <1741313581-14300-1-git-send-email-andremue@linux.microsoft.com>
+References: <1741311613-26629-1-git-send-email-andremue@linux.microsoft.com>
+In-Reply-To: <1741311613-26629-1-git-send-email-andremue@linux.microsoft.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 16 May 2025 15:18:56 +0200
-X-Gm-Features: AX0GCFs7SdBwcpzP4geoPSygPVVGGnojf9Bx4VCxzO5FaWIDSW89PO3V2b1SwDU
-Message-ID: <CAJFAV8yT5tHs0dkOinG+D2TbF13Jaks2RJNDwoz+yBHt_nLu0Q@mail.gmail.com>
-Subject: Re: [PATCH] test_ipfrag: remove array of size zero
+Date: Fri, 16 May 2025 15:19:31 +0200
+X-Gm-Features: AX0GCFuAMiHTH8OFUhkdOax_LNG6MeIALzQHaI6CgQwQqrUtbeAyeN-kh86iYS0
+Message-ID: <CAJFAV8yBUQ_DZhxwrco0Kk675Jwf9WaVU9voGjM-SGMj5O42vA@mail.gmail.com>
+Subject: Re: [PATCH] rcu: remove VLAs
 To: Andre Muezerie <andremue@linux.microsoft.com>
-Cc: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>, dev@dpdk.org
+Cc: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>, dev@dpdk.org
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: FoDI_8_jUJe5m-AGtmAZyr7QKay2pDgtcZFSIpkkoR0_1747401549
+X-Mimecast-MFC-PROC-ID: ayTBNIehaEyoQqavz0C1GiX3SrgB3BAFdhCHP-9Abzo_1747401584
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -85,21 +85,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Mar 7, 2025 at 3:13=E2=80=AFAM Andre Muezerie
+On Fri, Mar 7, 2025 at 2:40=E2=80=AFAM Andre Muezerie
 <andremue@linux.microsoft.com> wrote:
 >
-> When compiling with MSVC the error below pops up:
+> There are two lines that were using VLAs, which are not supported by
+> MSVC.
 >
-> ../app/test/test_ipfrag.c(39): error C2466:
->     cannot allocate an array of constant size 0
-> ../app/test/test_ipfrag.c(157): warning C4034: sizeof returns 0
-> ../app/test/test_ipfrag.c(160): warning C4034: sizeof returns 0
+> 1)
+> ../lib/rcu/rte_rcu_qsbr.c:326:12: warning: variable length array used [-W=
+vla]
+>   326 |         char data[dq->esize];
+>       |                   ^~~~~~~~~
+> 2)
+> ../lib/rcu/rte_rcu_qsbr.c:389:12: warning: variable length array used [-W=
+vla]
+>   389 |         char data[dq->esize];
+>       |                   ^~~~~~~~~
 >
-> The fix is to simplify the code and remove the zero-size array.
+> The short-term fix is to use alloca, to allow progress with the msvc
+> compatibility work.
+> The long-term plan involves API changes and therefore can only be applied
+> with a new release. This long-term plan consists of introducing some
+> reasonable limitation on RCU DQ element size.
 >
 > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 
-Applied, thanks.
+Applied with enabling RCU compilation on MSVC.
+Thanks.
 
 
 --=20
