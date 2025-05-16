@@ -2,33 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F124C3ABD8
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 13:22:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5840BC3ABD8
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 13:22:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ECE44402ED;
-	Fri, 16 May 2025 15:22:21 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E7AC04060B;
+	Fri, 16 May 2025 15:22:22 +0200 (CEST)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 67EF340292
+ by mails.dpdk.org (Postfix) with ESMTP id 88A21402ED
  for <dev@dpdk.org>; Fri, 16 May 2025 15:22:20 +0200 (CEST)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id B09372118E45; Fri, 16 May 2025 06:22:19 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B09372118E45
+ id D745C201DB26; Fri, 16 May 2025 06:22:19 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D745C201DB26
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1747401739;
- bh=WuwxDODN3PlxSKvZAlwY+krx9Cw+7xdJ+Ep7PSi3ack=;
- h=From:To:Cc:Subject:Date:From;
- b=gt99Tu5/eD7QiHjPid4L1+iBLbIfR/uEfCkcoCKSDrHbjZSgaKgSvNqvImAlz9syw
- ZEBMFjHsB+9l62KbdXB1w4b2rTqnp+WKEOY+aZYvQZBonZed4MRsnGTwleV6hQ7wKh
- 17TTYtfuDeCWlKH1ejO/6Q9zoAjKk4yyIa517+hY=
+ bh=J0lPR4tp0bPMAq+HoWO5msnUv4voz1LicTvpiDHs83I=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=F8U+IFPOJujYd780ZbnvEMXfHEsDa+I8BP4gJU+B1BZ7avqO+QA0arJs3SwmgR2aB
+ 42Fi3J2wv/kwioABB+ZP6R4AqiPMffF6UEf71j5l1cTap6sR/rmvZokPS1UhOklEBT
+ NxPkZlM0/AlIwnmUzWYsNutOhPNhni/jGfoQl5sg=
 From: Andre Muezerie <andremue@linux.microsoft.com>
-To: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>
+To: 
 Cc: dev@dpdk.org,
 	Andre Muezerie <andremue@linux.microsoft.com>
-Subject: [PATCH 1/2] eal: add strsep() for Windows builds
-Date: Fri, 16 May 2025 06:22:13 -0700
-Message-Id: <1747401734-6303-1-git-send-email-andremue@linux.microsoft.com>
+Subject: [PATCH 2/2] test/strsep: add tests for function strsep()
+Date: Fri, 16 May 2025 06:22:14 -0700
+Message-Id: <1747401734-6303-2-git-send-email-andremue@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1747401734-6303-1-git-send-email-andremue@linux.microsoft.com>
+References: <1747401734-6303-1-git-send-email-andremue@linux.microsoft.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -42,113 +43,141 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Function strsep() is used by DPDK code but is not available on Windows.
-
-This patch adds an implementation from NetBSD, unblocking code depending
-on it from being compiled on Windows.
+This patch adds tests for the strsep() function.
 
 Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 ---
- lib/eal/windows/include/rte_os_shim.h |  1 +
- lib/eal/windows/include/strsep.h      |  9 +++++
- lib/eal/windows/meson.build           |  1 +
- lib/eal/windows/strsep.c              | 47 +++++++++++++++++++++++++++
- 4 files changed, 58 insertions(+)
- create mode 100644 lib/eal/windows/include/strsep.h
- create mode 100644 lib/eal/windows/strsep.c
+ app/test/meson.build   |   1 +
+ app/test/test_strsep.c | 108 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 109 insertions(+)
+ create mode 100644 app/test/test_strsep.c
 
-diff --git a/lib/eal/windows/include/rte_os_shim.h b/lib/eal/windows/include/rte_os_shim.h
-index 0e74eb19c7..9c3da554da 100644
---- a/lib/eal/windows/include/rte_os_shim.h
-+++ b/lib/eal/windows/include/rte_os_shim.h
-@@ -7,6 +7,7 @@
- 
- #include <rte_os.h>
- #include <rte_windows.h>
-+#include <strsep.h>
- 
- /**
-  * @file
-diff --git a/lib/eal/windows/include/strsep.h b/lib/eal/windows/include/strsep.h
+diff --git a/app/test/meson.build b/app/test/meson.build
+index b6285a6b45..ec5a1fbae3 100644
+--- a/app/test/meson.build
++++ b/app/test/meson.build
+@@ -184,6 +184,7 @@ source_file_deps = {
+     'test_stack.c': ['stack'],
+     'test_stack_perf.c': ['stack'],
+     'test_string_fns.c': [],
++    'test_strsep.c': [],
+     'test_table.c': ['table', 'pipeline', 'port'],
+     'test_table_acl.c': ['net', 'table', 'pipeline', 'port'],
+     'test_table_combined.c': ['table', 'pipeline', 'port'],
+diff --git a/app/test/test_strsep.c b/app/test/test_strsep.c
 new file mode 100644
-index 0000000000..d5d2860d48
+index 0000000000..19df8f31ee
 --- /dev/null
-+++ b/lib/eal/windows/include/strsep.h
-@@ -0,0 +1,9 @@
++++ b/app/test/test_strsep.c
+@@ -0,0 +1,108 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (c) 1990, 1993
-+ * The Regents of the University of California.  All rights reserved.
-+ */
-+
-+#pragma once
-+
-+char *
-+strsep(char **stringp, const char *delim);
-diff --git a/lib/eal/windows/meson.build b/lib/eal/windows/meson.build
-index 7756d417be..eadecd473c 100644
---- a/lib/eal/windows/meson.build
-+++ b/lib/eal/windows/meson.build
-@@ -19,6 +19,7 @@ sources += files(
-         'eal_timer.c',
-         'getopt.c',
-         'rte_thread.c',
-+        'strsep.c',
- )
- 
- dpdk_conf.set10('RTE_EAL_NUMA_AWARE_HUGEPAGES', true)
-diff --git a/lib/eal/windows/strsep.c b/lib/eal/windows/strsep.c
-new file mode 100644
-index 0000000000..fdc0688a07
---- /dev/null
-+++ b/lib/eal/windows/strsep.c
-@@ -0,0 +1,47 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (c) 1990, 1993
-+ * The Regents of the University of California.  All rights reserved.
++ * Copyright (C) 2025 Microsoft Corporation
 + */
 +
 +#include <string.h>
++#include <rte_os_shim.h>
 +
-+#include "strsep.h"
++#include "test.h"
 +
-+/* Get next token from string *stringp, where tokens are possibly empty
-+ * strings separated by characters from delim.
-+ *
-+ * Writes NULLs into the string at *stringp to end tokens.
-+ * delim need not remain constant from call to call.
-+ * On return, *stringp points past the last NULL written (if there might
-+ * be further tokens), or is NULL (if there are definitely no more tokens).
-+ *
-+ * If *stringp is NULL, strsep returns NULL.
-+ */
-+char *
-+strsep(char **stringp, const char *delim)
++static int
++test_strsep_helper(const char *str, const char *delim,
++		   const char * const expected_tokens[], size_t expected_tokens_count)
 +{
-+	char *s;
-+	const char *spanp;
-+	int c, sc;
-+	char *tok;
-+
-+	s = *stringp;
-+	if (s == NULL)
-+		return NULL;
-+	for (tok = s;;) {
-+		c = *s++;
-+		spanp = delim;
-+		do {
-+			sc = *spanp++;
-+			if (sc == c) {
-+				if (c == 0)
-+					s = NULL;
-+				else
-+					s[-1] = 0;
-+				*stringp = s;
-+				return tok;
-+			}
-+		} while (sc != 0);
++	char *s = str != NULL ? strdup(str) : NULL;
++	const char *token;
++	for (size_t i = 0; i < expected_tokens_count; i++) {
++		token = strsep(&s, delim);
++		if (token == NULL) {
++			printf("Expected token '%s', got NULL\n", expected_tokens[i]);
++			free(s);
++			return TEST_FAILED;
++		}
++		if (strcmp(expected_tokens[i], token) != 0) {
++			printf("Expected '%s', got '%s'\n", expected_tokens[i], token);
++			free(s);
++			return TEST_FAILED;
++		}
 +	}
-+	/* NOTREACHED */
++	/* Check that there are no more tokens left */
++	token = strsep(&s, delim);
++	if (token != NULL) {
++		printf("Expected NULL, got '%s'\n", token);
++		free(s);
++		return TEST_FAILED;
++	}
++	free(s);
++	return TEST_SUCCESS;
 +}
++
++static int
++test_strsep_single_delimiter(void)
++{
++	const char *str = "hello,world";
++	const char *delim = ",";
++	static const char * const expected_tokens[] = { "hello", "world" };
++	const size_t expected_tokens_count = RTE_DIM(expected_tokens);
++	return test_strsep_helper(str, delim, expected_tokens, expected_tokens_count);
++}
++
++static int
++test_strsep_multiple_delimiters(void)
++{
++	const char *str = "hello,world;this:is;a:test";
++	const char *delim = ",;:";
++	static const char * const expected_tokens[] = {"hello", "world", "this", "is", "a", "test"};
++	const size_t expected_tokens_count = RTE_DIM(expected_tokens);
++	return test_strsep_helper(str, delim, expected_tokens, expected_tokens_count);
++}
++
++static int
++test_strsep_string_with_no_delimiters(void)
++{
++	const char *str = "helloworld";
++	const char *delim = ",";
++	static const char * const expected_tokens[] = {"helloworld"};
++	const size_t expected_tokens_count = RTE_DIM(expected_tokens);
++	return test_strsep_helper(str, delim, expected_tokens, expected_tokens_count);
++}
++
++static int
++test_strsep_empty_string(void)
++{
++	const char *str = "";
++	const char *delim = ",";
++	static const char * const expected_tokens[] = {""};
++	const size_t expected_tokens_count = RTE_DIM(expected_tokens);
++	return test_strsep_helper(str, delim, expected_tokens, expected_tokens_count);
++}
++
++static int
++test_strsep_null(void)
++{
++	const char *str = NULL;
++	const char *delim = ",";
++	static const char * const expected_tokens[] = {""};
++	const size_t expected_tokens_count = 0;
++	return test_strsep_helper(str, delim, expected_tokens, expected_tokens_count);
++}
++
++static struct unit_test_suite test_suite = {
++	.suite_name = "Strsep test suite",
++	.unit_test_cases = {
++		TEST_CASE(test_strsep_single_delimiter),
++		TEST_CASE(test_strsep_multiple_delimiters),
++		TEST_CASE(test_strsep_string_with_no_delimiters),
++		TEST_CASE(test_strsep_empty_string),
++		TEST_CASE(test_strsep_null),
++		TEST_CASES_END()
++	}
++};
++
++static int
++test_strsep(void)
++{
++	return unit_test_suite_runner(&test_suite);
++}
++
++REGISTER_FAST_TEST(strsep_autotest, true, true, test_strsep);
 -- 
 2.49.0.vfs.0.3
 
