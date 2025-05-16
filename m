@@ -2,102 +2,158 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F29C9C3ABC9
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 14:14:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 525E8C3ABC9
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 14:41:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 56A904064C;
-	Fri, 16 May 2025 16:14:35 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 8470C4064C
- for <dev@dpdk.org>; Fri, 16 May 2025 16:14:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1747404873;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=iWkaPJgndsN6K4AodBSgE3zljT1WNGD+2aOqDkbbf/M=;
- b=aahfAxtAewTdAmzyNfon2RNFdLRXODwvajXmVYBQq0lZ9by3nNj3AZqDlY1er9jYa8YTRg
- AeSek1lmgvLUHfZ81fDHyU8EfOvQzmxbPMBvSEQ5893cHfWjVbbXeZp3vcZWu97mhgp/hC
- jfI6OUEmBtNRv1ALs16nQhpriHYMMe8=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-31-D_nujBbdOWiXDWwIFujAFQ-1; Fri,
- 16 May 2025 10:14:30 -0400
-X-MC-Unique: D_nujBbdOWiXDWwIFujAFQ-1
-X-Mimecast-MFC-AGG-ID: D_nujBbdOWiXDWwIFujAFQ_1747404869
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 1DCC21800446; Fri, 16 May 2025 14:14:29 +0000 (UTC)
-Received: from [10.45.242.18] (unknown [10.45.242.18])
- by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 407331956066; Fri, 16 May 2025 14:14:26 +0000 (UTC)
-Message-ID: <2e0159a1-c0bd-43ac-b88b-25f8bea65932@redhat.com>
-Date: Fri, 16 May 2025 16:14:23 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] vhost: fix wrapping on control virtqueue rings
-To: David Marchand <david.marchand@redhat.com>, dev@dpdk.org
-Cc: stable@dpdk.org, Chenbo Xia <chenbox@nvidia.com>
-References: <20250402065358.3612788-1-david.marchand@redhat.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <20250402065358.3612788-1-david.marchand@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: eC_h1zqoU6DleTf0LgBJBGHLU9DYO_9lhrR7q7dTkTI_1747404869
-X-Mimecast-Originator: redhat.com
+	by mails.dpdk.org (Postfix) with ESMTP id 2530340395;
+	Fri, 16 May 2025 16:41:06 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id DBAFF402CD
+ for <dev@dpdk.org>; Fri, 16 May 2025 16:41:04 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54GCf6hU030033;
+ Fri, 16 May 2025 07:41:04 -0700
+Received: from nam02-dm3-obe.outbound.protection.outlook.com
+ (mail-dm3nam02lp2048.outbound.protection.outlook.com [104.47.56.48])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46p5jtr66v-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Fri, 16 May 2025 07:41:03 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pAjBI+q6eDqAfEhlnbJbO/UO418TDYJVvm1usopheIWvvW6h9qeRO8uhrta7v5K1qJLzGUx10mwIwNgURhmYPI6iOTa4a9YD6Wl3QFYiMfy5sZhUKJjZM8WTRz13R+Cif+UMz4Tp3ZCUlF6Dt6InmmbAa96PQ4Huhp718aCuIm5sejLxrCypg/OHSpP8W9240yw99YlZXAqhTZyvZdFBM8zyeopeXfMl4uQO7bHQHvcPUdQ1xHkf/ctJzsgpmsDNCQRFLk3xm8czBSFJV7V2ydryhwH5JAxA9x9Tk5Ev8YQa8CXwHppiutHF1HoV2Jgc1dRkMBDwQXjqsDH+7tHALA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tSe4JGjU1X9KQeXZZ1iU+eHgY9eLf2rhqM6T3AGqNww=;
+ b=WwXNvnZ67FfyMMQtGAkMfgWJ/nJvyyst782nhvNa2o4ze/7H5BxQNq19aPM3fk/myCQYcKmGrv2WQSL6HuSM9e9Tz+GY9GM39tgdiyQEWzun1GMwypGLB7G1AoQrwc//DDXn6UTeNr32aFcYTqzApA2M/Nk/xhmbcQMCU28602eDXQ2XH0VnTUsjiDGj8nJeF4IWppMBR0WtVROKXBktsq37gwgNeRq0dG+wsCgY6fbryVYY3x3Vj3n8IMz4DB2mehVLdgBoNEuS4cyi9aKyg2QNUERXazZQHBU64vBe0MtrbF8/pE84clEaoMwRhQR+aFI5F4hrssdkPXXsbRkLOA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tSe4JGjU1X9KQeXZZ1iU+eHgY9eLf2rhqM6T3AGqNww=;
+ b=iETucRCyUIfhZrl7GS0Ih7f4R8DzwPsN1Cx7L3X36cIBM0I1EByaBEYFqHDgnqpuzvPW3eWBGSLCksz21YJPhyLarDvmFihNJ/m/cAo6T1BopagSyGMlOAR0QX/WLhQOWEgoVmwH7btbw9q8a+xCbWmTR1qga5crxEU4TfrcW7w=
+Received: from PH0PR18MB4672.namprd18.prod.outlook.com (2603:10b6:510:c9::16)
+ by SA0PR18MB3632.namprd18.prod.outlook.com (2603:10b6:806:72::15)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.33; Fri, 16 May
+ 2025 14:41:01 +0000
+Received: from PH0PR18MB4672.namprd18.prod.outlook.com
+ ([fe80::10cc:503b:935f:f61c]) by PH0PR18MB4672.namprd18.prod.outlook.com
+ ([fe80::10cc:503b:935f:f61c%3]) with mapi id 15.20.8722.031; Fri, 16 May 2025
+ 14:41:00 +0000
+From: Anoob Joseph <anoobj@marvell.com>
+To: Akhil Goyal <gakhil@marvell.com>, "dev@dpdk.org" <dev@dpdk.org>
+CC: "suanmingm@nvidia.com" <suanmingm@nvidia.com>, "kai.ji@intel.com"
+ <kai.ji@intel.com>, "hemant.agrawal@nxp.com" <hemant.agrawal@nxp.com>,
+ "brian.dooley@intel.com" <brian.dooley@intel.com>, Akhil Goyal
+ <gakhil@marvell.com>
+Subject: RE: [PATCH] doc: add limitation in using segment-sz in crypto-perf
+Thread-Topic: [PATCH] doc: add limitation in using segment-sz in crypto-perf
+Thread-Index: AQHbxluS4q8hcCMwnUWmgyUA86igsrPVVC6Q
+Date: Fri, 16 May 2025 14:41:00 +0000
+Message-ID: <PH0PR18MB46722C2377C833F92C728E30DF93A@PH0PR18MB4672.namprd18.prod.outlook.com>
+References: <20250516121043.145572-1-gakhil@marvell.com>
+In-Reply-To: <20250516121043.145572-1-gakhil@marvell.com>
+Accept-Language: en-IN, en-US
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH0PR18MB4672:EE_|SA0PR18MB3632:EE_
+x-ms-office365-filtering-correlation-id: b3df1065-a5b8-4d4c-ef41-08dd9487ad14
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?A1z0o0yWVxOfwey5IR3FHlv/78mkrd6my0vpCzchYQ26DaBPlJrxCrx9Nj3n?=
+ =?us-ascii?Q?eGMxPsZo3zS5shntsBZR98W205ocdcOhE0t2RWEtbAYaNi+MF0xuJPU4/feV?=
+ =?us-ascii?Q?fYNFn66TouA7cYQ5QA8Dtatr7/cZSuh5R80x59vSR1ygDDcrH8ud2QVkyrd1?=
+ =?us-ascii?Q?wMus08WwcaIdgb+pYYi5PW/VjmcDlk5x5YEc6Xuqoh77cjXEQTYfQuit/GJc?=
+ =?us-ascii?Q?DK0W3MXqCSfNPNWNIHi7Idk/bcsdBtMKwknVvD2A/rLFpsas+cgvTA5Fo9pH?=
+ =?us-ascii?Q?64ddrn52RotzJtNhu/SM0HOZUhvxnFSx8o+8VPk9F55Kjq0zgzS1oJ1ro12L?=
+ =?us-ascii?Q?Cxvd3VWftsWGV8XqaAR1OVhwg9reWVB2C1a/UQDaajE/8srKyjEMflMh30yE?=
+ =?us-ascii?Q?hQ6CElYbLPbuZrCQQwzjYxUaEN/gHrBuoKI3rDAvXZ29seQHMNTU/+EoPs/k?=
+ =?us-ascii?Q?ZlXCjcyiGaP2hbixsn7fB2g1uOPWESxlvnIJVRTdBNmxrRz7NWWW53Nfl02o?=
+ =?us-ascii?Q?fleXdSAYNHMb8okYeuIa9vX9cg9KoLucvtV7LTYNIN7pxKS4yoYyE3QRvBoi?=
+ =?us-ascii?Q?wYMopwVvXFCd3+i1kYWcOE7EoOuhwwMdktTelIzK8Xs4+JCLcdVF3WTYTpR6?=
+ =?us-ascii?Q?wY0merCWpQxaOa/NT1Ahyw8K5rMnI4OeyD6PuqS5ia/yL0obHpvFlp8DGSBz?=
+ =?us-ascii?Q?DFaWV9H9bLPsW/nG60SeUru0SXzqruvWDGxQ3g0G8lcV7fqSTJWNUC1sSTux?=
+ =?us-ascii?Q?kgbTNyBb/N6zRBpel9Xofpytr/wUVMX74FGAvWqi4r1E/fv1DOAvN++JG+iE?=
+ =?us-ascii?Q?0DzlOnXEJiPggC6e/sNCNlsA9SKJJ1iMO2AsBcJODWnxGrp2qt8rQZs3R8Dc?=
+ =?us-ascii?Q?YqO8N3BMMssq2Mwxnf5ySYQ5v4M2gycyEsG3jZYdYMnIc77Y/U5Ki1oCGREm?=
+ =?us-ascii?Q?dRwPVT+Ne7qEKm/ZavOkEzZRQoXRxAE21aMtDva3nPdJsfYobGQMneJVdb4e?=
+ =?us-ascii?Q?Q74FL16yrQLvSglUnGUv5uR2I6Rf2cBjcQkyoA/TPD7ukjN6C1T/hJTDVTwj?=
+ =?us-ascii?Q?rBfYLv+AzOBpX6zyvQqOFUpF9fE0bLjbgf6yIiaBBj4nF8AuXFEn4WTW326+?=
+ =?us-ascii?Q?8kQvpV7MmoU07B/srPlqQZfqjBqqiFtuGZBEdOrlNDJ2L9Tp7mgl10+nG/g3?=
+ =?us-ascii?Q?UvTbvNmyRT+6kNQzu0ViewtBaDvpFjLDjSBQFhy6GJa/9GeJeKT/VXhL6GSh?=
+ =?us-ascii?Q?SwUWlKwPoLcohVka7NJlreYLXRdkB9uJaPFr/zjKGcI6h4B3pOgs2+o9Nd7Z?=
+ =?us-ascii?Q?LKyy3rMxqycw6kBAl9UMYP4i6Rn+mBDsS/bw0F+rl4SAYJw+/KE1fLoKze9H?=
+ =?us-ascii?Q?rewaPZzFkFSHs2luzjKyVkZQYNQWdkvNhhDWeoahqycXFG3j477mEwL8RbO3?=
+ =?us-ascii?Q?AuiHPH712dTi7HrzpxABqPFCFrz/2mCGX9ecNCU0ojhcd7VCFadzRal31/Wb?=
+ =?us-ascii?Q?RUFUOfy930EUzlo=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:PH0PR18MB4672.namprd18.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014)(38070700018); DIR:OUT; SFP:1102; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?teYZWAsOF5xLA/hSNKyiPWCUzWj3szFYqDAgV/DSUiXwby01PBw7Xlk4MLlj?=
+ =?us-ascii?Q?3bJPQlNYAr++BXd13v3yITKN+0zio5KqZtrXToNMp0p6E9EzpM4LOlMdNt6C?=
+ =?us-ascii?Q?Ke8RZQ1grzHMHUXa7X+IcxzDzY5TI29MkT/3mw2EfN/gArXPXD8Jm/ojzeWq?=
+ =?us-ascii?Q?+6k5im/LEefzQbd24YTHsJOGpcrbUR+BxC5NxAKEcf/x1VKA0Ics/bOa/LVk?=
+ =?us-ascii?Q?C/RuGRO4wF1Qd9mh7yNyLFT592TMnVa7ir0xu/BjugEpATrLAnlXUPoRmjxV?=
+ =?us-ascii?Q?k5Y31jhtug8ZcJdUC35r+SujqH5izsc2/FacyuSKs8dTTooi1IDeT3NGcD3K?=
+ =?us-ascii?Q?eYbUB6IOElL+j/sHjd5sDXsOeUyIAeeWlLMn863dTNEKr1paO99vyXA5Lab4?=
+ =?us-ascii?Q?OCQa5D9jz8R9z4Dw1uHz/GuGDTlRaxjzgXyUytJMRckeIZolMLPPt5NF43CE?=
+ =?us-ascii?Q?K+FyUmkQVeP7c78EHccxKaZFsixpsDtfCUd6YlQsFQ7oAG6lUG3cAQ7fZHwr?=
+ =?us-ascii?Q?BD+WuNLv7U750j335LbEK+R6obviyePrki5hY27FWZtCnmcIjDepKsHEA+/U?=
+ =?us-ascii?Q?sGJKdejYFMzgwcAqV3yJsK8J4AF/p8A3CJQJYT+hMAMBNUxPTzfEbJd0mh6I?=
+ =?us-ascii?Q?6V7d+G/6P43Chghb8bDwISkupKWMczP226WRJYxHWebii4OHEMRxjM+LM9f5?=
+ =?us-ascii?Q?MswewwwkPWVww6Id3MHDiTMrHsP/33jZRo2QQK3YP7StFicHiDAdcxQUafpt?=
+ =?us-ascii?Q?wujbrH2pZTYQhIBnHJ1mdwKJvG4NNvuPUc8+dyUlxd33BAe5Z72V1QUfFs9o?=
+ =?us-ascii?Q?ZlN/QLER8JN4EAfS3NAdWcZQO4Rezewz+L3OVuWKe/TrzPfZkB99uRjMST1V?=
+ =?us-ascii?Q?R704iI4/xAzXCWiZ9D0jjOUPbWYJ0FsY95jsLa8Uf8lsmZt1dEyH+IqYkU2J?=
+ =?us-ascii?Q?FBvKSUPuDL2im4u4xQj1FaKqR63Md5KaFkjpecge/Pnr5qO7RNAaXmVmvxDF?=
+ =?us-ascii?Q?/TVFkqa49m3GgjKlEhl/8QNrcUq4E9IJB4ILSBy9vvc+pIUMLJFRnH5GOUNH?=
+ =?us-ascii?Q?dg0wwRQrEX062FW5RBsWo5vIBQ+9UJ6Qvb836cqqSDuWQhaHswZuZT23+jKg?=
+ =?us-ascii?Q?TDQhbUQk7lZt9/RpPAXvBxbOOpUAFiiHFHURtng5ou3rPtXmU0B6oMBPe/TG?=
+ =?us-ascii?Q?y7p4KP71G2gq8rIKVO2w1OwhdJ+lz+PhLI/+5UUu8b5J55FYQAbv2ShHcCXA?=
+ =?us-ascii?Q?NZ9H8oZ5dd5wpkt1Dh2BgN2zQGX3kkEk3vJJjI5UhITrfSBgfKbDJyvi1OsM?=
+ =?us-ascii?Q?6JKG+ql6BSatw5QAMMpocf9U3D6m1zZ+Hg46lxgOshadJe04XQTdt2S7p1ch?=
+ =?us-ascii?Q?MAjml8zDHSymalSwy4BuI6NwjRdJ8WD1//fnlYuzkr2csroRea/xKk44gu9+?=
+ =?us-ascii?Q?QSFvEEpl79ixTAmFBAHNZqWH0zHLCpFJ6vq5xO4UkVAasWjgTviJSs+5pCtH?=
+ =?us-ascii?Q?HVQywb+WSsWTrtzlbsOZb5Vz/6U89Hax+pQxBogvLETtuL12nLY2i2Dp6gKM?=
+ =?us-ascii?Q?bckUgvD6kPPpixelatA=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR18MB4672.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b3df1065-a5b8-4d4c-ef41-08dd9487ad14
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 May 2025 14:41:00.1251 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: dpPpFaeTPoH9i6JF/Yp8GMaVvHgXcUSz97cwRUejqYpBvcyj2O22QTQYgnuy2ZCSfJSidLb6BQ8A/4fnaKQvtw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR18MB3632
+X-Authority-Analysis: v=2.4 cv=GPgIEvNK c=1 sm=1 tr=0 ts=68274e7f cx=c_pps
+ a=PZJ0/dUMjH0jBWORzn298Q==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=dt9VzEwgFbYA:10 a=-AAbraWEqlQA:10 a=M5GUcnROAAAA:8 a=6Io2p0sKCphI8ivHYZwA:9
+ a=CjuIK1q_8ugA:10 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE2MDE0MiBTYWx0ZWRfX2qI4EuYquXPa
+ tdC7riIaDCOtmqVfBVMkGPuV65y0Y+85QPI7OWvSZs+0jWoIcmTm3bSgbotofHPHFf6nQkYIdw+
+ dCKtRgQ7637G06+Emg7OeTAcCAj0E8Y47lMJ+23AuZWZRQhNT8Z4TaAf/m3460kWPnnxX4YyDx1
+ 1StqCrxaQ8h4GarDjjhdcCagsbsNr4yoeiGUD3Hpn0Rjd4MDx7tsLfAG8Fw1a2Z1YHKAcWQSURj
+ PsZRs0kJWtWpJpVLjtgV2G3l2R5Yv8HdEP9S+ycsc5oExRyvJpGD6rBTxVEfPe8hGv+yzGi3alD
+ Nvk0ZdZa/tEXblzkA4EHgsqJfKfEFKF0apvNNk3K4g+K5QZgCpv6cABffwVGBA51zaML++Jotwt
+ iId8b8+4wAXSXAe1mPdR5DZz8FPNN3cp20JY0nEnTS1J8hFMfBMeC3oil2i6chCYwGNONyQy
+X-Proofpoint-GUID: VB76uMIZl9CMIWP7on9GWIc6kovEHi50
+X-Proofpoint-ORIG-GUID: VB76uMIZl9CMIWP7on9GWIc6kovEHi50
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-16_05,2025-05-16_03,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -111,30 +167,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+> Subject: [PATCH] doc: add limitation in using segment-sz in crypto-perf
+>=20
+> When segment-sz is given as parameter,
+> use buffer-sz in descending order.
+> The reason is, same scatter gather buffer list is being used for all pack=
+et sizes
+> which is initialized once in the beginning.
+> Now if a small packet case is run first, mbuf SG list will be trimmed to =
+a smaller
+> number of SG and rest of the SGs are lost resulting in segfault.
+> Buffers cannot be re-initialized as that will come in datapath and will b=
+e costly.
+> So to workaround this, if segment-sz is passed as argument, use values in
+> buffer-sz in descending order.
+>=20
+> Signed-off-by: Akhil Goyal <gakhil@marvell.com>
 
-
-On 4/2/25 8:53 AM, David Marchand wrote:
-> The idx field of a virtqueue available ring is increased by the driver
-> regardless of the ring size. It is for the device to mask this index
-> modulo the ring size (2.7.6 of the virtio 1.3 specification).
-> The same applies to the used ring.
-> 
-> Failing to mask triggers:
-> - crashes when popping message received on the cvq,
-> - system lockups (in the case of VDUSE) when the virtio-net driver waits
->    infinitely,
-> 
-> Fixes: 474f4d7840ad ("vhost: add control virtqueue")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
-> ---
->   lib/vhost/virtio_net_ctrl.c | 10 ++--------
->   1 file changed, 2 insertions(+), 8 deletions(-)
-> 
-
-Applied to next-virtio/for-net-next.
-
-Thanks,
-Maxime
-
+Acked-by: Anoob Joseph <anoobj@marvell.com>
