@@ -2,51 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D10DC3ABC9
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 11:33:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E338BC3ABD8
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 12:10:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7F53640144;
-	Fri, 16 May 2025 13:33:27 +0200 (CEST)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
- by mails.dpdk.org (Postfix) with ESMTP id E4BE6400EF
- for <dev@dpdk.org>; Fri, 16 May 2025 13:33:24 +0200 (CEST)
-Received: from loongson.cn (unknown [10.20.42.143])
- by gateway (Coremail) with SMTP id _____8Axjmt_IidoambsAA--.55020S3;
- Fri, 16 May 2025 19:33:19 +0800 (CST)
-Received: from [10.20.42.143] (unknown [10.20.42.143])
- by front1 (Coremail) with SMTP id qMiowMDxvht8IidoyRjZAA--.43011S3;
- Fri, 16 May 2025 19:33:18 +0800 (CST)
-Subject: Re: [PATCH v3] build: automatically report minimum meson version
-To: "dev@dpdk.org" <dev@dpdk.org>
-References: <20241009152417.4028297-1-bruce.richardson@intel.com>
- <20250515134647.932537-1-bruce.richardson@intel.com>
-From: zhoumin <zhoumin@loongson.cn>
-Message-ID: <18dcc2a6-ce77-829b-a880-ebad2b401815@loongson.cn>
-Date: Fri, 16 May 2025 19:32:07 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	by mails.dpdk.org (Postfix) with ESMTP id 8B554402B1;
+	Fri, 16 May 2025 14:10:55 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 7394A40144
+ for <dev@dpdk.org>; Fri, 16 May 2025 14:10:53 +0200 (CEST)
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54G7vAjf008755;
+ Fri, 16 May 2025 05:10:52 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=6iUm6e00fCHQyypfvEoPEz9
+ Zpd//m8pmGDYvBl34gt8=; b=To+kiYJS6BylccY2EKD7dU2wODEQKop7P4VYIoK
+ vmnBplKTwF0sOZb+9CDk9wpdfVABhna6921vJkng333AFCCGwZ+Gm6odyhqXE3RC
+ OQSQDVJjxwS2sKqgrNCEdxaD+vSTA/HbR/8Qwr1+cax9PKCvGzQVQAnMx5yTQ23u
+ aZEbpgV0/oDxH2mKws/koD6zZFgcgvv5IILr2r0+GWWV9F07aObh34UBe0OrVYey
+ ny3CQi0fUldJPjUg55ZgJ3ebtiXxMq56zIwD/Us1Db8VwuPZ4fTV/XVfezQHo1gP
+ v1NFN95KJNW1Of0NcPiSEw0HvZuYnIPNTnuNlAGkIiD5FeQ==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46p1du0dgj-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Fri, 16 May 2025 05:10:52 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 16 May 2025 05:10:51 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 16 May 2025 05:10:51 -0700
+Received: from cavium-SR1-T640.marvell.com (unknown [10.28.36.102])
+ by maili.marvell.com (Postfix) with ESMTP id DA9D03F7051;
+ Fri, 16 May 2025 05:10:48 -0700 (PDT)
+From: Akhil Goyal <gakhil@marvell.com>
+To: <dev@dpdk.org>
+CC: <suanmingm@nvidia.com>, <anoobj@marvell.com>, <kai.ji@intel.com>,
+ <hemant.agrawal@nxp.com>, <brian.dooley@intel.com>, Akhil Goyal
+ <gakhil@marvell.com>
+Subject: [PATCH] doc: add limitation in using segment-sz in crypto-perf
+Date: Fri, 16 May 2025 17:40:43 +0530
+Message-ID: <20250516121043.145572-1-gakhil@marvell.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20250515134647.932537-1-bruce.richardson@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-CM-TRANSID: qMiowMDxvht8IidoyRjZAA--.43011S3
-X-CM-SenderInfo: 52kr3ztlq6z05rqj20fqof0/1tbiAgEEAWgmdWgOGgABsA
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
- ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
- BjDU0xBIdaVrnRJUUUBIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
- xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
- j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxV
- AFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAF
- wI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
- Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE
- 14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
- AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E
- 14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4
- CEj282c2IF4VAI2VCY07xJMI8E67AF67kF1VAFwI0_Jr0_JrylIxkGc2Ij64vIr41lIxAI
- cVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcV
- CF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
- c7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8hID7UUUUU==
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: d50PU7sV3I-6j2VheDeKHdSAZIaMISzv
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE2MDExNiBTYWx0ZWRfX2Y0/o6jSLAso
+ OhYwAHKYeb+rOorCC4k4FEm1+19y1tCnxNsGDNBNuyAFcgxMTi3JwtM/YVMIA4gyzaOXmnRVN5J
+ +5BE4EfTWjt7vWkEGOqIsf5idItMKfYMcq/8bQbcg4Nnwg5r4cYkr855OiF5gMaqKHTIz8OtmRH
+ uucsu2tf/xIoijMISVb1tFxN6I6ZXz4w2Q3cBt2bvpJq3GC5tYOX8ILvC57yhd6v3NhGdBPL1gD
+ CI21ahEotPcg0U+uomW+R33MILiszqJGD7IVYYkWNjx/ubTE6z5pCuCTfQH/TINqe9h6rikB2kF
+ WIfqqB417ZIB6+JhRxlWQpf7wlfS6+bHmVfiveQZHzgsD2ZOT1DMMe0z8htNYbtKQmsZZaxtsmU
+ a7w9xAGOa1s+qtFLQxMx4qARjvC4uoZQAosdg+m4l/LJk8BQC2ZOHwYN7QrHKO3wClI7793m
+X-Proofpoint-GUID: d50PU7sV3I-6j2VheDeKHdSAZIaMISzv
+X-Authority-Analysis: v=2.4 cv=fvPcZE4f c=1 sm=1 tr=0 ts=68272b4c cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=vdPL91twqqmzCy3sNZoA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-16_05,2025-05-16_02,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,5 +78,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Recheck-request: loongarch-compilation
+When segment-sz is given as parameter,
+use buffer-sz in descending order.
+The reason is, same scatter gather buffer list is being used
+for all packet sizes which is initialized once in the beginning.
+Now if a small packet case is run first,
+mbuf SG list will be trimmed to a smaller number of SG and
+rest of the SGs are lost resulting in segfault.
+Buffers cannot be re-initialized as that will come in datapath and
+will be costly.
+So to workaround this, if segment-sz is passed as argument,
+use values in buffer-sz in descending order.
+
+Signed-off-by: Akhil Goyal <gakhil@marvell.com>
+---
+ doc/guides/tools/cryptoperf.rst | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/doc/guides/tools/cryptoperf.rst b/doc/guides/tools/cryptoperf.rst
+index e53e2d0ebf..a3d35f6a50 100644
+--- a/doc/guides/tools/cryptoperf.rst
++++ b/doc/guides/tools/cryptoperf.rst
+@@ -139,6 +139,7 @@ The following are the application command-line options:
+ * ``--segment-sz <n>``
+ 
+         Set the size of the segment to use, for Scatter Gather List testing.
++        Use list of values in buffer-sz in descending order if segment-sz is used.
+         By default, it is set to the size of the maximum buffer size, including the digest size,
+         so a single segment is created.
+ 
+-- 
+2.25.1
 
