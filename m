@@ -2,102 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6700CC3ABC9
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 14:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABB64C3ABC9
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 16:17:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9BE8E402F1;
-	Fri, 16 May 2025 16:54:36 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 478BE402CD
- for <dev@dpdk.org>; Fri, 16 May 2025 16:54:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1747407274;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=qa+xz8c1kqCbxiju0XvG6ly7gJxWd9sjRzjCF95waE4=;
- b=A4eYXfqXLuNjV4E8nooBt9soNO+02CII5k73nWNys17ZF5tFVuLb86u1XK8zLJaomx8UTo
- 2bJOgypGPwxnU+I7+vYZc/+W7+rIh7qNrvtcbFWrdaieHC+VUrS8H0CTafJlTscTI2x1Fj
- Mfyu3n7tbxHgRM/qVyQdK9IGcg3m6nU=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-255-bsfRr2K-MqG3B98ml5uO9Q-1; Fri,
- 16 May 2025 10:54:31 -0400
-X-MC-Unique: bsfRr2K-MqG3B98ml5uO9Q-1
-X-Mimecast-MFC-AGG-ID: bsfRr2K-MqG3B98ml5uO9Q_1747407270
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 961C7180045B; Fri, 16 May 2025 14:54:30 +0000 (UTC)
-Received: from [10.45.242.18] (unknown [10.45.242.18])
- by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id AF7501956094; Fri, 16 May 2025 14:54:28 +0000 (UTC)
-Message-ID: <f4896f7f-6585-4f26-8280-639f7b25db52@redhat.com>
-Date: Fri, 16 May 2025 16:54:24 +0200
+	by mails.dpdk.org (Postfix) with ESMTP id 6862F402ED;
+	Fri, 16 May 2025 18:17:03 +0200 (CEST)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mails.dpdk.org (Postfix) with ESMTP id DBFB5402CD
+ for <dev@dpdk.org>; Fri, 16 May 2025 18:17:01 +0200 (CEST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D688169C;
+ Fri, 16 May 2025 09:16:49 -0700 (PDT)
+Received: from ampere-altra-2-4.usa.Arm.com (unknown [10.118.91.163])
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 250C53F5A1;
+ Fri, 16 May 2025 09:17:01 -0700 (PDT)
+From: Doug Foster <doug.foster@arm.com>
+To: Wathsala Vithanage <wathsala.vithanage@arm.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, nd@arm.com, Doug Foster <doug.foster@arm.com>,
+ Dhruv Tripathi <dhruv.tripathi@arm.com>
+Subject: [PATCH] config/arm: update neoverse n3 SoC and add neoverse V3
+Date: Fri, 16 May 2025 16:15:58 +0000
+Message-Id: <20250516161558.1482246-1-doug.foster@arm.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/1] bbdev: fix possible null pointer dereferencing
-To: Nicolas Chautru <nicolas.chautru@intel.com>, dev@dpdk.org
-Cc: hemant.agrawal@nxp.com, hernan.vargas@intel.com
-References: <20250501221031.4569-1-nicolas.chautru@intel.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <20250501221031.4569-1-nicolas.chautru@intel.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 8X8N8iAyj7AGhxuZHUvbdNfU30-e7TjFHz_txHO2EPk_1747407270
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -111,23 +40,94 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+Arm Neoverse N3 build configuration is updated to include mcpu that
+aligns with latest GCC. Also, add Arm Neoverse V3 build configuration.
 
+Signed-off-by: Doug Foster <doug.foster@arm.com>
+Reviewed-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
+Reviewed-by: Dhruv Tripathi <dhruv.tripathi@arm.com>
+---
+ config/arm/meson.build | 32 +++++++++++++++++++++-----------
+ 1 file changed, 21 insertions(+), 11 deletions(-)
 
-On 5/2/25 12:10 AM, Nicolas Chautru wrote:
-> Hi Maxime,
-> Minor fix for warning reported by coverity.
-> Thanks
-> Nic
-> 
-> Nicolas Chautru (1):
->    bbdev: fix possible null pointer dereference
-> 
->   lib/bbdev/rte_bbdev.c | 9 +++++----
->   1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-
-Applied to next-baseband/for-main.
-
-Thanks,
-Maxime
+diff --git a/config/arm/meson.build b/config/arm/meson.build
+index f971ed3c1b..2f510c3a6c 100644
+--- a/config/arm/meson.build
++++ b/config/arm/meson.build
+@@ -110,17 +110,7 @@ part_number_config_arm = {
+         ]
+     },
+     '0xd8e': {
+-        # Only when -march=armv9-a+wfxt is used will the WFET
+-        # feature be compiled with armv9 instructions.
+-        # However, +wfxt is not supported by GCC at the moment.
+-        # Although armv9-a is the fitting version of Arm ISA for
+-        # Neoverse N3, it cannot be used when enabling wfxt for
+-        # the above reasons.
+-        # The workaround for this is to use armv8.7-a, which
+-        # doesn't require +wfxt for binutils version 2.36 or greater.
+-        'march': 'armv8.7-a',
+-        'march_features': ['sve2'],
+-        'fallback_march': 'armv8.5-a',
++        'mcpu' : 'neoverse-n3',
+         'flags': [
+             ['RTE_MACHINE', '"neoverse-n3"'],
+             ['RTE_ARM_FEATURE_ATOMICS', true],
+@@ -128,6 +118,16 @@ part_number_config_arm = {
+             ['RTE_MAX_LCORE', 192],
+             ['RTE_MAX_NUMA_NODES', 2]
+         ]
++    },
++    '0xd84': {
++        'mcpu' : 'neoverse-v3',
++        'flags': [
++            ['RTE_MACHINE', '"neoverse-v3"'],
++            ['RTE_ARM_FEATURE_ATOMICS', true],
++            ['RTE_ARM_FEATURE_WFXT', true],
++            ['RTE_MAX_LCORE', 128],
++            ['RTE_MAX_NUMA_NODES', 2]
++        ]
+     }
+ }
+ implementer_arm = {
+@@ -641,6 +641,13 @@ soc_v2 = {
+     'numa': true
+ }
+ 
++soc_v3 = {
++    'description': 'Arm Neoverse V3',
++    'implementer': '0x41',
++    'part_number': '0xd84',
++    'numa': true
++}
++
+ mcpu_defs = {
+     'mcpu_centriq2400': {
+         'march': 'armv8-a',
+@@ -712,6 +719,7 @@ kunpeng920:      HiSilicon Kunpeng 920
+ kunpeng930:      HiSilicon Kunpeng 930
+ n1sdp:           Arm Neoverse N1SDP
+ n2:              Arm Neoverse N2
++n3:              Arm Neoverse N3
+ odyssey:         Marvell Odyssey
+ stingray:        Broadcom Stingray
+ thunderx2:       Marvell ThunderX2 T99
+@@ -720,6 +728,7 @@ thunderxt88:     Marvell ThunderX T88
+ tys2500:         Phytium TengYun S2500
+ tys5000c:        Phytium TengYun S5000c
+ v2:              Arm Neoverse V2
++v3:              Arm Neoverse V3
+ End of SoCs list
+ '''
+ # The string above is included in the documentation, keep it in sync with the
+@@ -760,6 +769,7 @@ socs = {
+     'tys2500': soc_tys2500,
+     'tys5000c': soc_tys5000c,
+     'v2': soc_v2,
++    'v3': soc_v3
+ }
+ 
+ dpdk_conf.set('RTE_ARCH_ARM', 1)
+-- 
+2.34.1
 
