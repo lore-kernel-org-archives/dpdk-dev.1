@@ -2,41 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45670C3ABD8
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 13:14:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BE83C3ABD8
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 13:19:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2097140292;
-	Fri, 16 May 2025 15:14:44 +0200 (CEST)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 7140C4028F
- for <dev@dpdk.org>; Fri, 16 May 2025 15:14:43 +0200 (CEST)
-Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 5A003201DB03; Fri, 16 May 2025 06:14:42 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5A003201DB03
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1747401282;
- bh=jV8aybsETpwwUZcf2IgTxVXcGh8as5RHHCobKlnS6Qw=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=cJKzHH8scp1jsFbcl77ETxm95VXNuBSDiJytWD94G88pGxDtC8uXrrGsT03Tzo3jA
- X/lMsVge7ohBo1kScH9E/h4pWCj5S10eRtPpPLZVPqUHlxx2iwZZhyGg4kCFOSyDkq
- /volJh83KlywAo6YUs6mRlKz07NAro1rnIIwq7II=
-Date: Fri, 16 May 2025 06:14:42 -0700
-From: Andre Muezerie <andremue@linux.microsoft.com>
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
-Subject: Re: [PATCH v3 1/1] buildtools: avoid break due to failure to cleanup
- temporary directory
-Message-ID: <20250516131442.GC29027@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1746474405-5056-1-git-send-email-andremue@linux.microsoft.com>
- <1746627671-28659-1-git-send-email-andremue@linux.microsoft.com>
- <1746627671-28659-2-git-send-email-andremue@linux.microsoft.com>
- <CAJFAV8zvB0Bn+r4JiNq5RzgDXZgQr_XRaT66TqR4rWoAwoGvZQ@mail.gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 86B9540292;
+	Fri, 16 May 2025 15:19:14 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 0F9094028F
+ for <dev@dpdk.org>; Fri, 16 May 2025 15:19:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1747401552;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=uAvG8bw2V994ECg58CRol62Hz9PMS52SqgMnF6zKcZ0=;
+ b=CTgIUB3TUAOahrzAlJXilk+D9YQCPnlk++jXz0uLXl9oJP8g9QU/d0RRk7+a/0O+HGmQtc
+ MrKZwZkGSlZcwZ7ts42HIke3sTWykDPuCWGxlNrzpMUrHpIwbjAIUGY729zSt5GNgPjROj
+ md4tbbem/Cibxozx3wNhJfqjXgZrhQo=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-187-H-lK-EUCPKG0wt1KXDSSZA-1; Fri, 16 May 2025 09:19:10 -0400
+X-MC-Unique: H-lK-EUCPKG0wt1KXDSSZA-1
+X-Mimecast-MFC-AGG-ID: H-lK-EUCPKG0wt1KXDSSZA_1747401549
+Received: by mail-lj1-f197.google.com with SMTP id
+ 38308e7fff4ca-327fece80a0so7053101fa.0
+ for <dev@dpdk.org>; Fri, 16 May 2025 06:19:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1747401549; x=1748006349;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=uAvG8bw2V994ECg58CRol62Hz9PMS52SqgMnF6zKcZ0=;
+ b=U6ymW3ycPz9hkAc4DMJu1MsFrtXec783wEV6wnqh2t2AF22rluMHVqITrdZWvCkjNO
+ NOmlCjzE+AU+LvPf3caXzGIR8K75XhioKbvpuLKwn1dOkCkmCzUg6lHBm3CJtDfcD3rz
+ 1mZux5VtYFn7A2XmtDeQRPvnAVSUY+oR2A7oy9orrl107eZF3A6UuySnGtPYvQnFCgEo
+ uec93AQwQwrhPdSmCH3a1sIPvTrsrjrecmF/TTPebkp7IlyJjGrpBNeEJSltBNvdHRpZ
+ XNo+fOqrnptHHMzmTKcP8eU+zyuFqqJIKxvCHDXHB1ZJqBvbT2NwnExDgKYVOGXcYxgM
+ XCwA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVbxMHstdN8FmH7vUi2S/88avFa3+pqr2VwuidIJfdSKZEyIrTE4CcM0iBhYQ4ZpaB1Fnk=@dpdk.org
+X-Gm-Message-State: AOJu0Yw/MYsnwl/FehB+LhMilL3PRhHoiu8P/3qDEd5peX10wNjzdwDS
+ fglRBZeS5glmG3tzFUvyIQpNQIJCL4uO48XrOh6IvfOJaSJBAvsfTtMQ//FqzxXUmE+JaAQZFBP
+ AwZFYeleJX+ZUM9e5oMQfXacWiwS2cv68nAMdyUURKuxIJ8P3XPojExoCMyz+s7kI3arclPjLRL
+ B7iJpHaPXDQeiV2acotj4=
+X-Gm-Gg: ASbGncux/7XfDwW2CYTWOwyiomYSicEsbXR7JkJpQxSWkNmt2qaytHI29ub2zcp0m/N
+ zJMcagwmn8eihL/f8cdyv//DAB3vb94gTll1K7dT5jpSC1kpQBgbchje5fMkebjuC5prXmyE=
+X-Received: by 2002:a05:651c:1544:b0:326:cb09:8220 with SMTP id
+ 38308e7fff4ca-327f84f686emr25910221fa.16.1747401548891; 
+ Fri, 16 May 2025 06:19:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE+x1/F+guHV6c3xMxp+kzXRNUmDDpKtV7a/O8PLk9KTed9IS//F0A6GeeYMTFHj1tFEATuuNi98LaAerqTN7k=
+X-Received: by 2002:a05:651c:1544:b0:326:cb09:8220 with SMTP id
+ 38308e7fff4ca-327f84f686emr25910131fa.16.1747401548475; Fri, 16 May 2025
+ 06:19:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJFAV8zvB0Bn+r4JiNq5RzgDXZgQr_XRaT66TqR4rWoAwoGvZQ@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <1741313581-14300-1-git-send-email-andremue@linux.microsoft.com>
+In-Reply-To: <1741313581-14300-1-git-send-email-andremue@linux.microsoft.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Fri, 16 May 2025 15:18:56 +0200
+X-Gm-Features: AX0GCFs7SdBwcpzP4geoPSygPVVGGnojf9Bx4VCxzO5FaWIDSW89PO3V2b1SwDU
+Message-ID: <CAJFAV8yT5tHs0dkOinG+D2TbF13Jaks2RJNDwoz+yBHt_nLu0Q@mail.gmail.com>
+Subject: Re: [PATCH] test_ipfrag: remove array of size zero
+To: Andre Muezerie <andremue@linux.microsoft.com>
+Cc: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>, dev@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: FoDI_8_jUJe5m-AGtmAZyr7QKay2pDgtcZFSIpkkoR0_1747401549
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,35 +85,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, May 16, 2025 at 11:34:10AM +0200, David Marchand wrote:
-> Hello Andre,
-> 
-> On Wed, May 7, 2025 at 4:21 PM Andre Muezerie
-> <andremue@linux.microsoft.com> wrote:
-> >
-> > When compiling drivers on Windows, instances have been seen where a
-> > temporary directory fails to get cleaned up due to
-> > ERROR_SHARING_VIOLATION (32).
-> >
-> > This issue was not seen on operating systems other than Windows.
-> >
-> > This patch eliminates the use of tempfile.TemporaryDirectory, which
-> > was triggering the issue.
-> >
-> > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-> 
-> How does this change interact (except a merge conflict) with the other
-> series that adds pmdinfo for MSVC?
-> https://patchwork.dpdk.org/project/dpdk/list/?series=35065&state=%2A&archive=both
-> 
+On Fri, Mar 7, 2025 at 3:13=E2=80=AFAM Andre Muezerie
+<andremue@linux.microsoft.com> wrote:
+>
+> When compiling with MSVC the error below pops up:
+>
+> ../app/test/test_ipfrag.c(39): error C2466:
+>     cannot allocate an array of constant size 0
+> ../app/test/test_ipfrag.c(157): warning C4034: sizeof returns 0
+> ../app/test/test_ipfrag.c(160): warning C4034: sizeof returns 0
+>
+> The fix is to simplify the code and remove the zero-size array.
+>
+> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 
-I suggest applying this patch as early as possible. I can rebase the other patch
-which will merge conflict with it after if needed.
+Applied, thanks.
 
-On my dev machine I'm building the drivers folder, and that doesn't succeed without
-this patch. I want to enable that on the official branch as well, but can't until
-this patch is merged.
 
-> 
-> -- 
-> David Marchand
+--=20
+David Marchand
+
