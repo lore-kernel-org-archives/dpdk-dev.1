@@ -2,66 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25964C3ABC9
-	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 19:13:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C889C3ABD8
+	for <dpdk-dev@archiver.kernel.org>; Fri, 16 May 2025 19:45:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5386140395;
-	Fri, 16 May 2025 21:12:59 +0200 (CEST)
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com
- [209.85.216.52]) by mails.dpdk.org (Postfix) with ESMTP id D13C0402D1
- for <dev@dpdk.org>; Fri, 16 May 2025 21:12:57 +0200 (CEST)
-Received: by mail-pj1-f52.google.com with SMTP id
- 98e67ed59e1d1-3032a9c7cfeso290566a91.1
- for <dev@dpdk.org>; Fri, 16 May 2025 12:12:57 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B258940395;
+	Fri, 16 May 2025 21:45:18 +0200 (CEST)
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com
+ [209.85.210.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 1E95C402D1
+ for <dev@dpdk.org>; Fri, 16 May 2025 21:45:17 +0200 (CEST)
+Received: by mail-pf1-f171.google.com with SMTP id
+ d2e1a72fcca58-742b78afa2eso64207b3a.2
+ for <dev@dpdk.org>; Fri, 16 May 2025 12:45:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1747422777; x=1748027577; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=mvh5qZEna+ULiIk5Re73WTFSShpPsK4J4QU6vJhrFMI=;
- b=bJ49PEK8KpUtviPPH616iFEgrYW5H+UgoVCXfMtFyEGHxvRaOqCIwVjkDgoTnfJDhI
- xJ0xFTXBS7E82W362F2OkjZcllkdPMw4AOojYDForOyluX2gtx2uzuXkLbUpGO4zToAA
- FQgXCWwSenTbMtcsC2M1pK0iGJNAtazIDsoG0=
+ d=iol.unh.edu; s=unh-iol; t=1747424716; x=1748029516; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=zxV1042PHY6pjFlolqPD4/+sdiQbaq0IGjVpYk/fLvk=;
+ b=MBXKtTtzwhZ3ILCIcHudoFD9D4sKvq78EYukecDpKoG7VhsRPAUxhz5Tvhsoi7DsCx
+ X0Zrk0ILgYTak7UyVPVhAsyfZuMDBsLzOSXlDpDpZvwu264OC0N1DMwADYIrBMCvGmgP
+ 2GxUSP7+HUI3P5S2vwajDabC+/VgxKvcvC3Go=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1747422777; x=1748027577;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=mvh5qZEna+ULiIk5Re73WTFSShpPsK4J4QU6vJhrFMI=;
- b=IcovdM3DtvpPTmQoryQsb83PHQle1Qph/TY8B0Ts2d0JH7QkTLCnX3OUjstYldjq3C
- 9KMIxrl87GtrOLypKgTCDVraKwK00IQX5nj/yWh7CdbUnITA8ujfUL3og1fO+y+3SQ6q
- DK3j3hCnzEJtgyB49gWkMfIK7Peu7AGLitpu4T0wqzR+QfSy/Q48kbrSaCeUfDMYPmlu
- xJv7CLEvGeRh9p8r301q9imioTKa7cQ9tCqcJNvouSEaZUCXjJ7BmsRGvuD8sqOWgFrA
- SmT3UtmbK0lp/d5t6dWqCSh7UlMMT+T+oPj4ARseJMEN74m2AB7WhvsR1muU6Vigj7io
- XaGA==
+ d=1e100.net; s=20230601; t=1747424716; x=1748029516;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=zxV1042PHY6pjFlolqPD4/+sdiQbaq0IGjVpYk/fLvk=;
+ b=WCWrDF68W4n/j6vuL8H7esZTs8m2kCztMFoGk+X6UFreeFm8pXKQdUdEMwPRnvguhY
+ FuzKhJCTWO7Eh8qYbapFcsxASRN38Y9EKB9C9P6bWm0jxxaVdTlWZosoi3ilrDfj3OHQ
+ 8oHWsx4JhH9Z9LiUzelKBq/5EAYgTsyzej+jeSp7s+xg1tlWrPgb+CQjfqb2K9YvAln0
+ Ouo7c2YM+QTT3g9r2ntwAZHxBJxXSloyPyokg+P2PFM27i1jitqgFNcZ+/13s3jwUQnU
+ nQTOn5DcgIGSfqdtxghGVD4OxEaXJ6AO/lImBqmJhk/NXHpAbgCA/oE6bVVTUBCnpb04
+ k4Xg==
 X-Forwarded-Encrypted: i=1;
- AJvYcCXWd74H1WMSde2/89PgJO0OgkTYYh7nTR2pNldU0KQIRtFElV3bj+fXF5U6wOpmGwchR/k=@dpdk.org
-X-Gm-Message-State: AOJu0YwM4+ivgScVT0CrRLIMK/NrCSUF7X4tfEMbqWy1TREQ8Yq/0phq
- 4crdGnWVR6zj8ukZJk4oYOPXt8sHJvnFJRR1aJecwQOVsZW4yB5Q7gromWbcrKvWFmTNmDyWVvS
- 0mg9kPLp5YFRiWUyczD+qbGOyRyeSX2qDXK07cS83hw==
-X-Gm-Gg: ASbGncvg+zqF4rg/GwtvSUFfaHLlmrFPZJGNPFjEZba67PT801yhjXY62UgrAo7wXjH
- nHHWcYiUAA79OWXBfTEOEuKb9InU3EccGzUeBw8KL3VJU3vwyRbvxoH25FWBoCKjG6aZzhtmhC6
- QR4twPwRZkxBp5LRlYKzblBvTuvvdWKwyzmYhiBfKg/ZUN6FOgMPe3s0e3nc8MjYOaWAA=
-X-Google-Smtp-Source: AGHT+IGe4TxIY49Dx2cL8WR59EO3MDRRm7pKgq+CuYOIblIg+wVJtHb2iFrIr6JjPIlCNpQOhLbh3j7JkF3ItTQC7Zo=
-X-Received: by 2002:a17:90b:33c2:b0:2ff:7970:d2b6 with SMTP id
- 98e67ed59e1d1-30e7d5eff12mr2355616a91.5.1747422776735; Fri, 16 May 2025
- 12:12:56 -0700 (PDT)
+ AJvYcCW40Qmn3Q1O75IJcABQCMbi+txPC7UQQscc3uGizpMJRMBK3iCuZm3V95hne4s2wUhgz+M=@dpdk.org
+X-Gm-Message-State: AOJu0YzIzBHTbiupxOwU0pSt73BaMbUV95t3Qf24T8AieqExr9Bxdspe
+ TrNgVRtcyyFclgkJk4aMDocw1juIXjESvxBpaUzNepC2l+lfXM8E9mMx7cF9TKPcdWVVJX2kp7T
+ bf/bGtG/tpWMCXM9265FIErdtv2BP7KJlH7Jg7I0glw==
+X-Gm-Gg: ASbGncv8o98BFpBIui0xN+eTaGoBEveM/0lWcmo7uUSmBAtaHR14tGyuU+kryln1IDI
+ iBbPbNkSMYU+1SCBendFF4PGXrHGeq0iXu9ak9LMfsR66G90TtwhJiQbVqdEaC43AgF9KOWlv6J
+ YOOjFz5j3utMj9Hoa1kVATkkwGlTQdySxmZ4drY1+Y79ySt0KtLpqD45LHQP1QGmP2Bjk=
+X-Google-Smtp-Source: AGHT+IFWpqvKiOLv6i12BB/t7LmkOBkMClRPvLASqdpSp8H5Zd7ZWvmcgTUlfonLW8g8MzSie5oAdpEYFZd4vjVhIQA=
+X-Received: by 2002:a17:90a:e7c2:b0:30a:a51c:5f48 with SMTP id
+ 98e67ed59e1d1-30e7d61b412mr2577045a91.8.1747424715970; Fri, 16 May 2025
+ 12:45:15 -0700 (PDT)
 MIME-Version: 1.0
 References: <20250423194011.1447679-1-npratte@iol.unh.edu>
- <20250423194011.1447679-3-npratte@iol.unh.edu>
- <CAJvnSUDs7To7F7TBH+CPn39TwFK-hu3+jzm_DMcEKxtDPqvYyg@mail.gmail.com>
-In-Reply-To: <CAJvnSUDs7To7F7TBH+CPn39TwFK-hu3+jzm_DMcEKxtDPqvYyg@mail.gmail.com>
+ <20250423194011.1447679-5-npratte@iol.unh.edu>
+ <CAJvnSUBt4D=jvYcbZacN1kDXL6pmukVeVq=g5XbkvwPG2b4tZw@mail.gmail.com>
+In-Reply-To: <CAJvnSUBt4D=jvYcbZacN1kDXL6pmukVeVq=g5XbkvwPG2b4tZw@mail.gmail.com>
 From: Nicholas Pratte <npratte@iol.unh.edu>
-Date: Fri, 16 May 2025 15:12:46 -0400
-X-Gm-Features: AX0GCFsvclh6mVW2MrYfU-7gOg81zCsFQlMJfIfKXrcNOjZUaXj0rtCsh_8p6to
-Message-ID: <CAKXZ7ehup4XA1T99BjBsKX1a30oBgT1pkg92P-tP8E_RZneQbQ@mail.gmail.com>
-Subject: Re: [RFC Patch v1 2/5] dts: rework traffic generator inheritance
- structure.
+Date: Fri, 16 May 2025 15:45:05 -0400
+X-Gm-Features: AX0GCFs3-0LTbOBJb2REsPtdCAIY7jvsCPPFkkcMJMjwHkx3QfM95Yvu6Xf5U3o
+Message-ID: <CAKXZ7egtJKm_U6ZdRU4s2bD60Oh+u-AisigYS1-7KyjF1SaByg@mail.gmail.com>
+Subject: Re: [RFC Patch v1 4/5] dts: add trex traffic generator to dts
+ framework
 To: Patrick Robb <probb@iol.unh.edu>
-Cc: yoan.picchi@foss.arm.com, paul.szczepanek@arm.com, 
+Cc: ian.stokes@intel.com, yoan.picchi@foss.arm.com, paul.szczepanek@arm.com, 
  Honnappa.Nagarahalli@arm.com, thomas@monjalon.net, luca.vizzarro@arm.com, 
  thomas.wilks@arm.com, dmarx@iol.unh.edu, stephen@networkplumber.org, 
  dev@dpdk.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -75,74 +78,95 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Patick, see below!
+>> Implement the TREX traffic generator for use in the DTS framework. The
+>> provided implementation leverages TREX's stateless API automation
+>> library, via use of a Python shell. As such, version control of TREX may
+>> be needed. The DTS context has been modified to include a performance
+>> traffic generator in addition to a functional traffic generator.
+>
+>
+> I think the statement is that only certain versions are confirmed to work=
+ off of your implementation? I think usage of the term version control is c=
+onfusing since we are just talking about using particular versions of TREX,=
+ and not using a "version control" tool like git. This is more about listin=
+g approved versions of the dependency for the TG.
 
+I can fix that!
+>>
+>>
+>>
+>>          dpdk_build_env =3D DPDKBuildEnvironment(config.dpdk.build, sut_=
+node)
+>>          dpdk_runtime_env =3D DPDKRuntimeEnvironment(config.dpdk, sut_no=
+de, dpdk_build_env)
+>> -        traffic_generator =3D create_traffic_generator(config.traffic_g=
+enerator, tg_node)
+>> +        # There is definitely a better way to do this.
+>> +        tg_dpdk_runtime_env =3D None
+>> +        if (
+>> +            config.perf_traffic_generator.type =3D=3D TrafficGeneratorT=
+ype.TREX
+>> +            or config.func_traffic_generator.type =3D=3D TrafficGenerat=
+orType.TREX
+>> +        ):
+>
+>
+> We have this from the testrun config
+>
+> perf: false # disable performance testing
+> func: true # enable functional testing
+>
+> So, use if testrunconfig.perf =3D=3D true?
+
+I see what you're saying, I can make that change for the time being.
+My reason for explicitly checking traffic generators types was that
+any future implementations may not need a DPDK runtime environment.
+
+>>
+>>
 >> +
->> +from framework.testbed_model.traffic_generator.traffic_generator import TrafficGenerator
+>> +@dataclass
+>> +class TrexPerformanceStats(PerformanceTrafficStats):
+>> +    """Data structure to store performance statistics for a given test =
+run.
+>> +
+>> +    Attributes:
+>> +        packet: The packet that was sent in the test run.
+>> +        frame_size: The total length of the frame. (L2 downward)
+>> +        tx_expected_bps: The expected bits per second on a given NIC.
+>> +        tx_expected_cps: ...
 >
 >
-> I think this can become:
->
-> from .traffic_generator import TrafficGenerator
+> "The expected connections per second" ? I think you just missed this one.
 
-Ack.
+This was ultimately removed from the final version, incidentally. But
+the way this was implemented does allow us to check this data.
+
 >
 >>
 >> +
->> +
->> +@dataclass(slots=True)
->> +class PerformanceTrafficStats(ABC):
->> +    """Data structure for stats offered by a given traffic generator."""
->> +
->> +    frame_size: int
->
->
-> Do we need to add an optional number of packet descriptors attribute? I realize that is a SUT testpmd param, not a TREX param, but presumably when we gather stats, we want to store the descriptor count with it.'
-
-It could be done by passing another parameter when the function is
-called. Maybe adding these parameters is helpful, maybe it isn't. It
-might just be easier to strip the frame size and descriptors away
-entirely from the statistics data structure, under the assumption that
-these fields would be managed in the test suites themselves. I think
-either/or would be fine.
-
-
->
->>
->> +
->> +
->> +class PerformanceTrafficGenerator(TrafficGenerator):
->> +    """An Abstract Base Class for all performance-oriented traffic generators.
->> +
->> +    Provides an intermediary interface for performance-based traffic generator.
->> +    """
->> +
->> +    _test_stats: list[PerformanceTrafficStats]
->> +
->> +    @property
->> +    def is_capturing(self) -> bool:
->> +        """Used for synchronization."""
->> +        return False
->> +
->> +    @property
->> +    def last_results(self) -> PerformanceTrafficStats | None:
->> +        """Get the latest set of results from TG instance.
->> +
->> +        Returns:
->> +            The most recent set of traffic statistics.
+>> +        Attributes:
+>> +            ports: Related ports utilized in TG instance.
 >> +        """
->> +        return self._test_stats.pop(0)
->> +
->> +    def generate_traffic_and_stats(
->> +        self,
->> +        packet: Packet,
->> +        duration: float,  # Default of 60 (in seconds).
+>> +        super().setup(ports)
+>> +        # Start TREX server process.
+>> +        try:
+>> +            self._logger.info("Starting TREX server process: sending 45=
+ second sleep.")
+>> +            privileged_command =3D self._os_session._get_privileged_com=
+mand(
+>> +                f"""
+>> +                    cd /opt/v3.03/; {self._tg_config.remote_path}/t-rex=
+-64
+>> +                     --cfg {self._tg_config.config} -i
+>> +                """
 >
 >
-> Should it be float = 60, so the default is coming from the function, and not a "default" which is coming from the testsuite? If not, I guess the "default" comment belongs in the testsuite?
+> I know this was just a work in progress for RFC with some hardcoding, but=
+ you already have tg_config.remote_path, right? So, the leading hardcoded c=
+d does not do anything, and even if you had to cd there you could use the t=
+g_config.remote_path?
 
-I would say the comment can be removed. Right now, as you mentioned,
-it is set up so that the default value is asserted at the test suite
-level. It might just make sense to do away with this default value and
-just insist the user explicitly provide a duration. That would make
-sense in its own right.
+Yes, that was hard coded as a temporary measure. The cd is needed to
+ensure that the TREX executable actually runs properly. I must have
+just forgot to switch that back as I was working with haste.
