@@ -2,65 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0845BC2D0CD
-	for <dpdk-dev@archiver.kernel.org>; Sat, 17 May 2025 08:15:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DD05C3ABDA
+	for <dpdk-dev@archiver.kernel.org>; Sat, 17 May 2025 08:21:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D3383402AF;
-	Sat, 17 May 2025 10:15:21 +0200 (CEST)
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com
- [209.85.215.175])
- by mails.dpdk.org (Postfix) with ESMTP id B30E64025D
- for <dev@dpdk.org>; Sat, 17 May 2025 10:15:19 +0200 (CEST)
-Received: by mail-pg1-f175.google.com with SMTP id
- 41be03b00d2f7-b0db0b6a677so2325858a12.2
- for <dev@dpdk.org>; Sat, 17 May 2025 01:15:19 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 491CD402E0;
+	Sat, 17 May 2025 10:21:51 +0200 (CEST)
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com
+ [209.85.215.178])
+ by mails.dpdk.org (Postfix) with ESMTP id CB0C0402DF
+ for <dev@dpdk.org>; Sat, 17 May 2025 10:21:49 +0200 (CEST)
+Received: by mail-pg1-f178.google.com with SMTP id
+ 41be03b00d2f7-b26f7d2c1f1so1047848a12.0
+ for <dev@dpdk.org>; Sat, 17 May 2025 01:21:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1747469718; x=1748074518; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1747470108; x=1748074908; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
  bh=mGKlQ2qeLXhaPjyjH4RpbokKu+gDtb2C5QM6XrVdsvY=;
- b=HPmbzqOBkboc5xikN5o/m0pfteMZ3cq1ghTkWT1/enK5Hg+vf2xAZ0l2UHikZD3PLw
- MZoIk7AAo81KuTdTES6fRiszl+DY4agGgGbRR/CxHiY/gc1oCOq9I9uKqBcbFR+sgSBC
- OT2+GXio6TlFb6vKwppjK7rsNkb2XtckIb4R6OLDcqJmUPsPhQn0+L2ZUvKuno5DTMOK
- KauXhGsi2R/zl/dR7m1AVgNR7lkPhziaJIMjfgOpmYB2wNjQioBGxfZGvaMDVJH7ndgM
- N5WA+GbzIBKU7Yze7fzeiqCyIF6s/SFVM0YGrCRKDms6YL/xo4bEok3KMUselHKsMFHt
- rQTw==
+ b=fzbP6vDsxBIYLV3ayVG+LkMTP5aGmvceYCRbG6ensFgVm2JOKvNo1T134NhoB4rNnd
+ V85LS8ymMaMHYmrHAeOuN0d9Wz57iOJupoKjUyZXiyul1R7gzQY2K2hhujK85qeSRDzd
+ JLeGU58em8O96531W2FQc/amr4My3dRME52TEfZ9VarC4NhkBc/unIJs+rIbRbOGnnaP
+ dnObksXiwi8f06MKASUTTcO+4HryfQLwmFQzIwntq9TlYY3NFPtPSgDurZUyFKyyey/t
+ 4DMfbHdA/WIze+NG1p4tXguFFrHq45h/OUwA0e3LikV9q25w7G6yA0kqTDF8G54YzWEA
+ oWDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1747469718; x=1748074518;
+ d=1e100.net; s=20230601; t=1747470108; x=1748074908;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
  bh=mGKlQ2qeLXhaPjyjH4RpbokKu+gDtb2C5QM6XrVdsvY=;
- b=jahr4kekYcxTxK2GAC1y3HgLl2ww4eTLftlmdhnqmyWQc5D0TGWb08R3pecKsbeawT
- qpOqQRO0tSOO3ztko6BMvm1+rIW6U+W8GnT9hr9fXqdEM26SmwnNqZU6t3DCU9ghY5Qf
- rUquW9WcqkrkEjKwrm9YTUeZQRxTxq3JX6PBvw6DaNptbn3lQp75pH4Pt4yKzQ9fGDuf
- C3nqH6ZqYP0tPDjkeA0+a7ee9G68gW5b7xcVI1PSXfsDuiSulk/rvrPByWzw6NN1wlLm
- V6MPySU2WOKQbkcALQyA4u8z9bbGaDnJ6bxKrwqVXe8cBOuMM+on2p4rTWrLq1r7275f
- pzow==
-X-Gm-Message-State: AOJu0Yzrj03XtV2K91uKqubHH14AGj8EWxpFMckpcPDR87N99XEZLCFp
- BCyIOQWB2381PwEVgBn41sXjv3KW8DZTIhijMeo0E6KlRCnm6t+XdoW9l2fFsssDJNo=
-X-Gm-Gg: ASbGncu8ZhYjS249tPEWeRfKEdKuE1PdaPL0zg0kKuFFebY1JixI3VVLsgbeR9N/b96
- TFvvOChLLSBz3bnXe0vz8xMv4x4Q1WKIT7k1wKkgE+GAJFOnJ4IUUBvrEhqFf1bjvol7ETLU7YE
- Lh/HU1l/TZWU2NP8V+nXG1k/8aP06n2hv3MHLCVZ1X+ue/hx7RpeLqXN02LW9adGTK5kykDrXy9
- 6fnxCjkfoZ7Q3OSgvdf3aveBx+1XEJmC6Z47h4TZWZ3SqlnPh3cOCREbGB3yBByTIXzwpfR04ZU
- Uxpu0I2+8x4Qxxk/YPalvCwlDLJLNSylMrnuOMoN+RNuIUN7vG7brZ7fBuO+TtOt90pntON3BvB
- BUJ04
-X-Google-Smtp-Source: AGHT+IFwQuWNPWONUUgIzecoosZ3fUqZmWmY98XKkZvSYJGXS1ScriRAf8ZA7IKaUREECadRYJseTA==
-X-Received: by 2002:a17:902:dacf:b0:220:c164:6ee1 with SMTP id
- d9443c01a7336-231d4595b02mr91199345ad.32.1747469718350; 
- Sat, 17 May 2025 01:15:18 -0700 (PDT)
+ b=wQKGn23pcmY/uJen8wr54yOCsmWONXYNGcpR6owqPXYNDbnxh6gkY/CGbHPM9WBdJF
+ /kVsasCdyYRvR4chTRkTyK7C9BeQNQMiHnAC54cJuC0ZMX/HB8kVvvIvlJwE/QuKVxYL
+ aZukjo2r8HEJ9mL8CPv757Z7p8lHdgQ9X1RbTfELP92JjY374Lq/+Pp4PieR1p/pB3DN
+ dHq//v7MuWsMNLvj1slY08A3hjcfmSDpe4NGIyJlUZaEQVdzBAA5fmHrCoc9y2h/E9aA
+ xomZHYVy6LuZD1liQE/JbcWxjLH8CDYGBky+bvZbGNjMFfIuIQF6YuTb7AYtYLxV5NX6
+ unYQ==
+X-Gm-Message-State: AOJu0Yym96yk68KU1DD14EGKh8VaBOtd+J5zEVQh+XcCjngVCxVRyNeh
+ XCj+lwbAg+Fl7lqXdsFjn7oPg9xYwWYmHJjm0KY2qpie1eL15OvavMzPnUZUxZGxmjU=
+X-Gm-Gg: ASbGncv7fTcilOJshYKnEWVuFsfvWyPkz2ijpMQr2fK8YGDCU+15FQ+yo+06Q7qINE3
+ +uB11N/WmfQ5lTtaRJ7oOQYU6TPdDHAyldizUPSzOXfXZR4B/UvRRGS2YMVvJFbzH1mLCvLXKyP
+ +zVv/mP8JlY9fabcdyzhBMnJSEGS8eTnWA8goZQV8hjLO8l6FX6lCnRBfyyqJPE1gLNRg8qU4Na
+ Oo8658TF9z3V06zEmED0ueZWJinCFTtTBXLfkw3FT/RJa5tgPgoKJlmPlmH3O6MfNWJ6Yfw1TFz
+ FyqlA74bq+qB2+qq/VNUXmKDs1fPuQ40DBcrdPdOroIR9SA+l98uHu7+FdFt/23DI+mjWB7aqng
+ abkZt
+X-Google-Smtp-Source: AGHT+IFfC4CQq6luT5LbrrPr/LJ0BCh/VEzZltgAcdKZDuXl9dZo+AlYqOicUyQvWBRTMLvaVINpwA==
+X-Received: by 2002:a17:902:d486:b0:224:1609:a74a with SMTP id
+ d9443c01a7336-231de3ae59amr78364145ad.34.1747470108098; 
+ Sat, 17 May 2025 01:21:48 -0700 (PDT)
 Received: from localhost.localdomain ([60.186.106.48])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-231d47f04d7sm26182015ad.0.2025.05.17.01.15.17
+ d9443c01a7336-231e27e62aasm22685065ad.31.2025.05.17.01.21.46
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 17 May 2025 01:15:17 -0700 (PDT)
+ Sat, 17 May 2025 01:21:47 -0700 (PDT)
 From: Yang Ming <mosesyyoung@gmail.com>
 To: dev@dpdk.org
 Cc: Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH] Skip vfio in the scenario of non-privileged mode
-Date: Sat, 17 May 2025 16:15:04 +0800
-Message-ID: <20250517081504.309-1-mosesyyoung@gmail.com>
+Subject: [PATCH v3] Skip vfio in the scenario of non-privileged mode
+Date: Sat, 17 May 2025 16:21:34 +0800
+Message-ID: <20250517082134.364-1-mosesyyoung@gmail.com>
 X-Mailer: git-send-email 2.49.0.windows.1
 In-Reply-To: <20250327075711.648-1-ming.1.yang@nokia-sbell.com>
 References: <20250327075711.648-1-ming.1.yang@nokia-sbell.com>
