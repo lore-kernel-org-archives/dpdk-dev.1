@@ -2,130 +2,153 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DF1AC3ABD8
-	for <dpdk-dev@archiver.kernel.org>; Sun, 18 May 2025 08:17:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB04C2D0CD
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 May 2025 05:42:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 10B7240A75;
-	Sun, 18 May 2025 10:17:22 +0200 (CEST)
-Received: from AS8PR03CU001.outbound.protection.outlook.com
- (mail-westeuropeazon11012035.outbound.protection.outlook.com [52.101.71.35])
- by mails.dpdk.org (Postfix) with ESMTP id A1A9E40A6E
- for <dev@dpdk.org>; Sun, 18 May 2025 10:17:20 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D40FF40648;
+	Mon, 19 May 2025 07:42:52 +0200 (CEST)
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com
+ (mail-co1nam11on2060.outbound.protection.outlook.com [40.107.220.60])
+ by mails.dpdk.org (Postfix) with ESMTP id D6EB64060C;
+ Mon, 19 May 2025 07:42:50 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=veIrtZ1MH+3ich58bHEPb3t5MY+ZHBfwVQoaIdrDpmj2H7mUXQbkfaKFWGZZOLPGeHfOwDvaJVVQCxcpHWaIs7+4ui18MUZky7c0D0tUliD5cNZI7xc5+JkY+jUAJQrETvg0qG4TzTJ6o46CUJ8IrZqmHgBr1Fsy/FwsZfp2+dOhs0oay1x0FstHjbvQ43gmnsJFjNYxug8bStsIcxgCSjMOy0jxSgFb+xyPZKtwwMcmQwTIUyEbu61YntuZak4Ny8Voln5ORZCgPZQEqKlwXYdrG3fZBaolBKxGwQqNVMZQ90idneG4dl0FmGaWH3c18nXOTNv0djKFMzmy5NdZ/g==
+ b=k9jOh7eC9SuDaTjgwgHwvd+JlG8cUkL/8xhpTkCu44Y77W3+qOq/J5dXOeOOqxL4KcNQjXsNco9eC74yIX7JEhi81mxI/mPtdYprz4jQBXND4hES7eyfPmcKmJVsoONWfbx78tIujFaprzT7l6vtxgnnvAvyki/CO4Tc72248V9LF+GIMGsM2ofGA7WCesB8+i+cZDrMqzuLN4Be24tZiZtF/lh81kxMElfcGJKNh1hy/pg6y+GPp13ecbM43x1YLTYuc8JE6STctDw+lax9EF6385qJ3UbkP/CdJ+PmCwj9nRliYL9wUDY7KT8NrraDn5quIHIr0qGSnOKA5znOIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3CTZ6wq0irrWxgz+AEzHo6qtQ3UEuNvTOdkC9aktfpw=;
- b=Ll6EnBDi1jIOZmfb8hRdgUYxBCN241hF8I0bnzQq6agvU7nzrQXu3N4SJj7k7/BKZMoWDjkIxH+0QRcZXIWBHIU9gTE7EfYOpctLJYt5khGrR2L2mECHfGTrROWhxjg6yID7PP6S4kbIMUE+aKUk/fWbmTb/vFhDfRCM/40hFyycpgHR5czMNOJG9XZgluZ/+HAV2uCe1/oyhNUIATR1T3f7UojOk5knW/fGIVUBLOekll76Pc1RTMx8xXJemZmsMUpiALpAnFu7zC1PLzTp758igV2fcCS7c7klIjidubdwfydrStbOMPgmGrYAygtCK1Mtzrc7Vn1Vfrt3Wr/fgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 192.176.1.74) smtp.rcpttodomain=dpdk.org smtp.mailfrom=ericsson.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com; 
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
- s=selector1;
+ bh=tRolqRmfkWc0aBrSw7gy9+c9iTFgBpldnRT1NLWkxB8=;
+ b=riBXdrqqbWRqprNYMRJ+6U1IMBSvb/7jFVU3AqnK6WKzA8AsHu8g3DT7xCtrC3dFhX83S5xo+JcsGjzCH3Wdzs9PE42sTe6SsCfwIQpldKjjzx5F8nNRLSIXBndDj85U6tcPbxk4RfrCmN6CLO1HWEhOCsMTDZu7p7rRlo6kArM3WpEaPQqwZif/Q4pf+tSmPKeXgfNx7vWE4IClNqz3B3yF/Ido5NTOXiTHsHXEZwACIORcrZxzuwLzD6DMLSSQfYRUGnYU+fEnDX3Z3BuBg8k2uDyRH2iSWWH7zUV6o6zqgkjQPSjFYuIndNcGxnuQMBP34OVxHApQotkO2qEi/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3CTZ6wq0irrWxgz+AEzHo6qtQ3UEuNvTOdkC9aktfpw=;
- b=d0ArOE7qYzJbnSyAfYc+RUIbxAg1lab51Izl6hQkwlfDFUIjuKDtmV6cOMdjiLRfX/Kk9qxuLJjtBL82+9Xnw9+ilKlcIOojsXUeC+Q6Pb38LddV7mIq7MbESqfOcZDKy6eDX1x/rmmeoA/EDH9NmdtwcYTiyveGwK0wiIoIWhOCqXt9UVx0uD2/C1bGz2kWZmJgDhEOyMBltg2nL1Szkk+UTqUina9HwiT6GOmHkruCiJDfjzQt3JKPmh8lTQ3WgX+EJHPYQ+VNU44uJd2qzcditLE9AFo5Vg8qpgj7ZJfk513DFrm9f7BPinCnigvA8eN6fetK5zt1f5muUnaYDQ==
-Received: from DU2P251CA0006.EURP251.PROD.OUTLOOK.COM (2603:10a6:10:230::7) by
- VI1PR07MB6446.eurprd07.prod.outlook.com (2603:10a6:800:13f::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.29; Sun, 18 May
- 2025 08:17:14 +0000
-Received: from DU6PEPF0000A7DF.eurprd02.prod.outlook.com
- (2603:10a6:10:230:cafe::ed) by DU2P251CA0006.outlook.office365.com
- (2603:10a6:10:230::7) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.27 via Frontend Transport; Sun,
- 18 May 2025 08:17:14 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 192.176.1.74)
- smtp.mailfrom=ericsson.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=ericsson.com;
-Received-SPF: Pass (protection.outlook.com: domain of ericsson.com designates
- 192.176.1.74 as permitted sender)
- receiver=protection.outlook.com; 
- client-ip=192.176.1.74; helo=oa.msg.ericsson.com; pr=C
-Received: from oa.msg.ericsson.com (192.176.1.74) by
- DU6PEPF0000A7DF.mail.protection.outlook.com (10.167.8.36) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8746.27 via Frontend Transport; Sun, 18 May 2025 08:17:14 +0000
-Received: from seliicinfr00050.seli.gic.ericsson.se (153.88.142.248) by
- smtp-central.internal.ericsson.com (100.87.178.60) with Microsoft SMTP Server
- id 15.2.1544.14; Sun, 18 May 2025 10:17:10 +0200
-Received: from breslau.. (seliicwb00002.seli.gic.ericsson.se [10.156.25.100])
- by seliicinfr00050.seli.gic.ericsson.se (Postfix) with ESMTP id
- CC5021C006B; Sun, 18 May 2025 10:17:10 +0200 (CEST)
-From: =?UTF-8?q?Mattias=20R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>
-To: <dev@dpdk.org>
-CC: =?UTF-8?q?Mattias=20R=C3=B6nnblom?= <hofors@lysator.liu.se>, "David
- Marchand" <david.marchand@redhat.com>, Thomas Monjalon <thomas@monjalon.net>, 
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
- =?UTF-8?q?Mattias=20R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>
-Subject: [PATCH 3/3] bitset: promote API stable
-Date: Sun, 18 May 2025 10:05:56 +0200
-Message-ID: <20250518080556.675092-3-mattias.ronnblom@ericsson.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250518080556.675092-1-mattias.ronnblom@ericsson.com>
-References: <20250518080556.675092-1-mattias.ronnblom@ericsson.com>
+ bh=tRolqRmfkWc0aBrSw7gy9+c9iTFgBpldnRT1NLWkxB8=;
+ b=hK/25pDjILeLrsyttAKuiaVfK5VKSEI9TWH6nYKG83du0f2NSgS8WdHKHjVerMSGYxKNDijdhpKa7NIkUglRMBC1cBX/ZyORf2ntpScbEKCXEz/ydZPBwZnJgp56dLdXXVEUXPwaK/1ZOm3gOJMNu7d0bV8ftxLBGtQ/kgC1ACqYi/T6XNo3Pmp+MPhu4gmAPOZ1g18wUqq2u8WS6Bdypa7EOfuETji6wLxVC5sA5Oxcy0rYB+EIv1uZsTYdPEAaxOCWZJ3peoweNGoJy/COLTIzjnSyCq9Rfzqlun6hJuCcFKSy9D5aoppsit3yb5IhO+ufvV9GvpNXJLm/SKtgoQ==
+Received: from SA1PR12MB9491.namprd12.prod.outlook.com (2603:10b6:806:458::21)
+ by LV8PR12MB9206.namprd12.prod.outlook.com (2603:10b6:408:186::21)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.30; Mon, 19 May
+ 2025 05:42:45 +0000
+Received: from SA1PR12MB9491.namprd12.prod.outlook.com
+ ([fe80::83e7:75dc:5128:784]) by SA1PR12MB9491.namprd12.prod.outlook.com
+ ([fe80::83e7:75dc:5128:784%6]) with mapi id 15.20.8746.030; Mon, 19 May 2025
+ 05:42:45 +0000
+From: Shani Peretz <shperetz@nvidia.com>
+To: Shani Peretz <shperetz@nvidia.com>, Akhil Goyal <gakhil@marvell.com>,
+ "dev@dpdk.org" <dev@dpdk.org>
+CC: Suanming Mou <suanmingm@nvidia.com>, "stable@dpdk.org" <stable@dpdk.org>, 
+ Brian Dooley <brian.dooley@intel.com>, Pablo de Lara
+ <pablo.de.lara.guarch@intel.com>
+Subject: RE: [EXTERNAL] [PATCH] app/crypto-perf: fix aad offset alignment
+Thread-Topic: [EXTERNAL] [PATCH] app/crypto-perf: fix aad offset alignment
+Thread-Index: AQHbkmQ2fHSrVkDKA0W0UfYk+ZI74LN3KDKAgA3v8yCAVMSX8A==
+Date: Mon, 19 May 2025 05:42:45 +0000
+Message-ID: <SA1PR12MB9491AEBA0261CF7E7C07D67DBF9CA@SA1PR12MB9491.namprd12.prod.outlook.com>
+References: <20250311090122.121190-1-shperetz@nvidia.com>
+ <CO6PR18MB44844B0F7C3BA22106DD9620D8DF2@CO6PR18MB4484.namprd18.prod.outlook.com>
+ <SA1PR12MB9491AB9BB59AB52B0D3A37FABFA62@SA1PR12MB9491.namprd12.prod.outlook.com>
+In-Reply-To: <SA1PR12MB9491AB9BB59AB52B0D3A37FABFA62@SA1PR12MB9491.namprd12.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR12MB9491:EE_|LV8PR12MB9206:EE_
+x-ms-office365-filtering-correlation-id: 2d6161cf-eef0-425f-e13d-08dd9697faed
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?NnFNcFhNejVQUjI2WVNQTTUzanBLL2NuMjQ5VzJMUDJDK0JGVVI1QjRjdVcy?=
+ =?utf-8?B?RVdkOVFZaWRTU3VFNFpibmhoVWpqc00rb0EyelgyRzUwc3F4OUZZNXBkUXBx?=
+ =?utf-8?B?QjlPN216ZFdYVWs3b1MrMzdaUUw4S0hSV0xvb1NSVndVTkk4UUx3akIvZjJ1?=
+ =?utf-8?B?T1B3WmUzY3pRd2Y2UUIraUl1KzVzOHZNMjJ2ak14cmdUZm1ka2JJTnVNNGY2?=
+ =?utf-8?B?dHhncXVMNGtCL3RVd3ZYVld0c25WdDRNYVJvckdWS05RVTNiYjFMU0hmbUI3?=
+ =?utf-8?B?bTZaTVB4VmdhNWdHVnZkZlVHVHRIZGtGVkk5RHJVd29pZEZaakRPMFluWjg1?=
+ =?utf-8?B?a2hjZVo2bTQrUFl5aTZmc3RwWDFPS2M5TDkyQkJLWld0enhMZHFvQm5VYVdq?=
+ =?utf-8?B?OHpZT2lGUFNjYmJqQzdzRG50a214RzI2QzhrTm8vQ2d2MHgzL0l3dUJnTmJS?=
+ =?utf-8?B?WXRtTzFrRVpmNlhEaWRWSllLMDBDODhQVFZFa0t5dndnbmZ4Y2FCN1ZXM0xh?=
+ =?utf-8?B?RlBPMHRpMHA3UUpTQnkvZkluZW5mcFUrN2l4NnArYk1zcjlXY2VtTXlmOHox?=
+ =?utf-8?B?eDJiU0g3WlR3TERXTnRNMmYwUHFJTEhXbmMwb3NFd0FReThya0xrb1E5RkFJ?=
+ =?utf-8?B?RlNGV1RZWVI4YVJJeFRBTWl5cFJFNFEwY3JteTQzODQvOWJrV284RWxZNWVn?=
+ =?utf-8?B?Y2k4ZGdQZE4wcGgxdFNPOUozdUhDVDJRQnVGSWdwZDNSQm8zVTJVdXR6Tzll?=
+ =?utf-8?B?b1pVWmlLWFJYclVMMW5GR2Zkd0pmWnh5LzY1ZG5uczU1bHhDMWt4YjFOVWxL?=
+ =?utf-8?B?aW5rdHdSMWRDbytwQlBHakhNZ1lOemgxZkpSZlpGREkyRGRhQTM5UU9uaTd0?=
+ =?utf-8?B?STg3UkZ1NVNQeThVRHJKc1lWK2VYQU1URGlPUEl0L0k3dFlQa2dKM09aOHV1?=
+ =?utf-8?B?Y2wxTzJzbE95M3Nnb3hmR2tYZzhaM2NuRENaam1wTHdqeEV5b3lYclVscEpj?=
+ =?utf-8?B?SmxZMkNZamNJc3F3WHlLMHVhTnRpVkltczc0azJUeWZ3OXN2TDNEYTJVQTh3?=
+ =?utf-8?B?a3lyeTZnT3Jvb0pKTmY2Z3l1VUUvMG94ck5IV3U2YmI3QnU4UFlScWhLc2pp?=
+ =?utf-8?B?ZUovMHRRdUp4bW15SHIzZjY2UEt5VFNrc1BzenFvSmlsak4rZ1VWcFU2UmlV?=
+ =?utf-8?B?TVlvYU50ejNaZFREbXh1YkJLQkNMU0FMR3BBQUE2eUp2VU1IcTU1SHJvd0Y0?=
+ =?utf-8?B?aXdHU3luMnlqRHNnNk5OVGZmSXc0YVE3dGptdFhCWEd1OEQ5cEZLYWhmVVhY?=
+ =?utf-8?B?UitEUXdlRDAwZkdtMHVCYXdyM3pMQTF4WE9CMzJYTUxRK1dHdk5CdWpscG9F?=
+ =?utf-8?B?N2c0QWRtZWwvVDdXL1ZNZ0dML2wwQktIdFJkL1MyUlJ1SzhZbTkwVkJvUnEv?=
+ =?utf-8?B?d0RxRnI3ek4xWWpqaGg4K2VQMGx3Wi9CNDIrT1Jid0tBMXNpMEdWVTgrd3VI?=
+ =?utf-8?B?c1lIenJ3cTMxa0QrckpWL0JRekIrN3hLZGZFbnVtWllWbEZRbDZmVVVjaERw?=
+ =?utf-8?B?U05pblZhNlM1NVM2QXBtZXprSUJJa2thUlJ6SkNseDh3TUNoSXhBTnNzejQ5?=
+ =?utf-8?B?cVpyNDdTVTdPcVBVRjVYVWFta20xeTlJbXh5MVo2dVdGdFZiaVVxRk9yM0xN?=
+ =?utf-8?B?TUNUODMwSWd3M3pneXFZckwrRnlaVFNDcG8zMTdyQk9IdExDQWxEd3FNeTd2?=
+ =?utf-8?B?RmU5aWhidW5sOVBDM3Qzc3VqYm85RHV0M0QzdGNZMjRIM2RhZ0xjSU9HTUJR?=
+ =?utf-8?B?ZHk1VXN0NVl6TG5TZ3N5bTVqV2JuMEhDSE1TdlVNdUZyZnhMQU1PUDZNa281?=
+ =?utf-8?B?cERRWjdhcnNlK1BBckxvNERRMmFLVVNVRFBXSlovcTc2c2pSRDRZcmdINGt1?=
+ =?utf-8?B?bTJnaGdUSndqWVdaQ2RlZXpxY05zbkY3YTlDMG5hWFZvU2lwRlluSmlhQmdC?=
+ =?utf-8?B?Y04yWjVSLzB3PT0=?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SA1PR12MB9491.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016)(38070700018); DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?NWZiamF1NmVob29FYWJCN3RoYnJDRThmT3RpMWlFMERCZEhERytNeUxwc3E0?=
+ =?utf-8?B?WmF2c1R1UFEzOGZPVkFzOWpVbldwU1hZY0lZVCt6dEoxV3dtZURYdVJYVE4x?=
+ =?utf-8?B?cUFJYUlSVE10SzkraEIwRFNMNFBjYkswZHNXdlkwNDNuSzNxd3dkNU9qazlm?=
+ =?utf-8?B?Rlk0NFEyZjduTzhoWHZLdm5NWXJ2eTFmTTJDWWJPb1Y4Sm9jR2VtM2hwS0FM?=
+ =?utf-8?B?L01OMXRncnFVQVpNeW9sM0kzendlbml1TDNTZGZiUnVMamJidlFUYXVxVXE4?=
+ =?utf-8?B?L29TSEkvMUd0cEtSaWVxdlpnS2VxdU1YbmxpNGJySERVa0pVTlNIYS8yK1F4?=
+ =?utf-8?B?cTlOVkRNbldFNmZtM2J5dlRISXlQQytMdVA3S20xVU1obkNZeHZHL1UvY0c1?=
+ =?utf-8?B?b25GYjNRSzJiNGtzTE4vS0lZUEJDMDN5TUZlYW5SNE1VV3VENVJwOFoyZWdB?=
+ =?utf-8?B?dGpISGQxTlVWWVROVWtnTDl1S3NmaEpJS2hSQnRMejdCT3c3SHdhelV2UzR4?=
+ =?utf-8?B?ZjRyYUxSQ0krd2JvSUo5RXNUUnZYaVNGTkNtWUdoR0RxbVlhN3dTWDhzOXVm?=
+ =?utf-8?B?cVBidTBOT3oyU2J3TEQ4NDlqUTZTNDVXVUUxRUkrZWNJVmhjN3hwc0dUYlJu?=
+ =?utf-8?B?a1hTVm5nMWoyQ0h5dVlWQ2RPdjNBS1UwRWNSdFB1b2xKK0JyWFlLRXkrN2o3?=
+ =?utf-8?B?RGRYNnhEU3RmbEFlYnRieUwvM2U1T3UwcXltcEN3Ry9OK2VyTVFObVEvZU1Z?=
+ =?utf-8?B?bDErbWlib3dPQTRFeURSQStKbXZFcHN0eUtjNU9RUERaSTd1N0NPVkNBN0VI?=
+ =?utf-8?B?RHloSjNMTGhyKzFKQ3FMNHUvSVFncW1yVXBxMXB4dUdRTUdWcUYzMXdaa3NN?=
+ =?utf-8?B?ME5ZeE9vY0dwVDZXOFZmalIzWEhSTElYc0JpVTNmdldMSXBHelFuU2dPd25h?=
+ =?utf-8?B?UVFrcEZ3YWgzS2c5NW5VclFucHJuSGRRVzFtRmd5Z0UwRlQrUUhOTzRzSkdu?=
+ =?utf-8?B?cURSN3Z5RVBjdDRKM2VGWDZqemFMVUU1WFpSSnE1VmJXbVJRM3NFeTl4Y3Y3?=
+ =?utf-8?B?THRodnpDcTFWUEtQMlZYNjJjL29YcExjcUVxODRrTEdDQTNyTE5Va2J1T2RI?=
+ =?utf-8?B?L1BJc0NFN2U0ZXQwOEFpYmRTbGIvWEp0L3dKbEVIQ2paTHgySkFNS1NZV1RQ?=
+ =?utf-8?B?VlNyalBxOVhQNnA4VCtCbkJyNjdvQ3RMNTlINDBRdkdPMFdKanpFeC8vdzVE?=
+ =?utf-8?B?dkd6dWt5MVR0NFhQZmxPOXR0aUhncFNjWkVtYzBOS2N6VEdzYWhVeHlOUWRo?=
+ =?utf-8?B?Y20yQ2FETlZMZkJpaUVTZTNySTZvNkU5NEI5TEhjbGZWTnQvMnJ4ZEVCNGph?=
+ =?utf-8?B?ZllLVzBYaXIwRHhCUXVuaFZYOExUYnBwNkdpdS9xNDZiZVY2QU9KMFlLMXhi?=
+ =?utf-8?B?WVBMQzBnVFU1V1hFaEtmbVRIWlJPekJHcEtsenJjREJHT3pWS1VnL3lxTGY5?=
+ =?utf-8?B?cEJ4akxFNnFXOXppU3NUOEdGQTZ4aEFtL2IvdWdxNUVnQWZLRHlsQnhPVWNW?=
+ =?utf-8?B?aHV3YWRRMzJydzdIVHZpRUxaQmNiZlBrNTFDZE1wVWxJTUNvbk4xRVZDLytE?=
+ =?utf-8?B?YmtVMDUxUnI5MXJyYWlpK2xaRGV5MGRvZDN5VVhsckxvdlJCZG9RNnFYYUF3?=
+ =?utf-8?B?cnR0cXZza29ST0xFN3JGb1ZtMGRwNDMzY2F3WjVQSEMwR2NRNVNMb29ma0Mz?=
+ =?utf-8?B?Wk5XUjMwbys5dmlBZU5tY1Z6ajV0czFiZEFNOHAvZWRYUytBUm5KdzFjbXdt?=
+ =?utf-8?B?Z2ZsZG5aRzRKb3RUMG9yYWJMUmorOHdRdDQvRTJCekRsRDRyVG1ZbUZsQm1j?=
+ =?utf-8?B?U3VwWVowK1FwYWNzam1KWUttR1dBTWNXVVFtSDdibmpWYS8wWFFHUG9zOXNF?=
+ =?utf-8?B?VFovMU1tVUJ4YmhGd1U1VTlDaEg4b0d0VDNiVDArRVNFMGtQbnlITWxSNUFK?=
+ =?utf-8?B?aC95Nmx5SHRjOGYrWXhtV3FZb21DQ0wvM2JWSWsyUkpHNmlQRlU5MUhTM1Q5?=
+ =?utf-8?B?MkdsazFGUkhFNlJ1a3dNMm1BdytETW9UVVBDTTk4MUt2OHVva0tGZngwYlRp?=
+ =?utf-8?Q?eRPVZigfTNwsGsroFc/kiAoLV?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU6PEPF0000A7DF:EE_|VI1PR07MB6446:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7a129c92-1d55-4eff-d6be-08dd95e46590
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|36860700013|376014|82310400026; 
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?RGViQUwxZGJNMXNJYVk3aFZMbGNkVk9TMXowZ01Va1hiOUl5TjFEdXpwMG5j?=
- =?utf-8?B?YjVKdnFHOWViUHhkZ1dQRmRTZ2h1QjRSVysxY3o5NmRXd2M4N0t2U1c5cE5S?=
- =?utf-8?B?TXlZVVl1NTJtMElEOXNYWWlGTFQvRHlOOWFGNHhoK2JEVlE4SDBTUkU1Z2hW?=
- =?utf-8?B?aEVQelN1U3hUS0huSUZtb0xPekVsMitCSmE1TUR0M1NjSkJ0bmx2N0E4eHEx?=
- =?utf-8?B?UHZ4VkI2RXNqdlJESzJxL1lxbW1oMHpoTFN2TTNiUklJZVF6a2lDeVExUHls?=
- =?utf-8?B?ekoyOTl5QnRPQUJBVVJpSlhjN3pGYm4vTFRKeXhWZGFmUjd1NXlBTGU5dEsy?=
- =?utf-8?B?S1ROeTN5RDRxaXFweWYzNUhjaWZrR0ppV053RktVdmlGMUc1UElpOEVKYXp6?=
- =?utf-8?B?dFdmMWFhQXMvbjRFelN3eW1zSUxCWkFRSFpUMDYzaEhjS3NWQkltS2JJTUdu?=
- =?utf-8?B?OWJZR3oxUlp2Z0FOZC90YS9QYjdCVzViTnZqTm9IenJ1c1IwUTdXR1ZINEZi?=
- =?utf-8?B?NkprU1ZpelZlQW0xa014K2NUelBMN1Q3TnBPUkJKdDJPaE9UT1cxWnVQNTNv?=
- =?utf-8?B?OEptaHFnYTdOcU01dFEvVmFrV2FyQmFYSWtELzdUeExFczFTV0RETmEvSDBh?=
- =?utf-8?B?UUNBNFV1U0V5M283MDNsOGVNTmFMd3JvSEY1OTVJOFlRZlZVWkJiYitQdXpt?=
- =?utf-8?B?d3ZINjZnQklmKzRCd1ZER0k5Tm42ckpBM1FyQ3p5dCttTUhFT3ZSMVQwSjVX?=
- =?utf-8?B?TEhKYUsrNmhnQlRQSlQvTFFadkt6WXRzbG5zWW4rNmFMREIyVWZCMS9QU0Jt?=
- =?utf-8?B?dCtiTWk1UlhBUnpTR21BblEyTWpocjRrS09rRGQ0VXBxYm1nNEVpN2g2R09X?=
- =?utf-8?B?YVlwc285aDR0V0NtMU5LUHhVUzl1S05nUWlhOERmbUVudHpQd3plUTlzVHBO?=
- =?utf-8?B?V1ZnTVFueFJXdUpvOFl1REdJWmJSdTZyYjJ4bm5VNEladHVYNlZhVTREQzBJ?=
- =?utf-8?B?Z0pCZE1lVVZlME1hUUtpdDhuSlpqOVNvUTQ4aitZakxXUkd4MWp2ZUswYzFB?=
- =?utf-8?B?ZE9uckMxT1N4Q1VOb2tQcFFrUjBRTktDMnhpenBzYmdJOFdCeVpzWmthR21y?=
- =?utf-8?B?dXUzYkpHRFV0ZFNYMGtGekJ4ZmUvdDZIM25kZHNtbG12TmwxeHRLcW9HTm9k?=
- =?utf-8?B?VVhhSW5qS3l2ekVCWVR3WWdFQU9JdHhYYmJ3UURIYyswUFdyTjJNMEdyc1VZ?=
- =?utf-8?B?SUxhOE9jUFN0OXA1dStHSDE0ZUhjam9QMC8xbGxIRys1L2gxNUdCakI4ajY0?=
- =?utf-8?B?K0Y3Ykd3Mk03ZGVmdU0wb3FyNVczU240bG1XZ1RTRUM5RzBXNHY4UEpGbE5u?=
- =?utf-8?B?akJUWDFWUVVzcEJHNHgweGl2OHVmckkyaVVUSEpwR2tJQjlacm5OTjBFNm55?=
- =?utf-8?B?b0M3cWdVZDhLYWxhQUJZTTBlbThRKy83dnZxczlXc0VSUWt6OVVpUksyNDYz?=
- =?utf-8?B?MTZaaEtBY2QrTlVUdXo0TEN4MS83Vkh3VGpueStFbXlxVHpsdmpFMDhrTFM0?=
- =?utf-8?B?TjUwVnh6d0x5L0twM0ZENUpKWWhjSnF1MzFUQW5PbmFZREx2dGZXYTA4OTNU?=
- =?utf-8?B?aVhOalhFRkRjY0V5YnB4VXFLNndyZXN3Z2Y4cE84akprT2p5bk5ndnJHTlRx?=
- =?utf-8?B?SlRsbk1pNWUzL2VIelpRT3puME9MaTlCVkU1eFcySlE2cms3UGtMVGs3TlZD?=
- =?utf-8?B?RjkwVjF6T2wxd2wwMHBRcnRrSkdocGVMazllVzVBTUtGZGV4aGhncHE0b0F6?=
- =?utf-8?B?TktUR2FUK3JjVmwzdzluTm0xL3RBOU04VkhoV0E0SnZCZkhaajI2anBvWWdo?=
- =?utf-8?B?cjhmSmxJeUhtc2ovNmRmVDVZRVdYZndmZkt4SUpxb2c0aDNXTVZVNlVSQ1Ex?=
- =?utf-8?B?SklxMmhDVXhKRnN1OTk1d0pYVkZwZnh5aWZXSkJMVjBVaGR2MDBndnpiamxn?=
- =?utf-8?B?aEQzM1diSEJzV25FMVN0b3hBZy9yNTdKdDI4NmZ5S2FaTnhUSW82WkdsZjAy?=
- =?utf-8?Q?t2lqC6?=
-X-Forefront-Antispam-Report: CIP:192.176.1.74; CTRY:SE; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:oa.msg.ericsson.com; PTR:office365.se.ericsson.net;
- CAT:NONE; SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);
- DIR:OUT; SFP:1101; 
-X-OriginatorOrg: ericsson.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 May 2025 08:17:14.4679 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a129c92-1d55-4eff-d6be-08dd95e46590
-X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f; Ip=[192.176.1.74];
- Helo=[oa.msg.ericsson.com]
-X-MS-Exchange-CrossTenant-AuthSource: DU6PEPF0000A7DF.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR07MB6446
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB9491.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2d6161cf-eef0-425f-e13d-08dd9697faed
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 May 2025 05:42:45.0484 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: aTTsduxURxcJZeuIkCX+Fyq76GT1IKocX0sGel9pL4Yu9u7EJPHaYuetVDfE/zkM8QH7wEHyICVI8lybdCqWaQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9206
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -139,637 +162,59 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove experimental tag on the bitset API.
-
-Signed-off-by: Mattias Rönnblom <mattias.ronnblom@ericsson.com>
----
- lib/eal/common/rte_bitset.c  |   2 +-
- lib/eal/include/rte_bitset.h | 137 -----------------------------------
- 2 files changed, 1 insertion(+), 138 deletions(-)
-
-diff --git a/lib/eal/common/rte_bitset.c b/lib/eal/common/rte_bitset.c
-index 78001b1ee8..0844acffc1 100644
---- a/lib/eal/common/rte_bitset.c
-+++ b/lib/eal/common/rte_bitset.c
-@@ -10,7 +10,7 @@
- #include <eal_export.h>
- #include "rte_bitset.h"
- 
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_bitset_to_str, 24.11)
-+RTE_EXPORT_SYMBOL(rte_bitset_to_str)
- ssize_t
- rte_bitset_to_str(const uint64_t *bitset, size_t num_bits, char *buf, size_t capacity)
- {
-diff --git a/lib/eal/include/rte_bitset.h b/lib/eal/include/rte_bitset.h
-index 27b7a2e34d..c199acc5be 100644
---- a/lib/eal/include/rte_bitset.h
-+++ b/lib/eal/include/rte_bitset.h
-@@ -87,9 +87,6 @@ extern "C" {
- 	fun(&(bitset)[__RTE_BITSET_WORD_IDX(bit_num)], __RTE_BITSET_BIT_OFFSET(bit_num))
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Declare a bitset.
-  *
-  * Declare (e.g., as a struct field) or define (e.g., as a stack
-@@ -115,9 +112,6 @@ extern "C" {
- 				__RTE_BITSET_FOREACH_LEFT(var, size, start_bit, len), flags) : -1)
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Iterate over all bits set.
-  *
-  * This macro iterates over all bits set (i.e., all ones) in the
-@@ -136,9 +130,6 @@ extern "C" {
- 	__RTE_BITSET_FOREACH(var, bitset, size, 0, size, 0)
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Iterate over all bits cleared.
-  *
-  * This macro iterates over all bits cleared in the bitset, in the
-@@ -156,9 +147,6 @@ extern "C" {
- 	__RTE_BITSET_FOREACH(var, bitset, size, 0, size, __RTE_BITSET_FIND_FLAG_FIND_CLEAR)
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Iterate over all bits set within a range.
-  *
-  * This macro iterates over all bits set (i.e., all ones) in the
-@@ -182,9 +170,6 @@ extern "C" {
- 	__RTE_BITSET_FOREACH(var, bitset, size, start_bit, len, 0)
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Iterate over all cleared bits within a range.
-  *
-  * This macro iterates over all bits cleared (i.e., all zeroes) in the
-@@ -215,9 +200,6 @@ extern "C" {
- 		__RTE_BITSET_FIND_FLAG_WRAP | __RTE_BITSET_FIND_FLAG_FIND_CLEAR)
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Initializes a bitset.
-  *
-  * All bits are cleared.
-@@ -231,7 +213,6 @@ extern "C" {
-  * @param size
-  *   The size of the bitset (in bits).
-  */
--__rte_experimental
- static inline void
- rte_bitset_init(uint64_t *bitset, size_t size)
- {
-@@ -239,9 +220,6 @@ rte_bitset_init(uint64_t *bitset, size_t size)
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Test if a bit is set.
-  *
-  * @param bitset
-@@ -251,7 +229,6 @@ rte_bitset_init(uint64_t *bitset, size_t size)
-  * @return
-  *   Returns true if the bit is '1', and false if the bit is '0'.
-  */
--__rte_experimental
- static inline bool
- rte_bitset_test(const uint64_t *bitset, size_t bit_num)
- {
-@@ -259,9 +236,6 @@ rte_bitset_test(const uint64_t *bitset, size_t bit_num)
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Set a bit in the bitset.
-  *
-  * Bits are numbered from 0 to (size - 1) (inclusive).
-@@ -273,7 +247,6 @@ rte_bitset_test(const uint64_t *bitset, size_t bit_num)
-  * @param bit_num
-  *   The index of the bit to be set.
-  */
--__rte_experimental
- static inline void
- rte_bitset_set(uint64_t *bitset, size_t bit_num)
- {
-@@ -281,9 +254,6 @@ rte_bitset_set(uint64_t *bitset, size_t bit_num)
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Clear a bit in the bitset.
-  *
-  * Bits are numbered 0 to (size - 1) (inclusive).
-@@ -295,7 +265,6 @@ rte_bitset_set(uint64_t *bitset, size_t bit_num)
-  * @param bit_num
-  *   The index of the bit to be cleared.
-  */
--__rte_experimental
- static inline void
- rte_bitset_clear(uint64_t *bitset, size_t bit_num)
- {
-@@ -303,9 +272,6 @@ rte_bitset_clear(uint64_t *bitset, size_t bit_num)
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Set or clear a bit in the bitset.
-  *
-  * Bits are numbered 0 to (size - 1) (inclusive).
-@@ -319,7 +285,6 @@ rte_bitset_clear(uint64_t *bitset, size_t bit_num)
-  * @param bit_value
-  *   Control if the bit should be set or cleared.
-  */
--__rte_experimental
- static inline void
- rte_bitset_assign(uint64_t *bitset, size_t bit_num, bool bit_value)
- {
-@@ -327,9 +292,6 @@ rte_bitset_assign(uint64_t *bitset, size_t bit_num, bool bit_value)
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Change the value of a bit in the bitset.
-  *
-  * Bits are numbered 0 to (size - 1) (inclusive).
-@@ -341,7 +303,6 @@ rte_bitset_assign(uint64_t *bitset, size_t bit_num, bool bit_value)
-  * @param bit_num
-  *   The index of the bit to be flipped.
-  */
--__rte_experimental
- static inline void
- rte_bitset_flip(uint64_t *bitset, size_t bit_num)
- {
-@@ -349,9 +310,6 @@ rte_bitset_flip(uint64_t *bitset, size_t bit_num)
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Atomically test if a bit is set.
-  *
-  * Atomically test if a bit in a bitset is set with the specified
-@@ -366,7 +324,6 @@ rte_bitset_flip(uint64_t *bitset, size_t bit_num)
-  * @return
-  *   Returns true if the bit is '1', and false if the bit is '0'.
-  */
--__rte_experimental
- static inline bool
- rte_bitset_atomic_test(const uint64_t *bitset, size_t bit_num, int memory_order)
- {
-@@ -374,9 +331,6 @@ rte_bitset_atomic_test(const uint64_t *bitset, size_t bit_num, int memory_order)
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Atomically set a bit in the bitset.
-  *
-  * Set a bit in a bitset as an atomic operation, with the specified
-@@ -395,7 +349,6 @@ rte_bitset_atomic_test(const uint64_t *bitset, size_t bit_num, int memory_order)
-  * @param memory_order
-  *   The memory order to use.
-  */
--__rte_experimental
- static inline void
- rte_bitset_atomic_set(uint64_t *bitset, size_t bit_num, int memory_order)
- {
-@@ -403,9 +356,6 @@ rte_bitset_atomic_set(uint64_t *bitset, size_t bit_num, int memory_order)
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Atomically clear a bit in the bitset.
-  *
-  * Clear a bit in a bitset as an atomic operation, with the specified
-@@ -424,7 +374,6 @@ rte_bitset_atomic_set(uint64_t *bitset, size_t bit_num, int memory_order)
-  * @param memory_order
-  *   The memory order to use.
-  */
--__rte_experimental
- static inline void
- rte_bitset_atomic_clear(uint64_t *bitset, size_t bit_num, int memory_order)
- {
-@@ -432,9 +381,6 @@ rte_bitset_atomic_clear(uint64_t *bitset, size_t bit_num, int memory_order)
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Atomically set or clear a bit in the bitset.
-  *
-  * Assign a value to a bit in a bitset as an atomic operation, with
-@@ -455,7 +401,6 @@ rte_bitset_atomic_clear(uint64_t *bitset, size_t bit_num, int memory_order)
-  * @param memory_order
-  *   The memory order to use.
-  */
--__rte_experimental
- static inline void
- rte_bitset_atomic_assign(uint64_t *bitset, size_t bit_num, bool bit_value, int memory_order)
- {
-@@ -463,9 +408,6 @@ rte_bitset_atomic_assign(uint64_t *bitset, size_t bit_num, bool bit_value, int m
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Atomically change the value of a bit in the bitset.
-  *
-  * Flip a bit in a bitset as an atomic operation, with the specified
-@@ -484,7 +426,6 @@ rte_bitset_atomic_assign(uint64_t *bitset, size_t bit_num, bool bit_value, int m
-  * @param memory_order
-  *   The memory order to use.
-  */
--__rte_experimental
- static inline void
- rte_bitset_atomic_flip(uint64_t *bitset, size_t bit_num, int memory_order)
- {
-@@ -492,9 +433,6 @@ rte_bitset_atomic_flip(uint64_t *bitset, size_t bit_num, int memory_order)
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Set all bits in the bitset.
-  *
-  * @param bitset
-@@ -502,7 +440,6 @@ rte_bitset_atomic_flip(uint64_t *bitset, size_t bit_num, int memory_order)
-  * @param size
-  *   The size of the bitset (in bits).
-  */
--__rte_experimental
- static inline void
- rte_bitset_set_all(uint64_t *bitset, size_t size)
- {
-@@ -510,9 +447,6 @@ rte_bitset_set_all(uint64_t *bitset, size_t size)
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Clear all bits in the bitset.
-  *
-  * @param bitset
-@@ -520,7 +454,6 @@ rte_bitset_set_all(uint64_t *bitset, size_t size)
-  * @param size
-  *   The size of the bitset (in bits).
-  */
--__rte_experimental
- static inline void
- rte_bitset_clear_all(uint64_t *bitset, size_t size)
- {
-@@ -528,9 +461,6 @@ rte_bitset_clear_all(uint64_t *bitset, size_t size)
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Count all set bits (also known as the @e weight).
-  *
-  * @param bitset
-@@ -540,7 +470,6 @@ rte_bitset_clear_all(uint64_t *bitset, size_t size)
-  * @return
-  *   Returns the number of '1' bits in the bitset.
-  */
--__rte_experimental
- static inline size_t
- rte_bitset_count_set(const uint64_t *bitset, size_t size)
- {
-@@ -560,9 +489,6 @@ rte_bitset_count_set(const uint64_t *bitset, size_t size)
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Count all cleared bits.
-  *
-  * @param bitset
-@@ -572,7 +498,6 @@ rte_bitset_count_set(const uint64_t *bitset, size_t size)
-  * @return
-  *   Returns the number of '0' bits in the bitset.
-  */
--__rte_experimental
- static inline size_t
- rte_bitset_count_clear(const uint64_t *bitset, size_t size)
- {
-@@ -582,7 +507,6 @@ rte_bitset_count_clear(const uint64_t *bitset, size_t size)
- #define __RTE_BITSET_FIND_FLAG_FIND_CLEAR (1U << 0)
- #define __RTE_BITSET_FIND_FLAG_WRAP (1U << 1)
- 
--__rte_experimental
- static inline ssize_t
- __rte_bitset_find_nowrap(const uint64_t *bitset, size_t __rte_unused size, size_t start_bit,
- 		size_t len, bool find_clear)
-@@ -630,7 +554,6 @@ __rte_bitset_find_nowrap(const uint64_t *bitset, size_t __rte_unused size, size_
- 
- }
- 
--__rte_experimental
- static inline ssize_t
- __rte_bitset_find(const uint64_t *bitset, size_t size, size_t start_bit, size_t len,
- 		unsigned int flags)
-@@ -658,9 +581,6 @@ __rte_bitset_find(const uint64_t *bitset, size_t size, size_t start_bit, size_t
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Find first bit set.
-  *
-  * Scans the bitset in the forward direction (i.e., starting at the
-@@ -674,7 +594,6 @@ __rte_bitset_find(const uint64_t *bitset, size_t size, size_t start_bit, size_t
-  *   Returns the index of the least significant '1', or -1 if all
-  *   bits are '0'.
-  */
--__rte_experimental
- static inline ssize_t
- rte_bitset_find_first_set(const uint64_t *bitset, size_t size)
- {
-@@ -682,9 +601,6 @@ rte_bitset_find_first_set(const uint64_t *bitset, size_t size)
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Find first bit set at offset.
-  *
-  * Scans the bitset in the forward direction (i.e., starting at the
-@@ -704,7 +620,6 @@ rte_bitset_find_first_set(const uint64_t *bitset, size_t size)
-  *   Returns the index of the least significant '1', or -1 if all
-  *   bits are '0'.
-  */
--__rte_experimental
- static inline ssize_t
- rte_bitset_find_set(const uint64_t *bitset, size_t size, size_t start_bit, size_t len)
- {
-@@ -712,9 +627,6 @@ rte_bitset_find_set(const uint64_t *bitset, size_t size, size_t start_bit, size_
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Find first bit set at offset, with wrap-around.
-  *
-  * Scans the bitset in the forward direction (i.e., starting at the
-@@ -735,7 +647,6 @@ rte_bitset_find_set(const uint64_t *bitset, size_t size, size_t start_bit, size_
-  *   Returns the index of the least significant '1', or -1 if all
-  *   bits are '0'.
-  */
--__rte_experimental
- static inline ssize_t
- rte_bitset_find_set_wrap(const uint64_t *bitset, size_t size, size_t start_bit, size_t len)
- {
-@@ -743,9 +654,6 @@ rte_bitset_find_set_wrap(const uint64_t *bitset, size_t size, size_t start_bit,
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Find first cleared bit.
-  *
-  * Scans the bitset in the forward direction (i.e., starting at the
-@@ -759,7 +667,6 @@ rte_bitset_find_set_wrap(const uint64_t *bitset, size_t size, size_t start_bit,
-  *   Returns the index of the least significant '0', or -1 if all
-  *   bits are '1'.
-  */
--__rte_experimental
- static inline ssize_t
- rte_bitset_find_first_clear(const uint64_t *bitset, size_t size)
- {
-@@ -767,9 +674,6 @@ rte_bitset_find_first_clear(const uint64_t *bitset, size_t size)
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Find first cleared bit at offset.
-  *
-  * Scans the bitset in the forward direction (i.e., starting at the
-@@ -789,7 +693,6 @@ rte_bitset_find_first_clear(const uint64_t *bitset, size_t size)
-  *   Returns the index of the least significant '0', or -1 if all
-  *   bits are '1'.
-  */
--__rte_experimental
- static inline ssize_t
- rte_bitset_find_clear(const uint64_t *bitset, size_t size, size_t start_bit, size_t len)
- {
-@@ -797,9 +700,6 @@ rte_bitset_find_clear(const uint64_t *bitset, size_t size, size_t start_bit, siz
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Find first cleared bit at offset, with wrap-around.
-  *
-  * Scans the bitset in the forward direction (i.e., starting at the
-@@ -820,7 +720,6 @@ rte_bitset_find_clear(const uint64_t *bitset, size_t size, size_t start_bit, siz
-  *   Returns the index of the least significant '0', or -1 if all
-  *   bits are '1'.
-  */
--__rte_experimental
- static inline ssize_t
- rte_bitset_find_clear_wrap(const uint64_t *bitset, size_t size, size_t start_bit, size_t len)
- {
-@@ -829,9 +728,6 @@ rte_bitset_find_clear_wrap(const uint64_t *bitset, size_t size, size_t start_bit
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Copy bitset.
-  *
-  * Copy the bits of the @c src_bitset to the @c dst_bitset.
-@@ -845,7 +741,6 @@ rte_bitset_find_clear_wrap(const uint64_t *bitset, size_t size, size_t start_bit
-  * @param size
-  *   The size of the bitsets (in bits).
-  */
--__rte_experimental
- static inline void
- rte_bitset_copy(uint64_t *__rte_restrict dst_bitset, const uint64_t *__rte_restrict src_bitset,
- 		size_t size)
-@@ -854,9 +749,6 @@ rte_bitset_copy(uint64_t *__rte_restrict dst_bitset, const uint64_t *__rte_restr
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Bitwise or two bitsets.
-  *
-  * Perform a bitwise OR operation on all bits in the two equal-size
-@@ -872,7 +764,6 @@ rte_bitset_copy(uint64_t *__rte_restrict dst_bitset, const uint64_t *__rte_restr
-  * @param size
-  *   The size of the bitsets (in bits).
-  */
--__rte_experimental
- static inline void
- rte_bitset_or(uint64_t *dst_bitset, const uint64_t *src_bitset0, const uint64_t *src_bitset1,
- 		size_t size)
-@@ -884,9 +775,6 @@ rte_bitset_or(uint64_t *dst_bitset, const uint64_t *src_bitset0, const uint64_t
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Bitwise and two bitsets.
-  *
-  * Perform a bitwise AND operation on all bits in the two equal-size
-@@ -902,7 +790,6 @@ rte_bitset_or(uint64_t *dst_bitset, const uint64_t *src_bitset0, const uint64_t
-  * @param size
-  *   The size of the bitsets (in bits).
-  */
--__rte_experimental
- static inline void
- rte_bitset_and(uint64_t *dst_bitset, const uint64_t *src_bitset0, const uint64_t *src_bitset1,
- 		size_t size)
-@@ -914,9 +801,6 @@ rte_bitset_and(uint64_t *dst_bitset, const uint64_t *src_bitset0, const uint64_t
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Bitwise xor two bitsets.
-  *
-  * Perform a bitwise XOR operation on all bits in the two equal-size
-@@ -932,7 +816,6 @@ rte_bitset_and(uint64_t *dst_bitset, const uint64_t *src_bitset0, const uint64_t
-  * @param size
-  *   The size of the bitsets (in bits).
-  */
--__rte_experimental
- static inline void
- rte_bitset_xor(uint64_t *dst_bitset, const uint64_t *src_bitset0, const uint64_t *src_bitset1,
- 		size_t size)
-@@ -944,9 +827,6 @@ rte_bitset_xor(uint64_t *dst_bitset, const uint64_t *src_bitset0, const uint64_t
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Compute the bitwise complement of a bitset.
-  *
-  * Flip every bit in the @c src_bitset, and store the result in @c
-@@ -959,7 +839,6 @@ rte_bitset_xor(uint64_t *dst_bitset, const uint64_t *src_bitset0, const uint64_t
-  * @param size
-  *   The size of the bitsets (in bits).
-  */
--__rte_experimental
- static inline void
- rte_bitset_complement(uint64_t *dst_bitset, const uint64_t *src_bitset, size_t size)
- {
-@@ -970,9 +849,6 @@ rte_bitset_complement(uint64_t *dst_bitset, const uint64_t *src_bitset, size_t s
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Shift bitset left.
-  *
-  * Perform a logical shift left of (multiply) @c src_bitset, and store
-@@ -987,7 +863,6 @@ rte_bitset_complement(uint64_t *dst_bitset, const uint64_t *src_bitset, size_t s
-  * @param shift_bits
-  *   The number of bits to shift the bitset.
-  */
--__rte_experimental
- static inline void
- rte_bitset_shift_left(uint64_t *dst_bitset, const uint64_t *src_bitset, size_t size,
- 		size_t shift_bits)
-@@ -1015,9 +890,6 @@ rte_bitset_shift_left(uint64_t *dst_bitset, const uint64_t *src_bitset, size_t s
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Shift bitset right.
-  *
-  * Perform a logical shift right of (divide) @c src_bitset, and store
-@@ -1032,7 +904,6 @@ rte_bitset_shift_left(uint64_t *dst_bitset, const uint64_t *src_bitset, size_t s
-  * @param shift_bits
-  *   The number of bits to shift the bitset.
-  */
--__rte_experimental
- static inline void
- rte_bitset_shift_right(uint64_t *dst_bitset, const uint64_t *src_bitset, size_t size,
- 		size_t shift_bits)
-@@ -1071,9 +942,6 @@ rte_bitset_shift_right(uint64_t *dst_bitset, const uint64_t *src_bitset, size_t
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Compare two bitsets.
-  *
-  * Compare two bitsets for equality.
-@@ -1085,7 +953,6 @@ rte_bitset_shift_right(uint64_t *dst_bitset, const uint64_t *src_bitset, size_t
-  * @param size
-  *   The size of the bitsets (in bits).
-  */
--__rte_experimental
- static inline bool
- rte_bitset_equal(const uint64_t *bitset_a, const uint64_t *bitset_b, size_t size)
- {
-@@ -1103,9 +970,6 @@ rte_bitset_equal(const uint64_t *bitset_a, const uint64_t *bitset_b, size_t size
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Converts a bitset to a string.
-  *
-  * This function prints a string representation of the bitstring to
-@@ -1127,7 +991,6 @@ rte_bitset_equal(const uint64_t *bitset_a, const uint64_t *bitset_b, size_t size
-  *   Returns the number of bytes written (i.e., @c size + 1), or -EINVAL
-  *   in case the buffer capacity was too small.
-  */
--__rte_experimental
- ssize_t
- rte_bitset_to_str(const uint64_t *bitset, size_t size, char *buf, size_t capacity);
- 
--- 
-2.43.0
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU2hhbmkgUGVyZXR6IDxz
+aHBlcmV0ekBudmlkaWEuY29tPg0KPiBTZW50OiBXZWRuZXNkYXksIDI2IE1hcmNoIDIwMjUgOTox
+NA0KPiBUbzogQWtoaWwgR295YWwgPGdha2hpbEBtYXJ2ZWxsLmNvbT47IGRldkBkcGRrLm9yZw0K
+PiBDYzogU3Vhbm1pbmcgTW91IDxzdWFubWluZ21AbnZpZGlhLmNvbT47IHN0YWJsZUBkcGRrLm9y
+ZzsgQnJpYW4NCj4gRG9vbGV5IDxicmlhbi5kb29sZXlAaW50ZWwuY29tPjsgUGFibG8gZGUgTGFy
+YQ0KPiA8cGFibG8uZGUubGFyYS5ndWFyY2hAaW50ZWwuY29tPg0KPiBTdWJqZWN0OiBSRTogW0VY
+VEVSTkFMXSBbUEFUQ0hdIGFwcC9jcnlwdG8tcGVyZjogZml4IGFhZCBvZmZzZXQgYWxpZ25tZW50
+DQo+IA0KPiBFeHRlcm5hbCBlbWFpbDogVXNlIGNhdXRpb24gb3BlbmluZyBsaW5rcyBvciBhdHRh
+Y2htZW50cw0KPiANCj4gDQo+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPiBGcm9t
+OiBBa2hpbCBHb3lhbCA8Z2FraGlsQG1hcnZlbGwuY29tPg0KPiA+IFNlbnQ6IE1vbmRheSwgMTcg
+TWFyY2ggMjAyNSAxMjoyMw0KPiA+IFRvOiBTaGFuaSBQZXJldHogPHNocGVyZXR6QG52aWRpYS5j
+b20+OyBkZXZAZHBkay5vcmcNCj4gPiBDYzogU3Vhbm1pbmcgTW91IDxzdWFubWluZ21AbnZpZGlh
+LmNvbT47IHN0YWJsZUBkcGRrLm9yZzsgQnJpYW4NCj4gRG9vbGV5DQo+ID4gPGJyaWFuLmRvb2xl
+eUBpbnRlbC5jb20+OyBQYWJsbyBkZSBMYXJhDQo+ID4gPHBhYmxvLmRlLmxhcmEuZ3VhcmNoQGlu
+dGVsLmNvbT4NCj4gPiBTdWJqZWN0OiBSRTogW0VYVEVSTkFMXSBbUEFUQ0hdIGFwcC9jcnlwdG8t
+cGVyZjogZml4IGFhZCBvZmZzZXQNCj4gPiBhbGlnbm1lbnQNCj4gPg0KPiA+IEV4dGVybmFsIGVt
+YWlsOiBVc2UgY2F1dGlvbiBvcGVuaW5nIGxpbmtzIG9yIGF0dGFjaG1lbnRzDQo+ID4NCj4gPg0K
+PiA+IEhpLA0KPiA+ID4gQUFEIG9mZnNldCBpbiBBRVMtR0NNIGNyeXB0byB0ZXN0IHdhcyBjYWxj
+dWxhdGVkIGJ5IGFkZGluZyAxNi1ieXRlDQo+ID4gPiBhbGlnbm1lbnQgYWZ0ZXIgdGhlIElWLCB3
+aGljaCBpcyBvbmx5IG5lZWRlZCBpbiBBRVMtQ0NNLg0KPiA+DQo+ID4gQWdyZWVkIHRoYXQgQ0NN
+IGhhcyBhIHJlcXVpcmVtZW50IGZvciAxNkIgYWxpZ25tZW50Lg0KPiA+IEJ1dCBmb3IgR0NNLCBk
+b2VzIGl0IGJyZWFrIGFueSBwcm90b2NvbD8gQ2FuIHdlIG5vdCBhbGlnbiB0byBieXRlDQo+ID4g
+Ym91bmRhcnkgZm9yIHBlcmZvcm1hbmNlPw0KPiA+IFRoaXMgaXMgYSBwZXJmb3JtYW5jZSBhcHBs
+aWNhdGlvbiB3aGljaCBtYWlubHkgZm9jdXMgb24gZ2V0dGluZyB0aGUNCj4gPiBiZXN0IHRocm91
+Z2hwdXQuDQo+ID4gRGlkIHlvdSBjaGVjayBpZiBpdCBpcyBoYXZpbmcgc29tZSBwZXJmb3JtYW5j
+ZSBkZWdyYWRhdGlvbj8NCj4gPg0KPiA+ID4NCj4gPiA+IFRoZSBwYXRjaCBjb3JyZWN0IHRoZSBB
+QUQgb2Zmc2V0IGNhbGN1bGF0aW9uIGluIEFFUy1HQ00gYWxnb3JpdGhtIHRlc3RzLg0KPiA+ID4N
+Cj4gPiA+IEZpeGVzOiAwYjI0MjQyMmQzODUgKCJhcHAvY3J5cHRvLXBlcmY6IHNldCBBQUQgYWZ0
+ZXIgdGhlIGNyeXB0bw0KPiA+ID4gb3BlcmF0aW9uIikNCj4gPiA+IENjOiBzdGFibGVAZHBkay5v
+cmcNCj4gPiA+DQo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBTaGFuaSBQZXJldHogPHNocGVyZXR6QG52
+aWRpYS5jb20+DQo+ID4gPiAtLS0NCj4gPiA+ICBhcHAvdGVzdC1jcnlwdG8tcGVyZi9jcGVyZl9v
+cHMuYyB8IDQgKysrLQ0KPiA+ID4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDEg
+ZGVsZXRpb24oLSkNCj4gPiA+DQo+ID4gPiBkaWZmIC0tZ2l0IGEvYXBwL3Rlc3QtY3J5cHRvLXBl
+cmYvY3BlcmZfb3BzLmMNCj4gPiA+IGIvYXBwL3Rlc3QtY3J5cHRvLXBlcmYvY3BlcmZfb3BzLmMN
+Cj4gPiA+IGluZGV4IDZkNWY1MTAyMjAuLmY5YmU1MWUxN2YgMTAwNjQ0DQo+ID4gPiAtLS0gYS9h
+cHAvdGVzdC1jcnlwdG8tcGVyZi9jcGVyZl9vcHMuYw0KPiA+ID4gKysrIGIvYXBwL3Rlc3QtY3J5
+cHRvLXBlcmYvY3BlcmZfb3BzLmMNCj4gPiA+IEBAIC02ODgsNyArNjg4LDkgQEAgY3BlcmZfc2V0
+X29wc19hZWFkKHN0cnVjdCBydGVfY3J5cHRvX29wICoqb3BzLA0KPiA+ID4gICAgICAgdWludDE2
+X3QgaTsNCj4gPiA+ICAgICAgIC8qIEFBRCBpcyBwbGFjZWQgYWZ0ZXIgdGhlIElWICovDQo+ID4g
+PiAgICAgICB1aW50MTZfdCBhYWRfb2Zmc2V0ID0gaXZfb2Zmc2V0ICsNCj4gPiA+IC0gICAgICAg
+ICAgICAgICAgICAgICBSVEVfQUxJR05fQ0VJTCh0ZXN0X3ZlY3Rvci0+YWVhZF9pdi5sZW5ndGgs
+IDE2KTsNCj4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAoKG9wdGlvbnMtPmFlYWRfYWxnbyA9
+PQ0KPiA+ID4gKyBSVEVfQ1JZUFRPX0FFQURfQUVTX0NDTSkNCj4gPiA+ID8NCj4gPiA+ICsgICAg
+ICAgICAgICAgICAgICAgICBSVEVfQUxJR05fQ0VJTCh0ZXN0X3ZlY3Rvci0+YWVhZF9pdi5sZW5n
+dGgsIDE2KSA6DQo+ID4gPiArICAgICAgICAgICAgICAgICAgICAgdGVzdF92ZWN0b3ItPmFlYWRf
+aXYubGVuZ3RoKTsNCj4gPiA+DQo+ID4gPiAgICAgICBmb3IgKGkgPSAwOyBpIDwgbmJfb3BzOyBp
+KyspIHsNCj4gPiA+ICAgICAgICAgICAgICAgc3RydWN0IHJ0ZV9jcnlwdG9fc3ltX29wICpzeW1f
+b3AgPSBvcHNbaV0tPnN5bTsNCj4gPiA+IC0tDQo+ID4gPiAyLjI1LjENCj4gDQo+IEkgY2hlY2tl
+ZCB0aGUgdGhyb3VnaHB1dCB0ZXN0LCBhbmQgSSBoYXZlbid0IG5vdGljZWQgYW55IGRlZ3JhZGF0
+aW9uDQo+IGNvbXBhcmVkIHRvIHVwc3RyZWFtLiBJIGNhbiBzaGFyZSB0aGUgcmVzdWx0cyBpZiBu
+ZWVkZWQuDQo+IE5vdGUgdGhhdCByZWdhcmRsZXNzIG9mIHRoZSBwZXJmb3JtYW5jZSBpdCBmaXhl
+cyBzZXZlcmFsIHNlZ21lbnRhdGlvbiBmYXVsdHMgaW4NCj4gdGhlIHRlc3QuDQo+IChUaGUgcHJv
+YmxlbSBpcyB0aGF0IHdlIGFsbG9jYXRlIHRoZSBjcnlwdG9fb3BfcHJpdmF0ZV9zaXplIHdpdGhv
+dXQNCj4gYWxpZ25tZW50LCBidXQgd2UgdHJ5IHRvIGFjY2VzcyBhcyBpZiBpdCB3YXMgMTYgYnl0
+ZSBhbGlnbm1lbnQpDQoNCkhleSwgSXMgdGhlcmUgYW55dGhpbmcgZWxzZSBJIGNhbiBkbyB0byBw
+cm9tb3RlIHRoaXMgZml4Pw0KDQo=
