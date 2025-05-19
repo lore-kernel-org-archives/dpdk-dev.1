@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A4B0C3ABD8
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 May 2025 12:54:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41AFBC3ABD8
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 May 2025 12:55:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 76BC540655;
-	Mon, 19 May 2025 14:54:55 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id A0C4440655
- for <dev@dpdk.org>; Mon, 19 May 2025 14:54:53 +0200 (CEST)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54JCG8Hi010616
- for <dev@dpdk.org>; Mon, 19 May 2025 05:54:52 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 8FB2B4065B;
+	Mon, 19 May 2025 14:54:59 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id C223240276
+ for <dev@dpdk.org>; Mon, 19 May 2025 14:54:58 +0200 (CEST)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54J0xMxV014535
+ for <dev@dpdk.org>; Mon, 19 May 2025 05:54:58 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=Q
- lrJkVLHx7jeJLErpPaXwpSMdh1+/wY5RZVDK441brs=; b=YTeN7vu6Bzk1IUUJ1
- /ijKsQjhsqZtmyi+9siLVxJ8zqM/xHK5P8ljm1CDSMgM5ZUA5gE6JYor41tnZj5d
- kgCrK4pHdzeU0oVbq/dNpo/F4LtEGIkJMyvjWpNU8iYBpIyUFbJgG/erP9fCdVlK
- 4K85LMrzHjmM3vS+ApM/tG6iLe1evFQ7+F9m32mQbv8bzGyNCtdO+FBEGVUkAiL2
- FM7qB50TxUbtZqcEa/1Oy5VEfG3YSZ7ZA8dQFeDs0d1mHQjbUVYHP+di9v5nsKxT
- NbOwpZVD+LoDKzHfUBGjwoEDfDVfJlQwk7ovh61WPcOI2tHmM39YiefUkqtFNlMB
- QYvWg==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46r4g981rg-1
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=j
+ iYTeFDHCcA7fUkC/Zmi/NSklPyp49KGrOVVLUox4rU=; b=TbcSDxJ1hLgCb5Ea7
+ 9D5SWT6FPqqOzeIKAEGxOpgBMky9q7Gp9maLxK4dfgke98kPAmpsmLB9dbCWkLyP
+ 4E1WBK2IbPaswfVaRjvi24C3bE7fG1kvXYyYmY/h7jWK1Ep2vJosrMR3BOiyuwc3
+ +61aVczZjDyKMdYjSQMK4w3C2cb9wbsbaAz7u2BbC4buCBL1OsOae57dGK0bLcCB
+ fMI30HZRST5UXXkWm5yxSNjDVhwR3yFw52KmOQkc/07GjhmngcF7ED3d8o98P3+F
+ +WhZhWkhmOr4Xp4gos0wsbVAFo1k5bQIhrC70DEUZiHdn2OIQNDOXpNEW315N8na
+ eYqQw==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46q46fad74-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Mon, 19 May 2025 05:54:52 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ for <dev@dpdk.org>; Mon, 19 May 2025 05:54:57 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 19 May 2025 05:54:51 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 19 May 2025 05:54:51 -0700
+ 15.2.1544.4; Mon, 19 May 2025 05:54:57 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 19 May 2025 05:54:57 -0700
 Received: from localhost.localdomain (unknown [10.28.36.158])
- by maili.marvell.com (Postfix) with ESMTP id BA06A3F7055;
- Mon, 19 May 2025 05:54:48 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 20CB03F7055;
+ Mon, 19 May 2025 05:54:53 -0700 (PDT)
 From: Rahul Bhansali <rbhansali@marvell.com>
 To: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
  <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
  <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
 CC: <jerinj@marvell.com>, Rahul Bhansali <rbhansali@marvell.com>
-Subject: [PATCH 3/6] common/cnxk: update CPT parse header for O20
-Date: Mon, 19 May 2025 18:24:21 +0530
-Message-ID: <20250519125424.1435140-3-rbhansali@marvell.com>
+Subject: [PATCH 4/6] common/cnxk: update inbound CPT LF ID
+Date: Mon, 19 May 2025 18:24:22 +0530
+Message-ID: <20250519125424.1435140-4-rbhansali@marvell.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250519125424.1435140-1-rbhansali@marvell.com>
 References: <20250519125424.1435140-1-rbhansali@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: 9063BLoZfvti8L5zDcZKxS6NuAkfnXI4
-X-Proofpoint-ORIG-GUID: 9063BLoZfvti8L5zDcZKxS6NuAkfnXI4
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE5MDEyMCBTYWx0ZWRfX8zyArVgwsauP
- p5NZYaCrFVC8A8x7RKN9E2aB3DmNQzkTTGCCOZd+P3kvytlA1ohKxMrXDJYewQ516VlXJKI1axY
- iNoJ/VrCx4gU11IAuCx/kB/BsWA9LjBO8C63S09I+mKXoIi491eO1oNQL59dGdD+mH33/Gq5dMs
- layWSoF4N+lQaYu3Ih/V8IiwnG60YZKgUC/2VZM7UHZNWAE/vYQq7hwA3nIX+RQHbveO3Fe5ybI
- qL/ArkFeEhljCAjVm3+zGDiyH+T/VXFmbz8fixpM0R6qJvH59Y8M+kpokJyqQwNdUfTtfmZVqbg
- tGWL6rwllI3qvzZEETxMW8PPgBAm/DmscvFoDP5UdoATHYcj5naxBKV1BcLihC26Gv9rxyOfAcq
- 8vwR3NScLKlByyj7X5eZ5OCUXs4cMOncBVONM5rzHBV6pVmeE5w3EDCo5cPvxEzwTNvi3Qt8
-X-Authority-Analysis: v=2.4 cv=B7m50PtM c=1 sm=1 tr=0 ts=682b2a1c cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=ju4TS-rKbe-V9a9IbisA:9
+X-Authority-Analysis: v=2.4 cv=b8uy4sGx c=1 sm=1 tr=0 ts=682b2a21 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=c-GMVqsASlz92QvtOfEA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: zvrl3E6A7hno_evH8bARRYfTJ6d-7OjE
+X-Proofpoint-ORIG-GUID: zvrl3E6A7hno_evH8bARRYfTJ6d-7OjE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE5MDEyMCBTYWx0ZWRfX8wzPVLi5FZvc
+ lubQ/RlDbv/FfNESz+PJ7xZAqG9q4xFCyEvyF/Y/8pNwAOUxM1COOSL1dBTZHt4EWUca1yya9Tj
+ wwPWTofZTokpB3UyGs1XIOGT6ZFcSU9Hub2vo/pjtCJM/3//ntmeh0uA2KhY37bLYZeBK+jRqmx
+ niAJMVyj3q0esK2VVUHZpJNxJfX7ipsvm/VTmWB64JYzoqFxA2O1Uoqh93g5uW7eEvZyOXXTJv+
+ 8Hg5eZ99LMydnZ678c9lmsNJ7y/g6YuEwR5MaQhKy4il29RR8haMRmP3dkKzjRzmT6QfIGKhOn1
+ eskaWk9MF8Z3kSITZyddWxjna7r+OtBHstHvUbiyPXDEwvgT7gUMHBff1kjGOtyI486G73xtv98
+ lnWyNtTTQNkdp8D9WGn3vOKQRbBdOaUGYSIcutONKtYLEcQdvBSAZj/VDfy4ICK36ziAW2Uv
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-19_05,2025-05-16_03,2025-03-28_01
@@ -81,75 +81,81 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Updates CPT parse header HW structure for O20.
+Inbound CPT LF ID update for Rx inline config.
 
 Signed-off-by: Rahul Bhansali <rbhansali@marvell.com>
 ---
- drivers/common/cnxk/hw/cpt.h        | 12 +++++++-----
- drivers/common/cnxk/roc_cpt_debug.c |  8 ++++----
- 2 files changed, 11 insertions(+), 9 deletions(-)
+ drivers/common/cnxk/roc_nix_inl.c      | 10 +++++++++-
+ drivers/common/cnxk/roc_nix_inl_dev.c  |  4 +---
+ drivers/common/cnxk/roc_nix_inl_priv.h |  2 +-
+ 3 files changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/common/cnxk/hw/cpt.h b/drivers/common/cnxk/hw/cpt.h
-index 40987abbb9..e542f3a3d4 100644
---- a/drivers/common/cnxk/hw/cpt.h
-+++ b/drivers/common/cnxk/hw/cpt.h
-@@ -358,11 +358,11 @@ union cpt_parse_hdr_u {
- 			struct {
- 				uint64_t rsvd_134_128 : 7;
- 				uint64_t pkt_inline : 1;
--				uint64_t new_pkt_aura : 20;
-+				uint64_t rsvd_155_136 : 20;
- 				uint64_t orig_pkt_aura : 20;
- 				uint64_t il3_off : 8;
--				uint64_t ptr_pad : 3;
--				uint64_t ptr_offset : 5;
-+				uint64_t ptr_pad : 5;
-+				uint64_t ptr_offset : 3;
- 			};
- 		} w2;
+diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_nix_inl.c
+index 7e47151eee..bee8e25c7c 100644
+--- a/drivers/common/cnxk/roc_nix_inl.c
++++ b/drivers/common/cnxk/roc_nix_inl.c
+@@ -495,7 +495,7 @@ nix_inl_inb_ipsec_sa_tbl_setup(struct roc_nix *roc_nix)
+ 			if (!inl_dev->nb_inb_cptlfs)
+ 				def_cptq = 0;
+ 			else
+-				def_cptq = inl_dev->nix_inb_qids[0];
++				def_cptq = inl_dev->nix_inb_qids[inl_dev->inb_cpt_lf_id];
+ 		}
  
-@@ -383,10 +383,12 @@ union cpt_parse_hdr_u {
- 			uint64_t u64;
- 			struct {
- 				uint32_t l4_chksum;
--				uint32_t l4_chksum_type : 1;
--				uint32_t rsvd_298_289 : 10;
-+				uint32_t l4_chksum_type : 2;
-+				uint32_t rsvd_292_290 : 3;
- 				uint32_t channel : 12;
-+				uint32_t rsvd_308_305 : 4;
- 				uint32_t sctr_size : 4;
-+				uint32_t rsvd_314_313 : 2;
- 				uint32_t gthr_size : 5;
- 			};
- 		} w4;
-diff --git a/drivers/common/cnxk/roc_cpt_debug.c b/drivers/common/cnxk/roc_cpt_debug.c
-index 35a2cf6b3a..28aedf088e 100644
---- a/drivers/common/cnxk/roc_cpt_debug.c
-+++ b/drivers/common/cnxk/roc_cpt_debug.c
-@@ -36,8 +36,8 @@ cpt_cnxk_parse_hdr_dump(FILE *file, const struct cpt_parse_hdr_s *cpth)
- 	cpt_dump(file, "W1: wqe_ptr \t0x%016lx\t", cpth->wqe_ptr);
+ 		res_addr_offset = (uint64_t)(inl_dev->res_addr_offset & 0xFF) << 48;
+@@ -1997,6 +1997,14 @@ roc_nix_inl_rq_ena_dis(struct roc_nix *roc_nix, bool enable)
  
- 	/* W2 */
--	cpt_dump(file, "W2: pkt_inline \t0x%x\t\tnew_pkt_aura \t0x%x\t\torig_pkt_aura \t0x%x",
--		 cpth->w2.pkt_inline, cpth->w2.new_pkt_aura, cpth->w2.orig_pkt_aura);
-+	cpt_dump(file, "W2: pkt_inline \t0x%x\t\torig_pkt_aura \t0x%x", cpth->w2.pkt_inline,
-+		 cpth->w2.orig_pkt_aura);
- 	cpt_dump(file, "W2: il3_off \t0x%x\t\tptr_pad \t0x%x \t", cpth->w2.il3_off,
- 		 cpth->w2.ptr_pad);
- 	cpt_dump(file, "W2: ptr_offset \t0x%x \t", cpth->w2.ptr_offset);
-@@ -53,9 +53,9 @@ cpt_cnxk_parse_hdr_dump(FILE *file, const struct cpt_parse_hdr_s *cpth)
- 	cpt_dump(file, "W4: channel \t0x%x\t\tsctr_size \t0x%08x\t\tgthr_size \t0x%08x",
- 		 cpth->w4.channel, cpth->w4.sctr_size, cpth->w4.gthr_size);
+ 		inl_dev = idev->nix_inl_dev;
  
--	/* offset of 0 implies 256B, otherwise it implies offset*8B */
-+	/* offset of 0 implies 256B, otherwise it implies offset*32B */
- 	offset = cpth->w2.ptr_offset;
--	offset = (((offset - 1) & 0x1f) + 1) * 8;
-+	offset = (((offset - 1) & 0x7) + 1) * 32;
- 	frag_info = PLT_PTR_ADD(cpth, offset);
++		if (!roc_model_is_cn10k()) {
++			if (inl_rq->spb_ena) {
++				rc = -EINVAL;
++				plt_err("inline RQ enable is not supported rc=%d", rc);
++				return rc;
++			}
++		}
++
+ 		rc = nix_rq_ena_dis(&inl_dev->dev, inl_rq, enable);
+ 		if (rc)
+ 			return rc;
+diff --git a/drivers/common/cnxk/roc_nix_inl_dev.c b/drivers/common/cnxk/roc_nix_inl_dev.c
+index 1f071df8ea..75d03c1077 100644
+--- a/drivers/common/cnxk/roc_nix_inl_dev.c
++++ b/drivers/common/cnxk/roc_nix_inl_dev.c
+@@ -385,7 +385,6 @@ nix_inl_nix_ipsec_cfg(struct nix_inl_dev *inl_dev, bool ena)
+ 			goto exit;
+ 		}
  
- 	if (cpth->w0.num_frags > 0) {
+-		/*TODO default cptq */
+ 		if (!inl_dev->nb_inb_cptlfs)
+ 			def_cptq = 0;
+ 		else
+@@ -646,11 +645,10 @@ nix_inl_nix_profile_config(struct nix_inl_dev *inl_dev, uint8_t profile_id)
+ 	sa_w = plt_log2_u32(max_sa);
+ 	sa_pow2_sz = plt_log2_u32(inb_sa_sz);
+ 
+-	/*TODO default cptq, Assuming Reassembly cpt lf ID at inl_dev->inb_cpt_lf_id + 1 */
+ 	if (!inl_dev->nb_inb_cptlfs)
+ 		def_cptq = 0;
+ 	else
+-		def_cptq = inl_dev->nix_inb_qids[inl_dev->inb_cpt_lf_id + 1];
++		def_cptq = inl_dev->nix_inb_qids[inl_dev->inb_cpt_lf_id];
+ 
+ 	res_addr_offset = (uint64_t)(inl_dev->res_addr_offset & 0xFF) << 48;
+ 	if (res_addr_offset)
+diff --git a/drivers/common/cnxk/roc_nix_inl_priv.h b/drivers/common/cnxk/roc_nix_inl_priv.h
+index 33073b2f34..5c12fb1160 100644
+--- a/drivers/common/cnxk/roc_nix_inl_priv.h
++++ b/drivers/common/cnxk/roc_nix_inl_priv.h
+@@ -134,7 +134,7 @@ struct nix_inl_dev {
+ 
+ #define NIX_INL_REASS_GEN_CFG                                                                      \
+ 	(BIT_ULL(51) | (ROC_CPT_DFLT_ENG_GRP_SE << 48) |                                           \
+-	 (ROC_IE_OW_MAJOR_OP_PROCESS_INBOUND_REASS << 32))
++	 (ROC_IE_OW_MAJOR_OP_PROCESS_INBOUND_REASS << 32 | ROC_IE_OW_INPLACE_BIT << 32))
+ 
+ int nix_inl_sso_register_irqs(struct nix_inl_dev *inl_dev);
+ void nix_inl_sso_unregister_irqs(struct nix_inl_dev *inl_dev);
 -- 
 2.25.1
 
