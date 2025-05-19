@@ -2,54 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1F2FC3ABDD
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 May 2025 18:56:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F089C3ABDD
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 May 2025 18:56:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4F81140673;
-	Mon, 19 May 2025 20:56:30 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 658834066F
- for <dev@dpdk.org>; Mon, 19 May 2025 20:56:28 +0200 (CEST)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54JHrAUY009121;
- Mon, 19 May 2025 11:56:27 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id BCED240666;
+	Mon, 19 May 2025 20:56:35 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 5687E4065B
+ for <dev@dpdk.org>; Mon, 19 May 2025 20:56:34 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54JHqtN2013911;
+ Mon, 19 May 2025 11:56:33 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=E
- PN4r7qqusAmP2TC0ibBHZeXthWEdXrV/yhKVsiVprg=; b=PHnATDXR3nah0cR7W
- 5iSl0IGqG0gd4X6IR6rK12AOIYcj/aEjpHCJqZLm3IQTlb9iGW1ZAI8o41uBm9aa
- IwZM96Auzx3PbTPIMxki4+EUPne2IbijtxmfkRy8Puev4viaHflU4Aw7yc00Eh5k
- NV/I0BgCjdfYn7Ms7FKpvWcRkFvziItr3c0I9Ha3+8Wjd3ZhrAhJIPhZjlG2ev3d
- DwRHPvelyH/IKD5e9hfA9NwHHqZzAo8tkz+dR2pZ9+59h2xTJA6Bot77DiMyHYcY
- UbLVytKIUaNS+X41pJWlKjDircABNFaL9jaBqO0WfcxZA0XnldadgqEzb0EuCLKm
- p11Vw==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=i
+ RjE6FDOiXwqsgcvb4h+/LzREaR3PnXYoNhQTU9lGbs=; b=cemtsvbXdLvPLjsx5
+ BZKIMahi1dXN3Yq7MxFTIC9c1adnSM7x41YU4B2pEO641t7yF9Em1de8bQgVMQZY
+ G4SOJ4CMK8y7t74n+sdnYBCuyvAH0hrQ3omxhchmOwe5OJMLU+Z5b0TTrPiMGFHB
+ 4M2tiF/13kv1aDuPSq3pMhf4sFWcQM18bdc/EmAj6I5dgIVJu0BgWDZ9oMzF0gyY
+ 5O30F+vc4roPdJQQWRsj0ONrfYdn6cJvOs5VJpSFFMxYQxyZjzz42Sqp1wNFFTgK
+ CLsJdw3impdhdBpBi9o568UwOoHLRzjpXRrRpeXn9kNSauI03HKSc2TLiS0H1hms
+ m8/ew==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46r4g98wey-1
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46qb79asgs-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Mon, 19 May 2025 11:56:27 -0700 (PDT)
+ Mon, 19 May 2025 11:56:33 -0700 (PDT)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 19 May 2025 11:56:26 -0700
+ 15.2.1544.4; Mon, 19 May 2025 11:56:31 -0700
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 19 May 2025 11:56:26 -0700
+ Transport; Mon, 19 May 2025 11:56:31 -0700
 Received: from MININT-80QBFE8.corp.innovium.com (MININT-80QBFE8.marvell.com
  [10.28.164.118])
- by maili.marvell.com (Postfix) with ESMTP id E1D133F7080;
- Mon, 19 May 2025 11:56:21 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 1C20D3F7080;
+ Mon, 19 May 2025 11:56:26 -0700 (PDT)
 From: <pbhagavatula@marvell.com>
-To: <jerinj@marvell.com>, Chengwen Feng <fengchengwen@huawei.com>, Kevin Laatz
- <kevin.laatz@intel.com>, Bruce Richardson <bruce.richardson@intel.com>
+To: <jerinj@marvell.com>, Cheng Jiang <honest.jiang@foxmail.com>, "Chengwen
+ Feng" <fengchengwen@huawei.com>
 CC: <vattunuru@marvell.com>, <g.singh@nxp.com>, <sachin.saxena@nxp.com>,
- <hemant.agrawal@nxp.com>, <conor.walsh@intel.com>,
+ <hemant.agrawal@nxp.com>, <bruce.richardson@intel.com>,
+ <kevin.laatz@intel.com>, <conor.walsh@intel.com>,
  <gmuthukrishn@marvell.com>, <vvelumuri@marvell.com>,
- <anatoly.burakov@intel.com>, <dev@dpdk.org>, Pavan Nikhilesh
- <pbhagavatula@marvell.com>
-Subject: [25.11 PATCH v2 2/5] test/dma: add enqueue dequeue operations
-Date: Tue, 20 May 2025 00:26:01 +0530
-Message-ID: <20250519185604.5584-3-pbhagavatula@marvell.com>
+ <anatoly.burakov@intel.com>, <dev@dpdk.org>, "Pavan
+ Nikhilesh" <pbhagavatula@marvell.com>
+Subject: [25.11 PATCH v2 3/5] app/dma-perf: add option to measure enq deq ops
+Date: Tue, 20 May 2025 00:26:02 +0530
+Message-ID: <20250519185604.5584-4-pbhagavatula@marvell.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250519185604.5584-1-pbhagavatula@marvell.com>
 References: <20250416100931.6544-1-pbhagavatula@marvell.com>
@@ -57,18 +58,18 @@ References: <20250416100931.6544-1-pbhagavatula@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: FaTNLkbMaCNPqWFd1VF1ho26S-2ko4jE
-X-Proofpoint-ORIG-GUID: FaTNLkbMaCNPqWFd1VF1ho26S-2ko4jE
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE5MDE3NiBTYWx0ZWRfXxIkLhcX8+JX5
- 7n6tEH6vAErHwxXlGT7q/YIdDCDldjtafO1NHmrnYi+wl7bs8/kzfQfOvKXzpIKYjFzPNO/2hhy
- 5PO1xgMEnFbfRRHbLnS2ZlXFSAI4On60MIrlC1D5JvZ+kKw1S+E8tt0cPzNeXeeYyUnfBWfMI+5
- uqG91ANYQXa31rMwtdQsIoLA/obdM0H/X7EZxzUbKCyxRYVTV0grepnPU+kDksn5x4cqM4Tgo4s
- 6twMFnaIwbDf6aJWJwCNLNOkVZI7H9EwmS/7H08K50dktNboLecrpipqc+X5LePWUlxjYVMQEQc
- +GWi1xjvOdofBlf7dILlJwz6NnwFY04GfUqJuywLZcZPhPToCy08r/1MiYZyfHN4wZ1E6Bw2WbF
- 5Ud6BtYo5jdUp6KxNujtzUwd/Y+0xLzINHUhvbfty19u6sSY2hYVc2xl33svhCPjZA0Lo/8/
-X-Authority-Analysis: v=2.4 cv=B7m50PtM c=1 sm=1 tr=0 ts=682b7edb cx=c_pps
+X-Proofpoint-GUID: 27G5HCNuYAZY6SW-Vp0zmniuWNBBmnTz
+X-Proofpoint-ORIG-GUID: 27G5HCNuYAZY6SW-Vp0zmniuWNBBmnTz
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE5MDE3NiBTYWx0ZWRfX08Ox7OydrqcJ
+ u4iffAJ+CxOv3YgiV8fQu1K/xEL3026lDs+wWvSzx0wkZKyJOJqBQs1c5wqDHU4OACO/bIIFGWm
+ Q5ZEKV/WPcVZpsixQoC+oisMChmssUX6zk3aZf4Y2pKC6ftaypxMMSG93uAUtoJmya3E7Ddtn6i
+ H9tz6Q4gy53avhbxS8fcyRQ+9AYcQZqQS2Z8jy3/ckUdsveF9YQH83GGiWa0V+mvyPZmjgJE2Mk
+ 9G9hq5oh8+awBdmSN1Ybt0kuO3IssuK2AXzGIg57WKwezty7VNts5tgY2zGkybWv3OZN7A0a6sH
+ qN8E7HVxHlYtjm4B1mMAgh9FyHXDqp4L7afWeEnxUzf1i3hCuQyODlPVGRUVzutLV//xDfvLuot
+ tydEEE5WFVg9/+xskbbLzc7Tc4C6Q79pvQNpIE9Y84oAbWMVL6Pa8INGS0zcHaH8scMjaGRG
+X-Authority-Analysis: v=2.4 cv=YvQPR5YX c=1 sm=1 tr=0 ts=682b7ee1 cx=c_pps
  a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=K0hZK82awePDIfUgRKoA:9
+ a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=SSXLivwrg0eM4BYXrbIA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
@@ -88,370 +89,326 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Pavan Nikhilesh <pbhagavatula@marvell.com>
 
-Add enqueue dequeue operations tests.
+This patch adds a option to measure performanc of
+enq/deq operations in the benchmark app.
 
 Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
 ---
- app/test/test_dmadev.c     | 160 +++++++++++++++++++++++++++++++++++++
- app/test/test_dmadev_api.c |  76 ++++++++++++++++--
- 2 files changed, 228 insertions(+), 8 deletions(-)
+ app/test-dma-perf/benchmark.c | 137 +++++++++++++++++++++++++++++++---
+ app/test-dma-perf/config.ini  |   3 +
+ app/test-dma-perf/main.c      |  13 +++-
+ app/test-dma-perf/main.h      |   1 +
+ doc/guides/tools/dmaperf.rst  |   5 ++
+ 5 files changed, 148 insertions(+), 11 deletions(-)
 
-diff --git a/app/test/test_dmadev.c b/app/test/test_dmadev.c
-index 9cbb9a6552..e9a62a0ddf 100644
---- a/app/test/test_dmadev.c
-+++ b/app/test/test_dmadev.c
-@@ -1052,6 +1052,147 @@ prepare_m2d_auto_free(int16_t dev_id, uint16_t vchan)
+diff --git a/app/test-dma-perf/benchmark.c b/app/test-dma-perf/benchmark.c
+index 6d617ea200..4425fc97cf 100644
+--- a/app/test-dma-perf/benchmark.c
++++ b/app/test-dma-perf/benchmark.c
+@@ -54,6 +54,7 @@ struct lcore_params {
+ 	struct rte_mbuf **srcs;
+ 	struct rte_mbuf **dsts;
+ 	struct sge_info sge;
++	struct rte_dma_op **dma_ops;
+ 	volatile struct worker_info worker_info;
+ };
+ 
+@@ -198,6 +199,16 @@ configure_dmadev_queue(uint32_t dev_id, struct test_configure *cfg, uint8_t sges
+ 	if (vchan_data_populate(dev_id, &qconf, cfg, dev_num) != 0)
+ 		rte_exit(EXIT_FAILURE, "Error with vchan data populate.\n");
+ 
++	if (rte_dma_info_get(dev_id, &info) != 0)
++		rte_exit(EXIT_FAILURE, "Error with getting device info.\n");
++
++	if (cfg->use_ops && !(info.dev_capa & RTE_DMA_CAPA_OPS_ENQ_DEQ))
++		rte_exit(EXIT_FAILURE, "Error with device %s not support enq_deq ops.\n",
++			 info.dev_name);
++
++	if (cfg->use_ops)
++		dev_config.flags = RTE_DMA_CFG_FLAG_ENQ_DEQ;
++
+ 	if (rte_dma_configure(dev_id, &dev_config) != 0)
+ 		rte_exit(EXIT_FAILURE, "Error with dma configure.\n");
+ 
+@@ -395,6 +406,61 @@ do_dma_sg_mem_copy(void *p)
  	return 0;
  }
  
-+static int
-+test_enq_deq_ops(int16_t dev_id, uint16_t vchan)
++static inline int
++do_dma_enq_deq_mem_copy(void *p)
 +{
-+#define BURST_SIZE 16
-+#define ROUNDS	   2E7
-+#define CPY_LEN	   64
-+	struct rte_mempool *ops_pool, *pkt_pool;
-+	struct rte_mbuf *mbufs[BURST_SIZE * 2];
-+	struct rte_dma_op *ops[BURST_SIZE];
-+	uint64_t enq_lat, deq_lat, start;
-+	int ret, i, j, enq, deq, n, max;
-+	struct rte_dma_sge ssg, dsg;
-+	struct rte_dma_info info;
++#define DEQ_SZ 64
++	struct lcore_params *para = (struct lcore_params *)p;
++	volatile struct worker_info *worker_info = &(para->worker_info);
++	struct rte_dma_op **dma_ops = para->dma_ops;
++	uint16_t kick_batch = para->kick_batch, sz;
++	uint16_t enq, deq, poll_cnt;
 +	uint64_t tenq, tdeq;
++	const uint16_t dev_id = para->dev_id;
++	uint32_t nr_buf = para->nr_buf;
++	struct rte_dma_op *op[DEQ_SZ];
++	uint32_t i;
 +
-+	memset(&info, 0, sizeof(info));
-+	ret = rte_dma_info_get(dev_id, &info);
-+	if (ret != 0)
-+		ERR_RETURN("Error with rte_dma_info_get()\n");
++	worker_info->stop_flag = false;
++	worker_info->ready_flag = true;
 +
-+	pkt_pool = rte_pktmbuf_pool_create("pkt_pool", info.max_desc * 2, 0, 0,
-+					   CPY_LEN + RTE_PKTMBUF_HEADROOM, rte_socket_id());
-+	if (pkt_pool == NULL)
-+		ERR_RETURN("Error creating pkt pool\n");
++	while (!worker_info->start_flag)
++		;
 +
-+	ops_pool = rte_mempool_create("ops_pool", info.max_desc,
-+				      sizeof(struct rte_dma_op) + (sizeof(struct rte_dma_sge) * 2),
-+				      0, 0, NULL, NULL, NULL, NULL, rte_socket_id(), 0);
-+	if (ops_pool == NULL)
-+		ERR_RETURN("Error creating ops pool\n");
++	if (kick_batch > nr_buf)
++		kick_batch = nr_buf;
 +
-+	max = info.max_desc - BURST_SIZE;
 +	tenq = 0;
 +	tdeq = 0;
-+	enq_lat = 0;
-+	deq_lat = 0;
-+
-+	for (i = 0; i < ROUNDS / max; i++) {
-+		n = 0;
-+		while (n != max) {
-+			if (rte_mempool_get_bulk(ops_pool, (void **)ops, BURST_SIZE) != 0)
-+				continue;
-+
-+			if (rte_pktmbuf_alloc_bulk(pkt_pool, mbufs, BURST_SIZE * 2) != 0)
-+				ERR_RETURN("Error allocating mbufs %d\n", n);
-+
-+			for (j = 0; j < BURST_SIZE; j++) {
-+				ops[j]->src_dst_seg[0].addr = rte_pktmbuf_iova(mbufs[j]);
-+				ops[j]->src_dst_seg[1].addr =
-+					rte_pktmbuf_iova(mbufs[j + BURST_SIZE]);
-+				ops[j]->src_dst_seg[0].length = CPY_LEN;
-+				ops[j]->src_dst_seg[1].length = CPY_LEN;
-+
-+				ops[j]->nb_src = 1;
-+				ops[j]->nb_dst = 1;
-+				ops[j]->user_meta = (uint64_t)mbufs[j];
-+				ops[j]->event_meta = (uint64_t)mbufs[j + BURST_SIZE];
-+
-+				memset((void *)(uintptr_t)ops[j]->src_dst_seg[0].addr,
-+				       rte_rand() & 0xFF, CPY_LEN);
-+				memset((void *)(uintptr_t)ops[j]->src_dst_seg[1].addr, 0, CPY_LEN);
++	while (1) {
++		for (i = 0; i < nr_buf; i += kick_batch) {
++			sz = RTE_MIN(nr_buf - i, kick_batch);
++			enq = rte_dma_enqueue_ops(dev_id, 0, &dma_ops[i], sz);
++			while (enq < sz) {
++				do {
++					deq = rte_dma_dequeue_ops(dev_id, 0, op, DEQ_SZ);
++					tdeq += deq;
++				} while (deq);
++				enq += rte_dma_enqueue_ops(dev_id, 0, &dma_ops[i + enq], sz - enq);
++				if (worker_info->stop_flag)
++					break;
 +			}
++			tenq += enq;
 +
-+			start = rte_rdtsc_precise();
-+			enq = rte_dma_enqueue_ops(dev_id, vchan, ops, BURST_SIZE);
-+			while (enq != BURST_SIZE) {
-+				enq += rte_dma_enqueue_ops(dev_id, vchan, ops + enq,
-+							   BURST_SIZE - enq);
-+			}
-+
-+			enq_lat += rte_rdtsc_precise() - start;
-+			n += enq;
++			worker_info->total_cpl += enq;
 +		}
-+		tenq += n;
 +
-+		memset(ops, 0, sizeof(ops));
-+		n = 0;
-+		while (n != max) {
-+			start = rte_rdtsc_precise();
-+			deq = rte_dma_dequeue_ops(dev_id, vchan, ops, BURST_SIZE);
-+			while (deq != BURST_SIZE) {
-+				deq += rte_dma_dequeue_ops(dev_id, vchan, ops + deq,
-+							   BURST_SIZE - deq);
-+			}
-+			n += deq;
-+			deq_lat += rte_rdtsc_precise() - start;
-+
-+			for (j = 0; j < deq; j++) {
-+				/* check the data is correct */
-+				ssg = ops[j]->src_dst_seg[0];
-+				dsg = ops[j]->src_dst_seg[1];
-+				if (memcmp((void *)(uintptr_t)ssg.addr, (void *)(uintptr_t)dsg.addr,
-+					   ssg.length) != 0)
-+					ERR_RETURN("Error with copy operation\n");
-+				rte_pktmbuf_free((struct rte_mbuf *)(uintptr_t)ops[j]->user_meta);
-+				rte_pktmbuf_free((struct rte_mbuf *)(uintptr_t)ops[j]->event_meta);
-+			}
-+			rte_mempool_put_bulk(ops_pool, (void **)ops, BURST_SIZE);
-+		}
-+		tdeq += n;
-+
-+		printf("\rEnqueued %" PRIu64 " Latency %.3f Dequeued %" PRIu64 " Latency %.3f",
-+		       tenq, (double)enq_lat / tenq, tdeq, (double)deq_lat / tdeq);
++		if (worker_info->stop_flag)
++			break;
 +	}
-+	printf("\n");
 +
-+	rte_mempool_free(pkt_pool);
-+	rte_mempool_free(ops_pool);
-+
-+	return 0;
-+}
-+
-+static int
-+prepare_enq_deq_ops(int16_t dev_id, uint16_t vchan)
-+{
-+	const struct rte_dma_conf conf = {.nb_vchans = 1, .flags = RTE_DMA_CFG_FLAG_ENQ_DEQ};
-+	struct rte_dma_vchan_conf qconf;
-+	struct rte_dma_info info;
-+
-+	memset(&qconf, 0, sizeof(qconf));
-+	memset(&info, 0, sizeof(info));
-+
-+	int ret = rte_dma_info_get(dev_id, &info);
-+	if (ret != 0)
-+		ERR_RETURN("Error with rte_dma_info_get()\n");
-+
-+	qconf.direction = RTE_DMA_DIR_MEM_TO_MEM;
-+	qconf.nb_desc = info.max_desc;
-+
-+	if (rte_dma_stop(dev_id) < 0)
-+		ERR_RETURN("Error stopping device %u\n", dev_id);
-+	if (rte_dma_configure(dev_id, &conf) != 0)
-+		ERR_RETURN("Error with rte_dma_configure()\n");
-+	if (rte_dma_vchan_setup(dev_id, vchan, &qconf) < 0)
-+		ERR_RETURN("Error with queue configuration\n");
-+	if (rte_dma_start(dev_id) != 0)
-+		ERR_RETURN("Error with rte_dma_start()\n");
++	poll_cnt = 0;
++	while ((tenq != tdeq) && (poll_cnt++ < POLL_MAX))
++		tdeq += rte_dma_dequeue_ops(dev_id, 0, op, DEQ_SZ);
 +
 +	return 0;
 +}
 +
- static int
- test_dmadev_sg_copy_setup(void)
+ static inline int
+ do_cpu_mem_copy(void *p)
  {
-@@ -1129,6 +1270,20 @@ test_dmadev_autofree_setup(void)
- 	return ret;
+@@ -436,16 +502,17 @@ dummy_free_ext_buf(void *addr, void *opaque)
  }
  
-+static int
-+test_dmadev_enq_deq_setup(void)
-+{
-+	int ret = TEST_SKIPPED;
-+
-+	if ((info.dev_capa & RTE_DMA_CAPA_OPS_ENQ_DEQ)) {
-+		if (prepare_enq_deq_ops(test_dev_id, vchan) != 0)
-+			return ret;
-+		ret = TEST_SUCCESS;
-+	}
-+
-+	return ret;
-+}
-+
  static int
- test_dmadev_setup(void)
+-setup_memory_env(struct test_configure *cfg,
+-			 struct rte_mbuf ***srcs, struct rte_mbuf ***dsts,
+-			 struct rte_dma_sge **src_sges, struct rte_dma_sge **dst_sges)
++setup_memory_env(struct test_configure *cfg, struct rte_mbuf ***srcs, struct rte_mbuf ***dsts,
++		 struct rte_dma_sge **src_sges, struct rte_dma_sge **dst_sges,
++		 struct rte_dma_op ***dma_ops)
  {
-@@ -1210,6 +1365,7 @@ test_dmadev_instance(int16_t dev_id)
- 		  TEST_ERR,
- 		  TEST_FILL,
- 		  TEST_M2D,
-+		  TEST_ENQ_DEQ,
- 		  TEST_END
- 	};
+ 	unsigned int cur_buf_size = cfg->buf_size.cur;
+ 	unsigned int buf_size = cur_buf_size + RTE_PKTMBUF_HEADROOM;
+-	unsigned int nr_sockets;
++	bool is_src_numa_incorrect, is_dst_numa_incorrect;
+ 	uint32_t nr_buf = cfg->nr_buf;
++	unsigned int nr_sockets;
++	uintptr_t ops;
+ 	uint32_t i;
+-	bool is_src_numa_incorrect, is_dst_numa_incorrect;
  
-@@ -1221,6 +1377,7 @@ test_dmadev_instance(int16_t dev_id)
- 		{"error_handling", test_completion_handling, 1},
- 		{"fill", test_enqueue_fill, 1},
- 		{"m2d_auto_free", test_m2d_auto_free, 128},
-+		{"dma_enq_deq", test_enq_deq_ops, 1},
- 	};
- 
- 	static struct unit_test_suite ts = {
-@@ -1249,6 +1406,9 @@ test_dmadev_instance(int16_t dev_id)
- 			TEST_CASE_NAMED_WITH_DATA("m2d_autofree",
- 				test_dmadev_autofree_setup, NULL,
- 				runtest, &param[TEST_M2D]),
-+			TEST_CASE_NAMED_WITH_DATA("dma_enq_deq",
-+				test_dmadev_enq_deq_setup, NULL,
-+				runtest, &param[TEST_ENQ_DEQ]),
- 			TEST_CASES_END()
+ 	nr_sockets = rte_socket_count();
+ 	is_src_numa_incorrect = (cfg->src_numa_node >= nr_sockets);
+@@ -540,6 +607,34 @@ setup_memory_env(struct test_configure *cfg,
+ 			if (!((i+1) % nb_dst_sges))
+ 				(*dst_sges)[i].length += (cur_buf_size % nb_dst_sges);
  		}
- 	};
-diff --git a/app/test/test_dmadev_api.c b/app/test/test_dmadev_api.c
-index 1ae85a9a29..1ba053696b 100644
---- a/app/test/test_dmadev_api.c
-+++ b/app/test/test_dmadev_api.c
-@@ -289,7 +289,7 @@ test_dma_vchan_setup(void)
- }
- 
- static int
--setup_vchan(int nb_vchans)
-+setup_vchan(int nb_vchans, bool ena_enq_deq)
- {
- 	struct rte_dma_vchan_conf vchan_conf = { 0 };
- 	struct rte_dma_info dev_info = { 0 };
-@@ -299,6 +299,7 @@ setup_vchan(int nb_vchans)
- 	ret = rte_dma_info_get(test_dev_id, &dev_info);
- 	RTE_TEST_ASSERT_SUCCESS(ret, "Failed to obtain device info, %d", ret);
- 	dev_conf.nb_vchans = nb_vchans;
-+	dev_conf.flags = ena_enq_deq ? RTE_DMA_CFG_FLAG_ENQ_DEQ : 0;
- 	ret = rte_dma_configure(test_dev_id, &dev_conf);
- 	RTE_TEST_ASSERT_SUCCESS(ret, "Failed to configure, %d", ret);
- 	vchan_conf.direction = RTE_DMA_DIR_MEM_TO_MEM;
-@@ -325,7 +326,7 @@ test_dma_start_stop(void)
- 	RTE_TEST_ASSERT(ret == -EINVAL, "Expected -EINVAL, %d", ret);
- 
- 	/* Setup one vchan for later test */
--	ret = setup_vchan(1);
-+	ret = setup_vchan(1, 0);
- 	RTE_TEST_ASSERT_SUCCESS(ret, "Failed to setup one vchan, %d", ret);
- 
- 	ret = rte_dma_start(test_dev_id);
-@@ -359,7 +360,7 @@ test_dma_reconfigure(void)
- 		return TEST_SKIPPED;
- 
- 	/* Setup one vchan for later test */
--	ret = setup_vchan(1);
-+	ret = setup_vchan(1, 0);
- 	RTE_TEST_ASSERT_SUCCESS(ret, "Failed to setup one vchan, %d", ret);
- 
- 	ret = rte_dma_start(test_dev_id);
-@@ -371,7 +372,7 @@ test_dma_reconfigure(void)
- 	/* Check reconfigure and vchan setup after device stopped */
- 	cfg_vchans = dev_conf.nb_vchans = (dev_info.max_vchans - 1);
- 
--	ret = setup_vchan(cfg_vchans);
-+	ret = setup_vchan(cfg_vchans, 0);
- 	RTE_TEST_ASSERT_SUCCESS(ret, "Failed to setup one vchan, %d", ret);
- 
- 	ret = rte_dma_start(test_dev_id);
-@@ -403,7 +404,7 @@ test_dma_stats(void)
- 	RTE_TEST_ASSERT(ret == -EINVAL, "Expected -EINVAL, %d", ret);
- 
- 	/* Setup one vchan for later test */
--	ret = setup_vchan(1);
-+	ret = setup_vchan(1, 0);
- 	RTE_TEST_ASSERT_SUCCESS(ret, "Failed to setup one vchan, %d", ret);
- 
- 	/* Check for invalid vchan */
-@@ -506,7 +507,7 @@ test_dma_completed(void)
- 	int ret;
- 
- 	/* Setup one vchan for later test */
--	ret = setup_vchan(1);
-+	ret = setup_vchan(1, 0);
- 	RTE_TEST_ASSERT_SUCCESS(ret, "Failed to setup one vchan, %d", ret);
- 
- 	ret = rte_dma_start(test_dev_id);
-@@ -569,7 +570,7 @@ test_dma_completed_status(void)
- 	int ret;
- 
- 	/* Setup one vchan for later test */
--	ret = setup_vchan(1);
-+	ret = setup_vchan(1, 0);
- 	RTE_TEST_ASSERT_SUCCESS(ret, "Failed to setup one vchan, %d", ret);
- 
- 	ret = rte_dma_start(test_dev_id);
-@@ -637,7 +638,7 @@ test_dma_sg(void)
- 
- 	n_sge = RTE_MIN(dev_info.max_sges, TEST_SG_MAX);
- 
--	ret = setup_vchan(1);
-+	ret = setup_vchan(1, 0);
- 	RTE_TEST_ASSERT_SUCCESS(ret, "Failed to setup one vchan, %d", ret);
- 
- 	ret = rte_dma_start(test_dev_id);
-@@ -699,6 +700,64 @@ test_dma_sg(void)
- 	return TEST_SUCCESS;
- }
- 
-+static int
-+test_dma_ops_enq_deq(void)
-+{
-+	struct rte_dma_info dev_info = {0};
-+	struct rte_dma_op *ops;
-+	int n_sge, i, ret;
 +
-+	ret = rte_dma_info_get(test_dev_id, &dev_info);
-+	RTE_TEST_ASSERT_SUCCESS(ret, "Failed to obtain device info, %d", ret);
-+	if ((dev_info.dev_capa & RTE_DMA_CAPA_OPS_ENQ_DEQ) == 0)
-+		return TEST_SKIPPED;
++		if (cfg->use_ops) {
 +
-+	n_sge = RTE_MIN(dev_info.max_sges, TEST_SG_MAX);
++			nr_buf /= RTE_MAX(nb_src_sges, nb_dst_sges);
++			*dma_ops = rte_zmalloc(NULL, nr_buf * (sizeof(struct rte_dma_op *)),
++					       RTE_CACHE_LINE_SIZE);
++			if (*dma_ops == NULL) {
++				printf("Error: dma_ops container malloc failed.\n");
++				return -1;
++			}
 +
-+	ret = setup_vchan(1, 1);
-+	RTE_TEST_ASSERT_SUCCESS(ret, "Failed to setup one vchan, %d", ret);
++			ops = (uintptr_t)rte_zmalloc(
++				NULL,
++				nr_buf * (sizeof(struct rte_dma_op) + ((nb_src_sges + nb_dst_sges) *
++								       sizeof(struct rte_dma_sge))),
++				RTE_CACHE_LINE_SIZE);
++			if (ops == 0) {
++				printf("Error: dma_ops malloc failed.\n");
++				return -1;
++			}
 +
-+	ret = rte_dma_start(test_dev_id);
-+	RTE_TEST_ASSERT_SUCCESS(ret, "Failed to start, %d", ret);
-+
-+	ops = rte_zmalloc(
-+		"ops", sizeof(struct rte_dma_op) + ((2 * n_sge) * sizeof(struct rte_dma_sge)), 0);
-+
-+	for (i = 0; i < n_sge; i++) {
-+		ops->src_dst_seg[i].addr = rte_malloc_virt2iova(src_sg[i]);
-+		ops->src_dst_seg[i].length = TEST_MEMCPY_SIZE;
-+		ops->src_dst_seg[n_sge + i].addr = rte_malloc_virt2iova(dst_sg[i]);
-+		ops->src_dst_seg[n_sge + i].length = TEST_MEMCPY_SIZE;
-+	}
-+
-+	ops->nb_src = n_sge;
-+	ops->nb_dst = n_sge;
-+	sg_memory_setup(n_sge);
-+
-+	/* Enqueue operations */
-+	ret = rte_dma_enqueue_ops(test_dev_id, 0, &ops, 1);
-+	RTE_TEST_ASSERT(ret == 1, "Failed to enqueue DMA operations, %d", ret);
-+
-+	rte_delay_us_sleep(TEST_WAIT_US_VAL);
-+
-+	ops = NULL;
-+	/* Dequeue operations */
-+	ret = rte_dma_dequeue_ops(test_dev_id, 0, &ops, 1);
-+	RTE_TEST_ASSERT(ret == 1, "Failed to dequeue DMA operations, %d", ret);
-+	RTE_TEST_ASSERT(ops != NULL, "Failed to dequeue DMA operations %p", ops);
-+	/* Free allocated memory for ops */
-+	rte_free(ops);
-+
-+	ret = sg_memory_verify(n_sge);
-+	RTE_TEST_ASSERT_SUCCESS(ret, "Failed to verify memory");
-+
-+	/* Stop dmadev to make sure dmadev to a known state */
-+	ret = rte_dma_stop(test_dev_id);
-+	RTE_TEST_ASSERT_SUCCESS(ret, "Failed to stop, %d", ret);
-+
-+	return TEST_SUCCESS;
-+}
-+
- static struct unit_test_suite dma_api_testsuite = {
- 	.suite_name = "DMA API Test Suite",
- 	.setup = testsuite_setup,
-@@ -717,6 +776,7 @@ static struct unit_test_suite dma_api_testsuite = {
- 		TEST_CASE(test_dma_completed),
- 		TEST_CASE(test_dma_completed_status),
- 		TEST_CASE(test_dma_sg),
-+		TEST_CASE(test_dma_ops_enq_deq),
- 		TEST_CASES_END()
++			for (i = 0; i < nr_buf; i++)
++				(*dma_ops)[i] =
++					(struct rte_dma_op *)(ops +
++							      (i * (sizeof(struct rte_dma_op) +
++								    ((nb_src_sges + nb_dst_sges) *
++								     sizeof(struct rte_dma_sge)))));
++		}
  	}
- };
+ 
+ 	return 0;
+@@ -582,8 +677,12 @@ get_work_function(struct test_configure *cfg)
+ 	if (cfg->is_dma) {
+ 		if (!cfg->is_sg)
+ 			fn = do_dma_plain_mem_copy;
+-		else
+-			fn = do_dma_sg_mem_copy;
++		else {
++			if (cfg->use_ops)
++				fn = do_dma_enq_deq_mem_copy;
++			else
++				fn = do_dma_sg_mem_copy;
++		}
+ 	} else {
+ 		fn = do_cpu_mem_copy;
+ 	}
+@@ -680,6 +779,7 @@ mem_copy_benchmark(struct test_configure *cfg)
+ 	struct rte_dma_sge *src_sges = NULL, *dst_sges = NULL;
+ 	struct vchan_dev_config *vchan_dev = NULL;
+ 	struct lcore_dma_map_t *lcore_dma_map = NULL;
++	struct rte_dma_op **dma_ops = NULL;
+ 	unsigned int buf_size = cfg->buf_size.cur;
+ 	uint16_t kick_batch = cfg->kick_batch.cur;
+ 	uint16_t nb_workers = cfg->num_worker;
+@@ -690,13 +790,13 @@ mem_copy_benchmark(struct test_configure *cfg)
+ 	float mops, mops_total;
+ 	float bandwidth, bandwidth_total;
+ 	uint32_t nr_sgsrc = 0, nr_sgdst = 0;
+-	uint32_t nr_buf;
++	uint32_t nr_buf, nr_ops;
+ 	int ret = 0;
+ 
+ 	nr_buf = align_buffer_count(cfg, &nr_sgsrc, &nr_sgdst);
+ 	cfg->nr_buf = nr_buf;
+ 
+-	if (setup_memory_env(cfg, &srcs, &dsts, &src_sges, &dst_sges) < 0)
++	if (setup_memory_env(cfg, &srcs, &dsts, &src_sges, &dst_sges, &dma_ops) < 0)
+ 		goto out;
+ 
+ 	if (cfg->is_dma)
+@@ -751,6 +851,25 @@ mem_copy_benchmark(struct test_configure *cfg)
+ 				goto out;
+ 		}
+ 
++		if (cfg->is_sg && cfg->use_ops) {
++			nr_ops = nr_buf / RTE_MAX(cfg->nb_src_sges, cfg->nb_dst_sges);
++			lcores[i]->nr_buf = nr_ops / nb_workers;
++			lcores[i]->dma_ops = dma_ops + (nr_ops / nb_workers * i);
++			for (j = 0; j < (nr_ops / nb_workers); j++) {
++				for (k = 0; k < cfg->nb_src_sges; k++)
++					lcores[i]->dma_ops[j]->src_dst_seg[k] =
++						lcores[i]->sge.srcs[(j * cfg->nb_src_sges) + k];
++
++				for (k = 0; k < cfg->nb_dst_sges; k++)
++					lcores[i]->dma_ops[j]->src_dst_seg[k + cfg->nb_src_sges] =
++						lcores[i]->sge.dsts[(j * cfg->nb_dst_sges) + k];
++
++				lcores[i]->dma_ops[j]->nb_src = cfg->nb_src_sges;
++				lcores[i]->dma_ops[j]->nb_dst = cfg->nb_dst_sges;
++				lcores[i]->dma_ops[j]->vchan = 0;
++			}
++		}
++
+ 		rte_eal_remote_launch(get_work_function(cfg), (void *)(lcores[i]), lcore_id);
+ 	}
+ 
+diff --git a/app/test-dma-perf/config.ini b/app/test-dma-perf/config.ini
+index 61e49dbae5..fa59f6b140 100644
+--- a/app/test-dma-perf/config.ini
++++ b/app/test-dma-perf/config.ini
+@@ -52,6 +52,8 @@
+ ;
+ ; For DMA scatter-gather memory copy, the parameters need to be configured
+ ; and they are valid only when type is DMA_MEM_COPY.
++;
++; To use Enqueue Dequeue operations, set ``use_enq_deq_ops=1`` in the configuration.
+ 
+ ; To specify a configuration file, use the "--config" flag followed by the path to the file.
+ 
+@@ -88,6 +90,7 @@ test_seconds=2
+ lcore_dma0=lcore=10,dev=0000:00:04.1,dir=mem2mem
+ lcore_dma1=lcore=11,dev=0000:00:04.2,dir=mem2mem
+ eal_args=--in-memory --file-prefix=test
++use_enq_deq_ops=0
+ 
+ [case3]
+ skip=1
+diff --git a/app/test-dma-perf/main.c b/app/test-dma-perf/main.c
+index 0586b3e1d0..cb4aee878f 100644
+--- a/app/test-dma-perf/main.c
++++ b/app/test-dma-perf/main.c
+@@ -297,8 +297,8 @@ load_configs(const char *path)
+ 	char section_name[CFG_NAME_LEN];
+ 	const char *case_type;
+ 	const char *lcore_dma;
+-	const char *mem_size_str, *buf_size_str, *ring_size_str, *kick_batch_str,
+-		*src_sges_str, *dst_sges_str;
++	const char *mem_size_str, *buf_size_str, *ring_size_str, *kick_batch_str, *src_sges_str,
++		*dst_sges_str, *use_dma_ops;
+ 	const char *skip;
+ 	struct rte_kvargs *kvlist;
+ 	int args_nr, nb_vp;
+@@ -349,6 +349,15 @@ load_configs(const char *path)
+ 			continue;
+ 		}
+ 
++		if (is_dma) {
++			use_dma_ops =
++				rte_cfgfile_get_entry(cfgfile, section_name, "use_enq_deq_ops");
++			if (use_dma_ops != NULL && (atoi(use_dma_ops) == 1))
++				test_case->use_ops = true;
++			else
++				test_case->use_ops = false;
++		}
++
+ 		test_case->is_dma = is_dma;
+ 		test_case->src_numa_node = (int)atoi(rte_cfgfile_get_entry(cfgfile,
+ 								section_name, "src_numa_node"));
+diff --git a/app/test-dma-perf/main.h b/app/test-dma-perf/main.h
+index 59eb648b3d..d6cc613250 100644
+--- a/app/test-dma-perf/main.h
++++ b/app/test-dma-perf/main.h
+@@ -58,6 +58,7 @@ struct test_configure {
+ 	uint16_t opcode;
+ 	bool is_dma;
+ 	bool is_sg;
++	bool use_ops;
+ 	struct lcore_dma_config dma_config[MAX_WORKER_NB];
+ 	struct test_configure_entry mem_size;
+ 	struct test_configure_entry buf_size;
+diff --git a/doc/guides/tools/dmaperf.rst b/doc/guides/tools/dmaperf.rst
+index b7ff41065f..7abbbf9260 100644
+--- a/doc/guides/tools/dmaperf.rst
++++ b/doc/guides/tools/dmaperf.rst
+@@ -69,6 +69,7 @@ along with the application to demonstrate all the parameters.
+    lcore_dma1=lcore=11,dev=0000:00:04.2,dir=dev2mem,raddr=0x200000000,coreid=1,pfid=2,vfid=3
+    lcore_dma2=lcore=12,dev=0000:00:04.3,dir=mem2dev,raddr=0x200000000,coreid=1,pfid=2,vfid=3
+    eal_args=--in-memory --file-prefix=test
++   use_enq_deq_ops=0
+ 
+ The configuration file is divided into multiple sections, each section represents a test case.
+ The four mandatory variables ``mem_size``, ``buf_size``, ``dma_ring_size``, and ``kick_batch``
+@@ -83,6 +84,7 @@ The variables for mem2dev and dev2mem copy are
+ and can vary for each device.
+ 
+ For scatter-gather copy test ``dma_src_sge``, ``dma_dst_sge`` must be configured.
++Enqueue and dequeue operations can be enabled by setting ``use_enq_deq_ops=1``.
+ 
+ Each case can only have one variable change,
+ and each change will generate a scenario, so each case can have multiple scenarios.
+@@ -170,6 +172,9 @@ Configuration Parameters
+ ``eal_args``
+   Specifies the EAL arguments.
+ 
++  ``use_enq_deq_ops``
++  Specifies whether to use enqueue/dequeue operations.
++  ``0`` indicates to not use and ``1`` to use.
+ 
+ Running the Application
+ -----------------------
 -- 
 2.43.0
 
