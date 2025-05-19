@@ -2,70 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2FBEC3ABDD
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 May 2025 18:20:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C5DC3ABDD
+	for <dpdk-dev@archiver.kernel.org>; Mon, 19 May 2025 18:56:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3E7EB40668;
-	Mon, 19 May 2025 20:20:04 +0200 (CEST)
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com
- [209.85.222.174])
- by mails.dpdk.org (Postfix) with ESMTP id 7ADE24065F
- for <dev@dpdk.org>; Mon, 19 May 2025 20:20:02 +0200 (CEST)
-Received: by mail-qk1-f174.google.com with SMTP id
- af79cd13be357-7c54f67db99so621952085a.1
- for <dev@dpdk.org>; Mon, 19 May 2025 11:20:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1747678802; x=1748283602; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=W0YR4vcpHFCptTfKsbD8gB8FELdTI7P5Y8OYxmqeMW0=;
- b=TeUA7FUKJ5QCEUu614OvFHIpJIe+fUBV2w0sHMXluZlw+BIetbprCwLujtLdNKttjE
- mFCOUphXPC741CvadedIPu+2PUVLfgLWGoE8PZn629FjVJfirnhQ0L+0d8D2v9QzZrCX
- a0VVvNAzlHzgZIy5uqGRzAtOEKve86jYoywZo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1747678802; x=1748283602;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=W0YR4vcpHFCptTfKsbD8gB8FELdTI7P5Y8OYxmqeMW0=;
- b=cMFm0yJmOGvpTyF1zfDEUdwXdkkGxm1oTbxZ26LJKqIHJJ0IEVbNHLmqwvCKCt7q5i
- vK7VYC6AxDrS/DRtEjT3jeDPdy6vdJHQ7WjwGfTUevkMPNK1OkwlY5ib/bg03zgUNFwb
- mVe9iod2bYhI5OLebt9PxOFbOkX5AYNpRGSZaHEyd3qKWrYdCBMWLM2KReR2gF/rlDZF
- tKulgWZ8MQfsRQBAsYNP5deFyxhl9+f3AT5vpMdRyVZI6H/vTZXNQxmn02Nf/4HSVhC8
- elyHI7p5in6LxYiffprVPxlc7+30y6yUr7YkGk+MJ8EOQORPakSevXzmoVv+7VZYPI25
- MUIw==
-X-Gm-Message-State: AOJu0YxDR23nHddmvQLa/Ww2hTz3yIi1tYnzxZWk2EIijumFM75BiGaa
- kYf8n6EOQnV8GAFWWz0M1XGvEW2PonhOKkEoJXEol+2pmnmxfvgOgQrjl4Q8bzAfswY=
-X-Gm-Gg: ASbGncut2FjxgFsk0kDCNy3srC6aZr2XmnJV/dUnv0TRdoIqj2ffW/x3nktDoKWgXfs
- Puk9A1iMZ2Fh39rCL/DRF3MZZQCOAOSbZ4kphlb6gyWpFXL0oWl6897JmBvIqnl9nNJw9MlQvHs
- n1+JSyIKXst39IZFUuZfRnrs1higIp1gqTUO/xcKeyfwyONtg1Ce8RD/k2zI27OBScelRYhDBWC
- rs+G1Ix2AB8Iyz2UmEqdu4DKn/LvtT/xwUPg9XmoV3iuzQqJu5UWfJz67EmzgPozEVx3/SxwvdX
- uTk7nY6ZkKjZt/ayl01NwtNrxaAQc4oflaBOcD86K00LZX60lybrthjJuJII05cqOkt61W5D
-X-Google-Smtp-Source: AGHT+IGArNmXnfQSjVGGUHEoajZ2xdYqlwFEFTUBxdOSowuXLpD8j0em9PCyDAViPtKz3C5ZlmKMMw==
-X-Received: by 2002:a05:620a:c4f:b0:7ce:c600:82c9 with SMTP id
- af79cd13be357-7cec6008341mr676685a.13.1747678801601; 
- Mon, 19 May 2025 11:20:01 -0700 (PDT)
-Received: from fedora.iol.unh.edu ([2606:4100:3880:1271:ac5d:4186:4dc6:47eb])
- by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7cd468cd130sm614991285a.103.2025.05.19.11.20.00
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 19 May 2025 11:20:01 -0700 (PDT)
-From: Dean Marx <dmarx@iol.unh.edu>
-To: probb@iol.unh.edu, npratte@iol.unh.edu, luca.vizzarro@arm.com,
- yoan.picchi@foss.arm.com, Honnappa.Nagarahalli@arm.com,
- paul.szczepanek@arm.com
-Cc: dev@dpdk.org,
-	Dean Marx <dmarx@iol.unh.edu>
-Subject: [PATCH v1 2/2] dts: add jump and priority tests to flow suite
-Date: Mon, 19 May 2025 14:19:57 -0400
-Message-ID: <20250519181957.228084-2-dmarx@iol.unh.edu>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250519181957.228084-1-dmarx@iol.unh.edu>
-References: <20250515163809.184720-2-dmarx@iol.unh.edu>
- <20250519181957.228084-1-dmarx@iol.unh.edu>
+	by mails.dpdk.org (Postfix) with ESMTP id 17D3540651;
+	Mon, 19 May 2025 20:56:19 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id DF3FA40612
+ for <dev@dpdk.org>; Mon, 19 May 2025 20:56:17 +0200 (CEST)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54JIXk73004682;
+ Mon, 19 May 2025 11:56:17 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=k
+ w+On5gq8/rNz0+53RUUiOhRwvHu54AJuVJi2xGWQ0Y=; b=Iym5v2z/IqD+IpFoC
+ ChJ+6jHZBe6h1ypBIDY6tCQAwL7ZiGpuQbN+jkioHJfAqTRU7Jqi5YbcgvhjUBYV
+ 8GsqqBI4TMOpkQpGOb4llfzCXc+Hl4qt9hm49wZztEi3V4pC/Bbl1z7lDEgKr8jU
+ vFo4zzCMO8uckM8SkDXVRNk/gMLXA8Ff7QncO6t7bOQHSkmctzmviwJMOEtr9ZP5
+ 0tuBPFq3DKJ4ZNrfqBPzFMwrFpWEK+4IyQhpKj3hCEMdbZvZLymwJrHm7i9w620H
+ 36y/O3e8Qf4DkT65cwdxfyK6gjXts7WX9kGKRkhByL1AJ6X6SEAVoxfC1KU1F3dI
+ +Cfcg==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46q46fb6cd-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Mon, 19 May 2025 11:56:16 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Mon, 19 May 2025 11:56:15 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 19 May 2025 11:56:15 -0700
+Received: from MININT-80QBFE8.corp.innovium.com (MININT-80QBFE8.marvell.com
+ [10.28.164.118])
+ by maili.marvell.com (Postfix) with ESMTP id E0EDA3F7080;
+ Mon, 19 May 2025 11:56:10 -0700 (PDT)
+From: <pbhagavatula@marvell.com>
+To: <jerinj@marvell.com>
+CC: <vattunuru@marvell.com>, <g.singh@nxp.com>, <sachin.saxena@nxp.com>,
+ <hemant.agrawal@nxp.com>, <fengchengwen@huawei.com>,
+ <bruce.richardson@intel.com>, <kevin.laatz@intel.com>,
+ <conor.walsh@intel.com>, <gmuthukrishn@marvell.com>,
+ <vvelumuri@marvell.com>, <anatoly.burakov@intel.com>, <dev@dpdk.org>,
+ Pavan Nikhilesh <pbhagavatula@marvell.com>
+Subject: [25.11 PATCH v2 0/5] Introduce DMA enqueue/dequeue operations
+Date: Tue, 20 May 2025 00:25:59 +0530
+Message-ID: <20250519185604.5584-1-pbhagavatula@marvell.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250416100931.6544-1-pbhagavatula@marvell.com>
+References: <20250416100931.6544-1-pbhagavatula@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=b8uy4sGx c=1 sm=1 tr=0 ts=682b7ed0 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=5UiQzHqjQ8NTYce_5-QA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: G6jfdwMG1gVI6UZHEX83WeeOs3g3Msdw
+X-Proofpoint-ORIG-GUID: G6jfdwMG1gVI6UZHEX83WeeOs3g3Msdw
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE5MDE3NiBTYWx0ZWRfXzbomH8VPxLP7
+ fryxPI4t3fiJ2bS02dFjFxWANm5XhLaPwMAz5/X3TU1jPs4M2Zpxl7dN8jK1HpVR1MCds0Y0JC/
+ Y+kmHDBDj+aQqHWgmvNoe4qfeZpHKWbbZElb1S2aqKsn1j63saZf7aGan+/zivCZWnZLWG0a+GC
+ LpTmkP0kaDv157nsDYdtybCir5AhhIGZ0QGyUMw1Jlr4OhqujuHDN7YfiQMkXKCUW72tF3TUm1A
+ IlYzfKG3MeQZ1uw9sToolji/V8/+ukQGtABQpm9ZLV8GfOpqbCxUciAqLHPS5Jt04bmBkVasp2n
+ HVKQBu+FZUfXo8Ki5eaFgAA4NJjEYZg+9cFWkvuVq5IVlYeKn6GF4Oeif/FnQcy470JbPV7ai0O
+ 33DinFIBKL0gLEkTfV5tJ+fRoDHmblJSaWbPgoazEr+r03Xt6B8V9SL4BTy06eoG7RosQgK0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-19_07,2025-05-16_03,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,299 +85,90 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add jump action verification method and test case to Flow API test suite,
-as well as a case for validating flows with different priority levels.
+From: Pavan Nikhilesh <pbhagavatula@marvell.com>
 
-Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
----
- dts/tests/TestSuite_flow.py | 187 +++++++++++++++++++++++++++++++-----
- 1 file changed, 165 insertions(+), 22 deletions(-)
+Introduce DMA enqueue/dequeue operations to the DMA device library.
 
-diff --git a/dts/tests/TestSuite_flow.py b/dts/tests/TestSuite_flow.py
-index 15566205c9..06bd3bedc5 100644
---- a/dts/tests/TestSuite_flow.py
-+++ b/dts/tests/TestSuite_flow.py
-@@ -29,7 +29,7 @@
- class TestFlow(TestSuite):
-     """RTE Flow test suite.
- 
--    This suite consists of 10 test cases:
-+    This suite consists of 12 test cases:
-     1. Queue Action Ethernet: Verifies queue actions with ethernet patterns
-     2. Queue Action IP: Verifies queue actions with IPv4 and IPv6 patterns
-     3. Queue Action L4: Verifies queue actions with TCP and UDP patterns
-@@ -39,7 +39,9 @@ class TestFlow(TestSuite):
-     7. Drop Action L4: Verifies drop actions with TCP and UDP patterns
-     8. Drop Action VLAN: Verifies drop actions with VLAN patterns
-     9. Modify Field Action: Verifies packet modification patterns
--    10. Egress Rules: Verifies previously covered rules are still valid as egress.
-+    10. Egress Rules: Verifies previously covered rules are still valid as egress
-+    11. Jump Action: Verifies packet behavior given grouped flows
-+    12. Priority Attribute: Verifies packet behavior given flows with different priorities
- 
-     """
- 
-@@ -169,14 +171,45 @@ def send_packet_and_verify_modification(self, packet: Packet, expected_packet: P
-                 f"MAC dst mismatch: expected {expected_mac_dst}, got {received_mac_dst}",
-             )
- 
-+    def send_packet_and_verify_jump(
-+        self,
-+        packets: list[Packet],
-+        flow_rules: list[FlowRule],
-+        test_queues: list[int],
-+        testpmd: TestPmdShell,
-+    ) -> None:
-+        """Create a testpmd session with every rule in the given list, verify jump behavior.
-+
-+        Args:
-+            packets: List of packets to send.
-+            flow_rules: List of flow rules to create in the same session.
-+            test_queues: List of Rx queue IDs each packet should be received on.
-+            testpmd: TestPmdShell instance to create flows on.
-+        """
-+        testpmd.set_verbose(level=1)
-+        for flow in flow_rules:
-+            testpmd.flow_create(flow_rule=flow, port_id=0)
-+
-+        for packet, test_queue in zip(packets, test_queues):
-+            testpmd.start()
-+            self.send_packet_and_capture(packet=packet)
-+            verbose_output = testpmd.extract_verbose_output(testpmd.stop())
-+            received = False
-+            for testpmd_packet in verbose_output:
-+                if testpmd_packet.queue_id == test_queue:
-+                    received = True
-+            self.verify(received, f"Expected packet was not received on queue {test_queue}")
-+
-     @func_test
-     def test_queue_action_ETH(self) -> None:
-         """Validate flow rules with queue actions and ethernet patterns.
- 
-         Steps:
-             Create a list of packets to test, with a corresponding flow list.
--            Launch testpmd with the necessary configuration.
--            Send each packet in the list, capture testpmd verbose output.
-+            Launch testpmd.
-+            Create first flow rule in flow list.
-+            Send first packet in packet list, capture verbose output.
-+            Delete flow rule, repeat for all flows/packets.
- 
-         Verify:
-             Check that each packet is received on the appropriate queue.
-@@ -214,8 +247,10 @@ def test_queue_action_IP(self) -> None:
- 
-         Steps:
-             Create a list of packets to test, with a corresponding flow list.
--            Launch testpmd with the necessary configuration.
--            Send each packet in the list, capture testpmd verbose output.
-+            Launch testpmd.
-+            Create first flow rule in flow list.
-+            Send first packet in packet list, capture verbose output.
-+            Delete flow rule, repeat for all flows/packets.
- 
-         Verify:
-             Check that each packet is received on the appropriate queue.
-@@ -269,8 +304,10 @@ def test_queue_action_L4(self) -> None:
- 
-         Steps:
-             Create a list of packets to test, with a corresponding flow list.
--            Launch testpmd with the necessary configuration.
--            Send each packet in the list, capture testpmd verbose output.
-+            Launch testpmd.
-+            Create first flow rule in flow list.
-+            Send first packet in packet list, capture verbose output.
-+            Delete flow rule, repeat for all flows/packets.
- 
-         Verify:
-             Check that each packet is received on the appropriate queue.
-@@ -322,8 +359,10 @@ def test_queue_action_VLAN(self) -> None:
- 
-         Steps:
-             Create a list of packets to test, with a corresponding flow list.
--            Launch testpmd with the necessary configuration.
--            Send each packet in the list, capture testpmd verbose output.
-+            Launch testpmd.
-+            Create first flow rule in flow list.
-+            Send first packet in packet list, capture verbose output.
-+            Delete flow rule, repeat for all flows/packets.
- 
-         Verify:
-             Check that each packet is received on the appropriate queue.
-@@ -346,8 +385,10 @@ def test_drop_action_ETH(self) -> None:
- 
-         Steps:
-             Create a list of packets to test, with a corresponding flow list.
--            Launch testpmd with the necessary configuration.
--            Send each packet in the list, check reception status.
-+            Launch testpmd.
-+            Create first flow rule in flow list.
-+            Send first packet in packet list, capture verbose output.
-+            Delete flow rule, repeat for all flows/packets.
- 
-         Verify:
-             Check that each packet is dropped.
-@@ -387,8 +428,10 @@ def test_drop_action_IP(self) -> None:
- 
-         Steps:
-             Create a list of packets to test, with a corresponding flow list.
--            Launch testpmd with the necessary configuration.
--            Send each packet in the list, check reception status.
-+            Launch testpmd.
-+            Create first flow rule in flow list.
-+            Send first packet in packet list, capture verbose output.
-+            Delete flow rule, repeat for all flows/packets.
- 
-         Verify:
-             Check that each packet is dropped.
-@@ -435,8 +478,10 @@ def test_drop_action_L4(self) -> None:
- 
-         Steps:
-             Create a list of packets to test, with a corresponding flow list.
--            Launch testpmd with the necessary configuration.
--            Send each packet in the list, check reception status.
-+            Launch testpmd.
-+            Create first flow rule in flow list.
-+            Send first packet in packet list, capture verbose output.
-+            Delete flow rule, repeat for all flows/packets.
- 
-         Verify:
-             Check that each packet is dropped.
-@@ -479,8 +524,10 @@ def test_drop_action_VLAN(self) -> None:
- 
-         Steps:
-             Create a list of packets to test, with a corresponding flow list.
--            Launch testpmd with the necessary configuration.
--            Send each packet in the list, check reception status.
-+            Launch testpmd.
-+            Create first flow rule in flow list.
-+            Send first packet in packet list, capture verbose output.
-+            Delete flow rule, repeat for all flows/packets.
- 
-         Verify:
-             Check that each packet is dropped.
-@@ -511,8 +558,11 @@ def test_modify_actions(self) -> None:
- 
-         Steps:
-             Create a list of packets to test, with a corresponding flow list.
--            Launch testpmd with the necessary configuration.
--            Send each packet in the list, check attributes.
-+            Launch testpmd.
-+            Create first flow rule in flow list.
-+            Send first packet in packet list, capture verbose output.
-+            Delete flow rule, repeat for all flows/packets.
-+
-         Verify:
-             Verify packet is received with the new attributes.
-         """
-@@ -552,8 +602,10 @@ def test_egress_rules(self) -> None:
- 
-         Steps:
-             Create a list of packets to test, with a corresponding flow list.
--            Launch testpmd with the necessary configuration.
--            Send each packet in the list, check reception status.
-+            Launch testpmd.
-+            Create first flow rule in flow list.
-+            Send first packet in packet list, capture verbose output.
-+            Delete flow rule, repeat for all flows/packets.
- 
-         Verify:
-             Check that each packet is dropped.
-@@ -583,3 +635,94 @@ def test_egress_rules(self) -> None:
-             packets=packet_list,
-             should_receive=False,
-         )
-+
-+    @func_test
-+    def test_jump_action(self) -> None:
-+        """Validate flow rules with different group levels and jump actions.
-+
-+        Steps:
-+            Create a list of packets to test, with a corresponding flow list.
-+            Launch testpmd with the necessary configuration.
-+            Create each flow rule in testpmd.
-+            Send each packet in the list, check Rx queue ID.
-+
-+        Verify:
-+            Check that each packet is received on the appropriate Rx queue.
-+        """
-+        packet_list = [Ether() / IP(), Ether() / IP() / TCP(), Ether() / IP() / UDP()]
-+        flow_list = [
-+            FlowRule(direction="ingress", group_id=0, pattern=["eth"], actions=["jump group 1"]),
-+            FlowRule(direction="ingress", group_id=0, pattern=["ipv4"], actions=["jump group 2"]),
-+            FlowRule(
-+                direction="ingress", group_id=0, pattern=["eth / ipv4"], actions=["queue index 1"]
-+            ),
-+            FlowRule(
-+                direction="ingress",
-+                group_id=0,
-+                pattern=["eth / ipv4 / tcp"],
-+                actions=["queue index 2"],
-+            ),
-+            FlowRule(
-+                direction="ingress",
-+                group_id=0,
-+                pattern=["eth / ipv4 / udp"],
-+                actions=["queue index 3"],
-+            ),
-+        ]
-+        expected_queue_list = [1, 2, 3]
-+        with TestPmdShell(rx_queues=4, tx_queues=4) as testpmd:
-+            self.send_packet_and_verify_jump(
-+                packets=packet_list,
-+                flow_rules=flow_list,
-+                test_queues=expected_queue_list,
-+                testpmd=testpmd,
-+            )
-+
-+    @func_test
-+    def test_priority_attribute(self) -> None:
-+        """Validate flow rules with queue actions and ethernet patterns.
-+
-+        Steps:
-+            Create a list of packets to test, with a corresponding flow list.
-+            Launch testpmd.
-+            Create first flow rule in flow list.
-+            Send first packet in packet list, capture verbose output.
-+            Delete flow rule, repeat for all flows/packets.
-+
-+        Verify:
-+            Check that each packet is received on the appropriate queue.
-+        """
-+        test_packet = Ether() / IP() / Raw()
-+        flow_list = [
-+            FlowRule(
-+                direction="ingress",
-+                priority_level=3,
-+                pattern=["eth / ipv4"],
-+                actions=["queue index 1"],
-+            ),
-+            FlowRule(
-+                direction="ingress",
-+                priority_level=2,
-+                pattern=["eth / ipv4"],
-+                actions=["queue index 2"],
-+            ),
-+            FlowRule(
-+                direction="ingress",
-+                priority_level=1,
-+                pattern=["eth / ipv4"],
-+                actions=["queue index 3"],
-+            ),
-+        ]
-+        expected_queue_list = [1, 2, 3]
-+        with TestPmdShell(rx_queues=4, tx_queues=4) as testpmd:
-+            testpmd.set_verbose(level=1)
-+            for flow, expected_queue in zip(flow_list, expected_queue_list):
-+                testpmd.flow_create(flow_rule=flow, port_id=0)
-+                testpmd.start()
-+                self.send_packet_and_capture(test_packet)
-+                verbose_output = testpmd.extract_verbose_output(testpmd.stop())
-+                received = False
-+                for testpmd_packet in verbose_output:
-+                    if testpmd_packet.queue_id == expected_queue:
-+                        received = True
-+                self.verify(received, f"Packet was not received on queue {expected_queue}")
--- 
-2.49.0
+Add configuration flags to rte_dma_config instead of boolean for
+individual features.
+
+The enqueue/dequeue operations allow applications to communicate with the
+DMA device using the rte_dma_op structure, providing a more flexible and
+efficient way to manage DMA operations.
+
+The programming model for the enqueue/dequeue operations is as follows:
+
+* Query DMA devices capability for RTE_DMA_CAPA_OPS_ENQ_DEQ through
+  rte_dma_info::dev_capa.
+* Enable enqueue/dequeue operations on DMA device by enabling the
+  flag RTE_DMA_CFG_FLAG_ENQ_DEQ in rte_dma_config::flags
+  during device configuration.
+* Allocate a mempool for rte_dma_ops with object size of
+  rte_dma_op + (sizeof(struct rte_dma_sge) * rte_dma_info::max_sges * 2).
+* Configure vchans and start the dma device.
+* Get an rte_dma_op from the mempool, fill it with the necessary
+  information and use rte_dma_enqueue() to enqueue the operation.
+* The enqueue operation behaves as a submit i.e., all the ops enqueued
+  should be considered as submitted.
+* Call rte_dma_dequeue() operation to get the array of finished operations.
+* Free the rte_dma_op back to the mempool.
+
+The ``rte_event_dma_adapter_op`` structure encapsulates all the
+necessary fields required for DMA operations and does not introduce
+any hard dependencies. Given its completeness and modular design,
+it is a suitable candidate for reuse within the DMA library as
+``rte_dma_op``.
+This approach promotes consistency across subsystems, reduces code
+duplication, and simplifies maintenance by leveraging an existing,
+well-defined data structure.
+
+Note: Not all fields inside ``rte_dma_ops`` are used by the DMA device
+      as some of them are valid only in the context of event device
+      programming model and can be repurposed by the application.
+      These include ``op_mp``, ``impl_opaque``,
+      ``user_meta``, ``event_meta``, ``dma_dev_id`` and ``vchan``.
+
+When the DMA device is configured with RTE_DMA_CFG_FLAG_ENQ_DEQ
+flag, the enqueue/dequeue operations should be used to perform
+DMA operations.
+All other operations i.e., rte_dma_copy, rte_dma_copy_sg,
+rte_dma_fill, rte_dma_submit, rte_dma_completed,
+rte_dma_completed_status are not supported.
+
+Pavan Nikhilesh (5):
+  dmadev: add enqueue dequeue operations
+  test/dma: add enqueue dequeue operations
+  app/dma-perf: add option to measure enq deq ops
+  dma/cnxk: implement enqueue dequeue ops
+  eventdev: refactor DMA adapter ops
+
+ app/test-dma-perf/benchmark.c                 | 137 +++++++++++-
+ app/test-dma-perf/config.ini                  |   3 +
+ app/test-dma-perf/main.c                      |  13 +-
+ app/test-dma-perf/main.h                      |   1 +
+ app/test-eventdev/test_perf_common.c          |   6 +-
+ app/test-eventdev/test_perf_common.h          |   4 +-
+ app/test/test_dmadev.c                        | 160 ++++++++++++++
+ app/test/test_dmadev_api.c                    |  78 ++++++-
+ app/test/test_event_dma_adapter.c             |   6 +-
+ doc/guides/prog_guide/dmadev.rst              |  34 +++
+ .../prog_guide/eventdev/event_dma_adapter.rst |   6 +-
+ doc/guides/tools/dmaperf.rst                  |   5 +
+ drivers/dma/cnxk/cnxk_dmadev.c                |  80 +++++--
+ drivers/dma/cnxk/cnxk_dmadev.h                |   7 +
+ drivers/dma/cnxk/cnxk_dmadev_fp.c             | 201 +++++++++++++++---
+ drivers/dma/dpaa/dpaa_qdma.c                  |   2 +-
+ drivers/dma/dpaa2/dpaa2_qdma.c                |   2 +-
+ lib/dmadev/rte_dmadev.c                       |  30 ++-
+ lib/dmadev/rte_dmadev.h                       | 155 +++++++++++++-
+ lib/dmadev/rte_dmadev_core.h                  |  10 +
+ lib/dmadev/rte_dmadev_trace.h                 |   2 +-
+ lib/dmadev/rte_dmadev_trace_fp.h              |  20 ++
+ lib/dmadev/rte_dmadev_trace_points.c          |   6 +
+ lib/eventdev/rte_event_dma_adapter.c          |  18 +-
+ lib/eventdev/rte_event_dma_adapter.h          |  57 -----
+ 25 files changed, 884 insertions(+), 159 deletions(-)
+
+--
+2.43.0
 
