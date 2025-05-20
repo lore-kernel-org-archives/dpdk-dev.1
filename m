@@ -2,71 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED49DC3ABDD
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 May 2025 16:19:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81EADC3ABDD
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 May 2025 16:40:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8B7C040B8F;
-	Tue, 20 May 2025 18:19:26 +0200 (CEST)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com
- [209.85.208.42]) by mails.dpdk.org (Postfix) with ESMTP id BF5494029C
- for <dev@dpdk.org>; Tue, 20 May 2025 18:19:25 +0200 (CEST)
-Received: by mail-ed1-f42.google.com with SMTP id
- 4fb4d7f45d1cf-601956fa3beso5679148a12.0
- for <dev@dpdk.org>; Tue, 20 May 2025 09:19:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1747757965;
- x=1748362765; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=4XR6IDdAW/8xE1w485EVaGsWC1r8cDFisZSXzUVqm1o=;
- b=lYdnvhoFEQU865dAjaFRt93TReuJ9f9QU6tW9BRfi00gT0LZwUaoXxYZqvFsc+vkyU
- j4nLy/An6Yrg3aL/Ay1oAjtDRYEma+wiqOMiHC7+ctI8LGNlzbUkYHgDAp/i/dPtCVzl
- jbYyk8yMARAs9J6jgPi0lSz2ecgEegmH75nCOJUS9OrJZhrfaxXOps4pWhpnsEh4gjZt
- z0FVTB8s4pX6mzBl4TogGIYt5D528jMOv6sfdVj4Q76XVzzEq/dE8LIEQMUhR1dZLUj4
- tg3N/BMm03jV2CJHUHoFlzaJr4aK8LOY3UuS7p1QJi8CvkYmxJ7PUkoOKcree4Bqryyq
- rkuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1747757965; x=1748362765;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=4XR6IDdAW/8xE1w485EVaGsWC1r8cDFisZSXzUVqm1o=;
- b=Q2hpnqZA0h/9mgm3kobHotVP/yOulOTtvHAI419NtelvU3Xsdw/pjbbPuXSQ71nK3a
- w8nxtaURrrOz6XKRNzuIJ9KZW+eM9PfOV6pkNmdH2baPq3y4OW6ZzDKZZZKBbQ0r9Gyi
- x8xkeew4U1654IYeO799GrcvlKoTZ45kd9lM2oadCZ3BNy4+yurR7oVmfhmyOHY5QRZp
- DIgJfR3szlxyko20svV9CWGdLno7g7tRZYrrlELmeWXsndSZYb/Tw6j85Ba3l6nWF+pI
- eukDMYqT6ytFZhQb2zVdUh5raMrWB+1/Tq5tJj1Qsv84SsEvXqWVt40hlMmKIhVmZHu/
- 4TEw==
-X-Gm-Message-State: AOJu0YzzNRGSM5Ti34+RiRod2bv8QiGXCFuNBp+/WIR+ccEj5K0ZvNzZ
- cChzj8kiNKPTzfJjAvyxk7VchUPTqAtW+/mTKYYWb/i+jA6d+DmTwh+L67IjjAUsD9Y=
-X-Gm-Gg: ASbGncvFRXUxcacjsjwXIsUGAXWgUSXyX3T7IOzec00AATRQYsz5+lA720MFn8+rsLU
- 0wHtY5/ohKZ+YuniidNSTAAo+UUabOnqXQju08Vnvlifgs84y4pglAynE2wxkIcpRDzSWIgfi6/
- beMu5Jmneuho1G6UTdhwmRoYe0rW6HxNbeaR+PDqxNbr43cQdF87kHe9ekcWgJKehJLNzr0WKW5
- Zdih4UJiOqnCFdMG8n4LiaNOErp7sowrakLulTQr2Je3Db7g3j+aGOK1rorOAxsTaoL4RsXsttU
- E018+saRVeLsiPhdsUmutacOo3MXn6NsTj4oDaQHo88Hob3Q+bpUBS8Nli4cEQCoDqHcVh3Dock
- 1mi0rbWa0QUci29AadJGo24xxnDk7
-X-Google-Smtp-Source: AGHT+IHOyRQ2ZBNKVYs3UF2EhqAfWZHW0V1ZT6GBjwBHM7SLNp+Z0pkYQ5Di7DnPnUVMf3aNLDc7EA==
-X-Received: by 2002:a17:906:387:b0:ad5:3504:a6b with SMTP id
- a640c23a62f3a-ad535041225mr1047592766b.52.1747757964704; 
- Tue, 20 May 2025 09:19:24 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-ad52d4ca3bdsm742708866b.160.2025.05.20.09.19.23
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 20 May 2025 09:19:24 -0700 (PDT)
-Date: Tue, 20 May 2025 09:19:17 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Anatoly Burakov <anatoly.burakov@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v5 2/3] cmdline: add floating point support
-Message-ID: <20250520091917.6d17ad14@hermes.local>
-In-Reply-To: <b9f8ac77e4eeecd67a83d72cdf52ef3e08539bab.1746631324.git.anatoly.burakov@intel.com>
-References: <ec8528874aad76348f27c551289e1729b2fdcd25.1746631324.git.anatoly.burakov@intel.com>
- <b9f8ac77e4eeecd67a83d72cdf52ef3e08539bab.1746631324.git.anatoly.burakov@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 99E7140B94;
+	Tue, 20 May 2025 18:40:44 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+ by mails.dpdk.org (Postfix) with ESMTP id ADB224029C
+ for <dev@dpdk.org>; Tue, 20 May 2025 18:40:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1747759243; x=1779295243;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=JpylTE1otNIe6HgIBohruPFZcpBOwvfvAGS5k7gh6z4=;
+ b=ENU0OZAeL38GokXkPoA7rNdHBoMjV7GmolbOvUJt1rMDGZ69t+8j+OUO
+ gf7HNCiqb3YbAlLQM84eehvbf7xXmcBIYmAhnvrnfDy1ym48RO/IsxYTe
+ +pAUKn842xHPOVoAPuO/Fpf0XfQfqbZenscj0oiQ9k8+VoRwzChgoccB+
+ 1ADKWas/83Q7QvxrQe8nLhioGShC6sryLQk5Uqv04+yofpiCQD8N7wOb/
+ Gu1d++d02dQVIZ4E3mwHTLNyBGyNE26PfTSCtsCg5lVxCR9UdRgtJr33m
+ SU1SP+1rPoYqmbbivDRZQ+VTG3QkT6xlKGWwR8Dj2m/dzPVz3+NhfOjDY g==;
+X-CSE-ConnectionGUID: teKxx7OORUGHja4Bn+jktw==
+X-CSE-MsgGUID: B3JrJHjrSGmrCusL3lku3A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="37320458"
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; d="scan'208";a="37320458"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+ by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 20 May 2025 09:40:41 -0700
+X-CSE-ConnectionGUID: 0R7aW1s+ReWh8aq80bEWEQ==
+X-CSE-MsgGUID: nmve5BU6S023hWWRt4KGyw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; d="scan'208";a="170759470"
+Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.30])
+ by fmviesa001.fm.intel.com with ESMTP; 20 May 2025 09:40:41 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: david.marchand@redhat.com,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [RFC PATCH 0/7] rework EAL argument parsing in DPDK
+Date: Tue, 20 May 2025 17:40:17 +0100
+Message-ID: <20250520164025.2055721-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.48.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,14 +58,63 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed,  7 May 2025 16:22:11 +0100
-Anatoly Burakov <anatoly.burakov@intel.com> wrote:
+This RFC is just an initial prototype of one approach we may want to
+take to help improve management of EAL cmdline arguments.
+Although not complete (no account taken yet for BSD or Windows),
+it's hopefully complete enough to give an idea of what I think would
+improve the handling.
 
-> Add support for parsing floating point numbers in cmdline library, as well
-> as unit tests for the new functionality. Use C library for parsing.
-> 
-> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+BACKGROUND:
+- The first problem that led to this work was that of providing a
+  way for users to easily provide a set of CPU cores to DPDK where the
+  CPU ids are >= RTE_MAX_LCORE
+- There are a number of solutions which were discussed for this, most
+  of which involved automatically remapping CPU ids to lcore ids
+  starting at zero.
+- However, in discussion with David M. at the last DPDK Summit in
+  Prague, he pointed out the main difficulty with all these approaches
+  in that they don't work with multi-process, since we can't reuse lcore
+  id numbers in secondary process.
+- This in turn lead to a realisation that when processing cmdline
+  arguments in DPDK, we always do so with very little context. So, for
+  example, when processing the "-l" flag, we have no idea whether there
+  will be later a --proc-type=secondary flag. We have all sorts of
+  post-arg-processing checks in place to try and catch these scenarios.
 
-This looks good, please resolve the checkpatch warnings.
-Not that all code has to checkpatch clean but lets try and make new
-code be cleaner.
+This patchset therefore tries to simplify the handling of argument
+processing, by explicitly doing an initial pass to collate all arguments
+into a structure. Thereafter, the actual arg parsing is done in a fixed
+order, meaning that e.g. when processing the --main-lcore flag, we have
+already processed the service core flags. We also can far quicker and
+easier check for conflicting options, since they can all be checked for
+NULL/non-NULL in the arg structure immediately after the struct has been
+populated.
+
+To do the initial argument gathering, this RFC uses the existing argparse
+library in DPDK. With some minor tweaking, this meets our needs for EAL
+argument parsing and allows us to not need to do direct getopt argument
+processing inside EAL at all.
+
+Bruce Richardson (7):
+  eal: add long options for each short option
+  argparse: add support for string and boolean args
+  argparse: make argparse EAL-args compatible
+  eal: define the EAL parameters in argparse format
+  eal: gather EAL args before processing
+  eal: combine parameter validation checks
+  eal: simplify handling of conflicting cmdline options
+
+ app/test/test_argparse.c            |   46 +-
+ lib/argparse/rte_argparse.c         |   46 +-
+ lib/argparse/rte_argparse.h         |    9 +-
+ lib/eal/common/eal_common_memory.c  |    3 +-
+ lib/eal/common/eal_common_options.c | 1435 ++++++++++++++++-----------
+ lib/eal/common/eal_options.h        |   99 +-
+ lib/eal/common/eal_private.h        |   11 +
+ lib/eal/linux/eal.c                 |  378 +------
+ lib/eal/meson.build                 |    2 +-
+ 9 files changed, 966 insertions(+), 1063 deletions(-)
+
+--
+2.48.1
+
