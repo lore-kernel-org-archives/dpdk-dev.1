@@ -2,78 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8091C3DA6D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 May 2025 13:53:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 708C1C54E65
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 May 2025 15:06:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BB9A540674;
-	Tue, 20 May 2025 15:53:35 +0200 (CEST)
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com
- [209.85.214.172])
- by mails.dpdk.org (Postfix) with ESMTP id 055B5402AE
- for <dev@dpdk.org>; Tue, 20 May 2025 15:53:34 +0200 (CEST)
-Received: by mail-pl1-f172.google.com with SMTP id
- d9443c01a7336-23229fdaff4so30571865ad.1
- for <dev@dpdk.org>; Tue, 20 May 2025 06:53:33 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 33FBC4069D;
+	Tue, 20 May 2025 17:06:31 +0200 (CEST)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
+ [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id 0E72A402AE
+ for <dev@dpdk.org>; Tue, 20 May 2025 17:06:30 +0200 (CEST)
+Received: by mail-wm1-f45.google.com with SMTP id
+ 5b1f17b1804b1-442ea95f738so47448085e9.3
+ for <dev@dpdk.org>; Tue, 20 May 2025 08:06:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1747749213;
- x=1748354013; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1747753589;
+ x=1748358389; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=681cDogw+E54E6DKnSavIZSBjehMh2e+NMFEhEJNEyY=;
- b=tR875tnbNcPE/3fYfXx7vwB8zOM1yT7FiYs+31/Tdq1hfv80B9HBC6bRW3n5HZVvZJ
- Yfj3/l12vZhvc1qpO0xvj3OrVzsOo7cM/Oiv7YqefI+Hkre1O6MA4FcRDMXlXmjA+Zcu
- UaqtZWFx6rJ29vvUv/ResG4JF4E1u5cEMOVzjZq2bnkuW74Zpn523a0F+tvRxgk/vFOZ
- J9xWBxM+LDk4yo1Y4hmK86VkZ07P3KU4oIYLXf0mP5feTaCVJl3YtPr3wmjERKwPszqM
- ce6ORVZg1vfoS625P66QVRiK2+uwwbHwD1tYY+H4Brjgx1xRxD0P7AKtzIpdeqL33t/V
- fhBw==
+ bh=grZriWFVVoNu5R6t6V0t5y0CspsUBpNgQqSrmPVt26Q=;
+ b=bzSs3P787c3Nhv1Tzj0X76WZnmAEkscctXPQOl+CsT7vOcWSHCH45jQaNC95OPss/f
+ suP6mQvjlLzPoKg/0DDeu6Ult+2LM5gRfc4+aU9DIyaRc9EaZQEx6CztTNE8J1GTU2Wk
+ hMHJNubPqk/cybHff4Ovwti++vnNP4c21hvRCZMy1MjgxhzgJK0+N7Y4SukHtMZcn0pj
+ hYqBnphLP3tibNnbsH9kDzMsTZ5hRVX76UbxRt7UUvbs5rXYOE8cSRIX2mwhg4dmWeZ2
+ 3aJGcL40cZJ/DhZEO9GMHWtd/Z1zVuayRLQ1uNixdidCVoSXZk2ZrXZCmzPj3u4Xbrzl
+ eW3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1747749213; x=1748354013;
+ d=1e100.net; s=20230601; t=1747753589; x=1748358389;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=681cDogw+E54E6DKnSavIZSBjehMh2e+NMFEhEJNEyY=;
- b=j1AWtf7N8klDdCeDfiaGF56QmH+6YngIMUrlIbMnR9lIBN83tOJ3aXwSpvZPJtRA4R
- T0qjKnwSr0IcoSqiBrFnLUdAvIPrGaBN/J9tM4DqeCAlq/6FLJitbdJ0NR3KZhOlHgVa
- 8hLwQsZzOqXgzxPzkWEEv3Y3RVw30m2pj1d4XuydtbtpEh1/Mm9ea1ZbDcHs50U0Y6Ma
- 8STDXk5r1tGaZFFBPvca+anaabUYOBCulcSO6BBTjlyPTBfaTv2O+V4121s2asoqJros
- QRs1Yq1mamC7J9IH2nxO/+s5Q+IghW0Koe83EEIcdOawAODH/828BbZv1Yfl++BFM0FV
- 5e6g==
-X-Forwarded-Encrypted: i=1;
- AJvYcCW00PWmF94RnTN5Qo99uOwEfz1FMO/FHsQzGqJVJLCYoLn5dvDT8RIOcHbmhaswifL6fuk=@dpdk.org
-X-Gm-Message-State: AOJu0YzErHvzsMpFXJKkw82jMPjoCwHIExc8qzcY/oURw4Xx30z31/3i
- e7Kp+BtSFCTqlGt9TnHsYWGh75ZUobzsq8VC+K8pJ0Aia/2nNuYHx1EAXWu3GUqN5P4=
-X-Gm-Gg: ASbGncub26EC2qAflNrWewQBMStFuQbEJHEtcdwbRs76l+UtG77ddx6eBgClMDe+zW7
- 9HKYBaVQhig/TKGtQiGKxkk8uUg5DfsOwXfGGrvYodSiJcGDiADqnUwFTEHKEZylbM0bnsI/yEo
- rsQ5CWZg0iMqXuZFVZaARSe5+TVVrb3fjbIpsKbtJ9slzqqrubFs9/b84cmBHIJ766tisaIIHvb
- OdSnIh6aDsVSpVor9f1xrnl+/tZEuC+QJQC1CjAe8PZskS+U87pl6Wbpsgns8i28qntTlNIuVHf
- nlhGyxBvoAb2bJzQ0WPkABEZ53o6ysOScsFdJXenPPeBhWMd6phZ31w6wWhnKkdyqxtkYbwBW+L
- uAqN31rC05OMVRY5I+hAoSoEHj+zcZ5ADX4a52g==
-X-Google-Smtp-Source: AGHT+IG82GqLlctqlrZ6kPfjG3eoCqrm25pC+LjZOpi1fwAUUViCU9ABcBzbIkx0VOoGca9zoVIzng==
-X-Received: by 2002:a17:903:2692:b0:232:2af:8569 with SMTP id
- d9443c01a7336-23202af8833mr122519425ad.18.1747749212952; 
- Tue, 20 May 2025 06:53:32 -0700 (PDT)
+ bh=grZriWFVVoNu5R6t6V0t5y0CspsUBpNgQqSrmPVt26Q=;
+ b=N9Y1gNZsM4bKMjXD8L6tjktzooqj56ylEjdQ+iKZjcjFppXYO1EUWxlmHbx67E5GzN
+ AefZUNH3/DvcvrgT7/1w122F5NIFvuFiQ2GLhI7qqaBg63XpwCuZKSVP42rTN0+wR7Ey
+ kQOg+jW4PBC0il/KQL9OS9jMWsXUGSIwLoTdc+XtzgK78Xj+G8jhrNHLU9nA9UaV9z4I
+ f6iIiOcyw2o49BdtUQFqFScBEQcc534Y1uG6sWQV5wtpapIOyHqNUgIh2v+vHGN+1IIQ
+ kOj9G5ZZNIgynox34r8GorbGr9XoxCOLCV+iOkVULsy1g+3NaUljLjyyxUrhmMxcusjV
+ uFyA==
+X-Gm-Message-State: AOJu0YywQko6UO3vQNObd00yfk4mrCyzi0co/LDNWMwfN/dIXtmcwH9y
+ 9lnMvm51esre4Tl4hppU3ZkytUvOW+i5jpZyeYbN0oQiP+/S1jOkJh6tLqtun7Ys2/wIgqTxZde
+ xU+Z0qOM=
+X-Gm-Gg: ASbGncuPDiJHpBRQ/11QIptoEUKAunJuL3XvJgOS+BSAZtJdF3tmxtm14x3R38vlFAT
+ aU83KeKJMkzL4i56Sh1CDqFdZ60qEnhgdujyGpE8Lw6GSCaqfep++9sz12OZszBOEH/syHGCBGu
+ cu3GOl0CRD5UhAxX9DwXU5zPVjq8pmO+esnOoQOgGfXkb1dfUyo1VmXQkFr7GNUjPrDTTc3SFEs
+ zj65Mp9ADsPzIVYFDvavUvhMjWBUReJL1/WwcjDZHcZhJ1Ie/V1AcIPywoWpTqlmRfaMz3+Hxfi
+ 0pwJcQKhsMu6lCYiitSsLiNEn0/Mo3NVrzmrsYWmKs2Nz5FPCjm+uQbzmVma0gpsa8dVSXQJVDo
+ dnu0WzDJCsW3Uwt3Xdsvf4LqCIo3i
+X-Google-Smtp-Source: AGHT+IHTfyv1eQNv5JLVX7LJnlEmAKESeH47hs9sVQhqi5FWLYmeMqh5aTRXurQUZfVcPoykaBX4sw==
+X-Received: by 2002:a05:600c:1c0a:b0:442:e03b:589d with SMTP id
+ 5b1f17b1804b1-442fd665745mr139220665e9.24.1747753589180; 
+ Tue, 20 May 2025 08:06:29 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-231d4e980e7sm77091575ad.108.2025.05.20.06.53.32
+ 5b1f17b1804b1-447f6f04334sm32966515e9.10.2025.05.20.08.06.27
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 20 May 2025 06:53:32 -0700 (PDT)
-Date: Tue, 20 May 2025 06:53:28 -0700
+ Tue, 20 May 2025 08:06:28 -0700 (PDT)
+Date: Tue, 20 May 2025 08:06:19 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Wathsala Vithanage <wathsala.vithanage@arm.com>
-Cc: Thomas Monjalon <thomas@monjalon.net>, Ferruh Yigit
- <ferruh.yigit@amd.com>, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- dev@dpdk.org, Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>, Dhruv
- Tripathi <dhruv.tripathi@arm.com>
-Subject: Re: [RFC PATCH v4 3/3] ethdev: introduce the cache stashing hints API
-Message-ID: <20250520065328.479b8c73@hermes.local>
-In-Reply-To: <20250517151736.2565461-4-wathsala.vithanage@arm.com>
-References: <20241021015246.304431-1-wathsala.vithanage@arm.com>
- <20250517151736.2565461-1-wathsala.vithanage@arm.com>
- <20250517151736.2565461-4-wathsala.vithanage@arm.com>
+To: Kyo Liu <kyo.liu@nebula-matrix.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH 1/1] net/nbl add doc and minimun nbl build framework
+Message-ID: <20250520080619.0718a950@hermes.local>
+In-Reply-To: <20250424114919.10349-1-kyo.liu@nebula-matrix.com>
+References: <20250424114919.10349-1-kyo.liu@nebula-matrix.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,48 +80,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, 17 May 2025 15:17:35 +0000
-Wathsala Vithanage <wathsala.vithanage@arm.com> wrote:
+On Thu, 24 Apr 2025 11:49:19 +0000
+Kyo Liu <kyo.liu@nebula-matrix.com> wrote:
 
-> Extend the ethdev library to enable the stashing of different data
-> objects, such as the ones listed below, into CPU caches directly
-> from the NIC.
->=20
-> - Rx/Tx queue descriptors
-> - Rx packets
-> - Packet headers
-> - packet payloads
-> - Data of a packet at an offset from the start of the packet
->=20
-> The APIs are designed in a hardware/vendor agnostic manner such that
-> supporting PMDs could use any capabilities available in the underlying
-> hardware for fine-grained stashing of data objects into a CPU cache
->=20
-> The API provides an interface to query the availability of stashing
-> capabilities, i.e., platform/NIC support, stashable object types, etc,
-> via the rte_eth_dev_stashing_capabilities_get interface.
->=20
-> The function pair rte_eth_dev_stashing_rx_config_set and
-> rte_eth_dev_stashing_tx_config_set sets the stashing hint (the CPU,=C2=A0
-> cache level, and data object types) on the Rx and Tx queues.
->=20
-> PMDs that support stashing must register their implementations with the
-> following eth_dev_ops callbacks, which are invoked by the ethdev
-> functions listed above.
->=20
-> - stashing_capabilities_get
-> - stashing_rx_hints_set
-> - stashing_tx_hints_set
->=20
-> Signed-off-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
-> Reviewed-by: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>
-> Reviewed-by: Dhruv Tripathi <dhruv.tripathi@arm.com>
+> Signed-off-by: Kyo Liu <kyo.liu@nebula-matrix.com>
 
-Adding more control in DPDK is good but I have concerns.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 9b8bb60023..4cf891a312 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1020,6 +1020,15 @@ F: drivers/net/sfc/
+>  F: doc/guides/nics/sfc_efx.rst
+>  F: doc/guides/nics/features/sfc.ini
+>  
+> +nebulamatrix nbl
 
-The default must be that the application has all the caching enabled
-without calling this API. It would be bad if existing DPDK applications
-from network vendors had to be modified.
+Pleas capitalize the company name.
 
-The DPDK should follow the "it just works" mantra and additional
-API's should be for special cases.
+> +M: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+> +M: Kyo Liu<kyo.liu@nebula-matrix.com>
+> +M: Leon Yu <leon.yu@nebula-matrix.com>
+> +M: Sam Chen <sam.chen@nebula-matrix.com>
+> +F: drivers/net/nbl
+> +F: doc/guides/nics/nbl.rst
+> +F: doc/guides/nics/features/nbl.ini
+> +
+>  Wangxun ngbe
+>  M: Jiawen Wu <jiawenwu@trustnetic.com>
+>  F: drivers/net/ngbe/
+
+
+Good start, but you need to submit the full series of patches
+for the driver before it can be reasonably reviewed.
