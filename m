@@ -2,73 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC90C3ABDD
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 May 2025 13:49:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8091C3DA6D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 May 2025 13:53:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5E4C440666;
-	Tue, 20 May 2025 15:49:52 +0200 (CEST)
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com
- [209.85.210.180])
- by mails.dpdk.org (Postfix) with ESMTP id 7B5CB402AE
- for <dev@dpdk.org>; Tue, 20 May 2025 15:49:51 +0200 (CEST)
-Received: by mail-pf1-f180.google.com with SMTP id
- d2e1a72fcca58-72d3b48d2ffso5370702b3a.2
- for <dev@dpdk.org>; Tue, 20 May 2025 06:49:51 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id BB9A540674;
+	Tue, 20 May 2025 15:53:35 +0200 (CEST)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com
+ [209.85.214.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 055B5402AE
+ for <dev@dpdk.org>; Tue, 20 May 2025 15:53:34 +0200 (CEST)
+Received: by mail-pl1-f172.google.com with SMTP id
+ d9443c01a7336-23229fdaff4so30571865ad.1
+ for <dev@dpdk.org>; Tue, 20 May 2025 06:53:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1747748990;
- x=1748353790; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1747749213;
+ x=1748354013; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=L7UDWp7mF1+0/se5JGlwizdhLWVAsII5ayOqdvXw44w=;
- b=EvX46I79+rtXQQv16S/pOlFpdBfcpb9tSJ7on+uwnLQ/AVQyf1MNHdwP4J/sunStTy
- uMtYu/2Ra9ZDBxWGYyy8OwfCPqJlicztqxTpLp2q+TRa+nKMeUDsjnffVhjkfkzka1WS
- iu4MAvuINbSYUNJcd8Riig4R2H5SrtWqLNZ6xyGL3uKcvwABH+s6GTQ85K6AloXGEXdK
- JJnRPeon47puH7VmZLTON90Xd/HLrDAtFIBDD4Bq5JShXE6fYjh96X0BqVa4Q9ciutGG
- oMVFkpRgVgY5h7XjHtsD2I6vA+GKJSfeAsNoXnk85xSr61IQv0VwljS2yedlVGzQ/qZg
- 5Bjw==
+ bh=681cDogw+E54E6DKnSavIZSBjehMh2e+NMFEhEJNEyY=;
+ b=tR875tnbNcPE/3fYfXx7vwB8zOM1yT7FiYs+31/Tdq1hfv80B9HBC6bRW3n5HZVvZJ
+ Yfj3/l12vZhvc1qpO0xvj3OrVzsOo7cM/Oiv7YqefI+Hkre1O6MA4FcRDMXlXmjA+Zcu
+ UaqtZWFx6rJ29vvUv/ResG4JF4E1u5cEMOVzjZq2bnkuW74Zpn523a0F+tvRxgk/vFOZ
+ J9xWBxM+LDk4yo1Y4hmK86VkZ07P3KU4oIYLXf0mP5feTaCVJl3YtPr3wmjERKwPszqM
+ ce6ORVZg1vfoS625P66QVRiK2+uwwbHwD1tYY+H4Brjgx1xRxD0P7AKtzIpdeqL33t/V
+ fhBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1747748990; x=1748353790;
+ d=1e100.net; s=20230601; t=1747749213; x=1748354013;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=L7UDWp7mF1+0/se5JGlwizdhLWVAsII5ayOqdvXw44w=;
- b=t7qZAC28XiZYxYmFzbu7r4saNuWfkutObmx4wxn9WCJDZiyp8g25gxDZIX1pkz+xn1
- WhPXeD68C1jbxblon7KqlimRpeWYMgn2DnAzP7ZcZc5HJQHLbi1RuuU2vBL91oQ66mpu
- gdZ/tRvpqavFcK8zi6YExixB5Uol+6uoo6wSdVkstSGfNwLQQ90tul6e2fi2nnEs1YIp
- AwefzlO2yurkXxUdq1RB7fGjkvTBrjLQDz1L8keKf09OvZmVb+FmS0NtYH/X1vJPEIAU
- Zmh8MpsF7Gw0RT/Oe1iEq6me8ex5Z4D0jydsTWk1dUJFJCzgbM/1VQt0TfO0OegTEzC/
- pl7A==
-X-Gm-Message-State: AOJu0Yzdq+hmX6B06fEjP6BBLO/ct1V+jwev6Hj4eU1TRiQ15I8/t9/r
- chEPKUpcq8gYjyRolOmpOPIajgJKPz9wzolTBHoDkI/AAD7g0snpK3Kij3qEULECl+vNK7CFSaR
- XmcEdOOQ=
-X-Gm-Gg: ASbGnculS39ZCYot9RYIt/CVjcgxRAA88NfvqaiS6zD30BJmWTbhsbjyIzxM6docadb
- MGmUDx4mQr9GMgBFge3V5Jl2fle3+6VQDXbWebPwz6TXtbUA4kjvZ1LxuaM3lOsjWXWCyKm7msM
- c6FvedEkUs4TseAUH2Pt8jKvfFrYyj21LP/1IqUuo3Wzw1ZF8pOX7hpWjNuVn+rolhjHEPLRzoR
- kr2s1sR0HGEsaBM0Diku9nuPydwPp8M6VCSOuGObvZfNOjuILKmUcD95yArkpgTXT/Vf/jtRBMe
- I0PvYT9isMalOkaPEogXrST3vvDIQatTxf8XfUAK/41eRhK1f64f6B41ymnYdQfkI/K7qZM6LZU
- xeYOoDFu/k/vTIWa61OsxKilQ3Fk=
-X-Google-Smtp-Source: AGHT+IFLA7CfH2KI+Mbl1/W0AB+ft+RjhWhtNzk9NFstVnUnKWWVVitXwKbPRYFjldMVDug8fZhchQ==
-X-Received: by 2002:a05:6a21:8889:b0:218:17c4:246c with SMTP id
- adf61e73a8af0-21817c42518mr16858621637.14.1747748990354; 
- Tue, 20 May 2025 06:49:50 -0700 (PDT)
+ bh=681cDogw+E54E6DKnSavIZSBjehMh2e+NMFEhEJNEyY=;
+ b=j1AWtf7N8klDdCeDfiaGF56QmH+6YngIMUrlIbMnR9lIBN83tOJ3aXwSpvZPJtRA4R
+ T0qjKnwSr0IcoSqiBrFnLUdAvIPrGaBN/J9tM4DqeCAlq/6FLJitbdJ0NR3KZhOlHgVa
+ 8hLwQsZzOqXgzxPzkWEEv3Y3RVw30m2pj1d4XuydtbtpEh1/Mm9ea1ZbDcHs50U0Y6Ma
+ 8STDXk5r1tGaZFFBPvca+anaabUYOBCulcSO6BBTjlyPTBfaTv2O+V4121s2asoqJros
+ QRs1Yq1mamC7J9IH2nxO/+s5Q+IghW0Koe83EEIcdOawAODH/828BbZv1Yfl++BFM0FV
+ 5e6g==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCW00PWmF94RnTN5Qo99uOwEfz1FMO/FHsQzGqJVJLCYoLn5dvDT8RIOcHbmhaswifL6fuk=@dpdk.org
+X-Gm-Message-State: AOJu0YzErHvzsMpFXJKkw82jMPjoCwHIExc8qzcY/oURw4Xx30z31/3i
+ e7Kp+BtSFCTqlGt9TnHsYWGh75ZUobzsq8VC+K8pJ0Aia/2nNuYHx1EAXWu3GUqN5P4=
+X-Gm-Gg: ASbGncub26EC2qAflNrWewQBMStFuQbEJHEtcdwbRs76l+UtG77ddx6eBgClMDe+zW7
+ 9HKYBaVQhig/TKGtQiGKxkk8uUg5DfsOwXfGGrvYodSiJcGDiADqnUwFTEHKEZylbM0bnsI/yEo
+ rsQ5CWZg0iMqXuZFVZaARSe5+TVVrb3fjbIpsKbtJ9slzqqrubFs9/b84cmBHIJ766tisaIIHvb
+ OdSnIh6aDsVSpVor9f1xrnl+/tZEuC+QJQC1CjAe8PZskS+U87pl6Wbpsgns8i28qntTlNIuVHf
+ nlhGyxBvoAb2bJzQ0WPkABEZ53o6ysOScsFdJXenPPeBhWMd6phZ31w6wWhnKkdyqxtkYbwBW+L
+ uAqN31rC05OMVRY5I+hAoSoEHj+zcZ5ADX4a52g==
+X-Google-Smtp-Source: AGHT+IG82GqLlctqlrZ6kPfjG3eoCqrm25pC+LjZOpi1fwAUUViCU9ABcBzbIkx0VOoGca9zoVIzng==
+X-Received: by 2002:a17:903:2692:b0:232:2af:8569 with SMTP id
+ d9443c01a7336-23202af8833mr122519425ad.18.1747749212952; 
+ Tue, 20 May 2025 06:53:32 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-742a970e29csm7941556b3a.72.2025.05.20.06.49.49
+ d9443c01a7336-231d4e980e7sm77091575ad.108.2025.05.20.06.53.32
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 20 May 2025 06:49:50 -0700 (PDT)
-Date: Tue, 20 May 2025 06:49:46 -0700
+ Tue, 20 May 2025 06:53:32 -0700 (PDT)
+Date: Tue, 20 May 2025 06:53:28 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: nan he <nhe295771@gmail.com>
-Cc: dev@dpdk.org
-Subject: Re: [Bug Report] KNI Module Causes Loopback Interface to Have
- Incorrect ifindex in Linux 5.4.46
-Message-ID: <20250520064947.513b73f9@hermes.local>
-In-Reply-To: <CAFohB5uoG8Sx5LXiX8F8QihT=ov2yR5rzgbaVNeodmYedy5S5g@mail.gmail.com>
-References: <CAFohB5uoG8Sx5LXiX8F8QihT=ov2yR5rzgbaVNeodmYedy5S5g@mail.gmail.com>
+To: Wathsala Vithanage <wathsala.vithanage@arm.com>
+Cc: Thomas Monjalon <thomas@monjalon.net>, Ferruh Yigit
+ <ferruh.yigit@amd.com>, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ dev@dpdk.org, Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>, Dhruv
+ Tripathi <dhruv.tripathi@arm.com>
+Subject: Re: [RFC PATCH v4 3/3] ethdev: introduce the cache stashing hints API
+Message-ID: <20250520065328.479b8c73@hermes.local>
+In-Reply-To: <20250517151736.2565461-4-wathsala.vithanage@arm.com>
+References: <20241021015246.304431-1-wathsala.vithanage@arm.com>
+ <20250517151736.2565461-1-wathsala.vithanage@arm.com>
+ <20250517151736.2565461-4-wathsala.vithanage@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,21 +87,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 23 Apr 2025 13:52:39 +0800
-nan he <nhe295771@gmail.com> wrote:
+On Sat, 17 May 2025 15:17:35 +0000
+Wathsala Vithanage <wathsala.vithanage@arm.com> wrote:
 
-> Dear DPDK Developers,
-> 
-> I am reporting an issue encountered in an environment running Linux kernel
-> version 5.4.46 with DPDK 19.11. When attempting to run Docker containers in
-> bridge mode, the container creation fails consistently. The kmsg indicate a
-> crash during the initialization of the loopback device within a new
-> *net_namespace*, specifically due to the loopback interface not being
-> assigned the expected ifindex of 1.
+> Extend the ethdev library to enable the stashing of different data
+> objects, such as the ones listed below, into CPU caches directly
+> from the NIC.
+>=20
+> - Rx/Tx queue descriptors
+> - Rx packets
+> - Packet headers
+> - packet payloads
+> - Data of a packet at an offset from the start of the packet
+>=20
+> The APIs are designed in a hardware/vendor agnostic manner such that
+> supporting PMDs could use any capabilities available in the underlying
+> hardware for fine-grained stashing of data objects into a CPU cache
+>=20
+> The API provides an interface to query the availability of stashing
+> capabilities, i.e., platform/NIC support, stashable object types, etc,
+> via the rte_eth_dev_stashing_capabilities_get interface.
+>=20
+> The function pair rte_eth_dev_stashing_rx_config_set and
+> rte_eth_dev_stashing_tx_config_set sets the stashing hint (the CPU,=C2=A0
+> cache level, and data object types) on the Rx and Tx queues.
+>=20
+> PMDs that support stashing must register their implementations with the
+> following eth_dev_ops callbacks, which are invoked by the ethdev
+> functions listed above.
+>=20
+> - stashing_capabilities_get
+> - stashing_rx_hints_set
+> - stashing_tx_hints_set
+>=20
+> Signed-off-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
+> Reviewed-by: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>
+> Reviewed-by: Dhruv Tripathi <dhruv.tripathi@arm.com>
 
-KNI is no longer supported. One of the reasons was that the KNI
-kernel module is not upstream and has lots of bugs.
-You found one and it is unlikely to be fixed.
+Adding more control in DPDK is good but I have concerns.
 
-Please use other mechanism such as TAP or virtio-user to inject
-packets into the kernel.
+The default must be that the application has all the caching enabled
+without calling this API. It would be bad if existing DPDK applications
+from network vendors had to be modified.
+
+The DPDK should follow the "it just works" mantra and additional
+API's should be for special cases.
