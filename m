@@ -2,71 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8413C3DA6D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 May 2025 15:55:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED49DC3ABDD
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 May 2025 16:19:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BD96940A8A;
-	Tue, 20 May 2025 17:55:29 +0200 (CEST)
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com
- [209.85.222.170])
- by mails.dpdk.org (Postfix) with ESMTP id 8F87D4029C
- for <dev@dpdk.org>; Tue, 20 May 2025 17:55:28 +0200 (CEST)
-Received: by mail-qk1-f170.google.com with SMTP id
- af79cd13be357-7c9376c4dbaso641281485a.0
- for <dev@dpdk.org>; Tue, 20 May 2025 08:55:28 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 8B7C040B8F;
+	Tue, 20 May 2025 18:19:26 +0200 (CEST)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com
+ [209.85.208.42]) by mails.dpdk.org (Postfix) with ESMTP id BF5494029C
+ for <dev@dpdk.org>; Tue, 20 May 2025 18:19:25 +0200 (CEST)
+Received: by mail-ed1-f42.google.com with SMTP id
+ 4fb4d7f45d1cf-601956fa3beso5679148a12.0
+ for <dev@dpdk.org>; Tue, 20 May 2025 09:19:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1747756528;
- x=1748361328; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1747757965;
+ x=1748362765; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=9oe1h+GlcjWNgNoQ5gjzVNmTWk6gOp4BLuj+OGfLgAk=;
- b=kDXwyITbFNriQrIo+1iNM42v1Aua+pRf21vvo65WpLL3yjxSjW+AzYQSY7kLZNQKzr
- veEpO9QqOicBPIqAQ8s/gFLiRKBoswmkxBgdEqnGP2nyKDxU/taRRpULF4mg9e8y66RG
- cSWBp1QzE2mNzRi56YQCVj9sOm9S+8cvjvlZESCl+Yn1EdpP189OO6C4akn3qag9AMJ9
- juqRYEvoKXS/s44bdTi6PTNSIiA3q3293WFD5BjRGpIibCEXlT/KEMKrQxVkh5seJMEP
- b2P+VnjICbkNQGthI/DtleCZOKItwXiagIcdzqcTIMklgAfYJPlkix+Fv0isvG8K+f0t
- +jTg==
+ bh=4XR6IDdAW/8xE1w485EVaGsWC1r8cDFisZSXzUVqm1o=;
+ b=lYdnvhoFEQU865dAjaFRt93TReuJ9f9QU6tW9BRfi00gT0LZwUaoXxYZqvFsc+vkyU
+ j4nLy/An6Yrg3aL/Ay1oAjtDRYEma+wiqOMiHC7+ctI8LGNlzbUkYHgDAp/i/dPtCVzl
+ jbYyk8yMARAs9J6jgPi0lSz2ecgEegmH75nCOJUS9OrJZhrfaxXOps4pWhpnsEh4gjZt
+ z0FVTB8s4pX6mzBl4TogGIYt5D528jMOv6sfdVj4Q76XVzzEq/dE8LIEQMUhR1dZLUj4
+ tg3N/BMm03jV2CJHUHoFlzaJr4aK8LOY3UuS7p1QJi8CvkYmxJ7PUkoOKcree4Bqryyq
+ rkuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1747756528; x=1748361328;
+ d=1e100.net; s=20230601; t=1747757965; x=1748362765;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=9oe1h+GlcjWNgNoQ5gjzVNmTWk6gOp4BLuj+OGfLgAk=;
- b=RpDL5KMf4vVqU7rrQOsXVEewc3A6wT6AlpqVweQQ9FCXA04Ode3vex4KVfTvC6cS2s
- UhdK0+9J9efXtImBJbYWrWTGBwJ2sQiTx+K5svEdwjv7nTFVu/q4L9gvBy3CbV292PBq
- ZcfGrPLdRtrmAvxREShrVcktC8eJrcpuPwl5hPxg1B8RD1SH5rHIE2OzAv4Ob/vpnquW
- XSj55m5m+niKLYhOGqnZaDwWgIpPZH5H2Tvi1i9A+fJi0bpxgGl1Xh5ElZe81sC0HF6K
- tBolSGkWWEJ6CmpU3RHadSFT6TZAImdoDtqV7YhoqpTfOOq0SE/xg1dpLAsDklQz55tp
- W+ig==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWnkvpiJYUtD1Nt78L+0IwkuzCZlnxhocLFADotMYcf3GDfY5dGtvTH/3mMKAHCOt+Ed7c=@dpdk.org
-X-Gm-Message-State: AOJu0YwNuHd30PJpm5YVKpvpEe7DkUJ49XdekpkJfb1pZ6Iyf+RJDnsc
- Yqvb/+VYAztus1yI/E3v9oRCNZAHr/2CgF+l7v2fzpW/J9mjC8Yb+DLwdYU1MlcbxlY=
-X-Gm-Gg: ASbGncvgQ4plLhCmNwr8vWNz44HDX2BkCKsuXe28ZPDCppi4XtAsbrNefo3dmjkwdmE
- pqmhhlH+fKblLiiHM54KIgGj+/ZtLsxbPAH0e+bRl70cXQcseY1KVpc8aBBGnPhZkRKLtjI3k+e
- K9fda3MeITV75hs6plIbD+Hd8bcwSTxWoZ+LoO1GccHQaGIzJranXG6aLUO5pI/RW2xdY4OBMOj
- c5P4L5z1vGXQHy4KTsoR5T3LFd1EpwTEGGJxg+RIzBT5VsQToPEbKyET3g24ja79lfCUuwQvbys
- qGrljno6iQXlmpc2stFkT20NvxuH+muL6iG/RZQpKxE1XvUUuATW3YnEIhrrNLQLCBlt7H1Mc+D
- jOw36K4OKmhhkhtfzcgpj++9XPl/d
-X-Google-Smtp-Source: AGHT+IGNpQ3gALoAbwM5TazfnjXoAn/R5eikwmBdtHkrFMTCmvH/9yOHPgLgOIE95DMqK7MOQ1AtoQ==
-X-Received: by 2002:a05:620a:271e:b0:7c7:b570:e2b1 with SMTP id
- af79cd13be357-7cd39dccc33mr3910985185a.7.1747756527767; 
- Tue, 20 May 2025 08:55:27 -0700 (PDT)
+ bh=4XR6IDdAW/8xE1w485EVaGsWC1r8cDFisZSXzUVqm1o=;
+ b=Q2hpnqZA0h/9mgm3kobHotVP/yOulOTtvHAI419NtelvU3Xsdw/pjbbPuXSQ71nK3a
+ w8nxtaURrrOz6XKRNzuIJ9KZW+eM9PfOV6pkNmdH2baPq3y4OW6ZzDKZZZKBbQ0r9Gyi
+ x8xkeew4U1654IYeO799GrcvlKoTZ45kd9lM2oadCZ3BNy4+yurR7oVmfhmyOHY5QRZp
+ DIgJfR3szlxyko20svV9CWGdLno7g7tRZYrrlELmeWXsndSZYb/Tw6j85Ba3l6nWF+pI
+ eukDMYqT6ytFZhQb2zVdUh5raMrWB+1/Tq5tJj1Qsv84SsEvXqWVt40hlMmKIhVmZHu/
+ 4TEw==
+X-Gm-Message-State: AOJu0YzzNRGSM5Ti34+RiRod2bv8QiGXCFuNBp+/WIR+ccEj5K0ZvNzZ
+ cChzj8kiNKPTzfJjAvyxk7VchUPTqAtW+/mTKYYWb/i+jA6d+DmTwh+L67IjjAUsD9Y=
+X-Gm-Gg: ASbGncvFRXUxcacjsjwXIsUGAXWgUSXyX3T7IOzec00AATRQYsz5+lA720MFn8+rsLU
+ 0wHtY5/ohKZ+YuniidNSTAAo+UUabOnqXQju08Vnvlifgs84y4pglAynE2wxkIcpRDzSWIgfi6/
+ beMu5Jmneuho1G6UTdhwmRoYe0rW6HxNbeaR+PDqxNbr43cQdF87kHe9ekcWgJKehJLNzr0WKW5
+ Zdih4UJiOqnCFdMG8n4LiaNOErp7sowrakLulTQr2Je3Db7g3j+aGOK1rorOAxsTaoL4RsXsttU
+ E018+saRVeLsiPhdsUmutacOo3MXn6NsTj4oDaQHo88Hob3Q+bpUBS8Nli4cEQCoDqHcVh3Dock
+ 1mi0rbWa0QUci29AadJGo24xxnDk7
+X-Google-Smtp-Source: AGHT+IHOyRQ2ZBNKVYs3UF2EhqAfWZHW0V1ZT6GBjwBHM7SLNp+Z0pkYQ5Di7DnPnUVMf3aNLDc7EA==
+X-Received: by 2002:a17:906:387:b0:ad5:3504:a6b with SMTP id
+ a640c23a62f3a-ad535041225mr1047592766b.52.1747757964704; 
+ Tue, 20 May 2025 09:19:24 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7cd468b6cb3sm748495585a.69.2025.05.20.08.55.26
+ a640c23a62f3a-ad52d4ca3bdsm742708866b.160.2025.05.20.09.19.23
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 20 May 2025 08:55:27 -0700 (PDT)
-Date: Tue, 20 May 2025 08:55:20 -0700
+ Tue, 20 May 2025 09:19:24 -0700 (PDT)
+Date: Tue, 20 May 2025 09:19:17 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: luyan <973788536@qq.com>
-Cc: maxime.coquelin@redhat.com, chenbox@nvidia.com, dev@dpdk.org, luyan
- <luyan@cmss.chinamobile.com>
-Subject: Re: [PATCH] net/tap: fix add qdisc failed when create tap
-Message-ID: <20250520085520.0bda787d@hermes.local>
-In-Reply-To: <tencent_C80031E4649A04EFE84C39ACCC8938FEBA06@qq.com>
-References: <tencent_C80031E4649A04EFE84C39ACCC8938FEBA06@qq.com>
+To: Anatoly Burakov <anatoly.burakov@intel.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v5 2/3] cmdline: add floating point support
+Message-ID: <20250520091917.6d17ad14@hermes.local>
+In-Reply-To: <b9f8ac77e4eeecd67a83d72cdf52ef3e08539bab.1746631324.git.anatoly.burakov@intel.com>
+References: <ec8528874aad76348f27c551289e1729b2fdcd25.1746631324.git.anatoly.burakov@intel.com>
+ <b9f8ac77e4eeecd67a83d72cdf52ef3e08539bab.1746631324.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -83,23 +80,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 12 May 2025 16:22:04 +0800
-luyan <973788536@qq.com> wrote:
+On Wed,  7 May 2025 16:22:11 +0100
+Anatoly Burakov <anatoly.burakov@intel.com> wrote:
 
-> From: luyan <luyan@cmss.chinamobile.com>
+> Add support for parsing floating point numbers in cmdline library, as well
+> as unit tests for the new functionality. Use C library for parsing.
 > 
-> The errno variable was assigned a positive value in the previous handling,
-> but here it is compared against -EEXIST,
-> When the tap already exists, this would falsely report an error.
-> 
-> Signed-off-by: luyan <luyan@cmss.chinamobile.com>
+> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 
-Patch looks good, but the commit message needs a couple of changes.
-
-* DPDK uses a .mailmap file to keep track of all the contributors.
-  You should add your email to that.
-* Please use your full legal name in the Signed-off-by: portion.
-  Is that your full name?
-* Since this fixes a bug, please add a fixes tag like:
-
-Fixes: 6fc6de7e0eaf ("net/tap: update netlink error code management")
+This looks good, please resolve the checkpatch warnings.
+Not that all code has to checkpatch clean but lets try and make new
+code be cleaner.
