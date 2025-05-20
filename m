@@ -2,47 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81EADC3ABDD
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 May 2025 16:40:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E33CC3ABDD
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 May 2025 16:40:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 99E7140B94;
-	Tue, 20 May 2025 18:40:44 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9E75D40B9D;
+	Tue, 20 May 2025 18:40:45 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id ADB224029C
- for <dev@dpdk.org>; Tue, 20 May 2025 18:40:42 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 788974029C
+ for <dev@dpdk.org>; Tue, 20 May 2025 18:40:43 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1747759243; x=1779295243;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=JpylTE1otNIe6HgIBohruPFZcpBOwvfvAGS5k7gh6z4=;
- b=ENU0OZAeL38GokXkPoA7rNdHBoMjV7GmolbOvUJt1rMDGZ69t+8j+OUO
- gf7HNCiqb3YbAlLQM84eehvbf7xXmcBIYmAhnvrnfDy1ym48RO/IsxYTe
- +pAUKn842xHPOVoAPuO/Fpf0XfQfqbZenscj0oiQ9k8+VoRwzChgoccB+
- 1ADKWas/83Q7QvxrQe8nLhioGShC6sryLQk5Uqv04+yofpiCQD8N7wOb/
- Gu1d++d02dQVIZ4E3mwHTLNyBGyNE26PfTSCtsCg5lVxCR9UdRgtJr33m
- SU1SP+1rPoYqmbbivDRZQ+VTG3QkT6xlKGWwR8Dj2m/dzPVz3+NhfOjDY g==;
-X-CSE-ConnectionGUID: teKxx7OORUGHja4Bn+jktw==
-X-CSE-MsgGUID: B3JrJHjrSGmrCusL3lku3A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="37320458"
-X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; d="scan'208";a="37320458"
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=znBiSN27qJ0p34eTTwAYJ3QhoW+cpP2gT+XXMcFktxg=;
+ b=UyeOsrZIUVMVPpIe6Ruq37SMURDmKVMTvOkuYJwRhu8bMhrk7dpFi6j4
+ guP5ow3fVJtdO5OTAHQoJsxoiyR7xCNWu5AI5JYYKe7jENnkHtkH9ndDu
+ XYyYzC1NcbbIV5L4/IZMrUzJCRm3OUIIxrIGbVGhjnca5gpZTDk2DmW43
+ GV5kVjoQjDOw+0lkygJ7EEMUb+fo9EEvS98s6EWQq4iNe9MFlpYrUB0xV
+ sCK4DvKZhZFmXxI1PcDQOb+rWSm3LNmE+wcTOZwO9p2XsHdRCfuBPT7A/
+ SOhg8AVZRhEq4jMHc+sRPXMKNsDNTVINuuodMLMHRjtAI+cdtc8Sp0E8u w==;
+X-CSE-ConnectionGUID: i7USaWYUTY2gkRO5rEOEmA==
+X-CSE-MsgGUID: gu5XpreBTVScxfrkcb5ZWw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="37320461"
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; d="scan'208";a="37320461"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 20 May 2025 09:40:41 -0700
-X-CSE-ConnectionGUID: 0R7aW1s+ReWh8aq80bEWEQ==
-X-CSE-MsgGUID: nmve5BU6S023hWWRt4KGyw==
+ 20 May 2025 09:40:43 -0700
+X-CSE-ConnectionGUID: nY5OU1fIRpClLXd4qmjTTw==
+X-CSE-MsgGUID: VDbdR9toTvGUToa4ud2j8g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; d="scan'208";a="170759470"
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; d="scan'208";a="170759473"
 Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.30])
- by fmviesa001.fm.intel.com with ESMTP; 20 May 2025 09:40:41 -0700
+ by fmviesa001.fm.intel.com with ESMTP; 20 May 2025 09:40:42 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: david.marchand@redhat.com,
-	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [RFC PATCH 0/7] rework EAL argument parsing in DPDK
-Date: Tue, 20 May 2025 17:40:17 +0100
-Message-ID: <20250520164025.2055721-1-bruce.richardson@intel.com>
+Cc: david.marchand@redhat.com, Bruce Richardson <bruce.richardson@intel.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>
+Subject: [RFC PATCH 1/7] eal: add long options for each short option
+Date: Tue, 20 May 2025 17:40:18 +0100
+Message-ID: <20250520164025.2055721-2-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250520164025.2055721-1-bruce.richardson@intel.com>
+References: <20250520164025.2055721-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -58,63 +60,79 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This RFC is just an initial prototype of one approach we may want to
-take to help improve management of EAL cmdline arguments.
-Although not complete (no account taken yet for BSD or Windows),
-it's hopefully complete enough to give an idea of what I think would
-improve the handling.
+To simplify future rework of the EAL arg handling, add a long-option
+equivalent for each short option that doesn't already have one.
 
-BACKGROUND:
-- The first problem that led to this work was that of providing a
-  way for users to easily provide a set of CPU cores to DPDK where the
-  CPU ids are >= RTE_MAX_LCORE
-- There are a number of solutions which were discussed for this, most
-  of which involved automatically remapping CPU ids to lcore ids
-  starting at zero.
-- However, in discussion with David M. at the last DPDK Summit in
-  Prague, he pointed out the main difficulty with all these approaches
-  in that they don't work with multi-process, since we can't reuse lcore
-  id numbers in secondary process.
-- This in turn lead to a realisation that when processing cmdline
-  arguments in DPDK, we always do so with very little context. So, for
-  example, when processing the "-l" flag, we have no idea whether there
-  will be later a --proc-type=secondary flag. We have all sorts of
-  post-arg-processing checks in place to try and catch these scenarios.
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ lib/eal/common/eal_common_options.c |  9 +++++++++
+ lib/eal/common/eal_options.h        | 16 ++++++++++++++++
+ 2 files changed, 25 insertions(+)
 
-This patchset therefore tries to simplify the handling of argument
-processing, by explicitly doing an initial pass to collate all arguments
-into a structure. Thereafter, the actual arg parsing is done in a fixed
-order, meaning that e.g. when processing the --main-lcore flag, we have
-already processed the service core flags. We also can far quicker and
-easier check for conflicting options, since they can all be checked for
-NULL/non-NULL in the arg structure immediately after the struct has been
-populated.
-
-To do the initial argument gathering, this RFC uses the existing argparse
-library in DPDK. With some minor tweaking, this meets our needs for EAL
-argument parsing and allows us to not need to do direct getopt argument
-processing inside EAL at all.
-
-Bruce Richardson (7):
-  eal: add long options for each short option
-  argparse: add support for string and boolean args
-  argparse: make argparse EAL-args compatible
-  eal: define the EAL parameters in argparse format
-  eal: gather EAL args before processing
-  eal: combine parameter validation checks
-  eal: simplify handling of conflicting cmdline options
-
- app/test/test_argparse.c            |   46 +-
- lib/argparse/rte_argparse.c         |   46 +-
- lib/argparse/rte_argparse.h         |    9 +-
- lib/eal/common/eal_common_memory.c  |    3 +-
- lib/eal/common/eal_common_options.c | 1435 ++++++++++++++++-----------
- lib/eal/common/eal_options.h        |   99 +-
- lib/eal/common/eal_private.h        |   11 +
- lib/eal/linux/eal.c                 |  378 +------
- lib/eal/meson.build                 |    2 +-
- 9 files changed, 966 insertions(+), 1063 deletions(-)
-
---
+diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
+index ed514ec1d1..a22dc69681 100644
+--- a/lib/eal/common/eal_common_options.c
++++ b/lib/eal/common/eal_common_options.c
+@@ -66,7 +66,9 @@ eal_short_options[] =
+ const struct option
+ eal_long_options[] = {
+ 	{OPT_BASE_VIRTADDR,     1, NULL, OPT_BASE_VIRTADDR_NUM    },
++	{OPT_COREMASK,          1, NULL, OPT_COREMASK_NUM        },
+ 	{OPT_CREATE_UIO_DEV,    0, NULL, OPT_CREATE_UIO_DEV_NUM   },
++	{OPT_DRIVER_PATH,       1, NULL, OPT_DRIVER_PATH_NUM     },
+ 	{OPT_FILE_PREFIX,       1, NULL, OPT_FILE_PREFIX_NUM      },
+ 	{OPT_HELP,              0, NULL, OPT_HELP_NUM             },
+ 	{OPT_HUGE_DIR,          1, NULL, OPT_HUGE_DIR_NUM         },
+@@ -76,6 +78,11 @@ eal_long_options[] = {
+ 	{OPT_LOG_COLOR,		2, NULL, OPT_LOG_COLOR_NUM	  },
+ 	{OPT_LOG_LEVEL,         1, NULL, OPT_LOG_LEVEL_NUM        },
+ 	{OPT_LOG_TIMESTAMP,     2, NULL, OPT_LOG_TIMESTAMP_NUM    },
++	{OPT_MEMORY_CHANNELS,   1, NULL, OPT_MEMORY_CHANNELS_NUM },
++	{OPT_MEMORY_RANKS,      1, NULL, OPT_MEMORY_RANKS_NUM    },
++	{OPT_MEMORY_SIZE,       1, NULL, OPT_MEMORY_SIZE_NUM     },
++	{OPT_SERVICE_CORELIST,  1, NULL, OPT_SERVICE_CORELIST_NUM },
++	{OPT_SERVICE_COREMASK,  1, NULL, OPT_SERVICE_COREMASK_NUM },
+ 	{OPT_TRACE,             1, NULL, OPT_TRACE_NUM            },
+ 	{OPT_TRACE_DIR,         1, NULL, OPT_TRACE_DIR_NUM        },
+ 	{OPT_TRACE_BUF_SIZE,    1, NULL, OPT_TRACE_BUF_SIZE_NUM   },
+@@ -106,6 +113,8 @@ eal_long_options[] = {
+ 	{OPT_NO_TELEMETRY,      0, NULL, OPT_NO_TELEMETRY_NUM     },
+ 	{OPT_FORCE_MAX_SIMD_BITWIDTH, 1, NULL, OPT_FORCE_MAX_SIMD_BITWIDTH_NUM},
+ 	{OPT_HUGE_WORKER_STACK, 2, NULL, OPT_HUGE_WORKER_STACK_NUM     },
++	{OPT_VERSION,           0, NULL, OPT_VERSION_NUM         },
++
+ 
+ 	{0,                     0, NULL, 0                        }
+ };
+diff --git a/lib/eal/common/eal_options.h b/lib/eal/common/eal_options.h
+index 7b84b7d778..e493821db1 100644
+--- a/lib/eal/common/eal_options.h
++++ b/lib/eal/common/eal_options.h
+@@ -17,8 +17,24 @@ enum {
+ 	OPT_DEV_ALLOW_NUM       = 'a',
+ #define OPT_DEV_BLOCK         "block"
+ 	OPT_DEV_BLOCK_NUM      = 'b',
++#define OPT_COREMASK          "coremask"
++	OPT_COREMASK_NUM       = 'c',
++#define OPT_DRIVER_PATH       "driver-path"
++	OPT_DRIVER_PATH_NUM    = 'd',
+ #define OPT_LCORES            "lcores"
+ 	OPT_LCORES_NUM         = 'l',
++#define OPT_MEMORY_SIZE       "memory-size"
++	OPT_MEMORY_SIZE_NUM    = 'm',
++#define OPT_MEMORY_CHANNELS   "memory-channels"
++	OPT_MEMORY_CHANNELS_NUM = 'n',
++#define OPT_MEMORY_RANKS     "memory-ranks"
++	OPT_MEMORY_RANKS_NUM   = 'r',
++#define OPT_SERVICE_COREMASK  "service-coremask"
++	OPT_SERVICE_COREMASK_NUM = 's',
++#define OPT_SERVICE_CORELIST  "service-corelist"
++	OPT_SERVICE_CORELIST_NUM = 'S',
++#define OPT_VERSION           "version"
++	OPT_VERSION_NUM        = 'v',
+ 
+ 	/* first long only option value must be >= 256, so that we won't
+ 	 * conflict with short options */
+-- 
 2.48.1
 
