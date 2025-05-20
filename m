@@ -2,63 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07840C3DA6D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 May 2025 20:34:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94333C54E71
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 May 2025 21:17:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C55E340E0F;
-	Tue, 20 May 2025 22:34:10 +0200 (CEST)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com
- [209.85.128.174])
- by mails.dpdk.org (Postfix) with ESMTP id 8D9D940DF5
- for <dev@dpdk.org>; Tue, 20 May 2025 22:34:09 +0200 (CEST)
-Received: by mail-yw1-f174.google.com with SMTP id
- 00721157ae682-70825de932bso73465977b3.0
- for <dev@dpdk.org>; Tue, 20 May 2025 13:34:09 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id BE61240E18;
+	Tue, 20 May 2025 23:17:29 +0200 (CEST)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com
+ [209.85.208.52]) by mails.dpdk.org (Postfix) with ESMTP id A4AA440E17
+ for <dev@dpdk.org>; Tue, 20 May 2025 23:17:28 +0200 (CEST)
+Received: by mail-ed1-f52.google.com with SMTP id
+ 4fb4d7f45d1cf-6015f8d4b7dso1450933a12.1
+ for <dev@dpdk.org>; Tue, 20 May 2025 14:17:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1747773248; x=1748378048; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=zm6hZQjxTsbW1tR/uWE+/Qa09sMcJcE0vmHrSf2ENmA=;
- b=bHh3g9e/szyo+xOfTICJh7JAzt2FSGQqO5HbRl+CZwv9/ild55/xYR4S36O+0eKNjh
- oCsHvAsAHlVpH98MKdJkLnC/MAWOVe8SZew7QaTq4MTC+GUVGR/4o+JgoAg0eVDSBQJv
- /0uBg449pkhxMxKdLWojN3up944jCDH0VlsmY=
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1747775848;
+ x=1748380648; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=hO/cMzxTHbkWA++oAb82gQcYn/NnauoGuwobhvTtZlo=;
+ b=gzWg8zmhEQM9pF8Hm8EbcNQVPa5Ke6hcifFR6A/2Hfvc3PenQawKyFCIHZIh5v43Mf
+ uMt8EHf81+VwGd0gLp4Ufv3ot55YFIgZdJiGmLQcstbISF4ssqiLBsoR2ejhT2m9xncq
+ ONsIihSzH48FJGbLF3cHLdMzZ9CuTOfZgAaC/3xtT48ALBBbrASp1HgO29vM5OWlNycr
+ ns6pTlsfrNilYD9vJb0gT6tNz4j9s/6U+9p44QGTnfgZ0AB7aP5ca30bCwjaD73n6thF
+ 9rJZl1Abpynpe4Dss6VN1tOtptvgVJVAEOgSgZ084dPgGe2ilok+HidKvHg5Uqlx7qR4
+ xv7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1747773248; x=1748378048;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=zm6hZQjxTsbW1tR/uWE+/Qa09sMcJcE0vmHrSf2ENmA=;
- b=rOBOb704i+rbjs9Bxw1pEIU483ctmWov/Va1BJOsji31gX+oqur2gBby9X9BqHuhx7
- ainWseh8gbVf8UQO7JEOMb/KuucKGORZ7U1JGgpmsC7wQAxJmRZkxrCbOde7SUXILVN2
- htmEsJ2o7lM4rWgwmbge0/0KBbtjvWEj7Y844FnAYd2cRuu0SbH0OwdygVvMrd6qHz8l
- p+R56HnCJZmAO6RYXHxbI3YnCJVeFO/U491RhAiEfviNegcaph7gbfkmyAWiDX2bR63P
- rbeNhKhRs4G6cHtjwViazwODBzenorhdwPyyorgNk+GCXvk061kzTfbPLENGlaDHl+q3
- 1Ndw==
-X-Gm-Message-State: AOJu0YzJSgrNkIJv99uou1Y9eZm56X6cZ52RLqFy5i8KqwQFaft0MivP
- vuNcDNAfOfS9oyxQdobdFz9YHMujvDIzIQim/cVeXwyQ1qVp9ulIWMjO5lsExW/83MVyLVjN4zE
- GLTVQrxG5xCuI7fDhar818dpuMqkVDGWGaekNKA10r3nqtATdIxul
-X-Gm-Gg: ASbGncvmlBKGUPXkfDY6EcoGkj9lGjeCoEwnuVKvwUsIoXnVNx0W7kuBTHHdcY9wBDS
- 73VWIzHoNpyeiaTWLV08w6ujNNv4XSoOw0W47R+RHeOV5xJPc7ZybLppBOdd5zPicHP6kvdFtgn
- UaQ3CZeFpYaUYbDuTPlcpoLxTQ234BGUh6FbT7WvhaUytINP/w+XsYmpUgngg2g7c/tkg=
-X-Google-Smtp-Source: AGHT+IFGxvfWyKjInJgH87wKwBb3ud4sGGjjGW6x66AMtgdOiJqL1x0PC0sRp3Vq+2HdKPmNymmVGSszdccWAVwIuGc=
-X-Received: by 2002:a05:690c:88f:b0:70c:aa79:250f with SMTP id
- 00721157ae682-70caa79262amr252337347b3.16.1747773247578; Tue, 20 May 2025
- 13:34:07 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1747775848; x=1748380648;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=hO/cMzxTHbkWA++oAb82gQcYn/NnauoGuwobhvTtZlo=;
+ b=s3ohuwFvJCSsxeORB4Rz2VCTCIxLFfT/9y/pTnDx+1FKWiVd4z+ilFQgvXIWZhykAS
+ DTK7c08CAN2JIEOsBdEbdYLXYADKCZUaQnXLStgQpDQI2JlJJG9ayvivzloy539laM7g
+ Ngr/dYdC9UfG9vDewkZN8wRC71T49UXDivWgotdTNoSoOYovrNsxob8YH48/M/nQYjfa
+ B8ENwMaSczxjpET26xWEa0Xqkj4STQBnO414lVyxQa2n+8+dcg56WtE1tBH4Bdt/LGvv
+ tQqgpJ7zR5mt4/vC7/ZyXmXphjjXkgJ4O1nT1W/E3BCuhavKzloyEh1VBKcAkrFXJcTr
+ VPYA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWXg1+QfReUTflffuSKBOz5A4/gRCarNC4buMhP/njCm83/aPN9bTtZBk2kP0jIDeHlZzE=@dpdk.org
+X-Gm-Message-State: AOJu0YyBetvvrNWeQTspxIsp7uK5o3+O8qVnFqTHqF3aLHUGnAdSvzhi
+ jNtTbRE5b8H0U1jimIVfyDW1oi1rWBsJXicK+qj5iY5VOnd0dAE0P3wR9qM60gQP5Nc=
+X-Gm-Gg: ASbGncvi+o6b+LmVClpe3sqCZ98hjF77a6BiKSvJyycNNS/Zv66IwDQrnW4nNCzH53y
+ secXVqvXS6hcTSy6duJPDZE1tKdZE0PPIudTA1HPG3csJQlEqCg772bzsryws2sNVkBiSS/r5c0
+ Yr93AbXGzAj+40ibM4KPmGGesnYuV52swYzdcq2aBWSDYofuJN2PUUcMNwHOwme6p8KolYoPYRA
+ 7j0LKfRdX++TwW4DqyoY//+DYT6oCzlOpmlyaNvvTqHvDjXzawJXGZBmzADLp8+vixRPB8dVrSc
+ vj5u+dqBDuIIsp+epxaxT8dwRCB5AKpEtHDJ14rQchXroC1znoQTk5gAhDsnI0dw0XRv9TwaXy1
+ QGFK4+/aY27LttFB0Ne8Gwq6cJvw+xDEHY0h6uD0=
+X-Google-Smtp-Source: AGHT+IGYeOeEzc4DoFqwTFLWtF3kGBAkhLy3NobN+1ZtOBD24O7Z1JvhGDdrlSGbzGZs8+dtgm49hA==
+X-Received: by 2002:a05:6402:254f:b0:602:1b8b:2904 with SMTP id
+ 4fb4d7f45d1cf-6021b8b2cbdmr2546480a12.0.1747775848077; 
+ Tue, 20 May 2025 14:17:28 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 4fb4d7f45d1cf-6005ae3b630sm7687570a12.76.2025.05.20.14.17.26
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 20 May 2025 14:17:27 -0700 (PDT)
+Date: Tue, 20 May 2025 14:17:11 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: <skori@marvell.com>
+Cc: Aman Singh <aman.deep.singh@intel.com>, <dev@dpdk.org>
+Subject: Re: [PATCH 2/2] app/testpmd: clear stale internal len information
+Message-ID: <20250520141711.0b9d481f@hermes.local>
+In-Reply-To: <20250519160711.4024414-2-skori@marvell.com>
+References: <20250519160711.4024414-1-skori@marvell.com>
+ <20250519160711.4024414-2-skori@marvell.com>
 MIME-Version: 1.0
-References: <20250423194011.1447679-1-npratte@iol.unh.edu>
- <20250516201834.626206-1-npratte@iol.unh.edu>
- <20250516201834.626206-2-npratte@iol.unh.edu>
-In-Reply-To: <20250516201834.626206-2-npratte@iol.unh.edu>
-From: Dean Marx <dmarx@iol.unh.edu>
-Date: Tue, 20 May 2025 16:33:55 -0400
-X-Gm-Features: AX0GCFtMx5ZEj8Ap5Y9bN68c6eLk9ZA_XE8nWcenSjfrwX3pnOUGsM96VHrMjmg
-Message-ID: <CABD7UXNgNaC9_jfH9-YZWfskVk-ruP0wYgrVGGm5n8PuCq_z8g@mail.gmail.com>
-Subject: Re: [RFC v2 1/6] dts: rework config module to support perf TGs
-To: dev@dpdk.org
-Cc: stephen@networkplumber.org, luca.vizzarro@arm.com, paul.szczepanek@arm.com,
- yoan.picchi@foss.arm.com, Honnappa.Nagarahalli@arm.com, thomas@monjalon.net, 
- thomas.wilks@arm.com, probb@iol.unh.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -72,15 +82,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-<snip>
-> +      - dest_mac: 3c:fd:fe:d5:e5:f9 # MAC OF LOOPBACK TO IT'S DUAL INTERFACE
-> +        src_mac:  3c:fd:fe:d5:e5:f8
-> +      - dest_mac: 3c:fd:fe:d5:e5:f8 # MAC OF LOOPBACK TO IT'S DUAL INTERFACE
-> +        src_mac:  3c:fd:fe:d5:e5:f9
+On Mon, 19 May 2025 21:36:56 +0530
+<skori@marvell.com> wrote:
 
-Should be its not it's
+> From: Sunil Kumar Kori <skori@marvell.com>
+> 
+> hdr_lens is used to maintain header lengths after parsing packets.
+> When port receives different type of packets (say first is VXLAN
+> packet and second is GRE packet).
+> 
+> For first packet, L2/L3/L4 lengths are set for inner and outer header
+> alongwith tunnel_len.
+> 
+> Now for second packet, tunnel_len is added more than its size it
+> contains stale value which further leads to wrong header pointers.
+> 
+> Hence clearing stale information before processing each packet.
+> 
+> Signed-off-by: Sunil Kumar Kori <skori@marvell.com>
 
-I like the concept of having a configurations directory within DTS,
-those files were starting to add up anyways.
+The initialization of hdr_lens then becomes redundant.
 
-Reviewed-by: Dean Marx <dmarx@iol.unh.edu>
+Maybe better to just move it into the loop.
+
+diff --git a/app/test-pmd/csumonly.c b/app/test-pmd/csumonly.c
+index fa0002d321..203af35cf0 100644
+--- a/app/test-pmd/csumonly.c
++++ b/app/test-pmd/csumonly.c
+@@ -627,7 +627,6 @@ pkt_burst_checksum_forward(struct fwd_stream *fs)
+        uint32_t rx_bad_outer_l4_csum;
+        uint32_t rx_bad_outer_ip_csum;
+        struct testpmd_offload_info info;
+-       struct rte_net_hdr_lens hdr_lens = {0};
+        uint32_t ptype;
+ 
+        /* receive a burst of packet */
+@@ -666,6 +665,8 @@ pkt_burst_checksum_forward(struct fwd_stream *fs)
+ #endif
+ 
+        for (i = 0; i < nb_rx; i++) {
++               struct rte_net_hdr_lens hdr_lens = {0};
++
+                if (likely(i < nb_rx - 1))
+                        rte_prefetch0(rte_pktmbuf_mtod(pkts_burst[i + 1],
+                                                       void *));
+~/DPDK/main $ 
