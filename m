@@ -2,49 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B53C9C2D0CD
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 May 2025 01:51:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E1FBC2D0CD
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 May 2025 02:09:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7599B402CA;
-	Tue, 20 May 2025 03:51:21 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id 5AB5A402AE;
- Tue, 20 May 2025 03:51:19 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id EDC7D402CA;
+	Tue, 20 May 2025 04:09:52 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+ by mails.dpdk.org (Postfix) with ESMTP id 16671402AE;
+ Tue, 20 May 2025 04:09:49 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1747705880; x=1779241880;
+ t=1747706990; x=1779242990;
  h=from:to:cc:subject:date:message-id:mime-version:
  content-transfer-encoding;
  bh=2MCqeiCm9Q2mytMV8rSDVAWZWg6A3JqtDWWUqqBNH3w=;
- b=nvYYp53XkULgAIf2S87cdNaAgep5G8cKbeUvPwMEwRuC/o5MamV1I9Ho
- JaLrvCiQct9gvqNvhkvudD+qrRbwqNkCR7H40Fd3famtUkazuP3lKB2uJ
- 1dPb1Ykx5vfjvdl142OcMiL/uNGgj8VlvxRgTEgE3nC0FkY1RDwJyOzsx
- PDKtS9h0JMZGmck6JrOuDQQr42lZeoeGrhNrXNSvY40qoRaFJtc1cmHpJ
- phv8HbHT58pcDspge69ANX0opjTilWjyUoSlMwoynxiTU9hdNGLSVVOKd
- jQroNlrsyQVxDWAaU9oQGvikntWNTp7MvySkS36w5nCArqvc2Zqx6UYrU Q==;
-X-CSE-ConnectionGUID: r7aGP9BlS7aSD55/jFm08w==
-X-CSE-MsgGUID: X4AhksTCT322vx3VXjnOhw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11438"; a="52254972"
-X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; d="scan'208";a="52254972"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
- by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 May 2025 18:51:18 -0700
-X-CSE-ConnectionGUID: /7fO593XTced+LKF2aDSxQ==
-X-CSE-MsgGUID: 29oZ4XaVSIGWEkt/6fq/Ww==
+ b=Jb/9bPmAv5+4EpTQpjVerIXpEnjF4wqmOp5tIjbjoihbyRnvp9qMjHr5
+ 1pkXqpzZIiFlhIrQ5ztOaWa+zKfQvHEO5D/CdSBhQqWNTuopgqQ9TiqAV
+ FipdRSuN87UPH5lCPcKtGM4d4XZGEILR7/eV3OHVdjbz96aL6S8UT8kDT
+ XxYOj8GNmJWq8rkG5I1pMgO+cSUUYHkc+gTBC4w13kgrHFmAtjHFy+nSt
+ rUsqFjyNGFnmMmkoAoXDVxXopEFPdjwy9H9UMzYuxl+V+CQPrrF6KJcLI
+ e2na6q5VoevJUwmvsGOgBUeyzHuAnIVklH0hqbc5RLyGzjYMqbz/DO0Cc Q==;
+X-CSE-ConnectionGUID: 5QZ/acf2RKGIzsvg6RkVEw==
+X-CSE-MsgGUID: +jlbU+MuShONtRKDppG1qQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11438"; a="59854939"
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; d="scan'208";a="59854939"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 19 May 2025 19:09:49 -0700
+X-CSE-ConnectionGUID: K47dx03HT8CjLmynlUiNmg==
+X-CSE-MsgGUID: UI/U6c+HRcK2dKTPCnD4/A==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; d="scan'208";a="139444154"
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; d="scan'208";a="139960286"
 Received: from shwdenpg561.ccr.corp.intel.com (HELO dpdk..) ([10.239.252.3])
- by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 May 2025 18:51:15 -0700
+ by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 19 May 2025 19:09:46 -0700
 From: Kaiwen Deng <kaiwenx.deng@intel.com>
 To: dev@dpdk.org
 Cc: stable@dpdk.org, Kaiwen Deng <kaiwenx.deng@intel.com>,
  Anatoly Burakov <anatoly.burakov@intel.com>,
  Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Wenzhuo Lu <wenzhuo.lu@intel.com>, Tiwei Bie <tiwei.bie@intel.com>
-Subject: [PATCH v1] net/intel: fix ixgbe get macsec stats
-Date: Tue, 20 May 2025 08:54:45 +0800
-Message-Id: <20250520005445.555573-1-kaiwenx.deng@intel.com>
+ Tiwei Bie <tiwei.bie@intel.com>, Wenzhuo Lu <wenzhuo.lu@intel.com>
+Subject: [PATCH] net/intel: fix ixgbe get macsec stats
+Date: Tue, 20 May 2025 09:13:16 +0800
+Message-Id: <20250520011316.561890-1-kaiwenx.deng@intel.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
