@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5EA7C3ABDD
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 May 2025 16:40:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F588C3DA6D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 May 2025 16:41:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 89C1240BA4;
-	Tue, 20 May 2025 18:40:46 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9C7A240B9F;
+	Tue, 20 May 2025 18:40:48 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id F2E3440B97
- for <dev@dpdk.org>; Tue, 20 May 2025 18:40:44 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id A2B7F40BA6
+ for <dev@dpdk.org>; Tue, 20 May 2025 18:40:46 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1747759245; x=1779295245;
+ t=1747759247; x=1779295247;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=QNUm58hFHZ5FQE0bEi2uJIrJMhsgs5LaSo/NE/7SpfI=;
- b=iw2EXPvUjxRsuG9kN0HAZKQm+f0i2nMhkMtUi20oTXFxBeag3hF3hbEq
- 6M2Q6GuOD39BhKYkuTuGlWENfF69uPkeyNcTQEBlJSVb5oJ5EdjvU5uJT
- ZtFQjpJp0zUE7vnrXYd8Y6UV7HaddSi+Gb+exNGdKNZRjnBS2MjjQ0k4F
- CA10intpZMTzEGKGWxRVyAu5/p0wpHNgd0vEDm2WYztltvWO/8q0fk/7R
- cZcZ2pSgMBAkW7yRegwGHHZBzSt4E6U15pShl1cZmR2KjMjvJ19hRg/+s
- r1lVyJpD44aSjsDgpR2LeMJmrdZ7n/NkGD3aco7Zyz5sx5zBYZARVjjVk A==;
-X-CSE-ConnectionGUID: Rb2/AByLS+SptkyWE+5LCw==
-X-CSE-MsgGUID: x8hQWZzITNWF5qVQoUCuPg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="37320467"
-X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; d="scan'208";a="37320467"
+ bh=ekoR4NHYNKrL8QUOoBqVsCgm7QkwLFpIkmDBLmxBz+8=;
+ b=B+dnkFfc3kQh83i+4UAoFsqmsEF9CAjXSLSLrPQBF+quL0VGb+GR6sUA
+ +5qb/A/pDHeWQq2zbwk0CvoLZ4RYgwW+/7E2eEkfflo2bjmL7zIX53vH8
+ o+xQP6qMtwwEA4iKhyJqNW5VLmrFK2qI0Bs5R4B16gsIDXeiGKzj5ykuK
+ T8c1fNbg2F8tyTqPPcUOeSQWp2oqWAhz0F8TtlnlG/29mXJEUL8XyVtMh
+ 3NDURx4Mn2okxWcWMhubolLKYfM2BrCL/Hra5E4/RGO+fuMr0nQbsa2yp
+ jZ2UZlQ8/JnTuLX6OdYKcENnPuazAcUjab4aR6UFqCL6dZcpuLQpM0v9T w==;
+X-CSE-ConnectionGUID: 4iGhNy6USr+9RJH8QXl0Sg==
+X-CSE-MsgGUID: WeS0wVb2QpuaTjvPJ84SLA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="37320470"
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; d="scan'208";a="37320470"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 20 May 2025 09:40:44 -0700
-X-CSE-ConnectionGUID: NQqQwb7aQQi7oOJFVEaGhQ==
-X-CSE-MsgGUID: 1APjamLtTgmFDM0sM9Vw4g==
+ 20 May 2025 09:40:46 -0700
+X-CSE-ConnectionGUID: 34K5KVCFRBid36kx8yD04g==
+X-CSE-MsgGUID: AMlT9T5jTZmGf+iqZdtsGg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; d="scan'208";a="170759476"
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; d="scan'208";a="170759479"
 Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.30])
- by fmviesa001.fm.intel.com with ESMTP; 20 May 2025 09:40:43 -0700
+ by fmviesa001.fm.intel.com with ESMTP; 20 May 2025 09:40:45 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: david.marchand@redhat.com, Bruce Richardson <bruce.richardson@intel.com>,
  Chengwen Feng <fengchengwen@huawei.com>
-Subject: [RFC PATCH 2/7] argparse: add support for string and boolean args
-Date: Tue, 20 May 2025 17:40:19 +0100
-Message-ID: <20250520164025.2055721-3-bruce.richardson@intel.com>
+Subject: [RFC PATCH 3/7] argparse: make argparse EAL-args compatible
+Date: Tue, 20 May 2025 17:40:20 +0100
+Message-ID: <20250520164025.2055721-4-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250520164025.2055721-1-bruce.richardson@intel.com>
 References: <20250520164025.2055721-1-bruce.richardson@intel.com>
@@ -60,94 +60,281 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Sometimes we don't want to parse the string at all, when doing arg
-parsing, and just save it off for later. Add support for that.
+The argparse library was missing two key features which made it
+unsuitable for use by EAL or any program wanting similar behaviour.
 
-Also, rather than assuming boolean values have to be the same size as
-uint8 (or some other size), add an explicitly type for that - which also
-allows checking for true/false and 0/1 values explicitly.
+1. It didn't stop parsing arguments when it hit a "--" character
+2. It never returned the number of arguments parsed
+
+Fix both these issues - the latter is a change to the ABI, since we now
+return >= 0 rather than == 0 on success. However, the ABI is still
+experimental so we can make exactly these sorts of tweaks to it.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
-Note: when adding support for strings, I was uncertain as to whether the library
-  should copy the string, or just store the pointer to the original value. This
-  patch takes the former approach and makes a copy, but I'd appreciate feedback
-  on people's thoughts as to whether this is the best approach.
----
- lib/argparse/rte_argparse.c | 34 ++++++++++++++++++++++++++++++++++
- lib/argparse/rte_argparse.h |  6 +++++-
- 2 files changed, 39 insertions(+), 1 deletion(-)
+ app/test/test_argparse.c    | 46 ++++++++++++++++++-------------------
+ lib/argparse/rte_argparse.c | 12 +++++++---
+ lib/argparse/rte_argparse.h |  3 ++-
+ 3 files changed, 34 insertions(+), 27 deletions(-)
 
+diff --git a/app/test/test_argparse.c b/app/test/test_argparse.c
+index fcea620501..77bace5a39 100644
+--- a/app/test/test_argparse.c
++++ b/app/test/test_argparse.c
+@@ -360,14 +360,14 @@ test_argparse_opt_autosave_parse_int_of_no_val(void)
+ 	argv[0] = test_strdup(obj->prog_name);
+ 	argv[1] = test_strdup("--test-long");
+ 	ret = rte_argparse_parse(obj, 2, argv);
+-	TEST_ASSERT(ret == 0, "Argparse parse expect success!");
++	TEST_ASSERT(ret >= 0, "Argparse parse expect success!");
+ 	TEST_ASSERT(val_saver == 100, "Argparse parse expect success!");
+ 
+ 	obj->args[0].flags = flags;
+ 	val_saver = 0;
+ 	argv[1] = test_strdup("-t");
+ 	ret = rte_argparse_parse(obj, 2, argv);
+-	TEST_ASSERT(ret == 0, "Argparse parse expect success!");
++	TEST_ASSERT(ret >= 0, "Argparse parse expect success!");
+ 	TEST_ASSERT(val_saver == 100, "Argparse parse expect success!");
+ 
+ 	return 0;
+@@ -393,14 +393,14 @@ test_argparse_opt_autosave_parse_int_of_required_val(void)
+ 	argv[1] = test_strdup("--test-long");
+ 	argv[2] = test_strdup("100");
+ 	ret = rte_argparse_parse(obj, 3, argv);
+-	TEST_ASSERT(ret == 0, "Argparse parse expect success!");
++	TEST_ASSERT(ret >= 0, "Argparse parse expect success!");
+ 	TEST_ASSERT(val_saver == 100, "Argparse parse expect success!");
+ 
+ 	obj->args[0].flags = flags;
+ 	val_saver = 0;
+ 	argv[1] = test_strdup("-t");
+ 	ret = rte_argparse_parse(obj, 3, argv);
+-	TEST_ASSERT(ret == 0, "Argparse parse expect success!");
++	TEST_ASSERT(ret >= 0, "Argparse parse expect success!");
+ 	TEST_ASSERT(val_saver == 100, "Argparse parse expect success!");
+ 
+ 	/* test invalid value. */
+@@ -434,13 +434,13 @@ test_argparse_opt_autosave_parse_int_of_optional_val(void)
+ 	argv[0] = test_strdup(obj->prog_name);
+ 	argv[1] = test_strdup("--test-long");
+ 	ret = rte_argparse_parse(obj, 2, argv);
+-	TEST_ASSERT(ret == 0, "Argparse parse expect success!");
++	TEST_ASSERT(ret >= 0, "Argparse parse expect success!");
+ 	TEST_ASSERT(val_saver == 100, "Argparse parse expect success!");
+ 	obj->args[0].flags = flags;
+ 	val_saver = 0;
+ 	argv[1] = test_strdup("-t");
+ 	ret = rte_argparse_parse(obj, 2, argv);
+-	TEST_ASSERT(ret == 0, "Argparse parse expect success!");
++	TEST_ASSERT(ret >= 0, "Argparse parse expect success!");
+ 	TEST_ASSERT(val_saver == 100, "Argparse parse expect success!");
+ 
+ 	/* test with value. */
+@@ -448,13 +448,13 @@ test_argparse_opt_autosave_parse_int_of_optional_val(void)
+ 	val_saver = 0;
+ 	argv[1] = test_strdup("--test-long=200");
+ 	ret = rte_argparse_parse(obj, 2, argv);
+-	TEST_ASSERT(ret == 0, "Argparse parse expect success!");
++	TEST_ASSERT(ret >= 0, "Argparse parse expect success!");
+ 	TEST_ASSERT(val_saver == 200, "Argparse parse expect success!");
+ 	obj->args[0].flags = flags;
+ 	val_saver = 0;
+ 	argv[1] = test_strdup("-t=200");
+ 	ret = rte_argparse_parse(obj, 2, argv);
+-	TEST_ASSERT(ret == 0, "Argparse parse expect success!");
++	TEST_ASSERT(ret >= 0, "Argparse parse expect success!");
+ 	TEST_ASSERT(val_saver == 200, "Argparse parse expect success!");
+ 
+ 	/* test with option value, but with wrong value. */
+@@ -503,14 +503,14 @@ test_argparse_opt_callback_parse_int_of_no_val(void)
+ 	argv[0] = test_strdup(obj->prog_name);
+ 	argv[1] = test_strdup("--test-long");
+ 	ret = rte_argparse_parse(obj, 2, argv);
+-	TEST_ASSERT(ret == 0, "Argparse parse expect success!");
++	TEST_ASSERT(ret >= 0, "Argparse parse expect success!");
+ 	TEST_ASSERT(val_saver == 100, "Argparse parse expect success!");
+ 
+ 	obj->args[0].flags = RTE_ARGPARSE_ARG_NO_VALUE;
+ 	val_saver = 0;
+ 	argv[1] = test_strdup("-t");
+ 	ret = rte_argparse_parse(obj, 2, argv);
+-	TEST_ASSERT(ret == 0, "Argparse parse expect success!");
++	TEST_ASSERT(ret >= 0, "Argparse parse expect success!");
+ 	TEST_ASSERT(val_saver == 100, "Argparse parse expect success!");
+ 
+ 	return 0;
+@@ -555,14 +555,14 @@ test_argparse_opt_callback_parse_int_of_required_val(void)
+ 	argv[1] = test_strdup("--test-long");
+ 	argv[2] = test_strdup("100");
+ 	ret = rte_argparse_parse(obj, 3, argv);
+-	TEST_ASSERT(ret == 0, "Argparse parse expect success!");
++	TEST_ASSERT(ret >= 0, "Argparse parse expect success!");
+ 	TEST_ASSERT(val_saver == 100, "Argparse parse expect success!");
+ 
+ 	obj->args[0].flags = RTE_ARGPARSE_ARG_REQUIRED_VALUE;
+ 	val_saver = 0;
+ 	argv[1] = test_strdup("-t");
+ 	ret = rte_argparse_parse(obj, 3, argv);
+-	TEST_ASSERT(ret == 0, "Argparse parse expect success!");
++	TEST_ASSERT(ret >= 0, "Argparse parse expect success!");
+ 	TEST_ASSERT(val_saver == 100, "Argparse parse expect success!");
+ 
+ 	/* test no more parameters. */
+@@ -618,14 +618,14 @@ test_argparse_opt_callback_parse_int_of_optional_val(void)
+ 	argv[0] = test_strdup(obj->prog_name);
+ 	argv[1] = test_strdup("--test-long");
+ 	ret = rte_argparse_parse(obj, 2, argv);
+-	TEST_ASSERT(ret == 0, "Argparse parse expect success!");
++	TEST_ASSERT(ret >= 0, "Argparse parse expect success!");
+ 	TEST_ASSERT(val_saver == 10, "Argparse parse expect success!");
+ 
+ 	obj->args[0].flags = RTE_ARGPARSE_ARG_OPTIONAL_VALUE;
+ 	val_saver = 0;
+ 	argv[1] = test_strdup("-t");
+ 	ret = rte_argparse_parse(obj, 2, argv);
+-	TEST_ASSERT(ret == 0, "Argparse parse expect success!");
++	TEST_ASSERT(ret >= 0, "Argparse parse expect success!");
+ 	TEST_ASSERT(val_saver == 10, "Argparse parse expect success!");
+ 
+ 	/* test with value. */
+@@ -633,13 +633,13 @@ test_argparse_opt_callback_parse_int_of_optional_val(void)
+ 	val_saver = 0;
+ 	argv[1] = test_strdup("--test-long=100");
+ 	ret = rte_argparse_parse(obj, 2, argv);
+-	TEST_ASSERT(ret == 0, "Argparse parse expect success!");
++	TEST_ASSERT(ret >= 0, "Argparse parse expect success!");
+ 	TEST_ASSERT(val_saver == 100, "Argparse parse expect success!");
+ 	obj->args[0].flags = RTE_ARGPARSE_ARG_OPTIONAL_VALUE;
+ 	val_saver = 0;
+ 	argv[1] = test_strdup("-t=100");
+ 	ret = rte_argparse_parse(obj, 2, argv);
+-	TEST_ASSERT(ret == 0, "Argparse parse expect success!");
++	TEST_ASSERT(ret >= 0, "Argparse parse expect success!");
+ 	TEST_ASSERT(val_saver == 100, "Argparse parse expect success!");
+ 
+ 	/* test callback return failed. */
+@@ -671,7 +671,7 @@ test_argparse_pos_autosave_parse_int(void)
+ 	argv[0] = test_strdup(obj->prog_name);
+ 	argv[1] = test_strdup("100");
+ 	ret = rte_argparse_parse(obj, 2, argv);
+-	TEST_ASSERT(ret == 0, "Argparse parse expect success!");
++	TEST_ASSERT(ret >= 0, "Argparse parse expect success!");
+ 	TEST_ASSERT(val_saver == 100, "Argparse parse expect success!");
+ 
+ 	/* test positional autosave parse failed. */
+@@ -738,7 +738,7 @@ test_argparse_pos_callback_parse_int(void)
+ 	argv[1] = test_strdup("100");
+ 	argv[2] = test_strdup("200");
+ 	ret = rte_argparse_parse(obj, 3, argv);
+-	TEST_ASSERT(ret == 0, "Argparse parse expect success!");
++	TEST_ASSERT(ret >= 0, "Argparse parse expect success!");
+ 	TEST_ASSERT(val_saver[1] == 100, "Argparse parse expect success!");
+ 	TEST_ASSERT(val_saver[2] == 200, "Argparse parse expect success!");
+ 
+@@ -774,7 +774,7 @@ test_argparse_parse_type(void)
+ 	ret = rte_argparse_parse_type(str_invalid, RTE_ARGPARSE_ARG_VALUE_INT, &val_int);
+ 	TEST_ASSERT(ret != 0, "Argparse parse type expect failed!");
+ 	ret = rte_argparse_parse_type(str_ok, RTE_ARGPARSE_ARG_VALUE_INT, &val_int);
+-	TEST_ASSERT(ret == 0, "Argparse parse type expect failed!");
++	TEST_ASSERT(ret >= 0, "Argparse parse type expect failed!");
+ 	TEST_ASSERT(val_int == 123, "Argparse parse type expect failed!");
+ 
+ 	/* test for u8 parsing */
+@@ -786,7 +786,7 @@ test_argparse_parse_type(void)
+ 	TEST_ASSERT(ret != 0, "Argparse parse type expect failed!");
+ 	val_u8 = 0;
+ 	ret = rte_argparse_parse_type(str_ok, RTE_ARGPARSE_ARG_VALUE_U8, &val_u8);
+-	TEST_ASSERT(ret == 0, "Argparse parse type expect failed!");
++	TEST_ASSERT(ret >= 0, "Argparse parse type expect failed!");
+ 	TEST_ASSERT(val_u8 == 123, "Argparse parse type expect failed!");
+ 
+ 	/* test for u16 parsing */
+@@ -798,7 +798,7 @@ test_argparse_parse_type(void)
+ 	TEST_ASSERT(ret != 0, "Argparse parse type expect failed!");
+ 	val_u16 = 0;
+ 	ret = rte_argparse_parse_type(str_ok, RTE_ARGPARSE_ARG_VALUE_U16, &val_u16);
+-	TEST_ASSERT(ret == 0, "Argparse parse type expect failed!");
++	TEST_ASSERT(ret >= 0, "Argparse parse type expect failed!");
+ 	TEST_ASSERT(val_u16 == 123, "Argparse parse type expect failed!");
+ 
+ 	/* test for u32 parsing */
+@@ -810,7 +810,7 @@ test_argparse_parse_type(void)
+ 	TEST_ASSERT(ret != 0, "Argparse parse type expect failed!");
+ 	val_u32 = 0;
+ 	ret = rte_argparse_parse_type(str_ok, RTE_ARGPARSE_ARG_VALUE_U32, &val_u32);
+-	TEST_ASSERT(ret == 0, "Argparse parse type expect failed!");
++	TEST_ASSERT(ret >= 0, "Argparse parse type expect failed!");
+ 	TEST_ASSERT(val_u32 == 123, "Argparse parse type expect failed!");
+ 
+ 	/* test for u64 parsing */
+@@ -820,7 +820,7 @@ test_argparse_parse_type(void)
+ 	TEST_ASSERT(ret != 0, "Argparse parse type expect failed!");
+ 	val_u64 = 0;
+ 	ret = rte_argparse_parse_type(str_ok, RTE_ARGPARSE_ARG_VALUE_U64, &val_u64);
+-	TEST_ASSERT(ret == 0, "Argparse parse type expect failed!");
++	TEST_ASSERT(ret >= 0, "Argparse parse type expect failed!");
+ 	TEST_ASSERT(val_u64 == 123, "Argparse parse type expect failed!");
+ 
+ 	return 0;
 diff --git a/lib/argparse/rte_argparse.c b/lib/argparse/rte_argparse.c
-index 18290e0c38..1cc06b550b 100644
+index 1cc06b550b..d8f964dc3c 100644
 --- a/lib/argparse/rte_argparse.c
 +++ b/lib/argparse/rte_argparse.c
-@@ -508,6 +508,38 @@ parse_arg_u64(struct rte_argparse_arg *arg, const char *value)
- 	return 0;
+@@ -605,6 +605,12 @@ parse_args(struct rte_argparse *obj, int argc, char **argv, bool *show_help)
+ 
+ 	for (i = 1; i < argc; i++) {
+ 		curr_argv = argv[i];
++
++		if (strcmp(argv[i], "--") == 0) {
++			i++;
++			break;
++		}
++
+ 		if (curr_argv[0] != '-') {
+ 			/* process positional parameters. */
+ 			position_index++;
+@@ -668,7 +674,7 @@ parse_args(struct rte_argparse *obj, int argc, char **argv, bool *show_help)
+ 		arg->flags |= ARG_ATTR_FLAG_PARSED_MASK;
+ 	}
+ 
+-	return 0;
++	return i;
  }
-
-+static int
-+parse_arg_str(struct rte_argparse_arg *arg, const char *value)
-+{
-+	if (value == NULL) {
-+		*(char **)arg->val_saver = arg->val_set;
-+		return 0;
-+	}
-+	*(char **)arg->val_saver = strdup(value);
-+
-+	return 0;
-+}
-+
-+static int
-+parse_arg_bool(struct rte_argparse_arg *arg, const char *value)
-+{
-+	if (value == NULL) {
-+		*(bool *)arg->val_saver = (arg->val_set != NULL);
-+		return 0;
-+	}
-+
-+	if (strcmp(value, "true") == 0 || strcmp(value, "1") == 0)
-+		*(bool *)arg->val_saver = true;
-+	else if (strcmp(value, "false") == 0 || strcmp(value, "0") == 0)
-+		*(bool *)arg->val_saver = false;
-+	else {
-+		ARGPARSE_LOG(ERR, "argument %s expect a boolean value!", arg->name_long);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- static int
- parse_arg_autosave(struct rte_argparse_arg *arg, const char *value)
- {
-@@ -521,6 +553,8 @@ parse_arg_autosave(struct rte_argparse_arg *arg, const char *value)
- 		{ parse_arg_u16 },
- 		{ parse_arg_u32 },
- 		{ parse_arg_u64 },
-+		{ parse_arg_str},
-+		{ parse_arg_bool },
- 	};
- 	uint32_t index = arg_attr_val_type(arg);
- 	int ret = -EINVAL;
+ 
+ static uint32_t
+@@ -784,7 +790,7 @@ rte_argparse_parse(struct rte_argparse *obj, int argc, char **argv)
+ 		goto error;
+ 
+ 	ret = parse_args(obj, argc, argv, &show_help);
+-	if (ret != 0)
++	if (ret < 0)
+ 		goto error;
+ 
+ 	if (show_help) {
+@@ -792,7 +798,7 @@ rte_argparse_parse(struct rte_argparse *obj, int argc, char **argv)
+ 		exit(0);
+ 	}
+ 
+-	return 0;
++	return ret;
+ 
+ error:
+ 	if (obj->exit_on_error)
 diff --git a/lib/argparse/rte_argparse.h b/lib/argparse/rte_argparse.h
-index d0cfaa1e4c..332184302e 100644
+index 332184302e..8cdb3195cb 100644
 --- a/lib/argparse/rte_argparse.h
 +++ b/lib/argparse/rte_argparse.h
-@@ -60,8 +60,12 @@ extern "C" {
- #define RTE_ARGPARSE_ARG_VALUE_U32      RTE_SHIFT_VAL64(4, 2)
- /** The argument's value is uint64 type. */
- #define RTE_ARGPARSE_ARG_VALUE_U64      RTE_SHIFT_VAL64(5, 2)
-+/** The argument's value is string type. */
-+#define RTE_ARGPARSE_ARG_VALUE_STR      RTE_SHIFT_VAL64(6, 2)
-+/** The argument's value is boolean flag type. */
-+#define RTE_ARGPARSE_ARG_VALUE_BOOL     RTE_SHIFT_VAL64(7, 2)
- /** Max value type. */
--#define RTE_ARGPARSE_ARG_VALUE_MAX      RTE_SHIFT_VAL64(6, 2)
-+#define RTE_ARGPARSE_ARG_VALUE_MAX      RTE_SHIFT_VAL64(8, 2)
- /**
-  * Flag for that argument support occur multiple times.
-  * This flag can be set only when the argument is optional.
---
+@@ -183,7 +183,8 @@ struct rte_argparse {
+  *   Array of parameters points.
+  *
+  * @return
+- *   0 on success. Otherwise negative value is returned.
++ *   number of arguments parsed (>= 0) on success.
++ *   Otherwise negative error code is returned.
+  */
+ __rte_experimental
+ int rte_argparse_parse(struct rte_argparse *obj, int argc, char **argv);
+-- 
 2.48.1
 
