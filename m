@@ -2,73 +2,63 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63005C3DA6D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 May 2025 20:17:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07840C3DA6D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 May 2025 20:34:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DE1AA40DF8;
-	Tue, 20 May 2025 22:17:45 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 0423340DF5;
- Tue, 20 May 2025 22:17:43 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54KGeoi7026264;
- Tue, 20 May 2025 13:17:42 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=vvRXtJ1h9hzZTUUq5l4t5Uh
- Z6zE1w+HbrMmuE+MLcKU=; b=lNYwT9VIHCzhFLvJXtyoyazuaiHuCa9aCn2HPvu
- j03LRehOp5hzA0V7oEeaqfPfMkzfpsJyjYQTnaGzFgFZOWvPxclm0nqfS04kgaJQ
- fLBC7TovkAzVhZWNMVvXhug5ClePFvlY76Ee6lt4Ae8oPXIIoSNVlIVJU1/5PXBp
- d+T1h1+GtmI0I9iYG1oKEaaH1yXEHqD8s8tfcKwEbXbUI8YrC9uMezZ6noD8FzeN
- NnjSiXnNszfr/TS8/13tozDNzJDO0sA+vvXpK4kwZ3HiTdpCaAqMXdD0y+SJWzRY
- zYSW1ZCXZNN0WIK0kdVTiBH2WvXm1w8RNIaFQqgsa7JPBuQ==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46rwfggd3k-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Tue, 20 May 2025 13:17:42 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 20 May 2025 13:17:40 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 20 May 2025 13:17:40 -0700
-Received: from MININT-80QBFE8.corp.innovium.com (MININT-80QBFE8.marvell.com
- [10.28.164.118])
- by maili.marvell.com (Postfix) with ESMTP id ADFC73F705B;
- Tue, 20 May 2025 13:17:37 -0700 (PDT)
-From: <pbhagavatula@marvell.com>
-To: <anatoly.burakov@intel.com>, <erik.g.carrillo@intel.com>,
- <mb@smartsharesystems.com>, <jerinj@marvell.com>, Tyler Retzlaff
- <roretzla@linux.microsoft.com>
-CC: <dev@dpdk.org>, Pavan Nikhilesh <pbhagavatula@marvell.com>,
- <stable@dpdk.org>
-Subject: [PATCH] eal: fix return value of lcore role
-Date: Wed, 21 May 2025 01:47:26 +0530
-Message-ID: <20250520201726.7420-1-pbhagavatula@marvell.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id C55E340E0F;
+	Tue, 20 May 2025 22:34:10 +0200 (CEST)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com
+ [209.85.128.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 8D9D940DF5
+ for <dev@dpdk.org>; Tue, 20 May 2025 22:34:09 +0200 (CEST)
+Received: by mail-yw1-f174.google.com with SMTP id
+ 00721157ae682-70825de932bso73465977b3.0
+ for <dev@dpdk.org>; Tue, 20 May 2025 13:34:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1747773248; x=1748378048; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=zm6hZQjxTsbW1tR/uWE+/Qa09sMcJcE0vmHrSf2ENmA=;
+ b=bHh3g9e/szyo+xOfTICJh7JAzt2FSGQqO5HbRl+CZwv9/ild55/xYR4S36O+0eKNjh
+ oCsHvAsAHlVpH98MKdJkLnC/MAWOVe8SZew7QaTq4MTC+GUVGR/4o+JgoAg0eVDSBQJv
+ /0uBg449pkhxMxKdLWojN3up944jCDH0VlsmY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1747773248; x=1748378048;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=zm6hZQjxTsbW1tR/uWE+/Qa09sMcJcE0vmHrSf2ENmA=;
+ b=rOBOb704i+rbjs9Bxw1pEIU483ctmWov/Va1BJOsji31gX+oqur2gBby9X9BqHuhx7
+ ainWseh8gbVf8UQO7JEOMb/KuucKGORZ7U1JGgpmsC7wQAxJmRZkxrCbOde7SUXILVN2
+ htmEsJ2o7lM4rWgwmbge0/0KBbtjvWEj7Y844FnAYd2cRuu0SbH0OwdygVvMrd6qHz8l
+ p+R56HnCJZmAO6RYXHxbI3YnCJVeFO/U491RhAiEfviNegcaph7gbfkmyAWiDX2bR63P
+ rbeNhKhRs4G6cHtjwViazwODBzenorhdwPyyorgNk+GCXvk061kzTfbPLENGlaDHl+q3
+ 1Ndw==
+X-Gm-Message-State: AOJu0YzJSgrNkIJv99uou1Y9eZm56X6cZ52RLqFy5i8KqwQFaft0MivP
+ vuNcDNAfOfS9oyxQdobdFz9YHMujvDIzIQim/cVeXwyQ1qVp9ulIWMjO5lsExW/83MVyLVjN4zE
+ GLTVQrxG5xCuI7fDhar818dpuMqkVDGWGaekNKA10r3nqtATdIxul
+X-Gm-Gg: ASbGncvmlBKGUPXkfDY6EcoGkj9lGjeCoEwnuVKvwUsIoXnVNx0W7kuBTHHdcY9wBDS
+ 73VWIzHoNpyeiaTWLV08w6ujNNv4XSoOw0W47R+RHeOV5xJPc7ZybLppBOdd5zPicHP6kvdFtgn
+ UaQ3CZeFpYaUYbDuTPlcpoLxTQ234BGUh6FbT7WvhaUytINP/w+XsYmpUgngg2g7c/tkg=
+X-Google-Smtp-Source: AGHT+IFGxvfWyKjInJgH87wKwBb3ud4sGGjjGW6x66AMtgdOiJqL1x0PC0sRp3Vq+2HdKPmNymmVGSszdccWAVwIuGc=
+X-Received: by 2002:a05:690c:88f:b0:70c:aa79:250f with SMTP id
+ 00721157ae682-70caa79262amr252337347b3.16.1747773247578; Tue, 20 May 2025
+ 13:34:07 -0700 (PDT)
 MIME-Version: 1.0
+References: <20250423194011.1447679-1-npratte@iol.unh.edu>
+ <20250516201834.626206-1-npratte@iol.unh.edu>
+ <20250516201834.626206-2-npratte@iol.unh.edu>
+In-Reply-To: <20250516201834.626206-2-npratte@iol.unh.edu>
+From: Dean Marx <dmarx@iol.unh.edu>
+Date: Tue, 20 May 2025 16:33:55 -0400
+X-Gm-Features: AX0GCFtMx5ZEj8Ap5Y9bN68c6eLk9ZA_XE8nWcenSjfrwX3pnOUGsM96VHrMjmg
+Message-ID: <CABD7UXNgNaC9_jfH9-YZWfskVk-ruP0wYgrVGGm5n8PuCq_z8g@mail.gmail.com>
+Subject: Re: [RFC v2 1/6] dts: rework config module to support perf TGs
+To: dev@dpdk.org
+Cc: stephen@networkplumber.org, luca.vizzarro@arm.com, paul.szczepanek@arm.com,
+ yoan.picchi@foss.arm.com, Honnappa.Nagarahalli@arm.com, thomas@monjalon.net, 
+ thomas.wilks@arm.com, probb@iol.unh.edu
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIwMDE2MyBTYWx0ZWRfX3xsduUyFAvl4
- vDnecRzTPH3xUmry+9qNiE1qTcmVqhX/E4rQbzDfhTChvBLDajiS5xn45zI8OO1l2ztpNgeP9dv
- I2seHBTcPz5XD4Hk8PrWLAK2kxkbuNEyVPkT/a1qZEPrQ0FlbrY70GZaccUZLNnB65LXSDLhPQ4
- qZnZBhGIM8/ThWI/cGhe4ylFdRnc8/V9cDtsQ6yypKJyNoTkjPX1LNHCtfDqmBr/vNxtyT9w4p3
- WXR7lbx4RQEZB771ejz1Zgsw8WLcAletvRTzCJi6MglfMHevbeYb6ZGN97MCEugDD9iLCyRXKIE
- Z8fdWUbPPkrLUioG0/EzBwuI+koTFBdYxMqGLcwG0/RJJv20nWUOLhosJG99BftKXaLFAN99s8J
- dxDJMt7Lo8kz/yfGi7wZMSaO+HiNhPDqrMXw2lzWknuwSHXB4rGhWAKQCpdAEUOVl/ugkLvN
-X-Proofpoint-GUID: ZbLk28jI0dK99u5TfQCbQzk6fGtgs0fz
-X-Authority-Analysis: v=2.4 cv=T6OMT+KQ c=1 sm=1 tr=0 ts=682ce366 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8
- a=n02bokGJAAAA:8 a=HRtwC6vWtb1WTaXEcz4A:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=OBjm3rFKGHvpk9ecZwUJ:22
- a=YjdVzJdQTyZRADMV7wFX:22 a=rszdq1ld3peujIA30KyE:22
-X-Proofpoint-ORIG-GUID: ZbLk28jI0dK99u5TfQCbQzk6fGtgs0fz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-20_09,2025-05-20_03,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,34 +72,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Pavan Nikhilesh <pbhagavatula@marvell.com>
+<snip>
+> +      - dest_mac: 3c:fd:fe:d5:e5:f9 # MAC OF LOOPBACK TO IT'S DUAL INTERFACE
+> +        src_mac:  3c:fd:fe:d5:e5:f8
+> +      - dest_mac: 3c:fd:fe:d5:e5:f8 # MAC OF LOOPBACK TO IT'S DUAL INTERFACE
+> +        src_mac:  3c:fd:fe:d5:e5:f9
 
-Update rte_lcore_has_role() to return false instead of a
-negative value for invalid lcore IDs, removing the need
-for callers to pre-validate the ID.
+Should be its not it's
 
-Fixes: b0a1502a277c ("eal: make semantics of lcore role function more intuitive")
-Cc: stable@dpdk.org
+I like the concept of having a configurations directory within DTS,
+those files were starting to add up anyways.
 
-Suggested-by: Morten Brørup <mb@smartsharesystems.com>
-Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
----
- lib/eal/common/eal_common_lcore.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/lib/eal/common/eal_common_lcore.c b/lib/eal/common/eal_common_lcore.c
-index 294267177d..9dd6c72055 100644
---- a/lib/eal/common/eal_common_lcore.c
-+++ b/lib/eal/common/eal_common_lcore.c
-@@ -87,7 +87,7 @@ rte_lcore_has_role(unsigned int lcore_id, enum rte_lcore_role_t role)
- 	struct rte_config *cfg = rte_eal_get_configuration();
- 
- 	if (lcore_id >= RTE_MAX_LCORE)
--		return -EINVAL;
-+		return 0;
- 
- 	return cfg->lcore_role[lcore_id] == role;
- }
--- 
-2.43.0
-
+Reviewed-by: Dean Marx <dmarx@iol.unh.edu>
