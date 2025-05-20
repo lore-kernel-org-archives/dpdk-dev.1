@@ -2,44 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49065C3DA6D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 May 2025 12:56:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58700C3ABDD
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 May 2025 13:31:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 28B4A402C2;
-	Tue, 20 May 2025 14:56:25 +0200 (CEST)
-Received: from mail.lysator.liu.se (mail.lysator.liu.se [130.236.254.3])
- by mails.dpdk.org (Postfix) with ESMTP id 1D8F3402AE
- for <dev@dpdk.org>; Tue, 20 May 2025 14:56:24 +0200 (CEST)
-Received: from mail.lysator.liu.se (localhost [127.0.0.1])
- by mail.lysator.liu.se (Postfix) with ESMTP id 98B0A6323
- for <dev@dpdk.org>; Tue, 20 May 2025 14:56:23 +0200 (CEST)
-Received: by mail.lysator.liu.se (Postfix, from userid 1004)
- id 8D4D4623C; Tue, 20 May 2025 14:56:23 +0200 (CEST)
-Received: from [192.168.1.85] (h-62-63-215-114.A163.priv.bahnhof.se
- [62.63.215.114])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
- (No client certificate requested)
- by mail.lysator.liu.se (Postfix) with ESMTPSA id CBA3062A7;
- Tue, 20 May 2025 14:56:21 +0200 (CEST)
-Message-ID: <e9b59048-4b3a-4daa-a944-81aff0d22c99@lysator.liu.se>
-Date: Tue, 20 May 2025 14:56:20 +0200
+	by mails.dpdk.org (Postfix) with ESMTP id EDDC04064C;
+	Tue, 20 May 2025 15:31:38 +0200 (CEST)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
+ [209.85.214.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 591A3402AE
+ for <dev@dpdk.org>; Tue, 20 May 2025 15:31:37 +0200 (CEST)
+Received: by mail-pl1-f174.google.com with SMTP id
+ d9443c01a7336-22d95f0dda4so59539935ad.2
+ for <dev@dpdk.org>; Tue, 20 May 2025 06:31:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1747747896;
+ x=1748352696; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=lMxmdC4E/T8icxyT9c+dAbXRo+OHTUrouWcA9/Y9mfE=;
+ b=Jue8RPw3PeSjTH6ITrqF6piUT8Cc1elKRA6pQ71ssF2HYYyVsMZwaKox13xzAZt2xk
+ yDaX9oW39YMcQqVZxKzp6ZP4d7fR6zTtcRW5kULicoOg3/nK8XnBvQZ7BinT58pC7bgs
+ +x0GksJn43OyVnR0CyISbBjaCmxm5lm+AXDp/SwDe3RjRZ/0uRibQh9heIo9OZGHZWyv
+ JfAsu3j8wB8UMQMt6bOhIp/Vawmi4S7sUpglY9KSWkUAO7Wwgk3hm1YLcWc+JZrzrisg
+ /AefqGCXEzp0Xm3TjobKS8A2JrrOMZapj6+vu9jGvEUUHML76JLt5AlE1Kz1q1iM786R
+ v4PA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1747747896; x=1748352696;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=lMxmdC4E/T8icxyT9c+dAbXRo+OHTUrouWcA9/Y9mfE=;
+ b=RQ/9fFAPAQtaa8Y+HrVpiwEKpoUZ/ngbePVVMs0f5LNjvHgUnsIWzGGlA2p49MK7bq
+ xwK1tgDQ+skdvvb0Ha1XH/xDxzlYAwzcsAWvMwFNNsa4RKNqJJMewQNiik/Ry4RRbIBB
+ 0H2IFcgSXF2OhTF4fr7BFjhNAnikFiNLC/cUchFj4uYbQpvFCNBbZGU/SPGUPeok9T4F
+ ljKUXm576y7DZtDHPnBvqwXgCsJgEU98Gw4LKsAO8L9DbU6UziDCxSSnW73CAX5BugKZ
+ eaHuPQzEWR+krv2PbQHGxrg+w3shkqE2XgpTNTwu5vmHMF2gW/voem0EKVYwCdKMtaXZ
+ OusQ==
+X-Gm-Message-State: AOJu0YxMkSncm+OuXmyeiPNOSjhp0kUcfB6eVFjFaPnxABGla4M4l1p5
+ BRb+RRrs63GzR/r36V+4D1wzQeIo2pWD2frJ5gwxKE9TB64BoD+M2dgdrWYvj6jrsnkVjReR9mV
+ 9GUKtWH4=
+X-Gm-Gg: ASbGncvpIf91HJZib7+rZYPfyOtJBfk8ZYVcq0Jw3p6SPMAZ5fRSZ/uwvCCT7g9rhwb
+ KSCept2iyRhx/15wSFLfET6gu+FvyTzGASoDvdx4dWYqGyx+uzRs+PoW49/4Blz3YxkTTfILjvC
+ 2VrgEmdbXChgOSBAmrLqs3EcJijmk1XlfqsJnfBkloGCxU/IEJ3cIT/nYDx4syW32JddFOBXO7E
+ PREJ3dQ8DeWLgu4NqdSMna4TaknztzaDNVot1cjr5TG2RoHbATvNBpwAZi32yLdLaWgk08V2GiX
+ CNxCWJX7N1ZPJnw2HerP7xVVDWDuIPWf3DjtwlpTrqc1P97SRGlT0LYDNz3cRND74o+Fq73D/O3
+ 2bl1kcXouYsMvXvPhBEfl++pV4HQ=
+X-Google-Smtp-Source: AGHT+IFQc25+8E9nZB0hW2AlzXgDYOO3+zXhhqrgQi/t1uk7EnIORePeae8398m/I2YCdwO7IUsTyg==
+X-Received: by 2002:a17:902:dacf:b0:220:c164:6ee1 with SMTP id
+ d9443c01a7336-231d4595b02mr254927145ad.32.1747747896065; 
+ Tue, 20 May 2025 06:31:36 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-231d4ebab7dsm76916145ad.181.2025.05.20.06.31.35
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 20 May 2025 06:31:35 -0700 (PDT)
+Date: Tue, 20 May 2025 06:31:29 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Maxime Coquelin <maxime.coquelin@redhat.com>
+Cc: dev@dpdk.org, david.marchand@redhat.com, thomas@monjalon.net
+Subject: Re: [PATCH 2/4] uapi: import VDUSE header from v6.14 kernel
+Message-ID: <20250520063129.0c35a6ed@hermes.local>
+In-Reply-To: <20250416123426.2638250-3-maxime.coquelin@redhat.com>
+References: <20250416123426.2638250-1-maxime.coquelin@redhat.com>
+ <20250416123426.2638250-3-maxime.coquelin@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] event/eth_tx: prefetch mbuf headers
-From: =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <hofors@lysator.liu.se>
-To: =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>,
- dev@dpdk.org
-Cc: Naga Harish K S V <s.v.naga.harish.k@intel.com>,
- Jerin Jacob <jerinj@marvell.com>,
- Peter Nilsson <peter.j.nilsson@ericsson.com>
-References: <20250328054339.489914-1-mattias.ronnblom@ericsson.com>
- <d0277a40-c17f-4ebf-99b3-bdb7e9190519@lysator.liu.se>
-Content-Language: en-US
-In-Reply-To: <d0277a40-c17f-4ebf-99b3-bdb7e9190519@lysator.liu.se>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,17 +82,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 2025-03-28 07:07, Mattias Rönnblom wrote:
-> On 2025-03-28 06:43, Mattias Rönnblom wrote:
->> Prefetch mbuf headers, resulting in ~10% throughput improvement when
->> the Ethernet RX and TX Adapters are hosted on the same core (likely
->> ~2x in case a dedicated TX core is used).
->>
->> Signed-off-by: Mattias Rönnblom <mattias.ronnblom@ericsson.com>
->> Tested-by: Peter Nilsson <peter.j.nilsson@ericsson.com>
+On Wed, 16 Apr 2025 14:34:24 +0200
+Maxime Coquelin <maxime.coquelin@redhat.com> wrote:
+
+> This header will be used by the Vhost library.
 > 
+> Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+> ---
+>  kernel/linux/uapi/linux/vduse.h | 353 ++++++++++++++++++++++++++++++++
+>  kernel/linux/uapi/version       |   2 +-
+>  2 files changed, 354 insertions(+), 1 deletion(-)
+>  create mode 100644 kernel/linux/uapi/linux/vduse.h
 
-<snip>
 
-Naga, could you comment on this patch?
+This file should be generated by doing make headers_install in a Linux
+kernel tree to ensure correct code.
 
+If I do that with current 6.15 kernel tree it comes out different.
+
+~/.../kernel/linux/uapi $ diff linux/vduse.h ~/kernel/linux/usr/include/linux/vduse.h 
+2,3c2,3
+< #ifndef _UAPI_VDUSE_H_
+< #define _UAPI_VDUSE_H_
+---
+> #ifndef _VDUSE_H_
+> #define _VDUSE_H_
+353c353
+< #endif /* _UAPI_VDUSE_H_ */
+---
+> #endif /* _VDUSE_H_ */
