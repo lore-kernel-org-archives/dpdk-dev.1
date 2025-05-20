@@ -2,78 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A31CC2D0CD
-	for <dpdk-dev@archiver.kernel.org>; Mon, 19 May 2025 18:56:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B53C9C2D0CD
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 May 2025 01:51:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5E81240685;
-	Mon, 19 May 2025 20:56:46 +0200 (CEST)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 802EB40672
- for <dev@dpdk.org>; Mon, 19 May 2025 20:56:44 +0200 (CEST)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54JHqwPi005106;
- Mon, 19 May 2025 11:56:43 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=B
- qXu8yP/1O73A+iAgQLGSeKWIWaOZyImo7Dpc140SpE=; b=h2aLaSSNO0SfhQPY3
- T10RdXSJA/rWyIApZ1lXC8RibzjlcddL5kd4kKNk8wtgREW4reMhdA0O7Zk4sHiy
- Ka944Im2dbbtLfZpNCe0Jm7AetKzqKlQ3YqQ2KyVG2QKNY+kwYUopn+BgjkB/cXE
- /0SF69jAXVDV4wyNy9OTeXWnU58YoRArVkfxS9DZURudvysMSkHRxR34QyYriC2y
- +NYMs4ytyRAuVCikf+PtAcJNCEP27j2RCpQRtl2E40FkGhoU0DXVVbFOmUCsz9db
- GWnc9prq1WhOQ+cJrytJ2yzLI4UhQBTeTMXTxlixXUGQashrDj84bZo7bIs82DBn
- K0rlA==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46qxnpsnmy-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Mon, 19 May 2025 11:56:43 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 19 May 2025 11:56:42 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 19 May 2025 11:56:42 -0700
-Received: from MININT-80QBFE8.corp.innovium.com (MININT-80QBFE8.marvell.com
- [10.28.164.118])
- by maili.marvell.com (Postfix) with ESMTP id CD3113F7080;
- Mon, 19 May 2025 11:56:37 -0700 (PDT)
-From: <pbhagavatula@marvell.com>
-To: <jerinj@marvell.com>, Amit Prakash Shukla <amitprakashs@marvell.com>,
- Vamsi Attunuru <vattunuru@marvell.com>
-CC: <g.singh@nxp.com>, <sachin.saxena@nxp.com>, <hemant.agrawal@nxp.com>,
- <fengchengwen@huawei.com>, <bruce.richardson@intel.com>,
- <kevin.laatz@intel.com>, <conor.walsh@intel.com>,
- <gmuthukrishn@marvell.com>, <vvelumuri@marvell.com>,
- <anatoly.burakov@intel.com>, <dev@dpdk.org>, "Pavan
- Nikhilesh" <pbhagavatula@marvell.com>
-Subject: [25.11 PATCH v2 5/5] eventdev: refactor DMA adapter ops
-Date: Tue, 20 May 2025 00:26:04 +0530
-Message-ID: <20250519185604.5584-6-pbhagavatula@marvell.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250519185604.5584-1-pbhagavatula@marvell.com>
-References: <20250416100931.6544-1-pbhagavatula@marvell.com>
- <20250519185604.5584-1-pbhagavatula@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 7599B402CA;
+	Tue, 20 May 2025 03:51:21 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 5AB5A402AE;
+ Tue, 20 May 2025 03:51:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1747705880; x=1779241880;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=2MCqeiCm9Q2mytMV8rSDVAWZWg6A3JqtDWWUqqBNH3w=;
+ b=nvYYp53XkULgAIf2S87cdNaAgep5G8cKbeUvPwMEwRuC/o5MamV1I9Ho
+ JaLrvCiQct9gvqNvhkvudD+qrRbwqNkCR7H40Fd3famtUkazuP3lKB2uJ
+ 1dPb1Ykx5vfjvdl142OcMiL/uNGgj8VlvxRgTEgE3nC0FkY1RDwJyOzsx
+ PDKtS9h0JMZGmck6JrOuDQQr42lZeoeGrhNrXNSvY40qoRaFJtc1cmHpJ
+ phv8HbHT58pcDspge69ANX0opjTilWjyUoSlMwoynxiTU9hdNGLSVVOKd
+ jQroNlrsyQVxDWAaU9oQGvikntWNTp7MvySkS36w5nCArqvc2Zqx6UYrU Q==;
+X-CSE-ConnectionGUID: r7aGP9BlS7aSD55/jFm08w==
+X-CSE-MsgGUID: X4AhksTCT322vx3VXjnOhw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11438"; a="52254972"
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; d="scan'208";a="52254972"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+ by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 19 May 2025 18:51:18 -0700
+X-CSE-ConnectionGUID: /7fO593XTced+LKF2aDSxQ==
+X-CSE-MsgGUID: 29oZ4XaVSIGWEkt/6fq/Ww==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; d="scan'208";a="139444154"
+Received: from shwdenpg561.ccr.corp.intel.com (HELO dpdk..) ([10.239.252.3])
+ by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 19 May 2025 18:51:15 -0700
+From: Kaiwen Deng <kaiwenx.deng@intel.com>
+To: dev@dpdk.org
+Cc: stable@dpdk.org, Kaiwen Deng <kaiwenx.deng@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Wenzhuo Lu <wenzhuo.lu@intel.com>, Tiwei Bie <tiwei.bie@intel.com>
+Subject: [PATCH v1] net/intel: fix ixgbe get macsec stats
+Date: Tue, 20 May 2025 08:54:45 +0800
+Message-Id: <20250520005445.555573-1-kaiwenx.deng@intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: NfuPXkj7TczQb2R08R66K_0HJOL0_2zu
-X-Proofpoint-GUID: NfuPXkj7TczQb2R08R66K_0HJOL0_2zu
-X-Authority-Analysis: v=2.4 cv=Z7fsHGRA c=1 sm=1 tr=0 ts=682b7eeb cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=8XZoYLytfDNUhoUKL8IA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE5MDE3NiBTYWx0ZWRfX3j/AeNVSVynb
- NJuII3CrWI13ALortprHEroSnU3nhW/qNZ7IKt46/xjrN6ZPXozkv/95qxWHIFVwOi4zqrEz1As
- EEzR2eKqE2bJIBKZDOTjjASOUUycsil7dbrSwzPNCvDEt6spbIbMubA5mBdopsYV0kq33lAJi5v
- dWgmPFRRWJRA0gumydBjwza3macUfBgnGK0bX7l6ZhZqg5WgDuHV5VLE/hvczYnSYbkXU3DGN/B
- zNS5t/hC9S7eUdtkq1c44snRhuiWZ7C/JLQ+XmtLObk8bTVqoAIju4aG+Vno575MvX2OUaWud9f
- s3EszFzpWFn6ye1skEIX5WPLQiMqhE/B8nbJ/oVei3W2dC8NzuNFLG2a80M8hHhwSWlTYo4k3yG
- +xOne12e6ulRBQxe5PAPsHiZDTMc1Ti1ObelmMG4IY8ps+h3tYkRw5WyEXjQImLBFnoVJDg9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-19_07,2025-05-16_03,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,344 +62,330 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Pavan Nikhilesh <pbhagavatula@marvell.com>
+The ixgbe macsec registers are not cleared on read. Reading the
+registers and then accumulating the values will cause macsec stats
+errors. Each time the data is queried via the testpmd command
+“show port stats xstats all”, the macsec statistics are increased.
 
-Migrate all invocations of rte_event_dma_adapter_op
-API to rte_dma_op.
+This commit will add macsec offset stats to record initial data
+and update macsec stats based on offset stats.
 
-Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
-Acked-by: Amit Prakash Shukla <amitprakashs@marvell.com>
+Fixes: b35d309710fe ("net/ixgbe: add MACsec offload")
+Cc: stable@dpdk.org
+
+Signed-off-by: Kaiwen Deng <kaiwenx.deng@intel.com>
 ---
- app/test-eventdev/test_perf_common.c          |  6 +-
- app/test-eventdev/test_perf_common.h          |  4 +-
- app/test/test_event_dma_adapter.c             |  6 +-
- .../prog_guide/eventdev/event_dma_adapter.rst |  6 +-
- drivers/dma/cnxk/cnxk_dmadev.c                |  2 +-
- drivers/dma/cnxk/cnxk_dmadev_fp.c             | 12 ++--
- lib/eventdev/rte_event_dma_adapter.c          | 18 +++---
- lib/eventdev/rte_event_dma_adapter.h          | 57 -------------------
- 8 files changed, 27 insertions(+), 84 deletions(-)
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c | 187 ++++++++++++++++++++-----
+ drivers/net/intel/ixgbe/ixgbe_ethdev.h |   2 +
+ 2 files changed, 151 insertions(+), 38 deletions(-)
 
-diff --git a/app/test-eventdev/test_perf_common.c b/app/test-eventdev/test_perf_common.c
-index 627f07caa1..4e0109db52 100644
---- a/app/test-eventdev/test_perf_common.c
-+++ b/app/test-eventdev/test_perf_common.c
-@@ -562,11 +562,11 @@ crypto_adapter_enq_op_fwd(struct prod_data *p)
- static inline void
- dma_adapter_enq_op_fwd(struct prod_data *p)
- {
--	struct rte_event_dma_adapter_op *ops[BURST_SIZE] = {NULL};
-+	struct rte_dma_op *ops[BURST_SIZE] = {NULL};
- 	struct test_perf *t = p->t;
- 	const uint32_t nb_flows = t->nb_flows;
- 	const uint64_t nb_pkts = t->nb_pkts;
--	struct rte_event_dma_adapter_op op;
-+	struct rte_dma_op op;
- 	struct rte_event evts[BURST_SIZE];
- 	const uint8_t dev_id = p->dev_id;
- 	struct evt_options *opt = t->opt;
-@@ -2114,7 +2114,7 @@ perf_mempool_setup(struct evt_test *test, struct evt_options *opt)
- 	} else if (opt->prod_type == EVT_PROD_TYPE_EVENT_DMA_ADPTR) {
- 		t->pool = rte_mempool_create(test->name,   /* mempool name */
- 					     opt->pool_sz, /* number of elements*/
--					     sizeof(struct rte_event_dma_adapter_op) +
-+					     sizeof(struct rte_dma_op) +
- 						     (sizeof(struct rte_dma_sge) * 2),
- 					     cache_sz,		       /* cache size*/
- 					     0, NULL, NULL, NULL,      /* obj constructor */
-diff --git a/app/test-eventdev/test_perf_common.h b/app/test-eventdev/test_perf_common.h
-index d7333ad390..63078b0ee2 100644
---- a/app/test-eventdev/test_perf_common.h
-+++ b/app/test-eventdev/test_perf_common.h
-@@ -139,7 +139,7 @@ perf_mark_fwd_latency(enum evt_prod_type prod_type, struct rte_event *const ev)
- 		}
- 		pe->timestamp = rte_get_timer_cycles();
- 	} else if (prod_type == EVT_PROD_TYPE_EVENT_DMA_ADPTR) {
--		struct rte_event_dma_adapter_op *op = ev->event_ptr;
-+		struct rte_dma_op *op = ev->event_ptr;
+diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+index 0fa4898aba..84f0458630 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
++++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+@@ -95,6 +95,10 @@
+ #define IXGBE_4_BIT_MASK   RTE_LEN2MASK(IXGBE_4_BIT_WIDTH, uint8_t)
+ #define IXGBE_8_BIT_WIDTH  CHAR_BIT
+ #define IXGBE_8_BIT_MASK   UINT8_MAX
++#define IXGBE_16_BIT_WIDTH (CHAR_BIT * 2)
++#define IXGBE_16_BIT_MASK  UINT16_MAX
++#define IXGBE_32_BIT_WIDTH (CHAR_BIT * 4)
++#define IXGBE_32_BIT_MASK  UINT32_MAX
  
- 		op->user_meta = rte_get_timer_cycles();
- 	} else {
-@@ -297,7 +297,7 @@ perf_process_last_stage_latency(struct rte_mempool *const pool, enum evt_prod_ty
- 		tstamp = pe->timestamp;
- 		rte_crypto_op_free(op);
- 	} else if (prod_type == EVT_PROD_TYPE_EVENT_DMA_ADPTR) {
--		struct rte_event_dma_adapter_op *op = ev->event_ptr;
-+		struct rte_dma_op *op = ev->event_ptr;
+ #define IXGBEVF_PMD_NAME "rte_ixgbevf_pmd" /* PMD name */
  
- 		to_free_in_bulk = op;
- 		tstamp = op->user_meta;
-diff --git a/app/test/test_event_dma_adapter.c b/app/test/test_event_dma_adapter.c
-index 9988d4fc7b..7f72a4e81d 100644
---- a/app/test/test_event_dma_adapter.c
-+++ b/app/test/test_event_dma_adapter.c
-@@ -234,7 +234,7 @@ test_op_forward_mode(void)
- {
- 	struct rte_mbuf *src_mbuf[TEST_MAX_OP];
- 	struct rte_mbuf *dst_mbuf[TEST_MAX_OP];
--	struct rte_event_dma_adapter_op *op;
-+	struct rte_dma_op *op;
- 	struct rte_event ev[TEST_MAX_OP];
- 	int ret, i;
- 
-@@ -266,7 +266,7 @@ test_op_forward_mode(void)
- 		op->vchan = TEST_DMA_VCHAN_ID;
- 		op->event_meta = dma_response_info.event;
- 
--		/* Fill in event info and update event_ptr with rte_event_dma_adapter_op */
-+		/* Fill in event info and update event_ptr with rte_dma_op */
- 		memset(&ev[i], 0, sizeof(struct rte_event));
- 		ev[i].event = 0;
- 		ev[i].op = RTE_EVENT_OP_NEW;
-@@ -396,7 +396,7 @@ configure_dmadev(void)
- 						       rte_socket_id());
- 	RTE_TEST_ASSERT_NOT_NULL(params.dst_mbuf_pool, "Can't create DMA_DST_MBUFPOOL\n");
- 
--	elt_size = sizeof(struct rte_event_dma_adapter_op) + (sizeof(struct rte_dma_sge) * 2);
-+	elt_size = sizeof(struct rte_dma_op) + (sizeof(struct rte_dma_sge) * 2);
- 	params.op_mpool = rte_mempool_create("EVENT_DMA_OP_POOL", DMA_OP_POOL_SIZE, elt_size, 0,
- 					     0, NULL, NULL, NULL, NULL, rte_socket_id(), 0);
- 	RTE_TEST_ASSERT_NOT_NULL(params.op_mpool, "Can't create DMA_OP_POOL\n");
-diff --git a/doc/guides/prog_guide/eventdev/event_dma_adapter.rst b/doc/guides/prog_guide/eventdev/event_dma_adapter.rst
-index e040d89e8b..e8437a3297 100644
---- a/doc/guides/prog_guide/eventdev/event_dma_adapter.rst
-+++ b/doc/guides/prog_guide/eventdev/event_dma_adapter.rst
-@@ -144,7 +144,7 @@ on which it enqueues events towards the DMA adapter using ``rte_event_enqueue_bu
-    uint32_t cap;
-    int ret;
- 
--   /* Fill in event info and update event_ptr with rte_event_dma_adapter_op */
-+   /* Fill in event info and update event_ptr with rte_dma_op */
-    memset(&ev, 0, sizeof(ev));
-    .
-    .
-@@ -244,11 +244,11 @@ Set event response information
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
- In the ``RTE_EVENT_DMA_ADAPTER_OP_FORWARD`` / ``RTE_EVENT_DMA_ADAPTER_OP_NEW`` mode,
--the application specifies the dmadev ID and vchan ID in ``struct rte_event_dma_adapter_op``
-+the application specifies the dmadev ID and vchan ID in ``struct rte_dma_op``
- and the event information (response information)
- needed to enqueue an event after the DMA operation has completed.
- The response information is specified in ``struct rte_event``
--and appended to the ``struct rte_event_dma_adapter_op``.
-+and appended to the ``struct rte_dma_op``.
- 
- 
- Start the adapter instance
-diff --git a/drivers/dma/cnxk/cnxk_dmadev.c b/drivers/dma/cnxk/cnxk_dmadev.c
-index f12a15aef7..0dcebc1b0b 100644
---- a/drivers/dma/cnxk/cnxk_dmadev.c
-+++ b/drivers/dma/cnxk/cnxk_dmadev.c
-@@ -622,7 +622,7 @@ cnxk_dmadev_probe(struct rte_pci_driver *pci_drv __rte_unused, struct rte_pci_de
- 	rdpi = &dpivf->rdpi;
- 
- 	rdpi->pci_dev = pci_dev;
--	rc = roc_dpi_dev_init(rdpi, offsetof(struct rte_event_dma_adapter_op, impl_opaque));
-+	rc = roc_dpi_dev_init(rdpi, offsetof(struct rte_dma_op, impl_opaque));
- 	if (rc < 0)
- 		goto err_out_free;
- 
-diff --git a/drivers/dma/cnxk/cnxk_dmadev_fp.c b/drivers/dma/cnxk/cnxk_dmadev_fp.c
-index 579aafa894..4435adc38b 100644
---- a/drivers/dma/cnxk/cnxk_dmadev_fp.c
-+++ b/drivers/dma/cnxk/cnxk_dmadev_fp.c
-@@ -455,7 +455,7 @@ uint16_t
- cn10k_dma_adapter_enqueue(void *ws, struct rte_event ev[], uint16_t nb_events)
- {
- 	const struct rte_dma_sge *src, *dst;
--	struct rte_event_dma_adapter_op *op;
-+	struct rte_dma_op *op;
- 	struct cnxk_dpi_conf *dpi_conf;
- 	struct cnxk_dpi_vf_s *dpivf;
- 	struct cn10k_sso_hws *work;
-@@ -515,7 +515,7 @@ uint16_t
- cn9k_dma_adapter_dual_enqueue(void *ws, struct rte_event ev[], uint16_t nb_events)
- {
- 	const struct rte_dma_sge *fptr, *lptr;
--	struct rte_event_dma_adapter_op *op;
-+	struct rte_dma_op *op;
- 	struct cn9k_sso_hws_dual *work;
- 	struct cnxk_dpi_conf *dpi_conf;
- 	struct cnxk_dpi_vf_s *dpivf;
-@@ -531,7 +531,7 @@ cn9k_dma_adapter_dual_enqueue(void *ws, struct rte_event ev[], uint16_t nb_event
- 	for (count = 0; count < nb_events; count++) {
- 		op = ev[count].event_ptr;
- 		rsp_info = (struct rte_event *)((uint8_t *)op +
--						sizeof(struct rte_event_dma_adapter_op));
-+						sizeof(struct rte_dma_op));
- 		dpivf = rte_dma_fp_objs[op->dma_dev_id].dev_private;
- 		dpi_conf = &dpivf->conf[op->vchan];
- 
-@@ -586,7 +586,7 @@ uint16_t
- cn9k_dma_adapter_enqueue(void *ws, struct rte_event ev[], uint16_t nb_events)
- {
- 	const struct rte_dma_sge *fptr, *lptr;
--	struct rte_event_dma_adapter_op *op;
-+	struct rte_dma_op *op;
- 	struct cnxk_dpi_conf *dpi_conf;
- 	struct cnxk_dpi_vf_s *dpivf;
- 	struct cn9k_sso_hws *work;
-@@ -653,11 +653,11 @@ RTE_EXPORT_INTERNAL_SYMBOL(cnxk_dma_adapter_dequeue)
- uintptr_t
- cnxk_dma_adapter_dequeue(uintptr_t get_work1)
- {
--	struct rte_event_dma_adapter_op *op;
-+	struct rte_dma_op *op;
- 	struct cnxk_dpi_conf *dpi_conf;
- 	struct cnxk_dpi_vf_s *dpivf;
- 
--	op = (struct rte_event_dma_adapter_op *)get_work1;
-+	op = (struct rte_dma_op *)get_work1;
- 	dpivf = rte_dma_fp_objs[op->dma_dev_id].dev_private;
- 	dpi_conf = &dpivf->conf[op->vchan];
- 
-diff --git a/lib/eventdev/rte_event_dma_adapter.c b/lib/eventdev/rte_event_dma_adapter.c
-index 9ac6a4a205..484cd50011 100644
---- a/lib/eventdev/rte_event_dma_adapter.c
-+++ b/lib/eventdev/rte_event_dma_adapter.c
-@@ -40,8 +40,8 @@ struct __rte_cache_aligned dma_ops_circular_buffer {
- 	/* Size of circular buffer */
- 	uint16_t size;
- 
--	/* Pointer to hold rte_event_dma_adapter_op for processing */
--	struct rte_event_dma_adapter_op **op_buffer;
-+	/* Pointer to hold rte_dma_op for processing */
-+	struct rte_dma_op **op_buffer;
- };
- 
- /* Vchan information */
-@@ -202,7 +202,7 @@ edma_circular_buffer_space_for_batch(struct dma_ops_circular_buffer *bufp)
- static inline int
- edma_circular_buffer_init(const char *name, struct dma_ops_circular_buffer *buf, uint16_t sz)
- {
--	buf->op_buffer = rte_zmalloc(name, sizeof(struct rte_event_dma_adapter_op *) * sz, 0);
-+	buf->op_buffer = rte_zmalloc(name, sizeof(struct rte_dma_op *) * sz, 0);
- 	if (buf->op_buffer == NULL)
- 		return -ENOMEM;
- 
-@@ -218,7 +218,7 @@ edma_circular_buffer_free(struct dma_ops_circular_buffer *buf)
+@@ -197,7 +201,8 @@ static const uint32_t *ixgbe_dev_supported_ptypes_get(struct rte_eth_dev *dev,
+ static int ixgbevf_dev_info_get(struct rte_eth_dev *dev,
+ 				struct rte_eth_dev_info *dev_info);
+ static int ixgbe_dev_mtu_set(struct rte_eth_dev *dev, uint16_t mtu);
+-
++static void ixgbe_stat_update_32(struct ixgbe_hw *hw, uint32_t reg,
++		bool offset_loaded, uint64_t *offset, uint64_t *stat);
+ static int ixgbe_vlan_filter_set(struct rte_eth_dev *dev,
+ 		uint16_t vlan_id, int on);
+ static int ixgbe_vlan_tpid_set(struct rte_eth_dev *dev,
+@@ -3171,12 +3176,14 @@ ixgbe_dev_reset(struct rte_eth_dev *dev)
  }
  
- static inline int
--edma_circular_buffer_add(struct dma_ops_circular_buffer *bufp, struct rte_event_dma_adapter_op *op)
-+edma_circular_buffer_add(struct dma_ops_circular_buffer *bufp, struct rte_dma_op *op)
+ static void
+-ixgbe_read_stats_registers(struct ixgbe_hw *hw,
+-			   struct ixgbe_hw_stats *hw_stats,
+-			   struct ixgbe_macsec_stats *macsec_stats,
++ixgbe_read_stats_registers(struct ixgbe_adapter *adapter,
++			struct ixgbe_hw *hw,
+ 			   uint64_t *total_missed_rx, uint64_t *total_qbrc,
+ 			   uint64_t *total_qprc, uint64_t *total_qprdc)
  {
- 	uint16_t *tail = &bufp->tail;
- 
-@@ -236,7 +236,7 @@ edma_circular_buffer_flush_to_dma_dev(struct event_dma_adapter *adapter,
- 				      struct dma_ops_circular_buffer *bufp, uint8_t dma_dev_id,
- 				      uint16_t vchan, uint16_t *nb_ops_flushed)
- {
--	struct rte_event_dma_adapter_op *op;
-+	struct rte_dma_op *op;
- 	uint16_t *head = &bufp->head;
- 	uint16_t *tail = &bufp->tail;
- 	struct dma_vchan_info *tq;
-@@ -503,7 +503,7 @@ edma_enq_to_dma_dev(struct event_dma_adapter *adapter, struct rte_event *ev, uns
- {
- 	struct rte_event_dma_adapter_stats *stats = &adapter->dma_stats;
- 	struct dma_vchan_info *vchan_qinfo = NULL;
--	struct rte_event_dma_adapter_op *dma_op;
-+	struct rte_dma_op *dma_op;
- 	uint16_t vchan, nb_enqueued = 0;
- 	int16_t dma_dev_id;
- 	unsigned int i, n;
-@@ -646,7 +646,7 @@ edma_adapter_enq_run(struct event_dma_adapter *adapter, unsigned int max_enq)
- #define DMA_ADAPTER_MAX_EV_ENQ_RETRIES 100
- 
- static inline uint16_t
--edma_ops_enqueue_burst(struct event_dma_adapter *adapter, struct rte_event_dma_adapter_op **ops,
-+edma_ops_enqueue_burst(struct event_dma_adapter *adapter, struct rte_dma_op **ops,
- 		       uint16_t num)
- {
- 	struct rte_event_dma_adapter_stats *stats = &adapter->dma_stats;
-@@ -692,7 +692,7 @@ edma_circular_buffer_flush_to_evdev(struct event_dma_adapter *adapter,
- 				    struct dma_ops_circular_buffer *bufp,
- 				    uint16_t *enqueue_count)
- {
--	struct rte_event_dma_adapter_op **ops = bufp->op_buffer;
-+	struct rte_dma_op **ops = bufp->op_buffer;
- 	uint16_t n = 0, nb_ops_flushed;
- 	uint16_t *head = &bufp->head;
- 	uint16_t *tail = &bufp->tail;
-@@ -741,7 +741,7 @@ edma_adapter_deq_run(struct event_dma_adapter *adapter, unsigned int max_deq)
- 	struct rte_event_dma_adapter_stats *stats = &adapter->dma_stats;
- 	struct dma_vchan_info *vchan_info;
- 	struct dma_ops_circular_buffer *tq_buf;
--	struct rte_event_dma_adapter_op *ops;
-+	struct rte_dma_op *ops;
- 	uint16_t n, nb_deq, nb_enqueued, i;
- 	struct dma_device_info *dev_info;
- 	uint16_t vchan, num_vchan;
-diff --git a/lib/eventdev/rte_event_dma_adapter.h b/lib/eventdev/rte_event_dma_adapter.h
-index 5c480b82ff..453754d13b 100644
---- a/lib/eventdev/rte_event_dma_adapter.h
-+++ b/lib/eventdev/rte_event_dma_adapter.h
-@@ -151,63 +151,6 @@
- extern "C" {
- #endif
- 
--/**
-- * A structure used to hold event based DMA operation entry. All the information
-- * required for a DMA transfer shall be populated in "struct rte_event_dma_adapter_op"
-- * instance.
-- */
--struct rte_event_dma_adapter_op {
--	uint64_t flags;
--	/**< Flags related to the operation.
--	 * @see RTE_DMA_OP_FLAG_*
--	 */
--	struct rte_mempool *op_mp;
--	/**< Mempool from which op is allocated. */
--	enum rte_dma_status_code status;
--	/**< Status code for this operation. */
--	uint32_t rsvd;
--	/**< Reserved for future use. */
--	uint64_t impl_opaque[2];
--	/**< Implementation-specific opaque data.
--	 * An dma device implementation use this field to hold
--	 * implementation specific values to share between dequeue and enqueue
--	 * operations.
--	 * The application should not modify this field.
--	 */
--	uint64_t user_meta;
--	/**<  Memory to store user specific metadata.
--	 * The dma device implementation should not modify this area.
--	 */
--	uint64_t event_meta;
--	/**< Event metadata of DMA completion event.
--	 * Used when RTE_EVENT_DMA_ADAPTER_CAP_INTERNAL_PORT_VCHAN_EV_BIND is not
--	 * supported in OP_NEW mode.
--	 * @see rte_event_dma_adapter_mode::RTE_EVENT_DMA_ADAPTER_OP_NEW
--	 * @see RTE_EVENT_DMA_ADAPTER_CAP_INTERNAL_PORT_VCHAN_EV_BIND
--	 *
--	 * Used when RTE_EVENT_DMA_ADAPTER_CAP_INTERNAL_PORT_OP_FWD is not
--	 * supported in OP_FWD mode.
--	 * @see rte_event_dma_adapter_mode::RTE_EVENT_DMA_ADAPTER_OP_FORWARD
--	 * @see RTE_EVENT_DMA_ADAPTER_CAP_INTERNAL_PORT_OP_FWD
--	 *
--	 * @see struct rte_event::event
--	 */
--	int16_t dma_dev_id;
--	/**< DMA device ID to be used with OP_FORWARD mode.
--	 * @see rte_event_dma_adapter_mode::RTE_EVENT_DMA_ADAPTER_OP_FORWARD
--	 */
--	uint16_t vchan;
--	/**< DMA vchan ID to be used with OP_FORWARD mode
--	 * @see rte_event_dma_adapter_mode::RTE_EVENT_DMA_ADAPTER_OP_FORWARD
--	 */
--	uint16_t nb_src;
--	/**< Number of source segments. */
--	uint16_t nb_dst;
--	/**< Number of destination segments. */
--	struct rte_dma_sge src_dst_seg[];
--	/**< Source and destination segments. */
--};
++	struct ixgbe_hw_stats *hw_stats = &adapter->stats;
++	struct ixgbe_macsec_stats *macsec_stats = &adapter->macsec_stats;
++	struct ixgbe_macsec_stats *macsec_stats_offset = &adapter->macsec_stats_offset;
+ 	uint32_t bprc, lxon, lxoff, total;
+ 	uint32_t delta_gprc = 0;
+ 	unsigned i;
+@@ -3186,7 +3193,6 @@ ixgbe_read_stats_registers(struct ixgbe_hw *hw,
+ 	 */
+ 	int crc_strip = (IXGBE_READ_REG(hw, IXGBE_HLREG0) &
+ 			IXGBE_HLREG0_RXCRCSTRP);
 -
- /**
-  *  DMA event adapter mode
+ 	hw_stats->crcerrs += IXGBE_READ_REG(hw, IXGBE_CRCERRS);
+ 	hw_stats->illerrc += IXGBE_READ_REG(hw, IXGBE_ILLERRC);
+ 	hw_stats->errbc += IXGBE_READ_REG(hw, IXGBE_ERRBC);
+@@ -3354,38 +3360,120 @@ ixgbe_read_stats_registers(struct ixgbe_hw *hw,
+ 					IXGBE_FDIRFSTAT) >> 16) & 0xFFFF;
+ 	}
+ 	/* MACsec Stats registers */
+-	macsec_stats->out_pkts_untagged += IXGBE_READ_REG(hw, IXGBE_LSECTXUT);
+-	macsec_stats->out_pkts_encrypted +=
+-		IXGBE_READ_REG(hw, IXGBE_LSECTXPKTE);
+-	macsec_stats->out_pkts_protected +=
+-		IXGBE_READ_REG(hw, IXGBE_LSECTXPKTP);
+-	macsec_stats->out_octets_encrypted +=
+-		IXGBE_READ_REG(hw, IXGBE_LSECTXOCTE);
+-	macsec_stats->out_octets_protected +=
+-		IXGBE_READ_REG(hw, IXGBE_LSECTXOCTP);
+-	macsec_stats->in_pkts_untagged += IXGBE_READ_REG(hw, IXGBE_LSECRXUT);
+-	macsec_stats->in_pkts_badtag += IXGBE_READ_REG(hw, IXGBE_LSECRXBAD);
+-	macsec_stats->in_pkts_nosci += IXGBE_READ_REG(hw, IXGBE_LSECRXNOSCI);
+-	macsec_stats->in_pkts_unknownsci +=
+-		IXGBE_READ_REG(hw, IXGBE_LSECRXUNSCI);
+-	macsec_stats->in_octets_decrypted +=
+-		IXGBE_READ_REG(hw, IXGBE_LSECRXOCTD);
+-	macsec_stats->in_octets_validated +=
+-		IXGBE_READ_REG(hw, IXGBE_LSECRXOCTV);
+-	macsec_stats->in_pkts_unchecked += IXGBE_READ_REG(hw, IXGBE_LSECRXUNCH);
+-	macsec_stats->in_pkts_delayed += IXGBE_READ_REG(hw, IXGBE_LSECRXDELAY);
+-	macsec_stats->in_pkts_late += IXGBE_READ_REG(hw, IXGBE_LSECRXLATE);
++	ixgbe_stat_update_32(hw,
++				  IXGBE_LSECTXUT,
++				  adapter->offset_loaded,
++				  &macsec_stats_offset->out_pkts_untagged,
++				  &macsec_stats->out_pkts_untagged);
++	ixgbe_stat_update_32(hw,
++				  IXGBE_LSECTXPKTE,
++				  adapter->offset_loaded,
++				  &macsec_stats_offset->out_pkts_encrypted,
++				  &macsec_stats->out_pkts_encrypted);
++	ixgbe_stat_update_32(hw,
++				  IXGBE_LSECTXPKTP,
++				  adapter->offset_loaded,
++				  &macsec_stats_offset->out_pkts_protected,
++				  &macsec_stats->out_pkts_protected);
++	ixgbe_stat_update_32(hw,
++				  IXGBE_LSECTXOCTE,
++				  adapter->offset_loaded,
++				  &macsec_stats_offset->out_octets_encrypted,
++				  &macsec_stats->out_octets_encrypted);
++	ixgbe_stat_update_32(hw,
++				  IXGBE_LSECTXOCTP,
++				  adapter->offset_loaded,
++				  &macsec_stats_offset->out_octets_protected,
++				  &macsec_stats->out_octets_protected);
++	ixgbe_stat_update_32(hw,
++				  IXGBE_LSECRXUT,
++				  adapter->offset_loaded,
++				  &macsec_stats_offset->in_pkts_untagged,
++				  &macsec_stats->in_pkts_untagged);
++	ixgbe_stat_update_32(hw,
++				  IXGBE_LSECRXBAD,
++				  adapter->offset_loaded,
++				  &macsec_stats_offset->in_pkts_badtag,
++				  &macsec_stats->in_pkts_badtag);
++	ixgbe_stat_update_32(hw,
++				  IXGBE_LSECRXNOSCI,
++				  adapter->offset_loaded,
++				  &macsec_stats_offset->in_pkts_nosci,
++				  &macsec_stats->in_pkts_nosci);
++	ixgbe_stat_update_32(hw,
++				  IXGBE_LSECRXUNSCI,
++				  adapter->offset_loaded,
++				  &macsec_stats_offset->in_pkts_unknownsci,
++				  &macsec_stats->in_pkts_unknownsci);
++	ixgbe_stat_update_32(hw,
++				  IXGBE_LSECRXOCTD,
++				  adapter->offset_loaded,
++				  &macsec_stats_offset->in_octets_decrypted,
++				  &macsec_stats->in_octets_decrypted);
++	ixgbe_stat_update_32(hw,
++				  IXGBE_LSECRXOCTV,
++				  adapter->offset_loaded,
++				  &macsec_stats_offset->in_octets_validated,
++				  &macsec_stats->in_octets_validated);
++	ixgbe_stat_update_32(hw,
++				  IXGBE_LSECRXUNCH,
++				  adapter->offset_loaded,
++				  &macsec_stats_offset->in_pkts_unchecked,
++				  &macsec_stats->in_pkts_unchecked);
++	ixgbe_stat_update_32(hw,
++				  IXGBE_LSECRXDELAY,
++				  adapter->offset_loaded,
++				  &macsec_stats_offset->in_pkts_delayed,
++				  &macsec_stats->in_pkts_delayed);
++	ixgbe_stat_update_32(hw,
++				  IXGBE_LSECRXLATE,
++				  adapter->offset_loaded,
++				  &macsec_stats_offset->in_pkts_late,
++				  &macsec_stats->in_pkts_late);
++	u64 in_pkts_ok = 0, in_pkts_invalid = 0, in_pkts_notvalid = 0;
+ 	for (i = 0; i < 2; i++) {
+-		macsec_stats->in_pkts_ok +=
++		in_pkts_ok +=
+ 			IXGBE_READ_REG(hw, IXGBE_LSECRXOK(i));
+-		macsec_stats->in_pkts_invalid +=
++		in_pkts_invalid +=
+ 			IXGBE_READ_REG(hw, IXGBE_LSECRXINV(i));
+-		macsec_stats->in_pkts_notvalid +=
++		in_pkts_notvalid +=
+ 			IXGBE_READ_REG(hw, IXGBE_LSECRXNV(i));
+ 	}
+-	macsec_stats->in_pkts_unusedsa += IXGBE_READ_REG(hw, IXGBE_LSECRXUNSA);
+-	macsec_stats->in_pkts_notusingsa +=
+-		IXGBE_READ_REG(hw, IXGBE_LSECRXNUSA);
++	if (!adapter->offset_loaded) {
++		macsec_stats_offset->in_pkts_ok = in_pkts_ok;
++		macsec_stats_offset->in_pkts_invalid = in_pkts_invalid;
++		macsec_stats_offset->in_pkts_notvalid = in_pkts_notvalid;
++	}
++	if (macsec_stats_offset->in_pkts_ok <= in_pkts_ok)
++		macsec_stats->in_pkts_ok = (uint64_t)(in_pkts_ok -
++			macsec_stats_offset->in_pkts_ok);
++	else
++		macsec_stats->in_pkts_ok = (uint64_t)((in_pkts_ok +
++			RTE_BIT64(IXGBE_32_BIT_WIDTH)) - macsec_stats_offset->in_pkts_ok);
++	if (macsec_stats_offset->in_pkts_invalid <= in_pkts_invalid)
++		macsec_stats->in_pkts_invalid = (uint64_t)(in_pkts_invalid -
++			macsec_stats_offset->in_pkts_invalid);
++	else
++		macsec_stats->in_pkts_invalid = (uint64_t)((in_pkts_invalid +
++			RTE_BIT64(IXGBE_32_BIT_WIDTH)) - macsec_stats_offset->in_pkts_invalid);
++	if (macsec_stats_offset->in_pkts_notvalid <= in_pkts_notvalid)
++		macsec_stats->in_pkts_notvalid = (uint64_t)(in_pkts_notvalid -
++			macsec_stats_offset->in_pkts_notvalid);
++	else
++		macsec_stats->in_pkts_notvalid = (uint64_t)((in_pkts_notvalid +
++			RTE_BIT64(IXGBE_32_BIT_WIDTH)) - macsec_stats_offset->in_pkts_notvalid);
++	ixgbe_stat_update_32(hw,
++				  IXGBE_LSECRXUNSA,
++				  adapter->offset_loaded,
++				  &macsec_stats_offset->in_pkts_unusedsa,
++				  &macsec_stats->in_pkts_unusedsa);
++	ixgbe_stat_update_32(hw,
++				  IXGBE_LSECRXNUSA,
++				  adapter->offset_loaded,
++				  &macsec_stats_offset->in_pkts_notusingsa,
++				  &macsec_stats->in_pkts_notusingsa);
++
++	adapter->offset_loaded = true;
+ }
+ 
+ /*
+@@ -3394,13 +3482,12 @@ ixgbe_read_stats_registers(struct ixgbe_hw *hw,
+ static int
+ ixgbe_dev_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats)
+ {
++	struct ixgbe_adapter *adapter =
++			(struct ixgbe_adapter *)(dev->data->dev_private);
+ 	struct ixgbe_hw *hw =
+ 			IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
+ 	struct ixgbe_hw_stats *hw_stats =
+ 			IXGBE_DEV_PRIVATE_TO_STATS(dev->data->dev_private);
+-	struct ixgbe_macsec_stats *macsec_stats =
+-			IXGBE_DEV_PRIVATE_TO_MACSEC_STATS(
+-				dev->data->dev_private);
+ 	uint64_t total_missed_rx, total_qbrc, total_qprc, total_qprdc;
+ 	unsigned i;
+ 
+@@ -3409,7 +3496,7 @@ ixgbe_dev_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats)
+ 	total_qprc = 0;
+ 	total_qprdc = 0;
+ 
+-	ixgbe_read_stats_registers(hw, hw_stats, macsec_stats, &total_missed_rx,
++	ixgbe_read_stats_registers(adapter, hw, &total_missed_rx,
+ 			&total_qbrc, &total_qprc, &total_qprdc);
+ 
+ 	if (stats == NULL)
+@@ -3633,6 +3720,8 @@ static int
+ ixgbe_dev_xstats_get(struct rte_eth_dev *dev, struct rte_eth_xstat *xstats,
+ 					 unsigned n)
+ {
++	struct ixgbe_adapter *adapter =
++			(struct ixgbe_adapter *)(dev->data->dev_private);
+ 	struct ixgbe_hw *hw =
+ 			IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
+ 	struct ixgbe_hw_stats *hw_stats =
+@@ -3653,7 +3742,7 @@ ixgbe_dev_xstats_get(struct rte_eth_dev *dev, struct rte_eth_xstat *xstats,
+ 	total_qprc = 0;
+ 	total_qprdc = 0;
+ 
+-	ixgbe_read_stats_registers(hw, hw_stats, macsec_stats, &total_missed_rx,
++	ixgbe_read_stats_registers(adapter, hw, &total_missed_rx,
+ 			&total_qbrc, &total_qprc, &total_qprdc);
+ 
+ 	/* If this is a reset xstats is NULL, and we have cleared the
+@@ -3708,6 +3797,8 @@ ixgbe_dev_xstats_get_by_id(struct rte_eth_dev *dev, const uint64_t *ids,
+ 		uint64_t *values, unsigned int n)
+ {
+ 	if (!ids) {
++		struct ixgbe_adapter *adapter =
++			(struct ixgbe_adapter *)(dev->data->dev_private);
+ 		struct ixgbe_hw *hw =
+ 				IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
+ 		struct ixgbe_hw_stats *hw_stats =
+@@ -3729,7 +3820,7 @@ ixgbe_dev_xstats_get_by_id(struct rte_eth_dev *dev, const uint64_t *ids,
+ 		total_qprc = 0;
+ 		total_qprdc = 0;
+ 
+-		ixgbe_read_stats_registers(hw, hw_stats, macsec_stats,
++		ixgbe_read_stats_registers(adapter, hw,
+ 				&total_missed_rx, &total_qbrc, &total_qprc,
+ 				&total_qprdc);
+ 
+@@ -5406,6 +5497,26 @@ ixgbe_dev_mtu_set(struct rte_eth_dev *dev, uint16_t mtu)
+ 	return 0;
+ }
+ 
++static void
++ixgbe_stat_update_32(struct ixgbe_hw *hw,
++		   uint32_t reg,
++		   bool offset_loaded,
++		   uint64_t *offset,
++		   uint64_t *stat)
++{
++	uint64_t new_data;
++
++	new_data = (uint64_t)IXGBE_READ_REG(hw, reg);
++	if (!offset_loaded)
++		*offset = new_data;
++
++	if (new_data >= *offset)
++		*stat = (uint64_t)(new_data - *offset);
++	else
++		*stat = (uint64_t)((new_data +
++			RTE_BIT64(IXGBE_32_BIT_WIDTH)) - *offset);
++}
++
+ /*
+  * Virtual Function operations
   */
+diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.h b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
+index 8ad841ea2c..fd7a786fbb 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_ethdev.h
++++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
+@@ -474,6 +474,7 @@ struct ixgbe_adapter {
+ 	struct ixgbe_hw             hw;
+ 	struct ixgbe_hw_stats       stats;
+ 	struct ixgbe_macsec_stats   macsec_stats;
++	struct ixgbe_macsec_stats   macsec_stats_offset;
+ 	struct ixgbe_macsec_setting	macsec_setting;
+ 	struct rte_eth_fdir_conf    fdir_conf;
+ 	struct ixgbe_hw_fdir_info   fdir;
+@@ -495,6 +496,7 @@ struct ixgbe_adapter {
+ #endif
+ 	bool rx_bulk_alloc_allowed;
+ 	bool rx_vec_allowed;
++	bool offset_loaded;
+ 	struct rte_timecounter      systime_tc;
+ 	struct rte_timecounter      rx_tstamp_tc;
+ 	struct rte_timecounter      tx_tstamp_tc;
 -- 
-2.43.0
+2.34.1
 
