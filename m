@@ -2,75 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A191C3DA6D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 May 2025 15:17:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB6DC3DA6D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 20 May 2025 15:25:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6AECA40A4B;
-	Tue, 20 May 2025 17:17:17 +0200 (CEST)
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com
- [209.85.219.43]) by mails.dpdk.org (Postfix) with ESMTP id DBF13402AE
- for <dev@dpdk.org>; Tue, 20 May 2025 17:17:15 +0200 (CEST)
-Received: by mail-qv1-f43.google.com with SMTP id
- 6a1803df08f44-6f8a87f0c0fso54843236d6.0
- for <dev@dpdk.org>; Tue, 20 May 2025 08:17:15 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9B3FD402AE;
+	Tue, 20 May 2025 17:25:56 +0200 (CEST)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com
+ [209.85.218.53]) by mails.dpdk.org (Postfix) with ESMTP id 963AE4029C
+ for <dev@dpdk.org>; Tue, 20 May 2025 17:25:54 +0200 (CEST)
+Received: by mail-ej1-f53.google.com with SMTP id
+ a640c23a62f3a-ad51ef2424bso841724566b.0
+ for <dev@dpdk.org>; Tue, 20 May 2025 08:25:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1747754235;
- x=1748359035; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1747754754;
+ x=1748359554; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=GUcX6uA99ik54k3QoCs7iR+2aKoaRoqURTAFjEM6vyQ=;
- b=08dGyXVZppKzIgn7e4meUgHVC7gY1Xoul30xeZvzcr2VWOpB9Kko7E5PrSFwkYP+J8
- jNNoyA8qPScxiULH+je7+pgrtFUajSihZTdQKJGY7hX8XbnF30Ped4ZlhRCfpJd+Qh47
- YUkLVWL2wzMWg/eGeZ963J0/7uTZkPpUs1I3mXLvv+QmYUgKYTDyV7Mn36qghmX+3Hm9
- XYg5BPJ1C2gKK2EcyIu8g1ctxyIy6HIQGF+QnSCwE84MDhhBrEu6WdyJPl9EDGHtxu2d
- OARTqniTOnFk0QSdYnG80PkTkzgIpq4F8MluOkuZ6g8Obq5X/9ryi3coNT9+p/8aNKSU
- EUWQ==
+ bh=8rxOiRbYBppSYMQ8TGnsVXB0O8T3OsXsDvXZ+pUy3vw=;
+ b=zEmkRQ5qV5+7dCYkaLDO4+EMGlFGwgqwZQEnHwVet3VXBkoTmKnmZKIEKW44OiWpGz
+ /5f/KK8W6/Jfggzl58wWr6kYZ4wHY1tMNe0hTQP/rrJVayep3o00PXqFfBcrZr++H4M8
+ 7pyNjviRjDs0prMhhDFJCegjKV93U2hcqitZCwb56IgSi78yVTrOhEoTrJVkKcUdhTCc
+ F8WuKapLUOQOnk6EAMRHs9UMGW45fpQ/AqGqfG2sRA2XLL1UnmRejfcmJ0qlgBS4l35y
+ MYGccnb5jm6QZcLBVPK6iMdWmoO9uZ/sLlcjc9LDj+vINqhBJWVFdAll8Pj0Ut89+IUd
+ Sd8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1747754235; x=1748359035;
+ d=1e100.net; s=20230601; t=1747754754; x=1748359554;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=GUcX6uA99ik54k3QoCs7iR+2aKoaRoqURTAFjEM6vyQ=;
- b=ayAjibCQZ05d3LJv93YvE/BH0fuSe1NCgM+aQKHvOzDApDiv4oUWg+7MXhDd3iOl2F
- 9Vz53xpgn0gRmXIfcmAHBKciy6xpzpOvsDdwjfdaMjNLbfp7ABcT6iCEHnKAh9+eK7H4
- 7kLw5Bec+RvT84Th+ePs+20ZR9OBc606oligcNvVwi02o3bQuAqgYUQuUhTbt+iHCAl2
- QexdPSwuV/EAy/DsuR123G+HDny5iRPSI5w60Y6q+eJHLuP6/7ZqBVfpDYs4ZVScmhx5
- M9Ocng5EqsFqZLczRtUGXTbbX5vDRs48oewet48Zso4tPfHi1fjT/wT7HA44SbxheLpj
- 9kfQ==
+ bh=8rxOiRbYBppSYMQ8TGnsVXB0O8T3OsXsDvXZ+pUy3vw=;
+ b=uq+WXHSQi8ggjN1fRhglROrQlrS+wpKNUT4/Xx/TG/o248t0YEf3wxuQYn4atpbtYT
+ 7PipEE9mSQC7i/6pKM+4nKN2kvv2t8j+6Kf/PQJZOH4Ykb+2L7nwIa7p7Z0yA4cozMf6
+ HJQlU32Y07JMeErEuv0J2bbqv4B+JATPdumWpVabRADHLsAaNO7XmHuFEJlxKWQV1JmN
+ 8gRyqxcnrR9uV/tFgfpnmqn5dWBBapLSKrLZ9OQUumQsoL+qRkGiT8lM6RZnmUpBrFdN
+ jDmwCaozdvnM5CrOKFP+6vhbS+X20x19mzprpPB16llycmexAVa8b/zmW6jnJ/aEOtsP
+ tXLw==
 X-Forwarded-Encrypted: i=1;
- AJvYcCWCOGNFiOrIzMeztxBJ5ZMx/p9mDL+dwG38648474Z0+aUSTzvURW93LH53XFYfvOc/nkU=@dpdk.org
-X-Gm-Message-State: AOJu0YzsrEd1ZXo4blAB1dnUwdszN0MXmMLDS1bHcO8Cwq51m9SMGMS4
- BBEhCtppimmLihYHYz20+dRqt2sOXe+nfS5M8mBPUlVCJz9SE69eJK1pbUv/d+b1cEA=
-X-Gm-Gg: ASbGncsh6OVHhjWxcuglQwdGVRoF1tRPOPWj/Nyg943zd9Nt/AE7smbz+NNXrXCYQ69
- n9X/oc6RhrJeTlEoARrPdnrbnE6GESK1sycjNybZ9sbSfgxfb/7FKF7FFT5St9MI4lcU6Nw/mHy
- cIabxVOiCHdgddTaT1FoEQV82ZXNIqV5Adf41Boqo2zOi0ezTUC5IiE48Jsr75EKyelEOE7bK3W
- RVHcI4C8sJlVKo0H+eCP38Q1HJXw06uisfOi86hHGOdHrSX2pqtMfm6Y80t0/8rFd7jGqMcZUqd
- jgAbesgkxM50OHcTUpx+VgUdV/Kr5ZIoxngKIDsig5+ZMSqzTOJqqM0F5n5DT1uLWQ07UexoLI3
- uwtxzx+3RJOcNbzNNf8Q8cIpMQDLl
-X-Google-Smtp-Source: AGHT+IG0wssVqN2mckgXhrTyAlNzQk04xUJMc1ueJV58uAD3xxUbD3b3UJtzrZC2rN/fFH/gwbNEmg==
-X-Received: by 2002:a05:6214:cc1:b0:6f8:d223:3c14 with SMTP id
- 6a1803df08f44-6f8d2233e2amr159079106d6.25.1747754234926; 
- Tue, 20 May 2025 08:17:14 -0700 (PDT)
+ AJvYcCW97Af0O83ta+o9/5k/oC+mR/5P/e1plitDmT9ytShCYEWWIFy6jfNdjXip2sR6UNATA9g=@dpdk.org
+X-Gm-Message-State: AOJu0Yx4FlfrwQaIm/FzrFo6aYgUikLuRuvSkLza8dINFK5Z3+7NDmPu
+ lRR//A6LQVKP5F6b80R5O+R40JF3DOpxURZa/F5G+MzyA0wICgIDl+5j2belFjxEcL4=
+X-Gm-Gg: ASbGnctLumkMRsdcWV2pwyUqbeoEvcmB9EYXwZrOw/LG8eWLEk+CtulczC94h2Vr1RE
+ Aga5n7YMzBbmCHCqwXiPXHOp0r7I2P24OWFWPayBTKHE6e9Xv+Msghm1e2Po751TE5jQUjXfyTE
+ 0Z+Vwt4NFznwrb3m3gEdQWDh0TOnUxhm1PhbTWN7x8NrYh3lgIm6NzJfQdLDPnBQEo/yBvAjJcU
+ rLKFakqHck16BT+2sHThq13eL09v9HoMIvts6DhCPaTxy60fEt6xsMohDyCYJ6cIaGe1jJ3I9y2
+ 2YWXQ2w1euv620/q01NMhUpIFWEAFbO23+SCd1koEgLX/h1OS0ewIFoLi2NPJdo9IUnXnb+44jx
+ xHXfygw+CKYXTnRguLomGUTR3MR26blr+p4O0fcc=
+X-Google-Smtp-Source: AGHT+IGJrBN7y+4zdNgFZRTDrht8IP8S3cBOkXaZeO+H6SDWTVmjtHK9vJB1sCB9Ps/7EJGcnzmjJw==
+X-Received: by 2002:a17:907:1c11:b0:ad2:48f4:5969 with SMTP id
+ a640c23a62f3a-ad52d53e79emr1605233466b.28.1747754753982; 
+ Tue, 20 May 2025 08:25:53 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-6f8b0965823sm72481166d6.88.2025.05.20.08.17.13
+ a640c23a62f3a-ad52d06b532sm740317766b.43.2025.05.20.08.25.51
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 20 May 2025 08:17:14 -0700 (PDT)
-Date: Tue, 20 May 2025 08:17:09 -0700
+ Tue, 20 May 2025 08:25:53 -0700 (PDT)
+Date: Tue, 20 May 2025 08:25:45 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: <kirankumark@marvell.com>
-Cc: Aman Singh <aman.deep.singh@intel.com>, Thomas Monjalon
- <thomas@monjalon.net>, Ferruh Yigit <ferruh.yigit@amd.com>, Andrew
- Rybchenko <andrew.rybchenko@oktetlabs.ru>, <dev@dpdk.org>
-Subject: Re: [PATCH v6 1/2] ethdev: support RSS based on RoCEv2 header
-Message-ID: <20250520081709.105c8b84@hermes.local>
-In-Reply-To: <20250505055717.3697335-1-kirankumark@marvell.com>
-References: <20250505053304.3288290-1-kirankumark@marvell.com>
- <20250505055717.3697335-1-kirankumark@marvell.com>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
+Cc: "Sunyang Wu" <sunyang.wu@jaguarmicro.com>, "dev" <dev@dpdk.org>, "Thomas
+ Monjalon" <thomas@monjalon.net>, "Ferruh Yigit" <ferruh.yigit@amd.com>,
+ "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>
+Subject: Re: [PATCH] ethdev: optimize how the values of the flag variables
+ are assigned
+Message-ID: <20250520082545.53836539@hermes.local>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FC35@smartserver.smartshare.dk>
+References: <20250508023334.28416-1-sunyang.wu@jaguarmicro.com>
+ <CAOaVG15=NiMUfxtkjPSdQWXKhqJ7x+9n-F1K-LdKpHuSUYnoAQ@mail.gmail.com>
+ <KL1PR0601MB55678B1F0A4D7AC99B21B5F6908BA@KL1PR0601MB5567.apcprd06.prod.outlook.com>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FC35@smartserver.smartshare.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,44 +87,121 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 5 May 2025 11:27:15 +0530
-<kirankumark@marvell.com> wrote:
-> @@ -149,6 +151,7 @@ const struct rss_type_info rss_type_table[] = {
->  	{ "l3-dst-only", RTE_ETH_RSS_L3_DST_ONLY },
->  	{ "l3-src-only", RTE_ETH_RSS_L3_SRC_ONLY },
->  	{ "ipv6-flow-label", RTE_ETH_RSS_IPV6_FLOW_LABEL },
-> +	{ "ib_bth", RTE_ETH_RSS_IB_BTH },
+On Thu, 8 May 2025 10:17:44 +0200
+Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
 
-Please follow convention of other options. Use minus instead of underscore.
-Consistency matters.
-
-> diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
-> index 093b85d206..d1293893be 100644
-> --- a/doc/guides/rel_notes/release_25_07.rst
-> +++ b/doc/guides/rel_notes/release_25_07.rst
-> @@ -55,6 +55,10 @@ New Features
->       Also, make sure to start the actual text at the margin.
->       =======================================================
->  
-> +* **Added new RSS offload types for IB_BTH in RSS flow.**
+> Wouldn't the correct fix assume the change has no effect if the operation=
+ failed, like the _enable_ functions do, i.e.:
+>=20
+> int
+> rte_eth_promiscuous_disable(uint16_t port_id)
+> {
+> 	struct rte_eth_dev *dev;
+> 	int diag =3D 0;
+>=20
+> 	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
+> 	dev =3D &rte_eth_devices[port_id];
+>=20
+> 	if (dev->data->promiscuous =3D=3D 0)
+> 		return 0;
+>=20
+> 	if (dev->dev_ops->promiscuous_disable =3D=3D NULL)
+> 		return -ENOTSUP;
+>=20
+> -	dev->data->promiscuous =3D 0;
+> 	diag =3D dev->dev_ops->promiscuous_disable(dev);
+> -	if (diag !=3D 0)
+> -		dev->data->promiscuous =3D 1;
+> +	if (diag =3D=3D 0)
+> +		dev->data->promiscuous =3D 0;
+> 	diag =3D eth_err(port_id, diag);
+>=20
+> 	rte_eth_trace_promiscuous_disable(port_id, dev->data->promiscuous,
+> 					  diag);
+>=20
+> 	return diag;
+> }
+>=20
+>=20
+> From: Sunyang Wu [mailto:sunyang.wu@jaguarmicro.com]=20
+> Sent: Thursday, 8 May 2025 08.27
+>=20
+> Thank you for your reply. Personally, I think that when disabling promisc=
+uous/all-multicast mode, the corresponding flag should be set based on the =
+return value. This is because, at the driver implementation level, the driv=
+er may check the flag to determine whether the corresponding disable operat=
+ion needs to be executed. If the flag is set before the operation is comple=
+ted, the driver will not execute the operation when it checks the flag, as =
+it will find that the flag has already been set.
+>=20
+> =E5=8F=91=E4=BB=B6=E4=BA=BA: Stephen Hemminger <stephen@networkplumber.or=
+g>=20
+> =E5=8F=91=E9=80=81=E6=97=B6=E9=97=B4: 2025=E5=B9=B45=E6=9C=888=E6=97=A5 1=
+3:35
+> =E6=94=B6=E4=BB=B6=E4=BA=BA: Sunyang Wu <sunyang.wu@jaguarmicro.com>
+> =E6=8A=84=E9=80=81: dev <dev@dpdk.org>; Thomas Monjalon <thomas@monjalon.=
+net>; Ferruh Yigit <ferruh.yigit@amd.com>; Andrew Rybchenko <andrew.rybchen=
+ko@oktetlabs.ru>
+> =E4=B8=BB=E9=A2=98: Re: [PATCH] ethdev: optimize how the values of the fl=
+ag variables are assigned
+>=20
+>=20
+> External Mail: This email originated from OUTSIDE of the organization!=20
+> Do not click links, open attachments or provide ANY information unless yo=
+u recognize the sender and know the content is safe.=20
+>=20
+> Why bother? This is not critical path.=20
+> Original code looked fine=C2=A0
+>=20
+> On Thu, May 8, 2025, 11:34 Sunyang Wu <sunyang.wu@jaguarmicro.com> wrote:
+> Set the values of the promiscuous and all_multicast variables
+> according to the return value.
+>=20
+> Signed-off-by: Sunyang Wu <sunyang.wu@jaguarmicro.com>
+> ---
+> =C2=A0lib/ethdev/rte_ethdev.c | 9 +++------
+> =C2=A01 file changed, 3 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
+> index d4197322a0..b1f593edc4 100644
+> --- a/lib/ethdev/rte_ethdev.c
+> +++ b/lib/ethdev/rte_ethdev.c
+> @@ -3044,10 +3044,8 @@ rte_eth_promiscuous_disable(uint16_t port_id)
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (dev->dev_ops->promiscuous_disable =3D=3D =
+NULL)
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return -ENOTSUP;
+>=20
+> -=C2=A0 =C2=A0 =C2=A0 =C2=A0dev->data->promiscuous =3D 0;
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 diag =3D dev->dev_ops->promiscuous_disable(de=
+v);
+> -=C2=A0 =C2=A0 =C2=A0 =C2=A0if (diag !=3D 0)
+> -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0dev->data->promis=
+cuous =3D 1;
+> +=C2=A0 =C2=A0 =C2=A0 =C2=A0dev->data->promiscuous =3D (diag =3D=3D 0) ? =
+0 : 1;
+>=20
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 diag =3D eth_err(port_id, diag);
+>=20
+> @@ -3112,10 +3110,9 @@ rte_eth_allmulticast_disable(uint16_t port_id)
+>=20
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (dev->dev_ops->allmulticast_disable =3D=3D=
+ NULL)
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return -ENOTSUP;
+> -=C2=A0 =C2=A0 =C2=A0 =C2=A0dev->data->all_multicast =3D 0;
 > +
-> +     Added ``RTE_ETH_RSS_IB_BTH`` macro so that the IB BTH header can be used as input set for RSS.
-> +
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 diag =3D dev->dev_ops->allmulticast_disable(d=
+ev);
+> -=C2=A0 =C2=A0 =C2=A0 =C2=A0if (diag !=3D 0)
+> -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0dev->data->all_mu=
+lticast =3D 1;
+> +=C2=A0 =C2=A0 =C2=A0 =C2=A0dev->data->all_multicast =3D (diag =3D=3D 0) =
+? 0 : 1;
+>=20
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 diag =3D eth_err(port_id, diag);
+>=20
 
-Please add reference to the relevant standard and expand the acronym
-at least one place in the documentation.
-
-
-> diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
-> index ea7f8c4a1a..edcd6b75b5 100644
-> --- a/lib/ethdev/rte_ethdev.h
-> +++ b/lib/ethdev/rte_ethdev.h
-> @@ -602,6 +602,7 @@ struct rte_eth_rss_conf {
->  
->  #define RTE_ETH_RSS_L2TPV2             RTE_BIT64(36)
->  #define RTE_ETH_RSS_IPV6_FLOW_LABEL    RTE_BIT64(37)
-> +#define RTE_ETH_RSS_IB_BTH		RTE_BIT64(38)
->  
-
-Why is the acronym IB_BTH rather than ROCEV2?
-Wouldn't it be clearer if it followed convention?
+Agree.
+The concept is good, but it is not an optimization.
+There is a bug here. The flag should not be set if driver returns an error.
+The error should be directly returned to application and state should not c=
+hange.
