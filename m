@@ -2,76 +2,157 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC94C54E65
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 May 2025 08:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C625C54ED1
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 May 2025 09:18:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 794AD40E28;
-	Wed, 21 May 2025 10:50:03 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 9593940151
- for <dev@dpdk.org>; Wed, 21 May 2025 10:50:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1747817401;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=dRzyt9WYUL6VnLcYOon1cZg/Lo42YdqWwFDOJoupWx0=;
- b=UFqlE4A072tYZjFbZGOa4Dk0RV6FQDeXSrGU2qy3jBJpdFXc7O+PU4h1eLYLX/BtvHWsL3
- ZsjM7YH3vUokFUr0tcV+0B0UsZ9kLUGcJHQxYKJyN9HTHbYlWswMdLtrMyVHzFlLpwJKB7
- wWvz71KgmZsTzK1r7Qkl1db3PxDarAw=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-324-IM-s8nPBN-q2S5tJH1Iu-A-1; Wed, 21 May 2025 04:49:59 -0400
-X-MC-Unique: IM-s8nPBN-q2S5tJH1Iu-A-1
-X-Mimecast-MFC-AGG-ID: IM-s8nPBN-q2S5tJH1Iu-A_1747817398
-Received: by mail-lj1-f200.google.com with SMTP id
- 38308e7fff4ca-30d6a0309f6so37694881fa.2
- for <dev@dpdk.org>; Wed, 21 May 2025 01:49:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1747817398; x=1748422198;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=dRzyt9WYUL6VnLcYOon1cZg/Lo42YdqWwFDOJoupWx0=;
- b=KCvinDvCWa0IG125YAf8i0A1eABB+WJ2pmz0q+zG9OO6CxxdMFY8ZpSX4PITa5jH3N
- CpuCUiE/bR4HuCsyLlCxwnPurCkNWhreOaIdBC5ASTTQHZf6s1EJjf/h9hJVdWem7KmL
- kapoKCY+sxVA1hJX+qDT5Pt7Fk3lTA/TUf9EAa7eKbovLOLT6P1D2xthyRMbNRTv1nO1
- 1jZqqYmsassjrM9IHbkAgasZgXMd/TEaDrLhfz0GsMdNFmnmqzI9nLULL6e1ZJ6+hFlJ
- Qsm53mxGOM+tluxThHxDhUMQTMaomEDB9gt212QRRJnyXNxOsvIcwgxNgvma1DvPNSs7
- iPSQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXHfAScSPNilF8mMhAnPi2saj9zKCYur70BUB69mLu86LsNHVNZ6jLK7hJvtBIBYetjOzs=@dpdk.org
-X-Gm-Message-State: AOJu0Yz07rFBEy2xcO2ytwpopqmJ63M7NTAIWFdKghV3WziCry2STrUQ
- 8QZcYq9t2Cgp+j8qR27j9lsQqU5PUcgRXpYBs4e2lm0loxlpPqWdBW7Y94z367R3oa2IyE7bvr3
- nYNIdB9D8FJRUofpxE+X0PvL4shrB5pkAyZ66nEe8iFHwxh8edV7bjFcUHAP7vz0YF1Oqihq0xI
- /iY4BeDrmwr6DcE64LKJk=
-X-Gm-Gg: ASbGnctNFthUg8A9S1Kn9q2M2PZOZ4gwQrkoyIT0MUy+jPSORAY2HynNsAKKYMfIqKp
- ptSW9PoWTQ1RETyn06EoSdanybIdRP4Tiw40JE80YIUgutJ1mwwT3WVWwbuU6kkLWyQbqI6U=
-X-Received: by 2002:a2e:bcc1:0:b0:31f:8659:dc23 with SMTP id
- 38308e7fff4ca-32809780216mr88783691fa.33.1747817398043; 
- Wed, 21 May 2025 01:49:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF4Im9KUZxbT59+NbHFNHQF1Jq/6RtDtQVAQ6ppV/OW9apjnHFisl3hOp5nz0Ut/jGQnM4SRWUPGWtjbQDPvZ8=
-X-Received: by 2002:a2e:bcc1:0:b0:31f:8659:dc23 with SMTP id
- 38308e7fff4ca-32809780216mr88783041fa.33.1747817394880; Wed, 21 May 2025
- 01:49:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20250520160150.50401-1-rui.ferreira1@h-partners.com>
-In-Reply-To: <20250520160150.50401-1-rui.ferreira1@h-partners.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 21 May 2025 10:49:43 +0200
-X-Gm-Features: AX0GCFvZFuzuju5lTsSak-GNcr8rNdnyIbeY1ANud0mEK2qni-9VN-LlRBBi6VI
-Message-ID: <CAJFAV8zTePNoQh+5MM3cO1nd6ZuBud=NCL1ik0GVS1oTDDOV2A@mail.gmail.com>
-Subject: Re: [PATCH] eal/linux: unregister alarm callback before free ptr
-To: Rui Ferreira <rui.ferreira1@h-partners.com>
-Cc: Thomas Monjalon <thomas@monjalon.net>, dev@dpdk.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: c28o1KmMNSMYhGcL-MXyG82TNZOm71IWo9pBmACTcBE_1747817398
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+	by mails.dpdk.org (Postfix) with ESMTP id 6AAF7410DC;
+	Wed, 21 May 2025 11:18:21 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 33F9040151
+ for <dev@dpdk.org>; Wed, 21 May 2025 11:18:19 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54KNcTTa031279;
+ Wed, 21 May 2025 02:18:18 -0700
+Received: from nam10-bn7-obe.outbound.protection.outlook.com
+ (mail-bn7nam10lp2046.outbound.protection.outlook.com [104.47.70.46])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46s3kc8vx5-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Wed, 21 May 2025 02:18:17 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CfKPPz+R8hl0uqBgnT5sBVEdEsU22rgmolnIu+bG1uOF+jwEa76UtixHC6oJQIpVM0cLeqAPQryweyo1JRp5e/E9iEVCOrlfZ4TgWmhHnpSPibyXcpCYHDJ4z18Rljx/V4HOy9PyHXYpMdB0LzlfsYHhduIwGNDKnQwHawfnWcXv1kUOTv35VukmRDQ0hsUfTN3HqJppBvYYS7iY0gbkwyC52jbW4vYno7Vy9gc/iTrfGza9Y/00J6NKduw+oduGDWxtOkDx7ghrOz/y9qFHzYTDy7qrZMJH3ogKHUnkgpZ1XYg9ZUm43/n5Asys6pYnO/ASSzolbbqR05TtPfKDyg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QzsI1D0JFhnnr48QkvxMJ1i3liwbsF8u5Cu1QC+7am8=;
+ b=IuD/5l7pd1GwmtAt2pmf8cNye0oZk/L5/fog6JZMGPz5HRxO+1aW8GMSWPZ/Az1Vph3rRQKLemagc+60irKMDjhjh68lYSQxLDG41ckN+wUxmr//RMxutKxOrXHyrS3BwiPnCU7+IPvjOdCyUavVTk0z3OCjK98WWz4q8XxhpVEhYILXQAFcwmJEXMiNl9sZ+FLY7jKeAJx1uHrYO+0G/6lBtvmH6KkWQdckov8ru9aapQIB0NM0A6NoVkOrjkF94qmt60c1R6fccDrsG5gged54pfrcXYzcWv9YMYCijyG9GycPYXx2jdUirQ4YBbeT1yzWH2H9wcTodF2ywXPRnw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QzsI1D0JFhnnr48QkvxMJ1i3liwbsF8u5Cu1QC+7am8=;
+ b=v9YXUrI0NCUJyYFqw+5BkKF81tRBFkl4q3my3trfRlENIZdeVsLazhKPvxPQgkE2UiF4KFFg7KbS/pPzZ1YD5GOX9Jh5IkvF5zuUzZiQqzoPfaRaKD6jVjkRbh0Z+kJKaicc4giGtfEctQQjy9jE+syOZUZHC25/QUPuLLhbx6w=
+Received: from CO6PR18MB4484.namprd18.prod.outlook.com (2603:10b6:5:359::9) by
+ DM4PR18MB4319.namprd18.prod.outlook.com (2603:10b6:5:39b::17) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8769.19; Wed, 21 May 2025 09:18:08 +0000
+Received: from CO6PR18MB4484.namprd18.prod.outlook.com
+ ([fe80::3c98:dd36:4897:a51d]) by CO6PR18MB4484.namprd18.prod.outlook.com
+ ([fe80::3c98:dd36:4897:a51d%4]) with mapi id 15.20.8746.030; Wed, 21 May 2025
+ 09:18:08 +0000
+From: Akhil Goyal <gakhil@marvell.com>
+To: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>, "dev@dpdk.org"
+ <dev@dpdk.org>, Fan Zhang <fanzhang.oss@gmail.com>
+CC: Anoob Joseph <anoobj@marvell.com>, Gowrishankar Muthukrishnan
+ <gmuthukrishn@marvell.com>
+Subject: RE: [PATCH v2] test/crypto: increment dequeue timeout
+Thread-Topic: [PATCH v2] test/crypto: increment dequeue timeout
+Thread-Index: AQHbxLK/wkZQCyierUCStD2r1zEDO7Pc2PNw
+Date: Wed, 21 May 2025 09:18:08 +0000
+Message-ID: <CO6PR18MB4484AEF17E0077A0A43800CAD89EA@CO6PR18MB4484.namprd18.prod.outlook.com>
+References: <20250421064708.1777-1-gmuthukrishn@marvell.com>
+ <20250514092941.1558-1-gmuthukrishn@marvell.com>
+In-Reply-To: <20250514092941.1558-1-gmuthukrishn@marvell.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CO6PR18MB4484:EE_|DM4PR18MB4319:EE_
+x-ms-office365-filtering-correlation-id: 931a7331-6539-4d66-d3c2-08dd9848667c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?fUahzRK5nMltndlJnUbYOAm0uI+JUXX+7l8oS9HuiSA6XOl6hthY4yK9hH+d?=
+ =?us-ascii?Q?5evaN3IJhV4MCf5nb8Pcfk7zuRwN75djXgYfBJDifMLvwjIGlnEbzH9KJLLx?=
+ =?us-ascii?Q?yTRB4RxUdzJU4IjCuOW22UTc73na8apLx0rirLl6db1R16Ke+y2hoxpxZ3QG?=
+ =?us-ascii?Q?fZxS3zPBmRIKiMRNZE1zLAJBWgA+8M4H9OtzkeqrdOj7VLcFzDBwXWJyaVAp?=
+ =?us-ascii?Q?jyLsIc3LG9gk+ziFfER8ecv769hoxuk8HQlokr1IRSKo2/oTPdNBeK+9HhXN?=
+ =?us-ascii?Q?iCLWxQagu26ijA6l0e5aQ16HQ+mvQwqh2zug6VlcUteYSmZN2gyNtwIFeiqi?=
+ =?us-ascii?Q?uZtN6Onla4lt7zN3Gmau03YwxPWNB/9sLm6EhleeJCqxcpXiUCazsPbhQKzc?=
+ =?us-ascii?Q?t5Z3GHN/3pQ3KIBqS3rdINhcfjpyZNcf/a+2AnYT6KiaAQVkx81eQpJUGjlx?=
+ =?us-ascii?Q?EYQ/yIsC3rwZmHVnw/2se/gUW3o0iXPfw3013qb/QZb4RgGcNYVi+81a+bBs?=
+ =?us-ascii?Q?ZxxEeMUVDfwDMSbLrtEyts6dYvuntYAQo0qZfD5XlVyf0FyvRsphDvZvH7lJ?=
+ =?us-ascii?Q?kauNSlRS3hqGfDn/+oBH1VNGV9hFuDcjBodhllVArLUwouYM+DrnOMypbCPn?=
+ =?us-ascii?Q?wktocfEi0B+qDLCEyBA8/RqLE1ZnupksWS+CE3dF+5M2VUmYz7n1B7dVnb/4?=
+ =?us-ascii?Q?4ePQbUGXLshuIvDqnWtbjforZAxJq8jLl079Ozeeg8pafzkwV+LnWnqRMlkn?=
+ =?us-ascii?Q?PStVEUupa7UB2PIApGmfUVckPUoMtg879SoiN7hnFF2MjwqrFvTvfzXrBqQP?=
+ =?us-ascii?Q?g8fp44cTyewfs41GI2/8307+0f1DSNcQufUnfAY7zZIRPMcl8huOjszUynmK?=
+ =?us-ascii?Q?jV+UjUvKbmWpjuFiAN7w5an5fWFUeblP8+L1OJK033r5t/nszejVil0nVlsI?=
+ =?us-ascii?Q?b4X9ailODn73lmijwlZTwNdvNy238xd++kNs9ZxWv9k0aDPbza9ZE628uxLJ?=
+ =?us-ascii?Q?0xLV5ii9LB8nd1Dze+JZ1mmMEbUwfZJBGUx4QEPhjuVa04cUSJNol5l90xaz?=
+ =?us-ascii?Q?2zTrXLfZwrgMMod21IRBUr/0HI0S1msTE1xXQpOW45R7XzaE1g8Lpgt4WFhO?=
+ =?us-ascii?Q?fUCUOvsbsjaC3rvQghjyfSbUhNWJyJBx626Dvv7RBukU+BgLxJtTCbzDleoA?=
+ =?us-ascii?Q?zEM5zjujF2ebE7g1rHZd/DMHKaY4x2FtKDFy11V97O2H/6Ql2laRSOqpPS9x?=
+ =?us-ascii?Q?4Z6QvSoxsW5xADwxGx9wpLD5JN4KNiuPamlWGQx4Dh+Iia0BjAkgsXIZiu6+?=
+ =?us-ascii?Q?bK6WA1CLSziaaZw9jq8bHflW4+6ULbj5f+eT7sZ+pJk5a4JfLSGvuksdbNQC?=
+ =?us-ascii?Q?cVE7Y69H1+IL5zMCpvROwGe4BuFM62qDcyhPbCO+R/pvLfebhN8K65ogSHtk?=
+ =?us-ascii?Q?oI+KkkQhNrypwG4GMpTSq8sno6o1qIQm1o3smIDt16sLVztkiUL5fw=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:CO6PR18MB4484.namprd18.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014)(38070700018); DIR:OUT; SFP:1102; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?l0+D90X9mKAuBgku8BTC3qp88LxIvDu4B6154YqClBjI/neZvn1tdZjTFYFU?=
+ =?us-ascii?Q?n4bCoxVfsDJtovO9ygQmVdNUVhXRtMdyypRUMPwcDGSaxr+CJiCbV0Duthx8?=
+ =?us-ascii?Q?7Qfy4XGnHxQN5ZIkL6d3b/28CfO8pd/7bZ7fNqrnnrzqOUma9HHua81DGox5?=
+ =?us-ascii?Q?U0+Yw7qbZXGOw2fTb/TangLcioF4/OEpLar0KKcRpeDo6QZPLN+Jme2PjDF5?=
+ =?us-ascii?Q?CeEVhjHMq6x//ZW04iGZ3ZPfajxJnHEjFvlPfhNH38pdKl6QNQ4LBIaiNS1u?=
+ =?us-ascii?Q?Oc59Co3Jl+eaTUgNF05FY5ogqWSlW0kzp1Jsnl8Sak4NGQ3OU/5lwLiV4P7O?=
+ =?us-ascii?Q?JvlfGCwv75YrzV4iDKrTwfhUf5xDtPtYHP71nE+vGYGvv3+hjZpf0LjeZVsD?=
+ =?us-ascii?Q?mi2cPxh9PQjfcjD9/qQprVWwV+9ndA1JtRp28gWR6D9NPpMt4OE2bxBRo90W?=
+ =?us-ascii?Q?RQFk/4uOFixKHBzb0ettICLSt34XM3SdFG9BXI5hMKnJcXXgi5RsbPpqcTA0?=
+ =?us-ascii?Q?eAWZBKihyKJECYthFhq0AEfZx6vy7epnxjwcnu5AIIzGMPRVTVKFdQHn4v+8?=
+ =?us-ascii?Q?NpFOFp5Rv9liWvWScylg8fY3rjPXchFcqGLgVAantb54I4X2z02KfABRTKGu?=
+ =?us-ascii?Q?bq7w4G33IS1uyb5xSbLqY7OKbCvKhcgwDB3zHb14FEVbEhFH/qHIOGACgOGa?=
+ =?us-ascii?Q?V6A9gc2kFk67clGjqKfPNQu57blWyOZlm1n2HNENgan0qhUSLa/tTkQtuCHS?=
+ =?us-ascii?Q?yLoTE5AKAamLYf/4jWGyGgf+vPb9zoo3lWS2b7nkHGvq+guAzouI+bnRwmUw?=
+ =?us-ascii?Q?FdMKokOqpbYkmBkkS6F5IC6b8ETIdYeAtm+UhjVxWi3iTVhgo6amW4jqgeOM?=
+ =?us-ascii?Q?GFu2Pg3Ivu8YII8/H0tdOP/Zs4ssvdWZaduvdZIRP9LI63dJ5tNwv7SsST+8?=
+ =?us-ascii?Q?PF4NDDHrmOMpAK+fA/u27hBDmbKKwKvTBUGoOve6hK279eUM6wzMFP/rIXnx?=
+ =?us-ascii?Q?04T5d5U8hos4w5YtVmew/QI8ZCs+a4lkqgIie4+8efukm/mHRPZ5JYPHG3TT?=
+ =?us-ascii?Q?YIVPMarsxZFhIv8jUWtvRSdVMEW9pFAOx7acHwE4aC1IsAzh30zYs6SY9a32?=
+ =?us-ascii?Q?xeDVggWp9JDubQ/YAx+Buo7kWDz+tLXG0fAoK4L1peq2jGBa2OO+4cr24+8w?=
+ =?us-ascii?Q?d1akeS9pYjPgXV1e52tyPZAGBogsJf7H7nnuAQcqILDTLxk4RTVip0o9vgsn?=
+ =?us-ascii?Q?Wpo+ev/IeJHFh3Vpj3u92cO8FZIDhMEX5CT5tlKb8PMba8opUVB5PbVPn045?=
+ =?us-ascii?Q?Cvq5nEE4ccnueniyHdWgcSzV9ABTObdL/MtBERugk4FpptvbCGUBtR4b8tIM?=
+ =?us-ascii?Q?kqVBIq9XMN9493woM6V6GeUr29SI+nsUQ4zA4Rv/OmZZDyryuGwOv/Tfv1IC?=
+ =?us-ascii?Q?BfHxqd1iZY+eMo1i20ODxoqtBPRUvvRHQYpvzHV2uiocFfIM9PiTVb5AmI0D?=
+ =?us-ascii?Q?vwV7fKwrjIp3kcQ2vVkgPGMpDobKtzc3XJhw1DRRIMs2xlhv0B/tvKW67j0T?=
+ =?us-ascii?Q?fSjti3EFwU+zSK5PfjazvhBuZ63PW5GEc9J6ElwL?=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR18MB4484.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 931a7331-6539-4d66-d3c2-08dd9848667c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2025 09:18:08.0815 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: DVXCYo2oLY8VLBTzdW6mmOZDV8bKTvGiaqK0TYhTMx2FjYsn3ScG1lfYplvHdk4YioxAQCO1wp7yHeI6n6D9wQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR18MB4319
+X-Proofpoint-ORIG-GUID: Vuwmfd5dn3ZspgnI2dqouaSOv6SS2l3F
+X-Proofpoint-GUID: Vuwmfd5dn3ZspgnI2dqouaSOv6SS2l3F
+X-Authority-Analysis: v=2.4 cv=TcyWtQQh c=1 sm=1 tr=0 ts=682d9a59 cx=c_pps
+ a=IwUfk5KXFkOzJxXNjnChew==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=dt9VzEwgFbYA:10 a=-AAbraWEqlQA:10 a=M5GUcnROAAAA:8 a=eqo-v25brgpHSQM9K20A:9
+ a=CjuIK1q_8ugA:10 a=OXoeHldmKWcA:10 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDA5MSBTYWx0ZWRfXyx9oONz5frlN
+ 4r2vcWw9CcDOlxgHeFbdvvFU6Wl3gNBnTGKL97UClIoJxg0Pn52QBb3VLYSqMKJbQEQCBi/z5cu
+ 9MBfmmwAC/SYV1ID0vKqPTRU3pkMG+OxTJqwiurVsf8vp7+YvCAFyF6Hz8q0/TJcFlhliE4IvXI
+ a53qepnOVPcjsYnyRI+D7vDXYNYrWssbIaA9VRWPtqCrpw2bqSKmx0SFctLzpYbVF5JaC1wEag5
+ qn3pLT2PgbceEa+2f5xpfU30ZFLsVOO1FYTVSQvEB0fClYkAxFI/5rqRFC9YgcMRKDVxNtlgUX3
+ BlE9JfxXdeyfYyad9htjM94KvdFtYv8/ROkywLjpZvPGooVkrZ7aVwY46YdOVuMt+fQae8YKpYK
+ gBz3vnhvNju8PlijC3pyrK5gz3fHFl4bCe6EBkKHpSddGtg4hbHZGnMMWldHUJOkgZtajPZ0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-21_02,2025-05-20_03,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,139 +166,12 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, May 20, 2025 at 5:08=E2=80=AFPM Rui Ferreira
-<rui.ferreira1@h-partners.com> wrote:
->
-> This was flagged by Address sanitizer as a use after free. The
-> intr_handle ptr is shared between the main thread and the interrupt
-> thread, and the interrupt thread can dereference the ptr after free
-> is called when the main thread cleans up (from the alarm callback).
->
-> The interrupt thread never terminates (eal_intr_thread_main) so
-> use rte_intr_callback_unregister_sync during cleanup to
-> ensure the callback is removed before freeing the ptr.
->
-> To be more defensive clear out the pointer and registration
-> variable if we can unregister.
->
-> Bugzilla ID: 1683
->
-> Signed-off-by: Rui Ferreira <rui.ferreira1@h-partners.com>
-
-I remember mentioning that other OS may be affected by the bug.
-Please consider fixing this issue for Windows and FreeBSD too.
-
-
+> Increment dequeue timeout to allow implementations taking
+> longer cycles.
+>=20
+> Signed-off-by: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
 > ---
->  .mailmap                  | 1 +
->  lib/eal/linux/eal_alarm.c | 9 ++++++++-
->  2 files changed, 9 insertions(+), 1 deletion(-)
->
-> diff --git a/.mailmap b/.mailmap
-> index d8439b79ce..907c5ea967 100644
-> --- a/.mailmap
-> +++ b/.mailmap
-> @@ -1332,6 +1332,7 @@ Rosen Xu <rosen.xu@altera.com> <rosen.xu@intel.com>
->  Roy Franz <roy.franz@cavium.com>
->  Roy Pledge <roy.pledge@nxp.com>
->  Roy Shterman <roy.shterman@vastdata.com>
-> +Rui Ferreira <rui.ferreira1@h-partners.com>
->  Ruifeng Wang <ruifeng.wang@arm.com>
->  Rushil Gupta <rushilg@google.com>
->  Ryan E Hall <ryan.e.hall@intel.com>
-> diff --git a/lib/eal/linux/eal_alarm.c b/lib/eal/linux/eal_alarm.c
-> index b216a007a3..eb6a21d4f0 100644
-> --- a/lib/eal/linux/eal_alarm.c
-> +++ b/lib/eal/linux/eal_alarm.c
-> @@ -57,7 +57,14 @@ static void eal_alarm_callback(void *arg);
->  void
->  rte_eal_alarm_cleanup(void)
->  {
-> -       rte_intr_instance_free(intr_handle);
-> +       /* unregister callback using intr_handle in interrupt thread */
-> +       int ret =3D rte_intr_callback_unregister_sync(intr_handle,
-> +                                               eal_alarm_callback, (void=
- *)-1);
-> +       if (ret >=3D 0) {
-> +               rte_intr_instance_free(intr_handle);
-> +               intr_handle =3D NULL;
-> +               handler_registered =3D 0;
-> +       }
->  }
->
->  int
+Acked-by: Akhil Goyal <gakhil@marvell.com>
 
-In rte_eal_cleanup, the trace framework is uninitialised prior to
-rte_eal_alarm_cleanup().
-
-And the CI caught this issue (see ovsrobot report in patchwork).
-
-ERROR: AddressSanitizer: heap-use-after-free on address 0x7f872ca90f80
-at pc 0x7f873db9fb1e bp 0x7fffc98a3720 sp 0x7fffc98a3718
-READ of size 4 at 0x7f872ca90f80 thread T0
-    #0 0x7f873db9fb1d in __rte_trace_mem_get
-/home/runner/work/dpdk/dpdk/build/../lib/eal/include/rte_trace_point.h:331:=
-27
-    #1 0x7f873db9fb1d in rte_eal_trace_intr_callback_unregister
-/home/runner/work/dpdk/dpdk/build/../lib/eal/include/eal_trace_internal.h:5=
-8:1
-    #2 0x7f873db9fb1d in rte_intr_callback_unregister
-/home/runner/work/dpdk/dpdk/build/../lib/eal/linux/eal_interrupts.c:685:2
-    #3 0x7f873db9fe44 in rte_intr_callback_unregister_sync
-/home/runner/work/dpdk/dpdk/build/../lib/eal/linux/eal_interrupts.c:697:16
-    #4 0x7f873db996ad in rte_eal_alarm_cleanup
-/home/runner/work/dpdk/dpdk/build/../lib/eal/linux/eal_alarm.c:61:12
-    #5 0x7f873db98b4f in rte_eal_cleanup
-/home/runner/work/dpdk/dpdk/build/../lib/eal/linux/eal.c:1334:2
-    #6 0x561c211092db in main
-/home/runner/work/dpdk/dpdk/build/../app/test/test.c:263:2
-    #7 0x7f873c429d8f in __libc_start_call_main
-csu/../sysdeps/nptl/libc_start_call_main.h:58:16
-    #8 0x7f873c429e3f in __libc_start_main csu/../csu/libc-start.c:392:3
-    #9 0x561c2104a534 in _start
-(/home/runner/work/dpdk/dpdk/build/app/dpdk-test+0x1fc534) (BuildId:
-37b8659fbf174b3d78222edbdcd9f2f6a3027aff)
-
-Address 0x7f872ca90f80 is a wild pointer inside of access range of
-size 0x000000000004.
-SUMMARY: AddressSanitizer: heap-use-after-free
-/home/runner/work/dpdk/dpdk/build/../lib/eal/include/rte_trace_point.h:331:=
-27
-in __rte_trace_mem_get
-Shadow bytes around the buggy address:
-  0x0ff16594a1a0: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
-  0x0ff16594a1b0: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
-  0x0ff16594a1c0: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
-  0x0ff16594a1d0: fd fd fd fd fd fd fd fd 00 00 00 00 00 00 00 00
-  0x0ff16594a1e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-=3D>0x0ff16594a1f0:[fd]fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
-  0x0ff16594a200: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
-  0x0ff16594a210: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
-  0x0ff16594a220: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
-  0x0ff16594a230: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
-  0x0ff16594a240: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
-Shadow byte legend (one shadow byte represents 8 application bytes):
-  Addressable:           00
-  Partially addressable: 01 02 03 04 05 06 07
-  Heap left redzone:       fa
-  Freed heap region:       fd
-  Stack left redzone:      f1
-  Stack mid redzone:       f2
-  Stack right redzone:     f3
-  Stack after return:      f5
-  Stack use after scope:   f8
-  Global redzone:          f9
-  Global init order:       f6
-  Poisoned by user:        f7
-  Container overflow:      fc
-  Array cookie:            ac
-  Intra object redzone:    bb
-  ASan internal:           fe
-  Left alloca redzone:     ca
-  Right alloca redzone:    cb
-=3D=3D55106=3D=3DABORTING
-
-
---=20
-David Marchand
-
+Applied to dpdk-next-crypto
+Thanks
