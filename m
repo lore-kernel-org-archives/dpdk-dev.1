@@ -2,70 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF9A6C2D0CD
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 May 2025 14:18:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A199FC54E71
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 May 2025 14:23:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4874742D96;
-	Wed, 21 May 2025 16:18:53 +0200 (CEST)
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com
- [209.85.219.47]) by mails.dpdk.org (Postfix) with ESMTP id 5A0054028F
- for <dev@dpdk.org>; Wed, 21 May 2025 16:18:51 +0200 (CEST)
-Received: by mail-qv1-f47.google.com with SMTP id
- 6a1803df08f44-6f8d4375aa5so25457986d6.0
- for <dev@dpdk.org>; Wed, 21 May 2025 07:18:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1747837130;
- x=1748441930; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=j3koOaxDM96mbi/uMvQwMEg7MzFlLm/DLPScApk7rlk=;
- b=SpMgp8B2//1BHN/NKZzx7vlu9NHk72ZNPw6Y/YlR4uTSMHHd2eSNSVEP26WLYBRIME
- ndNuUS1+jraM2cR1FAmdXwsKFCCB0iYYrJxjMKfafrQrQjaSiMZuzp+I22AJka95vjyi
- L6RUqoJHpvymLcOyQdlnKE9t7qLha3mjOVb+8dmWTsxwv+zWDVvWnaJTy5jPz8srkrYZ
- hHoXmoUHod+vupjYjc3cRNUCEOf9AH/DRGHypVmY8LdUyRVP0MLoX4YDjyhd9yTlRV+s
- IKqkFHhRza3uzhUIGqATWvuVSfg8SvUkGbVByi1XYV7dCppGlGuki4VX9kWzyF05JkK2
- sGVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1747837130; x=1748441930;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=j3koOaxDM96mbi/uMvQwMEg7MzFlLm/DLPScApk7rlk=;
- b=n8FJ0H9Xgt6lU+XzBq07me8mYhudfTIr0EhMd3n6MnHs1lFemNCWx+I0IAa23EUb61
- AXwDaYNBX6aUquLdM3ywWVelhbPpPGiy1Y8yUIl/Owr+tjs6BHM/GUYSEbM8Dsk/1VOR
- kGfet7lK5b3bXxD0NYSmNBuD8UrKfBmSDrP7rNWHxelZqlhpYSgchG1voqOPG0uXnkAJ
- IvSFmZUv9nIq+qbKzl1LQrvpNnyU9+C54Dzzg6oGRXfAQw+Efas7wEyjBPYI3jyM1fuR
- dJNTaTFVhtrCG4a2CrClLEAQVGhqGv4j5aREveHThHKV3AXbBEa4mdEEVOIns9aap1uF
- Ofjg==
-X-Gm-Message-State: AOJu0YwDMoHq5UIbP7nbw1llx8B9+UjnYUJNTNsFh/Xv91eZQCN+jHgP
- LkSpW+9x4MB47ASB4BB68Pt0ly1+2tkI+YAyWe4Ps5AflKxTGFmuNAhEDn/xt+6q4vE=
-X-Gm-Gg: ASbGncvKTZLFyLo2AkdxJpLSqNgUSs+3zj4yHLxjsEzbxlYWPs7vPH4Mbb+rvqW1y6e
- 5xtxsoq5JR6qw1Kj7p+7mZkGxjf9lGLkzOdtkOFM9kT7sVIATg4G4fqt1nqAru5IeHxRIOZK5uF
- dnPX9Uk1S/akCdesqwH+MfpvGJQvqQkrIeGNUb8SxO2r3PBOIQfPm39OHFIgNvfM9taM63kbLin
- WbBckX1lJvUi5O5kVIUc1LkagUNLlfM9qOHWMVmNfnWeIlKmf7NFwAcaQQ/kOlPZ/wgeqD2j4Yi
- vmOt3RAL/W725acjnPssfzPUgoV1V62ye98lRFWvUuJW48Yv4P1KtIF8/bpVpW4UI2BJypHu0Yj
- G4ecEy9IAhSi1ML+ye3Wp4vS4zg2L
-X-Google-Smtp-Source: AGHT+IHC5llvpNEIYuMqfqzCcbvHp/gvkN7vEUPcIq5QfLN/Xwp67IPmHlotcdq6+lU+Z+ExxpEsfA==
-X-Received: by 2002:a05:6214:d6f:b0:6e8:ff46:b33e with SMTP id
- 6a1803df08f44-6f8b094a1b0mr364985936d6.37.1747837129991; 
- Wed, 21 May 2025 07:18:49 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-6f8b0965b7asm85555146d6.80.2025.05.21.07.18.49
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 21 May 2025 07:18:49 -0700 (PDT)
-Date: Wed, 21 May 2025 07:18:45 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: farooq basha <farooq.juturu@gmail.com>
-Cc: dev@dpdk.org
-Subject: Re: [dpdk-dev] Regarding HQOS with run-to-completion Model
-Message-ID: <20250521071845.50d6f9e1@hermes.local>
-In-Reply-To: <CA+xuiv2jL934JR_QyLC1M5A+5dGPzw5L0=4RoS98eRjueA+9-g@mail.gmail.com>
-References: <CA+xuiv2jL934JR_QyLC1M5A+5dGPzw5L0=4RoS98eRjueA+9-g@mail.gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id C768B42DA6;
+	Wed, 21 May 2025 16:23:18 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id AD0964028F
+ for <dev@dpdk.org>; Wed, 21 May 2025 16:23:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1747837396;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=9Wv+S1Qok05Vj0JFF/Fm86XjCKZNyMIuorsh85vzH+w=;
+ b=jT4zL4RUQCs57RrFdlenBAcq2EiUwKt4cIuoUhGI3UBKam4VPrCGFs5C5aGBg+eMxoDsrK
+ U9MO/g8FLJVAj7RvSh2L+BEu/DHjlrmmK4L7x1M/vjf7bQ15aUcwp8aEyRWWDp0zTAjUBL
+ nkNvjBP1rkltCEWmhOXKq/mPJhmv0KY=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-126-UCMhoyvVMSSk5Xr2Qo_4bA-1; Wed,
+ 21 May 2025 10:23:13 -0400
+X-MC-Unique: UCMhoyvVMSSk5Xr2Qo_4bA-1
+X-Mimecast-MFC-AGG-ID: UCMhoyvVMSSk5Xr2Qo_4bA_1747837392
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 222C4195608A; Wed, 21 May 2025 14:23:12 +0000 (UTC)
+Received: from max-p1.redhat.com (unknown [10.44.22.28])
+ by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id BC36C19560AB; Wed, 21 May 2025 14:23:09 +0000 (UTC)
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+To: dev@dpdk.org,
+	david.marchand@redhat.com,
+	chenbox@nvidia.com
+Cc: Maxime Coquelin <maxime.coquelin@redhat.com>
+Subject: [PATCH v1] net/virtio-user: implement MAC setting for Vhost-kernel
+Date: Wed, 21 May 2025 16:23:05 +0200
+Message-ID: <20250521142305.343264-1-maxime.coquelin@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 4LMcLdn0Vdniag_ZN_s7HVa8tWLK0smZi416AlHoSME_1747837392
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,40 +65,118 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 28 Apr 2025 16:55:07 +0530
-farooq basha <farooq.juturu@gmail.com> wrote:
+This patch implements MAC address setting with Vhost-kernel
+backends.
 
-> Hello DevTeam,
->=20
->     I am planning to use DPDK HQOS for Traffic shaping with a
-> run-to-completion Model. While I was reading the dpdk-qos document, I came
-> across the following statement.
->=20
-> "*Running enqueue and dequeue operations for the same output port from
-> different cores is likely to cause significant impact on scheduler=E2=80=
-=99s
-> performance and it is therefore not recommended"*
->=20
->  Let's take an  example, Port1  & Port2 have 4 Rx queues and each Queue
-> mapped to a different CPU. Traffic coming on port1  gets forwarded to por=
-t2
-> . With the above limitation application needs to take a lock before doing
-> rte_sched_port_enqueue & dequeue operation. Performance is limited to only
-> 1 CPU even though Traffic is coming on 4 Different CPUs.
->=20
-> Correct me if my understanding is Wrong?
->=20
-> Thanks
-> Basha
+With this, it is possible to set the TAP interface MAC address
+using the Ethdev API.
 
-The HQOS code is not thread safe so yes you need a lock.
-The traffic scheduling (QOS) needs to be at last stage of the pipeline just
-before mbufs are passed to the device.
+Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+---
 
-The issue is that QOS is single threaded, so lock is required.=20
+Change from RFC: Rebased on latest main
 
-The statement is misleading, the real overhead is the lock; the secondary
-overhead is the cache miss that will happen if processing on different core=
-s.
-But if you are doing that you are going to cut performance a lot from cache
-misses.
+---
+
+ drivers/net/virtio/virtio_user/vhost_kernel.c | 23 +++++++++++++++++++
+ .../net/virtio/virtio_user/vhost_kernel_tap.c |  2 +-
+ .../net/virtio/virtio_user/vhost_kernel_tap.h |  2 +-
+ .../net/virtio/virtio_user/virtio_user_dev.c  |  2 +-
+ 4 files changed, 26 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/virtio/virtio_user/vhost_kernel.c b/drivers/net/virtio/virtio_user/vhost_kernel.c
+index e42bb35935..4ff47c2327 100644
+--- a/drivers/net/virtio/virtio_user/vhost_kernel.c
++++ b/drivers/net/virtio/virtio_user/vhost_kernel.c
+@@ -12,6 +12,7 @@
+ #include <rte_memory.h>
+
+ #include "vhost.h"
++#include "virtio.h"
+ #include "virtio_user_dev.h"
+ #include "vhost_kernel_tap.h"
+
+@@ -152,6 +153,9 @@ vhost_kernel_get_features(struct virtio_user_dev *dev, uint64_t *features)
+ 	if (tap_flags & IFF_MULTI_QUEUE)
+ 		*features |= (1ull << VIRTIO_NET_F_MQ);
+
++	/* vhost_kernel supports setting tap MAC address. */
++	*features |= (1ull << VIRTIO_NET_F_MAC);
++
+ 	return 0;
+ }
+
+@@ -371,6 +375,24 @@ vhost_kernel_set_status(struct virtio_user_dev *dev __rte_unused, uint8_t status
+ 	return -ENOTSUP;
+ }
+
++static int
++vhost_kernel_set_config(struct virtio_user_dev *dev,
++			const uint8_t *data, uint32_t off, uint32_t len)
++{
++	struct vhost_kernel_data *backend_data = dev->backend_data;
++
++	if (off == offsetof(struct virtio_net_config, mac)) {
++		if (len != RTE_ETHER_ADDR_LEN) {
++			PMD_DRV_LOG(ERR, "Invalid MAC address length");
++			return -EINVAL;
++		}
++
++		return tap_set_mac(backend_data->tapfds[0], data);
++	}
++
++	return -ENOTSUP;
++}
++
+ /**
+  * Set up environment to talk with a vhost kernel backend.
+  *
+@@ -613,6 +635,7 @@ struct virtio_user_backend_ops virtio_ops_kernel = {
+ 	.set_vring_addr = vhost_kernel_set_vring_addr,
+ 	.get_status = vhost_kernel_get_status,
+ 	.set_status = vhost_kernel_set_status,
++	.set_config = vhost_kernel_set_config,
+ 	.enable_qp = vhost_kernel_enable_queue_pair,
+ 	.update_link_state = vhost_kernel_update_link_state,
+ 	.get_intr_fd = vhost_kernel_get_intr_fd,
+diff --git a/drivers/net/virtio/virtio_user/vhost_kernel_tap.c b/drivers/net/virtio/virtio_user/vhost_kernel_tap.c
+index 611e2e25ec..3e13f8f65b 100644
+--- a/drivers/net/virtio/virtio_user/vhost_kernel_tap.c
++++ b/drivers/net/virtio/virtio_user/vhost_kernel_tap.c
+@@ -112,7 +112,7 @@ tap_get_flags(int tapfd, unsigned int *tap_flags)
+ }
+
+ int
+-tap_set_mac(int tapfd, uint8_t *mac)
++tap_set_mac(int tapfd, const uint8_t *mac)
+ {
+ 	struct ifreq ifr;
+
+diff --git a/drivers/net/virtio/virtio_user/vhost_kernel_tap.h b/drivers/net/virtio/virtio_user/vhost_kernel_tap.h
+index 636a0481be..0b9258dcb7 100644
+--- a/drivers/net/virtio/virtio_user/vhost_kernel_tap.h
++++ b/drivers/net/virtio/virtio_user/vhost_kernel_tap.h
+@@ -40,6 +40,6 @@ int tap_support_features(unsigned int *tap_features);
+ int tap_open(const char *ifname, unsigned int r_flags, bool multi_queue);
+ int tap_get_name(int tapfd, char **ifname);
+ int tap_get_flags(int tapfd, unsigned int *tap_flags);
+-int tap_set_mac(int tapfd, uint8_t *mac);
++int tap_set_mac(int tapfd, const uint8_t *mac);
+
+ #endif
+diff --git a/drivers/net/virtio/virtio_user/virtio_user_dev.c b/drivers/net/virtio/virtio_user/virtio_user_dev.c
+index 187f81b066..d5475bc4eb 100644
+--- a/drivers/net/virtio/virtio_user/virtio_user_dev.c
++++ b/drivers/net/virtio/virtio_user/virtio_user_dev.c
+@@ -790,7 +790,7 @@ virtio_user_dev_init(struct virtio_user_dev *dev, char *path, uint16_t queues,
+ 	if (!packed_vq)
+ 		dev->unsupported_features |= (1ull << VIRTIO_F_RING_PACKED);
+
+-	if (dev->mac_specified)
++	if (dev->mac_specified || (dev->device_features & (1ull << VIRTIO_NET_F_MAC)))
+ 		dev->frontend_features |= (1ull << VIRTIO_NET_F_MAC);
+ 	else
+ 		dev->unsupported_features |= (1ull << VIRTIO_NET_F_MAC);
+--
+2.49.0
+
