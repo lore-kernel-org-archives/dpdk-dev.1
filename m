@@ -2,41 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2916C54E65
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 May 2025 20:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E0BEC54E90
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 May 2025 20:26:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 01DC042E37;
-	Wed, 21 May 2025 22:23:13 +0200 (CEST)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 9778B402CD
- for <dev@dpdk.org>; Wed, 21 May 2025 22:23:11 +0200 (CEST)
-Received: by linux.microsoft.com (Postfix, from userid 1213)
- id B06BD2068347; Wed, 21 May 2025 13:23:10 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B06BD2068347
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1747858990;
- bh=7sUXIODcMzB3O7Rd0vhmVV5uTlQBZ5cY+Kv5xt/dpb8=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=aFUh/GimiY3cyqFGySbTNspjoTi1dAwKtdwc7vaWPCzog0pbaFjWaQqXgBdzkOMyL
- CpRaUEK3Eq0kK+3CBSCvI2PBLrA0cI5U71/3NvfKgrr0TovW/8KHT+vXU7FBsL2FeW
- 8wvGVLiI3MlPVv39A8/r6gEwqUcV4M8MyGQSxyqk=
-Date: Wed, 21 May 2025 13:23:10 -0700
-From: Andre Muezerie <andremue@linux.microsoft.com>
-To: Thomas Monjalon <thomas@monjalon.net>
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>, dev@dpdk.org
-Subject: Re: [PATCH] eal: add getline() function for Windows
-Message-ID: <20250521202310.GA16276@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1746477607-14961-1-git-send-email-andremue@linux.microsoft.com>
- <20250520101433.3a264cb1@hermes.local>
- <20250521003517.GA9927@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <2358541.72vocr9iq0@thomas>
+	by mails.dpdk.org (Postfix) with ESMTP id 756BF42E48;
+	Wed, 21 May 2025 22:26:16 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 599A142E48
+ for <dev@dpdk.org>; Wed, 21 May 2025 22:26:14 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 28DD5206C2;
+ Wed, 21 May 2025 22:26:14 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2358541.72vocr9iq0@thomas>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH v1 3/4] ring: fix potential sync issue between head and
+ tail values
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Wed, 21 May 2025 22:26:12 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FC82@smartserver.smartshare.dk>
+In-Reply-To: <20250521111432.207936-4-konstantin.ananyev@huawei.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v1 3/4] ring: fix potential sync issue between head and
+ tail values
+Thread-Index: AdvKQaZpB5Kmr/4HTquYJ4XX7wzCQQASOSNw
+References: <20250521111432.207936-1-konstantin.ananyev@huawei.com>
+ <20250521111432.207936-4-konstantin.ananyev@huawei.com>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
+	<dev@dpdk.org>
+Cc: <honnappa.nagarahalli@arm.com>, <jerinj@marvell.com>,
+ <hemant.agrawal@nxp.com>, <drc@linux.ibm.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,42 +51,99 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, May 21, 2025 at 09:00:48AM +0200, Thomas Monjalon wrote:
-> 21/05/2025 02:35, Andre Muezerie:
-> > On Tue, May 20, 2025 at 10:14:33AM -0700, Stephen Hemminger wrote:
-> > > On Mon,  5 May 2025 13:40:07 -0700
-> > > Andre Muezerie <andremue@linux.microsoft.com> wrote:
-> > > 
-> > > > Existing DPDK code uses getline(), which is a POSIX function and is
-> > > > not available in the Windows APIs.
-> > > > 
-> > > > Instead of rewriting it or coming up with some other replacement, this
-> > > > patch makes use of the implementation provided by NetBSD to make it
-> > > > possible to compile code dependent on getline on Windows.
-> > > > 
-> > > > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-> > > 
-> > > Not sure, are BSD-2 and BSD-3 compatible?
-> > > Getting license exception approved requires going through the governing board
-> > > which can take up to 6 months.
-> > 
-> > Hi Stephen, I would appreciate some guidance here.
-> > 
-> > My understanding is that in general, BSD-2 licensed code can be used in BSD-3
-> > licensed projects, as long as the BSD-2 license is retained in the original
-> >  (BSD-2) files.
-> > 
-> > I do see that BSD-2 was listed in the exception table (for getopt function). It's
-> > not clear to me why it needed to be listed as an exception, but if that was
-> > needed, it indicates that the same should be done for getline(). Is that not
-> > the case?
-> 
-> No matter the compatibility agreed or not in courts,
-> if the licence is different we note it as an exception,
-> so it is crystal clear for users of DPDK.
-> We don't want to have any surprise and we avoid exceptions,
-> that's why the Governing Board has to accept it.
-> 
-Thanks for clarifying, Thomas.
-I sent an email to the Governing Board requesting the exception.
-
+PiBGcm9tOiBLb25zdGFudGluIEFuYW55ZXYgW21haWx0bzprb25zdGFudGluLmFuYW55ZXZAaHVh
+d2VpLmNvbV0NCj4gU2VudDogV2VkbmVzZGF5LCAyMSBNYXkgMjAyNSAxMy4xNQ0KPiANCj4gVGhp
+cyBwYXRjaCBhaW1zIHNldmVyYWwgcHVycG9zZXM6DQo+IC0gcHJvdmlkZSBhbiBhbHRlcm5hdGl2
+ZSAoYW5kIEkgdGhpbmsgYSBiZXR0ZXIpIHdheSB0byBmaXggdGhlDQo+ICAgaXNzdWUgZGlzY3Vz
+c2VkIGluIHByZXZpb3VzIHBhdGNoOg0KPiAgICJyaW5nL3NvcmluZzogZml4IHN5bmNocm9uaXph
+dGlvbiBpc3N1ZSBiZXR3ZWVuIGhlYWQgYW5kIHRhaWwgdmFsdWVzIg0KPiAtIG1ha2Ugc3VyZSB0
+aGF0IHN1Y2ggcHJvYmxlbSB3b3VsZG7igJl0IGhhcHBlbiB3aXRoaW4gb3RoZXIgdXNhZ2VzIG9m
+DQo+ICAgX19ydGVfcmluZ19oZWFkdGFpbF9tb3ZlX2hlYWQoKSDigJMgYm90aCBjdXJyZW50IHJ0
+ZV9yaW5nDQo+ICAgaW1wbGVtZW50YXRpb24gYW5kIHBvc3NpYmxlIGZ1dHVyZSB1c2UtY2FzZXMu
+DQo+IC0gc3RlcCB0b3dhcmRzIHVuaWZpY2F0aW9uIG9mIG1vdmVfaGVhZCgpIGltcGxlbWVudGF0
+aW9ucyBhbmQNCj4gICByZW1vdmluZyBydGVfcmluZ19nZW5lcmljX3B2dC5oDQo+IEl0IHVzZXMg
+QWNxdWlyZS1SZWxlYXNlIG1lbW9yeSBvcmRlcmluZyBmb3IgQ0FTIG9wZXJhdGlvbiBpbg0KPiBt
+b3ZlX2hlYWQoKS4NCj4gVGhhdCBndWFyYW50ZWVzIHRoYXQgY29ycmVzcG9uZGluZyDigJh0YWls
+4oCZIHVwZGF0ZXMgd2lsbCBiZSB2aXNpYmxlDQo+IGJlZm9yZSBjdXJyZW50IOKAmGhlYWTigJkg
+aXMgdXBkYXRlZC4NCj4gQXMgSSBzYWlkIGJlZm9yZTogSSB0aGluayB0aGF0IGluIHRoZW9yeSB0
+aGUgcHJvYmxlbSBkZXNjcmliZWQgaW4NCj4gcHJldmlvdXMgcGF0Y2ggbWlnaHQgaGFwcGVuIHdp
+dGggb3VyIGNvbnZlbnRpb25hbCBydGVfcmluZyB0b28NCj4gKHdoZW4gUlRFX1VTRV9DMTFfTUVN
+X01PREVMIGVuYWJsZWQpLg0KPiBCdXQsIHNvIGZhciBJIGRpZG7igJl0IG1hbmFnZSB0byByZXBy
+b2R1Y2UgaXQgaW4gcmVhbGl0eS4NCg0KT3ZlcmFsbCwgSSB0aGluayB0aGUgY29kZSBiZWNvbWVz
+IG1vcmUgZWxlZ2FudCBhbmQgbXVjaCBlYXNpZXIgdG8gdW5kZXJzdGFuZCB3aXRoIHRoaXMgcGF0
+Y2gsIHdoZXJlIHRoZSBhdG9taWMgb3BlcmF0aW9ucyBhcmUgcGVyZm9ybWVkIGV4cGxpY2l0bHkg
+b24gdGhlIGhlYWQvdGFpbCwgZWxpbWluYXRpbmcgdGhlIG5lZWQgZm9yIHRoZSBicm9hZC1yZWFj
+aGluZyBydGVfYXRvbWljX3RocmVhZF9mZW5jZSgpLg0KDQpUaGUgZGV0YWlsZWQgaW5saW5lIGNv
+ZGUgY29tbWVudHMgYXJlIGFsc28gYSBnb29kIGltcHJvdmVtZW50Lg0KDQo+IEZvciB0aGF0IHJl
+YXNvbiBhbmQgYWxzbyBiZWNhdXNlIGl0IHRvdWNoZXMgYSBjcml0aWNhbCBydGVfcmluZyBjb2Rl
+LQ0KPiBwYXRoLA0KPiBJIHB1dCB0aGVzZSBjaGFuZ2VzIGludG8gYSBzZXBhcmF0ZSBwYXRjaC4g
+RXhwZWN0IGFsbCBpbnRlcmVzdGVkDQo+IHN0YWtlaG9sZGVycyB0byBjb21lLXVwIHdpdGggdGhl
+aXIgY29tbWVudHMgYW5kIG9ic2VydmF0aW9ucy4NCj4gUmVnYXJkaW5nIHBlcmZvcm1hbmNlIGlt
+cGFjdCDigJMgb24gbXkgYm94ZXMgYm90aCByaW5nX3BlcmZfYXV0b3Rlc3QgYW5kDQo+IHJpbmdf
+c3RyZXNzX2F1dG90ZXN0IOKAkyBzaG93IGEgbWl4ZWQgc2V0IG9mIHJlc3VsdHM6IHNvbWUgb2Yg
+dGhlbSBiZWNvbWUNCj4gZmV3IGN5Y2xlcyBmYXN0ZXIsIGFub3RoZXIgZmV3IGN5Y2xlcyBzbG93
+ZXIuDQo+IEJ1dCBzbyBmYXIsIEkgZGlkbuKAmXQgbm90aWNlIGFueSByZWFsIGRlZ3JhZGF0aW9u
+cyB3aXRoIHRoYXQgcGF0Y2guDQoNCk1heWJlIGl0IHdhcyB0aGUgYnJvYWQtcmVhY2hpbmcgcnRl
+X2F0b21pY190aHJlYWRfZmVuY2UoKSB0aGF0IG1hZGUgdGhlIEMxMSB2YXJpYW50IHNsb3cgb24g
+b3RoZXIgYXJjaGl0ZWN0dXJlcy4NClRoaXMgbWFrZXMgbWUgY3VyaW91cyBhYm91dCBwZXJmb3Jt
+YW5jZSByZXN1bHRzIG9uIG90aGVyIGFyY2hpdGVjdHVyZXMgd2l0aCB0aGlzIHBhdGNoLg0KDQo+
+IA0KPiBGaXhlczogYjU0NThlMmNjNDgzICgicmluZzogaW50cm9kdWNlIHN0YWdlZCBvcmRlcmVk
+IHJpbmciKQ0KPiBGaXhlczogMWNjMzYzYjhjZTA2ICgicmluZzogaW50cm9kdWNlIEhUUyByaW5n
+IG1vZGUiKQ0KPiBGaXhlczogZTZiYTQ3MzFjMGYzICgicmluZzogaW50cm9kdWNlIFJUUyByaW5n
+IG1vZGUiKQ0KPiBGaXhlczogNDk1OTRhNjMxNDdhICgicmluZy9jMTE6IHJlbGF4IG9yZGVyaW5n
+IGZvciBsb2FkIGFuZCBzdG9yZSBvZg0KPiB0aGUgaGVhZCIpDQo+IA0KPiBTaWduZWQtb2ZmLWJ5
+OiBLb25zdGFudGluIEFuYW55ZXYgPGtvbnN0YW50aW4uYW5hbnlldkBodWF3ZWkuY29tPg0KPiAt
+LS0NCj4gIGxpYi9yaW5nL3J0ZV9yaW5nX2MxMV9wdnQuaCAgICAgIHwgMjcgKysrKysrKysrKysr
+KysrKystLS0tLS0tLS0tDQo+ICBsaWIvcmluZy9ydGVfcmluZ19odHNfZWxlbV9wdnQuaCB8ICA2
+ICsrKystLQ0KPiAgbGliL3JpbmcvcnRlX3JpbmdfcnRzX2VsZW1fcHZ0LmggfCAgNiArKysrLS0N
+Cj4gIGxpYi9yaW5nL3NvcmluZy5jICAgICAgICAgICAgICAgIHwgIDUgLS0tLS0NCj4gIDQgZmls
+ZXMgY2hhbmdlZCwgMjUgaW5zZXJ0aW9ucygrKSwgMTkgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZm
+IC0tZ2l0IGEvbGliL3JpbmcvcnRlX3JpbmdfYzExX3B2dC5oIGIvbGliL3JpbmcvcnRlX3Jpbmdf
+YzExX3B2dC5oDQo+IGluZGV4IDA4NDVjZDZkY2YuLjZkMWM0NmRmOWEgMTAwNjQ0DQo+IC0tLSBh
+L2xpYi9yaW5nL3J0ZV9yaW5nX2MxMV9wdnQuaA0KPiArKysgYi9saWIvcmluZy9ydGVfcmluZ19j
+MTFfcHZ0LmgNCj4gQEAgLTc3LDIwICs3NywxOSBAQCBfX3J0ZV9yaW5nX2hlYWR0YWlsX21vdmVf
+aGVhZChzdHJ1Y3QNCj4gcnRlX3JpbmdfaGVhZHRhaWwgKmQsDQo+ICAJaW50IHN1Y2Nlc3M7DQo+
+ICAJdW5zaWduZWQgaW50IG1heCA9IG47DQo+IA0KPiArCS8qIEVuc3VyZSB0aGUgaGVhZCBpcyBy
+ZWFkIGJlZm9yZSB0YWlsICovDQoNCk1heWJlICJkLT5oZWFkIiBhbmQgInMtPnRhaWwiIGluc3Rl
+YWQgb2YgImhlYWQiIGFuZCAidGFpbCIuDQoNCj4gIAkqb2xkX2hlYWQgPSBydGVfYXRvbWljX2xv
+YWRfZXhwbGljaXQoJmQtPmhlYWQsDQo+IC0JCQlydGVfbWVtb3J5X29yZGVyX3JlbGF4ZWQpOw0K
+PiArCQkJcnRlX21lbW9yeV9vcmRlcl9hY3F1aXJlKTsNCj4gIAlkbyB7DQo+ICAJCS8qIFJlc2V0
+IG4gdG8gdGhlIGluaXRpYWwgYnVyc3QgY291bnQgKi8NCj4gIAkJbiA9IG1heDsNCj4gDQo+IC0J
+CS8qIEVuc3VyZSB0aGUgaGVhZCBpcyByZWFkIGJlZm9yZSB0YWlsICovDQo+IC0JCXJ0ZV9hdG9t
+aWNfdGhyZWFkX2ZlbmNlKHJ0ZV9tZW1vcnlfb3JkZXJfYWNxdWlyZSk7DQo+IC0NCj4gLQkJLyog
+bG9hZC1hY3F1aXJlIHN5bmNocm9uaXplIHdpdGggc3RvcmUtcmVsZWFzZSBvZiBodC0+dGFpbA0K
+PiAtCQkgKiBpbiB1cGRhdGVfdGFpbC4NCj4gKwkJLyoNCj4gKwkJICogUmVhZCBzLT50YWlsIHZh
+bHVlLiBOb3RlIHRoYXQgaXQgd2lsbCBiZSBsb2FkZWQgYWZ0ZXINCj4gKwkJICogZC0+aGVhZCBs
+b2FkLCBidXQgYmVmb3JlIENBUyBvcGVyYXRpb24gZm9yIHRoZSBkLT5oZWFkLg0KPiAgCQkgKi8N
+Cj4gIAkJc3RhaWwgPSBydGVfYXRvbWljX2xvYWRfZXhwbGljaXQoJnMtPnRhaWwsDQo+IC0JCQkJ
+CXJ0ZV9tZW1vcnlfb3JkZXJfYWNxdWlyZSk7DQo+ICsJCQkJCXJ0ZV9tZW1vcnlfb3JkZXJfcmVs
+YXhlZCk7DQo+IA0KPiAgCQkvKiBUaGUgc3VidHJhY3Rpb24gaXMgZG9uZSBiZXR3ZWVuIHR3byB1
+bnNpZ25lZCAzMmJpdHMNCj4gdmFsdWUNCj4gIAkJICogKHRoZSByZXN1bHQgaXMgYWx3YXlzIG1v
+ZHVsbyAzMiBiaXRzIGV2ZW4gaWYgd2UgaGF2ZQ0KPiBAQCAtMTEyLDExICsxMTEsMTkgQEAgX19y
+dGVfcmluZ19oZWFkdGFpbF9tb3ZlX2hlYWQoc3RydWN0DQo+IHJ0ZV9yaW5nX2hlYWR0YWlsICpk
+LA0KPiAgCQkJZC0+aGVhZCA9ICpuZXdfaGVhZDsNCj4gIAkJCXN1Y2Nlc3MgPSAxOw0KPiAgCQl9
+IGVsc2UNCj4gLQkJCS8qIG9uIGZhaWx1cmUsICpvbGRfaGVhZCBpcyB1cGRhdGVkICovDQo+ICsJ
+CQkvKg0KPiArCQkJICogb24gZmFpbHVyZSwgKm9sZF9oZWFkIGlzIHVwZGF0ZWQuDQo+ICsJCQkg
+KiB0aGlzIENBUyhBQ1FfUkVMLCBBQ1FVSVJFKSBzZXJ2ZXMgYXMgYSBob2lzdA0KPiArCQkJICog
+YmFycmllciB0byBwcmV2ZW50Og0KPiArCQkJICogIC0gT09PIHJlYWRzIG9mIGNvbnMgdGFpbCB2
+YWx1ZQ0KPiArCQkJICogIC0gT09PIGNvcHkgb2YgZWxlbXMgZnJvbSB0aGUgcmluZw0KDQpJdCdz
+IG5vdCByZWFsbHkgdGhlIEFDUV9SRUwgdGhhdCBkb2VzIHRoaXMuIEl0J3MgdGhlIEFRVUlSRS4N
+ClNvIHRoaXMgY29tbWVudCBuZWVkcyBzb21lIGFkanVzdG1lbnQuDQoNCkFsc28gbWF5YmUgInMt
+PnRhaWwiIGluc3RlYWQgb2YgImNvbnMgdGFpbCIuDQoNCj4gKwkJCSAqICBBbHNvIFJFTEVBU0Ug
+Z3VhcmFudGVlcyB0aGF0IGxhdGVzdCB0YWlsIHZhbHVlDQoNCk1heWJlICJsYXRlc3Qgcy0+dGFp
+bCIgaW5zdGVhZCBvZiAibGF0ZXN0IHRhaWwiLg0KDQo+ICsJCQkgKiAgd2lsbCBiZWNvbWUgdmlz
+aWJsZSBiZWZvcmUgdGhlIG5ldyBoZWFkIHZhbHVlLg0KDQpNYXliZSAibmV3IGQtPmhlYWQgdmFs
+dWUiIGluc3RlYWQgb2YgIm5ldyBoZWFkIHZhbHVlIi4NCg0KPiArCQkJICovDQo+ICAJCQlzdWNj
+ZXNzID0NCj4gcnRlX2F0b21pY19jb21wYXJlX2V4Y2hhbmdlX3N0cm9uZ19leHBsaWNpdCgNCj4g
+IAkJCQkJJmQtPmhlYWQsIG9sZF9oZWFkLCAqbmV3X2hlYWQsDQo+IC0JCQkJCXJ0ZV9tZW1vcnlf
+b3JkZXJfcmVsYXhlZCwNCj4gLQkJCQkJcnRlX21lbW9yeV9vcmRlcl9yZWxheGVkKTsNCj4gKwkJ
+CQkJcnRlX21lbW9yeV9vcmRlcl9hY3FfcmVsLA0KPiArCQkJCQlydGVfbWVtb3J5X29yZGVyX2Fj
+cXVpcmUpOw0KPiAgCX0gd2hpbGUgKHVubGlrZWx5KHN1Y2Nlc3MgPT0gMCkpOw0KPiAgCXJldHVy
+biBuOw0KPiAgfQ0KDQpJIGhhdmVuJ3QgcmV2aWV3ZWQgdGhlIHJlbWFpbmluZyBjaGFuZ2VzIGlu
+IGRldGFpbCwgYnV0IEkgdGhpbmsgbXkgZmVlZGJhY2sgdGhhdCB0aGUgY29tbWVudHMgc2hvdWxk
+IG1lbnRpb24gQUNRVUlSRSBpbnN0ZWFkIG9mIEFDUV9SRUwgYWxzbyBhcHBseSB0byB0aGUgb3Ro
+ZXIgZmlsZXMuDQoNCj4gZGlmZiAtLWdpdCBhL2xpYi9yaW5nL3J0ZV9yaW5nX2h0c19lbGVtX3B2
+dC5oDQo+IGIvbGliL3JpbmcvcnRlX3JpbmdfaHRzX2VsZW1fcHZ0LmgNCg0KPiBkaWZmIC0tZ2l0
+IGEvbGliL3JpbmcvcnRlX3JpbmdfcnRzX2VsZW1fcHZ0LmgNCj4gYi9saWIvcmluZy9ydGVfcmlu
+Z19ydHNfZWxlbV9wdnQuaA0KDQo+IGRpZmYgLS1naXQgYS9saWIvcmluZy9zb3JpbmcuYyBiL2xp
+Yi9yaW5nL3NvcmluZy5jDQoNCg==
