@@ -2,20 +2,20 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C227BC2D0CD
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 May 2025 15:20:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C62B7C2D0CD
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 May 2025 15:21:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 941C542DC1;
-	Wed, 21 May 2025 17:20:36 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id EA7AB42DC7;
+	Wed, 21 May 2025 17:21:25 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 3216042DB0
- for <dev@dpdk.org>; Wed, 21 May 2025 17:20:35 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 000F942DB0
+ for <dev@dpdk.org>; Wed, 21 May 2025 17:21:23 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 18341467B0; Wed, 21 May 2025 17:20:35 +0200 (CEST)
+ id EB9FA467B0; Wed, 21 May 2025 17:21:23 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1709] net/mlx5 warnings when build with lto
-Date: Wed, 21 May 2025 15:20:35 +0000
+Subject: [DPDK/ethdev Bug 1710] net/bnxt build failure with LTO enabled
+Date: Wed, 21 May 2025 15:21:24 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -34,8 +34,8 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1709-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17478408340.1EAeE70ea.2314293
+Message-ID: <bug-1710-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17478408830.2275.2314791
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -55,8 +55,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17478408340.1EAeE70ea.2314293
-Date: Wed, 21 May 2025 17:20:34 +0200
+--17478408830.2275.2314791
+Date: Wed, 21 May 2025 17:21:23 +0200
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -64,10 +64,10 @@ X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1709
+https://bugs.dpdk.org/show_bug.cgi?id=3D1710
 
-            Bug ID: 1709
-           Summary: net/mlx5 warnings when build with lto
+            Bug ID: 1710
+           Summary: net/bnxt build failure with LTO enabled
            Product: DPDK
            Version: unspecified
           Hardware: All
@@ -80,165 +80,36 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D1709
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-Suspect that temporary buffer may not be big enough.
-LTO enables more inlining and therefore more bounds checking.
-
-[3511/3591] Linking target drivers/librte_net_mlx5.so.25.2
-
-In function =E2=80=98mlx5dr_action_prepare_decap_l3_data=E2=80=99,
-    inlined from =E2=80=98mlx5dr_action_handle_tunnel_l3_to_l2=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2151:3,
-    inlined from =E2=80=98mlx5dr_action_create_reformat_hws=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2221:9,
-    inlined from =E2=80=98mlx5dr_action_create_reformat=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2278:8:
-../drivers/net/mlx5/hws/mlx5dr_action.c:3630:17: warning: writing 4 bytes i=
-nto
-a region of size 0 [-Wstringop-overflow=3D]
- 3630 |                 memcpy(dst, e_src, MLX5DR_ACTION_INLINE_DATA_SIZE);=
- /*
-data */
+3472/3591] Linking target drivers/librte_net_bnxt.so.25.2
+In function =E2=80=98tfo_open=E2=80=99,
+    inlined from =E2=80=98tfc_open=E2=80=99 at ../drivers/net/bnxt/tf_core/=
+v3/tfc_init.c:34:2,
+    inlined from =E2=80=98ulp_tfc_ctx_attach=E2=80=99 at
+../drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c:783:7:
+../drivers/net/bnxt/tf_core/v3/tfo.c:108:17: warning: =E2=80=98rte_free=E2=
+=80=99 called on
+pointer =E2=80=98bp_44(D)=E2=80=99 with nonzero offset 800 [-Wfree-nonheap-=
+object]
+  108 |                 rte_free(tfo);
       |                 ^
-../drivers/net/mlx5/hws/mlx5dr_action.c: In function
-=E2=80=98mlx5dr_action_create_reformat=E2=80=99:
-../drivers/net/mlx5/hws/mlx5dr_action.c:2131:17: note: at offset [76, 52423=
-6]
-into destination object =E2=80=98mh_data=E2=80=99 of size 64
- 2131 |         uint8_t mh_data[MLX5DR_ACTION_REFORMAT_DATA_SIZE] =3D {0};
-      |                 ^
-In function =E2=80=98mlx5dr_action_prepare_decap_l3_data=E2=80=99,
-    inlined from =E2=80=98mlx5dr_action_handle_tunnel_l3_to_l2=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2151:3,
-    inlined from =E2=80=98mlx5dr_action_create_reformat_hws=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2221:9,
-    inlined from =E2=80=98mlx5dr_action_create_reformat=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2278:8:
-../drivers/net/mlx5/hws/mlx5dr_action.c:3630:17: warning: writing 4 bytes i=
-nto
-a region of size 0 [-Wstringop-overflow=3D]
- 3630 |                 memcpy(dst, e_src, MLX5DR_ACTION_INLINE_DATA_SIZE);=
- /*
-data */
-      |                 ^
-../drivers/net/mlx5/hws/mlx5dr_action.c: In function
-=E2=80=98mlx5dr_action_create_reformat=E2=80=99:
-../drivers/net/mlx5/hws/mlx5dr_action.c:2131:17: note: at offset [84, 52424=
-4]
-into destination object =E2=80=98mh_data=E2=80=99 of size 64
- 2131 |         uint8_t mh_data[MLX5DR_ACTION_REFORMAT_DATA_SIZE] =3D {0};
-      |                 ^
-In function =E2=80=98mlx5dr_action_prepare_decap_l3_data=E2=80=99,
-    inlined from =E2=80=98mlx5dr_action_handle_tunnel_l3_to_l2=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2151:3,
-    inlined from =E2=80=98mlx5dr_action_create_reformat_hws=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2221:9,
-    inlined from =E2=80=98mlx5dr_action_create_reformat=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2278:8:
-../drivers/net/mlx5/hws/mlx5dr_action.c:3630:17: warning: writing 4 bytes i=
-nto
-a region of size 0 [-Wstringop-overflow=3D]
- 3630 |                 memcpy(dst, e_src, MLX5DR_ACTION_INLINE_DATA_SIZE);=
- /*
-data */
-      |                 ^
-../drivers/net/mlx5/hws/mlx5dr_action.c: In function
-=E2=80=98mlx5dr_action_create_reformat=E2=80=99:
-../drivers/net/mlx5/hws/mlx5dr_action.c:2131:17: note: at offset [92, 52425=
-2]
-into destination object =E2=80=98mh_data=E2=80=99 of size 64
- 2131 |         uint8_t mh_data[MLX5DR_ACTION_REFORMAT_DATA_SIZE] =3D {0};
-      |                 ^
-In function =E2=80=98mlx5dr_action_prepare_decap_l3_data=E2=80=99,
-    inlined from =E2=80=98mlx5dr_action_handle_tunnel_l3_to_l2=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2151:3,
-    inlined from =E2=80=98mlx5dr_action_create_reformat_hws=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2221:9,
-    inlined from =E2=80=98mlx5dr_action_create_reformat=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2278:8:
-../drivers/net/mlx5/hws/mlx5dr_action.c:3630:17: warning: writing 4 bytes i=
-nto
-a region of size 0 [-Wstringop-overflow=3D]
- 3630 |                 memcpy(dst, e_src, MLX5DR_ACTION_INLINE_DATA_SIZE);=
- /*
-data */
-      |                 ^
-../drivers/net/mlx5/hws/mlx5dr_action.c: In function
-=E2=80=98mlx5dr_action_create_reformat=E2=80=99:
-../drivers/net/mlx5/hws/mlx5dr_action.c:2131:17: note: at offset [100, 5242=
-60]
-into destination object =E2=80=98mh_data=E2=80=99 of size 64
- 2131 |         uint8_t mh_data[MLX5DR_ACTION_REFORMAT_DATA_SIZE] =3D {0};
-      |                 ^
-In function =E2=80=98mlx5dr_action_prepare_decap_l3_data=E2=80=99,
-    inlined from =E2=80=98mlx5dr_action_handle_tunnel_l3_to_l2=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2151:3,
-    inlined from =E2=80=98mlx5dr_action_create_reformat_hws=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2221:9,
-    inlined from =E2=80=98mlx5dr_action_create_reformat=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2278:8:
-../drivers/net/mlx5/hws/mlx5dr_action.c:3630:17: warning: writing 4 bytes i=
-nto
-a region of size 0 [-Wstringop-overflow=3D]
- 3630 |                 memcpy(dst, e_src, MLX5DR_ACTION_INLINE_DATA_SIZE);=
- /*
-data */
-      |                 ^
-../drivers/net/mlx5/hws/mlx5dr_action.c: In function
-=E2=80=98mlx5dr_action_create_reformat=E2=80=99:
-../drivers/net/mlx5/hws/mlx5dr_action.c:2131:17: note: at offset [108, 5242=
-68]
-into destination object =E2=80=98mh_data=E2=80=99 of size 64
- 2131 |         uint8_t mh_data[MLX5DR_ACTION_REFORMAT_DATA_SIZE] =3D {0};
-      |                 ^
-In function =E2=80=98mlx5dr_action_prepare_decap_l3_data=E2=80=99,
-    inlined from =E2=80=98mlx5dr_action_handle_tunnel_l3_to_l2=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2151:3,
-    inlined from =E2=80=98mlx5dr_action_create_reformat_hws=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2221:9,
-    inlined from =E2=80=98mlx5dr_action_create_reformat=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2278:8:
-../drivers/net/mlx5/hws/mlx5dr_action.c:3630:17: warning: writing 4 bytes i=
-nto
-a region of size 0 [-Wstringop-overflow=3D]
- 3630 |                 memcpy(dst, e_src, MLX5DR_ACTION_INLINE_DATA_SIZE);=
- /*
-data */
-      |                 ^
-../drivers/net/mlx5/hws/mlx5dr_action.c: In function
-=E2=80=98mlx5dr_action_create_reformat=E2=80=99:
-../drivers/net/mlx5/hws/mlx5dr_action.c:2131:17: note: at offset [116, 5242=
-76]
-into destination object =E2=80=98mh_data=E2=80=99 of size 64
- 2131 |         uint8_t mh_data[MLX5DR_ACTION_REFORMAT_DATA_SIZE] =3D {0};
-      |                 ^
-In function =E2=80=98mlx5dr_action_prepare_decap_l3_data=E2=80=99,
-    inlined from =E2=80=98mlx5dr_action_handle_tunnel_l3_to_l2=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2151:3,
-    inlined from =E2=80=98mlx5dr_action_create_reformat_hws=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2221:9,
-    inlined from =E2=80=98mlx5dr_action_create_reformat=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2278:8:
-../drivers/net/mlx5/hws/mlx5dr_action.c:3630:17: warning: writing 4 bytes i=
-nto
-a region of size 0 [-Wstringop-overflow=3D]
- 3630 |                 memcpy(dst, e_src, MLX5DR_ACTION_INLINE_DATA_SIZE);=
- /*
-data */
-      |                 ^
-../drivers/net/mlx5/hws/mlx5dr_action.c: In function
-=E2=80=98mlx5dr_action_create_reformat=E2=80=99:
-../drivers/net/mlx5/hws/mlx5dr_action.c:2131:17: note: at offset [124, 5242=
-84]
-into destination object =E2=80=98mh_data=E2=80=99 of size 64
- 2131 |         uint8_t mh_data[MLX5DR_ACTION_REFORMAT_DATA_SIZE] =3D {0};
+In function =E2=80=98tfo_open=E2=80=99,
+    inlined from =E2=80=98tfc_open=E2=80=99 at ../drivers/net/bnxt/tf_core/=
+v3/tfc_init.c:34:2,
+    inlined from =E2=80=98ulp_tfc_init=E2=80=99 at
+../drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c:957:7:
+../drivers/net/bnxt/tf_core/v3/tfo.c:108:17: warning: =E2=80=98rte_free=E2=
+=80=99 called on
+pointer =E2=80=98bp_74(D)=E2=80=99 with nonzero offset 800 [-Wfree-nonheap-=
+object]
+  108 |                 rte_free(tfo);
       |                 ^
 
 --=20
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17478408340.1EAeE70ea.2314293
-Date: Wed, 21 May 2025 17:20:34 +0200
+--17478408830.2275.2314791
+Date: Wed, 21 May 2025 17:21:23 +0200
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -256,14 +127,14 @@ bz_new_table">
           <th>Bug ID</th>
           <td><a class=3D"bz_bug_link=20
           bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - net/mlx5 warnings when build with lto"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1709">1709</a>
+   title=3D"UNCONFIRMED - net/bnxt build failure with LTO enabled"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1710">1710</a>
           </td>
         </tr>
 
         <tr>
           <th>Summary</th>
-          <td>net/mlx5 warnings when build with lto
+          <td>net/bnxt build failure with LTO enabled
           </td>
         </tr>
 
@@ -334,158 +205,29 @@ bz_new_table">
         </tr></table>
       <p>
         <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">Suspect that temporary buffer may =
-not be big enough.
-LTO enables more inlining and therefore more bounds checking.
-
-[3511/3591] Linking target drivers/librte_net_mlx5.so.25.2
-
-In function =E2=80=98mlx5dr_action_prepare_decap_l3_data=E2=80=99,
-    inlined from =E2=80=98mlx5dr_action_handle_tunnel_l3_to_l2=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2151:3,
-    inlined from =E2=80=98mlx5dr_action_create_reformat_hws=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2221:9,
-    inlined from =E2=80=98mlx5dr_action_create_reformat=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2278:8:
-../drivers/net/mlx5/hws/mlx5dr_action.c:3630:17: warning: writing 4 bytes i=
-nto
-a region of size 0 [-Wstringop-overflow=3D]
- 3630 |                 memcpy(dst, e_src, MLX5DR_ACTION_INLINE_DATA_SIZE);=
- /*
-data */
+          <pre class=3D"bz_comment_text">3472/3591] Linking target drivers/=
+librte_net_bnxt.so.25.2
+In function =E2=80=98tfo_open=E2=80=99,
+    inlined from =E2=80=98tfc_open=E2=80=99 at ../drivers/net/bnxt/tf_core/=
+v3/tfc_init.c:34:2,
+    inlined from =E2=80=98ulp_tfc_ctx_attach=E2=80=99 at
+../drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c:783:7:
+../drivers/net/bnxt/tf_core/v3/tfo.c:108:17: warning: =E2=80=98rte_free=E2=
+=80=99 called on
+pointer =E2=80=98bp_44(D)=E2=80=99 with nonzero offset 800 [-Wfree-nonheap-=
+object]
+  108 |                 rte_free(tfo);
       |                 ^
-../drivers/net/mlx5/hws/mlx5dr_action.c: In function
-=E2=80=98mlx5dr_action_create_reformat=E2=80=99:
-../drivers/net/mlx5/hws/mlx5dr_action.c:2131:17: note: at offset [76, 52423=
-6]
-into destination object =E2=80=98mh_data=E2=80=99 of size 64
- 2131 |         uint8_t mh_data[MLX5DR_ACTION_REFORMAT_DATA_SIZE] =3D {0};
-      |                 ^
-In function =E2=80=98mlx5dr_action_prepare_decap_l3_data=E2=80=99,
-    inlined from =E2=80=98mlx5dr_action_handle_tunnel_l3_to_l2=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2151:3,
-    inlined from =E2=80=98mlx5dr_action_create_reformat_hws=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2221:9,
-    inlined from =E2=80=98mlx5dr_action_create_reformat=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2278:8:
-../drivers/net/mlx5/hws/mlx5dr_action.c:3630:17: warning: writing 4 bytes i=
-nto
-a region of size 0 [-Wstringop-overflow=3D]
- 3630 |                 memcpy(dst, e_src, MLX5DR_ACTION_INLINE_DATA_SIZE);=
- /*
-data */
-      |                 ^
-../drivers/net/mlx5/hws/mlx5dr_action.c: In function
-=E2=80=98mlx5dr_action_create_reformat=E2=80=99:
-../drivers/net/mlx5/hws/mlx5dr_action.c:2131:17: note: at offset [84, 52424=
-4]
-into destination object =E2=80=98mh_data=E2=80=99 of size 64
- 2131 |         uint8_t mh_data[MLX5DR_ACTION_REFORMAT_DATA_SIZE] =3D {0};
-      |                 ^
-In function =E2=80=98mlx5dr_action_prepare_decap_l3_data=E2=80=99,
-    inlined from =E2=80=98mlx5dr_action_handle_tunnel_l3_to_l2=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2151:3,
-    inlined from =E2=80=98mlx5dr_action_create_reformat_hws=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2221:9,
-    inlined from =E2=80=98mlx5dr_action_create_reformat=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2278:8:
-../drivers/net/mlx5/hws/mlx5dr_action.c:3630:17: warning: writing 4 bytes i=
-nto
-a region of size 0 [-Wstringop-overflow=3D]
- 3630 |                 memcpy(dst, e_src, MLX5DR_ACTION_INLINE_DATA_SIZE);=
- /*
-data */
-      |                 ^
-../drivers/net/mlx5/hws/mlx5dr_action.c: In function
-=E2=80=98mlx5dr_action_create_reformat=E2=80=99:
-../drivers/net/mlx5/hws/mlx5dr_action.c:2131:17: note: at offset [92, 52425=
-2]
-into destination object =E2=80=98mh_data=E2=80=99 of size 64
- 2131 |         uint8_t mh_data[MLX5DR_ACTION_REFORMAT_DATA_SIZE] =3D {0};
-      |                 ^
-In function =E2=80=98mlx5dr_action_prepare_decap_l3_data=E2=80=99,
-    inlined from =E2=80=98mlx5dr_action_handle_tunnel_l3_to_l2=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2151:3,
-    inlined from =E2=80=98mlx5dr_action_create_reformat_hws=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2221:9,
-    inlined from =E2=80=98mlx5dr_action_create_reformat=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2278:8:
-../drivers/net/mlx5/hws/mlx5dr_action.c:3630:17: warning: writing 4 bytes i=
-nto
-a region of size 0 [-Wstringop-overflow=3D]
- 3630 |                 memcpy(dst, e_src, MLX5DR_ACTION_INLINE_DATA_SIZE);=
- /*
-data */
-      |                 ^
-../drivers/net/mlx5/hws/mlx5dr_action.c: In function
-=E2=80=98mlx5dr_action_create_reformat=E2=80=99:
-../drivers/net/mlx5/hws/mlx5dr_action.c:2131:17: note: at offset [100, 5242=
-60]
-into destination object =E2=80=98mh_data=E2=80=99 of size 64
- 2131 |         uint8_t mh_data[MLX5DR_ACTION_REFORMAT_DATA_SIZE] =3D {0};
-      |                 ^
-In function =E2=80=98mlx5dr_action_prepare_decap_l3_data=E2=80=99,
-    inlined from =E2=80=98mlx5dr_action_handle_tunnel_l3_to_l2=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2151:3,
-    inlined from =E2=80=98mlx5dr_action_create_reformat_hws=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2221:9,
-    inlined from =E2=80=98mlx5dr_action_create_reformat=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2278:8:
-../drivers/net/mlx5/hws/mlx5dr_action.c:3630:17: warning: writing 4 bytes i=
-nto
-a region of size 0 [-Wstringop-overflow=3D]
- 3630 |                 memcpy(dst, e_src, MLX5DR_ACTION_INLINE_DATA_SIZE);=
- /*
-data */
-      |                 ^
-../drivers/net/mlx5/hws/mlx5dr_action.c: In function
-=E2=80=98mlx5dr_action_create_reformat=E2=80=99:
-../drivers/net/mlx5/hws/mlx5dr_action.c:2131:17: note: at offset [108, 5242=
-68]
-into destination object =E2=80=98mh_data=E2=80=99 of size 64
- 2131 |         uint8_t mh_data[MLX5DR_ACTION_REFORMAT_DATA_SIZE] =3D {0};
-      |                 ^
-In function =E2=80=98mlx5dr_action_prepare_decap_l3_data=E2=80=99,
-    inlined from =E2=80=98mlx5dr_action_handle_tunnel_l3_to_l2=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2151:3,
-    inlined from =E2=80=98mlx5dr_action_create_reformat_hws=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2221:9,
-    inlined from =E2=80=98mlx5dr_action_create_reformat=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2278:8:
-../drivers/net/mlx5/hws/mlx5dr_action.c:3630:17: warning: writing 4 bytes i=
-nto
-a region of size 0 [-Wstringop-overflow=3D]
- 3630 |                 memcpy(dst, e_src, MLX5DR_ACTION_INLINE_DATA_SIZE);=
- /*
-data */
-      |                 ^
-../drivers/net/mlx5/hws/mlx5dr_action.c: In function
-=E2=80=98mlx5dr_action_create_reformat=E2=80=99:
-../drivers/net/mlx5/hws/mlx5dr_action.c:2131:17: note: at offset [116, 5242=
-76]
-into destination object =E2=80=98mh_data=E2=80=99 of size 64
- 2131 |         uint8_t mh_data[MLX5DR_ACTION_REFORMAT_DATA_SIZE] =3D {0};
-      |                 ^
-In function =E2=80=98mlx5dr_action_prepare_decap_l3_data=E2=80=99,
-    inlined from =E2=80=98mlx5dr_action_handle_tunnel_l3_to_l2=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2151:3,
-    inlined from =E2=80=98mlx5dr_action_create_reformat_hws=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2221:9,
-    inlined from =E2=80=98mlx5dr_action_create_reformat=E2=80=99 at
-../drivers/net/mlx5/hws/mlx5dr_action.c:2278:8:
-../drivers/net/mlx5/hws/mlx5dr_action.c:3630:17: warning: writing 4 bytes i=
-nto
-a region of size 0 [-Wstringop-overflow=3D]
- 3630 |                 memcpy(dst, e_src, MLX5DR_ACTION_INLINE_DATA_SIZE);=
- /*
-data */
-      |                 ^
-../drivers/net/mlx5/hws/mlx5dr_action.c: In function
-=E2=80=98mlx5dr_action_create_reformat=E2=80=99:
-../drivers/net/mlx5/hws/mlx5dr_action.c:2131:17: note: at offset [124, 5242=
-84]
-into destination object =E2=80=98mh_data=E2=80=99 of size 64
- 2131 |         uint8_t mh_data[MLX5DR_ACTION_REFORMAT_DATA_SIZE] =3D {0};
+In function =E2=80=98tfo_open=E2=80=99,
+    inlined from =E2=80=98tfc_open=E2=80=99 at ../drivers/net/bnxt/tf_core/=
+v3/tfc_init.c:34:2,
+    inlined from =E2=80=98ulp_tfc_init=E2=80=99 at
+../drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c:957:7:
+../drivers/net/bnxt/tf_core/v3/tfo.c:108:17: warning: =E2=80=98rte_free=E2=
+=80=99 called on
+pointer =E2=80=98bp_74(D)=E2=80=99 with nonzero offset 800 [-Wfree-nonheap-=
+object]
+  108 |                 rte_free(tfo);
       |                 ^
           </pre>
         </div>
@@ -503,7 +245,7 @@ into destination object =E2=80=98mh_data=E2=80=99 of size 64
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1709">
+?id=3D1710">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -512,4 +254,4 @@ ication">
     </body>
 </html>=
 
---17478408340.1EAeE70ea.2314293--
+--17478408830.2275.2314791--
