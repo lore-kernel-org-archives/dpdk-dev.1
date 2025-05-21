@@ -2,42 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E0BEC54E90
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 May 2025 20:26:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6BCFC54E65
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 May 2025 20:36:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 756BF42E48;
-	Wed, 21 May 2025 22:26:16 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 599A142E48
- for <dev@dpdk.org>; Wed, 21 May 2025 22:26:14 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 28DD5206C2;
- Wed, 21 May 2025 22:26:14 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 89D2342E4C;
+	Wed, 21 May 2025 22:36:19 +0200 (CEST)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com
+ [209.85.128.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 4680F42E4C
+ for <dev@dpdk.org>; Wed, 21 May 2025 22:36:18 +0200 (CEST)
+Received: by mail-yw1-f171.google.com with SMTP id
+ 00721157ae682-7053f85f059so62732277b3.2
+ for <dev@dpdk.org>; Wed, 21 May 2025 13:36:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1747859777; x=1748464577; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=BI9UThuJGniJNOjJ2CQD6pSMdSiIrlr4KJfjroz7hCM=;
+ b=aVSJDR9tvDKtQkIptgY0+8NY4ZywVCKhLpDs3O8Hufcf59f5FzpNf3mrV3qSN5hiYi
+ VmTxfimweyDAS6/3V4MKcd/+qZ07uah7Gg5EO91m8xBbgffWK8hq8oq8zm7iwEhkjk0l
+ uDcvdJjK3Ot7DfJjqN1tFGBpWo3U3N1rnuSw4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1747859777; x=1748464577;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=BI9UThuJGniJNOjJ2CQD6pSMdSiIrlr4KJfjroz7hCM=;
+ b=CUjLzLh9rM89QCKLbet9jarppnZWMisI49LYBmgKvGNEpNFSbwMzH6UTVqz1JXxrh1
+ LspfltKiXauCRSkxSmnggnr4JaCzS0wWamSS1JXgWYjRRzxHiF4G5Ko8q1mDo9QYAVi6
+ x8Sq1BSGWj6VaXa/6Cw7Lo7XllMjEHwQHwNGDrujaaQgGbLBX+V0+itCOppaFZW9n1Nj
+ BH8Nsmo2MymaHEWCVaXjhLmX8GF41WLp2jsU30vR8VvPrMG4ouGc9/UroAA74dOxKV5j
+ SlEHc7Lj7TffnE5BhoUhH1mlmp9DjqOtL5sr35c946oL7wLLckDRWGdLBvyGEww12ufz
+ XHng==
+X-Gm-Message-State: AOJu0Yx6DZGrukKHtjOeIjOW5mknP5URil3BhLc1yqat3PlVggfQPvWO
+ hlCOLcuIhX5fkHyhka42sPbEnhz/wJFHKM7F/mqbkzveQcsMDAsokoe0N5F3TxGOaJRIk6OpIx2
+ Mc0u0Mvgy2yGrUpcVddD6+Gp6aJcsol8vqQepdn3RhdIa3rRx1swN
+X-Gm-Gg: ASbGncvsuX2OaRT9Ca/d0NCdUfjWxQvkQ2aBLApzO/sT/dEo5mAel9eOm6/LGhdRZG0
+ DSaMuuXdTR6sTx9W80tov0v9ow7DXdUtGhgY5JhRMQMrIS7h4nzJBXEeP+v3VgNlnyv0wyLWvo5
+ eNfksjeRewDSIZPDB0Riz5CIMfXLTXwVJrRF5UukbQ68Atz2DapPG89ms0N+WZxO67h7OyWpIJO
+ dQjnw==
+X-Google-Smtp-Source: AGHT+IH4WF8aPv2CKFsuo4/H8wjip4T103af9M2YGDzimKpkY8AEbG5NKAIrSvYv4B5/z5Gpd2v9cTljbzBa+ej8Msc=
+X-Received: by 2002:a05:690c:3345:b0:709:1529:c24f with SMTP id
+ 00721157ae682-70ca797c392mr307477377b3.4.1747859777389; Wed, 21 May 2025
+ 13:36:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v1 3/4] ring: fix potential sync issue between head and
- tail values
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Wed, 21 May 2025 22:26:12 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FC82@smartserver.smartshare.dk>
-In-Reply-To: <20250521111432.207936-4-konstantin.ananyev@huawei.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v1 3/4] ring: fix potential sync issue between head and
- tail values
-Thread-Index: AdvKQaZpB5Kmr/4HTquYJ4XX7wzCQQASOSNw
-References: <20250521111432.207936-1-konstantin.ananyev@huawei.com>
- <20250521111432.207936-4-konstantin.ananyev@huawei.com>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
-	<dev@dpdk.org>
-Cc: <honnappa.nagarahalli@arm.com>, <jerinj@marvell.com>,
- <hemant.agrawal@nxp.com>, <drc@linux.ibm.com>
+References: <20250423194011.1447679-1-npratte@iol.unh.edu>
+ <20250516201834.626206-1-npratte@iol.unh.edu>
+ <20250516201834.626206-3-npratte@iol.unh.edu>
+In-Reply-To: <20250516201834.626206-3-npratte@iol.unh.edu>
+From: Dean Marx <dmarx@iol.unh.edu>
+Date: Wed, 21 May 2025 16:36:06 -0400
+X-Gm-Features: AX0GCFsmCvxW4FJvXaTNaSEfcFXlxRjzALMRVm1zl9B85V0Q-oU15ztURUFmnns
+Message-ID: <CABD7UXOvBVHBZP_RjxokDbDi4w25T1MVHE8iRbBNAzfGOTO7eQ@mail.gmail.com>
+Subject: Re: [RFC v2 2/6] dts: rework traffic generator inheritance structure.
+To: dev@dpdk.org
+Cc: stephen@networkplumber.org, luca.vizzarro@arm.com, paul.szczepanek@arm.com,
+ yoan.picchi@foss.arm.com, Honnappa.Nagarahalli@arm.com, thomas@monjalon.net, 
+ thomas.wilks@arm.com, probb@iol.unh.edu
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,99 +75,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBLb25zdGFudGluIEFuYW55ZXYgW21haWx0bzprb25zdGFudGluLmFuYW55ZXZAaHVh
-d2VpLmNvbV0NCj4gU2VudDogV2VkbmVzZGF5LCAyMSBNYXkgMjAyNSAxMy4xNQ0KPiANCj4gVGhp
-cyBwYXRjaCBhaW1zIHNldmVyYWwgcHVycG9zZXM6DQo+IC0gcHJvdmlkZSBhbiBhbHRlcm5hdGl2
-ZSAoYW5kIEkgdGhpbmsgYSBiZXR0ZXIpIHdheSB0byBmaXggdGhlDQo+ICAgaXNzdWUgZGlzY3Vz
-c2VkIGluIHByZXZpb3VzIHBhdGNoOg0KPiAgICJyaW5nL3NvcmluZzogZml4IHN5bmNocm9uaXph
-dGlvbiBpc3N1ZSBiZXR3ZWVuIGhlYWQgYW5kIHRhaWwgdmFsdWVzIg0KPiAtIG1ha2Ugc3VyZSB0
-aGF0IHN1Y2ggcHJvYmxlbSB3b3VsZG7igJl0IGhhcHBlbiB3aXRoaW4gb3RoZXIgdXNhZ2VzIG9m
-DQo+ICAgX19ydGVfcmluZ19oZWFkdGFpbF9tb3ZlX2hlYWQoKSDigJMgYm90aCBjdXJyZW50IHJ0
-ZV9yaW5nDQo+ICAgaW1wbGVtZW50YXRpb24gYW5kIHBvc3NpYmxlIGZ1dHVyZSB1c2UtY2FzZXMu
-DQo+IC0gc3RlcCB0b3dhcmRzIHVuaWZpY2F0aW9uIG9mIG1vdmVfaGVhZCgpIGltcGxlbWVudGF0
-aW9ucyBhbmQNCj4gICByZW1vdmluZyBydGVfcmluZ19nZW5lcmljX3B2dC5oDQo+IEl0IHVzZXMg
-QWNxdWlyZS1SZWxlYXNlIG1lbW9yeSBvcmRlcmluZyBmb3IgQ0FTIG9wZXJhdGlvbiBpbg0KPiBt
-b3ZlX2hlYWQoKS4NCj4gVGhhdCBndWFyYW50ZWVzIHRoYXQgY29ycmVzcG9uZGluZyDigJh0YWls
-4oCZIHVwZGF0ZXMgd2lsbCBiZSB2aXNpYmxlDQo+IGJlZm9yZSBjdXJyZW50IOKAmGhlYWTigJkg
-aXMgdXBkYXRlZC4NCj4gQXMgSSBzYWlkIGJlZm9yZTogSSB0aGluayB0aGF0IGluIHRoZW9yeSB0
-aGUgcHJvYmxlbSBkZXNjcmliZWQgaW4NCj4gcHJldmlvdXMgcGF0Y2ggbWlnaHQgaGFwcGVuIHdp
-dGggb3VyIGNvbnZlbnRpb25hbCBydGVfcmluZyB0b28NCj4gKHdoZW4gUlRFX1VTRV9DMTFfTUVN
-X01PREVMIGVuYWJsZWQpLg0KPiBCdXQsIHNvIGZhciBJIGRpZG7igJl0IG1hbmFnZSB0byByZXBy
-b2R1Y2UgaXQgaW4gcmVhbGl0eS4NCg0KT3ZlcmFsbCwgSSB0aGluayB0aGUgY29kZSBiZWNvbWVz
-IG1vcmUgZWxlZ2FudCBhbmQgbXVjaCBlYXNpZXIgdG8gdW5kZXJzdGFuZCB3aXRoIHRoaXMgcGF0
-Y2gsIHdoZXJlIHRoZSBhdG9taWMgb3BlcmF0aW9ucyBhcmUgcGVyZm9ybWVkIGV4cGxpY2l0bHkg
-b24gdGhlIGhlYWQvdGFpbCwgZWxpbWluYXRpbmcgdGhlIG5lZWQgZm9yIHRoZSBicm9hZC1yZWFj
-aGluZyBydGVfYXRvbWljX3RocmVhZF9mZW5jZSgpLg0KDQpUaGUgZGV0YWlsZWQgaW5saW5lIGNv
-ZGUgY29tbWVudHMgYXJlIGFsc28gYSBnb29kIGltcHJvdmVtZW50Lg0KDQo+IEZvciB0aGF0IHJl
-YXNvbiBhbmQgYWxzbyBiZWNhdXNlIGl0IHRvdWNoZXMgYSBjcml0aWNhbCBydGVfcmluZyBjb2Rl
-LQ0KPiBwYXRoLA0KPiBJIHB1dCB0aGVzZSBjaGFuZ2VzIGludG8gYSBzZXBhcmF0ZSBwYXRjaC4g
-RXhwZWN0IGFsbCBpbnRlcmVzdGVkDQo+IHN0YWtlaG9sZGVycyB0byBjb21lLXVwIHdpdGggdGhl
-aXIgY29tbWVudHMgYW5kIG9ic2VydmF0aW9ucy4NCj4gUmVnYXJkaW5nIHBlcmZvcm1hbmNlIGlt
-cGFjdCDigJMgb24gbXkgYm94ZXMgYm90aCByaW5nX3BlcmZfYXV0b3Rlc3QgYW5kDQo+IHJpbmdf
-c3RyZXNzX2F1dG90ZXN0IOKAkyBzaG93IGEgbWl4ZWQgc2V0IG9mIHJlc3VsdHM6IHNvbWUgb2Yg
-dGhlbSBiZWNvbWUNCj4gZmV3IGN5Y2xlcyBmYXN0ZXIsIGFub3RoZXIgZmV3IGN5Y2xlcyBzbG93
-ZXIuDQo+IEJ1dCBzbyBmYXIsIEkgZGlkbuKAmXQgbm90aWNlIGFueSByZWFsIGRlZ3JhZGF0aW9u
-cyB3aXRoIHRoYXQgcGF0Y2guDQoNCk1heWJlIGl0IHdhcyB0aGUgYnJvYWQtcmVhY2hpbmcgcnRl
-X2F0b21pY190aHJlYWRfZmVuY2UoKSB0aGF0IG1hZGUgdGhlIEMxMSB2YXJpYW50IHNsb3cgb24g
-b3RoZXIgYXJjaGl0ZWN0dXJlcy4NClRoaXMgbWFrZXMgbWUgY3VyaW91cyBhYm91dCBwZXJmb3Jt
-YW5jZSByZXN1bHRzIG9uIG90aGVyIGFyY2hpdGVjdHVyZXMgd2l0aCB0aGlzIHBhdGNoLg0KDQo+
-IA0KPiBGaXhlczogYjU0NThlMmNjNDgzICgicmluZzogaW50cm9kdWNlIHN0YWdlZCBvcmRlcmVk
-IHJpbmciKQ0KPiBGaXhlczogMWNjMzYzYjhjZTA2ICgicmluZzogaW50cm9kdWNlIEhUUyByaW5n
-IG1vZGUiKQ0KPiBGaXhlczogZTZiYTQ3MzFjMGYzICgicmluZzogaW50cm9kdWNlIFJUUyByaW5n
-IG1vZGUiKQ0KPiBGaXhlczogNDk1OTRhNjMxNDdhICgicmluZy9jMTE6IHJlbGF4IG9yZGVyaW5n
-IGZvciBsb2FkIGFuZCBzdG9yZSBvZg0KPiB0aGUgaGVhZCIpDQo+IA0KPiBTaWduZWQtb2ZmLWJ5
-OiBLb25zdGFudGluIEFuYW55ZXYgPGtvbnN0YW50aW4uYW5hbnlldkBodWF3ZWkuY29tPg0KPiAt
-LS0NCj4gIGxpYi9yaW5nL3J0ZV9yaW5nX2MxMV9wdnQuaCAgICAgIHwgMjcgKysrKysrKysrKysr
-KysrKystLS0tLS0tLS0tDQo+ICBsaWIvcmluZy9ydGVfcmluZ19odHNfZWxlbV9wdnQuaCB8ICA2
-ICsrKystLQ0KPiAgbGliL3JpbmcvcnRlX3JpbmdfcnRzX2VsZW1fcHZ0LmggfCAgNiArKysrLS0N
-Cj4gIGxpYi9yaW5nL3NvcmluZy5jICAgICAgICAgICAgICAgIHwgIDUgLS0tLS0NCj4gIDQgZmls
-ZXMgY2hhbmdlZCwgMjUgaW5zZXJ0aW9ucygrKSwgMTkgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZm
-IC0tZ2l0IGEvbGliL3JpbmcvcnRlX3JpbmdfYzExX3B2dC5oIGIvbGliL3JpbmcvcnRlX3Jpbmdf
-YzExX3B2dC5oDQo+IGluZGV4IDA4NDVjZDZkY2YuLjZkMWM0NmRmOWEgMTAwNjQ0DQo+IC0tLSBh
-L2xpYi9yaW5nL3J0ZV9yaW5nX2MxMV9wdnQuaA0KPiArKysgYi9saWIvcmluZy9ydGVfcmluZ19j
-MTFfcHZ0LmgNCj4gQEAgLTc3LDIwICs3NywxOSBAQCBfX3J0ZV9yaW5nX2hlYWR0YWlsX21vdmVf
-aGVhZChzdHJ1Y3QNCj4gcnRlX3JpbmdfaGVhZHRhaWwgKmQsDQo+ICAJaW50IHN1Y2Nlc3M7DQo+
-ICAJdW5zaWduZWQgaW50IG1heCA9IG47DQo+IA0KPiArCS8qIEVuc3VyZSB0aGUgaGVhZCBpcyBy
-ZWFkIGJlZm9yZSB0YWlsICovDQoNCk1heWJlICJkLT5oZWFkIiBhbmQgInMtPnRhaWwiIGluc3Rl
-YWQgb2YgImhlYWQiIGFuZCAidGFpbCIuDQoNCj4gIAkqb2xkX2hlYWQgPSBydGVfYXRvbWljX2xv
-YWRfZXhwbGljaXQoJmQtPmhlYWQsDQo+IC0JCQlydGVfbWVtb3J5X29yZGVyX3JlbGF4ZWQpOw0K
-PiArCQkJcnRlX21lbW9yeV9vcmRlcl9hY3F1aXJlKTsNCj4gIAlkbyB7DQo+ICAJCS8qIFJlc2V0
-IG4gdG8gdGhlIGluaXRpYWwgYnVyc3QgY291bnQgKi8NCj4gIAkJbiA9IG1heDsNCj4gDQo+IC0J
-CS8qIEVuc3VyZSB0aGUgaGVhZCBpcyByZWFkIGJlZm9yZSB0YWlsICovDQo+IC0JCXJ0ZV9hdG9t
-aWNfdGhyZWFkX2ZlbmNlKHJ0ZV9tZW1vcnlfb3JkZXJfYWNxdWlyZSk7DQo+IC0NCj4gLQkJLyog
-bG9hZC1hY3F1aXJlIHN5bmNocm9uaXplIHdpdGggc3RvcmUtcmVsZWFzZSBvZiBodC0+dGFpbA0K
-PiAtCQkgKiBpbiB1cGRhdGVfdGFpbC4NCj4gKwkJLyoNCj4gKwkJICogUmVhZCBzLT50YWlsIHZh
-bHVlLiBOb3RlIHRoYXQgaXQgd2lsbCBiZSBsb2FkZWQgYWZ0ZXINCj4gKwkJICogZC0+aGVhZCBs
-b2FkLCBidXQgYmVmb3JlIENBUyBvcGVyYXRpb24gZm9yIHRoZSBkLT5oZWFkLg0KPiAgCQkgKi8N
-Cj4gIAkJc3RhaWwgPSBydGVfYXRvbWljX2xvYWRfZXhwbGljaXQoJnMtPnRhaWwsDQo+IC0JCQkJ
-CXJ0ZV9tZW1vcnlfb3JkZXJfYWNxdWlyZSk7DQo+ICsJCQkJCXJ0ZV9tZW1vcnlfb3JkZXJfcmVs
-YXhlZCk7DQo+IA0KPiAgCQkvKiBUaGUgc3VidHJhY3Rpb24gaXMgZG9uZSBiZXR3ZWVuIHR3byB1
-bnNpZ25lZCAzMmJpdHMNCj4gdmFsdWUNCj4gIAkJICogKHRoZSByZXN1bHQgaXMgYWx3YXlzIG1v
-ZHVsbyAzMiBiaXRzIGV2ZW4gaWYgd2UgaGF2ZQ0KPiBAQCAtMTEyLDExICsxMTEsMTkgQEAgX19y
-dGVfcmluZ19oZWFkdGFpbF9tb3ZlX2hlYWQoc3RydWN0DQo+IHJ0ZV9yaW5nX2hlYWR0YWlsICpk
-LA0KPiAgCQkJZC0+aGVhZCA9ICpuZXdfaGVhZDsNCj4gIAkJCXN1Y2Nlc3MgPSAxOw0KPiAgCQl9
-IGVsc2UNCj4gLQkJCS8qIG9uIGZhaWx1cmUsICpvbGRfaGVhZCBpcyB1cGRhdGVkICovDQo+ICsJ
-CQkvKg0KPiArCQkJICogb24gZmFpbHVyZSwgKm9sZF9oZWFkIGlzIHVwZGF0ZWQuDQo+ICsJCQkg
-KiB0aGlzIENBUyhBQ1FfUkVMLCBBQ1FVSVJFKSBzZXJ2ZXMgYXMgYSBob2lzdA0KPiArCQkJICog
-YmFycmllciB0byBwcmV2ZW50Og0KPiArCQkJICogIC0gT09PIHJlYWRzIG9mIGNvbnMgdGFpbCB2
-YWx1ZQ0KPiArCQkJICogIC0gT09PIGNvcHkgb2YgZWxlbXMgZnJvbSB0aGUgcmluZw0KDQpJdCdz
-IG5vdCByZWFsbHkgdGhlIEFDUV9SRUwgdGhhdCBkb2VzIHRoaXMuIEl0J3MgdGhlIEFRVUlSRS4N
-ClNvIHRoaXMgY29tbWVudCBuZWVkcyBzb21lIGFkanVzdG1lbnQuDQoNCkFsc28gbWF5YmUgInMt
-PnRhaWwiIGluc3RlYWQgb2YgImNvbnMgdGFpbCIuDQoNCj4gKwkJCSAqICBBbHNvIFJFTEVBU0Ug
-Z3VhcmFudGVlcyB0aGF0IGxhdGVzdCB0YWlsIHZhbHVlDQoNCk1heWJlICJsYXRlc3Qgcy0+dGFp
-bCIgaW5zdGVhZCBvZiAibGF0ZXN0IHRhaWwiLg0KDQo+ICsJCQkgKiAgd2lsbCBiZWNvbWUgdmlz
-aWJsZSBiZWZvcmUgdGhlIG5ldyBoZWFkIHZhbHVlLg0KDQpNYXliZSAibmV3IGQtPmhlYWQgdmFs
-dWUiIGluc3RlYWQgb2YgIm5ldyBoZWFkIHZhbHVlIi4NCg0KPiArCQkJICovDQo+ICAJCQlzdWNj
-ZXNzID0NCj4gcnRlX2F0b21pY19jb21wYXJlX2V4Y2hhbmdlX3N0cm9uZ19leHBsaWNpdCgNCj4g
-IAkJCQkJJmQtPmhlYWQsIG9sZF9oZWFkLCAqbmV3X2hlYWQsDQo+IC0JCQkJCXJ0ZV9tZW1vcnlf
-b3JkZXJfcmVsYXhlZCwNCj4gLQkJCQkJcnRlX21lbW9yeV9vcmRlcl9yZWxheGVkKTsNCj4gKwkJ
-CQkJcnRlX21lbW9yeV9vcmRlcl9hY3FfcmVsLA0KPiArCQkJCQlydGVfbWVtb3J5X29yZGVyX2Fj
-cXVpcmUpOw0KPiAgCX0gd2hpbGUgKHVubGlrZWx5KHN1Y2Nlc3MgPT0gMCkpOw0KPiAgCXJldHVy
-biBuOw0KPiAgfQ0KDQpJIGhhdmVuJ3QgcmV2aWV3ZWQgdGhlIHJlbWFpbmluZyBjaGFuZ2VzIGlu
-IGRldGFpbCwgYnV0IEkgdGhpbmsgbXkgZmVlZGJhY2sgdGhhdCB0aGUgY29tbWVudHMgc2hvdWxk
-IG1lbnRpb24gQUNRVUlSRSBpbnN0ZWFkIG9mIEFDUV9SRUwgYWxzbyBhcHBseSB0byB0aGUgb3Ro
-ZXIgZmlsZXMuDQoNCj4gZGlmZiAtLWdpdCBhL2xpYi9yaW5nL3J0ZV9yaW5nX2h0c19lbGVtX3B2
-dC5oDQo+IGIvbGliL3JpbmcvcnRlX3JpbmdfaHRzX2VsZW1fcHZ0LmgNCg0KPiBkaWZmIC0tZ2l0
-IGEvbGliL3JpbmcvcnRlX3JpbmdfcnRzX2VsZW1fcHZ0LmgNCj4gYi9saWIvcmluZy9ydGVfcmlu
-Z19ydHNfZWxlbV9wdnQuaA0KDQo+IGRpZmYgLS1naXQgYS9saWIvcmluZy9zb3JpbmcuYyBiL2xp
-Yi9yaW5nL3NvcmluZy5jDQoNCg==
+On Fri, May 16, 2025 at 4:19=E2=80=AFPM Nicholas Pratte <npratte@iol.unh.ed=
+u> wrote:
+>
+> Rework TG class hierarchy to include performance traffic generators, in
+> addition to capturing traffic generators. As such, methods garnered
+> to capturing traffic have been moved to the CapturingTrafficGenerator
+> subclass.
+
+This commit message is worded a bit strangely to me, not sure garnered
+is the right word to use here. Also not sure what "as such" is
+referring to exactly
+
+<snip>
+> +"""Performance testing capable traffic generatiors."""
+
+*generators
+
+Reviewed-by: Dean Marx <dmarx@iol.unh.edu>
