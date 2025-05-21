@@ -2,33 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D86C3DA6D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 20 May 2025 22:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D261C54E65
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 May 2025 00:35:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D8826402E6;
-	Wed, 21 May 2025 00:48:25 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7151340A70;
+	Wed, 21 May 2025 02:35:19 +0200 (CEST)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 719EA402D6;
- Wed, 21 May 2025 00:48:23 +0200 (CEST)
-Received: by linux.microsoft.com (Postfix, from userid 1202)
- id 6DF8720277E4; Tue, 20 May 2025 15:48:22 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6DF8720277E4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
- s=default; t=1747781302;
- bh=ZMxYSm/9a7F09gDdeoxOAz3rzI21XQ51J7LJsTHEdEs=;
- h=From:To:Cc:Subject:Date:From;
- b=BSbv2oXaxIOPfPineBKrHB46BDLaS6H1+Dl02WOvCzV5fLBK2tVnp+dWnQWMyF4H9
- YDyTLmXEvcc9xA56bVQBbf7C3ijuhCjgilb8R2taRllZMoO8g+4shIMQYf+SQwtTdM
- cWzU1hLHGZqpvqSZqeR5Mu3cG1LCX7/tlkuw2O/g=
-From: longli@linuxonhyperv.com
-To: Stephen Hemminger <stephen@networkplumber.org>, Wei Hu <weh@microsoft.com>
-Cc: dev@dpdk.org,
-	Long Li <longli@microsoft.com>,
-	stable@dpdk.org
-Subject: [PATCH] net/mana: check for vendor_part_id when probing RDMA device
-Date: Tue, 20 May 2025 15:48:16 -0700
-Message-Id: <1747781296-19645-1-git-send-email-longli@linuxonhyperv.com>
-X-Mailer: git-send-email 1.8.3.1
+ by mails.dpdk.org (Postfix) with ESMTP id 9992D40A6F
+ for <dev@dpdk.org>; Wed, 21 May 2025 02:35:18 +0200 (CEST)
+Received: by linux.microsoft.com (Postfix, from userid 1213)
+ id 8B54A20277EE; Tue, 20 May 2025 17:35:17 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8B54A20277EE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1747787717;
+ bh=O5vxBXULZDGEZk8jRsMwPEZWl/RbeA7Cb+yAsxuC5AE=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=UKt+snGeQiZ6XDzgoO0BAT/1VjdxSFt6gpD5hHIZT+mBxItt6bmL6NVBmOC0lPo1b
+ KSzRj4eEHzv4xQGG7IEvp/Dm3rkLVM5mHQ1ZPfMcRL/2Q5j8BpgynT/00GF9+08Ct6
+ 2iLI7MfPbioLzJypqsv4rUdAj42iZD4tH28F0RjM=
+Date: Tue, 20 May 2025 17:35:17 -0700
+From: Andre Muezerie <andremue@linux.microsoft.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>,
+ Thomas Monjalon <thomas@monjalon.net>, dev@dpdk.org
+Subject: Re: [PATCH] eal: add getline() function for Windows
+Message-ID: <20250521003517.GA9927@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1746477607-14961-1-git-send-email-andremue@linux.microsoft.com>
+ <20250520101433.3a264cb1@hermes.local>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250520101433.3a264cb1@hermes.local>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -42,63 +48,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Long Li <longli@microsoft.com>
+On Tue, May 20, 2025 at 10:14:33AM -0700, Stephen Hemminger wrote:
+> On Mon,  5 May 2025 13:40:07 -0700
+> Andre Muezerie <andremue@linux.microsoft.com> wrote:
+> 
+> > Existing DPDK code uses getline(), which is a POSIX function and is
+> > not available in the Windows APIs.
+> > 
+> > Instead of rewriting it or coming up with some other replacement, this
+> > patch makes use of the implementation provided by NetBSD to make it
+> > possible to compile code dependent on getline on Windows.
+> > 
+> > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+> 
+> Not sure, are BSD-2 and BSD-3 compatible?
+> Getting license exception approved requires going through the governing board
+> which can take up to 6 months.
 
-The RDMA kernel driver may expose two MANA RDMA devices, for RC and RAW
-QP types. The purpose is to support fast service mode at SOC. Depending
-on kernel version, the probe may fail if DPDK picks up the wrong device.
+Hi Stephen, I would appreciate some guidance here.
 
-Add check for vendor_part_id and RAW QP capability when probing the MANA
-device. This check is compatible with all kernel versions.
+My understanding is that in general, BSD-2 licensed code can be used in BSD-3
+licensed projects, as long as the BSD-2 license is retained in the original
+ (BSD-2) files.
 
-Cc: stable@dpdk.org
-Fixes: 517ed6e2d590 ("net/mana: add basic driver with build environment")
-Signed-off-by: Long Li <longli@microsoft.com>
----
- drivers/net/mana/mana.c | 14 ++++++++++++++
- drivers/net/mana/mana.h |  4 ++++
- 2 files changed, 18 insertions(+)
-
-diff --git a/drivers/net/mana/mana.c b/drivers/net/mana/mana.c
-index 2934da29f7..c42a987a30 100644
---- a/drivers/net/mana/mana.c
-+++ b/drivers/net/mana/mana.c
-@@ -1490,6 +1490,20 @@ mana_pci_probe_mac(struct rte_pci_device *pci_dev,
- 			continue;
- 		}
- 
-+		if (dev_attr.orig_attr.vendor_part_id) {
-+			if (dev_attr.orig_attr.vendor_part_id !=
-+			    GDMA_DEVICE_MANA) {
-+				DRV_LOG(INFO, "Skip device vendor part id %x",
-+					dev_attr.orig_attr.vendor_part_id);
-+				continue;
-+			}
-+			if (!dev_attr.raw_packet_caps) {
-+				DRV_LOG(INFO,
-+					"Skip device without RAW support");
-+				continue;
-+			}
-+		}
-+
- 		for (port = 1; port <= dev_attr.orig_attr.phys_port_cnt;
- 		     port++) {
- 			struct rte_ether_addr addr;
-diff --git a/drivers/net/mana/mana.h b/drivers/net/mana/mana.h
-index 855d98911b..6309cae76b 100644
---- a/drivers/net/mana/mana.h
-+++ b/drivers/net/mana/mana.h
-@@ -12,6 +12,10 @@ struct mana_shared_data {
- 	RTE_ATOMIC(uint32_t) secondary_cnt;
- };
- 
-+/* vendor_part_id returned from ibv_query_device */
-+#define GDMA_DEVICE_MANA	2
-+#define GDMA_DEVICE_MANA_IB	3
-+
- #define MANA_MAX_MTU	9000
- #define MIN_RX_BUF_SIZE	1024
- #define MANA_MAX_MAC_ADDR 1
--- 
-2.34.1
-
+I do see that BSD-2 was listed in the exception table (for getopt function). It's
+not clear to me why it needed to be listed as an exception, but if that was
+needed, it indicates that the same should be done for getline(). Is that not
+the case?
