@@ -2,46 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E60C2D0CD
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 May 2025 06:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27814C2D0CD
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 May 2025 06:58:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0BCD140FB5;
-	Wed, 21 May 2025 08:57:33 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id EA6E0410FC;
+	Wed, 21 May 2025 08:57:34 +0200 (CEST)
 Received: from EUR05-VI1-obe.outbound.protection.outlook.com
- (mail-vi1eur05on2061.outbound.protection.outlook.com [40.107.21.61])
- by mails.dpdk.org (Postfix) with ESMTP id 5920140EDB;
- Wed, 21 May 2025 08:57:28 +0200 (CEST)
+ (mail-vi1eur05on2058.outbound.protection.outlook.com [40.107.21.58])
+ by mails.dpdk.org (Postfix) with ESMTP id 368CE40EE2
+ for <dev@dpdk.org>; Wed, 21 May 2025 08:57:30 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ecbpnlIvLw6D5aEQunuM67SYxdIyMcaFtqduWB0yk0Uq4u+/QUMSd8Bmt+MXk1v+2usJudOKiTYsMd0fEHEQEYnBoEFlh+xWl4Xqq0TklTTGSX5D9q/CWtmxu0C4gk0u67791ebeQcDPhdTDFc51QfAQKXkPiy7SEplKpdgmmfBUfqZdflhZ5lGvLHq0KD6n+l2zJGixtt/urNRDrCP8uv+RM6TJDfUzWwlY0kzbJ+0qfxz8TXEdn4Y9st2TMmBUsr3Wxekvu4+QdmQiFe34ejOzrVk/YwgAZ2AbNifVekvasOY1LQIajDId8QRDiE6iekTzX4p88f8jy5hvbveVkw==
+ b=VhxtdR9ckeEr0Y8YFapagWMh//SS7VvNah1Xv/e6n8L+fY3LTTk94hyIlYwXZYsml6XstoY0qoO+mNRsCfTb8LBBBESSfuAqc8w6bGBcQYndb9LA+OvgCvXjWL9NDy9SXbhh0YXt5PJYsHfAqHjIIgYl/6IOY2oriB5i5QFZcWtdihgccNj4uiJyZ7YNAfaaw6Lgxs9xF9Ce6Map6tZEh0U+lLo6trH53AYB3RijmVvNZtPqfBmI7i55qzu5LK1Y/cRrV0ioLTTEw5stT6ggEQB4SBYY66YS/HqjfpUUAql8aPAUA2lpIiBGLFOYiZz9UCwc3UDzyw9MEy8AfDdoIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qOF5N2UOSv2pW5lEMhGqOz/OEUlYtOrlCdAR54iY7CY=;
- b=CBcDggA+dvB7hgugDAGJ5JD3clW8E5fxLcQ9Eb1T6na2wSzAx0PP5KYNMngf3LrPoJG3sw8VBFmIjJYC2PS8TUKg0W7cgCM2tXmMoP5Ym7AxpPwUm/KOje+KsCqW/gBx+R6wpdEZ/100tJl9w/wOUnuKsHDt+gM5vqo1I1tvaY5YiSTOAQrxCiuRMvZXAJ4pTuI+2exnJ+13WY3w/9cqthpJzPlOZVldY9hMnMai2mAg4mcralBaP5RRrL9BUgyF0/L7ARxp9C9EpBvxJIHG542gBrZnqork2VEheNliNNwiq29mbMs0x82NkJMQpxzINl1iS31RV1UZrlR1pdxrcA==
+ bh=MRfuBhJSPPZ+PiHFqL2A6QrdiujPl1WlW1gPo2qgSdk=;
+ b=kJ89E/ciEcoMgVFwgD+Pqq2LzfXkrYEyNpkp1Rku1RinweUes77hYaAPmmR+Fm0YdaCl+DSvukI1xVITQE4Z7NdLhKL7lpyOQecdmhj/yD7+nTwFoV6h5eEaPB1hT5eFBjkNuJOPiqvDijtFce6Ul+KR647OoUk0O9YuUtyskJ8sBMW55FM4tEjpPSg+tyBQ6WkMWEXxpnXV60Tk//ekIW6N8JLBpOo8Cn6IJbLrnNX9fMgrt+0lz5lrG7GlIuttD+B08OqAJjSPcotvOZJX8DP6TJdfLt3WgGnBZK3p9A/IWlcFbk5olBgLV7vWTrwM/aZWySPp2ZjFxToensRVrw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qOF5N2UOSv2pW5lEMhGqOz/OEUlYtOrlCdAR54iY7CY=;
- b=ZAkKevtLvk1xMATOTR25MQIsd8h2grNnx1bRRslHIPK/+vbLqb3RoLWMH3dy3Bg5RKvspxXSuOQgOVW1xzpSjzaefTaLdmdJD4PR1evRXNY/YDQ4wDFt01VK76d4R1lymZNrSNwJNBsUOnI9kP+BsuMNRr+gYbt05yIvrVIGuIkedf/KMuXcBffDl5Q3kbj4FoCVagZUQsQ/LCIbn/5MZuSC8aRIdkn0CPD/HmLZ+ZrQh9UKpP6s4k+/ZDdZkVtt2YV0sYdRa01nOjhQK5Y2czKWu8EAngDNOjESAtyzUmHTugeiugvXh1lbcDWKdnYMl9hQzSosr/2g3PM8O5LWvA==
+ bh=MRfuBhJSPPZ+PiHFqL2A6QrdiujPl1WlW1gPo2qgSdk=;
+ b=PurFaXul5/pJISTEx8SXiZ10Zm1E2fDFcdl/G9gcmvHl7t8JJDB2NVsaN1JpF7VSYFVFNDna96wG6BH14swMt0bj6iG10koQbWlyyfz2PFt5q82qtERG1oe5IbnjboMa/GoPtOVodsiHj17dgfjFX0FoGHS1CRUNFtdkAGw1bI+ZOyBisFiqsjMWV2LmLj+fL3T4GP1PNeWlO6t0gKTIecx/7UeyMlzsnd2jHdCR3m+m23XgQq5Z2PgLPfTV0vRaHVDwrZUJpxbYrTk07RNtLPRDeFyf6QZwPmzyI3wh+dNtnNVqn6jy+UBRMOqVy3gDneDGgYRMFXrz0zkJJYiyIA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from AS8PR04MB8198.eurprd04.prod.outlook.com (2603:10a6:20b:3b0::14)
  by AM8PR04MB7940.eurprd04.prod.outlook.com (2603:10a6:20b:240::19)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.31; Wed, 21 May
- 2025 06:57:27 +0000
+ 2025 06:57:29 +0000
 Received: from AS8PR04MB8198.eurprd04.prod.outlook.com
  ([fe80::2e32:1a4a:7d29:195]) by AS8PR04MB8198.eurprd04.prod.outlook.com
  ([fe80::2e32:1a4a:7d29:195%6]) with mapi id 15.20.8769.019; Wed, 21 May 2025
- 06:57:27 +0000
+ 06:57:29 +0000
 From: Gagandeep Singh <g.singh@nxp.com>
 To: dev@dpdk.org, gakhil@marvell.com, Hemant Agrawal <hemant.agrawal@nxp.com>
-Cc: Vanshika Shukla <vanshika.shukla@nxp.com>, g.singh@nxp.com, stable@dpdk.org
-Subject: [PATCH v2 5/9] crypto/dpaa2_sec: fix coverity Issues
-Date: Wed, 21 May 2025 12:26:54 +0530
-Message-Id: <20250521065658.857707-6-g.singh@nxp.com>
+Subject: [PATCH v2 6/9] crypto/dpaa2_sec: add null algo capability
+Date: Wed, 21 May 2025 12:26:55 +0530
+Message-Id: <20250521065658.857707-7-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250521065658.857707-1-g.singh@nxp.com>
 References: <20250520055133.506071-1-g.singh@nxp.com>
@@ -54,77 +53,77 @@ X-ClientProxiedBy: SG2PR02CA0072.apcprd02.prod.outlook.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AS8PR04MB8198:EE_|AM8PR04MB7940:EE_
-X-MS-Office365-Filtering-Correlation-Id: a6b48cad-f137-432e-d56c-08dd9834bf21
+X-MS-Office365-Filtering-Correlation-Id: 0c65c308-870f-45ad-522f-08dd9834c072
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
  ARA:13230040|1800799024|52116014|376014|366016|38350700014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?fjSgDRWrQqXvc6OI/1vapOAxlVXiQYK/fGyRJQVFtcF0mGIaHc5MrBBiWdBe?=
- =?us-ascii?Q?aWgx6+YTHjMoewh25qFLRbLOLF+/9AwjlBQ+cfDkSgRNbS84euzKKOQ8Xown?=
- =?us-ascii?Q?m/QtGALI/a+hTedoJYM6J2XnJuBOMwHX4blD6P8MfO+p3HJvYqyzUuIn4dBy?=
- =?us-ascii?Q?fonRohwJUv7VzlPVo5DEHhe85bF/TdlH/3jOr+bgr8POmNedSNewYaOYK/YB?=
- =?us-ascii?Q?WomipbTWpe7zzzlklL2hacW69NtjqDsUKu351WHPqoRPL3NYoHArjawQisFJ?=
- =?us-ascii?Q?Lu9z4lZw7CumtF2IEI37mI8rTbejmVo6/GTZ6K08i418fqdpPgM4M9C60zmL?=
- =?us-ascii?Q?UZqeG26Ek3KWRjvkgwl3t0JtIFZXHZGmoVJBPk3EhRnkutkGGflPDWske92y?=
- =?us-ascii?Q?HNPa8yarXC8dJaD3bMqU4gWLWBkj6rQBs2YVH46KvjzhInUPh3yC7Oo3lRKI?=
- =?us-ascii?Q?VYXQW8kjdsFraCaySI9QUO5YwpGIbaY+GaCY/w9ISl3XO4DocKRY1HAYHcFG?=
- =?us-ascii?Q?l4TD1m1uFlZwZaAqizEqidZ8dcC803J1pY/JFlKC1RRRCika3/hsLlxIEtQW?=
- =?us-ascii?Q?1Cwz1Y2t2wNYCL1b3gc1Bvo2zpBNvcQKzN1pftXGUm2m6icK+Ts3x+mFMGGa?=
- =?us-ascii?Q?w4wGfw8zBbnPxOmKbq+uUBc13KxusTM+ypaVdTCm19v8rv51GKCwa2gx7aTC?=
- =?us-ascii?Q?v0DXyWiJFCazkxL42DgYwwDUIVeVVk7QR+Zh6KruvvRKA7wPzhc/WskDF3bv?=
- =?us-ascii?Q?tmXWYhHcuzgcl+9XB6n+PPsEbyosasRm8jBP5ZepDEmWgyhks8jsBcm2PzEs?=
- =?us-ascii?Q?8+Wr2O3fDF6qA1gkb1rpZJnntL4tFHYQpgH8DfF54yce7nuhKP6vqpknbKqZ?=
- =?us-ascii?Q?zmSjcExZEXzIEUwmm/lgPxTg1J0kFxC6Xk/EBeGzN9N8RPneV2zZ2C8Jd4Dg?=
- =?us-ascii?Q?c9mPlSnMHbuDX2t8WeJJ3ss2L3pCtzgISxSn/VEM2xpRmrvJX0GbLoy8SPQq?=
- =?us-ascii?Q?T/PO60pyo3k7Q8L17pWgWSVTa0NZyqxRD/z6cHeQk+2xtftwvAQJ+jhZPjTS?=
- =?us-ascii?Q?csYunrni5sgwuLTONjCp3umhGF3obccbbxNIspyfXPiVvFlvWyxO5M6NYe8p?=
- =?us-ascii?Q?Hh8H50+64n7uPlI8zK4j5pAT0LIw8XwEGS1oZkaQqoUI3W6m/nO9T5em/WBH?=
- =?us-ascii?Q?eVCYg0l3dx26863vv0wxFe30kGicTyyEi2jhBfYr5bAkuDurJuIUpwT6ixI1?=
- =?us-ascii?Q?i3W2LWbXmiuBD40d06Y8RktgiozRsS/PlDA5ed0cvo4yBtIm/wV7ahEomqZx?=
- =?us-ascii?Q?o6QtnfWYOrX8GrL0avohrOQFbRCrfnDh1AnpVXExtylgU3Lcy/2sSrn3x6Gy?=
- =?us-ascii?Q?CnOq4JLLZJsfJOpr9x/psaDKGDOc9JTyFVNl2k8FmS6dOjmWYoMg6iMtY+fx?=
- =?us-ascii?Q?k1AwP8MOBsNNfwKjYNlTgj28QGH6TLXpUwdYmpzpNrK26YcxyHLabw=3D=3D?=
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?6BzLVDxXpdx9NcrUZcOUG9XYaiH9BTry/bJfCzqLSn5waLHlCkVJCdXKqU8p?=
+ =?us-ascii?Q?LKsYNTYmoGcHZZyfiOD7xHAxG3+OVkI/tTzJ8Fzd4hwsFiW1T85nKeiz3aya?=
+ =?us-ascii?Q?Qn26sgZe1vavqngHs4WJQRvQm+JPHnF8DkZc5+dUr5WniyftKEGKG9HoWSAD?=
+ =?us-ascii?Q?otoC9CZSruBLADCVV5aEmhyVNUAIP2w5YrcJIqColaGg8N5oxpNKOfzMtA1L?=
+ =?us-ascii?Q?O4FopFTuklqfRy6fbdO7cl5OiOYmPp0MtUHIydh8+TSI2xyQFSbDwu6Beryv?=
+ =?us-ascii?Q?HDPEE4SLsVxB1qP61lHpLFRnAYs2oJHr2ZaKLTdIF7MYtpClnSskjHeaybOB?=
+ =?us-ascii?Q?DaE6E+pYy1Fh4dxbmlb8PcqZiKwelWoRT54MItEHaBhaENF14oOhiLOTqGVv?=
+ =?us-ascii?Q?kH9uoiX8jUCY3/gAS0irkf1p1IMaUzRiEzWIwI2sb9X7zmpuKdL8wfTHlcoT?=
+ =?us-ascii?Q?KoOeHyqg3f+7dP1W2+9sgr0lxQAeBzT6AfAetbhiCKx/SQ/uPtoroRbFFJZa?=
+ =?us-ascii?Q?OoRGm0sO7acj530Eb2ymukxil92G/5vBJ8lPhM5QRXAkfEt5UFC7zdL8uttm?=
+ =?us-ascii?Q?1gZwnqzybudqzNTp4jcg8saN3SSj1AWOnMQ+ZlzFmGtYJA/FcHVruikJkO1W?=
+ =?us-ascii?Q?3ZpudrbgQBdXaDxx20e+pjgNA5IwEo6B/A5S+ZsRe/dIUIv8iSA7HCGIboYh?=
+ =?us-ascii?Q?UZnQn1vU7LcBVRN8Xp9TRksf0e8oaK+BjuPsTvu1qOgI5mCZdj8FC5okinnk?=
+ =?us-ascii?Q?GfJvtZIENEly/ourrTxGcNw4PtSXIIl803WMhnNlQZ81+KPOnnkUz8np6xTD?=
+ =?us-ascii?Q?Y7KPpytOPgBGlr7iogM1EY/lN+UDKRllZL1fy5icZoW21EdQPR7nr3DtbGJU?=
+ =?us-ascii?Q?8LhWsNY2tIck/082v4i4VHjQcfdSMhqZ8wGhNMbhmp8c0WMhZzFEBPKQmm2L?=
+ =?us-ascii?Q?p5tvPk47C2ttM0uaUgxHu+1aSrhJ9GG02OphTM9l37q9VuXnfLU5xtWVhFK6?=
+ =?us-ascii?Q?YuFBNmxLV1lcqkRUHOzsKFiyTfYvxH5Qh6FwgJzSp71YkkP9hXnmf0UQZreD?=
+ =?us-ascii?Q?yjM/GStG42Khdciu25jyL/FpJeEyaph2me9KNKV+4qVOSKwX97bclpWEziWY?=
+ =?us-ascii?Q?NhN7xIp+W601sbjgOidtgsb0Erh6eBMXuSWP7DWBhRZPa6a/uyO2CvOjCC6N?=
+ =?us-ascii?Q?TGusPrcioZ7QMscRc/UaN+RNC8DfiLif/sRYwUMarnp8gsrC7mrPvmtRUxg6?=
+ =?us-ascii?Q?rwhjciuojECmq6Ifv1kX9U3U+XNuj2ThqI5GFmEeAH3ZQXzT14lQyvk/U3nd?=
+ =?us-ascii?Q?esihQdCV7VxpKEyAIi3PbVqoDcFI/QGL0FJxTgzB6NNL/oShj31Ho67Gn8pB?=
+ =?us-ascii?Q?WnE4RUkHcS8jaVls53FoVm21KqkzKbQbgXYoXSxK6WYhBB0CdlqF20cwo6qU?=
+ =?us-ascii?Q?Egfn7xsFM51h4cRBGuCxNIX2ZHudy/JzuUX6sdueydzZ8BP7uRJ8MA=3D=3D?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:AS8PR04MB8198.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014); DIR:OUT;
  SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?jRlv8uYDkBLxkdFhCrEZ8oThGieIqrZa6Di2d5aV1YaNy2QxB7oM++5DqPOo?=
- =?us-ascii?Q?GFSPVGceH/YUTuYtNos64mIij99RDE0GbINTc2W3pcyxC1bEx60XYQZzIYRH?=
- =?us-ascii?Q?IyHxem9ETuU2ZjXlFtw4saTWObbYLti+cjBQN04AwkFBf0mz0mU+cuRGDaN5?=
- =?us-ascii?Q?i3rcdEeIE0ODAV+8kWTfvQPx+K7yKpy/gXnqPb262Er+emhXM+d787a9z+gF?=
- =?us-ascii?Q?Dd6s3B/5Y9Y/I74nKoZeLV1ObQbGEcdtLg6dxP3J0x9iOwjEKppseU38HGVW?=
- =?us-ascii?Q?a/qnH+AGhkls4akg7r02xGE0DkJeXc3Mdm4HCMNwhxlSnd1OdL710PVUtQRd?=
- =?us-ascii?Q?kbgDi3eE2w9FG9kPdSyY/QdeXAAhg2kr7QlAM/Nj11HJupCNZvU/DD9CMEql?=
- =?us-ascii?Q?jj4o1zJGc+g3/dsaNuNTteJaMPkm4wTbu5gneKmbvQwmEhY6s9/BKo1+tSsl?=
- =?us-ascii?Q?CvpzUAZ6SkUp8h7UI5kV9wUxixB9+EpBGo0Qk+/VNSOvaPG9kH8T0X4dG+04?=
- =?us-ascii?Q?TgGIsPwXvSkyQtMx39bJoxM8d+WFfJddaE2Jj3Z3mBa1j4V8/DjBI9E/0YBH?=
- =?us-ascii?Q?Fylvv6hlP6mEFhJ7iXyHefjcM806jy6Ov5CgUX5WySEXFYBOLOFudOfkIHvA?=
- =?us-ascii?Q?cbTjPt/BidSDX+utczQUcfTjSNg8CTadoql2+u2r2dkvwaC6t7tAiL3rR9QH?=
- =?us-ascii?Q?fh95zGidDTtdR18qBT0YLqDaPCNRPDKKUYEmMYMUPneARzYh2Edb1qOqyIgg?=
- =?us-ascii?Q?zcisAc/3aZr36JbzjZFdLJkFLqhGX0x4j0ON9vXfRXlD2Ikedhr8tl2v+ILq?=
- =?us-ascii?Q?vu2MqMFkEnPCB+ecd84W3WEEpC1nrJPHGmKRcb7KWRc971OknJludO12g13g?=
- =?us-ascii?Q?2MkGkuSVxSY9BWWG0MQuBexz0N+nnN9nq+FpKlH1h0eph6cf+U+VQpL/MgTt?=
- =?us-ascii?Q?wx1TXMapwgmc/Y8OAyYFQPCaZLdmCRpi/cMakO0ghviyxMd9N5xL/dhFn0IT?=
- =?us-ascii?Q?LvPMo8QIfvDsRaaTS09W2HTMmfxGn2a4hldVJnKKvYj0C+rchiOkexal2Yhw?=
- =?us-ascii?Q?NLiSNSYTIoCxJdb6PvLxh77M+iqaPnJxYC2UpalOI5muAsSGnHv+FwfAZCp4?=
- =?us-ascii?Q?aujkCoWQl62pjegJdgWPMU8nlr7o59XV4BH1qtAYLKOJnRF3Pja74yqvlYjA?=
- =?us-ascii?Q?xceVLO/bsa9QKWLa3FTHhYWTUERDXNA5ro3oKlsEOg+nHZJuWwy3z7Fca+vo?=
- =?us-ascii?Q?5QVzvnsJnzLGcZIvtDBjl5RhqHXWmE8FWknnw41l7QYCAGjcZdsHxO2u+ET8?=
- =?us-ascii?Q?/ewmoh3v0Sy6zSjxcYqLlZ0TtedOnKzE20pFuoqtA8PCIGehi3VZsF/B6AdD?=
- =?us-ascii?Q?67Mf6ZcHiAd6dYPXgyQYYhBqrm+0yqON+Nm6qddBklSyZ9DgJ3ANwmueXasU?=
- =?us-ascii?Q?aeesnC+eKWAP+f4SXZYtouDGNsEqNVEn1ern40xIx96znygNA7a7aPbI38yx?=
- =?us-ascii?Q?3O6wTMCKYjnF9UjpAxYa+LDuehhMbTCKC1iUH4+QpUfqMO1kRwrf3Tw22zKx?=
- =?us-ascii?Q?sWfC/E3pr72wI01TDe4=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?iqjGeqnLDlKS+lA6l69iVhsA7Tio4KAO3+FC1gFrdPFWta26nFoWrFlOAOut?=
+ =?us-ascii?Q?4XDgdej5pelxHwlk91X5VauHtu39afPNhBFRKpc9dr1yN2udbm3shknW20dz?=
+ =?us-ascii?Q?aoAPaRUuXfv4WW+hzau+M+uyb4pArcHIhagAKqgcO1gX25L8fuzBj5yP9lnM?=
+ =?us-ascii?Q?lhGHbmsjOsO+vRJdfJsUuxIkoUCLZp9nTKwrpzdQPS6f7ODqPyhbNJACNBGn?=
+ =?us-ascii?Q?Qz+1PbL9bozJunSAtx1ZKPD9ybn8TpWBJAWdYoSVSnSekpgAJVTnFQ8KNVjj?=
+ =?us-ascii?Q?1vLF23oSxXhD1+yODm4w2Ouac6ZflS+Vi5V3l0LPc83EyYiKfZ2htehNMjbU?=
+ =?us-ascii?Q?88k0rgU6mMU64MKLGlnSetOdSxqfvb+yCYrHTyhAuGz3Ny13ZyNW4VOdGp2G?=
+ =?us-ascii?Q?D0Ecn13uv5meBx3mQO7TGqPydgtJl/RXxt3291KtoQ5R4mhsxf2TZ+9X6Zm7?=
+ =?us-ascii?Q?Z7vbLK0rrg2dl0BLpoTzkrJXEKlOIloYP3GrMnxPJ7aJ/b8uNfjORcRNNM9a?=
+ =?us-ascii?Q?hqMy2ATOQsPrjAGi2BeZQLtAT7ktn+6lH3ny2oh79/PvkCkFBRbLjYFgzcdc?=
+ =?us-ascii?Q?p9OsDmnUNbS0Uwd1OZKnd7aURdE3w3fy6y7XtICDRaktUsCdxMr41kbzF/uN?=
+ =?us-ascii?Q?y1rk0TYEjX8eBmEzhvSjjZNBfGTg1KK+ffNLRnjDiHYu2xFf7jaVvEuls3QT?=
+ =?us-ascii?Q?svwiIctidwDOMfc77EC0Z7v8ZN7jMDk3+5hCF13kx69lS4yHvp9tgErbPtgo?=
+ =?us-ascii?Q?unP/Hsu3x7SLtlT/qnslIJqOQ3AOuZkvTLdyb6wKWqf92HBfkM2m3SrOj+uD?=
+ =?us-ascii?Q?pzCZne4g011m5aES7Z6ixi0ajMGdAqdqi9dgH/oq88C2g9v5I6QZqFQPrSq7?=
+ =?us-ascii?Q?/btD3Kaif6NouBsiqr9fE0X5vF7d2O3a3m+PVOrh30rQ6bZ0kBG/KJL774jc?=
+ =?us-ascii?Q?nGRWGvJY88Vfo8796rEQmFebtzYCaoBRRKWBieWckd5O6t5R0lzNaRf8N3Zi?=
+ =?us-ascii?Q?GkHsK4+3xmPwqhMVhDBm8BOY44zTh72LbeL6urDE0/RaC0Sl2JDfKzJ8QcGh?=
+ =?us-ascii?Q?CD4b+xwPIMSSVVEtEvTD8kJ6OsqXHQ/gr7NZLs88ilY+k0C+6Gbp7XLENhiI?=
+ =?us-ascii?Q?O0eTtkZE/ds+sUo4uDoWQHqGYkPGKhqHkTTyPngJBv8GXWCzc6+abERF7Yql?=
+ =?us-ascii?Q?OP48HgltvOkOelppEL9pZpSzRHId8jf5MOjkb5GqjzJONrEYz/MfbnKXNW+U?=
+ =?us-ascii?Q?2LavoZI6C5QFAXdmDGF6BOU/l+ZLA142RNX2p66yQzDMfIBycDA/eE54WQs9?=
+ =?us-ascii?Q?QOINrOT1QbmisN59/mHEQuWDsHHP9ScMkK8RXVnojjBY7nx+jU/QqnTW+Uam?=
+ =?us-ascii?Q?YBm9YjsMwepLfLais6pb5kHk7fBvj0YqCdvQM48faAX+eAzf56bb7CgExwqt?=
+ =?us-ascii?Q?fvjZMA0agXEpv6N1il88bbzu3QjvIIRyz+i7g8HkT8ot/1BuNsH1LO/hj+Nz?=
+ =?us-ascii?Q?CZ73mjnqnbkyTAgO7FctXOpmcXvhMoOYLXXE8AJUFq4LHsrA+Nm0HlNDDqQo?=
+ =?us-ascii?Q?Ly8tVnvjcJvnCfNz4So=3D?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a6b48cad-f137-432e-d56c-08dd9834bf21
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0c65c308-870f-45ad-522f-08dd9834c072
 X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8198.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2025 06:57:27.4036 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2025 06:57:29.3134 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gIPSrA5bBJtFAkkbTbmozPyO3xSZyxjyfqkkN/OZ9NYD7Wp875ynVSCkUuOXDdHf
+X-MS-Exchange-CrossTenant-UserPrincipalName: e/fz6RxBHpFPdJ+x1pBiAmnzrNVgth6lwF8anQTgcLtKeDv5H2iR9fgrhEOU8uV9
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7940
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -139,32 +138,114 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Vanshika Shukla <vanshika.shukla@nxp.com>
+This patch adds NULL algo capabilities.
 
-Fixes the uninitialized variable issue - reported by NXP internal
-coverity.
-
-Fixes: 1182b364312c ("crypto/dpaax_sec: set authdata in non-auth case")
-Cc: g.singh@nxp.com
-Cc: stable@dpdk.org
-
-Signed-off-by: Vanshika Shukla <vanshika.shukla@nxp.com>
+Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c | 1 +
- 1 file changed, 1 insertion(+)
+ doc/guides/cryptodevs/dpaa2_sec.rst          |  2 +
+ doc/guides/cryptodevs/features/dpaa2_sec.ini |  2 +
+ drivers/crypto/dpaa2_sec/dpaa2_sec_priv.h    | 41 ++++++++++++++++++++
+ 3 files changed, 45 insertions(+)
 
-diff --git a/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c b/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
-index 925d2709d2..5995eb58d8 100644
---- a/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
-+++ b/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
-@@ -3576,6 +3576,7 @@ dpaa2_sec_set_pdcp_session(struct rte_cryptodev *dev,
- 		session->auth_key.data = NULL;
- 		session->auth_key.length = 0;
- 		session->auth_alg = 0;
-+		authdata.algtype = PDCP_AUTH_TYPE_NULL;
- 	}
- 	authdata.key = (size_t)session->auth_key.data;
- 	authdata.keylen = session->auth_key.length;
+diff --git a/doc/guides/cryptodevs/dpaa2_sec.rst b/doc/guides/cryptodevs/dpaa2_sec.rst
+index 1a590309a0..6b1357d78a 100644
+--- a/doc/guides/cryptodevs/dpaa2_sec.rst
++++ b/doc/guides/cryptodevs/dpaa2_sec.rst
+@@ -105,6 +105,7 @@ The DPAA2_SEC PMD has support for:
+ 
+ Cipher algorithms:
+ 
++* ``RTE_CRYPTO_CIPHER_NULL``
+ * ``RTE_CRYPTO_CIPHER_3DES_CBC``
+ * ``RTE_CRYPTO_CIPHER_AES128_CBC``
+ * ``RTE_CRYPTO_CIPHER_AES192_CBC``
+@@ -115,6 +116,7 @@ Cipher algorithms:
+ 
+ Hash algorithms:
+ 
++* ``RTE_CRYPTO_AUTH_NULL``
+ * ``RTE_CRYPTO_AUTH_SHA1_HMAC``
+ * ``RTE_CRYPTO_AUTH_SHA224_HMAC``
+ * ``RTE_CRYPTO_AUTH_SHA256_HMAC``
+diff --git a/doc/guides/cryptodevs/features/dpaa2_sec.ini b/doc/guides/cryptodevs/features/dpaa2_sec.ini
+index 3d6e449ca1..a280c7b51b 100644
+--- a/doc/guides/cryptodevs/features/dpaa2_sec.ini
++++ b/doc/guides/cryptodevs/features/dpaa2_sec.ini
+@@ -18,6 +18,7 @@ OOP LB  In LB  Out     = Y
+ ; Supported crypto algorithms of the 'dpaa2_sec' crypto driver.
+ ;
+ [Cipher]
++NULL          = Y
+ AES CBC (128) = Y
+ AES CBC (192) = Y
+ AES CBC (256) = Y
+@@ -33,6 +34,7 @@ ZUC EEA3      = Y
+ ; Supported authentication algorithms of the 'dpaa2_sec' crypto driver.
+ ;
+ [Auth]
++NULL         = Y
+ MD5          = Y
+ MD5 HMAC     = Y
+ SHA1         = Y
+diff --git a/drivers/crypto/dpaa2_sec/dpaa2_sec_priv.h b/drivers/crypto/dpaa2_sec/dpaa2_sec_priv.h
+index 1c0bc3d6de..e9b601c035 100644
+--- a/drivers/crypto/dpaa2_sec/dpaa2_sec_priv.h
++++ b/drivers/crypto/dpaa2_sec/dpaa2_sec_priv.h
+@@ -227,6 +227,27 @@ typedef struct dpaa2_sec_session_entry {
+ 
+ static const struct rte_cryptodev_capabilities dpaa2_sec_capabilities[] = {
+ 	/* Symmetric capabilities */
++	{	/* NULL (AUTH) */
++		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++		{.sym = {
++			.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH,
++			{.auth = {
++				.algo = RTE_CRYPTO_AUTH_NULL,
++				.block_size = 1,
++				.key_size = {
++					.min = 0,
++					.max = 0,
++					.increment = 0
++				},
++				.digest_size = {
++					.min = 0,
++					.max = 0,
++					.increment = 0
++				},
++				.iv_size = { 0 }
++			}, },
++		}, },
++	},
+ 	{	/* MD5 */
+ 		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
+ 		{.sym = {
+@@ -553,6 +574,26 @@ static const struct rte_cryptodev_capabilities dpaa2_sec_capabilities[] = {
+ 			}, }
+ 		}, }
+ 	},
++	{	/* NULL (CIPHER) */
++		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++		{.sym = {
++			.xform_type = RTE_CRYPTO_SYM_XFORM_CIPHER,
++			{.cipher = {
++				.algo = RTE_CRYPTO_CIPHER_NULL,
++				.block_size = 1,
++				.key_size = {
++					.min = 0,
++					.max = 0,
++					.increment = 0
++				},
++				.iv_size = {
++					.min = 0,
++					.max = 0,
++					.increment = 0
++				}
++			}, },
++		}, }
++	},
+ 	{	/* AES CBC */
+ 		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
+ 		{.sym = {
 -- 
 2.25.1
 
