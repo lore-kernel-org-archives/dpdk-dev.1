@@ -2,74 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CE20C54E71
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 May 2025 13:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02737C54E71
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 May 2025 14:02:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 87EC7427E2;
-	Wed, 21 May 2025 15:57:46 +0200 (CEST)
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com
- [209.85.208.48]) by mails.dpdk.org (Postfix) with ESMTP id 917CF427D5
- for <dev@dpdk.org>; Wed, 21 May 2025 15:57:45 +0200 (CEST)
-Received: by mail-ed1-f48.google.com with SMTP id
- 4fb4d7f45d1cf-601fb2b7884so5202351a12.2
- for <dev@dpdk.org>; Wed, 21 May 2025 06:57:45 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 28CBC427D5;
+	Wed, 21 May 2025 16:02:43 +0200 (CEST)
+Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com
+ [99.78.197.217]) by mails.dpdk.org (Postfix) with ESMTP id 11DB24028F
+ for <dev@dpdk.org>; Wed, 21 May 2025 16:02:40 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1747835865;
- x=1748440665; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=OFrBGea4IMt4vg5i/HNcbVnhIEcypIyQTG6yQZXHHdQ=;
- b=Xgj6YlzWXSA98A7MSxk6EHuN9n+/4mWSwbNJNXR4TM1+d6ZZ0BsBLQzM2oBiOu5lwM
- asyeimDCqjcRj7WJqmC0JDK4RUQdWkHkGkk2mNrGLFWxC7BOKSDXTxTfOiSZ5D1fWkCK
- CTcfJxwgyBpb991qpiBn7VgNXzdQ77B6k0lxdei7Kxfk0tRwXKjHX1/DG2EZMmG+Avkz
- Vmde2V1vaCtYqj59fMqblgleiZgQClwfUofZnJVfxJCd/+J1/1p7wHfnZ+m9P6csb4c/
- TAT7NnttHAJfhiQSgnAn9Sci06Xo1B91PjdKqITC18O/HVYbrMmOuDOjcmsyyZ3yPkTX
- /SYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1747835865; x=1748440665;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=OFrBGea4IMt4vg5i/HNcbVnhIEcypIyQTG6yQZXHHdQ=;
- b=dbtDv4hgp1JAzlHQPp6VJ/KkfsJK3oe7lZhuR/N76GdFIkFMtoMAFyLUXsSZ5MbKjk
- vwqVvRtgsuKyFShPI9mBa7YZhRpdBm129MtiOBMUm6VoICgr9Uh0rcnnqgXAwifDiBws
- r50zjyTTK9LLxWTlKkinhyU7CGWMdHASbs+abCJ/pnJza6eibBVWI6m28LdledHJRcuM
- 5F2u7JR7TZaHLztC2COGjTQpoPFRjyyJRlANX3lADO4tbPxauuG+9hNQo2Y2a1l2fd/3
- Gml/a0fSLSxEsNktkJsMHaWoWRCzz3MSiXJEuSscWdNYu0GLUHGl9UqIXTkr6ftyZPD7
- CPeQ==
-X-Gm-Message-State: AOJu0YyS2j635vPZe/bg4NUMtauGgsWZbFzMfg0jUzJykpaoNYcL7Qyg
- 4nZu2b/ukWxaWinkj4AAD4EkxO0M9hChQSCxZ45NluVmQkSjzM+HMUhhumUdSM0xn/LghbA70T8
- m+Khh
-X-Gm-Gg: ASbGncs0/2vZWYHN0SoH747tBaVf+oeFriyKUwGDpb7TL1+SDe3wIG4JLNV5Ye0dooq
- 0/RHnK0vztG+qEt14+i+DN8XtusTLuFWqkfi1eTrLKHlTev627euU3VMEg3rgaqMbojbeRxY3z2
- 1GZ1iEWGbdCtLX4PgpTnqQgxKTpd05NaiWcZF/ufz2zbdBod66XRdGzh5aAsfMl5Rvi2OdQdp1O
- U6amS4N9EEbsMryNoRED56rXL55vyD1kSoT+T0rG9+OBTmYdRUGIiz+5XXAT4IPk8NP5OCvsnQL
- bnANn64N2QYUI5ABYbg2sdi3MrVpxmhyHtTe3Bvu+5sCTJ4sCg2whY6lnx01bMS2lIBnWvWdhFU
- 6UwZUPJf8YVQJTuOJs/frK6qrjoWM
-X-Google-Smtp-Source: AGHT+IFi1qAVQ+ROmbv1uUYqIJyq4KNqi4NCwKbhQU74xkUMBOUmVLuqci0OEB1ythKIPjyJV6OnZA==
-X-Received: by 2002:a17:907:3e03:b0:ad4:c55e:ef8b with SMTP id
- a640c23a62f3a-ad536f9db9emr1701836166b.48.1747835864927; 
- Wed, 21 May 2025 06:57:44 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-ad52d4c9e56sm902511566b.156.2025.05.21.06.57.42
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 21 May 2025 06:57:44 -0700 (PDT)
-Date: Wed, 21 May 2025 06:57:37 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Sunyang Wu <sunyang.wu@jaguarmicro.com>
-Cc: dev@dpdk.org, thomas@monjalon.net, ferruh.yigit@amd.com,
- andrew.rybchenko@oktetlabs.ru, Morten =?UTF-8?B?QnLDuHJ1cA==?=
- <mb@smartsharesystems.com>
-Subject: Re: [PATCH v2] ethdev: optimize how the values of the flag
- variables are assigned
-Message-ID: <20250521065737.45cef281@hermes.local>
-In-Reply-To: <20250521101531.34240-1-sunyang.wu@jaguarmicro.com>
-References: <20250521101531.34240-1-sunyang.wu@jaguarmicro.com>
+ d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+ t=1747836161; x=1779372161;
+ h=from:to:cc:subject:date:message-id:mime-version;
+ bh=QdhWlNB2f6khDIl+XtwUMqUQi9c8pZ3bwUgxYMcZTvE=;
+ b=cgCXVSoGbb5EMPvhonSlRXNlKQPJdpi7eIJ9NcKHkoFZkb2ftm3sYBKj
+ kUx2Kt86dsRc65LKaY0L7f0DwvJTHI+RKxH9YxztLMt+aAVrke1/GOidi
+ rw0Ifjp+i8E+Vje8mL+iufRy1SqeTcGL2cyNzpzJrdGNzN2xUlg73mAK8
+ J+TkAH4LdsM+e1KsQ5y8C+Jrg/3IFxT4EIr359o5+L9qlgRhmjySLbp8j
+ MrhqyDFVwITHHqLslPOdpogmUaxTjSt11hnjc1jZXd6B4RLrrjPzfXOdc
+ AqEu4v/PcRFwNjQiQHVpm1Vz6zuCE0pd7Kn7/ymaoYRyhpU0GvGVeRWj5 Q==;
+X-IronPort-AV: E=Sophos;i="6.15,303,1739836800"; d="scan'208";a="52422188"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO
+ smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+ by smtp-border-fw-80006.pdx80.corp.amazon.com with
+ ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 14:02:37 +0000
+Received: from EX19MTAEUB001.ant.amazon.com [10.0.43.254:8504]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.39.182:2525]
+ with esmtp (Farcaster)
+ id ff571c94-9afb-449c-964e-2af174f0b802; Wed, 21 May 2025 14:02:36 +0000 (UTC)
+X-Farcaster-Flow-ID: ff571c94-9afb-449c-964e-2af174f0b802
+Received: from EX19D007EUA002.ant.amazon.com (10.252.50.68) by
+ EX19MTAEUB001.ant.amazon.com (10.252.51.26) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 21 May 2025 14:02:35 +0000
+Received: from HFA15-CG15235BS.amazon.com (10.106.83.30) by
+ EX19D007EUA002.ant.amazon.com (10.252.50.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 21 May 2025 14:02:33 +0000
+From: Shai Brandes <shaibran@amazon.com>
+To: <stephen@networkplumber.org>
+CC: <dev@dpdk.org>, Shai Brandes <shaibran@amazon.com>
+Subject: [PATCH 0/8] net/ena: release 2.13.0
+Date: Wed, 21 May 2025 17:02:05 +0300
+Message-ID: <20250521140213.2576-1-shaibran@amazon.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [10.106.83.30]
+X-ClientProxiedBy: EX19D042UWA003.ant.amazon.com (10.13.139.44) To
+ EX19D007EUA002.ant.amazon.com (10.252.50.68)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,53 +64,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 21 May 2025 18:15:31 +0800
-Sunyang Wu <sunyang.wu@jaguarmicro.com> wrote:
+This patchset includes an upgrade of the ENA HAL,
+introduces a new feature, and addresses three bug fixes.
 
-> Set the values of the promiscuous and all_multicast variables
-> according to the return value.
->=20
-> Signed-off-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
-> Signed-off-by: Sunyang Wu <sunyang.wu@jaguarmicro.com>
-> ---
->  lib/ethdev/rte_ethdev.c | 11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
->=20
-> diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-> index d4197322a0..c27d3e5041 100644
-> --- a/lib/ethdev/rte_ethdev.c
-> +++ b/lib/ethdev/rte_ethdev.c
-> @@ -3044,10 +3044,9 @@ rte_eth_promiscuous_disable(uint16_t port_id)
->  	if (dev->dev_ops->promiscuous_disable =3D=3D NULL)
->  		return -ENOTSUP;
-> =20
-> -	dev->data->promiscuous =3D 0;
->  	diag =3D dev->dev_ops->promiscuous_disable(dev);
-> -	if (diag !=3D 0)
-> -		dev->data->promiscuous =3D 1;
-> +	if (!diag)
-> +		dev->data->promiscuous =3D 0;
-> =20
->  	diag =3D eth_err(port_id, diag);
-> =20
-> @@ -3112,10 +3111,10 @@ rte_eth_allmulticast_disable(uint16_t port_id)
-> =20
->  	if (dev->dev_ops->allmulticast_disable =3D=3D NULL)
->  		return -ENOTSUP;
-> -	dev->data->all_multicast =3D 0;
-> +
->  	diag =3D dev->dev_ops->allmulticast_disable(dev);
-> -	if (diag !=3D 0)
-> -		dev->data->all_multicast =3D 1;
-> +	if (!diag)
-> +		dev->data->all_multicast =3D 0;
-> =20
->  	diag =3D eth_err(port_id, diag);
-> =20
+Thank you in advance to the net maintainers and community members
+for your time and effort reviewing the code.
 
-Code is fine, but the commit description is misleading.
-It is not an optimization, it is a bug fix so that flags
-are not set if device callback returns an error.
+Best regards,
+Shai Brandes
+AWS Elastic Network Adapter team
 
-An optimization is something that is faster but has the
-same effect.
+Shai Brandes (8):
+  net/ena/base: avoid recalculating desc per entry
+  net/ena/base: coding style changes
+  net/ena: separate doorbell logic for Rx and Tx
+  net/ena: support fragment bypass mode
+  net/ena: fix unhandled interrupt config failure
+  net/ena: fix aenq timeout with low poll interval
+  net/ena: fix virtual address calc for unaligned BARs
+  net/ena: upgrade driver version to 2.13.0
+
+ doc/guides/nics/ena.rst                       |  13 +-
+ doc/guides/rel_notes/release_25_07.rst        |  10 ++
+ drivers/net/ena/base/ena_com.c                |  39 +++++-
+ drivers/net/ena/base/ena_com.h                |   8 ++
+ .../net/ena/base/ena_defs/ena_admin_defs.h    |  15 +++
+ drivers/net/ena/base/ena_eth_com.c            |   6 +-
+ drivers/net/ena/base/ena_eth_com.h            |  15 ++-
+ drivers/net/ena/ena_ethdev.c                  | 112 ++++++++++++++----
+ drivers/net/ena/ena_ethdev.h                  |   9 +-
+ 9 files changed, 194 insertions(+), 33 deletions(-)
+
+-- 
+2.17.1
+
