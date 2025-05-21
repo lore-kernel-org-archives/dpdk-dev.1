@@ -2,49 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F389C54E65
-	for <dpdk-dev@archiver.kernel.org>; Wed, 21 May 2025 11:26:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCDE6C54E65
+	for <dpdk-dev@archiver.kernel.org>; Wed, 21 May 2025 11:43:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 63E8E427B6;
-	Wed, 21 May 2025 13:26:16 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9D5E1427BF;
+	Wed, 21 May 2025 13:43:03 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id A827E40041;
- Wed, 21 May 2025 13:26:14 +0200 (CEST)
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id CD327427BC
+ for <dev@dpdk.org>; Wed, 21 May 2025 13:43:02 +0200 (CEST)
 Received: from mail.maildlp.com (unknown [172.18.186.231])
- by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b2TcJ5SSRz6L54Q;
- Wed, 21 May 2025 19:25:20 +0800 (CST)
-Received: from frapeml100008.china.huawei.com (unknown [7.182.85.131])
- by mail.maildlp.com (Postfix) with ESMTPS id 9E2661400F4;
- Wed, 21 May 2025 19:26:13 +0800 (CST)
+ by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b2Tv63xSXz6DB54;
+ Wed, 21 May 2025 19:38:10 +0800 (CST)
+Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
+ by mail.maildlp.com (Postfix) with ESMTPS id E5B3B1400F4;
+ Wed, 21 May 2025 19:43:01 +0800 (CST)
 Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml100008.china.huawei.com (7.182.85.131) with Microsoft SMTP Server
+ frapeml500005.china.huawei.com (7.182.85.13) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 21 May 2025 13:26:13 +0200
+ 15.1.2507.39; Wed, 21 May 2025 13:43:01 +0200
 Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
  frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Wed, 21 May 2025 13:26:13 +0200
+ Wed, 21 May 2025 13:43:01 +0200
 From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: "pbhagavatula@marvell.com" <pbhagavatula@marvell.com>,
- "anatoly.burakov@intel.com" <anatoly.burakov@intel.com>,
- "erik.g.carrillo@intel.com" <erik.g.carrillo@intel.com>,
- "mb@smartsharesystems.com" <mb@smartsharesystems.com>, "jerinj@marvell.com"
- <jerinj@marvell.com>, Tyler Retzlaff <roretzla@linux.microsoft.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, "stable@dpdk.org" <stable@dpdk.org>
-Subject: RE: [PATCH] eal: fix return value of lcore role
-Thread-Topic: [PATCH] eal: fix return value of lcore role
-Thread-Index: AQHbycROpJg3qFKLdku72Ez8QXY6grPc8ovA
-Date: Wed, 21 May 2025 11:26:13 +0000
-Message-ID: <77ea61e96ce54cbeb46eb440e30fd19e@huawei.com>
-References: <20250520201726.7420-1-pbhagavatula@marvell.com>
-In-Reply-To: <20250520201726.7420-1-pbhagavatula@marvell.com>
+To: "Rui Ferreira (A)" <rui.ferreira1@h-partners.com>, Thomas Monjalon
+ <thomas@monjalon.net>
+CC: "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: [PATCH] eal/linux: unregister alarm callback before free ptr
+Thread-Topic: [PATCH] eal/linux: unregister alarm callback before free ptr
+Thread-Index: AQHbyZkX8uuilrj/CUSHVCEWtWVby7Pc9vTQ
+Date: Wed, 21 May 2025 11:43:01 +0000
+Message-ID: <462157df1f3742f7abd20ee27067c53b@huawei.com>
+References: <20250520160150.50401-1-rui.ferreira1@h-partners.com>
+In-Reply-To: <20250520160150.50401-1-rui.ferreira1@h-partners.com>
 Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [10.206.138.73]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -59,24 +55,68 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQoNCj4gDQo+IEZyb206IFBhdmFuIE5pa2hpbGVzaCA8cGJoYWdhdmF0dWxhQG1hcnZlbGwuY29t
-Pg0KPiANCj4gVXBkYXRlIHJ0ZV9sY29yZV9oYXNfcm9sZSgpIHRvIHJldHVybiBmYWxzZSBpbnN0
-ZWFkIG9mIGENCj4gbmVnYXRpdmUgdmFsdWUgZm9yIGludmFsaWQgbGNvcmUgSURzLCByZW1vdmlu
-ZyB0aGUgbmVlZA0KPiBmb3IgY2FsbGVycyB0byBwcmUtdmFsaWRhdGUgdGhlIElELg0KPiANCj4g
-Rml4ZXM6IGIwYTE1MDJhMjc3YyAoImVhbDogbWFrZSBzZW1hbnRpY3Mgb2YgbGNvcmUgcm9sZSBm
-dW5jdGlvbiBtb3JlIGludHVpdGl2ZSIpDQo+IENjOiBzdGFibGVAZHBkay5vcmcNCj4gDQo+IFN1
-Z2dlc3RlZC1ieTogTW9ydGVuIEJyw7hydXAgPG1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNvbT4NCj4g
-U2lnbmVkLW9mZi1ieTogUGF2YW4gTmlraGlsZXNoIDxwYmhhZ2F2YXR1bGFAbWFydmVsbC5jb20+
-DQo+IC0tLQ0KPiAgbGliL2VhbC9jb21tb24vZWFsX2NvbW1vbl9sY29yZS5jIHwgMiArLQ0KPiAg
-MSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZm
-IC0tZ2l0IGEvbGliL2VhbC9jb21tb24vZWFsX2NvbW1vbl9sY29yZS5jIGIvbGliL2VhbC9jb21t
-b24vZWFsX2NvbW1vbl9sY29yZS5jDQo+IGluZGV4IDI5NDI2NzE3N2QuLjlkZDZjNzIwNTUgMTAw
-NjQ0DQo+IC0tLSBhL2xpYi9lYWwvY29tbW9uL2VhbF9jb21tb25fbGNvcmUuYw0KPiArKysgYi9s
-aWIvZWFsL2NvbW1vbi9lYWxfY29tbW9uX2xjb3JlLmMNCj4gQEAgLTg3LDcgKzg3LDcgQEAgcnRl
-X2xjb3JlX2hhc19yb2xlKHVuc2lnbmVkIGludCBsY29yZV9pZCwgZW51bSBydGVfbGNvcmVfcm9s
-ZV90IHJvbGUpDQo+ICAJc3RydWN0IHJ0ZV9jb25maWcgKmNmZyA9IHJ0ZV9lYWxfZ2V0X2NvbmZp
-Z3VyYXRpb24oKTsNCj4gDQo+ICAJaWYgKGxjb3JlX2lkID49IFJURV9NQVhfTENPUkUpDQo+IC0J
-CXJldHVybiAtRUlOVkFMOw0KPiArCQlyZXR1cm4gMDsNCj4gDQo+ICAJcmV0dXJuIGNmZy0+bGNv
-cmVfcm9sZVtsY29yZV9pZF0gPT0gcm9sZTsNCj4gIH0NCj4gLS0NCg0KQWNrZWQtYnk6IEtvbnN0
-YW50aW4gQW5hbnlldiA8a29uc3RhbnRpbi5hbmFueWV2QGh1YXdlaS5jb20+DQogDQo+IDIuNDMu
-MA0KDQo=
+
+
+> Subject: [PATCH] eal/linux: unregister alarm callback before free ptr
+>=20
+> This was flagged by Address sanitizer as a use after free. The
+> intr_handle ptr is shared between the main thread and the interrupt
+> thread, and the interrupt thread can dereference the ptr after free
+> is called when the main thread cleans up (from the alarm callback).
+>=20
+> The interrupt thread never terminates (eal_intr_thread_main) so
+> use rte_intr_callback_unregister_sync during cleanup to
+> ensure the callback is removed before freeing the ptr.
+>=20
+> To be more defensive clear out the pointer and registration
+> variable if we can unregister.
+>=20
+> Bugzilla ID: 1683
+>=20
+> Signed-off-by: Rui Ferreira <rui.ferreira1@h-partners.com>
+> ---
+>  .mailmap                  | 1 +
+>  lib/eal/linux/eal_alarm.c | 9 ++++++++-
+>  2 files changed, 9 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/.mailmap b/.mailmap
+> index d8439b79ce..907c5ea967 100644
+> --- a/.mailmap
+> +++ b/.mailmap
+> @@ -1332,6 +1332,7 @@ Rosen Xu <rosen.xu@altera.com> <rosen.xu@intel.com>
+>  Roy Franz <roy.franz@cavium.com>
+>  Roy Pledge <roy.pledge@nxp.com>
+>  Roy Shterman <roy.shterman@vastdata.com>
+> +Rui Ferreira <rui.ferreira1@h-partners.com>
+>  Ruifeng Wang <ruifeng.wang@arm.com>
+>  Rushil Gupta <rushilg@google.com>
+>  Ryan E Hall <ryan.e.hall@intel.com>
+> diff --git a/lib/eal/linux/eal_alarm.c b/lib/eal/linux/eal_alarm.c
+> index b216a007a3..eb6a21d4f0 100644
+> --- a/lib/eal/linux/eal_alarm.c
+> +++ b/lib/eal/linux/eal_alarm.c
+> @@ -57,7 +57,14 @@ static void eal_alarm_callback(void *arg);
+>  void
+>  rte_eal_alarm_cleanup(void)
+>  {
+> -	rte_intr_instance_free(intr_handle);
+> +	/* unregister callback using intr_handle in interrupt thread */
+> +	int ret =3D rte_intr_callback_unregister_sync(intr_handle,
+> +						eal_alarm_callback, (void *)-1);
+> +	if (ret >=3D 0) {
+> +		rte_intr_instance_free(intr_handle);
+> +		intr_handle =3D NULL;
+> +		handler_registered =3D 0;
+> +	}
+>  }
+>=20
+>  int
+> --
+
+Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+
+As a nit: as it is a bug-fix, probably start with 'fix ..' in the subject.
+Also "Fixes:" and probably " Cc: stable@dpdk.org" needs to be added.
+
+> 2.35.3
+
