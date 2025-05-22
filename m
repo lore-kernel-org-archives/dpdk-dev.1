@@ -2,161 +2,63 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FC55C54E90
-	for <dpdk-dev@archiver.kernel.org>; Thu, 22 May 2025 10:44:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A49C54E90
+	for <dpdk-dev@archiver.kernel.org>; Thu, 22 May 2025 11:04:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0FBEA402DA;
-	Thu, 22 May 2025 12:44:50 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
- by mails.dpdk.org (Postfix) with ESMTP id 8576E402D1
- for <dev@dpdk.org>; Thu, 22 May 2025 12:44:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1747910688; x=1779446688;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=86xAnWQd+HCZj1HVP6JOETAfr82Aaa9uoA2Y1skEsBI=;
- b=ThCP69iBjVxvwymTLEcqQhPjXSrmDXDAi9V5+huP9UPjHtxipHg1CDEW
- jMh/1PJnXuAl1PNeCL2mxXWU/9EwvrctXROop+nBdpWgHc16MbRVXig3l
- zCyEnNjT0oAmjMk2tJGDnR63kCliac6+ZNMaF3Ufrd7t7P/muPzPBBdSU
- siKZLA2lK16n6X93jhDtOz4BZKQCNO5/3J/do7ubmwnTUgeZizESqf9Sl
- 3i1ffFXOfpZLeRld/5IpBk6/u6qCe9g0gjPYGB8iHzLqonsioL+sqgaft
- PIrMv2H5BtwoWjmhqqx+b6a9hV+LFD/ifnXMcdWsWKIE0TqlrsNaVeuzi Q==;
-X-CSE-ConnectionGUID: L+Oii1r2Sp6xtb2LXnynPg==
-X-CSE-MsgGUID: Iu0hmuBwQDqYaZCTtcOXGA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11440"; a="49044594"
-X-IronPort-AV: E=Sophos;i="6.15,305,1739865600"; d="scan'208";a="49044594"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
- by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 22 May 2025 03:44:44 -0700
-X-CSE-ConnectionGUID: iDIBRCeqQMiFK3hy8V1YRA==
-X-CSE-MsgGUID: kxW9rec0TEyTBBYGjTCSMQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,305,1739865600"; d="scan'208";a="140410782"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 22 May 2025 03:44:43 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 22 May 2025 03:44:43 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Thu, 22 May 2025 03:44:43 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.46) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.55; Thu, 22 May 2025 03:44:43 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=C2wr61dtg+pcI6zOLVJm/L8HRIfG8f8dTkEyU7sN/MN5dWbAM2Gk8Pj5ijD47dfv3Wpj5KIXU95T4HieBfmV/4b4SdZh24vUmodC9P8UYec0rYMirDKLKHf8jPv7QHDrE4j27QBkNiUShe3OvfqYuNt6klUnEXHsmLbwZTgdKUqXZKcDNvGmceykdPwrY2gLv8h7BpiWScOWA1AImRo7FvAHEYsh5NOUrOT2sU8VzBizoQbwc0J3Uq5T054zpE4wl1jKFHeWll00aUgsky8Oe02L5eLWXC4eM3K42DPOdKBQcS/tOjMffAqhM1HozH2JpD8tjjWwdKpmDEx/cHHkeA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YiohJVmhCINWW2MvlJ8LGNYUi04EThu559yWW+QrGO4=;
- b=R382RB7Gu+MkLbF/PhoFvwH9L0Hpkj39QO9GCUIUGv1gAUGzhFrvcG/lppBAsSWZlxVDNm2bbs/VR9ykJVwvIpztXvWbwiC0cFwU+33Z05RnYi2GQ5TJkEb2wc2lgH/C4OQ9GJa8MAdCnqh8Qw0G/eUFn1ff5PeU7F7XwuCFepj44/f7XgcyC4oc153ie7/xAMNJdrzrkFid6Yv3z17WDrwye+DDA3PwItA+T3cNSvbEEbHDCiHnp8RtUP4l9Eq5nL9UFsLrx70jIheSdxOrTTsh0Jr6Duc3dSHdrycvhOa60rm8dA2Hvk2/sW8L5Xz7FdHRnturAL5uu3bb1hr4Xg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by DS0PR11MB7684.namprd11.prod.outlook.com (2603:10b6:8:dd::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.35; Thu, 22 May
- 2025 10:44:41 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%5]) with mapi id 15.20.8746.030; Thu, 22 May 2025
- 10:44:41 +0000
-Date: Thu, 22 May 2025 11:44:36 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: <dev@dpdk.org>
-CC: <david.marchand@redhat.com>, Chengwen Feng <fengchengwen@huawei.com>
-Subject: Re: [RFC PATCH 3/7] argparse: make argparse EAL-args compatible
-Message-ID: <aC8AFA425744qaH-@bricha3-mobl1.ger.corp.intel.com>
-References: <20250520164025.2055721-1-bruce.richardson@intel.com>
- <20250520164025.2055721-4-bruce.richardson@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250520164025.2055721-4-bruce.richardson@intel.com>
-X-ClientProxiedBy: DB6PR0301CA0086.eurprd03.prod.outlook.com
- (2603:10a6:6:30::33) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id 038B4402D1;
+	Thu, 22 May 2025 13:04:53 +0200 (CEST)
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com
+ [209.85.222.44]) by mails.dpdk.org (Postfix) with ESMTP id 1B17140144
+ for <dev@dpdk.org>; Thu, 22 May 2025 04:45:26 +0200 (CEST)
+Received: by mail-ua1-f44.google.com with SMTP id
+ a1e0cc1a2514c-875b8e006f8so2110064241.0
+ for <dev@dpdk.org>; Wed, 21 May 2025 19:45:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1747881925; x=1748486725; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=4miqewFuR94tYynevwTvBygbzHl08rz+CQi8cN/4sm4=;
+ b=FrCnTohCoDGTP5eAk2+QsaXtqST1mSaFQ/A7gtHEEP6nLQb0t5Cg43wd9jhjO0rUS0
+ 3tS8Njx713T9nVvVbAVLdRF1KtaDbodt13bEPKTymPV1WBxgXuCXWnLQrLDLQ+Bi/Qnd
+ j6EqaqT8MS9pty2DHC5QR7tm37RWHdktoRP9UMk8rZjegM26keBvnFWj2UkhS159o4uQ
+ jmGUQvxsXjuxjmz/ywTtMdE8wGdiTZ8Np+0xLVhmF9eQgDjEb+FlJvFli444HF0Fby2e
+ iSrwrD1MiABRa3DS8w6q9izgGeLcbxK70mYt7slAq5Rtc2vPQq4iZY5w2xQWKEygfyQ7
+ RVFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1747881925; x=1748486725;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=4miqewFuR94tYynevwTvBygbzHl08rz+CQi8cN/4sm4=;
+ b=HeHiBxPZPlQT0wT1fk6F2NopGhSPtDKktkn9lBcOp8waeuUnjww/IK3w6KGCXRdQE8
+ 4cWQVfATxo411c0JGBal+GwOIV6PIqKZNs0a1U5DPw/grg4Mq9wNpRF5DY33xwXaYZQ/
+ c9T7W2B6z3qoACdtNXL8YMCZNKiUf35OnZFMu/7qA268Amndf5eVqW1TjWglNLsvJWI8
+ R1ytqBJCpBmJHWFQsaxIU6QrC7Gxuzao47dPD2eKN0wNp205yHummDE79YOvRgtceM8b
+ NcEwYUTARi39wnZoZSc2CrfU47fU4XlNILt2i6RCA9Uyg6urPLu2vuKRLj2eIQTAWY5C
+ bPkQ==
+X-Gm-Message-State: AOJu0YyNjmUu0TbzDQoD3ANxqm8g9wVbZOBv5K9oPiwXn7AejTclp9Gz
+ YSfwclKO0pR00QVgkrbabTgHWir/BHA0G5IMasR+CAc+xk/aZi7jDdkYcuan5AsDWbmXgT3+Xyy
+ bs8fb0nofQbB/ASMx+W4aRAq7cv7Ngsg=
+X-Gm-Gg: ASbGncs6KyVvys3S/C7Pn5wZvip92fc6I7zWR7ePLhuuGfwp1Tbm9YEvcdG4osPVwkG
+ GciKjWURzFLbI9sUxjUtUJgYjGPRs+YZIjaVYEigoOJ0lnioSghNEGKKkfoxMcAR6N0cK93P4Vq
+ UkRJNKE6nAkhkMMYKP9gcy+wEUEhfg6R1r
+X-Google-Smtp-Source: AGHT+IEXrmwe59cqKpQcblgbyZUhkAm5e0A7OIJKiId1siCJANb2AsYz99rJF4pQFJyCcDGH4KBXBZIpx8xcoNPoiGk=
+X-Received: by 2002:a05:6102:4194:b0:4b6:5e0f:6ddc with SMTP id
+ ada2fe7eead31-4dfa6bc7682mr20242784137.14.1747881925148; Wed, 21 May 2025
+ 19:45:25 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DS0PR11MB7684:EE_
-X-MS-Office365-Filtering-Correlation-Id: aec9d6c2-2869-4197-7001-08dd991da7f8
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?eLApzxaEAaCDVyhO82fZA5WdMYLWytjg1FIm1wOld/RK8h82ug4sEpVRzPX5?=
- =?us-ascii?Q?Kl0AqtnCStwOmfVtu9An4zvdBca6X2FADYd1u+4TqF85G64UewoprjU+x30/?=
- =?us-ascii?Q?RCthTAAEmn6TcflkFTMXnMh1MrcnYo9yPr6fwDTHVeWDNfYY8Qwubj2l9Oyp?=
- =?us-ascii?Q?fTWtw4btVYhBHsVx9Jj71BH/L+ChPSqWClBdYkfIzW/B/36cMW2dM7C1h7Ax?=
- =?us-ascii?Q?BxtZnyAdR4jRmN+wjrXl90FmlSc1QSePmW2RgxR2hU3XTjYJLha5qWH1sv/q?=
- =?us-ascii?Q?cpX+f29xuqZ2s8ldid6DBD/mY13/w2a0/JuNdbvnQrGf9kakPSU5lC/JSjP1?=
- =?us-ascii?Q?Rm0B/bmv6w18dh3lRAQCmadtapwXwds6mmEFqweUyq6tPIk00SDpUvhTb9XM?=
- =?us-ascii?Q?3jTqDWj5xx924M4gBnGnzv5Zl0MPk3O6PRqpu0JpqLhuUzJVQhd584kYcqs8?=
- =?us-ascii?Q?LUAIcOX9uJHcIsdaGgXVg9cGKwxfBNt81P39bTviRCqQi0+VPAAF8LUnTQCi?=
- =?us-ascii?Q?KPJ6JDHPJ4efUhxclFthGNB2x7GimwPBEYRRL/w9y0vg0KqnuKX8tu7kpG5v?=
- =?us-ascii?Q?M7GOxmU/nU03oyn8rY1dQHLM9w5OR4xWnIUW1jbAc0QNzpX0QaqX9jqEzWNb?=
- =?us-ascii?Q?+Dhu67yoTQmamYwfKa28Q2pTMcaSZkEnrbxqmGdqQbgT/kQGWgzz7uxZD7zp?=
- =?us-ascii?Q?eSKeXKBbHtctWtA5PYz4fP42U9fq52oY64+Cbaavdp6yG2SuhdvybD8zxtt4?=
- =?us-ascii?Q?9t/LfNOyICOtR8+PKtxuNCEyam1zV1anaX0KQ8oXKUy4AkTKoh8QwDRoRQ78?=
- =?us-ascii?Q?xfldnyT6BK1kIzQFNUxREhlGChanMjv1tSQQfqFrQEXNi1nXc17Ih56cOjjH?=
- =?us-ascii?Q?+m1Qs1ijmgyGZJNiCvfFlCiBg2us/Yv7cp5+xlMncfjIx55tE+cN+LHckWYN?=
- =?us-ascii?Q?xAntUed18DVqO4io8rdeWtJipAp7QUf6i7/M6JLU/+HKUuqq6NDvFszw43AN?=
- =?us-ascii?Q?T3P82FIAw3lG8Sm0riZLbFuHy6CLidN+XlTnmnVgD1+Vs5cfKfUQvGQ6eErf?=
- =?us-ascii?Q?ol3Xb6ipQsTeXXfMbBah2D29T77ub/nDqMiwmtoouu6M36hUS2r9F2lF7k0E?=
- =?us-ascii?Q?2JA2SG3eWZbHVxK5756j3JWJb+YFvb5FfHE09glMT1/ZMaB4Rie7GEd73wov?=
- =?us-ascii?Q?WzHOcGbjFdJRIg+EOseiQpVkvKg9N5E8PYZvfkO9YaQMmZTMLTq+mAfP1fLA?=
- =?us-ascii?Q?AlGt90erj6uIc5NFleooiWCbwJClgYI9JptsmTWdLwU/tXmuSHOeBwqy/4OM?=
- =?us-ascii?Q?jISxlPUglW8fl9dQdE/ngt/J0vxJwXhlqAQAIBOo0lzgq/IOgj9XiXkIGKPu?=
- =?us-ascii?Q?sbsorCGRDWIDBUU0A7k/EWl/ocksUvASCuLv05+sLURm+8SeJw=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?nJgDbX90gX3rXOevcBT9ESSEHnq3fPrt4hn2qEo4XL5G/NI1V4TJVXuNaZ3P?=
- =?us-ascii?Q?65S9KaYYPA65PO2HYaxRrY5ymFVJccBw5Ei7JqbAgPI3QQKvBPmKm52xiXyR?=
- =?us-ascii?Q?ci/Wt3MLCrJh12I7tVPQuDy+UINgV+pXvox8rWpeMTSIS02ydCqepZNbgKDz?=
- =?us-ascii?Q?HFuJrZZZvWoAv/ovCL4CJmcVO65dkyCAyevv3O8eP21btIvtwA5jyJOY8VLF?=
- =?us-ascii?Q?zveziljizU4MnlQA7/e+JDvpVJugFJ1gXf8g91vE+/ITllQyQpt8eTNYKjn1?=
- =?us-ascii?Q?NFSCvc4V5a4RFxkun4EZEWIakEWGONkp80Yiu4GhsvqwXUS/3vM3DjisCnhf?=
- =?us-ascii?Q?DTSjPy0xem84npnDie45WOFREzvHLBkZGzRZ68c9BqAhKh3MptAXGdvlLZYy?=
- =?us-ascii?Q?EM/YeAL/pSgGj1rFTwOVbT0td4z1+q7Wc3n/f23i5kO/2uEz8Gy2QnfuyAeG?=
- =?us-ascii?Q?CNWwphoJMwZaQmh5sF+8ezLnilu1y11LfotxSNXojdtae45I6dyXWdYlilb5?=
- =?us-ascii?Q?fCUy1uq3G4Xq1mBl89vDEbknD3syD3w4j3/YJ8nmb00Vm28bJe9qc/A1Z/gR?=
- =?us-ascii?Q?7vws4YBO4nHaVGOSnBuTaG4QV9kFYAxOPiMGsKFq8E901HaVhvZW1ZqqLNs/?=
- =?us-ascii?Q?MKEs211lF+J6yMfDDP+57EDyAay8hRn37fDMu32n+WtNuWTUYFMjYTwnd6Y1?=
- =?us-ascii?Q?G3t66FS94qI3/lOpfOkOhPyX6rZ294KpZOSlc0hM79DJ6e2bVBxQF1HVNZIw?=
- =?us-ascii?Q?18ePOdLeGNI8fveWgtZmJLl2cFYPFe/RFssJVe1k0ZwI0q6fKzyRtRW0p56V?=
- =?us-ascii?Q?Dbf6rAu2gpi23X7JAXHC2kwiXyqSgRjRBZxTiSARn0kKGO93pN6KDaohSpzf?=
- =?us-ascii?Q?KbX4AGR3B+6OQSzlLv33M0RTcwMRI0SmNAwBUsPxLmtt4ClQ79dwL89zcvOW?=
- =?us-ascii?Q?b0sXCuZZw3o6X0rXx/C1/PIIJ13sjq4fOdfTY9USDcZ5fiYdjj1kUIpwHEjQ?=
- =?us-ascii?Q?0OTCSKwfkvqObbo7ShdP3H9jXjnzVwRevz/u5v7XqvoSo3gHqkPsNJb09oNu?=
- =?us-ascii?Q?99BmjuocsT6cj4gVUxeft6PYDdK/RKa60mKIz/4UxjklgNdPNoOz1C+pgwvB?=
- =?us-ascii?Q?R7amTRHra/kv4J8jftVexq8T2hvmtGQlqu2u/YMI+IxAdnbxv7JeMkQOdo/2?=
- =?us-ascii?Q?YdzJHI6xmPD03EltEl5rPN9cMRA4e+VRFueCsvB3ENwzNAt3RU647rV3uiSG?=
- =?us-ascii?Q?l4xlbjCHba/8/CtEGuG2hgvttkqvsfWC8Fiu26o5qb+O0MYEq9Rg3Scf2E1q?=
- =?us-ascii?Q?WXVihSxQ7kKhxEM42xIrK/kU6d85pzxqn66LIRqAAz9k1VbKgHpMjeRErWrk?=
- =?us-ascii?Q?mUr17/q13y/Z65OI3hZu8oXdzEgNzZlRPzF4y3BVLDaZs2eLTeEu4ZrPVyOp?=
- =?us-ascii?Q?K/CCJjoL1M72JesamTr8FqQRfKhfGWTNpwvH4m7CTF9ZdclH9j9iD7Nx+ibw?=
- =?us-ascii?Q?jZLvyrrryqzW0IT6HXSGXFltlgAyy8nhOU9W8YqrXzXjOtWDqVp8R+FZxr3c?=
- =?us-ascii?Q?puq9G5mXFN723jucE0B91u3n1ZB9nX64UQke0rKjuTZ7w5lX+oUGydaRu4Cj?=
- =?us-ascii?Q?5w=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: aec9d6c2-2869-4197-7001-08dd991da7f8
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2025 10:44:40.9737 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SpAGVFWuzZKYf8aRcP9TlKv/4FfYFlxLVGiveInW8r4ZS43uagTgV0yW+3g7BvGm+CbzL3RoIgSB6VBubO+Zbyk+qXqndrR2Anao6Aihcqo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7684
-X-OriginatorOrg: intel.com
+References: <CA+xuiv2jL934JR_QyLC1M5A+5dGPzw5L0=4RoS98eRjueA+9-g@mail.gmail.com>
+ <20250521071845.50d6f9e1@hermes.local>
+In-Reply-To: <20250521071845.50d6f9e1@hermes.local>
+From: farooq basha <farooq.juturu@gmail.com>
+Date: Thu, 22 May 2025 08:15:14 +0530
+X-Gm-Features: AX0GCFvZtW7Pss4DU-HxZVexqkydNTMgFHkpeOeN8FI2CYjnEXZsS2C0O99bOCg
+Message-ID: <CA+xuiv0gKOp=Ukd=Nd-b=CV3YvA8P+HpR3PiH4h+9Dus9-vK1g@mail.gmail.com>
+Subject: Re: [dpdk-dev] Regarding HQOS with run-to-completion Model
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org
+Content-Type: multipart/alternative; boundary="0000000000004208a50635b079e1"
+X-Mailman-Approved-At: Thu, 22 May 2025 13:04:52 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -170,32 +72,145 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, May 20, 2025 at 05:40:20PM +0100, Bruce Richardson wrote:
-> The argparse library was missing two key features which made it
-> unsuitable for use by EAL or any program wanting similar behaviour.
-> 
-> 1. It didn't stop parsing arguments when it hit a "--" character
-> 2. It never returned the number of arguments parsed
-> 
-> Fix both these issues - the latter is a change to the ABI, since we now
-> return >= 0 rather than == 0 on success. However, the ABI is still
-> experimental so we can make exactly these sorts of tweaks to it.
-> 
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> ---
+--0000000000004208a50635b079e1
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thinking about it further, for EAL we can actually do without these changes
-to the argparse library*. However, this is also functionality that may be
-useful in other cases, so looking for feedback on whether to continue with
-this patch, or drop it?
+Thanks Stephen for addressing my queries , and it is helpful.
 
-Question:
-* should argparse library stop processing args at "--"?
-* should argparse library return number of args parsed, or zero on success?
+    One more follow up question on the same ,   Can DPDK HQOS be customized
+based on Use case ?
 
-/Bruce
+    For example: Hqos config for one of the use cases ,  *One Port , One
+Subport , 16 Pipes & Each Pipe with only one TC*.
+                         16 pipe config was allowed but changing the 13TCs
+to 1TC is not allowed per Pipe.
 
-*The reason we don't need these is because we clone the argv data on
-eal_init so we can return it via telemetry library. This splits the args
-into eal and non-eal args, so we can use just the "eal" arg array to pass to
-arg-parse, if we don't include this patch.
+    Can I still use 13 TCs but use the QueueSize as 0, Can that impact
+performance ?
+
+
+Thanks
+Farooq.J
+
+
+
+On Wed, May 21, 2025 at 7:48=E2=80=AFPM Stephen Hemminger <
+stephen@networkplumber.org> wrote:
+
+> On Mon, 28 Apr 2025 16:55:07 +0530
+> farooq basha <farooq.juturu@gmail.com> wrote:
+>
+> > Hello DevTeam,
+> >
+> >     I am planning to use DPDK HQOS for Traffic shaping with a
+> > run-to-completion Model. While I was reading the dpdk-qos document, I
+> came
+> > across the following statement.
+> >
+> > "*Running enqueue and dequeue operations for the same output port from
+> > different cores is likely to cause significant impact on scheduler=E2=
+=80=99s
+> > performance and it is therefore not recommended"*
+> >
+> >  Let's take an  example, Port1  & Port2 have 4 Rx queues and each Queue
+> > mapped to a different CPU. Traffic coming on port1  gets forwarded to
+> port2
+> > . With the above limitation application needs to take a lock before doi=
+ng
+> > rte_sched_port_enqueue & dequeue operation. Performance is limited to
+> only
+> > 1 CPU even though Traffic is coming on 4 Different CPUs.
+> >
+> > Correct me if my understanding is Wrong?
+> >
+> > Thanks
+> > Basha
+>
+> The HQOS code is not thread safe so yes you need a lock.
+> The traffic scheduling (QOS) needs to be at last stage of the pipeline ju=
+st
+> before mbufs are passed to the device.
+>
+> The issue is that QOS is single threaded, so lock is required.
+>
+> The statement is misleading, the real overhead is the lock; the secondary
+> overhead is the cache miss that will happen if processing on different
+> cores.
+> But if you are doing that you are going to cut performance a lot from cac=
+he
+> misses.
+>
+
+--0000000000004208a50635b079e1
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Thanks Stephen for addressing my queries , and it is helpf=
+ul.=C2=A0<div>=C2=A0 =C2=A0=C2=A0</div><div>=C2=A0 =C2=A0 One more follow u=
+p question on the same ,=C2=A0 =C2=A0Can DPDK HQOS be customized based on U=
+se case ?</div><div>=C2=A0 =C2=A0=C2=A0</div><div>=C2=A0 =C2=A0 For example=
+: Hqos config for one of the use cases ,=C2=A0 <b>One Port , One Subport , =
+16 Pipes &amp; Each Pipe with only one TC</b>.</div><div>=C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A016=
+ pipe=C2=A0config was allowed but changing the 13TCs to 1TC is not allowed =
+per Pipe.</div><div>=C2=A0</div><div>=C2=A0 =C2=A0 Can I still use 13 TCs b=
+ut use the QueueSize as 0, Can that impact performance ?=C2=A0 =C2=A0</div>=
+<div>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0</div><div>=C2=A0 =C2=A0=C2=A0</div><div>Thanks<=
+/div><div>Farooq.J</div><div>=C2=A0</div><div>=C2=A0=C2=A0</div></div><br><=
+div class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=3D"g=
+mail_attr">On Wed, May 21, 2025 at 7:48=E2=80=AFPM Stephen Hemminger &lt;<a=
+ href=3D"mailto:stephen@networkplumber.org">stephen@networkplumber.org</a>&=
+gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0=
+px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">On Mo=
+n, 28 Apr 2025 16:55:07 +0530<br>
+farooq basha &lt;<a href=3D"mailto:farooq.juturu@gmail.com" target=3D"_blan=
+k">farooq.juturu@gmail.com</a>&gt; wrote:<br>
+<br>
+&gt; Hello DevTeam,<br>
+&gt; <br>
+&gt;=C2=A0 =C2=A0 =C2=A0I am planning to use DPDK HQOS for Traffic shaping =
+with a<br>
+&gt; run-to-completion Model. While I was reading the dpdk-qos document, I =
+came<br>
+&gt; across the following statement.<br>
+&gt; <br>
+&gt; &quot;*Running enqueue and dequeue operations for the same output port=
+ from<br>
+&gt; different cores is likely to cause significant impact on scheduler=E2=
+=80=99s<br>
+&gt; performance and it is therefore not recommended&quot;*<br>
+&gt; <br>
+&gt;=C2=A0 Let&#39;s take an=C2=A0 example, Port1=C2=A0 &amp; Port2 have 4 =
+Rx queues and each Queue<br>
+&gt; mapped to a different CPU. Traffic coming on port1=C2=A0 gets forwarde=
+d to port2<br>
+&gt; . With the above limitation application needs to take a lock before do=
+ing<br>
+&gt; rte_sched_port_enqueue &amp; dequeue operation. Performance is limited=
+ to only<br>
+&gt; 1 CPU even though Traffic is coming on 4 Different CPUs.<br>
+&gt; <br>
+&gt; Correct me if my understanding is Wrong?<br>
+&gt; <br>
+&gt; Thanks<br>
+&gt; Basha<br>
+<br>
+The HQOS code is not thread safe so yes you need a lock.<br>
+The traffic scheduling (QOS) needs to be at last stage of the pipeline just=
+<br>
+before mbufs are passed to the device.<br>
+<br>
+The issue is that QOS is single threaded, so lock is required. <br>
+<br>
+The statement is misleading, the real overhead is the lock; the secondary<b=
+r>
+overhead is the cache miss that will happen if processing on different core=
+s.<br>
+But if you are doing that you are going to cut performance a lot from cache=
+<br>
+misses.<br>
+</blockquote></div>
+
+--0000000000004208a50635b079e1--
