@@ -2,74 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DBDDC54E90
-	for <dpdk-dev@archiver.kernel.org>; Thu, 22 May 2025 12:51:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E046C54E65
+	for <dpdk-dev@archiver.kernel.org>; Thu, 22 May 2025 13:00:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 045F2402E5;
-	Thu, 22 May 2025 14:51:46 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C7883402E5;
+	Thu, 22 May 2025 15:00:55 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 24B14402E0
- for <dev@dpdk.org>; Thu, 22 May 2025 14:51:44 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id B9CD4402E0
+ for <dev@dpdk.org>; Thu, 22 May 2025 15:00:53 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1747918303;
+ s=mimecast20190719; t=1747918853;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=GCsbvEGXi9imWhFOErJuCdcM1shFYckQDBF1JBL6i68=;
- b=dljRPql9qhtTZpOcByalVvjmdfTyfGcLlrpxCQZuGunfOa6zcVRFU4sm1P5SnwQpEwI7bS
- ZTCUKQP1GbbgI6/x1QAITt9gP5yjo89WtrIIn8ShoGhuP0J2L32gPMqRAtFWPKeVRE/XJJ
- t0PCKx6dNT6GeD8awUs60MrolFVa9+8=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=LgFRezh1Q0dMIYRa5LMSBwUjUqY+jTgZxAUm52D6cfQ=;
+ b=VEFPQiLmp2VBLVfK2kHk2bMy1pRRdEsoh+N+QDk53gmJsVhflLLeDT9HGFZryHSgTDW94M
+ Fq4yHv6FPN58vReQrtiskiSnHTAXjOvdm5YtoR/psIHacpUAR9rQ5F+S9U4TLgxnSXZ6wq
+ I5it9MSWaIh0WRpfrfsJNFFPikRjtnI=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-570-FELj25zGN6yQRs0i05R_SA-1; Thu, 22 May 2025 08:51:42 -0400
-X-MC-Unique: FELj25zGN6yQRs0i05R_SA-1
-X-Mimecast-MFC-AGG-ID: FELj25zGN6yQRs0i05R_SA_1747918301
-Received: by mail-lj1-f198.google.com with SMTP id
- 38308e7fff4ca-327fffcbf86so19058881fa.3
- for <dev@dpdk.org>; Thu, 22 May 2025 05:51:41 -0700 (PDT)
+ us-mta-201-WYdEWLiXPw6NEVQu1g8ELQ-1; Thu, 22 May 2025 09:00:51 -0400
+X-MC-Unique: WYdEWLiXPw6NEVQu1g8ELQ-1
+X-Mimecast-MFC-AGG-ID: WYdEWLiXPw6NEVQu1g8ELQ_1747918850
+Received: by mail-lj1-f199.google.com with SMTP id
+ 38308e7fff4ca-3292a313051so23802971fa.3
+ for <dev@dpdk.org>; Thu, 22 May 2025 06:00:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1747918301; x=1748523101;
+ d=1e100.net; s=20230601; t=1747918850; x=1748523650;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=GCsbvEGXi9imWhFOErJuCdcM1shFYckQDBF1JBL6i68=;
- b=FH4PfiXU9mKjwlf8Mx685H7kimDo6apaJvbUa24RUIwOVLZbGe+XfFiT1KUjEv11WL
- PpvItg0TqorPHCN3do+9UrwVJTQQZv+1T0+IHfq9UEqJVyqz0cVDLooXbTxMeRjFdq9n
- YE2GAKR0rv/QC2DFPzaZEMPm8SISaZMxOG7O+c152q5tGJeeh0hMP/9BIpQEoxhXxokO
- O5hgVoOExY03UAqstmGvsa2Pc6PZDa3QOhSwquJyJaDlj0jL+JlZU5C9VtqwGNczoJn3
- WTHwXjgArfAvgHQ58s11k2copaOXGGpaULj4ECrFWXlpQL54oBUSaZ7Oyews880NF4Cw
- /Q8A==
-X-Gm-Message-State: AOJu0Yy8ahSglsPZJ2qEYLkB6Mm/9MfOKcI6kd4oMeWaauBA1ZhVAfVF
- U0/twuZiTWZuqvYMBxxEgBr1fuiApwCQwg9y6uHRxLRZu918tgMAWqgR8lwUYj8E2oVAr6b9buv
- 3xpdoJgpNB7IMYuHjwg6xU5caTU430PpbvFSLY2D+rQzoHEMbxKB12xDCACDZ+3HGz+QnfCJhZ8
- IMU1XBvbUG5UZ1tD4co1c=
-X-Gm-Gg: ASbGnctSH0IHMhne/5I8v0l3bhcteGy3BueSSMDU0w0I87Moxhh3+nwvGUheqimxaUz
- Gmp1eK02ZJ/GRyTeK5xHkhv/R3JYD71PGLtQTvV2mAFxXl8WjBs/vDgGgO8VN/8kGbp2prS0=
-X-Received: by 2002:a2e:bcc1:0:b0:30b:9813:b010 with SMTP id
- 38308e7fff4ca-3280977f143mr95287111fa.31.1747918300662; 
- Thu, 22 May 2025 05:51:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGiis6KfflOP0C5bnZwNUFneJUCvA2UuH5mjOcvsHlUV3ak5KpGo/19Tm1xr6YiIufRVJFdpOqKIjHpZbiW5Y4=
-X-Received: by 2002:a2e:bcc1:0:b0:30b:9813:b010 with SMTP id
- 38308e7fff4ca-3280977f143mr95287011fa.31.1747918300267; Thu, 22 May 2025
- 05:51:40 -0700 (PDT)
+ bh=LgFRezh1Q0dMIYRa5LMSBwUjUqY+jTgZxAUm52D6cfQ=;
+ b=ucXBBwanV3mds0GDaUkjQQUMMOq22kAucMpG9pTHVGQxuDmZzSvQ2sALt0McMKBd8f
+ 1Cs0+53PsSLz+aXVkbLZRJXMZc2EubxF/vUh7AYTVWVXMDdU+47xTUrAC8VjISmz3wmo
+ A/tWfLT+Tzf1wthT6+/C8CQwkW9yCMoQTkmj4WgZWAKAW4cPkTTFrJiwNCe5b/HDWZfa
+ PAm0SyMROWJZkwRtGJSH+iT6QBhKIyAzRqnX9avrgYv/wbQEgSxhKaDChofiC48QqawP
+ AvqH7QHxaWJGO7o9mwjzqR5nhzVlUBYWAFbhsZj7kHLiRv4g12Lp1KJI1DJV4Fq/6QuV
+ D+0Q==
+X-Gm-Message-State: AOJu0YxPSVlEBwoPfMp8Z9Yj1UsSSgfvSzN+jYASD7ra+41ieIdWQ/t/
+ qI9ZDgAByA4WrRP3JOyyIphwptl6TEWbm3kZVaBG+FSpc6mtKuUT9R1GxyeiyhbK/3YvZTmWjoP
+ Ov3ND1bBphPC85RMKoCjud3puEei4zeM2LqLD1RH/8yf/nSUzMSue48BwaTE8ZaGcZiqUc2mOY0
+ p+nAtidqLCJxeBbY7anv4VMzdiTG2yhQ==
+X-Gm-Gg: ASbGnctpAuPoeXFGSBdmiYrfyQQXlDwvEaBndEvuPphYMXSydv4hjNwRZfOPHFuZjJp
+ zGNNFsqhG0aR9blqZ1QUWHVTyIvhdS2qg1wr2j+K0M+hUIpzItsWPmOFVBb6+T8Z3Ef+C3is=
+X-Received: by 2002:a05:651c:3243:b0:30b:a187:7a77 with SMTP id
+ 38308e7fff4ca-3280969820dmr62640971fa.4.1747918849443; 
+ Thu, 22 May 2025 06:00:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEd2KPn4rMbK1wQKHHVz3TCJSOzqpR2GSJSQh1qgu7F5oVQ1XONbIbNMVBz8fGYOHp2+Wb+XbdZ19sYSpv5cyo=
+X-Received: by 2002:a05:651c:3243:b0:30b:a187:7a77 with SMTP id
+ 38308e7fff4ca-3280969820dmr62639691fa.4.1747918847544; Thu, 22 May 2025
+ 06:00:47 -0700 (PDT)
 MIME-Version: 1.0
-References: <20240131174437.2494815-1-david.marchand@redhat.com>
-In-Reply-To: <20240131174437.2494815-1-david.marchand@redhat.com>
+References: <PH7PR12MB91737F14D62A8ADDCAE475CDDA99A@PH7PR12MB9173.namprd12.prod.outlook.com>
+ <aC7o9q3zGx9d0FG_@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <aC7o9q3zGx9d0FG_@bricha3-mobl1.ger.corp.intel.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 22 May 2025 14:51:27 +0200
-X-Gm-Features: AX0GCFtc2_0LF7LA9LoWXRtVg3wzP3qro4MUOV2j5BwJjR_wdgX5xfxALdQQBgc
-Message-ID: <CAJFAV8yAfPZ8XrerzCj1ihGSgBLrsdQNS5D1USCEfOu+jjcEjg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ci: bump tested distributions in GHA
-To: Luca Boccassi <bluca@debian.org>,
- "Xueming(Steven) Li" <xuemingl@nvidia.com>
-Cc: dev@dpdk.org, Aaron Conole <aconole@redhat.com>, 
- Michael Santana <maicolgabriel@hotmail.com>,
- Kevin Traynor <ktraynor@redhat.com>
+Date: Thu, 22 May 2025 15:00:36 +0200
+X-Gm-Features: AX0GCFub9svbw--6iK7ftq4kKoUfKDmIDHU--P-RW7Z-ypFkbhteL0ka84CLy2w
+Message-ID: <CAJFAV8y7eON8eJM_iLP8zfXv3bXqCLmzGdog0N1PDKEEM7dm2g@mail.gmail.com>
+Subject: Re: Addressing git.dpdk.org downtime
+To: "dev@dpdk.org" <dev@dpdk.org>
+Cc: Ali Alnubani <alialnu@nvidia.com>,
+ Bruce Richardson <bruce.richardson@intel.com>, 
+ Thomas Monjalon <thomas@monjalon.net>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: BpZli0sS5GdrsM75tt0Po2ivNndSCwThV1OHfwJjhEs_1747918301
+X-Mimecast-MFC-PROC-ID: CccOxDpOzGlyXTip92hN2LXglzUDn9zQ22DCmB_kojU_1747918850
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -86,29 +86,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello Luca, Xueming,
+On Thu, May 22, 2025 at 11:06=E2=80=AFAM Bruce Richardson
+<bruce.richardson@intel.com> wrote:
+>
+> On Thu, May 22, 2025 at 08:36:28AM +0000, Ali Alnubani wrote:
+> > Hello everyone,
+> >
+> > We=E2=80=99re aware that https://git.dpdk.org has been experiencing ava=
+ilability
+> > issues lately, largely due to abusive bots and crawlers overloading the=
+ servers and ignoring traditional controls like robots.txt.
+> >
+> > To address this, we're preparing to deploy Anubis, a traffic-challengin=
+g tool, to help ensure reliable and continued access for the community, sta=
+rting with our cgit instance. This approach has been adopted by several oth=
+er open-source projects recently to reduce disruptive automated traffic.
+> >
+> > Please reach out if you have questions or encounter issues.
+> >
+> > See: https://github.com/TecharoHQ/anubis
+> >
+> > Thanks,
+> > Ali
+>
+> Thanks Ali, (and others involved) for taking action on this.
+>
+> To everyone else in the community, just a reminder that, rather than
+> accessing dpdk.org site directly, you can use
+> "https://github.com/DPDK/dpdk" as a source for getting and browsing the
+> DPDK source code. The github mirror is always in sync with the main tree,
+> and, as an added convenience, also has the various "next" trees mirrored =
+to
+> it too. This means that you don't need to clone multiple trees to get e.g=
+.
+> next-net tree as well as main tree.
 
-On Wed, Jan 31, 2024 at 6:44=E2=80=AFPM David Marchand
-<david.marchand@redhat.com> wrote:
->
-> Fedora 37 has reached end of life in December 2023.
-> Ubuntu 20.04 is getting quite old.
->
-> Switch to more recent versions.
->
-> With this move, some packages provided by those distributions are now
-> recent enough to extend our build coverage.
-> Install additional dependencies like ipsec-mb, isal and other
-> libbpf/libxdp devel packages.
->
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
+To add on top of this, we discussed some additional mirroring during
+the techboard in Prague to ease life for (lazy?) maintainers and users
+who are not confortable with manipulating different git repositories.
+One request was to add mirroring of the stable branches and tags in a
+single repository with the main DPDK branch, and the DPDK/dpdk github
+repository seemed like the best location.
 
-The Ubuntu 20.04 image has been removed from GHA which means that GHA
-testing in github is KO for 22.11 and 23.11 branches.
-If you do care about GHA, I suggest backporting this current patch to
-those LTS branches (+ fix ef2535d022b9 ("ci: fix ccache for Ubuntu
-22.04")).
-It should apply cleanly (or at least easily), but I can help otherwise.
+I have just set up this mirroring down to 20.11 branch.
+The DPDK/dpdk github repository now contains most (if not all) of the
+active branches and tags.
 
 
 --=20
