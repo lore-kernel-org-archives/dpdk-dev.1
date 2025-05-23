@@ -2,33 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3839AC54ED1
-	for <dpdk-dev@archiver.kernel.org>; Thu, 22 May 2025 23:37:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 982DEC54E65
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 May 2025 01:29:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E60EC402E6;
-	Fri, 23 May 2025 01:37:05 +0200 (CEST)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 7BB73402D5
- for <dev@dpdk.org>; Fri, 23 May 2025 01:37:04 +0200 (CEST)
-Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 4935C211CF90; Thu, 22 May 2025 16:37:03 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4935C211CF90
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1747957023;
- bh=V0SuCHigD59ylRf7U5Ugg6O0Jp3oeF3RgtcL5w8+pmg=;
- h=From:To:Cc:Subject:Date:From;
- b=k0a+OcdyTczdMW6HoxVLdXkEUAh/iXjZ0swhQZpfJkC5lwHOBJq0Gd7/zlAckhD1s
- Ehb/qSY+1zbimRGs1M36Zx6egbvvXP7t6w8JQucdw12IwC7b+IZNj7Wtm6NRqO7IAo
- KIsJxle1I1jB5safl2GL8Dh/2ruDsENHpfrwT6Y8=
-From: Andre Muezerie <andremue@linux.microsoft.com>
-To: 
-Cc: dev@dpdk.org,
-	Andre Muezerie <andremue@linux.microsoft.com>
-Subject: [PATCH] rcu: add deprecation notice about limit on defer queue
- element size
-Date: Thu, 22 May 2025 16:37:01 -0700
-Message-Id: <1747957021-2581-1-git-send-email-andremue@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	by mails.dpdk.org (Postfix) with ESMTP id 747E7402E6;
+	Fri, 23 May 2025 03:29:54 +0200 (CEST)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+ by mails.dpdk.org (Postfix) with ESMTP id 6102540279
+ for <dev@dpdk.org>; Fri, 23 May 2025 03:29:53 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+ by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4b3SCD25fWzvWvg;
+ Fri, 23 May 2025 09:25:28 +0800 (CST)
+Received: from kwepemo500011.china.huawei.com (unknown [7.202.195.194])
+ by mail.maildlp.com (Postfix) with ESMTPS id ABEC3180B61;
+ Fri, 23 May 2025 09:29:50 +0800 (CST)
+Received: from [10.67.121.193] (10.67.121.193) by
+ kwepemo500011.china.huawei.com (7.202.195.194) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 23 May 2025 09:29:50 +0800
+Message-ID: <b851a5d1-b0b3-4237-8ea5-19ee556e1f6a@huawei.com>
+Date: Fri, 23 May 2025 09:29:49 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] net: fix offset calculation for GENEVE packet
+To: <dev@dpdk.org>, <skori@marvell.com>
+References: <20250519160711.4024414-2-skori@marvell.com>
+ <20250521051154.19595-1-skori@marvell.com>
+Content-Language: en-US
+CC: <skori@marvell.com>
+From: huangdengdui <huangdengdui@huawei.com>
+In-Reply-To: <20250521051154.19595-1-skori@marvell.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.193]
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemo500011.china.huawei.com (7.202.195.194)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -42,34 +50,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The functions rte_rcu_qsbr_dq_create and rte_rcu_qsbr_dq_reclaim establish
-no limit on the size of each element in the defer queue. With DPDK 25.11 a
-hard limit will be set (``RTE_QSBR_ESIZE_MAX``). This will allow fixed
-C arrays to be used in the functions' implementations, avoiding VLAs and
-use of alloca().
+Acked-by: Dengdui Huang <huangdengdui@huawei.com>
 
-Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
----
- doc/guides/rel_notes/deprecation.rst | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
-index 36489f6e68..78b2a27b52 100644
---- a/doc/guides/rel_notes/deprecation.rst
-+++ b/doc/guides/rel_notes/deprecation.rst
-@@ -17,6 +17,12 @@ Other API and ABI deprecation notices are to be posted below.
- Deprecation Notices
- -------------------
- 
-+* rcu: The functions ``rte_rcu_qsbr_dq_create`` and ``rte_rcu_qsbr_dq_reclaim``
-+  establish no limit on the size of each element in the defer queue. With
-+  DPDK 25.11 a hard limit will be set (``RTE_QSBR_ESIZE_MAX``). This will
-+  allow fixed C arrays to be used in the functions' implementations,
-+  avoiding VLAs and use of alloca().
-+
- * build: The ``enable_kmods`` option is deprecated and will be removed in a future release.
-   Setting/clearing the option has no impact on the build.
-   Instead, kernel modules will be always built for OS's where out-of-tree kernel modules
--- 
-2.49.0.vfs.0.3
-
+On 2025/5/21 13:11, skori@marvell.com wrote:
+> From: Sunil Kumar Kori <skori@marvell.com>
+> 
+> While parsing packet headers, offset must be added to get next
+> header but for geneve header parsing offset is overwritten.
+> Also inner_l2_len is not set in case of geneve packets.
+> 
+> Fixes: 64ed7f854cf4 ("net: add tunnel packet type parsing")
+> 
+> Signed-off-by: Sunil Kumar Kori <skori@marvell.com>
+> ---
+>  lib/net/rte_net.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/lib/net/rte_net.c b/lib/net/rte_net.c
+> index be24690fdf..1264f33d61 100644
+> --- a/lib/net/rte_net.c
+> +++ b/lib/net/rte_net.c
+> @@ -251,7 +251,8 @@ ptype_tunnel_with_udp(uint16_t *proto, const struct rte_mbuf *m,
+>  		if (unlikely(gnh == NULL))
+>  			return 0;
+>  		geneve_len = sizeof(*gnh) + gnh->opt_len * 4;
+> -		*off = geneve_len;
+> +		*off += geneve_len;
+> +		hdr_lens->inner_l2_len = sizeof(struct rte_udp_hdr) + geneve_len;
+>  		*proto = gnh->proto;
+>  		if (gnh->proto == 0)
+>  			*proto = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
