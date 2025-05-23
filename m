@@ -2,51 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CDBC54ED0
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 May 2025 14:05:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E9BC54FB3
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 May 2025 14:48:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 64D6840A67;
-	Fri, 23 May 2025 16:05:31 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id 67FF54060F;
- Fri, 23 May 2025 16:05:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1748009130; x=1779545130;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=YAZHMubO+mjmdA/mnkORqlr0vCOrAf4ZaGV8zuFGuc4=;
- b=SElGhIu9D0ehNrq7yaYZDQR0dHJ4ta9e8cQHAsAmVaBs8iBI8R/Aea0d
- A7zop4YxuwTitKHA2en5BXycJJ9TQpZhhBY/9DUd5qUiC4Smj7yUkv8cX
- IVouKG/74RdF+nGxdIeiiFQug2NZ/XAe7feY8PopGQFflkl/TaUjQhjMK
- 7gWLiEOXlwwI7OwBIeQchnO6yNi5KdQv5AXXLdaClWj5jxW/OPqUnRjFi
- E1hgRT1GxhGBoyPLCXeW4kcvMugY8oGhK6lsHdQ/wzhNvOetKSFdWEofs
- ZEpWChIG3nM07AtyrkoJ4cmpz97QIxGjV3eCY4n71HVIsDdaQxmuD7H5r A==;
-X-CSE-ConnectionGUID: YIUjUV62SC+/8XBCmyoVIg==
-X-CSE-MsgGUID: w3h1WGcVQOyEJHToP8gl4A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="52695941"
-X-IronPort-AV: E=Sophos;i="6.15,309,1739865600"; d="scan'208";a="52695941"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
- by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 May 2025 07:05:28 -0700
-X-CSE-ConnectionGUID: bY2wiiJrSmmWpJBnMKaEyw==
-X-CSE-MsgGUID: xoXbM6feSNSgqKXELDBNgg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,309,1739865600"; d="scan'208";a="145872134"
-Received: from unknown (HELO silpixa00401749.ger.corp.intel.com)
- ([10.237.222.190])
- by orviesa003.jf.intel.com with ESMTP; 23 May 2025 07:05:26 -0700
-From: Radu Nicolau <radu.nicolau@intel.com>
-To: Jay Zhou <jianjay.zhou@huawei.com>, Fan Zhang <fanzhang.oss@gmail.com>,
- Chenbo Xia <chenbox@nvidia.com>
-Cc: dev@dpdk.org, Radu Nicolau <radu.nicolau@intel.com>,
- roy.fan.zhang@intel.com, stable@dpdk.org
-Subject: [PATCH] crypto/virtio: add request check on request side
-Date: Fri, 23 May 2025 14:04:50 +0000
-Message-ID: <20250523140450.75543-1-radu.nicolau@intel.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id C62D140697;
+	Fri, 23 May 2025 16:48:03 +0200 (CEST)
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com
+ [209.85.208.44]) by mails.dpdk.org (Postfix) with ESMTP id EAF1940611
+ for <dev@dpdk.org>; Fri, 23 May 2025 16:48:02 +0200 (CEST)
+Received: by mail-ed1-f44.google.com with SMTP id
+ 4fb4d7f45d1cf-60179d8e65fso12463a12.0
+ for <dev@dpdk.org>; Fri, 23 May 2025 07:48:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1748011682;
+ x=1748616482; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=Qds6uX72jZ/ZPpsU91fvdIcSg2+ZpiGNy/FD+AsTnPY=;
+ b=pjM7vBlJNhf5oyRwXlwBQljC4NS8yBsmYCJb4wRC5D5iuEhgFggm2eHG1saE8l6WXE
+ 5os+VllbF4t1krNiAAbHa6Jw3Dg1pH/47BAFrpto2St45qeEtIcmVcTlXfhcAn+e40aG
+ h5d8jvXeF0LzZSHd6mWN6ERi5nlWXHLK2xbAicHmuScWWugz0n5ssxJnJ8Ppfhou0atN
+ V1CfKbuZaWKGfe2R7OjYxOvQhHCnrMQkR8bTgTtk4FZcp976cCEAqVxsPH+MYPpP6Ddg
+ KCgtbHHBIE+vmpF6e2uvw5NJr6IrRC9/If8VBHlO2WzXwO62kxkpmVi6v+vbhneV887b
+ p1aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1748011682; x=1748616482;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=Qds6uX72jZ/ZPpsU91fvdIcSg2+ZpiGNy/FD+AsTnPY=;
+ b=MdDpPhVQVi0kegZd3cO7Pcdk4zIz4azsWwbEC7EwDuK3hQhGjBq/h8RXlcStKyZvHh
+ /8e1zLCiXq9m1EIWorq/k3g09KsbV/uioWrabUwi1k56bWnCjnl4GJphtPVWPQ4ia19n
+ OPtySbraU87q0QOU3yJrmCGUaiEtj4IW3NyTUAsnq25gFZyPDbIrKPna1NHFu7JNpdya
+ G5DlM2SIu0xEEu7w/ZOzTsE33hTnNaHZ8AdVSQFHoMSDWCYC4XNXt/ZF7weKfPZ40AAd
+ a/GxctdW/VjfI+8ePabHQRc2MnsTHss6FsKLU5UXZ3iy11EgTohDv9CkPgMdHb1pEXBs
+ dwfA==
+X-Gm-Message-State: AOJu0YyJ0krZ07kUi+kTP7Adgxb0BS3Q8je3n2yD+Dr8j7p4IcyHwA8b
+ 30CjDznsfAIvzrCex6+QkeSrcW48fTF5hbEDTJvuUEJUYSJdYotEvtwLprRt3xWj2m8=
+X-Gm-Gg: ASbGncuNZ4GVIuI/oaMJZhE+HhlYfZ4JH8P8DKZTwd/TWjpNIBGyQl9Xr9zAIMBtVQX
+ 92QUpJNtD9DgXczMPJuGM7uPnyGC6tp40Ohl4WE51OrWWRnDW/niLsk8Uow23FjDnhutxfiTh+G
+ T0jT6uirTXY5x0uZlW1ob+I7VavLbWz+wThegrWX50BDA46wIFuy36b2OOvbWZVZYZ24kl2M3nx
+ mqkLmyH0cbUlwvCfZjKCaM6REYFoG6mf1hTWJKK/9nXBjZxik7LINS1riC0MfqmpiZqWvbzrqyg
+ xu2/WOFqHYAAEyu6iOmYM/v2dY80SQhpD0xc+9z0twn0h/cH1Q4o2dDQ8RKQgihX013foF2VEin
+ FilrWxzYq+1E2k3G6xa8gBV69OSjp
+X-Google-Smtp-Source: AGHT+IEOyEgNBkAqZNWiUvVuY7S6nXrl9R0iIJVEPBAZ009EBrid+eyAREKXhUbjq5Ce4M4643eVnQ==
+X-Received: by 2002:a17:907:8e97:b0:ad4:d335:d35d with SMTP id
+ a640c23a62f3a-ad52d45ae47mr2807024566b.4.1748011682318; 
+ Fri, 23 May 2025 07:48:02 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ a640c23a62f3a-ad52d04b096sm1243816666b.33.2025.05.23.07.48.00
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 23 May 2025 07:48:02 -0700 (PDT)
+Date: Fri, 23 May 2025 07:47:56 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: "Burakov, Anatoly" <anatoly.burakov@intel.com>
+Cc: <dev@dpdk.org>
+Subject: Re: [PATCH v5 2/3] cmdline: add floating point support
+Message-ID: <20250523074756.427bd102@hermes.local>
+In-Reply-To: <762c8bb2-f0b3-4cf5-837c-8297851aa417@intel.com>
+References: <ec8528874aad76348f27c551289e1729b2fdcd25.1746631324.git.anatoly.burakov@intel.com>
+ <b9f8ac77e4eeecd67a83d72cdf52ef3e08539bab.1746631324.git.anatoly.burakov@intel.com>
+ <20250521070538.29f64bc2@hermes.local>
+ <762c8bb2-f0b3-4cf5-837c-8297851aa417@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,82 +82,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add same request checks on the request side.
+On Fri, 23 May 2025 12:21:15 +0200
+"Burakov, Anatoly" <anatoly.burakov@intel.com> wrote:
 
-Fixes: b2866f473369 ("vhost/crypto: fix missed request check for copy mode")
-Cc: roy.fan.zhang@intel.com
-Cc: stable@dpdk.org
+> On 5/21/2025 4:05 PM, Stephen Hemminger wrote:
+> > On Wed,  7 May 2025 16:22:11 +0100
+> > Anatoly Burakov <anatoly.burakov@intel.com> wrote:
+> >   
+> >> +NUMERIC_TYPES = {
+> >> +    "UINT8": "uint8_t",
+> >> +    "UINT16": "uint16_t",
+> >> +    "UINT32": "uint32_t",
+> >> +    "UINT64": "uint64_t",
+> >> +    "INT8": "int8_t",
+> >> +    "INT16": "int16_t",
+> >> +    "INT32": "int32_t",
+> >> +    "INT64": "int64_t",
+> >> +    "FLOAT_SINGLE": "float",
+> >> +    "FLOAT_DOUBLE": "double",
+> >> +}
+> >>     
+> > 
+> > Is it really worth having both single and double versions.
+> > Seems like unnecessary complexity at this point.  
+> 
+> I'd argue the same about the various int types. I was just being 
+> consistent. I can remove the single (or double) if that's desired.
 
-Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
----
- drivers/crypto/virtio/virtio_rxtx.c | 40 +++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
 
-diff --git a/drivers/crypto/virtio/virtio_rxtx.c b/drivers/crypto/virtio/virtio_rxtx.c
-index 0cc904485c..afdb8fb406 100644
---- a/drivers/crypto/virtio/virtio_rxtx.c
-+++ b/drivers/crypto/virtio/virtio_rxtx.c
-@@ -193,6 +193,40 @@ virtqueue_dequeue_burst_rx_packed(struct virtqueue *vq,
- 	return i;
- }
- 
-+static __rte_always_inline uint8_t
-+virtqueue_crypto_check_cipher_request(struct virtio_crypto_cipher_data_req *req)
-+{
-+	if (likely((req->para.iv_len <= VIRTIO_CRYPTO_MAX_IV_SIZE) &&
-+		(req->para.src_data_len <= RTE_MBUF_DEFAULT_BUF_SIZE) &&
-+		(req->para.dst_data_len >= req->para.src_data_len) &&
-+		(req->para.dst_data_len <= RTE_MBUF_DEFAULT_BUF_SIZE)))
-+		return VIRTIO_CRYPTO_OK;
-+	return VIRTIO_CRYPTO_BADMSG;
-+}
-+
-+static __rte_always_inline uint8_t
-+virtqueue_crypto_check_chain_request(struct virtio_crypto_alg_chain_data_req *req)
-+{
-+	if (likely((req->para.iv_len <= VIRTIO_CRYPTO_MAX_IV_SIZE) &&
-+		(req->para.src_data_len <= RTE_MBUF_DEFAULT_BUF_SIZE) &&
-+		(req->para.dst_data_len >= req->para.src_data_len) &&
-+		(req->para.dst_data_len <= RTE_MBUF_DEFAULT_BUF_SIZE) &&
-+		(req->para.cipher_start_src_offset <
-+			RTE_MBUF_DEFAULT_BUF_SIZE) &&
-+		(req->para.len_to_cipher <= RTE_MBUF_DEFAULT_BUF_SIZE) &&
-+		(req->para.hash_start_src_offset <
-+			RTE_MBUF_DEFAULT_BUF_SIZE) &&
-+		(req->para.len_to_hash <= RTE_MBUF_DEFAULT_BUF_SIZE) &&
-+		(req->para.cipher_start_src_offset + req->para.len_to_cipher <=
-+			req->para.src_data_len) &&
-+		(req->para.hash_start_src_offset + req->para.len_to_hash <=
-+			req->para.src_data_len) &&
-+		(req->para.dst_data_len + req->para.hash_result_len <=
-+			RTE_MBUF_DEFAULT_BUF_SIZE)))
-+		return VIRTIO_CRYPTO_OK;
-+	return VIRTIO_CRYPTO_BADMSG;
-+}
-+
- static inline int
- virtqueue_crypto_sym_pkt_header_arrange(
- 		struct rte_crypto_op *cop,
-@@ -228,6 +262,9 @@ virtqueue_crypto_sym_pkt_header_arrange(
- 				sym_op->cipher.data.offset);
- 		req_data->u.sym_req.u.cipher.para.dst_data_len =
- 			req_data->u.sym_req.u.cipher.para.src_data_len;
-+		if (virtqueue_crypto_check_cipher_request(
-+			&req_data->u.sym_req.u.cipher) != VIRTIO_CRYPTO_OK)
-+			return -1;
- 		break;
- 	case VIRTIO_CRYPTO_SYM_OP_ALGORITHM_CHAINING:
- 		req_data->u.sym_req.op_type =
-@@ -265,6 +302,9 @@ virtqueue_crypto_sym_pkt_header_arrange(
- 			VIRTIO_CRYPTO_SYM_HASH_MODE_AUTH)
- 			req_data->u.sym_req.u.chain.para.hash_result_len =
- 				chain_para->u.mac_param.hash_result_len;
-+		if (virtqueue_crypto_check_chain_request(
-+			&req_data->u.sym_req.u.chain) != VIRTIO_CRYPTO_OK)
-+			return -1;
- 		break;
- 	default:
- 		return -1;
--- 
-2.43.0
-
+The int types have different ranges, but all float values have same
+range, just different number of bits. For now choose one version
+for floating point.
