@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3228AC54ED0
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 May 2025 15:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6188CC54ED1
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 May 2025 15:54:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8C1BE40697;
-	Fri, 23 May 2025 17:54:30 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B8E7D40B94;
+	Fri, 23 May 2025 17:54:48 +0200 (CEST)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id DA5C940DC9
- for <dev@dpdk.org>; Fri, 23 May 2025 17:54:28 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id C748840B94
+ for <dev@dpdk.org>; Fri, 23 May 2025 17:54:47 +0200 (CEST)
 Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54NDjErQ009967
- for <dev@dpdk.org>; Fri, 23 May 2025 08:54:28 -0700
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54NDiU8g008845
+ for <dev@dpdk.org>; Fri, 23 May 2025 08:54:47 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=q
- JpBzzSseL9ZYbMUHAydw2fVdgdtUyyuTuYVs7JTegw=; b=NJg79jIByU4bZ2Kqu
- lhbKt6dkcSlkHcOS7vC1FV0YoV9IzImUx3SXyKQHDLo6iiKfhbGO5bd/XFK1BotZ
- zSGJBbrmXhl3bKNi91lYM/ubrUurYG7c6M9B05QNzo28Kz6Q/rE3Q6bXcp3yJtvC
- ih7/Jvq8dP2X7eS7eSPlicE2hPDjprzsbAtP+P/7m28rwhgVOfIGs6DaCjYysWbj
- pYC6JIGcr07iKQgKWEA1YjXRRVLcBnT1z5aINxQ432WHGoERCctXDVrEY70ELsGO
- ecINvX+YqqODGhX05C1M7As2T9kzieJy0RsvgtAggeK1SOwioiYP4dYVHisPadPA
- +KzDA==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46tt5w08as-1
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=n
+ XjEDH3JPfQu9x94l1i5YPam+P3ZNlWELZndya6nE28=; b=adaqpU7CE5Ng6QCj3
+ +IBX51c9TXks2B+7G8+UwIcmeeaElkIsTR3GMN5eMetRFyUuIHTkGRHScK+6yzNw
+ MQgbAyVOIPvpexHISDyVij8iOlryarOvC6dacd3FeIqj2CdK9clBQsePnR84Bwn9
+ ltqMox/KjWqnBtuYXgD5mjiZoRzKkaSP5JnB8WWLeR8gHXmDakmUefLI3B+4ILTO
+ U4B8tTusRQlg7atv6pdmVwTSb9FyXnHnBtvbHDuJ4hPEbyuvupUrm00j3BTfEROJ
+ Qz9jMTmBQlASj22HRu8wngLsQIRXksJSIrOc00iWNCP00cdtP9LOM7L4yLPgDDt+
+ 0erqw==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46tt5w08b1-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Fri, 23 May 2025 08:54:27 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ for <dev@dpdk.org>; Fri, 23 May 2025 08:54:47 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 23 May 2025 08:54:27 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 23 May 2025 08:54:27 -0700
+ 15.2.1544.4; Fri, 23 May 2025 08:54:31 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 23 May 2025 08:54:31 -0700
 Received: from localhost.localdomain (unknown [10.28.36.158])
- by maili.marvell.com (Postfix) with ESMTP id 2B59D3F7078;
- Fri, 23 May 2025 08:54:23 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id E3B323F7078;
+ Fri, 23 May 2025 08:54:28 -0700 (PDT)
 From: Rahul Bhansali <rbhansali@marvell.com>
 To: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
  <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
  <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
 CC: <jerinj@marvell.com>, Rahul Bhansali <rbhansali@marvell.com>
-Subject: [PATCH v2 2/6] common/cnxk: config CPT result address for cn20k
-Date: Fri, 23 May 2025 21:23:43 +0530
-Message-ID: <20250523155347.1156891-2-rbhansali@marvell.com>
+Subject: [PATCH v2 3/6] common/cnxk: update CPT parse header for CN20k
+Date: Fri, 23 May 2025 21:23:44 +0530
+Message-ID: <20250523155347.1156891-3-rbhansali@marvell.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250523155347.1156891-1-rbhansali@marvell.com>
 References: <20250519125424.1435140-1-rbhansali@marvell.com>
@@ -53,19 +53,19 @@ References: <20250519125424.1435140-1-rbhansali@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=bYBrUPPB c=1 sm=1 tr=0 ts=68309a33 cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=GNgiR153GRbNzZcAi6YA:9
+X-Authority-Analysis: v=2.4 cv=bYBrUPPB c=1 sm=1 tr=0 ts=68309a47 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=K81mkqCTapQ1dLxXzbQA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: xS7SRGfKCWre8PdGQKLcL7ydyCsLJfA0
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIzMDE0MyBTYWx0ZWRfX0PyXu3I/vkSJ
- hL8xm4veRbcSjRLqFizBHckUsqjwApGIU+UYjQP2FpcIP9sWlBgkwTWnEv6+eSTKNQlmkso7pWu
- JCfww4m/Lsl5m9yN+eqBYW0vD6dxsw4gmnfinbEbmUJlalwCBxU+7C3dH0z/+0ZYxHiizyEwLW9
- zrD9INoYdkaMyAvwCWal3Ud/glzsseZAJB0UL7aRfqHJ+XNYCYEvASJUX8bef8rduTLz8HO30mg
- 0N3iUhoq2DN3wv9TXuKmdd47ZSO4W9ghnZa6W4q6h6HGfbBisyBXU6837r+0seLQndwr+R/TnSk
- XO0zOdfEZJVfKEP023q1FGl23cfZwwZK/mRKS2xWwA2kK9bqzIFa8/36ePh/DCGoVnPTxYBEOEY
- MbMhweWCGeffiP7OybU8OTVyH/R3vhvOfaCuRtLWmfI3UXfjBT/8btQHHSIGYxNU7hMefSS2
-X-Proofpoint-GUID: xS7SRGfKCWre8PdGQKLcL7ydyCsLJfA0
+X-Proofpoint-ORIG-GUID: DNi75w-jtG4Hnal46NvW9hQwcYpXTQfb
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIzMDE0NCBTYWx0ZWRfX3EgZHDo12Z8B
+ 68RjfeR83mSNZROykSznrTt/n08a19n0rQ/ItTjrZtdAAp+FiCm8vRSHaj9YXHxeVrrN099F3Rc
+ 04r7EuHWNpuZ51ai0ynzzjI+z116yVnHqO8F0foPTDMgLqEessSZzCPxILB7KBZOXxBagigByLi
+ /PRMPgYlimWpNEPLuXHGCoQB/Jprf+uG9yfIBp9RngAd83BWHZd+Xwn3ZbdWX3c0xtbzJvhapU+
+ Y8vM/pMfYaqwof4/17q35yXIcKiHKmjGDMhWnUTwpUybgKY4pwWsIBtdO9qr8tweAf+FwJd28IH
+ FSxQG+pJJ3OO0PlwempnqTt5lcINyb2dD86/jJbGJJRKNmiBnFQSDfPUjQfQ6pQCWLXXmSxrGFf
+ M/1YOyMJV+MUt5dQQOj0aa2OnidHh3yOyOS4hEzF72tKNKiDdsJ9NZESZI+0NiOfSqvblWka
+X-Proofpoint-GUID: DNi75w-jtG4Hnal46NvW9hQwcYpXTQfb
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-23_05,2025-05-22_01,2025-03-28_01
@@ -82,147 +82,77 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This configures the CPT result address offset from WQE pointer
-in RX_INLINE_CFG0. CPT result address offset is a signed
-number in multiple of 16 bytes and configured to the
-corresponding reserved space in packet meta area itself.
+Updates CPT parse header HW structure for CN20k.
 
 Signed-off-by: Rahul Bhansali <rbhansali@marvell.com>
 ---
-Changes in v2: No change.
+Changes in v2: updated commit message
 
- drivers/common/cnxk/roc_nix_inl.c     | 27 ++++++++++++++++++++++++---
- drivers/common/cnxk/roc_nix_inl_dev.c | 19 +++++++++++++++----
- 2 files changed, 39 insertions(+), 7 deletions(-)
+ drivers/common/cnxk/hw/cpt.h        | 12 +++++++-----
+ drivers/common/cnxk/roc_cpt_debug.c |  8 ++++----
+ 2 files changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_nix_inl.c
-index 6afdfb6b85..7e47151eee 100644
---- a/drivers/common/cnxk/roc_nix_inl.c
-+++ b/drivers/common/cnxk/roc_nix_inl.c
-@@ -399,6 +399,7 @@ nix_inl_inb_ipsec_sa_tbl_setup(struct roc_nix *roc_nix)
- 	struct nix_inl_dev *inl_dev = NULL;
- 	uint64_t max_sa, i, sa_pow2_sz;
- 	uint64_t sa_idx_w, lenm1_max;
-+	uint64_t res_addr_offset;
- 	uint8_t profile_id = 0;
- 	struct mbox *mbox;
- 	size_t inb_sa_sz;
-@@ -497,11 +498,16 @@ nix_inl_inb_ipsec_sa_tbl_setup(struct roc_nix *roc_nix)
- 				def_cptq = inl_dev->nix_inb_qids[0];
- 		}
+diff --git a/drivers/common/cnxk/hw/cpt.h b/drivers/common/cnxk/hw/cpt.h
+index 40987abbb9..e542f3a3d4 100644
+--- a/drivers/common/cnxk/hw/cpt.h
++++ b/drivers/common/cnxk/hw/cpt.h
+@@ -358,11 +358,11 @@ union cpt_parse_hdr_u {
+ 			struct {
+ 				uint64_t rsvd_134_128 : 7;
+ 				uint64_t pkt_inline : 1;
+-				uint64_t new_pkt_aura : 20;
++				uint64_t rsvd_155_136 : 20;
+ 				uint64_t orig_pkt_aura : 20;
+ 				uint64_t il3_off : 8;
+-				uint64_t ptr_pad : 3;
+-				uint64_t ptr_offset : 5;
++				uint64_t ptr_pad : 5;
++				uint64_t ptr_offset : 3;
+ 			};
+ 		} w2;
 
-+		res_addr_offset = (uint64_t)(inl_dev->res_addr_offset & 0xFF) << 48;
-+		if (res_addr_offset)
-+			res_addr_offset |= (1UL << 56);
-+
- 		lf_cfg->enable = 1;
- 		lf_cfg->profile_id = profile_id; /* IPsec profile is 0th one */
- 		lf_cfg->rx_inline_sa_base = (uintptr_t)nix->inb_sa_base[profile_id];
--		lf_cfg->rx_inline_cfg0 = ((def_cptq << 57) | ((uint64_t)SSO_TT_ORDERED << 44) |
--					  (sa_pow2_sz << 16) | lenm1_max);
-+		lf_cfg->rx_inline_cfg0 =
-+			((def_cptq << 57) | res_addr_offset | ((uint64_t)SSO_TT_ORDERED << 44) |
-+			 (sa_pow2_sz << 16) | lenm1_max);
- 		lf_cfg->rx_inline_cfg1 = (max_sa - 1) | (sa_idx_w << 32);
- 	}
+@@ -383,10 +383,12 @@ union cpt_parse_hdr_u {
+ 			uint64_t u64;
+ 			struct {
+ 				uint32_t l4_chksum;
+-				uint32_t l4_chksum_type : 1;
+-				uint32_t rsvd_298_289 : 10;
++				uint32_t l4_chksum_type : 2;
++				uint32_t rsvd_292_290 : 3;
+ 				uint32_t channel : 12;
++				uint32_t rsvd_308_305 : 4;
+ 				uint32_t sctr_size : 4;
++				uint32_t rsvd_314_313 : 2;
+ 				uint32_t gthr_size : 5;
+ 			};
+ 		} w4;
+diff --git a/drivers/common/cnxk/roc_cpt_debug.c b/drivers/common/cnxk/roc_cpt_debug.c
+index 35a2cf6b3a..28aedf088e 100644
+--- a/drivers/common/cnxk/roc_cpt_debug.c
++++ b/drivers/common/cnxk/roc_cpt_debug.c
+@@ -36,8 +36,8 @@ cpt_cnxk_parse_hdr_dump(FILE *file, const struct cpt_parse_hdr_s *cpth)
+ 	cpt_dump(file, "W1: wqe_ptr \t0x%016lx\t", cpth->wqe_ptr);
 
-@@ -570,9 +576,13 @@ static int
- nix_inl_reass_inb_sa_tbl_setup(struct roc_nix *roc_nix)
- {
- 	struct nix *nix = roc_nix_to_nix_priv(roc_nix);
-+	struct idev_cfg *idev = idev_get_cfg();
- 	struct nix_rx_inl_lf_cfg_req *lf_cfg;
-+	struct nix_inl_dev *inl_dev = NULL;
- 	uint64_t max_sa = 1, sa_pow2_sz;
- 	uint64_t sa_idx_w, lenm1_max;
-+	uint64_t res_addr_offset;
-+	uint64_t def_cptq = 0;
- 	size_t inb_sa_sz = 1;
- 	uint8_t profile_id;
- 	struct mbox *mbox;
-@@ -612,11 +622,22 @@ nix_inl_reass_inb_sa_tbl_setup(struct roc_nix *roc_nix)
- 	sa_idx_w = plt_log2_u32(max_sa);
- 	lenm1_max = roc_nix_max_pkt_len(roc_nix) - 1;
+ 	/* W2 */
+-	cpt_dump(file, "W2: pkt_inline \t0x%x\t\tnew_pkt_aura \t0x%x\t\torig_pkt_aura \t0x%x",
+-		 cpth->w2.pkt_inline, cpth->w2.new_pkt_aura, cpth->w2.orig_pkt_aura);
++	cpt_dump(file, "W2: pkt_inline \t0x%x\t\torig_pkt_aura \t0x%x", cpth->w2.pkt_inline,
++		 cpth->w2.orig_pkt_aura);
+ 	cpt_dump(file, "W2: il3_off \t0x%x\t\tptr_pad \t0x%x \t", cpth->w2.il3_off,
+ 		 cpth->w2.ptr_pad);
+ 	cpt_dump(file, "W2: ptr_offset \t0x%x \t", cpth->w2.ptr_offset);
+@@ -53,9 +53,9 @@ cpt_cnxk_parse_hdr_dump(FILE *file, const struct cpt_parse_hdr_s *cpth)
+ 	cpt_dump(file, "W4: channel \t0x%x\t\tsctr_size \t0x%08x\t\tgthr_size \t0x%08x",
+ 		 cpth->w4.channel, cpth->w4.sctr_size, cpth->w4.gthr_size);
 
-+	if (idev && idev->nix_inl_dev) {
-+		inl_dev = idev->nix_inl_dev;
-+		if (inl_dev->nb_inb_cptlfs)
-+			def_cptq = inl_dev->nix_inb_qids[inl_dev->inb_cpt_lf_id];
-+	}
-+
-+	res_addr_offset = (uint64_t)(inl_dev->res_addr_offset & 0xFF) << 48;
-+	if (res_addr_offset)
-+		res_addr_offset |= (1UL << 56);
-+
- 	lf_cfg->enable = 1;
- 	lf_cfg->profile_id = profile_id;
- 	lf_cfg->rx_inline_sa_base = (uintptr_t)nix->inb_sa_base[profile_id];
- 	lf_cfg->rx_inline_cfg0 =
--		(((uint64_t)SSO_TT_ORDERED << 44) | (sa_pow2_sz << 16) | lenm1_max);
-+		((def_cptq << 57) | res_addr_offset | ((uint64_t)SSO_TT_ORDERED << 44) |
-+		 (sa_pow2_sz << 16) | lenm1_max);
- 	lf_cfg->rx_inline_cfg1 = (max_sa - 1) | (sa_idx_w << 32);
+-	/* offset of 0 implies 256B, otherwise it implies offset*8B */
++	/* offset of 0 implies 256B, otherwise it implies offset*32B */
+ 	offset = cpth->w2.ptr_offset;
+-	offset = (((offset - 1) & 0x1f) + 1) * 8;
++	offset = (((offset - 1) & 0x7) + 1) * 32;
+ 	frag_info = PLT_PTR_ADD(cpth, offset);
 
- 	rc = mbox_process(mbox);
-diff --git a/drivers/common/cnxk/roc_nix_inl_dev.c b/drivers/common/cnxk/roc_nix_inl_dev.c
-index 1db05741ad..1f071df8ea 100644
---- a/drivers/common/cnxk/roc_nix_inl_dev.c
-+++ b/drivers/common/cnxk/roc_nix_inl_dev.c
-@@ -376,6 +376,7 @@ nix_inl_nix_ipsec_cfg(struct nix_inl_dev *inl_dev, bool ena)
- 		}
- 	} else {
- 		struct nix_rx_inl_lf_cfg_req *lf_cfg;
-+		uint64_t res_addr_offset;
- 		uint64_t def_cptq;
-
- 		lf_cfg = mbox_alloc_msg_nix_rx_inl_lf_cfg(mbox);
-@@ -390,13 +391,17 @@ nix_inl_nix_ipsec_cfg(struct nix_inl_dev *inl_dev, bool ena)
- 		else
- 			def_cptq = inl_dev->nix_inb_qids[inl_dev->inb_cpt_lf_id];
-
-+		res_addr_offset = (uint64_t)(inl_dev->res_addr_offset & 0xFF) << 48;
-+		if (res_addr_offset)
-+			res_addr_offset |= (1UL << 56);
-+
- 		lf_cfg->profile_id = inl_dev->ipsec_prof_id;
- 		if (ena) {
- 			lf_cfg->enable = 1;
- 			lf_cfg->rx_inline_sa_base = (uintptr_t)inl_dev->inb_sa_base[profile_id];
- 			lf_cfg->rx_inline_cfg0 =
--				((def_cptq << 57) | ((uint64_t)SSO_TT_ORDERED << 44) |
--				 (sa_pow2_sz << 16) | lenm1_max);
-+				((def_cptq << 57) | res_addr_offset |
-+				 ((uint64_t)SSO_TT_ORDERED << 44) | (sa_pow2_sz << 16) | lenm1_max);
- 			lf_cfg->rx_inline_cfg1 = (max_sa - 1) | (sa_w << 32);
- 		} else {
- 			lf_cfg->enable = 0;
-@@ -611,6 +616,7 @@ nix_inl_nix_profile_config(struct nix_inl_dev *inl_dev, uint8_t profile_id)
- 	struct mbox *mbox = mbox_get((&inl_dev->dev)->mbox);
- 	uint64_t max_sa, sa_w, sa_pow2_sz, lenm1_max;
- 	struct nix_rx_inl_lf_cfg_req *lf_cfg;
-+	uint64_t res_addr_offset;
- 	uint64_t def_cptq;
- 	size_t inb_sa_sz;
- 	void *sa;
-@@ -646,11 +652,16 @@ nix_inl_nix_profile_config(struct nix_inl_dev *inl_dev, uint8_t profile_id)
- 	else
- 		def_cptq = inl_dev->nix_inb_qids[inl_dev->inb_cpt_lf_id + 1];
-
-+	res_addr_offset = (uint64_t)(inl_dev->res_addr_offset & 0xFF) << 48;
-+	if (res_addr_offset)
-+		res_addr_offset |= (1UL << 56);
-+
- 	lf_cfg->enable = 1;
- 	lf_cfg->profile_id = profile_id;
- 	lf_cfg->rx_inline_sa_base = (uintptr_t)inl_dev->inb_sa_base[profile_id];
--	lf_cfg->rx_inline_cfg0 = ((def_cptq << 57) | ((uint64_t)SSO_TT_ORDERED << 44) |
--				  (sa_pow2_sz << 16) | lenm1_max);
-+	lf_cfg->rx_inline_cfg0 =
-+		((def_cptq << 57) | res_addr_offset | ((uint64_t)SSO_TT_ORDERED << 44) |
-+		 (sa_pow2_sz << 16) | lenm1_max);
- 	lf_cfg->rx_inline_cfg1 = (max_sa - 1) | (sa_w << 32);
-
- 	rc = mbox_process(mbox);
+ 	if (cpth->w0.num_frags > 0) {
 --
 2.25.1
 
