@@ -2,42 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A0CC54ED1
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 May 2025 02:56:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F7EC3DA6D
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 May 2025 10:09:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F33844067A;
-	Fri, 23 May 2025 04:56:04 +0200 (CEST)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
- by mails.dpdk.org (Postfix) with ESMTP id 6BB214066A
- for <dev@dpdk.org>; Fri, 23 May 2025 04:56:01 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.162.112])
- by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4b3V7N69WZz2Cdnd;
- Fri, 23 May 2025 10:52:16 +0800 (CST)
-Received: from kwepemo500011.china.huawei.com (unknown [7.202.195.194])
- by mail.maildlp.com (Postfix) with ESMTPS id 7CAED1400D3;
- Fri, 23 May 2025 10:55:59 +0800 (CST)
-Received: from localhost.localdomain (10.50.165.33) by
- kwepemo500011.china.huawei.com (7.202.195.194) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 23 May 2025 10:55:59 +0800
-From: Dengdui Huang <huangdengdui@huawei.com>
-To: <dev@dpdk.org>
-CC: <stephen@networkplumber.org>, <jasvinder.singh@intel.com>,
- <thomas@monjalon.net>, <aman.deep.singh@intel.com>, <lihuisong@huawei.com>,
- <fengchengwen@huawei.com>
-Subject: [PATCH v4 3/3] app/testpmd: fix obtain inner info of tunnel packet
-Date: Fri, 23 May 2025 10:55:57 +0800
-Message-ID: <20250523025557.905502-3-huangdengdui@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250523025557.905502-1-huangdengdui@huawei.com>
-References: <20250411084303.770040-1-huangdengdui@huawei.com>
- <20250523025557.905502-1-huangdengdui@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 123A340667;
+	Fri, 23 May 2025 12:09:35 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+ by mails.dpdk.org (Postfix) with ESMTP id E94E940658
+ for <dev@dpdk.org>; Fri, 23 May 2025 12:09:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1747994973; x=1779530973;
+ h=from:to:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=2dqMO8S1i/9GbhHCGnHCGkYZyH4slsGIpdd75HfhAKU=;
+ b=iUtceNzOhPCJTroTZYHWrHuvDQj2AyQCRn6D30vcNxTepN4Gqqjl4LVG
+ GLD5j0d73q2qHHl52LAUutBOEIotWARkgBgITD5e44VmfaIOIiB2JWCEg
+ lTSi0icJDOMa+ko+VvKRErI/DV7jQDtVBLMmMCClhLOjan6BaeP1jqbu9
+ QSC+UUdcBog0VyZZhAVP5JqBtbMR/TTyV0oDTVETjEUEbOMYR5M6RLX1F
+ OYGuVHdD/2lRbuTYoyJ+eBkINI7mOuXySLfrOhLeyXoQbToE85CjvkMl0
+ pNMNY9pF4FxM9F+gU5g/SAeH3KYE4C3BjbCwMgSZs0ycPHmnx01KbkwdF w==;
+X-CSE-ConnectionGUID: K2tFgbu3TQ2aYYEJAzBXOw==
+X-CSE-MsgGUID: HbklukbxTlODtXKPMlO/rQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11441"; a="50194164"
+X-IronPort-AV: E=Sophos;i="6.15,308,1739865600"; d="scan'208";a="50194164"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+ by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 23 May 2025 03:09:32 -0700
+X-CSE-ConnectionGUID: tnDlKPBDSKKawkZPJmcfkw==
+X-CSE-MsgGUID: 3nGirVrESN2A+vN/2kqd6Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,308,1739865600"; d="scan'208";a="141143241"
+Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
+ by fmviesa007.fm.intel.com with ESMTP; 23 May 2025 03:09:30 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org, Aman Singh <aman.deep.singh@intel.com>,
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>
+Subject: [PATCH v1 1/2] app/testpmd: harmonize case in help strings
+Date: Fri, 23 May 2025 11:09:27 +0100
+Message-ID: <9d6e0ff75abe0185c5a03aecba3269668860a1f7.1747227723.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.47.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.50.165.33]
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemo500011.china.huawei.com (7.202.195.194)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,38 +56,204 @@ List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
+Message-ID: <20250523100927.H84falJ_EvvAcckzJeeK9cmWr6rrhb0mZeTgEAY_gaE@z>
 
-l2_len for tunneling packets should contain Outer_L4_len.
-Additionally, the current offset used for the inner Ethernet
-header is incorrect. This patch fixes these issues.
+Most testpmd help strings are lower case. Amend those that aren't.
 
-Fixes: 76730c7b9b5a ("app/testpmd: use packet type parsing API")
-Cc: stable@dpdk.org
-
-Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- app/test-pmd/csumonly.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ app/test-pmd/cmdline.c    |  4 ++--
+ app/test-pmd/cmdline_tm.c | 36 ++++++++++++++++++------------------
+ 2 files changed, 20 insertions(+), 20 deletions(-)
 
-diff --git a/app/test-pmd/csumonly.c b/app/test-pmd/csumonly.c
-index fa0002d321..d488eed470 100644
---- a/app/test-pmd/csumonly.c
-+++ b/app/test-pmd/csumonly.c
-@@ -711,11 +711,11 @@ pkt_burst_checksum_forward(struct fwd_stream *fs)
- 		if (txp->parse_tunnel && RTE_ETH_IS_TUNNEL_PKT(ptype) != 0) {
- 			info.is_tunnel = 1;
- 			update_tunnel_outer(&info);
--			info.l2_len = hdr_lens.inner_l2_len + hdr_lens.tunnel_len;
-+			info.l2_len = hdr_lens.inner_l2_len;
- 			info.l3_len = hdr_lens.inner_l3_len;
- 			info.l4_len = hdr_lens.inner_l4_len;
--			eth_hdr = (struct rte_ether_hdr *)(char *)l3_hdr +
--					info.outer_l3_len + hdr_lens.tunnel_len;
-+			eth_hdr = (struct rte_ether_hdr *)((char *)l3_hdr +
-+				hdr_lens.l3_len + hdr_lens.l4_len + hdr_lens.tunnel_len);
- 			info.ethertype = get_ethertype_by_ptype(eth_hdr,
- 						ptype & RTE_PTYPE_INNER_L3_MASK);
- 			tx_ol_flags |= get_tunnel_ol_flags_by_ptype(ptype);
+diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
+index d4bb3ec998..a8f1b8ad67 100644
+--- a/app/test-pmd/cmdline.c
++++ b/app/test-pmd/cmdline.c
+@@ -8078,7 +8078,7 @@ static cmdline_parse_token_string_t cmd_operate_set_counter_name =
+ static cmdline_parse_inst_t cmd_operate_set_counter = {
+ 	.f = cmd_operate_set_counter_parsed,
+ 	.data = NULL,
+-	.help_str = "port (port_id) enable|disable <counter_name>",
++	.help_str = "port <port_id> enable|disable <counter_name>",
+ 	.tokens = {
+ 		(void *)&cmd_operate_set_counter_port,
+ 		(void *)&cmd_operate_set_counter_port_id,
+@@ -9034,7 +9034,7 @@ static cmdline_parse_token_string_t cmd_dump_dump =
+ static cmdline_parse_inst_t cmd_dump = {
+ 	.f = cmd_dump_parsed,  /* function to call */
+ 	.data = NULL,      /* 2nd arg of func */
+-	.help_str = "Dump status",
++	.help_str = "dump status",
+ 	.tokens = {        /* token list, NULL terminated */
+ 		(void *)&cmd_dump_dump,
+ 		NULL,
+diff --git a/app/test-pmd/cmdline_tm.c b/app/test-pmd/cmdline_tm.c
+index 7ade91549c..acf86c1ef0 100644
+--- a/app/test-pmd/cmdline_tm.c
++++ b/app/test-pmd/cmdline_tm.c
+@@ -327,7 +327,7 @@ static void cmd_show_port_tm_cap_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_show_port_tm_cap = {
+ 	.f = cmd_show_port_tm_cap_parsed,
+ 	.data = NULL,
+-	.help_str = "Show Port TM Capabilities",
++	.help_str = "show port tm capabilities",
+ 	.tokens = {
+ 		(void *)&cmd_show_port_tm_cap_show,
+ 		(void *)&cmd_show_port_tm_cap_port,
+@@ -475,7 +475,7 @@ static void cmd_show_port_tm_level_cap_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_show_port_tm_level_cap = {
+ 	.f = cmd_show_port_tm_level_cap_parsed,
+ 	.data = NULL,
+-	.help_str = "Show port TM hierarchical level capabilities",
++	.help_str = "show port tm hierarchical level capabilities",
+ 	.tokens = {
+ 		(void *)&cmd_show_port_tm_level_cap_show,
+ 		(void *)&cmd_show_port_tm_level_cap_port,
+@@ -598,7 +598,7 @@ static void cmd_show_port_tm_node_cap_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_show_port_tm_node_cap = {
+ 	.f = cmd_show_port_tm_node_cap_parsed,
+ 	.data = NULL,
+-	.help_str = "Show Port TM Hierarchy node capabilities",
++	.help_str = "show port tm Hierarchy node capabilities",
+ 	.tokens = {
+ 		(void *)&cmd_show_port_tm_node_cap_show,
+ 		(void *)&cmd_show_port_tm_node_cap_port,
+@@ -716,7 +716,7 @@ static void cmd_show_port_tm_node_stats_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_show_port_tm_node_stats = {
+ 	.f = cmd_show_port_tm_node_stats_parsed,
+ 	.data = NULL,
+-	.help_str = "Show port tm node stats",
++	.help_str = "show port tm node stats",
+ 	.tokens = {
+ 		(void *)&cmd_show_port_tm_node_stats_show,
+ 		(void *)&cmd_show_port_tm_node_stats_port,
+@@ -795,7 +795,7 @@ static void cmd_show_port_tm_node_type_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_show_port_tm_node_type = {
+ 	.f = cmd_show_port_tm_node_type_parsed,
+ 	.data = NULL,
+-	.help_str = "Show port tm node type",
++	.help_str = "show port tm node type",
+ 	.tokens = {
+ 		(void *)&cmd_show_port_tm_node_type_show,
+ 		(void *)&cmd_show_port_tm_node_type_port,
+@@ -942,7 +942,7 @@ static void cmd_add_port_tm_node_shaper_profile_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_add_port_tm_node_shaper_profile = {
+ 	.f = cmd_add_port_tm_node_shaper_profile_parsed,
+ 	.data = NULL,
+-	.help_str = "Add port tm node private shaper profile",
++	.help_str = "add port tm node private shaper profile",
+ 	.tokens = {
+ 		(void *)&cmd_add_port_tm_node_shaper_profile_add,
+ 		(void *)&cmd_add_port_tm_node_shaper_profile_port,
+@@ -1029,7 +1029,7 @@ static void cmd_del_port_tm_node_shaper_profile_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_del_port_tm_node_shaper_profile = {
+ 	.f = cmd_del_port_tm_node_shaper_profile_parsed,
+ 	.data = NULL,
+-	.help_str = "Delete port tm node private shaper profile",
++	.help_str = "delete port tm node private shaper profile",
+ 	.tokens = {
+ 		(void *)&cmd_del_port_tm_node_shaper_profile_del,
+ 		(void *)&cmd_del_port_tm_node_shaper_profile_port,
+@@ -1390,7 +1390,7 @@ static void cmd_add_port_tm_node_wred_profile_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_add_port_tm_node_wred_profile = {
+ 	.f = cmd_add_port_tm_node_wred_profile_parsed,
+ 	.data = NULL,
+-	.help_str = "Add port tm node wred profile",
++	.help_str = "add port tm node wred profile",
+ 	.tokens = {
+ 		(void *)&cmd_add_port_tm_node_wred_profile_add,
+ 		(void *)&cmd_add_port_tm_node_wred_profile_port,
+@@ -1483,7 +1483,7 @@ static void cmd_del_port_tm_node_wred_profile_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_del_port_tm_node_wred_profile = {
+ 	.f = cmd_del_port_tm_node_wred_profile_parsed,
+ 	.data = NULL,
+-	.help_str = "Delete port tm node wred profile",
++	.help_str = "delete port tm node wred profile",
+ 	.tokens = {
+ 		(void *)&cmd_del_port_tm_node_wred_profile_del,
+ 		(void *)&cmd_del_port_tm_node_wred_profile_port,
+@@ -1577,7 +1577,7 @@ static void cmd_set_port_tm_node_shaper_profile_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_set_port_tm_node_shaper_profile = {
+ 	.f = cmd_set_port_tm_node_shaper_profile_parsed,
+ 	.data = NULL,
+-	.help_str = "Set port tm node shaper profile",
++	.help_str = "set port tm node shaper profile",
+ 	.tokens = {
+ 		(void *)&cmd_set_port_tm_node_shaper_profile_set,
+ 		(void *)&cmd_set_port_tm_node_shaper_profile_port,
+@@ -1744,7 +1744,7 @@ static void cmd_add_port_tm_nonleaf_node_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_add_port_tm_nonleaf_node = {
+ 	.f = cmd_add_port_tm_nonleaf_node_parsed,
+ 	.data = NULL,
+-	.help_str = "Add port tm nonleaf node",
++	.help_str = "add port tm nonleaf node",
+ 	.tokens = {
+ 		(void *)&cmd_add_port_tm_nonleaf_node_add,
+ 		(void *)&cmd_add_port_tm_nonleaf_node_port,
+@@ -1911,7 +1911,7 @@ static void cmd_add_port_tm_nonleaf_node_pmode_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_add_port_tm_nonleaf_node_pmode = {
+ 	.f = cmd_add_port_tm_nonleaf_node_pmode_parsed,
+ 	.data = NULL,
+-	.help_str = "Add port tm nonleaf node pktmode",
++	.help_str = "add port tm nonleaf node pktmode",
+ 	.tokens = {
+ 		(void *)&cmd_add_port_tm_nonleaf_node_pmode_add,
+ 		(void *)&cmd_add_port_tm_nonleaf_node_pmode_port,
+@@ -2089,7 +2089,7 @@ static void cmd_add_port_tm_leaf_node_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_add_port_tm_leaf_node = {
+ 	.f = cmd_add_port_tm_leaf_node_parsed,
+ 	.data = NULL,
+-	.help_str = "Add port tm leaf node",
++	.help_str = "add port tm leaf node",
+ 	.tokens = {
+ 		(void *)&cmd_add_port_tm_leaf_node_add,
+ 		(void *)&cmd_add_port_tm_leaf_node_port,
+@@ -2301,7 +2301,7 @@ static void cmd_del_port_tm_node_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_del_port_tm_node = {
+ 	.f = cmd_del_port_tm_node_parsed,
+ 	.data = NULL,
+-	.help_str = "Delete port tm node",
++	.help_str = "delete port tm node",
+ 	.tokens = {
+ 		(void *)&cmd_del_port_tm_node_del,
+ 		(void *)&cmd_del_port_tm_node_port,
+@@ -2394,7 +2394,7 @@ static void cmd_set_port_tm_node_parent_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_set_port_tm_node_parent = {
+ 	.f = cmd_set_port_tm_node_parent_parsed,
+ 	.data = NULL,
+-	.help_str = "Set port tm node parent",
++	.help_str = "set port tm node parent",
+ 	.tokens = {
+ 		(void *)&cmd_set_port_tm_node_parent_set,
+ 		(void *)&cmd_set_port_tm_node_parent_port,
+@@ -2465,7 +2465,7 @@ static void cmd_suspend_port_tm_node_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_suspend_port_tm_node = {
+ 	.f = cmd_suspend_port_tm_node_parsed,
+ 	.data = NULL,
+-	.help_str = "Suspend port tm node",
++	.help_str = "suspend port tm node",
+ 	.tokens = {
+ 		(void *)&cmd_suspend_port_tm_node_suspend,
+ 		(void *)&cmd_suspend_port_tm_node_port,
+@@ -2530,7 +2530,7 @@ static void cmd_resume_port_tm_node_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_resume_port_tm_node = {
+ 	.f = cmd_resume_port_tm_node_parsed,
+ 	.data = NULL,
+-	.help_str = "Resume port tm node",
++	.help_str = "resume port tm node",
+ 	.tokens = {
+ 		(void *)&cmd_resume_port_tm_node_resume,
+ 		(void *)&cmd_resume_port_tm_node_port,
+@@ -2602,7 +2602,7 @@ static void cmd_port_tm_hierarchy_commit_parsed(void *parsed_result,
+ cmdline_parse_inst_t cmd_port_tm_hierarchy_commit = {
+ 	.f = cmd_port_tm_hierarchy_commit_parsed,
+ 	.data = NULL,
+-	.help_str = "Commit port tm hierarchy",
++	.help_str = "commit port tm hierarchy",
+ 	.tokens = {
+ 		(void *)&cmd_port_tm_hierarchy_commit_port,
+ 		(void *)&cmd_port_tm_hierarchy_commit_tm,
 -- 
-2.33.0
+2.47.1
 
