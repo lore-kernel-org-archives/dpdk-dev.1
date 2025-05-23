@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7889EC54F2E
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 May 2025 13:54:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48234C54F2E
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 May 2025 13:54:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D166C40E20;
-	Fri, 23 May 2025 15:52:39 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 09EF840E42;
+	Fri, 23 May 2025 15:52:41 +0200 (CEST)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id E23BA40DFD
- for <dev@dpdk.org>; Fri, 23 May 2025 15:52:33 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 08F9E40E12
+ for <dev@dpdk.org>; Fri, 23 May 2025 15:52:34 +0200 (CEST)
 Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54NBl8SP006690
- for <dev@dpdk.org>; Fri, 23 May 2025 06:52:33 -0700
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54NBl8SS006690
+ for <dev@dpdk.org>; Fri, 23 May 2025 06:52:34 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=K
- /3wDEzJQUoPU7rHMWZwt/0gyRz9leyuBSCfu1oML40=; b=IAHx6UCnLi097DcgB
- YQATRaKfoB11TJ0x9/A2EwT6GFpHASi4OLmvtgX/maBR4+9fG+0omLJ0B3IDvvRU
- +iyQW2a9J+bnodk4HaV1TVLqzvbVUYCo+otbT9WiYUwJyS1HSg/8bxJFJ5pjetHO
- Q/IwMpyMtTRvQr0siekVUtdk5Ab5g6+1XYzcrHbQopPxeOPDf9byRd7wXUjB+XDn
- iDOBSe7XaKgih/dofLyi1dya5YWAyBUe7KN6XSljoxBhXSdc0k3jl9YtSY+KZowg
- 2UnDV9mWVkfn2Zb85PFlwpMUaqcR5dZ1XH+h9iq/VvpTgaPvqVDitz1z7L1CFm0y
- ye5qw==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=6
+ ZGCHcJHV6e+JKivw66fGBfGZ6s1JjXQ59b7Mj1MbvY=; b=UJZsQuSdn1xjX7xWs
+ PrVUNzpa7mT4eqIvOSS4EGPzdNh7wQgCqdQu/e5+oXR5lw9i3lnK+5YbUiqg5sPg
+ /7Jka4667WQgJWABODlkNw+1QOvqF4R6a9JmDw17rk/9XRSP7LwNe8gU4Lfr2v8S
+ oVPXOGI+uwADHuuLMOtxSVjMPXnbI0yWLlpaGOAnTtepgTQzhUBHAJKTHulLRFBn
+ lqbvk1eyOHDPBh/adCI58NT+3YdBgdlY1VdHL1crkFqPldT430gVV9iWCmAi8FRj
+ pKrKja8U0YyXvx/wE8rVybRhTHImpQkRKeo4WIbEAI+u0XhT/qie0gfNOgU57hzH
+ vPOCg==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46tdnksh52-15
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46tdnksh52-16
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Fri, 23 May 2025 06:52:32 -0700 (PDT)
+ for <dev@dpdk.org>; Fri, 23 May 2025 06:52:33 -0700 (PDT)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 23 May 2025 06:52:06 -0700
+ 15.2.1544.4; Fri, 23 May 2025 06:52:30 -0700
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 23 May 2025 06:52:06 -0700
+ Transport; Fri, 23 May 2025 06:52:30 -0700
 Received: from hyd1554.caveonetworks.com (unknown [10.29.56.32])
- by maili.marvell.com (Postfix) with ESMTP id 482793F7041;
- Fri, 23 May 2025 06:52:04 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 89CF23F704F;
+ Fri, 23 May 2025 06:52:27 -0700 (PDT)
 From: Tejasree Kondoj <ktejasree@marvell.com>
 To: Akhil Goyal <gakhil@marvell.com>
 CC: Vidya Sagar Velumuri <vvelumuri@marvell.com>, Anoob Joseph
  <anoobj@marvell.com>, Aakash Sasidharan <asasidharan@marvell.com>,
  "Nithinsen Kaithakadan" <nkaithakadan@marvell.com>, Rupesh Chiluka
  <rchiluka@marvell.com>, <dev@dpdk.org>
-Subject: [PATCH 16/40] crypto/cnxk: add security session creation
-Date: Fri, 23 May 2025 19:20:47 +0530
-Message-ID: <20250523135111.2178408-17-ktejasree@marvell.com>
+Subject: [PATCH 23/40] crypto/cnxk: add tls write session creation
+Date: Fri, 23 May 2025 19:20:54 +0530
+Message-ID: <20250523135111.2178408-24-ktejasree@marvell.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250523135111.2178408-1-ktejasree@marvell.com>
 References: <20250523135111.2178408-1-ktejasree@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIzMDEyMyBTYWx0ZWRfXxMw9WyX4peNU
- Tx9+TEBWzzLXy/OZ+4ff+RL8bIKHNtiuyIGvBXhm/JaZAEL1U4iRJV3noHmVU0SIWEdM8W/zkSI
- rStsy6hy+ryD7zMwLDpGelZLvHffRn4koykFzVRMS7/hqMwYTH6036CMlsQya3AVCbEw66F8xSf
- k+TvhEpnRMH72pU9U/WHxv5dK1oAI5VBNUGShoNTv8cNRfxnh79HPyTV4bpgbw7x0Er1eEvfCwH
- UIIM0l3x9wrH39/Ro8LPlm91Zl1+tJixEfOIQlc1DYM02KgNhQlj73aYLDLBk1i/4+hBUoZf/Xf
- ZedVJPA6/EVzvkiwdQAvJNlUBhgenMmQTrrpq6vuT15tHpRYTYa88NgTK6eRBd8V9gLgzncG+1L
- 9QvUt6lg0pyDKYxx9BD30cAOzqXDNMB++sJcsT56weVY2D7ozW0qa5+DpZ9D+mb6NiINWEZk
-X-Authority-Analysis: v=2.4 cv=Hst2G1TS c=1 sm=1 tr=0 ts=68307da0 cx=c_pps
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIzMDEyMyBTYWx0ZWRfX0vegFHoiV2Z0
+ KG3Wp9Jtq7784HbgsaRjOOthenfUB/duh7zY8DJ7NqFtEM7Nu4CC1yJVznA+UCpLcpQINey9IEG
+ 5yHDCniKyLF4cYgHzyw3IHn8BFnGASHJnePXDfRFtQWMK5rMt9DXCS83ldcJCicrKHndkIG6d5J
+ A3dhyxV2X7aft9DG2jMoMPiGmScTqE9cQpkih22xqLNOerdxFi6oMI25rB9/wgCG+lOjTaO2cVW
+ SfRTnRgQnvHfMOEEDdm4YMtAhV4ik2uu8Dh39uHl/tu6K0aPUQfX9wHpwuo4rLKvFkaDMwf2YUR
+ COf4cpPvqY790ztUF3usVY8fx4e2UcMZl1KuCxVojneNAvVYkBH3/uhxOj5LKtBV0dgmw3Mhg45
+ NTrDsmHXAU7OuRcOpmu2JSKme+mFwDKjoOHV0fbMSM4jn8pyxOmiwBJ+aOBEysj218vediaY
+X-Authority-Analysis: v=2.4 cv=Hst2G1TS c=1 sm=1 tr=0 ts=68307da1 cx=c_pps
  a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=6DM_orCjHzrhloRL1IcA:9
+ a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=Z45Zc8Lmu-4BIUzS0UoA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: YGb6snFt10Rxu0nIAqyx4FcGeMrolZ5O
-X-Proofpoint-ORIG-GUID: YGb6snFt10Rxu0nIAqyx4FcGeMrolZ5O
+X-Proofpoint-GUID: GscLV_zEEkmXIfj9qiDQEwsQQ5nxY6-W
+X-Proofpoint-ORIG-GUID: GscLV_zEEkmXIfj9qiDQEwsQQ5nxY6-W
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-23_04,2025-05-22_01,2025-03-28_01
@@ -84,320 +84,516 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Vidya Sagar Velumuri <vvelumuri@marvell.com>
 
-Add rte security session creation for cn20k
+Add support for tls read session creation for cn20k
 
 Signed-off-by: Vidya Sagar Velumuri <vvelumuri@marvell.com>
 ---
- drivers/crypto/cnxk/cn20k_cryptodev_sec.c |  22 +-
- drivers/crypto/cnxk/cn20k_cryptodev_sec.h |  33 +++
- drivers/crypto/cnxk/cn20k_ipsec.c         | 250 +++++++++++++++++++++-
- 3 files changed, 296 insertions(+), 9 deletions(-)
+ drivers/crypto/cnxk/cn20k_cryptodev_sec.c |   4 +
+ drivers/crypto/cnxk/cn20k_cryptodev_sec.h |  12 +
+ drivers/crypto/cnxk/cn20k_tls.c           | 463 +++++++++++++++++++++-
+ 3 files changed, 473 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/crypto/cnxk/cn20k_cryptodev_sec.c b/drivers/crypto/cnxk/cn20k_cryptodev_sec.c
-index 04c8e8f506..0bb4b7db63 100644
+index 7374a83795..e5158af595 100644
 --- a/drivers/crypto/cnxk/cn20k_cryptodev_sec.c
 +++ b/drivers/crypto/cnxk/cn20k_cryptodev_sec.c
-@@ -12,9 +12,25 @@ static int
- cn20k_sec_session_create(void *dev, struct rte_security_session_conf *conf,
- 			 struct rte_security_session *sess)
- {
--	RTE_SET_USED(dev);
--	RTE_SET_USED(conf);
--	RTE_SET_USED(sess);
-+	struct rte_cryptodev *crypto_dev = dev;
-+	struct cnxk_cpt_vf *vf;
-+	struct cnxk_cpt_qp *qp;
-+
-+	if (conf->action_type != RTE_SECURITY_ACTION_TYPE_LOOKASIDE_PROTOCOL)
-+		return -EINVAL;
-+
-+	qp = crypto_dev->data->queue_pairs[0];
-+	if (qp == NULL) {
-+		plt_err("Setup cryptodev queue pair before creating security session");
-+		return -EPERM;
-+	}
-+
-+	vf = crypto_dev->data->dev_private;
-+
-+	if (conf->protocol == RTE_SECURITY_PROTOCOL_IPSEC) {
-+		((struct cn20k_sec_session *)sess)->userdata = conf->userdata;
-+		return cn20k_ipsec_session_create(vf, qp, &conf->ipsec, conf->crypto_xform, sess);
-+	}
+@@ -32,6 +32,10 @@ cn20k_sec_session_create(void *dev, struct rte_security_session_conf *conf,
+ 		return cn20k_ipsec_session_create(vf, qp, &conf->ipsec, conf->crypto_xform, sess);
+ 	}
  
++	if (conf->protocol == RTE_SECURITY_PROTOCOL_TLS_RECORD)
++		return cn20k_tls_record_session_create(vf, qp, &conf->tls_record,
++						       conf->crypto_xform, sess);
++
  	return -ENOTSUP;
  }
+ 
 diff --git a/drivers/crypto/cnxk/cn20k_cryptodev_sec.h b/drivers/crypto/cnxk/cn20k_cryptodev_sec.h
-index 5cd0e53017..4d6dcc9670 100644
+index 4d6dcc9670..42f588e4ac 100644
 --- a/drivers/crypto/cnxk/cn20k_cryptodev_sec.h
 +++ b/drivers/crypto/cnxk/cn20k_cryptodev_sec.h
-@@ -16,4 +16,37 @@
+@@ -12,9 +12,19 @@
+ #include "roc_cpt.h"
+ 
+ #include "cn20k_ipsec.h"
++#include "cn20k_tls.h"
+ 
  #define SEC_SESS_SIZE sizeof(struct rte_security_session)
  
- void cn20k_sec_ops_override(void);
-+
-+struct __rte_aligned(ROC_ALIGN) cn20k_sec_session {
-+	uint8_t rte_sess[SEC_SESS_SIZE];
-+
-+	/** PMD private space */
-+	alignas(RTE_CACHE_LINE_MIN_SIZE)
-+
-+	/** Pre-populated CPT inst words */
-+	struct cnxk_cpt_inst_tmpl inst;
-+	uint16_t max_extended_len;
-+	uint16_t iv_offset;
-+	uint8_t proto;
-+	uint8_t iv_length;
-+	union {
-+		uint16_t u16;
-+		struct {
-+			uint8_t ip_csum;
-+			uint8_t is_outbound : 1;
-+		} ipsec;
-+	};
-+	/** Queue pair */
-+	struct cnxk_cpt_qp *qp;
-+	/** Userdata to be set for Rx inject */
-+	void *userdata;
-+
-+	/**
-+	 * End of SW mutable area
-+	 */
-+	union {
-+		struct cn20k_ipsec_sa sa;
-+	};
++struct cn20k_tls_opt {
++	uint16_t pad_shift : 3;
++	uint16_t enable_padding : 1;
++	uint16_t tail_fetch_len : 2;
++	uint16_t tls_ver : 2;
++	uint16_t is_write : 1;
++	uint16_t mac_len : 7;
 +};
 +
- #endif /* __CN20K_CRYPTODEV_SEC_H__ */
-diff --git a/drivers/crypto/cnxk/cn20k_ipsec.c b/drivers/crypto/cnxk/cn20k_ipsec.c
-index da8f818d87..b6ecc4fb1a 100644
---- a/drivers/crypto/cnxk/cn20k_ipsec.c
-+++ b/drivers/crypto/cnxk/cn20k_ipsec.c
-@@ -20,19 +20,257 @@
+ void cn20k_sec_ops_override(void);
  
- #include "roc_api.h"
+ struct __rte_aligned(ROC_ALIGN) cn20k_sec_session {
+@@ -31,6 +41,7 @@ struct __rte_aligned(ROC_ALIGN) cn20k_sec_session {
+ 	uint8_t iv_length;
+ 	union {
+ 		uint16_t u16;
++		struct cn20k_tls_opt tls_opt;
+ 		struct {
+ 			uint8_t ip_csum;
+ 			uint8_t is_outbound : 1;
+@@ -46,6 +57,7 @@ struct __rte_aligned(ROC_ALIGN) cn20k_sec_session {
+ 	 */
+ 	union {
+ 		struct cn20k_ipsec_sa sa;
++		struct cn20k_tls_record tls_rec;
+ 	};
+ };
+ 
+diff --git a/drivers/crypto/cnxk/cn20k_tls.c b/drivers/crypto/cnxk/cn20k_tls.c
+index cef13a68a4..40fe48ae69 100644
+--- a/drivers/crypto/cnxk/cn20k_tls.c
++++ b/drivers/crypto/cnxk/cn20k_tls.c
+@@ -15,8 +15,452 @@
+ #include "cn20k_tls.h"
+ #include "cnxk_cryptodev.h"
+ #include "cnxk_cryptodev_ops.h"
++#include "cnxk_ipsec.h"
+ #include "cnxk_security.h"
  
 +static int
-+cn20k_ipsec_outb_sa_create(struct roc_cpt *roc_cpt, struct roc_cpt_lf *lf,
-+			   struct rte_security_ipsec_xform *ipsec_xfrm,
-+			   struct rte_crypto_sym_xform *crypto_xfrm,
-+			   struct cn20k_sec_session *sec_sess)
++tls_xform_cipher_auth_verify(struct rte_crypto_sym_xform *cipher_xform,
++			     struct rte_crypto_sym_xform *auth_xform)
 +{
-+	union roc_ow_ipsec_outb_param1 param1;
-+	struct roc_ow_ipsec_outb_sa *sa_dptr;
-+	struct cnxk_ipsec_outb_rlens rlens;
-+	struct cn20k_ipsec_sa *sa;
-+	union cpt_inst_w4 inst_w4;
-+	void *out_sa;
-+	int ret = 0;
++	enum rte_crypto_cipher_algorithm c_algo = cipher_xform->cipher.algo;
++	enum rte_crypto_auth_algorithm a_algo = auth_xform->auth.algo;
++	int ret = -ENOTSUP;
 +
-+	sa = &sec_sess->sa;
-+	out_sa = &sa->out_sa;
-+
-+	/* Allocate memory to be used as dptr for CPT ucode WRITE_SA op */
-+	sa_dptr = plt_zmalloc(sizeof(struct roc_ow_ipsec_outb_sa), 8);
-+	if (sa_dptr == NULL) {
-+		plt_err("Couldn't allocate memory for SA dptr");
-+		return -ENOMEM;
++	switch (c_algo) {
++	case RTE_CRYPTO_CIPHER_NULL:
++		if ((a_algo == RTE_CRYPTO_AUTH_MD5_HMAC) || (a_algo == RTE_CRYPTO_AUTH_SHA1_HMAC) ||
++		    (a_algo == RTE_CRYPTO_AUTH_SHA256_HMAC) ||
++		    (a_algo == RTE_CRYPTO_AUTH_SHA384_HMAC))
++			ret = 0;
++		break;
++	case RTE_CRYPTO_CIPHER_3DES_CBC:
++		if (a_algo == RTE_CRYPTO_AUTH_SHA1_HMAC)
++			ret = 0;
++		break;
++	case RTE_CRYPTO_CIPHER_AES_CBC:
++		if ((a_algo == RTE_CRYPTO_AUTH_SHA1_HMAC) ||
++		    (a_algo == RTE_CRYPTO_AUTH_SHA256_HMAC) ||
++		    (a_algo == RTE_CRYPTO_AUTH_SHA384_HMAC))
++			ret = 0;
++		break;
++	default:
++		break;
 +	}
-+
-+	/* Translate security parameters to SA */
-+	ret = cnxk_ow_ipsec_outb_sa_fill(sa_dptr, ipsec_xfrm, crypto_xfrm);
-+	if (ret) {
-+		plt_err("Could not fill outbound session parameters");
-+		goto sa_dptr_free;
-+	}
-+
-+	RTE_SET_USED(roc_cpt);
-+
-+#ifdef LA_IPSEC_DEBUG
-+	/* Use IV from application in debug mode */
-+	if (ipsec_xfrm->options.iv_gen_disable == 1) {
-+		sa_dptr->w2.s.iv_src = ROC_IE_OW_SA_IV_SRC_FROM_SA;
-+		if (crypto_xfrm->type == RTE_CRYPTO_SYM_XFORM_AEAD) {
-+			sec_sess->iv_offset = crypto_xfrm->aead.iv.offset;
-+			sec_sess->iv_length = crypto_xfrm->aead.iv.length;
-+		} else if (crypto_xfrm->type == RTE_CRYPTO_SYM_XFORM_CIPHER) {
-+			sec_sess->iv_offset = crypto_xfrm->cipher.iv.offset;
-+			sec_sess->iv_length = crypto_xfrm->cipher.iv.length;
-+		} else {
-+			sec_sess->iv_offset = crypto_xfrm->auth.iv.offset;
-+			sec_sess->iv_length = crypto_xfrm->auth.iv.length;
-+		}
-+	}
-+#else
-+	if (ipsec_xfrm->options.iv_gen_disable != 0) {
-+		plt_err("Application provided IV not supported");
-+		ret = -ENOTSUP;
-+		goto sa_dptr_free;
-+	}
-+#endif
-+
-+	sec_sess->ipsec.is_outbound = 1;
-+
-+	/* Get Rlen calculation data */
-+	ret = cnxk_ipsec_outb_rlens_get(&rlens, ipsec_xfrm, crypto_xfrm);
-+	if (ret)
-+		goto sa_dptr_free;
-+
-+	sec_sess->max_extended_len = rlens.max_extended_len;
-+
-+	/* pre-populate CPT INST word 4 */
-+	inst_w4.u64 = 0;
-+	inst_w4.s.opcode_major = ROC_IE_OW_MAJOR_OP_PROCESS_OUTBOUND_IPSEC | ROC_IE_OW_INPLACE_BIT;
-+
-+	param1.u16 = 0;
-+
-+	param1.s.ttl_or_hop_limit = ipsec_xfrm->options.dec_ttl;
-+
-+	/* Disable IP checksum computation by default */
-+	param1.s.ip_csum_disable = ROC_IE_OW_SA_INNER_PKT_IP_CSUM_DISABLE;
-+
-+	if (ipsec_xfrm->options.ip_csum_enable)
-+		param1.s.ip_csum_disable = ROC_IE_OW_SA_INNER_PKT_IP_CSUM_ENABLE;
-+
-+	/* Disable L4 checksum computation by default */
-+	param1.s.l4_csum_disable = ROC_IE_OW_SA_INNER_PKT_L4_CSUM_DISABLE;
-+
-+	if (ipsec_xfrm->options.l4_csum_enable)
-+		param1.s.l4_csum_disable = ROC_IE_OW_SA_INNER_PKT_L4_CSUM_ENABLE;
-+
-+	inst_w4.s.param1 = param1.u16;
-+
-+	sec_sess->inst.w4 = inst_w4.u64;
-+
-+	if (ipsec_xfrm->options.stats == 1) {
-+		/* Enable mib counters */
-+		sa_dptr->w0.s.count_mib_bytes = 1;
-+		sa_dptr->w0.s.count_mib_pkts = 1;
-+		sa_dptr->w0.s.count_glb_pkts = 1;
-+		sa_dptr->w0.s.count_glb_octets = 1;
-+	}
-+
-+	memset(out_sa, 0, sizeof(struct roc_ow_ipsec_outb_sa));
-+
-+	/* Copy word0 from sa_dptr to populate ctx_push_sz ctx_size fields */
-+	memcpy(out_sa, sa_dptr, 8);
-+
-+	rte_atomic_thread_fence(rte_memory_order_seq_cst);
-+
-+	/* Write session using microcode opcode */
-+	ret = roc_cpt_ctx_write(lf, sa_dptr, out_sa, sizeof(struct roc_ow_ipsec_outb_sa));
-+	if (ret) {
-+		plt_err("Could not write outbound session to hardware");
-+		goto sa_dptr_free;
-+	}
-+
-+	/* Trigger CTX flush so that data is written back to DRAM */
-+	ret = roc_cpt_lf_ctx_flush(lf, out_sa, false);
-+	if (ret == -EFAULT) {
-+		plt_err("Could not flush outbound session");
-+		goto sa_dptr_free;
-+	}
-+
-+	sec_sess->proto = RTE_SECURITY_PROTOCOL_IPSEC;
-+	rte_atomic_thread_fence(rte_memory_order_seq_cst);
-+
-+sa_dptr_free:
-+	plt_free(sa_dptr);
 +
 +	return ret;
 +}
 +
 +static int
-+cn20k_ipsec_inb_sa_create(struct roc_cpt *roc_cpt, struct roc_cpt_lf *lf,
-+			  struct rte_security_ipsec_xform *ipsec_xfrm,
-+			  struct rte_crypto_sym_xform *crypto_xfrm,
-+			  struct cn20k_sec_session *sec_sess)
++tls_xform_cipher_verify(struct rte_crypto_sym_xform *crypto_xform)
 +{
-+	union roc_ow_ipsec_inb_param1 param1;
-+	struct roc_ow_ipsec_inb_sa *sa_dptr;
-+	struct cn20k_ipsec_sa *sa;
-+	union cpt_inst_w4 inst_w4;
-+	void *in_sa;
++	enum rte_crypto_cipher_algorithm c_algo = crypto_xform->cipher.algo;
++	uint16_t keylen = crypto_xform->cipher.key.length;
++
++	if (((c_algo == RTE_CRYPTO_CIPHER_NULL) && (keylen == 0)) ||
++	    ((c_algo == RTE_CRYPTO_CIPHER_3DES_CBC) && (keylen == 24)) ||
++	    ((c_algo == RTE_CRYPTO_CIPHER_AES_CBC) && ((keylen == 16) || (keylen == 32))))
++		return 0;
++
++	return -EINVAL;
++}
++
++static int
++tls_xform_auth_verify(struct rte_crypto_sym_xform *crypto_xform)
++{
++	enum rte_crypto_auth_algorithm a_algo = crypto_xform->auth.algo;
++	uint16_t keylen = crypto_xform->auth.key.length;
++
++	if (((a_algo == RTE_CRYPTO_AUTH_MD5_HMAC) && (keylen == 16)) ||
++	    ((a_algo == RTE_CRYPTO_AUTH_SHA1_HMAC) && (keylen == 20)) ||
++	    ((a_algo == RTE_CRYPTO_AUTH_SHA256_HMAC) && (keylen == 32)) ||
++	    ((a_algo == RTE_CRYPTO_AUTH_SHA384_HMAC) && (keylen == 48)))
++		return 0;
++
++	return -EINVAL;
++}
++
++static int
++tls_xform_aead_verify(struct rte_security_tls_record_xform *tls_xform,
++		      struct rte_crypto_sym_xform *crypto_xform)
++{
++	uint16_t keylen = crypto_xform->aead.key.length;
++
++	if (tls_xform->type == RTE_SECURITY_TLS_SESS_TYPE_WRITE &&
++	    crypto_xform->aead.op != RTE_CRYPTO_AEAD_OP_ENCRYPT)
++		return -EINVAL;
++
++	if (tls_xform->type == RTE_SECURITY_TLS_SESS_TYPE_READ &&
++	    crypto_xform->aead.op != RTE_CRYPTO_AEAD_OP_DECRYPT)
++		return -EINVAL;
++
++	if (crypto_xform->aead.algo == RTE_CRYPTO_AEAD_AES_GCM) {
++		if ((keylen == 16) || (keylen == 32))
++			return 0;
++	}
++
++	if ((crypto_xform->aead.algo == RTE_CRYPTO_AEAD_CHACHA20_POLY1305) && (keylen == 32))
++		return 0;
++
++	return -EINVAL;
++}
++
++static int
++cnxk_tls_xform_verify(struct rte_security_tls_record_xform *tls_xform,
++		      struct rte_crypto_sym_xform *crypto_xform)
++{
++	struct rte_crypto_sym_xform *auth_xform, *cipher_xform = NULL;
 +	int ret = 0;
 +
-+	sa = &sec_sess->sa;
-+	in_sa = &sa->in_sa;
++	if ((tls_xform->ver != RTE_SECURITY_VERSION_TLS_1_2) &&
++	    (tls_xform->ver != RTE_SECURITY_VERSION_DTLS_1_2) &&
++	    (tls_xform->ver != RTE_SECURITY_VERSION_TLS_1_3))
++		return -EINVAL;
++
++	if ((tls_xform->type != RTE_SECURITY_TLS_SESS_TYPE_READ) &&
++	    (tls_xform->type != RTE_SECURITY_TLS_SESS_TYPE_WRITE))
++		return -EINVAL;
++
++	if (crypto_xform->type == RTE_CRYPTO_SYM_XFORM_AEAD) {
++		/* optional padding is not allowed in TLS-1.2 for AEAD */
++		if ((tls_xform->options.extra_padding_enable == 1) &&
++		    (tls_xform->ver != RTE_SECURITY_VERSION_TLS_1_3))
++			return -EINVAL;
++
++		return tls_xform_aead_verify(tls_xform, crypto_xform);
++	}
++
++	/* TLS-1.3 only support AEAD.
++	 * Control should not reach here for TLS-1.3
++	 */
++	if (tls_xform->ver == RTE_SECURITY_VERSION_TLS_1_3)
++		return -EINVAL;
++
++	if (tls_xform->type == RTE_SECURITY_TLS_SESS_TYPE_WRITE) {
++		/* Egress */
++
++		/* First should be for auth in Egress */
++		if (crypto_xform->type != RTE_CRYPTO_SYM_XFORM_AUTH)
++			return -EINVAL;
++
++		/* Next if present, should be for cipher in Egress */
++		if ((crypto_xform->next != NULL) &&
++		    (crypto_xform->next->type != RTE_CRYPTO_SYM_XFORM_CIPHER))
++			return -EINVAL;
++
++		auth_xform = crypto_xform;
++		cipher_xform = crypto_xform->next;
++	} else {
++		/* Ingress */
++
++		/* First can be for auth only when next is NULL in Ingress. */
++		if ((crypto_xform->type == RTE_CRYPTO_SYM_XFORM_AUTH) &&
++		    (crypto_xform->next != NULL))
++			return -EINVAL;
++		else if ((crypto_xform->type != RTE_CRYPTO_SYM_XFORM_CIPHER) ||
++			 (crypto_xform->next->type != RTE_CRYPTO_SYM_XFORM_AUTH))
++			return -EINVAL;
++
++		cipher_xform = crypto_xform;
++		auth_xform = crypto_xform->next;
++	}
++
++	if (cipher_xform) {
++		if ((tls_xform->type == RTE_SECURITY_TLS_SESS_TYPE_WRITE) &&
++		    !(cipher_xform->cipher.op == RTE_CRYPTO_CIPHER_OP_ENCRYPT &&
++		      auth_xform->auth.op == RTE_CRYPTO_AUTH_OP_GENERATE))
++			return -EINVAL;
++
++		if ((tls_xform->type == RTE_SECURITY_TLS_SESS_TYPE_READ) &&
++		    !(cipher_xform->cipher.op == RTE_CRYPTO_CIPHER_OP_DECRYPT &&
++		      auth_xform->auth.op == RTE_CRYPTO_AUTH_OP_VERIFY))
++			return -EINVAL;
++	} else {
++		if ((tls_xform->type == RTE_SECURITY_TLS_SESS_TYPE_WRITE) &&
++		    (auth_xform->auth.op != RTE_CRYPTO_AUTH_OP_GENERATE))
++			return -EINVAL;
++
++		if ((tls_xform->type == RTE_SECURITY_TLS_SESS_TYPE_READ) &&
++		    (auth_xform->auth.op == RTE_CRYPTO_AUTH_OP_VERIFY))
++			return -EINVAL;
++	}
++
++	if (cipher_xform)
++		ret = tls_xform_cipher_verify(cipher_xform);
++
++	if (!ret)
++		ret = tls_xform_auth_verify(auth_xform);
++
++	if (cipher_xform && !ret)
++		return tls_xform_cipher_auth_verify(cipher_xform, auth_xform);
++
++	return ret;
++}
++
++static size_t
++tls_read_ctx_size(struct roc_ie_ow_tls_read_sa *sa, enum rte_security_tls_version tls_ver)
++{
++	size_t size;
++
++	/* Variable based on Anti-replay Window */
++	if (tls_ver == RTE_SECURITY_VERSION_TLS_1_3) {
++		size = offsetof(struct roc_ie_ow_tls_read_sa, tls_13.ctx) +
++		       sizeof(struct roc_ie_ow_tls_1_3_read_ctx_update_reg);
++	} else {
++		size = offsetof(struct roc_ie_ow_tls_read_sa, tls_12.ctx) +
++		       offsetof(struct roc_ie_ow_tls_read_ctx_update_reg, ar_winbits);
++	}
++
++	if (sa->w0.s.ar_win)
++		size += (1 << (sa->w0.s.ar_win - 1)) * sizeof(uint64_t);
++
++	return size;
++}
++
++static int
++tls_read_sa_fill(struct roc_ie_ow_tls_read_sa *read_sa,
++		 struct rte_security_tls_record_xform *tls_xfrm,
++		 struct rte_crypto_sym_xform *crypto_xfrm, struct cn20k_tls_opt *tls_opt)
++{
++	enum rte_security_tls_version tls_ver = tls_xfrm->ver;
++	struct rte_crypto_sym_xform *auth_xfrm, *cipher_xfrm;
++	const uint8_t *key = NULL;
++	uint64_t *tmp, *tmp_key;
++	uint32_t replay_win_sz;
++	uint8_t *cipher_key;
++	int i, length = 0;
++	size_t offset;
++
++	/* Initialize the SA */
++	memset(read_sa, 0, sizeof(struct roc_ie_ow_tls_read_sa));
++
++	if (tls_ver == RTE_SECURITY_VERSION_TLS_1_2) {
++		read_sa->w2.s.version_select = ROC_IE_OW_TLS_VERSION_TLS_12;
++		read_sa->tls_12.ctx.ar_valid_mask = tls_xfrm->tls_1_2.seq_no - 1;
++	} else if (tls_ver == RTE_SECURITY_VERSION_DTLS_1_2) {
++		read_sa->w2.s.version_select = ROC_IE_OW_TLS_VERSION_DTLS_12;
++	} else if (tls_ver == RTE_SECURITY_VERSION_TLS_1_3) {
++		read_sa->w2.s.version_select = ROC_IE_OW_TLS_VERSION_TLS_13;
++		read_sa->tls_13.ctx.ar_valid_mask = tls_xfrm->tls_1_3.seq_no - 1;
++	}
++
++	cipher_key = read_sa->cipher_key;
++
++	/* Set encryption algorithm */
++	if (crypto_xfrm->type == RTE_CRYPTO_SYM_XFORM_AEAD) {
++		length = crypto_xfrm->aead.key.length;
++		if (crypto_xfrm->aead.algo == RTE_CRYPTO_AEAD_AES_GCM) {
++			read_sa->w2.s.cipher_select = ROC_IE_OW_TLS_CIPHER_AES_GCM;
++			if (length == 16)
++				read_sa->w2.s.aes_key_len = ROC_IE_OW_TLS_AES_KEY_LEN_128;
++			else
++				read_sa->w2.s.aes_key_len = ROC_IE_OW_TLS_AES_KEY_LEN_256;
++		}
++
++		if (crypto_xfrm->aead.algo == RTE_CRYPTO_AEAD_CHACHA20_POLY1305) {
++			read_sa->w2.s.cipher_select = ROC_IE_OW_TLS_CIPHER_CHACHA_POLY;
++			read_sa->w2.s.aes_key_len = ROC_IE_OW_TLS_AES_KEY_LEN_256;
++		}
++
++		key = crypto_xfrm->aead.key.data;
++		memcpy(cipher_key, key, length);
++
++		if (tls_ver == RTE_SECURITY_VERSION_TLS_1_2)
++			memcpy(((uint8_t *)cipher_key + 32), &tls_xfrm->tls_1_2.imp_nonce, 4);
++		else if (tls_ver == RTE_SECURITY_VERSION_DTLS_1_2)
++			memcpy(((uint8_t *)cipher_key + 32), &tls_xfrm->dtls_1_2.imp_nonce, 4);
++		else if (tls_ver == RTE_SECURITY_VERSION_TLS_1_3)
++			memcpy(((uint8_t *)cipher_key + 32), &tls_xfrm->tls_1_3.imp_nonce, 12);
++
++		goto key_swap;
++	}
++
++	if (crypto_xfrm->type == RTE_CRYPTO_SYM_XFORM_AUTH) {
++		auth_xfrm = crypto_xfrm;
++		cipher_xfrm = crypto_xfrm->next;
++	} else {
++		cipher_xfrm = crypto_xfrm;
++		auth_xfrm = crypto_xfrm->next;
++	}
++
++	if (cipher_xfrm != NULL) {
++		if (cipher_xfrm->cipher.algo == RTE_CRYPTO_CIPHER_3DES_CBC) {
++			read_sa->w2.s.cipher_select = ROC_IE_OW_TLS_CIPHER_3DES;
++			length = cipher_xfrm->cipher.key.length;
++		} else if (cipher_xfrm->cipher.algo == RTE_CRYPTO_CIPHER_AES_CBC) {
++			read_sa->w2.s.cipher_select = ROC_IE_OW_TLS_CIPHER_AES_CBC;
++			length = cipher_xfrm->cipher.key.length;
++			if (length == 16)
++				read_sa->w2.s.aes_key_len = ROC_IE_OW_TLS_AES_KEY_LEN_128;
++			else if (length == 32)
++				read_sa->w2.s.aes_key_len = ROC_IE_OW_TLS_AES_KEY_LEN_256;
++			else
++				return -EINVAL;
++		} else {
++			return -EINVAL;
++		}
++
++		key = cipher_xfrm->cipher.key.data;
++		memcpy(cipher_key, key, length);
++	}
++
++	switch (auth_xfrm->auth.algo) {
++	case RTE_CRYPTO_AUTH_MD5_HMAC:
++		read_sa->w2.s.mac_select = ROC_IE_OW_TLS_MAC_MD5;
++		tls_opt->mac_len = 0;
++		break;
++	case RTE_CRYPTO_AUTH_SHA1_HMAC:
++		read_sa->w2.s.mac_select = ROC_IE_OW_TLS_MAC_SHA1;
++		tls_opt->mac_len = 20;
++		break;
++	case RTE_CRYPTO_AUTH_SHA256_HMAC:
++		read_sa->w2.s.mac_select = ROC_IE_OW_TLS_MAC_SHA2_256;
++		tls_opt->mac_len = 32;
++		break;
++	case RTE_CRYPTO_AUTH_SHA384_HMAC:
++		read_sa->w2.s.mac_select = ROC_IE_OW_TLS_MAC_SHA2_384;
++		tls_opt->mac_len = 48;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	roc_se_hmac_opad_ipad_gen(read_sa->w2.s.mac_select, auth_xfrm->auth.key.data,
++				  auth_xfrm->auth.key.length, read_sa->tls_12.opad_ipad,
++				  ROC_SE_TLS);
++
++	tmp = (uint64_t *)read_sa->tls_12.opad_ipad;
++	for (i = 0; i < (int)(ROC_CTX_MAX_OPAD_IPAD_LEN / sizeof(uint64_t)); i++)
++		tmp[i] = rte_be_to_cpu_64(tmp[i]);
++
++key_swap:
++	tmp_key = (uint64_t *)cipher_key;
++	for (i = 0; i < (int)(ROC_IE_OW_TLS_CTX_MAX_KEY_IV_LEN / sizeof(uint64_t)); i++)
++		tmp_key[i] = rte_be_to_cpu_64(tmp_key[i]);
++
++	if (tls_xfrm->ver == RTE_SECURITY_VERSION_DTLS_1_2) {
++		/* Only support power-of-two window sizes supported */
++		replay_win_sz = tls_xfrm->dtls_1_2.ar_win_sz;
++		if (replay_win_sz) {
++			if (!rte_is_power_of_2(replay_win_sz) ||
++			    replay_win_sz > ROC_IE_OW_TLS_AR_WIN_SIZE_MAX)
++				return -ENOTSUP;
++
++			read_sa->w0.s.ar_win = rte_log2_u32(replay_win_sz) - 5;
++		}
++	}
++
++	read_sa->w0.s.ctx_hdr_size = ROC_IE_OW_TLS_CTX_HDR_SIZE;
++	read_sa->w0.s.aop_valid = 1;
++
++	offset = offsetof(struct roc_ie_ow_tls_read_sa, tls_12.ctx);
++	if (tls_ver == RTE_SECURITY_VERSION_TLS_1_3)
++		offset = offsetof(struct roc_ie_ow_tls_read_sa, tls_13.ctx);
++
++	/* Entire context size in 128B units */
++	read_sa->w0.s.ctx_size =
++		(PLT_ALIGN_CEIL(tls_read_ctx_size(read_sa, tls_ver), ROC_CTX_UNIT_128B) /
++		 ROC_CTX_UNIT_128B) -
++		1;
++
++	/* Word offset for HW managed CTX field */
++	read_sa->w0.s.hw_ctx_off = offset / 8;
++	read_sa->w0.s.ctx_push_size = read_sa->w0.s.hw_ctx_off;
++
++	rte_wmb();
++
++	return 0;
++}
++
++static int
++cn20k_tls_read_sa_create(struct roc_cpt *roc_cpt, struct roc_cpt_lf *lf,
++			 struct rte_security_tls_record_xform *tls_xfrm,
++			 struct rte_crypto_sym_xform *crypto_xfrm,
++			 struct cn20k_sec_session *sec_sess)
++{
++	struct roc_ie_ow_tls_read_sa *sa_dptr;
++	uint8_t tls_ver = tls_xfrm->ver;
++	struct cn20k_tls_record *tls;
++	union cpt_inst_w4 inst_w4;
++	void *read_sa;
++	int ret = 0;
++
++	tls = &sec_sess->tls_rec;
++	read_sa = &tls->read_sa;
 +
 +	/* Allocate memory to be used as dptr for CPT ucode WRITE_SA op */
-+	sa_dptr = plt_zmalloc(sizeof(struct roc_ow_ipsec_inb_sa), 8);
++	sa_dptr = plt_zmalloc(sizeof(struct roc_ie_ow_tls_read_sa), 8);
 +	if (sa_dptr == NULL) {
 +		plt_err("Couldn't allocate memory for SA dptr");
 +		return -ENOMEM;
 +	}
 +
 +	/* Translate security parameters to SA */
-+	ret = cnxk_ow_ipsec_inb_sa_fill(sa_dptr, ipsec_xfrm, crypto_xfrm);
++	ret = tls_read_sa_fill(sa_dptr, tls_xfrm, crypto_xfrm, &sec_sess->tls_opt);
 +	if (ret) {
-+		plt_err("Could not fill inbound session parameters");
++		plt_err("Could not fill read session parameters");
 +		goto sa_dptr_free;
 +	}
++	if (crypto_xfrm->type == RTE_CRYPTO_SYM_XFORM_AEAD) {
++		sec_sess->iv_offset = crypto_xfrm->aead.iv.offset;
++		sec_sess->iv_length = crypto_xfrm->aead.iv.length;
++	} else if (crypto_xfrm->type == RTE_CRYPTO_SYM_XFORM_CIPHER) {
++		sec_sess->iv_offset = crypto_xfrm->cipher.iv.offset;
++		sec_sess->iv_length = crypto_xfrm->cipher.iv.length;
++	} else {
++		sec_sess->iv_offset = crypto_xfrm->auth.iv.offset;
++		sec_sess->iv_length = crypto_xfrm->auth.iv.length;
++	}
 +
-+	sec_sess->ipsec.is_outbound = 0;
-+	RTE_SET_USED(roc_cpt);
-+
-+	/* Save index/SPI in cookie, requirement for Rx Inject */
-+	sa_dptr->w1.s.cookie = 0xFFFFFFFF;
++	sec_sess->proto = RTE_SECURITY_PROTOCOL_TLS_RECORD;
 +
 +	/* pre-populate CPT INST word 4 */
 +	inst_w4.u64 = 0;
-+	inst_w4.s.opcode_major = ROC_IE_OW_MAJOR_OP_PROCESS_INBOUND_IPSEC | ROC_IE_OW_INPLACE_BIT;
-+
-+	param1.u16 = 0;
-+
-+	/* Disable IP checksum verification by default */
-+	param1.s.ip_csum_disable = ROC_IE_OW_SA_INNER_PKT_IP_CSUM_DISABLE;
-+
-+	/* Set the ip chksum flag in mbuf before enqueue.
-+	 * Reset the flag in post process in case of errors
-+	 */
-+	if (ipsec_xfrm->options.ip_csum_enable) {
-+		param1.s.ip_csum_disable = ROC_IE_OW_SA_INNER_PKT_IP_CSUM_ENABLE;
-+		sec_sess->ipsec.ip_csum = RTE_MBUF_F_RX_IP_CKSUM_GOOD;
++	if ((tls_ver == RTE_SECURITY_VERSION_TLS_1_2) ||
++	    (tls_ver == RTE_SECURITY_VERSION_DTLS_1_2)) {
++		inst_w4.s.opcode_major = ROC_IE_OW_TLS_MAJOR_OP_RECORD_DEC | ROC_IE_OW_INPLACE_BIT;
++		sec_sess->tls_opt.tail_fetch_len = 0;
++		if (sa_dptr->w2.s.cipher_select == ROC_IE_OW_TLS_CIPHER_3DES)
++			sec_sess->tls_opt.tail_fetch_len = 1;
++		else if (sa_dptr->w2.s.cipher_select == ROC_IE_OW_TLS_CIPHER_AES_CBC)
++			sec_sess->tls_opt.tail_fetch_len = 2;
++	} else if (tls_xfrm->ver == RTE_SECURITY_VERSION_TLS_1_3) {
++		inst_w4.s.opcode_major =
++			ROC_IE_OW_TLS13_MAJOR_OP_RECORD_DEC | ROC_IE_OW_INPLACE_BIT;
 +	}
 +
-+	/* Disable L4 checksum verification by default */
-+	param1.s.l4_csum_disable = ROC_IE_OW_SA_INNER_PKT_L4_CSUM_DISABLE;
-+
-+	if (ipsec_xfrm->options.l4_csum_enable)
-+		param1.s.l4_csum_disable = ROC_IE_OW_SA_INNER_PKT_L4_CSUM_ENABLE;
-+
-+	param1.s.esp_trailer_disable = 1;
-+
-+	inst_w4.s.param1 = param1.u16;
-+
++	sec_sess->tls_opt.tls_ver = tls_ver;
 +	sec_sess->inst.w4 = inst_w4.u64;
++	sec_sess->inst.w7 = cnxk_cpt_sec_inst_w7_get(roc_cpt, read_sa);
 +
-+	if (ipsec_xfrm->options.stats == 1) {
-+		/* Enable mib counters */
-+		sa_dptr->w0.s.count_mib_bytes = 1;
-+		sa_dptr->w0.s.count_mib_pkts = 1;
-+		sa_dptr->w0.s.count_glb_pkts = 1;
-+		sa_dptr->w0.s.count_glb_octets = 1;
-+	}
-+
-+	memset(in_sa, 0, sizeof(struct roc_ow_ipsec_inb_sa));
++	memset(read_sa, 0, sizeof(struct roc_ie_ow_tls_read_sa));
 +
 +	/* Copy word0 from sa_dptr to populate ctx_push_sz ctx_size fields */
-+	memcpy(in_sa, sa_dptr, 8);
++	memcpy(read_sa, sa_dptr, 8);
 +
 +	rte_atomic_thread_fence(rte_memory_order_seq_cst);
 +
 +	/* Write session using microcode opcode */
-+	ret = roc_cpt_ctx_write(lf, sa_dptr, in_sa, sizeof(struct roc_ow_ipsec_inb_sa));
++	ret = roc_cpt_ctx_write(lf, sa_dptr, read_sa, sizeof(struct roc_ie_ow_tls_read_sa));
 +	if (ret) {
-+		plt_err("Could not write inbound session to hardware");
++		plt_err("Could not write read session to hardware");
 +		goto sa_dptr_free;
 +	}
 +
 +	/* Trigger CTX flush so that data is written back to DRAM */
-+	ret = roc_cpt_lf_ctx_flush(lf, in_sa, true);
++	ret = roc_cpt_lf_ctx_flush(lf, read_sa, true);
 +	if (ret == -EFAULT) {
-+		plt_err("Could not flush inbound session");
++		plt_err("Could not flush TLS read session to hardware");
 +		goto sa_dptr_free;
 +	}
 +
-+	sec_sess->proto = RTE_SECURITY_PROTOCOL_IPSEC;
 +	rte_atomic_thread_fence(rte_memory_order_seq_cst);
 +
 +sa_dptr_free:
@@ -407,32 +603,32 @@ index da8f818d87..b6ecc4fb1a 100644
 +}
 +
  int
- cn20k_ipsec_session_create(struct cnxk_cpt_vf *vf, struct cnxk_cpt_qp *qp,
- 			   struct rte_security_ipsec_xform *ipsec_xfrm,
- 			   struct rte_crypto_sym_xform *crypto_xfrm,
- 			   struct rte_security_session *sess)
+ cn20k_tls_record_session_update(struct cnxk_cpt_vf *vf, struct cnxk_cpt_qp *qp,
+ 				struct cn20k_sec_session *sess,
+@@ -36,13 +480,20 @@ cn20k_tls_record_session_create(struct cnxk_cpt_vf *vf, struct cnxk_cpt_qp *qp,
+ 				struct rte_crypto_sym_xform *crypto_xfrm,
+ 				struct rte_security_session *sess)
  {
 -	RTE_SET_USED(vf);
 -	RTE_SET_USED(qp);
--	RTE_SET_USED(ipsec_xfrm);
+-	RTE_SET_USED(tls_xfrm);
 -	RTE_SET_USED(crypto_xfrm);
 -	RTE_SET_USED(sess);
 +	struct roc_cpt *roc_cpt;
 +	int ret;
  
 -	return 0;
-+	ret = cnxk_ipsec_xform_verify(ipsec_xfrm, crypto_xfrm);
++	ret = cnxk_tls_xform_verify(tls_xfrm, crypto_xfrm);
 +	if (ret)
 +		return ret;
 +
 +	roc_cpt = &vf->cpt;
 +
-+	if (ipsec_xfrm->direction == RTE_SECURITY_IPSEC_SA_DIR_INGRESS)
-+		return cn20k_ipsec_inb_sa_create(roc_cpt, &qp->lf, ipsec_xfrm, crypto_xfrm,
-+						 (struct cn20k_sec_session *)sess);
-+	else
-+		return cn20k_ipsec_outb_sa_create(roc_cpt, &qp->lf, ipsec_xfrm, crypto_xfrm,
-+						  (struct cn20k_sec_session *)sess);
++	if (tls_xfrm->type == RTE_SECURITY_TLS_SESS_TYPE_READ)
++		return cn20k_tls_read_sa_create(roc_cpt, &qp->lf, tls_xfrm, crypto_xfrm,
++						(struct cn20k_sec_session *)sess);
++
++	return -ENOTSUP;
  }
  
  int
