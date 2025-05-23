@@ -2,73 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E9BC54FB3
-	for <dpdk-dev@archiver.kernel.org>; Fri, 23 May 2025 14:48:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90410C54ED1
+	for <dpdk-dev@archiver.kernel.org>; Fri, 23 May 2025 15:54:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C62D140697;
-	Fri, 23 May 2025 16:48:03 +0200 (CEST)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com
- [209.85.208.44]) by mails.dpdk.org (Postfix) with ESMTP id EAF1940611
- for <dev@dpdk.org>; Fri, 23 May 2025 16:48:02 +0200 (CEST)
-Received: by mail-ed1-f44.google.com with SMTP id
- 4fb4d7f45d1cf-60179d8e65fso12463a12.0
- for <dev@dpdk.org>; Fri, 23 May 2025 07:48:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1748011682;
- x=1748616482; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=Qds6uX72jZ/ZPpsU91fvdIcSg2+ZpiGNy/FD+AsTnPY=;
- b=pjM7vBlJNhf5oyRwXlwBQljC4NS8yBsmYCJb4wRC5D5iuEhgFggm2eHG1saE8l6WXE
- 5os+VllbF4t1krNiAAbHa6Jw3Dg1pH/47BAFrpto2St45qeEtIcmVcTlXfhcAn+e40aG
- h5d8jvXeF0LzZSHd6mWN6ERi5nlWXHLK2xbAicHmuScWWugz0n5ssxJnJ8Ppfhou0atN
- V1CfKbuZaWKGfe2R7OjYxOvQhHCnrMQkR8bTgTtk4FZcp976cCEAqVxsPH+MYPpP6Ddg
- KCgtbHHBIE+vmpF6e2uvw5NJr6IrRC9/If8VBHlO2WzXwO62kxkpmVi6v+vbhneV887b
- p1aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1748011682; x=1748616482;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=Qds6uX72jZ/ZPpsU91fvdIcSg2+ZpiGNy/FD+AsTnPY=;
- b=MdDpPhVQVi0kegZd3cO7Pcdk4zIz4azsWwbEC7EwDuK3hQhGjBq/h8RXlcStKyZvHh
- /8e1zLCiXq9m1EIWorq/k3g09KsbV/uioWrabUwi1k56bWnCjnl4GJphtPVWPQ4ia19n
- OPtySbraU87q0QOU3yJrmCGUaiEtj4IW3NyTUAsnq25gFZyPDbIrKPna1NHFu7JNpdya
- G5DlM2SIu0xEEu7w/ZOzTsE33hTnNaHZ8AdVSQFHoMSDWCYC4XNXt/ZF7weKfPZ40AAd
- a/GxctdW/VjfI+8ePabHQRc2MnsTHss6FsKLU5UXZ3iy11EgTohDv9CkPgMdHb1pEXBs
- dwfA==
-X-Gm-Message-State: AOJu0YyJ0krZ07kUi+kTP7Adgxb0BS3Q8je3n2yD+Dr8j7p4IcyHwA8b
- 30CjDznsfAIvzrCex6+QkeSrcW48fTF5hbEDTJvuUEJUYSJdYotEvtwLprRt3xWj2m8=
-X-Gm-Gg: ASbGncuNZ4GVIuI/oaMJZhE+HhlYfZ4JH8P8DKZTwd/TWjpNIBGyQl9Xr9zAIMBtVQX
- 92QUpJNtD9DgXczMPJuGM7uPnyGC6tp40Ohl4WE51OrWWRnDW/niLsk8Uow23FjDnhutxfiTh+G
- T0jT6uirTXY5x0uZlW1ob+I7VavLbWz+wThegrWX50BDA46wIFuy36b2OOvbWZVZYZ24kl2M3nx
- mqkLmyH0cbUlwvCfZjKCaM6REYFoG6mf1hTWJKK/9nXBjZxik7LINS1riC0MfqmpiZqWvbzrqyg
- xu2/WOFqHYAAEyu6iOmYM/v2dY80SQhpD0xc+9z0twn0h/cH1Q4o2dDQ8RKQgihX013foF2VEin
- FilrWxzYq+1E2k3G6xa8gBV69OSjp
-X-Google-Smtp-Source: AGHT+IEOyEgNBkAqZNWiUvVuY7S6nXrl9R0iIJVEPBAZ009EBrid+eyAREKXhUbjq5Ce4M4643eVnQ==
-X-Received: by 2002:a17:907:8e97:b0:ad4:d335:d35d with SMTP id
- a640c23a62f3a-ad52d45ae47mr2807024566b.4.1748011682318; 
- Fri, 23 May 2025 07:48:02 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-ad52d04b096sm1243816666b.33.2025.05.23.07.48.00
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 23 May 2025 07:48:02 -0700 (PDT)
-Date: Fri, 23 May 2025 07:47:56 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: "Burakov, Anatoly" <anatoly.burakov@intel.com>
-Cc: <dev@dpdk.org>
-Subject: Re: [PATCH v5 2/3] cmdline: add floating point support
-Message-ID: <20250523074756.427bd102@hermes.local>
-In-Reply-To: <762c8bb2-f0b3-4cf5-837c-8297851aa417@intel.com>
-References: <ec8528874aad76348f27c551289e1729b2fdcd25.1746631324.git.anatoly.burakov@intel.com>
- <b9f8ac77e4eeecd67a83d72cdf52ef3e08539bab.1746631324.git.anatoly.burakov@intel.com>
- <20250521070538.29f64bc2@hermes.local>
- <762c8bb2-f0b3-4cf5-837c-8297851aa417@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 270674064F;
+	Fri, 23 May 2025 17:54:27 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id E91AD402B4
+ for <dev@dpdk.org>; Fri, 23 May 2025 17:54:24 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54NBAf6c031533
+ for <dev@dpdk.org>; Fri, 23 May 2025 08:54:24 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=l
+ v+NmVyQ2sc6fGuG8+kRWJpBuW+Q7WCRGjWohKc2xtw=; b=HYpXFih3EZhKR3GsD
+ VIerQhaLzJWw9R0u8XFqrOITYjwEQBSRSyhuixz+4JkSxc5hfTZRbqyPzdlB4av9
+ v6zE7nnOuoNye7ov9HDJGP+1k6tvOVhkQbdtIEHlHSrv9pnwLkAgsXWqSobDi+2n
+ J0NbX+F0CUjrYPBf8odDEZXm7rncLylT2L2kWDXYlPbHHUHoIeMrrHV711jROk69
+ 6JCLLZJefVrXsteaPw3528UAyQ2DoRwL5NWrQlU2M8DucWCSadAtmeZhTH/Eg+Ux
+ CM05bLyMaC8CwSpbw/hXCmRV76YKLKgBMsi2esmWCdCLy+Ue3RQe1x01uxG+Gm5E
+ PuhHw==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46tqw58hkd-2
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Fri, 23 May 2025 08:54:23 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 23 May 2025 08:54:21 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 23 May 2025 08:54:21 -0700
+Received: from localhost.localdomain (unknown [10.28.36.158])
+ by maili.marvell.com (Postfix) with ESMTP id B5BD63F7078;
+ Fri, 23 May 2025 08:54:18 -0700 (PDT)
+From: Rahul Bhansali <rbhansali@marvell.com>
+To: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
+ <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
+ <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
+CC: <jerinj@marvell.com>, Monendra Singh Kushwaha <kmonendra@marvell.com>
+Subject: [PATCH v2 1/6] common/cnxk: config of CPT result address offset
+Date: Fri, 23 May 2025 21:23:42 +0530
+Message-ID: <20250523155347.1156891-1-rbhansali@marvell.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250519125424.1435140-1-rbhansali@marvell.com>
+References: <20250519125424.1435140-1-rbhansali@marvell.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=F8xXdrhN c=1 sm=1 tr=0 ts=68309a2f cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=1pmt-tPcaZLepNR4IZcA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIzMDE0MyBTYWx0ZWRfX6fxsojiHie8V
+ C+TyJwzb8p2DBptG1liWal9j97Jmww2qIq/AbLGePovyfABDrruS8h/zVr8ALNcF43kMa4BFGrD
+ OaOH3cyQvJZ0NPLwkkzyAMxhhZ9Kh8stBzNoTzIVQcXA9v16cu+LqqRwXbIQ0QHRqJVtsX5mKwY
+ RRy82HKkdNz/iboK4dFEgdknWrUmFfHHWG6pBTsIBINGgFgxsYtRyFBc/kRYYNA7EpM4y/xytBB
+ uidxuR+wX3pI3roWrd+VfM4rYVrNPQUsFdHeOsSa4dKcc3RSa38EawsSvVE/1v13TUhHqACF1dm
+ /AjSZqovsqaym/QKn+nG006Jljo8OchlO4fH7/Ue/vvc33riI0ZWqAty2CHMsJVmpk1EZV1YJwJ
+ pp6TXj+E5RdmeYzmlVxGdn5ZkLkaoVmA5pXesuwUwrMHPF7JSmX6ox6Vd3Me0oQJEH7b1QQB
+X-Proofpoint-GUID: SlOD8KPhr7t-5sJdrRjHyvGtL5drY73B
+X-Proofpoint-ORIG-GUID: SlOD8KPhr7t-5sJdrRjHyvGtL5drY73B
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-23_05,2025-05-22_01,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,34 +81,150 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 23 May 2025 12:21:15 +0200
-"Burakov, Anatoly" <anatoly.burakov@intel.com> wrote:
+From: Monendra Singh Kushwaha <kmonendra@marvell.com>
 
-> On 5/21/2025 4:05 PM, Stephen Hemminger wrote:
-> > On Wed,  7 May 2025 16:22:11 +0100
-> > Anatoly Burakov <anatoly.burakov@intel.com> wrote:
-> >   
-> >> +NUMERIC_TYPES = {
-> >> +    "UINT8": "uint8_t",
-> >> +    "UINT16": "uint16_t",
-> >> +    "UINT32": "uint32_t",
-> >> +    "UINT64": "uint64_t",
-> >> +    "INT8": "int8_t",
-> >> +    "INT16": "int16_t",
-> >> +    "INT32": "int32_t",
-> >> +    "INT64": "int64_t",
-> >> +    "FLOAT_SINGLE": "float",
-> >> +    "FLOAT_DOUBLE": "double",
-> >> +}
-> >>     
-> > 
-> > Is it really worth having both single and double versions.
-> > Seems like unnecessary complexity at this point.  
-> 
-> I'd argue the same about the various int types. I was just being 
-> consistent. I can remove the single (or double) if that's desired.
+This patch enables setting CPT result address offset relative
+to wqe address.
 
+Signed-off-by: Monendra Singh Kushwaha <kmonendra@marvell.com>
+---
+Changes in v2: No change.
 
-The int types have different ranges, but all float values have same
-range, just different number of bits. For now choose one version
-for floating point.
+ drivers/common/cnxk/roc_mbox.h         | 4 ++++
+ drivers/common/cnxk/roc_nix.c          | 5 +++++
+ drivers/common/cnxk/roc_nix.h          | 2 ++
+ drivers/common/cnxk/roc_nix_inl.c      | 7 +++++++
+ drivers/common/cnxk/roc_nix_inl.h      | 2 ++
+ drivers/common/cnxk/roc_nix_inl_dev.c  | 7 +++++++
+ drivers/common/cnxk/roc_nix_inl_priv.h | 1 +
+ 7 files changed, 28 insertions(+)
+
+diff --git a/drivers/common/cnxk/roc_mbox.h b/drivers/common/cnxk/roc_mbox.h
+index 471b66ec78..d2192cb6f9 100644
+--- a/drivers/common/cnxk/roc_mbox.h
++++ b/drivers/common/cnxk/roc_mbox.h
+@@ -2096,6 +2096,10 @@ struct nix_inline_ipsec_lf_cfg {
+ 		uint8_t __io sa_idx_w;
+ 	} ipsec_cfg1;
+ 	uint8_t __io enable;
++	struct {
++		uint8_t __io res_addr_offset;
++		uint8_t __io res_addr_offset_valid;
++	} ipsec_cfg0_ext;
+ };
+
+ struct nix_hw_info {
+diff --git a/drivers/common/cnxk/roc_nix.c b/drivers/common/cnxk/roc_nix.c
+index e4d7e11121..477c7d5ca0 100644
+--- a/drivers/common/cnxk/roc_nix.c
++++ b/drivers/common/cnxk/roc_nix.c
+@@ -120,6 +120,11 @@ roc_nix_lf_inl_ipsec_cfg(struct roc_nix *roc_nix, struct roc_nix_ipsec_cfg *cfg,
+ 		lf_cfg->ipsec_cfg0.sa_pow2_size = plt_log2_u32(cfg->sa_size);
+ 		lf_cfg->ipsec_cfg0.tag_const = cfg->tag_const;
+ 		lf_cfg->ipsec_cfg0.tt = cfg->tt;
++		if (cfg->res_addr_offset) {
++			lf_cfg->ipsec_cfg0_ext.res_addr_offset_valid = 1;
++			lf_cfg->ipsec_cfg0_ext.res_addr_offset =
++				(cfg->res_addr_offset & 0x80) | abs(cfg->res_addr_offset);
++		}
+ 	} else {
+ 		lf_cfg->enable = 0;
+ 	}
+diff --git a/drivers/common/cnxk/roc_nix.h b/drivers/common/cnxk/roc_nix.h
+index a1bd14ffc4..80392e7e1b 100644
+--- a/drivers/common/cnxk/roc_nix.h
++++ b/drivers/common/cnxk/roc_nix.h
+@@ -431,6 +431,7 @@ struct roc_nix_ipsec_cfg {
+ 	plt_iova_t iova;
+ 	uint16_t max_sa;
+ 	uint8_t tt;
++	int8_t res_addr_offset;
+ };
+
+ /* Link status update callback */
+@@ -469,6 +470,7 @@ struct roc_nix {
+ 	uint32_t dwrr_mtu;
+ 	bool ipsec_out_sso_pffunc;
+ 	bool custom_sa_action;
++	int8_t res_addr_offset;
+ 	bool local_meta_aura_ena;
+ 	uint32_t meta_buf_sz;
+ 	bool force_rx_aura_bp;
+diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_nix_inl.c
+index 8ade58e1a2..6afdfb6b85 100644
+--- a/drivers/common/cnxk/roc_nix_inl.c
++++ b/drivers/common/cnxk/roc_nix_inl.c
+@@ -471,6 +471,11 @@ nix_inl_inb_ipsec_sa_tbl_setup(struct roc_nix *roc_nix)
+ 		lf_cfg->ipsec_cfg0.sa_pow2_size = sa_pow2_sz;
+ 		lf_cfg->ipsec_cfg0.tag_const = 0;
+ 		lf_cfg->ipsec_cfg0.tt = SSO_TT_ORDERED;
++		if (roc_nix->res_addr_offset) {
++			lf_cfg->ipsec_cfg0_ext.res_addr_offset_valid = 1;
++			lf_cfg->ipsec_cfg0_ext.res_addr_offset =
++				(roc_nix->res_addr_offset & 0x80) | abs(roc_nix->res_addr_offset);
++		}
+ 	} else {
+ 		struct nix_rx_inl_lf_cfg_req *lf_cfg;
+ 		uint64_t def_cptq = 0;
+@@ -2155,6 +2160,8 @@ roc_nix_inl_inb_tag_update(struct roc_nix *roc_nix, uint32_t tag_const,
+ 	cfg.max_sa = nix->inb_spi_mask + 1;
+ 	cfg.tt = tt;
+ 	cfg.tag_const = tag_const;
++	if (roc_nix->res_addr_offset)
++		cfg.res_addr_offset = roc_nix->res_addr_offset;
+
+ 	return roc_nix_lf_inl_ipsec_cfg(roc_nix, &cfg, true);
+ }
+diff --git a/drivers/common/cnxk/roc_nix_inl.h b/drivers/common/cnxk/roc_nix_inl.h
+index dab4918535..4ef1908696 100644
+--- a/drivers/common/cnxk/roc_nix_inl.h
++++ b/drivers/common/cnxk/roc_nix_inl.h
+@@ -99,6 +99,8 @@ struct roc_nix_inl_dev {
+ 	uint8_t rx_inj_ena; /* Rx Inject Enable */
+ 	uint8_t custom_inb_sa;
+ 	uint8_t nb_inb_cptlfs;
++	int8_t res_addr_offset; /* CPT result address offset */
++
+ 	/* End of input parameters */
+
+ #define ROC_NIX_INL_MEM_SZ (6144)
+diff --git a/drivers/common/cnxk/roc_nix_inl_dev.c b/drivers/common/cnxk/roc_nix_inl_dev.c
+index 376582f5db..1db05741ad 100644
+--- a/drivers/common/cnxk/roc_nix_inl_dev.c
++++ b/drivers/common/cnxk/roc_nix_inl_dev.c
+@@ -365,6 +365,12 @@ nix_inl_nix_ipsec_cfg(struct nix_inl_dev *inl_dev, bool ena)
+
+ 			lf_cfg->ipsec_cfg0.tag_const = 0;
+ 			lf_cfg->ipsec_cfg0.tt = SSO_TT_ORDERED;
++			if (inl_dev->res_addr_offset) {
++				lf_cfg->ipsec_cfg0_ext.res_addr_offset_valid = 1;
++				lf_cfg->ipsec_cfg0_ext.res_addr_offset =
++					(inl_dev->res_addr_offset & 0x80) |
++					abs(inl_dev->res_addr_offset);
++			}
+ 		} else {
+ 			lf_cfg->enable = 0;
+ 		}
+@@ -1370,6 +1376,7 @@ roc_nix_inl_dev_init(struct roc_nix_inl_dev *roc_inl_dev)
+ 	inl_dev->nix_inb_q_bpid = -1;
+ 	inl_dev->nb_cptlf = 1;
+ 	inl_dev->ipsec_prof_id = 0;
++	inl_dev->res_addr_offset = roc_inl_dev->res_addr_offset;
+
+ 	if (roc_model_is_cn9k() || roc_model_is_cn10k())
+ 		inl_dev->eng_grpmask = (1ULL << ROC_LEGACY_CPT_DFLT_ENG_GRP_SE |
+diff --git a/drivers/common/cnxk/roc_nix_inl_priv.h b/drivers/common/cnxk/roc_nix_inl_priv.h
+index 8b3bd43547..33073b2f34 100644
+--- a/drivers/common/cnxk/roc_nix_inl_priv.h
++++ b/drivers/common/cnxk/roc_nix_inl_priv.h
+@@ -67,6 +67,7 @@ struct nix_inl_dev {
+ 	uint16_t inb_sa_sz[NIX_INL_PROFILE_CNT];
+ 	uint32_t inb_sa_max[NIX_INL_PROFILE_CNT];
+ 	uint8_t nb_cptlf;
++	int8_t res_addr_offset;
+
+ 	/* CPT data */
+ 	struct roc_cpt_lf cpt_lf[MAX_NIX_INL_DEV_CPT_LF];
+--
+2.25.1
+
