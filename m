@@ -2,78 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 847C8C54F2E
-	for <dpdk-dev@archiver.kernel.org>; Sat, 24 May 2025 09:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D06F6C54F30
+	for <dpdk-dev@archiver.kernel.org>; Sat, 24 May 2025 15:39:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7B65440E42;
-	Sat, 24 May 2025 11:14:01 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id D116340E45
- for <dev@dpdk.org>; Sat, 24 May 2025 11:14:00 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54O8xief027637;
- Sat, 24 May 2025 02:14:00 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=B
- qXu8yP/1O73A+iAgQLGSeKWIWaOZyImo7Dpc140SpE=; b=EjaaSHxDIA6L8AqJR
- Lr8XfJ9XppWX+4UOZPjHQwRzqb0rz5POh9f6ZHNUR+Up83Tiv2JrsbwWTjHCMzjD
- 6/2Omg74kA2WyLK1GJlWFI5GZ6M8w8Wg3V7FcR0dWssxHEzpHigpZUKl5HpwPtQ1
- 8mlkSbMysgOJf8mcUWtOxM90Cj1HXcz2Mja5p6AZNs/3JkyswQChlJPExMUyox9k
- 1Beqn+Pmp1JAYo26DXNpQWapYzBO7+JAWfsmwctP+LWxz+PvwH2rjUQC1K23xstT
- dXRmXhtuYLlxFZHAMpN16Q4bC8evBD+VwGxNXCq784BhiTB8wL5xO5mI2KLSy9Xf
- ePW+g==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46u5dk0bgw-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Sat, 24 May 2025 02:13:59 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Sat, 24 May 2025 02:13:59 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Sat, 24 May 2025 02:13:59 -0700
-Received: from MININT-80QBFE8.corp.innovium.com (MININT-80QBFE8.marvell.com
- [10.28.164.118])
- by maili.marvell.com (Postfix) with ESMTP id 447DE3F7079;
- Sat, 24 May 2025 02:13:53 -0700 (PDT)
-From: <pbhagavatula@marvell.com>
-To: <jerinj@marvell.com>, Amit Prakash Shukla <amitprakashs@marvell.com>,
- Vamsi Attunuru <vattunuru@marvell.com>
-CC: <g.singh@nxp.com>, <sachin.saxena@nxp.com>, <hemant.agrawal@nxp.com>,
- <fengchengwen@huawei.com>, <bruce.richardson@intel.com>,
- <kevin.laatz@intel.com>, <conor.walsh@intel.com>,
- <gmuthukrishn@marvell.com>, <vvelumuri@marvell.com>,
- <anatoly.burakov@intel.com>, <dev@dpdk.org>, "Pavan
- Nikhilesh" <pbhagavatula@marvell.com>
-Subject: [25.11 PATCH v3 5/5] eventdev: refactor DMA adapter ops
-Date: Sat, 24 May 2025 14:43:15 +0530
-Message-ID: <20250524091316.10056-6-pbhagavatula@marvell.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250524091316.10056-1-pbhagavatula@marvell.com>
-References: <20250519185604.5584-1-pbhagavatula@marvell.com>
- <20250524091316.10056-1-pbhagavatula@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 04BA540697;
+	Sat, 24 May 2025 17:39:53 +0200 (CEST)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com
+ [209.85.218.45]) by mails.dpdk.org (Postfix) with ESMTP id CD78F40263
+ for <dev@dpdk.org>; Sat, 24 May 2025 17:39:51 +0200 (CEST)
+Received: by mail-ej1-f45.google.com with SMTP id
+ a640c23a62f3a-ad51ba0af48so347874666b.0
+ for <dev@dpdk.org>; Sat, 24 May 2025 08:39:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1748101191;
+ x=1748705991; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=c4WSyXXKKvSQVDQ2cXmsmf9mLw71dz1IqE39D7lXAlU=;
+ b=kncWYAzeEdnl3lpB78W4Tetz4MrKuINWvJ5Ef7Az8L3qeq2OU2HC6dDfVMyHDZJnQN
+ TRvkUGP7YOwtqDZV9OSTcX0ZzpAUpgzTbQ9HHOsne3WnEhT0Gd/wNuHaN/BYYiEmDPy8
+ T8MqAXmf0l7VYGnM09YRMRjvuvPFoYMzUo1BADLAn2/F7sWWjCWbr60DGkGG+T3HuOdP
+ Ithxf+JHmrbpJkLYUZIYW1K/PSDw/wLbD6uHyXYNZo4bp+Kgil0GP8mfy5vBCMhc/VTP
+ ttDxysfyJlk99qyc2gWiHX7ONsI0Ta9YRJerOZychYv3lXk55d3dx8CLmGqvfE3haS1p
+ ZETQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1748101191; x=1748705991;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=c4WSyXXKKvSQVDQ2cXmsmf9mLw71dz1IqE39D7lXAlU=;
+ b=M2oyMdbNVllgLWfBN08C5UWo//JFqx3txYLRqGXdGdLZ4kGXklApQ2MPi5eT8rDPo/
+ eMxpHOLGm29Ctl+2HXBbCMrZz4zR3CtulQHu6wo6uzqPh7vVie9pdL9FXGeO5ZV2ys7D
+ djgs05zBOVi9CV5NCvBs2AiTahEtWHDCl9UvSkIxJKOkxZvhfogx0mdpHVQi2R+lylrk
+ aLmxmHUDKkNlB1zAXOFEJgXv/oXDQ26GhN9HaAZVgsMq84Z8K/291uoArg9lXvt35lpY
+ xDTvVXvAkRxTqSRF+jJXcJCWucDtagIbU6OHTuD/1txbFjK0nf2JedylY3JTcDUGri5T
+ PLOw==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUuzTGHpprxo/bc8k6y6kK92vb/H4zcIcy8XBXu8/SYLTlwZKipYJPYkEDUS7VLYL/DKUk=@dpdk.org
+X-Gm-Message-State: AOJu0Yzu03VHrFYsaAY/UQ4Z6sVaiHbxb3vTstXE5mJB1wYVXUse7HHi
+ YyCdAPVoLEVdguj7TZbGft8F6XRS3D0hZUcsDqe8do3APk67cvM38452ZZehvEoK+LM=
+X-Gm-Gg: ASbGncsTANG/IbmxypOgujCEmSwO+LLwmF6moNShHcVtZJxxPXbiQ5uzsiNJOWDOKv+
+ msy1cV+qxI4Zckkd4HnO9H8gCn3/28S/Z3za/+AIc3gF45guqEHFM44jLqd52rgfPqMOJ3G9fF5
+ IYGpL8xhZqXuHxcftuKyYki67LrF6zt03RGfj+G/IiyovdcBkEZjRRN75B/m1Y3QIolZAVUY6xV
+ Wp9AKRu49AbI1bPecoCnIlpYtR/b2veoLvXRF00dtwt2ZIfD6uTZ0XdrtuTHbGcfXKEPaZoDyM6
+ DVKLc9UCY3YVBKYPuOFYHxx0UJt40HV+8oRObpftA1l2vVBYMQf4aUqNqykj1Y1essnMLkgj2Au
+ VDrRgdJ8+1zBFYvzBtS1iM9n2EltG
+X-Google-Smtp-Source: AGHT+IG0eGsrHfZbwK9v9kHF5WiexZZGRHNdKjnKuDYtDq9Nk85epkBk5ITreFjbN5mlOXh1IhJ/+A==
+X-Received: by 2002:a17:907:9303:b0:ad8:5850:7332 with SMTP id
+ a640c23a62f3a-ad859840183mr268625366b.9.1748101191162; 
+ Sat, 24 May 2025 08:39:51 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ a640c23a62f3a-ad52d04f263sm1395378666b.1.2025.05.24.08.39.48
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sat, 24 May 2025 08:39:50 -0700 (PDT)
+Date: Sat, 24 May 2025 08:39:43 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Rakesh Kudurumalla <rkudurumalla@marvell.com>
+Cc: <ferruh.yigit@amd.com>, <andrew.rybchenko@oktetlabs.ru>,
+ <orika@nvidia.com>, <thomas@monjalon.net>, <dev@dpdk.org>,
+ <jerinj@marvell.com>, <ndabilpuram@marvell.com>, <stable@dpdk.org>
+Subject: Re: [PATCH v5 1/1] examples/l2fwd-jobstats: fix lock availability
+Message-ID: <20250524083943.08660ec0@hermes.local>
+In-Reply-To: <20240811155957.576645-1-rkudurumalla@marvell.com>
+References: <20240811065819.575759-1-rkudurumalla@marvell.com>
+ <20240811155957.576645-1-rkudurumalla@marvell.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI0MDA4MyBTYWx0ZWRfX75TI81rmLFtC
- leA8M29SzLYuQO9pgj/+6loVsoIaRhwAtpgzsmgb36wIoQ2hit53jKA7LvvJ5suFTId04608AIj
- U5O+kpLUbq6M9JdKW6EnIQXPmxj6yMu/IqEvumR5V8ewLwUm8ofVQ/OfO5FhCk0s1WixHw9ff0B
- 1qghij31MTV6A58RtSMcixMMW71wTPtKmQK36wXs6ikV1vMk9woxwNZIo/jYj4JYRJcsCV2tFQj
- EbigRVDBLGskL1pTCB2+/7RbBrcO8nxqr24pMvoNJl3W7e8r0MGrHcmZJ4W4P9fk1T5whfIHJph
- qcOVdy410/8MxPBfHGFS+sHH1Ar4Qb/g2CrqxvCfwo3YgzIVdNkjPQd1y+JWIbz+55ne9bpG2X3
- Z5ZnjKrRjEoxg1YK/ciIVjfbjo+GboK8FkoZKapajzav4JE6hh+DtMjQMcgPnn+ptkoLX6jB
-X-Authority-Analysis: v=2.4 cv=HpV2G1TS c=1 sm=1 tr=0 ts=68318dd8 cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=8XZoYLytfDNUhoUKL8IA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: BI3jxaQM4Pha3RBrP4Bo209XLEsFc9oq
-X-Proofpoint-GUID: BI3jxaQM4Pha3RBrP4Bo209XLEsFc9oq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-24_04,2025-05-22_01,2025-03-28_01
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,344 +84,157 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Pavan Nikhilesh <pbhagavatula@marvell.com>
+On Sun, 11 Aug 2024 21:29:57 +0530
+Rakesh Kudurumalla <rkudurumalla@marvell.com> wrote:
 
-Migrate all invocations of rte_event_dma_adapter_op
-API to rte_dma_op.
+> Race condition between jobstats and time metrics
+> for forwarding and flushing is maintained using spinlock.
+> Timer metrics are not displayed properly due to the
+> frequent unavailability of the lock.This patch fixes
+> the issue by introducing a delay before acquiring
+> the lock in the loop. This delay allows for betteravailability
+> of the lock, ensuring that show_lcore_stats() can
+> periodically update the statistics even when forwarding
+> jobs are running.
+> 
+> Fixes: 204896f8d66c ("examples/l2fwd-jobstats: add new example")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Rakesh Kudurumalla <rkudurumalla@marvell.com>
 
-Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
-Acked-by: Amit Prakash Shukla <amitprakashs@marvell.com>
----
- app/test-eventdev/test_perf_common.c          |  6 +-
- app/test-eventdev/test_perf_common.h          |  4 +-
- app/test/test_event_dma_adapter.c             |  6 +-
- .../prog_guide/eventdev/event_dma_adapter.rst |  6 +-
- drivers/dma/cnxk/cnxk_dmadev.c                |  2 +-
- drivers/dma/cnxk/cnxk_dmadev_fp.c             | 12 ++--
- lib/eventdev/rte_event_dma_adapter.c          | 18 +++---
- lib/eventdev/rte_event_dma_adapter.h          | 57 -------------------
- 8 files changed, 27 insertions(+), 84 deletions(-)
+The original code is a mess here.
+The whole idle job loop here is the problem.
+It should use rte_timer_next_ticks() to know when next timer is
+about to expire and use that.
 
-diff --git a/app/test-eventdev/test_perf_common.c b/app/test-eventdev/test_perf_common.c
-index 627f07caa1..4e0109db52 100644
---- a/app/test-eventdev/test_perf_common.c
-+++ b/app/test-eventdev/test_perf_common.c
-@@ -562,11 +562,11 @@ crypto_adapter_enq_op_fwd(struct prod_data *p)
- static inline void
- dma_adapter_enq_op_fwd(struct prod_data *p)
- {
--	struct rte_event_dma_adapter_op *ops[BURST_SIZE] = {NULL};
-+	struct rte_dma_op *ops[BURST_SIZE] = {NULL};
- 	struct test_perf *t = p->t;
- 	const uint32_t nb_flows = t->nb_flows;
- 	const uint64_t nb_pkts = t->nb_pkts;
--	struct rte_event_dma_adapter_op op;
-+	struct rte_dma_op op;
- 	struct rte_event evts[BURST_SIZE];
- 	const uint8_t dev_id = p->dev_id;
- 	struct evt_options *opt = t->opt;
-@@ -2114,7 +2114,7 @@ perf_mempool_setup(struct evt_test *test, struct evt_options *opt)
- 	} else if (opt->prod_type == EVT_PROD_TYPE_EVENT_DMA_ADPTR) {
- 		t->pool = rte_mempool_create(test->name,   /* mempool name */
- 					     opt->pool_sz, /* number of elements*/
--					     sizeof(struct rte_event_dma_adapter_op) +
-+					     sizeof(struct rte_dma_op) +
- 						     (sizeof(struct rte_dma_sge) * 2),
- 					     cache_sz,		       /* cache size*/
- 					     0, NULL, NULL, NULL,      /* obj constructor */
-diff --git a/app/test-eventdev/test_perf_common.h b/app/test-eventdev/test_perf_common.h
-index d7333ad390..63078b0ee2 100644
---- a/app/test-eventdev/test_perf_common.h
-+++ b/app/test-eventdev/test_perf_common.h
-@@ -139,7 +139,7 @@ perf_mark_fwd_latency(enum evt_prod_type prod_type, struct rte_event *const ev)
- 		}
- 		pe->timestamp = rte_get_timer_cycles();
- 	} else if (prod_type == EVT_PROD_TYPE_EVENT_DMA_ADPTR) {
--		struct rte_event_dma_adapter_op *op = ev->event_ptr;
-+		struct rte_dma_op *op = ev->event_ptr;
+And instead of fighting with spin lock, use ticket lock which will
+cause in-order waiting.
+
+Something like the following (untested):
+
+diff --git a/examples/l2fwd-jobstats/main.c b/examples/l2fwd-jobstats/main.c
+index 308b8edd20..9586d90ab6 100644
+--- a/examples/l2fwd-jobstats/main.c
++++ b/examples/l2fwd-jobstats/main.c
+@@ -27,7 +27,7 @@
+ #include <rte_ethdev.h>
+ #include <rte_mempool.h>
+ #include <rte_mbuf.h>
+-#include <rte_spinlock.h>
++#include <rte_ticketlock.h>
  
- 		op->user_meta = rte_get_timer_cycles();
- 	} else {
-@@ -297,7 +297,7 @@ perf_process_last_stage_latency(struct rte_mempool *const pool, enum evt_prod_ty
- 		tstamp = pe->timestamp;
- 		rte_crypto_op_free(op);
- 	} else if (prod_type == EVT_PROD_TYPE_EVENT_DMA_ADPTR) {
--		struct rte_event_dma_adapter_op *op = ev->event_ptr;
-+		struct rte_dma_op *op = ev->event_ptr;
+ #include <rte_errno.h>
+ #include <rte_jobstats.h>
+@@ -80,8 +80,7 @@ struct __rte_cache_aligned lcore_queue_conf {
+ 	struct rte_jobstats idle_job;
+ 	struct rte_jobstats_context jobs_context;
  
- 		to_free_in_bulk = op;
- 		tstamp = op->user_meta;
-diff --git a/app/test/test_event_dma_adapter.c b/app/test/test_event_dma_adapter.c
-index 9988d4fc7b..7f72a4e81d 100644
---- a/app/test/test_event_dma_adapter.c
-+++ b/app/test/test_event_dma_adapter.c
-@@ -234,7 +234,7 @@ test_op_forward_mode(void)
- {
- 	struct rte_mbuf *src_mbuf[TEST_MAX_OP];
- 	struct rte_mbuf *dst_mbuf[TEST_MAX_OP];
--	struct rte_event_dma_adapter_op *op;
-+	struct rte_dma_op *op;
- 	struct rte_event ev[TEST_MAX_OP];
- 	int ret, i;
- 
-@@ -266,7 +266,7 @@ test_op_forward_mode(void)
- 		op->vchan = TEST_DMA_VCHAN_ID;
- 		op->event_meta = dma_response_info.event;
- 
--		/* Fill in event info and update event_ptr with rte_event_dma_adapter_op */
-+		/* Fill in event info and update event_ptr with rte_dma_op */
- 		memset(&ev[i], 0, sizeof(struct rte_event));
- 		ev[i].event = 0;
- 		ev[i].op = RTE_EVENT_OP_NEW;
-@@ -396,7 +396,7 @@ configure_dmadev(void)
- 						       rte_socket_id());
- 	RTE_TEST_ASSERT_NOT_NULL(params.dst_mbuf_pool, "Can't create DMA_DST_MBUFPOOL\n");
- 
--	elt_size = sizeof(struct rte_event_dma_adapter_op) + (sizeof(struct rte_dma_sge) * 2);
-+	elt_size = sizeof(struct rte_dma_op) + (sizeof(struct rte_dma_sge) * 2);
- 	params.op_mpool = rte_mempool_create("EVENT_DMA_OP_POOL", DMA_OP_POOL_SIZE, elt_size, 0,
- 					     0, NULL, NULL, NULL, NULL, rte_socket_id(), 0);
- 	RTE_TEST_ASSERT_NOT_NULL(params.op_mpool, "Can't create DMA_OP_POOL\n");
-diff --git a/doc/guides/prog_guide/eventdev/event_dma_adapter.rst b/doc/guides/prog_guide/eventdev/event_dma_adapter.rst
-index e040d89e8b..e8437a3297 100644
---- a/doc/guides/prog_guide/eventdev/event_dma_adapter.rst
-+++ b/doc/guides/prog_guide/eventdev/event_dma_adapter.rst
-@@ -144,7 +144,7 @@ on which it enqueues events towards the DMA adapter using ``rte_event_enqueue_bu
-    uint32_t cap;
-    int ret;
- 
--   /* Fill in event info and update event_ptr with rte_event_dma_adapter_op */
-+   /* Fill in event info and update event_ptr with rte_dma_op */
-    memset(&ev, 0, sizeof(ev));
-    .
-    .
-@@ -244,11 +244,11 @@ Set event response information
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
- In the ``RTE_EVENT_DMA_ADAPTER_OP_FORWARD`` / ``RTE_EVENT_DMA_ADAPTER_OP_NEW`` mode,
--the application specifies the dmadev ID and vchan ID in ``struct rte_event_dma_adapter_op``
-+the application specifies the dmadev ID and vchan ID in ``struct rte_dma_op``
- and the event information (response information)
- needed to enqueue an event after the DMA operation has completed.
- The response information is specified in ``struct rte_event``
--and appended to the ``struct rte_event_dma_adapter_op``.
-+and appended to the ``struct rte_dma_op``.
- 
- 
- Start the adapter instance
-diff --git a/drivers/dma/cnxk/cnxk_dmadev.c b/drivers/dma/cnxk/cnxk_dmadev.c
-index f12a15aef7..0dcebc1b0b 100644
---- a/drivers/dma/cnxk/cnxk_dmadev.c
-+++ b/drivers/dma/cnxk/cnxk_dmadev.c
-@@ -622,7 +622,7 @@ cnxk_dmadev_probe(struct rte_pci_driver *pci_drv __rte_unused, struct rte_pci_de
- 	rdpi = &dpivf->rdpi;
- 
- 	rdpi->pci_dev = pci_dev;
--	rc = roc_dpi_dev_init(rdpi, offsetof(struct rte_event_dma_adapter_op, impl_opaque));
-+	rc = roc_dpi_dev_init(rdpi, offsetof(struct rte_dma_op, impl_opaque));
- 	if (rc < 0)
- 		goto err_out_free;
- 
-diff --git a/drivers/dma/cnxk/cnxk_dmadev_fp.c b/drivers/dma/cnxk/cnxk_dmadev_fp.c
-index 579aafa894..4435adc38b 100644
---- a/drivers/dma/cnxk/cnxk_dmadev_fp.c
-+++ b/drivers/dma/cnxk/cnxk_dmadev_fp.c
-@@ -455,7 +455,7 @@ uint16_t
- cn10k_dma_adapter_enqueue(void *ws, struct rte_event ev[], uint16_t nb_events)
- {
- 	const struct rte_dma_sge *src, *dst;
--	struct rte_event_dma_adapter_op *op;
-+	struct rte_dma_op *op;
- 	struct cnxk_dpi_conf *dpi_conf;
- 	struct cnxk_dpi_vf_s *dpivf;
- 	struct cn10k_sso_hws *work;
-@@ -515,7 +515,7 @@ uint16_t
- cn9k_dma_adapter_dual_enqueue(void *ws, struct rte_event ev[], uint16_t nb_events)
- {
- 	const struct rte_dma_sge *fptr, *lptr;
--	struct rte_event_dma_adapter_op *op;
-+	struct rte_dma_op *op;
- 	struct cn9k_sso_hws_dual *work;
- 	struct cnxk_dpi_conf *dpi_conf;
- 	struct cnxk_dpi_vf_s *dpivf;
-@@ -531,7 +531,7 @@ cn9k_dma_adapter_dual_enqueue(void *ws, struct rte_event ev[], uint16_t nb_event
- 	for (count = 0; count < nb_events; count++) {
- 		op = ev[count].event_ptr;
- 		rsp_info = (struct rte_event *)((uint8_t *)op +
--						sizeof(struct rte_event_dma_adapter_op));
-+						sizeof(struct rte_dma_op));
- 		dpivf = rte_dma_fp_objs[op->dma_dev_id].dev_private;
- 		dpi_conf = &dpivf->conf[op->vchan];
- 
-@@ -586,7 +586,7 @@ uint16_t
- cn9k_dma_adapter_enqueue(void *ws, struct rte_event ev[], uint16_t nb_events)
- {
- 	const struct rte_dma_sge *fptr, *lptr;
--	struct rte_event_dma_adapter_op *op;
-+	struct rte_dma_op *op;
- 	struct cnxk_dpi_conf *dpi_conf;
- 	struct cnxk_dpi_vf_s *dpivf;
- 	struct cn9k_sso_hws *work;
-@@ -653,11 +653,11 @@ RTE_EXPORT_INTERNAL_SYMBOL(cnxk_dma_adapter_dequeue)
- uintptr_t
- cnxk_dma_adapter_dequeue(uintptr_t get_work1)
- {
--	struct rte_event_dma_adapter_op *op;
-+	struct rte_dma_op *op;
- 	struct cnxk_dpi_conf *dpi_conf;
- 	struct cnxk_dpi_vf_s *dpivf;
- 
--	op = (struct rte_event_dma_adapter_op *)get_work1;
-+	op = (struct rte_dma_op *)get_work1;
- 	dpivf = rte_dma_fp_objs[op->dma_dev_id].dev_private;
- 	dpi_conf = &dpivf->conf[op->vchan];
- 
-diff --git a/lib/eventdev/rte_event_dma_adapter.c b/lib/eventdev/rte_event_dma_adapter.c
-index 9ac6a4a205..484cd50011 100644
---- a/lib/eventdev/rte_event_dma_adapter.c
-+++ b/lib/eventdev/rte_event_dma_adapter.c
-@@ -40,8 +40,8 @@ struct __rte_cache_aligned dma_ops_circular_buffer {
- 	/* Size of circular buffer */
- 	uint16_t size;
- 
--	/* Pointer to hold rte_event_dma_adapter_op for processing */
--	struct rte_event_dma_adapter_op **op_buffer;
-+	/* Pointer to hold rte_dma_op for processing */
-+	struct rte_dma_op **op_buffer;
+-	RTE_ATOMIC(uint16_t) stats_read_pending;
+-	rte_spinlock_t lock;
++	rte_ticketlock_t lock;
  };
+ /* >8 End of list of queues to be polled for given lcore. */
+ struct lcore_queue_conf lcore_queue_conf[RTE_MAX_LCORE];
+@@ -151,9 +150,7 @@ show_lcore_stats(unsigned lcore_id)
+ 	uint64_t collection_time = rte_get_timer_cycles();
  
- /* Vchan information */
-@@ -202,7 +202,7 @@ edma_circular_buffer_space_for_batch(struct dma_ops_circular_buffer *bufp)
- static inline int
- edma_circular_buffer_init(const char *name, struct dma_ops_circular_buffer *buf, uint16_t sz)
- {
--	buf->op_buffer = rte_zmalloc(name, sizeof(struct rte_event_dma_adapter_op *) * sz, 0);
-+	buf->op_buffer = rte_zmalloc(name, sizeof(struct rte_dma_op *) * sz, 0);
- 	if (buf->op_buffer == NULL)
- 		return -ENOMEM;
+ 	/* Ask forwarding thread to give us stats. */
+-	rte_atomic_store_explicit(&qconf->stats_read_pending, 1, rte_memory_order_relaxed);
+-	rte_spinlock_lock(&qconf->lock);
+-	rte_atomic_store_explicit(&qconf->stats_read_pending, 0, rte_memory_order_relaxed);
++	rte_ticketlock_lock(&qconf->lock);
  
-@@ -218,7 +218,7 @@ edma_circular_buffer_free(struct dma_ops_circular_buffer *buf)
- }
+ 	/* Collect context statistics. */
+ 	stats_period = ctx->state_time - ctx->start_time;
+@@ -195,7 +192,7 @@ show_lcore_stats(unsigned lcore_id)
+ 	idle_exec_max = qconf->idle_job.max_exec_time;
+ 	rte_jobstats_reset(&qconf->idle_job);
  
- static inline int
--edma_circular_buffer_add(struct dma_ops_circular_buffer *bufp, struct rte_event_dma_adapter_op *op)
-+edma_circular_buffer_add(struct dma_ops_circular_buffer *bufp, struct rte_dma_op *op)
- {
- 	uint16_t *tail = &bufp->tail;
+-	rte_spinlock_unlock(&qconf->lock);
++	rte_ticketlock_unlock(&qconf->lock);
  
-@@ -236,7 +236,7 @@ edma_circular_buffer_flush_to_dma_dev(struct event_dma_adapter *adapter,
- 				      struct dma_ops_circular_buffer *bufp, uint8_t dma_dev_id,
- 				      uint16_t vchan, uint16_t *nb_ops_flushed)
- {
--	struct rte_event_dma_adapter_op *op;
-+	struct rte_dma_op *op;
- 	uint16_t *head = &bufp->head;
- 	uint16_t *tail = &bufp->tail;
- 	struct dma_vchan_info *tq;
-@@ -503,7 +503,7 @@ edma_enq_to_dma_dev(struct event_dma_adapter *adapter, struct rte_event *ev, uns
- {
- 	struct rte_event_dma_adapter_stats *stats = &adapter->dma_stats;
- 	struct dma_vchan_info *vchan_qinfo = NULL;
--	struct rte_event_dma_adapter_op *dma_op;
-+	struct rte_dma_op *dma_op;
- 	uint16_t vchan, nb_enqueued = 0;
- 	int16_t dma_dev_id;
- 	unsigned int i, n;
-@@ -646,7 +646,7 @@ edma_adapter_enq_run(struct event_dma_adapter *adapter, unsigned int max_enq)
- #define DMA_ADAPTER_MAX_EV_ENQ_RETRIES 100
+ 	exec -= idle_exec;
+ 	busy = exec + management;
+@@ -478,11 +475,11 @@ l2fwd_main_loop(void)
+ 	unsigned lcore_id;
+ 	unsigned i, portid;
+ 	struct lcore_queue_conf *qconf;
+-	uint8_t stats_read_pending = 0;
+-	uint8_t need_manage;
++	uint64_t hz;
  
- static inline uint16_t
--edma_ops_enqueue_burst(struct event_dma_adapter *adapter, struct rte_event_dma_adapter_op **ops,
-+edma_ops_enqueue_burst(struct event_dma_adapter *adapter, struct rte_dma_op **ops,
- 		       uint16_t num)
- {
- 	struct rte_event_dma_adapter_stats *stats = &adapter->dma_stats;
-@@ -692,7 +692,7 @@ edma_circular_buffer_flush_to_evdev(struct event_dma_adapter *adapter,
- 				    struct dma_ops_circular_buffer *bufp,
- 				    uint16_t *enqueue_count)
- {
--	struct rte_event_dma_adapter_op **ops = bufp->op_buffer;
-+	struct rte_dma_op **ops = bufp->op_buffer;
- 	uint16_t n = 0, nb_ops_flushed;
- 	uint16_t *head = &bufp->head;
- 	uint16_t *tail = &bufp->tail;
-@@ -741,7 +741,7 @@ edma_adapter_deq_run(struct event_dma_adapter *adapter, unsigned int max_deq)
- 	struct rte_event_dma_adapter_stats *stats = &adapter->dma_stats;
- 	struct dma_vchan_info *vchan_info;
- 	struct dma_ops_circular_buffer *tq_buf;
--	struct rte_event_dma_adapter_op *ops;
-+	struct rte_dma_op *ops;
- 	uint16_t n, nb_deq, nb_enqueued, i;
- 	struct dma_device_info *dev_info;
- 	uint16_t vchan, num_vchan;
-diff --git a/lib/eventdev/rte_event_dma_adapter.h b/lib/eventdev/rte_event_dma_adapter.h
-index 5c480b82ff..453754d13b 100644
---- a/lib/eventdev/rte_event_dma_adapter.h
-+++ b/lib/eventdev/rte_event_dma_adapter.h
-@@ -151,63 +151,6 @@
- extern "C" {
- #endif
+ 	lcore_id = rte_lcore_id();
+ 	qconf = &lcore_queue_conf[lcore_id];
++	hz = rte_get_timer_hz();
  
--/**
-- * A structure used to hold event based DMA operation entry. All the information
-- * required for a DMA transfer shall be populated in "struct rte_event_dma_adapter_op"
-- * instance.
-- */
--struct rte_event_dma_adapter_op {
--	uint64_t flags;
--	/**< Flags related to the operation.
--	 * @see RTE_DMA_OP_FLAG_*
--	 */
--	struct rte_mempool *op_mp;
--	/**< Mempool from which op is allocated. */
--	enum rte_dma_status_code status;
--	/**< Status code for this operation. */
--	uint32_t rsvd;
--	/**< Reserved for future use. */
--	uint64_t impl_opaque[2];
--	/**< Implementation-specific opaque data.
--	 * An dma device implementation use this field to hold
--	 * implementation specific values to share between dequeue and enqueue
--	 * operations.
--	 * The application should not modify this field.
--	 */
--	uint64_t user_meta;
--	/**<  Memory to store user specific metadata.
--	 * The dma device implementation should not modify this area.
--	 */
--	uint64_t event_meta;
--	/**< Event metadata of DMA completion event.
--	 * Used when RTE_EVENT_DMA_ADAPTER_CAP_INTERNAL_PORT_VCHAN_EV_BIND is not
--	 * supported in OP_NEW mode.
--	 * @see rte_event_dma_adapter_mode::RTE_EVENT_DMA_ADAPTER_OP_NEW
--	 * @see RTE_EVENT_DMA_ADAPTER_CAP_INTERNAL_PORT_VCHAN_EV_BIND
--	 *
--	 * Used when RTE_EVENT_DMA_ADAPTER_CAP_INTERNAL_PORT_OP_FWD is not
--	 * supported in OP_FWD mode.
--	 * @see rte_event_dma_adapter_mode::RTE_EVENT_DMA_ADAPTER_OP_FORWARD
--	 * @see RTE_EVENT_DMA_ADAPTER_CAP_INTERNAL_PORT_OP_FWD
--	 *
--	 * @see struct rte_event::event
--	 */
--	int16_t dma_dev_id;
--	/**< DMA device ID to be used with OP_FORWARD mode.
--	 * @see rte_event_dma_adapter_mode::RTE_EVENT_DMA_ADAPTER_OP_FORWARD
--	 */
--	uint16_t vchan;
--	/**< DMA vchan ID to be used with OP_FORWARD mode
--	 * @see rte_event_dma_adapter_mode::RTE_EVENT_DMA_ADAPTER_OP_FORWARD
--	 */
--	uint16_t nb_src;
--	/**< Number of source segments. */
--	uint16_t nb_dst;
--	/**< Number of destination segments. */
--	struct rte_dma_sge src_dst_seg[];
--	/**< Source and destination segments. */
--};
+ 	if (qconf->n_rx_port == 0) {
+ 		RTE_LOG(INFO, L2FWD, "lcore %u has nothing to do\n", lcore_id);
+@@ -502,47 +499,22 @@ l2fwd_main_loop(void)
+ 
+ 	/* Minimize impact of stats reading. 8< */
+ 	for (;;) {
+-		rte_spinlock_lock(&qconf->lock);
 -
- /**
-  *  DMA event adapter mode
-  */
--- 
-2.43.0
+-		do {
+-			rte_jobstats_context_start(&qconf->jobs_context);
+-
+-			/* Do the Idle job:
+-			 * - Read stats_read_pending flag
+-			 * - check if some real job need to be executed
+-			 */
+-			rte_jobstats_start(&qconf->jobs_context, &qconf->idle_job);
+-
+-			uint64_t repeats = 0;
+-
+-			do {
+-				uint8_t i;
+-				uint64_t now = rte_get_timer_cycles();
+-
+-				repeats++;
+-				need_manage = qconf->flush_timer.expire < now;
+-				/* Check if we was esked to give a stats. */
+-				stats_read_pending = rte_atomic_load_explicit(
+-					&qconf->stats_read_pending,
+-					rte_memory_order_relaxed);
+-				need_manage |= stats_read_pending;
+ 
+-				for (i = 0; i < qconf->n_rx_port && !need_manage; i++)
+-					need_manage = qconf->rx_timers[i].expire < now;
++		rte_ticketlock_lock(&qconf->lock);
+ 
+-			} while (!need_manage);
++		rte_jobstats_context_start(&qconf->jobs_context);
++		rte_jobstats_start(&qconf->jobs_context, &qconf->idle_job);
++		rte_timer_manage();
++		rte_jobstats_context_finish(&qconf->jobs_context);
+ 
+-			if (likely(repeats != 1))
+-				rte_jobstats_finish(&qconf->idle_job, qconf->idle_job.target);
+-			else
+-				rte_jobstats_abort(&qconf->idle_job);
++		int64_t next_ticks = rte_timer_next_ticks();
+ 
+-			rte_timer_manage();
+-			rte_jobstats_context_finish(&qconf->jobs_context);
+-		} while (likely(stats_read_pending == 0));
++		rte_ticketlock_unlock(&qconf->lock);
+ 
+-		rte_spinlock_unlock(&qconf->lock);
+-		rte_pause();
++		if (next_ticks > 0)
++			rte_delay_us((1000000 * next_ticks) / hz);
++		else
++			rte_pause();
+ 	}
+ 	/* >8 End of minimize impact of stats reading. */
+ }
+@@ -972,7 +944,7 @@ main(int argc, char **argv)
+ 	RTE_LCORE_FOREACH(lcore_id) {
+ 		qconf = &lcore_queue_conf[lcore_id];
+ 
+-		rte_spinlock_init(&qconf->lock);
++		rte_ticketlock_init(&qconf->lock);
+ 
+ 		if (rte_jobstats_context_init(&qconf->jobs_context) != 0)
+ 			rte_panic("Jobs stats context for core %u init failed\n", lcore_id);
 
