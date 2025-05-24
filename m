@@ -2,55 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E7E5C54E71
-	for <dpdk-dev@archiver.kernel.org>; Sat, 24 May 2025 09:13:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D53C54F2E
+	for <dpdk-dev@archiver.kernel.org>; Sat, 24 May 2025 09:14:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EDA4140E2B;
-	Sat, 24 May 2025 11:13:51 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 01D9440E24;
+	Sat, 24 May 2025 11:13:57 +0200 (CEST)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 3863040E17
- for <dev@dpdk.org>; Sat, 24 May 2025 11:13:50 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 79E0C40E49
+ for <dev@dpdk.org>; Sat, 24 May 2025 11:13:55 +0200 (CEST)
 Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54O9DUbd012629;
- Sat, 24 May 2025 02:13:49 -0700
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54O9DLDJ012478;
+ Sat, 24 May 2025 02:13:55 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=i
- RjE6FDOiXwqsgcvb4h+/LzREaR3PnXYoNhQTU9lGbs=; b=Xst7vKgnifPQWX1eF
- 5mgHGIGSWQmb6cFaz60dehFsrl52yliaAEM2VQ1y0tMA5Wp9j7NdwMu9IORcQYNY
- dcoegjvLoxFyMzw2rfySIQUXKMoAQoNJw0MZDLyE4FX/I3Yr9z2k17amy2sbcgSX
- GCn9sQYIXTCLfp33BiAxAFRY/Vm6xCn3/364i8Z4wESinn7xCHQKNZuOLz4iAheI
- uDS7WwButEBOCfYAyGVShFq30qTWrkS7GTMaKqoWlkYuAaBgBWhtQW0ymSOtDB5r
- udv9o/eTF+nL7DFXEehRoVWfVGxKjpOJast6tGAP3zr1X3VwlRUsu5DoRXXUx5E3
- F2L/w==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46u1pc0ma0-1
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=Z
+ 3KXSvyk+KriLRh/KVv7BecYZ3BFEihAPNDP+AUadwI=; b=Cs/RapLWEONa1JKXt
+ F2co5niKEEAcky3WHhS2zm7Dyn0s2lhd0pqP7HM+/j5kGlCB0sBnzdl6SVCzHezf
+ QY9NCZ08YDEr0w+lP00IC1nkfgNOszHPgTu0/ztGPoJQ5eZuhW0h6kiWSNJ2DmgB
+ 0cwGT12Uomlv9BhXE0HQddFy1xuaKvvMf8pmesrT3wpct6Be2xNLyU0gz5MtooXN
+ d3ApoI5ILnQfJaQJXGeyx54mbT8S+FaU48Ist7iibb0I8s6L/2MFl7vW4Q+xQVfR
+ Bl4SLC4yKQhNDk/ih70CR4WB0WG7AYD2mCnH7on+oGHu6r66KArxUbJNUv9DlMUV
+ W6y1g==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46u1pc0maf-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Sat, 24 May 2025 02:13:49 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ Sat, 24 May 2025 02:13:54 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Sat, 24 May 2025 02:13:47 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Sat, 24 May 2025 02:13:47 -0700
+ 15.2.1544.4; Sat, 24 May 2025 02:13:53 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Sat, 24 May 2025 02:13:53 -0700
 Received: from MININT-80QBFE8.corp.innovium.com (MININT-80QBFE8.marvell.com
  [10.28.164.118])
- by maili.marvell.com (Postfix) with ESMTP id 2BF583F707E;
- Sat, 24 May 2025 02:13:42 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 79CDF3F7079;
+ Sat, 24 May 2025 02:13:48 -0700 (PDT)
 From: <pbhagavatula@marvell.com>
-To: <jerinj@marvell.com>, Cheng Jiang <honest.jiang@foxmail.com>, "Chengwen
- Feng" <fengchengwen@huawei.com>
-CC: <vattunuru@marvell.com>, <g.singh@nxp.com>, <sachin.saxena@nxp.com>,
- <hemant.agrawal@nxp.com>, <bruce.richardson@intel.com>,
+To: <jerinj@marvell.com>, Vamsi Attunuru <vattunuru@marvell.com>
+CC: <g.singh@nxp.com>, <sachin.saxena@nxp.com>, <hemant.agrawal@nxp.com>,
+ <fengchengwen@huawei.com>, <bruce.richardson@intel.com>,
  <kevin.laatz@intel.com>, <conor.walsh@intel.com>,
  <gmuthukrishn@marvell.com>, <vvelumuri@marvell.com>,
  <anatoly.burakov@intel.com>, <dev@dpdk.org>, "Pavan
  Nikhilesh" <pbhagavatula@marvell.com>
-Subject: [25.11 PATCH v3 3/5] app/dma-perf: add option to measure enq deq ops
-Date: Sat, 24 May 2025 14:43:13 +0530
-Message-ID: <20250524091316.10056-4-pbhagavatula@marvell.com>
+Subject: [25.11 PATCH v3 4/5] dma/cnxk: implement enqueue dequeue ops
+Date: Sat, 24 May 2025 14:43:14 +0530
+Message-ID: <20250524091316.10056-5-pbhagavatula@marvell.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250524091316.10056-1-pbhagavatula@marvell.com>
 References: <20250519185604.5584-1-pbhagavatula@marvell.com>
@@ -58,19 +57,19 @@ References: <20250519185604.5584-1-pbhagavatula@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: d7upgl837DDLpyuBsYNnajY58zB-u_VW
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI0MDA4MyBTYWx0ZWRfX1ZvS/S425S8i
- ts9uac721CVF/ROQYX3fpLPkRmDj4chm3bojGFLhawfqeSeodztZ1D4rGoT0U0E3AZVQBRfsoWf
- gA1/rRJugQRQ/duPOM6Agk7kbyknu31tTUYci0fXPgHavjJ1CUvdm5urc98or55jB1xkL0kInBq
- D7l68xMJ8HPjnZ3OMV6t93q3sZlmna7Yp1G+qywCkVYz9dt+S4dKzF3do7ZxYaWmxDS6qseBDDi
- ATfsacHQ9t1sUHfHyaCMuZbzMQqFnNjwi/jk77c3VA+e9tF9kVKRZPBCE7LbeYPV+qXyT0hlCx0
- 1JipeqGmeYRRJx88jb2c7BlydDDaAsSD4IB7W7MnCEYMqbmGZ7PwMa9JlcBwjBvFw09dtGuJfAc
- R4s3UGOzBSAWq33UWbNgiCb35uj7of5XbmHY23WydRhSWCZciy2NjZ1zn94LOrYM6vfL59Nk
-X-Authority-Analysis: v=2.4 cv=JovxrN4C c=1 sm=1 tr=0 ts=68318dcd cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=SSXLivwrg0eM4BYXrbIA:9
+X-Proofpoint-ORIG-GUID: sv1CtyTEeTPElYtXhEf5nqWeXuFJU_iL
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI0MDA4MyBTYWx0ZWRfX4WdwSHHhKFVC
+ eYiIGN91ua+rNskskTIXn6t2i+YMDn7XZf4upHWc9f1U2lNSTc97PpBDTxQVyrgrlTmfWhU9wAa
+ DedRRUuRrWFQrysfbZkyi8eegilSJyIw5ZPeWz1jnnFpkpU72BrQyECpF3LZDha5JYP4w+jIAA8
+ bm3hKwrpGm7kVu7kMgadKu08Trkma0YMzZRHM6WoJx4qklA8UfXdOAhwvLHZHalbSs9C2ebZFzp
+ 5AHvg3ZERzCbkMAMDT6vmFC6Ono5N6MsdV6Kx5SZ1roMG3lFhxcrHe2PPXFw5caih7r9UIcgfxL
+ ZWHMF2zWISIejnUxMGlFKkRmX5+J0g3nM38JZFDfGWmasny9tn10/dUpi3oPCgCC8HNI2fsQwaH
+ 6yp8LydZ/Xtn5r3THDvY14KCaRMXJ0S+BNEKWsVP8LRosBnCE+d7YJdt2Jvh1M+VuQeck6l+
+X-Authority-Analysis: v=2.4 cv=JovxrN4C c=1 sm=1 tr=0 ts=68318dd2 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=xKmJUHBexbacZ4eocFsA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: d7upgl837DDLpyuBsYNnajY58zB-u_VW
+X-Proofpoint-GUID: sv1CtyTEeTPElYtXhEf5nqWeXuFJU_iL
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-24_04,2025-05-22_01,2025-03-28_01
@@ -89,326 +88,476 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Pavan Nikhilesh <pbhagavatula@marvell.com>
 
-This patch adds a option to measure performanc of
-enq/deq operations in the benchmark app.
+Implement DMA enqueue/dequeue operations when
+application enables it via configuration.
 
 Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
 ---
- app/test-dma-perf/benchmark.c | 137 +++++++++++++++++++++++++++++++---
- app/test-dma-perf/config.ini  |   3 +
- app/test-dma-perf/main.c      |  13 +++-
- app/test-dma-perf/main.h      |   1 +
- doc/guides/tools/dmaperf.rst  |   5 ++
- 5 files changed, 148 insertions(+), 11 deletions(-)
+ drivers/dma/cnxk/cnxk_dmadev.c    |  78 ++++++++----
+ drivers/dma/cnxk/cnxk_dmadev.h    |   7 ++
+ drivers/dma/cnxk/cnxk_dmadev_fp.c | 189 ++++++++++++++++++++++++++----
+ 3 files changed, 232 insertions(+), 42 deletions(-)
 
-diff --git a/app/test-dma-perf/benchmark.c b/app/test-dma-perf/benchmark.c
-index 6d617ea200..4425fc97cf 100644
---- a/app/test-dma-perf/benchmark.c
-+++ b/app/test-dma-perf/benchmark.c
-@@ -54,6 +54,7 @@ struct lcore_params {
- 	struct rte_mbuf **srcs;
- 	struct rte_mbuf **dsts;
- 	struct sge_info sge;
-+	struct rte_dma_op **dma_ops;
- 	volatile struct worker_info worker_info;
- };
+diff --git a/drivers/dma/cnxk/cnxk_dmadev.c b/drivers/dma/cnxk/cnxk_dmadev.c
+index 90bb69011f..f12a15aef7 100644
+--- a/drivers/dma/cnxk/cnxk_dmadev.c
++++ b/drivers/dma/cnxk/cnxk_dmadev.c
+@@ -7,6 +7,7 @@
+ #include <cnxk_dmadev.h>
  
-@@ -198,6 +199,16 @@ configure_dmadev_queue(uint32_t dev_id, struct test_configure *cfg, uint8_t sges
- 	if (vchan_data_populate(dev_id, &qconf, cfg, dev_num) != 0)
- 		rte_exit(EXIT_FAILURE, "Error with vchan data populate.\n");
- 
-+	if (rte_dma_info_get(dev_id, &info) != 0)
-+		rte_exit(EXIT_FAILURE, "Error with getting device info.\n");
-+
-+	if (cfg->use_ops && !(info.dev_capa & RTE_DMA_CAPA_OPS_ENQ_DEQ))
-+		rte_exit(EXIT_FAILURE, "Error with device %s not support enq_deq ops.\n",
-+			 info.dev_name);
-+
-+	if (cfg->use_ops)
-+		dev_config.flags = RTE_DMA_CFG_FLAG_ENQ_DEQ;
-+
- 	if (rte_dma_configure(dev_id, &dev_config) != 0)
- 		rte_exit(EXIT_FAILURE, "Error with dma configure.\n");
- 
-@@ -395,6 +406,61 @@ do_dma_sg_mem_copy(void *p)
- 	return 0;
- }
- 
-+static inline int
-+do_dma_enq_deq_mem_copy(void *p)
-+{
-+#define DEQ_SZ 64
-+	struct lcore_params *para = (struct lcore_params *)p;
-+	volatile struct worker_info *worker_info = &(para->worker_info);
-+	struct rte_dma_op **dma_ops = para->dma_ops;
-+	uint16_t kick_batch = para->kick_batch, sz;
-+	uint16_t enq, deq, poll_cnt;
-+	uint64_t tenq, tdeq;
-+	const uint16_t dev_id = para->dev_id;
-+	uint32_t nr_buf = para->nr_buf;
-+	struct rte_dma_op *op[DEQ_SZ];
-+	uint32_t i;
-+
-+	worker_info->stop_flag = false;
-+	worker_info->ready_flag = true;
-+
-+	while (!worker_info->start_flag)
-+		;
-+
-+	if (kick_batch > nr_buf)
-+		kick_batch = nr_buf;
-+
-+	tenq = 0;
-+	tdeq = 0;
-+	while (1) {
-+		for (i = 0; i < nr_buf; i += kick_batch) {
-+			sz = RTE_MIN(nr_buf - i, kick_batch);
-+			enq = rte_dma_enqueue_ops(dev_id, 0, &dma_ops[i], sz);
-+			while (enq < sz) {
-+				do {
-+					deq = rte_dma_dequeue_ops(dev_id, 0, op, DEQ_SZ);
-+					tdeq += deq;
-+				} while (deq);
-+				enq += rte_dma_enqueue_ops(dev_id, 0, &dma_ops[i + enq], sz - enq);
-+				if (worker_info->stop_flag)
-+					break;
-+			}
-+			tenq += enq;
-+
-+			worker_info->total_cpl += enq;
-+		}
-+
-+		if (worker_info->stop_flag)
-+			break;
-+	}
-+
-+	poll_cnt = 0;
-+	while ((tenq != tdeq) && (poll_cnt++ < POLL_MAX))
-+		tdeq += rte_dma_dequeue_ops(dev_id, 0, op, DEQ_SZ);
-+
-+	return 0;
-+}
-+
- static inline int
- do_cpu_mem_copy(void *p)
- {
-@@ -436,16 +502,17 @@ dummy_free_ext_buf(void *addr, void *opaque)
- }
+ static int cnxk_stats_reset(struct rte_dma_dev *dev, uint16_t vchan);
++static void cnxk_set_fp_ops(struct rte_dma_dev *dev, uint8_t enable_enq_deq);
  
  static int
--setup_memory_env(struct test_configure *cfg,
--			 struct rte_mbuf ***srcs, struct rte_mbuf ***dsts,
--			 struct rte_dma_sge **src_sges, struct rte_dma_sge **dst_sges)
-+setup_memory_env(struct test_configure *cfg, struct rte_mbuf ***srcs, struct rte_mbuf ***dsts,
-+		 struct rte_dma_sge **src_sges, struct rte_dma_sge **dst_sges,
-+		 struct rte_dma_op ***dma_ops)
- {
- 	unsigned int cur_buf_size = cfg->buf_size.cur;
- 	unsigned int buf_size = cur_buf_size + RTE_PKTMBUF_HEADROOM;
--	unsigned int nr_sockets;
-+	bool is_src_numa_incorrect, is_dst_numa_incorrect;
- 	uint32_t nr_buf = cfg->nr_buf;
-+	unsigned int nr_sockets;
-+	uintptr_t ops;
- 	uint32_t i;
--	bool is_src_numa_incorrect, is_dst_numa_incorrect;
+ cnxk_dmadev_info_get(const struct rte_dma_dev *dev, struct rte_dma_info *dev_info, uint32_t size)
+@@ -19,7 +20,7 @@ cnxk_dmadev_info_get(const struct rte_dma_dev *dev, struct rte_dma_info *dev_inf
+ 	dev_info->dev_capa = RTE_DMA_CAPA_MEM_TO_MEM | RTE_DMA_CAPA_MEM_TO_DEV |
+ 			     RTE_DMA_CAPA_DEV_TO_MEM | RTE_DMA_CAPA_DEV_TO_DEV |
+ 			     RTE_DMA_CAPA_OPS_COPY | RTE_DMA_CAPA_OPS_COPY_SG |
+-			     RTE_DMA_CAPA_M2D_AUTO_FREE;
++			     RTE_DMA_CAPA_M2D_AUTO_FREE | RTE_DMA_CAPA_OPS_ENQ_DEQ;
+ 	if (roc_feature_dpi_has_priority()) {
+ 		dev_info->dev_capa |= RTE_DMA_CAPA_PRI_POLICY_SP;
+ 		dev_info->nb_priorities = CN10K_DPI_MAX_PRI;
+@@ -114,6 +115,8 @@ cnxk_dmadev_configure(struct rte_dma_dev *dev, const struct rte_dma_conf *conf,
+ 	if (roc_feature_dpi_has_priority())
+ 		dpivf->rdpi.priority = conf->priority;
  
- 	nr_sockets = rte_socket_count();
- 	is_src_numa_incorrect = (cfg->src_numa_node >= nr_sockets);
-@@ -540,6 +607,34 @@ setup_memory_env(struct test_configure *cfg,
- 			if (!((i+1) % nb_dst_sges))
- 				(*dst_sges)[i].length += (cur_buf_size % nb_dst_sges);
- 		}
++	cnxk_set_fp_ops(dev, conf->flags & RTE_DMA_CFG_FLAG_ENQ_DEQ);
 +
-+		if (cfg->use_ops) {
-+
-+			nr_buf /= RTE_MAX(nb_src_sges, nb_dst_sges);
-+			*dma_ops = rte_zmalloc(NULL, nr_buf * (sizeof(struct rte_dma_op *)),
-+					       RTE_CACHE_LINE_SIZE);
-+			if (*dma_ops == NULL) {
-+				printf("Error: dma_ops container malloc failed.\n");
-+				return -1;
-+			}
-+
-+			ops = (uintptr_t)rte_zmalloc(
-+				NULL,
-+				nr_buf * (sizeof(struct rte_dma_op) + ((nb_src_sges + nb_dst_sges) *
-+								       sizeof(struct rte_dma_sge))),
-+				RTE_CACHE_LINE_SIZE);
-+			if (ops == 0) {
-+				printf("Error: dma_ops malloc failed.\n");
-+				return -1;
-+			}
-+
-+			for (i = 0; i < nr_buf; i++)
-+				(*dma_ops)[i] =
-+					(struct rte_dma_op *)(ops +
-+							      (i * (sizeof(struct rte_dma_op) +
-+								    ((nb_src_sges + nb_dst_sges) *
-+								     sizeof(struct rte_dma_sge)))));
-+		}
- 	}
- 
  	return 0;
-@@ -582,8 +677,12 @@ get_work_function(struct test_configure *cfg)
- 	if (cfg->is_dma) {
- 		if (!cfg->is_sg)
- 			fn = do_dma_plain_mem_copy;
--		else
--			fn = do_dma_sg_mem_copy;
-+		else {
-+			if (cfg->use_ops)
-+				fn = do_dma_enq_deq_mem_copy;
-+			else
-+				fn = do_dma_sg_mem_copy;
-+		}
- 	} else {
- 		fn = do_cpu_mem_copy;
- 	}
-@@ -680,6 +779,7 @@ mem_copy_benchmark(struct test_configure *cfg)
- 	struct rte_dma_sge *src_sges = NULL, *dst_sges = NULL;
- 	struct vchan_dev_config *vchan_dev = NULL;
- 	struct lcore_dma_map_t *lcore_dma_map = NULL;
-+	struct rte_dma_op **dma_ops = NULL;
- 	unsigned int buf_size = cfg->buf_size.cur;
- 	uint16_t kick_batch = cfg->kick_batch.cur;
- 	uint16_t nb_workers = cfg->num_worker;
-@@ -690,13 +790,13 @@ mem_copy_benchmark(struct test_configure *cfg)
- 	float mops, mops_total;
- 	float bandwidth, bandwidth_total;
- 	uint32_t nr_sgsrc = 0, nr_sgdst = 0;
--	uint32_t nr_buf;
-+	uint32_t nr_buf, nr_ops;
- 	int ret = 0;
+ }
  
- 	nr_buf = align_buffer_count(cfg, &nr_sgsrc, &nr_sgdst);
- 	cfg->nr_buf = nr_buf;
- 
--	if (setup_memory_env(cfg, &srcs, &dsts, &src_sges, &dst_sges) < 0)
-+	if (setup_memory_env(cfg, &srcs, &dsts, &src_sges, &dst_sges, &dma_ops) < 0)
- 		goto out;
- 
- 	if (cfg->is_dma)
-@@ -751,6 +851,25 @@ mem_copy_benchmark(struct test_configure *cfg)
- 				goto out;
- 		}
- 
-+		if (cfg->is_sg && cfg->use_ops) {
-+			nr_ops = nr_buf / RTE_MAX(cfg->nb_src_sges, cfg->nb_dst_sges);
-+			lcores[i]->nr_buf = nr_ops / nb_workers;
-+			lcores[i]->dma_ops = dma_ops + (nr_ops / nb_workers * i);
-+			for (j = 0; j < (nr_ops / nb_workers); j++) {
-+				for (k = 0; k < cfg->nb_src_sges; k++)
-+					lcores[i]->dma_ops[j]->src_dst_seg[k] =
-+						lcores[i]->sge.srcs[(j * cfg->nb_src_sges) + k];
-+
-+				for (k = 0; k < cfg->nb_dst_sges; k++)
-+					lcores[i]->dma_ops[j]->src_dst_seg[k + cfg->nb_src_sges] =
-+						lcores[i]->sge.dsts[(j * cfg->nb_dst_sges) + k];
-+
-+				lcores[i]->dma_ops[j]->nb_src = cfg->nb_src_sges;
-+				lcores[i]->dma_ops[j]->nb_dst = cfg->nb_dst_sges;
-+				lcores[i]->dma_ops[j]->vchan = 0;
-+			}
-+		}
-+
- 		rte_eal_remote_launch(get_work_function(cfg), (void *)(lcores[i]), lcore_id);
+@@ -270,6 +273,14 @@ cnxk_dmadev_vchan_setup(struct rte_dma_dev *dev, uint16_t vchan,
+ 		return -ENOMEM;
  	}
  
-diff --git a/app/test-dma-perf/config.ini b/app/test-dma-perf/config.ini
-index 61e49dbae5..fa59f6b140 100644
---- a/app/test-dma-perf/config.ini
-+++ b/app/test-dma-perf/config.ini
-@@ -52,6 +52,8 @@
- ;
- ; For DMA scatter-gather memory copy, the parameters need to be configured
- ; and they are valid only when type is DMA_MEM_COPY.
-+;
-+; To use Enqueue Dequeue operations, set ``use_enq_deq_ops=1`` in the configuration.
- 
- ; To specify a configuration file, use the "--config" flag followed by the path to the file.
- 
-@@ -88,6 +90,7 @@ test_seconds=2
- lcore_dma0=lcore=10,dev=0000:00:04.1,dir=mem2mem
- lcore_dma1=lcore=11,dev=0000:00:04.2,dir=mem2mem
- eal_args=--in-memory --file-prefix=test
-+use_enq_deq_ops=0
- 
- [case3]
- skip=1
-diff --git a/app/test-dma-perf/main.c b/app/test-dma-perf/main.c
-index 0586b3e1d0..cb4aee878f 100644
---- a/app/test-dma-perf/main.c
-+++ b/app/test-dma-perf/main.c
-@@ -297,8 +297,8 @@ load_configs(const char *path)
- 	char section_name[CFG_NAME_LEN];
- 	const char *case_type;
- 	const char *lcore_dma;
--	const char *mem_size_str, *buf_size_str, *ring_size_str, *kick_batch_str,
--		*src_sges_str, *dst_sges_str;
-+	const char *mem_size_str, *buf_size_str, *ring_size_str, *kick_batch_str, *src_sges_str,
-+		*dst_sges_str, *use_dma_ops;
- 	const char *skip;
- 	struct rte_kvargs *kvlist;
- 	int args_nr, nb_vp;
-@@ -349,6 +349,15 @@ load_configs(const char *path)
- 			continue;
- 		}
- 
-+		if (is_dma) {
-+			use_dma_ops =
-+				rte_cfgfile_get_entry(cfgfile, section_name, "use_enq_deq_ops");
-+			if (use_dma_ops != NULL && (atoi(use_dma_ops) == 1))
-+				test_case->use_ops = true;
-+			else
-+				test_case->use_ops = false;
-+		}
++	size = (max_desc * sizeof(struct rte_dma_op *));
++	dpi_conf->c_desc.ops = rte_zmalloc(NULL, size, RTE_CACHE_LINE_SIZE);
++	if (dpi_conf->c_desc.ops == NULL) {
++		plt_err("Failed to allocate for ops array");
++		rte_free(dpi_conf->c_desc.compl_ptr);
++		return -ENOMEM;
++	}
 +
- 		test_case->is_dma = is_dma;
- 		test_case->src_numa_node = (int)atoi(rte_cfgfile_get_entry(cfgfile,
- 								section_name, "src_numa_node"));
-diff --git a/app/test-dma-perf/main.h b/app/test-dma-perf/main.h
-index 59eb648b3d..d6cc613250 100644
---- a/app/test-dma-perf/main.h
-+++ b/app/test-dma-perf/main.h
-@@ -58,6 +58,7 @@ struct test_configure {
- 	uint16_t opcode;
- 	bool is_dma;
- 	bool is_sg;
-+	bool use_ops;
- 	struct lcore_dma_config dma_config[MAX_WORKER_NB];
- 	struct test_configure_entry mem_size;
- 	struct test_configure_entry buf_size;
-diff --git a/doc/guides/tools/dmaperf.rst b/doc/guides/tools/dmaperf.rst
-index b7ff41065f..7abbbf9260 100644
---- a/doc/guides/tools/dmaperf.rst
-+++ b/doc/guides/tools/dmaperf.rst
-@@ -69,6 +69,7 @@ along with the application to demonstrate all the parameters.
-    lcore_dma1=lcore=11,dev=0000:00:04.2,dir=dev2mem,raddr=0x200000000,coreid=1,pfid=2,vfid=3
-    lcore_dma2=lcore=12,dev=0000:00:04.3,dir=mem2dev,raddr=0x200000000,coreid=1,pfid=2,vfid=3
-    eal_args=--in-memory --file-prefix=test
-+   use_enq_deq_ops=0
+ 	for (i = 0; i < max_desc; i++)
+ 		dpi_conf->c_desc.compl_ptr[i * CNXK_DPI_COMPL_OFFSET] = CNXK_DPI_REQ_CDATA;
  
- The configuration file is divided into multiple sections, each section represents a test case.
- The four mandatory variables ``mem_size``, ``buf_size``, ``dma_ring_size``, and ``kick_batch``
-@@ -83,6 +84,7 @@ The variables for mem2dev and dev2mem copy are
- and can vary for each device.
+@@ -382,23 +393,25 @@ cnxk_dmadev_completed(void *dev_private, uint16_t vchan, const uint16_t nb_cpls,
+ 	struct cnxk_dpi_vf_s *dpivf = dev_private;
+ 	struct cnxk_dpi_conf *dpi_conf = &dpivf->conf[vchan];
+ 	struct cnxk_dpi_cdesc_data_s *c_desc = &dpi_conf->c_desc;
++	const uint16_t max_cnt = c_desc->max_cnt;
+ 	uint8_t status;
+ 	int cnt;
  
- For scatter-gather copy test ``dma_src_sge``, ``dma_dst_sge`` must be configured.
-+Enqueue and dequeue operations can be enabled by setting ``use_enq_deq_ops=1``.
+ 	for (cnt = 0; cnt < nb_cpls; cnt++) {
+-		status = c_desc->compl_ptr[c_desc->head * CNXK_DPI_COMPL_OFFSET];
++		status = c_desc->compl_ptr[(c_desc->head & max_cnt) * CNXK_DPI_COMPL_OFFSET];
+ 		if (status) {
+ 			if (status == CNXK_DPI_REQ_CDATA)
+ 				break;
+ 			*has_error = 1;
+ 			dpi_conf->stats.errors++;
+-			c_desc->compl_ptr[c_desc->head * CNXK_DPI_COMPL_OFFSET] =
++			c_desc->compl_ptr[(c_desc->head & max_cnt) * CNXK_DPI_COMPL_OFFSET] =
+ 				CNXK_DPI_REQ_CDATA;
+-			CNXK_DPI_STRM_INC(*c_desc, head);
++			c_desc->head++;
+ 			break;
+ 		}
+-		c_desc->compl_ptr[c_desc->head * CNXK_DPI_COMPL_OFFSET] = CNXK_DPI_REQ_CDATA;
+-		CNXK_DPI_STRM_INC(*c_desc, head);
++		c_desc->compl_ptr[(c_desc->head & max_cnt) * CNXK_DPI_COMPL_OFFSET] =
++			CNXK_DPI_REQ_CDATA;
++		c_desc->head++;
+ 	}
  
- Each case can only have one variable change,
- and each change will generate a scenario, so each case can have multiple scenarios.
-@@ -170,6 +172,9 @@ Configuration Parameters
- ``eal_args``
-   Specifies the EAL arguments.
+ 	dpi_conf->stats.completed += cnt;
+@@ -414,18 +427,20 @@ cnxk_dmadev_completed_status(void *dev_private, uint16_t vchan, const uint16_t n
+ 	struct cnxk_dpi_vf_s *dpivf = dev_private;
+ 	struct cnxk_dpi_conf *dpi_conf = &dpivf->conf[vchan];
+ 	struct cnxk_dpi_cdesc_data_s *c_desc = &dpi_conf->c_desc;
++	const uint16_t max_cnt = dpi_conf->c_desc.max_cnt;
+ 	int cnt;
  
-+  ``use_enq_deq_ops``
-+  Specifies whether to use enqueue/dequeue operations.
-+  ``0`` indicates to not use and ``1`` to use.
+ 	for (cnt = 0; cnt < nb_cpls; cnt++) {
+-		status[cnt] = c_desc->compl_ptr[c_desc->head * CNXK_DPI_COMPL_OFFSET];
++		status[cnt] = c_desc->compl_ptr[(c_desc->head & max_cnt) * CNXK_DPI_COMPL_OFFSET];
+ 		if (status[cnt]) {
+ 			if (status[cnt] == CNXK_DPI_REQ_CDATA)
+ 				break;
  
- Running the Application
- -----------------------
+ 			dpi_conf->stats.errors++;
+ 		}
+-		c_desc->compl_ptr[c_desc->head * CNXK_DPI_COMPL_OFFSET] = CNXK_DPI_REQ_CDATA;
+-		CNXK_DPI_STRM_INC(*c_desc, head);
++		c_desc->compl_ptr[(c_desc->head & max_cnt) * CNXK_DPI_COMPL_OFFSET] =
++			CNXK_DPI_REQ_CDATA;
++		c_desc->head++;
+ 	}
+ 
+ 	dpi_conf->stats.completed += cnt;
+@@ -528,6 +543,37 @@ cnxk_stats_reset(struct rte_dma_dev *dev, uint16_t vchan)
+ 	return 0;
+ }
+ 
++static void
++cnxk_set_fp_ops(struct rte_dma_dev *dev, uint8_t ena_enq_deq)
++{
++
++	dev->fp_obj->copy = cnxk_dmadev_copy;
++	dev->fp_obj->copy_sg = cnxk_dmadev_copy_sg;
++	dev->fp_obj->submit = cnxk_dmadev_submit;
++	dev->fp_obj->completed = cnxk_dmadev_completed;
++	dev->fp_obj->completed_status = cnxk_dmadev_completed_status;
++	dev->fp_obj->burst_capacity = cnxk_damdev_burst_capacity;
++
++	if (roc_model_is_cn10k()) {
++		dev->fp_obj->copy = cn10k_dmadev_copy;
++		dev->fp_obj->copy_sg = cn10k_dmadev_copy_sg;
++	}
++
++	if (ena_enq_deq) {
++		dev->fp_obj->copy = NULL;
++		dev->fp_obj->copy_sg = NULL;
++		dev->fp_obj->submit = NULL;
++		dev->fp_obj->completed = NULL;
++		dev->fp_obj->completed_status = NULL;
++
++		dev->fp_obj->enqueue = cnxk_dma_ops_enqueue;
++		dev->fp_obj->dequeue = cnxk_dma_ops_dequeue;
++
++		if (roc_model_is_cn10k())
++			dev->fp_obj->enqueue = cn10k_dma_ops_enqueue;
++	}
++}
++
+ static const struct rte_dma_dev_ops cnxk_dmadev_ops = {
+ 	.dev_close = cnxk_dmadev_close,
+ 	.dev_configure = cnxk_dmadev_configure,
+@@ -571,19 +617,7 @@ cnxk_dmadev_probe(struct rte_pci_driver *pci_drv __rte_unused, struct rte_pci_de
+ 	dmadev->fp_obj->dev_private = dpivf;
+ 	dmadev->dev_ops = &cnxk_dmadev_ops;
+ 
+-	dmadev->fp_obj->copy = cnxk_dmadev_copy;
+-	dmadev->fp_obj->copy_sg = cnxk_dmadev_copy_sg;
+-	dmadev->fp_obj->submit = cnxk_dmadev_submit;
+-	dmadev->fp_obj->completed = cnxk_dmadev_completed;
+-	dmadev->fp_obj->completed_status = cnxk_dmadev_completed_status;
+-	dmadev->fp_obj->burst_capacity = cnxk_damdev_burst_capacity;
+-
+-	if (roc_model_is_cn10k()) {
+-		dpivf->is_cn10k = true;
+-		dmadev->fp_obj->copy = cn10k_dmadev_copy;
+-		dmadev->fp_obj->copy_sg = cn10k_dmadev_copy_sg;
+-	}
+-
++	dpivf->is_cn10k = roc_model_is_cn10k();
+ 	dpivf->mcs_lock = NULL;
+ 	rdpi = &dpivf->rdpi;
+ 
+diff --git a/drivers/dma/cnxk/cnxk_dmadev.h b/drivers/dma/cnxk/cnxk_dmadev.h
+index 9a232a5464..18039e43fb 100644
+--- a/drivers/dma/cnxk/cnxk_dmadev.h
++++ b/drivers/dma/cnxk/cnxk_dmadev.h
+@@ -93,6 +93,7 @@ struct cnxk_dpi_cdesc_data_s {
+ 	uint16_t head;
+ 	uint16_t tail;
+ 	uint8_t *compl_ptr;
++	struct rte_dma_op **ops;
+ };
+ 
+ struct cnxk_dpi_conf {
+@@ -131,5 +132,11 @@ int cn10k_dmadev_copy(void *dev_private, uint16_t vchan, rte_iova_t src, rte_iov
+ int cn10k_dmadev_copy_sg(void *dev_private, uint16_t vchan, const struct rte_dma_sge *src,
+ 			 const struct rte_dma_sge *dst, uint16_t nb_src, uint16_t nb_dst,
+ 			 uint64_t flags);
++uint16_t cnxk_dma_ops_enqueue(void *dev_private, uint16_t vchan, struct rte_dma_op **ops,
++			      uint16_t nb_ops);
++uint16_t cn10k_dma_ops_enqueue(void *dev_private, uint16_t vchan, struct rte_dma_op **ops,
++			       uint16_t nb_ops);
++uint16_t cnxk_dma_ops_dequeue(void *dev_private, uint16_t vchan, struct rte_dma_op **ops,
++			      uint16_t nb_ops);
+ 
+ #endif
+diff --git a/drivers/dma/cnxk/cnxk_dmadev_fp.c b/drivers/dma/cnxk/cnxk_dmadev_fp.c
+index dea73c5b41..579aafa894 100644
+--- a/drivers/dma/cnxk/cnxk_dmadev_fp.c
++++ b/drivers/dma/cnxk/cnxk_dmadev_fp.c
+@@ -246,15 +246,16 @@ cnxk_dmadev_copy(void *dev_private, uint16_t vchan, rte_iova_t src, rte_iova_t d
+ 	struct cnxk_dpi_vf_s *dpivf = dev_private;
+ 	struct cnxk_dpi_conf *dpi_conf = &dpivf->conf[vchan];
+ 	uint64_t cmd[CNXK_DPI_DW_PER_SINGLE_CMD];
++	const uint16_t max_cnt = dpi_conf->c_desc.max_cnt;
+ 	uint8_t *comp_ptr;
+ 	int rc;
+ 
+-	if (unlikely(((dpi_conf->c_desc.tail + 1) & dpi_conf->c_desc.max_cnt) ==
+-		     dpi_conf->c_desc.head))
++	if (unlikely(((dpi_conf->c_desc.tail + 1) & max_cnt) == (dpi_conf->c_desc.head & max_cnt)))
+ 		return -ENOSPC;
+ 
+-	comp_ptr = &dpi_conf->c_desc.compl_ptr[dpi_conf->c_desc.tail * CNXK_DPI_COMPL_OFFSET];
+-	CNXK_DPI_STRM_INC(dpi_conf->c_desc, tail);
++	comp_ptr = &dpi_conf->c_desc
++			    .compl_ptr[(dpi_conf->c_desc.tail & max_cnt) * CNXK_DPI_COMPL_OFFSET];
++	dpi_conf->c_desc.tail++;
+ 
+ 	cmd[0] = (1UL << 54) | (1UL << 48);
+ 	cmd[1] = dpi_conf->cmd.u | ((flags & RTE_DMA_OP_FLAG_AUTO_FREE) << 37);
+@@ -276,7 +277,7 @@ cnxk_dmadev_copy(void *dev_private, uint16_t vchan, rte_iova_t src, rte_iova_t d
+ 
+ 	rc = __dpi_queue_write_single(dpivf, cmd);
+ 	if (unlikely(rc)) {
+-		CNXK_DPI_STRM_DEC(dpi_conf->c_desc, tail);
++		dpi_conf->c_desc.tail--;
+ 		return rc;
+ 	}
+ 
+@@ -300,17 +301,18 @@ cnxk_dmadev_copy_sg(void *dev_private, uint16_t vchan, const struct rte_dma_sge
+ {
+ 	struct cnxk_dpi_vf_s *dpivf = dev_private;
+ 	struct cnxk_dpi_conf *dpi_conf = &dpivf->conf[vchan];
++	const uint16_t max_cnt = dpi_conf->c_desc.max_cnt;
+ 	const struct rte_dma_sge *fptr, *lptr;
+ 	uint8_t *comp_ptr;
+ 	uint64_t hdr[4];
+ 	int rc;
+ 
+-	if (unlikely(((dpi_conf->c_desc.tail + 1) & dpi_conf->c_desc.max_cnt) ==
+-		     dpi_conf->c_desc.head))
++	if (unlikely(((dpi_conf->c_desc.tail + 1) & max_cnt) == (dpi_conf->c_desc.head & max_cnt)))
+ 		return -ENOSPC;
+ 
+-	comp_ptr = &dpi_conf->c_desc.compl_ptr[dpi_conf->c_desc.tail * CNXK_DPI_COMPL_OFFSET];
+-	CNXK_DPI_STRM_INC(dpi_conf->c_desc, tail);
++	comp_ptr = &dpi_conf->c_desc
++			    .compl_ptr[(dpi_conf->c_desc.tail & max_cnt) * CNXK_DPI_COMPL_OFFSET];
++	dpi_conf->c_desc.tail++;
+ 
+ 	hdr[1] = dpi_conf->cmd.u | ((flags & RTE_DMA_OP_FLAG_AUTO_FREE) << 37);
+ 	hdr[2] = (uint64_t)comp_ptr;
+@@ -331,7 +333,7 @@ cnxk_dmadev_copy_sg(void *dev_private, uint16_t vchan, const struct rte_dma_sge
+ 
+ 	rc = __dpi_queue_write_sg(dpivf, hdr, fptr, lptr, nb_src, nb_dst);
+ 	if (unlikely(rc)) {
+-		CNXK_DPI_STRM_DEC(dpi_conf->c_desc, tail);
++		dpi_conf->c_desc.tail--;
+ 		return rc;
+ 	}
+ 
+@@ -355,16 +357,17 @@ cn10k_dmadev_copy(void *dev_private, uint16_t vchan, rte_iova_t src, rte_iova_t
+ {
+ 	struct cnxk_dpi_vf_s *dpivf = dev_private;
+ 	struct cnxk_dpi_conf *dpi_conf = &dpivf->conf[vchan];
++	const uint16_t max_cnt = dpi_conf->c_desc.max_cnt;
+ 	uint64_t cmd[CNXK_DPI_DW_PER_SINGLE_CMD];
+ 	uint8_t *comp_ptr;
+ 	int rc;
+ 
+-	if (unlikely(((dpi_conf->c_desc.tail + 1) & dpi_conf->c_desc.max_cnt) ==
+-		     dpi_conf->c_desc.head))
++	if (unlikely(((dpi_conf->c_desc.tail + 1) & max_cnt) == (dpi_conf->c_desc.head & max_cnt)))
+ 		return -ENOSPC;
+ 
+-	comp_ptr = &dpi_conf->c_desc.compl_ptr[dpi_conf->c_desc.tail * CNXK_DPI_COMPL_OFFSET];
+-	CNXK_DPI_STRM_INC(dpi_conf->c_desc, tail);
++	comp_ptr = &dpi_conf->c_desc
++			    .compl_ptr[(dpi_conf->c_desc.tail & max_cnt) * CNXK_DPI_COMPL_OFFSET];
++	dpi_conf->c_desc.tail++;
+ 
+ 	cmd[0] = dpi_conf->cmd.u | (1U << 6) | 1U;
+ 	cmd[1] = (uint64_t)comp_ptr;
+@@ -376,7 +379,7 @@ cn10k_dmadev_copy(void *dev_private, uint16_t vchan, rte_iova_t src, rte_iova_t
+ 
+ 	rc = __dpi_queue_write_single(dpivf, cmd);
+ 	if (unlikely(rc)) {
+-		CNXK_DPI_STRM_DEC(dpi_conf->c_desc, tail);
++		dpi_conf->c_desc.tail--;
+ 		return rc;
+ 	}
+ 
+@@ -401,16 +404,17 @@ cn10k_dmadev_copy_sg(void *dev_private, uint16_t vchan, const struct rte_dma_sge
+ {
+ 	struct cnxk_dpi_vf_s *dpivf = dev_private;
+ 	struct cnxk_dpi_conf *dpi_conf = &dpivf->conf[vchan];
++	const uint16_t max_cnt = dpi_conf->c_desc.max_cnt;
+ 	uint8_t *comp_ptr;
+ 	uint64_t hdr[4];
+ 	int rc;
+ 
+-	if (unlikely(((dpi_conf->c_desc.tail + 1) & dpi_conf->c_desc.max_cnt) ==
+-		     dpi_conf->c_desc.head))
++	if (unlikely(((dpi_conf->c_desc.tail + 1) & max_cnt) == (dpi_conf->c_desc.head & max_cnt)))
+ 		return -ENOSPC;
+ 
+-	comp_ptr = &dpi_conf->c_desc.compl_ptr[dpi_conf->c_desc.tail * CNXK_DPI_COMPL_OFFSET];
+-	CNXK_DPI_STRM_INC(dpi_conf->c_desc, tail);
++	comp_ptr = &dpi_conf->c_desc
++			    .compl_ptr[(dpi_conf->c_desc.tail & max_cnt) * CNXK_DPI_COMPL_OFFSET];
++	dpi_conf->c_desc.tail++;
+ 
+ 	hdr[0] = dpi_conf->cmd.u | (nb_dst << 6) | nb_src;
+ 	hdr[1] = (uint64_t)comp_ptr;
+@@ -418,7 +422,7 @@ cn10k_dmadev_copy_sg(void *dev_private, uint16_t vchan, const struct rte_dma_sge
+ 
+ 	rc = __dpi_queue_write_sg(dpivf, hdr, src, dst, nb_src, nb_dst);
+ 	if (unlikely(rc)) {
+-		CNXK_DPI_STRM_DEC(dpi_conf->c_desc, tail);
++		dpi_conf->c_desc.tail--;
+ 		return rc;
+ 	}
+ 
+@@ -670,3 +674,148 @@ cnxk_dma_adapter_dequeue(uintptr_t get_work1)
+ 
+ 	return (uintptr_t)op;
+ }
++
++uint16_t
++cnxk_dma_ops_enqueue(void *dev_private, uint16_t vchan, struct rte_dma_op **ops, uint16_t nb_ops)
++{
++	struct cnxk_dpi_vf_s *dpivf = dev_private;
++	struct cnxk_dpi_conf *dpi_conf = &dpivf->conf[vchan];
++	const uint16_t max_cnt = dpi_conf->c_desc.max_cnt;
++	const struct rte_dma_sge *fptr, *lptr;
++	uint16_t src, dst, nwords = 0;
++	struct rte_dma_op *op;
++	uint16_t space, i;
++	uint8_t *comp_ptr;
++	uint64_t hdr[4];
++	int rc;
++
++	space = ((dpi_conf->c_desc.max_cnt + dpi_conf->c_desc.head - dpi_conf->c_desc.tail) &
++		 max_cnt);
++	space = RTE_MIN(space, nb_ops);
++
++	for (i = 0; i < space; i++) {
++		op = ops[i];
++		comp_ptr = &dpi_conf->c_desc.compl_ptr[(dpi_conf->c_desc.tail & max_cnt) *
++						       CNXK_DPI_COMPL_OFFSET];
++		dpi_conf->c_desc.ops[dpi_conf->c_desc.tail & max_cnt] = op;
++		dpi_conf->c_desc.tail++;
++
++		hdr[1] = dpi_conf->cmd.u | ((op->flags & RTE_DMA_OP_FLAG_AUTO_FREE) << 37);
++		hdr[2] = (uint64_t)comp_ptr;
++
++		src = op->nb_src;
++		dst = op->nb_dst;
++		/*
++		 * For inbound case, src pointers are last pointers.
++		 * For all other cases, src pointers are first pointers.
++		 */
++		if (((dpi_conf->cmd.u >> 48) & DPI_HDR_XTYPE_MASK) == DPI_XTYPE_INBOUND) {
++			fptr = &op->src_dst_seg[src];
++			lptr = &op->src_dst_seg[0];
++			RTE_SWAP(src, dst);
++		} else {
++			fptr = &op->src_dst_seg[0];
++			lptr = &op->src_dst_seg[src];
++		}
++		hdr[0] = ((uint64_t)dst << 54) | (uint64_t)src << 48;
++
++		rc = __dpi_queue_write_sg(dpivf, hdr, fptr, lptr, src, dst);
++		if (rc) {
++			dpi_conf->c_desc.tail--;
++			goto done;
++		}
++		nwords += CNXK_DPI_CMD_LEN(src, dst);
++	}
++
++done:
++	if (nwords) {
++		rte_wmb();
++		plt_write64(nwords, dpivf->rdpi.rbase + DPI_VDMA_DBELL);
++		dpi_conf->stats.submitted += i;
++	}
++
++	return i;
++}
++
++uint16_t
++cn10k_dma_ops_enqueue(void *dev_private, uint16_t vchan, struct rte_dma_op **ops, uint16_t nb_ops)
++{
++	struct cnxk_dpi_vf_s *dpivf = dev_private;
++	struct cnxk_dpi_conf *dpi_conf = &dpivf->conf[vchan];
++	const uint16_t max_cnt = dpi_conf->c_desc.max_cnt;
++	uint16_t space, i, nwords = 0;
++	struct rte_dma_op *op;
++	uint16_t src, dst;
++	uint8_t *comp_ptr;
++	uint64_t hdr[4];
++	int rc;
++
++	space = (max_cnt + dpi_conf->c_desc.head - dpi_conf->c_desc.tail) & max_cnt;
++	space = RTE_MIN(space, nb_ops);
++
++	for (i = 0; i < space; i++) {
++		op = ops[i];
++		src = op->nb_src;
++		dst = op->nb_dst;
++
++		comp_ptr = &dpi_conf->c_desc.compl_ptr[(dpi_conf->c_desc.tail & max_cnt) *
++						       CNXK_DPI_COMPL_OFFSET];
++		dpi_conf->c_desc.ops[dpi_conf->c_desc.tail & max_cnt] = op;
++		dpi_conf->c_desc.tail++;
++
++		hdr[0] = dpi_conf->cmd.u | (dst << 6) | src;
++		hdr[1] = (uint64_t)comp_ptr;
++		hdr[2] = (1UL << 47) | ((op->flags & RTE_DMA_OP_FLAG_AUTO_FREE) << 43);
++
++		rc = __dpi_queue_write_sg(dpivf, hdr, &op->src_dst_seg[0], &op->src_dst_seg[src],
++					  src, dst);
++		if (rc) {
++			dpi_conf->c_desc.tail--;
++			goto done;
++		}
++		nwords += CNXK_DPI_CMD_LEN(src, dst);
++	}
++
++done:
++	if (nwords) {
++		rte_wmb();
++		plt_write64(nwords, dpivf->rdpi.rbase + DPI_VDMA_DBELL);
++		dpi_conf->stats.submitted += i;
++	}
++
++	return i;
++}
++
++uint16_t
++cnxk_dma_ops_dequeue(void *dev_private, uint16_t vchan, struct rte_dma_op **ops, uint16_t nb_ops)
++{
++	struct cnxk_dpi_vf_s *dpivf = dev_private;
++	struct cnxk_dpi_conf *dpi_conf = &dpivf->conf[vchan];
++	struct cnxk_dpi_cdesc_data_s *c_desc = &dpi_conf->c_desc;
++	const uint16_t max_cnt = c_desc->max_cnt;
++	struct rte_dma_op *op;
++	uint16_t space, cnt;
++	uint8_t status;
++
++	space = (c_desc->tail - c_desc->head) & max_cnt;
++	space = RTE_MIN(nb_ops, space);
++
++	for (cnt = 0; cnt < space; cnt++) {
++		status = c_desc->compl_ptr[(c_desc->head & max_cnt) * CNXK_DPI_COMPL_OFFSET];
++		op = c_desc->ops[c_desc->head & max_cnt];
++		if (status) {
++			if (status == CNXK_DPI_REQ_CDATA)
++				break;
++			dpi_conf->stats.errors++;
++		}
++		op->status = status;
++		ops[cnt] = op;
++		c_desc->compl_ptr[(c_desc->head & max_cnt) * CNXK_DPI_COMPL_OFFSET] =
++			CNXK_DPI_REQ_CDATA;
++		c_desc->head++;
++	}
++
++	dpi_conf->stats.completed += cnt;
++
++	return cnt;
++}
 -- 
 2.43.0
 
