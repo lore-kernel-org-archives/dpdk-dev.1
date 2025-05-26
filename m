@@ -2,51 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE04C54FB3
-	for <dpdk-dev@archiver.kernel.org>; Mon, 26 May 2025 17:01:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BABA2C5AD49
+	for <dpdk-dev@archiver.kernel.org>; Mon, 26 May 2025 17:01:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D11FE40DD1;
-	Mon, 26 May 2025 18:59:49 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E029B40DDA;
+	Mon, 26 May 2025 18:59:50 +0200 (CEST)
 Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
  [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 71E9940A71
+ by mails.dpdk.org (Postfix) with ESMTP id DB09940B9F
  for <dev@dpdk.org>; Mon, 26 May 2025 18:59:47 +0200 (CEST)
 Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54QA8Nsq022620
- for <dev@dpdk.org>; Mon, 26 May 2025 09:59:46 -0700
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54QA8RXm022843
+ for <dev@dpdk.org>; Mon, 26 May 2025 09:59:47 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=z
- o1ORhVz5s8mVXPkPwtc+O7UH1xg75hWSNHpgBrfw8I=; b=M+auXIfu8KSXT5JGm
- z18N/f36XZnYhBwIOXtj7L78L1KKC2aqaHPV9NMFmjmHAEuIkzfTAOIWbwEeb/Cz
- 0kHH0WRuNvnDZyg8oCAN4AGpT1z6TCe1A8R6IAziZGydIcy9dDit7NGmzrTgM1v2
- HrxOpNLxxJFK4kSedpbXgZv7AhNuvYMHap44zO7obtZR6vfw9aPln1qziclI9W4J
- 4bHiQ9LF73wxeprJmK+sA3LbXLamRZFeuyV6yCazY2P5r6yYFcn7HUCQDz7Qe4A1
- 7kuLhPJDE+KNMMgyzN7oJqFln0YZ9YvnV93I6O+AAu8Lvkt+4z0K0LaLDkOwdsHa
- aGf3A==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46vp9krpb9-2
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=R
+ KaT0Z2F6Yv4MB6dvxQqq8GOjwJJbjJatG27ie7+zv8=; b=EU53mcwQ3L1Y/xTcv
+ 7xLWJ6anJq78waJfXJt8F06qjgp++SM6+ZI9WW8no8uOCR7XTlG0vC39Mmbz6chb
+ /fra+f2fusyH+ZZ06Dt1nMC4lCtFy6umq3rGmV+oiB36sRqvH2gt9kS3UJaJ+zcH
+ ++U6Pd4ARNpl4NP2XUNlpNoyobLxK7qdeFXWghGpUx3obzyrZCRVvjqo3XZvyImx
+ 7zttCYL9cRnU5qqO/VDjFRt2RLBaCDfktI0ZinbslIqlo4mt+Fz6EQqXmBq/Ts+6
+ KQ7cLyB8XQCVAcxSUljUh2tTykQPvCF+Jzg6/qfQEQKkHED2wSoKoGnYDV9Vv8zq
+ g00eA==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46vp9krpbp-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
  for <dev@dpdk.org>; Mon, 26 May 2025 09:59:46 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 26 May 2025 09:59:34 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 26 May 2025 09:59:34 -0700
+ 15.2.1544.4; Mon, 26 May 2025 09:59:44 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 26 May 2025 09:59:44 -0700
 Received: from hyd1554.caveonetworks.com (unknown [10.29.56.32])
- by maili.marvell.com (Postfix) with ESMTP id 28D773F7048;
- Mon, 26 May 2025 09:59:31 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 1D36D3F7048;
+ Mon, 26 May 2025 09:59:41 -0700 (PDT)
 From: Tejasree Kondoj <ktejasree@marvell.com>
 To: Akhil Goyal <gakhil@marvell.com>
 CC: Vidya Sagar Velumuri <vvelumuri@marvell.com>, Anoob Joseph
  <anoobj@marvell.com>, Aakash Sasidharan <asasidharan@marvell.com>,
  "Nithinsen Kaithakadan" <nkaithakadan@marvell.com>, Rupesh Chiluka
  <rchiluka@marvell.com>, <dev@dpdk.org>
-Subject: [PATCH v2 22/40] crypto/cnxk: add skeleton for tls
-Date: Mon, 26 May 2025 22:28:01 +0530
-Message-ID: <20250526165819.2197892-23-ktejasree@marvell.com>
+Subject: [PATCH v2 25/40] crypto/cnxk: add tls session destroy
+Date: Mon, 26 May 2025 22:28:04 +0530
+Message-ID: <20250526165819.2197892-26-ktejasree@marvell.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250526165819.2197892-1-ktejasree@marvell.com>
 References: <20250526165819.2197892-1-ktejasree@marvell.com>
@@ -54,18 +54,18 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-Authority-Analysis: v=2.4 cv=VYn3PEp9 c=1 sm=1 tr=0 ts=68349e02 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=_WyLJemfGRsr6S8wcwYA:9
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=YxzK5bxhEJpzRz2Y-cgA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI2MDE0NCBTYWx0ZWRfXzmhZ0xPqqZH6
- rSVp9kN27FJk01HDODZk1zbyBxlygJzqC4T+keuWLRWhdZ/idyyMF4s/vyXZpHGXa8q6eY2oR7z
- 4zL9Z/ba96V/Im/bmzj4ew+2TKRArua9j//lwdL8B77x+h8rwPyHT3l6fBI31OoiNLO72Xmec1V
- ECElac/Q2orPUWmrFRC0y8I06LjWCLcUon4PcEHlkFhUfCx5Hx9n3PqrxmTQhsr/MqtduR9S38q
- 2/xPs132EHWDnMwojrjIGhK16P6PXTFOylnYOYIC+AyFBGzrdBa4CdzvruAkr0PSXZWINtKSDc4
- zsGkuLI55V/31n8Qt7s7W/GAI/FuyJccEIemz09uxT/k9WnwsuBJotsWJ9YKCYQcPC+1Ltaspts
- FxKLxuGrNZip5ZFn/nPBaPSsJQn9+3ezj/I2KJVft4mOVxJKBfTUJEjw2cIhmOCl3aheYFcG
-X-Proofpoint-ORIG-GUID: PyENihVzcx0Lf3zyJjMnlZQAdLUHTX5L
-X-Proofpoint-GUID: PyENihVzcx0Lf3zyJjMnlZQAdLUHTX5L
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI2MDE0NCBTYWx0ZWRfXxHiTgi1MRzsI
+ ibIbTcEDWUWwyF99ya9TJ1tPtCVLKZwWYv9heZPlMM7RyWGeIGzAIBH1OXU0m3Ih+zfPYNVf5zE
+ MhDEcSDHEQujYP51bMMn4pmYuYrgc8dCu7+R9WTclKZ9zkx6CptIKa5Ij2Lag6cPR6Np56AtVeN
+ tvKFeKM3gZW9lCB2kwGITlpy5tpw7EgXlk67Ssmex2CEFJm/45dP6s+YgJRiUK2MHGI2owfS+8J
+ JZcph5b4w5ndEL+CF/hJfOtzN2fNY91K82boPA6BETqWdcy9UpXlFbfl7dZsv8mqRp8IJM/M2Pf
+ e1zO+wakfUia5mXT0EEJ1BMxgDkhXdGvXCMIrBHHwcEIlyLadDYzSUm0DD1xoyywYYtrtS3yY21
+ dqg0TXdv54UINtCSG6aAxdWd3KOxbEN5HaV0dnXMJzS0WRZ17xkWK+NdU3nXRjwB9yoz52KT
+X-Proofpoint-ORIG-GUID: 7He4kIhrBJiRvf-RyqcvKQyFDQGWgNH5
+X-Proofpoint-GUID: 7He4kIhrBJiRvf-RyqcvKQyFDQGWgNH5
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-26_08,2025-05-26_02,2025-03-28_01
@@ -84,378 +84,131 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Vidya Sagar Velumuri <vvelumuri@marvell.com>
 
-Add skeleton for tls support for cn20k
+Add tls session destroy for cn20k
 
 Signed-off-by: Vidya Sagar Velumuri <vvelumuri@marvell.com>
 ---
- drivers/common/cnxk/roc_ie_ow_tls.h | 233 ++++++++++++++++++++++++++++
- drivers/crypto/cnxk/cn20k_tls.c     |  56 +++++++
- drivers/crypto/cnxk/cn20k_tls.h     |  40 +++++
- drivers/crypto/cnxk/meson.build     |   1 +
- 4 files changed, 330 insertions(+)
- create mode 100644 drivers/common/cnxk/roc_ie_ow_tls.h
- create mode 100644 drivers/crypto/cnxk/cn20k_tls.c
- create mode 100644 drivers/crypto/cnxk/cn20k_tls.h
+ drivers/crypto/cnxk/cn20k_cryptodev_sec.c |  3 +
+ drivers/crypto/cnxk/cn20k_tls.c           | 84 ++++++++++++++++++++++-
+ 2 files changed, 85 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/common/cnxk/roc_ie_ow_tls.h b/drivers/common/cnxk/roc_ie_ow_tls.h
-new file mode 100644
-index 0000000000..d2338926cc
---- /dev/null
-+++ b/drivers/common/cnxk/roc_ie_ow_tls.h
-@@ -0,0 +1,233 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(C) 2025 Marvell.
-+ */
+diff --git a/drivers/crypto/cnxk/cn20k_cryptodev_sec.c b/drivers/crypto/cnxk/cn20k_cryptodev_sec.c
+index e5158af595..ab676cc6cf 100644
+--- a/drivers/crypto/cnxk/cn20k_cryptodev_sec.c
++++ b/drivers/crypto/cnxk/cn20k_cryptodev_sec.c
+@@ -58,6 +58,9 @@ cn20k_sec_session_destroy(void *dev, struct rte_security_session *sec_sess)
+ 	if (cn20k_sec_sess->proto == RTE_SECURITY_PROTOCOL_IPSEC)
+ 		return cn20k_sec_ipsec_session_destroy(qp, cn20k_sec_sess);
+ 
++	if (cn20k_sec_sess->proto == RTE_SECURITY_PROTOCOL_TLS_RECORD)
++		return cn20k_sec_tls_session_destroy(qp, cn20k_sec_sess);
 +
-+#ifndef __ROC_IE_OW_TLS_H__
-+#define __ROC_IE_OW_TLS_H__
-+
-+#include "roc_platform.h"
-+
-+#define ROC_IE_OW_TLS_CTX_ILEN		     1
-+#define ROC_IE_OW_TLS_CTX_HDR_SIZE	     1
-+#define ROC_IE_OW_TLS_AR_WIN_SIZE_MAX	     4096
-+#define ROC_IE_OW_TLS_LOG_MIN_AR_WIN_SIZE_M1 5
-+
-+/* u64 array size to fit anti replay window bits */
-+#define ROC_IE_OW_TLS_AR_WINBITS_SZ                                                                \
-+	(PLT_ALIGN_CEIL(ROC_IE_OW_TLS_AR_WIN_SIZE_MAX, BITS_PER_LONG_LONG) / BITS_PER_LONG_LONG)
-+
-+/* CN20K TLS opcodes */
-+#define ROC_IE_OW_TLS_MAJOR_OP_RECORD_ENC   0x16UL
-+#define ROC_IE_OW_TLS_MAJOR_OP_RECORD_DEC   0x17UL
-+#define ROC_IE_OW_TLS13_MAJOR_OP_RECORD_ENC 0x18UL
-+#define ROC_IE_OW_TLS13_MAJOR_OP_RECORD_DEC 0x19UL
-+
-+#define ROC_IE_OW_TLS_CTX_MAX_OPAD_IPAD_LEN 128
-+#define ROC_IE_OW_TLS_CTX_MAX_KEY_IV_LEN    48
-+#define ROC_IE_OW_TLS_CTX_MAX_IV_LEN	    16
-+
-+enum roc_ie_ow_tls_mac_type {
-+	ROC_IE_OW_TLS_MAC_MD5 = 1,
-+	ROC_IE_OW_TLS_MAC_SHA1 = 2,
-+	ROC_IE_OW_TLS_MAC_SHA2_256 = 4,
-+	ROC_IE_OW_TLS_MAC_SHA2_384 = 5,
-+	ROC_IE_OW_TLS_MAC_SHA2_512 = 6,
-+};
-+
-+enum roc_ie_ow_tls_cipher_type {
-+	ROC_IE_OW_TLS_CIPHER_3DES = 1,
-+	ROC_IE_OW_TLS_CIPHER_AES_CBC = 3,
-+	ROC_IE_OW_TLS_CIPHER_AES_GCM = 7,
-+	ROC_IE_OW_TLS_CIPHER_AES_CCM = 10,
-+	ROC_IE_OW_TLS_CIPHER_CHACHA_POLY = 9,
-+};
-+
-+enum roc_ie_ow_tls_ver {
-+	ROC_IE_OW_TLS_VERSION_TLS_12 = 1,
-+	ROC_IE_OW_TLS_VERSION_DTLS_12 = 2,
-+	ROC_IE_OW_TLS_VERSION_TLS_13 = 3,
-+};
-+
-+enum roc_ie_ow_tls_aes_key_len {
-+	ROC_IE_OW_TLS_AES_KEY_LEN_128 = 1,
-+	ROC_IE_OW_TLS_AES_KEY_LEN_256 = 3,
-+};
-+
-+enum {
-+	ROC_IE_OW_TLS_IV_SRC_DEFAULT = 0,
-+	ROC_IE_OW_TLS_IV_SRC_FROM_SA = 1,
-+};
-+
-+struct roc_ie_ow_tls_read_ctx_update_reg {
-+	uint64_t ar_base;
-+	uint64_t ar_valid_mask;
-+	uint64_t hard_life;
-+	uint64_t soft_life;
-+	uint64_t mib_octs;
-+	uint64_t mib_pkts;
-+	uint64_t ar_winbits[ROC_IE_OW_TLS_AR_WINBITS_SZ];
-+};
-+
-+struct roc_ie_ow_tls_1_3_read_ctx_update_reg {
-+	uint64_t rsvd0;
-+	uint64_t ar_valid_mask;
-+	uint64_t hard_life;
-+	uint64_t soft_life;
-+	uint64_t mib_octs;
-+	uint64_t mib_pkts;
-+	uint64_t rsvd1;
-+};
-+
-+union roc_ie_ow_tls_param2 {
-+	uint16_t u16;
-+	struct {
-+		uint8_t msg_type;
-+		uint8_t rsvd;
-+	} s;
-+};
-+
-+struct roc_ie_ow_tls_read_sa {
-+	/* Word0 */
-+	union {
-+		struct {
-+			uint64_t ar_win : 3;
-+			uint64_t hard_life_dec : 1;
-+			uint64_t soft_life_dec : 1;
-+			uint64_t count_glb_octets : 1;
-+			uint64_t count_glb_pkts : 1;
-+			uint64_t count_mib_bytes : 1;
-+
-+			uint64_t count_mib_pkts : 1;
-+			uint64_t hw_ctx_off : 7;
-+
-+			uint64_t ctx_id : 16;
-+
-+			uint64_t orig_pkt_fabs : 1;
-+			uint64_t orig_pkt_free : 1;
-+			uint64_t pkind : 6;
-+
-+			uint64_t rsvd0 : 1;
-+			uint64_t et_ovrwr : 1;
-+			uint64_t pkt_output : 2;
-+			uint64_t pkt_format : 1;
-+			uint64_t defrag_opt : 2;
-+			uint64_t x2p_dst : 1;
-+
-+			uint64_t ctx_push_size : 7;
-+			uint64_t rsvd1 : 1;
-+
-+			uint64_t ctx_hdr_size : 2;
-+			uint64_t aop_valid : 1;
-+			uint64_t rsvd2 : 1;
-+			uint64_t ctx_size : 4;
-+		} s;
-+		uint64_t u64;
-+	} w0;
-+
-+	/* Word1 */
-+	uint64_t w1_rsvd3;
-+
-+	/* Word2 */
-+	union {
-+		struct {
-+			uint64_t version_select : 4;
-+			uint64_t aes_key_len : 2;
-+			uint64_t cipher_select : 4;
-+			uint64_t mac_select : 4;
-+			uint64_t rsvd4 : 50;
-+		} s;
-+		uint64_t u64;
-+	} w2;
-+
-+	/* Word3 */
-+	uint64_t w3_rsvd5;
-+
-+	/* Word4 - Word9 */
-+	uint8_t cipher_key[ROC_IE_OW_TLS_CTX_MAX_KEY_IV_LEN];
-+
-+	union {
-+		struct {
-+			/* Word10 - Word16 */
-+			struct roc_ie_ow_tls_1_3_read_ctx_update_reg ctx;
-+		} tls_13;
-+
-+		struct {
-+			/* Word10 - Word25 */
-+			uint8_t opad_ipad[ROC_IE_OW_TLS_CTX_MAX_OPAD_IPAD_LEN];
-+
-+			/* Word26 - Word95 */
-+			struct roc_ie_ow_tls_read_ctx_update_reg ctx;
-+		} tls_12;
-+	};
-+};
-+
-+struct roc_ie_ow_tls_write_sa {
-+	/* Word0 */
-+	union {
-+		struct {
-+			uint64_t rsvd0 : 3;
-+			uint64_t hard_life_dec : 1;
-+			uint64_t soft_life_dec : 1;
-+			uint64_t count_glb_octets : 1;
-+			uint64_t count_glb_pkts : 1;
-+			uint64_t count_mib_bytes : 1;
-+
-+			uint64_t count_mib_pkts : 1;
-+			uint64_t hw_ctx_off : 7;
-+
-+			uint64_t rsvd1 : 32;
-+
-+			uint64_t ctx_push_size : 7;
-+			uint64_t rsvd2 : 1;
-+
-+			uint64_t ctx_hdr_size : 2;
-+			uint64_t aop_valid : 1;
-+			uint64_t rsvd3 : 1;
-+			uint64_t ctx_size : 4;
-+		} s;
-+		uint64_t u64;
-+	} w0;
-+
-+	/* Word1 */
-+	uint64_t w1_rsvd4;
-+
-+	/* Word2 */
-+	union {
-+		struct {
-+			uint64_t version_select : 4;
-+			uint64_t aes_key_len : 2;
-+			uint64_t cipher_select : 4;
-+			uint64_t mac_select : 4;
-+			uint64_t iv_at_cptr : 1;
-+			uint64_t rsvd5 : 49;
-+		} s;
-+		uint64_t u64;
-+	} w2;
-+
-+	/* Word3 */
-+	uint64_t w3_rsvd6;
-+
-+	/* Word4 - Word9 */
-+	uint8_t cipher_key[ROC_IE_OW_TLS_CTX_MAX_KEY_IV_LEN];
-+
-+	union {
-+		struct {
-+			/* Word10 */
-+			uint64_t w10_rsvd7;
-+
-+			uint64_t seq_num;
-+		} tls_13;
-+
-+		struct {
-+			/* Word10 - Word25 */
-+			uint8_t opad_ipad[ROC_IE_OW_TLS_CTX_MAX_OPAD_IPAD_LEN];
-+
-+			/* Word26 */
-+			uint64_t w26_rsvd7;
-+
-+			/* Word27 */
-+			uint64_t seq_num;
-+		} tls_12;
-+	};
-+};
-+#endif /* __ROC_IE_OW_TLS_H__ */
+ 	return -EINVAL;
+ }
+ 
 diff --git a/drivers/crypto/cnxk/cn20k_tls.c b/drivers/crypto/cnxk/cn20k_tls.c
-new file mode 100644
-index 0000000000..cef13a68a4
---- /dev/null
+index 27d08c49fa..b6f444baf4 100644
+--- a/drivers/crypto/cnxk/cn20k_tls.c
 +++ b/drivers/crypto/cnxk/cn20k_tls.c
-@@ -0,0 +1,56 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(C) 2025 Marvell.
-+ */
-+
-+#include <rte_crypto_sym.h>
-+#include <rte_cryptodev.h>
-+#include <rte_security.h>
-+
-+#include <cryptodev_pmd.h>
-+
-+#include "roc_cpt.h"
-+#include "roc_se.h"
-+
-+#include "cn20k_cryptodev_sec.h"
-+#include "cn20k_tls.h"
-+#include "cnxk_cryptodev.h"
-+#include "cnxk_cryptodev_ops.h"
-+#include "cnxk_security.h"
-+
-+int
-+cn20k_tls_record_session_update(struct cnxk_cpt_vf *vf, struct cnxk_cpt_qp *qp,
-+				struct cn20k_sec_session *sess,
-+				struct rte_security_session_conf *conf)
+@@ -785,6 +785,36 @@ cn20k_tls_write_sa_create(struct roc_cpt *roc_cpt, struct roc_cpt_lf *lf,
+ 	return ret;
+ }
+ 
++static void
++tls_write_sa_init(struct roc_ie_ow_tls_write_sa *sa)
 +{
-+	RTE_SET_USED(vf);
-+	RTE_SET_USED(qp);
-+	RTE_SET_USED(sess);
-+	RTE_SET_USED(conf);
++	size_t offset;
 +
-+	return 0;
++	memset(sa, 0, sizeof(struct roc_ie_ow_tls_write_sa));
++
++	offset = offsetof(struct roc_ie_ow_tls_write_sa, tls_12.w26_rsvd7);
++	sa->w0.s.hw_ctx_off = offset / ROC_CTX_UNIT_8B;
++	sa->w0.s.ctx_push_size = sa->w0.s.hw_ctx_off;
++	sa->w0.s.ctx_size = ROC_IE_OW_TLS_CTX_ILEN;
++	sa->w0.s.ctx_hdr_size = ROC_IE_OW_TLS_CTX_HDR_SIZE;
++	sa->w0.s.aop_valid = 1;
 +}
 +
-+int
-+cn20k_tls_record_session_create(struct cnxk_cpt_vf *vf, struct cnxk_cpt_qp *qp,
-+				struct rte_security_tls_record_xform *tls_xfrm,
-+				struct rte_crypto_sym_xform *crypto_xfrm,
-+				struct rte_security_session *sess)
++static void
++tls_read_sa_init(struct roc_ie_ow_tls_read_sa *sa)
 +{
-+	RTE_SET_USED(vf);
-+	RTE_SET_USED(qp);
-+	RTE_SET_USED(tls_xfrm);
-+	RTE_SET_USED(crypto_xfrm);
-+	RTE_SET_USED(sess);
++	size_t offset;
 +
-+	return 0;
++	memset(sa, 0, sizeof(struct roc_ie_ow_tls_read_sa));
++
++	offset = offsetof(struct roc_ie_ow_tls_read_sa, tls_12.ctx);
++	sa->w0.s.hw_ctx_off = offset / ROC_CTX_UNIT_8B;
++	sa->w0.s.ctx_push_size = sa->w0.s.hw_ctx_off;
++	sa->w0.s.ctx_size = ROC_IE_OW_TLS_CTX_ILEN;
++	sa->w0.s.ctx_hdr_size = ROC_IE_OW_TLS_CTX_HDR_SIZE;
++	sa->w0.s.aop_valid = 1;
 +}
 +
-+int
-+cn20k_sec_tls_session_destroy(struct cnxk_cpt_qp *qp, struct cn20k_sec_session *sess)
-+{
+ int
+ cn20k_tls_record_session_update(struct cnxk_cpt_vf *vf, struct cnxk_cpt_qp *qp,
+ 				struct cn20k_sec_session *sess,
+@@ -824,9 +854,59 @@ cn20k_tls_record_session_create(struct cnxk_cpt_vf *vf, struct cnxk_cpt_qp *qp,
+ int
+ cn20k_sec_tls_session_destroy(struct cnxk_cpt_qp *qp, struct cn20k_sec_session *sess)
+ {
++	struct cn20k_tls_record *tls;
++	struct roc_cpt_lf *lf;
++	void *sa_dptr = NULL;
++	int ret = -ENOMEM;
+ 
+-	RTE_SET_USED(qp);
+-	RTE_SET_USED(sess);
++	lf = &qp->lf;
 +
-+	RTE_SET_USED(qp);
-+	RTE_SET_USED(sess);
++	tls = &sess->tls_rec;
 +
-+	return 0;
-+}
-diff --git a/drivers/crypto/cnxk/cn20k_tls.h b/drivers/crypto/cnxk/cn20k_tls.h
-new file mode 100644
-index 0000000000..27124602a0
---- /dev/null
-+++ b/drivers/crypto/cnxk/cn20k_tls.h
-@@ -0,0 +1,40 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(C) 2025 Marvell.
-+ */
++	/* Trigger CTX flush to write dirty data back to DRAM */
++	roc_cpt_lf_ctx_flush(lf, &tls->read_sa, false);
 +
-+#ifndef __CN20K_TLS_H__
-+#define __CN20K_TLS_H__
++	if (sess->tls_opt.is_write) {
++		sa_dptr = plt_zmalloc(sizeof(struct roc_ie_ow_tls_write_sa), 8);
++		if (sa_dptr != NULL) {
++			tls_write_sa_init(sa_dptr);
 +
-+#include <rte_crypto_sym.h>
-+#include <rte_security.h>
++			ret = roc_cpt_ctx_write(lf, sa_dptr, &tls->write_sa,
++						sizeof(struct roc_ie_ow_tls_write_sa));
++			plt_free(sa_dptr);
++		}
++		if (ret) {
++			/* MC write_ctx failed. Attempt reload of CTX */
 +
-+#include "roc_ie_ow_tls.h"
++			/* Wait for 1 ms so that flush is complete */
++			rte_delay_ms(1);
 +
-+#include "cnxk_cryptodev.h"
-+#include "cnxk_cryptodev_ops.h"
++			rte_atomic_thread_fence(rte_memory_order_seq_cst);
 +
-+/* Forward declaration */
-+struct cn20k_sec_session;
++			/* Trigger CTX reload to fetch new data from DRAM */
++			roc_cpt_lf_ctx_reload(lf, &tls->write_sa);
++		}
++	} else {
++		sa_dptr = plt_zmalloc(sizeof(struct roc_ie_ow_tls_read_sa), 8);
++		if (sa_dptr != NULL) {
++			tls_read_sa_init(sa_dptr);
 +
-+struct __rte_aligned(ROC_ALIGN) cn20k_tls_record
-+{
-+	union {
-+		/** Read SA */
-+		struct roc_ie_ow_tls_read_sa read_sa;
-+		/** Write SA */
-+		struct roc_ie_ow_tls_write_sa write_sa;
-+	};
-+};
++			ret = roc_cpt_ctx_write(lf, sa_dptr, &tls->read_sa,
++						sizeof(struct roc_ie_ow_tls_read_sa));
++			plt_free(sa_dptr);
++		}
++		if (ret) {
++			/* MC write_ctx failed. Attempt reload of CTX */
 +
-+int cn20k_tls_record_session_update(struct cnxk_cpt_vf *vf, struct cnxk_cpt_qp *qp,
-+				    struct cn20k_sec_session *sess,
-+				    struct rte_security_session_conf *conf);
++			/* Wait for 1 ms so that flush is complete */
++			rte_delay_ms(1);
 +
-+int cn20k_tls_record_session_create(struct cnxk_cpt_vf *vf, struct cnxk_cpt_qp *qp,
-+				    struct rte_security_tls_record_xform *tls_xfrm,
-+				    struct rte_crypto_sym_xform *crypto_xfrm,
-+				    struct rte_security_session *sess);
++			rte_atomic_thread_fence(rte_memory_order_seq_cst);
 +
-+int cn20k_sec_tls_session_destroy(struct cnxk_cpt_qp *qp, struct cn20k_sec_session *sess);
-+
-+#endif /* __CN20K_TLS_H__ */
-diff --git a/drivers/crypto/cnxk/meson.build b/drivers/crypto/cnxk/meson.build
-index f8077e4d4c..912c4a0851 100644
---- a/drivers/crypto/cnxk/meson.build
-+++ b/drivers/crypto/cnxk/meson.build
-@@ -21,6 +21,7 @@ sources = files(
-         'cn20k_cryptodev_ops.c',
-         'cn20k_cryptodev_sec.c',
-         'cn20k_ipsec.c',
-+        'cn20k_tls.c',
-         'cnxk_cryptodev.c',
-         'cnxk_cryptodev_capabilities.c',
-         'cnxk_cryptodev_devargs.c',
++			/* Trigger CTX reload to fetch new data from DRAM */
++			roc_cpt_lf_ctx_reload(lf, &tls->read_sa);
++		}
++	}
+ 
+ 	return 0;
+ }
 -- 
 2.25.1
 
