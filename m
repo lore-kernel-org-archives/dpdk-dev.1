@@ -2,47 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DC60C5AD49
-	for <dpdk-dev@archiver.kernel.org>; Mon, 26 May 2025 08:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C02BC5AD49
+	for <dpdk-dev@archiver.kernel.org>; Mon, 26 May 2025 08:34:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0675F40656;
-	Mon, 26 May 2025 10:33:56 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1BA5640667;
+	Mon, 26 May 2025 10:33:57 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id B95CE40615
- for <dev@dpdk.org>; Mon, 26 May 2025 10:33:52 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 60BD6402A0
+ for <dev@dpdk.org>; Mon, 26 May 2025 10:33:55 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1748248433; x=1779784433;
+ t=1748248435; x=1779784435;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=zzaYh+RklezDIFAl4uTbLV3p0q7a+PpezaZCKqG0Pog=;
- b=Bc5yLNsn1L0C8rQHx4o1Kcbt4FSiXSo3wgnQhoTU/bCxcvJKKqziiLly
- mk7v+/MoWWimTw2ZvZs/OZVxCp7FVj2q8ZV30eOpXkdwCDtGvXVdZ4yHl
- gljajfePJSKmP9DxpCo9cJPRfwUjJ5kg4LN3ZwXHliaL2QNHiDXSdVyKs
- eIjEGHjzPlwtAbf36xHwF2O0KT6roEvmYncbYMAO/cRNMIwNrv5cuHOU6
- JiRofq+Q7FPHEobG2cSMLfbpvKAlm7XDyDCFRVCRgCyW/6RDqsR1WtB3N
- rRKsBlZoagaIBRWnicg4czmFJgIPUvWh9oWBr7sNyvrOVq3J0h8oei95N w==;
-X-CSE-ConnectionGUID: le3E3ZWjR/+kZ0dkD9KktA==
-X-CSE-MsgGUID: Twmr5cWYSheiqohqqXzW1g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11444"; a="54009000"
-X-IronPort-AV: E=Sophos;i="6.15,315,1739865600"; d="scan'208";a="54009000"
+ bh=qSs99kAO8tbXer0roLYv/i4MPOVvNGzDTLfjxfpTMy0=;
+ b=VcJK6O6mKwOzd7b4uNfFILCK+NWyf+I5k4AzLgh5gi8YAS3xTTC0oDXY
+ Nfelxh8xEiyQ1dfZLo1HTITJrT1kRi14RElKe9XbPDZsd/1iJmWIXK9QH
+ XhbKCqP3OXD+q5O8ZNCcMiz+XQz0APVz6YC4lz1ehidDj1/+MrEz69pBr
+ G+O3ZM/PRgUlCun3ZpiFIsrqSCfNoQqUiPgfxU3ODg102EIpNYARM13ny
+ Cylo23fy20J+VsXqt8EPz+mYEXa20I2mNYcpRh+fVb5h8uEy48iLcqNp6
+ C0iD2bKrjXE8MTVxOUuoQ1rwOC8PsP5R6ncxOdFaIUjN770uj/IINanVY g==;
+X-CSE-ConnectionGUID: D441rwCyTOugoFf+lCEqvQ==
+X-CSE-MsgGUID: oOhel3ptSfy4jYjzidh8rw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11444"; a="54009008"
+X-IronPort-AV: E=Sophos;i="6.15,315,1739865600"; d="scan'208";a="54009008"
 Received: from fmviesa007.fm.intel.com ([10.60.135.147])
  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 26 May 2025 01:33:52 -0700
-X-CSE-ConnectionGUID: HVRIQlCdQtyKE7OmHfNKBA==
-X-CSE-MsgGUID: XkGzpfScQFqwWJOeFcpV+Q==
+ 26 May 2025 01:33:55 -0700
+X-CSE-ConnectionGUID: DFyPR15LSNCyydI1Xs9t3A==
+X-CSE-MsgGUID: PGyT4pFZRPa7ronoaW9mgQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,315,1739865600"; d="scan'208";a="142293421"
+X-IronPort-AV: E=Sophos;i="6.15,315,1739865600"; d="scan'208";a="142293450"
 Received: from unknown (HELO silpixa00401120.ir.intel.com) ([10.55.128.58])
- by fmviesa007.fm.intel.com with ESMTP; 26 May 2025 01:33:51 -0700
+ by fmviesa007.fm.intel.com with ESMTP; 26 May 2025 01:33:54 -0700
 From: Dhanya Pillai <dhanya.r.pillai@intel.com>
 To: Bruce Richardson <bruce.richardson@intel.com>,
  Anatoly Burakov <anatoly.burakov@intel.com>
-Cc: dev@dpdk.org, "Dworakowski, Waldemar" <waldemar.dworakowski@intel.com>,
+Cc: dev@dpdk.org, Paul Greenwalt <paul.greenwalt@intel.com>,
  Dhanya Pillai <dhanya.r.pillai@intel.com>
-Subject: [PATCH 1/9] net/ice/base: type conversion fix
-Date: Mon, 26 May 2025 08:33:03 +0000
-Message-ID: <20250526083325.248384-2-dhanya.r.pillai@intel.com>
+Subject: [PATCH 2/9] net/ice/base: typo fix in media type check
+Date: Mon, 26 May 2025 08:33:04 +0000
+Message-ID: <20250526083325.248384-3-dhanya.r.pillai@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250526083325.248384-1-dhanya.r.pillai@intel.com>
 References: <20250526083325.248384-1-dhanya.r.pillai@intel.com>
@@ -61,45 +61,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: "Dworakowski, Waldemar" <waldemar.dworakowski@intel.com>
+From: Paul Greenwalt <paul.greenwalt@intel.com>
 
-In ice_sched_move_vsi_to_agg() int16 is used to pass 8 bit value
-what causes compiler warning:
-warning C4244: 'function' : conversion from 'UINT16' to 'UINT8',
-possible loss of data
-Changed variable type to avoid conversion
+Found a typo in original implementation of ice_set_media_type,
+where one of the checks for FIBER checks for C2C media type
+instead of C2M. This results in failure of this check for some
+AOC devices, consequently setting  the media type as AUI.
+Bug was found in ethtool.
 
 Signed-off-by: Dhanya Pillai <dhanya.r.pillai@intel.com>
 ---
- drivers/net/intel/ice/base/ice_sched.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/net/intel/ice/base/ice_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/intel/ice/base/ice_sched.c b/drivers/net/intel/ice/base/ice_sched.c
-index 1f520bb7c0..a8a149f541 100644
---- a/drivers/net/intel/ice/base/ice_sched.c
-+++ b/drivers/net/intel/ice/base/ice_sched.c
-@@ -2383,7 +2383,8 @@ ice_sched_move_vsi_to_agg(struct ice_port_info *pi, u16 vsi_handle, u32 agg_id,
- 	u16 num_nodes_added;
- 	u8 aggl, vsil;
- 	int status;
--	u16 i;
-+	u16 j;
-+	u8 i;
- 
- 	tc_node = ice_sched_get_tc_node(pi, tc);
- 	if (!tc_node)
-@@ -2409,9 +2410,9 @@ ice_sched_move_vsi_to_agg(struct ice_port_info *pi, u16 vsi_handle, u32 agg_id,
- 		num_nodes[i] = 1;
- 
- 	/* Check if the aggregator subtree has any free node to add the VSI */
--	for (i = 0; i < agg_node->num_children; i++) {
-+	for (j = 0; j < agg_node->num_children; j++) {
- 		parent = ice_sched_get_free_vsi_parent(pi->hw,
--						       agg_node->children[i],
-+						       agg_node->children[j],
- 						       num_nodes);
- 		if (parent)
- 			goto move_nodes;
+diff --git a/drivers/net/intel/ice/base/ice_common.c b/drivers/net/intel/ice/base/ice_common.c
+index fce9b070cf..69070b740e 100644
+--- a/drivers/net/intel/ice/base/ice_common.c
++++ b/drivers/net/intel/ice/base/ice_common.c
+@@ -452,7 +452,7 @@ static void ice_set_media_type(struct ice_port_info *pi)
+ 		 ((phy_type_low & ICE_MEDIA_OPT_PHY_TYPE_LOW_M ||
+ 		   phy_type_high & ICE_MEDIA_OPT_PHY_TYPE_HIGH_M) &&
+ 		  (phy_type_low & ICE_MEDIA_C2M_PHY_TYPE_LOW_M ||
+-		   phy_type_high & ICE_MEDIA_C2C_PHY_TYPE_HIGH_M)))
++		   phy_type_high & ICE_MEDIA_C2M_PHY_TYPE_HIGH_M)))
+ 		*media_type = ICE_MEDIA_FIBER;
+ 	/* else if PHY types are only DA, or DA and C2C, then media type DA */
+ 	else if (ice_phy_maps_to_media(phy_type_low, phy_type_high,
 -- 
 2.43.0
 
