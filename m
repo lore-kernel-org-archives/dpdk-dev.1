@@ -2,41 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D050C54FB3
-	for <dpdk-dev@archiver.kernel.org>; Mon, 26 May 2025 09:57:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 348D8C54FB3
+	for <dpdk-dev@archiver.kernel.org>; Mon, 26 May 2025 11:54:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DA2F2402ED;
-	Mon, 26 May 2025 11:57:30 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 97C2C40280
- for <dev@dpdk.org>; Mon, 26 May 2025 11:57:29 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 4F74B20748;
- Mon, 26 May 2025 11:57:29 +0200 (CEST)
-Content-class: urn:content-classes:message
-MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH v1 1/4] ring: introduce extra run-time checks
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Mon, 26 May 2025 11:57:24 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FC8F@smartserver.smartshare.dk>
-In-Reply-To: <66f8dbc7d5fc492ba2ecf6fe61e86ed5@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id D499640608;
+	Mon, 26 May 2025 13:54:30 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 8671D402ED
+ for <dev@dpdk.org>; Mon, 26 May 2025 13:54:29 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b5Yvr6MkBz6M59Y;
+ Mon, 26 May 2025 19:49:28 +0800 (CST)
+Received: from frapeml100008.china.huawei.com (unknown [7.182.85.131])
+ by mail.maildlp.com (Postfix) with ESMTPS id C3B92140520;
+ Mon, 26 May 2025 19:54:27 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ frapeml100008.china.huawei.com (7.182.85.131) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 26 May 2025 13:54:27 +0200
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Mon, 26 May 2025 13:54:27 +0200
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: Wathsala Wathawana Vithanage <wathsala.vithanage@arm.com>, "dev@dpdk.org"
+ <dev@dpdk.org>
+CC: Honnappa Nagarahalli <Honnappa.Nagarahalli@arm.com>, "jerinj@marvell.com"
+ <jerinj@marvell.com>, "hemant.agrawal@nxp.com" <hemant.agrawal@nxp.com>,
+ "drc@linux.ibm.com" <drc@linux.ibm.com>, nd <nd@arm.com>
+Subject: RE: [PATCH v1 3/4] ring: fix potential sync issue between head and
+ tail values
+Thread-Topic: [PATCH v1 3/4] ring: fix potential sync issue between head and
+ tail values
+Thread-Index: AQHbykGqeBGQXW5y3EOG63fjgC8zzLPfFJ0AgAWK5JA=
+Date: Mon, 26 May 2025 11:54:27 +0000
+Message-ID: <62ba814dc50a4ffd9bcfe8f4d4073cd9@huawei.com>
+References: <20250521111432.207936-1-konstantin.ananyev@huawei.com>
+ <20250521111432.207936-4-konstantin.ananyev@huawei.com>
+ <PAWPR08MB8909895DF398ACB52C8D66719F99A@PAWPR08MB8909.eurprd08.prod.outlook.com>
+In-Reply-To: <PAWPR08MB8909895DF398ACB52C8D66719F99A@PAWPR08MB8909.eurprd08.prod.outlook.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v1 1/4] ring: introduce extra run-time checks
-Thread-Index: AQHbykGpsQqK+1TaqEarZz25/dQkMLPc3a4AgAAkv/CAAGJtoIAAFfLggAAe4pCABv2XgIAADCqA
-References: <20250521111432.207936-1-konstantin.ananyev@huawei.com><20250521111432.207936-2-konstantin.ananyev@huawei.com><98CBD80474FA8B44BF855DF32C47DC35E9FC7E@smartserver.smartshare.dk><1e3bcd254b7d4aba8fced00d76b70cee@huawei.com><98CBD80474FA8B44BF855DF32C47DC35E9FC80@smartserver.smartshare.dk><2a514cea0f8f413eba6c85585cc149a9@huawei.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FC85@smartserver.smartshare.dk>
- <66f8dbc7d5fc492ba2ecf6fe61e86ed5@huawei.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
-	<dev@dpdk.org>
-Cc: <honnappa.nagarahalli@arm.com>, <jerinj@marvell.com>,
- <hemant.agrawal@nxp.com>, <drc@linux.ibm.com>
+x-originating-ip: [10.206.138.73]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,296 +61,247 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Konstantin Ananyev [mailto:konstantin.ananyev@huawei.com]
-> Sent: Monday, 26 May 2025 10.39
->=20
-> > > > > From: Konstantin Ananyev =
-[mailto:konstantin.ananyev@huawei.com]
-> > > > > Sent: Wednesday, 21 May 2025 14.35
-> > > > >
-> > > > > > > From: Konstantin Ananyev
-> [mailto:konstantin.ananyev@huawei.com]
-> > > > > > > Sent: Wednesday, 21 May 2025 13.14
-> > > > > > >
-> > > > > > > Add RTE_ASSERT() to check that different move_tail()
-> flavors
-> > > > > > > return meaningful  *entries value.
-> > > > > > > It also helps to ensure that inside move_tail(), it uses
-> > > correct
-> > > > > > > head/tail values.
-> > > > > > >
-> > > > > > > Signed-off-by: Konstantin Ananyev
-> > > <konstantin.ananyev@huawei.com>
-> > > > > > > ---
-> > > > > > >  lib/ring/rte_ring_c11_pvt.h      | 2 +-
-> > > > > > >  lib/ring/rte_ring_elem_pvt.h     | 8 ++++++--
-> > > > > > >  lib/ring/rte_ring_hts_elem_pvt.h | 8 ++++++--
-> > > > > > >  lib/ring/rte_ring_rts_elem_pvt.h | 8 ++++++--
-> > > > > > >  lib/ring/soring.c                | 2 ++
-> > > > > > >  5 files changed, 21 insertions(+), 7 deletions(-)
-> > > > > > >
-> > > > > > > diff --git a/lib/ring/rte_ring_c11_pvt.h
-> > > > > b/lib/ring/rte_ring_c11_pvt.h
-> > > > > > > index b9388af0da..0845cd6dcf 100644
-> > > > > > > --- a/lib/ring/rte_ring_c11_pvt.h
-> > > > > > > +++ b/lib/ring/rte_ring_c11_pvt.h
-> > > > > > > @@ -104,10 +104,10 @@ __rte_ring_headtail_move_head(struct
-> > > > > > > rte_ring_headtail *d,
-> > > > > > >  			n =3D (behavior =3D=3D RTE_RING_QUEUE_FIXED) ?
-> > > > > > >  					0 : *entries;
-> > > > > > >
-> > > > > > > +		*new_head =3D *old_head + n;
-> > > > > > >  		if (n =3D=3D 0)
-> > > > > > >  			return 0;
-> > > > > > >
-> > > > > > > -		*new_head =3D *old_head + n;
-> > > > > > >  		if (is_st) {
-> > > > > > >  			d->head =3D *new_head;
-> > > > > > >  			success =3D 1;
-> > > > > >
-> > > > > > Is there a need to assign a value to *new_head if n=3D=3D0?
-> > > > >
-> > > > > Not really, main reason I just moved this line up - to keep
-> > > compiler
-> > > > > happy.
-> > > > > Otherwise it complained that *new_head might be left
-> uninitialized.
-> > > >
-> > > > Your change might give the impression that *new_head is used by =
-a
-> > > caller. (Like I asked about.)
-> > > > To please the compiler, you could mark new_head __rte_unused, =
-or:
-> > > >
-> > > > -		if (n =3D=3D 0)
-> > > > +		if (n =3D=3D 0) {
-> > > > +			RTE_SET_USED(new_head);
-> > > > 			return 0;
-> > > > +		}
->=20
-> Actually, that wouldn't help.
-> By some reason, after introducing RTE_ASSERT()  gcc13 believes that =
-now
-> cons_next can
-> be used (stored) unfinalized here:
->=20
->         n =3D __rte_ring_move_cons_head(r, (int)is_sc, n, behavior,
->                         &cons_head, &cons_next, &entries);
->         if (n =3D=3D 0)
->                 goto end;
->=20
->         __rte_ring_dequeue_elems(r, cons_head, obj_table, esize, n);
->=20
->         __rte_ring_update_tail(&r->cons, cons_head, cons_next, is_sc,
-> 0);
->=20
-> end:
->    ...
->=20
-> For me it is a false positive, somehow it missed that if (n=3D=3D0) =
-then
-> update_table()
-> wouldn't be called  at all. Full error message below.
-> So making new_head always initialized, even if we are not going to =
-use,
-> seems
-> like the simplest and cleanest way to fix it.
-
-NAK.
-Initializing new_head with potential garbage will prevent the compiler =
-from detecting that it is being used uninitialized afterwards.
-
-If the compiler is too stupid to understand "goto end", then please =
-rewrite the affected code instead:
--	if (n =3D=3D 0)
--		goto end;
-+	if (n !=3D 0) {
-	__rte_ring_dequeue_elems();
-	__rte_ring_update_tail();
--end:
-+	}
-	...
-
->=20
-> est-pipeline_runtime.c.o -c ../app/test-pipeline/runtime.c
-> In file included from ../lib/eal/include/rte_bitops.h:24,
->                  from ../lib/eal/include/rte_memory.h:18,
->                  from ../app/test-pipeline/runtime.c:19:
-> In function '__rte_ring_update_tail',
->     inlined from '__rte_ring_do_dequeue_elem' at
-> ../lib/ring/rte_ring_elem_pvt.h:472:2,
->     inlined from 'rte_ring_sc_dequeue_bulk_elem' at
-> ../lib/ring/rte_ring_elem.h:344:9,
->     inlined from 'rte_ring_sc_dequeue_bulk' at
-> ../lib/ring/rte_ring.h:402:9,
->     inlined from 'app_main_loop_worker' at ../app/test-
-> pipeline/runtime.c:91:10:
-> ../lib/eal/include/rte_stdatomic.h:139:9: error: 'cons_next' may be
-> used uninitialized [-Werror=3Dmaybe-uninitialized]
->   139 |         __atomic_store_n(ptr, val, memorder)
->       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> ../lib/ring/rte_ring_c11_pvt.h:39:9: note: in expansion of macro
-> 'rte_atomic_store_explicit'
->    39 |         rte_atomic_store_explicit(&ht->tail, new_val,
-> rte_memory_order_release);
->       |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-> In file included from ../lib/ring/rte_ring_elem.h:20,
->                  from ../lib/ring/rte_ring.h:38,
->                  from ../lib/mempool/rte_mempool.h:49,
->                  from ../lib/mbuf/rte_mbuf.h:38,
->                  from ../lib/net/rte_ether.h:20,
->                  from ../app/test-pipeline/runtime.c:31:
-> ../lib/ring/rte_ring_elem_pvt.h: In function 'app_main_loop_worker':
-> ../lib/ring/rte_ring_elem_pvt.h:462:29: note: 'cons_next' was declared
-> here
->   462 |         uint32_t cons_head, cons_next;
->       |                             ^~~~~~~~~
-> In function '__rte_ring_update_tail',
->     inlined from '__rte_ring_do_enqueue_elem' at
-> ../lib/ring/rte_ring_elem_pvt.h:425:2,
->     inlined from 'rte_ring_sp_enqueue_bulk_elem' at
-> ../lib/ring/rte_ring_elem.h:159:9,
->     inlined from 'rte_ring_sp_enqueue_bulk' at
-> ../lib/ring/rte_ring.h:267:9,
->     inlined from 'app_main_loop_worker' at ../app/test-
-> pipeline/runtime.c:101:11
->=20
-> > > >
-> > > > >
-> > >
-> > > Makes sense, will re-spin.
->=20
->=20
-> > I'm having second thoughts about treating this compiler warning as a
-> false positive!
-> >
-> > Are you 100 % sure that no caller uses *new_head?
->=20
-> Yes, I believe so. If not, then we do have a severe bug in our =
-rt_ring,
->=20
-> > I suppose you are, because it wasn't set before this patch either, =
-so
-> the existing code would have a bug if some caller uses it.
-> > But the documentation does not mention that *new_head is not set if
-> the function returns 0.
-> > So, some future caller might use *new_head, thus introducing a bug
-> when n=3D=3D0.
-> >
-> > But most importantly for the performance discussion, the costly CAS
-> is only pointless when n=3D=3D0.
-> > So, if n=3D=3D0 is very unlikely, we could accept this pointless =
-cost.
-> > And it would save us the cost of "if (n=3D=3D0) return 0;" in the =
-hot
-> code path.
-> >
-> > And, as a consequence, some of the callers of this function could
-> also remove their special handing of
-> > __rte_ring_headtail_move_head() returning 0. (Likewise, only if a
-> return value of 0 is unlikely, and the special handling has a cost in
-> > the hot cod path for non-zero return values.)
->=20
-> I don't think it is a good idea.
-> First of all about the cost - I suppose that situation when 'n=3D=3D0' =
-is
-> not so uncommon:
-> There is a contention on the ring (many threads try to =
-enqueue/dequeue)
-> to/from it.
-> Doing unnecessary CAS() (when n=3D=3D0) we introduce extra =
-cache-snooping
-> to already busy memory sub-system,
-> i.e. we slowing down not only current threads, but all other
-> producers/consumers of the ring.
-> About removing extra branches: I don't think there would be many to
-> remove.
-> Usually after move_head() finishes we have to do two operations:
-> __rte_ring_dequeue_elems() ;
-> __rte_ring_update_tail();
-> Both have to be performed only when 'n !=3D 0'.
-
-OK, thank you for the analysis.
-You convinced me my suggestion was not a good idea.
-
-> Regarding the doc for the move_head() function - sure it can be =
-updated
-> to note explicitly
-> that both *old_head and *new_head will contain up-to-date values only
-> when return value
-> is not zero.
-
-Maybe there's a ripple-down effect regarding documentation...
-Some of the output parameters of the functions calling =
-__rte_ring_headtail_move_head() are also conditionally valid.
-
-And if any of these output parameters are used anyway, your patch series =
-might have uncovered a bug.
-
-Note:
-For the multi-threaded rings, the output parameter *entries is only =
-up-to-date when the return value is non-zero.
-If d->head was fetched into *old_head, and another thread raced to =
-update d->head before the CAS() (which is not called when n=3D=3D0, but =
-would have failed), then *entries was set based on the old *old_head.
-But that race might as well occur when returning from the function, so =
-it shouldn't be a problem.
-Your added RTE_ASSERT(*entries <=3D r->capacity)'s should be valid, =
-regardless if *entries is up-to-date or based on the old *old_head.
-This also means that the documentation needs no update regarding the =
-validity of the *entries output parameter.
-
->=20
-> > > > > > I don't think your suggestion is multi-thread safe.
-> > > > > > If d->head moves, the value in *new_head will be incorrect.
-> > > > >
-> > > > > If d->head moves, then *old_head will also be incorrect.
-> > > > > For that case we do have CAS() below, it will return zero if
-> (d-
-> > > >head
-> > > > > !=3D *old_head)
-> > > > > and we shall go to the next iteration (attempt).
-> > > >
-> > > > Exactly.
-> > > > And with my suggestion the same will happen if n=3D=3D0, and the =
-next
-> > > attempt will update them both, until they are both correct.
-> > > >
-> > > > > Basically - if n =3D=3D 0, your *old_head and *new_head might =
-be
-> > > invalid
-> > > > > and should not be used
-> > > > > (and they are not used).
-> > > > >
-> > > > > > Instead, suggest:
-> > > > > >
-> > > > > > -		if (n =3D=3D 0)
-> > > > > > -			return 0;
-> > > > > >
-> > > > > > 		*new_head =3D *old_head + n;
-> > > > > > 		if (is_st) {
-> > > > > > 			d->head =3D *new_head;
-> > > > > > 			success =3D 1;
-> > > > > > 		} else
-> > > > > > 			/* on failure, *old_head is updated */
-> > > > > > 			success =3D
-> > > > > rte_atomic_compare_exchange_strong_explicit(
-> > > > > > 					&d->head, old_head, *new_head,
-> > > > > > 					rte_memory_order_relaxed,
-> > > > > > 					rte_memory_order_relaxed);
-> > > > > > 	} while (unlikely(success =3D=3D 0));
-> > > > >
-> > > > > That's possible, but if (n =3D=3D0) we probably don't want to
-> update
-> > > the
-> > > > > head -
-> > > > > as we are not moving head - it is pointless, while still
-> expensive.
-> > > >
-> > > > Agree. Let's avoid unnecessary cost!
-> > > > My suggestion was only relevant if *new_head needed to be =
-updated
-> > > when n=3D=3D0.
-> > > >
-> >
-
+SGkgV2F0aHNhbGEsDQoNCj4gDQo+IEhpIEtvbnN0YW5pbiwNCj4gDQo+IEluIHJ0ZV9yaW5nIHRo
+ZSBzdG9yZS1yZWxlYXNlIG9uIHRhaWwgdXBkYXRlIGd1YXJhbnRlZXMgdGhhdCBDQVMNCj4gd29u
+J3QgZ2V0IHJlb3JkZXJlZCB3aXRoIHRoZSBzdG9yZS1yZWxlYXNlZCBvZiB0aGUgdGFpbCB1cGRh
+dGUuDQo+IA0KPiBTbywgdGhlIHNlcXVlbmNlIG9mIGV2ZW50cyB3b3VsZCBsb29rIGxpa2UgdGhp
+cyAoY29tYmluZWQgdmlldw0KPiBvZiBoZWFkIGFuZCB0YWlsIHVwZGF0ZSkNCj4gDQo+IFJlbGVh
+eGVkLWxvYWQobmV3X2hlYWQsICBOKSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0tLS0t
+LS0tLS0tLS0tLS0+IChBKQ0KPiBSZWxheGVkLUNBUyhkLT5oZWFkLCBuZXdfaGVhZCwgb2xkX2hl
+YWQpICAgLS0tLS0tLS0tLS0tLS0tLT4gKEIpDQo+IFN0b3JlLXJlbGVhc2Utc3RvcmUoZC0+dGFp
+bCwgbmV3X2hlYWQpICAgICAgICAgICAgIC0tLS0tLS0tLS0tLS0tLS0+IChDKQ0KPiANCj4gSWYg
+d2UgbG9vayBhdCBhZGRyZXNzIGRlcGVuZGVuY2llcywgdGhlbi4uLg0KPiANCj4gKEIpIGRlcGVu
+ZHMgb24gKEEpIGR1ZSB0byBuZXdfaGVhZCBhZGRyZXNzIGRlcGVuZGVuY3kuDQo+IChDKSBkZXBl
+bmRzIG9uIChBKSBkdWUgdG8gbmV3X2hlYWQgYWRkcmVzcyBkZXBlbmRlbmN5Lg0KPiANCj4gU28s
+IGRlcGVuZGVuY3kgZ3JhcGggbG9va3MgbGlrZSB0aGlzDQo+ICAgICAgICAoQSkNCj4gICAgIC8g
+ICAgICAgXA0KPiAgICB2ICAgICAgICB2DQo+ICAoQikgICAgIChDKQ0KPiANCj4gVGhlcmUgaXMg
+bm8gaW1wbGljaXQgZGVwZW5kZW5jZSBiZXR3ZWVuIChCKSBhbmQgKEMpLCBJIHRoaW5rDQo+IHRo
+aXMgaXMgdGhlIGlzc3VlIHlvdSBhcmUgYnJpbmluZyB1cC4NCj4gRXZlbiB0aG91Z2ggdGhlcmUg
+aXMgbm8gZGVwZW5kZW5jZSBiZXR3ZWVuIHRoZSB0d28sDQo+IHRoZSBzdG9yZS1yZWxlYXNlIG9m
+IChDKSBlbnN1cmVzIHRoYXQgKEIpIHdvbid0IGRyb3AgYmVsb3cgaXQuDQo+IFRoZXJlZm9yZSwg
+dGhlIGFib3ZlIGdyYXBoIGNhbiBiZSB0dXJuZWQgaW50byBhbiBvcmRlcmVkDQo+IHNlcXVlbmNl
+IGFzIHNob3duIGJlbG93Li4NCj4gDQo+IChBKSAtPiAoQikgLT4gKEMpDQoNCkkgZG8gYWdyZWUg
+dGhhdCB3aXRoIGN1cnJlbnQgaW1wbGVtZW50YXRpb24gb2YgX19ydGVfcmluZ19oZWFkdGFpbF9t
+b3ZlX2hlYWQoKQ0KaW4gbGliL3JpbmcvcnRlX3JpbmdfYzExX3B2dC5oIHRoZSBvcmRlciBvZiB0
+aGVzZSAzIG9wZXJhdGlvbnMgKEEtPkItPkMpIHNob3VsZCBiZSBzZXF1ZW50aWFsLg0KVGhlIHBy
+b2JsZW0gSSBhbSB0YWxraW5nIGFib3V0IGlzIGEgZGlmZmVyZW50IG9uZToNCnRocmVhZCBjYW4g
+c2VlICdsYXRlc3QnICdjb25zLmhlYWQnIHZhbHVlLCB3aXRoICdwcmV2aW91cycgdmFsdWUgZm9y
+ICdwcm9kLnRhaWwnIG9yIHZpc2EtdmVyc2EuDQpJbiBvdGhlciB3b3JkczogJ2NvbnMuaGVhZCcg
+dmFsdWUgZGVwZW5kcyBvbiAncHJvZC50YWlsJywgc28gYmVmb3JlIG1ha2luZyBsYXRlc3QgJ2Nv
+bnMuaGVhZCcNCnZhbHVlIHZpc2libGUgdG8gb3RoZXIgdGhyZWFkcywgd2UgbmVlZCB0byBlbnN1
+cmUgdGhhdCBsYXRlc3QgJ3Byb2QudGFpbCcgaXMgYWxzbyB2aXNpYmxlLiANCkxldCBtZSB0cnkg
+dG8gZXhwbGFpbiBpdCBvbiB0aGUgZXhhbXBsZToNCg0KU3VwcG9zZSBhdCBzb21lIG1vbWVudCB3
+ZSBoYXZlOg0KcHJvZD17LmhlYWQ9MiwudGFpbD0xfTsNCmNvbnM9ey5oZWFkPTAsLnRhaWw9MH07
+DQpJLmUuIHRoZWFkICMxIGlzIGluIHByb2Nlc3MgdG8gZW5xdWV1ZSBvbmUgbW9yZSBlbGVtZW50
+IGludG8gdGhlIHJpbmcuDQoNCiAgICAgICBUaHJlYWQgIzEgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFRo
+cmVhZCAjMg0KVDA6DQogIHN0b3JlKCZwcm9kLnRhaWwsIDIsIHJlbGVhc2UpOw0KICAvKkFGQUlV
+OiB0aGlzIGlzIHNvbWV3aGF0IGVxdWl2YWxlbnQgdG86IHdtYigpOyBwcm9kLnRhaWw9MjsNCiAg
+KiBJLkUuIC0gaXQgZ3VhcmFudGVlcyB0aGF0IGFsbCBzdG9yZXMgaW5pdGlhdGVkIGJlZm9yZSB0
+aGF0IG9wZXJhdGlvbiB3aWxsIGJlIHZpc2libGUNCiAgKiBieSBvdGhlciB0aHJlYWRzIGF0IHRo
+ZSBzYW1lIG1vbWVudCBvciBiZWZvcmUgbmV3IHZhbHVlIG9mIHByb2QudGFpbCB3bGxsIGJlY29t
+ZQ0KICAqIHZpc2libGUsIGJ1dCBpdCBkb2Vzbid0IGd1YXJhbnRlZSB0aGF0IG5ldyBwcm9kLnRh
+aWwgIHZhbHVlIHdpbGwgYmUgdmlzaWJsZSAgdG8gb3RoZXINCiAgKiB0aHJlYWRzIGltbWVkaWF0
+ZWx5Lg0KICAqLyANCi4uLg0KbW92ZV9jb25zX2hlYWQoLi4uLG49MikgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbW92ZV9jb25zX2hlYWQoLi4uLG49
+MSkNCi4uLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAuLi4NClQxOg0KICAq
+b2xkX2hlYWQgPSBsb2FkKCZjb25zLmhlYWQsIHJlbGF4ZWQpOyAgICAgICAgICAgICAgICAgICAg
+ICAgICAgDQogIGZlbmNlKGFjcXVpcmUpOw0KICAvKm9sZF9oZWFkID09IDAsIG5vIHN1cnByaXNl
+cyAqLw0KICBzdGFpbCA9IGxvYWQoJnByb2QudGFpbCwgYWNxdWlyZSk7DQogIC8qc3RhaWwgPT0g
+Miwgbm8gc3VycHJpc2VzICovDQogKmVudHJpZXMgPSAoY2FwYWNpdHkgKyBzdGFpbCAtICpvbGRf
+aGVhZCk7DQoqbmV3X2hlYWQgPSAqb2xkX2hlYWQgKyBuOw0KIC8qICplbnRyaWVzID09ICgyIC0g
+MCkgPT0gMjsgKm5ld19oZWFkPT0yOyBhbGwgZ29vZCAqLyANCi4uLg0KVDI6DQogICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAqb2xkX2hlYWQgPSBsb2FkKCZjb25zLmhlYWQs
+IHJlbGF4ZWQpOw0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZmVuY2Uo
+YWNxdWlyZSk7DQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAvKm9sZF9o
+ZWFkID09IDAsIG5vIHN1cnByaXNlcyAqLw0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgc3RhaWwgPSBsb2FkKCZwcm9kLnRhaWwsIGFjcXVpcmUpOw0KLyogISEhISEgc3Rh
+aWwgPT0gMSAgISEhISEgZm9yIFRocmVhZCAyDQogKiBFdmVuIHRob3VnaCB3ZSBkbyB1c2UgYWNx
+dWlyZSBoZXJlIC0gdGhlcmUgd2FzIG5vICpyZWxlYXNlKiBhZnRlciBzdG9yZSgmcHJvZC50YWls
+KS4NCiAqIFNvLCBzdGlsbCBubyBndWFyYW50ZWUgdGhhdCBUaHJlYWQgMiB3aWxsIHNlZSBsYXRl
+c3QgcHJvZC50YWlsIHZhbHVlLg0KICovDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICplbnRyaWVzID0gKGNhcGFjaXR5ICsgc3RhaWwgLSAqb2xkX2hlYWQpOw0KICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAvKiAqZW50cmllcyA9PSAoMSAtIDApID09
+IDEsIHN0aWxsIG9rICovDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICpu
+ZXdfaGVhZCA9ICpvbGRfaGVhZCArIG47DQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIC8qICpuZXdfaGVhZCA9PSAxICovDQpUMzoNCiAgc3VjY2VzcyA9IENBUygmY29ucy5o
+ZWFkLA0KICAgIG9sZF9oZWFkIC8qPT0wLywgKm5ld19oZWFkIC8qPT0yKi8sDQogICAgcmVsYXhl
+ZCwgcmVsYXhlZCk7DQogIC8qc3VjY2Vzcz09MSwgY29ucy5oZWFkPT0yKi8NCiAuLi4gICANClQ0
+OiAgIA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN1Y2Nlc3MgPSBDQVMoJmNv
+bnMuaGVhZCwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBvbGRfaGVhZCAvKj09
+MC8sICpuZXdfaGVhZCAvKj09MSovLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+cmVsYXhlZCwgcmVsYXhlZCk7DQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAvKnN1
+Y2Nlc3M9PTAsICpvbGRfaGVhZD09MiovDQovKiBDQVMoKSBmYWlsZWQgYW5kIHByb3ZpZGVkIFRo
+cmVhZCAyIHdpdGggbGF0ZXN0IHZhbHVlZCBmb3IgY29ucy5oZWFkKD09MikNCiAqICBUaHJlYWQg
+MiByZXBlYXRzIGF0dGVtcHQsIHN0YXJ0cyBzZWNvbmQgaXRlcmF0aW9uDQogKi8NCiAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIGZlbmNlKGFjcXVpcmUpOw0KICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgc3RhaWwgPSBsb2FkKCZwcm9kLnRhaWwsIGFjcXVpcmUpOw0KLyog
+ISEhISEgc3RhaWwgPT0gMSAgISEhISEgZm9yIFRocmVhZCAyDQogKiBTdGlsbCBubyAqcmVsZWFz
+ZSogaGFkIGhhcHBlbmVkIGFmdGVyIHN0b3JlKCZwcm9kLnRhaWwpIGF0IFQwLg0KICogU28sIHN0
+aWxsIG5vIGd1YXJhbnRlZSB0aGF0IFRocmVhZCAyIHdpbGwgc2VlIGxhdGVzdCBwcm9kLnRhaWwg
+dmFsdWUuDQogKi8NCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICplbnRyaWVzID0g
+KGNhcGFjaXR5ICsgc3RhaWwgLSAqb2xkX2hlYWQpOw0KICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgKm5ld19oZWFkID0gKm9sZF9oZWFkICsgbjsNCiAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIA0KLyogISEhISEgKmVudHJpZXMgPT0gKDEgLSAyKSA9PSAtMShVSU5UMzJf
+TUFYKTsgKm5ld19oZWFkPT0oMisxKT09MzsgISEhISENCiAqICB3ZSBhcmUgYWJvdXQgdG8gY29y
+cnVwdCBvdXIgcmluZyAhISEhIQ0KICovICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA0K
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICANCj4gDQo+IEkgaGF2ZW4ndCBsb29rZWQgYXQgdGhlIHNvLXJpbmcg
+eWV0LiBDb3VsZCBpdCBiZSBwb3NzaWJsZSB0aGF0IHRoZQ0KPiBpc3N1ZSBpcyBkdWUgdG8gc29t
+ZXRoaW5nIGVsc2UgaW50cm9kdWNlZCBpbiB0aGF0IGNvZGU/DQoNCldlbGwsIGFzIEkgc2FpZCwg
+c28gZmFyIEkgd2Fzbid0IGFibGUgdG8gcmUtcHJvZHVjZSB0aGlzIHByb2JsZW0gd2l0aCBjb252
+ZW50aW9uYWwNCnJpbmcgKHJpbmdfc3RyZXNzX2F1dG90ZXN0KSwgb25seSBzb3Jpbmdfc3RyZXNz
+X2F1dG90ZXN0IGlzIGZhaWxpbmcgYW5kDQpmb3Igbm93IC0gb25seSBvbiBvbmUgc3BlY2lmaWMg
+QVJNIHBsYXRmb3JtLg0KUmVnYXJkaW5nIHNvcmluZyBzcGVjaWZpYyBmaXggKHdpdGhvdXQgdG91
+Y2hpbmcgY29tbW9uIGNvZGUpIC0gDQpzdXJlIGl0IGlzIGFsc28gcG9zc2libGUsIHBscyBzZWUg
+cGF0Y2ggIzIuDQpUaGVyZSBJIGp1c3QgYWRkZWQgJ2ZlbmNlKHJlbGVhc2UpOycgc3RyYWlnaHQg
+YWZ0ZXIgJ3N0b3JlKCZ0YWlsKTsnICAgDQpUaGF0J3Mgc2VlbXMgZW5vdWdoIHRvIGZpeCB0aGF0
+IHByb2JsZW0gd2l0aGluIHRoZSBzb3Jpbmcgb25seS4NClRob3VnaCwgZnJvbSBteSB1bmRlcnN0
+YW5kaW5nIHJ0ZV9yaW5nIG1pZ2h0IGFsc28gYmUgYWZmZWN0ZWQsDQp0aGF0J3Mgd2h5IEkgd2Vu
+dCBhaGVhZCBhbmQgcHJlcGFyZWQgdGhhdCBwYXRjaC4gDQpJZiB5b3UgZmVlbCwgdGhhdCBJIGEg
+bWlzc2luZyBzb21ldGhpbmcgaGVyZSAtIHBscyBzaG91dC4NCktvbnN0YW50aW4gDQoNCg0KPiBU
+aGFua3MsDQo+IA0KPiAtLXdhdGhzYWxhDQo+IA0KPiA+IFRoaXMgcGF0Y2ggYWltcyBzZXZlcmFs
+IHB1cnBvc2VzOg0KPiA+IC0gcHJvdmlkZSBhbiBhbHRlcm5hdGl2ZSAoYW5kIEkgdGhpbmsgYSBi
+ZXR0ZXIpIHdheSB0byBmaXggdGhlDQo+ID4gICBpc3N1ZSBkaXNjdXNzZWQgaW4gcHJldmlvdXMg
+cGF0Y2g6DQo+ID4gICAicmluZy9zb3Jpbmc6IGZpeCBzeW5jaHJvbml6YXRpb24gaXNzdWUgYmV0
+d2VlbiBoZWFkIGFuZCB0YWlsIHZhbHVlcyINCj4gPiAtIG1ha2Ugc3VyZSB0aGF0IHN1Y2ggcHJv
+YmxlbSB3b3VsZG7igJl0IGhhcHBlbiB3aXRoaW4gb3RoZXIgdXNhZ2VzIG9mDQo+ID4gICBfX3J0
+ZV9yaW5nX2hlYWR0YWlsX21vdmVfaGVhZCgpIOKAkyBib3RoIGN1cnJlbnQgcnRlX3JpbmcNCj4g
+PiAgIGltcGxlbWVudGF0aW9uIGFuZCBwb3NzaWJsZSBmdXR1cmUgdXNlLWNhc2VzLg0KPiA+IC0g
+c3RlcCB0b3dhcmRzIHVuaWZpY2F0aW9uIG9mIG1vdmVfaGVhZCgpIGltcGxlbWVudGF0aW9ucyBh
+bmQNCj4gPiAgIHJlbW92aW5nIHJ0ZV9yaW5nX2dlbmVyaWNfcHZ0LmgNCj4gPiBJdCB1c2VzIEFj
+cXVpcmUtUmVsZWFzZSBtZW1vcnkgb3JkZXJpbmcgZm9yIENBUyBvcGVyYXRpb24gaW4gbW92ZV9o
+ZWFkKCkuDQo+ID4gVGhhdCBndWFyYW50ZWVzIHRoYXQgY29ycmVzcG9uZGluZyDigJh0YWls4oCZ
+IHVwZGF0ZXMgd2lsbCBiZSB2aXNpYmxlIGJlZm9yZSBjdXJyZW50DQo+ID4g4oCYaGVhZOKAmSBp
+cyB1cGRhdGVkLg0KPiA+IEFzIEkgc2FpZCBiZWZvcmU6IEkgdGhpbmsgdGhhdCBpbiB0aGVvcnkg
+dGhlIHByb2JsZW0gZGVzY3JpYmVkIGluIHByZXZpb3VzIHBhdGNoDQo+ID4gbWlnaHQgaGFwcGVu
+IHdpdGggb3VyIGNvbnZlbnRpb25hbCBydGVfcmluZyB0b28gKHdoZW4NCj4gPiBSVEVfVVNFX0Mx
+MV9NRU1fTU9ERUwgZW5hYmxlZCkuDQo+ID4gQnV0LCBzbyBmYXIgSSBkaWRu4oCZdCBtYW5hZ2Ug
+dG8gcmVwcm9kdWNlIGl0IGluIHJlYWxpdHkuDQo+ID4gRm9yIHRoYXQgcmVhc29uIGFuZCBhbHNv
+IGJlY2F1c2UgaXQgdG91Y2hlcyBhIGNyaXRpY2FsIHJ0ZV9yaW5nIGNvZGUtcGF0aCwgSSBwdXQN
+Cj4gPiB0aGVzZSBjaGFuZ2VzIGludG8gYSBzZXBhcmF0ZSBwYXRjaC4gRXhwZWN0IGFsbCBpbnRl
+cmVzdGVkIHN0YWtlaG9sZGVycyB0byBjb21lLQ0KPiA+IHVwIHdpdGggdGhlaXIgY29tbWVudHMg
+YW5kIG9ic2VydmF0aW9ucy4NCj4gPiBSZWdhcmRpbmcgcGVyZm9ybWFuY2UgaW1wYWN0IOKAkyBv
+biBteSBib3hlcyBib3RoIHJpbmdfcGVyZl9hdXRvdGVzdCBhbmQNCj4gPiByaW5nX3N0cmVzc19h
+dXRvdGVzdCDigJMgc2hvdyBhIG1peGVkIHNldCBvZiByZXN1bHRzOiBzb21lIG9mIHRoZW0gYmVj
+b21lIGZldw0KPiA+IGN5Y2xlcyBmYXN0ZXIsIGFub3RoZXIgZmV3IGN5Y2xlcyBzbG93ZXIuDQo+
+ID4gQnV0IHNvIGZhciwgSSBkaWRu4oCZdCBub3RpY2UgYW55IHJlYWwgZGVncmFkYXRpb25zIHdp
+dGggdGhhdCBwYXRjaC4NCj4gPg0KPiA+IEZpeGVzOiBiNTQ1OGUyY2M0ODMgKCJyaW5nOiBpbnRy
+b2R1Y2Ugc3RhZ2VkIG9yZGVyZWQgcmluZyIpDQo+ID4gRml4ZXM6IDFjYzM2M2I4Y2UwNiAoInJp
+bmc6IGludHJvZHVjZSBIVFMgcmluZyBtb2RlIikNCj4gPiBGaXhlczogZTZiYTQ3MzFjMGYzICgi
+cmluZzogaW50cm9kdWNlIFJUUyByaW5nIG1vZGUiKQ0KPiA+IEZpeGVzOiA0OTU5NGE2MzE0N2Eg
+KCJyaW5nL2MxMTogcmVsYXggb3JkZXJpbmcgZm9yIGxvYWQgYW5kIHN0b3JlIG9mIHRoZSBoZWFk
+IikNCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEtvbnN0YW50aW4gQW5hbnlldiA8a29uc3RhbnRp
+bi5hbmFueWV2QGh1YXdlaS5jb20+DQo+ID4gLS0tDQo+ID4gIGxpYi9yaW5nL3J0ZV9yaW5nX2Mx
+MV9wdnQuaCAgICAgIHwgMjcgKysrKysrKysrKysrKysrKystLS0tLS0tLS0tDQo+ID4gIGxpYi9y
+aW5nL3J0ZV9yaW5nX2h0c19lbGVtX3B2dC5oIHwgIDYgKysrKy0tICBsaWIvcmluZy9ydGVfcmlu
+Z19ydHNfZWxlbV9wdnQuaA0KPiA+IHwgIDYgKysrKy0tDQo+ID4gIGxpYi9yaW5nL3NvcmluZy5j
+ICAgICAgICAgICAgICAgIHwgIDUgLS0tLS0NCj4gPiAgNCBmaWxlcyBjaGFuZ2VkLCAyNSBpbnNl
+cnRpb25zKCspLCAxOSBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9saWIvcmlu
+Zy9ydGVfcmluZ19jMTFfcHZ0LmggYi9saWIvcmluZy9ydGVfcmluZ19jMTFfcHZ0LmggaW5kZXgN
+Cj4gPiAwODQ1Y2Q2ZGNmLi42ZDFjNDZkZjlhIDEwMDY0NA0KPiA+IC0tLSBhL2xpYi9yaW5nL3J0
+ZV9yaW5nX2MxMV9wdnQuaA0KPiA+ICsrKyBiL2xpYi9yaW5nL3J0ZV9yaW5nX2MxMV9wdnQuaA0K
+PiA+IEBAIC03NywyMCArNzcsMTkgQEAgX19ydGVfcmluZ19oZWFkdGFpbF9tb3ZlX2hlYWQoc3Ry
+dWN0DQo+ID4gcnRlX3JpbmdfaGVhZHRhaWwgKmQsDQo+ID4gIAlpbnQgc3VjY2VzczsNCj4gPiAg
+CXVuc2lnbmVkIGludCBtYXggPSBuOw0KPiA+DQo+ID4gKwkvKiBFbnN1cmUgdGhlIGhlYWQgaXMg
+cmVhZCBiZWZvcmUgdGFpbCAqLw0KPiA+ICAJKm9sZF9oZWFkID0gcnRlX2F0b21pY19sb2FkX2V4
+cGxpY2l0KCZkLT5oZWFkLA0KPiA+IC0JCQlydGVfbWVtb3J5X29yZGVyX3JlbGF4ZWQpOw0KPiA+
+ICsJCQlydGVfbWVtb3J5X29yZGVyX2FjcXVpcmUpOw0KPiA+ICAJZG8gew0KPiA+ICAJCS8qIFJl
+c2V0IG4gdG8gdGhlIGluaXRpYWwgYnVyc3QgY291bnQgKi8NCj4gPiAgCQluID0gbWF4Ow0KPiA+
+DQo+ID4gLQkJLyogRW5zdXJlIHRoZSBoZWFkIGlzIHJlYWQgYmVmb3JlIHRhaWwgKi8NCj4gPiAt
+CQlydGVfYXRvbWljX3RocmVhZF9mZW5jZShydGVfbWVtb3J5X29yZGVyX2FjcXVpcmUpOw0KPiA+
+IC0NCj4gPiAtCQkvKiBsb2FkLWFjcXVpcmUgc3luY2hyb25pemUgd2l0aCBzdG9yZS1yZWxlYXNl
+IG9mIGh0LT50YWlsDQo+ID4gLQkJICogaW4gdXBkYXRlX3RhaWwuDQo+ID4gKwkJLyoNCj4gPiAr
+CQkgKiBSZWFkIHMtPnRhaWwgdmFsdWUuIE5vdGUgdGhhdCBpdCB3aWxsIGJlIGxvYWRlZCBhZnRl
+cg0KPiA+ICsJCSAqIGQtPmhlYWQgbG9hZCwgYnV0IGJlZm9yZSBDQVMgb3BlcmF0aW9uIGZvciB0
+aGUgZC0+aGVhZC4NCj4gPiAgCQkgKi8NCj4gPiAgCQlzdGFpbCA9IHJ0ZV9hdG9taWNfbG9hZF9l
+eHBsaWNpdCgmcy0+dGFpbCwNCj4gPiAtCQkJCQlydGVfbWVtb3J5X29yZGVyX2FjcXVpcmUpOw0K
+PiA+ICsJCQkJCXJ0ZV9tZW1vcnlfb3JkZXJfcmVsYXhlZCk7DQo+ID4NCj4gPiAgCQkvKiBUaGUg
+c3VidHJhY3Rpb24gaXMgZG9uZSBiZXR3ZWVuIHR3byB1bnNpZ25lZCAzMmJpdHMgdmFsdWUNCj4g
+PiAgCQkgKiAodGhlIHJlc3VsdCBpcyBhbHdheXMgbW9kdWxvIDMyIGJpdHMgZXZlbiBpZiB3ZSBo
+YXZlIEBAIC0NCj4gPiAxMTIsMTEgKzExMSwxOSBAQCBfX3J0ZV9yaW5nX2hlYWR0YWlsX21vdmVf
+aGVhZChzdHJ1Y3QgcnRlX3JpbmdfaGVhZHRhaWwNCj4gPiAqZCwNCj4gPiAgCQkJZC0+aGVhZCA9
+ICpuZXdfaGVhZDsNCj4gPiAgCQkJc3VjY2VzcyA9IDE7DQo+ID4gIAkJfSBlbHNlDQo+ID4gLQkJ
+CS8qIG9uIGZhaWx1cmUsICpvbGRfaGVhZCBpcyB1cGRhdGVkICovDQo+ID4gKwkJCS8qDQo+ID4g
+KwkJCSAqIG9uIGZhaWx1cmUsICpvbGRfaGVhZCBpcyB1cGRhdGVkLg0KPiA+ICsJCQkgKiB0aGlz
+IENBUyhBQ1FfUkVMLCBBQ1FVSVJFKSBzZXJ2ZXMgYXMgYSBob2lzdA0KPiA+ICsJCQkgKiBiYXJy
+aWVyIHRvIHByZXZlbnQ6DQo+ID4gKwkJCSAqICAtIE9PTyByZWFkcyBvZiBjb25zIHRhaWwgdmFs
+dWUNCj4gPiArCQkJICogIC0gT09PIGNvcHkgb2YgZWxlbXMgZnJvbSB0aGUgcmluZw0KPiA+ICsJ
+CQkgKiAgQWxzbyBSRUxFQVNFIGd1YXJhbnRlZXMgdGhhdCBsYXRlc3QgdGFpbCB2YWx1ZQ0KPiA+
+ICsJCQkgKiAgd2lsbCBiZWNvbWUgdmlzaWJsZSBiZWZvcmUgdGhlIG5ldyBoZWFkIHZhbHVlLg0K
+PiA+ICsJCQkgKi8NCj4gPiAgCQkJc3VjY2VzcyA9DQo+ID4gcnRlX2F0b21pY19jb21wYXJlX2V4
+Y2hhbmdlX3N0cm9uZ19leHBsaWNpdCgNCj4gPiAgCQkJCQkmZC0+aGVhZCwgb2xkX2hlYWQsICpu
+ZXdfaGVhZCwNCj4gPiAtCQkJCQlydGVfbWVtb3J5X29yZGVyX3JlbGF4ZWQsDQo+ID4gLQkJCQkJ
+cnRlX21lbW9yeV9vcmRlcl9yZWxheGVkKTsNCj4gPiArCQkJCQlydGVfbWVtb3J5X29yZGVyX2Fj
+cV9yZWwsDQo+ID4gKwkJCQkJcnRlX21lbW9yeV9vcmRlcl9hY3F1aXJlKTsNCj4gPiAgCX0gd2hp
+bGUgKHVubGlrZWx5KHN1Y2Nlc3MgPT0gMCkpOw0KPiA+ICAJcmV0dXJuIG47DQo+ID4gIH0NCj4g
+PiBkaWZmIC0tZ2l0IGEvbGliL3JpbmcvcnRlX3JpbmdfaHRzX2VsZW1fcHZ0LmggYi9saWIvcmlu
+Zy9ydGVfcmluZ19odHNfZWxlbV9wdnQuaA0KPiA+IGluZGV4IGM1OWU1ZjY0MjAuLmNjNTkzNDMz
+YjkgMTAwNjQ0DQo+ID4gLS0tIGEvbGliL3JpbmcvcnRlX3JpbmdfaHRzX2VsZW1fcHZ0LmgNCj4g
+PiArKysgYi9saWIvcmluZy9ydGVfcmluZ19odHNfZWxlbV9wdnQuaA0KPiA+IEBAIC0xMTYsMTMg
+KzExNiwxNSBAQCBfX3J0ZV9yaW5nX2h0c19tb3ZlX2hlYWQoc3RydWN0DQo+ID4gcnRlX3Jpbmdf
+aHRzX2hlYWR0YWlsICpkLA0KPiA+ICAJCW5wLnBvcy5oZWFkID0gb3AucG9zLmhlYWQgKyBuOw0K
+PiA+DQo+ID4gIAkvKg0KPiA+IC0JICogdGhpcyBDQVMoQUNRVUlSRSwgQUNRVUlSRSkgc2VydmVz
+IGFzIGEgaG9pc3QgYmFycmllciB0byBwcmV2ZW50Og0KPiA+ICsJICogdGhpcyBDQVMoQUNRX1JF
+TCwgQUNRVUlSRSkgc2VydmVzIGFzIGEgaG9pc3QgYmFycmllciB0byBwcmV2ZW50Og0KPiA+ICAJ
+ICogIC0gT09PIHJlYWRzIG9mIGNvbnMgdGFpbCB2YWx1ZQ0KPiA+ICAJICogIC0gT09PIGNvcHkg
+b2YgZWxlbXMgZnJvbSB0aGUgcmluZw0KPiA+ICsJICogICBBbHNvIFJFTEVBU0UgZ3VhcmFudGVl
+cyB0aGF0IGxhdGVzdCB0YWlsIHZhbHVlDQo+ID4gKwkgKiAgIHdpbGwgYmVjb21lIHZpc2libGUg
+YmVmb3JlIHRoZSBuZXcgaGVhZCB2YWx1ZS4NCj4gPiAgCSAqLw0KPiA+ICAJfSB3aGlsZSAocnRl
+X2F0b21pY19jb21wYXJlX2V4Y2hhbmdlX3N0cm9uZ19leHBsaWNpdCgmZC0+aHQucmF3LA0KPiA+
+ICAJCQkodWludDY0X3QgKikodWludHB0cl90KSZvcC5yYXcsIG5wLnJhdywNCj4gPiAtCQkJcnRl
+X21lbW9yeV9vcmRlcl9hY3F1aXJlLA0KPiA+ICsJCQlydGVfbWVtb3J5X29yZGVyX2FjcV9yZWws
+DQo+ID4gIAkJCXJ0ZV9tZW1vcnlfb3JkZXJfYWNxdWlyZSkgPT0gMCk7DQo+ID4NCj4gPiAgCSpv
+bGRfaGVhZCA9IG9wLnBvcy5oZWFkOw0KPiA+IGRpZmYgLS1naXQgYS9saWIvcmluZy9ydGVfcmlu
+Z19ydHNfZWxlbV9wdnQuaCBiL2xpYi9yaW5nL3J0ZV9yaW5nX3J0c19lbGVtX3B2dC5oDQo+ID4g
+aW5kZXggNTA5ZmE2NzRmYi4uODYwYjEzY2M2MSAxMDA2NDQNCj4gPiAtLS0gYS9saWIvcmluZy9y
+dGVfcmluZ19ydHNfZWxlbV9wdnQuaA0KPiA+ICsrKyBiL2xpYi9yaW5nL3J0ZV9yaW5nX3J0c19l
+bGVtX3B2dC5oDQo+ID4gQEAgLTEzMSwxMyArMTMxLDE1IEBAIF9fcnRlX3JpbmdfcnRzX21vdmVf
+aGVhZChzdHJ1Y3QNCj4gPiBydGVfcmluZ19ydHNfaGVhZHRhaWwgKmQsDQo+ID4gIAkJbmgudmFs
+LmNudCA9IG9oLnZhbC5jbnQgKyAxOw0KPiA+DQo+ID4gIAkvKg0KPiA+IC0JICogdGhpcyBDQVMo
+QUNRVUlSRSwgQUNRVUlSRSkgc2VydmVzIGFzIGEgaG9pc3QgYmFycmllciB0byBwcmV2ZW50Og0K
+PiA+ICsJICogdGhpcyBDQVMoQUNRX1JFTCwgQUNRVUlSRSkgc2VydmVzIGFzIGEgaG9pc3QgYmFy
+cmllciB0byBwcmV2ZW50Og0KPiA+ICAJICogIC0gT09PIHJlYWRzIG9mIGNvbnMgdGFpbCB2YWx1
+ZQ0KPiA+ICAJICogIC0gT09PIGNvcHkgb2YgZWxlbXMgdG8gdGhlIHJpbmcNCj4gPiArCSAqICBB
+bHNvIFJFTEVBU0UgZ3VhcmFudGVlcyB0aGF0IGxhdGVzdCB0YWlsIHZhbHVlDQo+ID4gKwkgKiAg
+d2lsbCBiZWNvbWUgdmlzaWJsZSBiZWZvcmUgdGhlIG5ldyBoZWFkIHZhbHVlLg0KPiA+ICAJICov
+DQo+ID4gIAl9IHdoaWxlIChydGVfYXRvbWljX2NvbXBhcmVfZXhjaGFuZ2Vfc3Ryb25nX2V4cGxp
+Y2l0KCZkLT5oZWFkLnJhdywNCj4gPiAgCQkJKHVpbnQ2NF90ICopKHVpbnRwdHJfdCkmb2gucmF3
+LCBuaC5yYXcsDQo+ID4gLQkJCXJ0ZV9tZW1vcnlfb3JkZXJfYWNxdWlyZSwNCj4gPiArCQkJcnRl
+X21lbW9yeV9vcmRlcl9hY3FfcmVsLA0KPiA+ICAJCQlydGVfbWVtb3J5X29yZGVyX2FjcXVpcmUp
+ID09IDApOw0KPiA+DQo+ID4gIAkqb2xkX2hlYWQgPSBvaC52YWwucG9zOw0KPiA+IGRpZmYgLS1n
+aXQgYS9saWIvcmluZy9zb3JpbmcuYyBiL2xpYi9yaW5nL3NvcmluZy5jIGluZGV4IDdiY2JmMzU1
+MTYuLjIxYTFhMjdlMjQNCj4gPiAxMDA2NDQNCj4gPiAtLS0gYS9saWIvcmluZy9zb3JpbmcuYw0K
+PiA+ICsrKyBiL2xpYi9yaW5nL3NvcmluZy5jDQo+ID4gQEAgLTEyMyw4ICsxMjMsNiBAQCBfX3J0
+ZV9zb3Jpbmdfc3RhZ2VfZmluYWxpemUoc3RydWN0DQo+ID4gc29yaW5nX3N0YWdlX2hlYWR0YWls
+ICpzaHQsIHVpbnQzMl90IHN0YWdlLA0KPiA+ICAJcnRlX2F0b21pY19zdG9yZV9leHBsaWNpdCgm
+c2h0LT50YWlsLnJhdywgb3QucmF3LA0KPiA+ICAJCQlydGVfbWVtb3J5X29yZGVyX3JlbGVhc2Up
+Ow0KPiA+DQo+ID4gLQkvKiBtYWtlIHN1cmUgdGhhdCBuZXcgdGFpbCB2YWx1ZSBpcyB2aXNpYmxl
+ICovDQo+ID4gLQlydGVfYXRvbWljX3RocmVhZF9mZW5jZShydGVfbWVtb3J5X29yZGVyX3JlbGVh
+c2UpOw0KPiA+ICAJcmV0dXJuIGk7DQo+ID4gIH0NCj4gPg0KPiA+IEBAIC0yMTksOSArMjE3LDYg
+QEAgX19ydGVfc29yaW5nX3VwZGF0ZV90YWlsKHN0cnVjdCBfX3J0ZV9yaW5nX2hlYWR0YWlsDQo+
+ID4gKnJodCwNCj4gPiAgCQkvKiB1bnN1cHBvcnRlZCBtb2RlLCBzaG91bGRuJ3QgYmUgaGVyZSAq
+Lw0KPiA+ICAJCVJURV9BU1NFUlQoMCk7DQo+ID4gIAl9DQo+ID4gLQ0KPiA+IC0JLyogbWFrZSBz
+dXJlIHRoYXQgbmV3IHRhaWwgdmFsdWUgaXMgdmlzaWJsZSAqLw0KPiA+IC0JcnRlX2F0b21pY190
+aHJlYWRfZmVuY2UocnRlX21lbW9yeV9vcmRlcl9yZWxlYXNlKTsNCj4gPiAgfQ0KPiA+DQo+ID4g
+IHN0YXRpYyBfX3J0ZV9hbHdheXNfaW5saW5lIHVpbnQzMl90DQo+ID4gLS0NCj4gPiAyLjQzLjAN
+Cg0K
