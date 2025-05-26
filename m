@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4094C5AD49
-	for <dpdk-dev@archiver.kernel.org>; Mon, 26 May 2025 16:59:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 822E6C54FB3
+	for <dpdk-dev@archiver.kernel.org>; Mon, 26 May 2025 17:00:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 53E6B40A6F;
-	Mon, 26 May 2025 18:59:05 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+	by mails.dpdk.org (Postfix) with ESMTP id 50C6A406B6;
+	Mon, 26 May 2025 18:59:09 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
  [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 339A040A67
- for <dev@dpdk.org>; Mon, 26 May 2025 18:59:04 +0200 (CEST)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54QEwgui006948
- for <dev@dpdk.org>; Mon, 26 May 2025 09:59:03 -0700
+ by mails.dpdk.org (Postfix) with ESMTP id 31CFE40A77
+ for <dev@dpdk.org>; Mon, 26 May 2025 18:59:08 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54QFnCDi009349
+ for <dev@dpdk.org>; Mon, 26 May 2025 09:59:07 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=Q
- AX3R4FjvxWELyd/k4vKsNgeyqhAAvrXNgJQB1vtkwU=; b=PfwPjMThI/7ugRfkl
- G1XqCilmu2Db4ZiIhytsUxtMhKsAqpfpaaGab/sZy7mIRdWHWwm71ARAz8eTZnwj
- cRIVUGO301JS/xIgE1TGn43txb8ZOi+ESl1PjPjShsmEWwQ5J8Q7+mzJ8b/hFUzr
- XfZJPPLM9X+d4xw26FH0JHFTDHNkrNNbUXej7/fuWhW95RCvJeXlaOLX7n6m5H0C
- DwOrWJEJjEmgJbiFsHxOZijZRnmsHRC+0eeKoMiyb5NFheJRz9KgkV4fzJN2CBep
- f3y038Ot1xfiLMpxi+qzmQvEI6/1DolJ5k2RXmSdApxCL9ykHMBG5Ir1yzBXt+FL
- PpTWw==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46vthfr6s4-1
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=z
+ w8E9CqgTDwhFhmGSfcL80X2enm07wW8E/6OWYfmMCk=; b=C8Pa0pwNTugYp9uxr
+ obt35NbTWLM0EN6DdO5GqN2ikmy6uz5uqMgMpVzhIoRRcP0VQAuboaGtsGEeBFyu
+ VQGyBBa3v50hdt/54Y+KAIMeZJ+X4sb+Con24KZzu1IjW5apWAcWexQMcdvV3wtj
+ klU/LJAa9ieLlVnkIAKg5Xf/kQ+MDQVtwnACSxpr4vKky7lSLBGtnbM8643+rY+U
+ 8r15zqOERoHLQpbZ/sG/iZ/PAEHmoONUb9slJMj6MC5XKYOSTCIlp00rHOwSacX4
+ ZSFdAtp4Obx40v0xeSHlL96Di6npjE+lP8g7mjfUk86w0j7AY32lJHFv5MQt9Bbk
+ AupoA==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46vp9krp9j-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Mon, 26 May 2025 09:59:03 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ for <dev@dpdk.org>; Mon, 26 May 2025 09:59:07 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 26 May 2025 09:59:02 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 26 May 2025 09:59:02 -0700
+ 15.2.1544.4; Mon, 26 May 2025 09:59:06 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 26 May 2025 09:59:06 -0700
 Received: from hyd1554.caveonetworks.com (unknown [10.29.56.32])
- by maili.marvell.com (Postfix) with ESMTP id F18BB3F7048;
- Mon, 26 May 2025 09:58:59 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 32ED33F7048;
+ Mon, 26 May 2025 09:59:02 -0700 (PDT)
 From: Tejasree Kondoj <ktejasree@marvell.com>
 To: Akhil Goyal <gakhil@marvell.com>
 CC: Vidya Sagar Velumuri <vvelumuri@marvell.com>, Anoob Joseph
  <anoobj@marvell.com>, Aakash Sasidharan <asasidharan@marvell.com>,
  "Nithinsen Kaithakadan" <nkaithakadan@marvell.com>, Rupesh Chiluka
  <rchiluka@marvell.com>, <dev@dpdk.org>
-Subject: [PATCH v2 12/40] crypto/cnxk: add enqueue function support
-Date: Mon, 26 May 2025 22:27:51 +0530
-Message-ID: <20250526165819.2197892-13-ktejasree@marvell.com>
+Subject: [PATCH v2 13/40] crypto/cnxk: add cryptodev dequeue support for cn20k
+Date: Mon, 26 May 2025 22:27:52 +0530
+Message-ID: <20250526165819.2197892-14-ktejasree@marvell.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250526165819.2197892-1-ktejasree@marvell.com>
 References: <20250526165819.2197892-1-ktejasree@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI2MDE0MyBTYWx0ZWRfX9s444uRrtths
- Fk4RuMcT1nND8WA4yhxEtk95HPwRJebYS29eoXOEZrkA1QynTvj6perXTOTdCeenDUqfRAY0b3r
- WVY8YuAsgxHcviElSAM88psj+kiB5HLGXjBchzXNLBiUzVIwh3fmCrJG+Gkgfgbo701jRfxSUpo
- JlyJQT0IyOpWfuYHtROO3gkFOIB/RywYOLblWirO7InbarIOOq+TS5g0fRDFQaZz8aF29lLLP6Q
- zbEjQJB0Q7tRAdcpxseQbEbMVO1VWWW2FQzu7+11spRDEahyq+kJbOKoT5G+w13iXmxUsZpyo0k
- JRPAKggObnuGezsjDJOikmqJLEH84RHHM/IeidaOVh9fOFGVr29A4YSqgAvxDKNr4pzWtE1uYp+
- tzCXzId7VVvE9zl2aoyW4AWUgj3+fnShedy6VGBUnwZlY2XC93Fu1mZvhC3ZVfP/hbp9PQUS
-X-Proofpoint-ORIG-GUID: DsWtP8dfSD51V5q9qCUn3f8GU8ZqTCCp
-X-Proofpoint-GUID: DsWtP8dfSD51V5q9qCUn3f8GU8ZqTCCp
-X-Authority-Analysis: v=2.4 cv=FfA3xI+6 c=1 sm=1 tr=0 ts=68349dd7 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=FvBXgo9mQ-onvgMoz1IA:9
+X-Authority-Analysis: v=2.4 cv=VYn3PEp9 c=1 sm=1 tr=0 ts=68349ddb cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=ZtNhUn4JJ_VNKK7vbDYA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI2MDE0MyBTYWx0ZWRfX4ZS4jcSlDNr3
+ N/HBjyabg6HW79PYpTnaK4ebSyXrBQUlwBQxKuC3V6ZIG0yLoZgpzKypIlAxMU8J6iuID4OyZ19
+ b0c+mC1PNjJomw9TrVn9xAWeXgU3PXDQ4wLVyTnYtVgcjmLDiaorzmp/Rz/mVWs3xWSz9z8liSZ
+ 18hRX8ZZJbluvqQtGHWzkzSR6vAjs84KSDVI6NOoFGr1kZTgaE25dWhhqkLq+ZZW5luSAFuKN7P
+ 6KMHL4pWZDkP+yykbAZJp4XSnjcE/nxUVQeLjlCOrNSy9mc+5OViSO7FYjHYcyHo2mfbQdFlCRm
+ 2V6p2qAvlptw7FDQ4FIxDGChFn2tEQ9MXMB14tYTF9343MxAcvmJVMWPH6cymj0yxgwRU7iZw0I
+ DNaexgOWUNi5IjR9DtmULHNL4bJ343Dj0pa6J4h0vl5Vd2MBGcEucWrPyvgqul7gDyizC4g0
+X-Proofpoint-ORIG-GUID: 0lCaSKYesu3NAdVUy4y5GDfdUKxH_d62
+X-Proofpoint-GUID: 0lCaSKYesu3NAdVUy4y5GDfdUKxH_d62
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-26_08,2025-05-26_02,2025-03-28_01
@@ -84,288 +84,169 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Vidya Sagar Velumuri <vvelumuri@marvell.com>
 
-Add cryptodev enqueue function support for cn20k
+Add dequeue support in cryptodev for cn20k
 
 Signed-off-by: Vidya Sagar Velumuri <vvelumuri@marvell.com>
 ---
- drivers/crypto/cnxk/cn20k_cryptodev.c     |   2 +-
- drivers/crypto/cnxk/cn20k_cryptodev_ops.c | 193 +++++++++++++++++++++-
- drivers/crypto/cnxk/cn20k_cryptodev_ops.h |   2 +-
- drivers/crypto/cnxk/cnxk_cryptodev_ops.h  |  11 +-
- 4 files changed, 195 insertions(+), 13 deletions(-)
+ drivers/crypto/cnxk/cn20k_cryptodev_ops.c | 141 +++++++++++++++++++++-
+ 1 file changed, 137 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/crypto/cnxk/cn20k_cryptodev.c b/drivers/crypto/cnxk/cn20k_cryptodev.c
-index 0845c1e20d..4c70c15ca9 100644
---- a/drivers/crypto/cnxk/cn20k_cryptodev.c
-+++ b/drivers/crypto/cnxk/cn20k_cryptodev.c
-@@ -92,7 +92,7 @@ cn20k_cpt_pci_probe(struct rte_pci_driver *pci_drv __rte_unused, struct rte_pci_
- 	dev->feature_flags = cnxk_cpt_default_ff_get();
- 
- 	dev->qp_depth_used = cnxk_cpt_qp_depth_used;
--	cn20k_cpt_set_enqdeq_fns(dev, vf);
-+	cn20k_cpt_set_enqdeq_fns(dev);
- 
- 	rte_cryptodev_pmd_probing_finish(dev);
- 
 diff --git a/drivers/crypto/cnxk/cn20k_cryptodev_ops.c b/drivers/crypto/cnxk/cn20k_cryptodev_ops.c
-index e3bea9aaf6..fe9f91a780 100644
+index fe9f91a780..4235c3f2c2 100644
 --- a/drivers/crypto/cnxk/cn20k_cryptodev_ops.c
 +++ b/drivers/crypto/cnxk/cn20k_cryptodev_ops.c
-@@ -10,6 +10,7 @@
- 
- #include "cn20k_cryptodev.h"
- #include "cn20k_cryptodev_ops.h"
-+#include "cnxk_ae.h"
- #include "cnxk_cryptodev.h"
- #include "cnxk_cryptodev_ops.h"
- #include "cnxk_se.h"
-@@ -30,14 +31,196 @@ cn20k_cpt_crypto_adapter_ev_mdata_set(struct rte_cryptodev *dev __rte_unused, vo
- 	return 0;
+@@ -223,14 +223,147 @@ cn20k_cpt_enqueue_burst(void *qptr, struct rte_crypto_op **ops, uint16_t nb_ops)
+ 	return count + i;
  }
  
-+static inline struct cnxk_se_sess *
-+cn20k_cpt_sym_temp_sess_create(struct cnxk_cpt_qp *qp, struct rte_crypto_op *op)
++static inline void
++cn20k_cpt_dequeue_post_process(struct cnxk_cpt_qp *qp, struct rte_crypto_op *cop,
++			       struct cpt_inflight_req *infl_req, struct cpt_cn20k_res_s *res)
 +{
-+	struct rte_crypto_sym_op *sym_op = op->sym;
-+	struct rte_cryptodev_sym_session *sess;
-+	struct cnxk_se_sess *priv;
-+	int ret;
++	const uint8_t uc_compcode = res->uc_compcode;
++	const uint8_t compcode = res->compcode;
 +
-+	/* Create temporary session */
-+	if (rte_mempool_get(qp->sess_mp, (void **)&sess) < 0)
-+		return NULL;
++	cop->status = RTE_CRYPTO_OP_STATUS_SUCCESS;
 +
-+	ret = sym_session_configure(qp->lf.roc_cpt, sym_op->xform, sess, true);
-+	if (ret) {
-+		rte_mempool_put(qp->sess_mp, (void *)sess);
-+		goto sess_put;
++	if (cop->type == RTE_CRYPTO_OP_TYPE_ASYMMETRIC &&
++	    cop->sess_type == RTE_CRYPTO_OP_WITH_SESSION) {
++		struct cnxk_ae_sess *sess;
++
++		sess = (struct cnxk_ae_sess *)cop->asym->session;
++		if (sess->xfrm_type == RTE_CRYPTO_ASYM_XFORM_ECDH &&
++		    cop->asym->ecdh.ke_type == RTE_CRYPTO_ASYM_KE_PUB_KEY_VERIFY) {
++			if (likely(compcode == CPT_COMP_GOOD)) {
++				if (uc_compcode == ROC_AE_ERR_ECC_POINT_NOT_ON_CURVE) {
++					cop->status = RTE_CRYPTO_OP_STATUS_ERROR;
++					return;
++				} else if (uc_compcode == ROC_AE_ERR_ECC_PAI) {
++					cop->status = RTE_CRYPTO_OP_STATUS_SUCCESS;
++					return;
++				}
++			}
++		}
 +	}
 +
-+	priv = (void *)sess;
-+	sym_op->session = sess;
-+
-+	return priv;
-+
-+sess_put:
-+	rte_mempool_put(qp->sess_mp, sess);
-+	return NULL;
-+}
-+
-+static inline int
-+cn20k_cpt_fill_inst(struct cnxk_cpt_qp *qp, struct rte_crypto_op *ops[], struct cpt_inst_s inst[],
-+		    struct cpt_inflight_req *infl_req)
-+{
-+	struct rte_crypto_asym_op *asym_op;
-+	struct rte_crypto_sym_op *sym_op;
-+	struct cnxk_ae_sess *ae_sess;
-+	struct cnxk_se_sess *sess;
-+	struct rte_crypto_op *op;
-+	uint64_t w7;
-+	int ret;
-+
-+	const union cpt_res_s res = {
-+		.cn20k.compcode = CPT_COMP_NOT_DONE,
-+	};
-+
-+	op = ops[0];
-+
-+	inst[0].w0.u64 = 0;
-+	inst[0].w2.u64 = 0;
-+	inst[0].w3.u64 = 0;
-+
-+	sym_op = op->sym;
-+
-+	if (op->type == RTE_CRYPTO_OP_TYPE_SYMMETRIC) {
-+		if (op->sess_type == RTE_CRYPTO_OP_WITH_SESSION) {
-+			sess = (struct cnxk_se_sess *)(sym_op->session);
-+			ret = cpt_sym_inst_fill(qp, op, sess, infl_req, &inst[0], true);
-+			if (unlikely(ret))
-+				return 0;
-+			w7 = sess->cpt_inst_w7;
-+		} else {
-+			sess = cn20k_cpt_sym_temp_sess_create(qp, op);
-+			if (unlikely(sess == NULL)) {
-+				plt_dp_err("Could not create temp session");
-+				return 0;
-+			}
-+
-+			ret = cpt_sym_inst_fill(qp, op, sess, infl_req, &inst[0], true);
-+			if (unlikely(ret)) {
-+				sym_session_clear(op->sym->session, true);
-+				rte_mempool_put(qp->sess_mp, op->sym->session);
-+				return 0;
-+			}
-+			w7 = sess->cpt_inst_w7;
-+		}
-+	} else if (op->type == RTE_CRYPTO_OP_TYPE_ASYMMETRIC) {
-+
-+		if (op->sess_type == RTE_CRYPTO_OP_WITH_SESSION) {
-+			asym_op = op->asym;
-+			ae_sess = (struct cnxk_ae_sess *)asym_op->session;
-+			ret = cnxk_ae_enqueue(qp, op, infl_req, &inst[0], ae_sess);
-+			if (unlikely(ret))
-+				return 0;
-+			w7 = ae_sess->cpt_inst_w7;
-+		} else {
-+			plt_dp_err("Not supported Asym op without session");
-+			return 0;
-+		}
-+	} else {
-+		plt_dp_err("Unsupported op type");
-+		return 0;
-+	}
-+
-+	inst[0].res_addr = (uint64_t)&infl_req->res;
-+	rte_atomic_store_explicit(&infl_req->res.u64[0], res.u64[0], rte_memory_order_relaxed);
-+	infl_req->cop = op;
-+
-+	inst[0].w7.u64 = w7;
-+
++	if (likely(compcode == CPT_COMP_GOOD)) {
 +#ifdef CPT_INST_DEBUG_ENABLE
-+	infl_req->dptr = (uint8_t *)inst[0].dptr;
-+	infl_req->rptr = (uint8_t *)inst[0].rptr;
-+	infl_req->scatter_sz = inst[0].w6.s.scatter_sz;
-+	infl_req->opcode_major = inst[0].w4.s.opcode_major;
-+
-+	rte_hexdump(rte_log_get_stream(), "cptr", (void *)(uint64_t)inst[0].w7.s.cptr, 128);
-+	plt_err("major opcode:%d", inst[0].w4.s.opcode_major);
-+	plt_err("minor opcode:%d", inst[0].w4.s.opcode_minor);
-+	plt_err("param1:%d", inst[0].w4.s.param1);
-+	plt_err("param2:%d", inst[0].w4.s.param2);
-+	plt_err("dlen:%d", inst[0].w4.s.dlen);
-+
-+	cpt_request_data_sgv2_mode_dump((void *)inst[0].dptr, 1, inst[0].w5.s.gather_sz);
-+	cpt_request_data_sgv2_mode_dump((void *)inst[0].rptr, 0, inst[0].w6.s.scatter_sz);
++		cpt_request_data_sgv2_mode_dump(infl_req->rptr, 0, infl_req->scatter_sz);
 +#endif
 +
-+	return 1;
++		if (unlikely(uc_compcode)) {
++			if (uc_compcode == ROC_SE_ERR_GC_ICV_MISCOMPARE)
++				cop->status = RTE_CRYPTO_OP_STATUS_AUTH_FAILED;
++			else
++				cop->status = RTE_CRYPTO_OP_STATUS_ERROR;
++
++			plt_dp_info("Request failed with microcode error");
++			plt_dp_info("MC completion code 0x%x", res->uc_compcode);
++			cop->aux_flags = uc_compcode;
++			goto temp_sess_free;
++		}
++
++		if (cop->type == RTE_CRYPTO_OP_TYPE_SYMMETRIC) {
++			/* Verify authentication data if required */
++			if (unlikely(infl_req->op_flags & CPT_OP_FLAGS_AUTH_VERIFY)) {
++				uintptr_t *rsp = infl_req->mdata;
++
++				compl_auth_verify(cop, (uint8_t *)rsp[0], rsp[1]);
++			}
++		} else if (cop->type == RTE_CRYPTO_OP_TYPE_ASYMMETRIC) {
++			struct rte_crypto_asym_op *op = cop->asym;
++			uintptr_t *mdata = infl_req->mdata;
++			struct cnxk_ae_sess *sess = (struct cnxk_ae_sess *)op->session;
++
++			cnxk_ae_post_process(cop, sess, (uint8_t *)mdata[0]);
++		}
++	} else {
++		cop->status = RTE_CRYPTO_OP_STATUS_ERROR;
++		plt_dp_info("HW completion code 0x%x", res->compcode);
++
++		switch (compcode) {
++		case CPT_COMP_INSTERR:
++			plt_dp_err("Request failed with instruction error");
++			break;
++		case CPT_COMP_FAULT:
++			plt_dp_err("Request failed with DMA fault");
++			break;
++		case CPT_COMP_HWERR:
++			plt_dp_err("Request failed with hardware error");
++			break;
++		default:
++			plt_dp_err("Request failed with unknown completion code");
++		}
++	}
++
++temp_sess_free:
++	if (unlikely(cop->sess_type == RTE_CRYPTO_OP_SESSIONLESS)) {
++		if (cop->type == RTE_CRYPTO_OP_TYPE_SYMMETRIC) {
++			sym_session_clear(cop->sym->session, true);
++			rte_mempool_put(qp->sess_mp, cop->sym->session);
++			cop->sym->session = NULL;
++		}
++	}
 +}
 +
  static uint16_t
- cn20k_cpt_enqueue_burst(void *qptr, struct rte_crypto_op **ops, uint16_t nb_ops)
+ cn20k_cpt_dequeue_burst(void *qptr, struct rte_crypto_op **ops, uint16_t nb_ops)
  {
 -	(void)qptr;
 -	(void)ops;
 -	(void)nb_ops;
 +	struct cpt_inflight_req *infl_req;
-+	uint64_t head, lmt_base, io_addr;
-+	uint16_t nb_allowed, count = 0;
 +	struct cnxk_cpt_qp *qp = qptr;
 +	struct pending_queue *pend_q;
-+	struct cpt_inst_s *inst;
-+	union cpt_fc_write_s fc;
-+	uint64_t *fc_addr;
-+	uint16_t lmt_id;
-+	int ret, i;
++	uint64_t infl_cnt, pq_tail;
++	struct rte_crypto_op *cop;
++	union cpt_res_s res;
++	int i;
  
 -	return 0;
 +	pend_q = &qp->pend_q;
 +
 +	const uint64_t pq_mask = pend_q->pq_mask;
 +
-+	head = pend_q->head;
-+	nb_allowed = pending_queue_free_cnt(head, pend_q->tail, pq_mask);
-+	nb_ops = RTE_MIN(nb_ops, nb_allowed);
++	pq_tail = pend_q->tail;
++	infl_cnt = pending_queue_infl_cnt(pend_q->head, pq_tail, pq_mask);
++	nb_ops = RTE_MIN(nb_ops, infl_cnt);
 +
-+	if (unlikely(nb_ops == 0))
-+		return 0;
++	/* Ensure infl_cnt isn't read before data lands */
++	rte_atomic_thread_fence(rte_memory_order_acquire);
 +
-+	lmt_base = qp->lmtline.lmt_base;
-+	io_addr = qp->lmtline.io_addr;
-+	fc_addr = qp->lmtline.fc_addr;
++	for (i = 0; i < nb_ops; i++) {
++		infl_req = &pend_q->req_queue[pq_tail];
 +
-+	const uint32_t fc_thresh = qp->lmtline.fc_thresh;
++		res.u64[0] =
++			rte_atomic_load_explicit((RTE_ATOMIC(uint64_t) *)(&infl_req->res.u64[0]), rte_memory_order_relaxed);
 +
-+	ROC_LMT_BASE_ID_GET(lmt_base, lmt_id);
-+	inst = (struct cpt_inst_s *)lmt_base;
-+
-+again:
-+	fc.u64[0] = rte_atomic_load_explicit((RTE_ATOMIC(uint64_t) *)fc_addr, rte_memory_order_relaxed);
-+	if (unlikely(fc.s.qsize > fc_thresh)) {
-+		i = 0;
-+		goto pend_q_commit;
-+	}
-+
-+	for (i = 0; i < RTE_MIN(CN20K_CPT_PKTS_PER_LOOP, nb_ops); i++) {
-+		infl_req = &pend_q->req_queue[head];
-+		infl_req->op_flags = 0;
-+
-+		ret = cn20k_cpt_fill_inst(qp, ops + i, &inst[i], infl_req);
-+		if (unlikely(ret != 1)) {
-+			plt_dp_err("Could not process op: %p", ops + i);
-+			if (i == 0)
-+				goto pend_q_commit;
++		if (unlikely(res.cn20k.compcode == CPT_COMP_NOT_DONE)) {
++			if (unlikely(rte_get_timer_cycles() > pend_q->time_out)) {
++				plt_err("Request timed out");
++				cnxk_cpt_dump_on_err(qp);
++				pend_q->time_out = rte_get_timer_cycles() +
++						   DEFAULT_COMMAND_TIMEOUT * rte_get_timer_hz();
++			}
 +			break;
 +		}
 +
-+		pending_queue_advance(&head, pq_mask);
++		pending_queue_advance(&pq_tail, pq_mask);
++
++		cop = infl_req->cop;
++
++		ops[i] = cop;
++
++		cn20k_cpt_dequeue_post_process(qp, cop, infl_req, &res.cn20k);
++
++		if (unlikely(infl_req->op_flags & CPT_OP_FLAGS_METABUF))
++			rte_mempool_put(qp->meta_info.pool, infl_req->mdata);
 +	}
 +
-+	cn20k_cpt_lmtst_dual_submit(&io_addr, lmt_id, &i);
++	pend_q->tail = pq_tail;
 +
-+	if (nb_ops - i > 0 && i == CN20K_CPT_PKTS_PER_LOOP) {
-+		nb_ops -= CN20K_CPT_PKTS_PER_LOOP;
-+		ops += CN20K_CPT_PKTS_PER_LOOP;
-+		count += CN20K_CPT_PKTS_PER_LOOP;
-+		goto again;
-+	}
-+
-+pend_q_commit:
-+	rte_atomic_thread_fence(rte_memory_order_release);
-+
-+	pend_q->head = head;
-+	pend_q->time_out = rte_get_timer_cycles() + DEFAULT_COMMAND_TIMEOUT * rte_get_timer_hz();
-+
-+	return count + i;
- }
- 
- static uint16_t
-@@ -51,7 +234,7 @@ cn20k_cpt_dequeue_burst(void *qptr, struct rte_crypto_op **ops, uint16_t nb_ops)
++	return i;
  }
  
  void
--cn20k_cpt_set_enqdeq_fns(struct rte_cryptodev *dev, struct cnxk_cpt_vf *vf)
-+cn20k_cpt_set_enqdeq_fns(struct rte_cryptodev *dev)
- {
- 	dev->enqueue_burst = cn20k_cpt_enqueue_burst;
- 	dev->dequeue_burst = cn20k_cpt_dequeue_burst;
-diff --git a/drivers/crypto/cnxk/cn20k_cryptodev_ops.h b/drivers/crypto/cnxk/cn20k_cryptodev_ops.h
-index 3e2ad1e2df..bdd6f71022 100644
---- a/drivers/crypto/cnxk/cn20k_cryptodev_ops.h
-+++ b/drivers/crypto/cnxk/cn20k_cryptodev_ops.h
-@@ -23,7 +23,7 @@
- 
- extern struct rte_cryptodev_ops cn20k_cpt_ops;
- 
--void cn20k_cpt_set_enqdeq_fns(struct rte_cryptodev *dev, struct cnxk_cpt_vf *vf);
-+void cn20k_cpt_set_enqdeq_fns(struct rte_cryptodev *dev);
- 
- static __rte_always_inline void __rte_hot
- cn20k_cpt_lmtst_dual_submit(uint64_t *io_addr, const uint16_t lmt_id, int *i)
-diff --git a/drivers/crypto/cnxk/cnxk_cryptodev_ops.h b/drivers/crypto/cnxk/cnxk_cryptodev_ops.h
-index 54d32abc9c..6ad52ec13e 100644
---- a/drivers/crypto/cnxk/cnxk_cryptodev_ops.h
-+++ b/drivers/crypto/cnxk/cnxk_cryptodev_ops.h
-@@ -32,14 +32,13 @@
- 
- #define MOD_INC(i, l) ((i) == (l - 1) ? (i) = 0 : (i)++)
- 
--#define CN10K_CPT_PKTS_PER_LOOP	  64
-+#define CN10K_CPT_PKTS_PER_LOOP 64
-+#define CN20K_CPT_PKTS_PER_LOOP 64
- 
- /* Macros to form words in CPT instruction */
--#define CNXK_CPT_INST_W2(tag, tt, grp, rvu_pf_func)                            \
--	((tag) | ((uint64_t)(tt) << 32) | ((uint64_t)(grp) << 34) |            \
--	 ((uint64_t)(rvu_pf_func) << 48))
--#define CNXK_CPT_INST_W3(qord, wqe_ptr)                                        \
--	(qord | ((uintptr_t)(wqe_ptr) >> 3) << 3)
-+#define CNXK_CPT_INST_W2(tag, tt, grp, rvu_pf_func)                                                \
-+	((tag) | ((uint64_t)(tt) << 32) | ((uint64_t)(grp) << 34) | ((uint64_t)(rvu_pf_func) << 48))
-+#define CNXK_CPT_INST_W3(qord, wqe_ptr) (qord | ((uintptr_t)(wqe_ptr) >> 3) << 3)
- 
- struct cpt_qp_meta_info {
- 	struct rte_mempool *pool;
 -- 
 2.25.1
 
