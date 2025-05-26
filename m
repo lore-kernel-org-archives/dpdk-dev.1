@@ -2,71 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1213DC5AD49
-	for <dpdk-dev@archiver.kernel.org>; Mon, 26 May 2025 16:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B780C54FB3
+	for <dpdk-dev@archiver.kernel.org>; Mon, 26 May 2025 16:59:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7062B4068E;
-	Mon, 26 May 2025 18:58:46 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id DE04540689
- for <dev@dpdk.org>; Mon, 26 May 2025 18:58:44 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54QGv80m007027
- for <dev@dpdk.org>; Mon, 26 May 2025 09:58:44 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id CF602406BC;
+	Mon, 26 May 2025 18:58:50 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id CD77540697
+ for <dev@dpdk.org>; Mon, 26 May 2025 18:58:48 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54QFnCDh009349
+ for <dev@dpdk.org>; Mon, 26 May 2025 09:58:48 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=y
- zQ9a0Bgsislq3LpLz8mCRaAgOJkm/lRRe7BjOntwBE=; b=I3oqyzK4paxAivr7q
- mEBJryALQA+r1OBWS33orbm2x3M0Tz+LQh/Xh6EAyL4UF1YrHWj9N+if8NUY0tVk
- +gWSufK5syod0IMPAVTx8rVrJZk/7bQquus91eg+zSfiAzKYAuCLS2oV6K9h/xsR
- UaK0m0JE7eOvH4HTvFQvGOMyfwS1+0nmxB7UrmbZdc4ZdD3TWeo/8w98g+0abx+y
- 5zy8UBuQZbbfJr5+zlqMlKfrkOduC5OrrVfO0gWeYMabG/FxZBdTCCMX3qWZ8mSY
- cwmYKJ+ptvN8jnVmmAMS9ABeAkj+9kDocQdnAElQ0mw2qesOqaaoTFlNAnrtpJFb
- u7Z5Q==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=S
+ WXyt7xrNmCWGMvl+b857amZE/LN/I2lZ3RqOQ7VoB0=; b=kQv3PlbKwgYuVJh/a
+ fC1xexp+k+JenujVmXo7z6S1s3MYLVg1Rwn2+5N4yoM09LA3jfHNKJU42LBx2SYd
+ abbCmUfApcQHBmt4s2DVW2zy9n/mgKmo2uCImk9ucVaboP2qxyC4gT3FWs0r24lv
+ /SEXBPTfD4LFIgGPUody8xZ13aR3L5teET1CwCkBxrmSyRhrWGsWPwWubbHT3YLZ
+ Dy6o2YmHrlovqkiq2zdzfhFreRD4mqwsoqb/0sOc+ZxX4QybjP7f2ApVMwOSLUw9
+ ltDKaH38FwkQGf0DAf5VO2ZOJr+icm2hbguIL8KIbGF4pTu3fOE8AY2lDx6Og1f0
+ Gx1tw==
 Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46vnv1gsn7-1
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46vp9krp9c-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Mon, 26 May 2025 09:58:44 -0700 (PDT)
+ for <dev@dpdk.org>; Mon, 26 May 2025 09:58:47 -0700 (PDT)
 Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
  DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 26 May 2025 09:58:43 -0700
+ 15.2.1544.4; Mon, 26 May 2025 09:58:46 -0700
 Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
  (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 26 May 2025 09:58:43 -0700
+ Transport; Mon, 26 May 2025 09:58:46 -0700
 Received: from hyd1554.caveonetworks.com (unknown [10.29.56.32])
- by maili.marvell.com (Postfix) with ESMTP id 940F13F7063;
- Mon, 26 May 2025 09:58:40 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id C9A9A3F7048;
+ Mon, 26 May 2025 09:58:43 -0700 (PDT)
 From: Tejasree Kondoj <ktejasree@marvell.com>
 To: Akhil Goyal <gakhil@marvell.com>
-CC: Anoob Joseph <anoobj@marvell.com>, Aakash Sasidharan
- <asasidharan@marvell.com>,
- Nithinsen Kaithakadan <nkaithakadan@marvell.com>,
- Rupesh Chiluka <rchiluka@marvell.com>, Vidya Sagar Velumuri
- <vvelumuri@marvell.com>, <dev@dpdk.org>
-Subject: [PATCH v2 06/40] crypto/cnxk: enable IV from application support
-Date: Mon, 26 May 2025 22:27:45 +0530
-Message-ID: <20250526165819.2197892-7-ktejasree@marvell.com>
+CC: Vidya Sagar Velumuri <vvelumuri@marvell.com>, Anoob Joseph
+ <anoobj@marvell.com>, Aakash Sasidharan <asasidharan@marvell.com>,
+ "Nithinsen Kaithakadan" <nkaithakadan@marvell.com>, Rupesh Chiluka
+ <rchiluka@marvell.com>, <dev@dpdk.org>
+Subject: [PATCH v2 07/40] crypto/cnxk: add probe for cn20k crypto device
+Date: Mon, 26 May 2025 22:27:46 +0530
+Message-ID: <20250526165819.2197892-8-ktejasree@marvell.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250526165819.2197892-1-ktejasree@marvell.com>
 References: <20250526165819.2197892-1-ktejasree@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: MgFysW5wRSGOL6Etx7Y6EgXzTt5i1Jww
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI2MDE0MyBTYWx0ZWRfX6s49Hpj/iiJ6
- Tjulqm1o4W8+Jlki1FboQW4IRHMH5JUrGsueHgiSGo0qOVDCJ0wiGG434taPRIexmYGD53YV8Tr
- 7dwQb2zq6ozgqMRKaKKVNf/73BvXNbW1HNKTEGjHm+KzI5LoiawIskZbF+6f/4LVfLvH4wpqHma
- LiMa/faBaT90ZLMxQqdDcXMV8rZjYQncqAmtEGrODBbQEmeurs/Blh689azGAzYmC/P6DynIsyS
- K1Dkk5Wg4HRyeEamPR103HS1dBWN9U1ZNC3jhT1Ciku1MTVi8zuWn6dFIwAjjJhZv35/WeX5KPc
- u0zdi6erB/gGQAWD7e3FNVWtO1XKViYC6+lpSHLjrBYydRC6YJL6Jt7M6FO0cJkFDmT0NDKc6YW
- 3PnPXbQrnD0Fb0kAsf/KNtxczRRBt7gPkOoZttekz5Rnwdj/MSsC6GpHBrXoQrQAZwcdxvAF
-X-Proofpoint-ORIG-GUID: MgFysW5wRSGOL6Etx7Y6EgXzTt5i1Jww
-X-Authority-Analysis: v=2.4 cv=PPgP+eqC c=1 sm=1 tr=0 ts=68349dc4 cx=c_pps
+X-Authority-Analysis: v=2.4 cv=VYn3PEp9 c=1 sm=1 tr=0 ts=68349dc7 cx=c_pps
  a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=wYxiG_oPtXBE3MfwHpYA:9
+ a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=zkyjEOYy4g67kIsTIeYA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI2MDE0MyBTYWx0ZWRfX9Uy7JxC5SA+1
+ 372Ty1Np6HBUPzsKmugIG7Oo89+kQKmmaXr274dS6R7QttYWwu+HoMnGPZnynUqAM4B8UgnF4rF
+ N2Xjy/jxEDwGDGJBPII4G0ul3q4nHV79SX2FN7UZ1sQgS/Wa1JRsKVHWewNRTappU2XsCvDu+2s
+ TohQX0vHbjzofrw6kDjd716sIZu50V11BaZDM2/5+Km9CdXmBScvaBjvzfiVvOS1F19KzSIWD1K
+ NpaSERqN0kV0Ev/2X5mazLhq2GF0n8KAPIPwX8DFkB1ONLOl8uDMdQoldU7jRh2dgmk0JR/kKPq
+ xB0FedMNdOjaPh2hAKNS4fMDMQ4lisMzq8D285ciZuNO6Zj61z81fvNHRcnjvGm3jjHIckbeBkN
+ BMltW3J2fpS1BAkTSLm1p9lammyYX6+CY5KMYhDSTaZtKT4qTF4jUYiGPc/DCgIGBVNNRqY2
+X-Proofpoint-ORIG-GUID: 1j1AepZCUH-zjkJ3MpISdsS-g5oBb8EU
+X-Proofpoint-GUID: 1j1AepZCUH-zjkJ3MpISdsS-g5oBb8EU
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-26_08,2025-05-26_02,2025-03-28_01
@@ -83,99 +82,232 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Enabling IV from application as the default option.
+From: Vidya Sagar Velumuri <vvelumuri@marvell.com>
 
-Signed-off-by: Tejasree Kondoj <ktejasree@marvell.com>
+Add probe for cn20k crypto device
+
+Signed-off-by: Vidya Sagar Velumuri <vvelumuri@marvell.com>
 ---
- drivers/crypto/cnxk/cn9k_ipsec.c              | 19 +------------------
- drivers/crypto/cnxk/cn9k_ipsec_la_ops.h       |  5 +----
- .../crypto/cnxk/cnxk_cryptodev_capabilities.c |  6 ++----
- 3 files changed, 4 insertions(+), 26 deletions(-)
+ drivers/crypto/cnxk/cn10k_cryptodev.c |  12 +-
+ drivers/crypto/cnxk/cn20k_cryptodev.c | 152 ++++++++++++++++++++++++++
+ drivers/crypto/cnxk/cn20k_cryptodev.h |  13 +++
+ drivers/crypto/cnxk/meson.build       |   1 +
+ 4 files changed, 170 insertions(+), 8 deletions(-)
+ create mode 100644 drivers/crypto/cnxk/cn20k_cryptodev.c
+ create mode 100644 drivers/crypto/cnxk/cn20k_cryptodev.h
 
-diff --git a/drivers/crypto/cnxk/cn9k_ipsec.c b/drivers/crypto/cnxk/cn9k_ipsec.c
-index fa00c428e6..62478d2340 100644
---- a/drivers/crypto/cnxk/cn9k_ipsec.c
-+++ b/drivers/crypto/cnxk/cn9k_ipsec.c
-@@ -48,11 +48,8 @@ cn9k_ipsec_outb_sa_create(struct cnxk_cpt_qp *qp,
- 	if (ret)
- 		return ret;
+diff --git a/drivers/crypto/cnxk/cn10k_cryptodev.c b/drivers/crypto/cnxk/cn10k_cryptodev.c
+index 70bef13cda..598def51a5 100644
+--- a/drivers/crypto/cnxk/cn10k_cryptodev.c
++++ b/drivers/crypto/cnxk/cn10k_cryptodev.c
+@@ -22,14 +22,10 @@
+ uint8_t cn10k_cryptodev_driver_id;
  
--	sess->custom_hdr_len =
--		sizeof(struct roc_ie_on_outb_hdr) - ROC_IE_ON_MAX_IV_LEN;
-+	sess->custom_hdr_len = sizeof(struct roc_ie_on_outb_hdr) - ROC_IE_ON_MAX_IV_LEN;
+ static struct rte_pci_id pci_id_cpt_table[] = {
+-	{
+-		RTE_PCI_DEVICE(PCI_VENDOR_ID_CAVIUM,
+-			       PCI_DEVID_CN10K_RVU_CPT_VF)
+-	},
+-	/* sentinel */
+-	{
+-		.device_id = 0
+-	},
++	CNXK_PCI_ID(PCI_SUBSYSTEM_DEVID_CN10KA, PCI_DEVID_CN10K_RVU_CPT_VF),
++	CNXK_PCI_ID(PCI_SUBSYSTEM_DEVID_CN10KAS, PCI_DEVID_CN10K_RVU_CPT_VF),
++	CNXK_PCI_ID(PCI_SUBSYSTEM_DEVID_CN10KB, PCI_DEVID_CN10K_RVU_CPT_VF),
++	{.vendor_id = 0},
+ };
  
--#ifdef LA_IPSEC_DEBUG
--	/* Use IV from application in debug mode */
- 	if (ipsec->options.iv_gen_disable == 1) {
- 		sess->custom_hdr_len = sizeof(struct roc_ie_on_outb_hdr);
- 
-@@ -67,12 +64,6 @@ cn9k_ipsec_outb_sa_create(struct cnxk_cpt_qp *qp,
- 			sess->cipher_iv_len = crypto_xform->auth.iv.length;
- 		}
- 	}
--#else
--	if (ipsec->options.iv_gen_disable != 0) {
--		plt_err("Application provided IV is not supported");
--		return -ENOTSUP;
--	}
--#endif
- 
- 	ret = cnxk_on_ipsec_outb_sa_create(ipsec, crypto_xform, &sa->out_sa);
- 
-@@ -89,16 +80,8 @@ cn9k_ipsec_outb_sa_create(struct cnxk_cpt_qp *qp,
- 	param1.u16 = 0;
- 	param1.s.ikev2 = 1;
- 
--#ifdef LA_IPSEC_DEBUG
--	/* Use IV from application in debug mode */
- 	if (ipsec->options.iv_gen_disable == 1)
- 		param1.s.per_pkt_iv = ROC_IE_ON_IV_SRC_FROM_DPTR;
--#else
--	if (ipsec->options.iv_gen_disable != 0) {
--		plt_err("Application provided IV is not supported");
--		return -ENOTSUP;
--	}
--#endif
- 
- 	w4.s.param1 = param1.u16;
- 
-diff --git a/drivers/crypto/cnxk/cn9k_ipsec_la_ops.h b/drivers/crypto/cnxk/cn9k_ipsec_la_ops.h
-index 3e9f1e7efb..befd5b0c05 100644
---- a/drivers/crypto/cnxk/cn9k_ipsec_la_ops.h
-+++ b/drivers/crypto/cnxk/cn9k_ipsec_la_ops.h
-@@ -159,13 +159,10 @@ process_outb_sa(struct cpt_qp_meta_info *m_info, struct rte_crypto_op *cop,
- 		inst->w4.s.opcode_major |= (uint64_t)ROC_DMA_MODE_SG;
- 	}
- 
--#ifdef LA_IPSEC_DEBUG
- 	if (sess->inst.w4 & ROC_IE_ON_PER_PKT_IV) {
--		memcpy(&hdr->iv[0],
--		       rte_crypto_op_ctod_offset(cop, uint8_t *, sess->cipher_iv_off),
-+		memcpy(&hdr->iv[0], rte_crypto_op_ctod_offset(cop, uint8_t *, sess->cipher_iv_off),
- 		       sess->cipher_iv_len);
- 	}
--#endif
- 
- 	m_src->pkt_len = pkt_len;
- 	esn = ++sess->esn;
-diff --git a/drivers/crypto/cnxk/cnxk_cryptodev_capabilities.c b/drivers/crypto/cnxk/cnxk_cryptodev_capabilities.c
-index e78bc37c37..63d2eef349 100644
---- a/drivers/crypto/cnxk/cnxk_cryptodev_capabilities.c
-+++ b/drivers/crypto/cnxk/cnxk_cryptodev_capabilities.c
-@@ -2102,11 +2102,9 @@ cn10k_sec_ipsec_caps_update(struct rte_security_capability *sec_cap)
- static void
- cn9k_sec_ipsec_caps_update(struct rte_security_capability *sec_cap)
- {
--	if (sec_cap->ipsec.direction == RTE_SECURITY_IPSEC_SA_DIR_EGRESS) {
--#ifdef LA_IPSEC_DEBUG
-+	if (sec_cap->ipsec.direction == RTE_SECURITY_IPSEC_SA_DIR_EGRESS)
- 		sec_cap->ipsec.options.iv_gen_disable = 1;
--#endif
--	}
+ static int
+diff --git a/drivers/crypto/cnxk/cn20k_cryptodev.c b/drivers/crypto/cnxk/cn20k_cryptodev.c
+new file mode 100644
+index 0000000000..e52336c2b7
+--- /dev/null
++++ b/drivers/crypto/cnxk/cn20k_cryptodev.c
+@@ -0,0 +1,152 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(C) 2025 Marvell.
++ */
 +
- 	sec_cap->ipsec.replay_win_sz_max = CNXK_ON_AR_WIN_SIZE_MAX;
- 	sec_cap->ipsec.options.esn = 1;
- }
++#include <bus_pci_driver.h>
++#include <cryptodev_pmd.h>
++#include <dev_driver.h>
++#include <rte_common.h>
++#include <rte_crypto.h>
++#include <rte_cryptodev.h>
++#include <rte_pci.h>
++
++#include "cn20k_cryptodev.h"
++#include "cnxk_cryptodev.h"
++#include "cnxk_cryptodev_capabilities.h"
++#include "cnxk_cryptodev_ops.h"
++#include "cnxk_cryptodev_sec.h"
++
++#include "roc_api.h"
++
++uint8_t cn20k_cryptodev_driver_id;
++
++static struct rte_pci_id pci_id_cpt_table[] = {
++	CNXK_PCI_ID(PCI_SUBSYSTEM_DEVID_CN20KA, PCI_DEVID_CN20K_RVU_CPT_VF),
++	{.vendor_id = 0},
++};
++
++static int
++cn20k_cpt_pci_probe(struct rte_pci_driver *pci_drv __rte_unused, struct rte_pci_device *pci_dev)
++{
++	struct rte_cryptodev_pmd_init_params init_params = {.name = "",
++							    .socket_id = rte_socket_id(),
++							    .private_data_size =
++								    sizeof(struct cnxk_cpt_vf)};
++	char name[RTE_CRYPTODEV_NAME_MAX_LEN];
++	struct rte_cryptodev *dev;
++	struct roc_cpt *roc_cpt;
++	struct cnxk_cpt_vf *vf;
++	int rc;
++
++	rc = roc_plt_init();
++	if (rc < 0) {
++		plt_err("Failed to initialize platform model");
++		return rc;
++	}
++
++	rte_pci_device_name(&pci_dev->addr, name, sizeof(name));
++
++	dev = rte_cryptodev_pmd_create(name, &pci_dev->device, &init_params);
++	if (dev == NULL) {
++		rc = -ENODEV;
++		goto exit;
++	}
++
++	/* Get private data space allocated */
++	vf = dev->data->dev_private;
++
++	roc_cpt = &vf->cpt;
++
++	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
++		roc_cpt->pci_dev = pci_dev;
++
++		rc = cnxk_cpt_parse_devargs(dev->device->devargs, vf);
++		if (rc) {
++			plt_err("Failed to parse devargs rc=%d", rc);
++			goto pmd_destroy;
++		}
++
++		rc = roc_cpt_dev_init(roc_cpt);
++		if (rc) {
++			plt_err("Failed to initialize roc cpt rc=%d", rc);
++			goto pmd_destroy;
++		}
++
++		rc = cnxk_cpt_eng_grp_add(roc_cpt);
++		if (rc) {
++			plt_err("Failed to add engine group rc=%d", rc);
++			goto dev_fini;
++		}
++
++		/* Create security context */
++		rc = cnxk_crypto_sec_ctx_create(dev);
++		if (rc)
++			goto dev_fini;
++	}
++
++	cnxk_cpt_caps_populate(vf);
++
++	dev->feature_flags = cnxk_cpt_default_ff_get();
++
++	dev->qp_depth_used = cnxk_cpt_qp_depth_used;
++
++	rte_cryptodev_pmd_probing_finish(dev);
++
++	return 0;
++
++dev_fini:
++	if (rte_eal_process_type() == RTE_PROC_PRIMARY)
++		roc_cpt_dev_fini(roc_cpt);
++pmd_destroy:
++	rte_cryptodev_pmd_destroy(dev);
++exit:
++	plt_err("Could not create device (vendor_id: 0x%x device_id: 0x%x)", pci_dev->id.vendor_id,
++		pci_dev->id.device_id);
++	return rc;
++}
++
++static int
++cn20k_cpt_pci_remove(struct rte_pci_device *pci_dev)
++{
++	char name[RTE_CRYPTODEV_NAME_MAX_LEN];
++	struct rte_cryptodev *dev;
++	struct cnxk_cpt_vf *vf;
++	int ret;
++
++	if (pci_dev == NULL)
++		return -EINVAL;
++
++	rte_pci_device_name(&pci_dev->addr, name, sizeof(name));
++
++	dev = rte_cryptodev_pmd_get_named_dev(name);
++	if (dev == NULL)
++		return -ENODEV;
++
++	/* Destroy security context */
++	cnxk_crypto_sec_ctx_destroy(dev);
++
++	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
++		dev->dev_ops = NULL;
++		vf = dev->data->dev_private;
++		ret = roc_cpt_dev_fini(&vf->cpt);
++		if (ret)
++			return ret;
++	}
++
++	return rte_cryptodev_pmd_destroy(dev);
++}
++
++static struct rte_pci_driver cn20k_cryptodev_pmd = {
++	.id_table = pci_id_cpt_table,
++	.drv_flags = RTE_PCI_DRV_NEED_MAPPING | RTE_PCI_DRV_NEED_IOVA_AS_VA,
++	.probe = cn20k_cpt_pci_probe,
++	.remove = cn20k_cpt_pci_remove,
++};
++
++static struct cryptodev_driver cn20k_cryptodev_drv;
++
++RTE_PMD_REGISTER_PCI(CRYPTODEV_NAME_CN20K_PMD, cn20k_cryptodev_pmd);
++RTE_PMD_REGISTER_PCI_TABLE(CRYPTODEV_NAME_CN20K_PMD, pci_id_cpt_table);
++RTE_PMD_REGISTER_KMOD_DEP(CRYPTODEV_NAME_CN20K_PMD, "vfio-pci");
++RTE_PMD_REGISTER_CRYPTO_DRIVER(cn20k_cryptodev_drv, cn20k_cryptodev_pmd.driver,
++			       cn20k_cryptodev_driver_id);
+diff --git a/drivers/crypto/cnxk/cn20k_cryptodev.h b/drivers/crypto/cnxk/cn20k_cryptodev.h
+new file mode 100644
+index 0000000000..d8a84d5464
+--- /dev/null
++++ b/drivers/crypto/cnxk/cn20k_cryptodev.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(C) 2025 Marvell.
++ */
++
++#ifndef _CN20K_CRYPTODEV_H_
++#define _CN20K_CRYPTODEV_H_
++
++/* Marvell OCTEON CN20K Crypto PMD device name */
++#define CRYPTODEV_NAME_CN20K_PMD crypto_cn20k
++
++extern uint8_t cn20k_cryptodev_driver_id;
++
++#endif /* _CN20K_CRYPTODEV_H_ */
+diff --git a/drivers/crypto/cnxk/meson.build b/drivers/crypto/cnxk/meson.build
+index e9b67b4a14..886bb5c428 100644
+--- a/drivers/crypto/cnxk/meson.build
++++ b/drivers/crypto/cnxk/meson.build
+@@ -17,6 +17,7 @@ sources = files(
+         'cn10k_cryptodev_sec.c',
+         'cn10k_ipsec.c',
+         'cn10k_tls.c',
++        'cn20k_cryptodev.c',
+         'cnxk_cryptodev.c',
+         'cnxk_cryptodev_capabilities.c',
+         'cnxk_cryptodev_devargs.c',
 -- 
 2.25.1
 
