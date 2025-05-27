@@ -2,47 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AE1BC54ED1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 May 2025 13:17:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18FD9C54F30
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 May 2025 13:17:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 39EB7402D1;
-	Tue, 27 May 2025 15:17:49 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 74B1C4067A;
+	Tue, 27 May 2025 15:17:51 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id E41224027A
- for <dev@dpdk.org>; Tue, 27 May 2025 15:17:46 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id C01814027A;
+ Tue, 27 May 2025 15:17:48 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1748351867; x=1779887867;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=m5CBiBbXTv+SGb0mDp1ej0+p3A1pJlu0B3vW0DkcBIY=;
- b=RX3qYrQRLpqUNZJ1qzZKuVzVtf/hbyn1Wft9CCintuGDvq96cUalrqrb
- 8Ls76NfcmncFdn7OwBGiZPsI8yYPz0aJfvhtfpmBJfAfwgtZzFEBduis/
- 01UuU0WYtz6/hhaZ80ib1lC1JSrru0c0tMfsU1PaLJDcmtSVA/UwfIpB4
- unOhQl9zTmFMf5D3qTEpCs7x6Xr3dkJw4iSrEaZa+93fcupByyhVj/E23
- tLfOtA+1WsssC4/Q7B5yBGcZrYqw4D7eJMWqg1AuHmOmP49vMzuGMTtsn
- ufcI9ly7l4QGBiZZofTwuuJULlnWfu4iWZQBfdNQngRjqITDH2A/jjtxp A==;
-X-CSE-ConnectionGUID: TwbEoWeVShO+KAXGSfkPzQ==
-X-CSE-MsgGUID: 9hxxwxA/QN+AyXWl8dbYRQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11446"; a="67884813"
-X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; d="scan'208";a="67884813"
+ t=1748351869; x=1779887869;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=bgT8RXnzDusNhq0Yhq44mejoHunl76jnckHJHCe7aCY=;
+ b=QLvnjQp+tWVwWrV0K9+RRJF8PEQ8n72/tJWL1t9yXpQF4z99Zsj7RHkI
+ wrrq5LjiOzu6bGcONaPqUlq9FJm0qbo0O/bkRGz4Y167IQEtCcHE938l/
+ lTqtk9VB6NoHKRktLwWDPbO23wb9A3zVIjQKsvfyDH1x4/hhrj2DpMzx2
+ zeD7S7kqaO7iVAKtLtWvYsztx8QVx6HmsdZ2n3Odd2qY6eXJ6rdcM9/bb
+ 7otuKsc5nV5KAnHhxJnewasbEegR7qP1kM9bQ984WqOWY2wivfjogaofq
+ DSxxyzZVC80rBE3SgK5h3BdiCRCqmybMmE/GRsG6Bry4GSrOvgWnpGXBC g==;
+X-CSE-ConnectionGUID: scp72cTcRminCMBCOuE0VQ==
+X-CSE-MsgGUID: 1TRfUs6uQ9aSIPW+rJuJyA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11446"; a="67884823"
+X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; d="scan'208";a="67884823"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 May 2025 06:17:46 -0700
-X-CSE-ConnectionGUID: F0pKS2aaTjKe0pXdDADYjw==
-X-CSE-MsgGUID: vP+noSZUTNGGpDfaDbF6ow==
+ 27 May 2025 06:17:48 -0700
+X-CSE-ConnectionGUID: tRZSi2BfT3uWwCQCBlh7FA==
+X-CSE-MsgGUID: yv5zzDOnSP+HKf8vLCEfbg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; d="scan'208";a="143150021"
+X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; d="scan'208";a="143150026"
 Received: from unknown (HELO silpixa00401120.ir.intel.com) ([10.55.128.58])
- by fmviesa008.fm.intel.com with ESMTP; 27 May 2025 06:17:45 -0700
+ by fmviesa008.fm.intel.com with ESMTP; 27 May 2025 06:17:46 -0700
 From: Dhanya Pillai <dhanya.r.pillai@intel.com>
-To: 
-Cc: dev@dpdk.org,
-	Dhanya Pillai <dhanya.r.pillai@intel.com>
-Subject: [PATCH v3 00/10] Update ice base code
-Date: Tue, 27 May 2025 13:17:19 +0000
-Message-ID: <20250527131741.7606-1-dhanya.r.pillai@intel.com>
+To: Bruce Richardson <bruce.richardson@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Qiming Yang <qiming.yang@intel.com>, Qi Zhang <qi.z.zhang@intel.com>,
+ Paul M Stillwell Jr <paul.m.stillwell.jr@intel.com>,
+ Wenzhuo Lu <wenzhuo.lu@intel.com>
+Cc: dev@dpdk.org, Waldemar Dworakowski <waldemar.dworakowski@intel.com>,
+ stable@dpdk.org, Dhanya Pillai <dhanya.r.pillai@intel.com>
+Subject: [PATCH v3 01/10] net/ice/base: fix type conversion
+Date: Tue, 27 May 2025 13:17:20 +0000
+Message-ID: <20250527131741.7606-2-dhanya.r.pillai@intel.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250527131741.7606-1-dhanya.r.pillai@intel.com>
+References: <20250527131741.7606-1-dhanya.r.pillai@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -58,52 +64,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-ice base code is updated to latest snapshot.
+From: Waldemar Dworakowski <waldemar.dworakowski@intel.com>
 
-v3:
-- Fixed check patch failure in DPDK CI.
-- Added Fixes tag to bug fixes.
-- Corrected author name for couple of patches.
+In ice_sched_move_vsi_to_agg() int16 is used to pass 8 bit value
+what causes compiler warning:
+warning C4244: 'function' : conversion from 'UINT16' to 'UINT8',
+possible loss of data
+Changed variable type to avoid conversion
 
-v2:
-- Added Author Signoff.
+Fixes: 29a0c11489ef ("net/ice/base: clean code")
+Cc: stable@dpdk.org
+Signed-off-by: Waldemar Dworakowski <waldemar.dworakowski@intel.com>
+Signed-off-by: Dhanya Pillai <dhanya.r.pillai@intel.com>
+---
+ drivers/net/intel/ice/base/ice_sched.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Dhanya Pillai (1):
-  net/ice/base: update version info
-
-Janardhanan Arumugam (1):
-  net/ice/base: increase reset timeout to 20 seconds
-
-Lukasz Krakowiak (3):
-  net/ice/base: fix integer overflow issue
-  net/ice/base: set speculative execution barrier
-  net/ice/base: fix typo in desc for dev ID 579F
-
-Mikolaj Filar (2):
-  net/ice/base: support for MAC rule with own filter flags
-  net/ice/base: configure PHY FEC error in logs for GNRD
-
-Oleg Akhrem (1):
-  net/ice/base: ptp minimal refactoring
-
-Paul Greenwalt (1):
-  net/ice/base: fix typo in media type check
-
-Waldemar Dworakowski (1):
-  net/ice/base: fix type conversion
-
- drivers/net/intel/ice/base/README          |  2 +-
- drivers/net/intel/ice/base/ice_common.c    |  6 ++-
- drivers/net/intel/ice/base/ice_devids.h    |  2 +-
- drivers/net/intel/ice/base/ice_flex_pipe.c |  2 +
- drivers/net/intel/ice/base/ice_osdep.h     |  6 +++
- drivers/net/intel/ice/base/ice_ptp_hw.c    |  9 ++---
- drivers/net/intel/ice/base/ice_sched.c     | 10 +++--
- drivers/net/intel/ice/base/ice_switch.c    | 46 ++++++++++++++++++++--
- drivers/net/intel/ice/base/ice_switch.h    |  1 +
- drivers/net/intel/ice/base/ice_type.h      |  2 +-
- 10 files changed, 68 insertions(+), 18 deletions(-)
-
+diff --git a/drivers/net/intel/ice/base/ice_sched.c b/drivers/net/intel/ice/base/ice_sched.c
+index 1f520bb7c0..a8a149f541 100644
+--- a/drivers/net/intel/ice/base/ice_sched.c
++++ b/drivers/net/intel/ice/base/ice_sched.c
+@@ -2383,7 +2383,8 @@ ice_sched_move_vsi_to_agg(struct ice_port_info *pi, u16 vsi_handle, u32 agg_id,
+ 	u16 num_nodes_added;
+ 	u8 aggl, vsil;
+ 	int status;
+-	u16 i;
++	u16 j;
++	u8 i;
+ 
+ 	tc_node = ice_sched_get_tc_node(pi, tc);
+ 	if (!tc_node)
+@@ -2409,9 +2410,9 @@ ice_sched_move_vsi_to_agg(struct ice_port_info *pi, u16 vsi_handle, u32 agg_id,
+ 		num_nodes[i] = 1;
+ 
+ 	/* Check if the aggregator subtree has any free node to add the VSI */
+-	for (i = 0; i < agg_node->num_children; i++) {
++	for (j = 0; j < agg_node->num_children; j++) {
+ 		parent = ice_sched_get_free_vsi_parent(pi->hw,
+-						       agg_node->children[i],
++						       agg_node->children[j],
+ 						       num_nodes);
+ 		if (parent)
+ 			goto move_nodes;
 -- 
 2.43.0
 
