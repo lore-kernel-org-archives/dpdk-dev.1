@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55225C54F30
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 May 2025 13:02:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D33A0C54ED1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 May 2025 13:02:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1A06540687;
-	Tue, 27 May 2025 15:02:03 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 240734069F;
+	Tue, 27 May 2025 15:02:06 +0200 (CEST)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 4AEB24067A
+ by mails.dpdk.org (Postfix) with ESMTP id 15BAA40685
  for <dev@dpdk.org>; Tue, 27 May 2025 15:02:02 +0200 (CEST)
 Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54QNTsgF001051
- for <dev@dpdk.org>; Tue, 27 May 2025 06:02:01 -0700
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54QNTsgG001051
+ for <dev@dpdk.org>; Tue, 27 May 2025 06:02:02 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=E
- R/Rdt4uMDMRIcH6i4HvAsNBJcHfVqRIlI19YGsuW0Q=; b=jqT1LjSMNzkygm8FN
- BZI6AyY+vEQhn6DWj9f8Xu8rl5uR2k4oJ2AIoPknjk2v1g2emlP7AI3aLbA7YATa
- vm/D3bcH9C9lc+TNkw+OTyryiAJh24FJ+AaRcao75pZdeCnZI9w9TGAhUku9Fl5c
- pdG1u9JVNyYZm/ArwjMYbFbuQoFuHcFHxsaPhB9HLZ3gem6zZQtpn3h9zObvqKyT
- c4/jf9/0EWPXDX9G8X0URsuRG4DQdTamqHep/BjJI3gBadfQZfu+00J+mtDvliFr
- 1e9bUkf0pX+exvfgrf/BiYMMmH69Ttx9FCsZL+J8nJiNA8W5qXzZZGIG0FFMD49w
- nALkA==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=q
+ pmvACWTT7vInAStpxwdQZvgsWD5E7hsf/x0RpLul28=; b=R0HNAQfdjaOnjoBh/
+ gq85BR5pDd02VdgCX/UHAJ2K8eiW56q6PK6y1M31xJxuNUzM08XFx2xT2p5+GCij
+ nkh1gUM0P7xBKDQ43AZu+Km3v7UjMNiXphDSBFGQrOVJU8iUcj4VE7xSC1pdX5JV
+ CaeGrr9JemoHzgkxNz2QSFf4qZ1GN9HxU3WoXjV0t4JiyRcdvm6H4JekX7cLjuX3
+ lvaEpjlSNSEiGSylbfK/DhUqTIHE0PXAUu5zBkruxEthjx++n9RYXoGV3vbl+qCd
+ XcTOzBJeYSWHy3nW0+aO+3e9yrvJfw+545wnCZMRAZPB7WxVTVJBNgRtNSSZZwRq
+ Nt4sg==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46w21299pu-2
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46w21299pu-3
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Tue, 27 May 2025 06:01:57 -0700 (PDT)
+ for <dev@dpdk.org>; Tue, 27 May 2025 06:02:02 -0700 (PDT)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 27 May 2025 06:01:47 -0700
+ 15.2.1544.4; Tue, 27 May 2025 06:01:50 -0700
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 27 May 2025 06:01:47 -0700
+ Transport; Tue, 27 May 2025 06:01:50 -0700
 Received: from hyd1554.caveonetworks.com (unknown [10.29.56.32])
- by maili.marvell.com (Postfix) with ESMTP id E24153F705D;
- Tue, 27 May 2025 06:01:44 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id B6D603F705D;
+ Tue, 27 May 2025 06:01:47 -0700 (PDT)
 From: Tejasree Kondoj <ktejasree@marvell.com>
 To: Akhil Goyal <gakhil@marvell.com>
-CC: Nithinsen Kaithakadan <nkaithakadan@marvell.com>, Anoob Joseph
- <anoobj@marvell.com>, Rupesh Chiluka <rchiluka@marvell.com>, "Vidya Sagar
- Velumuri" <vvelumuri@marvell.com>, <dev@dpdk.org>
-Subject: [PATCH 3/9] common/cnxk: set correct salt value for ctr algos
-Date: Tue, 27 May 2025 18:31:29 +0530
-Message-ID: <20250527130135.2301726-4-ktejasree@marvell.com>
+CC: Rupesh Chiluka <rchiluka@marvell.com>, Anoob Joseph <anoobj@marvell.com>, 
+ Nithinsen Kaithakadan <nkaithakadan@marvell.com>, Vidya Sagar Velumuri
+ <vvelumuri@marvell.com>, <dev@dpdk.org>
+Subject: [PATCH 4/9] crypto/cnxk: extend check for max supported gather entries
+Date: Tue, 27 May 2025 18:31:30 +0530
+Message-ID: <20250527130135.2301726-5-ktejasree@marvell.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250527130135.2301726-1-ktejasree@marvell.com>
 References: <20250527130135.2301726-1-ktejasree@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=H6zbw/Yi c=1 sm=1 tr=0 ts=6835b7c8 cx=c_pps
+X-Authority-Analysis: v=2.4 cv=H6zbw/Yi c=1 sm=1 tr=0 ts=6835b7ca cx=c_pps
  a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=VlgjLVM6OR-Tcjh_F24A:9
+ a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=eJjrCEJGAj4jR_m2buIA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: ztElFyZXX0keb8M34GsNZz2G5-hygb-O
-X-Proofpoint-ORIG-GUID: ztElFyZXX0keb8M34GsNZz2G5-hygb-O
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI3MDEwNiBTYWx0ZWRfXyndMKzvA2A2h
- JeoQoojOyrhd/RCokJpopp6fp3jAGSB8jmFiucZpV1qjHDt6GZQrMYGmyireXc9zUXAaddfyFsj
- +rUZeskVX+RMBy1abUzNVHUQ2/gTFukJooC4t46EDqqF0gZNqxM1Vuiv5ioYuRTv3nZHHYoh3q8
- g0fZ75zTiXuL78SrGjy/AYae/PojV4vllt9861UQCU6nGlqT7k5CPYrnc2DX/eG9yiTW+qFpp9p
- ej+j4e9PUDoCz3DNbOqNG/2tVKeBMAtU1TS0xfj6fVt8kkcYbDF3G1asXbc+yGvp3L7VwV9jUa+
- BuRAPJMw0ABD13YCQuyu0d0UugmCMhYcWjVsv31u7IjGr0DYV6fkSe5O8tybfK5z/UpexmDJG6I
- f5hRvlvmX9+3uY0SxYXmFOYzXkexg1jDuNKppJU0vn9kZffAhg6QO/9efv/4ngXyGsmu6c4j
+X-Proofpoint-GUID: Biz1oQVBUxuTmav9FgLg2upNoYsC9dqp
+X-Proofpoint-ORIG-GUID: Biz1oQVBUxuTmav9FgLg2upNoYsC9dqp
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI3MDEwNiBTYWx0ZWRfX4jRcaV3KBwuI
+ d5gEPfTwBMQ6X1UX/eJb4iToBK1enMFmkkFvNLPOxXMJ+z38Cjw018npflTKiINQho4u9DopSTh
+ nC8OCbTOfm52jmQCbgcdpiYZuK4D4C33K22xYUE/xgH2YRY5uRIcTvZQghxTBHMurNTJPP7440C
+ dP3FO8uJQlGQnLGeMeWh4sKXpfasXQkVUt8Od4QOb65CXetjYyMy2az3s2GV9Wv9R3wKQ8dwbpA
+ ClneFB++q2PCxp9+KgZUsqH4S9DHGaLwWJKYlYLW1AwzT07nunbt4sXSextIvF0EoLIegqx0z94
+ Cqbh4iPbDZhsEgbYDCmIg64tPud+ciWaN4vzG2uFQ517o0+0w4OwdsiJ67nFXEKXr/i85I18tsB
+ QNOhNOqWdC7y1R3Hnd2IVLplX3Wu2RIEoa7eUh+3DztYYilgk45waC8fIprf1DePslje33FF
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-27_06,2025-05-27_01,2025-03-28_01
@@ -81,41 +81,173 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Nithinsen Kaithakadan <nkaithakadan@marvell.com>
+From: Rupesh Chiluka <rchiluka@marvell.com>
 
-This patch includes fix for setting correct salt value
-for CTR algorithm.
+Extend check for max supported gather entries in CNXK
+CPT PMD.
 
-Fixes: 532963b8070 ("crypto/cnxk: move IPsec SA creation to common")
-
-Signed-off-by: Nithinsen Kaithakadan <nkaithakadan@marvell.com>
+Signed-off-by: Rupesh Chiluka <rchiluka@marvell.com>
 ---
- drivers/common/cnxk/cnxk_security.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/common/cnxk/roc_cpt_sg.h         |  1 +
+ drivers/crypto/cnxk/cn10k_ipsec_la_ops.h | 10 ++++++++++
+ drivers/crypto/cnxk/cn10k_tls_ops.h      | 10 ++++++++++
+ drivers/crypto/cnxk/cn20k_ipsec_la_ops.h | 10 ++++++++++
+ drivers/crypto/cnxk/cn20k_tls_ops.h      | 10 ++++++++++
+ drivers/crypto/cnxk/cn9k_ipsec_la_ops.h  | 10 ++++++++++
+ 6 files changed, 51 insertions(+)
 
-diff --git a/drivers/common/cnxk/cnxk_security.c b/drivers/common/cnxk/cnxk_security.c
-index 62ae7b9b2e..0e6777e6ca 100644
---- a/drivers/common/cnxk/cnxk_security.c
-+++ b/drivers/common/cnxk/cnxk_security.c
-@@ -965,6 +965,8 @@ on_fill_ipsec_common_sa(struct rte_security_ipsec_xform *ipsec,
- 		cipher_key_len = crypto_xform->aead.key.length;
- 	} else {
- 		if (cipher_xform) {
-+			if (cipher_xform->cipher.algo == RTE_CRYPTO_CIPHER_AES_CTR)
-+				memcpy(common_sa->iv.gcm.nonce, &ipsec->salt, 4);
- 			cipher_key = cipher_xform->cipher.key.data;
- 			cipher_key_len = cipher_xform->cipher.key.length;
+diff --git a/drivers/common/cnxk/roc_cpt_sg.h b/drivers/common/cnxk/roc_cpt_sg.h
+index e7e01cd29a..7c3caf94d7 100644
+--- a/drivers/common/cnxk/roc_cpt_sg.h
++++ b/drivers/common/cnxk/roc_cpt_sg.h
+@@ -15,6 +15,7 @@
+ #define ROC_SG_MAX_COMP	     25
+ #define ROC_SG_MAX_DLEN_SIZE (ROC_SG_LIST_HDR_SIZE + (ROC_SG_MAX_COMP * ROC_SG_ENTRY_SIZE))
+ #define ROC_SG2_MAX_PTRS 48
++#define ROC_SG1_MAX_PTRS 32
+ 
+ struct roc_sglist_comp {
+ 	union {
+diff --git a/drivers/crypto/cnxk/cn10k_ipsec_la_ops.h b/drivers/crypto/cnxk/cn10k_ipsec_la_ops.h
+index 87442c2a1f..0cc6283c7e 100644
+--- a/drivers/crypto/cnxk/cn10k_ipsec_la_ops.h
++++ b/drivers/crypto/cnxk/cn10k_ipsec_la_ops.h
+@@ -105,6 +105,11 @@ process_outb_sa(struct roc_cpt_lf *lf, struct rte_crypto_op *cop, struct cn10k_s
+ 			return -ENOMEM;
  		}
-@@ -1285,6 +1287,9 @@ ow_ipsec_sa_common_param_fill(union roc_ow_ipsec_sa_word2 *w2, uint8_t *cipher_k
- 				break;
- 			case RTE_CRYPTO_CIPHER_AES_CTR:
- 				w2->s.enc_type = ROC_IE_SA_ENC_AES_CTR;
-+				memcpy(salt_key, &ipsec_xfrm->salt, 4);
-+				tmp_salt = (uint32_t *)salt_key;
-+				*tmp_salt = rte_be_to_cpu_32(*tmp_salt);
- 				break;
- 			case RTE_CRYPTO_CIPHER_3DES_CBC:
- 				w2->s.enc_type = ROC_IE_SA_ENC_3DES_CBC;
+ 
++		if (unlikely(m_src->nb_segs > ROC_SG1_MAX_PTRS)) {
++			plt_dp_err("Exceeds max supported components. Reduce segments");
++			return -1;
++		}
++
+ 		m_data = alloc_op_meta(NULL, m_info->mlen, m_info->pool, infl_req);
+ 		if (unlikely(m_data == NULL)) {
+ 			plt_dp_err("Error allocating meta buffer for request");
+@@ -224,6 +229,11 @@ process_inb_sa(struct rte_crypto_op *cop, struct cn10k_sec_session *sess, struct
+ 		void *m_data;
+ 		int i;
+ 
++		if (unlikely(m_src->nb_segs > ROC_SG1_MAX_PTRS)) {
++			plt_dp_err("Exceeds max supported components. Reduce segments");
++			return -1;
++		}
++
+ 		m_data = alloc_op_meta(NULL, m_info->mlen, m_info->pool, infl_req);
+ 		if (unlikely(m_data == NULL)) {
+ 			plt_dp_err("Error allocating meta buffer for request");
+diff --git a/drivers/crypto/cnxk/cn10k_tls_ops.h b/drivers/crypto/cnxk/cn10k_tls_ops.h
+index 427c31425c..90600bd850 100644
+--- a/drivers/crypto/cnxk/cn10k_tls_ops.h
++++ b/drivers/crypto/cnxk/cn10k_tls_ops.h
+@@ -117,6 +117,11 @@ process_tls_write(struct roc_cpt_lf *lf, struct rte_crypto_op *cop, struct cn10k
+ 			return -ENOMEM;
+ 		}
+ 
++		if (unlikely(m_src->nb_segs > ROC_SG1_MAX_PTRS)) {
++			plt_dp_err("Exceeds max supported components. Reduce segments");
++			return -1;
++		}
++
+ 		m_data = alloc_op_meta(NULL, m_info->mlen, m_info->pool, infl_req);
+ 		if (unlikely(m_data == NULL)) {
+ 			plt_dp_err("Error allocating meta buffer for request");
+@@ -255,6 +260,11 @@ process_tls_read(struct rte_crypto_op *cop, struct cn10k_sec_session *sess,
+ 		uint32_t dlen;
+ 		int i;
+ 
++		if (unlikely(m_src->nb_segs > ROC_SG1_MAX_PTRS)) {
++			plt_dp_err("Exceeds max supported components. Reduce segments");
++			return -1;
++		}
++
+ 		m_data = alloc_op_meta(NULL, m_info->mlen, m_info->pool, infl_req);
+ 		if (unlikely(m_data == NULL)) {
+ 			plt_dp_err("Error allocating meta buffer for request");
+diff --git a/drivers/crypto/cnxk/cn20k_ipsec_la_ops.h b/drivers/crypto/cnxk/cn20k_ipsec_la_ops.h
+index eff51bd794..505fddb517 100644
+--- a/drivers/crypto/cnxk/cn20k_ipsec_la_ops.h
++++ b/drivers/crypto/cnxk/cn20k_ipsec_la_ops.h
+@@ -104,6 +104,11 @@ process_outb_sa(struct roc_cpt_lf *lf, struct rte_crypto_op *cop, struct cn20k_s
+ 			return -ENOMEM;
+ 		}
+ 
++		if (unlikely(m_src->nb_segs > ROC_SG2_MAX_PTRS)) {
++			plt_dp_err("Exceeds max supported components. Reduce segments");
++			return -1;
++		}
++
+ 		m_data = alloc_op_meta(NULL, m_info->mlen, m_info->pool, infl_req);
+ 		if (unlikely(m_data == NULL)) {
+ 			plt_dp_err("Error allocating meta buffer for request");
+@@ -163,6 +168,11 @@ process_inb_sa(struct rte_crypto_op *cop, struct cn20k_sec_session *sess, struct
+ 		void *m_data;
+ 		int i;
+ 
++		if (unlikely(m_src->nb_segs > ROC_SG2_MAX_PTRS)) {
++			plt_dp_err("Exceeds max supported components. Reduce segments");
++			return -1;
++		}
++
+ 		m_data = alloc_op_meta(NULL, m_info->mlen, m_info->pool, infl_req);
+ 		if (unlikely(m_data == NULL)) {
+ 			plt_dp_err("Error allocating meta buffer for request");
+diff --git a/drivers/crypto/cnxk/cn20k_tls_ops.h b/drivers/crypto/cnxk/cn20k_tls_ops.h
+index 14f879f2a9..9f70a1d42d 100644
+--- a/drivers/crypto/cnxk/cn20k_tls_ops.h
++++ b/drivers/crypto/cnxk/cn20k_tls_ops.h
+@@ -118,6 +118,11 @@ process_tls_write(struct roc_cpt_lf *lf, struct rte_crypto_op *cop, struct cn20k
+ 			return -ENOMEM;
+ 		}
+ 
++		if (unlikely(m_src->nb_segs > ROC_SG2_MAX_PTRS)) {
++			plt_dp_err("Exceeds max supported components. Reduce segments");
++			return -1;
++		}
++
+ 		m_data = alloc_op_meta(NULL, m_info->mlen, m_info->pool, infl_req);
+ 		if (unlikely(m_data == NULL)) {
+ 			plt_dp_err("Error allocating meta buffer for request");
+@@ -194,6 +199,11 @@ process_tls_read(struct rte_crypto_op *cop, struct cn20k_sec_session *sess,
+ 		uint32_t g_size_bytes;
+ 		int i;
+ 
++		if (unlikely(m_src->nb_segs > ROC_SG2_MAX_PTRS)) {
++			plt_dp_err("Exceeds max supported components. Reduce segments");
++			return -1;
++		}
++
+ 		m_data = alloc_op_meta(NULL, m_info->mlen, m_info->pool, infl_req);
+ 		if (unlikely(m_data == NULL)) {
+ 			plt_dp_err("Error allocating meta buffer for request");
+diff --git a/drivers/crypto/cnxk/cn9k_ipsec_la_ops.h b/drivers/crypto/cnxk/cn9k_ipsec_la_ops.h
+index befd5b0c05..79e00e3c57 100644
+--- a/drivers/crypto/cnxk/cn9k_ipsec_la_ops.h
++++ b/drivers/crypto/cnxk/cn9k_ipsec_la_ops.h
+@@ -111,6 +111,11 @@ process_outb_sa(struct cpt_qp_meta_info *m_info, struct rte_crypto_op *cop,
+ 			return -ENOMEM;
+ 		}
+ 
++		if (unlikely(m_src->nb_segs > ROC_SG1_MAX_PTRS)) {
++			plt_dp_err("Exceeds max supported components. Reduce segments");
++			return -1;
++		}
++
+ 		m_data = alloc_op_meta(NULL, m_info->mlen, m_info->pool, infl_req);
+ 		if (unlikely(m_data == NULL)) {
+ 			plt_dp_err("Error allocating meta buffer for request");
+@@ -206,6 +211,11 @@ process_inb_sa(struct cpt_qp_meta_info *m_info, struct rte_crypto_op *cop,
+ 		void *m_data;
+ 		int i;
+ 
++		if (unlikely(m_src->nb_segs > ROC_SG1_MAX_PTRS)) {
++			plt_dp_err("Exceeds max supported components. Reduce segments");
++			return -1;
++		}
++
+ 		m_data = alloc_op_meta(NULL, m_info->mlen, m_info->pool, infl_req);
+ 		if (unlikely(m_data == NULL)) {
+ 			plt_dp_err("Error allocating meta buffer for request");
 -- 
 2.25.1
 
