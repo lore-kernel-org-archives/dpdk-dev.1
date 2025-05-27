@@ -2,170 +2,185 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDC75C54ED1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 May 2025 05:50:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DE78C54F30
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 May 2025 07:02:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1ADDC402D6;
-	Tue, 27 May 2025 07:50:11 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id DAFA0402ED;
+	Tue, 27 May 2025 09:02:35 +0200 (CEST)
 Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
  [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 925F0402CD
- for <dev@dpdk.org>; Tue, 27 May 2025 07:50:08 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 7C3A4402D6
+ for <dev@dpdk.org>; Tue, 27 May 2025 09:02:34 +0200 (CEST)
 Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54QNrBtw032052
- for <dev@dpdk.org>; Mon, 26 May 2025 22:50:07 -0700
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54R6Xndr024968
+ for <dev@dpdk.org>; Tue, 27 May 2025 00:02:33 -0700
 Received: from pps.reinject (localhost [127.0.0.1])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46w20e8jsh-1
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46w88001h5-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Mon, 26 May 2025 22:50:07 -0700 (PDT)
+ for <dev@dpdk.org>; Tue, 27 May 2025 00:02:33 -0700 (PDT)
 Received: from m0431384.ppops.net (m0431384.ppops.net [127.0.0.1])
- by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54R5o5tg018765
- for <dev@dpdk.org>; Mon, 26 May 2025 22:50:06 -0700
-Received: from nam11-dm6-obe.outbound.protection.outlook.com
- (mail-dm6nam11on2109.outbound.protection.outlook.com [40.107.223.109])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46w20e8jr4-1
+ by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54R6xCmu032404
+ for <dev@dpdk.org>; Tue, 27 May 2025 00:02:32 -0700
+Received: from nam12-dm6-obe.outbound.protection.outlook.com
+ (mail-dm6nam12on2123.outbound.protection.outlook.com [40.107.243.123])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46w88001h4-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Mon, 26 May 2025 22:50:05 -0700 (PDT)
+ Tue, 27 May 2025 00:02:32 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zS/jWJNj90kRNN5r+wsYIaaPlJtpiZe6yxleT61+11bdIjhSn+2s352193AIJMEUlMcKD094S+EX7oPdQ29OAitVvqsnQW/y4rpIUSFSaTn+qVtlT/o2bDv1iPB8fqfg04rsogDDrhNnxuNAthHHv+qVMUVzHmDwVCPzgajx+m5z3P+0g22B0W7yUdH6txOcSnsXw4C18H3wLYauG/+gFEbhjdJqV6fVnUdp9y/mx+gY8Dp/NIlMjDImtbCo1wbxgoGbiuhjdSclKTmM2UznTYHnoRL2eKjIL88V8qAQT3PnKANhzSAo38g3PAiJjcv6AaUjK5CmiZadtF2jQYgkjg==
+ b=zDlmn0tYF2YasbuYcJcP2IVz1aJdyp6sNGs5VQqLHLUoUASy6vJwzAvMZs6diX1+8oD5sLcJI2lrOKSMiAOKOY+KDDKSEVTu2+caBhcmsw/e/7CTRwRhLhFXZnCqD7AkvUK9XPh0tfugQlPzsYHG/JiLY9qbdTrMxL2qilebmCH2720HJgIiyv+PswkXKD0As9KXy2pE66pOWxhazox3cnUNqo0KwaGvbQd2HwwEHAV3l83fyOammAlRgBhu366b2uH8WsNgAwqDOpxUIW0/SQbLrNtKmpybPUth9HpPGbmWlh1grbVttQmBWIqh+r/CbT/NrkiWoyI+m4CKIIxV0g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=o5N512hTf+OBiUSO7UuGW+vE4lDulMwy0KS+6/44N3Q=;
- b=VM2vnnMDh3NhV5tzE8fUX4MGwqMXmFhtXxQUNYVZ9t5o/Dri2RDWSZmuTRdEKx3y7Zwjx9REKZfZfB3atr+tSebJJfozsd4ZWUtXftFb0btW3M/Z9pnHAnKzbnkkAIa8EqN+ovHOmhkRDrT9jEsbetSeHWFdvcDL8NneNuQXr5OJZwJoHQlCwIdx+0qzsk/47caFn1Lu6VvMO1yrYW23A4grkagaLseuQMRpvnQUqhFCmDDW/aiU2LmsKAMwfCL6uZcJ86UqYWHGS8WyxREFVqS3UiFpUU1vJK4w+6lqQNspzzXmVzaVrqjWI5xIMSk35SF3tgXs1FyZL4/tpLKSHw==
+ bh=HUJhPRn7ZbTH9uZdd/Xn6QRi1VKXCeKx9x6/ZNCpH2U=;
+ b=DJDDIyX4ISBFBrWfL7SDuWPGPhPQ1Z0BH393NF3v2MfkOKDof/SfvO8bJ3sHosEQrBD/nMmmpEqGO2/vP8CtyVNI/6VECVeFjnswEilO2nPxnhhjsUUqVqGqY4kJIn8ONtnDv6xyy9R3o5Ju2bonI80sDRXIv6iy+l8XZIb3rPWmWuLxLhKEwy7C42BcJwdlxq/+MHpjTE9O95wC5uWtPDNYqZteLpuEGRv9brv4HLA+CmSE0HxUVoKUwk6EB+5037Mad1dLgj94fiYNCZcZ334kmOHyTIJp7bSi/yAqssZQXDlAEqv+TOFaqEX2syynCPOq0rjCn6Q0UGXh7l9qAA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
  dkim=pass header.d=marvell.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=o5N512hTf+OBiUSO7UuGW+vE4lDulMwy0KS+6/44N3Q=;
- b=MaLO4+bKBK/gSsehJBJl7c+NxK0npzKmzexdXHuM0GMA++R7YeSQFDAIrP18EuPleZREXV4dJ7RfMMXPsBlYcz3Wk+3Vr9dAgUXW4ikoMEpDoz0DdHmXbmVV+N4p78RN5lytOKqUUOd2w7my1dSnvbZ3W2Eu6EVgpUraS4TLFzA=
-Received: from BY3PR18MB4785.namprd18.prod.outlook.com (2603:10b6:a03:3cc::18)
- by CO1PR18MB4780.namprd18.prod.outlook.com (2603:10b6:303:ef::8) with
+ bh=HUJhPRn7ZbTH9uZdd/Xn6QRi1VKXCeKx9x6/ZNCpH2U=;
+ b=RX7iZYoi8tKt5tQx865OuoLN6IIBIa0wVyqg7oD6nBOj5iuskn+wX4VOfzzSPuTyZzOqD3utWTYwzwZrSC9WXanB8gtd4L6gE2U9B4g3IH6lteJyI0Syo3rnx554lsVsmLGSF1a3Gx2KLAIME5bcLBm9INq/0qPEMdd0TbeMsNA=
+Received: from PH0PR18MB4086.namprd18.prod.outlook.com (2603:10b6:510:3::9) by
+ CH3PR18MB5404.namprd18.prod.outlook.com (2603:10b6:610:156::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.25; Tue, 27 May
- 2025 05:50:01 +0000
-Received: from BY3PR18MB4785.namprd18.prod.outlook.com
- ([fe80::4f9f:e101:dad7:c576]) by BY3PR18MB4785.namprd18.prod.outlook.com
- ([fe80::4f9f:e101:dad7:c576%6]) with mapi id 15.20.8769.022; Tue, 27 May 2025
- 05:50:01 +0000
-From: Jerin Jacob <jerinj@marvell.com>
-To: Pravin Pathak <pravin.pathak@intel.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: "mike.ximing.chen@intel.com" <mike.ximing.chen@intel.com>,
- "bruce.richardson@intel.com" <bruce.richardson@intel.com>,
- "thomas@monjalon.net" <thomas@monjalon.net>, "david.marchand@redhat.com"
- <david.marchand@redhat.com>, "nipun.gupta@amd.com" <nipun.gupta@amd.com>,
- "chenbox@nvidia.com" <chenbox@nvidia.com>, "tirthendu.sarkar@intel.com"
- <tirthendu.sarkar@intel.com>
-Subject: RE: [EXTERNAL] [PATCH v1 4/7] event/dlb2: support managing history
- list resource
-Thread-Topic: [EXTERNAL] [PATCH v1 4/7] event/dlb2: support managing history
- list resource
-Thread-Index: AQHbwJo5QL9uMF+bckmc+SLLtOzlK7PmFQvg
-Date: Tue, 27 May 2025 05:50:01 +0000
-Message-ID: <BY3PR18MB478577B72F59FBD025B80969C864A@BY3PR18MB4785.namprd18.prod.outlook.com>
-References: <20250509042401.2634765-1-pravin.pathak@intel.com>
- <20250509042401.2634765-5-pravin.pathak@intel.com>
-In-Reply-To: <20250509042401.2634765-5-pravin.pathak@intel.com>
-Accept-Language: en-US
+ 2025 07:02:29 +0000
+Received: from PH0PR18MB4086.namprd18.prod.outlook.com
+ ([fe80::ed37:4ea0:6359:f717]) by PH0PR18MB4086.namprd18.prod.outlook.com
+ ([fe80::ed37:4ea0:6359:f717%6]) with mapi id 15.20.8769.019; Tue, 27 May 2025
+ 07:02:28 +0000
+From: Pavan Nikhilesh Bhagavatula <pbhagavatula@marvell.com>
+To: Jerin Jacob <jerinj@marvell.com>, Andre Muezerie
+ <andremue@linux.microsoft.com>, Nithin Kumar Dabilpuram
+ <ndabilpuram@marvell.com>, Kiran Kumar Kokkilagadda
+ <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha
+ Koteswara Rao Kottidi <skoteshwar@marvell.com>, Harman Kalra
+ <hkalra@marvell.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: [EXTERNAL] [PATCH] drivers: remove __rte_used from functions for
+ compatibility with MSVC
+Thread-Topic: [EXTERNAL] [PATCH] drivers: remove __rte_used from functions for
+ compatibility with MSVC
+Thread-Index: AQHbpQOk6Y8dA8EHNUaYLMIT/vMIjLPmPyyAgAAhBMA=
+Date: Tue, 27 May 2025 07:02:28 +0000
+Message-ID: <PH0PR18MB4086220D295D076CD17E50C5DE64A@PH0PR18MB4086.namprd18.prod.outlook.com>
+References: <1743731269-5936-1-git-send-email-andremue@linux.microsoft.com>
+ <BY3PR18MB4785102E282A25D741443B84C864A@BY3PR18MB4785.namprd18.prod.outlook.com>
+In-Reply-To: <BY3PR18MB4785102E282A25D741443B84C864A@BY3PR18MB4785.namprd18.prod.outlook.com>
+Accept-Language: en-US, en-IN
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BY3PR18MB4785:EE_|CO1PR18MB4780:EE_
-x-ms-office365-filtering-correlation-id: e928942c-301a-441c-c49e-08dd9ce25297
+x-ms-traffictypediagnostic: PH0PR18MB4086:EE_|CH3PR18MB5404:EE_
+x-ms-office365-filtering-correlation-id: 3636ed29-a241-4817-a830-08dd9cec719e
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?jCUBh8TkElW0kMUAzkFj4IkFk2U1HYZPvMwwriWVgTDSJ+yGda2fwAivVRRN?=
- =?us-ascii?Q?WQ7YoFdlkgyQfodSyHSbyKVXmaLQU3ykFFxYuh+QxMi3qYk1ATSndV9JWNDV?=
- =?us-ascii?Q?PfYR2Pf2eGUtwpKGzz129ZMoaURO7e+lkOMPYR76AqEXM9mwoim9N6cclpTi?=
- =?us-ascii?Q?hauco27ddkwRDK8Ue8HipyaogLyndukPHpcVl8KraK9A/N38kIHMofj8SV3v?=
- =?us-ascii?Q?E8qRP+xgYFDVMVB7S+Lk8wqCBjV7pf1fDRepXBJ3UTziuYbpJ7w8ONRCExUU?=
- =?us-ascii?Q?Cq7w0MsBRwPdF50qOR1WdcdzCdUG933S0M4YkjZd++dA4hehXWJFfs2M5LCc?=
- =?us-ascii?Q?UCWsBXFuhrPbBgHw/LD7DC+aOSv1amqtba/IdalydKeIDGcakgDi+HQwZJyj?=
- =?us-ascii?Q?Xgv+4Vxu71tTp7kcRAAw3q/YnvHXJjgaOwiMttS2Q9a0y2YDbEEvlU/XTcbF?=
- =?us-ascii?Q?8kPgU/2MLtZaPqmjCnP88qB5j+yMUvXA90YR1EQ+ev7Uj9UE+IjKn5muHFiF?=
- =?us-ascii?Q?tyeo7jlrEfx66LjPyCjsnc+KXGpTn/R5We80iCpmqvG8kRQFmVkzeWwmGVjH?=
- =?us-ascii?Q?fuIG4frhtQduE95Gt7PKlvuEZiVC8iJ95A7pYyvKLyJj9hzk0aiGlzpFy4oL?=
- =?us-ascii?Q?z1/mJSXUppgHMGLroPmMPpxN1zVGYnHnUwoiwRA/W7Cyp/rVlwbjOyo9Grj5?=
- =?us-ascii?Q?+FRuEBuz1GbuvQ3dum9AkTes+6DHVFP2p7zL044QdkeEhSKpYzDmjqzmOdvt?=
- =?us-ascii?Q?4HS7GbeSeDmz7mj9R1i/WK5VcGziFvXTig12WVM6gN/SZnRrXqtp5rjMDHh9?=
- =?us-ascii?Q?lWQxZaTfIa1zY7+J2qTuUE85kwMh+ZSvlaZ9XULGJxKW/KxEgg2vB7zdrGIi?=
- =?us-ascii?Q?bpDur1gLXnqKvXvLVu6/4GK6bVAGQjw5xOxh9+IeKAtyPJvrBufp38EfqJSa?=
- =?us-ascii?Q?MdALySr+k1wFPYe2IirlcNxxZKyHJeWImVyZJ9Ii/uTOBDAC/Q1Dyruyicbl?=
- =?us-ascii?Q?mp5JpncxdbRoclzK1OL6+zM+nvH2nbeM1nqKUwpvuqxfJen5zdMUVzvT1GuC?=
- =?us-ascii?Q?NfYnoj7wvxwygTxQnlQnjz2qDkvsQWaxmnjjscDu3EOlVsqwOl7m+Iv805D+?=
- =?us-ascii?Q?gIEV6qW3xA4qmTnZDgf7fI1HzQWZIwyI5c71VWcSPmFyqq++sLFpFSz++bVX?=
- =?us-ascii?Q?ny9WrGCrfXcsLArcDrdpAwkjZhrwjc5YncHFlhmPNKJ8eXVuvHes1Bt1NfhG?=
- =?us-ascii?Q?uDMno0gL+U+ewUSQkgPtIYo1v1fBFmZ6IB8cggH+1T1+AR1lQ83asj54eot9?=
- =?us-ascii?Q?Dq9xlVxXoyBImy6TQh1uuptCEjQs7I2HiuauyJ4KMAw3fiKIJKFIvjwKOi2e?=
- =?us-ascii?Q?U9a1lae18OdIzTJLwZh6WtfjHI4NVGJd6EEGJyv/Rt9ZfHhi2LAtxYWzssHI?=
- =?us-ascii?Q?3+6crJfB1j0=3D?=
+x-microsoft-antispam: BCL:0; ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?TFd2MGRqTTVZelo4YTBmbzlWOExub3hmcW1UZGdHd2cvaE9vaFhZdndOajhF?=
+ =?utf-8?B?MC9HN2xOWjVGRU0rRFlGVkc5cU8vYW5ZamtSVWhrbzd5L1U1dUdubWVTUFJE?=
+ =?utf-8?B?anFwak5GWXVLQlMydnI5c2dINko2c21CSURJaEZUNVQvWEhrUlVOTFZWcVRs?=
+ =?utf-8?B?N3ZBM21ibjdLdmdyTDREMjBiRFVGU1RuMW13a3dKelh3aVZyU3NqZ0F0d29v?=
+ =?utf-8?B?M1NjYnAzNmk4dzl3dHVYaWhPcWthSlBOTE9WdmloVlBpQi81aDRMRCtGTHRz?=
+ =?utf-8?B?cFIzOTZicWprY2dtdStsVkg5VzRKNSs2cGVuZkRPOGI5SWU5V3h0eUFURXB3?=
+ =?utf-8?B?cVpyTTJ3bW8vam9tczU4ME01enRPd3ppbk1yZGZFaTVEQ1dVNGZlY291dTND?=
+ =?utf-8?B?djZZNEl3eU1PM2RoelJLSkE3QWpid0JmMUxsa1VSczVndjRrRzlxSmdhdmIx?=
+ =?utf-8?B?Vi9oSWFHaERKbW1xbHFYVG5hSzUveDQ1UjBmYkVhYkJqbnZxaDI5ZHpxMEx3?=
+ =?utf-8?B?VURZNFN2azNQcUUwVkUxNVRKMmFxOEtYZGZicHh3YkJYR1ZPaE8vZk5UeUNw?=
+ =?utf-8?B?VUxTbk11WmRicmxWbTJITnNOZVR0ZE14ZkM2cUdlRzZlbWM5YyttWUxQN2wv?=
+ =?utf-8?B?cnF6NElVQ3pJRmNwd3ZTY3BCNVRTeUFaeStmRjJteDMvek5kMzI3ZWxkaGpo?=
+ =?utf-8?B?amM3SFhtY2x1R1c1QWdzVStjcnlUdjRmdlJjZlY1VjhXcWRtb2QwQ0FuNzNS?=
+ =?utf-8?B?VVlRNXM0YUJ1WEhEVzY3UGxXSnNSRVN0R0hRUEM1dVlsUDVQdHhkNXprakdh?=
+ =?utf-8?B?SjRPYXJCZXppaEdZdWdoR2EvZ0EyZnpmQnc5Z2tFVFUyd3dQMTh0ZjZTZFRG?=
+ =?utf-8?B?ZDhmUWYzS1llV1YzQ1g1Sno1Q1NBNmwwVk0wUkk3YSttMWdGbFJ2RjZxUVJD?=
+ =?utf-8?B?bkgvUi9LK0hBcHMvblJ4cWVmT0sxblpoUkRPUzFkNkQvZG1yYXhOWllBdHl0?=
+ =?utf-8?B?RGxiUUdXZzlaU01ySWdGS2dUWXgzbTBrdWdmWUpKZmVTTDkrUGJnTUVlN3p4?=
+ =?utf-8?B?NlBBQ3RkVmgrU0YreXpvWkNFZUdyeVVlSzJhS0RIOVVWUHd6a3JCSVkxSHc2?=
+ =?utf-8?B?eXdKMXQ0TGMrVHEwaGlrcnFjZXBOamQyMGFiOFBUMXBSTEVCK2tMcEhRZ2tL?=
+ =?utf-8?B?emRXeER6Tml3NytDZER4OFJrQVZpdlJMTmxoMENpYnRHaXpKVFdzMnJ3K1ov?=
+ =?utf-8?B?ck5QUW9ENEFoNlhZckZsR1NCMHpmNWkydmxTNzNrRnJzZTNtVkxPdWN1eGtV?=
+ =?utf-8?B?TXlvT3VnWms4UWlzSFMxRDRSMWJWMHhTdUxFbmdTZnZBWWFxajZMSUpxZ0xz?=
+ =?utf-8?B?dGdCVFk4ZThMdUlWMlE3ZENVTHpvVGwxY3lyV0xsZlYvTmhXTzYvRVBFbTln?=
+ =?utf-8?B?MXJIbDlvTXBoS2haNGhIL25tT2dZdmJHeS81NUtOa3VmOVlyZ0JQcVFNOFpO?=
+ =?utf-8?B?Tkp5TFBZSlFoenZSbnRlNE9XRU1VRGZNTUE0M0JGc3NyQmR0cDJrNVVKNTdP?=
+ =?utf-8?B?RTQrYU1SSVJkVmdJYkxNNHJISkZLemRQNXVReE10c3I4QTBhUXZJbkl1Vmtz?=
+ =?utf-8?B?MDU4YzIwNFZKSm9aZEZWeTd5SjZTdHloTk8zM2hLcy9kQm9OZVVScDFMKzgx?=
+ =?utf-8?B?R3FWQy9TSkMxelBEY1ZRbUt3cktUTHZUWlFQVUJ4OUhkNENsbVczNzdON1Z1?=
+ =?utf-8?B?bk5LWWJxaHRPd21ZeGdtZzI3Nkp0Q1JDRGlFMzRYUU5LNzFmbVVreEJOSG93?=
+ =?utf-8?B?aUNyVTVwNFRpOXVuNGxsUXBGc2ZoRnlmRGJuOXVGZ2tOTlJSLzNLRU11Zm5p?=
+ =?utf-8?B?TFlaL2k1NzNERXdIUDkyR3o1Y2dzV0o3b1JpNWhpOGozaXB2VFZuNlplN3FD?=
+ =?utf-8?Q?0ERfiOdblhWefqd180xdKRPY9zYAuqjp?=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:BY3PR18MB4785.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(38070700018); DIR:OUT; SFP:1102; 
+ IPV:NLI; SFV:NSPM; H:PH0PR18MB4086.namprd18.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(376014)(1800799024)(38070700018); DIR:OUT; SFP:1102; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?gWOhX8g5QA/zXEt0zrmZ5FE6H6PVy0ztMGrTKblWG90WJpjmGn6ld5aZIOoA?=
- =?us-ascii?Q?9RR/RnNqyxaCIoT/DrzI09Uw17iKPOCeppDsCc+2R0XQJiNuF3Xfowigl1sp?=
- =?us-ascii?Q?m7z1cMl7jwcYpprX7KU9KKrtMpUdgByXjjbsDIJuWYPQ7/YuWUFdovz5Izgy?=
- =?us-ascii?Q?TfecwO+Ij8Zx5LT0k36d8ZH6cMG8x2BmHpZXSGMdGzeo3DfZIItT1zSwoLKV?=
- =?us-ascii?Q?aDcXIx9ZOIyvfZGptBm4JLZL1Ls+JiZ3CJS1vUBeICpk0vgu7sT+PCTHgXwO?=
- =?us-ascii?Q?bV6NVjf73EGcxjhQcMg9tlKzVA37y0B8dBOdjG7xwDys5+57Gw4qYU4qqFTF?=
- =?us-ascii?Q?w7x5qjCJSP+VtJDBbDMXUpUOpHaDZmdWryebo0H+C6Bh32E/OIvUUrRlAz5p?=
- =?us-ascii?Q?iDoyAK869O4Xnh82M6i0Orb8D5A7HDpDIgXTYBbVofbAABfScy7kGhjuhQ2x?=
- =?us-ascii?Q?r2+FvKh63HghLno5Fgrd4Ig2r662juTvHv5isILQgvI+029FVL3W1LClC+Fc?=
- =?us-ascii?Q?jNYTzcGSM5cq+a85qQzVVdT5aayR/SpKXiROFXyP5liWhOI9ct+O7EFUprVp?=
- =?us-ascii?Q?rYY07L9RAx5oo9m5MSMVB8oQ2Jv1pcad3syLG1Gg6/E/lt5f7w87iuDvyebX?=
- =?us-ascii?Q?joSF46BKkBoBUcSMH/Fhj8a/EFcwrAyxxKOPGyJ2ZknwUC7TC1KHk653+/ij?=
- =?us-ascii?Q?Jr/zsTfH5PFZzUTvHPumukk3fZEJeNRCwNLn4WPbRH8aIfzAcFJP8uCvnWW6?=
- =?us-ascii?Q?KnjzAz6RkIze4vfK8Qp04sMrD1m1uElMbNDzZGKCCOHAZGDoEt9nPGv+v0sz?=
- =?us-ascii?Q?GI1q6qmir0R5Wird5HNdqmatPaYyolJgkybL88V4/+gYv4GoQFtU3Z3B/ihA?=
- =?us-ascii?Q?NVhGe/QynBTHeG5CnSJj05dhjgVK7OWrrR5omQCFnUYwcRMG/IAmuqz/uSZ5?=
- =?us-ascii?Q?BqsBNcX6p/RQ0+29MniP9pSoh/lb5Jc/SHslE6DxQyR93UEYaRPqhdKxL2/z?=
- =?us-ascii?Q?ukPe4BQGHkF1k6BV7m3CGrQ3nkgfwNtGh9YMMtAGeLH4+D8qtqoMoAkyYDe/?=
- =?us-ascii?Q?uWr114C/mmcXaicK8eNUj7o0IThgMgTPzRcpjVLDquOP2B+T1PgJ2Td5JKbV?=
- =?us-ascii?Q?myYZZmJoTRHYxMfpg5V3U6bV3z7Jdg8iBy5vZ1qQNxFlxrWNGCVosXd9gRed?=
- =?us-ascii?Q?1xwYqhvJA5J2cCQQfbwQfTBLs+OqQk9bfPuhVDGQhiaXJjByqBKHnhiFravu?=
- =?us-ascii?Q?ZEpj7qmwSz/psBZdm1BAoYXVpBeliCq1YrzFnNvXhpCm3w0Of8x5Q5Ua3ESN?=
- =?us-ascii?Q?jrIavSwqgwE7TdhFhfqRjRIFPunkdnX2fQydi6y7k4wQEnlCFFMHynE+jGH9?=
- =?us-ascii?Q?6N5blsCvN8mSGB7/oVntJhB7LHx/vdg0YKQoG1WpJckgPx6/eUeX96ldayrk?=
- =?us-ascii?Q?iSTanDhMJS2WA7yl07To9im43kVnHyfkApfVILMJ+kveFh872hr0UpbJt51D?=
- =?us-ascii?Q?r9HFWLd3ONh9YALGEmczCb7VFtUrMVepWSOOhT73v7twJXDZMShG2pNzgDeE?=
- =?us-ascii?Q?N6qg9Y4y80m179eRhtz+L8+XQkrs3GiQPYY16JMP?=
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?WDRZcER4aXRRK0J3S1Z2ckpGd1RaRHNQN2FIUmFyNFpJaEFxOWwxVGQ2eS9h?=
+ =?utf-8?B?SjM5VW5tcTlvUVV4RnBqR0xiS1pXUitPSVY2eURINjladlNkRFNFYVlQdnJR?=
+ =?utf-8?B?NDFGUXVubWsxUlpqZ0JCZjN1TDJaUUpYRnVsenBRNCtBaFpJdXF1UUZFOXFh?=
+ =?utf-8?B?VXZnNnhyMFRwaCtudXR3d1FOY09ocHVKM0JxeGY0MHBNYjUrOWh3bS9rdWs3?=
+ =?utf-8?B?N21QMW9aUTlSNVh6R2VIMjJvV1Y2Z1R3cGdtYWVMeVYzSjV0RGY3dHpCTjBY?=
+ =?utf-8?B?VFpnTHo0azRLamQrV0x1Y0hwL1IvNE5lZFJ2M3pFQjlmdXJGZEcyOTNRSEtK?=
+ =?utf-8?B?SFpKWXNrU1hQMTRYczMzcVh2SXcvVkpadGF0V0o0bHFEZWd1T2ptQ0NYejZG?=
+ =?utf-8?B?TWZFRmU2dmJvandxaW9ncE8rWk12dDhJREpyeDVQQ1d1aG1hdkhNZnFmN0NF?=
+ =?utf-8?B?WS9uNVNTei95Sm5GL0dsS01vUlJWWlVaWmRQdUlXMWIrdXhYSUc4VTlHYVFn?=
+ =?utf-8?B?TjZ3b3oyWkxPWjgxOVpkQytpRld2djZzcFBYWXR2TFV5eGZjTDlnNGtCN1Rv?=
+ =?utf-8?B?cHJWUzd4TTU4TTF6U29jUFJ1YXJKN0xSN2ZKdVNMaDRlajBLRnljSG1nVTNl?=
+ =?utf-8?B?Z0d2SlkrNzYyMnFuYnJES2phRXdNVnlnWjZBamZ0cDArQTJXNlRZeEFwb1Ju?=
+ =?utf-8?B?QTdYbGdEL05tUHpocmdJV21VajJXMHl4VndvZHpmcUFyb2tDNnRMUmN5Zk9r?=
+ =?utf-8?B?UVFlYzVUZU9qWllaR0poVmdsaXVFRzJzV3BNMFlCTkNuVnJUTThPMFdJQUhM?=
+ =?utf-8?B?VmVGOWJuT2xlQkpTQmJzUURtTGtGK1hvOENpWXFnd290SjJ3M09hUlpNdGQ1?=
+ =?utf-8?B?Mnc0VEdhUG9qd2dBL2tJZ0x0RVd2UldzcVc4UVozcXpJODZoSyt4ZUxUUjFM?=
+ =?utf-8?B?d0NTMVhBMFduVDBkQlJ4djBXdVhLSUVkL0VHaXM0cEJCWnpSVDZzdGNFTXM4?=
+ =?utf-8?B?aWptMzVnODA4TnNhajBqb0drUlRWRTErZ0dZVXUwRi84OE9JSzNvemJBZ2tK?=
+ =?utf-8?B?OHZNL2VCd1MyVUJkZ0Q1aUlsVU82V1VabkJXSHNPbHdDL1h6NllLNG5YNkFV?=
+ =?utf-8?B?N2FvRWJUdW9CaXN2bHMwdjZBbDVudHo1V3pyOGRrTVh4MzBSeU9oSjY5cHND?=
+ =?utf-8?B?cXNqV1Q4dndici9JK3ZESTZjMDhEMDBUQnFZZjlBR2t5VW0rbHVSbUpGWExE?=
+ =?utf-8?B?alVIdzJqWHhFM2FLTEg3dzEyOGhkNDFuNGpIc0ppbGdMYlp2NkdFSUNpVXMx?=
+ =?utf-8?B?YjNqcnJxWTUveFcxLzNXU3M1Y0JWOFZqNHZaSWhLeXJmVm1VelBqYjRkdVpr?=
+ =?utf-8?B?ZXBodFl6bk8wWlRsN29IR1dKLzF6Y0tkMythZzNtZXpuaGhzcE1HeENwd1Nx?=
+ =?utf-8?B?Q3MwK2pOT3J4M29NNUN3bGtZWXMxZnFjQXNYU0ZPSG5uOHRKNDNhelBlcmtt?=
+ =?utf-8?B?U1FjNVlsaGg3WU9rWkluU1Q4WmVNVzBZVmU2UHRqTDRkS3N5TThsR2F6TWV0?=
+ =?utf-8?B?Uml5RGY4MnZsVDlFMjZDVVF0UldGdWNLL0l6VEhoM0QrT2ozS1pJNmY3RUNK?=
+ =?utf-8?B?RURRSzdPd1N4MkRXajVCa0trSmVyZ2FDZ3BESzFEK1dIcVZCd2xaMStFY2c1?=
+ =?utf-8?B?WTlYSC93cldLbCtOOVpIZHRhOWpTeWQ3d2tVOVk3elNQZ0tXVXdhUG1KM1gy?=
+ =?utf-8?B?R25OZUVDNXFWbklReFgyRlR2T3BhMFlqSzBKdmRaUDdSVXFsU1JhcW9MeFRS?=
+ =?utf-8?B?SThhSGdrejIrSFpyN2RRKzRITHNKNkJrK29ycE85eHQ0L0VQcVduSWFMc0ti?=
+ =?utf-8?B?SkZCTTNLbFFKMFVudVpFZ1hlTDNlSWNPa3NwOGdsRmlSQitGNDlKbDR5TEZ2?=
+ =?utf-8?B?Z3BUT0IrVmROSkJDRnJ5SXhKcXpVYXcrQUpyNW5sS0J6RjArdWx0ZUpObmNu?=
+ =?utf-8?B?WW5nZjJRc2duOXdZclh3V3p2anA3V29vUVBPTkU5ckVvVkoveWZXSUt0MWdP?=
+ =?utf-8?B?NXlvTGpxMFBRU25GTk5kc3Q3VWJYSUNmSUJYTVE2elFTbXJ1WDE0b2ZFRkcw?=
+ =?utf-8?Q?aFumq7y1uGKG6ZBKf/TI44YXS?=
 MIME-Version: 1.0
 X-OriginatorOrg: marvell.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BY3PR18MB4785.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e928942c-301a-441c-c49e-08dd9ce25297
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 May 2025 05:50:01.8575 (UTC)
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR18MB4086.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3636ed29-a241-4817-a830-08dd9cec719e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 May 2025 07:02:28.8683 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: nRUFAAipaQUoPZULx/Z5MundoOPAHpDHnvXd89ForBW4cUiqihXcB3jVJats+Z5GScL9w/UIf/45OW09pSJ6Zw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR18MB4780
-X-Proofpoint-GUID: HKIlabxmmu03PG7UVFFPZuMmDhoXDyXN
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI3MDA0NCBTYWx0ZWRfXx3WqYErIEW5U
- qMz+Z5hW7bd0ATesgPEhYZr+UQ0v/0seDCtOgYMvU8l8oVD0n524lNU1pADuNAtw/AzKEYmIr7r
- 5wC61XiHaduKdwHOkiaEPKVWAmRcvyvLzgUwM3KE5/aMvBB9Kuv89G8vIqmgcv7nB7TfD5+MUeG
- r9vxeVs0brbxcVQIFHCs6kqbr6yAJ/Wa5ZrRxi0O3CbWcMZrl0dqnxQKjL2WKFUYjZt4KxPo79V
- 3naQx90DyuUGc/194k5euzUDttypdUSjMsk3iBPljkYEACyDe5rhfgCF7hW0boroJD481BshURD
- Dy9mAJE+0GOymJtg9bNkmEvs/2W1iqZRLsgRalSyGhlbgKRaTj8/9xo1rja+aNs4iAcjb4uF2su
- MSGi/hFwXEOuYcyO4m24C93+RO1tYQZQkmVvNCZ25oILh4/YVPtU8Y1xiT6OmlIMI8jwuxoC
-X-Proofpoint-ORIG-GUID: sAazWrBBt7-CoiqOS-ljy66xnIrUUBdh
-X-Authority-Analysis: v=2.4 cv=G5ccE8k5 c=1 sm=1 tr=0 ts=6835528f cx=c_pps
- a=JCInGfjmQJ+O+leRUSAC4A==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+X-MS-Exchange-CrossTenant-userprincipalname: dGBkMejttemvnYZl3C8X0dzsbaW+g1FymIT06vwIF20sdEEkAJMtmQaNJWhOosAgjXaZvqtGS1jpR+A1yNrb20R3DlCdLcY7B+mQcrOqaFo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR18MB5404
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI3MDA1NSBTYWx0ZWRfX6HS+kSeJ/rhI
+ 9qK1cNlD872VuHG7krgNeccFn2Nf6TCfh+8x/SwzoDBvIIXbwiOB/bgi+Gnywzk14XK9qiJQD0Y
+ 7X6zK3V0MoR//C6VS0Cs0BNTpjLQ4nedpWsHqHsh3EYxv90tFb9MwDhilXSzNbwlqos/2fOEquT
+ MPbAGtXjJGdrDNiyuhOWxxY8E4zXcXGQw557RKVqj51CCIShgxhgZRdLsu1w3ZKQtR0SXikJ9/+
+ JWlUDRL99T6yhLV7M5gjp74Ws3aYVTvpXLEfHJwPjkaf0Y5E4GLhZwO5QrEgewHnv39u6/XO38s
+ zkH/1cMLE17WdlU5vE7Qb4A5+Nbt7OtWQ9/Xr81wxrK9K+6ZNTCWHGlEKrDnnr0pR76zLhVVqNc
+ EzRKrB9MhrdWZhESKmciwd4Z4us7mekLZ9Rw5av35FdDaLzuud5jhqqn9C9LGGGzXXufI2hx
+X-Authority-Analysis: v=2.4 cv=LZ086ifi c=1 sm=1 tr=0 ts=68356389 cx=c_pps
+ a=yXZ1+FovyrT58tjj2uJhTA==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
  a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=dt9VzEwgFbYA:10 a=-AAbraWEqlQA:10 a=QyXUC8HyAAAA:8 a=8rWy6zfcAAAA:8
- a=M5GUcnROAAAA:8 a=bt5KbKNvAAAA:8 a=20KFwNOVAAAA:8 a=zd2uoN0lAAAA:8
- a=Ikd4Dj_1AAAA:8 a=RpNjiQI2AAAA:8 a=Qr0ms1Cz38Lz1GemAIkA:9 a=CjuIK1q_8ugA:10
- a=YjdVzJdQTyZRADMV7wFX:22
- a=OBjm3rFKGHvpk9ecZwUJ:22 a=a-zEBD5cKgE7DNtTSb7C:22
+ a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=dt9VzEwgFbYA:10 a=-AAbraWEqlQA:10 a=RpNjiQI2AAAA:8 a=yMhMjlubAAAA:8
+ a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8 a=WtUc2Sty7jUJBGBoxR8A:9 a=QEXdDO2ut3YA:10
+ a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
+X-Proofpoint-ORIG-GUID: _JZ4PoidrgynCyP5eh0RZzfwZGU4cQln
+X-Proofpoint-GUID: jMV5N2XS95YnASpqzXM9egoWiMFQNRqJ
 X-Proofpoint-Banner-Trigger: inbound
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/html; charset="us-ascii"
+Content-Type: text/html; charset="utf-8"
 X-Proofpoint-Banner-Convert: 7bit mime entity
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
@@ -189,11 +204,11 @@ Errors-To: dev-bounces@dpdk.org
 <div style=3D"display:none !important;display:none;visibility:hidden;mso-hi=
 de:all;font-size:1px;color:#ffffff;line-height:1px;height:0px;max-height:0p=
 x;opacity:0;overflow:hidden;">
-&gt; -----Original Message----- &gt; From: Pravin Pathak &lt;pravin.&#8202;=
-pathak@&#8202;intel.&#8202;com&gt; &gt; Sent: Friday, May 9, 2025 9:&#8202;=
-54 AM &gt; To: dev@&#8202;dpdk.&#8202;org &gt; Cc: Jerin Jacob &lt;jerinj@&=
-#8202;marvell.&#8202;com&gt;; mike.&#8202;ximing.&#8202;chen@&#8202;intel.&=
-#8202;com; &gt; bruce.&#8202;richardson@&#8202;intel.&#8202;com;</div>
+&gt; &gt; From: Andre Muezerie &lt;andremue@=E2=80=8Alinux.=E2=80=8Amicroso=
+ft.=E2=80=8Acom&gt; &gt; &gt; Sent: Friday, April 4, 2025 7:=E2=80=8A18 AM =
+&gt; &gt; To: Nithin Kumar Dabilpuram &lt;ndabilpuram@=E2=80=8Amarvell.=E2=
+=80=8Acom&gt;; Kiran Kumar &gt; &gt; Kokkilagadda &lt;kirankumark@=E2=80=8A=
+marvell.=E2=80=8Acom&gt;;</div>
 <!-- Preheader Text : END -->
 
 <!-- Email Banner : BEGIN -->
@@ -224,9 +239,9 @@ g attachments
       <table align=3D"right" border=3D"0" cellspacing=3D"0" cellpadding=3D"=
 0" style=3D"padding: 4px 0px 4px 0px"><tr>
 	<td style=3D"direction: ltr">&nbsp;&nbsp;<a target=3D"_blank" href=3D"http=
-s://us-phishalarm-ewt.proofpoint.com/EWT/v1/CRVmXkqW!ui3X2N84rjX7-6H8OTxazq=
-KNrbxbU3QM1Wav6Ecy3a0D90KUJcMS2kHwhFdLXwRRAhafQEtS-IW5IRGLpIgfnwzS7s_RIc1vt=
-42pHYvmBNbV5L9tWijJJmydyqe-L2IylTTkhcg$" style=3D"mso-padding-alt: 7.5px; p=
+s://us-phishalarm-ewt.proofpoint.com/EWT/v1/CRVmXkqW!ui3Vmv9YrjX7-6H8Odxarv=
+_Zw1JD81gcd-C6xsoBvnm16iV3ibKEP2Q4vEy15LzPWnnRTe94Bc_mN96d-C_OxV3PrHQi_iudG=
+eLpHir4nVufYToka1AcbwiIF7PX2Loxm0TVmvM$" style=3D"mso-padding-alt: 7.5px; p=
 adding: 7.5px; border-radius: 2px; border: 1.5px solid #666666; "><strong s=
 tyle=3D"font-weight: normal; color: #000000; text-decoration: none; font-fa=
 mily: 'Arial', sans-serif; font-size:14px; line-height: 40px; ">&nbsp;&nbsp=
@@ -237,16 +252,16 @@ mily: 'Arial', sans-serif; font-size:14px; line-height: 40px; ">&nbsp;&nbsp=
 <![endif]-->
 
 <![if !((ie)|(mso))]>
-  <div dir=3D"ltr" lang=3D"en" id=3D"pfptBannerqpx5gfp" style=3D"all: rever=
+  <div dir=3D"ltr" lang=3D"en" id=3D"pfptBanner0k8x9no" style=3D"all: rever=
 t !important; display:block !important; text-align: left !important; margin=
 :16px 0px 16px 0px !important; padding:8px 16px 8px 16px !important; border=
 -radius: 4px !important; min-width: 200px !important; background-color: #D2=
 D0D0 !important; background-color: #D2D0D0; border-top: 4px solid #8d8c8c !=
 important; border-top: 4px solid #8d8c8c;">
-    <div id=3D"pfptBannerqpx5gfp" style=3D"all: unset !important; float:lef=
+    <div id=3D"pfptBanner0k8x9no" style=3D"all: unset !important; float:lef=
 t !important; display:block !important; margin: 0px 0px 1px 0px !important;=
  max-width: 600px !important;">
-      <div id=3D"pfptBannerqpx5gfp" style=3D"all: unset !important; display=
+      <div id=3D"pfptBanner0k8x9no" style=3D"all: unset !important; display=
 :block !important; visibility: visible !important; background-color: #D2D0D=
 0 !important; color:#000000 !important; color:#000000; font-family: 'Arial'=
 , sans-serif !important; font-family: 'Arial', sans-serif; font-weight:bold=
@@ -254,7 +269,7 @@ t !important; display:block !important; margin: 0px 0px 1px 0px !important;=
 !important; line-height:18px">
 	Prioritize security for external emails:
       </div>
-      <div id=3D"pfptBannerqpx5gfp" style=3D"all: unset !important; display=
+      <div id=3D"pfptBanner0k8x9no" style=3D"all: unset !important; display=
 :block !important; visibility: visible !important; background-color: #D2D0D=
 0 !important; color:#000000 !important; color:#000000; font-weight:normal; =
 font-family: 'Arial', sans-serif !important; font-family: 'Arial', sans-ser=
@@ -265,17 +280,17 @@ nts
       </div>
 
     </div>
-    <div id=3D"pfptBannerqpx5gfp" style=3D"all: unset !important; float: ri=
+    <div id=3D"pfptBanner0k8x9no" style=3D"all: unset !important; float: ri=
 ght !important; display: block !important; display: block; margin: 0px 0px =
 0px 16px !important; text-align: right !important; width: fit-content !impo=
 rtant;">
-<a id=3D"pfptBannerqpx5gfp" href=3D"https://us-phishalarm-ewt.proofpoint.co=
-m/EWT/v1/CRVmXkqW!ui3X2N84rjX7-6H8OTxazqKNrbxbU3QM1Wav6Ecy3a0D90KUJcMS2kHwh=
-FdLXwRRAhafQEtS-IW5IRGLpIgfnwzS7s_RIc1vt42pHYvmBNbV5L9tWijJJmydyqe-L2IylTTk=
-hcg$"
+<a id=3D"pfptBanner0k8x9no" href=3D"https://us-phishalarm-ewt.proofpoint.co=
+m/EWT/v1/CRVmXkqW!ui3Vmv9YrjX7-6H8Odxarv_Zw1JD81gcd-C6xsoBvnm16iV3ibKEP2Q4v=
+Ey15LzPWnnRTe94Bc_mN96d-C_OxV3PrHQi_iudGeLpHir4nVufYToka1AcbwiIF7PX2Loxm0TV=
+mvM$"
     style=3D"all: unset !important; display: inline-block !important; text-=
 decoration: none">
-    <div class=3D"pfptPrimaryButtonqpx5gfp" style=3D"display: inline-block =
+    <div class=3D"pfptPrimaryButton0k8x9no" style=3D"display: inline-block =
 !important; display: inline-block; visibility: visible !important; opacity:=
  1 !important; color: #000000 !important; color: #000000; font-family: 'Ari=
 al', sans-serif !important; font-family: 'Arial', sans-serif; font-size: 14=
@@ -303,187 +318,113 @@ de:all;font-size:1px;color:#ffffff;line-height:1px;max-height:0px;opacity:0=
 <html>
 <head><!-- BaNnErBlUrFlE-HeAdEr-start -->
 <style>
-  #pfptBannerqpx5gfp { all: revert !important; display: block !important;=20
+  #pfptBanner0k8x9no { all: revert !important; display: block !important;=20
     visibility: visible !important; opacity: 1 !important;=20
     background-color: #D2D0D0 !important;=20
     max-width: none !important; max-height: none !important }
-  .pfptPrimaryButtonqpx5gfp:hover, .pfptPrimaryButtonqpx5gfp:focus {
+  .pfptPrimaryButton0k8x9no:hover, .pfptPrimaryButton0k8x9no:focus {
     background-color: #afaeae !important; }
-  .pfptPrimaryButtonqpx5gfp:active {
+  .pfptPrimaryButton0k8x9no:active {
     background-color: #8d8c8c !important; }
 </style>
 
 <!-- BaNnErBlUrFlE-HeAdEr-end -->
 </head><body><pre style=3D"font-family: sans-serif; font-size: 100%; white-=
-space: pre-wrap; word-wrap: break-word">
+space: pre-wrap; word-wrap: break-word">&gt; &gt; From: Andre Muezerie &lt;=
+andremue@linux.microsoft.com&gt;
+&gt; &gt; Sent: Friday, April 4, 2025 7:18 AM
+&gt; &gt; To: Nithin Kumar Dabilpuram &lt;ndabilpuram@marvell.com&gt;; Kira=
+n Kumar
+&gt; &gt; Kokkilagadda &lt;kirankumark@marvell.com&gt;; Sunil Kumar Kori
+&gt; &gt; &lt;skori@marvell.com&gt;; Satha Koteswara Rao Kottidi
+&gt; &gt; &lt;skoteshwar@marvell.com&gt;; Harman Kalra &lt;hkalra@marvell.c=
+om&gt;
+&gt; &gt; Cc: dev@dpdk.org; Andre Muezerie &lt;andremue@linux.microsoft.com=
+&gt;
+&gt; &gt; Subject: [EXTERNAL] [PATCH] drivers: remove __rte_used from funct=
+ions for
+&gt; &gt; compatibility with MSVC
+&gt; &gt;
+&gt; &gt; With gcc, the macro __rte_used translates to __attribute__((used)=
+). MSVC
+&gt; has
+&gt; &gt; something to the same effect, but harder to use and with some lim=
+itations
+&gt; (one
+&gt; &gt; being that it cannot be used with "static"). Therefore, it makes =
+sense to
+&gt; avoid
+&gt; &gt; __rte_used ZjQcmQRYFpfptBannerStart Prioritize security for exter=
+nal
+&gt; emails:
+&gt; &gt; Confirm sender and content safety before clicking links or opening
+&gt; attachments
+&gt; &gt; &lt;https://us-phishalarm-
+&gt; &lt;<a href=3D"https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__=
+us-2Dphishalarm-
+&gt;">https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__us-2Dphishalar=
+m-
+&gt;</a>2D&amp;d=3DDwQFAg&amp;c=3DnKjWec2b6R0mOyPaz7xtfQ&amp;r=3DE3SgYMjtKC=
+MVsB-
+&gt; fmvgGV3o-
+&gt; g_fjLhk5Pupi9ijohpc&amp;m=3D1VjiJp6BZRZ004EEbRgDWdnwVSxocf7eebwvsLHsSba
+&gt; GED02QuAMX--cepxiabet&amp;s=3DXp1219TuPNnfOJWQk6-Il7LikxCZOexBfkdSm-
+&gt; kmbuI&amp;e=3D&gt;
+&gt; &gt;
+&gt; ewt.proofpoint.com/EWT/v1/CRVmXkqW!t83ZtR_UwpW61E99mn37ThGThaB
+&gt; 6
+&gt; &gt; gt7spCdfZvP9Yz5DLa-AKWhfbPLLmgyDnTM_FczAEE3KDso8-
+&gt; &gt; QC5MEstA0f8Xb8gLd9dJN3BVWrFMpv9DT2-yl2l$&gt;
+&gt; &gt; Report Suspicious
+&gt; &gt;
+&gt; &gt; ZjQcmQRYFpfptBannerEnd
+&gt; &gt; With gcc, the macro __rte_used translates to __attribute__((used)=
+).
+&gt; &gt; MSVC has something to the same effect, but harder to use and with=
+ some
+&gt; &gt; limitations (one being that it cannot be used with "static"). The=
+refore, it
+&gt; makes
+&gt; &gt; sense to avoid __rte_used in some cases.
+&gt; &gt;
+&gt; &gt; The functions modified in this patch don't really need to use __r=
+te_used.
+&gt; &gt; Instead, these functions can be involved in same ifdefs used in t=
+he callers.
+&gt; That
+&gt; &gt; way, they are only defined when needed (when someone is actually =
+calling
+&gt; the
+&gt; &gt; function). Doing so makes the code compatible with MSVC and avoids
+&gt; compiler
+&gt; &gt; warnings about functions being defined but not used.
+&gt; &gt;
+&gt; &gt; Signed-off-by: Andre Muezerie &lt;andremue@linux.microsoft.com&gt;
+&gt; &gt; ---
+&gt; &gt;  drivers/net/cnxk/cn10k_rx_select.c | 6 +++++-
+&gt; &gt; drivers/net/cnxk/cn10k_tx_select.c | 6 ++++--
+&gt; &gt; drivers/net/cnxk/cn20k_rx_select.c | 6 +++++-
+&gt; &gt; drivers/net/cnxk/cn20k_tx_select.c | 6 ++++--
+&gt; &gt; drivers/net/cnxk/cn9k_rx_select.c  | 6 ++++--
+&gt; &gt; drivers/net/cnxk/cn9k_tx_select.c  | 6 ++++--
+&gt; &gt;  6 files changed, 26 insertions(+), 10 deletions(-)
+&gt; &gt;
+&gt; &gt; diff --git a/drivers/net/cnxk/cn10k_rx_select.c
+&gt; &gt; b/drivers/net/cnxk/cn10k_rx_select.c
+&gt; &gt; index fe1f0dda73..658a434d75 100644
+&gt; &gt; --- a/drivers/net/cnxk/cn10k_rx_select.c
+&gt; &gt; +++ b/drivers/net/cnxk/cn10k_rx_select.c
+&gt; &gt; @@ -5,7 +5,9 @@
+&gt; &gt;  #include "cn10k_ethdev.h"
+&gt; &gt;  #include "cn10k_rx.h"
+&gt; &gt;
+&gt; &gt; -static __rte_used void
+&gt; &gt; +#if defined(RTE_ARCH_ARM64)
+&gt; &gt; +#if !defined(CNXK_DIS_TMPLT_FUNC)
+&gt;=20
+&gt; Please change to #if defined(RTE_ARCH_ARM64) &amp;&amp;
+&gt; !defined(CNXK_DIS_TMPLT_FUNC)
 
-&gt; -----Original Message-----
-&gt; From: Pravin Pathak &lt;pravin.pathak@intel.com&gt;
-&gt; Sent: Friday, May 9, 2025 9:54 AM
-&gt; To: dev@dpdk.org
-&gt; Cc: Jerin Jacob &lt;jerinj@marvell.com&gt;; mike.ximing.chen@intel.com;
-&gt; bruce.richardson@intel.com; thomas@monjalon.net;
-&gt; david.marchand@redhat.com; nipun.gupta@amd.com; chenbox@nvidia.com;
-&gt; tirthendu.sarkar@intel.com; Pravin Pathak &lt;pravin.pathak@intel.com&=
-gt;
-&gt; Subject: [EXTERNAL] [PATCH v1 4/7] event/dlb2: support managing histor=
-y list
-&gt; resource
-&gt;=20
-&gt; Add support for setting application specified port history Set HL equa=
-l to CQ
-&gt; depth when inflight control is enabled Added command line parameters
-&gt; 'use_default_hl' (default: 1) and 'alloc_hl_entries' - When 'use_defau=
-lt_hl =3D 1' *
-&gt; Per port HL ZjQcmQRYFpfptBannerStart Prioritize security for external =
-emails:
-&gt; Confirm sender and content safety before clicking links or opening att=
-achments
-&gt; &lt;https://us-phishalarm-
-&gt; ewt.proofpoint.com/EWT/v1/CRVmXkqW!tm3Z1f8UAnV69S-
-&gt; 8OZ3abn2jU1Fw7JxGFGecPxaCk1uQu97fQz1QdXWof_KxtumPzB31X_fWX1Ns4
-&gt; HIeAFdHnOYAiGPs37vC1U0$&gt;
-&gt; Report Suspicious
-&gt;=20
-&gt; ZjQcmQRYFpfptBannerEnd
-&gt; Add support for setting application specified port history Set HL equa=
-l to CQ
-&gt; depth when inflight control is enabled Added command line parameters
-&gt; 'use_default_hl' (default: 1)
-&gt;    and 'alloc_hl_entries'
-&gt;  - When 'use_default_hl =3D 1'
-&gt;    * Per port HL is set to DLB2_FIXED_CQ_HL_SIZE (32)
-&gt;    * Recommended CQ depth by dlb2_eventdev_port_default_conf_get()
-&gt;      is DLB2_FIXED_CQ_HL_SIZE/2
-&gt;    * command line parameter alloc_hl_entries is ignored
-&gt;  - When 'use_default_hl =3D 0'
-&gt;    * Per LDB port HL =3D 2 * CQ depth
-&gt;    * Recommended CQ depth by dlb2_eventdev_port_default_conf_get()
-&gt;      is DLB2_FIXED_CQ_HL_SIZE
-&gt;    * User should calculate needed HL entries based on CQ depths the
-&gt;      application will use and specify it as command line parameter
-&gt;      'alloc_hl_entries'.  This will be used to allocate HL entries.
-&gt;       alloc_hl_entries =3D (Sum of all LDB ports CQ depths * 2)
-&gt;    * If alloc_hl_entries is not specified, then
-&gt;      Total HL entries for the eventdev  =3D num_ldb_ports * 64
-&gt;=20
-&gt; Signed-off-by: Pravin Pathak &lt;pravin.pathak@intel.com&gt;
-&gt; Signed-off-by: Tirthendu Sarkar &lt;tirthendu.sarkar@intel.com&gt;
-&gt; ---
-&gt;  drivers/event/dlb2/dlb2.c                  | 220 +++++++++++++++++----
-&gt;  drivers/event/dlb2/dlb2_iface.c            |   5 +-
-&gt;  drivers/event/dlb2/dlb2_iface.h            |   4 +-
-&gt;  drivers/event/dlb2/dlb2_priv.h             |  19 +-
-&gt;  drivers/event/dlb2/dlb2_user.h             |  24 +++
-&gt;  drivers/event/dlb2/pf/base/dlb2_regs.h     |   9 +
-&gt;  drivers/event/dlb2/pf/base/dlb2_resource.c |  74 +++++++
-&gt; drivers/event/dlb2/pf/base/dlb2_resource.h |  18 ++
-&gt;  drivers/event/dlb2/pf/dlb2_pf.c            |  29 ++-
-&gt;  drivers/event/dlb2/rte_pmd_dlb2.c          |  23 +++
-&gt;  drivers/event/dlb2/rte_pmd_dlb2.h          |  40 ++++
-&gt;  drivers/event/dlb2/version.map             |   1 +
-&gt;  12 files changed, 422 insertions(+), 44 deletions(-)
-&gt;=20
-&gt; diff --git a/drivers/event/dlb2/dlb2.c b/drivers/event/dlb2/dlb2.c ind=
-ex
-&gt; 24c56a7968..cd843bb9d0 100644
-&gt; --- a/drivers/event/dlb2/dlb2.c
-&gt; +++ b/drivers/event/dlb2/dlb2.c
-&gt; @@ -727,6 +727,50 @@ set_enable_cq_weight(const char *key __rte_unused,
-&gt;  	return 0;
-&gt;  }
-&gt;=20
-&gt; +static int set_hl_override(const char *key __rte_unused, const char *=
-value,
-&gt; +			   void *opaque)
-&gt; +{
-&gt; +	bool *default_hl =3D opaque;
-&gt; +
-&gt; +	if (value =3D=3D NULL || opaque =3D=3D NULL) {
-&gt; +		DLB2_LOG_ERR("NULL pointer");
-&gt; +		return -EINVAL;
-&gt; +	}
-&gt; +
-&gt; +	if ((*value =3D=3D 'n') || (*value =3D=3D 'N') || (*value =3D=3D '0'=
-))
-&gt; +		*default_hl =3D false;
-&gt; +	else
-&gt; +		*default_hl =3D true;
-&gt; +
-&gt; +	return 0;
-&gt; +}
-&gt; +
-&gt; +static int set_hl_entries(const char *key __rte_unused, const char *v=
-alue,
-&gt; +			  void *
-&gt; +
-&gt; +	return dlb2_set_port_param(dlb2, port_id, flags, val); }
-&gt; diff --git a/drivers/event/dlb2/rte_pmd_dlb2.h
-&gt; b/drivers/event/dlb2/rte_pmd_dlb2.h
-&gt; index 207ce6a3fd..3f529860ba 100644
-&gt; --- a/drivers/event/dlb2/rte_pmd_dlb2.h
-&gt; +++ b/drivers/event/dlb2/rte_pmd_dlb2.h
-&gt; @@ -91,6 +91,46 @@ rte_pmd_dlb2_set_token_pop_mode(uint8_t dev_id,
-&gt;  				uint8_t port_id,
-&gt;  				enum dlb2_token_pop_mode mode);
-&gt;=20
-&gt; +/** Set inflight threshold for flow migration */ #define
-&gt; +DLB2_FLOW_MIGRATION_THRESHOLD RTE_BIT64(0)
-&gt; +
-&gt; +/** Set port history list */
-&gt; +#define DLB2_SET_PORT_HL RTE_BIT64(1)
-&gt; +
-&gt; +struct dlb2_port_param {
-&gt; +	uint16_t inflight_threshold : 12;
-&gt; +	uint16_t port_hl;
-&gt; +};
-&gt; +
-&gt; +/*!
-&gt; + * @warning
-&gt; + * @b EXPERIMENTAL: this API may change, or be removed, without prior
-&gt; +notice
-&gt; + *
-&gt; + * Configure various port parameters.
-&gt; + * AUTO_POP. This function must be called before calling
-&gt; +rte_event_port_setup()
-&gt; + * for the port, but after calling rte_event_dev_configure().
-&gt; + *
-&gt; + * @param dev_id
-&gt; + *    The identifier of the event device.
-&gt; + * @param port_id
-&gt; + *    The identifier of the event port.
-&gt; + * @param flags
-&gt; + *    Bitmask of the parameters being set.
-&gt; + * @param val
-&gt; + *    Structure coantaining the values of parameters being set.
-&gt; + *
-&gt; + * @return
-&gt; + * - 0: Success
-&gt; + * - EINVAL: Invalid dev_id, port_id, or mode
-&gt; + * - EINVAL: The DLB2 is not configured, is already running, or the p=
-ort is
-&gt; + *   already setup
-&gt; + */
-&gt; +__rte_experimental
-&gt; +int
-&gt; +rte_pmd_dlb2_set_port_param(uint8_t dev_id,
-&gt; +			    uint8_t port_id,
-&gt; +			    uint64_t flags,
-&gt; +			    void *val);
-&gt;  #ifdef __cplusplus
-&gt;  }
-&gt;  #endif
-&gt; diff --git a/drivers/event/dlb2/version.map b/drivers/event/dlb2/versi=
-on.map
-&gt; index c37d2302cd..be5a8f6f2b 100644
-&gt; --- a/drivers/event/dlb2/version.map
-&gt; +++ b/drivers/event/dlb2/version.map
-&gt; @@ -7,4 +7,5 @@ EXPERIMENTAL {
-&gt;=20
-&gt;  	# added in 20.11
-&gt;  	rte_pmd_dlb2_set_token_pop_mode;
-&gt; +	rte_pmd_dlb2_set_port_param;
-&gt;  };
-&gt; --
-&gt; 2.25.1
+With the above change
+Acked-by: Pavan Nikhilesh &lt;pbhagavatula@marvell.com&gt;
 </pre></body></html>
