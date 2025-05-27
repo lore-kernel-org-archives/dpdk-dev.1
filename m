@@ -2,47 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 517D9C54F30
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 May 2025 09:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96861C54F30
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 May 2025 09:21:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7B878402D6;
-	Tue, 27 May 2025 11:21:26 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 745B940669;
+	Tue, 27 May 2025 11:21:27 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id 63346402B9
- for <dev@dpdk.org>; Tue, 27 May 2025 11:21:24 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id D2847402B9
+ for <dev@dpdk.org>; Tue, 27 May 2025 11:21:25 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1748337685; x=1779873685;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=O3LH2bAqT7PzsdMV6otBGg9R1lYKBEXC0om4pPBjetI=;
- b=L4B9efHZD2JFWH8iSDQiuzRaZm1lUCptoWyiIL42jnRak238hqGEydRS
- wPfMCvhuA8D9OqByslbuDUTPq7vG4FDQvrRtGAhwcHaaZ2xqj+35MIlIn
- h8Cue2h2RW47V62EEnNzBMdZt39V6gtOXzQn0kgkpxCR0yHRYgW7SnjGY
- VcXYcXy46LR4m+aW9afIKY2rWnpqPLad+uNNvfYayCFycjisytn77YQOF
- e+yf+cEm0WgXnlqbmqrAB8EpHgPLKAVcVSW5MYJG6ncc2xGUV76fr4JjX
- 62h3ZeVOpJK0fIulCOUOil8Cq+gwXT4vUSWJ7Z+NptxjM2YsdFwuJVvp4 A==;
-X-CSE-ConnectionGUID: ajanVsD5Qwa00eCArUw8rQ==
-X-CSE-MsgGUID: TC0MccduSyet939lMp+odA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11445"; a="50197799"
-X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; d="scan'208";a="50197799"
+ t=1748337686; x=1779873686;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=KH3JqbxeMxuZvx+0l6npGrSawGJAkbqaPFnjhz1/msM=;
+ b=YJ2lr8cwG/Q1xceiYSNFoEHhGWJ3A5UYwn0QzCdscJ/2XIHaK0441esl
+ u7i2nzP1isMt6XjsNWvzj+T5ZwSrz0V9jdriZ7C2NVvNJs4kFkeElQPXE
+ DifYhX7BJUcVM22vMjvj+VlkGtDV6evXElcdDBSTWTWMLJ23muu8O+T/u
+ ywvFZm5Hrk9sL6X49Y+sBy38HDS2Oyoc5H8ebIKijwkvPoHYlZ3XSJrDR
+ z7nEC5em3cPcNPgJ/y/glC3TRlkKgAuY0/tBnmeMKoAW81W4vxY9h/+63
+ pEIua5yrmXVG+b2cadFaxiKUbG68C5EDYCaeKcMTAbl9WbK8DPm5ogzwn Q==;
+X-CSE-ConnectionGUID: Cb8yGd5wQOOKryRbd8Y0GQ==
+X-CSE-MsgGUID: jTwNqKiCQvmnWjNWtAgLSw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11445"; a="50197804"
+X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; d="scan'208";a="50197804"
 Received: from orviesa008.jf.intel.com ([10.64.159.148])
  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 May 2025 02:21:23 -0700
-X-CSE-ConnectionGUID: PW8yCgyqRB6uinRfN4B/mg==
-X-CSE-MsgGUID: r3SPNIIwQ3+j6Zx/u0C7ig==
+ 27 May 2025 02:21:26 -0700
+X-CSE-ConnectionGUID: LGStQJI/TM+1bfB5sw9YxQ==
+X-CSE-MsgGUID: V4+EplkaTXWFkj0B2MogOA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; d="scan'208";a="143703917"
+X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; d="scan'208";a="143703927"
 Received: from silpixa00401217.ir.intel.com ([10.55.128.45])
- by orviesa008.jf.intel.com with ESMTP; 27 May 2025 02:21:23 -0700
+ by orviesa008.jf.intel.com with ESMTP; 27 May 2025 02:21:25 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Chengwen Feng <fengchengwen@huawei.com>,
  Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH 0/3] argparse additions and rework
-Date: Tue, 27 May 2025 10:21:10 +0100
-Message-ID: <20250527092113.903910-1-bruce.richardson@intel.com>
+Subject: [PATCH 1/3] argparse: add support for string and boolean args
+Date: Tue, 27 May 2025 10:21:11 +0100
+Message-ID: <20250527092113.903910-2-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250527092113.903910-1-bruce.richardson@intel.com>
+References: <20250527092113.903910-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -58,39 +60,150 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patchset is based off the work to adjust how we do argument parsing
-inside EAL. To enable argparse to be effectively used for EAL, we have
-new features and some changes in the first two patches, which are 
-relatively small - though are ABI/API affecting.
+Sometimes we don't want to parse the string at all, when doing arg
+parsing, and just save it off for later. Add support for that.
 
-These add support for saving off strings and boolean values, have argparse
-stop parsing at a "--", and finally have argparse return the number of
-arguments actually parsed on success.
+Also, rather than assuming boolean values have to be the same size as
+uint8 (or some other size), add an explicitly type for that - which also
+allows checking for true/false and 0/1 values explicitly.
 
-The third patch is a bigger change. It was inspired by the fact that
-when adding the boolean and string support we had to update some
-"MAX" value defines used in the code. This is obviously not good from
-an ABI/API perspective, once the library becomes part of the stable ABI.
-In order to remove these MAX values, patch 3 looks to replace the
-#define values with enums - which means some rework splitting the
-various flags into separate categories, and similarly splitting the
-single "flags" field with separate fields specifying if an argument
-value is required, what type that value should have, and then a
-final smaller field for any additional modifiers.
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ app/test/test_argparse.c               | 25 +++++++++++++++++++
+ doc/guides/rel_notes/release_25_07.rst |  5 ++++
+ lib/argparse/rte_argparse.c            | 34 ++++++++++++++++++++++++++
+ lib/argparse/rte_argparse.h            |  6 ++++-
+ 4 files changed, 69 insertions(+), 1 deletion(-)
 
-Bruce Richardson (3):
-  argparse: add support for string and boolean args
-  argparse: make argparse EAL-args compatible
-  argparse: use enums to remove max-value defines in lists
-
- app/test/test_argparse.c               | 235 ++++++++++++++-----------
- doc/guides/rel_notes/release_25_07.rst |  49 ++++++
- examples/dma/dmafwd.c                  |  20 +--
- examples/flow_filtering/main.c         |   4 +-
- lib/argparse/rte_argparse.c            | 184 ++++++++++++-------
- lib/argparse/rte_argparse.h            |  91 +++++-----
- 6 files changed, 352 insertions(+), 231 deletions(-)
-
+diff --git a/app/test/test_argparse.c b/app/test/test_argparse.c
+index fcea620501..6b0d1524b5 100644
+--- a/app/test/test_argparse.c
++++ b/app/test/test_argparse.c
+@@ -761,6 +761,12 @@ test_argparse_parse_type(void)
+ 	char *str_erange_u8 = test_strdup("256");
+ 	char *str_invalid = test_strdup("1a");
+ 	char *str_ok = test_strdup("123");
++	char *bool_true = test_strdup("true");
++	char *bool_false = test_strdup("false");
++	char *bool_invalid = test_strdup("invalid");
++	char *bool_numeric_true = test_strdup("1");
++	char *bool_numeric_false = test_strdup("0");
++	char *bool_numeric_invalid = test_strdup("2");
+ 	uint16_t val_u16;
+ 	uint32_t val_u32;
+ 	uint64_t val_u64;
+@@ -823,6 +829,25 @@ test_argparse_parse_type(void)
+ 	TEST_ASSERT(ret == 0, "Argparse parse type expect failed!");
+ 	TEST_ASSERT(val_u64 == 123, "Argparse parse type expect failed!");
+ 
++	/* test for string parsing - all it does is save string, so all are valid */
++	const char *val_str;
++	ret = rte_argparse_parse_type(str_erange, RTE_ARGPARSE_ARG_VALUE_STR, &val_str);
++	TEST_ASSERT(ret == 0, "Argparse parse a string failed unexpectedly!");
++
++	/* test for boolean parsing */
++	bool val_bool = false;
++	ret = rte_argparse_parse_type(bool_true, RTE_ARGPARSE_ARG_VALUE_BOOL, &val_bool);
++	TEST_ASSERT(ret == 0 && val_bool == true, "Argparse parse type for bool (true) failed!");
++	ret = rte_argparse_parse_type(bool_false, RTE_ARGPARSE_ARG_VALUE_BOOL, &val_bool);
++	TEST_ASSERT(ret == 0 && val_bool == false, "Argparse parse type for bool (false) failed!");
++	ret = rte_argparse_parse_type(bool_invalid, RTE_ARGPARSE_ARG_VALUE_BOOL, &val_bool);
++	TEST_ASSERT(ret != 0, "Argparse parse type for bool (invalid) passed unexpectedly!");
++	ret = rte_argparse_parse_type(bool_numeric_true, RTE_ARGPARSE_ARG_VALUE_BOOL, &val_bool);
++	TEST_ASSERT(ret == 0 && val_bool == true, "Argparse parse type for bool (numeric true) failed!");
++	ret = rte_argparse_parse_type(bool_numeric_false, RTE_ARGPARSE_ARG_VALUE_BOOL, &val_bool);
++	TEST_ASSERT(ret == 0 && val_bool == false, "Argparse parse type for bool (numeric false) failed!");
++	ret = rte_argparse_parse_type(bool_numeric_invalid, RTE_ARGPARSE_ARG_VALUE_BOOL, &val_bool);
++	TEST_ASSERT(ret != 0, "Argparse parse type for bool (numeric invalid) passed unexpectedly!");
+ 	return 0;
+ }
+ 
+diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
+index 093b85d206..523d69c854 100644
+--- a/doc/guides/rel_notes/release_25_07.rst
++++ b/doc/guides/rel_notes/release_25_07.rst
+@@ -55,6 +55,11 @@ New Features
+      Also, make sure to start the actual text at the margin.
+      =======================================================
+ 
++* **Added support for string and boolean types to the "argparse" library.**
++
++  The "argparse" library now supports parsing of string and boolean types.
++  String values are simply saved as-is,
++  while the boolean support allows for values "true", "false", "1" or "0".
+ 
+ Removed Items
+ -------------
+diff --git a/lib/argparse/rte_argparse.c b/lib/argparse/rte_argparse.c
+index 18290e0c38..af2ca7e455 100644
+--- a/lib/argparse/rte_argparse.c
++++ b/lib/argparse/rte_argparse.c
+@@ -508,6 +508,38 @@ parse_arg_u64(struct rte_argparse_arg *arg, const char *value)
+ 	return 0;
+ }
+ 
++static int
++parse_arg_str(struct rte_argparse_arg *arg, const char *value)
++{
++	if (value == NULL) {
++		*(char **)arg->val_saver = arg->val_set;
++		return 0;
++	}
++	*(const char **)arg->val_saver = value;
++
++	return 0;
++}
++
++static int
++parse_arg_bool(struct rte_argparse_arg *arg, const char *value)
++{
++	if (value == NULL) {
++		*(bool *)arg->val_saver = (arg->val_set != NULL);
++		return 0;
++	}
++
++	if (strcmp(value, "true") == 0 || strcmp(value, "1") == 0)
++		*(bool *)arg->val_saver = true;
++	else if (strcmp(value, "false") == 0 || strcmp(value, "0") == 0)
++		*(bool *)arg->val_saver = false;
++	else {
++		ARGPARSE_LOG(ERR, "argument %s expects a boolean (true/false, 0/1) value!", arg->name_long);
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
+ static int
+ parse_arg_autosave(struct rte_argparse_arg *arg, const char *value)
+ {
+@@ -521,6 +553,8 @@ parse_arg_autosave(struct rte_argparse_arg *arg, const char *value)
+ 		{ parse_arg_u16 },
+ 		{ parse_arg_u32 },
+ 		{ parse_arg_u64 },
++		{ parse_arg_str},
++		{ parse_arg_bool },
+ 	};
+ 	uint32_t index = arg_attr_val_type(arg);
+ 	int ret = -EINVAL;
+diff --git a/lib/argparse/rte_argparse.h b/lib/argparse/rte_argparse.h
+index d0cfaa1e4c..332184302e 100644
+--- a/lib/argparse/rte_argparse.h
++++ b/lib/argparse/rte_argparse.h
+@@ -60,8 +60,12 @@ extern "C" {
+ #define RTE_ARGPARSE_ARG_VALUE_U32      RTE_SHIFT_VAL64(4, 2)
+ /** The argument's value is uint64 type. */
+ #define RTE_ARGPARSE_ARG_VALUE_U64      RTE_SHIFT_VAL64(5, 2)
++/** The argument's value is string type. */
++#define RTE_ARGPARSE_ARG_VALUE_STR      RTE_SHIFT_VAL64(6, 2)
++/** The argument's value is boolean flag type. */
++#define RTE_ARGPARSE_ARG_VALUE_BOOL     RTE_SHIFT_VAL64(7, 2)
+ /** Max value type. */
+-#define RTE_ARGPARSE_ARG_VALUE_MAX      RTE_SHIFT_VAL64(6, 2)
++#define RTE_ARGPARSE_ARG_VALUE_MAX      RTE_SHIFT_VAL64(8, 2)
+ /**
+  * Flag for that argument support occur multiple times.
+  * This flag can be set only when the argument is optional.
 -- 
 2.48.1
 
