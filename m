@@ -2,72 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB768C54ED1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 May 2025 13:02:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09CA8C5B542
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 May 2025 13:02:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 382C040395;
-	Tue, 27 May 2025 15:01:56 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 7D4E3402A0
- for <dev@dpdk.org>; Tue, 27 May 2025 15:01:54 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54QNTsg4001051
- for <dev@dpdk.org>; Tue, 27 May 2025 06:01:54 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=R
- EU0Va8rrH/1BfOThF4wQvzUqVr7qYMmbzT9cN9tKFE=; b=kyljkn2UlYqLoGxQK
- W93xsnc4oxAA7gbnfogxXtPIYYxOoU/APbBFttGeRm+lfgDrU9Do45zYhoQMiYiw
- sRF0ubqKzfvxr35o4JMepHq6wJvUzWzBiXX8BZJJ+ENePe/Z1nWjAb1q6/ZcmTzh
- sb4d3kKnxVfTEACE9E2v+ezTppBh5aB5k1/acqOlIPKhiIkNKQRYs7BH3BJN5531
- Vkj9ZlmnsbHOVSeVglGv+HoUnOYhHwF3F28MS4S0Ynkrq2RccxOMzU4RU9eb/Uqf
- rVOgfiT/nRWdPj+LPwKmKRcyn+tQVwmLSSYOU0AmavaHqnGiqACKGPUZQcfzx4EK
- muTLQ==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46w21299pu-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Tue, 27 May 2025 06:01:53 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 27 May 2025 06:01:44 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 27 May 2025 06:01:44 -0700
-Received: from hyd1554.caveonetworks.com (unknown [10.29.56.32])
- by maili.marvell.com (Postfix) with ESMTP id 0FC983F705D;
- Tue, 27 May 2025 06:01:41 -0700 (PDT)
-From: Tejasree Kondoj <ktejasree@marvell.com>
-To: Akhil Goyal <gakhil@marvell.com>
-CC: Nithinsen Kaithakadan <nkaithakadan@marvell.com>, Anoob Joseph
- <anoobj@marvell.com>, Rupesh Chiluka <rchiluka@marvell.com>, "Vidya Sagar
- Velumuri" <vvelumuri@marvell.com>, <dev@dpdk.org>
-Subject: [PATCH 2/9] common/cnxk: fix salt handling with aes-ctr
-Date: Tue, 27 May 2025 18:31:28 +0530
-Message-ID: <20250527130135.2301726-3-ktejasree@marvell.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250527130135.2301726-1-ktejasree@marvell.com>
-References: <20250527130135.2301726-1-ktejasree@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 396E2402D6;
+	Tue, 27 May 2025 15:02:02 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id D2F47402AE
+ for <dev@dpdk.org>; Tue, 27 May 2025 15:02:00 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id CB46046806; Tue, 27 May 2025 15:02:00 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/core Bug 1713] dispatcher_autotest hangs on build with
+ disabled RTE_USE_C11_MEM_MODEL
+Date: Tue, 27 May 2025 13:02:00 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: core
+X-Bugzilla-Version: 25.03
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: konstantin.v.ananyev@yandex.ru
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1713-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17483509200.Fb6Fcdf.2313538
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=H6zbw/Yi c=1 sm=1 tr=0 ts=6835b7c1 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=ADimZIIzWdH1LguBofUA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: 4TzCKtq3fsC4QuBGR8pE-rW_8WozkexH
-X-Proofpoint-ORIG-GUID: 4TzCKtq3fsC4QuBGR8pE-rW_8WozkexH
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI3MDEwNiBTYWx0ZWRfXw6KqaBfjBIJm
- 3al+PDGZJddzI/SRweSMpuhDDAM+8r9VIr+pGjtgHf2wBodfsuJaZeEA99YbPLe8qj1JYaB0M9d
- 6KsXCLnY6ev0W7DvNGmebhDrQj12N+lRBY1YIRDsWIZnp6sHFxt8eJCDaVBjIP3IRSdzNLxgNa7
- pWoI4eQtk1AUGtYlJ+h8wtDVRe0k4/2LBOGjWp49fMK6w+SQmUuGdFTHEqrsv/M7d6r+jvGamEU
- RsPgvMv2k6nw5SEHcqG4yPikGANThsSh45XsU/VTp5dJ3xjot2KcVotfpje1fTDpF5bRQi1cSu5
- t4+kwq6VbqUa/5SriamG/9XIn/bzGaDrqYSKg0fITV0GxctLr+eRm7Mfc8DzQYDv2InZBdAiet6
- MDg1aNxNkKbc/f72KgXKdJA+hOvCD659FTEZJ175MEDPcDJfVTfdcXVVXNi8Gq3V5MoUaUAq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-27_06,2025-05-27_01,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,32 +55,396 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Nithinsen Kaithakadan <nkaithakadan@marvell.com>
 
-This patch includes fix for setting correct salt value
-for CTR algorithm.
+--17483509200.Fb6Fcdf.2313538
+Date: Tue, 27 May 2025 15:02:00 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-Fixes: 78d03027f2cc ("common/cnxk: add IPsec common code")
+https://bugs.dpdk.org/show_bug.cgi?id=3D1713
 
-Signed-off-by: Nithinsen Kaithakadan <nkaithakadan@marvell.com>
----
- drivers/common/cnxk/cnxk_security.c | 3 +++
- 1 file changed, 3 insertions(+)
+            Bug ID: 1713
+           Summary: dispatcher_autotest hangs on build with disabled
+                    RTE_USE_C11_MEM_MODEL
+           Product: DPDK
+           Version: 25.03
+          Hardware: ARM
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: core
+          Assignee: dev@dpdk.org
+          Reporter: konstantin.v.ananyev@yandex.ru
+  Target Milestone: ---
 
-diff --git a/drivers/common/cnxk/cnxk_security.c b/drivers/common/cnxk/cnxk_security.c
-index ea3b87e65c..62ae7b9b2e 100644
---- a/drivers/common/cnxk/cnxk_security.c
-+++ b/drivers/common/cnxk/cnxk_security.c
-@@ -96,6 +96,9 @@ ot_ipsec_sa_common_param_fill(union roc_ot_ipsec_sa_word2 *w2, uint8_t *cipher_k
- 				break;
- 			case RTE_CRYPTO_CIPHER_AES_CTR:
- 				w2->s.enc_type = ROC_IE_SA_ENC_AES_CTR;
-+				memcpy(salt_key, &ipsec_xfrm->salt, 4);
-+				tmp_salt = (uint32_t *)salt_key;
-+				*tmp_salt = rte_be_to_cpu_32(*tmp_salt);
- 				break;
- 			case RTE_CRYPTO_CIPHER_3DES_CBC:
- 				w2->s.enc_type = ROC_IE_SA_ENC_3DES_CBC;
--- 
-2.25.1
+CPU: Ampere(R) Altra(R) Max
 
+steps to reproduce:
+1)build dpdk with RTE_USE_C11_MEM_MODEL undefined, i.e.:
+--- a/config/arm/meson.build
++++ b/config/arm/meson.build
+@@ -33,7 +33,7 @@ implementer_generic =3D {
+     'description': 'Generic armv8',
+     'flags': [
+         ['RTE_MACHINE', '"armv8a"'],
+-        ['RTE_USE_C11_MEM_MODEL', true],
++        ['RTE_USE_C11_MEM_MODEL', false],
+         ['RTE_MAX_LCORE', 256],
+         ['RTE_MAX_NUMA_NODES', 4]
+     ],
+
+$CFLAGS=3D'-g -O1 -DRTE_SORING_DEBUG -DRTE_ENABLE_ASSERT' CC=3Dgcc-13 meson
+--prefix=3D${PWD}/aarch64-default-linuxapp-gcc13-rg-dbg-install --werror
+-Dbuildtype=3Drelease -Dmachine=3Ddefault -Ddisable_drivers=3Dnet/cnxk,net/=
+xsc
+-Dexamples=3Dall aarch64-default-linuxapp-gcc13-rg-dbg
+
+$grep C11_MEM aarch64-default-linuxapp-gcc13-rg-dbg/rte_build_config.h
+#undef RTE_USE_C11_MEM_MODEL
+
+$ninja -v -j 24 -C aarch64-default-linuxapp-gcc13-rg-dbg
+
+2) run dispatcher_autotest:
+$DPDK_TEST=3Ddispatcher_autotest
+./aarch64-default-linuxapp-gcc13-rg-dbg/app/dpdk-test --no-huge -m 2048
+--no-pci --lcores=3D0-3
+
+the test will get hanged forever at the very first test.
+
+Looking with gdb, we get stuck at:
+...
+#11 test_basic () at ../app/test/test_dispatcher.c:848
+#12 0x000000000050d638 in unit_test_suite_runner (
+    suite=3Dsuite@entry=3D0x1a23370 <test_suite>) at ../app/test/test.c:364
+#13 0x0000000000571fa8 in test_dispatcher ()
+    at ../app/test/test_dispatcher.c:1053
+...
+i.e. we are waiting for all events to complete, but it never happens,
+though there is huge numbers of errors:
+(gdb) print test_app->completed_events
+$1 =3D 71402
+(gdb) print test_app->errors
+$2 =3D 767639
+
+Debugging it a bit more, errors counters are incremented at:
+./app/test/test_dispatcher.c:377
+test_app_process_queue(uint8_t p_event_dev_id, uint8_t p_event_port_id,
+        struct rte_event *in_events, uint16_t num,
+        void *cb_data)
+{
+    ...
+
+    for (i =3D 0; i < num; i++) {
+                const struct rte_event *in_event =3D &in_events[i];
+                struct rte_event *out_event =3D &out_events[i];
+                uint64_t sn =3D in_event->u64;
+                uint64_t expected_sn;
+
+                if (in_event->queue_id !=3D app_queue->queue_id) {
+                        test_app_queue_note_error(app);
+                        return;
+                }
+
+                expected_sn =3D app_queue->sn[in_event->flow_id]++;
+
+                if (expected_sn !=3D sn) {
+                        test_app_queue_note_error(app);
+                        return;
+
+
+As I can read the code - that means that dequeued events don't pass sanity
+check.
+Note that with RTE_USE_C11_MEM_MODEL undefined we use different (legacy)
+implementation of __rte_ring_headtail_move_head().
+Also note that we do use MP/SC rte_ring for events.=20
+
+In that implementation we do:
+
+load(&d->head);
+rmb();
+load(&s->tail);
+...
+if (st)
+     d->head =3D ...;
+else
+   rte_atomic32_cmpset(&d->head, ...);
+
+While for MT case cmpset will generate a CASAL instruction - CAS() with
+acquire-release mem-order, for ST case we don't have any memory-ordering
+primitives.
+So, as I understand, what happens here:
+reading elements from the ring sometimes get re-ordered with reading prod.t=
+ail
+value, i.e. we reading elements that are not yet completely written into the
+ring.
+What is really strange that we never hit such issue before...
+
+Anyway, the proposed fix, is to put rmb() after load(&s->tail); for ST case:
+--- a/lib/ring/rte_ring_generic_pvt.h
++++ b/lib/ring/rte_ring_generic_pvt.h
+@@ -106,6 +106,7 @@ __rte_ring_headtail_move_head(struct rte_ring_headtail =
+*d,
+
+                *new_head =3D *old_head + n;
+                if (is_st) {
++                       rte_smp_rmb();
+                        d->head =3D *new_head;
+                        success =3D 1;
+                } else
+
+With it in place, dispatcher_autotest completes successfully on that machin=
+e.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17483509200.Fb6Fcdf.2313538
+Date: Tue, 27 May 2025 15:02:00 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - dispatcher_autotest hangs on build with disabled =
+RTE_USE_C11_MEM_MODEL"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1713">1713</a>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Summary</th>
+          <td>dispatcher_autotest hangs on build with disabled RTE_USE_C11_=
+MEM_MODEL
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>25.03
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>ARM
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>core
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>konstantin.v.ananyev&#64;yandex.ru
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">CPU: Ampere(R) Altra(R) Max
+
+steps to reproduce:
+1)build dpdk with RTE_USE_C11_MEM_MODEL undefined, i.e.:
+--- a/config/arm/meson.build
++++ b/config/arm/meson.build
+&#64;&#64; -33,7 +33,7 &#64;&#64; implementer_generic =3D {
+     'description': 'Generic armv8',
+     'flags': [
+         ['RTE_MACHINE', '&quot;armv8a&quot;'],
+-        ['RTE_USE_C11_MEM_MODEL', true],
++        ['RTE_USE_C11_MEM_MODEL', false],
+         ['RTE_MAX_LCORE', 256],
+         ['RTE_MAX_NUMA_NODES', 4]
+     ],
+
+$CFLAGS=3D'-g -O1 -DRTE_SORING_DEBUG -DRTE_ENABLE_ASSERT' CC=3Dgcc-13 meson
+--prefix=3D${PWD}/aarch64-default-linuxapp-gcc13-rg-dbg-install --werror
+-Dbuildtype=3Drelease -Dmachine=3Ddefault -Ddisable_drivers=3Dnet/cnxk,net/=
+xsc
+-Dexamples=3Dall aarch64-default-linuxapp-gcc13-rg-dbg
+
+$grep C11_MEM aarch64-default-linuxapp-gcc13-rg-dbg/rte_build_config.h
+#undef RTE_USE_C11_MEM_MODEL
+
+$ninja -v -j 24 -C aarch64-default-linuxapp-gcc13-rg-dbg
+
+2) run dispatcher_autotest:
+$DPDK_TEST=3Ddispatcher_autotest
+./aarch64-default-linuxapp-gcc13-rg-dbg/app/dpdk-test --no-huge -m 2048
+--no-pci --lcores=3D0-3
+
+the test will get hanged forever at the very first test.
+
+Looking with gdb, we get stuck at:
+...
+#11 test_basic () at ../app/test/test_dispatcher.c:848
+#12 0x000000000050d638 in unit_test_suite_runner (
+    suite=3Dsuite&#64;entry=3D0x1a23370 &lt;test_suite&gt;) at ../app/test/=
+test.c:364
+#13 0x0000000000571fa8 in test_dispatcher ()
+    at ../app/test/test_dispatcher.c:1053
+...
+i.e. we are waiting for all events to complete, but it never happens,
+though there is huge numbers of errors:
+(gdb) print test_app-&gt;completed_events
+$1 =3D 71402
+(gdb) print test_app-&gt;errors
+$2 =3D 767639
+
+Debugging it a bit more, errors counters are incremented at:
+./app/test/test_dispatcher.c:377
+test_app_process_queue(uint8_t p_event_dev_id, uint8_t p_event_port_id,
+        struct rte_event *in_events, uint16_t num,
+        void *cb_data)
+{
+    ...
+
+    for (i =3D 0; i &lt; num; i++) {
+                const struct rte_event *in_event =3D &amp;in_events[i];
+                struct rte_event *out_event =3D &amp;out_events[i];
+                uint64_t sn =3D in_event-&gt;u64;
+                uint64_t expected_sn;
+
+                if (in_event-&gt;queue_id !=3D app_queue-&gt;queue_id) {
+                        test_app_queue_note_error(app);
+                        return;
+                }
+
+                expected_sn =3D app_queue-&gt;sn[in_event-&gt;flow_id]++;
+
+                if (expected_sn !=3D sn) {
+                        test_app_queue_note_error(app);
+                        return;
+
+
+As I can read the code - that means that dequeued events don't pass sanity
+check.
+Note that with RTE_USE_C11_MEM_MODEL undefined we use different (legacy)
+implementation of __rte_ring_headtail_move_head().
+Also note that we do use MP/SC rte_ring for events.=20
+
+In that implementation we do:
+
+load(&amp;d-&gt;head);
+rmb();
+load(&amp;s-&gt;tail);
+...
+if (st)
+     d-&gt;head =3D ...;
+else
+   rte_atomic32_cmpset(&amp;d-&gt;head, ...);
+
+While for MT case cmpset will generate a CASAL instruction - CAS() with
+acquire-release mem-order, for ST case we don't have any memory-ordering
+primitives.
+So, as I understand, what happens here:
+reading elements from the ring sometimes get re-ordered with reading prod.t=
+ail
+value, i.e. we reading elements that are not yet completely written into the
+ring.
+What is really strange that we never hit such issue before...
+
+Anyway, the proposed fix, is to put rmb() after load(&amp;s-&gt;tail); for =
+ST case:
+--- a/lib/ring/rte_ring_generic_pvt.h
++++ b/lib/ring/rte_ring_generic_pvt.h
+&#64;&#64; -106,6 +106,7 &#64;&#64; __rte_ring_headtail_move_head(struct rt=
+e_ring_headtail *d,
+
+                *new_head =3D *old_head + n;
+                if (is_st) {
++                       rte_smp_rmb();
+                        d-&gt;head =3D *new_head;
+                        success =3D 1;
+                } else
+
+With it in place, dispatcher_autotest completes successfully on that machin=
+e.
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1713">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17483509200.Fb6Fcdf.2313538--
