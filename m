@@ -2,47 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D19FC54F30
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 May 2025 13:18:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E59C54F30
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 May 2025 13:18:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 447A140A80;
-	Tue, 27 May 2025 15:17:56 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8DB3E40A8A;
+	Tue, 27 May 2025 15:17:59 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id A8D6E40669
- for <dev@dpdk.org>; Tue, 27 May 2025 15:17:54 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 3FBC640669;
+ Tue, 27 May 2025 15:17:57 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1748351875; x=1779887875;
+ t=1748351877; x=1779887877;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=/0O3x1TBLma/oq9aoAH+b1LJKbS3wLu41otoCYfLLuk=;
- b=crg4M59IygIlFDXVeGhi6Ufl49W+9A3yG2SoBxhAURu8bRCQeL0m8nMl
- iPnbkyCPHq7O4YaUuteVwexVVLFVBjxdOVHyyq0xB2ShDUF0HcQvt+Rcp
- x2CfQT5Hc4rPVtPFRDmVEkKxvhyvtLpUIosJ4j6dou8mLH+Gx5aho4xj+
- 544VBjJve3TjI60r46XsOEFO0y8KUmPKJtS7sRNl5Ia++jc8JUWTIV+Tj
- 0JW5kcnAOEGk1Pv8l1Caw1l7Jym1kzNdxUHgsHRcsli+XEbjKMKFv91l9
- jJLL8SwcwWVKGAakArSNYf+Tw7irV7htmTT2a4TjfV3jH/XY29MXM0WLm Q==;
-X-CSE-ConnectionGUID: 5zP4e5unRXy8rtVvexIO6Q==
-X-CSE-MsgGUID: 4DodkNrnSTKIo2kaVOgNhw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11446"; a="67884839"
-X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; d="scan'208";a="67884839"
+ bh=VZwcIyJsYATf4Mjf53YVDQgjShIfppWlKnG1aqP+rLU=;
+ b=M89Z6NFvfGY1CuiBNfVeiXeBMsxcGpaclRX5YYXhVL7QXh4EQPitAMXB
+ qUCGJH3KF73KsFC6s1iPR9X1o/OOycgZhgCUn9G2VnJqdqz2Z7SshFcC5
+ WU1KtzsbOEULU4aKNA+MKQ2Ko+3xDKgM8Ao4n0YGkLJvz8xyb9kT6mS+p
+ DOicZDTWfeV5412ubyyx3QOTw7lbiMesT1dHhNw7wh62JcITxpU+oc+Km
+ 8ShrYZCG1C6kSz4pnRaq3rPPO6rDsZO5r6S/b3KwsfdysaVNEMEd7TB9a
+ wpZRc8ouFIu9c9mB3BTNPNzyIM4/s8EQoQ8JugNg7OXisQyQnunpO/JQA A==;
+X-CSE-ConnectionGUID: bB9mQTijS+CaVKFM5qWScg==
+X-CSE-MsgGUID: U/+ndnPeR7enRUbwgoMSTg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11446"; a="67884842"
+X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; d="scan'208";a="67884842"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 May 2025 06:17:54 -0700
-X-CSE-ConnectionGUID: Pp5k6vtOTjOs3sLS2Kfquw==
-X-CSE-MsgGUID: i2Xk7Et0TzGrryxpkjH+mw==
+ 27 May 2025 06:17:57 -0700
+X-CSE-ConnectionGUID: yc/ZWlQ8RhePbb//EDGjpw==
+X-CSE-MsgGUID: 92leiJEWS5aLcw2GC3nV3g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; d="scan'208";a="143150052"
+X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; d="scan'208";a="143150062"
 Received: from unknown (HELO silpixa00401120.ir.intel.com) ([10.55.128.58])
- by fmviesa008.fm.intel.com with ESMTP; 27 May 2025 06:17:53 -0700
+ by fmviesa008.fm.intel.com with ESMTP; 27 May 2025 06:17:55 -0700
 From: Dhanya Pillai <dhanya.r.pillai@intel.com>
 To: Bruce Richardson <bruce.richardson@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Robin Zhang <robinx.zhang@intel.com>, Ferruh Yigit <ferruh.yigit@intel.com>
 Cc: dev@dpdk.org, Lukasz Krakowiak <lukaszx.krakowiak@intel.com>,
- Dhanya Pillai <dhanya.r.pillai@intel.com>
-Subject: [PATCH v3 04/10] net/ice/base: set speculative execution barrier
-Date: Tue, 27 May 2025 13:17:23 +0000
-Message-ID: <20250527131741.7606-5-dhanya.r.pillai@intel.com>
+ stable@dpdk.org, Dhanya Pillai <dhanya.r.pillai@intel.com>
+Subject: [PATCH v3 05/10] net/ice/base: fix typo in desc for dev ID 579F
+Date: Tue, 27 May 2025 13:17:24 +0000
+Message-ID: <20250527131741.7606-6-dhanya.r.pillai@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250527131741.7606-1-dhanya.r.pillai@intel.com>
 References: <20250527131741.7606-1-dhanya.r.pillai@intel.com>
@@ -63,90 +64,29 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Lukasz Krakowiak <lukaszx.krakowiak@intel.com>
 
-Fix issues related to SPECULATIVE_EXECUTION_DATA_LEAK.
-This changes set speculative execution barrier to functions:
+Fix typo in desc for dev ID 579F.
 
-* ice_sched_add_vsi_child_nodes,
-* ice_sched_add_vsi_support_nodes,
-* ice_sched_move_vsi_to_agg,
-* ice_prof_has_mask_idx,
-* ice_alloc_prof_mask.
-
-Also, Added memfence definitions.
-
+Fixes: 6fd3889c1779 ("net/ice/base: support E824S and E825 devices")
+Cc: stable@dpdk.org
 Signed-off-by: Lukasz Krakowiak <lukaszx.krakowiak@intel.com>
 Signed-off-by: Dhanya Pillai <dhanya.r.pillai@intel.com>
 ---
- drivers/net/intel/ice/base/ice_flex_pipe.c | 2 ++
- drivers/net/intel/ice/base/ice_osdep.h     | 6 ++++++
- drivers/net/intel/ice/base/ice_sched.c     | 3 +++
- 3 files changed, 11 insertions(+)
+ drivers/net/intel/ice/base/ice_devids.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/intel/ice/base/ice_flex_pipe.c b/drivers/net/intel/ice/base/ice_flex_pipe.c
-index 6dd5588f85..dc8c92e203 100644
---- a/drivers/net/intel/ice/base/ice_flex_pipe.c
-+++ b/drivers/net/intel/ice/base/ice_flex_pipe.c
-@@ -1280,6 +1280,7 @@ ice_prof_has_mask_idx(struct ice_hw *hw, enum ice_block blk, u8 prof, u16 idx,
- 			if (hw->blk[blk].masks.masks[i].in_use &&
- 			    hw->blk[blk].masks.masks[i].idx == idx) {
- 				found = true;
-+				ice_memfence_read();
- 				if (hw->blk[blk].masks.masks[i].mask == mask)
- 					match = true;
- 				break;
-@@ -1648,6 +1649,7 @@ ice_alloc_prof_mask(struct ice_hw *hw, enum ice_block blk, u16 idx, u16 mask,
- 			/* if mask is in use and it exactly duplicates the
- 			 * desired mask and index, then in can be reused
- 			 */
-+			ice_memfence_read();
- 			if (hw->blk[blk].masks.masks[i].mask == mask &&
- 			    hw->blk[blk].masks.masks[i].idx == idx) {
- 				found_copy = true;
-diff --git a/drivers/net/intel/ice/base/ice_osdep.h b/drivers/net/intel/ice/base/ice_osdep.h
-index ad6cde9896..7588ad3dbc 100644
---- a/drivers/net/intel/ice/base/ice_osdep.h
-+++ b/drivers/net/intel/ice/base/ice_osdep.h
-@@ -203,6 +203,12 @@ struct __rte_packed_begin ice_virt_mem {
- #define ice_memset(a, b, c, d) memset((a), (b), (c))
- #define ice_memcpy(a, b, c, d) rte_memcpy((a), (b), (c))
- 
-+/* Memory fence barrier */
-+#define ice_memfence_read()
-+#define ice_memfence_read_write()
-+#define ice_memfence_write()
-+
-+
- /* SW spinlock */
- struct ice_lock {
- 	rte_spinlock_t spinlock;
-diff --git a/drivers/net/intel/ice/base/ice_sched.c b/drivers/net/intel/ice/base/ice_sched.c
-index a8a149f541..be9393a7d6 100644
---- a/drivers/net/intel/ice/base/ice_sched.c
-+++ b/drivers/net/intel/ice/base/ice_sched.c
-@@ -1748,6 +1748,7 @@ ice_sched_add_vsi_child_nodes(struct ice_port_info *pi, u16 vsi_handle,
- 				node = node->sibling;
- 			}
- 		} else {
-+			ice_memfence_read();
- 			parent = parent->children[0];
- 		}
- 	}
-@@ -1840,6 +1841,7 @@ ice_sched_add_vsi_support_nodes(struct ice_port_info *pi, u16 vsi_handle,
- 		/* The newly added node can be a new parent for the next
- 		 * layer nodes
- 		 */
-+		ice_memfence_read();
- 		if (num_added)
- 			parent = ice_sched_find_node_by_teid(tc_node,
- 							     first_node_teid);
-@@ -2431,6 +2433,7 @@ ice_sched_move_vsi_to_agg(struct ice_port_info *pi, u16 vsi_handle, u32 agg_id,
- 		/* The newly added node can be a new parent for the next
- 		 * layer nodes
- 		 */
-+		ice_memfence_read();
- 		if (num_nodes_added)
- 			parent = ice_sched_find_node_by_teid(tc_node,
- 							     first_node_teid);
+diff --git a/drivers/net/intel/ice/base/ice_devids.h b/drivers/net/intel/ice/base/ice_devids.h
+index 807b5d0c29..20c6dbd4a5 100644
+--- a/drivers/net/intel/ice/base/ice_devids.h
++++ b/drivers/net/intel/ice/base/ice_devids.h
+@@ -90,7 +90,7 @@
+ #define ICE_DEV_ID_E825C_QSFP		0x579D
+ /* Intel(R) Ethernet Connection E825-C for SFP */
+ #define ICE_DEV_ID_E825C_SFP		0x579E
+-/* Intel(R) Ethernet Connection E825-C 1GbE */
++/* Intel(R) Ethernet Connection E825-C 10GbE */
+ #define ICE_DEV_ID_E825C_SGMII		0x579F
+ #define ICE_DEV_ID_C825X		0x0DCD
+ #endif /* _ICE_DEVIDS_H_ */
 -- 
 2.43.0
 
