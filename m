@@ -2,79 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13DC5C54F30
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 May 2025 09:22:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 794DCC54ED1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 May 2025 10:22:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7874740666;
-	Tue, 27 May 2025 11:22:08 +0200 (CEST)
-Received: from fout-a4-smtp.messagingengine.com
- (fout-a4-smtp.messagingengine.com [103.168.172.147])
- by mails.dpdk.org (Postfix) with ESMTP id BBF16402D6
- for <dev@dpdk.org>; Tue, 27 May 2025 11:22:07 +0200 (CEST)
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal
- [10.202.2.42])
- by mailfout.phl.internal (Postfix) with ESMTP id 5B6A71380138;
- Tue, 27 May 2025 05:22:07 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-02.internal (MEProxy); Tue, 27 May 2025 05:22:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1748337727;
- x=1748424127; bh=3cqZ6STe2s33sKByiWxebbz69351Y1jjuBipw264U9E=; b=
- MurYSlQr5jldyeYSo2mUihXq2Y72flwkAOTpj4UvcgqxpjbMuc3iXQ8r3PVp+AVA
- MRXyh4M8JpKGQwz0Xhkg/BY6S0L+DQ96S+jAr/QoM1iTK4+7OHUqqzJvgKbL7YxT
- gmOYE0cvGWQGZHaW38Wyq2b5NMPR+NmMXXQyQKYhBx9kmcianauBdptRXN8uaDwb
- DbscOUMWb5Y67GjfsyESHoZO1DJpNWADj1Km6JoT4j9KVIiAQxmafaAD0DM8ydSF
- tFu7nSNJCDn4Rj32RSNFO9Y5B3WbmGHsse63LT2db7UaxkKqN3yKC4hqEdPn7dip
- i6JuIG8trvt0M3elotHl1w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1748337727; x=
- 1748424127; bh=3cqZ6STe2s33sKByiWxebbz69351Y1jjuBipw264U9E=; b=R
- JwZ4+aUCRtAqco+s2bYb9FOYfiJVjzXrlQRFHwtwP9ALerpMPVsHiQyZfgisa7YC
- iYDxrmg9qk2uCtNKqfTMVofmxTjeZ6W5ydStwKJJkQLwiXzMCKfH2OFmxdRHUAX3
- b9qY1/Th9XJEgKC3sCu0X0NnOOB49YlBICCHilraCjLrMf+t4rfWtz4yXQ2zlDY5
- I1YsqIyksps6uqf+R02GGCkPxUewont5ragatE02fCxvUcGCK3Rn/8XzypLJZeVY
- zqBCbGCH/6pR6D6PvaB7+RBehckNpuWYZnwPzXaacZbA9veRbM0mnSA2aWXLmfTl
- JIiTE1Gd+07J09su1xjYA==
-X-ME-Sender: <xms:P4Q1aIK8wOknmf70qO1ydTm3N5Sd_7bESxAdbAipuAYNvA8votEkUQ>
- <xme:P4Q1aIIrO3yWdD_RPZKLg-FlvzoNa9in775ktdFMzGSbI5nwzTkfDJYE9Cwma6FUT
- RNooxQt1x8Z3WO1yg>
-X-ME-Received: <xmr:P4Q1aIuqgN3rWWIKe27lDFT3J2DtYBEch65vb5PlIwQflloBqKk49s4vdvGffxElxIbxtqRQU63LiBCWGP4sTE4jfQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddvtddttdculddtuddrgeefvddrtd
- dtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggft
- fghnshhusghstghrihgsvgdpuffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftd
- dtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgj
- fhgggfgtsehtqhertddttdejnecuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuc
- eothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepffdt
- uefhhedvkeelleevffdvlefhleehvdegtddvvdduueeivedtgfejvddugeefnecuffhomh
- grihhnpeguphgukhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhep
- mhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtph
- htthhopedvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmsgesshhmrghrthhs
- hhgrrhgvshihshhtvghmshdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
-X-ME-Proxy: <xmx:P4Q1aFbrCPCochMpTFxgm_P5afK9Pk_TmlWn7_rj3ikvhGYV0pmADQ>
- <xmx:P4Q1aPY7x_p6fCZ7AvK-GgxQd2mTueQwOtsC4bW16MLpnD01N_X1PQ>
- <xmx:P4Q1aBAoYuIS7WeIsS8xI9NubMzFc1EKSUvKKYmYXz8e3N7Mb0Rrhg>
- <xmx:P4Q1aFYAJ9W5d9rCX5AA5rX_QNXtEdRwf_7LUHFMApr1QbkPNa8Y2A>
- <xmx:P4Q1aFyTzAkqre7OfqqTnUFQyYbJlucmyb31z4_AB6IiYV3Hm4ANJQxJ>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 27 May 2025 05:22:06 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: dev@dpdk.org
-Subject: Re: patch state
-Date: Tue, 27 May 2025 11:22:05 +0200
-Message-ID: <6836044.tM3a2QDmDi@thomas>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FC99@smartserver.smartshare.dk>
-References: <98CBD80474FA8B44BF855DF32C47DC35E9FC99@smartserver.smartshare.dk>
-MIME-Version: 1.0
+	by mails.dpdk.org (Postfix) with ESMTP id AE51B40395;
+	Tue, 27 May 2025 12:22:51 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56])
+ by mails.dpdk.org (Postfix) with ESMTP id A94B640144;
+ Tue, 27 May 2025 12:22:50 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b67sN04jbz6L5Dr;
+ Tue, 27 May 2025 18:19:20 +0800 (CST)
+Received: from frapeml100008.china.huawei.com (unknown [7.182.85.131])
+ by mail.maildlp.com (Postfix) with ESMTPS id DA4F0140393;
+ Tue, 27 May 2025 18:22:49 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ frapeml100008.china.huawei.com (7.182.85.131) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 27 May 2025 12:22:49 +0200
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Tue, 27 May 2025 12:22:49 +0200
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: "Rui Ferreira (A)" <rui.ferreira1@h-partners.com>, Thomas Monjalon
+ <thomas@monjalon.net>
+CC: "dev@dpdk.org" <dev@dpdk.org>, "stable@dpdk.org" <stable@dpdk.org>
+Subject: RE: [PATCH v2] fix eal/linux: unregister alarm callback before free
+Thread-Topic: [PATCH v2] fix eal/linux: unregister alarm callback before free
+Thread-Index: AQHbyytZFwMSgv5A0UC8Gz2xCRweu7PmTALw
+Date: Tue, 27 May 2025 10:22:49 +0000
+Message-ID: <2885c0014ac54593ac60d2ce226cbc48@huawei.com>
+References: <20250520160150.50401-1-rui.ferreira1@h-partners.com>
+ <20250522155944.65342-1-rui.ferreira1@h-partners.com>
+In-Reply-To: <20250522155944.65342-1-rui.ferreira1@h-partners.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.138.73]
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,20 +57,85 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-27/05/2025 10:07, Morten Br=C3=B8rup:
-> Hi Thomas,
+
+
+> This was flagged by Address sanitizer as a use after free. The
+> intr_handle ptr is shared between the main thread and the interrupt
+> thread. The interrupt thread can dereference the ptr after free (from
+> the alarm callback). free is called when the main thread cleans up.
 >=20
-> I have two patch series ready for RC1:
-> https://patchwork.dpdk.org/project/dpdk/list/?submitter=3D591
+> The interrupt thread never terminates (eal_intr_thread_main) so
+> use rte_intr_callback_unregister_sync during cleanup to
+> ensure the callback is removed before freeing the ptr.
 >=20
-> Do you want me to change their state from New to Awaiting Upstream?
+> To be more defensive clear out the pointer and registration
+> variable if we can unregister.
+>=20
+> rte_intr_callback_unregister_sync may (optionally) use traces
+> so the alarm cleanup must happen before eal_trace_fini to avoid
+> accessing freed memory.
+>=20
+> Bugzilla ID: 1683
+>=20
+> Signed-off-by: Rui Ferreira <rui.ferreira1@h-partners.com>
+> ---
+>  .mailmap                  | 1 +
+>  lib/eal/linux/eal.c       | 3 ++-
+>  lib/eal/linux/eal_alarm.c | 9 ++++++++-
+>  3 files changed, 11 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/.mailmap b/.mailmap
+> index d8439b79ce..907c5ea967 100644
+> --- a/.mailmap
+> +++ b/.mailmap
+> @@ -1332,6 +1332,7 @@ Rosen Xu <rosen.xu@altera.com> <rosen.xu@intel.com>
+>  Roy Franz <roy.franz@cavium.com>
+>  Roy Pledge <roy.pledge@nxp.com>
+>  Roy Shterman <roy.shterman@vastdata.com>
+> +Rui Ferreira <rui.ferreira1@h-partners.com>
+>  Ruifeng Wang <ruifeng.wang@arm.com>
+>  Rushil Gupta <rushilg@google.com>
+>  Ryan E Hall <ryan.e.hall@intel.com>
+> diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
+> index 20f777b8b0..b448db1392 100644
+> --- a/lib/eal/linux/eal.c
+> +++ b/lib/eal/linux/eal.c
+> @@ -1329,9 +1329,10 @@ rte_eal_cleanup(void)
+>  	rte_mp_channel_cleanup();
+>  	eal_bus_cleanup();
+>  	rte_trace_save();
+> +	/* may use trace, must be called before eal_trace_fini */
+> +	rte_eal_alarm_cleanup();
+>  	eal_trace_fini();
+>  	eal_mp_dev_hotplug_cleanup();
+> -	rte_eal_alarm_cleanup();
+>  	/* after this point, any DPDK pointers will become dangling */
+>  	rte_eal_memory_detach();
+>  	rte_eal_malloc_heap_cleanup();
+> diff --git a/lib/eal/linux/eal_alarm.c b/lib/eal/linux/eal_alarm.c
+> index b216a007a3..eb6a21d4f0 100644
+> --- a/lib/eal/linux/eal_alarm.c
+> +++ b/lib/eal/linux/eal_alarm.c
+> @@ -57,7 +57,14 @@ static void eal_alarm_callback(void *arg);
+>  void
+>  rte_eal_alarm_cleanup(void)
+>  {
+> -	rte_intr_instance_free(intr_handle);
+> +	/* unregister callback using intr_handle in interrupt thread */
+> +	int ret =3D rte_intr_callback_unregister_sync(intr_handle,
+> +						eal_alarm_callback, (void *)-1);
+> +	if (ret >=3D 0) {
+> +		rte_intr_instance_free(intr_handle);
+> +		intr_handle =3D NULL;
+> +		handler_registered =3D 0;
+> +	}
+>  }
+>=20
+>  int
+> --
 
-Awaiting Upstream is very special, it means you wait for something in anoth=
-er project.
+Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+=20
 
-> The "mempool perf test" series only has one Ack, from Mempool co-maintain=
-er Andrew Rybchenko. Should I solicit more reviews?
-
-It should be enough, I will merge these 2 series.
-
+> 2.35.3
 
