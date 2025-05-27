@@ -2,75 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F776C54F30
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 May 2025 19:24:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5BF3C54F30
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 May 2025 19:33:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 154904028F;
-	Tue, 27 May 2025 21:24:19 +0200 (CEST)
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com
- [209.85.160.178])
- by mails.dpdk.org (Postfix) with ESMTP id C7BB84028D;
- Tue, 27 May 2025 21:24:17 +0200 (CEST)
-Received: by mail-qt1-f178.google.com with SMTP id
- d75a77b69052e-4766631a6a4so36130141cf.2; 
- Tue, 27 May 2025 12:24:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1748373857; x=1748978657; darn=dpdk.org;
- h=in-reply-to:from:content-language:references:cc:to:subject
- :user-agent:mime-version:date:message-id:from:to:cc:subject:date
- :message-id:reply-to;
- bh=slNCuezi0D7XZrujwgpag20bZsgmt4bhzwN5n+xzTRs=;
- b=FFeWTcI3IYRNNNj9hf65ccc8iEFODaLX31D9AMdB3vKSl86uX0a+MGdbPrUcVHgwxD
- gcyb/chQ+h3YJK0DH4i2v9nOdvcxRooAUF97ccpMjq5/In1m19426GvOwpUjs22KrU+G
- T/fuR/U9y+Dwn800RZh//cHYfUiP8J5v0VypXf7wyjgfN/gv2cJC+j2xLpaWt1Sy9o4J
- kmRwaapZM/y/D5o4pwuS5w+JURoGubyocAS23w+NhhOoP7Q3KgvXWZTsySPuT0XnITIz
- jwxo4jeX5AxhhRAZ+UhQzYo/364+KjtaOW8plPgf174Q4bIpeZrMsshLRqt7DlU9h77V
- CehQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1748373857; x=1748978657;
- h=in-reply-to:from:content-language:references:cc:to:subject
- :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
- :cc:subject:date:message-id:reply-to;
- bh=slNCuezi0D7XZrujwgpag20bZsgmt4bhzwN5n+xzTRs=;
- b=kVWJEadKrbdweDUwttrGZsHBmlhLbchh+Tdna/aMLAyO7nxRXEkW5rL9m0FavRXMOm
- Rsl/0LpRPxK7cLnwOsq9ax7HYvz5C8Bv6OsXVxFAv/iyNvaVkPPawT8MV1x9ELi29dfa
- jRs1kj7wvlBx06eAvvB9Wi9pljtmmxi5NqJxjWlqsH2eWM30yzARByaz5S54Bg2cxGKO
- +6GRx4SKqo/rYTCh5y/6+GBOqOPCQcI4KGJNLlclOySIsGBeEOcXS0crTAOKKB4iY2Db
- 9KncJ4SdKKcSVy8Xu1VI2jgCmMkkX7AfGWJZmXXkoMjbtxMTcMwKUHNfl9DYI/HRyRai
- E2Aw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXCjHpaF47Y+NVKkFPI/JQN7vvwpFg4yAa73w8UUbVirPTNEcFqjuBpzCVKwqcWc0vuuuieH7Y=@dpdk.org
-X-Gm-Message-State: AOJu0YwyzFk1kjZHRburpf1itIb7py8nusiCG4oF0GVVGJ+MX8+15JAJ
- XbEKuqY87nSpTRTSsR30blXo6lN8QnpN2/zBse909mrH2hTeIihqKElB
-X-Gm-Gg: ASbGncvxsPIT9aeLjd4ivFCR0rp7sdvNdrR6bC5++fzq903tPwhcxNL4LIndrU7hj7d
- HfGe4q34QvHnha5jUNQ+v0x89LWoREPGWz+i9XZvCk2XfEtTtrxDfz0zdR0I5aeAOArLoWTl/1g
- 3ZibxxE78GbXjpMpbzvqddk3u0ZdSmmTcu6VFsiRdv7t0ySX5wHvTaBxegO7bQ3Cx/8ayFXFa2H
- pAsv7T4Bzim3M/G1x2K+i+tQyhCAMJ6A+vAKyuMfwUSKF5GXZETmjHMY4ZrXPsCWmA6KDxbGKQ+
- w1ITKTW3rbZ/M/4Xqx/JoQp6zy/7Fo4cBMqmLdzycDpkhb3whVbjM2uxMb2ZfG7pQSJ2uJdjJV/
- ThGfs+Qq3k/zx/xHmjllLIdo9
-X-Google-Smtp-Source: AGHT+IFJl8kGXp2uV40EWZibRK1MI6Ns6j1K2dnVv6qs/DyC48FUXLgYPE/M/ZkwMuzWCK0/4ypP9A==
-X-Received: by 2002:a05:622a:610a:b0:476:903a:b7f0 with SMTP id
- d75a77b69052e-49f480c95c2mr212877651cf.49.1748373856944; 
- Tue, 27 May 2025 12:24:16 -0700 (PDT)
-Received: from [10.249.152.235] (nat-216-240-30-23.netapp.com. [216.240.30.23])
- by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-4a2f925fdd1sm284391cf.12.2025.05.27.12.24.15
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Tue, 27 May 2025 12:24:16 -0700 (PDT)
-Content-Type: multipart/alternative;
- boundary="------------3QkkKE0lD0empIQig5ntmjkN"
-Message-ID: <73ac3428-f8bd-4473-a451-97646c6fd18e@gmail.com>
-Date: Tue, 27 May 2025 20:24:13 +0100
+	by mails.dpdk.org (Postfix) with ESMTP id E80754028F;
+	Tue, 27 May 2025 21:32:59 +0200 (CEST)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 0C7C84028D
+ for <dev@dpdk.org>; Tue, 27 May 2025 21:32:58 +0200 (CEST)
+Received: by linux.microsoft.com (Postfix, from userid 1213)
+ id EC8B8206B768; Tue, 27 May 2025 12:32:56 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EC8B8206B768
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1748374376;
+ bh=OJ41AdKA84oxIJNExFRIJ9RYLY1aLUxum+VQT9hOXLQ=;
+ h=Date:From:To:Cc:Subject:From;
+ b=I4OZVCcQgPeGiQma/mzIDPzDUBrYn/AuXjcBmrCTLhF4ZG8krS8nMmzvmbOAsvTSN
+ xJn46pllGEU4Y4Ll2IYnxJ1tbMj8F8joVh8uXiwpDjjMNQUsD2PUlXggxTi1Uxyqc9
+ FjrC85sgXi0JcaTlqsxUoKcFZCZHSnhAKd7+Ukw8=
+Date: Tue, 27 May 2025 12:32:56 -0700
+From: Andre Muezerie <andremue@linux.microsoft.com>
+To: Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
+Cc: dev@dpdk.org
+Subject: Looks like a bug: operands are different enum types
+ 'ibv_flow_attr_type' and 'ibv_flow_flags'
+Message-ID: <20250527193256.GA6110@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] crypto/virtio: add request check on request side
-To: Radu Nicolau <radu.nicolau@intel.com>, Jay Zhou
- <jianjay.zhou@huawei.com>, Chenbo Xia <chenbox@nvidia.com>
-Cc: dev@dpdk.org, stable@dpdk.org
-References: <20250523140450.75543-1-radu.nicolau@intel.com>
-Content-Language: en-US
-From: "Zhang, Fan" <fanzhang.oss@gmail.com>
-In-Reply-To: <20250523140450.75543-1-radu.nicolau@intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,53 +47,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This is a multi-part message in MIME format.
---------------3QkkKE0lD0empIQig5ntmjkN
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Hi Folks,
 
 
-On 5/23/2025 3:04 PM, Radu Nicolau wrote:
-> Add same request checks on the request side.
->
-> Fixes: b2866f473369 ("vhost/crypto: fix missed request check for copy mode")
-> Cc:roy.fan.zhang@intel.com
-> Cc:stable@dpdk.org
->
-> Signed-off-by: Radu Nicolau<radu.nicolau@intel.com>
-> ---
-Acked-by: Fan Zhang <fanzhang.oss@gmail.com>
---------------3QkkKE0lD0empIQig5ntmjkN
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Compiling with MSCS resulted in the warning below:
 
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  </head>
-  <body>
-    <p><br>
-    </p>
-    <div class="moz-cite-prefix">On 5/23/2025 3:04 PM, Radu Nicolau
-      wrote:<br>
-    </div>
-    <blockquote type="cite"
-      cite="mid:20250523140450.75543-1-radu.nicolau@intel.com">
-      <pre wrap="" class="moz-quote-pre">Add same request checks on the request side.
+../drivers/net/mlx5/mlx5_flow_dv.c(19636): warning C5287: operands are different enum types 'ibv_flow_attr_type' and 'ibv_flow_flags'; use an explicit cast to silence this warning
 
-Fixes: b2866f473369 ("vhost/crypto: fix missed request check for copy mode")
-Cc: <a class="moz-txt-link-abbreviated" href="mailto:roy.fan.zhang@intel.com">roy.fan.zhang@intel.com</a>
-Cc: <a class="moz-txt-link-abbreviated" href="mailto:stable@dpdk.org">stable@dpdk.org</a>
+It looks like a legit bug. Here is the offending line:
 
-Signed-off-by: Radu Nicolau <a class="moz-txt-link-rfc2396E" href="mailto:radu.nicolau@intel.com">&lt;radu.nicolau@intel.com&gt;</a>
----
-</pre>
-    </blockquote>
-    Acked-by: Fan Zhang <a class="moz-txt-link-rfc2396E" href="mailto:fanzhang.oss@gmail.com">&lt;fanzhang.oss@gmail.com&gt;</a><span
-    style="white-space: pre-wrap">
-</span>
-  </body>
-</html>
+	struct mlx5dv_flow_matcher_attr dv_attr = {
+		.type = IBV_FLOW_ATTR_NORMAL | IBV_FLOW_ATTR_FLAGS_EGRESS,
 
---------------3QkkKE0lD0empIQig5ntmjkN--
+As the warning states, the constants in the bitwise operation belong to different enums, and these enums have overlaping values, which makes the bitwise operation very suspicious.
+On top of that, I see that struct mlx5dv_flow_matcher_attr has a field named "flags" which accepts values from ibv_flow_flags:
+
+	struct mlx5dv_flow_matcher_attr {
+		enum ibv_flow_attr_type type;
+		uint32_t flags; /* From enum ibv_flow_flags. */
+
+Could someone more familiar with the code take a look and make a fix if needed? My goal here is just to get the code to compile with MSVC without warnings. I can add a cast to remove the warning if this is indeed how the code should be, but I don't want to do this unless I get confirmation that this would be the right course of action.
+
+Thanks,
+
+Andre Muezerie
