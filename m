@@ -2,180 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FD88C54F30
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 May 2025 14:26:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EAA7C54F30
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 May 2025 14:27:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3E017402E0;
-	Tue, 27 May 2025 16:26:06 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id 6D9EB4028D
- for <dev@dpdk.org>; Tue, 27 May 2025 16:26:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1748355965; x=1779891965;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=2UBgH5Kqxj6bx2ftIE8IP4VqCC1+C+nZMInrQ31v6L8=;
- b=nogno+TGfdmlxmRljk4BwDItNKDMouCeUaZiuoKBEjGXS5tAFD+TwkwN
- JjNIvzhzKOPdJu2jHmX8a3PSNbrftP9l9/mJ+gTcAvzppot3dpejzMs8i
- zy2S4Oipey11wybKj3haMwicEeULDFljrB1fR08FAUHgjkIwBcxFVu+U3
- +/Hon9bfyOUHrSzsm/i6/fuBuaPrT0JOtFhAiBl2ykEHYsvf0mzzEVSuv
- R3+w8JkPlnZKwYhL16VE20xERCcg41xfqoJ71EgMhNaNNJr/8jiRP/72w
- L2tmMkf5yxxPym+dBCEE8Vr1oDmfI/LkguPFwZVuvJ6aUsg1D/wyxtWIA A==;
-X-CSE-ConnectionGUID: Nq5RoqwvRValc+781kktRQ==
-X-CSE-MsgGUID: YGBXtpe9TrmNm7BLC37bhQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11446"; a="52970425"
-X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; d="scan'208";a="52970425"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
- by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 May 2025 07:26:03 -0700
-X-CSE-ConnectionGUID: 9ZIsOEmMTb6Zcha6czgAiw==
-X-CSE-MsgGUID: 2XPXSFwtQ2m2+JPSHfQ50w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; d="scan'208";a="147862536"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
- by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 May 2025 07:26:03 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 27 May 2025 07:26:02 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Tue, 27 May 2025 07:26:02 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.45) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.55; Tue, 27 May 2025 07:26:02 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vE64exYSA+oJ+kxgn3KzJpqlrbRtEINATOkN2R20p6yPw8UGzW/Xs5TwP/nfufSw8wtZHyR/0bLppKK6yC08f8W4CtkJm1qWZkGBD8WOl6G3Is+Cxg8fvI2U8FsacKoxJbEWIMPFMXHiP9EkiUWG8IwYqbepGv67V3s4wsxbGSR7ibQa4MKrRJvNUWFMLXZe7u+bOjUGIrzp3YI0y02+6Hpf2ahIqiZoaZXNQEgX+tyM9PM4UMcDAgvEiYAkBfOvoASXn5F5Getr0kF+QPPyJAACNQhSC+NiUOfzfnX8KS8kdxW8eUlpW2FJSGkiLKqcSGqJ9Wr0Wu5GBPFFUZ/UYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KyE4qCzk67jEuUvZX7X9VH0mqflR6hBAGQFeRCC8WNk=;
- b=tE6qy7DSaN3IqopTOesu+EpqiQ/IZ31QlnW/qWT+He5C6980jqYNvu7XmJuSvEaR+4wnqKSoOEAZD4j/wUaIUppbvVJ62V8F5VC1OjUu7GQpAbFkvtCcvs9m13C4xLuH9Kw+DQYBRtgobjt5FeBmjTPCA3NgLIaNMMzQM4ik+Xl9HOdeukBvB5LnRN+H6pl/SuOy+PvGAiFUWVAr8UdrZmdsl7XVuES5mDz11/MxSTpUOXXsWszSmlijZjEIScFCZAYuCqIfNx3Uk3Bh/AN9/FS+Q33wlcpBkDpg70BZLJyXrPEehEWsNTzp9HIKrweoQNtitPwnZfCFdjB9rjYB4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by IA4PR11MB9084.namprd11.prod.outlook.com (2603:10b6:208:562::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.25; Tue, 27 May
- 2025 14:26:00 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%5]) with mapi id 15.20.8746.030; Tue, 27 May 2025
- 14:25:59 +0000
-Date: Tue, 27 May 2025 15:25:50 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Nandini Persad <nandinipersad361@gmail.com>
-CC: Wathsala Vithanage <wathsala.vithanage@arm.com>, Ciara Loftus
- <ciara.loftus@intel.com>, Maryam Tahhan <mtahhan@redhat.com>, Julien Aube
- <julien_dpdk@jaube.fr>, Nithin Dabilpuram <ndabilpuram@marvell.com>, "Kiran
- Kumar K" <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>,
- Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>,
- Potnuri Bharat Teja <bharat@chelsio.com>, Hemant Agrawal
- <hemant.agrawal@nxp.com>, Sachin Saxena <sachin.saxena@nxp.com>, John Daley
- <johndale@cisco.com>, Hyong Youb Kim <hyonkim@cisco.com>, Ian Stokes
- <ian.stokes@intel.com>, Anatoly Burakov <anatoly.burakov@intel.com>,
- "Vladimir Medvedkin" <vladimir.medvedkin@intel.com>, Matan Azrad
- <matan@nvidia.com>, Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Dariusz
- Sosnowski <dsosnowski@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
- <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Liron Himi
- <lironh@marvell.com>, Long Li <longli@microsoft.com>, Wei Hu
- <weh@microsoft.com>, Devendra Singh Rawat <dsinghrawat@marvell.com>, "Alok
- Prasad" <palok@marvell.com>, Maxime Coquelin <maxime.coquelin@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>, Jochen Behrens
- <jochen.behrens@broadcom.com>, Paul Szczepanek <paul.szczepanek@arm.com>,
- Patrick Robb <probb@iol.unh.edu>, <dev@dpdk.org>
-Subject: Re: [PATCH] doc: fix anchors namespace in guides
-Message-ID: <aDXLbglk_hLfTMXT@bricha3-mobl1.ger.corp.intel.com>
-References: <20250527140435.21361-1-nandinipersad361@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250527140435.21361-1-nandinipersad361@gmail.com>
-X-ClientProxiedBy: DB8PR03CA0008.eurprd03.prod.outlook.com
- (2603:10a6:10:be::21) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id 4F28B402E0;
+	Tue, 27 May 2025 16:27:37 +0200 (CEST)
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com
+ [209.85.128.47]) by mails.dpdk.org (Postfix) with ESMTP id 296644028D
+ for <dev@dpdk.org>; Tue, 27 May 2025 16:27:36 +0200 (CEST)
+Received: by mail-wm1-f47.google.com with SMTP id
+ 5b1f17b1804b1-442ed8a275fso46545195e9.2
+ for <dev@dpdk.org>; Tue, 27 May 2025 07:27:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1748356056;
+ x=1748960856; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=9oZyQDk7sJ22N2k1U6fe8D3tmNw9xJjRx3KnCCXj9y0=;
+ b=l+tGGj6ioi/hTbbXvZYSpZAAmAR+1hdI3ug0ykpfWnyluANEf4cUVrL9Z5AtcBmcVa
+ JBztbiuRbXb0oXrpwn6URlQvO3UNcas4zEZTBB/HDmxr6+8GfzJWdSp49PxoHQKRzXyF
+ JfiI3yPNoWFIWeaWHzi1S+3pHOTxzCV1edhN9tlrlqCkwtF3JoMcWuZg4j0yJ2nbUmOZ
+ ess3NISM/yW2RbGoFC+GNQG/mGJ0iw5J8YDK7pwuTOyQioHnR6h23vUmZ+ejzFVff1W3
+ uAcKxTFRpfszargQbjyhnF7wiitVoVbCk/DZdfU2993hhhE2SzNHSvU9G6te0xJ/LACY
+ ncTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1748356056; x=1748960856;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=9oZyQDk7sJ22N2k1U6fe8D3tmNw9xJjRx3KnCCXj9y0=;
+ b=NJz8omweRwZCrNKFs/sujKD7B+sLCJg0XviELOYFRAKFlOVGbiCLeL5AAGhFgixKFR
+ dPJf05BJLmEHBG1SpevyQNd+685o+wO8A9AFIus6FZaVNvqFsF451GirAjIlwUxLRh/L
+ FMUHvxkaj81WIdbxH76HvcPSgjkgvoKn5ZyMy7Y/UVJjPGc/C3niSpRaau1k9BSEeHNR
+ 46LBWCSpPTltmVWP7X6T8YVbE0reeBgtn5Zc7IicUCWcR2XIalntuUO9+oNfCLZV8XwS
+ QC7pueP2Yyn8ksSvUf5OShy3KS64/yxueACaJY0lIzbv8bNd//97MH/A2QKfvl2XtQep
+ i+rQ==
+X-Gm-Message-State: AOJu0YxURtcfj1APLu66m0xKBxRgTxY171iX8wVW3xdviZ5xTctNd784
+ XjVnKiXmJASOQYJR0YxDcR5eLrETMPRjyH0sCQq550XDhYaeWd5JQMfeJB8CGqmxno38cjyx8+6
+ sOiw1PvU=
+X-Gm-Gg: ASbGncv54N/Nk5lc5/SIc9EEJ4G2l7ZCxNkCVsAuSER1itq0W3cw7j6UXTH01Pgbr8I
+ BNybh1ER/bxc5fFZ2uxPV/Sz+U6NM1BGvYjGqhLtnS+KWjIGDFj5lIbX5oRTWJuQ/Bt6sGw2X9M
+ fHnah59BxrQxMqlgreP/aaoaxHviFcyX07Mqy5nBABGScLwlgmA8ivKnO46TVwSMG12hWySHGMs
+ ovsdaX51jYLKYPUrj1Gz9jb+eLDwZMnXFhonVAvLBdpa0/Pu5ij56+aBjEMnIhguI/9tCrTktO3
+ hm64h/5IfZ0s89DzZsSoMJZblxtsoVaigMm627Bw5s4O6Bx1tQSCI7YSs0jA2AExVib+yLEx68l
+ s9oyCEFCqZlR24B8qB3yJ0c6GHKHb
+X-Google-Smtp-Source: AGHT+IEq7mlpM+5Nja1wZXtn0nQC4OSRpx9n51Q3EiH1mQzVhN2RX8i66Sx+RI0EnHtUx9qQYlmbmA==
+X-Received: by 2002:a05:600c:4e0c:b0:442:faa3:fadb with SMTP id
+ 5b1f17b1804b1-44c917f3ea8mr138017935e9.2.1748356055303; 
+ Tue, 27 May 2025 07:27:35 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-447f6b29548sm285152185e9.4.2025.05.27.07.27.34
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 27 May 2025 07:27:35 -0700 (PDT)
+Date: Tue, 27 May 2025 07:27:29 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Wencheng Li <liwencheng@phytium.com.cn>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v7 0/3] net/macb: updated net macb driver
+Message-ID: <20250527072729.5e96c551@hermes.local>
+In-Reply-To: <1744946674-31765-1-git-send-email-liwencheng@phytium.com.cn>
+References: <1744093147-313646-1-git-send-email-liwencheng@phytium.com.cn>
+ <1744946674-31765-1-git-send-email-liwencheng@phytium.com.cn>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|IA4PR11MB9084:EE_
-X-MS-Office365-Filtering-Correlation-Id: 49d462f5-f0e6-4fc4-8fbf-08dd9d2a66d2
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|366016|7416014|376014|7053199007; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Ko2wv48DN6o+lhWzXBzvmXNMFhFpbUvP7zWrQqdLdlbUmbFWMn63J2hYlhkR?=
- =?us-ascii?Q?qJSeKmCOTGWNjza5qvYPTIvJTR2BBB7nZ1WSug2V/36YOGAvPZ73h768bk7e?=
- =?us-ascii?Q?maVo6MEzMfJ487anQ7TQLb2Sv0yxaPhXrkocxariSeLsYEXCwNzbdOlVjmSZ?=
- =?us-ascii?Q?FG57FfwmOL15XG0FBNxtiydpHpZrAfIvlMfXZq/EVkxoWdrbBY6UF2Dho0HG?=
- =?us-ascii?Q?8QU5kJ0AJO478E7t9HstMZUbp7MVSkvq1KS6CgwpDSSnpW9atAr0YmZ4lHyI?=
- =?us-ascii?Q?gGYUlaHSMohI0mGYVl8Bi9fI+LKyea54hXrF037zlrFsv4kkJCD1SsqHa+o8?=
- =?us-ascii?Q?B7gytOpcBRU8rQ82SvrFkZf1OIi8USWV/a5iWd+1ujGmxHFuxUJqPf6FjI8D?=
- =?us-ascii?Q?6tfalr9lp79LreYOiP5NvcqB8mx0BUtabJkL+ehT5BvLMtpHu5kt21tG70Ks?=
- =?us-ascii?Q?eri5jRD9OJxVjuYKT4IX+tWryiK90+XUA1PUKnPM5X6z5zWSO6Hj2PUyOM72?=
- =?us-ascii?Q?wteILMtyCQaowv6//goFxkPfAVRBplnd3Jv4xl3/qQJlpBRBvAN1f27VhWya?=
- =?us-ascii?Q?Q8e2MdpJy54GOlZKUlwW8Yqoqipm6mH+S2O/73Nsb9j4ah1iPhiS27ExQ68b?=
- =?us-ascii?Q?t9GMvCM+/f+DMYzBZRL8o84tkt8wsc72pubYxdzpXKV7OGJVdsuEmJYYfoq9?=
- =?us-ascii?Q?mergNcU4Bq4N+EXmfEk+s2Tcnzt2vy8vygGNrvET/D/lARuyfwGWtY00d47U?=
- =?us-ascii?Q?zM1FtWWsCtARLqCd4xwax5+nP3pFC/TZtWuzRPKLrk7eTfZjQkwNAaRsv3As?=
- =?us-ascii?Q?pLkQB8hqn+vRwvW7EW87TRBrB5Q799UrfDIGEq5t8/xAS4iJRvQ3Y4akjdLT?=
- =?us-ascii?Q?8kZ4pw+jwFn+e8RbHJJ2qD3nnknMfnH0IaRduN88VEHnZFssV/pKsAXPMKBv?=
- =?us-ascii?Q?gXgDOvQunHfQwoadHBVSplx0AP1kj1l9P1jEeTJH1mu1+/Vw8Uou6bcVwLhV?=
- =?us-ascii?Q?+xMtsf7N9gE0sjJULu+K4uPs7DvfN0QjQoAR13GPwpVPqjVTSjCRCAcS0CI8?=
- =?us-ascii?Q?rV5zYhbGgVEravUfN8AYGoi+DxOy+zk7BthMyViVgUA90CGvRf/08P3am7Xt?=
- =?us-ascii?Q?uYwCy6WmMs2OzpH5ugNkgGaCL1UDtxmt+n03OMgH5jii+NwBDTLKnn0QKIeF?=
- =?us-ascii?Q?ESNLUf986yWroE6W0NgnvZLm1Yxd3I/GY64nX84UYa5qQ/ky9v1J3G+ffEam?=
- =?us-ascii?Q?Marnc1P1ULO9eaSgTIo0q1DSJmiUFKLq2Kj1qLpckNzpHOlevYwh8VYOO1zX?=
- =?us-ascii?Q?d8w8FiZL7S8K3Ep32PjIuhzXtgWPCcWR4TpRP1WooKAQm8hazm1TyoJ5wvbA?=
- =?us-ascii?Q?JvJAcQ+PX1jMbmuYu/ZlDyh9Quz4oK19xPqNODavRatiwXPZJg=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007); DIR:OUT;
- SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?bbYuTduoy/FRtjFQZBMQ1fIN3JTd7rUiylpsdSNwBRkBN8MjVq/BKlLQbztG?=
- =?us-ascii?Q?clSYfVFF7KzMy3WUX8gur3QIkURqvU47QULx8yyvQhvQshe4/zm5v8bTP9n7?=
- =?us-ascii?Q?V6KGgLeKm/bWEdXpBYPDvU0Fb3B8Za3NSOAmSiTE0aq0cC5yAeGUOdTpkllM?=
- =?us-ascii?Q?sLTdZN8j8tXBPwx1uFOqvJFd23amY8z1Q7tIcNeuRl1bUY+b12siT0pMdV9w?=
- =?us-ascii?Q?d5swFdnENiv72sljN8suK1r66JyhkWSrUe5Iu0GA/YOrZLHhRT3eP34JATRn?=
- =?us-ascii?Q?7m3RE18Lw2ycmMYLvQAds1ul88PLvFewsjGC7y/TZEi2dIrR8s1lVTLYOUbv?=
- =?us-ascii?Q?dRWNpBtEPfmOUuTMLAR6UvxNAb0rGxn6sGwDv7OMQIop7rduTmr6YOweqoQB?=
- =?us-ascii?Q?lEB4eQgdUlHsKWRAtkiDk52jMLcescIGPFFwXU/Fa4oMwU2bXVLo5iHqK70r?=
- =?us-ascii?Q?/UD1fAu/J/kTsEfTz2CfZ1M8lsN3ZbIZLRuKXu6gYU/xHPrHvaGdw1xdrES7?=
- =?us-ascii?Q?y4x31h+m7e9FRi71CVaLZWlgx/GNGP/G/nd5BvK0AZmdAT/+K3yTCxQVpJ8Z?=
- =?us-ascii?Q?dn1qNi95621BTdiA2mqdzlxRIRSLe4HGTrcx/CGcAOwJ4uZRuqTClcHrNRJM?=
- =?us-ascii?Q?eCp8smUxZXAn5jRnVSV9zAiuh7pLWfKofg/qFRoFV8WQ7ylm2EKP/jKFio8Q?=
- =?us-ascii?Q?vAg3o5K+mQn+mrh6XXzMDW2BR4kImqU+TwSDjVocSAQeASUelF4X4pvTbqGO?=
- =?us-ascii?Q?4mVDqemZBSXDqqA1cByDPRE08t5p238pW4W8N6cu9s4VfAwUS922IWPOmx5P?=
- =?us-ascii?Q?abAoKv+VxJJKSQHYPJknx6+z7r0MAmVldG+7eaxDkRPcw9f7NQOQ/JyRkFn5?=
- =?us-ascii?Q?FYxhvgTRvfpSAQrurbaDkgXl1MauJRjMwceTCcicgEhoS01jIe/2BRKXKVlb?=
- =?us-ascii?Q?D39SRRkEAjoJmqg59mk+PYTssYLDblVnTwHvk1m1XG7KOX87CSl9E6vHJqzi?=
- =?us-ascii?Q?YCByxWHbteRD/OniD8CZpeO7w9Uf9XhcyNbm08X0OIRiN8egMSh6t1rH57mB?=
- =?us-ascii?Q?yCsvqf81cHN/2z0cAHYJGcK1QJYWhr1eyTQf8mm4JhRPsIYFvF//gob8O2OV?=
- =?us-ascii?Q?MRFGwkfzFOzCq6dkWzUphCBfhFf+HQxU8p2Ewy8I6sXpr83sUiVFxnzyYJZ9?=
- =?us-ascii?Q?4f+7lBVDYVLtu70spHdlBQBA3ZQRpuJ4X/z1Q2JppgQQfj+R1Nyg2NEFx5AS?=
- =?us-ascii?Q?gB5lvGW9oLCVs1hO5BMLcTlYcnTP5qteBBZ6RWOpLDDYwVsjsbcvPs/2QMhe?=
- =?us-ascii?Q?LMEmsNZCnW65vkzag2uHcfGacdGlVxnDI8opr807ot+N7WmHmiIhXUSdapGf?=
- =?us-ascii?Q?KL83kmeMTJuZ6Mx+TrkgW4c4ejGZ2Yeqr+oCGo/qOB/ITQSyECytNLCjxfJ9?=
- =?us-ascii?Q?uiRaaSsTCJD4UqFBWeRrF25W7aTdahQSXgxUI+9PQIRr+2iXAYQ30LsujHsu?=
- =?us-ascii?Q?jj2TOrYZA1JygPj3/tcnsmhdMYdNXeGNRBjjiv6JXirl5RHxWtPCQhJRUH8i?=
- =?us-ascii?Q?VX9+fo07O1xvXTOT8HKAXzI6qmVL+7N2kxZkTJWsj13+3ZQcIJErYFm+KPEl?=
- =?us-ascii?Q?8w=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 49d462f5-f0e6-4fc4-8fbf-08dd9d2a66d2
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2025 14:25:59.8244 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ulKiZYLCHRsLDGwwN6T+pFjG+ZTq0RDrHcMM7KhjKxAgGqPotoNCaKJTKCFWqKEYTyIQt5ddHlYL01U+UqLfRm6ObI8XWBpBgv+0EQ9OlRA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR11MB9084
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -189,14 +81,137 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, May 27, 2025 at 07:04:35AM -0700, Nandini Persad wrote:
-> I modified the anchors names within the guides to have a
-> a clear prefix so that they don't collide, based on
-> advice from Thomas.
-> 
-> Signed-off-by: Nandini Persad <nandinipersad361@gmail.com>
-> ---
-Good idea.
+On Fri, 18 Apr 2025 03:24:34 +0000
+Wencheng Li <liwencheng@phytium.com.cn> wrote:
 
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+> v7:
+> - Use a legal name instead of an email alias.
+> - Do not use additional __rte_cold.
+> - Replace unsigned long with standard uint64_t.
+> - Describe the devargs used by the driver in the documentation.
+> - Update macb.ini.
+> 
+> v6:
+> - Fixed build failures across different OS.
+> 
+> v5:
+> - Putting __rte_unused after the declaration.
+> - Correct RX-bytes and TX-bytes statistics.
+> - Initialize the mbuf_initializer.
+> - Add driver based on 25.07.
+> - Fixed some code style issues.
+> 
+> v4:
+> - Fix tab errors in meson.build file.
+> - Use RTE_LOG_LINE instead of rte_log.
+> - Replace %l with %PRI*64.
+> - Replace rte_smp_[r/w]mb with rte_[r/w]mb.
+> - Do not use variadic arguments in macros.
+> - Do not use variable-length array pkts[nb_bufs].
+> - Use __rte_cache_aligned only for struct or union types alignment.
+> - Support hardware Rx/Tx checksum offload.
+> - Fixed some code style issues.
+> v3:
+> - Changed functions that always return 0 and whose return value
+> is unused to void type, improving code simplicity and readability.
+> - Fixed the implicit conversion issues in the
+> macb_usxgmii_pcs_check_for_link and
+> macb_usxgmii_pcs_check_for_link functions.
+> - Added the missing SPDX license tags.
+> - Added the missing mailmap entry.
+> - Updated the MAINTAINERS file to include the missing information.
+> 
+> v2:
+> - Split the driver into three logically independent patches,
+> rather than one large patch.
+> - Added conditional compilation to address the issue of
+> macb_rxtx_vec_neon.c failing to compile in certain modes.
+> - Fixed some code style issues.
+> 
+> v1:
+> - updated net macb driver.
+> 
+> *** BLURB HERE ***
+
+This part is supposed to be removed when sending the commit message.
+
+> 
+> Wencheng Li (3):
+>   net/macb: add new poll mode driver
+>   net/macb: add NEON vectorized Rx/Tx
+>   net/macb: add necessary docs and update related files
+> 
+>  .mailmap                               |    1 +
+>  MAINTAINERS                            |    6 +
+>  doc/guides/nics/features/macb.ini      |   19 +
+>  doc/guides/nics/index.rst              |    1 +
+>  doc/guides/nics/macb.rst               |  180 +++
+>  doc/guides/rel_notes/release_25_07.rst |    4 +
+>  drivers/net/macb/base/generic_phy.c    |  271 +++++
+>  drivers/net/macb/base/generic_phy.h    |  202 ++++
+>  drivers/net/macb/base/macb_common.c    |  670 ++++++++++++
+>  drivers/net/macb/base/macb_common.h    |  253 +++++
+>  drivers/net/macb/base/macb_errno.h     |   58 +
+>  drivers/net/macb/base/macb_hw.h        | 1138 +++++++++++++++++++
+>  drivers/net/macb/base/macb_type.h      |   23 +
+>  drivers/net/macb/base/macb_uio.c       |  351 ++++++
+>  drivers/net/macb/base/macb_uio.h       |   50 +
+>  drivers/net/macb/base/meson.build      |   25 +
+>  drivers/net/macb/macb_ethdev.c         | 1861 ++++++++++++++++++++++++++++++++
+>  drivers/net/macb/macb_ethdev.h         |   91 ++
+>  drivers/net/macb/macb_log.h            |   19 +
+>  drivers/net/macb/macb_rxtx.c           | 1394 ++++++++++++++++++++++++
+>  drivers/net/macb/macb_rxtx.h           |  325 ++++++
+>  drivers/net/macb/macb_rxtx_vec_neon.c  |  675 ++++++++++++
+>  drivers/net/macb/meson.build           |   22 +
+>  drivers/net/meson.build                |    1 +
+>  24 files changed, 7640 insertions(+)
+>  create mode 100644 doc/guides/nics/features/macb.ini
+>  create mode 100644 doc/guides/nics/macb.rst
+>  create mode 100644 drivers/net/macb/base/generic_phy.c
+>  create mode 100644 drivers/net/macb/base/generic_phy.h
+>  create mode 100644 drivers/net/macb/base/macb_common.c
+>  create mode 100644 drivers/net/macb/base/macb_common.h
+>  create mode 100644 drivers/net/macb/base/macb_errno.h
+>  create mode 100644 drivers/net/macb/base/macb_hw.h
+>  create mode 100644 drivers/net/macb/base/macb_type.h
+>  create mode 100644 drivers/net/macb/base/macb_uio.c
+>  create mode 100644 drivers/net/macb/base/macb_uio.h
+>  create mode 100644 drivers/net/macb/base/meson.build
+>  create mode 100644 drivers/net/macb/macb_ethdev.c
+>  create mode 100644 drivers/net/macb/macb_ethdev.h
+>  create mode 100644 drivers/net/macb/macb_log.h
+>  create mode 100644 drivers/net/macb/macb_rxtx.c
+>  create mode 100644 drivers/net/macb/macb_rxtx.h
+>  create mode 100644 drivers/net/macb/macb_rxtx_vec_neon.c
+>  create mode 100644 drivers/net/macb/meson.build
+> 
+
+Noticed that this driver is resetting the log level values.
+This doesn't follow pattern of other drivers.
+
+ $ git grep rte_log_set_level
+macb/macb_ethdev.c:     rte_log_set_level(macb_logtype, rte_log_get_global_level());
+macb/macb_ethdev.c:             rte_log_set_level(macb_logtype, RTE_LOG_NOTICE);
+
+Noticed that driver has option where it needs to link with external
+phy library. That should be documented more; what is the library, how to get it etc.
+
+You are using eth0, eth1, etc in the doc but not clear what relationship if any
+is with kernel driver.
+
+I would also leave out any non-driver specific options to test-pmd in macb.rst.
+These might change in the future, and are not specific to this device.
+The default test-pmd values for rxq, txq, rxd, txd should be good enough.
+
+Since macb requires out of tree kernel module.
+Where is source for kernel module, what is its license?
+If it is not going to be submitted to kernel as GPLv2 then this needs discussion
+and approval by Technical Board.
+
+Out of tree kernel modules are a real negative. It is hard to write good, safe, and correct
+kernel code for UIO. That is why DPDK abandoned igb_uio and kni. They were buggy,
+hard to support and prone to failure.
+
+
 
