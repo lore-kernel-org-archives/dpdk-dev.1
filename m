@@ -2,48 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E59C54F30
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 May 2025 13:18:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFEF5C54F30
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 May 2025 13:18:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8DB3E40A8A;
-	Tue, 27 May 2025 15:17:59 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E002540697;
+	Tue, 27 May 2025 15:18:01 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id 3FBC640669;
- Tue, 27 May 2025 15:17:57 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 775C140685
+ for <dev@dpdk.org>; Tue, 27 May 2025 15:17:58 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1748351877; x=1779887877;
+ t=1748351879; x=1779887879;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=VZwcIyJsYATf4Mjf53YVDQgjShIfppWlKnG1aqP+rLU=;
- b=M89Z6NFvfGY1CuiBNfVeiXeBMsxcGpaclRX5YYXhVL7QXh4EQPitAMXB
- qUCGJH3KF73KsFC6s1iPR9X1o/OOycgZhgCUn9G2VnJqdqz2Z7SshFcC5
- WU1KtzsbOEULU4aKNA+MKQ2Ko+3xDKgM8Ao4n0YGkLJvz8xyb9kT6mS+p
- DOicZDTWfeV5412ubyyx3QOTw7lbiMesT1dHhNw7wh62JcITxpU+oc+Km
- 8ShrYZCG1C6kSz4pnRaq3rPPO6rDsZO5r6S/b3KwsfdysaVNEMEd7TB9a
- wpZRc8ouFIu9c9mB3BTNPNzyIM4/s8EQoQ8JugNg7OXisQyQnunpO/JQA A==;
-X-CSE-ConnectionGUID: bB9mQTijS+CaVKFM5qWScg==
-X-CSE-MsgGUID: U/+ndnPeR7enRUbwgoMSTg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11446"; a="67884842"
-X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; d="scan'208";a="67884842"
+ bh=v5n2tP2s1SLf0ky5juQRN5KJRVlM8uZ8RLTFUyBvcyc=;
+ b=YMtiWsHeNbnsrWDyYFBOzqWtQOsD7yKJXXZJsK4+7RBJTAGfCFhWdVEr
+ Ij2gnbmW4QhiGceYyfG5W1og62MsGQg8gLEQrs25ausqAczjT3uc2hXVE
+ AXgNTxiBEYHA1myWr12IHHYn1Bg/iVGqDULj121WotLHQTmljY+SDEpu1
+ 7UpNe61FlU5ZLZf/4IAlm6Il219NWGIkZZb+mCduLKhASxb9O8Lbva7cO
+ 1cwVHrI8qm0xdVxrfyMF2IfvR2g8XYEkeQEITUxoKowSEQOEKpCHFOGXR
+ VkinFiXBvxjcKLxP3cW/1LVYzrp2ty33lTfPNzZhNXo0xxjHU0ajT2/QD Q==;
+X-CSE-ConnectionGUID: NZ3KNmxiTeWVrwJRvOrxpw==
+X-CSE-MsgGUID: 26DgVaDoQXixTLIj4Wh9og==
+X-IronPort-AV: E=McAfee;i="6700,10204,11446"; a="67884844"
+X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; d="scan'208";a="67884844"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 May 2025 06:17:57 -0700
-X-CSE-ConnectionGUID: yc/ZWlQ8RhePbb//EDGjpw==
-X-CSE-MsgGUID: 92leiJEWS5aLcw2GC3nV3g==
+ 27 May 2025 06:17:58 -0700
+X-CSE-ConnectionGUID: eO4FfwTlSeSl0i8yf1zesg==
+X-CSE-MsgGUID: OLdZNJMWTZymLzycncUxxw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; d="scan'208";a="143150062"
+X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; d="scan'208";a="143150071"
 Received: from unknown (HELO silpixa00401120.ir.intel.com) ([10.55.128.58])
- by fmviesa008.fm.intel.com with ESMTP; 27 May 2025 06:17:55 -0700
+ by fmviesa008.fm.intel.com with ESMTP; 27 May 2025 06:17:57 -0700
 From: Dhanya Pillai <dhanya.r.pillai@intel.com>
 To: Bruce Richardson <bruce.richardson@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Robin Zhang <robinx.zhang@intel.com>, Ferruh Yigit <ferruh.yigit@intel.com>
-Cc: dev@dpdk.org, Lukasz Krakowiak <lukaszx.krakowiak@intel.com>,
- stable@dpdk.org, Dhanya Pillai <dhanya.r.pillai@intel.com>
-Subject: [PATCH v3 05/10] net/ice/base: fix typo in desc for dev ID 579F
-Date: Tue, 27 May 2025 13:17:24 +0000
-Message-ID: <20250527131741.7606-6-dhanya.r.pillai@intel.com>
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Cc: dev@dpdk.org, Oleg Akhrem <oleg.akhrem@intel.com>,
+ Dhanya Pillai <dhanya.r.pillai@intel.com>
+Subject: [PATCH v3 06/10] net/ice/base: ptp minimal refactoring
+Date: Tue, 27 May 2025 13:17:25 +0000
+Message-ID: <20250527131741.7606-7-dhanya.r.pillai@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250527131741.7606-1-dhanya.r.pillai@intel.com>
 References: <20250527131741.7606-1-dhanya.r.pillai@intel.com>
@@ -62,31 +61,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Lukasz Krakowiak <lukaszx.krakowiak@intel.com>
+From: Oleg Akhrem <oleg.akhrem@intel.com>
 
-Fix typo in desc for dev ID 579F.
+Removed redundant code. The *clk_freq and *clk_src are not modified.
 
-Fixes: 6fd3889c1779 ("net/ice/base: support E824S and E825 devices")
-Cc: stable@dpdk.org
-Signed-off-by: Lukasz Krakowiak <lukaszx.krakowiak@intel.com>
+Signed-off-by: Oleg Akhrem <oleg.akhrem@intel.com>
 Signed-off-by: Dhanya Pillai <dhanya.r.pillai@intel.com>
 ---
- drivers/net/intel/ice/base/ice_devids.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/intel/ice/base/ice_ptp_hw.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/intel/ice/base/ice_devids.h b/drivers/net/intel/ice/base/ice_devids.h
-index 807b5d0c29..20c6dbd4a5 100644
---- a/drivers/net/intel/ice/base/ice_devids.h
-+++ b/drivers/net/intel/ice/base/ice_devids.h
-@@ -90,7 +90,7 @@
- #define ICE_DEV_ID_E825C_QSFP		0x579D
- /* Intel(R) Ethernet Connection E825-C for SFP */
- #define ICE_DEV_ID_E825C_SFP		0x579E
--/* Intel(R) Ethernet Connection E825-C 1GbE */
-+/* Intel(R) Ethernet Connection E825-C 10GbE */
- #define ICE_DEV_ID_E825C_SGMII		0x579F
- #define ICE_DEV_ID_C825X		0x0DCD
- #endif /* _ICE_DEVIDS_H_ */
+diff --git a/drivers/net/intel/ice/base/ice_ptp_hw.c b/drivers/net/intel/ice/base/ice_ptp_hw.c
+index 1e92e5ff21..7d16965674 100644
+--- a/drivers/net/intel/ice/base/ice_ptp_hw.c
++++ b/drivers/net/intel/ice/base/ice_ptp_hw.c
+@@ -520,9 +520,6 @@ ice_cfg_cgu_pll_e825c(struct ice_hw *hw, enum ice_time_ref_freq *clk_freq,
+ 		  ice_clk_src_str(dw23.field.time_ref_sel),
+ 		  ice_clk_freq_str(dw9.field.time_ref_freq_sel));
+ 
+-	*clk_freq = (enum ice_time_ref_freq)dw9.field.time_ref_freq_sel;
+-	*clk_src = (enum ice_clk_src)dw23.field.time_ref_sel;
+-
+ 	return 0;
+ }
+ 
+@@ -798,11 +795,11 @@ static int ice_init_cgu_e82x(struct ice_hw *hw)
+ 		ice_warn(hw, "Failed to lock TS PLL to predefined frequency. Retrying with fallback frequency.\n");
+ 
+ 		/* Try to lock to internal 25 MHz TCXO as a fallback */
++		time_ref_freq = ICE_TIME_REF_FREQ_25_000;
++		clk_src = ICE_CLK_SRC_TCX0;
+ 		if (hw->phy_model == ICE_PHY_ETH56G)
+ 			time_ref_freq = ICE_TIME_REF_FREQ_156_250;
+-		else
+-			time_ref_freq = ICE_TIME_REF_FREQ_25_000;
+-		clk_src = ICE_CLK_SRC_TCX0;
++
+ 		if (ice_is_e825c(hw))
+ 			err = ice_cfg_cgu_pll_e825c(hw, &time_ref_freq,
+ 						    &clk_src);
 -- 
 2.43.0
 
