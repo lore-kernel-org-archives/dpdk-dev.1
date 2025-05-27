@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2538FC54F30
-	for <dpdk-dev@archiver.kernel.org>; Tue, 27 May 2025 11:05:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49BC1C54F30
+	for <dpdk-dev@archiver.kernel.org>; Tue, 27 May 2025 11:05:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 53F01409FA;
-	Tue, 27 May 2025 13:03:09 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id ACE1740E2C;
+	Tue, 27 May 2025 13:03:10 +0200 (CEST)
 Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
  [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 8D0CE40685
- for <dev@dpdk.org>; Tue, 27 May 2025 13:03:07 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 32BF940395
+ for <dev@dpdk.org>; Tue, 27 May 2025 13:03:09 +0200 (CEST)
 Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54R6t7Fo019630
- for <dev@dpdk.org>; Tue, 27 May 2025 04:03:06 -0700
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54R6sfV5018502
+ for <dev@dpdk.org>; Tue, 27 May 2025 04:03:08 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=1
- O7ZpH37342PJ1hUc9Is94ybaToxC+fJVvYuNiLsXfM=; b=Hsq89El7hV5pBMhqB
- MUqIMgEaZNj/rA1efWtbkqJHUG/KFne5A9U5XvJTR0crQeSI/Omtyke4Ka1c+tWZ
- ZMFx4wBDvCiVL3bJTHvWuMvjbfdcCmG6d+Xtefyf2LD+a0i5Ck4fYmgzVDeJN/0P
- ARxu27nw1RQk1tPTMl3/i0RryzeJWFH94Dnx0a12Q33Gi4PfWOHhESN9zFa2LYMT
- hv0J55fncbSeJTNjL8IlLXxgMOjuj91QUu6bJGURB8qR/6W/PPcT8n1JEOFikCIe
- nTFk9muEpTtH2WHUDAcNaJnGNmAQma346xvETlT+qPyF/yka4l/S7ggyk0+XOmNU
- cR3yw==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46w8hq8dr7-1
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=S
+ 9TR/u6VBUgxkeQ7tfgoc/rgACG0fRULBBHnIpB0DvI=; b=bDSLTg4i5CHR3t+Cs
+ FtefgauB0vfuQKeS92tBbrgQxtTdjh0loTQGjuFSr6yWTTRSgL+uFvCFL9+zkLof
+ MT66MAGSdABR6yd+EUtfWzDg8QcWdJMXosHf1czlZGcUGxDm18xj2pSsq/I+QoXA
+ j1UB9wTlvKcwN62jFSqnVvaiTgx9MCFJXsGZoeI2FH5135IuzhBDdpgwiabbY4ym
+ gO+z8kWXJbmX3dLwHg7hggRei//K0iL7WRMWk/AHZ+B22tFrkpUa7JShlRGebyUr
+ NijIwlAawM4C+DD35rZY0Pc/qVDzdp/HDQwx+cTmvjAVBcWxqRt4W5q5NkuE2T1g
+ wmPyQ==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 46w8hq8dr8-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Tue, 27 May 2025 04:03:06 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ for <dev@dpdk.org>; Tue, 27 May 2025 04:03:08 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 27 May 2025 04:03:05 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 27 May 2025 04:03:05 -0700
+ 15.2.1544.4; Tue, 27 May 2025 04:03:07 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 27 May 2025 04:03:07 -0700
 Received: from hyd1554.caveonetworks.com (unknown [10.29.56.32])
- by maili.marvell.com (Postfix) with ESMTP id 65D7D3F7061;
- Tue, 27 May 2025 04:03:03 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id B5C923F7061;
+ Tue, 27 May 2025 04:03:05 -0700 (PDT)
 From: Tejasree Kondoj <ktejasree@marvell.com>
 To: Akhil Goyal <gakhil@marvell.com>
-CC: Vidya Sagar Velumuri <vvelumuri@marvell.com>, Anoob Joseph
- <anoobj@marvell.com>, <dev@dpdk.org>
-Subject: [PATCH 24/25] crypto/cnxk: add model check for cn20k
-Date: Tue, 27 May 2025 16:32:04 +0530
-Message-ID: <20250527110205.2300800-25-ktejasree@marvell.com>
+CC: Anoob Joseph <anoobj@marvell.com>, Vidya Sagar Velumuri
+ <vvelumuri@marvell.com>, <dev@dpdk.org>
+Subject: [PATCH 25/25] doc: update CN20K CPT documentation
+Date: Tue, 27 May 2025 16:32:05 +0530
+Message-ID: <20250527110205.2300800-26-ktejasree@marvell.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250527110205.2300800-1-ktejasree@marvell.com>
 References: <20250527110205.2300800-1-ktejasree@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI3MDA5MCBTYWx0ZWRfX96BYLhpEkXb4
- zFlHUMbApmA0kqAwMC70oRW3o5n/TVx1UfIMv1ySJteKZWLEFyKt2JaN1+UFvnY1HngQN7aV2lk
- g93Ye1q94T7/0EdZ44T+PnDOYiZrR/e2MraWHpri4F6bT2EkiZgw3WN1h8PBl0RX5lKm2SPlLyU
- KGRCgBovlvoa8uBWKFkSwIRfjSmlZPh5fbE5zl0b/Db/j0yKqU9p/HmBzLGJUXatDlsni9xN9hi
- g3W5yrLVkbXMY4lHzYYX03uZ9y3HpNrG3CWf4TWX4trDq11rI6ipXBDKjz9mM1FEklBZomxMENH
- Zzt/rOO4YHUVWgxPrlunk8JT7Dsch8YPTUzfNwkgTvOfHsRtTy9b38y66TS29MzaQBcruEiV5UR
- 7viKCJUhPMkYLPHc9ZS7SuVibPSCAoLFNtZSa8aBiTBWLfFzuudZRzLMppgo7G/sG2BWXSGA
-X-Authority-Analysis: v=2.4 cv=D89HKuRj c=1 sm=1 tr=0 ts=68359bea cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=zATx9W9L8u6M64y1SlQA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI3MDA5MCBTYWx0ZWRfX8b4l3VTN8k00
+ sO0YQrVgIJQqI1/LcVOYJ3aamN2K4EStcGmVPWSoBevJoUculRgP/j+i692YdPFRMiSFBObcGyZ
+ c/9ywOafAF9nrXrGnElcCP107Sb+rn/axxzQH6a4YNEI2DUF1jpTHe34sbZx2CCAHY9+M0+9RRW
+ gb0BS1kgLjDFvtb+evK5gvIr8YK88Yw0TGUD0ctn2rSkfsJ9vHV+EN7xOieqjP/XMiwSnL3jf2D
+ XQ8vVL87c21ftneuK7gsZLj9fjeAbZcJXZKGBHlflYDBlzSGGDuDuD33hYwQGWV8NPn/hpMZGgz
+ 968tLVPPHDcKw+/8y79cicebtZAdZQYL18hbj9sDnM/CTPPxlfLVrvOFU7WMbX6JjTtIPspioy+
+ hS+Nde3a62h3sxx8AYlEI2bM4drBtn3nmLhi3EfjYcNJQeactJ8TLRbC3bEVTYGUp5pUllzy
+X-Authority-Analysis: v=2.4 cv=D89HKuRj c=1 sm=1 tr=0 ts=68359bec cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=6cXmKztfqU2S9WV7NuMA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: xBcy8mz4owFW1f6bu9t0wqYwjmxy9BKd
-X-Proofpoint-ORIG-GUID: xBcy8mz4owFW1f6bu9t0wqYwjmxy9BKd
+X-Proofpoint-GUID: Dl9fHXdV47w101cf_9cuWW07k_JRF67u
+X-Proofpoint-ORIG-GUID: Dl9fHXdV47w101cf_9cuWW07k_JRF67u
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-27_05,2025-05-27_01,2025-03-28_01
@@ -80,142 +80,213 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Vidya Sagar Velumuri <vvelumuri@marvell.com>
+Updating documentation for CN20K CPT support.
 
-Add model checks for cn20k.
-Enable crypto and security capabilities for cn20k
-
-Signed-off-by: Vidya Sagar Velumuri <vvelumuri@marvell.com>
+Signed-off-by: Tejasree Kondoj <ktejasree@marvell.com>
 ---
- drivers/crypto/cnxk/cnxk_cryptodev.c             | 14 ++++++++------
- .../crypto/cnxk/cnxk_cryptodev_capabilities.c    | 10 +++++-----
- drivers/crypto/cnxk/cnxk_cryptodev_ops.c         | 16 ++++++++++++----
- 3 files changed, 25 insertions(+), 15 deletions(-)
+ doc/guides/cryptodevs/cnxk.rst           |  26 +++++-
+ doc/guides/cryptodevs/features/cn20k.ini | 113 +++++++++++++++++++++++
+ 2 files changed, 134 insertions(+), 5 deletions(-)
+ create mode 100644 doc/guides/cryptodevs/features/cn20k.ini
 
-diff --git a/drivers/crypto/cnxk/cnxk_cryptodev.c b/drivers/crypto/cnxk/cnxk_cryptodev.c
-index 1eede2e59c..96b5121097 100644
---- a/drivers/crypto/cnxk/cnxk_cryptodev.c
-+++ b/drivers/crypto/cnxk/cnxk_cryptodev.c
-@@ -21,10 +21,10 @@ cnxk_cpt_default_ff_get(void)
- 		      RTE_CRYPTODEV_FF_OOP_SGL_IN_SGL_OUT | RTE_CRYPTODEV_FF_SYM_SESSIONLESS |
- 		      RTE_CRYPTODEV_FF_DIGEST_ENCRYPTED | RTE_CRYPTODEV_FF_SECURITY;
+diff --git a/doc/guides/cryptodevs/cnxk.rst b/doc/guides/cryptodevs/cnxk.rst
+index ac843ddc53..1799161fdf 100644
+--- a/doc/guides/cryptodevs/cnxk.rst
++++ b/doc/guides/cryptodevs/cnxk.rst
+@@ -9,8 +9,8 @@ cryptographic operations to cryptographic accelerator units on the
+ **Marvell OCTEON cnxk** SoC family.
  
--	if (roc_model_is_cn10k())
-+	if (roc_model_is_cn10k() || roc_model_is_cn20k())
- 		ff |= RTE_CRYPTODEV_FF_SECURITY_INNER_CSUM | RTE_CRYPTODEV_FF_SYM_RAW_DP;
+ The cnxk crypto PMD code is organized into different sets of files.
+-The file names starting with cn9k and cn10k provides support for CN9XX
+-and CN10XX respectively. The common code between the SoCs is present
++The file names starting with cn9k, cn10k and cn20k provides support for CN9XX,
++CN10XX and CN20XX respectively. The common code between the SoCs is present
+ in file names starting with cnxk.
  
--	if (roc_model_is_cn10ka_b0() || roc_model_is_cn10kb())
-+	if (roc_model_is_cn10ka_b0() || roc_model_is_cn10kb() || roc_model_is_cn20k())
- 		ff |= RTE_CRYPTODEV_FF_SECURITY_RX_INJECT;
+ More information about OCTEON cnxk SoCs may be obtained from `<https://www.marvell.com>`_
+@@ -20,6 +20,7 @@ Supported OCTEON cnxk SoCs
  
- 	return ff;
-@@ -41,10 +41,12 @@ cnxk_cpt_eng_grp_add(struct roc_cpt *roc_cpt)
- 		return -ENOTSUP;
- 	}
+ - CN9XX
+ - CN10XX
++- CN20XX
  
--	ret = roc_cpt_eng_grp_add(roc_cpt, CPT_ENG_TYPE_IE);
--	if (ret < 0) {
--		plt_err("Could not add CPT IE engines");
--		return -ENOTSUP;
-+	if (!roc_model_is_cn20k()) {
-+		ret = roc_cpt_eng_grp_add(roc_cpt, CPT_ENG_TYPE_IE);
-+		if (ret < 0) {
-+			plt_err("Could not add CPT IE engines");
-+			return -ENOTSUP;
-+		}
- 	}
+ Features
+ --------
+@@ -144,7 +145,7 @@ Bind the CPT VF device to the vfio_pci driver:
  
- 	ret = roc_cpt_eng_grp_add(roc_cpt, CPT_ENG_TYPE_AE);
-diff --git a/drivers/crypto/cnxk/cnxk_cryptodev_capabilities.c b/drivers/crypto/cnxk/cnxk_cryptodev_capabilities.c
-index 63d2eef349..d2747878d3 100644
---- a/drivers/crypto/cnxk/cnxk_cryptodev_capabilities.c
-+++ b/drivers/crypto/cnxk/cnxk_cryptodev_capabilities.c
-@@ -1976,16 +1976,16 @@ crypto_caps_populate(struct rte_cryptodev_capabilities cnxk_caps[],
- 	CPT_CAPS_ADD(cnxk_caps, &cur_pos, hw_caps, kasumi);
- 	CPT_CAPS_ADD(cnxk_caps, &cur_pos, hw_caps, des);
+       Refer to :ref:`linux_gsg_hugepages` for more details.
  
--	if (!roc_model_is_cn10k())
-+	if (roc_model_is_cn9k())
- 		cn9k_crypto_caps_add(cnxk_caps, &cur_pos);
+-``CN10K Initialization``
++``CN10K/CN20K Initialization``
  
--	if (roc_model_is_cn10k())
-+	if (roc_model_is_cn10k() || roc_model_is_cn20k())
- 		cn10k_crypto_caps_add(cnxk_caps, hw_caps, &cur_pos);
+ List the CPT PF devices available on cn10k platform:
  
- 	cpt_caps_add(cnxk_caps, &cur_pos, caps_null, RTE_DIM(caps_null));
- 	cpt_caps_add(cnxk_caps, &cur_pos, caps_end, RTE_DIM(caps_end));
+@@ -232,6 +233,13 @@ running the test application:
+     ./dpdk-test
+     RTE>>cryptodev_cn10k_autotest
  
--	if (roc_model_is_cn10k())
-+	if (roc_model_is_cn10k() || roc_model_is_cn20k())
- 		cn10k_crypto_caps_update(cnxk_caps);
- }
- 
-@@ -2060,7 +2060,7 @@ sec_ipsec_crypto_caps_populate(struct rte_cryptodev_capabilities cnxk_caps[],
- 	SEC_IPSEC_CAPS_ADD(cnxk_caps, &cur_pos, hw_caps, des);
- 	SEC_IPSEC_CAPS_ADD(cnxk_caps, &cur_pos, hw_caps, sha1_sha2);
- 
--	if (roc_model_is_cn10k())
-+	if (roc_model_is_cn10k() || roc_model_is_cn20k())
- 		cn10k_sec_ipsec_crypto_caps_update(cnxk_caps, &cur_pos);
- 	else
- 		cn9k_sec_ipsec_crypto_caps_update(cnxk_caps);
-@@ -2189,7 +2189,7 @@ cnxk_cpt_caps_populate(struct cnxk_cpt_vf *vf)
- 
- 			cnxk_sec_ipsec_caps_update(&vf->sec_caps[i]);
- 
--			if (roc_model_is_cn10k())
-+			if (roc_model_is_cn10k() || roc_model_is_cn20k())
- 				cn10k_sec_ipsec_caps_update(&vf->sec_caps[i]);
- 
- 			if (roc_model_is_cn9k())
-diff --git a/drivers/crypto/cnxk/cnxk_cryptodev_ops.c b/drivers/crypto/cnxk/cnxk_cryptodev_ops.c
-index 982fbe991f..e5ca082e10 100644
---- a/drivers/crypto/cnxk/cnxk_cryptodev_ops.c
-+++ b/drivers/crypto/cnxk/cnxk_cryptodev_ops.c
-@@ -741,8 +741,10 @@ cnxk_cpt_inst_w7_get(struct cnxk_se_sess *sess, struct roc_cpt *roc_cpt)
- 		inst_w7.s.cptr += 8;
- 
- 	/* Set the engine group */
--	if (sess->zsk_flag || sess->aes_ctr_eea2 || sess->is_sha3 || sess->is_sm3 ||
--	    sess->passthrough || sess->is_sm4)
-+	if (roc_model_is_cn20k())
-+		inst_w7.s.egrp = roc_cpt->eng_grp[CPT_ENG_TYPE_SE];
-+	else if (sess->zsk_flag || sess->aes_ctr_eea2 || sess->is_sha3 || sess->is_sm3 ||
-+		 sess->passthrough || sess->is_sm4)
- 		inst_w7.s.egrp = roc_cpt->eng_grp[CPT_ENG_TYPE_SE];
- 	else
- 		inst_w7.s.egrp = roc_cpt->eng_grp[CPT_ENG_TYPE_IE];
-@@ -1043,7 +1045,7 @@ RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_cnxk_crypto_submit, 24.03)
- void
- rte_pmd_cnxk_crypto_submit(struct rte_pmd_cnxk_crypto_qptr *qptr, void *inst, uint16_t nb_inst)
- {
--	if (roc_model_is_cn10k())
-+	if (roc_model_is_cn10k() || roc_model_is_cn20k())
- 		return cnxk_crypto_cn10k_submit(qptr, inst, nb_inst);
- 	else if (roc_model_is_cn9k())
- 		return cnxk_crypto_cn9k_submit(qptr, inst, nb_inst);
-@@ -1068,7 +1070,7 @@ rte_pmd_cnxk_crypto_cptr_flush(struct rte_pmd_cnxk_crypto_qptr *qptr,
- 		return -EINVAL;
- 	}
- 
--	if (unlikely(!roc_model_is_cn10k())) {
-+	if (unlikely(roc_model_is_cn9k())) {
- 		plt_err("Invalid cnxk model");
- 		return -EINVAL;
- 	}
-@@ -1106,6 +1108,12 @@ rte_pmd_cnxk_crypto_cptr_get(struct rte_pmd_cnxk_crypto_sess *rte_sess)
- 	}
- 
- 	if (rte_sess->sess_type == RTE_CRYPTO_OP_SECURITY_SESSION) {
-+		if (roc_model_is_cn20k()) {
-+			struct cn20k_sec_session *sec_sess = PLT_PTR_CAST(rte_sess->sec_sess);
++``CN20K``
 +
-+			return PLT_PTR_CAST(&sec_sess->sa);
-+		}
++.. code-block:: console
 +
- 		if (roc_model_is_cn10k()) {
- 			struct cn10k_sec_session *sec_sess = PLT_PTR_CAST(rte_sess->sec_sess);
- 			return PLT_PTR_CAST(&sec_sess->sa);
++    ./dpdk-test
++    RTE>>cryptodev_cn20k_autotest
++
+ The asymmetric crypto operations on OCTEON cnxk crypto PMD may be verified by
+ running the test application:
+ 
+@@ -249,6 +257,13 @@ running the test application:
+     ./dpdk-test
+     RTE>>cryptodev_cn10k_asym_autotest
+ 
++``CN20K``
++
++.. code-block:: console
++
++    ./dpdk-test
++    RTE>>cryptodev_cn20k_asym_autotest
++
+ Lookaside IPsec Support
+ -----------------------
+ 
+@@ -265,6 +280,7 @@ Supported OCTEON cnxk SoCs
+ 
+ - CN9XX
+ - CN10XX
++- CN20XX
+ 
+ CN9XX Features supported
+ ~~~~~~~~~~~~~~~~~~~~~~~~
+@@ -301,8 +317,8 @@ Auth algorithms
+ * AES-XCBC-96
+ * AES-GMAC
+ 
+-CN10XX Features supported
+-~~~~~~~~~~~~~~~~~~~~~~~~~
++CN10XX/CN20XX Features supported
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ * IPv4
+ * ESP
+diff --git a/doc/guides/cryptodevs/features/cn20k.ini b/doc/guides/cryptodevs/features/cn20k.ini
+new file mode 100644
+index 0000000000..76553d190e
+--- /dev/null
++++ b/doc/guides/cryptodevs/features/cn20k.ini
+@@ -0,0 +1,113 @@
++;
++; Supported features of the 'cn20k' crypto driver.
++;
++; Refer to default.ini for the full list of available PMD features.
++;
++[Features]
++Symmetric crypto       = Y
++Asymmetric crypto      = Y
++Sym operation chaining = Y
++HW Accelerated         = Y
++Protocol offload       = Y
++In Place SGL           = Y
++OOP SGL In LB  Out     = Y
++OOP SGL In SGL Out     = Y
++OOP LB  In LB  Out     = Y
++Symmetric sessionless  = Y
++RSA PRIV OP KEY EXP    = Y
++RSA PRIV OP KEY QT     = Y
++Digest encrypted       = Y
++Sym raw data path API  = Y
++Inner checksum         = Y
++Rx inject              = Y
++
++;
++; Supported crypto algorithms of 'cn20k' crypto driver.
++;
++[Cipher]
++NULL           = Y
++3DES CBC       = Y
++3DES ECB       = Y
++AES CBC (128)  = Y
++AES CBC (192)  = Y
++AES CBC (256)  = Y
++AES CTR (128)  = Y
++AES CTR (192)  = Y
++AES CTR (256)  = Y
++AES XTS (128)  = Y
++AES XTS (256)  = Y
++DES CBC        = Y
++KASUMI F8      = Y
++SNOW3G UEA2    = Y
++ZUC EEA3       = Y
++SM4 ECB        = Y
++SM4 CBC        = Y
++SM4 CTR        = Y
++SM4 CFB        = Y
++SM4 OFB        = Y
++
++;
++; Supported authentication algorithms of 'cn20k' crypto driver.
++;
++[Auth]
++NULL            = Y
++AES GMAC        = Y
++KASUMI F9       = Y
++MD5             = Y
++MD5 HMAC        = Y
++SHA1            = Y
++SHA1 HMAC       = Y
++SHA224          = Y
++SHA224 HMAC     = Y
++SHA256          = Y
++SHA256 HMAC     = Y
++SHA384          = Y
++SHA384 HMAC     = Y
++SHA512          = Y
++SHA512 HMAC     = Y
++SNOW3G UIA2     = Y
++ZUC EIA3        = Y
++AES CMAC (128)  = Y
++AES CMAC (192)  = Y
++AES CMAC (256)  = Y
++SHA3_224        = Y
++SHA3_224 HMAC   = Y
++SHA3_256        = Y
++SHA3_256 HMAC   = Y
++SHA3_384        = Y
++SHA3_384 HMAC   = Y
++SHA3_512        = Y
++SHA3_512 HMAC   = Y
++SHAKE_128       = Y
++SHAKE_256       = Y
++SM3             = Y
++
++;
++; Supported AEAD algorithms of 'cn20k' crypto driver.
++;
++[AEAD]
++AES GCM (128)     = Y
++AES GCM (192)     = Y
++AES GCM (256)     = Y
++AES CCM (128)     = Y
++AES CCM (192)     = Y
++AES CCM (256)     = Y
++CHACHA20-POLY1305 = Y
++
++;
++; Supported Asymmetric algorithms of the 'cn20k' crypto driver.
++;
++[Asymmetric]
++RSA                     = Y
++Modular Exponentiation  = Y
++ECDH                    = Y
++ECDSA                   = Y
++ECPM                    = Y
++SM2                     = Y
++EdDSA                   = Y
++
++;
++; Supported Operating systems of the 'cn20k' crypto driver.
++;
++[OS]
++Linux = Y
 -- 
 2.25.1
 
