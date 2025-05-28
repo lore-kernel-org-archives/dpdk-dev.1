@@ -2,163 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70865C5AD49
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 May 2025 14:59:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 361AEC3ABB2
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 May 2025 15:00:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 57E41406BC;
-	Wed, 28 May 2025 16:59:19 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id 87E0C40156
- for <dev@dpdk.org>; Wed, 28 May 2025 16:59:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1748444358; x=1779980358;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=AnvkE5THvdN7XbnF/UI7MHe2gMIuCDZj0xFMekB1KgI=;
- b=Y5oCwApMcVkAkv+IdZ+zJnIStF/I+d0n0WrNmc6aVHBQodZpO3gOllzR
- 2dxo9Uf/1X+Mp8bl7bF/9dVIc7XGhkcSPutBpVnAlEk3G/l8AFn181vIK
- MOxKUGKKbmq8VDqy21s1bnzZ1oI8RRoCmj4G/ooMjj/0idkiFvhnG36IH
- V/BpByC0gSqx3wTUx8oyoVh9NMn51+cpFjGJAcmcXgFO9I/24Dnj0KUkF
- k0aamY8fuo+8D7MNzPUhJaXE5MJHOeo9Zx0UsDCCEYS3gikY8apgwe4Iz
- IpEQd26xZSpBxREvikvkz/gQjJJpzOa8dJ6uQ3P2zPgxff9HKmwFuGmmt A==;
-X-CSE-ConnectionGUID: baPRNU53RtaxCHDk90HKbw==
-X-CSE-MsgGUID: ij3Xn3VESyei8GdNRG1Inw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11447"; a="61134646"
-X-IronPort-AV: E=Sophos;i="6.15,321,1739865600"; d="scan'208";a="61134646"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
- by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 28 May 2025 07:59:17 -0700
-X-CSE-ConnectionGUID: IA89OmiLSOaestqg4u4U/w==
-X-CSE-MsgGUID: XPuVbkxzRlCHGxUmjIQLOg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,321,1739865600"; d="scan'208";a="143300737"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 28 May 2025 07:59:17 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id 91A1A406BC;
+	Wed, 28 May 2025 17:00:07 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 0203840156
+ for <dev@dpdk.org>; Wed, 28 May 2025 17:00:05 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54SDqwCa010624;
+ Wed, 28 May 2025 08:00:05 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=/KjXSujtxKbKRCLblI5RTIk
+ cRrj9j2WheO+YslDcx3M=; b=S5tGNVh2/ezTN3FKEX8I8Ey/Jpgsz0eMF5b6POC
+ 54KyS4a7E/goiKR3gtuDi8HzFnAQso9Wv9uzc/XffzDSGZo+RXqVF95riIXe7y94
+ HngSulsebhL1G/XKEXwV0O/QGU9Z1HKq43RQ1GhR0EOMj0KA7ExjiPTY3F3xUzID
+ KddicgrZoA+xMZXijvSWOPS8Z5EefBrc5Pr7rmFT/1Kdg4aclRNwbIwwD5GUVAzK
+ kSAMBB4a9eh9Y8SJaABXrka1sMWVzh88b1cfbRMxF5ABeZRma+ymVK0Z1XGRETOS
+ jKjutZMbCexnxjDdjLmv0bNJAd6Wj6PlO2ZciBSNjNzajag==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46x1e30bcj-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Wed, 28 May 2025 08:00:05 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 28 May 2025 07:59:15 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Wed, 28 May 2025 07:59:15 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.79)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.55; Wed, 28 May 2025 07:59:15 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j743H91ER2iTHuLqCxorPgfIwbkzb3txkZuhmgVVbmsWR4KSzEJkDJ2oXRxE9YqeFTWoHps7a0AN8+KK+bTiVC9/4FyrrGcwMdsltrwJHG3KX8fOpvn4PlNeUfHDgT/5p8kgzLT4oVU5tT0jvo2UQRDSKLZJrr0MIfZzAYqT3P66R7beRzDABi3xpCSJ/Rxmv7HueZOgkHFhIfOaRLOFjbGilfu5CE9KqkvI+Box3OCkBgtHotWxrWmekOQVTl+z60ZEBaQrZ4e5ijVtsmbUKJ/41bqHrhWlia58ln8n8fuS9/arD/7C37asXUPBTPlcwCAtDMpcx9novn5roXX9rA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=B66I2NV0nz+stZS0cMsgl7im+iUvWi6No45X1ONy5y8=;
- b=MjmlAqH4zVJA5VuaL6ce0/9z9XBpX6oP1MMLtlMvDVNmlsNvocbw9GgpEjca3omF8RnNGBJmF7N5HsnbB482AECwDIA0dZGhYk4l/+8eER4yXPj67xiN5n0d3Jvex6UH5qhPpJtVk1LRftO/74vW6CxL/Lwlzw6cU1h0fVrn8Hv/EiOa6c/J9mQO/3OmBuoKGMzQPfT7+tlZZRFvvmMvgSRHWYG8GUm3UBe1o4tI5ybPLe9r3kXWZeHFaEFS42Mnbv0GrFPzdYOLmsbNNgPZDuugyQ94Q71zG0xynQPDGSjoedlwVy8EuLyJxmYBQIaKeaL/Jskn363+V0Wl+PqNNw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by PH7PR11MB6521.namprd11.prod.outlook.com (2603:10b6:510:213::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.20; Wed, 28 May
- 2025 14:59:13 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%5]) with mapi id 15.20.8746.030; Wed, 28 May 2025
- 14:59:12 +0000
-Date: Wed, 28 May 2025 15:59:06 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Dhanya Pillai <dhanya.r.pillai@intel.com>
-CC: Anatoly Burakov <anatoly.burakov@intel.com>, <dev@dpdk.org>, "Lukasz
- Krakowiak" <lukaszx.krakowiak@intel.com>
-Subject: Re: [PATCH v3 04/10] net/ice/base: set speculative execution barrier
-Message-ID: <aDckum8YiGEObYUL@bricha3-mobl1.ger.corp.intel.com>
-References: <20250527131741.7606-1-dhanya.r.pillai@intel.com>
- <20250527131741.7606-5-dhanya.r.pillai@intel.com>
- <aDcKjfSrOShfJE1b@bricha3-mobl1.ger.corp.intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <aDcKjfSrOShfJE1b@bricha3-mobl1.ger.corp.intel.com>
-X-ClientProxiedBy: DB9PR01CA0022.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:1d8::27) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+ 15.2.1544.4; Wed, 28 May 2025 08:00:04 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 28 May 2025 08:00:04 -0700
+Received: from IN-lckQE5Rwctls.marvell.com (unknown [10.193.79.44])
+ by maili.marvell.com (Postfix) with ESMTP id 04C213F707A;
+ Wed, 28 May 2025 08:00:01 -0700 (PDT)
+From: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
+To: <dev@dpdk.org>, Akhil Goyal <gakhil@marvell.com>, Fan Zhang
+ <fanzhang.oss@gmail.com>
+CC: <anoobj@marvell.com>, Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
+Subject: [PATCH] test/crypto: test vectors for additional ECDH groups
+Date: Wed, 28 May 2025 20:29:55 +0530
+Message-ID: <20250528145958.1897-1-gmuthukrishn@marvell.com>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|PH7PR11MB6521:EE_
-X-MS-Office365-Filtering-Correlation-Id: 22433071-8b69-4672-343b-08dd9df83529
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?yBkq/6U/gGwh9C7bxqiauvZ05D8xpCKyo7iUrOAPvsMQI78FMoUjtwk3PB6m?=
- =?us-ascii?Q?KVGqjaXKCoSX5BFvucc5wsOMQ5eeDs1HkaHRME1wxQ0RkHr0thLD+clLsV6P?=
- =?us-ascii?Q?K985MEKaxBq6esn+mbPvQJXrg+c4Jml4uP7Uv5Aj+Tcubowp7OV/C0dredM4?=
- =?us-ascii?Q?BkaKuDmdWwMsNmNnu30UjvPTjPTlE0xPJuXWgbQhGQeTnodwPvPT4NFXLWyL?=
- =?us-ascii?Q?ldARux37C/FP3lakzsnoQnekaYgdYZps5wMKQ/Qu7n7HcxKroi56avHkeCme?=
- =?us-ascii?Q?a/eSjsoUKnZvh65NCICljAA+PUKJ1Sgihj0p6d72HdWxqWopl44g4p2SDiL2?=
- =?us-ascii?Q?HPHkLem+7KxuJPscA/LxfGyTVEr5VzeqP86pu2nxMEXWWsjUbMD9vx2lAoZ4?=
- =?us-ascii?Q?xRfzu9Q1ZT68iTlAQadN8s2t76WdJSkWMXZNt7Yxu0yLCVtNzgCpNpO25PRQ?=
- =?us-ascii?Q?ZX412h+EFVJamq8eBRfcB1CKZ2y90OtOHy5hepaxOSinqB2n6pkkhrfICzEl?=
- =?us-ascii?Q?vHeMC6X1RBuSqWoW75lFrM8yFgaJOVi1B9JHyLsGzVfit8vkx8lx3yGCcMmH?=
- =?us-ascii?Q?IBFvC04oRMGdaI/5DvsJSssk2z6ypTV4Vg551olgbWYs+s4f1MhC7kDKSVdU?=
- =?us-ascii?Q?JDo0n4KdO0XQumcsY21hgkh4laLkT7+ma8zlaEHqA4sspyJXW0vX0mWllt33?=
- =?us-ascii?Q?mkkZRTSL05WrUBShiNRjwpRIYJvD0/mbln/CIc9KpEdYTIZOqlxNFQ3BxTqR?=
- =?us-ascii?Q?WanYq9dJgMuNn1akO/pXqR+/l62+B9bwU14CVv5A/KQ3W9eJq6I0Oa1OML50?=
- =?us-ascii?Q?99bSUbPOsRPLllhklJYTPbvW7zqPdqz0T+O3Szr1xFIham/4LRKrc+vpto7S?=
- =?us-ascii?Q?vfwlEKxh+xT6wwPjy3s2rEeUqeUvbtDZjlDluWg6zXC+n6fAFxVGrD//XVsn?=
- =?us-ascii?Q?5SRkX68EWZdehQI30FWXoFpg/mRW08Ze3mtg5p9qu/sH5VM5PA3qdpFOJ3ij?=
- =?us-ascii?Q?9q2vQTEpKeeG7xYCCcVuiFXMvc0XRAWM8KskWiB50GcR6mg8JVfH+mAQI0uF?=
- =?us-ascii?Q?bIBQ+H/1V48YuiXjv4luF/74yvqwB4LgRtxdtmsEweDokQ9vwnU2r8XwBBZo?=
- =?us-ascii?Q?S1VbyQd1uVOXujZ0SScocoVtYLJ/4su053Xta0r4xJig8Afr9Rl7GuduIQUK?=
- =?us-ascii?Q?s4PvOdDqi8hn9qT2GQhDhlc1dErmCQTYLAuQQL+G9AiuW+4sfIE8ujmpXiRP?=
- =?us-ascii?Q?oOixGc4ZOHdkvit35jbtSFEkXkyss+QNXDrpp3xc75lHK7Jcs6dRW1JYGQUu?=
- =?us-ascii?Q?sNpEOu12lMjgFEjNC+ne++uY0/c2OiMUQbi8IWU8p1++/ItSLaEJUOGlD/Ih?=
- =?us-ascii?Q?h6UhwBcgojN7nZ81hhgxJ0O8mhMY9Dgs3agIDv/MTj3Jgc9E6RoBbaLMzNSf?=
- =?us-ascii?Q?T1oeDFgDwdE=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?1RLM3UKMMYpADTNlTlmeL4gg0CCWnk1nvMliJCmtWivGGEsLJmOkF4/OZN/B?=
- =?us-ascii?Q?0Xc9g2UCFZBQWI/a1bcdJyx1yHSX7ee/K9tEIoVBPOkAE/qz3HgePnfPWJws?=
- =?us-ascii?Q?X+he7U7+7updNDkwAhFrz0TaDZYuzF/wP+DTTJw2bBapGEya2PiSC+5pEtoK?=
- =?us-ascii?Q?VL6WWa1rrc1Ik1CccTjETXPd4MM8wkRDuJU3Rxxr8qdftNUs+TO0x5TQx3Ki?=
- =?us-ascii?Q?IX79HYQWAhLPBrjy/Fp1AsYNrifXb2jGb109FioPaduA5w8q49Z8pKFB9ZS/?=
- =?us-ascii?Q?ZubEEbU3TdvKhgPDL4vIGJs1sNIsTi98If3iyfd0pg3UfCI/OSSi/YqfxjBy?=
- =?us-ascii?Q?EeB64APXcQxyL2MK9ViCvAP8vPndPQt2BP/kATKncsPDbxNPhtHgyKexZDQw?=
- =?us-ascii?Q?HZ0CB5bHjtIL9FnlT7A8lBQ66ovdNixYEHgzb/3QlG6pVWPYaus9k18KGoum?=
- =?us-ascii?Q?SDoXUoC5jI5i6H7jXWXFmQ0/Fy4NaprEpEQR9EbkycGPCUL/O9U8LHEsxPNh?=
- =?us-ascii?Q?NlXWzP/nB6Cs7toUgpzDkLrhi8bHDP13asVn4OMWpQaBSoZOgp7Rw/QuP8Ea?=
- =?us-ascii?Q?M3IQ6ZujWAxS6yD9SoWHf6i+cnOIx0w8HleoSAhYn+Chl0bJ1ogmiDXfkfOy?=
- =?us-ascii?Q?UoEhBaWLixPsdLnQWt3GzrL0hVB3slYaA8BJySqMARoTjvWVas6p62lj633r?=
- =?us-ascii?Q?mZf4dZs84aRveFGhaoeih1lc1PcbDvU2LZashQ5mI9BBUoXoQRpqCaVRL7kh?=
- =?us-ascii?Q?tKOXfYnS+8r69kC7Zft33NzLOjROebH+mpVSrRbilNNhWzUYvT+kpgmza7Di?=
- =?us-ascii?Q?ichQHx6XTowWQNhSjQ00NVpNWpW0npxBES+AkjU9uazNyTI/Lv5EeAKGZ+y/?=
- =?us-ascii?Q?tfeW576Dq8RFDCUC5Xvs2Md8N9CLa8+Adruf+lgPznhjvkPRAkVctUUvnFxz?=
- =?us-ascii?Q?hDx/czTanS4ls5XZpWDLMRw2DJsGY2m2sRqGF/kzuJLuk1izcCrT1GJWCF59?=
- =?us-ascii?Q?q3COWSv9DrjKYeu0CRod2ENG/sVtfEiTxbceMtSe8zAO+IX+v8HEAdRXauoC?=
- =?us-ascii?Q?PbAh9EXWtsad1+f3y+Sep2Od0MyuszIdFjADZrVTKrHRaPB9xayvaLCU5Htl?=
- =?us-ascii?Q?Id7QA7ko2DB/nEYyV5BhtI4xi8B8VlC64O3D1IeS0LspfqD035XReeKUG5XR?=
- =?us-ascii?Q?zXweFCGpl+TZENBcFSglxFys5E2MUBgyGnczMuPXhDBAy/70GZXKOJEkyW/1?=
- =?us-ascii?Q?5pY6Bv0H/cYrDxtFcTgcXvE8K7P+hZd6H5Un74HViBVPzA0Jlo2rWG+OrqpR?=
- =?us-ascii?Q?SMU8yuglnl9MGozhCJ67+oEGCWUbW7OaAhX3CO2/eeoHqNfp3fXyb7QQD+OP?=
- =?us-ascii?Q?gJixdOhHcXo1cmF565VJYJ7SCsCqzSoku6LU1LhKhfg2W1puGVrHczpjg5jY?=
- =?us-ascii?Q?EiiEYi/CwATLzXOZJ2wQf0Yo3DAa7yX469ugkgsX0mX2FeKQO9+VZUDBGwed?=
- =?us-ascii?Q?B9gno82bA9Ift3XYmGSpXewymNDg6I6J15cSZlYtqd8G2F0ya/xgKKUfGgqn?=
- =?us-ascii?Q?CX4b5actMoX4iuCmjhHUxDg1I0wJH/qHYh0UWzY5oU57/oWh/X7pbcRBqvMg?=
- =?us-ascii?Q?pw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 22433071-8b69-4672-343b-08dd9df83529
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2025 14:59:12.7956 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: h3ipNmo44ZIcG37IvB+9p03WY61GIQDH+9YE3qsanF5EsRAzD5ly/NZgw6LwJKKICzKY1pjMI6sIfr2wSZKibYe9vH+J0SZBqEugy4decrc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6521
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: l6ardpyIo5J5fKc7fFM_aTI13rM9Gdjx
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI4MDEzMCBTYWx0ZWRfX+C2qaVYUXbAz
+ 14x9ZVjn+oYnPC3t1OjsrFQzHCvIyh6btZpRjPWuULettypfD6r/0zKZtugf5IK3qUbbAH9AAEh
+ 2lw5rzMyfZJmQ1pAOKrECuRmlhGVGcIqAvhou8m/W+la1bl/EuvE8YHxbKjMeIAN1dHU1R+OcBS
+ WPku2/iadCHNuY3JDtduxyJC8+zmNAIiHiTfpDYTftESEIFHHBO+sECfPjQxzIeE5AfTURi40U8
+ /RbJ5wBhA9Yq9kHs5bgle8ns3Ig7LHSdvp+stIpLU4sZtpEh9A2OX+x+NNaKXuOI9cKPU2a1DMy
+ tU6pbZuBRTnKpp5Dkc0LH+uFoK2GwWaKNLJuStomr3tXxppyStnwSS9oacmzV5jBNouoNNsZlgK
+ 3M2il/VXHlfav4sr9G1HgBwx4W0BK3JztXTbhu/+/5DsIp/AY7cLiVycVkfNZXHHCLLSUlch
+X-Proofpoint-GUID: l6ardpyIo5J5fKc7fFM_aTI13rM9Gdjx
+X-Authority-Analysis: v=2.4 cv=baVrUPPB c=1 sm=1 tr=0 ts=683724f5 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=dt9VzEwgFbYA:10 a=48vgC7mUAAAA:8 a=M5GUcnROAAAA:8 a=u2QwUtF3NPryoehed10A:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-28_07,2025-05-27_01,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -172,69 +77,479 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, May 28, 2025 at 02:07:25PM +0100, Bruce Richardson wrote:
-> On Tue, May 27, 2025 at 01:17:23PM +0000, Dhanya Pillai wrote:
-> > From: Lukasz Krakowiak <lukaszx.krakowiak@intel.com>
-> > 
-> > Fix issues related to SPECULATIVE_EXECUTION_DATA_LEAK.
-> > This changes set speculative execution barrier to functions:
-> > 
-> > * ice_sched_add_vsi_child_nodes,
-> > * ice_sched_add_vsi_support_nodes,
-> > * ice_sched_move_vsi_to_agg,
-> > * ice_prof_has_mask_idx,
-> > * ice_alloc_prof_mask.
-> > 
-> > Also, Added memfence definitions.
-> > 
-> > Signed-off-by: Lukasz Krakowiak <lukaszx.krakowiak@intel.com>
-> > Signed-off-by: Dhanya Pillai <dhanya.r.pillai@intel.com>
-> > ---
-> >  drivers/net/intel/ice/base/ice_flex_pipe.c | 2 ++
-> >  drivers/net/intel/ice/base/ice_osdep.h     | 6 ++++++
-> >  drivers/net/intel/ice/base/ice_sched.c     | 3 +++
-> >  3 files changed, 11 insertions(+)
-> > 
-> > diff --git a/drivers/net/intel/ice/base/ice_flex_pipe.c b/drivers/net/intel/ice/base/ice_flex_pipe.c
-> > index 6dd5588f85..dc8c92e203 100644
-> > --- a/drivers/net/intel/ice/base/ice_flex_pipe.c
-> > +++ b/drivers/net/intel/ice/base/ice_flex_pipe.c
-> > @@ -1280,6 +1280,7 @@ ice_prof_has_mask_idx(struct ice_hw *hw, enum ice_block blk, u8 prof, u16 idx,
-> >  			if (hw->blk[blk].masks.masks[i].in_use &&
-> >  			    hw->blk[blk].masks.masks[i].idx == idx) {
-> >  				found = true;
-> > +				ice_memfence_read();
-> >  				if (hw->blk[blk].masks.masks[i].mask == mask)
-> >  					match = true;
-> >  				break;
-> > @@ -1648,6 +1649,7 @@ ice_alloc_prof_mask(struct ice_hw *hw, enum ice_block blk, u16 idx, u16 mask,
-> >  			/* if mask is in use and it exactly duplicates the
-> >  			 * desired mask and index, then in can be reused
-> >  			 */
-> > +			ice_memfence_read();
-> >  			if (hw->blk[blk].masks.masks[i].mask == mask &&
-> >  			    hw->blk[blk].masks.masks[i].idx == idx) {
-> >  				found_copy = true;
-> > diff --git a/drivers/net/intel/ice/base/ice_osdep.h b/drivers/net/intel/ice/base/ice_osdep.h
-> > index ad6cde9896..7588ad3dbc 100644
-> > --- a/drivers/net/intel/ice/base/ice_osdep.h
-> > +++ b/drivers/net/intel/ice/base/ice_osdep.h
-> > @@ -203,6 +203,12 @@ struct __rte_packed_begin ice_virt_mem {
-> >  #define ice_memset(a, b, c, d) memset((a), (b), (c))
-> >  #define ice_memcpy(a, b, c, d) rte_memcpy((a), (b), (c))
-> >  
-> > +/* Memory fence barrier */
-> > +#define ice_memfence_read()
-> > +#define ice_memfence_read_write()
-> > +#define ice_memfence_write()
-> > +
-> 
-> I suspect rather than removing this, they would be better defined as
-> rte_smp_* barriers. As in:
-> 
-> #define ice_memfence_read() rte_smp_rmb()
-> 
-Correcting my own suggestion - since this is a NIC driver, we probably want
-to use rte_io_* barriers, not the rte_smp_* ones.
+Add test vectors for ECDH groups 19, 20 and 21.
 
-/Bruce
+Signed-off-by: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
+---
+ app/test/test_cryptodev_asym.c               |  39 ++-
+ app/test/test_cryptodev_ecdh_test_vectors.h  | 344 +++++++++++++++++++
+ app/test/test_cryptodev_ecdsa_test_vectors.h |   6 +
+ 3 files changed, 386 insertions(+), 3 deletions(-)
+
+diff --git a/app/test/test_cryptodev_asym.c b/app/test/test_cryptodev_asym.c
+index fcaf73aa1a..46bbc520e6 100644
+--- a/app/test/test_cryptodev_asym.c
++++ b/app/test/test_cryptodev_asym.c
+@@ -1676,7 +1676,9 @@ test_ecdsa_sign_verify_all_curve(void)
+ 	const char *msg;
+ 
+ 	for (curve_id = SECP192R1; curve_id < END_OF_CURVE_LIST; curve_id++) {
+-		if (curve_id == ED25519 || curve_id == ED448)
++		if (curve_id == ED25519 || curve_id == ED448 ||
++		    curve_id == ECGROUP19 || curve_id == ECGROUP20 ||
++		    curve_id == ECGROUP21)
+ 			continue;
+ 
+ 		status = test_ecdsa_sign_verify(curve_id);
+@@ -1840,7 +1842,9 @@ test_ecpm_all_curve(void)
+ 	const char *msg;
+ 
+ 	for (curve_id = SECP192R1; curve_id < END_OF_CURVE_LIST; curve_id++) {
+-		if (curve_id == SECP521R1_UA || curve_id == ED25519 || curve_id == ED448)
++		if (curve_id == SECP521R1_UA || curve_id == ECGROUP19 ||
++		    curve_id == ECGROUP20 || curve_id == ECGROUP21 ||
++		    curve_id == ED25519 || curve_id == ED448)
+ 			continue;
+ 
+ 		status = test_ecpm(curve_id);
+@@ -2043,6 +2047,15 @@ test_ecdh_pub_key_generate(enum curve curve_id)
+ 	case SECP521R1:
+ 		input_params = ecdh_param_secp521r1;
+ 		break;
++	case ECGROUP19:
++		input_params = ecdh_param_group19;
++		break;
++	case ECGROUP20:
++		input_params = ecdh_param_group20;
++		break;
++	case ECGROUP21:
++		input_params = ecdh_param_group21;
++		break;
+ 	case ED25519:
+ 		input_params = ecdh_param_ed25519;
+ 		break;
+@@ -2204,6 +2217,15 @@ test_ecdh_pub_key_verify(enum curve curve_id)
+ 	case SECP521R1:
+ 		input_params = ecdh_param_secp521r1;
+ 		break;
++	case ECGROUP19:
++		input_params = ecdh_param_group19;
++		break;
++	case ECGROUP20:
++		input_params = ecdh_param_group20;
++		break;
++	case ECGROUP21:
++		input_params = ecdh_param_group21;
++		break;
+ 	default:
+ 		RTE_LOG(ERR, USER1,
+ 				"line %u FAILED: %s", __LINE__,
+@@ -2334,6 +2356,15 @@ test_ecdh_shared_secret(enum curve curve_id)
+ 	case SECP521R1:
+ 		input_params = ecdh_param_secp521r1;
+ 		break;
++	case ECGROUP19:
++		input_params = ecdh_param_group19;
++		break;
++	case ECGROUP20:
++		input_params = ecdh_param_group20;
++		break;
++	case ECGROUP21:
++		input_params = ecdh_param_group21;
++		break;
+ 	default:
+ 		RTE_LOG(ERR, USER1,
+ 				"line %u FAILED: %s", __LINE__,
+@@ -2556,7 +2587,9 @@ test_ecdh_all_curve(void)
+ 	const char *msg;
+ 
+ 	for (curve_id = SECP192R1; curve_id < END_OF_CURVE_LIST; curve_id++) {
+-		if (curve_id == SECP521R1_UA || curve_id == ED25519 || curve_id == ED448)
++		if (curve_id == SECP521R1_UA || curve_id == ECGROUP19 ||
++		    curve_id == ECGROUP20 || curve_id == ECGROUP21 ||
++		    curve_id == ED25519 || curve_id == ED448)
+ 			continue;
+ 
+ 		status = test_ecdh_priv_key_generate(curve_id);
+diff --git a/app/test/test_cryptodev_ecdh_test_vectors.h b/app/test/test_cryptodev_ecdh_test_vectors.h
+index 36f92b223f..91719b11c1 100644
+--- a/app/test/test_cryptodev_ecdh_test_vectors.h
++++ b/app/test/test_cryptodev_ecdh_test_vectors.h
+@@ -553,6 +553,350 @@ struct crypto_testsuite_ecdh_params ecdh_param_secp521r1 = {
+ 	.curve = RTE_CRYPTO_EC_GROUP_SECP521R1
+ };
+ 
++/** 256 bit Random ECP group
++ * https://datatracker.ietf.org/doc/html/rfc5903#section-8.1
++ */
++
++static uint8_t i_group19[] = {
++	0xC8, 0x8F, 0x01, 0xF5, 0x10, 0xD9, 0xAC, 0x3F,
++	0x70, 0xA2, 0x92, 0xDA, 0xA2, 0x31, 0x6D, 0xE5,
++	0x44, 0xE9, 0xAA, 0xB8, 0xAF, 0xE8, 0x40, 0x49,
++	0xC6, 0x2A, 0x9C, 0x57, 0x86, 0x2D, 0x14, 0x33
++};
++
++static uint8_t gix_group19[] = {
++	0xDA, 0xD0, 0xB6, 0x53, 0x94, 0x22, 0x1C, 0xF9,
++	0xB0, 0x51, 0xE1, 0xFE, 0xCA, 0x57, 0x87, 0xD0,
++	0x98, 0xDF, 0xE6, 0x37, 0xFC, 0x90, 0xB9, 0xEF,
++	0x94, 0x5D, 0x0C, 0x37, 0x72, 0x58, 0x11, 0x80
++};
++
++static uint8_t giy_group19[] = {
++	0x52, 0x71, 0xA0, 0x46, 0x1C, 0xDB, 0x82, 0x52,
++	0xD6, 0x1F, 0x1C, 0x45, 0x6F, 0xA3, 0xE5, 0x9A,
++	0xB1, 0xF4, 0x5B, 0x33, 0xAC, 0xCF, 0x5F, 0x58,
++	0x38, 0x9E, 0x05, 0x77, 0xB8, 0x99, 0x0B, 0xB3
++};
++
++static uint8_t r_group19[] = {
++	0xC6, 0xEF, 0x9C, 0x5D, 0x78, 0xAE, 0x01, 0x2A,
++	0x01, 0x11, 0x64, 0xAC, 0xB3, 0x97, 0xCE, 0x20,
++	0x88, 0x68, 0x5D, 0x8F, 0x06, 0xBF, 0x9B, 0xE0,
++	0xB2, 0x83, 0xAB, 0x46, 0x47, 0x6B, 0xEE, 0x53
++};
++
++static uint8_t grx_group19[] = {
++	0xD1, 0x2D, 0xFB, 0x52, 0x89, 0xC8, 0xD4, 0xF8,
++	0x12, 0x08, 0xB7, 0x02, 0x70, 0x39, 0x8C, 0x34,
++	0x22, 0x96, 0x97, 0x0A, 0x0B, 0xCC, 0xB7, 0x4C,
++	0x73, 0x6F, 0xC7, 0x55, 0x44, 0x94, 0xBF, 0x63
++};
++
++static uint8_t gry_group19[] = {
++	0x56, 0xFB, 0xF3, 0xCA, 0x36, 0x6C, 0xC2, 0x3E,
++	0x81, 0x57, 0x85, 0x4C, 0x13, 0xC5, 0x8D, 0x6A,
++	0xAC, 0x23, 0xF0, 0x46, 0xAD, 0xA3, 0x0F, 0x83,
++	0x53, 0xE7, 0x4F, 0x33, 0x03, 0x98, 0x72, 0xAB
++};
++
++static uint8_t girx_group19[] = {
++	0xD6, 0x84, 0x0F, 0x6B, 0x42, 0xF6, 0xED, 0xAF,
++	0xD1, 0x31, 0x16, 0xE0, 0xE1, 0x25, 0x65, 0x20,
++	0x2F, 0xEF, 0x8E, 0x9E, 0xCE, 0x7D, 0xCE, 0x03,
++	0x81, 0x24, 0x64, 0xD0, 0x4B, 0x94, 0x42, 0xDE
++};
++
++static uint8_t giry_group19[] = {
++	0x52, 0x2B, 0xDE, 0x0A, 0xF0, 0xD8, 0x58, 0x5B,
++	0x8D, 0xEF, 0x9C, 0x18, 0x3B, 0x5A, 0xE3, 0x8F,
++	0x50, 0x23, 0x52, 0x06, 0xA8, 0x67, 0x4E, 0xCB,
++	0x5D, 0x98, 0xED, 0xB2, 0x0E, 0xB1, 0x53, 0xA2
++};
++
++struct crypto_testsuite_ecdh_params ecdh_param_group19 = {
++	.pubkey_qA_x = {
++		.data = gix_group19,
++		.length = sizeof(gix_group19),
++	},
++	.pubkey_qA_y = {
++		.data = giy_group19,
++		.length = sizeof(giy_group19),
++	},
++	.pubkey_qB_x = {
++		.data = grx_group19,
++		.length = sizeof(grx_group19),
++	},
++	.pubkey_qB_y = {
++		.data = gry_group19,
++		.length = sizeof(gry_group19),
++	},
++	.pkey_A = {
++		.data = i_group19,
++		.length = sizeof(i_group19),
++	},
++	.pkey_B = {
++		.data = r_group19,
++		.length = sizeof(r_group19),
++	},
++	.secret_x = {
++		.data = girx_group19,
++		.length = sizeof(girx_group19),
++	},
++	.secret_y = {
++		.data = giry_group19,
++		.length = sizeof(giry_group19),
++	},
++	.curve = RTE_CRYPTO_EC_GROUP_SECP256R1
++};
++
++/** 384 bit Random ECP group
++ * https://datatracker.ietf.org/doc/html/rfc5903#section-8.2
++ */
++
++static uint8_t i_group20[] = {
++	0x09, 0x9F, 0x3C, 0x70, 0x34, 0xD4, 0xA2, 0xC6,
++	0x99, 0x88, 0x4D, 0x73, 0xA3, 0x75, 0xA6, 0x7F,
++	0x76, 0x24, 0xEF, 0x7C, 0x6B, 0x3C, 0x0F, 0x16,
++	0x06, 0x47, 0xB6, 0x74, 0x14, 0xDC, 0xE6, 0x55,
++	0xE3, 0x5B, 0x53, 0x80, 0x41, 0xE6, 0x49, 0xEE,
++	0x3F, 0xAE, 0xF8, 0x96, 0x78, 0x3A, 0xB1, 0x94
++};
++
++static uint8_t gix_group20[] = {
++	0x66, 0x78, 0x42, 0xD7, 0xD1, 0x80, 0xAC, 0x2C,
++	0xDE, 0x6F, 0x74, 0xF3, 0x75, 0x51, 0xF5, 0x57,
++	0x55, 0xC7, 0x64, 0x5C, 0x20, 0xEF, 0x73, 0xE3,
++	0x16, 0x34, 0xFE, 0x72, 0xB4, 0xC5, 0x5E, 0xE6,
++	0xDE, 0x3A, 0xC8, 0x08, 0xAC, 0xB4, 0xBD, 0xB4,
++	0xC8, 0x87, 0x32, 0xAE, 0xE9, 0x5F, 0x41, 0xAA
++};
++
++static uint8_t giy_group20[] = {
++	0x94, 0x82, 0xED, 0x1F, 0xC0, 0xEE, 0xB9, 0xCA,
++	0xFC, 0x49, 0x84, 0x62, 0x5C, 0xCF, 0xC2, 0x3F,
++	0x65, 0x03, 0x21, 0x49, 0xE0, 0xE1, 0x44, 0xAD,
++	0xA0, 0x24, 0x18, 0x15, 0x35, 0xA0, 0xF3, 0x8E,
++	0xEB, 0x9F, 0xCF, 0xF3, 0xC2, 0xC9, 0x47, 0xDA,
++	0xE6, 0x9B, 0x4C, 0x63, 0x45, 0x73, 0xA8, 0x1C
++};
++
++static uint8_t r_group20[] = {
++	0x41, 0xCB, 0x07, 0x79, 0xB4, 0xBD, 0xB8, 0x5D,
++	0x47, 0x84, 0x67, 0x25, 0xFB, 0xEC, 0x3C, 0x94,
++	0x30, 0xFA, 0xB4, 0x6C, 0xC8, 0xDC, 0x50, 0x60,
++	0x85, 0x5C, 0xC9, 0xBD, 0xA0, 0xAA, 0x29, 0x42,
++	0xE0, 0x30, 0x83, 0x12, 0x91, 0x6B, 0x8E, 0xD2,
++	0x96, 0x0E, 0x4B, 0xD5, 0x5A, 0x74, 0x48, 0xFC
++};
++
++static uint8_t grx_group20[] = {
++	0xE5, 0x58, 0xDB, 0xEF, 0x53, 0xEE, 0xCD, 0xE3,
++	0xD3, 0xFC, 0xCF, 0xC1, 0xAE, 0xA0, 0x8A, 0x89,
++	0xA9, 0x87, 0x47, 0x5D, 0x12, 0xFD, 0x95, 0x0D,
++	0x83, 0xCF, 0xA4, 0x17, 0x32, 0xBC, 0x50, 0x9D,
++	0x0D, 0x1A, 0xC4, 0x3A, 0x03, 0x36, 0xDE, 0xF9,
++	0x6F, 0xDA, 0x41, 0xD0, 0x77, 0x4A, 0x35, 0x71
++};
++
++static uint8_t gry_group20[] = {
++	0xDC, 0xFB, 0xEC, 0x7A, 0xAC, 0xF3, 0x19, 0x64,
++	0x72, 0x16, 0x9E, 0x83, 0x84, 0x30, 0x36, 0x7F,
++	0x66, 0xEE, 0xBE, 0x3C, 0x6E, 0x70, 0xC4, 0x16,
++	0xDD, 0x5F, 0x0C, 0x68, 0x75, 0x9D, 0xD1, 0xFF,
++	0xF8, 0x3F, 0xA4, 0x01, 0x42, 0x20, 0x9D, 0xFF,
++	0x5E, 0xAA, 0xD9, 0x6D, 0xB9, 0xE6, 0x38, 0x6C
++};
++
++static uint8_t girx_group20[] = {
++	0x11, 0x18, 0x73, 0x31, 0xC2, 0x79, 0x96, 0x2D,
++	0x93, 0xD6, 0x04, 0x24, 0x3F, 0xD5, 0x92, 0xCB,
++	0x9D, 0x0A, 0x92, 0x6F, 0x42, 0x2E, 0x47, 0x18,
++	0x75, 0x21, 0x28, 0x7E, 0x71, 0x56, 0xC5, 0xC4,
++	0xD6, 0x03, 0x13, 0x55, 0x69, 0xB9, 0xE9, 0xD0,
++	0x9C, 0xF5, 0xD4, 0xA2, 0x70, 0xF5, 0x97, 0x46
++};
++
++static uint8_t giry_group20[] = {
++	0xA2, 0xA9, 0xF3, 0x8E, 0xF5, 0xCA, 0xFB, 0xE2,
++	0x34, 0x7C, 0xF7, 0xEC, 0x24, 0xBD, 0xD5, 0xE6,
++	0x24, 0xBC, 0x93, 0xBF, 0xA8, 0x27, 0x71, 0xF4,
++	0x0D, 0x1B, 0x65, 0xD0, 0x62, 0x56, 0xA8, 0x52,
++	0xC9, 0x83, 0x13, 0x5D, 0x46, 0x69, 0xF8, 0x79,
++	0x2F, 0x2C, 0x1D, 0x55, 0x71, 0x8A, 0xFB, 0xB4
++};
++
++struct crypto_testsuite_ecdh_params ecdh_param_group20 = {
++	.pubkey_qA_x = {
++		.data = gix_group20,
++		.length = sizeof(gix_group20),
++	},
++	.pubkey_qA_y = {
++		.data = giy_group20,
++		.length = sizeof(giy_group20),
++	},
++	.pubkey_qB_x = {
++		.data = grx_group20,
++		.length = sizeof(grx_group20),
++	},
++	.pubkey_qB_y = {
++		.data = gry_group20,
++		.length = sizeof(gry_group20),
++	},
++	.pkey_A = {
++		.data = i_group20,
++		.length = sizeof(i_group20),
++	},
++	.pkey_B = {
++		.data = r_group20,
++		.length = sizeof(r_group20),
++	},
++	.secret_x = {
++		.data = girx_group20,
++		.length = sizeof(girx_group20),
++	},
++	.secret_y = {
++		.data = giry_group20,
++		.length = sizeof(giry_group20),
++	},
++	.curve = RTE_CRYPTO_EC_GROUP_SECP384R1
++};
++
++/** 521 bit Random ECP group
++ * https://datatracker.ietf.org/doc/html/rfc5903#section-8.3
++ */
++
++static uint8_t i_group21[] = {
++	0x00, 0x37, 0xAD, 0xE9, 0x31, 0x9A, 0x89, 0xF4,
++	0xDA, 0xBD, 0xB3, 0xEF, 0x41, 0x1A, 0xAC, 0xCC,
++	0xA5, 0x12, 0x3C, 0x61, 0xAC, 0xAB, 0x57, 0xB5,
++	0x39, 0x3D, 0xCE, 0x47, 0x60, 0x81, 0x72, 0xA0,
++	0x95, 0xAA, 0x85, 0xA3, 0x0F, 0xE1, 0xC2, 0x95,
++	0x2C, 0x67, 0x71, 0xD9, 0x37, 0xBA, 0x97, 0x77,
++	0xF5, 0x95, 0x7B, 0x26, 0x39, 0xBA, 0xB0, 0x72,
++	0x46, 0x2F, 0x68, 0xC2, 0x7A, 0x57, 0x38, 0x2D,
++	0x4A, 0x52
++};
++
++static uint8_t gix_group21[] = {
++	0x00, 0x15, 0x41, 0x7E, 0x84, 0xDB, 0xF2, 0x8C,
++	0x0A, 0xD3, 0xC2, 0x78, 0x71, 0x33, 0x49, 0xDC,
++	0x7D, 0xF1, 0x53, 0xC8, 0x97, 0xA1, 0x89, 0x1B,
++	0xD9, 0x8B, 0xAB, 0x43, 0x57, 0xC9, 0xEC, 0xBE,
++	0xE1, 0xE3, 0xBF, 0x42, 0xE0, 0x0B, 0x8E, 0x38,
++	0x0A, 0xEA, 0xE5, 0x7C, 0x2D, 0x10, 0x75, 0x64,
++	0x94, 0x18, 0x85, 0x94, 0x2A, 0xF5, 0xA7, 0xF4,
++	0x60, 0x17, 0x23, 0xC4, 0x19, 0x5D, 0x17, 0x6C,
++	0xED, 0x3E
++};
++
++static uint8_t giy_group21[] = {
++	0x01, 0x7C, 0xAE, 0x20, 0xB6, 0x64, 0x1D, 0x2E,
++	0xEB, 0x69, 0x57, 0x86, 0xD8, 0xC9, 0x46, 0x14,
++	0x62, 0x39, 0xD0, 0x99, 0xE1, 0x8E, 0x1D, 0x5A,
++	0x51, 0x4C, 0x73, 0x9D, 0x7C, 0xB4, 0xA1, 0x0A,
++	0xD8, 0xA7, 0x88, 0x01, 0x5A, 0xC4, 0x05, 0xD7,
++	0x79, 0x9D, 0xC7, 0x5E, 0x7B, 0x7D, 0x5B, 0x6C,
++	0xF2, 0x26, 0x1A, 0x6A, 0x7F, 0x15, 0x07, 0x43,
++	0x8B, 0xF0, 0x1B, 0xEB, 0x6C, 0xA3, 0x92, 0x6F,
++	0x95, 0x82
++};
++
++static uint8_t r_group21[] = {
++	0x01, 0x45, 0xBA, 0x99, 0xA8, 0x47, 0xAF, 0x43,
++	0x79, 0x3F, 0xDD, 0x0E, 0x87, 0x2E, 0x7C, 0xDF,
++	0xA1, 0x6B, 0xE3, 0x0F, 0xDC, 0x78, 0x0F, 0x97,
++	0xBC, 0xCC, 0x3F, 0x07, 0x83, 0x80, 0x20, 0x1E,
++	0x9C, 0x67, 0x7D, 0x60, 0x0B, 0x34, 0x37, 0x57,
++	0xA3, 0xBD, 0xBF, 0x2A, 0x31, 0x63, 0xE4, 0xC2,
++	0xF8, 0x69, 0xCC, 0xA7, 0x45, 0x8A, 0xA4, 0xA4,
++	0xEF, 0xFC, 0x31, 0x1F, 0x5C, 0xB1, 0x51, 0x68,
++	0x5E, 0xB9
++};
++
++static uint8_t grx_group21[] = {
++	0x00, 0xD0, 0xB3, 0x97, 0x5A, 0xC4, 0xB7, 0x99,
++	0xF5, 0xBE, 0xA1, 0x6D, 0x5E, 0x13, 0xE9, 0xAF,
++	0x97, 0x1D, 0x5E, 0x9B, 0x98, 0x4C, 0x9F, 0x39,
++	0x72, 0x8B, 0x5E, 0x57, 0x39, 0x73, 0x5A, 0x21,
++	0x9B, 0x97, 0xC3, 0x56, 0x43, 0x6A, 0xDC, 0x6E,
++	0x95, 0xBB, 0x03, 0x52, 0xF6, 0xBE, 0x64, 0xA6,
++	0xC2, 0x91, 0x2D, 0x4E, 0xF2, 0xD0, 0x43, 0x3C,
++	0xED, 0x2B, 0x61, 0x71, 0x64, 0x00, 0x12, 0xD9,
++	0x46, 0x0F
++};
++
++static uint8_t gry_group21[] = {
++	0x01, 0x5C, 0x68, 0x22, 0x63, 0x83, 0x95, 0x6E,
++	0x3B, 0xD0, 0x66, 0xE7, 0x97, 0xB6, 0x23, 0xC2,
++	0x7C, 0xE0, 0xEA, 0xC2, 0xF5, 0x51, 0xA1, 0x0C,
++	0x2C, 0x72, 0x4D, 0x98, 0x52, 0x07, 0x7B, 0x87,
++	0x22, 0x0B, 0x65, 0x36, 0xC5, 0xC4, 0x08, 0xA1,
++	0xD2, 0xAE, 0xBB, 0x8E, 0x86, 0xD6, 0x78, 0xAE,
++	0x49, 0xCB, 0x57, 0x09, 0x1F, 0x47, 0x32, 0x29,
++	0x65, 0x79, 0xAB, 0x44, 0xFC, 0xD1, 0x7F, 0x0F,
++	0xC5, 0x6A
++};
++
++static uint8_t girx_group21[] = {
++	0x01, 0x14, 0x4C, 0x7D, 0x79, 0xAE, 0x69, 0x56,
++	0xBC, 0x8E, 0xDB, 0x8E, 0x7C, 0x78, 0x7C, 0x45,
++	0x21, 0xCB, 0x08, 0x6F, 0xA6, 0x44, 0x07, 0xF9,
++	0x78, 0x94, 0xE5, 0xE6, 0xB2, 0xD7, 0x9B, 0x04,
++	0xD1, 0x42, 0x7E, 0x73, 0xCA, 0x4B, 0xAA, 0x24,
++	0x0A, 0x34, 0x78, 0x68, 0x59, 0x81, 0x0C, 0x06,
++	0xB3, 0xC7, 0x15, 0xA3, 0xA8, 0xCC, 0x31, 0x51,
++	0xF2, 0xBE, 0xE4, 0x17, 0x99, 0x6D, 0x19, 0xF3,
++	0xDD, 0xEA
++};
++
++static uint8_t giry_group21[] = {
++	0x01, 0xB9, 0x01, 0xE6, 0xB1, 0x7D, 0xB2, 0x94,
++	0x7A, 0xC0, 0x17, 0xD8, 0x53, 0xEF, 0x1C, 0x16,
++	0x74, 0xE5, 0xCF, 0xE5, 0x9C, 0xDA, 0x18, 0xD0,
++	0x78, 0xE0, 0x5D, 0x1B, 0x52, 0x42, 0xAD, 0xAA,
++	0x9F, 0xFC, 0x3C, 0x63, 0xEA, 0x05, 0xED, 0xB1,
++	0xE1, 0x3C, 0xE5, 0xB3, 0xA8, 0xE5, 0x0C, 0x3E,
++	0xB6, 0x22, 0xE8, 0xDA, 0x1B, 0x38, 0xE0, 0xBD,
++	0xD1, 0xF8, 0x85, 0x69, 0xD6, 0xC9, 0x9B, 0xAF,
++	0xFA, 0x43
++};
++
++struct crypto_testsuite_ecdh_params ecdh_param_group21 = {
++	.pubkey_qA_x = {
++		.data = gix_group21,
++		.length = sizeof(gix_group21),
++	},
++	.pubkey_qA_y = {
++		.data = giy_group21,
++		.length = sizeof(giy_group21),
++	},
++	.pubkey_qB_x = {
++		.data = grx_group21,
++		.length = sizeof(grx_group21),
++	},
++	.pubkey_qB_y = {
++		.data = gry_group21,
++		.length = sizeof(gry_group21),
++	},
++	.pkey_A = {
++		.data = i_group21,
++		.length = sizeof(i_group21),
++	},
++	.pkey_B = {
++		.data = r_group21,
++		.length = sizeof(r_group21),
++	},
++	.secret_x = {
++		.data = girx_group21,
++		.length = sizeof(girx_group21),
++	},
++	.secret_y = {
++		.data = giry_group21,
++		.length = sizeof(giry_group21),
++	},
++	.curve = RTE_CRYPTO_EC_GROUP_SECP521R1
++};
++
+ /** ED25519 test vector */
+ 
+ static uint8_t privkey_ed25519[] = {
+diff --git a/app/test/test_cryptodev_ecdsa_test_vectors.h b/app/test/test_cryptodev_ecdsa_test_vectors.h
+index 636a1ab1b2..f6f6217898 100644
+--- a/app/test/test_cryptodev_ecdsa_test_vectors.h
++++ b/app/test/test_cryptodev_ecdsa_test_vectors.h
+@@ -15,6 +15,9 @@ enum curve {
+ 	SECP384R1,
+ 	SECP521R1,
+ 	SECP521R1_UA,
++	ECGROUP19,
++	ECGROUP20,
++	ECGROUP21,
+ 	ED25519,
+ 	ED448,
+ 	END_OF_CURVE_LIST
+@@ -26,6 +29,9 @@ const char *curve[] = {"SECP192R1",
+ 		       "SECP384R1",
+ 		       "SECP521R1",
+ 		       "SECP521R1(unaligned)",
++		       "ECDH group 19",
++		       "ECDH group 20",
++		       "ECDH group 21",
+ 		       "ED25519",
+ 		       "ED448",
+ };
+-- 
+2.25.1
+
