@@ -2,38 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1689C5AD49
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 May 2025 11:55:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2980DC5AD49
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 May 2025 12:12:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BA61C40E0F;
-	Wed, 28 May 2025 13:55:18 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id AE4C54028D
- for <dev@dpdk.org>; Wed, 28 May 2025 13:55:16 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8AB31203C26;
- Wed, 28 May 2025 13:55:16 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com
- (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4EA68203BE1;
- Wed, 28 May 2025 13:55:16 +0200 (CEST)
-Received: from lsv03379.swis.in-blr01.nxp.com (lsv03379.swis.in-blr01.nxp.com
- [92.120.147.188])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 6C56D180008F;
- Wed, 28 May 2025 19:55:15 +0800 (+08)
-From: vanshika.shukla@nxp.com
-To: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>
-Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [v1 01/10] bus/dpaa: avoid using same structure and variable name
-Date: Wed, 28 May 2025 17:25:04 +0530
-Message-Id: <20250528115513.1023689-2-vanshika.shukla@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250528115513.1023689-1-vanshika.shukla@nxp.com>
-References: <20250528115513.1023689-1-vanshika.shukla@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 5BB5640669;
+	Wed, 28 May 2025 14:12:54 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 5D1AA4028D
+ for <dev@dpdk.org>; Wed, 28 May 2025 14:12:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1748434372;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=srobE0mnR+F8E9TPe7J3R1RM9gkJvM7e19kCOzgdYNM=;
+ b=Kh+Cd/TwsJDyNcB6OGpJhNVj5wFG99/8ZXTWh0CpJJ5qrv91aqS0tzLPOvzzF4O26xxhWD
+ pJUCwuqnOo2HU1TaNSBQJVS/6cs9RubIPs/Yz9wiFHrX7QHd1Ii4U1x+dwxxK+12moLT7e
+ 8s4Y82+Mw01YQ27GOIw3/NrUuSHAtuI=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-81-W3ig8p_OMwm0vMRIa65uDA-1; Wed, 28 May 2025 08:12:51 -0400
+X-MC-Unique: W3ig8p_OMwm0vMRIa65uDA-1
+X-Mimecast-MFC-AGG-ID: W3ig8p_OMwm0vMRIa65uDA_1748434370
+Received: by mail-lf1-f71.google.com with SMTP id
+ 2adb3069b0e04-55321c19944so1645278e87.3
+ for <dev@dpdk.org>; Wed, 28 May 2025 05:12:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1748434369; x=1749039169;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=srobE0mnR+F8E9TPe7J3R1RM9gkJvM7e19kCOzgdYNM=;
+ b=ayF/AKwh60uhyLuttoSZX0KHTCIZiKI52AKfIR984tjHWIf1hFvKp/pPLhqY07tTXf
+ UZuHji8QFZfIPLyAVbtNPLhIkq9y94ral9z/sY7iSR30qDrb5X+yRplXhF2f6VaTUkS2
+ 6TUi+wBq2FFO6LnHZFi3hZ+aI78kCk7XJ/zzLwQW0JQsEujFXRCSto3p0+/eEPcOlqoq
+ GtYctzKEPRJI8qEHW4P9pYIg0Qqns8ZQG5fjqYIehzrBsgh+cf1ZlR82T0VwG6mMfnCv
+ XQhbhU+OddXXLD4jBamsnzwGyMb7RhqR0wIifTKG3bJ+5twKJ/GioC4VY3R9PexSo/OL
+ TY6A==
+X-Gm-Message-State: AOJu0YyhqRISxj8WMqEZ+5yMzJJaLPnlh0J2hzl+tIurYtR8eS1a9VZu
+ tIJgDR1ACfcR+5378ZvclSvfg3ZwE4pNAgnfc7+XVfTM5OxdUulpTD8zsP27V/sZktouEloVXtP
+ /8EYKwQn8eOabD5m5e9pCYY7coRkRtgxObvDnA09vd9tN0xXKOPOKNu/DZ7US/iLPonGnTZPIQ4
+ 4OTEDvrBUp1j3mh0Dv0e0=
+X-Gm-Gg: ASbGncv8OAZwd8mStxUFD7ivvH0xPDvRzEg0Tw4ZS/QF2WmqnFb7H/QD6MFQOW+MbzO
+ eE+eghMT3z+nPDiQ/QRGUGgW387J2ymO+SF9//RZhui8EpSipRu5sVhntrtpdIelmfvJedfr0jJ
+ hnyHZiog==
+X-Received: by 2002:a05:6512:33c9:b0:553:2f47:ed21 with SMTP id
+ 2adb3069b0e04-5532f47ee2amr709097e87.41.1748434369479; 
+ Wed, 28 May 2025 05:12:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGEOgTW2hcPTwdW4qLD+LlEqPYiVDDDrVBBCCFkWUMq2TaBFHU8pAm1B5TBV1V/PzVzcgSfjHsd5K20mlj9Xp4=
+X-Received: by 2002:a05:6512:33c9:b0:553:2f47:ed21 with SMTP id
+ 2adb3069b0e04-5532f47ee2amr709088e87.41.1748434369085; Wed, 28 May 2025
+ 05:12:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+References: <20250528093644.2456221-1-maxime.coquelin@redhat.com>
+In-Reply-To: <20250528093644.2456221-1-maxime.coquelin@redhat.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Wed, 28 May 2025 14:12:37 +0200
+X-Gm-Features: AX0GCFu7jEDQ_CtFaMvXgnEsjDaFUT1PwGuuIKtKq37FXBOG4F8XpEvIozEzvCQ
+Message-ID: <CAJFAV8zDs2nVvX2ZC=sXX3pwYY4t+-ZrOcKqZpnSbjO4MqZ7DQ@mail.gmail.com>
+Subject: Re: [PATCH] net/mlx5: avoid setting kernel MTU if not needed
+To: Maxime Coquelin <maxime.coquelin@redhat.com>, dsosnowski@nvidia.com
+Cc: dev@dpdk.org, viacheslavo@nvidia.com, stable@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: xHIgiVXjjN-5m6cmAEzhmwbTGcOeuTFN4DeWahYMqvE_1748434370
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -47,236 +84,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Hemant Agrawal <hemant.agrawal@nxp.com>
+Hello,
 
-rte_dpaa_bus was being used as structure and variable name both.
+On Wed, May 28, 2025 at 11:36=E2=80=AFAM Maxime Coquelin
+<maxime.coquelin@redhat.com> wrote:
+>
+> This patch checks whether the Kernel MTU has the same value
+> as the requested one at port configuration time, and skip
+> setting it if it is the same.
+>
+> Doing this, we can avoid the application to require
+> NET_ADMIN capability, as in v23.11.
+>
+> Fixes: 10859ecf09c4 ("net/mlx5: fix MTU configuration")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+> ---
+>
+> Hi Dariuz,
+>
+> I set priv->mtu as it is done after the mlx5_set_mtu() call,
+> but I'm not sure it is necessary, as is the existing call to
+> mlx5_get_mtu() because it seems done in mlx5_dev_spawn().
 
-Signed-off-by: Jun Yang <jun.yang@nxp.com>
-Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
----
- drivers/bus/dpaa/dpaa_bus.c | 56 ++++++++++++++++++-------------------
- 1 file changed, 28 insertions(+), 28 deletions(-)
+It seems there were some back and forth on this priv->mtu topic
+between Nelio and other devs in the past.
 
-diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
-index 5420733019..f5ce4a2761 100644
---- a/drivers/bus/dpaa/dpaa_bus.c
-+++ b/drivers/bus/dpaa/dpaa_bus.c
-@@ -54,7 +54,7 @@ struct rte_dpaa_bus {
- 	int detected;
- };
- 
--static struct rte_dpaa_bus rte_dpaa_bus;
-+static struct rte_dpaa_bus s_rte_dpaa_bus;
- struct netcfg_info *dpaa_netcfg;
- 
- /* define a variable to hold the portal_key, once created.*/
-@@ -120,7 +120,7 @@ dpaa_add_to_device_list(struct rte_dpaa_device *newdev)
- 	struct rte_dpaa_device *dev = NULL;
- 	struct rte_dpaa_device *tdev = NULL;
- 
--	RTE_TAILQ_FOREACH_SAFE(dev, &rte_dpaa_bus.device_list, next, tdev) {
-+	RTE_TAILQ_FOREACH_SAFE(dev, &s_rte_dpaa_bus.device_list, next, tdev) {
- 		comp = compare_dpaa_devices(newdev, dev);
- 		if (comp < 0) {
- 			TAILQ_INSERT_BEFORE(dev, newdev, next);
-@@ -130,7 +130,7 @@ dpaa_add_to_device_list(struct rte_dpaa_device *newdev)
- 	}
- 
- 	if (!inserted)
--		TAILQ_INSERT_TAIL(&rte_dpaa_bus.device_list, newdev, next);
-+		TAILQ_INSERT_TAIL(&s_rte_dpaa_bus.device_list, newdev, next);
- }
- 
- /*
-@@ -176,7 +176,7 @@ dpaa_create_device_list(void)
- 	struct fm_eth_port_cfg *cfg;
- 	struct fman_if *fman_intf;
- 
--	rte_dpaa_bus.device_count = 0;
-+	s_rte_dpaa_bus.device_count = 0;
- 
- 	/* Creating Ethernet Devices */
- 	for (i = 0; dpaa_netcfg && (i < dpaa_netcfg->num_ethports); i++) {
-@@ -187,7 +187,7 @@ dpaa_create_device_list(void)
- 			goto cleanup;
- 		}
- 
--		dev->device.bus = &rte_dpaa_bus.bus;
-+		dev->device.bus = &s_rte_dpaa_bus.bus;
- 		dev->device.numa_node = SOCKET_ID_ANY;
- 
- 		/* Allocate interrupt handle instance */
-@@ -226,7 +226,7 @@ dpaa_create_device_list(void)
- 		dpaa_add_to_device_list(dev);
- 	}
- 
--	rte_dpaa_bus.device_count += i;
-+	s_rte_dpaa_bus.device_count += i;
- 
- 	/* Unlike case of ETH, RTE_LIBRTE_DPAA_MAX_CRYPTODEV SEC devices are
- 	 * constantly created only if "sec" property is found in the device
-@@ -259,7 +259,7 @@ dpaa_create_device_list(void)
- 		}
- 
- 		dev->device_type = FSL_DPAA_CRYPTO;
--		dev->id.dev_id = rte_dpaa_bus.device_count + i;
-+		dev->id.dev_id = s_rte_dpaa_bus.device_count + i;
- 
- 		/* Even though RTE_CRYPTODEV_NAME_MAX_LEN is valid length of
- 		 * crypto PMD, using RTE_ETH_NAME_MAX_LEN as that is the size
-@@ -274,7 +274,7 @@ dpaa_create_device_list(void)
- 		dpaa_add_to_device_list(dev);
- 	}
- 
--	rte_dpaa_bus.device_count += i;
-+	s_rte_dpaa_bus.device_count += i;
- 
- qdma_dpaa:
- 	/* Creating QDMA Device */
-@@ -287,7 +287,7 @@ dpaa_create_device_list(void)
- 		}
- 
- 		dev->device_type = FSL_DPAA_QDMA;
--		dev->id.dev_id = rte_dpaa_bus.device_count + i;
-+		dev->id.dev_id = s_rte_dpaa_bus.device_count + i;
- 
- 		memset(dev->name, 0, RTE_ETH_NAME_MAX_LEN);
- 		sprintf(dev->name, "dpaa_qdma-%d", i+1);
-@@ -297,7 +297,7 @@ dpaa_create_device_list(void)
- 
- 		dpaa_add_to_device_list(dev);
- 	}
--	rte_dpaa_bus.device_count += i;
-+	s_rte_dpaa_bus.device_count += i;
- 
- 	return 0;
- 
-@@ -312,8 +312,8 @@ dpaa_clean_device_list(void)
- 	struct rte_dpaa_device *dev = NULL;
- 	struct rte_dpaa_device *tdev = NULL;
- 
--	RTE_TAILQ_FOREACH_SAFE(dev, &rte_dpaa_bus.device_list, next, tdev) {
--		TAILQ_REMOVE(&rte_dpaa_bus.device_list, dev, next);
-+	RTE_TAILQ_FOREACH_SAFE(dev, &s_rte_dpaa_bus.device_list, next, tdev) {
-+		TAILQ_REMOVE(&s_rte_dpaa_bus.device_list, dev, next);
- 		rte_intr_instance_free(dev->intr_handle);
- 		free(dev);
- 		dev = NULL;
-@@ -537,10 +537,10 @@ rte_dpaa_bus_scan(void)
- 		return 0;
- 	}
- 
--	if (rte_dpaa_bus.detected)
-+	if (s_rte_dpaa_bus.detected)
- 		return 0;
- 
--	rte_dpaa_bus.detected = 1;
-+	s_rte_dpaa_bus.detected = 1;
- 
- 	/* create the key, supplying a function that'll be invoked
- 	 * when a portal affined thread will be deleted.
-@@ -564,7 +564,7 @@ rte_dpaa_driver_register(struct rte_dpaa_driver *driver)
- 
- 	BUS_INIT_FUNC_TRACE();
- 
--	TAILQ_INSERT_TAIL(&rte_dpaa_bus.driver_list, driver, next);
-+	TAILQ_INSERT_TAIL(&s_rte_dpaa_bus.driver_list, driver, next);
- }
- 
- /* un-register a dpaa bus based dpaa driver */
-@@ -574,7 +574,7 @@ rte_dpaa_driver_unregister(struct rte_dpaa_driver *driver)
- {
- 	BUS_INIT_FUNC_TRACE();
- 
--	TAILQ_REMOVE(&rte_dpaa_bus.driver_list, driver, next);
-+	TAILQ_REMOVE(&s_rte_dpaa_bus.driver_list, driver, next);
- }
- 
- static int
-@@ -663,11 +663,11 @@ rte_dpaa_bus_probe(void)
- 	struct rte_dpaa_driver *drv;
- 	FILE *svr_file = NULL;
- 	unsigned int svr_ver;
--	int probe_all = rte_dpaa_bus.bus.conf.scan_mode != RTE_BUS_SCAN_ALLOWLIST;
-+	int probe_all = s_rte_dpaa_bus.bus.conf.scan_mode != RTE_BUS_SCAN_ALLOWLIST;
- 	static int process_once;
- 
- 	/* If DPAA bus is not present nothing needs to be done */
--	if (!rte_dpaa_bus.detected)
-+	if (!s_rte_dpaa_bus.detected)
- 		return 0;
- 
- 	/* Device list creation is only done once */
-@@ -690,7 +690,7 @@ rte_dpaa_bus_probe(void)
- 	process_once = 1;
- 
- 	/* If no device present on DPAA bus nothing needs to be done */
--	if (TAILQ_EMPTY(&rte_dpaa_bus.device_list))
-+	if (TAILQ_EMPTY(&s_rte_dpaa_bus.device_list))
- 		return 0;
- 
- 	/* Register DPAA mempool ops only if any DPAA device has
-@@ -705,7 +705,7 @@ rte_dpaa_bus_probe(void)
- 		fclose(svr_file);
- 	}
- 
--	TAILQ_FOREACH(dev, &rte_dpaa_bus.device_list, next) {
-+	TAILQ_FOREACH(dev, &s_rte_dpaa_bus.device_list, next) {
- 		if (dev->device_type == FSL_DPAA_ETH) {
- 			ret = rte_dpaa_setup_intr(dev->intr_handle);
- 			if (ret)
-@@ -717,8 +717,8 @@ rte_dpaa_bus_probe(void)
- 	dpaax_iova_table_populate();
- 
- 	/* For each registered driver, and device, call the driver->probe */
--	TAILQ_FOREACH(dev, &rte_dpaa_bus.device_list, next) {
--		TAILQ_FOREACH(drv, &rte_dpaa_bus.driver_list, next) {
-+	TAILQ_FOREACH(dev, &s_rte_dpaa_bus.device_list, next) {
-+		TAILQ_FOREACH(drv, &s_rte_dpaa_bus.driver_list, next) {
- 			ret = rte_dpaa_device_match(drv, dev);
- 			if (ret)
- 				continue;
-@@ -765,7 +765,7 @@ rte_dpaa_find_device(const struct rte_device *start, rte_dev_cmp_t cmp,
- 		dstart = RTE_DEV_TO_DPAA_CONST(start);
- 		dev = TAILQ_NEXT(dstart, next);
- 	} else {
--		dev = TAILQ_FIRST(&rte_dpaa_bus.device_list);
-+		dev = TAILQ_FIRST(&s_rte_dpaa_bus.device_list);
- 	}
- 
- 	while (dev != NULL) {
-@@ -838,7 +838,7 @@ dpaa_bus_dev_iterate(const void *start, const char *str,
- 		dstart = RTE_DEV_TO_DPAA_CONST(start);
- 		dev = TAILQ_NEXT(dstart, next);
- 	} else {
--		dev = TAILQ_FIRST(&rte_dpaa_bus.device_list);
-+		dev = TAILQ_FIRST(&s_rte_dpaa_bus.device_list);
- 	}
- 
- 	while (dev != NULL) {
-@@ -853,7 +853,7 @@ dpaa_bus_dev_iterate(const void *start, const char *str,
- 	return NULL;
- }
- 
--static struct rte_dpaa_bus rte_dpaa_bus = {
-+static struct rte_dpaa_bus s_rte_dpaa_bus = {
- 	.bus = {
- 		.scan = rte_dpaa_bus_scan,
- 		.probe = rte_dpaa_bus_probe,
-@@ -864,10 +864,10 @@ static struct rte_dpaa_bus rte_dpaa_bus = {
- 		.unplug = dpaa_bus_unplug,
- 		.dev_iterate = dpaa_bus_dev_iterate,
- 	},
--	.device_list = TAILQ_HEAD_INITIALIZER(rte_dpaa_bus.device_list),
--	.driver_list = TAILQ_HEAD_INITIALIZER(rte_dpaa_bus.driver_list),
-+	.device_list = TAILQ_HEAD_INITIALIZER(s_rte_dpaa_bus.device_list),
-+	.driver_list = TAILQ_HEAD_INITIALIZER(s_rte_dpaa_bus.driver_list),
- 	.device_count = 0,
- };
- 
--RTE_REGISTER_BUS(FSL_DPAA_BUS_NAME, rte_dpaa_bus.bus);
-+RTE_REGISTER_BUS(FSL_DPAA_BUS_NAME, s_rte_dpaa_bus.bus);
- RTE_LOG_REGISTER_DEFAULT(dpaa_logtype_bus, NOTICE);
--- 
-2.25.1
+Atm, I don't see the need for keeping such a cached mtu value in priv.
+There is only one user of the value, and it is for configuration
+operation that can do a query to the kernel.
+
+
+--=20
+David Marchand
 
