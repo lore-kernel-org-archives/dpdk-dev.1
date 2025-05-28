@@ -2,74 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6DEAC5AD49
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 May 2025 09:14:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE88BC5AD49
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 May 2025 09:35:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9BD09402A8;
-	Wed, 28 May 2025 11:14:30 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id D163640279
- for <dev@dpdk.org>; Wed, 28 May 2025 11:14:29 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.186.216])
- by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b6kN12b21z6GFRS;
- Wed, 28 May 2025 17:14:25 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
- by mail.maildlp.com (Postfix) with ESMTPS id B63AF1402FE;
- Wed, 28 May 2025 17:14:27 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml500008.china.huawei.com (7.182.85.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 28 May 2025 11:14:27 +0200
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Wed, 28 May 2025 11:14:27 +0200
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>, "Stephen
- Hemminger" <stephen@networkplumber.org>, "skori@marvell.com"
- <skori@marvell.com>
-CC: Shepard Siegel <shepard.siegel@atomicrules.com>, Ed Czeck
- <ed.czeck@atomicrules.com>, John Miller <john.miller@atomicrules.com>, "Igor
- Russkikh" <irusskikh@marvell.com>, Ajit Khaparde
- <ajit.khaparde@broadcom.com>, Somnath Kotur <somnath.kotur@broadcom.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
- <kirankumark@marvell.com>, Satha Rao <skoteshwar@marvell.com>, Harman Kalra
- <hkalra@marvell.com>, Hemant Agrawal <hemant.agrawal@nxp.com>, Sachin Saxena
- <sachin.saxena@nxp.com>, John Daley <johndale@cisco.com>, Hyong Youb Kim
- <hyonkim@cisco.com>, Ian Stokes <ian.stokes@intel.com>, Bruce Richardson
- <bruce.richardson@intel.com>, Vladimir Medvedkin
- <vladimir.medvedkin@intel.com>, Anatoly Burakov <anatoly.burakov@intel.com>,
- Dariusz Sosnowski <dsosnowski@nvidia.com>, Viacheslav Ovsiienko
- <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
- <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
- <matan@nvidia.com>, Long Li <longli@microsoft.com>, Wei Hu
- <weh@microsoft.com>, Chaoyong He <chaoyong.he@corigine.com>, Jiawen Wu
- <jiawenwu@trustnetic.com>, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Jerin Jacob <jerinj@marvell.com>, Maciej Czekaj <mczekaj@marvell.com>, "Jian
- Wang" <jianwang@trustnetic.com>, Maxime Coquelin
- <maxime.coquelin@redhat.com>, Chenbo Xia <chenbox@nvidia.com>, Jochen Behrens
- <jochen.behrens@broadcom.com>, Thomas Monjalon <thomas@monjalon.net>, "Ferruh
- Yigit" <ferruh.yigit@amd.com>, "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH v2 1/2] ethdev: remove unnecessary type conversion
-Thread-Topic: [PATCH v2 1/2] ethdev: remove unnecessary type conversion
-Thread-Index: AQHbw0/AjHqMNRGXNUegkZRPaA3HnbPmidiAgAAVuwCAASoo4IAAAtRwgAAAsvCAAAy/wA==
-Date: Wed, 28 May 2025 09:14:27 +0000
-Message-ID: <581e7a5389f842a9824a365a46c470ad@huawei.com>
-References: <20250429181132.2544771-1-skori@marvell.com>
- <20250512150732.65743-1-skori@marvell.com>
- <20250527080701.712af797@hermes.local>
- <98CBD80474FA8B44BF855DF32C47DC35E9FC9B@smartserver.smartshare.dk>
- <211102eb85854ab2b64f34e72603587c@huawei.com>
- <e15717945ee34a748436e7cc7fecbde4@huawei.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FC9D@smartserver.smartshare.dk>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FC9D@smartserver.smartshare.dk>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
+	by mails.dpdk.org (Postfix) with ESMTP id 64B514028D;
+	Wed, 28 May 2025 11:35:51 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 39FB840279
+ for <dev@dpdk.org>; Wed, 28 May 2025 11:35:50 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id E55692076F;
+ Wed, 28 May 2025 11:35:49 +0200 (CEST)
+Content-class: urn:content-classes:message
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH v2 2/2] ethdev: remove callback checks from fast path
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Wed, 28 May 2025 11:35:48 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FC9E@smartserver.smartshare.dk>
+In-Reply-To: <20250512150732.65743-2-skori@marvell.com>
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [10.126.172.111]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+Thread-Topic: [PATCH v2 2/2] ethdev: remove callback checks from fast path
+Thread-Index: AdvDT6dtNl1iyDDXR46COnveyler+wMYgcTw
+References: <20250429181132.2544771-1-skori@marvell.com>
+ <20250512150732.65743-1-skori@marvell.com>
+ <20250512150732.65743-2-skori@marvell.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
+ "Sunil Kumar Kori" <skori@marvell.com>
+Cc: <dev@dpdk.org>, "Thomas Monjalon" <thomas@monjalon.net>,
+ "Ferruh Yigit" <ferruh.yigit@amd.com>,
+ "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,134 +51,339 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+> From: Sunil Kumar Kori <skori@marvell.com>
+> Sent: Monday, 12 May 2025 17.07
+>=20
+> rte_eth_fp_ops contains ops for fast path APIs. Each API
+> validates availability of callback and then invoke it.
+> These checks impact data path performace.
 
+Picking up the discussion from another thread [1]:
+
+> From: Konstantin Ananyev [mailto:konstantin.ananyev@huawei.com]
+> Sent: Wednesday, 28 May 2025 11.14
+>=20
+> So what we are saving with that patch: one cmp and one un-taken =
+branch:
+> @@ -6399,8 +6399,6 @@ rte_eth_rx_queue_count(uint16_t port_id, =
+uint16_t
+> queue_id)
+>  		return -EINVAL;
+>  #endif
+>=20
+> -	if (p->rx_queue_count =3D=3D NULL)
+> -		return -ENOTSUP;
+>  	return p->rx_queue_count(qd);
+>  }
+
+These are inline functions, so we also save some code space, instruction =
+cache, and possibly an entry in the branch predictor - everywhere these =
+functions are instantiated by the compiler.
 
 >=20
-> > From: Konstantin Ananyev [mailto:konstantin.ananyev@huawei.com]
-> > Sent: Wednesday, 28 May 2025 10.24
-> >
-> > > >
-> > > > > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
-> > > > > Sent: Tuesday, 27 May 2025 17.07
-> > > > >
-> > > > > On Mon, 12 May 2025 20:37:19 +0530
-> > > > > <skori@marvell.com> wrote:
-> > > > >
-> > > > > >  /**@{@name Rx hardware descriptor states
-> > > > > > diff --git a/lib/ethdev/rte_ethdev_core.h
-> > > > > b/lib/ethdev/rte_ethdev_core.h
-> > > > > > index e55fb42996..4ffae4921a 100644
-> > > > > > --- a/lib/ethdev/rte_ethdev_core.h
-> > > > > > +++ b/lib/ethdev/rte_ethdev_core.h
-> > > > > > @@ -45,7 +45,7 @@ typedef uint16_t (*eth_tx_prep_t)(void *txq,
-> > > > > >
-> > > > > >
-> > > > > >  /** @internal Get number of used descriptors on a receive
-> > queue. */
-> > > > > > -typedef uint32_t (*eth_rx_queue_count_t)(void *rxq);
-> > > > > > +typedef int (*eth_rx_queue_count_t)(void *rxq);
-> > > > > >
-> > > > > >  /** @internal Check the status of a Rx descriptor */
-> > > > > >  typedef int (*eth_rx_descriptor_status_t)(void *rxq, uint16_t
-> > > > > offset);
-> > > > >
-> > > > >
-> > > > > This gets reported as ABI breakage. The change will have to wait
-> > until
-> > > > > next LTS (25.11)
-> > > >
-> > > > The return type was weird (wrong) to begin with.
-> > > > When used, it gets cast to int:
-> > > >
-> > https://elixir.bootlin.com/dpdk/v25.03/source/lib/ethdev/rte_ethdev.h#L
-> > 6404
-> > >
-> > > Personally, I don't see anything strange here.
-> > > devops rx_queue_count() supposed to return uint, because it should
-> > never failed for
-> > > valid queue.
->=20
-> The main thing wrong is inconsistency with its sibling API for TX queue c=
-ount:
-> /** @internal Get number of used descriptors on a receive queue. */
-> typedef uint32_t (*eth_rx_queue_count_t)(void *rxq);
-> /** @internal Get number of used descriptors on a transmit queue. */
-> typedef int (*eth_tx_queue_count_t)(void *txq);
->=20
-> > > While rte_eth_rx_queue_count() itself can fail - wrong port/queue id,
-> > etc.
-> >
-> > BTW, rx_queue_setup() accepts only uint16_t for number of rx
-> > descritoirs:
-> > int rte_eth_rx_queue_setup(uint16_t port_id, uint16_t rx_queue_id,
-> >                 uint16_t nb_rx_desc, unsigned int socket_id,
-> >                 const struct rte_eth_rxconf *rx_conf,
-> >                 struct rte_mempool *mb_pool);
-> >
-> > shouldn't dev->rx_queue_count() then also return uitn16_t (for
-> > consistency)?
->=20
-> If neither the RX or TX queue count callbacks can fail, then yes, both AP=
-Is could be updated to return uint16_t.
-> But it would be more future proof to allow these callbacks to fail, even =
-on a valid queue.
-> The public APIs rte_eth_rx/tx_queue_count() can fail, so passing on failu=
-res from the callbacks would not be a change of the public
-> API. (Assuming no new error codes are allowed.)
->=20
-> And the "future" already arrived:
-> The return type must be int (or have the same size as int), for the perfo=
-rmance patch [1] replacing the ops->callback=3D=3DNULL check
-> with dummy callbacks returning -ENOTSUP.
->=20
-> [1]: https://inbox.dpdk.org/dev/20250512150732.65743-2-skori@marvell.com/
+> I wonder is how realistic (and measurable) is the gain?
 
-So what we are saving with that patch: one cmp and one un-taken branch:
-@@ -6399,8 +6399,6 @@ rte_eth_rx_queue_count(uint16_t port_id, uint16_t que=
-ue_id)
- 		return -EINVAL;
- #endif
-=20
--	if (p->rx_queue_count =3D=3D NULL)
--		return -ENOTSUP;
- 	return p->rx_queue_count(qd);
- }
+The performance optimization is mainly targeting the mbuf recycle =
+operations, i.e. the hot fast path, where every cycle counts.
+And while optimizing those, the other ethdev fast path callbacks are =
+also optimized.
 
-I wonder is how realistic (and measurable) is the gain?
+Yes, although we all agree that there is no downside to this =
+optimization, it would be nice to see some performance numbers.
 
->  =20
-> >
-> > > >
-> > > > You are right that it formally changes the ABI, and we should go
-> > through the LTS motions.
-> > > > But, for this change, I'd favor an exception.
-> > >
-> > > Again, from my opinion, there is nothing that urgent/important why
-> > such changes (if needed)
-> > > can't wait till next LTS.
-> > > For now, we can simply do type conversion explicitly at
-> > rte_eth_rx_queue_count().
+[1]: =
+https://inbox.dpdk.org/dev/581e7a5389f842a9824a365a46c470ad@huawei.com/
+
 >=20
-> OK. No objections from me. Just trying to accelerate some cleanup work.
+> Hence removing these NULL checks instead using dummy
+> callbacks.
 >=20
-> > >
-> > > > PS: As a consequence of this change, a patch to update the return
-> > type of the callback in all the ethdev drivers should be provided.
-> > > >
-> > > > >
-> > > > >
-> > > > >   [C] 'rte_eth_fp_ops rte_eth_fp_ops[32]' was changed at
-> > > > > rte_ethdev.c:47:1:
-> > > > >     type of variable changed:
-> > > > >       array element type 'struct rte_eth_fp_ops' changed:
-> > > > >         type size hasn't changed
-> > > > >         1 data member change:
-> > > > >           type of 'eth_rx_queue_count_t rx_queue_count' changed:
-> > > > >             underlying type 'uint32_t (*)(void*)' changed:
-> > > > >               in pointed to type 'function type uint32_t
-> > (void*)':
-> > > > >                 return type changed:
-> > > > >                   entity changed from 'typedef uint32_t' to 'int'
-> > > > >                   type size hasn't changed
-> > > > >       type size hasn't changed
+> Signed-off-by: Sunil Kumar Kori <skori@marvell.com>
+> ---
+>  lib/ethdev/ethdev_driver.c | 55 +++++++++++++++++++++++++++++
+>  lib/ethdev/ethdev_driver.h | 71 =
+++++++++++++++++++++++++++++++++++++++
+>  lib/ethdev/rte_ethdev.h    | 29 ++--------------
+>  3 files changed, 129 insertions(+), 26 deletions(-)
+>=20
+> diff --git a/lib/ethdev/ethdev_driver.c b/lib/ethdev/ethdev_driver.c
+> index ec0c1e1176..f89562b237 100644
+> --- a/lib/ethdev/ethdev_driver.c
+> +++ b/lib/ethdev/ethdev_driver.c
+> @@ -75,6 +75,20 @@ eth_dev_get(uint16_t port_id)
+>  	return eth_dev;
+>  }
+>=20
+> +static void
+> +eth_dev_set_dummy_fops(struct rte_eth_dev *eth_dev)
+> +{
+> +	eth_dev->rx_pkt_burst =3D rte_eth_pkt_burst_dummy;
+> +	eth_dev->tx_pkt_burst =3D rte_eth_pkt_burst_dummy;
+> +	eth_dev->tx_pkt_prepare =3D rte_eth_tx_pkt_prepare_dummy;
+> +	eth_dev->rx_queue_count =3D rte_eth_queue_count_dummy;
+> +	eth_dev->tx_queue_count =3D rte_eth_queue_count_dummy;
+> +	eth_dev->rx_descriptor_status =3D rte_eth_descriptor_status_dummy;
+> +	eth_dev->tx_descriptor_status =3D rte_eth_descriptor_status_dummy;
+> +	eth_dev->recycle_tx_mbufs_reuse =3D
+> rte_eth_recycle_tx_mbufs_reuse_dummy;
+> +	eth_dev->recycle_rx_descriptors_refill =3D
+> rte_eth_recycle_rx_descriptors_refill_dummy;
+> +}
+> +
+>  RTE_EXPORT_INTERNAL_SYMBOL(rte_eth_dev_allocate)
+>  struct rte_eth_dev *
+>  rte_eth_dev_allocate(const char *name)
+> @@ -115,6 +129,7 @@ rte_eth_dev_allocate(const char *name)
+>  	}
+>=20
+>  	eth_dev =3D eth_dev_get(port_id);
+> +	eth_dev_set_dummy_fops(eth_dev);
+>  	eth_dev->flow_fp_ops =3D &rte_flow_fp_default_ops;
+>  	strlcpy(eth_dev->data->name, name, sizeof(eth_dev->data->name));
+>  	eth_dev->data->port_id =3D port_id;
+> @@ -847,6 +862,46 @@ rte_eth_pkt_burst_dummy(void *queue __rte_unused,
+>  	return 0;
+>  }
+>=20
+> +RTE_EXPORT_INTERNAL_SYMBOL(rte_eth_tx_pkt_prepare_dummy)
+> +uint16_t
+> +rte_eth_tx_pkt_prepare_dummy(void *queue __rte_unused,
+> +		struct rte_mbuf **pkts __rte_unused,
+> +		uint16_t nb_pkts)
+> +{
+> +	return nb_pkts;
+> +}
+> +
+> +RTE_EXPORT_INTERNAL_SYMBOL(rte_eth_queue_count_dummy)
+> +int
+> +rte_eth_queue_count_dummy(void *queue __rte_unused)
+> +{
+> +	return -ENOTSUP;
+> +}
+> +
+> +RTE_EXPORT_INTERNAL_SYMBOL(rte_eth_descriptor_status_dummy)
+> +int
+> +rte_eth_descriptor_status_dummy(void *queue __rte_unused,
+> +		uint16_t offset __rte_unused)
+> +{
+> +	return -ENOTSUP;
+> +}
+> +
+> +RTE_EXPORT_INTERNAL_SYMBOL(rte_eth_recycle_tx_mbufs_reuse_dummy)
+> +uint16_t
+> +rte_eth_recycle_tx_mbufs_reuse_dummy(void *queue __rte_unused,
+> +		struct rte_eth_recycle_rxq_info *recycle_rxq_info
+> __rte_unused)
+> +{
+> +	return 0;
+> +}
+> +
+> =
++RTE_EXPORT_INTERNAL_SYMBOL(rte_eth_recycle_rx_descriptors_refill_dummy
+> )
+> +void
+> +rte_eth_recycle_rx_descriptors_refill_dummy(void *queue __rte_unused,
+> +		uint16_t nb __rte_unused)
+> +{
+> +	/* No action. */
+> +}
+> +
+>  RTE_EXPORT_INTERNAL_SYMBOL(rte_eth_representor_id_get)
+>  int
+>  rte_eth_representor_id_get(uint16_t port_id,
+> diff --git a/lib/ethdev/ethdev_driver.h b/lib/ethdev/ethdev_driver.h
+> index 2b4d2ae9c3..71085bddff 100644
+> --- a/lib/ethdev/ethdev_driver.h
+> +++ b/lib/ethdev/ethdev_driver.h
+> @@ -1874,6 +1874,77 @@ rte_eth_pkt_burst_dummy(void *queue
+> __rte_unused,
+>  		struct rte_mbuf **pkts __rte_unused,
+>  		uint16_t nb_pkts __rte_unused);
+>=20
+> +/**
+> + * @internal
+> + * Dummy DPDK callback for Tx packet prepare.
+> + *
+> + * @param queue
+> + *  Pointer to Tx queue
+> + * @param pkts
+> + *  Packet array
+> + * @param nb_pkts
+> + *  Number of packets in packet array
+> + */
+> +__rte_internal
+> +uint16_t
+> +rte_eth_tx_pkt_prepare_dummy(void *queue __rte_unused,
+> +		struct rte_mbuf **pkts __rte_unused,
+> +		uint16_t nb_pkts __rte_unused);
+> +
+> +/**
+> + * @internal
+> + * Dummy DPDK callback for queue count.
+> + *
+> + * @param queue
+> + *  Pointer to Rx/Tx queue
+> + */
+> +__rte_internal
+> +int
+> +rte_eth_queue_count_dummy(void *queue __rte_unused);
+> +
+> +/**
+> + * @internal
+> + * Dummy DPDK callback for descriptor status.
+> + *
+> + * @param queue
+> + *  Pointer to Rx/Tx queue
+> + * @param offset
+> + *  The offset of the descriptor starting from tail (0 is the next
+> + *  packet to be received by the driver).
+> + */
+> +__rte_internal
+> +int
+> +rte_eth_descriptor_status_dummy(void *queue __rte_unused,
+> +		uint16_t offset __rte_unused);
+> +
+> +/**
+> + * @internal
+> + * Dummy DPDK callback for recycle Tx mbufs reuse.
+> + *
+> + * @param queue
+> + *  Pointer to Tx queue
+> + * @param recycle_rxq_info
+> + *  Pointer to recycle Rx queue info
+> + */
+> +__rte_internal
+> +uint16_t
+> +rte_eth_recycle_tx_mbufs_reuse_dummy(void *queue __rte_unused,
+> +		struct rte_eth_recycle_rxq_info *recycle_rxq_info
+> __rte_unused);
+> +
+> +/**
+> + * @internal
+> + * Dummy DPDK callback Rx descriptor refill.
+> + *
+> + * @param queue
+> + *  Pointer Rx queue
+> + * @param offset
+> + *  number of descriptors to refill
+> + */
+> +__rte_internal
+> +void
+> +rte_eth_recycle_rx_descriptors_refill_dummy(void *queue __rte_unused,
+> +		uint16_t nb __rte_unused);
+> +
+>  /**
+>   * Allocate an unique switch domain identifier.
+>   *
+> diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
+> index b3031ab9e6..2034680560 100644
+> --- a/lib/ethdev/rte_ethdev.h
+> +++ b/lib/ethdev/rte_ethdev.h
+> @@ -6399,8 +6399,6 @@ rte_eth_rx_queue_count(uint16_t port_id, =
+uint16_t
+> queue_id)
+>  		return -EINVAL;
+>  #endif
+>=20
+> -	if (p->rx_queue_count =3D=3D NULL)
+> -		return -ENOTSUP;
+>  	return p->rx_queue_count(qd);
+>  }
+>=20
+> @@ -6471,8 +6469,6 @@ rte_eth_rx_descriptor_status(uint16_t port_id,
+> uint16_t queue_id,
+>  	if (qd =3D=3D NULL)
+>  		return -ENODEV;
+>  #endif
+> -	if (p->rx_descriptor_status =3D=3D NULL)
+> -		return -ENOTSUP;
+>  	return p->rx_descriptor_status(qd, offset);
+>  }
+>=20
+> @@ -6542,8 +6538,6 @@ static inline int
+> rte_eth_tx_descriptor_status(uint16_t port_id,
+>  	if (qd =3D=3D NULL)
+>  		return -ENODEV;
+>  #endif
+> -	if (p->tx_descriptor_status =3D=3D NULL)
+> -		return -ENOTSUP;
+>  	return p->tx_descriptor_status(qd, offset);
+>  }
+>=20
+> @@ -6786,9 +6780,6 @@ rte_eth_tx_prepare(uint16_t port_id, uint16_t
+> queue_id,
+>  	}
+>  #endif
+>=20
+> -	if (!p->tx_pkt_prepare)
+> -		return nb_pkts;
+> -
+>  	return p->tx_pkt_prepare(qd, tx_pkts, nb_pkts);
+>  }
+>=20
+> @@ -6985,8 +6976,6 @@ rte_eth_recycle_mbufs(uint16_t rx_port_id,
+> uint16_t rx_queue_id,
+>  		return 0;
+>  	}
+>  #endif
+> -	if (p1->recycle_tx_mbufs_reuse =3D=3D NULL)
+> -		return 0;
+>=20
+>  #ifdef RTE_ETHDEV_DEBUG_RX
+>  	if (rx_port_id >=3D RTE_MAX_ETHPORTS ||
+> @@ -7010,8 +6999,6 @@ rte_eth_recycle_mbufs(uint16_t rx_port_id,
+> uint16_t rx_queue_id,
+>  		return 0;
+>  	}
+>  #endif
+> -	if (p2->recycle_rx_descriptors_refill =3D=3D NULL)
+> -		return 0;
+>=20
+>  	/* Copy used *rte_mbuf* buffer pointers from Tx mbuf ring
+>  	 * into Rx mbuf ring.
+> @@ -7107,15 +7094,13 @@ rte_eth_tx_queue_count(uint16_t port_id,
+> uint16_t queue_id)
+>  #ifdef RTE_ETHDEV_DEBUG_TX
+>  	if (port_id >=3D RTE_MAX_ETHPORTS ||
+> !rte_eth_dev_is_valid_port(port_id)) {
+>  		RTE_ETHDEV_LOG_LINE(ERR, "Invalid port_id=3D%u", port_id);
+> -		rc =3D -ENODEV;
+> -		goto out;
+> +		return -ENODEV;
+>  	}
+>=20
+>  	if (queue_id >=3D RTE_MAX_QUEUES_PER_PORT) {
+>  		RTE_ETHDEV_LOG_LINE(ERR, "Invalid queue_id=3D%u for
+> port_id=3D%u",
+>  				    queue_id, port_id);
+> -		rc =3D -EINVAL;
+> -		goto out;
+> +		return -EINVAL;
+>  	}
+>  #endif
+>=20
+> @@ -7127,18 +7112,10 @@ rte_eth_tx_queue_count(uint16_t port_id,
+> uint16_t queue_id)
+>  	if (qd =3D=3D NULL) {
+>  		RTE_ETHDEV_LOG_LINE(ERR, "Invalid queue_id=3D%u for
+> port_id=3D%u",
+>  				    queue_id, port_id);
+> -		rc =3D -EINVAL;
+> -		goto out;
+> +		return -EINVAL;
+>  	}
+>  #endif
+> -	if (fops->tx_queue_count =3D=3D NULL) {
+> -		rc =3D -ENOTSUP;
+> -		goto out;
+> -	}
+> -
+>  	rc =3D fops->tx_queue_count(qd);
+> -
+> -out:
+>  	rte_eth_trace_tx_queue_count(port_id, queue_id, rc);
+>  	return rc;
+>  }
+> --
+> 2.43.0
 
