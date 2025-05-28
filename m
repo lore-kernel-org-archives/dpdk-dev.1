@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5150C5AD49
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 May 2025 11:51:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CC9BC5AD49
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 May 2025 11:51:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A97FE40B9D;
-	Wed, 28 May 2025 13:51:42 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B673C40DFB;
+	Wed, 28 May 2025 13:51:48 +0200 (CEST)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 3E0AA40279
- for <dev@dpdk.org>; Wed, 28 May 2025 13:51:41 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54SBFCcj025707
- for <dev@dpdk.org>; Wed, 28 May 2025 04:51:40 -0700
+ by mails.dpdk.org (Postfix) with ESMTP id C191640279
+ for <dev@dpdk.org>; Wed, 28 May 2025 13:51:47 +0200 (CEST)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54S5qtbq006078
+ for <dev@dpdk.org>; Wed, 28 May 2025 04:51:47 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=K
- ZhiU5JM673a160GDgmCX+ZjB4ZnRldceliRbamdJno=; b=Me9t7NuLK6WV+fGwl
- 08mH5RIcizOimx6Ez5zU292VgtPSY+3YIBUhtHtuiIDitiuX/PlOOiBFNeiZ3Ok6
- nhk7AXoL/VQ08wUGGJxAVHdLMlHkP07nTotzqm0BOYB3MwA3iSRpjVNyy7W8rcjA
- +WaKZrmzHURc7+Lj0OaLi4f8xLXhD9Mo0rF7Q9b4xsOMo3D27utvfrpm+yE5Dnol
- 47L89pExcyQRPFjy5f/peqe23etA3YENi1jP7G1lFuyzI5a+4ZbkM6OBWEpRWXBS
- cPTVUdag7Z+LSCufGOQFDsm60GbMKHDSAkRMqM5q0ShyMeEODqe7GEEnEFbjqDdO
- su/bQ==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46x1e301mb-1
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=g
+ ei4AR9eYk0Y2Oe8Sk+O7pJ69aig906tFsaQELtwXo8=; b=XGOFWoJ8+5hgeCCr8
+ V2qMo6Zamse43bgfUWbKu5P81S7AlMT/YbDYj7Fa27597SNUocytUyR4oKgg+Nfg
+ rI3T2wVfxKQ9kjer0uI5cPqiCPh/1xz38gXiMrWO/v13PtZ2t0wlGhUgBY/Vdkrj
+ Z5/cY6m8Lbg24GOV3bFH+6j0Q8yfupCLjSHOPzxXwRoDVRaM0hPoeCGojgeNjfKH
+ upHy2amQ+M6girURZmJ4nAzqzCjyjtDZhPnjWgJZLDQE+1l3iOXtlZI2v2Xuz9BD
+ waEdMfDIQ0+gZwqtSSNzPelPUnCUxgts6m2WtLydVQ3tQTHSu3hhCneS+quixdq5
+ m1D4Q==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46wu5agr77-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Wed, 28 May 2025 04:51:40 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ for <dev@dpdk.org>; Wed, 28 May 2025 04:51:46 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 28 May 2025 04:51:39 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 28 May 2025 04:51:39 -0700
+ 15.2.1544.4; Wed, 28 May 2025 04:51:45 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 28 May 2025 04:51:45 -0700
 Received: from localhost.localdomain (unknown [10.28.36.158])
- by maili.marvell.com (Postfix) with ESMTP id 988713F7060;
- Wed, 28 May 2025 04:51:34 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 3015D3F7060;
+ Wed, 28 May 2025 04:51:40 -0700 (PDT)
 From: Rahul Bhansali <rbhansali@marvell.com>
 To: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
  <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
  <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
 CC: <jerinj@marvell.com>, Rahul Bhansali <rbhansali@marvell.com>
-Subject: [PATCH 2/7] common/cnxk: set CQ drop and backpressure threshold
-Date: Wed, 28 May 2025 17:21:17 +0530
-Message-ID: <20250528115122.24052-2-rbhansali@marvell.com>
+Subject: [PATCH 3/7] net/cnxk: devarg to set force tail drop
+Date: Wed, 28 May 2025 17:21:18 +0530
+Message-ID: <20250528115122.24052-3-rbhansali@marvell.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250528115122.24052-1-rbhansali@marvell.com>
 References: <20250528115122.24052-1-rbhansali@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: P3N0MypbnSDDB_8AJgavD1cXJdxyHzRd
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI4MDEwNCBTYWx0ZWRfX2Zh9ah08ZjLJ
- ldgjRWJIG5nNvLGAu45zzASoOX7+f3RXRo5QJ7pSxd7V2n4dPExz1wZJGCPwSBV6A4Qaj7BHAqG
- 78o9Ge7WnSBhnBSmHYmGMHalt2TpBnwcOtpNkJm+tETprW/tGajLCPt3wSKi4j1llhgbY0rAHTh
- iN8Z3pF8ad/xc2L5NBFBnRIZnokBduI4Ad3SF4QnFaacf3MnOHb1BHVOffdmRwbqNrDQl2bXW+p
- CafE/yVglwTpo0u7gH3HFRHX8ECMQApuXZuWT104hD06+vPh2hGOKn+6p2bVe/p4tw6l0uIRT9w
- 9elpidiTCyM3WjYzIlu8IfiJja95c0P/piLMyRfx/J9z9k0T5VS0JjmwhS746vYgaxozX2nrLRB
- JtBAWxejxfsCpJCT3KlO0UTfWdRNrhzxHhfGs7AqnY7AcLxmQ9ikFrw8fpctRW8vFWeDoMrG
-X-Proofpoint-GUID: P3N0MypbnSDDB_8AJgavD1cXJdxyHzRd
-X-Authority-Analysis: v=2.4 cv=baVrUPPB c=1 sm=1 tr=0 ts=6836f8cc cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=62nf8py8lASbXsaL7-YA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI4MDEwNCBTYWx0ZWRfX76FKlf4FDMxl
+ 9glnbNQ14pk7AeYzFtP4Umv0Oa3mPpwGBSPWj8d8bmQHEyA66RnK0+mMNMHd1rKFBjIRQcTuflE
+ +wQtZZzGnbe1E5082Mo0T/ppN615THr/Qra6D/tw+9Be6Gg5tteGn9Dfqwtvp2GSw43gnkqRwaR
+ ZyXs6oAbBAl51pDIOrhdaJ90r6NmkY20zz5C9OQAntKSNMI1SiKFpVCFUTu/Awd0oKEPN/rd3jC
+ NpUyHOYgBTBQ/yZ24hIaLlTCgRI4uHweJM3h1LjP/eiljpxc6OWAoF3Ud9OLBGNbe1aJervwHJo
+ GijzPDVlpnrbKPw6n1VodLihYwl/N55CPFpLXYP+w0rvbx0183szviq6UG13XAuhbSTx7hhiegS
+ CcanXqizGNGi5VOXpubZZRv/jN1Dl9W9zOp2dVV3QLNgq5EBHrYw9pzDpYrOwQpTN1x74+F2
+X-Proofpoint-GUID: 3Dea14P3r47CgO7ujbRz9KngMqS91SEr
+X-Proofpoint-ORIG-GUID: 3Dea14P3r47CgO7ujbRz9KngMqS91SEr
+X-Authority-Analysis: v=2.4 cv=UahRSLSN c=1 sm=1 tr=0 ts=6836f8d2 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=UQ_tuG2nzi5MP-4U3P0A:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
@@ -81,238 +81,98 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In case of force_tail_drop is enabled, a different set of
-CQ drop and backpressure threshold will be configured
-to avoid CQ FULL interrupts.
-Also, drop thresholds are optimized for security packets.
+A new devarg is added to configure force tail drop.
+Also, CQ descriptors are doubled under this option.
+
+To enable this devarg, it needs to be pass as
+force_tail_drop=1 for nix device.
+e.g.: 0002:02:00.0,force_tail_drop=1
 
 Signed-off-by: Rahul Bhansali <rbhansali@marvell.com>
 ---
- drivers/common/cnxk/roc_nix.h       |  4 ++++
- drivers/common/cnxk/roc_nix_fc.c    | 10 +++++----
- drivers/common/cnxk/roc_nix_priv.h  | 14 +++++++++---
- drivers/common/cnxk/roc_nix_queue.c | 35 ++++++++++++++++++++++-------
- 4 files changed, 48 insertions(+), 15 deletions(-)
+ drivers/net/cnxk/cnxk_ethdev.c         | 4 ++++
+ drivers/net/cnxk/cnxk_ethdev_devargs.c | 7 ++++++-
+ drivers/net/cnxk/cnxk_ethdev_ops.c     | 2 ++
+ 3 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/common/cnxk/roc_nix.h b/drivers/common/cnxk/roc_nix.h
-index 1e543d8f11..75b414a32a 100644
---- a/drivers/common/cnxk/roc_nix.h
-+++ b/drivers/common/cnxk/roc_nix.h
-@@ -189,6 +189,7 @@ struct roc_nix_fc_cfg {
- 			uint32_t rq;
- 			uint16_t tc;
- 			uint16_t cq_drop;
-+			uint16_t cq_bp;
- 			bool enable;
- 		} cq_cfg;
+diff --git a/drivers/net/cnxk/cnxk_ethdev.c b/drivers/net/cnxk/cnxk_ethdev.c
+index b9a0b37425..1ba09c068b 100644
+--- a/drivers/net/cnxk/cnxk_ethdev.c
++++ b/drivers/net/cnxk/cnxk_ethdev.c
+@@ -708,6 +708,10 @@ cnxk_nix_rx_queue_setup(struct rte_eth_dev *eth_dev, uint16_t qid,
+ 	if (dev->rx_offloads & RTE_ETH_RX_OFFLOAD_SECURITY)
+ 		nb_desc = nix_inl_cq_sz_clamp_up(nix, lpb_pool, nb_desc);
  
-@@ -196,6 +197,7 @@ struct roc_nix_fc_cfg {
- 			uint32_t rq;
- 			uint16_t tc;
- 			uint16_t cq_drop;
-+			uint16_t cq_bp;
- 			uint64_t pool;
- 			uint64_t spb_pool;
- 			uint64_t pool_drop_pct;
-@@ -371,6 +373,7 @@ struct roc_nix_cq {
- 	uint8_t stash_thresh;
- 	/* End of Input parameters */
- 	uint16_t drop_thresh;
-+	uint16_t bp_thresh;
- 	struct roc_nix *roc_nix;
- 	uintptr_t door;
- 	int64_t *status;
-@@ -483,6 +486,7 @@ struct roc_nix {
- 	uint32_t root_sched_weight;
- 	uint16_t inb_cfg_param1;
- 	uint16_t inb_cfg_param2;
-+	bool force_tail_drop;
- 	/* End of input parameters */
- 	/* LMT line base for "Per Core Tx LMT line" mode*/
- 	uintptr_t lmt_base;
-diff --git a/drivers/common/cnxk/roc_nix_fc.c b/drivers/common/cnxk/roc_nix_fc.c
-index 3e162ede8e..e35c993f96 100644
---- a/drivers/common/cnxk/roc_nix_fc.c
-+++ b/drivers/common/cnxk/roc_nix_fc.c
-@@ -157,7 +157,8 @@ nix_fc_cq_config_get(struct roc_nix *roc_nix, struct roc_nix_fc_cfg *fc_cfg)
++	/* Double the CQ descriptors */
++	if (nix->force_tail_drop)
++		nb_desc = 2 * RTE_MAX(nb_desc, (uint32_t)4096);
++
+ 	/* Setup ROC CQ */
+ 	cq = &dev->cqs[qid];
+ 	cq->qid = qid;
+diff --git a/drivers/net/cnxk/cnxk_ethdev_devargs.c b/drivers/net/cnxk/cnxk_ethdev_devargs.c
+index aa2fe7dfe1..7013849ad3 100644
+--- a/drivers/net/cnxk/cnxk_ethdev_devargs.c
++++ b/drivers/net/cnxk/cnxk_ethdev_devargs.c
+@@ -281,6 +281,7 @@ parse_val_u16(const char *key, const char *value, void *extra_args)
+ #define CNXK_NIX_RX_INJ_ENABLE	"rx_inj_ena"
+ #define CNXK_CUSTOM_META_AURA_DIS "custom_meta_aura_dis"
+ #define CNXK_CUSTOM_INB_SA	  "custom_inb_sa"
++#define CNXK_FORCE_TAIL_DROP	  "force_tail_drop"
+ 
+ int
+ cnxk_ethdev_parse_devargs(struct rte_devargs *devargs, struct cnxk_eth_dev *dev)
+@@ -301,6 +302,7 @@ cnxk_ethdev_parse_devargs(struct rte_devargs *devargs, struct cnxk_eth_dev *dev)
+ 	uint16_t outb_nb_desc = 8200;
+ 	struct sdp_channel sdp_chan;
+ 	uint16_t rss_tag_as_xor = 0;
++	uint8_t force_tail_drop = 0;
+ 	uint16_t scalar_enable = 0;
+ 	uint16_t tx_compl_ena = 0;
+ 	uint16_t custom_sa_act = 0;
+@@ -364,6 +366,7 @@ cnxk_ethdev_parse_devargs(struct rte_devargs *devargs, struct cnxk_eth_dev *dev)
+ 	rte_kvargs_process(kvlist, CNXK_CUSTOM_META_AURA_DIS, &parse_flag,
+ 			   &custom_meta_aura_dis);
+ 	rte_kvargs_process(kvlist, CNXK_CUSTOM_INB_SA, &parse_flag, &custom_inb_sa);
++	rte_kvargs_process(kvlist, CNXK_FORCE_TAIL_DROP, &parse_flag, &force_tail_drop);
+ 	rte_kvargs_free(kvlist);
+ 
+ null_devargs:
+@@ -405,6 +408,7 @@ cnxk_ethdev_parse_devargs(struct rte_devargs *devargs, struct cnxk_eth_dev *dev)
+ 	dev->npc.flow_age.aging_poll_freq = aging_thread_poll_freq;
+ 	if (roc_feature_nix_has_rx_inject())
+ 		dev->nix.rx_inj_ena = rx_inj_ena;
++	dev->nix.force_tail_drop = force_tail_drop;
+ 	return 0;
+ exit:
+ 	return -EINVAL;
+@@ -429,4 +433,5 @@ RTE_PMD_REGISTER_PARAM_STRING(net_cnxk,
+ 			      CNXK_SQB_SLACK "=<12-512>"
+ 			      CNXK_FLOW_AGING_POLL_FREQ "=<10-65535>"
+ 			      CNXK_NIX_RX_INJ_ENABLE "=1"
+-			      CNXK_CUSTOM_META_AURA_DIS "=1");
++			      CNXK_CUSTOM_META_AURA_DIS "=1"
++			      CNXK_FORCE_TAIL_DROP "=1");
+diff --git a/drivers/net/cnxk/cnxk_ethdev_ops.c b/drivers/net/cnxk/cnxk_ethdev_ops.c
+index 9970c5ff5c..7c8a4d8416 100644
+--- a/drivers/net/cnxk/cnxk_ethdev_ops.c
++++ b/drivers/net/cnxk/cnxk_ethdev_ops.c
+@@ -313,6 +313,7 @@ cnxk_nix_flow_ctrl_set(struct rte_eth_dev *eth_dev,
+ 		fc_cfg.rq_cfg.pool = rq->aura_handle;
+ 		fc_cfg.rq_cfg.spb_pool = rq->spb_aura_handle;
+ 		fc_cfg.rq_cfg.cq_drop = cq->drop_thresh;
++		fc_cfg.rq_cfg.cq_bp = cq->bp_thresh;
+ 		fc_cfg.rq_cfg.pool_drop_pct = ROC_NIX_AURA_THRESH;
+ 
+ 		rc = roc_nix_fc_config_set(nix, &fc_cfg);
+@@ -1239,6 +1240,7 @@ nix_priority_flow_ctrl_rq_conf(struct rte_eth_dev *eth_dev, uint16_t qid,
+ 	fc_cfg.rq_cfg.pool = rxq->qconf.mp->pool_id;
+ 	fc_cfg.rq_cfg.spb_pool = rq->spb_aura_handle;
+ 	fc_cfg.rq_cfg.cq_drop = cq->drop_thresh;
++	fc_cfg.rq_cfg.cq_bp = cq->bp_thresh;
+ 	fc_cfg.rq_cfg.pool_drop_pct = ROC_NIX_AURA_THRESH;
+ 	rc = roc_nix_fc_config_set(nix, &fc_cfg);
  	if (rc)
- 		goto exit;
- 
--	fc_cfg->cq_cfg.cq_drop = rsp->cq.bp;
-+	fc_cfg->cq_cfg.cq_drop = rsp->cq.drop;
-+	fc_cfg->cq_cfg.cq_bp = rsp->cq.bp;
- 	fc_cfg->cq_cfg.enable = rsp->cq.bp_ena;
- 	fc_cfg->type = ROC_NIX_FC_CQ_CFG;
- 
-@@ -288,7 +289,7 @@ nix_fc_cq_config_set(struct roc_nix *roc_nix, struct roc_nix_fc_cfg *fc_cfg)
- 		if (fc_cfg->cq_cfg.enable) {
- 			aq->cq.bpid = nix->bpid[fc_cfg->cq_cfg.tc];
- 			aq->cq_mask.bpid = ~(aq->cq_mask.bpid);
--			aq->cq.bp = fc_cfg->cq_cfg.cq_drop;
-+			aq->cq.bp = fc_cfg->cq_cfg.cq_bp;
- 			aq->cq_mask.bp = ~(aq->cq_mask.bp);
- 		}
- 
-@@ -310,7 +311,7 @@ nix_fc_cq_config_set(struct roc_nix *roc_nix, struct roc_nix_fc_cfg *fc_cfg)
- 		if (fc_cfg->cq_cfg.enable) {
- 			aq->cq.bpid = nix->bpid[fc_cfg->cq_cfg.tc];
- 			aq->cq_mask.bpid = ~(aq->cq_mask.bpid);
--			aq->cq.bp = fc_cfg->cq_cfg.cq_drop;
-+			aq->cq.bp = fc_cfg->cq_cfg.cq_bp;
- 			aq->cq_mask.bp = ~(aq->cq_mask.bp);
- 		}
- 
-@@ -332,7 +333,7 @@ nix_fc_cq_config_set(struct roc_nix *roc_nix, struct roc_nix_fc_cfg *fc_cfg)
- 		if (fc_cfg->cq_cfg.enable) {
- 			aq->cq.bpid = nix->bpid[fc_cfg->cq_cfg.tc];
- 			aq->cq_mask.bpid = ~(aq->cq_mask.bpid);
--			aq->cq.bp = fc_cfg->cq_cfg.cq_drop;
-+			aq->cq.bp = fc_cfg->cq_cfg.cq_bp;
- 			aq->cq_mask.bp = ~(aq->cq_mask.bp);
- 		}
- 
-@@ -389,6 +390,7 @@ nix_fc_rq_config_set(struct roc_nix *roc_nix, struct roc_nix_fc_cfg *fc_cfg)
- 	tmp.cq_cfg.rq = fc_cfg->rq_cfg.rq;
- 	tmp.cq_cfg.tc = fc_cfg->rq_cfg.tc;
- 	tmp.cq_cfg.cq_drop = fc_cfg->rq_cfg.cq_drop;
-+	tmp.cq_cfg.cq_bp = fc_cfg->rq_cfg.cq_bp;
- 	tmp.cq_cfg.enable = fc_cfg->rq_cfg.enable;
- 
- 	rc = nix_fc_cq_config_set(roc_nix, &tmp);
-diff --git a/drivers/common/cnxk/roc_nix_priv.h b/drivers/common/cnxk/roc_nix_priv.h
-index 09a55e43ce..dc3450a3d4 100644
---- a/drivers/common/cnxk/roc_nix_priv.h
-+++ b/drivers/common/cnxk/roc_nix_priv.h
-@@ -15,10 +15,18 @@
- #define NIX_SQB_PREFETCH     ((uint16_t)1)
- 
- /* Apply BP/DROP when CQ is 95% full */
--#define NIX_CQ_THRESH_LEVEL	(5 * 256 / 100)
--#define NIX_CQ_SEC_THRESH_LEVEL (25 * 256 / 100)
-+#define NIX_CQ_THRESH_LEVEL	   (5 * 256 / 100)
-+#define NIX_CQ_SEC_BP_THRESH_LEVEL (25 * 256 / 100)
-+
-+/* Applicable when force_tail_drop is enabled */
-+#define NIX_CQ_THRESH_LEVEL_REF1	(50 * 256 / 100)
-+#define NIX_CQ_SEC_THRESH_LEVEL_REF1	(20 * 256 / 100)
-+#define NIX_CQ_BP_THRESH_LEVEL_REF1	(60 * 256 / 100)
-+#define NIX_CQ_SEC_BP_THRESH_LEVEL_REF1 (50 * 256 / 100)
-+#define NIX_CQ_LBP_THRESH_FRAC_REF1	(80 * 16 / 100)
-+
- /* Apply LBP at 75% of actual BP */
--#define NIX_CQ_LPB_THRESH_FRAC	(75 * 16 / 100)
-+#define NIX_CQ_LBP_THRESH_FRAC	(75 * 16 / 100)
- #define NIX_CQ_FULL_ERRATA_SKID (1024ull * 256)
- #define NIX_RQ_AURA_BP_THRESH(percent, limit, shift) ((((limit) * (percent)) / 100) >> (shift))
- 
-diff --git a/drivers/common/cnxk/roc_nix_queue.c b/drivers/common/cnxk/roc_nix_queue.c
-index 39bd051c94..84a736e3bb 100644
---- a/drivers/common/cnxk/roc_nix_queue.c
-+++ b/drivers/common/cnxk/roc_nix_queue.c
-@@ -954,7 +954,8 @@ roc_nix_rq_init(struct roc_nix *roc_nix, struct roc_nix_rq *rq, bool ena)
- 	rq->tc = ROC_NIX_PFC_CLASS_INVALID;
- 
- 	/* Enable XQE/CQ drop on cn10k to count pkt drops only when inline is disabled */
--	if (roc_model_is_cn10k() && !roc_nix_inl_inb_is_enabled(roc_nix))
-+	if (roc_model_is_cn10k() &&
-+	    (roc_nix->force_tail_drop || !roc_nix_inl_inb_is_enabled(roc_nix)))
- 		rq->xqe_drop_ena = true;
- 
- 	if (is_cn9k)
-@@ -1150,9 +1151,9 @@ roc_nix_cn20k_cq_init(struct roc_nix *roc_nix, struct roc_nix_cq *cq)
- 			cq_ctx->lbpid_low = cpt_lbpid & 0x7;
- 			cq_ctx->lbpid_med = (cpt_lbpid >> 3) & 0x7;
- 			cq_ctx->lbpid_high = (cpt_lbpid >> 6) & 0x7;
--			cq_ctx->lbp_frac = NIX_CQ_LPB_THRESH_FRAC;
-+			cq_ctx->lbp_frac = NIX_CQ_LBP_THRESH_FRAC;
- 		}
--		drop_thresh = NIX_CQ_SEC_THRESH_LEVEL;
-+		drop_thresh = NIX_CQ_SEC_BP_THRESH_LEVEL;
- 	}
- 
- 	/* Many to one reduction */
-@@ -1178,6 +1179,7 @@ roc_nix_cn20k_cq_init(struct roc_nix *roc_nix, struct roc_nix_cq *cq)
- 			cq_ctx->drop_ena = 1;
- 		}
- 	}
-+	cq->bp_thresh = cq->drop_thresh;
- 	cq_ctx->bp = cq->drop_thresh;
- 
- 	if (roc_feature_nix_has_cqe_stash()) {
-@@ -1206,9 +1208,11 @@ roc_nix_cq_init(struct roc_nix *roc_nix, struct roc_nix_cq *cq)
- 	struct nix *nix = roc_nix_to_nix_priv(roc_nix);
- 	struct mbox *mbox = (&nix->dev)->mbox;
- 	volatile struct nix_cq_ctx_s *cq_ctx = NULL;
--	uint16_t drop_thresh = NIX_CQ_THRESH_LEVEL;
- 	uint16_t cpt_lbpid = nix->cpt_lbpid;
- 	enum nix_q_size qsize;
-+	bool force_tail_drop;
-+	uint16_t drop_thresh;
-+	uint16_t bp_thresh;
- 	size_t desc_sz;
- 	int rc;
- 
-@@ -1262,6 +1266,8 @@ roc_nix_cq_init(struct roc_nix *roc_nix, struct roc_nix_cq *cq)
- 		cq_ctx = &aq->cq;
- 	}
- 
-+	force_tail_drop = roc_nix->force_tail_drop;
-+
- 	cq_ctx->ena = 1;
- 	cq_ctx->caching = 1;
- 	cq_ctx->qsize = qsize;
-@@ -1269,6 +1275,9 @@ roc_nix_cq_init(struct roc_nix *roc_nix, struct roc_nix_cq *cq)
- 	cq_ctx->avg_level = 0xff;
- 	cq_ctx->cq_err_int_ena = BIT(NIX_CQERRINT_CQE_FAULT);
- 	cq_ctx->cq_err_int_ena |= BIT(NIX_CQERRINT_DOOR_ERR);
-+	drop_thresh = force_tail_drop ? NIX_CQ_THRESH_LEVEL_REF1 : NIX_CQ_THRESH_LEVEL;
-+	bp_thresh = force_tail_drop ? NIX_CQ_BP_THRESH_LEVEL_REF1 : drop_thresh;
-+
- 	if (roc_feature_nix_has_late_bp() && roc_nix_inl_inb_is_enabled(roc_nix)) {
- 		cq_ctx->cq_err_int_ena |= BIT(NIX_CQERRINT_CPT_DROP);
- 		cq_ctx->cpt_drop_err_en = 1;
-@@ -1278,9 +1287,16 @@ roc_nix_cq_init(struct roc_nix *roc_nix, struct roc_nix_cq *cq)
- 			cq_ctx->lbpid_low = cpt_lbpid & 0x7;
- 			cq_ctx->lbpid_med = (cpt_lbpid >> 3) & 0x7;
- 			cq_ctx->lbpid_high = (cpt_lbpid >> 6) & 0x7;
--			cq_ctx->lbp_frac = NIX_CQ_LPB_THRESH_FRAC;
-+			cq_ctx->lbp_frac = force_tail_drop ? NIX_CQ_LBP_THRESH_FRAC_REF1 :
-+							     NIX_CQ_LBP_THRESH_FRAC;
- 		}
--		drop_thresh = NIX_CQ_SEC_THRESH_LEVEL;
-+
-+		/* CQ drop is disabled by default when inline device in use and
-+		 * force_tail_drop disabled, so will not configure drop threshold.
-+		 */
-+		drop_thresh = force_tail_drop ? NIX_CQ_SEC_THRESH_LEVEL_REF1 : 0;
-+		bp_thresh = force_tail_drop ? NIX_CQ_SEC_BP_THRESH_LEVEL_REF1 :
-+					      NIX_CQ_SEC_BP_THRESH_LEVEL;
- 	}
- 
- 	/* Many to one reduction */
-@@ -1296,17 +1312,20 @@ roc_nix_cq_init(struct roc_nix *roc_nix, struct roc_nix_cq *cq)
- 		cq_ctx->drop = min_rx_drop;
- 		cq_ctx->drop_ena = 1;
- 		cq->drop_thresh = min_rx_drop;
-+		bp_thresh = min_rx_drop;
-+		cq->bp_thresh = bp_thresh;
- 	} else {
- 		cq->drop_thresh = drop_thresh;
-+		cq->bp_thresh = bp_thresh;
- 		/* Drop processing or red drop cannot be enabled due to
- 		 * due to packets coming for second pass from CPT.
- 		 */
--		if (!roc_nix_inl_inb_is_enabled(roc_nix)) {
-+		if (!roc_nix_inl_inb_is_enabled(roc_nix) || force_tail_drop) {
- 			cq_ctx->drop = cq->drop_thresh;
- 			cq_ctx->drop_ena = 1;
- 		}
- 	}
--	cq_ctx->bp = cq->drop_thresh;
-+	cq_ctx->bp = bp_thresh;
- 
- 	if (roc_feature_nix_has_cqe_stash()) {
- 		if (cq_ctx->caching) {
 -- 
 2.25.1
 
