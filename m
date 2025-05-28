@@ -2,35 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C6BC3ABB2
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 May 2025 13:22:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C50EC3ABB2
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 May 2025 14:32:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E0C5940DFB;
-	Wed, 28 May 2025 15:22:58 +0200 (CEST)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id B734740669
- for <dev@dpdk.org>; Wed, 28 May 2025 15:22:57 +0200 (CEST)
-Received: by linux.microsoft.com (Postfix, from userid 1213)
- id C9EAD206788C; Wed, 28 May 2025 06:22:56 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C9EAD206788C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1748438576;
- bh=zeu2XDixgwuEHRFp0qtPdbmePaB4mB2THj2/mK+wACo=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=cKaRoHUQp0yd8UWg5dotIiSINBmqRA0jutVClqZlUwFccRosBhNKddhhya+kWCYvJ
- vHQpbvPVaLkcFEnNn/5kBnk7aKUw870TWfSgGb0eBSvlnt83T1qEmzFRA7007zqv35
- 2maKrxzMrrI7B3X3gHiJPQ1NlmPiXn6LXnM3StGU=
-From: Andre Muezerie <andremue@linux.microsoft.com>
-To: andremue@linux.microsoft.com
-Cc: dev@dpdk.org, hkalra@marvell.com, kirankumark@marvell.com,
- ndabilpuram@marvell.com, skori@marvell.com, skoteshwar@marvell.com
-Subject: [PATCH v3] drivers: remove __rte_used from functions for
- compatibility with MSVC
-Date: Wed, 28 May 2025 06:22:51 -0700
-Message-Id: <1748438571-20477-1-git-send-email-andremue@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1743731269-5936-1-git-send-email-andremue@linux.microsoft.com>
-References: <1743731269-5936-1-git-send-email-andremue@linux.microsoft.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 58A83406BC;
+	Wed, 28 May 2025 16:32:12 +0200 (CEST)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com
+ [209.85.218.45]) by mails.dpdk.org (Postfix) with ESMTP id BF2E640156
+ for <dev@dpdk.org>; Wed, 28 May 2025 16:32:10 +0200 (CEST)
+Received: by mail-ej1-f45.google.com with SMTP id
+ a640c23a62f3a-acacb8743a7so165050466b.1
+ for <dev@dpdk.org>; Wed, 28 May 2025 07:32:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1748442730;
+ x=1749047530; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=yTIDMQYdrz7t7cj1O2J9P1aqWeUu94dmc9gYIDX3RfA=;
+ b=erqaK2D3Vf1NJxYBBCZlTAV8PRgN7ZnL5Gf+nipGd8oQ3SKAups+K6831dN2h0Q8Pb
+ 1eHBY50gmPasG03NtOn+qjlg6Ro77E07EL+WyREGR4KRwTKFvCnP/5sCBPqXsb55H0bd
+ JsVP+vlDUFcYBTh7hJbMocRFXOIhyHv/zUzxbcflZsNet9gQPW8GkPSZe7OL4r1BVp2o
+ OqVm7PU20mSVjtvhXuCLcUD7KD16VscPJB2Vt/8uI4dneROrSKAn7eKUL77I9ppEepw8
+ XxsOO7iWhOC6yGLJKS7ZNPd93qEb4XW5MqDDtGzVSeuGuku/NtPiEqOpvBtacYRbbXa7
+ yBNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1748442730; x=1749047530;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=yTIDMQYdrz7t7cj1O2J9P1aqWeUu94dmc9gYIDX3RfA=;
+ b=C1sBUut0kK53Odv+Xy4+5PSR5tepxaFSiJOMyHAvG4V1TxIfMDeUuNeLnHIN13KDM+
+ uO6YmPLIsKcya6pjvPtcB8rCzmaWVLx93OmXLzE5qMJVoms1Depq8QsU3xO3RR89Sgip
+ BVbajfjuCS/YY0/2ctEb+kZAOdYYEwCA7ZbHUnSzWZYCCWjsV8Jd9ZObvFGAk9rLyI7E
+ ldVV1QISg8V7E2UpE0xqFP//olXeMgfeR//FlhXOeKehRf2q1M4eKbYSxRE/f3EvOOz1
+ pxY8nDBIFjMerdZt4Ejsn7xR6482xgOWpO6hiA/4rtaV/rcJKUvY9Oj5uLCVALZzaZfZ
+ Gd9g==
+X-Gm-Message-State: AOJu0Yz3lESjS6nap8x6RDLP2yZ4mGxfFoHrLoxrd4yvYTQeO92H+Sla
+ UpKEwiWSU9w4ULov+6042g3XR28ThuSe9MYuKWsJp5w1avvJvjKmqRfiPbUP9jOO+v0=
+X-Gm-Gg: ASbGnct/Qhr7BXpS/j/PfVptHHCuQsNH7TjjPEKRvbCLu3sFuOx3T2yVEdHG0ZVduK8
+ 1gSs5ZihnTtDitn+gwGnvHbNqTRnylJWEeM2qrE9Ik8d0NON2zyju8sMeahSVGchGO3bA7lqRtf
+ 2qXBIPKrTolhysXH4p1xL0eFHjfD6k3HBdTgEF58+pLCDL5iwFSg+hU3Frz0Eh4CMxJ7JkrykoV
+ fawV6KVGjeYGGzH1L+7S1a5CJNK1iyjtpAm/h4jzc4zHhL2V0HHO3f2bEI9ygq/RyWU83bOw+Yc
+ tKUPF4fE+4i0WpZJnIwG92s+GOk1sgYRtXluC1zHtNkQTyBOpwAyfb7iaTTtuwBRANTAd2rs7ez
+ tCWmC2cw60Fvg4j5WO6O5VbIJT+K2JO3fMmJgoO8=
+X-Google-Smtp-Source: AGHT+IEGE20ezCzKb9dCzEJ+f8m0O+P3+TUOQZ566X8lDwxHcKZvEY8eT+D4W8ThJ/4oVK2uWzyBWw==
+X-Received: by 2002:a17:907:7e9b:b0:ad8:8f3b:de2d with SMTP id
+ a640c23a62f3a-ad898891879mr436430566b.9.1748442729301; 
+ Wed, 28 May 2025 07:32:09 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ a640c23a62f3a-ad8a19c8a45sm115804566b.39.2025.05.28.07.32.08
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 28 May 2025 07:32:09 -0700 (PDT)
+Date: Wed, 28 May 2025 07:25:38 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: vanshika.shukla@nxp.com
+Cc: dev@dpdk.org
+Subject: Re: [v1 00/10] DPAA specific fixes
+Message-ID: <20250528072538.23cbbb58@hermes.local>
+In-Reply-To: <20250528115513.1023689-1-vanshika.shukla@nxp.com>
+References: <20250528115513.1023689-1-vanshika.shukla@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -44,161 +79,59 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-With gcc, the macro __rte_used translates to __attribute__((used)).
-MSVC has something to the same effect, but harder to use and with some
-limitations (one being that it cannot be used with "static"). Therefore,
-it makes sense to avoid __rte_used in some cases.
+On Wed, 28 May 2025 17:25:03 +0530
+vanshika.shukla@nxp.com wrote:
 
-The functions modified in this patch don't really need to use __rte_used.
-Instead, these functions can be involved in same ifdefs used in the
-callers. That way, they are only defined when needed (when
-someone is actually calling the function). Doing so makes the code
-compatible with MSVC and avoids compiler warnings about functions being
-defined but not used.
+> From: Vanshika Shukla <vanshika.shukla@nxp.com>
+> 
+> This series includes fixes for NXP DPAA drivers.
+> 
+> Gagandeep Singh (1):
+>   bus/dpaa: improve DPAA cleanup
+> 
+> Hemant Agrawal (2):
+>   bus/dpaa: avoid using same structure and variable name
+>   bus/dpaa: optimize qman enqueue check
+> 
+> Jun Yang (5):
+>   bus/dpaa: add FMan node
+>   bus/dpaa: enhance DPAA SoC version
+>   bus/dpaa: optimize bman acquire/release
+>   mempool/dpaa: fast acquire and release
+>   mempool/dpaa: adjust pool element for LS1043A errata
+> 
+> Vanshika Shukla (1):
+>   net/dpaa: add devargs for enabling err packets on main queue
+> 
+> Vinod Pullabhatla (1):
+>   net/dpaa: add Tx rate limiting DPAA PMD API
+> 
+>  .mailmap                                  |   1 +
+>  doc/guides/nics/dpaa.rst                  |   3 +
+>  drivers/bus/dpaa/base/fman/fman.c         | 278 ++++++++++++---------
+>  drivers/bus/dpaa/base/fman/netcfg_layer.c |   8 +-
+>  drivers/bus/dpaa/base/qbman/bman.c        | 149 +++++++++--
+>  drivers/bus/dpaa/base/qbman/qman.c        |  50 ++--
+>  drivers/bus/dpaa/base/qbman/qman_driver.c |   2 -
+>  drivers/bus/dpaa/bus_dpaa_driver.h        |   9 +-
+>  drivers/bus/dpaa/dpaa_bus.c               | 179 +++++++++----
+>  drivers/bus/dpaa/include/fman.h           |  40 +--
+>  drivers/bus/dpaa/include/fsl_bman.h       |  20 +-
+>  drivers/bus/dpaa/include/fsl_qman.h       |   2 +-
+>  drivers/bus/dpaa/include/netcfg.h         |  14 --
+>  drivers/mempool/dpaa/dpaa_mempool.c       | 230 +++++++++++++----
+>  drivers/mempool/dpaa/dpaa_mempool.h       |  13 +-
+>  drivers/net/dpaa/dpaa_ethdev.c            | 291 +++++++++++++++-------
+>  drivers/net/dpaa/dpaa_flow.c              |  87 ++++++-
+>  drivers/net/dpaa/dpaa_ptp.c               |  12 +-
+>  drivers/net/dpaa/dpaa_rxtx.c              |   4 +-
+>  drivers/net/dpaa/fmlib/fm_lib.c           |  30 +++
+>  drivers/net/dpaa/fmlib/fm_port_ext.h      |   2 +-
+>  drivers/net/dpaa/rte_pmd_dpaa.h           |  21 +-
+>  22 files changed, 1022 insertions(+), 423 deletions(-)
+> 
 
-Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-Acked-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
----
- drivers/net/cnxk/cn10k_rx_select.c | 4 +++-
- drivers/net/cnxk/cn10k_tx_select.c | 4 +++-
- drivers/net/cnxk/cn20k_rx_select.c | 4 +++-
- drivers/net/cnxk/cn20k_tx_select.c | 4 +++-
- drivers/net/cnxk/cn9k_rx_select.c  | 4 +++-
- drivers/net/cnxk/cn9k_tx_select.c  | 4 +++-
- 6 files changed, 18 insertions(+), 6 deletions(-)
+Don't resend same patch series, twice in 24 hours.
+If the series is revised please mark it as v2.
 
-diff --git a/drivers/net/cnxk/cn10k_rx_select.c b/drivers/net/cnxk/cn10k_rx_select.c
-index fe1f0dda73..5258d7f745 100644
---- a/drivers/net/cnxk/cn10k_rx_select.c
-+++ b/drivers/net/cnxk/cn10k_rx_select.c
-@@ -5,7 +5,8 @@
- #include "cn10k_ethdev.h"
- #include "cn10k_rx.h"
- 
--static __rte_used void
-+#if defined(RTE_ARCH_ARM64) && !defined(CNXK_DIS_TMPLT_FUNC)
-+static void
- pick_rx_func(struct rte_eth_dev *eth_dev,
- 	     const eth_rx_burst_t rx_burst[NIX_RX_OFFLOAD_MAX])
- {
-@@ -21,6 +22,7 @@ pick_rx_func(struct rte_eth_dev *eth_dev,
- 
- 	rte_atomic_thread_fence(rte_memory_order_release);
- }
-+#endif
- 
- static uint16_t __rte_noinline __rte_hot __rte_unused
- cn10k_nix_flush_rx(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t pkts)
-diff --git a/drivers/net/cnxk/cn10k_tx_select.c b/drivers/net/cnxk/cn10k_tx_select.c
-index 56fddac5a0..066c65c9b9 100644
---- a/drivers/net/cnxk/cn10k_tx_select.c
-+++ b/drivers/net/cnxk/cn10k_tx_select.c
-@@ -5,7 +5,8 @@
- #include "cn10k_ethdev.h"
- #include "cn10k_tx.h"
- 
--static __rte_used inline void
-+#if defined(RTE_ARCH_ARM64) && !defined(CNXK_DIS_TMPLT_FUNC)
-+static inline void
- pick_tx_func(struct rte_eth_dev *eth_dev,
- 	     const eth_tx_burst_t tx_burst[NIX_TX_OFFLOAD_MAX])
- {
-@@ -19,6 +20,7 @@ pick_tx_func(struct rte_eth_dev *eth_dev,
- 		rte_eth_fp_ops[eth_dev->data->port_id].tx_pkt_burst =
- 			eth_dev->tx_pkt_burst;
- }
-+#endif
- 
- #if defined(RTE_ARCH_ARM64)
- static int
-diff --git a/drivers/net/cnxk/cn20k_rx_select.c b/drivers/net/cnxk/cn20k_rx_select.c
-index 25c79434cd..d60f4e62f7 100644
---- a/drivers/net/cnxk/cn20k_rx_select.c
-+++ b/drivers/net/cnxk/cn20k_rx_select.c
-@@ -5,7 +5,8 @@
- #include "cn20k_ethdev.h"
- #include "cn20k_rx.h"
- 
--static __rte_used void
-+#if defined(RTE_ARCH_ARM64) && !defined(CNXK_DIS_TMPLT_FUNC)
-+static void
- pick_rx_func(struct rte_eth_dev *eth_dev, const eth_rx_burst_t rx_burst[NIX_RX_OFFLOAD_MAX])
- {
- 	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
-@@ -18,6 +19,7 @@ pick_rx_func(struct rte_eth_dev *eth_dev, const eth_rx_burst_t rx_burst[NIX_RX_O
- 
- 	rte_atomic_thread_fence(rte_memory_order_release);
- }
-+#endif
- 
- static uint16_t __rte_noinline __rte_hot __rte_unused
- cn20k_nix_flush_rx(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t pkts)
-diff --git a/drivers/net/cnxk/cn20k_tx_select.c b/drivers/net/cnxk/cn20k_tx_select.c
-index fb62b54a5f..95cd1148a1 100644
---- a/drivers/net/cnxk/cn20k_tx_select.c
-+++ b/drivers/net/cnxk/cn20k_tx_select.c
-@@ -5,7 +5,8 @@
- #include "cn20k_ethdev.h"
- #include "cn20k_tx.h"
- 
--static __rte_used inline void
-+#if defined(RTE_ARCH_ARM64) && !defined(CNXK_DIS_TMPLT_FUNC)
-+static inline void
- pick_tx_func(struct rte_eth_dev *eth_dev, const eth_tx_burst_t tx_burst[NIX_TX_OFFLOAD_MAX])
- {
- 	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
-@@ -16,6 +17,7 @@ pick_tx_func(struct rte_eth_dev *eth_dev, const eth_tx_burst_t tx_burst[NIX_TX_O
- 	if (eth_dev->data->dev_started)
- 		rte_eth_fp_ops[eth_dev->data->port_id].tx_pkt_burst = eth_dev->tx_pkt_burst;
- }
-+#endif
- 
- #if defined(RTE_ARCH_ARM64)
- static int
-diff --git a/drivers/net/cnxk/cn9k_rx_select.c b/drivers/net/cnxk/cn9k_rx_select.c
-index 0d4031ddeb..bb943e694d 100644
---- a/drivers/net/cnxk/cn9k_rx_select.c
-+++ b/drivers/net/cnxk/cn9k_rx_select.c
-@@ -5,7 +5,8 @@
- #include "cn9k_ethdev.h"
- #include "cn9k_rx.h"
- 
--static __rte_used void
-+#if defined(RTE_ARCH_ARM64) && !defined(CNXK_DIS_TMPLT_FUNC)
-+static void
- pick_rx_func(struct rte_eth_dev *eth_dev,
- 	     const eth_rx_burst_t rx_burst[NIX_RX_OFFLOAD_MAX])
- {
-@@ -19,6 +20,7 @@ pick_rx_func(struct rte_eth_dev *eth_dev,
- 		rte_eth_fp_ops[eth_dev->data->port_id].rx_pkt_burst =
- 			eth_dev->rx_pkt_burst;
- }
-+#endif
- 
- #if defined(RTE_ARCH_ARM64)
- static void
-diff --git a/drivers/net/cnxk/cn9k_tx_select.c b/drivers/net/cnxk/cn9k_tx_select.c
-index 497449b1c4..784faa3b8b 100644
---- a/drivers/net/cnxk/cn9k_tx_select.c
-+++ b/drivers/net/cnxk/cn9k_tx_select.c
-@@ -5,7 +5,8 @@
- #include "cn9k_ethdev.h"
- #include "cn9k_tx.h"
- 
--static __rte_used void
-+#if defined(RTE_ARCH_ARM64) && !defined(CNXK_DIS_TMPLT_FUNC)
-+static void
- pick_tx_func(struct rte_eth_dev *eth_dev,
- 	     const eth_tx_burst_t tx_burst[NIX_TX_OFFLOAD_MAX])
- {
-@@ -19,6 +20,7 @@ pick_tx_func(struct rte_eth_dev *eth_dev,
- 		rte_eth_fp_ops[eth_dev->data->port_id].tx_pkt_burst =
- 			eth_dev->tx_pkt_burst;
- }
-+#endif
- 
- #if defined(RTE_ARCH_ARM64)
- static int
--- 
-2.49.0.vfs.0.3
-
+There are multiple compile failures, please fix and resubmit.
