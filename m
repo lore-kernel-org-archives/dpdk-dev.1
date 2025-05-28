@@ -2,31 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E57B6C3ABB2
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 May 2025 10:39:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C410EC3ABB2
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 May 2025 10:39:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D0DE94028D;
-	Wed, 28 May 2025 12:39:37 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E97F540B8F;
+	Wed, 28 May 2025 12:39:40 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 54CBA40279
- for <dev@dpdk.org>; Wed, 28 May 2025 12:39:37 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 14D8240A89
+ for <dev@dpdk.org>; Wed, 28 May 2025 12:39:38 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2567D20119F
- for <dev@dpdk.org>; Wed, 28 May 2025 12:39:37 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9017D200084;
+ Wed, 28 May 2025 12:39:37 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CE7F0203BCF
- for <dev@dpdk.org>; Wed, 28 May 2025 12:39:36 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4519D203BCF;
+ Wed, 28 May 2025 12:39:37 +0200 (CEST)
 Received: from lsv03379.swis.in-blr01.nxp.com (lsv03379.swis.in-blr01.nxp.com
  [92.120.147.188])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id DAA521800078
- for <dev@dpdk.org>; Wed, 28 May 2025 18:39:35 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 316B71800083;
+ Wed, 28 May 2025 18:39:36 +0800 (+08)
 From: vanshika.shukla@nxp.com
-To: dev@dpdk.org
-Subject: [v1 00/10] DPAA specific fixes
-Date: Wed, 28 May 2025 16:09:24 +0530
-Message-Id: <20250528103934.1001747-1-vanshika.shukla@nxp.com>
+To: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>
+Cc: Jun Yang <jun.yang@nxp.com>
+Subject: [v1 01/10] bus/dpaa: avoid using same structure and variable name
+Date: Wed, 28 May 2025 16:09:25 +0530
+Message-Id: <20250528103934.1001747-2-vanshika.shukla@nxp.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250528103934.1001747-1-vanshika.shukla@nxp.com>
+References: <20250528103934.1001747-1-vanshika.shukla@nxp.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: ClamAV using ClamSMTP
@@ -43,54 +47,236 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Vanshika Shukla <vanshika.shukla@nxp.com>
+From: Hemant Agrawal <hemant.agrawal@nxp.com>
 
-This series includes fixes for NXP DPAA drivers.
+rte_dpaa_bus was being used as structure and variable name both.
 
-Gagandeep Singh (1):
-  bus/dpaa: improve DPAA cleanup
+Signed-off-by: Jun Yang <jun.yang@nxp.com>
+Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
+---
+ drivers/bus/dpaa/dpaa_bus.c | 56 ++++++++++++++++++-------------------
+ 1 file changed, 28 insertions(+), 28 deletions(-)
 
-Hemant Agrawal (2):
-  bus/dpaa: avoid using same structure and variable name
-  bus/dpaa: optimize qman enqueue check
-
-Jun Yang (5):
-  bus/dpaa: add FMan node
-  bus/dpaa: enhance DPAA SoC version
-  bus/dpaa: optimize bman acquire/release
-  mempool/dpaa: fast acquire and release
-  mempool/dpaa: adjust pool element for LS1043A errata
-
-Vanshika Shukla (1):
-  net/dpaa: add devargs for enabling err packets on main queue
-
-Vinod Pullabhatla (1):
-  net/dpaa: add Tx rate limiting DPAA PMD API
-
- .mailmap                                  |   1 +
- doc/guides/nics/dpaa.rst                  |   3 +
- drivers/bus/dpaa/base/fman/fman.c         | 278 ++++++++++++---------
- drivers/bus/dpaa/base/fman/netcfg_layer.c |   8 +-
- drivers/bus/dpaa/base/qbman/bman.c        | 149 +++++++++--
- drivers/bus/dpaa/base/qbman/qman.c        |  50 ++--
- drivers/bus/dpaa/base/qbman/qman_driver.c |   2 -
- drivers/bus/dpaa/bus_dpaa_driver.h        |   9 +-
- drivers/bus/dpaa/dpaa_bus.c               | 179 +++++++++----
- drivers/bus/dpaa/include/fman.h           |  40 +--
- drivers/bus/dpaa/include/fsl_bman.h       |  20 +-
- drivers/bus/dpaa/include/fsl_qman.h       |   2 +-
- drivers/bus/dpaa/include/netcfg.h         |  14 --
- drivers/mempool/dpaa/dpaa_mempool.c       | 230 +++++++++++++----
- drivers/mempool/dpaa/dpaa_mempool.h       |  13 +-
- drivers/net/dpaa/dpaa_ethdev.c            | 291 +++++++++++++++-------
- drivers/net/dpaa/dpaa_flow.c              |  87 ++++++-
- drivers/net/dpaa/dpaa_ptp.c               |  12 +-
- drivers/net/dpaa/dpaa_rxtx.c              |   4 +-
- drivers/net/dpaa/fmlib/fm_lib.c           |  30 +++
- drivers/net/dpaa/fmlib/fm_port_ext.h      |   2 +-
- drivers/net/dpaa/rte_pmd_dpaa.h           |  21 +-
- 22 files changed, 1022 insertions(+), 423 deletions(-)
-
+diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
+index 5420733019..f5ce4a2761 100644
+--- a/drivers/bus/dpaa/dpaa_bus.c
++++ b/drivers/bus/dpaa/dpaa_bus.c
+@@ -54,7 +54,7 @@ struct rte_dpaa_bus {
+ 	int detected;
+ };
+ 
+-static struct rte_dpaa_bus rte_dpaa_bus;
++static struct rte_dpaa_bus s_rte_dpaa_bus;
+ struct netcfg_info *dpaa_netcfg;
+ 
+ /* define a variable to hold the portal_key, once created.*/
+@@ -120,7 +120,7 @@ dpaa_add_to_device_list(struct rte_dpaa_device *newdev)
+ 	struct rte_dpaa_device *dev = NULL;
+ 	struct rte_dpaa_device *tdev = NULL;
+ 
+-	RTE_TAILQ_FOREACH_SAFE(dev, &rte_dpaa_bus.device_list, next, tdev) {
++	RTE_TAILQ_FOREACH_SAFE(dev, &s_rte_dpaa_bus.device_list, next, tdev) {
+ 		comp = compare_dpaa_devices(newdev, dev);
+ 		if (comp < 0) {
+ 			TAILQ_INSERT_BEFORE(dev, newdev, next);
+@@ -130,7 +130,7 @@ dpaa_add_to_device_list(struct rte_dpaa_device *newdev)
+ 	}
+ 
+ 	if (!inserted)
+-		TAILQ_INSERT_TAIL(&rte_dpaa_bus.device_list, newdev, next);
++		TAILQ_INSERT_TAIL(&s_rte_dpaa_bus.device_list, newdev, next);
+ }
+ 
+ /*
+@@ -176,7 +176,7 @@ dpaa_create_device_list(void)
+ 	struct fm_eth_port_cfg *cfg;
+ 	struct fman_if *fman_intf;
+ 
+-	rte_dpaa_bus.device_count = 0;
++	s_rte_dpaa_bus.device_count = 0;
+ 
+ 	/* Creating Ethernet Devices */
+ 	for (i = 0; dpaa_netcfg && (i < dpaa_netcfg->num_ethports); i++) {
+@@ -187,7 +187,7 @@ dpaa_create_device_list(void)
+ 			goto cleanup;
+ 		}
+ 
+-		dev->device.bus = &rte_dpaa_bus.bus;
++		dev->device.bus = &s_rte_dpaa_bus.bus;
+ 		dev->device.numa_node = SOCKET_ID_ANY;
+ 
+ 		/* Allocate interrupt handle instance */
+@@ -226,7 +226,7 @@ dpaa_create_device_list(void)
+ 		dpaa_add_to_device_list(dev);
+ 	}
+ 
+-	rte_dpaa_bus.device_count += i;
++	s_rte_dpaa_bus.device_count += i;
+ 
+ 	/* Unlike case of ETH, RTE_LIBRTE_DPAA_MAX_CRYPTODEV SEC devices are
+ 	 * constantly created only if "sec" property is found in the device
+@@ -259,7 +259,7 @@ dpaa_create_device_list(void)
+ 		}
+ 
+ 		dev->device_type = FSL_DPAA_CRYPTO;
+-		dev->id.dev_id = rte_dpaa_bus.device_count + i;
++		dev->id.dev_id = s_rte_dpaa_bus.device_count + i;
+ 
+ 		/* Even though RTE_CRYPTODEV_NAME_MAX_LEN is valid length of
+ 		 * crypto PMD, using RTE_ETH_NAME_MAX_LEN as that is the size
+@@ -274,7 +274,7 @@ dpaa_create_device_list(void)
+ 		dpaa_add_to_device_list(dev);
+ 	}
+ 
+-	rte_dpaa_bus.device_count += i;
++	s_rte_dpaa_bus.device_count += i;
+ 
+ qdma_dpaa:
+ 	/* Creating QDMA Device */
+@@ -287,7 +287,7 @@ dpaa_create_device_list(void)
+ 		}
+ 
+ 		dev->device_type = FSL_DPAA_QDMA;
+-		dev->id.dev_id = rte_dpaa_bus.device_count + i;
++		dev->id.dev_id = s_rte_dpaa_bus.device_count + i;
+ 
+ 		memset(dev->name, 0, RTE_ETH_NAME_MAX_LEN);
+ 		sprintf(dev->name, "dpaa_qdma-%d", i+1);
+@@ -297,7 +297,7 @@ dpaa_create_device_list(void)
+ 
+ 		dpaa_add_to_device_list(dev);
+ 	}
+-	rte_dpaa_bus.device_count += i;
++	s_rte_dpaa_bus.device_count += i;
+ 
+ 	return 0;
+ 
+@@ -312,8 +312,8 @@ dpaa_clean_device_list(void)
+ 	struct rte_dpaa_device *dev = NULL;
+ 	struct rte_dpaa_device *tdev = NULL;
+ 
+-	RTE_TAILQ_FOREACH_SAFE(dev, &rte_dpaa_bus.device_list, next, tdev) {
+-		TAILQ_REMOVE(&rte_dpaa_bus.device_list, dev, next);
++	RTE_TAILQ_FOREACH_SAFE(dev, &s_rte_dpaa_bus.device_list, next, tdev) {
++		TAILQ_REMOVE(&s_rte_dpaa_bus.device_list, dev, next);
+ 		rte_intr_instance_free(dev->intr_handle);
+ 		free(dev);
+ 		dev = NULL;
+@@ -537,10 +537,10 @@ rte_dpaa_bus_scan(void)
+ 		return 0;
+ 	}
+ 
+-	if (rte_dpaa_bus.detected)
++	if (s_rte_dpaa_bus.detected)
+ 		return 0;
+ 
+-	rte_dpaa_bus.detected = 1;
++	s_rte_dpaa_bus.detected = 1;
+ 
+ 	/* create the key, supplying a function that'll be invoked
+ 	 * when a portal affined thread will be deleted.
+@@ -564,7 +564,7 @@ rte_dpaa_driver_register(struct rte_dpaa_driver *driver)
+ 
+ 	BUS_INIT_FUNC_TRACE();
+ 
+-	TAILQ_INSERT_TAIL(&rte_dpaa_bus.driver_list, driver, next);
++	TAILQ_INSERT_TAIL(&s_rte_dpaa_bus.driver_list, driver, next);
+ }
+ 
+ /* un-register a dpaa bus based dpaa driver */
+@@ -574,7 +574,7 @@ rte_dpaa_driver_unregister(struct rte_dpaa_driver *driver)
+ {
+ 	BUS_INIT_FUNC_TRACE();
+ 
+-	TAILQ_REMOVE(&rte_dpaa_bus.driver_list, driver, next);
++	TAILQ_REMOVE(&s_rte_dpaa_bus.driver_list, driver, next);
+ }
+ 
+ static int
+@@ -663,11 +663,11 @@ rte_dpaa_bus_probe(void)
+ 	struct rte_dpaa_driver *drv;
+ 	FILE *svr_file = NULL;
+ 	unsigned int svr_ver;
+-	int probe_all = rte_dpaa_bus.bus.conf.scan_mode != RTE_BUS_SCAN_ALLOWLIST;
++	int probe_all = s_rte_dpaa_bus.bus.conf.scan_mode != RTE_BUS_SCAN_ALLOWLIST;
+ 	static int process_once;
+ 
+ 	/* If DPAA bus is not present nothing needs to be done */
+-	if (!rte_dpaa_bus.detected)
++	if (!s_rte_dpaa_bus.detected)
+ 		return 0;
+ 
+ 	/* Device list creation is only done once */
+@@ -690,7 +690,7 @@ rte_dpaa_bus_probe(void)
+ 	process_once = 1;
+ 
+ 	/* If no device present on DPAA bus nothing needs to be done */
+-	if (TAILQ_EMPTY(&rte_dpaa_bus.device_list))
++	if (TAILQ_EMPTY(&s_rte_dpaa_bus.device_list))
+ 		return 0;
+ 
+ 	/* Register DPAA mempool ops only if any DPAA device has
+@@ -705,7 +705,7 @@ rte_dpaa_bus_probe(void)
+ 		fclose(svr_file);
+ 	}
+ 
+-	TAILQ_FOREACH(dev, &rte_dpaa_bus.device_list, next) {
++	TAILQ_FOREACH(dev, &s_rte_dpaa_bus.device_list, next) {
+ 		if (dev->device_type == FSL_DPAA_ETH) {
+ 			ret = rte_dpaa_setup_intr(dev->intr_handle);
+ 			if (ret)
+@@ -717,8 +717,8 @@ rte_dpaa_bus_probe(void)
+ 	dpaax_iova_table_populate();
+ 
+ 	/* For each registered driver, and device, call the driver->probe */
+-	TAILQ_FOREACH(dev, &rte_dpaa_bus.device_list, next) {
+-		TAILQ_FOREACH(drv, &rte_dpaa_bus.driver_list, next) {
++	TAILQ_FOREACH(dev, &s_rte_dpaa_bus.device_list, next) {
++		TAILQ_FOREACH(drv, &s_rte_dpaa_bus.driver_list, next) {
+ 			ret = rte_dpaa_device_match(drv, dev);
+ 			if (ret)
+ 				continue;
+@@ -765,7 +765,7 @@ rte_dpaa_find_device(const struct rte_device *start, rte_dev_cmp_t cmp,
+ 		dstart = RTE_DEV_TO_DPAA_CONST(start);
+ 		dev = TAILQ_NEXT(dstart, next);
+ 	} else {
+-		dev = TAILQ_FIRST(&rte_dpaa_bus.device_list);
++		dev = TAILQ_FIRST(&s_rte_dpaa_bus.device_list);
+ 	}
+ 
+ 	while (dev != NULL) {
+@@ -838,7 +838,7 @@ dpaa_bus_dev_iterate(const void *start, const char *str,
+ 		dstart = RTE_DEV_TO_DPAA_CONST(start);
+ 		dev = TAILQ_NEXT(dstart, next);
+ 	} else {
+-		dev = TAILQ_FIRST(&rte_dpaa_bus.device_list);
++		dev = TAILQ_FIRST(&s_rte_dpaa_bus.device_list);
+ 	}
+ 
+ 	while (dev != NULL) {
+@@ -853,7 +853,7 @@ dpaa_bus_dev_iterate(const void *start, const char *str,
+ 	return NULL;
+ }
+ 
+-static struct rte_dpaa_bus rte_dpaa_bus = {
++static struct rte_dpaa_bus s_rte_dpaa_bus = {
+ 	.bus = {
+ 		.scan = rte_dpaa_bus_scan,
+ 		.probe = rte_dpaa_bus_probe,
+@@ -864,10 +864,10 @@ static struct rte_dpaa_bus rte_dpaa_bus = {
+ 		.unplug = dpaa_bus_unplug,
+ 		.dev_iterate = dpaa_bus_dev_iterate,
+ 	},
+-	.device_list = TAILQ_HEAD_INITIALIZER(rte_dpaa_bus.device_list),
+-	.driver_list = TAILQ_HEAD_INITIALIZER(rte_dpaa_bus.driver_list),
++	.device_list = TAILQ_HEAD_INITIALIZER(s_rte_dpaa_bus.device_list),
++	.driver_list = TAILQ_HEAD_INITIALIZER(s_rte_dpaa_bus.driver_list),
+ 	.device_count = 0,
+ };
+ 
+-RTE_REGISTER_BUS(FSL_DPAA_BUS_NAME, rte_dpaa_bus.bus);
++RTE_REGISTER_BUS(FSL_DPAA_BUS_NAME, s_rte_dpaa_bus.bus);
+ RTE_LOG_REGISTER_DEFAULT(dpaa_logtype_bus, NOTICE);
 -- 
 2.25.1
 
