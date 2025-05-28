@@ -2,51 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26B99C5AD49
-	for <dpdk-dev@archiver.kernel.org>; Wed, 28 May 2025 10:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 110D7C5AD49
+	for <dpdk-dev@archiver.kernel.org>; Wed, 28 May 2025 10:26:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3577F4028D;
-	Wed, 28 May 2025 12:26:02 +0200 (CEST)
-Received: from smtp-fw-9105.amazon.com (smtp-fw-9105.amazon.com
- [207.171.188.204])
- by mails.dpdk.org (Postfix) with ESMTP id 984F340279
- for <dev@dpdk.org>; Wed, 28 May 2025 12:26:00 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1DA5D40A77;
+	Wed, 28 May 2025 12:26:04 +0200 (CEST)
+Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com
+ [52.119.213.154])
+ by mails.dpdk.org (Postfix) with ESMTP id 7F67940279
+ for <dev@dpdk.org>; Wed, 28 May 2025 12:26:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
- t=1748427961; x=1779963961;
- h=from:to:cc:subject:date:message-id:mime-version;
- bh=AC5pJK/bdx0MTAkEOB+1N3fPrQOPVfa3J9GdSX2QEDQ=;
- b=b+nSiyOayR2x9NdM8gWek81J38LJQAnQoFm6/UyGUqzs9KCKU6/96Wgu
- u23XwFAOZyThZ/NY1NnFDEsVc+HQkkVefVgfJSKfTkptaDKjuLUSYsBvJ
- JonaYf8UcQY9WHuYJgdZ+kLrUBVmCg9LD+X1a+OWnkQEABsZU4h7q7qTp
- 5aJzK3e5zlFBZGaXoQGjXL8pmDZwba/cNVEO+3RXJ3DHPGgZljTc/DBEh
- Be4LLESkQLmYvdqvGhIdrZPjak8GL1sBzYxVDrQVBgzyB7ahOySI5Izom
- gvmDPqNQw+tW+08Kc7SJG05bFFNe+3ZeWBVoCd4fpxWGE82fcZe/2/f4S g==;
-X-IronPort-AV: E=Sophos;i="6.15,320,1739836800"; d="scan'208";a="24456076"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO
- smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
- by smtp-border-fw-9105.sea19.amazon.com with
- ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2025 10:25:54 +0000
-Received: from EX19MTAEUB001.ant.amazon.com [10.0.43.254:14559]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.31.11:2525]
+ t=1748427962; x=1779963962;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version;
+ bh=mjViE5GihM/7hPFITPO6iPt4X7jcaYJLZw737c3eB+M=;
+ b=a32RmyacKaUzj7rgmIQ+ALkk4/3epqgVCjetQByzW02k572IZt3pnPHC
+ 9gxTAtgNKA6qpgzLqXDyQQBr9l6kPyAaqsoE0nTkqqxwUgbJoOYMt7QhA
+ iNCUu/40XZ9z4h3rBPnzoeDBOEF7HFMRsiEi4U0JJm/RhSMrz2rPGGcmU
+ rnIIc8IztBkeb7WC+qF2Z89tpz4ef0H886+1RSCbLDBZPMDo6HPiG0lCQ
+ jJSMrSHn9ZO2R/5w30whXrH27w/715FBUmz+BxbCMmN7jr/XX0jmagTVG
+ YQWxjS3ZSwRnm0v8+aeZw4aQvun4u7OqYK/piDnznAjWGsgvYkHvK8X7F Q==;
+X-IronPort-AV: E=Sophos;i="6.15,320,1739836800"; d="scan'208";a="302405108"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO
+ smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+ by smtp-border-fw-52004.iad7.amazon.com with
+ ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2025 10:26:00 +0000
+Received: from EX19MTAEUB002.ant.amazon.com [10.0.17.79:34740]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.27.243:2525]
  with esmtp (Farcaster)
- id 1294402a-9e32-4a30-ad3a-40504d62eb44; Wed, 28 May 2025 10:25:52 +0000 (UTC)
-X-Farcaster-Flow-ID: 1294402a-9e32-4a30-ad3a-40504d62eb44
+ id 9cfe63e6-6931-4eb5-9677-28f04f30269f; Wed, 28 May 2025 10:25:58 +0000 (UTC)
+X-Farcaster-Flow-ID: 9cfe63e6-6931-4eb5-9677-28f04f30269f
 Received: from EX19D007EUA002.ant.amazon.com (10.252.50.68) by
- EX19MTAEUB001.ant.amazon.com (10.252.51.26) with Microsoft SMTP Server
+ EX19MTAEUB002.ant.amazon.com (10.252.51.79) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 28 May 2025 10:25:52 +0000
+ Wed, 28 May 2025 10:25:57 +0000
 Received: from HFA15-CG15235BS.amazon.com (10.1.213.9) by
  EX19D007EUA002.ant.amazon.com (10.252.50.68) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 28 May 2025 10:25:50 +0000
+ Wed, 28 May 2025 10:25:55 +0000
 From: Shai Brandes <shaibran@amazon.com>
 To: <stephen@networkplumber.org>
 CC: <dev@dpdk.org>, Shai Brandes <shaibran@amazon.com>
-Subject: [PATCH v4 0/7] net/ena: release 2.13.0
-Date: Wed, 28 May 2025 13:25:24 +0300
-Message-ID: <20250528102531.9876-1-shaibran@amazon.com>
+Subject: [PATCH v4 1/7] net/ena/base: avoid recalculating desc per entry
+Date: Wed, 28 May 2025 13:25:25 +0300
+Message-ID: <20250528102531.9876-2-shaibran@amazon.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20250528102531.9876-1-shaibran@amazon.com>
+References: <20250528102531.9876-1-shaibran@amazon.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.1.213.9]
@@ -65,51 +68,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patchset includes an upgrade of the ENA HAL,
-introduces a new feature, and addresses three bug fixes.
+desc_per_entry is precomputed in ena_com_config_llq_info() using
+desc_stride_ctrl and desc_list_entry_size, which remain unchanged after
+device negotiation. Reuse the existing value instead of recalculating it
+in the fast path.
 
-Thank you in advance to the net maintainers and community members
-for your time and effort reviewing the code.
-
-Best regards,
-Shai Brandes
-AWS Elastic Network Adapter team
-
+Signed-off-by: Shai Brandes <shaibran@amazon.com>
+Reviewed-by: Amit Bernstein <amitbern@amazon.com>
+Reviewed-by: Yosef Raisman <yraisman@amazon.com>
 ---
-v2:
-Removed patch "net/ena: fix virtual address calc for unaligned BARs"
-which contained a problematic casting when compiling with 32-bit system
+ drivers/net/ena/base/ena_eth_com.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-v3:
-no change, there was some technical issue when sending the emails
-where part of the patches apeared on different series.
-
-v4:
-Each patch in the series should compile independently.  
-Patch 4/7 causes a compile error that was missed,  
-as the full series passed our directed tests when applied together
-
-
-Shai Brandes (7):
-  net/ena/base: avoid recalculating desc per entry
-  net/ena/base: coding style changes
-  net/ena: separate doorbell logic for Rx and Tx
-  net/ena: support fragment bypass mode
-  net/ena: fix unhandled interrupt config failure
-  net/ena: fix aenq timeout with low poll interval
-  net/ena: upgrade driver version to 2.13.0
-
- doc/guides/nics/ena.rst                       | 13 ++-
- doc/guides/rel_notes/release_25_07.rst        |  9 ++
- drivers/net/ena/base/ena_com.c                | 39 +++++++-
- drivers/net/ena/base/ena_com.h                |  8 ++
- .../net/ena/base/ena_defs/ena_admin_defs.h    | 15 +++
- drivers/net/ena/base/ena_eth_com.c            |  6 +-
- drivers/net/ena/base/ena_eth_com.h            | 15 ++-
- drivers/net/ena/ena_ethdev.c                  | 98 +++++++++++++++----
- drivers/net/ena/ena_ethdev.h                  |  5 +-
- 9 files changed, 177 insertions(+), 31 deletions(-)
-
+diff --git a/drivers/net/ena/base/ena_eth_com.c b/drivers/net/ena/base/ena_eth_com.c
+index 90dd85c7ff..c6668238e5 100644
+--- a/drivers/net/ena/base/ena_eth_com.c
++++ b/drivers/net/ena/base/ena_eth_com.c
+@@ -248,11 +248,7 @@ static int ena_com_sq_update_llq_tail(struct ena_com_io_sq *io_sq)
+ 		       0x0, llq_info->desc_list_entry_size);
+ 
+ 		pkt_ctrl->idx = 0;
+-		if (unlikely(llq_info->desc_stride_ctrl == ENA_ADMIN_SINGLE_DESC_PER_ENTRY))
+-			pkt_ctrl->descs_left_in_line = 1;
+-		else
+-			pkt_ctrl->descs_left_in_line =
+-			llq_info->desc_list_entry_size / io_sq->desc_entry_size;
++		pkt_ctrl->descs_left_in_line = llq_info->descs_per_entry;
+ 	}
+ 
+ 	return ENA_COM_OK;
 -- 
 2.17.1
 
