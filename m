@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F862C5AD49
-	for <dpdk-dev@archiver.kernel.org>; Thu, 29 May 2025 12:31:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30117C5AD49
+	for <dpdk-dev@archiver.kernel.org>; Thu, 29 May 2025 12:32:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 272E942709;
-	Thu, 29 May 2025 14:31:50 +0200 (CEST)
-Received: from egress-ip42b.ess.de.barracuda.com
- (egress-ip42b.ess.de.barracuda.com [18.185.115.246])
- by mails.dpdk.org (Postfix) with ESMTP id A37054021F
- for <dev@dpdk.org>; Thu, 29 May 2025 14:31:39 +0200 (CEST)
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com
- (mail-vi1eur02on2099.outbound.protection.outlook.com [40.107.241.99]) by
- mx-outbound20-107.eu-central-1b.ess.aws.cudaops.com (version=TLSv1.2
+	by mails.dpdk.org (Postfix) with ESMTP id 52D6342670;
+	Thu, 29 May 2025 14:32:51 +0200 (CEST)
+Received: from egress-ip11b.ess.de.barracuda.com
+ (egress-ip11b.ess.de.barracuda.com [18.185.115.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 76BBB4021F
+ for <dev@dpdk.org>; Thu, 29 May 2025 14:32:42 +0200 (CEST)
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com
+ (mail-vi1eur05on2101.outbound.protection.outlook.com [40.107.21.101]) by
+ mx-outbound45-249.eu-central-1c.ess.aws.cudaops.com (version=TLSv1.2
  cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Thu, 29 May 2025 12:31:29 +0000
+ Thu, 29 May 2025 12:32:41 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=svwC6NuRKn2Ra2MdnHNdxYGP5ZtovEnMoSGBCRSUStyFVfAyWE5MAgcj+ix6KEo+4Hr42XvL+jowJtW3wfb5a8Ak9RW9dtr0GPMniubiG00an/K7jCzFpLf7zfJBBYvH+FE4+iEwjpPdMl4isAQTavRpcmHTSJD/YXl4xlUZHl2MCtE4m3whNm7sfZUNqu5+H9jYqdY3lObahxjK8dVJHumTJ2+VQGVKRF3es4o4SEOWdJod58XeUQylcUtpKaPycx9NpK9eUaKPBfwygh46KvhjFCrCBMmbi+eZb6gsejT/IPzOAGomTHEAV5gqKDn8PDXrmvYD8TQT+pJiLtbLvw==
+ b=WfobZ8qnOF/lq8QJeGNu7ftT+yrdD+H2xEQu8/7iz7i1JoHWDZUlWqazUHKL7NE5706uKU4Nj6Dpb+m5Wkm7Y8cjaCyDuA5X5LYwTyhfTuxf4UQ8Ua8PrmY9IkFhvIwidnJ/Qr1zrXWtwcmbJOKxTxkME2/dWAOK8Utu3x5BUie/k8vGJnhJ7hm7/NPW4LvH6+HA0hucwfCda/voksiOjSBN0+5aORTCtmRnMwXmebQUaIjFjTuMuwQ2sQ8idNaMbjkmGHAiFfDOTPRpWKJcwnadI3Jy+Sx6FeI2851hgD2baoZYwcPDRxoeu7SxNynssuJwraoy5qqcY/ctsOSsyg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=j8wOghxBRELwvIrc/olDgzHJw2qPdQOOyeqMfmOqn7U=;
- b=RT9Vr5ditX4q6yzD4buFk78nyzp5f0viu7MEzMx41GqCG7GtjC1SFZfb3iYVnzF+yfMyYfMgLxveK9jwgjMk8vnkwpbFBf1kbr+aQ7ndd+hzlhsFUb85sMJefg9U35tSJO10PgGa8Zrzl5SyFeZoZwCMKIIKprXWkw38i1EzavKsiwGSpOdae3yTuLcd7VqiSdy8aG/pnfla0pjzd/q3KC4P/ia1/HakjYnCgUGoQx0KNq5yWrvdxelgGrNjqboP9r5QHG3rpAQdCD0sx3fWEMfbVimdInzWDVU2JoCxn/9VBh+zea40DZr68P/oyq5zzpCa/dnQlSnphFB7OZAWzQ==
+ bh=8ymZxHXfNPEnNoo2VZ7W2BBwvGscc7zSG36Tzp9YoD4=;
+ b=WWimwFV926AzQdbL8LIW4KQKnMVGcl82/oBR+6kdonMXRdEx+1hL4N0gwJKwr9/vccmxzQtM0bLaFh6dXfCFgLUz5elyxZmL+ZxJvqmUNqVKjlhSauoDLd9FljfGLkJrHh4jY6RwCEKVZ71/5Y+J7CeyZIr7lflfG2EDYWzWroeFg5anHLVQ2gHX/SA/cXRLeTRzIHcGPx4h2OlLNNeUC2+uE9zhIz/gOEYj1znOSNJE1dbiaCP3M4uvpJ0M2HGjIQYu0pP05aZINRdScJD6aZYdEh5TUsOQyiIuVlY7csjqXEr7f0iX6D57ZGjUlvt7GdRAY2W7yCxMTQgmM9gQdA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=monjalon.net smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=j8wOghxBRELwvIrc/olDgzHJw2qPdQOOyeqMfmOqn7U=;
- b=ZIcP3q19djgOy0kpFtFBkpauKIIBENpMdmPdmUmThpeaLp5wBdnABrDLolJihhN+5SAMtyKbM5+E0WLQrzMvoqcxoc3Hr2xEsITDklmVnkaUSTALQiKJEXf7/LArgVMiikZoZzWUZ5Rn6o5ICJ1/61+S/F6pOW1W2+g89aOs+m4=
-Received: from AS4P195CA0040.EURP195.PROD.OUTLOOK.COM (2603:10a6:20b:65a::28)
- by VI1P190MB0688.EURP190.PROD.OUTLOOK.COM (2603:10a6:800:126::8) with
+ bh=8ymZxHXfNPEnNoo2VZ7W2BBwvGscc7zSG36Tzp9YoD4=;
+ b=Jc4yZuZrv9dUAJVQTNF7t4uhYRBmerILYe5AOo1jRPMoXURu9aD4IDNT+JhLdJe7gfzKE95M8J2woKAns/b6g0Z4P0c5S336kdyKkZvVou2gXzpw1/o3WDdXaJebqOaAr94od3RltCNWBsnxWyxp6AArf2316pXyRkC1W1Uux1c=
+Received: from DU7P251CA0023.EURP251.PROD.OUTLOOK.COM (2603:10a6:10:551::16)
+ by AM0P190MB0594.EURP190.PROD.OUTLOOK.COM (2603:10a6:208:1a1::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.31; Thu, 29 May
- 2025 12:31:15 +0000
-Received: from AM3PEPF00009BA0.eurprd04.prod.outlook.com
- (2603:10a6:20b:65a:cafe::7c) by AS4P195CA0040.outlook.office365.com
- (2603:10a6:20b:65a::28) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.21 via Frontend Transport; Thu,
- 29 May 2025 12:31:15 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.25; Thu, 29 May
+ 2025 12:32:30 +0000
+Received: from DB5PEPF00014B95.eurprd02.prod.outlook.com
+ (2603:10a6:10:551:cafe::f2) by DU7P251CA0023.outlook.office365.com
+ (2603:10a6:10:551::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.23 via Frontend Transport; Thu,
+ 29 May 2025 12:32:30 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -49,86 +49,83 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
  designate 178.72.21.4 as permitted sender) receiver=protection.outlook.com;
  client-ip=178.72.21.4; helo=localhost.localdomain;
 Received: from localhost.localdomain (178.72.21.4) by
- AM3PEPF00009BA0.mail.protection.outlook.com (10.167.16.25) with Microsoft
+ DB5PEPF00014B95.mail.protection.outlook.com (10.167.8.233) with Microsoft
  SMTP Server id 15.20.8769.18 via Frontend Transport; Thu, 29 May 2025
- 12:31:14 +0000
+ 12:32:28 +0000
 From: Danylo Vodopianov <dvo-plv@napatech.com>
 To: thomas@monjalon.net, aman.deep.singh@intel.com, yuying.zhang@intel.com,
  orika@nvidia.com, mcoqueli@redhat.com, ckm@napatech.com,
  matan@mellanox.com, david.marchand@redhat.com, mko-plv@napatech.com,
  sil-plv@napatech.com
-Cc: stephen@networkplumber.org, dev@dpdk.org,
- Maxime Coquelin <maxime.coquelin@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>
-Subject: [PATCH v1 1/1] vhost: handle virtqueue locking for memory hotplug
-Date: Thu, 29 May 2025 14:31:02 +0200
-Message-ID: <20250529123102.1875027-2-dvo-plv@napatech.com>
+Cc: stephen@networkplumber.org,
+	dev@dpdk.org
+Subject: [PATCH v1 0/1] Memory hotplug fix
+Date: Thu, 29 May 2025 14:32:25 +0200
+Message-ID: <20250529123226.1875075-1-dvo-plv@napatech.com>
 X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250529123102.1875027-1-dvo-plv@napatech.com>
-References: <20250529123102.1875027-1-dvo-plv@napatech.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM3PEPF00009BA0:EE_|VI1P190MB0688:EE_
+X-MS-TrafficTypeDiagnostic: DB5PEPF00014B95:EE_|AM0P190MB0594:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: e490e3f8-c6b9-4a9d-6933-08dd9eacb41a
+X-MS-Office365-Filtering-Correlation-Id: a445b4a6-cd7f-4417-ec14-08dd9eace02b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|82310400026|376014|36860700013|921020; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?/XPi00hxL2d4bD9IQPonUC6tfsw4wHcmf0eeAY3NzBzXBplpB55xBORpGvuk?=
- =?us-ascii?Q?gB1R6V0VOwE/KAiJQ6S0TYZ/KETH36X/L1VumcS8tE7yiz+WkPqhWc0ljA2f?=
- =?us-ascii?Q?aC0oOG/VeJwLNfHOUPGmZLH6D5U6+oZ+nm6Jpb1A2MS3pyhwxkidBX87mWAN?=
- =?us-ascii?Q?REq2fhiCirRjoFQKknSLZ8jrHd3eNnd3sHgoax2em5oysCdgNR8S+CsOwvUe?=
- =?us-ascii?Q?qas4kyIRII4qhCMPt4pYMhr9tx+SVp9vECzFE/LC+yFRv1SyHG+GbXBTZv4e?=
- =?us-ascii?Q?9WL8KJl5UrBAPGvjY9JfKi3k8KCA1/l/KU2FO5ZVCldqEiT55fVUX7VsbecG?=
- =?us-ascii?Q?7tRVN3v2FjeG9jwixh7PnfDNLdv9bXIANwZ85jDfLp1GCuG+/OgOITW9DOKw?=
- =?us-ascii?Q?5ZEnqMya441BPwYOhCRXYaN6YOMuck5iM85rM1VwGnvJwsQhszJPRcgZMTp1?=
- =?us-ascii?Q?G6n9rCMblaZirn4bri4fcj5oxufU16j10Fiy/Jj3NQeW0SYjVSpUFb2QTcvC?=
- =?us-ascii?Q?oF3MaxK85ovE7R2KxcAaH6Lz9XseSRHLM+BF8Rui9+venW5S6/raQuB0v3VZ?=
- =?us-ascii?Q?yHkMuSbLf6+nmdMIgAC1iYuuU4JxcOl5MRIBn6r0T/Qcc8TThpV0vm5vFylD?=
- =?us-ascii?Q?pfoHEIP/2Ob7Si5O6xk+9/7jh8qJvdrAT1sVQ6B4feRrxjcsnfnnfC8U+zzn?=
- =?us-ascii?Q?WRWI0DXTzte2TvvGp7H51GT2exIL3a3Iv6Rv7wbIVe0HI/eX4SK710wLYG8T?=
- =?us-ascii?Q?8fBF9GXbs5Wa2+RRvYvA7rgIq1jugydBqaJv14ubBdjMYkI6GpRwm7rkBe4K?=
- =?us-ascii?Q?Go3hiIOfLZPszRZvUewST/gC/AsrxfoLLX8FR5LLHzjf+LD5wKGc2tAJLIO0?=
- =?us-ascii?Q?5prUHmxPpAhjd89hXHdTK5NbXsd/4BGOxnBkgH51C6gZcONqoWLl7ukX0KkQ?=
- =?us-ascii?Q?Eq4Xn6WT6yctVYfHmZnpw2MsRnMpoeEc/Htl7If30I+ROjUemVnZlMY6/B0G?=
- =?us-ascii?Q?UE3dzZ6vwTrkp86mGyLYvgXVW5rJ5K6ruvZSfyFXjQm9EQsUQ6KznDMpwrvB?=
- =?us-ascii?Q?Uet0iWWl66OOApqbBt8B/81MNPygxxCqsyM/0f48vstHHp89WJDksRvzRv2X?=
- =?us-ascii?Q?h3V4i7fEmSvRCY1VTONSQ+SSUqAw1HMlRURFgo8tyFXbgNQfdF6oexUm3t6S?=
- =?us-ascii?Q?/gpsPqfFl/WaIo79WeReLc0Y8YPsPmG69c/kPj5zIsslQ9xw4gUFJiOM8oVo?=
- =?us-ascii?Q?Pt0Tpz87HZdJ8WyWVIjODfGAsXTo5gYoAi39+xRKjRAWZrKMCidBBHefJ9S+?=
- =?us-ascii?Q?rnWOk/a2htAp/nYQbv1f49iKuXYFYGLSQMLcf6yWVFtLRIqHkwmMdT42PhqC?=
- =?us-ascii?Q?Tfm3OvsY0BxaRb+ADTsZ5pcw8ad8xCRjteh9JTir+Zj5LmL2OFILDpNUpgMq?=
- =?us-ascii?Q?u5xk1ljpwJzYlRkv6Ke2guVNz2ugelu8kLmJX9hR2QtDSYUyGWrL+Oc6Ge9Y?=
- =?us-ascii?Q?vKGtF3GdLK1SN6skWUOT/UvLgqy1BG0XkCTkbwx4ZKmblLgM+gCLlxwoiQ?=
- =?us-ascii?Q?=3D=3D?=
+ ARA:13230040|1800799024|82310400026|36860700013|376014|921020|13003099007; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?XFbCi8LfWgvJ/11dtXLvgDVGxy2/jT9BOwtIboCcEqzs4QbONKt5fW4YsJCX?=
+ =?us-ascii?Q?MpiOu504J6uyjy2RybYnCrwuzyBDP+GI4HBOWphXonrZZOhMq/bC+rPaU9bP?=
+ =?us-ascii?Q?0LeBMwlOd8yFH/sFOP7NZAsKcNFr/Xu/f0hPfSpyl8vvDNs6TVDvRjYZ5Plh?=
+ =?us-ascii?Q?/GHgX6muIjayywk4WK1KNzEl7KzPwjTBT75p5OG7z2W38ORIWGTqT5yKtpxC?=
+ =?us-ascii?Q?ZAv3dxoVokOeztAPCwuChWgCsRc/vQ6Up+zNIkiViF78+BczCl2Ho/Fx4RUg?=
+ =?us-ascii?Q?EQXn4cDeh60Lt+pjngBppToTMVRQqF5hiNjVszjp2eqRkb7v+JGxcNlJT7Iq?=
+ =?us-ascii?Q?94FnlCUXP4sGrXp8lKL+6TGwAAfGVqvmHBhDUm8NhMC34mJL9g1toKppR5Br?=
+ =?us-ascii?Q?tAt0niE4rVj/o6c4pfY9M6+VAYWkJZimgBYEvYjEz1cCZ0pBDoZDGlLMvPSX?=
+ =?us-ascii?Q?XnIo7d+Y01mtdCCASSFW6O8PCV0FrOStuCA8eV2hDhBzCwDWcvpenEP9XGzc?=
+ =?us-ascii?Q?fpfw+dReUzfebc1D8HpdKMUSQRLfSkWUKicJz3hIXlL+JK6g9BRqjGUbHPHF?=
+ =?us-ascii?Q?xlhx3+DpQVEBczXQUKo993xG5vatBhV919lSYmD6/pHCTuEOIDnkTu2G7o7d?=
+ =?us-ascii?Q?GhcgPy/JII886O8mUvpboDTiUmCppiWfUbFr914akxk+j55inpROqvigiJEw?=
+ =?us-ascii?Q?XyBertcDQIdPTj4UlB7ZaaTwAtq5y3q7muhlsRkeIyz9ATaHYB78EAWO3wgj?=
+ =?us-ascii?Q?OngyF4Suzt7qhoB9Mh71+D2aPkjljsrcro3t//bZ3uokysYfxEjRfj8aZBFV?=
+ =?us-ascii?Q?Bj15nkZLDEBZVFXiUFqu/lLBzAlGijwo7MEII2gmrYWaZqUujntxW7eUdveh?=
+ =?us-ascii?Q?XH58R1NfF97ARioFKso1jJG3gDSbNlG6aRimbrp9giufasWKRS0Eq3SPkoaW?=
+ =?us-ascii?Q?EgYtrar5aq/Y1jSXrlnd4wcfWa+lT+tleHDNLNehac14vVewNG6o8PFXUd+R?=
+ =?us-ascii?Q?oJQ/Y2kH43yQznaX7xSTrRFoStohTuAkm7WjXYcuFlc5RUf0c7bE45hUcSgM?=
+ =?us-ascii?Q?kpoKld3CTYDqKxceA0MHpDT/4UVh4DuPtWADTLy9/9fCCuvPjYLhv5ZDDf8q?=
+ =?us-ascii?Q?M1luLKLVTgVNbzZj78OT++Pw8b5cVl1ksAYsw4jmAVh7H1Hx7MMeLkO+qNFM?=
+ =?us-ascii?Q?42j3sd5xY6HJ3SDPo3zlsPwdeIVB3vy0MrSPpJyGp3184AGe/S9sNT9JheNK?=
+ =?us-ascii?Q?+0BRPbodb5Nozd9cA6c1ixtoqqx3ODnBJPiD8gXbGS+Hh4Qe0udvfvNLe/44?=
+ =?us-ascii?Q?9NWoumeX1eoXdFuoOZTpPzH3fwpMJkIWz4JimqZcU9fRsdoXa2N2QzQOKEIA?=
+ =?us-ascii?Q?aDXZ13TRcUAB5jfti080OWMLyw2rlM4pUtrnGAZF1y2d1Xc+77fn82ZB+J/f?=
+ =?us-ascii?Q?f0pejGSR6g8ONpJV/pNFFLPbZBD174Gs1LQfU/DfKApO/zwJxM6zuwyqIVgn?=
+ =?us-ascii?Q?nzJKpKQAfADi9sw=3D?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013)(921020);
+ CAT:NONE;
+ SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014)(921020)(13003099007);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: ReIXj6nNIr23G6/7SjedETGNfHXmo7ftlDRkYLDojyyc/u0LUZE2oo564MTmrLyKAr5avpiUlIWzZslUwbkL42EzaO4MJaAU39GFGqwdpIEHJxNXdCsnZWACNz4e2TC7lVqA8Vk6ELsa/dcyhbDVw1C7zMRn6zsdV7JCVijKk52HBRl0t18S/LkZccdRsjATVoBiZ8afbilWvVbB3aYarRNhdj48DJXGjIrR29SoO0lyQ+J/2I7rYAqAalyxB+2bc75EHfpSjhHY2+bXbG1jlqHjpTkh1W8YYjOxUOIv8fyyCRhEf9lIzNdtu0saEV6vv6zBOD/nz2mUqAYGRG7IyzcE8Uys24sXdY6iu8XjjuLpL1aokjS/RiPEcHO66qSQT47L1sl3djYYk17Sob7aNIUQhn/rqGRRQkoFnhLEmjpHiC8SgeM8zqOgo1S45o8bAlO2cO+au+oHydK4wNZksEb0SgRNsvwDywuizkoKInuyVX4Vg4kJj7uq457OIIq98HoqGjSoNUOZN4NvORKYfZ8vRBqylTIPt6zY+xcP937U3UqqJcXIqYTcCjxDaVrgaUrQquvgOsKCWNzbBc7JvcXWSEsUr+0ApK/4zU+Hj7Qjvhy2SopTfqov/OgAO8oHtK8mJx6vaxqKTXbPJLtyhjAJEzKUGPXrA56xBRGFpTA=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: xwy6rFVcKDaPV2AE06qQhekZV4Q/Qb4rogvZM4ihmHIyPhJ1Oq6kxP52GdUlFroHBIpHZgK7h0gRU1fzTSFmjHgonNBSGKlMrL0QEflxWp9caJAGkwtpn57BORdYKAf21oEsv3uQyppcrojLoEiYDjpqqt7Hd9VmBgVtb7Svdbpd2kvSu9HLR+VCEzsXMwvkZz2AbTxufXmipTBq5ULszytLTj9d2SbRWODbZhB0EduX0PpCbPM1XDcMrx8yJpocc0GTeU2D+D4gApEiEQadFp72Iynhu84vdWmC8EixEn9jZ3ERDl5A5ozg2yMwXN1b91KWKIOp/cJb4e5OBavlBu2s4/NFGY9qqvsMcR/4lsM7+BVbtWUAmJVwHaxM8+2rfY4ZVYx+dxG7NAzQcDX17aiao2K6JV8pq/v+kozAo0K2bwwqZq/UWpwcrRNHkK1rjF+6bdwHoSj05KEE6mjjZo1Fk1ogo/YIVPBfFDW5HyUfaOphxj1Np6SiQEYPufWoQKaPbFpoEzi2VG50xfZTW0OHquFsOH974gF7DBZuclknk9ABmb04qQMCk0RyxGpSUqC5gwJw6COvB0830Ds/B/meiZWtIkRdiRIA8F5PrLoCNtaf4AgJvob4d9A9S6ZuE07pE3jssb/Bhmr1k7oG6o+xsb5g4SElYJ9E1FfMiBE=
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2025 12:31:14.7346 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e490e3f8-c6b9-4a9d-6933-08dd9eacb41a
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2025 12:32:28.5911 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a445b4a6-cd7f-4417-ec14-08dd9eace02b
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
-X-MS-Exchange-CrossTenant-AuthSource: AM3PEPF00009BA0.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: DB5PEPF00014B95.eurprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1P190MB0688
-X-BESS-ID: 1748521889-305227-7656-15941-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0P190MB0594
+X-BESS-ID: 1748521952-311769-7757-13974-2
 X-BESS-VER: 2019.1_20250527.1501
-X-BESS-Apparent-Source-IP: 40.107.241.99
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVkbGJhZAVgZQ0MgiLS3VIMXMMN
- XAINkwxcI8yTAxzSI5NSXJyMDMLNlEqTYWAPcx3jxBAAAA
+X-BESS-Apparent-Source-IP: 40.107.21.101
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoZGlqZAVgZQ0NzA0sg0ydLcON
+ XC0NjIIM3QzMTYICXFINEgxSjZ3NxSqTYWADb48PpBAAAA
 X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.264948 [from 
- cloudscan23-29.eu-central-1b.ess.aws.cudaops.com]
+ cloudscan13-204.eu-central-1a.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
@@ -149,59 +146,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-For vDPA devices, virtqueues are not locked once the device has been
-configured.
-In the commit 5e8fcc60b59d
-("vhost: enhance virtqueue access lock asserts"),
-the asserts were enhanced to trigger rte_panic functionality, preventing
-access to virtqueues without locking. However, this change introduced
-an issue where the memory hotplug mechanism, added in the commit
-127f9c6f7b78 ("vhost: handle memory hotplug with vDPA devices"),
-no longer works. Since it expects for all queues are locked.
+Hi everyone.
+We detected an issue with the memory hotplug feature and virtio devices while working with vitrio
+in DPDK.In general, the issue is around the user request VHOST_USER_SET_MEM_TABLE and
+locking queues for this request
+(https://git.dpdk.org/dpdk-stable/tree/lib/vhost/vhost_user.c#n1512)
+When the vhost_user receives the request VHOST_USER_SET_MEM_TABLE, it locks queues only
+when the flag lock_all_qps is true(it is always true), AND the flag
+VIRTIO_DEV_VDPA_CONFIGURED is not set.
+https://git.dpdk.org/dpdk-stable/tree/lib/vhost/vhost_user.c#n3181
+In the case of a memory hot plug, the flag VIRTIO_DEV_VDPA_CONFIGURED is always set,
+and due to this, the queues are never locked while they are expected to be locked.
+https://git.dpdk.org/dpdk-stable/tree/lib/vhost/vhost_user.c#n1512.
+The quick solution is to add the check for request type and do lock queues always
+if we have request VHOST_USER_SET_MEM_TABLE. Something like this, in general
+https://git.dpdk.org/dpdk-stable/tree/lib/vhost/vhost_user.c#n3179
 
-During the initialization of a vDPA device, the driver sets the
-VIRTIO_DEV_VDPA_CONFIGURED flag, which prevents the
-vhost_user_lock_all_queue_pairs function from locking the
-virtqueues. This leads to the error: the VIRTIO_DEV_VDPA_CONFIGURED
-flag allows the use of the hotplug mechanism, but it fails
-because the virtqueues are not locked, while it expects to be locked
-for VHOST_USER_SET_MEM_TABLE in the table VHOST_MESSAGE_HANDLERS.
+ if (!(dev->flags & VIRTIO_DEV_VDPA_CONFIGURED) ||
+ request == VHOST_USER_SET_MEM_TABLE) {
+ ...
 
-This patch addresses the issue by enhancing the conditional statement
-to include a new condition. Specifically, when the device receives the
-VHOST_USER_SET_MEM_TABLE request, the virtqueues are locked to update
-the basic configurations and hotplug the guest memory.
+Danylo Vodopianov (1):
+  vhost: handle virtqueue locking for memory hotplug
 
-This fix does not impact access lock when vDPA driver is configured
-for other unnecessary message handlers.
-
-Manual memory configuring with "--socket-mem" option allows to avoid
-hotplug mechanism using.
-
-Signed-off-by: Danylo Vodopianov <dvo-plv@napatech.com>
----
  lib/vhost/vhost_user.c | 8 +++++++-
  1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/lib/vhost/vhost_user.c b/lib/vhost/vhost_user.c
-index ec950acf97..16d03e1033 100644
---- a/lib/vhost/vhost_user.c
-+++ b/lib/vhost/vhost_user.c
-@@ -3178,7 +3178,13 @@ vhost_user_msg_handler(int vid, int fd)
- 	 * would cause a dead lock.
- 	 */
- 	if (msg_handler != NULL && msg_handler->lock_all_qps) {
--		if (!(dev->flags & VIRTIO_DEV_VDPA_CONFIGURED)) {
-+		/* Lock all queue pairs if the device is not configured for vDPA,
-+		 * or if it is configured for vDPA but the request is VHOST_USER_SET_MEM_TABLE.
-+		 * This ensures proper queue locking for memory table updates and guest
-+		 * memory hotplug.
-+		 */
-+		if (!(dev->flags & VIRTIO_DEV_VDPA_CONFIGURED) ||
-+			request == VHOST_USER_SET_MEM_TABLE) {
- 			vhost_user_lock_all_queue_pairs(dev);
- 			unlock_required = 1;
- 		}
 -- 
 2.43.5
 
