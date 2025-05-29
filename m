@@ -2,193 +2,161 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2813AC54FB3
-	for <dpdk-dev@archiver.kernel.org>; Thu, 29 May 2025 12:41:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25F4BC54FB3
+	for <dpdk-dev@archiver.kernel.org>; Thu, 29 May 2025 15:10:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 70587402C1;
-	Thu, 29 May 2025 14:41:37 +0200 (CEST)
-Received: from DB3PR0202CU003.outbound.protection.outlook.com
- (mail-northeuropeazon11010049.outbound.protection.outlook.com [52.101.84.49])
- by mails.dpdk.org (Postfix) with ESMTP id 9310F4021F
- for <dev@dpdk.org>; Thu, 29 May 2025 14:41:36 +0200 (CEST)
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=Iyu5lnC7Ab+5iVB8mxBJzX+qoZBoHpAnquPgAKBZIK25qqJ4MjOP5iPR58vGcaHG66sR5yNP6Sk5aInv8hEXZ+TqxnbpzagL4K1SVrrYwnuPxXVVu0MS19EEu1FZ9rMsybhCR51/sITJ/nMR99mcpkLGcQjXnVzhnt1/14tGK8uj8qZtA16UelR0wzEPgBei4uWDYYmla6ghJMX6tmb4OuK+L6bNMbLYPF95lnKrfkuanNaZ4FBnTnjpFY7cjpW01yVAEucieIaDD8baTwpz4lY8fwDcRETfJ2W017tRSjh0jHee+iMvKiJHe3GM/GbrTusNrxuuZjYuPuOnSQKTfg==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VCdIh26K7rf0y+pawG9uqWa4MMH8G/Cot7bV953qoKE=;
- b=E6V/0cLQiWNOZ4n1TdMxgJM4ywW5RNeLrcJ7tgvY2JqgOZ6RsSb9mUIqTo2DTSI9uDy9zXpkM4jcuPCDt3hEmtxZ3tMwYYIEC58+gtGBHXsFWsepWQ8U55/QF5CYHIkIyStK5W8Z1hLCquq7hEVs8mgGwdaqW+EJZsVIcSeZZD9ppm5zR0bJM7cuctZqN8sJUOHV4g9tlKbEMRSzCip6hd+TdeBtka7jZE//FFxWgwKUpAtQ2cqV3y3WgD0eBbaOAcY5gmCcaI+TciKopEZ8iVv+mJMPhoMu1i1AOv0TEjCkqkOLOghlv83PxDTKn3T6JZArO57dSHbXX3nQv2wn6g==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=iol.unh.edu smtp.mailfrom=arm.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
- (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VCdIh26K7rf0y+pawG9uqWa4MMH8G/Cot7bV953qoKE=;
- b=quQz6HgJrhkHsZoYWBjn1YdbZutVlLACg0Qzz90GUUetzuZqVDugCas5BLPZ25L984Qu8dlyYL1rZh0dpCAi+e5w5ZiTyExE+Rn5VptNWMEel0mWK9OHQ/kqhN6keHI5FUPk46CqRy/oXHgtI/gRwtjQFhZNZcHmtSqHOSc7fvQ=
-Received: from DU7P195CA0008.EURP195.PROD.OUTLOOK.COM (2603:10a6:10:54d::35)
- by VI0PR08MB10825.eurprd08.prod.outlook.com (2603:10a6:800:201::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.25; Thu, 29 May
- 2025 12:41:32 +0000
-Received: from DB1PEPF000509E4.eurprd03.prod.outlook.com
- (2603:10a6:10:54d:cafe::db) by DU7P195CA0008.outlook.office365.com
- (2603:10a6:10:54d::35) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.19 via Frontend Transport; Thu,
- 29 May 2025 12:41:27 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- DB1PEPF000509E4.mail.protection.outlook.com (10.167.242.54) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8769.18
- via Frontend Transport; Thu, 29 May 2025 12:41:26 +0000
+	by mails.dpdk.org (Postfix) with ESMTP id B00AE402C1;
+	Thu, 29 May 2025 17:10:13 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+ by mails.dpdk.org (Postfix) with ESMTP id 12E7C4021F
+ for <dev@dpdk.org>; Thu, 29 May 2025 17:10:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1748531412; x=1780067412;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=TxAD70ughZ2zvx7itVMZQlS/Yat0iGeaX/3e2kbAx6k=;
+ b=RA+FJbP27ARZaqfUbzaSEtfn/E5azSQ+rwN+9kF3kEk2t0HM97ArpATo
+ D+HUSOrtohsjp4QmhhwcYONcjPPJiPsdukuCR8E5lSAv1hPOd4qTR4b5e
+ wR1Iwzoix/z7sX77y05LixBGKmKDyLHF5gfFKTuADBkDpD5n9q0N4iCvT
+ XsBGc4t4E9yIJyTNQuzCXWQudLDF5Konryu+riUQfeucNSRL6CNESpfHe
+ /D41YjmEIZ/6uYHpnFos1vydlJrbe3q17rdGcfE7k82oyXYsK3NEPxtR6
+ 1s9X6ntxBzd2KH4ucSBOUEYg7AU5ZS6JfbQfh3/yASlB0FP+LwKFjlKq7 g==;
+X-CSE-ConnectionGUID: BgnEIu/eR9uf3Gv9niwxWg==
+X-CSE-MsgGUID: CzKa0G25QE6qzyhV3Ju9bw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11448"; a="50652311"
+X-IronPort-AV: E=Sophos;i="6.16,193,1744095600"; d="scan'208";a="50652311"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+ by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 29 May 2025 08:10:09 -0700
+X-CSE-ConnectionGUID: BXybdzo2Qn2Ev65ImKqYLw==
+X-CSE-MsgGUID: lEvBFQ+8SJaWZxfYtca9QA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,193,1744095600"; d="scan'208";a="148746631"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+ by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 29 May 2025 08:10:01 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 29 May 2025 08:10:01 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Thu, 29 May 2025 08:10:01 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.40) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.55; Thu, 29 May 2025 08:10:01 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mph9110Q9Dfu6X9uTU9iKHohnAG+kheFoU8j+Z+bEQqJTt7dLBYTFhPPPfu0gbj5mjpitGd5J9AWanJateyEg4OueY/SXbacqN2v46CYEyluz0pzmuhQ2z3G/uqkbSqkS+XqUUjSUp+9rW5HrfiFwjl1mjkodANDK641FtuSE4bNNt/AK8FYtO+2GgAvZ/Zeu9TowGFKpyH2RzECaZ4SJhaeEsoP7xZoJOyD5EP9z4ujyq5/2WQAwfa+oFOqjAeKwxCfy/FBA3robDCaJRa3np7VR+UawCAbKtTaCdGjBhkdwnHmFb623SmnekQ2i+If+Oo6DsF8JUhDBPyQzLPX6A==
+ b=GUD4bN1/XYwIdFvQPSDAN7QL5Ro+gnNo39sVXtV/Z4YgBAAao2ZWAy+JA/iVcvrl+h4h/tsPBhnvjYxDERUpXsUnLQtmaV3HPkLJolSvyBKCas+qs3yV8X6FrtDAa43Bgczu9ODohS1RVTmv0Ueo2c8gkwBAsPttssue11763arQGrV93Q/NuoAkY42VrcVIHNWLpMYPLVjtEU6r4egsqtG0hpM8r/+NdG+lD+Jsd5JV8oZxSTWxlOec8XsvIks8Vs75YrA9s/Tuv0JizpTgF3YHer6/1Urkid/R1N0YRo/2XUDDH+vvlgzGfNqMWXPPd9xotSvtxz1xxFedXGk7pA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VCdIh26K7rf0y+pawG9uqWa4MMH8G/Cot7bV953qoKE=;
- b=hKuaQtsVrNyMcJjh6vUaxXxmEKeCJT/ozWXXa6p6MNoc9J6/9Gm0jhlVUQYd+VxADDk3dBtNQRdd2nPzR2rXRKnkA5vyz+qlk3kOzqDhsbjqaRZRf9v4r9fpihlSGMfaLk5zv/r4oZ9hhNtjEDgUsP6gEW46TXAhOVHIuf2VTtZEIDPXImdJHV4AuN0HXB7RaRONJ1y/jUEzIrwq2NPM0MvUnwteGLYg141S6NDx1PRWXMKRIcktnDGPsiLqngjuv/0xUQY2PlfJUKQH78GTRNZapjJ4BLANx2c56uJMYsmmjloJWdJk8KOyYwbNGedBy/bMeXM/6bw7gYYliEI4/A==
+ bh=WWBkApqYkTUInXH/VJEY3BeqTNN7opaob/FLdYt7D9Q=;
+ b=UA8JMsBXRPkYN9IITHfJwG44mX385V/CkKHAN8U1Cj7IHoS/xFQ8MHrdOejw0xwnTqvx6q5DCAWmaRRJ/lJUYFr2Mg+Qv0mTFC4oJHVLQC/5BYAjWYZlcFy9a7KYZINEwsSr+E/xkWRXJ9NbiVakYxtvWa5ZiDTYWNJv/ImPW9JxsDoMRL1Qw7Tu1xaCeYJqADr3OXy6osTJ/N5WnPXgHTu/hXEGEmkpg53V7i1aIyceBKoiwhAI6esi1vLPmfFhscjC93NPf8CA12hMW82kDnNdcgwpifekNxwnUzSs0IPn95IjvqXm6b91ZqiV/oeqLPFypfh4NlqI6hQWTlhv8g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VCdIh26K7rf0y+pawG9uqWa4MMH8G/Cot7bV953qoKE=;
- b=quQz6HgJrhkHsZoYWBjn1YdbZutVlLACg0Qzz90GUUetzuZqVDugCas5BLPZ25L984Qu8dlyYL1rZh0dpCAi+e5w5ZiTyExE+Rn5VptNWMEel0mWK9OHQ/kqhN6keHI5FUPk46CqRy/oXHgtI/gRwtjQFhZNZcHmtSqHOSc7fvQ=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from DB4PR08MB8151.eurprd08.prod.outlook.com (2603:10a6:10:381::16)
- by VI1PR08MB10073.eurprd08.prod.outlook.com (2603:10a6:800:1bc::7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.31; Thu, 29 May
- 2025 12:40:53 +0000
-Received: from DB4PR08MB8151.eurprd08.prod.outlook.com
- ([fe80::2dd2:fd4d:8ff5:3733]) by DB4PR08MB8151.eurprd08.prod.outlook.com
- ([fe80::2dd2:fd4d:8ff5:3733%3]) with mapi id 15.20.8769.025; Thu, 29 May 2025
- 12:40:53 +0000
-Message-ID: <4feefa38-e480-4838-b221-d1cef4fb735d@arm.com>
-Date: Thu, 29 May 2025 13:40:53 +0100
-User-Agent: Mozilla Thunderbird
-Cc: nd@arm.com, dev@dpdk.org
-Subject: Re: [PATCH v1 1/3] dts: rewrite README
-To: Dean Marx <dmarx@iol.unh.edu>, probb@iol.unh.edu
-References: <20250527153734.368235-1-dmarx@iol.unh.edu>
-Content-Language: en-US
-From: Paul Szczepanek <paul.szczepanek@arm.com>
-In-Reply-To: <20250527153734.368235-1-dmarx@iol.unh.edu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0552.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:319::14) To DB4PR08MB8151.eurprd08.prod.outlook.com
- (2603:10a6:10:381::16)
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by SJ0PR11MB4861.namprd11.prod.outlook.com (2603:10b6:a03:2ac::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.30; Thu, 29 May
+ 2025 15:09:57 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%5]) with mapi id 15.20.8769.029; Thu, 29 May 2025
+ 15:09:57 +0000
+Date: Thu, 29 May 2025 16:09:51 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: <dev@dpdk.org>
+CC: Chengwen Feng <fengchengwen@huawei.com>, <david.marchand@redhat.com>
+Subject: Re: [PATCH 0/3] argparse additions and rework
+Message-ID: <aDh4v0_0TB13RsjY@bricha3-mobl1.ger.corp.intel.com>
+References: <20250527092113.903910-1-bruce.richardson@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250527092113.903910-1-bruce.richardson@intel.com>
+X-ClientProxiedBy: DU2PR04CA0027.eurprd04.prod.outlook.com
+ (2603:10a6:10:3b::32) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic: DB4PR08MB8151:EE_|VI1PR08MB10073:EE_|DB1PEPF000509E4:EE_|VI0PR08MB10825:EE_
-X-MS-Office365-Filtering-Correlation-Id: f67a601d-5ae0-47d5-84ea-08dd9eae20f2
-x-checkrecipientrouted: true
-NoDisclaimer: true
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SJ0PR11MB4861:EE_
+X-MS-Office365-Filtering-Correlation-Id: e176ef39-0720-42b0-7fd8-08dd9ec2dfee
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;
- ARA:13230040|366016|376014|1800799024|7053199007; 
-X-Microsoft-Antispam-Message-Info-Original: =?utf-8?B?MDY0djNuRlpodDM4bFlDODkwb3Y2MDhaYUs0alA0R2x1WkhGTkxONjhCWVJ2?=
- =?utf-8?B?YlZ2QlpHTDcraW5UcDFVeWtHMmMyM0lZSmw3OG5oNmtCN1ZCREhhOVpPYWpx?=
- =?utf-8?B?QXNQRElmTVJaSjVtUWhUUjZBemlrcWREdThpb0JYLzlPbGFBSWs5SldQcFpr?=
- =?utf-8?B?ZmhFNzZDb0dlYURDSTJGcTZnZGFCTWhqbWxHVStZVUc2TUhuNkVKMmVZVHBR?=
- =?utf-8?B?MEU3K25BdXRUUTA4RTlyUUZZaWZzZmQ3SFQ4MTF2dSthbG0rcHpxaGRjV0xz?=
- =?utf-8?B?QUhoMy9YRytCWjNVWjdYb2kyc2wzYzRLZGQyQW84d0lhYmt3eE1jSlI5WVRx?=
- =?utf-8?B?eHJYdzM3QWNGVEJmRWw2OERlMGFzT3pKb1p5MFpTbTNUWWxJOHlpWHkxSDZ1?=
- =?utf-8?B?ZVZKK21obWZDQ1RCUzIyUXliYmk4RGFBV1VqaVp5VXd6VGVVd3BnZ1ZacjBn?=
- =?utf-8?B?c3NxVW12MkJjYVczc0YvUmUxQ0RGUjd1ajlBVEQ3WllXZGZTK2VnNFVrV0ZZ?=
- =?utf-8?B?N1FDWm1wd2MwNzhtVUNnS1JPajJyaDEvcmhJZUI1T3pScDhnQjI2alpiMEcx?=
- =?utf-8?B?eENRSWUxM0tUSmJvSm5HNmlsdDQyeFBjbGUyTDJ5WUE1YjFRUTF4dXJDV0Vn?=
- =?utf-8?B?VXFkL2FEODdDalowMFNhNFNkcTlySVo4R1NabUdYSWpkK2RNaHZZTW90R09U?=
- =?utf-8?B?UE5PbURUSU1rb0luNThnMjBJZlJaSkJjSGpndURxZFh2Q3hPd3RVRFhhWFNO?=
- =?utf-8?B?TGE1d2VPYjlEOVZidTNDc1hXVnJNSkdDVUdYRnRtRVlVZWR1dm9WdXlBMzRu?=
- =?utf-8?B?MVVMdmU2eTJOSHJHQVhPWlJ1UmxTVkYxUHF3V29ieVY3dHlqTEtBSHJzTk1F?=
- =?utf-8?B?QVNNelp2ZTNPTXJTZ2JHTWhDbUpCZWc2WHF6UDNGTEZzOFFoNitydnV1N3No?=
- =?utf-8?B?SE1QMTM2K3lTdklWdzBQK0prUkMvS2JJdU9RMm9VOTJvMHhaenJqRXV1MzJH?=
- =?utf-8?B?NWlLVWVzNFZWRVZJaEwyWE5SSmNrRmdIcTJZeVovNGZvUUs5NloxdVpUZkcy?=
- =?utf-8?B?RWlYNkdVelNYYitVem5wL3crUFJNTm9YRVJwbHJaQzh4cDhIKzdCVkMvd0Rr?=
- =?utf-8?B?VUVnVTNOaG1LaVVRWVBUM29YZ3UrRHFNL1RCTldOQWo3WVQ5UTN6MEZ5VndO?=
- =?utf-8?B?bFJLdU9ndTVMa3ZuRi91NFRzNXlsZEdYYWVoaVp6MlJWY2gvZW9NSk1FYi9u?=
- =?utf-8?B?VFozam5MNDU1eUZ1U1dsNHgrcS8rVUxWUmcyeklkUDNuSk1sWG92alYySFpJ?=
- =?utf-8?B?djRuKzlZZk9vNXY2cXlwYTVmSG5YdC9QenpqN2N5RnM1S1VSWFU4WFdPY0lC?=
- =?utf-8?B?VGVPQlJVV0lFMEJwdTFxa01FUzJuNWFRMVRYVlRjUjJROWNvVnZGajhpVHZ6?=
- =?utf-8?B?VjN1MWs3YVpFUW05UVE1LzZ1L2I0VmVJNGhuWG9saU9vYkVxYy9kUFhRNm4r?=
- =?utf-8?B?UDhSZVlSdWtVYy96Z0xmQjdlbzM3Y0hKUE1OWk5rOVlOYzRTWkpLS3duSE96?=
- =?utf-8?B?MHlEZ2Ixdzg4WkdxUVdBdDVEWFh2dFhXSDRkVGZ0MFlqcEs3b2hvQW5jNS83?=
- =?utf-8?B?M3pGT2NkaGFvdUh3UTVQb0xvbmMzeVRuQkxBY2E5U3EzdGJkYmV0SlY1Sy8x?=
- =?utf-8?B?OW1mSlBESUVIeUprQ1NKYkk3QU94MmdGQyt6cWNoalp6aDRyVW1udmFTRm03?=
- =?utf-8?B?T2V0RUpXZlVQTFpwZCtBMmo3NkE4eUtsajM1ZitzaTJDdm5xbnRpNzRJMjlz?=
- =?utf-8?B?OW1kd2g2ZEtzQ2NITjBNUEIwZWt4QWptVXRtMTFYYUV1bnRQU0lRdGdpb3ZS?=
- =?utf-8?Q?E+PTBucnJkgao?=
-X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255; CTRY:; LANG:en;
- SCL:1; SRV:; IPV:NLI; SFV:NSPM; H:DB4PR08MB8151.eurprd08.prod.outlook.com;
- PTR:; CAT:NONE; SFS:(13230040)(366016)(376014)(1800799024)(7053199007);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB10073
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: DB1PEPF000509E4.eurprd03.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs: 11711cee-8038-407f-f4b3-08dd9eae0cfc
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|36860700013|35042699022|376014|14060799003|82310400026|13003099007|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?KzBrM2g1VjMrWEJpZTVlSmtlTXBlM2ZtSFc4WUJuWTlKbFNjM1RtYW1tWW9v?=
- =?utf-8?B?ZklaQndPMGJzUXlWOCtXcmpIM0p3OVNvNXF4aFJSTWpCSGNzd0txc3hHM3R4?=
- =?utf-8?B?UVhWZjRsSEhrRVQxWUN1TFRwcHlObE9LcHVpamdydUJpRml2czhuMjUvZFc0?=
- =?utf-8?B?Vitvd3FiNzJ2cXZhR0tGcjZQMmgxUmxMalV2MXVvcXNyelVwZkhiMVMwWGZx?=
- =?utf-8?B?cWRXeCs3V3ZpYVJYU2greEovY1Vud2pwVFFzMkpkWDBBMUQ3Z0MzblRpN0Jl?=
- =?utf-8?B?dEdxNTdvaStDZ2RtbTRLeGltSzFOWnhGY3BEQU9mZDMwakZ4RWJCTlpWUUZl?=
- =?utf-8?B?NXNnNFZWUVRRUTNiUkNqcS92Y0JNcHg1N3EvTjVIMWtTdnVOa1FkeWZXVXpa?=
- =?utf-8?B?L0M1RW5DVERhSDE2VkxsODFiYUtwMXkvOTZXR2puR2tGQVFTa3hNV2NuNVZK?=
- =?utf-8?B?amI5L25QWWo3bzFUU0F0MWlzeWZjMHA5dTJNZjMxbU1Za29TSk5BWEtMOWQ1?=
- =?utf-8?B?akxxbUVIS2lPd2JJTDBQbHlmR3RCOWhhOVZ4K05kUmt4RFdjNWNqUnF3Y0Fj?=
- =?utf-8?B?UkpsY21KVGJSSUFJaXcxZkhoMGV4cFpuMWk1VE1GTkpZS0tQa2hzNDIxVUF3?=
- =?utf-8?B?cWJlUjZiVC9mN3hyN1V0T1N2WGNLNzBUSnpheXlMZFdJUE1LU2d3NnU4UE8r?=
- =?utf-8?B?dFVtZTJrcjRhbStsL01qb3hNaGMwM1pJb3hsRjRVL1FSYkpJOFcwTEJ1L1Vq?=
- =?utf-8?B?N3dweWV0UlBMRDNTT20yKzQ4SmVEODlINnJmVDczUHZaT3lOaWNNNGdZUzVN?=
- =?utf-8?B?YXBPcmpwQ1hsdU9IZ0pSUXlGVnpzbjlDK29UZS9EQmt5dVkrZytVREVUUlBr?=
- =?utf-8?B?SUJGcnduQURmRU1nN2QzMHVhdFhHMWtaZU5vSStLWXA0NXpHRmQyUndFR3F1?=
- =?utf-8?B?eDRzMDBhS2JqbDUwZmdoMUIzWlJQSGN4WWd2ZlBSWnN2N3AwVFcwZjF5bm9u?=
- =?utf-8?B?YkZHNEdORTNoNmhxNGhFY2lrTm55YW9TMzdPaE9YRkdNWW5YakRQa3pBZm9R?=
- =?utf-8?B?eFFDeHNSWXY2WWs5Nmk1MXkwamNFZldLbFRhYzIzWG1JL3VhUUl1UlNUdlNQ?=
- =?utf-8?B?eGoxWmN3VThUK25ZbUVzTEF5UGl4aXI3T01rSlFJcFF0U2xWRS8xZWR2Q2tt?=
- =?utf-8?B?dC9nZWE2VWVJNThlbUxWR01yVHBVVTFFRWNPbGh1SkpFV3Z5SXpvYk5ONWJu?=
- =?utf-8?B?QjJDbDZsQUVpVWl6ZmJqWWVsSjFXMmE3OFpQRFV6MzM2UWtBakJ3OWtOUUJX?=
- =?utf-8?B?d0dZdERmcC9zNEgxWVpXYjByRHp2MmFVQStyK0lkb0NrQmxiemdBY3owUjRt?=
- =?utf-8?B?U1h4UFdGRU51emRZUXVxMWUwYVIyYWJBUFlQcnhyNndZMFhFdkNqMkt2UVFB?=
- =?utf-8?B?R055S01KREYzTkdNYXRYWU4rdEVFSzVDZHh6NFBlZXl6MjltQU42N1NXMXZU?=
- =?utf-8?B?SmtlMHBjWHBvWm9wazZyNGVmMzRkQXpzdnphVHBRV2dGd0xHc2ZGY3I0aGs1?=
- =?utf-8?B?TGZFbThqemxweUZtN3ZCaklVVTdOUDVxZzE0NitsaHNOUEluR0lqMnRiZU9B?=
- =?utf-8?B?TlI2RFpndTVXUVlKRDl0ak8xa1NoV3FuZHplK2c4VkVGTm03UDFpS3hSbGxo?=
- =?utf-8?B?dFRONTJXQi9WS0l4S3FxdGY1bTJlcTVncVVKcG1WcnFyKy9DZFVOcmlIcU53?=
- =?utf-8?B?MGZuTW1iRnZnQ1NjNnBtaTFER3kzalZNcG9kS1FRUGVFbUU4Q2c0TlJQTGxD?=
- =?utf-8?B?OUxIeHJTNy8rcnRsUWZyRmFlZWxCbmRnRWhaeTZtV2tETFFMNXVUMWV1VGJK?=
- =?utf-8?B?UzdoaUM3bG1QNjR1RHdGODBlcjlvZVg2UlJzTFF4QmowZi94d2NDQ2FTSFh2?=
- =?utf-8?B?VzFMK3lMMG5PV2tBWEVJWThHSnJMaDNkaXBYNFkxZkZnSHA2MDZReUN2WVVh?=
- =?utf-8?B?MEhXWlp0K0x3PT0=?=
-X-Forefront-Antispam-Report: CIP:4.158.2.129; CTRY:GB; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:outbound-uk1.az.dlp.m.darktrace.com;
- PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(1800799024)(36860700013)(35042699022)(376014)(14060799003)(82310400026)(13003099007)(7053199007);
- DIR:OUT; SFP:1101; 
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2025 12:41:26.9689 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f67a601d-5ae0-47d5-84ea-08dd9eae20f2
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d; Ip=[4.158.2.129];
- Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource: DB1PEPF000509E4.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR08MB10825
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?EzQsW6SJokoG1X19lVSG3+4RNsITg58/NsVl0ZB9zn9jLkymJV8+rwdFf9cx?=
+ =?us-ascii?Q?DkdhQ9+lh4QY44Zb/u+DMbA3sBHr560paY3CBxKG+AuTycGfhUv4x7HtXs6M?=
+ =?us-ascii?Q?KK5VniOBwRfua4KGvYRVF6LjB2mQygw9M4GtzJ+Ah0quJFR0KjWG9yDx9liy?=
+ =?us-ascii?Q?TpedEUJ/LYxaZnnhY0QBgaiquvqPt/Nuq+BnZBt1mbosr3wrPu5I1sGZ5ucl?=
+ =?us-ascii?Q?ReID/OdlDrsuYPfmVKv5Cs0GBEh9r/GBEO0Bv6U5OYZCx4KcQn+qv9cJevAB?=
+ =?us-ascii?Q?eYVW59Bv4uoMxoJgCTRk2TFezwxtQkxfduJzvRv3p5BFnCinRi/K+ZB9TTWt?=
+ =?us-ascii?Q?TEAlXLeF7a2WWcbDl7NEG9W48Aoz8+w43geSObWQO6ovWt69Am2CupuoIPbZ?=
+ =?us-ascii?Q?LOQFD19JLsxW/SX6oBC2Hs+EmyP+ikeLQiNwsjWt0nu1Xxl4rCV/3uRYdWXe?=
+ =?us-ascii?Q?LzTbER0SzSoWDwetre6paSJpxcpH/PYgj8/pHBlROoMvPrjZLDOKd+jpX0AQ?=
+ =?us-ascii?Q?lMunvl2T00E8qhKwXnNkvD0jbX34OdLjaiusFOUcnP+ll3SYFEISeykXYUsp?=
+ =?us-ascii?Q?rnzzu9tiCpMP4UZh61/xE2k6cbpod2cGHsW2TgnyCLr6YI0ZyCnWpL/i6XIh?=
+ =?us-ascii?Q?ZPn5Bjt7QInGzYteEWFilN7sNVUtJsWV6T+koj5LO72fo76jvXe0/U/3pz/5?=
+ =?us-ascii?Q?fiZ1Fcog5IqXggv0LTKKjnZr5XutbEgGY/lTVCdGHvROux54TQ58WT3xRwfD?=
+ =?us-ascii?Q?IETZ+fbKsFOPtmVCWjjrfCGERewmv0PvKMEcF/ZnBRA/f2KH4aSSmhLrB+jE?=
+ =?us-ascii?Q?X4FqODnagDnuzlFGTJDQUhrhzP7N45xE0LueY1mcTbDpsfkvyCQmNLMdc2LV?=
+ =?us-ascii?Q?drJ2L0lnl8Xy/nTe5uITQV+UaBhwkM88M1XsE2XBcb2o8yq9Q+QzCT/0YNbn?=
+ =?us-ascii?Q?FMovJyieXBSbcZXmvha7aP7trcXT0D7M7U1/R0cgwSeek2DylmufyKTNRj/Y?=
+ =?us-ascii?Q?+k9hE6pgvOhpXa6jVnx4FT2lhuk0+QYJ9hyfRF65/bB7FL+bJWQ+CiE83XbO?=
+ =?us-ascii?Q?6z3ia90sRfxzX519VKswLalrBFW6TdIpQAcUTo9A5I73JsJ9sxv2/+/u+ZmP?=
+ =?us-ascii?Q?tzH76KMnFUUuwL0IXtQpAnFcawaHUkFjmeCMIe3AxusNbgc1CmtlguFV3BFf?=
+ =?us-ascii?Q?r+wItP9S1p54VVFZiLfItYra/gG2zR98Sed7rb79eMIjRA3vw9c/3lGEcA8O?=
+ =?us-ascii?Q?szX+MOwUPPhMS4wnkcLyRn0Yctho4vtpZWl5+Dtk2QtKwgfEm5qgyUa9d7Bh?=
+ =?us-ascii?Q?jAQWiM8wm7Rm4JkekkDMfh02yIBcgpCaYbR6Ntw93jEv+vXOsCxae3MNgQ+/?=
+ =?us-ascii?Q?GPI5tZuyDEYYkwXaSb9i6IytI736kiMU/VB74UU7IKZgd//v4DpCr9OyZIvV?=
+ =?us-ascii?Q?xUWjOHQiIXY=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Lgtz7sWZ54nwRdcD+PU2HtMlevRN+Hpk0/tLRbr7hjTuIMVChSgvWLjl0wni?=
+ =?us-ascii?Q?9kurO9v3bzIFWUtlacsloNjpKydZdKXGcQ99bJPJomnKQgxHLS1BW4aDxypt?=
+ =?us-ascii?Q?VnkLFwd2F736eKVquuDVevdVXGdKpGPVcIgD2sXCi0Y3sLFfnipdwTx7geOR?=
+ =?us-ascii?Q?NkyCn96OOFzljWQ1XdIeOvRSKgXocZsJ/YdGXKeg4lDQdygEisz5zCEBbI9c?=
+ =?us-ascii?Q?smdpTz3n2PnkNfzRR47BlsIKAaAzukNtjfJ1scUykThwgyBiYsS1hTyMGGB+?=
+ =?us-ascii?Q?2ZrnmGMirYuuz/Lk03nXuic0fXYagw+hfcxVqEixBLpReudPtbPw8UUjroQu?=
+ =?us-ascii?Q?G+cAfuqJi/5iTWATPQUO6eH+TNrK7/FbfCJWelhSUi/KgXMJjcq3KF2dEzOE?=
+ =?us-ascii?Q?yBQwm5ELIbBMVkzK/s4bZNdJPaqbBDcNH/cDEl2d0wMT+oUYcpyvilRZB2/Q?=
+ =?us-ascii?Q?eqI/H2Ih0sv53wM11FQg/RZWooiCPhUQL+JnQH1drEbSdC6KvWN9fbDgkDTH?=
+ =?us-ascii?Q?NlqN0rC6060ilzdNtGFA6F5QyIvY5ae30ir2IzR94Itwx5MXZKHFIaiHlzn6?=
+ =?us-ascii?Q?nrHxzB2qwsWSAgrs2yLOSut7qKJfICdOfT8GwoTajTYzWLo67bPDPb9zHMA4?=
+ =?us-ascii?Q?guhCuXQ8U/4lvBIWVfeca1585IrY2E5fCRZaVZQH3Rsj5cgpr+3G92wGp8To?=
+ =?us-ascii?Q?jOxnrWO68Wt7Zp8cI0QYyyGR0bQAzoC2+7P8WW83GAgPOIp8g01s5XSZYsY2?=
+ =?us-ascii?Q?nMXtSa2fPBOZl8JFmTvgMTs2AXwkVi19gfZrVnhOG8LNN++CGbrxL4RpG6fc?=
+ =?us-ascii?Q?U5S7mR4xFNx+1AC9jqbfDTJj0SYpsj9N8lgygPmvHtb2ns4vTOFNMvsjlkIA?=
+ =?us-ascii?Q?z5khrGGWF+0vL1qbTytGJyLcQ7C4LjMrweMpxCe3hk2SdnZGHry2P9VW3nwl?=
+ =?us-ascii?Q?vYj715MgPga5T3jDWiLlNUh7xcT3RD2ijwKFUFB2ogBrkXDRf9Elu6KE5z1C?=
+ =?us-ascii?Q?jOv27UhqSL9HCc5ilXSVNE11KMA+gzcILzl4xmensEVmJetUAMuHRyr4n+Sd?=
+ =?us-ascii?Q?lGQn4xVVZBkcLdv1NJD4eqlDFbUrqk39wunplblXBxWIhjIt/sVJexCjIuSL?=
+ =?us-ascii?Q?hbOLYkAwGK9q1PCah57F8JJrNYjjvqcOl/retH/swTYIB7H1lDb9mJVWicKf?=
+ =?us-ascii?Q?cOZ71EdcOY/MGc6EYd1xnCyW7VhEYHM419nnh4Pi7V8qConW7GNprGLRJAbY?=
+ =?us-ascii?Q?oFxdzJbui1GM7jcPbOqAjZIR9Klviqn6coCSRWNNykzn7mBWRUZZ1xADYujJ?=
+ =?us-ascii?Q?5Tnhme8iQTjDdQ3aIrPK6vCKLUqf5ukMHES6Ir/J5ywx7yhI22im8WCfHXRe?=
+ =?us-ascii?Q?9/dVjJTZYV32M2FfORWLRH7aXpG9QVUoOW6j24uKBtI3aNqDaB9LkqTAipTg?=
+ =?us-ascii?Q?r3b63aK0dhrAj1uKE7hl217VfS4aY7j/bRMjmy8aYCQBak2A/FZDNKsSOzyS?=
+ =?us-ascii?Q?RVmZ5IkQv1KD3HbFLAigQGdUF2MSucR1i3LgndXYQPq9z56RXrxf0S6VK2Y2?=
+ =?us-ascii?Q?vosgN6ZDtSh0gespFn37Q2UyAasd2C66mB3gwWpRfYI4Dp1BONT+KC8AfG1I?=
+ =?us-ascii?Q?Mg=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: e176ef39-0720-42b0-7fd8-08dd9ec2dfee
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2025 15:09:57.6846 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mHXsgoRvzNjHaZgh1usT2IRqw6FEVGCtUQQqwER1zXir16GqCje6GIrzpCk+WC+Tc2sqta6enj+HI4YUxCpwPqhk3hRzCEAqt7cXXcwpfrY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4861
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -202,141 +170,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Pls fix warning and I will merge
-
-On 27/05/2025 16:37, Dean Marx wrote:
-> Remove unnecessary information from README.md, and add new sections to clarify
-> the purpose/use of DTS along with clear setup instructions.
+On Tue, May 27, 2025 at 10:21:10AM +0100, Bruce Richardson wrote:
+> This patchset is based off the work to adjust how we do argument parsing
+> inside EAL. To enable argparse to be effectively used for EAL, we have
+> new features and some changes in the first two patches, which are 
+> relatively small - though are ABI/API affecting.
 > 
-> Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
-> ---
->  dts/README.md | 104 +++++++++++++++++++-------------------------------
->  1 file changed, 39 insertions(+), 65 deletions(-)
+> These add support for saving off strings and boolean values, have argparse
+> stop parsing at a "--", and finally have argparse return the number of
+> arguments actually parsed on success.
 > 
-> diff --git a/dts/README.md b/dts/README.md
-> index 2b3a7f89c5..879cf65abc 100644
-> --- a/dts/README.md
-> +++ b/dts/README.md
-> @@ -1,81 +1,55 @@
-> -# DTS Environment
-> +# Description
->  
-> -The execution and development environments for DTS are the same,
-> -a [Docker](https://docs.docker.com/) container defined by our [Dockerfile](./Dockerfile).
-> -Using a container for the development environment helps with a few things.
-> +DTS is a testing framework and set of testsuites for end to end testing of DPDK and DPDK 
-> +enabled hardware. Unlike the DPDK unit test application, DTS is intended to be used to 
-> +evaluate real DPDK workloads run over supported hardware. For instance, DTS will control
-> +a traffic generator node which will send packets to a system under test node which is 
-> +running a DPDK application, and evaluate those results.
->  
-> -1. It helps enforce the boundary between the DTS environment and the TG/SUT,
-> -   something which caused issues in the past.
-> -2. It makes creating containers to run DTS inside automated tooling much easier, since
-> -   they can be based off of a known-working environment that will be updated as DTS is.
-> -3. It abstracts DTS from the server it is running on. This means that the bare-metal OS
-> -   can be whatever corporate policy or your personal preferences dictate,
-> -   and DTS does not have to try to support all distros that are supported by DPDK CI.
-> -4. It makes automated testing for DTS easier,
-> -   since new dependencies can be sent in with the patches.
-> -5. It fixes the issue of undocumented dependencies,
-> -   where some test suites require Python libraries that are not installed.
-> -6. Allows everyone to use the same Python version easily,
-> -   even if they are using a distribution or Windows with out-of-date packages.
-> -7. Allows you to run the tester on Windows while developing via Docker for Windows.
-> +# Supported Test Node Topologies
->  
-> -## Tips for setting up a development environment
-> +DTS is a python application which will control a traffic generator node (TG) and system 
-> +under test node (SUT). The nodes represent a DPDK device (usually a NIC) located on a 
-> +host. The devices/NICs can be located on two separate servers, or on the same server. If you use
-> +the same server for both NICs, install them on separate NUMA domains if possible (this is ideal
-> +for performance testing.)
->  
-> -### Getting a docker shell
-> +1. 2 link: Represents a topology in which the TG node and SUT node both have two network interfaces
-> +which form the TG <-> SUT connection. An example of this would be a dual interface NIC which is the
-> +TG node connected to a dual interface NIC which is the SUT node. Interface 0 on TG <-> interface 0 
-> +on SUT, interface 1 on TG <-> interface 1 on SUT.
-> +2. 1 link: Works, but may result in skips for testsuites which are explicitly decorated with a
-> +2 link requirement. Represents a topology in which the TG node and SUT node are both located on one
-> +network interface. An example of this would be a dual interface NIC with a connection between
-> +its own ports.
->  
-> -These commands will give you a bash shell inside the container
-> -with all the Python dependencies installed.
-> -This will place you inside a Python virtual environment.
-> -DTS is mounted via a volume, which is essentially a symlink from the host to the container.
-> -This enables you to edit and run inside the container
-> -and then delete the container when you are done, keeping your work.
-> -It is also strongly recommended that you mount your SSH keys into the container
-> -to allow you to connect to hosts without specifying a password.
-> +# Simple linux setup
->  
-> -#### Start docker container with SSH keys
-> +1. On your TG and SUT nodes, add a dedicated user. In this example I will name the user "dts."
-> +2. Grant passwordless sudo to the dts user, like so:
-> +    2a: enter 'visudo' in your terminal
-> +    2b: In the visudo text editor, add:
-> +        dts   ALL=(ALL:ALL) NOPASSWD:ALL
-> +3. DTS uses ssh key auth to control the nodes. Copy your ssh keys to the TG and SUT:
-> +    ssh-copy-id dts@{your host}.
->  
-> -```shell
-> -docker build --target dev -t dpdk-dts .
-> -docker run -v $(pwd)/..:/dpdk -v /home/dtsuser/.ssh:/root/.ssh:ro -it dpdk-dts bash
-> -$ poetry install
-> -$ poetry shell
-> -```
-> +For additional detail, please refer to [dts.rst](doc/guides/tools/dts.rst)
-> +
-> +# DTS Configuration
->  
-> -#### Start docker container without SSH keys
-> +DTS requires two yaml files to be filled out with information about your environment,
-> +test_run.yaml and nodes.yaml, which follow the format illustrated in the example files.
->  
->  ```shell
->  docker build --target dev -t dpdk-dts .
-> -docker run -v $(pwd)/..:/dpdk -it dpdk-dts bash
-> +docker run -v $(pwd)/..:/dpdk -v /home/dtsuser/.ssh:/root/.ssh:ro -it dpdk-dts bash
->  $ poetry install
-> -$ poetry shell
-> +$ poetry run ./main.py
->  ```
->  
-> -### Vim/Emacs
-> -
-> -Any editor in the Ubuntu repos should be easy to use,
-> -with Vim and Emacs already installed.
-> -You can add your normal config files as a volume,
-> -enabling you to use your preferred settings.
-> -
-> -```shell
-> -docker run -v ${HOME}/.vimrc:/root/.vimrc -v $(pwd)/..:/dpdk -it dpdk-dts bash
-> -```
-> -
-> -### Visual Studio Code
-> -
-> -VSCode has first-class support for developing with containers.
-> -You may need to run the non-Docker setup commands in the integrated terminal.
-> -DTS contains a .devcontainer config,
-> -so if you open the folder in VSCode it should prompt you to use the dev container
-> -assuming you have the plugin installed.
-> -Please refer to
-> -[VS Development Containers Docs](https://code.visualstudio.com/docs/remote/containers)
-> -to set it all up.
-> -Additionally, there is a line in `.devcontainer/devcontainer.json` that, when included,
-> -will mount the SSH keys of the user currently running VSCode into the container for you.
-> -The `source` on this line can be altered to mount any SSH keys
-> -on the local machine into the container at the correct location.
-> +These commands will give you a bash shell inside a docker container
-> +with all DTS Python dependencies installed.
->  
-> -### Other
-> +## Other
->  
-> -Searching for '$IDE dev containers' will probably lead you in the right direction.
-> +Searching for '$IDE dev containers' will probably lead you in the right direction.
-> \ No newline at end of file
+> The third patch is a bigger change. It was inspired by the fact that
+> when adding the boolean and string support we had to update some
+> "MAX" value defines used in the code. This is obviously not good from
+> an ABI/API perspective, once the library becomes part of the stable ABI.
+> In order to remove these MAX values, patch 3 looks to replace the
+> #define values with enums - which means some rework splitting the
+> various flags into separate categories, and similarly splitting the
+> single "flags" field with separate fields specifying if an argument
+> value is required, what type that value should have, and then a
+> final smaller field for any additional modifiers.
+> 
+> Bruce Richardson (3):
+>   argparse: add support for string and boolean args
+>   argparse: make argparse EAL-args compatible
+>   argparse: use enums to remove max-value defines in lists
+>
 
+Ping for review.
+
+Chengwen, as maintainer of argparse, can you perhaps take a look at this
+set and give your feedback? I'm hoping to do some rework of EAL argument
+parsing using argparse (see [1]), which requires some of the changes in this
+patchset.
+
+Thanks,
+/Bruce 
+
+[1] https://patches.dpdk.org/project/dpdk/list/?series=35256&state=*
