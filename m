@@ -2,161 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25F4BC54FB3
-	for <dpdk-dev@archiver.kernel.org>; Thu, 29 May 2025 15:10:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 280E0C5AD49
+	for <dpdk-dev@archiver.kernel.org>; Thu, 29 May 2025 15:35:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B00AE402C1;
-	Thu, 29 May 2025 17:10:13 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id 12E7C4021F
- for <dev@dpdk.org>; Thu, 29 May 2025 17:10:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1748531412; x=1780067412;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=TxAD70ughZ2zvx7itVMZQlS/Yat0iGeaX/3e2kbAx6k=;
- b=RA+FJbP27ARZaqfUbzaSEtfn/E5azSQ+rwN+9kF3kEk2t0HM97ArpATo
- D+HUSOrtohsjp4QmhhwcYONcjPPJiPsdukuCR8E5lSAv1hPOd4qTR4b5e
- wR1Iwzoix/z7sX77y05LixBGKmKDyLHF5gfFKTuADBkDpD5n9q0N4iCvT
- XsBGc4t4E9yIJyTNQuzCXWQudLDF5Konryu+riUQfeucNSRL6CNESpfHe
- /D41YjmEIZ/6uYHpnFos1vydlJrbe3q17rdGcfE7k82oyXYsK3NEPxtR6
- 1s9X6ntxBzd2KH4ucSBOUEYg7AU5ZS6JfbQfh3/yASlB0FP+LwKFjlKq7 g==;
-X-CSE-ConnectionGUID: BgnEIu/eR9uf3Gv9niwxWg==
-X-CSE-MsgGUID: CzKa0G25QE6qzyhV3Ju9bw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11448"; a="50652311"
-X-IronPort-AV: E=Sophos;i="6.16,193,1744095600"; d="scan'208";a="50652311"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
- by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 29 May 2025 08:10:09 -0700
-X-CSE-ConnectionGUID: BXybdzo2Qn2Ev65ImKqYLw==
-X-CSE-MsgGUID: lEvBFQ+8SJaWZxfYtca9QA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,193,1744095600"; d="scan'208";a="148746631"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 29 May 2025 08:10:01 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id B0B5B402C1;
+	Thu, 29 May 2025 17:35:01 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id B4CF94021F
+ for <dev@dpdk.org>; Thu, 29 May 2025 17:35:00 +0200 (CEST)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54TDqfVD003907;
+ Thu, 29 May 2025 08:34:58 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=T
+ s/JHaz+N0lGCjjIYIA9HoZZ+mKhjPoffPXWm9zWcX8=; b=YFgItoW4cCpsmiBLm
+ mdgQDeNtwfZnLbSZIjcc6L6MvBAc2N9BRP3qTovawxN6hDHFiNw2deyWa0lnwdEj
+ jJR/uBCgTOf5XbRdt1txjUHCe3jakf9/d0SbNL2GnViRvAjEtZFkHi+2uG04dVhG
+ UwEwT0muObglwyhDdCxmJBTG3mN6YzFZpgdhMb9qeyBZFmO8MD8BGDdS5MsGUEV0
+ ZldxoLZKyUczvsWImTpDIReXlWJrN/BwK7eyTcl4HxijBkAv0wLoTcWZqH4ieyx9
+ DTNUo66vLwAnAdz4V8QciMkWCjcvWbOVzPJrQ156RMdo2HpgrcvmazUNo4TjWHHY
+ bL51g==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46xc7h9r7e-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Thu, 29 May 2025 08:34:57 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 29 May 2025 08:10:01 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Thu, 29 May 2025 08:10:01 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.40) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.55; Thu, 29 May 2025 08:10:01 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GUD4bN1/XYwIdFvQPSDAN7QL5Ro+gnNo39sVXtV/Z4YgBAAao2ZWAy+JA/iVcvrl+h4h/tsPBhnvjYxDERUpXsUnLQtmaV3HPkLJolSvyBKCas+qs3yV8X6FrtDAa43Bgczu9ODohS1RVTmv0Ueo2c8gkwBAsPttssue11763arQGrV93Q/NuoAkY42VrcVIHNWLpMYPLVjtEU6r4egsqtG0hpM8r/+NdG+lD+Jsd5JV8oZxSTWxlOec8XsvIks8Vs75YrA9s/Tuv0JizpTgF3YHer6/1Urkid/R1N0YRo/2XUDDH+vvlgzGfNqMWXPPd9xotSvtxz1xxFedXGk7pA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WWBkApqYkTUInXH/VJEY3BeqTNN7opaob/FLdYt7D9Q=;
- b=UA8JMsBXRPkYN9IITHfJwG44mX385V/CkKHAN8U1Cj7IHoS/xFQ8MHrdOejw0xwnTqvx6q5DCAWmaRRJ/lJUYFr2Mg+Qv0mTFC4oJHVLQC/5BYAjWYZlcFy9a7KYZINEwsSr+E/xkWRXJ9NbiVakYxtvWa5ZiDTYWNJv/ImPW9JxsDoMRL1Qw7Tu1xaCeYJqADr3OXy6osTJ/N5WnPXgHTu/hXEGEmkpg53V7i1aIyceBKoiwhAI6esi1vLPmfFhscjC93NPf8CA12hMW82kDnNdcgwpifekNxwnUzSs0IPn95IjvqXm6b91ZqiV/oeqLPFypfh4NlqI6hQWTlhv8g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by SJ0PR11MB4861.namprd11.prod.outlook.com (2603:10b6:a03:2ac::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.30; Thu, 29 May
- 2025 15:09:57 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%5]) with mapi id 15.20.8769.029; Thu, 29 May 2025
- 15:09:57 +0000
-Date: Thu, 29 May 2025 16:09:51 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: <dev@dpdk.org>
-CC: Chengwen Feng <fengchengwen@huawei.com>, <david.marchand@redhat.com>
-Subject: Re: [PATCH 0/3] argparse additions and rework
-Message-ID: <aDh4v0_0TB13RsjY@bricha3-mobl1.ger.corp.intel.com>
-References: <20250527092113.903910-1-bruce.richardson@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250527092113.903910-1-bruce.richardson@intel.com>
-X-ClientProxiedBy: DU2PR04CA0027.eurprd04.prod.outlook.com
- (2603:10a6:10:3b::32) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+ 15.2.1544.4; Thu, 29 May 2025 08:34:56 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 29 May 2025 08:34:56 -0700
+Received: from cavium-System-Product-Name.. (unknown [10.28.37.22])
+ by maili.marvell.com (Postfix) with ESMTP id 63ED83F70AB;
+ Thu, 29 May 2025 08:34:54 -0700 (PDT)
+From: <kirankumark@marvell.com>
+To: Aman Singh <aman.deep.singh@intel.com>, Thomas Monjalon
+ <thomas@monjalon.net>, Ferruh Yigit <ferruh.yigit@amd.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+CC: <dev@dpdk.org>, Kiran Kumar K <kirankumark@marvell.com>
+Subject: [PATCH v7 1/2] ethdev: support RSS based on RoCEv2 header
+Date: Thu, 29 May 2025 21:04:50 +0530
+Message-ID: <20250529153451.1552174-1-kirankumark@marvell.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250505055717.3697335-1-kirankumark@marvell.com>
+References: <20250505055717.3697335-1-kirankumark@marvell.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SJ0PR11MB4861:EE_
-X-MS-Office365-Filtering-Correlation-Id: e176ef39-0720-42b0-7fd8-08dd9ec2dfee
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?EzQsW6SJokoG1X19lVSG3+4RNsITg58/NsVl0ZB9zn9jLkymJV8+rwdFf9cx?=
- =?us-ascii?Q?DkdhQ9+lh4QY44Zb/u+DMbA3sBHr560paY3CBxKG+AuTycGfhUv4x7HtXs6M?=
- =?us-ascii?Q?KK5VniOBwRfua4KGvYRVF6LjB2mQygw9M4GtzJ+Ah0quJFR0KjWG9yDx9liy?=
- =?us-ascii?Q?TpedEUJ/LYxaZnnhY0QBgaiquvqPt/Nuq+BnZBt1mbosr3wrPu5I1sGZ5ucl?=
- =?us-ascii?Q?ReID/OdlDrsuYPfmVKv5Cs0GBEh9r/GBEO0Bv6U5OYZCx4KcQn+qv9cJevAB?=
- =?us-ascii?Q?eYVW59Bv4uoMxoJgCTRk2TFezwxtQkxfduJzvRv3p5BFnCinRi/K+ZB9TTWt?=
- =?us-ascii?Q?TEAlXLeF7a2WWcbDl7NEG9W48Aoz8+w43geSObWQO6ovWt69Am2CupuoIPbZ?=
- =?us-ascii?Q?LOQFD19JLsxW/SX6oBC2Hs+EmyP+ikeLQiNwsjWt0nu1Xxl4rCV/3uRYdWXe?=
- =?us-ascii?Q?LzTbER0SzSoWDwetre6paSJpxcpH/PYgj8/pHBlROoMvPrjZLDOKd+jpX0AQ?=
- =?us-ascii?Q?lMunvl2T00E8qhKwXnNkvD0jbX34OdLjaiusFOUcnP+ll3SYFEISeykXYUsp?=
- =?us-ascii?Q?rnzzu9tiCpMP4UZh61/xE2k6cbpod2cGHsW2TgnyCLr6YI0ZyCnWpL/i6XIh?=
- =?us-ascii?Q?ZPn5Bjt7QInGzYteEWFilN7sNVUtJsWV6T+koj5LO72fo76jvXe0/U/3pz/5?=
- =?us-ascii?Q?fiZ1Fcog5IqXggv0LTKKjnZr5XutbEgGY/lTVCdGHvROux54TQ58WT3xRwfD?=
- =?us-ascii?Q?IETZ+fbKsFOPtmVCWjjrfCGERewmv0PvKMEcF/ZnBRA/f2KH4aSSmhLrB+jE?=
- =?us-ascii?Q?X4FqODnagDnuzlFGTJDQUhrhzP7N45xE0LueY1mcTbDpsfkvyCQmNLMdc2LV?=
- =?us-ascii?Q?drJ2L0lnl8Xy/nTe5uITQV+UaBhwkM88M1XsE2XBcb2o8yq9Q+QzCT/0YNbn?=
- =?us-ascii?Q?FMovJyieXBSbcZXmvha7aP7trcXT0D7M7U1/R0cgwSeek2DylmufyKTNRj/Y?=
- =?us-ascii?Q?+k9hE6pgvOhpXa6jVnx4FT2lhuk0+QYJ9hyfRF65/bB7FL+bJWQ+CiE83XbO?=
- =?us-ascii?Q?6z3ia90sRfxzX519VKswLalrBFW6TdIpQAcUTo9A5I73JsJ9sxv2/+/u+ZmP?=
- =?us-ascii?Q?tzH76KMnFUUuwL0IXtQpAnFcawaHUkFjmeCMIe3AxusNbgc1CmtlguFV3BFf?=
- =?us-ascii?Q?r+wItP9S1p54VVFZiLfItYra/gG2zR98Sed7rb79eMIjRA3vw9c/3lGEcA8O?=
- =?us-ascii?Q?szX+MOwUPPhMS4wnkcLyRn0Yctho4vtpZWl5+Dtk2QtKwgfEm5qgyUa9d7Bh?=
- =?us-ascii?Q?jAQWiM8wm7Rm4JkekkDMfh02yIBcgpCaYbR6Ntw93jEv+vXOsCxae3MNgQ+/?=
- =?us-ascii?Q?GPI5tZuyDEYYkwXaSb9i6IytI736kiMU/VB74UU7IKZgd//v4DpCr9OyZIvV?=
- =?us-ascii?Q?xUWjOHQiIXY=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Lgtz7sWZ54nwRdcD+PU2HtMlevRN+Hpk0/tLRbr7hjTuIMVChSgvWLjl0wni?=
- =?us-ascii?Q?9kurO9v3bzIFWUtlacsloNjpKydZdKXGcQ99bJPJomnKQgxHLS1BW4aDxypt?=
- =?us-ascii?Q?VnkLFwd2F736eKVquuDVevdVXGdKpGPVcIgD2sXCi0Y3sLFfnipdwTx7geOR?=
- =?us-ascii?Q?NkyCn96OOFzljWQ1XdIeOvRSKgXocZsJ/YdGXKeg4lDQdygEisz5zCEBbI9c?=
- =?us-ascii?Q?smdpTz3n2PnkNfzRR47BlsIKAaAzukNtjfJ1scUykThwgyBiYsS1hTyMGGB+?=
- =?us-ascii?Q?2ZrnmGMirYuuz/Lk03nXuic0fXYagw+hfcxVqEixBLpReudPtbPw8UUjroQu?=
- =?us-ascii?Q?G+cAfuqJi/5iTWATPQUO6eH+TNrK7/FbfCJWelhSUi/KgXMJjcq3KF2dEzOE?=
- =?us-ascii?Q?yBQwm5ELIbBMVkzK/s4bZNdJPaqbBDcNH/cDEl2d0wMT+oUYcpyvilRZB2/Q?=
- =?us-ascii?Q?eqI/H2Ih0sv53wM11FQg/RZWooiCPhUQL+JnQH1drEbSdC6KvWN9fbDgkDTH?=
- =?us-ascii?Q?NlqN0rC6060ilzdNtGFA6F5QyIvY5ae30ir2IzR94Itwx5MXZKHFIaiHlzn6?=
- =?us-ascii?Q?nrHxzB2qwsWSAgrs2yLOSut7qKJfICdOfT8GwoTajTYzWLo67bPDPb9zHMA4?=
- =?us-ascii?Q?guhCuXQ8U/4lvBIWVfeca1585IrY2E5fCRZaVZQH3Rsj5cgpr+3G92wGp8To?=
- =?us-ascii?Q?jOxnrWO68Wt7Zp8cI0QYyyGR0bQAzoC2+7P8WW83GAgPOIp8g01s5XSZYsY2?=
- =?us-ascii?Q?nMXtSa2fPBOZl8JFmTvgMTs2AXwkVi19gfZrVnhOG8LNN++CGbrxL4RpG6fc?=
- =?us-ascii?Q?U5S7mR4xFNx+1AC9jqbfDTJj0SYpsj9N8lgygPmvHtb2ns4vTOFNMvsjlkIA?=
- =?us-ascii?Q?z5khrGGWF+0vL1qbTytGJyLcQ7C4LjMrweMpxCe3hk2SdnZGHry2P9VW3nwl?=
- =?us-ascii?Q?vYj715MgPga5T3jDWiLlNUh7xcT3RD2ijwKFUFB2ogBrkXDRf9Elu6KE5z1C?=
- =?us-ascii?Q?jOv27UhqSL9HCc5ilXSVNE11KMA+gzcILzl4xmensEVmJetUAMuHRyr4n+Sd?=
- =?us-ascii?Q?lGQn4xVVZBkcLdv1NJD4eqlDFbUrqk39wunplblXBxWIhjIt/sVJexCjIuSL?=
- =?us-ascii?Q?hbOLYkAwGK9q1PCah57F8JJrNYjjvqcOl/retH/swTYIB7H1lDb9mJVWicKf?=
- =?us-ascii?Q?cOZ71EdcOY/MGc6EYd1xnCyW7VhEYHM419nnh4Pi7V8qConW7GNprGLRJAbY?=
- =?us-ascii?Q?oFxdzJbui1GM7jcPbOqAjZIR9Klviqn6coCSRWNNykzn7mBWRUZZ1xADYujJ?=
- =?us-ascii?Q?5Tnhme8iQTjDdQ3aIrPK6vCKLUqf5ukMHES6Ir/J5ywx7yhI22im8WCfHXRe?=
- =?us-ascii?Q?9/dVjJTZYV32M2FfORWLRH7aXpG9QVUoOW6j24uKBtI3aNqDaB9LkqTAipTg?=
- =?us-ascii?Q?r3b63aK0dhrAj1uKE7hl217VfS4aY7j/bRMjmy8aYCQBak2A/FZDNKsSOzyS?=
- =?us-ascii?Q?RVmZ5IkQv1KD3HbFLAigQGdUF2MSucR1i3LgndXYQPq9z56RXrxf0S6VK2Y2?=
- =?us-ascii?Q?vosgN6ZDtSh0gespFn37Q2UyAasd2C66mB3gwWpRfYI4Dp1BONT+KC8AfG1I?=
- =?us-ascii?Q?Mg=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: e176ef39-0720-42b0-7fd8-08dd9ec2dfee
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2025 15:09:57.6846 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mHXsgoRvzNjHaZgh1usT2IRqw6FEVGCtUQQqwER1zXir16GqCje6GIrzpCk+WC+Tc2sqta6enj+HI4YUxCpwPqhk3hRzCEAqt7cXXcwpfrY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4861
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: ikQuI1-OYiwDKV0zzu3cxrDqcR-5ECiW
+X-Proofpoint-ORIG-GUID: ikQuI1-OYiwDKV0zzu3cxrDqcR-5ECiW
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI5MDE1MSBTYWx0ZWRfX+nem0H7vxD9M
+ HinS2wAeILtg5xPuO9Ly+qiG8MHQ7Pez59FvDWStnaZJeIqQscH2GggcP7qf9hFrJkE8qzkQSKj
+ 3OpslKpLnoqQpKjdyjVemTNYCQT39pl73gPBbNyVWvYxMaBWDRJPBG9AFms+KMz5r6C7NEylOQy
+ L2DwdZKbhgpBzsYnz8yhwci7gta+kP5zOSHSVYNDRb0InwegqE91s/OMJPl54Y9CintrAQ8sbgL
+ 5SPiQwjGSgqMTLKWhmYqDWu4srlspHAijpI5w9F+CUsqVYEMWYdcujWHMqW1WovwAT2nrR9oIJY
+ 11DzPE/sofJFxB5SPeajT46mYcti5hGgjIO0OnVtiTJw5mOg+gmlR1fzmj0KC7emI8ooZCMF7+b
+ A88esP1KJIh+ffM03EIsf93CSwappmUQh3uqZCdyy+4VEuFqWPiMUOdwYhlACwIlcC+uXtUC
+X-Authority-Analysis: v=2.4 cv=QcBmvtbv c=1 sm=1 tr=0 ts=68387ea1 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=C5gxgng_NU4p8u1cKgkA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-29_08,2025-05-29_01,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -170,41 +81,99 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, May 27, 2025 at 10:21:10AM +0100, Bruce Richardson wrote:
-> This patchset is based off the work to adjust how we do argument parsing
-> inside EAL. To enable argparse to be effectively used for EAL, we have
-> new features and some changes in the first two patches, which are 
-> relatively small - though are ABI/API affecting.
-> 
-> These add support for saving off strings and boolean values, have argparse
-> stop parsing at a "--", and finally have argparse return the number of
-> arguments actually parsed on success.
-> 
-> The third patch is a bigger change. It was inspired by the fact that
-> when adding the boolean and string support we had to update some
-> "MAX" value defines used in the code. This is obviously not good from
-> an ABI/API perspective, once the library becomes part of the stable ABI.
-> In order to remove these MAX values, patch 3 looks to replace the
-> #define values with enums - which means some rework splitting the
-> various flags into separate categories, and similarly splitting the
-> single "flags" field with separate fields specifying if an argument
-> value is required, what type that value should have, and then a
-> final smaller field for any additional modifiers.
-> 
-> Bruce Richardson (3):
->   argparse: add support for string and boolean args
->   argparse: make argparse EAL-args compatible
->   argparse: use enums to remove max-value defines in lists
->
+From: Kiran Kumar K <kirankumark@marvell.com>
 
-Ping for review.
+On supporting hardware, RoCEv2 header can be used to
+perform RSS in the ingress path.
 
-Chengwen, as maintainer of argparse, can you perhaps take a look at this
-set and give your feedback? I'm hoping to do some rework of EAL argument
-parsing using argparse (see [1]), which requires some of the changes in this
-patchset.
+Signed-off-by: Kiran Kumar K <kirankumark@marvell.com>
+---
+V7 Changes;
+* Addressed review comments related to rss_type_table.
+ app/test-pmd/config.c                  |  4 +++-
+ doc/guides/rel_notes/release_25_07.rst | 32 +++-----------------------
+ lib/ethdev/rte_ethdev.h                |  2 ++
+ 3 files changed, 8 insertions(+), 30 deletions(-)
 
-Thanks,
-/Bruce 
+diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
+index e89af21cec..5cc82a68aa 100644
+--- a/app/test-pmd/config.c
++++ b/app/test-pmd/config.c
+@@ -92,7 +92,8 @@ const struct rss_type_info rss_type_table[] = {
+ 	{ "all", RTE_ETH_RSS_ETH | RTE_ETH_RSS_VLAN | RTE_ETH_RSS_IP | RTE_ETH_RSS_TCP |
+ 		RTE_ETH_RSS_UDP | RTE_ETH_RSS_SCTP | RTE_ETH_RSS_L2_PAYLOAD |
+ 		RTE_ETH_RSS_L2TPV3 | RTE_ETH_RSS_ESP | RTE_ETH_RSS_AH | RTE_ETH_RSS_PFCP |
+-		RTE_ETH_RSS_GTPU | RTE_ETH_RSS_ECPRI | RTE_ETH_RSS_MPLS | RTE_ETH_RSS_L2TPV2},
++		RTE_ETH_RSS_GTPU | RTE_ETH_RSS_ECPRI | RTE_ETH_RSS_MPLS | RTE_ETH_RSS_L2TPV2 |
++	        RTE_ETH_RSS_IB_BTH},
+ 	{ "none", 0 },
+ 	{ "ip", RTE_ETH_RSS_IP },
+ 	{ "udp", RTE_ETH_RSS_UDP },
+@@ -149,6 +150,7 @@ const struct rss_type_info rss_type_table[] = {
+ 	{ "l3-dst-only", RTE_ETH_RSS_L3_DST_ONLY },
+ 	{ "l3-src-only", RTE_ETH_RSS_L3_SRC_ONLY },
+ 	{ "ipv6-flow-label", RTE_ETH_RSS_IPV6_FLOW_LABEL },
++	{ "ib-bth", RTE_ETH_RSS_IB_BTH },
+ 	{ NULL, 0},
+ };
 
-[1] https://patches.dpdk.org/project/dpdk/list/?series=35256&state=*
+diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
+index 6b070801de..6f72293fd1 100644
+--- a/doc/guides/rel_notes/release_25_07.rst
++++ b/doc/guides/rel_notes/release_25_07.rst
+@@ -24,36 +24,10 @@ DPDK Release 25.07
+ New Features
+ ------------
+
+-.. This section should contain new features added in this release.
+-   Sample format:
++* **Added new RSS offload types for IB_BTH in RSS flow.**
+
+-   * **Add a title in the past tense with a full stop.**
+-
+-     Add a short 1-2 sentence description in the past tense.
+-     The description should be enough to allow someone scanning
+-     the release notes to understand the new feature.
+-
+-     If the feature adds a lot of sub-features you can use a bullet list
+-     like this:
+-
+-     * Added feature foo to do something.
+-     * Enhanced feature bar to do something else.
+-
+-     Refer to the previous release notes for examples.
+-
+-     Suggested order in release notes items:
+-     * Core libs (EAL, mempool, ring, mbuf, buses)
+-     * Device abstraction libs and PMDs (ordered alphabetically by vendor name)
+-       - ethdev (lib, PMDs)
+-       - cryptodev (lib, PMDs)
+-       - eventdev (lib, PMDs)
+-       - etc
+-     * Other libs
+-     * Apps, Examples, Tools (if significant)
+-
+-     This section is a comment. Do not overwrite or remove it.
+-     Also, make sure to start the actual text at the margin.
+-     =======================================================
++  Added ``RTE_ETH_RSS_IB_BTH`` macro so that the RoCE Infiniband base transport header
++  can be used as input set for RSS.
+
+ * **Added burst mode query function to Intel drivers.**
+
+diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
+index ea7f8c4a1a..8e0c89581e 100644
+--- a/lib/ethdev/rte_ethdev.h
++++ b/lib/ethdev/rte_ethdev.h
+@@ -602,6 +602,8 @@ struct rte_eth_rss_conf {
+
+ #define RTE_ETH_RSS_L2TPV2             RTE_BIT64(36)
+ #define RTE_ETH_RSS_IPV6_FLOW_LABEL    RTE_BIT64(37)
++/** RoCE InfiniBand Base Transport Header */
++#define RTE_ETH_RSS_IB_BTH RTE_BIT64(38)
+
+ /*
+  * We use the following macros to combine with above RTE_ETH_RSS_* for
+--
+2.48.1
+
