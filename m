@@ -2,61 +2,62 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D64C5AD49
-	for <dpdk-dev@archiver.kernel.org>; Thu, 29 May 2025 19:31:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB46C54FB3
+	for <dpdk-dev@archiver.kernel.org>; Thu, 29 May 2025 19:57:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6A4894021E;
-	Thu, 29 May 2025 21:31:31 +0200 (CEST)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com
- [209.85.221.179])
- by mails.dpdk.org (Postfix) with ESMTP id 3D1F340150
- for <dev@dpdk.org>; Thu, 29 May 2025 21:31:29 +0200 (CEST)
-Received: by mail-vk1-f179.google.com with SMTP id
- 71dfb90a1353d-525da75d902so379316e0c.3
- for <dev@dpdk.org>; Thu, 29 May 2025 12:31:29 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1076E4021E;
+	Thu, 29 May 2025 21:57:42 +0200 (CEST)
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com
+ [209.85.221.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 1B7BB40150
+ for <dev@dpdk.org>; Thu, 29 May 2025 21:57:41 +0200 (CEST)
+Received: by mail-vk1-f181.google.com with SMTP id
+ 71dfb90a1353d-5290be1aedcso1461136e0c.1
+ for <dev@dpdk.org>; Thu, 29 May 2025 12:57:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1748547088;
- x=1749151888; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1748548660;
+ x=1749153460; darn=dpdk.org; 
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=RJxjno0QjAS5cRgSJG5tq8vnwREBeZB1EnRWnE3Y8u8=;
- b=1eTueDAqIIj3rCUkje38zgwATqooQuFaXeat++I+ayRPBFhFx1LM5EhdwP0joCacwa
- l7pifIMIrVwelPDN+rt+tHp9ZB8oBzlu+eD02LZKXbYdyyppBkXd+K5UKswiwnpEBCx9
- Svbjn0+c9eAiyg78BiD1LnRyXZeV0kYWOXWul6LU9NgnQzbgiWvneUBuT4qsmOhlu4YR
- +I+f2XoS1pu+MTZ0UQVC4hY+RxoK/njxcgKYkIJxhEFLAVGcJYI7PHwzd5rlHtO/KUma
- eKDoizBnF+cqA3KfNinZa/RUSijA+trjxQcchLCw5DLZaVGArSirwrDXf3le4NhriKGZ
- uZ9w==
+ bh=+NcfN5QI1zAQrCBUYj7vFsr6D/kM+MAxTlYq9Nt7cQ0=;
+ b=T9P4IG3jAOo1Q4ghgghh3Fx2LtNdl34vtwGok/DF3lQjPuhaknAvFGG6XXEUYUJwkV
+ 7ZQ3JpPEGNoCzC/9OJ2kOI1ELocfN37OCw/5zIrlKIc5yKkpQld2fiI5gNH3TDrv05hz
+ PAJ+1LNr6yo95LKeUTOtVp3BeHTyxfPwJmp0qFuwOPuz7juqTfet7KwApSx/hSJMEXMR
+ ewoUC8jLN0kqvPyFmBVwdQiKlNifkqYEmgyvr8qOtrk+vLrQVjwfNrRDOF51yDpwNtCe
+ u7a/sBz9+dTiLQ6feRICkZwFh6yr+NX9bUmxeW509BkXJSSi0qSld4Gox11Q3Ukk61Mj
+ XHKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1748547088; x=1749151888;
+ d=1e100.net; s=20230601; t=1748548660; x=1749153460;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=RJxjno0QjAS5cRgSJG5tq8vnwREBeZB1EnRWnE3Y8u8=;
- b=quCuPsJECX+WbX7ORLYNJkKBYF6GxYRtvV6e9z6dXrvFskRImSBvZsD8gs1Xgxr4fu
- r19bNDbt3sNsrWxPCpLDS43aLYRn53V8JHjHzyS/fzt+p6TIalAzfdFNDk06mEPakuO+
- MTLbMIxY+NisbVm44IBUibV5Y6zCpb0YoNlMBbXz9kjSrmblWg1vXlo5W+GYP+olVc7n
- cqnR7T7jm5TIKSYTDta+iFXKlMrl4mMAw+COBsJD8O36HkxCIYspZrMvTppUsTOFF4la
- +5q1wujG1Oj+rqHwsUIfeQSeX3VoUaF6JIaFwL6vnqh9YtM50/AXXKN+DlvYL2PFixlc
- HLWw==
+ bh=+NcfN5QI1zAQrCBUYj7vFsr6D/kM+MAxTlYq9Nt7cQ0=;
+ b=qk+Qj0ajouW5POpgVFA8X4OMQq/m0DDK6jzxPPYmb0wKvYu+Ym3Q6TeROX4DR9tnGP
+ TftCm2qS2zWHA7ttTMW1wv9KrFQwF/r57/7AAH/AGs9dBSxpvFc2Nmg5sjhLsHRVO80/
+ k+JcFBNKqeEh+6OF3J2L6X8kfNMoZNPj+awB1NiCGL9Raba4GupUBGWpNjWbzXeskv3r
+ bzp9sjUTaVIgld6/q/230ruhVk0DX9Zjkby055sZ1DIEIJIy/RUJj1elm+3s1Hft5Ndv
+ dtoOsJO8RmZ5wo9Os/m18axUUjnJJ0tevE0kOplbIZXdnZUmWJZW2MB7kVbe54fvUWwr
+ phhw==
 X-Forwarded-Encrypted: i=1;
- AJvYcCUsyWEX6Ksk0PsW3dqsId/yWG/6YPXzuN7rnRDqpyKMqSRz3BpvXNWnuMJyqpNqtlkbPpg=@dpdk.org
-X-Gm-Message-State: AOJu0YyN8f8zsaILpJsQhNjMhbbMbVdxwz6cc/Nz4jbAk9TUFm9uGMVS
- QdnxMbIE0wwoThdtXNqq7XimZdPgJl8aZo/dhTgnECVXae2FnINpQV77F7kYq1IYuc0gWA9/TYu
- WovSa1stqOdVQ+qF+MNHLWEtHsB1j1c0k+0LT9X20tA==
-X-Gm-Gg: ASbGnctlCalVnlco0awhqbsQnYgHinJvOY53mx52QvQ4s+Oy3Bw7jkUDod2H4xftjW+
- BHUfALow+K6LC2LZWTkuP4KNAO7kWuyGS04ovKOYNejBetYZU5p8VWdadWVnESyimmodMCHmDvu
- ccgqJN+GXKvYdm+dXFdHBZyHujJRtlln0gmrsAZ27dqYiiKBBJzDpl23V5Sb4AlUFonS0=
-X-Google-Smtp-Source: AGHT+IE8VEmungjFB1ipSFRoXP3ORdqQIqJen4GvZ2W3l6gvOD/MW+33m9xrdZBbhnji7ybz0wkMUZ5emqfgj9JN9jU=
-X-Received: by 2002:a05:6122:790:b0:52a:7787:53d7 with SMTP id
- 71dfb90a1353d-5308109f849mr956271e0c.6.1748547088320; Thu, 29 May 2025
- 12:31:28 -0700 (PDT)
+ AJvYcCWEwRDGrsLuM7KoJii6f7xXrxLE2gR94S0HY6bp4fssAm5k3vq6GpVCqlkiOFAK3sMhVCU=@dpdk.org
+X-Gm-Message-State: AOJu0YzUn9sCmHHnnxDntwNsinzt+FrgTUkGC2A9Z9Qdr1tIWGnQnix/
+ 2gjKJy/BsMfX5Mhjd3vPRpmwZl/b0qEyGRlc5ZPKl5DGxB45DXtsDHLsPp9FJbfjRST9zc1VqPx
+ 2R1vRkpkcZMuA0hgHxHCDce0HGhBiHQNoAFuaABdaTg==
+X-Gm-Gg: ASbGncuFASzR4KXBbrXiChRJPngqKXUWFxmn614fXqn+I/5U1tAnFQwCiEpS8BxxH2i
+ /t94IT/Eh60G8SzO+SP1Jopg6zNB8tFygKdtdEwJ2Pg/b3GxnalzHy4gwr7IN7xBU+Ig3/smXqD
+ HYG+3CF2uRWBn21P0yJHeDwBPQ6RIz4tJgUSjzw+oVAg52NRk91drmQcJ80SA8Nn5Osa21pi/+3
+ 1iAgA==
+X-Google-Smtp-Source: AGHT+IEX6OGPQSG4moJF+olTk2vbJg55BZ9w+4O3328s4jnUcDYpg7ndDsjO5FkRhDEeJM9A6zq6p1jHAQrLxZfdjHY=
+X-Received: by 2002:a05:6122:50c:b0:52d:bcd1:ab55 with SMTP id
+ 71dfb90a1353d-530710fe00emr5670278e0c.2.1748548660276; Thu, 29 May 2025
+ 12:57:40 -0700 (PDT)
 MIME-Version: 1.0
 References: <20250529171609.2448832-1-schneide@qti.qualcomm.com>
 In-Reply-To: <20250529171609.2448832-1-schneide@qti.qualcomm.com>
 From: Stephen Hemminger <stephen@networkplumber.org>
-Date: Thu, 29 May 2025 12:31:17 -0700
-X-Gm-Features: AX0GCFvglBc0WbJ8pAC6FPALxEphROVIgdnNKUqG4M7zNpmj0x83oYWnJ-kkNQ0
-Message-ID: <CAOaVG17RtUQKFVoLX_WCU-MA0AzEZZ0QsJmPkO5Rpa8-9ohfKQ@mail.gmail.com>
+Date: Thu, 29 May 2025 12:57:29 -0700
+X-Gm-Features: AX0GCFtnPoOVnHUY0NlZcLOinTJFUZVF2qjNFidmjV9zwFklT5I235tjuW8nFbs
+Message-ID: <CAOaVG17jkYu3oc=7AvPoM6m83Bs12bW97EfrtMkgNF_fcaSi9g@mail.gmail.com>
 Subject: Re: [PATCH] pcapng: allow any protocol link type for the interface
  block
 To: Schneide <schneide@qti.qualcomm.com>
@@ -65,7 +66,7 @@ Cc: Thomas Monjalon <thomas@monjalon.net>,
  Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, 
  Nithin Dabilpuram <ndabilpuram@marvell.com>, Zhirun Yan <yanzhirun_163@163.com>,
  dev <dev@dpdk.org>
-Content-Type: multipart/alternative; boundary="00000000000012a83a06364b5848"
+Content-Type: multipart/alternative; boundary="000000000000c4c22c06364bb5d0"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,13 +80,11 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---00000000000012a83a06364b5848
+--000000000000c4c22c06364bb5d0
 Content-Type: text/plain; charset="UTF-8"
 
-What other packet types would a DPDK app use. The possible type fields are
-quite limited see the spec.
-
-Plus it would be an ABI breakage would require versioning.
+Full list of types is here
+https://www.tcpdump.org/linktypes.html
 
 On Thu, May 29, 2025, 10:16 Schneide <schneide@qti.qualcomm.com> wrote:
 
@@ -244,20 +243,19 @@ On Thu, May 29, 2025, 10:16 Schneide <schneide@qti.qualcomm.com> wrote:
 >
 >
 
---00000000000012a83a06364b5848
+--000000000000c4c22c06364bb5d0
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"auto">What other packet types would a DPDK app use. The possibl=
-e type fields are quite limited see the spec.<div dir=3D"auto"><br></div><d=
-iv dir=3D"auto">Plus it would be an ABI breakage would require versioning.<=
-/div></div><br><div class=3D"gmail_quote gmail_quote_container"><div dir=3D=
-"ltr" class=3D"gmail_attr">On Thu, May 29, 2025, 10:16 Schneide &lt;<a href=
-=3D"mailto:schneide@qti.qualcomm.com">schneide@qti.qualcomm.com</a>&gt; wro=
-te:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px =
-0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">From: Dylan =
-Schneider &lt;<a href=3D"mailto:schneide@qti.qualcomm.com" target=3D"_blank=
-" rel=3D"noreferrer">schneide@qti.qualcomm.com</a>&gt;<br>
+<div dir=3D"auto">Full list of types is here=C2=A0<div dir=3D"auto"><a href=
+=3D"https://www.tcpdump.org/linktypes.html">https://www.tcpdump.org/linktyp=
+es.html</a></div></div><br><div class=3D"gmail_quote gmail_quote_container"=
+><div dir=3D"ltr" class=3D"gmail_attr">On Thu, May 29, 2025, 10:16 Schneide=
+ &lt;<a href=3D"mailto:schneide@qti.qualcomm.com">schneide@qti.qualcomm.com=
+</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:=
+0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">=
+From: Dylan Schneider &lt;<a href=3D"mailto:schneide@qti.qualcomm.com" targ=
+et=3D"_blank" rel=3D"noreferrer">schneide@qti.qualcomm.com</a>&gt;<br>
 <br>
 Allow the user to specify protocol link type when creating pcapng files.<br=
 >
@@ -467,4 +465,4 @@ type,<br>
 <br>
 </blockquote></div>
 
---00000000000012a83a06364b5848--
+--000000000000c4c22c06364bb5d0--
