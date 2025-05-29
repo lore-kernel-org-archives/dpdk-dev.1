@@ -2,43 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D56A4C54FB3
-	for <dpdk-dev@archiver.kernel.org>; Thu, 29 May 2025 08:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF3DC54FB3
+	for <dpdk-dev@archiver.kernel.org>; Thu, 29 May 2025 08:16:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CB15B40ED8;
-	Thu, 29 May 2025 10:16:04 +0200 (CEST)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.2])
- by mails.dpdk.org (Postfix) with ESMTP id 9B1BC402B6
+	by mails.dpdk.org (Postfix) with ESMTP id D4A7D40EE2;
+	Thu, 29 May 2025 10:16:05 +0200 (CEST)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.5])
+ by mails.dpdk.org (Postfix) with ESMTP id 1891040150
  for <dev@dpdk.org>; Thu, 29 May 2025 10:16:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=qeKWnpxYSU33i4PsiwosA1GIOt/be2SXJ3iVtP+Xqf4=;
- b=oFxB8V5l1BUes1mOueKTT3EyD8ZbqrRqf8n8kFoEvTAk2D+QByYdZZsEobajRj
- qOEUGHt/bdeatDHm37IRPLATWoSJWpV9Bi/WnbUrA89eOMR6WHkhZI6Nbnq4+KuA
- wDIgeYYjsjCTn7azKiKw04aX8s/X/7vwhm7jKRb4XGvxs=
+ MIME-Version; bh=YR56+SExan5xAOHVC190gNqoJZbt9dbaUxsnnQ5NPOQ=;
+ b=lBbtSu63OzPVvoDevL06BU3hCkRkfKdWvKFBU9o/GuY3NQhvC5RfbvTYhbDYZW
+ pGmhbPGCWmjVKWDlkfQyqX3hw4fRP8E8MyTWL6oenTMIMTqR7aQWV1L0xodZFTk9
+ T9sVegl1FdGLNGGLVG9CE8sRxEELJ86Lwjh7j5DQixIGI=
 Received: from localhost.localdomain (unknown [114.116.198.59])
- by gzsmtp1 (Coremail) with SMTP id Ac8vCgBnrqG7FzhofozTAQ--.8522S5;
- Thu, 29 May 2025 16:15:57 +0800 (CST)
+ by gzsmtp1 (Coremail) with SMTP id Ac8vCgBnrqG7FzhofozTAQ--.8522S7;
+ Thu, 29 May 2025 16:16:00 +0800 (CST)
 From: Feifei <wff_light@vip.163.com>
 To: dev@dpdk.org
-Cc: Feifei Wang <wangfeifei40@huawei.com>, Yi Chen <chenyi221@huawei.com>,
- Xin Wang <wangxin679@h-partners.com>
-Subject: [PATCH v1 01/18] This patch adds some basic files to describe the
- hinic3 driver.
-Date: Thu, 29 May 2025 16:15:00 +0800
-Message-ID: <20250529081529.2839-2-wff_light@vip.163.com>
+Cc: Yi Chen <chenyi221@huawei.com>, Xin Wang <wangxin679@h-partners.com>,
+ Feifei Wang <wangfeifei40@huawei.com>
+Subject: [PATCH v1 03/18] net/hinic3: add hardware interfaces of BAR operation
+Date: Thu, 29 May 2025 16:15:02 +0800
+Message-ID: <20250529081529.2839-4-wff_light@vip.163.com>
 X-Mailer: git-send-email 2.47.0.windows.2
 In-Reply-To: <20250418090621.9638-19-wff_light@vip.163.com>
 References: <20250418090621.9638-19-wff_light@vip.163.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Ac8vCgBnrqG7FzhofozTAQ--.8522S5
-X-Coremail-Antispam: 1Uf129KBjvJXoWxArWUXFy8Aw15Xr4fCFy8Zrb_yoW7JF1kpw
- s3CryfGF98GryI9rnIy3WUAr15A3Z5C34Uuay8tFyrZFnxAr10gw48KayIy3yDGFy09a43
- Zr1jgrySk3WjgrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j5OzsUUUUU=
+X-CM-TRANSID: Ac8vCgBnrqG7FzhofozTAQ--.8522S7
+X-Coremail-Antispam: 1Uf129KBjvAXoWfCFyDJr4DJr4DXrW8AFyfCrg_yoW5GFW3Zo
+ W7Gr45Kr4Fyr18CF4vvrZ7JFsrGrZ3uwn8Gaya9an2ga1Iqr98tasxGw1xXry0934DWr17
+ XF98Aw1qkr1Fywnrn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU2na9UUUUU
 X-Originating-IP: [114.116.198.59]
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiJgBcCmg3+XCOywAAsj
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiAQ1cCmg4DmEsHgABsW
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,147 +51,955 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Signed-off-by: Feifei Wang <wangfeifei40@huawei.com>
+From: Yi Chen <chenyi221@huawei.com>
+
+This patch adds some HW interfaces for bar operatioin interfaces,
+including: mapped bar address geeting, HW attributes getting,
+msi-x reg operation, function type getting and so on.
+
 Signed-off-by: Yi Chen <chenyi221@huawei.com>
 Reviewed-by: Xin Wang <wangxin679@h-partners.com>
+Reviewed-by: Feifei Wang <wangfeifei40@huawei.com>
 ---
- .mailmap                               |  4 +-
- MAINTAINERS                            |  6 +++
- doc/guides/nics/hinic3.rst             | 51 ++++++++++++++++++++++++++
- doc/guides/nics/index.rst              |  1 +
- doc/guides/rel_notes/release_25_07.rst |  3 ++
- 5 files changed, 64 insertions(+), 1 deletion(-)
- create mode 100644 doc/guides/nics/hinic3.rst
+ drivers/net/hinic3/base/hinic3_hwif.c | 779 ++++++++++++++++++++++++++
+ drivers/net/hinic3/base/hinic3_hwif.h | 142 +++++
+ 2 files changed, 921 insertions(+)
+ create mode 100644 drivers/net/hinic3/base/hinic3_hwif.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_hwif.h
 
-diff --git a/.mailmap b/.mailmap
-index 91e08f4a1f..deb35ab1b8 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -430,7 +430,7 @@ Fang TongHao <fangtonghao@sangfor.com.cn>
- Fan Zhang <fanzhang.oss@gmail.com> <roy.fan.zhang@intel.com>
- Farah Smith <farah.smith@broadcom.com>
- Fei Chen <chenwei.0515@bytedance.com>
--Feifei Wang <feifei.wang2@arm.com> <feifei.wang@arm.com>
-+Feifei Wang <wangfeifei40@huawei.com> <feifei.wang1218@gmail.com> <feifei.wang2@arm.com> <feifei.wang@arm.com> <wff_light@vip.163.com>
- Fei Qin <fei.qin@corigine.com>
- Fengjiang Liu <liufengjiang.0426@bytedance.com>
- Fengnan Chang <changfengnan@bytedance.com>
-@@ -1723,6 +1723,7 @@ Xingguang He <xingguang.he@intel.com>
- Xingyou Chen <niatlantice@gmail.com>
- Xing Wang <xing_wang@realsil.com.cn>
- Xinying Yu <xinying.yu@corigine.com>
-+Xin Wang <wangxin679@h-partners.com>
- Xin Long <longxin.xl@alibaba-inc.com>
- Xi Zhang <xix.zhang@intel.com>
- Xuan Ding <xuan.ding@intel.com>
-@@ -1756,6 +1757,7 @@ Yelena Krivosheev <yelena@marvell.com>
- Yerden Zhumabekov <e_zhumabekov@sts.kz> <yerden.zhumabekov@sts.kz>
- Yevgeny Kliteynik <kliteyn@nvidia.com>
- Yicai Lu <luyicai@huawei.com>
-+Yi Chen <chenyi221@huawei.com>
- Yiding Zhou <yidingx.zhou@intel.com>
- Yi Li <liyi1@chinatelecom.cn>
- Yi Liu <yi.liu@nxp.com>
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3e16789250..673b24673e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -773,6 +773,12 @@ F: drivers/net/hinic/
- F: doc/guides/nics/hinic.rst
- F: doc/guides/nics/features/hinic.ini
- 
-+Huawei hinic3
-++M: Feifei Wang <wangfeifei40@huawei.com>
-++F: drivers/net/hinic3/
-++F: doc/guides/nics/hinic3.rst
-++F: doc/guides/nics/features/hinic3.ini
-+
- Intel Network Common Code
- M: Bruce Richardson <bruce.richardson@intel.com>
- T: git://dpdk.org/next/dpdk-next-net-intel
-diff --git a/doc/guides/nics/hinic3.rst b/doc/guides/nics/hinic3.rst
+diff --git a/drivers/net/hinic3/base/hinic3_hwif.c b/drivers/net/hinic3/base/hinic3_hwif.c
 new file mode 100644
-index 0000000000..c9e49a2be2
+index 0000000000..ede4aa311f
 --- /dev/null
-+++ b/doc/guides/nics/hinic3.rst
-@@ -0,0 +1,51 @@
-+..  SPDX-License-Identifier: BSD-3-Clause
-+    Copyright(c) 2025 Huawei Technologies Co., Ltd
++++ b/drivers/net/hinic3/base/hinic3_hwif.c
+@@ -0,0 +1,779 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2025 Huawei Technologies Co., Ltd
++ */
 +
-+HINIC Poll Mode Driver
-+======================
++#include <rte_bus_pci.h>
++#include "hinic3_compat.h"
++#include "hinic3_csr.h"
++#include "hinic3_hwdev.h"
++#include "hinic3_hwif.h"
 +
-+The hinic3 PMD (**librte_net_hinic3**) provides poll mode driver support
-+for 25Gbps/100Gbps/200Gbps Huawei SPx series Network Adapters.
++#define WAIT_HWIF_READY_TIMEOUT 10000
 +
-+Features
-+--------
++#define DB_IDX(db, db_base) \
++	((u32)(((ulong)(db) - (ulong)(db_base)) / HINIC3_DB_PAGE_SIZE))
 +
-+- Multi arch support: x86_64, ARMv8.
-+- Multiple queues for TX and RX
-+- Receiver Side Scaling (RSS)
-+- flow filtering
-+- Checksum offload
-+- TSO offload
-+- Promiscuous mode
-+- Port hardware statistics
-+- Link state information
-+- Link flow control
-+- Scattered and gather for TX and RX
-+- Allmulticast mode
-+- MTU update
-+- Multicast MAC filter
-+- Flow API
-+- Set Link down or up
-+- VLAN filter and VLAN offload
-+- SR-IOV - Partially supported at this point, VFIO only
-+- FW version
-+- LRO
++#define HINIC3_AF0_FUNC_GLOBAL_IDX_SHIFT 0
++#define HINIC3_AF0_P2P_IDX_SHIFT	 12
++#define HINIC3_AF0_PCI_INTF_IDX_SHIFT	 17
++#define HINIC3_AF0_VF_IN_PF_SHIFT	 20
++#define HINIC3_AF0_FUNC_TYPE_SHIFT	 28
 +
-+Prerequisites
-+-------------
++#define HINIC3_AF0_FUNC_GLOBAL_IDX_MASK 0xFFF
++#define HINIC3_AF0_P2P_IDX_MASK		0x1F
++#define HINIC3_AF0_PCI_INTF_IDX_MASK	0x7
++#define HINIC3_AF0_VF_IN_PF_MASK	0xFF
++#define HINIC3_AF0_FUNC_TYPE_MASK	0x1
 +
-+- Learning about Huawei Hi1823 Series Intelligent NICs using
-+  `<https://www.hikunpeng.com/compute/component/nic>`_.
++#define HINIC3_AF0_GET(val, member) \
++	(((val) >> HINIC3_AF0_##member##_SHIFT) & HINIC3_AF0_##member##_MASK)
 +
-+- Follow the DPDK :ref:`Getting Started Guide for Linux <linux_gsg>` to setup the basic DPDK environment.
++#define HINIC3_AF1_PPF_IDX_SHIFT	  0
++#define HINIC3_AF1_AEQS_PER_FUNC_SHIFT	  8
++#define HINIC3_AF1_MGMT_INIT_STATUS_SHIFT 30
++#define HINIC3_AF1_PF_INIT_STATUS_SHIFT	  31
 +
++#define HINIC3_AF1_PPF_IDX_MASK		 0x3F
++#define HINIC3_AF1_AEQS_PER_FUNC_MASK	 0x3
++#define HINIC3_AF1_MGMT_INIT_STATUS_MASK 0x1
++#define HINIC3_AF1_PF_INIT_STATUS_MASK	 0x1
 +
-+Driver compilation and testing
-+------------------------------
++#define HINIC3_AF1_GET(val, member) \
++	(((val) >> HINIC3_AF1_##member##_SHIFT) & HINIC3_AF1_##member##_MASK)
 +
-+Refer to the document :ref:`compiling and testing a PMD for a NIC <pmd_build_and_test>`
-+for details.
++#define HINIC3_AF2_CEQS_PER_FUNC_SHIFT	   0
++#define HINIC3_AF2_DMA_ATTR_PER_FUNC_SHIFT 9
++#define HINIC3_AF2_IRQS_PER_FUNC_SHIFT	   16
 +
-+Limitations or Known issues
-+---------------------------
-+X86-32, Windows, and BSD are not supported yet.
-diff --git a/doc/guides/nics/index.rst b/doc/guides/nics/index.rst
-index 10a2eca3b0..5ae4021ccb 100644
---- a/doc/guides/nics/index.rst
-+++ b/doc/guides/nics/index.rst
-@@ -33,6 +33,7 @@ Network Interface Controller Drivers
-     fm10k
-     gve
-     hinic
-+    hinic3
-     hns3
-     i40e
-     ice
-diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
-index 6b070801de..a9de42d8db 100644
---- a/doc/guides/rel_notes/release_25_07.rst
-+++ b/doc/guides/rel_notes/release_25_07.rst
-@@ -54,6 +54,9 @@ New Features
-      This section is a comment. Do not overwrite or remove it.
-      Also, make sure to start the actual text at the margin.
-      =======================================================
-+* **Added Huawei hinic3 net driver.**
++#define HINIC3_AF2_CEQS_PER_FUNC_MASK	  0x1FF
++#define HINIC3_AF2_DMA_ATTR_PER_FUNC_MASK 0x7
++#define HINIC3_AF2_IRQS_PER_FUNC_MASK	  0x7FF
 +
-+  * Added network driver for the Huawei SPx series Network Adapters.
- 
- * **Added burst mode query function to Intel drivers.**
- 
++#define HINIC3_AF2_GET(val, member) \
++	(((val) >> HINIC3_AF2_##member##_SHIFT) & HINIC3_AF2_##member##_MASK)
++
++#define HINIC3_AF3_GLOBAL_VF_ID_OF_NXT_PF_SHIFT 0
++#define HINIC3_AF3_GLOBAL_VF_ID_OF_PF_SHIFT	16
++
++#define HINIC3_AF3_GLOBAL_VF_ID_OF_NXT_PF_MASK 0xFFF
++#define HINIC3_AF3_GLOBAL_VF_ID_OF_PF_MASK     0xFFF
++
++#define HINIC3_AF3_GET(val, member) \
++	(((val) >> HINIC3_AF3_##member##_SHIFT) & HINIC3_AF3_##member##_MASK)
++
++#define HINIC3_AF4_DOORBELL_CTRL_SHIFT 0
++#define HINIC3_AF4_DOORBELL_CTRL_MASK  0x1
++
++#define HINIC3_AF4_GET(val, member) \
++	(((val) >> HINIC3_AF4_##member##_SHIFT) & HINIC3_AF4_##member##_MASK)
++
++#define HINIC3_AF4_SET(val, member) \
++	(((val) & HINIC3_AF4_##member##_MASK) << HINIC3_AF4_##member##_SHIFT)
++
++#define HINIC3_AF4_CLEAR(val, member) \
++	((val) & (~(HINIC3_AF4_##member##_MASK << HINIC3_AF4_##member##_SHIFT)))
++
++#define HINIC3_AF5_OUTBOUND_CTRL_SHIFT 0
++#define HINIC3_AF5_OUTBOUND_CTRL_MASK  0x1
++
++#define HINIC3_AF5_GET(val, member) \
++	(((val) >> HINIC3_AF5_##member##_SHIFT) & HINIC3_AF5_##member##_MASK)
++
++#define HINIC3_AF5_SET(val, member) \
++	(((val) & HINIC3_AF5_##member##_MASK) << HINIC3_AF5_##member##_SHIFT)
++
++#define HINIC3_AF5_CLEAR(val, member) \
++	((val) & (~(HINIC3_AF5_##member##_MASK << HINIC3_AF5_##member##_SHIFT)))
++
++#define HINIC3_AF6_PF_STATUS_SHIFT 0
++#define HINIC3_AF6_PF_STATUS_MASK  0xFFFF
++
++#define HINIC3_AF6_FUNC_MAX_QUEUE_SHIFT 23
++#define HINIC3_AF6_FUNC_MAX_QUEUE_MASK	0x1FF
++
++#define HINIC3_AF6_MSIX_FLEX_EN_SHIFT 22
++#define HINIC3_AF6_MSIX_FLEX_EN_MASK  0x1
++
++#define HINIC3_AF6_SET(val, member)                  \
++	((((u32)(val)) & HINIC3_AF6_##member##_MASK) \
++	 << HINIC3_AF6_##member##_SHIFT)
++
++#define HINIC3_AF6_GET(val, member) \
++	(((val) >> HINIC3_AF6_##member##_SHIFT) & HINIC3_AF6_##member##_MASK)
++
++#define HINIC3_AF6_CLEAR(val, member) \
++	((val) & (~(HINIC3_AF6_##member##_MASK << HINIC3_AF6_##member##_SHIFT)))
++
++#define HINIC3_PPF_ELECTION_IDX_SHIFT 0
++
++#define HINIC3_PPF_ELECTION_IDX_MASK 0x3F
++
++#define HINIC3_PPF_ELECTION_SET(val, member)           \
++	(((val) & HINIC3_PPF_ELECTION_##member##_MASK) \
++	 << HINIC3_PPF_ELECTION_##member##_SHIFT)
++
++#define HINIC3_PPF_ELECTION_GET(val, member)               \
++	(((val) >> HINIC3_PPF_ELECTION_##member##_SHIFT) & \
++	 HINIC3_PPF_ELECTION_##member##_MASK)
++
++#define HINIC3_PPF_ELECTION_CLEAR(val, member)          \
++	((val) & (~(HINIC3_PPF_ELECTION_##member##_MASK \
++		    << HINIC3_PPF_ELECTION_##member##_SHIFT)))
++
++#define HINIC3_MPF_ELECTION_IDX_SHIFT 0
++
++#define HINIC3_MPF_ELECTION_IDX_MASK 0x1F
++
++#define HINIC3_MPF_ELECTION_SET(val, member)           \
++	(((val) & HINIC3_MPF_ELECTION_##member##_MASK) \
++	 << HINIC3_MPF_ELECTION_##member##_SHIFT)
++
++#define HINIC3_MPF_ELECTION_GET(val, member)               \
++	(((val) >> HINIC3_MPF_ELECTION_##member##_SHIFT) & \
++	 HINIC3_MPF_ELECTION_##member##_MASK)
++
++#define HINIC3_MPF_ELECTION_CLEAR(val, member)          \
++	((val) & (~(HINIC3_MPF_ELECTION_##member##_MASK \
++		    << HINIC3_MPF_ELECTION_##member##_SHIFT)))
++
++#define HINIC3_GET_REG_FLAG(reg) ((reg) & (~(HINIC3_REGS_FLAG_MASK)))
++
++#define HINIC3_GET_REG_ADDR(reg) ((reg) & (HINIC3_REGS_FLAG_MASK))
++
++#define HINIC3_IS_VF_DEV(pdev) ((pdev)->id.device_id == HINIC3_DEV_ID_VF)
++
++u32
++hinic3_hwif_read_reg(struct hinic3_hwif *hwif, u32 reg)
++{
++	if (HINIC3_GET_REG_FLAG(reg) == HINIC3_MGMT_REGS_FLAG)
++		return be32_to_cpu(rte_read32(hwif->mgmt_regs_base +
++					      HINIC3_GET_REG_ADDR(reg)));
++	else
++		return be32_to_cpu(rte_read32(hwif->cfg_regs_base +
++					      HINIC3_GET_REG_ADDR(reg)));
++}
++
++void
++hinic3_hwif_write_reg(struct hinic3_hwif *hwif, u32 reg, u32 val)
++{
++	if (HINIC3_GET_REG_FLAG(reg) == HINIC3_MGMT_REGS_FLAG)
++		rte_write32(cpu_to_be32(val),
++			    hwif->mgmt_regs_base + HINIC3_GET_REG_ADDR(reg));
++	else
++		rte_write32(cpu_to_be32(val),
++			    hwif->cfg_regs_base + HINIC3_GET_REG_ADDR(reg));
++}
++
++/**
++ * Judge whether HW initialization ok.
++ *
++ * @param[in] hwdev
++ * The pointer to the private hardware device.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++static int
++hwif_ready(struct hinic3_hwdev *hwdev)
++{
++	u32 addr, attr1;
++
++	addr = HINIC3_CSR_FUNC_ATTR1_ADDR;
++	attr1 = hinic3_hwif_read_reg(hwdev->hwif, addr);
++	if (attr1 == HINIC3_PCIE_LINK_DOWN)
++		return -EBUSY;
++
++	if (!HINIC3_AF1_GET(attr1, MGMT_INIT_STATUS))
++		return -EBUSY;
++
++	return 0;
++}
++
++static int
++wait_hwif_ready(struct hinic3_hwdev *hwdev)
++{
++	ulong timeout = 0;
++
++	do {
++		if (!hwif_ready(hwdev))
++			return 0;
++
++		rte_delay_ms(1);
++		timeout++;
++	} while (timeout <= WAIT_HWIF_READY_TIMEOUT);
++
++	PMD_DRV_LOG(ERR, "Hwif is not ready");
++	return -EBUSY;
++}
++
++/**
++ * Set the attributes as members in hwif.
++ *
++ * @param[in] hwif
++ * The hardware interface of a pci function device.
++ * @param[in] attr0
++ * The first attribute that was read from the hw.
++ * @param[in] attr1
++ * The second attribute that was read from the hw.
++ * @param[in] attr2
++ * The third attribute that was read from the hw.
++ * @param[in] attr3
++ * The fourth attribute that was read from the hw.
++ */
++static void
++set_hwif_attr(struct hinic3_hwif *hwif, u32 attr0, u32 attr1, u32 attr2,
++	      u32 attr3)
++{
++	hwif->attr.func_global_idx = HINIC3_AF0_GET(attr0, FUNC_GLOBAL_IDX);
++	hwif->attr.port_to_port_idx = HINIC3_AF0_GET(attr0, P2P_IDX);
++	hwif->attr.pci_intf_idx = HINIC3_AF0_GET(attr0, PCI_INTF_IDX);
++	hwif->attr.vf_in_pf = HINIC3_AF0_GET(attr0, VF_IN_PF);
++	hwif->attr.func_type = HINIC3_AF0_GET(attr0, FUNC_TYPE);
++
++	hwif->attr.ppf_idx = HINIC3_AF1_GET(attr1, PPF_IDX);
++	hwif->attr.num_aeqs = BIT(HINIC3_AF1_GET(attr1, AEQS_PER_FUNC));
++
++	hwif->attr.num_ceqs = (u8)HINIC3_AF2_GET(attr2, CEQS_PER_FUNC);
++	hwif->attr.num_irqs = HINIC3_AF2_GET(attr2, IRQS_PER_FUNC);
++	hwif->attr.num_dma_attr = BIT(HINIC3_AF2_GET(attr2, DMA_ATTR_PER_FUNC));
++
++	hwif->attr.global_vf_id_of_pf =
++		HINIC3_AF3_GET(attr3, GLOBAL_VF_ID_OF_PF);
++}
++
++/**
++ * Read and set the attributes as members in hwif.
++ *
++ * @param[in] hwif
++ * The hardware interface of a pci function device.
++ */
++static void
++get_hwif_attr(struct hinic3_hwif *hwif)
++{
++	u32 addr, attr0, attr1, attr2, attr3;
++
++	addr = HINIC3_CSR_FUNC_ATTR0_ADDR;
++	attr0 = hinic3_hwif_read_reg(hwif, addr);
++
++	addr = HINIC3_CSR_FUNC_ATTR1_ADDR;
++	attr1 = hinic3_hwif_read_reg(hwif, addr);
++
++	addr = HINIC3_CSR_FUNC_ATTR2_ADDR;
++	attr2 = hinic3_hwif_read_reg(hwif, addr);
++
++	addr = HINIC3_CSR_FUNC_ATTR3_ADDR;
++	attr3 = hinic3_hwif_read_reg(hwif, addr);
++
++	set_hwif_attr(hwif, attr0, attr1, attr2, attr3);
++}
++
++/**
++ * Update message signaled interrupt information.
++ *
++ * @param[in] hwif
++ * The hardware interface of a pci function device.
++ */
++void
++hinic3_update_msix_info(struct hinic3_hwif *hwif)
++{
++	u32 attr6 = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR6_ADDR);
++	hwif->attr.num_queue = HINIC3_AF6_GET(attr6, FUNC_MAX_QUEUE);
++	hwif->attr.msix_flex_en = HINIC3_AF6_GET(attr6, MSIX_FLEX_EN);
++	PMD_DRV_LOG(INFO, "msix_flex_en: %u, queue msix: %u",
++		    hwif->attr.msix_flex_en, hwif->attr.num_queue);
++}
++
++void
++hinic3_set_pf_status(struct hinic3_hwif *hwif, enum hinic3_pf_status status)
++{
++	u32 attr6 = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR6_ADDR);
++
++	attr6 = HINIC3_AF6_CLEAR(attr6, PF_STATUS);
++	attr6 |= HINIC3_AF6_SET(status, PF_STATUS);
++
++	if (hwif->attr.func_type == TYPE_VF)
++		return;
++
++	hinic3_hwif_write_reg(hwif, HINIC3_CSR_FUNC_ATTR6_ADDR, attr6);
++}
++
++enum hinic3_pf_status
++hinic3_get_pf_status(struct hinic3_hwif *hwif)
++{
++	u32 attr6 = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR6_ADDR);
++
++	return HINIC3_AF6_GET(attr6, PF_STATUS);
++}
++
++static enum hinic3_doorbell_ctrl
++hinic3_get_doorbell_ctrl_status(struct hinic3_hwif *hwif)
++{
++	u32 attr4 = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR4_ADDR);
++
++	return HINIC3_AF4_GET(attr4, DOORBELL_CTRL);
++}
++
++static enum hinic3_outbound_ctrl
++hinic3_get_outbound_ctrl_status(struct hinic3_hwif *hwif)
++{
++	u32 attr5 = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR5_ADDR);
++
++	return HINIC3_AF5_GET(attr5, OUTBOUND_CTRL);
++}
++
++void
++hinic3_enable_doorbell(struct hinic3_hwif *hwif)
++{
++	u32 addr, attr4;
++
++	addr = HINIC3_CSR_FUNC_ATTR4_ADDR;
++	attr4 = hinic3_hwif_read_reg(hwif, addr);
++
++	attr4 = HINIC3_AF4_CLEAR(attr4, DOORBELL_CTRL);
++	attr4 |= HINIC3_AF4_SET(ENABLE_DOORBELL, DOORBELL_CTRL);
++
++	hinic3_hwif_write_reg(hwif, addr, attr4);
++}
++
++void
++hinic3_disable_doorbell(struct hinic3_hwif *hwif)
++{
++	u32 addr, attr4;
++
++	addr = HINIC3_CSR_FUNC_ATTR4_ADDR;
++	attr4 = hinic3_hwif_read_reg(hwif, addr);
++
++	attr4 = HINIC3_AF4_CLEAR(attr4, DOORBELL_CTRL);
++	attr4 |= HINIC3_AF4_SET(DISABLE_DOORBELL, DOORBELL_CTRL);
++
++	hinic3_hwif_write_reg(hwif, addr, attr4);
++}
++
++/**
++ * Try to set hwif as ppf and set the type of hwif in this case.
++ *
++ * @param[in] hwif
++ * The hardware interface of a pci function device
++ */
++static void
++set_ppf(struct hinic3_hwif *hwif)
++{
++	struct hinic3_func_attr *attr = &hwif->attr;
++	u32 addr, val, ppf_election;
++
++	addr = HINIC3_CSR_PPF_ELECTION_ADDR;
++
++	val = hinic3_hwif_read_reg(hwif, addr);
++	val = HINIC3_PPF_ELECTION_CLEAR(val, IDX);
++
++	ppf_election = HINIC3_PPF_ELECTION_SET(attr->func_global_idx, IDX);
++	val |= ppf_election;
++
++	hinic3_hwif_write_reg(hwif, addr, val);
++
++	/* Check PPF. */
++	val = hinic3_hwif_read_reg(hwif, addr);
++
++	attr->ppf_idx = HINIC3_PPF_ELECTION_GET(val, IDX);
++	if (attr->ppf_idx == attr->func_global_idx)
++		attr->func_type = TYPE_PPF;
++}
++
++/**
++ * Get the mpf index from the hwif.
++ *
++ * @param[in] hwif
++ * The hardware interface of a pci function device.
++ */
++static void
++get_mpf(struct hinic3_hwif *hwif)
++{
++	struct hinic3_func_attr *attr = &hwif->attr;
++	u32 mpf_election, addr;
++
++	addr = HINIC3_CSR_GLOBAL_MPF_ELECTION_ADDR;
++
++	mpf_election = hinic3_hwif_read_reg(hwif, addr);
++	attr->mpf_idx = HINIC3_MPF_ELECTION_GET(mpf_election, IDX);
++}
++
++/**
++ * Try to set hwif as mpf and set the mpf idx in hwif.
++ *
++ * @param[in] hwif
++ * The hardware interface of a pci function device.
++ */
++static void
++set_mpf(struct hinic3_hwif *hwif)
++{
++	struct hinic3_func_attr *attr = &hwif->attr;
++	u32 addr, val, mpf_election;
++
++	addr = HINIC3_CSR_GLOBAL_MPF_ELECTION_ADDR;
++
++	val = hinic3_hwif_read_reg(hwif, addr);
++
++	val = HINIC3_MPF_ELECTION_CLEAR(val, IDX);
++	mpf_election = HINIC3_MPF_ELECTION_SET(attr->func_global_idx, IDX);
++
++	val |= mpf_election;
++	hinic3_hwif_write_reg(hwif, addr, val);
++}
++
++int
++hinic3_alloc_db_addr(void *hwdev, void **db_base,
++		     enum hinic3_db_type queue_type)
++{
++	struct hinic3_hwif *hwif = NULL;
++
++	if (!hwdev || !db_base)
++		return -EINVAL;
++
++	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
++	*db_base = hwif->db_base + queue_type * HINIC3_DB_PAGE_SIZE;
++
++	return 0;
++}
++
++void
++hinic3_set_msix_auto_mask_state(void *hwdev, u16 msix_idx,
++				enum hinic3_msix_auto_mask flag)
++{
++	struct hinic3_hwif *hwif = NULL;
++	u32 mask_bits;
++	u32 addr;
++
++	if (!hwdev)
++		return;
++
++	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
++
++	if (flag)
++		mask_bits = HINIC3_MSI_CLR_INDIR_SET(1, AUTO_MSK_SET);
++	else
++		mask_bits = HINIC3_MSI_CLR_INDIR_SET(1, AUTO_MSK_CLR);
++
++	mask_bits = mask_bits |
++		    HINIC3_MSI_CLR_INDIR_SET(msix_idx, SIMPLE_INDIR_IDX);
++
++	addr = HINIC3_CSR_FUNC_MSI_CLR_WR_ADDR;
++	hinic3_hwif_write_reg(hwif, addr, mask_bits);
++}
++
++/**
++ * Set msix state.
++ *
++ * @param[in] hwdev
++ * The pointer to the private hardware device object.
++ * @param[in] msix_idx
++ * MSIX(Message Signaled Interrupts) index.
++ * @param[in] flag
++ * MSIX state flag, 0-enable, 1-disable.
++ */
++void
++hinic3_set_msix_state(void *hwdev, u16 msix_idx, enum hinic3_msix_state flag)
++{
++	struct hinic3_hwif *hwif = NULL;
++	u32 mask_bits;
++	u32 addr;
++	u8 int_msk = 1;
++
++	if (!hwdev)
++		return;
++
++	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
++
++	if (flag)
++		mask_bits = HINIC3_MSI_CLR_INDIR_SET(int_msk, INT_MSK_SET);
++	else
++		mask_bits = HINIC3_MSI_CLR_INDIR_SET(int_msk, INT_MSK_CLR);
++	mask_bits = mask_bits |
++		    HINIC3_MSI_CLR_INDIR_SET(msix_idx, SIMPLE_INDIR_IDX);
++
++	addr = HINIC3_CSR_FUNC_MSI_CLR_WR_ADDR;
++	hinic3_hwif_write_reg(hwif, addr, mask_bits);
++}
++
++static void
++disable_all_msix(struct hinic3_hwdev *hwdev)
++{
++	u16 num_irqs = hwdev->hwif->attr.num_irqs;
++	u16 i;
++
++	for (i = 0; i < num_irqs; i++)
++		hinic3_set_msix_state(hwdev, i, HINIC3_MSIX_DISABLE);
++}
++
++/**
++ * Clear msix resend bit.
++ *
++ * @param[in] hwdev
++ * The pointer to the private hardware device object.
++ * @param[in] msix_idx
++ * MSIX(Message Signaled Interrupts) index
++ * @param[in] clear_resend_en
++ * Clear resend en flag, 1-clear.
++ */
++void
++hinic3_misx_intr_clear_resend_bit(void *hwdev, u16 msix_idx, u8 clear_resend_en)
++{
++	struct hinic3_hwif *hwif = NULL;
++	u32 msix_ctrl = 0, addr;
++
++	if (!hwdev)
++		return;
++
++	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
++
++	msix_ctrl = HINIC3_MSI_CLR_INDIR_SET(msix_idx, SIMPLE_INDIR_IDX) |
++		    HINIC3_MSI_CLR_INDIR_SET(clear_resend_en, RESEND_TIMER_CLR);
++
++	addr = HINIC3_CSR_FUNC_MSI_CLR_WR_ADDR;
++	hinic3_hwif_write_reg(hwif, addr, msix_ctrl);
++}
++
++#ifdef HINIC3_RELEASE
++static int
++wait_until_doorbell_flush_states(struct hinic3_hwif *hwif,
++				 enum hinic3_doorbell_ctrl states)
++{
++	enum hinic3_doorbell_ctrl db_ctrl;
++	u32 cnt = 0;
++
++	if (!hwif)
++		return -EINVAL;
++
++	while (cnt < HINIC3_WAIT_DOORBELL_AND_OUTBOUND_TIMEOUT) {
++		db_ctrl = hinic3_get_doorbell_ctrl_status(hwif);
++		if (db_ctrl == states)
++			return 0;
++
++		rte_delay_ms(1);
++		cnt++;
++	}
++
++	return -EFAULT;
++}
++#endif
++
++static int
++wait_until_doorbell_and_outbound_enabled(struct hinic3_hwif *hwif)
++{
++	enum hinic3_doorbell_ctrl db_ctrl;
++	enum hinic3_outbound_ctrl outbound_ctrl;
++	u32 cnt = 0;
++
++	while (cnt < HINIC3_WAIT_DOORBELL_AND_OUTBOUND_TIMEOUT) {
++		db_ctrl = hinic3_get_doorbell_ctrl_status(hwif);
++		outbound_ctrl = hinic3_get_outbound_ctrl_status(hwif);
++		if (outbound_ctrl == ENABLE_OUTBOUND &&
++		    db_ctrl == ENABLE_DOORBELL)
++			return 0;
++
++		rte_delay_ms(1);
++		cnt++;
++	}
++
++	return -EFAULT;
++}
++
++static int
++hinic3_get_bar_addr(struct hinic3_hwdev *hwdev)
++{
++	struct rte_pci_device *pci_dev = hwdev->pci_dev;
++	struct hinic3_hwif *hwif = hwdev->hwif;
++	void *cfg_regs_base = NULL;
++	void *mgmt_reg_base = NULL;
++	void *db_base = NULL;
++	int cfg_bar;
++
++	cfg_bar = HINIC3_IS_VF_DEV(pci_dev) ? HINIC3_VF_PCI_CFG_REG_BAR
++					    : HINIC3_PF_PCI_CFG_REG_BAR;
++
++	cfg_regs_base = pci_dev->mem_resource[cfg_bar].addr;
++	if (!HINIC3_IS_VF_DEV(pci_dev)) {
++		mgmt_reg_base =
++			pci_dev->mem_resource[HINIC3_PCI_MGMT_REG_BAR].addr;
++		if (mgmt_reg_base == NULL) {
++			PMD_DRV_LOG(ERR, "mgmt_reg_base addr is null");
++			return -EFAULT;
++		}
++	}
++	db_base = pci_dev->mem_resource[HINIC3_PCI_DB_BAR].addr;
++	if (cfg_regs_base == NULL) {
++		PMD_DRV_LOG(ERR,
++			    "mem_resource addr is null, cfg_regs_base is NULL");
++		return -EFAULT;
++	} else if (db_base == NULL) {
++		PMD_DRV_LOG(ERR, "mem_resource addr is null, db_base is NULL");
++		return -EFAULT;
++	}
++
++	/* If function is VF, mgmt_regs_base will be NULL. */
++	if (!mgmt_reg_base)
++		hwif->cfg_regs_base =
++			(u8 *)cfg_regs_base + HINIC3_VF_CFG_REG_OFFSET;
++	else
++		hwif->cfg_regs_base = cfg_regs_base;
++	hwif->mgmt_regs_base = mgmt_reg_base;
++	hwif->db_base = db_base;
++	hwif->db_dwqe_len = pci_dev->mem_resource[HINIC3_PCI_DB_BAR].len;
++
++	return 0;
++}
++
++/**
++ * Initialize the hw interface.
++ *
++ * @param[in] hwdev
++ * The pointer to the private hardware device object.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++int
++hinic3_init_hwif(void *dev)
++{
++	struct hinic3_hwdev *hwdev = NULL;
++	struct hinic3_hwif *hwif;
++	int err;
++	u32 attr4, attr5;
++
++	hwif = rte_zmalloc("hinic_hwif", sizeof(struct hinic3_hwif),
++			   RTE_CACHE_LINE_SIZE);
++	if (!hwif)
++		return -ENOMEM;
++
++	hwdev = (struct hinic3_hwdev *)dev;
++	hwdev->hwif = hwif;
++
++	err = hinic3_get_bar_addr(hwdev);
++	if (err != 0) {
++		PMD_DRV_LOG(ERR, "get bar addr fail");
++		goto hwif_ready_err;
++	}
++
++	err = wait_hwif_ready(hwdev);
++	if (err != 0) {
++		PMD_DRV_LOG(ERR, "Chip status is not ready");
++		goto hwif_ready_err;
++	}
++
++	get_hwif_attr(hwif);
++
++	err = wait_until_doorbell_and_outbound_enabled(hwif);
++	if (err != 0) {
++		attr4 = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR4_ADDR);
++		attr5 = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR5_ADDR);
++		PMD_DRV_LOG(ERR,
++			    "Hw doorbell/outbound is disabled, attr4 0x%x "
++			    "attr5 0x%x",
++			    attr4, attr5);
++		goto hwif_ready_err;
++	}
++
++	if (!HINIC3_IS_VF(hwdev)) {
++		set_ppf(hwif);
++
++		if (HINIC3_IS_PPF(hwdev))
++			set_mpf(hwif);
++
++		get_mpf(hwif);
++	}
++
++	disable_all_msix(hwdev);
++	/* Disable mgmt cpu reporting any event. */
++	hinic3_set_pf_status(hwdev->hwif, HINIC3_PF_STATUS_INIT);
++
++	PMD_DRV_LOG(INFO,
++		    "global_func_idx: %d, func_type: %d, host_id: %d, ppf: %d, "
++		    "mpf: %d",
++		    hwif->attr.func_global_idx, hwif->attr.func_type,
++		    hwif->attr.pci_intf_idx, hwif->attr.ppf_idx,
++		    hwif->attr.mpf_idx);
++
++	return 0;
++
++hwif_ready_err:
++	rte_free(hwdev->hwif);
++	hwdev->hwif = NULL;
++
++	return err;
++}
++
++/**
++ * Free the hw interface.
++ *
++ * @param[in] dev
++ * The pointer to the private hardware device.
++ */
++void
++hinic3_free_hwif(void *dev)
++{
++	struct hinic3_hwdev *hwdev = (struct hinic3_hwdev *)dev;
++
++	rte_free(hwdev->hwif);
++}
++
++u16
++hinic3_global_func_id(void *hwdev)
++{
++	struct hinic3_hwif *hwif = NULL;
++
++	if (!hwdev)
++		return 0;
++
++	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
++
++	return hwif->attr.func_global_idx;
++}
++
++u8
++hinic3_pf_id_of_vf(void *hwdev)
++{
++	struct hinic3_hwif *hwif = NULL;
++
++	if (!hwdev)
++		return 0;
++
++	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
++
++	return hwif->attr.port_to_port_idx;
++}
++
++u8
++hinic3_pcie_itf_id(void *hwdev)
++{
++	struct hinic3_hwif *hwif = NULL;
++
++	if (!hwdev)
++		return 0;
++
++	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
++
++	return hwif->attr.pci_intf_idx;
++}
++
++enum func_type
++hinic3_func_type(void *hwdev)
++{
++	struct hinic3_hwif *hwif = NULL;
++
++	if (!hwdev)
++		return 0;
++
++	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
++
++	return hwif->attr.func_type;
++}
++
++u16
++hinic3_glb_pf_vf_offset(void *hwdev)
++{
++	struct hinic3_hwif *hwif = NULL;
++
++	if (!hwdev)
++		return 0;
++
++	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
++
++	return hwif->attr.global_vf_id_of_pf;
++}
+diff --git a/drivers/net/hinic3/base/hinic3_hwif.h b/drivers/net/hinic3/base/hinic3_hwif.h
+new file mode 100644
+index 0000000000..97d2ed99df
+--- /dev/null
++++ b/drivers/net/hinic3/base/hinic3_hwif.h
+@@ -0,0 +1,142 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2025 Huawei Technologies Co., Ltd
++ */
++
++#ifndef _HINIC3_HWIF_H_
++#define _HINIC3_HWIF_H_
++
++#define HINIC3_WAIT_DOORBELL_AND_OUTBOUND_TIMEOUT 60000
++#define HINIC3_PCIE_LINK_DOWN			  0xFFFFFFFF
++
++/* PCIe bar space. */
++#define HINIC3_VF_PCI_CFG_REG_BAR 0
++#define HINIC3_PF_PCI_CFG_REG_BAR 1
++
++#define HINIC3_PCI_INTR_REG_BAR 2
++#define HINIC3_PCI_MGMT_REG_BAR 3 /**< Only PF has mgmt bar. */
++#define HINIC3_PCI_DB_BAR	4
++
++/* Doorbell or direct wqe page size is 4K. */
++#define HINIC3_DB_PAGE_SIZE 0x00001000ULL
++#define HINIC3_DWQE_OFFSET  0x00000800ULL
++
++enum func_type { TYPE_PF, TYPE_VF, TYPE_PPF, TYPE_UNKNOWN };
++#define MSIX_RESEND_TIMER_CLEAR 1
++
++/* Message signaled interrupt status. */
++enum hinic3_msix_state { HINIC3_MSIX_ENABLE, HINIC3_MSIX_DISABLE };
++
++enum hinic3_msix_auto_mask {
++	HINIC3_CLR_MSIX_AUTO_MASK,
++	HINIC3_SET_MSIX_AUTO_MASK,
++};
++
++struct hinic3_func_attr {
++	u16 func_global_idx;
++	u8 port_to_port_idx;
++	u8 pci_intf_idx;
++	u8 vf_in_pf;
++	enum func_type func_type;
++
++	u8 mpf_idx;
++
++	u8 ppf_idx;
++
++	u16 num_irqs; /**< Max: 2 ^ 15. */
++	u8 num_aeqs;  /**< Max: 2 ^ 3. */
++	u8 num_ceqs;  /**< Max: 2 ^ 7. */
++
++	u16 num_queue;	 /**< Max: 2 ^ 8. */
++	u8 num_dma_attr; /**< Max: 2 ^ 6. */
++	u8 msix_flex_en;
++
++	u16 global_vf_id_of_pf;
++};
++
++/* Structure for hardware interface. */
++struct hinic3_hwif {
++	/* Configure virtual address, PF is bar1, VF is bar0/1. */
++	u8 *cfg_regs_base;
++	/* For PF bar3 virtual address, if function is VF should set NULL. */
++	u8 *mgmt_regs_base;
++	u8 *db_base;
++	u64 db_dwqe_len;
++
++	struct hinic3_func_attr attr;
++
++	void *pdev;
++};
++
++enum hinic3_outbound_ctrl { ENABLE_OUTBOUND = 0x0, DISABLE_OUTBOUND = 0x1 };
++
++enum hinic3_doorbell_ctrl { ENABLE_DOORBELL = 0x0, DISABLE_DOORBELL = 0x1 };
++
++enum hinic3_pf_status {
++	HINIC3_PF_STATUS_INIT = 0x0,
++	HINIC3_PF_STATUS_ACTIVE_FLAG = 0x11,
++	HINIC3_PF_STATUS_FLR_START_FLAG = 0x12,
++	HINIC3_PF_STATUS_FLR_FINISH_FLAG = 0x13
++};
++
++/* Type of doorbell. */
++enum hinic3_db_type {
++	HINIC3_DB_TYPE_CMDQ = 0x0,
++	HINIC3_DB_TYPE_SQ = 0x1,
++	HINIC3_DB_TYPE_RQ = 0x2,
++	HINIC3_DB_TYPE_MAX = 0x3
++};
++
++/* Get the attributes of the hardware interface. */
++#define HINIC3_HWIF_NUM_AEQS(hwif)	   ((hwif)->attr.num_aeqs)
++#define HINIC3_HWIF_NUM_IRQS(hwif)	   ((hwif)->attr.num_irqs)
++#define HINIC3_HWIF_GLOBAL_IDX(hwif)	   ((hwif)->attr.func_global_idx)
++#define HINIC3_HWIF_GLOBAL_VF_OFFSET(hwif) ((hwif)->attr.global_vf_id_of_pf)
++#define HINIC3_HWIF_PPF_IDX(hwif)	   ((hwif)->attr.ppf_idx)
++#define HINIC3_PCI_INTF_IDX(hwif)	   ((hwif)->attr.pci_intf_idx)
++
++/* Func type judgment. */
++#define HINIC3_FUNC_TYPE(dev) ((dev)->hwif->attr.func_type)
++#define HINIC3_IS_PF(dev)     (HINIC3_FUNC_TYPE(dev) == TYPE_PF)
++#define HINIC3_IS_VF(dev)     (HINIC3_FUNC_TYPE(dev) == TYPE_VF)
++#define HINIC3_IS_PPF(dev)    (HINIC3_FUNC_TYPE(dev) == TYPE_PPF)
++
++u32 hinic3_hwif_read_reg(struct hinic3_hwif *hwif, u32 reg);
++
++void hinic3_hwif_write_reg(struct hinic3_hwif *hwif, u32 reg, u32 val);
++
++void hinic3_set_msix_auto_mask_state(void *hwdev, u16 msix_idx,
++				     enum hinic3_msix_auto_mask flag);
++
++void hinic3_set_msix_state(void *hwdev, u16 msix_idx,
++			   enum hinic3_msix_state flag);
++
++void hinic3_misx_intr_clear_resend_bit(void *hwdev, u16 msix_idx,
++				       u8 clear_resend_en);
++
++u16 hinic3_global_func_id(void *hwdev);
++
++u8 hinic3_pf_id_of_vf(void *hwdev);
++
++u8 hinic3_pcie_itf_id(void *hwdev);
++
++enum func_type hinic3_func_type(void *hwdev);
++
++u16 hinic3_glb_pf_vf_offset(void *hwdev);
++void hinic3_update_msix_info(struct hinic3_hwif *hwif);
++void hinic3_set_pf_status(struct hinic3_hwif *hwif,
++			  enum hinic3_pf_status status);
++
++enum hinic3_pf_status hinic3_get_pf_status(struct hinic3_hwif *hwif);
++
++int hinic3_alloc_db_addr(void *hwdev, void **db_base,
++			 enum hinic3_db_type queue_type);
++
++void hinic3_disable_doorbell(struct hinic3_hwif *hwif);
++
++void hinic3_enable_doorbell(struct hinic3_hwif *hwif);
++
++int hinic3_init_hwif(void *dev);
++
++void hinic3_free_hwif(void *dev);
++
++#endif /**< _HINIC3_HWIF_H_ */
 -- 
 2.47.0.windows.2
 
