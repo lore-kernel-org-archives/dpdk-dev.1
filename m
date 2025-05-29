@@ -2,42 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F17CC5AD49
-	for <dpdk-dev@archiver.kernel.org>; Thu, 29 May 2025 08:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB90FC54FB3
+	for <dpdk-dev@archiver.kernel.org>; Thu, 29 May 2025 08:18:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8E5A8427B8;
-	Thu, 29 May 2025 10:16:27 +0200 (CEST)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.4])
- by mails.dpdk.org (Postfix) with ESMTP id C244842708
- for <dev@dpdk.org>; Thu, 29 May 2025 10:16:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=kSS5a5zWpdvU1e6xY8P44yzrqG4eDBk9HBjGCVj9fIc=;
- b=fyMmGKJfUmSYyAbowTQng9aQ7FzL0C7KUIe0f//koYullrC00SgK+02FgSqlHu
- BQihdYr3NRb3eh9GQqgnXa2d4XKuGyB+ihnXafqWvOHPcxL/vjbDRWyU6QdDTFiW
- fODBtlhGoG+aGwD0UkPWbnhqOjwBMC6m4VQ1lyyvo5R1U=
-Received: from localhost.localdomain (unknown [114.116.198.59])
- by gzsmtp1 (Coremail) with SMTP id Ac8vCgBnrqG7FzhofozTAQ--.8522S22;
- Thu, 29 May 2025 16:16:16 +0800 (CST)
-From: Feifei <wff_light@vip.163.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 026CE427B0;
+	Thu, 29 May 2025 10:16:30 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 489CC427BD
+ for <dev@dpdk.org>; Thu, 29 May 2025 10:16:29 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 3C51F4681F; Thu, 29 May 2025 10:16:29 +0200 (CEST)
+From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Cc: Yi Chen <chenyi221@huawei.com>, Xin Wang <wangxin679@h-partners.com>,
- Feifei Wang <wangfeifei40@huawei.com>
-Subject: [PATCH v1 18/18] drivers/net: add hinic3 PMD build and doc files
-Date: Thu, 29 May 2025 16:15:17 +0800
-Message-ID: <20250529081529.2839-19-wff_light@vip.163.com>
-X-Mailer: git-send-email 2.47.0.windows.2
-In-Reply-To: <20250418090621.9638-19-wff_light@vip.163.com>
-References: <20250418090621.9638-19-wff_light@vip.163.com>
+Subject: [DPDK/ethdev Bug 1716] virtio_xmit_cleanup failed when vm rx/tx
+ queues from 1024 to 4096
+Date: Thu, 29 May 2025 08:16:28 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: ethdev
+X-Bugzilla-Version: 22.11
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: major
+X-Bugzilla-Who: updoing@sina.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone attachments.created
+Message-ID: <bug-1716-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17485065890.7Cdf6.3889295
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Ac8vCgBnrqG7FzhofozTAQ--.8522S22
-X-Coremail-Antispam: 1Uf129KBjvJXoW3WFy3AFWDXFyUJF45Gw1UAwb_yoW7GFW3pa
- 1UGayS9rW8Xr48t3Z5AryxAFWFvw1UKFyjkw1aka4rZryDAFy5AayUKFWYkF9Fqr1jyFyf
- ZFn8C393KF1rtw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jnEfOUUUUU=
-X-Originating-IP: [114.116.198.59]
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiHwpcCmg33Xb0iQAAsK
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,196 +55,204 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Yi Chen <chenyi221@huawei.com>
 
-The meson.build file is added to this patch to enable
-the hinic3 compilation function.
+--17485065890.7Cdf6.3889295
+Date: Thu, 29 May 2025 10:16:28 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-Signed-off-by: Yi Chen <chenyi221@huawei.com>
-Reviewed-by: Xin Wang <wangxin679@h-partners.com>
-Reviewed-by: Feifei Wang <wangfeifei40@huawei.com>
----
- doc/guides/nics/features/hinic3.ini |  9 ++++++
- drivers/net/hinic3/base/meson.build | 50 +++++++++++++++++++++++++++++
- drivers/net/hinic3/meson.build      | 33 +++++++++++++++++++
- drivers/net/hinic3/mml/meson.build  | 33 +++++--------------
- drivers/net/meson.build             |  1 +
- 5 files changed, 101 insertions(+), 25 deletions(-)
- create mode 100644 doc/guides/nics/features/hinic3.ini
- create mode 100644 drivers/net/hinic3/base/meson.build
- create mode 100644 drivers/net/hinic3/meson.build
+https://bugs.dpdk.org/show_bug.cgi?id=3D1716
 
-diff --git a/doc/guides/nics/features/hinic3.ini b/doc/guides/nics/features/hinic3.ini
-new file mode 100644
-index 0000000000..8bafd49090
---- /dev/null
-+++ b/doc/guides/nics/features/hinic3.ini
-@@ -0,0 +1,9 @@
-+;
-+; Supported features of the 'hinic3' network poll mode driver.
-+;
-+; Refer to default.ini for the full list of available PMD features.
-+;
-+[Features]
-+Linux                = Y
-+x86-64               = Y
-+ARMv8                = Y
-diff --git a/drivers/net/hinic3/base/meson.build b/drivers/net/hinic3/base/meson.build
-new file mode 100644
-index 0000000000..b6a3a6cfe7
---- /dev/null
-+++ b/drivers/net/hinic3/base/meson.build
-@@ -0,0 +1,50 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2025 Huawei Technologies Co., Ltd
-+
-+sources = files(
-+        'hinic3_cmdq.c',
-+        'hinic3_eqs.c',
-+        'hinic3_hw_cfg.c',
-+        'hinic3_hw_comm.c',
-+        'hinic3_hwdev.c',
-+        'hinic3_hwif.c',
-+        'hinic3_mbox.c',
-+        'hinic3_mgmt.c',
-+        'hinic3_nic_cfg.c',
-+        'hinic3_nic_event.c',
-+        'hinic3_wq.c',
-+)
-+
-+extra_flags = []
-+
-+# The driver runs only on arch64 machine, remove 32bit warnings
-+if not dpdk_conf.get('RTE_ARCH_64')
-+    extra_flags += [
-+            '-Wno-int-to-pointer-cast',
-+            '-Wno-pointer-to-int-cast',
-+    ]
-+endif
-+
-+foreach flag: extra_flags
-+    if cc.has_argument(flag)
-+        cflags += flag
-+    endif
-+endforeach
-+
-+deps += ['hash']
-+c_args = cflags
-+includes += include_directories('../')
-+
-+base_lib = static_library(
-+    'spnic_base',
-+    sources,
-+    dependencies: [
-+        static_rte_eal,
-+        static_rte_ethdev,
-+        static_rte_bus_pci,
-+        static_rte_hash,
-+    ],
-+    include_directories: includes,
-+    c_args: c_args,
-+)
-+base_objs = base_lib.extract_all_objects()
-diff --git a/drivers/net/hinic3/meson.build b/drivers/net/hinic3/meson.build
-new file mode 100644
-index 0000000000..42fb5bc194
---- /dev/null
-+++ b/drivers/net/hinic3/meson.build
-@@ -0,0 +1,33 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2025 Huawei Technologies Co., Ltd
-+
-+if not is_linux
-+    build = false
-+    reason = 'only supported on Linux'
-+    subdir_done()
-+endif
-+
-+if (arch_subdir != 'x86' and arch_subdir != 'arm'
-+        or not dpdk_conf.get('RTE_ARCH_64'))
-+    build = false
-+    reason = 'only supported on x86_64 and aarch64'
-+    subdir_done()
-+endif
-+
-+cflags += ['-DHW_CONVERT_ENDIAN']
-+
-+subdir('base')
-+subdir('mml')
-+objs = [base_objs] + [mml_objs]
-+
-+sources = files(
-+        'hinic3_ethdev.c',
-+        'hinic3_fdir.c',
-+        'hinic3_flow.c',
-+        'hinic3_nic_io.c',
-+        'hinic3_rx.c',
-+        'hinic3_tx.c',
-+)
-+
-+includes += include_directories('base')
-+includes += include_directories('mml')
-diff --git a/drivers/net/hinic3/mml/meson.build b/drivers/net/hinic3/mml/meson.build
-index f8d2650d8d..67bba4f067 100644
---- a/drivers/net/hinic3/mml/meson.build
-+++ b/drivers/net/hinic3/mml/meson.build
-@@ -2,36 +2,19 @@
- # Copyright(c) 2025 Huawei Technologies Co., Ltd
- 
- sources = files(
--    'hinic3_dbg.c',
--    'hinic3_mml_cmd.c',
--    'hinic3_mml_ioctl.c',
--    'hinic3_mml_lib.c',
--    'hinic3_mml_main.c',
--    'hinic3_mml_queue.c',
-+        'hinic3_dbg.c',
-+        'hinic3_mml_cmd.c',
-+        'hinic3_mml_ioctl.c',
-+        'hinic3_mml_lib.c',
-+        'hinic3_mml_main.c',
-+        'hinic3_mml_queue.c',
- )
- 
--extra_flags = [
--    '-Wno-cast-qual',
--    '-Wno-format',
--    '-Wno-format-nonliteral',
--    '-Wno-format-security',
--    '-Wno-missing-braces',
--    '-Wno-missing-field-initializers',
--    '-Wno-missing-prototypes',
--    '-Wno-pointer-sign',
--    '-Wno-pointer-to-int-cast',
--    '-Wno-sign-compare',
--    '-Wno-strict-aliasing',
--    '-Wno-unused-parameter',
--    '-Wno-unused-value',
--    '-Wno-unused-variable',
--]
--
- # The driver runs only on arch64 machine, remove 32bit warnings
- if not dpdk_conf.get('RTE_ARCH_64')
-     extra_flags += [
--        '-Wno-int-to-pointer-cast',
--        '-Wno-pointer-to-int-cast',
-+            '-Wno-int-to-pointer-cast',
-+            '-Wno-pointer-to-int-cast',
-     ]
- endif
- 
-diff --git a/drivers/net/meson.build b/drivers/net/meson.build
-index 460eb69e5b..b5442349d4 100644
---- a/drivers/net/meson.build
-+++ b/drivers/net/meson.build
-@@ -23,6 +23,7 @@ drivers = [
-         'failsafe',
-         'gve',
-         'hinic',
-+        'hinic3',
-         'hns3',
-         'intel/e1000',
-         'intel/fm10k',
--- 
-2.47.0.windows.2
+            Bug ID: 1716
+           Summary: virtio_xmit_cleanup failed when vm rx/tx queues from
+                    1024 to 4096
+           Product: DPDK
+           Version: 22.11
+          Hardware: Other
+                OS: All
+            Status: UNCONFIRMED
+          Severity: major
+          Priority: Normal
+         Component: ethdev
+          Assignee: dev@dpdk.org
+          Reporter: updoing@sina.com
+  Target Milestone: ---
 
+Created attachment 319
+  --> https://bugs.dpdk.org/attachment.cgi?id=3D319&action=3Dedit
+viritio patch
+
+In a virtual machine scenario running a DPDK application with virtio driver=
+s,
+when the host machine adjusted the guest VM's transmit/receive queue size f=
+rom
+1024 to 4096, the DPDK application's allocated 2048 mbufs became insufficie=
+nt.
+After this adjustment, the condition vq->vq_nentries - vq->vq_free_thresh w=
+as
+never triggered, resulting in the cleanup operation not occurring.
+
+virtio_dev_rx_queue_setup the third param nb_desc is not used when
+vq->vq_free_cnt great then nb_desc. vq->vq_free_cnt is assigned a value thr=
+ough
+vq->n_nentries when virtio driver has inited. i40e driver vq has a nb_rx_de=
+sc
+value, our dpdk app nb_desc setup 2048, malloc 2048 mbufs, so our dpdk app
+rx/tx burst is failed on the line.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17485065890.7Cdf6.3889295
+Date: Thu, 29 May 2025 10:16:29 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - virtio_xmit_cleanup failed when vm rx/tx queues f=
+rom 1024 to 4096"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1716">1716</a>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Summary</th>
+          <td>virtio_xmit_cleanup failed when vm rx/tx queues from 1024 to =
+4096
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>22.11
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>Other
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>major
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>ethdev
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>updoing&#64;sina.com
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">Created <span class=3D""><a href=
+=3D"attachment.cgi?id=3D319&amp;action=3Ddiff" name=3D"attach_319" title=3D=
+"viritio patch">attachment 319</a> <a href=3D"attachment.cgi?id=3D319&amp;a=
+ction=3Dedit" title=3D"viritio patch">[details]</a></span>
+viritio patch
+
+In a virtual machine scenario running a DPDK application with virtio driver=
+s,
+when the host machine adjusted the guest VM's transmit/receive queue size f=
+rom
+1024 to 4096, the DPDK application's allocated 2048 mbufs became insufficie=
+nt.
+After this adjustment, the condition vq-&gt;vq_nentries - vq-&gt;vq_free_th=
+resh was
+never triggered, resulting in the cleanup operation not occurring.
+
+virtio_dev_rx_queue_setup the third param nb_desc is not used when
+vq-&gt;vq_free_cnt great then nb_desc. vq-&gt;vq_free_cnt is assigned a val=
+ue through
+vq-&gt;n_nentries when virtio driver has inited. i40e driver vq has a nb_rx=
+_desc
+value, our dpdk app nb_desc setup 2048, malloc 2048 mbufs, so our dpdk app
+rx/tx burst is failed on the line.
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1716">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17485065890.7Cdf6.3889295--
