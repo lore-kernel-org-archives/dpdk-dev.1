@@ -2,74 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2852BC5AD49
-	for <dpdk-dev@archiver.kernel.org>; Thu, 29 May 2025 15:44:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1454BC5AD49
+	for <dpdk-dev@archiver.kernel.org>; Thu, 29 May 2025 15:44:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1FF4A427A6;
-	Thu, 29 May 2025 17:43:58 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id E6F9B427A9
- for <dev@dpdk.org>; Thu, 29 May 2025 17:43:56 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54TDqVXu003767
- for <dev@dpdk.org>; Thu, 29 May 2025 08:43:56 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=L
- mvDex0xgj+/9h9g8TilHhjsa4yeeO89sWJz2vP6SB0=; b=gQ0BWE/ckf6b/F9Ss
- F8d3YlkB7IkpPEdC1BjsiQ+012lzDb1llAEWhbVReMHHX+j4xECtiHubTsRxtOLV
- L1PLqMx5etSgKyEXMqJ8Y5CVHa5dbFtnlQ8MGMJMKg1QBFeIv4EeM3MS5STj3cpR
- i5G491E65MOcGq0UwcO2+L0h+dE3AXOksaOKdb/GDlENnpJathgInqiWBpPmfT4s
- VeA2S5/pD10TMWrWRd/lOjNT1gDddXnLHwZaP/1ZuxzkZEH9cB7swepNSDVRYlqH
- I0zB60HnXbqYR2MK4R2eVrw3NlTNVZ7Z2LJ2vWibZX80uzK1VldNaORdRgWfeqSu
- l6Jzw==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46xc7h9rw7-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Thu, 29 May 2025 08:43:56 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 29 May 2025 08:43:55 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 29 May 2025 08:43:55 -0700
-Received: from cavium-System-Product-Name.. (unknown [10.28.37.22])
- by maili.marvell.com (Postfix) with ESMTP id E1C5F3F70AB;
- Thu, 29 May 2025 08:43:52 -0700 (PDT)
-From: <kirankumark@marvell.com>
-To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
- <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
- <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
-CC: <dev@dpdk.org>
-Subject: [PATCH v9 2/2] drivers: add support for IB_BTH header for RSS in cnxk
- device
-Date: Thu, 29 May 2025 21:13:43 +0530
-Message-ID: <20250529154343.1589903-2-kirankumark@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 665D7427AF;
+	Thu, 29 May 2025 17:44:10 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+ by mails.dpdk.org (Postfix) with ESMTP id DF82B427A7
+ for <dev@dpdk.org>; Thu, 29 May 2025 17:44:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1748533450; x=1780069450;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=B80eXcD/Yu8MtvDwqTAp4vg0E1POmkbgql/F1i4pdXM=;
+ b=PbJlsKk3YZfmcja+fBYG77FZG1shPQuOTyQWPIh9ohwcxQasriUZThmb
+ vsRWwtcbPzNvwiaGPVmtoG2LoNUunyKouf1+9BSozd+9SxoCcCoUHuOLn
+ VzrXRiYL2P07OF5uqhhKxboW1NrpA5lvUx3GHKdAkYxFx5ei8oK32psPk
+ gWn7A0InDPMiAWzmq5z/mL/zV1kNTmuVHf42NLgqbcw1I3GtQgKimz7Yt
+ w5XbMdai9MbMNJbTuJgHKWOivDQqS5BeOd1UXeqJlM68iR/17ISaTOCRL
+ if2rGlRYFg4255ZY3m9AgK9K+5R2ALncTnJTcU50YvL0cTyZFmcxU/AcG g==;
+X-CSE-ConnectionGUID: P6spHEbRQFib+jhfOd6LNQ==
+X-CSE-MsgGUID: lmvNO3djQpuFtRdGuDk6og==
+X-IronPort-AV: E=McAfee;i="6700,10204,11448"; a="50480916"
+X-IronPort-AV: E=Sophos;i="6.16,193,1744095600"; d="scan'208";a="50480916"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+ by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 29 May 2025 08:44:03 -0700
+X-CSE-ConnectionGUID: M6OhTU1lQ36QHC5XkFA/yQ==
+X-CSE-MsgGUID: mmIkC7+ETSi5LyNlGcmXkQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,193,1744095600"; d="scan'208";a="143577228"
+Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.31])
+ by fmviesa007.fm.intel.com with ESMTP; 29 May 2025 08:42:54 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Vipin.Varghese@amd.com,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v4] build: reduce use of AVX compiler flags
+Date: Thu, 29 May 2025 16:42:19 +0100
+Message-ID: <20250529154249.1310449-1-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250529154343.1589903-1-kirankumark@marvell.com>
-References: <20250529153908.1571050-1-kirankumark@marvell.com>
- <20250529154343.1589903-1-kirankumark@marvell.com>
+In-Reply-To: <20250325172215.3360590-1-bruce.richardson@intel.com>
+References: <20250325172215.3360590-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: NCCY78nJxKC_0F3pbksd8H011XGw-pCR
-X-Proofpoint-ORIG-GUID: NCCY78nJxKC_0F3pbksd8H011XGw-pCR
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI5MDE1MiBTYWx0ZWRfX549a4YBICQD7
- Xkg2krNs/DOjIaswamnQ78pJvOI0qP72zjnGix2Pwe5Pi1oYczgTfMPf85GlPdPZtk45w4pZeKl
- 5CErwMzntxvTnZK1pQ+Dsd3sFpuBzI8I0q7AJTQLWqYoBmn/GhLVU5XBTBmQyXtUWdqBtPHiJRz
- DIKhdPLXuC2gycnz4DPDER/9Wn6V4lR6hC2FzJEsIiez1UyTHj0Wpv2COkia/iyEpYCuhgFh4fa
- 6DJ4f4vdwTXxccDpiVA/b3nQ2fq84nbudLuvS/XfJUCHfTyUHtFUVSrL7jV/Q/HyWQRUBKcsQ0q
- Ht1GovhoKeiX9cR6J/K99e8LvHcCzylkKyVK9CebPA44tjY7Y8S+coeeXiKJerL1JjKz2mV/VRi
- iDaHjahPqeLTTL2NVFaQ1CPlUNbh+Nu9bJ3FWOHiuG2wCpgvNMoSYKciMuhbTU8CneQSALtv
-X-Authority-Analysis: v=2.4 cv=QcBmvtbv c=1 sm=1 tr=0 ts=683880bc cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=sF3me3CDcygQo1B6QsgA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-29_08,2025-05-29_01,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,56 +60,145 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Kiran Kumar K <kirankumark@marvell.com>
+When doing a build for a target that already has the instruction sets
+for AVX2/AVX512 enabled, skip emitting the AVX compiler flags, or the
+skylake-avx512 '-march' flags, as they are unnecessary. Instead, when
+the default flags produce the desired output, just use them unmodified,
+and don't bother adding in extra enabling flags for AVX2 or AVX-512.
 
-Adding support for IB_BTH header for RSS in cnxk device.
+Depends-on: series-35006 ("doc/linux_gsg: update recommended compiler versions")
 
-Signed-off-by: Kiran Kumar K <kirankumark@marvell.com>
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/common/cnxk/roc_mbox.h | 1 +
- drivers/net/cnxk/cnxk_ethdev.c | 3 +++
- drivers/net/cnxk/cnxk_ethdev.h | 2 +-
- 3 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/common/cnxk/roc_mbox.h b/drivers/common/cnxk/roc_mbox.h
-index a82d120d1d..030556c8dc 100644
---- a/drivers/common/cnxk/roc_mbox.h
-+++ b/drivers/common/cnxk/roc_mbox.h
-@@ -1777,6 +1777,7 @@ struct nix_rss_flowkey_cfg {
- #define FLOW_KEY_TYPE_CH_LEN_90B    BIT(18)
- #define FLOW_KEY_TYPE_CUSTOM0	    BIT(19)
- #define FLOW_KEY_TYPE_VLAN	    BIT(20)
-+#define FLOW_KEY_TYPE_ROCEV2 BIT(24)
- #define FLOW_KEY_TYPE_L4_DST	    BIT(28)
- #define FLOW_KEY_TYPE_L4_SRC	    BIT(29)
- #define FLOW_KEY_TYPE_L3_DST	    BIT(30)
-diff --git a/drivers/net/cnxk/cnxk_ethdev.c b/drivers/net/cnxk/cnxk_ethdev.c
-index 026c61f2c7..9500e92172 100644
---- a/drivers/net/cnxk/cnxk_ethdev.c
-+++ b/drivers/net/cnxk/cnxk_ethdev.c
-@@ -939,6 +939,9 @@ cnxk_rss_ethdev_to_nix(struct cnxk_eth_dev *dev, uint64_t ethdev_rss,
- 	if (ethdev_rss & RTE_ETH_RSS_GTPU)
- 		flowkey_cfg |= FLOW_KEY_TYPE_GTPU;
+V4: Fix error flagged by CI with clang builds without AVX512 - change
+    "cc_avx512_args" to correct "cc_avx512_flags"
+
+V3: put in version check to work around an issues with some meson
+    versions, (hopefully) allowing builds to pass in all CIs. The
+    printout of the extra flags now only happens with meson >= 0.60.2
+
+V2: dropped the doc update for the minimum compiler version.  Based on
+    discussion, that version bump is larger than proposed in RFC and is
+    now a separate patch/series [series 35006 referenced above]
+
+---
+ config/x86/meson.build | 31 ++++++++++++++++++++-----------
+ drivers/meson.build    |  9 +--------
+ lib/meson.build        |  9 +--------
+ 3 files changed, 22 insertions(+), 27 deletions(-)
+
+diff --git a/config/x86/meson.build b/config/x86/meson.build
+index c3564b0011..e6612dbd80 100644
+--- a/config/x86/meson.build
++++ b/config/x86/meson.build
+@@ -4,11 +4,13 @@
+ if is_ms_compiler
+     cc_avx2_flags = ['/arch:AVX2']
+ else
+-    cc_avx2_flags = ['-mavx2']
++    cc_avx2_flags = []
++    if cc.get_define('__AVX2__', args: machine_args) == ''
++        cc_avx2_flags = ['-mavx2']
++    endif
+ endif
  
-+	if (ethdev_rss & RTE_ETH_RSS_IB_BTH)
-+		flowkey_cfg |= FLOW_KEY_TYPE_ROCEV2;
-+
- 	return flowkey_cfg;
- }
+ cc_has_avx512 = false
+-target_has_avx512 = false
  
-diff --git a/drivers/net/cnxk/cnxk_ethdev.h b/drivers/net/cnxk/cnxk_ethdev.h
-index daf80be51b..4f9802c5fa 100644
---- a/drivers/net/cnxk/cnxk_ethdev.h
-+++ b/drivers/net/cnxk/cnxk_ethdev.h
-@@ -59,7 +59,7 @@
- 	(RTE_ETH_RSS_PORT | RTE_ETH_RSS_IP | RTE_ETH_RSS_UDP |                 \
- 	 RTE_ETH_RSS_TCP | RTE_ETH_RSS_SCTP | RTE_ETH_RSS_TUNNEL |             \
- 	 RTE_ETH_RSS_L2_PAYLOAD | CNXK_NIX_RSS_L3_L4_SRC_DST |                 \
--	 RTE_ETH_RSS_LEVEL_MASK | RTE_ETH_RSS_C_VLAN)
-+	 RTE_ETH_RSS_LEVEL_MASK | RTE_ETH_RSS_C_VLAN | RTE_ETH_RSS_IB_BTH)
+ dpdk_conf.set('RTE_ARCH_X86', 1)
+ if dpdk_conf.get('RTE_ARCH_64')
+@@ -65,26 +67,33 @@ if is_linux or cc.get_id() == 'gcc'
+     endif
+ endif
  
- #define CNXK_NIX_TX_OFFLOAD_CAPA                                               \
- 	(RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE | RTE_ETH_TX_OFFLOAD_MT_LOCKFREE |          \
+-cc_avx512_flags = ['-mavx512f', '-mavx512vl', '-mavx512dq', '-mavx512bw', '-mavx512cd']
+-if (binutils_ok and cc.has_multi_arguments(cc_avx512_flags)
++avx512_march_flag = '-march=skylake-avx512'
++cc_avx512_flags = []
++if (binutils_ok and cc.has_argument(avx512_march_flag)
+         and '-mno-avx512f' not in get_option('c_args'))
+     # check if compiler is working with _mm512_extracti64x4_epi64
+     # Ref: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82887
+     code = '''#include <immintrin.h>
+     void test(__m512i zmm){
+         __m256i ymm = _mm512_extracti64x4_epi64(zmm, 0);}'''
+-    result = cc.compiles(code, args : cc_avx512_flags, name : 'AVX512 checking')
++    result = cc.compiles(code, args : [avx512_march_flag], name : 'AVX512 checking')
+     if result == false
+         machine_args += '-mno-avx512f'
+         warning('Broken _mm512_extracti64x4_epi64, disabling AVX512 support')
+     else
+         cc_has_avx512 = true
+-        target_has_avx512 = (
+-                cc.get_define('__AVX512F__', args: machine_args) != '' and
+-                cc.get_define('__AVX512BW__', args: machine_args) != '' and
+-                cc.get_define('__AVX512DQ__', args: machine_args) != '' and
+-                cc.get_define('__AVX512VL__', args: machine_args) != ''
+-            )
++        if cc.get_define('__AVX512F__', args: machine_args) == ''
++            cc_avx512_flags = [avx512_march_flag]
++            if cc.has_argument('-Wno-overriding-option')
++                cc_avx512_flags += '-Wno-overriding-option'
++            endif
++        endif
++    endif
++endif
++if developer_mode and meson.version().version_compare('>=0.60.2')
++    message('Extra C flags needed for AVX2 output: @0@'.format(cc_avx2_flags))
++    if cc_has_avx512
++        message('Extra C flags needed for AVX512 output: @0@'.format(cc_avx512_flags))
+     endif
+ endif
+ 
+diff --git a/drivers/meson.build b/drivers/meson.build
+index b0850bbb24..51c824ea40 100644
+--- a/drivers/meson.build
++++ b/drivers/meson.build
+@@ -267,18 +267,11 @@ foreach subpath:subdirs
+             endif
+             if sources_avx512.length() > 0 and cc_has_avx512
+                 cflags += '-DCC_AVX512_SUPPORT'
+-                avx512_args = [cflags, cc_avx512_flags]
+-                if not target_has_avx512 and cc.has_argument('-march=skylake-avx512')
+-                    avx512_args += '-march=skylake-avx512'
+-                    if cc.has_argument('-Wno-overriding-option')
+-                        avx512_args += '-Wno-overriding-option'
+-                    endif
+-                endif
+                 avx512_lib = static_library(lib_name + '_avx512_lib',
+                         sources_avx512,
+                         dependencies: static_deps,
+                         include_directories: includes,
+-                        c_args: avx512_args)
++                        c_args: [cflags, cc_avx512_flags])
+                 objs += avx512_lib.extract_objects(sources_avx512)
+             endif
+         endif
+diff --git a/lib/meson.build b/lib/meson.build
+index 41fd98f4e9..16389b9c34 100644
+--- a/lib/meson.build
++++ b/lib/meson.build
+@@ -260,18 +260,11 @@ foreach l:libraries
+         endif
+         if sources_avx512.length() > 0 and cc_has_avx512
+             cflags += '-DCC_AVX512_SUPPORT'
+-            avx512_args = [cflags, cflags_avx512, cc_avx512_flags]
+-            if not target_has_avx512 and cc.has_argument('-march=skylake-avx512')
+-                avx512_args += '-march=skylake-avx512'
+-                if cc.has_argument('-Wno-overriding-option')
+-                    avx512_args += '-Wno-overriding-option'
+-                endif
+-            endif
+             avx512_lib = static_library(libname + '_avx512_lib',
+                     sources_avx512,
+                     dependencies: static_deps,
+                     include_directories: includes,
+-                    c_args: avx512_args)
++                    c_args: [cflags, cflags_avx512, cc_avx512_flags])
+             objs += avx512_lib.extract_objects(sources_avx512)
+         endif
+     endif
 -- 
 2.48.1
 
