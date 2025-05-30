@@ -2,46 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65DCCC5B543
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 May 2025 14:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2249C5B543
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 May 2025 14:00:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8C30540DDC;
-	Fri, 30 May 2025 15:58:25 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0718540DF5;
+	Fri, 30 May 2025 15:58:30 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
- by mails.dpdk.org (Postfix) with ESMTP id 9A9DF40DFD
- for <dev@dpdk.org>; Fri, 30 May 2025 15:58:21 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id BE16640DD2
+ for <dev@dpdk.org>; Fri, 30 May 2025 15:58:24 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1748613502; x=1780149502;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=gK8O5QFnCsh+deJt0UaV9H3VZLQJOlcX2LTDDXyDGTk=;
- b=lpP8OejbhciRdqM84KzLYGkGO8I3If/O4nEIJOwMOo9O29d0La3soWYD
- zI8qnNjvghDgxhruDumU19m/r8W5cDsW3K5wg1Urmn+vOm0X/tUe10J0Y
- xT5JZ8d3yWWK2qDp1018BSWTUJf6M4gJf+ji/nylmr6u/C5H2tFhaaT1s
- d7wVFmDzVbzI1LC2sw0fx6mGmE8mNALS9yta9tG1m07OYumGYf+h7G4r9
- uWtoSxxxGNboSgZ6F9nihMU48er3IgX4Km7nS/7OVmMFa0pGZUPrD6oN1
- /j06H59KOYIlMYT0pxS0pmwXubbauw6tmc8jQMlzdGNiUEiZRKoeJZdrp w==;
-X-CSE-ConnectionGUID: jDVe2/ugRTCWt83nACgcfQ==
-X-CSE-MsgGUID: jjEFKPnYSk2wXH4XPKq66g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11449"; a="50809453"
-X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; d="scan'208";a="50809453"
+ t=1748613505; x=1780149505;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=jvvMXmOb4I4VKGqwOOT7VzFPSRyu5+hMlxTvrK/+0oU=;
+ b=SHRRaD7MRRzEFhAL5xKrQvOTUeRV3kImuSt9tknS8iHirtWPamCF8P/N
+ xAKFAocq7MLI9hs3o+KwyzbfI7pRwV6Bd9crkWWRy3xBS3QupW8RZRaj5
+ yr7tar78O4UFkX4Lz/0rBv9/rKp46BZzHnb+LerIYE4pZN0L5BSQeMdLA
+ cHV24X4RCTg/pkRstuZADHcf1/ljwiQQQcPiUplNJEdspzxxFsI06dBXF
+ ATQniGsYvh52iEatGzWny1SFJDpqxY2rCjkbDLOuSNCZE2ilpLM1jFtKo
+ EVtsZPwWVijKkTneAnUWY6q+C6Nnpdb5FgsVwhQsMh0dFOSVKB8qlOalR A==;
+X-CSE-ConnectionGUID: YezIcInMQBy2VNqcgbbf6A==
+X-CSE-MsgGUID: 65sMqIpFRx6+lm6VwOvGxA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11449"; a="50809471"
+X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; d="scan'208";a="50809471"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 30 May 2025 06:58:19 -0700
-X-CSE-ConnectionGUID: b2z4oSgHSLSrB0KdPwNfOw==
-X-CSE-MsgGUID: DPUlfb73SJe38z84k1LVPw==
+ 30 May 2025 06:58:20 -0700
+X-CSE-ConnectionGUID: 4U1SnGfgR1q3bGLyEt4olw==
+X-CSE-MsgGUID: U+oFu6KsQt+lfPBUl8QFxw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; d="scan'208";a="174887543"
+X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; d="scan'208";a="174887568"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by orviesa002.jf.intel.com with ESMTP; 30 May 2025 06:58:18 -0700
+ by orviesa002.jf.intel.com with ESMTP; 30 May 2025 06:58:19 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
-	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Cc: bruce.richardson@intel.com
-Subject: [PATCH v4 22/25] net/ixgbe: use common Rx rearm code
-Date: Fri, 30 May 2025 14:57:18 +0100
-Message-ID: <94bf598f2c12704cc60e4201bc670c70c2795227.1748612804.git.anatoly.burakov@intel.com>
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v4 23/25] net/intel: support wider x86 vectors for Rx rearm
+Date: Fri, 30 May 2025 14:57:19 +0100
+Message-ID: <b7864d189e468484a6af5aa774ed566b2a37818f.1748612804.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <cover.1748612803.git.anatoly.burakov@intel.com>
  <cover.1748612803.git.anatoly.burakov@intel.com>
@@ -61,15 +60,11 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The ixgbe driver has implementations of vectorized mbuf rearm code that
-is identical to the ones in the common code, so just use those.
-
-Since ixgbe Rx descriptors are always 16-byte wide, force using 16-byte
-definitions in the common headers with a define flag.
-
-While we're at it, also make sure to use common definitions for things like
-burst size, rearm threshold, and descriptors per loop, which is currently
-defined separately in each driver.
+Currently, for 32-byte descriptor format, only SSE instruction set is
+supported. Add implementation for AVX2 and AVX512 instruction sets. Since
+we are using Rx descriptor definitions from common code, we can just use
+the generic descriptor definition, as we only ever write the first 16 bytes
+of it, and the layout is always the same for that part.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
@@ -77,230 +72,434 @@ Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 Notes:
     v3 -> v4:
     - Use the common descriptor format instead of constant propagation
-    - Use some definitional hackery to work around IXGBE descriptors always being 16-byte
-    - Use the new unified definitions for burst size, rearm threshold, and descriptors per loop
+    - Syntax and whitespace cleanups
 
- drivers/net/intel/ixgbe/ixgbe_rxtx.h          | 21 ++++-
- drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c | 67 +---------------
- drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c  | 76 +------------------
- 3 files changed, 26 insertions(+), 138 deletions(-)
+ drivers/net/intel/common/rx_vec_x86.h | 339 ++++++++++++++------------
+ 1 file changed, 183 insertions(+), 156 deletions(-)
 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.h b/drivers/net/intel/ixgbe/ixgbe_rxtx.h
-index d1847a33dd..0640336156 100644
---- a/drivers/net/intel/ixgbe/ixgbe_rxtx.h
-+++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.h
-@@ -5,9 +5,24 @@
- #ifndef _IXGBE_RXTX_H_
- #define _IXGBE_RXTX_H_
- 
-+/*
-+ * For IXGBE, descriptor size is always 16 bytes, so in order to have all
-+ * vectorized and common code building correctly and with proper offsets, force
-+ * the common parts to consider IXGBE descriptors to be 16-bytes in size.
-+ */
-+#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
-+#define IXGBE_FORCE_16BYTE_DESC
-+#define RTE_NET_INTEL_USE_16BYTE_DESC
-+#endif
-+
- #include "../common/rx.h"
- #include "../common/tx.h"
- 
-+#ifdef IXGBE_FORCE_16BYTE_DESC
-+#undef RTE_NET_INTEL_USE_16BYTE_DESC
-+#undef IXGBE_FORCE_16BYTE_DESC
-+#endif
-+
- /*
-  * Rings setup and release.
-  *
-@@ -34,10 +49,10 @@
- #define IXGBE_RX_MAX_BURST            CI_RX_MAX_BURST
- #define IXGBE_TX_MAX_FREE_BUF_SZ      64
- 
--#define IXGBE_VPMD_DESCS_PER_LOOP     4
-+#define IXGBE_VPMD_DESCS_PER_LOOP     CI_VPMD_DESCS_PER_LOOP
- 
--#define IXGBE_VPMD_RXQ_REARM_THRESH   32
--#define IXGBE_VPMD_RX_BURST           IXGBE_VPMD_RXQ_REARM_THRESH
-+#define IXGBE_VPMD_RXQ_REARM_THRESH   CI_VPMD_RX_REARM_THRESH
-+#define IXGBE_VPMD_RX_BURST           CI_VPMD_RX_BURST
- 
- #define RX_RING_SZ ((IXGBE_MAX_RING_DESC + IXGBE_RX_MAX_BURST) * \
- 		    sizeof(union ixgbe_adv_rx_desc))
-diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c
-index 82c655e769..481ff61c60 100644
---- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c
-@@ -11,72 +11,13 @@
- #include "ixgbe_rxtx.h"
- #include "ixgbe_rxtx_vec_common.h"
- 
-+#include "../common/rx_vec_arm.h"
-+
- static inline void
- ixgbe_rxq_rearm(struct ci_rx_queue *rxq)
- {
--	int i;
--	uint16_t rx_id;
--	volatile union ixgbe_adv_rx_desc *rxdp;
--	struct ci_rx_entry *rxep = &rxq->sw_ring[rxq->rxrearm_start];
--	struct rte_mbuf *mb0, *mb1;
--	uint64x2_t dma_addr0, dma_addr1;
--	uint64x2_t zero = vdupq_n_u64(0);
--	uint64_t paddr;
--	uint8x8_t p;
--
--	rxdp = rxq->ixgbe_rx_ring + rxq->rxrearm_start;
--
--	/* Pull 'n' more MBUFs into the software ring */
--	if (unlikely(rte_mempool_get_bulk(rxq->mp,
--					  (void *)rxep,
--					  IXGBE_VPMD_RXQ_REARM_THRESH) < 0)) {
--		if (rxq->rxrearm_nb + IXGBE_VPMD_RXQ_REARM_THRESH >=
--		    rxq->nb_rx_desc) {
--			for (i = 0; i < IXGBE_VPMD_DESCS_PER_LOOP; i++) {
--				rxep[i].mbuf = &rxq->fake_mbuf;
--				vst1q_u64(RTE_CAST_PTR(uint64_t *, &rxdp[i].read),
--					  zero);
--			}
--		}
--		rte_eth_devices[rxq->port_id].data->rx_mbuf_alloc_failed +=
--			IXGBE_VPMD_RXQ_REARM_THRESH;
--		return;
--	}
--
--	p = vld1_u8((uint8_t *)&rxq->mbuf_initializer);
--
--	/* Initialize the mbufs in vector, process 2 mbufs in one loop */
--	for (i = 0; i < IXGBE_VPMD_RXQ_REARM_THRESH; i += 2, rxep += 2) {
--		mb0 = rxep[0].mbuf;
--		mb1 = rxep[1].mbuf;
--
--		/*
--		 * Flush mbuf with pkt template.
--		 * Data to be rearmed is 6 bytes long.
--		 */
--		vst1_u8((uint8_t *)&mb0->rearm_data, p);
--		paddr = mb0->buf_iova + RTE_PKTMBUF_HEADROOM;
--		dma_addr0 = vsetq_lane_u64(paddr, zero, 0);
--		/* flush desc with pa dma_addr */
--		vst1q_u64(RTE_CAST_PTR(uint64_t *, &rxdp++->read), dma_addr0);
--
--		vst1_u8((uint8_t *)&mb1->rearm_data, p);
--		paddr = mb1->buf_iova + RTE_PKTMBUF_HEADROOM;
--		dma_addr1 = vsetq_lane_u64(paddr, zero, 0);
--		vst1q_u64(RTE_CAST_PTR(uint64_t *, &rxdp++->read), dma_addr1);
--	}
--
--	rxq->rxrearm_start += IXGBE_VPMD_RXQ_REARM_THRESH;
--	if (rxq->rxrearm_start >= rxq->nb_rx_desc)
--		rxq->rxrearm_start = 0;
--
--	rxq->rxrearm_nb -= IXGBE_VPMD_RXQ_REARM_THRESH;
--
--	rx_id = (uint16_t)((rxq->rxrearm_start == 0) ?
--			     (rxq->nb_rx_desc - 1) : (rxq->rxrearm_start - 1));
--
--	/* Update the tail pointer on the NIC */
--	IXGBE_PCI_REG_WRITE(rxq->qrx_tail, rx_id);
-+	RTE_BUILD_BUG_ON(sizeof(union ci_rx_desc) != sizeof(union ixgbe_adv_rx_desc));
-+	ci_rxq_rearm(rxq);
+diff --git a/drivers/net/intel/common/rx_vec_x86.h b/drivers/net/intel/common/rx_vec_x86.h
+index 7c57016df7..43f7c59449 100644
+--- a/drivers/net/intel/common/rx_vec_x86.h
++++ b/drivers/net/intel/common/rx_vec_x86.h
+@@ -43,206 +43,244 @@ _ci_rxq_rearm_get_bufs(struct ci_rx_queue *rxq)
+ 	return 0;
  }
  
- static inline void
-diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
-index f6aa3f9f9a..03d16e7b36 100644
---- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
-@@ -10,83 +10,15 @@
- #include "ixgbe_rxtx.h"
- #include "ixgbe_rxtx_vec_common.h"
- 
-+#include "../common/rx_vec_x86.h"
-+
- #include <rte_vect.h>
- 
- static inline void
- ixgbe_rxq_rearm(struct ci_rx_queue *rxq)
+-/*
+- * SSE code path can handle both 16-byte and 32-byte descriptors with one code
+- * path, as we only ever write 16 bytes at a time.
+- */
+-static __rte_always_inline void
+-_ci_rxq_rearm_sse(struct ci_rx_queue *rxq)
++static __rte_always_inline __m128i
++_ci_rxq_rearm_desc_sse(const __m128i vaddr)
  {
--	int i;
--	uint16_t rx_id;
--	volatile union ixgbe_adv_rx_desc *rxdp;
--	struct ci_rx_entry *rxep = &rxq->sw_ring[rxq->rxrearm_start];
--	struct rte_mbuf *mb0, *mb1;
--	__m128i hdr_room = _mm_set_epi64x(RTE_PKTMBUF_HEADROOM,
--			RTE_PKTMBUF_HEADROOM);
--	__m128i dma_addr0, dma_addr1;
--
--	const __m128i hba_msk = _mm_set_epi64x(0, UINT64_MAX);
--
--	rxdp = rxq->ixgbe_rx_ring + rxq->rxrearm_start;
--
--	/* Pull 'n' more MBUFs into the software ring */
--	if (rte_mempool_get_bulk(rxq->mp,
--				 (void *)rxep,
--				 IXGBE_VPMD_RXQ_REARM_THRESH) < 0) {
--		if (rxq->rxrearm_nb + IXGBE_VPMD_RXQ_REARM_THRESH >=
--		    rxq->nb_rx_desc) {
--			dma_addr0 = _mm_setzero_si128();
--			for (i = 0; i < IXGBE_VPMD_DESCS_PER_LOOP; i++) {
--				rxep[i].mbuf = &rxq->fake_mbuf;
--				_mm_store_si128(RTE_CAST_PTR(__m128i *, &rxdp[i].read),
--						dma_addr0);
--			}
--		}
--		rte_eth_devices[rxq->port_id].data->rx_mbuf_alloc_failed +=
--			IXGBE_VPMD_RXQ_REARM_THRESH;
--		return;
--	}
--
--	/* Initialize the mbufs in vector, process 2 mbufs in one loop */
--	for (i = 0; i < IXGBE_VPMD_RXQ_REARM_THRESH; i += 2, rxep += 2) {
--		__m128i vaddr0, vaddr1;
--
--		mb0 = rxep[0].mbuf;
--		mb1 = rxep[1].mbuf;
--
+ 	const __m128i hdroom = _mm_set1_epi64x(RTE_PKTMBUF_HEADROOM);
+ 	const __m128i zero = _mm_setzero_si128();
++
++	/* add headroom to address values */
++	__m128i reg = _mm_add_epi64(vaddr, hdroom);
++
++#if RTE_IOVA_IN_MBUF
++	/* load buf_addr(lo 64bit) and buf_iova(hi 64bit) */
++	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, buf_iova) !=
++			 offsetof(struct rte_mbuf, buf_addr) + 8);
++	/* move IOVA to Packet Buffer Address, erase Header Buffer Address */
++	reg = _mm_unpackhi_epi64(reg, zero);
++#else
++	/* erase Header Buffer Address */
++	reg = _mm_unpacklo_epi64(reg, zero);
++#endif
++	return reg;
++}
++
++static __rte_always_inline void
++_ci_rxq_rearm_sse(struct ci_rx_queue *rxq)
++{
+ 	const uint16_t rearm_thresh = CI_VPMD_RX_REARM_THRESH;
+ 	struct ci_rx_entry *rxp = &rxq->sw_ring[rxq->rxrearm_start];
++	/* SSE writes 16-bytes regardless of descriptor size */
++	const uint8_t desc_per_reg = 1;
++	const uint8_t desc_per_iter = desc_per_reg * 2;
+ 	volatile union ci_rx_desc *rxdp;
+ 	int i;
+ 
+ 	rxdp = &rxq->rx_ring[rxq->rxrearm_start];
+ 
+ 	/* Initialize the mbufs in vector, process 2 mbufs in one loop */
+-	for (i = 0; i < rearm_thresh; i += 2, rxp += 2, rxdp += 2) {
++	for (i = 0; i < rearm_thresh;
++			i += desc_per_iter,
++			rxp += desc_per_iter,
++			rxdp += desc_per_iter) {
+ 		struct rte_mbuf *mb0 = rxp[0].mbuf;
+ 		struct rte_mbuf *mb1 = rxp[1].mbuf;
+ 
+-#if RTE_IOVA_IN_MBUF
 -		/* load buf_addr(lo 64bit) and buf_iova(hi 64bit) */
 -		RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, buf_iova) !=
 -				offsetof(struct rte_mbuf, buf_addr) + 8);
--		vaddr0 = _mm_loadu_si128((__m128i *)&(mb0->buf_addr));
--		vaddr1 = _mm_loadu_si128((__m128i *)&(mb1->buf_addr));
--
--		/* convert pa to dma_addr hdr/data */
--		dma_addr0 = _mm_unpackhi_epi64(vaddr0, vaddr0);
--		dma_addr1 = _mm_unpackhi_epi64(vaddr1, vaddr1);
--
--		/* add headroom to pa values */
--		dma_addr0 = _mm_add_epi64(dma_addr0, hdr_room);
--		dma_addr1 = _mm_add_epi64(dma_addr1, hdr_room);
--
--		/* set Header Buffer Address to zero */
--		dma_addr0 =  _mm_and_si128(dma_addr0, hba_msk);
--		dma_addr1 =  _mm_and_si128(dma_addr1, hba_msk);
+-#endif
+-		__m128i addr0 = _mm_loadu_si128((__m128i *)&mb0->buf_addr);
+-		__m128i addr1 = _mm_loadu_si128((__m128i *)&mb1->buf_addr);
++		const __m128i vaddr0 = _mm_loadu_si128((const __m128i *)&mb0->buf_addr);
++		const __m128i vaddr1 = _mm_loadu_si128((const __m128i *)&mb1->buf_addr);
+ 
+-		/* add headroom to address values */
+-		addr0 = _mm_add_epi64(addr0, hdroom);
+-		addr1 = _mm_add_epi64(addr1, hdroom);
++		const __m128i reg0 = _ci_rxq_rearm_desc_sse(vaddr0);
++		const __m128i reg1 = _ci_rxq_rearm_desc_sse(vaddr1);
+ 
+-#if RTE_IOVA_IN_MBUF
+-		/* move IOVA to Packet Buffer Address, erase Header Buffer Address */
+-		addr0 = _mm_unpackhi_epi64(addr0, zero);
+-		addr0 = _mm_unpackhi_epi64(addr1, zero);
+-#else
+-		/* erase Header Buffer Address */
+-		addr0 = _mm_unpacklo_epi64(addr0, zero);
+-		addr1 = _mm_unpacklo_epi64(addr1, zero);
+-#endif
 -
 -		/* flush desc with pa dma_addr */
--		_mm_store_si128(RTE_CAST_PTR(__m128i *, &rxdp++->read), dma_addr0);
--		_mm_store_si128(RTE_CAST_PTR(__m128i *, &rxdp++->read), dma_addr1);
--	}
--
--	rxq->rxrearm_start += IXGBE_VPMD_RXQ_REARM_THRESH;
--	if (rxq->rxrearm_start >= rxq->nb_rx_desc)
--		rxq->rxrearm_start = 0;
--
--	rxq->rxrearm_nb -= IXGBE_VPMD_RXQ_REARM_THRESH;
--
--	rx_id = (uint16_t) ((rxq->rxrearm_start == 0) ?
--			     (rxq->nb_rx_desc - 1) : (rxq->rxrearm_start - 1));
--
--	/* Update the tail pointer on the NIC */
--	IXGBE_PCI_REG_WC_WRITE(rxq->qrx_tail, rx_id);
-+	RTE_BUILD_BUG_ON(sizeof(union ci_rx_desc) != sizeof(union ixgbe_adv_rx_desc));
-+	ci_rxq_rearm(rxq, CI_RX_VEC_LEVEL_SSE);
+-		_mm_store_si128(RTE_CAST_PTR(__m128i *, &rxdp[0]), addr0);
+-		_mm_store_si128(RTE_CAST_PTR(__m128i *, &rxdp[1]), addr1);
++		/* flush descriptors */
++		_mm_store_si128(RTE_CAST_PTR(__m128i *, &rxdp[0]), reg0);
++		_mm_store_si128(RTE_CAST_PTR(__m128i *, &rxdp[1]), reg1);
+ 	}
  }
  
- #ifdef RTE_LIB_SECURITY
+-#ifdef RTE_NET_INTEL_USE_16BYTE_DESC
+ #ifdef __AVX2__
+-/* AVX2 version for 16-byte descriptors, handles 4 buffers at a time */
+-static __rte_always_inline void
+-_ci_rxq_rearm_avx2(struct ci_rx_queue *rxq)
++static __rte_always_inline __m256i
++_ci_rxq_rearm_desc_avx2(const __m128i vaddr0, const __m128i vaddr1)
+ {
+-	struct ci_rx_entry *rxp = &rxq->sw_ring[rxq->rxrearm_start];
+-	const uint16_t rearm_thresh = CI_VPMD_RX_REARM_THRESH;
+-	const __m256i hdroom = _mm256_set1_epi64x(RTE_PKTMBUF_HEADROOM);
++	const __m256i hdr_room = _mm256_set1_epi64x(RTE_PKTMBUF_HEADROOM);
+ 	const __m256i zero = _mm256_setzero_si256();
++
++	/* merge by casting 0 to 256-bit and inserting 1 into the high lanes */
++	__m256i reg = _mm256_inserti128_si256(_mm256_castsi128_si256(vaddr0), vaddr1, 1);
++
++	/* add headroom to address values */
++	reg = _mm256_add_epi64(reg, hdr_room);
++
++#if RTE_IOVA_IN_MBUF
++	/* load buf_addr(lo 64bit) and buf_iova(hi 64bit) */
++	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, buf_iova) !=
++			offsetof(struct rte_mbuf, buf_addr) + 8);
++	/* extract IOVA addr into Packet Buffer Address, erase Header Buffer Address */
++	reg = _mm256_unpackhi_epi64(reg, zero);
++#else
++	/* erase Header Buffer Address */
++	reg = _mm256_unpacklo_epi64(reg, zero);
++#endif
++	return reg;
++}
++
++static __rte_always_inline void
++_ci_rxq_rearm_avx2(struct ci_rx_queue *rxq)
++{
++	struct ci_rx_entry *rxp = &rxq->sw_ring[rxq->rxrearm_start];
++	const uint16_t rearm_thresh = CI_VPMD_RX_REARM_THRESH;
++	/* how many descriptors can fit into a register */
++	const uint8_t desc_per_reg = sizeof(__m256i) / sizeof(union ci_rx_desc);
++	/* how many descriptors can fit into one loop iteration */
++	const uint8_t desc_per_iter = desc_per_reg * 2;
+ 	volatile union ci_rx_desc *rxdp;
+ 	int i;
+ 
+-	RTE_BUILD_BUG_ON(sizeof(union ci_rx_desc) != 16);
+-
+ 	rxdp = &rxq->rx_ring[rxq->rxrearm_start];
+ 
+-	/* Initialize the mbufs in vector, process 4 mbufs in one loop */
+-	for (i = 0; i < rearm_thresh; i += 4, rxp += 4, rxdp += 4) {
+-		struct rte_mbuf *mb0 = rxp[0].mbuf;
+-		struct rte_mbuf *mb1 = rxp[1].mbuf;
+-		struct rte_mbuf *mb2 = rxp[2].mbuf;
+-		struct rte_mbuf *mb3 = rxp[3].mbuf;
++	/* Initialize the mbufs in vector, process 2 or 4 mbufs in one loop */
++	for (i = 0; i < rearm_thresh;
++			i += desc_per_iter,
++			rxp += desc_per_iter,
++			rxdp += desc_per_iter) {
++		__m256i reg0, reg1;
+ 
+-#if RTE_IOVA_IN_MBUF
+-		/* load buf_addr(lo 64bit) and buf_iova(hi 64bit) */
+-		RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, buf_iova) !=
+-				offsetof(struct rte_mbuf, buf_addr) + 8);
+-#endif
+-		const __m128i vaddr0 = _mm_loadu_si128((__m128i *)&mb0->buf_addr);
+-		const __m128i vaddr1 = _mm_loadu_si128((__m128i *)&mb1->buf_addr);
+-		const __m128i vaddr2 = _mm_loadu_si128((__m128i *)&mb2->buf_addr);
+-		const __m128i vaddr3 = _mm_loadu_si128((__m128i *)&mb3->buf_addr);
++		if (desc_per_iter == 2) {
++			/* 16 byte descriptor, 16 byte zero, times two */
++			const __m128i zero = _mm_setzero_si128();
++			const struct rte_mbuf *mb0 = rxp[0].mbuf;
++			const struct rte_mbuf *mb1 = rxp[1].mbuf;
+ 
+-		/**
+-		 * merge 0 & 1, by casting 0 to 256-bit and inserting 1
+-		 * into the high lanes. Similarly for 2 & 3
+-		 */
+-		const __m256i vaddr0_256 = _mm256_castsi128_si256(vaddr0);
+-		const __m256i vaddr2_256 = _mm256_castsi128_si256(vaddr2);
++			const __m128i vaddr0 = _mm_loadu_si128((const __m128i *)&mb0->buf_addr);
++			const __m128i vaddr1 = _mm_loadu_si128((const __m128i *)&mb1->buf_addr);
+ 
+-		__m256i addr0_1 = _mm256_inserti128_si256(vaddr0_256, vaddr1, 1);
+-		__m256i addr2_3 = _mm256_inserti128_si256(vaddr2_256, vaddr3, 1);
++			reg0 = _ci_rxq_rearm_desc_avx2(vaddr0, zero);
++			reg1 = _ci_rxq_rearm_desc_avx2(vaddr1, zero);
++		} else {
++			/* 16 byte descriptor times four */
++			const struct rte_mbuf *mb0 = rxp[0].mbuf;
++			const struct rte_mbuf *mb1 = rxp[1].mbuf;
++			const struct rte_mbuf *mb2 = rxp[2].mbuf;
++			const struct rte_mbuf *mb3 = rxp[3].mbuf;
+ 
+-		/* add headroom to address values */
+-		addr0_1 = _mm256_add_epi64(addr0_1, hdroom);
+-		addr0_1 = _mm256_add_epi64(addr0_1, hdroom);
++			const __m128i vaddr0 = _mm_loadu_si128((const __m128i *)&mb0->buf_addr);
++			const __m128i vaddr1 = _mm_loadu_si128((const __m128i *)&mb1->buf_addr);
++			const __m128i vaddr2 = _mm_loadu_si128((const __m128i *)&mb2->buf_addr);
++			const __m128i vaddr3 = _mm_loadu_si128((const __m128i *)&mb3->buf_addr);
+ 
+-#if RTE_IOVA_IN_MBUF
+-		/* extract IOVA addr into Packet Buffer Address, erase Header Buffer Address */
+-		addr0_1 = _mm256_unpackhi_epi64(addr0_1, zero);
+-		addr2_3 = _mm256_unpackhi_epi64(addr2_3, zero);
+-#else
+-		/* erase Header Buffer Address */
+-		addr0_1 = _mm256_unpacklo_epi64(addr0_1, zero);
+-		addr2_3 = _mm256_unpacklo_epi64(addr2_3, zero);
+-#endif
++			reg0 = _ci_rxq_rearm_desc_avx2(vaddr0, vaddr1);
++			reg1 = _ci_rxq_rearm_desc_avx2(vaddr2, vaddr3);
++		}
+ 
+-		/* flush desc with pa dma_addr */
+-		_mm256_store_si256(RTE_CAST_PTR(__m256i *, &rxdp[0]), addr0_1);
+-		_mm256_store_si256(RTE_CAST_PTR(__m256i *, &rxdp[2]), addr2_3);
++		/* flush descriptors */
++		_mm256_store_si256(RTE_CAST_PTR(__m256i *, &rxdp[0]), reg0);
++		_mm256_store_si256(RTE_CAST_PTR(__m256i *, &rxdp[2]), reg1);
+ 	}
+ }
+ #endif /* __AVX2__ */
+ 
+ #ifdef __AVX512VL__
+-/* AVX512 version for 16-byte descriptors, handles 8 buffers at a time */
+-static __rte_always_inline void
+-_ci_rxq_rearm_avx512(struct ci_rx_queue *rxq)
++static __rte_always_inline __m512i
++_ci_rxq_rearm_desc_avx512(const __m128i vaddr0, const __m128i vaddr1,
++		const __m128i vaddr2, const __m128i vaddr3)
+ {
+-	struct ci_rx_entry *rxp = &rxq->sw_ring[rxq->rxrearm_start];
+-	const uint16_t rearm_thresh = CI_VPMD_RX_REARM_THRESH;
+-	const __m512i hdroom = _mm512_set1_epi64(RTE_PKTMBUF_HEADROOM);
+ 	const __m512i zero = _mm512_setzero_si512();
++	const __m512i hdroom = _mm512_set1_epi64(RTE_PKTMBUF_HEADROOM);
++
++	/**
++	 * merge 0 & 1, by casting 0 to 256-bit and inserting 1 into the high
++	 * lanes. Similarly for 2 & 3.
++	 */
++	const __m256i vaddr0_1 = _mm256_inserti128_si256(_mm256_castsi128_si256(vaddr0), vaddr1, 1);
++	const __m256i vaddr2_3 = _mm256_inserti128_si256(_mm256_castsi128_si256(vaddr2), vaddr3, 1);
++	/*
++	 * merge 0+1 & 2+3, by casting 0+1 to 512-bit and inserting 2+3 into the
++	 * high lanes.
++	 */
++	__m512i reg = _mm512_inserti64x4(_mm512_castsi256_si512(vaddr0_1), vaddr2_3, 1);
++
++	/* add headroom to address values */
++	reg = _mm512_add_epi64(reg, hdroom);
++
++#if RTE_IOVA_IN_MBUF
++	/* load buf_addr(lo 64bit) and buf_iova(hi 64bit) */
++	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, buf_iova) !=
++			offsetof(struct rte_mbuf, buf_addr) + 8);
++	/* extract IOVA addr into Packet Buffer Address, erase Header Buffer Address */
++	reg = _mm512_unpackhi_epi64(reg, zero);
++#else
++	/* erase Header Buffer Address */
++	reg = _mm512_unpacklo_epi64(reg, zero);
++#endif
++	return reg;
++}
++
++static __rte_always_inline void
++_ci_rxq_rearm_avx512(struct ci_rx_queue *rxq)
++{
++	struct ci_rx_entry *rxp = &rxq->sw_ring[rxq->rxrearm_start];
++	const uint16_t rearm_thresh = CI_VPMD_RX_REARM_THRESH;
++	/* how many descriptors can fit into a register */
++	const uint8_t desc_per_reg = sizeof(__m512i) / sizeof(union ci_rx_desc);
++	/* how many descriptors can fit into one loop iteration */
++	const uint8_t desc_per_iter = desc_per_reg * 2;
+ 	volatile union ci_rx_desc *rxdp;
+ 	int i;
+ 
+-	RTE_BUILD_BUG_ON(sizeof(union ci_rx_desc) != 16);
+-
+ 	rxdp = &rxq->rx_ring[rxq->rxrearm_start];
+ 
+-	/* Initialize the mbufs in vector, process 8 mbufs in one loop */
+-	for (i = 0; i < rearm_thresh; i += 8, rxp += 8, rxdp += 8) {
+-		struct rte_mbuf *mb0 = rxp[0].mbuf;
+-		struct rte_mbuf *mb1 = rxp[1].mbuf;
+-		struct rte_mbuf *mb2 = rxp[2].mbuf;
+-		struct rte_mbuf *mb3 = rxp[3].mbuf;
+-		struct rte_mbuf *mb4 = rxp[4].mbuf;
+-		struct rte_mbuf *mb5 = rxp[5].mbuf;
+-		struct rte_mbuf *mb6 = rxp[6].mbuf;
+-		struct rte_mbuf *mb7 = rxp[7].mbuf;
++	/* Initialize the mbufs in vector, process 4 or 8 mbufs in one loop */
++	for (i = 0; i < rearm_thresh;
++			i += desc_per_iter,
++			rxp += desc_per_iter,
++			rxdp += desc_per_iter) {
++		__m512i reg0, reg1;
+ 
+-#if RTE_IOVA_IN_MBUF
+-		/* load buf_addr(lo 64bit) and buf_iova(hi 64bit) */
+-		RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, buf_iova) !=
+-				offsetof(struct rte_mbuf, buf_addr) + 8);
+-#endif
+-		const __m128i vaddr0 = _mm_loadu_si128((__m128i *)&mb0->buf_addr);
+-		const __m128i vaddr1 = _mm_loadu_si128((__m128i *)&mb1->buf_addr);
+-		const __m128i vaddr2 = _mm_loadu_si128((__m128i *)&mb2->buf_addr);
+-		const __m128i vaddr3 = _mm_loadu_si128((__m128i *)&mb3->buf_addr);
+-		const __m128i vaddr4 = _mm_loadu_si128((__m128i *)&mb4->buf_addr);
+-		const __m128i vaddr5 = _mm_loadu_si128((__m128i *)&mb5->buf_addr);
+-		const __m128i vaddr6 = _mm_loadu_si128((__m128i *)&mb6->buf_addr);
+-		const __m128i vaddr7 = _mm_loadu_si128((__m128i *)&mb7->buf_addr);
++		if (desc_per_iter == 4) {
++			/* 16-byte descriptor, 16 byte zero, times four */
++			const __m128i zero = _mm_setzero_si128();
++			const struct rte_mbuf *mb0 = rxp[0].mbuf;
++			const struct rte_mbuf *mb1 = rxp[1].mbuf;
++			const struct rte_mbuf *mb2 = rxp[2].mbuf;
++			const struct rte_mbuf *mb3 = rxp[3].mbuf;
+ 
+-		/**
+-		 * merge 0 & 1, by casting 0 to 256-bit and inserting 1
+-		 * into the high lanes. Similarly for 2 & 3, and so on.
+-		 */
+-		const __m256i addr0_256 = _mm256_castsi128_si256(vaddr0);
+-		const __m256i addr2_256 = _mm256_castsi128_si256(vaddr2);
+-		const __m256i addr4_256 = _mm256_castsi128_si256(vaddr4);
+-		const __m256i addr6_256 = _mm256_castsi128_si256(vaddr6);
++			const __m128i vaddr0 = _mm_loadu_si128((const __m128i *)&mb0->buf_addr);
++			const __m128i vaddr1 = _mm_loadu_si128((const __m128i *)&mb1->buf_addr);
++			const __m128i vaddr2 = _mm_loadu_si128((const __m128i *)&mb2->buf_addr);
++			const __m128i vaddr3 = _mm_loadu_si128((const __m128i *)&mb3->buf_addr);
+ 
+-		const __m256i addr0_1 = _mm256_inserti128_si256(addr0_256, vaddr1, 1);
+-		const __m256i addr2_3 = _mm256_inserti128_si256(addr2_256, vaddr3, 1);
+-		const __m256i addr4_5 = _mm256_inserti128_si256(addr4_256, vaddr5, 1);
+-		const __m256i addr6_7 = _mm256_inserti128_si256(addr6_256, vaddr7, 1);
++			reg0 = _ci_rxq_rearm_desc_avx512(vaddr0, zero, vaddr1, zero);
++			reg1 = _ci_rxq_rearm_desc_avx512(vaddr2, zero, vaddr3, zero);
++		} else {
++			/* 16-byte descriptor times eight */
++			const struct rte_mbuf *mb0 = rxp[0].mbuf;
++			const struct rte_mbuf *mb1 = rxp[1].mbuf;
++			const struct rte_mbuf *mb2 = rxp[2].mbuf;
++			const struct rte_mbuf *mb3 = rxp[3].mbuf;
++			const struct rte_mbuf *mb4 = rxp[4].mbuf;
++			const struct rte_mbuf *mb5 = rxp[5].mbuf;
++			const struct rte_mbuf *mb6 = rxp[6].mbuf;
++			const struct rte_mbuf *mb7 = rxp[7].mbuf;
+ 
+-		/**
+-		 * merge 0_1 & 2_3, by casting 0_1 to 512-bit and inserting 2_3
+-		 * into the high lanes. Similarly for 4_5 & 6_7, and so on.
+-		 */
+-		const __m512i addr0_1_512 = _mm512_castsi256_si512(addr0_1);
+-		const __m512i addr4_5_512 = _mm512_castsi256_si512(addr4_5);
++			const __m128i vaddr0 = _mm_loadu_si128((const __m128i *)&mb0->buf_addr);
++			const __m128i vaddr1 = _mm_loadu_si128((const __m128i *)&mb1->buf_addr);
++			const __m128i vaddr2 = _mm_loadu_si128((const __m128i *)&mb2->buf_addr);
++			const __m128i vaddr3 = _mm_loadu_si128((const __m128i *)&mb3->buf_addr);
++			const __m128i vaddr4 = _mm_loadu_si128((const __m128i *)&mb4->buf_addr);
++			const __m128i vaddr5 = _mm_loadu_si128((const __m128i *)&mb5->buf_addr);
++			const __m128i vaddr6 = _mm_loadu_si128((const __m128i *)&mb6->buf_addr);
++			const __m128i vaddr7 = _mm_loadu_si128((const __m128i *)&mb7->buf_addr);
+ 
+-		__m512i addr0_3 = _mm512_inserti64x4(addr0_1_512, addr2_3, 1);
+-		__m512i addr4_7 = _mm512_inserti64x4(addr4_5_512, addr6_7, 1);
+-
+-		/* add headroom to address values */
+-		addr0_3 = _mm512_add_epi64(addr0_3, hdroom);
+-		addr4_7 = _mm512_add_epi64(addr4_7, hdroom);
+-
+-#if RTE_IOVA_IN_MBUF
+-		/* extract IOVA addr into Packet Buffer Address, erase Header Buffer Address */
+-		addr0_3 = _mm512_unpackhi_epi64(addr0_3, zero);
+-		addr4_7 = _mm512_unpackhi_epi64(addr4_7, zero);
+-#else
+-		/* erase Header Buffer Address */
+-		addr0_3 = _mm512_unpacklo_epi64(addr0_3, zero);
+-		addr4_7 = _mm512_unpacklo_epi64(addr4_7, zero);
+-#endif
++			reg0 = _ci_rxq_rearm_desc_avx512(vaddr0, vaddr1, vaddr2, vaddr3);
++			reg1 = _ci_rxq_rearm_desc_avx512(vaddr4, vaddr5, vaddr6, vaddr7);
++		}
+ 
+ 		/* flush desc with pa dma_addr */
+-		_mm512_store_si512(RTE_CAST_PTR(__m512i *, &rxdp[0]), addr0_3);
+-		_mm512_store_si512(RTE_CAST_PTR(__m512i *, &rxdp[4]), addr4_7);
++		_mm512_store_si512(RTE_CAST_PTR(__m512i *, &rxdp[0]), reg0);
++		_mm512_store_si512(RTE_CAST_PTR(__m512i *, &rxdp[4]), reg1);
+ 	}
+ }
+ #endif /* __AVX512VL__ */
+-#endif /* RTE_NET_INTEL_USE_16BYTE_DESC */
+ 
+ static __rte_always_inline void
+ ci_rxq_rearm(struct ci_rx_queue *rxq, const enum ci_rx_vec_level vec_level)
+@@ -254,7 +292,6 @@ ci_rxq_rearm(struct ci_rx_queue *rxq, const enum ci_rx_vec_level vec_level)
+ 	if (_ci_rxq_rearm_get_bufs(rxq) < 0)
+ 		return;
+ 
+-#ifdef RTE_NET_INTEL_USE_16BYTE_DESC
+ 	switch (vec_level) {
+ 	case CI_RX_VEC_LEVEL_AVX512:
+ #ifdef __AVX512VL__
+@@ -272,20 +309,10 @@ ci_rxq_rearm(struct ci_rx_queue *rxq, const enum ci_rx_vec_level vec_level)
+ 		/* fall back to SSE */
+ 		/* fall through */
+ #endif
+-	case CI_RX_VEC_LEVEL_SSE:
+-		_ci_rxq_rearm_sse(rxq, desc_len);
+-		break;
+-	}
+-#else
+-	/* for 32-byte descriptors only support SSE */
+-	switch (vec_level) {
+-	case CI_RX_VEC_LEVEL_AVX512:
+-	case CI_RX_VEC_LEVEL_AVX2:
+ 	case CI_RX_VEC_LEVEL_SSE:
+ 		_ci_rxq_rearm_sse(rxq);
+ 		break;
+ 	}
+-#endif /* RTE_NET_INTEL_USE_16BYTE_DESC */
+ 
+ 	rxq->rxrearm_start += rearm_thresh;
+ 	if (rxq->rxrearm_start >= rxq->nb_rx_desc)
 -- 
 2.47.1
 
