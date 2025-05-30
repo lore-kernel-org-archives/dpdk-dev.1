@@ -2,46 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E60CBC5AD49
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 May 2025 13:59:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 399E4C5AD49
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 May 2025 13:59:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DEACA40A71;
-	Fri, 30 May 2025 15:58:05 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 687ED40B99;
+	Fri, 30 May 2025 15:58:07 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
- by mails.dpdk.org (Postfix) with ESMTP id E945C40697
- for <dev@dpdk.org>; Fri, 30 May 2025 15:58:01 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5C49E40A67
+ for <dev@dpdk.org>; Fri, 30 May 2025 15:58:04 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1748613482; x=1780149482;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=mTJIEJA+UHnV9yxOMNJuDHoB8n9m4Xw6HPRlI5tEXw4=;
- b=Jdd/usrdv62HRRn4OaweL0qEBWpN7DMIt1a/u4TK+ilbW7S83hzA4A6Q
- VvF9hkFD/7NuAnIjfSxlAp8z2zQ7+Usha0iC5rwKUJbZo+p3NHsw41yUY
- XmZoDo0KGeQXqMvA3+fVfl0qJ8jv6FTOZNkCtfZ2xDpDZIEoJ3RbBKEOl
- dbnOyTQUlsmoifK1fq0eh6iSkeTm5eq8TqiYcZp831OPIeBPfb9ANN+Kp
- b550H8/aa3SmJuqzeRxj7uKcTzUX4xvI76hhRKM0W59L/MLK344iVSZXn
- eLWkoB8P5WUjIhtWBgOxSwsuB28raFBMP2K75XVTazcefY+uq/sLJZknO A==;
-X-CSE-ConnectionGUID: v/+HPEpsSp+otOuY3L3Lgg==
-X-CSE-MsgGUID: TpmvwI6gR4SWLPH6jtOUAA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11449"; a="50809395"
-X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; d="scan'208";a="50809395"
+ t=1748613484; x=1780149484;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=EnMBF6r+zCmRXSw9lc/6r/IeandHXiWO7+mbWjgeUnE=;
+ b=S0vRzybD/suGDprdddgvcTR/BC/lryHmRhnx5LZ00llwqR4KKtqs3Ypn
+ amCsgzHgetlHIZEUAANvQK/G/TFQaXwX2UdqFKIOp+cGNtk0sLpN+snuI
+ 5W5ar+7J0lmWdgfV6SWLedtbdXpWSU1yo/BM5y+ntiTpTJwNPs8ExQXJz
+ 3ieWYKVbdu7X9eGeCpsF7QwTVnJ2KWfh+5BDEHzrZsi4zxLsJeFhvYHjW
+ orVHqDzF2Wo34pC7Ee3GcRBjTRI9vb7hb5nZm5s+OoVo48wKuUGziu4a6
+ SX/VDvIno/LGKdOrXHKby1xf80B0RuiMIVngJt3n3FqIa9Z44dCrjoeWl w==;
+X-CSE-ConnectionGUID: iPZfiU5jT6iz9bupcgU5wA==
+X-CSE-MsgGUID: LOr4Lrf1Q+KLEjNjmUW6hw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11449"; a="50809398"
+X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; d="scan'208";a="50809398"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 30 May 2025 06:58:01 -0700
-X-CSE-ConnectionGUID: TeteY03oQ0CQEuAXRX/SpA==
-X-CSE-MsgGUID: +iM2Tds/SgyhaQfZ5InYsg==
+ 30 May 2025 06:58:04 -0700
+X-CSE-ConnectionGUID: A7FcvHyIT8uxeXJOjwDOWQ==
+X-CSE-MsgGUID: jJ4stYftRACbfZp9FCnkZw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; d="scan'208";a="174887471"
+X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; d="scan'208";a="174887483"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by orviesa002.jf.intel.com with ESMTP; 30 May 2025 06:58:00 -0700
+ by orviesa002.jf.intel.com with ESMTP; 30 May 2025 06:58:02 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Ian Stokes <ian.stokes@intel.com>
-Cc: bruce.richardson@intel.com
-Subject: [PATCH v4 14/25] net/iavf: clean up definitions
-Date: Fri, 30 May 2025 14:57:10 +0100
-Message-ID: <cb9a7f1a509f4dcbfc12819097ceeab4b9873cb2.1748612803.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH v4 15/25] net/ixgbe: create common Rx queue structure
+Date: Fri, 30 May 2025 14:57:11 +0100
+Message-ID: <dcde3665a06b052fef2c722e8c940bf41ab73e4f.1748612803.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <cover.1748612803.git.anatoly.burakov@intel.com>
  <cover.1748612803.git.anatoly.burakov@intel.com>
@@ -61,636 +60,879 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This commit does the following cleanups:
+In preparation for deduplication effort, generalize the Rx queue structure.
 
-- Mark vector-PMD related definitions with a special naming convention
-- Create "descriptors per loop" for different vector implementations
-  (regular for SSE, Neon, AltiVec, wide for AVX2, AVX512)
-- Make definitions' names match naming conventions used in other drivers
+The entire Rx queue structure is moved to common/rx.h, clarifying the
+comments where necessary, and separating common parts from ixgbe-specific
+parts.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
 
 Notes:
     v3 -> v4:
-    - Add this commit
+    - Separate out some of the changes from this commit into previous commits
+    - Rename CI_RX_BURST to CI_RX_MAX_BURST to match the driver naming convention
 
- drivers/net/intel/iavf/iavf_rxtx.c            |  2 +-
- drivers/net/intel/iavf/iavf_rxtx.h            | 11 ++--
- drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c   | 52 +++++++++----------
- drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c | 49 +++++++++--------
- drivers/net/intel/iavf/iavf_rxtx_vec_common.h | 20 +++----
- drivers/net/intel/iavf/iavf_rxtx_vec_neon.c   | 14 ++---
- drivers/net/intel/iavf/iavf_rxtx_vec_sse.c    | 20 +++----
- 7 files changed, 82 insertions(+), 86 deletions(-)
+ drivers/net/intel/common/rx.h                 |  67 ++++++++++-
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c        |   8 +-
+ .../ixgbe/ixgbe_recycle_mbufs_vec_common.c    |   6 +-
+ drivers/net/intel/ixgbe/ixgbe_rxtx.c          | 110 +++++++++---------
+ drivers/net/intel/ixgbe/ixgbe_rxtx.h          |  65 +----------
+ .../net/intel/ixgbe/ixgbe_rxtx_vec_common.h   |   4 +-
+ drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c |  18 +--
+ drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c  |  18 +--
+ 8 files changed, 150 insertions(+), 146 deletions(-)
 
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
-index fd6c7d3a3e..2aed22800e 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx.c
-@@ -212,7 +212,7 @@ static inline bool
- check_tx_vec_allow(struct ci_tx_queue *txq)
+diff --git a/drivers/net/intel/common/rx.h b/drivers/net/intel/common/rx.h
+index abb01ba5e7..80a9f21303 100644
+--- a/drivers/net/intel/common/rx.h
++++ b/drivers/net/intel/common/rx.h
+@@ -10,14 +10,75 @@
+ #include <rte_mbuf.h>
+ #include <rte_ethdev.h>
+ 
+-#define CI_RX_BURST 32
++#define CI_RX_MAX_BURST 32
++
++struct ci_rx_queue;
++
++struct ci_rx_entry {
++	struct rte_mbuf *mbuf; /* mbuf associated with RX descriptor. */
++};
++
++struct ci_rx_entry_sc {
++	struct rte_mbuf *fbuf; /* First segment of the fragmented packet.*/
++};
++
++/**
++ * Structure associated with each RX queue.
++ */
++struct ci_rx_queue {
++	struct rte_mempool  *mp; /**< mbuf pool to populate RX ring. */
++	union { /* RX ring virtual address */
++		volatile union ixgbe_adv_rx_desc *ixgbe_rx_ring;
++	};
++	volatile uint8_t *qrx_tail;   /**< register address of tail */
++	struct ci_rx_entry *sw_ring; /**< address of RX software ring. */
++	struct ci_rx_entry_sc *sw_sc_ring; /**< address of scattered Rx software ring. */
++	rte_iova_t rx_ring_phys_addr; /**< RX ring DMA address. */
++	struct rte_mbuf *pkt_first_seg; /**< First segment of current packet. */
++	struct rte_mbuf *pkt_last_seg; /**< Last segment of current packet. */
++	/** hold packets to return to application */
++	struct rte_mbuf *rx_stage[CI_RX_MAX_BURST * 2];
++	uint16_t nb_rx_desc; /**< number of RX descriptors. */
++	uint16_t rx_tail;  /**< current value of tail register. */
++	uint16_t rx_nb_avail; /**< nr of staged pkts ready to ret to app */
++	uint16_t nb_rx_hold; /**< number of held free RX desc. */
++	uint16_t rx_next_avail; /**< idx of next staged pkt to ret to app */
++	uint16_t rx_free_thresh; /**< max free RX desc to hold. */
++	uint16_t rx_free_trigger; /**< triggers rx buffer allocation */
++	uint16_t rxrearm_nb;     /**< number of remaining to be re-armed */
++	uint16_t rxrearm_start;  /**< the idx we start the re-arming from */
++	uint16_t queue_id; /**< RX queue index. */
++	uint16_t port_id;  /**< Device port identifier. */
++	uint16_t reg_idx;  /**< RX queue register index. */
++	uint8_t crc_len;  /**< 0 if CRC stripped, 4 otherwise. */
++	bool rx_deferred_start; /**< queue is not started on dev start. */
++	bool vector_rx; /**< indicates that vector RX is in use */
++	bool drop_en;  /**< if 1, drop packets if no descriptors are available. */
++	uint64_t mbuf_initializer; /**< value to init mbufs */
++	uint64_t offloads; /**< Rx offloads with RTE_ETH_RX_OFFLOAD_* */
++	/** need to alloc dummy mbuf, for wraparound when scanning hw ring */
++	struct rte_mbuf fake_mbuf;
++	const struct rte_memzone *mz;
++	union {
++		struct { /* ixgbe specific values */
++			/** indicates that IPsec RX feature is in use */
++			uint8_t using_ipsec;
++			/** Packet type mask for different NICs. */
++			uint16_t pkt_type_mask;
++			/** UDP frames with a 0 checksum can be marked as checksum errors. */
++			uint8_t rx_udp_csum_zero_err;
++			/** flags to set in mbuf when a vlan is detected. */
++			uint64_t vlan_flags;
++		};
++	};
++};
+ 
+ static inline uint16_t
+ ci_rx_reassemble_packets(struct rte_mbuf **rx_bufs, uint16_t nb_bufs, uint8_t *split_flags,
+ 		struct rte_mbuf **pkt_first_seg, struct rte_mbuf **pkt_last_seg,
+ 		const uint8_t crc_len)
  {
- 	if (!(txq->offloads & IAVF_TX_NO_VECTOR_FLAGS) &&
--	    txq->tx_rs_thresh >= IAVF_VPMD_TX_MAX_BURST &&
-+	    txq->tx_rs_thresh >= IAVF_VPMD_TX_BURST &&
- 	    txq->tx_rs_thresh <= IAVF_VPMD_TX_MAX_FREE_BUF) {
- 		PMD_INIT_LOG(DEBUG, "Vector tx can be enabled on this txq.");
- 		return true;
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.h b/drivers/net/intel/iavf/iavf_rxtx.h
-index 6198643605..8c0bb5475d 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.h
-+++ b/drivers/net/intel/iavf/iavf_rxtx.h
-@@ -23,11 +23,12 @@
- #define IAVF_RX_MAX_DATA_BUF_SIZE (16 * 1024 - 128)
- 
- /* used for Vector PMD */
--#define IAVF_VPMD_RX_MAX_BURST    32
--#define IAVF_VPMD_TX_MAX_BURST    32
--#define IAVF_RXQ_REARM_THRESH     32
--#define IAVF_VPMD_DESCS_PER_LOOP  4
--#define IAVF_VPMD_TX_MAX_FREE_BUF 64
-+#define IAVF_VPMD_RX_BURST             32
-+#define IAVF_VPMD_TX_BURST             32
-+#define IAVF_VPMD_RXQ_REARM_THRESH     32
-+#define IAVF_VPMD_DESCS_PER_LOOP       4
-+#define IAVF_VPMD_DESCS_PER_LOOP_WIDE  8
-+#define IAVF_VPMD_TX_MAX_FREE_BUF      64
- 
- #define IAVF_TX_NO_VECTOR_FLAGS (				 \
- 		RTE_ETH_TX_OFFLOAD_VLAN_INSERT |		 \
-diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-index d94a8b0ae1..40b265183f 100644
---- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-@@ -20,8 +20,6 @@ _iavf_recv_raw_pkts_vec_avx2(struct iavf_rx_queue *rxq,
- 			     uint16_t nb_pkts, uint8_t *split_packet,
- 			     bool offload)
+-	struct rte_mbuf *pkts[CI_RX_BURST] = {0}; /*finished pkts*/
++	struct rte_mbuf *pkts[CI_RX_MAX_BURST] = {0}; /*finished pkts*/
+ 	struct rte_mbuf *start = *pkt_first_seg;
+ 	struct rte_mbuf *end = *pkt_last_seg;
+ 	unsigned int pkt_idx, buf_idx;
+@@ -97,7 +158,7 @@ static inline bool
+ ci_rxq_vec_capable(uint16_t nb_desc, uint16_t rx_free_thresh, uint64_t offloads)
  {
--#define IAVF_DESCS_PER_LOOP_AVX 8
--
- 	/* const uint32_t *ptype_tbl = rxq->vsi->adapter->ptype_tbl; */
- 	const uint32_t *type_table = rxq->vsi->adapter->ptype_tbl;
+ 	if (!rte_is_power_of_2(nb_desc) ||
+-			rx_free_thresh < CI_RX_BURST ||
++			rx_free_thresh < CI_RX_MAX_BURST ||
+ 			(nb_desc % rx_free_thresh) != 0)
+ 		return false;
  
-@@ -34,13 +32,13 @@ _iavf_recv_raw_pkts_vec_avx2(struct iavf_rx_queue *rxq,
- 
- 	rte_prefetch0(rxdp);
- 
--	/* nb_pkts has to be floor-aligned to IAVF_DESCS_PER_LOOP_AVX */
--	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, IAVF_DESCS_PER_LOOP_AVX);
-+	/* nb_pkts has to be floor-aligned to IAVF_VPMD_DESCS_PER_LOOP_WIDE */
-+	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, IAVF_VPMD_DESCS_PER_LOOP_WIDE);
- 
- 	/* See if we need to rearm the RX queue - gives the prefetch a bit
- 	 * of time to act
- 	 */
--	if (rxq->rxrearm_nb > IAVF_RXQ_REARM_THRESH)
-+	if (rxq->rxrearm_nb > IAVF_VPMD_RXQ_REARM_THRESH)
- 		iavf_rxq_rearm(rxq);
- 
- 	/* Before we start moving massive data around, check to see if
-@@ -178,8 +176,8 @@ _iavf_recv_raw_pkts_vec_avx2(struct iavf_rx_queue *rxq,
- 	uint16_t i, received;
- 
- 	for (i = 0, received = 0; i < nb_pkts;
--	     i += IAVF_DESCS_PER_LOOP_AVX,
--	     rxdp += IAVF_DESCS_PER_LOOP_AVX) {
-+	     i += IAVF_VPMD_DESCS_PER_LOOP_WIDE,
-+	     rxdp += IAVF_VPMD_DESCS_PER_LOOP_WIDE) {
- 		/* step 1, copy over 8 mbuf pointers to rx_pkts array */
- 		_mm256_storeu_si256((void *)&rx_pkts[i],
- 				    _mm256_loadu_si256((void *)&sw_ring[i]));
-@@ -217,7 +215,7 @@ _iavf_recv_raw_pkts_vec_avx2(struct iavf_rx_queue *rxq,
- 		if (split_packet) {
- 			int j;
- 
--			for (j = 0; j < IAVF_DESCS_PER_LOOP_AVX; j++)
-+			for (j = 0; j < IAVF_VPMD_DESCS_PER_LOOP_WIDE; j++)
- 				rte_mbuf_prefetch_part2(rx_pkts[i + j]);
- 		}
- 
-@@ -436,7 +434,7 @@ _iavf_recv_raw_pkts_vec_avx2(struct iavf_rx_queue *rxq,
- 			split_bits = _mm_shuffle_epi8(split_bits, eop_shuffle);
- 			*(uint64_t *)split_packet =
- 				_mm_cvtsi128_si64(split_bits);
--			split_packet += IAVF_DESCS_PER_LOOP_AVX;
-+			split_packet += IAVF_VPMD_DESCS_PER_LOOP_WIDE;
- 		}
- 
- 		/* perform dd_check */
-@@ -452,7 +450,7 @@ _iavf_recv_raw_pkts_vec_avx2(struct iavf_rx_queue *rxq,
- 				(_mm_cvtsi128_si64
- 					(_mm256_castsi256_si128(status0_7)));
- 		received += burst;
--		if (burst != IAVF_DESCS_PER_LOOP_AVX)
-+		if (burst != IAVF_VPMD_DESCS_PER_LOOP_WIDE)
- 			break;
- 	}
- 
-@@ -492,8 +490,6 @@ _iavf_recv_raw_pkts_vec_avx2_flex_rxd(struct iavf_rx_queue *rxq,
- 				      uint16_t nb_pkts, uint8_t *split_packet,
- 				      bool offload)
+diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+index f1fd271a0a..df1eecc3c1 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
++++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+@@ -2022,7 +2022,7 @@ ixgbe_vlan_hw_strip_bitmap_set(struct rte_eth_dev *dev, uint16_t queue, bool on)
  {
--#define IAVF_DESCS_PER_LOOP_AVX 8
--
- 	struct iavf_adapter *adapter = rxq->vsi->adapter;
+ 	struct ixgbe_hwstrip *hwstrip =
+ 		IXGBE_DEV_PRIVATE_TO_HWSTRIP_BITMAP(dev->data->dev_private);
+-	struct ixgbe_rx_queue *rxq;
++	struct ci_rx_queue *rxq;
  
- #ifndef RTE_NET_INTEL_USE_16BYTE_DESC
-@@ -509,13 +505,13 @@ _iavf_recv_raw_pkts_vec_avx2_flex_rxd(struct iavf_rx_queue *rxq,
- 
- 	rte_prefetch0(rxdp);
- 
--	/* nb_pkts has to be floor-aligned to IAVF_DESCS_PER_LOOP_AVX */
--	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, IAVF_DESCS_PER_LOOP_AVX);
-+	/* nb_pkts has to be floor-aligned to IAVF_VPMD_DESCS_PER_LOOP_WIDE */
-+	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, IAVF_VPMD_DESCS_PER_LOOP_WIDE);
- 
- 	/* See if we need to rearm the RX queue - gives the prefetch a bit
- 	 * of time to act
- 	 */
--	if (rxq->rxrearm_nb > IAVF_RXQ_REARM_THRESH)
-+	if (rxq->rxrearm_nb > IAVF_VPMD_RXQ_REARM_THRESH)
- 		iavf_rxq_rearm(rxq);
- 
- 	/* Before we start moving massive data around, check to see if
-@@ -725,8 +721,8 @@ _iavf_recv_raw_pkts_vec_avx2_flex_rxd(struct iavf_rx_queue *rxq,
- 	uint16_t i, received;
- 
- 	for (i = 0, received = 0; i < nb_pkts;
--	     i += IAVF_DESCS_PER_LOOP_AVX,
--	     rxdp += IAVF_DESCS_PER_LOOP_AVX) {
-+	     i += IAVF_VPMD_DESCS_PER_LOOP_WIDE,
-+	     rxdp += IAVF_VPMD_DESCS_PER_LOOP_WIDE) {
- 		/* step 1, copy over 8 mbuf pointers to rx_pkts array */
- 		_mm256_storeu_si256((void *)&rx_pkts[i],
- 				    _mm256_loadu_si256((void *)&sw_ring[i]));
-@@ -782,7 +778,7 @@ _iavf_recv_raw_pkts_vec_avx2_flex_rxd(struct iavf_rx_queue *rxq,
- 		if (split_packet) {
- 			int j;
- 
--			for (j = 0; j < IAVF_DESCS_PER_LOOP_AVX; j++)
-+			for (j = 0; j < IAVF_VPMD_DESCS_PER_LOOP_WIDE; j++)
- 				rte_mbuf_prefetch_part2(rx_pkts[i + j]);
- 		}
- 
-@@ -1344,7 +1340,7 @@ _iavf_recv_raw_pkts_vec_avx2_flex_rxd(struct iavf_rx_queue *rxq,
- 			split_bits = _mm_shuffle_epi8(split_bits, eop_shuffle);
- 			*(uint64_t *)split_packet =
- 				_mm_cvtsi128_si64(split_bits);
--			split_packet += IAVF_DESCS_PER_LOOP_AVX;
-+			split_packet += IAVF_VPMD_DESCS_PER_LOOP_WIDE;
- 		}
- 
- 		/* perform dd_check */
-@@ -1407,7 +1403,7 @@ _iavf_recv_raw_pkts_vec_avx2_flex_rxd(struct iavf_rx_queue *rxq,
- 			rxq->hw_time_update = rte_get_timer_cycles() / (rte_get_timer_hz() / 1000);
- 		}
- #endif
--		if (burst != IAVF_DESCS_PER_LOOP_AVX)
-+		if (burst != IAVF_VPMD_DESCS_PER_LOOP_WIDE)
- 			break;
- 	}
- 
-@@ -1477,7 +1473,7 @@ iavf_recv_scattered_burst_vec_avx2(void *rx_queue, struct rte_mbuf **rx_pkts,
- 				   uint16_t nb_pkts, bool offload)
- {
- 	struct iavf_rx_queue *rxq = rx_queue;
--	uint8_t split_flags[IAVF_VPMD_RX_MAX_BURST] = {0};
-+	uint8_t split_flags[IAVF_VPMD_RX_BURST] = {0};
- 
- 	/* get some new buffers */
- 	uint16_t nb_bufs = _iavf_recv_raw_pkts_vec_avx2(rxq, rx_pkts, nb_pkts,
-@@ -1520,12 +1516,12 @@ iavf_recv_scattered_pkts_vec_avx2_common(void *rx_queue, struct rte_mbuf **rx_pk
- {
- 	uint16_t retval = 0;
- 
--	while (nb_pkts > IAVF_VPMD_RX_MAX_BURST) {
-+	while (nb_pkts > IAVF_VPMD_RX_BURST) {
- 		uint16_t burst = iavf_recv_scattered_burst_vec_avx2(rx_queue,
--				rx_pkts + retval, IAVF_VPMD_RX_MAX_BURST, offload);
-+				rx_pkts + retval, IAVF_VPMD_RX_BURST, offload);
- 		retval += burst;
- 		nb_pkts -= burst;
--		if (burst < IAVF_VPMD_RX_MAX_BURST)
-+		if (burst < IAVF_VPMD_RX_BURST)
- 			return retval;
- 	}
- 	return retval + iavf_recv_scattered_burst_vec_avx2(rx_queue,
-@@ -1566,7 +1562,7 @@ iavf_recv_scattered_burst_vec_avx2_flex_rxd(void *rx_queue,
- 					    uint16_t nb_pkts, bool offload)
- {
- 	struct iavf_rx_queue *rxq = rx_queue;
--	uint8_t split_flags[IAVF_VPMD_RX_MAX_BURST] = {0};
-+	uint8_t split_flags[IAVF_VPMD_RX_BURST] = {0};
- 
- 	/* get some new buffers */
- 	uint16_t nb_bufs = _iavf_recv_raw_pkts_vec_avx2_flex_rxd(rxq,
-@@ -1610,14 +1606,14 @@ iavf_recv_scattered_pkts_vec_avx2_flex_rxd_common(void *rx_queue,
- {
- 	uint16_t retval = 0;
- 
--	while (nb_pkts > IAVF_VPMD_RX_MAX_BURST) {
-+	while (nb_pkts > IAVF_VPMD_RX_BURST) {
- 		uint16_t burst =
- 			iavf_recv_scattered_burst_vec_avx2_flex_rxd
--			(rx_queue, rx_pkts + retval, IAVF_VPMD_RX_MAX_BURST,
-+			(rx_queue, rx_pkts + retval, IAVF_VPMD_RX_BURST,
- 			 offload);
- 		retval += burst;
- 		nb_pkts -= burst;
--		if (burst < IAVF_VPMD_RX_MAX_BURST)
-+		if (burst < IAVF_VPMD_RX_BURST)
- 			return retval;
- 	}
- 	return retval + iavf_recv_scattered_burst_vec_avx2_flex_rxd(rx_queue,
-diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
-index 895b8717f7..53bc69ecf6 100644
---- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
-@@ -6,7 +6,6 @@
- 
- #include <rte_vect.h>
- 
--#define IAVF_DESCS_PER_LOOP_AVX 8
- #define PKTLEN_SHIFT 10
- 
- /******************************************************************************
-@@ -51,13 +50,13 @@ _iavf_recv_raw_pkts_vec_avx512(struct iavf_rx_queue *rxq,
- 
- 	rte_prefetch0(rxdp);
- 
--	/* nb_pkts has to be floor-aligned to IAVF_DESCS_PER_LOOP_AVX */
--	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, IAVF_DESCS_PER_LOOP_AVX);
-+	/* nb_pkts has to be floor-aligned to IAVF_VPMD_DESCS_PER_LOOP_WIDE */
-+	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, IAVF_VPMD_DESCS_PER_LOOP_WIDE);
- 
- 	/* See if we need to rearm the RX queue - gives the prefetch a bit
- 	 * of time to act
- 	 */
--	if (rxq->rxrearm_nb > IAVF_RXQ_REARM_THRESH)
-+	if (rxq->rxrearm_nb > IAVF_VPMD_RXQ_REARM_THRESH)
- 		iavf_rxq_rearm(rxq);
- 
- 	/* Before we start moving massive data around, check to see if
-@@ -148,8 +147,8 @@ _iavf_recv_raw_pkts_vec_avx512(struct iavf_rx_queue *rxq,
- 	uint16_t i, received;
- 
- 	for (i = 0, received = 0; i < nb_pkts;
--	     i += IAVF_DESCS_PER_LOOP_AVX,
--	     rxdp += IAVF_DESCS_PER_LOOP_AVX) {
-+	     i += IAVF_VPMD_DESCS_PER_LOOP_WIDE,
-+	     rxdp += IAVF_VPMD_DESCS_PER_LOOP_WIDE) {
- 		/* step 1, copy over 8 mbuf pointers to rx_pkts array */
- 		_mm256_storeu_si256((void *)&rx_pkts[i],
- 				    _mm256_loadu_si256((void *)&sw_ring[i]));
-@@ -196,7 +195,7 @@ _iavf_recv_raw_pkts_vec_avx512(struct iavf_rx_queue *rxq,
- 		if (split_packet) {
- 			int j;
- 
--			for (j = 0; j < IAVF_DESCS_PER_LOOP_AVX; j++)
-+			for (j = 0; j < IAVF_VPMD_DESCS_PER_LOOP_WIDE; j++)
- 				rte_mbuf_prefetch_part2(rx_pkts[i + j]);
- 		}
- 
-@@ -527,7 +526,7 @@ _iavf_recv_raw_pkts_vec_avx512(struct iavf_rx_queue *rxq,
- 			split_bits = _mm_shuffle_epi8(split_bits, eop_shuffle);
- 			*(uint64_t *)split_packet =
- 				_mm_cvtsi128_si64(split_bits);
--			split_packet += IAVF_DESCS_PER_LOOP_AVX;
-+			split_packet += IAVF_VPMD_DESCS_PER_LOOP_WIDE;
- 		}
- 
- 		/* perform dd_check */
-@@ -543,7 +542,7 @@ _iavf_recv_raw_pkts_vec_avx512(struct iavf_rx_queue *rxq,
- 				(_mm_cvtsi128_si64
- 					(_mm256_castsi256_si128(status0_7)));
- 		received += burst;
--		if (burst != IAVF_DESCS_PER_LOOP_AVX)
-+		if (burst != IAVF_VPMD_DESCS_PER_LOOP_WIDE)
- 			break;
- 	}
- 
-@@ -600,13 +599,13 @@ _iavf_recv_raw_pkts_vec_avx512_flex_rxd(struct iavf_rx_queue *rxq,
- 
- 	rte_prefetch0(rxdp);
- 
--	/* nb_pkts has to be floor-aligned to IAVF_DESCS_PER_LOOP_AVX */
--	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, IAVF_DESCS_PER_LOOP_AVX);
-+	/* nb_pkts has to be floor-aligned to IAVF_VPMD_DESCS_PER_LOOP_WIDE */
-+	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, IAVF_VPMD_DESCS_PER_LOOP_WIDE);
- 
- 	/* See if we need to rearm the RX queue - gives the prefetch a bit
- 	 * of time to act
- 	 */
--	if (rxq->rxrearm_nb > IAVF_RXQ_REARM_THRESH)
-+	if (rxq->rxrearm_nb > IAVF_VPMD_RXQ_REARM_THRESH)
- 		iavf_rxq_rearm(rxq);
- 
- 	/* Before we start moving massive data around, check to see if
-@@ -716,8 +715,8 @@ _iavf_recv_raw_pkts_vec_avx512_flex_rxd(struct iavf_rx_queue *rxq,
- 	uint16_t i, received;
- 
- 	for (i = 0, received = 0; i < nb_pkts;
--	     i += IAVF_DESCS_PER_LOOP_AVX,
--	     rxdp += IAVF_DESCS_PER_LOOP_AVX) {
-+	     i += IAVF_VPMD_DESCS_PER_LOOP_WIDE,
-+	     rxdp += IAVF_VPMD_DESCS_PER_LOOP_WIDE) {
- 		/* step 1, copy over 8 mbuf pointers to rx_pkts array */
- 		_mm256_storeu_si256((void *)&rx_pkts[i],
- 				    _mm256_loadu_si256((void *)&sw_ring[i]));
-@@ -765,7 +764,7 @@ _iavf_recv_raw_pkts_vec_avx512_flex_rxd(struct iavf_rx_queue *rxq,
- 		if (split_packet) {
- 			int j;
- 
--			for (j = 0; j < IAVF_DESCS_PER_LOOP_AVX; j++)
-+			for (j = 0; j < IAVF_VPMD_DESCS_PER_LOOP_WIDE; j++)
- 				rte_mbuf_prefetch_part2(rx_pkts[i + j]);
- 		}
- 
-@@ -1532,7 +1531,7 @@ _iavf_recv_raw_pkts_vec_avx512_flex_rxd(struct iavf_rx_queue *rxq,
- 			split_bits = _mm_shuffle_epi8(split_bits, eop_shuffle);
- 			*(uint64_t *)split_packet =
- 				_mm_cvtsi128_si64(split_bits);
--			split_packet += IAVF_DESCS_PER_LOOP_AVX;
-+			split_packet += IAVF_VPMD_DESCS_PER_LOOP_WIDE;
- 		}
- 
- 		/* perform dd_check */
-@@ -1597,7 +1596,7 @@ _iavf_recv_raw_pkts_vec_avx512_flex_rxd(struct iavf_rx_queue *rxq,
- 		}
- #endif
- #endif
--		if (burst != IAVF_DESCS_PER_LOOP_AVX)
-+		if (burst != IAVF_VPMD_DESCS_PER_LOOP_WIDE)
- 			break;
- 	}
- 
-@@ -1654,7 +1653,7 @@ iavf_recv_scattered_burst_vec_avx512(void *rx_queue, struct rte_mbuf **rx_pkts,
- 				     uint16_t nb_pkts, bool offload)
- {
- 	struct iavf_rx_queue *rxq = rx_queue;
--	uint8_t split_flags[IAVF_VPMD_RX_MAX_BURST] = {0};
-+	uint8_t split_flags[IAVF_VPMD_RX_BURST] = {0};
- 
- 	/* get some new buffers */
- 	uint16_t nb_bufs = _iavf_recv_raw_pkts_vec_avx512(rxq, rx_pkts, nb_pkts,
-@@ -1697,12 +1696,12 @@ iavf_recv_scattered_pkts_vec_avx512_cmn(void *rx_queue, struct rte_mbuf **rx_pkt
- {
- 	uint16_t retval = 0;
- 
--	while (nb_pkts > IAVF_VPMD_RX_MAX_BURST) {
-+	while (nb_pkts > IAVF_VPMD_RX_BURST) {
- 		uint16_t burst = iavf_recv_scattered_burst_vec_avx512(rx_queue,
--				rx_pkts + retval, IAVF_VPMD_RX_MAX_BURST, offload);
-+				rx_pkts + retval, IAVF_VPMD_RX_BURST, offload);
- 		retval += burst;
- 		nb_pkts -= burst;
--		if (burst < IAVF_VPMD_RX_MAX_BURST)
-+		if (burst < IAVF_VPMD_RX_BURST)
- 			return retval;
- 	}
- 	return retval + iavf_recv_scattered_burst_vec_avx512(rx_queue,
-@@ -1730,7 +1729,7 @@ iavf_recv_scattered_burst_vec_avx512_flex_rxd(void *rx_queue,
- 					      bool offload)
- {
- 	struct iavf_rx_queue *rxq = rx_queue;
--	uint8_t split_flags[IAVF_VPMD_RX_MAX_BURST] = {0};
-+	uint8_t split_flags[IAVF_VPMD_RX_BURST] = {0};
- 
- 	/* get some new buffers */
- 	uint16_t nb_bufs = _iavf_recv_raw_pkts_vec_avx512_flex_rxd(rxq,
-@@ -1775,14 +1774,14 @@ iavf_recv_scattered_pkts_vec_avx512_flex_rxd_cmn(void *rx_queue,
- {
- 	uint16_t retval = 0;
- 
--	while (nb_pkts > IAVF_VPMD_RX_MAX_BURST) {
-+	while (nb_pkts > IAVF_VPMD_RX_BURST) {
- 		uint16_t burst =
- 			iavf_recv_scattered_burst_vec_avx512_flex_rxd
- 				(rx_queue, rx_pkts + retval,
--				 IAVF_VPMD_RX_MAX_BURST, offload);
-+				 IAVF_VPMD_RX_BURST, offload);
- 		retval += burst;
- 		nb_pkts -= burst;
--		if (burst < IAVF_VPMD_RX_MAX_BURST)
-+		if (burst < IAVF_VPMD_RX_BURST)
- 			return retval;
- 	}
- 	return retval + iavf_recv_scattered_burst_vec_avx512_flex_rxd(rx_queue,
-diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_common.h b/drivers/net/intel/iavf/iavf_rxtx_vec_common.h
-index f577fd7f3e..c78bebe9b4 100644
---- a/drivers/net/intel/iavf/iavf_rxtx_vec_common.h
-+++ b/drivers/net/intel/iavf/iavf_rxtx_vec_common.h
-@@ -59,7 +59,7 @@ iavf_rx_vec_queue_default(struct iavf_rx_queue *rxq)
- 	if (!rte_is_power_of_2(rxq->nb_rx_desc))
- 		return -1;
- 
--	if (rxq->rx_free_thresh < IAVF_VPMD_RX_MAX_BURST)
-+	if (rxq->rx_free_thresh < IAVF_VPMD_RX_BURST)
- 		return -1;
- 
- 	if (rxq->nb_rx_desc % rxq->rx_free_thresh)
-@@ -80,7 +80,7 @@ iavf_tx_vec_queue_default(struct ci_tx_queue *txq)
- 	if (!txq)
- 		return -1;
- 
--	if (txq->tx_rs_thresh < IAVF_VPMD_TX_MAX_BURST ||
-+	if (txq->tx_rs_thresh < IAVF_VPMD_TX_BURST ||
- 	    txq->tx_rs_thresh > IAVF_VPMD_TX_MAX_FREE_BUF)
- 		return -1;
- 
-@@ -252,8 +252,8 @@ iavf_rxq_rearm_common(struct iavf_rx_queue *rxq, __rte_unused bool avx512)
- 	/* Pull 'n' more MBUFs into the software ring */
- 	if (rte_mempool_get_bulk(rxq->mp,
- 				 (void *)rxp,
--				 IAVF_RXQ_REARM_THRESH) < 0) {
--		if (rxq->rxrearm_nb + IAVF_RXQ_REARM_THRESH >=
-+				 IAVF_VPMD_RXQ_REARM_THRESH) < 0) {
-+		if (rxq->rxrearm_nb + IAVF_VPMD_RXQ_REARM_THRESH >=
- 		    rxq->nb_rx_desc) {
- 			__m128i dma_addr0;
- 
-@@ -265,7 +265,7 @@ iavf_rxq_rearm_common(struct iavf_rx_queue *rxq, __rte_unused bool avx512)
- 			}
- 		}
- 		rte_eth_devices[rxq->port_id].data->rx_mbuf_alloc_failed +=
--			IAVF_RXQ_REARM_THRESH;
-+			IAVF_VPMD_RXQ_REARM_THRESH;
+ 	if (queue >= IXGBE_MAX_RX_QUEUE_NUM)
  		return;
+@@ -2157,7 +2157,7 @@ ixgbe_vlan_hw_strip_config(struct rte_eth_dev *dev)
+ 	struct rte_eth_rxmode *rxmode = &dev->data->dev_conf.rxmode;
+ 	uint32_t ctrl;
+ 	uint16_t i;
+-	struct ixgbe_rx_queue *rxq;
++	struct ci_rx_queue *rxq;
+ 	bool on;
+ 
+ 	PMD_INIT_FUNC_TRACE();
+@@ -2200,7 +2200,7 @@ ixgbe_config_vlan_strip_on_all_queues(struct rte_eth_dev *dev, int mask)
+ {
+ 	uint16_t i;
+ 	struct rte_eth_rxmode *rxmode;
+-	struct ixgbe_rx_queue *rxq;
++	struct ci_rx_queue *rxq;
+ 
+ 	if (mask & RTE_ETH_VLAN_STRIP_MASK) {
+ 		rxmode = &dev->data->dev_conf.rxmode;
+@@ -5789,7 +5789,7 @@ ixgbevf_vlan_strip_queue_set(struct rte_eth_dev *dev, uint16_t queue, int on)
+ static int
+ ixgbevf_vlan_offload_config(struct rte_eth_dev *dev, int mask)
+ {
+-	struct ixgbe_rx_queue *rxq;
++	struct ci_rx_queue *rxq;
+ 	uint16_t i;
+ 	int on = 0;
+ 
+diff --git a/drivers/net/intel/ixgbe/ixgbe_recycle_mbufs_vec_common.c b/drivers/net/intel/ixgbe/ixgbe_recycle_mbufs_vec_common.c
+index 2ab7abbf4e..1df1787c7f 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_recycle_mbufs_vec_common.c
++++ b/drivers/net/intel/ixgbe/ixgbe_recycle_mbufs_vec_common.c
+@@ -11,15 +11,15 @@
+ void
+ ixgbe_recycle_rx_descriptors_refill_vec(void *rx_queue, uint16_t nb_mbufs)
+ {
+-	struct ixgbe_rx_queue *rxq = rx_queue;
+-	struct ixgbe_rx_entry *rxep;
++	struct ci_rx_queue *rxq = rx_queue;
++	struct ci_rx_entry *rxep;
+ 	volatile union ixgbe_adv_rx_desc *rxdp;
+ 	uint16_t rx_id;
+ 	uint64_t paddr;
+ 	uint64_t dma_addr;
+ 	uint16_t i;
+ 
+-	rxdp = rxq->rx_ring + rxq->rxrearm_start;
++	rxdp = rxq->ixgbe_rx_ring + rxq->rxrearm_start;
+ 	rxep = &rxq->sw_ring[rxq->rxrearm_start];
+ 
+ 	for (i = 0; i < nb_mbufs; i++) {
+diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.c b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+index 22d0aea1a7..00a14adfa7 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_rxtx.c
++++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+@@ -1419,11 +1419,11 @@ int
+ ixgbe_get_monitor_addr(void *rx_queue, struct rte_power_monitor_cond *pmc)
+ {
+ 	volatile union ixgbe_adv_rx_desc *rxdp;
+-	struct ixgbe_rx_queue *rxq = rx_queue;
++	struct ci_rx_queue *rxq = rx_queue;
+ 	uint16_t desc;
+ 
+ 	desc = rxq->rx_tail;
+-	rxdp = &rxq->rx_ring[desc];
++	rxdp = &rxq->ixgbe_rx_ring[desc];
+ 	/* watch for changes in status bit */
+ 	pmc->addr = &rxdp->wb.upper.status_error;
+ 
+@@ -1563,10 +1563,10 @@ rx_desc_error_to_pkt_flags(uint32_t rx_status, uint16_t pkt_info,
+ #error "PMD IXGBE: LOOK_AHEAD must be 8\n"
+ #endif
+ static inline int
+-ixgbe_rx_scan_hw_ring(struct ixgbe_rx_queue *rxq)
++ixgbe_rx_scan_hw_ring(struct ci_rx_queue *rxq)
+ {
+ 	volatile union ixgbe_adv_rx_desc *rxdp;
+-	struct ixgbe_rx_entry *rxep;
++	struct ci_rx_entry *rxep;
+ 	struct rte_mbuf *mb;
+ 	uint16_t pkt_len;
+ 	uint64_t pkt_flags;
+@@ -1578,7 +1578,7 @@ ixgbe_rx_scan_hw_ring(struct ixgbe_rx_queue *rxq)
+ 	uint64_t vlan_flags = rxq->vlan_flags;
+ 
+ 	/* get references to current descriptor and S/W ring entry */
+-	rxdp = &rxq->rx_ring[rxq->rx_tail];
++	rxdp = &rxq->ixgbe_rx_ring[rxq->rx_tail];
+ 	rxep = &rxq->sw_ring[rxq->rx_tail];
+ 
+ 	status = rxdp->wb.upper.status_error;
+@@ -1663,10 +1663,10 @@ ixgbe_rx_scan_hw_ring(struct ixgbe_rx_queue *rxq)
+ }
+ 
+ static inline int
+-ixgbe_rx_alloc_bufs(struct ixgbe_rx_queue *rxq, bool reset_mbuf)
++ixgbe_rx_alloc_bufs(struct ci_rx_queue *rxq, bool reset_mbuf)
+ {
+ 	volatile union ixgbe_adv_rx_desc *rxdp;
+-	struct ixgbe_rx_entry *rxep;
++	struct ci_rx_entry *rxep;
+ 	struct rte_mbuf *mb;
+ 	uint16_t alloc_idx;
+ 	__le64 dma_addr;
+@@ -1680,7 +1680,7 @@ ixgbe_rx_alloc_bufs(struct ixgbe_rx_queue *rxq, bool reset_mbuf)
+ 	if (unlikely(diag != 0))
+ 		return -ENOMEM;
+ 
+-	rxdp = &rxq->rx_ring[alloc_idx];
++	rxdp = &rxq->ixgbe_rx_ring[alloc_idx];
+ 	for (i = 0; i < rxq->rx_free_thresh; ++i) {
+ 		/* populate the static rte mbuf fields */
+ 		mb = rxep[i].mbuf;
+@@ -1707,7 +1707,7 @@ ixgbe_rx_alloc_bufs(struct ixgbe_rx_queue *rxq, bool reset_mbuf)
+ }
+ 
+ static inline uint16_t
+-ixgbe_rx_fill_from_stage(struct ixgbe_rx_queue *rxq, struct rte_mbuf **rx_pkts,
++ixgbe_rx_fill_from_stage(struct ci_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+ 			 uint16_t nb_pkts)
+ {
+ 	struct rte_mbuf **stage = &rxq->rx_stage[rxq->rx_next_avail];
+@@ -1731,7 +1731,7 @@ static inline uint16_t
+ rx_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 	     uint16_t nb_pkts)
+ {
+-	struct ixgbe_rx_queue *rxq = (struct ixgbe_rx_queue *)rx_queue;
++	struct ci_rx_queue *rxq = (struct ci_rx_queue *)rx_queue;
+ 	uint16_t nb_rx = 0;
+ 
+ 	/* Any previously recv'd pkts will be returned from the Rx stage */
+@@ -1820,11 +1820,11 @@ uint16_t
+ ixgbe_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 		uint16_t nb_pkts)
+ {
+-	struct ixgbe_rx_queue *rxq;
++	struct ci_rx_queue *rxq;
+ 	volatile union ixgbe_adv_rx_desc *rx_ring;
+ 	volatile union ixgbe_adv_rx_desc *rxdp;
+-	struct ixgbe_rx_entry *sw_ring;
+-	struct ixgbe_rx_entry *rxe;
++	struct ci_rx_entry *sw_ring;
++	struct ci_rx_entry *rxe;
+ 	struct rte_mbuf *rxm;
+ 	struct rte_mbuf *nmb;
+ 	union ixgbe_adv_rx_desc rxd;
+@@ -1842,7 +1842,7 @@ ixgbe_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 	nb_hold = 0;
+ 	rxq = rx_queue;
+ 	rx_id = rxq->rx_tail;
+-	rx_ring = rxq->rx_ring;
++	rx_ring = rxq->ixgbe_rx_ring;
+ 	sw_ring = rxq->sw_ring;
+ 	vlan_flags = rxq->vlan_flags;
+ 	while (nb_rx < nb_pkts) {
+@@ -2047,7 +2047,7 @@ static inline void
+ ixgbe_fill_cluster_head_buf(
+ 	struct rte_mbuf *head,
+ 	union ixgbe_adv_rx_desc *desc,
+-	struct ixgbe_rx_queue *rxq,
++	struct ci_rx_queue *rxq,
+ 	uint32_t staterr)
+ {
+ 	uint32_t pkt_info;
+@@ -2109,10 +2109,10 @@ static inline uint16_t
+ ixgbe_recv_pkts_lro(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts,
+ 		    bool bulk_alloc)
+ {
+-	struct ixgbe_rx_queue *rxq = rx_queue;
+-	volatile union ixgbe_adv_rx_desc *rx_ring = rxq->rx_ring;
+-	struct ixgbe_rx_entry *sw_ring = rxq->sw_ring;
+-	struct ixgbe_scattered_rx_entry *sw_sc_ring = rxq->sw_sc_ring;
++	struct ci_rx_queue *rxq = rx_queue;
++	volatile union ixgbe_adv_rx_desc *rx_ring = rxq->ixgbe_rx_ring;
++	struct ci_rx_entry *sw_ring = rxq->sw_ring;
++	struct ci_rx_entry_sc *sw_sc_ring = rxq->sw_sc_ring;
+ 	uint16_t rx_id = rxq->rx_tail;
+ 	uint16_t nb_rx = 0;
+ 	uint16_t nb_hold = rxq->nb_rx_hold;
+@@ -2120,10 +2120,10 @@ ixgbe_recv_pkts_lro(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts,
+ 
+ 	while (nb_rx < nb_pkts) {
+ 		bool eop;
+-		struct ixgbe_rx_entry *rxe;
+-		struct ixgbe_scattered_rx_entry *sc_entry;
+-		struct ixgbe_scattered_rx_entry *next_sc_entry = NULL;
+-		struct ixgbe_rx_entry *next_rxe = NULL;
++		struct ci_rx_entry *rxe;
++		struct ci_rx_entry_sc *sc_entry;
++		struct ci_rx_entry_sc *next_sc_entry = NULL;
++		struct ci_rx_entry *next_rxe = NULL;
+ 		struct rte_mbuf *first_seg;
+ 		struct rte_mbuf *rxm;
+ 		struct rte_mbuf *nmb = NULL;
+@@ -2962,7 +2962,7 @@ ixgbe_free_sc_cluster(struct rte_mbuf *m)
+ }
+ 
+ static void __rte_cold
+-ixgbe_rx_queue_release_mbufs(struct ixgbe_rx_queue *rxq)
++ixgbe_rx_queue_release_mbufs(struct ci_rx_queue *rxq)
+ {
+ 	unsigned i;
+ 
+@@ -2999,7 +2999,7 @@ ixgbe_rx_queue_release_mbufs(struct ixgbe_rx_queue *rxq)
+ }
+ 
+ static void __rte_cold
+-ixgbe_rx_queue_release(struct ixgbe_rx_queue *rxq)
++ixgbe_rx_queue_release(struct ci_rx_queue *rxq)
+ {
+ 	if (rxq != NULL) {
+ 		ixgbe_rx_queue_release_mbufs(rxq);
+@@ -3025,7 +3025,7 @@ ixgbe_dev_rx_queue_release(struct rte_eth_dev *dev, uint16_t qid)
+  *           function must be used.
+  */
+ static inline int __rte_cold
+-check_rx_burst_bulk_alloc_preconditions(struct ixgbe_rx_queue *rxq)
++check_rx_burst_bulk_alloc_preconditions(struct ci_rx_queue *rxq)
+ {
+ 	int ret = 0;
+ 
+@@ -3062,7 +3062,7 @@ check_rx_burst_bulk_alloc_preconditions(struct ixgbe_rx_queue *rxq)
+ 
+ /* Reset dynamic ixgbe_rx_queue fields back to defaults */
+ static void __rte_cold
+-ixgbe_reset_rx_queue(struct ixgbe_adapter *adapter, struct ixgbe_rx_queue *rxq)
++ixgbe_reset_rx_queue(struct ixgbe_adapter *adapter, struct ci_rx_queue *rxq)
+ {
+ 	static const union ixgbe_adv_rx_desc zeroed_desc = {{0}};
+ 	unsigned i;
+@@ -3083,7 +3083,7 @@ ixgbe_reset_rx_queue(struct ixgbe_adapter *adapter, struct ixgbe_rx_queue *rxq)
+ 	 * reads extra memory as zeros.
+ 	 */
+ 	for (i = 0; i < len; i++) {
+-		rxq->rx_ring[i] = zeroed_desc;
++		rxq->ixgbe_rx_ring[i] = zeroed_desc;
  	}
  
-@@ -275,7 +275,7 @@ iavf_rxq_rearm_common(struct iavf_rx_queue *rxq, __rte_unused bool avx512)
- 	__m128i hdr_room = _mm_set_epi64x(RTE_PKTMBUF_HEADROOM,
- 			RTE_PKTMBUF_HEADROOM);
- 	/* Initialize the mbufs in vector, process 2 mbufs in one loop */
--	for (i = 0; i < IAVF_RXQ_REARM_THRESH; i += 2, rxp += 2) {
-+	for (i = 0; i < IAVF_VPMD_RXQ_REARM_THRESH; i += 2, rxp += 2) {
- 		__m128i vaddr0, vaddr1;
+ 	/*
+@@ -3198,7 +3198,7 @@ ixgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
+ 			 struct rte_mempool *mp)
+ {
+ 	const struct rte_memzone *rz;
+-	struct ixgbe_rx_queue *rxq;
++	struct ci_rx_queue *rxq;
+ 	struct ixgbe_hw     *hw;
+ 	uint16_t len;
+ 	struct ixgbe_adapter *adapter = dev->data->dev_private;
+@@ -3227,7 +3227,7 @@ ixgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
+ 	}
  
- 		mb0 = rxp[0];
-@@ -307,7 +307,7 @@ iavf_rxq_rearm_common(struct iavf_rx_queue *rxq, __rte_unused bool avx512)
- 		__m512i dma_addr0_3, dma_addr4_7;
- 		__m512i hdr_room = _mm512_set1_epi64(RTE_PKTMBUF_HEADROOM);
- 		/* Initialize the mbufs in vector, process 8 mbufs in one loop */
--		for (i = 0; i < IAVF_RXQ_REARM_THRESH;
-+		for (i = 0; i < IAVF_VPMD_RXQ_REARM_THRESH;
- 				i += 8, rxp += 8, rxdp += 8) {
- 			__m128i vaddr0, vaddr1, vaddr2, vaddr3;
- 			__m128i vaddr4, vaddr5, vaddr6, vaddr7;
-@@ -378,7 +378,7 @@ iavf_rxq_rearm_common(struct iavf_rx_queue *rxq, __rte_unused bool avx512)
- 		__m256i dma_addr0_1, dma_addr2_3;
- 		__m256i hdr_room = _mm256_set1_epi64x(RTE_PKTMBUF_HEADROOM);
- 		/* Initialize the mbufs in vector, process 4 mbufs in one loop */
--		for (i = 0; i < IAVF_RXQ_REARM_THRESH;
-+		for (i = 0; i < IAVF_VPMD_RXQ_REARM_THRESH;
- 				i += 4, rxp += 4, rxdp += 4) {
- 			__m128i vaddr0, vaddr1, vaddr2, vaddr3;
- 			__m256i vaddr0_1, vaddr2_3;
-@@ -423,11 +423,11 @@ iavf_rxq_rearm_common(struct iavf_rx_queue *rxq, __rte_unused bool avx512)
+ 	/* First allocate the rx queue data structure */
+-	rxq = rte_zmalloc_socket("ethdev RX queue", sizeof(struct ixgbe_rx_queue),
++	rxq = rte_zmalloc_socket("ethdev RX queue", sizeof(struct ci_rx_queue),
+ 				 RTE_CACHE_LINE_SIZE, socket_id);
+ 	if (rxq == NULL)
+ 		return -ENOMEM;
+@@ -3297,7 +3297,7 @@ ixgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
+ 			IXGBE_PCI_REG_ADDR(hw, IXGBE_RDT(rxq->reg_idx));
  
- #endif
+ 	rxq->rx_ring_phys_addr = rz->iova;
+-	rxq->rx_ring = (union ixgbe_adv_rx_desc *) rz->addr;
++	rxq->ixgbe_rx_ring = (union ixgbe_adv_rx_desc *)rz->addr;
  
--	rxq->rxrearm_start += IAVF_RXQ_REARM_THRESH;
-+	rxq->rxrearm_start += IAVF_VPMD_RXQ_REARM_THRESH;
- 	if (rxq->rxrearm_start >= rxq->nb_rx_desc)
- 		rxq->rxrearm_start = 0;
+ 	/*
+ 	 * Certain constraints must be met in order to use the bulk buffer
+@@ -3322,7 +3322,7 @@ ixgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
+ 		len += IXGBE_RX_MAX_BURST;
  
--	rxq->rxrearm_nb -= IAVF_RXQ_REARM_THRESH;
-+	rxq->rxrearm_nb -= IAVF_VPMD_RXQ_REARM_THRESH;
+ 	rxq->sw_ring = rte_zmalloc_socket("rxq->sw_ring",
+-					  sizeof(struct ixgbe_rx_entry) * len,
++					  sizeof(struct ci_rx_entry) * len,
+ 					  RTE_CACHE_LINE_SIZE, socket_id);
+ 	if (!rxq->sw_ring) {
+ 		ixgbe_rx_queue_release(rxq);
+@@ -3339,7 +3339,7 @@ ixgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
+ 	 */
+ 	rxq->sw_sc_ring =
+ 		rte_zmalloc_socket("rxq->sw_sc_ring",
+-				   sizeof(struct ixgbe_scattered_rx_entry) * len,
++				   sizeof(struct ci_rx_entry_sc) * len,
+ 				   RTE_CACHE_LINE_SIZE, socket_id);
+ 	if (!rxq->sw_sc_ring) {
+ 		ixgbe_rx_queue_release(rxq);
+@@ -3348,7 +3348,7 @@ ixgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
  
- 	rx_id = (uint16_t)((rxq->rxrearm_start == 0) ?
- 			     (rxq->nb_rx_desc - 1) : (rxq->rxrearm_start - 1));
-diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_neon.c b/drivers/net/intel/iavf/iavf_rxtx_vec_neon.c
-index a583340f15..86f3a7839d 100644
---- a/drivers/net/intel/iavf/iavf_rxtx_vec_neon.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx_vec_neon.c
-@@ -31,8 +31,8 @@ iavf_rxq_rearm(struct iavf_rx_queue *rxq)
+ 	PMD_INIT_LOG(DEBUG, "sw_ring=%p sw_sc_ring=%p hw_ring=%p "
+ 			    "dma_addr=0x%"PRIx64,
+-		     rxq->sw_ring, rxq->sw_sc_ring, rxq->rx_ring,
++		     rxq->sw_ring, rxq->sw_sc_ring, rxq->ixgbe_rx_ring,
+ 		     rxq->rx_ring_phys_addr);
+ 
+ 	if (!rte_is_power_of_2(nb_desc)) {
+@@ -3372,11 +3372,11 @@ ixgbe_dev_rx_queue_count(void *rx_queue)
+ {
+ #define IXGBE_RXQ_SCAN_INTERVAL 4
+ 	volatile union ixgbe_adv_rx_desc *rxdp;
+-	struct ixgbe_rx_queue *rxq;
++	struct ci_rx_queue *rxq;
+ 	uint32_t desc = 0;
+ 
+ 	rxq = rx_queue;
+-	rxdp = &(rxq->rx_ring[rxq->rx_tail]);
++	rxdp = &rxq->ixgbe_rx_ring[rxq->rx_tail];
+ 
+ 	while ((desc < rxq->nb_rx_desc) &&
+ 		(rxdp->wb.upper.status_error &
+@@ -3384,7 +3384,7 @@ ixgbe_dev_rx_queue_count(void *rx_queue)
+ 		desc += IXGBE_RXQ_SCAN_INTERVAL;
+ 		rxdp += IXGBE_RXQ_SCAN_INTERVAL;
+ 		if (rxq->rx_tail + desc >= rxq->nb_rx_desc)
+-			rxdp = &(rxq->rx_ring[rxq->rx_tail +
++			rxdp = &(rxq->ixgbe_rx_ring[rxq->rx_tail +
+ 				desc - rxq->nb_rx_desc]);
+ 	}
+ 
+@@ -3394,7 +3394,7 @@ ixgbe_dev_rx_queue_count(void *rx_queue)
+ int
+ ixgbe_dev_rx_descriptor_status(void *rx_queue, uint16_t offset)
+ {
+-	struct ixgbe_rx_queue *rxq = rx_queue;
++	struct ci_rx_queue *rxq = rx_queue;
+ 	volatile uint32_t *status;
+ 	uint32_t nb_hold, desc;
+ 
+@@ -3414,7 +3414,7 @@ ixgbe_dev_rx_descriptor_status(void *rx_queue, uint16_t offset)
+ 	if (desc >= rxq->nb_rx_desc)
+ 		desc -= rxq->nb_rx_desc;
+ 
+-	status = &rxq->rx_ring[desc].wb.upper.status_error;
++	status = &rxq->ixgbe_rx_ring[desc].wb.upper.status_error;
+ 	if (*status & rte_cpu_to_le_32(IXGBE_RXDADV_STAT_DD))
+ 		return RTE_ETH_RX_DESC_DONE;
+ 
+@@ -3499,7 +3499,7 @@ ixgbe_dev_clear_queues(struct rte_eth_dev *dev)
+ 	}
+ 
+ 	for (i = 0; i < dev->data->nb_rx_queues; i++) {
+-		struct ixgbe_rx_queue *rxq = dev->data->rx_queues[i];
++		struct ci_rx_queue *rxq = dev->data->rx_queues[i];
+ 
+ 		if (rxq != NULL) {
+ 			ixgbe_rx_queue_release_mbufs(rxq);
+@@ -4661,9 +4661,9 @@ ixgbe_vmdq_tx_hw_configure(struct ixgbe_hw *hw)
+ }
+ 
+ static int __rte_cold
+-ixgbe_alloc_rx_queue_mbufs(struct ixgbe_rx_queue *rxq)
++ixgbe_alloc_rx_queue_mbufs(struct ci_rx_queue *rxq)
+ {
+-	struct ixgbe_rx_entry *rxe = rxq->sw_ring;
++	struct ci_rx_entry *rxe = rxq->sw_ring;
+ 	uint64_t dma_addr;
+ 	unsigned int i;
+ 
+@@ -4683,7 +4683,7 @@ ixgbe_alloc_rx_queue_mbufs(struct ixgbe_rx_queue *rxq)
+ 
+ 		dma_addr =
+ 			rte_cpu_to_le_64(rte_mbuf_data_iova_default(mbuf));
+-		rxd = &rxq->rx_ring[i];
++		rxd = &rxq->ixgbe_rx_ring[i];
+ 		rxd->read.hdr_addr = 0;
+ 		rxd->read.pkt_addr = dma_addr;
+ 		rxe[i].mbuf = mbuf;
+@@ -5098,7 +5098,7 @@ ixgbe_set_rx_function(struct rte_eth_dev *dev)
+ 		dev->rx_pkt_burst == ixgbe_recv_pkts_vec);
+ 
+ 	for (i = 0; i < dev->data->nb_rx_queues; i++) {
+-		struct ixgbe_rx_queue *rxq = dev->data->rx_queues[i];
++		struct ci_rx_queue *rxq = dev->data->rx_queues[i];
+ 
+ 		rxq->vector_rx = rx_using_sse;
+ #ifdef RTE_LIB_SECURITY
+@@ -5176,7 +5176,7 @@ ixgbe_set_rsc(struct rte_eth_dev *dev)
+ 
+ 	/* Per-queue RSC configuration (chapter 4.6.7.2.2 of 82599 Spec) */
+ 	for (i = 0; i < dev->data->nb_rx_queues; i++) {
+-		struct ixgbe_rx_queue *rxq = dev->data->rx_queues[i];
++		struct ci_rx_queue *rxq = dev->data->rx_queues[i];
+ 		uint32_t srrctl =
+ 			IXGBE_READ_REG(hw, IXGBE_SRRCTL(rxq->reg_idx));
+ 		uint32_t rscctl =
+@@ -5252,7 +5252,7 @@ int __rte_cold
+ ixgbe_dev_rx_init(struct rte_eth_dev *dev)
+ {
+ 	struct ixgbe_hw     *hw;
+-	struct ixgbe_rx_queue *rxq;
++	struct ci_rx_queue *rxq;
+ 	uint64_t bus_addr;
+ 	uint32_t rxctrl;
+ 	uint32_t fctrl;
+@@ -5548,7 +5548,7 @@ ixgbe_dev_rxtx_start(struct rte_eth_dev *dev)
+ {
+ 	struct ixgbe_hw     *hw;
+ 	struct ci_tx_queue *txq;
+-	struct ixgbe_rx_queue *rxq;
++	struct ci_rx_queue *rxq;
+ 	uint32_t txdctl;
+ 	uint32_t dmatxctl;
+ 	uint32_t rxctrl;
+@@ -5635,7 +5635,7 @@ int __rte_cold
+ ixgbe_dev_rx_queue_start(struct rte_eth_dev *dev, uint16_t rx_queue_id)
+ {
+ 	struct ixgbe_hw     *hw;
+-	struct ixgbe_rx_queue *rxq;
++	struct ci_rx_queue *rxq;
+ 	uint32_t rxdctl;
+ 	int poll_ms;
+ 
+@@ -5678,7 +5678,7 @@ ixgbe_dev_rx_queue_stop(struct rte_eth_dev *dev, uint16_t rx_queue_id)
+ {
+ 	struct ixgbe_hw     *hw;
+ 	struct ixgbe_adapter *adapter = dev->data->dev_private;
+-	struct ixgbe_rx_queue *rxq;
++	struct ci_rx_queue *rxq;
+ 	uint32_t rxdctl;
+ 	int poll_ms;
+ 
+@@ -5812,7 +5812,7 @@ void
+ ixgbe_rxq_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
+ 	struct rte_eth_rxq_info *qinfo)
+ {
+-	struct ixgbe_rx_queue *rxq;
++	struct ci_rx_queue *rxq;
+ 
+ 	rxq = dev->data->rx_queues[queue_id];
+ 
+@@ -5850,7 +5850,7 @@ void
+ ixgbe_recycle_rxq_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
+ 	struct rte_eth_recycle_rxq_info *recycle_rxq_info)
+ {
+-	struct ixgbe_rx_queue *rxq;
++	struct ci_rx_queue *rxq;
+ 	struct ixgbe_adapter *adapter = dev->data->dev_private;
+ 
+ 	rxq = dev->data->rx_queues[queue_id];
+@@ -5876,7 +5876,7 @@ int __rte_cold
+ ixgbevf_dev_rx_init(struct rte_eth_dev *dev)
+ {
+ 	struct ixgbe_hw     *hw;
+-	struct ixgbe_rx_queue *rxq;
++	struct ci_rx_queue *rxq;
+ 	struct rte_eth_rxmode *rxmode = &dev->data->dev_conf.rxmode;
+ 	uint32_t frame_size = dev->data->mtu + IXGBE_ETH_OVERHEAD;
+ 	uint64_t bus_addr;
+@@ -6063,7 +6063,7 @@ ixgbevf_dev_rxtx_start(struct rte_eth_dev *dev)
+ {
+ 	struct ixgbe_hw     *hw;
+ 	struct ci_tx_queue *txq;
+-	struct ixgbe_rx_queue *rxq;
++	struct ci_rx_queue *rxq;
+ 	uint32_t txdctl;
+ 	uint32_t rxdctl;
+ 	uint16_t i;
+@@ -6261,7 +6261,7 @@ ixgbe_recycle_rx_descriptors_refill_vec(void __rte_unused * rx_queue,
+ }
+ 
+ int
+-ixgbe_rxq_vec_setup(struct ixgbe_rx_queue __rte_unused *rxq)
++ixgbe_rxq_vec_setup(struct ci_rx_queue __rte_unused * rxq)
+ {
+ 	return -1;
+ }
+@@ -6288,7 +6288,7 @@ ixgbe_txq_vec_setup(struct ci_tx_queue *txq __rte_unused)
+ }
+ 
+ void
+-ixgbe_rx_queue_release_mbufs_vec(struct ixgbe_rx_queue __rte_unused *rxq)
++ixgbe_rx_queue_release_mbufs_vec(struct ci_rx_queue __rte_unused * rxq)
+ {
+ 	return;
+ }
+diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.h b/drivers/net/intel/ixgbe/ixgbe_rxtx.h
+index 5742e845cf..d1847a33dd 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_rxtx.h
++++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.h
+@@ -5,6 +5,7 @@
+ #ifndef _IXGBE_RXTX_H_
+ #define _IXGBE_RXTX_H_
+ 
++#include "../common/rx.h"
+ #include "../common/tx.h"
+ 
+ /*
+@@ -30,7 +31,7 @@
+ #define	IXGBE_MAX_RING_DESC	8192
+ 
+ #define IXGBE_TX_MAX_BURST            32
+-#define IXGBE_RX_MAX_BURST            32
++#define IXGBE_RX_MAX_BURST            CI_RX_MAX_BURST
+ #define IXGBE_TX_MAX_FREE_BUF_SZ      64
+ 
+ #define IXGBE_VPMD_DESCS_PER_LOOP     4
+@@ -64,64 +65,6 @@
+ #define IXGBE_PACKET_TYPE_TN_MAX            0X100
+ #define IXGBE_PACKET_TYPE_SHIFT             0X04
+ 
+-/**
+- * Structure associated with each descriptor of the RX ring of a RX queue.
+- */
+-struct ixgbe_rx_entry {
+-	struct rte_mbuf *mbuf; /**< mbuf associated with RX descriptor. */
+-};
+-
+-struct ixgbe_scattered_rx_entry {
+-	struct rte_mbuf *fbuf; /**< First segment of the fragmented packet. */
+-};
+-
+-/**
+- * Structure associated with each RX queue.
+- */
+-struct ixgbe_rx_queue {
+-	struct rte_mempool  *mp; /**< mbuf pool to populate RX ring. */
+-	volatile union ixgbe_adv_rx_desc *rx_ring; /**< RX ring virtual address. */
+-	uint64_t            rx_ring_phys_addr; /**< RX ring DMA address. */
+-	volatile uint32_t   *qrx_tail; /**< RDT register address. */
+-	struct ixgbe_rx_entry *sw_ring; /**< address of RX software ring. */
+-	struct ixgbe_scattered_rx_entry *sw_sc_ring; /**< address of scattered Rx software ring. */
+-	struct rte_mbuf *pkt_first_seg; /**< First segment of current packet. */
+-	struct rte_mbuf *pkt_last_seg; /**< Last segment of current packet. */
+-	uint64_t            mbuf_initializer; /**< value to init mbufs */
+-	uint16_t            nb_rx_desc; /**< number of RX descriptors. */
+-	uint16_t            rx_tail;  /**< current value of RDT register. */
+-	uint16_t            nb_rx_hold; /**< number of held free RX desc. */
+-	uint16_t rx_nb_avail; /**< nr of staged pkts ready to ret to app */
+-	uint16_t rx_next_avail; /**< idx of next staged pkt to ret to app */
+-	uint16_t rx_free_trigger; /**< triggers rx buffer allocation */
+-	uint8_t            vector_rx;
+-	/**< indicates that vector RX is in use */
+-#ifdef RTE_LIB_SECURITY
+-	uint8_t            using_ipsec;
+-	/**< indicates that IPsec RX feature is in use */
+-#endif
+-	uint16_t            rxrearm_nb;     /**< number of remaining to be re-armed */
+-	uint16_t            rxrearm_start;  /**< the idx we start the re-arming from */
+-	uint16_t            rx_free_thresh; /**< max free RX desc to hold. */
+-	uint16_t            queue_id; /**< RX queue index. */
+-	uint16_t            reg_idx;  /**< RX queue register index. */
+-	uint16_t            pkt_type_mask;  /**< Packet type mask for different NICs. */
+-	uint16_t            port_id;  /**< Device port identifier. */
+-	uint8_t             crc_len;  /**< 0 if CRC stripped, 4 otherwise. */
+-	uint8_t             drop_en;  /**< If not 0, set SRRCTL.Drop_En. */
+-	uint8_t             rx_deferred_start; /**< not in global dev start. */
+-	/** UDP frames with a 0 checksum can be marked as checksum errors. */
+-	uint8_t             rx_udp_csum_zero_err;
+-	/** flags to set in mbuf when a vlan is detected. */
+-	uint64_t            vlan_flags;
+-	uint64_t	    offloads; /**< Rx offloads with RTE_ETH_RX_OFFLOAD_* */
+-	/** need to alloc dummy mbuf, for wraparound when scanning hw ring */
+-	struct rte_mbuf fake_mbuf;
+-	/** hold packets to return to application */
+-	struct rte_mbuf *rx_stage[IXGBE_RX_MAX_BURST * 2];
+-	const struct rte_memzone *mz;
+-};
+-
+ /**
+  * IXGBE CTX Constants
+  */
+@@ -226,8 +169,8 @@ uint16_t ixgbe_recv_pkts_vec(void *rx_queue, struct rte_mbuf **rx_pkts,
+ uint16_t ixgbe_recv_scattered_pkts_vec(void *rx_queue,
+ 		struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
+ int ixgbe_rx_vec_dev_conf_condition_check(struct rte_eth_dev *dev);
+-int ixgbe_rxq_vec_setup(struct ixgbe_rx_queue *rxq);
+-void ixgbe_rx_queue_release_mbufs_vec(struct ixgbe_rx_queue *rxq);
++int ixgbe_rxq_vec_setup(struct ci_rx_queue *rxq);
++void ixgbe_rx_queue_release_mbufs_vec(struct ci_rx_queue *rxq);
+ int ixgbe_dev_tx_done_cleanup(void *tx_queue, uint32_t free_cnt);
+ 
+ extern const uint32_t ptype_table[IXGBE_PACKET_TYPE_MAX];
+diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
+index 4442dc7b39..538a2b5164 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
++++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
+@@ -69,7 +69,7 @@ ixgbe_tx_free_bufs(struct ci_tx_queue *txq)
+ }
+ 
+ static inline void
+-_ixgbe_rx_queue_release_mbufs_vec(struct ixgbe_rx_queue *rxq)
++_ixgbe_rx_queue_release_mbufs_vec(struct ci_rx_queue *rxq)
+ {
+ 	unsigned int i;
+ 
+@@ -173,7 +173,7 @@ ixgbe_rx_vec_dev_conf_condition_check_default(struct rte_eth_dev *dev)
+ 		return -1;
+ 
+ 	for (uint16_t i = 0; i < dev->data->nb_rx_queues; i++) {
+-		struct ixgbe_rx_queue *rxq = dev->data->rx_queues[i];
++		struct ci_rx_queue *rxq = dev->data->rx_queues[i];
+ 		if (!rxq)
+ 			continue;
+ 		if (!ci_rxq_vec_capable(rxq->nb_rx_desc, rxq->rx_free_thresh, rxq->offloads))
+diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c
+index 02d9dbb573..82c655e769 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c
++++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c
+@@ -12,19 +12,19 @@
+ #include "ixgbe_rxtx_vec_common.h"
+ 
+ static inline void
+-ixgbe_rxq_rearm(struct ixgbe_rx_queue *rxq)
++ixgbe_rxq_rearm(struct ci_rx_queue *rxq)
+ {
+ 	int i;
+ 	uint16_t rx_id;
+ 	volatile union ixgbe_adv_rx_desc *rxdp;
+-	struct ixgbe_rx_entry *rxep = &rxq->sw_ring[rxq->rxrearm_start];
++	struct ci_rx_entry *rxep = &rxq->sw_ring[rxq->rxrearm_start];
+ 	struct rte_mbuf *mb0, *mb1;
+ 	uint64x2_t dma_addr0, dma_addr1;
+ 	uint64x2_t zero = vdupq_n_u64(0);
+ 	uint64_t paddr;
+ 	uint8x8_t p;
+ 
+-	rxdp = rxq->rx_ring + rxq->rxrearm_start;
++	rxdp = rxq->ixgbe_rx_ring + rxq->rxrearm_start;
+ 
  	/* Pull 'n' more MBUFs into the software ring */
  	if (unlikely(rte_mempool_get_bulk(rxq->mp,
- 					  (void *)rxep,
--					  IAVF_RXQ_REARM_THRESH) < 0)) {
--		if (rxq->rxrearm_nb + IAVF_RXQ_REARM_THRESH >=
-+					  IAVF_VPMD_RXQ_REARM_THRESH) < 0)) {
-+		if (rxq->rxrearm_nb + IAVF_VPMD_RXQ_REARM_THRESH >=
- 		    rxq->nb_rx_desc) {
- 			for (i = 0; i < IAVF_VPMD_DESCS_PER_LOOP; i++) {
- 				rxep[i] = &rxq->fake_mbuf;
-@@ -40,12 +40,12 @@ iavf_rxq_rearm(struct iavf_rx_queue *rxq)
- 			}
- 		}
- 		rte_eth_devices[rxq->port_id].data->rx_mbuf_alloc_failed +=
--			IAVF_RXQ_REARM_THRESH;
-+			IAVF_VPMD_RXQ_REARM_THRESH;
- 		return;
- 	}
- 
- 	/* Initialize the mbufs in vector, process 2 mbufs in one loop */
--	for (i = 0; i < IAVF_RXQ_REARM_THRESH; i += 2, rxep += 2) {
-+	for (i = 0; i < IAVF_VPMD_RXQ_REARM_THRESH; i += 2, rxep += 2) {
- 		mb0 = rxep[0];
- 		mb1 = rxep[1];
- 
-@@ -60,11 +60,11 @@ iavf_rxq_rearm(struct iavf_rx_queue *rxq)
- 		vst1q_u64(RTE_CAST_PTR(uint64_t *, &rxdp++->read), dma_addr1);
- 	}
- 
--	rxq->rxrearm_start += IAVF_RXQ_REARM_THRESH;
-+	rxq->rxrearm_start += IAVF_VPMD_RXQ_REARM_THRESH;
- 	if (rxq->rxrearm_start >= rxq->nb_rx_desc)
- 		rxq->rxrearm_start = 0;
- 
--	rxq->rxrearm_nb -= IAVF_RXQ_REARM_THRESH;
-+	rxq->rxrearm_nb -= IAVF_VPMD_RXQ_REARM_THRESH;
- 
- 	rx_id = (uint16_t)((rxq->rxrearm_start == 0) ?
- 			     (rxq->nb_rx_desc - 1) : (rxq->rxrearm_start - 1));
-@@ -233,7 +233,7 @@ _recv_raw_pkts_vec(struct iavf_rx_queue *__rte_restrict rxq,
- 	/* See if we need to rearm the RX queue - gives the prefetch a bit
- 	 * of time to act
+@@ -282,11 +282,11 @@ desc_to_ptype_v(uint64x2_t descs[4], uint16_t pkt_type_mask,
+  * - floor align nb_pkts to a IXGBE_VPMD_DESCS_PER_LOOP power-of-two
+  */
+ static inline uint16_t
+-_recv_raw_pkts_vec(struct ixgbe_rx_queue *rxq, struct rte_mbuf **rx_pkts,
++_recv_raw_pkts_vec(struct ci_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+ 		   uint16_t nb_pkts, uint8_t *split_packet)
+ {
+ 	volatile union ixgbe_adv_rx_desc *rxdp;
+-	struct ixgbe_rx_entry *sw_ring;
++	struct ci_rx_entry *sw_ring;
+ 	uint16_t nb_pkts_recd;
+ 	int pos;
+ 	uint8x16_t shuf_msk = {
+@@ -309,7 +309,7 @@ _recv_raw_pkts_vec(struct ixgbe_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+ 	/* Just the act of getting into the function from the application is
+ 	 * going to cost about 7 cycles
  	 */
--	if (rxq->rxrearm_nb > IAVF_RXQ_REARM_THRESH)
-+	if (rxq->rxrearm_nb > IAVF_VPMD_RXQ_REARM_THRESH)
- 		iavf_rxq_rearm(rxq);
+-	rxdp = rxq->rx_ring + rxq->rx_tail;
++	rxdp = rxq->ixgbe_rx_ring + rxq->rx_tail;
  
- 	/* Before we start moving massive data around, check to see if
-diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_sse.c b/drivers/net/intel/iavf/iavf_rxtx_vec_sse.c
-index 8ccdec7f8a..190c1dd869 100644
---- a/drivers/net/intel/iavf/iavf_rxtx_vec_sse.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx_vec_sse.c
-@@ -1175,7 +1175,7 @@ _recv_raw_pkts_vec_flex_rxd(struct iavf_rx_queue *rxq,
+ 	rte_prefetch_non_temporal(rxdp);
  
- /* Notice:
-  * - nb_pkts < IAVF_DESCS_PER_LOOP, just return no packet
-- * - nb_pkts > IAVF_VPMD_RX_MAX_BURST, only scan IAVF_VPMD_RX_MAX_BURST
-+ * - nb_pkts > IAVF_VPMD_RX_BURST, only scan IAVF_VPMD_RX_BURST
-  *   numbers of DD bits
-  */
- uint16_t
-@@ -1187,7 +1187,7 @@ iavf_recv_pkts_vec(void *rx_queue, struct rte_mbuf **rx_pkts,
- 
- /* Notice:
-  * - nb_pkts < IAVF_DESCS_PER_LOOP, just return no packet
-- * - nb_pkts > IAVF_VPMD_RX_MAX_BURST, only scan IAVF_VPMD_RX_MAX_BURST
-+ * - nb_pkts > IAVF_VPMD_RX_BURST, only scan IAVF_VPMD_RX_BURST
-  *   numbers of DD bits
-  */
- uint16_t
-@@ -1208,7 +1208,7 @@ iavf_recv_scattered_burst_vec(void *rx_queue, struct rte_mbuf **rx_pkts,
- 			      uint16_t nb_pkts)
+@@ -488,7 +488,7 @@ static uint16_t
+ ixgbe_recv_scattered_burst_vec(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 			       uint16_t nb_pkts)
  {
- 	struct iavf_rx_queue *rxq = rx_queue;
--	uint8_t split_flags[IAVF_VPMD_RX_MAX_BURST] = {0};
-+	uint8_t split_flags[IAVF_VPMD_RX_BURST] = {0};
- 	unsigned int i = 0;
+-	struct ixgbe_rx_queue *rxq = rx_queue;
++	struct ci_rx_queue *rxq = rx_queue;
+ 	uint8_t split_flags[IXGBE_VPMD_RX_BURST] = {0};
  
  	/* get some new buffers */
-@@ -1247,15 +1247,15 @@ iavf_recv_scattered_pkts_vec(void *rx_queue, struct rte_mbuf **rx_pkts,
+@@ -634,7 +634,7 @@ ixgbe_xmit_fixed_burst_vec(void *tx_queue, struct rte_mbuf **tx_pkts,
+ }
+ 
+ void __rte_cold
+-ixgbe_rx_queue_release_mbufs_vec(struct ixgbe_rx_queue *rxq)
++ixgbe_rx_queue_release_mbufs_vec(struct ci_rx_queue *rxq)
  {
- 	uint16_t retval = 0;
+ 	_ixgbe_rx_queue_release_mbufs_vec(rxq);
+ }
+@@ -657,7 +657,7 @@ static const struct ixgbe_txq_ops vec_txq_ops = {
+ };
  
--	while (nb_pkts > IAVF_VPMD_RX_MAX_BURST) {
-+	while (nb_pkts > IAVF_VPMD_RX_BURST) {
- 		uint16_t burst;
- 
- 		burst = iavf_recv_scattered_burst_vec(rx_queue,
- 						      rx_pkts + retval,
--						      IAVF_VPMD_RX_MAX_BURST);
-+						      IAVF_VPMD_RX_BURST);
- 		retval += burst;
- 		nb_pkts -= burst;
--		if (burst < IAVF_VPMD_RX_MAX_BURST)
-+		if (burst < IAVF_VPMD_RX_BURST)
- 			return retval;
- 	}
- 
-@@ -1277,7 +1277,7 @@ iavf_recv_scattered_burst_vec_flex_rxd(void *rx_queue,
- 				       uint16_t nb_pkts)
+ int __rte_cold
+-ixgbe_rxq_vec_setup(struct ixgbe_rx_queue *rxq)
++ixgbe_rxq_vec_setup(struct ci_rx_queue *rxq)
  {
- 	struct iavf_rx_queue *rxq = rx_queue;
--	uint8_t split_flags[IAVF_VPMD_RX_MAX_BURST] = {0};
-+	uint8_t split_flags[IAVF_VPMD_RX_BURST] = {0};
- 	unsigned int i = 0;
+ 	rxq->mbuf_initializer = ci_rxq_mbuf_initializer(rxq->port_id);
+ 	return 0;
+diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
+index ea57631932..f6aa3f9f9a 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
++++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
+@@ -13,12 +13,12 @@
+ #include <rte_vect.h>
+ 
+ static inline void
+-ixgbe_rxq_rearm(struct ixgbe_rx_queue *rxq)
++ixgbe_rxq_rearm(struct ci_rx_queue *rxq)
+ {
+ 	int i;
+ 	uint16_t rx_id;
+ 	volatile union ixgbe_adv_rx_desc *rxdp;
+-	struct ixgbe_rx_entry *rxep = &rxq->sw_ring[rxq->rxrearm_start];
++	struct ci_rx_entry *rxep = &rxq->sw_ring[rxq->rxrearm_start];
+ 	struct rte_mbuf *mb0, *mb1;
+ 	__m128i hdr_room = _mm_set_epi64x(RTE_PKTMBUF_HEADROOM,
+ 			RTE_PKTMBUF_HEADROOM);
+@@ -26,7 +26,7 @@ ixgbe_rxq_rearm(struct ixgbe_rx_queue *rxq)
+ 
+ 	const __m128i hba_msk = _mm_set_epi64x(0, UINT64_MAX);
+ 
+-	rxdp = rxq->rx_ring + rxq->rxrearm_start;
++	rxdp = rxq->ixgbe_rx_ring + rxq->rxrearm_start;
+ 
+ 	/* Pull 'n' more MBUFs into the software ring */
+ 	if (rte_mempool_get_bulk(rxq->mp,
+@@ -327,11 +327,11 @@ desc_to_ptype_v(__m128i descs[4], uint16_t pkt_type_mask,
+  * - floor align nb_pkts to a IXGBE_VPMD_DESCS_PER_LOOP power-of-two
+  */
+ static inline uint16_t
+-_recv_raw_pkts_vec(struct ixgbe_rx_queue *rxq, struct rte_mbuf **rx_pkts,
++_recv_raw_pkts_vec(struct ci_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+ 		uint16_t nb_pkts, uint8_t *split_packet)
+ {
+ 	volatile union ixgbe_adv_rx_desc *rxdp;
+-	struct ixgbe_rx_entry *sw_ring;
++	struct ci_rx_entry *sw_ring;
+ 	uint16_t nb_pkts_recd;
+ #ifdef RTE_LIB_SECURITY
+ 	uint8_t use_ipsec = rxq->using_ipsec;
+@@ -377,7 +377,7 @@ _recv_raw_pkts_vec(struct ixgbe_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+ 	/* Just the act of getting into the function from the application is
+ 	 * going to cost about 7 cycles
+ 	 */
+-	rxdp = rxq->rx_ring + rxq->rx_tail;
++	rxdp = rxq->ixgbe_rx_ring + rxq->rx_tail;
+ 
+ 	rte_prefetch0(rxdp);
+ 
+@@ -609,7 +609,7 @@ static uint16_t
+ ixgbe_recv_scattered_burst_vec(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 			       uint16_t nb_pkts)
+ {
+-	struct ixgbe_rx_queue *rxq = rx_queue;
++	struct ci_rx_queue *rxq = rx_queue;
+ 	uint8_t split_flags[IXGBE_VPMD_RX_BURST] = {0};
  
  	/* get some new buffers */
-@@ -1317,15 +1317,15 @@ iavf_recv_scattered_pkts_vec_flex_rxd(void *rx_queue,
+@@ -755,7 +755,7 @@ ixgbe_xmit_fixed_burst_vec(void *tx_queue, struct rte_mbuf **tx_pkts,
+ }
+ 
+ void __rte_cold
+-ixgbe_rx_queue_release_mbufs_vec(struct ixgbe_rx_queue *rxq)
++ixgbe_rx_queue_release_mbufs_vec(struct ci_rx_queue *rxq)
  {
- 	uint16_t retval = 0;
+ 	_ixgbe_rx_queue_release_mbufs_vec(rxq);
+ }
+@@ -778,7 +778,7 @@ static const struct ixgbe_txq_ops vec_txq_ops = {
+ };
  
--	while (nb_pkts > IAVF_VPMD_RX_MAX_BURST) {
-+	while (nb_pkts > IAVF_VPMD_RX_BURST) {
- 		uint16_t burst;
- 
- 		burst = iavf_recv_scattered_burst_vec_flex_rxd(rx_queue,
- 						rx_pkts + retval,
--						IAVF_VPMD_RX_MAX_BURST);
-+						IAVF_VPMD_RX_BURST);
- 		retval += burst;
- 		nb_pkts -= burst;
--		if (burst < IAVF_VPMD_RX_MAX_BURST)
-+		if (burst < IAVF_VPMD_RX_BURST)
- 			return retval;
- 	}
- 
+ int __rte_cold
+-ixgbe_rxq_vec_setup(struct ixgbe_rx_queue *rxq)
++ixgbe_rxq_vec_setup(struct ci_rx_queue *rxq)
+ {
+ 	rxq->mbuf_initializer = ci_rxq_mbuf_initializer(rxq->port_id);
+ 	return 0;
 -- 
 2.47.1
 
