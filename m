@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D3BC5B543
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 May 2025 13:58:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00944C5AD49
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 May 2025 13:58:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4F4124065D;
-	Fri, 30 May 2025 15:57:45 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6A50740667;
+	Fri, 30 May 2025 15:57:48 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
- by mails.dpdk.org (Postfix) with ESMTP id C91E040651
- for <dev@dpdk.org>; Fri, 30 May 2025 15:57:41 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id D7BAE4042C
+ for <dev@dpdk.org>; Fri, 30 May 2025 15:57:43 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1748613462; x=1780149462;
+ t=1748613464; x=1780149464;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=sGTaHnnPET/SUsaIz+0gQF3Ny4bW6g+kZ+41loKExoQ=;
- b=OrVf184/cEi66hcmD7lgMHBG7j2H/g1UsuKAxTNEzyzoVXizh14v9cSk
- VPA4LDSEG10WpjymjeXDSh5Mgqkl4e7epl1Blf0DqIEA7zmO8nROX58ma
- yWXy1o45o27dZMaKdpjMSJitB/yeAVMaq3BOsC3SRxijUyPFwCMWQ4I+p
- IWIFOT45/Y2lDn7jWP+S2lZv6EopmvLJRSh6CYm97LYVTSTkRCHO73Lqy
- u1zoZbyEU0wrWb9UUdL30evDkdJ7oxSjCztD34AigqFbHnUeFgY2i6/as
- QMY0fWcBCOJCLDFuf2nc2vSAnVdV7L3vStxyPSVe+2gshfkWYrVhlCPGY Q==;
-X-CSE-ConnectionGUID: d2I2P92TTpqHiFj5WqI/AA==
-X-CSE-MsgGUID: YilN6C1WQ5qmtZiISgIjZg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11449"; a="50809369"
-X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; d="scan'208";a="50809369"
+ bh=syyydYjIrIesALno7bCDThsh2jBZAlXgMD0zKm39RHc=;
+ b=i6ZyzMOKSm2ga00YehmCS/9LlwQgomfmbbUoAIbZJZwb1N9y5oUPPSPm
+ nCOxtTsc5ME8K0sFblanPOfeUwU3JHkXxbNTPl+Nic1iokU4Q/sUPRKtO
+ 4gurEqLG/ybAa2KcywWgQ5QW7bMoyxsGGwh9hGKB3KBNqLVlaiEE+DH6x
+ upUiUVECKw+mdw+nTYPsKf6O5y5/60ai5OiALDORzmJPxIBPiDmdfBqeK
+ E2Eg7breI8J8m9Vx7TZFUhHJv7qbDJyljIT0vr3UVtTe8H9q5uQnBZ+vL
+ W9Jae7++iYrEDxurBDq1t1RoUvGN2HT2lhnzhNS2TS1UoFy4nTNsJAGE9 w==;
+X-CSE-ConnectionGUID: ZS2TplKGR9quTosUs9I15w==
+X-CSE-MsgGUID: hOuAMv7nSCWNIumSiIfUQw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11449"; a="50809370"
+X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; d="scan'208";a="50809370"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 30 May 2025 06:57:41 -0700
-X-CSE-ConnectionGUID: 2Ovn0i9dSdurozcelE8Qjg==
-X-CSE-MsgGUID: HDn4mOQHQ8ysrgKa4yUL1w==
+ 30 May 2025 06:57:43 -0700
+X-CSE-ConnectionGUID: PaWGYmh9Q9GdkD0+kuts9Q==
+X-CSE-MsgGUID: iur4l6STQzCo0veAOVTpaA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; d="scan'208";a="174887374"
+X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; d="scan'208";a="174887387"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by orviesa002.jf.intel.com with ESMTP; 30 May 2025 06:57:40 -0700
+ by orviesa002.jf.intel.com with ESMTP; 30 May 2025 06:57:42 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Ian Stokes <ian.stokes@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v4 04/25] net/i40e: match variable name to other drivers
-Date: Fri, 30 May 2025 14:57:00 +0100
-Message-ID: <5265721cd3bba6ce768a980c4c171d95ed7ab71f.1748612803.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v4 05/25] net/ice: match variable name to other drivers
+Date: Fri, 30 May 2025 14:57:01 +0100
+Message-ID: <730db61d118c257b4862a2bb64137c743549559b.1748612803.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <cover.1748612803.git.anatoly.burakov@intel.com>
  <cover.1748612803.git.anatoly.burakov@intel.com>
@@ -60,9 +60,9 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, the i40e driver has a variable that has the same semantics as
-in other drivers, but has a different name. Rename `rx_using_sse` to
-`vector_rx` to match it to other drivers.
+Currently, the ice driver has a variable that have the same semantics as
+in other drivers, but has a different name. Rename `rx_ring_dma` to
+`rx_ring_phys_addr` for consistency with other drivers.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
@@ -71,105 +71,77 @@ Notes:
     v3 -> v4:
     - Make this commit separate
 
- drivers/net/intel/i40e/i40e_rxtx.c             | 8 ++++----
- drivers/net/intel/i40e/i40e_rxtx.h             | 2 +-
- drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c | 2 +-
- drivers/net/intel/i40e/i40e_rxtx_vec_neon.c    | 2 +-
- drivers/net/intel/i40e/i40e_rxtx_vec_sse.c     | 2 +-
- 5 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/net/intel/ice/ice_dcf.c  | 2 +-
+ drivers/net/intel/ice/ice_rxtx.c | 8 ++++----
+ drivers/net/intel/ice/ice_rxtx.h | 2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
-index c3ff2e05c3..b4caa3bdd5 100644
---- a/drivers/net/intel/i40e/i40e_rxtx.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx.c
-@@ -2633,7 +2633,7 @@ i40e_rx_queue_release_mbufs(struct i40e_rx_queue *rxq)
- 	uint16_t i;
+diff --git a/drivers/net/intel/ice/ice_dcf.c b/drivers/net/intel/ice/ice_dcf.c
+index 65c18921f4..fa95aaaba6 100644
+--- a/drivers/net/intel/ice/ice_dcf.c
++++ b/drivers/net/intel/ice/ice_dcf.c
+@@ -1211,7 +1211,7 @@ ice_dcf_configure_queues(struct ice_dcf_hw *hw)
  
- 	/* SSE Vector driver has a different way of releasing mbufs. */
--	if (rxq->rx_using_sse) {
-+	if (rxq->vector_rx) {
- 		i40e_rx_queue_release_mbufs_vec(rxq);
- 		return;
+ 		vc_qp->rxq.max_pkt_size = rxq[i]->max_pkt_len;
+ 		vc_qp->rxq.ring_len = rxq[i]->nb_rx_desc;
+-		vc_qp->rxq.dma_ring_addr = rxq[i]->rx_ring_dma;
++		vc_qp->rxq.dma_ring_addr = rxq[i]->rx_ring_phys_addr;
+ 		vc_qp->rxq.databuffer_size = rxq[i]->rx_buf_len;
+ 
+ #ifndef RTE_LIBRTE_ICE_16BYTE_RX_DESC
+diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
+index ba1435b9de..81962a1f9a 100644
+--- a/drivers/net/intel/ice/ice_rxtx.c
++++ b/drivers/net/intel/ice/ice_rxtx.c
+@@ -370,7 +370,7 @@ ice_program_hw_rx_queue(struct ice_rx_queue *rxq)
+ 		rx_ctx.dtype = 0; /* No Protocol Based Buffer Split mode */
  	}
-@@ -3316,7 +3316,7 @@ i40e_set_rx_function(struct rte_eth_dev *dev)
- {
- 	struct i40e_adapter *ad =
- 		I40E_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
--	uint16_t rx_using_sse, i;
-+	uint16_t vector_rx, i;
- 	/* In order to allow Vector Rx there are a few configuration
- 	 * conditions to be met and Rx Bulk Allocation should be allowed.
- 	 */
-@@ -3427,7 +3427,7 @@ i40e_set_rx_function(struct rte_eth_dev *dev)
  
- 	/* Propagate information about RX function choice through all queues. */
- 	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
--		rx_using_sse =
-+		vector_rx =
- 			(dev->rx_pkt_burst == i40e_recv_scattered_pkts_vec ||
- 			 dev->rx_pkt_burst == i40e_recv_pkts_vec ||
- #ifdef CC_AVX512_SUPPORT
-@@ -3441,7 +3441,7 @@ i40e_set_rx_function(struct rte_eth_dev *dev)
- 			struct i40e_rx_queue *rxq = dev->data->rx_queues[i];
+-	rx_ctx.base = rxq->rx_ring_dma / ICE_QUEUE_BASE_ADDR_UNIT;
++	rx_ctx.base = rxq->rx_ring_phys_addr / ICE_QUEUE_BASE_ADDR_UNIT;
+ 	rx_ctx.qlen = rxq->nb_rx_desc;
+ 	rx_ctx.dbuf = rxq->rx_buf_len >> ICE_RLAN_CTX_DBUF_S;
+ 	rx_ctx.hbuf = rxq->rx_hdr_len >> ICE_RLAN_CTX_HBUF_S;
+@@ -847,7 +847,7 @@ ice_fdir_program_hw_rx_queue(struct ice_rx_queue *rxq)
  
- 			if (rxq)
--				rxq->rx_using_sse = rx_using_sse;
-+				rxq->vector_rx = vector_rx;
- 		}
- 	}
- }
-diff --git a/drivers/net/intel/i40e/i40e_rxtx.h b/drivers/net/intel/i40e/i40e_rxtx.h
-index 2f32fc5686..9db044f280 100644
---- a/drivers/net/intel/i40e/i40e_rxtx.h
-+++ b/drivers/net/intel/i40e/i40e_rxtx.h
-@@ -118,7 +118,7 @@ struct i40e_rx_queue {
- 	uint8_t hs_mode; /* Header Split mode */
- 	bool q_set; /**< indicate if rx queue has been configured */
- 	bool rx_deferred_start; /**< don't start this queue in dev start */
--	uint16_t rx_using_sse; /**<flag indicate the usage of vPMD for rx */
-+	uint16_t vector_rx; /**<flag indicate the usage of vPMD for rx */
- 	uint8_t dcb_tc;         /**< Traffic class of rx queue */
- 	uint64_t offloads; /**< Rx offload flags of RTE_ETH_RX_OFFLOAD_* */
- 	const struct rte_memzone *mz;
-diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c b/drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c
-index 42beff6e89..01dee811ba 100644
---- a/drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c
-@@ -619,7 +619,7 @@ i40e_rx_queue_release_mbufs_vec(struct i40e_rx_queue *rxq)
- int __rte_cold
- i40e_rxq_vec_setup(struct i40e_rx_queue *rxq)
- {
--	rxq->rx_using_sse = 1;
-+	rxq->vector_rx = 1;
- 	rxq->mbuf_initializer = ci_rxq_mbuf_initializer(rxq->port_id);
- 	return 0;
- }
-diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c b/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c
-index d16ceb6b5d..317a0323bb 100644
---- a/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c
-@@ -746,7 +746,7 @@ i40e_rx_queue_release_mbufs_vec(struct i40e_rx_queue *rxq)
- int __rte_cold
- i40e_rxq_vec_setup(struct i40e_rx_queue *rxq)
- {
--	rxq->rx_using_sse = 1;
-+	rxq->vector_rx = 1;
- 	rxq->mbuf_initializer = ci_rxq_mbuf_initializer(rxq->port_id);
- 	return 0;
- }
-diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_sse.c b/drivers/net/intel/i40e/i40e_rxtx_vec_sse.c
-index 774519265b..25a3ef7352 100644
---- a/drivers/net/intel/i40e/i40e_rxtx_vec_sse.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx_vec_sse.c
-@@ -763,7 +763,7 @@ i40e_rx_queue_release_mbufs_vec(struct i40e_rx_queue *rxq)
- int __rte_cold
- i40e_rxq_vec_setup(struct i40e_rx_queue *rxq)
- {
--	rxq->rx_using_sse = 1;
-+	rxq->vector_rx = 1;
- 	rxq->mbuf_initializer = ci_rxq_mbuf_initializer(rxq->port_id);
- 	return 0;
- }
+ 	memset(&rx_ctx, 0, sizeof(rx_ctx));
+ 
+-	rx_ctx.base = rxq->rx_ring_dma / ICE_QUEUE_BASE_ADDR_UNIT;
++	rx_ctx.base = rxq->rx_ring_phys_addr / ICE_QUEUE_BASE_ADDR_UNIT;
+ 	rx_ctx.qlen = rxq->nb_rx_desc;
+ 	rx_ctx.dbuf = rxq->rx_buf_len >> ICE_RLAN_CTX_DBUF_S;
+ 	rx_ctx.hbuf = rxq->rx_hdr_len >> ICE_RLAN_CTX_HBUF_S;
+@@ -1273,7 +1273,7 @@ ice_rx_queue_setup(struct rte_eth_dev *dev,
+ 	/* Zero all the descriptors in the ring. */
+ 	memset(rz->addr, 0, ring_size);
+ 
+-	rxq->rx_ring_dma = rz->iova;
++	rxq->rx_ring_phys_addr = rz->iova;
+ 	rxq->rx_ring = rz->addr;
+ 
+ 	/* always reserve more for bulk alloc */
+@@ -2500,7 +2500,7 @@ ice_fdir_setup_rx_resources(struct ice_pf *pf)
+ 	rxq->reg_idx = pf->fdir.fdir_vsi->base_queue;
+ 	rxq->vsi = pf->fdir.fdir_vsi;
+ 
+-	rxq->rx_ring_dma = rz->iova;
++	rxq->rx_ring_phys_addr = rz->iova;
+ 	memset(rz->addr, 0, ICE_FDIR_NUM_RX_DESC *
+ 	       sizeof(union ice_32byte_rx_desc));
+ 	rxq->rx_ring = (union ice_rx_flex_desc *)rz->addr;
+diff --git a/drivers/net/intel/ice/ice_rxtx.h b/drivers/net/intel/ice/ice_rxtx.h
+index 500d630679..3c5c014b41 100644
+--- a/drivers/net/intel/ice/ice_rxtx.h
++++ b/drivers/net/intel/ice/ice_rxtx.h
+@@ -93,7 +93,7 @@ enum ice_rx_dtype {
+ struct ice_rx_queue {
+ 	struct rte_mempool *mp; /* mbuf pool to populate RX ring */
+ 	volatile union ice_rx_flex_desc *rx_ring;/* RX ring virtual address */
+-	rte_iova_t rx_ring_dma; /* RX ring DMA address */
++	rte_iova_t rx_ring_phys_addr; /* RX ring DMA address */
+ 	struct ice_rx_entry *sw_ring; /* address of RX soft ring */
+ 	uint16_t nb_rx_desc; /* number of RX descriptors */
+ 	uint16_t rx_free_thresh; /* max free RX desc to hold */
 -- 
 2.47.1
 
