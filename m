@@ -2,48 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 200FDC54F30
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 May 2025 07:14:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C40AEC3ABB2
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 May 2025 07:14:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 19E984042C;
-	Fri, 30 May 2025 09:14:15 +0200 (CEST)
-Received: from DUZPR83CU001.outbound.protection.outlook.com
- (mail-northeuropeazon11012045.outbound.protection.outlook.com [52.101.66.45])
- by mails.dpdk.org (Postfix) with ESMTP id 12283402E1
- for <dev@dpdk.org>; Fri, 30 May 2025 09:14:13 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2F9A940609;
+	Fri, 30 May 2025 09:14:17 +0200 (CEST)
+Received: from MRWPR03CU001.outbound.protection.outlook.com
+ (mail-francesouthazon11011019.outbound.protection.outlook.com
+ [40.107.130.19]) by mails.dpdk.org (Postfix) with ESMTP id 6A9C6402E1
+ for <dev@dpdk.org>; Fri, 30 May 2025 09:14:15 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZVzg/dyDV/jvQwMl0l1PZutjTAp9VgDrHgdJCZ7UAHE2r5vU16qM/eKxPug/y5pZQAaZ5Z1PwqkgT/UKlIZZ/sXqdltNhtgKAEHZC5LaE15bRRhreSrmn8Y4JHDrJdQ66WTEOZbQx+qcGXGlrzYak4fiYVGaj3emfsOdWwDCzPlsBfIsBvJ1mwnf/nURCli6KcMR9/w6lwqcm3WrVNwcaY+2x7Ub3THlnrTxNsjy+ZF1b+gFNF6EoRgtvpKkTeYerYmLru/hq6CizPRhEPwidYpbpCHf70L0lcZ8fT1xiDGS8VrogLHS9Oj8XonARMUdH+3rFdwo+oMDE2fY+wWGSA==
+ b=r8ygY0sryraEJRqirMULZ68rvIFua4EVbrsVHk3MzwMW88XTN06m1LxnPwMg8gDgx+Ecgqz0XJKGAa5zvvW2PTZE8npaYUUbZVaVlpeSOv3OMi3UsKItjxmkGxFLKA8kOQ9f8DtUNZi1zh2pseoShnpUKpqpBJfbI5ibXv6tNW0JYMX6NzB6085Q27YWA4rSL58qKZLGrOe4C8KbBsoN0zPQuc0X0jphGZ6cfXrZv9of1A/Nk0SFs9RzxQo6OCHkkxs3GamHC9d930iKzi7nmiuBlp7rq4RPCRQuLmjoXSrbwoXY5ZzUlOp2HDq1BJ6gdft4SO4vlpXaKJm5tkQ0xg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HdDt7RlcMilD0rxGmIK7K4ze8JuE2v3iqfkDVi9vBH4=;
- b=V5WhRGUH3oS7Pg0mQ/tGOxEeq0SUBV+WsVmlwT7PALFNEYxjdsevj16f6DzcVU8TaHAqPfsvpzSOoTZGTjnyPzVIaOarCOgH5pPu0rsmVjpnkEyHkyZLKE+euSWdg41Q5+yvY8QhnyBEveatSRyAFrXGsINjJrivne99Euk5HmlghQ0aCnZMFRaJdHEyQ7TTT9OkWXi8abcyNwCvQhMhqp1de6PVtzhJtWcetyqWDksskK4mE0TUBbVD8LVFu1UzBM5DE8F3C0B93riiHFC/eWt81fWzTaTQZTGQjNqoGzWQJ0W1E3RMNAv41hBSYj6FeQOIlqCZUQRtyO2we2EIzQ==
+ bh=Nj6ZQsr5ZcAvWcqnrvuhMD3JvkiArci2vvf/RdtdW2k=;
+ b=HUwP+ccPk1+gTDD3n324weQwdqtA2I03qCJCveFEJMkt+jPBRlITKU3WvA/ugiSHEpnwL1Hi91IDaGPUKOcA8EcTv8OrOOK6DbVOvOsmhnU6iat8ruEeYMh+JU84/BF3sfJBicuXmaatmnQZBKGRxoIP4e9bNJwUMTqWsF+ZgyMoxIX0PcwtoTkR4GPN5lst+UlJuZntLLuGDflZ+ZjuH984TWXDhZhMvay1Li3ApIzE/3bt4P9QqD3OCUWcL4otX0zO5wkavAzn4rIIQyqj1uNnQ185qIzLSM6FongS1XKdox4JgMHUvsjb9NaG+pcLq0kE2oFjLUJ7mqPGmjyn1A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HdDt7RlcMilD0rxGmIK7K4ze8JuE2v3iqfkDVi9vBH4=;
- b=hhlv7w2r2Z4z4MUG1NSYYGWyinqwDV6wTJGWzHkMoOwt/WV+v2KyWr5NtH3OMEsCqimwcM6IEhilVp3Jk6IgB9ywRpMwV5VpDay2ouqPjno5iGSGg6UoDPKi7FPWT96HBMRec0mJAbTECnrWPCcQGy0hevBvfm4JNpSjv2QVgTHKFiDCIKlHt+Nw3BvxiI8sClWJzV+w8CBUDeKqkTrzlJMePrD1pyMkLFKTNPVl3YsU4vhv3RY4gJv8DMIx4ZxpZ1pMpWhpwaMDkz0M04qEOhmvZZW7JNjfyIZ199xwdvnn/xdtCYR6Vkt/u1stPfy5cCLqKOXdz/BgLmpdX7sMyQ==
+ bh=Nj6ZQsr5ZcAvWcqnrvuhMD3JvkiArci2vvf/RdtdW2k=;
+ b=dmdeBNG8tc8F5hOZotp3QOQDJdzjAAGBpuW7B7ZYawaYw1isAqMLdL8VNcjTcahUGbJMXs1Oqg+QJNadoLO0mhzxFlA81ePO/HkJGqaOUUv1B+q6Xs1CLPCFNKeMaDDYpDViPW8PJTVJJwWZ6qCKsHmxlIqtK6ZaC44DzUuRQSQQT9YFIzzrxv6Hb/IEOd4eDIan37DPs+TsfGzvIeQiLaxFmYbqkLZQH6gZJApK8rGC5y5IwPQzecINGUR1cMEF/Cw0Vld++KUbu5oIRxZe956APOvIaXyUMptAT84L1YLmPbOa86yZpoasp5ynVRqITErYE2NtfzZZaGsqclMBkA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from PAXPR04MB8205.eurprd04.prod.outlook.com (2603:10a6:102:1c2::20)
- by GV1PR04MB10378.eurprd04.prod.outlook.com (2603:10a6:150:1d4::12)
+ by DBAPR04MB7223.eurprd04.prod.outlook.com (2603:10a6:10:1a4::22)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.21; Fri, 30 May
- 2025 07:14:11 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.30; Fri, 30 May
+ 2025 07:14:14 +0000
 Received: from PAXPR04MB8205.eurprd04.prod.outlook.com
  ([fe80::7633:884d:5973:174f]) by PAXPR04MB8205.eurprd04.prod.outlook.com
  ([fe80::7633:884d:5973:174f%4]) with mapi id 15.20.8769.025; Fri, 30 May 2025
- 07:14:11 +0000
+ 07:14:14 +0000
 From: Gagandeep Singh <g.singh@nxp.com>
 To: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
  Sachin Saxena <sachin.saxena@nxp.com>
-Cc: Vanshika Shukla <vanshika.shukla@nxp.com>
-Subject: [PATCH 03/11] bus/fslmc: add DPBP APIs for setting depletion
- thresholds
-Date: Fri, 30 May 2025 12:43:36 +0530
-Message-Id: <20250530071344.2939434-4-g.singh@nxp.com>
+Cc: Jun Yang <jun.yang@nxp.com>
+Subject: [PATCH 04/11] mempool/dpaa2: use unified VA to IOVA conversion
+Date: Fri, 30 May 2025 12:43:37 +0530
+Message-Id: <20250530071344.2939434-5-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250530071344.2939434-1-g.singh@nxp.com>
 References: <20250530071344.2939434-1-g.singh@nxp.com>
@@ -54,80 +53,80 @@ X-ClientProxiedBy: SG2PR01CA0153.apcprd01.prod.exchangelabs.com
  (2603:10a6:102:1c2::20)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8205:EE_|GV1PR04MB10378:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3f0b7dd2-188c-46f2-45d9-08dd9f49939d
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8205:EE_|DBAPR04MB7223:EE_
+X-MS-Office365-Filtering-Correlation-Id: dfcec7dc-7b53-46b4-bfd0-08dd9f4994e1
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|376014|52116014|366016|38350700014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?g5XjZxEDmz7bzJqdWRyVci8E0wMmC0kGzHeroO5XMGjzutTNCfAJwLDku56E?=
- =?us-ascii?Q?+DNS3oXdrAq2QQ4yQZzRRsQXbgAXYWmHXujJ/TdL7JDIu3xJ/sE6HGoN1X1W?=
- =?us-ascii?Q?vpcr+KBqP+mutcY9YrMcMyAr7wBy8YixrDamNvzdWWaPjVEqnAaUFmy3FvwN?=
- =?us-ascii?Q?lPEbgXqG1NdvdNcAJ1KfhXVehbKIx0Dg1vtHj3S2SAbe6aHQAuQBF3yv2JpH?=
- =?us-ascii?Q?HwncU06LRkC5Jcj78Qek2lgfKpITQm8xT8jWYOEXDLqRsv36+9mfcosl8KGt?=
- =?us-ascii?Q?/ETd4mixC90UU8cZn3BC/+k3S5KRAIZ53H07RK5Tj7CZKccjY2x8dywJvG5Y?=
- =?us-ascii?Q?tyngboVnzELSDPJlyCUN7cEHl5gjd5tczfzWa37Dhz+BlQIIZb3skKWpF7/y?=
- =?us-ascii?Q?H7aga2WwE2xcx2bPyvQRYB1f34dHfRhKhleOc4pnO9QPgpTl5+Fj2BRUX5Z5?=
- =?us-ascii?Q?jilV6nmPpZ5IqcnfSkVbXHHnUJQ06U4NX63OT2em6/S7J2M6Wbnw87vCtwSg?=
- =?us-ascii?Q?72CxrTAWaoJxo4lvGC/uBv33HGuAqAKzyfPFfg9IMqYXXbEQYdueZ97vGSr1?=
- =?us-ascii?Q?4ZCyoa0xSpL7j1Yj9auO3X9BW49SDa1uroQg8mjkbW8IKWGeqk5AjkTvSqPu?=
- =?us-ascii?Q?+BQ2gz5OafrnkkDvNFQr9uTs/riu7BH0QNLHExdI99ES27bkEaOHnZ/YKiAz?=
- =?us-ascii?Q?UG4ZIKH09K/x6vlAKsy5e4zvsjKks6Sr+FEK10FYXt29trHKww2/AWykjFHP?=
- =?us-ascii?Q?xtgHvWwsyXdI8/u7EkcYJ7IsvMIfK0sYswfg3SaoRNeIUw3ICXg3nrNyPQW9?=
- =?us-ascii?Q?3hSugSPvwGxr5yAJrJt2JAkiUVSv3EVzlqIOzxyn83Dhq2F22tbhc0iIKKyn?=
- =?us-ascii?Q?eYkbonjmZM/QOd1OWnsFCZyE/2nh1/8cjhNBfYb2mx7I+kq3wff6N+7zLKj1?=
- =?us-ascii?Q?sNxGTSg8GP9UbicFB5J1w31rj9GuEjLxuIP7AOfoZ1FTGyHCOZ11XRENrD47?=
- =?us-ascii?Q?WgDAttUIpjm1Ft3QLffpjP+66ppiC1yN4QKFy3QlsP6RB64FcWLi3dvTbUV3?=
- =?us-ascii?Q?6wAxWZCartF1jN1R75ikUp0jfysM5WmwcAVtbL8lEKp+PaQBuFZgYLT/ExMo?=
- =?us-ascii?Q?Gt2yX+T6+XZ4pku8o0bQ4uEEmuRbTLxaj9N5tiYqDir4ctsEyDKiycHw31Wn?=
- =?us-ascii?Q?eCg1ePGb6NGTO7tL4UQbtutZH2h3Q+tP6v0ZPFvfxcIfGA4h+6ood5fq++hs?=
- =?us-ascii?Q?vg6piEpl27cL5Ufwgs+W/q/Vu8SFnox8F1e2WudQacKUGQJBsGeHsKzljB0F?=
- =?us-ascii?Q?+IvrD3dPfCmgtlkgTmzHLJiPfVkDUGl+itwktAybytQML/XMaaMxopr39PXC?=
- =?us-ascii?Q?zrlX4xguMBNRyv8xskzXCBTLdOEhXwu2b8IMESUDtNa8XunF96EdE6nIrSLA?=
- =?us-ascii?Q?rppYmd7Js4TK84THNvo2u4KBbdS5AlFc3MtdyUBIY4c1371zJJJxjM+e3a/U?=
- =?us-ascii?Q?M3PkyzPGuc4UjIA=3D?=
+ ARA:13230040|52116014|1800799024|376014|366016|38350700014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?9pczlw5jzWkeHY1CjnayhKSGb+Q/VmPDZzDdrmHrcGCaO2vIOIt4ZGK+vtQz?=
+ =?us-ascii?Q?GoQILa2m+vCPVsJqBNjaDRF/9USl70obyuEpn/osYn0PyZfh+SKO0ugt8RJE?=
+ =?us-ascii?Q?AhFESYcowU/6W9xhf4cMYnuplDkrZUUo8gFM99mzeR/D/ao/AOZ03SXE/nYJ?=
+ =?us-ascii?Q?N7k9g+/pjujLQ7erSTcNdcRQQIs+QoyRrPtlKzxCWDO4XYQdOuRZaSiHuXGi?=
+ =?us-ascii?Q?6XbXF2XmN8/bkN+sUGXECVeJRysf18AYRNfLGctw+EFU48Z8Es7+x5vNpF3M?=
+ =?us-ascii?Q?N7zoMDFuf6eeBYAqdvjV3ikfmbb2jgai8da4HUZSSy8HZM+1B8V2HObx0SHE?=
+ =?us-ascii?Q?H5D7dGA+f/fHhW+qhj3/2wkjR4O/lgQn/HnHp2ZKSK1esvpXsLhrcH0NcBP9?=
+ =?us-ascii?Q?dcjnRxqf7sq6cxGPruqenJ/ubc/ultGZxOuFQiz72L++xr3Qq419rhWS8nec?=
+ =?us-ascii?Q?JtDQBtOrkuCtTpP0VCN6++czr+JPns2CyjBnoBhJi31ScjxWUc/8aTlkKDYU?=
+ =?us-ascii?Q?C1/e7HpzMfqpnRT5eYafrAi69tiv0zVRPVOQsTSbXb6j1OnX3LdjOYbkxj0G?=
+ =?us-ascii?Q?aFLcnMWFiH6C+JCSkV2842I9k5OIrvvuSCZ0C5xdE3n5BZksv88FIlpG2hMi?=
+ =?us-ascii?Q?0W6oIm22YPZbsAxJFykQO7lgc4teLpdcgqkcXQlzN7VgV3rgeh1ok14+78Fg?=
+ =?us-ascii?Q?xGC4VCqRXyKTCbx4nwe0gwkNdA8rFV128328vU/y1FU6vEoikkYWVocwV7o1?=
+ =?us-ascii?Q?Cs75fAA7a15h0wHNv/0yKwN+pTSGL71oNVFCyPS+viZBssc0VvFDjYfbjMQv?=
+ =?us-ascii?Q?MRQCjezl5emW9AqWxAuFCR3FIto+CqLfC7jRfutbMCwgrUQY+MQQQetWJJYz?=
+ =?us-ascii?Q?2kQUfP0YWCtoZd9fB2qDmmSaqaEH/kWoiPBu72IgFY49dSMslkphCy8MgCdF?=
+ =?us-ascii?Q?si+/8MQZXXGIZjHpfw8OLs7KwZaozrlY3b3zIwwGH/KNUMGrOR9OQlPIEtAt?=
+ =?us-ascii?Q?PavPlA3IWvkEmjGH9SWxdTlHZEvlD9AMJYA/C737l9EFuXFY22MYIndQreh0?=
+ =?us-ascii?Q?c4rr9zTpFPfh0sZMj1cSItfvElImY2A28uJ6Xxf/jDDl7z74QmIAF3tfm81j?=
+ =?us-ascii?Q?Qv0E+CosY2c6MVswVFvxtwVQe4ix3smPFmCDsuQOdOCy3tTQ1aLopbbtGSIv?=
+ =?us-ascii?Q?dmbtIwIJRRmSvCkcFvjcQDgp0AfrxY6Id1c/O/OPjXTEOd9WMkMocw273nV6?=
+ =?us-ascii?Q?TEAGbaD/6LoeN+7+tjlW/IkyovqNGdDFxJxDsd9Gz0FHaz2sxs1aJ2wLWSFK?=
+ =?us-ascii?Q?DyRJaHErm+3d6kI413iG8ERwr2Ej9Woj6OZXa9cE1guPV6SyqeqGjvi0rfiO?=
+ =?us-ascii?Q?sPT9/9AKgtu6W84eRO9IYrICcxRrE2Gn9/KzHzvBzSW00OAhDAs99fJR7R4q?=
+ =?us-ascii?Q?b922jN3AuAZ8/dULHKdfykLFKdI8odlbkSWAhHF3b3vC1m6GRCdd8bA4jB3J?=
+ =?us-ascii?Q?qrgFuK59BevsvLE=3D?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:PAXPR04MB8205.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014); DIR:OUT;
+ SFS:(13230040)(52116014)(1800799024)(376014)(366016)(38350700014); DIR:OUT;
  SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?NEwI1B87BTd0UYFY7CukhDRiEjD3B6jNCbx26RG4I5XiLexnEumxMxOOTqfd?=
- =?us-ascii?Q?fyHk7oO1LYtrnieZVk006ucZvlOHuK0JoM/AVwP7m6fi0lNvVS0KvmG9y0AA?=
- =?us-ascii?Q?SN0nGG4r/FIl9zPwLMQqqtTqoe56SCEMpLU6Vs6+rek02u+F0SG4UnlLb98r?=
- =?us-ascii?Q?scTcH7+didkNF0qvSv457o1Fu6KT69fEeIYtsVxwJbOXeghv0/iJCv4p5AYX?=
- =?us-ascii?Q?nrZUltJYJUsZ1fp0ow97M1pzOF5oC6EVe73mCKCpwD2N5q9iwzp6XkR8kE9F?=
- =?us-ascii?Q?KzlN/23l+7hqv63gjdxm8ctg4ziBE1Amec0NtMfkkVOcDK9LhlsyiDApFtM+?=
- =?us-ascii?Q?jxTo+XuOcs9Ys/0qq3INAdBdgwCErOsyU3+/1U/2BWnCuEqWfp4BTFwJH5sI?=
- =?us-ascii?Q?06mjXKEuIKfWPwmuW5qxWJgWYmoS89zlkX2Y2dBRDYzMToBxam8/Y3aAVzQc?=
- =?us-ascii?Q?M7WXAk4nd3QllDMwrUYp7wkDQPreUmtUCoZwWGeJX/Tf7bH9s6S0A8ik/VA6?=
- =?us-ascii?Q?vAH38vXd/GOd588x7OaW1VkhA6aVHDYMA7x/znNGVZqRATX/tYNFRHjBPdEP?=
- =?us-ascii?Q?5Et9mhZqPujAta/zDMBVuVtTG2TLU7lnrTAp5HPqyDEd/Wmlc6uBYbGsrOPF?=
- =?us-ascii?Q?w+uijxo+slhbLhiXC63T0BjB/RVUL3PbJ7egx2TaysRHQqs3nIrAtUlRk688?=
- =?us-ascii?Q?MurYd22C17udfDq+EjoERW6e7WMPNBgCzPEwXqDBAhIuaQzeho3OVkMZl602?=
- =?us-ascii?Q?VAz4U+UMWq2A0j3xlRtV/rtdVrq6vGTHYlDE/b8okigVHuTpgrKH7dnQre+H?=
- =?us-ascii?Q?3u6INToFqPiIV7HwZJj63TUfH97rmeydcO+HYNw3+guD1Kd/oK2hE2Q7MN1Q?=
- =?us-ascii?Q?MMucC9lyPJ3BTP3sifmG3ayj+vrCx4KeIx2b5H42Od5wDRtTPq0UuFhFcHB/?=
- =?us-ascii?Q?3Vchv/XpKmskcezQlnudttUWc/2xF0QXGcalwApMeAkoezp/jvO4ybIzM/vj?=
- =?us-ascii?Q?ioZwDBnWs1X/vhDyeENMB7W/b3pj9fKEUkuXUTJWAhPSfMH7QRnFHS6Qe2YV?=
- =?us-ascii?Q?qCMY13BNACS8WglSx+j2ZovJylgzovP9n9QWF6tR1UhNVLCZiW71Dxpxmpgr?=
- =?us-ascii?Q?qollKXYITUwrajQT5bdHttrRnrMwjEKDrp6db23Oi6RQE6Hkj8QgXQ7+PwoV?=
- =?us-ascii?Q?aSaUXd9WJqN4P+dGyVu80gcA3BmYhsGkPWbPgdpktsuldghOzKnoSdb/MTh4?=
- =?us-ascii?Q?X204KR2kSEnshClOH+799Pt17I8i7fBDdQMdfUE3Q06gT+UJqfXLFCgy86rS?=
- =?us-ascii?Q?3NceB7e2xaexs+yYzksIlW5Wa32uyjPnK+iImtNlgMrrXRByoGypJsiKtcQf?=
- =?us-ascii?Q?5qbgJqPQ9eS2vg+zuWDQFeka9S8C8T6yv1THodye2JCHOetVRvmqycU0XRdx?=
- =?us-ascii?Q?iYU11Uw8/GDN8ZbC9PfrhUMPeWVj6ISVtRVhrMX7GrhK4TrW/sKOEhwmAxoI?=
- =?us-ascii?Q?Sw9OkxQ4hgAwmHg5Pan2tWuDLZGm7z/hvNjs8BsPVVEYZfwA8gxIJSrLBkfb?=
- =?us-ascii?Q?a4cnglYUIuv1xwIg6l8=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?cRSM+ht9a02qMSGG/EBp3d7X1ah/c3vOzEx7vWIqF3QRkvJ8lVOFwk7P16vd?=
+ =?us-ascii?Q?DSlZOR9ob5ap9g0i7X8SDyDtiATdkSmQG+gHAnB0jSwGqOkruJ/hJGkJpMvy?=
+ =?us-ascii?Q?b8AyuxL46bWZ4HIvJwFzOhRjcmRF/wXksr7+uNOAZde+FOkpCX4Nkb1DUrwP?=
+ =?us-ascii?Q?lo+AWSZXSbiU6kBeI6SIyWm3g08bOY/Zf97oGrKrhtVW8+bydqF4U//i2mwX?=
+ =?us-ascii?Q?oWaq6oUXjgVZgHQT5M5y4CVtn2vf+/aPyJAH2bBB1KuyujngCI5r4hGzC7mR?=
+ =?us-ascii?Q?Q8jZblZGQgs8daTyT57cd8gDz1+upoUiA3u0z8+WacXJMYOsOrC/xmFjCO9u?=
+ =?us-ascii?Q?SW6J4snmVfAbexfuFbQFRVc+6lBKWynvGwjoqql/Rh7QpKtBbfNO/cBd2sz5?=
+ =?us-ascii?Q?yu2pwAoTFDIzJ1XS6QeydBDLKmt3rOJyrRwqxZ6DTeyszieeSJi50bArCL1A?=
+ =?us-ascii?Q?6Srf4kCO0UR5PQE136ZLfyk3EBiK2+vt/z6FnIXeVw6xcjfDYvbnjAakoRXi?=
+ =?us-ascii?Q?HJAwAVjMtKlIEgMow/WTT5wjvSzBBksWiSGO2SZb2ewYdK1eBYwnIsAjT4CU?=
+ =?us-ascii?Q?8W96HQ6hR1OUpjkOJ69H8Fm/O8rEZ4Yid9PUBQs9FxbgltLd6QNH+N0QbLvl?=
+ =?us-ascii?Q?p/W46GzrSBsUZBUwEELuaXUjv6DuRk5yLxm4ZablAP74/KHSrTcsh3lzDJaG?=
+ =?us-ascii?Q?tlGCHMvcJpwZL3jETdeMKB375ZLoUVibLd4BCb0lzDsJyRC/98596JWJVoQT?=
+ =?us-ascii?Q?aVGLELlo4Gm5MQYLljriCy4l6dLQzc4jY2lTXYvl6+j0657rWNftVK+RxUDm?=
+ =?us-ascii?Q?jW+TXx+1ErvRdK+VRSfmmlOk4Nsklz5N1O06b+BgpkWOoZCWnDBfhgwuoFrX?=
+ =?us-ascii?Q?JR5JDKLvL5vUARLMgvEiXflHmBsKEGxlZoX+UksNnmtepZKYsaIjZAtPSac7?=
+ =?us-ascii?Q?g/LZrgz3MBxsUXsBDU43khSlvi801kAA+wRx/n+Qs9zsle6+IDuTrNEXU+Ps?=
+ =?us-ascii?Q?MVvo+2FBeWttNJnz8RLIbZGusZ0xHWVIsqi/Z1AoKyA1PXLb0zQrEodUURJT?=
+ =?us-ascii?Q?SizooF4HHd6vikXaJxuJExs2wWt/3R3gNIR2vGIzWgD91XTkZmx7qKTgPJwB?=
+ =?us-ascii?Q?eF2WlRlC6GSstG8r2hv+iQufM4QQEfz7V3swt1MZj/qTACZ2NP3M5zouXzWg?=
+ =?us-ascii?Q?QvhWEcEKnOkm0nUJ4/zWv/sv/oTLfXM28G4dxWfM0Q8lkGmYXW82ZluUEkFa?=
+ =?us-ascii?Q?Zew7jH334eg88/22WRJkoJk5OG60e5RaP1h2P+8hdXUvfUBrUK9NjlJaen2K?=
+ =?us-ascii?Q?aNUGLRBhy7m26PwvQH0Pnx18aoCmu7he+x2vWvXTppbtV6TU2+e3P0soAkIY?=
+ =?us-ascii?Q?V4myDia5fEzBmYd0iU+c9G9UJM0bSq5xtuU4FW5AQEwI6uaUDIiXQbe8EG8Q?=
+ =?us-ascii?Q?GmYjv2kvXcCWemxZHG/tYM530vtpY/eJHPeUjyauMdUp2WxDwKBr/wKmgaF5?=
+ =?us-ascii?Q?rs0mlrzQf/emM7t7gjxOEOk1c97ZazvywU25NCuE8CItJvlrJE3hdW83CDEw?=
+ =?us-ascii?Q?od2e6TkLcnWdO+/QVVg=3D?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f0b7dd2-188c-46f2-45d9-08dd9f49939d
+X-MS-Exchange-CrossTenant-Network-Message-Id: dfcec7dc-7b53-46b4-bfd0-08dd9f4994e1
 X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8205.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2025 07:14:11.7984 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2025 07:14:13.9583 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YOCGVuR2fTQj4nHtWyZY5IfekTw0Wi0VZkyJlIZlgeHz/rIayA10QMfT8t6DjSOF
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10378
+X-MS-Exchange-CrossTenant-UserPrincipalName: psxlZCp2vrrOmJSum9Vu4qmRFxaEcMQgvABBrNXRPrqgM2RcNbhmtRmfnaXBMufC
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7223
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -141,379 +140,330 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Vanshika Shukla <vanshika.shukla@nxp.com>
+From: Jun Yang <jun.yang@nxp.com>
 
-This patch adds DPBP APIs for setting and getting the depletion/surplus
-thresholds for controlling pause frame generation.
+Use DPAA2_VADDR_TO_IOVA to convert va to iova for both VA and PA modes.
 
-By default, depletion_entry is set as 128 by MC. This API would help user
-configure the buffer in depletion state as per requirement.
-
-Signed-off-by: Vanshika Shukla <vanshika.shukla@nxp.com>
+Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- doc/guides/platform/dpaa2.rst             |  2 +-
- drivers/bus/fslmc/mc/dpbp.c               | 78 ++++++++++++++++++++++-
- drivers/bus/fslmc/mc/fsl_dpbp.h           | 41 +++++++++++-
- drivers/mempool/dpaa2/dpaa2_hw_mempool.c  | 26 ++++++++
- drivers/mempool/dpaa2/dpaa2_hw_mempool.h  |  1 +
- drivers/mempool/dpaa2/rte_dpaa2_mempool.h | 12 ++++
- drivers/net/dpaa2/dpaa2_ethdev.c          | 39 +++++++++++-
- drivers/net/dpaa2/dpaa2_ethdev.h          |  1 +
- 8 files changed, 194 insertions(+), 6 deletions(-)
+ drivers/mempool/dpaa2/dpaa2_hw_mempool.c | 220 +++++++++++++++--------
+ 1 file changed, 141 insertions(+), 79 deletions(-)
 
-diff --git a/doc/guides/platform/dpaa2.rst b/doc/guides/platform/dpaa2.rst
-index c9ec21334f..e32ba5d300 100644
---- a/doc/guides/platform/dpaa2.rst
-+++ b/doc/guides/platform/dpaa2.rst
-@@ -106,7 +106,7 @@ separately:
- Currently supported by DPDK:
+diff --git a/drivers/mempool/dpaa2/dpaa2_hw_mempool.c b/drivers/mempool/dpaa2/dpaa2_hw_mempool.c
+index eb22a14fb5..da49c25900 100644
+--- a/drivers/mempool/dpaa2/dpaa2_hw_mempool.c
++++ b/drivers/mempool/dpaa2/dpaa2_hw_mempool.c
+@@ -224,26 +224,47 @@ rte_hw_mbuf_free_pool(struct rte_mempool *mp)
+ 	dpaa2_free_dpbp_dev(dpbp_node);
+ }
  
- - NXP SDK **LSDK 21.08++**.
--- MC Firmware version **10.37.0** and higher.
-+- MC Firmware version **10.39.0** and higher.
- - Supported architectures:  **arm64 LE**.
+-static void
+-rte_dpaa2_mbuf_release(struct rte_mempool *pool __rte_unused,
+-			void * const *obj_table,
+-			uint32_t bpid,
+-			uint32_t meta_data_size,
+-			int count)
++static inline int
++dpaa2_bman_multi_release(uint64_t *bufs, int num,
++	struct qbman_swp *swp,
++	const struct qbman_release_desc *releasedesc)
++{
++	int retry_count = 0, ret;
++
++release_again:
++	ret = qbman_swp_release(swp, releasedesc, bufs, num);
++	if (unlikely(ret == -EBUSY)) {
++		retry_count++;
++		if (retry_count <= DPAA2_MAX_TX_RETRY_COUNT)
++			goto release_again;
++
++		DPAA2_MEMPOOL_ERR("bman release retry exceeded, low fbpr?");
++		return ret;
++	}
++	if (unlikely(ret)) {
++		DPAA2_MEMPOOL_ERR("bman release failed(err=%d)", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int
++dpaa2_mbuf_release(void * const *obj_table, uint32_t bpid,
++	uint32_t meta_data_size, int count)
+ {
+ 	struct qbman_release_desc releasedesc;
+ 	struct qbman_swp *swp;
+ 	int ret;
+-	int i, n, retry_count;
++	int i, n;
+ 	uint64_t bufs[DPAA2_MBUF_MAX_ACQ_REL];
  
- - Follow the DPDK :ref:`Getting Started Guide for Linux <linux_gsg>`
-diff --git a/drivers/bus/fslmc/mc/dpbp.c b/drivers/bus/fslmc/mc/dpbp.c
-index 08f24d33e8..5529a1fe9c 100644
---- a/drivers/bus/fslmc/mc/dpbp.c
-+++ b/drivers/bus/fslmc/mc/dpbp.c
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
-  *
-  * Copyright 2013-2016 Freescale Semiconductor Inc.
-- * Copyright 2016-2017 NXP
-+ * Copyright 2016-2017, 2025 NXP
-  *
-  */
- #include <fsl_mc_sys.h>
-@@ -362,3 +362,79 @@ int dpbp_get_num_free_bufs(struct fsl_mc_io *mc_io,
+ 	if (unlikely(!DPAA2_PER_LCORE_DPIO)) {
+ 		ret = dpaa2_affine_qbman_swp();
+-		if (ret != 0) {
+-			DPAA2_MEMPOOL_ERR(
+-				"Failed to allocate IO portal, tid: %d",
+-				rte_gettid());
+-			return;
++		if (ret) {
++			DPAA2_MEMPOOL_ERR("affine portal err: %d, tid: %d",
++				ret, rte_gettid());
++			return -EIO;
+ 		}
+ 	}
+ 	swp = DPAA2_PER_LCORE_PORTAL;
+@@ -259,51 +280,62 @@ rte_dpaa2_mbuf_release(struct rte_mempool *pool __rte_unused,
+ 		goto aligned;
+ 
+ 	/* convert mbuf to buffers for the remainder */
+-	for (i = 0; i < n ; i++) {
+-#ifdef RTE_LIBRTE_DPAA2_USE_PHYS_IOVA
+-		bufs[i] = (uint64_t)rte_mempool_virt2iova(obj_table[i])
+-				+ meta_data_size;
+-#else
+-		bufs[i] = (uint64_t)obj_table[i] + meta_data_size;
+-#endif
++	if (likely(rte_eal_iova_mode() == RTE_IOVA_VA)) {
++		for (i = 0; i < n ; i++) {
++			bufs[i] = DPAA2_VAMODE_VADDR_TO_IOVA(obj_table[i]) +
++				meta_data_size;
++		}
++	} else {
++		for (i = 0; i < n ; i++) {
++			bufs[i] = DPAA2_PAMODE_VADDR_TO_IOVA(obj_table[i]) +
++				meta_data_size;
++		}
+ 	}
+ 
+ 	/* feed them to bman */
+-	retry_count = 0;
+-	while ((ret = qbman_swp_release(swp, &releasedesc, bufs, n)) ==
+-			-EBUSY) {
+-		retry_count++;
+-		if (retry_count > DPAA2_MAX_TX_RETRY_COUNT) {
+-			DPAA2_MEMPOOL_ERR("bman release retry exceeded, low fbpr?");
+-			return;
+-		}
+-	}
++	ret = dpaa2_bman_multi_release(bufs, n, swp, &releasedesc);
++	if (unlikely(ret))
++		return 0;
+ 
+ aligned:
+ 	/* if there are more buffers to free */
++	if (unlikely(rte_eal_iova_mode() != RTE_IOVA_VA))
++		goto iova_pa_release;
++
+ 	while (n < count) {
+ 		/* convert mbuf to buffers */
+ 		for (i = 0; i < DPAA2_MBUF_MAX_ACQ_REL; i++) {
+-#ifdef RTE_LIBRTE_DPAA2_USE_PHYS_IOVA
+-			bufs[i] = (uint64_t)
+-				  rte_mempool_virt2iova(obj_table[n + i])
+-				  + meta_data_size;
+-#else
+-			bufs[i] = (uint64_t)obj_table[n + i] + meta_data_size;
+-#endif
++			bufs[i] = DPAA2_VAMODE_VADDR_TO_IOVA(obj_table[n + i]) +
++				meta_data_size;
+ 		}
+ 
+-		retry_count = 0;
+-		while ((ret = qbman_swp_release(swp, &releasedesc, bufs,
+-					DPAA2_MBUF_MAX_ACQ_REL)) == -EBUSY) {
+-			retry_count++;
+-			if (retry_count > DPAA2_MAX_TX_RETRY_COUNT) {
+-				DPAA2_MEMPOOL_ERR("bman release retry exceeded, low fbpr?");
+-				return;
+-			}
++		ret = dpaa2_bman_multi_release(bufs,
++				DPAA2_MBUF_MAX_ACQ_REL, swp, &releasedesc);
++		if (unlikely(ret))
++			return n;
++
++		n += DPAA2_MBUF_MAX_ACQ_REL;
++	}
++
++	return count;
++
++iova_pa_release:
++	while (n < count) {
++		/* convert mbuf to buffers */
++		for (i = 0; i < DPAA2_MBUF_MAX_ACQ_REL; i++) {
++			bufs[i] = DPAA2_PAMODE_VADDR_TO_IOVA(obj_table[n + i]) +
++				meta_data_size;
+ 		}
++
++		ret = dpaa2_bman_multi_release(bufs,
++				DPAA2_MBUF_MAX_ACQ_REL, swp, &releasedesc);
++		if (unlikely(ret))
++			return n;
++
+ 		n += DPAA2_MBUF_MAX_ACQ_REL;
+ 	}
++
++	return count;
+ }
+ 
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_dpaa2_bpid_info_init)
+@@ -387,56 +419,79 @@ rte_dpaa2_mbuf_alloc_bulk(struct rte_mempool *pool,
+ 
+ 	if (unlikely(!DPAA2_PER_LCORE_DPIO)) {
+ 		ret = dpaa2_affine_qbman_swp();
+-		if (ret != 0) {
+-			DPAA2_MEMPOOL_ERR(
+-				"Failed to allocate IO portal, tid: %d",
+-				rte_gettid());
++		if (ret) {
++			DPAA2_MEMPOOL_ERR("affine portal err: %d, tid: %d",
++				ret, rte_gettid());
+ 			return ret;
+ 		}
+ 	}
+ 	swp = DPAA2_PER_LCORE_PORTAL;
+ 
++	if (unlikely(rte_eal_iova_mode() != RTE_IOVA_VA))
++		goto iova_pa_acquire;
++
+ 	while (n < count) {
+ 		/* Acquire is all-or-nothing, so we drain in 7s,
+ 		 * then the remainder.
+ 		 */
+-		if ((count - n) > DPAA2_MBUF_MAX_ACQ_REL) {
+-			ret = qbman_swp_acquire(swp, bpid, (void *)bufs,
+-						DPAA2_MBUF_MAX_ACQ_REL);
+-		} else {
+-			ret = qbman_swp_acquire(swp, bpid, (void *)bufs,
+-						count - n);
++		ret = qbman_swp_acquire(swp, bpid, bufs,
++			(count - n) > DPAA2_MBUF_MAX_ACQ_REL ?
++			DPAA2_MBUF_MAX_ACQ_REL : (count - n));
++		if (unlikely(ret <= 0))
++			goto acquire_failed;
++
++		/* assigning mbuf from the acquired objects */
++		for (i = 0; i < ret; i++) {
++			DPAA2_VAMODE_MODIFY_IOVA_TO_VADDR(bufs[i],
++				size_t);
++			obj_table[n] = (void *)(bufs[i] -
++				bp_info->meta_data_size);
++			n++;
+ 		}
+-		/* In case of less than requested number of buffers available
+-		 * in pool, qbman_swp_acquire returns 0
++	}
++	goto acquire_success;
++
++iova_pa_acquire:
++
++	while (n < count) {
++		/* Acquire is all-or-nothing, so we drain in 7s,
++		 * then the remainder.
+ 		 */
+-		if (ret <= 0) {
+-			DPAA2_MEMPOOL_DP_DEBUG(
+-				"Buffer acquire failed with err code: %d", ret);
+-			/* The API expect the exact number of requested bufs */
+-			/* Releasing all buffers allocated */
+-			rte_dpaa2_mbuf_release(pool, obj_table, bpid,
+-					   bp_info->meta_data_size, n);
+-			return -ENOBUFS;
+-		}
++		ret = qbman_swp_acquire(swp, bpid, bufs,
++			(count - n) > DPAA2_MBUF_MAX_ACQ_REL ?
++			DPAA2_MBUF_MAX_ACQ_REL : (count - n));
++		if (unlikely(ret <= 0))
++			goto acquire_failed;
++
+ 		/* assigning mbuf from the acquired objects */
+-		for (i = 0; (i < ret) && bufs[i]; i++) {
+-			DPAA2_MODIFY_IOVA_TO_VADDR(bufs[i], size_t);
+-			obj_table[n] = (struct rte_mbuf *)
+-				       (bufs[i] - bp_info->meta_data_size);
+-			DPAA2_MEMPOOL_DP_DEBUG(
+-				   "Acquired %p address %p from BMAN\n",
+-				   (void *)bufs[i], (void *)obj_table[n]);
++		for (i = 0; i < ret; i++) {
++			DPAA2_PAMODE_MODIFY_IOVA_TO_VADDR(bufs[i],
++				size_t);
++			obj_table[n] = (void *)(bufs[i] -
++				bp_info->meta_data_size);
+ 			n++;
+ 		}
+ 	}
+ 
++acquire_success:
+ #ifdef RTE_LIBRTE_DPAA2_DEBUG_DRIVER
+ 	alloc += n;
+-	DPAA2_MEMPOOL_DP_DEBUG("Total = %d , req = %d done = %d\n",
+-			       alloc, count, n);
++	DPAA2_MEMPOOL_DP_DEBUG("Total = %d , req = %d done = %d",
++		alloc, count, n);
+ #endif
+ 	return 0;
++
++acquire_failed:
++	DPAA2_MEMPOOL_DP_DEBUG("Buffer acquire err: %d", ret);
++	/* The API expect the exact number of requested bufs */
++	/* Releasing all buffers allocated */
++	ret = dpaa2_mbuf_release(obj_table, bpid,
++			bp_info->meta_data_size, n);
++	if (ret != (int)n) {
++		DPAA2_MEMPOOL_ERR("%s: expect to free %d!= %d",
++			__func__, n, ret);
++	}
++	return -ENOBUFS;
+ }
+ 
+ static int
+@@ -444,14 +499,21 @@ rte_hw_mbuf_free_bulk(struct rte_mempool *pool,
+ 		  void * const *obj_table, unsigned int n)
+ {
+ 	struct dpaa2_bp_info *bp_info;
++	int ret;
+ 
+ 	bp_info = mempool_to_bpinfo(pool);
+ 	if (!(bp_info->bp_list)) {
+ 		DPAA2_MEMPOOL_ERR("DPAA2 buffer pool not configured");
+ 		return -ENOENT;
+ 	}
+-	rte_dpaa2_mbuf_release(pool, obj_table, bp_info->bpid,
+-			   bp_info->meta_data_size, n);
++	ret = dpaa2_mbuf_release(obj_table, bp_info->bpid,
++			bp_info->meta_data_size, n);
++	if (unlikely(ret != (int)n)) {
++		DPAA2_MEMPOOL_ERR("%s: expect to free %d!= %d",
++			__func__, n, ret);
++
++		return -EIO;
++	}
  
  	return 0;
  }
-+
-+/**
-+ * dpbp_set_notifications() - Set notifications towards software
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPBP object
-+ * @cfg:	notifications configuration
-+ *
-+ * Return:	'0' on Success; Error code otherwise.
-+ */
-+RTE_EXPORT_INTERNAL_SYMBOL(dpbp_set_notifications)
-+int dpbp_set_notifications(struct fsl_mc_io *mc_io,
-+	uint32_t cmd_flags,
-+	uint16_t token,
-+	struct dpbp_notification_cfg *cfg)
-+{
-+	struct dpbp_cmd_set_notifications *cmd_params;
-+	struct mc_command cmd = { 0 };
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPBP_CMDID_SET_NOTIFICATIONS,
-+			cmd_flags, token);
-+	cmd_params = (struct dpbp_cmd_set_notifications *)cmd.params;
-+	cmd_params->depletion_entry = cpu_to_le32(cfg->depletion_entry);
-+	cmd_params->depletion_exit = cpu_to_le32(cfg->depletion_exit);
-+	cmd_params->surplus_entry = cpu_to_le32(cfg->surplus_entry);
-+	cmd_params->surplus_exit = cpu_to_le32(cfg->surplus_exit);
-+	cmd_params->options = cpu_to_le32(cfg->options);
-+	cmd_params->message_ctx = cpu_to_le64(cfg->message_ctx);
-+	cmd_params->message_iova = cpu_to_le64(cfg->message_iova);
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
-+/**
-+ * dpbp_get_notifications() - Get the notifications configuration
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPBP object
-+ * @cfg:	notifications configuration
-+ *
-+ * Return:	'0' on Success; Error code otherwise.
-+ */
-+RTE_EXPORT_INTERNAL_SYMBOL(dpbp_get_notifications)
-+int dpbp_get_notifications(struct fsl_mc_io *mc_io,
-+	uint32_t cmd_flags,
-+	uint16_t token,
-+	struct dpbp_notification_cfg *cfg)
-+{
-+	struct dpbp_rsp_get_notifications *rsp_params;
-+	struct mc_command cmd = { 0 };
-+	int err;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPBP_CMDID_GET_NOTIFICATIONS,
-+			  cmd_flags,
-+			  token);
-+
-+	/* send command to mc*/
-+	err = mc_send_command(mc_io, &cmd);
-+	if (err)
-+		return err;
-+
-+	/* retrieve response parameters */
-+	rsp_params = (struct dpbp_rsp_get_notifications *)cmd.params;
-+	cfg->depletion_entry = le32_to_cpu(rsp_params->depletion_entry);
-+	cfg->depletion_exit = le32_to_cpu(rsp_params->depletion_exit);
-+	cfg->surplus_entry = le32_to_cpu(rsp_params->surplus_entry);
-+	cfg->surplus_exit = le32_to_cpu(rsp_params->surplus_exit);
-+	cfg->options = le32_to_cpu(rsp_params->options);
-+	cfg->message_ctx = le64_to_cpu(rsp_params->message_ctx);
-+	cfg->message_iova = le64_to_cpu(rsp_params->message_iova);
-+
-+	return 0;
-+}
-diff --git a/drivers/bus/fslmc/mc/fsl_dpbp.h b/drivers/bus/fslmc/mc/fsl_dpbp.h
-index 8a021f55f1..c79b511715 100644
---- a/drivers/bus/fslmc/mc/fsl_dpbp.h
-+++ b/drivers/bus/fslmc/mc/fsl_dpbp.h
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
-  *
-  * Copyright 2013-2016 Freescale Semiconductor Inc.
-- * Copyright 2016-2017 NXP
-+ * Copyright 2016-2017, 2025 NXP
-  *
-  */
- #ifndef __FSL_DPBP_H
-@@ -16,6 +16,34 @@
- 
- struct fsl_mc_io;
- 
-+/**
-+ * struct dpbp_notification_cfg - Structure representing DPBP notifications
-+ *	towards software
-+ * @depletion_entry: below this threshold the pool is "depleted";
-+ *	set it to '0' to disable it
-+ * @depletion_exit: greater than or equal to this threshold the pool exit its
-+ *	"depleted" state
-+ * @surplus_entry: above this threshold the pool is in "surplus" state;
-+ *	set it to '0' to disable it
-+ * @surplus_exit: less than or equal to this threshold the pool exit its
-+ *	"surplus" state
-+ * @message_iova: MUST be given if either 'depletion_entry' or 'surplus_entry'
-+ *	is not '0' (enable); I/O virtual address (must be in DMA-able memory),
-+ *	must be 16B aligned.
-+ * @message_ctx: The context that will be part of the BPSCN message and will
-+ *	be written to 'message_iova'
-+ * @options: Mask of available options; use 'DPBP_NOTIF_OPT_<X>' values
-+ */
-+struct dpbp_notification_cfg {
-+	uint32_t depletion_entry;
-+	uint32_t depletion_exit;
-+	uint32_t surplus_entry;
-+	uint32_t surplus_exit;
-+	uint64_t message_iova;
-+	uint64_t message_ctx;
-+	uint32_t options;
-+};
-+
- __rte_internal
- int dpbp_open(struct fsl_mc_io *mc_io,
- 	      uint32_t cmd_flags,
-@@ -25,7 +53,18 @@ int dpbp_open(struct fsl_mc_io *mc_io,
- int dpbp_close(struct fsl_mc_io *mc_io,
- 	       uint32_t cmd_flags,
- 	       uint16_t token);
-+__rte_internal
-+int dpbp_set_notifications(struct fsl_mc_io *mc_io,
-+		uint32_t cmd_flags,
-+		uint16_t token,
-+		struct dpbp_notification_cfg *cfg);
-+__rte_internal
-+int dpbp_get_notifications(struct fsl_mc_io *mc_io,
-+		uint32_t cmd_flags,
-+		uint16_t token,
-+		struct dpbp_notification_cfg *cfg);
- 
-+#define DPBP_NOTIF_OPT_WRIOP               0x00010000
- /**
-  * struct dpbp_cfg - Structure representing DPBP configuration
-  * @options:	place holder
-diff --git a/drivers/mempool/dpaa2/dpaa2_hw_mempool.c b/drivers/mempool/dpaa2/dpaa2_hw_mempool.c
-index 09729d2828..eb22a14fb5 100644
---- a/drivers/mempool/dpaa2/dpaa2_hw_mempool.c
-+++ b/drivers/mempool/dpaa2/dpaa2_hw_mempool.c
-@@ -38,6 +38,32 @@ RTE_EXPORT_INTERNAL_SYMBOL(rte_dpaa2_bpid_info)
- struct dpaa2_bp_info *rte_dpaa2_bpid_info;
- static struct dpaa2_bp_list *h_bp_list;
- 
-+int
-+rte_dpaa2_dpbp_set_notifications(struct rte_mempool *mp,
-+					struct dpaa2_dpbp_cfg *dpbp_cfg)
-+{
-+	struct dpaa2_dpbp_dev *avail_dpbp;
-+	struct dpaa2_bp_info *bpinfo;
-+	struct dpaa2_bp_list *bp;
+@@ -497,6 +559,7 @@ dpaa2_populate(struct rte_mempool *mp, unsigned int max_objs,
+ 	      rte_mempool_populate_obj_cb_t *obj_cb, void *obj_cb_arg)
+ {
+ 	struct rte_memseg_list *msl;
 +	int ret;
-+
-+	bpinfo = mempool_to_bpinfo(mp);
-+	bp = bpinfo->bp_list;
-+
-+	avail_dpbp = bp->buf_pool.dpbp_node;
-+
-+	ret = dpbp_set_notifications(&avail_dpbp->dpbp, CMD_PRI_LOW,
-+					avail_dpbp->token,
-+					(struct dpbp_notification_cfg *) dpbp_cfg);
-+	if (ret) {
-+		DPAA2_MEMPOOL_ERR("DPBP set notifications failure!");
-+		return ret;
-+	}
-+	bp->dpbp_notification_enable = true;
-+
-+	return 0;
-+}
-+
- static int
- rte_hw_mbuf_create_pool(struct rte_mempool *mp)
- {
-diff --git a/drivers/mempool/dpaa2/dpaa2_hw_mempool.h b/drivers/mempool/dpaa2/dpaa2_hw_mempool.h
-index 9e21823fb6..f2583be4c6 100644
---- a/drivers/mempool/dpaa2/dpaa2_hw_mempool.h
-+++ b/drivers/mempool/dpaa2/dpaa2_hw_mempool.h
-@@ -48,6 +48,7 @@ struct dpaa2_bp_list {
- 	struct rte_mempool *mp; /**< DPDK RTE EAL pool reference */
- 	int32_t dpaa2_ops_index; /**< Index into DPDK Mempool ops table */
- 	struct buf_pool buf_pool;
-+	bool dpbp_notification_enable;
- };
+ 	/* The memsegment list exists incase the memory is not external.
+ 	 * So, DMA-Map is required only when memory is provided by user,
+ 	 * i.e. External.
+@@ -505,11 +568,10 @@ dpaa2_populate(struct rte_mempool *mp, unsigned int max_objs,
  
- struct dpaa2_bp_info {
-diff --git a/drivers/mempool/dpaa2/rte_dpaa2_mempool.h b/drivers/mempool/dpaa2/rte_dpaa2_mempool.h
-index 0286090b1b..c1cf160a21 100644
---- a/drivers/mempool/dpaa2/rte_dpaa2_mempool.h
-+++ b/drivers/mempool/dpaa2/rte_dpaa2_mempool.h
-@@ -19,6 +19,16 @@
- extern "C" {
- #endif
- 
-+struct dpaa2_dpbp_cfg {
-+	uint32_t depletion_entry;
-+	uint32_t depletion_exit;
-+	uint32_t surplus_entry;
-+	uint32_t surplus_exit;
-+	uint64_t message_iova;
-+	uint64_t message_ctx;
-+	uint32_t options;
-+};
-+
- /**
-  * Get BPID corresponding to the packet pool
-  *
-@@ -62,6 +72,8 @@ rte_dpaa2_mbuf_from_buf_addr(struct rte_mempool *mp, void *buf_addr);
- __rte_internal
- int rte_dpaa2_bpid_info_init(struct rte_mempool *mp);
- 
-+int rte_dpaa2_dpbp_set_notifications(struct rte_mempool *mp, struct dpaa2_dpbp_cfg *dpbp_cfg);
-+
- #ifdef __cplusplus
- }
- #endif
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index c154a574ce..d17785a6ee 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.c
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -745,6 +745,9 @@ dpaa2_dev_rx_queue_setup(struct rte_eth_dev *dev,
- 	dpaa2_q->nb_desc = UINT16_MAX;
- 	dpaa2_q->offloads = rx_conf->offloads;
- 
-+	if (priv->bp_list->dpbp_notification_enable)
-+		priv->enable_bp_flow_ctrl = true;
-+
- 	/*Get the flow id from given VQ id*/
- 	flow_id = dpaa2_q->flow_id;
- 	memset(&cfg, 0, sizeof(struct dpni_queue));
-@@ -1176,7 +1179,7 @@ dpaa2_eth_setup_irqs(struct rte_eth_dev *dev, int enable)
- 
- 	return err;
- }
--
-+static int dpaa2_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf);
- static int
- dpaa2_dev_start(struct rte_eth_dev *dev)
- {
-@@ -1191,11 +1194,27 @@ dpaa2_dev_start(struct rte_eth_dev *dev)
- 	struct dpaa2_queue *dpaa2_q;
- 	int ret, i;
- 	struct rte_intr_handle *intr_handle;
-+	struct rte_eth_fc_conf *fc_conf;
-+
-+	PMD_INIT_FUNC_TRACE();
- 
- 	dpaa2_dev = container_of(rdev, struct rte_dpaa2_device, device);
- 	intr_handle = dpaa2_dev->intr_handle;
- 
--	PMD_INIT_FUNC_TRACE();
-+	if (priv->enable_bp_flow_ctrl) {
-+		fc_conf = rte_zmalloc(NULL, sizeof(struct rte_eth_fc_conf),
-+				RTE_CACHE_LINE_SIZE);
-+		fc_conf->autoneg = 0;
-+		fc_conf->mode = RTE_ETH_FC_FULL;
-+
-+		ret = dpaa2_flow_ctrl_set(dev, fc_conf);
-+		if (ret) {
-+			DPAA2_PMD_ERR("Unable to set flow ctrl");
+ 	if (!msl) {
+ 		DPAA2_MEMPOOL_DEBUG("Memsegment is External.");
+-		rte_fslmc_vfio_mem_dmamap((size_t)vaddr,
+-				(size_t)paddr, (size_t)len);
++		ret = rte_fslmc_vfio_mem_dmamap((size_t)vaddr, paddr, len);
++		if (ret)
 +			return ret;
-+		}
-+		rte_free(fc_conf);
-+	}
-+
- 	ret = dpni_enable(dpni, CMD_PRI_LOW, priv->token);
- 	if (ret) {
- 		DPAA2_PMD_ERR("Failure in enabling dpni %d device: err=%d",
-@@ -1298,6 +1317,7 @@ dpaa2_dev_stop(struct rte_eth_dev *dev)
- 	struct rte_device *rdev = dev->device;
- 	struct rte_intr_handle *intr_handle;
- 	struct rte_dpaa2_device *dpaa2_dev;
-+	struct rte_eth_fc_conf *fc_conf;
- 	uint16_t i;
+ 	}
+-	/* Insert entry into the PA->VA Table */
+-	dpaax_iova_table_update(paddr, vaddr, len);
  
- 	dpaa2_dev = container_of(rdev, struct rte_dpaa2_device, device);
-@@ -1305,6 +1325,19 @@ dpaa2_dev_stop(struct rte_eth_dev *dev)
- 
- 	PMD_INIT_FUNC_TRACE();
- 
-+	if (priv->enable_bp_flow_ctrl) {
-+		fc_conf = rte_zmalloc(NULL, sizeof(struct rte_eth_fc_conf),
-+			RTE_CACHE_LINE_SIZE);
-+		fc_conf->mode = RTE_ETH_FC_NONE;
-+
-+		ret = dpaa2_flow_ctrl_set(dev, fc_conf);
-+		if (ret) {
-+			DPAA2_PMD_ERR("Unable to set flow ctrl");
-+			return ret;
-+		}
-+		rte_free(fc_conf);
-+	}
-+
- 	/* reset interrupt callback  */
- 	if (intr_handle && rte_intr_fd_get(intr_handle) &&
- 	    dev->data->dev_conf.intr_conf.lsc != 0) {
-@@ -2110,7 +2143,7 @@ dpaa2_flow_ctrl_get(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf)
- 	return ret;
- }
- 
--static int
-+int
- dpaa2_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf)
- {
- 	int ret = -EINVAL;
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.h b/drivers/net/dpaa2/dpaa2_ethdev.h
-index f32c31c763..103fa2ca67 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.h
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.h
-@@ -409,6 +409,7 @@ struct dpaa2_dev_priv {
- 	struct rte_eth_dev *eth_dev; /**< Pointer back to holding ethdev */
- 	rte_spinlock_t lpbk_qp_lock;
- 
-+	bool enable_bp_flow_ctrl;
- 	uint8_t channel_inuse;
- 	/* Stores correction offset for one step timestamping */
- 	uint16_t ptp_correction_offset;
+ 	return rte_mempool_op_populate_helper(mp, 0, max_objs, vaddr, paddr,
+ 					       len, obj_cb, obj_cb_arg);
 -- 
 2.25.1
 
