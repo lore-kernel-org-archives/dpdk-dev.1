@@ -2,45 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DAB2C5B543
-	for <dpdk-dev@archiver.kernel.org>; Fri, 30 May 2025 13:59:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E60CBC5AD49
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 May 2025 13:59:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E918540A70;
-	Fri, 30 May 2025 15:58:04 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id DEACA40A71;
+	Fri, 30 May 2025 15:58:05 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
- by mails.dpdk.org (Postfix) with ESMTP id 9FFCB4069F
- for <dev@dpdk.org>; Fri, 30 May 2025 15:57:59 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id E945C40697
+ for <dev@dpdk.org>; Fri, 30 May 2025 15:58:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1748613480; x=1780149480;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=8bKI1GfCFK1W6/1GH1md5SaneZFbv/PBTINz4mpj5T0=;
- b=QVzeQ77KDg8lcR3y/pL/1fsHYC7cXsq0heP/eEdUy2zFiBdkUm0V1vQx
- 0sAolELPydEoVlleFCSlaQtZ0mphNHagbVgR195ObOZ/SYl9E41eKWs/N
- BkiUXz/1VURjhN0yEw30vZZrPlirVmi8XJm8TGt67ylPfIKgI/SJb4QOa
- jqekif+9X6ZafhwdIEtlkzRNE2wo7lJ+CaYwmtlal4iNuFGhjescy0XRC
- W3vgGN/8CJbIe4qy+B9z4jB3+RNob0EUJtETti5318FzJjs2cyweXhhS7
- B6zDOXptQllGhALeUIiAWZMX0YgHvCBgoeSFpcfapOObzWcm5XC0jEebq g==;
-X-CSE-ConnectionGUID: gJ7uJjo/RHiUXAaN/2OmEQ==
-X-CSE-MsgGUID: s2Q4DfkdTT+vnKDshJ1aDg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11449"; a="50809391"
-X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; d="scan'208";a="50809391"
+ t=1748613482; x=1780149482;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=mTJIEJA+UHnV9yxOMNJuDHoB8n9m4Xw6HPRlI5tEXw4=;
+ b=Jdd/usrdv62HRRn4OaweL0qEBWpN7DMIt1a/u4TK+ilbW7S83hzA4A6Q
+ VvF9hkFD/7NuAnIjfSxlAp8z2zQ7+Usha0iC5rwKUJbZo+p3NHsw41yUY
+ XmZoDo0KGeQXqMvA3+fVfl0qJ8jv6FTOZNkCtfZ2xDpDZIEoJ3RbBKEOl
+ dbnOyTQUlsmoifK1fq0eh6iSkeTm5eq8TqiYcZp831OPIeBPfb9ANN+Kp
+ b550H8/aa3SmJuqzeRxj7uKcTzUX4xvI76hhRKM0W59L/MLK344iVSZXn
+ eLWkoB8P5WUjIhtWBgOxSwsuB28raFBMP2K75XVTazcefY+uq/sLJZknO A==;
+X-CSE-ConnectionGUID: v/+HPEpsSp+otOuY3L3Lgg==
+X-CSE-MsgGUID: TpmvwI6gR4SWLPH6jtOUAA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11449"; a="50809395"
+X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; d="scan'208";a="50809395"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 30 May 2025 06:57:59 -0700
-X-CSE-ConnectionGUID: AiRqm2OuTfaN5uftQIfFMw==
-X-CSE-MsgGUID: qG6UHhhnTjq4ma8dTpjuDg==
+ 30 May 2025 06:58:01 -0700
+X-CSE-ConnectionGUID: TeteY03oQ0CQEuAXRX/SpA==
+X-CSE-MsgGUID: +iM2Tds/SgyhaQfZ5InYsg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; d="scan'208";a="174887466"
+X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; d="scan'208";a="174887471"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by orviesa002.jf.intel.com with ESMTP; 30 May 2025 06:57:58 -0700
+ by orviesa002.jf.intel.com with ESMTP; 30 May 2025 06:58:00 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org,
-	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v4 13/25] net/ice: clean up definitions
-Date: Fri, 30 May 2025 14:57:09 +0100
-Message-ID: <85fcf321a961c6542878d81315458d4a7aabba13.1748612803.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Ian Stokes <ian.stokes@intel.com>
+Cc: bruce.richardson@intel.com
+Subject: [PATCH v4 14/25] net/iavf: clean up definitions
+Date: Fri, 30 May 2025 14:57:10 +0100
+Message-ID: <cb9a7f1a509f4dcbfc12819097ceeab4b9873cb2.1748612803.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <cover.1748612803.git.anatoly.burakov@intel.com>
  <cover.1748612803.git.anatoly.burakov@intel.com>
@@ -63,9 +64,9 @@ Errors-To: dev-bounces@dpdk.org
 This commit does the following cleanups:
 
 - Mark vector-PMD related definitions with a special naming convention
-- Remove unused definitions
 - Create "descriptors per loop" for different vector implementations
-  (regular for SSE, Neon, wide for AVX2, AVX512)
+  (regular for SSE, Neon, AltiVec, wide for AVX2, AVX512)
+- Make definitions' names match naming conventions used in other drivers
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
@@ -74,449 +75,622 @@ Notes:
     v3 -> v4:
     - Add this commit
 
- drivers/net/intel/ice/ice_rxtx.h            |  6 ++--
- drivers/net/intel/ice/ice_rxtx_common_avx.h | 18 +++++-----
- drivers/net/intel/ice/ice_rxtx_vec_avx2.c   | 24 ++++++-------
- drivers/net/intel/ice/ice_rxtx_vec_avx512.c | 30 ++++++++--------
- drivers/net/intel/ice/ice_rxtx_vec_sse.c    | 40 ++++++++++-----------
- 5 files changed, 57 insertions(+), 61 deletions(-)
+ drivers/net/intel/iavf/iavf_rxtx.c            |  2 +-
+ drivers/net/intel/iavf/iavf_rxtx.h            | 11 ++--
+ drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c   | 52 +++++++++----------
+ drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c | 49 +++++++++--------
+ drivers/net/intel/iavf/iavf_rxtx_vec_common.h | 20 +++----
+ drivers/net/intel/iavf/iavf_rxtx_vec_neon.c   | 14 ++---
+ drivers/net/intel/iavf/iavf_rxtx_vec_sse.c    | 20 +++----
+ 7 files changed, 82 insertions(+), 86 deletions(-)
 
-diff --git a/drivers/net/intel/ice/ice_rxtx.h b/drivers/net/intel/ice/ice_rxtx.h
-index d2d521c4f5..52c753ba7c 100644
---- a/drivers/net/intel/ice/ice_rxtx.h
-+++ b/drivers/net/intel/ice/ice_rxtx.h
-@@ -35,10 +35,10 @@
- 
- #define ICE_VPMD_RX_BURST           32
- #define ICE_VPMD_TX_BURST           32
--#define ICE_RXQ_REARM_THRESH        64
--#define ICE_MAX_RX_BURST            ICE_RXQ_REARM_THRESH
-+#define ICE_VPMD_RXQ_REARM_THRESH   64
- #define ICE_TX_MAX_FREE_BUF_SZ      64
--#define ICE_DESCS_PER_LOOP          4
-+#define ICE_VPMD_DESCS_PER_LOOP      4
-+#define ICE_VPMD_DESCS_PER_LOOP_WIDE 8
- 
- #define ICE_FDIR_PKT_LEN	512
- 
-diff --git a/drivers/net/intel/ice/ice_rxtx_common_avx.h b/drivers/net/intel/ice/ice_rxtx_common_avx.h
-index a68cf8512d..d1c772bf06 100644
---- a/drivers/net/intel/ice/ice_rxtx_common_avx.h
-+++ b/drivers/net/intel/ice/ice_rxtx_common_avx.h
-@@ -21,20 +21,20 @@ ice_rxq_rearm_common(struct ice_rx_queue *rxq, __rte_unused bool avx512)
- 	/* Pull 'n' more MBUFs into the software ring */
- 	if (rte_mempool_get_bulk(rxq->mp,
- 				 (void *)rxep,
--				 ICE_RXQ_REARM_THRESH) < 0) {
--		if (rxq->rxrearm_nb + ICE_RXQ_REARM_THRESH >=
-+				 ICE_VPMD_RXQ_REARM_THRESH) < 0) {
-+		if (rxq->rxrearm_nb + ICE_VPMD_RXQ_REARM_THRESH >=
- 		    rxq->nb_rx_desc) {
- 			__m128i dma_addr0;
- 
- 			dma_addr0 = _mm_setzero_si128();
--			for (i = 0; i < ICE_DESCS_PER_LOOP; i++) {
-+			for (i = 0; i < ICE_VPMD_DESCS_PER_LOOP; i++) {
- 				rxep[i].mbuf = &rxq->fake_mbuf;
- 				_mm_store_si128(RTE_CAST_PTR(__m128i *, &rxdp[i].read),
- 						dma_addr0);
- 			}
- 		}
- 		rte_eth_devices[rxq->port_id].data->rx_mbuf_alloc_failed +=
--			ICE_RXQ_REARM_THRESH;
-+			ICE_VPMD_RXQ_REARM_THRESH;
- 		return;
- 	}
- 
-@@ -44,7 +44,7 @@ ice_rxq_rearm_common(struct ice_rx_queue *rxq, __rte_unused bool avx512)
- 	__m128i hdr_room = _mm_set_epi64x(RTE_PKTMBUF_HEADROOM,
- 			RTE_PKTMBUF_HEADROOM);
- 	/* Initialize the mbufs in vector, process 2 mbufs in one loop */
--	for (i = 0; i < ICE_RXQ_REARM_THRESH; i += 2, rxep += 2) {
-+	for (i = 0; i < ICE_VPMD_RXQ_REARM_THRESH; i += 2, rxep += 2) {
- 		__m128i vaddr0, vaddr1;
- 
- 		mb0 = rxep[0].mbuf;
-@@ -84,7 +84,7 @@ ice_rxq_rearm_common(struct ice_rx_queue *rxq, __rte_unused bool avx512)
- 		__m512i dma_addr0_3, dma_addr4_7;
- 		__m512i hdr_room = _mm512_set1_epi64(RTE_PKTMBUF_HEADROOM);
- 		/* Initialize the mbufs in vector, process 8 mbufs in one loop */
--		for (i = 0; i < ICE_RXQ_REARM_THRESH;
-+		for (i = 0; i < ICE_VPMD_RXQ_REARM_THRESH;
- 				i += 8, rxep += 8, rxdp += 8) {
- 			__m128i vaddr0, vaddr1, vaddr2, vaddr3;
- 			__m128i vaddr4, vaddr5, vaddr6, vaddr7;
-@@ -163,7 +163,7 @@ ice_rxq_rearm_common(struct ice_rx_queue *rxq, __rte_unused bool avx512)
- 		__m256i dma_addr0_1, dma_addr2_3;
- 		__m256i hdr_room = _mm256_set1_epi64x(RTE_PKTMBUF_HEADROOM);
- 		/* Initialize the mbufs in vector, process 4 mbufs in one loop */
--		for (i = 0; i < ICE_RXQ_REARM_THRESH;
-+		for (i = 0; i < ICE_VPMD_RXQ_REARM_THRESH;
- 				i += 4, rxep += 4, rxdp += 4) {
- 			__m128i vaddr0, vaddr1, vaddr2, vaddr3;
- 			__m256i vaddr0_1, vaddr2_3;
-@@ -216,11 +216,11 @@ ice_rxq_rearm_common(struct ice_rx_queue *rxq, __rte_unused bool avx512)
- 
- #endif
- 
--	rxq->rxrearm_start += ICE_RXQ_REARM_THRESH;
-+	rxq->rxrearm_start += ICE_VPMD_RXQ_REARM_THRESH;
- 	if (rxq->rxrearm_start >= rxq->nb_rx_desc)
- 		rxq->rxrearm_start = 0;
- 
--	rxq->rxrearm_nb -= ICE_RXQ_REARM_THRESH;
-+	rxq->rxrearm_nb -= ICE_VPMD_RXQ_REARM_THRESH;
- 
- 	rx_id = (uint16_t)((rxq->rxrearm_start == 0) ?
- 			     (rxq->nb_rx_desc - 1) : (rxq->rxrearm_start - 1));
-diff --git a/drivers/net/intel/ice/ice_rxtx_vec_avx2.c b/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
-index 6fe5ffa6f4..5ed669fc30 100644
---- a/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
-+++ b/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
-@@ -37,8 +37,6 @@ _ice_recv_raw_pkts_vec_avx2(struct ice_rx_queue *rxq, struct rte_mbuf **rx_pkts,
- 			    uint16_t nb_pkts, uint8_t *split_packet,
- 			    bool offload)
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
+index fd6c7d3a3e..2aed22800e 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.c
++++ b/drivers/net/intel/iavf/iavf_rxtx.c
+@@ -212,7 +212,7 @@ static inline bool
+ check_tx_vec_allow(struct ci_tx_queue *txq)
  {
--#define ICE_DESCS_PER_LOOP_AVX 8
+ 	if (!(txq->offloads & IAVF_TX_NO_VECTOR_FLAGS) &&
+-	    txq->tx_rs_thresh >= IAVF_VPMD_TX_MAX_BURST &&
++	    txq->tx_rs_thresh >= IAVF_VPMD_TX_BURST &&
+ 	    txq->tx_rs_thresh <= IAVF_VPMD_TX_MAX_FREE_BUF) {
+ 		PMD_INIT_LOG(DEBUG, "Vector tx can be enabled on this txq.");
+ 		return true;
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.h b/drivers/net/intel/iavf/iavf_rxtx.h
+index 6198643605..8c0bb5475d 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.h
++++ b/drivers/net/intel/iavf/iavf_rxtx.h
+@@ -23,11 +23,12 @@
+ #define IAVF_RX_MAX_DATA_BUF_SIZE (16 * 1024 - 128)
+ 
+ /* used for Vector PMD */
+-#define IAVF_VPMD_RX_MAX_BURST    32
+-#define IAVF_VPMD_TX_MAX_BURST    32
+-#define IAVF_RXQ_REARM_THRESH     32
+-#define IAVF_VPMD_DESCS_PER_LOOP  4
+-#define IAVF_VPMD_TX_MAX_FREE_BUF 64
++#define IAVF_VPMD_RX_BURST             32
++#define IAVF_VPMD_TX_BURST             32
++#define IAVF_VPMD_RXQ_REARM_THRESH     32
++#define IAVF_VPMD_DESCS_PER_LOOP       4
++#define IAVF_VPMD_DESCS_PER_LOOP_WIDE  8
++#define IAVF_VPMD_TX_MAX_FREE_BUF      64
+ 
+ #define IAVF_TX_NO_VECTOR_FLAGS (				 \
+ 		RTE_ETH_TX_OFFLOAD_VLAN_INSERT |		 \
+diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
+index d94a8b0ae1..40b265183f 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
++++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
+@@ -20,8 +20,6 @@ _iavf_recv_raw_pkts_vec_avx2(struct iavf_rx_queue *rxq,
+ 			     uint16_t nb_pkts, uint8_t *split_packet,
+ 			     bool offload)
+ {
+-#define IAVF_DESCS_PER_LOOP_AVX 8
 -
- 	const uint32_t *ptype_tbl = rxq->vsi->adapter->ptype_tbl;
- 	const __m256i mbuf_init = _mm256_set_epi64x(0, 0,
- 			0, rxq->mbuf_initializer);
-@@ -48,13 +46,13 @@ _ice_recv_raw_pkts_vec_avx2(struct ice_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+ 	/* const uint32_t *ptype_tbl = rxq->vsi->adapter->ptype_tbl; */
+ 	const uint32_t *type_table = rxq->vsi->adapter->ptype_tbl;
+ 
+@@ -34,13 +32,13 @@ _iavf_recv_raw_pkts_vec_avx2(struct iavf_rx_queue *rxq,
  
  	rte_prefetch0(rxdp);
  
--	/* nb_pkts has to be floor-aligned to ICE_DESCS_PER_LOOP_AVX */
--	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, ICE_DESCS_PER_LOOP_AVX);
-+	/* nb_pkts has to be floor-aligned to ICE_VPMD_DESCS_PER_LOOP_WIDE */
-+	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, ICE_VPMD_DESCS_PER_LOOP_WIDE);
+-	/* nb_pkts has to be floor-aligned to IAVF_DESCS_PER_LOOP_AVX */
+-	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, IAVF_DESCS_PER_LOOP_AVX);
++	/* nb_pkts has to be floor-aligned to IAVF_VPMD_DESCS_PER_LOOP_WIDE */
++	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, IAVF_VPMD_DESCS_PER_LOOP_WIDE);
  
  	/* See if we need to rearm the RX queue - gives the prefetch a bit
  	 * of time to act
  	 */
--	if (rxq->rxrearm_nb > ICE_RXQ_REARM_THRESH)
-+	if (rxq->rxrearm_nb > ICE_VPMD_RXQ_REARM_THRESH)
- 		ice_rxq_rearm(rxq);
+-	if (rxq->rxrearm_nb > IAVF_RXQ_REARM_THRESH)
++	if (rxq->rxrearm_nb > IAVF_VPMD_RXQ_REARM_THRESH)
+ 		iavf_rxq_rearm(rxq);
  
  	/* Before we start moving massive data around, check to see if
-@@ -239,8 +237,8 @@ _ice_recv_raw_pkts_vec_avx2(struct ice_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+@@ -178,8 +176,8 @@ _iavf_recv_raw_pkts_vec_avx2(struct iavf_rx_queue *rxq,
  	uint16_t i, received;
  
  	for (i = 0, received = 0; i < nb_pkts;
--	     i += ICE_DESCS_PER_LOOP_AVX,
--	     rxdp += ICE_DESCS_PER_LOOP_AVX) {
-+	     i += ICE_VPMD_DESCS_PER_LOOP_WIDE,
-+	     rxdp += ICE_VPMD_DESCS_PER_LOOP_WIDE) {
+-	     i += IAVF_DESCS_PER_LOOP_AVX,
+-	     rxdp += IAVF_DESCS_PER_LOOP_AVX) {
++	     i += IAVF_VPMD_DESCS_PER_LOOP_WIDE,
++	     rxdp += IAVF_VPMD_DESCS_PER_LOOP_WIDE) {
  		/* step 1, copy over 8 mbuf pointers to rx_pkts array */
  		_mm256_storeu_si256((void *)&rx_pkts[i],
  				    _mm256_loadu_si256((void *)&sw_ring[i]));
-@@ -286,7 +284,7 @@ _ice_recv_raw_pkts_vec_avx2(struct ice_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+@@ -217,7 +215,7 @@ _iavf_recv_raw_pkts_vec_avx2(struct iavf_rx_queue *rxq,
  		if (split_packet) {
  			int j;
  
--			for (j = 0; j < ICE_DESCS_PER_LOOP_AVX; j++)
-+			for (j = 0; j < ICE_VPMD_DESCS_PER_LOOP_WIDE; j++)
+-			for (j = 0; j < IAVF_DESCS_PER_LOOP_AVX; j++)
++			for (j = 0; j < IAVF_VPMD_DESCS_PER_LOOP_WIDE; j++)
  				rte_mbuf_prefetch_part2(rx_pkts[i + j]);
  		}
  
-@@ -634,7 +632,7 @@ _ice_recv_raw_pkts_vec_avx2(struct ice_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+@@ -436,7 +434,7 @@ _iavf_recv_raw_pkts_vec_avx2(struct iavf_rx_queue *rxq,
  			split_bits = _mm_shuffle_epi8(split_bits, eop_shuffle);
  			*(uint64_t *)split_packet =
  				_mm_cvtsi128_si64(split_bits);
--			split_packet += ICE_DESCS_PER_LOOP_AVX;
-+			split_packet += ICE_VPMD_DESCS_PER_LOOP_WIDE;
+-			split_packet += IAVF_DESCS_PER_LOOP_AVX;
++			split_packet += IAVF_VPMD_DESCS_PER_LOOP_WIDE;
  		}
  
  		/* perform dd_check */
-@@ -650,7 +648,7 @@ _ice_recv_raw_pkts_vec_avx2(struct ice_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+@@ -452,7 +450,7 @@ _iavf_recv_raw_pkts_vec_avx2(struct iavf_rx_queue *rxq,
  				(_mm_cvtsi128_si64
  					(_mm256_castsi256_si128(status0_7)));
  		received += burst;
--		if (burst != ICE_DESCS_PER_LOOP_AVX)
-+		if (burst != ICE_VPMD_DESCS_PER_LOOP_WIDE)
+-		if (burst != IAVF_DESCS_PER_LOOP_AVX)
++		if (burst != IAVF_VPMD_DESCS_PER_LOOP_WIDE)
  			break;
  	}
  
-@@ -667,7 +665,7 @@ _ice_recv_raw_pkts_vec_avx2(struct ice_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+@@ -492,8 +490,6 @@ _iavf_recv_raw_pkts_vec_avx2_flex_rxd(struct iavf_rx_queue *rxq,
+ 				      uint16_t nb_pkts, uint8_t *split_packet,
+ 				      bool offload)
+ {
+-#define IAVF_DESCS_PER_LOOP_AVX 8
+-
+ 	struct iavf_adapter *adapter = rxq->vsi->adapter;
  
- /**
-  * Notice:
-- * - nb_pkts < ICE_DESCS_PER_LOOP, just return no packet
-+ * - nb_pkts < ICE_VPMD_DESCS_PER_LOOP, just return no packet
-  */
- uint16_t
- ice_recv_pkts_vec_avx2(void *rx_queue, struct rte_mbuf **rx_pkts,
-@@ -688,7 +686,7 @@ ice_recv_pkts_vec_avx2_offload(void *rx_queue, struct rte_mbuf **rx_pkts,
- /**
-  * vPMD receive routine that reassembles single burst of 32 scattered packets
-  * Notice:
-- * - nb_pkts < ICE_DESCS_PER_LOOP, just return no packet
-+ * - nb_pkts < ICE_VPMD_DESCS_PER_LOOP, just return no packet
-  */
- static __rte_always_inline uint16_t
- ice_recv_scattered_burst_vec_avx2(void *rx_queue, struct rte_mbuf **rx_pkts,
-@@ -730,7 +728,7 @@ ice_recv_scattered_burst_vec_avx2(void *rx_queue, struct rte_mbuf **rx_pkts,
-  * vPMD receive routine that reassembles scattered packets.
-  * Main receive routine that can handle arbitrary burst sizes
-  * Notice:
-- * - nb_pkts < ICE_DESCS_PER_LOOP, just return no packet
-+ * - nb_pkts < ICE_VPMD_DESCS_PER_LOOP, just return no packet
-  */
- static __rte_always_inline uint16_t
- ice_recv_scattered_pkts_vec_avx2_common(void *rx_queue,
-diff --git a/drivers/net/intel/ice/ice_rxtx_vec_avx512.c b/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
-index 490d1ae059..e52e9e9ceb 100644
---- a/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
-+++ b/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
-@@ -7,8 +7,6 @@
+ #ifndef RTE_NET_INTEL_USE_16BYTE_DESC
+@@ -509,13 +505,13 @@ _iavf_recv_raw_pkts_vec_avx2_flex_rxd(struct iavf_rx_queue *rxq,
+ 
+ 	rte_prefetch0(rxdp);
+ 
+-	/* nb_pkts has to be floor-aligned to IAVF_DESCS_PER_LOOP_AVX */
+-	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, IAVF_DESCS_PER_LOOP_AVX);
++	/* nb_pkts has to be floor-aligned to IAVF_VPMD_DESCS_PER_LOOP_WIDE */
++	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, IAVF_VPMD_DESCS_PER_LOOP_WIDE);
+ 
+ 	/* See if we need to rearm the RX queue - gives the prefetch a bit
+ 	 * of time to act
+ 	 */
+-	if (rxq->rxrearm_nb > IAVF_RXQ_REARM_THRESH)
++	if (rxq->rxrearm_nb > IAVF_VPMD_RXQ_REARM_THRESH)
+ 		iavf_rxq_rearm(rxq);
+ 
+ 	/* Before we start moving massive data around, check to see if
+@@ -725,8 +721,8 @@ _iavf_recv_raw_pkts_vec_avx2_flex_rxd(struct iavf_rx_queue *rxq,
+ 	uint16_t i, received;
+ 
+ 	for (i = 0, received = 0; i < nb_pkts;
+-	     i += IAVF_DESCS_PER_LOOP_AVX,
+-	     rxdp += IAVF_DESCS_PER_LOOP_AVX) {
++	     i += IAVF_VPMD_DESCS_PER_LOOP_WIDE,
++	     rxdp += IAVF_VPMD_DESCS_PER_LOOP_WIDE) {
+ 		/* step 1, copy over 8 mbuf pointers to rx_pkts array */
+ 		_mm256_storeu_si256((void *)&rx_pkts[i],
+ 				    _mm256_loadu_si256((void *)&sw_ring[i]));
+@@ -782,7 +778,7 @@ _iavf_recv_raw_pkts_vec_avx2_flex_rxd(struct iavf_rx_queue *rxq,
+ 		if (split_packet) {
+ 			int j;
+ 
+-			for (j = 0; j < IAVF_DESCS_PER_LOOP_AVX; j++)
++			for (j = 0; j < IAVF_VPMD_DESCS_PER_LOOP_WIDE; j++)
+ 				rte_mbuf_prefetch_part2(rx_pkts[i + j]);
+ 		}
+ 
+@@ -1344,7 +1340,7 @@ _iavf_recv_raw_pkts_vec_avx2_flex_rxd(struct iavf_rx_queue *rxq,
+ 			split_bits = _mm_shuffle_epi8(split_bits, eop_shuffle);
+ 			*(uint64_t *)split_packet =
+ 				_mm_cvtsi128_si64(split_bits);
+-			split_packet += IAVF_DESCS_PER_LOOP_AVX;
++			split_packet += IAVF_VPMD_DESCS_PER_LOOP_WIDE;
+ 		}
+ 
+ 		/* perform dd_check */
+@@ -1407,7 +1403,7 @@ _iavf_recv_raw_pkts_vec_avx2_flex_rxd(struct iavf_rx_queue *rxq,
+ 			rxq->hw_time_update = rte_get_timer_cycles() / (rte_get_timer_hz() / 1000);
+ 		}
+ #endif
+-		if (burst != IAVF_DESCS_PER_LOOP_AVX)
++		if (burst != IAVF_VPMD_DESCS_PER_LOOP_WIDE)
+ 			break;
+ 	}
+ 
+@@ -1477,7 +1473,7 @@ iavf_recv_scattered_burst_vec_avx2(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 				   uint16_t nb_pkts, bool offload)
+ {
+ 	struct iavf_rx_queue *rxq = rx_queue;
+-	uint8_t split_flags[IAVF_VPMD_RX_MAX_BURST] = {0};
++	uint8_t split_flags[IAVF_VPMD_RX_BURST] = {0};
+ 
+ 	/* get some new buffers */
+ 	uint16_t nb_bufs = _iavf_recv_raw_pkts_vec_avx2(rxq, rx_pkts, nb_pkts,
+@@ -1520,12 +1516,12 @@ iavf_recv_scattered_pkts_vec_avx2_common(void *rx_queue, struct rte_mbuf **rx_pk
+ {
+ 	uint16_t retval = 0;
+ 
+-	while (nb_pkts > IAVF_VPMD_RX_MAX_BURST) {
++	while (nb_pkts > IAVF_VPMD_RX_BURST) {
+ 		uint16_t burst = iavf_recv_scattered_burst_vec_avx2(rx_queue,
+-				rx_pkts + retval, IAVF_VPMD_RX_MAX_BURST, offload);
++				rx_pkts + retval, IAVF_VPMD_RX_BURST, offload);
+ 		retval += burst;
+ 		nb_pkts -= burst;
+-		if (burst < IAVF_VPMD_RX_MAX_BURST)
++		if (burst < IAVF_VPMD_RX_BURST)
+ 			return retval;
+ 	}
+ 	return retval + iavf_recv_scattered_burst_vec_avx2(rx_queue,
+@@ -1566,7 +1562,7 @@ iavf_recv_scattered_burst_vec_avx2_flex_rxd(void *rx_queue,
+ 					    uint16_t nb_pkts, bool offload)
+ {
+ 	struct iavf_rx_queue *rxq = rx_queue;
+-	uint8_t split_flags[IAVF_VPMD_RX_MAX_BURST] = {0};
++	uint8_t split_flags[IAVF_VPMD_RX_BURST] = {0};
+ 
+ 	/* get some new buffers */
+ 	uint16_t nb_bufs = _iavf_recv_raw_pkts_vec_avx2_flex_rxd(rxq,
+@@ -1610,14 +1606,14 @@ iavf_recv_scattered_pkts_vec_avx2_flex_rxd_common(void *rx_queue,
+ {
+ 	uint16_t retval = 0;
+ 
+-	while (nb_pkts > IAVF_VPMD_RX_MAX_BURST) {
++	while (nb_pkts > IAVF_VPMD_RX_BURST) {
+ 		uint16_t burst =
+ 			iavf_recv_scattered_burst_vec_avx2_flex_rxd
+-			(rx_queue, rx_pkts + retval, IAVF_VPMD_RX_MAX_BURST,
++			(rx_queue, rx_pkts + retval, IAVF_VPMD_RX_BURST,
+ 			 offload);
+ 		retval += burst;
+ 		nb_pkts -= burst;
+-		if (burst < IAVF_VPMD_RX_MAX_BURST)
++		if (burst < IAVF_VPMD_RX_BURST)
+ 			return retval;
+ 	}
+ 	return retval + iavf_recv_scattered_burst_vec_avx2_flex_rxd(rx_queue,
+diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
+index 895b8717f7..53bc69ecf6 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
++++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
+@@ -6,7 +6,6 @@
  
  #include <rte_vect.h>
  
--#define ICE_DESCS_PER_LOOP_AVX 8
--
- static __rte_always_inline void
- ice_rxq_rearm(struct ice_rx_queue *rxq)
- {
-@@ -49,13 +47,13 @@ _ice_recv_raw_pkts_vec_avx512(struct ice_rx_queue *rxq,
+-#define IAVF_DESCS_PER_LOOP_AVX 8
+ #define PKTLEN_SHIFT 10
+ 
+ /******************************************************************************
+@@ -51,13 +50,13 @@ _iavf_recv_raw_pkts_vec_avx512(struct iavf_rx_queue *rxq,
  
  	rte_prefetch0(rxdp);
  
--	/* nb_pkts has to be floor-aligned to ICE_DESCS_PER_LOOP_AVX */
--	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, ICE_DESCS_PER_LOOP_AVX);
-+	/* nb_pkts has to be floor-aligned to ICE_VPMD_DESCS_PER_LOOP_WIDE */
-+	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, ICE_VPMD_DESCS_PER_LOOP_WIDE);
+-	/* nb_pkts has to be floor-aligned to IAVF_DESCS_PER_LOOP_AVX */
+-	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, IAVF_DESCS_PER_LOOP_AVX);
++	/* nb_pkts has to be floor-aligned to IAVF_VPMD_DESCS_PER_LOOP_WIDE */
++	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, IAVF_VPMD_DESCS_PER_LOOP_WIDE);
  
  	/* See if we need to rearm the RX queue - gives the prefetch a bit
  	 * of time to act
  	 */
--	if (rxq->rxrearm_nb > ICE_RXQ_REARM_THRESH)
-+	if (rxq->rxrearm_nb > ICE_VPMD_RXQ_REARM_THRESH)
- 		ice_rxq_rearm(rxq);
+-	if (rxq->rxrearm_nb > IAVF_RXQ_REARM_THRESH)
++	if (rxq->rxrearm_nb > IAVF_VPMD_RXQ_REARM_THRESH)
+ 		iavf_rxq_rearm(rxq);
  
  	/* Before we start moving massive data around, check to see if
-@@ -224,8 +222,8 @@ _ice_recv_raw_pkts_vec_avx512(struct ice_rx_queue *rxq,
+@@ -148,8 +147,8 @@ _iavf_recv_raw_pkts_vec_avx512(struct iavf_rx_queue *rxq,
  	uint16_t i, received;
  
  	for (i = 0, received = 0; i < nb_pkts;
--	     i += ICE_DESCS_PER_LOOP_AVX,
--	     rxdp += ICE_DESCS_PER_LOOP_AVX) {
-+	     i += ICE_VPMD_DESCS_PER_LOOP_WIDE,
-+	     rxdp += ICE_VPMD_DESCS_PER_LOOP_WIDE) {
+-	     i += IAVF_DESCS_PER_LOOP_AVX,
+-	     rxdp += IAVF_DESCS_PER_LOOP_AVX) {
++	     i += IAVF_VPMD_DESCS_PER_LOOP_WIDE,
++	     rxdp += IAVF_VPMD_DESCS_PER_LOOP_WIDE) {
  		/* step 1, copy over 8 mbuf pointers to rx_pkts array */
  		_mm256_storeu_si256((void *)&rx_pkts[i],
  				    _mm256_loadu_si256((void *)&sw_ring[i]));
-@@ -292,7 +290,7 @@ _ice_recv_raw_pkts_vec_avx512(struct ice_rx_queue *rxq,
+@@ -196,7 +195,7 @@ _iavf_recv_raw_pkts_vec_avx512(struct iavf_rx_queue *rxq,
  		if (split_packet) {
  			int j;
  
--			for (j = 0; j < ICE_DESCS_PER_LOOP_AVX; j++)
-+			for (j = 0; j < ICE_VPMD_DESCS_PER_LOOP_WIDE; j++)
+-			for (j = 0; j < IAVF_DESCS_PER_LOOP_AVX; j++)
++			for (j = 0; j < IAVF_VPMD_DESCS_PER_LOOP_WIDE; j++)
  				rte_mbuf_prefetch_part2(rx_pkts[i + j]);
  		}
  
-@@ -660,7 +658,7 @@ _ice_recv_raw_pkts_vec_avx512(struct ice_rx_queue *rxq,
+@@ -527,7 +526,7 @@ _iavf_recv_raw_pkts_vec_avx512(struct iavf_rx_queue *rxq,
  			split_bits = _mm_shuffle_epi8(split_bits, eop_shuffle);
  			*(uint64_t *)split_packet =
  				_mm_cvtsi128_si64(split_bits);
--			split_packet += ICE_DESCS_PER_LOOP_AVX;
-+			split_packet += ICE_VPMD_DESCS_PER_LOOP_WIDE;
+-			split_packet += IAVF_DESCS_PER_LOOP_AVX;
++			split_packet += IAVF_VPMD_DESCS_PER_LOOP_WIDE;
  		}
  
  		/* perform dd_check */
-@@ -676,7 +674,7 @@ _ice_recv_raw_pkts_vec_avx512(struct ice_rx_queue *rxq,
+@@ -543,7 +542,7 @@ _iavf_recv_raw_pkts_vec_avx512(struct iavf_rx_queue *rxq,
  				(_mm_cvtsi128_si64
  					(_mm256_castsi256_si128(status0_7)));
  		received += burst;
--		if (burst != ICE_DESCS_PER_LOOP_AVX)
-+		if (burst != ICE_VPMD_DESCS_PER_LOOP_WIDE)
+-		if (burst != IAVF_DESCS_PER_LOOP_AVX)
++		if (burst != IAVF_VPMD_DESCS_PER_LOOP_WIDE)
  			break;
  	}
  
-@@ -693,7 +691,7 @@ _ice_recv_raw_pkts_vec_avx512(struct ice_rx_queue *rxq,
+@@ -600,13 +599,13 @@ _iavf_recv_raw_pkts_vec_avx512_flex_rxd(struct iavf_rx_queue *rxq,
  
- /**
-  * Notice:
-- * - nb_pkts < ICE_DESCS_PER_LOOP, just return no packet
-+ * - nb_pkts < ICE_VPMD_DESCS_PER_LOOP, just return no packet
-  */
- uint16_t
- ice_recv_pkts_vec_avx512(void *rx_queue, struct rte_mbuf **rx_pkts,
-@@ -704,7 +702,7 @@ ice_recv_pkts_vec_avx512(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 	rte_prefetch0(rxdp);
  
- /**
-  * Notice:
-- * - nb_pkts < ICE_DESCS_PER_LOOP, just return no packet
-+ * - nb_pkts < ICE_VPMD_DESCS_PER_LOOP, just return no packet
-  */
- uint16_t
- ice_recv_pkts_vec_avx512_offload(void *rx_queue, struct rte_mbuf **rx_pkts,
-@@ -717,7 +715,7 @@ ice_recv_pkts_vec_avx512_offload(void *rx_queue, struct rte_mbuf **rx_pkts,
- /**
-  * vPMD receive routine that reassembles single burst of 32 scattered packets
-  * Notice:
-- * - nb_pkts < ICE_DESCS_PER_LOOP, just return no packet
-+ * - nb_pkts < ICE_VPMD_DESCS_PER_LOOP, just return no packet
-  */
- static uint16_t
- ice_recv_scattered_burst_vec_avx512(void *rx_queue, struct rte_mbuf **rx_pkts,
-@@ -758,7 +756,7 @@ ice_recv_scattered_burst_vec_avx512(void *rx_queue, struct rte_mbuf **rx_pkts,
- /**
-  * vPMD receive routine that reassembles single burst of 32 scattered packets
-  * Notice:
-- * - nb_pkts < ICE_DESCS_PER_LOOP, just return no packet
-+ * - nb_pkts < ICE_VPMD_DESCS_PER_LOOP, just return no packet
-  */
- static uint16_t
- ice_recv_scattered_burst_vec_avx512_offload(void *rx_queue,
-@@ -801,7 +799,7 @@ ice_recv_scattered_burst_vec_avx512_offload(void *rx_queue,
-  * vPMD receive routine that reassembles scattered packets.
-  * Main receive routine that can handle arbitrary burst sizes
-  * Notice:
-- * - nb_pkts < ICE_DESCS_PER_LOOP, just return no packet
-+ * - nb_pkts < ICE_VPMD_DESCS_PER_LOOP, just return no packet
-  */
- uint16_t
- ice_recv_scattered_pkts_vec_avx512(void *rx_queue, struct rte_mbuf **rx_pkts,
-@@ -825,7 +823,7 @@ ice_recv_scattered_pkts_vec_avx512(void *rx_queue, struct rte_mbuf **rx_pkts,
-  * vPMD receive routine that reassembles scattered packets.
-  * Main receive routine that can handle arbitrary burst sizes
-  * Notice:
-- * - nb_pkts < ICE_DESCS_PER_LOOP, just return no packet
-+ * - nb_pkts < ICE_VPMD_DESCS_PER_LOOP, just return no packet
-  */
- uint16_t
- ice_recv_scattered_pkts_vec_avx512_offload(void *rx_queue,
-diff --git a/drivers/net/intel/ice/ice_rxtx_vec_sse.c b/drivers/net/intel/ice/ice_rxtx_vec_sse.c
-index 719b37645e..36da5b5d1b 100644
---- a/drivers/net/intel/ice/ice_rxtx_vec_sse.c
-+++ b/drivers/net/intel/ice/ice_rxtx_vec_sse.c
-@@ -42,23 +42,23 @@ ice_rxq_rearm(struct ice_rx_queue *rxq)
+-	/* nb_pkts has to be floor-aligned to IAVF_DESCS_PER_LOOP_AVX */
+-	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, IAVF_DESCS_PER_LOOP_AVX);
++	/* nb_pkts has to be floor-aligned to IAVF_VPMD_DESCS_PER_LOOP_WIDE */
++	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, IAVF_VPMD_DESCS_PER_LOOP_WIDE);
+ 
+ 	/* See if we need to rearm the RX queue - gives the prefetch a bit
+ 	 * of time to act
+ 	 */
+-	if (rxq->rxrearm_nb > IAVF_RXQ_REARM_THRESH)
++	if (rxq->rxrearm_nb > IAVF_VPMD_RXQ_REARM_THRESH)
+ 		iavf_rxq_rearm(rxq);
+ 
+ 	/* Before we start moving massive data around, check to see if
+@@ -716,8 +715,8 @@ _iavf_recv_raw_pkts_vec_avx512_flex_rxd(struct iavf_rx_queue *rxq,
+ 	uint16_t i, received;
+ 
+ 	for (i = 0, received = 0; i < nb_pkts;
+-	     i += IAVF_DESCS_PER_LOOP_AVX,
+-	     rxdp += IAVF_DESCS_PER_LOOP_AVX) {
++	     i += IAVF_VPMD_DESCS_PER_LOOP_WIDE,
++	     rxdp += IAVF_VPMD_DESCS_PER_LOOP_WIDE) {
+ 		/* step 1, copy over 8 mbuf pointers to rx_pkts array */
+ 		_mm256_storeu_si256((void *)&rx_pkts[i],
+ 				    _mm256_loadu_si256((void *)&sw_ring[i]));
+@@ -765,7 +764,7 @@ _iavf_recv_raw_pkts_vec_avx512_flex_rxd(struct iavf_rx_queue *rxq,
+ 		if (split_packet) {
+ 			int j;
+ 
+-			for (j = 0; j < IAVF_DESCS_PER_LOOP_AVX; j++)
++			for (j = 0; j < IAVF_VPMD_DESCS_PER_LOOP_WIDE; j++)
+ 				rte_mbuf_prefetch_part2(rx_pkts[i + j]);
+ 		}
+ 
+@@ -1532,7 +1531,7 @@ _iavf_recv_raw_pkts_vec_avx512_flex_rxd(struct iavf_rx_queue *rxq,
+ 			split_bits = _mm_shuffle_epi8(split_bits, eop_shuffle);
+ 			*(uint64_t *)split_packet =
+ 				_mm_cvtsi128_si64(split_bits);
+-			split_packet += IAVF_DESCS_PER_LOOP_AVX;
++			split_packet += IAVF_VPMD_DESCS_PER_LOOP_WIDE;
+ 		}
+ 
+ 		/* perform dd_check */
+@@ -1597,7 +1596,7 @@ _iavf_recv_raw_pkts_vec_avx512_flex_rxd(struct iavf_rx_queue *rxq,
+ 		}
+ #endif
+ #endif
+-		if (burst != IAVF_DESCS_PER_LOOP_AVX)
++		if (burst != IAVF_VPMD_DESCS_PER_LOOP_WIDE)
+ 			break;
+ 	}
+ 
+@@ -1654,7 +1653,7 @@ iavf_recv_scattered_burst_vec_avx512(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 				     uint16_t nb_pkts, bool offload)
+ {
+ 	struct iavf_rx_queue *rxq = rx_queue;
+-	uint8_t split_flags[IAVF_VPMD_RX_MAX_BURST] = {0};
++	uint8_t split_flags[IAVF_VPMD_RX_BURST] = {0};
+ 
+ 	/* get some new buffers */
+ 	uint16_t nb_bufs = _iavf_recv_raw_pkts_vec_avx512(rxq, rx_pkts, nb_pkts,
+@@ -1697,12 +1696,12 @@ iavf_recv_scattered_pkts_vec_avx512_cmn(void *rx_queue, struct rte_mbuf **rx_pkt
+ {
+ 	uint16_t retval = 0;
+ 
+-	while (nb_pkts > IAVF_VPMD_RX_MAX_BURST) {
++	while (nb_pkts > IAVF_VPMD_RX_BURST) {
+ 		uint16_t burst = iavf_recv_scattered_burst_vec_avx512(rx_queue,
+-				rx_pkts + retval, IAVF_VPMD_RX_MAX_BURST, offload);
++				rx_pkts + retval, IAVF_VPMD_RX_BURST, offload);
+ 		retval += burst;
+ 		nb_pkts -= burst;
+-		if (burst < IAVF_VPMD_RX_MAX_BURST)
++		if (burst < IAVF_VPMD_RX_BURST)
+ 			return retval;
+ 	}
+ 	return retval + iavf_recv_scattered_burst_vec_avx512(rx_queue,
+@@ -1730,7 +1729,7 @@ iavf_recv_scattered_burst_vec_avx512_flex_rxd(void *rx_queue,
+ 					      bool offload)
+ {
+ 	struct iavf_rx_queue *rxq = rx_queue;
+-	uint8_t split_flags[IAVF_VPMD_RX_MAX_BURST] = {0};
++	uint8_t split_flags[IAVF_VPMD_RX_BURST] = {0};
+ 
+ 	/* get some new buffers */
+ 	uint16_t nb_bufs = _iavf_recv_raw_pkts_vec_avx512_flex_rxd(rxq,
+@@ -1775,14 +1774,14 @@ iavf_recv_scattered_pkts_vec_avx512_flex_rxd_cmn(void *rx_queue,
+ {
+ 	uint16_t retval = 0;
+ 
+-	while (nb_pkts > IAVF_VPMD_RX_MAX_BURST) {
++	while (nb_pkts > IAVF_VPMD_RX_BURST) {
+ 		uint16_t burst =
+ 			iavf_recv_scattered_burst_vec_avx512_flex_rxd
+ 				(rx_queue, rx_pkts + retval,
+-				 IAVF_VPMD_RX_MAX_BURST, offload);
++				 IAVF_VPMD_RX_BURST, offload);
+ 		retval += burst;
+ 		nb_pkts -= burst;
+-		if (burst < IAVF_VPMD_RX_MAX_BURST)
++		if (burst < IAVF_VPMD_RX_BURST)
+ 			return retval;
+ 	}
+ 	return retval + iavf_recv_scattered_burst_vec_avx512_flex_rxd(rx_queue,
+diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_common.h b/drivers/net/intel/iavf/iavf_rxtx_vec_common.h
+index f577fd7f3e..c78bebe9b4 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx_vec_common.h
++++ b/drivers/net/intel/iavf/iavf_rxtx_vec_common.h
+@@ -59,7 +59,7 @@ iavf_rx_vec_queue_default(struct iavf_rx_queue *rxq)
+ 	if (!rte_is_power_of_2(rxq->nb_rx_desc))
+ 		return -1;
+ 
+-	if (rxq->rx_free_thresh < IAVF_VPMD_RX_MAX_BURST)
++	if (rxq->rx_free_thresh < IAVF_VPMD_RX_BURST)
+ 		return -1;
+ 
+ 	if (rxq->nb_rx_desc % rxq->rx_free_thresh)
+@@ -80,7 +80,7 @@ iavf_tx_vec_queue_default(struct ci_tx_queue *txq)
+ 	if (!txq)
+ 		return -1;
+ 
+-	if (txq->tx_rs_thresh < IAVF_VPMD_TX_MAX_BURST ||
++	if (txq->tx_rs_thresh < IAVF_VPMD_TX_BURST ||
+ 	    txq->tx_rs_thresh > IAVF_VPMD_TX_MAX_FREE_BUF)
+ 		return -1;
+ 
+@@ -252,8 +252,8 @@ iavf_rxq_rearm_common(struct iavf_rx_queue *rxq, __rte_unused bool avx512)
  	/* Pull 'n' more MBUFs into the software ring */
  	if (rte_mempool_get_bulk(rxq->mp,
- 				 (void *)rxep,
--				 ICE_RXQ_REARM_THRESH) < 0) {
--		if (rxq->rxrearm_nb + ICE_RXQ_REARM_THRESH >=
-+				 ICE_VPMD_RXQ_REARM_THRESH) < 0) {
-+		if (rxq->rxrearm_nb + ICE_VPMD_RXQ_REARM_THRESH >=
+ 				 (void *)rxp,
+-				 IAVF_RXQ_REARM_THRESH) < 0) {
+-		if (rxq->rxrearm_nb + IAVF_RXQ_REARM_THRESH >=
++				 IAVF_VPMD_RXQ_REARM_THRESH) < 0) {
++		if (rxq->rxrearm_nb + IAVF_VPMD_RXQ_REARM_THRESH >=
  		    rxq->nb_rx_desc) {
- 			dma_addr0 = _mm_setzero_si128();
--			for (i = 0; i < ICE_DESCS_PER_LOOP; i++) {
-+			for (i = 0; i < ICE_VPMD_DESCS_PER_LOOP; i++) {
- 				rxep[i].mbuf = &rxq->fake_mbuf;
- 				_mm_store_si128(RTE_CAST_PTR(__m128i *, &rxdp[i].read),
- 						dma_addr0);
+ 			__m128i dma_addr0;
+ 
+@@ -265,7 +265,7 @@ iavf_rxq_rearm_common(struct iavf_rx_queue *rxq, __rte_unused bool avx512)
  			}
  		}
  		rte_eth_devices[rxq->port_id].data->rx_mbuf_alloc_failed +=
--			ICE_RXQ_REARM_THRESH;
-+			ICE_VPMD_RXQ_REARM_THRESH;
+-			IAVF_RXQ_REARM_THRESH;
++			IAVF_VPMD_RXQ_REARM_THRESH;
+ 		return;
+ 	}
+ 
+@@ -275,7 +275,7 @@ iavf_rxq_rearm_common(struct iavf_rx_queue *rxq, __rte_unused bool avx512)
+ 	__m128i hdr_room = _mm_set_epi64x(RTE_PKTMBUF_HEADROOM,
+ 			RTE_PKTMBUF_HEADROOM);
+ 	/* Initialize the mbufs in vector, process 2 mbufs in one loop */
+-	for (i = 0; i < IAVF_RXQ_REARM_THRESH; i += 2, rxp += 2) {
++	for (i = 0; i < IAVF_VPMD_RXQ_REARM_THRESH; i += 2, rxp += 2) {
+ 		__m128i vaddr0, vaddr1;
+ 
+ 		mb0 = rxp[0];
+@@ -307,7 +307,7 @@ iavf_rxq_rearm_common(struct iavf_rx_queue *rxq, __rte_unused bool avx512)
+ 		__m512i dma_addr0_3, dma_addr4_7;
+ 		__m512i hdr_room = _mm512_set1_epi64(RTE_PKTMBUF_HEADROOM);
+ 		/* Initialize the mbufs in vector, process 8 mbufs in one loop */
+-		for (i = 0; i < IAVF_RXQ_REARM_THRESH;
++		for (i = 0; i < IAVF_VPMD_RXQ_REARM_THRESH;
+ 				i += 8, rxp += 8, rxdp += 8) {
+ 			__m128i vaddr0, vaddr1, vaddr2, vaddr3;
+ 			__m128i vaddr4, vaddr5, vaddr6, vaddr7;
+@@ -378,7 +378,7 @@ iavf_rxq_rearm_common(struct iavf_rx_queue *rxq, __rte_unused bool avx512)
+ 		__m256i dma_addr0_1, dma_addr2_3;
+ 		__m256i hdr_room = _mm256_set1_epi64x(RTE_PKTMBUF_HEADROOM);
+ 		/* Initialize the mbufs in vector, process 4 mbufs in one loop */
+-		for (i = 0; i < IAVF_RXQ_REARM_THRESH;
++		for (i = 0; i < IAVF_VPMD_RXQ_REARM_THRESH;
+ 				i += 4, rxp += 4, rxdp += 4) {
+ 			__m128i vaddr0, vaddr1, vaddr2, vaddr3;
+ 			__m256i vaddr0_1, vaddr2_3;
+@@ -423,11 +423,11 @@ iavf_rxq_rearm_common(struct iavf_rx_queue *rxq, __rte_unused bool avx512)
+ 
+ #endif
+ 
+-	rxq->rxrearm_start += IAVF_RXQ_REARM_THRESH;
++	rxq->rxrearm_start += IAVF_VPMD_RXQ_REARM_THRESH;
+ 	if (rxq->rxrearm_start >= rxq->nb_rx_desc)
+ 		rxq->rxrearm_start = 0;
+ 
+-	rxq->rxrearm_nb -= IAVF_RXQ_REARM_THRESH;
++	rxq->rxrearm_nb -= IAVF_VPMD_RXQ_REARM_THRESH;
+ 
+ 	rx_id = (uint16_t)((rxq->rxrearm_start == 0) ?
+ 			     (rxq->nb_rx_desc - 1) : (rxq->rxrearm_start - 1));
+diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_neon.c b/drivers/net/intel/iavf/iavf_rxtx_vec_neon.c
+index a583340f15..86f3a7839d 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx_vec_neon.c
++++ b/drivers/net/intel/iavf/iavf_rxtx_vec_neon.c
+@@ -31,8 +31,8 @@ iavf_rxq_rearm(struct iavf_rx_queue *rxq)
+ 	/* Pull 'n' more MBUFs into the software ring */
+ 	if (unlikely(rte_mempool_get_bulk(rxq->mp,
+ 					  (void *)rxep,
+-					  IAVF_RXQ_REARM_THRESH) < 0)) {
+-		if (rxq->rxrearm_nb + IAVF_RXQ_REARM_THRESH >=
++					  IAVF_VPMD_RXQ_REARM_THRESH) < 0)) {
++		if (rxq->rxrearm_nb + IAVF_VPMD_RXQ_REARM_THRESH >=
+ 		    rxq->nb_rx_desc) {
+ 			for (i = 0; i < IAVF_VPMD_DESCS_PER_LOOP; i++) {
+ 				rxep[i] = &rxq->fake_mbuf;
+@@ -40,12 +40,12 @@ iavf_rxq_rearm(struct iavf_rx_queue *rxq)
+ 			}
+ 		}
+ 		rte_eth_devices[rxq->port_id].data->rx_mbuf_alloc_failed +=
+-			IAVF_RXQ_REARM_THRESH;
++			IAVF_VPMD_RXQ_REARM_THRESH;
  		return;
  	}
  
  	/* Initialize the mbufs in vector, process 2 mbufs in one loop */
--	for (i = 0; i < ICE_RXQ_REARM_THRESH; i += 2, rxep += 2) {
-+	for (i = 0; i < ICE_VPMD_RXQ_REARM_THRESH; i += 2, rxep += 2) {
- 		__m128i vaddr0, vaddr1;
+-	for (i = 0; i < IAVF_RXQ_REARM_THRESH; i += 2, rxep += 2) {
++	for (i = 0; i < IAVF_VPMD_RXQ_REARM_THRESH; i += 2, rxep += 2) {
+ 		mb0 = rxep[0];
+ 		mb1 = rxep[1];
  
- 		mb0 = rxep[0].mbuf;
-@@ -91,11 +91,11 @@ ice_rxq_rearm(struct ice_rx_queue *rxq)
- 		_mm_store_si128(RTE_CAST_PTR(__m128i *, &rxdp++->read), dma_addr1);
+@@ -60,11 +60,11 @@ iavf_rxq_rearm(struct iavf_rx_queue *rxq)
+ 		vst1q_u64(RTE_CAST_PTR(uint64_t *, &rxdp++->read), dma_addr1);
  	}
  
--	rxq->rxrearm_start += ICE_RXQ_REARM_THRESH;
-+	rxq->rxrearm_start += ICE_VPMD_RXQ_REARM_THRESH;
+-	rxq->rxrearm_start += IAVF_RXQ_REARM_THRESH;
++	rxq->rxrearm_start += IAVF_VPMD_RXQ_REARM_THRESH;
  	if (rxq->rxrearm_start >= rxq->nb_rx_desc)
  		rxq->rxrearm_start = 0;
  
--	rxq->rxrearm_nb -= ICE_RXQ_REARM_THRESH;
-+	rxq->rxrearm_nb -= ICE_VPMD_RXQ_REARM_THRESH;
+-	rxq->rxrearm_nb -= IAVF_RXQ_REARM_THRESH;
++	rxq->rxrearm_nb -= IAVF_VPMD_RXQ_REARM_THRESH;
  
  	rx_id = (uint16_t)((rxq->rxrearm_start == 0) ?
- 			   (rxq->nb_rx_desc - 1) : (rxq->rxrearm_start - 1));
-@@ -294,11 +294,11 @@ ice_rx_desc_to_ptype_v(__m128i descs[4], struct rte_mbuf **rx_pkts,
- }
- 
- /**
-- * vPMD raw receive routine, only accept(nb_pkts >= ICE_DESCS_PER_LOOP)
-+ * vPMD raw receive routine, only accept(nb_pkts >= ICE_VPMD_DESCS_PER_LOOP)
-  *
-  * Notice:
-- * - nb_pkts < ICE_DESCS_PER_LOOP, just return no packet
-- * - floor align nb_pkts to a ICE_DESCS_PER_LOOP power-of-two
-+ * - nb_pkts < ICE_VPMD_DESCS_PER_LOOP, just return no packet
-+ * - floor align nb_pkts to a ICE_VPMD_DESCS_PER_LOOP power-of-two
-  */
- static inline uint16_t
- _ice_recv_raw_pkts_vec(struct ice_rx_queue *rxq, struct rte_mbuf **rx_pkts,
-@@ -355,8 +355,8 @@ _ice_recv_raw_pkts_vec(struct ice_rx_queue *rxq, struct rte_mbuf **rx_pkts,
- 	const __m128i eop_check = _mm_set_epi64x(0x0000000200000002LL,
- 						 0x0000000200000002LL);
- 
--	/* nb_pkts has to be floor-aligned to ICE_DESCS_PER_LOOP */
--	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, ICE_DESCS_PER_LOOP);
-+	/* nb_pkts has to be floor-aligned to ICE_VPMD_DESCS_PER_LOOP */
-+	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, ICE_VPMD_DESCS_PER_LOOP);
- 
- 	/* Just the act of getting into the function from the application is
- 	 * going to cost about 7 cycles
-@@ -368,7 +368,7 @@ _ice_recv_raw_pkts_vec(struct ice_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+ 			     (rxq->nb_rx_desc - 1) : (rxq->rxrearm_start - 1));
+@@ -233,7 +233,7 @@ _recv_raw_pkts_vec(struct iavf_rx_queue *__rte_restrict rxq,
  	/* See if we need to rearm the RX queue - gives the prefetch a bit
  	 * of time to act
  	 */
--	if (rxq->rxrearm_nb > ICE_RXQ_REARM_THRESH)
-+	if (rxq->rxrearm_nb > ICE_VPMD_RXQ_REARM_THRESH)
- 		ice_rxq_rearm(rxq);
+-	if (rxq->rxrearm_nb > IAVF_RXQ_REARM_THRESH)
++	if (rxq->rxrearm_nb > IAVF_VPMD_RXQ_REARM_THRESH)
+ 		iavf_rxq_rearm(rxq);
  
  	/* Before we start moving massive data around, check to see if
-@@ -406,9 +406,9 @@ _ice_recv_raw_pkts_vec(struct ice_rx_queue *rxq, struct rte_mbuf **rx_pkts,
- 	 */
+diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_sse.c b/drivers/net/intel/iavf/iavf_rxtx_vec_sse.c
+index 8ccdec7f8a..190c1dd869 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx_vec_sse.c
++++ b/drivers/net/intel/iavf/iavf_rxtx_vec_sse.c
+@@ -1175,7 +1175,7 @@ _recv_raw_pkts_vec_flex_rxd(struct iavf_rx_queue *rxq,
  
- 	for (pos = 0, nb_pkts_recd = 0; pos < nb_pkts;
--	     pos += ICE_DESCS_PER_LOOP,
--	     rxdp += ICE_DESCS_PER_LOOP) {
--		__m128i descs[ICE_DESCS_PER_LOOP];
-+	     pos += ICE_VPMD_DESCS_PER_LOOP,
-+	     rxdp += ICE_VPMD_DESCS_PER_LOOP) {
-+		__m128i descs[ICE_VPMD_DESCS_PER_LOOP];
- 		__m128i pkt_mb0, pkt_mb1, pkt_mb2, pkt_mb3;
- 		__m128i staterr, sterr_tmp1, sterr_tmp2;
- 		/* 2 64 bit or 4 32 bit mbuf pointers in one XMM reg. */
-@@ -556,7 +556,7 @@ _ice_recv_raw_pkts_vec(struct ice_rx_queue *rxq, struct rte_mbuf **rx_pkts,
- 			eop_bits = _mm_shuffle_epi8(eop_bits, eop_shuf_mask);
- 			/* store the resulting 32-bit value */
- 			*(int *)split_packet = _mm_cvtsi128_si32(eop_bits);
--			split_packet += ICE_DESCS_PER_LOOP;
-+			split_packet += ICE_VPMD_DESCS_PER_LOOP;
- 		}
- 
- 		/* C.3 calc available number of desc */
-@@ -573,7 +573,7 @@ _ice_recv_raw_pkts_vec(struct ice_rx_queue *rxq, struct rte_mbuf **rx_pkts,
- 		/* C.4 calc available number of desc */
- 		var = rte_popcount64(_mm_cvtsi128_si64(staterr));
- 		nb_pkts_recd += var;
--		if (likely(var != ICE_DESCS_PER_LOOP))
-+		if (likely(var != ICE_VPMD_DESCS_PER_LOOP))
- 			break;
- 	}
- 
-@@ -587,7 +587,7 @@ _ice_recv_raw_pkts_vec(struct ice_rx_queue *rxq, struct rte_mbuf **rx_pkts,
- 
- /**
-  * Notice:
-- * - nb_pkts < ICE_DESCS_PER_LOOP, just return no packet
-+ * - nb_pkts < ICE_VPMD_DESCS_PER_LOOP, just return no packet
-  * - nb_pkts > ICE_VPMD_RX_BURST, only scan ICE_VPMD_RX_BURST
+ /* Notice:
+  * - nb_pkts < IAVF_DESCS_PER_LOOP, just return no packet
+- * - nb_pkts > IAVF_VPMD_RX_MAX_BURST, only scan IAVF_VPMD_RX_MAX_BURST
++ * - nb_pkts > IAVF_VPMD_RX_BURST, only scan IAVF_VPMD_RX_BURST
   *   numbers of DD bits
   */
-@@ -602,7 +602,7 @@ ice_recv_pkts_vec(void *rx_queue, struct rte_mbuf **rx_pkts,
-  * vPMD receive routine that reassembles single burst of 32 scattered packets
-  *
-  * Notice:
-- * - nb_pkts < ICE_DESCS_PER_LOOP, just return no packet
-+ * - nb_pkts < ICE_VPMD_DESCS_PER_LOOP, just return no packet
+ uint16_t
+@@ -1187,7 +1187,7 @@ iavf_recv_pkts_vec(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 
+ /* Notice:
+  * - nb_pkts < IAVF_DESCS_PER_LOOP, just return no packet
+- * - nb_pkts > IAVF_VPMD_RX_MAX_BURST, only scan IAVF_VPMD_RX_MAX_BURST
++ * - nb_pkts > IAVF_VPMD_RX_BURST, only scan IAVF_VPMD_RX_BURST
+  *   numbers of DD bits
   */
- static uint16_t
- ice_recv_scattered_burst_vec(void *rx_queue, struct rte_mbuf **rx_pkts,
+ uint16_t
+@@ -1208,7 +1208,7 @@ iavf_recv_scattered_burst_vec(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 			      uint16_t nb_pkts)
+ {
+ 	struct iavf_rx_queue *rxq = rx_queue;
+-	uint8_t split_flags[IAVF_VPMD_RX_MAX_BURST] = {0};
++	uint8_t split_flags[IAVF_VPMD_RX_BURST] = {0};
+ 	unsigned int i = 0;
+ 
+ 	/* get some new buffers */
+@@ -1247,15 +1247,15 @@ iavf_recv_scattered_pkts_vec(void *rx_queue, struct rte_mbuf **rx_pkts,
+ {
+ 	uint16_t retval = 0;
+ 
+-	while (nb_pkts > IAVF_VPMD_RX_MAX_BURST) {
++	while (nb_pkts > IAVF_VPMD_RX_BURST) {
+ 		uint16_t burst;
+ 
+ 		burst = iavf_recv_scattered_burst_vec(rx_queue,
+ 						      rx_pkts + retval,
+-						      IAVF_VPMD_RX_MAX_BURST);
++						      IAVF_VPMD_RX_BURST);
+ 		retval += burst;
+ 		nb_pkts -= burst;
+-		if (burst < IAVF_VPMD_RX_MAX_BURST)
++		if (burst < IAVF_VPMD_RX_BURST)
+ 			return retval;
+ 	}
+ 
+@@ -1277,7 +1277,7 @@ iavf_recv_scattered_burst_vec_flex_rxd(void *rx_queue,
+ 				       uint16_t nb_pkts)
+ {
+ 	struct iavf_rx_queue *rxq = rx_queue;
+-	uint8_t split_flags[IAVF_VPMD_RX_MAX_BURST] = {0};
++	uint8_t split_flags[IAVF_VPMD_RX_BURST] = {0};
+ 	unsigned int i = 0;
+ 
+ 	/* get some new buffers */
+@@ -1317,15 +1317,15 @@ iavf_recv_scattered_pkts_vec_flex_rxd(void *rx_queue,
+ {
+ 	uint16_t retval = 0;
+ 
+-	while (nb_pkts > IAVF_VPMD_RX_MAX_BURST) {
++	while (nb_pkts > IAVF_VPMD_RX_BURST) {
+ 		uint16_t burst;
+ 
+ 		burst = iavf_recv_scattered_burst_vec_flex_rxd(rx_queue,
+ 						rx_pkts + retval,
+-						IAVF_VPMD_RX_MAX_BURST);
++						IAVF_VPMD_RX_BURST);
+ 		retval += burst;
+ 		nb_pkts -= burst;
+-		if (burst < IAVF_VPMD_RX_MAX_BURST)
++		if (burst < IAVF_VPMD_RX_BURST)
+ 			return retval;
+ 	}
+ 
 -- 
 2.47.1
 
