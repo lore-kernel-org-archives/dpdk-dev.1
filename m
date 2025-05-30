@@ -2,78 +2,128 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C18C5AD49
-	for <dpdk-dev@archiver.kernel.org>; Thu, 29 May 2025 22:25:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC046C3ABB2
+	for <dpdk-dev@archiver.kernel.org>; Fri, 30 May 2025 07:14:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DFF95402B3;
-	Fri, 30 May 2025 00:25:13 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id CBC0240655
- for <dev@dpdk.org>; Fri, 30 May 2025 00:25:12 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54TLrCrm022512;
- Thu, 29 May 2025 15:25:12 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=S
- 0bH26cE7Qzyx+Ud35vEg91R8t1VgE1Z+iMeVRaMP9Q=; b=b1FGtfuPlzoslBKTq
- lct6JkEZxS86cTvnK9qX8S19HQ04mYJayTDQZr2EQiKn4Nud6BWnTpkVb6VqOqox
- EyBGr0FpKOI0dBtkhriUIy5O+GlWLEE6ISGxtG77s3Y2QVNuFX6XOuYI0eHR55Sw
- 0lbT+D+uSxxDqsR8QoiWH5XiXJvisZMS6tTZzckaXxMGncR4OZA/6GadohOkx5fJ
- 2WgraWKdczswF1McHKGX2aDWoMwGwx1UDwXvxXmqHuoqPmyb/gyK7kdWctD889i8
- 18mvm3d3hs0XOLtmnG/t0ZbGl9LziwZt4qcQakKva1Rq2JDlqXCoMSUojBLsQe4U
- qYTow==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 46xc7hakta-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 29 May 2025 15:25:11 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 29 May 2025 15:25:10 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 29 May 2025 15:25:10 -0700
-Received: from LYYJYPGKF4.marvell.com (unknown [10.28.164.240])
- by maili.marvell.com (Postfix) with ESMTP id 3BDEB3F7040;
- Thu, 29 May 2025 15:25:04 -0700 (PDT)
-From: <pbhagavatula@marvell.com>
-To: <jerinj@marvell.com>, <pbhagavatula@marvell.com>,
- <abhinandan.gujjar@intel.com>, <amitprakashs@marvell.com>,
- <s.v.naga.harish.k@intel.com>, <sthotton@marvell.com>,
- <pravin.pathak@intel.com>, <hemant.agrawal@nxp.com>,
- <sachin.saxena@nxp.com>, <mattias.ronnblom@ericsson.com>,
- <liangma@liangbit.com>, <peter.mccarthy@intel.com>,
- <harry.van.haaren@intel.com>, <anatoly.burakov@intel.com>,
- <erik.g.carrillo@intel.com>
-CC: <dev@dpdk.org>
-Subject: [PATCH v2 3/3] app/eventdev: add vector adapter performance test
-Date: Fri, 30 May 2025 03:54:37 +0530
-Message-ID: <20250529222437.91818-4-pbhagavatula@marvell.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250529222437.91818-1-pbhagavatula@marvell.com>
-References: <20250410180056.10368-1-pbhagavatula@marvell.com>
- <20250529222437.91818-1-pbhagavatula@marvell.com>
-MIME-Version: 1.0
+	by mails.dpdk.org (Postfix) with ESMTP id B85FC4025E;
+	Fri, 30 May 2025 09:14:08 +0200 (CEST)
+Received: from DU2PR03CU002.outbound.protection.outlook.com
+ (mail-northeuropeazon11011032.outbound.protection.outlook.com [52.101.65.32])
+ by mails.dpdk.org (Postfix) with ESMTP id 17B104014F
+ for <dev@dpdk.org>; Fri, 30 May 2025 09:14:07 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PJw/cLTwk0KxkHZ/UvxlP2n4A1iXVd0IBw7xBx2cTIWauxFLW49kk7nTjCKymq4GL6cfTs4ie9vg2w/uq3l5HQw0opi7MSoTLxOP7gT+Cp5c1n/zeJIXTDWiP1iMgirpU9cWw/kaWJnx6nK50WyFVbMnEFAhhl98JRFBw89QyOt+2x7qa661jsEHGB9at5eaXdTAddml/frhh4gvNN8ErtkpI+HW6UOjh/Ag+wdvGj6idE91Yxbw8soJkYNG0Poa9VZAufAEYcJIKeFruQcrxShrHJjAe2segm3is+DNh4k530fAG78Nhb11QuvmKZ7zyNrRBQpht6MZUCC0Y4cfNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EcZm136qgEl0vS/Np6NN0L4xj++vdUcYg+OzBUMHcxw=;
+ b=MRCoxRGGDE0xPViqJ6tgTBWPQd8QU02t59Xw0pCrjWgS6ROunpWsZVqiVaojFvUP3xJ4W2bBuiOzt/QCZ9SENJ0/o/fLBAKOt9YRhIFJlTM7TuGXWRiqFtykDtYVppbz0RVzh/jbvpma+HDRL5vOejtm0US/bR3bUvGOgpvluS8jBPO/zrTVBAN7GD5xgRnw+CpPN0YS/YdQH/QDeUXDY8QB1jzCSmGOUdA1SREjEzAquRzUoc6gIZrf1Q81GQQaID/dVV0Qk6H1riUi2+E5xTEg1OiVCkcR8AwKjG/kdOTNQr0n0XHJUBpPh8y2wzDxVK1JYEEwSg93QeAiJgeuGw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EcZm136qgEl0vS/Np6NN0L4xj++vdUcYg+OzBUMHcxw=;
+ b=ejshxfPbwCWhG+Mz7gN1/ABX4gSVt8fcycBNS9Jp24xsJCqXr6Qqwnuiy5eQDPksovRXvX47snd9JxNRjD5YsrnpIgbaQHOYPTccCPDEPPo4Xq2bpX7/n5xBEUd4+MDbGcTnrK+SjRd1BpCJhL/yxVBw1Mc3pznqivNzSZtbxP8DakqLzvEq2IjHMIGmEpoWw3ifGcMTJsXkQ+cU0Bbfj0GqzWzHbZdTTLuYxxKQs7/y5DTyeCZQc/d2tqTiYXM8VHKOrtXfOJSTmWaa+vSGaTkwxW2osGlXbytypp4kMSxYUihNvTHzSuYYh17wqM4vPkVyU65ndBJYk48UvA7OLQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB8205.eurprd04.prod.outlook.com (2603:10a6:102:1c2::20)
+ by GV1PR04MB10378.eurprd04.prod.outlook.com (2603:10a6:150:1d4::12)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.21; Fri, 30 May
+ 2025 07:14:04 +0000
+Received: from PAXPR04MB8205.eurprd04.prod.outlook.com
+ ([fe80::7633:884d:5973:174f]) by PAXPR04MB8205.eurprd04.prod.outlook.com
+ ([fe80::7633:884d:5973:174f%4]) with mapi id 15.20.8769.025; Fri, 30 May 2025
+ 07:14:04 +0000
+From: Gagandeep Singh <g.singh@nxp.com>
+To: dev@dpdk.org
+Cc: hemant.agrawal@nxp.com
+Subject: [PATCH 00/11] NXP DPAA2 driver enhancements and fixes
+Date: Fri, 30 May 2025 12:43:33 +0530
+Message-Id: <20250530071344.2939434-1-g.singh@nxp.com>
+X-Mailer: git-send-email 2.25.1
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: SOx_Wm19tPv8SsMUS8zhA5lASxeBoOpZ
-X-Proofpoint-ORIG-GUID: SOx_Wm19tPv8SsMUS8zhA5lASxeBoOpZ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI5MDIxOSBTYWx0ZWRfX9qz2Se2GIKC2
- +IDwK2a9vpfe9S4V3CHETIiccEKOyfBnmR+uSrE5x9mHmnC5lE1YtEbJgIgICBHZAcvyz/j8sgc
- oMSo1hFKU3PgsQuBAhFdhXOMp3sktCJM+GGS/MOxW4lHND31dv9//06kGJ4XTXg+iNdDPXJPi8O
- 30Qb4niGEhX88XWpyccgjwfe7yhwe5yFQacdduvxW29DbMCHX9PQ2i5t7zCornT/YddkD5cRihf
- /llFTZ++ivFEJmEnTeWdgGxXgruEbrhxhObKe+n7n7iBFrElgen2QeJ9ick/uybKYxNNgJg4T/0
- CV+lrkcCJ7mLzkNUd5xZURwe8QtlvS59L2xh5svyJ8vGkO0dWHN5Uy19GJsMc+o0obtlW2wl/VG
- QH47DFxs7OUPQoziXJb06K4nz9MpdhdaPD/3v73LnTAcwVeH/pt5312WFcJPVJgkwGdPK4KX
-X-Authority-Analysis: v=2.4 cv=QcBmvtbv c=1 sm=1 tr=0 ts=6838dec7 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=dt9VzEwgFbYA:10 a=M5GUcnROAAAA:8 a=Z-f73vtj0jMIOVENMMQA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-29_10,2025-05-29_01,2025-03-28_01
+X-ClientProxiedBy: SG2PR01CA0153.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:8f::33) To PAXPR04MB8205.eurprd04.prod.outlook.com
+ (2603:10a6:102:1c2::20)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8205:EE_|GV1PR04MB10378:EE_
+X-MS-Office365-Filtering-Correlation-Id: 58ff81eb-f3d9-4cb0-bf4e-08dd9f498f2f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|376014|52116014|366016|38350700014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ddanP5ho8QJhdD+3FpA+sbUMTy8J2VBRKXc3Igbj58kE6bFX90/CWEXraDba?=
+ =?us-ascii?Q?Mu5WiDJcWGhCc+BGTwI0JtA26eZtlwYX5ePOF/9fxnj+NUIE+pT1KSEbi11P?=
+ =?us-ascii?Q?lhjGbYZYCHWZwjJjLll9nd8/wC9IBkn/Qku3f0FqSsWWo5c7znyhUkL28b5M?=
+ =?us-ascii?Q?RKI+n7YXYlglfCkFkJ7QHJnGWWISbAX69i38c3Mf0YHT29MtWNKQhYe3zeyp?=
+ =?us-ascii?Q?olI7d51/GIe/JSJ38t7CpjWWBvl0pd6ATO8o8Boo7I8FVmmByssT0oJn1Ye3?=
+ =?us-ascii?Q?aCM5Jnwe7qTYqjiC2cII8z5JXZH33TUofGYyvkTBqSRSYTIa5dBEGBCx65h2?=
+ =?us-ascii?Q?OOKqclrDmsZuhiWZT2n4xkFB+CCmvs9YFkuMNgO2a5wzHmag4qbj8qIveVX+?=
+ =?us-ascii?Q?kf94xqVeZbxbApOMjTDDGB7bfcOUH5TEVElj9JTp/VXPdjDAXebb/iAYu7uy?=
+ =?us-ascii?Q?T8GRWMsqfR8MKpGmJ81z20tLwiPa5752lAsoQeK1CKw9GITymxboHGVfWDFp?=
+ =?us-ascii?Q?M3qLnXUHOQwXJ1M5W6AkW17Are6IPrLh7ZryGhlnrQuNTGefU6WSTrcuZWti?=
+ =?us-ascii?Q?mHejMfvLpDxcACDLwBavtQ0Wuhd21ZMOKYyZNjDc2rjcG7kqWEYf+xUhcveO?=
+ =?us-ascii?Q?B4ZE9BahUiODA7f3jKlvLijHyrMolaWPdESdmo9ZrI5wgf+nSfCN19roeeGU?=
+ =?us-ascii?Q?baQg6duG8PZ8R7lP8+xHHsW3iinhI83RhZpUK7Z9Xqwx5vOuJFgfX185Zur2?=
+ =?us-ascii?Q?6eFmm+Kwu66d9wZidiFLHK4uhITqjQwv5FgYujsZ3pd6v6ieyCosA8OmHwHR?=
+ =?us-ascii?Q?k0Vy3nydLUJ006CAAw+g3DGH4LKR0c0mKk1S5Dfbbaf7D+gbVj0OFf50omtj?=
+ =?us-ascii?Q?fKAV8r3AAL9/wbA26bAe3Dk53Bn98hWGZ29EaOtVcBzJS61KXTBa3zCHkoco?=
+ =?us-ascii?Q?m4VI1S7GcpoGE6r9WVEYlxHjMsq48rBa/ingLF3AUn144p9Llmckt8HzpjEg?=
+ =?us-ascii?Q?UcxAnPOmIw4naTfMN2Xpyi4Efg1ZM2GnP9sGaNtmSHz3Eeo65cJfwZ1i4f9O?=
+ =?us-ascii?Q?7gi2RqQxicgwoXQnbz5QQv4FYbq5x0r1aTt6hV52bmUI/1Oi/BOm6F5lgtwJ?=
+ =?us-ascii?Q?FPorFW0wx+uwyND8UdX1C2L4q9Rh+iOHB1SjvsGXsRVd1OOIa5W3a+AFfIH7?=
+ =?us-ascii?Q?Pwk383CT1yzQt+rvpFrYPlre2k1hDr7cV6fLX8MUM1+XYRcdkPONjKSKQSsc?=
+ =?us-ascii?Q?yUe3P9MHe2jZ47wU5W80YCj6gvOKgCaGUcG1/APjc++1Qjp5CCH5VtWYL3z2?=
+ =?us-ascii?Q?tySE6WDTIyjulMq21puDLmxDQbYkYLcPdf3eIrkcYYMLkHgGrsPx3q5M9R1q?=
+ =?us-ascii?Q?HPftmHskLQO8ngE55A3snsk5tNR3Wr4W/vSyD5CEydW9HhS//kaaF0mtnK9W?=
+ =?us-ascii?Q?dVcS6670Hl+7E2ELZo1TmyAnw1TDl9COWakw/LFmfHnrG2XOuWdrxiZFxV6R?=
+ =?us-ascii?Q?NMJE4q/ZVKMpHYE=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:PAXPR04MB8205.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014); DIR:OUT;
+ SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?w67kubcZ7Sr4zGGrbN2VNVX/uZ4xtuPIBwGk/KzQoWWidG9GxL3RtYI5/gN2?=
+ =?us-ascii?Q?EOL9vYK8gvnN/BChmQhXhxhGiXtUyutlMCsdqN74C2WWd3CZgNzh56RBU2Em?=
+ =?us-ascii?Q?6RV0dc4ojYzWId+VwMHsddo1oP3W4Eq2d55HD4T8CGFY3jr92K0zJMpvNgMp?=
+ =?us-ascii?Q?lY++fstY4dtHbhFrhvkTUrLJDUwubywKScxw5FBg17zlg89iR90Tf57g8reF?=
+ =?us-ascii?Q?Vzwzs2qJnA7jwGONa91CO2edQ17LQV8RvYRKwOJ+cNsM7AKMqBqavLJsx2s0?=
+ =?us-ascii?Q?dCXBcUnANRTupmI9TWfT3rtycBmOPXwvDX1aVMFFJtt3gSvtky4RAKyW0p4C?=
+ =?us-ascii?Q?ED5xK8dWmXgWJ+Qz28iZM5knEWqwR3YP873W7BguwF5iKOiF24kVC3fBf6tt?=
+ =?us-ascii?Q?3Tnxa+Oqs/oXBtngw91pZPAPTWXLkhXSULPpE8MNvgavIAB5VwUiNc2eDood?=
+ =?us-ascii?Q?kSnWP+jEQm5ypFtFe3JPYt60+UACMVBKLKPFwgx818gHCjf/5I3nuIBloV7W?=
+ =?us-ascii?Q?AMCgF6Ah/Ru8tu9fphQqG2GQ+7QVh/czN0IdT3wO0/kvjXtG/rXhBBmJZlwQ?=
+ =?us-ascii?Q?2vdNqDKw7cOPtF4KLlbdE2udLa2jwNfUefTZl8qGwmlalSTgU9QvXZBRbCLD?=
+ =?us-ascii?Q?1ZP9LYWnT8ihjoH8/Ywxjs6OK+6rSdFktsbYHW0N9ehvVWpaR3sEODsF9gOv?=
+ =?us-ascii?Q?VS1YlVdWeyZ6/Mf64QH1mDK638WefyQaHZDz6mqmPPlPA2Ngm9ifSbXUcAxQ?=
+ =?us-ascii?Q?o7vvCGgELwC9eUouzDorKjw0okxsVcCJ6Ktv1V8GAntbvFb8oy2cwXDnEiqR?=
+ =?us-ascii?Q?zQC6CJ+f4eIfI8y8uIUNAaB6UJuRA/yPYp9iTbDoOyC/i3A0U/1FI2ZgSJfk?=
+ =?us-ascii?Q?Cg37qftoFCongFllwQ13RYGKJuKAWFeGf5yAzuowTFLlT1mkVOWi+vJmDJmE?=
+ =?us-ascii?Q?HhFp72fJuBKSnCulXf4PEWkkHBK8rXg1c+ztXWej/hH0/6l4ESpPISFRVhYb?=
+ =?us-ascii?Q?57NhHGGdHtsGp9Q1OJJcOS0PkuE+/a6RhejhKtwf4KJz0pS5AvQy4rxQvsQh?=
+ =?us-ascii?Q?MZtUkDoLYr6WSvw7LDYItcLE8WJ4UWHF2aM9fCbEeClyst8gb1ZcmrMkqaFm?=
+ =?us-ascii?Q?tJ+wpI6ZJNbbK2xihxFw2t5XA3LCjuVDSlgdCzkAg1nwA7beIiR9jp4nO1OC?=
+ =?us-ascii?Q?tiLL3j9blEp8yvBMda1to/EZ9tUDF2lmB+DEqARWXldG/4FmRCipyUnlh2cE?=
+ =?us-ascii?Q?p8eiseCuW5QqB1kiivTDnnJvxl7Qfgjiq3N01N03xV4eP1vgBeXbP0US8KvZ?=
+ =?us-ascii?Q?whTagIp7UpBpuMuILNKtl3q+CK+orEMnCRQMY6dspmfqWvqqsaxeGRigszuU?=
+ =?us-ascii?Q?uytPux6OuUei0kAptXYkmhvWt4EhB+WM5qlD68OAwoywDgiF6L4jAyK3zyWj?=
+ =?us-ascii?Q?3pNf7QgGLIJb21auqCJr1WkHTA/kNrLC6OKRq7us0/sDMrN3+/xMPNyjiJqw?=
+ =?us-ascii?Q?mJeMcCBt3pqk/P48NiEuZk7g3rlPhPw/8QfkmhqYFb4Bpbwrd/8emxloeYLb?=
+ =?us-ascii?Q?UvLlHSZGUW09SxgI2Y0=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 58ff81eb-f3d9-4cb0-bf4e-08dd9f498f2f
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8205.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2025 07:14:04.2875 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AkcZ3dxbtCtC4fXLAjJbTwRgkXB2lATXPmLeBdNogZF668KpakdDJ72yF4J/jCGI
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10378
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,806 +137,57 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Pavan Nikhilesh <pbhagavatula@marvell.com>
+This patch series introduces enhancements and fixes to the
+NXP DPAA2 Ethernet driver. 
+It includes support for
+ - software taildrop on ordered queues.
+ - setup speed capabilities.
+ - DPAA2 resource version.
+ - MAC level statistics.
+ - improve PA-VA conversion.
+ - add buffer pool depletion state configuration.
+ - fixes for shaper rate and buffer prepration.
 
-Add performance test for event vector adapter.
 
-Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
----
- app/test-eventdev/evt_common.h         |   9 +-
- app/test-eventdev/evt_options.c        |  14 ++
- app/test-eventdev/evt_options.h        |   1 +
- app/test-eventdev/test_perf_atq.c      |  61 +++++-
- app/test-eventdev/test_perf_common.c   | 281 ++++++++++++++++++-------
- app/test-eventdev/test_perf_common.h   |  13 +-
- app/test-eventdev/test_perf_queue.c    |  66 +++++-
- doc/guides/rel_notes/release_25_07.rst |   5 +
- doc/guides/tools/testeventdev.rst      |   6 +
- 9 files changed, 362 insertions(+), 94 deletions(-)
+Apeksha Gupta (4):
+  net/dpaa2: add dpmac MC header file
+  net/dpaa2: support dpmac counters in stats
+  net/dpaa2: support dpmac Tx stats
+  net/dpaa2: support dpmac Tx stats in xstats
 
-diff --git a/app/test-eventdev/evt_common.h b/app/test-eventdev/evt_common.h
-index 74f9d187f3f5..ec824f2454c1 100644
---- a/app/test-eventdev/evt_common.h
-+++ b/app/test-eventdev/evt_common.h
-@@ -39,11 +39,12 @@
- 
- enum evt_prod_type {
- 	EVT_PROD_TYPE_NONE,
--	EVT_PROD_TYPE_SYNT,          /* Producer type Synthetic i.e. CPU. */
--	EVT_PROD_TYPE_ETH_RX_ADPTR,  /* Producer type Eth Rx Adapter. */
-+	EVT_PROD_TYPE_SYNT,		  /* Producer type Synthetic i.e. CPU. */
-+	EVT_PROD_TYPE_ETH_RX_ADPTR,	  /* Producer type Eth Rx Adapter. */
- 	EVT_PROD_TYPE_EVENT_TIMER_ADPTR,  /* Producer type Timer Adapter. */
--	EVT_PROD_TYPE_EVENT_CRYPTO_ADPTR,  /* Producer type Crypto Adapter. */
--	EVT_PROD_TYPE_EVENT_DMA_ADPTR,  /* Producer type DMA Adapter. */
-+	EVT_PROD_TYPE_EVENT_CRYPTO_ADPTR, /* Producer type Crypto Adapter. */
-+	EVT_PROD_TYPE_EVENT_DMA_ADPTR,	  /* Producer type DMA Adapter. */
-+	EVT_PROD_TYPE_EVENT_VECTOR_ADPTR, /* Producer type Vector adapter. */
- 	EVT_PROD_TYPE_MAX,
- };
- 
-diff --git a/app/test-eventdev/evt_options.c b/app/test-eventdev/evt_options.c
-index 323d1e724dce..0e70c971eb2e 100644
---- a/app/test-eventdev/evt_options.c
-+++ b/app/test-eventdev/evt_options.c
-@@ -186,6 +186,13 @@ evt_parse_dma_adptr_mode(struct evt_options *opt, const char *arg)
- 	return ret;
- }
- 
-+static int
-+evt_parse_vector_prod_type(struct evt_options *opt,
-+			   const char *arg __rte_unused)
-+{
-+	opt->prod_type = EVT_PROD_TYPE_EVENT_VECTOR_ADPTR;
-+	return 0;
-+}
- 
- static int
- evt_parse_crypto_prod_type(struct evt_options *opt,
-@@ -494,6 +501,7 @@ usage(char *program)
- 		"\t                     in ns.\n"
- 		"\t--prod_type_timerdev_burst : use timer device as producer\n"
- 		"\t                             burst mode.\n"
-+		"\t--prod_type_vector : use vector adapter as producer.\n"
- 		"\t--nb_timers        : number of timers to arm.\n"
- 		"\t--nb_timer_adptrs  : number of timer adapters to use.\n"
- 		"\t--timer_tick_nsec  : timer tick interval in ns.\n"
-@@ -591,6 +599,7 @@ static struct option lgopts[] = {
- 	{ EVT_PROD_CRYPTODEV,      0, 0, 0 },
- 	{ EVT_PROD_TIMERDEV,       0, 0, 0 },
- 	{ EVT_PROD_TIMERDEV_BURST, 0, 0, 0 },
-+	{ EVT_PROD_VECTOR,         0, 0, 0 },
- 	{ EVT_DMA_ADPTR_MODE,      1, 0, 0 },
- 	{ EVT_CRYPTO_ADPTR_MODE,   1, 0, 0 },
- 	{ EVT_CRYPTO_OP_TYPE,	   1, 0, 0 },
-@@ -642,6 +651,7 @@ evt_opts_parse_long(int opt_idx, struct evt_options *opt)
- 		{ EVT_PROD_DMADEV, evt_parse_dma_prod_type},
- 		{ EVT_PROD_TIMERDEV, evt_parse_timer_prod_type},
- 		{ EVT_PROD_TIMERDEV_BURST, evt_parse_timer_prod_type_burst},
-+		{ EVT_PROD_VECTOR, evt_parse_vector_prod_type },
- 		{ EVT_DMA_ADPTR_MODE, evt_parse_dma_adptr_mode},
- 		{ EVT_CRYPTO_ADPTR_MODE, evt_parse_crypto_adptr_mode},
- 		{ EVT_CRYPTO_OP_TYPE, evt_parse_crypto_op_type},
-@@ -721,4 +731,8 @@ evt_options_dump(struct evt_options *opt)
- 	evt_dump_end;
- 	evt_dump_nb_flows(opt);
- 	evt_dump_worker_dequeue_depth(opt);
-+	if (opt->ena_vector || opt->prod_type == EVT_PROD_TYPE_EVENT_VECTOR_ADPTR) {
-+		evt_dump("vector_sz", "%d", opt->vector_size);
-+		evt_dump("vector_tmo_ns", "%"PRIu64, opt->vector_tmo_nsec);
-+	}
- }
-diff --git a/app/test-eventdev/evt_options.h b/app/test-eventdev/evt_options.h
-index 18a893b7040b..4bf712bd19aa 100644
---- a/app/test-eventdev/evt_options.h
-+++ b/app/test-eventdev/evt_options.h
-@@ -38,6 +38,7 @@
- #define EVT_PROD_DMADEV          ("prod_type_dmadev")
- #define EVT_PROD_TIMERDEV        ("prod_type_timerdev")
- #define EVT_PROD_TIMERDEV_BURST  ("prod_type_timerdev_burst")
-+#define EVT_PROD_VECTOR          ("prod_type_vector")
- #define EVT_DMA_ADPTR_MODE       ("dma_adptr_mode")
- #define EVT_CRYPTO_ADPTR_MODE	 ("crypto_adptr_mode")
- #define EVT_CRYPTO_OP_TYPE	 ("crypto_op_type")
-diff --git a/app/test-eventdev/test_perf_atq.c b/app/test-eventdev/test_perf_atq.c
-index 30c34edabd3a..b07b010af1b5 100644
---- a/app/test-eventdev/test_perf_atq.c
-+++ b/app/test-eventdev/test_perf_atq.c
-@@ -145,7 +145,7 @@ perf_atq_worker_burst(void *arg, const int enable_fwd_latency)
- }
- 
- static int
--perf_atq_worker_vector(void *arg, const int enable_fwd_latency)
-+perf_atq_worker_crypto_vector(void *arg, const int enable_fwd_latency)
- {
- 	uint16_t enq = 0, deq = 0;
- 	struct rte_event ev;
-@@ -161,10 +161,8 @@ perf_atq_worker_vector(void *arg, const int enable_fwd_latency)
- 		if (!deq)
- 			continue;
- 
--		if (ev.event_type == RTE_EVENT_TYPE_CRYPTODEV_VECTOR) {
--			if (perf_handle_crypto_vector_ev(&ev, &pe, enable_fwd_latency))
--				continue;
--		}
-+		if (perf_handle_crypto_vector_ev(&ev, &pe, enable_fwd_latency))
-+			continue;
- 
- 		stage = ev.sub_event_type % nb_stages;
- 		/* First q in pipeline, mark timestamp to compute fwd latency */
-@@ -173,8 +171,8 @@ perf_atq_worker_vector(void *arg, const int enable_fwd_latency)
- 
- 		/* Last stage in pipeline */
- 		if (unlikely(stage == laststage)) {
--			perf_process_vector_last_stage(pool, t->ca_op_pool, &ev, w,
--							enable_fwd_latency);
-+			perf_process_crypto_vector_last_stage(pool, t->ca_op_pool, &ev, w,
-+							      enable_fwd_latency);
- 		} else {
- 			atq_fwd_event_vector(&ev, sched_type_list, nb_stages);
- 			do {
-@@ -188,6 +186,53 @@ perf_atq_worker_vector(void *arg, const int enable_fwd_latency)
- 	return 0;
- }
- 
-+static int
-+perf_atq_worker_vector(void *arg, const int enable_fwd_latency)
-+{
-+	uint16_t enq = 0, deq = 0;
-+	struct rte_event ev;
-+	PERF_WORKER_INIT;
-+
-+	RTE_SET_USED(sz);
-+	RTE_SET_USED(pe);
-+	RTE_SET_USED(cnt);
-+	RTE_SET_USED(prod_type);
-+	RTE_SET_USED(prod_timer_type);
-+
-+	while (t->done == false) {
-+		deq = rte_event_dequeue_burst(dev, port, &ev, 1, 0);
-+		if (!deq)
-+			continue;
-+
-+		if (ev.event_type != RTE_EVENT_TYPE_CPU_VECTOR) {
-+			w->processed_pkts++;
-+			continue;
-+		}
-+
-+		stage = ev.sub_event_type % nb_stages;
-+		if (enable_fwd_latency && stage == 0)
-+			/* first stage in pipeline, mark ts to compute fwd latency */
-+			ev.vec->u64s[0] = rte_get_timer_cycles();
-+
-+		/* Last stage in pipeline */
-+		if (unlikely(stage == laststage)) {
-+			w->processed_vecs++;
-+			if (enable_fwd_latency)
-+				w->latency += rte_get_timer_cycles() - ev.vec->u64s[0];
-+
-+			rte_mempool_put(pool, ev.event_ptr);
-+		} else {
-+			atq_fwd_event_vector(&ev, sched_type_list, nb_stages);
-+			do {
-+				enq = rte_event_enqueue_burst(dev, port, &ev, 1);
-+			} while (!enq && !t->done);
-+		}
-+	}
-+	perf_worker_cleanup(pool, dev, port, &ev, enq, deq);
-+
-+	return 0;
-+}
-+
- static int
- worker_wrapper(void *arg)
- {
-@@ -199,6 +244,8 @@ worker_wrapper(void *arg)
- 
- 	/* allow compiler to optimize */
- 	if (opt->ena_vector && opt->prod_type == EVT_PROD_TYPE_EVENT_CRYPTO_ADPTR)
-+		return perf_atq_worker_crypto_vector(arg, fwd_latency);
-+	else if (opt->prod_type == EVT_PROD_TYPE_EVENT_VECTOR_ADPTR)
- 		return perf_atq_worker_vector(arg, fwd_latency);
- 	else if (!burst && !fwd_latency)
- 		return perf_atq_worker(arg, 0);
-diff --git a/app/test-eventdev/test_perf_common.c b/app/test-eventdev/test_perf_common.c
-index 627f07caa1b7..4709de8b07a3 100644
---- a/app/test-eventdev/test_perf_common.c
-+++ b/app/test-eventdev/test_perf_common.c
-@@ -102,16 +102,20 @@ perf_test_result(struct evt_test *test, struct evt_options *opt)
- 	int i;
- 	uint64_t total = 0;
- 	struct test_perf *t = evt_test_priv(test);
-+	uint8_t is_vec;
- 
- 	printf("Packet distribution across worker cores :\n");
-+	is_vec = (opt->prod_type == EVT_PROD_TYPE_EVENT_VECTOR_ADPTR);
- 	for (i = 0; i < t->nb_workers; i++)
--		total += t->worker[i].processed_pkts;
-+		total += is_vec ? t->worker[i].processed_vecs : t->worker[i].processed_pkts;
- 	for (i = 0; i < t->nb_workers; i++)
--		printf("Worker %d packets: "CLGRN"%"PRIx64" "CLNRM"percentage:"
--				CLGRN" %3.2f"CLNRM"\n", i,
--				t->worker[i].processed_pkts,
--				(((double)t->worker[i].processed_pkts)/total)
--				* 100);
-+		printf("Worker %d packets: " CLGRN "%" PRIx64 " " CLNRM "percentage:" CLGRN
-+		       " %3.2f" CLNRM "\n",
-+		       i, is_vec ? t->worker[i].processed_vecs : t->worker[i].processed_pkts,
-+		       (((double)(is_vec ? t->worker[i].processed_vecs :
-+					   t->worker[i].processed_pkts)) /
-+			total) *
-+			       100);
- 
- 	return t->result;
- }
-@@ -887,6 +891,31 @@ perf_event_crypto_producer_burst(void *arg)
- 	return 0;
- }
- 
-+static int
-+perf_event_vector_producer(struct prod_data *p)
-+{
-+	struct rte_event_vector_adapter *adptr = p->va.vector_adptr;
-+	struct evt_options *opt = p->t->opt;
-+	const struct test_perf *t = p->t;
-+	uint64_t objs[BURST_SIZE];
-+	uint16_t enq;
-+
-+	if (opt->verbose_level > 1)
-+		printf("%s(): lcore %d vector adapter %p\n", __func__, rte_lcore_id(), adptr);
-+
-+	while (t->done == false) {
-+		enq = rte_event_vector_adapter_enqueue(adptr, objs, BURST_SIZE, 0);
-+		while (enq < BURST_SIZE) {
-+			enq += rte_event_vector_adapter_enqueue(adptr, objs + enq, BURST_SIZE - enq,
-+								0);
-+			if (t->done)
-+				break;
-+			rte_pause();
-+		}
-+	}
-+	return 0;
-+}
-+
- static int
- perf_producer_wrapper(void *arg)
- {
-@@ -930,6 +959,8 @@ perf_producer_wrapper(void *arg)
- 			return perf_event_crypto_producer(arg);
- 	} else if (t->opt->prod_type == EVT_PROD_TYPE_EVENT_DMA_ADPTR)
- 		return perf_event_dma_producer(arg);
-+	else if (t->opt->prod_type == EVT_PROD_TYPE_EVENT_VECTOR_ADPTR)
-+		return perf_event_vector_producer(p);
- 
- 	return 0;
- }
-@@ -947,115 +978,103 @@ processed_pkts(struct test_perf *t)
- }
- 
- static inline uint64_t
--total_latency(struct test_perf *t)
-+processed_vecs(struct test_perf *t)
- {
- 	uint8_t i;
- 	uint64_t total = 0;
- 
- 	for (i = 0; i < t->nb_workers; i++)
--		total += t->worker[i].latency;
-+		total += t->worker[i].processed_vecs;
- 
- 	return total;
- }
- 
--
--int
--perf_launch_lcores(struct evt_test *test, struct evt_options *opt,
--		int (*worker)(void *))
-+static inline uint64_t
-+total_latency(struct test_perf *t)
- {
--	int ret, lcore_id;
--	struct test_perf *t = evt_test_priv(test);
--
--	int port_idx = 0;
--	/* launch workers */
--	RTE_LCORE_FOREACH_WORKER(lcore_id) {
--		if (!(opt->wlcores[lcore_id]))
--			continue;
--
--		ret = rte_eal_remote_launch(worker,
--				 &t->worker[port_idx], lcore_id);
--		if (ret) {
--			evt_err("failed to launch worker %d", lcore_id);
--			return ret;
--		}
--		port_idx++;
--	}
--
--	/* launch producers */
--	RTE_LCORE_FOREACH_WORKER(lcore_id) {
--		if (!(opt->plcores[lcore_id]))
--			continue;
-+	uint8_t i;
-+	uint64_t total = 0;
- 
--		ret = rte_eal_remote_launch(perf_producer_wrapper,
--				&t->prod[port_idx], lcore_id);
--		if (ret) {
--			evt_err("failed to launch perf_producer %d", lcore_id);
--			return ret;
--		}
--		port_idx++;
--	}
-+	for (i = 0; i < t->nb_workers; i++)
-+		total += t->worker[i].latency;
- 
--	const uint64_t total_pkts = t->outstand_pkts;
-+	return total;
-+}
- 
--	uint64_t dead_lock_cycles = rte_get_timer_cycles();
--	int64_t dead_lock_remaining  =  total_pkts;
-+static void
-+check_work_status(struct test_perf *t, struct evt_options *opt)
-+{
- 	const uint64_t dead_lock_sample = rte_get_timer_hz() * 5;
--
-+	const uint64_t freq_mhz = rte_get_timer_hz() / 1000000;
-+	uint64_t dead_lock_cycles = rte_get_timer_cycles();
-+	const uint64_t perf_sample = rte_get_timer_hz();
- 	uint64_t perf_cycles = rte_get_timer_cycles();
-+	const uint64_t total_pkts = t->outstand_pkts;
-+	int64_t dead_lock_remaining = total_pkts;
- 	int64_t perf_remaining  = total_pkts;
--	const uint64_t perf_sample = rte_get_timer_hz();
--
--	static float total_mpps;
- 	static uint64_t samples;
-+	static float total_mpps;
-+	int64_t remaining;
-+	uint8_t is_vec;
- 
--	const uint64_t freq_mhz = rte_get_timer_hz() / 1000000;
--	int64_t remaining = t->outstand_pkts - processed_pkts(t);
-+	is_vec = (t->opt->prod_type == EVT_PROD_TYPE_EVENT_VECTOR_ADPTR);
-+	remaining = t->outstand_pkts - (is_vec ? processed_vecs(t) : processed_pkts(t));
- 
- 	while (t->done == false) {
- 		const uint64_t new_cycles = rte_get_timer_cycles();
- 
- 		if ((new_cycles - perf_cycles) > perf_sample) {
- 			const uint64_t latency = total_latency(t);
--			const uint64_t pkts = processed_pkts(t);
-+			const uint64_t pkts = is_vec ? processed_vecs(t) : processed_pkts(t);
-+			uint64_t fallback_pkts = processed_pkts(t);
- 
- 			remaining = t->outstand_pkts - pkts;
--			float mpps = (float)(perf_remaining-remaining)/1000000;
-+			float mpps = (float)(perf_remaining - remaining) / 1E6;
- 
- 			perf_remaining = remaining;
- 			perf_cycles = new_cycles;
- 			total_mpps += mpps;
- 			++samples;
-+
- 			if (opt->fwd_latency && pkts > 0) {
--				printf(CLGRN"\r%.3f mpps avg %.3f mpps [avg fwd latency %.3f us] "CLNRM,
--					mpps, total_mpps/samples,
--					(float)(latency/pkts)/freq_mhz);
-+				if (is_vec) {
-+					printf(CLGRN
-+					       "\r%.3f mvps avg %.3f mvps [avg fwd latency %.3f us] "
-+					       "fallback mpps %.3f" CLNRM,
-+					       mpps, total_mpps / samples,
-+					       (float)(latency / pkts) / freq_mhz,
-+					       fallback_pkts / 1E6);
-+				} else {
-+					printf(CLGRN
-+					       "\r%.3f mpps avg %.3f mpps [avg fwd latency %.3f us] "
-+					       CLNRM,
-+					       mpps, total_mpps / samples,
-+					       (float)(latency / pkts) / freq_mhz);
-+				}
- 			} else {
--				printf(CLGRN"\r%.3f mpps avg %.3f mpps"CLNRM,
--					mpps, total_mpps/samples);
-+				if (is_vec) {
-+					printf(CLGRN
-+					       "\r%.3f mvps avg %.3f mvps fallback mpps %.3f" CLNRM,
-+					       mpps, total_mpps / samples, fallback_pkts / 1E6);
-+				} else {
-+					printf(CLGRN "\r%.3f mpps avg %.3f mpps" CLNRM, mpps,
-+					       total_mpps / samples);
-+				}
- 			}
- 			fflush(stdout);
- 
- 			if (remaining <= 0) {
- 				t->result = EVT_TEST_SUCCESS;
--				if (opt->prod_type == EVT_PROD_TYPE_SYNT ||
--				    opt->prod_type ==
--					    EVT_PROD_TYPE_EVENT_TIMER_ADPTR ||
--				    opt->prod_type ==
--					    EVT_PROD_TYPE_EVENT_CRYPTO_ADPTR ||
--				    opt->prod_type ==
--					    EVT_PROD_TYPE_EVENT_DMA_ADPTR) {
-+				if (opt->prod_type != EVT_PROD_TYPE_ETH_RX_ADPTR) {
- 					t->done = true;
- 					break;
- 				}
- 			}
- 		}
--
- 		if (new_cycles - dead_lock_cycles > dead_lock_sample &&
--		    (opt->prod_type == EVT_PROD_TYPE_SYNT ||
--		     opt->prod_type == EVT_PROD_TYPE_EVENT_TIMER_ADPTR ||
--		     opt->prod_type == EVT_PROD_TYPE_EVENT_CRYPTO_ADPTR ||
--		     opt->prod_type == EVT_PROD_TYPE_EVENT_DMA_ADPTR)) {
--			remaining = t->outstand_pkts - processed_pkts(t);
-+		    (opt->prod_type != EVT_PROD_TYPE_ETH_RX_ADPTR)) {
-+			remaining =
-+				t->outstand_pkts - (is_vec ? processed_vecs(t) : processed_pkts(t));
- 			if (dead_lock_remaining == remaining) {
- 				rte_event_dev_dump(opt->dev_id, stdout);
- 				evt_err("No schedules for seconds, deadlock");
-@@ -1067,6 +1086,45 @@ perf_launch_lcores(struct evt_test *test, struct evt_options *opt,
- 		}
- 	}
- 	printf("\n");
-+}
-+
-+int
-+perf_launch_lcores(struct evt_test *test, struct evt_options *opt, int (*worker)(void *))
-+{
-+	int ret, lcore_id;
-+	struct test_perf *t = evt_test_priv(test);
-+
-+	int port_idx = 0;
-+	/* launch workers */
-+	RTE_LCORE_FOREACH_WORKER(lcore_id)
-+	{
-+		if (!(opt->wlcores[lcore_id]))
-+			continue;
-+
-+		ret = rte_eal_remote_launch(worker, &t->worker[port_idx], lcore_id);
-+		if (ret) {
-+			evt_err("failed to launch worker %d", lcore_id);
-+			return ret;
-+		}
-+		port_idx++;
-+	}
-+
-+	/* launch producers */
-+	RTE_LCORE_FOREACH_WORKER(lcore_id)
-+	{
-+		if (!(opt->plcores[lcore_id]))
-+			continue;
-+
-+		ret = rte_eal_remote_launch(perf_producer_wrapper, &t->prod[port_idx], lcore_id);
-+		if (ret) {
-+			evt_err("failed to launch perf_producer %d", lcore_id);
-+			return ret;
-+		}
-+		port_idx++;
-+	}
-+
-+	check_work_status(t, opt);
-+
- 	return 0;
- }
- 
-@@ -1564,6 +1622,70 @@ perf_event_dev_port_setup(struct evt_test *test, struct evt_options *opt,
- 
- 			prod++;
- 		}
-+	} else if (opt->prod_type == EVT_PROD_TYPE_EVENT_VECTOR_ADPTR) {
-+		struct rte_event_vector_adapter_conf conf;
-+		struct rte_event_vector_adapter_info info;
-+
-+		ret = rte_event_vector_adapter_info_get(opt->dev_id, &info);
-+
-+		if (opt->vector_size < info.min_vector_sz ||
-+		    opt->vector_size > info.max_vector_sz) {
-+			evt_err("Vector size [%d] not within limits max[%d] min[%d]",
-+				opt->vector_size, info.max_vector_sz, info.min_vector_sz);
-+			return -EINVAL;
-+		}
-+
-+		if (opt->vector_tmo_nsec > info.max_vector_timeout_ns ||
-+		    opt->vector_tmo_nsec < info.min_vector_timeout_ns) {
-+			evt_err("Vector timeout [%" PRIu64 "] not within limits "
-+				"max[%" PRIu64 "] min[%" PRIu64 "]",
-+				opt->vector_tmo_nsec, info.max_vector_timeout_ns,
-+				info.min_vector_timeout_ns);
-+			return -EINVAL;
-+		}
-+
-+		memset(&conf, 0, sizeof(struct rte_event_vector_adapter_conf));
-+		conf.event_dev_id = opt->dev_id;
-+		conf.vector_sz = opt->vector_size;
-+		conf.vector_timeout_ns = opt->vector_tmo_nsec;
-+		conf.socket_id = opt->socket_id;
-+		conf.vector_mp = t->pool;
-+
-+		conf.ev.sched_type = opt->sched_type_list[0];
-+		conf.ev.event_type = RTE_EVENT_TYPE_VECTOR | RTE_EVENT_TYPE_CPU;
-+
-+		conf.ev_fallback.event_type = RTE_EVENT_TYPE_CPU;
-+
-+		prod = 0;
-+		for (; port < perf_nb_event_ports(opt); port++) {
-+			struct rte_event_vector_adapter *vector_adptr;
-+			struct prod_data *p = &t->prod[port];
-+			uint32_t service_id;
-+
-+			p->queue_id = prod * stride;
-+			p->t = t;
-+
-+			conf.ev.queue_id = p->queue_id;
-+
-+			vector_adptr = rte_event_vector_adapter_create(&conf);
-+			if (vector_adptr == NULL) {
-+				evt_err("Failed to create vector adapter for port %d", port);
-+				return -ENOMEM;
-+			}
-+			p->va.vector_adptr = vector_adptr;
-+			prod++;
-+
-+			if (rte_event_vector_adapter_service_id_get(vector_adptr, &service_id) ==
-+			    0) {
-+				ret = evt_service_setup(service_id);
-+				if (ret) {
-+					evt_err("Failed to setup service core"
-+						" for vector adapter\n");
-+					return ret;
-+				}
-+				rte_service_runstate_set(service_id, 1);
-+			}
-+		}
- 	} else {
- 		prod = 0;
- 		for ( ; port < perf_nb_event_ports(opt); port++) {
-@@ -1728,6 +1850,20 @@ perf_eventdev_destroy(struct evt_test *test, struct evt_options *opt)
- 		for (i = 0; i < opt->nb_timer_adptrs; i++)
- 			rte_event_timer_adapter_stop(t->timer_adptr[i]);
- 	}
-+
-+	if (opt->prod_type == EVT_PROD_TYPE_EVENT_VECTOR_ADPTR) {
-+		for (i = 0; i < evt_nr_active_lcores(opt->plcores); i++) {
-+			struct prod_data *p = &t->prod[i];
-+			uint32_t service_id;
-+
-+			if (p->va.vector_adptr) {
-+				if (rte_event_vector_adapter_service_id_get(p->va.vector_adptr,
-+									    &service_id) == 0)
-+					rte_service_runstate_set(service_id, 0);
-+				rte_event_vector_adapter_destroy(p->va.vector_adptr);
-+			}
-+		}
-+	}
- 	rte_event_dev_stop(opt->dev_id);
- 	rte_event_dev_close(opt->dev_id);
- }
-@@ -2119,6 +2255,9 @@ perf_mempool_setup(struct evt_test *test, struct evt_options *opt)
- 					     cache_sz,		       /* cache size*/
- 					     0, NULL, NULL, NULL,      /* obj constructor */
- 					     NULL, opt->socket_id, 0); /* flags */
-+	} else if (opt->prod_type == EVT_PROD_TYPE_EVENT_VECTOR_ADPTR) {
-+		t->pool = rte_event_vector_pool_create(test->name, opt->pool_sz, cache_sz,
-+						       opt->vector_size, opt->socket_id);
- 	} else {
- 		t->pool = rte_pktmbuf_pool_create(test->name, /* mempool name */
- 				opt->pool_sz, /* number of elements*/
-diff --git a/app/test-eventdev/test_perf_common.h b/app/test-eventdev/test_perf_common.h
-index d7333ad390a4..99df008cc7b7 100644
---- a/app/test-eventdev/test_perf_common.h
-+++ b/app/test-eventdev/test_perf_common.h
-@@ -16,6 +16,7 @@
- #include <rte_event_eth_rx_adapter.h>
- #include <rte_event_eth_tx_adapter.h>
- #include <rte_event_timer_adapter.h>
-+#include <rte_event_vector_adapter.h>
- #include <rte_eventdev.h>
- #include <rte_lcore.h>
- #include <rte_malloc.h>
-@@ -33,6 +34,7 @@ struct test_perf;
- 
- struct __rte_cache_aligned worker_data {
- 	uint64_t processed_pkts;
-+	uint64_t processed_vecs;
- 	uint64_t latency;
- 	uint8_t dev_id;
- 	uint8_t port_id;
-@@ -50,12 +52,17 @@ struct dma_adptr_data {
- 	uint16_t vchan_id;
- };
- 
-+struct vector_adptr_data {
-+	struct rte_event_vector_adapter *vector_adptr;
-+};
-+
- struct __rte_cache_aligned prod_data {
- 	uint8_t dev_id;
- 	uint8_t port_id;
- 	uint8_t queue_id;
- 	struct crypto_adptr_data ca;
- 	struct dma_adptr_data da;
-+	struct vector_adptr_data va;
- 	struct test_perf *t;
- };
- 
-@@ -320,9 +327,9 @@ perf_process_last_stage_latency(struct rte_mempool *const pool, enum evt_prod_ty
- }
- 
- static __rte_always_inline void
--perf_process_vector_last_stage(struct rte_mempool *const pool,
--		struct rte_mempool *const ca_pool, struct rte_event *const ev,
--		struct worker_data *const w, const bool enable_fwd_latency)
-+perf_process_crypto_vector_last_stage(struct rte_mempool *const pool,
-+				      struct rte_mempool *const ca_pool, struct rte_event *const ev,
-+				      struct worker_data *const w, const bool enable_fwd_latency)
- {
- 	struct rte_event_vector *vec = ev->vec;
- 	struct rte_crypto_op *cop;
-diff --git a/app/test-eventdev/test_perf_queue.c b/app/test-eventdev/test_perf_queue.c
-index 58715a253748..36fe94e19032 100644
---- a/app/test-eventdev/test_perf_queue.c
-+++ b/app/test-eventdev/test_perf_queue.c
-@@ -147,7 +147,7 @@ perf_queue_worker_burst(void *arg, const int enable_fwd_latency)
- }
- 
- static int
--perf_queue_worker_vector(void *arg, const int enable_fwd_latency)
-+perf_queue_worker_crypto_vector(void *arg, const int enable_fwd_latency)
- {
- 	uint16_t enq = 0, deq = 0;
- 	struct rte_event ev;
-@@ -163,10 +163,8 @@ perf_queue_worker_vector(void *arg, const int enable_fwd_latency)
- 		if (!deq)
- 			continue;
- 
--		if (ev.event_type == RTE_EVENT_TYPE_CRYPTODEV_VECTOR) {
--			if (perf_handle_crypto_vector_ev(&ev, &pe, enable_fwd_latency))
--				continue;
--		}
-+		if (perf_handle_crypto_vector_ev(&ev, &pe, enable_fwd_latency))
-+			continue;
- 
- 		stage = ev.queue_id % nb_stages;
- 		/* First q in pipeline, mark timestamp to compute fwd latency */
-@@ -175,8 +173,8 @@ perf_queue_worker_vector(void *arg, const int enable_fwd_latency)
- 
- 		/* Last stage in pipeline */
- 		if (unlikely(stage == laststage)) {
--			perf_process_vector_last_stage(pool, t->ca_op_pool, &ev, w,
--						       enable_fwd_latency);
-+			perf_process_crypto_vector_last_stage(pool, t->ca_op_pool, &ev, w,
-+							      enable_fwd_latency);
- 		} else {
- 			fwd_event_vector(&ev, sched_type_list, nb_stages);
- 			do {
-@@ -190,6 +188,52 @@ perf_queue_worker_vector(void *arg, const int enable_fwd_latency)
- 	return 0;
- }
- 
-+static int
-+perf_queue_worker_vector(void *arg, const int enable_fwd_latency)
-+{
-+	uint16_t enq = 0, deq = 0;
-+	struct rte_event ev;
-+	PERF_WORKER_INIT;
-+
-+	RTE_SET_USED(pe);
-+	RTE_SET_USED(sz);
-+	RTE_SET_USED(cnt);
-+	RTE_SET_USED(prod_type);
-+	RTE_SET_USED(prod_timer_type);
-+
-+	while (t->done == false) {
-+		deq = rte_event_dequeue_burst(dev, port, &ev, 1, 0);
-+		if (!deq)
-+			continue;
-+
-+		if (ev.event_type != RTE_EVENT_TYPE_CPU_VECTOR) {
-+			w->processed_pkts++;
-+			continue;
-+		}
-+
-+		stage = ev.sub_event_type % nb_stages;
-+		if (enable_fwd_latency && stage == 0)
-+			/* first stage in pipeline, mark ts to compute fwd latency */
-+			ev.vec->u64s[0] = rte_get_timer_cycles();
-+
-+		/* Last stage in pipeline */
-+		if (unlikely(stage == laststage)) {
-+			w->processed_vecs++;
-+			if (enable_fwd_latency)
-+				w->latency += rte_get_timer_cycles() - ev.vec->u64s[0];
-+			rte_mempool_put(pool, ev.event_ptr);
-+		} else {
-+			fwd_event_vector(&ev, sched_type_list, nb_stages);
-+			do {
-+				enq = rte_event_enqueue_burst(dev, port, &ev, 1);
-+			} while (!enq && !t->done);
-+		}
-+	}
-+	perf_worker_cleanup(pool, dev, port, &ev, enq, deq);
-+
-+	return 0;
-+}
-+
- static int
- worker_wrapper(void *arg)
- {
-@@ -201,6 +245,8 @@ worker_wrapper(void *arg)
- 
- 	/* allow compiler to optimize */
- 	if (opt->ena_vector && opt->prod_type == EVT_PROD_TYPE_EVENT_CRYPTO_ADPTR)
-+		return perf_queue_worker_crypto_vector(arg, fwd_latency);
-+	else if (opt->prod_type == EVT_PROD_TYPE_EVENT_VECTOR_ADPTR)
- 		return perf_queue_worker_vector(arg, fwd_latency);
- 	else if (!burst && !fwd_latency)
- 		return perf_queue_worker(arg, 0);
-@@ -234,8 +280,10 @@ perf_queue_eventdev_setup(struct evt_test *test, struct evt_options *opt)
- 
- 	nb_ports = evt_nr_active_lcores(opt->wlcores);
- 	nb_ports += opt->prod_type == EVT_PROD_TYPE_ETH_RX_ADPTR ||
--		opt->prod_type == EVT_PROD_TYPE_EVENT_TIMER_ADPTR ? 0 :
--		evt_nr_active_lcores(opt->plcores);
-+				    opt->prod_type == EVT_PROD_TYPE_EVENT_TIMER_ADPTR ||
-+				    opt->prod_type == EVT_PROD_TYPE_EVENT_VECTOR_ADPTR ?
-+			    0 :
-+			    evt_nr_active_lcores(opt->plcores);
- 
- 	nb_queues = perf_queue_nb_event_queues(opt);
- 
-diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
-index 5bd299e7a3c7..d5aa8628c982 100644
---- a/doc/guides/rel_notes/release_25_07.rst
-+++ b/doc/guides/rel_notes/release_25_07.rst
-@@ -91,6 +91,11 @@ New Features
-       based on their properties.
- 
- 
-+* **Added vector adapter producer mode in eventdev test.**
-+
-+  Added vector adapter producer mode to measure performance of event vector
-+  adapter.
-+
- 
- Removed Items
- -------------
-diff --git a/doc/guides/tools/testeventdev.rst b/doc/guides/tools/testeventdev.rst
-index 58f373b8677c..c4e1047fbb8b 100644
---- a/doc/guides/tools/testeventdev.rst
-+++ b/doc/guides/tools/testeventdev.rst
-@@ -130,6 +130,10 @@ The following are the application command-line options:
- 
-         Use DMA device as producer.
- 
-+* ``--prod_type_vector``
-+
-+        Use event vector adapter as producer.
-+
- * ``--timer_tick_nsec``
- 
-        Used to dictate number of nano seconds between bucket traversal of the
-@@ -635,6 +639,7 @@ Supported application command line options are following::
-         --prod_type_timerdev
-         --prod_type_cryptodev
-         --prod_type_dmadev
-+        --prod_type_vector
-         --prod_enq_burst_sz
-         --timer_tick_nsec
-         --max_tmo_nsec
-@@ -756,6 +761,7 @@ Supported application command line options are following::
-         --prod_type_timerdev
-         --prod_type_cryptodev
-         --prod_type_dmadev
-+        --prod_type_vector
-         --timer_tick_nsec
-         --max_tmo_nsec
-         --expiry_nsec
+Gagandeep Singh (2):
+  net/dpaa2: fix shaper rate
+  net/dpaa2: enable software taildrop for ordered queues
+
+Ioana Ciornei (2):
+  net/dpaa2: retrieve DPNI API version at init time
+  net/dpaa2: setup the speed cap based on the actual MAC
+
+Jun Yang (2):
+  net/dpaa2: fix issue of extract buffer preparation
+  mempool/dpaa2: use unified VA to IOVA conversion
+
+Vanshika Shukla (1):
+  bus/fslmc: add DPBP APIs for setting depletion thresholds
+
+ .mailmap                                  |   1 +
+ doc/guides/platform/dpaa2.rst             |   2 +-
+ drivers/bus/fslmc/mc/dpbp.c               |  78 ++-
+ drivers/bus/fslmc/mc/fsl_dpbp.h           |  41 +-
+ drivers/mempool/dpaa2/dpaa2_hw_mempool.c  | 246 ++++++----
+ drivers/mempool/dpaa2/dpaa2_hw_mempool.h  |   1 +
+ drivers/mempool/dpaa2/rte_dpaa2_mempool.h |  12 +
+ drivers/net/dpaa2/dpaa2_ethdev.c          | 276 ++++++++++-
+ drivers/net/dpaa2/dpaa2_ethdev.h          |  36 +-
+ drivers/net/dpaa2/dpaa2_rxtx.c            |  24 +-
+ drivers/net/dpaa2/dpaa2_tm.c              |  68 ++-
+ drivers/net/dpaa2/mc/dpni.c               |  50 +-
+ drivers/net/dpaa2/mc/fsl_dpmac.h          | 551 ++++++++++++++++++++++
+ drivers/net/dpaa2/mc/fsl_dpni.h           |   8 +-
+ drivers/net/dpaa2/mc/fsl_dpni_cmd.h       |  15 +-
+ 15 files changed, 1262 insertions(+), 147 deletions(-)
+ create mode 100644 drivers/net/dpaa2/mc/fsl_dpmac.h
+
 -- 
-2.39.5 (Apple Git-154)
+2.25.1
 
