@@ -2,55 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C889BC54FB3
-	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Jun 2025 17:14:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76CA6C54FB3
+	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Jun 2025 17:30:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 96CB54026F;
-	Sun,  1 Jun 2025 19:14:49 +0200 (CEST)
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com
- [209.85.216.54]) by mails.dpdk.org (Postfix) with ESMTP id CD87F40268
- for <dev@dpdk.org>; Sun,  1 Jun 2025 19:14:47 +0200 (CEST)
-Received: by mail-pj1-f54.google.com with SMTP id
- 98e67ed59e1d1-309fac646adso4282742a91.1
- for <dev@dpdk.org>; Sun, 01 Jun 2025 10:14:47 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5A9FE40268;
+	Sun,  1 Jun 2025 19:30:26 +0200 (CEST)
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com
+ [209.85.215.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 122B4400D5
+ for <dev@dpdk.org>; Sun,  1 Jun 2025 19:30:08 +0200 (CEST)
+Received: by mail-pg1-f170.google.com with SMTP id
+ 41be03b00d2f7-b26f7d2c1f1so3471199a12.0
+ for <dev@dpdk.org>; Sun, 01 Jun 2025 10:30:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1748798086; x=1749402886; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1748799007; x=1749403807; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
  :date:message-id:reply-to;
- bh=awZ5GZPLsXfEvXinOX60wN4Om6iCYD11XTpjH/cRcEQ=;
- b=gSz1pS3i/dbon8lbHgSqGSHIsc2h33YD/dVJTcCa9zvP1FcBIilf8zDGFYXKuNqQ9V
- iXYH9RNtZ81F1DP+YxBRv3scd606UOphaHP7Wsg7Pr8NihCvYaI0RAsh6EM+LFJNcryL
- hPzds+BXJZvRSjoNBHhXtHVJGSG+45HAmpdrc=
+ bh=+KKG813cZON+SbHzlInMXPD43qFF2XaPv8iV0O3v61E=;
+ b=gpLhUxA+0tKHuL1dWXqiEG+x+Vk5lm9UyZ8E4CxPJH84U+sfc4s7plloSUuAG5W+dV
+ 1m+I0HtEtLU3Hid/unE9EFErRc8BM9Efou2pPI+iDOZv2Vn0WFTHpcpkFobpJB1TCqKx
+ u7Cl7k47TT2k0P6jrm1w1aPO60l9jqiHsXxsA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1748798086; x=1749402886;
+ d=1e100.net; s=20230601; t=1748799007; x=1749403807;
  h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
  :from:to:cc:subject:date:message-id:reply-to;
- bh=awZ5GZPLsXfEvXinOX60wN4Om6iCYD11XTpjH/cRcEQ=;
- b=bhHCEXWweMdnyhF8Q5PtDu/mk/PZxXd4HQPo8ICsLdXqaVJMcwUatahgBE/7F173cn
- YvxgcL49lbenKqQgBrOz5MXD+UIRxDySDfwLKCxxpeG9QGAbN3HWVFkE3wLKG2i9VRjl
- Qp7KFnpo1NMAIRXYxnMaso9+X6oEhDOMFFNWXx4oBuNiB4uOw39KhOqNYCDq/hpf4VZZ
- R8HfRpP4NTg9e3VfLau2hqRjL1gn/kBLyZVQQ1rx8T6NYRl0hQpWyl6lgD/Gzm01+Dxt
- xbCI1QkD9hUabxBITfhMG5F+ATg4XoW38nvqk9qjsOYImM+/B7wYUMIC9vKJC/mEzAP2
- Va4w==
-X-Gm-Message-State: AOJu0YxS8tqo0WjPTYjfbetqeE8cd+Tf+0df4CFt1vo1qv5Mn6WPz6ja
- reipOVYtJ/dg+cAYHKtNwFwJ00BBtICB2K1o5t+l7POjeM+ZX3i69KFoZRbkoUJ8op2+koZdg7Q
- XlzLuUDng+K4jSvHiNoDzjMckjFrRhQDoPvR53pSiII60VvAyBmvhydNZfw==
-X-Gm-Gg: ASbGnctxZwFJUML8tQwqixwQKCwvkYnzB3kK6RMzNQm5F6kG0CCS6MPurU93ZhjEi3I
- vBjxIpSIheLoUqxMesyIzqgW1TLyG/MfGtNgXFnTKXYUdkmYWE+rP7qEm4MWzwqZSnkT2OmEY7y
- Wq2Z4IDGnQ5+IRyKclZrDGwK0v6rvSkim4ubZHUbL6GTsmm/INxahy+XHmUfIwv8WYdQ==
-X-Google-Smtp-Source: AGHT+IFyUD426lQElarhHcnAzPVFVFwPzWW5LaIprYxcd2hqY/FHKAW6Y0sv59nnDdtR2q4ZIg3xirusHkON8QurC8s=
-X-Received: by 2002:a17:90b:180b:b0:311:be43:f09a with SMTP id
- 98e67ed59e1d1-312460ed63emr13138156a91.9.1748798085945; Sun, 01 Jun 2025
- 10:14:45 -0700 (PDT)
+ bh=+KKG813cZON+SbHzlInMXPD43qFF2XaPv8iV0O3v61E=;
+ b=Lv2uyBZk410jrz9UI32Rkokw7wTvDFj3zB0dvsWSZdyLLy1uRvVJfKm023CdOHTHsN
+ S0kwBjtsXSlUM0Qf0UCWOzPRVui4GIa8oIjHwAJMkbIqKxAsMiPpF7YJ8KNSM1tIT4A7
+ dKadmeT+jbwv3iDr2clgyR9OY6XDrwsYsVH3MFv2DsDTda7EUrDxD6nUJbgipf6tWXYf
+ wqSpbDC3kzJeT+RC4woJYqyOSpBimVjj9V60tKASXmMaWPY5AXQWqlmFk7AN5R/yZ4Wg
+ 9XkGKAMmrycclAOTWwvGXYQyO+y7c1xrrPN/BY3xOWGYi02P+fJH2iStieMWNkTVNwqj
+ AKAw==
+X-Gm-Message-State: AOJu0Yxjp10K4Is/zAe/RS5qUX6j/4t76LqRPBYdw1RCuR7v6pP8DmtT
+ vilu422acJs/u2g93kjW8zDQe56he6CC4pz97taAfFLVwZ25wT0RzcYSS1mlbwDnq0/79QllG6A
+ 64JWYTJVWaW96Bb+emdnhhpANalSbv80pwGXF9h6lj8xfdTgMs1sVUojapg==
+X-Gm-Gg: ASbGncsSgjFv/w6MQ5U/LhySnew0sUDx1YOs+8s8EB2jRBMXu+wTfFs01qQGdOBzysz
+ MNbfYLkSsnZxSxCpnhCQG7Ui/bUc7Mo6p5nHPKSnM/oA76+Yr/p5uUHHPYojM+/N/kb+Q0xrA5g
+ f62+kHcbEosf0ZKFH725caivFK39sVi1Lth+xIy5no1P6vsOvfdZGnncVYzw4PrvbyEQmyODkNs
+ Nwo
+X-Google-Smtp-Source: AGHT+IGXS669kFByNNMuKt1XL6u4JOMRDbAk6G0+d2VPjtSQAg1ivrGG+fYJ5HDp9a3leEMRkq/NXQHQ0BsDIjnrNBE=
+X-Received: by 2002:a17:902:d4cd:b0:234:f4da:7eef with SMTP id
+ d9443c01a7336-2353968853dmr130099895ad.52.1748799006778; Sun, 01 Jun 2025
+ 10:30:06 -0700 (PDT)
 MIME-Version: 1.0
 From: Patrick Robb <probb@iol.unh.edu>
-Date: Sun, 1 Jun 2025 13:09:47 -0400
-X-Gm-Features: AX0GCFthBcH6KPpRQQDPrJ0c3U3ee5okpanTDtdnLyKgrukfrlAO7N6fzFbSZds
-Message-ID: <CAJvnSUDnag=QrgXriWEgj4a9X7BpTrBkMz-DH9nmr9=LM1=VXQ@mail.gmail.com>
-Subject: DTS WG Meeting Minutes - May 22, 2025
-To: dev <dev@dpdk.org>
-Cc: ci@dpdk.org
-Content-Type: multipart/alternative; boundary="000000000000b27348063685c86b"
+Date: Sun, 1 Jun 2025 13:25:07 -0400
+X-Gm-Features: AX0GCFs06MJXBj57ST6XWUL7k71YF20Hx7mFlNQLduicOlVf8-d28hu8_2vopSE
+Message-ID: <CAJvnSUAudjeWv_bobAzwXaWVcSX-yLT+asn9JKjrn=DibtwMLw@mail.gmail.com>
+Subject: Community CI Meeting Minutes - May 29, 2025
+To: ci@dpdk.org
+Cc: dev <dev@dpdk.org>
+Content-Type: multipart/alternative; boundary="000000000000953e24063685ffeb"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -64,174 +66,211 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000b27348063685c86b
+--000000000000953e24063685ffeb
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
 #####################################################################
-May 22, 2025
+May 29, 2025
 Attendees
-* Patrick Robb
-* Luca Vizzarro
-* Paul Szczepanek
-* Manit Mahajan
-* Dean Marx
-* Matthew McGovern
+1. Patrick Robb
+2. Paul Szczepanek
+3. Aaron Conole
+4. Manit Mahajan
 
 #####################################################################
 Minutes
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-General Discussion
-* Nick Pratte from UNH-IOL is doing an internship outside IOL this Summer,
-so he will not be working on DTS as much as expected
-   * He still wants to submit some testsuites this Summer, but all his
-framework side work (like perf tg (trex) support) will go to Patrick or Dea=
-n
-   * He may be back to working on DTS more regularly at the end of the
-Summer that is TBD
-* CI Lab items:
-   * We=E2=80=99re still debugging some of the failures that we saw on the =
-cx5
-before DPDK Summit, which took that testing offline in our public reporting
-system
-   * Dean is adding some new NICs to the public testing
-      * Broadcom 25g
-      * Broadcom 100g (p2100g)
+=====================================================================
+General Announcements
+* LTS branches (with backports), which were previously only available on
+the Github dpdk-stable repo, are now available on the github DPDK repo.
+Example: https://github.com/DPDK/dpdk/tree/24.11
+* Patrick still needs to send out a survey to CI meetings folks for finding
+an agreeable new meeting timeslot.
+   * In order to facilitate both Europe, Asia, and North America, we may
+have to alternate the meeting time.
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Patch discussions
-* Rte_flow: https://patchwork.dpdk.org/project/dpdk/list/?series=3D35269
-   * Dean has updated the flow testsuite, adding a flow validate step
-   * If flow validate fails, skip the testsuite
-   * If flow validate passes, then flow create fails, fail the testsuite
-   * If flow validate passes, flow create passes, then run the testsuite
-and validate the flow behavior (pass or fail based on testsuite assert)
-   * Dean added a verify_skip method to the testsuite class used for
-skipping testsuites at runtime based on some condition
-* Per test suite config docs:
-https://patchwork.dpdk.org/project/dpdk/list/?series=3D35240
-   * Doc update towards explaining how to leverage the per test suite confi=
-g
-* Perf tg support:
-https://patchwork.dpdk.org/project/dpdk/list/?series=3D35239
-   * Patrick is picking up this series
-   * UNH people will ensure that the forwarding test metrics align with the
-results we get from legacy DTS, which is considered stable
-   * The legacy framework single core forwarding test had some effort done
-towards supporting different traffic mixes/profiles, and we should examine
-this for the new testsuite, but the MVP will feature basically a uniform
-set of packets
-* L4 packet matching:
-https://patchwork.dpdk.org/project/dpdk/list/?series=3D3522
-   * Luca provided a few nits
-   * Nits are resolved, so Patrick can test and merge
-* Improved port handling:
-https://patchwork.dpdk.org/project/dpdk/patch/20250506131657.1576152-1-luca=
-.vizzarro@arm.com/
-   * Patrick needs to review ASAP
-* Packet capture testsuite:
-https://patchwork.dpdk.org/project/dpdk/list/?series=3D35163
-   * UNH guys need to provide a review and test on our hardware
-* Tmp dir dpdk tree dir:
-https://patchwork.dpdk.org/project/dpdk/list/?series=3D35049
-   * UNH guys need to provide a review
-* Patrick needs to resolve a docs error from the stats testsuite
+=====================================================================
+CI Status
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Bugzilla discussions
+---------------------------------------------------------------------
+UNH-IOL Community Lab
+* Cody brought the x86 Intel e810 100G single core forwarding test back
+online.
+   * Necessitated making the TREX traffic profile homogeneous as the
+traffic mix used before was causing issues with the TREX software.
+* New environment info update process:
+   * Runs once every 48 hours when there is a periodic (no patch) run on
+dpdk mainline
+   * Added a stage to all our testing pipelines which will run a python
+subprocess script to collect software information. Then, sends a PATCH http
+request to our DPDK dashboard, which updates the database.
+   * Collects these values from the system:
+      * Compiler version
+      * Kernel version
+      * Kernel cmdline
+      * Os distro
+   * Followup values we want to grab in the future:
+      * Libc version
+* Working on some internal tooling to help our maintenance:
+   * Refactoring our ansible playbooks so that we have a larger set of
+discrete provisioning playbooks instead of our monolithic playbook which we
+have been managing for years, and is becoming a maintenance burden.
+* Currently we have 2 racks at UNH set aside for DPDK servers, one is
+completely full and the other half full. We had a couple parties at DPDK
+Prague offer to help fill the remaining 24U in the second rack, and we are
+following up with these parties.
+
+---------------------------------------------------------------------
+Intel Lab
 * None
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Any other business
-* DPDK-Pktgen
-   * Patrick should share the pktgen notes and code example the CESNET guys
-shared at a future meeting
-* Cloud testing
-   * Matthew is setting up an environment on Azure to experiment with DTS.
-* Group looked at roadmap status DTS 25.07 Roadmap
-* Luca will be gone for 3 weeks, and will be back in the 2nd half of June
-* Next meeting is Jun 5, 2025
+---------------------------------------------------------------------
+Github Actions Robot
+* Aaron started looking at changes to the patchwork events API.
+   * Adam Hassickshould review the email thread on this and see if he can
+suggest any ideas for improving the patchwork API
+* There was a little discussion about how developers would benefit from
+forking DPDK on github and leveraging the GHA pipelines, which would help
+with the simplest type of failures (like just failing build on linux)
+* Aaron notes that ovs and netdev are seeing similar issues as DPDK in
+terms of developers relying too much on CI, and completely forgoing
+personally testing their patches ahead of submission to the mailing list.
 
---000000000000b27348063685c86b
+---------------------------------------------------------------------
+AWS Lab
+* No updates, but Patrick will try to find some CI meeting scheduling
+solution which will work for Shai.
+
+---------------------------------------------------------------------
+Loongson Lab
+* It is confirmed that Loongson lab is supporting the email based test
+recheck framework. However, we have not synced with Min Zhou about
+supporting the rebase={branch} argument for rechecks. Patrick has emailed
+on the old loongson recheck support email thread asking for the latest
+status.
+   * We need to send a patch to the testing page for dpdk.org adding
+loongson as a lab which supports this.
+
+=====================================================================
+DTS Improvements & Test Development
+* README and dts.rst rewrite to simplify user onboarding instructions:
+   * Reviewed by Patrick and Paul. Looks good mostly but needs a v2 for
+some minor nits, and has a warning which needs to be resolved.
+* Reminder - when submitting a DTS patchseries:
+   * Run dts-check-format.py, checkpatch, check-git-log.sh, and ideally do
+a docs build.
+* Rte_flow: Dean has submitted a v2, which adds a flow validate call ahead
+of each flow create call.
+   * Patrick to review for a v3 or merge.
+* Docs patch which adds explanation of per testsuite config file
+   * Patrick to review and merge
+* dts: use tmp dir and DPDK tree dir
+   * Tested and reviewed by Dean
+   * Patrick to review and merge
+* Improve port handling:
+   * Dean has reviewed
+   * Paul to merge
+   *
+https://patchwork.dpdk.org/project/dpdk/patch/20250506131657.1576152-1-luca.vizzarro@arm.com/
+* Docs builds are a big burden, as there are lots of warnings:
+   * Should be a discussion item at the next meeting
+   * If you have ideas on how the process (on the DTS side or the DPDK
+side) can be improved to make this less of a maintenance burden, please
+bring those to the next meeting
+
+=====================================================================
+Any other business
+* Next Meeting Jun 12, 2025
+
+--000000000000953e24063685ffeb
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 <div dir=3D"ltr">##########################################################=
-###########<br>May 22, 2025<br>Attendees<br>* Patrick Robb<br>* Luca Vizzar=
-ro<br>* Paul Szczepanek<br>* Manit Mahajan<br>* Dean Marx<br>* Matthew McGo=
-vern<br><br>###############################################################=
-######<br>Minutes<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+###########<br>May 29, 2025<br>Attendees<br>1. Patrick Robb<br>2. Paul Szcz=
+epanek<br>3. Aaron Conole<br>4. Manit Mahajan<br><br>######################=
+###############################################<br>Minutes<br><br>=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D<br>General Discussion<br>* Nick Pratte from UNH-IOL is doing an i=
-nternship outside IOL this Summer, so he will not be working on DTS as much=
- as expected<br>=C2=A0 =C2=A0* He still wants to submit some testsuites thi=
-s Summer, but all his framework side work (like perf tg (trex) support) wil=
-l go to Patrick or Dean<br>=C2=A0 =C2=A0* He may be back to working on DTS =
-more regularly at the end of the Summer that is TBD<br>* CI Lab items:<br>=
-=C2=A0 =C2=A0* We=E2=80=99re still debugging some of the failures that we s=
-aw on the cx5 before DPDK Summit, which took that testing offline in our pu=
-blic reporting system<br>=C2=A0 =C2=A0* Dean is adding some new NICs to the=
- public testing<br>=C2=A0 =C2=A0 =C2=A0 * Broadcom 25g<br>=C2=A0 =C2=A0 =C2=
-=A0 * Broadcom 100g (p2100g)<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>General Announcements<b=
+r>* LTS branches (with backports), which were previously only available on =
+the Github dpdk-stable repo, are now available on the github DPDK repo. Exa=
+mple: <a href=3D"https://github.com/DPDK/dpdk/tree/24.11">https://github.co=
+m/DPDK/dpdk/tree/24.11</a><br>* Patrick still needs to send out a survey to=
+ CI meetings folks for finding an agreeable new meeting timeslot.<br>=C2=A0=
+ =C2=A0* In order to facilitate both Europe, Asia, and North America, we ma=
+y have to alternate the meeting time.<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D<br>Patch discussions<br>* Rte_flow: <a href=3D"https://p=
-atchwork.dpdk.org/project/dpdk/list/?series=3D35269">https://patchwork.dpdk=
-.org/project/dpdk/list/?series=3D35269</a><br>=C2=A0 =C2=A0* Dean has updat=
-ed the flow testsuite, adding a flow validate step<br>=C2=A0 =C2=A0* If flo=
-w validate fails, skip the testsuite<br>=C2=A0 =C2=A0* If flow validate pas=
-ses, then flow create fails, fail the testsuite<br>=C2=A0 =C2=A0* If flow v=
-alidate passes, flow create passes, then run the testsuite and validate the=
- flow behavior (pass or fail based on testsuite assert)<br>=C2=A0 =C2=A0* D=
-ean added a verify_skip method to the testsuite class used for skipping tes=
-tsuites at runtime based on some condition<br>* Per test suite config docs:=
- <a href=3D"https://patchwork.dpdk.org/project/dpdk/list/?series=3D35240">h=
-ttps://patchwork.dpdk.org/project/dpdk/list/?series=3D35240</a><br>=C2=A0 =
-=C2=A0* Doc update towards explaining how to leverage the per test suite co=
-nfig<br>* Perf tg support: <a href=3D"https://patchwork.dpdk.org/project/dp=
-dk/list/?series=3D35239">https://patchwork.dpdk.org/project/dpdk/list/?seri=
-es=3D35239</a><br>=C2=A0 =C2=A0* Patrick is picking up this series<br>=C2=
-=A0 =C2=A0* UNH people will ensure that the forwarding test metrics align w=
-ith the results we get from legacy DTS, which is considered stable<br>=C2=
-=A0 =C2=A0* The legacy framework single core forwarding test had some effor=
-t done towards supporting different traffic mixes/profiles, and we should e=
-xamine this for the new testsuite, but the MVP will feature basically a uni=
-form set of packets<br>* L4 packet matching: <a href=3D"https://patchwork.d=
-pdk.org/project/dpdk/list/?series=3D3522">https://patchwork.dpdk.org/projec=
-t/dpdk/list/?series=3D3522</a><br>=C2=A0 =C2=A0* Luca provided a few nits<b=
-r>=C2=A0 =C2=A0* Nits are resolved, so Patrick can test and merge<br>* Impr=
-oved port handling: <a href=3D"https://patchwork.dpdk.org/project/dpdk/patc=
-h/20250506131657.1576152-1-luca.vizzarro@arm.com/">https://patchwork.dpdk.o=
-rg/project/dpdk/patch/20250506131657.1576152-1-luca.vizzarro@arm.com/</a><b=
-r>=C2=A0 =C2=A0* Patrick needs to review ASAP<br>* Packet capture testsuite=
-: <a href=3D"https://patchwork.dpdk.org/project/dpdk/list/?series=3D35163">=
-https://patchwork.dpdk.org/project/dpdk/list/?series=3D35163</a><br>=C2=A0 =
-=C2=A0* UNH guys need to provide a review and test on our hardware<br>* Tmp=
- dir dpdk tree dir: <a href=3D"https://patchwork.dpdk.org/project/dpdk/list=
-/?series=3D35049">https://patchwork.dpdk.org/project/dpdk/list/?series=3D35=
-049</a><br>=C2=A0 =C2=A0* UNH guys need to provide a review<br>* Patrick ne=
-eds to resolve a docs error from the stats testsuite<br><br>=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>CI Status<br><br>---------------------------=
+------------------------------------------<br>UNH-IOL Community Lab<br>* Co=
+dy brought the x86 Intel e810 100G single core forwarding test back online.=
+<br>=C2=A0 =C2=A0* Necessitated making the TREX traffic profile homogeneous=
+ as the traffic mix used before was causing issues with the TREX software.<=
+br>* New environment info update process:<br>=C2=A0 =C2=A0* Runs once every=
+ 48 hours when there is a periodic (no patch) run on dpdk mainline<br>=C2=
+=A0 =C2=A0* Added a stage to all our testing pipelines which will run a pyt=
+hon subprocess script to collect software information. Then, sends a PATCH =
+http request to our DPDK dashboard, which updates the database.<br>=C2=A0 =
+=C2=A0* Collects these values from the system:<br>=C2=A0 =C2=A0 =C2=A0 * Co=
+mpiler version<br>=C2=A0 =C2=A0 =C2=A0 * Kernel version<br>=C2=A0 =C2=A0 =
+=C2=A0 * Kernel cmdline<br>=C2=A0 =C2=A0 =C2=A0 * Os distro<br>=C2=A0 =C2=
+=A0* Followup values we want to grab in the future:<br>=C2=A0 =C2=A0 =C2=A0=
+ * Libc version<br>* Working on some internal tooling to help our maintenan=
+ce:<br>=C2=A0 =C2=A0* Refactoring our ansible playbooks so that we have a l=
+arger set of discrete provisioning playbooks instead of our monolithic play=
+book which we have been managing for years, and is becoming a maintenance b=
+urden.<br>* Currently we have 2 racks at UNH set aside for DPDK servers, on=
+e is completely full and the other half full. We had a couple parties at DP=
+DK Prague offer to help fill the remaining 24U in the second rack, and we a=
+re following up with these parties.<br><br>--------------------------------=
+-------------------------------------<br>Intel Lab<br>* None<br><br>-------=
+--------------------------------------------------------------<br>Github Ac=
+tions Robot<br>* Aaron started looking at changes to the patchwork events A=
+PI.<br>=C2=A0 =C2=A0* Adam Hassickshould review the email thread on this an=
+d see if he can suggest any ideas for improving the patchwork API<br>* Ther=
+e was a little discussion about how developers would benefit from forking D=
+PDK on github and leveraging the GHA pipelines, which would help with the s=
+implest type of failures (like just failing build on linux)<br>* Aaron note=
+s that ovs and netdev are seeing similar issues as DPDK in terms of develop=
+ers relying too much on CI, and completely forgoing personally testing thei=
+r patches ahead of submission to the mailing list.<br><br>-----------------=
+----------------------------------------------------<br>AWS Lab<br>* No upd=
+ates, but Patrick will try to find some CI meeting scheduling solution whic=
+h will work for Shai.<br><br>----------------------------------------------=
+-----------------------<br>Loongson Lab<br>* It is confirmed that Loongson =
+lab is supporting the email based test recheck framework. However, we have =
+not synced with Min Zhou about supporting the rebase=3D{branch} argument fo=
+r rechecks. Patrick has emailed on the old loongson recheck support email t=
+hread asking for the latest status.<br>=C2=A0 =C2=A0* We need to send a pat=
+ch to the testing page for <a href=3D"http://dpdk.org">dpdk.org</a> adding =
+loongson as a lab which supports this.<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>Bugzilla discussions<br>* Non=
-e<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>DTS Improvements &amp; Test Development<b=
+r>* README and dts.rst rewrite to simplify user onboarding instructions:<br=
+>=C2=A0 =C2=A0* Reviewed by Patrick and Paul. Looks good mostly but needs a=
+ v2 for some minor nits, and has a warning which needs to be resolved.<br>*=
+ Reminder - when submitting a DTS patchseries:<br>=C2=A0 =C2=A0* Run dts-ch=
+eck-format.py, checkpatch, check-git-log.sh, and ideally do a docs build.<b=
+r>* Rte_flow: Dean has submitted a v2, which adds a flow validate call ahea=
+d of each flow create call.<br>=C2=A0 =C2=A0* Patrick to review for a v3 or=
+ merge.<br>* Docs patch which adds explanation of per testsuite config file=
+<br>=C2=A0 =C2=A0* Patrick to review and merge<br>* dts: use tmp dir and DP=
+DK tree dir<br>=C2=A0 =C2=A0* Tested and reviewed by Dean<br>=C2=A0 =C2=A0*=
+ Patrick to review and merge<br>* Improve port handling:<br>=C2=A0 =C2=A0* =
+Dean has reviewed<br>=C2=A0 =C2=A0* Paul to merge<br>=C2=A0 =C2=A0* <a href=
+=3D"https://patchwork.dpdk.org/project/dpdk/patch/20250506131657.1576152-1-=
+luca.vizzarro@arm.com/">https://patchwork.dpdk.org/project/dpdk/patch/20250=
+506131657.1576152-1-luca.vizzarro@arm.com/</a><br>* Docs builds are a big b=
+urden, as there are lots of warnings:<br>=C2=A0 =C2=A0* Should be a discuss=
+ion item at the next meeting<br>=C2=A0 =C2=A0* If you have ideas on how the=
+ process (on the DTS side or the DPDK side) can be improved to make this le=
+ss of a maintenance burden, please bring those to the next meeting<br>=C2=
+=A0 =C2=A0<br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>Any o=
-ther business<br>* DPDK-Pktgen<br>=C2=A0 =C2=A0* Patrick should share the p=
-ktgen notes and code example the CESNET guys shared at a future meeting<br>=
-* Cloud testing<br>=C2=A0 =C2=A0* Matthew is setting up an environment on A=
-zure to experiment with DTS.<br>* Group looked at roadmap status DTS 25.07 =
-Roadmap<br>* Luca will be gone for 3 weeks, and will be back in the 2nd hal=
-f of June<br>* Next meeting is Jun 5, 2025</div>
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br=
+>Any other business<br>* Next Meeting Jun 12, 2025</div>
 
---000000000000b27348063685c86b--
+--000000000000953e24063685ffeb--
