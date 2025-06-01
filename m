@@ -2,57 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76CA6C54FB3
-	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Jun 2025 17:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA73CC5B552
+	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Jun 2025 20:46:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5A9FE40268;
-	Sun,  1 Jun 2025 19:30:26 +0200 (CEST)
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com
- [209.85.215.170])
- by mails.dpdk.org (Postfix) with ESMTP id 122B4400D5
- for <dev@dpdk.org>; Sun,  1 Jun 2025 19:30:08 +0200 (CEST)
-Received: by mail-pg1-f170.google.com with SMTP id
- 41be03b00d2f7-b26f7d2c1f1so3471199a12.0
- for <dev@dpdk.org>; Sun, 01 Jun 2025 10:30:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1748799007; x=1749403807; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
- :date:message-id:reply-to;
- bh=+KKG813cZON+SbHzlInMXPD43qFF2XaPv8iV0O3v61E=;
- b=gpLhUxA+0tKHuL1dWXqiEG+x+Vk5lm9UyZ8E4CxPJH84U+sfc4s7plloSUuAG5W+dV
- 1m+I0HtEtLU3Hid/unE9EFErRc8BM9Efou2pPI+iDOZv2Vn0WFTHpcpkFobpJB1TCqKx
- u7Cl7k47TT2k0P6jrm1w1aPO60l9jqiHsXxsA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1748799007; x=1749403807;
- h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=+KKG813cZON+SbHzlInMXPD43qFF2XaPv8iV0O3v61E=;
- b=Lv2uyBZk410jrz9UI32Rkokw7wTvDFj3zB0dvsWSZdyLLy1uRvVJfKm023CdOHTHsN
- S0kwBjtsXSlUM0Qf0UCWOzPRVui4GIa8oIjHwAJMkbIqKxAsMiPpF7YJ8KNSM1tIT4A7
- dKadmeT+jbwv3iDr2clgyR9OY6XDrwsYsVH3MFv2DsDTda7EUrDxD6nUJbgipf6tWXYf
- wqSpbDC3kzJeT+RC4woJYqyOSpBimVjj9V60tKASXmMaWPY5AXQWqlmFk7AN5R/yZ4Wg
- 9XkGKAMmrycclAOTWwvGXYQyO+y7c1xrrPN/BY3xOWGYi02P+fJH2iStieMWNkTVNwqj
- AKAw==
-X-Gm-Message-State: AOJu0Yxjp10K4Is/zAe/RS5qUX6j/4t76LqRPBYdw1RCuR7v6pP8DmtT
- vilu422acJs/u2g93kjW8zDQe56he6CC4pz97taAfFLVwZ25wT0RzcYSS1mlbwDnq0/79QllG6A
- 64JWYTJVWaW96Bb+emdnhhpANalSbv80pwGXF9h6lj8xfdTgMs1sVUojapg==
-X-Gm-Gg: ASbGncsSgjFv/w6MQ5U/LhySnew0sUDx1YOs+8s8EB2jRBMXu+wTfFs01qQGdOBzysz
- MNbfYLkSsnZxSxCpnhCQG7Ui/bUc7Mo6p5nHPKSnM/oA76+Yr/p5uUHHPYojM+/N/kb+Q0xrA5g
- f62+kHcbEosf0ZKFH725caivFK39sVi1Lth+xIy5no1P6vsOvfdZGnncVYzw4PrvbyEQmyODkNs
- Nwo
-X-Google-Smtp-Source: AGHT+IGXS669kFByNNMuKt1XL6u4JOMRDbAk6G0+d2VPjtSQAg1ivrGG+fYJ5HDp9a3leEMRkq/NXQHQ0BsDIjnrNBE=
-X-Received: by 2002:a17:902:d4cd:b0:234:f4da:7eef with SMTP id
- d9443c01a7336-2353968853dmr130099895ad.52.1748799006778; Sun, 01 Jun 2025
- 10:30:06 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 574154026B;
+	Sun,  1 Jun 2025 22:46:41 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 9F5AE40268
+ for <dev@dpdk.org>; Sun,  1 Jun 2025 22:46:38 +0200 (CEST)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 551KY8UY006527
+ for <dev@dpdk.org>; Sun, 1 Jun 2025 13:46:37 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=N
+ O/BPyaewH4bb1oMVoytSumPDaoDl0Sd3S3X914pquM=; b=ZEuYcNAsVhAec8D/u
+ dtKOmfOAQji5h4f7Z20zbRayGT5N10mI+bkq9Zg4BUVBrCCjlLrBHl0TJM0p3wJH
+ 3JXfHi6sIVXcPy+HDXK3IRksaK8HrdLtE16GQxKAtpW7iq/DHdVYe+gWLQI1eCPs
+ JgmjXmplZFwryQYs/u9Wghm0dC5n73S0ReVOVbscR8kEdCYbFvhrAoY5wQBlKFlS
+ t6ws/dDa+eRM9hHHZvEwHkuz7BWD3PNKcrvjWyJykZHOv3nLT2JEvrmEJybuHHHZ
+ /vSdLmkG6zsOjLpW03paXXaLrCp/AQbz1XkV4r50q+aa/f5W6tGM3WMQpzdusKa7
+ g7j0Q==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 470bpa1358-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Sun, 01 Jun 2025 13:46:37 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Sun, 1 Jun 2025 13:46:36 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Sun, 1 Jun 2025 13:46:36 -0700
+Received: from LYYJYPGKF4.marvell.com (unknown [10.28.164.240])
+ by maili.marvell.com (Postfix) with ESMTP id 8B6C13F705B;
+ Sun,  1 Jun 2025 13:46:32 -0700 (PDT)
+From: <pbhagavatula@marvell.com>
+To: <jerinj@marvell.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>, "Kiran
+ Kumar K" <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>,
+ Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>,
+ "Pavan Nikhilesh" <pbhagavatula@marvell.com>,
+ Shijith Thotton <sthotton@marvell.com>
+CC: <dev@dpdk.org>
+Subject: [PATCH v2] event/cnxk: add event vector adapter support
+Date: Mon, 2 Jun 2025 02:16:25 +0530
+Message-ID: <20250601204626.98998-1-pbhagavatula@marvell.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250530163436.56579-1-pbhagavatula@marvell.com>
+References: <20250530163436.56579-1-pbhagavatula@marvell.com>
 MIME-Version: 1.0
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Sun, 1 Jun 2025 13:25:07 -0400
-X-Gm-Features: AX0GCFs06MJXBj57ST6XWUL7k71YF20Hx7mFlNQLduicOlVf8-d28hu8_2vopSE
-Message-ID: <CAJvnSUAudjeWv_bobAzwXaWVcSX-yLT+asn9JKjrn=DibtwMLw@mail.gmail.com>
-Subject: Community CI Meeting Minutes - May 29, 2025
-To: ci@dpdk.org
-Cc: dev <dev@dpdk.org>
-Content-Type: multipart/alternative; boundary="000000000000953e24063685ffeb"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=MJNgmNZl c=1 sm=1 tr=0 ts=683cbc2d cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=fgU79axJwWEwFkpbp-oA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-ORIG-GUID: vLeRrbgJacoGBBSlagQXRttGGKcE3O8j
+X-Proofpoint-GUID: vLeRrbgJacoGBBSlagQXRttGGKcE3O8j
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAxMDE4MSBTYWx0ZWRfX6/4LonH5RIgv
+ CJ1TQxXUuVYs4rLFVh7+7a4L4bAoP6mwaR54NIpB/KoSFwvGGAysDmiccpmyZQGkHZohQB9Z7dE
+ qWqnM3kdOcGqhwDzPtJTakx6grvOQOrl343nW5E6KhRvyhx1XGIDJoLybw6N9+TNFCoH1bY5/Cq
+ 0vfIL7v9eaDgOd2ebzaATUeILi5gSKOIOkrjNz50CL8j71ce8gBRdsLk8mnfApjdOfwMDbUSRyg
+ Nw9nve2V7FPf3n6dUUweXeRT6Ljp3iUzAHuMukdPXqiS/EEndBVroHqawFRR+2uwmzenYT/rT2J
+ DSOGPbb6IDEzYdUg1c4kodtydhd6cq8pXsQi/8t5zDF/qp1zsL6ceDrnld0AJUV8KF8SHmsGU8a
+ TUkdallsmrmAYxe6ScAiPP3POJ/qQrkOciLN7lBEukLyKPXGe6FdVZ0U2mj0vOr6ZFFuyjQp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-01_09,2025-05-30_01,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -66,211 +83,292 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000953e24063685ffeb
-Content-Type: text/plain; charset="UTF-8"
+From: Pavan Nikhilesh <pbhagavatula@marvell.com>
 
-#####################################################################
-May 29, 2025
-Attendees
-1. Patrick Robb
-2. Paul Szczepanek
-3. Aaron Conole
-4. Manit Mahajan
+Add event vector adapter support to CN20K event device.
 
-#####################################################################
-Minutes
+Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
+---
+ Depends-on: series-35336 (introduce event vector adapter)
+ v2 Changes:
+ - Add depends on series tag.
+ - Fix compilation.
 
-=====================================================================
-General Announcements
-* LTS branches (with backports), which were previously only available on
-the Github dpdk-stable repo, are now available on the github DPDK repo.
-Example: https://github.com/DPDK/dpdk/tree/24.11
-* Patrick still needs to send out a survey to CI meetings folks for finding
-an agreeable new meeting timeslot.
-   * In order to facilitate both Europe, Asia, and North America, we may
-have to alternate the meeting time.
+ drivers/common/cnxk/roc_sso.c          |   4 +-
+ drivers/common/cnxk/roc_sso.h          |   2 +-
+ drivers/event/cnxk/cn20k_eventdev.c    |   8 +-
+ drivers/event/cnxk/cnxk_vector_adptr.c | 148 +++++++++++++++++++++++++
+ drivers/event/cnxk/cnxk_vector_adptr.h |  22 ++++
+ drivers/event/cnxk/meson.build         |   1 +
+ 6 files changed, 181 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/event/cnxk/cnxk_vector_adptr.c
+ create mode 100644 drivers/event/cnxk/cnxk_vector_adptr.h
 
-=====================================================================
-CI Status
+diff --git a/drivers/common/cnxk/roc_sso.c b/drivers/common/cnxk/roc_sso.c
+index 4996329018fb..1d82e5b9782c 100644
+--- a/drivers/common/cnxk/roc_sso.c
++++ b/drivers/common/cnxk/roc_sso.c
+@@ -514,7 +514,8 @@ sso_agq_op_wait(struct roc_sso *roc_sso, uint16_t hwgrp)
+ }
 
----------------------------------------------------------------------
-UNH-IOL Community Lab
-* Cody brought the x86 Intel e810 100G single core forwarding test back
-online.
-   * Necessitated making the TREX traffic profile homogeneous as the
-traffic mix used before was causing issues with the TREX software.
-* New environment info update process:
-   * Runs once every 48 hours when there is a periodic (no patch) run on
-dpdk mainline
-   * Added a stage to all our testing pipelines which will run a python
-subprocess script to collect software information. Then, sends a PATCH http
-request to our DPDK dashboard, which updates the database.
-   * Collects these values from the system:
-      * Compiler version
-      * Kernel version
-      * Kernel cmdline
-      * Os distro
-   * Followup values we want to grab in the future:
-      * Libc version
-* Working on some internal tooling to help our maintenance:
-   * Refactoring our ansible playbooks so that we have a larger set of
-discrete provisioning playbooks instead of our monolithic playbook which we
-have been managing for years, and is becoming a maintenance burden.
-* Currently we have 2 racks at UNH set aside for DPDK servers, one is
-completely full and the other half full. We had a couple parties at DPDK
-Prague offer to help fill the remaining 24U in the second rack, and we are
-following up with these parties.
+ int
+-roc_sso_hwgrp_agq_alloc(struct roc_sso *roc_sso, uint16_t hwgrp, struct roc_sso_agq_data *data)
++roc_sso_hwgrp_agq_alloc(struct roc_sso *roc_sso, uint16_t hwgrp, struct roc_sso_agq_data *data,
++			uint32_t *agq_id)
+ {
+ 	struct sso *sso = roc_sso_to_sso_priv(roc_sso);
+ 	struct sso_aggr_setconfig *req;
+@@ -621,6 +622,7 @@ roc_sso_hwgrp_agq_alloc(struct roc_sso *roc_sso, uint16_t hwgrp, struct roc_sso_
 
----------------------------------------------------------------------
-Intel Lab
-* None
+ 	plt_wmb();
+ 	sso->agg_used[hwgrp]++;
++	*agq_id = off;
 
----------------------------------------------------------------------
-Github Actions Robot
-* Aaron started looking at changes to the patchwork events API.
-   * Adam Hassickshould review the email thread on this and see if he can
-suggest any ideas for improving the patchwork API
-* There was a little discussion about how developers would benefit from
-forking DPDK on github and leveraging the GHA pipelines, which would help
-with the simplest type of failures (like just failing build on linux)
-* Aaron notes that ovs and netdev are seeing similar issues as DPDK in
-terms of developers relying too much on CI, and completely forgoing
-personally testing their patches ahead of submission to the mailing list.
+ 	return 0;
+ }
+diff --git a/drivers/common/cnxk/roc_sso.h b/drivers/common/cnxk/roc_sso.h
+index f73128087a53..f1ad34bcc745 100644
+--- a/drivers/common/cnxk/roc_sso.h
++++ b/drivers/common/cnxk/roc_sso.h
+@@ -112,7 +112,7 @@ int __roc_api roc_sso_hwgrp_stash_config(struct roc_sso *roc_sso,
+ void __roc_api roc_sso_hws_gwc_invalidate(struct roc_sso *roc_sso, uint8_t *hws,
+ 					  uint8_t nb_hws);
+ int __roc_api roc_sso_hwgrp_agq_alloc(struct roc_sso *roc_sso, uint16_t hwgrp,
+-				      struct roc_sso_agq_data *data);
++				      struct roc_sso_agq_data *data, uint32_t *agq_id);
+ void __roc_api roc_sso_hwgrp_agq_free(struct roc_sso *roc_sso, uint16_t hwgrp, uint32_t agq_id);
+ void __roc_api roc_sso_hwgrp_agq_release(struct roc_sso *roc_sso, uint16_t hwgrp);
+ uint32_t __roc_api roc_sso_hwgrp_agq_from_tag(struct roc_sso *roc_sso, uint16_t hwgrp, uint32_t tag,
+diff --git a/drivers/event/cnxk/cn20k_eventdev.c b/drivers/event/cnxk/cn20k_eventdev.c
+index 0688cf97e5d6..9d68397b88a4 100644
+--- a/drivers/event/cnxk/cn20k_eventdev.c
++++ b/drivers/event/cnxk/cn20k_eventdev.c
+@@ -10,6 +10,7 @@
+ #include "cn20k_worker.h"
+ #include "cnxk_common.h"
+ #include "cnxk_eventdev.h"
++#include "cnxk_vector_adptr.h"
+ #include "cnxk_worker.h"
 
----------------------------------------------------------------------
-AWS Lab
-* No updates, but Patrick will try to find some CI meeting scheduling
-solution which will work for Shai.
+ #define CN20K_SET_EVDEV_DEQ_OP(dev, deq_op, deq_ops)                                               \
+@@ -708,11 +709,11 @@ cn20k_sso_rx_adapter_vwqe_enable(struct cnxk_sso_evdev *dev, uint16_t port_id, u
+ 	data.vwqe_wait_tmo = queue_conf->vector_timeout_ns / ((SSO_AGGR_DEF_TMO + 1) * 100);
+ 	data.xqe_type = 0;
 
----------------------------------------------------------------------
-Loongson Lab
-* It is confirmed that Loongson lab is supporting the email based test
-recheck framework. However, we have not synced with Min Zhou about
-supporting the rebase={branch} argument for rechecks. Patrick has emailed
-on the old loongson recheck support email thread asking for the latest
-status.
-   * We need to send a patch to the testing page for dpdk.org adding
-loongson as a lab which supports this.
+-	rc = roc_sso_hwgrp_agq_alloc(&dev->sso, queue_conf->ev.queue_id, &data);
++	agq = UINT32_MAX;
++	rc = roc_sso_hwgrp_agq_alloc(&dev->sso, queue_conf->ev.queue_id, &data, &agq);
+ 	if (rc < 0)
+ 		return rc;
 
-=====================================================================
-DTS Improvements & Test Development
-* README and dts.rst rewrite to simplify user onboarding instructions:
-   * Reviewed by Patrick and Paul. Looks good mostly but needs a v2 for
-some minor nits, and has a warning which needs to be resolved.
-* Reminder - when submitting a DTS patchseries:
-   * Run dts-check-format.py, checkpatch, check-git-log.sh, and ideally do
-a docs build.
-* Rte_flow: Dean has submitted a v2, which adds a flow validate call ahead
-of each flow create call.
-   * Patrick to review for a v3 or merge.
-* Docs patch which adds explanation of per testsuite config file
-   * Patrick to review and merge
-* dts: use tmp dir and DPDK tree dir
-   * Tested and reviewed by Dean
-   * Patrick to review and merge
-* Improve port handling:
-   * Dean has reviewed
-   * Paul to merge
-   *
-https://patchwork.dpdk.org/project/dpdk/patch/20250506131657.1576152-1-luca.vizzarro@arm.com/
-* Docs builds are a big burden, as there are lots of warnings:
-   * Should be a discussion item at the next meeting
-   * If you have ideas on how the process (on the DTS side or the DPDK
-side) can be improved to make this less of a maintenance burden, please
-bring those to the next meeting
+-	agq = roc_sso_hwgrp_agq_from_tag(&dev->sso, queue_conf->ev.queue_id, tag_mask, 0);
+ 	return agq;
+ }
 
-=====================================================================
-Any other business
-* Next Meeting Jun 12, 2025
+@@ -1081,6 +1082,9 @@ static struct eventdev_ops cn20k_sso_dev_ops = {
 
---000000000000953e24063685ffeb
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+ 	.timer_adapter_caps_get = cn20k_tim_caps_get,
 
-<div dir=3D"ltr">##########################################################=
-###########<br>May 29, 2025<br>Attendees<br>1. Patrick Robb<br>2. Paul Szcz=
-epanek<br>3. Aaron Conole<br>4. Manit Mahajan<br><br>######################=
-###############################################<br>Minutes<br><br>=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>General Announcements<b=
-r>* LTS branches (with backports), which were previously only available on =
-the Github dpdk-stable repo, are now available on the github DPDK repo. Exa=
-mple: <a href=3D"https://github.com/DPDK/dpdk/tree/24.11">https://github.co=
-m/DPDK/dpdk/tree/24.11</a><br>* Patrick still needs to send out a survey to=
- CI meetings folks for finding an agreeable new meeting timeslot.<br>=C2=A0=
- =C2=A0* In order to facilitate both Europe, Asia, and North America, we ma=
-y have to alternate the meeting time.<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>CI Status<br><br>---------------------------=
-------------------------------------------<br>UNH-IOL Community Lab<br>* Co=
-dy brought the x86 Intel e810 100G single core forwarding test back online.=
-<br>=C2=A0 =C2=A0* Necessitated making the TREX traffic profile homogeneous=
- as the traffic mix used before was causing issues with the TREX software.<=
-br>* New environment info update process:<br>=C2=A0 =C2=A0* Runs once every=
- 48 hours when there is a periodic (no patch) run on dpdk mainline<br>=C2=
-=A0 =C2=A0* Added a stage to all our testing pipelines which will run a pyt=
-hon subprocess script to collect software information. Then, sends a PATCH =
-http request to our DPDK dashboard, which updates the database.<br>=C2=A0 =
-=C2=A0* Collects these values from the system:<br>=C2=A0 =C2=A0 =C2=A0 * Co=
-mpiler version<br>=C2=A0 =C2=A0 =C2=A0 * Kernel version<br>=C2=A0 =C2=A0 =
-=C2=A0 * Kernel cmdline<br>=C2=A0 =C2=A0 =C2=A0 * Os distro<br>=C2=A0 =C2=
-=A0* Followup values we want to grab in the future:<br>=C2=A0 =C2=A0 =C2=A0=
- * Libc version<br>* Working on some internal tooling to help our maintenan=
-ce:<br>=C2=A0 =C2=A0* Refactoring our ansible playbooks so that we have a l=
-arger set of discrete provisioning playbooks instead of our monolithic play=
-book which we have been managing for years, and is becoming a maintenance b=
-urden.<br>* Currently we have 2 racks at UNH set aside for DPDK servers, on=
-e is completely full and the other half full. We had a couple parties at DP=
-DK Prague offer to help fill the remaining 24U in the second rack, and we a=
-re following up with these parties.<br><br>--------------------------------=
--------------------------------------<br>Intel Lab<br>* None<br><br>-------=
---------------------------------------------------------------<br>Github Ac=
-tions Robot<br>* Aaron started looking at changes to the patchwork events A=
-PI.<br>=C2=A0 =C2=A0* Adam Hassickshould review the email thread on this an=
-d see if he can suggest any ideas for improving the patchwork API<br>* Ther=
-e was a little discussion about how developers would benefit from forking D=
-PDK on github and leveraging the GHA pipelines, which would help with the s=
-implest type of failures (like just failing build on linux)<br>* Aaron note=
-s that ovs and netdev are seeing similar issues as DPDK in terms of develop=
-ers relying too much on CI, and completely forgoing personally testing thei=
-r patches ahead of submission to the mailing list.<br><br>-----------------=
-----------------------------------------------------<br>AWS Lab<br>* No upd=
-ates, but Patrick will try to find some CI meeting scheduling solution whic=
-h will work for Shai.<br><br>----------------------------------------------=
------------------------<br>Loongson Lab<br>* It is confirmed that Loongson =
-lab is supporting the email based test recheck framework. However, we have =
-not synced with Min Zhou about supporting the rebase=3D{branch} argument fo=
-r rechecks. Patrick has emailed on the old loongson recheck support email t=
-hread asking for the latest status.<br>=C2=A0 =C2=A0* We need to send a pat=
-ch to the testing page for <a href=3D"http://dpdk.org">dpdk.org</a> adding =
-loongson as a lab which supports this.<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>DTS Improvements &amp; Test Development<b=
-r>* README and dts.rst rewrite to simplify user onboarding instructions:<br=
->=C2=A0 =C2=A0* Reviewed by Patrick and Paul. Looks good mostly but needs a=
- v2 for some minor nits, and has a warning which needs to be resolved.<br>*=
- Reminder - when submitting a DTS patchseries:<br>=C2=A0 =C2=A0* Run dts-ch=
-eck-format.py, checkpatch, check-git-log.sh, and ideally do a docs build.<b=
-r>* Rte_flow: Dean has submitted a v2, which adds a flow validate call ahea=
-d of each flow create call.<br>=C2=A0 =C2=A0* Patrick to review for a v3 or=
- merge.<br>* Docs patch which adds explanation of per testsuite config file=
-<br>=C2=A0 =C2=A0* Patrick to review and merge<br>* dts: use tmp dir and DP=
-DK tree dir<br>=C2=A0 =C2=A0* Tested and reviewed by Dean<br>=C2=A0 =C2=A0*=
- Patrick to review and merge<br>* Improve port handling:<br>=C2=A0 =C2=A0* =
-Dean has reviewed<br>=C2=A0 =C2=A0* Paul to merge<br>=C2=A0 =C2=A0* <a href=
-=3D"https://patchwork.dpdk.org/project/dpdk/patch/20250506131657.1576152-1-=
-luca.vizzarro@arm.com/">https://patchwork.dpdk.org/project/dpdk/patch/20250=
-506131657.1576152-1-luca.vizzarro@arm.com/</a><br>* Docs builds are a big b=
-urden, as there are lots of warnings:<br>=C2=A0 =C2=A0* Should be a discuss=
-ion item at the next meeting<br>=C2=A0 =C2=A0* If you have ideas on how the=
- process (on the DTS side or the DPDK side) can be improved to make this le=
-ss of a maintenance burden, please bring those to the next meeting<br>=C2=
-=A0 =C2=A0<br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br=
->Any other business<br>* Next Meeting Jun 12, 2025</div>
++	.vector_adapter_caps_get = cnxk_vector_caps_get,
++	.vector_adapter_info_get = cnxk_vector_info_get,
++
+ 	.xstats_get = cnxk_sso_xstats_get,
+ 	.xstats_reset = cnxk_sso_xstats_reset,
+ 	.xstats_get_names = cnxk_sso_xstats_get_names,
+diff --git a/drivers/event/cnxk/cnxk_vector_adptr.c b/drivers/event/cnxk/cnxk_vector_adptr.c
+new file mode 100644
+index 000000000000..0495258cbb5c
+--- /dev/null
++++ b/drivers/event/cnxk/cnxk_vector_adptr.c
+@@ -0,0 +1,148 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(C) 2025 Marvell.
++ */
++#include <event_vector_adapter_pmd.h>
++#include <eventdev_pmd.h>
++
++#include "roc_api.h"
++
++#include "cnxk_eventdev.h"
++#include "cnxk_vector_adptr.h"
++#include "cnxk_worker.h"
++
++static int
++cnxk_sso_vector_adapter_create(struct rte_event_vector_adapter *adapter)
++{
++	struct rte_event_vector_adapter_conf *conf;
++	struct cnxk_event_vector_adapter *adptr;
++	uint32_t agq, tag_mask, stag_mask;
++	struct roc_sso_agq_data data;
++	struct cnxk_sso_evdev *dev;
++	uint8_t queue_id;
++	int rc;
++
++	adptr = rte_zmalloc("cnxk_event_vector_adapter", sizeof(struct cnxk_event_vector_adapter),
++			    RTE_CACHE_LINE_SIZE);
++	if (adptr == NULL) {
++		plt_err("Failed to allocate memory for vector adapter");
++		return -ENOMEM;
++	}
++
++	conf = &adapter->data->conf;
++
++	queue_id = adapter->data->conf.ev.queue_id;
++	dev = cnxk_sso_pmd_priv(&rte_eventdevs[conf->event_dev_id]);
++	adapter->data->adapter_priv = adptr;
++
++	tag_mask = conf->ev.event & 0xFFFFFFFF;
++	stag_mask = (conf->ev_fallback.event & 0xFFFFFFFF) >> 20;
++
++	memset(&data, 0, sizeof(struct roc_sso_agq_data));
++	data.tag = tag_mask;
++	data.tt = conf->ev.sched_type;
++	data.stag = stag_mask;
++	data.vwqe_aura = roc_npa_aura_handle_to_aura(conf->vector_mp->pool_id);
++	data.vwqe_max_sz_exp = rte_log2_u32(conf->vector_sz);
++	data.vwqe_wait_tmo = conf->vector_timeout_ns / ((SSO_AGGR_DEF_TMO + 1) * 100);
++	data.xqe_type = 0;
++
++	agq = UINT32_MAX;
++	rc = roc_sso_hwgrp_agq_alloc(&dev->sso, queue_id, &data, &agq);
++	if (rc < 0 || agq == UINT32_MAX) {
++		plt_err("Failed to allocate aggregation queue for queue_id=%d", queue_id);
++		adapter->data->adapter_priv = NULL;
++		rte_free(adptr);
++		return rc;
++	}
++
++	adptr->agq = agq;
++	adptr->tt = SSO_TT_AGG;
++	adptr->base = roc_sso_hwgrp_base_get(&dev->sso, queue_id);
++
++	return 0;
++}
++
++static int
++cnxk_sso_vector_adapter_destroy(struct rte_event_vector_adapter *adapter)
++{
++	struct cnxk_event_vector_adapter *adptr;
++	struct cnxk_sso_evdev *dev;
++	uint16_t queue_id;
++
++	if (adapter == NULL || adapter->data == NULL)
++		return -EINVAL;
++
++	adptr = adapter->data->adapter_priv;
++	if (adptr == NULL)
++		return -EINVAL;
++
++	queue_id = adapter->data->conf.ev.queue_id;
++	dev = cnxk_sso_pmd_priv(&rte_eventdevs[adapter->data->conf.event_dev_id]);
++
++	roc_sso_hwgrp_agq_free(&dev->sso, queue_id, adptr->agq);
++	rte_free(adptr);
++	adapter->data->adapter_priv = NULL;
++
++	return 0;
++}
++
++static int
++cnxk_sso_vector_adapter_enqueue(struct rte_event_vector_adapter *adapter, uint64_t objs[],
++				uint16_t num_elem, uint64_t flags)
++{
++	struct cnxk_event_vector_adapter *adptr;
++	uint16_t n = num_elem;
++	uint64_t add_work0;
++
++	adptr = adapter->data->adapter_priv;
++	plt_wmb();
++
++	add_work0 = adptr->agq | ((uint64_t)(adptr->tt) << 32);
++	roc_store_pair(add_work0 | ((uint64_t)!!(flags & RTE_EVENT_VECTOR_ENQ_SOV) << 34),
++		       objs[num_elem - n], adptr->base);
++	while (--n > 1)
++		roc_store_pair(add_work0, objs[num_elem - n], adptr->base);
++	if (n)
++		roc_store_pair(add_work0 | ((uint64_t)!!(flags & RTE_EVENT_VECTOR_ENQ_EOV) << 35),
++			       objs[num_elem - n], adptr->base);
++
++	return num_elem;
++}
++
++static struct event_vector_adapter_ops vector_ops = {
++	.create = cnxk_sso_vector_adapter_create,
++	.destroy = cnxk_sso_vector_adapter_destroy,
++	.enqueue = cnxk_sso_vector_adapter_enqueue,
++};
++
++int
++cnxk_vector_caps_get(const struct rte_eventdev *evdev, uint32_t *caps,
++		     const struct event_vector_adapter_ops **ops)
++{
++	RTE_SET_USED(evdev);
++
++	*caps = RTE_EVENT_VECTOR_ADAPTER_CAP_INTERNAL_PORT;
++	*ops = &vector_ops;
++
++	return 0;
++}
++
++int
++cnxk_vector_info_get(const struct rte_eventdev *evdev, struct rte_event_vector_adapter_info *info)
++{
++	RTE_SET_USED(evdev);
++	if (info == NULL)
++		return -EINVAL;
++
++	info->max_vector_adapters_per_event_queue =
++		SSO_AGGR_MAX_CTX > UINT8_MAX ? UINT8_MAX : SSO_AGGR_MAX_CTX;
++	info->log2_sz = true;
++	info->min_vector_sz = RTE_BIT32(ROC_NIX_VWQE_MIN_SIZE_LOG2);
++	info->max_vector_sz = RTE_BIT32(ROC_NIX_VWQE_MAX_SIZE_LOG2);
++	info->min_vector_timeout_ns = (SSO_AGGR_DEF_TMO + 1) * 100;
++	info->max_vector_timeout_ns = (BITMASK_ULL(11, 0) + 1) * info->min_vector_timeout_ns;
++
++	info->log2_sz = true;
++
++	return 0;
++}
+diff --git a/drivers/event/cnxk/cnxk_vector_adptr.h b/drivers/event/cnxk/cnxk_vector_adptr.h
+new file mode 100644
+index 000000000000..f60b0f4edd89
+--- /dev/null
++++ b/drivers/event/cnxk/cnxk_vector_adptr.h
+@@ -0,0 +1,22 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(C) 2025 Marvell.
++ */
++
++#ifndef __CNXK_VECTOR_ADPTR_H__
++#define __CNXK_VECTOR_ADPTR_H__
++
++#include <rte_event_vector_adapter.h>
++#include <rte_eventdev.h>
++
++struct cnxk_event_vector_adapter {
++	uint8_t tt;
++	uint32_t agq;  /**< Aggregation queue ID */
++	uint64_t base; /**< Base address of the adapter */
++};
++
++int cnxk_vector_caps_get(const struct rte_eventdev *evdev, uint32_t *caps,
++			 const struct event_vector_adapter_ops **ops);
++int cnxk_vector_info_get(const struct rte_eventdev *evdev,
++			 struct rte_event_vector_adapter_info *info);
++
++#endif /* __CNXK_VECTOR_ADPTR_H__ */
+diff --git a/drivers/event/cnxk/meson.build b/drivers/event/cnxk/meson.build
+index 9461ae33e443..84cc93e2fd73 100644
+--- a/drivers/event/cnxk/meson.build
++++ b/drivers/event/cnxk/meson.build
+@@ -26,6 +26,7 @@ sources = files(
+         'cnxk_eventdev_stats.c',
+         'cnxk_tim_evdev.c',
+         'cnxk_tim_worker.c',
++        'cnxk_vector_adptr.c'
+ )
 
---000000000000953e24063685ffeb--
+ disable_template = false
+--
+2.39.5 (Apple Git-154)
+
