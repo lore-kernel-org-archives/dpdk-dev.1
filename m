@@ -2,57 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85D52C5B555
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Jun 2025 20:35:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4338C5B549
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Jun 2025 22:38:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 468F7402C9;
-	Mon,  2 Jun 2025 22:35:33 +0200 (CEST)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com
- [209.85.216.46]) by mails.dpdk.org (Postfix) with ESMTP id D73C94028E
- for <dev@dpdk.org>; Mon,  2 Jun 2025 22:35:31 +0200 (CEST)
-Received: by mail-pj1-f46.google.com with SMTP id
- 98e67ed59e1d1-3121aed2435so4384897a91.2
- for <dev@dpdk.org>; Mon, 02 Jun 2025 13:35:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1748896530; x=1749501330; darn=dpdk.org;
- h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
- :date:message-id:reply-to;
- bh=pPDkAsDs1MIlHetXTQ9du6uQgOcjRT80hEFObZBGGw8=;
- b=PP8TP1PJ7EieiaYvvlxI0JHspM3oPKCyTmYlIxyn9byihFu37eQtMcQjmqkKHjFbVj
- KkpX7QOq6CYe3vjQzPioWD7zPqwZ4k7roR3/VbNI9mEM+RDVwkDxowozDPEnGQ/qwXSZ
- ThbcXElPVGBrMmjpJdoXeHMknzMpqrT0xhjUWJR8d1OMeRX+qAdha26nmY0kQ5DMujl6
- 1zEOTnsT+pTGz6GWLvtgdj8cvXRTg6fNEqBNcq9vmvwsMNIKzAVBsBdcZWVSPem36lEH
- 0fP+4uziCCHsJdEh2UcwExyDq5AokfvjP6cD21NALf3B37IhDfoxHjUt23LFFAfirqHC
- sL6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1748896530; x=1749501330;
- h=to:subject:message-id:date:from:mime-version:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=pPDkAsDs1MIlHetXTQ9du6uQgOcjRT80hEFObZBGGw8=;
- b=SLIHTb/hOr/RhP4ludRbY58+W+K8UDXuI47rLCeGqNjU14U8YtwkJshWukNqtbFTtx
- n1cb38zL/ailyOnyG2bf9vds9yrHIjQGgWms/5v30lz/feYhp1knTcGX00WfuGAvnrtl
- EuGoHTNPx4ebQQF8vdKtQ7adYCZXIS0jcKW+16hlj1SVq/Gdbox7urA+trjCKn4+CYA3
- GIsdv5DU0O6eATqTloNKo4MElomNluqDpQSA2rvCmiC1zWaCRlAMLAln2/xPCct8B9wc
- tBGVH/63ArqfyRAsgRP+EZmyGhQfZD37PP53rXrsjrID8tsSsFnI2JaQ7uHrpNrhcvoW
- oq8w==
-X-Gm-Message-State: AOJu0Yxd7lnt4nA5sHRyAXnY94TstLOdKteFnP7RKuPuKvBaSyX0MGc1
- hqpAnWSc4fgImNqQc3j8gB98FhL25gQxDxsyxsjdBih2W3MyRtbZgs/AxJlFznQFoHA7g6RoUcY
- ehwJWpjxZKqlaaXX+TXspT6ngfGuw3BcG6eda
-X-Gm-Gg: ASbGncsd2NWQ+N/859LK9MK6gORkGnni6A2UZ1WADXt5tI6JlueM+5QvYWcyV4IpX2F
- gXQjxtvtPoqHSLnmxJj+3zuFfp7XCpPI5w0awkjL8yjWEe51iaNJptWl/+CfdFyuWfW9fTZETRr
- oWk4Ev+bUGlHyDb6LlEtxsfFbZmVL5w76KTIrr2fD3BMW+sscz8MnBq9c=
-X-Google-Smtp-Source: AGHT+IFbNNXjWigwz/8NKGQ9TI+hgFGEC6hSx4d3yQQDz0QWPYw3habQrIO62tqdZ/uoEHoFDZSj7jqsV/T7HObscHw=
-X-Received: by 2002:a17:90b:4c09:b0:312:1b53:5ead with SMTP id
- 98e67ed59e1d1-31240d1c0d7mr20417319a91.4.1748896530376; Mon, 02 Jun 2025
- 13:35:30 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 98E794028F;
+	Tue,  3 Jun 2025 00:38:15 +0200 (CEST)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mails.dpdk.org (Postfix) with ESMTP id EB5B040281
+ for <dev@dpdk.org>; Tue,  3 Jun 2025 00:38:13 +0200 (CEST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 898BE1424;
+ Mon,  2 Jun 2025 15:37:56 -0700 (PDT)
+Received: from ampere-altra-2-1.usa.arm.com (ampere-altra-2-1.usa.arm.com
+ [10.118.91.158])
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E25303F5A1;
+ Mon,  2 Jun 2025 15:38:12 -0700 (PDT)
+From: Wathsala Vithanage <wathsala.vithanage@arm.com>
+To: 
+Cc: dev@dpdk.org, nd@arm.com, Wathsala Vithanage <wathsala.vithanage@arm.com>
+Subject: [PATCH v5 0/4] An API for Cache Stashing with TPH
+Date: Mon,  2 Jun 2025 22:38:00 +0000
+Message-ID: <20250602223805.816816-1-wathsala.vithanage@arm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241021015246.304431-1-wathsala.vithanage@arm.com>
+References: <20241021015246.304431-1-wathsala.vithanage@arm.com>
 MIME-Version: 1.0
-From: Ashish Sadanandan <ashish.sadanandan@gmail.com>
-Date: Mon, 2 Jun 2025 14:35:04 -0600
-X-Gm-Features: AX0GCFviLbzhWCg23cWcVAkSjCkexKMS6lKTX_4aGyzo4r9lbTyUSt6Wdor3920
-Message-ID: <CAN44U22Jq=Gap8YjKUeEUm4D8p5Th_M38YkCheKk67EpKmR-zw@mail.gmail.com>
-Subject: ethdev use from secondary process
-To: dev <dev@dpdk.org>
-Content-Type: multipart/alternative; boundary="000000000000712e7d06369cb4eb"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -66,144 +42,117 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000712e7d06369cb4eb
-Content-Type: text/plain; charset="UTF-8"
+Today, DPDK applications benefit from Direct Cache Access (DCA) features
+like Intel DDIO and Arm's write-allocate-to-SLC. However, those features
+do not allow fine-grained control of direct cache access, such as
+stashing packets into upper-level caches (L2 caches) of a processor or
+the shared cache of a chiplet. PCIe TLP Processing Hints (TPH) addresses
+this need in a vendor-agnostic manner. TPH capability has existed since
+PCI Express Base Specification revision 3.0; today, numerous Network
+Interface Cards and interconnects from different vendors support TPH
+capability. TPH comprises a steering tag (ST) and a processing hint
+(PH). ST specifies the cache level of a CPU at which the data should be
+written to (or DCAed into), while PH is a hint provided by the PCIe
+requester to the completer on an upcoming traffic pattern. Some NIC
+vendors bundle TPH capability with fine-grained control over the type of
+objects that can be stashed into CPU caches, such as
 
-Hi everyone,
-I'm trying to use a secondary process to rx/tx packets through a NIC and
-running into segfaults due to some data structures not being populated on
-the secondary. I've figured out a solution, but it involves the use of
-internal APIs and I wanted to check with the community if there's a better
-way to do this.
+- Rx/Tx queue descriptors
+- Packet-headers
+- Packet-payloads
+- Data from a given offset from the start of a packet
 
-I'm using DPDK 24.11 LTS for this test. The test code is at
-https://gist.github.com/praetorian20/0c1b69abbc7843d958da72fdf611a5d7. I'll
-describe the steps I'm following here.
+Note that stashable object types are outside the scope of the PCIe
+standard; therefore, vendors could support any combination of the above
+items as they see fit.
 
-Primary process:
+To enable TPH and fine-grained packet stashing, this API extends the
+ethdev library and the PCI bus driver. In this design, the application
+provides hints to the PMD via the ethdev stashing API to indicate the
+underlying hardware at which CPU and cache level it prefers a packet to
+end up. Once the PMD receives a CPU and a cache-level combination (or a
+list of such combinations), it must extract the matching ST from the PCI
+bus driver for such combinations. The PCI bus driver implements the TPH
+functions in an OS specific way; for Linux, it depends on the TPH
+capabilities of the VFIO kernel driver.
 
-   1. Command line: sudo LD_LIBRARY_PATH=/path/to/dpdk/shared/libs/
-   ./test-ethdev --main-lcore 0 --file-prefix=mpdemo --socket-mem=1024 -d
-   /path/to/dpdk/shared/libs/dpdk/pmds-25.0 --proc-type primary
-   2. Calls rte_eal_init
-   3. Registers message handler using  rte_mp_action_register
-   4. Waits indefinitely for CTRL+C
+An application uses the cache stashing ethdev API by first calling the
+rte_eth_dev_stashing_capabilities_get() function to find out what object
+types can be stashed into a CPU cache by the NIC out of the object types
+in the bulleted list above. This function takes a port_id and a pointer
+to a uint16_t to report back the object type flags. PMD implements the
+stashing_capabilities_get function pointer in eth_dev_ops. If the
+underlying platform or the NIC does not support TPH, this function
+returns -ENOTSUP, and the application should consider any values stored
+in the object invalid.
 
-Secondary process:
+Once the application knows the supported object types that can be
+stashed, the next step is to set the steering tags for the packets
+associated with Rx and Tx queues via
+rte_eth_dev_stashing_{rx,tx}_config_set() ethdev library functions. Both
+functions have an identical signature, a port_id, a queue_id, and a
+config object. The port_id and the queue_id are used to locate the
+device and the queue. The config object is of type struct
+rte_eth_stashing_config, which specifies the lcore_id and the
+cache_level, indicating where objects from this queue should be stashed.
+The 'objects' field in the config sets the types of objects the
+application wishes to stash based on the capabilities found earlier.
+Note that if the 'objects' field includes the flag
+RTE_ETH_DEV_STASH_OBJECT_OFFSET, the 'offset' field must be used to set
+the desired offset. These functions invoke PMD implementations of the
+stashing functionality via the stashing_{rx,tx}_hints_set function
+callbacks in the eth_dev_ops, respectively.
 
-   1. Command line: Same as primary, except --proc-type=secondary
-   2. Calls rte_eal_init
-   3. Registers message handler using  rte_mp_action_register
-   4. Creates a mempool using rte_pktmbuf_pool_create
-   5. Sends request message to primary using  rte_mp_request_async
+The PMD's implementation of the stashing_rx_hints_set() and
+stashing_tx_hints_set() functions is ultimately responsible for
+extracting the ST via the API provided by the PCI bus driver. Before
+extracting STs, the PMD should enable the TPH capability in the endpoint
+device by calling the rte_pci_tph_enable() function.  The application
+begins the ST extraction process by calling the rte_pci_tph_st_get()
+function in drivers/bus/pci/rte_bus_pci.h, which returns STs via the
+same rte_tph_info objects array passed into it as an argument.  Once PMD
+acquires ST, the stashing_{rx,tx}_hints_set callbacks implemented in the
+PMD are ready to set the ST as per the rte_eth_stashing_config object
+passed to them by the higher-level ethdev functions
+ret_eth_dev_stashing_{rx,tx}_hints(). As per the PCIe specification, STs
+can be placed on the MSI-X tables or in a device-specific location. For
+PMDs, setting the STs on queue contexts is the only viable way of using
+TPH. Therefore, the PMDs should only enable TPH in device-specific mode.
 
-Primary process (upon receiving the async request):
+V4->V5:
+ * Enable stashing-hints (TPH) in Intel i40e driver.
+ * Update exported symbol version from 25.03 to 25.07.
+ * Add TPH mode macros.
 
-   1. Look up the mempool created by the secondary
-   2. Get port id for a particular ethdev using PCI address
-   3. Call rte_eth_dev_configure,  rte_eth_rx_queue_setup,
-rte_eth_tx_queue_setup
-   and  rte_eth_dev_start to start the ethdev
-   4. Send response to secondary
+V3->V4:
+ * Add VFIO IOCTL based ST extraction mechanism to Linux PCI bus driver
+ * Remove ST extraction via direct access to ACPI _DSM
+ * Replace rte_pci_extract_tph_st() with rte_pci_tph_st_get() in PCI
+   bus driver.
 
-Secondary process (upon receiving response):
+Wathsala Vithanage (4):
+  pci: add non-merged Linux uAPI changes
+  bus/pci: introduce the PCIe TLP Processing Hints API
+  ethdev: introduce the cache stashing hints API
+  net/i40e: enable TPH in i40e
 
-   1. Call  rte_eth_dev_get_port_by_name to fetch port id
-   2. Call  rte_eth_dev_attach_secondary and  rte_eth_dev_probing_finish to
-   initialize data structures. Without this the next step has segv
-   because rte_eth_fp_ops.rxq.data is nullptr
-   3. Call rte_eth_rx_burst to receive packets
+ drivers/bus/pci/bsd/pci.c            |  43 +++++++
+ drivers/bus/pci/bus_pci_driver.h     |  52 ++++++++
+ drivers/bus/pci/linux/pci.c          | 100 ++++++++++++++++
+ drivers/bus/pci/linux/pci_init.h     |  14 +++
+ drivers/bus/pci/linux/pci_vfio.c     | 170 +++++++++++++++++++++++++++
+ drivers/bus/pci/private.h            |   8 ++
+ drivers/bus/pci/rte_bus_pci.h        |  67 +++++++++++
+ drivers/bus/pci/windows/pci.c        |  43 +++++++
+ drivers/net/intel/i40e/i40e_ethdev.c | 127 ++++++++++++++++++++
+ kernel/linux/uapi/linux/vfio_tph.h   | 102 ++++++++++++++++
+ lib/ethdev/ethdev_driver.h           |  66 +++++++++++
+ lib/ethdev/rte_ethdev.c              | 149 +++++++++++++++++++++++
+ lib/ethdev/rte_ethdev.h              | 158 +++++++++++++++++++++++++
+ lib/pci/rte_pci.h                    |  15 +++
+ 14 files changed, 1114 insertions(+)
+ create mode 100644 kernel/linux/uapi/linux/vfio_tph.h
 
+-- 
+2.43.0
 
-The above works but I have a few questions whether this process can be
-improved. I'm using an Nvidia ConnectX6 NIC (mlx5 driver) in case that
-matters.
-
-
-   - Are there public APIs I can call instead of
-   rte_eth_dev_attach_secondary and  rte_eth_dev_probing_finish?
-   - Is it possible to perform rte_eth_dev_configure, tx/rx queue setup and
-   rte_eth_dev_start from the secondary process? These functions return
-   various error codes when I try this.
-   - When I call rte_eth_dev_start on the primary, it's sending a message
-   to the secondary that goes unhandled. Is this a problem, and possibly the
-   reason for the unpopulated rte_eth_fp_ops on the secondary? This is the
-   error message I see from the primary:
-
-EAL: Fail to recv reply for request
-> /var/run/dpdk/mpdemo/mp_socket_1094695_b7080eff23acd4:common_mlx5_mp
-> mlx5_net: port 2 failed to request stop/start Rx/Tx (5)
-
-
- Thanks for all your help,
-Ashish
-
---000000000000712e7d06369cb4eb
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div>Hi everyone,</div><div>I&#39;m trying to use a second=
-ary process to rx/tx packets through a NIC and running into segfaults due t=
-o some data structures not being populated on the secondary. I&#39;ve figur=
-ed out a solution, but it involves the use of internal APIs and I wanted to=
- check with the community if there&#39;s a better way to do this.</div><div=
-><br></div><div>I&#39;m using DPDK 24.11 LTS for this test. The test code i=
-s at=C2=A0<a href=3D"https://gist.github.com/praetorian20/0c1b69abbc7843d95=
-8da72fdf611a5d7">https://gist.github.com/praetorian20/0c1b69abbc7843d958da7=
-2fdf611a5d7</a>. I&#39;ll describe the=C2=A0steps I&#39;m following here.</=
-div><div><br></div><div>Primary process:</div><div><ol><li>Command line:=C2=
-=A0sudo LD_LIBRARY_PATH=3D/path/to/dpdk/shared/libs/ ./test-ethdev --main-l=
-core 0 --file-prefix=3Dmpdemo --socket-mem=3D1024 -d /path/to/dpdk/shared/l=
-ibs/dpdk/pmds-25.0 --proc-type primary</li><li>Calls rte_eal_init</li><li>R=
-egisters message handler using=C2=A0
-<span class=3D"gmail-pl-c1">rte_mp_action_register</span></li><li><span cla=
-ss=3D"gmail-pl-c1">Waits indefinitely=C2=A0for CTRL+C</span></li></ol><div>=
-Secondary process:</div><div><ol><li>Command line: Same as primary, except =
---proc-type=3Dsecondary</li><li>Calls rte_eal_init</li><li>Registers messag=
-e handler using=C2=A0
-<span class=3D"gmail-pl-c1">rte_mp_action_register</span></li><li><span cla=
-ss=3D"gmail-pl-c1">Creates a mempool using=C2=A0</span><span class=3D"gmail=
--pl-c1">rte_pktmbuf_pool_create</span>
-
-</li><li><span class=3D"gmail-pl-c1">Sends request message to primary using=
-=C2=A0</span>
-<span class=3D"gmail-pl-c1">rte_mp_request_async</span></li></ol><div>Prima=
-ry process (upon receiving the async request):</div><div><ol><li>Look up th=
-e mempool created by the secondary</li><li>Get port id for a particular eth=
-dev using PCI address</li><li>Call <span class=3D"gmail-pl-c1">rte_eth_dev_=
-configure</span>,=C2=A0
-<span class=3D"gmail-pl-c1">rte_eth_rx_queue_setup,=C2=A0</span>
-<span class=3D"gmail-pl-c1">rte_eth_tx_queue_setup and=C2=A0</span>
-<span class=3D"gmail-pl-c1">rte_eth_dev_start</span>=C2=A0to start the ethd=
-ev</li><li>Send response to secondary</li></ol><div>Secondary process (upon=
- receiving response):</div><div><ol><li>Call=C2=A0
-<span class=3D"gmail-pl-c1">rte_eth_dev_get_port_by_name</span>=C2=A0to fet=
-ch port id</li><li>Call=C2=A0
-<span class=3D"gmail-pl-c1">rte_eth_dev_attach_secondary</span>=C2=A0and=C2=
-=A0
-<span class=3D"gmail-pl-c1">rte_eth_dev_probing_finish</span>=C2=A0to initi=
-alize data structures. Without this the next step has segv because=C2=A0rte=
-_eth_fp_ops.rxq.data is nullptr</li><li>Call rte_eth_rx_burst to receive pa=
-ckets</li></ol><div><br></div><div>The above works but I have a few questio=
-ns whether this process can be improved. I&#39;m using an Nvidia ConnectX6 =
-NIC (mlx5 driver) in case that matters.</div><div><br></div><div><ul><li>Ar=
-e there public APIs I can call instead of=C2=A0
-<span class=3D"gmail-pl-c1">rte_eth_dev_attach_secondary</span>=C2=A0and=C2=
-=A0
-<span class=3D"gmail-pl-c1">rte_eth_dev_probing_finish</span>?</li><li>Is i=
-t possible to perform=C2=A0<span class=3D"gmail-pl-c1">rte_eth_dev_configur=
-e, tx/rx queue setup and=C2=A0</span>
-<span class=3D"gmail-pl-c1">rte_eth_dev_start</span>=C2=A0from the secondar=
-y process? These functions return various error codes when I try this.</li>=
-<li>When I call rte_eth_dev_start on the primary, it&#39;s sending a messag=
-e to the secondary that goes unhandled. Is this a problem, and possibly the=
- reason for the unpopulated rte_eth_fp_ops on the secondary? This is the er=
-ror message I see from the primary:</li></ul></div><blockquote class=3D"gma=
-il_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,2=
-04,204);padding-left:1ex">EAL: Fail to recv reply for request /var/run/dpdk=
-/mpdemo/mp_socket_1094695_b7080eff23acd4:common_mlx5_mp<br>mlx5_net: port 2=
- failed to request stop/start Rx/Tx (5)</blockquote><div><br></div><div>=C2=
-=A0Thanks for all your help,</div><div>Ashish</div></div></div></div></div>=
-</div>
-
---000000000000712e7d06369cb4eb--
