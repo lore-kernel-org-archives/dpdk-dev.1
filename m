@@ -2,51 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCCACC5B549
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Jun 2025 06:37:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A70C5B549
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Jun 2025 06:37:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7A38E402D5;
-	Mon,  2 Jun 2025 08:37:42 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 02BAB402EA;
+	Mon,  2 Jun 2025 08:37:52 +0200 (CEST)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id AA685402D5
- for <dev@dpdk.org>; Mon,  2 Jun 2025 08:37:40 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id EB1C5402AB
+ for <dev@dpdk.org>; Mon,  2 Jun 2025 08:37:47 +0200 (CEST)
 Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5524KnsG020800;
- Sun, 1 Jun 2025 23:37:40 -0700
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 551MEgOr028737;
+ Sun, 1 Jun 2025 23:37:47 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=+
- dO1JhTyf0T6H3W8m0XjbrpCL1CWpYjk4ee/N2Ph7ac=; b=dWIvcXOr8ZJxpPe7a
- JUuciNsK8LbRdc0Hp13hRPMuJ8xVD++PewbgxGjw2YEPorxcmdOes2NZhTwN46r+
- iAvZBdRuMWkqxC2JSgvsnsBtuQwYhbsh18eEYUGelspbIZLxJr1HS5stIfmNk+99
- GFGTgbDWLzMuXC5or8fhjw+4JEa3ZJdqdPQtvCq8d/0ARZpFCljUiLN39MEQota7
- EukOE8Kg2zVVheb6LWFpa9dS1sCVF/zNwGpwA9hqvk23iBPCtYcTraB7SHI7OyGH
- 5vrG22oaaN++2g7RWG4kTJZS5FF1rbfLc5J1rAD0EK//x7S+lRdttmsre2Y5kL2a
- oPIGw==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=c
+ 5s4YLCdtcINaujq3EZxw0hdavoh2JBLx+iLCQq1Qak=; b=LCDiIpncTrWo60fAA
+ fOvSD3TbI9lBiPKFsw9NrxjCPQZjZUMZGlrJ2PiUGj8jCQ9bLbH9vYmPOnHturL2
+ YVyCTRicU+jaSXGqSDv79xRM5COcTIIaOXVEZqYp7YjtunhnlD8Bte2AqZCEwgVs
+ SPo9k/SOsiihm7maSI3GZc8C6s+kDN6o7MN/cjeBffe9I4ixX1Ao0PwlUzAM6FKo
+ eLcODEWLtN6mb2fu4LX4jdQkPwygBuiSbcr9JYQWy8J2tMEf7gEI84QRoAl/zSSz
+ 2LOHUP2cIFcln8D/lt8PKFX/qjG/OJ4e76n89UGABue9W3pD3qtyL2DBDp3J5njh
+ ykgOw==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 470ye00n63-1
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 470ye00n74-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Sun, 01 Jun 2025 23:37:39 -0700 (PDT)
+ Sun, 01 Jun 2025 23:37:47 -0700 (PDT)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Sun, 1 Jun 2025 23:37:38 -0700
+ 15.2.1544.4; Sun, 1 Jun 2025 23:37:45 -0700
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Sun, 1 Jun 2025 23:37:38 -0700
+ Transport; Sun, 1 Jun 2025 23:37:45 -0700
 Received: from localhost.localdomain (unknown [10.28.36.185])
- by maili.marvell.com (Postfix) with ESMTP id 8F5F63F704B;
- Sun,  1 Jun 2025 23:37:35 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 471693F706C;
+ Sun,  1 Jun 2025 23:37:42 -0700 (PDT)
 From: Ankur Dwivedi <adwivedi@marvell.com>
 To: <dev@dpdk.org>
 CC: <jerinj@marvell.com>, <vladimir.medvedkin@intel.com>,
  <ndabilpuram@marvell.com>, <pbhagavatula@marvell.com>,
  <skori@marvell.com>, <rkudurumalla@marvell.com>, <nsaxena@marvell.com>,
  Ankur Dwivedi <adwivedi@marvell.com>
-Subject: [PATCH v3 08/14] fib: move macro to header file
-Date: Mon, 2 Jun 2025 12:06:33 +0530
-Message-ID: <20250602063639.198550-9-adwivedi@marvell.com>
+Subject: [PATCH v3 09/14] node: add IP6 lookup FIB node
+Date: Mon, 2 Jun 2025 12:06:34 +0530
+Message-ID: <20250602063639.198550-10-adwivedi@marvell.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250602063639.198550-1-adwivedi@marvell.com>
 References: <20250509064448.724019-1-adwivedi@marvell.com>
@@ -54,19 +54,19 @@ References: <20250509064448.724019-1-adwivedi@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAyMDA1NSBTYWx0ZWRfX/6HM9MNq0DpK
- 3KweAwWtrggaC039fcKuP2OlogaDZneuZg0MN9T8egZ/glLscE6ZEZl/m/kVRVCM6jTBMlFHQhI
- 665HHjL6CdvsIgQYKhQPMx0F4h70pv6dDlRk+XpGrNMys85MPvE/V08kGbbbf1tyekBvEmz5LYP
- oprm7TrbSAc+I/AK+opcJugq/45y3SOyXjYOPpVzPJ2tBh3cEExhtYWLPexMzCblRVq4OUsq1Hu
- 1XJyeCfqW6D7hzLd5l5769NvE32myNzeX9n49XSMsWLAfCNJSQCLoi0xFGxGgTvi6h/SG8zDkvd
- 5WkcAAS6OxZfaQ9UvlUuyinX26JaEveT88i7aCJx9hNyAAG6grEYu5ZtVE/qkYPJEhqUy3hG7jv
- sPAxdWTXg+K3GYBSZucq4R8iR4mTB5eUY92qsHDCZM1xdoKMXLeahv2mB1l/LUDWJDAUb3wR
-X-Authority-Analysis: v=2.4 cv=Iv8ecK/g c=1 sm=1 tr=0 ts=683d46b3 cx=c_pps
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAyMDA1NSBTYWx0ZWRfX5hFDUHzTOWxz
+ YLQy9e5k9HORvKv8jBHHiK74GrXaOhaSnG5xtPRFjzLybrjaU7SDpPzXErNEvCddNKNPbCi16G9
+ 89QDEvCM7Y/zKzvNH3IcmfWb8SzeaoGUCZDrFLrhg41CbxKGUHd4vzBaePGx+AqpYk5u6hKQEaI
+ 79b0UJ0zP9HGtEk//jeOlDHaHf1YLsWTDT31EYPCgxEOD/Yb5mvCG7JJjvsycNCdT5nldrerU0r
+ Vn/HCOBK5wOn5RdreD9LQziVtH9/PXKnhvsAfWOnQ7mLpfnk7Dzv2qKISH6gOutObSet33lzCVm
+ XBoqctZptkjZbTqsSaUbOuV871u7DVwHMVuF2Pv6PngNyNsWbMy95riYTKxBkwnvFvPcghhY7SM
+ sAQWs1pOPK9JnYJ/zvNJK3RTBw+TSz/IKLgCNsRZSabj66VQJkl4o7BQKKHMMVJFGNG65MS8
+X-Authority-Analysis: v=2.4 cv=Iv8ecK/g c=1 sm=1 tr=0 ts=683d46bb cx=c_pps
  a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=iWd_wJcLHtG8fJjlCTcA:9
+ a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=MTiQbDV8bN19jQCZShcA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: 8Orm820ZeZFO4AUGtP4Xr_s7NRP-8JzC
-X-Proofpoint-GUID: 8Orm820ZeZFO4AUGtP4Xr_s7NRP-8JzC
+X-Proofpoint-ORIG-GUID: DXy7sHO3MlLADo0wGUFuXMg0bIbCZfs2
+X-Proofpoint-GUID: DXy7sHO3MlLADo0wGUFuXMg0bIbCZfs2
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-02_02,2025-05-30_01,2025-03-28_01
@@ -83,79 +83,207 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Moves the macro FIB6_NAMESIZE to header file and rename it to
-RTE_FIB6_NAMESIZE.
+Adds a lookup FIB node for IP6.
+Adds a public function to do fib configuration from application.
 
 Signed-off-by: Ankur Dwivedi <adwivedi@marvell.com>
 ---
- lib/fib/rte_fib6.c | 11 ++++-------
- lib/fib/rte_fib6.h |  3 +++
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ lib/node/ip6_lookup_fib.c   | 139 ++++++++++++++++++++++++++++++++++++
+ lib/node/meson.build        |   1 +
+ lib/node/rte_node_ip6_api.h |  15 ++++
+ 3 files changed, 155 insertions(+)
+ create mode 100644 lib/node/ip6_lookup_fib.c
 
-diff --git a/lib/fib/rte_fib6.c b/lib/fib/rte_fib6.c
-index 00647bdfa4..93a1c7197b 100644
---- a/lib/fib/rte_fib6.c
-+++ b/lib/fib/rte_fib6.c
-@@ -28,9 +28,6 @@ static struct rte_tailq_elem rte_fib6_tailq = {
- };
- EAL_REGISTER_TAILQ(rte_fib6_tailq)
- 
--/* Maximum length of a FIB name. */
--#define FIB6_NAMESIZE	64
--
- #if defined(RTE_LIBRTE_FIB_DEBUG)
- #define FIB6_RETURN_IF_TRUE(cond, retval) do {		\
- 	if (cond)					\
-@@ -41,7 +38,7 @@ EAL_REGISTER_TAILQ(rte_fib6_tailq)
- #endif
- 
- struct rte_fib6 {
--	char			name[FIB6_NAMESIZE];
-+	char			name[RTE_FIB6_NAMESIZE];
- 	enum rte_fib6_type	type;	/**< Type of FIB struct */
- 	struct rte_rib6		*rib;	/**< RIB helper datastructure */
- 	void			*dp;	/**< pointer to the dataplane struct*/
-@@ -157,7 +154,7 @@ RTE_EXPORT_SYMBOL(rte_fib6_create)
- struct rte_fib6 *
- rte_fib6_create(const char *name, int socket_id, struct rte_fib6_conf *conf)
- {
--	char mem_name[FIB6_NAMESIZE];
-+	char mem_name[RTE_FIB6_NAMESIZE];
- 	int ret;
- 	struct rte_fib6 *fib = NULL;
- 	struct rte_rib6 *rib = NULL;
-@@ -190,7 +187,7 @@ rte_fib6_create(const char *name, int socket_id, struct rte_fib6_conf *conf)
- 	/* guarantee there's no existing */
- 	TAILQ_FOREACH(te, fib_list, next) {
- 		fib = (struct rte_fib6 *)te->data;
--		if (strncmp(name, fib->name, FIB6_NAMESIZE) == 0)
-+		if (strncmp(name, fib->name, RTE_FIB6_NAMESIZE) == 0)
- 			break;
- 	}
- 	fib = NULL;
-@@ -261,7 +258,7 @@ rte_fib6_find_existing(const char *name)
- 	rte_mcfg_tailq_read_lock();
- 	TAILQ_FOREACH(te, fib_list, next) {
- 		fib = (struct rte_fib6 *) te->data;
--		if (strncmp(name, fib->name, FIB6_NAMESIZE) == 0)
-+		if (strncmp(name, fib->name, RTE_FIB6_NAMESIZE) == 0)
- 			break;
- 	}
- 	rte_mcfg_tailq_read_unlock();
-diff --git a/lib/fib/rte_fib6.h b/lib/fib/rte_fib6.h
-index 42e6138708..625df1fa6b 100644
---- a/lib/fib/rte_fib6.h
-+++ b/lib/fib/rte_fib6.h
-@@ -28,6 +28,9 @@ extern "C" {
- /** Maximum depth value possible for IPv6 FIB. */
- #define RTE_FIB6_MAXDEPTH (RTE_DEPRECATED(RTE_FIB6_MAXDEPTH) RTE_IPV6_MAX_DEPTH)
- 
-+/* Maximum length of a FIB name. */
-+#define RTE_FIB6_NAMESIZE	64
+diff --git a/lib/node/ip6_lookup_fib.c b/lib/node/ip6_lookup_fib.c
+new file mode 100644
+index 0000000000..a4f9f53644
+--- /dev/null
++++ b/lib/node/ip6_lookup_fib.c
+@@ -0,0 +1,139 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(C) 2025 Marvell.
++ */
 +
- struct rte_fib6;
- struct rte_rib6;
++#include <eal_export.h>
++#include <rte_errno.h>
++#include <rte_ether.h>
++#include <rte_fib6.h>
++#include <rte_graph.h>
++#include <rte_graph_worker.h>
++#include <rte_ip.h>
++
++#include "rte_node_ip6_api.h"
++
++#include "node_private.h"
++
++/* IP6 Lookup FIB global data struct */
++struct ip6_lookup_fib_node_main {
++	struct rte_fib6 *fib6[RTE_MAX_NUMA_NODES];
++};
++
++struct ip6_lookup_fib_node_ctx {
++	/* Socket's FIB6 */
++	struct rte_fib6 *fib6;
++	/* Dynamic offset to mbuf priv1 */
++	int mbuf_priv1_off;
++};
++
++static struct ip6_lookup_fib_node_main ip6_lookup_fib_nm;
++
++#define FIB6_DEFAULT_MAX_ROUTES (UINT16_MAX)
++#define FIB6_DEFAULT_NUM_TBL8   (UINT16_MAX / 2)
++#define FIB6_DEFAULT_NH (RTE_NODE_IP6_LOOKUP_NEXT_PKT_DROP << 16)
++
++#define IP6_LOOKUP_FIB_NODE(ctx) \
++	(((struct ip6_lookup_fib_node_ctx *)ctx)->fib6)
++
++#define IP6_LOOKUP_FIB_NODE_PRIV1_OFF(ctx) \
++	(((struct ip6_lookup_fib_node_ctx *)ctx)->mbuf_priv1_off)
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_node_ip6_fib_create, 25.07)
++int
++rte_node_ip6_fib_create(int socket, struct rte_fib6_conf *conf)
++{
++	struct ip6_lookup_fib_node_main *nm = &ip6_lookup_fib_nm;
++	char s[RTE_FIB6_NAMESIZE];
++
++	/* One fib6 per socket */
++	if (nm->fib6[socket])
++		return 0;
++
++	conf->default_nh = FIB6_DEFAULT_NH;
++	snprintf(s, sizeof(s), "IPV6_LOOKUP_FIB_%u", socket);
++	nm->fib6[socket] = rte_fib6_create(s, socket, conf);
++	if (nm->fib6[socket] == NULL)
++		return -rte_errno;
++
++	return 0;
++}
++
++static int
++setup_fib6(int socket)
++{
++	struct ip6_lookup_fib_node_main *nm = &ip6_lookup_fib_nm;
++	struct rte_fib6_conf conf;
++	char s[RTE_FIB6_NAMESIZE];
++
++	/* One fib6 per socket */
++	if (nm->fib6[socket])
++		return 0;
++
++	conf.type = RTE_FIB6_TRIE;
++	conf.default_nh = FIB6_DEFAULT_NH;
++	conf.max_routes = FIB6_DEFAULT_MAX_ROUTES;
++	conf.rib_ext_sz = 0;
++	conf.trie.nh_sz = RTE_FIB6_TRIE_4B;
++	conf.trie.num_tbl8 = FIB6_DEFAULT_NUM_TBL8;
++	snprintf(s, sizeof(s), "IPV6_LOOKUP_FIB_%u", socket);
++	nm->fib6[socket] = rte_fib6_create(s, socket, &conf);
++	if (nm->fib6[socket] == NULL)
++		return -rte_errno;
++
++	return 0;
++}
++
++static int
++ip6_lookup_fib_node_init(const struct rte_graph *graph, struct rte_node *node)
++{
++	static uint8_t init_once;
++	int rc;
++
++	RTE_BUILD_BUG_ON(sizeof(struct ip6_lookup_fib_node_ctx) > RTE_NODE_CTX_SZ);
++
++	if (!init_once) {
++		node_mbuf_priv1_dynfield_offset = rte_mbuf_dynfield_register(
++				&node_mbuf_priv1_dynfield_desc);
++		if (node_mbuf_priv1_dynfield_offset < 0)
++			return -rte_errno;
++
++		init_once = 1;
++	}
++
++	rc = setup_fib6(graph->socket);
++	if (rc) {
++		node_err("ip6_lookup_fib", "Failed to setup fib6 for sock %u, rc=%d",
++				graph->socket, rc);
++		return rc;
++	}
++
++	/* Update socket's FIB and mbuf dyn priv1 offset in node ctx */
++	IP6_LOOKUP_FIB_NODE(node->ctx) = ip6_lookup_fib_nm.fib6[graph->socket];
++	IP6_LOOKUP_FIB_NODE_PRIV1_OFF(node->ctx) = node_mbuf_priv1_dynfield_offset;
++
++	node_dbg("ip6_lookup_fib", "Initialized ip6_lookup_fib node");
++
++	return 0;
++}
++
++static struct rte_node_xstats ip6_lookup_fib_xstats = {
++	.nb_xstats = 1,
++	.xstat_desc = {
++		[0] = "ip6_lookup_fib_error",
++	},
++};
++
++static struct rte_node_register ip6_lookup_fib_node = {
++	.name = "ip6_lookup_fib",
++
++	.init = ip6_lookup_fib_node_init,
++	.xstats = &ip6_lookup_fib_xstats,
++
++	.nb_edges = RTE_NODE_IP6_LOOKUP_NEXT_PKT_DROP + 1,
++	.next_nodes = {
++		[RTE_NODE_IP6_LOOKUP_NEXT_REWRITE] = "ip6_rewrite",
++		[RTE_NODE_IP6_LOOKUP_NEXT_PKT_DROP] = "pkt_drop",
++	},
++};
++
++RTE_NODE_REGISTER(ip6_lookup_fib_node);
+diff --git a/lib/node/meson.build b/lib/node/meson.build
+index 8112cf7f5b..5ff52a2c44 100644
+--- a/lib/node/meson.build
++++ b/lib/node/meson.build
+@@ -17,6 +17,7 @@ sources = files(
+         'ip4_reassembly.c',
+         'ip4_rewrite.c',
+         'ip6_lookup.c',
++        'ip6_lookup_fib.c',
+         'ip6_rewrite.c',
+         'kernel_rx.c',
+         'kernel_tx.c',
+diff --git a/lib/node/rte_node_ip6_api.h b/lib/node/rte_node_ip6_api.h
+index 2875bc981a..1d2b190724 100644
+--- a/lib/node/rte_node_ip6_api.h
++++ b/lib/node/rte_node_ip6_api.h
+@@ -17,6 +17,7 @@
+  */
+ #include <rte_common.h>
+ #include <rte_compat.h>
++#include <rte_fib6.h>
+ #include <rte_ip6.h>
  
+ #ifdef __cplusplus
+@@ -71,6 +72,20 @@ __rte_experimental
+ int rte_node_ip6_rewrite_add(uint16_t next_hop, uint8_t *rewrite_data,
+ 			     uint8_t rewrite_len, uint16_t dst_port);
+ 
++/**
++ * Create ipv6 FIB.
++ *
++ * @param socket
++ *   NUMA socket for FIB memory allocation.
++ * @param conf
++ *   Structure containing FIB configuration.
++ *
++ * @return
++ *   0 on success, negative otherwise.
++ */
++__rte_experimental
++int rte_node_ip6_fib_create(int socket, struct rte_fib6_conf *conf);
++
+ #ifdef __cplusplus
+ }
+ #endif
 -- 
 2.25.1
 
