@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09B2BC5AD49
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Jun 2025 10:41:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A85C5AD49
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Jun 2025 10:42:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0D3E54067C;
-	Mon,  2 Jun 2025 12:41:18 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4D13F40670;
+	Mon,  2 Jun 2025 12:41:20 +0200 (CEST)
 Received: from AM0PR02CU008.outbound.protection.outlook.com
- (mail-westeuropeazon11013055.outbound.protection.outlook.com [52.101.72.55])
- by mails.dpdk.org (Postfix) with ESMTP id 62F554066E
- for <dev@dpdk.org>; Mon,  2 Jun 2025 12:41:16 +0200 (CEST)
+ (mail-westeuropeazon11013000.outbound.protection.outlook.com [52.101.72.0])
+ by mails.dpdk.org (Postfix) with ESMTP id E93464066D
+ for <dev@dpdk.org>; Mon,  2 Jun 2025 12:41:18 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PmeSh4VfTj2x8xOBKGBJ76nRBn2zUei5GXMRxz2hdk26QHNGXWyt4SjZBWDyh0rJZOKNBSCHQTsXhGxH7KBLJ0QwQQkEG9k0N4Q50EvVxihX1+c+Pre7VFlnZa7Brv/l4RDSgsv3vy8hulZ9fppEoB8PLU/hNbE1VTyfHENg3/Qt3H6lt/f0Plt/2QCiNzRHXrPY1RtYEsm4iLda8YICEhpknqkFG1aOWIWU/fE8qfbbWZtLmpJoGemgEwPzCxsH0DTuKP7xeJJSDz6GLTmkegFCKh7a1vkyUPMmwjNl1lljv14ld1OzDOWCRdfB7K+VbzdMpp32EXStPCzFZcEniA==
+ b=WmweH1oU6w9NBKiSBBXFNBWASLLC9++CoJU9Vo3fj3UMeRjZOcWnAAuWNYnom1O67s3v9yZMK5EWN0AAG+UQXjQjPhREoX2T29R4+vJd6VLqZnXaIc5ZgKiSQiLer8PBtBDLffd5HkBmhzwAj3mu3kjmZyqxv8IGqWZfP88J4KsDSjWWurovazpuLIF3AYa0t7iQ6BLoDzf2KM4X8xYxq72+kPgs4KegpWatj8Kx93sNOxegINoAPkefc62dpaHjLGgHo79HT6VnvI+fVpBI1g3bO+C6E2b3sFjjhshnkIrKh7AC+kIHABwDXnXtFnUJobLxsCPBqcbk8z9VqA2FvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3ttGjp0btNF4zOpXcuPmwIEmB9LAeLpyYJU3GbMRoQ4=;
- b=V4iRwx6z1DnsxyJ+k+DRseJu3vE95OL47z1c+mBTqFLmTSYCobyvVmxjY6x71bHu5fM/CQmhTCrLSdQ3G1QFasHT+H0XNnqBJgaxL+tFBg2cCwJeVhi3C0JYi1l/wtP3X+CzIIQps5JAPRpbqLfu7DdBNFuThIW5hkADiXpdSSdyLeFuGPJ+FDRNEzJAYeDJ3p2Inxdjez7cl6eA/hF99mNeKpfQev29nmV+hi+FdyrNfJMjY730oTsb7hMF4QLkQest39H8rUNlWQTkkl/Laeu/8rAiaxbqXfogfLCRMDs7mJuKuGPP96fdIQcbDgU1+kWOJoUky0xANx5JWEkKiQ==
+ bh=93MdefBw0jA0A5+WRy0g+aG3ddRyCdD8Xq2wUWWv9ZI=;
+ b=Io22A92/m8UpBn8s4L3PtW55BDDL1FP3FcDeHcia4H85aTFO1qUeV/nNl0g84Q/52PyIfbkqXGuIVXWSzFni7+Zgp1k9VN/m8nAhDlbr3YtCyCW89rq0/xFYY8epZgYHliuxKoGDJATDpcNovap8w8rX6ykAXAIaDxE/TC9rV/zyobGqqZhaC3dtyqFsnHlCsjDOWgXN5l3tOLvcXxnq2Xqi5MXix9He/FS1VxnxtwZsox9ZirNvNNVMmsK/ZC1rdsrctrJeUQNx8ZTDgrIfIUHvyy9n8SCb3/s3IkPAZQ4xfSKAH3SRmUMxNNSdwRWr0yv1PFhD8zyAubvhypzqMA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3ttGjp0btNF4zOpXcuPmwIEmB9LAeLpyYJU3GbMRoQ4=;
- b=hYRr3dwn8++znDpE/0aPqVxQSklH8sSwUXOJdElRPfWn40/rP9/lSMEiwnuP29+TjKjRbFqFSyvEebk5ICSK2DPM9O5xu2TX9u8pOhwcFM4u+l2Mdj/bCs574T6PtoxH45bUotU7v4UCMAjcUIMUXWqVOR+SgtN9uOmSB5E/kPZ/conjwQOn2bTDoOt7FCptqI5n/rwSKc8CI/G19zv5PT9P2/S30ZfUWtIVtfHefS8PNBwUv7CNYKBgk1wWULM3LnsV7hX5F/3FPPVYwH2tFRExepurf28dGV+siNt22XHrpuzS8qnR83dpyl7P5tkuqzrQIz0Xa1B/fIE3n9Rnpw==
+ bh=93MdefBw0jA0A5+WRy0g+aG3ddRyCdD8Xq2wUWWv9ZI=;
+ b=J/92jwR4L0y36NHJu6FP3KwFI6++kPDXpLl0f0Ts+WqryRNQSgAEgKnJ5D+ByBBRiVY/hIiBQq/nUSm7kFVl09lHpKAzVOnxudPXjOb8pevy3+4tC2YX2U95nyxA1EwIDWxyXzhTYhJoT9+Jk75qXbPKQh+hX19gHay8dO6rEBcqZx3fOhVG1XEn4lX2BQ5kFBr+OQfOpoTrJf/5M/9uFwjuFw8oqEgOdUZbI0mIgqne9Pkj1o/hFU4BBudUcBtXETukkrtu+LoZcuuwhcJqKieMdbnvJJJ8xj1XMwsWkg6NawMdwFQyX9BzwfBB23ip+oGXNyHV7l9M7dEX3yuQJA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from AM9PR04MB8194.eurprd04.prod.outlook.com (2603:10a6:20b:3e6::7)
  by VI2PR04MB10956.eurprd04.prod.outlook.com (2603:10a6:800:276::5)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.34; Mon, 2 Jun
- 2025 10:41:15 +0000
+ 2025 10:41:17 +0000
 Received: from AM9PR04MB8194.eurprd04.prod.outlook.com
  ([fe80::cd61:3920:b12f:6561]) by AM9PR04MB8194.eurprd04.prod.outlook.com
  ([fe80::cd61:3920:b12f:6561%4]) with mapi id 15.20.8769.029; Mon, 2 Jun 2025
- 10:41:15 +0000
+ 10:41:17 +0000
 From: Gagandeep Singh <g.singh@nxp.com>
 To: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
  Sachin Saxena <sachin.saxena@nxp.com>
 Cc: Apeksha Gupta <apeksha.gupta@nxp.com>,
  Vanshika Shukla <vanshika.shukla@nxp.com>
-Subject: [PATCH v2 07/11] net/dpaa2: support dpmac Tx stats
-Date: Mon,  2 Jun 2025 16:10:37 +0530
-Message-Id: <20250602104041.3322164-8-g.singh@nxp.com>
+Subject: [PATCH v2 08/11] net/dpaa2: support dpmac Tx stats in xstats
+Date: Mon,  2 Jun 2025 16:10:38 +0530
+Message-Id: <20250602104041.3322164-9-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250602104041.3322164-1-g.singh@nxp.com>
 References: <20250530071344.2939434-1-g.singh@nxp.com>
@@ -56,77 +56,78 @@ X-ClientProxiedBy: SI2PR04CA0011.apcprd04.prod.outlook.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AM9PR04MB8194:EE_|VI2PR04MB10956:EE_
-X-MS-Office365-Filtering-Correlation-Id: 85724271-fa71-4de2-e3b6-08dda1c1ffd7
+X-MS-Office365-Filtering-Correlation-Id: 463119ce-3bfb-43ce-57bd-08dda1c2013e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
  ARA:13230040|366016|1800799024|52116014|376014|38350700014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ZVjOlXYZLoW0HFy2V4CPcyW7JFMs1iehLwKyl4/QhdL2yHIlgPpflTDnwC5u?=
- =?us-ascii?Q?XqgJam7eBLx+xKpaXMGu7gPEQ7fDZwIizGqMXzPkbxvAtNw1XVm/eLWVEaEy?=
- =?us-ascii?Q?P+ATK0QZ401yFVkDO+uAUDB/uLPgw1SnmYKL6ICipDUtTNZ7SSgIb61Cqw/V?=
- =?us-ascii?Q?bdC0DXEcMWHKaJJkHD2t99ARf4p1h1kj1ps3+okNY8lOCqF9YkWSuUS8gnzP?=
- =?us-ascii?Q?D0ApYQkX4zQZpvbEf+0KDxhpKXzTV6mWfEXEvgOGaCy1FKn1g6whHvjDN2WF?=
- =?us-ascii?Q?o5C7RiC707wkItxBOJJP7O+HIdgx8wFHk7Bhnn1xjWwxD0JuGBeymcTMtTMA?=
- =?us-ascii?Q?FRocUq2wpsZRJCJ/9gqLBMhBTZXiHzjq/tl3hZW0xoGWqlgQGwsJqbt1Ifld?=
- =?us-ascii?Q?y16m3LbRE/bo2Az9i8mB6rT6tgTsyg6Mkp7lMrs2tGWNgc5yB7M+OvIuHOrj?=
- =?us-ascii?Q?QzXK1Uff8gu5GBxeSknUGClq0onnMU9gf2FAbfWx/K4SgOmcgu4c2u45VQTK?=
- =?us-ascii?Q?ewHBp5a9OtIsgBJntBIfzvxgcG9JXYhFXUaMLegTBGXoaLjjahbQ2LmoochR?=
- =?us-ascii?Q?pbNek9bpj8+JdjgQiQEQHgEWD692LvA0bPHRctDUpILM+ITixXB7X1iHRZvx?=
- =?us-ascii?Q?eTwGmUZNSb5EPpg5N8ycVk9dYcnHugKADgnIkdObpV2+NtcWHSh659zl12K+?=
- =?us-ascii?Q?pPJA6ECO6YWuebDMsM9HG4QdhL8PuPZYozAWLnoDr3y3o14QgwDzVFdqHrcK?=
- =?us-ascii?Q?TX4zAcy/f2Vju9XXIPsaXw0hhZ5Y9sZE6EkfKtELkqcA8lGIdKy1hlCJ1on6?=
- =?us-ascii?Q?A464wSQvz1l5h1wBLazcx1ScJpgbQoULy1c32EbLLOxh0v8TPvsIxljkmY9y?=
- =?us-ascii?Q?mVaarI9zQDtG+TY4ou5HnEJaslmKdzdw0Kx0e58hnDaFgY8md7gZ6qtzSVP/?=
- =?us-ascii?Q?n2EAwamwu69R/aQDcUKgiBn08Pn+BFtmO0+C/gTq4dNQK9Z9Vr4VPUO+QFXs?=
- =?us-ascii?Q?BjN8FnhIqqClR5CW17oB3AHKPHaPEUq5xMjTPsmOev8XQ7mnFJZw3eRYTP2F?=
- =?us-ascii?Q?hsQTwKVrA2sK/ZYbVBSXbvaVBry6PvsvNgVJTfJiNm76JTCg9LfI8iVHQX78?=
- =?us-ascii?Q?Me3fb7eG+g+QbiMxpNtJLJ90RlVKu6nlOA8zTKxSe8HccsS5EsXc0SLhpBsS?=
- =?us-ascii?Q?QYMymvfk0IDsZo7IdxCoI+ZQOZ8SYD8gNk7bBHBUIMChs4Tk/NrQ5Xr4iPS2?=
- =?us-ascii?Q?3mkbf54H8Ef66iHa7lY01feVyLxzi2f9H08tPBD6TSL+F27vCOroCrgYL/9q?=
- =?us-ascii?Q?0ouF285NETtHIx9x1aeX6FWrUO9JhPvPM7dDbUPiSVExVX0S3+uwT2RPSKp1?=
- =?us-ascii?Q?CzssQs6eUhmOfGsMRdLjXPfHgCARPDnTm5qVhdZaPWA16vXhPjp+af9gpFZt?=
- =?us-ascii?Q?SHYzVbrvA9GkwM5ACD4px6KhRC49Vyc54JaQDWXUejqKneWzJ1t41g=3D=3D?=
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?PGQ73FNTcmBGhFaMEac1s6sE/tevOZrKFI0vki2aZZvcoHOeZ1PFvfj4HYQE?=
+ =?us-ascii?Q?jGa49+m+K0hM2x6vD3/KdY4/1vN/MGzUTkMIcLa4jBONPuFnDdLxvSFoK2c6?=
+ =?us-ascii?Q?xbs8uNHH8eN/Rx9LOzOEYs0bdi5Hk/fo7ompWJxNL72VWb5uBw45TXkGhSxV?=
+ =?us-ascii?Q?brgiEktI+mWsPv5hh9XBH9eapRQ2UlmJ/Gau7QUrQ1Zzj4oSe2fh3oviOYgW?=
+ =?us-ascii?Q?t6OMX5fclY5g9g74ddgd+ABmp0o+q++8IqSMbHafStGUbww2uo+tLUotaH+e?=
+ =?us-ascii?Q?0m+vnJkabpCY8mNrzFlLrdl3S6FCLF1XLx06cHZD7R5fNQM8DZVpPSvnreJS?=
+ =?us-ascii?Q?ZsRoPJBUMR2Uxw4+fgCq3nCvZmQwY7xO4tQE9pH9Yw26nQ5vsuOwjxRm8Dkt?=
+ =?us-ascii?Q?oYdO5XHLNYLROTvgwRJ0dF720QUkovLOYEOk9pi6FKnqO2UGiXDWGvhAid2M?=
+ =?us-ascii?Q?QFn2n+m52vJzA1aHItchGtJeRIRz7QGBLpulyRACIdS1r3TQOsQpJiStBq0z?=
+ =?us-ascii?Q?5G5Z8OwjWV6jc0qgnm4oyAZxaZXoXqI6ZJFVFVbKU9zLsXYlTwzZrtmBcQ8g?=
+ =?us-ascii?Q?C0fMmfjM5o1hvU5QwRO1VeT/pojdp/gf4P66N8BEU/1NBgkyQWYm/g+dWlAD?=
+ =?us-ascii?Q?A4auyyloz9XBeXkKJ78rEmlg4sLxN5v0TkyZEhW/G+0HFe79G673mxFwhhXS?=
+ =?us-ascii?Q?CtMYzXTg7VxsiznNXp5PuwnsG1Z27UQpoNKLJvUrOCmc585vSLRfLLkQZKrE?=
+ =?us-ascii?Q?f+NfQ/3ihQ3Zo/dwadUURrIdlH00/393X9LnPoipkYknZj6OxScMmCqHtc5e?=
+ =?us-ascii?Q?Uo50AQrU4fNn3v2eHuEGlDMn37WCmMl2TbDE9LzCQ5mHT0D+uT1o5fM8JvAn?=
+ =?us-ascii?Q?195YNh4zM5lZyMlU0+DCugsaekeaQARUauLLNKQODezdSgFqjz7sVmKERETb?=
+ =?us-ascii?Q?K0d/Yrb1I54qYsZBxVT8RrWsGyqFnr9PqmUpUPTffM9HOp1Z0Av782lQzqtS?=
+ =?us-ascii?Q?nM970yD+rn2ovgXtxXXMW4cEE/YQmfmlBzOxO9xHinZRLhxnRALuDB6NNtaM?=
+ =?us-ascii?Q?zwGLomIrz8tXII1usvYDGZ2ZmyZIVGhRzvq1K2M3D4y3JVfh43w3kVSl4fuL?=
+ =?us-ascii?Q?jfvOaJwHm/IoMtMI5Gi45QW7jUk3PjUeQ62C42rpPIWtgQ8366VyO2JfsQVW?=
+ =?us-ascii?Q?2QHB4PlXumzsI7JJyl+Mwq9wX0oBzYXcbbzjeUI4i4oxdUt+OCk3H9INx27h?=
+ =?us-ascii?Q?cjfCEbTcHr9CljhWLwiC8HyDz4gNIEYEn1FW7jHFKq1dQuYLt5M75CCFTX2K?=
+ =?us-ascii?Q?xkyU1vAc7LElh0FR6wX+wFdgZLZzXfhB/31oJ7OIqqc4LJe2QXN/PoRIFgNn?=
+ =?us-ascii?Q?+e1My1TO9bZArs+z65kO28q+XInY0BOi7smHsc7qZ/LGzXB+sSS9IkPgXTXR?=
+ =?us-ascii?Q?RLwn9otYFdUVOFhdcqPp5XJMx4vwmetznBYoYyXxYk9lGPBX2/UWdIl9y8s5?=
+ =?us-ascii?Q?6HbLfU03UKYrfek=3D?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:AM9PR04MB8194.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014); DIR:OUT;
  SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?rBr9cv5mHeffuem7K61crVJ0I8qtrU765dJXF7wmW+CvyZRHwazLw0/eV4e1?=
- =?us-ascii?Q?UluZe71sRH+wF1czWGZaeFpAR7o/zu5f8Gb8Zk6aqfoTBGC+UzuoRykVNsOx?=
- =?us-ascii?Q?A+6m9kJDR8WgPKEhFBd3OdPtOi26W2TY8jYCeIpWobZZRuaAyWiHp8vYLXxc?=
- =?us-ascii?Q?/Lxnm+LLifZAWetDMgqJS9RBO+aY99gb3VECeq5jKkEI3UAXUUdOT1QqTrjg?=
- =?us-ascii?Q?8YfjiaRXIR6Ng2nLLXHfWRHDVj0p9vOPGltfXgT5QzKoLRlxr5pNaNXTD+03?=
- =?us-ascii?Q?dSib5u4K5jc7b3+WdCdFP6wnaxuqzkblJ3i6gsZ08QAVsBhs1YFsQIKHGEbg?=
- =?us-ascii?Q?FUzaDxgvi/57/STqi8B6SAXgjummPPDHlERiZeBfchfo4tdezg/PwsL/r7im?=
- =?us-ascii?Q?dCW14EYekA9hACCKX7oWQddnQNSW3T5cHwLwPlTr1wxcSv1GSWb321OeIXJ3?=
- =?us-ascii?Q?qpJa96NCts5RQzBM/sGXtGfQskVRzEdwcA/0fPWphVDyHyiyTt7vPB8LKoN3?=
- =?us-ascii?Q?F+DFQND2l08wVVys0LJwPVriLSoc6gpnkMv0emYYND5u+cIaTgchGexh0UdG?=
- =?us-ascii?Q?3/ojI4idZhuWE/Lo4TU6xoV7vOUnVpr4WX9PGTrKzBGYjkey784dVu2gtbKX?=
- =?us-ascii?Q?YwmOr2IHIn9ErQJ3vZqhn3FqMqLOu3uxM3LSrCjyFHFOMs4JCc0zv6pdEfRh?=
- =?us-ascii?Q?J3CbloCinvld0E41c4IhiLrUnIjngM4zdo4Mtk5Tt3pqVUyNE2FP66Ayg/KO?=
- =?us-ascii?Q?KJlDbSYCNykITJ26q1OKc8QCzEgvAweq3HC0kfWOvCw/3R5tGFWz+Z8hDa2f?=
- =?us-ascii?Q?42MSc3nSBgJ58vXSSOBa9mafnCvfduiZu4KRvFj0zk43xhwN6uTP2e4rTWFc?=
- =?us-ascii?Q?d5wVX7TdH/woMqeLmjRWv0vlpMKEDqSb1XDqaRAp7kEyVxsQcWkTiVsEO5Ic?=
- =?us-ascii?Q?0yerQuLfQR4ZyO0+duMHGMZoVx7f08NDfwRznF2TvC5BTPgY9K5+dwXAZ9VK?=
- =?us-ascii?Q?k5b1tB0Qqm2iLzaXablDIcyhed472DF78geWtj1qVyO0dTugG+H3a4bpdNlY?=
- =?us-ascii?Q?AA7m6cTHthUotgQzHJWmoa2y9tgZdjCwJ/8znxvDnDKdKaGxrC7EXXh8q+aV?=
- =?us-ascii?Q?JCAA6TE2IYQ5ceVEJhSGnGttp9bDQI4iaWuTe8yHsXm+DA4Vipk7U4Y+nNPa?=
- =?us-ascii?Q?z8fSwXT964hPC5bOpQ2qQMHLlG/+61cX9W6ql39whSzcC7Y0DVgGblITEacr?=
- =?us-ascii?Q?G18gJ7eqP2g5OMjdRBxdHAtjbshHs0apDDYXC98elL0AQNVlhkpzmA9F2XFn?=
- =?us-ascii?Q?ry/ZdTrPyqR7Lblxii1p9DRe8oqZuzLaM+ab7EKoSTX5ipH/YWh1laoTMHq+?=
- =?us-ascii?Q?UZcavb+IuoTw67CuJne5FSFuZMyFapeMoyBcQzA1jlCs3CkpfLYgs23/zBaf?=
- =?us-ascii?Q?3MS1NZ9L3ZguqKpGnhKrRBkgzHWWFdHRq2jdGKR38Nzm8WL08VOpv3S8YDU8?=
- =?us-ascii?Q?P8G4hTqElVjVuisQjNdzv3y/52tKXLAqeGwMV2JvlAHkdzcXBqBtyoMQF4qV?=
- =?us-ascii?Q?N8soYh5HlMPrWd35ULw=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?plHXVFHuZPbRYj6P0zq9FaqppSdfqM4SFf5eBBR0S283o6k6ohObmXVW7Il7?=
+ =?us-ascii?Q?zmf7jwkhTYuVsOMmiUQHWLg7HnAgkxx+hmbKSkhrdmVGeM6hFo48btAGImqn?=
+ =?us-ascii?Q?tp+h2iaPqose2xxZ4YzFWpvtcrBPq/TPGr8mvzD6d09XHAQmiv8CoC1+/9Jp?=
+ =?us-ascii?Q?R5HEeBwoCZ3Sv6vxwm3g+W+QWM+IAs99EkcLDPeNh+oWrX5YoZe+l9oj2+8M?=
+ =?us-ascii?Q?KUgAQ8q3iieF1agmLhPbhMKna1mACElo4VtpM4efdCSlt61tzJER3K5NBP2F?=
+ =?us-ascii?Q?34EcvWkcxx1e3q2rnO8MvXpqelTIskum/CaEJ8XajfeBVgWFVF8qpESE/cUH?=
+ =?us-ascii?Q?C+2kWeqdUsM5ACBETx7QfqwaWSZyxbcVN46Cbea2jO2BvmvrA4swNhBzj3ME?=
+ =?us-ascii?Q?QJ8N6pAVtBFESsZA6NMpmN2ndkocrcxngGHKINieYIRwFpxmfljNZVDwLIgN?=
+ =?us-ascii?Q?aG1Xb87U+Ig/zyCupHGxTuzLNS4X87VogN6XslovZPhHelYG6vJspWAm6OgJ?=
+ =?us-ascii?Q?PEQv3LJ4KheV4Vbig5WLo/yi6ZwiU/L97zD4o80Qf/sm2n0J1rU8NbeHh3Ov?=
+ =?us-ascii?Q?vSxJRmUi2BGjw2EpGzzbEfGETD7bHJGlieDIhGEieJTWkxNsVliAqzKGztgI?=
+ =?us-ascii?Q?vcPsUvF1c9UBGbmhRiQt7+k2gkA3wGOcsBfuQZoT5tSONMGkqgQj6BXq+8+L?=
+ =?us-ascii?Q?NfOrczIUmHhrs1Fiu7ObsNMDNe4QmBAvH6Xp1NoMXmAi//o/3Q1d+o0Y9R5V?=
+ =?us-ascii?Q?MZbWu25AIicuKuYlFfxCTUxNF7NSviO8kAByAT7+7z9MRhrmj4VoroUMAK0t?=
+ =?us-ascii?Q?lWAoV8dYPd+bCNh7D76lPG1kMxRaU+ttQWCe/YooEJK44mrf0aeE82bXQKCl?=
+ =?us-ascii?Q?Z+dDnU+AqkEBqf3q3Mi65RDEAkUIGLFyFnVHGHVgsSs7Gphn0+c7CSVXTu+p?=
+ =?us-ascii?Q?TlrJvaS5SHJdhXw1GVwFkiSv6PZ4o+Iq7DkSx7SsjOWCmA2ihsX4JvEzo2Y3?=
+ =?us-ascii?Q?E2v4wzh1ZqZd8OgEQoetK9js8M+wCHY5biH9TRdvLMY7rphV+hT60Wzlb8gS?=
+ =?us-ascii?Q?mJ/Na49WaTvvRlP1iSity2hVcCwS1pbExODNSSQPV7nLpHw2qZ6HXq4ue9y0?=
+ =?us-ascii?Q?o42dufuI2CP78GdhY8WOTHRzun7avgH+EqjNuRsWzQ6FLoEX+AGRdRA4PgSQ?=
+ =?us-ascii?Q?TPbRnFzfEee2KiKwlbKWAaLNiJwUjyDvuy7XG6RNQX/mLjSdpcFQnYawyWM5?=
+ =?us-ascii?Q?CqXOQH7wt8WiPDcM6crQ/mr7W9ZvQ5ZlAK/BN6b7EXQtNUTOvZqcM2PqZ0Pa?=
+ =?us-ascii?Q?NTcKLNHm/fJIc2ow7rn0B8DDjFNjvw/AITlxN6jm/rjUEGoTFvE5tatfV89p?=
+ =?us-ascii?Q?Zgu+JR7IoaOlRUaOTMtF4IT0lF9ufHlHUQXI4IDSgMuhA/Xyi7ZKVvfazd9h?=
+ =?us-ascii?Q?OnkR2Z+I9yDfWZvwjUcFmAH4Uvifn/xYv/wbuRinHcICuwca06w4uf9C3nMw?=
+ =?us-ascii?Q?oQlLm6UaMlbGf2oRXwmXKWBDfXbukS2daBe/7NeohIKsiq3iGy4kNOrdNVhm?=
+ =?us-ascii?Q?nr9oEPm+Bt0rfDbMZJg=3D?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 85724271-fa71-4de2-e3b6-08dda1c1ffd7
+X-MS-Exchange-CrossTenant-Network-Message-Id: 463119ce-3bfb-43ce-57bd-08dda1c2013e
 X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8194.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2025 10:41:15.1658 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2025 10:41:17.5246 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MHpwxANgTjbBVY8W4gtGFwTUQYdnEeVkqwb/tSc466tRvq/qCHeD3QngyHi4n3DU
+X-MS-Exchange-CrossTenant-UserPrincipalName: wdj2/vg7LtuF0JtT1erbwED0VxwpJ+v6upGR/L4HC5ZCXyBGwKXxhH3ZXdvFD1dU
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10956
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -144,87 +145,75 @@ Errors-To: dev-bounces@dpdk.org
 From: Apeksha Gupta <apeksha.gupta@nxp.com>
 
 Added all mac counters including Tx stats buckets for
-packet sizes.
+packet sizes in xstats.
 
 Signed-off-by: Apeksha Gupta <apeksha.gupta@nxp.com>
 Signed-off-by: Vanshika Shukla <vanshika.shukla@nxp.com>
 ---
- drivers/net/dpaa2/mc/fsl_dpmac.h | 50 ++++++++++++++++++++++++++++++--
- 1 file changed, 48 insertions(+), 2 deletions(-)
+ drivers/net/dpaa2/dpaa2_ethdev.c | 20 +++++++++++++++++++-
+ drivers/net/dpaa2/dpaa2_ethdev.h |  4 ++--
+ 2 files changed, 21 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/dpaa2/mc/fsl_dpmac.h b/drivers/net/dpaa2/mc/fsl_dpmac.h
-index c4f16f6113..13b5a94b8c 100644
---- a/drivers/net/dpaa2/mc/fsl_dpmac.h
-+++ b/drivers/net/dpaa2/mc/fsl_dpmac.h
-@@ -1,5 +1,5 @@
- /* Copyright 2013-2016 Freescale Semiconductor Inc.
-- * Copyright 2018-2022, 2024 NXP
-+ * Copyright 2018-2022, 2024-2025 NXP
+diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
+index bbf4df69d4..298fded65e 100644
+--- a/drivers/net/dpaa2/dpaa2_ethdev.c
++++ b/drivers/net/dpaa2/dpaa2_ethdev.c
+@@ -1,7 +1,7 @@
+ /* * SPDX-License-Identifier: BSD-3-Clause
   *
-  * Redistribution and use in source and binary forms, with or without
-  * modification, are permitted provided that the following conditions are met:
-@@ -434,6 +434,34 @@ int dpmac_set_link_state(struct fsl_mc_io *mc_io,
-  *			      pause frames.
-  * @DPMAC_CNT_EGR_GOOD_FRAME: counts frames transmitted without error, including
-  *			      pause frames.
-+ * @DPMAC_CNT_EGR_FRAME_64: counts transmitted 64-bytes frames, good or bad.
-+ * @DPMAC_CNT_EGR_FRAME_127: counts transmitted 65 to 127-bytes frames, good or bad.
-+ * @DPMAC_CNT_EGR_FRAME_255: counts transmitted 128 to 255-bytes frames, good or bad.
-+ * @DPMAC_CNT_EGR_FRAME_511: counts transmitted 256 to 511-bytes frames, good or bad.
-+ * @DPMAC_CNT_EGR_FRAME_1023: counts transmitted 512 to 1023-bytes frames, good or bad.
-+ * @DPMAC_CNT_EGR_FRAME_1518: counts transmitted 1024 to 1518-bytes frames, good or bad.
-+ * @DPMAC_CNT_EGR_FRAME_1519_MAX: counts transmitted 1519-bytes frames and
-+ * larger (up to max frame length specified), good or bad.
-+ * @DPMAC_CNT_ING_ALL_BYTE: counts bytes received in both good and bad packets
-+ * @DPMAC_CNT_ING_FCS_ERR: counts frames received with a CRC-32 error but the
-+ * frame is otherwise of correct length
-+ * @DPMAC_CNT_ING_VLAN_FRAME: counts the received VLAN tagged frames which are valid.
-+ * @DPMAC_CNT_ING_UNDERSIZED: counts received frames which were less than 64
-+ * bytes long and with a good CRC.
-+ * @DPMAC_CNT_ING_CONTROL_FRAME: counts received control frames (type 0x8808)
-+ * but not pause frames.
-+ * @DPMAC_CNT_ING_FRAME_DISCARD_NOT_TRUNC: counts the fully dropped frames (not
-+ * truncated) due to internal errors of the MAC client. Occurs when a received
-+ * FIFO overflows.
-+ * @DPMAC_CNT_EGR_ALL_BYTE: counts transmitted bytes in both good and bad
-+ * packets.
-+ * @DPMAC_CNT_EGR_FCS_ERR: counts trasmitted frames with a CRC-32 error except
-+ * for underflows.
-+ * @DPMAC_CNT_EGR_VLAN_FRAME: counts the transmitted VLAN tagged frames which
-+ * are valid.
-+ * @DPMAC_CNT_EGR_ALL_FRAME: counts all trasmitted frames, good or bad.
-+ * @DPMAC_CNT_EGR_CONTROL_FRAME: counts transmitted control frames (type
-+ * 0x8808) but not pause frames.
+  *   Copyright (c) 2016 Freescale Semiconductor, Inc. All rights reserved.
+- *   Copyright 2016-2024 NXP
++ *   Copyright 2016-2025 NXP
+  *
   */
- enum dpmac_counter {
- 	DPMAC_CNT_ING_FRAME_64,
-@@ -463,7 +491,25 @@ enum dpmac_counter {
- 	DPMAC_CNT_EGR_UCAST_FRAME,
- 	DPMAC_CNT_EGR_ERR_FRAME,
- 	DPMAC_CNT_ING_GOOD_FRAME,
--	DPMAC_CNT_EGR_GOOD_FRAME
-+	DPMAC_CNT_EGR_GOOD_FRAME,
-+	DPMAC_CNT_EGR_FRAME_64,
-+	DPMAC_CNT_EGR_FRAME_127,
-+	DPMAC_CNT_EGR_FRAME_255,
-+	DPMAC_CNT_EGR_FRAME_511,
-+	DPMAC_CNT_EGR_FRAME_1023,
-+	DPMAC_CNT_EGR_FRAME_1518,
-+	DPMAC_CNT_EGR_FRAME_1519_MAX,
-+	DPMAC_CNT_ING_ALL_BYTE,
-+	DPMAC_CNT_ING_FCS_ERR,
-+	DPMAC_CNT_ING_VLAN_FRAME,
-+	DPMAC_CNT_ING_UNDERSIZED,
-+	DPMAC_CNT_ING_CONTROL_FRAME,
-+	DPMAC_CNT_ING_FRAME_DISCARD_NOT_TRUNC,
-+	DPMAC_CNT_EGR_ALL_BYTE,
-+	DPMAC_CNT_EGR_FCS_ERR,
-+	DPMAC_CNT_EGR_VLAN_FRAME,
-+	DPMAC_CNT_EGR_ALL_FRAME,
-+	DPMAC_CNT_EGR_CONTROL_FRAME
+ 
+@@ -134,6 +134,24 @@ static const struct rte_dpaa2_xstats_name_off dpaa2_xstats_strings[] = {
+ 	{"mac_tx_frame errors", 0, 0},
+ 	{"mac_rx_frames ok", 0, 0},
+ 	{"mac_tx_frames ok", 0, 0},
++	{"mac_tx_64 bytes", 0, 0},
++	{"mac_tx_65-127 bytes", 0, 0},
++	{"mac_tx_128-255 bytes", 0, 0},
++	{"mac_tx_256-511 bytes", 0, 0},
++	{"mac_tx_512-1023 bytes", 0, 0},
++	{"mac_tx_1024-1518 bytes", 0, 0},
++	{"mac_tx_1519-max bytes", 0, 0},
++	{"mac_rx_all_bytes", 0, 0},
++	{"mac_rx_fcs_err", 0, 0},
++	{"mac_rx_vlan_frame", 0, 0},
++	{"mac_rx_undersized", 0, 0},
++	{"mac_rx_control_frame", 0, 0},
++	{"mac_rx_frame_discard_not_trunc", 0, 0},
++	{"mac_tx_all_bytes", 0, 0},
++	{"mac_tx_fcs_err", 0, 0},
++	{"mac_tx_vlan_frame", 0, 0},
++	{"mac_tx_all_frame", 0, 0},
++	{"mac_tx_control_frame", 0, 0},
  };
  
- int dpmac_get_counter(struct fsl_mc_io *mc_io,
+ static struct rte_dpaa2_driver rte_dpaa2_pmd;
+diff --git a/drivers/net/dpaa2/dpaa2_ethdev.h b/drivers/net/dpaa2/dpaa2_ethdev.h
+index 532c257203..570b1608a0 100644
+--- a/drivers/net/dpaa2/dpaa2_ethdev.h
++++ b/drivers/net/dpaa2/dpaa2_ethdev.h
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+  *
+  *   Copyright (c) 2015-2016 Freescale Semiconductor, Inc. All rights reserved.
+- *   Copyright 2016-2022 NXP
++ *   Copyright 2016-2025 NXP
+  *
+  */
+ 
+@@ -131,7 +131,7 @@
+ #define DPAA2_PKT_TYPE_VLAN_2		0x0260
+ 
+ /* mac counters */
+-#define DPAA2_MAC_NUM_STATS            (DPMAC_CNT_EGR_GOOD_FRAME + 1)
++#define DPAA2_MAC_NUM_STATS            (DPMAC_CNT_EGR_CONTROL_FRAME + 1)
+ #define DPAA2_MAC_STATS_INDEX_DMA_SIZE (DPAA2_MAC_NUM_STATS * sizeof(uint32_t))
+ #define DPAA2_MAC_STATS_VALUE_DMA_SIZE (DPAA2_MAC_NUM_STATS * sizeof(uint64_t))
+ 
 -- 
 2.25.1
 
