@@ -2,51 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E16EC54FB3
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Jun 2025 06:37:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 545D9C5B549
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Jun 2025 06:37:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8CF114042C;
-	Mon,  2 Jun 2025 08:37:14 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 6FBB6402E1
- for <dev@dpdk.org>; Mon,  2 Jun 2025 08:37:12 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 551MEgOf028737;
- Sun, 1 Jun 2025 23:37:11 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 9F9C240609;
+	Mon,  2 Jun 2025 08:37:20 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id EFF99402F1
+ for <dev@dpdk.org>; Mon,  2 Jun 2025 08:37:18 +0200 (CEST)
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5523a3Z2020583;
+ Sun, 1 Jun 2025 23:37:18 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=j
- zN7ydV2H6iCMt2rBh8hjF76qjt2fAhPPLxX8AlwEtE=; b=e0BbVtVdJUR62LlHs
- VFa7LVMJlE8G7Q84kScXfs3M2OQ4/e+cTgXMuy7KaB4An/yIMkTvLHn5pixSiNEu
- u3qzvV5PYvu9ZsCG01osjAVJ64ChYK40eiymDKyjmhhK8uxGBYlS6MVqejlVdYHQ
- 7XcLpAduq6PWl5/QfeVnVdV/9WQz5T7IppZ8FHq8wjKxQ8aka9DoIKDdAXdJlBdO
- 5w+Tu1ySjQRLA/DcFoGfo/SxLrjwrYsdjgG/+gVi/2ZN+HOkoVbKRX51KQkMaGT6
- rgaMQOWQ3usrvwxqTZnT+ldkHpSMPwYT6Em1rarR9Hm/ZhdrmtpQk4z9ptE3WzET
- ZfzjA==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 470ye00n26-1
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=B
+ wcCesHYb591No8TpfnNncmZkKK4MEvVnVMp0vZwji8=; b=lXfsjbPlhwwW2BXx8
+ dN2viBgZ0pAVilpJRawHtdVlFqZSO1Xt4CQgzgtL512HON1dT3j2xzz1+gUosyx0
+ U1dpWtNUR/QfY0aMDhxnxKAiNPRgl478g1Ef6LewjUZsYJe/CxSY2j86tVPH7Dwg
+ 90205gxS9yK52BuwHvdcHClw1cYTSMoshB3DDjKAa7nYY7x2VLK8Kqq+IBEQ1+9q
+ lnHCVka99e8ITZpI1EjDdcgv7EyCTZNMscp8v3gQO3i7kpxqxkpm1UdfVKX52Spy
+ P+cJJQcKJW2WAJlYLjh0UshAoTCWHotfq6R/hfZ6JwqZZmGoUQ/TWA2FaYNL6TaI
+ MQCow==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 47145mg8mn-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Sun, 01 Jun 2025 23:37:11 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ Sun, 01 Jun 2025 23:37:17 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Sun, 1 Jun 2025 23:37:10 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Sun, 1 Jun 2025 23:37:10 -0700
+ 15.2.1544.4; Sun, 1 Jun 2025 23:37:16 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Sun, 1 Jun 2025 23:37:16 -0700
 Received: from localhost.localdomain (unknown [10.28.36.185])
- by maili.marvell.com (Postfix) with ESMTP id 4A44B3F706C;
- Sun,  1 Jun 2025 23:37:07 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 1AFE63F704B;
+ Sun,  1 Jun 2025 23:37:12 -0700 (PDT)
 From: Ankur Dwivedi <adwivedi@marvell.com>
 To: <dev@dpdk.org>
 CC: <jerinj@marvell.com>, <vladimir.medvedkin@intel.com>,
  <ndabilpuram@marvell.com>, <pbhagavatula@marvell.com>,
  <skori@marvell.com>, <rkudurumalla@marvell.com>, <nsaxena@marvell.com>,
  Ankur Dwivedi <adwivedi@marvell.com>
-Subject: [PATCH v3 03/14] node: add IP4 FIB route add
-Date: Mon, 2 Jun 2025 12:06:28 +0530
-Message-ID: <20250602063639.198550-4-adwivedi@marvell.com>
+Subject: [PATCH v3 04/14] node: add process callback for IP4 FIB
+Date: Mon, 2 Jun 2025 12:06:29 +0530
+Message-ID: <20250602063639.198550-5-adwivedi@marvell.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250602063639.198550-1-adwivedi@marvell.com>
 References: <20250509064448.724019-1-adwivedi@marvell.com>
@@ -54,19 +54,19 @@ References: <20250509064448.724019-1-adwivedi@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAyMDA1NSBTYWx0ZWRfX7PPySI9u1/Bx
- w2IwYCWsWIEvy/1YqK1v0lCUWjJ792xwyZ6FK2O94Vkj5xAIJwc6gF2hCp873k0wpp2jPLZoXuT
- ZezJkQeork/s2ZAVpPFE2FFmsGg+0BmgWj1U78Zm/7CaaxnCFfmZ3mhCDiDUhtO6+yZ+mMZTtJt
- j8rBrZVegZnYkreiPeuawBXB+LUhV2xVcEQDG/+xZC8wNMoPUfa2/ocZSV8pDMnTWoUPEUjyj6n
- kXo661QqJhwdtYm/QuigCOThWnuQJQzHDN5nb1s39BuUR7jPrMO/4JEIzAkP6UGXupdq+w3ElKr
- xYf4VSA+5DxjStu9q4p25JasSlxe/GDT4tyOo1HxwX/OLrgafDsYN00LsAxk0cLp07t2kdHQV9Y
- czTdh+h3PQ/qXNFdXd7fNfCW763BeYyzk/uO1B4nmHK/VKq1/LGZH/5l5Ncqww624mC+9ded
-X-Authority-Analysis: v=2.4 cv=Iv8ecK/g c=1 sm=1 tr=0 ts=683d4697 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=KWxuKWQm0HYJUTJt3pUA:9
+X-Proofpoint-GUID: a1HErtox0NUH9H666EYjgvAyrwtPUzMM
+X-Proofpoint-ORIG-GUID: a1HErtox0NUH9H666EYjgvAyrwtPUzMM
+X-Authority-Analysis: v=2.4 cv=GMAIEvNK c=1 sm=1 tr=0 ts=683d469d cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=qYUj2gt9vubUHnbZ9DIA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: NEEZ3gHyaBa-mh2RWYQ3csl_a72PWxML
-X-Proofpoint-GUID: NEEZ3gHyaBa-mh2RWYQ3csl_a72PWxML
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAyMDA1NSBTYWx0ZWRfX6UbToBG5t8za
+ jmJNV+sSFGPeNWT2anf7FREYEtTe/oJQZ95rRMbAszmPMdv2x1x81ob7Qscxw1lcCf3UVaAsaH/
+ vrMufoa9/jSBM2RprZXN+mCSsA9dXXw7L2jTiYs7FoSKT7UE+RM6YREbcsgzHhjQda9uP9zCGxE
+ 1fVtV4R+dn2sxw2fDC2AcSSVCvB4ry/kYW2ADsWpyvo7/cnLCrVf8eLix9BphN/nrph+Jq3O20N
+ BfJFuRQoq6Om95cRE2cU96wRsLh8SS2ZaQ0ck8iNhq2Q1V8/wM0xj+D2J+RfzVCQWW6a9Va25Ks
+ jV9to51lQNmLacZ/8L2PXokwnOaBW5mi8fo5QZTqkB6ya4Nuyd7rK7bw2aHTM+6OLdxX4Xk8POG
+ 01dnrr5Y2DNNEKCRsClt84WqBtk2Ah38/CHtB2/zCWHQeQQkBWzlg7C7Z2yMKqAjyIPihsNd
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-02_02,2025-05-30_01,2025-03-28_01
@@ -83,100 +83,185 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Adds a public function to add IP4 route to FIB. The applications should
-call this function to add IP4 routes to FIB.
+Adds the process callback function for ip4_lookup_fib node.
 
 Signed-off-by: Ankur Dwivedi <adwivedi@marvell.com>
 ---
- lib/node/ip4_lookup_fib.c   | 37 +++++++++++++++++++++++++++++++++++++
- lib/node/rte_node_ip4_api.h | 19 +++++++++++++++++++
- 2 files changed, 56 insertions(+)
+ lib/node/ip4_lookup_fib.c | 154 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 154 insertions(+)
 
 diff --git a/lib/node/ip4_lookup_fib.c b/lib/node/ip4_lookup_fib.c
-index 977d97b713..f300266c00 100644
+index f300266c00..f9a5c5aa5a 100644
 --- a/lib/node/ip4_lookup_fib.c
 +++ b/lib/node/ip4_lookup_fib.c
-@@ -2,6 +2,8 @@
-  * Copyright(C) 2025 Marvell.
-  */
+@@ -40,6 +40,159 @@ static struct ip4_lookup_fib_node_main ip4_lookup_fib_nm;
+ #define IP4_LOOKUP_FIB_NODE_PRIV1_OFF(ctx) \
+ 	(((struct ip4_lookup_fib_node_ctx *)ctx)->mbuf_priv1_off)
  
-+#include <arpa/inet.h>
-+
- #include <eal_export.h>
- #include <rte_errno.h>
- #include <rte_ether.h>
-@@ -58,6 +60,41 @@ rte_node_ip4_fib_create(int socket, struct rte_fib_conf *conf)
- 	return 0;
- }
- 
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_node_ip4_fib_route_add, 25.07)
-+int
-+rte_node_ip4_fib_route_add(uint32_t ip, uint8_t depth, uint16_t next_hop,
-+			   enum rte_node_ip4_lookup_next next_node)
++static uint16_t
++ip4_lookup_fib_node_process(struct rte_graph *graph, struct rte_node *node, void **objs,
++			    uint16_t nb_objs)
 +{
-+	char abuf[INET6_ADDRSTRLEN];
-+	unsigned int nb_sockets;
-+	struct in_addr in;
-+	uint8_t socket;
-+	uint32_t val;
-+	int ret;
++	struct rte_mbuf *mbuf0, *mbuf1, *mbuf2, *mbuf3, **pkts;
++	const int dyn = IP4_LOOKUP_FIB_NODE_PRIV1_OFF(node->ctx);
++	struct rte_fib *fib = IP4_LOOKUP_NODE_FIB(node->ctx);
++	uint64_t next_hop[RTE_GRAPH_BURST_SIZE];
++	uint32_t ip[RTE_GRAPH_BURST_SIZE];
++	struct rte_ipv4_hdr *ipv4_hdr;
++	uint16_t lookup_err = 0;
++	void **to_next, **from;
++	uint16_t last_spec = 0;
++	rte_edge_t next_index;
++	uint16_t n_left_from;
++	uint16_t held = 0;
++	uint16_t next;
++	int i;
 +
-+	nb_sockets = rte_socket_count();
-+	in.s_addr = htonl(ip);
-+	inet_ntop(AF_INET, &in, abuf, sizeof(abuf));
-+	/* Embedded next node id into 24 bit next hop */
-+	val = ((next_node << 16) | next_hop) & ((1ull << 24) - 1);
-+	node_dbg("ip4_lookup_fib", "FIB: Adding route %s / %d nh (0x%x)", abuf, depth, val);
++	/* Speculative next */
++	next_index = RTE_NODE_IP4_LOOKUP_NEXT_REWRITE;
 +
-+	for (socket = 0; socket < nb_sockets; socket++) {
-+		if (!ip4_lookup_fib_nm.fib[socket])
-+			continue;
++	pkts = (struct rte_mbuf **)objs;
++	from = objs;
++	n_left_from = nb_objs;
 +
-+		ret = rte_fib_add(ip4_lookup_fib_nm.fib[socket], ip, depth, val);
-+		if (ret < 0) {
-+			node_err("ip4_lookup_fib",
-+				 "Unable to add entry %s / %d nh (%x) to FIB on sock %d, rc=%d",
-+				 abuf, depth, val, socket, ret);
-+			return ret;
++	/* Get stream for the speculated next node */
++	to_next = rte_node_next_stream_get(graph, node, next_index, nb_objs);
++
++	for (i = 0; i < 4 && i < n_left_from; i++)
++		rte_prefetch0(rte_pktmbuf_mtod_offset(pkts[i], void *,
++					sizeof(struct rte_ether_hdr)));
++
++	i = 0;
++	while (n_left_from >= 4) {
++		if (likely(n_left_from > 7)) {
++
++			/* Prefetch next-next mbufs */
++			if (likely(n_left_from > 11)) {
++				rte_prefetch0(pkts[8]);
++				rte_prefetch0(pkts[9]);
++				rte_prefetch0(pkts[10]);
++				rte_prefetch0(pkts[11]);
++			}
++
++			/* Prefetch next mbuf data */
++			rte_prefetch0(rte_pktmbuf_mtod_offset(pkts[4], void *,
++						sizeof(struct rte_ether_hdr)));
++			rte_prefetch0(rte_pktmbuf_mtod_offset(pkts[5], void *,
++						sizeof(struct rte_ether_hdr)));
++			rte_prefetch0(rte_pktmbuf_mtod_offset(pkts[6], void *,
++						sizeof(struct rte_ether_hdr)));
++			rte_prefetch0(rte_pktmbuf_mtod_offset(pkts[7], void *,
++						sizeof(struct rte_ether_hdr)));
 +		}
++
++		mbuf0 = pkts[0];
++		mbuf1 = pkts[1];
++		mbuf2 = pkts[2];
++		mbuf3 = pkts[3];
++		pkts += 4;
++		n_left_from -= 4;
++		/* Extract DIP of mbuf0 */
++		ipv4_hdr = rte_pktmbuf_mtod_offset(mbuf0, struct rte_ipv4_hdr *,
++				sizeof(struct rte_ether_hdr));
++		/* Extract cksum, ttl as ipv4 hdr is in cache */
++		node_mbuf_priv1(mbuf0, dyn)->cksum = ipv4_hdr->hdr_checksum;
++		node_mbuf_priv1(mbuf0, dyn)->ttl = ipv4_hdr->time_to_live;
++
++		ip[i++] = rte_be_to_cpu_32(ipv4_hdr->dst_addr);
++
++		/* Extract DIP of mbuf1 */
++		ipv4_hdr = rte_pktmbuf_mtod_offset(mbuf1, struct rte_ipv4_hdr *,
++				sizeof(struct rte_ether_hdr));
++		/* Extract cksum, ttl as ipv4 hdr is in cache */
++		node_mbuf_priv1(mbuf1, dyn)->cksum = ipv4_hdr->hdr_checksum;
++		node_mbuf_priv1(mbuf1, dyn)->ttl = ipv4_hdr->time_to_live;
++
++		ip[i++] = rte_be_to_cpu_32(ipv4_hdr->dst_addr);
++
++		/* Extract DIP of mbuf2 */
++		ipv4_hdr = rte_pktmbuf_mtod_offset(mbuf2, struct rte_ipv4_hdr *,
++				sizeof(struct rte_ether_hdr));
++		/* Extract cksum, ttl as ipv4 hdr is in cache */
++		node_mbuf_priv1(mbuf2, dyn)->cksum = ipv4_hdr->hdr_checksum;
++		node_mbuf_priv1(mbuf2, dyn)->ttl = ipv4_hdr->time_to_live;
++
++		ip[i++] = rte_be_to_cpu_32(ipv4_hdr->dst_addr);
++
++		/* Extract DIP of mbuf3 */
++		ipv4_hdr = rte_pktmbuf_mtod_offset(mbuf3, struct rte_ipv4_hdr *,
++				sizeof(struct rte_ether_hdr));
++
++		/* Extract cksum, ttl as ipv4 hdr is in cache */
++		node_mbuf_priv1(mbuf3, dyn)->cksum = ipv4_hdr->hdr_checksum;
++		node_mbuf_priv1(mbuf3, dyn)->ttl = ipv4_hdr->time_to_live;
++
++		ip[i++] = rte_be_to_cpu_32(ipv4_hdr->dst_addr);
++	}
++	while (n_left_from > 0) {
++		mbuf0 = pkts[0];
++		pkts += 1;
++		n_left_from -= 1;
++
++		/* Extract DIP of mbuf0 */
++		ipv4_hdr = rte_pktmbuf_mtod_offset(mbuf0, struct rte_ipv4_hdr *,
++				sizeof(struct rte_ether_hdr));
++		/* Extract cksum, ttl as ipv4 hdr is in cache */
++		node_mbuf_priv1(mbuf0, dyn)->cksum = ipv4_hdr->hdr_checksum;
++		node_mbuf_priv1(mbuf0, dyn)->ttl = ipv4_hdr->time_to_live;
++
++		ip[i++] = rte_be_to_cpu_32(ipv4_hdr->dst_addr);
 +	}
 +
-+	return 0;
++	rte_fib_lookup_bulk(fib, ip, next_hop, nb_objs);
++
++	for (i = 0; i < nb_objs; i++) {
++		mbuf0 = (struct rte_mbuf *)objs[i];
++		node_mbuf_priv1(mbuf0, dyn)->nh = (uint16_t)next_hop[i];
++		next = (uint16_t)(next_hop[i] >> 16);
++
++		if (unlikely(next_index ^ next)) {
++			/* Copy things successfully speculated till now */
++			rte_memcpy(to_next, from, last_spec * sizeof(from[0]));
++			from += last_spec;
++			to_next += last_spec;
++			held += last_spec;
++			last_spec = 0;
++
++			rte_node_enqueue_x1(graph, node, next, from[0]);
++			from += 1;
++		} else {
++			last_spec += 1;
++		}
++
++		if (unlikely(next_hop[i] == FIB_DEFAULT_NH))
++			lookup_err += 1;
++	}
++
++	/* !!! Home run !!! */
++	if (likely(last_spec == nb_objs)) {
++		rte_node_next_stream_move(graph, node, next_index);
++		return nb_objs;
++	}
++
++	NODE_INCREMENT_XSTAT_ID(node, 0, lookup_err != 0, lookup_err);
++	held += last_spec;
++	rte_memcpy(to_next, from, last_spec * sizeof(from[0]));
++	rte_node_next_stream_put(graph, node, next_index, held);
++
++	return nb_objs;
 +}
 +
- static int
- setup_fib(int socket)
- {
-diff --git a/lib/node/rte_node_ip4_api.h b/lib/node/rte_node_ip4_api.h
-index 1dac7a4936..4d75c5f874 100644
---- a/lib/node/rte_node_ip4_api.h
-+++ b/lib/node/rte_node_ip4_api.h
-@@ -132,6 +132,25 @@ int rte_node_ip4_reassembly_configure(struct rte_node_ip4_reassembly_cfg *cfg, u
- __rte_experimental
- int rte_node_ip4_fib_create(int socket, struct rte_fib_conf *conf);
+ RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_node_ip4_fib_create, 25.07)
+ int
+ rte_node_ip4_fib_create(int socket, struct rte_fib_conf *conf)
+@@ -162,6 +315,7 @@ static struct rte_node_xstats ip4_lookup_fib_xstats = {
+ };
  
-+/**
-+ * Add ipv4 route to FIB.
-+ *
-+ * @param ip
-+ *   IP address of route to be added.
-+ * @param depth
-+ *   Depth of the rule to be added.
-+ * @param next_hop
-+ *   Next hop id of the rule result to be added.
-+ * @param next_node
-+ *   Next node to redirect traffic to.
-+ *
-+ * @return
-+ *   0 on success, negative otherwise.
-+ */
-+__rte_experimental
-+int rte_node_ip4_fib_route_add(uint32_t ip, uint8_t depth, uint16_t next_hop,
-+			       enum rte_node_ip4_lookup_next next_node);
-+
- #ifdef __cplusplus
- }
- #endif
+ static struct rte_node_register ip4_lookup_fib_node = {
++	.process = ip4_lookup_fib_node_process,
+ 	.name = "ip4_lookup_fib",
+ 
+ 	.init = ip4_lookup_fib_node_init,
 -- 
 2.25.1
 
