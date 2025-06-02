@@ -2,183 +2,129 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0406CC54FB3
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Jun 2025 08:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B0FEC54FB3
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Jun 2025 08:46:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B3042402E6;
-	Mon,  2 Jun 2025 10:45:10 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
- by mails.dpdk.org (Postfix) with ESMTP id F22D94025A;
- Mon,  2 Jun 2025 10:45:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1748853909; x=1780389909;
- h=message-id:date:subject:to:cc:references:from:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=IN3tgauvEDrEH57murrYS7LKeMf5g/+B2GEvgexQjtw=;
- b=ZUDEnu9O15gRXF3llnBsStalIiTojncd+zfZ+K0L4p+ZF9FoJauFWqKZ
- ysbYw2IwXJCqgvP52iF+m+Y5sfsKn8XMfIJIugS6u9dThjjt7ZWx6C98n
- jGvK5U8Xqx7eOLSWBg3EwJxN1dL9u7jur+drHyw7muAIgD8OgKffP+IBy
- 84MrXXbywAvEcPlMYeii76agKzHnRKOlbzAIIgTKzpv9WUaqVVm75MtNr
- C6MVNcn6hNSpwderH7THDHF0zF5HU2krCLQp3I6Ymai+fqKkWryTNxymn
- ovLvinA6EwPgIiowci1E9bSM8/ZN5aqjJLX0xytuYl1YaPG6UmxyB/7jT A==;
-X-CSE-ConnectionGUID: mrDLWKcLTw2gVZe3HJ4Lmg==
-X-CSE-MsgGUID: pj8abmyaRZeVQOCGPR0KHA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11450"; a="50556741"
-X-IronPort-AV: E=Sophos;i="6.16,202,1744095600"; d="scan'208";a="50556741"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
- by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Jun 2025 01:45:08 -0700
-X-CSE-ConnectionGUID: KtTStL/pQWeje3rzMZm5Ng==
-X-CSE-MsgGUID: M4ahXv8UTxC9M2aUb9JCLQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,202,1744095600"; d="scan'208";a="145434882"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
- by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Jun 2025 01:45:07 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 2 Jun 2025 01:45:06 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Mon, 2 Jun 2025 01:45:06 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (40.107.236.80)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.55; Mon, 2 Jun 2025 01:45:06 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 2F5C2402D5;
+	Mon,  2 Jun 2025 10:46:27 +0200 (CEST)
+Received: from egress-ip11b.ess.de.barracuda.com
+ (egress-ip11b.ess.de.barracuda.com [18.185.115.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 57A3C4025A
+ for <dev@dpdk.org>; Mon,  2 Jun 2025 10:46:23 +0200 (CEST)
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com
+ (mail-vi1eur03on2124.outbound.protection.outlook.com [40.107.103.124]) by
+ mx-outbound42-219.eu-central-1c.ess.aws.cudaops.com (version=TLSv1.2
+ cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+ Mon, 02 Jun 2025 08:42:16 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pdY/0NyKrtbWIVUkalk256+aRbhNCEAvQ+Q5NHrgDSTNpbjgEJGdTUK6rXqpGngS0peO6VEtgjZJhvEwqqYw37lO+FL3UpLIwKZFZb4Jh+omta5n7r0rZTJE4yE9mNTActqnizQ6JcLR1CC3q5aiYeZwuguy/FW82c1ZP74zjvMhz4g8nQCC8oTtCEpagMVb4Yvt9aq8O4INGV4kc/L4NkfLnL2tNWnNunbkZR0U8a3t2v8WjLtNwsMpjnP1QY8hrJFnp+DMTZfmJEQ5GvEWdzSDGnIspr0Zbktt2Erk8s03YYUw7kvQF+J/RluEwlWn2rxQwg+oz6byskO/oqR4WQ==
+ b=oQW3Pxop8/n1DSLz3CE7kEFAwNE2ESxAt2ZBbE5Uhl5sdWEyGf6arbvdhUdO0q8cjX/0QYX2sPEBt5faUHp2cW7vecCN+NknhAWLBcFSVnYQCujHIVyGPW/wLWh4c+1c0CAEKxSLDUWaMQDM6+Mp9CEBMo3jKfbP56w31YefVvahaQCn6e9FeVaiAFdfwjiNK0C6z61coxd/MEWtrW1UpIIgBnMzkFYr9Dou29Gck9epxsMqjJJZyNwPJCnzrHMJ1zYZ1EjtCdsV61+079fmcxLYxzLatN2wPx4XVNmPjAPNcb3zOV2bLN0azsNvsZslZsFYUwY+EoqfiUOqE1wjKg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xKfxMlpq5PjXPBKIbAd48sp0ZxR87DcVrE/cyqk87T8=;
- b=to27mzCPNYh7JDOmuVgWqNscXOciOaloCfnGwZHZYxBXacL38mpPD/7DdJzRFX549Z9ARDQ5s4tYrDqY8b3sNUYq0qiNtmFs0c29yAhf59340IWzpHzWNFiKe7OAA++YXoACLf0QBg04cWakeiYRNm4fSpl+ZWEm4M0FhQbhFjck5l+9I3oSn9L7DX2oPLTt0d8/3+Tu6cVy4drp6jpPV62za4QJrH74HiOERxUIO9Do3FmXR8nSnM0NWwq4wNm8hB0F7birKmFxwMwZjlgBdx/6vwCIAJGVx1bJxL+MWUe/0vBlu/buHe6hHtlZpaCjYxbLLyIYsKFbwznzMtVC3Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
- DS0PR11MB7903.namprd11.prod.outlook.com (2603:10b6:8:f7::10) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8769.32; Mon, 2 Jun 2025 08:44:50 +0000
-Received: from DM4PR11MB6502.namprd11.prod.outlook.com
- ([fe80::21e4:2d98:c498:2d7a]) by DM4PR11MB6502.namprd11.prod.outlook.com
- ([fe80::21e4:2d98:c498:2d7a%4]) with mapi id 15.20.8769.037; Mon, 2 Jun 2025
- 08:44:50 +0000
-Message-ID: <a9aa62aa-d6b9-4215-8ee1-1d99297d487e@intel.com>
-Date: Mon, 2 Jun 2025 10:44:44 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/10] net/ice/base: fix typo in media type check
-To: Dhanya Pillai <dhanya.r.pillai@intel.com>, Bruce Richardson
- <bruce.richardson@intel.com>, Ian Stokes <ian.stokes@intel.com>, "Paul
- Greenwalt" <paul.greenwalt@intel.com>, Alice Michael
- <alice.michael@intel.com>
-CC: <dev@dpdk.org>, <stable@dpdk.org>
-References: <20250527131741.7606-1-dhanya.r.pillai@intel.com>
- <20250527131741.7606-3-dhanya.r.pillai@intel.com>
-Content-Language: en-US
-From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
-In-Reply-To: <20250527131741.7606-3-dhanya.r.pillai@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DU2PR04CA0045.eurprd04.prod.outlook.com
- (2603:10a6:10:234::20) To DM4PR11MB6502.namprd11.prod.outlook.com
- (2603:10b6:8:89::7)
+ bh=rc3+G14/fNLImHg80A51xx7QXxA0+BETK/Ik4gj5erg=;
+ b=XiDESVaUyu+JQ8Jz7SXhCwceIbpo06h70x26ueeLTW6v+Ue5ev0MRYYQm/40EmTFRnQlR49o5b+5wVs4QZUqHcInYhI8ugwGAsp2ByqF5h/jB6kUfGv9aVcV/S52++MNB83i4mNLoLArrBjvWqbquhcoLZVoGvOD4bJgZFjbW4RNrCrAPCrWBMDrYgZBmBm4nlzw+7LMQBbXAwS70dgJCkg4qxaNhkBBJmQ+/3Hwg0IyZEgiMaFSYiOP9xIDbkg2feLY4wOTGZayXsVTto4xYnHDQdAartyk2NLM3LgGSxQgm1BYLk7n+WRoJWeQZIJ7m6AbprAtVcvVYjD401YHBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 178.72.21.4) smtp.rcpttodomain=monjalon.net smtp.mailfrom=napatech.com;
+ dmarc=fail (p=reject sp=reject pct=100) action=oreject
+ header.from=napatech.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rc3+G14/fNLImHg80A51xx7QXxA0+BETK/Ik4gj5erg=;
+ b=CasXO7O5zepTtiROJ29iTk9TmkukjtnxaV9IebEg4GJBx2FhGBNZ4Xnx8VVSKB9wByrpPUXVB7kZpWw6/wjjjpaH/IBtWbi2m6fQMAuQUtjJY4+Erp3s9giiLFuGQlIOFslKWOirMwRrp44u7mQVxw1JzKOygORMAUrDuYfAgEE=
+Received: from DUZPR01CA0335.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b8::19) by DBAP190MB0949.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:10:1ad::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.37; Mon, 2 Jun
+ 2025 08:40:30 +0000
+Received: from DB1PEPF000509F0.eurprd03.prod.outlook.com
+ (2603:10a6:10:4b8:cafe::df) by DUZPR01CA0335.outlook.office365.com
+ (2603:10a6:10:4b8::19) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.23 via Frontend Transport; Mon,
+ 2 Jun 2025 08:40:28 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
+ smtp.mailfrom=napatech.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=oreject header.from=napatech.com;
+Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
+ designate 178.72.21.4 as permitted sender) receiver=protection.outlook.com;
+ client-ip=178.72.21.4; helo=localhost.localdomain;
+Received: from localhost.localdomain (178.72.21.4) by
+ DB1PEPF000509F0.mail.protection.outlook.com (10.167.242.74) with Microsoft
+ SMTP Server id 15.20.8792.29 via Frontend Transport; Mon, 2 Jun 2025 08:40:27
+ +0000
+From: Danylo Vodopianov <dvo-plv@napatech.com>
+To: thomas@monjalon.net, aman.deep.singh@intel.com, yuying.zhang@intel.com,
+ orika@nvidia.com, mcoqueli@redhat.com, ckm@napatech.com,
+ matan@mellanox.com, david.marchand@redhat.com, mko-plv@napatech.com,
+ sil-plv@napatech.com
+Cc: stephen@networkplumber.org,
+	dev@dpdk.org
+Subject: [PATCH v3 0/1] Memory hotplug fix
+Date: Mon,  2 Jun 2025 10:40:24 +0200
+Message-ID: <20250602084025.1881768-1-dvo-plv@napatech.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250602081933.1881050-1-dvo-plv@napatech.com>
+References: <20250602081933.1881050-1-dvo-plv@napatech.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|DS0PR11MB7903:EE_
-X-MS-Office365-Filtering-Correlation-Id: b6323813-3284-4e98-c5b1-08dda1b1bcba
+X-MS-TrafficTypeDiagnostic: DB1PEPF000509F0:EE_|DBAP190MB0949:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: f3b3c614-668f-4321-16ba-08dda1b1207c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?akc2TVdGVlZ0MTR3QTU0V05yaXdGWldyb1NXZ3lWa0NvSGtPTE5obDhQWWoz?=
- =?utf-8?B?RGo0bGJoMWpNcEtjU3hpTlNWUUlxcGdFNzMyTXc5cDArQWxUeFVuV09HcFAz?=
- =?utf-8?B?QVE2NW9tTEJJOEp6cVRjdG9nYU1za3lrckx0L0VBbm51WHBLZHh6c2d2Z2ZD?=
- =?utf-8?B?L0xDeW5tYmtiT0oyaGc4Qkk2UHU3N2s3QU1OaGw3SzBhN1J0YkREbHJobXc2?=
- =?utf-8?B?ZUdnaXdua1gvQ3V4VUs3bmpud3kyYUR4WmZOVlE3MzRVOEFNWWc5cDZDZDgv?=
- =?utf-8?B?dGhYcW9pbHZacVhZUzNRNzZBcWg4QUxvSklQZGRJeFlyRlpUZFJEK3NNVjEx?=
- =?utf-8?B?N3VrUVZmMzhlMWttQnlvU1ZSQVVKeFJja3hUOEhoNEh5WVNWYXQ4OFYvR3NJ?=
- =?utf-8?B?cUkvNGdZNi9iUUwzVkZISUhrY3pwZ3lkK1g5ZzdVSEU0Um52UWkyWnk3cTZx?=
- =?utf-8?B?S045Z095YVZ1OGR4QVVSOFRNY2R2ei9PY0hxU0FaczZpOFdWUEQrakNQV0tE?=
- =?utf-8?B?am9hc1ZSQktNVjdHNWNGVUZxRGRJTG9aQ3hmYStpRC94amU1bllkSGVjbHcv?=
- =?utf-8?B?VllXY050aHQ3eU9zWDZjMS9XOEJZYmk3cHRHelhTc0o3RUNuS3I3YWRGekVm?=
- =?utf-8?B?UVoyM1FZcCtvMkJ5TWVKU1o3OVJrV25QYU5XR0R3UXZlbDgyWGFjMVNUcnYx?=
- =?utf-8?B?aHArd0VlUXFMQXhsbVJuNHRhaGJ0Z1NBazlVeTlBQ2c3QTR5SnpFU1JBNlNO?=
- =?utf-8?B?ZVBrdDZsVzdqclBnOERFNWd5Y3cybXIxTXVST1lSQ3RvZXZuQmM2NUMvL3JQ?=
- =?utf-8?B?OEhBL0wxczdUZWpRZWpwNHJick9odkpRZENnckhsdHpKQ1crUUtPdGtuamtE?=
- =?utf-8?B?eG52WVhKTXVURURsdGRNaFh3eXBPM2h4eWdpZEIrTFN3a2dSVG9NendiWldH?=
- =?utf-8?B?NUlHbjJnemJqa0dvNDRlanNuZTF1TlluVUtDMk9qQVBZTzlQdnV1cXZoZ1Z6?=
- =?utf-8?B?SXZZYmZHQ1Q0b0wzQlJ5bmhtQzl4VitDeU5BQWM2YlI1WEJLMnFna0hEeWlC?=
- =?utf-8?B?ZHJlS2pYYUh4c0l1NHQwV1ZrV29GWUc0L3Zwbk8xaHNNdllVazcxcHlzR0ZG?=
- =?utf-8?B?OElQNmxCc3FzcWVGWU1CcEhmK0dYSXVNakNWUDB4OExRaENWbVowYUd2VFlU?=
- =?utf-8?B?ZWpYVmxVN2kyYmJiRUNZZ2RQSmZ0TnhsQWVHQ1ZCbVEyeUlzMk1nQjhEOURE?=
- =?utf-8?B?NkNmYklReFhrVjEzOUxmMnh6WGErbzM0bXdpR2ZiRHdXS2lkWVhwN0hYbWdC?=
- =?utf-8?B?a2c1dWJwbEF6SUEzRFM0N2dJd0RFSkNaMDMxdFg0dnNzeHJicjd6cy9ic1dS?=
- =?utf-8?B?STcyQmhvbnBQdkNjVEVGdktmMDJGenJacHVtY1crYzQ3QURsTTlTVXRtSWNZ?=
- =?utf-8?B?Q01OdFZ5czNxWlYzTXNVY3VYaExxYUphbWlFSFo0Smp3U05TM0c0RUh3bWJj?=
- =?utf-8?B?blhXZGd3ZXhqMmo0RVlhd2NIaEZ1amh6WXBPQjRBY2Fmc2huM296dGVDTHl6?=
- =?utf-8?B?YTk2MU5TMU1OemRaN1dEM3JiSzlLblRidkxEY2t3L0czL2Q4Mi9EdFRySUtm?=
- =?utf-8?B?V0ZNN2dDWEovUkRGV3hnN3o5MmxvMmxQcE1TelBiUjBzMk4wWEV1SVdwR2tx?=
- =?utf-8?B?dmN6L1pCUzhJbmE2QzdkcUxYY1VTSjVqZVg1Q2VxVE1QMGFQcUpBa1hMMUZ1?=
- =?utf-8?B?aUZkSWFwQzJlSllCNDVaM1FuL1VPWCt2c0JGb25UK2NkekZoSjk2UXJHd3Bn?=
- =?utf-8?B?dE40L3MvaWE4WkVCd1RsdVFoVU9zSUQ4NGxDZVVMQjd6Mmg3SzVjaDcwRXQ1?=
- =?utf-8?B?VmczLzFMbVV4VGNPSk4zcmliNEswYkV1U09NTzZVOFdkckV3WCtmeS8rNXNH?=
- =?utf-8?Q?lTBs8waadMs=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(1800799024); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MWxzcnp1eC9xRWgwbC9OcmxXY1BQenBVc3hhWHhmakdPS0pwSjlZemR4WU5k?=
- =?utf-8?B?TkhLby8rMUMydDRzWFE5cHpYZW5DVU1mK3E2aG1BTTlySzhmcXJld3dUQ29u?=
- =?utf-8?B?N1lMSEI4Q28rUkZDdHFTN1pmcFB1TzEra241RmlrcEozOE43MTV5V3BRdXY5?=
- =?utf-8?B?OGxxZkdsSEdZanFJQzdSK0p5VzhwaThKcDArZXpxUXIwUWxJWGZyWTg1WUdv?=
- =?utf-8?B?a2M1TmlXRFo2Z1kzbGVSU1NsRXo1cGk4Wlp4MVF2aVQ3VU1sOXhiU1pOMFdH?=
- =?utf-8?B?a1R4TVczL2pnckJURHRwRmEwSllHUUpoVzg3YUEvYjNFakhLYXhBN1hoRTB0?=
- =?utf-8?B?OHZyTW52U0VnbXJ5eFYreDZva29rVEltSjR1WW5NYTlYNlY0N09GZ1lkWlpV?=
- =?utf-8?B?ZmwzQnFaZlBuN1NWVGRQOE55ZmQ4ODdQZk1IWk5WTjhVaEoxZ01HUE9pSUlJ?=
- =?utf-8?B?V2p0azgweWs0VVBmN0hra05TUGZOV2dlR2NVYzF3Q3IvZ1BCcllPV2hRdlZS?=
- =?utf-8?B?c1hTaDBhNzNLcU9XRnlDRWkwUko2SGs5RzdFUHBtY3VYeWt4bllnVld1WjBo?=
- =?utf-8?B?TnBuQ2VGL1NUc3dLdVhSTkJrM2JlTlhScDNVSE9NbFlUa0RDOEttTnpzUzMr?=
- =?utf-8?B?dFYvMERWZm9pcTlxeG9EZk5BYkZQV0owZjlZN3NjN1RIN0JmRzNBUTVaZnNo?=
- =?utf-8?B?MmJ0NUFtc05Hbmt0Q3FiL2Q3Lzd6Ty9uL1ZDQzhubFhxZVE3clhBQXhGUVFr?=
- =?utf-8?B?OUZyM1dFeVkwME0xSjEvaTZXNXcvVi90OEcwaWl6TFpHeFQreTNTSFdxNDNY?=
- =?utf-8?B?Zm1FVzY2TEdPNlp4Y3NyQkU0Vm5zbnB6QUFkM2tiOU1sWXNNdnkyRHVsUDl0?=
- =?utf-8?B?QjhJTWxNMHlkT1JzVjRkWjdHK0ZRdUtKRkVENC84dEZrYnBocXFlOFVqUi9Y?=
- =?utf-8?B?TkI1UFNGOWQyTnF4ZkxERG1FRnNwcWp5RUQ2ZWRodFh2TmlwM2pQcXAzZmhj?=
- =?utf-8?B?OE45K1hEVUwxMFVNWll0bXJwWm11cC9iK1ZaaDJwamVDaTlzMzdkR0x4eE94?=
- =?utf-8?B?NC9CS0VDSk9VZ0lmci8rc0x5MzlVZnhJOWRiZi9Lby9pQnVYZmZJa3gxN05n?=
- =?utf-8?B?VUtvRXMvOFRUR0dKdHovenFOOHZCc21lRldrZFBXRmVEaENYWVMyQTFQWWkv?=
- =?utf-8?B?djcraXQybFN3WmlXbTVtZ0VnR241TVc3SlZQMU1tNUU2azg0QWZwcUt2NzMx?=
- =?utf-8?B?NGs0djVzUVpRcXhiQjVYVWZsa0FOSU1MdlN6VlZ0WTR1OXM4bzlFQ0Y0MDJV?=
- =?utf-8?B?ODk2dENWUTNPWGNBYXdRZzhRWVhNTGxBaURYQ0ViSDc4YTlWSnk0bWpVQVVo?=
- =?utf-8?B?Q3dPTVNveSthUURoSHVNL1NYeGVDZUdWNDR5ZSszR3dWQ2dzZXlCaGQzTlIw?=
- =?utf-8?B?TjZHR1NzZnpvVS9SQkZOSCtLMjdXTFh3eWtTMXhyS0h6OXlmYmZYSFBtNmZ0?=
- =?utf-8?B?RmdSeUpHVTczNnpyYWMvSE96RnZodzZYWjEySHNVRzlCQkNwMWFvN0pETVpB?=
- =?utf-8?B?cTBVZjNkUXdwbklaa1ZuRXZHVzBYOFV1MTRHK2pLZUpoNi82ams4ODVseE5O?=
- =?utf-8?B?TW5WYmV0cHBHTy9ha2M0UGdCWVk4VzNtemIxSzcxTkVqOWtuRk5EZk1CMm5G?=
- =?utf-8?B?S1MzTVBMcUZDNE95eG5NNmY5L21zUWc1OW9tZFE2ZXhiOUxXVTRZYnpQRFlv?=
- =?utf-8?B?cHNVUnY2VEo2b3VuNEx2bVppYklZUVFNTVM5YkdFQXBvcGRaMkk3dzZtOUU2?=
- =?utf-8?B?MW1ORENBQlk1MjFCSldUNm5kYXRQc29iUE83RW1vOFNWNGhRNStzWkw5NlVD?=
- =?utf-8?B?aFcvNU5tS2Z5WjJiQUZwQ09tWGpoamkyQUtGOFVtbVZ6Z0Irdnl5Q0REcWdZ?=
- =?utf-8?B?TXVoaDh1MS9GbEpkRnlDWW84TkFTUkhDd3JQZFFvNHZacUpvVGxaa2hsQ0ZI?=
- =?utf-8?B?ZEZDZEc0MFhjYVRvazJqRFpOdzhtclhDcXlzS0JGK0tQSDNMTUltNHlrYzcx?=
- =?utf-8?B?eDdQeGY5amVmbzJsK3gwd28zT25pNDhyM090bHFCbUZ5NTA1WTVJbzdKdmRE?=
- =?utf-8?B?ci9NZlpoWHM3czZ1ZWwwb3R6U2VSMk9VOFhRNlZCWDRhQUFtQUxISDE4UVhZ?=
- =?utf-8?B?d1E9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: b6323813-3284-4e98-c5b1-08dda1b1bcba
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2025 08:44:50.7906 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qPq2jbssh0W9r74xnEJiBIL+DCm+z4ZYnMhYysMJXMFe8a5azrhBtS7K/ixxUPddRzGpz46uVwA6vMwQLCBHeRploISHs1zfP7IKWR+lfBA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7903
-X-OriginatorOrg: intel.com
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|36860700013|376014|82310400026|1800799024|13003099007|921020; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?lsgYsmzrtbA7X4vYFFdTrZpRScM+VMdoM012LcVum3Z4g9JzjtOIdnnDZ/g6?=
+ =?us-ascii?Q?umaOA8q6Nn3v2fcth2tbDsUMX+W4f6qAhXe9vvxcx0aC7wQBt19rL4VAbgvo?=
+ =?us-ascii?Q?MGNQ6pUCRqBFHfXn1gT9mvMJ/nfXWETLdNTvl/hY+i2Sfqm1Qze5PsGLktu2?=
+ =?us-ascii?Q?c7JFzqquadT3jPx+dQUrmKwwETDp2yD4IZ9vK9HOiKHqzUUjDrJdb07w4TCL?=
+ =?us-ascii?Q?w6++It6AoGILawGp+ifio6WHvebCAsY4ysWVmUouatwO2WQ/+5EeyQD53nhf?=
+ =?us-ascii?Q?QrYUH+Jq/zEx+3oCfvcwsGCrynBQK3blN1gE/stIy8pWskhGH1tYdsCUHcZ0?=
+ =?us-ascii?Q?xyLtibupiWqqhkf3uFaHITw3/6KABkTyRk1xKlvPAgUFVW75cOjptdBFa4l1?=
+ =?us-ascii?Q?4tibnJFRoUxEz+hvnTclamhxMAnyFUOVcDzLmgCAwcYdOVmaHhrhixb1EBCb?=
+ =?us-ascii?Q?1fXW2mMcaC2V2zTEju8GNmZ2QqxioinkEE92E6WjT021gh/XN+ls655/aSV3?=
+ =?us-ascii?Q?qb+0Vm/2gYgkx6uzNNtIt/Ikl8Cemur/PXVPOvS5hHb9tjUMfFFuewSiqoZk?=
+ =?us-ascii?Q?H8hvLg4rC2hKAtb2hWlQBaMa/sMGAUnPl3CY/tFh0Rt9c7nhK0KWH5F40pYf?=
+ =?us-ascii?Q?xKinIfnT6jYzeOhhfcz+lZB748SBfMXIMTbydUu4aYYcbUu8DIwvG7IHSBOL?=
+ =?us-ascii?Q?tx1vKvYoCMVjP8g/5W1FWH+jOV54VnLmTIFtict1PJgUaxIfH3GiOgzm90wh?=
+ =?us-ascii?Q?eWcdeOgkqtLMxUZoyyz0PdqpkauGtJAIObS+Rebb09fimrl6xLZwXrk1n/Pw?=
+ =?us-ascii?Q?trimtNM2YP0tMVL0uO+nBPTNxof/nyS1S2sS07hP0zg94GqmUbi6RZVLtj3u?=
+ =?us-ascii?Q?R94mRgs/+23kUGDHmXHrKptKuMRCJgIbUSsM1N1HQwnKw8kW1Qop+DqZerY/?=
+ =?us-ascii?Q?AOkOSRA5cxk5XM1nE6A2w/+CI8YalO9XJbppVcAiY1L2VHUcjosMyPaXYFoN?=
+ =?us-ascii?Q?HYU7nLJLaaCt04oCMHkvxh8xE+THcpS9z7Eqx97zNzc/f+CLaPilG3j2b2p+?=
+ =?us-ascii?Q?/ED/gEhPCfN3wwOHQ92LIbh8facr1HgA96qDjYwPnqB4Ya5RB/7xtlba4iuy?=
+ =?us-ascii?Q?gdLeuXpbb4JHU5EPO+TGUj96SeH4uLSQpbgOnf7dU94dUCUzA6qSLEWKBEPe?=
+ =?us-ascii?Q?oiCTYxSwj5rJ/F9Dj/tIruqoxO282aK1Dw4fL1Wr4kifsdk6Nhims64kQJQ+?=
+ =?us-ascii?Q?YtpvLMp8v/GIcgITU6VsZhoI0URm3bIMEZQKlo/vFgEMg7k823nixfFc4Sqi?=
+ =?us-ascii?Q?JnGpnIEFlRDRejzy8gJsCL25ztGXcPXjLm00baInexmhoHnd6BGaVQ0ab8P+?=
+ =?us-ascii?Q?KIZGGO1QNxuTQvF9hsawFJz+40VMA2Bx46elPrKkpMww9dghZAO1iAVUWAG4?=
+ =?us-ascii?Q?MhBCzeHPtfJsEdkoHa9vA36sTf+Kp8rwOVc4FlUHnRoycBeIMFiScCkvG1Rd?=
+ =?us-ascii?Q?tFcGphI3+No6GD0=3D?=
+X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
+ CAT:NONE;
+ SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024)(13003099007)(921020);
+ DIR:OUT; SFP:1102; 
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: pPfBwWOuPNSG0vJE153ZysEK5Jh3h5RXdY880XAuAgVZQv6RGSgCVTBtUuXceOqCxx3CQQtF377vMz0+K/JqH01yyxdBV8DKKZNo3WqOKSBz5MwmSouxtM6ZnP/WMnIdme7YyNf6+L6SwrZzWskHX7IfyDJmQT23tT6Qyh/CkJtMmiCypQFqonrdaKNYSgTbT6/9Pto3BTKUn2GI+EXg4jFdHoZzimfh97v2YWCkUePBxqbAKS4RXHvd2BbsJPjB0XMHkGz8r9FQU0XN51rkNLhgYjn+aOZWsaasJMZM1aXmMNBD8IJn9gVh4MLw2NDFsaF4jZYNQeKUmcs75ZLXPUVzNTW+yzn615FLX/pRSlZ8RAl1IEffvhWmkxozS85wLWirdXuAk1w/kx4g0jnjAlLAuP/6MA+yDkKygKjXzB80vYUoxnIbWG0+9dCwdbi5b4ono94ZlpAfDtGSB3ncApeZvNg4CiGZ74NfD+Sxy51PIOtJ3MsHbZR6Jod0NTTwYi5tzQB7h0gMfRg+snxlwk5GyBV2nI59S+Q2uh/QPedCYhEclUGD+cR1IEzT4nQSL2/pYPihC6H6cPYg++9SQchqi8A0To76yiM7D6Qk0PH6FdVIBHhNz7n0WGTdNMFMxNEXguiyhmlkaPYsfl0Wog==
+X-OriginatorOrg: napatech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2025 08:40:27.9698 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f3b3c614-668f-4321-16ba-08dda1b1207c
+X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
+ Helo=[localhost.localdomain]
+X-MS-Exchange-CrossTenant-AuthSource: DB1PEPF000509F0.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAP190MB0949
+X-BESS-ID: 1748853736-310971-7660-2524-1
+X-BESS-VER: 2019.1_20250527.1501
+X-BESS-Apparent-Source-IP: 40.107.103.124
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoZGlqZAVgZQMNksxdQgKcnczM
+ DAyMzY2MjQNNHE1NLcODXNOC3JyMxAqTYWAKATvvVBAAAA
+X-BESS-BRTS-Status: 1
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -192,25 +138,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 5/27/2025 3:17 PM, Dhanya Pillai wrote:
-> From: Paul Greenwalt <paul.greenwalt@intel.com>
-> 
-> Found a typo in original implementation of ice_set_media_type,
-> where one of the checks for FIBER checks for C2C media type
-> instead of C2M. This results in failure of this check for some
-> AOC devices, consequently setting  the media type as AUI.
-> Bug was found in ethtool.
+Hi everyone.
+We detected an issue with the memory hotplug feature and virtio devices while working with vitrio
+in DPDK.In general, the issue is around the user request VHOST_USER_SET_MEM_TABLE and
+locking queues for this request
+(https://git.dpdk.org/dpdk-stable/tree/lib/vhost/vhost_user.c#n1512)
+When the vhost_user receives the request VHOST_USER_SET_MEM_TABLE, it locks queues only
+when the flag lock_all_qps is true(it is always true), AND the flag
+VIRTIO_DEV_VDPA_CONFIGURED is not set.
+https://git.dpdk.org/dpdk-stable/tree/lib/vhost/vhost_user.c#n3181
+In the case of a memory hot plug, the flag VIRTIO_DEV_VDPA_CONFIGURED is always set,
+and due to this, the queues are never locked while they are expected to be locked.
+https://git.dpdk.org/dpdk-stable/tree/lib/vhost/vhost_user.c#n1512.
+The quick solution is to add the check for request type and do lock queues always
+if we have request VHOST_USER_SET_MEM_TABLE. Something like this, in general
+https://git.dpdk.org/dpdk-stable/tree/lib/vhost/vhost_user.c#n3179
 
-I don't think mentioning ethtool is necessary here, we can leave that 
-out of the commit message.
+ if (!(dev->flags & VIRTIO_DEV_VDPA_CONFIGURED) ||
+ request == VHOST_USER_SET_MEM_TABLE) {
+ ...
 
-> 
-> Fixes: e7bd7d54a26b ("net/ice/base: improve PHY media capabilities handling")
-> Cc: stable@dpdk.org
-> Signed-off-by: Paul Greenwalt <paul.greenwalt@intel.com>
-> Signed-off-by: Dhanya Pillai <dhanya.r.pillai@intel.com>
-> ---
+Danylo Vodopianov (1):
+  vhost: handle virtqueue locking for memory hotplug
+
+ lib/vhost/vhost_user.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
 -- 
-Thanks,
-Anatoly
+2.47.1
+
