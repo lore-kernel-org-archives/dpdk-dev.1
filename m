@@ -2,51 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C78C5B549
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Jun 2025 06:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B24AC54FB3
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Jun 2025 06:38:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0E0584042C;
-	Mon,  2 Jun 2025 08:37:57 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 09B8E402E2;
+	Mon,  2 Jun 2025 08:38:09 +0200 (CEST)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 67A794026B
- for <dev@dpdk.org>; Mon,  2 Jun 2025 08:37:55 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 47DAC402AB
+ for <dev@dpdk.org>; Mon,  2 Jun 2025 08:37:59 +0200 (CEST)
 Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5521jKMR014482;
- Sun, 1 Jun 2025 23:37:54 -0700
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5521jKMU014482;
+ Sun, 1 Jun 2025 23:37:58 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=b
- vCEz1DgB2/SfzLOr4mk51Or0qbIv/1O63+2uWKuYmA=; b=GCPcdDM5QUCHCgMty
- M0D9HVyPsa11DeyVyJNeo3NWs7D0lby6DgHTfauEp3xWYhlvu6Sq39QUO0BWo1xf
- G0BWSTpomM3aW3y+UbuaRQ8Xy05wY7g1VU9aEtGVdKyeCw4XFwwyKQxRj1kXRbuO
- ypPBlqEnt2VoDxFKTzOdWeIMIRuWswkmCu/P42kknOvwC0csetVYW2+7MlrBwbSY
- WK80tRSt1IC3K7q2qaRmAwRAkvzXTmCOIW4I7gsphIyH3SlfRCToACnkPqoab4pM
- Ufc0s2ZYesPyjn05Utxa+q1v5RP7y6ygaLe0tlgRQ5Ref2zQ4/Q57rCALXKwp+Gy
- pRpXg==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=Z
+ fyE3uuSbhwxlY15Wlw5aPbWQpf1ZHJhXj7OEptQIrU=; b=g/iHE8gyxBNBODKoa
+ LIarJFQb6Ps0IitXmyb5A3t7r7pkvIi61h8oTT/38xbSXRL9nWXCh2kJ0ucCwYda
+ lqDBqmyq4DuWPH5YjH8nK84OnB06o4VzAzNqZ9YpRO6bUiSJovMUJm3dI0jOZXHE
+ ZnG04eXys6fAFx7QmBnFoNQrvq4vfYbasTLytZ/X5odMa5tmjHdZe8yZyH+IEthi
+ /LAciNM1GmYwCm/e8cm6j/WrEd9+OSOf4MY9BGG2qa1L8T7+wPNtTV+2uiwWTOqZ
+ LfY1xS0DiCwEXm9lddfNH8MQYr1KCFuISwRyOpM/6GHLcFA9vWvYfwR4fSnB5kBg
+ sKbtQ==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 470bpa1ta6-1
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 470bpa1tap-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Sun, 01 Jun 2025 23:37:54 -0700 (PDT)
+ Sun, 01 Jun 2025 23:37:58 -0700 (PDT)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Sun, 1 Jun 2025 23:37:51 -0700
+ 15.2.1544.4; Sun, 1 Jun 2025 23:37:57 -0700
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Sun, 1 Jun 2025 23:37:51 -0700
+ Transport; Sun, 1 Jun 2025 23:37:57 -0700
 Received: from localhost.localdomain (unknown [10.28.36.185])
- by maili.marvell.com (Postfix) with ESMTP id 7EAE93F704B;
- Sun,  1 Jun 2025 23:37:48 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 3B9DC3F704B;
+ Sun,  1 Jun 2025 23:37:53 -0700 (PDT)
 From: Ankur Dwivedi <adwivedi@marvell.com>
 To: <dev@dpdk.org>
 CC: <jerinj@marvell.com>, <vladimir.medvedkin@intel.com>,
  <ndabilpuram@marvell.com>, <pbhagavatula@marvell.com>,
  <skori@marvell.com>, <rkudurumalla@marvell.com>, <nsaxena@marvell.com>,
  Ankur Dwivedi <adwivedi@marvell.com>
-Subject: [PATCH v3 10/14] node: add IP6 FIB route add
-Date: Mon, 2 Jun 2025 12:06:35 +0530
-Message-ID: <20250602063639.198550-11-adwivedi@marvell.com>
+Subject: [PATCH v3 11/14] node: add process callback for IP6 FIB
+Date: Mon, 2 Jun 2025 12:06:36 +0530
+Message-ID: <20250602063639.198550-12-adwivedi@marvell.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250602063639.198550-1-adwivedi@marvell.com>
 References: <20250509064448.724019-1-adwivedi@marvell.com>
@@ -54,19 +54,19 @@ References: <20250509064448.724019-1-adwivedi@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=MJNgmNZl c=1 sm=1 tr=0 ts=683d46c2 cx=c_pps
+X-Authority-Analysis: v=2.4 cv=MJNgmNZl c=1 sm=1 tr=0 ts=683d46c6 cx=c_pps
  a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=KWxuKWQm0HYJUTJt3pUA:9
+ a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=HgU-b89uhFXLxWSzcvEA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: 9595PLp9pgbW6rTsj0_b9JVNOuVugIOV
-X-Proofpoint-GUID: 9595PLp9pgbW6rTsj0_b9JVNOuVugIOV
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAyMDA1NSBTYWx0ZWRfX2Gw1EOD+k5jf
- Z4T4qYgwm/MoaAUhjREeYQ4c013oH6D4MPr4xXuhYAxVlUJ5RBHROcgk5GqYdoQF3YYEkUjzOs7
- lzCyTP3rd8B1oSdfES89PqBRxN6KyaqprjhyPPubfoCoGIpXoYZp3aBR9gUY7mVFuo9r7pVHYs+
- P4ssH6hsWY3vbBQ2poz2R7glq++E2y6jiz29kCRKIe8wejAnA3jNIrxIX+P5FMXniT0c7rxo6d5
- 5lO2zmTgIGmlPKPPTNfiuH0R493PBrD87jvAEVzezH5wlyMunoBVS8UqXINjBjGbJ4w07GaisDC
- wVID8r6sENnOIwQnCvridkOwkHm3L5g81Rg2OUhq3aRy0/ngAQ5Qia+et0U/d+UE3CJJc0647PW
- RHGDRgaxi0CJKqOgzeHeE113g8IyVKiYlH9YPmkHEpeCVW5iY2cagoPUhaCRDnAnySXvqyOU
+X-Proofpoint-ORIG-GUID: un0bKe0njtxx-wbtUFGWZCX_V5vE2FT1
+X-Proofpoint-GUID: un0bKe0njtxx-wbtUFGWZCX_V5vE2FT1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAyMDA1NSBTYWx0ZWRfX1Virn1whrUiF
+ MYSFWQkxwTU07iOzG03K7iqLvNW4mjSGemoMwniU/h1Np5BIrxEsdvcbnM0Ez398FBfRqIp7wY8
+ soyzUDO6j+G7hYy47VX1alRU5D6m4hprytasOcPIxyjQulZFNzdLV4taQHHV6QRrAYu9W0Fu2fP
+ 1yDG2ayE9kX6+fwQaJ0UtAyjQ1f4YyfTr1k5O1MQVOouM8tggAojliBSHPqWxFDy9iSpiIfQQ7C
+ a4a0KEzsT6YQk9C6KXBHhXVatBtZLfJFf7va92x2R9ZTlDJTYAgektHHRHz1kXcXnmDoiufHHUn
+ vcUCwc3drflMvBVFeaeyU7eHRIL1ZQ/AVlHO03+OKpk7JSCcbgGMGwFUpjwNgb60m74HoahQ+Du
+ YojjynL/3cXb5JsO0C9rmd9VT4XguzQbf3hWJAaSDjDHGpxBeLVFDsfjYhNl4SVkKDs/RZYc
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-02_02,2025-05-30_01,2025-03-28_01
@@ -83,98 +83,179 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Adds a public function to add IP6 route to FIB. The applications should
-call this function to add IP6 routes to FIB.
+Adds the process callback function for ip6_lookup_fib node.
 
 Signed-off-by: Ankur Dwivedi <adwivedi@marvell.com>
 ---
- lib/node/ip6_lookup_fib.c   | 35 +++++++++++++++++++++++++++++++++++
- lib/node/rte_node_ip6_api.h | 19 +++++++++++++++++++
- 2 files changed, 54 insertions(+)
+ lib/node/ip6_lookup_fib.c | 148 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 148 insertions(+)
 
 diff --git a/lib/node/ip6_lookup_fib.c b/lib/node/ip6_lookup_fib.c
-index a4f9f53644..b510452ad8 100644
+index b510452ad8..3df61890e9 100644
 --- a/lib/node/ip6_lookup_fib.c
 +++ b/lib/node/ip6_lookup_fib.c
-@@ -2,6 +2,8 @@
-  * Copyright(C) 2025 Marvell.
-  */
+@@ -40,6 +40,153 @@ static struct ip6_lookup_fib_node_main ip6_lookup_fib_nm;
+ #define IP6_LOOKUP_FIB_NODE_PRIV1_OFF(ctx) \
+ 	(((struct ip6_lookup_fib_node_ctx *)ctx)->mbuf_priv1_off)
  
-+#include <arpa/inet.h>
-+
- #include <eal_export.h>
- #include <rte_errno.h>
- #include <rte_ether.h>
-@@ -58,6 +60,39 @@ rte_node_ip6_fib_create(int socket, struct rte_fib6_conf *conf)
- 	return 0;
- }
- 
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_node_ip6_fib_route_add, 25.07)
-+int
-+rte_node_ip6_fib_route_add(const struct rte_ipv6_addr *ip, uint8_t depth, uint16_t next_hop,
-+			   enum rte_node_ip6_lookup_next next_node)
++static uint16_t
++ip6_lookup_fib_node_process(struct rte_graph *graph, struct rte_node *node, void **objs,
++			    uint16_t nb_objs)
 +{
-+	char abuf[INET6_ADDRSTRLEN];
-+	unsigned int nb_sockets;
-+	uint8_t socket;
-+	uint32_t val;
-+	int ret;
++	struct rte_mbuf *mbuf0, *mbuf1, *mbuf2, *mbuf3, **pkts;
++	const int dyn = IP6_LOOKUP_FIB_NODE_PRIV1_OFF(node->ctx);
++	struct rte_fib6 *fib = IP6_LOOKUP_FIB_NODE(node->ctx);
++	struct rte_ipv6_addr ip[RTE_GRAPH_BURST_SIZE] = { 0 };
++	uint64_t next_hop[RTE_GRAPH_BURST_SIZE];
++	struct rte_ipv6_hdr *ipv6_hdr;
++	uint16_t lookup_err = 0;
++	void **to_next, **from;
++	uint16_t last_spec = 0;
++	rte_edge_t next_index;
++	uint16_t n_left_from;
++	uint16_t held = 0;
++	uint16_t next;
++	int i;
 +
-+	nb_sockets = rte_socket_count();
-+	inet_ntop(AF_INET6, ip, abuf, sizeof(abuf));
-+	/* Embedded next node id into 24 bit next hop */
-+	val = ((next_node << 16) | next_hop) & ((1ull << 24) - 1);
-+	node_dbg("ip6_lookup_fib", "FIB6: Adding route %s / %d nh (0x%x)", abuf, depth, val);
++	/* Speculative next */
++	next_index = RTE_NODE_IP6_LOOKUP_NEXT_REWRITE;
 +
-+	for (socket = 0; socket < nb_sockets; socket++) {
-+		if (!ip6_lookup_fib_nm.fib6[socket])
-+			continue;
++	pkts = (struct rte_mbuf **)objs;
++	from = objs;
++	n_left_from = nb_objs;
 +
-+		ret = rte_fib6_add(ip6_lookup_fib_nm.fib6[socket], ip, depth, val);
-+		if (ret < 0) {
-+			node_err("ip6_lookup_fib",
-+				 "Unable to add entry %s / %d nh (%x) to FIB on sock %d, rc=%d",
-+				 abuf, depth, val, socket, ret);
-+			return ret;
++	/* Get stream for the speculated next node */
++	to_next = rte_node_next_stream_get(graph, node, next_index, nb_objs);
++
++	for (i = 0; i < 4 && i < n_left_from; i++)
++		rte_prefetch0(rte_pktmbuf_mtod_offset(pkts[i], void *,
++					sizeof(struct rte_ether_hdr)));
++
++	i = 0;
++	while (n_left_from >= 4) {
++		if (likely(n_left_from > 7)) {
++
++			/* Prefetch next-next mbufs */
++			if (likely(n_left_from > 11)) {
++				rte_prefetch0(pkts[8]);
++				rte_prefetch0(pkts[9]);
++				rte_prefetch0(pkts[10]);
++				rte_prefetch0(pkts[11]);
++			}
++
++			/* Prefetch next mbuf data */
++			rte_prefetch0(rte_pktmbuf_mtod_offset(pkts[4], void *,
++					sizeof(struct rte_ether_hdr)));
++			rte_prefetch0(rte_pktmbuf_mtod_offset(pkts[5], void *,
++					sizeof(struct rte_ether_hdr)));
++			rte_prefetch0(rte_pktmbuf_mtod_offset(pkts[6], void *,
++					sizeof(struct rte_ether_hdr)));
++			rte_prefetch0(rte_pktmbuf_mtod_offset(pkts[7], void *,
++					sizeof(struct rte_ether_hdr)));
 +		}
++
++		mbuf0 = pkts[0];
++		mbuf1 = pkts[1];
++		mbuf2 = pkts[2];
++		mbuf3 = pkts[3];
++		pkts += 4;
++		n_left_from -= 4;
++		/* Extract DIP of mbuf0 */
++		ipv6_hdr = rte_pktmbuf_mtod_offset(mbuf0, struct rte_ipv6_hdr *,
++				sizeof(struct rte_ether_hdr));
++		/* Extract hop_limits as ipv6 hdr is in cache */
++		node_mbuf_priv1(mbuf0, dyn)->ttl = ipv6_hdr->hop_limits;
++
++		ip[i++] = ipv6_hdr->dst_addr;
++
++		/* Extract DIP of mbuf1 */
++		ipv6_hdr = rte_pktmbuf_mtod_offset(mbuf1, struct rte_ipv6_hdr *,
++				sizeof(struct rte_ether_hdr));
++		/* Extract hop_limits as ipv6 hdr is in cache */
++		node_mbuf_priv1(mbuf1, dyn)->ttl = ipv6_hdr->hop_limits;
++
++		ip[i++] = ipv6_hdr->dst_addr;
++
++		/* Extract DIP of mbuf2 */
++		ipv6_hdr = rte_pktmbuf_mtod_offset(mbuf2, struct rte_ipv6_hdr *,
++				sizeof(struct rte_ether_hdr));
++		/* Extract hop_limits as ipv6 hdr is in cache */
++		node_mbuf_priv1(mbuf2, dyn)->ttl = ipv6_hdr->hop_limits;
++
++		ip[i++] = ipv6_hdr->dst_addr;
++
++		/* Extract DIP of mbuf3 */
++		ipv6_hdr = rte_pktmbuf_mtod_offset(mbuf3, struct rte_ipv6_hdr *,
++				sizeof(struct rte_ether_hdr));
++		/* Extract hop_limits as ipv6 hdr is in cache */
++		node_mbuf_priv1(mbuf3, dyn)->ttl = ipv6_hdr->hop_limits;
++
++		ip[i++] = ipv6_hdr->dst_addr;
++	}
++	while (n_left_from > 0) {
++		mbuf0 = pkts[0];
++		pkts += 1;
++		n_left_from -= 1;
++
++		/* Extract DIP of mbuf0 */
++		ipv6_hdr = rte_pktmbuf_mtod_offset(mbuf0, struct rte_ipv6_hdr *,
++				sizeof(struct rte_ether_hdr));
++		/* Extract hop_limits as ipv6 hdr is in cache */
++		node_mbuf_priv1(mbuf0, dyn)->ttl = ipv6_hdr->hop_limits;
++
++		ip[i++] = ipv6_hdr->dst_addr;
 +	}
 +
-+	return 0;
++	rte_fib6_lookup_bulk(fib, ip, next_hop, nb_objs);
++
++	for (i = 0; i < nb_objs; i++) {
++		mbuf0 = (struct rte_mbuf *)objs[i];
++		node_mbuf_priv1(mbuf0, dyn)->nh = (uint16_t)next_hop[i];
++		next = (uint16_t)(next_hop[i] >> 16);
++
++		if (unlikely(next_index ^ next)) {
++			/* Copy things successfully speculated till now */
++			rte_memcpy(to_next, from, last_spec * sizeof(from[0]));
++			from += last_spec;
++			to_next += last_spec;
++			held += last_spec;
++			last_spec = 0;
++
++			rte_node_enqueue_x1(graph, node, next, from[0]);
++			from += 1;
++		} else {
++			last_spec += 1;
++		}
++
++		if (unlikely(next_hop[i] == FIB6_DEFAULT_NH))
++			lookup_err += 1;
++	}
++
++	/* !!! Home run !!! */
++	if (likely(last_spec == nb_objs)) {
++		rte_node_next_stream_move(graph, node, next_index);
++		return nb_objs;
++	}
++
++	NODE_INCREMENT_XSTAT_ID(node, 0, lookup_err != 0, lookup_err);
++	held += last_spec;
++	rte_memcpy(to_next, from, last_spec * sizeof(from[0]));
++	rte_node_next_stream_put(graph, node, next_index, held);
++
++	return nb_objs;
 +}
 +
- static int
- setup_fib6(int socket)
- {
-diff --git a/lib/node/rte_node_ip6_api.h b/lib/node/rte_node_ip6_api.h
-index 1d2b190724..31089b35fc 100644
---- a/lib/node/rte_node_ip6_api.h
-+++ b/lib/node/rte_node_ip6_api.h
-@@ -86,6 +86,25 @@ int rte_node_ip6_rewrite_add(uint16_t next_hop, uint8_t *rewrite_data,
- __rte_experimental
- int rte_node_ip6_fib_create(int socket, struct rte_fib6_conf *conf);
+ RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_node_ip6_fib_create, 25.07)
+ int
+ rte_node_ip6_fib_create(int socket, struct rte_fib6_conf *conf)
+@@ -159,6 +306,7 @@ static struct rte_node_xstats ip6_lookup_fib_xstats = {
+ };
  
-+/**
-+ * Add IPv6 route to FIB.
-+ *
-+ * @param ip
-+ *   IPv6 address of route to be added.
-+ * @param depth
-+ *   Depth of the rule to be added.
-+ * @param next_hop
-+ *   Next hop id of the rule result to be added.
-+ * @param next_node
-+ *   Next node to redirect traffic to.
-+ *
-+ * @return
-+ *   0 on success, negative otherwise.
-+ */
-+__rte_experimental
-+int rte_node_ip6_fib_route_add(const struct rte_ipv6_addr *ip, uint8_t depth, uint16_t next_hop,
-+			       enum rte_node_ip6_lookup_next next_node);
-+
- #ifdef __cplusplus
- }
- #endif
+ static struct rte_node_register ip6_lookup_fib_node = {
++	.process = ip6_lookup_fib_node_process,
+ 	.name = "ip6_lookup_fib",
+ 
+ 	.init = ip6_lookup_fib_node_init,
 -- 
 2.25.1
 
