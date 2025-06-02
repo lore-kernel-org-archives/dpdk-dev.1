@@ -2,152 +2,153 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44246C54FB3
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Jun 2025 11:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F89C5AD49
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Jun 2025 11:53:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8DF414028E;
-	Mon,  2 Jun 2025 13:47:00 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id B2FBC4025E
- for <dev@dpdk.org>; Mon,  2 Jun 2025 13:46:58 +0200 (CEST)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 552894Hi004539
- for <dev@dpdk.org>; Mon, 2 Jun 2025 04:46:57 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 517A64028E;
+	Mon,  2 Jun 2025 13:53:37 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 631284025E
+ for <dev@dpdk.org>; Mon,  2 Jun 2025 13:53:36 +0200 (CEST)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5521jF8O013934
+ for <dev@dpdk.org>; Mon, 2 Jun 2025 04:53:35 -0700
 Received: from nam12-bn8-obe.outbound.protection.outlook.com
- (mail-bn8nam12on2105.outbound.protection.outlook.com [40.107.237.105])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 47186dreeg-1
+ (mail-bn8nam12on2122.outbound.protection.outlook.com [40.107.237.122])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 470bpa2ect-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Mon, 02 Jun 2025 04:46:57 -0700 (PDT)
+ for <dev@dpdk.org>; Mon, 02 Jun 2025 04:53:35 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vlfkkd2FwguUCMwQzF2tT6Gtz2pqMd4vhiHy08K5Bz/NRKo7dJrXY5+8E057Oxtv9yjW2SuE/6pwN9KOQumSE+JloUX+qADRLHHeqKPVjX80Fct9G1iBsAcPn/8ESMyEbPBj2D9A93eF359UDvwD0yDdE+ek0Bl+pS6IsTv+9ZLfERC+3WxDzAZtBcxa7WuEPrRUo6fdG0Tqe2w2ieKieh5SUeqqDz3I+vM6DsGTSohsIWoFbMDeu4VgrLWLrkiGTvg25XlSI7bIjyjAFBBw1xFJVOWlaX1gJbnZmTT9RvBLQ6omClo3AJXV1xiP96V5NfxBTDuNktNz2/bt+WeH/A==
+ b=ifRzD3Yibxspps2UmElHJGfjfJX8a+NS3v5DJOlt+fS2GzQi4ZfGtUyDZOwHM7T83WQNMAuyvanZ4RANaRQhYvANZTla8Rj2jCbNN0OwZYIqeWk77yazdqZnpJzfc7Ife/NZmDlu5YOFqfr7+p/zwIJ24v10scVe8pVkltKjfjB1pGqbXjsvmS8P+jgntX3XgBw+/RElh8MVaLYIsTGR7YbH8NhdqQ8EN/l4V9Sroo2KiGSzyROhQosl4eXLQNO0cPavRRqunWR/LsR3T57afFIWKutgDejNlj2AKJdMBPfc60g1CmhH9OahZBsJYAjQoA3Iqcwr6wciffNwlOiWYQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4FAgJZwktgvsX7HqSeer3AnqaXSZFBdAU3HnT40wvDE=;
- b=TC45QDUr6pEAuUz64hPNpEpQAkUbXA3IFZ/OJ7oihFNQX0Lez829SmtoOF4Men7XOFXWDIsocAeHoGZUu2bUiJBjcCgtZsj/dKJlA70QlIPk5v5j+qgVq6HmjOdt52vjvcmRbnm9FlaRUz2eVhiNuDbj60BcemxzBtW/tmXEecuMXbkWa+ORQtnNEZpvcTkSTegMTCXkk46Q0ZoiMFR+BashrtDYZgNNYrB0s8ws2A0gm+W8dHUjf1D5zBaR4O6i3rVFdaxlf9Cr2ND873i9oEunNAQ3NABwPfPebpWJ7qMcC6faLuu54GUdhfrKnZWgFx1+JPYwl04hLDneXVsprg==
+ bh=QyL76oYLy1jWa8owmEAAIO05TMo+gfhlvYD6DLdhPMQ=;
+ b=y18/G7duP/kMwtkCK0oUp2STneBZxEKnaZf3W36kvA2OZx+xZaqx00PRBFj5eEB+RBJjq2eO6laYfUkhHkJLHNSvn54uUJgBQPaUdHmb2YmUMu9jL3O7+N9JeYDbla4QG66w8nyn4FmlZBC6o8I7NI7AALfdpUMbWecN/F8V5v24RuMOg9rO3iD8R6vzURy72UrIDUhxlwa3lEEf14yMwZIlbVe+6rBtsvRgKSiixxa2X9q0zNL2vKy9vi+udu3g1zxnvfMs48i1+Q60VmvbzkBnVYyS3MlmOAB413W3327r3BSwnnHCxHdJLhKOc1hd50KtlbtWU/BQ9pXTMgPQHA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
  dkim=pass header.d=marvell.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4FAgJZwktgvsX7HqSeer3AnqaXSZFBdAU3HnT40wvDE=;
- b=QLuEAzBu12yH2Unrv/WULExTJIka9yOw7evYBhRWp7qsaIvxrlQMphLOynScTVM3ynyMCbEUGWdl/Fr/zLhIuAVuOe5ljq1Azipy7U01ZP3QXV666EIO/ENnBsS2Ocf0oe51yZXCjZ+Zf+eB5rHDsY91MNkFjPWpREcK6yB/UnU=
+ bh=QyL76oYLy1jWa8owmEAAIO05TMo+gfhlvYD6DLdhPMQ=;
+ b=HQdusRstFLIaTpkVyjiDgoZc+hEBVFADYjQ4zToNci7IeCFJjty6sHDv9Jp4JY6uoyutuG/5m6a/baA+B036ow1nRED8MJxfoozBxFqVgzTysetuV7KNsYV0ES2oMpQfCCjZS7YtkypOW0LF6zKACGqOjGWzdD6nFkO2uaBbPq4=
 Received: from CO6PR18MB4484.namprd18.prod.outlook.com (2603:10b6:5:359::9) by
  BY3PR18MB4708.namprd18.prod.outlook.com (2603:10b6:a03:3cb::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.37; Mon, 2 Jun
- 2025 11:46:52 +0000
+ 2025 11:53:33 +0000
 Received: from CO6PR18MB4484.namprd18.prod.outlook.com
  ([fe80::3c98:dd36:4897:a51d]) by CO6PR18MB4484.namprd18.prod.outlook.com
  ([fe80::3c98:dd36:4897:a51d%4]) with mapi id 15.20.8769.037; Mon, 2 Jun 2025
- 11:46:52 +0000
+ 11:53:32 +0000
 From: Akhil Goyal <gakhil@marvell.com>
 To: Tejasree Kondoj <ktejasree@marvell.com>
 CC: Anoob Joseph <anoobj@marvell.com>, Vidya Sagar Velumuri
  <vvelumuri@marvell.com>, "dev@dpdk.org" <dev@dpdk.org>
 Subject: RE: [PATCH 00/25] add CN20K support to cnxk crypto PMD
 Thread-Topic: [PATCH 00/25] add CN20K support to cnxk crypto PMD
-Thread-Index: AQHbzvbNlul8yPh5BkWwRasBUQnNP7PvyfDQ
-Date: Mon, 2 Jun 2025 11:46:52 +0000
-Message-ID: <CO6PR18MB4484450C1C211727EE49EB0BD862A@CO6PR18MB4484.namprd18.prod.outlook.com>
+Thread-Index: AQHbzvbNlul8yPh5BkWwRasBUQnNP7PvyfDQgAAB/HA=
+Date: Mon, 2 Jun 2025 11:53:32 +0000
+Message-ID: <CO6PR18MB4484DCBF14E6172020D563ABD862A@CO6PR18MB4484.namprd18.prod.outlook.com>
 References: <20250527110205.2300800-1-ktejasree@marvell.com>
-In-Reply-To: <20250527110205.2300800-1-ktejasree@marvell.com>
+ <CO6PR18MB4484450C1C211727EE49EB0BD862A@CO6PR18MB4484.namprd18.prod.outlook.com>
+In-Reply-To: <CO6PR18MB4484450C1C211727EE49EB0BD862A@CO6PR18MB4484.namprd18.prod.outlook.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-ms-publictraffictype: Email
 x-ms-traffictypediagnostic: CO6PR18MB4484:EE_|BY3PR18MB4708:EE_
-x-ms-office365-filtering-correlation-id: ce3a696e-c14b-4885-57a6-08dda1cb2a85
+x-ms-office365-filtering-correlation-id: bcb921c0-700b-4694-155f-08dda1cc1979
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0; ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?4NTh6/xJV2NJkR1KeUt6ZlEEegqaruMv84kcoGQdQbrcQNx83RHHKPWTrTMw?=
- =?us-ascii?Q?JkrekWGJgju2kfB2yWr5G+wrn8996FvNJXHUNCZcTnnHwTqJ3S6/7PPcdbC+?=
- =?us-ascii?Q?y31z9BMlk/cRmY14lsH0e+Sfcgrl07xvQxIs8IK0XiPzM7bKzxMTKcDg1+SE?=
- =?us-ascii?Q?4PB3L+9MXxLMyDoHExDQpokm7OP4aYs0/zSpwe4O5OWe3G/ay88g/tPmTbQc?=
- =?us-ascii?Q?YyKbeqQd6PUJyeLbbhIpcja0uAjYd/GO4/8yZSYfNn4PdI/PBPqWhzqBVwzy?=
- =?us-ascii?Q?1u7MzrOI+5rKlTu9/LOpGaAx/9Ah++mQekHpFAU35pPjWb+AtjEyNfkkj1wT?=
- =?us-ascii?Q?eYUvw1rebw+e+WjOoDIOWfzFrnpf3op78G4xyKBgHUb8QDSRNre3NF/ZF9R7?=
- =?us-ascii?Q?Ea7Px6dPnDHe3MQMLvkuD3/quRfHkO9uDT4pDrO3BpmiWhwunPYgefrdZKv1?=
- =?us-ascii?Q?O0bPo8uEbB1qYH3SBbje+q7Vvy0PehlXcPgWl/5mWcxyGGr9ODg8biEofcFN?=
- =?us-ascii?Q?aj2n+7i7OssWk+wtJKyk5YzYFua6j06iA+pJ4OnZtrxerpYTM8KPbS1gdWG2?=
- =?us-ascii?Q?FrlDNE0zc5lVp4fGu/N9U8VPJmg8GokL4ByJIaTq8kT+kQHH2WbefiQEDkD1?=
- =?us-ascii?Q?jVPxqJ/n/K/T/I3V1QuGw8nmKP+jBKgPi2K0PqPLwnJympmA0vLmB9tPwf4b?=
- =?us-ascii?Q?XRrcodjOjbYHDwbh5Vf4KGhNZ7wkFv621dFgAMQJwHgxIygtWS/4ze/WDebt?=
- =?us-ascii?Q?DDorsL+oRNozNL2YQGWbDLNm6YV+WTTDKhmVSqT5oocvpc8Lzn+F0cHc8WbJ?=
- =?us-ascii?Q?tKXjWfM5Du3ZZANflZu1jwceRy42MX8KCdEq2DXziLA5cfIejY1ZEipHjaWd?=
- =?us-ascii?Q?EGOtoG9suJ1ItI34SLEHPDqr0dhEEkfSGO5ZVxYa59NEEfUAPrOJIUtRRC/u?=
- =?us-ascii?Q?7R/6WvcGy+i/NgiKRrg/m9MHOR2S6ofnAmXsfuwDeqFEcGJ92uQpBVpq3e/n?=
- =?us-ascii?Q?Z+DJFjKA+7UP5Mvf5k1ilXAtMlt68v8hZOXpxtXujayKy/p+LTm03K4U+s86?=
- =?us-ascii?Q?uHswRiTE2Qn6Xlyd3VEp/xc6LuwOWIQDds/u/MMUNfN3iM8Xqai1TKqsHsmv?=
- =?us-ascii?Q?1mQmxp63qCl3cpMle2EwzfwNFawpQAc2565W+edHNXrhEugM50qyMyv661eP?=
- =?us-ascii?Q?DjXPQjgKIPd/WawJA7G0uRUMzsAYHBkK0Va8bPVKLPFb8Lv+d3tPtilXX7xw?=
- =?us-ascii?Q?a6BDW6R2bUmqK+ujams3AnOIQVt7+8hsJU9PG5srG6KghJLKF9+HdOYXUmiN?=
- =?us-ascii?Q?nUfSusd/IktxDNyEj1tpEWx8gPOfr0sN2AlzLLsp8bkFJv4XdpX3jF4s9lvM?=
- =?us-ascii?Q?qOrUJnWyUCFVVtbXEBw87hCWUVo37uRev4AC6gQ3OoVTHKOzxpYNwHz1m9a4?=
- =?us-ascii?Q?zlOey0zHkUXOzjhGxbX3CW0SLS2VXk9LsMWJNx0+qlq5djpM4qs8O07SbZ7/?=
- =?us-ascii?Q?DNqf+YZdRaP1Bec=3D?=
+x-microsoft-antispam-message-info: =?us-ascii?Q?eReLChgufRwYxRqFTitna1J44fL5EHSLtZbtxkokK6UujAS4GAOXWuW0EEwp?=
+ =?us-ascii?Q?9p8Su3/uQF1ovVeDUbepmXD/2p9VDDM6x1QE9EB7brflaNc/hgPeydSRjrAy?=
+ =?us-ascii?Q?X18oEhK5rjY9tAwpryCuSdtmsTb6jN5azU3enUWrBJ8L1V5hZsGBO3SHjTt/?=
+ =?us-ascii?Q?j1AMu9/2LKIfGTlpBJwLBL4RpwqxLUYkuAorJ+MGqVgPS9nFvVDX7ilgAObM?=
+ =?us-ascii?Q?4UYA/hKKaRMabxQ7V+An23DHyGePp5DZAHdC1p9LCI1W5Qr7qKcRIqt04MCo?=
+ =?us-ascii?Q?fxCZPZiDHusEi4O5G3Zp80BIQ362LBDG36sPupg9kTvOF5Z2p2liTV5cAYVX?=
+ =?us-ascii?Q?X7CDQaGgJgx/hBJadbQF6J34K/cZTLwmX6JULlJ2BA4D7H9bN8N5Q+y6RzRT?=
+ =?us-ascii?Q?GkdQjzgiuyfjG1K7fp2Ja5QO178Tijx969aCJTM7Gf9v1HLiQOmKoQFwaeMX?=
+ =?us-ascii?Q?aGxaj9I7YVcLuSsHEl6U88fmmyPfBq/p6R9O6bQRH6eihO1X4+Qsg+3e4+BY?=
+ =?us-ascii?Q?XUB3uhrY7713Zqwsjciu8kymxF7ZRtHUQ2NDS2j+3JoppHNDgd5t6G8w/gP8?=
+ =?us-ascii?Q?Z00cm10fmUQQdt6icayYImhaLzcAmP3kFvKnwGH0BTfYH3Mkw1igF8sDlu5l?=
+ =?us-ascii?Q?O6H7rfGxGPLpRXPtgBqf4+VrZdYOBcZrjuO2dPapd/F32Z36rd77uUDqy9mL?=
+ =?us-ascii?Q?bdr7KGeM9j7fZoU2M6vnsVubTvhTyIHhI/Ei/+KgzCP+3OzkE4vfbEDV9UvO?=
+ =?us-ascii?Q?o0fYfaMYArDNy74Fx+Z2q7DQXUxWatJqz7SzfRO3Sz7RE43B9M/YGYj8ay0Y?=
+ =?us-ascii?Q?a9k5JyiMD4WiobyyuHu0AOZoYspfuOZRnGATGBingqzX54Ftn9WyrKcfq9dF?=
+ =?us-ascii?Q?91tOE5C+jx7X5Ge2/NI9ZPg/8qOH+PqzwaBK/Oa6PbIycrux7Us4EHZJnHwe?=
+ =?us-ascii?Q?c5jUPoMwCwPzQiD5Ruet0YrLZlonom9+X71D3um7NTBegnavDk4IlU8yHOea?=
+ =?us-ascii?Q?wDkoQCsqv4nP97IPrYhHwXo/muJlTBNgVahgQw9+vXUrByInkmsjimzSoHhJ?=
+ =?us-ascii?Q?iLLvaXWDTBZb4SfNGBHVDZFUv96MqQelVCiCT2d+IL52ZgwNz6VAXoq3DX0v?=
+ =?us-ascii?Q?D2JEOqgL/NhlVUeICXff3DOPleyC3eYoH+P9DRaUx6TqGckr1P6oCW208yu7?=
+ =?us-ascii?Q?wuc5jmMYU/Zk5FOlalmktgp0d4ENgSroswomNDjKDr+14Jp95/Y1pBOL0Ysj?=
+ =?us-ascii?Q?+LmpQasiOP28EERnuEj0j4O+QCAlkgKdWAzzbAay3h5UVqJ93EbcIhGy5Ag3?=
+ =?us-ascii?Q?Agg7rSBktaeJ/cRsZfOZcn1wnITpM0w60nKmZulY3i/+k8uv66PfTzK/sLEv?=
+ =?us-ascii?Q?fUku8DiiCKtp4PaUq0jRiIuklb7oUXPP5LuU4GqrxfbjSwLhAscduuK+lM0A?=
+ =?us-ascii?Q?OAZQChZlZxUWTzPzT05q5kVDcUWakL2IJQlGpB2LRdAHFw5TMTQZXIBFof+R?=
+ =?us-ascii?Q?cCK1KboosVQDRz8=3D?=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:CO6PR18MB4484.namprd18.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(366016)(376014)(1800799024)(38070700018); DIR:OUT; SFP:1102; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?0rFLJd5AbpdjTcOGOsRRwp9SVSfhj6U5UBUxW5PxYFYPaGCzGV+JInyjRAKj?=
- =?us-ascii?Q?iXuOys6Rzw5eXcO2Uwf+Ty9wlAbLULdccyPo1s6q2QGGrIdTz3J8+SlSVJre?=
- =?us-ascii?Q?nsQSnhHo3zqUsY0LO8wWnYnxXrPT7I3hi9uk5RXOqiCspIOfGdn0cTJJMeQj?=
- =?us-ascii?Q?gXz9BFnVZPuLYaMKkFiTR5n0WSvXaiqxHwfelNnU7lKc0WDj3H14OmAfbZN2?=
- =?us-ascii?Q?WoZE8A3fjYRryISEYboPWiVsedZFV2MTRrlxTX/R46TLCm012ILd/i56HsDN?=
- =?us-ascii?Q?1n+e5puWFTxZsFW5rxDMz195GrAsOLIBgCw3eg0jkWrnQVt8ZLdpm+F9b2Bv?=
- =?us-ascii?Q?wZ2uGk/xflzy2DWJLORPdaVuQ8oofP+MUUGT57s1Noac31OuNew1ygWaS/zX?=
- =?us-ascii?Q?9k4zoyvlKbzbfvOOJtSk8OPo6V3OS+8NaPnJlTSMg1bKLfraQZIRTIDjBSB7?=
- =?us-ascii?Q?93tL7/u/GURL+u6ju0zB33h2ompK/xPvVXGYmYRMQqb4E9ePN3/SkVRdS1Qo?=
- =?us-ascii?Q?BEvjE7mlFY2IwBnknp9mkY+53nmQqi1vofQJ3SmrrxTvXXP49zeMAYdnXbUT?=
- =?us-ascii?Q?l4PnPDNioNAGC0eaMg8tjuW7FQ22s3MwWSvLs8R/dzBtzXFoGsNHsHhGkSGo?=
- =?us-ascii?Q?tx14C5FqGg5cFOLNTvtIcPrId01K/Nf4PZMsRz8shi26O0xL7DbP7T+2uRAR?=
- =?us-ascii?Q?q0mt+qYnZgNOes4CnjdMoHZICUpOBkxuVjRUgGO9M1JYPEl8daAmrTDeMrQO?=
- =?us-ascii?Q?QElJSjX+PB3Bh0P7WpHM4Fk13rYAZHfN0S49B0LxrJMvd4jPG4f51e0oqEP2?=
- =?us-ascii?Q?HXRBXA1T/W/0Hha8Op4nkPUk19tx8dxV/FFXF8JIFZHX48n0Y2M1NtiSgfJh?=
- =?us-ascii?Q?tJzegTUhYem8y2dANEpA6kGmDPvksc7mlyZcoo8Z1wzZIGXgjVSSxwlUnQ2n?=
- =?us-ascii?Q?DXO1bo5r5iibRNssF4nN2w/CvAbsangU8zk/aG13emEckHKYUY8WEPDz0ecW?=
- =?us-ascii?Q?sFdJ7qlRlWi75Kl372OlAmIGOWNdARsp9pFyD2SQoM9q1LP5SduExrC/gFP1?=
- =?us-ascii?Q?5O3aZW1821y7hPP8rPNBNhoWQdOa9o6CfRGVRH/9khaVeJ3HYXAteY2Thlhx?=
- =?us-ascii?Q?4GlTTZU9GjM+Ay5AXAEZadkiEyz5Hp7eagz0wBXswcd14LtNInk0C9TkBlNi?=
- =?us-ascii?Q?PN4jviWwmYFepzjIb6YIbhvJr+1K9UIefJ3bdpabH8yJhusUKmqc5CC/d7uw?=
- =?us-ascii?Q?5WvpcR5Ty3eeRE+Onp2A5rqGk6uGZLpSSuKDZjBHtK9gdy4/aVFJdC9KZ0Bm?=
- =?us-ascii?Q?yaIdoxtVxjXksz5y5X3tSkqfGnHnV+60x0lAOBW47yD7j6YxWBKmIg2Abywc?=
- =?us-ascii?Q?FNBpYbziWIWOWwa/uEWflpVF2e+f/Me2ExvevRiqKh6Mf4BSy3wwP4ufJnF8?=
- =?us-ascii?Q?o7bYOt8VKtw9FgQX7+XBYlA7XPTmtEu0cEXaOl8GKN1LU4qhCK5iewH+jSJP?=
- =?us-ascii?Q?MpKROQ08q6P5c500iRxiDASLPp4zuMIieELDI+8FS0mwzMrFAKltBm/jyTdu?=
- =?us-ascii?Q?dy+PpDfBkwoD4Q0B8n0=3D?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?sfdsTZmwMMxc1W1Deow0x4tj3m8pZG5aIXp6bCewRi8WzV5iDEHit72IkiDq?=
+ =?us-ascii?Q?lzBcMGCbwqt8Ldk3SYV22LQnHs/NUbvfNjBu98pR15zfu8c4v+yuVqvP5aZC?=
+ =?us-ascii?Q?zmLY42IbWFxhVs1c+960Q0egI++Hmo6z10lrscTbSmzu/QFyVT55M5uxv/Jh?=
+ =?us-ascii?Q?OJRhBzf3C/VSPI6W8xbnKIXg3PX/sfAem42QLCEtzqk3RBT9H22A25iPXsi4?=
+ =?us-ascii?Q?XtAjq/ASxboKBMo7sgD1ZLJ5KQadhsPXUo287KOllQzTLBQRZXvAD7V3ntSA?=
+ =?us-ascii?Q?wHoWY7rKcFWW9wnokkLlwa5lI8i1Fal2aMGCMg15WHgtF1EzjgRqH95Ww8aW?=
+ =?us-ascii?Q?ZWG1JbeOHhQwzgBqgf4EPb4A2xfZC5H4fJJLPB/mA2DFyjVAQfgl8/3iYDjT?=
+ =?us-ascii?Q?NdmkLtvhQ0v/K5nxT2PGBbeN3t6BldFPjW3byg+tl9X9HFl0PaFXJE+yBjA0?=
+ =?us-ascii?Q?pryvLruvlRCHcoA7zBaeh4I3DrF7tXYEr5wLuzlecB8pUd8/NJj4OZmkPr92?=
+ =?us-ascii?Q?4TpCjqc+HxGXcuOZu8kZTERwS9u+dS1A3nNXTtQIdoZepghdMGOVFDDRVafG?=
+ =?us-ascii?Q?bUHRXlavS2Tllq1HpfIckvz87CwA0MFlW+lqjtIq5iFh86Q51vqtvXPj8Jte?=
+ =?us-ascii?Q?ILpx8xAa4YrIfKZ8erNI6UmkBqsUOZDk9Mzlpdv1X7cz34wb19Sr/PZwpg1O?=
+ =?us-ascii?Q?PDmy8RFtgnha+UvqAOF0lmotEf/gNxlX2I3sTQAHWi+xoKl7YAGoDwE2WpRo?=
+ =?us-ascii?Q?ZAJ/lDLYoU4lLseoVVVj/MvPkBCK8UcDJECASoT27wi9LxoL7apXiYDHk/iV?=
+ =?us-ascii?Q?ZeNLYX5IKaq2VMZxeCAQQWtGjk2uPQSKLNvxF5NJt88M92vRcZJzLbBNSHWc?=
+ =?us-ascii?Q?w82OXk17notoIvNSw9Jlph/W1HDw/bnxwK7tltCrx2UgnOyBS3fYgEU09mSQ?=
+ =?us-ascii?Q?NVPiFAfrLGK3n3bOvHPC4DeUqzn7oyUo3SCpAQ0io5foElRooFWmCQtW+//B?=
+ =?us-ascii?Q?tNgDPfoogvPT0KF2+YgPk4Av8/MiBpRIBi5v7620BPMm+43POxuCJK0FI01v?=
+ =?us-ascii?Q?zBS67ay9gttU/mUsqZMmaPJejqsgXQmTeyUvSM1CsV++OYgpJSMYHaSox4P+?=
+ =?us-ascii?Q?7pqkmcylDSu95PcDronYYx9v/y3mgbRM+mFbu1YHx2ILkScAvOQngFS8bOPH?=
+ =?us-ascii?Q?CwMhTj6NyOp3csvLuWL5iawjobBry5d4ZhBF9YjXMaoKTXb9Bph2gghVBHP1?=
+ =?us-ascii?Q?2kz2zWPDIDzjs4ODH9UWbDIXy5BWv4d4tcus1q/uWKpeovHR9wCmXyWEvIA3?=
+ =?us-ascii?Q?KPt3Q6nReuO6V032e3ISuoRASoVxH1N2TyUL3Xq9FUP3FpTQhpydUC4jonNE?=
+ =?us-ascii?Q?wPHvGb3vbi8Zo8JosS68MVmfzsiwKjG/OqpG2U4/UOGdVyhOBH+oz8p8dDmC?=
+ =?us-ascii?Q?fvy/rwQPkc3USVNSFsL4I1h/bwwhDB3uFQCNJSdL6+sZ0JhHgrTG18hoEGRH?=
+ =?us-ascii?Q?5gyEk9vH/UQyt0YzgAmEngN5PvOgpk4eoZZTh9OJD3A5Ccu8zfsYXo54a2uC?=
+ =?us-ascii?Q?xga4trwq97aD1nkxCMY=3D?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: marvell.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: CO6PR18MB4484.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ce3a696e-c14b-4885-57a6-08dda1cb2a85
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jun 2025 11:46:52.0264 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bcb921c0-700b-4694-155f-08dda1cc1979
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jun 2025 11:53:32.9136 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: H3qDs0WfYRL9jqdgF4xkt/7QNAECHUYIw8oPodIkQjEAUeHg8cTgqKYDU0RYLcTHuRN+CMgSLkwUrE7GobTq6A==
+X-MS-Exchange-CrossTenant-userprincipalname: 1gobb69fihjNWe9ynFC14Z7IM9FjwWHdMgnwWn1XubgU9jKAidEQnrPR2ukWosEEHbQAEdPb1Qpurl7sNm9JQw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY3PR18MB4708
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAyMDEwMSBTYWx0ZWRfXwkUO0A2lIEQU
- PDK1X3Y1OEmUkWoRXjMIM8jOqL1Fy7dBxCA+nvelxx4txEqxB3CjhRwDtkcdHZluLpXsFenePhl
- GAKJFmwZprggqCDPyvt734cIIOSi+cSQrXDLfmPzjfgcoB/BJCR3sh7XX1bSAwUt/b+43PAzkR4
- XeycRxbOjp9oqKz3wpr+CB0UYbjbz/ygIGcGfuyf0zfIv3bSzrJEi0lwIua8C4+YAS/nAtL9V9U
- TlA6hvwQjDcqB0xOCE213Bpjpiuhd54KxujDBqLBnFFks7woUoplwuVesg2UYH8bI1ilFwRF3W4
- i3ojyMRs5J6VL9I5lEGAAIZcFsQsptNaSf5//Xxo4bePBNhR0zgJgdV4q+1tykm8SbaVe2Qqg8u
- oFhSy8ZSQaqwSHQNGO6nIgEUM2wHHqsrdfyGjUiKUkg5gof5TcPNRIZIu+thZBbXNWkgYYZi
-X-Proofpoint-ORIG-GUID: KgLiLsq10VaaLnR0GVKWEqMNyQz5bT5f
-X-Proofpoint-GUID: KgLiLsq10VaaLnR0GVKWEqMNyQz5bT5f
-X-Authority-Analysis: v=2.4 cv=aoGyCTZV c=1 sm=1 tr=0 ts=683d8f31 cx=c_pps
- a=IWBKlLGroRVvC9/lYsYQWQ==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+X-Authority-Analysis: v=2.4 cv=MJNgmNZl c=1 sm=1 tr=0 ts=683d90bf cx=c_pps
+ a=A3v3qn6PhMMR3Z1noSFPxA==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
  a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
  a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=6IFa9wvqVegA:10 a=-AAbraWEqlQA:10 a=ivIPmE0RtOkxCvsByzIA:9 a=CjuIK1q_8ugA:10
+ a=6IFa9wvqVegA:10 a=-AAbraWEqlQA:10 a=89AEe5TETISvge3HjHAA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: yP_IiUo_qahg00kmhltQkC0eHqXptKSX
+X-Proofpoint-GUID: yP_IiUo_qahg00kmhltQkC0eHqXptKSX
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAyMDEwMiBTYWx0ZWRfX2eKW29ge7eQB
+ b8HRIWajl8KI2cqCq5ES4bH64kPe2CXFOvZMwsp/p8QL79WM8rlZO+DcMA15EEXckfLsLAHP8pL
+ ARunA3Nvi9pB24M7UkrlHG2cJ2ktZWwkmyowX1wCO6Uh4olxEjdIkWwPxLXw8d0clzWr6GVmtwD
+ wGSvt1XHWjTQAnZSAdHbZZ6qtOseOoUie932947dlosOL0RVoOlmWqH4jPxlpRy8uTyG03SgRTH
+ UKH1tl/DfF8bA06dul9GAmp5L2EyQFc5c2CHuHkHItPckUCM3Ii6CzbNQggQn8nqgwZ2XHHPgXx
+ PiOSPLHkeAi6a9HLbbYGF7fsFqmVvBUwGF9dXtn/nhBW+jfFXybnz4bL4N/scXISshvngtZPN/Y
+ 7Ffpt8tHSgaemgp2HymWgkJKtDDsUpqEcNCXOqXPHuYBWzMjuW3xmc9ZCssqMemsII4iHy+Q
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-02_05,2025-05-30_01,2025-03-28_01
@@ -164,129 +165,148 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Please fix individual patch compilation
+Also update release notes.
 
-[2/34] Compiling C object drivers/libtmp_rte_crypto_cnxk.a.p/crypto_cnxk_cn=
-20k_cryptodev_ops.c.o
-FAILED: drivers/libtmp_rte_crypto_cnxk.a.p/crypto_cnxk_cn20k_cryptodev_ops.=
-c.o
-ccache gcc -Idrivers/libtmp_rte_crypto_cnxk.a.p -Idrivers -I../drivers -Idr=
-ivers/crypto/cnxk -I../drivers/crypto/cnxk -Ilib/net -I../lib/net -Idrivers=
-/event/cnxk -I../drivers/event/cnxk -Ilib/cryptodev -I../lib/cryptodev -Ili=
-b/eal/common -I../lib/eal/common -I. -I.. -Iconfig -I../config -Ilib/eal/in=
-clude -I../lib/eal/include -Ilib/eal/linux/include -I../lib/eal/linux/inclu=
-de -Ilib/eal/x86/include -I../lib/eal/x86/include -I../kernel/linux -Ilib/e=
-al -I../lib/eal -Ilib/kvargs -I../lib/kvargs -Ilib/log -I../lib/log -Ilib/m=
-etrics -I../lib/metrics -Ilib/telemetry -I../lib/telemetry -Ilib/mbuf -I../=
-lib/mbuf -Ilib/mempool -I../lib/mempool -Ilib/ring -I../lib/ring -Ilib/rcu =
--I../lib/rcu -Idrivers/bus/pci -I../drivers/bus/pci -I../drivers/bus/pci/li=
-nux -Ilib/pci -I../lib/pci -Idrivers/common/cnxk -I../drivers/common/cnxk -=
-Ilib/ethdev -I../lib/ethdev -Ilib/meter -I../lib/meter -Ilib/security -I../=
-lib/security -Ilib/eventdev -I../lib/eventdev -Ilib/hash -I../lib/hash -Ili=
-b/timer -I../lib/timer -Ilib/dmadev -I../lib/dmadev -fdiagnostics-color=3Da=
-lways -D_FILE_OFFSET_BITS=3D64 -Wall -Winvalid-pch -Wextra -Werror -std=3Dc=
-11 -O2 -g -include rte_config.h -Wvla -Wcast-qual -Wdeprecated -Wformat -Wf=
-ormat-nonliteral -Wformat-security -Wmissing-declarations -Wmissing-prototy=
-pes -Wnested-externs -Wold-style-definition -Wpointer-arith -Wsign-compare =
--Wstrict-prototypes -Wundef -Wwrite-strings -Wno-packed-not-aligned -Wno-mi=
-ssing-field-initializers -D_GNU_SOURCE -fPIC -march=3Dnative -mrtm -DALLOW_=
-EXPERIMENTAL_API -DALLOW_INTERNAL_API -Wno-format-truncation -Wno-address-o=
-f-packed-member -Wno-vla -DLA_IPSEC_DEBUG -DCNXK_CRYPTODEV_DEBUG -DRTE_LOG_=
-DEFAULT_LOGTYPE=3Dpmd.crypto.cnxk -MD -MQ drivers/libtmp_rte_crypto_cnxk.a.=
-p/crypto_cnxk_cn20k_cryptodev_ops.c.o -MF drivers/libtmp_rte_crypto_cnxk.a.=
-p/crypto_cnxk_cn20k_cryptodev_ops.c.o.d -o drivers/libtmp_rte_crypto_cnxk.a=
-.p/crypto_cnxk_cn20k_cryptodev_ops.c.o -c ../drivers/crypto/cnxk/cn20k_cryp=
-todev_ops.c
-../drivers/crypto/cnxk/cn20k_cryptodev_ops.c: In function 'cn20k_cpt_set_en=
-qdeq_fns':
-../drivers/crypto/cnxk/cn20k_cryptodev_ops.c:54:73: error: unused parameter=
- 'vf' [-Werror=3Dunused-parameter]
-   54 | cn20k_cpt_set_enqdeq_fns(struct rte_cryptodev *dev, struct cnxk_cpt=
-_vf *vf)
-      |                                                     ~~~~~~~~~~~~~~~=
-~~~~~^~
-cc1: all warnings being treated as errors
-[3/34] Compiling C object drivers/libtmp_rte_crypto_cnxk.a.p/crypto_cnxk_cn=
-20k_cryptodev.c.o
-ninja: build stopped: subcommand failed.
-
-
-> Subject: [PATCH 00/25] add CN20K support to cnxk crypto PMD
+> Subject: RE: [PATCH 00/25] add CN20K support to cnxk crypto PMD
 >=20
-> This series adds CN20K support to cnxk crypto PMD.
+> Please fix individual patch compilation
 >=20
-> Tejasree Kondoj (3):
->   crypto/cnxk: move debug dumps to common
->   crypto/cnxk: add Rx inject in security lookaside
->   doc: update CN20K CPT documentation
+> [2/34] Compiling C object
+> drivers/libtmp_rte_crypto_cnxk.a.p/crypto_cnxk_cn20k_cryptodev_ops.c.o
+> FAILED:
+> drivers/libtmp_rte_crypto_cnxk.a.p/crypto_cnxk_cn20k_cryptodev_ops.c.o
+> ccache gcc -Idrivers/libtmp_rte_crypto_cnxk.a.p -Idrivers -I../drivers -
+> Idrivers/crypto/cnxk -I../drivers/crypto/cnxk -Ilib/net -I../lib/net -
+> Idrivers/event/cnxk -I../drivers/event/cnxk -Ilib/cryptodev -I../lib/cryp=
+todev -
+> Ilib/eal/common -I../lib/eal/common -I. -I.. -Iconfig -I../config -Ilib/e=
+al/include -
+> I../lib/eal/include -Ilib/eal/linux/include -I../lib/eal/linux/include -
+> Ilib/eal/x86/include -I../lib/eal/x86/include -I../kernel/linux -Ilib/eal=
+ -I../lib/eal -
+> Ilib/kvargs -I../lib/kvargs -Ilib/log -I../lib/log -Ilib/metrics -I../lib=
+/metrics -
+> Ilib/telemetry -I../lib/telemetry -Ilib/mbuf -I../lib/mbuf -Ilib/mempool =
+-
+> I../lib/mempool -Ilib/ring -I../lib/ring -Ilib/rcu -I../lib/rcu -Idrivers=
+/bus/pci -
+> I../drivers/bus/pci -I../drivers/bus/pci/linux -Ilib/pci -I../lib/pci -
+> Idrivers/common/cnxk -I../drivers/common/cnxk -Ilib/ethdev -I../lib/ethde=
+v -
+> Ilib/meter -I../lib/meter -Ilib/security -I../lib/security -Ilib/eventdev=
+ -
+> I../lib/eventdev -Ilib/hash -I../lib/hash -Ilib/timer -I../lib/timer -Ili=
+b/dmadev -
+> I../lib/dmadev -fdiagnostics-color=3Dalways -D_FILE_OFFSET_BITS=3D64 -Wal=
+l -
+> Winvalid-pch -Wextra -Werror -std=3Dc11 -O2 -g -include rte_config.h -Wvl=
+a -
+> Wcast-qual -Wdeprecated -Wformat -Wformat-nonliteral -Wformat-security -
+> Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wold-style-
+> definition -Wpointer-arith -Wsign-compare -Wstrict-prototypes -Wundef -
+> Wwrite-strings -Wno-packed-not-aligned -Wno-missing-field-initializers -
+> D_GNU_SOURCE -fPIC -march=3Dnative -mrtm -DALLOW_EXPERIMENTAL_API -
+> DALLOW_INTERNAL_API -Wno-format-truncation -Wno-address-of-packed-
+> member -Wno-vla -DLA_IPSEC_DEBUG -DCNXK_CRYPTODEV_DEBUG -
+> DRTE_LOG_DEFAULT_LOGTYPE=3Dpmd.crypto.cnxk -MD -MQ
+> drivers/libtmp_rte_crypto_cnxk.a.p/crypto_cnxk_cn20k_cryptodev_ops.c.o -M=
+F
+> drivers/libtmp_rte_crypto_cnxk.a.p/crypto_cnxk_cn20k_cryptodev_ops.c.o.d =
+-o
+> drivers/libtmp_rte_crypto_cnxk.a.p/crypto_cnxk_cn20k_cryptodev_ops.c.o -c
+> ../drivers/crypto/cnxk/cn20k_cryptodev_ops.c
+> ../drivers/crypto/cnxk/cn20k_cryptodev_ops.c: In function
+> 'cn20k_cpt_set_enqdeq_fns':
+> ../drivers/crypto/cnxk/cn20k_cryptodev_ops.c:54:73: error: unused paramet=
+er
+> 'vf' [-Werror=3Dunused-parameter]
+>    54 | cn20k_cpt_set_enqdeq_fns(struct rte_cryptodev *dev, struct cnxk_c=
+pt_vf
+> *vf)
+>       |                                                     ~~~~~~~~~~~~~=
+~~~~~~~^~
+> cc1: all warnings being treated as errors
+> [3/34] Compiling C object
+> drivers/libtmp_rte_crypto_cnxk.a.p/crypto_cnxk_cn20k_cryptodev.c.o
+> ninja: build stopped: subcommand failed.
 >=20
-> Vidya Sagar Velumuri (22):
->   crypto/cnxk: add probe for cn20k crypto device
->   crypto/cnxk: add ops skeleton for cn20k
->   crypto/cnxk: add dev info get
->   crypto/cnxk: add skeletion for enq deq functions
->   crypto/cnxk: add lmtst routines for cn20k
->   crypto/cnxk: add enqueue function support
->   crypto/cnxk: add cryptodev dequeue support for cn20k
->   crypto/cnxk: add rte security skeletion for cn20k
->   crypto/cnxk: add security session creation
->   crypto/cnxk: add security session destroy
->   crypto/cnxk: move code to common
->   crypto/cnxk: add rte sec session update
->   crypto/cnxk: add rte security datapath handling
->   crypto/cnxk: add skeleton for tls
->   crypto/cnxk: add tls write session creation
->   crypto/cnxk: add tls read session creation
->   crypto/cnxk: add tls session destroy
->   crypto/cnxk: add enq and dequeue support for TLS
->   crypto/cnxk: tls post process
->   crypto/cnxk: add tls session update
->   crypto/cnxk: support raw API for cn20k
->   crypto/cnxk: add model check for cn20k
 >=20
->  doc/guides/cryptodevs/cnxk.rst                |   26 +-
->  doc/guides/cryptodevs/features/cn20k.ini      |  113 ++
->  drivers/common/cnxk/roc_cpt.h                 |    7 +-
->  drivers/common/cnxk/roc_ie_ow_tls.h           |  233 +++
->  drivers/crypto/cnxk/cn10k_cryptodev.c         |   12 +-
->  drivers/crypto/cnxk/cn10k_cryptodev_ops.c     |  125 +-
->  drivers/crypto/cnxk/cn10k_cryptodev_sec.h     |   14 -
->  drivers/crypto/cnxk/cn10k_ipsec.c             |    4 +-
->  drivers/crypto/cnxk/cn10k_tls.c               |    4 +-
->  drivers/crypto/cnxk/cn20k_cryptodev.c         |  158 ++
->  drivers/crypto/cnxk/cn20k_cryptodev.h         |   13 +
->  drivers/crypto/cnxk/cn20k_cryptodev_ops.c     | 1278 +++++++++++++++++
->  drivers/crypto/cnxk/cn20k_cryptodev_ops.h     |   85 ++
->  drivers/crypto/cnxk/cn20k_cryptodev_sec.c     |  137 ++
->  drivers/crypto/cnxk/cn20k_cryptodev_sec.h     |   64 +
->  drivers/crypto/cnxk/cn20k_ipsec.c             |  378 +++++
->  drivers/crypto/cnxk/cn20k_ipsec.h             |   41 +
->  drivers/crypto/cnxk/cn20k_ipsec_la_ops.h      |  199 +++
->  drivers/crypto/cnxk/cn20k_tls.c               |  917 ++++++++++++
->  drivers/crypto/cnxk/cn20k_tls.h               |   40 +
->  drivers/crypto/cnxk/cn20k_tls_ops.h           |  250 ++++
->  drivers/crypto/cnxk/cnxk_cryptodev.c          |   14 +-
->  .../crypto/cnxk/cnxk_cryptodev_capabilities.c |   10 +-
->  drivers/crypto/cnxk/cnxk_cryptodev_ops.c      |  119 +-
->  drivers/crypto/cnxk/cnxk_cryptodev_ops.h      |   34 +-
->  drivers/crypto/cnxk/cnxk_ipsec.h              |    2 +
->  drivers/crypto/cnxk/meson.build               |    5 +
->  27 files changed, 4117 insertions(+), 165 deletions(-)
->  create mode 100644 doc/guides/cryptodevs/features/cn20k.ini
->  create mode 100644 drivers/common/cnxk/roc_ie_ow_tls.h
->  create mode 100644 drivers/crypto/cnxk/cn20k_cryptodev.c
->  create mode 100644 drivers/crypto/cnxk/cn20k_cryptodev.h
->  create mode 100644 drivers/crypto/cnxk/cn20k_cryptodev_ops.c
->  create mode 100644 drivers/crypto/cnxk/cn20k_cryptodev_ops.h
->  create mode 100644 drivers/crypto/cnxk/cn20k_cryptodev_sec.c
->  create mode 100644 drivers/crypto/cnxk/cn20k_cryptodev_sec.h
->  create mode 100644 drivers/crypto/cnxk/cn20k_ipsec.c
->  create mode 100644 drivers/crypto/cnxk/cn20k_ipsec.h
->  create mode 100644 drivers/crypto/cnxk/cn20k_ipsec_la_ops.h
->  create mode 100644 drivers/crypto/cnxk/cn20k_tls.c
->  create mode 100644 drivers/crypto/cnxk/cn20k_tls.h
->  create mode 100644 drivers/crypto/cnxk/cn20k_tls_ops.h
->=20
-> --
-> 2.25.1
+> > Subject: [PATCH 00/25] add CN20K support to cnxk crypto PMD
+> >
+> > This series adds CN20K support to cnxk crypto PMD.
+> >
+> > Tejasree Kondoj (3):
+> >   crypto/cnxk: move debug dumps to common
+> >   crypto/cnxk: add Rx inject in security lookaside
+> >   doc: update CN20K CPT documentation
+> >
+> > Vidya Sagar Velumuri (22):
+> >   crypto/cnxk: add probe for cn20k crypto device
+> >   crypto/cnxk: add ops skeleton for cn20k
+> >   crypto/cnxk: add dev info get
+> >   crypto/cnxk: add skeletion for enq deq functions
+> >   crypto/cnxk: add lmtst routines for cn20k
+> >   crypto/cnxk: add enqueue function support
+> >   crypto/cnxk: add cryptodev dequeue support for cn20k
+> >   crypto/cnxk: add rte security skeletion for cn20k
+> >   crypto/cnxk: add security session creation
+> >   crypto/cnxk: add security session destroy
+> >   crypto/cnxk: move code to common
+> >   crypto/cnxk: add rte sec session update
+> >   crypto/cnxk: add rte security datapath handling
+> >   crypto/cnxk: add skeleton for tls
+> >   crypto/cnxk: add tls write session creation
+> >   crypto/cnxk: add tls read session creation
+> >   crypto/cnxk: add tls session destroy
+> >   crypto/cnxk: add enq and dequeue support for TLS
+> >   crypto/cnxk: tls post process
+> >   crypto/cnxk: add tls session update
+> >   crypto/cnxk: support raw API for cn20k
+> >   crypto/cnxk: add model check for cn20k
+> >
+> >  doc/guides/cryptodevs/cnxk.rst                |   26 +-
+> >  doc/guides/cryptodevs/features/cn20k.ini      |  113 ++
+> >  drivers/common/cnxk/roc_cpt.h                 |    7 +-
+> >  drivers/common/cnxk/roc_ie_ow_tls.h           |  233 +++
+> >  drivers/crypto/cnxk/cn10k_cryptodev.c         |   12 +-
+> >  drivers/crypto/cnxk/cn10k_cryptodev_ops.c     |  125 +-
+> >  drivers/crypto/cnxk/cn10k_cryptodev_sec.h     |   14 -
+> >  drivers/crypto/cnxk/cn10k_ipsec.c             |    4 +-
+> >  drivers/crypto/cnxk/cn10k_tls.c               |    4 +-
+> >  drivers/crypto/cnxk/cn20k_cryptodev.c         |  158 ++
+> >  drivers/crypto/cnxk/cn20k_cryptodev.h         |   13 +
+> >  drivers/crypto/cnxk/cn20k_cryptodev_ops.c     | 1278 +++++++++++++++++
+> >  drivers/crypto/cnxk/cn20k_cryptodev_ops.h     |   85 ++
+> >  drivers/crypto/cnxk/cn20k_cryptodev_sec.c     |  137 ++
+> >  drivers/crypto/cnxk/cn20k_cryptodev_sec.h     |   64 +
+> >  drivers/crypto/cnxk/cn20k_ipsec.c             |  378 +++++
+> >  drivers/crypto/cnxk/cn20k_ipsec.h             |   41 +
+> >  drivers/crypto/cnxk/cn20k_ipsec_la_ops.h      |  199 +++
+> >  drivers/crypto/cnxk/cn20k_tls.c               |  917 ++++++++++++
+> >  drivers/crypto/cnxk/cn20k_tls.h               |   40 +
+> >  drivers/crypto/cnxk/cn20k_tls_ops.h           |  250 ++++
+> >  drivers/crypto/cnxk/cnxk_cryptodev.c          |   14 +-
+> >  .../crypto/cnxk/cnxk_cryptodev_capabilities.c |   10 +-
+> >  drivers/crypto/cnxk/cnxk_cryptodev_ops.c      |  119 +-
+> >  drivers/crypto/cnxk/cnxk_cryptodev_ops.h      |   34 +-
+> >  drivers/crypto/cnxk/cnxk_ipsec.h              |    2 +
+> >  drivers/crypto/cnxk/meson.build               |    5 +
+> >  27 files changed, 4117 insertions(+), 165 deletions(-)
+> >  create mode 100644 doc/guides/cryptodevs/features/cn20k.ini
+> >  create mode 100644 drivers/common/cnxk/roc_ie_ow_tls.h
+> >  create mode 100644 drivers/crypto/cnxk/cn20k_cryptodev.c
+> >  create mode 100644 drivers/crypto/cnxk/cn20k_cryptodev.h
+> >  create mode 100644 drivers/crypto/cnxk/cn20k_cryptodev_ops.c
+> >  create mode 100644 drivers/crypto/cnxk/cn20k_cryptodev_ops.h
+> >  create mode 100644 drivers/crypto/cnxk/cn20k_cryptodev_sec.c
+> >  create mode 100644 drivers/crypto/cnxk/cn20k_cryptodev_sec.h
+> >  create mode 100644 drivers/crypto/cnxk/cn20k_ipsec.c
+> >  create mode 100644 drivers/crypto/cnxk/cn20k_ipsec.h
+> >  create mode 100644 drivers/crypto/cnxk/cn20k_ipsec_la_ops.h
+> >  create mode 100644 drivers/crypto/cnxk/cn20k_tls.c
+> >  create mode 100644 drivers/crypto/cnxk/cn20k_tls.h
+> >  create mode 100644 drivers/crypto/cnxk/cn20k_tls_ops.h
+> >
+> > --
+> > 2.25.1
 
