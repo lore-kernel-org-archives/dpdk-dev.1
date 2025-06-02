@@ -2,74 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA73CC5B552
-	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Jun 2025 20:46:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FA0EC54FB3
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Jun 2025 06:36:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 574154026B;
-	Sun,  1 Jun 2025 22:46:41 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4CDFE40270;
+	Mon,  2 Jun 2025 08:36:54 +0200 (CEST)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 9F5AE40268
- for <dev@dpdk.org>; Sun,  1 Jun 2025 22:46:38 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id A47544026B
+ for <dev@dpdk.org>; Mon,  2 Jun 2025 08:36:52 +0200 (CEST)
 Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 551KY8UY006527
- for <dev@dpdk.org>; Sun, 1 Jun 2025 13:46:37 -0700
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5521jF5Y013924;
+ Sun, 1 Jun 2025 23:36:51 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=N
- O/BPyaewH4bb1oMVoytSumPDaoDl0Sd3S3X914pquM=; b=ZEuYcNAsVhAec8D/u
- dtKOmfOAQji5h4f7Z20zbRayGT5N10mI+bkq9Zg4BUVBrCCjlLrBHl0TJM0p3wJH
- 3JXfHi6sIVXcPy+HDXK3IRksaK8HrdLtE16GQxKAtpW7iq/DHdVYe+gWLQI1eCPs
- JgmjXmplZFwryQYs/u9Wghm0dC5n73S0ReVOVbscR8kEdCYbFvhrAoY5wQBlKFlS
- t6ws/dDa+eRM9hHHZvEwHkuz7BWD3PNKcrvjWyJykZHOv3nLT2JEvrmEJybuHHHZ
- /vSdLmkG6zsOjLpW03paXXaLrCp/AQbz1XkV4r50q+aa/f5W6tGM3WMQpzdusKa7
- g7j0Q==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=k
+ Mc/G21E8/sQ0kH50ArHNO0cheJm9bikQhfcBoJbX1Y=; b=lFEhvYwTVVIgFhVfx
+ qqWvbNBFj5yMQe/cDiCaMqZ8sVt7j5/N6rmJpqOZHaVLRIvv0WV00gzEUvRGx0yX
+ hiAb+dsYkbz11t0EVGishTQYvhQ23ehoTWX5sw5j7ihJfjHhJ4KBfqbqg5pIx0Wy
+ 1KGNHbNKtBLc3eu6+X670U/2gwCz1oVoMfyZzZw52If3U57wI+iOLQYQIRhr5V2l
+ 9lctJ1/YwWILUgyPJeXGfkSDOhmUMs673ynL6jEQmUal3xD3k9Zge57huo5eDqNl
+ Q2mf+GDZCUhRNLOjzUaG2NpTWbrz093MZv/tKtL+zk/jU2S/0W+IjvIqcKVscnvS
+ 7i+2g==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 470bpa1358-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Sun, 01 Jun 2025 13:46:37 -0700 (PDT)
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 470bpa1t55-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Sun, 01 Jun 2025 23:36:51 -0700 (PDT)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Sun, 1 Jun 2025 13:46:36 -0700
+ 15.2.1544.4; Sun, 1 Jun 2025 23:36:49 -0700
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Sun, 1 Jun 2025 13:46:36 -0700
-Received: from LYYJYPGKF4.marvell.com (unknown [10.28.164.240])
- by maili.marvell.com (Postfix) with ESMTP id 8B6C13F705B;
- Sun,  1 Jun 2025 13:46:32 -0700 (PDT)
-From: <pbhagavatula@marvell.com>
-To: <jerinj@marvell.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>, "Kiran
- Kumar K" <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>,
- Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>,
- "Pavan Nikhilesh" <pbhagavatula@marvell.com>,
- Shijith Thotton <sthotton@marvell.com>
-CC: <dev@dpdk.org>
-Subject: [PATCH v2] event/cnxk: add event vector adapter support
-Date: Mon, 2 Jun 2025 02:16:25 +0530
-Message-ID: <20250601204626.98998-1-pbhagavatula@marvell.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250530163436.56579-1-pbhagavatula@marvell.com>
-References: <20250530163436.56579-1-pbhagavatula@marvell.com>
+ Transport; Sun, 1 Jun 2025 23:36:49 -0700
+Received: from localhost.localdomain (unknown [10.28.36.185])
+ by maili.marvell.com (Postfix) with ESMTP id E64A73F704B;
+ Sun,  1 Jun 2025 23:36:46 -0700 (PDT)
+From: Ankur Dwivedi <adwivedi@marvell.com>
+To: <dev@dpdk.org>
+CC: <jerinj@marvell.com>, <vladimir.medvedkin@intel.com>,
+ <ndabilpuram@marvell.com>, <pbhagavatula@marvell.com>,
+ <skori@marvell.com>, <rkudurumalla@marvell.com>, <nsaxena@marvell.com>,
+ Ankur Dwivedi <adwivedi@marvell.com>
+Subject: [PATCH v3 00/14] add lookup fib nodes in graph library
+Date: Mon, 2 Jun 2025 12:06:25 +0530
+Message-ID: <20250602063639.198550-1-adwivedi@marvell.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250509064448.724019-1-adwivedi@marvell.com>
+References: <20250509064448.724019-1-adwivedi@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=MJNgmNZl c=1 sm=1 tr=0 ts=683cbc2d cx=c_pps
+X-Authority-Analysis: v=2.4 cv=MJNgmNZl c=1 sm=1 tr=0 ts=683d4683 cx=c_pps
  a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=fgU79axJwWEwFkpbp-oA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: vLeRrbgJacoGBBSlagQXRttGGKcE3O8j
-X-Proofpoint-GUID: vLeRrbgJacoGBBSlagQXRttGGKcE3O8j
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAxMDE4MSBTYWx0ZWRfX6/4LonH5RIgv
- CJ1TQxXUuVYs4rLFVh7+7a4L4bAoP6mwaR54NIpB/KoSFwvGGAysDmiccpmyZQGkHZohQB9Z7dE
- qWqnM3kdOcGqhwDzPtJTakx6grvOQOrl343nW5E6KhRvyhx1XGIDJoLybw6N9+TNFCoH1bY5/Cq
- 0vfIL7v9eaDgOd2ebzaATUeILi5gSKOIOkrjNz50CL8j71ce8gBRdsLk8mnfApjdOfwMDbUSRyg
- Nw9nve2V7FPf3n6dUUweXeRT6Ljp3iUzAHuMukdPXqiS/EEndBVroHqawFRR+2uwmzenYT/rT2J
- DSOGPbb6IDEzYdUg1c4kodtydhd6cq8pXsQi/8t5zDF/qp1zsL6ceDrnld0AJUV8KF8SHmsGU8a
- TUkdallsmrmAYxe6ScAiPP3POJ/qQrkOciLN7lBEukLyKPXGe6FdVZ0U2mj0vOr6ZFFuyjQp
+ a=6IFa9wvqVegA:10 a=4tAOc5THTaw21q7mBqQA:9
+X-Proofpoint-ORIG-GUID: 7iclJIcvHNppivJ43YmuCmBcCeahwaQ1
+X-Proofpoint-GUID: 7iclJIcvHNppivJ43YmuCmBcCeahwaQ1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAyMDA1NSBTYWx0ZWRfX8/F/1Rcqzd4I
+ ueeyK5XSUbhV+BYHhEgoqRNPTSPMJ157aR9AbnTV0nvj445vdUBJtwKqbM7dLIezrKNsNFGgHxI
+ GQPCAybxe7YXaWbhl3VUYDJjidxZV7F3wTA+G+cJElRd7FCtk79uz3FCQ0RqOsMlm59FC7w0MJp
+ +rNbdYnCdxpHrdX4xA7ZaowaUeprn9n2DAsZXlKfqtrzwYbd6eWRe/i3nD1PZZgeGrw/UQH/boT
+ F0alIFLAi5LVbU5GTkfiAhWbyguxGSZtcnCmkGblHFEH9pn3MJKlaU4iYAxq2nBqKRPKE/dWyWz
+ 30OXtiv7AAS6Su6GtX6U5fHxdDcKyZAnE2gRPpQvePWAhCfLAOv4ud9C4C3URqtLnqA8lI60MNO
+ 1hbJVGR+oLo8VqdkmtEUTl6no0Ir6VLdPpqv6HRPm+mfaK3F0NeBOjUyIFqft5NyhmJAJ4uJ
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-01_09,2025-05-30_01,2025-03-28_01
+ definitions=2025-06-02_02,2025-05-30_01,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,292 +81,71 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Pavan Nikhilesh <pbhagavatula@marvell.com>
+This patch series adds two inbuilt nodes ip4_lookup_fib and
+ip6_lookup_fib in graph library. These nodes uses the existing
+Forwarding Information Base (FIB) library to create FIB, to do
+route addition and route lookup.
 
-Add event vector adapter support to CN20K event device.
+Two new commands (for ipv4 and ipv6) for providing the lookup mode
+is added in the dpdk-graph application. fib or lpm can be given as
+lookup mode. If these new lookup mode commands are not given, the
+dpdk-graph uses lpm (Longest Prefix Match) or lpm6 by default.
+If fib is given as lookup mode then the ip4_lookup_fib or ip6_lookup_fib
+nodes are used by the application.
 
-Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
----
- Depends-on: series-35336 (introduce event vector adapter)
- v2 Changes:
- - Add depends on series tag.
- - Fix compilation.
+v3:
+- Added FIB inbuilt nodes in graph guide.
 
- drivers/common/cnxk/roc_sso.c          |   4 +-
- drivers/common/cnxk/roc_sso.h          |   2 +-
- drivers/event/cnxk/cn20k_eventdev.c    |   8 +-
- drivers/event/cnxk/cnxk_vector_adptr.c | 148 +++++++++++++++++++++++++
- drivers/event/cnxk/cnxk_vector_adptr.h |  22 ++++
- drivers/event/cnxk/meson.build         |   1 +
- 6 files changed, 181 insertions(+), 4 deletions(-)
- create mode 100644 drivers/event/cnxk/cnxk_vector_adptr.c
- create mode 100644 drivers/event/cnxk/cnxk_vector_adptr.h
+v2:
+- Fixed build failure in DPDK CI.
+- Changed the prefetch code in process functions. Also removed the
+  prefetch of mbuf obj as it was not improving performance.
+- Added code to control fib configuration from dpdk-graph application.
+- Added the packet classification next nodes id in public header file,
+  so that they can be used by library and application.
+- Changed the macro FIB_DEFAULT_NH to point to pkt drop node.
 
-diff --git a/drivers/common/cnxk/roc_sso.c b/drivers/common/cnxk/roc_sso.c
-index 4996329018fb..1d82e5b9782c 100644
---- a/drivers/common/cnxk/roc_sso.c
-+++ b/drivers/common/cnxk/roc_sso.c
-@@ -514,7 +514,8 @@ sso_agq_op_wait(struct roc_sso *roc_sso, uint16_t hwgrp)
- }
+Ankur Dwivedi (14):
+  fib: move macro to header file
+  node: add IP4 lookup FIB node
+  node: add IP4 FIB route add
+  node: add process callback for IP4 FIB
+  node: move next nodes to public header file
+  node: add next node in packet classification
+  app/graph: add IP4 lookup mode command
+  fib: move macro to header file
+  node: add IP6 lookup FIB node
+  node: add IP6 FIB route add
+  node: add process callback for IP6 FIB
+  node: add next node in packet classification
+  app/graph: add IP6 lookup mode command
+  doc: add FIB nodes in graph guide
 
- int
--roc_sso_hwgrp_agq_alloc(struct roc_sso *roc_sso, uint16_t hwgrp, struct roc_sso_agq_data *data)
-+roc_sso_hwgrp_agq_alloc(struct roc_sso *roc_sso, uint16_t hwgrp, struct roc_sso_agq_data *data,
-+			uint32_t *agq_id)
- {
- 	struct sso *sso = roc_sso_to_sso_priv(roc_sso);
- 	struct sso_aggr_setconfig *req;
-@@ -621,6 +622,7 @@ roc_sso_hwgrp_agq_alloc(struct roc_sso *roc_sso, uint16_t hwgrp, struct roc_sso_
+ app/graph/commands.list                       |   2 +
+ app/graph/ip4_route.c                         |  34 +-
+ app/graph/ip6_route.c                         |  33 +-
+ app/graph/l3fwd.c                             |  70 ++++
+ app/graph/module_api.h                        |  13 +
+ doc/guides/prog_guide/graph_lib.rst           |  32 ++
+ .../img/graph_inbuilt_node_flow.svg           | 150 ++++----
+ doc/guides/tools/graph.rst                    |  24 +-
+ lib/fib/rte_fib.c                             |   3 -
+ lib/fib/rte_fib.h                             |   3 +
+ lib/fib/rte_fib6.c                            |  11 +-
+ lib/fib/rte_fib6.h                            |   3 +
+ lib/node/ip4_lookup_fib.c                     | 332 ++++++++++++++++++
+ lib/node/ip6_lookup_fib.c                     | 322 +++++++++++++++++
+ lib/node/meson.build                          |   5 +-
+ lib/node/pkt_cls.c                            |  35 +-
+ lib/node/pkt_cls_priv.h                       |   7 -
+ lib/node/rte_node_ip4_api.h                   |  34 ++
+ lib/node/rte_node_ip6_api.h                   |  34 ++
+ lib/node/rte_node_pkt_cls_api.h               |  39 ++
+ 20 files changed, 1062 insertions(+), 124 deletions(-)
+ create mode 100644 lib/node/ip4_lookup_fib.c
+ create mode 100644 lib/node/ip6_lookup_fib.c
+ create mode 100644 lib/node/rte_node_pkt_cls_api.h
 
- 	plt_wmb();
- 	sso->agg_used[hwgrp]++;
-+	*agq_id = off;
-
- 	return 0;
- }
-diff --git a/drivers/common/cnxk/roc_sso.h b/drivers/common/cnxk/roc_sso.h
-index f73128087a53..f1ad34bcc745 100644
---- a/drivers/common/cnxk/roc_sso.h
-+++ b/drivers/common/cnxk/roc_sso.h
-@@ -112,7 +112,7 @@ int __roc_api roc_sso_hwgrp_stash_config(struct roc_sso *roc_sso,
- void __roc_api roc_sso_hws_gwc_invalidate(struct roc_sso *roc_sso, uint8_t *hws,
- 					  uint8_t nb_hws);
- int __roc_api roc_sso_hwgrp_agq_alloc(struct roc_sso *roc_sso, uint16_t hwgrp,
--				      struct roc_sso_agq_data *data);
-+				      struct roc_sso_agq_data *data, uint32_t *agq_id);
- void __roc_api roc_sso_hwgrp_agq_free(struct roc_sso *roc_sso, uint16_t hwgrp, uint32_t agq_id);
- void __roc_api roc_sso_hwgrp_agq_release(struct roc_sso *roc_sso, uint16_t hwgrp);
- uint32_t __roc_api roc_sso_hwgrp_agq_from_tag(struct roc_sso *roc_sso, uint16_t hwgrp, uint32_t tag,
-diff --git a/drivers/event/cnxk/cn20k_eventdev.c b/drivers/event/cnxk/cn20k_eventdev.c
-index 0688cf97e5d6..9d68397b88a4 100644
---- a/drivers/event/cnxk/cn20k_eventdev.c
-+++ b/drivers/event/cnxk/cn20k_eventdev.c
-@@ -10,6 +10,7 @@
- #include "cn20k_worker.h"
- #include "cnxk_common.h"
- #include "cnxk_eventdev.h"
-+#include "cnxk_vector_adptr.h"
- #include "cnxk_worker.h"
-
- #define CN20K_SET_EVDEV_DEQ_OP(dev, deq_op, deq_ops)                                               \
-@@ -708,11 +709,11 @@ cn20k_sso_rx_adapter_vwqe_enable(struct cnxk_sso_evdev *dev, uint16_t port_id, u
- 	data.vwqe_wait_tmo = queue_conf->vector_timeout_ns / ((SSO_AGGR_DEF_TMO + 1) * 100);
- 	data.xqe_type = 0;
-
--	rc = roc_sso_hwgrp_agq_alloc(&dev->sso, queue_conf->ev.queue_id, &data);
-+	agq = UINT32_MAX;
-+	rc = roc_sso_hwgrp_agq_alloc(&dev->sso, queue_conf->ev.queue_id, &data, &agq);
- 	if (rc < 0)
- 		return rc;
-
--	agq = roc_sso_hwgrp_agq_from_tag(&dev->sso, queue_conf->ev.queue_id, tag_mask, 0);
- 	return agq;
- }
-
-@@ -1081,6 +1082,9 @@ static struct eventdev_ops cn20k_sso_dev_ops = {
-
- 	.timer_adapter_caps_get = cn20k_tim_caps_get,
-
-+	.vector_adapter_caps_get = cnxk_vector_caps_get,
-+	.vector_adapter_info_get = cnxk_vector_info_get,
-+
- 	.xstats_get = cnxk_sso_xstats_get,
- 	.xstats_reset = cnxk_sso_xstats_reset,
- 	.xstats_get_names = cnxk_sso_xstats_get_names,
-diff --git a/drivers/event/cnxk/cnxk_vector_adptr.c b/drivers/event/cnxk/cnxk_vector_adptr.c
-new file mode 100644
-index 000000000000..0495258cbb5c
---- /dev/null
-+++ b/drivers/event/cnxk/cnxk_vector_adptr.c
-@@ -0,0 +1,148 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(C) 2025 Marvell.
-+ */
-+#include <event_vector_adapter_pmd.h>
-+#include <eventdev_pmd.h>
-+
-+#include "roc_api.h"
-+
-+#include "cnxk_eventdev.h"
-+#include "cnxk_vector_adptr.h"
-+#include "cnxk_worker.h"
-+
-+static int
-+cnxk_sso_vector_adapter_create(struct rte_event_vector_adapter *adapter)
-+{
-+	struct rte_event_vector_adapter_conf *conf;
-+	struct cnxk_event_vector_adapter *adptr;
-+	uint32_t agq, tag_mask, stag_mask;
-+	struct roc_sso_agq_data data;
-+	struct cnxk_sso_evdev *dev;
-+	uint8_t queue_id;
-+	int rc;
-+
-+	adptr = rte_zmalloc("cnxk_event_vector_adapter", sizeof(struct cnxk_event_vector_adapter),
-+			    RTE_CACHE_LINE_SIZE);
-+	if (adptr == NULL) {
-+		plt_err("Failed to allocate memory for vector adapter");
-+		return -ENOMEM;
-+	}
-+
-+	conf = &adapter->data->conf;
-+
-+	queue_id = adapter->data->conf.ev.queue_id;
-+	dev = cnxk_sso_pmd_priv(&rte_eventdevs[conf->event_dev_id]);
-+	adapter->data->adapter_priv = adptr;
-+
-+	tag_mask = conf->ev.event & 0xFFFFFFFF;
-+	stag_mask = (conf->ev_fallback.event & 0xFFFFFFFF) >> 20;
-+
-+	memset(&data, 0, sizeof(struct roc_sso_agq_data));
-+	data.tag = tag_mask;
-+	data.tt = conf->ev.sched_type;
-+	data.stag = stag_mask;
-+	data.vwqe_aura = roc_npa_aura_handle_to_aura(conf->vector_mp->pool_id);
-+	data.vwqe_max_sz_exp = rte_log2_u32(conf->vector_sz);
-+	data.vwqe_wait_tmo = conf->vector_timeout_ns / ((SSO_AGGR_DEF_TMO + 1) * 100);
-+	data.xqe_type = 0;
-+
-+	agq = UINT32_MAX;
-+	rc = roc_sso_hwgrp_agq_alloc(&dev->sso, queue_id, &data, &agq);
-+	if (rc < 0 || agq == UINT32_MAX) {
-+		plt_err("Failed to allocate aggregation queue for queue_id=%d", queue_id);
-+		adapter->data->adapter_priv = NULL;
-+		rte_free(adptr);
-+		return rc;
-+	}
-+
-+	adptr->agq = agq;
-+	adptr->tt = SSO_TT_AGG;
-+	adptr->base = roc_sso_hwgrp_base_get(&dev->sso, queue_id);
-+
-+	return 0;
-+}
-+
-+static int
-+cnxk_sso_vector_adapter_destroy(struct rte_event_vector_adapter *adapter)
-+{
-+	struct cnxk_event_vector_adapter *adptr;
-+	struct cnxk_sso_evdev *dev;
-+	uint16_t queue_id;
-+
-+	if (adapter == NULL || adapter->data == NULL)
-+		return -EINVAL;
-+
-+	adptr = adapter->data->adapter_priv;
-+	if (adptr == NULL)
-+		return -EINVAL;
-+
-+	queue_id = adapter->data->conf.ev.queue_id;
-+	dev = cnxk_sso_pmd_priv(&rte_eventdevs[adapter->data->conf.event_dev_id]);
-+
-+	roc_sso_hwgrp_agq_free(&dev->sso, queue_id, adptr->agq);
-+	rte_free(adptr);
-+	adapter->data->adapter_priv = NULL;
-+
-+	return 0;
-+}
-+
-+static int
-+cnxk_sso_vector_adapter_enqueue(struct rte_event_vector_adapter *adapter, uint64_t objs[],
-+				uint16_t num_elem, uint64_t flags)
-+{
-+	struct cnxk_event_vector_adapter *adptr;
-+	uint16_t n = num_elem;
-+	uint64_t add_work0;
-+
-+	adptr = adapter->data->adapter_priv;
-+	plt_wmb();
-+
-+	add_work0 = adptr->agq | ((uint64_t)(adptr->tt) << 32);
-+	roc_store_pair(add_work0 | ((uint64_t)!!(flags & RTE_EVENT_VECTOR_ENQ_SOV) << 34),
-+		       objs[num_elem - n], adptr->base);
-+	while (--n > 1)
-+		roc_store_pair(add_work0, objs[num_elem - n], adptr->base);
-+	if (n)
-+		roc_store_pair(add_work0 | ((uint64_t)!!(flags & RTE_EVENT_VECTOR_ENQ_EOV) << 35),
-+			       objs[num_elem - n], adptr->base);
-+
-+	return num_elem;
-+}
-+
-+static struct event_vector_adapter_ops vector_ops = {
-+	.create = cnxk_sso_vector_adapter_create,
-+	.destroy = cnxk_sso_vector_adapter_destroy,
-+	.enqueue = cnxk_sso_vector_adapter_enqueue,
-+};
-+
-+int
-+cnxk_vector_caps_get(const struct rte_eventdev *evdev, uint32_t *caps,
-+		     const struct event_vector_adapter_ops **ops)
-+{
-+	RTE_SET_USED(evdev);
-+
-+	*caps = RTE_EVENT_VECTOR_ADAPTER_CAP_INTERNAL_PORT;
-+	*ops = &vector_ops;
-+
-+	return 0;
-+}
-+
-+int
-+cnxk_vector_info_get(const struct rte_eventdev *evdev, struct rte_event_vector_adapter_info *info)
-+{
-+	RTE_SET_USED(evdev);
-+	if (info == NULL)
-+		return -EINVAL;
-+
-+	info->max_vector_adapters_per_event_queue =
-+		SSO_AGGR_MAX_CTX > UINT8_MAX ? UINT8_MAX : SSO_AGGR_MAX_CTX;
-+	info->log2_sz = true;
-+	info->min_vector_sz = RTE_BIT32(ROC_NIX_VWQE_MIN_SIZE_LOG2);
-+	info->max_vector_sz = RTE_BIT32(ROC_NIX_VWQE_MAX_SIZE_LOG2);
-+	info->min_vector_timeout_ns = (SSO_AGGR_DEF_TMO + 1) * 100;
-+	info->max_vector_timeout_ns = (BITMASK_ULL(11, 0) + 1) * info->min_vector_timeout_ns;
-+
-+	info->log2_sz = true;
-+
-+	return 0;
-+}
-diff --git a/drivers/event/cnxk/cnxk_vector_adptr.h b/drivers/event/cnxk/cnxk_vector_adptr.h
-new file mode 100644
-index 000000000000..f60b0f4edd89
---- /dev/null
-+++ b/drivers/event/cnxk/cnxk_vector_adptr.h
-@@ -0,0 +1,22 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(C) 2025 Marvell.
-+ */
-+
-+#ifndef __CNXK_VECTOR_ADPTR_H__
-+#define __CNXK_VECTOR_ADPTR_H__
-+
-+#include <rte_event_vector_adapter.h>
-+#include <rte_eventdev.h>
-+
-+struct cnxk_event_vector_adapter {
-+	uint8_t tt;
-+	uint32_t agq;  /**< Aggregation queue ID */
-+	uint64_t base; /**< Base address of the adapter */
-+};
-+
-+int cnxk_vector_caps_get(const struct rte_eventdev *evdev, uint32_t *caps,
-+			 const struct event_vector_adapter_ops **ops);
-+int cnxk_vector_info_get(const struct rte_eventdev *evdev,
-+			 struct rte_event_vector_adapter_info *info);
-+
-+#endif /* __CNXK_VECTOR_ADPTR_H__ */
-diff --git a/drivers/event/cnxk/meson.build b/drivers/event/cnxk/meson.build
-index 9461ae33e443..84cc93e2fd73 100644
---- a/drivers/event/cnxk/meson.build
-+++ b/drivers/event/cnxk/meson.build
-@@ -26,6 +26,7 @@ sources = files(
-         'cnxk_eventdev_stats.c',
-         'cnxk_tim_evdev.c',
-         'cnxk_tim_worker.c',
-+        'cnxk_vector_adptr.c'
- )
-
- disable_template = false
---
-2.39.5 (Apple Git-154)
+-- 
+2.25.1
 
