@@ -2,74 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7791CC5AD49
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Jun 2025 14:32:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A06AC5AD49
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Jun 2025 14:33:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6454A402C8;
-	Tue,  3 Jun 2025 16:32:42 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8DDFA402C8;
+	Tue,  3 Jun 2025 16:33:33 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id EE6244028E
- for <dev@dpdk.org>; Tue,  3 Jun 2025 16:32:39 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id B767C4028E
+ for <dev@dpdk.org>; Tue,  3 Jun 2025 16:33:32 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1748961159;
+ s=mimecast20190719; t=1748961212;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=fTmG3ZNuu7JZ8xlaT4Jz0eSNLwfl+i5HVZTqFySTonA=;
- b=DGJu+1mmiPlhpPdLGhi4cwqMrv4E/ltOm7OvLXYAzaJpK2c2qoVK6LVpCjPNcmRWadH3uF
- ondiL8p3nrgpElmC/SGNUjZDr1DBvGZvvwwEmQhUeGBcZrfW9p/N6qKPK6I0Qo3iXv44Mx
- 0kFHAz91C/i8WldD8UmvMoh/3zYnXqc=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=NkV5w2IckmWqTB9ZzL0C3pNgEW8syPGL9KHpt+6JKb0=;
+ b=EcATWY9i8GlAYTteuOuFlq/+LpfFnI3dkQJBvJ3L4uZBUev1vdZZyeHpdQsz9egNWayePS
+ yw58D5FeDTD+tI5Lx0RxZDVY549xQMKOJH30HxgBcuuVH3ps50UsoQYhHhFY9Hgkkp+XGM
+ TAr8LImHVrDlm9x8kAWgZldFcbatVNk=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-547-vx2zY-5PPfSsQ3yRPhmxOQ-1; Tue, 03 Jun 2025 10:32:38 -0400
-X-MC-Unique: vx2zY-5PPfSsQ3yRPhmxOQ-1
-X-Mimecast-MFC-AGG-ID: vx2zY-5PPfSsQ3yRPhmxOQ_1748961157
-Received: by mail-lf1-f71.google.com with SMTP id
- 2adb3069b0e04-5532f32cbdfso3320333e87.3
- for <dev@dpdk.org>; Tue, 03 Jun 2025 07:32:37 -0700 (PDT)
+ us-mta-25-uF3VSkCIMhybxa7O6M1G8w-1; Tue, 03 Jun 2025 10:33:31 -0400
+X-MC-Unique: uF3VSkCIMhybxa7O6M1G8w-1
+X-Mimecast-MFC-AGG-ID: uF3VSkCIMhybxa7O6M1G8w_1748961210
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-55328b79ec3so2989099e87.0
+ for <dev@dpdk.org>; Tue, 03 Jun 2025 07:33:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1748961156; x=1749565956;
+ d=1e100.net; s=20230601; t=1748961209; x=1749566009;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=fTmG3ZNuu7JZ8xlaT4Jz0eSNLwfl+i5HVZTqFySTonA=;
- b=WW7B9/p3v80+TLLYymJUMMZ0IyJiPpM0UUgefYloyp9yhiqNaYAKVKWWAYHk54jVm5
- Sthq0XX/4QnNSWAReoZ8iuarmM1Lm1CY+FieDLP8qro0ICWhQImTVz0vEisBjKu5lCqr
- +Bimt/D9y3X+mnotIJNTyjfNcU7t+73jrQApPbDvxe6OWPhEpypMNGHhpKPW/eZYkVw/
- pdQTFuPr6UGtNllSlIBOzPl/oY4Da0dt0I8J50bZyzYwPqlkd9RmKX9F8GHxBcnzmlEO
- ZqBpy2osjjQCjzsjsHDpE7UtItuk6QSGTVslC4mqOmxchneQJLMFo7+j5Nmdorq9TNBi
- 8J2A==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWGUK6lR4iRUBliodZdt8nQg0nbuFk/CxX+tt9znYOTo9pyfQcwYC2cYwlRmOFJH25yKc4=@dpdk.org
-X-Gm-Message-State: AOJu0YzGFxxduywy5pZ/m1ELOciYCtzgTW+d2WDmas2uY+sRuPY+yyJk
- 8rzsOAETHwGopzaVqFNX0O2sEemNxOOG0Xfn0fs91LLGucUlyXTmW8EpZl5UAtuqZ4OeZAKIXAg
- QDoK7lyMIOF7MVabad75hURI/zZkGZSPgmtaHSHM5OLrI6G6cwO1fO4aEbP9p142LwJ3dCHTOJs
- 8PB/b0LcnT2FatQYxGPZg=
-X-Gm-Gg: ASbGncuuk9fJ33khaWl53gfiQ/Xdns+nM3Qv4CKk1lzOYHt4Mj6tT7YBkEDFa5ze+AJ
- 25VJCOJBTFiKF/2RosxNtSWqqYOKTnIYxZvq0jIYh1L1K12J3mtTmZQiO4f/87CBBaIzeZCM=
-X-Received: by 2002:a05:6512:220b:b0:553:377a:dac with SMTP id
- 2adb3069b0e04-5533b8e1108mr4542539e87.9.1748961156591; 
- Tue, 03 Jun 2025 07:32:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGSJ6tSRQbqzboIva1M2mSaOt+6Ee74advmVTZ/tqTDrjeKGcsx9OtKI4s11/PjukVdEB8FglUXLxe+ENGkjyk=
-X-Received: by 2002:a05:6512:220b:b0:553:377a:dac with SMTP id
- 2adb3069b0e04-5533b8e1108mr4542532e87.9.1748961156193; Tue, 03 Jun 2025
- 07:32:36 -0700 (PDT)
+ bh=NkV5w2IckmWqTB9ZzL0C3pNgEW8syPGL9KHpt+6JKb0=;
+ b=NLnwe5k1oKFCaeDrpVym36Xn1uR1BeSXD6SETmu9IS5KSWxxZCJUyosvD4OrpZgzWP
+ dI9Z7J/VQ2hHXZhu8pOpLPepl2jjDAY5gGYwvxpqsL+U7aOfgXL5Tyut1SwoFxrKc2hX
+ pXYIGeL/bB/KMsGZZslr9mFaq6CDHVdgfz7l2KpWkBCbXeZ/l9F8A5QSQHbpeL/jNAkz
+ jdzFNCskfbFLCs0IjHGcBYyLq0piDwgePz03y1UQ8PO0ci0TpkwzL7IPPeHUe0C4CJ05
+ yFluFSO1q/Zo2ne7OyNfT3pro+5YJZR8sb5Gx+2F04OKO35iafLyXO86PEWv015GAKn5
+ d07Q==
+X-Gm-Message-State: AOJu0YzlH2Zlcm32XW0L+X5wGN6o/CXbTkABCLHW9Kq0AnlXPBNZidIH
+ R3K7uB8g4a/08ZWilGYaCs086zqQdSHw6eD64+oCsRqIlP2ysdVpCDQ07bhSXJ/hZF6DZFztFwf
+ exmAd2Y2YQMS+xa/BCXgaEOSw9rp5QP7+Rn5ltTSMFs7eIXgFJzu6RT4fOYxkVFuFeB+m4Zcgok
+ g4054Ejt/RMFLP4Rsq8uo=
+X-Gm-Gg: ASbGncuByS1+1WjrDC9C1NvxRISxDBn/0d9Vl7ThHMex4LRfrH28PNC2Mwoz4FzeWr8
+ /nEw6L4+1AsMqxycuHJAzTneA+Yt8J3C5lOYoNjJ7430ZkL9Pe/MftIKN0CRzREgnu9JX+7o=
+X-Received: by 2002:a05:6512:10c9:b0:553:23fe:fbeb with SMTP id
+ 2adb3069b0e04-553531f5535mr764315e87.3.1748961209472; 
+ Tue, 03 Jun 2025 07:33:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE8/dPOeb15ofaoAX00UivuknvDAixjJoOMCCxW7kAghL1+RUTFVMkzLfBh7lQZmz40e868zZRQI9X+srzUgYY=
+X-Received: by 2002:a05:6512:10c9:b0:553:23fe:fbeb with SMTP id
+ 2adb3069b0e04-553531f5535mr764311e87.3.1748961209124; Tue, 03 Jun 2025
+ 07:33:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <1733278801-19296-1-git-send-email-andremue@linux.microsoft.com>
- <1747417002-28419-1-git-send-email-andremue@linux.microsoft.com>
-In-Reply-To: <1747417002-28419-1-git-send-email-andremue@linux.microsoft.com>
+References: <1733281010-23780-1-git-send-email-andremue@linux.microsoft.com>
+ <1747428335-3736-1-git-send-email-andremue@linux.microsoft.com>
+In-Reply-To: <1747428335-3736-1-git-send-email-andremue@linux.microsoft.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 3 Jun 2025 16:32:24 +0200
-X-Gm-Features: AX0GCFvkgUKIW6U-cMJT6z0LcoZtJraGR3zAX6VcezjSFhizzqPgKV4Ppl7T-hc
-Message-ID: <CAJFAV8wo6_diSeiupPnJpp15srTKOa2iBLUGNEYrKbzEH7pUqg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] enable lpm to be compiled with MSVC
+Date: Tue, 3 Jun 2025 16:33:16 +0200
+X-Gm-Features: AX0GCFtaBsJc3GmoTrSjal2JVLHgjqNXOeQKOobASN1Yr151xSj7Xlgh4tDtSzM
+Message-ID: <CAJFAV8xc+WjtM6Zwu5OPLxbsiBXTshxxWeSaLv75=7-4AGnFEw@mail.gmail.com>
+Subject: Re: [PATCH v5 0/2] enable fib to be compiled with MSVC
 To: Andre Muezerie <andremue@linux.microsoft.com>
-Cc: bruce.richardson@intel.com, dev@dpdk.org, vladimir.medvedkin@intel.com
+Cc: dev@dpdk.org, vladimir.medvedkin@intel.com
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: MUZ1bOKTLxkprin_2cwj2ZPhOPJUH404N8Y46O99_lE_1748961157
+X-Mimecast-MFC-PROC-ID: I6LCwMn8C0Z1Tk8MsBMR3gcaiMb0uBpnssL1CA89U9E_1748961210
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -86,13 +84,13 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, May 16, 2025 at 7:37=E2=80=AFPM Andre Muezerie
+On Fri, May 16, 2025 at 10:46=E2=80=AFPM Andre Muezerie
 <andremue@linux.microsoft.com> wrote:
 >
-> This patchset resolves all issues related to lpm that until now prevented
-> it from being built using MSVC.
->
-> After resolving the issues it enables lpm to be compiled with MSVC.
+> This patchset addresses the issues in lib/fib that were preventing
+> compilation with MSVC. The first patch removes a warning about
+> implicit 64-bit conversion, and the second patch enables the
+> compilation of fib with MSVC.
 
 Series applied, thanks.
 
