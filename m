@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B65ACC5AE59
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Jun 2025 11:52:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E35C5AE59
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Jun 2025 11:52:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6FF9E40E1C;
-	Tue,  3 Jun 2025 13:51:16 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8A65940E12;
+	Tue,  3 Jun 2025 13:51:19 +0200 (CEST)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id A1F6740666
- for <dev@dpdk.org>; Tue,  3 Jun 2025 13:51:14 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 552HKnHq010604
- for <dev@dpdk.org>; Tue, 3 Jun 2025 04:51:14 -0700
+ by mails.dpdk.org (Postfix) with ESMTP id 682A940E1F
+ for <dev@dpdk.org>; Tue,  3 Jun 2025 13:51:17 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 553AHu3C017702
+ for <dev@dpdk.org>; Tue, 3 Jun 2025 04:51:16 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=e
- DGqgjGNm146U/8YucTWK+7Cf6GPh7Uru+bq+FnF9LE=; b=APHoy2gSKEiQOoHLo
- AOzVLJF4ydNpuT+YV+BLcZHEXorIoqXEouWCt9rs+k3j4YsDr7CqH/dEcq4Rzqrn
- SNEK0EzKxzS+elhJLP3CkLBX6f19+CM4RfzIkDRBKa99a7qj3s0xzriiqmhxgoxZ
- fNYIch3xJCTmFnsShmOGJe0mMDC3dc0xVfbUx16Qjp9yuNUIvDkKYodc10+v/cfw
- EajKY6PrY0b+tmFeqnfuQsW2FgURbJ6eb7/MW5hQl185BjUWIsrEYgC/sp4c/WDD
- ePA9J+gokzYqvyGjedPtqzvEAYH7fDfveZRNE3rOVMH88vaPKtXszdF5cfJ5TN4e
- unHew==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 471g98hw7u-1
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=G
+ jY+ih8PgtGBTyHtPzDBFVt3exAe6YJ9qi9oGbUSYpA=; b=hX1UO89MY7s5CVZ/H
+ rkJ+BfJfaf72Gkxe6ouVcA3MVhmKlyP50FxpakJ0UsfhdJUagBXrQ0cYvnRM0ipy
+ Z8NkgHUnIsV9T11sBF47TFo1hGLFVzKyYvtPa7Hy8tWMAgCzLT4OJqbyCADt+OR6
+ PdUE9SRq1JbdSenAQUJn1VuXwS/ICGy7V9j0PzWPTwZ2ivaLsn7C4RNmvOfkAwse
+ bFMWGr08dhbIVTAvnhkGeLP2LSp05S9MCj3kFR3LK9dFA0b/xqwEdP8jr6kmhKwy
+ MKFuXKxcHtw1uJ1UfaMZRyMQbJFeGxY3fzwul3HIwrPSvxysgmIOMJXdvccjD2cj
+ /ekXA==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 471y6304ej-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Tue, 03 Jun 2025 04:51:13 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ for <dev@dpdk.org>; Tue, 03 Jun 2025 04:51:16 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 3 Jun 2025 04:51:13 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 3 Jun 2025 04:51:13 -0700
+ 15.2.1544.4; Tue, 3 Jun 2025 04:51:15 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 3 Jun 2025 04:51:15 -0700
 Received: from hyd1554.caveonetworks.com (unknown [10.29.56.32])
- by maili.marvell.com (Postfix) with ESMTP id 3B4305B692D;
- Tue,  3 Jun 2025 04:51:10 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 8086A3F7048;
+ Tue,  3 Jun 2025 04:51:13 -0700 (PDT)
 From: Tejasree Kondoj <ktejasree@marvell.com>
 To: Akhil Goyal <gakhil@marvell.com>
 CC: Vidya Sagar Velumuri <vvelumuri@marvell.com>, Anoob Joseph
  <anoobj@marvell.com>, <dev@dpdk.org>
-Subject: [PATCH v2 19/25] crypto/cnxk: add TLS session destroy
-Date: Tue, 3 Jun 2025 17:20:20 +0530
-Message-ID: <20250603115026.2664706-20-ktejasree@marvell.com>
+Subject: [PATCH v2 20/25] crypto/cnxk: add TLS datapath
+Date: Tue, 3 Jun 2025 17:20:21 +0530
+Message-ID: <20250603115026.2664706-21-ktejasree@marvell.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250603115026.2664706-1-ktejasree@marvell.com>
 References: <20250603115026.2664706-1-ktejasree@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAzMDEwNCBTYWx0ZWRfX74PtdWoM83hh
- 6qoURUiZr376GSVB0ys7UL1wjcD8gRtf8f56UAoazxMbjcgdT7zGiBypKugbWqBjONTOpFlS71q
- BF7dx7Cm4QzZuPCyLc1SccEdIC9rLfP5pXYcWgPyUSWASy8g665MYrU8e+/oNRVk3XrXz+FD/Tt
- F34xoZnehz5mY/KiQeRmqLRTRoJ/oPNb4ZQ6k9qVkSIWkkzFxlQGRYaMo+UL2i7xMgopzEcomg2
- 4aUGn05qLFRyG+Ty4h0cGO2+rMQsfqCMHcfYDZjlSBoEkYpp6aBrJ53t4sUJXC6FqQrzko/s2zI
- gn8YMdDMXZ4pEoJw1kgH25SdoQfwPT7EkBuGWPQdDsCRBOTmB4d0NDGw65zNR654sQbY+CCSp6W
- jS7PP/FmGaqN7wcnN6XKN5e4Z9k2k+d2BJwM/Nx4alj0/p/Ypv/nx8vpKjtVUJ2WO3JVPX9U
-X-Proofpoint-ORIG-GUID: kMjUkBWEy2ac1ZeHOlKq3brF7zWBi7rG
-X-Authority-Analysis: v=2.4 cv=JpPxrN4C c=1 sm=1 tr=0 ts=683ee1b1 cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=YxzK5bxhEJpzRz2Y-cgA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAzMDEwNCBTYWx0ZWRfX+7dr6756Lft8
+ MyQy8bAZhYseynMygQvvJTuy3TVVyowbCPD3Z6pTANs2om/dgfDi18ugP3FtPJK7cWZg6wMAkRo
+ VL1mLM9O+z2pWC/LEYy+TGQKrbSLcublZZAZkhFZR5aIgEcUKxMf4bNPCxQwFIGhBoadV7+7ITh
+ Bkurzb+Rj2GqgP1hQzVzVGZbT/xEQwHzIeo74KLaPYvpZJ44yZkInfj+es7sboSiQ5FjYf0aisv
+ 2sVkG5cP0AMW2hClAn5qUNWA1KKpsLEyzENG36R8Nn1h+Pgg1WCliL9/XovxR4c2okdwCA7z4C+
+ Tbj7smAUHRLUKnvzeOvJw40XcutPlin5VaTAu/I6cE/0sVtWwev1XSZGSqgapJvc44pgPAa+ES9
+ jVYXQK/3EQxKzxWxfDCXQjtPcbb2N7acM0t90+KXo6nDV3zaFSX5FfRd7gR/DPsAqJQC44Xc
+X-Proofpoint-GUID: Kb9PHiwz38CS5hDcmGB7QtflfNhRHBW8
+X-Authority-Analysis: v=2.4 cv=QaJmvtbv c=1 sm=1 tr=0 ts=683ee1b4 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=aWxl6RcaphiAd3Pw21cA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: kMjUkBWEy2ac1ZeHOlKq3brF7zWBi7rG
+X-Proofpoint-ORIG-GUID: Kb9PHiwz38CS5hDcmGB7QtflfNhRHBW8
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-03_01,2025-06-02_01,2025-03-28_01
@@ -82,131 +82,310 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Vidya Sagar Velumuri <vvelumuri@marvell.com>
 
-Add TLS session destroy for cn20k
+Add enqueue and dequeue support for TLS for cn20k
 
 Signed-off-by: Vidya Sagar Velumuri <vvelumuri@marvell.com>
 ---
- drivers/crypto/cnxk/cn20k_cryptodev_sec.c |  3 +
- drivers/crypto/cnxk/cn20k_tls.c           | 84 ++++++++++++++++++++++-
- 2 files changed, 85 insertions(+), 2 deletions(-)
+ drivers/crypto/cnxk/cn20k_cryptodev_ops.c |  14 ++
+ drivers/crypto/cnxk/cn20k_tls_ops.h       | 250 ++++++++++++++++++++++
+ 2 files changed, 264 insertions(+)
+ create mode 100644 drivers/crypto/cnxk/cn20k_tls_ops.h
 
-diff --git a/drivers/crypto/cnxk/cn20k_cryptodev_sec.c b/drivers/crypto/cnxk/cn20k_cryptodev_sec.c
-index e5158af595..ab676cc6cf 100644
---- a/drivers/crypto/cnxk/cn20k_cryptodev_sec.c
-+++ b/drivers/crypto/cnxk/cn20k_cryptodev_sec.c
-@@ -58,6 +58,9 @@ cn20k_sec_session_destroy(void *dev, struct rte_security_session *sec_sess)
- 	if (cn20k_sec_sess->proto == RTE_SECURITY_PROTOCOL_IPSEC)
- 		return cn20k_sec_ipsec_session_destroy(qp, cn20k_sec_sess);
- 
-+	if (cn20k_sec_sess->proto == RTE_SECURITY_PROTOCOL_TLS_RECORD)
-+		return cn20k_sec_tls_session_destroy(qp, cn20k_sec_sess);
-+
- 	return -EINVAL;
- }
- 
-diff --git a/drivers/crypto/cnxk/cn20k_tls.c b/drivers/crypto/cnxk/cn20k_tls.c
-index 27d08c49fa..b6f444baf4 100644
---- a/drivers/crypto/cnxk/cn20k_tls.c
-+++ b/drivers/crypto/cnxk/cn20k_tls.c
-@@ -785,6 +785,36 @@ cn20k_tls_write_sa_create(struct roc_cpt *roc_cpt, struct roc_cpt_lf *lf,
+diff --git a/drivers/crypto/cnxk/cn20k_cryptodev_ops.c b/drivers/crypto/cnxk/cn20k_cryptodev_ops.c
+index e61a5e50c8..4e0315dcb7 100644
+--- a/drivers/crypto/cnxk/cn20k_cryptodev_ops.c
++++ b/drivers/crypto/cnxk/cn20k_cryptodev_ops.c
+@@ -16,6 +16,7 @@
+ #include "cn20k_cryptodev_ops.h"
+ #include "cn20k_cryptodev_sec.h"
+ #include "cn20k_ipsec_la_ops.h"
++#include "cn20k_tls_ops.h"
+ #include "cnxk_ae.h"
+ #include "cnxk_cryptodev.h"
+ #include "cnxk_cryptodev_ops.h"
+@@ -86,6 +87,17 @@ cpt_sec_ipsec_inst_fill(struct cnxk_cpt_qp *qp, struct rte_crypto_op *op,
  	return ret;
  }
  
-+static void
-+tls_write_sa_init(struct roc_ie_ow_tls_write_sa *sa)
++static __rte_always_inline int __rte_hot
++cpt_sec_tls_inst_fill(struct cnxk_cpt_qp *qp, struct rte_crypto_op *op,
++		      struct cn20k_sec_session *sess, struct cpt_inst_s *inst,
++		      struct cpt_inflight_req *infl_req)
 +{
-+	size_t offset;
-+
-+	memset(sa, 0, sizeof(struct roc_ie_ow_tls_write_sa));
-+
-+	offset = offsetof(struct roc_ie_ow_tls_write_sa, tls_12.w26_rsvd7);
-+	sa->w0.s.hw_ctx_off = offset / ROC_CTX_UNIT_8B;
-+	sa->w0.s.ctx_push_size = sa->w0.s.hw_ctx_off;
-+	sa->w0.s.ctx_size = ROC_IE_OW_TLS_CTX_ILEN;
-+	sa->w0.s.ctx_hdr_size = ROC_IE_OW_TLS_CTX_HDR_SIZE;
-+	sa->w0.s.aop_valid = 1;
++	if (sess->tls_opt.is_write)
++		return process_tls_write(&qp->lf, op, sess, &qp->meta_info, infl_req, inst);
++	else
++		return process_tls_read(op, sess, &qp->meta_info, infl_req, inst);
 +}
 +
-+static void
-+tls_read_sa_init(struct roc_ie_ow_tls_read_sa *sa)
-+{
-+	size_t offset;
-+
-+	memset(sa, 0, sizeof(struct roc_ie_ow_tls_read_sa));
-+
-+	offset = offsetof(struct roc_ie_ow_tls_read_sa, tls_12.ctx);
-+	sa->w0.s.hw_ctx_off = offset / ROC_CTX_UNIT_8B;
-+	sa->w0.s.ctx_push_size = sa->w0.s.hw_ctx_off;
-+	sa->w0.s.ctx_size = ROC_IE_OW_TLS_CTX_ILEN;
-+	sa->w0.s.ctx_hdr_size = ROC_IE_OW_TLS_CTX_HDR_SIZE;
-+	sa->w0.s.aop_valid = 1;
-+}
-+
- int
- cn20k_tls_record_session_update(struct cnxk_cpt_vf *vf, struct cnxk_cpt_qp *qp,
- 				struct cn20k_sec_session *sess,
-@@ -824,9 +854,59 @@ cn20k_tls_record_session_create(struct cnxk_cpt_vf *vf, struct cnxk_cpt_qp *qp,
- int
- cn20k_sec_tls_session_destroy(struct cnxk_cpt_qp *qp, struct cn20k_sec_session *sess)
- {
-+	struct cn20k_tls_record *tls;
-+	struct roc_cpt_lf *lf;
-+	void *sa_dptr = NULL;
-+	int ret = -ENOMEM;
+ static __rte_always_inline int __rte_hot
+ cpt_sec_inst_fill(struct cnxk_cpt_qp *qp, struct rte_crypto_op *op, struct cn20k_sec_session *sess,
+ 		  struct cpt_inst_s *inst, struct cpt_inflight_req *infl_req)
+@@ -93,6 +105,8 @@ cpt_sec_inst_fill(struct cnxk_cpt_qp *qp, struct rte_crypto_op *op, struct cn20k
  
--	RTE_SET_USED(qp);
--	RTE_SET_USED(sess);
-+	lf = &qp->lf;
-+
-+	tls = &sess->tls_rec;
-+
-+	/* Trigger CTX flush to write dirty data back to DRAM */
-+	roc_cpt_lf_ctx_flush(lf, &tls->read_sa, false);
-+
-+	if (sess->tls_opt.is_write) {
-+		sa_dptr = plt_zmalloc(sizeof(struct roc_ie_ow_tls_write_sa), 8);
-+		if (sa_dptr != NULL) {
-+			tls_write_sa_init(sa_dptr);
-+
-+			ret = roc_cpt_ctx_write(lf, sa_dptr, &tls->write_sa,
-+						sizeof(struct roc_ie_ow_tls_write_sa));
-+			plt_free(sa_dptr);
-+		}
-+		if (ret) {
-+			/* MC write_ctx failed. Attempt reload of CTX */
-+
-+			/* Wait for 1 ms so that flush is complete */
-+			rte_delay_ms(1);
-+
-+			rte_atomic_thread_fence(rte_memory_order_seq_cst);
-+
-+			/* Trigger CTX reload to fetch new data from DRAM */
-+			roc_cpt_lf_ctx_reload(lf, &tls->write_sa);
-+		}
-+	} else {
-+		sa_dptr = plt_zmalloc(sizeof(struct roc_ie_ow_tls_read_sa), 8);
-+		if (sa_dptr != NULL) {
-+			tls_read_sa_init(sa_dptr);
-+
-+			ret = roc_cpt_ctx_write(lf, sa_dptr, &tls->read_sa,
-+						sizeof(struct roc_ie_ow_tls_read_sa));
-+			plt_free(sa_dptr);
-+		}
-+		if (ret) {
-+			/* MC write_ctx failed. Attempt reload of CTX */
-+
-+			/* Wait for 1 ms so that flush is complete */
-+			rte_delay_ms(1);
-+
-+			rte_atomic_thread_fence(rte_memory_order_seq_cst);
-+
-+			/* Trigger CTX reload to fetch new data from DRAM */
-+			roc_cpt_lf_ctx_reload(lf, &tls->read_sa);
-+		}
-+	}
+ 	if (sess->proto == RTE_SECURITY_PROTOCOL_IPSEC)
+ 		return cpt_sec_ipsec_inst_fill(qp, op, sess, &inst[0], infl_req);
++	else if (sess->proto == RTE_SECURITY_PROTOCOL_TLS_RECORD)
++		return cpt_sec_tls_inst_fill(qp, op, sess, &inst[0], infl_req);
  
  	return 0;
  }
+diff --git a/drivers/crypto/cnxk/cn20k_tls_ops.h b/drivers/crypto/cnxk/cn20k_tls_ops.h
+new file mode 100644
+index 0000000000..14f879f2a9
+--- /dev/null
++++ b/drivers/crypto/cnxk/cn20k_tls_ops.h
+@@ -0,0 +1,250 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(C) 2025 Marvell.
++ */
++
++#ifndef __CN20K_TLS_OPS_H__
++#define __CN20K_TLS_OPS_H__
++
++#include <rte_crypto_sym.h>
++#include <rte_security.h>
++
++#include "roc_ie.h"
++
++#include "cn20k_cryptodev.h"
++#include "cn20k_cryptodev_sec.h"
++#include "cnxk_cryptodev.h"
++#include "cnxk_cryptodev_ops.h"
++#include "cnxk_sg.h"
++
++static __rte_always_inline int
++process_tls_write(struct roc_cpt_lf *lf, struct rte_crypto_op *cop, struct cn20k_sec_session *sess,
++		  struct cpt_qp_meta_info *m_info, struct cpt_inflight_req *infl_req,
++		  struct cpt_inst_s *inst)
++{
++	struct cn20k_tls_opt tls_opt = sess->tls_opt;
++	struct rte_crypto_sym_op *sym_op = cop->sym;
++#ifdef LA_IPSEC_DEBUG
++	struct roc_ie_ow_tls_write_sa *write_sa;
++#endif
++	struct rte_mbuf *m_src = sym_op->m_src;
++	struct rte_mbuf *m_dst = sym_op->m_dst;
++	uint32_t pad_len, pad_bytes;
++	struct rte_mbuf *last_seg;
++	union cpt_inst_w4 w4;
++	void *m_data = NULL;
++	uint8_t *in_buffer;
++
++	pad_bytes = (cop->aux_flags * 8) > 0xff ? 0xff : (cop->aux_flags * 8);
++	pad_len = (pad_bytes >> tls_opt.pad_shift) * tls_opt.enable_padding;
++
++#ifdef LA_IPSEC_DEBUG
++	write_sa = &sess->tls_rec.write_sa;
++	if (write_sa->w2.s.iv_at_cptr == ROC_IE_OW_TLS_IV_SRC_FROM_SA) {
++
++		uint8_t *iv = PLT_PTR_ADD(write_sa->cipher_key, 32);
++
++		if (write_sa->w2.s.cipher_select == ROC_IE_OW_TLS_CIPHER_AES_GCM) {
++			uint32_t *tmp;
++
++			/* For GCM, the IV and salt format will be like below:
++			 * iv[0-3]: lower bytes of IV in BE format.
++			 * iv[4-7]: salt / nonce.
++			 * iv[12-15]: upper bytes of IV in BE format.
++			 */
++			memcpy(iv, rte_crypto_op_ctod_offset(cop, uint8_t *, sess->iv_offset), 4);
++			tmp = (uint32_t *)iv;
++			*tmp = rte_be_to_cpu_32(*tmp);
++
++			memcpy(iv + 12,
++			       rte_crypto_op_ctod_offset(cop, uint8_t *, sess->iv_offset + 4), 4);
++			tmp = (uint32_t *)(iv + 12);
++			*tmp = rte_be_to_cpu_32(*tmp);
++		} else if (write_sa->w2.s.cipher_select == ROC_IE_OW_TLS_CIPHER_AES_CBC) {
++			uint64_t *tmp;
++
++			memcpy(iv, rte_crypto_op_ctod_offset(cop, uint8_t *, sess->iv_offset), 16);
++			tmp = (uint64_t *)iv;
++			*tmp = rte_be_to_cpu_64(*tmp);
++			tmp = (uint64_t *)(iv + 8);
++			*tmp = rte_be_to_cpu_64(*tmp);
++		} else if (write_sa->w2.s.cipher_select == ROC_IE_OW_TLS_CIPHER_3DES) {
++			uint64_t *tmp;
++
++			memcpy(iv, rte_crypto_op_ctod_offset(cop, uint8_t *, sess->iv_offset), 8);
++			tmp = (uint64_t *)iv;
++			*tmp = rte_be_to_cpu_64(*tmp);
++		}
++
++		/* Trigger CTX reload to fetch new data from DRAM */
++		roc_cpt_lf_ctx_reload(lf, write_sa);
++		rte_delay_ms(1);
++	}
++#else
++	RTE_SET_USED(lf);
++#endif
++	/* Single buffer direct mode */
++	if (likely(m_src->next == NULL)) {
++		void *vaddr;
++
++		if (unlikely(rte_pktmbuf_tailroom(m_src) < sess->max_extended_len)) {
++			plt_dp_err("Not enough tail room");
++			return -ENOMEM;
++		}
++
++		vaddr = rte_pktmbuf_mtod(m_src, void *);
++		inst->dptr = (uint64_t)vaddr;
++		inst->rptr = (uint64_t)vaddr;
++
++		w4.u64 = sess->inst.w4;
++		w4.s.param1 = m_src->data_len;
++		w4.s.dlen = m_src->data_len;
++
++		w4.s.param2 = cop->param1.tls_record.content_type;
++		w4.s.opcode_minor = pad_len;
++
++		inst->w4.u64 = w4.u64;
++	} else {
++		struct roc_sg2list_comp *scatter_comp, *gather_comp;
++		union cpt_inst_w5 cpt_inst_w5;
++		union cpt_inst_w6 cpt_inst_w6;
++		uint32_t g_size_bytes;
++		int i;
++
++		last_seg = rte_pktmbuf_lastseg(m_src);
++
++		if (unlikely(rte_pktmbuf_tailroom(last_seg) < sess->max_extended_len)) {
++			plt_dp_err("Not enough tail room (required: %d, available: %d)",
++				   sess->max_extended_len, rte_pktmbuf_tailroom(last_seg));
++			return -ENOMEM;
++		}
++
++		m_data = alloc_op_meta(NULL, m_info->mlen, m_info->pool, infl_req);
++		if (unlikely(m_data == NULL)) {
++			plt_dp_err("Error allocating meta buffer for request");
++			return -ENOMEM;
++		}
++
++		in_buffer = (uint8_t *)m_data;
++		/* Input Gather List */
++		i = 0;
++		gather_comp = (struct roc_sg2list_comp *)((uint8_t *)in_buffer);
++		i = fill_sg2_comp_from_pkt(gather_comp, i, m_src);
++
++		cpt_inst_w5.s.gather_sz = ((i + 2) / 3);
++		g_size_bytes = ((i + 2) / 3) * sizeof(struct roc_sg2list_comp);
++
++		/* Output Scatter List */
++		last_seg->data_len += sess->max_extended_len + pad_bytes;
++		i = 0;
++		scatter_comp = (struct roc_sg2list_comp *)((uint8_t *)gather_comp + g_size_bytes);
++
++		if (m_dst == NULL)
++			m_dst = m_src;
++		i = fill_sg2_comp_from_pkt(scatter_comp, i, m_dst);
++
++		cpt_inst_w6.s.scatter_sz = ((i + 2) / 3);
++
++		cpt_inst_w5.s.dptr = (uint64_t)gather_comp;
++		cpt_inst_w6.s.rptr = (uint64_t)scatter_comp;
++
++		inst->w5.u64 = cpt_inst_w5.u64;
++		inst->w6.u64 = cpt_inst_w6.u64;
++		w4.u64 = sess->inst.w4;
++		w4.s.dlen = rte_pktmbuf_pkt_len(m_src);
++		w4.s.opcode_major &= (~(ROC_IE_OW_INPLACE_BIT));
++		w4.s.opcode_minor = pad_len;
++		w4.s.param1 = w4.s.dlen;
++		w4.s.param2 = cop->param1.tls_record.content_type;
++		inst->w4.u64 = w4.u64;
++	}
++
++	return 0;
++}
++
++static __rte_always_inline int
++process_tls_read(struct rte_crypto_op *cop, struct cn20k_sec_session *sess,
++		 struct cpt_qp_meta_info *m_info, struct cpt_inflight_req *infl_req,
++		 struct cpt_inst_s *inst)
++{
++	struct rte_crypto_sym_op *sym_op = cop->sym;
++	struct rte_mbuf *m_src = sym_op->m_src;
++	struct rte_mbuf *m_dst = sym_op->m_dst;
++	union cpt_inst_w4 w4;
++	uint8_t *in_buffer;
++	void *m_data;
++
++	if (likely(m_src->next == NULL)) {
++		void *vaddr;
++
++		vaddr = rte_pktmbuf_mtod(m_src, void *);
++
++		inst->dptr = (uint64_t)vaddr;
++		inst->rptr = (uint64_t)vaddr;
++
++		w4.u64 = sess->inst.w4;
++		w4.s.dlen = m_src->data_len;
++		w4.s.param1 = m_src->data_len;
++		inst->w4.u64 = w4.u64;
++	} else {
++		struct roc_sg2list_comp *scatter_comp, *gather_comp;
++		int tail_len = sess->tls_opt.tail_fetch_len * 16;
++		int pkt_len = rte_pktmbuf_pkt_len(m_src);
++		union cpt_inst_w5 cpt_inst_w5;
++		union cpt_inst_w6 cpt_inst_w6;
++		uint32_t g_size_bytes;
++		int i;
++
++		m_data = alloc_op_meta(NULL, m_info->mlen, m_info->pool, infl_req);
++		if (unlikely(m_data == NULL)) {
++			plt_dp_err("Error allocating meta buffer for request");
++			return -ENOMEM;
++		}
++
++		in_buffer = (uint8_t *)m_data;
++		/* Input Gather List */
++		i = 0;
++
++		/* First 32 bytes in m_data are rsvd for tail fetch.
++		 * SG list start from 32 byte onwards.
++		 */
++		gather_comp = (struct roc_sg2list_comp *)((uint8_t *)(in_buffer + 32));
++
++		/* Add the last blocks as first gather component for tail fetch. */
++		if (tail_len) {
++			const uint8_t *output;
++
++			output = rte_pktmbuf_read(m_src, pkt_len - tail_len, tail_len, in_buffer);
++			if (output != in_buffer)
++				rte_memcpy(in_buffer, output, tail_len);
++			i = fill_sg2_comp(gather_comp, i, (uint64_t)in_buffer, tail_len);
++		}
++
++		i = fill_sg2_comp_from_pkt(gather_comp, i, m_src);
++
++		cpt_inst_w5.s.gather_sz = ((i + 2) / 3);
++		g_size_bytes = ((i + 2) / 3) * sizeof(struct roc_sg2list_comp);
++
++		i = 0;
++		scatter_comp = (struct roc_sg2list_comp *)((uint8_t *)gather_comp + g_size_bytes);
++
++		if (m_dst == NULL)
++			m_dst = m_src;
++		i = fill_sg2_comp_from_pkt(scatter_comp, i, m_dst);
++
++		cpt_inst_w6.s.scatter_sz = ((i + 2) / 3);
++
++		cpt_inst_w5.s.dptr = (uint64_t)gather_comp;
++		cpt_inst_w6.s.rptr = (uint64_t)scatter_comp;
++
++		inst->w5.u64 = cpt_inst_w5.u64;
++		inst->w6.u64 = cpt_inst_w6.u64;
++		w4.u64 = sess->inst.w4;
++		w4.s.dlen = pkt_len + tail_len;
++		w4.s.param1 = w4.s.dlen;
++		w4.s.opcode_major &= (~(ROC_IE_OW_INPLACE_BIT));
++		inst->w4.u64 = w4.u64;
++	}
++
++	return 0;
++}
++#endif /* __CN20K_TLS_OPS_H__ */
 -- 
 2.25.1
 
