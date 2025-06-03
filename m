@@ -2,38 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 728ABC5B549
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Jun 2025 01:07:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14691C5B549
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Jun 2025 01:10:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 94C2A4028E;
-	Tue,  3 Jun 2025 03:07:31 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 45A224028E;
+	Tue,  3 Jun 2025 03:10:05 +0200 (CEST)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id A73C74025A
- for <dev@dpdk.org>; Tue,  3 Jun 2025 03:07:29 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id A54B74025A
+ for <dev@dpdk.org>; Tue,  3 Jun 2025 03:10:03 +0200 (CEST)
 Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 953DA2113A62; Mon,  2 Jun 2025 18:07:28 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 953DA2113A62
+ id 9A0E02113A62; Mon,  2 Jun 2025 18:10:02 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9A0E02113A62
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1748912848;
- bh=nelYCBzgICJrXGPLj125DTiWrIL6MsRNrPSiA0OTaeU=;
+ s=default; t=1748913002;
+ bh=o0M9qlZ2AobRPrZQP2F097UV3IuQyJD2Ys4EHNw0LoI=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=Djyb6V0HlrEeBP7xPoJvQOWAl2zqQtLTFesZ8AZg8ck4ejIU102fETp1PsxUw5qtW
- dk6xOwwQ+nlyuMeqxnZQBMmGZDHojyqAEiOwpfY4AFtjpyXgy3YYai9IIe8xP+2NSQ
- pLZJLyLKHcpG7qHgGIuO5/M3Cgz0Qk2wLhZsY9tI=
-Date: Mon, 2 Jun 2025 18:07:28 -0700
+ b=YB0Cqz7Nl448ypsIFQl4Sgdq8eMdLqfYr9e4cJUIZvupNBwmuXzPJoCcQsos223U0
+ Kkbc/kBQrfVFD+538wnl8eIg7gcAU8KVGLkuF21IUuyJyrkqlxREwQvqC3XRQzwOko
+ 39ytPZWsvEfX2LQkuHXNPtrcbAoZkV5HPWohxyVw=
+Date: Mon, 2 Jun 2025 18:10:02 -0700
 From: Andre Muezerie <andremue@linux.microsoft.com>
 To: Dariusz Sosnowski <dsosnowski@nvidia.com>,
  Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
  Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
  Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH] common/mlx5: use intrinsics instead of inline assembly
-Message-ID: <20250603010728.GC30135@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1746457062-8502-1-git-send-email-andremue@linux.microsoft.com>
+Subject: Re: [PATCH] net/mlx5: use portable version of __builtin_ffsl
+Message-ID: <20250603011002.GA1658@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1746457492-10012-1-git-send-email-andremue@linux.microsoft.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1746457062-8502-1-git-send-email-andremue@linux.microsoft.com>
+In-Reply-To: <1746457492-10012-1-git-send-email-andremue@linux.microsoft.com>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -48,89 +48,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, May 05, 2025 at 07:57:42AM -0700, Andre Muezerie wrote:
-> When compiling with MSVC the errors below are hit because msvc does not
-> support inline assembly:
+On Mon, May 05, 2025 at 08:04:52AM -0700, Andre Muezerie wrote:
+> Builtin __builtin_ffsl is not available with MSVC therefore a
+> portable replacement should be used.
 > 
-> 1)
-> ../drivers/common/mlx5/mlx5_common.c(86): warning C4013: '__asm__'
->     undefined; assuming extern returning int
-> ../drivers/common/mlx5/mlx5_common.c(87): error C2143: syntax error:
->      missing ')' before ':'
-> 
-> 2)
-> ../drivers/net/mlx5/mlx5_txpp.c(510): error C2065: '__asm__':
->     undeclared identifier
-> ../drivers/net/mlx5/mlx5_txpp.c(510): error C2143: syntax error:
->     missing ';' before 'volatile'
-> 
-> The fix for (1) is to use compiler intrinsic __cpuid and for (2)
-> intrinsic _InterlockedCompareExchange128 can be used.
+> Function rte_ffs32 is already available in eal and should be used
+> instead.
 > 
 > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 > ---
->  drivers/common/mlx5/mlx5_common.c | 13 +++++++++++--
->  drivers/net/mlx5/mlx5_txpp.c      | 15 +++++++++++++++
->  2 files changed, 26 insertions(+), 2 deletions(-)
+>  drivers/net/mlx5/mlx5_tx.c    | 4 ++--
+>  drivers/net/mlx5/mlx5_utils.c | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/common/mlx5/mlx5_common.c b/drivers/common/mlx5/mlx5_common.c
-> index 4f25127582..e1ce17559d 100644
-> --- a/drivers/common/mlx5/mlx5_common.c
-> +++ b/drivers/common/mlx5/mlx5_common.c
-> @@ -75,9 +75,18 @@ static inline void mlx5_cpu_id(unsigned int level,
->  				unsigned int *eax, unsigned int *ebx,
->  				unsigned int *ecx, unsigned int *edx)
->  {
-> +#ifdef RTE_TOOLCHAIN_MSVC
-> +	int data[4];
-> +	__cpuid(data, level);
-> +	*eax = data[0];
-> +	*ebx = data[1];
-> +	*ecx = data[2];
-> +	*edx = data[3];
-> +#else
->  	__asm__("cpuid\n\t"
-> -		: "=a" (*eax), "=b" (*ebx), "=c" (*ecx), "=d" (*edx)
-> -		: "0" (level));
-> +	: "=a" (*eax), "=b" (*ebx), "=c" (*ecx), "=d" (*edx)
-> +	: "0" (level));
-> +#endif
->  }
->  #endif
->  
-> diff --git a/drivers/net/mlx5/mlx5_txpp.c b/drivers/net/mlx5/mlx5_txpp.c
-> index e6d3ad83e9..5bbaf668e6 100644
-> --- a/drivers/net/mlx5/mlx5_txpp.c
-> +++ b/drivers/net/mlx5/mlx5_txpp.c
-> @@ -486,6 +486,20 @@ mlx5_txpp_cq_arm(struct mlx5_dev_ctx_shared *sh)
->  }
->  
->  #if defined(RTE_ARCH_X86_64)
-> +#ifdef RTE_TOOLCHAIN_MSVC
-> +static inline int
-> +mlx5_atomic128_compare_exchange(rte_int128_t *dst,
-> +				rte_int128_t *exp,
-> +				const rte_int128_t *src)
-> +{
-> +	return (int)_InterlockedCompareExchange128(
-> +		(int64_t volatile *)dst,
-> +		src->val[1], /* exchange high */
-> +		src->val[0], /* exchange low */
-> +		(int64_t *)exp /* comparand result */
-> +	);
-> +}
-> +#else
->  static inline int
->  mlx5_atomic128_compare_exchange(rte_int128_t *dst,
->  				rte_int128_t *exp,
-> @@ -510,6 +524,7 @@ mlx5_atomic128_compare_exchange(rte_int128_t *dst,
->  	return res;
->  }
->  #endif
-> +#endif
->  
->  static inline void
->  mlx5_atomic_read_cqe(rte_int128_t *from, rte_int128_t *ts)
+> diff --git a/drivers/net/mlx5/mlx5_tx.c b/drivers/net/mlx5/mlx5_tx.c
+> index 39afca3d64..b2522e7170 100644
+> --- a/drivers/net/mlx5/mlx5_tx.c
+> +++ b/drivers/net/mlx5/mlx5_tx.c
+> @@ -629,8 +629,8 @@ mlx5_select_tx_function(struct rte_eth_dev *dev)
+>  		}
+>  		if (tmp == diff) {
+>  			tmp = txoff_func[i].olx ^ txoff_func[m].olx;
+> -			if (__builtin_ffsl(txoff_func[i].olx & ~tmp) <
+> -			    __builtin_ffsl(txoff_func[m].olx & ~tmp)) {
+> +			if (rte_ffs32(txoff_func[i].olx & ~tmp) <
+> +			    rte_ffs32(txoff_func[m].olx & ~tmp)) {
+>  				/* Lighter not requested offload. */
+>  				m = i;
+>  			}
+> diff --git a/drivers/net/mlx5/mlx5_utils.c b/drivers/net/mlx5/mlx5_utils.c
+> index d882af6047..645bb118fb 100644
+> --- a/drivers/net/mlx5/mlx5_utils.c
+> +++ b/drivers/net/mlx5/mlx5_utils.c
+> @@ -84,7 +84,7 @@ mlx5_ipool_create(struct mlx5_indexed_pool_config *cfg)
+>  	if (!cfg || (!cfg->malloc ^ !cfg->free) ||
+>  	    (cfg->per_core_cache && cfg->release_mem_en) ||
+>  	    (cfg->trunk_size && ((cfg->trunk_size & (cfg->trunk_size - 1)) ||
+> -	    ((__builtin_ffs(cfg->trunk_size) + TRUNK_IDX_BITS) > 32))))
+> +	    ((rte_ffs32(cfg->trunk_size) + TRUNK_IDX_BITS) > 32))))
+>  		return NULL;
+>  	pool = mlx5_malloc(MLX5_MEM_ZERO, sizeof(*pool) + cfg->grow_trunk *
+>  			   sizeof(pool->grow_tbl[0]), RTE_CACHE_LINE_SIZE,
 > -- 
 > 2.49.0.vfs.0.2
 
