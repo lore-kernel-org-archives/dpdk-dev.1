@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38647C5AD49
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Jun 2025 11:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 632A6C5AD49
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Jun 2025 11:52:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1D90540B9F;
-	Tue,  3 Jun 2025 13:51:07 +0200 (CEST)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 03AFD40A77
- for <dev@dpdk.org>; Tue,  3 Jun 2025 13:51:04 +0200 (CEST)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 553AJGr3020925
+	by mails.dpdk.org (Postfix) with ESMTP id 116DF40DD6;
+	Tue,  3 Jun 2025 13:51:08 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 6672B40DCA
+ for <dev@dpdk.org>; Tue,  3 Jun 2025 13:51:05 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 553AHutS017714
  for <dev@dpdk.org>; Tue, 3 Jun 2025 04:51:04 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=c
- jP1zJ2wize+hq3EoOiHRjryvNeJbRGso2iUqamWh10=; b=OzQ3lHKhYDWBAurzT
- Pc01pT9uHjCahmO/SgLkJ3w7GUNy9uMAP80EMZlbqNbUcUnEPwnuaWqFGcx0IBDl
- 4NNXYl4s3xZoDREtwf1Qx/AD7TNCe7N6Y7IzueRAvvldpvDUcSFXIUp8jcpWFXbD
- GXde/QXVu0/BN3+C218byOkkfab0Gyus+Yg7cpYC6H30ZZGL81SOWOYjOi3ruXeM
- xs76N4NyTchsPu+9pJVN3s6GSSeQ9dWJHPKyecVta424cSwmtl3aWUfORIH+Zl72
- F7Lihpqa8d17g9Nv+ssG0uJwwSXHJ2K76wM7mCDZs+x6VgI2KPubJxw45EKHUJsF
- 6dOhg==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 471y6rg4q8-1
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=D
+ zvj5EyBtgu8mStuVWh4DgwFykUdm+psWM9AeEsPndI=; b=F+IbscscwGfg3E4FT
+ Zx50m3D7VbSTepHrPowobGFdY6t94uS+R5jSdra+J/BFLXFyfE07pxvD1E+ngdmc
+ h6tP7KJoh04fv1KpUijnQXV3IlI2C4fRQug5iDIsce5TZzhnGrQv12z5M1MLy/bs
+ xW26x7XI1FXQJcuDsBOhRwEFiAXhqNcmtdLPW5h7880N07G4IwPf8C2hf/iffxQr
+ GWWxls3yRq/ciIwPeHIMysM5dQONOQArE8xAC4IBhPT82Q4NXVTjehDCVh54/1Jd
+ 9cbCgU0VWVGvTPX2j3HXFM56YIaUcO5ymVyBbOeVqlWMJ6mXb3KnSN+miHtvWV+s
+ lZFFw==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 471y6304dq-2
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Tue, 03 Jun 2025 04:51:02 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ for <dev@dpdk.org>; Tue, 03 Jun 2025 04:51:04 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 3 Jun 2025 04:51:01 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 3 Jun 2025 04:51:01 -0700
+ 15.2.1544.4; Tue, 3 Jun 2025 04:51:03 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 3 Jun 2025 04:51:03 -0700
 Received: from hyd1554.caveonetworks.com (unknown [10.29.56.32])
- by maili.marvell.com (Postfix) with ESMTP id 77C6A5B6921;
- Tue,  3 Jun 2025 04:50:59 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id C0D365B6921;
+ Tue,  3 Jun 2025 04:51:01 -0700 (PDT)
 From: Tejasree Kondoj <ktejasree@marvell.com>
 To: Akhil Goyal <gakhil@marvell.com>
-CC: Vidya Sagar Velumuri <vvelumuri@marvell.com>, Anoob Joseph
- <anoobj@marvell.com>, <dev@dpdk.org>
-Subject: [PATCH v2 14/25] crypto/cnxk: add security datapath
-Date: Tue, 3 Jun 2025 17:20:15 +0530
-Message-ID: <20250603115026.2664706-15-ktejasree@marvell.com>
+CC: Anoob Joseph <anoobj@marvell.com>, Vidya Sagar Velumuri
+ <vvelumuri@marvell.com>, <dev@dpdk.org>
+Subject: [PATCH v2 15/25] crypto/cnxk: add Rx inject in security lookaside
+Date: Tue, 3 Jun 2025 17:20:16 +0530
+Message-ID: <20250603115026.2664706-16-ktejasree@marvell.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250603115026.2664706-1-ktejasree@marvell.com>
 References: <20250603115026.2664706-1-ktejasree@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=Xpf6OUF9 c=1 sm=1 tr=0 ts=683ee1a6 cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=onbpyaOX_tx6xXp-YHAA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAzMDEwNCBTYWx0ZWRfXzNpo3JDjRJvo
+ Sv5325to4F/yRHGa7w/hBCQ8rfKm8e4UwONRWn8X6Zy/UDht4zouaa/nA+hZEf3fBf6FczJfmGy
+ wl1it3dARD6pdTEQTil6Pyv52hZ1BZYKhQwAM2QWfBkLTzMdfginbMzYQJ++WF6NkCBF1dti9O8
+ Esj1uauqQotvFHqTjMtY/6GS7ttnFllLCqLjMNSA+Yes93tdW+Y9lAqbwJiXUjnt9R03J7G+fGq
+ 77ynUcLv+gN10RTyo4rRIuoXraVAgrKde6uGeXRPz7oh7nF+93hAy+zxuazo9BEQHXF/nOdPFxR
+ owpXAN0bgHEzuAGorWPtc9PjgWTAAnTduEameLnyRnt5KEXacngp/3fkVf3ynrNuikHcdN5XYby
+ 4ezGuyPtXtVk/Jhc7BY9K6beND3JjRVgbNVHuv7A6+zNew50jLpJf63WsMGeTQNthWX5+1Cm
+X-Proofpoint-GUID: hr8SJvBwPyPa810ko4hQEaFD1LROYp1U
+X-Authority-Analysis: v=2.4 cv=QaJmvtbv c=1 sm=1 tr=0 ts=683ee1a8 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=dE99wGDcKYuoAeO9Ty8A:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: hWDRG_tCuRQE0GwQG3JD7g1DTwrRMSCu
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAzMDEwNCBTYWx0ZWRfX/MhOENduYsvI
- lY29L803cwS65gtTgoxLULGD7vNX7dBb+MDak9Tsukl5Mtb+oXZ9MAwtMZqGRVcQ9Km61rzo3Wv
- lskKU3hGH8fKEfQwfz+8iQrx9E3updeRCO9UBylbMmamu3IeJpQhp+Z9A4QP6eD4KHCcUFY/qe2
- 1v06CTG47GxJVZ3GvxH00Gz10nA3foYCeD5ZPSCTP53Lo7/DvX2yZoFUB6wEAFukdj2hZCp/8+J
- KDBuxK6mivnwMKc6Rm1uB0Uu0vM0YoYIKMsEWSf8NC/wc+DOU0yE7tvY29+L7Qw4zq7PJ+Xz+iz
- uwfas4qp1z7gIwx2JgjhflXb8/+3JY3hc9FPsgdJBxsx1KTwnpGcLY9K8koEHOIq9U4o55u1zgX
- nwJcROOuDmRlWkAC4M/zIEpq7Y0uOv5NXsJ5bNPKd1UTddJW0M5VxJVg461WkUrqcixbZy+w
-X-Proofpoint-ORIG-GUID: hWDRG_tCuRQE0GwQG3JD7g1DTwrRMSCu
+X-Proofpoint-ORIG-GUID: hr8SJvBwPyPa810ko4hQEaFD1LROYp1U
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-03_01,2025-06-02_01,2025-03-28_01
@@ -80,400 +80,208 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Vidya Sagar Velumuri <vvelumuri@marvell.com>
-
-Add support for enqueue and dequeue of rte_security for cn20k
+Add Rx inject fastpath API for cn20k
 
 Signed-off-by: Vidya Sagar Velumuri <vvelumuri@marvell.com>
+Signed-off-by: Tejasree Kondoj <ktejasree@marvell.com>
 ---
- drivers/crypto/cnxk/cn20k_cryptodev_ops.c | 108 +++++++++++-
- drivers/crypto/cnxk/cn20k_ipsec_la_ops.h  | 199 ++++++++++++++++++++++
- drivers/crypto/cnxk/cnxk_cryptodev_ops.c  |   2 +
- drivers/crypto/cnxk/cnxk_ipsec.h          |   1 +
- 4 files changed, 307 insertions(+), 3 deletions(-)
- create mode 100644 drivers/crypto/cnxk/cn20k_ipsec_la_ops.h
+ drivers/crypto/cnxk/cn20k_cryptodev_ops.c | 165 ++++++++++++++++++++--
+ 1 file changed, 156 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/crypto/cnxk/cn20k_cryptodev_ops.c b/drivers/crypto/cnxk/cn20k_cryptodev_ops.c
-index 2e5c6d2dc5..328679bd07 100644
+index 328679bd07..e61a5e50c8 100644
 --- a/drivers/crypto/cnxk/cn20k_cryptodev_ops.c
 +++ b/drivers/crypto/cnxk/cn20k_cryptodev_ops.c
-@@ -12,6 +12,8 @@
+@@ -4,8 +4,10 @@
  
- #include "cn20k_cryptodev.h"
- #include "cn20k_cryptodev_ops.h"
-+#include "cn20k_cryptodev_sec.h"
-+#include "cn20k_ipsec_la_ops.h"
- #include "cnxk_ae.h"
- #include "cnxk_cryptodev.h"
- #include "cnxk_cryptodev_ops.h"
-@@ -61,10 +63,43 @@ cn20k_cpt_sym_temp_sess_create(struct cnxk_cpt_qp *qp, struct rte_crypto_op *op)
- 	return NULL;
+ #include <cryptodev_pmd.h>
+ #include <eal_export.h>
++#include <ethdev_driver.h>
+ #include <rte_cryptodev.h>
+ #include <rte_hexdump.h>
++#include <rte_vect.h>
+ 
+ #include "roc_cpt.h"
+ #include "roc_idev.h"
+@@ -516,12 +518,143 @@ uint16_t __rte_hot
+ cn20k_cryptodev_sec_inb_rx_inject(void *dev, struct rte_mbuf **pkts,
+ 				  struct rte_security_session **sess, uint16_t nb_pkts)
+ {
+-	RTE_SET_USED(dev);
+-	RTE_SET_USED(pkts);
+-	RTE_SET_USED(sess);
+-	RTE_SET_USED(nb_pkts);
++	uint64_t lmt_base, io_addr, u64_0, u64_1, l2_len, pf_func;
++	uint64x2_t inst_01, inst_23, inst_45, inst_67;
++	struct cn20k_sec_session *sec_sess;
++	struct rte_cryptodev *cdev = dev;
++	union cpt_res_s *hw_res = NULL;
++	uint16_t lmt_id, count = 0;
++	struct cpt_inst_s *inst;
++	union cpt_fc_write_s fc;
++	struct cnxk_cpt_vf *vf;
++	struct rte_mbuf *m;
++	uint64_t u64_dptr;
++	uint64_t *fc_addr;
++	int i;
+ 
+-	return 0;
++	vf = cdev->data->dev_private;
++
++	lmt_base = vf->rx_inj_lmtline.lmt_base;
++	io_addr = vf->rx_inj_lmtline.io_addr;
++	fc_addr = vf->rx_inj_lmtline.fc_addr;
++
++	ROC_LMT_BASE_ID_GET(lmt_base, lmt_id);
++	pf_func = vf->rx_inj_sso_pf_func;
++
++	const uint32_t fc_thresh = vf->rx_inj_lmtline.fc_thresh;
++
++again:
++	fc.u64[0] =
++		rte_atomic_load_explicit((RTE_ATOMIC(uint64_t) *)fc_addr, rte_memory_order_relaxed);
++	inst = (struct cpt_inst_s *)lmt_base;
++
++	i = 0;
++
++	if (unlikely(fc.s.qsize > fc_thresh))
++		goto exit;
++
++	for (; i < RTE_MIN(CN20K_CPT_PKTS_PER_LOOP, nb_pkts); i++) {
++
++		m = pkts[i];
++		sec_sess = (struct cn20k_sec_session *)sess[i];
++
++		if (unlikely(rte_pktmbuf_headroom(m) < 32)) {
++			plt_dp_err("No space for CPT res_s");
++			break;
++		}
++
++		l2_len = m->l2_len;
++
++		*rte_security_dynfield(m) = (uint64_t)sec_sess->userdata;
++
++		hw_res = rte_pktmbuf_mtod(m, void *);
++		hw_res = RTE_PTR_SUB(hw_res, 32);
++		hw_res = RTE_PTR_ALIGN_CEIL(hw_res, 16);
++
++		/* Prepare CPT instruction */
++		if (m->nb_segs > 1) {
++			struct rte_mbuf *last = rte_pktmbuf_lastseg(m);
++			uintptr_t dptr, rxphdr, wqe_hdr;
++			uint16_t i;
++
++			if ((m->nb_segs > CNXK_CPT_MAX_SG_SEGS) ||
++			    (rte_pktmbuf_tailroom(m) < CNXK_CPT_MIN_TAILROOM_REQ))
++				goto exit;
++
++			wqe_hdr = rte_pktmbuf_mtod_offset(last, uintptr_t, last->data_len);
++			wqe_hdr += BIT_ULL(7);
++			wqe_hdr = (wqe_hdr - 1) & ~(BIT_ULL(7) - 1);
++
++			/* Pointer to WQE header */
++			*(uint64_t *)(m + 1) = wqe_hdr;
++
++			/* Reserve SG list after end of last mbuf data location. */
++			rxphdr = wqe_hdr + 8;
++			dptr = rxphdr + 7 * 8;
++
++			/* Prepare Multiseg SG list */
++			i = fill_sg2_comp_from_pkt((struct roc_sg2list_comp *)dptr, 0, m);
++			u64_dptr = dptr | ((uint64_t)(i) << 60);
++		} else {
++			struct roc_sg2list_comp *sg2;
++			uintptr_t dptr, wqe_hdr;
++
++			/* Reserve space for WQE, NIX_RX_PARSE_S and SG_S.
++			 * Populate SG_S with num segs and seg length
++			 */
++			wqe_hdr = (uintptr_t)(m + 1);
++			*(uint64_t *)(m + 1) = wqe_hdr;
++
++			sg2 = (struct roc_sg2list_comp *)(wqe_hdr + 8 * 8);
++			sg2->u.s.len[0] = rte_pktmbuf_pkt_len(m);
++			sg2->u.s.valid_segs = 1;
++
++			dptr = (uint64_t)rte_pktmbuf_iova(m);
++			u64_dptr = dptr;
++		}
++
++		/* Word 0 and 1 */
++		inst_01 = vdupq_n_u64(0);
++		u64_0 = pf_func << 48 | *(vf->rx_chan_base + m->port) << 4 | (l2_len - 2) << 24 |
++			l2_len << 16;
++		inst_01 = vsetq_lane_u64(u64_0, inst_01, 0);
++		inst_01 = vsetq_lane_u64((uint64_t)hw_res, inst_01, 1);
++		vst1q_u64(&inst->w0.u64, inst_01);
++
++		/* Word 2 and 3 */
++		inst_23 = vdupq_n_u64(0);
++		u64_1 = (((uint64_t)m + sizeof(struct rte_mbuf)) >> 3) << 3 | 1;
++		inst_23 = vsetq_lane_u64(u64_1, inst_23, 1);
++		vst1q_u64(&inst->w2.u64, inst_23);
++
++		/* Word 4 and 5 */
++		inst_45 = vdupq_n_u64(0);
++		u64_0 = sec_sess->inst.w4 | (rte_pktmbuf_pkt_len(m));
++		inst_45 = vsetq_lane_u64(u64_0, inst_45, 0);
++		inst_45 = vsetq_lane_u64(u64_dptr, inst_45, 1);
++		vst1q_u64(&inst->w4.u64, inst_45);
++
++		/* Word 6 and 7 */
++		inst_67 = vdupq_n_u64(0);
++		u64_1 = sec_sess->inst.w7;
++		inst_67 = vsetq_lane_u64(u64_1, inst_67, 1);
++		vst1q_u64(&inst->w6.u64, inst_67);
++
++		inst++;
++	}
++
++	cn20k_cpt_lmtst_dual_submit(&io_addr, lmt_id, &i);
++
++	if (nb_pkts - i > 0 && i == CN20K_CPT_PKTS_PER_LOOP) {
++		nb_pkts -= CN20K_CPT_PKTS_PER_LOOP;
++		pkts += CN20K_CPT_PKTS_PER_LOOP;
++		count += CN20K_CPT_PKTS_PER_LOOP;
++		sess += CN20K_CPT_PKTS_PER_LOOP;
++		goto again;
++	}
++
++exit:
++	return count + i;
  }
- 
-+static __rte_always_inline int __rte_hot
-+cpt_sec_ipsec_inst_fill(struct cnxk_cpt_qp *qp, struct rte_crypto_op *op,
-+			struct cn20k_sec_session *sess, struct cpt_inst_s *inst,
-+			struct cpt_inflight_req *infl_req)
-+{
-+	struct rte_crypto_sym_op *sym_op = op->sym;
+ #else
+ RTE_EXPORT_INTERNAL_SYMBOL(cn20k_cryptodev_sec_inb_rx_inject)
+@@ -541,11 +674,25 @@ RTE_EXPORT_INTERNAL_SYMBOL(cn20k_cryptodev_sec_rx_inject_configure)
+ int
+ cn20k_cryptodev_sec_rx_inject_configure(void *device, uint16_t port_id, bool enable)
+ {
+-	RTE_SET_USED(device);
+-	RTE_SET_USED(port_id);
+-	RTE_SET_USED(enable);
++	struct rte_cryptodev *crypto_dev = device;
++	struct rte_eth_dev *eth_dev;
 +	int ret;
 +
-+	if (unlikely(sym_op->m_dst && sym_op->m_dst != sym_op->m_src)) {
-+		plt_dp_err("Out of place is not supported");
++	if (!rte_eth_dev_is_valid_port(port_id))
++		return -EINVAL;
+ 
+-	return -ENOTSUP;
++	if (!(crypto_dev->feature_flags & RTE_CRYPTODEV_FF_SECURITY_RX_INJECT))
 +		return -ENOTSUP;
-+	}
 +
-+	if (sess->ipsec.is_outbound)
-+		ret = process_outb_sa(&qp->lf, op, sess, &qp->meta_info, infl_req, inst);
-+	else
-+		ret = process_inb_sa(op, sess, inst, &qp->meta_info, infl_req);
++	eth_dev = &rte_eth_devices[port_id];
 +
-+	return ret;
-+}
++	ret = strncmp(eth_dev->device->driver->name, "net_cn20k", 8);
++	if (ret)
++		return -ENOTSUP;
 +
-+static __rte_always_inline int __rte_hot
-+cpt_sec_inst_fill(struct cnxk_cpt_qp *qp, struct rte_crypto_op *op, struct cn20k_sec_session *sess,
-+		  struct cpt_inst_s *inst, struct cpt_inflight_req *infl_req)
-+{
-+
-+	if (sess->proto == RTE_SECURITY_PROTOCOL_IPSEC)
-+		return cpt_sec_ipsec_inst_fill(qp, op, sess, &inst[0], infl_req);
++	roc_idev_nix_rx_inject_set(port_id, enable);
 +
 +	return 0;
-+}
-+
- static inline int
- cn20k_cpt_fill_inst(struct cnxk_cpt_qp *qp, struct rte_crypto_op *ops[], struct cpt_inst_s inst[],
- 		    struct cpt_inflight_req *infl_req)
- {
-+	struct cn20k_sec_session *sec_sess;
- 	struct rte_crypto_asym_op *asym_op;
- 	struct rte_crypto_sym_op *sym_op;
- 	struct cnxk_ae_sess *ae_sess;
-@@ -86,7 +121,13 @@ cn20k_cpt_fill_inst(struct cnxk_cpt_qp *qp, struct rte_crypto_op *ops[], struct
- 	sym_op = op->sym;
- 
- 	if (op->type == RTE_CRYPTO_OP_TYPE_SYMMETRIC) {
--		if (op->sess_type == RTE_CRYPTO_OP_WITH_SESSION) {
-+		if (op->sess_type == RTE_CRYPTO_OP_SECURITY_SESSION) {
-+			sec_sess = (struct cn20k_sec_session *)sym_op->session;
-+			ret = cpt_sec_inst_fill(qp, op, sec_sess, &inst[0], infl_req);
-+			if (unlikely(ret))
-+				return 0;
-+			w7 = sec_sess->inst.w7;
-+		} else if (op->sess_type == RTE_CRYPTO_OP_WITH_SESSION) {
- 			sess = (struct cnxk_se_sess *)(sym_op->session);
- 			ret = cpt_sym_inst_fill(qp, op, sess, infl_req, &inst[0], true);
- 			if (unlikely(ret))
-@@ -226,6 +267,52 @@ cn20k_cpt_enqueue_burst(void *qptr, struct rte_crypto_op **ops, uint16_t nb_ops)
- 	return count + i;
  }
  
-+static inline void
-+cn20k_cpt_ipsec_post_process(struct rte_crypto_op *cop, struct cpt_cn20k_res_s *res)
-+{
-+	struct rte_mbuf *mbuf = cop->sym->m_src;
-+	const uint16_t m_len = res->rlen;
-+
-+	switch (res->uc_compcode) {
-+	case ROC_IE_OW_UCC_SUCCESS_PKT_IP_BADCSUM:
-+		mbuf->ol_flags &= ~RTE_MBUF_F_RX_IP_CKSUM_GOOD;
-+		mbuf->ol_flags |= RTE_MBUF_F_RX_IP_CKSUM_BAD;
-+		break;
-+	case ROC_IE_OW_UCC_SUCCESS_PKT_L4_GOODCSUM:
-+		mbuf->ol_flags |= RTE_MBUF_F_RX_L4_CKSUM_GOOD | RTE_MBUF_F_RX_IP_CKSUM_GOOD;
-+		break;
-+	case ROC_IE_OW_UCC_SUCCESS_PKT_L4_BADCSUM:
-+		mbuf->ol_flags |= RTE_MBUF_F_RX_L4_CKSUM_BAD | RTE_MBUF_F_RX_IP_CKSUM_GOOD;
-+		break;
-+	case ROC_IE_OW_UCC_SUCCESS_PKT_IP_GOODCSUM:
-+		break;
-+	case ROC_IE_OW_UCC_SUCCESS_SA_SOFTEXP_FIRST:
-+	case ROC_IE_OW_UCC_SUCCESS_SA_SOFTEXP_AGAIN:
-+		cop->aux_flags = RTE_CRYPTO_OP_AUX_FLAGS_IPSEC_SOFT_EXPIRY;
-+		break;
-+	default:
-+		cop->status = RTE_CRYPTO_OP_STATUS_ERROR;
-+		cop->aux_flags = res->uc_compcode;
-+		return;
-+	}
-+
-+	if (mbuf->next == NULL)
-+		mbuf->data_len = m_len;
-+
-+	mbuf->pkt_len = m_len;
-+}
-+
-+static inline void
-+cn20k_cpt_sec_post_process(struct rte_crypto_op *cop, struct cpt_cn20k_res_s *res)
-+{
-+	struct rte_crypto_sym_op *sym_op = cop->sym;
-+	struct cn20k_sec_session *sess;
-+
-+	sess = sym_op->session;
-+	if (sess->proto == RTE_SECURITY_PROTOCOL_IPSEC)
-+		cn20k_cpt_ipsec_post_process(cop, res);
-+}
-+
- static inline void
- cn20k_cpt_dequeue_post_process(struct cnxk_cpt_qp *qp, struct rte_crypto_op *cop,
- 			       struct cpt_inflight_req *infl_req, struct cpt_cn20k_res_s *res)
-@@ -235,8 +322,23 @@ cn20k_cpt_dequeue_post_process(struct cnxk_cpt_qp *qp, struct rte_crypto_op *cop
- 
- 	cop->status = RTE_CRYPTO_OP_STATUS_SUCCESS;
- 
--	if (cop->type == RTE_CRYPTO_OP_TYPE_ASYMMETRIC &&
--	    cop->sess_type == RTE_CRYPTO_OP_WITH_SESSION) {
-+	if (cop->type == RTE_CRYPTO_OP_TYPE_SYMMETRIC &&
-+	    cop->sess_type == RTE_CRYPTO_OP_SECURITY_SESSION) {
-+		if (likely(compcode == CPT_COMP_GOOD || compcode == CPT_COMP_WARN)) {
-+			/* Success with additional info */
-+			cn20k_cpt_sec_post_process(cop, res);
-+		} else {
-+			cop->status = RTE_CRYPTO_OP_STATUS_ERROR;
-+			plt_dp_info("HW completion code 0x%x", res->compcode);
-+			if (compcode == CPT_COMP_GOOD) {
-+				plt_dp_info("Request failed with microcode error");
-+				plt_dp_info("MC completion code 0x%x", uc_compcode);
-+			}
-+		}
-+
-+		return;
-+	} else if (cop->type == RTE_CRYPTO_OP_TYPE_ASYMMETRIC &&
-+		   cop->sess_type == RTE_CRYPTO_OP_WITH_SESSION) {
- 		struct cnxk_ae_sess *sess;
- 
- 		sess = (struct cnxk_ae_sess *)cop->asym->session;
-diff --git a/drivers/crypto/cnxk/cn20k_ipsec_la_ops.h b/drivers/crypto/cnxk/cn20k_ipsec_la_ops.h
-new file mode 100644
-index 0000000000..eff51bd794
---- /dev/null
-+++ b/drivers/crypto/cnxk/cn20k_ipsec_la_ops.h
-@@ -0,0 +1,199 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(C) 2025 Marvell.
-+ */
-+
-+#ifndef __CN20K_IPSEC_LA_OPS_H__
-+#define __CN20K_IPSEC_LA_OPS_H__
-+
-+#include <rte_crypto_sym.h>
-+#include <rte_security.h>
-+
-+#include "roc_ie.h"
-+
-+#include "cn20k_cryptodev.h"
-+#include "cn20k_ipsec.h"
-+#include "cnxk_cryptodev.h"
-+#include "cnxk_cryptodev_ops.h"
-+#include "cnxk_sg.h"
-+
-+static inline void
-+ipsec_po_sa_iv_set(struct cn20k_sec_session *sess, struct rte_crypto_op *cop)
-+{
-+	uint64_t *iv = &sess->sa.out_sa.iv.u64[0];
-+	uint64_t *tmp_iv;
-+
-+	memcpy(iv, rte_crypto_op_ctod_offset(cop, uint8_t *, sess->iv_offset), 16);
-+	tmp_iv = (uint64_t *)iv;
-+	*tmp_iv = rte_be_to_cpu_64(*tmp_iv);
-+
-+	tmp_iv = (uint64_t *)(iv + 1);
-+	*tmp_iv = rte_be_to_cpu_64(*tmp_iv);
-+}
-+
-+static inline void
-+ipsec_po_sa_aes_gcm_iv_set(struct cn20k_sec_session *sess, struct rte_crypto_op *cop)
-+{
-+	uint8_t *iv = &sess->sa.out_sa.iv.s.iv_dbg1[0];
-+	uint32_t *tmp_iv;
-+
-+	memcpy(iv, rte_crypto_op_ctod_offset(cop, uint8_t *, sess->iv_offset), 4);
-+	tmp_iv = (uint32_t *)iv;
-+	*tmp_iv = rte_be_to_cpu_32(*tmp_iv);
-+
-+	iv = &sess->sa.out_sa.iv.s.iv_dbg2[0];
-+	memcpy(iv, rte_crypto_op_ctod_offset(cop, uint8_t *, sess->iv_offset + 4), 4);
-+	tmp_iv = (uint32_t *)iv;
-+	*tmp_iv = rte_be_to_cpu_32(*tmp_iv);
-+}
-+
-+static __rte_always_inline int
-+process_outb_sa(struct roc_cpt_lf *lf, struct rte_crypto_op *cop, struct cn20k_sec_session *sess,
-+		struct cpt_qp_meta_info *m_info, struct cpt_inflight_req *infl_req,
-+		struct cpt_inst_s *inst)
-+{
-+	struct rte_crypto_sym_op *sym_op = cop->sym;
-+	struct rte_mbuf *m_src = sym_op->m_src;
-+	uint64_t inst_w4_u64 = sess->inst.w4;
-+	uint64_t dptr;
-+
-+	RTE_SET_USED(lf);
-+
-+#ifdef LA_IPSEC_DEBUG
-+	if (sess->sa.out_sa.w2.s.iv_src == ROC_IE_OW_SA_IV_SRC_FROM_SA) {
-+		if (sess->sa.out_sa.w2.s.enc_type == ROC_IE_SA_ENC_AES_GCM ||
-+		    sess->sa.out_sa.w2.s.enc_type == ROC_IE_SA_ENC_AES_CCM ||
-+		    sess->sa.out_sa.w2.s.auth_type == ROC_IE_SA_AUTH_AES_GMAC)
-+			ipsec_po_sa_aes_gcm_iv_set(sess, cop);
-+		else
-+			ipsec_po_sa_iv_set(sess, cop);
-+	}
-+
-+	/* Trigger CTX reload to fetch new data from DRAM */
-+	roc_cpt_lf_ctx_reload(lf, &sess->sa.out_sa);
-+	rte_delay_ms(1);
-+#endif
-+	const uint64_t ol_flags = m_src->ol_flags;
-+
-+	inst_w4_u64 &= ~(((uint64_t)(!!(ol_flags & RTE_MBUF_F_TX_IP_CKSUM)) << 33) |
-+			 ((uint64_t)(!!(ol_flags & RTE_MBUF_F_TX_L4_MASK)) << 32));
-+
-+	if (likely(m_src->next == NULL)) {
-+		if (unlikely(rte_pktmbuf_tailroom(m_src) < sess->max_extended_len)) {
-+			plt_dp_err("Not enough tail room");
-+			return -ENOMEM;
-+		}
-+
-+		/* Prepare CPT instruction */
-+		inst->w4.u64 = inst_w4_u64 | rte_pktmbuf_pkt_len(m_src);
-+		dptr = rte_pktmbuf_mtod(m_src, uint64_t);
-+		inst->dptr = dptr;
-+	} else {
-+		struct roc_sg2list_comp *scatter_comp, *gather_comp;
-+		union cpt_inst_w5 cpt_inst_w5;
-+		union cpt_inst_w6 cpt_inst_w6;
-+		struct rte_mbuf *last_seg;
-+		uint32_t g_size_bytes;
-+		void *m_data;
-+		int i;
-+
-+		last_seg = rte_pktmbuf_lastseg(m_src);
-+
-+		if (unlikely(rte_pktmbuf_tailroom(last_seg) < sess->max_extended_len)) {
-+			plt_dp_err("Not enough tail room (required: %d, available: %d)",
-+				   sess->max_extended_len, rte_pktmbuf_tailroom(last_seg));
-+			return -ENOMEM;
-+		}
-+
-+		m_data = alloc_op_meta(NULL, m_info->mlen, m_info->pool, infl_req);
-+		if (unlikely(m_data == NULL)) {
-+			plt_dp_err("Error allocating meta buffer for request");
-+			return -ENOMEM;
-+		}
-+
-+		/* Input Gather List */
-+		i = 0;
-+		gather_comp = (struct roc_sg2list_comp *)((uint8_t *)m_data);
-+
-+		i = fill_sg2_comp_from_pkt(gather_comp, i, m_src);
-+
-+		cpt_inst_w5.s.gather_sz = ((i + 2) / 3);
-+		g_size_bytes = ((i + 2) / 3) * sizeof(struct roc_sg2list_comp);
-+
-+		/* Output Scatter List */
-+		last_seg->data_len += sess->max_extended_len;
-+
-+		i = 0;
-+		scatter_comp = (struct roc_sg2list_comp *)((uint8_t *)gather_comp + g_size_bytes);
-+
-+		i = fill_sg2_comp_from_pkt(scatter_comp, i, m_src);
-+
-+		cpt_inst_w6.s.scatter_sz = ((i + 2) / 3);
-+
-+		cpt_inst_w5.s.dptr = (uint64_t)gather_comp;
-+		cpt_inst_w6.s.rptr = (uint64_t)scatter_comp;
-+
-+		inst->w5.u64 = cpt_inst_w5.u64;
-+		inst->w6.u64 = cpt_inst_w6.u64;
-+		inst->w4.u64 = sess->inst.w4 | rte_pktmbuf_pkt_len(m_src);
-+		inst->w4.s.opcode_major &= (~(ROC_IE_OW_INPLACE_BIT));
-+	}
-+
-+	return 0;
-+}
-+
-+static __rte_always_inline int
-+process_inb_sa(struct rte_crypto_op *cop, struct cn20k_sec_session *sess, struct cpt_inst_s *inst,
-+	       struct cpt_qp_meta_info *m_info, struct cpt_inflight_req *infl_req)
-+{
-+	struct rte_crypto_sym_op *sym_op = cop->sym;
-+	struct rte_mbuf *m_src = sym_op->m_src;
-+	uint64_t dptr;
-+
-+	if (likely(m_src->next == NULL)) {
-+		/* Prepare CPT instruction */
-+		inst->w4.u64 = sess->inst.w4 | rte_pktmbuf_pkt_len(m_src);
-+		dptr = rte_pktmbuf_mtod(m_src, uint64_t);
-+		inst->dptr = dptr;
-+		m_src->ol_flags |= (uint64_t)sess->ipsec.ip_csum;
-+	} else {
-+		struct roc_sg2list_comp *scatter_comp, *gather_comp;
-+		union cpt_inst_w5 cpt_inst_w5;
-+		union cpt_inst_w6 cpt_inst_w6;
-+		uint32_t g_size_bytes;
-+		void *m_data;
-+		int i;
-+
-+		m_data = alloc_op_meta(NULL, m_info->mlen, m_info->pool, infl_req);
-+		if (unlikely(m_data == NULL)) {
-+			plt_dp_err("Error allocating meta buffer for request");
-+			return -ENOMEM;
-+		}
-+
-+		/* Input Gather List */
-+		i = 0;
-+		gather_comp = (struct roc_sg2list_comp *)((uint8_t *)m_data);
-+
-+		i = fill_sg2_comp_from_pkt(gather_comp, i, m_src);
-+
-+		cpt_inst_w5.s.gather_sz = ((i + 2) / 3);
-+		g_size_bytes = ((i + 2) / 3) * sizeof(struct roc_sg2list_comp);
-+
-+		/* Output Scatter List */
-+		i = 0;
-+		scatter_comp = (struct roc_sg2list_comp *)((uint8_t *)gather_comp + g_size_bytes);
-+		i = fill_sg2_comp_from_pkt(scatter_comp, i, m_src);
-+
-+		cpt_inst_w6.s.scatter_sz = ((i + 2) / 3);
-+
-+		cpt_inst_w5.s.dptr = (uint64_t)gather_comp;
-+		cpt_inst_w6.s.rptr = (uint64_t)scatter_comp;
-+
-+		inst->w5.u64 = cpt_inst_w5.u64;
-+		inst->w6.u64 = cpt_inst_w6.u64;
-+		inst->w4.u64 = sess->inst.w4 | rte_pktmbuf_pkt_len(m_src);
-+		inst->w4.s.opcode_major &= (~(ROC_IE_OW_INPLACE_BIT));
-+	}
-+	return 0;
-+}
-+
-+#endif /* __CN20K_IPSEC_LA_OPS_H__ */
-diff --git a/drivers/crypto/cnxk/cnxk_cryptodev_ops.c b/drivers/crypto/cnxk/cnxk_cryptodev_ops.c
-index b4020f96c1..982fbe991f 100644
---- a/drivers/crypto/cnxk/cnxk_cryptodev_ops.c
-+++ b/drivers/crypto/cnxk/cnxk_cryptodev_ops.c
-@@ -31,6 +31,8 @@
- 
- #include "cn10k_cryptodev_ops.h"
- #include "cn10k_cryptodev_sec.h"
-+#include "cn20k_cryptodev_ops.h"
-+#include "cn20k_cryptodev_sec.h"
- #include "cn9k_cryptodev_ops.h"
- #include "cn9k_ipsec.h"
- 
-diff --git a/drivers/crypto/cnxk/cnxk_ipsec.h b/drivers/crypto/cnxk/cnxk_ipsec.h
-index 42f8e64009..5f65c34380 100644
---- a/drivers/crypto/cnxk/cnxk_ipsec.h
-+++ b/drivers/crypto/cnxk/cnxk_ipsec.h
-@@ -10,6 +10,7 @@
- #include "roc_cpt.h"
- #include "roc_ie_on.h"
- #include "roc_ie_ot.h"
-+#include "roc_ie_ow.h"
- #include "roc_model.h"
- 
- extern struct rte_security_ops cnxk_sec_ops;
+ struct rte_cryptodev_ops cn20k_cpt_ops = {
 -- 
 2.25.1
 
