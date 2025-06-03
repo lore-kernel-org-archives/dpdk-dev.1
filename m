@@ -2,34 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 524A1C5AD49
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Jun 2025 00:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F0DC5B552
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Jun 2025 01:01:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 12CF44028E;
-	Tue,  3 Jun 2025 02:32:11 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E26C64028E;
+	Tue,  3 Jun 2025 03:01:29 +0200 (CEST)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id CCB004025A
- for <dev@dpdk.org>; Tue,  3 Jun 2025 02:32:09 +0200 (CEST)
-Received: by linux.microsoft.com (Postfix, from userid 1202)
- id CC5B8206789F; Mon,  2 Jun 2025 17:32:08 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CC5B8206789F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
- s=default; t=1748910728;
- bh=EYCyKqolryF+HdLTdxcysokyqGZqZFSIfkhKrf777wk=;
- h=From:To:Cc:Subject:Date:Reply-To:From;
- b=fyFldldvQcubQJQcjqGdIinvUIzMrBfbAIJuNdik3M9QP18EqSQ1R635reydDH/N9
- b9Eand79dRur2b8OiDZvtkwfr5dH5qCZhX5m8n11SdmN2l1yqSF2agTKk/DRZcWbPZ
- 9yq01+QNp/AbXRst1dkRS2QEncj/1mIK5S5pDO3A=
-From: longli@linuxonhyperv.com
-To: Stephen Hemminger <stephen@networkplumber.org>, Wei Hu <weh@microsoft.com>,
- Thomas Monjalon <thomas@monjalon.net>,
- David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org,
-	Long Li <longli@microsoft.com>
-Subject: [PATCH] doc: remove the public interfaces from bus/vmbus
-Date: Mon,  2 Jun 2025 17:31:44 -0700
-Message-Id: <1748910704-25463-1-git-send-email-longli@linuxonhyperv.com>
-X-Mailer: git-send-email 1.8.3.1
+ by mails.dpdk.org (Postfix) with ESMTP id 193AF4025A
+ for <dev@dpdk.org>; Tue,  3 Jun 2025 03:01:28 +0200 (CEST)
+Received: by linux.microsoft.com (Postfix, from userid 1213)
+ id 1C43B2117456; Mon,  2 Jun 2025 18:01:27 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1C43B2117456
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1748912487;
+ bh=o+8wvdoKWR6+TP7sochf0jLX0kz2TjPu1Ata53D8f2o=;
+ h=Date:From:To:Subject:References:In-Reply-To:From;
+ b=BfTpdxNxLGHWRTkqt3nQZYJMd5XF6OKIqTYkCIDNqOfV4/HdWKKRgwO3A0tshrawL
+ bc98Cvo3mWLhZKznNGKtyvsH9RmavYHPTmKeOG/C3rrPAZiQ18/nbwPsukf60sJvOV
+ ARjFWkZunwo9oZBNMzYcC9RzR9q5o+ChNXxNkgaw=
+Date: Mon, 2 Jun 2025 18:01:27 -0700
+From: Andre Muezerie <andremue@linux.microsoft.com>
+To: dev@dpdk.org
+Subject: Re: [PATCH v4 0/4] allow pmdinfo to be inserted and parsed using MSVC
+Message-ID: <20250603010127.GA30135@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1744400374-26620-1-git-send-email-andremue@linux.microsoft.com>
+ <1744839898-15745-1-git-send-email-andremue@linux.microsoft.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1744839898-15745-1-git-send-email-andremue@linux.microsoft.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -41,35 +43,94 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-Reply-To: longli@microsoft.com
 Errors-To: dev-bounces@dpdk.org
 
-From: Long Li <longli@microsoft.com>
+On Wed, Apr 16, 2025 at 02:44:54PM -0700, Andre Muezerie wrote:
+> DPDK uses GCC attribute "used" through macro __rte_used to indicate
+> that a variable not referenced in the code should be assumed being
+> used and therefore not be optimized away. This technique is used to embed
+> information in the binaries, by having crafted information stored in
+> them.
+> 
+> MSVC offers similar functionality, but it differs significantly: MSVC
+> requires a pragma to be used to send a command to the linker telling it
+> explicitly the name of the symbol that should be included (even if not
+> referenced). As a side-effect, variables called out to be included cannot
+> be static, otherwise their symbols are not "seen" by the linker. This
+> restriction requires some DPDK code to be refactored.
+> 
+> Macro RTE_INCLUDE is used in this patch to ensure these special variables
+> make it to the final binaries.
+> 
+> The elimination of "static" for some of these variables caused name
+> clashes when __COUNTER__ predefined macro was used. As a workaround,
+> predefined macro __LINE__ was used instead. However, when __COUNTER__
+> was used directly from a header file, __LINE__ had to be used from the
+> .c files, otherwise it would also not result in a unique symbol. This
+> required a parameter to be added to some macros so that the __LINE__
+> could be passed from the .c file to the macro defined in the header
+> (which was originally using __COUNTER__).
+> 
+> With this patchset commands like the one below provide the same JSON
+> output as would be obtained on Linux.
+> 
+> python usertools\dpdk-pmdinfo.py build\app\dpdk-testpmd.exe
+> 
+> v4:
+>  - limited the use of __LINE__ to the header files, reducing number of
+>    changes made in previous versions of this patchset.
+> 
+> v3:
+>  - ge-pmdinfo-cfile.py: fixed archiver's syntax to extract object from
+>    library
+>  - dpdk-pmdinfo.py: removed is_windows() and replaced with
+>    os.name == "nt"
+> 
+> v2:
+>  - dpdk-pmdinfo.py: not importing elftools on Windows
+>  - not requiring "pefile" Python module during build
+>  - gen-pmdinfo-cfile.py: renamed "ar" to "archiver"
+> 
+> Andre Muezerie (4):
+>   eal: add macro to embed information in binaries
+>   buildtools: use macro to embed information in binaries
+>   usertools: parse strings from PE images
+>   drivers: use macro to embed information in binaries
+> 
+>  buildtools/gen-pmdinfo-cfile.py              | 24 +++++++--
+>  buildtools/meson.build                       |  4 +-
+>  buildtools/pmdinfogen.py                     | 11 ++--
+>  drivers/bus/auxiliary/bus_auxiliary_driver.h |  2 +-
+>  drivers/bus/cdx/bus_cdx_driver.h             |  5 +-
+>  drivers/bus/dpaa/bus_dpaa_driver.h           |  2 +-
+>  drivers/bus/fslmc/bus_fslmc_driver.h         |  4 +-
+>  drivers/bus/ifpga/bus_ifpga_driver.h         |  2 +-
+>  drivers/bus/pci/bus_pci_driver.h             |  2 +-
+>  drivers/bus/platform/bus_platform_driver.h   |  2 +-
+>  drivers/bus/uacce/bus_uacce_driver.h         |  2 +-
+>  drivers/bus/vdev/bus_vdev_driver.h           |  2 +-
+>  drivers/bus/vmbus/bus_vmbus_driver.h         |  2 +-
+>  drivers/common/mlx5/mlx5_common.c            |  2 +-
+>  drivers/common/mlx5/mlx5_common_pci.c        |  2 +-
+>  drivers/common/nitrox/nitrox_device.c        |  1 +
+>  drivers/compress/mlx5/mlx5_compress.c        |  2 +-
+>  drivers/crypto/mlx5/mlx5_crypto.c            |  2 +-
+>  drivers/event/octeontx/ssovf_evdev.c         |  1 +
+>  drivers/net/mlx4/mlx4.c                      |  2 +-
+>  drivers/net/mlx5/mlx5.c                      |  2 +-
+>  drivers/net/virtio/virtio_pci_ethdev.c       |  2 +-
+>  drivers/regex/mlx5/mlx5_regex.c              |  2 +-
+>  drivers/vdpa/mlx5/mlx5_vdpa.c                |  2 +-
+>  lib/eal/common/eal_common_options.c          |  2 +-
+>  lib/eal/include/rte_common.h                 |  6 +++
+>  lib/eal/include/rte_dev.h                    | 14 ++----
+>  usertools/dpdk-pmdinfo.py                    | 53 ++++++++++++++++----
+>  28 files changed, 106 insertions(+), 53 deletions(-)
+> 
+> --
+> 2.49.0.vfs.0.0
 
-The deprecation notice has been sent in
-7642e3b0e0 ("doc: announce vmbus API deprecation")
+Would someone be able to review this series?
+Thanks,
 
-Remove those interfaces in this release.
-
-Signed-off-by: Long Li <longli@microsoft.com>
----
- doc/guides/rel_notes/release_25_07.rst | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
-index 6b070801de..672307da6c 100644
---- a/doc/guides/rel_notes/release_25_07.rst
-+++ b/doc/guides/rel_notes/release_25_07.rst
-@@ -125,7 +125,8 @@ ABI Changes
-    Also, make sure to start the actual text at the margin.
-    =======================================================
- 
--* No ABI change that would break compatibility with 24.11.
-+* All the vmbus interfaces defined in ``drivers/bus/vmbus/rte_bus_vmbus.h``
-+  become internal to DPDK.
- 
- 
- Known Issues
--- 
-2.25.1
-
+Andre Muezerie
