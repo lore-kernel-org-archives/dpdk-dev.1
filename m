@@ -2,124 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A744C5AD49
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Jun 2025 15:14:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CC74C5AE59
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Jun 2025 15:20:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 57748402C8;
-	Tue,  3 Jun 2025 17:14:01 +0200 (CEST)
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com
- (mail-bn8nam04on2072.outbound.protection.outlook.com [40.107.100.72])
- by mails.dpdk.org (Postfix) with ESMTP id 356574028E
- for <dev@dpdk.org>; Tue,  3 Jun 2025 17:14:00 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=p5QZOxEla9XDFrBosTXDK2jfGfZ2R8Q2CuB3V3q7NbrhhtYYMPsbXX99VgsH48Ahj6i2sWlzyo8Ki3sBl7HAGMjjLxu2xBLCU3h/oTGWfOLS+2l9IRhDqBkomjkQmDHBXoklG11y5VWPjmDzvqsbHzPCw8dpqEHZ/EYIw/n0v/NSv+FJqjJcSbcvbDHkpktA1xEgtJVl1imWVRqr624BQr9hQunrzgzAF50ErTdow7Ug608oQPeiIIc1GaVALHT/Cyn6MmRcnVwqmSQI3OaK2xiZLS4aLaM+i81cELMRGJxy5IeOXgJl+NtMI15fgQz71YPcOFIiS+ch1cMwYKYC+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=J7QYk0ni7pGKRKT81jY4j2tqGx/I7YsMbneUGWvNAFc=;
- b=DZyogu/5gqEaVE97Nb3aTn5bDhYRytSGFY/AZioLOLovhOVeeuvOta5jRby6aKS5cysyJq5ePBloIvYnOkxlnGE9/Q8n3yXHMFyniU4LsyBAyLFVFmDZ5jEZ2DsR3bhwAhIuaI20md38chKx5QKEcw/08CoRJ89Kf7VxsobPSBn32k2LzwqasV5WrLAdwz9dgHrj5bBGEGapoms3sm7ZMsJYANNw+UCZTZa3hRhD4sc+ZL9PsIWmldNnu4cmQcNMkEfYoTUnT1N+Qr5/yLBIoYyu6ggiOwLeFFrF/tlW1Amhwv/bV4l4wvbh8bXeLoYpLHUwMxJ6WymxCLKxiDIjVw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linux.microsoft.com
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J7QYk0ni7pGKRKT81jY4j2tqGx/I7YsMbneUGWvNAFc=;
- b=jpCx3nX+a2iOaxSlm9ZjQtsbizH9uuMi5RG8YJvasXHbScpIQfYtWZbTPO5NOTQBVOtdaw66gsIeGDTw3zZ1oi7Th3rquVVowNWDcAeOzuPpFwDdgdnv3zxWvjDWYmWmKlP+/4/TTqslZM21RwZ/RIQkp/T7seAylD0HxMlbFm/i3PQhm2ZSXS+9kVqt2iicDpIAT/1kSZRO8rfT/QyLvXbhhYR7bRrEil/KsZn+17uyMpNHcsRZpNvuhSk6K0DMrwqOIYjrrFeE3tPNmSy8STMYuaEywcHsyB5n/AsJuarWzx0W0HpTqmcFdv+v9I6dRxcqO76ZXms+qoNF6y5mTA==
-Received: from BN0PR10CA0019.namprd10.prod.outlook.com (2603:10b6:408:143::8)
- by DM4PR12MB6493.namprd12.prod.outlook.com (2603:10b6:8:b6::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.34; Tue, 3 Jun
- 2025 15:13:57 +0000
-Received: from BN1PEPF00004682.namprd03.prod.outlook.com
- (2603:10b6:408:143:cafe::f5) by BN0PR10CA0019.outlook.office365.com
- (2603:10b6:408:143::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.32 via Frontend Transport; Tue,
- 3 Jun 2025 15:13:57 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN1PEPF00004682.mail.protection.outlook.com (10.167.243.88) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8792.29 via Frontend Transport; Tue, 3 Jun 2025 15:13:57 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 3 Jun 2025
- 08:13:35 -0700
-Received: from localhost (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 3 Jun
- 2025 08:13:34 -0700
-Date: Tue, 3 Jun 2025 17:13:14 +0200
-From: Dariusz Sosnowski <dsosnowski@nvidia.com>
-To: Andre Muezerie <andremue@linux.microsoft.com>
-CC: Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao
- <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
- <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>, <dev@dpdk.org>
-Subject: Re: [PATCH] common/mlx5: use intrinsics instead of inline assembly
-Message-ID: <20250603151253.jjctszshwamnepdy@ds-vm-debian.local>
-References: <1746457062-8502-1-git-send-email-andremue@linux.microsoft.com>
+	by mails.dpdk.org (Postfix) with ESMTP id DDE1740E35;
+	Tue,  3 Jun 2025 17:20:27 +0200 (CEST)
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com
+ [209.85.216.41]) by mails.dpdk.org (Postfix) with ESMTP id 14E3D402C8
+ for <dev@dpdk.org>; Tue,  3 Jun 2025 17:20:27 +0200 (CEST)
+Received: by mail-pj1-f41.google.com with SMTP id
+ 98e67ed59e1d1-3122a63201bso4405000a91.0
+ for <dev@dpdk.org>; Tue, 03 Jun 2025 08:20:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1748964026; x=1749568826; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+ :date:message-id:reply-to;
+ bh=SB2kvjMXFzgkhbg1XBQBSPOiim7LdqI6jCq9cfScv1Y=;
+ b=XmLSkMdxDxjRHc8VJyWvEIai4kwiKmi3RmAIX7pf4ye5+GLqYHlJMcfk8B45MECD1E
+ UAXr4rv6kG2FZ2IZVF1T8+PNSCLhNQG1h7I92330wbNiG3R7H3eI4YuBBAup3U2QY2Mh
+ o8301ucyV5Yy7SnWRyc86OzBR3oVvObU3zgmE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1748964026; x=1749568826;
+ h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=SB2kvjMXFzgkhbg1XBQBSPOiim7LdqI6jCq9cfScv1Y=;
+ b=WfwbkNzb+HuZl7Eq9Z5YHoz5pAaoXYzeVhmv894UWiyqaORjdnWMCWiTSsuyqoX3Md
+ eASNe88c5O4Ya0dA6ytBLaz7PLkwuvODf3RphsZzuh6csMIf2R6++Uz1LevCY59gCHGD
+ GKD+lB427oqxMQMcmUdKuUVg3Z//Kl/re2/JSvc3Lv2D4+d4bE5KUaeXTwdiV6ivX64u
+ wl7WXoNpOjmVCn/hCDwU/HTo6biZS7t0Fy4MdaGIBSMBYHuwpppMnQHToZaWs5SjeVlb
+ HMflDJHpHF0pUm8//eLjfXomDg2NuACskOt9LHr9z6VCJPjZDmVybtL+b6soX4Egxt5c
+ 0Uxw==
+X-Gm-Message-State: AOJu0YyY7QRBssFsy6XcVn3kXI4HszqcMi4YAxKbbUBSfCdtblOZFa10
+ gza92A6HkS+bf6GUI8mNVjfWs5omzhPH2cNnQY9bsjz7ETriDkAIl5d+NNaTMugNhxIBXRWlBEW
+ 63NWUE0HB4Af1M7F9rhpF9xNYyaLgNn/2mZoc6BMsVxDCfFhDkyZSI8g=
+X-Gm-Gg: ASbGnct8IguxhhuqBEr6p3P8IecY2xCBIg2wn1f88OgPw0xakiWsrwgXDuN/dyMfvXG
+ AV9QGtwX3mdfbkRrCI1xb597nLulieZOmrY1b28OU3bDaC9wBrmiPxFIA93bfT1nFggNKFTrcKb
+ qFjt7pe/rEWB6GUh95TWqJLjgDtlGjCaOj26fLSdt06Un7
+X-Google-Smtp-Source: AGHT+IF4Fcc8tb7CwiaKyMYJfctflRoD+BVySH/mK43kQp9Vrn5ZCginip1UIw87yMFyLrL5yrS5HthyV9wq+LiJjmk=
+X-Received: by 2002:a17:90b:1810:b0:311:c1ec:7d0a with SMTP id
+ 98e67ed59e1d1-3127c72e97bmr16801539a91.25.1748964025386; Tue, 03 Jun 2025
+ 08:20:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1746457062-8502-1-git-send-email-andremue@linux.microsoft.com>
-X-Originating-IP: [10.126.231.35]
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00004682:EE_|DM4PR12MB6493:EE_
-X-MS-Office365-Filtering-Correlation-Id: cd1f4209-005f-4515-e07e-08dda2b142fd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|36860700013|1800799024|376014|7053199007; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?/b1TAbzMCykvfNhImcMlmxIPEXU2LBhFvsVuZY+jTOtfvCH8gC90PSwKmrKI?=
- =?us-ascii?Q?dNDVYfAt4p0gW631Ox82s+qh0XiGFA3A7Mnd4tMtHgr7Ek/Er4VKnqU5X83l?=
- =?us-ascii?Q?0QUJIlJjXwkUPIeZmSA3yZyZX4EnZpFELskWKlO0Io15XJlj8RfOGFCc0//O?=
- =?us-ascii?Q?zI/Wbcdd80+zD02Bw7r/wzwOYpVT0K94CEBus2sEtJ3REetj0sm9xFKBXNSg?=
- =?us-ascii?Q?xh9KPjw/6T3uFQ8n7D98seAaJsWchdg0H29JqHv2YD7fUWtLgB0YfbGLlUsl?=
- =?us-ascii?Q?lAHFRnP2OS35vuYxjyI9o35mQaiqp/H1dTcnOZUr+7LEjEibqEMFDEZKsbwd?=
- =?us-ascii?Q?1bfe525EYSJgDFU4JZxKVZ/BD2y9+BjBsj2QAivLl8RzO/GaSZRpe1eRF1lp?=
- =?us-ascii?Q?/XTWF0qHEMJiHOyVKXTPzJWD9IOAJUFacAYT7mVxiHBMwkl5PZSuuFGZ1atW?=
- =?us-ascii?Q?rjU3Vkw1vCQ5YZ8LM452G7PfimhHIhwHgMXAGr3Pm3yuOtd4D8FmhPYolbD8?=
- =?us-ascii?Q?Rk5nni6SmO2YVHiiMTopnDuOZ0qMB9gJnhIACyYlHxdtAhkyDFjvNwLxRW9R?=
- =?us-ascii?Q?/SqdefA2N84f8fEZcoCFscdLck8sl2im8IYX7bkfc3ue1CvH4kPB2BBzxxWI?=
- =?us-ascii?Q?hp2MQ4NDz9ooIa0mzKTqAheWPS3VphkEg51i1htj150Ft+GxQ708BfbQXZfm?=
- =?us-ascii?Q?p1eHvhRJ5SiQ3ZVBZuo2lt5i6pQ/GV/gWQ/hvfzqz6aHfiNYh/5kKmMyCByr?=
- =?us-ascii?Q?uNnNIXd3RSvshSft9LCgcCwJdDkFRwaxQuprBKmERB4k0AG11q/Qu/XEtpc/?=
- =?us-ascii?Q?yACkpFNqqHJHDy7na4EwzPi5hYQ0Dx7ds8TCdXV/M7ILKbqg516HwJPRC/i0?=
- =?us-ascii?Q?vaKLvFFSNAVVtMu7skW4kog1z/8J1m/zYLabZhdGHMZwxZaFu8lSFu51sYKU?=
- =?us-ascii?Q?rC/DR/iZBTrUKDelvPxroQUrOO/GzNGrpJt3/Ha+aD/Q9Ue8nEd5Cfw6ulZ7?=
- =?us-ascii?Q?tM3NwMU8lI8KBscy4Vbn7KEMVfqvOws2ENebyh3Dx1TWDUShdWHH3fwAQGF4?=
- =?us-ascii?Q?/mfsXFf+Y83hXR1xhYVgSVSPSkX8Rxh+C7cgC+icYuulFWTi7L6jkyU2gdOy?=
- =?us-ascii?Q?hr4GLTXc2zd3R9NAI+Y+VZD3KPQikLVYzMacTKMPa8YMeRas3zrrDgnaWASX?=
- =?us-ascii?Q?OLrHfM9f/Q04loeyehu94qk3HTA9lcqGBLDirdWO+/nTq8UJeN58j+Ri4jrR?=
- =?us-ascii?Q?mOkU5Daqjz0X31lYMGAm/GJ9UefN7cnn3zAGH/7xaoYKHwP0891ZqEMoTJ9o?=
- =?us-ascii?Q?OaVUm6UCNiGRJv3jwl5HuXpdcqdCEsMwg8gHJV9GCPALvxET8lnypV/VPvek?=
- =?us-ascii?Q?uhuQjs7yYr6uWG/+4ZBCECVE+qhd2Z9Rkc5Wk6WD3tr5nUfnIiZuaPWsA2mW?=
- =?us-ascii?Q?wVMTjzzXYUPiSIfZZQLuJ2gJ9MimpX3SytazWIHqip5O0z4jcNA6a0CfxcWf?=
- =?us-ascii?Q?JyTTX9OOTvkO4dRIvpdPU2iPEIvJOs+lXxoT?=
-X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014)(7053199007);
- DIR:OUT; SFP:1101; 
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2025 15:13:57.1234 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cd1f4209-005f-4515-e07e-08dda2b142fd
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN1PEPF00004682.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6493
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Tue, 3 Jun 2025 11:15:24 -0400
+X-Gm-Features: AX0GCFu1ye9iHWeKj9816JfQRMKeswHV0oppvmtHN7i1PS4hjJS50DfgTOU1gDM
+Message-ID: <CAJvnSUCFRccZaKrmiTorg+i_45cmjZ0mq-S9kMOt-SHHaKVC9g@mail.gmail.com>
+Subject: Cancelled - June 5 DTS Meeting
+To: dev <dev@dpdk.org>
+Cc: Paul Szczepanek <Paul.Szczepanek@arm.com>,
+ Luca Vizzarro <Luca.Vizzarro@arm.com>, 
+ Manit Mahajan <mmahajan@iol.unh.edu>,
+ "nprattedev@gmail.com" <nprattedev@gmail.com>, 
+ Dean Marx <dmarx@iol.unh.edu>, mamcgove@microsoft.com, ci@dpdk.org
+Content-Type: multipart/alternative; boundary="00000000000075761f0636ac6b88"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -133,78 +68,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi,
+--00000000000075761f0636ac6b88
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, May 05, 2025 at 07:57:42AM -0700, Andre Muezerie wrote:
-> When compiling with MSVC the errors below are hit because msvc does not
-> support inline assembly:
-> 
-> 1)
-> ../drivers/common/mlx5/mlx5_common.c(86): warning C4013: '__asm__'
->     undefined; assuming extern returning int
-> ../drivers/common/mlx5/mlx5_common.c(87): error C2143: syntax error:
->      missing ')' before ':'
-> 
-> 2)
-> ../drivers/net/mlx5/mlx5_txpp.c(510): error C2065: '__asm__':
->     undeclared identifier
-> ../drivers/net/mlx5/mlx5_txpp.c(510): error C2143: syntax error:
->     missing ';' before 'volatile'
-> 
-> The fix for (1) is to use compiler intrinsic __cpuid and for (2)
-> intrinsic _InterlockedCompareExchange128 can be used.
-> 
-> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+Hi DTS contributors,
 
-*snip*
+I am unable to host the meeting this Thursday. And, like we discussed at
+the previous meeting, a couple other regular attendees also have conflicts
+this week. I have discussed with Paul and we're going to cancel this
+meeting and handle any conversations over email this week.
 
-> diff --git a/drivers/net/mlx5/mlx5_txpp.c b/drivers/net/mlx5/mlx5_txpp.c
-> index e6d3ad83e9..5bbaf668e6 100644
-> --- a/drivers/net/mlx5/mlx5_txpp.c
-> +++ b/drivers/net/mlx5/mlx5_txpp.c
-> @@ -486,6 +486,20 @@ mlx5_txpp_cq_arm(struct mlx5_dev_ctx_shared *sh)
->  }
->  
->  #if defined(RTE_ARCH_X86_64)
-> +#ifdef RTE_TOOLCHAIN_MSVC
-> +static inline int
-> +mlx5_atomic128_compare_exchange(rte_int128_t *dst,
-> +				rte_int128_t *exp,
-> +				const rte_int128_t *src)
-> +{
-> +	return (int)_InterlockedCompareExchange128(
-> +		(int64_t volatile *)dst,
-> +		src->val[1], /* exchange high */
-> +		src->val[0], /* exchange low */
-> +		(int64_t *)exp /* comparand result */
-> +	);
+A couple things to note:
 
-There is one checkpatch warning to fix here:
+1. Paul is merging some patches to next-dts today/tomorrow.
+2. We picked up a couple warnings from check-git-log.sh which we need to
+git amend some of the commit messages and force push to next-dts, also
+within the next couple of days. Can discuss over the mailing list.
 
-	CHECK:OPEN_ENDED_LINE: Lines should not end with a '('
-	#117: FILE: drivers/net/mlx5/mlx5_txpp.c:495:
-	+	return (int)_InterlockedCompareExchange128(
+Thanks.
 
-Also, I don't think that comments for arguments are needed here.
+--00000000000075761f0636ac6b88
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Could you please organize the code as follows:
+<div dir=3D"ltr"><div>Hi DTS contributors,</div><div><br></div><div>I am un=
+able to host the meeting this Thursday. And, like we discussed at the previ=
+ous meeting, a couple other regular attendees also have conflicts this week=
+. I have discussed with Paul and we&#39;re going to cancel this meeting and=
+ handle any conversations=C2=A0over email this week.</div><div><br></div><d=
+iv>A couple things to note:</div><div><br></div><div>1. Paul is merging som=
+e patches to next-dts today/tomorrow.</div><div>2. We picked up a couple wa=
+rnings from check-git-log.sh which we need to git amend some of the commit =
+messages and force push to next-dts, also within the next couple of days. C=
+an discuss over the mailing list.=C2=A0</div><div><br></div><div>Thanks.</d=
+iv><div><br></div></div>
 
-	return (int)_InterlockedCompareExchange128((int64_t volatile *)dst,
-		src->val[1], src->val[0], (int64_t *)exp);
-
-> +}
-> +#else
->  static inline int
->  mlx5_atomic128_compare_exchange(rte_int128_t *dst,
->  				rte_int128_t *exp,
-> @@ -510,6 +524,7 @@ mlx5_atomic128_compare_exchange(rte_int128_t *dst,
->  	return res;
->  }
->  #endif
-> +#endif
->  
->  static inline void
->  mlx5_atomic_read_cqe(rte_int128_t *from, rte_int128_t *ts)
-
-Best regards,
-Dariusz Sosnowski
+--00000000000075761f0636ac6b88--
