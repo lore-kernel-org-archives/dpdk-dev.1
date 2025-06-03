@@ -2,46 +2,163 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F28C5AE59
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Jun 2025 08:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B93F2C5AD49
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Jun 2025 08:29:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DB5C24028E;
-	Tue,  3 Jun 2025 10:11:14 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 148314025A
- for <dev@dpdk.org>; Tue,  3 Jun 2025 10:11:13 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id B2AFD20100;
- Tue,  3 Jun 2025 10:11:12 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 74E294028E;
+	Tue,  3 Jun 2025 10:29:23 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 45C5E4025A;
+ Tue,  3 Jun 2025 10:29:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1748939362; x=1780475362;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=C3Hk6gKQ5xBS9FJ4uKu9lynz6N0s616ZilozvdeXGbM=;
+ b=OhTZRilUWYGwbuQsJ+G5SPEmTUkKg+a7MYieics4Uct1sxUP1BSAlk15
+ dAPVgMmTHw3otVwL4F73i2mmB1r0W6PcAUJdBeN2KRzZtHgi/hLoFSNvP
+ 7tcpxib8yFKNlg51TOZZieCfGTGrIK5ycmc2MqKs32/zIcTgMrynUBxjj
+ RgM69X2Dq6Eyj0umhsxHLSeNCyBvlA29YbcHT/qj7swn6VoRhcUSdlDy8
+ skVf++iiHwZZ4hM7ghNnCZfW5i6TdSSbM2wXAEfVkM36miyvJMEj7xNn/
+ rUr72A/IGmqMaWIIuxC89ojVu/M1Pj7wYT4y/QjcoTzntXoiYa6H+plZP A==;
+X-CSE-ConnectionGUID: ywNKazbRQvq/74/d1omCdQ==
+X-CSE-MsgGUID: K20ZC8kaRD6P6cRyA5bNfQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11451"; a="50091323"
+X-IronPort-AV: E=Sophos;i="6.16,205,1744095600"; d="scan'208";a="50091323"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+ by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 03 Jun 2025 01:29:11 -0700
+X-CSE-ConnectionGUID: 9dDt8nvBT0O2Dk/NSYUwHA==
+X-CSE-MsgGUID: YrWK7Se4QMyF1DEpeosePg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,205,1744095600"; d="scan'208";a="149836939"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 03 Jun 2025 01:29:11 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 3 Jun 2025 01:29:09 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Tue, 3 Jun 2025 01:29:09 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.60)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.55; Tue, 3 Jun 2025 01:29:09 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=V6ctud2qDpG8npNpyz/KntlAmyqKshmcbLclAWMr73bAr9o19U3JWY9pEv+1+DM5JrZIVSxoQ5/kyPwQZqPiUr/TAshjw7iqLwcbztRzk0FFUdTcSsjXLAlrQlGrM4pyrOBGMEpZ/FHFRydodSVO/LDFQmaoTtn6sL48dbdkE6g3mEAYiI6bZSGhBGkKxgbdpoduaaY1pMY9Gp3KEPvMvKv6O7SWDT7DqBZdYkhgTcINksS37Hg14jklDo7hKPoViQxK9CFFEP7KescyOSV9d2rgaLy/SzvEm1TWoowN+9gTe1nC9QWH54L3WJGPK1i8bIUz+rnddcRs0LIWEHmVWg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iMMvV4oZ1ul2UAec/PhzazDcOgNSLKjOJuObWk0+zYk=;
+ b=aZ5QOd5D4fpKzeY7zwdZIckZSgo37iUYQY+f7JCBpDL6JWfLuAH+UQA55bEjioVEzbhd6jypCt38CaCR3ckDxdO6DOnT5b15Zb0nbmKSWCjws4uZsiRkJhIXe8qebURZkN+cE+gUvI2y48N1SqqLlUxe4pp4Y+/nq10+mX+LcyzJ64IlCmEYPGCqzYVn/U4vSJ+p1FYa7iP4XZG9FJ2z+ceeC1jmBE/sZ7roaqrm1mFg809DNgVJJQtYJ87ng+ir6SQqb0poKFxkKshNb5tn2hI6ELjljf3kI+tlK4XLY07Av8/mKacwA22fc7XmaO9JaoQBAgqqr+LL5ao8XAyt/g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by CO1PR11MB5106.namprd11.prod.outlook.com (2603:10b6:303:93::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.36; Tue, 3 Jun
+ 2025 08:29:07 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%5]) with mapi id 15.20.8792.033; Tue, 3 Jun 2025
+ 08:29:07 +0000
+Date: Tue, 3 Jun 2025 09:29:03 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Rui Ferreira <rui.ferreira1@h-partners.com>
+CC: <dev@dpdk.org>, <stable@dpdk.org>
+Subject: Re: [PATCH v2 2/2] fix eal/freebsd: unregister alarm callback before
+ free
+Message-ID: <aD6yTxLUgI3jxlPe@bricha3-mobl1.ger.corp.intel.com>
+References: <dcbff1c1ee8c48598294306fe80167ef@h-partners.com>
+ <20250530081845.64297-1-rui.ferreira1@h-partners.com>
+ <20250530081845.64297-3-rui.ferreira1@h-partners.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250530081845.64297-3-rui.ferreira1@h-partners.com>
+X-ClientProxiedBy: DU2P250CA0003.EURP250.PROD.OUTLOOK.COM
+ (2603:10a6:10:231::8) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH v5 2/4] bus/pci: introduce the PCIe TLP Processing Hints
- API
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Tue, 3 Jun 2025 10:11:08 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FCB1@smartserver.smartshare.dk>
-In-Reply-To: <20250602223805.816816-3-wathsala.vithanage@arm.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v5 2/4] bus/pci: introduce the PCIe TLP Processing Hints
- API
-Thread-Index: AdvUDxGu561xbmeURIec+NOT2mKbTQASabOw
-References: <20241021015246.304431-1-wathsala.vithanage@arm.com>
- <20250602223805.816816-1-wathsala.vithanage@arm.com>
- <20250602223805.816816-3-wathsala.vithanage@arm.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Wathsala Vithanage" <wathsala.vithanage@arm.com>,
- "Chenbo Xia" <chenbox@nvidia.com>, "Nipun Gupta" <nipun.gupta@amd.com>,
- "Anatoly Burakov" <anatoly.burakov@intel.com>,
- "Gaetan Rivet" <grive@u256.net>
-Cc: <dev@dpdk.org>, <nd@arm.com>,
- "Honnappa Nagarahalli" <honnappa.nagarahalli@arm.com>,
- "Dhruv Tripathi" <dhruv.tripathi@arm.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|CO1PR11MB5106:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3d1ab7db-0205-4b38-c26f-08dda278b537
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?AjLn5tkkP29tBdzq+EsaRw0v4gGEYO+Aoj1MYgQ+p05mMJbMVoGz05jOc1lE?=
+ =?us-ascii?Q?q3Vx32fng/W+fGXzmVWa1eMxD3rAa7fyj7EBstVrV0BFe2QWb07YkCUGtqw6?=
+ =?us-ascii?Q?ruRXm9yBsvIp5aXqHYsZOMgh3CEsyHNkIOvS1Z8lwzot53MOYpGDHAEyRFm8?=
+ =?us-ascii?Q?GIqawHlsxA/H/QE9f7ULsF+kvP6yvrlckbbHbE21JUhQi/le5UzjfpdGKNw5?=
+ =?us-ascii?Q?J6M9B8uuIuTq53sgcTd9JHQa/mT0rJojteclzXLkvYXcGo5sxz01/ym2D96N?=
+ =?us-ascii?Q?+hovbUBMNlPr8pJOtpJUVAiY0s0HpqrvhQ2q3AVInLsZ5JHbF+NGsjira4yY?=
+ =?us-ascii?Q?TXOZcEBovYBJ9jpfvBH67k73bm/9A6KTmYWKDjsR1jQqtVeqahAbvHy2fvYd?=
+ =?us-ascii?Q?qfzwEr0ymSOWpnopKp3p4c6qfn2zI1pFwn3uPcYtfi+ZIEsk3+65vuhwrfqL?=
+ =?us-ascii?Q?lv8ZGPbQ+CYfrdek8KYVwqHHv0XS0nGzGzT0NzotFbfjoyl+7HLbGffMNrl6?=
+ =?us-ascii?Q?p9+DPrQ0lCVyKnGMked/eFkHUedXNwMf2wlStnjXOaD2XeGp5COEtRNwcNqj?=
+ =?us-ascii?Q?cmM9Zwr96epdIvVeuoYTLZ0IubV6XtqwdgaLNwYAXbJ6kxpe6rOh/VkXhfQL?=
+ =?us-ascii?Q?63MqRqDGcKzWsTcpCjkjaSG1oiZqWg6u6ubgPDl+TPj6wnMkgYgwfDoOIwsu?=
+ =?us-ascii?Q?yMf5pk3q+lj1EZUmTnZ7h+U4esV15FG6ZwL9CgnipPdN673mCST+Js1QDYa9?=
+ =?us-ascii?Q?jaShENohsIPrPlQOS8Yfca1StlC1+Lu3Yn2KMNzWip8CsKUeSWIjpbYxW7Wd?=
+ =?us-ascii?Q?k3sfHxJupXsDsbtuBqq1Z+uGcvwBJMUwq0cHbdrqstQToVKuFXAoeQR0zNVT?=
+ =?us-ascii?Q?YIhNkWuhrhlbwEu5rUNTGDl1RQk68roqq+u+Gny2nhoH4LoGGeMtxYr/0dMD?=
+ =?us-ascii?Q?lhao7t/q/rA7SsYvyyqLlCT1+D7e+otO0QjMb0/DNAe9Otg1l0xkbltiVpJu?=
+ =?us-ascii?Q?Cp8hC6QlSSNFbg8oaUdbzA3jBzD7Tbw/ajc/KBJIu3D0rWHzk7wHhNk93aiR?=
+ =?us-ascii?Q?lYiaMZmYjOC8qkueps9bHHpKBvmH+jk9Wo8W5smk3Ma/xT60oeEsYFv3U0DO?=
+ =?us-ascii?Q?TWFU178mdRuqJagm6Di9rNjjJw1yPBQU+P4Husv2TWUy5ydeisELtw8G+Gxr?=
+ =?us-ascii?Q?vrN1sMyWnowAfkucMrGp4q8ILg1qI2qJKRqFCSa5YWFAErxkrsuSvU7QCUzr?=
+ =?us-ascii?Q?OriOWlNQeGd3w3RXYDZGrsCFU7b9hsTt3aG7jNPeaPvVcmM/RRjv+aH6KfeG?=
+ =?us-ascii?Q?n2Ui86Bbl9qeHlpbJ6brNL+vqFPbnS6mjQrwRjHn0/g2oXGb/49JeUQZVltg?=
+ =?us-ascii?Q?7WDuKaozvfTjoTR6R7nu2M/JS8dTKRFw8LLmBjXxJq7LmpRr1gQ/HdTYUY99?=
+ =?us-ascii?Q?XCpCfd9kLcs=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016)(7053199007); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?yVhhZLH1WLQyOWJMMZ8HhHUQUTj/vnCsASX2ZgEcorSnyQ/PWDR4H7Y2x2DV?=
+ =?us-ascii?Q?3q8gWW9Nzv/yLL0Upufkmd9Tl/tWlhWQ712j/XqYrWd3IxCpD0yACy0+n6Bx?=
+ =?us-ascii?Q?pfEDsio11xItoNjUHkHiy7v2r7fPVT7FgGjvihTkrdlNURcgoOkYpI7+ixDJ?=
+ =?us-ascii?Q?6aWDgenB9GGW6v7FVashv9vFsgfmHTI06D89u8p6U9wYNR/va/EIRuXflfbD?=
+ =?us-ascii?Q?UBYH+G/fTPvhL8F6FTaQ27OQtcBYrCzG3qXaLL7DOqjPMgXAhYWCxZgt1f/t?=
+ =?us-ascii?Q?W4Z5A6aIfOk/rgXp5Q9+Z2gO46kHw/lh+32cWbQSyHqbK+1abbIUoQPAfw0u?=
+ =?us-ascii?Q?VHRqn+1TJtHrtcV0ncg2ty1vlVu8GVuJhYCEioTW5rcjM+L3k5N8QnprdK5y?=
+ =?us-ascii?Q?bZ+0pm+uCTNCtE0GIg2X400aqGVgbkUIBegpGgxMIRCFiUpV2tqAN5jU/IXa?=
+ =?us-ascii?Q?F1exQ9zjHX1YvNn6ZV9q4zqkTDWAvyKS5x44W8SXmQ9Ae+siWSjOlEKGQo0z?=
+ =?us-ascii?Q?XqS0bcqBsa622Yp/9P2o1uMRyNSY6oebHNVWnxHvF930bdw6IVnZMNV/RWdu?=
+ =?us-ascii?Q?V83kewSDK3CLjqm+XbENIhcJK4dnasvjsjCXjJjsEZeyTHnvVKXh7o+dJVWK?=
+ =?us-ascii?Q?C0d8t8YEk76kfDcoJbFM7jY3QcpPYJUb4CTNtfQ0kpnqCFjkWcPrEID2Spv3?=
+ =?us-ascii?Q?bsrhnKv92jditCP3XvTBzPa1t844JHjO9QsyvuFMcRvxEx0uNWdsi9lCuan5?=
+ =?us-ascii?Q?totjSLs05J0LY24Lc7B62SHwSzldxYxK1MBBVkWp77uYjzC5Fop1MTxAlYKL?=
+ =?us-ascii?Q?cQZNQN3qKfEBwcvtOsPaAiwUoV2QLtVxaV2ZrcHsdGMnBNhjIHVhThGQauRd?=
+ =?us-ascii?Q?iGLTW6r/v8U8bLa6YJBX+c0eoyEtMsIf2Mkg6MrPvY5dQSptJYddE1OHUkDc?=
+ =?us-ascii?Q?k+tHq9C3L0qekFRfSPitFLbqhCZN7dpUU6PVFOxZU+wc9U6Ydf6uVUF7mWx9?=
+ =?us-ascii?Q?XP+ZUAATOiUpRGQi6OBZrKxHfJp4RRGV4vC6z2eikqSta5WFbjazJB1+VV6u?=
+ =?us-ascii?Q?0K69B2ObN6YUtsZ9NrqSb+IpEOF/fcE/ekb8X1r5JDlMNzuvgTaXGPBApN1Z?=
+ =?us-ascii?Q?gLWj2g90/f9KQStd7iLB/UeIQM889uLvDTI2n3u1sVaZkqwIHjSLvC63KzjT?=
+ =?us-ascii?Q?G05eGAdXoXAtrCp7668IG+aeUMe81Nb3jLd2X+Pyg11DjnpjBTH6Rh+CeubM?=
+ =?us-ascii?Q?V5a+pmzmHB4T86L1sLF76m2cnGxWLWPC5hF4zKC62otH87dqs9qtY9QhzvTq?=
+ =?us-ascii?Q?k5rDHkqfiJFZ7zLKdAXZG8tovMroPdIHAgkoUuKHOVQi6rqnWK2YvaPo/o2i?=
+ =?us-ascii?Q?ekrC9f1ayXFn0xCTKAsZqHka6hKmvlcZ1kGDMjUC2lnp9DoulSZRNTNg2NAX?=
+ =?us-ascii?Q?1VUFaR7kqKsSomG931nMInI5Li3Rqddx/QQ3atGeWj39eYRWvMbUvkOdfy4T?=
+ =?us-ascii?Q?VrdHm2hV8q0QL0uCD7RSsJRIvXN+ZnudIEvoo5feWtIKuBaLglGZF8Vw0Zfr?=
+ =?us-ascii?Q?atgVMwCNrKKyd18Fzq+T2ztjhAFX933vkyNFrhgEZDkjltc9HFpnR280Sk6j?=
+ =?us-ascii?Q?mA=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3d1ab7db-0205-4b38-c26f-08dda278b537
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2025 08:29:07.7645 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tJC6FVHvpRAwp6FU4IrsSNBG2HJusJ8/JjT9YrcYBOPIHfoByu92ZxBfSC52MdbWcd0d8J1MWzDujbM+ZR0EPvo4P0mGsS9X0zS1gl9D0oE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5106
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,576 +172,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Wathsala Vithanage [mailto:wathsala.vithanage@arm.com]
-> Sent: Tuesday, 3 June 2025 00.38
+On Fri, May 30, 2025 at 09:18:44AM +0100, Rui Ferreira wrote:
+> Unregister callback on cleanup to avoid use after free from the
+> interrupt thread (eal_intr_thread_main).
+> 
+> To be more defensive, set ptr to NULL if we can unregister.
+> 
+> rte_intr_callback_unregister_sync may (optionally) use traces
+> so the alarm cleanup must happen before eal_trace_fini to avoid
+> accessing freed memory.
+> 
+> Bugzilla ID: 1683
 
-Some nitpicking inline below.
+Source of bug is probably:
 
-[...]
+Fixes: 90b13ab8d4f7 ("alarm: remove direct access to interrupt handle")
 
-> diff --git a/drivers/bus/pci/bsd/pci.c b/drivers/bus/pci/bsd/pci.c
-> index 5e2e09d5a4..dff750c4d6 100644
-> --- a/drivers/bus/pci/bsd/pci.c
-> +++ b/drivers/bus/pci/bsd/pci.c
-> @@ -650,3 +650,46 @@ rte_pci_ioport_unmap(struct rte_pci_ioport *p)
->=20
->  	return ret;
->  }
-> +
-> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pci_tph_enable, 25.07)
-> +int
-> +rte_pci_tph_enable(struct rte_pci_device *dev, int mode)
-> +{
-> +	RTE_SET_USED(dev);
-> +	RTE_SET_USED(mode);
-> +	/* This feature is not yet implemented for BSD */
-> +	return -1;
+> 
+> Signed-off-by: Rui Ferreira <rui.ferreira1@h-partners.com>
 
-Either set rte_errno and return -1, or return -ENOTSUP.
-If one of these two design patterns are already used in a module, please =
-use the same design pattern for new functions.
-Applies to all dummy functions, BSD and Windows.
+Patch looks ok to me.
 
-[...]
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-> diff --git a/drivers/bus/pci/bus_pci_driver.h
-> b/drivers/bus/pci/bus_pci_driver.h
-> index 2cc1119072..b1c2829fc1 100644
-> --- a/drivers/bus/pci/bus_pci_driver.h
-> +++ b/drivers/bus/pci/bus_pci_driver.h
-> @@ -46,6 +46,7 @@ struct rte_pci_device {
->  	char *bus_info;                     /**< PCI bus specific info */
->  	struct rte_intr_handle *vfio_req_intr_handle;
->  				/**< Handler of VFIO request interrupt */
-> +	uint8_t tph_enabled;                /**< TPH enabled on this
-> device */
->  };
->=20
->  /**
-> @@ -194,6 +195,57 @@ struct rte_pci_ioport {
->  	uint64_t len; /* only filled for memory mapped ports */
->  };
->=20
-> +/**
-> + * @warning
-> + * @b EXPERIMENTAL: this structure may change, or be removed, without
-> prior
-> + * notice
-> + *
-> + * This structure is passed into the TPH Steering-Tag set or get
-> function as an
-> + * argument by the caller. Return values are set in the same =
-structure
-> in st and
-> + * ph_ignore fields by the calee.
-> + *
-> + * Refer to PCI-SIG ECN "Revised _DSM for Cache Locality TPH =
-Features"
-> for
-> + * details.
-> + */
-> +struct rte_tph_info {
-> +	/* Input */
-> +	uint32_t cpu_id;	/*Logical CPU id*/
-> +	uint32_t cache_level;	/*Cache level relative to CPU.
-> l1d=3D0,l2d=3D1,...*/
-> +	uint8_t flags;		/*Memory type, procesisng hint etc.*/
-> +	uint16_t index;		/*Index in vector table to store the ST*/
-> +
-> +	/* Output */
-
-I don't think these are Output fields when used in the set() function.
-Please update the documentation of this structure accordingly.
-
-> +	uint16_t st;		/*Steering tag returned by the platform*/
-> +	uint8_t ph_ignore;	/*Platform ignores PH for the returned
-> ST*/
-> +};
-> +
-> +#define RTE_PCI_TPH_MEM_TYPE_MASK		0x1
-> +#define RTE_PCI_TPH_MEM_TYPE_SHIFT		0
-> +/** Request volatile memory ST */
-> +#define RTE_PCI_TPH_MEM_TYPE_VMEM		0
-> +/** Request persistent memory ST */
-> +#define RTE_PCI_TPH_MEM_TYPE_PMEM		1
-> +
-> +/** TLP Processing Hints - PCIe 6.0 specification section 2.2.7.1.1 =
-*/
-> +#define RTE_PCI_TPH_HINT_MASK		0x3
-> +#define RTE_PCI_TPH_HINT_SHIFT		1
-> +/** Host and device access data equally */
-> +#define RTE_PCI_TPH_HINT_BIDIR		0
-> +/** Device accesses data more frequently */
-> +#define RTE_PCI_TPH_HINT_REQSTR		(1 << RTE_PCI_TPH_HINT_SHIFT)
-> +/** Host access data more frequently */
-> +#define RTE_PCI_TPH_HINT_TARGET		(2 << RTE_PCI_TPH_HINT_SHIFT)
-> +/** Host access data more frequently with a high temporal locality */
-> +#define RTE_PCI_TPH_HINT_TARGET_PRIO	(3 << RTE_PCI_TPH_HINT_SHIFT)
-> +
-> +#define RTE_PCI_TPH_ST_MODE_MASK   0x3
-> +/** TPH no ST mode */
-> +#define RTE_PCI_TPH_ST_NS_MODE	   0
-> +/** TPH interrupt vector mode */
-> +#define RTE_PCI_TPH_ST_IV_MODE	   1
-> +/** TPH device specific mode */
-> +#define RTE_PCI_TPH_ST_DS_MODE	   2
-> +
->  #ifdef __cplusplus
->  }
->  #endif
-> diff --git a/drivers/bus/pci/linux/pci.c b/drivers/bus/pci/linux/pci.c
-> index c20d159218..b5a8ba0a86 100644
-> --- a/drivers/bus/pci/linux/pci.c
-> +++ b/drivers/bus/pci/linux/pci.c
-> @@ -814,3 +814,103 @@ rte_pci_ioport_unmap(struct rte_pci_ioport *p)
->=20
->  	return ret;
->  }
-> +
-> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pci_tph_enable, 25.07)
-> +int
-> +rte_pci_tph_enable(struct rte_pci_device *dev, int mode)
-> +{
-> +	int ret =3D 0;
-> +
-> +	switch (dev->kdrv) {
-> +#ifdef VFIO_PRESENT
-> +	case RTE_PCI_KDRV_VFIO:
-> +		if (pci_vfio_is_enabled())
-> +			ret =3D pci_vfio_tph_enable(dev, mode);
-
-Is it correct to return 0 when pci_vfio_is_enabled() returns false?
-
-> +		break;
-> +#endif
-> +	case RTE_PCI_KDRV_IGB_UIO:
-
-Please add "/* fall through */" or similar compiler hint.
-Or even better, define a new __rte_fallthrough macro as =
-__attribute__((fallthrough)) in rte_common.h.
-Refer to [1].
-
-[1]: https://gcc.gnu.org/onlinedocs/gcc/Statement-Attributes.html
-
-> +	case RTE_PCI_KDRV_UIO_GENERIC:
-> +	default:
-> +		ret =3D -ENOTSUP;
-> +		break;
-> +	}
-> +
-> +	if (!ret)
-
-This looks wrong. "ret" is not Boolean, so please use "ret =3D=3D 0" =
-instead of "!ret".
-Applies elsewhere in this patch too, e.g. comparing empty "count" in =
-pci_vfio_tph_st_op().
-
-> +		dev->tph_enabled =3D 1;
-> +
-> +	return ret;
-> +}
-> +
-
-The above comments apply to all four functions.
-
-[...]
-
-> diff --git a/drivers/bus/pci/linux/pci_vfio.c
-> b/drivers/bus/pci/linux/pci_vfio.c
-> index 5317170231..bdbeb38658 100644
-> --- a/drivers/bus/pci/linux/pci_vfio.c
-> +++ b/drivers/bus/pci/linux/pci_vfio.c
-> @@ -12,6 +12,7 @@
->  #include <stdbool.h>
->=20
->  #include <rte_log.h>
-> +#include <eal_export.h>
->  #include <rte_pci.h>
->  #include <rte_bus_pci.h>
->  #include <rte_eal_paging.h>
-> @@ -1316,6 +1317,175 @@ pci_vfio_mmio_write(const struct =
-rte_pci_device
-> *dev, int bar,
->  	return pwrite(fd, buf, len, offset + offs);
->  }
->=20
-> +static int
-> +pci_vfio_tph_ioctl(const struct rte_pci_device *dev, struct
-> vfio_pci_tph *pci_tph)
-> +{
-> +	const struct rte_intr_handle *intr_handle =3D dev->intr_handle;
-> +	int vfio_dev_fd =3D 0, ret =3D 0;
-> +
-> +	vfio_dev_fd =3D rte_intr_dev_fd_get(intr_handle);
-> +	if (vfio_dev_fd < 0) {
-> +		ret =3D -EINVAL;
-
-This should be ret =3D rte_errno.
-Or even better: Other code in /drivers/bus/pci/linux/pci_vfio.c follows =
-the design pattern of setting rte_errno and returning -1 on error. =
-Please use the same design pattern.
-Applies to all four functions.
-
-> +		goto out;
-> +	}
-> +
-> +	ret =3D ioctl(vfio_dev_fd, VFIO_DEVICE_PCI_TPH, pci_tph);
-> +out:
-> +	return ret;
-> +}
-> +
-> +static int
-> +pci_vfio_tph_st_op(const struct rte_pci_device *dev,
-> +		    struct rte_tph_info *info, size_t count,
-> +		    enum rte_pci_st_op op)
-> +{
-> +	int ret =3D 0;
-> +	size_t argsz =3D 0, i;
-> +	struct vfio_pci_tph *pci_tph =3D NULL;
-> +	uint8_t mem_type =3D 0, hint =3D 0;
-> +
-> +	if (!count) {
-> +		ret =3D -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	argsz =3D sizeof(struct vfio_pci_tph) +
-> +		count * sizeof(struct vfio_pci_tph_entry);
-> +
-> +	pci_tph =3D rte_zmalloc(NULL, argsz, 0);
-> +	if (!pci_tph) {
-> +		ret =3D -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	pci_tph->argsz =3D argsz;
-> +	pci_tph->count =3D count;
-> +
-> +	switch (op) {
-> +	case RTE_PCI_TPH_ST_GET:
-> +		pci_tph->flags =3D VFIO_DEVICE_TPH_GET_ST;
-> +		break;
-> +	case RTE_PCI_TPH_ST_SET:
-> +		pci_tph->flags =3D VFIO_DEVICE_TPH_SET_ST;
-> +		break;
-> +	default:
-> +		ret =3D -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	for (i =3D 0; i < count; i++) {
-> +		pci_tph->ents[i].cpu_id =3D info[i].cpu_id;
-> +		pci_tph->ents[i].cache_level =3D info[i].cache_level;
-> +
-> +		mem_type =3D info[i].flags & RTE_PCI_TPH_MEM_TYPE_MASK;
-> +		switch (mem_type) {
-> +		case RTE_PCI_TPH_MEM_TYPE_VMEM:
-> +			pci_tph->ents[i].flags |=3D VFIO_TPH_MEM_TYPE_VMEM;
-> +			break;
-> +		case RTE_PCI_TPH_MEM_TYPE_PMEM:
-> +			pci_tph->ents[i].flags |=3D VFIO_TPH_MEM_TYPE_PMEM;
-> +			break;
-> +		default:
-> +			ret =3D -EINVAL;
-> +			goto out;
-> +		}
-> +
-> +		hint =3D info[i].flags & RTE_PCI_TPH_HINT_MASK;
-> +		switch (hint) {
-> +		case RTE_PCI_TPH_HINT_BIDIR:
-> +			pci_tph->ents[i].flags |=3D VFIO_TPH_HINT_BIDIR;
-> +			break;
-> +		case RTE_PCI_TPH_HINT_REQSTR:
-> +			pci_tph->ents[i].flags |=3D VFIO_TPH_HINT_REQSTR;
-> +			break;
-> +		case RTE_PCI_TPH_HINT_TARGET:
-> +			pci_tph->ents[i].flags |=3D VFIO_TPH_HINT_TARGET;
-> +			break;
-> +		case RTE_PCI_TPH_HINT_TARGET_PRIO:
-> +			pci_tph->ents[i].flags |=3D VFIO_TPH_HINT_TARGET_PRIO;
-> +			break;
-> +		default:
-> +			ret =3D -EINVAL;
-> +			goto out;
-> +		}
-> +
-> +		if (op =3D=3D RTE_PCI_TPH_ST_SET)
-> +			pci_tph->ents[i].index =3D info[i].index;
-> +	}
-> +
-> +	ret =3D pci_vfio_tph_ioctl(dev, pci_tph);
-> +	if (ret)
-> +		goto out;
-> +
-> +	/*
-> +	 * Kernel returns steering-tag and ph-ignore bits for
-> +	 * RTE_PCI_TPH_ST_SET too, therefore copy output for
-> +	 * both RTE_PCI_TPH_ST_SET and RTE_PCI_TPH_ST_GET
-> +	 * cases.
-> +	 */
-> +	for (i =3D 0; i < count; i++) {
-> +		info[i].st =3D pci_tph->ents[i].st;
-> +		info[i].ph_ignore =3D pci_tph->ents[i].ph_ignore;
-> +	}
-> +
-> +out:
-> +	if (pci_tph)
-> +		rte_free(pci_tph);
-> +	return ret;
-> +}
-> +
-> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(pci_vfio_tph_enable, 25.07)
-> +int
-> +pci_vfio_tph_enable(const struct rte_pci_device *dev, int mode)
-> +{
-> +	int ret;
-> +
-> +	if (!(mode ^ (mode & VFIO_TPH_ST_MODE_MASK))) {
-> +		ret =3D -EINVAL;
-> +		goto out;
-> +	} else
-> +		mode &=3D VFIO_TPH_ST_MODE_MASK;
-> +
-> +	struct vfio_pci_tph pci_tph =3D {
-> +		.argsz =3D sizeof(struct vfio_pci_tph),
-> +		.flags =3D VFIO_DEVICE_TPH_ENABLE | mode,
-> +		.count =3D 0
-> +	};
-> +
-> +	ret =3D pci_vfio_tph_ioctl(dev, &pci_tph);
-> +out:
-> +	return ret;
-> +}
-> +
-> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(pci_vfio_tph_disable, 25.07)
-> +int
-> +pci_vfio_tph_disable(const struct rte_pci_device *dev)
-> +{
-> +	struct vfio_pci_tph pci_tph =3D {
-> +		.argsz =3D sizeof(struct vfio_pci_tph),
-> +		.flags =3D VFIO_DEVICE_TPH_DISABLE,
-> +		.count =3D 0
-> +	};
-> +
-> +	return pci_vfio_tph_ioctl(dev, &pci_tph);
-> +}
-> +
-> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(pci_vfio_tph_st_get, 25.07)
-> +int
-> +pci_vfio_tph_st_get(const struct rte_pci_device *dev,
-> +		    struct rte_tph_info *info, size_t count)
-> +{
-> +	return pci_vfio_tph_st_op(dev, info, count, RTE_PCI_TPH_ST_GET);
-> +}
-> +
-> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(pci_vfio_tph_st_set, 25.07)
-> +int
-> +pci_vfio_tph_st_set(const struct rte_pci_device *dev,
-> +		    struct rte_tph_info *info, size_t count)
-> +{
-> +	return pci_vfio_tph_st_op(dev, info, count, RTE_PCI_TPH_ST_SET);
-> +}
-> +
->  int
->  pci_vfio_is_enabled(void)
->  {
-> diff --git a/drivers/bus/pci/private.h b/drivers/bus/pci/private.h
-> index 38109844b9..d2ec370320 100644
-> --- a/drivers/bus/pci/private.h
-> +++ b/drivers/bus/pci/private.h
-> @@ -335,4 +335,12 @@ rte_pci_dev_iterate(const void *start,
->  int
->  rte_pci_devargs_parse(struct rte_devargs *da);
->=20
-> +/*
-> + * TPH Steering-Tag operation types.
-> + */
-> +enum rte_pci_st_op {
-> +	RTE_PCI_TPH_ST_SET, /* Set TPH Steering - Tags */
-> +	RTE_PCI_TPH_ST_GET  /* Get TPH Steering - Tags */
-> +};
-> +
->  #endif /* _PCI_PRIVATE_H_ */
-> diff --git a/drivers/bus/pci/rte_bus_pci.h
-> b/drivers/bus/pci/rte_bus_pci.h
-> index 19a7b15b99..e4d4780f54 100644
-> --- a/drivers/bus/pci/rte_bus_pci.h
-> +++ b/drivers/bus/pci/rte_bus_pci.h
-> @@ -31,6 +31,7 @@ extern "C" {
->  struct rte_pci_device;
->  struct rte_pci_driver;
->  struct rte_pci_ioport;
-> +struct rte_tph_info;
->=20
->  struct rte_devargs;
->=20
-> @@ -312,6 +313,72 @@ void rte_pci_ioport_read(struct rte_pci_ioport =
-*p,
->  void rte_pci_ioport_write(struct rte_pci_ioport *p,
->  		const void *data, size_t len, off_t offset);
->=20
-> +/**
-> + * @warning
-> + * @b EXPERIMENTAL: this API may change without prior notice.
-> + *
-> + * Enable TLP Processing Hints (TPH) in the endpoint device.
-> + *
-> + * @param dev
-> + *   A pointer to a rte_pci_device structure describing the device
-> + *   to use.
-> + * @param mode
-> + *   TPH mode the device must operate in.
-
-The values of the "mode" parameter should be well defined in a DPDK =
-public API.
-I cannot find them.
-
-The return value is missing from the documentation.
-For all four functions here.
-
-> + */
-> +__rte_experimental
-> +int rte_pci_tph_enable(struct rte_pci_device *dev, int mode);
-> +
-> +/**
-> + * @warning
-> + * @b EXPERIMENTAL: this API may change without prior notice.
-> + *
-> + * Disable TLP Processing Hints (TPH) in the endpoint device.
-> + *
-> + * @param dev
-> + *   A pointer to a rte_pci_device structure describing the device
-> + *   to use.
-> + */
-> +__rte_experimental
-> +int rte_pci_tph_disable(struct rte_pci_device *dev);
-> +
-> +/**
-> + * @warning
-> + * @b EXPERIMENTAL: this API may change without prior notice.
-> + *
-> + * Get PCI Steering-Tags (STs) for a list of stashing targets.
-> + *
-> + * @param mode
-> + *   TPH mode the device must operate in.
-> + * @param info
-> + *   An array of rte_tph_info objects, each describing the target
-> + *   cpu-id, cache-level, etc. Steering-tags for each target is
-> + *   eturned via info array.
-> + * @param count
-> + *   The number of elements in the info array.
-> + */
-> +__rte_experimental
-> +int rte_pci_tph_st_get(const struct rte_pci_device *dev,
-> +		struct rte_tph_info *info, size_t count);
-> +
-> +/**
-> + * @warning
-> + * @b EXPERIMENTAL: this API may change without prior notice.
-> + *
-> + * Set PCI Steering-Tags (STs) for a list of stashing targets.
-> + *
-> + * @param mode
-> + *   TPH mode the device must operate in.
-> + * @param info
-> + *   An array of rte_tph_info objects, each describing the target
-> + *   cpu-id, cache-level, etc. Steering-tags for each target is
-> + *   eturned via info array.
-> + * @param count
-> + *   The number of elements in the info array.
-> + */
-> +__rte_experimental
-> +int rte_pci_tph_st_set(const struct rte_pci_device *dev,
-> +		struct rte_tph_info *info, size_t count);
-> +
->  #ifdef __cplusplus
->  }
->  #endif
-> diff --git a/drivers/bus/pci/windows/pci.c
-> b/drivers/bus/pci/windows/pci.c
-> index e7e449306e..218e667a5a 100644
-> --- a/drivers/bus/pci/windows/pci.c
-> +++ b/drivers/bus/pci/windows/pci.c
-> @@ -511,3 +511,46 @@ rte_pci_scan(void)
->=20
->  	return ret;
->  }
-> +
-> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pci_tph_enable, 25.07)
-> +int
-> +rte_pci_tph_enable(struct rte_pci_device *dev, int mode)
-> +{
-> +	RTE_SET_USED(dev);
-> +	RTE_SET_USED(mode);
-> +	/* This feature is not yet implemented for windows */
-> +	return -1;
-> +}
-> +
-> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pci_tph_disable, 25.07)
-> +int
-> +rte_pci_tph_disable(struct rte_pci_device *dev)
-> +{
-> +	RTE_SET_USED(dev);
-> +	/* This feature is not yet implemented for windows */
-> +	return -1;
-> +}
-> +
-> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pci_tph_st_get, 25.07)
-> +int
-> +rte_pci_tph_st_get(const struct rte_pci_device *dev,
-> +		   struct rte_tph_info *info, size_t count)
-> +{
-> +	RTE_SET_USED(dev);
-> +	RTE_SET_USED(info);
-> +	RTE_SET_USED(count);
-> +	/* This feature is not yet implemented for windows */
-> +	return -1;
-> +}
-> +
-> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pci_tph_st_set, 25.07)
-> +int
-> +rte_pci_tph_st_set(const struct rte_pci_device *dev,
-> +		   struct rte_tph_info *info, size_t count)
-> +{
-> +	RTE_SET_USED(dev);
-> +	RTE_SET_USED(info);
-> +	RTE_SET_USED(count);
-> +	/* This feature is not yet implemented for windows */
-> +	return -1;
-> +}
-> diff --git a/lib/pci/rte_pci.h b/lib/pci/rte_pci.h
-> index 9a50a12142..da9cd666bf 100644
-> --- a/lib/pci/rte_pci.h
-> +++ b/lib/pci/rte_pci.h
-> @@ -137,6 +137,21 @@ extern "C" {
->  /* Process Address Space ID (RTE_PCI_EXT_CAP_ID_PASID) */
->  #define RTE_PCI_PASID_CTRL		0x06    /* PASID control register
-> */
->=20
-> +/* TPH Requester */
-> +#define RTE_PCI_TPH_CAP            4       /* capability register */
-> +#define RTE_PCI_TPH_CAP_ST_NS      0x00000001 /* No ST Mode Supported
-> */
-> +#define RTE_PCI_TPH_CAP_ST_IV      0x00000002 /* Interrupt Vector =
-Mode
-> Supported */
-> +#define RTE_PCI_TPH_CAP_ST_DS      0x00000004 /* Device Specific Mode
-> Supported */
-> +#define RTE_PCI_TPH_CAP_EXT_TPH    0x00000100 /* Ext TPH Requester
-> Supported */
-> +#define RTE_PCI_TPH_CAP_LOC_MASK   0x00000600 /* ST Table Location */
-> +#define RTE_PCI_TPH_LOC_NONE       0x00000000 /* Not present */
-> +#define RTE_PCI_TPH_LOC_CAP        0x00000200 /* In capability */
-> +#define RTE_PCI_TPH_LOC_MSIX       0x00000400 /* In MSI-X */
-> +#define RTE_PCI_TPH_CAP_ST_MASK    0x07FF0000 /* ST Table Size */
-> +#define RTE_PCI_TPH_CAP_ST_SHIFT   16      /* ST Table Size shift */
-> +#define RTE_PCI_TPH_BASE_SIZEOF    0xc     /* Size with no ST table =
-*/
-> +
-> +
->  /** Formatting string for PCI device identifier: Ex: 0000:00:01.0 */
->  #define PCI_PRI_FMT "%.4" PRIx32 ":%.2" PRIx8 ":%.2" PRIx8 ".%" PRIx8
->  #define PCI_PRI_STR_SIZE sizeof("XXXXXXXX:XX:XX.X")
-> --
-> 2.43.0
 
