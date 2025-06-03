@@ -2,44 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50EECC5AD49
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Jun 2025 08:43:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA22FC5AD49
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Jun 2025 08:44:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DCF594028E;
-	Tue,  3 Jun 2025 10:43:16 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 5D4FD4025A
- for <dev@dpdk.org>; Tue,  3 Jun 2025 10:43:16 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 35D5720100;
- Tue,  3 Jun 2025 10:43:15 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 230B44028E;
+	Tue,  3 Jun 2025 10:44:49 +0200 (CEST)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+ by mails.dpdk.org (Postfix) with ESMTP id 0388F4025A
+ for <dev@dpdk.org>; Tue,  3 Jun 2025 10:44:48 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+ by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bBPNq3vhRz13L9Q
+ for <dev@dpdk.org>; Tue,  3 Jun 2025 16:42:51 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id 95835180482
+ for <dev@dpdk.org>; Tue,  3 Jun 2025 16:44:43 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 3 Jun 2025 16:44:43 +0800
+Message-ID: <b58d1963-c4ca-4049-95d6-11293dc85e67@huawei.com>
+Date: Tue, 3 Jun 2025 16:44:42 +0800
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v5 3/4] ethdev: introduce the cache stashing hints API
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Tue, 3 Jun 2025 10:43:11 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FCB2@smartserver.smartshare.dk>
-In-Reply-To: <20250602223805.816816-4-wathsala.vithanage@arm.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v5 3/4] ethdev: introduce the cache stashing hints API
-Thread-Index: AdvUDxazfuPtZbRaRoinhIqOax92sgAUU49w
-References: <20241021015246.304431-1-wathsala.vithanage@arm.com>
- <20250602223805.816816-1-wathsala.vithanage@arm.com>
- <20250602223805.816816-4-wathsala.vithanage@arm.com>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Wathsala Vithanage" <wathsala.vithanage@arm.com>,
- "Thomas Monjalon" <thomas@monjalon.net>,
- "Ferruh Yigit" <ferruh.yigit@amd.com>,
- "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>
-Cc: <dev@dpdk.org>, <nd@arm.com>,
- "Honnappa Nagarahalli" <honnappa.nagarahalli@arm.com>,
- "Dhruv Tripathi" <dhruv.tripathi@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] argparse: make argparse EAL-args compatible
+To: Bruce Richardson <bruce.richardson@intel.com>, <dev@dpdk.org>
+References: <20250527092113.903910-1-bruce.richardson@intel.com>
+ <20250527092113.903910-3-bruce.richardson@intel.com>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <20250527092113.903910-3-bruce.richardson@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.161]
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,45 +49,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBXYXRoc2FsYSBWaXRoYW5hZ2UgW21haWx0bzp3YXRoc2FsYS52aXRoYW5hZ2VAYXJt
-LmNvbV0NCj4gU2VudDogVHVlc2RheSwgMyBKdW5lIDIwMjUgMDAuMzgNCj4gDQo+IEV4dGVuZCB0
-aGUgZXRoZGV2IGxpYnJhcnkgdG8gZW5hYmxlIHRoZSBzdGFzaGluZyBvZiBkaWZmZXJlbnQgZGF0
-YQ0KPiBvYmplY3RzLCBzdWNoIGFzIHRoZSBvbmVzIGxpc3RlZCBiZWxvdywgaW50byBDUFUgY2Fj
-aGVzIGRpcmVjdGx5DQo+IGZyb20gdGhlIE5JQy4NCj4gDQo+IC0gUngvVHggcXVldWUgZGVzY3Jp
-cHRvcnMNCj4gLSBSeCBwYWNrZXRzDQo+IC0gUGFja2V0IGhlYWRlcnMNCj4gLSBwYWNrZXQgcGF5
-bG9hZHMNCj4gLSBEYXRhIG9mIGEgcGFja2V0IGF0IGFuIG9mZnNldCBmcm9tIHRoZSBzdGFydCBv
-ZiB0aGUgcGFja2V0DQo+IA0KPiBUaGUgQVBJcyBhcmUgZGVzaWduZWQgaW4gYSBoYXJkd2FyZS92
-ZW5kb3IgYWdub3N0aWMgbWFubmVyIHN1Y2ggdGhhdA0KPiBzdXBwb3J0aW5nIFBNRHMgY291bGQg
-dXNlIGFueSBjYXBhYmlsaXRpZXMgYXZhaWxhYmxlIGluIHRoZSB1bmRlcmx5aW5nDQo+IGhhcmR3
-YXJlIGZvciBmaW5lLWdyYWluZWQgc3Rhc2hpbmcgb2YgZGF0YSBvYmplY3RzIGludG8gYSBDUFUg
-Y2FjaGUNCj4gDQo+IFRoZSBBUEkgcHJvdmlkZXMgYW4gaW50ZXJmYWNlIHRvIHF1ZXJ5IHRoZSBh
-dmFpbGFiaWxpdHkgb2Ygc3Rhc2hpbmcNCj4gY2FwYWJpbGl0aWVzLCBpLmUuLCBwbGF0Zm9ybS9O
-SUMgc3VwcG9ydCwgc3Rhc2hhYmxlIG9iamVjdCB0eXBlcywgZXRjLA0KPiB2aWEgdGhlIHJ0ZV9l
-dGhfZGV2X3N0YXNoaW5nX2NhcGFiaWxpdGllc19nZXQgaW50ZXJmYWNlLg0KPiANCj4gVGhlIGZ1
-bmN0aW9uIHBhaXIgcnRlX2V0aF9kZXZfc3Rhc2hpbmdfcnhfY29uZmlnX3NldCBhbmQNCj4gcnRl
-X2V0aF9kZXZfc3Rhc2hpbmdfdHhfY29uZmlnX3NldCBzZXRzIHRoZSBzdGFzaGluZyBoaW50ICh0
-aGUgQ1BVLA0KPiBjYWNoZSBsZXZlbCwgYW5kIGRhdGEgb2JqZWN0IHR5cGVzKSBvbiB0aGUgUngg
-YW5kIFR4IHF1ZXVlcy4NCj4gDQo+IFBNRHMgdGhhdCBzdXBwb3J0IHN0YXNoaW5nIG11c3QgcmVn
-aXN0ZXIgdGhlaXIgaW1wbGVtZW50YXRpb25zIHdpdGggdGhlDQo+IGZvbGxvd2luZyBldGhfZGV2
-X29wcyBjYWxsYmFja3MsIHdoaWNoIGFyZSBpbnZva2VkIGJ5IHRoZSBldGhkZXYNCj4gZnVuY3Rp
-b25zIGxpc3RlZCBhYm92ZS4NCj4gDQo+IC0gc3Rhc2hpbmdfY2FwYWJpbGl0aWVzX2dldA0KPiAt
-IHN0YXNoaW5nX3J4X2hpbnRzX3NldA0KPiAtIHN0YXNoaW5nX3R4X2hpbnRzX3NldA0KPiANCj4g
-U2lnbmVkLW9mZi1ieTogV2F0aHNhbGEgVml0aGFuYWdlIDx3YXRoc2FsYS52aXRoYW5hZ2VAYXJt
-LmNvbT4NCj4gUmV2aWV3ZWQtYnk6IEhvbm5hcHBhIE5hZ2FyYWhhbGxpIDxob25uYXBwYS5uYWdh
-cmFoYWxsaUBhcm0uY29tPg0KPiBSZXZpZXdlZC1ieTogRGhydXYgVHJpcGF0aGkgPGRocnV2LnRy
-aXBhdGhpQGFybS5jb20+DQoNCk5pdHBpY2tpbmc6DQoNCkluIERQREssICJvYmplY3RzIiB1c3Vh
-bGx5IHJlZmVyIHRvIG1idWZzLCBtZW1wb29sIGVsZW1lbnRzIG9yIHNpbWlsYXIuDQpTbyBwbGVh
-c2UgdXNlIHRoZSB0ZXJtICJmbGFncyIgaW5zdGVhZCBvZiAib2JqZWN0cyIuIEFsc28gaW4gdGhl
-IG1hY3JvcywgZGVmaW5pdGlvbnMgYW5kIGNvbW1lbnRzLg0KDQpBbmQgRFBESyB1c3VhbGx5IHVz
-ZXMgNjQgYml0IGZvciBmbGFncywgc28gdGhleSBzaG91bGQgYmUgdWludDY0X3QuIFVubGVzcyB0
-aGVyZSBpcyBhIGZhc3QgcGF0aCBwZXJmb3JtYW5jZSByZWxhdGVkIHJlYXNvbiB0byBtYWtlIHRo
-ZW0gc2hvcnRlci4NCg0KSWYgeW91IHVzZSB0aGUgc2FtZSBmbGFncyBmb3IgYm90aCBSWCBhbmQg
-VFgsIGluc3RlYWQgb2YgcHJvdmlkaW5nIHNlcGFyYXRlIGRlZmluaXRpb25zIGZvciBUWCBmbGFn
-cywgdGhlIGRlc2NyaXB0aW9ucyBvZiB0aGUgZmxhZ3Mgc2hvdWxkIHJlZmxlY3QgdGhpcy4NCg0K
-VGhlIGNhcGFiaWxpdGllcyBBUElzIHNob3VsZCBvdXRwdXQgdGhlIGxpc3QvcmFuZ2Ugb2YgdmFs
-aWQgIm9mZnNldCIgdmFsdWVzIGZvciBSWCBhbmQgVFguDQoNCkFuZCBpZiB0aGUgb2Zmc2V0IGNh
-bm5vdCBiZSBuZWdhdGl2ZSwgcGxlYXNlIHVzZSBhbiB1bnNpZ25lZCB0eXBlIGZvciBpdC4NCg0K
-VGhlIGxpYi9ldGhkZXYvcnRlX2V0aGRldi5jIGZvbGxvd3MgdGhlIGRlc2lnbiBwYXR0ZXJuIG9m
-IHNldHRpbmcgcnRlX2Vycm5vIGFuZCByZXR1cm5pbmcgLTEgb24gZXJyb3IuDQpQbGVhc2UgZm9s
-bG93IHRoZSBzYW1lIGRlc2lnbiBwYXR0ZXJuIGluIHRoZSBuZXcgZnVuY3Rpb25zIGFkZGVkIHRv
-IHRoZSBydGVfZXRoZGV2IGxpYnJhcnkuDQoNCg==
+On 2025/5/27 17:21, Bruce Richardson wrote:
+> The argparse library was missing two key features which made it
+> unsuitable for use by EAL or any program wanting similar behaviour.
+> 
+> 1. It didn't stop parsing arguments when it hit a "--" character
+> 2. It never returned the number of arguments parsed
+> 
+> Fix both these issues - the latter is a change to the ABI, since we now
+> return >= 0 rather than == 0 on success. However, the ABI is still
+> experimental so we can make exactly these sorts of tweaks to it.
+> 
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> ---
+>  app/test/test_argparse.c               | 46 +++++++++++++-------------
+>  doc/guides/rel_notes/release_25_07.rst |  9 +++++
+>  lib/argparse/rte_argparse.c            | 12 +++++--
+>  lib/argparse/rte_argparse.h            |  3 +-
+>  4 files changed, 43 insertions(+), 27 deletions(-)
+> 
+> diff --git a/app/test/test_argparse.c b/app/test/test_argparse.c
+> index 6b0d1524b5..a907fbe53f 100644
+> --- a/app/test/test_argparse.c
+> +++ b/app/test/test_argparse.c
+> @@ -360,14 +360,14 @@ test_argparse_opt_autosave_parse_int_of_no_val(void)
+>  	argv[0] = test_strdup(obj->prog_name);
+>  	argv[1] = test_strdup("--test-long");
+>  	ret = rte_argparse_parse(obj, 2, argv);
+> -	TEST_ASSERT(ret == 0, "Argparse parse expect success!");
+> +	TEST_ASSERT(ret >= 0, "Argparse parse expect success!");
+
+Please compared with specific number, eg. TEST_ASSERT(ret == 2, "xxx");
+
+...
+
+>  
+> @@ -780,7 +780,7 @@ test_argparse_parse_type(void)
+>  	ret = rte_argparse_parse_type(str_invalid, RTE_ARGPARSE_ARG_VALUE_INT, &val_int);
+>  	TEST_ASSERT(ret != 0, "Argparse parse type expect failed!");
+>  	ret = rte_argparse_parse_type(str_ok, RTE_ARGPARSE_ARG_VALUE_INT, &val_int);
+> -	TEST_ASSERT(ret == 0, "Argparse parse type expect failed!");
+> +	TEST_ASSERT(ret >= 0, "Argparse parse type expect failed!");
+
+No need for rte_argparse_parse_type() API, this API still return 0 if success.
+
+...
+
+> diff --git a/lib/argparse/rte_argparse.h b/lib/argparse/rte_argparse.h
+> index 332184302e..8cdb3195cb 100644
+> --- a/lib/argparse/rte_argparse.h
+> +++ b/lib/argparse/rte_argparse.h
+> @@ -183,7 +183,8 @@ struct rte_argparse {
+>   *   Array of parameters points.
+>   *
+>   * @return
+> - *   0 on success. Otherwise negative value is returned.
+> + *   number of arguments parsed (>= 0) on success.
+> + *   Otherwise negative error code is returned.
+
+Please add note for "stops processing arguments when a ``--`` argument is encountered".
+
+>   */
+>  __rte_experimental
+>  int rte_argparse_parse(struct rte_argparse *obj, int argc, char **argv);
+
