@@ -2,59 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CC74C5AE59
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Jun 2025 15:20:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61BB9C5B555
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Jun 2025 15:20:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DDE1740E35;
-	Tue,  3 Jun 2025 17:20:27 +0200 (CEST)
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com
- [209.85.216.41]) by mails.dpdk.org (Postfix) with ESMTP id 14E3D402C8
- for <dev@dpdk.org>; Tue,  3 Jun 2025 17:20:27 +0200 (CEST)
-Received: by mail-pj1-f41.google.com with SMTP id
- 98e67ed59e1d1-3122a63201bso4405000a91.0
- for <dev@dpdk.org>; Tue, 03 Jun 2025 08:20:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1748964026; x=1749568826; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
- :date:message-id:reply-to;
- bh=SB2kvjMXFzgkhbg1XBQBSPOiim7LdqI6jCq9cfScv1Y=;
- b=XmLSkMdxDxjRHc8VJyWvEIai4kwiKmi3RmAIX7pf4ye5+GLqYHlJMcfk8B45MECD1E
- UAXr4rv6kG2FZ2IZVF1T8+PNSCLhNQG1h7I92330wbNiG3R7H3eI4YuBBAup3U2QY2Mh
- o8301ucyV5Yy7SnWRyc86OzBR3oVvObU3zgmE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1748964026; x=1749568826;
- h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=SB2kvjMXFzgkhbg1XBQBSPOiim7LdqI6jCq9cfScv1Y=;
- b=WfwbkNzb+HuZl7Eq9Z5YHoz5pAaoXYzeVhmv894UWiyqaORjdnWMCWiTSsuyqoX3Md
- eASNe88c5O4Ya0dA6ytBLaz7PLkwuvODf3RphsZzuh6csMIf2R6++Uz1LevCY59gCHGD
- GKD+lB427oqxMQMcmUdKuUVg3Z//Kl/re2/JSvc3Lv2D4+d4bE5KUaeXTwdiV6ivX64u
- wl7WXoNpOjmVCn/hCDwU/HTo6biZS7t0Fy4MdaGIBSMBYHuwpppMnQHToZaWs5SjeVlb
- HMflDJHpHF0pUm8//eLjfXomDg2NuACskOt9LHr9z6VCJPjZDmVybtL+b6soX4Egxt5c
- 0Uxw==
-X-Gm-Message-State: AOJu0YyY7QRBssFsy6XcVn3kXI4HszqcMi4YAxKbbUBSfCdtblOZFa10
- gza92A6HkS+bf6GUI8mNVjfWs5omzhPH2cNnQY9bsjz7ETriDkAIl5d+NNaTMugNhxIBXRWlBEW
- 63NWUE0HB4Af1M7F9rhpF9xNYyaLgNn/2mZoc6BMsVxDCfFhDkyZSI8g=
-X-Gm-Gg: ASbGnct8IguxhhuqBEr6p3P8IecY2xCBIg2wn1f88OgPw0xakiWsrwgXDuN/dyMfvXG
- AV9QGtwX3mdfbkRrCI1xb597nLulieZOmrY1b28OU3bDaC9wBrmiPxFIA93bfT1nFggNKFTrcKb
- qFjt7pe/rEWB6GUh95TWqJLjgDtlGjCaOj26fLSdt06Un7
-X-Google-Smtp-Source: AGHT+IF4Fcc8tb7CwiaKyMYJfctflRoD+BVySH/mK43kQp9Vrn5ZCginip1UIw87yMFyLrL5yrS5HthyV9wq+LiJjmk=
-X-Received: by 2002:a17:90b:1810:b0:311:c1ec:7d0a with SMTP id
- 98e67ed59e1d1-3127c72e97bmr16801539a91.25.1748964025386; Tue, 03 Jun 2025
- 08:20:25 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 591FA40E3E;
+	Tue,  3 Jun 2025 17:20:31 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 6FC8A40E44
+ for <dev@dpdk.org>; Tue,  3 Jun 2025 17:20:29 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 660374686B; Tue,  3 Jun 2025 17:20:29 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/DTS Bug 1717] is monster hunter world cross platform
+Date: Tue, 03 Jun 2025 15:20:28 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: DTS
+X-Bugzilla-Version: 24.07
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: johndoe96598@gmail.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter cc
+ target_milestone
+Message-ID: <bug-1717-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17489640290.87Ea0.4182671
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Tue, 3 Jun 2025 11:15:24 -0400
-X-Gm-Features: AX0GCFu1ye9iHWeKj9816JfQRMKeswHV0oppvmtHN7i1PS4hjJS50DfgTOU1gDM
-Message-ID: <CAJvnSUCFRccZaKrmiTorg+i_45cmjZ0mq-S9kMOt-SHHaKVC9g@mail.gmail.com>
-Subject: Cancelled - June 5 DTS Meeting
-To: dev <dev@dpdk.org>
-Cc: Paul Szczepanek <Paul.Szczepanek@arm.com>,
- Luca Vizzarro <Luca.Vizzarro@arm.com>, 
- Manit Mahajan <mmahajan@iol.unh.edu>,
- "nprattedev@gmail.com" <nprattedev@gmail.com>, 
- Dean Marx <dmarx@iol.unh.edu>, mamcgove@microsoft.com, ci@dpdk.org
-Content-Type: multipart/alternative; boundary="00000000000075761f0636ac6b88"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -68,39 +54,202 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---00000000000075761f0636ac6b88
-Content-Type: text/plain; charset="UTF-8"
 
-Hi DTS contributors,
-
-I am unable to host the meeting this Thursday. And, like we discussed at
-the previous meeting, a couple other regular attendees also have conflicts
-this week. I have discussed with Paul and we're going to cancel this
-meeting and handle any conversations over email this week.
-
-A couple things to note:
-
-1. Paul is merging some patches to next-dts today/tomorrow.
-2. We picked up a couple warnings from check-git-log.sh which we need to
-git amend some of the commit messages and force push to next-dts, also
-within the next couple of days. Can discuss over the mailing list.
-
-Thanks.
-
---00000000000075761f0636ac6b88
-Content-Type: text/html; charset="UTF-8"
+--17489640290.87Ea0.4182671
+Date: Tue, 3 Jun 2025 17:20:29 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-<div dir=3D"ltr"><div>Hi DTS contributors,</div><div><br></div><div>I am un=
-able to host the meeting this Thursday. And, like we discussed at the previ=
-ous meeting, a couple other regular attendees also have conflicts this week=
-. I have discussed with Paul and we&#39;re going to cancel this meeting and=
- handle any conversations=C2=A0over email this week.</div><div><br></div><d=
-iv>A couple things to note:</div><div><br></div><div>1. Paul is merging som=
-e patches to next-dts today/tomorrow.</div><div>2. We picked up a couple wa=
-rnings from check-git-log.sh which we need to git amend some of the commit =
-messages and force push to next-dts, also within the next couple of days. C=
-an discuss over the mailing list.=C2=A0</div><div><br></div><div>Thanks.</d=
-iv><div><br></div></div>
+https://bugs.dpdk.org/show_bug.cgi?id=3D1717
 
---00000000000075761f0636ac6b88--
+            Bug ID: 1717
+           Summary: is monster hunter world cross platform
+           Product: DPDK
+           Version: 24.07
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: DTS
+          Assignee: dev@dpdk.org
+          Reporter: johndoe96598@gmail.com
+                CC: juraj.linkes@pantheon.tech, probb@iol.unh.edu
+  Target Milestone: ---
+
+Hi, I=E2=80=99m John Doe, a gamer with a passion for food, health, and life=
+style.
+Lately, I=E2=80=99ve been exploring Monster Hunter: World, and one of the m=
+ost common
+questions I=E2=80=99ve encountered is: Is monster hunter world cross platfo=
+rm? In my
+latest blog post, I dive into this popular query, breaking down everything =
+you
+need to know about cross-platform play. While Monster Hunter: World offers a
+fantastic multiplayer experience, unfortunately, it doesn=E2=80=99t support=
+ full
+cross-platform play between PlayStation, Xbox, and PC. I=E2=80=99ll explain=
+ the reasons
+behind this, the limited options available for multiplayer, and tips for
+getting the most out of your hunts with friends on the same platform. If yo=
+u=E2=80=99re
+looking for more details on cross-platform play or need tips to enhance your
+Monster Hunter: World experience, head over to Vronns! Stay informed, stay
+active, and level up your gaming knowledge.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17489640290.87Ea0.4182671
+Date: Tue, 3 Jun 2025 17:20:29 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - is monster hunter world cross platform"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1717">1717</a>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Summary</th>
+          <td>is monster hunter world cross platform
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>24.07
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>DTS
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>johndoe96598&#64;gmail.com
+          </td>
+        </tr>
+
+        <tr>
+          <th>CC</th>
+          <td>juraj.linkes&#64;pantheon.tech, probb&#64;iol.unh.edu
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">Hi, I=E2=80=99m John Doe, a gamer =
+with a passion for food, health, and lifestyle.
+Lately, I=E2=80=99ve been exploring Monster Hunter: World, and one of the m=
+ost common
+questions I=E2=80=99ve encountered is: Is monster hunter world cross platfo=
+rm? In my
+latest blog post, I dive into this popular query, breaking down everything =
+you
+need to know about cross-platform play. While Monster Hunter: World offers a
+fantastic multiplayer experience, unfortunately, it doesn=E2=80=99t support=
+ full
+cross-platform play between PlayStation, Xbox, and PC. I=E2=80=99ll explain=
+ the reasons
+behind this, the limited options available for multiplayer, and tips for
+getting the most out of your hunts with friends on the same platform. If yo=
+u=E2=80=99re
+looking for more details on cross-platform play or need tips to enhance your
+Monster Hunter: World experience, head over to Vronns! Stay informed, stay
+active, and level up your gaming knowledge.
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1717">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17489640290.87Ea0.4182671--
