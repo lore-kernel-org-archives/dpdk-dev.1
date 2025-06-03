@@ -2,48 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83516C5AD49
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Jun 2025 09:23:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5115AC5AD49
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Jun 2025 10:31:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5ED964028E;
-	Tue,  3 Jun 2025 11:23:32 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id 292044025A
- for <dev@dpdk.org>; Tue,  3 Jun 2025 11:23:30 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1DCF84026C;
+	Tue,  3 Jun 2025 12:31:00 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+ by mails.dpdk.org (Postfix) with ESMTP id A04B540269
+ for <dev@dpdk.org>; Tue,  3 Jun 2025 12:30:58 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1748942612; x=1780478612;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=F55dn7uEddkCkYFyc0NYZRKoFLmFBE+g4LqYZRlY8oA=;
- b=ZNWw+E3aMN1jR+0knEFx406N7WDsh8+LCz5xaNkdh31PwBS+NGBMuVTH
- cXzPATeBdbs0N90lI/tD/FnH24LbDo43FWzZfYUD2n5N8O7DKuThVm6xC
- ZuBrhpOISYy9EKGzvDkNpjKhBo9M0AnuRg8YbZ8FSOrTtU8OKj6ILVfWX
- BWH181g5g2ANnS2NVx9LaddRzCSaLgIehEZx3aopB8y5NDiwv+sTl7Er0
- ouFd3izfzDV4Mkm3qDCRFcyAuJ8rONozCQqh3IpEC1KNZ7oAgyJOCD7mf
- 6dcQdEcTiKB9NPcBypJEaRxyRAmoZBSi9lelwXqzCz/HRfE9H0E12UqAf w==;
-X-CSE-ConnectionGUID: AD6PSxeTSbi6+viadFRh2w==
-X-CSE-MsgGUID: 4PHI3GA4QtGW6o7x053LJA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11451"; a="51040178"
-X-IronPort-AV: E=Sophos;i="6.16,205,1744095600"; d="scan'208";a="51040178"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
- by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 03 Jun 2025 02:23:30 -0700
-X-CSE-ConnectionGUID: Uwo56PI+R+Ko2/ieNpqVVQ==
-X-CSE-MsgGUID: H1a1WxZ1Qt+sVLj3UvhPOg==
+ t=1748946659; x=1780482659;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=bFS1e8NiafxFaKDcLW8ExIIihjzefU/xA1KSwQLOd1o=;
+ b=N+ldix6Br5chwRCXzDsTRNkyHrUAm7780bbLd5md4G6By4ZKQqniXNN7
+ DqxZN6Nxh+GcpIgnsKYM+9avRlN6ozaowKm6us8INOj9bwUh/ePAQlyT5
+ RCaPC8BmsL3AsY7CySAbviWQbr+8notPu2QItMAU/z5JMOhrdIed4ViwN
+ ltc0G6jxTi2prZGA0LXwMkVhSOK/gTPKHfWSYcfWMUAylWL8W6DG7UmSb
+ hPoaWm517y7EFr001hTvk2leDVThKLyCK9SswbduCL1DqdkzY7gG4+GrO
+ OgMj87BOoy13Ye6CGlrE5X84gmeInpCY+DGneweyngHMHvQTCoNrncdUL Q==;
+X-CSE-ConnectionGUID: 7aRHftH5Q6KGGzTf8FVJfA==
+X-CSE-MsgGUID: YpdtejtEQDeH4oRSOP5Irg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11451"; a="50852529"
+X-IronPort-AV: E=Sophos;i="6.16,205,1744095600"; d="scan'208";a="50852529"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+ by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 03 Jun 2025 03:30:58 -0700
+X-CSE-ConnectionGUID: g3lg45ZEQZm1SSWswx3QaA==
+X-CSE-MsgGUID: TKUa413yTGKVcvaIudQ+HA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,205,1744095600"; d="scan'208";a="144835866"
+X-IronPort-AV: E=Sophos;i="6.16,205,1744095600"; d="scan'208";a="145790427"
 Received: from unknown (HELO silpixa00401749.ger.corp.intel.com)
  ([10.237.222.190])
- by orviesa009.jf.intel.com with ESMTP; 03 Jun 2025 02:23:28 -0700
+ by orviesa008.jf.intel.com with ESMTP; 03 Jun 2025 03:30:56 -0700
 From: Radu Nicolau <radu.nicolau@intel.com>
 To: Kai Ji <kai.ji@intel.com>
 Cc: dev@dpdk.org,
 	Radu Nicolau <radu.nicolau@intel.com>
-Subject: [PATCH] crypto/qat: remove ZUC 256 support
-Date: Tue,  3 Jun 2025 09:23:24 +0000
-Message-ID: <20250603092324.66743-1-radu.nicolau@intel.com>
+Subject: [PATCH v2] crypto/qat: remove ZUC 256 support
+Date: Tue,  3 Jun 2025 10:30:35 +0000
+Message-ID: <20250603103054.60606-1-radu.nicolau@intel.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250603092324.66743-1-radu.nicolau@intel.com>
+References: <20250603092324.66743-1-radu.nicolau@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -63,15 +65,17 @@ Remove ZUC 256 support from Gen 3 and 5 hardware
 
 Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
 ---
- doc/guides/rel_notes/release_25_07.rst       |  5 +++
+v2: removed usnused function
+
+ doc/guides/rel_notes/release_25_07.rst       |  5 ++
  drivers/common/qat/qat_adf/icp_qat_hw.h      |  2 +-
- drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c | 40 +-------------------
- drivers/crypto/qat/dev/qat_crypto_pmd_gen5.c | 36 ++----------------
- drivers/crypto/qat/dev/qat_crypto_pmd_gens.h | 20 ----------
- drivers/crypto/qat/dev/qat_sym_pmd_gen1.c    | 33 ----------------
- drivers/crypto/qat/qat_sym_session.c         | 25 ++----------
+ drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c | 40 +---------------
+ drivers/crypto/qat/dev/qat_crypto_pmd_gen5.c | 49 ++------------------
+ drivers/crypto/qat/dev/qat_crypto_pmd_gens.h | 20 --------
+ drivers/crypto/qat/dev/qat_sym_pmd_gen1.c    | 33 -------------
+ drivers/crypto/qat/qat_sym_session.c         | 25 ++--------
  drivers/crypto/qat/qat_sym_session.h         |  1 -
- 8 files changed, 14 insertions(+), 148 deletions(-)
+ 8 files changed, 14 insertions(+), 161 deletions(-)
 
 diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
 index 11bb6d34f7..07bfa71700 100644
@@ -176,7 +180,7 @@ index af664fb9b9..f2ff952482 100644
  
  		ret = 0;
 diff --git a/drivers/crypto/qat/dev/qat_crypto_pmd_gen5.c b/drivers/crypto/qat/dev/qat_crypto_pmd_gen5.c
-index e1302e9b36..db27819f84 100644
+index e1302e9b36..5714420e1e 100644
 --- a/drivers/crypto/qat/dev/qat_crypto_pmd_gen5.c
 +++ b/drivers/crypto/qat/dev/qat_crypto_pmd_gen5.c
 @@ -113,11 +113,11 @@ static struct rte_cryptodev_capabilities qat_sym_crypto_caps_gen5[] = {
@@ -194,10 +198,23 @@ index e1302e9b36..db27819f84 100644
  	QAT_SYM_CIPHER_CAP(SNOW3G_UEA2,
  		CAP_SET(block_size, 16),
  		CAP_RNG(key_size, 16, 16, 0), CAP_RNG(iv_size, 16, 16, 0)),
-@@ -141,19 +141,6 @@ check_cipher_capa(const struct rte_cryptodev_capabilities *cap,
- 	return 1;
- }
+@@ -128,32 +128,6 @@ static struct rte_cryptodev_capabilities qat_sym_crypto_caps_gen5[] = {
+ 	RTE_CRYPTODEV_END_OF_CAPABILITIES_LIST()
+ };
  
+-static int
+-check_cipher_capa(const struct rte_cryptodev_capabilities *cap,
+-		enum rte_crypto_cipher_algorithm algo)
+-{
+-	if (cap->op != RTE_CRYPTO_OP_TYPE_SYMMETRIC)
+-		return 0;
+-	if (cap->sym.xform_type != RTE_CRYPTO_SYM_XFORM_CIPHER)
+-		return 0;
+-	if (cap->sym.cipher.algo != algo)
+-		return 0;
+-	return 1;
+-}
+-
 -static int
 -check_auth_capa(const struct rte_cryptodev_capabilities *cap,
 -		enum rte_crypto_auth_algorithm algo)
@@ -214,7 +231,7 @@ index e1302e9b36..db27819f84 100644
  static int
  qat_sym_crypto_cap_get_gen5(struct qat_cryptodev_private *internals,
  			const char *capa_memz_name,
-@@ -195,14 +182,6 @@ qat_sym_crypto_cap_get_gen5(struct qat_cryptodev_private *internals,
+@@ -195,14 +169,6 @@ qat_sym_crypto_cap_get_gen5(struct qat_cryptodev_private *internals,
  	capabilities = qat_sym_crypto_caps_gen5;
  
  	for (i = 0; i < capa_num; i++, iter++) {
@@ -229,7 +246,7 @@ index e1302e9b36..db27819f84 100644
  		memcpy(addr + curr_capa, capabilities + iter,
  			sizeof(struct rte_cryptodev_capabilities));
  		curr_capa++;
-@@ -233,15 +212,8 @@ qat_sym_crypto_set_session_gen5(void *cdev, void *session)
+@@ -233,15 +199,8 @@ qat_sym_crypto_set_session_gen5(void *cdev, void *session)
  				(ctx->qat_cipher_alg ==
  				ICP_QAT_HW_CIPHER_ALGO_SNOW_3G_UEA2 ||
  				ctx->qat_cipher_alg ==
