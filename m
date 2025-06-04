@@ -2,74 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F6EFC5B543
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 20:46:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 772D7C5B549
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 20:52:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 512834026C;
-	Wed,  4 Jun 2025 22:46:38 +0200 (CEST)
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com
- [209.85.219.52]) by mails.dpdk.org (Postfix) with ESMTP id 3578D4025D
- for <dev@dpdk.org>; Wed,  4 Jun 2025 22:46:37 +0200 (CEST)
-Received: by mail-qv1-f52.google.com with SMTP id
- 6a1803df08f44-6f8a87f0c0fso4215856d6.0
- for <dev@dpdk.org>; Wed, 04 Jun 2025 13:46:37 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E708E4026C;
+	Wed,  4 Jun 2025 22:52:46 +0200 (CEST)
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com
+ [209.85.219.42]) by mails.dpdk.org (Postfix) with ESMTP id 3A8AA4025D
+ for <dev@dpdk.org>; Wed,  4 Jun 2025 22:52:45 +0200 (CEST)
+Received: by mail-qv1-f42.google.com with SMTP id
+ 6a1803df08f44-6f8aa9e6ffdso3830896d6.3
+ for <dev@dpdk.org>; Wed, 04 Jun 2025 13:52:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1749069996;
- x=1749674796; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1749070364;
+ x=1749675164; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=lzFrjF7daY4ZjXoWEUmh+qr5J7h6JUEsX5LU9tJoX88=;
- b=XLDUXW3J/0gbb2QxaUSkLS2Bi/B/esx1WyCflR7CJen5nXRjDeQGnxywQB5agVp5Yt
- pvenXlGDrSD3ixuHub5EG7EkP2Y4mGqu31MhJ/CxcxpUwewbq0pVMU8QuCPIG0q9RK44
- oWB9vazMZ3MEQgRjx8eS1HEyoXmW+l2NthV0dO1SBt0dcVrcFEIVp+CHzNSN11pVoDMf
- WyMkmLOyD4woMIyqz3cr3QsdfOFJwFbkhTN+lIrYrgZuMeynJftvdWeeas6voGTHZFAl
- RgfzOkhUg8hdF/6DAZTdgAogb6oox8VFQ39NW+ZXlQQE3g+2HNweGm0XY02yNqBVjkET
- r4fw==
+ bh=7DyLsrMpBITUYDR2mamYoL6y5GNuFQI4XvkHclT45yM=;
+ b=zsECKdkj0SUiCqeOQNvVayVIEz28WSQuD8WtyZtQt1uRHVkL7M9fEuNrtGq2LxVKxh
+ bTVGmF2v6VKRFV4l4IOgE+xoFPcZIJm5fkBLrDNupGaglJWmOgohqZHLCpIhGxKyp6A8
+ tS/VIBanZAN8qjbKWITe+tnBZCE8cCwmk518PrpO+qVEF+zknhi/jYSZ0ZZRfcqfHyvx
+ MLg3umWEp37NYWqi5Wqo9c08yMcwMgJZbxh+K2MXq1vbeHIRVrGYmlxKyGUdK1H1AUSR
+ 0aDzVEgFp3vKCSNWGZaSbquUhF0zB2DUXdxkOJNDHHf9qSShJEpl4knOKFWdJ0yqG5VX
+ WJYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749069996; x=1749674796;
+ d=1e100.net; s=20230601; t=1749070364; x=1749675164;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=lzFrjF7daY4ZjXoWEUmh+qr5J7h6JUEsX5LU9tJoX88=;
- b=B33/YyqrGC1h88aAODvP5ATYfBlKKMHM++lOWlbTBhZLMhp6RcfP+RDX+H0qfh/yLI
- LlMg8o5JUgl8IeDnEhdiN1JAgAzFzE4MCPXrCVmZozzHcXJKnJ4YhJXwaZug2OEDpQhe
- rGCSrhUS+4Zt/v7a1YrkYEXCmloeQXHJSClMI0FoIq+WAa8S1qJgvAH8eAQvBPY0dOoD
- DSXu1hNDOKk41UNuOgbmqs6F05Blj/U2rsYszWURkw65NaHcnoFkLd0AhumVZD10TSu9
- wVmJG1r4esyIQEfFIvgtCUEEJz0hh/3z/5znG5zWjNcSoLJxZD0BmJ7VS3zirGsKQ/S2
- wvPg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVkUUk829udCC1X3EiVLa/MHq7wEGgtZsLrsFwznd4TseeqSczd8OYBC0OIiRRpYY+sRnA=@dpdk.org
-X-Gm-Message-State: AOJu0YxWwds3hVQ5Snn9SyE6vvklUxdrWffhk88RluEemnBMm3b6/H9R
- opNSxFjIoTg/UjI7Y0O8+Bg6vMcUMOT5RZPdbecy/JVzOILl7h+OqHaCOMBryJ5ygeY=
-X-Gm-Gg: ASbGncte/+1YLGOYYS3aHSEJskllRiiNTHrweLuvJBFksBL+i+pk8UAE68fHinkLO3d
- SDK13RKMqAne80ZdvudenoUK1hP9foLy12T9Ay3RH52hzEQ7A1g18d1R0aN7TETEZlb6K+bj+aX
- lEgnb5XzIxzEzYXaJJKJsVTCu0ZfVqn3j8tEUb66GNyDpwZfAtc36zolMqWatDa0zpZyY8h8nF2
- hrZn+v1tjq9eNUaajU5vYsYXrDCKJc7en2Xh71kjTEJX1WlSqU+JCyuPFapspvvGxu8cPgCixSD
- 353k027EPiwQamGycj3S3Z5K3L+1milwLdAcTyEnefJhsMVMkgQdV5BRm/zfIc5bUsYKkvijU5a
- gsmU9Ub/lmdr9b47buY1n+o6JCdLu
-X-Google-Smtp-Source: AGHT+IHZu2A9RTjzU3sRUYkW8ITLFMEWgtCXTWLcGjNfcAOzxk+yImRembHWh7ZHU/keFrduEI2MCQ==
-X-Received: by 2002:ad4:5dec:0:b0:6fa:9baa:face with SMTP id
- 6a1803df08f44-6faf6fc3deamr64701516d6.35.1749069996316; 
- Wed, 04 Jun 2025 13:46:36 -0700 (PDT)
+ bh=7DyLsrMpBITUYDR2mamYoL6y5GNuFQI4XvkHclT45yM=;
+ b=A3wNMeIrnGcSAGn7CHi+b3Vrj3jpMAnDS6X3vkzxsx1nZjXwIuh8jPm3Rhiv246ARB
+ HhkeXSwsH9flTzDWw0VCvcytFbd/Ot5pSnXZqVa4cutwahPL5vQIxjPnE0ngXYeq+Yy9
+ qkcaEGCPoqDGZ9BzXQUTxf0zFs1g4CpE++vVVvvXLTwVeV5GijL1ACym+XmbvOC3kxHL
+ kOb+kdCnf56r9ats44vbkeggAXxmr/jgLi78lSiHUutWbLJX3fpk811+z2DfyxtFa8ez
+ 5EbbMu1Kb0cM5nkbTcLzH0BIHAMVSdPqF1ksJK63NNjVkztNFNKH43fT0yFXoErgbBjk
+ /j4Q==
+X-Gm-Message-State: AOJu0Yw64qG0WscYpPNC2pHmvoTQuEDE9OCPGnfW0pj4YxKVpd/ppVk5
+ Np5bc3dsAIxWROjHeMEa5OXU5u9dAotRXRXJM3XAZ04n9rmDHw48K/xrRfV7tFG6kC2pk8b3TNv
+ rjlG3
+X-Gm-Gg: ASbGncsP40b0CnVPx+1GDbSyPJEbqIevr+l1Ij56fkXxnJb3RGuakuZFc5y3GNTA2WF
+ CqfhwGpNIp/1oBEwJ/63PNMtG7J1yxtFimNX94EnNzG2gkZu2a6BdHY8p+YQReVzLVdj4P55n0o
+ sj8Lw8+Ca+Ohi/Oj/B9cZfw+uJb/svxn1CLGS/wvRnmHXbONW82G7LioebDFwzDKA1+xX8tACRy
+ 8UxaTWNhy9awuHpx24HhHem18iXxMaA68j6Q4xT/3hPg9/UL4U9ZVepaZFASM8F2FPxRdJmEUBY
+ q0Pz/4Uro3PSeb9ii/+onhFkpG62lNepxVUfEwAyVpCz84uhOXqqkuvSUPndGafh+clkvONcnMY
+ xYJbYhNGhyyc8IKKr9YdgxPU+A5Pp
+X-Google-Smtp-Source: AGHT+IFCHzIWdnbnD9xD+6Jb9SosxBOscZYf948s5K/KZvXxHPTgpy7NFwTz6V7dTknlVPKUA1LMKw==
+X-Received: by 2002:ad4:5c6b:0:b0:6fa:c0ca:ba70 with SMTP id
+ 6a1803df08f44-6faf7a6e582mr62567126d6.42.1749070364455; 
+ Wed, 04 Jun 2025 13:52:44 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7d09a1a793esm1099435485a.111.2025.06.04.13.46.35
+ 6a1803df08f44-6fac6d337aesm105855476d6.8.2025.06.04.13.52.43
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 04 Jun 2025 13:46:36 -0700 (PDT)
-Date: Wed, 4 Jun 2025 13:41:24 -0700
+ Wed, 04 Jun 2025 13:52:44 -0700 (PDT)
+Date: Wed, 4 Jun 2025 13:52:39 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: <kirankumark@marvell.com>
-Cc: Nithin Dabilpuram <ndabilpuram@marvell.com>, Sunil Kumar Kori
- <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>, Harman Kalra
- <hkalra@marvell.com>, <dev@dpdk.org>
-Subject: Re: [PATCH v9 2/2] drivers: add support for IB_BTH header for RSS
- in cnxk device
-Message-ID: <20250604134124.3979a78a@hermes.local>
-In-Reply-To: <20250529154343.1589903-2-kirankumark@marvell.com>
-References: <20250529153908.1571050-1-kirankumark@marvell.com>
- <20250529154343.1589903-1-kirankumark@marvell.com>
- <20250529154343.1589903-2-kirankumark@marvell.com>
+To: Wencheng Li <liwencheng@phytium.com.cn>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v8 1/3] net/macb: add new poll mode driver
+Message-ID: <20250604135239.15e7eadb@hermes.local>
+In-Reply-To: <1749020395-44053-1-git-send-email-liwencheng@phytium.com.cn>
+References: <1744946730-31821-1-git-send-email-liwencheng@phytium.com.cn>
+ <1749020395-44053-1-git-send-email-liwencheng@phytium.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -86,15 +81,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 29 May 2025 21:13:43 +0530
-<kirankumark@marvell.com> wrote:
+On Wed,  4 Jun 2025 06:59:55 +0000
+Wencheng Li <liwencheng@phytium.com.cn> wrote:
 
-> From: Kiran Kumar K <kirankumark@marvell.com>
-> 
-> Adding support for IB_BTH header for RSS in cnxk device.
-> 
-> Signed-off-by: Kiran Kumar K <kirankumark@marvell.com>
-> ---
+> diff --git a/drivers/net/macb/base/macb_uio.c b/drivers/net/macb/base/macb_uio.c
+> new file mode 100644
+> index 0000000..19b757d
+> --- /dev/null
+> +++ b/drivers/net/macb/base/macb_uio.c
+> @@ -0,0 +1,351 @@
+> +/* SPDX-License-Identifier: BSD-3-Clause
+> + * Copyright(c) 2022 Phytium Technology Co., Ltd.
+> + */
+> +#include <dirent.h>
+> +
+> +#include "macb_uio.h"
+> +
+> +#define MACB_UIO_DRV_DIR "/sys/bus/platform/drivers/macb_uio"
+> +#define UIO_DEV_DIR "/sys/class/uio"
+> +
 
-Applied with some rewording of commit header to make check-git-log happy
-and whitespace change to the header file so new field matches others.
+If this driver requires a kernel module, it should use
+RTE_PMD_REGISTER_KMOD_DEP like other drivers.
+
+Where is the source for this kernel module? What is its license?
