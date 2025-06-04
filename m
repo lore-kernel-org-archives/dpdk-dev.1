@@ -2,49 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E9BC5B543
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 13:07:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5275EC5B549
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 13:07:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AE35C42D80;
-	Wed,  4 Jun 2025 15:07:49 +0200 (CEST)
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com
- [162.62.57.49])
- by mails.dpdk.org (Postfix) with UTF8SMTP id CDB8742D80
- for <dev@dpdk.org>; Wed,  4 Jun 2025 15:07:47 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A349F42DD1;
+	Wed,  4 Jun 2025 15:07:56 +0200 (CEST)
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com
+ [162.62.58.216])
+ by mails.dpdk.org (Postfix) with UTF8SMTP id 1433442DCB
+ for <dev@dpdk.org>; Wed,  4 Jun 2025 15:07:54 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
- s=s201512; t=1749042459;
- bh=Hjr0XbO/ojJw0nJu2dHawW6RJJudiS3hOQ1CIPsGNWM=;
+ s=s201512; t=1749042462;
+ bh=9jPVAJsdveFmvEIskdyTPeqaobb0rO9QjEji692N5jY=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=W7GshvlMLufsjEjGJO8uHd6LgpvtV1BFHIXNxQdHnuQ+V61jzeUgNNLpRzKesN4+L
- 6hpnz7JtpgRuIJnZcFIMLwupRxHuzc3+R4E3y2NEl8BnFyxtf2hFopYPzOlXyG36ak
- u+0ne3TRVA1J4KWhJwtHhXl0xf6FzGkzXkV51tw0=
+ b=NlImq0vjQPc4D/BmeBSFOLF8VrKNWNydCrF7KR/aam5b+ue4zTI0h6xufoVrFa+qH
+ XJQANM2hffu8jGSI/Qc+I4nARZxEz4otMjseyoXmM3NqG1RGGj47mXtBAuF9hCvi9K
+ iYnwy9zPEB+vDOnbGrv2fIYy9A0i1jsMd/N4ANog=
 Received: from localhost.localdomain ([116.139.97.45])
  by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
- id 1E695429; Wed, 04 Jun 2025 21:07:38 +0800
-X-QQ-mid: xmsmtpt1749042458tpq9h1aj6
-Message-ID: <tencent_51258569F10CA9965AA00D6D162FCD45600A@qq.com>
-X-QQ-XMAILINFO: OATpkVjS499uluhqroXs7S+O6qwi2hfztQpI/tcfWWxQ1LwhM02MmUIEjq1GYF
- ZqKmY6CFj+9872L0pGlhjZn9sROFttrKH2uF7/VmhghpGTKbnrJlTOJ1PZ4IRhJBPyfsyTmy+Edq
- PJvFDZX4YgBZLEl1Hq8r/IFfXTD2KA3qHUFCLNZP6b/18WTVc8ABK6E+KrGlee+4AHjtM8Av17iL
- rgEfXjhg5rIZKj+qUUUTjEOfd1V2+mb24vZjuKSLI5GxlLNXCrYLR/6zTDQM+M98vO8YjPtma7e3
- fGcW62alIko8CZEfYQYVqHHWj0HRJHm3CKsZE2Mwf+5FXCwE+oYMV0j1DCgfPZSn9vzQLNlcpfZj
- JD98Ujqg+2fh7QQ16Rcs0FKZbyPCmJN6B9KgJU4ZnwhEy9d2JEM0SVRPzn3bengRcJ0kAYL62QVN
- tQxcKTRJZBYELoNPpCsEYTE36ihR/4q7YusisaAvzfEAD1BdeYaMQ1Gd7/xVu3PXB1yaElz0WoaU
- 2GmUpBIGx3MFxzXGeiURBIqDd8JkaST39evGFhmFCWLrXAU7DOdLkoOW5w2IsxgR3xIz6KfQ/g7X
- 91He5RUS9DEB1HxIk6wPqjdzRD2c5QLKOeEpUHxHBUlXQxLrdzXz9fzVtXlMxbRE9NfZzr0TDKC6
- FH2dXqtCgZM0vitBCMbL8AHZrP4QQ5bdqP0g/LzImesoyQpectzYOK4koATqimB2m+JjiPebEG7U
- SLPTLXmcQVy+e81pEpY0quQgeMmB2vYtsQUQ17ylTFRldpvzbQ/oEF22iq7GQrFoetWji92+Wlar
- mxI5pFh1ebQCriRcspAe/oPdQrYV4/li0EEWPWrvnss+EqrBD9iSktuOoGfTb3unPdIQDcbGvUKm
- JmHFLD1VcjOmyWVj7eNYlhCrK5paNFVW+mFr6r68foneh7WL8THKOz8BIEjX5nTB3u/BKk5KfvXs
- CSJI/GkIzT1suJfIG77wBWYTKCs1HrFvGPasy4ZJ7av1ZoHHPQnSqem/WVFhOQDqThxZwI6Uoa3T
- m366Rqxw==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+ id 1E909CDE; Wed, 04 Jun 2025 21:07:41 +0800
+X-QQ-mid: xmsmtpt1749042461ty0fkrca1
+Message-ID: <tencent_19200D25157FCC8160218545F000AB465A0A@qq.com>
+X-QQ-XMAILINFO: OASTJNHpK0Kvx8VQBS4HeN2F5jZgWiRuBsjQXPOWeAnlsoIBu6vfhFAxXtRqMU
+ WYnoRZWH+hFy2UJLgdZX97mvuvCXT1q/nmcrBzv6V2+8+FYc4Ro7iKU3Ns7dJXP2tmjqvf8W0Bpn
+ 5kBehRQVlmGT4SwVfxi/dCCc5o77J+P2VYLq3reoSSctFqo8HOri22DGMecamCEm9DaGhdaVYEJ1
+ qUrmsYj51WZO2HZjKKBDP89RDoK2k+kCTnuuzUAyfG51RNe22//Z5ZuakEskYeF0l+3O3YY9kabN
+ gJKgSZ1s2TyUUIIZi71esmf+DOGhP0ZJaTI4rN4qv8W7/VmelN86RqijVN4uNViNrfplPiHizK7A
+ 8y9OqBB8jBqlhR3aTe1LhLCZTBFTTMm1wtAE4SJV+XgPRHWUmLKWf0O8ZtIYQLj8b73jNjPpg14i
+ gEXjwoVmczWWtYjbpZ5DFDmO1Bop+rB5mSc1YXXT+puZl8aYMt5oKrtfr5O1jgsMWtw7STZxj55Z
+ YXx+oU3baxKxHNozE1dPuAhqxsiXHFN0+VkNriWRxqmRESB8lWsF7p293nA1zmFaWNiuutdK1G0Z
+ ZZ4796mvdzVYyaVISbLqNrNxsIVFklLJ54KNzwMIS0MEpm+j+LQc88Ge0wuesBNxhnhg5ikfhoCS
+ jpBx2ahgP4+uh2YFcpN9brCpnIgXt1htNS41a0cZ4gk5o23JQ6V+ldQvUySBCDSVFL/V8MVXGxtB
+ Wqx8p++ZVtzpEG6AtvGNkcx2J08ZyHKmRJt3M5B8R/kn5BaMpJ8Zg4v8kMDPP5uOgA2jvs4pqKlZ
+ 3V7YulTZ6nQFmgkbwEvRzVsSSiH9fA4J547YYuqTVjUK6iSc+DWoZjHcY6xEvnNlI93pvkQnG4ax
+ uu0IZHhOMWrbDLHAKESsWgpHbAi5rGwQjC0lyKAfXY7wJSwPq04fBHhULEnQPhigwbgGmPqklk07
+ llkKOBT2jxz/orxhCdQSjtixrmdLMA05wia1LvF+q/OGrjNWJY/Q==
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
 From: uk7b@foxmail.com
 To: dev@dpdk.org
-Cc: sunyuechi <sunyuechi@iscas.ac.cn>
-Subject: [PATCH v2 0/3] Add RISC-V V extension detection and LPM optimization
-Date: Wed,  4 Jun 2025 21:07:33 +0800
-X-OQ-MSGID: <20250604130733.2346936-1-uk7b@foxmail.com>
+Cc: sunyuechi <sunyuechi@iscas.ac.cn>,
+ Stanislaw Kardach <stanislaw.kardach@gmail.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v2 1/3] config/riscv: detect V extension
+Date: Wed,  4 Jun 2025 21:07:39 +0800
+X-OQ-MSGID: <20250604130739.2347575-1-uk7b@foxmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <tencent_3C14F3CE0963698675F04CA9725B540D5D0A@qq.com>
 References: <tencent_3C14F3CE0963698675F04CA9725B540D5D0A@qq.com>
@@ -65,31 +66,59 @@ Errors-To: dev-bounces@dpdk.org
 
 From: sunyuechi <sunyuechi@iscas.ac.cn>
 
-This patch series adds support for the RISC-V Vector (V) extension and provides
-an optimized implementation of `rte_lpm_lookupx4` using RVV. It includes runtime
-detection of the V extension, conditional compilation based on compiler support
-for RVV intrinsics.
+This patch is derived from "config/riscv: detect presence of Zbc
+extension with modifications".
 
-Test results using lpm_perf_autotest on BPI-F3:
-    scalar: 5.7 cycles
-    rvv:    2.4 cycles
+The RISC-V C api defines architecture extension test macros
+These let us detect whether the V extension is supported on the
+compiler and -march we're building with. The C api also defines V
+intrinsics we can use rather than inline assembly on newer versions of
+GCC (14.1.0+) and Clang (18.1.0+).
 
-### v2:
-- Improved commit messages.
+If the V extension and intrinsics are both present and we can detect
+the V extension at runtime, we define a flag, RTE_RISCV_FEATURE_V.
 
-sunyuechi (3):
-  config/riscv: detect V extension
-  lib/lpm: R-V V rte_lpm_lookupx4
-  riscv: override machine_args only when default
+Signed-off-by: sunyuechi <sunyuechi@iscas.ac.cn>
+---
+ config/riscv/meson.build | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
- MAINTAINERS              |  2 +
- config/riscv/meson.build | 27 ++++++++++++
- lib/lpm/meson.build      |  1 +
- lib/lpm/rte_lpm.h        |  2 +
- lib/lpm/rte_lpm_rvv.h    | 91 ++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 123 insertions(+)
- create mode 100644 lib/lpm/rte_lpm_rvv.h
-
---
+diff --git a/config/riscv/meson.build b/config/riscv/meson.build
+index 7562c6cb99..e3694cf2e6 100644
+--- a/config/riscv/meson.build
++++ b/config/riscv/meson.build
+@@ -119,6 +119,31 @@ foreach flag: arch_config['machine_args']
+     endif
+ endforeach
+ 
++# check if we can do buildtime detection of extensions supported by the target
++riscv_extension_macros = false
++if (cc.get_define('__riscv_arch_test', args: machine_args) == '1')
++  message('Detected architecture extension test macros')
++  riscv_extension_macros = true
++else
++  warning('RISC-V architecture extension test macros not available. Build-time detection of extensions not possible')
++endif
++
++# detect extensions
++# Requires intrinsics available in GCC 14.1.0+ and Clang 18.1.0+
++if (riscv_extension_macros and
++    (cc.get_define('__riscv_vector', args: machine_args) != ''))
++  if ((cc.get_id() == 'gcc' and cc.version().version_compare('>=14.1.0'))
++      or (cc.get_id() == 'clang' and cc.version().version_compare('>=18.1.0')))
++    if (cc.compiles('''#include <riscv_vector.h>
++        int main(void) { size_t vl = __riscv_vsetvl_e32m1(1); }''', args: machine_args))
++      message('Compiling with the V extension')
++      machine_args += ['-DRTE_RISCV_FEATURE_V']
++    endif
++  else
++    warning('Detected V extension but cannot use because intrinsics are not available (present in GCC 14.1.0+ and Clang 18.1.0+)')
++  endif
++endif
++
+ # apply flags
+ foreach flag: dpdk_flags
+     if flag.length() > 0
+-- 
 2.49.0
 
