@@ -2,72 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E21BBC5B559
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 12:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE03BC5B549
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 12:20:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1E8D642D80;
-	Wed,  4 Jun 2025 14:04:55 +0200 (CEST)
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com
- [209.85.167.47]) by mails.dpdk.org (Postfix) with ESMTP id 68455402D8
- for <dev@dpdk.org>; Wed,  4 Jun 2025 14:04:54 +0200 (CEST)
-Received: by mail-lf1-f47.google.com with SMTP id
- 2adb3069b0e04-55220699ba8so8496227e87.2
- for <dev@dpdk.org>; Wed, 04 Jun 2025 05:04:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=linaro.org; s=google; t=1749038694; x=1749643494; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=nJZ5kNYy43GxxXi0M8hKrUg7n7tjyY45W1hgN+6SXkU=;
- b=qJUTliGgZqwHjPVG6TFGpQC0Km9ewJB7bBcUoWVlIVk7YZTYPPTvtybJlfRapnordL
- 4z/VbbESRYaKI2b0hqnOAkENyMklI8C86jMyE9zXYRhs0eGNSxTvdwVRt38m+rq+GEAE
- gKzhtjUw8Tb2vPfvIh0956Kr6EnkGUrZjgBf2jhroNRLDu+mXEQp9ajZvyNzMIFdG3yx
- V3zk+TekALCiF2XH9U6cDZKkqq52Q9I2cZt0ikB9Fk5cflubpf+DDevHx63FMbAcBqYD
- ypSFARRUPhR8FMbC7Dnxfb7B4xzQDhJWol0htWd21Bry7+hvI6RqIvmsdRVk2bNBtFGB
- 3fxQ==
+	by mails.dpdk.org (Postfix) with ESMTP id 0749842D80;
+	Wed,  4 Jun 2025 14:20:01 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 3737C402D8
+ for <dev@dpdk.org>; Wed,  4 Jun 2025 14:19:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1749039598;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=zXIhiDmdKIf0nLHo4I9E0nN0f/SyJcvVjR3zD/pUjtQ=;
+ b=bM5tzgOIzfUdbt+MXA0HoRhRB+2nyCAHvvlZ69LrapfVbsNZZ8Y725m3cJsIJPwn7dsxAk
+ vqaIAHcMV+3Nvwotg2KjBYodhTg2F/j4NTdb7QZwEPgsmmG9EZf5ENogGjNJy9FY36v5S9
+ HYj+4WrHUlw98RpCuXrKwVmc+e2SrkE=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-594-TTsoT9oHPvSQgYxhRXBiBA-1; Wed, 04 Jun 2025 08:19:57 -0400
+X-MC-Unique: TTsoT9oHPvSQgYxhRXBiBA-1
+X-Mimecast-MFC-AGG-ID: TTsoT9oHPvSQgYxhRXBiBA_1749039596
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-55328b79ec3so475435e87.0
+ for <dev@dpdk.org>; Wed, 04 Jun 2025 05:19:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749038694; x=1749643494;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=nJZ5kNYy43GxxXi0M8hKrUg7n7tjyY45W1hgN+6SXkU=;
- b=RQSnEYqPOtHIXvYaT516dHkSaqVk9crFMR0CHDo7y+/69Scnz7c+yVpb6DSrqBzXJs
- Juah4NI+3u6kDv0itdTNbVP/9dx3X1h00s8jseD4OGvbBATPyzE2LIfa5yXTMJtHCWZL
- +gjwiIqUi16MmkhouIhX93rGClasqhTnWxP51Tg9jxjvgYgMPpUc4GKcLi2OFQpB7qDr
- OVrkAexX21CtlarJwjOkJQ6Qzwf8Cr0oG1mldLOdkOtKJcLXELf6L/w8YUt5hA15gRBw
- R4Jy7XBxSnXl5L47dZoj1NAJmJpHghcJ1/fpznC8E7J1780nQQ05wEE9ubS1rB7UqaGJ
- PbJg==
+ d=1e100.net; s=20230601; t=1749039596; x=1749644396;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=zXIhiDmdKIf0nLHo4I9E0nN0f/SyJcvVjR3zD/pUjtQ=;
+ b=YV+BuAogKC1yHSmgiDTkNCH1eDZT5UadZmN/0iI+1Uwg2Sqc8KMcG7rVUjRUHb+0k9
+ WcMH3lN9lVi2vOe+UaAd9Oh7F6Q5s7jjtUdcHzpdCLDI5haKL43axUWO5Wqt0wHsLKOO
+ ANPAiIezSNI/VOu7KV+zVQZVjWIr8x2dQW7KCuqwF40T76S/Hf6zxzdZzJKHB0Rxm+oQ
+ TKFgfDSdLHZAfd+DDGcu9JkRpFB7KvqbUZ6EBvB7P8Q/UTUNrXyCOEiU5XNEqX80jvci
+ D4gKX4neX06+8hV2E6Z4nUYt6jwXdB/NJK2gAnaiYbAG9QUMaVIY/6xZ74OIELjRTRak
+ 46TQ==
 X-Forwarded-Encrypted: i=1;
- AJvYcCUwXTwxYh3SiwU6UD/dROamqoPvb8kxY2D+VBv62qy3oUCu0u7dYREeKNqE6mCO+2kthlY=@dpdk.org
-X-Gm-Message-State: AOJu0YzfZjgXF5hvAr3fS5fPRFuiaqqFddL+44i1g9+ZU5Uclsj8T1Vs
- sVmnliPYRlibf2jkCa04C7RvLJac8M4jhVwrBVIih5m58eXqPYgaZHBJmUky+1CBpBM/l2SlJJL
- 8Kl03IgFYOjSYU6ZIbiGvN7xYjMnF9X9UeN3kVm1+EQ==
-X-Gm-Gg: ASbGncuP2jViI9cuTEksgt6JxHbO42EzEictXpVnhzyCC3JFSK6ovhc1U+qYL42QChQ
- JtQ3f8gKG1+DBmGJBWFGXzdlwAK05JZvtHS+fWlBVRFSyGLdLoBXdCyafLkjWX6rmib7rlCt5FL
- nQhIs1V2bf3hhEwUkuOpoHfMf3t2Vot2I=
-X-Google-Smtp-Source: AGHT+IF7e909RZ737T7oklvAG7+O0hqKWRAzYowNAJjTYZh7/CIymfVkaqM5ixy4nqjo8iMUS5Cc9xWZkEg+aDdW6nQ=
-X-Received: by 2002:a05:651c:312b:b0:32a:6026:ec08 with SMTP id
- 38308e7fff4ca-32ac7175af2mr6439241fa.18.1749038693741; Wed, 04 Jun 2025
- 05:04:53 -0700 (PDT)
+ AJvYcCVcfbsA5I/WwqT1gd1RO29LDAJnDKWNZH4fwM23ImeZiGP7Pm3v6bDeU0EuCMfiEfAcHqk=@dpdk.org
+X-Gm-Message-State: AOJu0YyHTZqL7Ua9muzJ351cNHRti5BGVQ/DjgOUV2aqqwaCckJG9q0+
+ IjfjabCkZOKgA2mCtDwbjTWawWFASvnR7ieaKTFW9N25bTKQG+O+jQYuZVph3F1G4cP9HnttBbl
+ y70NRkl7HxpzqYp3J2WRYzAq9l+yIdyGEUQAfVmnjpjI5yqowlm5xMo001akVtlg80lF9zbPWIJ
+ KjoX/+9QVtLOffNJsfC54=
+X-Gm-Gg: ASbGncs2QXFd2NZcfvn3UZGknwP4vB/4zhbumhnucZyz6vLwaT1T8JM9x98UfmUo0tn
+ fPZzujkbuMnAi/PXDAV4XijwUBBU4+9+jTaFJn0OzHQWV/L1UyIxKn4QAOsOE7LUgNDKc10Y=
+X-Received: by 2002:a05:6512:2256:b0:553:2a16:2503 with SMTP id
+ 2adb3069b0e04-5535719cdc4mr734352e87.22.1749039595914; 
+ Wed, 04 Jun 2025 05:19:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG69nzSadJqJq5/oyd7qWvvaoufPzOsvPL6tgCiF3Dh0eZFi7TsHFR3GtmzlT0QWVI4N3pUnaFt0ukGAvDcdUc=
+X-Received: by 2002:a05:6512:2256:b0:553:2a16:2503 with SMTP id
+ 2adb3069b0e04-5535719cdc4mr734345e87.22.1749039595440; Wed, 04 Jun 2025
+ 05:19:55 -0700 (PDT)
 MIME-Version: 1.0
-References: <20250508074119.356011-1-zhangfei.gao@linaro.org>
- <CO6PR18MB4484068E26F01A086742F2F4D89EA@CO6PR18MB4484.namprd18.prod.outlook.com>
- <CABQgh9E0Kh115U4YbkVPOCR-65cbFb__V-+pRGFdRGoqLVYMtg@mail.gmail.com>
- <CO6PR18MB448446151350E98857F883FFD899A@CO6PR18MB4484.namprd18.prod.outlook.com>
- <CABQgh9HYQo7FNPggY1-m4-SMga4Sf5G3RV1AU-izZunNJzgqcQ@mail.gmail.com>
- <CO6PR18MB44849D14A16B1B5729F69746D865A@CO6PR18MB4484.namprd18.prod.outlook.com>
-In-Reply-To: <CO6PR18MB44849D14A16B1B5729F69746D865A@CO6PR18MB4484.namprd18.prod.outlook.com>
-From: Zhangfei Gao <zhangfei.gao@linaro.org>
-Date: Wed, 4 Jun 2025 20:04:41 +0800
-X-Gm-Features: AX0GCFuoLfHsQ1gj8viJsBwgS6sMq_xs5XWV-gZxGjt6VwRPqXqpgR80AfA2Fwk
-Message-ID: <CABQgh9HxKgiMgo4s9r1-PfA8+2Bp8ENduJEP+h6zOgaPKNPozA@mail.gmail.com>
-Subject: Re: [EXTERNAL] [PATCH 0/2] uadk: realize async mode
-To: Akhil Goyal <gakhil@marvell.com>
-Cc: "Marchand, David" <david.marchand@redhat.com>,
- Aaron Conole <aconole@redhat.com>, 
- Fan Zhang <fanzhang.oss@gmail.com>, Ashish Gupta <ashishg@marvell.com>, 
- "dev@dpdk.org" <dev@dpdk.org>, 
- "NBU-Contact-Thomas Monjalon (EXTERNAL)" <thomas@monjalon.net>
+References: <1734988233-20208-1-git-send-email-andremue@linux.microsoft.com>
+In-Reply-To: <1734988233-20208-1-git-send-email-andremue@linux.microsoft.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Wed, 4 Jun 2025 14:19:43 +0200
+X-Gm-Features: AX0GCFtueAsSQYKTMZP0rMx2FeBHW0wvG7UAfqLOGFGtoCE8XD8kYODpN_tMp34
+Message-ID: <CAJFAV8zCw0QJzFgKsYco=W2b7Z5J=P=Wva+xqDuEggtCODzApg@mail.gmail.com>
+Subject: Re: [PATCH] app/test: fix stack overflow in fib6_perf_autotest
+To: Andre Muezerie <andremue@linux.microsoft.com>
+Cc: Vladimir Medvedkin <vladimir.medvedkin@intel.com>, dev@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: UihLEhbqyw3KYQ6Q3frEUW_ZEe43FWeR_fPdGSLwWKg_1749039596
+X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,38 +85,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 26 May 2025 at 14:15, Akhil Goyal <gakhil@marvell.com> wrote:
-
+On Mon, Dec 23, 2024 at 10:11=E2=80=AFPM Andre Muezerie
+<andremue@linux.microsoft.com> wrote:
 >
-> DPDK deprecation notice need not include API changes in external libraries.
-> We just need to notify the users about the version of ZSDA external lib is going to change in next release or so.
-> And then we can change the code.
+> Test fib6_perf_autotest was hitting a stack overflow on Windows
+> with MSVC.
 >
-> You can refer to intel-ipsec-mb. It manages compatible external library version in dpdk docs.
+> The fix is to move some of the data from the stack to the heap.
 >
+> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+> Acked-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 
-Thanks Akhil
+Applied, thanks.
 
-Will add this.
-I am waiting for the 2.9 release, which may happen this weekend.
 
-diff --git a/doc/guides/rel_notes/release_25_07.rst
-b/doc/guides/rel_notes/release_25_07.rst
-index 0c9ec76355..138bfecd61 100644
---- a/doc/guides/rel_notes/release_25_07.rst
-+++ b/doc/guides/rel_notes/release_25_07.rst
-@@ -72,6 +72,11 @@ New Features
+--=20
+David Marchand
 
-   * Support matching on IPv6 frag extension header with async flow
-template API.
-
-+* **Updated UADK crypto & compress driver.**
-+
-+  * Update to init2 interface which requires v2.9 of the UADK library.
-+  * Update to asynchronous mode for better performance.
-+
- * **Updated virtio driver.**
-
-Is this suitable to squash into the last patch together?
-
-Thanks
