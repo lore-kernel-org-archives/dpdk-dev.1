@@ -2,57 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E1FC5B549
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 15:48:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9526FC5B543
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 15:50:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3A5D342E82;
-	Wed,  4 Jun 2025 17:47:47 +0200 (CEST)
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com
- [162.62.58.216])
- by mails.dpdk.org (Postfix) with UTF8SMTP id 95BE042E81
- for <dev@dpdk.org>; Wed,  4 Jun 2025 17:47:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
- s=s201512; t=1749052052;
- bh=gZuath/qkKD9o/Anpg7yWB85iperEzQT0ytrAzc4tF8=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=mhsG/8T9wABPxCeVnFPfbHWQEmQ1k6MrExDk+v+mUuq0ZKMiJ7zfTild6G0NlZSpV
- NiFBUUOZJL3pb6a92ryERlvER5xmpx6wfCOyuScfDDIyuWfMgciNqNdjJ8qAk0mUOQ
- RNLORTOGCscfLRYOIIucqYmhndvZDEHTkVULHtcg=
-Received: from localhost.localdomain ([116.139.97.45])
- by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
- id BDF3AAC2; Wed, 04 Jun 2025 23:47:31 +0800
-X-QQ-mid: xmsmtpt1749052051tpzm5065z
-Message-ID: <tencent_4361083CE4AA3E16A1430DC533739958AC08@qq.com>
-X-QQ-XMAILINFO: N/WmRbclY25GY1M4ahXNh+HMUT3h2TtWGUAPvZ5I6jzV5BueX0P2mjzLDSNvjz
- mywlm0JaXrUHdGw2ZLnToFjnV44phCJdjwDZgFTJq+EwL9eOzkMQVdST+MdhR0imAkqq1rjkyHfg
- vzaw1FHhAu+XCWo2JvMKx+p7Zlz7/aEOjBmpz3WgqHpU37RtnI2IC7m/5b8F11Dfc8NMBusZ0FxT
- PL6bs+65n17maM4f5h0TbaB/Szh4M8+9KesKQeG21I13qUmmZpVk3pbR25lcIs2uyW1s7OQkjNoy
- KXtuXcw8/UmGMQsbqzdUV/XLy6PLvZR48ViClvJgLdYL/aBvxGHZTEnTEjJgScG0Y1gNQI2l3/lj
- YngMpT64J2yk/xENOsqQCFteR6DfK+7XQHUgp9IoZ+DnnoSDiHDqoTCXIKDUGSYw4e3nrjgjJGy6
- cJFOc8qBj90PsdArn3Cddn3AxjKt40FHBPu5FkuYkPPFMppb1KSJUrQg+76FzwnfM727ghm1bo/a
- 0TZ5HTlwXfFxOUvBxVrwQGhRWzGdi8OWwGlE9M4lIoHtOLwy6LiegyCHfzLVpB2huzgwQDgfhgxh
- PSMr+v3ULuv0GS4TnQ79hEsdO2Hv+U7OVILa/KvKK7ec3aGT59K0EhkRdJ8vZ7sHAhlLBlwOI9U8
- r1ipYBnLtZhsW2dYtTzRDFPkEN+nAWMw9eJT5T8Ld16OIPAbfyXm+5mJPCPR+h87UNUuk5gFX9MM
- vqjLFlaSB1UoX1etKxtujMw07Ex0ojv13dSXDvif5YNi2jnemvnN8qbj/90jiSNKfSq+66mEOr+s
- 0n8iaSI1Q+/8DCaqi6pVcVbV5VY1o2SLkJqtBEdnHZcIiwd1SOot9+aSO5j2xpyjE5XX9VzU3zTa
- nXSWd2ajsfQfEpsBI4SwazGKiroJ6as/xpCZJVPihfkbCmnR2v2esemeNYycv3nH+e8SYfHk86J3
- bdgpqatwxdRhHvlMKfXUCB3YBptboa1WeQvDb/mcMhO/OMMAclIzXoDuqa5V5Fi9j+8lTnEvphkn
- alEE0QrX2Wy053tirQ6l/3Xh9e4Pb21OC1Bq6iGQ==
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: uk7b@foxmail.com
-To: dev@dpdk.org
-Cc: sunyuechi <sunyuechi@iscas.ac.cn>,
- Stanislaw Kardach <stanislaw.kardach@gmail.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v3 3/3] riscv: override machine_args only when default
-Date: Wed,  4 Jun 2025 23:47:20 +0800
-X-OQ-MSGID: <20250604154720.3078131-4-uk7b@foxmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250604154720.3078131-1-uk7b@foxmail.com>
-References: <tencent_3C14F3CE0963698675F04CA9725B540D5D0A@qq.com>
- <20250604154720.3078131-1-uk7b@foxmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id ADAFE42E68;
+	Wed,  4 Jun 2025 17:50:42 +0200 (CEST)
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com
+ [209.85.217.41]) by mails.dpdk.org (Postfix) with ESMTP id 98D2042DF1
+ for <dev@dpdk.org>; Wed,  4 Jun 2025 17:50:40 +0200 (CEST)
+Received: by mail-vs1-f41.google.com with SMTP id
+ ada2fe7eead31-4e45ece38cdso744223137.0
+ for <dev@dpdk.org>; Wed, 04 Jun 2025 08:50:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1749052240; x=1749657040; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=9JJggeB8UpZrZ3/IuyrScIUWO7HTnthliHh3jcj+uag=;
+ b=U6TJxoD5WrQp74/UbxTz9O+d+f+JtGNSyrJkqR61DRJBBuywASSwsb0c3mDtLafKl4
+ yLIJjHEEaPt5xEu/InE5ffIYMID/7pWvqogpZ6XzeBOnRJVBqX5wwVlbm1tISs3dW8pd
+ odnoL+MzZEwLJ7ywt+OZJTUkDVV0wVqgMHys1hAHEwR0BZsDqnLkvWjaqCIo8+A6QWDK
+ gAityl/a90L4K62QfznWg5x95tVI+OzEnscGXhCU3xi9E6uXQfMua4FUsRIUF+DqNtEI
+ 44Ea8VkDa4BIX5Ip3H/edzSkr6Gh2DRPdRxcuuHefRfQidTpuXmKtQ5n1oYFJugdxULs
+ VLJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1749052240; x=1749657040;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=9JJggeB8UpZrZ3/IuyrScIUWO7HTnthliHh3jcj+uag=;
+ b=CQkY5RSDDvLNmlg/VrLXD+Y98RVUefEXrIJ6SWKBSYjmyDHIlkAP9L5WBK7xYbnXJL
+ VNxUK0+vKy5y5xo+My6HTE22f6mPx/inVvAtA2r7voCt3X20r7dEub+mY3BlewTO9ZCx
+ NegbVVHPXyjhkoqaG52y2/eY+VAlh2kR6L3J3eW9+KRlxpBfiDZj/CZTQxfKFabpCVi3
+ 2HMeoZdsFBzB+fif5vgU583JH6HoD0BqLyZdOaeqjJl/W6/j5FooyZWdnUiJOZAX4Ry2
+ 08clwmAU5mepfqk07G/AgnWzPPAVRVgF6RBAM3LMm3iLK2Y6QzLOtvsB4J1F7byapuC1
+ OvWw==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUbgVAj1m2HPskvT0JRyWheexX7qzfDBKfh+IeF4yYZNKEOLizsZJS6smJfZI3bdERohlY=@dpdk.org
+X-Gm-Message-State: AOJu0YyRfaxPf9GOx8FFI6r3abKEhvLD0pSDxuGzkk5w9W73Iv869GT9
+ XRnRdDgERQf9nXrYU3UqlhmQkQCLwd9Kt3EIPvwTJPZgsspMfhp4RrX2PolISXu+RZ6KGWYTXQ0
+ kVe9UNsu3pyEkc+jQdk0LM5YIlUkvB8Q=
+X-Gm-Gg: ASbGncsIzMAqcix8nEuUxuNt+5iT4llnm3dNlRnHEWQ21JnJV2IruncrBd5YQZ2ucNo
+ h07F/Uj67CKGC8Hz6ESKvq/hHhwA4jyBFSqohx2thCfUpoTaNR2AvBSiHgPaTzEpbQa3czvkZcs
+ C2/PLCaxlFAdWofUIoPQBwoE6fsyqGNYJeN/3pKa9KvQ==
+X-Google-Smtp-Source: AGHT+IFQrMn+ss2iKQT5mFtVKz9GbQOuyQkqDsuCjMlx5//JRIZFa4ywseGZlibjMfCLbNjN6BriOQOdReZSi7hZD+I=
+X-Received: by 2002:a05:6102:c14:b0:4e5:8d83:c50e with SMTP id
+ ada2fe7eead31-4e758bcac31mr31496137.10.1749052239889; Wed, 04 Jun 2025
+ 08:50:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250103060612.2671836-1-nsaxena@marvell.com>
+ <20250604101259.4181992-1-nsaxena@marvell.com>
+ <20250604101259.4181992-4-nsaxena@marvell.com>
+ <DM3PPF17CE793ABE46D170841F018BCE2E1AC6CA@DM3PPF17CE793AB.namprd18.prod.outlook.com>
+In-Reply-To: <DM3PPF17CE793ABE46D170841F018BCE2E1AC6CA@DM3PPF17CE793AB.namprd18.prod.outlook.com>
+From: Nitin Saxena <nsaxena16@gmail.com>
+Date: Wed, 4 Jun 2025 21:20:28 +0530
+X-Gm-Features: AX0GCFvWinF-9mSA3YSyskVvZnBy2Jz2jcd0a55c_4MdbNp6eTw2kI6sJoswX_g
+Message-ID: <CAG6-93yDuhTaQtxE3nwh7KNCygCyPLJaR3WPEom-ai8NVafRsQ@mail.gmail.com>
+Subject: Re: [PATCH v10 3/7] graph: add feature arc init APIs
+To: Kiran Kumar Kokkilagadda <kirankumark@marvell.com>
+Cc: Nitin Saxena <nsaxena@marvell.com>, Jerin Jacob <jerinj@marvell.com>, 
+ Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>,
+ Zhirun Yan <yanzhirun_163@163.com>, 
+ Robin Jarry <rjarry@redhat.com>, Christophe Fontaine <cfontain@redhat.com>,
+ "dev@dpdk.org" <dev@dpdk.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -66,35 +81,123 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: sunyuechi <sunyuechi@iscas.ac.cn>
+Hi Kiran,
 
-Support using -Dcpu_instruction_set=rv64gcv to enable V extension.
 
-Signed-off-by: sunyuechi <sunyuechi@iscas.ac.cn>
----
- config/riscv/meson.build | 2 ++
- 1 file changed, 2 insertions(+)
+On Wed, Jun 4, 2025 at 4:54=E2=80=AFPM Kiran Kumar Kokkilagadda
+<kirankumark@marvell.com> wrote:
+>
+>
+>
+> > -----Original Message-----
+> > From: Nitin Saxena <nsaxena@marvell.com>
+> > Sent: Wednesday, June 4, 2025 3:43 PM
+> > To: Jerin Jacob <jerinj@marvell.com>; Kiran Kumar Kokkilagadda
+> > <kirankumark@marvell.com>; Nithin Kumar Dabilpuram
+> > <ndabilpuram@marvell.com>; Zhirun Yan <yanzhirun_163@163.com>; Robin
+> > Jarry <rjarry@redhat.com>; Christophe Fontaine <cfontain@redhat.com>
+> > Cc: dev@dpdk.org; Nitin Saxena <nsaxena16@gmail.com>
+> > Subject: [PATCH v10 3/7] graph: add feature arc init APIs
+> >
+> > This patch adds feature arc init()/create()/destroy() APIs. It also add
+> > APIs for adding feature node to an arc.
+> >
+> > Signed-off-by: Nitin Saxena <nsaxena@marvell.com>
+> > ---
+> >  doc/api/doxy-api-index.md                |    1 +
+> >  doc/guides/prog_guide/graph_lib.rst      |   23 +-
+> >  lib/graph/graph_feature_arc.c            | 1329 +++++++++++++++++++++-
+> >  lib/graph/graph_private.h                |    4 +
+> >  lib/graph/meson.build                    |    2 +-
+> >  lib/graph/rte_graph_feature_arc.h        |  248 +++-
+> >  lib/graph/rte_graph_feature_arc_worker.h |  303 +++++
+> >  7 files changed, 1902 insertions(+), 8 deletions(-)
+> >  create mode 100644 lib/graph/rte_graph_feature_arc_worker.h
+> >
+> > diff --git a/doc/api/doxy-api-index.md b/doc/api/doxy-api-index.md
+> > index a7bdbf892c..6d8b531344 100644
+> > --- a/doc/api/doxy-api-index.md
+> > +++ b/doc/api/doxy-api-index.md
+> > @@ -215,6 +215,7 @@ The public API headers are grouped by topics:
+> >    * [graph](@ref rte_graph.h):
+> >      [graph_worker](@ref rte_graph_worker.h)
+> >      [graph_feature_arc](@ref rte_graph_feature_arc.h)
+> > +    [graph_feature_arc_worker](@ref rte_graph_feature_arc_worker.h)
+> >    * graph_nodes:
+> >      [eth_node](@ref rte_node_eth_api.h),
+> >      [ip4_node](@ref rte_node_ip4_api.h),
+> > diff --git a/doc/guides/prog_guide/graph_lib.rst
+> > b/doc/guides/prog_guide/graph_lib.rst
+> > index 191c8e8a0b..c9ac9e7ae0 100644
+> > --- a/doc/guides/prog_guide/graph_lib.rst
+> > +++ b/doc/guides/prog_guide/graph_lib.rst
+> > @@ -815,7 +815,7 @@ added to existing arc as follows:
+> >              ...
+> >              ...
+> >              ...
+> > -        .override_index_cb =3D Feature-3_override_index_cb(),
+> > +        .override_index_cb =3D Feature-2_override_index_cb(),
+> >          .runs_after =3D "Feature-1",
+> >          .runs_before =3D "Custom-Feature",
+> >      };
+> > @@ -848,3 +848,24 @@ this callback. In case of multiple features, large=
+st
+> > value returned by any
+> >  feature would be selected for creating feature arc.
+> >
+> >  .. _Feature_Arc_Initialization:
+> > +
+> > +Initializing Feature arc
+> > +^^^^^^^^^^^^^^^^^^^^^^^^
+> > +Following code shows how to initialize feature arc sub-system.
+> > +``rte_graph_feature_arc_init()`` API is used to initialize a feature a=
+rc
+> > +sub-system. If not called, feature arc has no impact on application.
+> > +
+> > +.. code-block:: c
+> > +
+> > +    struct rte_graph_param *graph_param =3D app_get_graph_param();
+> > +
+> > +    /* Initialize feature arc before graph create */
+> > +    rte_graph_feature_arc_init(0);
+> > +
+> > +    rte_graph_create(graph_param);
+> > +
+> > +.. note::
+> > +
+> > +   ``rte_graph_feature_arc_init()`` API should be called before
+> > +   ``rte_graph_create()``. If not called, feature arc is a ``NOP`` to
+> > +   application.
+> > diff --git a/lib/graph/graph_feature_arc.c b/lib/graph/graph_feature_ar=
+c.c
+> > index 6135b262d5..b28f0ec321 100644
+> > --- a/lib/graph/graph_feature_arc.c
+> > +++ b/lib/graph/graph_feature_arc.c
+> > @@ -2,10 +2,57 @@
+> >   * Copyright(C) 2025 Marvell International Ltd.
+> >   */
+> >
+> > -#include <rte_graph_feature_arc.h>
+> > +#include <rte_graph_feature_arc_worker.h>
+> > +#include <rte_malloc.h>
+> > +#include <rte_string_fns.h>
+> >  #include <eal_export.h>
+> >  #include "graph_private.h"
+> >
+> > +#define GRAPH_FEATURE_MAX_NUM_PER_ARC  (64)
+> > +
+> > +#define connect_graph_nodes(node1, node2, edge, arc_name) \
+> > +     __connect_graph_nodes(node1, node2, edge, arc_name, __LINE__)
+> > +
+> > +#define FEATURE_ARC_MEMZONE_NAME "__rte_feature_arc_main_mz"
+> > +
+> > +#define NUM_EXTRA_FEATURE_DATA   (2)
+> > +
+> > +#define graph_uint_cast(f)           ((unsigned int)f)
+>
+> Not used anywhere in the patch.
 
-diff --git a/config/riscv/meson.build b/config/riscv/meson.build
-index e3694cf2e6..1036a86d05 100644
---- a/config/riscv/meson.build
-+++ b/config/riscv/meson.build
-@@ -111,6 +111,7 @@ arch_config = arch_config[arch_id]
- # Concatenate flags respecting priorities.
- dpdk_flags = flags_common + vendor_config['flags'] + arch_config.get('flags', [])
- 
-+if (cpu_instruction_set == 'rv64gc')
- # apply supported machine args
- machine_args = [] # Clear previous machine args
- foreach flag: arch_config['machine_args']
-@@ -118,6 +119,7 @@ foreach flag: arch_config['machine_args']
-         machine_args += flag
-     endif
- endforeach
-+endif
- 
- # check if we can do buildtime detection of extensions supported by the target
- riscv_extension_macros = false
--- 
-2.49.0
+It is getting used in enable/disable APIs. I have moved this macro to
+another patch where it is being used
 
+<snip>
