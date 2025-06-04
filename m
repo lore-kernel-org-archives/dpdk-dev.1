@@ -2,162 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB50C5B543
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 12:33:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FADAC5B543
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 12:43:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5C57642D80;
-	Wed,  4 Jun 2025 14:33:41 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id 725D3402D8
- for <dev@dpdk.org>; Wed,  4 Jun 2025 14:33:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1749040420; x=1780576420;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=1Z/BnK/vS3uHb69fI2FamDK/llqOmjK7gB3m/mEV/hs=;
- b=FI1f9NB3cVPmQmxzpjdGpnooE68FqUPpgcwhiJH616sRdfEpKWCSRM2d
- I/SnSB75E51C7632sOYCxF9U23uhUZ/U3mRbvBBvpiv/SfEYgdlhhySzP
- vl34JsE3L69aoQjNX8j2UIzcy05eF0lQwE0FIZG9uJk2rSuhpr4a7oXu+
- C5JV1ohmdeDbVrPOFpkWaDqQC53q7AJmwHRlrfDmogQNP/aL3Q+z77RyM
- aF4qRwR8L5KSgwmN+FhrzssKxHiFCYFgR/t5wmgLmfbn4Y+d/IsJtRvyL
- Z87Hvxf1ZUDavUD4JpXbcj2DNkEtWd/KC9tez7KSXb+GTchOAgi64xcwg Q==;
-X-CSE-ConnectionGUID: For2XBp1SzmHQxbYZU40xg==
-X-CSE-MsgGUID: qHcIDLkORjiOAxWWDoCY9A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11454"; a="61779383"
-X-IronPort-AV: E=Sophos;i="6.16,209,1744095600"; d="scan'208";a="61779383"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
- by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Jun 2025 05:32:58 -0700
-X-CSE-ConnectionGUID: rnZwr3SCTRW4SrQClI9sdw==
-X-CSE-MsgGUID: MGEL4RafRsqIgmjRwwqzLg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,209,1744095600"; d="scan'208";a="150058444"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
- by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Jun 2025 05:32:58 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id 2617B42D80;
+	Wed,  4 Jun 2025 14:43:18 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 81ACB402D8
+ for <dev@dpdk.org>; Wed,  4 Jun 2025 14:43:16 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 553NW6fn019380
+ for <dev@dpdk.org>; Wed, 4 Jun 2025 05:43:15 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=N
+ 3LXLZ2YIQKwMIK0zQLrT7QidukiO2UeJkR9JKbk0O8=; b=GN3b59nHrJMrMMWcV
+ sa8PBWaGweaMbJHTzMsNYyjR4lb2PLtkvYy7BrH5e6h3cFMX0vWpOjmj2fBhaunW
+ ScsOgV/q48zXuSlmXaYy5ZWf/LqXkQu5KgQOS5Er0GWccLdl9WIG1ZmQoFJkm5Uw
+ +E/mckyMObAUtVqNttibz7DlOukanP5Apw7ar4nMJPMJNoWrVrIPMAvfct2TW3SL
+ WVoJftfF9B6W/lUeS/9E+Dc+UXl3s3BNnaVvIU1BrGczL1nEhSR2vAnj5Xl+5jZ8
+ HfmOyHN8ksyKnWRxXGTBeS3Qtbf7Lcylg6EAB2CfcOWtmunfrmL38dkWHbz+ZWhL
+ LiOSQ==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 472at51dsu-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Wed, 04 Jun 2025 05:43:15 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 4 Jun 2025 05:32:58 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Wed, 4 Jun 2025 05:32:58 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.44) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.55; Wed, 4 Jun 2025 05:32:57 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ax7Yxj31KF4ogyDsPa9dqDbii3JX4twShgtenIs7CL9Q3n58+oqIxzScxmzVACET+t+7x4RFfBwhiPkUu8sRL2ookw4pivETuj9tqyZajMawEl7fOck/Rlr0tTrtxnnQDg0qJ2az5fPSh3t6s63rtyeKrSKf/Jt3EZBK1wbVPG95BGKuUjdWKZm9/ycHXmEuWhF0bW4o9oCLh80lfvJLSvMuEVydiCA3++mMnFhL5LdBHsMjjdzIViqHHjaUUnYCU45bl+V7cHPliffWBWer0LJPzp7nz0uKUjXpY+m7r2cfgM7yVHTCUk5Zvti7U8UlKfxzAQRyW50aRN3zLd1pJw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nULP4aYlIK7EphO6vvQ8lA9fay9DtibGDxfk1RFyGMo=;
- b=i7tXtdqKTAKE87d4pTWI5bE/24AZj46cXh0aYb+fqBOrIAHPN3vHb6N7Gadfzp24DXOCJOQ1UvMVRshtfVZ0pG+iyOaeUjgBUPuDeABy4f4UR7iQKsjNURTZKRvMz6AjEE02AOQ5mfnLj+3ChF8DzEt4F4+j+VOnZci/D+/yYjpZJOqZFAztHUqzPFmtC0zp783giK2PYn40rOFbh9GZhXwrXPWKgaG+/1HW6MzNypxSBfBkQdetejKv7APmxzuvTnrUXUvGuRuN2Ku4BcnR7RIVRyKkWgtdXiQDpsql1/QHfB4Dogd9JWHwXTwWJRBLY0p7KSUX1BYXYBLhf/AG0w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by CO1PR11MB4946.namprd11.prod.outlook.com (2603:10b6:303:9e::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.32; Wed, 4 Jun
- 2025 12:32:54 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%5]) with mapi id 15.20.8792.033; Wed, 4 Jun 2025
- 12:32:54 +0000
-Date: Wed, 4 Jun 2025 13:32:49 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Anatoly Burakov <anatoly.burakov@intel.com>
+ 15.2.1544.4; Wed, 4 Jun 2025 05:43:14 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 4 Jun 2025 05:43:14 -0700
+Received: from LYYJYPGKF4.marvell.com (unknown [10.28.164.240])
+ by maili.marvell.com (Postfix) with ESMTP id 2C6443F7040;
+ Wed,  4 Jun 2025 05:43:10 -0700 (PDT)
+From: <pbhagavatula@marvell.com>
+To: <jerinj@marvell.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>, "Kiran
+ Kumar K" <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>,
+ Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>,
+ "Pavan Nikhilesh" <pbhagavatula@marvell.com>,
+ Shijith Thotton <sthotton@marvell.com>
 CC: <dev@dpdk.org>
-Subject: Re: [PATCH v4 23/25] net/intel: support wider x86 vectors for Rx rearm
-Message-ID: <aEA88Z1N-Z2B2EB2@bricha3-mobl1.ger.corp.intel.com>
-References: <cover.1748612803.git.anatoly.burakov@intel.com>
- <cover.1748612803.git.anatoly.burakov@intel.com>
- <b7864d189e468484a6af5aa774ed566b2a37818f.1748612804.git.anatoly.burakov@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <b7864d189e468484a6af5aa774ed566b2a37818f.1748612804.git.anatoly.burakov@intel.com>
-X-ClientProxiedBy: DUZPR01CA0044.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:468::7) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+Subject: [PATCH v3] event/cnxk: add event vector adapter support
+Date: Wed, 4 Jun 2025 18:13:05 +0530
+Message-ID: <20250604124305.80579-1-pbhagavatula@marvell.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250601204626.98998-1-pbhagavatula@marvell.com>
+References: <20250601204626.98998-1-pbhagavatula@marvell.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|CO1PR11MB4946:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1d1c36d2-4a99-48aa-d0c0-08dda363edde
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?sWUxLgLFV8OcpXMVF/XrJX5E97HEeVG+ecu2RN3KhzuJccEt4aeV+aiLlmpI?=
- =?us-ascii?Q?53oLAVqwoXHbnk65Dng0q/YuCNcnZOSR8S+220UOIve5+rmDcqr321W4z+fq?=
- =?us-ascii?Q?KQgQrczniWQ3YzgejR8SjmYLFREu9++rxQkPYJEiojtS0/1rq7ySfcHXs4Ah?=
- =?us-ascii?Q?R8it/Mtw21BkFPdoEw4vVJ+PGfAK32nsDyC63xdB9rNM/ouVFLraOpeQGQ5a?=
- =?us-ascii?Q?5V8c/xoQKyvMorearYWJqokMhxCYXKjVgzI7m3Pp5E5vCH8zLxqjTBokOtkz?=
- =?us-ascii?Q?5hvnkGTStJwFJy3KIR1orHT00VHMOoZiu4nRt2BnOaSOZhaVBnXNdd2XhH5b?=
- =?us-ascii?Q?ceUl0RVOk7b/Uut2rRtqRnWR/c0Y29dqeOWEgRHXXnOJp2KlTcRHCmZlOTOh?=
- =?us-ascii?Q?ng+cEp008RoQRpvwUgAYspDQgKOAjr8v+JcLTzU6iRYVc0VfeDH5Bs4cNVWz?=
- =?us-ascii?Q?zcakRlwDWNcrgrl4mgp5FIegYl25gNYM24YjdwkV4z5625HdKEBGaWMAeLED?=
- =?us-ascii?Q?2eLqt9Mhr0FPzdDmxadtySUVdlHTLma5jrdleq1JpWQShukCy+G/X2K89vgq?=
- =?us-ascii?Q?sB+CBvp80V0BvDhpSc9tu5oeMyop8moyizKgrAgrn2uU9XQua3hsT9iv0qly?=
- =?us-ascii?Q?6oKL4c5EAaAYjdFXg87RNqPmUOlPdu64HOhv9wB78Ii51QjsBH/WhYUjH0eo?=
- =?us-ascii?Q?JtW3fQthgrHxcCq9Dz0GeYJFAKxjFPV656k0OQdRdhRcGRa6D5PmvQCXbvlO?=
- =?us-ascii?Q?prbC/AuopiZDTxzQJyb9ZXKnZUIm7DLtGwb2F2n8qTTXRfSbQIzeffKiP/kU?=
- =?us-ascii?Q?8XbTkt4yAT11DPZqhfa7ZZZW5l5StigZfIXLMIIWugm7GCFTIZv4Vo58WTyQ?=
- =?us-ascii?Q?taQrwLkLhpQnx9MSzkD9hBl0YxyKiziCJrRS4FzP+WmYIoerNr66+2n8EoIQ?=
- =?us-ascii?Q?Fo9ZFt641tJpkaLyfubjzXS+apbISIk7K02ls59q3wgUsHYZS01xIDlU0R0R?=
- =?us-ascii?Q?NLJe8lwLwiVMN0kVLmjebbgEiM7y6aBHP9EWQyg6UdoL35Tks7cRXStFwZ4f?=
- =?us-ascii?Q?zd3U2DIU2HT9qnkkvS+JWA8EpN/DojIAg31toOHm2vB5ScwkALfWVsLp+4ud?=
- =?us-ascii?Q?KXjex7N2S2t/q8x8CkfDiElIVxav2r6BXmtHJlshVmuwVnRZtG6z4gmXVhUw?=
- =?us-ascii?Q?VIrM4eju8lw4miyQQL47km9VSZYcfLjB/Hh/YfwLh9nbXijsFFEuY4akesLK?=
- =?us-ascii?Q?9CXGJyGYAQabLMd9hd277gtuxPK7WaBf5wW0JF4EH/H2da/Bx2CxzPiIFKZJ?=
- =?us-ascii?Q?r8+Ao+xE3SG8c1epiAutpCJHBE1PHpbesTe/YtNjvq3DAAodr00XfOum12w/?=
- =?us-ascii?Q?JjJqSk2sCL0Sq8D8VdNbZAZ8h1O8XyxxnECfJlzw19KOKEs85O9UDLHwDujW?=
- =?us-ascii?Q?CfkqoGAVC+I=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?IqnfRTx7k8EJgPcdJq8Z3P3ucZ6j/RV+qXfA2XXldgr9l9p95WZA1mm/68xe?=
- =?us-ascii?Q?Bnr4DaX4B9IQrA9/EMa1YLPXl9H5tuxjX36xWAIDfJYRNntWksHkK0tWr3no?=
- =?us-ascii?Q?sWaujS/2+iepC0rlvZp8f19ad1zSHv6RoHygzUWbQABHG5/vzo+Zz1CfcHKS?=
- =?us-ascii?Q?7UEpUVk3TGBS4bsZtjkW/Xe+L6nGTCIb7BU8oURXmFwL63co/9GVstr8vGuj?=
- =?us-ascii?Q?tfR6xF8aaEVx45G5RhSG6nalzj2UGnVx805ujPL8xFz8OZGTIJFBHrQP1Aif?=
- =?us-ascii?Q?UYsoNfV54gcoDNhSwTvMIXqYE91sEp8qPEtPisnKiLBMofV3mdNSP423y/Id?=
- =?us-ascii?Q?1YwQSCcQLU7l14oBbbjC3QsoXeta89EQyz49u/PJZhBkvrnoSxsOURXomkz8?=
- =?us-ascii?Q?oW6i9JxFPOmvTzNKKqF5rnH1jyxXr/ou4uKGeFAWaUvufx9yK81vTbExhlZe?=
- =?us-ascii?Q?/lEpdbQup2IWwWLGJkY25EDX+KPqxvUigws/cO+laiKskSZ2gyvPy+TH71Gv?=
- =?us-ascii?Q?0E3W9O0j9fJ4jZIniRt2CJUVcKnckmF97idRLjGCAArEtlxhftFb66+zsXB7?=
- =?us-ascii?Q?7LHgsv/WYdLsQjV0wEVy0nCq6b8gLwW/epal7GFMTwd881aAsxosklzu7OPx?=
- =?us-ascii?Q?rkAoFNCWPDU1PbwcjCOPRBGO4CVKf9mF9Z/JUhCUg1tMFEibIGwmEKd3pZZK?=
- =?us-ascii?Q?T8iIzhhb0xluRpWeL4mFcei/HZ14EtLyyyK/a982vzhFi+ouPlByFaJf+jak?=
- =?us-ascii?Q?ZfiPNrQPG/ICIJ3KkWfNHLZtlP2oHiw1pF27spXzAH3tciAKv2hJ4j+Nufuq?=
- =?us-ascii?Q?EmaoyvsKl/Qy/FV41Q76vZQCDguI8BM5wijVZlaGSOOSG2Avm/5xdTvQFgD6?=
- =?us-ascii?Q?xYOrtQZoqkNcHFDafkV/7AFvjrO2xStuJcoYRQG+Ii5kgUPu6ZqQzya0Bxnt?=
- =?us-ascii?Q?YCHy6w0FQ1eeHJiKdtSKUvWBTUoaw+pikWsKqyTiWfpr0zXMLRhwfjXnnvxL?=
- =?us-ascii?Q?APF+iqsIg18JrOr+RWciwPdaXiZPIhPkyqARyXNczuBr8m5ILjDasLrppx8s?=
- =?us-ascii?Q?GZPce+1nieNhBz0mA6rM+LasCVv2sWKJvsnEAdiC+Yc1L7MCh9/ws9Tfjzmt?=
- =?us-ascii?Q?PP6+QEBlKtXBdinQwdC0lYc8VZyixb0+v75A9n3/EfgVta9OmkSeTvaF7Qmt?=
- =?us-ascii?Q?RId9Ii7tiUE4doIscEK9AuOmZXww/GtLslo3i7Kt9FCfr96Ao0K6WsNC7zgi?=
- =?us-ascii?Q?TcHTWZbhXLvwIu9TMzvsAp6FlUZZT3Cp9mwpLObq1prg5FgMnfD2c4w+NvJk?=
- =?us-ascii?Q?pVSXPjWBDHmOTmg4d+qNwE1MhNT2yD3v/LLFGpuxaQLrIxjOqDHhgfqbAmLc?=
- =?us-ascii?Q?0rJkYstzrci8/bbM7tNzts0RCIDPRwtz86QTOxTB9b75RPlV66lLgHdRxrMT?=
- =?us-ascii?Q?3QM5mU3Cb6Lpo2sA4K6VDzssXm27RrsF3MfOgRS+wFlWphI8qbliuyCHuJMs?=
- =?us-ascii?Q?zfecJE0m4j8lizsRB7MhpJLD9Lh86Dipukusl6iarfkYFy71xgYyQO2Ebwsq?=
- =?us-ascii?Q?TPGtH/8K7kuJR9MT9V5PfMBneaEj7zw/rV+n74IAA3wM0P+izsNrGmXjAYAm?=
- =?us-ascii?Q?CQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d1c36d2-4a99-48aa-d0c0-08dda363edde
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2025 12:32:54.7309 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fQniWJhykvoJzyCiSG6AxmZ5CZNAxYxmAgcrjqhKqiE6La70cstwEFnmmEjR2Jv4SG/Rmjo7kwjHi5kRT7RzXW6cqR4fOty1c+a0D8iRh7M=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB4946
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: WnUTdLced_REn7iUePm40dOhlZnuZWiu
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA0MDA5NiBTYWx0ZWRfXy/eCnXWoVYkL
+ zjpc2iEsA+x/MrHw186AKsVlLJhkYwXQ9jelVlGEfeM9X2fzFhiP/ethbbYjBkYiY/KNqWLVi8B
+ q8pnpWRjaTqZrKpoRfG/3rHCG2Osd/QWyPKHqp4MjhwjmuOO2VuPyU33t9jTheFp+6g+MjHQja3
+ 7wpIzaWuRTqF1AjJHyRBQauQXXsX45hJxRLDIqN63bCd056Ij2Ll91S5yiWAmdoBsVMqrBFkxM2
+ LT03goB8JCeLznVjPyQmonSM+6M4uYUJSTQ0HFsMGOFUfP6C5hth4bSdGKYm3dWI9rULC7lRpL5
+ 8AVJIB0ih+J2Sur+qnTlgEoHrt7pFrTt0qIKUqmaGWkcjqVjdCSNNeZuzR/07XvJeHrp13Es8RX
+ fS5zBYGFG3fVG9/fG7uIBvcxH1/igi3xRiT0Iusea8hAGuwFIfbj+V5YO6OQS5FUhTCorL/E
+X-Authority-Analysis: v=2.4 cv=F9dXdrhN c=1 sm=1 tr=0 ts=68403f63 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=sXgmuBsvd_0s3Wv3ioQA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: WnUTdLced_REn7iUePm40dOhlZnuZWiu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-04_03,2025-06-03_02,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -171,45 +83,294 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, May 30, 2025 at 02:57:19PM +0100, Anatoly Burakov wrote:
-> Currently, for 32-byte descriptor format, only SSE instruction set is
-> supported. Add implementation for AVX2 and AVX512 instruction sets. Since
-> we are using Rx descriptor definitions from common code, we can just use
-> the generic descriptor definition, as we only ever write the first 16 bytes
-> of it, and the layout is always the same for that part.
-> 
-> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-> ---
-> 
-> Notes:
->     v3 -> v4:
->     - Use the common descriptor format instead of constant propagation
->     - Syntax and whitespace cleanups
-> 
->  drivers/net/intel/common/rx_vec_x86.h | 339 ++++++++++++++------------
->  1 file changed, 183 insertions(+), 156 deletions(-)
-> 
-> diff --git a/drivers/net/intel/common/rx_vec_x86.h b/drivers/net/intel/common/rx_vec_x86.h
-> index 7c57016df7..43f7c59449 100644
-> --- a/drivers/net/intel/common/rx_vec_x86.h
-> +++ b/drivers/net/intel/common/rx_vec_x86.h
-> @@ -43,206 +43,244 @@ _ci_rxq_rearm_get_bufs(struct ci_rx_queue *rxq)
->  	return 0;
->  }
->  
-> -/*
-> - * SSE code path can handle both 16-byte and 32-byte descriptors with one code
-> - * path, as we only ever write 16 bytes at a time.
-> - */
-> -static __rte_always_inline void
-> -_ci_rxq_rearm_sse(struct ci_rx_queue *rxq)
-> +static __rte_always_inline __m128i
-> +_ci_rxq_rearm_desc_sse(const __m128i vaddr)
+From: Pavan Nikhilesh <pbhagavatula@marvell.com>
 
-This function needs a comment, describing the inputs and outputs.
-From my reading, the input is 16bytes of mbuf header starting from the
-buffer address, with second 8 bytes being the iova, if we have separate
-iova field.
-Output is 16B of descriptor to write.
+Add event vector adapter support to CN20K event device.
 
-/Bruce
+Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
+---
+v2 Changes:
+ - Add depends on series tag.
+ - Fix compilation.
+v3 Changes:
+ - Rebase.
+ - Fix errors from check-meson.py
+
+ drivers/common/cnxk/roc_sso.c          |   4 +-
+ drivers/common/cnxk/roc_sso.h          |   2 +-
+ drivers/event/cnxk/cn20k_eventdev.c    |   8 +-
+ drivers/event/cnxk/cnxk_vector_adptr.c | 148 +++++++++++++++++++++++++
+ drivers/event/cnxk/cnxk_vector_adptr.h |  22 ++++
+ drivers/event/cnxk/meson.build         |   1 +
+ 6 files changed, 181 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/event/cnxk/cnxk_vector_adptr.c
+ create mode 100644 drivers/event/cnxk/cnxk_vector_adptr.h
+
+diff --git a/drivers/common/cnxk/roc_sso.c b/drivers/common/cnxk/roc_sso.c
+index 4996329018fb..1d82e5b9782c 100644
+--- a/drivers/common/cnxk/roc_sso.c
++++ b/drivers/common/cnxk/roc_sso.c
+@@ -514,7 +514,8 @@ sso_agq_op_wait(struct roc_sso *roc_sso, uint16_t hwgrp)
+ }
+
+ int
+-roc_sso_hwgrp_agq_alloc(struct roc_sso *roc_sso, uint16_t hwgrp, struct roc_sso_agq_data *data)
++roc_sso_hwgrp_agq_alloc(struct roc_sso *roc_sso, uint16_t hwgrp, struct roc_sso_agq_data *data,
++			uint32_t *agq_id)
+ {
+ 	struct sso *sso = roc_sso_to_sso_priv(roc_sso);
+ 	struct sso_aggr_setconfig *req;
+@@ -621,6 +622,7 @@ roc_sso_hwgrp_agq_alloc(struct roc_sso *roc_sso, uint16_t hwgrp, struct roc_sso_
+
+ 	plt_wmb();
+ 	sso->agg_used[hwgrp]++;
++	*agq_id = off;
+
+ 	return 0;
+ }
+diff --git a/drivers/common/cnxk/roc_sso.h b/drivers/common/cnxk/roc_sso.h
+index f73128087a53..f1ad34bcc745 100644
+--- a/drivers/common/cnxk/roc_sso.h
++++ b/drivers/common/cnxk/roc_sso.h
+@@ -112,7 +112,7 @@ int __roc_api roc_sso_hwgrp_stash_config(struct roc_sso *roc_sso,
+ void __roc_api roc_sso_hws_gwc_invalidate(struct roc_sso *roc_sso, uint8_t *hws,
+ 					  uint8_t nb_hws);
+ int __roc_api roc_sso_hwgrp_agq_alloc(struct roc_sso *roc_sso, uint16_t hwgrp,
+-				      struct roc_sso_agq_data *data);
++				      struct roc_sso_agq_data *data, uint32_t *agq_id);
+ void __roc_api roc_sso_hwgrp_agq_free(struct roc_sso *roc_sso, uint16_t hwgrp, uint32_t agq_id);
+ void __roc_api roc_sso_hwgrp_agq_release(struct roc_sso *roc_sso, uint16_t hwgrp);
+ uint32_t __roc_api roc_sso_hwgrp_agq_from_tag(struct roc_sso *roc_sso, uint16_t hwgrp, uint32_t tag,
+diff --git a/drivers/event/cnxk/cn20k_eventdev.c b/drivers/event/cnxk/cn20k_eventdev.c
+index 0688cf97e5d6..9d68397b88a4 100644
+--- a/drivers/event/cnxk/cn20k_eventdev.c
++++ b/drivers/event/cnxk/cn20k_eventdev.c
+@@ -10,6 +10,7 @@
+ #include "cn20k_worker.h"
+ #include "cnxk_common.h"
+ #include "cnxk_eventdev.h"
++#include "cnxk_vector_adptr.h"
+ #include "cnxk_worker.h"
+
+ #define CN20K_SET_EVDEV_DEQ_OP(dev, deq_op, deq_ops)                                               \
+@@ -708,11 +709,11 @@ cn20k_sso_rx_adapter_vwqe_enable(struct cnxk_sso_evdev *dev, uint16_t port_id, u
+ 	data.vwqe_wait_tmo = queue_conf->vector_timeout_ns / ((SSO_AGGR_DEF_TMO + 1) * 100);
+ 	data.xqe_type = 0;
+
+-	rc = roc_sso_hwgrp_agq_alloc(&dev->sso, queue_conf->ev.queue_id, &data);
++	agq = UINT32_MAX;
++	rc = roc_sso_hwgrp_agq_alloc(&dev->sso, queue_conf->ev.queue_id, &data, &agq);
+ 	if (rc < 0)
+ 		return rc;
+
+-	agq = roc_sso_hwgrp_agq_from_tag(&dev->sso, queue_conf->ev.queue_id, tag_mask, 0);
+ 	return agq;
+ }
+
+@@ -1081,6 +1082,9 @@ static struct eventdev_ops cn20k_sso_dev_ops = {
+
+ 	.timer_adapter_caps_get = cn20k_tim_caps_get,
+
++	.vector_adapter_caps_get = cnxk_vector_caps_get,
++	.vector_adapter_info_get = cnxk_vector_info_get,
++
+ 	.xstats_get = cnxk_sso_xstats_get,
+ 	.xstats_reset = cnxk_sso_xstats_reset,
+ 	.xstats_get_names = cnxk_sso_xstats_get_names,
+diff --git a/drivers/event/cnxk/cnxk_vector_adptr.c b/drivers/event/cnxk/cnxk_vector_adptr.c
+new file mode 100644
+index 000000000000..0495258cbb5c
+--- /dev/null
++++ b/drivers/event/cnxk/cnxk_vector_adptr.c
+@@ -0,0 +1,148 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(C) 2025 Marvell.
++ */
++#include <event_vector_adapter_pmd.h>
++#include <eventdev_pmd.h>
++
++#include "roc_api.h"
++
++#include "cnxk_eventdev.h"
++#include "cnxk_vector_adptr.h"
++#include "cnxk_worker.h"
++
++static int
++cnxk_sso_vector_adapter_create(struct rte_event_vector_adapter *adapter)
++{
++	struct rte_event_vector_adapter_conf *conf;
++	struct cnxk_event_vector_adapter *adptr;
++	uint32_t agq, tag_mask, stag_mask;
++	struct roc_sso_agq_data data;
++	struct cnxk_sso_evdev *dev;
++	uint8_t queue_id;
++	int rc;
++
++	adptr = rte_zmalloc("cnxk_event_vector_adapter", sizeof(struct cnxk_event_vector_adapter),
++			    RTE_CACHE_LINE_SIZE);
++	if (adptr == NULL) {
++		plt_err("Failed to allocate memory for vector adapter");
++		return -ENOMEM;
++	}
++
++	conf = &adapter->data->conf;
++
++	queue_id = adapter->data->conf.ev.queue_id;
++	dev = cnxk_sso_pmd_priv(&rte_eventdevs[conf->event_dev_id]);
++	adapter->data->adapter_priv = adptr;
++
++	tag_mask = conf->ev.event & 0xFFFFFFFF;
++	stag_mask = (conf->ev_fallback.event & 0xFFFFFFFF) >> 20;
++
++	memset(&data, 0, sizeof(struct roc_sso_agq_data));
++	data.tag = tag_mask;
++	data.tt = conf->ev.sched_type;
++	data.stag = stag_mask;
++	data.vwqe_aura = roc_npa_aura_handle_to_aura(conf->vector_mp->pool_id);
++	data.vwqe_max_sz_exp = rte_log2_u32(conf->vector_sz);
++	data.vwqe_wait_tmo = conf->vector_timeout_ns / ((SSO_AGGR_DEF_TMO + 1) * 100);
++	data.xqe_type = 0;
++
++	agq = UINT32_MAX;
++	rc = roc_sso_hwgrp_agq_alloc(&dev->sso, queue_id, &data, &agq);
++	if (rc < 0 || agq == UINT32_MAX) {
++		plt_err("Failed to allocate aggregation queue for queue_id=%d", queue_id);
++		adapter->data->adapter_priv = NULL;
++		rte_free(adptr);
++		return rc;
++	}
++
++	adptr->agq = agq;
++	adptr->tt = SSO_TT_AGG;
++	adptr->base = roc_sso_hwgrp_base_get(&dev->sso, queue_id);
++
++	return 0;
++}
++
++static int
++cnxk_sso_vector_adapter_destroy(struct rte_event_vector_adapter *adapter)
++{
++	struct cnxk_event_vector_adapter *adptr;
++	struct cnxk_sso_evdev *dev;
++	uint16_t queue_id;
++
++	if (adapter == NULL || adapter->data == NULL)
++		return -EINVAL;
++
++	adptr = adapter->data->adapter_priv;
++	if (adptr == NULL)
++		return -EINVAL;
++
++	queue_id = adapter->data->conf.ev.queue_id;
++	dev = cnxk_sso_pmd_priv(&rte_eventdevs[adapter->data->conf.event_dev_id]);
++
++	roc_sso_hwgrp_agq_free(&dev->sso, queue_id, adptr->agq);
++	rte_free(adptr);
++	adapter->data->adapter_priv = NULL;
++
++	return 0;
++}
++
++static int
++cnxk_sso_vector_adapter_enqueue(struct rte_event_vector_adapter *adapter, uint64_t objs[],
++				uint16_t num_elem, uint64_t flags)
++{
++	struct cnxk_event_vector_adapter *adptr;
++	uint16_t n = num_elem;
++	uint64_t add_work0;
++
++	adptr = adapter->data->adapter_priv;
++	plt_wmb();
++
++	add_work0 = adptr->agq | ((uint64_t)(adptr->tt) << 32);
++	roc_store_pair(add_work0 | ((uint64_t)!!(flags & RTE_EVENT_VECTOR_ENQ_SOV) << 34),
++		       objs[num_elem - n], adptr->base);
++	while (--n > 1)
++		roc_store_pair(add_work0, objs[num_elem - n], adptr->base);
++	if (n)
++		roc_store_pair(add_work0 | ((uint64_t)!!(flags & RTE_EVENT_VECTOR_ENQ_EOV) << 35),
++			       objs[num_elem - n], adptr->base);
++
++	return num_elem;
++}
++
++static struct event_vector_adapter_ops vector_ops = {
++	.create = cnxk_sso_vector_adapter_create,
++	.destroy = cnxk_sso_vector_adapter_destroy,
++	.enqueue = cnxk_sso_vector_adapter_enqueue,
++};
++
++int
++cnxk_vector_caps_get(const struct rte_eventdev *evdev, uint32_t *caps,
++		     const struct event_vector_adapter_ops **ops)
++{
++	RTE_SET_USED(evdev);
++
++	*caps = RTE_EVENT_VECTOR_ADAPTER_CAP_INTERNAL_PORT;
++	*ops = &vector_ops;
++
++	return 0;
++}
++
++int
++cnxk_vector_info_get(const struct rte_eventdev *evdev, struct rte_event_vector_adapter_info *info)
++{
++	RTE_SET_USED(evdev);
++	if (info == NULL)
++		return -EINVAL;
++
++	info->max_vector_adapters_per_event_queue =
++		SSO_AGGR_MAX_CTX > UINT8_MAX ? UINT8_MAX : SSO_AGGR_MAX_CTX;
++	info->log2_sz = true;
++	info->min_vector_sz = RTE_BIT32(ROC_NIX_VWQE_MIN_SIZE_LOG2);
++	info->max_vector_sz = RTE_BIT32(ROC_NIX_VWQE_MAX_SIZE_LOG2);
++	info->min_vector_timeout_ns = (SSO_AGGR_DEF_TMO + 1) * 100;
++	info->max_vector_timeout_ns = (BITMASK_ULL(11, 0) + 1) * info->min_vector_timeout_ns;
++
++	info->log2_sz = true;
++
++	return 0;
++}
+diff --git a/drivers/event/cnxk/cnxk_vector_adptr.h b/drivers/event/cnxk/cnxk_vector_adptr.h
+new file mode 100644
+index 000000000000..f60b0f4edd89
+--- /dev/null
++++ b/drivers/event/cnxk/cnxk_vector_adptr.h
+@@ -0,0 +1,22 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(C) 2025 Marvell.
++ */
++
++#ifndef __CNXK_VECTOR_ADPTR_H__
++#define __CNXK_VECTOR_ADPTR_H__
++
++#include <rte_event_vector_adapter.h>
++#include <rte_eventdev.h>
++
++struct cnxk_event_vector_adapter {
++	uint8_t tt;
++	uint32_t agq;  /**< Aggregation queue ID */
++	uint64_t base; /**< Base address of the adapter */
++};
++
++int cnxk_vector_caps_get(const struct rte_eventdev *evdev, uint32_t *caps,
++			 const struct event_vector_adapter_ops **ops);
++int cnxk_vector_info_get(const struct rte_eventdev *evdev,
++			 struct rte_event_vector_adapter_info *info);
++
++#endif /* __CNXK_VECTOR_ADPTR_H__ */
+diff --git a/drivers/event/cnxk/meson.build b/drivers/event/cnxk/meson.build
+index 9461ae33e443..677ebc9e2814 100644
+--- a/drivers/event/cnxk/meson.build
++++ b/drivers/event/cnxk/meson.build
+@@ -26,6 +26,7 @@ sources = files(
+         'cnxk_eventdev_stats.c',
+         'cnxk_tim_evdev.c',
+         'cnxk_tim_worker.c',
++        'cnxk_vector_adptr.c',
+ )
+
+ disable_template = false
+--
+2.39.5 (Apple Git-154)
+
