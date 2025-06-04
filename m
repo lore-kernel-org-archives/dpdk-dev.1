@@ -2,42 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 039A1C5B543
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 22:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC48C5B549
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 22:53:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 133D5402A7;
-	Thu,  5 Jun 2025 00:25:23 +0200 (CEST)
-Received: from AM0PR02CU008.outbound.protection.outlook.com
- (mail-westeuropeazon11013035.outbound.protection.outlook.com [52.101.72.35])
- by mails.dpdk.org (Postfix) with ESMTP id D9D324028E
- for <dev@dpdk.org>; Thu,  5 Jun 2025 00:25:20 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2A31C4028F;
+	Thu,  5 Jun 2025 00:53:07 +0200 (CEST)
+Received: from AS8PR03CU001.outbound.protection.outlook.com
+ (mail-westeuropeazon11012013.outbound.protection.outlook.com [52.101.71.13])
+ by mails.dpdk.org (Postfix) with ESMTP id C27914028E
+ for <dev@dpdk.org>; Thu,  5 Jun 2025 00:53:05 +0200 (CEST)
 ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=qCRNehGIBxo8OpG3chuJXgNZztGNjkgOi9K1146raa6ke4yu/JctYURgv3tk2eZGWFSp0JJTCPOxIT2878hfgm2gQFCdKsJylscBITISyaTxtE3bgEX8BVwMum7gHcsAWXUIMUNB6jCtiS7ImPH0y+/bvdFa8I1n8jgaolOvOxEf0446OBqdvBxVYbvNo3qh4JBMP9PdYD48+RDEE35z9aRA6Q3SLPvfY0OdHRxRe8XrIcGypQs++kpjvSDuwOuEgDmAU5h88VqtBIbnwlm0n5jQ0El3tDotsuVSzlFJRNAIn62oun/WE8KLRvSffjR25YupwAqdb05V0jS16W2hLg==
+ b=vDZG9ttoz7+4WYd310z1rWd3INlzQWBcgL1fdUEPeaWDCBjG1aPiZ38tCzlCtEeAyxCdYkqPeaENKOtxH/iB+SOC4wXf0M982jjPKsL7YZaVgBO0hcJeXDM0zB/xUSQmKcQld59lO1KZIO/PWw8vdlqXQx1XU13/0PnKytTwzV2L72KAaRmKGzn/AoE+PKq6LbP07jUQYuUqbMSZxZEJHOTdCbQCJSAWO7rjIQ1A+5FkDkZqTMdk2ehRH0wpZBV6oJ/6qtbymDh8H8aV2O7E7xAV9Zxh0GcyiesXxAQgYyyp2H4sa66TqhvCGsJ+KrL8eYmUOXuvzLWGa5qffVqEag==
 ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iIcgl14bRb0su+HapIWDoCdh+7EfIT9bt37BrdeObcs=;
- b=BoXDr8kW9em+mxcb3iZK7aw8IPqY7gZZnDLRalOkZpOlIMHK7bPnST2uMtoMg0ijBJ3n/B98eE0uHEaQffaZugLkezIw4acKn1SI1lVKKChnzA5aXjjpYt+DvD3UnSjn+YiOkYNySEuLqMCpf/z7HNAaHmy/DcEztl9HAleZ/LA6e5A8ek36QlFbmRZbTbMNJuQJxFeorCcBCRfXi3TahieAJbRJXyjw4IyM9VXR7cY+T3yUBBob+E35hHN0v6sozURGmUYZIyqiFFHSuU8cZgxy84Qna10ap3NVRxrgvIrmaMcodBotZAjkydVrrSa3jRGZ/STZBGGAUYy2GKXptw==
+ bh=LiYSBMR5IecYDyAOoEmN3A9bVdiA/nIJHIchIQY3t7M=;
+ b=PwcjEasp96gDmKmdFqzRAVEn4Z8r2Fb5M7hUMmrMCjziR3qGvLSCJH1AJA3UCYv5BJ/JVbHNdK+cdNt3PGmsIqn/7w6PX4ujSDWOGwDYa0jNxX0mp4xabpCOLtba55IV38g8DGl7BmC0GmEC3CqAx2LiOJg5V2TzFy1o/W8GFHj6+VmKJmSJtw4TeBVlIL3XO0QkLwUfTTqBK5KIHgEc/ymgLZygGKjrTBpYfQpp5jCqS6C6t/F1yTx7Zu2S1yI7Z8qSp61tw5fdKjwI5tEe1lvL0Nii2yDdsH1ypIHSY7QwnbxvVVMaIpvNTCYLYbhOaATJjEMaIf4YHigZ8IDIfw==
 ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=networkplumber.org smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ 4.158.2.129) smtp.rcpttodomain=intel.com smtp.mailfrom=arm.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
+ (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
  spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
  dmarc=[1,1,header.from=arm.com])
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iIcgl14bRb0su+HapIWDoCdh+7EfIT9bt37BrdeObcs=;
- b=UJQDCXGu7IP6mtTkWJl00zOkt/HMMP+y+TmtT3JnNs3dAV+SAo0AigEIpN0TniTYNkIy6kLz6JVB07Dky82ZXStHVqLPIn2a6Ss5dXjH23b3XRuIqcP1QpogurKH2qZ+BrqapBM/kfACFukmV8KCGAusffJz0DaSPPnmjJntjYA=
-Received: from AM0PR06CA0141.eurprd06.prod.outlook.com (2603:10a6:208:ab::46)
- by DB9PR08MB7796.eurprd08.prod.outlook.com (2603:10a6:10:39b::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.37; Wed, 4 Jun
- 2025 22:25:17 +0000
-Received: from AMS1EPF00000040.eurprd04.prod.outlook.com
- (2603:10a6:208:ab:cafe::e) by AM0PR06CA0141.outlook.office365.com
- (2603:10a6:208:ab::46) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8769.24 via Frontend Transport; Wed,
- 4 Jun 2025 22:25:17 +0000
+ bh=LiYSBMR5IecYDyAOoEmN3A9bVdiA/nIJHIchIQY3t7M=;
+ b=f+vghqdEGrmZgHY4oUV57ZbOADa7Rk04/+1RveepV8zoNIs5kdajs9kNWEDDV/24geoqzKLdGpPhsbto+pof4Lb8+WZ7kXdGaLtgpxLf8XxG1O0VUW7WOeGG/VrgIvIbqXZvle9L8PNw7yo4nYOr6xwpX1VEaiU9ctpHYgWD6RQ=
+Received: from DUZPR01CA0027.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:46b::14) by AS8PR08MB8993.eurprd08.prod.outlook.com
+ (2603:10a6:20b:5b4::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.29; Wed, 4 Jun
+ 2025 22:52:59 +0000
+Received: from DB1PEPF000509F3.eurprd02.prod.outlook.com
+ (2603:10a6:10:46b:cafe::fa) by DUZPR01CA0027.outlook.office365.com
+ (2603:10a6:10:46b::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.35 via Frontend Transport; Wed,
+ 4 Jun 2025 22:53:07 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
  smtp.mailfrom=arm.com; dkim=pass (signature was verified)
  header.d=arm.com;dmarc=pass action=none header.from=arm.com;
@@ -45,156 +45,147 @@ Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
  4.158.2.129 as permitted sender) receiver=protection.outlook.com;
  client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
 Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- AMS1EPF00000040.mail.protection.outlook.com (10.167.16.37) with Microsoft
+ DB1PEPF000509F3.mail.protection.outlook.com (10.167.242.149) with Microsoft
  SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.29
- via Frontend Transport; Wed, 4 Jun 2025 22:25:16 +0000
+ via Frontend Transport; Wed, 4 Jun 2025 22:52:57 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OVYTi780zvDu239TR6vGjMbAvVIWhLts9V5xQf/UlALCsiYrKDUXGhBbNABHkcUijbOiX/LSR/Js5Hkf2YvUKvYP/sQ3S10IXpw6RKNAvpC4WSNjn5o8Xr30PnJPuMxd9pkFKYyA2LArrMUJl39yrTO2yemiqAAYK2Nl3IqIb9ltyYSZSRZvpos/q7MSd31YS/TzsJkNcZmXb6aWM7qoJSHMl9ftv64+b7eMhJX2ti6CROpz0Rc37hn0GeBy3SazfPDOUv/g7JCYdeHL+gdYKv5nZwweSDTkY428opVY41n0e7TJofSPP9zrlvZYl+8QxxuqBYq9sjER38fsGyWxvA==
+ b=W0/4WPDZNP6l+nEKG/IMepDDbwr/er+gvV6cRL/TJWFAJ4mSwdeEdWE+KxT9qWUPgBx/PssH2YvJ0b+Lq6BMhEUF0H8IXgKjVXSA+8ckrw3nEakyXwSWLurQ7MfUbnYVr5tavvzIx9CV3tGnEf4nyU6EV69sJSOCe3JkXubFtBOkZm6Ges9eUuvEViH+FRNIoZ19COqCSapb4XTWAbr5b/GSO26bchqYeF5t2U3LakmaBvnaKnVhyfQWP8KyCWULUWrN5AmSWFw2hjkY8XwnvgAY0EjrzuvJfNVXzXT8FxROyJfMcBfINs1J0j8Zxa5jxW0P20M1oglHLSMu5WQjdg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iIcgl14bRb0su+HapIWDoCdh+7EfIT9bt37BrdeObcs=;
- b=GhKT1THGftUEMXOcf5YcZMoQNzGjSAvf25uekvyew4S33i69b9AIJ6NFpSQkEM0k1nqrPgcEDSkRiRGdT2Sq6vAH6Il2Xo+W7GagRgiffHyTeLmHTDjKj1f1w6NhayWnSXVMEgP1AW0Pufeu0DSFNPwGA6P6ZwMDFYDRG+W68rKGE59DnoBBNd+S2cr/4tK81JaNoHCRnT2BM0AGJmumKjl0wcOpSk5OpyZbt+MWjz73Gy+K4dsQOjP+C7+RgwT/R4ggz7NcQE5yIsh704mRdEHWD4wte5h71tgRJ/1WoUsS+dxIDcb8SKCB8Drhq+nm9gZXNWxJBZmUO007k1jmMQ==
+ bh=LiYSBMR5IecYDyAOoEmN3A9bVdiA/nIJHIchIQY3t7M=;
+ b=TAcvRe5Fq/w+aW6aNiGXBY2Pmhim0K1i5oYC7LRbSwmOMCRdkPzJuG2bq2Bd3Njno6NC6mxxqGqCikekMTw2axaxTiyl919XN633B3iWmF9yzmJQtGBLGcdevl3jI3K7TafzWZ/hc4L1RgJCieEs3tyo0u6JGoen43JLF4f2MeBOW4gHbF0INy/RWsVnIvXyB6x1zJ13SxXxDPoSt+Wj1li6SmxLfeqwMldv+ULNIbf3t/3YdwSaZxlEzVeX3EWXgqHTflX0hkyySLhn5fiKjWb2bowY+hOZii/XGS1PP2NL3/KfnNJyW/eaD6iaE7ng7ESeBsmWwsDyKdz0gpAd3w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
  header.d=arm.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iIcgl14bRb0su+HapIWDoCdh+7EfIT9bt37BrdeObcs=;
- b=UJQDCXGu7IP6mtTkWJl00zOkt/HMMP+y+TmtT3JnNs3dAV+SAo0AigEIpN0TniTYNkIy6kLz6JVB07Dky82ZXStHVqLPIn2a6Ss5dXjH23b3XRuIqcP1QpogurKH2qZ+BrqapBM/kfACFukmV8KCGAusffJz0DaSPPnmjJntjYA=
+ bh=LiYSBMR5IecYDyAOoEmN3A9bVdiA/nIJHIchIQY3t7M=;
+ b=f+vghqdEGrmZgHY4oUV57ZbOADa7Rk04/+1RveepV8zoNIs5kdajs9kNWEDDV/24geoqzKLdGpPhsbto+pof4Lb8+WZ7kXdGaLtgpxLf8XxG1O0VUW7WOeGG/VrgIvIbqXZvle9L8PNw7yo4nYOr6xwpX1VEaiU9ctpHYgWD6RQ=
 Received: from PAWPR08MB8909.eurprd08.prod.outlook.com (2603:10a6:102:33a::19)
- by VI0PR08MB10744.eurprd08.prod.outlook.com (2603:10a6:800:20b::5)
+ by AM0PR08MB5475.eurprd08.prod.outlook.com (2603:10a6:208:188::7)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.20; Wed, 4 Jun
- 2025 22:24:41 +0000
+ 2025 22:52:24 +0000
 Received: from PAWPR08MB8909.eurprd08.prod.outlook.com
  ([fe80::613d:8d51:60e5:d294]) by PAWPR08MB8909.eurprd08.prod.outlook.com
  ([fe80::613d:8d51:60e5:d294%7]) with mapi id 15.20.8792.034; Wed, 4 Jun 2025
- 22:24:41 +0000
+ 22:52:24 +0000
 From: Wathsala Wathawana Vithanage <wathsala.vithanage@arm.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: "dev@dpdk.org" <dev@dpdk.org>, nd <nd@arm.com>, nd <nd@arm.com>
-Subject: RE: [PATCH v5 0/4] An API for Cache Stashing with TPH
-Thread-Topic: [PATCH v5 0/4] An API for Cache Stashing with TPH
-Thread-Index: AQHb1A8ISIMiXdU/RkWkyAsKdq/xXrPzOaUAgABce6A=
-Date: Wed, 4 Jun 2025 22:24:41 +0000
-Message-ID: <PAWPR08MB890902A37C742458A49436A79F6CA@PAWPR08MB8909.eurprd08.prod.outlook.com>
+To: Bruce Richardson <bruce.richardson@intel.com>
+CC: Chenbo Xia <chenbox@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>, Gaetan Rivet <grive@u256.net>,
+ "dev@dpdk.org" <dev@dpdk.org>, nd <nd@arm.com>, Honnappa Nagarahalli
+ <Honnappa.Nagarahalli@arm.com>, Dhruv Tripathi <Dhruv.Tripathi@arm.com>, nd
+ <nd@arm.com>
+Subject: RE: [PATCH v5 2/4] bus/pci: introduce the PCIe TLP Processing Hints
+ API
+Thread-Topic: [PATCH v5 2/4] bus/pci: introduce the PCIe TLP Processing Hints
+ API
+Thread-Index: AQHb1A8LVwjtBj2HM0KwVaHXGcaVP7PzOp8AgABXn0A=
+Date: Wed, 4 Jun 2025 22:52:24 +0000
+Message-ID: <PAWPR08MB89092A3A53CBFA874B1AEA729F6CA@PAWPR08MB8909.eurprd08.prod.outlook.com>
 References: <20241021015246.304431-1-wathsala.vithanage@arm.com>
  <20250602223805.816816-1-wathsala.vithanage@arm.com>
- <20250604095114.2e540905@hermes.local>
-In-Reply-To: <20250604095114.2e540905@hermes.local>
+ <20250602223805.816816-3-wathsala.vithanage@arm.com>
+ <aEB6VEFCKr-2t11p@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <aEB6VEFCKr-2t11p@bricha3-mobl1.ger.corp.intel.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 Authentication-Results-Original: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=arm.com;
-x-ms-traffictypediagnostic: PAWPR08MB8909:EE_|VI0PR08MB10744:EE_|AMS1EPF00000040:EE_|DB9PR08MB7796:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0673d821-166d-4d0f-f941-08dda3b6aeea
+x-ms-traffictypediagnostic: PAWPR08MB8909:EE_|AM0PR08MB5475:EE_|DB1PEPF000509F3:EE_|AS8PR08MB8993:EE_
+X-MS-Office365-Filtering-Correlation-Id: e747d74d-2bdf-4150-eece-08dda3ba8cda
 x-checkrecipientrouted: true
 nodisclaimer: true
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam-Untrusted: BCL:0;
- ARA:13230040|376014|366016|1800799024|38070700018; 
-X-Microsoft-Antispam-Message-Info-Original: =?utf-8?B?aWsyeUlkWkpRbDZOYnNLV0RzU1VGai9YZ1J0WlduL0xTak5pMmpNRURFeEtr?=
- =?utf-8?B?QWpzbm1va0t3WHo3aU1mdzRkSVczTnhrOWNNUkpHVVVQeGdmcnpCK3p2YldU?=
- =?utf-8?B?MjBVbEZYelVuTFpIdmpsWCtnRWdDbUR2RTJpRkJsaXg4U0d6akU3RXhvWGU3?=
- =?utf-8?B?NVhuUmU4QnlPVkpyWS9iZHd2cHhhUWszZm1RVUtNZmNCb2dkeG0vdGpIS29F?=
- =?utf-8?B?THhrdWhNZEZ4cU5zQTlIWWFmZUNtb0JOV3EwOThuL2k1cE9IWlBsK0JwbUFK?=
- =?utf-8?B?QmE1alRMUzByUTJvNzVXZUsxMXJJT2FDb0RhWW9rVzBoUXhLSFFyL1JjbytI?=
- =?utf-8?B?T2t3R0c3S1R5bTUzcTczaFlkckhqVERIUmM2Wmd2cFJLdVl3WitvNW9laUt1?=
- =?utf-8?B?NVhEOHMvS2dKd3hzcjQ0MXlsTk4yTllPZjlNL3B3RWpNbHdkTW9Ec0RyUTdT?=
- =?utf-8?B?Y1RPdlgrTU0xT0lnK3JCTXlKVDlPMGl2bjBiamEza0dlU3pSMFJPQ3MzT1dq?=
- =?utf-8?B?TlVRcVh4clRqSHA0bFVZdk9sVng1NmE2ZDBUWVRneUh3R2dETEsrR3dUeFRT?=
- =?utf-8?B?aExsd3R1OEJ4YWlSYklkWGc4R0NRaWcvVEhPdVUwdVVqZ09SZGQwbWlpelA4?=
- =?utf-8?B?MGdkeFNBOXo1a1lySmdoeUpBRlFmYVFhQXlMUVRXOStPditvYUgzTzVNT1BS?=
- =?utf-8?B?cGFRTTJteDlJeVEycU9NQ0JwdGRNMFQ4NUhtejV5Q21lSWtUR3Q5MGx1c0or?=
- =?utf-8?B?SC9iNEdsYlZDejdrMHpnWG9Cdm9UZzFBSkFST0xLeU9IL0VpU01MVTZzRzFF?=
- =?utf-8?B?MlFjdnBhN2lCdmUzRWZLTVRaT3Vha2FsckJYcjFtYlpwT1FJSXdsNzRZVHR3?=
- =?utf-8?B?R1ExckdLTXZwU2x0bTl3ODFjelMrV2hWZm5Fa0Q1L1Y3V1BMblBrNG1aK2xY?=
- =?utf-8?B?dTJvMlg2Z0RnOXBNSlRScFRLTXFsbk1jN3RFSG1ybWc1b0ZvMXhyVCtuZHBw?=
- =?utf-8?B?QWRZQlBoMCswbXdET2RLcUhSaGo2bUJiVWxTY2FtcVVjaklnZVdjV01ZUlU2?=
- =?utf-8?B?RlJhZzREV0FiM1liRVFkUkFPeFR5SFFzakQ0NU4ycnN4NHJVWkVTdUJ4Z1Fr?=
- =?utf-8?B?N0xsQU02cGRHZEhMdWVDd2RJcnhqVXhRUDNyNmxXcW5jckZEMkdJbERJbnJG?=
- =?utf-8?B?RFVvYytXV3R4eEU2S0xTSkFuQ3ZqWUc0UEQxMm14b3M3andMaStJNHp4RjdE?=
- =?utf-8?B?RGNnUDFKbVJYbnkvVEFSU0Z2bEcrMDJNaEN1MHZtWXphcXVzQ28zZWE1NGhZ?=
- =?utf-8?B?UnMycXVHMlFmWEVHbVVsaHdIL2pIZEYyYStsYmRzWlpDNnNJUlRxcWNaNEJC?=
- =?utf-8?B?Nkc1VU1lUm9Ud1kvMzZsb0s5aDV2ZlJrK3krS04xcjdaY2lOR3J6NlgrZmpr?=
- =?utf-8?B?dFlEYUozOTROdm5XU1ROb0JsU1M4V0VaSTRkMkp5bWkyQ0VDMm9YREc4Vkpw?=
- =?utf-8?B?ZE5TaUtxb1VabWlrNnhDSFZEaWpYaTROUEl3UFErTEZxSmN4bGQxdzNOOC9o?=
- =?utf-8?B?bE9DSnhXdzBVQ1p4QXN5M2hyU2NDYldaQVdrZnRURm91N2trQThXaVRrWlJO?=
- =?utf-8?B?TG55Z0RBNi9TcWpYU1kyRU9QelIzS1VSMHBtdW9hZjc4aVV4dlZtd2dmNVRS?=
- =?utf-8?B?T0xaMm8zNlUra3J4Sk1zUmZNZ1p5NUtRclRrMUFjWm9pSTlGT2lJaXRqdEJn?=
- =?utf-8?B?MFR1MlpKTHZldGhvZTcxSVBwajh4bEtrOVVNczNRTG9xejhkSmhPd0dRRGRk?=
- =?utf-8?B?czBRZVUwUUNJQVY2OUx4SVdTZndvM2FqK0x1M0lNVXk3Tis4VUJuMVRHK3B1?=
- =?utf-8?B?eHZ3OXdhOU16THQ1a3Fqd3BnSm5CN2c4U2YzY0RlcW9mVVRiYTYrVFJKQk1P?=
- =?utf-8?B?ald6RTVCZmpoU0Z5ek5xWXRFNFlZZENtSUVpSklHRGZqWEd2TzBKSjdTZHBV?=
- =?utf-8?Q?tFOivWjpz6keCd8DbImKzhfP8zbzt0=3D?=
+ ARA:13230040|1800799024|366016|376014|38070700018; 
+X-Microsoft-Antispam-Message-Info-Original: =?us-ascii?Q?fHQ4NbCpKGvv68RXy0TtEuco/vSAkA8mBh0TL6SS/iQ04osyuHkGXDim6EdM?=
+ =?us-ascii?Q?x12Lm8yA0QCKKli5imMp/NifXJt3qtfBxBRDwLZtMy/JDedouWRaeAlv4pMh?=
+ =?us-ascii?Q?RCImiuGuAuI2XxX6CyyxWyIJGypXQchyXSbMTPZzRlyhvJqMqnXJDc5ryRb+?=
+ =?us-ascii?Q?3hZE2VsNGNecAqxJia7gUPtE/WRZHafUxy4JB7hQ7y6VEoFEKl9O+UGTb1It?=
+ =?us-ascii?Q?WClQiSFad55UeQqmYD4Sqb9A66BDuUU1ZhM7cKRYcF1QC16X1P9EgKzo4ZKo?=
+ =?us-ascii?Q?vkeMpmHOYNX5f21Gi9whoePY/5XZzJjJx8BbJrXBjVNHEXGFtI9OGenxg33Z?=
+ =?us-ascii?Q?kjTXpl8k1kfu2hh3tmSSJSGS3HmJyxg6bzacTt83N7+0EuPDLlSZXy03Agkm?=
+ =?us-ascii?Q?LP6/UuClwjKTFWFL0OXqbJtZtPMK34DoT6u4hC92t3B9CohDSv0m9V5vX5et?=
+ =?us-ascii?Q?yCZY9sPR4jIAZqesdF5wvwtEQ+S5RTXFL7sPXlMP/ckA7+E1xZRwmyX6VeMa?=
+ =?us-ascii?Q?EI21HduI59IOL6xK4AJlx7AFbmagYeMyuQNw/F3N/IzUjOFwUDjlrK0zlukP?=
+ =?us-ascii?Q?t7bw/TB8D0aADLFV7vEVzZPSrXuyDHyWC0TIDBHgo65UvR3NuwpNVHCL2c0b?=
+ =?us-ascii?Q?SoLZtWjCSjLDEN3Uaia+gLsAypHoZAcFZzygIgCM9Y8SkC9VlSnd6lI+vYzz?=
+ =?us-ascii?Q?NCWYZU63IVXTw7l8dRBFIdUjbPzaCqxDeVmMh249A4I7JGHvlT9VS+S0RZLc?=
+ =?us-ascii?Q?QslqthZcHdXQ+vnpIRqZyaCeCk2NIcbkt0m0jorDKO39qVDAMaskC9dVn2JL?=
+ =?us-ascii?Q?nSQ0V4kzbZxuh0J4HCaMLFuYfLjCmoMLFHdqlUJvjpthoBDFYKJML3NrW5Ky?=
+ =?us-ascii?Q?+X0WM5zYOt7UKsmiA0Rc0ll9Hxn1bnoZsJIgNnOl5HpoI/IboiaTnkFVZoof?=
+ =?us-ascii?Q?XA0kwQX0Fs75KBDvFbSQiCFc8guQuivOpvaYugjB+2yF3D0vLDhcx8RLRJGS?=
+ =?us-ascii?Q?S0BhjoKA0OjMPdwPhuSTfQXSs/BVhgy27sc96BJ6aeasaN5Uas9xm7xRsMYK?=
+ =?us-ascii?Q?XIUJAVSjvJCZA3My75YzD7GYYS/C9Kjjc83dy/imoyVU/TBZamKOa9JWYaOj?=
+ =?us-ascii?Q?6wj4xF6aJks2ZR00pK+dZXM6C0e8TjC1tHT0IFjYY/LIcX7I8CyjP5sKbIbX?=
+ =?us-ascii?Q?5DCptP2Cth/50A0zW1flvPpfoNsqLnxIo/ue6t5Y0DzhKCAJRODmGABPdBsp?=
+ =?us-ascii?Q?smwzq+0zxLfpSSEqNbNJRqkHr2ENQ0YbrGRDl7nAeUtsjxqcQHGkj1PwQafY?=
+ =?us-ascii?Q?xsITnAj2SkUbh/UkIMwHuL6lgDgdGuRL7dr+wpD/o1MBTN5h0JeffnWss52e?=
+ =?us-ascii?Q?trwjlCUs9/l754tFNj8TUGMgbdl2wT2FXLg750xBwp5T+mtYR9Tte7JWsW6i?=
+ =?us-ascii?Q?lyO9HGdKLLLiRj5C8RnlCTI2KcKH9qKCIUyGyktAfq9DfxWcpgm+w5UAd0AS?=
+ =?us-ascii?Q?yEqsddIsQU1H7DM=3D?=
 X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255; CTRY:; LANG:en;
  SCL:1; SRV:; IPV:NLI; SFV:NSPM; H:PAWPR08MB8909.eurprd08.prod.outlook.com;
- PTR:; CAT:NONE; SFS:(13230040)(376014)(366016)(1800799024)(38070700018);
+ PTR:; CAT:NONE; SFS:(13230040)(1800799024)(366016)(376014)(38070700018);
  DIR:OUT; SFP:1101; 
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR08MB10744
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB5475
 X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: AMS1EPF00000040.eurprd04.prod.outlook.com
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: DB1PEPF000509F3.eurprd02.prod.outlook.com
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs: 1f3680a5-c5be-4580-194d-08dda3b699c4
+X-MS-Office365-Filtering-Correlation-Id-Prvs: 2672a662-e5e9-4ebd-6d5c-08dda3ba791a
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|14060799003|1800799024|35042699022|376014|36860700013;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?aFRjUFg1Q0VITU1mblJwSUdYS25CUmwwbHFlUHFMSHRMQm9GOUJkZ2NseGQz?=
- =?utf-8?B?Wk9HNTJSaUVTSiswbmJIVit1V0FyT1RwdHdkWEdCV2duTE01M1ZEMWZxNGRs?=
- =?utf-8?B?NHBqTGo2SXg2bFR5QTVxcjYzOUtML3NETGZjNzVnM1VDVWhNVUV5WVEzMU41?=
- =?utf-8?B?dTI2Q01rRitSOGIzWGcxZ1VsSGFOTU9qV01zZElPUlNxTU5JREVFT3g0Qnln?=
- =?utf-8?B?bEhrNEwzT0lZRlkzUmk4WXlhYy8vSlh2REh4TzZGbVc4RkdIaVA4OVBCeHJX?=
- =?utf-8?B?VzNsaVJFSzZOeE9iWEFvak5vZlVha1RpOEhLeUZidzd6MDZJbVY2NWwxWW1r?=
- =?utf-8?B?WHlvVDN6ek02UVdqQWtuMHlTTFo4N1RKdFp6aGtzaVE2QkUzNlVhK1JmS3ZC?=
- =?utf-8?B?UDBRUC9TcEFPU04rMkJPUlZJTmtlRTdNT09BYkJmdTJFU1FseE5QMTFhNFFB?=
- =?utf-8?B?TmNjNjFHejM4RWE0ZkRDNUxJaVFXN2huN3hjNG0wUXBZMlZyNHdBNkRpUW9v?=
- =?utf-8?B?VGFWUTRkcWFqRTVjL0RWVm5ZTTZORUduVVBuekhsQzg5a3M1QWJSZEVXS2J4?=
- =?utf-8?B?VFZ6UkdTcDZNSG13QU1WOElFWXlZM0NEcVYyUURUWk1kenFTSUFUa3JsbkxI?=
- =?utf-8?B?NmMzckkzZm9lRVpjUm0xM1Z4eHdLV3BBRTdiT2FMNWQxWnllaG00Q0lieUoy?=
- =?utf-8?B?Tm1uVk5OR3hOc1cvcjM5aFdFUkR3dEpyK2Nmdmt6LzJ4YzhLbXFNRkpndmll?=
- =?utf-8?B?dkVhbndtZmlnSVJUQ3pudDRoQlQySFRueVFPeERxMlVVWmlSckJjQi9CNE1U?=
- =?utf-8?B?L1dDbHB4eEhxQWduWm95TVg1Ymg0dVRWL2dlb3hpU1kwQ2VOUC96QzBBVWxi?=
- =?utf-8?B?RkV3UjhHenFYWlc2QnRoeE5POGVvaG5LOFBTbFFLd1ZWd291Z1RWVWljTHNT?=
- =?utf-8?B?OS96NTdvVVo2NWNyd3k0WEFkWjVyWVRNeUZPd3hnbzdTWTU2aWc2cGFXNEhZ?=
- =?utf-8?B?eXZQd1FZanExd2dlZVJsYmlLQzcvQ0I3OHo4Z2F5c3phZmhjU3J1dFFVckM3?=
- =?utf-8?B?dDRlSVg3dFBqNFhhS1RyWGtUUkM3N1d6bUhpdGpjb1QwYWNMQm1tdW9SZnhv?=
- =?utf-8?B?VUk1VENZZFQrZHBRc3l5cHFXZFNudTNJMHliZ3k3SE9HRjZjbVV2NjBmQURM?=
- =?utf-8?B?QlF6aHI3dGFBTW5HQm9vZVdHd29mb0VtUjdjNzNDYWh5b0VmQVU5bG4vb1Ez?=
- =?utf-8?B?YUFoeHF4b0lpVUxvM2pTdjVUaE1zNjlCY05GVjB3MHllVHdMYnpKTWEycXRC?=
- =?utf-8?B?a2hwWXprQTl1UkNYYkNMTlRJR09KUW02ZUsyOFE0RW82UXdVNGpqaVNCNlla?=
- =?utf-8?B?WmgvZzV5VkNTcHlRK0FEYjJ6VUFzQUNOT3AvZzYvNXd0Zk5IdDN0TXBHUlBU?=
- =?utf-8?B?UFhCSy9BcmU5bWJpdDNHNElFbVJFY215Qm5KbStzMlVUc0J6b3AwUEFRbzBT?=
- =?utf-8?B?V0JYZUY5TlRDNkxOYWt1RGxXdVNQUW9DUTN2Wk1CNWpQekJxS1dwUlR0VmtH?=
- =?utf-8?B?U1B3b3VMdDR6M3ZCYkRBMXBMZVRrMjFjMmVyelFoSkpRQURVQnIvM0dlYnFK?=
- =?utf-8?B?cm1TN2tweFNhRjlwK1FnNUtlRDVRc041U3IwWmYxdGJEdFhLOHBUKzRFaXhh?=
- =?utf-8?B?Y0cwTStMRXlXdVBPVmlPSmE0Mm43WGVwZmllVTI0Tm1QTlZocGlWQnVXNEN4?=
- =?utf-8?B?eUxLRXgzME9FS0VXTmxFWnNEQzM5ajd4dmk2TEI5TGZ6S1dCRnNmQVZrTE5w?=
- =?utf-8?B?aHluMmlvK0hSSk5XdUl5OWwxUDFBQndWL0xlQzlXeWs5VUx1SXdoMW9OMnMx?=
- =?utf-8?B?Nk5CdlNBUFdZSndJbjBxQ1hrV0dBcXBSb0UrS1EwaStiaEY2UFkwK2JXS2Rn?=
- =?utf-8?B?L3l5NmV3TWR2T0pQQkgrL1h1K3h0VjhySHVIY0oxYmMvc05CK3JMOWxwZCtI?=
- =?utf-8?B?UmZoTXhpeTV6T3hhOTdWTnRkdmdlODFPZUpwenBoMzl1UHY1RE9kUk5RZ0FY?=
- =?utf-8?Q?TU4O+L?=
+ ARA:13230040|36860700013|35042699022|82310400026|1800799024|376014|14060799003|13003099007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?HFTGUWpMe5TeXwQm5NwBM9WunNJKvTskszFSeJnbXGAVlgDp3yIKlmwQyH7Q?=
+ =?us-ascii?Q?mXHlIpRcADA6Yvvve3sa7YyG2HZF/OHu9yCgoXoF/7TZVKrjUxdyd/GEtJmw?=
+ =?us-ascii?Q?QlaQ3XGPqMk7mgCvBc2aDCPAsOGjQime8jOD2ke//3TUGV05f7gK1b3yk5kz?=
+ =?us-ascii?Q?ZZfP2hnnUspYaSLbkmG6J/aDEvTIuv3MKxYcxAEuZURkm6L1uwZ0CNbTKl/t?=
+ =?us-ascii?Q?DXSRgesDmChQebi52kWbpuyNIAjEkvLBkUXnLqZ/kabD3nPhYKcW/mFXw6yZ?=
+ =?us-ascii?Q?4ny9byoSEtl+4ldUpRHaqwUtzGmLeZMmpBeavef3gfsp5Br6xVXv7ZsJ6QMV?=
+ =?us-ascii?Q?tlc8TsJkjRV7l+cLy7Qp7T0R4RZdYc9t36lHwVQ39fN205Kg+IRiIaYiPIoX?=
+ =?us-ascii?Q?7uH9WdCx9x+A8sM8fiCo3fDPN/kn573LqROs9fKAv/pySNaIf1N/ucK+WSLL?=
+ =?us-ascii?Q?85ae1HCOGlVxV4GZKix2tBQFamfdag9wrtL6IRsB2M/AC6AgwxutmjIAR7I2?=
+ =?us-ascii?Q?0SBMAXiffsGBLQt5rz2mf0bn03FuARM6mBhrjWTVZOZwg/iQfzd/0PMJFlHu?=
+ =?us-ascii?Q?AnpW28uXFQTWm7BHOKFF1biR3CT3YwuXLBpXB45nrDUexilbKgFHrZDhxIu0?=
+ =?us-ascii?Q?i0Z7HcklJcvFg/mm1YcxUjZR7qiZyMogDE+0+xQbdqXIEy5MMx3Y8xIVkI0/?=
+ =?us-ascii?Q?L6qss0Dx6fPTLWxQSMMCwj0OjuQr2Brd7Dg3Hamewz+wFTyMDIim3WpZHR6s?=
+ =?us-ascii?Q?4DOtSHb4t9oeLr3lImreFTiF9qb+Wc9zURC1SR+6rJytGpTznBfZJM5S2jH1?=
+ =?us-ascii?Q?h0MJ28t776fKYGbf7PO2a5PJXAD2rrw2frXK7S22/xBMNeIymO3TbYzpK31l?=
+ =?us-ascii?Q?tjew+HcyWz3uXBViLhJeV61lV9SZ11VdiS3PHfsUyKAe8ybsU8LT2lCS3WpP?=
+ =?us-ascii?Q?n1x0+q0IKkP52iCOnsuYbHqV8B1PDcqYKLUfHFk5MKVTv34W70Vq3X7M0Bc9?=
+ =?us-ascii?Q?z8gkHXvyg6cj63V42f7HdS5N/aUwpV1ngzbNwiVeRTcFYsSfx4RzlToiadIc?=
+ =?us-ascii?Q?q0NFP4iIAvMx+eIiCcew4/2VxVGx0aTTxcLrCDlNI0OHPBZdEDee00vBifZI?=
+ =?us-ascii?Q?RV9xH0J1V4/1+W9C2Vam1tIWqlkywYDS12oJ1zSWRPgBctD5clj0Rqj37O0e?=
+ =?us-ascii?Q?lykZ099WQ6c2p324spOjumojGHoUxXyyRy1Bfaoblb/am2qoI4COxsfZkV/c?=
+ =?us-ascii?Q?6UIHrZDC7HVNhBbzowuFRDXyklMvJN4YLEOWK8ybJQ+jNaGBxGboVmDMUAV6?=
+ =?us-ascii?Q?Nar3kpQ/iROLYtZ4rQYIFHSoInb+qo8wY6hNnoHzSbNxnU6P2XLNG4KLJO0M?=
+ =?us-ascii?Q?AkyNpDY9U3RSkQm/jxvVCzu6FGFQrRU/xuDvA+4Um0+MOwEeaKzeDJX9CMbY?=
+ =?us-ascii?Q?0CZ00bbtT52eGiap0HmAqIyUt1LANmgAmS1xzelSWUO5fdOHuu7jKYXne7vo?=
+ =?us-ascii?Q?6UjyUwdWTboB5iD0EeQ1bd40x7EFKur/flh/gZ6/2nvhEQFWgVDNe4vXpQ?=
+ =?us-ascii?Q?=3D=3D?=
 X-Forefront-Antispam-Report: CIP:4.158.2.129; CTRY:GB; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:outbound-uk1.az.dlp.m.darktrace.com;
  PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(82310400026)(14060799003)(1800799024)(35042699022)(376014)(36860700013);
+ SFS:(13230040)(36860700013)(35042699022)(82310400026)(1800799024)(376014)(14060799003)(13003099007);
  DIR:OUT; SFP:1101; 
 X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2025 22:25:16.9882 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0673d821-166d-4d0f-f941-08dda3b6aeea
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2025 22:52:57.7535 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e747d74d-2bdf-4150-eece-08dda3ba8cda
 X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d; Ip=[4.158.2.129];
  Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource: AMS1EPF00000040.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: DB1PEPF000509F3.eurprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR08MB7796
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB8993
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -208,126 +199,775 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiA+IFRvZGF5LCBEUERLIGFwcGxpY2F0aW9ucyBiZW5lZml0IGZyb20gRGlyZWN0IENhY2hlIEFj
-Y2VzcyAoRENBKQ0KPiA+IGZlYXR1cmVzIGxpa2UgSW50ZWwgRERJTyBhbmQgQXJtJ3Mgd3JpdGUt
-YWxsb2NhdGUtdG8tU0xDLiBIb3dldmVyLA0KPiA+IHRob3NlIGZlYXR1cmVzIGRvIG5vdCBhbGxv
-dyBmaW5lLWdyYWluZWQgY29udHJvbCBvZiBkaXJlY3QgY2FjaGUNCj4gPiBhY2Nlc3MsIHN1Y2gg
-YXMgc3Rhc2hpbmcgcGFja2V0cyBpbnRvIHVwcGVyLWxldmVsIGNhY2hlcyAoTDIgY2FjaGVzKQ0K
-PiA+IG9mIGEgcHJvY2Vzc29yIG9yIHRoZSBzaGFyZWQgY2FjaGUgb2YgYSBjaGlwbGV0LiBQQ0ll
-IFRMUCBQcm9jZXNzaW5nDQo+ID4gSGludHMgKFRQSCkgYWRkcmVzc2VzIHRoaXMgbmVlZCBpbiBh
-IHZlbmRvci1hZ25vc3RpYyBtYW5uZXIuIFRQSA0KPiA+IGNhcGFiaWxpdHkgaGFzIGV4aXN0ZWQg
-c2luY2UgUENJIEV4cHJlc3MgQmFzZSBTcGVjaWZpY2F0aW9uIHJldmlzaW9uDQo+ID4gMy4wOyB0
-b2RheSwgbnVtZXJvdXMgTmV0d29yayBJbnRlcmZhY2UgQ2FyZHMgYW5kIGludGVyY29ubmVjdHMg
-ZnJvbQ0KPiA+IGRpZmZlcmVudCB2ZW5kb3JzIHN1cHBvcnQgVFBIIGNhcGFiaWxpdHkuIFRQSCBj
-b21wcmlzZXMgYSBzdGVlcmluZyB0YWcNCj4gPiAoU1QpIGFuZCBhIHByb2Nlc3NpbmcgaGludCAo
-UEgpLiBTVCBzcGVjaWZpZXMgdGhlIGNhY2hlIGxldmVsIG9mIGEgQ1BVDQo+ID4gYXQgd2hpY2gg
-dGhlIGRhdGEgc2hvdWxkIGJlIHdyaXR0ZW4gdG8gKG9yIERDQWVkIGludG8pLCB3aGlsZSBQSCBp
-cyBhDQo+ID4gaGludCBwcm92aWRlZCBieSB0aGUgUENJZSByZXF1ZXN0ZXIgdG8gdGhlIGNvbXBs
-ZXRlciBvbiBhbiB1cGNvbWluZw0KPiA+IHRyYWZmaWMgcGF0dGVybi4gU29tZSBOSUMgdmVuZG9y
-cyBidW5kbGUgVFBIIGNhcGFiaWxpdHkgd2l0aA0KPiA+IGZpbmUtZ3JhaW5lZCBjb250cm9sIG92
-ZXIgdGhlIHR5cGUgb2Ygb2JqZWN0cyB0aGF0IGNhbiBiZSBzdGFzaGVkIGludG8NCj4gPiBDUFUg
-Y2FjaGVzLCBzdWNoIGFzDQo+ID4NCj4gPiAtIFJ4L1R4IHF1ZXVlIGRlc2NyaXB0b3JzDQo+ID4g
-LSBQYWNrZXQtaGVhZGVycw0KPiA+IC0gUGFja2V0LXBheWxvYWRzDQo+ID4gLSBEYXRhIGZyb20g
-YSBnaXZlbiBvZmZzZXQgZnJvbSB0aGUgc3RhcnQgb2YgYSBwYWNrZXQNCj4gPg0KPiA+IE5vdGUg
-dGhhdCBzdGFzaGFibGUgb2JqZWN0IHR5cGVzIGFyZSBvdXRzaWRlIHRoZSBzY29wZSBvZiB0aGUg
-UENJZQ0KPiA+IHN0YW5kYXJkOyB0aGVyZWZvcmUsIHZlbmRvcnMgY291bGQgc3VwcG9ydCBhbnkg
-Y29tYmluYXRpb24gb2YgdGhlDQo+ID4gYWJvdmUgaXRlbXMgYXMgdGhleSBzZWUgZml0Lg0KPiA+
-DQo+ID4gVG8gZW5hYmxlIFRQSCBhbmQgZmluZS1ncmFpbmVkIHBhY2tldCBzdGFzaGluZywgdGhp
-cyBBUEkgZXh0ZW5kcyB0aGUNCj4gPiBldGhkZXYgbGlicmFyeSBhbmQgdGhlIFBDSSBidXMgZHJp
-dmVyLiBJbiB0aGlzIGRlc2lnbiwgdGhlIGFwcGxpY2F0aW9uDQo+ID4gcHJvdmlkZXMgaGludHMg
-dG8gdGhlIFBNRCB2aWEgdGhlIGV0aGRldiBzdGFzaGluZyBBUEkgdG8gaW5kaWNhdGUgdGhlDQo+
-ID4gdW5kZXJseWluZyBoYXJkd2FyZSBhdCB3aGljaCBDUFUgYW5kIGNhY2hlIGxldmVsIGl0IHBy
-ZWZlcnMgYSBwYWNrZXQNCj4gPiB0byBlbmQgdXAuIE9uY2UgdGhlIFBNRCByZWNlaXZlcyBhIENQ
-VSBhbmQgYSBjYWNoZS1sZXZlbCBjb21iaW5hdGlvbg0KPiA+IChvciBhIGxpc3Qgb2Ygc3VjaCBj
-b21iaW5hdGlvbnMpLCBpdCBtdXN0IGV4dHJhY3QgdGhlIG1hdGNoaW5nIFNUIGZyb20NCj4gPiB0
-aGUgUENJIGJ1cyBkcml2ZXIgZm9yIHN1Y2ggY29tYmluYXRpb25zLiBUaGUgUENJIGJ1cyBkcml2
-ZXINCj4gPiBpbXBsZW1lbnRzIHRoZSBUUEggZnVuY3Rpb25zIGluIGFuIE9TIHNwZWNpZmljIHdh
-eTsgZm9yIExpbnV4LCBpdA0KPiA+IGRlcGVuZHMgb24gdGhlIFRQSCBjYXBhYmlsaXRpZXMgb2Yg
-dGhlIFZGSU8ga2VybmVsIGRyaXZlci4NCj4gPg0KPiA+IEFuIGFwcGxpY2F0aW9uIHVzZXMgdGhl
-IGNhY2hlIHN0YXNoaW5nIGV0aGRldiBBUEkgYnkgZmlyc3QgY2FsbGluZyB0aGUNCj4gPiBydGVf
-ZXRoX2Rldl9zdGFzaGluZ19jYXBhYmlsaXRpZXNfZ2V0KCkgZnVuY3Rpb24gdG8gZmluZCBvdXQg
-d2hhdA0KPiA+IG9iamVjdCB0eXBlcyBjYW4gYmUgc3Rhc2hlZCBpbnRvIGEgQ1BVIGNhY2hlIGJ5
-IHRoZSBOSUMgb3V0IG9mIHRoZQ0KPiA+IG9iamVjdCB0eXBlcyBpbiB0aGUgYnVsbGV0ZWQgbGlz
-dCBhYm92ZS4gVGhpcyBmdW5jdGlvbiB0YWtlcyBhIHBvcnRfaWQNCj4gPiBhbmQgYSBwb2ludGVy
-IHRvIGEgdWludDE2X3QgdG8gcmVwb3J0IGJhY2sgdGhlIG9iamVjdCB0eXBlIGZsYWdzLiBQTUQN
-Cj4gPiBpbXBsZW1lbnRzIHRoZSBzdGFzaGluZ19jYXBhYmlsaXRpZXNfZ2V0IGZ1bmN0aW9uIHBv
-aW50ZXIgaW4NCj4gPiBldGhfZGV2X29wcy4gSWYgdGhlIHVuZGVybHlpbmcgcGxhdGZvcm0gb3Ig
-dGhlIE5JQyBkb2VzIG5vdCBzdXBwb3J0DQo+ID4gVFBILCB0aGlzIGZ1bmN0aW9uIHJldHVybnMg
-LUVOT1RTVVAsIGFuZCB0aGUgYXBwbGljYXRpb24gc2hvdWxkDQo+ID4gY29uc2lkZXIgYW55IHZh
-bHVlcyBzdG9yZWQgaW4gdGhlIG9iamVjdCBpbnZhbGlkLg0KPiA+DQo+ID4gT25jZSB0aGUgYXBw
-bGljYXRpb24ga25vd3MgdGhlIHN1cHBvcnRlZCBvYmplY3QgdHlwZXMgdGhhdCBjYW4gYmUNCj4g
-PiBzdGFzaGVkLCB0aGUgbmV4dCBzdGVwIGlzIHRvIHNldCB0aGUgc3RlZXJpbmcgdGFncyBmb3Ig
-dGhlIHBhY2tldHMNCj4gPiBhc3NvY2lhdGVkIHdpdGggUnggYW5kIFR4IHF1ZXVlcyB2aWENCj4g
-PiBydGVfZXRoX2Rldl9zdGFzaGluZ197cngsdHh9X2NvbmZpZ19zZXQoKSBldGhkZXYgbGlicmFy
-eSBmdW5jdGlvbnMuDQo+ID4gQm90aCBmdW5jdGlvbnMgaGF2ZSBhbiBpZGVudGljYWwgc2lnbmF0
-dXJlLCBhIHBvcnRfaWQsIGEgcXVldWVfaWQsIGFuZA0KPiA+IGEgY29uZmlnIG9iamVjdC4gVGhl
-IHBvcnRfaWQgYW5kIHRoZSBxdWV1ZV9pZCBhcmUgdXNlZCB0byBsb2NhdGUgdGhlDQo+ID4gZGV2
-aWNlIGFuZCB0aGUgcXVldWUuIFRoZSBjb25maWcgb2JqZWN0IGlzIG9mIHR5cGUgc3RydWN0DQo+
-ID4gcnRlX2V0aF9zdGFzaGluZ19jb25maWcsIHdoaWNoIHNwZWNpZmllcyB0aGUgbGNvcmVfaWQg
-YW5kIHRoZQ0KPiA+IGNhY2hlX2xldmVsLCBpbmRpY2F0aW5nIHdoZXJlIG9iamVjdHMgZnJvbSB0
-aGlzIHF1ZXVlIHNob3VsZCBiZSBzdGFzaGVkLg0KPiA+IFRoZSAnb2JqZWN0cycgZmllbGQgaW4g
-dGhlIGNvbmZpZyBzZXRzIHRoZSB0eXBlcyBvZiBvYmplY3RzIHRoZQ0KPiA+IGFwcGxpY2F0aW9u
-IHdpc2hlcyB0byBzdGFzaCBiYXNlZCBvbiB0aGUgY2FwYWJpbGl0aWVzIGZvdW5kIGVhcmxpZXIu
-DQo+ID4gTm90ZSB0aGF0IGlmIHRoZSAnb2JqZWN0cycgZmllbGQgaW5jbHVkZXMgdGhlIGZsYWcN
-Cj4gPiBSVEVfRVRIX0RFVl9TVEFTSF9PQkpFQ1RfT0ZGU0VULCB0aGUgJ29mZnNldCcgZmllbGQg
-bXVzdCBiZSB1c2VkIHRvDQo+ID4gc2V0IHRoZSBkZXNpcmVkIG9mZnNldC4gVGhlc2UgZnVuY3Rp
-b25zIGludm9rZSBQTUQgaW1wbGVtZW50YXRpb25zIG9mDQo+ID4gdGhlIHN0YXNoaW5nIGZ1bmN0
-aW9uYWxpdHkgdmlhIHRoZSBzdGFzaGluZ197cngsdHh9X2hpbnRzX3NldCBmdW5jdGlvbg0KPiA+
-IGNhbGxiYWNrcyBpbiB0aGUgZXRoX2Rldl9vcHMsIHJlc3BlY3RpdmVseS4NCj4gPg0KPiA+IFRo
-ZSBQTUQncyBpbXBsZW1lbnRhdGlvbiBvZiB0aGUgc3Rhc2hpbmdfcnhfaGludHNfc2V0KCkgYW5k
-DQo+ID4gc3Rhc2hpbmdfdHhfaGludHNfc2V0KCkgZnVuY3Rpb25zIGlzIHVsdGltYXRlbHkgcmVz
-cG9uc2libGUgZm9yDQo+ID4gZXh0cmFjdGluZyB0aGUgU1QgdmlhIHRoZSBBUEkgcHJvdmlkZWQg
-YnkgdGhlIFBDSSBidXMgZHJpdmVyLiBCZWZvcmUNCj4gPiBleHRyYWN0aW5nIFNUcywgdGhlIFBN
-RCBzaG91bGQgZW5hYmxlIHRoZSBUUEggY2FwYWJpbGl0eSBpbiB0aGUNCj4gPiBlbmRwb2ludCBk
-ZXZpY2UgYnkgY2FsbGluZyB0aGUgcnRlX3BjaV90cGhfZW5hYmxlKCkgZnVuY3Rpb24uwqAgVGhl
-DQo+ID4gYXBwbGljYXRpb24gYmVnaW5zIHRoZSBTVCBleHRyYWN0aW9uIHByb2Nlc3MgYnkgY2Fs
-bGluZyB0aGUNCj4gPiBydGVfcGNpX3RwaF9zdF9nZXQoKSBmdW5jdGlvbiBpbiBkcml2ZXJzL2J1
-cy9wY2kvcnRlX2J1c19wY2kuaCwgd2hpY2gNCj4gPiByZXR1cm5zIFNUcyB2aWEgdGhlIHNhbWUg
-cnRlX3RwaF9pbmZvIG9iamVjdHMgYXJyYXkgcGFzc2VkIGludG8gaXQgYXMNCj4gPiBhbiBhcmd1
-bWVudC7CoCBPbmNlIFBNRCBhY3F1aXJlcyBTVCwgdGhlIHN0YXNoaW5nX3tyeCx0eH1faGludHNf
-c2V0DQo+ID4gY2FsbGJhY2tzIGltcGxlbWVudGVkIGluIHRoZSBQTUQgYXJlIHJlYWR5IHRvIHNl
-dCB0aGUgU1QgYXMgcGVyIHRoZQ0KPiA+IHJ0ZV9ldGhfc3Rhc2hpbmdfY29uZmlnIG9iamVjdCBw
-YXNzZWQgdG8gdGhlbSBieSB0aGUgaGlnaGVyLWxldmVsDQo+ID4gZXRoZGV2IGZ1bmN0aW9ucyBy
-ZXRfZXRoX2Rldl9zdGFzaGluZ197cngsdHh9X2hpbnRzKCkuIEFzIHBlciB0aGUgUENJZQ0KPiA+
-IHNwZWNpZmljYXRpb24sIFNUcyBjYW4gYmUgcGxhY2VkIG9uIHRoZSBNU0ktWCB0YWJsZXMgb3Ig
-aW4gYQ0KPiA+IGRldmljZS1zcGVjaWZpYyBsb2NhdGlvbi4gRm9yIFBNRHMsIHNldHRpbmcgdGhl
-IFNUcyBvbiBxdWV1ZSBjb250ZXh0cw0KPiA+IGlzIHRoZSBvbmx5IHZpYWJsZSB3YXkgb2YgdXNp
-bmcgVFBILiBUaGVyZWZvcmUsIHRoZSBQTURzIHNob3VsZCBvbmx5IGVuYWJsZSBUUEgNCj4gaW4g
-ZGV2aWNlLXNwZWNpZmljIG1vZGUuDQo+ID4NCj4gPiBWNC0+VjU6DQo+ID4gICogRW5hYmxlIHN0
-YXNoaW5nLWhpbnRzIChUUEgpIGluIEludGVsIGk0MGUgZHJpdmVyLg0KPiA+ICAqIFVwZGF0ZSBl
-eHBvcnRlZCBzeW1ib2wgdmVyc2lvbiBmcm9tIDI1LjAzIHRvIDI1LjA3Lg0KPiA+ICAqIEFkZCBU
-UEggbW9kZSBtYWNyb3MuDQo+ID4NCj4gPiBWMy0+VjQ6DQo+ID4gICogQWRkIFZGSU8gSU9DVEwg
-YmFzZWQgU1QgZXh0cmFjdGlvbiBtZWNoYW5pc20gdG8gTGludXggUENJIGJ1cw0KPiA+IGRyaXZl
-cg0KPiA+ICAqIFJlbW92ZSBTVCBleHRyYWN0aW9uIHZpYSBkaXJlY3QgYWNjZXNzIHRvIEFDUEkg
-X0RTTQ0KPiA+ICAqIFJlcGxhY2UgcnRlX3BjaV9leHRyYWN0X3RwaF9zdCgpIHdpdGggcnRlX3Bj
-aV90cGhfc3RfZ2V0KCkgaW4gUENJDQo+ID4gICAgYnVzIGRyaXZlci4NCj4gPg0KPiA+IFdhdGhz
-YWxhIFZpdGhhbmFnZSAoNCk6DQo+ID4gICBwY2k6IGFkZCBub24tbWVyZ2VkIExpbnV4IHVBUEkg
-Y2hhbmdlcw0KPiA+ICAgYnVzL3BjaTogaW50cm9kdWNlIHRoZSBQQ0llIFRMUCBQcm9jZXNzaW5n
-IEhpbnRzIEFQSQ0KPiA+ICAgZXRoZGV2OiBpbnRyb2R1Y2UgdGhlIGNhY2hlIHN0YXNoaW5nIGhp
-bnRzIEFQSQ0KPiA+ICAgbmV0L2k0MGU6IGVuYWJsZSBUUEggaW4gaTQwZQ0KPiA+DQo+ID4gIGRy
-aXZlcnMvYnVzL3BjaS9ic2QvcGNpLmMgICAgICAgICAgICB8ICA0MyArKysrKysrDQo+ID4gIGRy
-aXZlcnMvYnVzL3BjaS9idXNfcGNpX2RyaXZlci5oICAgICB8ICA1MiArKysrKysrKw0KPiA+ICBk
-cml2ZXJzL2J1cy9wY2kvbGludXgvcGNpLmMgICAgICAgICAgfCAxMDAgKysrKysrKysrKysrKysr
-Kw0KPiA+ICBkcml2ZXJzL2J1cy9wY2kvbGludXgvcGNpX2luaXQuaCAgICAgfCAgMTQgKysrDQo+
-ID4gIGRyaXZlcnMvYnVzL3BjaS9saW51eC9wY2lfdmZpby5jICAgICB8IDE3MCArKysrKysrKysr
-KysrKysrKysrKysrKysrKysNCj4gPiAgZHJpdmVycy9idXMvcGNpL3ByaXZhdGUuaCAgICAgICAg
-ICAgIHwgICA4ICsrDQo+ID4gIGRyaXZlcnMvYnVzL3BjaS9ydGVfYnVzX3BjaS5oICAgICAgICB8
-ICA2NyArKysrKysrKysrKw0KPiA+ICBkcml2ZXJzL2J1cy9wY2kvd2luZG93cy9wY2kuYyAgICAg
-ICAgfCAgNDMgKysrKysrKw0KPiA+ICBkcml2ZXJzL25ldC9pbnRlbC9pNDBlL2k0MGVfZXRoZGV2
-LmMgfCAxMjcgKysrKysrKysrKysrKysrKysrKysNCj4gPiAga2VybmVsL2xpbnV4L3VhcGkvbGlu
-dXgvdmZpb190cGguaCAgIHwgMTAyICsrKysrKysrKysrKysrKysNCj4gPiAgbGliL2V0aGRldi9l
-dGhkZXZfZHJpdmVyLmggICAgICAgICAgIHwgIDY2ICsrKysrKysrKysrDQo+ID4gIGxpYi9ldGhk
-ZXYvcnRlX2V0aGRldi5jICAgICAgICAgICAgICB8IDE0OSArKysrKysrKysrKysrKysrKysrKysr
-Kw0KPiA+ICBsaWIvZXRoZGV2L3J0ZV9ldGhkZXYuaCAgICAgICAgICAgICAgfCAxNTggKysrKysr
-KysrKysrKysrKysrKysrKysrKw0KPiA+ICBsaWIvcGNpL3J0ZV9wY2kuaCAgICAgICAgICAgICAg
-ICAgICAgfCAgMTUgKysrDQo+ID4gIDE0IGZpbGVzIGNoYW5nZWQsIDExMTQgaW5zZXJ0aW9ucygr
-KQ0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQga2VybmVsL2xpbnV4L3VhcGkvbGludXgvdmZpb190
-cGguaA0KPiA+DQo+IA0KPiBIb3cgd2lsbCB0aGlzIGltcGFjdCBleGlzdGluZyBhcHBsaWNhdGlv
-bnMgdGhhdCBuZXZlciB1c2UgdGhlIEFQST8NCj4gSXQgaXMgY3J1Y2lhbCB0aGF0IGV4aXN0aW5n
-IDNyZCBwYXJ0eSBhcHBsaWNhdGlvbnMsIGp1c3Qgd29yayB3aXRob3V0IG1vZGlmaWNhdGlvbnMu
-DQo+IFdlIGRvbid0IHdhbnQgdG8gaGVhciBmcm9tIE5ldHdvcmsgVmlydHVhbCBBcHBsaWFuY2Ug
-dmVuZG9ycyB0aGF0IHRoZXJlIGlzIGENCj4gcGVyZm9ybWFuY2UgcmVncmVzc2lvbiBpbiBEUERL
-LiBUaGV5IGFyZSBhbHJlYWR5IHJlbHVjdGFudCB0byBrZWVwIHVwIHdpdGgNCj4gRFBESyB2ZXJz
-aW9ucy4NCj4gDQo+IEkuZSBpZiB0aGUgYXBwbGljYXRpb24gZG9lcyBub3RoaW5nIGNhY2hpbmcg
-bXVzdCBiZSBlbmFibGVkLg0KDQpJdCB3b24ndCBhZmZlY3Qgc3VjaCBhcHBsaWNhdGlvbnMuDQoN
-Ci0td2F0aHNhbGENCg0K
+> > rte_pci_tph_st_{get, set} functions will return an error if processing
+> > any of the rte_tph_info objects fails. The API does not indicate which
+> > entry in the rte_tph_info array was executed successfully and which
+> > caused an error. Therefore, in case of an error, the caller should
+> > discard the output. If rte_pci_tph_set returns an error, it should be
+> > treated as a partial error. Hence, the steering-tag update on the
+> > device should be considered partial and inconsistent with the expected
+> outcome.
+> > This should be resolved by resetting the endpoint device before
+> > further attempts to set steering tags.
+>=20
+> This seems very clunky for the user. Is there a fundamental reason why we=
+ cannot
+> report out what ones passed or failed?
+>=20
+> If it's a limitation of the kernel IOCTL, how about just making one ioctl=
+ for each
+> individual op requested, one at a time. That way we will know what failed=
+ to
+> report it?
+>=20
+
+The V1 of the kernel patch had that feature, but it was frowned upon, and I=
+ was
+asked to implement the IOCTL this way. Please find it here (V1)
+https://lore.kernel.org/kvm/20250221224638.1836909-1-wathsala.vithanage@arm=
+.com/T/#me73cf9b9c87da97d7d9461dfb97863b78ca1755b
+
+> Other comments inline below.
+>=20
+
+I will address them in the next version.
+
+Thanks.
+
+--wathsala
+
+> /Bruce
+>=20
+> >
+> > Signed-off-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
+> > Reviewed-by: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>
+> > Reviewed-by: Dhruv Tripathi <dhruv.tripathi@arm.com>
+> > ---
+> >  drivers/bus/pci/bsd/pci.c        |  43 ++++++++
+> >  drivers/bus/pci/bus_pci_driver.h |  52 ++++++++++
+> >  drivers/bus/pci/linux/pci.c      | 100 ++++++++++++++++++
+> >  drivers/bus/pci/linux/pci_init.h |  13 +++
+> > drivers/bus/pci/linux/pci_vfio.c | 170 +++++++++++++++++++++++++++++++
+> >  drivers/bus/pci/private.h        |   8 ++
+> >  drivers/bus/pci/rte_bus_pci.h    |  67 ++++++++++++
+> >  drivers/bus/pci/windows/pci.c    |  43 ++++++++
+> >  lib/pci/rte_pci.h                |  15 +++
+> >  9 files changed, 511 insertions(+)
+> >
+> > diff --git a/drivers/bus/pci/bsd/pci.c b/drivers/bus/pci/bsd/pci.c
+> > index 5e2e09d5a4..dff750c4d6 100644
+> > --- a/drivers/bus/pci/bsd/pci.c
+> > +++ b/drivers/bus/pci/bsd/pci.c
+>=20
+> <snip>
+>=20
+> > diff --git a/drivers/bus/pci/bus_pci_driver.h
+> > b/drivers/bus/pci/bus_pci_driver.h
+> > index 2cc1119072..b1c2829fc1 100644
+> > --- a/drivers/bus/pci/bus_pci_driver.h
+> > +++ b/drivers/bus/pci/bus_pci_driver.h
+> > @@ -46,6 +46,7 @@ struct rte_pci_device {
+> >  	char *bus_info;                     /**< PCI bus specific info */
+> >  	struct rte_intr_handle *vfio_req_intr_handle;
+> >  				/**< Handler of VFIO request interrupt */
+> > +	uint8_t tph_enabled;                /**< TPH enabled on this device *=
+/
+>=20
+> question: what would happen if we always enabled tph for each device. Doe=
+s
+> doing so disable the default handling for the device?
+>=20
+> >  };
+> >
+> >  /**
+> > @@ -194,6 +195,57 @@ struct rte_pci_ioport {
+> >  	uint64_t len; /* only filled for memory mapped ports */  };
+> >
+> > +/**
+> > + * @warning
+> > + * @b EXPERIMENTAL: this structure may change, or be removed, without
+> > +prior
+> > + * notice
+> > + *
+> > + * This structure is passed into the TPH Steering-Tag set or get
+> > +function as an
+> > + * argument by the caller. Return values are set in the same
+> > +structure in st and
+> > + * ph_ignore fields by the calee.
+> > + *
+> > + * Refer to PCI-SIG ECN "Revised _DSM for Cache Locality TPH
+> > +Features" for
+> > + * details.
+> > + */
+> > +struct rte_tph_info {
+> > +	/* Input */
+> > +	uint32_t cpu_id;	/*Logical CPU id*/
+> > +	uint32_t cache_level;	/*Cache level relative to CPU. l1d=3D0,l2d=3D1,=
+...*/
+> > +	uint8_t flags;		/*Memory type, procesisng hint etc.*/
+> > +	uint16_t index;		/*Index in vector table to store the ST*/
+> > +
+>=20
+> These fields should be reordered in order of size to avoid unnecessary ga=
+ps.
+>=20
+> For the flags field, I dislike having different sets of flags all multipl=
+exed into a
+> single field. Can we instead of the flags field, and the set of #defines =
+below split
+> these out into separate enums, and then have separate fields for each one=
+.
+>=20
+> For example:
+> 	struct rte_tph_info {
+> 		uint32_t cpu_id;
+> 		uint32_t cache_level;
+> 		enum rte_tph_mem_type mem_type;
+> 		enum rte_tph_hint hints;
+> 		enum rte_tph_mode mode;
+> 		...
+> 	}
+>=20
+> While the structure takes more space this way, this is not a datapath str=
+ucture
+> that we should be seeing large arrays of it, or that needs to be processe=
+d quickly,
+> so usability should be prioritized over size/compactness.
+>=20
+>=20
+
++1
+
+> > +	/* Output */
+> > +	uint16_t st;		/*Steering tag returned by the platform*/
+> > +	uint8_t ph_ignore;	/*Platform ignores PH for the returned ST*/
+> > +};
+> > +
+> > +#define RTE_PCI_TPH_MEM_TYPE_MASK		0x1
+> > +#define RTE_PCI_TPH_MEM_TYPE_SHIFT		0
+> > +/** Request volatile memory ST */
+> > +#define RTE_PCI_TPH_MEM_TYPE_VMEM		0
+> > +/** Request persistent memory ST */
+> > +#define RTE_PCI_TPH_MEM_TYPE_PMEM		1
+> > +
+> > +/** TLP Processing Hints - PCIe 6.0 specification section 2.2.7.1.1 */
+> > +#define RTE_PCI_TPH_HINT_MASK		0x3
+>=20
+> Looking at the mask usage below, does this mask not need to also be shift=
+ed by
+> the TPH_HINT_SHIFT? Otherwise it overlaps with the type mask.
+>=20
+> > +#define RTE_PCI_TPH_HINT_SHIFT		1
+> > +/** Host and device access data equally */
+> > +#define RTE_PCI_TPH_HINT_BIDIR		0
+> > +/** Device accesses data more frequently */
+> > +#define RTE_PCI_TPH_HINT_REQSTR		(1 <<
+> RTE_PCI_TPH_HINT_SHIFT)
+> > +/** Host access data more frequently */
+> > +#define RTE_PCI_TPH_HINT_TARGET		(2 <<
+> RTE_PCI_TPH_HINT_SHIFT)
+> > +/** Host access data more frequently with a high temporal locality */
+> > +#define RTE_PCI_TPH_HINT_TARGET_PRIO	(3 <<
+> RTE_PCI_TPH_HINT_SHIFT)
+> > +
+> > +#define RTE_PCI_TPH_ST_MODE_MASK   0x3
+> > +/** TPH no ST mode */
+> > +#define RTE_PCI_TPH_ST_NS_MODE	   0
+> > +/** TPH interrupt vector mode */
+> > +#define RTE_PCI_TPH_ST_IV_MODE	   1
+> > +/** TPH device specific mode */
+> > +#define RTE_PCI_TPH_ST_DS_MODE	   2
+> > +
+>=20
+> As above, I think these would be nicer defined in different enums, going =
+to
+> separate fields in the struct. That would also remove any ambiguity as to=
+ whether
+> the masks include the shift or not.
+>=20
+
++1
+
+> >  #ifdef __cplusplus
+> >  }
+> >  #endif
+> > diff --git a/drivers/bus/pci/linux/pci.c b/drivers/bus/pci/linux/pci.c
+> > index c20d159218..b5a8ba0a86 100644
+> > --- a/drivers/bus/pci/linux/pci.c
+> > +++ b/drivers/bus/pci/linux/pci.c
+> > @@ -814,3 +814,103 @@ rte_pci_ioport_unmap(struct rte_pci_ioport *p)
+> >
+> >  	return ret;
+> >  }
+> > +
+> > +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pci_tph_enable, 25.07) int
+> > +rte_pci_tph_enable(struct rte_pci_device *dev, int mode) {
+> > +	int ret =3D 0;
+> > +
+>=20
+> Should check here if dev->tph_enabled is already true.
+>=20
+
++1
+
+> > +	switch (dev->kdrv) {
+> > +#ifdef VFIO_PRESENT
+> > +	case RTE_PCI_KDRV_VFIO:
+> > +		if (pci_vfio_is_enabled())
+> > +			ret =3D pci_vfio_tph_enable(dev, mode);
+> > +		break;
+> > +#endif
+> > +	case RTE_PCI_KDRV_IGB_UIO:
+> > +	case RTE_PCI_KDRV_UIO_GENERIC:
+> > +	default:
+> > +		ret =3D -ENOTSUP;
+> > +		break;
+> > +	}
+> > +
+> > +	if (!ret)
+>=20
+> Prefer "ret =3D=3D 0" for this comparison.
+>=20
+> > +		dev->tph_enabled =3D 1;
+> > +
+> > +	return ret;
+> > +}
+> > +
+>=20
+> Function could probably be shortened to something like (including a check=
+ for
+> already enabled, 2 lines shorter if we rely on checks in the
+> vfio_tph_enable() call):
+>=20
+> int
+> rte_pci_tph_enable(...)
+> {
+> #ifdef VFIO_PRESENT
+> 	if (dev->kdrv =3D=3D RTE_PCI_KDRV_VFIO && pci_vfio_is_enabled()) {
+> 		if (dev->tph_enabled =3D=3D 0) {
+> 			int ret =3D pci_vfio_tph_enable(...);
+> 			if (ret !=3D 0)
+> 				return ret;
+> 			dev->tph_enabled =3D 1;
+> 		}
+> 		return 0;
+> 	}
+> #endif
+> 	return -ENOTSUP
+> }
+>=20
+>=20
+> > +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pci_tph_disable, 25.07) int
+> > +rte_pci_tph_disable(struct rte_pci_device *dev) {
+> > +	int ret =3D 0;
+> > +
+> > +	switch (dev->kdrv) {
+> > +#ifdef VFIO_PRESENT
+> > +	case RTE_PCI_KDRV_VFIO:
+> > +		if (pci_vfio_is_enabled())
+> > +			ret =3D pci_vfio_tph_disable(dev);
+> > +		break;
+> > +#endif
+> > +	case RTE_PCI_KDRV_IGB_UIO:
+> > +	case RTE_PCI_KDRV_UIO_GENERIC:
+> > +	default:
+> > +		ret =3D -ENOTSUP;
+> > +		break;
+> > +	}
+> > +
+> > +	if (!ret)
+> > +		dev->tph_enabled =3D 0;
+> > +
+> > +	return ret;
+> > +}
+>=20
+> As above, we can shorten this function by replacing the switch with a str=
+aight
+> check for kdrv =3D=3D RTE_PCI_KDRV_VFIO. Same with functions below too.
+>=20
+=20
++1
+
+> > +
+> > +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pci_tph_st_get, 25.07) int
+> > +rte_pci_tph_st_get(const struct rte_pci_device *dev,
+> > +		   struct rte_tph_info *info, size_t count) {
+> > +	int ret =3D 0;
+> > +
+> > +	switch (dev->kdrv) {
+> > +#ifdef VFIO_PRESENT
+> > +	case RTE_PCI_KDRV_VFIO:
+> > +		if (pci_vfio_is_enabled())
+> > +			ret =3D pci_vfio_tph_st_get(dev, info, count);
+> > +		break;
+> > +#endif
+> > +	case RTE_PCI_KDRV_IGB_UIO:
+> > +	case RTE_PCI_KDRV_UIO_GENERIC:
+> > +	default:
+> > +		ret =3D -ENOTSUP;
+> > +		break;
+> > +	}
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pci_tph_st_set, 25.07) int
+> > +rte_pci_tph_st_set(const struct rte_pci_device *dev,
+> > +		   struct rte_tph_info *info, size_t count) {
+> > +	int ret =3D 0;
+> > +
+> > +	switch (dev->kdrv) {
+> > +#ifdef VFIO_PRESENT
+> > +	case RTE_PCI_KDRV_VFIO:
+> > +		if (pci_vfio_is_enabled())
+> > +			ret =3D pci_vfio_tph_st_set(dev, info, count);
+> > +		break;
+> > +#endif
+> > +	case RTE_PCI_KDRV_IGB_UIO:
+> > +	case RTE_PCI_KDRV_UIO_GENERIC:
+> > +	default:
+> > +		ret =3D -ENOTSUP;
+> > +		break;
+> > +	}
+> > +
+> > +	return ret;
+> > +}
+> > diff --git a/drivers/bus/pci/linux/pci_init.h
+> > b/drivers/bus/pci/linux/pci_init.h
+> > index 25b901f460..e71bfd2dce 100644
+> > --- a/drivers/bus/pci/linux/pci_init.h
+> > +++ b/drivers/bus/pci/linux/pci_init.h
+> > @@ -5,6 +5,7 @@
+> >  #ifndef EAL_PCI_INIT_H_
+> >  #define EAL_PCI_INIT_H_
+> >
+> > +#include <rte_compat.h>
+> >  #include <rte_vfio.h>
+> >  #include <uapi/linux/vfio_tph.h>
+> >
+> > @@ -76,6 +77,18 @@ int pci_vfio_ioport_unmap(struct rte_pci_ioport
+> > *p);  int pci_vfio_map_resource(struct rte_pci_device *dev);  int
+> > pci_vfio_unmap_resource(struct rte_pci_device *dev);
+> >
+> > +/* TLP Processing Hints control functions */ __rte_experimental int
+> > +pci_vfio_tph_enable(const struct rte_pci_device *dev, int mode);
+> > +__rte_experimental int pci_vfio_tph_disable(const struct
+> > +rte_pci_device *dev); __rte_experimental int
+> > +pci_vfio_tph_st_get(const struct rte_pci_device *dev,
+> > +			struct rte_tph_info *info, size_t ent_count);
+> __rte_experimental
+> > +int pci_vfio_tph_st_set(const struct rte_pci_device *dev,
+> > +			struct rte_tph_info *info, size_t ent_count);
+> > +
+> >  int pci_vfio_is_enabled(void);
+> >
+> >  #endif
+> > diff --git a/drivers/bus/pci/linux/pci_vfio.c
+> > b/drivers/bus/pci/linux/pci_vfio.c
+> > index 5317170231..bdbeb38658 100644
+> > --- a/drivers/bus/pci/linux/pci_vfio.c
+> > +++ b/drivers/bus/pci/linux/pci_vfio.c
+> > @@ -12,6 +12,7 @@
+> >  #include <stdbool.h>
+> >
+> >  #include <rte_log.h>
+> > +#include <eal_export.h>
+> >  #include <rte_pci.h>
+> >  #include <rte_bus_pci.h>
+> >  #include <rte_eal_paging.h>
+> > @@ -1316,6 +1317,175 @@ pci_vfio_mmio_write(const struct rte_pci_device
+> *dev, int bar,
+> >  	return pwrite(fd, buf, len, offset + offs);  }
+> >
+> > +static int
+> > +pci_vfio_tph_ioctl(const struct rte_pci_device *dev, struct
+> > +vfio_pci_tph *pci_tph) {
+> > +	const struct rte_intr_handle *intr_handle =3D dev->intr_handle;
+> > +	int vfio_dev_fd =3D 0, ret =3D 0;
+> > +
+> > +	vfio_dev_fd =3D rte_intr_dev_fd_get(intr_handle);
+> > +	if (vfio_dev_fd < 0) {
+> > +		ret =3D -EINVAL;
+> > +		goto out;
+> > +	}
+> > +
+> > +	ret =3D ioctl(vfio_dev_fd, VFIO_DEVICE_PCI_TPH, pci_tph);
+> > +out:
+> > +	return ret;
+> > +}
+> > +
+> > +static int
+> > +pci_vfio_tph_st_op(const struct rte_pci_device *dev,
+> > +		    struct rte_tph_info *info, size_t count,
+> > +		    enum rte_pci_st_op op)
+> > +{
+> > +	int ret =3D 0;
+> > +	size_t argsz =3D 0, i;
+> > +	struct vfio_pci_tph *pci_tph =3D NULL;
+> > +	uint8_t mem_type =3D 0, hint =3D 0;
+> > +
+> > +	if (!count) {
+> > +		ret =3D -EINVAL;
+> > +		goto out;
+> > +	}
+> > +
+> > +	argsz =3D sizeof(struct vfio_pci_tph) +
+> > +		count * sizeof(struct vfio_pci_tph_entry);
+> > +
+> > +	pci_tph =3D rte_zmalloc(NULL, argsz, 0);
+>=20
+> For ioctl we should not need pinned memory. Use regular malloc here.
+>=20
+
++1
+
+> > +	if (!pci_tph) {
+>=20
+> Coding style guidelines say to compare pointers explicitly to NULL.
+>=20
+
++1
+
+> > +		ret =3D -ENOMEM;
+> > +		goto out;
+> > +	}
+> > +
+> > +	pci_tph->argsz =3D argsz;
+> > +	pci_tph->count =3D count;
+> > +
+> > +	switch (op) {
+> > +	case RTE_PCI_TPH_ST_GET:
+> > +		pci_tph->flags =3D VFIO_DEVICE_TPH_GET_ST;
+> > +		break;
+> > +	case RTE_PCI_TPH_ST_SET:
+> > +		pci_tph->flags =3D VFIO_DEVICE_TPH_SET_ST;
+> > +		break;
+> > +	default:
+> > +		ret =3D -EINVAL;
+> > +		goto out;
+> > +	}
+> > +
+> > +	for (i =3D 0; i < count; i++) {
+> > +		pci_tph->ents[i].cpu_id =3D info[i].cpu_id;
+> > +		pci_tph->ents[i].cache_level =3D info[i].cache_level;
+> > +
+> > +		mem_type =3D info[i].flags & RTE_PCI_TPH_MEM_TYPE_MASK;
+> > +		switch (mem_type) {
+> > +		case RTE_PCI_TPH_MEM_TYPE_VMEM:
+> > +			pci_tph->ents[i].flags |=3D VFIO_TPH_MEM_TYPE_VMEM;
+> > +			break;
+> > +		case RTE_PCI_TPH_MEM_TYPE_PMEM:
+> > +			pci_tph->ents[i].flags |=3D VFIO_TPH_MEM_TYPE_PMEM;
+> > +			break;
+> > +		default:
+> > +			ret =3D -EINVAL;
+> > +			goto out;
+> > +		}
+> > +
+> > +		hint =3D info[i].flags & RTE_PCI_TPH_HINT_MASK;
+>=20
+> As pointed out above, unshifted, this HINT_MASK overlaps with the TYPE_MA=
+SK.
+>=20
+> > +		switch (hint) {
+> > +		case RTE_PCI_TPH_HINT_BIDIR:
+> > +			pci_tph->ents[i].flags |=3D VFIO_TPH_HINT_BIDIR;
+> > +			break;
+> > +		case RTE_PCI_TPH_HINT_REQSTR:
+> > +			pci_tph->ents[i].flags |=3D VFIO_TPH_HINT_REQSTR;
+> > +			break;
+> > +		case RTE_PCI_TPH_HINT_TARGET:
+> > +			pci_tph->ents[i].flags |=3D VFIO_TPH_HINT_TARGET;
+> > +			break;
+> > +		case RTE_PCI_TPH_HINT_TARGET_PRIO:
+> > +			pci_tph->ents[i].flags |=3D
+> VFIO_TPH_HINT_TARGET_PRIO;
+> > +			break;
+> > +		default:
+> > +			ret =3D -EINVAL;
+> > +			goto out;
+> > +		}
+> > +
+> > +		if (op =3D=3D RTE_PCI_TPH_ST_SET)
+> > +			pci_tph->ents[i].index =3D info[i].index;
+> > +	}
+> > +
+> > +	ret =3D pci_vfio_tph_ioctl(dev, pci_tph);
+> > +	if (ret)
+>=20
+> Again, check explicitly for "=3D=3D 0".
+>=20
+
++1
+
+> > +		goto out;
+> > +
+> > +	/*
+> > +	 * Kernel returns steering-tag and ph-ignore bits for
+> > +	 * RTE_PCI_TPH_ST_SET too, therefore copy output for
+> > +	 * both RTE_PCI_TPH_ST_SET and RTE_PCI_TPH_ST_GET
+> > +	 * cases.
+> > +	 */
+> > +	for (i =3D 0; i < count; i++) {
+> > +		info[i].st =3D pci_tph->ents[i].st;
+> > +		info[i].ph_ignore =3D pci_tph->ents[i].ph_ignore;
+> > +	}
+> > +
+> > +out:
+> > +	if (pci_tph)
+> > +		rte_free(pci_tph);
+>=20
+> Free functions work fine with null pointers, so just call free without a =
+null check.
+>=20
+
++1
+
+> > +	return ret;
+> > +}
+> > +
+> > +RTE_EXPORT_EXPERIMENTAL_SYMBOL(pci_vfio_tph_enable, 25.07) int
+> > +pci_vfio_tph_enable(const struct rte_pci_device *dev, int mode) {
+> > +	int ret;
+> > +
+> > +	if (!(mode ^ (mode & VFIO_TPH_ST_MODE_MASK))) {
+>=20
+> So it's an error to twice set the mode to the same thing? should it not j=
+ust be a
+> no-op?
+>=20
+
+This doesn't make sense; I will fix this in next version.
+
+> > +		ret =3D -EINVAL;
+> > +		goto out;
+> > +	} else
+> > +		mode &=3D VFIO_TPH_ST_MODE_MASK;
+> > +
+> > +	struct vfio_pci_tph pci_tph =3D {
+> > +		.argsz =3D sizeof(struct vfio_pci_tph),
+> > +		.flags =3D VFIO_DEVICE_TPH_ENABLE | mode,
+> > +		.count =3D 0
+> > +	};
+> > +
+> > +	ret =3D pci_vfio_tph_ioctl(dev, &pci_tph);
+> > +out:
+> > +	return ret;
+> > +}
+> > +
+> > +RTE_EXPORT_EXPERIMENTAL_SYMBOL(pci_vfio_tph_disable, 25.07) int
+> > +pci_vfio_tph_disable(const struct rte_pci_device *dev) {
+>=20
+> Check here, or in caller to see if it's already enabled?
+>=20
+
+This check should happen in rte_pci_tph_disable() rather than here which is
+specific for Linux. I will do the check where you pointed it out earlier.
+
+> > +	struct vfio_pci_tph pci_tph =3D {
+> > +		.argsz =3D sizeof(struct vfio_pci_tph),
+> > +		.flags =3D VFIO_DEVICE_TPH_DISABLE,
+> > +		.count =3D 0
+> > +	};
+> > +
+> > +	return pci_vfio_tph_ioctl(dev, &pci_tph); }
+> > +
+> > +RTE_EXPORT_EXPERIMENTAL_SYMBOL(pci_vfio_tph_st_get, 25.07) int
+> > +pci_vfio_tph_st_get(const struct rte_pci_device *dev,
+> > +		    struct rte_tph_info *info, size_t count) {
+> > +	return pci_vfio_tph_st_op(dev, info, count, RTE_PCI_TPH_ST_GET); }
+> > +
+> > +RTE_EXPORT_EXPERIMENTAL_SYMBOL(pci_vfio_tph_st_set, 25.07) int
+> > +pci_vfio_tph_st_set(const struct rte_pci_device *dev,
+> > +		    struct rte_tph_info *info, size_t count) {
+> > +	return pci_vfio_tph_st_op(dev, info, count, RTE_PCI_TPH_ST_SET); }
+> > +
+> >  int
+> >  pci_vfio_is_enabled(void)
+> >  {
+> > diff --git a/drivers/bus/pci/private.h b/drivers/bus/pci/private.h
+> > index 38109844b9..d2ec370320 100644
+> > --- a/drivers/bus/pci/private.h
+> > +++ b/drivers/bus/pci/private.h
+> > @@ -335,4 +335,12 @@ rte_pci_dev_iterate(const void *start,  int
+> > rte_pci_devargs_parse(struct rte_devargs *da);
+> >
+> > +/*
+> > + * TPH Steering-Tag operation types.
+> > + */
+> > +enum rte_pci_st_op {
+> > +	RTE_PCI_TPH_ST_SET, /* Set TPH Steering - Tags */
+> > +	RTE_PCI_TPH_ST_GET  /* Get TPH Steering - Tags */ };
+> > +
+> >  #endif /* _PCI_PRIVATE_H_ */
+> > diff --git a/drivers/bus/pci/rte_bus_pci.h
+> > b/drivers/bus/pci/rte_bus_pci.h index 19a7b15b99..e4d4780f54 100644
+> > --- a/drivers/bus/pci/rte_bus_pci.h
+> > +++ b/drivers/bus/pci/rte_bus_pci.h
+> > @@ -31,6 +31,7 @@ extern "C" {
+> >  struct rte_pci_device;
+> >  struct rte_pci_driver;
+> >  struct rte_pci_ioport;
+> > +struct rte_tph_info;
+> >
+> >  struct rte_devargs;
+> >
+> > @@ -312,6 +313,72 @@ void rte_pci_ioport_read(struct rte_pci_ioport
+> > *p,  void rte_pci_ioport_write(struct rte_pci_ioport *p,
+> >  		const void *data, size_t len, off_t offset);
+> >
+> > +/**
+> > + * @warning
+> > + * @b EXPERIMENTAL: this API may change without prior notice.
+> > + *
+> > + * Enable TLP Processing Hints (TPH) in the endpoint device.
+> > + *
+> > + * @param dev
+> > + *   A pointer to a rte_pci_device structure describing the device
+> > + *   to use.
+> > + * @param mode
+> > + *   TPH mode the device must operate in.
+> > + */
+> > +__rte_experimental
+> > +int rte_pci_tph_enable(struct rte_pci_device *dev, int mode);
+> > +
+> > +/**
+> > + * @warning
+> > + * @b EXPERIMENTAL: this API may change without prior notice.
+> > + *
+> > + * Disable TLP Processing Hints (TPH) in the endpoint device.
+> > + *
+> > + * @param dev
+> > + *   A pointer to a rte_pci_device structure describing the device
+> > + *   to use.
+> > + */
+> > +__rte_experimental
+> > +int rte_pci_tph_disable(struct rte_pci_device *dev);
+> > +
+> > +/**
+> > + * @warning
+> > + * @b EXPERIMENTAL: this API may change without prior notice.
+> > + *
+> > + * Get PCI Steering-Tags (STs) for a list of stashing targets.
+> > + *
+> > + * @param mode
+> > + *   TPH mode the device must operate in.
+> > + * @param info
+> > + *   An array of rte_tph_info objects, each describing the target
+> > + *   cpu-id, cache-level, etc. Steering-tags for each target is
+> > + *   eturned via info array.
+> > + * @param count
+> > + *   The number of elements in the info array.
+> > + */
+> > +__rte_experimental
+> > +int rte_pci_tph_st_get(const struct rte_pci_device *dev,
+> > +		struct rte_tph_info *info, size_t count);
+> > +
+> > +/**
+> > + * @warning
+> > + * @b EXPERIMENTAL: this API may change without prior notice.
+> > + *
+> > + * Set PCI Steering-Tags (STs) for a list of stashing targets.
+> > + *
+> > + * @param mode
+> > + *   TPH mode the device must operate in.
+> > + * @param info
+> > + *   An array of rte_tph_info objects, each describing the target
+> > + *   cpu-id, cache-level, etc. Steering-tags for each target is
+> > + *   eturned via info array.
+> > + * @param count
+> > + *   The number of elements in the info array.
+> > + */
+> > +__rte_experimental
+> > +int rte_pci_tph_st_set(const struct rte_pci_device *dev,
+> > +		struct rte_tph_info *info, size_t count);
+> > +
+> >  #ifdef __cplusplus
+> >  }
+> >  #endif
+> > diff --git a/drivers/bus/pci/windows/pci.c
+> > b/drivers/bus/pci/windows/pci.c index e7e449306e..218e667a5a 100644
+> > --- a/drivers/bus/pci/windows/pci.c
+> > +++ b/drivers/bus/pci/windows/pci.c
+> > @@ -511,3 +511,46 @@ rte_pci_scan(void)
+> >
+> >  	return ret;
+> >  }
+> > +
+> > +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pci_tph_enable, 25.07) int
+> > +rte_pci_tph_enable(struct rte_pci_device *dev, int mode) {
+> > +	RTE_SET_USED(dev);
+> > +	RTE_SET_USED(mode);
+> > +	/* This feature is not yet implemented for windows */
+> > +	return -1;
+> > +}
+> > +
+> > +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pci_tph_disable, 25.07) int
+> > +rte_pci_tph_disable(struct rte_pci_device *dev) {
+> > +	RTE_SET_USED(dev);
+> > +	/* This feature is not yet implemented for windows */
+> > +	return -1;
+> > +}
+> > +
+> > +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pci_tph_st_get, 25.07) int
+> > +rte_pci_tph_st_get(const struct rte_pci_device *dev,
+> > +		   struct rte_tph_info *info, size_t count) {
+> > +	RTE_SET_USED(dev);
+> > +	RTE_SET_USED(info);
+> > +	RTE_SET_USED(count);
+> > +	/* This feature is not yet implemented for windows */
+> > +	return -1;
+> > +}
+> > +
+> > +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pci_tph_st_set, 25.07) int
+> > +rte_pci_tph_st_set(const struct rte_pci_device *dev,
+> > +		   struct rte_tph_info *info, size_t count) {
+> > +	RTE_SET_USED(dev);
+> > +	RTE_SET_USED(info);
+> > +	RTE_SET_USED(count);
+> > +	/* This feature is not yet implemented for windows */
+> > +	return -1;
+> > +}
+> > diff --git a/lib/pci/rte_pci.h b/lib/pci/rte_pci.h index
+> > 9a50a12142..da9cd666bf 100644
+> > --- a/lib/pci/rte_pci.h
+> > +++ b/lib/pci/rte_pci.h
+> > @@ -137,6 +137,21 @@ extern "C" {
+> >  /* Process Address Space ID (RTE_PCI_EXT_CAP_ID_PASID) */
+> >  #define RTE_PCI_PASID_CTRL		0x06    /* PASID control register */
+> >
+> > +/* TPH Requester */
+> > +#define RTE_PCI_TPH_CAP            4       /* capability register */
+> > +#define RTE_PCI_TPH_CAP_ST_NS      0x00000001 /* No ST Mode Supported
+> */
+> > +#define RTE_PCI_TPH_CAP_ST_IV      0x00000002 /* Interrupt Vector Mode
+> Supported */
+> > +#define RTE_PCI_TPH_CAP_ST_DS      0x00000004 /* Device Specific Mode
+> Supported */
+> > +#define RTE_PCI_TPH_CAP_EXT_TPH    0x00000100 /* Ext TPH Requester
+> Supported */
+> > +#define RTE_PCI_TPH_CAP_LOC_MASK   0x00000600 /* ST Table Location */
+> > +#define RTE_PCI_TPH_LOC_NONE       0x00000000 /* Not present */
+> > +#define RTE_PCI_TPH_LOC_CAP        0x00000200 /* In capability */
+> > +#define RTE_PCI_TPH_LOC_MSIX       0x00000400 /* In MSI-X */
+> > +#define RTE_PCI_TPH_CAP_ST_MASK    0x07FF0000 /* ST Table Size */
+> > +#define RTE_PCI_TPH_CAP_ST_SHIFT   16      /* ST Table Size shift */
+> > +#define RTE_PCI_TPH_BASE_SIZEOF    0xc     /* Size with no ST table */
+> > +
+> > +
+>=20
+> Where are all these values used? They don't seem to be needed by this pat=
+ch. If
+> needed in later patches, I'd suggest adding them there.
+>=20
+
+RTE_PCI_TPH_CAP_ST_NS, RTE_PCI_TPH_CAP_ST_IV and RTE_PCI_TPH_CAP_ST_DS
+are used by drivers. I40e patch uses RTE_PCI_TPH_CAP_ST_DS.
+I will remove the rest, added here for completeness.
+
+> >  /** Formatting string for PCI device identifier: Ex: 0000:00:01.0 */
+> > #define PCI_PRI_FMT "%.4" PRIx32 ":%.2" PRIx8 ":%.2" PRIx8 ".%" PRIx8
+> > #define PCI_PRI_STR_SIZE sizeof("XXXXXXXX:XX:XX.X")
+> > --
+> > 2.43.0
+> >
