@@ -2,162 +2,147 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E7D4C5B549
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 14:59:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 873CDC5B549
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 14:59:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 71DB342D66;
-	Wed,  4 Jun 2025 16:59:21 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id 421A8402B1
- for <dev@dpdk.org>; Wed,  4 Jun 2025 16:59:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1749049161; x=1780585161;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=Hoa8dwp87w//oaoi0IPNu1u55396KKc8HKhSwfKJntI=;
- b=Comm7Cd1SyHLobi0o18+blXZsaMQVEEehs7NHcy0glOqgYhAmtXE7mhL
- dpoM1a5UQzoGdBmd+5l2Cj3pTipEhNb6Ryo9iVVO2YYgZ3jOSHeIKXwF1
- Iuop4cgNMs1NpbcgqgMQOfr3+Hpj491CLDOOytb+Q67nRcuFJf7MSm5/e
- w1Wm3RUHT9XPO4ArkfnMM3lj5Ql4gQjD1o0+3KuztKaoCcv+wj8yxo0ah
- fHm/em4FVJmAgtw5pN+quPLGtyup+NbUABpXIpNPKX5o7cUMbY/iH2wXY
- 5VXuFacv41DwhcwBjpiASzg01NFdBtAjypD8+u9Aek8NwE4QYsf7+Zb6A g==;
-X-CSE-ConnectionGUID: 9LqmaIs/S3eYxe6132/6Wg==
-X-CSE-MsgGUID: VYR1q03VQtmZ8ohxkHw39g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11454"; a="61798893"
-X-IronPort-AV: E=Sophos;i="6.16,209,1744095600"; d="scan'208";a="61798893"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
- by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Jun 2025 07:59:19 -0700
-X-CSE-ConnectionGUID: 4zAaiysgRIC5CmzIjqFbDA==
-X-CSE-MsgGUID: 3l1j9zVWTqWZY2cZBTVk3A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,209,1744095600"; d="scan'208";a="145175456"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Jun 2025 07:59:19 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 4 Jun 2025 07:59:18 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Wed, 4 Jun 2025 07:59:18 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (40.107.236.49)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.55; Wed, 4 Jun 2025 07:59:17 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 99A9042E4B;
+	Wed,  4 Jun 2025 16:59:49 +0200 (CEST)
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com
+ (mail-mw2nam12on2065.outbound.protection.outlook.com [40.107.244.65])
+ by mails.dpdk.org (Postfix) with ESMTP id 2F8D6402B1
+ for <dev@dpdk.org>; Wed,  4 Jun 2025 16:59:48 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=P7jjs1BB8OG9ie/QnDj1endQsvImtVyjMkrz983jEZhTlWdAcgtF3mko751nFgztfVWktYfmAwVvsHDmsmd1CsjmwFnPKTLWF+ajwPoFbUIdAGUNjIZno9gqkdUnJSyYghE+ihQ5J6pqX47xCFUIDv+RlH1qb1M9xD6WyXzleAafm3R2LkB+jUfFl5W+NxEn4tNTpzZwb3u+mor513p2X7gQxIKfet8Nhxeb6efloOr1FmI7TX3/1DP82vgjTGlWcOJseACKP/bij3znsaHekv4WS5Uq/G9w8unw72kw2mANLCbs1g22ucn5iEyoc9qNiJ7+3bd9mrECpgxmtMNGsw==
+ b=buPs7Bju6OuzbT0AaWKgGPvVfhtkr+N8P5SFWPZhyBqakH1cs2ekxkUc8ZIMYsFnn1+F8QxleLFgmsqgEbdRb8uwVbNVIIMtXcxsD5cQb0eB7AqLsCl8HRqEY0ojYXzLPpaq0i5W4AXPNMFk21kxgRYm/X4eaGT/jtXWSxHcN9DBz8FVCaCk6WwGKnIr4EG+cFcMWgsOGU7JO7nbE0enanCUllX1ESV25GxxvDHTFn1Qr/rX3b3oPWHrefY9xmjgJaNL+DGiqp+amEh57B0A0yJ6C9bzaucEo48jfvSiFDzLgcRSMMz9vWk2s4jtN4O4H1fV/LGQdMVvtzPI47xjXg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qCvrgoQ6F2+T9FrVDHBptrzeji3ef861ZnIUVCRFc3Q=;
- b=uwknIT9IUml/IYxn8pUEb9y39rKlRCrEtuYXkY3dtXxXZDjr2eMrLh+iURlAK0A8lO8szjaDqAqrXAsKUMp9WpAKlsdMc0z4ADXs+KnG0J5VEBLWCEbfhNM2izbvmkB4wnanEUyhv+bXAI26c1F+X1Gao1uqIiEmss2H8UJfrrVVheSlNiO0r0c3ZdCdDMWKqyPUuY+J0moPMBx79iXf2jAfPYbd6MEFNF7Z72i3RJpTqMkZiWPSx6SFKykmHIAaRexPrerwAsgmBDYY6cShkg5hc/daNZo2sdGYRssFEbLo9mqLMDbVbRvW8f+YlV5ktbCNawLndbBfSJfAg6Au3Q==
+ bh=iYfgvTclYoJHqKAkZFzUhdHdCywZOA6/idQ/qnZvBls=;
+ b=bxMoMlHWmG3e8y++CDv/8PvpyaWAXvY8FzAcRV2lvIeRahiIn+NTGuZY0Dfk3138IlmN0tAoSnvOUyQ5dgJ6onu2u1euduzjd3WA7DWYadzusz2fy7VOLdaLKdS+FQED+maC5RAraL6iVfx2wMsqdaZCnoT80RLXU1tgfs3ayr3TmTUHPW95jAfZmGDh8KxsSnxme04OPS4kjvP4KRqb6qpMETmbXpL6krP+HHJhArpDNZZIGTV6rcvEMJAx/XaDLfy7e1UBtkEXfkkVdapfN/wkznVykvlBsPBvYs+gMiB53v6UdshTZfioPh+8X0o+SKCju2M8P6GAX0koccABVQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iYfgvTclYoJHqKAkZFzUhdHdCywZOA6/idQ/qnZvBls=;
+ b=aXLNIKQ0JOAKTvFOyG3ABPffG6zBpgPrA/+EpiK2UQ5eAQlCCjraR9GQlPdJ7Q5o4Myi46lvyQTTi2ZcR1XXfZjoGnDunt05PbkteiUp+KSeUVk2/Be/JPjPsphQ9wifvWppbmXD7fHWvlGaQdKisNuJ325FJ+VDGSQx7uTrE2nuJKGjuNTVScgVruSIlBBBAPr5VkiNib5gIrdtWWXvTZV98C2F5HkVt3OoJ6bFiUFfFKBqFWS+a497lh9GfIEEk3q8yfvPEWqcTIr/U51TRXxkb97yJs9PxkXVAVy4vDM/QPIuDXedsYKEQNqv1TOPXlNCiZXid7a7+grcQlayWg==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by CO1PR11MB5172.namprd11.prod.outlook.com (2603:10b6:303:6c::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.20; Wed, 4 Jun
- 2025 14:59:14 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%5]) with mapi id 15.20.8792.033; Wed, 4 Jun 2025
- 14:59:14 +0000
-Date: Wed, 4 Jun 2025 15:59:09 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Anatoly Burakov <anatoly.burakov@intel.com>
-CC: <dev@dpdk.org>
-Subject: Re: [PATCH v4 23/25] net/intel: support wider x86 vectors for Rx rearm
-Message-ID: <aEBfPb8Imy6nemXw@bricha3-mobl1.ger.corp.intel.com>
-References: <cover.1748612803.git.anatoly.burakov@intel.com>
- <cover.1748612803.git.anatoly.burakov@intel.com>
- <b7864d189e468484a6af5aa774ed566b2a37818f.1748612804.git.anatoly.burakov@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <b7864d189e468484a6af5aa774ed566b2a37818f.1748612804.git.anatoly.burakov@intel.com>
-X-ClientProxiedBy: DBBPR09CA0033.eurprd09.prod.outlook.com
- (2603:10a6:10:d4::21) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8460.namprd12.prod.outlook.com (2603:10b6:610:156::15)
+ by MN2PR12MB4061.namprd12.prod.outlook.com (2603:10b6:208:19a::18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.30; Wed, 4 Jun
+ 2025 14:59:42 +0000
+Received: from CH3PR12MB8460.namprd12.prod.outlook.com
+ ([fe80::2e9d:7265:3b84:59b5]) by CH3PR12MB8460.namprd12.prod.outlook.com
+ ([fe80::2e9d:7265:3b84:59b5%4]) with mapi id 15.20.8792.034; Wed, 4 Jun 2025
+ 14:59:41 +0000
+Message-ID: <49c35db2-7406-46c0-90b6-938c3482c034@nvidia.com>
+Date: Wed, 4 Jun 2025 17:59:34 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net/mlx5: optimize counters ID greneration logic
+To: Alexander Kozyrev <akozyrev@nvidia.com>, dev@dpdk.org
+Cc: viacheslavo@nvidia.com, dsosnowski@nvidia.com, bingz@nvidia.com,
+ suanmingm@nvidia.com
+References: <20250425155515.2635090-1-akozyrev@nvidia.com>
+Content-Language: en-US
+From: Raslan Darawsheh <rasland@nvidia.com>
+In-Reply-To: <20250425155515.2635090-1-akozyrev@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TLZP290CA0013.ISRP290.PROD.OUTLOOK.COM (2603:1096:950:9::6)
+ To CH3PR12MB8460.namprd12.prod.outlook.com
+ (2603:10b6:610:156::15)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|CO1PR11MB5172:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2364a235-5123-4691-b7d1-08dda3785ed9
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8460:EE_|MN2PR12MB4061:EE_
+X-MS-Office365-Filtering-Correlation-Id: daa1373d-4bdc-472b-a096-08dda3786f52
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?64AHgTLZbNv12EAskTJFiL6EZx3f+X424L2ocBmPnk46OXEHlNzqLcs+BK71?=
- =?us-ascii?Q?Md3Ur2/bKPredNiNCJ/bRZYf9GyWH99MFluoslOZnvfVSj9hYEezUrJASfrl?=
- =?us-ascii?Q?rS5HFwWgpLPF7RUoE83lndTnVZnQzFHkeghge9u88LUhwhJ/RCA0GrcWDF4p?=
- =?us-ascii?Q?FJypdeHc7LrGGUO033UKzjzmdG7XulJzVQBRcADkcHi4N9B0uGdawz7Um9zT?=
- =?us-ascii?Q?cdpF2P/cpIgUssn2kL2pHOVMEE4kJAHeYg5RgAWSq1M6wgRcJtjUyFVaffJU?=
- =?us-ascii?Q?YdUALGoFBvJROP577+UNg1OIzzJkCwT6KF4fmpQDudDkN1soQ4/lG8eQcCYT?=
- =?us-ascii?Q?zTfSJU5gywF8FOOxjpc7aImyIYGgbrgcvpzp7MhtSCBMkUbOFkgNTyrPWIjb?=
- =?us-ascii?Q?LjCrcCnbEc7ifyCg8/w9s+DiM88TzNVzyj/tzrBmA5CiLKWj3Q6YMY+HFe0R?=
- =?us-ascii?Q?p29Rzas90hD7ZBq5UrMO7gjBE1rRmJ8hKVlvhczmlPC6y0vrlYHe+qTAfW/8?=
- =?us-ascii?Q?mme8YeaWCGhDtduZvqp4odTdZYZSCIVQxfUfVnxqxK6F/2pA7kK6cvVhEcuI?=
- =?us-ascii?Q?V/nUs+JKh5J9dldtfYmCYulNGtAqlewXfVlgvYlQHqmlEO9LHEGRY3THqMTG?=
- =?us-ascii?Q?YFWdHokFoAiNIZgdDOxAG63oV8CSTqcDJhcVgVRM/ok8jLSRpl0VV6sxfhyZ?=
- =?us-ascii?Q?E07bbHPSEo2uWLvDIaBdfC8i5m4JcR7CKpnwv6bHtuvUhFi1krHSenP/ebvj?=
- =?us-ascii?Q?QA61LxYAI4GdSfi0MpARGIwq/JYICKf47KSrRCWxH1NIaKDaooyC58wgJDq8?=
- =?us-ascii?Q?GmsW+ldDMKbEWaAbGoMF1e9ZHhpc73E933M4vPezwUGfgI2QT/muy6r6DxZi?=
- =?us-ascii?Q?yPEi+de3atUleQTMgOj9wPks2KNnp95mjUwnfFpayUywHD/XMQCCyCGFCCut?=
- =?us-ascii?Q?q1X6vdkVx4aMZ/nSQCXVKAxCGbkht3ufTbuxq7rhdUNVPxSvJ+sppDMRIFjr?=
- =?us-ascii?Q?tvIy+vPnEelXugNc+DJFIG0xVU03EkDxP+T4wut8UlmSNbOWvEnP63PqvLgk?=
- =?us-ascii?Q?A/jSKQ+x9DMVUMtdtaI3uSpF0PewVCYBnZwowY856NkoQ42WUt+gJCwnr5vg?=
- =?us-ascii?Q?W7jZ3TTkJVECPN1PdH7t0i4p5OydFNYFZy9Gdy7kq8p1dh27XFKApsNCdAlR?=
- =?us-ascii?Q?J5jfJbRa63WzCetwe25U1BWyJ/eR4kFj/BbE2wMGB40rnhoBEBzU2RJJhDL2?=
- =?us-ascii?Q?GW5nBUCjifjD4vqL1OsUVgtzo4osKLH5yDsaX4KKRQbLnzZPMTyCvjID1Zkc?=
- =?us-ascii?Q?Y0Ox6vArFZjQncKVkVzHRk+4SFNfGRsQp7/NodGulzp2uRr2NRSpOGnqPNit?=
- =?us-ascii?Q?7c6XRTLV1zCYYhihiWj8x34d3ULk/O4/Ra2ChAUxKyp2ESoy2V/wQtAeoZEt?=
- =?us-ascii?Q?NGvsq1q3RVc=3D?=
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?SVo0TThMcGtBTjZwZUdpL3BVblBJNkpkemQxVHZXNHVZNVFBNjlTbmZ3TnV1?=
+ =?utf-8?B?YUh6eEdQUEpwc0xueUxsdHcvQUNCcFgzSVlWTkFhMDJRdk16VUtnc1BKWitr?=
+ =?utf-8?B?TFdZQ0VOVkljYmcvOU9tV3JKelpkWFdWQ2tWcmUyYWZmeTBwS2hJMkZuMWxW?=
+ =?utf-8?B?QzJoaUlZZXdkVFpWQllhckRlN3N6Z09oUTdHZ1YyWkhRTkNFcVBQTkw3b2pC?=
+ =?utf-8?B?a05wU3pMVGRZOTdMUDgrOHFwcEQzYUNvSFlqZTM3VVU3Y2crdFlteWRmMHE0?=
+ =?utf-8?B?R0ZOTE9yM1NnNjVXaFVqRlFBdGg0OTFIZGNnaE5NZzB2SHZEZFlVWWdxa0Jv?=
+ =?utf-8?B?V0QrNW9qdEpibnNsSENLeXY4OGR0MGwrZEhieXJYTVdvNGtWRFkxcjlFR2oy?=
+ =?utf-8?B?TEhOeG83Vy9UQ0xIQWRGNGE2cm9nVGgrUFFLSVFjazVlQjZ3SmYxMVFmdGFp?=
+ =?utf-8?B?anRvWEgwTDFSVlVscGFTQlBqYXY5d3daZGVQMDlKS3BSV2tCTkpDMGcwajd2?=
+ =?utf-8?B?Uzl5VXNJNzl2RTB0QVdRUG40SGdidVkyekcrT3VSby80cFdqQVVtUnBOSjQz?=
+ =?utf-8?B?MDlFYUY2VHFDellYR01FU29RcndsVWxwUExiK2Nsekl2UnlEVGVzVHp6L3ZN?=
+ =?utf-8?B?K29lOVhUeWhLZVNXcUN1K2prdW5YdmZTeDJBc3dIajV4eVJKcHE3YjM4WENh?=
+ =?utf-8?B?WTBudkF1OGF0amNnNmVMcnhKckhPeVVuZXB1S2xSdHBiU0dUMHdRMVBBazlp?=
+ =?utf-8?B?WDdoamU3YlFNbXVDNWJ2SWxITjZhUmd5TEsxV1pSTDNkaEpYcEY4Nm9QVURN?=
+ =?utf-8?B?WHZ4ZTBZT3V3bWF2TmFmUFh5a2NtRGZCWk9VRVFLSi9yVVNuUVRicklpNVN3?=
+ =?utf-8?B?VkF2QWFGMTkyVEZHcGp2dFcyanBVTnFiN3BSMDZKd1d3WTFSTytmQmV6QjZo?=
+ =?utf-8?B?c0M0TVk2L3VQbWwrVERhTU9kdjhNYlZBU3ZYc2hkSGZPVWxjekRJaGpBVHJz?=
+ =?utf-8?B?cGs3ODgzYzgxNGk3cVJpNWFJTTdPai9JY3I5clVlZ0Z3Q2o2VmV3cThSZ2g3?=
+ =?utf-8?B?RHR0Tk1sd2IrRTYrUWZpbWZ0b3U4aW10YU5BR21ZTWdFcTFxcGdnbDFESXkw?=
+ =?utf-8?B?ZjJBYWtuVDg0UDgwTVJVRThMcmovcStkOTBGeEx0SG1yTkFXa3JDbUpLYitH?=
+ =?utf-8?B?UnFJMWZZMEpHU3IxOWoxVVRYaUZSQTJHdXNDWnFsLzArSW1DNmREZFhoeXQx?=
+ =?utf-8?B?cUZFNUViclVJYXdIcFpJMGFqTjJQMk42enZ4VzJEWEhmWUR1ZXczcTYrNTlK?=
+ =?utf-8?B?TUNsbG03UjB5QlZuc0ZDZ01HTDFoTGtkU2xIUExaUk02Nk1ZS3UxYzlVbzlK?=
+ =?utf-8?B?SzhyZG9tWk9QMVMwaENzOTYvanJPejZERDJCM0dQTXE0c2laRUF1VXhwSWpJ?=
+ =?utf-8?B?WHAxd243ZjR3Y3pnQXk1NlFIUVlvKzk4STRwMFowWWlkK05xUVBRSHlyeGFS?=
+ =?utf-8?B?MTlkNWgvRElwcG12byttaWhHbDlFUk12REdWUjVrSE05S1hXckJlbU5Cekt1?=
+ =?utf-8?B?b1pxM0U5VE40eVJkeDd3TXJWRzlHekhrTXBLcGZKZmREMDNtTFBhVkxIcFk5?=
+ =?utf-8?B?R3diQW9kL2dWOE9mUXBIdE1YU28zU2ZuWXBWa2VodkFrZHBmM3J4QmpJczJH?=
+ =?utf-8?B?MTU4ZzN4c1pXRVkwMzQ0cDg4SURzMzZ0SVBPOGoyNVVaTlYrQ0gvOWJZOWds?=
+ =?utf-8?B?ZUt2b1phYVN2NzZ5VHVubXdXYW9menhRbXo4ZlhGUzU1SFE2dTc3Q0J0ZlVT?=
+ =?utf-8?B?Q0hsRGJKZ1R3R3d5Q2hYc3JCUGhVNEs1TVVtcjU4TjRyQUZIbWNKNGpBVjVh?=
+ =?utf-8?B?ejE2cC9JeTFSOFdtTVBPVkNkTE84ZzJiVjQvVEdGdG9KSXdWcXpiLy93dnl5?=
+ =?utf-8?Q?QjkPEvychls=3D?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014); DIR:OUT; SFP:1101; 
+ IPV:NLI; SFV:NSPM; H:CH3PR12MB8460.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(376014)(1800799024); DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?btzB89kWiSq/YbOUhZMUwVADMy/pSN4bwCiSTog1UsITwvVYYCAxLK36c4Zg?=
- =?us-ascii?Q?FVDXd18My+2ROoIM10KpOjybNqyUH5MgX5ezzfMAngM7i4rbh4mgVE4POvHS?=
- =?us-ascii?Q?s5jUrbbn1IpOhxSmFUxcoUemfO0JExq1XBvCoczuM+ufrlno3WWWU+i+Stbp?=
- =?us-ascii?Q?afVp6zHbCau+Z48t42VLsW5fgOwFlP2jQe/NeZjcsaAZgml7RKOIDgiqzOV5?=
- =?us-ascii?Q?45OLgbKQEQWTvj7R0PZcoFWLzIcytbL2UBRvv3BbQg3wX7Ctt/5g+KxK3Szw?=
- =?us-ascii?Q?ez4w5Af6eyh9+rGLyXI8UH2nf3+lmRBi7WcmSiUAibKEVaethTviGv6xptXP?=
- =?us-ascii?Q?u/K1AoSIQ/CygrcJ5pUMFll4STP7pf3DjmOYqCqvSdnm1ZFnd6xswlI9WVQ8?=
- =?us-ascii?Q?VWTiNe0/qv+ani/bemKwbgTFXvwcp6h5MxIIbR+gtdyTsz+FCzeuct9UXdS8?=
- =?us-ascii?Q?7o3Oul0sDB+krrxje+3rDN1Jh8yPdZb8rpLttHcV+eFimDcr2tCWAmtZAS3N?=
- =?us-ascii?Q?G92dV7v1VQ6e1oZ+SM4NoUMt8JEzievXyxJXoG7nLL+9kePUSJXd7GYcaE/7?=
- =?us-ascii?Q?RYAk/qdlOEGqWn2ZKqf+NLNDKuqSd3gxPm56qxukbmHIK+G/Yni5UkAVkoTm?=
- =?us-ascii?Q?ftki0uMukb75NN0BazOBJAfSu0ZBfC/auSwgV3jCIF3GUQ7eanarn7UxRECQ?=
- =?us-ascii?Q?JMsErbD1NzgICZCwcWF53Yad52PMX16be8t8SRIzPXoE1S+rH1p9bO7S9zXi?=
- =?us-ascii?Q?ZzN/XXeF6J8bNWswKeaTMitQrHkPs9br+cbQJkiASRLsH9UlbCfNobO0dRHr?=
- =?us-ascii?Q?lzM/Cf1Es5YIC8YKcCoFleMlUMgW7QBak7pHAKCGax+pyyOQCtSgBGxmeahA?=
- =?us-ascii?Q?wCwTBrXc2WzC3VAU8JKN2ez432l8o0BPzSrFJyg/HmUlHH42xj89bGjyG1Vy?=
- =?us-ascii?Q?bEELTr9TCH55VPDDPBuZs0LGyO4qpLatECQJc+I8GVxVsWGrQe36RBKwZ6Cb?=
- =?us-ascii?Q?D4wtNQ83yDJOaQj1mHQ9tSmhscCXtmqYABv2jZCQ6DuiaCZSIfc2CnaNiB9C?=
- =?us-ascii?Q?z3onalbI8MOS4uxTOuqysLt3hnGCoILIk/yzXWJNLFiuUMGbsnWb8r44c0Qs?=
- =?us-ascii?Q?MWJCP47YiEETUpaKzzv6G4tLyV7/MWpV8mQP4cRsut37bzR6LURb4DhXscHU?=
- =?us-ascii?Q?HB4m76ifAbFCRY87te6NkrVLFEc7hBH0v0VcdQBdMAXHb1oNm8b4B8D4tNQP?=
- =?us-ascii?Q?S23NmUMTiq1igTf+CmWZAhJrOVsOIHX3pDs6kRpz+T2YuI/pZnT/lKeLRChC?=
- =?us-ascii?Q?+0oa1LVCK/Ms3Xj5CPegth3GQxrDNixpS+rQDXVal4C/ng2fKkNdgpXeB7LL?=
- =?us-ascii?Q?g+OVmc8oKocTgTWZhF1aLQZL/DKHiQrs8b5BFM6qWlLgrgNAdD6B4GL273QY?=
- =?us-ascii?Q?UlmnxSr1SlSBh+KUFy8PdDipr9eYvkA43wCZsC8p1kxUyIA3rqd+Zqd6GBl7?=
- =?us-ascii?Q?gDleqzLBKeiZ05wnPwU79R2QOKlq5aXofdnTiOsGKLjCAFCr029QSQaB3ga5?=
- =?us-ascii?Q?m4+lyennJ9pju4cUNImiv+i/KCqDpCi0Ymzb9DdEo4nwcdyevW1L1CYgrbxh?=
- =?us-ascii?Q?hw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2364a235-5123-4691-b7d1-08dda3785ed9
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QVVxM1BmVzBLL2VwS3U4VXZCQXlkeGx5U1FMRmdWajZDYzhyTHgyeHExaUJq?=
+ =?utf-8?B?WUVhbm1GRFg5VE9pWWZIa0JrREhFNGo1TEIrVFFXT1hyRkNZQmJUTkRabkFW?=
+ =?utf-8?B?em91S2UxbFg0VGI0VWYvdzFnTTIzY0xNemg5bHo3am96WEZ3QmJtbjU2cjZD?=
+ =?utf-8?B?WDFpcFNyR05RbUVBSDd0YkIrQlM4emNRYnMyY3h6RXZMc0Q2RVpPb1ZmZWdi?=
+ =?utf-8?B?a3pWakt6VXhuQXJ0Qjc1bzZwK2d3NENFczJDbmFtRFRNKzFSOHJmSmlnLyt4?=
+ =?utf-8?B?aEttZkh6M1c2TjBnVEp5N2dKU0NKQXVLRmFzTWM3SGkzNkJsbFNWb0xOUUNN?=
+ =?utf-8?B?QVNJTEUyVUp2LzBLdm4xSzBOWkhjbUlsMVhYNlU4bUhqT3BZRjcydk1PV05j?=
+ =?utf-8?B?anNrbGZ5ZWVJeG9EZi9uOCtPc1E0ZG1vd2YvM1FCSlUySUNueEY1RW1rVVVJ?=
+ =?utf-8?B?ZEJ4MEJVT1Fmb0dsNkZpc3dBMGQ1TTM2eStXQ3hmL1padEVGOUsxdlNDS3Z2?=
+ =?utf-8?B?WmFxcFpoK3ZmcWlUNis2b0dzY1Eyb0pObTVvNzh5MUh6TVBQRWFYWHAxNU9o?=
+ =?utf-8?B?RGk3SVBLS00xa0RtazZielFFSzVMdmowaDZzRnF6Y0FCcjlWRFprTGdSU1Nt?=
+ =?utf-8?B?dVhPT1BlN1NhbGRGWmorUC9halRnZHVCYXhiZG5kS3V3eWcvVVhVNURUWExB?=
+ =?utf-8?B?MFdtTXZxZHVjYUdQMXk0TjBUT2tRSjZLbzB1UVJnMUw4Z21aY0pxNk5BRFBX?=
+ =?utf-8?B?VDAvRGpaQ09MVWV5bzk3RVhyVG9ONENyQVFzeHFRNWViRmFyNStiT2JmeXR0?=
+ =?utf-8?B?TW15L2Mvd05PVVYrT1FuVG85cUdRaVF5THl3dm1BejJPc05jZkc3MWFVRCs5?=
+ =?utf-8?B?a1lja2hpR3l6Y3JrY2lQL3drYnA1RE4yeHpqQ0p0T01yME52c212OFY1Wnd6?=
+ =?utf-8?B?QWNqaFY0dVhSNlBrSWIxSVdjSkV5VU1hblJMM3VXL0t3R0dnYmJrNFFzdEpV?=
+ =?utf-8?B?cVJmUzZ5K0RmUVdOYkV2citML1dtRXBqREFhQnNwUENJaDg2dWJBK0c5WEtM?=
+ =?utf-8?B?MGZjcDE0eDdwV2hlZ1FXTHN2UU5NWk5OSCtid2RnQVpjT0E5b282bnBoVzdv?=
+ =?utf-8?B?ODZPSFdRT0dYOVNXQTU4UXczYjMrd2hnRGRtK1BvYTdVeXJDd0h2cXhnOFZD?=
+ =?utf-8?B?L0tMQUIrOHpxN1BjQSt4T3AyekloQWVBU21ydzg1c1UwaEhrOEdzYlRjWEsv?=
+ =?utf-8?B?R2ZwOUpDRFNSdXdtQUROZWNSVGFITElpM21zSTNIbEtaRVFMVm4ySW9lOGVV?=
+ =?utf-8?B?em1aY3o2Z2p0bkZDUlNLS2kzY2VCbkxUMFFoQndvaERyVDZpQ0g0eVg2OFhW?=
+ =?utf-8?B?OEZlZU42M1pwOVV3bysrRmZ1VnZYZENKZWxJYXllVkZEWEsyUjdvZHdibnMy?=
+ =?utf-8?B?N2pFZzBrUVlDMjY4QmdvdGNmdzRBS0J3a1laS1RIYUFWV3UzTVRwZEt5SS9N?=
+ =?utf-8?B?b1p3bVk3UXdqblkwSzZVNDI3d004RWJCUUkzaDlEYUtCeWx2aHkyaFpJNC9U?=
+ =?utf-8?B?a0MzOSt0dUZxdCtZc3NPTWsyMG11bFFnbklKT004N2h0S0xQNDdqWXF1Z2Y3?=
+ =?utf-8?B?am85WVdUK01mcDZsWTJOeSthakJyWm1tZE8vNG0yRW5qVCs3enFDZXcySEdm?=
+ =?utf-8?B?bXlMNVhFbzhYeU5PNDVNd09wQnczZ2pVQisyVUF6RWN6VDFiaTc4MUNZNEZK?=
+ =?utf-8?B?NDFwWlk3TWdHc0cxcndqbWFhWDBqYjFkY0szZTVMalJmK0kycU14a0hrMmJF?=
+ =?utf-8?B?QUZiRUNJdjhmbGg4KzhPeWlEcUI5R2N4WFNyT3VYYnVNMCs5cFNjSGtPYWg0?=
+ =?utf-8?B?aXJCejg4UUZadWIyZ1BkZjZIUWVmK2JIZDV4YUpSWVdSUUJERTF4dGZqQ1Ax?=
+ =?utf-8?B?MWk5Q09qQmNXOUk5WkduU1VNSGhWSVpYQ1BZNDdxWE5hWFhSSjVYU0FjVVc1?=
+ =?utf-8?B?aGcrOGVQL1pSclhId1I2eGViL3RDRFJsb21IR0dKMG1sZUZjaXJhb0dQNDBT?=
+ =?utf-8?B?eC9TWTd4VDl0R2VRdk1PUVFZRDVjMTcyRnY3Q2xqS3Y1dFhYdGo5QVFFME5T?=
+ =?utf-8?Q?Hor8Mk2Al1GwQxyCi96X0zbXz?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: daa1373d-4bdc-472b-a096-08dda3786f52
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8460.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2025 14:59:14.2658 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2025 14:59:41.8933 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QZEPWbjD7CVkO/KIDodPJSA4GVDfMrTVXt6A766w3o/pbF/XLP8GrY9BO5nMxa2dVzEc5j4nI2FBpRtI3YUM9naEshfcQWNRFm96KHvNzxk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5172
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-UserPrincipalName: /6E4kRHIC/bkMFsdkCR0mZ4KDKUIKCbkCO1sW50ejVk+3Lz38ZSkF7/R+kOKHmrD5BdktWsF9lUAxkU4aryRlQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4061
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -171,457 +156,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, May 30, 2025 at 02:57:19PM +0100, Anatoly Burakov wrote:
-> Currently, for 32-byte descriptor format, only SSE instruction set is
-> supported. Add implementation for AVX2 and AVX512 instruction sets. Since
-> we are using Rx descriptor definitions from common code, we can just use
-> the generic descriptor definition, as we only ever write the first 16 bytes
-> of it, and the layout is always the same for that part.
+Hi,
+
+
+On 25/04/2025 6:55 PM, Alexander Kozyrev wrote:
+> Enqueue generated counter IDs on a ring in bulk.
+> Generate them and store in an array before putting them
+> on a ring all at once. That bring better cache access
+> and speeds up the mlx5_hws_cnt_pool_create() function.
 > 
-> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-> ---
-> 
+> Signed-off-by: Alexander Kozyrev <akozyrev@nvidia.com>
 
-Like the idea. Feedback inline below.
+Patch applied to next-net-mlx,
 
-/Bruce
+Kindest regards
+Raslan Darawsheh
 
-> Notes:
->     v3 -> v4:
->     - Use the common descriptor format instead of constant propagation
->     - Syntax and whitespace cleanups
-> 
->  drivers/net/intel/common/rx_vec_x86.h | 339 ++++++++++++++------------
->  1 file changed, 183 insertions(+), 156 deletions(-)
-> 
-> diff --git a/drivers/net/intel/common/rx_vec_x86.h b/drivers/net/intel/common/rx_vec_x86.h
-> index 7c57016df7..43f7c59449 100644
-> --- a/drivers/net/intel/common/rx_vec_x86.h
-> +++ b/drivers/net/intel/common/rx_vec_x86.h
-> @@ -43,206 +43,244 @@ _ci_rxq_rearm_get_bufs(struct ci_rx_queue *rxq)
->  	return 0;
->  }
->  
-> -/*
-> - * SSE code path can handle both 16-byte and 32-byte descriptors with one code
-> - * path, as we only ever write 16 bytes at a time.
-> - */
-> -static __rte_always_inline void
-> -_ci_rxq_rearm_sse(struct ci_rx_queue *rxq)
-> +static __rte_always_inline __m128i
-> +_ci_rxq_rearm_desc_sse(const __m128i vaddr)
->  {
->  	const __m128i hdroom = _mm_set1_epi64x(RTE_PKTMBUF_HEADROOM);
->  	const __m128i zero = _mm_setzero_si128();
-> +
-> +	/* add headroom to address values */
-> +	__m128i reg = _mm_add_epi64(vaddr, hdroom);
-> +
-> +#if RTE_IOVA_IN_MBUF
-> +	/* load buf_addr(lo 64bit) and buf_iova(hi 64bit) */
-> +	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, buf_iova) !=
-> +			 offsetof(struct rte_mbuf, buf_addr) + 8);
-> +	/* move IOVA to Packet Buffer Address, erase Header Buffer Address */
-> +	reg = _mm_unpackhi_epi64(reg, zero);
-> +#else
-> +	/* erase Header Buffer Address */
-> +	reg = _mm_unpacklo_epi64(reg, zero);
-> +#endif
-> +	return reg;
-> +}
-> +
-> +static __rte_always_inline void
-> +_ci_rxq_rearm_sse(struct ci_rx_queue *rxq)
-> +{
->  	const uint16_t rearm_thresh = CI_VPMD_RX_REARM_THRESH;
->  	struct ci_rx_entry *rxp = &rxq->sw_ring[rxq->rxrearm_start];
-> +	/* SSE writes 16-bytes regardless of descriptor size */
-> +	const uint8_t desc_per_reg = 1;
-> +	const uint8_t desc_per_iter = desc_per_reg * 2;
->  	volatile union ci_rx_desc *rxdp;
->  	int i;
->  
->  	rxdp = &rxq->rx_ring[rxq->rxrearm_start];
->  
->  	/* Initialize the mbufs in vector, process 2 mbufs in one loop */
-> -	for (i = 0; i < rearm_thresh; i += 2, rxp += 2, rxdp += 2) {
-> +	for (i = 0; i < rearm_thresh;
-> +			i += desc_per_iter,
-> +			rxp += desc_per_iter,
-> +			rxdp += desc_per_iter) {
->  		struct rte_mbuf *mb0 = rxp[0].mbuf;
->  		struct rte_mbuf *mb1 = rxp[1].mbuf;
->  
-> -#if RTE_IOVA_IN_MBUF
-> -		/* load buf_addr(lo 64bit) and buf_iova(hi 64bit) */
-> -		RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, buf_iova) !=
-> -				offsetof(struct rte_mbuf, buf_addr) + 8);
-> -#endif
-> -		__m128i addr0 = _mm_loadu_si128((__m128i *)&mb0->buf_addr);
-> -		__m128i addr1 = _mm_loadu_si128((__m128i *)&mb1->buf_addr);
-> +		const __m128i vaddr0 = _mm_loadu_si128((const __m128i *)&mb0->buf_addr);
-> +		const __m128i vaddr1 = _mm_loadu_si128((const __m128i *)&mb1->buf_addr);
->  
-> -		/* add headroom to address values */
-> -		addr0 = _mm_add_epi64(addr0, hdroom);
-> -		addr1 = _mm_add_epi64(addr1, hdroom);
-> +		const __m128i reg0 = _ci_rxq_rearm_desc_sse(vaddr0);
-> +		const __m128i reg1 = _ci_rxq_rearm_desc_sse(vaddr1);
-> 
-> -#if RTE_IOVA_IN_MBUF
-> -		/* move IOVA to Packet Buffer Address, erase Header Buffer Address */
-> -		addr0 = _mm_unpackhi_epi64(addr0, zero);
-> -		addr0 = _mm_unpackhi_epi64(addr1, zero);
-> -#else
-> -		/* erase Header Buffer Address */
-> -		addr0 = _mm_unpacklo_epi64(addr0, zero);
-> -		addr1 = _mm_unpacklo_epi64(addr1, zero);
-> -#endif
-> -
-> -		/* flush desc with pa dma_addr */
-> -		_mm_store_si128(RTE_CAST_PTR(__m128i *, &rxdp[0]), addr0);
-> -		_mm_store_si128(RTE_CAST_PTR(__m128i *, &rxdp[1]), addr1);
-> +		/* flush descriptors */
-> +		_mm_store_si128(RTE_CAST_PTR(__m128i *, &rxdp[0]), reg0);
-> +		_mm_store_si128(RTE_CAST_PTR(__m128i *, &rxdp[1]), reg1);
->  	}
->  }
->  
-> -#ifdef RTE_NET_INTEL_USE_16BYTE_DESC
->  #ifdef __AVX2__
-> -/* AVX2 version for 16-byte descriptors, handles 4 buffers at a time */
-> -static __rte_always_inline void
-> -_ci_rxq_rearm_avx2(struct ci_rx_queue *rxq)
-> +static __rte_always_inline __m256i
-> +_ci_rxq_rearm_desc_avx2(const __m128i vaddr0, const __m128i vaddr1)
->  {
-> -	struct ci_rx_entry *rxp = &rxq->sw_ring[rxq->rxrearm_start];
-> -	const uint16_t rearm_thresh = CI_VPMD_RX_REARM_THRESH;
-> -	const __m256i hdroom = _mm256_set1_epi64x(RTE_PKTMBUF_HEADROOM);
-> +	const __m256i hdr_room = _mm256_set1_epi64x(RTE_PKTMBUF_HEADROOM);
->  	const __m256i zero = _mm256_setzero_si256();
-> +
-> +	/* merge by casting 0 to 256-bit and inserting 1 into the high lanes */
-> +	__m256i reg = _mm256_inserti128_si256(_mm256_castsi128_si256(vaddr0), vaddr1, 1);
-> +
-> +	/* add headroom to address values */
-> +	reg = _mm256_add_epi64(reg, hdr_room);
-> +
-> +#if RTE_IOVA_IN_MBUF
-> +	/* load buf_addr(lo 64bit) and buf_iova(hi 64bit) */
-> +	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, buf_iova) !=
-> +			offsetof(struct rte_mbuf, buf_addr) + 8);
-> +	/* extract IOVA addr into Packet Buffer Address, erase Header Buffer Address */
-> +	reg = _mm256_unpackhi_epi64(reg, zero);
-> +#else
-> +	/* erase Header Buffer Address */
-> +	reg = _mm256_unpacklo_epi64(reg, zero);
-> +#endif
-> +	return reg;
-> +}
-> +
-> +static __rte_always_inline void
-> +_ci_rxq_rearm_avx2(struct ci_rx_queue *rxq)
-> +{
-> +	struct ci_rx_entry *rxp = &rxq->sw_ring[rxq->rxrearm_start];
-> +	const uint16_t rearm_thresh = CI_VPMD_RX_REARM_THRESH;
-> +	/* how many descriptors can fit into a register */
-> +	const uint8_t desc_per_reg = sizeof(__m256i) / sizeof(union ci_rx_desc);
-> +	/* how many descriptors can fit into one loop iteration */
-> +	const uint8_t desc_per_iter = desc_per_reg * 2;
->  	volatile union ci_rx_desc *rxdp;
->  	int i;
->  
-> -	RTE_BUILD_BUG_ON(sizeof(union ci_rx_desc) != 16);
-> -
->  	rxdp = &rxq->rx_ring[rxq->rxrearm_start];
->  
-> -	/* Initialize the mbufs in vector, process 4 mbufs in one loop */
-> -	for (i = 0; i < rearm_thresh; i += 4, rxp += 4, rxdp += 4) {
-> -		struct rte_mbuf *mb0 = rxp[0].mbuf;
-> -		struct rte_mbuf *mb1 = rxp[1].mbuf;
-> -		struct rte_mbuf *mb2 = rxp[2].mbuf;
-> -		struct rte_mbuf *mb3 = rxp[3].mbuf;
-> +	/* Initialize the mbufs in vector, process 2 or 4 mbufs in one loop */
-> +	for (i = 0; i < rearm_thresh;
-> +			i += desc_per_iter,
-> +			rxp += desc_per_iter,
-> +			rxdp += desc_per_iter) {
-> +		__m256i reg0, reg1;
->  
-> -#if RTE_IOVA_IN_MBUF
-> -		/* load buf_addr(lo 64bit) and buf_iova(hi 64bit) */
-> -		RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, buf_iova) !=
-> -				offsetof(struct rte_mbuf, buf_addr) + 8);
-> -#endif
-> -		const __m128i vaddr0 = _mm_loadu_si128((__m128i *)&mb0->buf_addr);
-> -		const __m128i vaddr1 = _mm_loadu_si128((__m128i *)&mb1->buf_addr);
-> -		const __m128i vaddr2 = _mm_loadu_si128((__m128i *)&mb2->buf_addr);
-> -		const __m128i vaddr3 = _mm_loadu_si128((__m128i *)&mb3->buf_addr);
-> +		if (desc_per_iter == 2) {
-> +			/* 16 byte descriptor, 16 byte zero, times two */
-> +			const __m128i zero = _mm_setzero_si128();
-> +			const struct rte_mbuf *mb0 = rxp[0].mbuf;
-> +			const struct rte_mbuf *mb1 = rxp[1].mbuf;
->  
-> -		/**
-> -		 * merge 0 & 1, by casting 0 to 256-bit and inserting 1
-> -		 * into the high lanes. Similarly for 2 & 3
-> -		 */
-> -		const __m256i vaddr0_256 = _mm256_castsi128_si256(vaddr0);
-> -		const __m256i vaddr2_256 = _mm256_castsi128_si256(vaddr2);
-> +			const __m128i vaddr0 = _mm_loadu_si128((const __m128i *)&mb0->buf_addr);
-> +			const __m128i vaddr1 = _mm_loadu_si128((const __m128i *)&mb1->buf_addr);
-
-Minor nit, but do we need to use unaligned loads here? The mbuf is marked
-as cache-aligned, and buf_addr is the first field in it.
-
->  
-> -		__m256i addr0_1 = _mm256_inserti128_si256(vaddr0_256, vaddr1, 1);
-> -		__m256i addr2_3 = _mm256_inserti128_si256(vaddr2_256, vaddr3, 1);
-> +			reg0 = _ci_rxq_rearm_desc_avx2(vaddr0, zero);
-> +			reg1 = _ci_rxq_rearm_desc_avx2(vaddr1, zero);
-
-The compiler may optimize this away, but rather than calling this function
-with a zero register, we can save the call to insert the zero into the high
-register half by just using the SSE/AVX-128 function, and casting the
-result (which should be a no-op).
-
-> +		} else {
-> +			/* 16 byte descriptor times four */
-> +			const struct rte_mbuf *mb0 = rxp[0].mbuf;
-> +			const struct rte_mbuf *mb1 = rxp[1].mbuf;
-> +			const struct rte_mbuf *mb2 = rxp[2].mbuf;
-> +			const struct rte_mbuf *mb3 = rxp[3].mbuf;
->  
-> -		/* add headroom to address values */
-> -		addr0_1 = _mm256_add_epi64(addr0_1, hdroom);
-> -		addr0_1 = _mm256_add_epi64(addr0_1, hdroom);
-> +			const __m128i vaddr0 = _mm_loadu_si128((const __m128i *)&mb0->buf_addr);
-> +			const __m128i vaddr1 = _mm_loadu_si128((const __m128i *)&mb1->buf_addr);
-> +			const __m128i vaddr2 = _mm_loadu_si128((const __m128i *)&mb2->buf_addr);
-> +			const __m128i vaddr3 = _mm_loadu_si128((const __m128i *)&mb3->buf_addr);
->  
-> -#if RTE_IOVA_IN_MBUF
-> -		/* extract IOVA addr into Packet Buffer Address, erase Header Buffer Address */
-> -		addr0_1 = _mm256_unpackhi_epi64(addr0_1, zero);
-> -		addr2_3 = _mm256_unpackhi_epi64(addr2_3, zero);
-> -#else
-> -		/* erase Header Buffer Address */
-> -		addr0_1 = _mm256_unpacklo_epi64(addr0_1, zero);
-> -		addr2_3 = _mm256_unpacklo_epi64(addr2_3, zero);
-> -#endif
-> +			reg0 = _ci_rxq_rearm_desc_avx2(vaddr0, vaddr1);
-> +			reg1 = _ci_rxq_rearm_desc_avx2(vaddr2, vaddr3);
-> +		}
->  
-> -		/* flush desc with pa dma_addr */
-> -		_mm256_store_si256(RTE_CAST_PTR(__m256i *, &rxdp[0]), addr0_1);
-> -		_mm256_store_si256(RTE_CAST_PTR(__m256i *, &rxdp[2]), addr2_3);
-> +		/* flush descriptors */
-> +		_mm256_store_si256(RTE_CAST_PTR(__m256i *, &rxdp[0]), reg0);
-> +		_mm256_store_si256(RTE_CAST_PTR(__m256i *, &rxdp[2]), reg1);
-
-This should be rxdp[desc_per_reg], not rxdp[2].
-
->  	}
->  }
->  #endif /* __AVX2__ */
->  
->  #ifdef __AVX512VL__
-> -/* AVX512 version for 16-byte descriptors, handles 8 buffers at a time */
-> -static __rte_always_inline void
-> -_ci_rxq_rearm_avx512(struct ci_rx_queue *rxq)
-> +static __rte_always_inline __m512i
-> +_ci_rxq_rearm_desc_avx512(const __m128i vaddr0, const __m128i vaddr1,
-> +		const __m128i vaddr2, const __m128i vaddr3)
->  {
-> -	struct ci_rx_entry *rxp = &rxq->sw_ring[rxq->rxrearm_start];
-> -	const uint16_t rearm_thresh = CI_VPMD_RX_REARM_THRESH;
-> -	const __m512i hdroom = _mm512_set1_epi64(RTE_PKTMBUF_HEADROOM);
->  	const __m512i zero = _mm512_setzero_si512();
-> +	const __m512i hdroom = _mm512_set1_epi64(RTE_PKTMBUF_HEADROOM);
-> +
-> +	/**
-> +	 * merge 0 & 1, by casting 0 to 256-bit and inserting 1 into the high
-> +	 * lanes. Similarly for 2 & 3.
-> +	 */
-> +	const __m256i vaddr0_1 = _mm256_inserti128_si256(_mm256_castsi128_si256(vaddr0), vaddr1, 1);
-> +	const __m256i vaddr2_3 = _mm256_inserti128_si256(_mm256_castsi128_si256(vaddr2), vaddr3, 1);
-> +	/*
-> +	 * merge 0+1 & 2+3, by casting 0+1 to 512-bit and inserting 2+3 into the
-> +	 * high lanes.
-> +	 */
-> +	__m512i reg = _mm512_inserti64x4(_mm512_castsi256_si512(vaddr0_1), vaddr2_3, 1);
-> +
-> +	/* add headroom to address values */
-> +	reg = _mm512_add_epi64(reg, hdroom);
-> +
-> +#if RTE_IOVA_IN_MBUF
-> +	/* load buf_addr(lo 64bit) and buf_iova(hi 64bit) */
-> +	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, buf_iova) !=
-> +			offsetof(struct rte_mbuf, buf_addr) + 8);
-> +	/* extract IOVA addr into Packet Buffer Address, erase Header Buffer Address */
-> +	reg = _mm512_unpackhi_epi64(reg, zero);
-> +#else
-> +	/* erase Header Buffer Address */
-> +	reg = _mm512_unpacklo_epi64(reg, zero);
-> +#endif
-> +	return reg;
-> +}
-> +
-> +static __rte_always_inline void
-> +_ci_rxq_rearm_avx512(struct ci_rx_queue *rxq)
-> +{
-> +	struct ci_rx_entry *rxp = &rxq->sw_ring[rxq->rxrearm_start];
-> +	const uint16_t rearm_thresh = CI_VPMD_RX_REARM_THRESH;
-> +	/* how many descriptors can fit into a register */
-> +	const uint8_t desc_per_reg = sizeof(__m512i) / sizeof(union ci_rx_desc);
-> +	/* how many descriptors can fit into one loop iteration */
-> +	const uint8_t desc_per_iter = desc_per_reg * 2;
->  	volatile union ci_rx_desc *rxdp;
->  	int i;
->  
-> -	RTE_BUILD_BUG_ON(sizeof(union ci_rx_desc) != 16);
-> -
->  	rxdp = &rxq->rx_ring[rxq->rxrearm_start];
->  
-> -	/* Initialize the mbufs in vector, process 8 mbufs in one loop */
-> -	for (i = 0; i < rearm_thresh; i += 8, rxp += 8, rxdp += 8) {
-> -		struct rte_mbuf *mb0 = rxp[0].mbuf;
-> -		struct rte_mbuf *mb1 = rxp[1].mbuf;
-> -		struct rte_mbuf *mb2 = rxp[2].mbuf;
-> -		struct rte_mbuf *mb3 = rxp[3].mbuf;
-> -		struct rte_mbuf *mb4 = rxp[4].mbuf;
-> -		struct rte_mbuf *mb5 = rxp[5].mbuf;
-> -		struct rte_mbuf *mb6 = rxp[6].mbuf;
-> -		struct rte_mbuf *mb7 = rxp[7].mbuf;
-> +	/* Initialize the mbufs in vector, process 4 or 8 mbufs in one loop */
-> +	for (i = 0; i < rearm_thresh;
-> +			i += desc_per_iter,
-> +			rxp += desc_per_iter,
-> +			rxdp += desc_per_iter) {
-> +		__m512i reg0, reg1;
->  
-> -#if RTE_IOVA_IN_MBUF
-> -		/* load buf_addr(lo 64bit) and buf_iova(hi 64bit) */
-> -		RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, buf_iova) !=
-> -				offsetof(struct rte_mbuf, buf_addr) + 8);
-> -#endif
-> -		const __m128i vaddr0 = _mm_loadu_si128((__m128i *)&mb0->buf_addr);
-> -		const __m128i vaddr1 = _mm_loadu_si128((__m128i *)&mb1->buf_addr);
-> -		const __m128i vaddr2 = _mm_loadu_si128((__m128i *)&mb2->buf_addr);
-> -		const __m128i vaddr3 = _mm_loadu_si128((__m128i *)&mb3->buf_addr);
-> -		const __m128i vaddr4 = _mm_loadu_si128((__m128i *)&mb4->buf_addr);
-> -		const __m128i vaddr5 = _mm_loadu_si128((__m128i *)&mb5->buf_addr);
-> -		const __m128i vaddr6 = _mm_loadu_si128((__m128i *)&mb6->buf_addr);
-> -		const __m128i vaddr7 = _mm_loadu_si128((__m128i *)&mb7->buf_addr);
-> +		if (desc_per_iter == 4) {
-> +			/* 16-byte descriptor, 16 byte zero, times four */
-> +			const __m128i zero = _mm_setzero_si128();
-> +			const struct rte_mbuf *mb0 = rxp[0].mbuf;
-> +			const struct rte_mbuf *mb1 = rxp[1].mbuf;
-> +			const struct rte_mbuf *mb2 = rxp[2].mbuf;
-> +			const struct rte_mbuf *mb3 = rxp[3].mbuf;
->  
-> -		/**
-> -		 * merge 0 & 1, by casting 0 to 256-bit and inserting 1
-> -		 * into the high lanes. Similarly for 2 & 3, and so on.
-> -		 */
-> -		const __m256i addr0_256 = _mm256_castsi128_si256(vaddr0);
-> -		const __m256i addr2_256 = _mm256_castsi128_si256(vaddr2);
-> -		const __m256i addr4_256 = _mm256_castsi128_si256(vaddr4);
-> -		const __m256i addr6_256 = _mm256_castsi128_si256(vaddr6);
-> +			const __m128i vaddr0 = _mm_loadu_si128((const __m128i *)&mb0->buf_addr);
-> +			const __m128i vaddr1 = _mm_loadu_si128((const __m128i *)&mb1->buf_addr);
-> +			const __m128i vaddr2 = _mm_loadu_si128((const __m128i *)&mb2->buf_addr);
-> +			const __m128i vaddr3 = _mm_loadu_si128((const __m128i *)&mb3->buf_addr);
->  
-> -		const __m256i addr0_1 = _mm256_inserti128_si256(addr0_256, vaddr1, 1);
-> -		const __m256i addr2_3 = _mm256_inserti128_si256(addr2_256, vaddr3, 1);
-> -		const __m256i addr4_5 = _mm256_inserti128_si256(addr4_256, vaddr5, 1);
-> -		const __m256i addr6_7 = _mm256_inserti128_si256(addr6_256, vaddr7, 1);
-> +			reg0 = _ci_rxq_rearm_desc_avx512(vaddr0, zero, vaddr1, zero);
-> +			reg1 = _ci_rxq_rearm_desc_avx512(vaddr2, zero, vaddr3, zero);
-
-I can't help but thinking we can probably do a little better than this
-merging in zeros using AVX-512 mask registers, e.g. using
- _mm256_maskz_broadcastq_epi64()  intrinsic, but it will be ok for now! :-)
-
-> +		} else {
-> +			/* 16-byte descriptor times eight */
-> +			const struct rte_mbuf *mb0 = rxp[0].mbuf;
-> +			const struct rte_mbuf *mb1 = rxp[1].mbuf;
-> +			const struct rte_mbuf *mb2 = rxp[2].mbuf;
-> +			const struct rte_mbuf *mb3 = rxp[3].mbuf;
-> +			const struct rte_mbuf *mb4 = rxp[4].mbuf;
-> +			const struct rte_mbuf *mb5 = rxp[5].mbuf;
-> +			const struct rte_mbuf *mb6 = rxp[6].mbuf;
-> +			const struct rte_mbuf *mb7 = rxp[7].mbuf;
->  
-> -		/**
-> -		 * merge 0_1 & 2_3, by casting 0_1 to 512-bit and inserting 2_3
-> -		 * into the high lanes. Similarly for 4_5 & 6_7, and so on.
-> -		 */
-> -		const __m512i addr0_1_512 = _mm512_castsi256_si512(addr0_1);
-> -		const __m512i addr4_5_512 = _mm512_castsi256_si512(addr4_5);
-> +			const __m128i vaddr0 = _mm_loadu_si128((const __m128i *)&mb0->buf_addr);
-> +			const __m128i vaddr1 = _mm_loadu_si128((const __m128i *)&mb1->buf_addr);
-> +			const __m128i vaddr2 = _mm_loadu_si128((const __m128i *)&mb2->buf_addr);
-> +			const __m128i vaddr3 = _mm_loadu_si128((const __m128i *)&mb3->buf_addr);
-> +			const __m128i vaddr4 = _mm_loadu_si128((const __m128i *)&mb4->buf_addr);
-> +			const __m128i vaddr5 = _mm_loadu_si128((const __m128i *)&mb5->buf_addr);
-> +			const __m128i vaddr6 = _mm_loadu_si128((const __m128i *)&mb6->buf_addr);
-> +			const __m128i vaddr7 = _mm_loadu_si128((const __m128i *)&mb7->buf_addr);
->  
-> -		__m512i addr0_3 = _mm512_inserti64x4(addr0_1_512, addr2_3, 1);
-> -		__m512i addr4_7 = _mm512_inserti64x4(addr4_5_512, addr6_7, 1);
-> -
-> -		/* add headroom to address values */
-> -		addr0_3 = _mm512_add_epi64(addr0_3, hdroom);
-> -		addr4_7 = _mm512_add_epi64(addr4_7, hdroom);
-> -
-> -#if RTE_IOVA_IN_MBUF
-> -		/* extract IOVA addr into Packet Buffer Address, erase Header Buffer Address */
-> -		addr0_3 = _mm512_unpackhi_epi64(addr0_3, zero);
-> -		addr4_7 = _mm512_unpackhi_epi64(addr4_7, zero);
-> -#else
-> -		/* erase Header Buffer Address */
-> -		addr0_3 = _mm512_unpacklo_epi64(addr0_3, zero);
-> -		addr4_7 = _mm512_unpacklo_epi64(addr4_7, zero);
-> -#endif
-> +			reg0 = _ci_rxq_rearm_desc_avx512(vaddr0, vaddr1, vaddr2, vaddr3);
-> +			reg1 = _ci_rxq_rearm_desc_avx512(vaddr4, vaddr5, vaddr6, vaddr7);
-
-To shorten the code (and this applies elsewhere too), we can remove the
-vaddr* temporary variables and just do the loads implicitly in the function
-calls, e.g.
-
-reg0 = _ci_rxq_rearm_desc_avx512((const __m128i *)&mb0->buf_addr,
-				(const __m128i *)&mb1->buf_addr,
-				(const __m128i *)&mb2->buf_addr,
-				(const __m128i *)&mb3->buf_addr);
-
-> +		}
->  
->  		/* flush desc with pa dma_addr */
-> -		_mm512_store_si512(RTE_CAST_PTR(__m512i *, &rxdp[0]), addr0_3);
-> -		_mm512_store_si512(RTE_CAST_PTR(__m512i *, &rxdp[4]), addr4_7);
-> +		_mm512_store_si512(RTE_CAST_PTR(__m512i *, &rxdp[0]), reg0);
-> +		_mm512_store_si512(RTE_CAST_PTR(__m512i *, &rxdp[4]), reg1);
-
-Again, the "4" needs to be adjusted based on desc size.
-
->  	}
->  }
->  #endif /* __AVX512VL__ */
-> -#endif /* RTE_NET_INTEL_USE_16BYTE_DESC */
->  
->  static __rte_always_inline void
->  ci_rxq_rearm(struct ci_rx_queue *rxq, const enum ci_rx_vec_level vec_level)
-> @@ -254,7 +292,6 @@ ci_rxq_rearm(struct ci_rx_queue *rxq, const enum ci_rx_vec_level vec_level)
->  	if (_ci_rxq_rearm_get_bufs(rxq) < 0)
->  		return;
->  
-
-<snip>
