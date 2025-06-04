@@ -2,74 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40F50C5B543
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 20:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F6EFC5B543
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 20:46:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 13DAC4026C;
-	Wed,  4 Jun 2025 22:43:32 +0200 (CEST)
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com
- [209.85.222.174])
- by mails.dpdk.org (Postfix) with ESMTP id E5E7C4025D
- for <dev@dpdk.org>; Wed,  4 Jun 2025 22:43:30 +0200 (CEST)
-Received: by mail-qk1-f174.google.com with SMTP id
- af79cd13be357-7cadd46eb07so34254285a.3
- for <dev@dpdk.org>; Wed, 04 Jun 2025 13:43:30 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 512834026C;
+	Wed,  4 Jun 2025 22:46:38 +0200 (CEST)
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com
+ [209.85.219.52]) by mails.dpdk.org (Postfix) with ESMTP id 3578D4025D
+ for <dev@dpdk.org>; Wed,  4 Jun 2025 22:46:37 +0200 (CEST)
+Received: by mail-qv1-f52.google.com with SMTP id
+ 6a1803df08f44-6f8a87f0c0fso4215856d6.0
+ for <dev@dpdk.org>; Wed, 04 Jun 2025 13:46:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1749069810;
- x=1749674610; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1749069996;
+ x=1749674796; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=O8FHYW0ftw2OIyPtNDg4os5UrKIV55As73Xp34F8SfQ=;
- b=a4eHxjjdqde+fsAIJEVeibjiwsy21IYWOtdlDN1gr2dHZ2eWaR/W1bRb0ve3tlos5r
- WemHksgOeSbDrAw++3vilLZzfqRfl36VX5UlLQMhC4iyaXL7PJQOH1WvCLkZWZuv7vJ0
- 8cbBIfGolVIdWaM5FT9m2Rf7XJsnBmf8pNSRxB0cRNdMpkV25MrW6x1qcmsv7qQk0Bgv
- wRdAlitkhFjcfaWDg0aKqVAZe9c5TNSodw90U3j+BM4lpN2sXE0Uz1YWoP1YUKu1ge0B
- 9hB6MKEms7AlTK3+FaVhTQ2hKjaGArySUBLIQQVd9hQkSOBDL6GYIwmGyepcKEFd+Zvv
- /6PA==
+ bh=lzFrjF7daY4ZjXoWEUmh+qr5J7h6JUEsX5LU9tJoX88=;
+ b=XLDUXW3J/0gbb2QxaUSkLS2Bi/B/esx1WyCflR7CJen5nXRjDeQGnxywQB5agVp5Yt
+ pvenXlGDrSD3ixuHub5EG7EkP2Y4mGqu31MhJ/CxcxpUwewbq0pVMU8QuCPIG0q9RK44
+ oWB9vazMZ3MEQgRjx8eS1HEyoXmW+l2NthV0dO1SBt0dcVrcFEIVp+CHzNSN11pVoDMf
+ WyMkmLOyD4woMIyqz3cr3QsdfOFJwFbkhTN+lIrYrgZuMeynJftvdWeeas6voGTHZFAl
+ RgfzOkhUg8hdF/6DAZTdgAogb6oox8VFQ39NW+ZXlQQE3g+2HNweGm0XY02yNqBVjkET
+ r4fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749069810; x=1749674610;
+ d=1e100.net; s=20230601; t=1749069996; x=1749674796;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=O8FHYW0ftw2OIyPtNDg4os5UrKIV55As73Xp34F8SfQ=;
- b=OvOfre6R0d+6dt9+GuTdJbmk/QYU7QZn5iftomfjP594wq/hZcnt3FAhqJAqOIf5q1
- 7DqTkvQvq8ltY/AMwQ+rSsSNd/z4tbaipdAYRm+cBjIrPIcgPkyfO0Tvt9BAnPYpF5MC
- 2cjJQMFQiLXMuHrpB4Je/2pgciGkRUeo4ea2Fqq51tJ/6v+ooRrtY65rCNNQ/CIK2sWX
- Idnfb/XNBZ980cU8ls6OWRUa1ePOjXIwbMBQuUG+4M93fACiIFOUXBbJUVeZnXoJa4zK
- FFmLaRFi/+NoxQCj8/kHM2SmvNz7mjrtXOpDy97iI3/MEv+c58YL2ooto6PsSayOEwID
- TTig==
+ bh=lzFrjF7daY4ZjXoWEUmh+qr5J7h6JUEsX5LU9tJoX88=;
+ b=B33/YyqrGC1h88aAODvP5ATYfBlKKMHM++lOWlbTBhZLMhp6RcfP+RDX+H0qfh/yLI
+ LlMg8o5JUgl8IeDnEhdiN1JAgAzFzE4MCPXrCVmZozzHcXJKnJ4YhJXwaZug2OEDpQhe
+ rGCSrhUS+4Zt/v7a1YrkYEXCmloeQXHJSClMI0FoIq+WAa8S1qJgvAH8eAQvBPY0dOoD
+ DSXu1hNDOKk41UNuOgbmqs6F05Blj/U2rsYszWURkw65NaHcnoFkLd0AhumVZD10TSu9
+ wVmJG1r4esyIQEfFIvgtCUEEJz0hh/3z/5znG5zWjNcSoLJxZD0BmJ7VS3zirGsKQ/S2
+ wvPg==
 X-Forwarded-Encrypted: i=1;
- AJvYcCXt6HMagmSwXiWVr37rkMYaLgZNYoAmPcyA78jlsdxSA153vdyFp+LH4tclyJE77nBp8bM=@dpdk.org
-X-Gm-Message-State: AOJu0YxG7DskSzqCP6jtvvL1cxgEH+vy3ErTWEhWy1OH2gh/2lAYlQXv
- 94btd/aRRRkmbcjsgc3Tm7wl+66yTIfYYO8kF0zSxukQAda4aNEUxZuwgLkgs8BBtW4=
-X-Gm-Gg: ASbGncudubFrW1DnkUziIASnikkKyY55hb3MDC7d0/NpSTSpBx0RfgvuIT/sJVWNmsi
- KdLX8cDqbIQVUyMjp8A2rhiCOmkZjtK134NzvuO56bmECQ0T61fjdd+zRwXYR2a4o9m3R1QTelc
- 64QZfPw4daJODCAIFQGIHB6gndUNq5OyPYg54bDmf5xopW/6uS2AHkypZ8kDthWyi0N200Tpics
- h7HZRJvLl2Uo5ah9UpUUL0Sp4MCakTacBackV5z954d/t3aMIJXPDxPlRFhbjwB45skRRfDcHyv
- ue4XJTSVXyNzcee9MEQ/14KpayJ0O40qzKpG4O2IC3cUuavh5BUNj3apg3d1w2lwUlmQmTbFkrQ
- Mi/wuQJnWO9bsi1k2mLn8bU18wr7j
-X-Google-Smtp-Source: AGHT+IFpaJrxuQZNR3VRq11YIRKaMPyMTF+4qSZDP2WqZhb3FIUPLqb7PqmQrbIVNcFsA0c9mvnhVg==
-X-Received: by 2002:a05:620a:198a:b0:7c7:70dc:e921 with SMTP id
- af79cd13be357-7d21a8cc5eamr732462785a.36.1749069810112; 
- Wed, 04 Jun 2025 13:43:30 -0700 (PDT)
+ AJvYcCVkUUk829udCC1X3EiVLa/MHq7wEGgtZsLrsFwznd4TseeqSczd8OYBC0OIiRRpYY+sRnA=@dpdk.org
+X-Gm-Message-State: AOJu0YxWwds3hVQ5Snn9SyE6vvklUxdrWffhk88RluEemnBMm3b6/H9R
+ opNSxFjIoTg/UjI7Y0O8+Bg6vMcUMOT5RZPdbecy/JVzOILl7h+OqHaCOMBryJ5ygeY=
+X-Gm-Gg: ASbGncte/+1YLGOYYS3aHSEJskllRiiNTHrweLuvJBFksBL+i+pk8UAE68fHinkLO3d
+ SDK13RKMqAne80ZdvudenoUK1hP9foLy12T9Ay3RH52hzEQ7A1g18d1R0aN7TETEZlb6K+bj+aX
+ lEgnb5XzIxzEzYXaJJKJsVTCu0ZfVqn3j8tEUb66GNyDpwZfAtc36zolMqWatDa0zpZyY8h8nF2
+ hrZn+v1tjq9eNUaajU5vYsYXrDCKJc7en2Xh71kjTEJX1WlSqU+JCyuPFapspvvGxu8cPgCixSD
+ 353k027EPiwQamGycj3S3Z5K3L+1milwLdAcTyEnefJhsMVMkgQdV5BRm/zfIc5bUsYKkvijU5a
+ gsmU9Ub/lmdr9b47buY1n+o6JCdLu
+X-Google-Smtp-Source: AGHT+IHZu2A9RTjzU3sRUYkW8ITLFMEWgtCXTWLcGjNfcAOzxk+yImRembHWh7ZHU/keFrduEI2MCQ==
+X-Received: by 2002:ad4:5dec:0:b0:6fa:9baa:face with SMTP id
+ 6a1803df08f44-6faf6fc3deamr64701516d6.35.1749069996316; 
+ Wed, 04 Jun 2025 13:46:36 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7d09a19548dsm1090384085a.67.2025.06.04.13.43.28
+ af79cd13be357-7d09a1a793esm1099435485a.111.2025.06.04.13.46.35
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 04 Jun 2025 13:43:29 -0700 (PDT)
-Date: Wed, 4 Jun 2025 13:43:25 -0700
+ Wed, 04 Jun 2025 13:46:36 -0700 (PDT)
+Date: Wed, 4 Jun 2025 13:41:24 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Wathsala Vithanage <wathsala.vithanage@arm.com>
-Cc: Chenbo Xia <chenbox@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>,
- Maxime Coquelin <maxime.coquelin@redhat.com>, dev@dpdk.org, nd@arm.com,
- Dhruv Tripathi <dhruv.tripathi@arm.com>
-Subject: Re: [PATCH v5 1/4] pci: add non-merged Linux uAPI changes
-Message-ID: <20250604134325.2e23f0cf@hermes.local>
-In-Reply-To: <20250602223805.816816-2-wathsala.vithanage@arm.com>
-References: <20241021015246.304431-1-wathsala.vithanage@arm.com>
- <20250602223805.816816-1-wathsala.vithanage@arm.com>
- <20250602223805.816816-2-wathsala.vithanage@arm.com>
+To: <kirankumark@marvell.com>
+Cc: Nithin Dabilpuram <ndabilpuram@marvell.com>, Sunil Kumar Kori
+ <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>, Harman Kalra
+ <hkalra@marvell.com>, <dev@dpdk.org>
+Subject: Re: [PATCH v9 2/2] drivers: add support for IB_BTH header for RSS
+ in cnxk device
+Message-ID: <20250604134124.3979a78a@hermes.local>
+In-Reply-To: <20250529154343.1589903-2-kirankumark@marvell.com>
+References: <20250529153908.1571050-1-kirankumark@marvell.com>
+ <20250529154343.1589903-1-kirankumark@marvell.com>
+ <20250529154343.1589903-2-kirankumark@marvell.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -86,19 +86,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon,  2 Jun 2025 22:38:01 +0000
-Wathsala Vithanage <wathsala.vithanage@arm.com> wrote:
+On Thu, 29 May 2025 21:13:43 +0530
+<kirankumark@marvell.com> wrote:
 
-> This commit is a hack to prevent build failures the next commit in this
-> patch series causes due to missing vfio uapi definitions.
-> This commit should NEVER BE MERGED.
-> Next commit in this patch series depends on additions to vfio uapi that
-> enable TPH icotl in the vfio-pci driver in the Linux kernel.
-> These additions have not yet been merged into the upstream kernel.
+> From: Kiran Kumar K <kirankumark@marvell.com>
 > 
-> Signed-off-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
-> Reviewed-by: Dhruv Tripathi <dhruv.tripathi@arm.com>
+> Adding support for IB_BTH header for RSS in cnxk device.
+> 
+> Signed-off-by: Kiran Kumar K <kirankumark@marvell.com>
 > ---
 
-The series will not be reviewed or accepted until the kernel
-changes are merged upstream and in a kernel release from Linus.
+Applied with some rewording of commit header to make check-git-log happy
+and whitespace change to the header file so new field matches others.
