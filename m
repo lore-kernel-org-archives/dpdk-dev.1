@@ -2,71 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6113C5B543
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 16:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C5FDC5B549
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 16:51:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BB61C42E46;
-	Wed,  4 Jun 2025 18:43:14 +0200 (CEST)
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com
- [209.85.160.171])
- by mails.dpdk.org (Postfix) with ESMTP id 3BD3A4025D
- for <dev@dpdk.org>; Wed,  4 Jun 2025 18:43:13 +0200 (CEST)
-Received: by mail-qt1-f171.google.com with SMTP id
- d75a77b69052e-4a44b0ed780so60720881cf.3
- for <dev@dpdk.org>; Wed, 04 Jun 2025 09:43:13 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 74E3542E46;
+	Wed,  4 Jun 2025 18:51:20 +0200 (CEST)
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com
+ [209.85.219.54]) by mails.dpdk.org (Postfix) with ESMTP id 91E884025D
+ for <dev@dpdk.org>; Wed,  4 Jun 2025 18:51:19 +0200 (CEST)
+Received: by mail-qv1-f54.google.com with SMTP id
+ 6a1803df08f44-6f8a87f0c0fso1602446d6.0
+ for <dev@dpdk.org>; Wed, 04 Jun 2025 09:51:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1749055392; x=1749660192; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1749055879;
+ x=1749660679; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=996eXmhT5t0GeW44HxL3y0dqJggLVUBDa8v1fsy/2Ws=;
- b=gAw4VUgH0SVJy3oLkTJyQOIMCWTiWmDNWYbdJ+xmREt+9HtnuMhzWDT184ik/p7x4e
- eg/QF3olPppl8qutWNST1ugUsPrJwmIfAM0+PCc2NFxxoXIpR7oYrqhJSBlOkxru+LL5
- SbPex49NT0xzCRr+UrC+2WaW8/kSFdhaNY23iS0kpwnAI4oZzFfZQPvToa6QxoovR2pE
- +myeL6GU3FMisWUEty3n2JBnDb5rkab6U1nLrEo5/Vijy2Mp2i+wTtOY0kwazOaO3EYE
- QvPyVFYv9Icg8/Wt/TsYYPPtmmYzfxhON3o0q4XBFzOxTG20ghw+qvD2CZz4e+H3W7m6
- uRQg==
+ bh=3vK7HpJgy2aDXfev5pOU5lhtYGavLb3M+riIFi5ZBww=;
+ b=M5w452NxdnzidNzYSPo4f/jsFeRR5Ws9wHqq3FBdUNv7TkO2WTF8BtuLa5ULJkv6Qy
+ P8vcKrx+JEzUrAs2SiPcUGkmc5MiIkvMgUJqH0c1d1OcIWnds/o+k3CIsAblt7pspfgi
+ 6KpoPWrlNE9V0ket/gM2g459ywGKwJrIHIN2KwmisvQPOqd2h7nJIK9y/BLJeUpGsnk8
+ CvmUIHvUNrTjJgqCIn2TwYxu/0u5ifc2zWW2hXFa1YZq5bkS3OEWVe7lBk6KUGIv1jNl
+ zcVphzBQOOAkmMFKliMQcvqeHBEaoIXP/tB8EBpVy/YsBKIZOgAppQj5I6H3xRdZz005
+ 5wBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749055392; x=1749660192;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ d=1e100.net; s=20230601; t=1749055879; x=1749660679;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=996eXmhT5t0GeW44HxL3y0dqJggLVUBDa8v1fsy/2Ws=;
- b=dI0rz0qHgya4xXUQyppnc5t+nAKZdjS1aIvkvXhTK6qal18p6L1s18Vv9fR7ZZj792
- EaE/RpzRp3XM+zY2mIAOD3wcMFno8w5/WrsNsgNKLJna6x0dSYjR1aeKerRqRNhyQ+iR
- ZU7CPp6cTnBy7y0BPxPU/3i8ihvEhoeHXfJEq0SjsBQaOKo0sbliDkz/ydRyJsOmApUP
- oRXAkzjCiHCtSJaA1Ht6tUAP3KcYCM/nOgKzLc0aWioq4NlpzRhPwpiqZSNw79y/FQV+
- 4sMepeje2TXYXKpuGrAVhODg3Y5GQFI+pwTDsQb96gwsJNOKnJ3GRqMvPciKOzpavQTv
- zYJg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUt1iD4FBQq+4ApcdkarmjmU743oOkpLmInWWpUfSv+YlpY/Y9qwgOhxWZ3G3EIMMQIKYI=@dpdk.org
-X-Gm-Message-State: AOJu0YzXu/xDuiKMqSn37qmWqvBBm8MkWMba1JWSn/shzyJART6keDQl
- A5Bukem7YswcF+C3jmjraAc6qnaVP6n9LAqjBjpSDCc07pJ+mDJiEuC7XXW5wBzQW58CpAUbvlV
- uRfU+6YVAbq32kk+SH8GqCalZMCWNjDA=
-X-Gm-Gg: ASbGncuCNUc2vGP3OIqPMIWKDo5ntEcURsXIndq1RpFc8yG7KQw3cCLtSL6Ox8iOc3U
- JwiImkLFh99e5gdfq/UQ40kLV5upMPTMaRU5IAVSmY4pSDro6Z32dJ+bty3NKrdgGGIZqniwr6O
- x0pIqxJcmWQbru9EQAByRhntnK+QK9BdXZgvkOxzC6kg==
-X-Google-Smtp-Source: AGHT+IGXqq9tx7pCpXKfTF7UfhMnlAibrKBBORrc6wauvLCJfq86Wtx9ZqYGGO9xk9xr2al4+pUsyMzdp954Circ6tE=
-X-Received: by 2002:a05:622a:590e:b0:4a5:98ad:5640 with SMTP id
- d75a77b69052e-4a5a578425fmr59154461cf.23.1749055392531; Wed, 04 Jun 2025
- 09:43:12 -0700 (PDT)
+ bh=3vK7HpJgy2aDXfev5pOU5lhtYGavLb3M+riIFi5ZBww=;
+ b=YavE1wBEEH7ScshKau7Kfuue8f3EuDNaReOKSNf11dy1kdHpxnaC/2K0d1w0/me0k7
+ QEQ/Oja8HM+tydZYy469B0ibG1rQWor63Z9qLG10Pyr0x8JD6Hi2Isrqh1kUcYnoCoQz
+ 36VfSjC2NyqbIkJGvqlfJloGHAEKPPTD+Uwf80b8C+3vFG2p4zIbVelgzZK7GGJyQc9t
+ m32It3YJSK8/HUVML4JVzmIByHfn2WuKUDoa8L2KOdcMiTcl+/WECjJegrMIiixR769X
+ mWL/uRz/kUkBRn3ms7nftFnKOqXpoPa4WdYwkLm8zDoo/gSvJRB0x0B2B0w7DLR+9DTa
+ dI8w==
+X-Gm-Message-State: AOJu0YzyYSpfF1AOllg7QpqQ5FtlzURR+b5vnEk9iyb4M43X2ovA14jg
+ AoHIksS7jc9iGjT6v/7zhowBu7a4WRZx6y924D7hVyn6s5CWgtLUw5jK08lXo8g0uYM=
+X-Gm-Gg: ASbGncs9WLlQeWAO+Pfcnse2VURwNo4k68wnUlSe4XAqw/YekmfxTTrpgiaIyYHD8h3
+ DHwc2OOAOrwYUJ9zR3UXSOIgDk5HVppjGg1io1am4kqTBrKdJnTg4o6aeRGipHcUDccTOkTZT9b
+ ZgAHq9c7HgegnfTZahcajW1s4A60fKIPCslweJ9tx+M5bjlalk+xlKslEbcbwNb04OPZDC1HmmO
+ HzBlSj90KmYFwVG8FCPCwXg0rTxoj1JOro07PzOjb9mb/umnxh0ux0198pueQM0tvAeMfLdYtlp
+ b41GZVwRPMbO1u2acJ2wGnu/yRd4xWZwMjuXp8pPIYcD5Gq73mLiDBTnu8p968/4tiAxJVb5mqw
+ pvBNd86naYgpNswQDqgdtrPR+hy/yeZNWatXmbxM=
+X-Google-Smtp-Source: AGHT+IG6EYH8BCjzAoaxZDUPOfK7SgqYeYeHLdadTc9CTUqkegiUVU5zyy4HoKFdBz6AgpKMePx4DQ==
+X-Received: by 2002:ad4:5ced:0:b0:6e8:ebc6:fd5f with SMTP id
+ 6a1803df08f44-6faf6fa70bdmr50370946d6.20.1749055878768; 
+ Wed, 04 Jun 2025 09:51:18 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-6fac6d4c7d8sm102321166d6.36.2025.06.04.09.51.18
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 04 Jun 2025 09:51:18 -0700 (PDT)
+Date: Wed, 4 Jun 2025 09:51:14 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Wathsala Vithanage <wathsala.vithanage@arm.com>
+Cc: dev@dpdk.org, nd@arm.com
+Subject: Re: [PATCH v5 0/4] An API for Cache Stashing with TPH
+Message-ID: <20250604095114.2e540905@hermes.local>
+In-Reply-To: <20250602223805.816816-1-wathsala.vithanage@arm.com>
+References: <20241021015246.304431-1-wathsala.vithanage@arm.com>
+ <20250602223805.816816-1-wathsala.vithanage@arm.com>
 MIME-Version: 1.0
-References: <20250103060612.2671836-1-nsaxena@marvell.com>
- <20250604101259.4181992-1-nsaxena@marvell.com>
- <20250604101259.4181992-3-nsaxena@marvell.com>
-In-Reply-To: <20250604101259.4181992-3-nsaxena@marvell.com>
-From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Wed, 4 Jun 2025 22:12:46 +0530
-X-Gm-Features: AX0GCFv9OCnwXXsVn8Yc4dU8Rl0Exyb0MlWOBUXUsJLZph1C04QFhSMKLEJMrOs
-Message-ID: <CALBAE1M7cMhYfNUbvqVQy62YTQfF3RnNmhVLYguKvmWEEmpxPQ@mail.gmail.com>
-Subject: Re: [PATCH v10 2/7] graph: add feature arc registrations
-To: Nitin Saxena <nsaxena@marvell.com>
-Cc: Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, 
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Zhirun Yan <yanzhirun_163@163.com>, 
- Robin Jarry <rjarry@redhat.com>, Christophe Fontaine <cfontain@redhat.com>,
- dev@dpdk.org, Nitin Saxena <nsaxena16@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -81,130 +80,126 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Jun 4, 2025 at 3:43=E2=80=AFPM Nitin Saxena <nsaxena@marvell.com> w=
-rote:
->
-> This patch defines RTE_GRAPH_FEATURE_ARC_REGISTER() and
-> RTE_GRAPH_FEATURE_REGISTER() constructors and associated APIs with
-> programming guide.
->
-> Signed-off-by: Nitin Saxena <nsaxena@marvell.com>
-> ---
->  doc/api/doxy-api-index.md                   |   1 +
->  doc/guides/prog_guide/graph_lib.rst         | 289 +++++++++++
->  doc/guides/prog_guide/img/feature_arc-1.svg | 269 +++++++++++
->  doc/guides/prog_guide/img/feature_arc-2.svg | 511 ++++++++++++++++++++
->  doc/guides/rel_notes/release_25_07.rst      |   7 +
->  lib/graph/graph_feature_arc.c               |  36 ++
->  lib/graph/meson.build                       |   2 +
->  lib/graph/rte_graph_feature_arc.h           | 270 +++++++++++
->  8 files changed, 1385 insertions(+)
->  create mode 100644 doc/guides/prog_guide/img/feature_arc-1.svg
->  create mode 100644 doc/guides/prog_guide/img/feature_arc-2.svg
->  create mode 100644 lib/graph/graph_feature_arc.c
->  create mode 100644 lib/graph/rte_graph_feature_arc.h
->
-> diff --git a/doc/api/doxy-api-index.md b/doc/api/doxy-api-index.md
-> index 5c425a2cb9..a7bdbf892c 100644
-> --- a/doc/api/doxy-api-index.md
-> +++ b/doc/api/doxy-api-index.md
-> @@ -214,6 +214,7 @@ The public API headers are grouped by topics:
->      [table_wm](@ref rte_swx_table_wm.h)
->    * [graph](@ref rte_graph.h):
->      [graph_worker](@ref rte_graph_worker.h)
-> +    [graph_feature_arc](@ref rte_graph_feature_arc.h)
+On Mon,  2 Jun 2025 22:38:00 +0000
+Wathsala Vithanage <wathsala.vithanage@arm.com> wrote:
 
-Missing ",". See diff
+> Today, DPDK applications benefit from Direct Cache Access (DCA) features
+> like Intel DDIO and Arm's write-allocate-to-SLC. However, those features
+> do not allow fine-grained control of direct cache access, such as
+> stashing packets into upper-level caches (L2 caches) of a processor or
+> the shared cache of a chiplet. PCIe TLP Processing Hints (TPH) addresses
+> this need in a vendor-agnostic manner. TPH capability has existed since
+> PCI Express Base Specification revision 3.0; today, numerous Network
+> Interface Cards and interconnects from different vendors support TPH
+> capability. TPH comprises a steering tag (ST) and a processing hint
+> (PH). ST specifies the cache level of a CPU at which the data should be
+> written to (or DCAed into), while PH is a hint provided by the PCIe
+> requester to the completer on an upcoming traffic pattern. Some NIC
+> vendors bundle TPH capability with fine-grained control over the type of
+> objects that can be stashed into CPU caches, such as
+>=20
+> - Rx/Tx queue descriptors
+> - Packet-headers
+> - Packet-payloads
+> - Data from a given offset from the start of a packet
+>=20
+> Note that stashable object types are outside the scope of the PCIe
+> standard; therefore, vendors could support any combination of the above
+> items as they see fit.
+>=20
+> To enable TPH and fine-grained packet stashing, this API extends the
+> ethdev library and the PCI bus driver. In this design, the application
+> provides hints to the PMD via the ethdev stashing API to indicate the
+> underlying hardware at which CPU and cache level it prefers a packet to
+> end up. Once the PMD receives a CPU and a cache-level combination (or a
+> list of such combinations), it must extract the matching ST from the PCI
+> bus driver for such combinations. The PCI bus driver implements the TPH
+> functions in an OS specific way; for Linux, it depends on the TPH
+> capabilities of the VFIO kernel driver.
+>=20
+> An application uses the cache stashing ethdev API by first calling the
+> rte_eth_dev_stashing_capabilities_get() function to find out what object
+> types can be stashed into a CPU cache by the NIC out of the object types
+> in the bulleted list above. This function takes a port_id and a pointer
+> to a uint16_t to report back the object type flags. PMD implements the
+> stashing_capabilities_get function pointer in eth_dev_ops. If the
+> underlying platform or the NIC does not support TPH, this function
+> returns -ENOTSUP, and the application should consider any values stored
+> in the object invalid.
+>=20
+> Once the application knows the supported object types that can be
+> stashed, the next step is to set the steering tags for the packets
+> associated with Rx and Tx queues via
+> rte_eth_dev_stashing_{rx,tx}_config_set() ethdev library functions. Both
+> functions have an identical signature, a port_id, a queue_id, and a
+> config object. The port_id and the queue_id are used to locate the
+> device and the queue. The config object is of type struct
+> rte_eth_stashing_config, which specifies the lcore_id and the
+> cache_level, indicating where objects from this queue should be stashed.
+> The 'objects' field in the config sets the types of objects the
+> application wishes to stash based on the capabilities found earlier.
+> Note that if the 'objects' field includes the flag
+> RTE_ETH_DEV_STASH_OBJECT_OFFSET, the 'offset' field must be used to set
+> the desired offset. These functions invoke PMD implementations of the
+> stashing functionality via the stashing_{rx,tx}_hints_set function
+> callbacks in the eth_dev_ops, respectively.
+>=20
+> The PMD's implementation of the stashing_rx_hints_set() and
+> stashing_tx_hints_set() functions is ultimately responsible for
+> extracting the ST via the API provided by the PCI bus driver. Before
+> extracting STs, the PMD should enable the TPH capability in the endpoint
+> device by calling the rte_pci_tph_enable() function.=C2=A0 The application
+> begins the ST extraction process by calling the rte_pci_tph_st_get()
+> function in drivers/bus/pci/rte_bus_pci.h, which returns STs via the
+> same rte_tph_info objects array passed into it as an argument.=C2=A0 Once=
+ PMD
+> acquires ST, the stashing_{rx,tx}_hints_set callbacks implemented in the
+> PMD are ready to set the ST as per the rte_eth_stashing_config object
+> passed to them by the higher-level ethdev functions
+> ret_eth_dev_stashing_{rx,tx}_hints(). As per the PCIe specification, STs
+> can be placed on the MSI-X tables or in a device-specific location. For
+> PMDs, setting the STs on queue contexts is the only viable way of using
+> TPH. Therefore, the PMDs should only enable TPH in device-specific mode.
+>=20
+> V4->V5:
+>  * Enable stashing-hints (TPH) in Intel i40e driver.
+>  * Update exported symbol version from 25.03 to 25.07.
+>  * Add TPH mode macros.
+>=20
+> V3->V4:
+>  * Add VFIO IOCTL based ST extraction mechanism to Linux PCI bus driver
+>  * Remove ST extraction via direct access to ACPI _DSM
+>  * Replace rte_pci_extract_tph_st() with rte_pci_tph_st_get() in PCI
+>    bus driver.
+>=20
+> Wathsala Vithanage (4):
+>   pci: add non-merged Linux uAPI changes
+>   bus/pci: introduce the PCIe TLP Processing Hints API
+>   ethdev: introduce the cache stashing hints API
+>   net/i40e: enable TPH in i40e
+>=20
+>  drivers/bus/pci/bsd/pci.c            |  43 +++++++
+>  drivers/bus/pci/bus_pci_driver.h     |  52 ++++++++
+>  drivers/bus/pci/linux/pci.c          | 100 ++++++++++++++++
+>  drivers/bus/pci/linux/pci_init.h     |  14 +++
+>  drivers/bus/pci/linux/pci_vfio.c     | 170 +++++++++++++++++++++++++++
+>  drivers/bus/pci/private.h            |   8 ++
+>  drivers/bus/pci/rte_bus_pci.h        |  67 +++++++++++
+>  drivers/bus/pci/windows/pci.c        |  43 +++++++
+>  drivers/net/intel/i40e/i40e_ethdev.c | 127 ++++++++++++++++++++
+>  kernel/linux/uapi/linux/vfio_tph.h   | 102 ++++++++++++++++
+>  lib/ethdev/ethdev_driver.h           |  66 +++++++++++
+>  lib/ethdev/rte_ethdev.c              | 149 +++++++++++++++++++++++
+>  lib/ethdev/rte_ethdev.h              | 158 +++++++++++++++++++++++++
+>  lib/pci/rte_pci.h                    |  15 +++
+>  14 files changed, 1114 insertions(+)
+>  create mode 100644 kernel/linux/uapi/linux/vfio_tph.h
+>=20
 
--    [graph_worker](@ref rte_graph_worker.h)
--    [graph_feature_arc](@ref rte_graph_feature_arc.h)
-+    [graph_worker](@ref rte_graph_worker.h),
-+    [graph_feature_arc](@ref rte_graph_feature_arc.h),
+How will this impact existing applications that never use the API?
+It is crucial that existing 3rd party applications, just work without
+modifications. We don't want to hear from Network Virtual Appliance
+vendors that there is a performance regression in DPDK. They are already
+reluctant to keep up with DPDK versions.
 
-
-
->    * graph_nodes:
->      [eth_node](@ref rte_node_eth_api.h),
->      [ip4_node](@ref rte_node_ip4_api.h),
-> diff --git a/doc/guides/prog_guide/graph_lib.rst b/doc/guides/prog_guide/=
-graph_lib.rst
-> index dc6c8c0712..191c8e8a0b 100644
-> --- a/doc/guides/prog_guide/graph_lib.rst
-> +++ b/doc/guides/prog_guide/graph_lib.rst
-> @@ -559,3 +559,292 @@ on success packet is enqueued to ``udp4_input`` nod=
-e.
->
->  Hash lookup is performed in ``udp4_input`` node with registered destinat=
-ion port
->  and destination port in UDP packet , on success packet is handed to ``ud=
-p_user_node``.
-> +
-> +Graph feature arc
-
-Move this above "Inbuilt Nodes" section as it is Graph related feature.
-
-> +-----------------
-> diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_note=
-s/release_25_07.rst
-> index 6b070801de..9740274a16 100644
-> --- a/doc/guides/rel_notes/release_25_07.rst
-> +++ b/doc/guides/rel_notes/release_25_07.rst
-> @@ -78,6 +78,13 @@ New Features
->
->    See the :doc:`../cryptodevs/zsda` guide for more details on the new dr=
-iver.
->
-> +* **Added feature arc abstraction in graph library.**
-
-Better to reword as Added feature arc support in graph library
-> new file mode 100644
-> index 0000000000..56d8f2f34c
-> --- /dev/null
-> +++ b/lib/graph/rte_graph_feature_arc.h
-> @@ -0,0 +1,270 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright(C) 2025 Marvell International Ltd.
-> + */
-> +
-> +#ifndef _RTE_GRAPH_FEATURE_ARC_H_
-> +#define _RTE_GRAPH_FEATURE_ARC_H_
-> +
-> +#include <assert.h>
-> +#include <errno.h>
-> +#include <signal.h>
-> +#include <stddef.h>
-> +#include <stdint.h>
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <string.h>
-> +
-> +#include <rte_common.h>
-> +#include <rte_compat.h>
-> +#include <rte_debug.h>
-> +#include <rte_graph.h>
-> +
-> +#ifdef __cplusplus
-> +extern "C" {
-> +#endif
-> +
-> +/**
-> + * @file
-> + *
-> + * rte_graph_feature_arc.h
-
-
-Please check the generated html file of documentation. Some of the
-symbols are not resolving. See some examples
-
-  * If a given feature likes to control number of indexes (which is higher =
-than
-- * RTE_GRAPH_FEATURE_ARC_REGISTER::max_indexes) it can do so by using
-- * RTE_GRAPH_FEATURE_REGISTER():override_index_cb(). As part of
-+ * rte_graph_feature_arc_register::max_indexes) it can do so by using
-+ * rte_graph_feature_arc_register::override_index_cb(). As part of
-  * rte_graph_feature_arc_init(), all feature's override_index_cb(), if set=
-, are
-  * called and with maximum value returned by any of the feature is used fo=
-r
-  * rte_graph_feature_arc_create()
-@@ -126,8 +126,8 @@ extern "C" {
+I.e if the application does nothing caching must be enabled.
