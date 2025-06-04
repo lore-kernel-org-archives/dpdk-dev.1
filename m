@@ -2,40 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E3D8C5AD49
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 01:37:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC183C5AD49
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 02:51:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 45CD34065A;
-	Wed,  4 Jun 2025 03:37:16 +0200 (CEST)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
- by mails.dpdk.org (Postfix) with ESMTP id 4E5E2402DC
- for <dev@dpdk.org>; Wed,  4 Jun 2025 03:37:14 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.88.163])
- by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4bBqwB16Ppz27hdM
- for <dev@dpdk.org>; Wed,  4 Jun 2025 09:38:02 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id E7EC1180042
- for <dev@dpdk.org>; Wed,  4 Jun 2025 09:37:10 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 4 Jun 2025 09:37:10 +0800
-Message-ID: <3eb61fe1-ccf5-4c73-907f-f3a38b4496ee@huawei.com>
-Date: Wed, 4 Jun 2025 09:37:10 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id 704C24065A;
+	Wed,  4 Jun 2025 04:51:44 +0200 (CEST)
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com
+ [209.85.219.54]) by mails.dpdk.org (Postfix) with ESMTP id B1039402DC
+ for <dev@dpdk.org>; Wed,  4 Jun 2025 04:51:42 +0200 (CEST)
+Received: by mail-qv1-f54.google.com with SMTP id
+ 6a1803df08f44-6fad8e00a22so45006076d6.3
+ for <dev@dpdk.org>; Tue, 03 Jun 2025 19:51:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1749005502;
+ x=1749610302; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=o+NBqHnJpXDRdc5vArMSD8CpKmVKK8DIlmVuRpY01p4=;
+ b=G+T8gjqa0yBUhsc453EsvbHLJ5KViHQeAiwnoS/hZdgjU6K8bumIkgYdZjljKugs7/
+ u4ijHWdB99F85lEjXhoxcANguXIzTdr5eSkupaOD6XQJFWsWrWxLjzRwqfZF4EavvyTY
+ HIawGTh+uXFZpnFi02NVwocSQPVSCE/uO54Pm20CnxC79Yo6g/jCPYGkKe2sZ8PDI7rn
+ DtEIbhZz78KcML5RLMqI0OjwL/G300/XzbgVPx0mjETHln+sLZnWv4UzD28Wv59/Wwu4
+ 6gHJOaSba3v2QvCytLimhecMPVnOET1bnIfaibd/+e5BbMlRbujK7ff75gwShqIZI5l1
+ EL8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1749005502; x=1749610302;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=o+NBqHnJpXDRdc5vArMSD8CpKmVKK8DIlmVuRpY01p4=;
+ b=BbzbyQ/aLuMsdzz/mxlxedIC3OOmAzHzykVLmOfobDvWuUF3GJlLHe3BgJ+Y+W3X/Y
+ mfWaNn1lVUSHgI2Eri+0JJQVo4KWNOwq7vt2cqYe3Iasnod868a+Uxef5pCOz27TAVVA
+ d1K15NbTclqgL+YO5rQcajI9VF5iUYgLOXKOTsNyA1Zyk2Psv/fyzlhplbIDhjGjRPTN
+ p/OCUsWpvdlQ48EAOFJWqZCHvpYV606BP+pGQA6jO7o/AiNNhs7OV6TZvI662UBOJitc
+ Bkdv1akY7Se77u4cvvhgdxreG3ygVSUG7d1cJJG1MeZJnE+aEuh2EAn4Xms9IzWfYjvG
+ qEcQ==
+X-Gm-Message-State: AOJu0YwHHSKAgQMLrQKRYZ+uf4ompOdlpRAZPxn0G2YozCd1Ab1ffduH
+ ieXmQdSz4VssNO5EcFYrM9B/k6BUTo+O6pboUBzNiFWOBeZpMmZkRW+8PdZ+eI/Ist4=
+X-Gm-Gg: ASbGncthTkCxRtTuSy9uxiUtAuyNM0wQ6aV2+K2KGnUbd6zrFqG5jvshfH0PMonbHbC
+ RzMZPbc/7r6lkagGuu3YWntOQBU8AmZY9cskZxDS+y23ZtW5IOC48UNEMyYxMZA6MjMxVKlh5aP
+ gdgV4XbeBe5+KL4q9v1wIqmnp88HeIHuoVmvLLBqJxdNq828vmsg1ImZ/Wsa6zw/NneXAKRFzDm
+ DUPPOudQfBSI33lbF3jkoZ4Tiu8Hwkh5l26KWEXldbe4uIKP94GaDy8KXqcca+os+nxQUmR07Hk
+ KzMa3GcnrmD3BP7ckDRbZ0n6PDLzGsXK3m6bqB1fpnIXcK+rHeinWz65ZZXML3k20jYS4WEfcir
+ esnh63w9a13jAoJBhVqvEJdT/Vxxf
+X-Google-Smtp-Source: AGHT+IEL1BpCPt9d7ttxZ4JaRwB5STBvVI3RCIjQDgjkcuQ91zYK0G3ZScmWOX9rlpuatqG+R3R7aA==
+X-Received: by 2002:a05:6214:124b:b0:6e8:9086:261 with SMTP id
+ 6a1803df08f44-6faf6e988efmr16871636d6.3.1749005501872; 
+ Tue, 03 Jun 2025 19:51:41 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-6fac6d33901sm92054256d6.18.2025.06.03.19.51.40
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 03 Jun 2025 19:51:41 -0700 (PDT)
+Date: Tue, 3 Jun 2025 19:51:38 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: vanshika.shukla@nxp.com
+Cc: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>, Sachin Saxena
+ <sachin.saxena@nxp.com>, Jun Yang <jun.yang@nxp.com>
+Subject: Re: [v2 10/10] bus/dpaa: optimize qman enqueue check
+Message-ID: <20250603195138.310a98a5@hermes.local>
+In-Reply-To: <20250602131526.3233959-11-vanshika.shukla@nxp.com>
+References: <20250528103934.1001747-1-vanshika.shukla@nxp.com>
+ <20250602131526.3233959-1-vanshika.shukla@nxp.com>
+ <20250602131526.3233959-11-vanshika.shukla@nxp.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] argparse additions and rework
-To: Bruce Richardson <bruce.richardson@intel.com>, <dev@dpdk.org>
-References: <20250527092113.903910-1-bruce.richardson@intel.com>
- <20250603153233.2427833-1-bruce.richardson@intel.com>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20250603153233.2427833-1-bruce.richardson@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,46 +82,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Thanks for this patchset, Bruce.
-Series-acked-by: Chengwen Feng <fengchengwen@huawei.com>
+On Mon,  2 Jun 2025 18:45:26 +0530
+vanshika.shukla@nxp.com wrote:
 
-On 2025/6/3 23:32, Bruce Richardson wrote:
-> This patchset is based off the work to adjust how we do argument parsing
-> inside EAL. To enable argparse to be effectively used for EAL, we have
-> new features and some changes in the first two patches, which are
-> relatively small - though are ABI/API affecting.
+> From: Hemant Agrawal <hemant.agrawal@nxp.com>
 > 
-> These add support for saving off strings and boolean values, have argparse
-> stop parsing at a "--", and finally have argparse return the number of
-> arguments actually parsed on success.
+> This patch improves data access during qman enequeue ring check.
 > 
-> The third patch is a bigger change. It was inspired by the fact that
-> when adding the boolean and string support we had to update some
-> "MAX" value defines used in the code. This is obviously not good from
-> an ABI/API perspective, once the library becomes part of the stable ABI.
-> In order to remove these MAX values, patch 3 looks to replace the
-> #define values with enums - which means some rework splitting the
-> various flags into separate categories, and similarly splitting the
-> single "flags" field with separate fields specifying if an argument
-> value is required, what type that value should have, and then a
-> final smaller field for any additional modifiers.
-> 
-> v2: minor changes to patch 2 (see log at end of that patch)
-> 
-> Bruce Richardson (3):
->   argparse: add support for string and boolean args
->   argparse: make argparse EAL-args compatible
->   argparse: use enums to remove max-value defines in lists
-> 
->  app/test/test_argparse.c               | 229 ++++++++++++++-----------
->  doc/guides/rel_notes/release_25_07.rst |  50 ++++++
->  examples/dma/dmafwd.c                  |  20 +--
->  examples/flow_filtering/main.c         |   4 +-
->  lib/argparse/rte_argparse.c            | 184 ++++++++++++--------
->  lib/argparse/rte_argparse.h            |  94 +++++-----
->  6 files changed, 355 insertions(+), 226 deletions(-)
-> 
-> --
-> 2.48.1
-> 
+> Signed-off-by: Jun Yang <jun.yang@nxp.com>
+> Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 
+Still has compile failures, fix and resubmit
