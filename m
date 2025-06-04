@@ -2,56 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4536DC5B549
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 13:08:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6454C5B549
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 13:16:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 621A942DE4;
-	Wed,  4 Jun 2025 15:08:07 +0200 (CEST)
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com
- [162.62.58.216])
- by mails.dpdk.org (Postfix) with UTF8SMTP id 1F2D042DE9
- for <dev@dpdk.org>; Wed,  4 Jun 2025 15:08:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
- s=s201512; t=1749042483;
- bh=gZuath/qkKD9o/Anpg7yWB85iperEzQT0ytrAzc4tF8=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=X1ogYpyfX7FDmm3wyLaiPDm/qD7+WEd+/bhZIlxpJBK/2V44hr2IaS+oMqVZM4n9y
- /vqkqDluN45GRm6Sp/F+HxGcAQq2YTSmH7Ko7UMk51315tfXcsNH8O9gad6uVagjyt
- fub2YpPffs5m78DPj/wjnWQVxV1jiROVLCtSiYQo=
-Received: from localhost.localdomain ([116.139.97.45])
- by newxmesmtplogicsvrszgpua8-0.qq.com (NewEsmtp) with SMTP
- id 1F808003; Wed, 04 Jun 2025 21:07:56 +0800
-X-QQ-mid: xmsmtpt1749042476tf0b0jev0
-Message-ID: <tencent_B52A55B12D5087CE8A57E68AB148C2A47809@qq.com>
-X-QQ-XMAILINFO: OVFdYp27KdlJVBMWibhg2vXNmhyu+Qqo+1p05p2yiWY9+NUksi7nhhOfZGJjKw
- p8aPHFq237hfLbdRft8beS26Skvc+EjZ5c4gwPmzlAluYchrHEvt1BxD8Y5oXf/T/T+OdXX4m0Mm
- so8iNiWhaIey/INRlCaV+W1HThckIFDU4CJsjiJ7wChfR/ezVCMVTHQFvBxk11hGXXWmYBIgEsYg
- nSbpDeojAS0BNvVl45jvWoyRRqwzxIHCv0LZJnLcILHhFXu+CkLoxellk7k4zMjamPt4Fc3+5ifq
- TzDmXqZxXn4mj6ftxby378ip+wenFP18C7ErD6roEuBYtaI7tfqQ4Raew7Bk3ASCvmryRtKKewHl
- a9XLmcZXZ7LuvKWiWEi0S2L4M3q7gUQgOcDSpGtkq0ha86fOkNb98mnkkNwpPNY1wK72Xk2eR58Y
- WABGh1g0Ymrtszh+gC0qCNRDdHOD3tL3m0wVDkegdLQyfo/ATJly+z8P0VEOnPCtMjlC8kE3IyV0
- uzf2tU8FV+lTyz0oOeTxlp7t91m337/dBAQs5uJLBvGOKWrnixzqcUZQY3OY7nTQtQ6HsOkq3bvg
- KopXHKZ3Rbaqd4+NidHFy5dhcK7E5P8oUYQbyJLkUI8/6rHayttliAtU22BM+6UTqOsfXS3XDn0y
- gJLaU1FpTMQyx8mKa//mkQR8++occHKKAfKwUvqBhhyso4sgyWfUAwmhhXUnFAPny/QAh28xm3U1
- SXXoFsCqx0kGT+BTJ7k0hUjI5Cte8ZRpBFBKU1smVrFGp/3TnpgdZlMG77TIb1KuhSikOuSz0sPI
- V3ko/L8878AJSLl4Wcsxnvhjfzc5nte3EQA0o+tTpVc1bOGdO2mfL0pkGJMBcoW3bX9Pi5F4/PN1
- dNK6QlOkym4b4bjYVQRT+Em3s6UhtR8CK1uJ6N5GjvylHSA/HmQggHv81zDXAI9nd7ffWCt0fgRo
- LMq/oO+nP+a8JHp61Qxc/YBxg/B5a+r9/ZEGGHF9P+KBUO+b269xloUOh0jE41KqS+4kN18EcC3l
- ffGYnNkD/yHlj/1W3xA9mDSCr0hPI=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: uk7b@foxmail.com
-To: dev@dpdk.org
-Cc: sunyuechi <sunyuechi@iscas.ac.cn>,
- Stanislaw Kardach <stanislaw.kardach@gmail.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v2 3/3] riscv: override machine_args only when default
-Date: Wed,  4 Jun 2025 21:07:54 +0800
-X-OQ-MSGID: <20250604130754.2349592-1-uk7b@foxmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <tencent_3C14F3CE0963698675F04CA9725B540D5D0A@qq.com>
+	by mails.dpdk.org (Postfix) with ESMTP id EE2B242D80;
+	Wed,  4 Jun 2025 15:16:25 +0200 (CEST)
+Received: from cstnet.cn (smtp83.cstnet.cn [159.226.251.83])
+ by mails.dpdk.org (Postfix) with ESMTP id 843D3402D8
+ for <dev@dpdk.org>; Wed,  4 Jun 2025 15:16:23 +0200 (CEST)
+Received: from sunyuechi$iscas.ac.cn ( [116.139.97.45] ) by
+ ajax-webmail-APP-09 (Coremail) ; Wed, 4 Jun 2025 21:16:21 +0800 (GMT+08:00)
+X-Originating-IP: [116.139.97.45]
+Date: Wed, 4 Jun 2025 21:16:21 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: =?UTF-8?B?5a2Z6LaK5rGg?= <sunyuechi@iscas.ac.cn>
+To: uk7b@foxmail.com, dev@dpdk.org
+Subject: Re: [PATCH v2 0/3] Add RISC-V V extension detection and LPM
+ optimization
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.1-cmXT5 build
+ 20240627(e6c6db66) Copyright (c) 2002-2025 www.mailtech.cn cnic.cn
+In-Reply-To: <tencent_51258569F10CA9965AA00D6D162FCD45600A@qq.com>
 References: <tencent_3C14F3CE0963698675F04CA9725B540D5D0A@qq.com>
+ <tencent_51258569F10CA9965AA00D6D162FCD45600A@qq.com>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <2d17956c.286c8.1973b15eac2.Coremail.sunyuechi@iscas.ac.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: swCowAB3NZglR0Bo5V4DAA--.28586W
+X-CM-SenderInfo: 5vxq53phfkxq5lvft2wodfhubq/1tbiDAcDAmhABOvtOQACsb
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+ CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+ daVFxhVjvjDU=
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -65,35 +48,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: sunyuechi <sunyuechi@iscas.ac.cn>
-
-Support using -Dcpu_instruction_set=rv64gcv to enable V extension.
-
-Signed-off-by: sunyuechi <sunyuechi@iscas.ac.cn>
----
- config/riscv/meson.build | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/config/riscv/meson.build b/config/riscv/meson.build
-index e3694cf2e6..1036a86d05 100644
---- a/config/riscv/meson.build
-+++ b/config/riscv/meson.build
-@@ -111,6 +111,7 @@ arch_config = arch_config[arch_id]
- # Concatenate flags respecting priorities.
- dpdk_flags = flags_common + vendor_config['flags'] + arch_config.get('flags', [])
- 
-+if (cpu_instruction_set == 'rv64gc')
- # apply supported machine args
- machine_args = [] # Clear previous machine args
- foreach flag: arch_config['machine_args']
-@@ -118,6 +119,7 @@ foreach flag: arch_config['machine_args']
-         machine_args += flag
-     endif
- endforeach
-+endif
- 
- # check if we can do buildtime detection of extensions supported by the target
- riscv_extension_macros = false
--- 
-2.49.0
+VGhlIHByZXZpb3VzIHYyIHBhdGNoIGluY29ycmVjdGx5IHVzZWQgLS1pbi1yZXBseS10bywgd2hp
+Y2ggY2F1c2VkIGEgd2FybmluZyBvbiBQYXRjaHdvcmsuIFRoaXMgdXBkYXRlIG9ubHkgY29ycmVj
+dHMgdGhlIFJlcGx5LVRvIGZpZWxkLgoKCiZndDsgLS0tLS3ljp/lp4vpgq7ku7YtLS0tLQomZ3Q7
+IOWPkeS7tuS6ujogdWs3YkBmb3htYWlsLmNvbQomZ3Q7IOWPkemAgeaXtumXtDogMjAyNS0wNi0w
+NCAyMTowNzozMyAo5pif5pyf5LiJKQomZ3Q7IOaUtuS7tuS6ujogZGV2QGRwZGsub3JnCiZndDsg
+5oqE6YCBOiBzdW55dWVjaGkgPHN1bnl1ZWNoaUBpc2Nhcy5hYy5jbj4KJmd0OyDkuLvpopg6IFtQ
+QVRDSCB2MiAwLzNdIEFkZCBSSVNDLVYgViBleHRlbnNpb24gZGV0ZWN0aW9uIGFuZCBMUE0gb3B0
+aW1pemF0aW9uCiZndDsgCiZndDsgRnJvbTogc3VueXVlY2hpIDxzdW55dWVjaGlAaXNjYXMuYWMu
+Y24+CiZndDsgCiZndDsgVGhpcyBwYXRjaCBzZXJpZXMgYWRkcyBzdXBwb3J0IGZvciB0aGUgUklT
+Qy1WIFZlY3RvciAoVikgZXh0ZW5zaW9uIGFuZCBwcm92aWRlcwomZ3Q7IGFuIG9wdGltaXplZCBp
+bXBsZW1lbnRhdGlvbiBvZiBgcnRlX2xwbV9sb29rdXB4NGAgdXNpbmcgUlZWLiBJdCBpbmNsdWRl
+cyBydW50aW1lCiZndDsgZGV0ZWN0aW9uIG9mIHRoZSBWIGV4dGVuc2lvbiwgY29uZGl0aW9uYWwg
+Y29tcGlsYXRpb24gYmFzZWQgb24gY29tcGlsZXIgc3VwcG9ydAomZ3Q7IGZvciBSVlYgaW50cmlu
+c2ljcy4KJmd0OyAKJmd0OyBUZXN0IHJlc3VsdHMgdXNpbmcgbHBtX3BlcmZfYXV0b3Rlc3Qgb24g
+QlBJLUYzOgomZ3Q7ICAgICBzY2FsYXI6IDUuNyBjeWNsZXMKJmd0OyAgICAgcnZ2OiAgICAyLjQg
+Y3ljbGVzCiZndDsgCiZndDsgIyMjIHYyOgomZ3Q7IC0gSW1wcm92ZWQgY29tbWl0IG1lc3NhZ2Vz
+LgomZ3Q7IAomZ3Q7IHN1bnl1ZWNoaSAoMyk6CiZndDsgICBjb25maWcvcmlzY3Y6IGRldGVjdCBW
+IGV4dGVuc2lvbgomZ3Q7ICAgbGliL2xwbTogUi1WIFYgcnRlX2xwbV9sb29rdXB4NAomZ3Q7ICAg
+cmlzY3Y6IG92ZXJyaWRlIG1hY2hpbmVfYXJncyBvbmx5IHdoZW4gZGVmYXVsdAomZ3Q7IAomZ3Q7
+ICBNQUlOVEFJTkVSUyAgICAgICAgICAgICAgfCAgMiArCiZndDsgIGNvbmZpZy9yaXNjdi9tZXNv
+bi5idWlsZCB8IDI3ICsrKysrKysrKysrKwomZ3Q7ICBsaWIvbHBtL21lc29uLmJ1aWxkICAgICAg
+fCAgMSArCiZndDsgIGxpYi9scG0vcnRlX2xwbS5oICAgICAgICB8ICAyICsKJmd0OyAgbGliL2xw
+bS9ydGVfbHBtX3J2di5oICAgIHwgOTEgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKwomZ3Q7ICA1IGZpbGVzIGNoYW5nZWQsIDEyMyBpbnNlcnRpb25zKCspCiZndDsgIGNy
+ZWF0ZSBtb2RlIDEwMDY0NCBsaWIvbHBtL3J0ZV9scG1fcnZ2LmgKJmd0OyAKJmd0OyAtLQomZ3Q7
+IDIuNDkuMAo8L3N1bnl1ZWNoaUBpc2Nhcy5hYy5jbj48L3N1bnl1ZWNoaUBpc2Nhcy5hYy5jbj4=
 
