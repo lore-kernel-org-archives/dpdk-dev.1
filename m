@@ -2,42 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB66BC5B543
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 10:29:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02295C5B543
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 10:35:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0B91D427C3;
-	Wed,  4 Jun 2025 12:29:35 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 062084029D
- for <dev@dpdk.org>; Wed,  4 Jun 2025 12:29:33 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id C27AB21ECB;
- Wed,  4 Jun 2025 12:29:32 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 8A17A427C3;
+	Wed,  4 Jun 2025 12:35:13 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 657244029D
+ for <dev@dpdk.org>; Wed,  4 Jun 2025 12:35:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1749033310;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=L6BGcnAM9bgv7pf+n0C5rZW2TRua6bROYr3ohj5v4Sw=;
+ b=UZMv0aCYxkDwJ/s7fgjZPsD7OfDUa2wbCRcgObsjIhrpf7pKCxpeuIc1c1DT8ut9szmJvq
+ ChClh6Yd0sZY2fGeij4tifV0Qfl7IMbsEDs2o2HZSWvz4O4/D6+eP6egDQX36ubQ+ZDwSA
+ OvROVXwQ5mWFncyLetis6ylyOEe7RJ4=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-610-PeDunWMBMu65fIa5TvRgWA-1; Wed, 04 Jun 2025 06:35:09 -0400
+X-MC-Unique: PeDunWMBMu65fIa5TvRgWA-1
+X-Mimecast-MFC-AGG-ID: PeDunWMBMu65fIa5TvRgWA_1749033308
+Received: by mail-lf1-f71.google.com with SMTP id
+ 2adb3069b0e04-553270eb471so3755562e87.0
+ for <dev@dpdk.org>; Wed, 04 Jun 2025 03:35:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1749033308; x=1749638108;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=L6BGcnAM9bgv7pf+n0C5rZW2TRua6bROYr3ohj5v4Sw=;
+ b=wwuaAiTWF8z4tRjN5BnoAk19Z51fYE8YmdjdwJ2q2ZyoPRZot/+9zJZsk3W54UfkRl
+ gFq6zg4w12aMY6tv4qps1NCRL7uYafe5fpjnmMLXzdewzHkVCeUJCAI4D1PnW2pttdbF
+ ZMZBu9kEcILIW+Jpi8XLcGBbSheKanayclCse5xkh/iWBtDWnj3WcZBqINVX8xgML6+f
+ vvAvQmaWGp/eLoLy7MMzDKMtTGQxr89Uf1lDc+0RixkUHI59HQxxxofzq4XOBI9hDPIw
+ 87dtZq4vPW+G6bX4an1eK0WVPepQEuhSW8iPyQAIKOlz034TXQv1t0YJjU6tBRs6+9al
+ lPXA==
+X-Gm-Message-State: AOJu0YyOrVupIcBlLddknJiGVWyUTCzHuOgGToOlJ22G85QDV7eziPWc
+ Ce4O78IaMRGFzSiWp0Cou1FMc8rtz1RogRL+dN0w4OtAZTBS9KL/OgSflniY7nr/qLKoQ/cdZPD
+ FCvQWn2Z5UdMD4ZnavzWEv42osS0eEHbftsSus8B4bU5Y0cKbWb14I+qq3ZK9OlHKqI0RGt8fSI
+ tFIPG0to/hRSNvwq25NO8=
+X-Gm-Gg: ASbGncsxwcMgZlASGlmTaLWn6QHj5QI6czACJNiWBgerBbj3rrxfvnt6bhGqsbtENyL
+ SSpu7P2gATnTU+mNhst0/+rd5VOobEBXUWqpxxQcdagbYRGGXUazybIFNSwiMMNn+2dmE9og=
+X-Received: by 2002:a05:6512:3ca8:b0:552:2257:93dd with SMTP id
+ 2adb3069b0e04-55356bf5594mr568264e87.25.1749033308094; 
+ Wed, 04 Jun 2025 03:35:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEdBZw6RZQZAEUtU3EayOHuftdlvAZC9Mg9fvEFem09oJkTd0J9f4Bu8sf3gbf2Rsx+iraVeXa793QfrvpuQ20=
+X-Received: by 2002:a05:6512:3ca8:b0:552:2257:93dd with SMTP id
+ 2adb3069b0e04-55356bf5594mr568258e87.25.1749033307679; Wed, 04 Jun 2025
+ 03:35:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v5 0/3] add portable version of __builtin_add_overflow
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Wed, 4 Jun 2025 12:29:30 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FCBF@smartserver.smartshare.dk>
-In-Reply-To: <CAJFAV8z3zqxm_VLXkztjThS3XhuKrJ0kf_yjeSgx+VjXaoyh7w@mail.gmail.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v5 0/3] add portable version of __builtin_add_overflow
-Thread-Index: AdvVOJnW53LYINpARBaqwpaNSGXVeAAAZIQA
-References: <1735857169-19131-1-git-send-email-andremue@linux.microsoft.com>
- <1741962820-27123-1-git-send-email-andremue@linux.microsoft.com>
- <CAJFAV8z3zqxm_VLXkztjThS3XhuKrJ0kf_yjeSgx+VjXaoyh7w@mail.gmail.com>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "David Marchand" <david.marchand@redhat.com>,
- "Andre Muezerie" <andremue@linux.microsoft.com>,
- "Thomas Monjalon" <thomas@monjalon.net>
-Cc: <dev@dpdk.org>, "Stephen Hemminger" <stephen@networkplumber.org>,
- "Bruce Richardson" <bruce.richards@intel.com>
+References: <1746474405-5056-1-git-send-email-andremue@linux.microsoft.com>
+ <1746627671-28659-1-git-send-email-andremue@linux.microsoft.com>
+ <1746627671-28659-2-git-send-email-andremue@linux.microsoft.com>
+In-Reply-To: <1746627671-28659-2-git-send-email-andremue@linux.microsoft.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Wed, 4 Jun 2025 12:34:55 +0200
+X-Gm-Features: AX0GCFvVw9-nO9BdSgMqXd9v2IodohQKQV9ISTR8AlYrtfmZWNs78GeDPJS_mD0
+Message-ID: <CAJFAV8x3bNgDENPODXUaXPvai-oKucUcLB4NYQpgPsEqJsqQ3A@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] buildtools: avoid break due to failure to cleanup
+ temporary directory
+To: Andre Muezerie <andremue@linux.microsoft.com>
+Cc: dev@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: du42LbfLvGOdqd7-UINKteb-99-2HIG5rRhQRiYTqMA_1749033308
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,43 +86,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBEYXZpZCBNYXJjaGFuZCBbbWFpbHRvOmRhdmlkLm1hcmNoYW5kQHJlZGhhdC5jb21d
-DQo+IFNlbnQ6IFdlZG5lc2RheSwgNCBKdW5lIDIwMjUgMTIuMDgNCj4gDQo+IE9uIEZyaSwgTWFy
-IDE0LCAyMDI1IGF0IDM6MzTigK9QTSBBbmRyZSBNdWV6ZXJpZQ0KPiA8YW5kcmVtdWVAbGludXgu
-bWljcm9zb2Z0LmNvbT4gd3JvdGU6DQo+ID4NCj4gPiBfX2J1aWx0aW5fYWRkX292ZXJmbG93IGlz
-IGdjYyBzcGVjaWZpYy4gVGhlcmUncyBhIG5lZWQgZm9yIGEgcG9ydGFibGUNCj4gPiB2ZXJzaW9u
-IHRoYXQgY2FuIGFsc28gYmUgdXNlZCB3aXRoIG90aGVyIGNvbXBpbGVycy4NCj4gPg0KPiA+IHY1
-Og0KPiA+IC0gQ29tYmluZWQgcGF0Y2hlcyAxIHdpdGggNSBhbmQgMiB3aXRoIDMuDQo+ID4NCj4g
-PiB2NDoNCj4gPiAtIEFkZGVkIGRlZmluZSBpbiBpY2Vfb3NkZXAuaCB0byB1c2UgcG9ydGFibGUg
-dmVyc2lvbiBvZg0KPiA+ICAgX19idWlsdGluX2FkZF9vdmVyZmxvdyB3aGVuIHVzaW5nIE1TVkMu
-DQo+ID4gLSBVbmRpZCBhbGwgY2hhbmdlcyBmcm9tIGRyaXZlcnMvbmV0L2ludGVsL2ljZS9iYXNl
-L2ljZV9udm0uYy4NCj4gPg0KPiA+IHYzOg0KPiA+IC0gUmViYXNlIG9uIHRvcCBvZiBsYXRlc3Qg
-bWFpbi4NCj4gPg0KPiA+IEFuZHJlIE11ZXplcmllICgzKToNCj4gPiAgIGVhbDogYWRkIHBvcnRh
-YmxlIHZlcnNpb24gb2YgX19idWlsdGluX2FkZF9vdmVyZmxvdw0KPiA+ICAgbmV0L2ludGVsOiB1
-c2UgcG9ydGFibGUgdmVyc2lvbiBvZiBfX2J1aWx0aW5fYWRkX292ZXJmbG93DQo+ID4gICBhcHAv
-dGVzdDogYWRkIHRlc3RzIGZvciBwb3J0YWJsZSB2ZXJzaW9uIG9mIF9fYnVpbHRpbl9hZGRfb3Zl
-cmZsb3cNCj4gPg0KPiA+ICBNQUlOVEFJTkVSUyAgICAgICAgICAgICAgICAgICAgICAgICAgICB8
-ICAgMSArDQo+ID4gIGFwcC90ZXN0L21lc29uLmJ1aWxkICAgICAgICAgICAgICAgICAgIHwgICAx
-ICsNCj4gPiAgYXBwL3Rlc3QvdGVzdF9tYXRoLmMgICAgICAgICAgICAgICAgICAgfCAxNzANCj4g
-KysrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+ICBkb2MvYXBpL2RveHktYXBpLWluZGV4Lm1k
-ICAgICAgICAgICAgICB8ICAgMSArDQo+ID4gIGRyaXZlcnMvbmV0L2ludGVsL2ljZS9iYXNlL2lj
-ZV9vc2RlcC5oIHwgICA1ICsNCj4gPiAgbGliL2VhbC9pbmNsdWRlL21lc29uLmJ1aWxkICAgICAg
-ICAgICAgfCAgIDEgKw0KPiA+ICBsaWIvZWFsL2luY2x1ZGUvcnRlX21hdGguaCAgICAgICAgICAg
-ICB8ICA0NiArKysrKysrDQo+ID4gIDcgZmlsZXMgY2hhbmdlZCwgMjI1IGluc2VydGlvbnMoKykN
-Cj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGFwcC90ZXN0L3Rlc3RfbWF0aC5jDQo+ID4gIGNyZWF0
-ZSBtb2RlIDEwMDY0NCBsaWIvZWFsL2luY2x1ZGUvcnRlX21hdGguaA0KPiANCj4gSSBhbSBub3Qg
-YSBmYW4gb2YgYWRkaW5nIHN1Y2ggcHVibGljIEFQSSwgYW4gaW50ZXJuYWwgQVBJIHdvdWxkIGJl
-DQo+IGVub3VnaC4NCj4gRG8geW91IHBsYW4gdG8gYWRkIG1vcmUgaGVscGVycyBmb3IgbWF0aCBv
-cGVyYXRpb25zPw0KPiANCj4gRm9yIHRoZSBjdXJyZW50IGhlbHBlciwgdGhlIG9ubHkgdXNlciBp
-cyBhIGRyaXZlciAoYmFzZSBjb2RlKS4NCj4gQ2FuJ3Qgd2UganVzdCB3cmFwIGEgX19idWlsdGlu
-X2FkZF9vdmVyZmxvdyAodW5kZXIgI2lmZGVmIG1zdmMpIGluIHRoZQ0KPiBvc2RlcC5oIGhlYWRl
-cj8NCg0KV2UgYWxyZWFkeSBoYXZlIHB1YmxpYyBBUElzIGZvciBiaXQgb3BlcmF0aW9ucyBpbiBy
-dGVfYml0b3BzLmguDQpUaGlzIG1hdGggQVBJIGZvbGxvd3MgdGhlIHNhbWUgcHJpbmNpcGxlOyBh
-bmQgbWF0aCBvcGVyYXRpb25zIC0ganVzdCBsaWtlIGJpdCBvcGVyYXRpb25zIC0gbWlnaHQgYmUg
-dXNlZnVsIGZvciBEUERLIGFwcGxpY2F0aW9ucywgc28gbGV0J3Mga2VlcCBpdCBwdWJsaWMuDQoN
-ClRoZSBvbmx5IGlzc3VlIEkgaGF2ZSB3aXRoIHRoZXNlIChpbmNsLiB0aGUgYml0IG9wZXJhdGlv
-bnMpIGFyZSB0aGF0IHRoZXkgYXJlIGluIHRoZSBFQUwgbGlicmFyeSwgYWx0aG91Z2ggdGhleSBo
-YXZlIGFic29sdXRlbHkgbm90aGluZyB0byBkbyB3aXRoIGhhcmR3YXJlIG9yIE8vUyBhYnN0cmFj
-dGlvbiwgc28gdGhleSByZWFsbHkgc2hvdWxkIGJlIGluIGEgInV0aWxzIiBsaWJyYXJ5Lg0KQnV0
-IHRoYXQncyBhbm90aGVyIHN0b3J5LCBzbyBsZXQncyBub3QgYnVyZGVuIEFuZHJlIHdpdGggdGhh
-dC4NCg0K
+On Wed, May 7, 2025 at 4:21=E2=80=AFPM Andre Muezerie
+<andremue@linux.microsoft.com> wrote:
+>
+> When compiling drivers on Windows, instances have been seen where a
+> temporary directory fails to get cleaned up due to
+> ERROR_SHARING_VIOLATION (32).
+>
+> This issue was not seen on operating systems other than Windows.
+>
+> This patch eliminates the use of tempfile.TemporaryDirectory, which
+> was triggering the issue.
+>
+> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+
+Applied, thanks.
+
+
+--=20
+David Marchand
+
