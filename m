@@ -2,77 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 965FEC5B549
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 11:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D61C5B543
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 11:04:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9DF2A427E4;
-	Wed,  4 Jun 2025 13:04:45 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 9E014427E4
- for <dev@dpdk.org>; Wed,  4 Jun 2025 13:04:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1749035084;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=T4+3J5z7Zou3JLO0YtAK4nKlbhdYP3LlEYxUrSTFtZI=;
- b=fMEouIfQqCPhNRkAmoeT9ajKeqJZU/FKyFXU6QDSHaZHo2zdwtOKSiLzsENqJ4eiMHJTtb
- ArAmPw7CTWEyj/5QQe4jRsPKRPBfW6RsVn/nPfj4WwiSr68L+34OYuuV+8xMiskLdoFFFg
- oQbbSlJn+KyPdNR+eySJvSWsCfXx+Sk=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-382-pMKdvRMTODSzDZraoAmYmA-1; Wed, 04 Jun 2025 07:04:42 -0400
-X-MC-Unique: pMKdvRMTODSzDZraoAmYmA-1
-X-Mimecast-MFC-AGG-ID: pMKdvRMTODSzDZraoAmYmA_1749035081
-Received: by mail-lf1-f71.google.com with SMTP id
- 2adb3069b0e04-55334debc43so3139581e87.2
- for <dev@dpdk.org>; Wed, 04 Jun 2025 04:04:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749035081; x=1749639881;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=T4+3J5z7Zou3JLO0YtAK4nKlbhdYP3LlEYxUrSTFtZI=;
- b=KkRPYR2bTGJWnFjBu/yXTIL0blfxx+HQvN5nSnvBmCxp+WwUlbyzR84ZMrU8GOVVut
- fyG5qnQOV0ynALqPgBKRXS1enJtEjJOuN5wmpAFlBQDuOKmZh8Y88dCljlf19IOe0W/X
- l7ic8sDJP7WsNRHK+n5s80MrkhQ6X5g1iekB6FzBWy91/Dg7HHGYxlzfjdR84X9ao0cN
- 3AUSFnrOSLUraYA5QFJ29ILwDSJOom/xfuT4AySC57O5md8C/7VZYK5Z0aHN/e5mEtN3
- gx7ryJf5k1srDo2Ujre9ROVHWCQJ7BB0rJNbOaMi8xNhBWq5W4vMdAFknbL3rqkKMata
- gWWg==
-X-Gm-Message-State: AOJu0YxWWTHaJh4WtQ7hHDm65njY07cX834pzgcGWw52GN160jC8yCwL
- 8x7OQri3+5nBZJZbMHNyD3hInUye+m11sUJobEJo2IoHmwkuYQNxcIbxBTj7y8Oxzu1KEWkdgiV
- UylPgp8u9dI5HMP+7vIjjnGuI81q9bLA1aMkXNHSZr6yc9suglkOM320//GtZgDpKtblJJaZMlW
- F9H0NHlyRlBEHTfRQpQwE=
-X-Gm-Gg: ASbGncuvRCb8i/qUgXVAXBL4u72Jzbzvq/gDl3ns9IZgGHWfE+ny2YsQLgi8uNb3lRD
- u7utyyM7blynjTzz8ou0uLjDUrhiSy4H6uNRR++TLb3A51qQ9RKEfchA8Yl1Iwkay1ZO7/SA=
-X-Received: by 2002:a05:6512:4025:b0:553:515a:5ef8 with SMTP id
- 2adb3069b0e04-55356aeab20mr715417e87.15.1749035081202; 
- Wed, 04 Jun 2025 04:04:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFWJHNaRnddAMA/2aXH7cXK6GMBH6zjBG6OgIKrHoGtH9xO4yLqDSBxZtdbLQQHSQGZlvE0OUWqZjugmd7Q/cY=
-X-Received: by 2002:a05:6512:4025:b0:553:515a:5ef8 with SMTP id
- 2adb3069b0e04-55356aeab20mr715407e87.15.1749035080776; Wed, 04 Jun 2025
- 04:04:40 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9DB8D427C3;
+	Wed,  4 Jun 2025 13:04:48 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 059164029D
+ for <dev@dpdk.org>; Wed,  4 Jun 2025 13:04:48 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id D682A21ED6;
+ Wed,  4 Jun 2025 13:04:47 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-References: <1744400374-26620-1-git-send-email-andremue@linux.microsoft.com>
- <1744839898-15745-1-git-send-email-andremue@linux.microsoft.com>
- <1744839898-15745-3-git-send-email-andremue@linux.microsoft.com>
-In-Reply-To: <1744839898-15745-3-git-send-email-andremue@linux.microsoft.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 4 Jun 2025 13:04:29 +0200
-X-Gm-Features: AX0GCFv8tB_tkTx1dZj2UYuPkXF1NxoreG7gimc7rqTchDjaS7KxY6-uCwRdWXE
-Message-ID: <CAJFAV8zTWGCt41_oqpHktfNJ1s6n9iFbJjwCJPPoKuWJamg0QQ@mail.gmail.com>
-Subject: Re: [PATCH v4 2/4] buildtools: use macro to embed information in
- binaries
-To: Andre Muezerie <andremue@linux.microsoft.com>
-Cc: dev@dpdk.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: q-cRbZQLPjrmBpFdP4Eq9LEIaWtF-Dxb_5xLN4aO0pc_1749035081
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH v5 0/3] add portable version of __builtin_add_overflow
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Wed, 4 Jun 2025 13:04:44 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FCC0@smartserver.smartshare.dk>
+In-Reply-To: <CAJFAV8wboVDP8fp=CyQwi6nD7bbu11RjBa35un5yr0faAp2i1g@mail.gmail.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v5 0/3] add portable version of __builtin_add_overflow
+Thread-Index: AdvVPUTKQBnCMqg6QX6E32y3VUvf2wAAKWbQ
+References: <1735857169-19131-1-git-send-email-andremue@linux.microsoft.com>
+ <1741962820-27123-1-git-send-email-andremue@linux.microsoft.com>
+ <CAJFAV8z3zqxm_VLXkztjThS3XhuKrJ0kf_yjeSgx+VjXaoyh7w@mail.gmail.com>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FCBF@smartserver.smartshare.dk>
+ <CAJFAV8wboVDP8fp=CyQwi6nD7bbu11RjBa35un5yr0faAp2i1g@mail.gmail.com>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "David Marchand" <david.marchand@redhat.com>
+Cc: "Andre Muezerie" <andremue@linux.microsoft.com>,
+ "Thomas Monjalon" <thomas@monjalon.net>, <dev@dpdk.org>,
+ "Stephen Hemminger" <stephen@networkplumber.org>,
+ "Bruce Richardson" <bruce.richardson@intel.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,68 +53,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello Andre,
-
-On Wed, Apr 16, 2025 at 11:45=E2=80=AFPM Andre Muezerie
-<andremue@linux.microsoft.com> wrote:
->
-> The archiver tool from the MSVC toolset is lib.exe. It has different
-> parameters then it's GNU counterpart "ar".
->
-> buildtools\meson.build was updated to use lib.exe when MSVC compiler is
-> used. This is to allow the code to be built without requiring GNU "ar"
-> to be installed in that scenario.
->
-> Script gen-pmdinfo-cfile.py was updated to use the correct parameters
-> when using lib.exe.
->
-> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-> ---
->  buildtools/gen-pmdinfo-cfile.py | 24 +++++++++++++++++++-----
->  buildtools/meson.build          |  4 +++-
->  buildtools/pmdinfogen.py        | 11 ++++++-----
->  3 files changed, 28 insertions(+), 11 deletions(-)
->
-> diff --git a/buildtools/gen-pmdinfo-cfile.py b/buildtools/gen-pmdinfo-cfi=
-le.py
-> index 5fbd51658a..3a078ab6d1 100644
-> --- a/buildtools/gen-pmdinfo-cfile.py
-> +++ b/buildtools/gen-pmdinfo-cfile.py
-> @@ -7,15 +7,29 @@
->  import sys
->  import tempfile
->
-> -_, tmp_root, ar, archive, output, *pmdinfogen =3D sys.argv
-> +_, tmp_root, archiver, archive, output, *pmdinfogen =3D sys.argv
->  with tempfile.TemporaryDirectory(dir=3Dtmp_root) as temp:
->      paths =3D []
-> -    for name in subprocess.run([ar, "t", archive], stdout=3Dsubprocess.P=
-IPE,
-> -                               check=3DTrue).stdout.decode().splitlines(=
-):
-> +    if archiver =3D=3D "lib":
-> +        archiver_options =3D ["/LIST", "/NOLOGO"]
-> +    else:
-> +        archiver_options =3D ["t"]
-> +    for name in (
-> +        subprocess.run(
-> +            [archiver] + archiver_options + [archive],
-> +            stdout=3Dsubprocess.PIPE,
-> +            check=3DTrue,
-> +        )
-> +        .stdout.decode()
-> +        .splitlines()
-> +    ):
->          if os.path.exists(name):
->              paths.append(name)
-
-Indent after the change seems strange.
-
-And we need a rebase of this series in any case.
-Please send a new revision.
-
-
-
---=20
-David Marchand
-
+PiBGcm9tOiBEYXZpZCBNYXJjaGFuZCBbbWFpbHRvOmRhdmlkLm1hcmNoYW5kQHJlZGhhdC5jb21d
+DQo+IFNlbnQ6IFdlZG5lc2RheSwgNCBKdW5lIDIwMjUgMTIuNDENCj4gDQo+IE9uIFdlZCwgSnVu
+IDQsIDIwMjUgYXQgMTI6MjnigK9QTSBNb3J0ZW4gQnLDuHJ1cA0KPiA8bWJAc21hcnRzaGFyZXN5
+c3RlbXMuY29tPiB3cm90ZToNCj4gPiA+IEkgYW0gbm90IGEgZmFuIG9mIGFkZGluZyBzdWNoIHB1
+YmxpYyBBUEksIGFuIGludGVybmFsIEFQSSB3b3VsZCBiZQ0KPiA+ID4gZW5vdWdoLg0KPiA+ID4g
+RG8geW91IHBsYW4gdG8gYWRkIG1vcmUgaGVscGVycyBmb3IgbWF0aCBvcGVyYXRpb25zPw0KPiA+
+ID4NCj4gPiA+IEZvciB0aGUgY3VycmVudCBoZWxwZXIsIHRoZSBvbmx5IHVzZXIgaXMgYSBkcml2
+ZXIgKGJhc2UgY29kZSkuDQo+ID4gPiBDYW4ndCB3ZSBqdXN0IHdyYXAgYSBfX2J1aWx0aW5fYWRk
+X292ZXJmbG93ICh1bmRlciAjaWZkZWYgbXN2YykgaW4NCj4gdGhlDQo+ID4gPiBvc2RlcC5oIGhl
+YWRlcj8NCj4gPg0KPiA+IFdlIGFscmVhZHkgaGF2ZSBwdWJsaWMgQVBJcyBmb3IgYml0IG9wZXJh
+dGlvbnMgaW4gcnRlX2JpdG9wcy5oLg0KPiA+IFRoaXMgbWF0aCBBUEkgZm9sbG93cyB0aGUgc2Ft
+ZSBwcmluY2lwbGU7IGFuZCBtYXRoIG9wZXJhdGlvbnMgLSBqdXN0DQo+IGxpa2UgYml0IG9wZXJh
+dGlvbnMgLSBtaWdodCBiZSB1c2VmdWwgZm9yIERQREsgYXBwbGljYXRpb25zLCBzbyBsZXQncw0K
+PiBrZWVwIGl0IHB1YmxpYy4NCj4gDQo+IFRoaXMgY29tcGFyaXNvbiBpcyBwb29yLg0KPiANCj4g
+VGhlcmUgYXJlIG1hbnkgdXNlcnMgb2YgYml0b3BzIGluIGRwZGssIGFuZCAqcHVibGljKiBoZWFk
+ZXJzIG5lZWRlZCBpdC4NCg0KSSBkb24ndCB0aGluayB0aGUgbnVtYmVyIG9mIHVzZXMgb2YgYSBn
+ZW5lcmljIGZ1bmN0aW9uIHNob3VsZCBkZXRlcm1pbmUgaWYgaXQgc2hvdWxkIGJlIHB1YmxpYyBv
+ciBwcml2YXRlLg0KVGhlIGltcG9ydGFudCB0aGluZyBpcyBhdm9pZGluZyBjb3B5LXBhc3Rpbmcu
+DQoNCj4gDQo+IEhlcmUsIHdlIGhhdmUgb25lIHNpbmdsZSBmdW5jdGlvbiBpbiBhIGRyaXZlciBp
+bXBsZW1lbnRhdGlvbi4NCj4gQW5kIHRoaXMgY29kZSBpcyB1bnVzZWQgKF9fYnVpbHRpbl9hZGRf
+b3ZlcmZsb3cgLT4gY2hlY2tfYWRkX292ZXJmbG93DQo+IC0+IGljZV9nZXRfcGZhX21vZHVsZV90
+bHYgLT4gaWNlX2dldF9saW5rX2RlZmF1bHRfb3ZlcnJpZGUgLT4NCj4gaWNlX2NmZ19waHlfZmVj
+LCB3aXRoIG5vIGludHJlZSB1c2VyKS4NCj4gDQoNCkknbSBtYWlubHkgc2F5aW5nIHRoYXQgQW5k
+cmUgaXMgZG9pbmcgbm90aGluZyB3cm9uZyBoZXJlOyBpdCdzIGEgbWF0dGVyIG9mIHNldHRpbmcg
+dGhlIGJhciBmb3IgbWFraW5nIGdlbmVyaWMgZnVuY3Rpb25zIHBhcnQgb2YgRFBESydzIHB1Ymxp
+YyBBUEkuDQoNCkluIHRoaXMgcGFydGljdWxhciBjYXNlLCBJIGRvbid0IGhhdmUgYSBzdHJvbmcg
+b3BpbmlvbiBvbiBob3cgcHVibGljIHRoZSBuZXcgZnVuY3Rpb24gaXMuDQpQdXR0aW5nIGl0IGlu
+IHNvbWUgZ2VuZXJpYyBwcml2YXRlIGhlYWRlciBpcyBhbHNvIHBlcmZlY3RseSBhY2NlcHRhYmxl
+IGZvciBtZS4NCkp1c3QgZG9uJ3QgcHV0IGl0IGRpcmVjdGx5IGluIHRoZSBkcml2ZXI7IHRoYXQg
+d291bGQgbGVhZCB0byBjb3B5LXBhc3RlIGludG8gb3RoZXIgZHJpdmVycy4NCg0KPiANCj4gPg0K
+PiA+IFRoZSBvbmx5IGlzc3VlIEkgaGF2ZSB3aXRoIHRoZXNlIChpbmNsLiB0aGUgYml0IG9wZXJh
+dGlvbnMpIGFyZSB0aGF0DQo+IHRoZXkgYXJlIGluIHRoZSBFQUwgbGlicmFyeSwgYWx0aG91Z2gg
+dGhleSBoYXZlIGFic29sdXRlbHkgbm90aGluZyB0bw0KPiBkbyB3aXRoIGhhcmR3YXJlIG9yIE8v
+UyBhYnN0cmFjdGlvbiwgc28gdGhleSByZWFsbHkgc2hvdWxkIGJlIGluIGENCj4gInV0aWxzIiBs
+aWJyYXJ5Lg0KPiA+IEJ1dCB0aGF0J3MgYW5vdGhlciBzdG9yeSwgc28gbGV0J3Mgbm90IGJ1cmRl
+biBBbmRyZSB3aXRoIHRoYXQuDQo+IA0KPiBPcnRob2dvbmFsIHRvIHRoZSBxdWVzdGlvbi4NCg0K
+UGFydGx5LCB5ZXMuDQpCdXQgaWYgd2UgaGFkIGEgZ2VuZXJpYyAidXRpbHMiIGxpYnJhcnksIHRo
+ZXJlIHdvdWxkIGJlIGxlc3MgcmVzaXN0YW5jZSB0byBhZGRpbmcgdGhlIG5ldyBmdW5jdGlvbiB0
+aGVyZSB0aGFuIHRoZXJlIGlzIHRvIGFkZGluZyBpdCB0byB0aGUgRUFMIEFQSS4NCg0K
