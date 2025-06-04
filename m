@@ -2,207 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BA2AC5B549
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 03:48:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24E5AC5B552
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 06:28:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7E0A44065A;
-	Wed,  4 Jun 2025 05:48:26 +0200 (CEST)
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com
- (mail-am7eur03on2089.outbound.protection.outlook.com [40.107.105.89])
- by mails.dpdk.org (Postfix) with ESMTP id BA6A7402DC
- for <dev@dpdk.org>; Wed,  4 Jun 2025 05:48:25 +0200 (CEST)
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=SvW9kcpck2bfrdS1/vCRcWZOpkttP6Cg4h9D2heoynrcZOoQUlrSRD4pWkHVh1ywflqOjirWvZb5ne9mVxI/uRTYAU+Tvg/XdLMyc0v8RNSgHAjrU6hCH8WuTl2MDJFzPhvjPGq1BJeFdPOWkjPRfMj5PFHy4+OxTq6wayZ7mrgYhHOeXANe3jJWP0Nc4Er0xHLtm2RIZz+/OIF6BcMiYgMeNfBP4O0zysuazx4OuZaZ+mq0iUn4nFnQL2oDmKh71iO75evtWyrc6KWcum3FdSncitboyKD5CPyiiHCjd86z+y/izIl+rxOLGVhBnIOPAyj9r4oRmSWBWyvkshVWYQ==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3eg7HqYgrDPcYn09rLgxwJjYTRr3ZzLrEGKEdu6Nb3U=;
- b=R8f7knByAloyPI2QQkVGXLBzQRmOsAYdK8Q7FZhe+UHg80ygdVZ5i5qxBg1xAt2SM1dmnLk2wfH1Hi5XitQsZGFsZIHuNt4qhef7A4WHcWe5w1g16Po7d61NQ3ADnOJuF5i3FCda/b3xuxS2RLH4mB/pxinmig8HNlPADnU3kargWKhmud3iHpSI/XqA4xEUJaggQbfyh6oY3dHiRraiYCSNWNoRusOeCGf5+dFnjH3KCuOIAm9JKCsxCALl2fGllL5PZLwR7kPttQ+kCBGOdebqfyhuv3BU9IVPbEjI0IXlIUdzjbgKAPFeO5Kk0ec66AU7MfRRfttZOFVGEO3yAw==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=huawei.com smtp.mailfrom=arm.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
- (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3eg7HqYgrDPcYn09rLgxwJjYTRr3ZzLrEGKEdu6Nb3U=;
- b=D3Uc0rAVYmddqTBjxC1MJdvKsGbN4RbQL7KLN3RFnAbACZMjI4yKNNgZuDCsUQCLO3o5C1ylRcVs2p3PVjOkSG3WY9saBrgOtB8Rf6HOSQ7Tc1OAxtI6TZ/FrX6Crvu50FstJ3lfakI7pOrh6id8j/p8v2oJT0Sinv3vkUCxLVM=
-Received: from AM9P193CA0017.EURP193.PROD.OUTLOOK.COM (2603:10a6:20b:21e::22)
- by GV2PR08MB9423.eurprd08.prod.outlook.com (2603:10a6:150:df::22)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.20; Wed, 4 Jun
- 2025 03:48:13 +0000
-Received: from AM2PEPF0001C70F.eurprd05.prod.outlook.com
- (2603:10a6:20b:21e:cafe::f1) by AM9P193CA0017.outlook.office365.com
- (2603:10a6:20b:21e::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.29 via Frontend
- Transport; Wed, 4 Jun 2025 03:48:13 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- AM2PEPF0001C70F.mail.protection.outlook.com (10.167.16.203) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.29
- via Frontend Transport; Wed, 4 Jun 2025 03:48:12 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HMA2kly8jUWnb3wVnRAzJjqmYc8Slt+vRW6SlxblFMqqQAQk1G7KtDN5q/ZpX6s13A+0hL12W9i+0qRkdxUAGv6t66dhNpF42wUMSsYYFZfANST34BIKXTOZMAqle5VlWXG8ZVdqhUUy6qoI/MHSGb8ZPKqZAHbaca0aoW36zIbuHdFpbmYyKmynHTN6lg86NunxcXI9sUUgbhMHSeScnGgdFdVS0HOGxY00npITlWffJxrwdlpHPkMvncmwcemi2i1tRfiSbib7uPVb76gA7zeH72UnUGXJeCOzx/LhUBeK8e7vECG8mfFMI+uYVXJXgZFN00qeTwK6ABeU7tzbSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3eg7HqYgrDPcYn09rLgxwJjYTRr3ZzLrEGKEdu6Nb3U=;
- b=gkIH3eqxTtqZAHgaKBx3wdQ6iQVsKHL3h7Sdy5CxngBbEOqiXP1SgYxS++Zslbv//1rcuqH5N/ZQ4FUmcoQVQ8cF7TjuASpkgDnKMkDL8EoQbEGz8mGCgNRYQlJF10jdclELH79yVzeQepKyRQsK/TgiTq3My7VOsJTKqbXu9OuDMXzLy7vqoRtn6LF6DEfJNIPbdn4My8vji1n0Kl1DDYms6pEU5D5RXPzdmyamFLFpA5jcB3GNbg1B5x7zIsh3cr7mSzzIaMq0+F9ShDrENTZ1A7Zj/sSegUaqCrdBXGRgOFJDLFMsltM6ERgV5gqXvD4v1c8DDI71OaOxpAif4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3eg7HqYgrDPcYn09rLgxwJjYTRr3ZzLrEGKEdu6Nb3U=;
- b=D3Uc0rAVYmddqTBjxC1MJdvKsGbN4RbQL7KLN3RFnAbACZMjI4yKNNgZuDCsUQCLO3o5C1ylRcVs2p3PVjOkSG3WY9saBrgOtB8Rf6HOSQ7Tc1OAxtI6TZ/FrX6Crvu50FstJ3lfakI7pOrh6id8j/p8v2oJT0Sinv3vkUCxLVM=
-Received: from PAWPR08MB8909.eurprd08.prod.outlook.com (2603:10a6:102:33a::19)
- by GV1PR08MB10718.eurprd08.prod.outlook.com (2603:10a6:150:15d::7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.37; Wed, 4 Jun
- 2025 03:47:39 +0000
-Received: from PAWPR08MB8909.eurprd08.prod.outlook.com
- ([fe80::613d:8d51:60e5:d294]) by PAWPR08MB8909.eurprd08.prod.outlook.com
- ([fe80::613d:8d51:60e5:d294%7]) with mapi id 15.20.8792.034; Wed, 4 Jun 2025
- 03:47:39 +0000
-From: Wathsala Wathawana Vithanage <wathsala.vithanage@arm.com>
-To: Konstantin Ananyev <konstantin.ananyev@huawei.com>, "dev@dpdk.org"
- <dev@dpdk.org>
-CC: Honnappa Nagarahalli <Honnappa.Nagarahalli@arm.com>, "jerinj@marvell.com"
- <jerinj@marvell.com>, "hemant.agrawal@nxp.com" <hemant.agrawal@nxp.com>,
- "drc@linux.ibm.com" <drc@linux.ibm.com>, nd <nd@arm.com>, nd <nd@arm.com>
-Subject: RE: [PATCH v1 3/4] ring: fix potential sync issue between head and
- tail values
-Thread-Topic: [PATCH v1 3/4] ring: fix potential sync issue between head and
- tail values
-Thread-Index: AQHbykGnqwbK+3U2jEmKxyxFWCOr77Pe8sVwgAXilICAAjNA0IAADQnwgAi0DQCAAeaRMA==
-Date: Wed, 4 Jun 2025 03:47:39 +0000
-Message-ID: <PAWPR08MB8909A1EAE3BF1F467B144B219F6CA@PAWPR08MB8909.eurprd08.prod.outlook.com>
-References: <20250521111432.207936-1-konstantin.ananyev@huawei.com>
- <20250521111432.207936-4-konstantin.ananyev@huawei.com>
- <PAWPR08MB8909895DF398ACB52C8D66719F99A@PAWPR08MB8909.eurprd08.prod.outlook.com>
- <62ba814dc50a4ffd9bcfe8f4d4073cd9@huawei.com>
- <AS2PR08MB890280D5F8C0E5D018E738D49F64A@AS2PR08MB8902.eurprd08.prod.outlook.com>
- <AS2PR08MB8902DE7ECC64BAFE65C02F9B9F64A@AS2PR08MB8902.eurprd08.prod.outlook.com>
- <0832db1027614c918301e48010d92e4a@huawei.com>
-In-Reply-To: <0832db1027614c918301e48010d92e4a@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-x-ms-traffictypediagnostic: PAWPR08MB8909:EE_|GV1PR08MB10718:EE_|AM2PEPF0001C70F:EE_|GV2PR08MB9423:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0f2c5ce0-0bac-4647-6ec0-08dda31aa116
-X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr,ExtAddr
-x-checkrecipientrouted: true
-nodisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;
- ARA:13230040|376014|1800799024|366016|38070700018; 
-X-Microsoft-Antispam-Message-Info-Original: =?utf-8?B?VURYZzB3enBDRVBzNWNxcXBOMFk1NVlFK3FoK1RuT0VqWGRXRkU2VWhXWkp4?=
- =?utf-8?B?eUllNHgzUk96MzBOcmdITW1Qc0p2M1pSN21XbUtnaUVlWlJqdnpPY0NvTFVw?=
- =?utf-8?B?UXRUM2RoNjVYT0FZVy9ycGoveXVzZllraTNNb2w1TGZiQXlMQ1l5KzArUWZ3?=
- =?utf-8?B?Qlh5VjcyNnlVOUY3SnNFd3lBZEJVVG1SaGw1RCtpR1B3SDIrRmZzRXltb1R2?=
- =?utf-8?B?Rnk3Vkc1RDVXSmFkWGtGbnJaUmtjRFhHelRROHJsakdpV2VicVRVakh3Tkp5?=
- =?utf-8?B?bXN4eDJlaUhRVEN3NGVCbTYvZjdLMHVwSDBrSmhKNm11NlBxalcrYnZNYmZu?=
- =?utf-8?B?VlI5KzlHU1Zxak5YQyt5WlNPOVpUcm5zbkNkSzh3U1JZeUllRjJUS0dXbERV?=
- =?utf-8?B?bmtqYjV6V3c3ZEpZWjJRU0tQNkhCUjc0dGp5R2xWdWZaTjl6MHZ5YVV6TW4z?=
- =?utf-8?B?Z0k1REp6N0RFb08wVjUwd1VQbi9UZjZsSU5tdGNVc2tBU1JnN2RqL0wwSGJt?=
- =?utf-8?B?TjhRcTlRYXpTVlpqM1FqdlZ1Q2xjYTFaVnZic2xTZHJ2cHpjcTlHbUthWVlU?=
- =?utf-8?B?NVI4U1ZBV1hiUExkbmhzeEtOV3E4TytaQm5BSjJJUlNwMTNZMTJMT1VYWkFr?=
- =?utf-8?B?cy94VkF3aTlFM2ZRKzJXY3JacWpCTmt0V25sMWs4b3RaakRxa3JhTjZnaUtO?=
- =?utf-8?B?L0wyQWxPUGdvbmlkSnB6OFh0WWRseTZYL3dScC8yZFZLa1gwRmhIZWF0QjBr?=
- =?utf-8?B?QmF0T3FDRCtXQkZxRlh3eGR5RUVPWXJuRjJVVytTRTNWVzdnMTI5Ym5hREhy?=
- =?utf-8?B?WnJWVDNuNkIzSjJEdTFFUnVrU3o0dk5MU0tHSFhGcmsreEhBVVplRnVNcUlW?=
- =?utf-8?B?K0gzK0Y2MXFGWnRxY3Rab2h6RGJ1T0lEc1pERW03OE85VUt3MDBrcjdLdFNI?=
- =?utf-8?B?SWsrU3V6RmJZV3Uva0NaNVU5UUVOY0p1a0Zld012OExGSC9DZW1WSDBGZUhh?=
- =?utf-8?B?Zkt6R0tpazRXS2hIdEZDTGlYNEhMb0xjd28yZ2tQQmlrZlZMV2ZmblI0UjFJ?=
- =?utf-8?B?NVJ5TkRXcmg0M2xLNmhCMHZEZ1VOR0pVQVpXQnIyQlVMZy9oeFNad3NkWHZj?=
- =?utf-8?B?ZkZQcmNvWThWSTQxN2hZVG9vaTBBYlRSNTZrR0V1cXpVaFVycllGa3pNMmI5?=
- =?utf-8?B?cVBDZ2NUZGhpVTcxZHU2SGloeVhWSFV2bXI5VHV1OTBKd0FVNnpsQzg1RW54?=
- =?utf-8?B?Y3lHQ1o1b09QSko4MDkydWxFQi9BV3hHaGVXdjVKNlMycFlwSlhlbVhBbDhW?=
- =?utf-8?B?emdOSFFEdjNFV1ZRaTNOS3dqWTlsK1k5VVRzdW40UHZHRk1QczlTYVVDMDFl?=
- =?utf-8?B?UG1hRzM2bkhSbHMyZldGQkhTQzVyMkd1UDBQb1NKdElPSkZLaHZMemNvRVA4?=
- =?utf-8?B?OVEraEJtdGljMUY2VFoxRk1ZVlYvemd3c1ZtcmV0bHkxVkJCYm82WVh3NUZI?=
- =?utf-8?B?V1djaG1CZ1RZSU5pbmNuK0N3WWVTNTJrd1YweUNad3V3TkZSUDdLdm96Zk45?=
- =?utf-8?B?WDJKYit2NkNRL0N0TmRHd1VUWEJuQ3JTTlhSQ1pKQlpPTEdyUzhqZVlXdm1O?=
- =?utf-8?B?L2JGWVA3RE5NS0Z3Uk1tSjJYd0haQ1hJay9TWDFrcUN0aHE2S3JkbWdEMEln?=
- =?utf-8?B?SG1nVzRUaXVrNnFqRUdUeHBhY1B2djRTZndDVFZibFVnZW5LOUNaWjVOUzBl?=
- =?utf-8?B?cnpQR3NiVk05Yi9GSThmeXRqZWRWOVBaSWlDSW5jYVZ3cURtVGtvVWE4Rkdi?=
- =?utf-8?B?ay9hYTZLKy83b3hvWThSSW9oOEk5YUtDcEdEYklmUDNiYW1HZmxaQ2tPQnl5?=
- =?utf-8?B?Q2w5WkJqWlJaUDZyVTg1NFNWanZabW55anYzbXQ5TVdLcmlnbnNRcGxjSllp?=
- =?utf-8?Q?kAZ58eC+UUHj6oJEhSQOpNCwUe6KRcJK?=
-X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255; CTRY:; LANG:en;
- SCL:1; SRV:; IPV:NLI; SFV:NSPM; H:PAWPR08MB8909.eurprd08.prod.outlook.com;
- PTR:; CAT:NONE; SFS:(13230040)(376014)(1800799024)(366016)(38070700018);
- DIR:OUT; SFP:1101; 
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id 0C6E64065A;
+	Wed,  4 Jun 2025 08:28:08 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 8E7CB402DC
+ for <dev@dpdk.org>; Wed,  4 Jun 2025 08:28:06 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 553NW6FH019403;
+ Tue, 3 Jun 2025 23:28:05 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=Qd3ZpFTc62OI0oj9td4BfOp
+ HV/RtbojZqecZI+MEQvU=; b=iwqWUM6NJVbcuSAwbesTv/JfxaTvwiDGMz+Z1qy
+ FfJ3gesjOlleOgLVOqkxfMraDK2iOPJqOpIBAg6xeJLw1AP6z0T7fxtKWa0Jw5dC
+ 5i6/swhCKgw37bZ0rC/Q9YZaJhYDfsn3BJjQPQPQ8pzgYnYm/1kg3FcvCjCluPWu
+ TEFTqIAM9VFTf3Y5baIYjNakZRNVvgstwTPwSxnX99LQFh4rRO0Of2onpSYNIRy9
+ NdvdVuYmYoBaRWa19i8DkgF2Sm4dkkcDpbusGAiyFgDk+8haTIYQKoJ6v8XhhzoU
+ D16NxTSun54a7BlxoGP+XvVTCwddmJC/lZvb89sSVxdMBhg==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 472at50pb5-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Tue, 03 Jun 2025 23:28:05 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 3 Jun 2025 23:28:04 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 3 Jun 2025 23:28:04 -0700
+Received: from ssarananaga.marvell.com (unknown [10.29.57.26])
+ by maili.marvell.com (Postfix) with ESMTP id C68FF3F704F;
+ Tue,  3 Jun 2025 23:28:02 -0700 (PDT)
+From: Sucharitha Sarananaga <ssarananaga@marvell.com>
+To: <dev@dpdk.org>
+CC: <kai.ji@intel.com>, Sucharitha Sarananaga <ssarananaga@marvell.com>
+Subject: [PATCH] app/crypto-perf: add support for RSA decrypt
+Date: Wed, 4 Jun 2025 06:27:53 +0000
+Message-ID: <20250604062753.3672139-1-ssarananaga@marvell.com>
+X-Mailer: git-send-email 2.49.0
 MIME-Version: 1.0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR08MB10718
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: AM2PEPF0001C70F.eurprd05.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs: c34885c1-3a57-4dfb-991d-08dda31a8d70
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|14060799003|376014|82310400026|36860700013|1800799024|35042699022|13003099007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?eUIrY01UK3JPNTlkU3diUXFuS01Ec1FzZFlLYWc1OVlrcExJWHppZTNQNisw?=
- =?utf-8?B?RlJpSVBGMXl3OGNUaHAvQlB6aDE2ZHVwQVBodkd6VWY1azBQdUMreVhNRFdy?=
- =?utf-8?B?SDNDaEduUzlxeFhvS25hcHZvYS9COEFBMlpkZEFJZTYyL0hBNVpFekJyY1B1?=
- =?utf-8?B?M091RkwyZlIyNEV6NFNpbVpsc2hkeVZwSW9vMnJYeVkrY2hrOGtEUXBDVHN6?=
- =?utf-8?B?NFVIdmZhWE1PRWFlVnVWV3Y3d1JqWE0wSVczbVFxY2w0aWxEVkFzRzhSdk5R?=
- =?utf-8?B?YnNmZmVNSE9xL3l2VGJ3LzUxYzRTcGwrWTFXTWVFdnNjU0wvK05jdGR0bWhn?=
- =?utf-8?B?QUQ5MGI1c0lzODBzd0VoS1p0cW5xa0pGbGdGM3pGR0RtczVBazFGbTVhYmw4?=
- =?utf-8?B?eGl2RjhCdWVYa2lPbm4ycnFtZGNZR21YSkJzMjVrNUQ2WHlNUm5HME9rVlZB?=
- =?utf-8?B?azg2OWxpblJXQWlGaDZDRW9OcWxpSWFLYmQ5dnZZajdwRUtjc3NvbkNZaUhr?=
- =?utf-8?B?bFRaTkpKcU9aTkhxWW1ML1VLaUdRbHZ3TGVSZmhnZ2pBTEpjV01aenRMRlVr?=
- =?utf-8?B?ZTQybDZua3ZwN1RFVk4zZC9FTFJ3TlNsdHkwbDk1Zm91Z2puUCt3TjZvOS96?=
- =?utf-8?B?ZHNUTkZBTklIcDNESnJpTDNiVCt4c20yK25HRE02Rk5WN1FPcUZtVFNud3dB?=
- =?utf-8?B?UUtsbDUxc0poaWhMODZ3OUhjSWtrOUJrUXZaQkxqYjRrd2c1SXNTRkZ2TExn?=
- =?utf-8?B?RGRPeGFqYU5tMnhJMFA2aWZLRVlXZjNDNjZTQnN6cHgra252bkMyVmxMenRE?=
- =?utf-8?B?UUQybWJ4Z1NnbUQ5enRVdkFQN3B5cUNRMWhkVXhNRDBWM3RvbFFtT245c1NV?=
- =?utf-8?B?bjRibE1wMmxURG1IMjRmSE5SY1FMV3BDYU03UW1GSVQ4S0crNWRhTXZQNFVO?=
- =?utf-8?B?R2ZqMHhadWdBVkhZb1N0Y2ZiUVNzcnJEckJoL0FkMmg2TmI1ZGlEVWhMVUNQ?=
- =?utf-8?B?dUlNN2QvVEx4SFprRTVPeGdxTFhaU2V3bXlrb0Q2ZXlhcEM1QnRteWxaT043?=
- =?utf-8?B?M29ISUlLNGpVZVRpaWRuKzA2aE5Cb3dwZExhUjQyb29TUmROb1FDeGtSaU1D?=
- =?utf-8?B?aEJwTUQrWUFBLzQ5bHEvb01rMGZvTGhlOStHajBsU1hsU28wU1l0Q1EyK3hm?=
- =?utf-8?B?RzB3KzUrOVY4c0ZQNklkRnRGZU0yQnJHTnZmazNkeXZ4MzI3RnQyRS91dnZO?=
- =?utf-8?B?ckk2UndwdTJ6QlRrOGh1S1hjNzg4TUhwYU9XUDZueFl4TGRwZVZpeDdHU1gy?=
- =?utf-8?B?V2MrV1E0K0d5RTNDbTJTRnlkMTZKcGxMYmc5Y0pCZS9EYjN0Kzk4NXFaM2NE?=
- =?utf-8?B?UllSWUxIQ0UxK3VBSXdMZktaZWFzNnJMWHFlVTl4eG1Wc3dwNTdXU1dzTHRn?=
- =?utf-8?B?TUVLL1VtMGNQMis2U0t6U1gwcHltUEIvdUFWQ0lJYllKbGI3UjA1NDZOc2NZ?=
- =?utf-8?B?dXdYdm9KSVFTVVNEWlFDdlNaLytSb1hpZFRjL01DSzlLN3hNN3JCb3orS3E3?=
- =?utf-8?B?b3Q3R29DaVdFbXgzbWdnOE80Q3QwNFRyWDYrR09sNGNyblJUVnV3M204VFFr?=
- =?utf-8?B?bE0zOWNkbi8wdkJFUE5QMWNUSHdMUzY1NmVaLzArY0RFdUpJbUtJVFBWMGU1?=
- =?utf-8?B?YmNlbklXeVdWcFhFQlZ6Smk0bWtsUjlzMEJZVGdLbHJwQ2N1V2pYdEtoRElQ?=
- =?utf-8?B?cDB4cUZpeHJrcWN6RUphMjlBR01ka1dwNGZhRHJGdlZpdXhIYm9RTWd6MjVW?=
- =?utf-8?B?OFFHSW93S0pCdGZHRkY2czF4aEIrbTVrazF1bVFmRXFEeGMxU3lEVjFMQklo?=
- =?utf-8?B?aThGZlROWm5maitxUzN2RG5uemlZZUEzRnozUjNkc096eDFHS2Jmei8rRUh0?=
- =?utf-8?B?VmZzQXViUGNmb3QwaUxwNWJjOHpoYU5CRkhDNzJkTjRINE9oN0RwSGQwYzlJ?=
- =?utf-8?B?ZXdyK0pJU3J3PT0=?=
-X-Forefront-Antispam-Report: CIP:4.158.2.129; CTRY:GB; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:outbound-uk1.az.dlp.m.darktrace.com;
- PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(14060799003)(376014)(82310400026)(36860700013)(1800799024)(35042699022)(13003099007);
- DIR:OUT; SFP:1101; 
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2025 03:48:12.2677 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0f2c5ce0-0bac-4647-6ec0-08dda31aa116
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d; Ip=[4.158.2.129];
- Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource: AM2PEPF0001C70F.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR08MB9423
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: RJZV2Df-Ti7olqdH5wPhpOkVxDHEXjKn
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA0MDA1MyBTYWx0ZWRfX+G8oHNrpXlzF
+ qJfvNFXuwsX2ZuyBG3aVph8W5bLy4jj822HRUfsWfy16/aDwLfIQasphgZCOsoxt8/RwRTYn23k
+ TnDZmhjPegaDLymuTQaC9u4XhjIlZfnkV5089jn/KOn8oGrIDjYIfTsZ65hhPwfFGsMbjrCRZ7R
+ XrEfFq113ZukY/AtSp/SH7LZvO2ic7ihdzOH911p78fsw4kMENOmiE92sIDrB6ZPn+gT3hISiRC
+ XWIM04VD86Lc4KIfDvHC/oSbZVKFmwvOQjnxQBMd5nyGdWD+CF9vrVrEuGXlSpBZkKy6AJeAUOs
+ mWvqIAcfNV1GVGOFrCgwzrWr0j4wnL5Q0utSQiib4zXrh+egWtGU3E5IDpYKkht6d+RYdQv+W/6
+ EPrAudvZg1FbdxJ2c4fCrZIt6cBfNpdaRZqIhBKvqzCOnnZCcOGk4ztJKXm/JdklKawF4MQ8
+X-Authority-Analysis: v=2.4 cv=F9dXdrhN c=1 sm=1 tr=0 ts=683fe775 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=5ZAIpsIEnsGhuwd8FO4A:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: RJZV2Df-Ti7olqdH5wPhpOkVxDHEXjKn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-04_01,2025-06-03_02,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -216,373 +76,701 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-SGkgS29uc3RhbnRpbiwNCg0KPiA+ID4gVGhhdCBjYW5ub3QgaGFwcGVuIGluIEFybSB2OC92OSBi
-ZWNhdXNlIHRhaWwgdXBkYXRlIGlzIGENCj4gPiA+IHN0b3JlLXJlbGVhc2UgYW5kIGEgbG9hZC1h
-Y3F1aXJlIHRoYXQgcHJvZ3JhbSBvcmRlciBmb2xsb3dzIGl0IGNhbg0KPiA+ID4gb25seSBiZSBp
-c3N1ZWQgYWZ0ZXIgYWxsIHRoZSBjb3JlcyBoYXZlIG9ic2VydmVkIHRoZSBzdG9yZS1yZWxlYXNl
-DQo+ID4gPiAodGhlcmUgaXMgYSBzeW5jaHJvbml6YXRpb24gd2l0aCByZWxhdGlvbnNoaXAgdG8g
-c3RvcmUtcmVsZWFzZSBhbmQNCj4gPiA+IGxvYWQtYWNxdWlyZSBwYWlycykuDQo+ID4gPg0KPiA+
-ID4gSW4gdGhlIGV4YW1wbGUgeW91IGhhdmUgcHJvdmlkZWQgVGhyZWFkICMxJ3Mgc3RvcmUoJnBy
-b2QudGFpbCwgMiwNCj4gPiA+IHJlbGVhc2UpIGlzIG9ic2VydmVkIGJ5IGFsbCB0aGUgY29yZXMg
-aW4gdGhlIHN5c3RlbSBieSB0aGUgdGltZSBzYW1lDQo+ID4gPiB0aHJlYWQgcGVyZm9ybXMgbG9h
-ZCgmcHJvZC50YWlsLCBhY3F1aXJlKSBhdCBUMi4gQXMgcGVyIEFybSB2OC92OQ0KPiA+ID4gbWVt
-b3J5IG1vZGVsIFRocmVhZCAjMiBzaG91bGQgb2JzZXJ2ZQ0KPiA+ID4gcHJvZC50YWlsPTIgKG5v
-dCBwcm9kLnRhaWw9MSkuDQo+ID4gPg0KPiA+ID4gQXJtIEFyY2hpdGVjdHVyZSBSZWZlcmVuY2Ug
-TWFudWFsIHNlY3Rpb24gQjIuMTAuMTEgc3RhdGVz4oCmDQo+ID4gPg0KPiA+ID4gIldoZXJlIGEg
-TG9hZC1BY3F1aXJlIGFwcGVhcnMgaW4gcHJvZ3JhbSBvcmRlciBhZnRlciBhDQo+ID4gPiBTdG9y
-ZS1SZWxlYXNlLCB0aGUgbWVtb3J5IGFjY2VzcyBnZW5lcmF0ZWQgYnkgdGhlIFN0b3JlLVJlbGVh
-c2UNCj4gPiA+IGluc3RydWN0aW9uIGlzIG9ic2VydmVkIGJ5IGVhY2ggUEUgdG8gdGhlIGV4dGVu
-dCB0aGF0IFBFIGlzIHJlcXVpcmVkDQo+ID4gPiB0byBvYnNlcnZlIHRoZSBhY2Nlc3MgY29oZXJl
-bnRseSwgYmVmb3JlIHRoZSBtZW1vcnkgYWNjZXNzIGdlbmVyYXRlZA0KPiA+ID4gYnkgdGhlIExv
-YWQtQWNxdWlyZSBpbnN0cnVjdGlvbiBpcyBvYnNlcnZlZCBieSB0aGF0IFBFLCB0byB0aGUNCj4g
-PiA+IGV4dGVudCB0aGF0IHRoZSBQRSBpcyByZXF1aXJlZCB0byBvYnNlcnZlIHRoZSBhY2Nlc3Mg
-Y29oZXJlbnRseS4iDQo+IA0KPiBJbnRlcmVzdGluZywgdGhhbmtzIGZvciBwb2ludGluZyB0byB0
-aGF0Lg0KPiBJbmRlZWQsIGFjY29yZGluZyB0byB0aGUgZG9jcywgYWNxdWlyZS9yZWxlYXNlIG9w
-ZXJhdGlvbnMgdXNlIGEgc2VxdWVudGlhbGx5DQo+IGNvbnNpc3RlbnQgbW9kZWwuDQo+IEJ1dCB3
-ZSBub3QgYWx3YXlzIGdldHRpbmcgcHVyZSBMREFSIGluc3RydWN0aW9uIGhlcmUsIGl0IGRlcGVu
-ZHMgb24gY29tcGlsZXINCj4gbWFyY2gvbWNwdSAgZmxhZ3MuDQo+IEZvciBzb21lIEhXIGFyY2gg
-Z2NjIChhbmQgY2xhbmcpIGdlbmVyYXRlIExEQVIgaW5zdHJ1Y3Rpb24sIGZvciBvdGhlcnMgLQ0K
-PiBMRFBBUFIuDQo+IEFuZCBhY2NvcmRpbmcgdG8gdGhlIGRvYzoNCj4gaHR0cHM6Ly9kZXZlbG9w
-ZXIuYXJtLmNvbS9kb2N1bWVudGF0aW9uLzEwMjMzNi8wMTAwL0xvYWQtQWNxdWlyZS1hbmQtDQo+
-IFN0b3JlLVJlbGVhc2UtaW5zdHJ1Y3Rpb25zDQo+IGZvciBMb2FkLUFjcXVpcmVQQyAgdGhlIHJl
-cXVpcmVtZW50IHRoYXQgTG9hZC1BY3F1aXJlcyBhcmUgb2JzZXJ2ZWQgaW4gb3JkZXINCj4gd2l0
-aCBwcmVjZWRpbmcgU3RvcmUtUmVsZWFzZXMgaXMgZHJvcHBlZC4NCj4gVG8gYmUgbW9yZSBzcGVj
-aWZpYyBoZXJlLCBvbiBteSBib3g6DQo+IDEpIG1lc29uIHdpdGggLURtYWNoaW5lPWRlZmF1bHQg
-KGdjYyBvcHRpb25zOiAiLW1hcmNoPWFybXY4LWErY3JjIikNCj4gZ2VuZXJhdGVzIGNvZGUgd2l0
-aCBMREFSIGluc3RydWN0aW9uIGh0dHBzOi8vZ29kYm9sdC5vcmcvei81Y0VzY2R4cmINCj4gMikg
-bWVzb24gd2l0aCAtRG1hY2hpbmU9bmF0aXZlIChnY2Mgb3B0aW9uczogIiAtbWNwdT1uZW92ZXJz
-ZS1uMSIpIGdlbmVyYXRlcw0KPiBjb2RlIHdpdGggTERBUFIgaW5zdHJ1Y3Rpb24gaHR0cHM6Ly9n
-b2Rib2x0Lm9yZy96LzhLamN2WXhjaA0KPiANCj4gc29yaW5nX3N0cmVzc190ZXN0IGZvciAxKSAo
-TERBUikgcGFzc2VzDQo+IHNvcmluZ19zdHJlc3NfdGVzdCBmb3IgMikgKExEQVBSKSBmYWlscyB3
-aXRoIHN5bXB0b21zIEkgZGVzY3JpYmVkIGVhcmxpZXINCj4gDQoNClRoaXMgbWFrZXMgc2Vuc2Us
-IExvYWQtQWNxdWlyZVBDIHBhaXJlZCB3aXRoIFN0b3JlLVJlbGVhc2UgZ2l2ZXMgeW91DQpSZWxl
-YXNlLUNvbnNpc3RlbmN5LXByb2dyYW0tY29uc2lzdGVuY3kgKFJDcGMpIHdoZXJlYXMgTG9hZC1B
-Y3F1aXJlDQpwYWlyZWQgd2l0aCBhIFN0b3JlLVJlbGVhc2UgZ2l2ZXMgeW91IA0KUmVsZWFzZS1D
-b25zaXN0ZW5jeS1zZXF1ZW50aWFsLWNvbnNpc3RlbmN5IChSQ3NjKSBhIHN0cm9uZ2VyIGNvbnNp
-c3RlbmN5DQptb2RlbCBjb21wYXJlZCB0byBSQ3BjLg0KQXMgeW91IGhhdmUgcG9pbnRlZCBvdXQg
-dGhpcyBpcyB3aGF0IGNhdXNlcyB0aGUgaXNzdWUgeW91IGhhdmUgb2JzZXJ2ZWQuDQpMREFQUiBv
-biB0aGUgc2FtZSBhZGRyZXNzIG9uIHRoZSBzYW1lIGNvcmUgdGhhdCBwcm9ncmFtIG9yZGVyIGZv
-bGxvd3MNClNUTFIgZG9lc24ndCBjYXVzZSBvdGhlciBjb3JlcyB0byBvYnNlcnZlIHRoZSB2YWx1
-ZSB3cml0dGVuIGJ5IFNUTFIuDQpIb3dldmVyLCBjb250cmFyeSB0byB0aGlzIGJlaGF2aW9yIEMx
-MSBleHBlY3RzIF9fQVRPTUlDX1JFTEVBU0UgYW5kDQpfX0FUT01JQ19BQ1FVSVJFIHBhaXJzIHRv
-IGJlIHNlcXVlbnRpYWxseSBjb25zaXN0ZW50IHdoaWNoIHRoZSByaW5nIHJlbGllcw0Kb24uIFRo
-dXMsIF9fQVRPTUlDX0FDUVVJUkUgY2Fubm90IGVtaXQgYW4gTERBUFIgaWYgcGFpcmVkIHdpdGgg
-YW4NCl9fQVRPTUlDX1JFTEVBU0UuDQoNClRvIGNvcnJlY3QgdGhpcyBiZWhhdmlvciwgSSBzdWdn
-ZXN0IGNoYW5naW5nIGJvdGggdGhlIHRhaWwgdXBkYXRlIHRvDQpzdG9yZSgmcHJvZC50YWlsLCAy
-LCByZWxlYXNlKSB0byBzdG9yZSgmcHJvZC50YWlsLCAyLCBjZXFfY3N0KSBhbmQNCmxvYWQoJnBy
-b2QudGFpbCwgYWNxdWlyZSkgdG8gZCgmcHJvZC50YWlsLCBjZXFfY3N0KTsNClRoaXMgd291bGQg
-cmVzdWx0IGluIGFuIFNUTFIgYW5kIExEQVIgKGluc3RlYWQgb2YgYW4gTERBUFIpLCBzbw0KZXNz
-ZW50aWFsbHksIHdlIGFyZSBnb2luZyBiYWNrIHRvIHRoZSBkZXNpcmVkIG9sZCBiZWhhdmlvci4N
-Cg0KSSBoYXZlIHJhaXNlZCB0aGlzIGlzc3VlIHdpdGggdGhlIGNvbXBpbGVyIGZvbGtzIHRvIGdl
-dCBzb21lIGNsYXJpdHkgb24NCmFwcGFyZW50IGNvbmZsaWN0IHdpdGggdGhlIEMxMSBzcGVjLg0K
-DQpBZGRpdGlvbmFsbHksIHdoZW4geW91IHNwZWNpZnkgIiAtbWNwdT1uZW92ZXJzZS1uMSIgR0ND
-IGtub3dzIHRoYXQNCk5lb3ZlcnNlLW4xIENQVXMgaGF2ZSBGRUFUX0xSQ1BDIHdoaWNoIG1lYW5z
-IGl0IGltcGxlbWVudHMgTERBUFINCkluc3RydWN0aW9uLiBCdXQgb24gdGhlIHNhbWUgcGxhdGZv
-cm0gd2hlbiB5b3Ugb25seSBzcGVjaWZ5DQoiLW1hcmNoPWFybXY4LWErY3JjIiBHQ0MgZG9lc24n
-dCBrbm93IHRoYXQgTERBUFIgaXMgc3VwcG9ydGVkIHVubGVzcw0KeW91IGFsc28gYXBwZW5kICty
-Y3BjIHRvIHRoYXQgc3RyaW5nLCBzbyB5b3UgZW5kIHVwIHdpdGggTERBUi4NCihXaHkgd2UgbWFk
-ZSB0aGUgcmVjZW50IGJ1aWxkIGNoYW5nZXMpDQoNClRoYW5rcyANCg0KLS13YXRoc2FsYQ0KDQo+
-ID4NCj4gPiBJbiBzb3JpbmcgaXMgdGhpcyB0aGUgcGFpciB0aGF0IHVwZGF0ZSB0aGUgdGFpbCBh
-bmQgbW92ZSBoZWFkPw0KPiA+DQo+ID4gX19ydGVfc29yaW5nX3VwZGF0ZV90YWlsOg0KPiA+IAlf
-X3J0ZV9yaW5nX3VwZGF0ZV90YWlsKCZyaHQtPmh0LCBoZWFkLCBuZXh0LCBzdCwgZW5xKTsNCj4g
-DQo+IFRoYXQgZnVuY3Rpb24gaXMgdXNlZCB0byB1cGRhdGUgcHJvZC50YWlsIGFuZCBjb25zLnRh
-aWwNCj4gDQo+ID4gX19ydGVfc29yaW5nX21vdmVfY29uc19oZWFkOg0KPiA+IAkgX19ydGVfcmlu
-Z19oZWFkdGFpbF9tb3ZlX2hlYWQoJnItPmNvbnMuaHQsICAmci0+c3RhZ2Vbc3RhZ2VdLmh0LCAw
-LA0KPiA+IC4uLik7DQo+ID4NCj4gDQo+IF9fcnRlX3JpbmdfaGVhZHRhaWxfbW92ZV9oZWFkIGlz
-IGludm9rZWQgdG8gdXBkYXRlIHByb2QuaGVhZCAoYnkNCj4gX19ydGVfc29yaW5nX21vdmVfcHJv
-ZF9oZWFkKSAgYW5kIGNvbnMuaGVhZCAoYnkNCj4gX19ydGVfc29yaW5nX21vdmVfY29uc19oZWFk
-KS4NCj4gDQo+ID4gSWYgc28sICZyaHQtPmh0IGFuZCAmci0+c3RhZ2Vbc3RhZ2VdLmh0IGFyZSB0
-aGUgc2FtZSBhZGRyZXNzPw0KPiANCj4gTm8uDQo+IEluIGNvbnZlbnRpb25hbCByaW5nIHdlIGhh
-dmUganVzdCB0d28gc3RhZ2VzOiAncHJvZCcgIGFuZCAnY29ucycuDQo+IFNvIG1vdmluZyBwcm9k
-LmhlYWQgZGVwZW5kcyBvbiBjb25zLnRhaWwgYW5kIHZpc2EtdmVyc2E6IG1vdmluZyBjb25zLmhl
-YWQNCj4gZGVwZW5kcyBvbiBwcm9kLnRhaWwuDQo+IFdpdGggc29yaW5nIHdlIGhhdmUgbXVsdGlw
-bGUgKE4pIGV4dHJhIHN0YWdlcyBpbiBiZXR3ZWVuLg0KPiBTbyB0aGUgZGVwZW5kZW5jeSBjaGFp
-biBpcyBhIGJpdCBsb25nZXI6DQo+IHByb2QuaGVhZCBkZXBlbmRzIG9uIGNvbnMudGFpbA0KPiBz
-dGFnZVswXS5oZWFkIGRlcGVuZHMgb24gcHJvZC50YWlsLA0KPiBzdGFnZVsxXS5oZWFkIGRlcGVu
-ZHMgb24gc3RhZ2VbMF0udGFpbA0KPiAuLi4NCj4gc3RhZ2V7Ti0xXS5oZWFkIGRlcGVuZHMgb24g
-c3RhZ2VbTi0yXS50YWlsIGNvbnMuaGVhZCBkZXBlbmRzIG9uIHN0YWdlW04tMV0udGFpbA0KPiAN
-Cj4gPiBJZiB0aGV5IGFyZQ0KPiA+IG5vdCwgdGhlbiB5b3Ugd2lsbCBydW4gaW50byB0aGUgaXNz
-dWUgeW91IGhhdmUgc2VlbiAoYS5rLmENCj4gPiAiT3RoZXItbXVsdGktY29weSAgYXRvbWljIiB3
-aGljaCBpcyBsZWdpdCBpbiBBcm0gdjggYW5kIGFib3ZlKS4NCj4gDQo+IENhbiB5b3UgcHJvYmFi
-bHkgZWxhYm9yYXRlIGEgYml0IG1vcmUgZm9yIG1lIGhlcmU/DQo+IFRoYW5rcw0KPiBLb25zdGFu
-dGluDQo+IA0KPiANCj4gPiBUaGFua3MuDQo+ID4NCj4gPiAtLXdhdGhzYWxhDQo+ID4NCj4gPg0K
-PiA+ID4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+ID4gPiBGcm9tOiBLb25zdGFu
-dGluIEFuYW55ZXYgPGtvbnN0YW50aW4uYW5hbnlldkBodWF3ZWkuY29tPg0KPiA+ID4gPiBTZW50
-OiBNb25kYXksIE1heSAyNiwgMjAyNSA2OjU0IEFNDQo+ID4gPiA+IFRvOiBXYXRoc2FsYSBXYXRo
-YXdhbmEgVml0aGFuYWdlIDx3YXRoc2FsYS52aXRoYW5hZ2VAYXJtLmNvbT47DQo+ID4gPiA+IGRl
-dkBkcGRrLm9yZw0KPiA+ID4gPiBDYzogSG9ubmFwcGEgTmFnYXJhaGFsbGkgPEhvbm5hcHBhLk5h
-Z2FyYWhhbGxpQGFybS5jb20+Ow0KPiA+ID4gPiBqZXJpbmpAbWFydmVsbC5jb207IGhlbWFudC5h
-Z3Jhd2FsQG54cC5jb207IGRyY0BsaW51eC5pYm0uY29tOyBuZA0KPiA+ID4gPiA8bmRAYXJtLmNv
-bT4NCj4gPiA+ID4gU3ViamVjdDogUkU6IFtQQVRDSCB2MSAzLzRdIHJpbmc6IGZpeCBwb3RlbnRp
-YWwgc3luYyBpc3N1ZSBiZXR3ZWVuDQo+ID4gPiA+IGhlYWQgYW5kDQo+ID4gPiB0YWlsDQo+ID4g
-PiA+IHZhbHVlcw0KPiA+ID4gPg0KPiA+ID4gPiBIaSBXYXRoc2FsYSwNCj4gPiA+ID4NCj4gPiA+
-ID4gPg0KPiA+ID4gPiA+IEhpIEtvbnN0YW5pbiwNCj4gPiA+ID4gPg0KPiA+ID4gPiA+IEluIHJ0
-ZV9yaW5nIHRoZSBzdG9yZS1yZWxlYXNlIG9uIHRhaWwgdXBkYXRlIGd1YXJhbnRlZXMgdGhhdCBD
-QVMNCj4gPiA+ID4gPiB3b24ndCBnZXQgcmVvcmRlcmVkIHdpdGggdGhlIHN0b3JlLXJlbGVhc2Vk
-IG9mIHRoZSB0YWlsIHVwZGF0ZS4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+IFNvLCB0aGUgc2VxdWVu
-Y2Ugb2YgZXZlbnRzIHdvdWxkIGxvb2sgbGlrZSB0aGlzIChjb21iaW5lZCB2aWV3DQo+ID4gPiA+
-ID4gb2YgaGVhZCBhbmQgdGFpbCB1cGRhdGUpDQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBSZWxlYXhl
-ZC1sb2FkKG5ld19oZWFkLCAgTikgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLS0tLS0t
-LS0tLS0tLS0tPiAoQSkNCj4gPiA+ID4gPiBSZWxheGVkLUNBUyhkLT5oZWFkLCBuZXdfaGVhZCwg
-b2xkX2hlYWQpICAgLS0tLS0tLS0tLS0tLS0tLT4gKEIpDQo+ID4gPiA+ID4gU3RvcmUtcmVsZWFz
-ZS1zdG9yZShkLT50YWlsLCBuZXdfaGVhZCkgICAgICAgICAgICAgLS0tLS0tLS0tLS0tLS0tLT4g
-KEMpDQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBJZiB3ZSBsb29rIGF0IGFkZHJlc3MgZGVwZW5kZW5j
-aWVzLCB0aGVuLi4uDQo+ID4gPiA+ID4NCj4gPiA+ID4gPiAoQikgZGVwZW5kcyBvbiAoQSkgZHVl
-IHRvIG5ld19oZWFkIGFkZHJlc3MgZGVwZW5kZW5jeS4NCj4gPiA+ID4gPiAoQykgZGVwZW5kcyBv
-biAoQSkgZHVlIHRvIG5ld19oZWFkIGFkZHJlc3MgZGVwZW5kZW5jeS4NCj4gPiA+ID4gPg0KPiA+
-ID4gPiA+IFNvLCBkZXBlbmRlbmN5IGdyYXBoIGxvb2tzIGxpa2UgdGhpcw0KPiA+ID4gPiA+ICAg
-ICAgICAoQSkNCj4gPiA+ID4gPiAgICAgLyAgICAgICBcDQo+ID4gPiA+ID4gICAgdiAgICAgICAg
-dg0KPiA+ID4gPiA+ICAoQikgICAgIChDKQ0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gVGhlcmUgaXMg
-bm8gaW1wbGljaXQgZGVwZW5kZW5jZSBiZXR3ZWVuIChCKSBhbmQgKEMpLCBJIHRoaW5rDQo+ID4g
-PiA+ID4gdGhpcyBpcyB0aGUgaXNzdWUgeW91IGFyZSBicmluaW5nIHVwLg0KPiA+ID4gPiA+IEV2
-ZW4gdGhvdWdoIHRoZXJlIGlzIG5vIGRlcGVuZGVuY2UgYmV0d2VlbiB0aGUgdHdvLCB0aGUNCj4g
-PiA+ID4gPiBzdG9yZS1yZWxlYXNlIG9mIChDKSBlbnN1cmVzIHRoYXQgKEIpIHdvbid0IGRyb3Ag
-YmVsb3cgaXQuDQo+ID4gPiA+ID4gVGhlcmVmb3JlLCB0aGUgYWJvdmUgZ3JhcGggY2FuIGJlIHR1
-cm5lZCBpbnRvIGFuIG9yZGVyZWQNCj4gPiA+ID4gPiBzZXF1ZW5jZSBhcyBzaG93biBiZWxvdy4u
-DQo+ID4gPiA+ID4NCj4gPiA+ID4gPiAoQSkgLT4gKEIpIC0+IChDKQ0KPiA+ID4gPg0KPiA+ID4g
-PiBJIGRvIGFncmVlIHRoYXQgd2l0aCBjdXJyZW50IGltcGxlbWVudGF0aW9uIG9mDQo+ID4gPiA+
-IF9fcnRlX3JpbmdfaGVhZHRhaWxfbW92ZV9oZWFkKCkNCj4gPiA+ID4gaW4gbGliL3JpbmcvcnRl
-X3JpbmdfYzExX3B2dC5oIHRoZSBvcmRlciBvZiB0aGVzZSAzIG9wZXJhdGlvbnMNCj4gPiA+ID4g
-KEEtPkItPkMpIHNob3VsZCBiZSBzZXF1ZW50aWFsLg0KPiA+ID4gPiBUaGUgcHJvYmxlbSBJIGFt
-IHRhbGtpbmcgYWJvdXQgaXMgYSBkaWZmZXJlbnQgb25lOg0KPiA+ID4gPiB0aHJlYWQgY2FuIHNl
-ZSAnbGF0ZXN0JyAnY29ucy5oZWFkJyB2YWx1ZSwgd2l0aCAncHJldmlvdXMnIHZhbHVlDQo+ID4g
-PiA+IGZvciAncHJvZC50YWlsJyBvciB2aXNhLXZlcnNhLg0KPiA+ID4gPiBJbiBvdGhlciB3b3Jk
-czogJ2NvbnMuaGVhZCcgdmFsdWUgZGVwZW5kcyBvbiAncHJvZC50YWlsJywgc28NCj4gPiA+ID4g
-YmVmb3JlIG1ha2luZyBsYXRlc3QgJ2NvbnMuaGVhZCcNCj4gPiA+ID4gdmFsdWUgdmlzaWJsZSB0
-byBvdGhlciB0aHJlYWRzLCB3ZSBuZWVkIHRvIGVuc3VyZSB0aGF0IGxhdGVzdA0KPiA+ID4gPiAn
-cHJvZC50YWlsJyBpcyBhbHNvIHZpc2libGUuDQo+ID4gPiA+IExldCBtZSB0cnkgdG8gZXhwbGFp
-biBpdCBvbiB0aGUgZXhhbXBsZToNCj4gPiA+ID4NCj4gPiA+ID4gU3VwcG9zZSBhdCBzb21lIG1v
-bWVudCB3ZSBoYXZlOg0KPiA+ID4gPiBwcm9kPXsuaGVhZD0yLC50YWlsPTF9Ow0KPiA+ID4gPiBj
-b25zPXsuaGVhZD0wLC50YWlsPTB9Ow0KPiA+ID4gPiBJLmUuIHRoZWFkICMxIGlzIGluIHByb2Nl
-c3MgdG8gZW5xdWV1ZSBvbmUgbW9yZSBlbGVtZW50IGludG8gdGhlIHJpbmcuDQo+ID4gPiA+DQo+
-ID4gPiA+ICAgICAgICBUaHJlYWQgIzEgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFRocmVhZCAjMg0KPiA+
-ID4gPiBUMDoNCj4gPiA+ID4gICBzdG9yZSgmcHJvZC50YWlsLCAyLCByZWxlYXNlKTsNCj4gPiA+
-ID4gICAvKkFGQUlVOiB0aGlzIGlzIHNvbWV3aGF0IGVxdWl2YWxlbnQgdG86IHdtYigpOyBwcm9k
-LnRhaWw9MjsNCj4gPiA+ID4gICAqIEkuRS4gLSBpdCBndWFyYW50ZWVzIHRoYXQgYWxsIHN0b3Jl
-cyBpbml0aWF0ZWQgYmVmb3JlIHRoYXQNCj4gPiA+ID4gb3BlcmF0aW9uIHdpbGwgYmUgdmlzaWJs
-ZQ0KPiA+ID4gPiAgICogYnkgb3RoZXIgdGhyZWFkcyBhdCB0aGUgc2FtZSBtb21lbnQgb3IgYmVm
-b3JlIG5ldyB2YWx1ZSBvZg0KPiA+ID4gPiBwcm9kLnRhaWwgd2xsbCBiZWNvbWUNCj4gPiA+ID4g
-ICAqIHZpc2libGUsIGJ1dCBpdCBkb2Vzbid0IGd1YXJhbnRlZSB0aGF0IG5ldyBwcm9kLnRhaWwg
-IHZhbHVlDQo+ID4gPiA+IHdpbGwgYmUgdmlzaWJsZSAgdG8gb3RoZXINCj4gPiA+ID4gICAqIHRo
-cmVhZHMgaW1tZWRpYXRlbHkuDQo+ID4gPiA+ICAgKi8NCj4gPiA+ID4gLi4uDQo+ID4gPiA+IG1v
-dmVfY29uc19oZWFkKC4uLixuPTIpDQo+ID4gPiBtb3ZlX2NvbnNfaGVhZCguLi4sbj0xKQ0KPiA+
-ID4gPiAuLi4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLi4uDQo+ID4gPiA+
-IFQxOg0KPiA+ID4gPiAgICpvbGRfaGVhZCA9IGxvYWQoJmNvbnMuaGVhZCwgcmVsYXhlZCk7DQo+
-ID4gPiA+ICAgZmVuY2UoYWNxdWlyZSk7DQo+ID4gPiA+ICAgLypvbGRfaGVhZCA9PSAwLCBubyBz
-dXJwcmlzZXMgKi8NCj4gPiA+ID4gICBzdGFpbCA9IGxvYWQoJnByb2QudGFpbCwgYWNxdWlyZSk7
-DQo+ID4gPiA+ICAgLypzdGFpbCA9PSAyLCBubyBzdXJwcmlzZXMgKi8NCj4gPiA+ID4gICplbnRy
-aWVzID0gKGNhcGFjaXR5ICsgc3RhaWwgLSAqb2xkX2hlYWQpOyAqbmV3X2hlYWQgPSAqb2xkX2hl
-YWQNCj4gPiA+ID4gKyBuOw0KPiA+ID4gPiAgLyogKmVudHJpZXMgPT0gKDIgLSAwKSA9PSAyOyAq
-bmV3X2hlYWQ9PTI7IGFsbCBnb29kICovIC4uLg0KPiA+ID4gPiBUMjoNCj4gPiA+ID4NCj4gPiA+
-ID4gKm9sZF9oZWFkID0gbG9hZCgmY29ucy5oZWFkLCByZWxheGVkKTsNCj4gPiA+ID4gICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZmVuY2UoYWNxdWlyZSk7DQo+ID4gPiA+
-DQo+ID4gPiA+IC8qb2xkX2hlYWQgPT0gMCwgbm8NCj4gPiA+IHN1cnByaXNlcw0KPiA+ID4gPiAq
-Lw0KPiA+ID4gPg0KPiA+ID4gPiBzdGFpbCA9IGxvYWQoJnByb2QudGFpbCwgYWNxdWlyZSk7DQo+
-ID4gPiA+IC8qICEhISEhIHN0YWlsID09IDEgICEhISEhIGZvciBUaHJlYWQgMg0KPiA+ID4gPiAg
-KiBFdmVuIHRob3VnaCB3ZSBkbyB1c2UgYWNxdWlyZSBoZXJlIC0gdGhlcmUgd2FzIG5vICpyZWxl
-YXNlKg0KPiA+ID4gPiBhZnRlciBzdG9yZSgmcHJvZC50YWlsKS4NCj4gPiA+ID4gICogU28sIHN0
-aWxsIG5vIGd1YXJhbnRlZSB0aGF0IFRocmVhZCAyIHdpbGwgc2VlIGxhdGVzdCBwcm9kLnRhaWwg
-dmFsdWUuDQo+ID4gPiA+ICAqLw0KPiA+ID4gPg0KPiA+ID4gPiAqZW50cmllcyA9IChjYXBhY2l0
-eSArIHN0YWlsIC0gKm9sZF9oZWFkKTsNCj4gPiA+ID4NCj4gPiA+ID4gLyogKmVudHJpZXMgPT0g
-KDEgLSAwKSA9PSAxLA0KPiA+ID4gc3RpbGwNCj4gPiA+ID4gb2sgKi8NCj4gPiA+ID4gICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAqbmV3X2hlYWQgPQ0KPiAqb2xkX2hlYWQg
-KyBuOw0KPiA+ID4gPg0KPiA+ID4gPiAvKiAqbmV3X2hlYWQgPT0gMSAqLw0KPiA+ID4gPiBUMzoN
-Cj4gPiA+ID4gICBzdWNjZXNzID0gQ0FTKCZjb25zLmhlYWQsDQo+ID4gPiA+ICAgICBvbGRfaGVh
-ZCAvKj09MC8sICpuZXdfaGVhZCAvKj09MiovLA0KPiA+ID4gPiAgICAgcmVsYXhlZCwgcmVsYXhl
-ZCk7DQo+ID4gPiA+ICAgLypzdWNjZXNzPT0xLCBjb25zLmhlYWQ9PTIqLw0KPiA+ID4gPiAgLi4u
-DQo+ID4gPiA+IFQ0Og0KPiA+ID4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-c3VjY2VzcyA9DQo+IENBUygmY29ucy5oZWFkLA0KPiA+ID4gPg0KPiA+ID4gPiBvbGRfaGVhZCAv
-Kj09MC8sICpuZXdfaGVhZCAvKj09MSovLA0KPiA+ID4gPiAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICByZWxheGVkLCByZWxheGVkKTsNCj4gPiA+ID4NCj4gPiA+ID4gLypzdWNjZXNz
-PT0wLCAqb2xkX2hlYWQ9PTIqLw0KPiA+ID4gPiAvKiBDQVMoKSBmYWlsZWQgYW5kIHByb3ZpZGVk
-IFRocmVhZCAyIHdpdGggbGF0ZXN0IHZhbHVlZCBmb3INCj4gPiA+ID4gY29ucy5oZWFkKD09MikN
-Cj4gPiA+ID4gICogIFRocmVhZCAyIHJlcGVhdHMgYXR0ZW1wdCwgc3RhcnRzIHNlY29uZCBpdGVy
-YXRpb24gICovDQo+ID4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGZlbmNl
-KGFjcXVpcmUpOw0KPiA+ID4gPg0KPiA+ID4gPiBzdGFpbCA9IGxvYWQoJnByb2QudGFpbCwgYWNx
-dWlyZSk7DQo+ID4gPiA+IC8qICEhISEhIHN0YWlsID09IDEgICEhISEhIGZvciBUaHJlYWQgMg0K
-PiA+ID4gPiAgKiBTdGlsbCBubyAqcmVsZWFzZSogaGFkIGhhcHBlbmVkIGFmdGVyIHN0b3JlKCZw
-cm9kLnRhaWwpIGF0IFQwLg0KPiA+ID4gPiAgKiBTbywgc3RpbGwgbm8gZ3VhcmFudGVlIHRoYXQg
-VGhyZWFkIDIgd2lsbCBzZWUgbGF0ZXN0IHByb2QudGFpbCB2YWx1ZS4NCj4gPiA+ID4gICovDQo+
-ID4gPiA+DQo+ID4gPiA+ICplbnRyaWVzID0gKGNhcGFjaXR5ICsgc3RhaWwgLSAqb2xkX2hlYWQp
-Ow0KPiA+ID4gPg0KPiA+ID4gPiAqbmV3X2hlYWQgPSAqb2xkX2hlYWQgKyBuOw0KPiA+ID4gPg0K
-PiA+ID4gPiAvKiAhISEhISAqZW50cmllcyA9PSAoMSAtIDIpID09IC0xKFVJTlQzMl9NQVgpOyAq
-bmV3X2hlYWQ9PSgyKzEpPT0zOyAhISEhIQ0KPiA+ID4gPiAgKiAgd2UgYXJlIGFib3V0IHRvIGNv
-cnJ1cHQgb3VyIHJpbmcgISEhISENCj4gPiA+ID4gICovDQo+ID4gPiA+DQo+ID4gPiA+ID4NCj4g
-PiA+ID4gPiBJIGhhdmVuJ3QgbG9va2VkIGF0IHRoZSBzby1yaW5nIHlldC4gQ291bGQgaXQgYmUg
-cG9zc2libGUgdGhhdA0KPiA+ID4gPiA+IHRoZSBpc3N1ZSBpcyBkdWUgdG8gc29tZXRoaW5nIGVs
-c2UgaW50cm9kdWNlZCBpbiB0aGF0IGNvZGU/DQo+ID4gPiA+DQo+ID4gPiA+IFdlbGwsIGFzIEkg
-c2FpZCwgc28gZmFyIEkgd2Fzbid0IGFibGUgdG8gcmUtcHJvZHVjZSB0aGlzIHByb2JsZW0NCj4g
-PiA+ID4gd2l0aCBjb252ZW50aW9uYWwgcmluZyAocmluZ19zdHJlc3NfYXV0b3Rlc3QpLCBvbmx5
-DQo+ID4gPiA+IHNvcmluZ19zdHJlc3NfYXV0b3Rlc3QgaXMgZmFpbGluZyBhbmQgZm9yIG5vdyAt
-IG9ubHkgb24gb25lDQo+ID4gPiA+IHNwZWNpZmljIEFSTSBwbGF0Zm9ybS4NCj4gPiA+ID4gUmVn
-YXJkaW5nIHNvcmluZyBzcGVjaWZpYyBmaXggKHdpdGhvdXQgdG91Y2hpbmcgY29tbW9uIGNvZGUp
-IC0NCj4gPiA+ID4gc3VyZSBpdCBpcyBhbHNvIHBvc3NpYmxlLCBwbHMgc2VlIHBhdGNoICMyLg0K
-PiA+ID4gPiBUaGVyZSBJIGp1c3QgYWRkZWQgJ2ZlbmNlKHJlbGVhc2UpOycgc3RyYWlnaHQgYWZ0
-ZXIgJ3N0b3JlKCZ0YWlsKTsnDQo+ID4gPiA+IFRoYXQncyBzZWVtcyBlbm91Z2ggdG8gZml4IHRo
-YXQgcHJvYmxlbSB3aXRoaW4gdGhlIHNvcmluZyBvbmx5Lg0KPiA+ID4gPiBUaG91Z2gsIGZyb20g
-bXkgdW5kZXJzdGFuZGluZyBydGVfcmluZyBtaWdodCBhbHNvIGJlIGFmZmVjdGVkLA0KPiA+ID4g
-PiB0aGF0J3Mgd2h5IEkgd2VudCBhaGVhZCBhbmQgcHJlcGFyZWQgdGhhdCBwYXRjaC4NCj4gPiA+
-ID4gSWYgeW91IGZlZWwsIHRoYXQgSSBhIG1pc3Npbmcgc29tZXRoaW5nIGhlcmUgLSBwbHMgc2hv
-dXQuDQo+ID4gPiA+IEtvbnN0YW50aW4NCj4gPiA+ID4NCj4gPiA+ID4NCj4gPiA+ID4gPiBUaGFu
-a3MsDQo+ID4gPiA+ID4NCj4gPiA+ID4gPiAtLXdhdGhzYWxhDQo+ID4gPiA+ID4NCj4gPiA+ID4g
-PiA+IFRoaXMgcGF0Y2ggYWltcyBzZXZlcmFsIHB1cnBvc2VzOg0KPiA+ID4gPiA+ID4gLSBwcm92
-aWRlIGFuIGFsdGVybmF0aXZlIChhbmQgSSB0aGluayBhIGJldHRlcikgd2F5IHRvIGZpeCB0aGUN
-Cj4gPiA+ID4gPiA+ICAgaXNzdWUgZGlzY3Vzc2VkIGluIHByZXZpb3VzIHBhdGNoOg0KPiA+ID4g
-PiA+ID4gICAicmluZy9zb3Jpbmc6IGZpeCBzeW5jaHJvbml6YXRpb24gaXNzdWUgYmV0d2VlbiBo
-ZWFkIGFuZCB0YWlsIHZhbHVlcyINCj4gPiA+ID4gPiA+IC0gbWFrZSBzdXJlIHRoYXQgc3VjaCBw
-cm9ibGVtIHdvdWxkbuKAmXQgaGFwcGVuIHdpdGhpbiBvdGhlciB1c2FnZXMgb2YNCj4gPiA+ID4g
-PiA+ICAgX19ydGVfcmluZ19oZWFkdGFpbF9tb3ZlX2hlYWQoKSDigJMgYm90aCBjdXJyZW50IHJ0
-ZV9yaW5nDQo+ID4gPiA+ID4gPiAgIGltcGxlbWVudGF0aW9uIGFuZCBwb3NzaWJsZSBmdXR1cmUg
-dXNlLWNhc2VzLg0KPiA+ID4gPiA+ID4gLSBzdGVwIHRvd2FyZHMgdW5pZmljYXRpb24gb2YgbW92
-ZV9oZWFkKCkgaW1wbGVtZW50YXRpb25zIGFuZA0KPiA+ID4gPiA+ID4gICByZW1vdmluZyBydGVf
-cmluZ19nZW5lcmljX3B2dC5oIEl0IHVzZXMgQWNxdWlyZS1SZWxlYXNlDQo+ID4gPiA+ID4gPiBt
-ZW1vcnkgb3JkZXJpbmcgZm9yIENBUyBvcGVyYXRpb24gaW4NCj4gPiA+ID4gbW92ZV9oZWFkKCku
-DQo+ID4gPiA+ID4gPiBUaGF0IGd1YXJhbnRlZXMgdGhhdCBjb3JyZXNwb25kaW5nIOKAmHRhaWzi
-gJkgdXBkYXRlcyB3aWxsIGJlDQo+ID4gPiA+ID4gPiB2aXNpYmxlIGJlZm9yZQ0KPiA+ID4gPiBj
-dXJyZW50DQo+ID4gPiA+ID4gPiDigJhoZWFk4oCZIGlzIHVwZGF0ZWQuDQo+ID4gPiA+ID4gPiBB
-cyBJIHNhaWQgYmVmb3JlOiBJIHRoaW5rIHRoYXQgaW4gdGhlb3J5IHRoZSBwcm9ibGVtIGRlc2Ny
-aWJlZA0KPiA+ID4gPiA+ID4gaW4gcHJldmlvdXMNCj4gPiA+ID4gcGF0Y2gNCj4gPiA+ID4gPiA+
-IG1pZ2h0IGhhcHBlbiB3aXRoIG91ciBjb252ZW50aW9uYWwgcnRlX3JpbmcgdG9vICh3aGVuDQo+
-ID4gPiA+ID4gPiBSVEVfVVNFX0MxMV9NRU1fTU9ERUwgZW5hYmxlZCkuDQo+ID4gPiA+ID4gPiBC
-dXQsIHNvIGZhciBJIGRpZG7igJl0IG1hbmFnZSB0byByZXByb2R1Y2UgaXQgaW4gcmVhbGl0eS4N
-Cj4gPiA+ID4gPiA+IEZvciB0aGF0IHJlYXNvbiBhbmQgYWxzbyBiZWNhdXNlIGl0IHRvdWNoZXMg
-YSBjcml0aWNhbA0KPiA+ID4gPiA+ID4gcnRlX3JpbmcgY29kZS1wYXRoLCBJDQo+ID4gPiA+IHB1
-dA0KPiA+ID4gPiA+ID4gdGhlc2UgY2hhbmdlcyBpbnRvIGEgc2VwYXJhdGUgcGF0Y2guIEV4cGVj
-dCBhbGwgaW50ZXJlc3RlZA0KPiA+ID4gPiA+ID4gc3Rha2Vob2xkZXJzIHRvDQo+ID4gPiA+IGNv
-bWUtDQo+ID4gPiA+ID4gPiB1cCB3aXRoIHRoZWlyIGNvbW1lbnRzIGFuZCBvYnNlcnZhdGlvbnMu
-DQo+ID4gPiA+ID4gPiBSZWdhcmRpbmcgcGVyZm9ybWFuY2UgaW1wYWN0IOKAkyBvbiBteSBib3hl
-cyBib3RoDQo+ID4gPiA+ID4gPiByaW5nX3BlcmZfYXV0b3Rlc3QNCj4gPiA+IGFuZA0KPiA+ID4g
-PiA+ID4gcmluZ19zdHJlc3NfYXV0b3Rlc3Qg4oCTIHNob3cgYSBtaXhlZCBzZXQgb2YgcmVzdWx0
-czogc29tZSBvZg0KPiA+ID4gPiA+ID4gdGhlbQ0KPiA+ID4gYmVjb21lDQo+ID4gPiA+IGZldw0K
-PiA+ID4gPiA+ID4gY3ljbGVzIGZhc3RlciwgYW5vdGhlciBmZXcgY3ljbGVzIHNsb3dlci4NCj4g
-PiA+ID4gPiA+IEJ1dCBzbyBmYXIsIEkgZGlkbuKAmXQgbm90aWNlIGFueSByZWFsIGRlZ3JhZGF0
-aW9ucyB3aXRoIHRoYXQgcGF0Y2guDQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gRml4ZXM6IGI1
-NDU4ZTJjYzQ4MyAoInJpbmc6IGludHJvZHVjZSBzdGFnZWQgb3JkZXJlZCByaW5nIikNCj4gPiA+
-ID4gPiA+IEZpeGVzOiAxY2MzNjNiOGNlMDYgKCJyaW5nOiBpbnRyb2R1Y2UgSFRTIHJpbmcgbW9k
-ZSIpDQo+ID4gPiA+ID4gPiBGaXhlczogZTZiYTQ3MzFjMGYzICgicmluZzogaW50cm9kdWNlIFJU
-UyByaW5nIG1vZGUiKQ0KPiA+ID4gPiA+ID4gRml4ZXM6IDQ5NTk0YTYzMTQ3YSAoInJpbmcvYzEx
-OiByZWxheCBvcmRlcmluZyBmb3IgbG9hZCBhbmQNCj4gPiA+ID4gPiA+IHN0b3JlIG9mIHRoZQ0K
-PiA+ID4gPiBoZWFkIikNCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBL
-b25zdGFudGluIEFuYW55ZXYNCj4gPiA+ID4gPiA+IDxrb25zdGFudGluLmFuYW55ZXZAaHVhd2Vp
-LmNvbT4NCj4gPiA+ID4gPiA+IC0tLQ0KPiA+ID4gPiA+ID4gIGxpYi9yaW5nL3J0ZV9yaW5nX2Mx
-MV9wdnQuaCAgICAgIHwgMjcgKysrKysrKysrKysrKysrKystLS0tLS0tLS0tDQo+ID4gPiA+ID4g
-PiAgbGliL3JpbmcvcnRlX3JpbmdfaHRzX2VsZW1fcHZ0LmggfCAgNiArKysrLS0NCj4gPiA+ID4g
-bGliL3JpbmcvcnRlX3JpbmdfcnRzX2VsZW1fcHZ0LmgNCj4gPiA+ID4gPiA+IHwgIDYgKysrKy0t
-DQo+ID4gPiA+ID4gPiAgbGliL3Jpbmcvc29yaW5nLmMgICAgICAgICAgICAgICAgfCAgNSAtLS0t
-LQ0KPiA+ID4gPiA+ID4gIDQgZmlsZXMgY2hhbmdlZCwgMjUgaW5zZXJ0aW9ucygrKSwgMTkgZGVs
-ZXRpb25zKC0pDQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gZGlmZiAtLWdpdCBhL2xpYi9yaW5n
-L3J0ZV9yaW5nX2MxMV9wdnQuaA0KPiA+ID4gPiA+ID4gYi9saWIvcmluZy9ydGVfcmluZ19jMTFf
-cHZ0LmgNCj4gPiA+IGluZGV4DQo+ID4gPiA+ID4gPiAwODQ1Y2Q2ZGNmLi42ZDFjNDZkZjlhIDEw
-MDY0NA0KPiA+ID4gPiA+ID4gLS0tIGEvbGliL3JpbmcvcnRlX3JpbmdfYzExX3B2dC5oDQo+ID4g
-PiA+ID4gPiArKysgYi9saWIvcmluZy9ydGVfcmluZ19jMTFfcHZ0LmgNCj4gPiA+ID4gPiA+IEBA
-IC03NywyMCArNzcsMTkgQEAgX19ydGVfcmluZ19oZWFkdGFpbF9tb3ZlX2hlYWQoc3RydWN0DQo+
-ID4gPiA+ID4gPiBydGVfcmluZ19oZWFkdGFpbCAqZCwNCj4gPiA+ID4gPiA+ICAJaW50IHN1Y2Nl
-c3M7DQo+ID4gPiA+ID4gPiAgCXVuc2lnbmVkIGludCBtYXggPSBuOw0KPiA+ID4gPiA+ID4NCj4g
-PiA+ID4gPiA+ICsJLyogRW5zdXJlIHRoZSBoZWFkIGlzIHJlYWQgYmVmb3JlIHRhaWwgKi8NCj4g
-PiA+ID4gPiA+ICAJKm9sZF9oZWFkID0gcnRlX2F0b21pY19sb2FkX2V4cGxpY2l0KCZkLT5oZWFk
-LA0KPiA+ID4gPiA+ID4gLQkJCXJ0ZV9tZW1vcnlfb3JkZXJfcmVsYXhlZCk7DQo+ID4gPiA+ID4g
-PiArCQkJcnRlX21lbW9yeV9vcmRlcl9hY3F1aXJlKTsNCj4gPiA+ID4gPiA+ICAJZG8gew0KPiA+
-ID4gPiA+ID4gIAkJLyogUmVzZXQgbiB0byB0aGUgaW5pdGlhbCBidXJzdCBjb3VudCAqLw0KPiA+
-ID4gPiA+ID4gIAkJbiA9IG1heDsNCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiAtCQkvKiBFbnN1
-cmUgdGhlIGhlYWQgaXMgcmVhZCBiZWZvcmUgdGFpbCAqLw0KPiA+ID4gPiA+ID4gLQkJcnRlX2F0
-b21pY190aHJlYWRfZmVuY2UocnRlX21lbW9yeV9vcmRlcl9hY3F1aXJlKTsNCj4gPiA+ID4gPiA+
-IC0NCj4gPiA+ID4gPiA+IC0JCS8qIGxvYWQtYWNxdWlyZSBzeW5jaHJvbml6ZSB3aXRoIHN0b3Jl
-LXJlbGVhc2Ugb2YgaHQtDQo+ID50YWlsDQo+ID4gPiA+ID4gPiAtCQkgKiBpbiB1cGRhdGVfdGFp
-bC4NCj4gPiA+ID4gPiA+ICsJCS8qDQo+ID4gPiA+ID4gPiArCQkgKiBSZWFkIHMtPnRhaWwgdmFs
-dWUuIE5vdGUgdGhhdCBpdCB3aWxsIGJlIGxvYWRlZCBhZnRlcg0KPiA+ID4gPiA+ID4gKwkJICog
-ZC0+aGVhZCBsb2FkLCBidXQgYmVmb3JlIENBUyBvcGVyYXRpb24gZm9yIHRoZSBkLQ0KPiA+aGVh
-ZC4NCj4gPiA+ID4gPiA+ICAJCSAqLw0KPiA+ID4gPiA+ID4gIAkJc3RhaWwgPSBydGVfYXRvbWlj
-X2xvYWRfZXhwbGljaXQoJnMtPnRhaWwsDQo+ID4gPiA+ID4gPiAtCQkJCQlydGVfbWVtb3J5X29y
-ZGVyX2FjcXVpcmUpOw0KPiA+ID4gPiA+ID4gKwkJCQkJcnRlX21lbW9yeV9vcmRlcl9yZWxheGVk
-KTsNCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiAgCQkvKiBUaGUgc3VidHJhY3Rpb24gaXMgZG9u
-ZSBiZXR3ZWVuIHR3byB1bnNpZ25lZCAzMmJpdHMNCj4gdmFsdWUNCj4gPiA+ID4gPiA+ICAJCSAq
-ICh0aGUgcmVzdWx0IGlzIGFsd2F5cyBtb2R1bG8gMzIgYml0cyBldmVuIGlmIHdlIGhhdmUNCj4g
-QEANCj4gPiA+ID4gPiA+IC0NCj4gPiA+ID4gPiA+IDExMiwxMSArMTExLDE5IEBAIF9fcnRlX3Jp
-bmdfaGVhZHRhaWxfbW92ZV9oZWFkKHN0cnVjdA0KPiA+ID4gPiBydGVfcmluZ19oZWFkdGFpbA0K
-PiA+ID4gPiA+ID4gKmQsDQo+ID4gPiA+ID4gPiAgCQkJZC0+aGVhZCA9ICpuZXdfaGVhZDsNCj4g
-PiA+ID4gPiA+ICAJCQlzdWNjZXNzID0gMTsNCj4gPiA+ID4gPiA+ICAJCX0gZWxzZQ0KPiA+ID4g
-PiA+ID4gLQkJCS8qIG9uIGZhaWx1cmUsICpvbGRfaGVhZCBpcyB1cGRhdGVkICovDQo+ID4gPiA+
-ID4gPiArCQkJLyoNCj4gPiA+ID4gPiA+ICsJCQkgKiBvbiBmYWlsdXJlLCAqb2xkX2hlYWQgaXMg
-dXBkYXRlZC4NCj4gPiA+ID4gPiA+ICsJCQkgKiB0aGlzIENBUyhBQ1FfUkVMLCBBQ1FVSVJFKSBz
-ZXJ2ZXMgYXMgYQ0KPiBob2lzdA0KPiA+ID4gPiA+ID4gKwkJCSAqIGJhcnJpZXIgdG8gcHJldmVu
-dDoNCj4gPiA+ID4gPiA+ICsJCQkgKiAgLSBPT08gcmVhZHMgb2YgY29ucyB0YWlsIHZhbHVlDQo+
-ID4gPiA+ID4gPiArCQkJICogIC0gT09PIGNvcHkgb2YgZWxlbXMgZnJvbSB0aGUgcmluZw0KPiA+
-ID4gPiA+ID4gKwkJCSAqICBBbHNvIFJFTEVBU0UgZ3VhcmFudGVlcyB0aGF0IGxhdGVzdCB0YWls
-DQo+IHZhbHVlDQo+ID4gPiA+ID4gPiArCQkJICogIHdpbGwgYmVjb21lIHZpc2libGUgYmVmb3Jl
-IHRoZSBuZXcgaGVhZA0KPiB2YWx1ZS4NCj4gPiA+ID4gPiA+ICsJCQkgKi8NCj4gPiA+ID4gPiA+
-ICAJCQlzdWNjZXNzID0NCj4gPiA+ID4gPiA+IHJ0ZV9hdG9taWNfY29tcGFyZV9leGNoYW5nZV9z
-dHJvbmdfZXhwbGljaXQoDQo+ID4gPiA+ID4gPiAgCQkJCQkmZC0+aGVhZCwgb2xkX2hlYWQsDQo+
-ICpuZXdfaGVhZCwNCj4gPiA+ID4gPiA+IC0JCQkJCXJ0ZV9tZW1vcnlfb3JkZXJfcmVsYXhlZCwN
-Cj4gPiA+ID4gPiA+IC0JCQkJCXJ0ZV9tZW1vcnlfb3JkZXJfcmVsYXhlZCk7DQo+ID4gPiA+ID4g
-PiArCQkJCQlydGVfbWVtb3J5X29yZGVyX2FjcV9yZWwsDQo+ID4gPiA+ID4gPiArCQkJCQlydGVf
-bWVtb3J5X29yZGVyX2FjcXVpcmUpOw0KPiA+ID4gPiA+ID4gIAl9IHdoaWxlICh1bmxpa2VseShz
-dWNjZXNzID09IDApKTsNCj4gPiA+ID4gPiA+ICAJcmV0dXJuIG47DQo+ID4gPiA+ID4gPiAgfQ0K
-PiA+ID4gPiA+ID4gZGlmZiAtLWdpdCBhL2xpYi9yaW5nL3J0ZV9yaW5nX2h0c19lbGVtX3B2dC5o
-DQo+ID4gPiA+IGIvbGliL3JpbmcvcnRlX3JpbmdfaHRzX2VsZW1fcHZ0LmgNCj4gPiA+ID4gPiA+
-IGluZGV4IGM1OWU1ZjY0MjAuLmNjNTkzNDMzYjkgMTAwNjQ0DQo+ID4gPiA+ID4gPiAtLS0gYS9s
-aWIvcmluZy9ydGVfcmluZ19odHNfZWxlbV9wdnQuaA0KPiA+ID4gPiA+ID4gKysrIGIvbGliL3Jp
-bmcvcnRlX3JpbmdfaHRzX2VsZW1fcHZ0LmgNCj4gPiA+ID4gPiA+IEBAIC0xMTYsMTMgKzExNiwx
-NSBAQCBfX3J0ZV9yaW5nX2h0c19tb3ZlX2hlYWQoc3RydWN0DQo+ID4gPiA+ID4gPiBydGVfcmlu
-Z19odHNfaGVhZHRhaWwgKmQsDQo+ID4gPiA+ID4gPiAgCQlucC5wb3MuaGVhZCA9IG9wLnBvcy5o
-ZWFkICsgbjsNCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiAgCS8qDQo+ID4gPiA+ID4gPiAtCSAq
-IHRoaXMgQ0FTKEFDUVVJUkUsIEFDUVVJUkUpIHNlcnZlcyBhcyBhIGhvaXN0IGJhcnJpZXIgdG8N
-Cj4gcHJldmVudDoNCj4gPiA+ID4gPiA+ICsJICogdGhpcyBDQVMoQUNRX1JFTCwgQUNRVUlSRSkg
-c2VydmVzIGFzIGEgaG9pc3QgYmFycmllciB0bw0KPiBwcmV2ZW50Og0KPiA+ID4gPiA+ID4gIAkg
-KiAgLSBPT08gcmVhZHMgb2YgY29ucyB0YWlsIHZhbHVlDQo+ID4gPiA+ID4gPiAgCSAqICAtIE9P
-TyBjb3B5IG9mIGVsZW1zIGZyb20gdGhlIHJpbmcNCj4gPiA+ID4gPiA+ICsJICogICBBbHNvIFJF
-TEVBU0UgZ3VhcmFudGVlcyB0aGF0IGxhdGVzdCB0YWlsIHZhbHVlDQo+ID4gPiA+ID4gPiArCSAq
-ICAgd2lsbCBiZWNvbWUgdmlzaWJsZSBiZWZvcmUgdGhlIG5ldyBoZWFkIHZhbHVlLg0KPiA+ID4g
-PiA+ID4gIAkgKi8NCj4gPiA+ID4gPiA+ICAJfSB3aGlsZSAocnRlX2F0b21pY19jb21wYXJlX2V4
-Y2hhbmdlX3N0cm9uZ19leHBsaWNpdCgmZC0NCj4gPmh0LnJhdywNCj4gPiA+ID4gPiA+ICAJCQko
-dWludDY0X3QgKikodWludHB0cl90KSZvcC5yYXcsIG5wLnJhdywNCj4gPiA+ID4gPiA+IC0JCQly
-dGVfbWVtb3J5X29yZGVyX2FjcXVpcmUsDQo+ID4gPiA+ID4gPiArCQkJcnRlX21lbW9yeV9vcmRl
-cl9hY3FfcmVsLA0KPiA+ID4gPiA+ID4gIAkJCXJ0ZV9tZW1vcnlfb3JkZXJfYWNxdWlyZSkgPT0g
-MCk7DQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gIAkqb2xkX2hlYWQgPSBvcC5wb3MuaGVhZDsN
-Cj4gPiA+ID4gPiA+IGRpZmYgLS1naXQgYS9saWIvcmluZy9ydGVfcmluZ19ydHNfZWxlbV9wdnQu
-aA0KPiA+ID4gPiBiL2xpYi9yaW5nL3J0ZV9yaW5nX3J0c19lbGVtX3B2dC5oDQo+ID4gPiA+ID4g
-PiBpbmRleCA1MDlmYTY3NGZiLi44NjBiMTNjYzYxIDEwMDY0NA0KPiA+ID4gPiA+ID4gLS0tIGEv
-bGliL3JpbmcvcnRlX3JpbmdfcnRzX2VsZW1fcHZ0LmgNCj4gPiA+ID4gPiA+ICsrKyBiL2xpYi9y
-aW5nL3J0ZV9yaW5nX3J0c19lbGVtX3B2dC5oDQo+ID4gPiA+ID4gPiBAQCAtMTMxLDEzICsxMzEs
-MTUgQEAgX19ydGVfcmluZ19ydHNfbW92ZV9oZWFkKHN0cnVjdA0KPiA+ID4gPiA+ID4gcnRlX3Jp
-bmdfcnRzX2hlYWR0YWlsICpkLA0KPiA+ID4gPiA+ID4gIAkJbmgudmFsLmNudCA9IG9oLnZhbC5j
-bnQgKyAxOw0KPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ICAJLyoNCj4gPiA+ID4gPiA+IC0JICog
-dGhpcyBDQVMoQUNRVUlSRSwgQUNRVUlSRSkgc2VydmVzIGFzIGEgaG9pc3QgYmFycmllciB0bw0K
-PiBwcmV2ZW50Og0KPiA+ID4gPiA+ID4gKwkgKiB0aGlzIENBUyhBQ1FfUkVMLCBBQ1FVSVJFKSBz
-ZXJ2ZXMgYXMgYSBob2lzdCBiYXJyaWVyIHRvDQo+IHByZXZlbnQ6DQo+ID4gPiA+ID4gPiAgCSAq
-ICAtIE9PTyByZWFkcyBvZiBjb25zIHRhaWwgdmFsdWUNCj4gPiA+ID4gPiA+ICAJICogIC0gT09P
-IGNvcHkgb2YgZWxlbXMgdG8gdGhlIHJpbmcNCj4gPiA+ID4gPiA+ICsJICogIEFsc28gUkVMRUFT
-RSBndWFyYW50ZWVzIHRoYXQgbGF0ZXN0IHRhaWwgdmFsdWUNCj4gPiA+ID4gPiA+ICsJICogIHdp
-bGwgYmVjb21lIHZpc2libGUgYmVmb3JlIHRoZSBuZXcgaGVhZCB2YWx1ZS4NCj4gPiA+ID4gPiA+
-ICAJICovDQo+ID4gPiA+ID4gPiAgCX0gd2hpbGUgKHJ0ZV9hdG9taWNfY29tcGFyZV9leGNoYW5n
-ZV9zdHJvbmdfZXhwbGljaXQoJmQtDQo+ID4gPiA+ID5oZWFkLnJhdywNCj4gPiA+ID4gPiA+ICAJ
-CQkodWludDY0X3QgKikodWludHB0cl90KSZvaC5yYXcsIG5oLnJhdywNCj4gPiA+ID4gPiA+IC0J
-CQlydGVfbWVtb3J5X29yZGVyX2FjcXVpcmUsDQo+ID4gPiA+ID4gPiArCQkJcnRlX21lbW9yeV9v
-cmRlcl9hY3FfcmVsLA0KPiA+ID4gPiA+ID4gIAkJCXJ0ZV9tZW1vcnlfb3JkZXJfYWNxdWlyZSkg
-PT0gMCk7DQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gIAkqb2xkX2hlYWQgPSBvaC52YWwucG9z
-Ow0KPiA+ID4gPiA+ID4gZGlmZiAtLWdpdCBhL2xpYi9yaW5nL3NvcmluZy5jIGIvbGliL3Jpbmcv
-c29yaW5nLmMgaW5kZXgNCj4gPiA+ID4gN2JjYmYzNTUxNi4uMjFhMWEyN2UyNA0KPiA+ID4gPiA+
-ID4gMTAwNjQ0DQo+ID4gPiA+ID4gPiAtLS0gYS9saWIvcmluZy9zb3JpbmcuYw0KPiA+ID4gPiA+
-ID4gKysrIGIvbGliL3Jpbmcvc29yaW5nLmMNCj4gPiA+ID4gPiA+IEBAIC0xMjMsOCArMTIzLDYg
-QEAgX19ydGVfc29yaW5nX3N0YWdlX2ZpbmFsaXplKHN0cnVjdA0KPiA+ID4gPiA+ID4gc29yaW5n
-X3N0YWdlX2hlYWR0YWlsICpzaHQsIHVpbnQzMl90IHN0YWdlLA0KPiA+ID4gPiA+ID4gIAlydGVf
-YXRvbWljX3N0b3JlX2V4cGxpY2l0KCZzaHQtPnRhaWwucmF3LCBvdC5yYXcsDQo+ID4gPiA+ID4g
-PiAgCQkJcnRlX21lbW9yeV9vcmRlcl9yZWxlYXNlKTsNCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4g
-PiAtCS8qIG1ha2Ugc3VyZSB0aGF0IG5ldyB0YWlsIHZhbHVlIGlzIHZpc2libGUgKi8NCj4gPiA+
-ID4gPiA+IC0JcnRlX2F0b21pY190aHJlYWRfZmVuY2UocnRlX21lbW9yeV9vcmRlcl9yZWxlYXNl
-KTsNCj4gPiA+ID4gPiA+ICAJcmV0dXJuIGk7DQo+ID4gPiA+ID4gPiAgfQ0KPiA+ID4gPiA+ID4N
-Cj4gPiA+ID4gPiA+IEBAIC0yMTksOSArMjE3LDYgQEAgX19ydGVfc29yaW5nX3VwZGF0ZV90YWls
-KHN0cnVjdA0KPiA+ID4gPiBfX3J0ZV9yaW5nX2hlYWR0YWlsDQo+ID4gPiA+ID4gPiAqcmh0LA0K
-PiA+ID4gPiA+ID4gIAkJLyogdW5zdXBwb3J0ZWQgbW9kZSwgc2hvdWxkbid0IGJlIGhlcmUgKi8N
-Cj4gPiA+ID4gPiA+ICAJCVJURV9BU1NFUlQoMCk7DQo+ID4gPiA+ID4gPiAgCX0NCj4gPiA+ID4g
-PiA+IC0NCj4gPiA+ID4gPiA+IC0JLyogbWFrZSBzdXJlIHRoYXQgbmV3IHRhaWwgdmFsdWUgaXMg
-dmlzaWJsZSAqLw0KPiA+ID4gPiA+ID4gLQlydGVfYXRvbWljX3RocmVhZF9mZW5jZShydGVfbWVt
-b3J5X29yZGVyX3JlbGVhc2UpOw0KPiA+ID4gPiA+ID4gIH0NCj4gPiA+ID4gPiA+DQo+ID4gPiA+
-ID4gPiAgc3RhdGljIF9fcnRlX2Fsd2F5c19pbmxpbmUgdWludDMyX3QNCj4gPiA+ID4gPiA+IC0t
-DQo+ID4gPiA+ID4gPiAyLjQzLjANCg0K
+This patch enables support for RSA decrypt and verify operations
+and added cipher and sign test vectors.
+
+Signed-off-by: Sucharitha Sarananaga <ssarananaga@marvell.com>
+---
+ app/test-crypto-perf/cperf_ops.c          |  25 +-
+ app/test-crypto-perf/cperf_test_vectors.c | 536 ++++++++++++++++++++++
+ app/test-crypto-perf/cperf_test_vectors.h |   2 +
+ 3 files changed, 557 insertions(+), 6 deletions(-)
+
+diff --git a/app/test-crypto-perf/cperf_ops.c b/app/test-crypto-perf/cperf_ops.c
+index 47965bbc32..a2e4058f50 100644
+--- a/app/test-crypto-perf/cperf_ops.c
++++ b/app/test-crypto-perf/cperf_ops.c
+@@ -45,7 +45,7 @@ cperf_set_ops_asym_rsa(struct rte_crypto_op **ops,
+ 		   uint32_t *imix_idx __rte_unused,
+ 		   uint64_t *tsc_start __rte_unused)
+ {
+-	uint8_t cipher_buf[4096] = {0};
++	uint8_t output_buf[4096] = {0};
+ 	uint16_t i;
+ 
+ 	for (i = 0; i < nb_ops; i++) {
+@@ -53,16 +53,29 @@ cperf_set_ops_asym_rsa(struct rte_crypto_op **ops,
+ 
+ 		ops[i]->status = RTE_CRYPTO_OP_STATUS_NOT_PROCESSED;
+ 		asym_op->rsa.op_type = options->asym_op_type;
+-		asym_op->rsa.message.data = rsa_plaintext.data;
+-		asym_op->rsa.message.length = rsa_plaintext.len;
+ 		if (options->asym_op_type == RTE_CRYPTO_ASYM_OP_SIGN) {
+-			asym_op->rsa.sign.data = cipher_buf;
++			asym_op->rsa.message.data = rsa_plaintext.data;
++			asym_op->rsa.message.length = rsa_plaintext.len;
++			asym_op->rsa.sign.data = output_buf;
+ 			asym_op->rsa.sign.length = options->rsa_data->n.length;
+ 		} else if (options->asym_op_type == RTE_CRYPTO_ASYM_OP_ENCRYPT) {
+-			asym_op->rsa.cipher.data = cipher_buf;
++			asym_op->rsa.message.data = rsa_plaintext.data;
++			asym_op->rsa.message.length = rsa_plaintext.len;
++			asym_op->rsa.cipher.data = output_buf;
+ 			asym_op->rsa.cipher.length = options->rsa_data->n.length;
++		} else if (options->asym_op_type == RTE_CRYPTO_ASYM_OP_DECRYPT) {
++			asym_op->rsa.cipher.data = options->rsa_data->cipher.data;
++			asym_op->rsa.cipher.length = options->rsa_data->cipher.length;
++			asym_op->rsa.message.data = output_buf;
++			asym_op->rsa.message.length = options->rsa_data->n.length;
++		} else if (options->asym_op_type == RTE_CRYPTO_ASYM_OP_VERIFY) {
++			asym_op->rsa.sign.data = options->rsa_data->sign.data;
++			asym_op->rsa.sign.length = options->rsa_data->sign.length;
++			asym_op->rsa.message.data = rsa_plaintext.data;
++			asym_op->rsa.message.length = rsa_plaintext.len;
+ 		} else {
+-			printf("RSA DECRYPT/VERIFY not supported");
++			rte_panic("Unsupported RSA operation type %d\n",
++				  options->asym_op_type);
+ 		}
+ 		rte_crypto_op_attach_asym_session(ops[i], sess);
+ 	}
+diff --git a/app/test-crypto-perf/cperf_test_vectors.c b/app/test-crypto-perf/cperf_test_vectors.c
+index aa52800fbd..682988ccff 100644
+--- a/app/test-crypto-perf/cperf_test_vectors.c
++++ b/app/test-crypto-perf/cperf_test_vectors.c
+@@ -1568,6 +1568,44 @@ uint8_t rsa_qinv[] = {
+ 	0x71, 0x94, 0xdd, 0xa0, 0xf5, 0x1e, 0x6d, 0xcc
+ };
+ 
++uint8_t rsa_sign[] = {
++	0x2f, 0x42, 0xb3, 0xb1, 0x7f, 0xa8, 0x66, 0x00,
++	0xc6, 0xb4, 0x7d, 0x12, 0x67, 0x5f, 0x94, 0xf7,
++	0x25, 0xd6, 0x7e, 0x14, 0xe4, 0xc2, 0x63, 0xb2,
++	0xdc, 0x1b, 0x13, 0xc0, 0xda, 0xda, 0x0d, 0x32,
++	0x9b, 0xf4, 0x8a, 0x62, 0x90, 0xe7, 0xb3, 0xf3,
++	0xbb, 0x5a, 0xab, 0x5f, 0xf8, 0xaf, 0xf4, 0x19,
++	0x0d, 0xa5, 0x66, 0x25, 0x95, 0x69, 0x57, 0x43,
++	0x87, 0x44, 0xb0, 0x92, 0x1a, 0x39, 0xa6, 0x97,
++	0x06, 0xfd, 0xf3, 0x20, 0x72, 0xfb, 0xea, 0xef,
++	0xcf, 0xd1, 0x88, 0xca, 0x23, 0x26, 0xa9, 0xa9,
++	0x22, 0xcd, 0xa0, 0x10, 0xf9, 0x14, 0x28, 0xc7,
++	0x0e, 0x82, 0xe1, 0xcd, 0xc3, 0x31, 0x0f, 0x75,
++	0x6d, 0x69, 0xcd, 0x55, 0x30, 0xa3, 0x26, 0xcb,
++	0xf8, 0xbc, 0xf3, 0xc5, 0xfa, 0xd7, 0x7e, 0x51,
++	0x81, 0xc9, 0x5c, 0x9f, 0x2a, 0x40, 0x40, 0x83,
++	0xb3, 0xba, 0xdb, 0x94, 0x2d, 0x31, 0x1c, 0xf8,
++};
++
++uint8_t rsa_cipher[] = {
++	0x90, 0x65, 0xb0, 0x2e, 0xe0, 0xdd, 0x52, 0x0f,
++	0xaf, 0x59, 0x30, 0x1d, 0xed, 0x15, 0x44, 0x27,
++	0x98, 0xf6, 0xd2, 0xae, 0xa6, 0x51, 0x4e, 0xf3,
++	0xd1, 0x5c, 0x59, 0x24, 0xa3, 0xaf, 0x1f, 0x42,
++	0xaa, 0x4a, 0xd3, 0x94, 0xe5, 0x6f, 0xfd, 0x68,
++	0x6a, 0xa3, 0xc9, 0x69, 0x2b, 0xb5, 0x48, 0x69,
++	0xe8, 0x04, 0x44, 0x64, 0x47, 0xe2, 0xab, 0xb1,
++	0x49, 0x19, 0xb1, 0x17, 0x76, 0x06, 0x20, 0xa6,
++	0x81, 0x57, 0x69, 0x76, 0x99, 0xf7, 0x3c, 0xf6,
++	0x3f, 0x23, 0x58, 0xe6, 0xad, 0x4b, 0xb5, 0xdc,
++	0x9d, 0xf1, 0x22, 0xfe, 0xda, 0xad, 0x8b, 0x4d,
++	0x7a, 0xe8, 0x8a, 0x8f, 0x7b, 0x16, 0x47, 0x7b,
++	0x48, 0x91, 0x22, 0x04, 0x44, 0x80, 0xcb, 0x93,
++	0x63, 0x42, 0x73, 0x55, 0x4d, 0x73, 0x1a, 0x64,
++	0xbf, 0x56, 0x12, 0x25, 0xe6, 0x9e, 0xb2, 0xd2,
++	0xeb, 0x01, 0x57, 0x2c, 0x3a, 0xdf, 0x02, 0xfb,
++};
++
+ uint8_t rsa_2048_n[] = {
+ 	0xB0, 0xF9, 0xE8, 0x19, 0x43, 0xA7, 0xAE, 0x98,
+ 	0x92, 0xAA, 0xDE, 0x17, 0xCA, 0x7C, 0x40, 0xF8,
+@@ -1732,6 +1770,76 @@ uint8_t rsa_2048_qinv[] = {
+ 	0x2F, 0x67, 0xB5, 0xC8, 0xAA, 0x38, 0x7F, 0xF7
+ };
+ 
++uint8_t rsa_2048_sign[] = {
++	0x12, 0x76, 0xE0, 0x0B, 0xD9, 0x08, 0x66, 0x9A,
++	0x92, 0x53, 0xD1, 0x70, 0xAA, 0x5B, 0x9D, 0xC0,
++	0x88, 0x11, 0x9F, 0x0C, 0x97, 0x7C, 0x9F, 0x96,
++	0x4C, 0x12, 0x3D, 0xB6, 0xFC, 0xF3, 0xEB, 0x3C,
++	0x19, 0x1E, 0x21, 0x6D, 0x56, 0x8F, 0x8D, 0xFA,
++	0x58, 0xE3, 0xED, 0xD8, 0xD6, 0x89, 0x6C, 0x29,
++	0xDE, 0x12, 0x05, 0xDB, 0x7A, 0x1F, 0x1E, 0x94,
++	0x02, 0x2D, 0x4A, 0x57, 0xC8, 0x77, 0x59, 0x08,
++	0x84, 0xC4, 0xD9, 0x44, 0x82, 0x8A, 0x7F, 0x0E,
++	0x5E, 0x2A, 0x45, 0xE7, 0x7E, 0xB6, 0xB1, 0x95,
++	0x09, 0x2C, 0xED, 0x08, 0x32, 0x31, 0xA5, 0x01,
++	0x76, 0x9E, 0x8A, 0x76, 0xA2, 0xBD, 0xD3, 0xE6,
++	0x26, 0x5A, 0x16, 0x0D, 0xF8, 0xE5, 0xF6, 0xC5,
++	0x94, 0x21, 0xF2, 0x9E, 0xB3, 0x26, 0xE0, 0xA4,
++	0xF7, 0xA7, 0x20, 0xFC, 0xE0, 0xE3, 0xF3, 0xB2,
++	0x2C, 0xA7, 0x6B, 0x99, 0x68, 0xDC, 0x43, 0xDF,
++	0xE0, 0x5B, 0x78, 0xAC, 0xDB, 0x78, 0x19, 0x44,
++	0x66, 0x8B, 0x1E, 0x56, 0x5E, 0xD7, 0xD8, 0x4A,
++	0x73, 0x4F, 0x00, 0xA8, 0x75, 0x9F, 0xEB, 0x8F,
++	0x97, 0x32, 0x35, 0xCC, 0xEF, 0xC9, 0xF9, 0x26,
++	0xBE, 0xB6, 0x63, 0x86, 0x8F, 0x23, 0xDA, 0x44,
++	0x77, 0xC3, 0x36, 0x7B, 0xC7, 0x9B, 0x13, 0x0F,
++	0xDB, 0x6E, 0x3C, 0xDF, 0x33, 0xC0, 0x1F, 0x41,
++	0x4C, 0x58, 0xEA, 0x0E, 0xB2, 0x8A, 0x44, 0xDB,
++	0x9B, 0x82, 0x63, 0xA4, 0x89, 0x58, 0xB5, 0x98,
++	0xFC, 0x0D, 0x1E, 0x00, 0x82, 0x26, 0x27, 0xB4,
++	0x43, 0xFD, 0x78, 0xA8, 0xBD, 0xDC, 0x91, 0xE4,
++	0xC2, 0xB5, 0xD3, 0xF8, 0x7A, 0x86, 0x1D, 0xD8,
++	0x1E, 0x3F, 0xD7, 0x0D, 0x79, 0xB3, 0xBE, 0x24,
++	0xB0, 0x07, 0x95, 0xDF, 0xFC, 0xBA, 0xF9, 0x09,
++	0xF7, 0xDF, 0xBA, 0x3F, 0x7A, 0x8C, 0xDA, 0xB0,
++	0xA5, 0x36, 0xA2, 0xFF, 0x8A, 0x68, 0x4F, 0x68,
++};
++
++uint8_t rsa_2048_cipher[] = {
++	0x9f, 0xd3, 0xf2, 0x54, 0x23, 0xb2, 0x0f, 0x8e,
++	0x8b, 0x16, 0x3c, 0x22, 0x66, 0x00, 0xe1, 0x38,
++	0x86, 0xdc, 0x8c, 0x3f, 0x6b, 0x99, 0xa1, 0x45,
++	0x0b, 0xb5, 0x39, 0x90, 0x4d, 0x59, 0xc4, 0xe5,
++	0x9b, 0xe5, 0x2b, 0xb9, 0xad, 0xca, 0x1c, 0x9c,
++	0x51, 0x7b, 0xdd, 0x7f, 0x25, 0x24, 0xe7, 0x6d,
++	0x96, 0x04, 0x64, 0x76, 0x9d, 0x65, 0xb3, 0x03,
++	0x65, 0xc9, 0xd4, 0xfb, 0x48, 0x89, 0x2a, 0x8d,
++	0xf0, 0xb1, 0x03, 0x3a, 0x55, 0x4e, 0x8e, 0x4c,
++	0x25, 0x88, 0xf8, 0x3c, 0x7f, 0xb8, 0x6c, 0xb9,
++	0x65, 0x58, 0x13, 0xc9, 0x71, 0xdf, 0xeb, 0x98,
++	0x1d, 0x69, 0x4f, 0x70, 0xbd, 0x2e, 0xa6, 0xf8,
++	0x99, 0xe7, 0xcf, 0xc9, 0xb7, 0x18, 0x4a, 0x49,
++	0xad, 0x3c, 0xe7, 0xee, 0x50, 0xea, 0x3d, 0xb4,
++	0x6e, 0x14, 0x9f, 0x2e, 0x0e, 0x50, 0xba, 0xd1,
++	0x2e, 0xd2, 0x3b, 0x3b, 0x2a, 0xe1, 0x33, 0x6a,
++	0xdb, 0xbc, 0x5b, 0x80, 0x39, 0xe2, 0xb0, 0xf3,
++	0xbe, 0x6b, 0xfa, 0x0d, 0x34, 0x0b, 0x84, 0x16,
++	0x5f, 0x08, 0x17, 0xac, 0xf1, 0x94, 0xc1, 0xd8,
++	0xa8, 0x56, 0x6d, 0x62, 0xc9, 0xdb, 0x53, 0xfc,
++	0x2d, 0xca, 0xa2, 0xad, 0x34, 0xc9, 0x3c, 0x5e,
++	0xfd, 0x5f, 0x44, 0x2e, 0x4a, 0x0f, 0x25, 0x68,
++	0x5f, 0x57, 0xb8, 0xd7, 0xd7, 0xb1, 0x5c, 0xc6,
++	0xb6, 0x90, 0xcf, 0x14, 0xd9, 0x0b, 0x6c, 0xab,
++	0x8c, 0x05, 0x12, 0x00, 0x5f, 0x14, 0x4e, 0x84,
++	0xdd, 0x64, 0x8a, 0xdd, 0xcb, 0x98, 0xab, 0x22,
++	0x84, 0x97, 0xa0, 0xae, 0xfe, 0xab, 0xe6, 0xba,
++	0xf0, 0xb3, 0x8a, 0x1d, 0xf5, 0xad, 0x0e, 0x26,
++	0xec, 0x07, 0x5b, 0x67, 0xed, 0xe0, 0xbd, 0x58,
++	0xdb, 0x75, 0xff, 0x83, 0xe8, 0x52, 0x40, 0x2b,
++	0xf8, 0x4d, 0x43, 0xf5, 0xfc, 0x69, 0xcc, 0x5f,
++	0x31, 0xb2, 0xb9, 0x07, 0x2f, 0x9a, 0x7f, 0x89,
++};
++
+ uint8_t rsa_4096_n[] = {
+ 	0xB3, 0x8B, 0x49, 0x60, 0xE6, 0x3B, 0xE6, 0xA8,
+ 	0xDB, 0xA8, 0x9A, 0x82, 0x97, 0x8E, 0xF1, 0xF6,
+@@ -2041,6 +2149,140 @@ uint8_t rsa_4096_qinv[] = {
+ 	0xFD, 0xEB, 0x8A, 0xBA, 0xF4, 0x91, 0x31, 0xBF
+ };
+ 
++uint8_t rsa_4096_sign[] = {
++	0x1C, 0xFA, 0x48, 0x6A, 0x74, 0x1B, 0xD5, 0x08,
++	0xB4, 0x34, 0x37, 0x8E, 0x1C, 0x12, 0x98, 0x87,
++	0x3D, 0xB4, 0xB9, 0x3F, 0xFE, 0xF4, 0x4F, 0x49,
++	0xB9, 0xD7, 0x8E, 0x19, 0xA1, 0x85, 0xD0, 0x39,
++	0xB0, 0xC6, 0xBD, 0x25, 0x2F, 0xE0, 0x94, 0xEE,
++	0x41, 0xC5, 0xEF, 0xAD, 0xBC, 0xA4, 0xCE, 0xED,
++	0xAF, 0x2B, 0x26, 0x67, 0x8F, 0x53, 0x02, 0x9D,
++	0xB5, 0x95, 0x15, 0x84, 0xF2, 0x1F, 0x4A, 0x59,
++	0x1C, 0x91, 0x61, 0xFC, 0x83, 0x60, 0x73, 0x2B,
++	0xD3, 0x0C, 0xC6, 0xDF, 0xF8, 0xC0, 0xD0, 0x22,
++	0x77, 0xDB, 0xE0, 0xD9, 0x5A, 0x5B, 0x45, 0x10,
++	0x20, 0x35, 0x6B, 0xFB, 0x86, 0x8B, 0xD1, 0xD4,
++	0xC3, 0x4F, 0x4C, 0x57, 0xCC, 0xE8, 0xCB, 0x1F,
++	0x61, 0x07, 0xDD, 0x15, 0x83, 0xBE, 0x3F, 0x80,
++	0x81, 0xEA, 0xD4, 0x29, 0xC5, 0x5C, 0xE9, 0x36,
++	0xB4, 0x29, 0x92, 0x17, 0x31, 0x66, 0x42, 0x5E,
++	0x5A, 0x6E, 0xAA, 0x2A, 0x78, 0x37, 0xEA, 0x45,
++	0xF4, 0x41, 0xC2, 0x6B, 0x31, 0xD0, 0x93, 0x2A,
++	0x7E, 0x69, 0x9F, 0x16, 0xE0, 0xB2, 0xE0, 0x7E,
++	0x55, 0xD0, 0x97, 0xCA, 0x64, 0x3F, 0x8C, 0x90,
++	0x56, 0xE9, 0xCD, 0xAA, 0xED, 0xC7, 0x56, 0x51,
++	0x05, 0xC9, 0xA3, 0x09, 0x1C, 0xDD, 0x1E, 0x82,
++	0x57, 0x8A, 0xA3, 0x43, 0xC2, 0xA7, 0xD9, 0x9B,
++	0x19, 0x04, 0x98, 0x02, 0x70, 0xF3, 0xE1, 0x0D,
++	0x5D, 0x7F, 0x3B, 0xC4, 0x74, 0x14, 0xC1, 0xBF,
++	0xBA, 0x44, 0xF7, 0xAB, 0x26, 0xF9, 0x9E, 0x37,
++	0x09, 0x17, 0x10, 0xA1, 0xD0, 0xEB, 0xE2, 0x74,
++	0xB3, 0x70, 0x56, 0xBA, 0x99, 0x5A, 0x05, 0x21,
++	0x82, 0x0A, 0x1D, 0xE8, 0xCC, 0x3E, 0x49, 0x35,
++	0x9A, 0xE8, 0x18, 0x7E, 0x89, 0x46, 0x6D, 0xA9,
++	0x93, 0x22, 0x22, 0xB1, 0xCA, 0x3E, 0xFF, 0x3E,
++	0x06, 0x76, 0x3B, 0x08, 0x8B, 0xA9, 0x60, 0xE2,
++	0x32, 0xAC, 0x10, 0x95, 0x07, 0xF1, 0x4B, 0x1D,
++	0x02, 0xD3, 0xC6, 0xB6, 0xD2, 0x9A, 0xB1, 0xEA,
++	0x97, 0x81, 0xE7, 0x1F, 0x86, 0x7E, 0xE1, 0x1D,
++	0xB2, 0xA2, 0x15, 0x85, 0x54, 0x6B, 0x0E, 0x01,
++	0x37, 0x9F, 0x09, 0xF2, 0xFF, 0x44, 0x32, 0x68,
++	0x2E, 0x11, 0x8F, 0xBC, 0x85, 0x9A, 0x6C, 0xCA,
++	0x80, 0xBF, 0xEC, 0x02, 0x1F, 0xEB, 0x0A, 0xCA,
++	0x3F, 0x68, 0xE8, 0x2E, 0xA2, 0xE4, 0xCE, 0xEB,
++	0xC1, 0x76, 0xCD, 0x2F, 0xC1, 0x07, 0x5C, 0x34,
++	0x98, 0xD1, 0x36, 0xEE, 0x44, 0xFB, 0xF1, 0x33,
++	0xF8, 0x40, 0xE7, 0xEE, 0xA5, 0xC5, 0x6F, 0x67,
++	0x1D, 0xF9, 0x5E, 0x14, 0xE0, 0xD8, 0x19, 0xA9,
++	0x9A, 0x62, 0xB9, 0x69, 0xAE, 0x04, 0x08, 0xC3,
++	0xEF, 0x18, 0xE2, 0x9B, 0xB3, 0xB1, 0x88, 0x5F,
++	0x7C, 0x9A, 0x25, 0x09, 0x84, 0x66, 0xA2, 0xBD,
++	0xA7, 0x6B, 0xFC, 0x1B, 0xA5, 0x3C, 0xD4, 0x03,
++	0x59, 0x2E, 0x3A, 0x6E, 0x1E, 0x3F, 0x1D, 0x73,
++	0x07, 0xC7, 0x90, 0x64, 0xE6, 0x86, 0x42, 0xC6,
++	0xFF, 0x36, 0x0F, 0xB3, 0x35, 0x8E, 0xEC, 0x8A,
++	0x04, 0x46, 0x1D, 0xBE, 0xD9, 0x1D, 0x51, 0x5D,
++	0x30, 0xC8, 0xE1, 0x40, 0x28, 0xE1, 0xA8, 0x1D,
++	0x87, 0xB6, 0x9A, 0x6B, 0x79, 0xFA, 0x94, 0x2D,
++	0x50, 0x85, 0x81, 0xB6, 0x6B, 0x0A, 0x61, 0xA2,
++	0x82, 0x60, 0xFE, 0xA4, 0x52, 0x6C, 0x9D, 0xAE,
++	0x60, 0x92, 0x15, 0x63, 0x17, 0x57, 0x4B, 0x5A,
++	0x27, 0xD4, 0xD8, 0xA6, 0x22, 0x1F, 0x5A, 0x3E,
++	0x6A, 0x73, 0x19, 0x67, 0x0F, 0xCD, 0x65, 0x20,
++	0x82, 0x8B, 0x96, 0xA8, 0xF1, 0x14, 0xB9, 0xC6,
++	0xBD, 0x3E, 0xD8, 0x36, 0xF2, 0x0C, 0xFF, 0x15,
++	0x8E, 0x2B, 0xE7, 0x76, 0x1E, 0xEB, 0x71, 0x4F,
++	0x44, 0xD8, 0x67, 0xF6, 0x87, 0x3D, 0xE1, 0x28,
++	0xE6, 0xD4, 0x23, 0xCA, 0x3F, 0xB1, 0xAF, 0xF8
++};
++
++uint8_t rsa_4096_cipher[] = {
++	0xab, 0x03, 0x5f, 0x3f, 0x35, 0x8c, 0xd8, 0xcd,
++	0x68, 0x23, 0x2f, 0x99, 0xa4, 0xac, 0x47, 0xbb,
++	0x6d, 0x7c, 0x56, 0xb0, 0x74, 0x50, 0x10, 0xe9,
++	0x77, 0xfe, 0x6e, 0xec, 0xab, 0x6c, 0x3f, 0x71,
++	0xc2, 0xe8, 0x39, 0xfc, 0x31, 0x84, 0xff, 0x7e,
++	0x8d, 0xaf, 0x28, 0x14, 0x41, 0x59, 0x7e, 0xd2,
++	0x5e, 0xe9, 0xc8, 0xfb, 0x1a, 0x66, 0x19, 0xe6,
++	0x24, 0x95, 0x27, 0x83, 0x40, 0x68, 0x09, 0xa8,
++	0x4f, 0xd3, 0x7c, 0x46, 0xb3, 0xc9, 0xd9, 0xd6,
++	0x8e, 0xc8, 0x0b, 0xad, 0xe3, 0x4e, 0x42, 0xea,
++	0x7e, 0x95, 0x05, 0x7d, 0x74, 0xa1, 0x69, 0x6c,
++	0x03, 0xd1, 0xd7, 0x2e, 0xf8, 0x96, 0x92, 0x84,
++	0x61, 0x97, 0x01, 0x8f, 0x6e, 0xe0, 0x03, 0x00,
++	0x02, 0x2f, 0xf4, 0xe0, 0xbe, 0xb3, 0xa9, 0xed,
++	0x31, 0x2d, 0x0b, 0xff, 0xc2, 0xba, 0xcf, 0xb1,
++	0xf5, 0x83, 0xb4, 0x61, 0x43, 0x1d, 0x74, 0xd3,
++	0x1b, 0xfb, 0x16, 0xbb, 0x04, 0xce, 0xde, 0x30,
++	0x92, 0x93, 0x63, 0xdd, 0x4b, 0xef, 0x4c, 0x48,
++	0x39, 0xd1, 0xdc, 0x55, 0xe6, 0xd7, 0x9d, 0x31,
++	0x0e, 0x8f, 0x74, 0x26, 0xed, 0x80, 0xe1, 0xea,
++	0x27, 0xb5, 0x29, 0x9b, 0x9f, 0xa6, 0xe7, 0xb1,
++	0xe4, 0x42, 0xc0, 0x8f, 0xfb, 0x90, 0x8a, 0x5e,
++	0xfb, 0xf5, 0x30, 0x9d, 0xdc, 0x74, 0x2a, 0x0c,
++	0xdf, 0x28, 0xe4, 0x66, 0x7d, 0x3c, 0x38, 0x9c,
++	0x48, 0x95, 0x6f, 0xb8, 0xfc, 0x47, 0x79, 0x89,
++	0x0a, 0x99, 0xe5, 0xf6, 0x25, 0x3e, 0x74, 0x34,
++	0x2e, 0x2c, 0xcb, 0x98, 0x14, 0x24, 0x97, 0x7d,
++	0x21, 0x64, 0xdb, 0xe9, 0xbc, 0xbd, 0x63, 0xab,
++	0xdb, 0xc7, 0xcf, 0xd4, 0x8e, 0xb7, 0x7f, 0x5c,
++	0x8f, 0x52, 0x69, 0x2b, 0x21, 0x73, 0x43, 0x60,
++	0xa2, 0xdf, 0x3c, 0x97, 0x50, 0x9a, 0x5f, 0xc9,
++	0x56, 0xac, 0x7d, 0xe7, 0xe1, 0x7b, 0xaa, 0xbe,
++	0x8a, 0x48, 0x1d, 0x1c, 0xa5, 0x50, 0xae, 0xcf,
++	0x41, 0xb3, 0x56, 0x92, 0x12, 0xda, 0x91, 0x69,
++	0x59, 0x7c, 0x68, 0x77, 0xea, 0xd3, 0x90, 0x3c,
++	0x4f, 0x36, 0x4b, 0xb8, 0xf6, 0x3d, 0xb8, 0x8b,
++	0xf6, 0xca, 0x80, 0x20, 0x95, 0xf2, 0x95, 0x8c,
++	0xbd, 0x19, 0xd4, 0x6a, 0x89, 0xa6, 0x72, 0xf8,
++	0x43, 0x02, 0xdc, 0x81, 0x5c, 0xcd, 0x74, 0xca,
++	0xb3, 0xdf, 0x9b, 0xe4, 0x37, 0xfa, 0x07, 0xa6,
++	0x40, 0xc0, 0x11, 0x88, 0x55, 0xdf, 0x50, 0x1f,
++	0x47, 0x3d, 0xb1, 0xbe, 0x5b, 0xf6, 0xa7, 0xd9,
++	0x3b, 0x39, 0x0b, 0x03, 0xbb, 0xa0, 0x7a, 0xb2,
++	0xd0, 0xda, 0x43, 0x37, 0x92, 0x2e, 0xd2, 0x09,
++	0x4f, 0x9d, 0x0a, 0xbe, 0xec, 0x1e, 0x1f, 0x46,
++	0xd9, 0x90, 0xe6, 0xfc, 0xcb, 0x78, 0x1e, 0x8c,
++	0x91, 0x35, 0x2b, 0x2f, 0xc8, 0x4a, 0x70, 0x5c,
++	0x90, 0x46, 0xb1, 0xca, 0x9f, 0x37, 0xa2, 0x27,
++	0x1f, 0xdf, 0xdb, 0xd9, 0xe0, 0x09, 0x40, 0x87,
++	0x07, 0x07, 0x4b, 0xd0, 0x3c, 0xbe, 0xe9, 0xcc,
++	0xb9, 0x0e, 0xf8, 0x70, 0x69, 0xef, 0x3a, 0xa4,
++	0x90, 0x8e, 0x15, 0xce, 0x2a, 0x9c, 0x67, 0xe9,
++	0xb4, 0x6d, 0xfd, 0x62, 0x77, 0xc5, 0x1a, 0xed,
++	0xf6, 0x7c, 0xdc, 0xe2, 0x3d, 0x6c, 0x0c, 0x25,
++	0x65, 0x25, 0x32, 0x8d, 0xb4, 0xcd, 0xac, 0x4b,
++	0x8e, 0x16, 0xbf, 0x13, 0x2e, 0xc4, 0x51, 0xfc,
++	0x39, 0x04, 0x23, 0xec, 0x7d, 0x8b, 0x2f, 0x0f,
++	0x24, 0x55, 0x14, 0x09, 0x8a, 0x82, 0xc6, 0xb8,
++	0x66, 0x91, 0x8c, 0xde, 0x72, 0x0f, 0x6d, 0xc2,
++	0x94, 0x17, 0xe8, 0x6f, 0x65, 0x93, 0xc8, 0x2c,
++	0x74, 0x29, 0xf6, 0x19, 0x78, 0xaf, 0x45, 0xba,
++	0x4c, 0x5f, 0x98, 0x87, 0xc8, 0x23, 0xe1, 0xb0,
++	0xba, 0xb6, 0x93, 0x44, 0xc9, 0x14, 0x63, 0xa5,
++	0x95, 0x32, 0x7d, 0xac, 0x1a, 0xde, 0x8a, 0x65,
++};
++
+ uint8_t rsa_8192_n[] = {
+ 	0xcf, 0xb0, 0x0e, 0x88, 0x72, 0x2d, 0x19, 0x63,
+ 	0x7f, 0xe0, 0x13, 0x9a, 0xe1, 0x01, 0xec, 0x1f,
+@@ -2638,6 +2880,268 @@ uint8_t rsa_8192_qinv[] = {
+ 	0x25, 0x33, 0xf1, 0x4a, 0x8b, 0x68, 0x07, 0x7b,
+ };
+ 
++uint8_t rsa_8192_sign[] = {
++	0x5D, 0xD0, 0x26, 0x63, 0x96, 0x97, 0x0A, 0x00,
++	0xAE, 0x01, 0x17, 0x77, 0x46, 0x89, 0x66, 0xC0,
++	0x7B, 0xA9, 0x00, 0x4B, 0xFE, 0x6B, 0xFB, 0xD5,
++	0xD6, 0x84, 0x90, 0xE4, 0xEF, 0x0C, 0xED, 0x2F,
++	0xC9, 0x0E, 0x69, 0x8F, 0xC5, 0x9F, 0xA0, 0xE4,
++	0xD9, 0xF8, 0x36, 0x3F, 0x74, 0xA2, 0xC8, 0x4D,
++	0x78, 0xFF, 0x8C, 0x25, 0x18, 0x81, 0x5E, 0xD3,
++	0xDC, 0x6F, 0x6F, 0xC4, 0x03, 0xA9, 0x16, 0x58,
++	0xAE, 0x74, 0x0B, 0x31, 0xF4, 0xDC, 0x85, 0x93,
++	0xD0, 0x94, 0x47, 0x38, 0x8E, 0xBC, 0xB2, 0xCF,
++	0xCE, 0x85, 0xF3, 0xF3, 0x44, 0x13, 0x3F, 0xA9,
++	0xCA, 0x59, 0x89, 0x85, 0xBC, 0xA4, 0x66, 0x26,
++	0xC1, 0x56, 0xD1, 0x62, 0xCD, 0xFF, 0xD6, 0x6F,
++	0x18, 0xA1, 0x6E, 0x77, 0xFB, 0x32, 0x91, 0xAB,
++	0xC8, 0x33, 0x31, 0xF1, 0x04, 0x82, 0x44, 0x3E,
++	0x59, 0xD4, 0x33, 0xD4, 0x81, 0x6D, 0xB1, 0x7C,
++	0x0F, 0x85, 0xD8, 0xD9, 0x8D, 0x79, 0x12, 0x9C,
++	0x1B, 0xF5, 0x0C, 0xF0, 0xDA, 0x91, 0xA9, 0x78,
++	0x09, 0xAB, 0x0E, 0x41, 0xA5, 0x8E, 0xAD, 0x8C,
++	0x91, 0x23, 0x9D, 0xD0, 0x3E, 0xE6, 0xC7, 0x93,
++	0x1D, 0xBD, 0x49, 0x18, 0xD7, 0x6F, 0x30, 0xEB,
++	0x22, 0x12, 0xC6, 0x82, 0x75, 0xC1, 0xDA, 0x97,
++	0x9C, 0xEC, 0xD9, 0x6B, 0xDC, 0xA5, 0x19, 0xE5,
++	0x0B, 0x83, 0x15, 0x7D, 0x4B, 0xB4, 0xFA, 0x3E,
++	0x01, 0xB2, 0xDF, 0x5F, 0xA0, 0xE9, 0x21, 0x59,
++	0x0D, 0x45, 0xB1, 0x51, 0x81, 0x40, 0xE7, 0xD1,
++	0x1D, 0x7B, 0xD8, 0xFF, 0xD5, 0x0A, 0xE0, 0x6B,
++	0x2B, 0x38, 0x81, 0xBC, 0x13, 0x53, 0xDC, 0x87,
++	0x03, 0x5B, 0x96, 0xAB, 0xE2, 0xF4, 0x9F, 0x81,
++	0x3E, 0x53, 0x41, 0x3E, 0x0B, 0xC4, 0xD1, 0x0A,
++	0x83, 0x96, 0x61, 0x3C, 0x2E, 0xC2, 0x11, 0x1B,
++	0x32, 0x09, 0x7C, 0xEF, 0x9A, 0x18, 0x50, 0xB8,
++	0xFF, 0xA1, 0xEE, 0xFF, 0xC9, 0x8E, 0xFA, 0xDF,
++	0xEE, 0x8F, 0xF9, 0x02, 0x7A, 0xC1, 0x69, 0x86,
++	0xE3, 0x16, 0xCC, 0x20, 0x76, 0xC0, 0x1A, 0x9B,
++	0x5B, 0x6F, 0xCB, 0x31, 0xEB, 0x8C, 0x84, 0x2C,
++	0x1E, 0xF4, 0x1D, 0x48, 0xDA, 0x04, 0x10, 0x8E,
++	0xFE, 0xB0, 0x75, 0x58, 0x05, 0xDD, 0xBC, 0x01,
++	0x83, 0x9B, 0xAE, 0x73, 0x89, 0x29, 0x73, 0x1B,
++	0x14, 0xEA, 0x52, 0xF8, 0xA5, 0x11, 0xA7, 0x23,
++	0x2A, 0xAA, 0xBE, 0xC9, 0x71, 0xE1, 0x20, 0x5F,
++	0xB0, 0x18, 0x56, 0xED, 0x0A, 0x63, 0x07, 0x2F,
++	0x3F, 0xDF, 0xFA, 0xEF, 0xFE, 0x8F, 0x5C, 0xC4,
++	0xDC, 0xE6, 0xC8, 0x4E, 0xD1, 0xDE, 0x0E, 0xD4,
++	0x9C, 0xEA, 0x49, 0xF4, 0xCD, 0x30, 0xDE, 0x5D,
++	0x79, 0xAE, 0x5A, 0x64, 0x4F, 0x0A, 0xDB, 0x5C,
++	0x6A, 0xBB, 0x83, 0x3B, 0xAE, 0x7E, 0x48, 0xA8,
++	0x03, 0x46, 0x2F, 0x56, 0xD8, 0x5B, 0xFE, 0xE4,
++	0xCE, 0xC1, 0xC2, 0xC6, 0xDE, 0x85, 0xF2, 0x6E,
++	0x94, 0x67, 0x04, 0x79, 0xD9, 0xBA, 0x63, 0x38,
++	0x80, 0x88, 0x7B, 0xEC, 0xA8, 0x84, 0x51, 0xFA,
++	0x85, 0x7B, 0xD5, 0x9B, 0xCB, 0xB4, 0x4A, 0x28,
++	0xE2, 0x50, 0x84, 0xC6, 0x8C, 0xE2, 0x9C, 0xC1,
++	0xFB, 0xD8, 0x77, 0x18, 0xF1, 0x54, 0x3E, 0x4E,
++	0x67, 0x12, 0x36, 0x34, 0xB5, 0xA8, 0x53, 0x5A,
++	0x71, 0x25, 0xCA, 0x34, 0x8E, 0xC0, 0x4E, 0x67,
++	0xD8, 0xBC, 0xE5, 0x0B, 0x2B, 0xB0, 0x3A, 0xBE,
++	0x12, 0xD4, 0x27, 0x58, 0x06, 0x36, 0x3F, 0x6D,
++	0xC2, 0xC0, 0xAD, 0x8B, 0xBB, 0xF0, 0x7B, 0x91,
++	0xB1, 0xA0, 0xBD, 0xFD, 0x3B, 0xAD, 0x4F, 0x36,
++	0x3C, 0x51, 0x14, 0xBD, 0x29, 0xCA, 0x49, 0x45,
++	0x00, 0xC8, 0x3D, 0xF0, 0xA7, 0xF3, 0x16, 0x93,
++	0x4B, 0x63, 0xB1, 0x50, 0x79, 0xF9, 0x7D, 0x5D,
++	0x72, 0x15, 0xFF, 0x45, 0x44, 0xBC, 0x7E, 0x8A,
++	0x14, 0xA2, 0x64, 0x26, 0xB1, 0x48, 0x20, 0x88,
++	0x77, 0x9B, 0x45, 0xD1, 0xB3, 0x32, 0x6B, 0x3D,
++	0x6C, 0xDB, 0x27, 0x83, 0x4C, 0x49, 0xEC, 0x86,
++	0x40, 0x90, 0x95, 0x4E, 0x07, 0x01, 0xDD, 0xF3,
++	0x72, 0x7B, 0x8B, 0xA2, 0xAE, 0x42, 0xD3, 0xE5,
++	0xA5, 0x7B, 0x58, 0x67, 0x85, 0x3B, 0x84, 0xF0,
++	0x82, 0x5F, 0x01, 0x13, 0x9F, 0xD4, 0xEB, 0x2A,
++	0x60, 0xB7, 0x0C, 0x78, 0x42, 0x84, 0x56, 0xFE,
++	0x8D, 0xF0, 0x59, 0x29, 0xA0, 0xB4, 0x50, 0xCC,
++	0x5F, 0xC0, 0x66, 0xA2, 0x2F, 0x5E, 0x29, 0x21,
++	0x09, 0x42, 0x61, 0xE5, 0x85, 0x43, 0xFA, 0xB0,
++	0xE6, 0x61, 0x37, 0x34, 0x75, 0x8A, 0x10, 0xB9,
++	0xEE, 0xDF, 0xAC, 0x2E, 0xFB, 0xB1, 0x8C, 0x86,
++	0x96, 0x73, 0xAE, 0xF6, 0xC1, 0x71, 0x81, 0x2A,
++	0x17, 0x79, 0x6E, 0x8F, 0x61, 0xF8, 0xD4, 0x9D,
++	0xFD, 0x1E, 0xF9, 0x89, 0xE7, 0x9A, 0x8E, 0xA0,
++	0xE5, 0xAF, 0x81, 0x53, 0xFE, 0xF0, 0xC3, 0x4F,
++	0xD2, 0x91, 0xE1, 0xE0, 0x78, 0xF1, 0xF5, 0xD6,
++	0x22, 0x57, 0x0F, 0xFD, 0x3B, 0x8F, 0x0F, 0xE2,
++	0x99, 0x57, 0xE1, 0xBA, 0x29, 0x1F, 0x2B, 0x25,
++	0xF9, 0xC5, 0xDD, 0xA9, 0x5C, 0xC5, 0x9E, 0x18,
++	0x88, 0x99, 0xD5, 0x80, 0xC7, 0x5D, 0x4D, 0xD3,
++	0xDE, 0xE7, 0x0D, 0x0D, 0xEC, 0x62, 0xBE, 0x72,
++	0x0C, 0x9D, 0xAC, 0x2B, 0x18, 0x0B, 0x9E, 0xBB,
++	0xC3, 0x46, 0xAC, 0x04, 0x79, 0x25, 0x1B, 0x13,
++	0x13, 0x88, 0x82, 0xA4, 0x86, 0x38, 0xA8, 0x6C,
++	0xAA, 0x83, 0xF6, 0xD4, 0x97, 0x37, 0xA3, 0x21,
++	0x5B, 0x84, 0xCC, 0xEE, 0xA3, 0x77, 0x2A, 0xA4,
++	0x93, 0x02, 0x99, 0x4B, 0xD6, 0x64, 0x01, 0x91,
++	0xCC, 0xBE, 0x8F, 0x62, 0x4F, 0x2D, 0xA1, 0xF1,
++	0x4E, 0x20, 0x4C, 0x8E, 0x91, 0x5B, 0xCB, 0x82,
++	0xD1, 0xE6, 0xF3, 0x92, 0x31, 0x13, 0x9E, 0x7D,
++	0x14, 0xF1, 0xF3, 0x89, 0x67, 0x10, 0xF8, 0x9A,
++	0x15, 0x31, 0x01, 0x36, 0xD0, 0x1B, 0x8A, 0xA1,
++	0xE9, 0xB1, 0x50, 0xB8, 0xF8, 0x9B, 0x93, 0x9A,
++	0xBA, 0x05, 0x5E, 0xE0, 0xC9, 0x05, 0x3A, 0x1B,
++	0xB4, 0xBB, 0x53, 0x18, 0xE5, 0x8E, 0x2C, 0x42,
++	0xC3, 0x4F, 0x6E, 0x36, 0x8E, 0xBA, 0x51, 0xD4,
++	0xCB, 0xD3, 0x51, 0xF0, 0x96, 0x72, 0x42, 0x87,
++	0xBE, 0xD8, 0xC9, 0x2B, 0x11, 0xB7, 0xCE, 0xC1,
++	0xC9, 0xBF, 0x56, 0x2C, 0x53, 0xC2, 0x1B, 0xF1,
++	0x52, 0x23, 0xAA, 0xDA, 0x5F, 0x1A, 0x3F, 0x2C,
++	0xBC, 0x4D, 0x21, 0xA5, 0x0D, 0x7A, 0x1C, 0x0C,
++	0x21, 0x64, 0x49, 0xAA, 0x19, 0xC0, 0x1D, 0x16,
++	0x6C, 0xE2, 0x75, 0xC5, 0xB1, 0x0E, 0xC4, 0x7C,
++	0x96, 0x1E, 0xF8, 0xFA, 0xC4, 0x0C, 0xE8, 0x5B,
++	0x94, 0x4B, 0x5F, 0x71, 0x14, 0x6C, 0xF1, 0xAA,
++	0x9B, 0xF9, 0x9D, 0xD1, 0x6B, 0x43, 0x79, 0xBD,
++	0x19, 0xED, 0xF5, 0x74, 0x3E, 0xA7, 0xF2, 0x37,
++	0x7E, 0xCB, 0x08, 0x35, 0xFB, 0x31, 0xF5, 0x08,
++	0x54, 0xB2, 0x51, 0xA7, 0x4B, 0x42, 0x9D, 0x7A,
++	0xFC, 0x7B, 0x09, 0x24, 0xF3, 0x37, 0x41, 0x52,
++	0x34, 0xCC, 0x54, 0x05, 0x3D, 0x10, 0xF6, 0xF2,
++	0xB2, 0xC8, 0xDD, 0x8B, 0x33, 0x43, 0x1B, 0x18,
++	0xA9, 0xE9, 0xFA, 0xEB, 0x05, 0xA9, 0xBB, 0xBA,
++	0x9B, 0x18, 0x84, 0x98, 0xB7, 0xAE, 0x10, 0x65,
++	0xDC, 0x8A, 0x4D, 0x71, 0xD3, 0xB5, 0x04, 0xE0,
++	0x67, 0x80, 0xBF, 0x09, 0x10, 0x1B, 0xEB, 0x1B,
++	0x76, 0x57, 0xAC, 0x09, 0xB9, 0x7F, 0x96, 0x52,
++	0x39, 0x47, 0xEB, 0x18, 0xA9, 0x0B, 0x0A, 0xBD,
++	0x9E, 0x8B, 0xBA, 0x4B, 0x99, 0x53, 0x6A, 0x9D,
++	0x0B, 0x8A, 0xF2, 0x53, 0x15, 0xC4, 0xC6, 0x45,
++	0x48, 0x49, 0xAD, 0xA9, 0x92, 0x6E, 0x97, 0xE5,
++	0x69, 0x18, 0x2C, 0x0D, 0x4D, 0xD7, 0x2B, 0x3C,
++};
++
++uint8_t rsa_8192_cipher[] = {
++	0x3e, 0x48, 0xb9, 0x61, 0x62, 0xeb, 0x9d, 0x13,
++	0x9c, 0xc3, 0x3a, 0xeb, 0x21, 0x8b, 0xe7, 0x72,
++	0x65, 0xd0, 0xc3, 0x26, 0x49, 0xf2, 0x6c, 0x90,
++	0xb7, 0xbe, 0x34, 0xc7, 0xe0, 0x57, 0x16, 0x4e,
++	0x30, 0x04, 0x7e, 0xdf, 0x65, 0x3b, 0x68, 0xc5,
++	0x8e, 0xc1, 0x53, 0x3d, 0x43, 0xa4, 0x9a, 0x80,
++	0x0e, 0x55, 0x96, 0x12, 0x5c, 0x1b, 0x8c, 0x14,
++	0x45, 0x3a, 0xe5, 0xac, 0xcb, 0xe4, 0x5f, 0x2a,
++	0x50, 0x0d, 0xeb, 0xf2, 0x63, 0xb9, 0x6b, 0xba,
++	0xb2, 0x48, 0xa5, 0xa3, 0x13, 0xa6, 0xe9, 0x5e,
++	0x07, 0xbb, 0x13, 0x0d, 0x17, 0xc0, 0x2a, 0x3f,
++	0xed, 0xf1, 0x2f, 0x91, 0x5e, 0xf0, 0x24, 0xdc,
++	0xde, 0x2f, 0xa4, 0x52, 0x4e, 0xa2, 0xba, 0x02,
++	0x32, 0xf1, 0x02, 0x94, 0xf2, 0x34, 0xe9, 0x22,
++	0x44, 0xc8, 0x88, 0x87, 0x57, 0x61, 0xce, 0xe5,
++	0x08, 0x35, 0x18, 0x27, 0x0b, 0x1b, 0x50, 0xf7,
++	0xa7, 0x41, 0xec, 0x38, 0x50, 0x6c, 0x62, 0xe1,
++	0xcd, 0x8e, 0x10, 0x3b, 0x6a, 0xbd, 0xf8, 0x2a,
++	0x7c, 0x5b, 0x81, 0xed, 0x72, 0xb4, 0xca, 0xeb,
++	0xca, 0xc5, 0xe7, 0x1c, 0xc0, 0xf3, 0x57, 0xbd,
++	0xe8, 0x07, 0xd5, 0xcd, 0x5c, 0x30, 0x98, 0xff,
++	0x64, 0x64, 0xfc, 0x2c, 0x20, 0x67, 0xe7, 0xdb,
++	0x0d, 0x7b, 0x40, 0x4c, 0x1f, 0x34, 0xbe, 0x3f,
++	0x69, 0x7d, 0x76, 0x94, 0x94, 0x59, 0x56, 0x1d,
++	0x7b, 0x04, 0x9c, 0xfe, 0x4e, 0x95, 0xd4, 0xf6,
++	0xb0, 0xda, 0x56, 0x88, 0x78, 0x77, 0x76, 0x89,
++	0xe8, 0x60, 0xed, 0x5d, 0x00, 0xb2, 0xde, 0xa6,
++	0x63, 0x0d, 0xdb, 0xdc, 0xa1, 0xc1, 0x23, 0x8a,
++	0xe7, 0x2b, 0x5c, 0xf2, 0x45, 0x68, 0x42, 0x90,
++	0xc5, 0xa3, 0x7b, 0xb6, 0xbe, 0x71, 0xaa, 0xe3,
++	0xdb, 0xd3, 0xc5, 0x37, 0xf2, 0xfb, 0x3b, 0x7c,
++	0xa0, 0x23, 0x05, 0x8a, 0x7b, 0xf3, 0xd9, 0x86,
++	0xc7, 0x94, 0x36, 0x02, 0xc3, 0xdb, 0x0e, 0xb1,
++	0x83, 0x8f, 0xef, 0x1d, 0xc6, 0x6d, 0x39, 0x30,
++	0x81, 0x61, 0x15, 0x02, 0xae, 0x04, 0x9b, 0x48,
++	0x4a, 0x80, 0xef, 0x8c, 0xea, 0x20, 0x6b, 0x59,
++	0xfa, 0xb6, 0x79, 0x28, 0x68, 0x15, 0x05, 0xf1,
++	0xbf, 0x7b, 0x6b, 0xa0, 0x2a, 0x2f, 0x86, 0x67,
++	0x92, 0x0f, 0xcf, 0xcc, 0xfe, 0x2a, 0x23, 0x09,
++	0x89, 0x2c, 0xb1, 0xcd, 0x7d, 0x9e, 0x13, 0xe3,
++	0x8a, 0xfb, 0x56, 0xc0, 0xee, 0x3e, 0xb1, 0x0d,
++	0xd7, 0xd3, 0x95, 0xa9, 0xc5, 0xa3, 0x07, 0xd4,
++	0x8d, 0x26, 0xa5, 0x19, 0x6b, 0xed, 0x01, 0x83,
++	0x84, 0x07, 0x00, 0x71, 0x4f, 0x67, 0xd6, 0x8c,
++	0x58, 0x12, 0xc1, 0x07, 0xeb, 0x81, 0xd9, 0x88,
++	0x49, 0x8b, 0xe1, 0x95, 0xa1, 0xff, 0xed, 0xae,
++	0x1f, 0x48, 0x7d, 0xea, 0x86, 0xc9, 0xc9, 0x6c,
++	0xcc, 0x96, 0xb1, 0x96, 0x47, 0x9d, 0x4a, 0x68,
++	0xb4, 0xb3, 0x5b, 0x14, 0x08, 0x67, 0xbe, 0x6f,
++	0x66, 0xa2, 0xd7, 0x8d, 0x65, 0x5b, 0xdb, 0xe5,
++	0x60, 0x9c, 0xca, 0xea, 0xc1, 0x6a, 0x82, 0x98,
++	0x7c, 0xdd, 0x1d, 0xe8, 0xa7, 0xc3, 0x78, 0xc7,
++	0x65, 0xee, 0xea, 0x7d, 0x8b, 0x1b, 0x3b, 0x62,
++	0xe6, 0xfa, 0x6f, 0x83, 0xf2, 0xbc, 0x32, 0x01,
++	0x7b, 0xb2, 0x35, 0xf7, 0x02, 0x7d, 0x38, 0xb6,
++	0x12, 0x45, 0x3f, 0xed, 0x42, 0xdc, 0x01, 0xc1,
++	0x7c, 0xb6, 0xd1, 0x63, 0xbe, 0x46, 0xe0, 0x23,
++	0x8b, 0xe6, 0x17, 0x4d, 0xac, 0x86, 0x45, 0xf6,
++	0x0f, 0x0b, 0x02, 0xe4, 0x5c, 0x2b, 0x5e, 0xeb,
++	0x76, 0x79, 0xc2, 0x86, 0xc6, 0x04, 0xec, 0xc9,
++	0xbd, 0xdd, 0xd5, 0x56, 0x78, 0x3b, 0x6c, 0xa3,
++	0xfe, 0xeb, 0x98, 0x30, 0x62, 0x78, 0xf4, 0xde,
++	0x4d, 0x7a, 0x9f, 0xdc, 0x7f, 0x81, 0xe1, 0x43,
++	0x21, 0xef, 0xb1, 0x05, 0xf6, 0xd6, 0x87, 0xde,
++	0x8a, 0xa1, 0x80, 0x4f, 0xb1, 0xc1, 0xae, 0xc2,
++	0x48, 0x50, 0xa4, 0x1d, 0x03, 0x9e, 0x23, 0xa1,
++	0x02, 0x31, 0x50, 0x8e, 0x84, 0xe3, 0xde, 0x9f,
++	0x79, 0x6e, 0xe9, 0x46, 0xc2, 0xe0, 0x17, 0xb9,
++	0x7e, 0x1e, 0x9a, 0x12, 0x95, 0xc3, 0x6f, 0x52,
++	0xd7, 0xcd, 0x44, 0xeb, 0x23, 0xf3, 0xc9, 0xdc,
++	0x3f, 0x33, 0x1d, 0xad, 0x10, 0x11, 0x49, 0x2d,
++	0x4d, 0xdf, 0x65, 0xbb, 0xc1, 0x6d, 0x2a, 0xee,
++	0x0d, 0xad, 0x4d, 0xd2, 0x01, 0xf3, 0xfe, 0x46,
++	0x70, 0xff, 0x49, 0xe2, 0x0f, 0x91, 0xe5, 0x23,
++	0x60, 0xdb, 0x59, 0x0b, 0x8f, 0x62, 0x9d, 0xc5,
++	0xd9, 0xec, 0xb8, 0x8c, 0xe2, 0xae, 0xce, 0x9e,
++	0xfc, 0x65, 0xde, 0xa0, 0x1b, 0x2e, 0x5f, 0x8a,
++	0xf5, 0xf9, 0x18, 0x2e, 0xfa, 0x32, 0x7c, 0x54,
++	0x81, 0x26, 0xf0, 0x72, 0xeb, 0xb6, 0xb2, 0x71,
++	0xee, 0x78, 0x4b, 0x1b, 0x2e, 0xa3, 0xac, 0x33,
++	0x5c, 0x68, 0x77, 0xcc, 0x0d, 0x8c, 0xdf, 0x2e,
++	0x57, 0xe9, 0x87, 0xfe, 0xda, 0xaf, 0xf4, 0xee,
++	0xef, 0xd6, 0x1d, 0x22, 0x97, 0xcb, 0xb7, 0x0d,
++	0xa3, 0x92, 0xa2, 0xc9, 0xa2, 0x18, 0xa3, 0x93,
++	0x49, 0x19, 0x60, 0x01, 0xe5, 0x92, 0xeb, 0xf5,
++	0x85, 0x29, 0x36, 0xdb, 0x67, 0xf7, 0x10, 0xfb,
++	0xff, 0x69, 0x08, 0x52, 0x96, 0x41, 0x67, 0x2f,
++	0x3d, 0xf0, 0x28, 0xe4, 0x8f, 0xb2, 0x6e, 0x97,
++	0xa4, 0xbd, 0xfe, 0x6b, 0xaf, 0x84, 0x91, 0xa2,
++	0x47, 0x97, 0x90, 0x8e, 0x58, 0x78, 0x5e, 0x29,
++	0x58, 0x45, 0xea, 0x6a, 0x31, 0x2d, 0x4b, 0xc7,
++	0x0e, 0x8c, 0x0e, 0x50, 0x05, 0x44, 0x2c, 0x1a,
++	0xab, 0xff, 0x38, 0xda, 0x73, 0x7c, 0x6d, 0x09,
++	0xe4, 0x6e, 0x78, 0x41, 0xec, 0xd2, 0x36, 0x8b,
++	0x6d, 0xb7, 0x6b, 0xb8, 0x18, 0x15, 0x5d, 0xee,
++	0xb6, 0xf1, 0x2d, 0xdf, 0xc2, 0x54, 0xdf, 0x84,
++	0xfd, 0x4c, 0xa3, 0x43, 0x09, 0x8d, 0xe7, 0x1b,
++	0x9d, 0x69, 0xb8, 0x91, 0x7c, 0x50, 0x99, 0x88,
++	0x6a, 0x48, 0xb6, 0xab, 0xc3, 0xfe, 0x36, 0x08,
++	0x0e, 0xae, 0x31, 0x1c, 0x0c, 0xbe, 0xb2, 0x1f,
++	0xdd, 0x60, 0x68, 0x15, 0x25, 0xa4, 0x97, 0xaa,
++	0xf7, 0x12, 0x30, 0xc4, 0xca, 0x40, 0x33, 0x8b,
++	0x71, 0x1d, 0xa5, 0x65, 0x8d, 0x99, 0x96, 0xc8,
++	0x73, 0xc2, 0x66, 0xe9, 0x55, 0xde, 0x55, 0x73,
++	0x5a, 0xd9, 0x97, 0x3d, 0x0a, 0x38, 0xe2, 0x63,
++	0xd4, 0x96, 0x9f, 0x9e, 0x91, 0x01, 0xa6, 0xb3,
++	0x4c, 0x01, 0xec, 0xc8, 0xeb, 0x89, 0x94, 0x57,
++	0x28, 0x21, 0xc8, 0x8f, 0x90, 0x2c, 0xec, 0x54,
++	0x61, 0x66, 0x34, 0x31, 0xd9, 0x0e, 0x06, 0xad,
++	0x70, 0x85, 0x0e, 0x69, 0xcd, 0x97, 0x9b, 0x4c,
++	0x15, 0xd5, 0x96, 0xb2, 0x8d, 0x7f, 0x95, 0xd8,
++	0x64, 0x87, 0x1e, 0xac, 0x76, 0xd4, 0xe1, 0x8f,
++	0x0c, 0xf2, 0x93, 0x93, 0x19, 0xa3, 0x7a, 0xc5,
++	0x14, 0x52, 0xe8, 0x89, 0x1a, 0x52, 0x9a, 0xf5,
++	0x34, 0x27, 0xca, 0xed, 0x5b, 0xb7, 0xc3, 0x23,
++	0xce, 0x8c, 0x67, 0xcc, 0x38, 0x15, 0xb1, 0xd4,
++	0x2e, 0xba, 0xf4, 0x43, 0x18, 0xd8, 0x5e, 0x43,
++	0x55, 0x43, 0x0b, 0x67, 0xc8, 0xb1, 0x54, 0xe6,
++	0xf5, 0x1c, 0xd4, 0x13, 0x47, 0x08, 0x80, 0xea,
++	0x20, 0x1a, 0xeb, 0xa4, 0x89, 0x64, 0x58, 0x87,
++	0x23, 0x15, 0xa6, 0x19, 0x76, 0xd2, 0xc5, 0xab,
++	0x8e, 0x09, 0x0b, 0x61, 0xe3, 0x74, 0x6d, 0x22,
++	0x72, 0x59, 0x0b, 0x46, 0xd1, 0x44, 0x43, 0xea,
++	0x66, 0x41, 0x98, 0xc1, 0x63, 0x79, 0xba, 0x56,
++	0x49, 0x09, 0x13, 0x05, 0xeb, 0x69, 0x9b, 0x43,
++	0xec, 0xbf, 0x5f, 0xb5, 0xae, 0x92, 0xa9, 0xc2,
++	0xb7, 0x6b, 0xfb, 0xf9, 0x28, 0x23, 0x35, 0x31,
++	0xab, 0x45, 0xa7, 0x55, 0xf5, 0xc1, 0x33, 0x3e,
++};
++
+ struct
+ cperf_rsa_test_data rsa_qt_perf_data[4] = {
+ 	{
+@@ -2674,6 +3178,10 @@ cperf_rsa_test_data rsa_qt_perf_data[4] = {
+ 			.data = rsa_qinv,
+ 			.length = sizeof(rsa_qinv),
+ 		},
++		.cipher = {
++			.data = rsa_cipher,
++			.length = sizeof(rsa_cipher),
++		},
+ 		.key_type = RTE_RSA_KEY_TYPE_QT,
+ 		.padding = RTE_CRYPTO_RSA_PADDING_PKCS1_5,
+ 	},
+@@ -2711,6 +3219,10 @@ cperf_rsa_test_data rsa_qt_perf_data[4] = {
+ 			.data = rsa_2048_qinv,
+ 			.length = sizeof(rsa_2048_qinv),
+ 		},
++		.cipher = {
++			.data = rsa_2048_cipher,
++			.length = sizeof(rsa_2048_cipher),
++		},
+ 		.key_type = RTE_RSA_KEY_TYPE_QT,
+ 		.padding = RTE_CRYPTO_RSA_PADDING_PKCS1_5,
+ 	},
+@@ -2748,6 +3260,10 @@ cperf_rsa_test_data rsa_qt_perf_data[4] = {
+ 			.data = rsa_4096_qinv,
+ 			.length = sizeof(rsa_4096_qinv),
+ 		},
++		.cipher = {
++			.data = rsa_4096_cipher,
++			.length = sizeof(rsa_4096_cipher),
++		},
+ 		.key_type = RTE_RSA_KEY_TYPE_QT,
+ 		.padding = RTE_CRYPTO_RSA_PADDING_PKCS1_5,
+ 	},
+@@ -2785,6 +3301,10 @@ cperf_rsa_test_data rsa_qt_perf_data[4] = {
+ 			.data = rsa_8192_qinv,
+ 			.length = sizeof(rsa_8192_qinv),
+ 		},
++		.cipher = {
++			.data = rsa_8192_cipher,
++			.length = sizeof(rsa_8192_cipher),
++		},
+ 		.key_type = RTE_RSA_KEY_TYPE_QT,
+ 		.padding = RTE_CRYPTO_RSA_PADDING_PKCS1_5,
+ 	}
+@@ -2806,6 +3326,10 @@ cperf_rsa_test_data rsa_exp_perf_data[4] = {
+ 			.data = rsa_d,
+ 			.length = sizeof(rsa_d),
+ 		},
++		.sign = {
++			.data = rsa_sign,
++			.length = sizeof(rsa_sign),
++		},
+ 		.key_type = RTE_RSA_KEY_TYPE_EXP,
+ 		.padding = RTE_CRYPTO_RSA_PADDING_PKCS1_5,
+ 	},
+@@ -2823,6 +3347,10 @@ cperf_rsa_test_data rsa_exp_perf_data[4] = {
+ 			.data = rsa_2048_d,
+ 			.length = sizeof(rsa_2048_d),
+ 		},
++		.sign = {
++			.data = rsa_2048_sign,
++			.length = sizeof(rsa_2048_sign),
++		},
+ 		.key_type = RTE_RSA_KEY_TYPE_EXP,
+ 		.padding = RTE_CRYPTO_RSA_PADDING_PKCS1_5,
+ 	},
+@@ -2840,6 +3368,10 @@ cperf_rsa_test_data rsa_exp_perf_data[4] = {
+ 			.data = rsa_4096_d,
+ 			.length = sizeof(rsa_4096_d),
+ 		},
++		.sign = {
++			.data = rsa_4096_sign,
++			.length = sizeof(rsa_4096_sign),
++		},
+ 		.key_type = RTE_RSA_KEY_TYPE_EXP,
+ 		.padding = RTE_CRYPTO_RSA_PADDING_PKCS1_5,
+ 	},
+@@ -2857,6 +3389,10 @@ cperf_rsa_test_data rsa_exp_perf_data[4] = {
+ 			.data = rsa_8192_d,
+ 			.length = sizeof(rsa_8192_d),
+ 		},
++		.sign = {
++			.data = rsa_8192_sign,
++			.length = sizeof(rsa_8192_sign),
++		},
+ 		.key_type = RTE_RSA_KEY_TYPE_EXP,
+ 		.padding = RTE_CRYPTO_RSA_PADDING_PKCS1_5,
+ 	}
+diff --git a/app/test-crypto-perf/cperf_test_vectors.h b/app/test-crypto-perf/cperf_test_vectors.h
+index 3025280ecd..b5e300dc1b 100644
+--- a/app/test-crypto-perf/cperf_test_vectors.h
++++ b/app/test-crypto-perf/cperf_test_vectors.h
+@@ -124,6 +124,8 @@ struct cperf_rsa_test_data {
+ 	rte_crypto_param dp;
+ 	rte_crypto_param dq;
+ 	rte_crypto_param qinv;
++	rte_crypto_param sign;
++	rte_crypto_param cipher;
+ 	enum rte_crypto_rsa_padding_type padding;
+ };
+ 
+-- 
+2.48.1
+
