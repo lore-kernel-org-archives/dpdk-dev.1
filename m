@@ -2,69 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BB62C5B543
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 08:59:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4828AC5B543
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 09:27:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3254D4042E;
-	Wed,  4 Jun 2025 10:59:27 +0200 (CEST)
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com
- [209.85.222.181])
- by mails.dpdk.org (Postfix) with ESMTP id 878324029D
- for <dev@dpdk.org>; Wed,  4 Jun 2025 10:59:25 +0200 (CEST)
-Received: by mail-qk1-f181.google.com with SMTP id
- af79cd13be357-7caeeef95d4so626864085a.2
- for <dev@dpdk.org>; Wed, 04 Jun 2025 01:59:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1749027565; x=1749632365; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=1Yb95dAhS23G+MJ53qtkdgMjIjVziyGFacgJj6OLapo=;
- b=HL1RNLCxeR2YxhPJbzxCZtiCerSsVS+Fjyb4EAISytBGeogw+UQj4/P5hpPuWl14To
- GDqYtrxvszsXa1bHxAYJJHfbDqowAbaeIw58Jg0nfJx97gv7uSbpb3IuRpfZCYYpNyRN
- ew6Qbriro80QVgaitFqOUSUQ5litquqbJnymXbifv6pKhhZhFDCk27Mf9H6/R4y2KGoK
- IwhIKbGz0hfwQAiYhyRt2gYFBOQ+JIiVal9EVoXtj47bSFFsD10K81usFV2fh3Jn/7Ob
- dKBEcyHPUWONWvOETxSKE8VYgyvNUYLXvaIezfFi/MeFhfYpyBHYmNM586jbYYc82WDK
- lvcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749027565; x=1749632365;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=1Yb95dAhS23G+MJ53qtkdgMjIjVziyGFacgJj6OLapo=;
- b=qs2t+bF1SmHcAZwpvKWjuMrrZ/F3N0lk0svAzJ47Nv8VhCNbHBU+SIKtu4QP6+kCds
- eY76qhytQEpzK3E1uhEYLbtcYJF2WJvAQedz4p8IPEc/imz5j7pyffAeH6UtwitSwrzq
- Zsz0UDyy13QCvYqScOnnih7HT/bAntvkjkrGg2JpSMhC/gV8VH6bF3Qh0JhMa1ouWum4
- Xif9hAgZilZyO/xx+uPlyxeYR1zQo2JlUfpPpjtAL5B8lpcVsXRpC73I6bDajoopTWvK
- SiWVEML26ihLBYbM2uvFHvmy9wnXTqonLGsAlRgEr88xOJFQIn2o0DBKbtB+p3kNa0Rf
- n0kA==
-X-Gm-Message-State: AOJu0Yzranxyp45cvl20ZXIl/LCUXMvSlJhaSIQDJnVSyqzrVz8kLblA
- 7kLr9axEN3bq6spsXD2yFNtG7PKxoxRynXjFuuSKwExo8+n87H7DqlX0ocR9UGu0Hp//DLycV15
- yMdMBliFiQmHfkEetUZnuvlgIteFVznU=
-X-Gm-Gg: ASbGnctRcS+ZE9fazEAzNpa5D9I+X6t9DTBoQ0bSaMgMqgSwUbsxvDxxua77G2QV2df
- YWOvfe+Q/sSngbZcpqV1VF/ZPaEzvir4SPPNkF14QNYpI76sCvEA8QJXUv4ni3JBfYs022Le2XP
- pPTndWhkAfpiRTIqtA0SaqPHYacw5I2oc=
-X-Google-Smtp-Source: AGHT+IHtCw2vntf0gcQ0WuFkbQDCsDbERkqm9BBwX68+YIg3LRDnYeSC4b9qzghRezAzYl6eIRTst95wfdpJTp8fiqQ=
-X-Received: by 2002:a05:622a:408e:b0:4a5:880d:ee6 with SMTP id
- d75a77b69052e-4a5a576348bmr34921061cf.3.1749027564852; Wed, 04 Jun 2025
- 01:59:24 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0AF9C4042E;
+	Wed,  4 Jun 2025 11:27:23 +0200 (CEST)
+Received: from fhigh-b6-smtp.messagingengine.com
+ (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+ by mails.dpdk.org (Postfix) with ESMTP id DE6B64029D
+ for <dev@dpdk.org>; Wed,  4 Jun 2025 11:27:21 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal
+ [10.202.2.41])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 283AB2540117;
+ Wed,  4 Jun 2025 05:27:21 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-01.internal (MEProxy); Wed, 04 Jun 2025 05:27:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1749029241;
+ x=1749115641; bh=e4AzhwKIbGvKsugWvwecSiEV9PjI4mw2bHqlLAQUDfg=; b=
+ YTYbdwZKhPS0EK1TxHtkEVREcZHspFDdxAgtaqBUn7lorNUhdqnyGJhKn4zv92OG
+ 5LOYQo4zazy0GcIPDjLB4jdZNJvgJ7xSKz6QO2X3m16fUXrONp6AiBDFFYt5ZAmT
+ rgXRM9jYX6GWiMmJK+TmMtnOYt5YcVX6m6y2dKfZMPiZoltMRrD/odoUP8mE5kJG
+ gNH6bUj6eIFsZfxYpWAavv2YA6bisuKkKnjgSaMAObqiLQaYrZULz48r/pfIfVFo
+ Zot5dLyQCkNBplv8I/kKsWDf4RAYFIvi5BLq2/kB8MVNK9d57OABdD+Bq0AcbDPZ
+ etk+Z5wWRXKvKRwGPVIFdQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749029241; x=
+ 1749115641; bh=e4AzhwKIbGvKsugWvwecSiEV9PjI4mw2bHqlLAQUDfg=; b=d
+ RUkgOmlL+kzaQMIeq1p/vyL0lNL4uTo//w+WeCsOJwqByM4KAPEkM5GinNp/Szuz
+ o2ykzjf46pRz7xOhBmMPUIpk0PgIrkxvqdsvHB5yunty2oXiBmT3yEnDYP7/1QPY
+ KqmY/SHl0cqnXTCSsFqHl0Pkk54AMB1hzSCdnXfoHb1bBHaj9Fr/z3Wi0i2Y7nUC
+ 3YXBPl6vCnXK8uL90Q3STQdSL4wMuqpuLo6EN9HAGftFAVsbxZ5mqUtfCzcDEfC/
+ s2wcFpGwjjWPNMeNY5Y/2KGsTYx6YuMJQEO7ccmCZtCpwaVByCFkf8zkIRPKEv/4
+ aV+wUl0AtMLTBnD9NL+Yw==
+X-ME-Sender: <xms:eBFAaP36wNmFelkPlAldeEkc5iDNJHPesAfg3GFkek585HvhmF35Hg>
+ <xme:eBFAaOFH3Ceh9b8PbVzetrt_Te4oPXp2ELRKTmHqtC1nHIOaMf0DIilaQWvfkc8lq
+ wCePpy0RCwOnIEEyw>
+X-ME-Received: <xmr:eBFAaP4YKzo5vQf58UmHzc9PrjJX4vy7JB1lcCc20uOky7Eee2hqMZAGCcteVpqusbOI5WY-WOb4rZlAv5FD-snz3Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddukeelucetufdoteggodetrfdotf
+ fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+ rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+ htshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeen
+ ucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrg
+ hlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeek
+ ueevjeffjeegtdeggeekgfdvuefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurf
+ grrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhn
+ sggprhgtphhtthhopedvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgvph
+ hhvghnsehnvghtfihorhhkphhluhhmsggvrhdrohhrghdprhgtphhtthhopeguvghvsegu
+ phgukhdrohhrgh
+X-ME-Proxy: <xmx:eBFAaE1E2Q_VWkbpiLDlHnpUxGWzxcaFgaRoKWPsr7-jGEZCwJM94g>
+ <xmx:eBFAaCEHH-yJ_HCr-VkeVpYE17gD9NGJE0uSQY-biqiPD-pe1R7w9A>
+ <xmx:eBFAaF9L8BrUtFBHS5ziGoTGPZrhCfTCu4oew2YcvvqgJtZgiP8-BA>
+ <xmx:eBFAaPkCOax_gSuUePBfq5hRt7K2MvPvglrrRnTDNWLs31TZ8S3kQQ>
+ <xmx:eRFAaHIVeXFNvoxwIHV05LpfCS1iTQjWncNQeqXdmMDhqPfk54nxkvxM>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 4 Jun 2025 05:27:20 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH] net/tap: do not force inline or unroll
+Date: Wed, 04 Jun 2025 11:27:18 +0200
+Message-ID: <5348112.44csPzL39Z@thomas>
+In-Reply-To: <20250424160705.19655-1-stephen@networkplumber.org>
+References: <20250424160705.19655-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-References: <20250509042401.2634765-1-pravin.pathak@intel.com>
- <20250603180514.3826917-1-pravin.pathak@intel.com>
- <20250603180514.3826917-2-pravin.pathak@intel.com>
-In-Reply-To: <20250603180514.3826917-2-pravin.pathak@intel.com>
-From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Wed, 4 Jun 2025 14:28:58 +0530
-X-Gm-Features: AX0GCFtf9ZyD84BWa-JF9T-KWKRw9bTM0DPvlLJpCDNtoX_AKlwnKTfCMOo0WVU
-Message-ID: <CALBAE1NS4YRZFqGe2s1wQqtNyr9vQe+zL2eU2kfXXAijxpaCig@mail.gmail.com>
-Subject: Re: [PATCH v2 1/7] event/dlb2: addresses deq failure when CQ depth <=
- 16
-To: Pravin Pathak <pravin.pathak@intel.com>
-Cc: dev@dpdk.org, jerinj@marvell.com, mike.ximing.chen@intel.com, 
- bruce.richardson@intel.com, thomas@monjalon.net, david.marchand@redhat.com, 
- nipun.gupta@amd.com, chenbox@nvidia.com, tirthendu.sarkar@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -78,19 +88,11 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Jun 3, 2025 at 11:47=E2=80=AFPM Pravin Pathak <pravin.pathak@intel.=
-com> wrote:
->
-> When application configures a DIR port with CQ depth less than 8, DLB PMD
-> sets port's cq_depth as 8 and token reservation is used to make the
-> effective cq_depth smaller. However, while setting port's cq_depth_mask
-> application configured CQ depth was used resulting in reading incorrect
-> cachelines while dequeuing. Use PMD calculated CQ depth for cq_depth_mask
-> calculation.
->
-> Signed-off-by: Pravin Pathak <pravin.pathak@intel.com>
-> Signed-off-by: Tirthendu Sarkar <tirthendu.sarkar@intel.com>
+24/04/2025 18:07, Stephen Hemminger:
+> The BPF code in TAP device was using outdated advice on how
+> to write BPF programs. Modern BPF verifier has to do less work
+> if force inlining and unrolling is not done.
 
-it looks like except 4/7 remaining patches are fixes. please change
-relevant patches subject to event/dlb2: fix ...
-and add Fixes tag,
+Why do you keep unroll in IPv6 parsing?
+
+
