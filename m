@@ -2,76 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26C0EC5B543
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 09:53:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5941C5B552
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 10:08:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 258B84042E;
-	Wed,  4 Jun 2025 11:53:02 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0AA9B4042E;
+	Wed,  4 Jun 2025 12:08:20 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 211124029D
- for <dev@dpdk.org>; Wed,  4 Jun 2025 11:53:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1749030779;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=PhfTmBtDbqLCJcEiskcyo4+nL+rdVAI61TmV8fOIv4E=;
- b=TnnJEmb7nbh1fMNmLfxjSINVNlmcU9eSOZWujBWYXY+7xuLlN8lcmCcU79RUy4MDxE39fr
- nvlYsO2PyEnJkMpH9uEnyobxt6j/8nDSjY5589IXP3jKlUBh3+IEYhcl/ZzzQQ/mB7nDn2
- zaGEzpq5tYZkSrbO1tZb+3ZNC4RG39o=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 052C44029D
+ for <dev@dpdk.org>; Wed,  4 Jun 2025 12:08:18 +0200 (CEST)
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-686-57LQImAmOk2pCm6efSGuGw-1; Wed, 04 Jun 2025 05:52:58 -0400
-X-MC-Unique: 57LQImAmOk2pCm6efSGuGw-1
-X-Mimecast-MFC-AGG-ID: 57LQImAmOk2pCm6efSGuGw_1749030777
-Received: by mail-lf1-f69.google.com with SMTP id
- 2adb3069b0e04-55324bc26dcso389892e87.1
- for <dev@dpdk.org>; Wed, 04 Jun 2025 02:52:58 -0700 (PDT)
+ us-mta-347-rebcNOCMOlSegsTT-9qf0Q-1; Wed, 04 Jun 2025 06:08:17 -0400
+X-MC-Unique: rebcNOCMOlSegsTT-9qf0Q-1
+X-Mimecast-MFC-AGG-ID: rebcNOCMOlSegsTT-9qf0Q_1749031695
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-55220256289so4188852e87.1
+ for <dev@dpdk.org>; Wed, 04 Jun 2025 03:08:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749030777; x=1749635577;
+ d=1e100.net; s=20230601; t=1749031695; x=1749636495;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=PhfTmBtDbqLCJcEiskcyo4+nL+rdVAI61TmV8fOIv4E=;
- b=t7gCuXY6AGenHvtNb3gNXqf9A9kfMyft03ggKc4N5yK+wF8ARo/dhRY01zbrjo0MDh
- yC7wGC+aGiRymzNaoeMaZxfRD0QuoAXvhcEJVjM/MfnplE5qgBt2eC0k5wOThZBY2wYJ
- R28frNtFRySqGnl6imH1Md7adjO8pgRCmhuMashKQMsw59h1TXGPJwALtphqxH0YqAUh
- sBhNaS0Xawc8DoLwCcyOdJvJhzpZAjxcITqTwhgL5ZpD+kawyIqS8X55CY+jff6bKB/R
- otBknToroWvtf9LA18jPBnfaJWcnslGD3S41E1v+99oijDXBG6rfAw9KSQ2f6AT47BIJ
- a81w==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWApGT+aH7mvYjHeLQdi/IgJ8FofscHFDJEkSyFHiC158qBRNoCUFrWeAdqCU4KW1IWHNs=@dpdk.org
-X-Gm-Message-State: AOJu0Yywi12LQvBK3JQsvELD+ait/VujCxoFpa6m6QObiLcM/E8THwc/
- ZjblIt1VthhLXBSuw/l4xW8O0K/eKPz1GvrtOBtHGS5YdBSvTYny5K/O8D6T26mZVGPcOQCX0Ur
- yUHCujmNMhIJxL+bYqtjga2JjdTfYAOz6CNJZ1x07QS4p/FkTPgVz9UQvuNGWZUTgt8oXmlPXzw
- HUaZl8DrK7rpQSls4Vukg=
-X-Gm-Gg: ASbGncvNzwhvi9AhHapJDoCfBuFo2qDS2UlCMtcF4KClevY2lCjrBQGKyQp0O9KYXd0
- XFPq/DZu2G+2DZtHzLiANzQ//RFv1ATuqSgLqr/2zungka6zhl7BMjf5rMxIsEInGeG5FwLw=
-X-Received: by 2002:a05:6512:3f1e:b0:54d:6a90:5ba6 with SMTP id
- 2adb3069b0e04-55356e2b89bmr657878e87.0.1749030776928; 
- Wed, 04 Jun 2025 02:52:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHdsCykrTn8fxp8KpTn/U0RByYl0IM8bfXFsS067LJJYRWfAovZtECGrBvs6cpttvszvvLelsGjK1vKtcJxo+U=
-X-Received: by 2002:a05:6512:3f1e:b0:54d:6a90:5ba6 with SMTP id
- 2adb3069b0e04-55356e2b89bmr657867e87.0.1749030776510; Wed, 04 Jun 2025
- 02:52:56 -0700 (PDT)
+ bh=LwQR87NMMysRIn8bt0RTphkXuNoxszaYkPyXzOpIXos=;
+ b=jN0MzEou2/s79NxUbg9Uw50ulQLAMUK8DAiJxRhBXIX/Ao0B7hbW697ALi6bLn4vLB
+ zwST1O1qC9Cf6MtB+W/1EcRDfRdYugA5up1F9Fm9wvSc2J60fS3CUagSmj4sthgvgRpc
+ 2jH2D/e3+PAvJgUKpQLheSIkyCbM03kC6NcDLi3/2sZMXRrX8w6uoVYgzgqM3s9KU5rv
+ kkSdbVxzTBqXzaFyvTnF9jOxMfXTHtCSSb1z984srhhoWP7CJuraGZ77SOjdrXmPJqYd
+ MkioTcx9yFrg4f69aoBJdE3ZOGu8dYPlbpYz9Jr2VoUmzsErPc7sa1+JPhBuU1Ggzs9N
+ emkA==
+X-Gm-Message-State: AOJu0YwLFbPsA/v/wDVzyDHmlYZa7SHrjySv2otXrvmoe5L57IkFRSLY
+ lLD5rCKQtJ6rGu9wJtIJd9as2FX9nKbnJB9czDe0U3EmHYUFdMgCBOgugJSzdgxGbD/LMrvYpup
+ x5iFKBvc1K1nih/sPJAJF/lqeFMiKprg01egzryZ4bVLz8+/SxKm/9AmLntdj/4lTqK6kptWWos
+ 0PKMypSlUWKErCmcktJ+s=
+X-Gm-Gg: ASbGncv9HeCbU98I0+IVUyTzAtJ+vIZaZ8sIM8hPOKtqp5PpQHqVq5qQpP7OK80NPoy
+ cqOHjkV0bPUKbi/s+jnD3+BopjMAng0Emgp6aTKn7F8+1zIYRPX9aWJwlKQXlyn3RNBLP1Nk=
+X-Received: by 2002:a05:6512:3092:b0:553:2f8c:e624 with SMTP id
+ 2adb3069b0e04-55356beff09mr649868e87.15.1749031694987; 
+ Wed, 04 Jun 2025 03:08:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IExRtsUQRLDrCUF7qNuBgNyplBU2aPsDbydviz8bfnqpKflLYs7xvf927r6WCYQ+dT7eGb/7z+lvFlRV13HwVc=
+X-Received: by 2002:a05:6512:3092:b0:553:2f8c:e624 with SMTP id
+ 2adb3069b0e04-55356beff09mr649859e87.15.1749031694542; Wed, 04 Jun 2025
+ 03:08:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <20250528093644.2456221-1-maxime.coquelin@redhat.com>
- <CAJFAV8zDs2nVvX2ZC=sXX3pwYY4t+-ZrOcKqZpnSbjO4MqZ7DQ@mail.gmail.com>
- <20250603175334.x4iknunhjbrsceat@ds-vm-debian.local>
-In-Reply-To: <20250603175334.x4iknunhjbrsceat@ds-vm-debian.local>
+References: <1735857169-19131-1-git-send-email-andremue@linux.microsoft.com>
+ <1741962820-27123-1-git-send-email-andremue@linux.microsoft.com>
+In-Reply-To: <1741962820-27123-1-git-send-email-andremue@linux.microsoft.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 4 Jun 2025 11:52:44 +0200
-X-Gm-Features: AX0GCFsLT-nHTnX5UzgniWJB99lLyGjO3gUEGy4NzYVJf1X1fVMPYEjwQHAm7T0
-Message-ID: <CAJFAV8wkOfzMStekpOMbEsPD3PjM7+JAxYy4R1B=cH4oGH1QOg@mail.gmail.com>
-Subject: Re: [PATCH] net/mlx5: avoid setting kernel MTU if not needed
-To: Dariusz Sosnowski <dsosnowski@nvidia.com>
-Cc: Maxime Coquelin <maxime.coquelin@redhat.com>, dev@dpdk.org,
- viacheslavo@nvidia.com, stable@dpdk.org
+Date: Wed, 4 Jun 2025 12:08:02 +0200
+X-Gm-Features: AX0GCFs_twX8RwBfWsaGtPtaTLLjzWU8Yz5xidmsbQQgYHW5d2Pf81ihLvUYiOg
+Message-ID: <CAJFAV8z3zqxm_VLXkztjThS3XhuKrJ0kf_yjeSgx+VjXaoyh7w@mail.gmail.com>
+Subject: Re: [PATCH v5 0/3] add portable version of __builtin_add_overflow
+To: Andre Muezerie <andremue@linux.microsoft.com>,
+ Thomas Monjalon <thomas@monjalon.net>
+Cc: dev@dpdk.org, mb@smartsharesystems.com, 
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Bruce Richardson <bruce.richards@intel.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: nWSIrsNSqENt4e080b2mAcCZ5BAgyQow-bofRpk0p5M_1749030777
+X-Mimecast-MFC-PROC-ID: l3sSkiHkOWYdYiDb1M-WgR6BnwipGnoZX1WHLK0fb_8_1749031695
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -88,19 +77,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Jun 3, 2025 at 7:54=E2=80=AFPM Dariusz Sosnowski <dsosnowski@nvidia=
-.com> wrote:
-> > Atm, I don't see the need for keeping such a cached mtu value in priv.
-> > There is only one user of the value, and it is for configuration
-> > operation that can do a query to the kernel.
+On Fri, Mar 14, 2025 at 3:34=E2=80=AFPM Andre Muezerie
+<andremue@linux.microsoft.com> wrote:
 >
-> I agree. It's not really needed, especially since the same value is also
-> stored in dev->data->mtu, so the kernel query can easily be replaced
-> with reading dev->data->mtu.
+> __builtin_add_overflow is gcc specific. There's a need for a portable
+> version that can also be used with other compilers.
+>
+> v5:
+> - Combined patches 1 with 5 and 2 with 3.
+>
+> v4:
+> - Added define in ice_osdep.h to use portable version of
+>   __builtin_add_overflow when using MSVC.
+> - Undid all changes from drivers/net/intel/ice/base/ice_nvm.c.
+>
+> v3:
+> - Rebase on top of latest main.
+>
+> Andre Muezerie (3):
+>   eal: add portable version of __builtin_add_overflow
+>   net/intel: use portable version of __builtin_add_overflow
+>   app/test: add tests for portable version of __builtin_add_overflow
+>
+>  MAINTAINERS                            |   1 +
+>  app/test/meson.build                   |   1 +
+>  app/test/test_math.c                   | 170 +++++++++++++++++++++++++
+>  doc/api/doxy-api-index.md              |   1 +
+>  drivers/net/intel/ice/base/ice_osdep.h |   5 +
+>  lib/eal/include/meson.build            |   1 +
+>  lib/eal/include/rte_math.h             |  46 +++++++
+>  7 files changed, 225 insertions(+)
+>  create mode 100644 app/test/test_math.c
+>  create mode 100644 lib/eal/include/rte_math.h
 
-Good point, which makes this priv->mtu even less useful.
+I am not a fan of adding such public API, an internal API would be enough.
+Do you plan to add more helpers for math operations?
 
-Thanks Dariusz.
+For the current helper, the only user is a driver (base code).
+Can't we just wrap a __builtin_add_overflow (under #ifdef msvc) in the
+osdep.h header?
+
 
 --=20
 David Marchand
