@@ -2,77 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9CA5C5B549
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 16:03:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6113C5B543
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Jun 2025 16:43:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 365FC42E67;
-	Wed,  4 Jun 2025 18:03:49 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 79F9342E45
- for <dev@dpdk.org>; Wed,  4 Jun 2025 18:03:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1749053028;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=mDyypYhoIT1iMYmkdxn+L4cm8Aoc1BJZdIN3xProyU4=;
- b=M3UfmpOjqMrOEi02uBFZXsVLggaLkz/JDSQEJpJJVNv87FQd5vczXitcMihNXGvqe2i8mp
- +qV2gQDZcwqrubgKKJIMByggOqNBfT0GyxNajOqFjDng/+Jejs3/+HX2n+qRTwNsBUiBuL
- nNuRf4s2f8oMw9t71Pg0MbnXzK25UWk=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-611-EcVBjKBoM3-Rv6gLs1sDhw-1; Wed, 04 Jun 2025 12:03:45 -0400
-X-MC-Unique: EcVBjKBoM3-Rv6gLs1sDhw-1
-X-Mimecast-MFC-AGG-ID: EcVBjKBoM3-Rv6gLs1sDhw_1749053024
-Received: by mail-lf1-f69.google.com with SMTP id
- 2adb3069b0e04-550f0376a83so3382333e87.0
- for <dev@dpdk.org>; Wed, 04 Jun 2025 09:03:45 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id BB61C42E46;
+	Wed,  4 Jun 2025 18:43:14 +0200 (CEST)
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com
+ [209.85.160.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 3BD3A4025D
+ for <dev@dpdk.org>; Wed,  4 Jun 2025 18:43:13 +0200 (CEST)
+Received: by mail-qt1-f171.google.com with SMTP id
+ d75a77b69052e-4a44b0ed780so60720881cf.3
+ for <dev@dpdk.org>; Wed, 04 Jun 2025 09:43:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1749055392; x=1749660192; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=996eXmhT5t0GeW44HxL3y0dqJggLVUBDa8v1fsy/2Ws=;
+ b=gAw4VUgH0SVJy3oLkTJyQOIMCWTiWmDNWYbdJ+xmREt+9HtnuMhzWDT184ik/p7x4e
+ eg/QF3olPppl8qutWNST1ugUsPrJwmIfAM0+PCc2NFxxoXIpR7oYrqhJSBlOkxru+LL5
+ SbPex49NT0xzCRr+UrC+2WaW8/kSFdhaNY23iS0kpwnAI4oZzFfZQPvToa6QxoovR2pE
+ +myeL6GU3FMisWUEty3n2JBnDb5rkab6U1nLrEo5/Vijy2Mp2i+wTtOY0kwazOaO3EYE
+ QvPyVFYv9Icg8/Wt/TsYYPPtmmYzfxhON3o0q4XBFzOxTG20ghw+qvD2CZz4e+H3W7m6
+ uRQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749053024; x=1749657824;
+ d=1e100.net; s=20230601; t=1749055392; x=1749660192;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=mDyypYhoIT1iMYmkdxn+L4cm8Aoc1BJZdIN3xProyU4=;
- b=fDJbMVoAIGPZ3XCViV2g1EcLtX5tsTsy/twC/y3UqfXu1kCXV1/DIxN+0IpRHZ+qFt
- EWnNWh7mj3a862veuaJoqJ6gdevmAjqYGenEIopY42arTk9hcJNFzwhpAsiQVSWPM48y
- ETTNJV09pBFkVUCWjOmp3w/KJD03ZpHYjB1Z7v5IZ5cOad8Qve+lJGXvbxet1a3m7oPN
- rOmgq5l3MypAbQahiDbQaLnw86kMe92pXoDuJM31BZ0T4e7h8R43Wt5NMF/1zjePaKbc
- Q3KYNYrJnpEyY32D3T4cDAm0meQj56mC+sl7XSi1SVkkpOsoHHPwec1tg+tP1ZwN8ocN
- KT8A==
-X-Gm-Message-State: AOJu0YzmqDXo0SjIptdsxD9O9ciz2jp+BKnpJzQOA8rN2cJDVvRC0xtk
- YLycjHnjezDVfh15BA/lZ4NdSKDK4bpcQTDPzeSp6Og/svkX9MTy9Ktpt/kNc8vtIrr4Qd8xWvX
- ZytxyEEcWUc/8iD8+qG7AbxBbvZv0dxoatl6aeDlMgibrzHACs+0D1txKqv+xRFdwuQK7vMRJpm
- OOPJVIWLeewEyfTirNIvA=
-X-Gm-Gg: ASbGnctDl+9isV3Pb0+0rjvy9d2QEaT559oq13ro8GWEiV/vSlNQDDTrWK7uU1Qwi5R
- SvPmtcAzpG7LA+Xwhnpwh23TuQ81p8okfHSbGpQNjenUeGQk1Q6+KTDjLJA3RSK/rH7knEQwrZA
- YzUXkqsg==
-X-Received: by 2002:a05:6512:3e0d:b0:553:2bf2:e303 with SMTP id
- 2adb3069b0e04-55356bf9864mr1060071e87.30.1749053024243; 
- Wed, 04 Jun 2025 09:03:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG3OBVdLzMYcS0zZFyHr6+Gw34jTdF49TyNj1aQu0UQSHt1ueHzpMxVadNnjgH5pnJXCzT9SIFfHgkWwX/7krA=
-X-Received: by 2002:a05:6512:3e0d:b0:553:2bf2:e303 with SMTP id
- 2adb3069b0e04-55356bf9864mr1059983e87.30.1749053023374; Wed, 04 Jun 2025
- 09:03:43 -0700 (PDT)
+ bh=996eXmhT5t0GeW44HxL3y0dqJggLVUBDa8v1fsy/2Ws=;
+ b=dI0rz0qHgya4xXUQyppnc5t+nAKZdjS1aIvkvXhTK6qal18p6L1s18Vv9fR7ZZj792
+ EaE/RpzRp3XM+zY2mIAOD3wcMFno8w5/WrsNsgNKLJna6x0dSYjR1aeKerRqRNhyQ+iR
+ ZU7CPp6cTnBy7y0BPxPU/3i8ihvEhoeHXfJEq0SjsBQaOKo0sbliDkz/ydRyJsOmApUP
+ oRXAkzjCiHCtSJaA1Ht6tUAP3KcYCM/nOgKzLc0aWioq4NlpzRhPwpiqZSNw79y/FQV+
+ 4sMepeje2TXYXKpuGrAVhODg3Y5GQFI+pwTDsQb96gwsJNOKnJ3GRqMvPciKOzpavQTv
+ zYJg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUt1iD4FBQq+4ApcdkarmjmU743oOkpLmInWWpUfSv+YlpY/Y9qwgOhxWZ3G3EIMMQIKYI=@dpdk.org
+X-Gm-Message-State: AOJu0YzXu/xDuiKMqSn37qmWqvBBm8MkWMba1JWSn/shzyJART6keDQl
+ A5Bukem7YswcF+C3jmjraAc6qnaVP6n9LAqjBjpSDCc07pJ+mDJiEuC7XXW5wBzQW58CpAUbvlV
+ uRfU+6YVAbq32kk+SH8GqCalZMCWNjDA=
+X-Gm-Gg: ASbGncuCNUc2vGP3OIqPMIWKDo5ntEcURsXIndq1RpFc8yG7KQw3cCLtSL6Ox8iOc3U
+ JwiImkLFh99e5gdfq/UQ40kLV5upMPTMaRU5IAVSmY4pSDro6Z32dJ+bty3NKrdgGGIZqniwr6O
+ x0pIqxJcmWQbru9EQAByRhntnK+QK9BdXZgvkOxzC6kg==
+X-Google-Smtp-Source: AGHT+IGXqq9tx7pCpXKfTF7UfhMnlAibrKBBORrc6wauvLCJfq86Wtx9ZqYGGO9xk9xr2al4+pUsyMzdp954Circ6tE=
+X-Received: by 2002:a05:622a:590e:b0:4a5:98ad:5640 with SMTP id
+ d75a77b69052e-4a5a578425fmr59154461cf.23.1749055392531; Wed, 04 Jun 2025
+ 09:43:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <20250402124258.2299435-1-huangdengdui@huawei.com>
- <20250403025736.135846-1-huangdengdui@huawei.com>
-In-Reply-To: <20250403025736.135846-1-huangdengdui@huawei.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 4 Jun 2025 18:03:31 +0200
-X-Gm-Features: AX0GCFt_70hIwgXHYW3JYEiWK4KnsZGrMUIAtIUJv9o3K5O72NiZHHvbfOiWkqY
-Message-ID: <CAJFAV8xu7i7O3U3mQS3+2=kQYh2j2fvLcZNZ6U19_=YtPA2+3Q@mail.gmail.com>
-Subject: Re: [PATCH v2] mem: fix infinite loop
-To: Dengdui Huang <huangdengdui@huawei.com>
-Cc: dev@dpdk.org, fengchengwen@huawei.com, lihuisong@huawei.com, 
- haijie1@huawei.com, liuyonglong@huawei.com, roretzla@linux.microsoft.com, 
- anatoly.burakov@intel.com, stephen@networkplumber.org, 
- mb@smartsharesystems.com, dmitry.kozliuk@gmail.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: D8nu0Lzjy9z0WR7Ei7ui6R0DDAnZpHL0TN4OfBI9hDQ_1749053024
-X-Mimecast-Originator: redhat.com
+References: <20250103060612.2671836-1-nsaxena@marvell.com>
+ <20250604101259.4181992-1-nsaxena@marvell.com>
+ <20250604101259.4181992-3-nsaxena@marvell.com>
+In-Reply-To: <20250604101259.4181992-3-nsaxena@marvell.com>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Wed, 4 Jun 2025 22:12:46 +0530
+X-Gm-Features: AX0GCFv9OCnwXXsVn8Yc4dU8Rl0Exyb0MlWOBUXUsJLZph1C04QFhSMKLEJMrOs
+Message-ID: <CALBAE1M7cMhYfNUbvqVQy62YTQfF3RnNmhVLYguKvmWEEmpxPQ@mail.gmail.com>
+Subject: Re: [PATCH v10 2/7] graph: add feature arc registrations
+To: Nitin Saxena <nsaxena@marvell.com>
+Cc: Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, 
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Zhirun Yan <yanzhirun_163@163.com>, 
+ Robin Jarry <rjarry@redhat.com>, Christophe Fontaine <cfontain@redhat.com>,
+ dev@dpdk.org, Nitin Saxena <nsaxena16@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
@@ -88,24 +81,130 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Apr 3, 2025 at 4:57=E2=80=AFAM Dengdui Huang <huangdengdui@huawei.c=
-om> wrote:
+On Wed, Jun 4, 2025 at 3:43=E2=80=AFPM Nitin Saxena <nsaxena@marvell.com> w=
+rote:
 >
-> When the process address space is insufficient,
-> mmap will fail, which will cause an infinite loop.
-> This patch stops attempting mmap if it fails and
-> the requested size cannot be reduced.
+> This patch defines RTE_GRAPH_FEATURE_ARC_REGISTER() and
+> RTE_GRAPH_FEATURE_REGISTER() constructors and associated APIs with
+> programming guide.
 >
-> Fixes: b7cc54187ea4 ("mem: move virtual area function in common directory=
-")
-> Cc: stable@dpdk.org
+> Signed-off-by: Nitin Saxena <nsaxena@marvell.com>
+> ---
+>  doc/api/doxy-api-index.md                   |   1 +
+>  doc/guides/prog_guide/graph_lib.rst         | 289 +++++++++++
+>  doc/guides/prog_guide/img/feature_arc-1.svg | 269 +++++++++++
+>  doc/guides/prog_guide/img/feature_arc-2.svg | 511 ++++++++++++++++++++
+>  doc/guides/rel_notes/release_25_07.rst      |   7 +
+>  lib/graph/graph_feature_arc.c               |  36 ++
+>  lib/graph/meson.build                       |   2 +
+>  lib/graph/rte_graph_feature_arc.h           | 270 +++++++++++
+>  8 files changed, 1385 insertions(+)
+>  create mode 100644 doc/guides/prog_guide/img/feature_arc-1.svg
+>  create mode 100644 doc/guides/prog_guide/img/feature_arc-2.svg
+>  create mode 100644 lib/graph/graph_feature_arc.c
+>  create mode 100644 lib/graph/rte_graph_feature_arc.h
 >
-> Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
-> Acked-by: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
+> diff --git a/doc/api/doxy-api-index.md b/doc/api/doxy-api-index.md
+> index 5c425a2cb9..a7bdbf892c 100644
+> --- a/doc/api/doxy-api-index.md
+> +++ b/doc/api/doxy-api-index.md
+> @@ -214,6 +214,7 @@ The public API headers are grouped by topics:
+>      [table_wm](@ref rte_swx_table_wm.h)
+>    * [graph](@ref rte_graph.h):
+>      [graph_worker](@ref rte_graph_worker.h)
+> +    [graph_feature_arc](@ref rte_graph_feature_arc.h)
 
-Applied, thanks.
+Missing ",". See diff
+
+-    [graph_worker](@ref rte_graph_worker.h)
+-    [graph_feature_arc](@ref rte_graph_feature_arc.h)
++    [graph_worker](@ref rte_graph_worker.h),
++    [graph_feature_arc](@ref rte_graph_feature_arc.h),
 
 
---=20
-David Marchand
 
+>    * graph_nodes:
+>      [eth_node](@ref rte_node_eth_api.h),
+>      [ip4_node](@ref rte_node_ip4_api.h),
+> diff --git a/doc/guides/prog_guide/graph_lib.rst b/doc/guides/prog_guide/=
+graph_lib.rst
+> index dc6c8c0712..191c8e8a0b 100644
+> --- a/doc/guides/prog_guide/graph_lib.rst
+> +++ b/doc/guides/prog_guide/graph_lib.rst
+> @@ -559,3 +559,292 @@ on success packet is enqueued to ``udp4_input`` nod=
+e.
+>
+>  Hash lookup is performed in ``udp4_input`` node with registered destinat=
+ion port
+>  and destination port in UDP packet , on success packet is handed to ``ud=
+p_user_node``.
+> +
+> +Graph feature arc
+
+Move this above "Inbuilt Nodes" section as it is Graph related feature.
+
+> +-----------------
+> diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_note=
+s/release_25_07.rst
+> index 6b070801de..9740274a16 100644
+> --- a/doc/guides/rel_notes/release_25_07.rst
+> +++ b/doc/guides/rel_notes/release_25_07.rst
+> @@ -78,6 +78,13 @@ New Features
+>
+>    See the :doc:`../cryptodevs/zsda` guide for more details on the new dr=
+iver.
+>
+> +* **Added feature arc abstraction in graph library.**
+
+Better to reword as Added feature arc support in graph library
+> new file mode 100644
+> index 0000000000..56d8f2f34c
+> --- /dev/null
+> +++ b/lib/graph/rte_graph_feature_arc.h
+> @@ -0,0 +1,270 @@
+> +/* SPDX-License-Identifier: BSD-3-Clause
+> + * Copyright(C) 2025 Marvell International Ltd.
+> + */
+> +
+> +#ifndef _RTE_GRAPH_FEATURE_ARC_H_
+> +#define _RTE_GRAPH_FEATURE_ARC_H_
+> +
+> +#include <assert.h>
+> +#include <errno.h>
+> +#include <signal.h>
+> +#include <stddef.h>
+> +#include <stdint.h>
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+> +
+> +#include <rte_common.h>
+> +#include <rte_compat.h>
+> +#include <rte_debug.h>
+> +#include <rte_graph.h>
+> +
+> +#ifdef __cplusplus
+> +extern "C" {
+> +#endif
+> +
+> +/**
+> + * @file
+> + *
+> + * rte_graph_feature_arc.h
+
+
+Please check the generated html file of documentation. Some of the
+symbols are not resolving. See some examples
+
+  * If a given feature likes to control number of indexes (which is higher =
+than
+- * RTE_GRAPH_FEATURE_ARC_REGISTER::max_indexes) it can do so by using
+- * RTE_GRAPH_FEATURE_REGISTER():override_index_cb(). As part of
++ * rte_graph_feature_arc_register::max_indexes) it can do so by using
++ * rte_graph_feature_arc_register::override_index_cb(). As part of
+  * rte_graph_feature_arc_init(), all feature's override_index_cb(), if set=
+, are
+  * called and with maximum value returned by any of the feature is used fo=
+r
+  * rte_graph_feature_arc_create()
+@@ -126,8 +126,8 @@ extern "C" {
