@@ -2,36 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD1EC5AE59
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Jun 2025 17:16:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E58C5B543
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Jun 2025 17:33:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9721E40283;
-	Thu,  5 Jun 2025 19:16:45 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 6DE3540150
- for <dev@dpdk.org>; Thu,  5 Jun 2025 19:16:43 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 2EAE820467;
- Thu,  5 Jun 2025 19:16:43 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id F28E140283;
+	Thu,  5 Jun 2025 19:33:29 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 6DA3140150
+ for <dev@dpdk.org>; Thu,  5 Jun 2025 19:33:28 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 555H0UMk024592;
+ Thu, 5 Jun 2025 10:33:20 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=u
+ Uu4IXf/K4GlP0TknCbb62FjApMRuDiq1CYZ54mn9Ik=; b=dq4cLLoB+y36TXVii
+ 0XMibT3ayhUNdvPJu1lTZcppCEfeVz7b2bzk4zTVbq8Pt7T2LLkW8Q1FsIS5SoKO
+ SrY1EkhXtUnjCqdJRzuwjJlGiKl+xBAtOR34HlhoWY50Xp3lSYNnyivBnA5xJYyw
+ QtDMALjo66iWI6W1zYUoLcTygQqDDYVZeWm49JdVG7pD0FFTjMaSGL8qKIk9J9I9
+ uzg9NCGajuxTami6Cw59kiPwIFAZDjgQdxz8MwmFmR037kGEMVWtk9HKDeaPFskw
+ yraExvmgNm+dsF7YFiCGSb8FIiiazln0YaO+BFFV+1zt60vZfxEoQULelC2kuRtR
+ 8dBXQ==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 473f8s82cd-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Thu, 05 Jun 2025 10:33:20 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 5 Jun 2025 10:33:19 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 5 Jun 2025 10:33:19 -0700
+Received: from cavium-PowerEdge-R640.. (unknown [10.28.36.207])
+ by maili.marvell.com (Postfix) with ESMTP id 7745F3F7044;
+ Thu,  5 Jun 2025 10:33:16 -0700 (PDT)
+From: Nitin Saxena <nsaxena@marvell.com>
+To: Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, 
+ Nithin Dabilpuram <ndabilpuram@marvell.com>, Zhirun Yan
+ <yanzhirun_163@163.com>, Robin Jarry <rjarry@redhat.com>,
+ Christophe Fontaine <cfontain@redhat.com>
+CC: <dev@dpdk.org>, Nitin Saxena <nsaxena16@gmail.com>
+Subject: [PATCH v12 0/7] add feature arc in rte_graph
+Date: Thu, 5 Jun 2025 23:03:05 +0530
+Message-ID: <20250605173315.1447003-1-nsaxena@marvell.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250103060612.2671836-1-nsaxena@marvell.com>
+References: <20250103060612.2671836-1-nsaxena@marvell.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: Intel NIC mbuf fast free
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Thu, 5 Jun 2025 19:16:39 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FCCE@smartserver.smartshare.dk>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: Intel NIC mbuf fast free
-Thread-Index: AdvWPZl3JFoIFYWKQH2FZuzvP12Hpg==
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Anatoly Burakov" <anatoly.burakov@intel.com>
-Cc: "Bruce Richardson" <bruce.richardson@intel.com>,
-	<dev@dpdk.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: yCxqtGD1c6dmN1Op_UaU6-1-R8VXV8Af
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA1MDE1NSBTYWx0ZWRfX4BKg/+ewqjHv
+ vpsmRp3UByCjbjiFvf9Ta6p1gESjx2IgVl+Nq0CLNBG/dF56cwdUWuGacPGpwtS74vDM305+qcK
+ MtV4Xzthw6pG1aJYCsQrk0rjklLZYOzAnRNczpvE5dE31ONISWIO5qmo7FqrOBR1oZAOCPLbcW8
+ 1u/u498QqdOkRgNqJtTmZV2EV1/Pn2qVyFE+VGsJsJ7ArOoes6x61D5GbAHMA7oNlC7QEpywBIX
+ i5Vu10fkbU+BYtyhbLeMU0G76vC0YbskxXWr4YUyibjjnW3Y9vf8KJ5pfSpeMyKFMSFONG1l1iA
+ 9O3GzieWv5HXDRVBJwJ8Q65snqfnQJ8gmcaA7NtzouypU7XSfH0wTP7ZP7UWLNo2WMAO4mPrlTu
+ WXkBhKhSV5Xo3mFMkEzc+6OL6ASrlg6yq0B4bXBFhY0wRuML1L5yGGwfxvlNToRlAxn6y3GL
+X-Authority-Analysis: v=2.4 cv=RKizH5i+ c=1 sm=1 tr=0 ts=6841d4e0 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=6IFa9wvqVegA:10 a=NEAV23lmAAAA:8 a=VDk4JRl-7iTCIaFRHVcA:9
+X-Proofpoint-GUID: yCxqtGD1c6dmN1Op_UaU6-1-R8VXV8Af
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-05_04,2025-06-05_01,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -45,123 +81,141 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Anatoly,
+Feature arc represents an ordered list of features/protocols at a given
+networking layer. It is a high level abstraction to express relationship
+between rte_graph nodes, as feature nodes, and allow packets steering
+across these nodes in a simplified manner.
 
-I noticed you are consolidating the Intel NIC drivers into common code, =
-which is good.
+Features (or feature nodes) are nodes which handles partial or complete
+handling of a protocol in fast path. Like ipv4-rewrite node, which adds
+rewrite data to an outgoing IPv4 packet.
 
-While you are at it, please also consider replacing some ancient code =
-with functions doing the same:
-https://git.dpdk.org/dpdk/tree/drivers/net/intel/common/tx.h#n157
+However in above example, outgoing interface(say "eth0") may have
+outbound IPsec policy enabled, hence packets must be steered from
+ipv4-rewrite node to outbound-IPsec-policy node. On the other hand,
+packets routed to another interface (say eth1) must ot be sent to
+IPsec node, as IPsec feature is disabled on eth1. Feature-arc allows
+rte_graph applications to manage such constraints easily
 
-Something like (untested):
+Feature arc abstraction allows rte_graph based application to
 
-static __rte_always_inline int
-ci_tx_free_bufs_vec(struct ci_tx_queue *txq, ci_desc_done_fn desc_done, =
-bool ctx_descs)
-{
-	int nb_free =3D 0;
-	struct rte_mbuf *free[IETH_VPMD_TX_MAX_FREE_BUF];
-	struct rte_mbuf *m;
+1. Runtime enable/disable features on an index (like interface), so that
+if a feature is enabled at runtime, only then packets associated with
+that interface will steer to corresponding feature node. Control plane
+enables/disables features. Features enabled on one interface may not be
+enabled on another interface with in a same feature arc.
 
-	/* check DD bits on threshold descriptor */
-	if (!desc_done(txq, txq->tx_next_dd))
-		return 0;
+2. Single feature arc represents a hook point at a network layer in an
+given direction. Multiple feature arcs can be added in desginated nodes
+to add various hook points in stack. Likt IPv4-output, IPv4-input,
+IPv6-output, IPv6-input, ethernet-input, mpls-input, mpls-output etc.
 
-	const uint32_t n =3D txq->tx_rs_thresh >> ctx_descs;
+3. Hook custom/out-of-tree nodes to DPDK in-built nodes and allow packet
+steering from in-built node to custom node without requiring changes to
+in-built fast path function
 
-	/* first buffer to free from S/W ring is at index
-	 * tx_next_dd - (tx_rs_thresh - 1)
-	 */
-	struct ci_tx_entry_vec *txep =3D txq->sw_ring_vec;
-	txep +=3D (txq->tx_next_dd >> ctx_descs) - (n - 1);
+4. Express features in a particular sequential order so that
+packets are steered in an ordered way across nodes in fast path. For
+eg: if IPsec and IPv4 features are enabled on an ingress interface,
+packets must be sent to IPsec inbound policy node first and then to ipv4
+lookup node.
 
--	if (txq->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE && (n & 31) =
-=3D=3D 0) {
--		struct rte_mempool *mp =3D txep[0].mbuf->pool;
--		void **cache_objs;
--		struct rte_mempool_cache *cache =3D rte_mempool_default_cache(mp, =
-rte_lcore_id());
--
--		if (cache =3D=3D NULL)
--			goto normal;
--
--		cache_objs =3D &cache->objs[cache->len];
--
--		if (n > RTE_MEMPOOL_CACHE_MAX_SIZE) {
--			rte_mempool_ops_enqueue_bulk(mp, (void *)txep, n);
--			goto done;
--		}
--
--		/* The cache follows the following algorithm
--		 *   1. Add the objects to the cache
--		 *   2. Anything greater than the cache min value (if it
--		 *   crosses the cache flush threshold) is flushed to the ring.
--		 */
--		/* Add elements back into the cache */
--		uint32_t copied =3D 0;
--		/* n is multiple of 32 */
--		while (copied < n) {
--			memcpy(&cache_objs[copied], &txep[copied], 32 * sizeof(void *));
--			copied +=3D 32;
--		}
--		cache->len +=3D n;
--
--		if (cache->len >=3D cache->flushthresh) {
--			rte_mempool_ops_enqueue_bulk(mp, &cache->objs[cache->size],
--					cache->len - cache->size);
--			cache->len =3D cache->size;
--		}
--		goto done;
--	}
--
--normal:
--	m =3D rte_pktmbuf_prefree_seg(txep[0].mbuf);
--	if (likely(m)) {
--		free[0] =3D m;
--		nb_free =3D 1;
--		for (uint32_t i =3D 1; i < n; i++) {
--			m =3D rte_pktmbuf_prefree_seg(txep[i].mbuf);
--			if (likely(m)) {
--				if (likely(m->pool =3D=3D free[0]->pool)) {
--					free[nb_free++] =3D m;
--				} else {
--					rte_mempool_put_bulk(free[0]->pool, (void *)free, nb_free);
--					free[0] =3D m;
--					nb_free =3D 1;
--				}
--			}
--		}
--		rte_mempool_put_bulk(free[0]->pool, (void **)free, nb_free);
--	} else {
--		for (uint32_t i =3D 1; i < n; i++) {
--			m =3D rte_pktmbuf_prefree_seg(txep[i].mbuf);
--			if (m)
--				rte_mempool_put(m->pool, m);
--		}
--	}
--
--done:
-+	if (txq->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE)
-+		rte_mempool_put_bulk(txep[0].mbuf->pool, (void **)txep, n);
-+	else
-+		rte_pktmbuf_free_bulk((void **)txep, n);
-+
-	/* buffers were freed, update counters */
-	txq->nb_tx_free =3D (uint16_t)(txq->nb_tx_free + txq->tx_rs_thresh);
-	txq->tx_next_dd =3D (uint16_t)(txq->tx_next_dd + txq->tx_rs_thresh);
-	if (txq->tx_next_dd >=3D txq->nb_tx_desc)
-		txq->tx_next_dd =3D (uint16_t)(txq->tx_rs_thresh - 1);
+This patch series adds feature arc library in rte_graph and also adds
+"ipv4-output" feature arc handling in "ipv4-rewrite" node.
 
-	return txq->tx_rs_thresh;
-}
+Changes in v12
+- Fixed github CI build failure
+- Incorporated further comments from Jerin
 
-Note:
-My suggestion relies on the ci_tx_entry_vec structure effectively being =
-the same as an mbuf pointer.
-The existing code path for RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE also relies =
-on this.
+Changes in v11
+- Incorporated all comments from Kiran
 
+Changes in v10
+- Incorporated all comments from Jerin
+- Splitted feature arc spec patch into 3 patches
+- added programming guide in each patch
+- Fixed documentation comments
 
--Morten
+Changes in v9:
+- Fix build failures
+
+Changes in v8:
+- Fix CI iol testing
+
+Changes in v7:
+- Rebased to latest main for DPDK-25.07
+- Added override_index_cb() in RTE_GRAPH_FEATURE_REGISTER() to allow
+  features to take control of "max_index" (passed to
+  rte_graph_feature_arc_create())
+- Streamlined fast path APIs to make them more simpler
+- Added quad_loop in "if_tx_feature" node
+- Added functional test cases and fixed bugs
+- Based on feedback from Redhat on v6 patches, it was tried to move
+  feature arc APIs inside rte_graph library (to reduce node burden) but
+  it was adding 4% performance regression for L3fwd usecase. For
+  interested users: https://github.com/nsaxena16/dpdk/pull/2
+
+Changes in v6:
+- Rebased to latest main for DPDK-25.03
+- Added constructor based feature arc/feature registration
+- Changed design to handle fast path synchronization via RCU mechanism
+  when any feature is enabled or disabled
+- Added feature arc specific mbuf dynamic field to carry feature data
+  across nodes
+- Added feature arc example in app/graph
+- Programming guide and functional test cases in future versions
+
+Nitin Saxena (7):
+  graph: add API to override node process function
+  graph: add feature arc registrations
+  graph: add feature arc init APIs
+  graph: add feature enable/disable APIs
+  ip4: add ip4 output feature arc
+  app/graph: add custom feature nodes for ip4 output arc
+  test/graph_feature_arc: add functional tests
+
+ app/graph/commands.list                     |    6 +
+ app/graph/feature.c                         |  141 ++
+ app/graph/feature.h                         |   13 +
+ app/graph/graph.c                           |    4 +
+ app/graph/ip4_output_hook.c                 |  180 ++
+ app/graph/main.c                            |   15 +-
+ app/graph/meson.build                       |    2 +
+ app/graph/module_api.h                      |    2 +
+ app/test/meson.build                        |    1 +
+ app/test/test_graph_feature_arc.c           | 1374 +++++++++++++
+ doc/api/doxy-api-index.md                   |    4 +-
+ doc/guides/prog_guide/graph_lib.rst         |  490 +++++
+ doc/guides/prog_guide/img/feature_arc-1.svg |  269 +++
+ doc/guides/prog_guide/img/feature_arc-2.svg |  511 +++++
+ doc/guides/rel_notes/release_25_07.rst      |    9 +
+ doc/guides/tools/graph.rst                  |   18 +
+ lib/graph/graph_feature_arc.c               | 2058 +++++++++++++++++++
+ lib/graph/graph_private.h                   |   15 +
+ lib/graph/meson.build                       |    4 +-
+ lib/graph/node.c                            |   22 +
+ lib/graph/rte_graph_feature_arc.h           |  656 ++++++
+ lib/graph/rte_graph_feature_arc_worker.h    |  624 ++++++
+ lib/node/ethdev_ctrl.c                      |    8 +
+ lib/node/interface_tx_feature.c             |  213 ++
+ lib/node/interface_tx_feature_priv.h        |   33 +
+ lib/node/ip4_rewrite.c                      |  286 ++-
+ lib/node/meson.build                        |    1 +
+ lib/node/node_private.h                     |    1 +
+ lib/node/rte_node_ip4_api.h                 |    4 +
+ 29 files changed, 6954 insertions(+), 10 deletions(-)
+ create mode 100644 app/graph/feature.c
+ create mode 100644 app/graph/feature.h
+ create mode 100644 app/graph/ip4_output_hook.c
+ create mode 100644 app/test/test_graph_feature_arc.c
+ create mode 100644 doc/guides/prog_guide/img/feature_arc-1.svg
+ create mode 100644 doc/guides/prog_guide/img/feature_arc-2.svg
+ create mode 100644 lib/graph/graph_feature_arc.c
+ create mode 100644 lib/graph/rte_graph_feature_arc.h
+ create mode 100644 lib/graph/rte_graph_feature_arc_worker.h
+ create mode 100644 lib/node/interface_tx_feature.c
+ create mode 100644 lib/node/interface_tx_feature_priv.h
+
+--
+2.43.0
 
