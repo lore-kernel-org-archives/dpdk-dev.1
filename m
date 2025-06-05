@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5389FC5B543
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Jun 2025 09:07:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49DF4C5B543
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Jun 2025 09:07:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 69E764064E;
-	Thu,  5 Jun 2025 11:07:21 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 86910402EE;
+	Thu,  5 Jun 2025 11:07:24 +0200 (CEST)
 Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
  [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id EC83D40430
- for <dev@dpdk.org>; Thu,  5 Jun 2025 11:07:19 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 4AC69402EE
+ for <dev@dpdk.org>; Thu,  5 Jun 2025 11:07:23 +0200 (CEST)
 Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 554NSoHc026314
- for <dev@dpdk.org>; Thu, 5 Jun 2025 02:07:19 -0700
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 554NSnIm026248
+ for <dev@dpdk.org>; Thu, 5 Jun 2025 02:07:22 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=q
- OI3WufL1f6RruyDTzo5IOpATF0zSzOrncf0s6TTfV8=; b=AB+hqnGJ59Rz/cr2F
- fz3dNjPFFWm+AgrTgGyTg9PNVf85rDxnn2r2+EZGLIs1GJVvQgIOw7PdOzXz3SWI
- v0hB178OF5DwBSeZDwNhUABr8Tr9/Tt37KN8j0dxOJyveE22TgdAUCm2nFQCEe48
- m5rMnvi3P9E4RyivHZiqBs5e44BGysOByF3LNT9kU70Sk2ivlMLbJMxs4gK02gI1
- 41JVPLYmxsQCR7uGVHuGCbuTcZEOhfJQebqlA6KpGmNoki8ZAzWXdqiMYgKkNnHu
- O6y1HjDQwY0L8IkdZ//0PGJOAuiQfaUubwscV/PWP2wOOL5MR+8I05aJvPPl4cJo
- PVc/Q==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 472yurs1yy-1
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=k
+ svoOwqwU+aReVGGLHb9s/UQiRRaTmVDZWOYtH0v6eU=; b=WRAzPS0EOfKazh91o
+ IcNhZN7sajR2M+Xi1tU3VYIe2FZYW7AqBh2SWNrW8vpAQy7XLmxrDtxbL50LL702
+ NnuiTqWxAYY1+nL9c/VphrlsjCCQcCLBeopYthQrGict14rGJ0jQCDsUFffG/+oi
+ LoP+58u5WFRgSN9DY2gF8RFCjjAlb+7QnDb+xQAfLsY3ReGyV32Kus1b033tLMaw
+ VNxwG7QwBvtA8MnGftkUGOVkzbwyOkR1L3VqK6AF+GJdgxWc4tnVagu0cOG06bw4
+ spLfxuDmaBEyG+5TQKNHBOWyoxTU61chM5K3Ag2TJYat15oHNKWetCGlXZiyNkJY
+ Elr5g==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 472yurs203-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Thu, 05 Jun 2025 02:07:19 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ for <dev@dpdk.org>; Thu, 05 Jun 2025 02:07:22 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 5 Jun 2025 02:07:18 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 5 Jun 2025 02:07:18 -0700
+ 15.2.1544.4; Thu, 5 Jun 2025 02:07:21 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 5 Jun 2025 02:07:21 -0700
 Received: from cavium-3070-BM23.. (unknown [10.28.34.25])
- by maili.marvell.com (Postfix) with ESMTP id E762F3F7079;
- Thu,  5 Jun 2025 02:07:15 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id B2C923F7079;
+ Thu,  5 Jun 2025 02:07:18 -0700 (PDT)
 From: <skori@marvell.com>
 To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
  <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
  <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
 CC: <dev@dpdk.org>
-Subject: [PATCH 4/7] net/cnxk: get speed capability from firmware
-Date: Thu, 5 Jun 2025 14:36:39 +0530
-Message-ID: <20250605090657.3032918-4-skori@marvell.com>
+Subject: [PATCH 5/7] net/cnxk: support link mode configuration
+Date: Thu, 5 Jun 2025 14:36:40 +0530
+Message-ID: <20250605090657.3032918-5-skori@marvell.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250605090657.3032918-1-skori@marvell.com>
 References: <20250605090657.3032918-1-skori@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=YuQPR5YX c=1 sm=1 tr=0 ts=68415e47 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=3CMRPe03__idA2T9rPcA:9
+X-Authority-Analysis: v=2.4 cv=YuQPR5YX c=1 sm=1 tr=0 ts=68415e4a cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=83_Lh2SUWi18qvg5i8YA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: bm7UHu0av9Ts443av-wZyDQMzP8YzVfp
-X-Proofpoint-ORIG-GUID: bm7UHu0av9Ts443av-wZyDQMzP8YzVfp
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA1MDA3OSBTYWx0ZWRfX3+GF/+WgspN/
- PyO+k8fw6I6Cp8y6iy+2xGMJGRiAXtXMAErTFAfZC/Crzg5drKc6GX3nrMdC77mnYfjjz3HEv2E
- XS7h8EnkItU7gs9KFQBPM0wS45C+34EaIWTJnU/mfFB8rUgALtyCdan5LBSesak/T97W5k3u7se
- ajrOZwzlhnWwG8bIZ14+Ld/dBst68j1Tcca41p228Rr2vG/zcxQicPYQrxjv8fDr0g8J0fffeo1
- /HHF6gR+LRIJ2RyY2MiRIOzogSPwINTLlb5C3ssmCY9w8G+wMGk2hMc2TRUuSKjS3yaX8owAHR6
- ufeLmeNHplEYaeiSiU12ENd+98WB8xIU2i771iWDNpCH1Ed0ikL0AyQJkvbzv5pQ0t7JTjqo7+z
- aut2AC+n29szX4ZyZZJ04Dw2/rNsdMKSDj1gnsuKPBUxm8BoXLpKwlc0wDHcorDJhMVoxGnB
+X-Proofpoint-GUID: g603zOuuVayyXRY82PSro8g4if1frHxS
+X-Proofpoint-ORIG-GUID: g603zOuuVayyXRY82PSro8g4if1frHxS
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA1MDA3OSBTYWx0ZWRfXxD1sHSl+NSCf
+ 8tjAN+9LvD0EwlLaJmVeFvZ6XikmNejdmjdGM3siXRdPYAY7yUrMdffv8jCqMJ7WtCSmfAZDdpp
+ gGMCw81Zq/b1sukTJ+wYZtyNMb0pcyuDAjG9li2gZdY6s9H1+2bUysMOmxiIr1DIAEkQVo9Z3Tn
+ rOVxLyrJLAwy/Wt/9WOteo/e1wN6tUnkzWZjkMjE1pGMoMNMd/qsadBT+L353Y+O6nr5zKcQ7m0
+ gOrQ32wr/F7Is2ds6pXlF/woaamH1MApIE5SvRVbkQfxm2JJlHbBaU2+DvNhYiqt3WQ8jvamRKd
+ KbXK7GEq/9xoXjnlWCD7MI1A/vCkWM9uUTPCPwoRMVZW9SOIt5kag1Anp5g1qqOZjdn8eQzmjBj
+ fqvwuP0aN32egtqRULpALiN7ks0u1nS58DzwSYDAv+mEXmb8oLf3iAGfr6i0vBhsXuIeoV7w
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-05_02,2025-06-03_02,2025-03-28_01
@@ -83,117 +83,203 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Sunil Kumar Kori <skori@marvell.com>
 
-Currently speed capability is hardcoded to support defined
-modes and speeds but MAC can support others modes and speed
-too. This information is populated by firmware.
+As a port can be configured to operate on specific
+mode and speed via struct rte_eth_conf::link_speeds
+in rte_eth_dev_configure() API.
 
-Hence fetching firmware data to provide actual supported
-modes and speeds by the port.
+Implement mentioned configuration passed by user.
 
-Signed-off-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
 Signed-off-by: Sunil Kumar Kori <skori@marvell.com>
+Signed-off-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
 ---
- drivers/net/cnxk/cnxk_ethdev.c | 75 ++++++++++++++++++++++++++++++++--
- 1 file changed, 72 insertions(+), 3 deletions(-)
+ drivers/net/cnxk/cnxk_ethdev.c |   6 ++
+ drivers/net/cnxk/cnxk_ethdev.h |   1 +
+ drivers/net/cnxk/cnxk_link.c   | 132 +++++++++++++++++++++++++++++++++
+ 3 files changed, 139 insertions(+)
 
 diff --git a/drivers/net/cnxk/cnxk_ethdev.c b/drivers/net/cnxk/cnxk_ethdev.c
-index fc17841bca..89d304be7e 100644
+index 89d304be7e..34f391e755 100644
 --- a/drivers/net/cnxk/cnxk_ethdev.c
 +++ b/drivers/net/cnxk/cnxk_ethdev.c
-@@ -7,6 +7,60 @@
+@@ -3,6 +3,7 @@
+  */
+ #include <cnxk_ethdev.h>
+ 
++#include <rte_bitops.h>
+ #include <eal_export.h>
  #include <rte_eventdev.h>
  #include <rte_pmd_cnxk.h>
+@@ -1609,6 +1610,11 @@ cnxk_nix_configure(struct rte_eth_dev *eth_dev)
+ 		    eth_dev->data->port_id, ea_fmt, nb_rxq, nb_txq,
+ 		    dev->rx_offloads, dev->tx_offloads);
  
-+static const uint32_t cnxk_mac_modes[CGX_MODE_MAX + 1] = {
-+	[CGX_MODE_SGMII] = RTE_ETH_LINK_SPEED_1G,
-+	[CGX_MODE_1000_BASEX] = RTE_ETH_LINK_SPEED_1G,
-+	[CGX_MODE_QSGMII] = RTE_ETH_LINK_SPEED_1G,
-+	[CGX_MODE_10G_C2C] = RTE_ETH_LINK_SPEED_10G,
-+	[CGX_MODE_10G_C2M] = RTE_ETH_LINK_SPEED_10G,
-+	[CGX_MODE_10G_KR] = RTE_ETH_LINK_SPEED_10G,
-+	[CGX_MODE_20G_C2C] = RTE_ETH_LINK_SPEED_20G,
-+	[CGX_MODE_25G_C2C] = RTE_ETH_LINK_SPEED_25G,
-+	[CGX_MODE_25G_C2M] = RTE_ETH_LINK_SPEED_25G,
-+	[CGX_MODE_25G_2_C2C] = RTE_ETH_LINK_SPEED_25G,
-+	[CGX_MODE_25G_CR] = RTE_ETH_LINK_SPEED_25G,
-+	[CGX_MODE_25G_KR] = RTE_ETH_LINK_SPEED_25G,
-+	[CGX_MODE_40G_C2C] = RTE_ETH_LINK_SPEED_40G,
-+	[CGX_MODE_40G_C2M] = RTE_ETH_LINK_SPEED_40G,
-+	[CGX_MODE_40G_CR4] = RTE_ETH_LINK_SPEED_40G,
-+	[CGX_MODE_40G_KR4] = RTE_ETH_LINK_SPEED_40G,
-+	[CGX_MODE_40GAUI_C2C] = RTE_ETH_LINK_SPEED_40G,
-+	[CGX_MODE_50G_C2C] = RTE_ETH_LINK_SPEED_50G,
-+	[CGX_MODE_50G_C2M] = RTE_ETH_LINK_SPEED_50G,
-+	[CGX_MODE_50G_4_C2C] = RTE_ETH_LINK_SPEED_50G,
-+	[CGX_MODE_50G_CR] = RTE_ETH_LINK_SPEED_50G,
-+	[CGX_MODE_50G_KR] = RTE_ETH_LINK_SPEED_50G,
-+	[CGX_MODE_80GAUI_C2C] = 0, /* No define for 80G */
-+	[CGX_MODE_100G_C2C] = RTE_ETH_LINK_SPEED_100G,
-+	[CGX_MODE_100G_C2M] = RTE_ETH_LINK_SPEED_100G,
-+	[CGX_MODE_100G_CR4] = RTE_ETH_LINK_SPEED_100G,
-+	[CGX_MODE_100G_KR4] = RTE_ETH_LINK_SPEED_100G,
-+	[CGX_MODE_LAUI_2_C2C_BIT] = RTE_ETH_LINK_SPEED_50G,
-+	[CGX_MODE_LAUI_2_C2M_BIT] = RTE_ETH_LINK_SPEED_50G,
-+	[CGX_MODE_50GBASE_CR2_C_BIT] = RTE_ETH_LINK_SPEED_50G,
-+	[CGX_MODE_50GBASE_KR2_C_BIT] = RTE_ETH_LINK_SPEED_50G,
-+	[CGX_MODE_100GAUI_2_C2C_BIT] = RTE_ETH_LINK_SPEED_100G,
-+	[CGX_MODE_100GAUI_2_C2M_BIT] = RTE_ETH_LINK_SPEED_100G,
-+	[CGX_MODE_100GBASE_CR2_BIT] = RTE_ETH_LINK_SPEED_100G,
-+	[CGX_MODE_100GBASE_KR2_BIT] = RTE_ETH_LINK_SPEED_100G,
-+	[CGX_MODE_SFI_1G_BIT] = RTE_ETH_LINK_SPEED_1G,
-+	[CGX_MODE_25GBASE_CR_C_BIT] = RTE_ETH_LINK_SPEED_25G,
-+	[CGX_MODE_25GBASE_KR_C_BIT] = RTE_ETH_LINK_SPEED_25G,
-+	[ETH_MODE_SGMII_10M_BIT] = RTE_ETH_LINK_SPEED_10M | RTE_ETH_LINK_SPEED_10M_HD,
-+	[ETH_MODE_SGMII_100M_BIT] = RTE_ETH_LINK_SPEED_100M | RTE_ETH_LINK_SPEED_100M_HD,
-+	[40] = 0,
-+	[41] = 0,
-+	[ETH_MODE_2500_BASEX_BIT] = RTE_ETH_LINK_SPEED_2_5G,
-+	[ETH_MODE_5000_BASEX_BIT] = RTE_ETH_LINK_SPEED_5G,
-+	[ETH_MODE_O_USGMII_BIT] = RTE_ETH_LINK_SPEED_100M,
-+	[ETH_MODE_Q_USGMII_BIT] = RTE_ETH_LINK_SPEED_1G,
-+	[ETH_MODE_2_5G_USXGMII_BIT] = RTE_ETH_LINK_SPEED_2_5G,
-+	[ETH_MODE_5G_USXGMII_BIT] = RTE_ETH_LINK_SPEED_5G,
-+	[ETH_MODE_10G_SXGMII_BIT] = RTE_ETH_LINK_SPEED_10G,
-+	[ETH_MODE_10G_DXGMII_BIT] = RTE_ETH_LINK_SPEED_10G,
-+	[ETH_MODE_10G_QXGMII_BIT] = RTE_ETH_LINK_SPEED_10G,
++	/* Configure link parameters */
++	rc = cnxk_nix_link_info_configure(eth_dev);
++	if (rc)
++		plt_warn("Unable to configure requested link attributes, rc=%d continue...", rc);
++
+ 	/* All good */
+ 	dev->configured = 1;
+ 	dev->nb_rxq = data->nb_rx_queues;
+diff --git a/drivers/net/cnxk/cnxk_ethdev.h b/drivers/net/cnxk/cnxk_ethdev.h
+index 1ced6dd65e..c11a3e6ce0 100644
+--- a/drivers/net/cnxk/cnxk_ethdev.h
++++ b/drivers/net/cnxk/cnxk_ethdev.h
+@@ -678,6 +678,7 @@ void cnxk_eth_dev_link_status_cb(struct roc_nix *nix,
+ void cnxk_eth_dev_link_status_get_cb(struct roc_nix *nix,
+ 				     struct roc_nix_link_info *link);
+ void cnxk_eth_dev_q_err_cb(struct roc_nix *nix, void *data);
++int cnxk_nix_link_info_configure(struct rte_eth_dev *eth_dev);
+ int cnxk_nix_link_update(struct rte_eth_dev *eth_dev, int wait_to_complete);
+ int cnxk_nix_queue_stats_mapping(struct rte_eth_dev *dev, uint16_t queue_id,
+ 				 uint8_t stat_idx, uint8_t is_rx);
+diff --git a/drivers/net/cnxk/cnxk_link.c b/drivers/net/cnxk/cnxk_link.c
+index 903b44de2c..0bc56fbb8c 100644
+--- a/drivers/net/cnxk/cnxk_link.c
++++ b/drivers/net/cnxk/cnxk_link.c
+@@ -4,6 +4,74 @@
+ 
+ #include "cnxk_ethdev.h"
+ 
++const enum roc_nix_link_mode mac_to_ethtool_mode[CGX_LMAC_TYPE_MAX][2] = {
++	[CGX_LMAC_TYPE_SGMII][ROC_NIX_LINK_DUPLEX_HALF] = ROC_NIX_LINK_MODE_1000BASET_HD,
++	[CGX_LMAC_TYPE_SGMII][ROC_NIX_LINK_DUPLEX_FULL] = ROC_NIX_LINK_MODE_1000BASET_FD,
++	[CGX_LMAC_TYPE_10G_R][ROC_NIX_LINK_DUPLEX_FULL] = ROC_NIX_LINK_MODE_10000BASESR_FD,
++	[CGX_LMAC_TYPE_QSGMII][ROC_NIX_LINK_DUPLEX_HALF] = ROC_NIX_LINK_MODE_1000BASET_HD,
++	[CGX_LMAC_TYPE_QSGMII][ROC_NIX_LINK_DUPLEX_FULL] = ROC_NIX_LINK_MODE_10000BASET_FD,
 +};
 +
- cnxk_ethdev_rx_offload_cb_t cnxk_ethdev_rx_offload_cb;
- 
- #define CNXK_NIX_CQ_INL_CLAMP_MAX (64UL * 1024UL)
-@@ -42,14 +96,29 @@ nix_get_tx_offload_capa(struct cnxk_eth_dev *dev)
- static inline uint32_t
- nix_get_speed_capa(struct cnxk_eth_dev *dev)
- {
++const enum roc_nix_link_mode rte_to_ethtool_mode[ROC_NIX_LINK_SPEED_MAX] = {
++	0,
++	ROC_NIX_LINK_MODE_10BASET_HD,
++	ROC_NIX_LINK_MODE_10BASET_FD,
++	ROC_NIX_LINK_MODE_100BASET_HD,
++	ROC_NIX_LINK_MODE_100BASET_FD,
++	ROC_NIX_LINK_MODE_1000BASET_FD,
++	ROC_NIX_LINK_MODE_2500BASEX_FD,
++	0,
++	ROC_NIX_LINK_MODE_10000BASESR_FD,
++	0,
++	ROC_NIX_LINK_MODE_25000BASESR_FD,
++	ROC_NIX_LINK_MODE_40000BASELR4_FD,
++	ROC_NIX_LINK_MODE_50000BASELR_ER_FR_FD,
++	0,
++	ROC_NIX_LINK_MODE_100000BASELR4_ER4_FD,
++	0,
++	0,
++};
++
++static uint64_t
++nix_link_advertising_get(struct cnxk_eth_dev *dev, struct roc_nix_link_info *link_info)
++{
 +	struct roc_nix_mac_fwdata fwdata;
- 	uint32_t speed_capa;
-+	uint8_t mode;
-+	int rc;
++	struct roc_nix_link_info linfo;
++	uint64_t advertise = 0;
++	int bit, rc;
++
++	memset(&fwdata, 0, sizeof(fwdata));
++	rc = roc_nix_mac_fwdata_get(&dev->nix, &fwdata);
++	if (rc) {
++		plt_err("Failed to get MAC firmware data");
++		goto exit;
++	}
++
++	memset(&linfo, 0, sizeof(linfo));
++	rc = roc_nix_mac_link_info_get(&dev->nix, &linfo);
++	if (rc) {
++		plt_err("Failed to get MAC link info");
++		goto exit;
++	}
++
++	if (link_info->autoneg) {
++		if (!fwdata.supported_an) {
++			plt_err("Autoneg is not supported");
++			goto exit;
++		} else {
++			for (bit = 0; bit < ROC_NIX_LINK_SPEED_MAX; bit++) {
++				if (link_info->speed_bitmask & BIT_ULL(bit))
++					advertise |= rte_to_ethtool_mode[bit];
++			}
++			goto exit;
++		}
++	}
++
++	advertise |= mac_to_ethtool_mode[linfo.lmac_type_id][link_info->full_duplex];
++exit:
++	return advertise;
++}
++
+ void
+ cnxk_nix_toggle_flag_link_cfg(struct cnxk_eth_dev *dev, bool set)
+ {
+@@ -146,3 +214,67 @@ cnxk_nix_link_update(struct rte_eth_dev *eth_dev, int wait_to_complete)
  
- 	/* Auto negotiation disabled */
- 	speed_capa = RTE_ETH_LINK_SPEED_FIXED;
- 	if (!roc_nix_is_vf_or_sdp(&dev->nix) && !roc_nix_is_lbk(&dev->nix)) {
--		speed_capa |= RTE_ETH_LINK_SPEED_1G | RTE_ETH_LINK_SPEED_10G |
--			      RTE_ETH_LINK_SPEED_25G | RTE_ETH_LINK_SPEED_40G |
--			      RTE_ETH_LINK_SPEED_50G | RTE_ETH_LINK_SPEED_100G;
-+		memset(&fwdata, 0, sizeof(fwdata));
-+		rc = roc_nix_mac_fwdata_get(&dev->nix, &fwdata);
-+		if (rc) {
-+			plt_err("Failed to get MAC firmware data");
-+			return 0;
+ 	return rte_eth_linkstatus_set(eth_dev, &link);
+ }
++
++int
++cnxk_nix_link_info_configure(struct rte_eth_dev *eth_dev)
++{
++	uint32_t speed_map[] = {
++		RTE_ETH_SPEED_NUM_NONE, RTE_ETH_SPEED_NUM_10M,  RTE_ETH_SPEED_NUM_10M,
++		RTE_ETH_SPEED_NUM_100M, RTE_ETH_SPEED_NUM_100M, RTE_ETH_SPEED_NUM_1G,
++		RTE_ETH_SPEED_NUM_2_5G, RTE_ETH_SPEED_NUM_5G,   RTE_ETH_SPEED_NUM_10G,
++		RTE_ETH_SPEED_NUM_20G,  RTE_ETH_SPEED_NUM_25G,  RTE_ETH_SPEED_NUM_40G,
++		RTE_ETH_SPEED_NUM_50G,  RTE_ETH_SPEED_NUM_56G,  RTE_ETH_SPEED_NUM_100G,
++		RTE_ETH_SPEED_NUM_200G, RTE_ETH_SPEED_NUM_400G
++	};
++	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
++	struct rte_eth_dev_data *data = eth_dev->data;
++	struct rte_eth_conf *conf = &data->dev_conf;
++	uint32_t link_speeds = conf->link_speeds;
++	struct roc_nix_link_info link_info = {0};
++	struct roc_nix *nix = &dev->nix;
++	uint32_t speed = link_speeds;
++	bool fixed;
++
++	plt_info("User passed link configuration: %x", link_speeds);
++
++	if (!roc_nix_is_pf(nix) || link_speeds == RTE_ETH_LINK_SPEED_AUTONEG)
++		return 0;
++
++	fixed = link_speeds & RTE_ETH_LINK_SPEED_FIXED ? true : false;
++	if (fixed) {
++		if (rte_popcount32(link_speeds) == 1) {
++			plt_err("Desired speed is not specified in FIXED mode");
++			return -EINVAL;
 +		}
 +
-+		if (fwdata.supported_an)
-+			speed_capa = 0;
-+
-+		/* Translate advertised modes to speed_capa */
-+		for (mode = 0; mode < CGX_MODE_MAX; mode++) {
-+			if (fwdata.supported_link_modes & BIT_ULL(mode))
-+				speed_capa |= cnxk_mac_modes[mode];
++		if (rte_popcount32(link_speeds) > 2) {
++			plt_err("Multiple speeds can't be configured in FIXED mode");
++			return -EINVAL;
 +		}
- 	}
- 
- 	return speed_capa;
++
++		link_info.autoneg = 0;
++	} else {
++		link_info.autoneg = 1;
++	}
++
++	speed >>= 1;
++	link_info.speed = speed_map[rte_bsf32(speed) + 1];
++	link_info.speed_bitmask = link_speeds & ~RTE_ETH_LINK_SPEED_FIXED;
++	link_info.full_duplex = ((link_speeds & RTE_ETH_LINK_SPEED_10M_HD) ||
++				 (link_speeds & RTE_ETH_LINK_SPEED_100M_HD)) ?
++				  ROC_NIX_LINK_DUPLEX_HALF :
++				  ROC_NIX_LINK_DUPLEX_FULL;
++	link_info.advertising = nix_link_advertising_get(dev, &link_info);
++	if (link_info.advertising == 0) {
++		plt_err("advertising bitmap is not set");
++		return -EINVAL;
++	}
++
++	plt_info("Following link settings are sent to firmware:");
++	plt_info("Advertised modes: %lx", link_info.advertising);
++	plt_info("speed: %u", link_info.speed);
++	plt_info("duplex: %s", link_info.full_duplex == ROC_NIX_LINK_DUPLEX_HALF ?
++						"half-duplex" : "full-duplex");
++	plt_info("autoneg: %s", link_info.autoneg ? "enabled" : "disabled");
++	return roc_nix_mac_link_info_set(nix, &link_info);
++}
 -- 
 2.43.0
 
