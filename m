@@ -2,22 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1156C5B543
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Jun 2025 14:25:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11144C5B543
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Jun 2025 14:31:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8B2B740281;
-	Thu,  5 Jun 2025 16:25:41 +0200 (CEST)
-Received: from OSPPR02CU001.outbound.protection.outlook.com
- (mail-norwayeastazon11013012.outbound.protection.outlook.com [40.107.159.12])
- by mails.dpdk.org (Postfix) with ESMTP id 4522C40150
- for <dev@dpdk.org>; Thu,  5 Jun 2025 16:25:40 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2778F40281;
+	Thu,  5 Jun 2025 16:31:37 +0200 (CEST)
+Received: from AM0PR83CU005.outbound.protection.outlook.com
+ (mail-westeuropeazon11010011.outbound.protection.outlook.com [52.101.69.11])
+ by mails.dpdk.org (Postfix) with ESMTP id A7AC240150
+ for <dev@dpdk.org>; Thu,  5 Jun 2025 16:31:35 +0200 (CEST)
 ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=KqAbO3TXBkjgk9hcN+E8cNvDWC0yEpkq0aU0AGyvpx64nnY5S7mJRgDG7RrBFnV5XJWtY2tczE2wzkRf/5cZ7+6atoIijHlwqei1Fz8EoxsRdmiObIizqT7WJS1BrESqWwJ9o1qCccQsDePVMKXL1L5DKN/I0qlbU9X+EbLv4iEtOF+QFmjukxuZqUnL6LBIIzJ0HGrl4nbOlk4BrCK53Lhgm0t1Fb7iaaqQ1f+6urpZRV9Sm9YEz/oG6XovssKhB0QiUueyXjIAgbAmF2MKq3xuJN3AcsvO60wtixQGff9C2ZQpPeidZCLMmvyQlLErPa9ye+P55V4MyN1LPa1iXA==
+ b=VaFMmuFqmXJQM+npL3iXjBIuj31XAbh7HuodrTQiIykrTLwe9jMhcy09OOeXOPRwQopp2upjSCGVdWwHWuja9psSn8o66ctiZ7XQor0xth6vGKzqCxv4+RG4DzTjvuvBjAwTFp3b61NW4FVzHQEuPqKjFNAn0ngSqq/54CxPtpXJu0vSsIwc48konHzEppzaD+jaOLorZysUB/fTFXxYYQV1hoMTEINLBcdU2wNgdA5LiFKOzBSkax5zaRI76Qq7cxApk42+fzGilLlHdA/Lhq+zEPBfHSgfGYYcHevz/EnwTY0xFREqCiIaL8OQl3tKiVtGWfo3niBXHMhiUsNzIw==
 ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6nJb67RbaMBzrIAaolLeArOHa5cRr4XE2Z3ASWT1VIU=;
- b=gPyGrDTHZczB9HV69zWdD6DFvQZ7IxoGhJh6+YYAeaG7jvJkxvURqwlStcsb3gpv4N/yGfpzDL3P58YyLmdvIq5pYI5mvZsmyHfdCE4Ov1EtbtCyxgwz7rK9uuILpxGhjzXFh6UAFrAD5Ds5V28UgzIwZOkX5EnZ3U2+DCE67S0c9rMgEUJQxkQ2JPwb+kndHcBqQChjf39/XS49lSLydnbC9HZpwVapFinVCBVub4gZDNnJT1fmnbF2DUQmd/hzLSWpBRk48CKVtIDngp9PG4LdOs69ZdfOhsxrGCshOnWR8LZKEFDd64xSceGkUC2ZAmjMo9w6QwKU2q6T7hQu0w==
+ bh=pVodjAdEQfIHo3jOtHuXRWNwOecbCYupNDcL//vCaI4=;
+ b=bWoqO094+o+HezuyS7jIzf3w1xxzbd4Zr/YPeNKZ/ZonWf9TDqJvK8LcSt8dWBr/LV+JZIAdHJfcrn0OLUZUSkwQ3LpDaiQeEekEVyofEpwKerJdXfjtrlP5s0IK+moGoLGl+zC7Okzh3Fn+2kWbUnu7pLaQahkl2bb/XM+oTsigTro4A2HxW4RnJ9wz/K52IUJ8nMJc8hKXv2xf3kyOonhJWFXMFrla4tAQR39wQyPSyY9TXyc/qnyrM0ctMhLFE9BVb1JanIY81r8He/sMBSPFjSnxRRhNn8maFqssEcwdgqEvKkr94ucnpmyqFjbdwzHc//5vkw2IwIQmHhMmAQ==
 ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
  4.158.2.129) smtp.rcpttodomain=intel.com smtp.mailfrom=arm.com; dmarc=pass
  (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
@@ -26,18 +26,18 @@ ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
  dmarc=[1,1,header.from=arm.com])
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6nJb67RbaMBzrIAaolLeArOHa5cRr4XE2Z3ASWT1VIU=;
- b=BuU7Kn5ohTKpkuzNUs4SCim+esDElEpilfotg+i22cbI6KPnZSRT+5h5wrwt+tOzrIjrmmHg9OXSY0K86tx5BxK7m5tJNtMn77cBm75K51Vp4X8Kq7vBostZVRRKhmZgelMyVlb31BTGlvBvRyvAE4EKLazsaDH4Xx1m/NZHz4s=
-Received: from DU2PR04CA0083.eurprd04.prod.outlook.com (2603:10a6:10:232::28)
- by GV2PR08MB9375.eurprd08.prod.outlook.com (2603:10a6:150:d0::8) with
+ bh=pVodjAdEQfIHo3jOtHuXRWNwOecbCYupNDcL//vCaI4=;
+ b=PFujyKyrKG7S0YdXPNXHOBD+gCL3zcBaT+mmepWWUOp0mF5FdySPkx/uWQpyFqQH940YBmwXaWdkSPR0HG746DL9RCnR6uWcOmGch7iRyZvW1V9a0PBBHb7NlTJ3IvM8N0CyCHAcXvxt45HezB+ltWbd78J+N4N/inLqPxbCDEU=
+Received: from DB6PR0301CA0098.eurprd03.prod.outlook.com (2603:10a6:6:30::45)
+ by DBBPR08MB6186.eurprd08.prod.outlook.com (2603:10a6:10:204::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.33; Thu, 5 Jun
- 2025 14:25:35 +0000
-Received: from DU2PEPF0001E9BF.eurprd03.prod.outlook.com
- (2603:10a6:10:232:cafe::45) by DU2PR04CA0083.outlook.office365.com
- (2603:10a6:10:232::28) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8769.26 via Frontend Transport; Thu,
- 5 Jun 2025 14:25:35 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.20; Thu, 5 Jun
+ 2025 14:31:33 +0000
+Received: from DU2PEPF00028D10.eurprd03.prod.outlook.com
+ (2603:10a6:6:30:cafe::27) by DB6PR0301CA0098.outlook.office365.com
+ (2603:10a6:6:30::45) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.29 via Frontend Transport; Thu,
+ 5 Jun 2025 14:31:33 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
  smtp.mailfrom=arm.com; dkim=pass (signature was verified)
  header.d=arm.com;dmarc=pass action=none header.from=arm.com;
@@ -45,149 +45,147 @@ Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
  4.158.2.129 as permitted sender) receiver=protection.outlook.com;
  client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
 Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- DU2PEPF0001E9BF.mail.protection.outlook.com (10.167.8.68) with Microsoft SMTP
- Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.29 via
- Frontend Transport; Thu, 5 Jun 2025 14:25:35 +0000
+ DU2PEPF00028D10.mail.protection.outlook.com (10.167.242.24) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.29
+ via Frontend Transport; Thu, 5 Jun 2025 14:31:32 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lZEE7RhxLG5cUtS4vG3Cd/IIGnL+ysJ/8Zki5AhevuxYcBBsfanrvSDTj7rBNsb3Dz2+VrNOM8EdeHoKjUxLsbutgatXEXsY8t1FF8rfuqhTPqefOWuGq90HKRMli8epd1ijGhuuZfuKthkd3yO3HPNWLE1dGY9owI1RNujjEKgvTJhfZyteWyTPq0f0b6K/ilEL5GXJNxIjxm+0kcd2VU4xM9JXXBbHWuznAPIrT34MuxrHOlgFKSXfztVCdgarUceFGOi80ZKuk6VjjgyJbqS8JBtUTMOqipWV/ZSVjWR+qqzg/VMDELd7mBlggSzQadYF8xtc12AiYz30GbKtnw==
+ b=lpoLTdBzTWWQMHqLty8CbLAa5EoRRJrSBCGClpWak8JG0zKzoSOVwpv3K6zbj9e8tfN15Rh9v6SlJMW2tAPvZPPC6bZMiYi0MC2NydeLImrFi4BMy+2FsGS6K8zN4r4Zosnlt1W/Zlk8Te6SLnZH/YiWPBpf2Q0EnvMaKnmxhe7gt4YM2jvT7FXUv3zN8zFXuhzjF4G+eBDQvYMaDBihJZ16jy5A9c9r5p4EZIyCrZgKbB/tFxzwVVQo+hzIBmkbPwIVYeYmD+0/tk9mDAcvJd4mzQsBMXTfk2YUThs+pWOyLEXm0XyMXw7Ov6dyKW9E3LT2vI5MCT78OQqyWMq8cQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6nJb67RbaMBzrIAaolLeArOHa5cRr4XE2Z3ASWT1VIU=;
- b=Oy8LbH2ZxZZhRal8sL0AzFefvvbjjjCRn7MRw6fIXfDEzKvsyEf3AlsbBeiGhL1mTnzk0fegIQtP6pXxMcNfOH+syFk75FmgqflOtk5wB99oZkxiwC+dOsONkq8zc5HrqtUrJ4B48ZK7MEC79M7Gh+oqamwrCnLL8h5r+C8Rbx2qX6c6BWW9FlRwXfSssVIZA3gfn2mjACK6Wbf/2lyymdZ91CS4AdNmfu2H99ZT5N5N2aRi+z2hcqvcZmyM6GcoTS0NJcmRDfGtewr7qw3EOn9n5lQxy79Tt6t7Qvi+rr5tUxNh1cEKg2Otb6CA+pmMod9summwryKhpXj5jCsn2A==
+ bh=pVodjAdEQfIHo3jOtHuXRWNwOecbCYupNDcL//vCaI4=;
+ b=JKJQOLWMoHZz5sxKmXeTJF8gNLsBquZyAZg5+sybxSaxa3yqHYWeHEWgdnHIqUoEPmUPNnJe1T2f/sswsNKjH5LCZzhsfG/k5eXpnh9wlLT+JhAUg2g3lzWUy6KnDqmRZvWHqju5QWPdQ0v14QU6h0hFJYaTO09xopMyUMn2F81VogZ7xEuNhqFiY700aQXRtmtN8cJPmvN2vh7caaWMaTAMtp1fUFJgfIw0F8HIHBzV5lviLiLeMXO9BTPDfFyaka2HCUYdx1LFL2Yd10RiY9vN9GnDwKRdGs7PCJqAlQVWIjp2tBi6rzjtZZx4s0MN8xtemF6Bdrw4GjaS+KgJyg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
  header.d=arm.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6nJb67RbaMBzrIAaolLeArOHa5cRr4XE2Z3ASWT1VIU=;
- b=BuU7Kn5ohTKpkuzNUs4SCim+esDElEpilfotg+i22cbI6KPnZSRT+5h5wrwt+tOzrIjrmmHg9OXSY0K86tx5BxK7m5tJNtMn77cBm75K51Vp4X8Kq7vBostZVRRKhmZgelMyVlb31BTGlvBvRyvAE4EKLazsaDH4Xx1m/NZHz4s=
+ bh=pVodjAdEQfIHo3jOtHuXRWNwOecbCYupNDcL//vCaI4=;
+ b=PFujyKyrKG7S0YdXPNXHOBD+gCL3zcBaT+mmepWWUOp0mF5FdySPkx/uWQpyFqQH940YBmwXaWdkSPR0HG746DL9RCnR6uWcOmGch7iRyZvW1V9a0PBBHb7NlTJ3IvM8N0CyCHAcXvxt45HezB+ltWbd78J+N4N/inLqPxbCDEU=
 Received: from PAWPR08MB8909.eurprd08.prod.outlook.com (2603:10a6:102:33a::19)
- by GV1PR08MB10670.eurprd08.prod.outlook.com (2603:10a6:150:169::18)
+ by AS2PR08MB8286.eurprd08.prod.outlook.com (2603:10a6:20b:555::15)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.21; Thu, 5 Jun
- 2025 14:25:03 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.20; Thu, 5 Jun
+ 2025 14:30:58 +0000
 Received: from PAWPR08MB8909.eurprd08.prod.outlook.com
  ([fe80::613d:8d51:60e5:d294]) by PAWPR08MB8909.eurprd08.prod.outlook.com
  ([fe80::613d:8d51:60e5:d294%7]) with mapi id 15.20.8792.034; Thu, 5 Jun 2025
- 14:25:03 +0000
+ 14:30:58 +0000
 From: Wathsala Wathawana Vithanage <wathsala.vithanage@arm.com>
-To: Bruce Richardson <bruce.richardson@intel.com>
-CC: Chenbo Xia <chenbox@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>, Gaetan Rivet <grive@u256.net>,
+To: Bruce Richardson <bruce.richardson@intel.com>,
+ "stephen@networkplumber.org" <stephen@networkplumber.org>
+CC: "thomas@monjalon.net" <thomas@monjalon.net>, Ferruh Yigit
+ <ferruh.yigit@amd.com>, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
  "dev@dpdk.org" <dev@dpdk.org>, nd <nd@arm.com>, Honnappa Nagarahalli
  <Honnappa.Nagarahalli@arm.com>, Dhruv Tripathi <Dhruv.Tripathi@arm.com>, nd
  <nd@arm.com>
-Subject: RE: [PATCH v5 2/4] bus/pci: introduce the PCIe TLP Processing Hints
- API
-Thread-Topic: [PATCH v5 2/4] bus/pci: introduce the PCIe TLP Processing Hints
- API
-Thread-Index: AQHb1A8LVwjtBj2HM0KwVaHXGcaVP7PzOp8AgABXn0CAAMwZAIAARDiw
-Date: Thu, 5 Jun 2025 14:25:02 +0000
-Message-ID: <PAWPR08MB8909C227E1E5906477B75FAB9F6FA@PAWPR08MB8909.eurprd08.prod.outlook.com>
+Subject: RE: [PATCH v5 3/4] ethdev: introduce the cache stashing hints API
+Thread-Topic: [PATCH v5 3/4] ethdev: introduce the cache stashing hints API
+Thread-Index: AQHb1A8Kkg6K6E7oCUG+LajjxjjcyrP0WfwAgABJldA=
+Date: Thu, 5 Jun 2025 14:30:58 +0000
+Message-ID: <PAWPR08MB8909982D8234CB4001B6A3949F6FA@PAWPR08MB8909.eurprd08.prod.outlook.com>
 References: <20241021015246.304431-1-wathsala.vithanage@arm.com>
  <20250602223805.816816-1-wathsala.vithanage@arm.com>
- <20250602223805.816816-3-wathsala.vithanage@arm.com>
- <aEB6VEFCKr-2t11p@bricha3-mobl1.ger.corp.intel.com>
- <PAWPR08MB89092A3A53CBFA874B1AEA729F6CA@PAWPR08MB8909.eurprd08.prod.outlook.com>
- <aEFvChZ-K8dJGcI9@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <aEFvChZ-K8dJGcI9@bricha3-mobl1.ger.corp.intel.com>
+ <20250602223805.816816-4-wathsala.vithanage@arm.com>
+ <aEFrYvpyc_-Ji5U1@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <aEFrYvpyc_-Ji5U1@bricha3-mobl1.ger.corp.intel.com>
 Accept-Language: en-US
 Content-Language: en-US
+X-Mentions: stephen@networkplumber.org
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 Authentication-Results-Original: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=arm.com;
-x-ms-traffictypediagnostic: PAWPR08MB8909:EE_|GV1PR08MB10670:EE_|DU2PEPF0001E9BF:EE_|GV2PR08MB9375:EE_
-X-MS-Office365-Filtering-Correlation-Id: c50eeaf5-27b7-4be8-9b65-08dda43cd620
+x-ms-traffictypediagnostic: PAWPR08MB8909:EE_|AS2PR08MB8286:EE_|DU2PEPF00028D10:EE_|DBBPR08MB6186:EE_
+X-MS-Office365-Filtering-Correlation-Id: 67404928-0f87-48b2-18d3-08dda43daad6
+X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr,ExtAddr
 x-checkrecipientrouted: true
 nodisclaimer: true
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam-Untrusted: BCL:0;
- ARA:13230040|376014|1800799024|366016|38070700018; 
-X-Microsoft-Antispam-Message-Info-Original: =?us-ascii?Q?pMBHy33AGzTfK/BUqG0FAjIkM8IWRzsySSw2+YSR8y6+nJPcL09QJmGVhI9V?=
- =?us-ascii?Q?OhcOXo7K0lMAubufW7HFus6YjhOcZqvysVYD41T4I12uTeza6ZE8g6E4Cams?=
- =?us-ascii?Q?GjcUA/9oxLa/W/ZHSG5NJFAAVvstLz1w6q6Y2uHVFivCZmnHxSnDwIhb4mvr?=
- =?us-ascii?Q?Y655alCfxgTLEG0vgitC4K1L2ZexbQwG79HYXha7t1baUCV1uxSG/1pp7OOG?=
- =?us-ascii?Q?yolUEGUug5NkcwGUBu2wVd2+1SJzf/lJn/n94gSQTwc3rlTraGt7nrzY2z7W?=
- =?us-ascii?Q?W8U/gt/cQ1lynZO5Ft5jCTBTo/s8KjK5C1yc+f4szGX/prbdREPkXJCnKTKI?=
- =?us-ascii?Q?H47vT+hnFSJwsnAoLvV0xeoPUK2nD5XQfdqV+vrloGoDETPN/Vt9jaaJjiB/?=
- =?us-ascii?Q?9VA1BXgCRBA6DCvirZPCl9y2x8KMypUvB1fzdFvEGKTjaZpYjI0E6zwsszkj?=
- =?us-ascii?Q?uO3OTSotDYdz4N1TH1rZRA8IgMiFcA87VbHCuPYL4V3ajVP+cJiRdwmRpIDI?=
- =?us-ascii?Q?31njEFoq0JQtXV3mPJuLAgO9Kuz8qQR+pxlEbmaH9xuQSgmHh5Bu8TCc+d/r?=
- =?us-ascii?Q?7v3Eo5iuq9B9GGoqwTl/9jv/9pWEZZQD2MM9fuvMhohPidu0dPeO2mcEAmmg?=
- =?us-ascii?Q?2/1HUnQf+SdD7WJbBZRK4wW1pNH7RA9OQ1O6vBhURDpHzPITFoWkmw7oSkkP?=
- =?us-ascii?Q?+h4WtrjvazARKMtRkbRwX27uHKOt6MD5WP8u4DQ1T+RUK8pYuEpkBVX3VPeH?=
- =?us-ascii?Q?fn2NrRmvaph+GieMKRabkHsnJj9V29JDeUdONu89b8nm/h0VurfB3eWfle5q?=
- =?us-ascii?Q?4McyRZrn3o7uWK/ENVI5mxpy+bajReP45caX8sOfjlDS5yfZMxxucR9xU/6m?=
- =?us-ascii?Q?8DjVf9nkfa6NmuzpiwjtaXclkGTNg3e9ohToRldYQaTvaXvLgCH6hCXa+wPI?=
- =?us-ascii?Q?5EoeJS44qRF0p1+J/atvzeopwRkQ2VtAuvNkjL0kKxyGjzfnyUpgk+0+umOT?=
- =?us-ascii?Q?pA7RH22nGajnK06AGKhv5WBpHhNBxd0QdQ3sWiyIs6IBgTTDN5vRzj3HmRJp?=
- =?us-ascii?Q?7YDkTC0vT4zTUqiXeAqm6r48inK2nNNBVr3rNJ9B0Es+VgbjGW8TF3+u6WRk?=
- =?us-ascii?Q?pQUwKITebZ4x1i8bAusI86wHNFhrMFRciOoQsGGGd7sHdS878btZCl30UCcN?=
- =?us-ascii?Q?hihTwzytn/w74hf0wPs1vbgiRMPicCs0icbD5LayX+qDDi/3LeLbgX0DTc5U?=
- =?us-ascii?Q?NaPla97j1Slct6Xhq1WWkfJDu4Yjv3FJpJ+ctoKDi/M69CpxluOa21PR4K2t?=
- =?us-ascii?Q?muA6vIcpMfYPhSkkS9iyPz/VUcsyh4Y5Or3d2REEpvopxu5oFGqit1UwZS2l?=
- =?us-ascii?Q?HwclWePrwwdt+FtPuIuEF9KP72Hk0ZC8Fw6BXOaYuHPUvEbMG0pwlzOwoTVe?=
- =?us-ascii?Q?WZDEEiXgJdRe7jFK0JEonwiSvFoHyn8NDjD9rT7HQ60haSQc7TQTUkQEHm/S?=
- =?us-ascii?Q?cjbQVNTaV/QC/rE=3D?=
+ ARA:13230040|1800799024|376014|366016|38070700018; 
+X-Microsoft-Antispam-Message-Info-Original: =?us-ascii?Q?xlPQ+6GbkqHtAkwSEUX19nbBKB8/bC0FyTIh7yZ/pk/RnvzrfnrnTLVZrgU/?=
+ =?us-ascii?Q?Ho2JGukQkWytsP3Ziar2T+60Fk3kar+r+5rWjYkP91sKoCENKFMRRIjib7Ej?=
+ =?us-ascii?Q?k/bAqYAeZlEwqc9brCYztMKS+8nobohLjEFeLSIn/E52+P5rdxoodG83pixy?=
+ =?us-ascii?Q?d5YE3DBtmKxmgvWQI0hQjLMOcLUjLmr+SK6YVBoO3HiROCs6y4njyJWr1Im7?=
+ =?us-ascii?Q?qiG3Lk8zW+lNtFU8oUKAsR4JE/LZTzj0VFACnOOHR/qH40NOapZFC3VMzwR/?=
+ =?us-ascii?Q?fIqSFK1YmTkEUrlqhWZF6jI0N3bZqHhR4SBxODCm78UU5gGU4O7Yf2Fr/4tx?=
+ =?us-ascii?Q?83EhthNaf66ybOhTlDMx6jYTFApUL7R7BD0n7//DLjWuIMV/owkilENuSxEo?=
+ =?us-ascii?Q?dXJuJ3mput36dW0+LYpNBJ/9W4QAlFYi5CJ7eAH9VZ8d1HTQCIPo3UfzH0eb?=
+ =?us-ascii?Q?jPDn0Qb9SachY4Ru29vQB+hexGOBlLp4RPOdGngD+7gR7UtyIVgea6znHUHV?=
+ =?us-ascii?Q?MHqZL9zv5WRDXHbMQqOckWFzye5WCb3R4XZMGdM5d2aSW/rKAX92PSMNaHds?=
+ =?us-ascii?Q?z0N0TVSCXjuvXo5NqLH/INK6QSyMRD/WdXNvFN0nOhcu5k6hIrxd85ojw+pn?=
+ =?us-ascii?Q?pRMs12mlipjazJlf/uAHuSDgwWFh+daXCzu+WE3a3V/7rSqGBZpGQj4rouAu?=
+ =?us-ascii?Q?TBpPG1D7qYtGzDxHA2y9Iz3emKTz/jtiOQhdOP322gJIEfqTIPNGvP5U41lr?=
+ =?us-ascii?Q?259esgKJKGEAwpMGbiVa1DvrEngWjXP54DpIgBdJXCZUESO40HLXk9yj6JLr?=
+ =?us-ascii?Q?yBAWFuU6Ti+rdL8m/tBemve6RyDlXz7jZYQoMDFrzdSE6S19SPPB/eGyzYgU?=
+ =?us-ascii?Q?fqx27ta6rjmTyzkuNGz4L9M2X5YLGOdj7V+gm6+dc9Iv6C/0M1HbTvY1dpLN?=
+ =?us-ascii?Q?U0Smj5UDtKiYNOF2O+j3pV6kSh0df01bH1JclKO1zxDLVmQq2Va0WDi4KGn5?=
+ =?us-ascii?Q?ApV5nHgpy/Q0QW8ldCTQKlkgOI7kwB34kN26E055Dpl0ArCL9AOX+N1SRct/?=
+ =?us-ascii?Q?GwbME/gxyktQbFBOMfWTrwu7OLYyOBUksuSZJWCXFZvUTbz7qus3v9vFuzFO?=
+ =?us-ascii?Q?CXsqAGg9vHRD7cDRJ6ODULx2Xsi05xCOGoY0SYqqdXyoHwmK4r9s0BlOt79Y?=
+ =?us-ascii?Q?qSBKm8whKXD1R3WPbC6q59a0L32HzN9FSjjXTDsd/cKnvY+aaSfmfbKu8f9U?=
+ =?us-ascii?Q?RF98CWqCcojMryRAPJZWztEMoYLZMXUefOj8Dy0oR0ZY0IYe83s+vliXZbwE?=
+ =?us-ascii?Q?qOwqpSuMWWI5B6aXv3ZogecXKL3ceogbfvZgKVAEG8qFURFxOp9rEmXra0Pz?=
+ =?us-ascii?Q?EKgGuVLkrG5/qqsgDWMpqv3t6n5UEiZLURhrz6IYXugCK8otniLqILx7BGIq?=
+ =?us-ascii?Q?gGVWMAQY/sSKuSSsKr/4NFWUtPACkTvw07XWrh7lDslEXEeWs6HF8lkvIA8C?=
+ =?us-ascii?Q?a2Gu0YreT0Qhg5A=3D?=
 X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255; CTRY:; LANG:en;
  SCL:1; SRV:; IPV:NLI; SFV:NSPM; H:PAWPR08MB8909.eurprd08.prod.outlook.com;
- PTR:; CAT:NONE; SFS:(13230040)(376014)(1800799024)(366016)(38070700018);
+ PTR:; CAT:NONE; SFS:(13230040)(1800799024)(376014)(366016)(38070700018);
  DIR:OUT; SFP:1101; 
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR08MB10670
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR08MB8286
 X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: DU2PEPF0001E9BF.eurprd03.prod.outlook.com
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: DU2PEPF00028D10.eurprd03.prod.outlook.com
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs: 322c0423-67c2-4045-da4a-08dda43cc2c9
+X-MS-Office365-Filtering-Correlation-Id-Prvs: ee29069b-6222-4cc3-d1a1-08dda43d96d7
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|36860700013|1800799024|376014|35042699022|14060799003|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?X2UVKlJKvh8rhARuai/C2Hwepx59EqFZaMCOSHY6wrALIomlWZHyd9Lxf7it?=
- =?us-ascii?Q?8bAbMPJszpdWzb6VAe6CWZboU1D7SvgEZBh1YaGpVME/Mb6NVZLChT/fBsTp?=
- =?us-ascii?Q?gVo9VJDZsNk2aW61m66/2H7sfQXAdOQtFPY2YQnW8DM1ClRuFDbZZIjFjNN/?=
- =?us-ascii?Q?kVFRH1mkY1v+O4T2lZKZiSf1p3Ju+uhiePLtWgitRPK4fwgSu4fZHln9Ph6h?=
- =?us-ascii?Q?jrOhSBeE01qvGG3eFgNSxwuj6gSoveVSOCRWIhPX7v+obP9embMCc1xzFvZq?=
- =?us-ascii?Q?fb+ytaPnLGhyRowdW13z8OXjd/r5HF2uzWNsd7EDxLRwzFX8XXKt9nnegcpa?=
- =?us-ascii?Q?9dcr75kOA61F2bu7VWeSiWLo4NS3yM5u7uuALXJB6YVth0IroC49SS5D08Kg?=
- =?us-ascii?Q?+uw4azpny5Pol7ETpxW6slP0aIcbC8F09IF/pAE+pxZt1B6Lg+3Kk25+3g2O?=
- =?us-ascii?Q?cH0fE+iOx/ekcKPizaB3J9wFHR1PlSFhOIcSldVsfZsFxtYZqrISJtNvoRw/?=
- =?us-ascii?Q?EUOXfXt0+69hS/AZ1nJeRkrKRakNBAdYlMdAm1jhwrxo2QSH9SJdvPete1oJ?=
- =?us-ascii?Q?3JJ2RrxtH1YkHKi4566u0utf21rO4q1QRJvoiugvFXC6vHiUhsNx7Lw/LMlF?=
- =?us-ascii?Q?x+N+iFQMQSn2OL/vKlGYS5yTOY06KtwF1BkStrZNK0PYJhZXnxjoQVwIa9af?=
- =?us-ascii?Q?oyaLIFGKi5n/Z3NwtB+UWnIFv64WYNiaGGAcKna55WKyfkruhTMenxkvCL/C?=
- =?us-ascii?Q?vQygunvQG/fC0+BsZR64iUfqqd4CMTaxUJgFhSUWz2pZUK8XNicl3mZrdHm7?=
- =?us-ascii?Q?O5DaSRhM403hljFnSDWqzWd9hutwxyaRZT6lIg4SFQfSwzJULnRXvysV3B5D?=
- =?us-ascii?Q?Y5HHJvOvXzLF/QwkvQpi+gIM8c3oOF/ZGa2Z4S2In5Mop0SF6YFk2DzqtWD6?=
- =?us-ascii?Q?og9tDm1WAfvWERoygloQnKVsYRkHi9KI8NF2zxvFs4/bBEgTJ+NLK9DLmwHP?=
- =?us-ascii?Q?4yZPRqeeVl6eU9ZZAo/9XCQuH/GXYsKH2AwQfAD6mcfsFjD6XOEmwU3gpHJ3?=
- =?us-ascii?Q?GSd1tHSWgefaOwlPzCda7AFIHkbDek4hiVNgPnK9AeOFKw5+rLRIh99bcoOV?=
- =?us-ascii?Q?QhCEMC3yY4X9edZOn6fUMHfaXcOZTkn4y9Du3Er+pkuDpgeFUEJn4JoMczS9?=
- =?us-ascii?Q?+3E4xLsZ71DdBeyA4rNp6jRMqLzB6G2YYD0in8ciCmx9nZt0EX0QKksA9GS5?=
- =?us-ascii?Q?j9xW0uNUnFwYfazaKwpVBYhlNayh1mQJ5nchsfJ1gAwPWrXJDRkmRKESQ/6l?=
- =?us-ascii?Q?2VLyBdloHGa3jo/0jAysUMfALh+KcrDoI5zL6a4xJBOxfC9/aVGdLvGyE0mY?=
- =?us-ascii?Q?1ZHIWYUkBp1btG5xIgr4VUyDrf5SH6Rh8xU5DT12L9pECJrGAM2Ef7yTBsLu?=
- =?us-ascii?Q?AbK9KQ3mI86kwrKxa/+N4Yxe3dg66sJqEd5uPvXJmp2r1fOgZ+H4/v/4OwLm?=
- =?us-ascii?Q?7Cso99NLeqWGNkDZN+3vpaGLUn1ewcD7gDcDbKMgb/l+gBLpNbmElSansw?=
- =?us-ascii?Q?=3D=3D?=
+ ARA:13230040|376014|14060799003|36860700013|82310400026|1800799024|35042699022;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?EuxAhHX0FfYcWhBO9r5GKtG6h2MLdFul9jAyYiOQbcU71YpuSdUnJ/Q3k3YV?=
+ =?us-ascii?Q?xJWmHIN5xb8Mimeenf1wi862eZU6vE+c9yb6HTrfzOEOxbvb3mHwmVQM5EBK?=
+ =?us-ascii?Q?LwUT6DwLPBOMgJVjo+ZMb+wZqFxuiFz3HTskEzQWUPz5RBadnOFRKgjY/xfl?=
+ =?us-ascii?Q?AxbKz1zzp+zabA8HHMkltRHTBbG57Qdu53Rr5HYxSNrnWXiYIV0Y117k/BJe?=
+ =?us-ascii?Q?BKPNwoByRARpEPKRg0TKQjzOY8mv2twDMdkMZfN8OYHJYfbvmvFg1j4c/J2Z?=
+ =?us-ascii?Q?8ozBH74gstU01exXW9IQvc8L9qbvF3joBfRUIq1PvVVdjiVVRBXyppYz8QRU?=
+ =?us-ascii?Q?zLqr4uBpWRlRiFWUxtmUoUaUiHFsvDn4gp1ICqp7k2FEQ/2ciurX9lCykLYJ?=
+ =?us-ascii?Q?K9quN9SpL7J0WH0Pr2tuAzCo8jlYz4q7lKvKTnbxDaJb9D7ry1J8dtW2rm/t?=
+ =?us-ascii?Q?waIqsrWh1PGU9u+k7C6fxkDgyvL6M7iHp+DuOCuWj0SEmFpVk8yDTmCYpNQl?=
+ =?us-ascii?Q?Qj9O1aqivZ7KcTkoEHE/c4VuPv4UjtL4nH8PSNy8BCkGSrlrsexcdWyoKoNu?=
+ =?us-ascii?Q?Wci/Ttdavy80p0GigIdctbAnxOUxVYpCyBNptik3BIXqBik6H/lKOAyxQIng?=
+ =?us-ascii?Q?YW15IYEcm2vnHr00rKXO8UPpI/IlImBvtCjByusmvcQZmImhN7XePOkatmQ5?=
+ =?us-ascii?Q?3HDKkZcZslnLKJnoDyAihjl3SOpM8vqMWtzrEZrlvkSoANP/YmRGZGTZ0/tB?=
+ =?us-ascii?Q?du3/lxdIuvp3Ppk2RflgGTOAPUWsusB56flPVUM8rYuWFTxgJWHk7X5hQwMv?=
+ =?us-ascii?Q?coiyYo19rQxqBc31dn1jf4MvH5kSv/+n+KdFT1x9VYWKZEmH3xaAlzTkisKf?=
+ =?us-ascii?Q?rFmbljQK2tRGaoyqnLHr7oN8qxFJSdIwc2ZNUV3vQ/2+QaGtNLG7jCvivTf2?=
+ =?us-ascii?Q?jvqBeQcKsS0DCAILXAJTsDWlVfytlJ09T3xcyyjra7VRN/lbnTcpE8RL1MCL?=
+ =?us-ascii?Q?DykIBgEOKpTOBRHo5xjXsQjKTSsJ3zZdUAQoEkjJWe9YSVspjY9cj+zC0NkY?=
+ =?us-ascii?Q?yM2sPK123brP1mS6rlOj0VOa2pgKSL0rdWHbgHWWBCqeMCFABD9411QidGl9?=
+ =?us-ascii?Q?u9IBNiRs+5EKRkUsxtjBtbd3UFdPY+Lk+gCLzpoOY8bjof63+Jp0l0Xm8TFj?=
+ =?us-ascii?Q?mGynHz8v5p4e+mBrACFMlUKS7apUsocYPLB3N5y+T8Q8eYJ8gKIOvGn9cvkH?=
+ =?us-ascii?Q?kddUg+uOiz/fAYe7ku+qmUnta0EX9n6MfBvc936G0TJ9I54qA3H30RZsGq3W?=
+ =?us-ascii?Q?T6aKqMolhg4g5Wa3Oh5DVHGzhWkQH/tS9LkMuVDsK8xszdTVKOzSS+QdFDJL?=
+ =?us-ascii?Q?14ZkEz/5CenT/flEFga2LryTuJhrD/+4mTRCd4h9CAkE4LmarLdtI5/0gkvx?=
+ =?us-ascii?Q?Lu9HjXJxXeGFaHh8xWXbJESfK95l16HOAgBCZShF6tT+d6KQeZqMBAc20pBR?=
+ =?us-ascii?Q?3wDiFjDBpC+Lt1nPAbe/dqgfH6PAuX4rAaNW?=
 X-Forefront-Antispam-Report: CIP:4.158.2.129; CTRY:GB; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:outbound-uk1.az.dlp.m.darktrace.com;
  PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014)(35042699022)(14060799003)(7053199007);
+ SFS:(13230040)(376014)(14060799003)(36860700013)(82310400026)(1800799024)(35042699022);
  DIR:OUT; SFP:1101; 
 X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2025 14:25:35.2948 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c50eeaf5-27b7-4be8-9b65-08dda43cd620
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2025 14:31:32.1510 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67404928-0f87-48b2-18d3-08dda43daad6
 X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d; Ip=[4.158.2.129];
  Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource: DU2PEPF0001E9BF.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: DU2PEPF00028D10.eurprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR08MB9375
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR08MB6186
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -201,66 +199,560 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-
-
-> -----Original Message-----
-> From: Bruce Richardson <bruce.richardson@intel.com>
-> Sent: Thursday, June 5, 2025 5:19 AM
-> To: Wathsala Wathawana Vithanage <wathsala.vithanage@arm.com>
-> Cc: Chenbo Xia <chenbox@nvidia.com>; Nipun Gupta <nipun.gupta@amd.com>;
-> Anatoly Burakov <anatoly.burakov@intel.com>; Gaetan Rivet <grive@u256.net=
->;
-> dev@dpdk.org; nd <nd@arm.com>; Honnappa Nagarahalli
-> <Honnappa.Nagarahalli@arm.com>; Dhruv Tripathi <Dhruv.Tripathi@arm.com>
-> Subject: Re: [PATCH v5 2/4] bus/pci: introduce the PCIe TLP Processing Hi=
-nts API
->=20
-> On Wed, Jun 04, 2025 at 10:52:24PM +0000, Wathsala Wathawana Vithanage
-> wrote:
-> > > > rte_pci_tph_st_{get, set} functions will return an error if
-> > > > processing any of the rte_tph_info objects fails. The API does not
-> > > > indicate which entry in the rte_tph_info array was executed
-> > > > successfully and which caused an error. Therefore, in case of an
-> > > > error, the caller should discard the output. If rte_pci_tph_set
-> > > > returns an error, it should be treated as a partial error. Hence,
-> > > > the steering-tag update on the device should be considered partial
-> > > > and inconsistent with the expected
-> > > outcome.
-> > > > This should be resolved by resetting the endpoint device before
-> > > > further attempts to set steering tags.
-> > >
-> > > This seems very clunky for the user. Is there a fundamental reason
-> > > why we cannot report out what ones passed or failed?
-> > >
-> > > If it's a limitation of the kernel IOCTL, how about just making one
-> > > ioctl for each individual op requested, one at a time. That way we
-> > > will know what failed to report it?
-> > >
+> On Mon, Jun 02, 2025 at 10:38:03PM +0000, Wathsala Vithanage wrote:
+> > Extend the ethdev library to enable the stashing of different data
+> > objects, such as the ones listed below, into CPU caches directly from
+> > the NIC.
 > >
-> > The V1 of the kernel patch had that feature, but it was frowned upon,
-> > and I was asked to implement the IOCTL this way. Please find it here
-> > (V1)
-> > https://lore.kernel.org/kvm/20250221224638.1836909-1-wathsala.vithanag
-> > e@arm.com/T/#me73cf9b9c87da97d7d9461dfb97863b78ca1755b
+> > - Rx/Tx queue descriptors
+> > - Rx packets
+> > - Packet headers
+> > - packet payloads
+> > - Data of a packet at an offset from the start of the packet
 > >
-> Read the thread. However, from my reading, there is nothing in there that
-> mandates having an interface where the user won't know the state on error=
-.
-> We need some method to have userspace know what tags were applied or not =
-on
-> failure. Resetting the whole device is not a good solution. Whatever API =
-is
-> provided, if it is going to take multiple ops in one go it needs to eithe=
-r return the
-> number applied on failure, or if just returning success/failure, it shoul=
-d rollback
-> the successful ones to give an all-or-nothing interface.
+> > The APIs are designed in a hardware/vendor agnostic manner such that
+> > supporting PMDs could use any capabilities available in the underlying
+> > hardware for fine-grained stashing of data objects into a CPU cache
+> >
+> > The API provides an interface to query the availability of stashing
+> > capabilities, i.e., platform/NIC support, stashable object types, etc,
+> > via the rte_eth_dev_stashing_capabilities_get interface.
+> >
+> > The function pair rte_eth_dev_stashing_rx_config_set and
+> > rte_eth_dev_stashing_tx_config_set sets the stashing hint (the CPU,
+> > cache level, and data object types) on the Rx and Tx queues.
+> >
+> > PMDs that support stashing must register their implementations with
+> > the following eth_dev_ops callbacks, which are invoked by the ethdev
+> > functions listed above.
+> >
+> > - stashing_capabilities_get
+> > - stashing_rx_hints_set
+> > - stashing_tx_hints_set
+> >
+> > Signed-off-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
+> > Reviewed-by: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>
+> > Reviewed-by: Dhruv Tripathi <dhruv.tripathi@arm.com>
+> > ---
 >=20
+> Few small comments inline below
+>=20
+
+Thank you, Bruce. I will address them in the next version. As asked by
+@stephen@networkplumber I will only send it only if kernel piece makes it
+into Linus branch.
+
+--wathsala
+
 > /Bruce
-
-I will bring this up in the V2 review. If there is a pushback we can altern=
-atively change
-the API to do one tag at a time.
-
-Thanks.
-
+>=20
+> >  lib/ethdev/ethdev_driver.h |  66 ++++++++++++++++
+> >  lib/ethdev/rte_ethdev.c    | 149 ++++++++++++++++++++++++++++++++++
+> >  lib/ethdev/rte_ethdev.h    | 158 +++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 373 insertions(+)
+> >
+> > diff --git a/lib/ethdev/ethdev_driver.h b/lib/ethdev/ethdev_driver.h
+> > index 2b4d2ae9c3..8a4012db08 100644
+> > --- a/lib/ethdev/ethdev_driver.h
+> > +++ b/lib/ethdev/ethdev_driver.h
+> > @@ -1376,6 +1376,68 @@ enum rte_eth_dev_operation {  typedef uint64_t
+> > (*eth_get_restore_flags_t)(struct rte_eth_dev *dev,
+> >  					    enum rte_eth_dev_operation op);
+> >
+> > +/**
+> > + * @internal
+> > + * Set cache stashing hints in Rx queue.
+> > + *
+> > + * @param dev
+> > + *   Port (ethdev) handle.
+> > + * @param queue_id
+> > + *   Rx queue.
+> > + * @param config
+> > + *   Stashing hints configuration for the queue.
+> > + *
+> > + * @return
+> > + *   -ENOTSUP if the device or the platform does not support cache sta=
+shing.
+> > + *   -ENOSYS  if the underlying PMD hasn't implemented cache stashing
+> feature.
+> > + *   -EINVAL  on invalid arguments.
+> > + *   0 on success.
+> > + */
+> > +typedef int (*eth_stashing_rx_hints_set_t)(struct rte_eth_dev *dev, ui=
+nt16_t
+> queue_id,
+> > +					   struct rte_eth_stashing_config
+> *config);
+> > +
+> > +/**
+> > + * @internal
+> > + * Set cache stashing hints in Tx queue.
+> > + *
+> > + * @param dev
+> > + *   Port (ethdev) handle.
+> > + * @param queue_id
+> > + *   Tx queue.
+> > + * @param config
+> > + *   Stashing hints configuration for the queue.
+> > + *
+> > + * @return
+> > + *   -ENOTSUP if the device or the platform does not support cache sta=
+shing.
+> > + *   -ENOSYS  if the underlying PMD hasn't implemented cache stashing
+> feature.
+> > + *   -EINVAL  on invalid arguments.
+> > + *   0 on success.
+>=20
+> What about on failure of the underlying ioctl call?
+>=20
+> > + */
+> > +typedef int (*eth_stashing_tx_hints_set_t)(struct rte_eth_dev *dev, ui=
+nt16_t
+> queue_id,
+> > +					   struct rte_eth_stashing_config
+> *config);
+> > +
+> > +/**
+> > + * @internal
+> > + * Get cache stashing object types supported in the ethernet device.
+> > + * The return value indicates availability of stashing hints support
+> > + * in the hardware and the PMD.
+> > + *
+> > + * @param dev
+> > + *   Port (ethdev) handle.
+> > + * @param objects
+> > + *   PMD sets supported bits on return.
+> > + *
+> > + * @return
+> > + *   -ENOTSUP if the device or the platform does not support cache sta=
+shing.
+> > + *   -ENOSYS  if the underlying PMD hasn't implemented cache stashing
+> feature.
+> > + *   -EINVAL  on NULL values for types or hints parameters.
+> > + *   On return, types and hints parameters will have bits set for supp=
+orted
+> > + *   object types and hints.
+> > + *   0 on success.
+> > + */
+> > +typedef int (*eth_stashing_capabilities_get_t)(struct rte_eth_dev *dev=
+,
+> > +					     uint16_t *objects);
+> > +
+> >  /**
+> >   * @internal A structure containing the functions exported by an Ether=
+net
+> driver.
+> >   */
+> > @@ -1402,6 +1464,10 @@ struct eth_dev_ops {
+> >  	eth_mac_addr_remove_t      mac_addr_remove; /**< Remove MAC
+> address */
+> >  	eth_mac_addr_add_t         mac_addr_add;  /**< Add a MAC address */
+> >  	eth_mac_addr_set_t         mac_addr_set;  /**< Set a MAC address */
+> > +	eth_stashing_rx_hints_set_t   stashing_rx_hints_set; /**< Set Rx cach=
+e
+> stashing*/
+> > +	eth_stashing_tx_hints_set_t   stashing_tx_hints_set; /**< Set Tx cach=
+e
+> stashing*/
+> > +	/** Get supported stashing hints*/
+> > +	eth_stashing_capabilities_get_t stashing_capabilities_get;
+> >  	/** Set list of multicast addresses */
+> >  	eth_set_mc_addr_list_t     set_mc_addr_list;
+> >  	mtu_set_t                  mtu_set;       /**< Set MTU */
+> > diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c index
+> > d4197322a0..ae666c370b 100644
+> > --- a/lib/ethdev/rte_ethdev.c
+> > +++ b/lib/ethdev/rte_ethdev.c
+> > @@ -158,6 +158,7 @@ static const struct {
+> >  	{RTE_ETH_DEV_CAPA_RXQ_SHARE, "RXQ_SHARE"},
+> >  	{RTE_ETH_DEV_CAPA_FLOW_RULE_KEEP, "FLOW_RULE_KEEP"},
+> >  	{RTE_ETH_DEV_CAPA_FLOW_SHARED_OBJECT_KEEP,
+> > "FLOW_SHARED_OBJECT_KEEP"},
+> > +	{RTE_ETH_DEV_CAPA_CACHE_STASHING, "CACHE_STASHING"},
+> >  };
+> >
+> >  enum {
+> > @@ -7419,5 +7420,153 @@ int rte_eth_dev_map_aggr_tx_affinity(uint16_t
+> port_id, uint16_t tx_queue_id,
+> >  	return ret;
+> >  }
+> >
+> >
+> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_dev_validate_stashing_config,
+> > +25.07) int rte_eth_dev_validate_stashing_config(uint16_t port_id,
+> > +uint16_t queue_id,
+> > +				     uint8_t queue_direction,
+> > +				     struct rte_eth_stashing_config *config) {
+> > +	struct rte_eth_dev *dev;
+> > +	struct rte_eth_dev_info dev_info;
+> > +	int ret =3D 0;
+> > +	uint16_t nb_queues;
+> > +
+> > +	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
+> > +
+> > +	if (!config) {
+> > +		RTE_ETHDEV_LOG_LINE(ERR, "Invalid stashing configuration");
+> > +		ret =3D -EINVAL;
+> > +		goto out;
+> > +	}
+> > +
+> > +	/*
+> > +	 * Check for invalid objects
+> > +	 */
+> > +	if (!RTE_ETH_DEV_STASH_OBJECTS_VALID(config->objects)) {
+> > +		RTE_ETHDEV_LOG_LINE(ERR, "Invalid stashing objects");
+> > +		ret =3D -EINVAL;
+> > +		goto out;
+> > +	}
+> > +
+> > +	dev =3D &rte_eth_devices[port_id];
+> > +
+> > +	nb_queues =3D (queue_direction =3D=3D RTE_ETH_DEV_RX_QUEUE) ?
+> > +				      dev->data->nb_rx_queues :
+> > +				      dev->data->nb_tx_queues;
+> > +
+> > +	if (queue_id >=3D nb_queues) {
+> > +		RTE_ETHDEV_LOG_LINE(ERR, "Invalid Rx queue_id=3D%u",
+> queue_id);
+> > +		ret =3D -EINVAL;
+> > +		goto out;
+> > +	}
+> > +
+> > +	ret =3D rte_eth_dev_info_get(port_id, &dev_info);
+> > +	if (ret < 0)
+> > +		goto out;
+> > +
+> > +	if ((dev_info.dev_capa & RTE_ETH_DEV_CAPA_CACHE_STASHING) !=3D
+> > +	    RTE_ETH_DEV_CAPA_CACHE_STASHING) {
+>=20
+> Nit: check if all this can fit on one line under 100 chars. I think it ca=
+n.
+>=20
+> > +		ret =3D -ENOTSUP;
+> > +		goto out;
+> > +	}
+> > +
+> > +	if (*dev->dev_ops->stashing_rx_hints_set =3D=3D NULL ||
+> > +	    *dev->dev_ops->stashing_tx_hints_set =3D=3D NULL) {
+> > +		RTE_ETHDEV_LOG_LINE(ERR, "Stashing hints are not
+> implemented "
+> > +				    "in %s for %s", dev_info.driver_name,
+>=20
+> Don't split error messages across lines. Text strings are allowed to go o=
+ver the 100
+> char limit if necessary to avoid splitting.
+>=20
+> > +				    dev_info.device->name);
+> > +		ret =3D -ENOSYS;
+> > +	}
+> > +
+> > +out:
+> > +	return ret;
+> > +}
+> > +
+> > +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_dev_stashing_rx_config_set,
+> > +25.07) int rte_eth_dev_stashing_rx_config_set(uint16_t port_id,
+> > +uint16_t queue_id,
+> > +				   struct rte_eth_stashing_config *config) {
+> > +	struct rte_eth_dev *dev;
+> > +	int ret =3D 0;
+> > +
+> > +	ret =3D rte_eth_dev_validate_stashing_config(port_id, queue_id,
+> > +						   RTE_ETH_DEV_RX_QUEUE,
+> > +						   config);
+> > +	if (ret < 0)
+> > +		goto out;
+> > +
+> > +	dev =3D &rte_eth_devices[port_id];
+> > +
+> > +	ret =3D eth_err(port_id,
+> > +		      (*dev->dev_ops->stashing_rx_hints_set)(dev, queue_id,
+> > +		      config));
+> > +out:
+> > +	return ret;
+> > +}
+> > +
+> > +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_dev_stashing_tx_config_set,
+> > +25.07) int rte_eth_dev_stashing_tx_config_set(uint16_t port_id,
+> > +uint16_t queue_id,
+> > +				   struct rte_eth_stashing_config *config) {
+> > +	struct rte_eth_dev *dev;
+> > +	int ret =3D 0;
+> > +
+> > +	ret =3D rte_eth_dev_validate_stashing_config(port_id, queue_id,
+> > +						   RTE_ETH_DEV_TX_QUEUE,
+> > +						   config);
+> > +	if (ret < 0)
+> > +		goto out;
+> > +
+> > +	dev =3D &rte_eth_devices[port_id];
+> > +
+> > +	ret =3D eth_err(port_id,
+> > +		      (*dev->dev_ops->stashing_rx_hints_set) (dev, queue_id,
+> > +		       config));
+> > +out:
+> > +	return ret;
+> > +}
+> > +
+> >
+> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_dev_stashing_capabilities_get,
+> > +25.07) int rte_eth_dev_stashing_capabilities_get(uint16_t port_id,
+> > +uint16_t *objects) {
+> > +	struct rte_eth_dev *dev;
+> > +	struct rte_eth_dev_info dev_info;
+> > +	int ret =3D 0;
+> > +
+> > +	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
+> > +
+> > +	if (!objects) {
+> > +		ret =3D -EINVAL;
+> > +		goto out;
+> > +	}
+> > +
+> > +	dev =3D &rte_eth_devices[port_id];
+> > +
+> > +	ret =3D rte_eth_dev_info_get(port_id, &dev_info);
+> > +	if (ret < 0)
+> > +		goto out;
+> > +
+> > +	if ((dev_info.dev_capa & RTE_ETH_DEV_CAPA_CACHE_STASHING) !=3D
+> > +	    RTE_ETH_DEV_CAPA_CACHE_STASHING) {
+> > +		ret =3D -ENOTSUP;
+> > +		goto out;
+> > +	}
+> > +
+> > +	if (*dev->dev_ops->stashing_capabilities_get =3D=3D NULL) {
+> > +		RTE_ETHDEV_LOG_LINE(ERR, "Stashing hints are not
+> implemented "
+> > +				    "in %s for %s", dev_info.driver_name,
+> > +				    dev_info.device->name);
+> > +		ret =3D -ENOSYS;
+> > +		goto out;
+> > +	}
+> > +	ret =3D eth_err(port_id,
+> > +		      (*dev->dev_ops->stashing_capabilities_get)(dev, objects));
+> > +out:
+> > +	return ret;
+> > +}
+> > +
+> >  RTE_EXPORT_SYMBOL(rte_eth_dev_logtype)
+> >  RTE_LOG_REGISTER_DEFAULT(rte_eth_dev_logtype, INFO); diff --git
+> > a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h index
+> > ea7f8c4a1a..1398f8c837 100644
+> > --- a/lib/ethdev/rte_ethdev.h
+> > +++ b/lib/ethdev/rte_ethdev.h
+> > @@ -1667,6 +1667,9 @@ struct rte_eth_conf {  #define
+> > RTE_ETH_DEV_CAPA_FLOW_SHARED_OBJECT_KEEP RTE_BIT64(4)  /**@}*/
+> >
+> > +/** Device supports stashing to CPU/system caches. */ #define
+> > +RTE_ETH_DEV_CAPA_CACHE_STASHING RTE_BIT64(5)
+> > +
+> >  /*
+> >   * Fallback default preferred Rx/Tx port parameters.
+> >   * These are used if an application requests default parameters @@
+> > -1838,6 +1841,7 @@ struct rte_eth_dev_info {
+> >  	struct rte_eth_dev_portconf default_txportconf;
+> >  	/** Generic device capabilities (RTE_ETH_DEV_CAPA_). */
+> >  	uint64_t dev_capa;
+> > +	uint16_t stashing_capa;
+> >  	/**
+> >  	 * Switching information for ports on a device with a
+> >  	 * embedded managed interconnect/switch.
+> > @@ -6173,6 +6177,160 @@ int rte_eth_cman_config_set(uint16_t port_id,
+> > const struct rte_eth_cman_config *  __rte_experimental  int
+> > rte_eth_cman_config_get(uint16_t port_id, struct rte_eth_cman_config
+> > *config);
+> >
+> > +
+> > +/** Queue type is RX. */
+> > +#define RTE_ETH_DEV_RX_QUEUE		0
+> > +/** Queue type is TX. */
+> > +#define RTE_ETH_DEV_TX_QUEUE		1
+> > +
+>=20
+> I'd prefer an enum for these.
+> Why are the necessary since we have separate rx and tx functions for the =
+caching
+> hints.
+>=20
+> > +
+> > +/**
+> > + * @warning
+> > + * @b EXPERIMENTAL: this structure may change, or be removed, without
+> > +prior notice
+> > + *
+> > + * A structure used for configuring the cache stashing hints.
+> > + */
+> > +struct rte_eth_stashing_config {
+> > +	/**
+> > +	 * lcore_id of the processor the stashing hints are applied to.
+> > +	 */
+> > +	uint32_t	lcore_id;
+> > +	/**
+> > +	 * Zero based cache level relative to the CPU.
+> > +	 * E.g. l1d =3D 0, l2d =3D 1,...
+> > +	 */
+> > +	uint32_t	cache_level;
+> > +	/**
+> > +	 * Object types the configuration is applied to
+> > +	 */
+> > +	uint16_t	objects;
+>=20
+> What are the objects? That needs to be covered by the docs, or make this =
+an
+> enum type so that it's clear from the typesystem what it applies to [thou=
+gh that
+> would require an array of objects and count, it may be clearer for user].
+>=20
+> > +	/**
+> > +	 * The offset if RTE_ETH_DEV_STASH_OBJECT_OFFSET bit is set
+> > +	 *  in objects
+> > +	 */
+> > +	int		offset;
+> > +};
+> > +
+> > +/**@{@name Stashable Rx/Tx queue object types supported by the
+> > +ethernet device  *@see rte_eth_dev_stashing_capabilities_get
+> > + *@see rte_eth_dev_stashing_rx_config_set
+> > + *@see rte_eth_dev_stashing_tx_config_set
+> > + */
+> > +
+> > +/**
+> > + * Apply stashing hint to data at a given offset from the start of a
+> > + * received packet.
+> > + */
+> > +#define RTE_ETH_DEV_STASH_OBJECT_OFFSET		0x0001
+> > +
+> > +/** Apply stashing hint to an rx descriptor. */
+> > +#define RTE_ETH_DEV_STASH_OBJECT_DESC		0x0002
+> > +
+> > +/** Apply stashing hint to a header of a received packet. */
+> > +#define RTE_ETH_DEV_STASH_OBJECT_HEADER		0x0004
+> > +
+> > +/** Apply stashing hint to a payload of a received packet. */
+> > +#define RTE_ETH_DEV_STASH_OBJECT_PAYLOAD	0x0008
+> > +
+> > +#define __RTE_ETH_DEV_STASH_OBJECT_MASK		0x000f
+> > +/**@}*/
+> > +
+> > +#define RTE_ETH_DEV_STASH_OBJECTS_VALID(t)
+> 	\
+> > +	((!((t) & (~__RTE_ETH_DEV_STASH_OBJECT_MASK))) && (t))
+> > +
+> > +/**
+> > + *
+> > + * @warning
+> > + * @b EXPERIMENTAL: this API may change, or be removed, without prior
+> > +notice
+> > + *
+> > + * @internal
+> > + * Helper function to validate stashing hints configuration.
+> > + */
+> > +__rte_experimental
+> > +int rte_eth_dev_validate_stashing_config(uint16_t port_id, uint16_t qu=
+eue_id,
+> > +					 uint8_t queue_direction,
+> > +					 struct rte_eth_stashing_config
+> *config);
+> > +
+> > +/**
+> > + *
+> > + * @warning
+> > + * @b EXPERIMENTAL: this API may change, or be removed, without prior
+> > +notice
+> > + *
+> > + * Provide cache stashing hints for improved memory access latencies
+> > +for
+> > + * packets received by the NIC.
+> > + * This feature is available only in supported NICs and platforms.
+> > + *
+> > + * @param port_id
+> > + *  The port identifier of the Ethernet device.
+> > + * @param queue_id
+> > + *  The index of the receive queue to which hints are applied.
+> > + * @param config
+> > + *  Stashing configuration.
+> > + * @return
+> > + *  - (-ENODEV) on incorrect port_ids.
+> > + *  - (-EINVAL) if both RX and TX object types used in conjuection in
+> > +objects
+> > + *  parameter.
+> > + *  - (-EINVAL) on invalid queue_id.
+> > + *  - (-ENOTSUP) if RTE_ETH_DEV_CAPA_CACHE_STASHING capability is
+> unavailable.
+> > + *  - (-ENOSYS) if PMD does not implement cache stashing hints.
+> > + *  - (0) on Success.
+> > + */
+> > +__rte_experimental
+> > +int rte_eth_dev_stashing_rx_config_set(uint16_t port_id, uint16_t queu=
+e_id,
+> > +				   struct rte_eth_stashing_config *config);
+> > +
+> > +/**
+> > + *
+> > + * @warning
+> > + * @b EXPERIMENTAL: this API may change, or be removed, without prior
+> > +notice
+> > + *
+> > + * Configure cache stashing for improved memory access latencies for
+> > +Tx
+> > + * queue completion descriptors being sent to host system by the NIC.
+> > + * This feature is available only in supported NICs and platforms.
+> > + *
+> > + * @param port_id
+> > + *  The port identifier of the Ethernet device.
+> > + * @param queue_id
+> > + *  The index of the receive queue to which hints are applied.
+> > + * @param config
+> > + *  Stashing configuration.
+> > + * @return
+> > + *  - (-ENODEV) on incorrect port_ids.
+> > + *  - (-EINVAL) if both RX and TX object types are used in
+> > +conjuection in objects
+> > + *  parameter.
+> > + *  - (-EINVAL) if hints are incompatible with TX queues.
+> > + *  - (-EINVAL) on invalid queue_id.
+> > + *  - (-ENOTSUP) if RTE_ETH_DEV_CAPA_CACHE_STASHING capability is
+> unavailable.
+> > + *  - (-ENOSYS) if PMD does not implement cache stashing hints.
+> > + *  - (0) on Success.
+> > + */
+> > +__rte_experimental
+> > +int rte_eth_dev_stashing_tx_config_set(uint16_t port_id, uint16_t queu=
+e_id,
+> > +				   struct rte_eth_stashing_config *config);
+> > +
+> > +/**
+> > + *
+> > + * @warning
+> > + * @b EXPERIMENTAL: this API may change, or be removed, without prior
+> > +notice
+> > + *
+> > + * Discover cache stashing objects supported in the ethernet device.
+> > + *
+> > + * @param port_id
+> > + *  The port identifier of the Ethernet device.
+> > + * @param objects
+> > + *  Supported objects vector set by the ethernet device.
+> > + * @return
+> > + *  On return types and hints parameters will have bits set for
+> > +supported
+> > + *  object types.
+> > + *  - (-ENOTSUP) if the device or the platform does not support cache =
+stashing.
+> > + *  - (-ENOSYS)  if the underlying PMD hasn't implemented cache
+> > +stashing
+> > + *  feature.
+> > + *  - (-EINVAL)  on NULL values for types or hints parameters.
+> > + *  - (0) on success.
+> > + */
+> > +__rte_experimental
+> > +int rte_eth_dev_stashing_capabilities_get(uint16_t port_id, uint16_t
+> > +*objects);
+> > +
+> >  #ifdef __cplusplus
+> >  }
+> >  #endif
+> > --
+> > 2.43.0
+> >
