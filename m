@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 104C2C5AD49
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Jun 2025 17:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7221FC61CE7
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Jun 2025 17:11:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3DC4540DDA;
-	Fri,  6 Jun 2025 19:09:53 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 79E9A40E03;
+	Fri,  6 Jun 2025 19:09:54 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id 3188F40E11
- for <dev@dpdk.org>; Fri,  6 Jun 2025 19:09:50 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id ABAAC40E03
+ for <dev@dpdk.org>; Fri,  6 Jun 2025 19:09:51 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1749229790; x=1780765790;
+ t=1749229792; x=1780765792;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=qQbmxTzDWvVayMfUxi25N2OFEJRBDc0A6KoF9xjzkhY=;
- b=jXgucOwLetSjMdWySkrEesJMxkpTnfZijQ05Vx5oaBTN1/+UKOYFN2N7
- vWM4gYaPegA+veqFd5CxK3bJYQ5vbXUqaw6XVJI2EWVGvrCM6YPvv+bTW
- eZznce9gsdIJwp1ZcEBmDn76U0UnDwT4YUfIRjibW3eLuMdt2qGJHzjMu
- W8rB5gKlsqqv46ZUEK33CgRMEoSfuoVpfxCd0D3OAd8KpJzMLBJRqtpTt
- yb4lEMafJiwj393Tvlxti+L8bFAHFAWcXmZeFFyK0Kdy5dbutKOgru2EA
- i+6nY7sPsUU4VYEAh5uvSEdiAEfiFOYXxRtjCp2pJyUn7kFxdixrB8LaL Q==;
-X-CSE-ConnectionGUID: YARlEKCkQU2OG3xTyAYbaQ==
-X-CSE-MsgGUID: nVbUKCVoS6Snrzuh1QrHBQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11456"; a="68828430"
-X-IronPort-AV: E=Sophos;i="6.16,215,1744095600"; d="scan'208";a="68828430"
+ bh=146ee9e5nDe+hXkqpDQwZLAZCUdX0+uPeEifoXcJe7Q=;
+ b=f4ya9lHA0npUO2/9ASPXqT0+UBt0oQeFJpr1nV/7w0pnhJActuJCCket
+ /n3FBBihJbrjpxf6YdQDgYmZXuK1EIt8qI3BcbRPa8SyjJQLrxGf3yCI3
+ yuxNIvtEPZz2HK0OGqzbgmxK8XYwccOM4kJ9W7/YZYp67AfUKtIHMsnDX
+ 8Ib2BeNh+cvQ1LMZrJl5VSkCPhod4l1oCqDcbaNNgJWERg3PH0mPKuMZR
+ WFixag4RUX8/3rDTVZStZkATRqKxa8pcldRAGHdHiXe1O/sX3QQgap3xp
+ 9ivLjxgdvRn4C9X5hRz0xfmbo3NkYZvWuf9Cbe62/xGpba4NkFZbClU8x w==;
+X-CSE-ConnectionGUID: kwbcwG9gQ7+8sfWsGEpaDw==
+X-CSE-MsgGUID: 7KfEnibdS9WZfStJhLh4vA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11456"; a="68828432"
+X-IronPort-AV: E=Sophos;i="6.16,215,1744095600"; d="scan'208";a="68828432"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jun 2025 10:09:50 -0700
-X-CSE-ConnectionGUID: E76PEsK3QUa1Dofjcw23ZA==
-X-CSE-MsgGUID: kwM7CmCzQUWyFq9S8hGHfg==
+ 06 Jun 2025 10:09:51 -0700
+X-CSE-ConnectionGUID: YcyC2Q4WRoqCtxyf4VnBew==
+X-CSE-MsgGUID: Kad7QwMUQI6UBFBnl0zW7g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,215,1744095600"; d="scan'208";a="145808182"
+X-IronPort-AV: E=Sophos;i="6.16,215,1744095600"; d="scan'208";a="145808187"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by orviesa010.jf.intel.com with ESMTP; 06 Jun 2025 10:09:49 -0700
+ by orviesa010.jf.intel.com with ESMTP; 06 Jun 2025 10:09:50 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 Cc: bruce.richardson@intel.com
-Subject: [PATCH v5 13/34] net/ixgbe: decouple scalar and vec rxq free mbufs
-Date: Fri,  6 Jun 2025 18:08:52 +0100
-Message-ID: <4d611236d5fee9b9315093d889fe0a41a7c6cef2.1749229650.git.anatoly.burakov@intel.com>
+Subject: [PATCH v5 14/34] net/ixgbe: rename vector txq free mbufs
+Date: Fri,  6 Jun 2025 18:08:53 +0100
+Message-ID: <783f1afd4f23d38f21b2ce5e0c97f2efa1f8bbab.1749229650.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <cover.1749229650.git.anatoly.burakov@intel.com>
  <cover.1749229650.git.anatoly.burakov@intel.com>
@@ -61,10 +61,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, vector Rx queue release mbufs function is only called from
-inside the scalar variant. Decouple them to allow both to be defined
-separately from each other, and provide a common function that picks
-between the two when necessary.
+There is no reason why scalar and vector implementations of tx free mbufs
+function have to share the same name. Fix it.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
@@ -73,66 +71,50 @@ Notes:
     v5:
     - Add this commit
 
- drivers/net/intel/ixgbe/ixgbe_rxtx.c | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h | 2 +-
+ drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c   | 2 +-
+ drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c    | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.c b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-index fad4a01a10..ecd1f38ac5 100644
---- a/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-@@ -2970,12 +2970,6 @@ ixgbe_rx_queue_release_mbufs(struct ixgbe_rx_queue *rxq)
+diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
+index 018010820f..9e1abf4449 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
++++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
+@@ -12,7 +12,7 @@
+ #include "ixgbe_rxtx.h"
+ 
+ static __rte_always_inline int
+-ixgbe_tx_free_bufs(struct ci_tx_queue *txq)
++ixgbe_tx_free_bufs_vec(struct ci_tx_queue *txq)
  {
- 	unsigned i;
+ 	struct ci_tx_entry_vec *txep;
+ 	uint32_t status;
+diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c
+index f8916d44e8..3a0b2909a7 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c
++++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c
+@@ -583,7 +583,7 @@ ixgbe_xmit_fixed_burst_vec(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	nb_pkts = RTE_MIN(nb_pkts, txq->tx_rs_thresh);
  
--	/* SSE Vector driver has a different way of releasing mbufs. */
--	if (rxq->vector_rx) {
--		ixgbe_rx_queue_release_mbufs_vec(rxq);
--		return;
--	}
--
- 	if (rxq->sw_ring != NULL) {
- 		for (i = 0; i < rxq->nb_rx_desc; i++) {
- 			if (rxq->sw_ring[i].mbuf != NULL) {
-@@ -3002,11 +2996,20 @@ ixgbe_rx_queue_release_mbufs(struct ixgbe_rx_queue *rxq)
- 			}
- }
+ 	if (txq->nb_tx_free < txq->tx_free_thresh)
+-		ixgbe_tx_free_bufs(txq);
++		ixgbe_tx_free_bufs_vec(txq);
  
-+static void __rte_cold
-+ixgbe_rx_queue_release_mbufs_common(struct ixgbe_rx_queue *rxq)
-+{
-+	if (rxq->vector_rx)
-+		ixgbe_rx_queue_release_mbufs_vec(rxq);
-+	else
-+		ixgbe_rx_queue_release_mbufs(rxq);
-+}
-+
- static void __rte_cold
- ixgbe_rx_queue_release(struct ixgbe_rx_queue *rxq)
- {
- 	if (rxq != NULL) {
--		ixgbe_rx_queue_release_mbufs(rxq);
-+		ixgbe_rx_queue_release_mbufs_common(rxq);
- 		rte_free(rxq->sw_ring);
- 		rte_free(rxq->sw_sc_ring);
- 		rte_memzone_free(rxq->mz);
-@@ -3501,7 +3504,7 @@ ixgbe_dev_clear_queues(struct rte_eth_dev *dev)
- 		struct ixgbe_rx_queue *rxq = dev->data->rx_queues[i];
+ 	nb_commit = nb_pkts = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
+ 	if (unlikely(nb_pkts == 0))
+diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
+index 9417e5b11f..1e063bb243 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
++++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
+@@ -703,7 +703,7 @@ ixgbe_xmit_fixed_burst_vec(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	nb_pkts = RTE_MIN(nb_pkts, txq->tx_rs_thresh);
  
- 		if (rxq != NULL) {
--			ixgbe_rx_queue_release_mbufs(rxq);
-+			ixgbe_rx_queue_release_mbufs_common(rxq);
- 			ixgbe_reset_rx_queue(adapter, rxq);
- 			dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
- 		}
-@@ -5701,7 +5704,7 @@ ixgbe_dev_rx_queue_stop(struct rte_eth_dev *dev, uint16_t rx_queue_id)
+ 	if (txq->nb_tx_free < txq->tx_free_thresh)
+-		ixgbe_tx_free_bufs(txq);
++		ixgbe_tx_free_bufs_vec(txq);
  
- 	rte_delay_us(RTE_IXGBE_WAIT_100_US);
- 
--	ixgbe_rx_queue_release_mbufs(rxq);
-+	ixgbe_rx_queue_release_mbufs_common(rxq);
- 	ixgbe_reset_rx_queue(adapter, rxq);
- 	dev->data->rx_queue_state[rx_queue_id] = RTE_ETH_QUEUE_STATE_STOPPED;
- 
+ 	nb_commit = nb_pkts = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
+ 	if (unlikely(nb_pkts == 0))
 -- 
 2.47.1
 
