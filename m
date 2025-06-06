@@ -2,64 +2,64 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B750C5AD49
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Jun 2025 07:56:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC3CC5B549
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Jun 2025 08:00:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D63B34014F;
-	Fri,  6 Jun 2025 09:56:15 +0200 (CEST)
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com
- [209.85.160.175])
- by mails.dpdk.org (Postfix) with ESMTP id C9899400EF
- for <dev@dpdk.org>; Fri,  6 Jun 2025 09:56:13 +0200 (CEST)
-Received: by mail-qt1-f175.google.com with SMTP id
- d75a77b69052e-4a4312b4849so22696641cf.1
- for <dev@dpdk.org>; Fri, 06 Jun 2025 00:56:13 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 27F6E4014F;
+	Fri,  6 Jun 2025 10:00:01 +0200 (CEST)
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com
+ [209.85.160.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 8737D400EF
+ for <dev@dpdk.org>; Fri,  6 Jun 2025 09:59:59 +0200 (CEST)
+Received: by mail-qt1-f181.google.com with SMTP id
+ d75a77b69052e-4a588338015so29129241cf.0
+ for <dev@dpdk.org>; Fri, 06 Jun 2025 00:59:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1749196573; x=1749801373; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1749196799; x=1749801599; darn=dpdk.org;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:from:to:cc:subject:date
  :message-id:reply-to;
- bh=4Ho8H0oT36ZfTEn1ORiipa+ui8k4sbWqVcrKxLuwBwU=;
- b=AfJ7LRfucsaVd5u4p23c9nS1TarlVumq0uU6Z0oeTUCbYxeZhOr92fdrSPbFZMtbbm
- iwQEwLqSeUN6j/5BPj6YORXURLXTGQWKi1PpMBYTuc1N7Y4SN3K1peq7hFG4R7nVOWsN
- teephwmAxctftm1w7a1/4+kSP5+z2H+Z+fZGaYPiQmZBDH5luK67y3HcCgkV99kYtrPk
- x/K7B0fSU47giNwuNAU/lHI0iCcr+LCKX9ECdlR/d8kfcKry3UaMy8LsUOUrN8QDMyY0
- o967IOJiCKKrwaKvpIIHD34NyZTniE12BcmsZRlvqS/hOOXmQ1LAqb8DykRcJ6rmcW6q
- 0JwA==
+ bh=DytWbMsP/Avhut3r2a0R78DHlabH+0pvJ/wqN6Sp6iY=;
+ b=hpTVSGBtSDJEuzBzEzSnooM6PP4ODrDM/VEJ7DUXt7H4IIR2hyt485bTOj2eeqxHru
+ TMiyVkkqFNHU8kLMd46Ry5kAeVYgpQjxi1PdyWQnQ07RX8LP0yn9y4vMkS39Nw3MZMnk
+ mGYwHJVF98JSgdMdkecL2VSq3o4Bw2Oi76wBWiXEmCUDRF5IUz55Oyp1CeqrJUojYLtx
+ 71csWaHelosm2wEa7PFheC1bfDbihCybTbfgln6eVbxGMdFvYQISxVzkeXdv8DF39/mJ
+ v3ZCBKPtroWbRTTruUFcS+NTBFcSrt2ZqXaR6MwzuLxyVF+av2wECbpcQq2WKN1lqboj
+ jhmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749196573; x=1749801373;
+ d=1e100.net; s=20230601; t=1749196799; x=1749801599;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=4Ho8H0oT36ZfTEn1ORiipa+ui8k4sbWqVcrKxLuwBwU=;
- b=Qfu9s21YG0NybR1Qqb+bJvd+Yemz7TrdXPirpc7rR0A4c6wubVgYomgBsIxQCTqrVM
- ATCdgC/9KLnyFaYIO0OU+rAYAeRz8fi+Fn6IKmSnsQ1wx+CV7Lay3s5jc8pT78tZrFev
- opmNcfCLD1wFiQaj8EVT9XtkDqcDEIqaA235xKk/SxYPpRv+s0ACXa7qzJ7qsZRMaY99
- nih55eSE0vbVVMdkGkxThzV4NiOLgLznvtTJ66YwaVkPXNowG1P54MrH8s30XlO9tUlp
- AypMuzo8Yyzvwas83sUQvfgGAXu4Fs/ojEvFa3K7toaO6eJ5RkfApwSU4uB6cVNSH3x9
- XnhQ==
+ bh=DytWbMsP/Avhut3r2a0R78DHlabH+0pvJ/wqN6Sp6iY=;
+ b=oUUeYxXBxF+O7I8jSzSlA+imUA/6UrUHTitKvpb+j1oxJJGC0WuRPSD+45H2YNHkkl
+ QBVZ0pvlXh/3yeBrM6SOuMOEsaJ1dCKBajHrgzxSq8FY37fa4ZTGewtpnJkctKRTmIFE
+ mSRfb5V7ABVvAAKNzU+6Hdr9Ns+WUVCT0ATvjNcZK5ttMJcXXpncz3iAghsXDgrvAKmM
+ PoT0deUMIBFgXHbMKhrbjX2Mnlp2cg4Z1ltqIj2R4QGtk/Jpp2K7ZEQHiVX987xVAkW5
+ jGUWwyLpKNpdP8GgHvIzZOPxW2MHFYXoB4JjB4B7Yidgej2vax26zkqRkN7vT8sku30a
+ jhsg==
 X-Forwarded-Encrypted: i=1;
- AJvYcCXlfPRvibl/+JL7+Rm+DxOv2g1+9dzvkhVbwYZ6Y6br6Rvr/NKIrr2nWc+e/R4RrDmqE+Y=@dpdk.org
-X-Gm-Message-State: AOJu0YzBJiDcbBchPexW4wD/HIBlL+hSHuHQQh+tVZRRwP4Df7lIaNZP
- QnuvZfXczZX8iGUQlj1AXLTtp7okw8WtiU7rIbLQYztTn+JEQEswpDtc02QhQwG49uo9YUVy5p7
- uufK69Ghz8sMshJXRoB8ED7ZFMdRkt7g=
-X-Gm-Gg: ASbGncvrQCQj/H69W6D6Gjj/DQr6HkFQCkaZPOz7DZvl1DAmjDs5ClKUBXtRdbvO9yz
- wqgkRt/q7kutOz/ZjIY0p1ZndNzEiL5BI5SWFiH9BRAGR76e3X6H2dIBNL2O/nRRMjnNJG5ujgt
- vVdeOvEOHIJKyLZFcAfvs4SguieZ9llp8=
-X-Google-Smtp-Source: AGHT+IEPRNJv0zqtMk8JRKl7Mz4BGknPSBDU4X7AojPdf+vqbUxMJ9fZUIV3gsRcsSI0nLu0TBx/m4/p3dKMyZoj5nU=
-X-Received: by 2002:a05:622a:4892:b0:494:a283:1c4a with SMTP id
- d75a77b69052e-4a5b9d7da40mr50751761cf.32.1749196572962; Fri, 06 Jun 2025
- 00:56:12 -0700 (PDT)
+ AJvYcCUzi8jQii/FzpXoUd8+oNxG1TY/56LXQIdeA9IddEkZkJ7itqPiZRTepsBhNyjkWAktoLA=@dpdk.org
+X-Gm-Message-State: AOJu0YwUJvnkKxUkDvS8urwxtfUFi4o9ypLv/FgF1mLp9ow6KK4kjN0Y
+ MAKpkdbL5rNfdaWfp30RQ4Hg+DrEkALCjUvYY80qnl6JXME71xGTom3aX5T2YxaVIddnV4NWxws
+ ZN7Z9Ilg2jmsJtprBNRGBzjhd+bxyQ2w=
+X-Gm-Gg: ASbGncvsADGf9e7qYvb3439GRFk4UcnIG/OQhhbs0JvidhKkVlOKo1dmv9ZD/vFliSr
+ 0zz7lNDW+bNFak6+55lrApUbtP/CVPT7Qz5QBeWBNe44NA7pO5TUuMmXid3omgVAu4HzbKsUW3B
+ yJXkOwSoi5d9GeYFh9DV8NbwAhPtIWtwo=
+X-Google-Smtp-Source: AGHT+IH4KDVJKa03PHUNuXdIDT5opXtssniksKzH6JHssJIX6NWKIr1maNn1W+0GmlWKeQpQrOjEryVz6uNOjP19doM=
+X-Received: by 2002:a05:622a:1c0d:b0:4a5:8820:a0ac with SMTP id
+ d75a77b69052e-4a5b9a04a44mr40113361cf.3.1749196798734; Fri, 06 Jun 2025
+ 00:59:58 -0700 (PDT)
 MIME-Version: 1.0
 References: <20250103060612.2671836-1-nsaxena@marvell.com>
  <20250605173315.1447003-1-nsaxena@marvell.com>
- <20250605173315.1447003-2-nsaxena@marvell.com>
-In-Reply-To: <20250605173315.1447003-2-nsaxena@marvell.com>
+ <20250605173315.1447003-3-nsaxena@marvell.com>
+In-Reply-To: <20250605173315.1447003-3-nsaxena@marvell.com>
 From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Fri, 6 Jun 2025 13:25:45 +0530
-X-Gm-Features: AX0GCFswH-VYrICtmn6NKbDzx2PIqAAwcUZ5w1r4CE5KqcndmHmMlxRkx0hTU7w
-Message-ID: <CALBAE1OmW+Oh=nAXNW5YCJys08GSgRwU8J8W4-VSwozk0AuR1Q@mail.gmail.com>
-Subject: Re: [PATCH v12 1/7] graph: add API to override node process function
+Date: Fri, 6 Jun 2025 13:29:32 +0530
+X-Gm-Features: AX0GCFtDcBOAM37_cGO-ty7I4em7ZCyoEHAAZdgd_0wtqmZ-tQmK3duWetudUSE
+Message-ID: <CALBAE1OfOQ=ui_xwXWeRf3L3ko6bmFJDrQ=cdMWj=XOjbTAxmQ@mail.gmail.com>
+Subject: Re: [PATCH v12 2/7] graph: add feature arc registrations
 To: Nitin Saxena <nsaxena@marvell.com>
 Cc: Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, 
  Nithin Dabilpuram <ndabilpuram@marvell.com>,
@@ -81,15 +81,13 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Jun 5, 2025 at 11:12=E2=80=AFPM Nitin Saxena <nsaxena@marvell.com> =
+On Thu, Jun 5, 2025 at 11:03=E2=80=AFPM Nitin Saxena <nsaxena@marvell.com> =
 wrote:
 >
-> New internal API used by feature arc library to override node's original
-> process() func.
+> This patch defines RTE_GRAPH_FEATURE_ARC_REGISTER() and
+> RTE_GRAPH_FEATURE_REGISTER() constructors and associated APIs with
+> programming guide.
 >
 > Signed-off-by: Nitin Saxena <nsaxena@marvell.com>
 
 Acked-by: Jerin Jacob <jerinj@marvell.com>
-
-@Thomas Monjalon While merging, please add <nsaxena@marvell.com> in
-.mailmap for  Nitin Saxena  in addition to current emails
