@@ -2,72 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC3CC5B549
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Jun 2025 08:00:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C06BEC5AD49
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Jun 2025 08:01:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 27F6E4014F;
-	Fri,  6 Jun 2025 10:00:01 +0200 (CEST)
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com
- [209.85.160.181])
- by mails.dpdk.org (Postfix) with ESMTP id 8737D400EF
- for <dev@dpdk.org>; Fri,  6 Jun 2025 09:59:59 +0200 (CEST)
-Received: by mail-qt1-f181.google.com with SMTP id
- d75a77b69052e-4a588338015so29129241cf.0
- for <dev@dpdk.org>; Fri, 06 Jun 2025 00:59:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1749196799; x=1749801599; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=DytWbMsP/Avhut3r2a0R78DHlabH+0pvJ/wqN6Sp6iY=;
- b=hpTVSGBtSDJEuzBzEzSnooM6PP4ODrDM/VEJ7DUXt7H4IIR2hyt485bTOj2eeqxHru
- TMiyVkkqFNHU8kLMd46Ry5kAeVYgpQjxi1PdyWQnQ07RX8LP0yn9y4vMkS39Nw3MZMnk
- mGYwHJVF98JSgdMdkecL2VSq3o4Bw2Oi76wBWiXEmCUDRF5IUz55Oyp1CeqrJUojYLtx
- 71csWaHelosm2wEa7PFheC1bfDbihCybTbfgln6eVbxGMdFvYQISxVzkeXdv8DF39/mJ
- v3ZCBKPtroWbRTTruUFcS+NTBFcSrt2ZqXaR6MwzuLxyVF+av2wECbpcQq2WKN1lqboj
- jhmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749196799; x=1749801599;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=DytWbMsP/Avhut3r2a0R78DHlabH+0pvJ/wqN6Sp6iY=;
- b=oUUeYxXBxF+O7I8jSzSlA+imUA/6UrUHTitKvpb+j1oxJJGC0WuRPSD+45H2YNHkkl
- QBVZ0pvlXh/3yeBrM6SOuMOEsaJ1dCKBajHrgzxSq8FY37fa4ZTGewtpnJkctKRTmIFE
- mSRfb5V7ABVvAAKNzU+6Hdr9Ns+WUVCT0ATvjNcZK5ttMJcXXpncz3iAghsXDgrvAKmM
- PoT0deUMIBFgXHbMKhrbjX2Mnlp2cg4Z1ltqIj2R4QGtk/Jpp2K7ZEQHiVX987xVAkW5
- jGUWwyLpKNpdP8GgHvIzZOPxW2MHFYXoB4JjB4B7Yidgej2vax26zkqRkN7vT8sku30a
- jhsg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUzi8jQii/FzpXoUd8+oNxG1TY/56LXQIdeA9IddEkZkJ7itqPiZRTepsBhNyjkWAktoLA=@dpdk.org
-X-Gm-Message-State: AOJu0YwUJvnkKxUkDvS8urwxtfUFi4o9ypLv/FgF1mLp9ow6KK4kjN0Y
- MAKpkdbL5rNfdaWfp30RQ4Hg+DrEkALCjUvYY80qnl6JXME71xGTom3aX5T2YxaVIddnV4NWxws
- ZN7Z9Ilg2jmsJtprBNRGBzjhd+bxyQ2w=
-X-Gm-Gg: ASbGncvsADGf9e7qYvb3439GRFk4UcnIG/OQhhbs0JvidhKkVlOKo1dmv9ZD/vFliSr
- 0zz7lNDW+bNFak6+55lrApUbtP/CVPT7Qz5QBeWBNe44NA7pO5TUuMmXid3omgVAu4HzbKsUW3B
- yJXkOwSoi5d9GeYFh9DV8NbwAhPtIWtwo=
-X-Google-Smtp-Source: AGHT+IH4KDVJKa03PHUNuXdIDT5opXtssniksKzH6JHssJIX6NWKIr1maNn1W+0GmlWKeQpQrOjEryVz6uNOjP19doM=
-X-Received: by 2002:a05:622a:1c0d:b0:4a5:8820:a0ac with SMTP id
- d75a77b69052e-4a5b9a04a44mr40113361cf.3.1749196798734; Fri, 06 Jun 2025
- 00:59:58 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 41EC8402D9;
+	Fri,  6 Jun 2025 10:01:50 +0200 (CEST)
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+ by mails.dpdk.org (Postfix) with ESMTP id 7E65A400EF
+ for <dev@dpdk.org>; Fri,  6 Jun 2025 10:01:46 +0200 (CEST)
+X-QQ-mid: zesmtpsz2t1749196901te2bdd55e
+X-QQ-Originating-IP: QjzFtsVZbfTmbpHvzgsat6t+3XH8v7OY7l5QgDalGLI=
+Received: from w-MS-7E16.trustnetic.com ( [220.184.249.46])
+ by bizesmtp.qq.com (ESMTP) with 
+ id ; Fri, 06 Jun 2025 16:01:34 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 15430318269192433800
+EX-QQ-RecipientCnt: 3
+From: Jiawen Wu <jiawenwu@trustnetic.com>
+To: dev@dpdk.org
+Cc: zaiyuwang@trustnetic.com,
+	Jiawen Wu <jiawenwu@trustnetic.com>
+Subject: [PATCH 00/12] Fixes and supports for Wangxun NICs
+Date: Fri,  6 Jun 2025 16:01:05 +0800
+Message-ID: <00DEAE896AFE0D2D+20250606080117.183198-1-jiawenwu@trustnetic.com>
+X-Mailer: git-send-email 2.48.1
 MIME-Version: 1.0
-References: <20250103060612.2671836-1-nsaxena@marvell.com>
- <20250605173315.1447003-1-nsaxena@marvell.com>
- <20250605173315.1447003-3-nsaxena@marvell.com>
-In-Reply-To: <20250605173315.1447003-3-nsaxena@marvell.com>
-From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Fri, 6 Jun 2025 13:29:32 +0530
-X-Gm-Features: AX0GCFtDcBOAM37_cGO-ty7I4em7ZCyoEHAAZdgd_0wtqmZ-tQmK3duWetudUSE
-Message-ID: <CALBAE1OfOQ=ui_xwXWeRf3L3ko6bmFJDrQ=cdMWj=XOjbTAxmQ@mail.gmail.com>
-Subject: Re: [PATCH v12 2/7] graph: add feature arc registrations
-To: Nitin Saxena <nsaxena@marvell.com>
-Cc: Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, 
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Zhirun Yan <yanzhirun_163@163.com>, 
- Robin Jarry <rjarry@redhat.com>, Christophe Fontaine <cfontain@redhat.com>,
- dev@dpdk.org, Nitin Saxena <nsaxena16@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: M5KJbUcTvJCQ871MSW5XsDlqkf7tAKquYb6lGHx/sfG+2Qnn61gfgdDx
+ egthOqQbRZ2slzrZKXNzk3ZEgYfxVzVXzYUN5TQxi75rxMnQC+vzhgy0peoA2WB+8TJEA/Y
+ GktiAef3vtYhJgYY/6SRTNzUG/aMJJ++MsG/HoFgMQapqNFAh2wUI2kyLOwYdF/CFwP0O3D
+ 62aKeZZR5UXJzi+tcJ8T3fRYMuja5+UaXrCeUqmy0rlybFZC++47NxuT/V68i/fwTwkXH+x
+ CVQuKUKdBY7QeW05j3I637LcP0+1bIuTFcpvoOgV/6LUyCpySQPS3jo5WuOFvkbbBo1IeR5
+ Fp/wvZbsVF1ve64Jka8KZiL3Hdf+S0fdfOvaRZgYlDFRgapMhMXkZK//Yw58XRKutu7y/lY
+ 5tj87joDBlxOdLEs/c/n6TI11vvSDm/e12JCG6URnE7qjrPxJep9xWf0rw3BvBqckP6kpSI
+ 4bENFC9MQCmuQJ8Jkzj2d5Q3B46X2u+t9BzNtbu3qnTuIsz4N2DV0XtdHIRz+PIy2/e3I1Y
+ sgDL7keGAgEcqwce5Q0poVEa5UsQnWwRG6zptmvxERwUSCnkG0VtRXLOOKhbSrqt2olqIYR
+ TKrpIbNpNHsOR8Ibh4YnmjNBVVxoCWNVPIJoCCA46F0LDmZRvKT1D2js33NT6Mz33YUf8wz
+ Kg9gyaq7FG4fVwsZD52Cuojzx5S8K4rjqimM/Ch5jm9XEOiDaZo8EEaQMuAQ1pvcgrKPuAt
+ QZrUX18gOwmMYfJEYykPnfIY5xWJ9HMuRA0biRhwnkj4P/UlS3iFxLDYaqnxN5RGbbEj8vd
+ G3lA8wHI2zRpRm5oSmYiBUNuaPi0mvYdKwofu0kzJ56Oy6wH+qYl1gbj4RJq0VkIb01mNx4
+ oME9zHQ+aIyYMCbifR13R93qF5k/CFyTsV2w77KhJGV36RdSdvAOPgSw/xebQKSnaZx/fz0
+ ev9Bx0gItOQ8jnOjQBO7csxobVofGaFQcPQdos9TqIrjNJro30b0NSEvcfBBnMsa9w4IGdB
+ VOUGztwQ==
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,13 +62,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Jun 5, 2025 at 11:03=E2=80=AFPM Nitin Saxena <nsaxena@marvell.com> =
-wrote:
->
-> This patch defines RTE_GRAPH_FEATURE_ARC_REGISTER() and
-> RTE_GRAPH_FEATURE_REGISTER() constructors and associated APIs with
-> programming guide.
->
-> Signed-off-by: Nitin Saxena <nsaxena@marvell.com>
+Fix some bugs and improve flow filters.
 
-Acked-by: Jerin Jacob <jerinj@marvell.com>
+Jiawen Wu (12):
+  net/txgbe: support flow filter for VF
+  net/txgbe: refactor FDIR filter to improve functionality
+  net/txgbe: fix reserved extra FDIR headroom
+  net/txgbe: support RSS offload for SCTP port
+  net/ngbe: support RSS offload for SCTP port
+  net/txgbe: fix MAC control frame forwarding
+  net/ngbe: fix MAC control frame forwarding
+  net/txgbe: fix incorrect device statistics
+  net/ngbe: fix incorrect device statistics
+  net/txgbe: restrict VLAN strip configuration on VF
+  net/ngbe: restrict VLAN strip configuration on VF
+  net/txgbe: add missing LRO flag in mbuf when LRO enabled
+
+ drivers/net/ngbe/base/ngbe_hw.c     |   9 +
+ drivers/net/ngbe/base/ngbe_regs.h   |   2 +
+ drivers/net/ngbe/base/ngbe_type.h   |   1 +
+ drivers/net/ngbe/ngbe_ethdev.c      |   6 +-
+ drivers/net/ngbe/ngbe_ethdev.h      |   2 +
+ drivers/net/ngbe/ngbe_ethdev_vf.c   |  24 +-
+ drivers/net/ngbe/ngbe_rxtx.c        |   8 +
+ drivers/net/txgbe/base/txgbe_hw.c   |  23 +-
+ drivers/net/txgbe/base/txgbe_hw.h   |   1 +
+ drivers/net/txgbe/base/txgbe_mbx.h  |  17 +
+ drivers/net/txgbe/base/txgbe_regs.h |   4 +
+ drivers/net/txgbe/base/txgbe_type.h |  21 +-
+ drivers/net/txgbe/base/txgbe_vf.c   |  29 +
+ drivers/net/txgbe/base/txgbe_vf.h   |   2 +
+ drivers/net/txgbe/txgbe_ethdev.c    |  18 +-
+ drivers/net/txgbe/txgbe_ethdev.h    |  16 +-
+ drivers/net/txgbe/txgbe_ethdev_vf.c | 111 +++-
+ drivers/net/txgbe/txgbe_fdir.c      |  62 +-
+ drivers/net/txgbe/txgbe_flow.c      | 857 ++++++++++++++++++++--------
+ drivers/net/txgbe/txgbe_rxtx.c      |  18 +
+ 20 files changed, 943 insertions(+), 288 deletions(-)
+
+-- 
+2.48.1
+
