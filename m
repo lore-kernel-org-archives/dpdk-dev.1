@@ -2,106 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5694AC5AD49
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Jun 2025 15:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05726C5AD49
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Jun 2025 15:13:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2816D40283;
-	Fri,  6 Jun 2025 17:10:42 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 7DFBC40263
- for <dev@dpdk.org>; Fri,  6 Jun 2025 17:10:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1749222639;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=chTgfri7wrTOXvjQaPIMSTb8W08W34MhvHWsfqNdWm8=;
- b=jGJ+9e3dUe4OyqDz0OFLNEnBMH4bUf0zGsfJmX5X5smNSnXSKJVNEzYDGljgyBKXI4h4Qi
- T0YMCLZZ17e8IFZfd4YDphevjWpbl6SpFvEKOp3usR26cpfG9un8s45e8epMgfnXI5xT9+
- PP4JPvqgeAjT/ieBc/MKb5OlyhlYo9A=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-518-49lIp9wNMiGo0CDfoRMfFg-1; Fri,
- 06 Jun 2025 11:10:38 -0400
-X-MC-Unique: 49lIp9wNMiGo0CDfoRMfFg-1
-X-Mimecast-MFC-AGG-ID: 49lIp9wNMiGo0CDfoRMfFg_1749222637
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id BA8231956057; Fri,  6 Jun 2025 15:10:37 +0000 (UTC)
-Received: from [10.45.242.3] (unknown [10.45.242.3])
- by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 9408030001B7; Fri,  6 Jun 2025 15:10:35 +0000 (UTC)
-Message-ID: <5076b1c0-1848-405c-ae27-00e3505a2733@redhat.com>
-Date: Fri, 6 Jun 2025 17:10:32 +0200
+	by mails.dpdk.org (Postfix) with ESMTP id 3DFF740283;
+	Fri,  6 Jun 2025 17:13:14 +0200 (CEST)
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com
+ [209.85.160.170])
+ by mails.dpdk.org (Postfix) with ESMTP id AD86C40263
+ for <dev@dpdk.org>; Fri,  6 Jun 2025 17:13:12 +0200 (CEST)
+Received: by mail-qt1-f170.google.com with SMTP id
+ d75a77b69052e-4a58d95ea53so25093051cf.0
+ for <dev@dpdk.org>; Fri, 06 Jun 2025 08:13:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1749222792;
+ x=1749827592; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=GrU2VFL8R7v6mNI4mlSh98u777ThmxGTLNVGiCP1cRI=;
+ b=YL0Y/4011M7r2oES52YjZAyphO+eO/f9iaJ43J3zMwuOIa2LLHrqheLm464tVbdUg5
+ OnJqaK4hrgSSJH5XuFgBgzg/pAtpJSHI1JyVHcCUXkLW805WwqBD3Mvimmowc/a0ONSE
+ dDARCkaXtg+p7EAgYehnF1W2QDnlQ03SrtkWKaCTfMlXpC6xhukwK66K/FuYk/hTRHUe
+ H5chPUwJd83J61AZjYg4gZnzZ37uPrG14L9BpGJFjQ5xy6XJdduvOeXNYgwY3Y3z5PO4
+ xUUWLdyvj25fW5WAqCd22mWvdhR+ExpaHS2MRRay5b1NggSIuLYR1uTFIttWX/LvYHFl
+ Vfrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1749222792; x=1749827592;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=GrU2VFL8R7v6mNI4mlSh98u777ThmxGTLNVGiCP1cRI=;
+ b=gXP0B6ugktI1Nf2sOAvwSz/BGFU4IKo5bl15Lxx+PPgHt31y9B9R8WntuoWaMuVXzb
+ XTrxokeY1c44OD5dbl/daaeLA6zkyLsE9TiiZPBjnVAO7nQjanIgPjOZev4YjI9KF5DI
+ F8VAKphEQre9ThY9ppZOYU3gpCqWXKsV8NGh80/5yGGpNg1R8ZFol++hW8JrZjhx2p34
+ st5aW80sgtMGJe/JmJelh/DA+rs1FUqivcIGHnsToZMESAGjbLILHx6ZENu3pv/iLYbx
+ +N7OKjQwW+PBN5ENPMxOI4yZ7CUNLB9YTUKmGnlfAKOkC+UFAM461rmTm9fUf6pKVAbC
+ Pc2w==
+X-Gm-Message-State: AOJu0Ywm2SJwruDvtB9CfAPHFsZYVpDoTWe/OcMqSzB1y/CzBn8Y6zRo
+ hTV5RvAQkIUEbLmnoMagGPYdMu3/M8BYZeNob9cUR2f99R6QhrS/yJFNfkb3MSsNVi8=
+X-Gm-Gg: ASbGnctUgIKDT2BOPYd7MqMS0UN8XHMggWl9RWh6h93/Um9fNOWqWIoeIt4JYW15QRV
+ 5sH+vTolK/b1z9/+HXJEHPIBtpujUxbZ+8BiPxk0DbSZXK3d6vJM0axwbOC74TavMW4wZh13Ilh
+ v++NOXDOX7P/M3lUYdJUqAwNdjal+kzVlk8qLx0O8hVkKWB4AT5ZAVXquHlAFRVNupprZ/vl7SN
+ v3kLIj/tYsUTCCox2QN8NUlrHebYPgybN62a9dtsZU/Cp5enbFqRewmznmIgBV+bKFWBwPBdNpw
+ WYySEGugVjn5MSgt6/G4ChFgu8dXXBxC06fTxyphJeTsXsHr1eU06P/jqI3ZsQWuUyJUfmWqFWZ
+ g1RBCiUOqxIC11uPZkGooPwwXN0GF2m+V5wCZu3w=
+X-Google-Smtp-Source: AGHT+IEzazoTp6MobVRTsamZU9YnSYPrl2nVChbFq/EzifZnhG6mXYDmQBmPI5PKMjGsslahid8BcQ==
+X-Received: by 2002:a05:622a:5148:b0:4a4:2d6d:80a0 with SMTP id
+ d75a77b69052e-4a64b6511admr48481041cf.10.1749222792002; 
+ Fri, 06 Jun 2025 08:13:12 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d75a77b69052e-4a611150479sm13854481cf.5.2025.06.06.08.13.10
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 06 Jun 2025 08:13:11 -0700 (PDT)
+Date: Fri, 6 Jun 2025 08:13:08 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Schneide <schneide@qti.qualcomm.com>
+Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, Reshma Pattan
+ <reshma.pattan@intel.com>, Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K
+ <kirankumark@marvell.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Zhirun Yan <yanzhirun_163@163.com>
+Subject: Re: [PATCH v2] pcapng: allow any protocol link type for the
+ interface block
+Message-ID: <20250606081308.00b32b15@hermes.local>
+In-Reply-To: <20250605230237.36131-1-schneide@qti.qualcomm.com>
+References: <20250529171609.2448832-1-schneide@qti.qualcomm.com>
+ <20250605230237.36131-1-schneide@qti.qualcomm.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] Search the split vq desc and avail in RO areas
-To: David Marchand <david.marchand@redhat.com>,
- Eugenio Perez Martin <eperezma@redhat.com>
-Cc: dev@dpdk.org, Chenbo Xia <chenbox@nvidia.com>, stable@dpdk.org
-References: <20250605113552.918120-1-eperezma@redhat.com>
- <CAJFAV8ydHHbbtOYLq4dr+g9qPh52EnNEZU5kieNAY4_BPfsO2A@mail.gmail.com>
- <CAJaqyWf1DMkdf-UNVOpbeqDA0CvMjnWoZ-CDcvFzEeO-1re7Ow@mail.gmail.com>
- <CAJFAV8wnM+xNLrUbuYbJ7cJY+ZRKN5VcnBKwOtc_HHxj-YoaTg@mail.gmail.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <CAJFAV8wnM+xNLrUbuYbJ7cJY+ZRKN5VcnBKwOtc_HHxj-YoaTg@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: j7d1LYfYsrIVA2d0JeJXJPaM7ctIAX2flhxR0axezoE_1749222637
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -115,58 +85,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+On Thu,  5 Jun 2025 17:02:37 -0600
+Schneide <schneide@qti.qualcomm.com> wrote:
 
+>  
+> +RTE_VERSION_SYMBOL(25, int, rte_pcapng_add_interface,
+> +				  (rte_pcapng_t *self, uint16_t port,
+> +				   const char *ifname, const char *ifdescr,
+> +				   const char *filter))
+> +{
+> +	/* Call the new version with a default link_type (Ethernet) */
+> +	return rte_pcapng_add_interface(self, port, 1 /* DLT_EN10MB */,
+> +									ifname, ifdescr, filter);
+> +}
+> +
 
-On 6/6/25 4:20 PM, David Marchand wrote:
-> On Thu, Jun 5, 2025 at 4:55 PM Eugenio Perez Martin <eperezma@redhat.com> wrote:
->>
->> On Thu, Jun 5, 2025 at 1:50 PM David Marchand <david.marchand@redhat.com> wrote:
->>>
->>> On Thu, Jun 5, 2025 at 1:36 PM Eugenio Pérez <eperezma@redhat.com> wrote:
->>>>
->>>> QEMU's shadow virtqueue and VDUSE exposes these areas as read-only. If
->>>> we don't change it, vhost_iova_to_vva do not consider them as valid and
->>>> returns that they're not found.
->>>>
->>>> Eugenio Pérez (2):
->>>>    vhost: search the split vq desc and avail in RO areas
->>>>    vhost: search the packed vq driver area in RO areas
->>>>
->>>>   lib/vhost/vhost.c | 6 +++---
->>>>   1 file changed, 3 insertions(+), 3 deletions(-)
->>>
->>> At a quick glance, no need for two patches.
->>>
->>
->> Sure I can respin with both squashed.
->>
->>> Sorry, the implication of this issue is not clear to me.
->>> What is the impact from a user pov?
->>>
->>
->> QEMU maps the CVQ descriptors and avail vring through as read only
->> maps in the case of vDPA. But DPDK is looking for them with RW
->> permissions, so the vhost_iova_to_vva function never selects the right
->> one as valid.
->>
->> Looking for them with RO still picks the map if it is mapped as RW,
->> but the reverse is not true.
-> 
-> Ok, thanks.
-> Well, it's better, but still hard to tell how this impacts existing
-> usecases :-).
-> After discussing with Maxime, I understand that the shadow CVQ just
-> can't work => blocking multi queue support with vduse for example.
-> This is the type of high level impact I was looking for.
-> 
->> Let me know if you want me to respin the series with this comment too!
-> 
-> Ideally yes, but maybe Maxime can do it when applying.
-> 
-> 
-
-Yes, I can rework the commit message while applying.
-
-Thanks,
-Maxime
-
+You should be able to use the defined value directly here.
