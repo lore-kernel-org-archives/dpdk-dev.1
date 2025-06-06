@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3D56C61CE7
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Jun 2025 17:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A447DC61CE7
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Jun 2025 17:10:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9822240E17;
-	Fri,  6 Jun 2025 19:09:50 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C69BD40E1C;
+	Fri,  6 Jun 2025 19:09:51 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id 61CB440DD6
- for <dev@dpdk.org>; Fri,  6 Jun 2025 19:09:47 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id BF2A140DCB
+ for <dev@dpdk.org>; Fri,  6 Jun 2025 19:09:48 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1749229787; x=1780765787;
+ t=1749229789; x=1780765789;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=paLL/pLnogQOKuh8teTsOK7+tL+vxo4jt0I2I2TBHss=;
- b=G08TaAKnPN54PFuRvYNcmFYUUFbeLFQLEwpNLUE3wWugN66H3GJwD4tr
- cXaCHk03KLyfr7EW0d7D3coFRup3i7tfPyg+o8IGGPmKbChgBI0cLw8CI
- BL8/XGe+DzIFB/9qcMVQRYHk7jTE49jRPjFzvcy4uKbuNOAq909H7zL8E
- yncPJDdyKcW0CfRSfObGlxwomA6oid24X2j+sPm22eaiudmfcYdd+c3t9
- Bu3RDimsT+vo+HuewjMk86HXs2q/JBi4EwQWArF6/7M3Cw/ECMIEytAic
- Pldo3XSvNK7edTTPIWBnEboG10opoax8bzGtGmyzwjJVN0R0dJ64Ps1g6 A==;
-X-CSE-ConnectionGUID: hZrZj0T+R6O15MJcHCCpnw==
-X-CSE-MsgGUID: RFZcgpHqR4yiwLYWqj/a2g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11456"; a="68828422"
-X-IronPort-AV: E=Sophos;i="6.16,215,1744095600"; d="scan'208";a="68828422"
+ bh=tcYxfvcUkFMm4ORn4Jkshprcjf3cZ4n/2rFUpWFB/Oc=;
+ b=NFQK1F5Lb7Lt8VhBh5UwzR9wsXFaT1IsHP1BPyofcQEMkpawwkfjHLlz
+ iJMLJenXxsADmCFcL7ZE/zpvmn7n/LEs1FAj0TwOEaUQy/q9sU50LMBQV
+ SASmep6vD055Hj81BsrS7tJcUMfP+f80vJwMtsmpfENa4teAt47B37R2D
+ Dm5UxDuFKWjviWvf0Aw7SD94/lQ6NKYEmZrnqjGEsCLrTP6WcIUnh/LSw
+ 50JroVT75lc30lMDhU0mpWVITD8/RqnC/+Q6Cvt2p/yVDSD2lBSEINsGm
+ nMZXohIWOi88Pl6HlrMg6q8FGlNN8FcGVt/6wM8h9vaeJMAmuqatxu2d8 g==;
+X-CSE-ConnectionGUID: 4gWPjF9NSwK/TZMYxM1B+g==
+X-CSE-MsgGUID: mmqRFMhSTOOnvf+s0hf8qA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11456"; a="68828426"
+X-IronPort-AV: E=Sophos;i="6.16,215,1744095600"; d="scan'208";a="68828426"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jun 2025 10:09:47 -0700
-X-CSE-ConnectionGUID: cfxKSjTzRTGTAUCEW2PNlg==
-X-CSE-MsgGUID: QOajrttxS2q5Npgw8mkGkQ==
+ 06 Jun 2025 10:09:48 -0700
+X-CSE-ConnectionGUID: 9LMj0qMUTxueIDxv6CT8VQ==
+X-CSE-MsgGUID: DbiVXCbrRAONggAQ5kwGKw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,215,1744095600"; d="scan'208";a="145808174"
+X-IronPort-AV: E=Sophos;i="6.16,215,1744095600"; d="scan'208";a="145808178"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by orviesa010.jf.intel.com with ESMTP; 06 Jun 2025 10:09:46 -0700
+ by orviesa010.jf.intel.com with ESMTP; 06 Jun 2025 10:09:47 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 Cc: bruce.richardson@intel.com
-Subject: [PATCH v5 11/34] net/ixgbe: remove unnecessary platform checks
-Date: Fri,  6 Jun 2025 18:08:50 +0100
-Message-ID: <a58a51b8b3d0393af942f256f95fbb5908d1b872.1749229650.git.anatoly.burakov@intel.com>
+Subject: [PATCH v5 12/34] net/ixgbe: make context desc creation non-static
+Date: Fri,  6 Jun 2025 18:08:51 +0100
+Message-ID: <a83990ed1b856c34ed546d4ca77f9e8f8c202051.1749229650.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <cover.1749229650.git.anatoly.burakov@intel.com>
  <cover.1749229650.git.anatoly.burakov@intel.com>
@@ -61,11 +61,7 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Some of the things that are only used by vector drivers is guarded by
-platform define checks, but there is actually no real reason to have those
-checks, because this code won't run anyway. Remove all of the unnecessary
-platform checks, and provide function stubs where necessary to make
-compilation work.
+We will need this function in multiple files, so make it non-static.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
@@ -74,124 +70,43 @@ Notes:
     v5:
     - Add this commit
 
- drivers/net/intel/ixgbe/ixgbe_rxtx.c | 24 +++++++++++-------------
- drivers/net/intel/ixgbe/ixgbe_rxtx.h |  4 ----
- 2 files changed, 11 insertions(+), 17 deletions(-)
+ drivers/net/intel/ixgbe/ixgbe_rxtx.c | 3 +--
+ drivers/net/intel/ixgbe/ixgbe_rxtx.h | 1 +
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.c b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-index 8fbb795097..77d0555fae 100644
+index 77d0555fae..fad4a01a10 100644
 --- a/drivers/net/intel/ixgbe/ixgbe_rxtx.c
 +++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-@@ -2678,9 +2678,7 @@ ixgbe_set_tx_function(struct rte_eth_dev *dev, struct ci_tx_queue *txq)
- 				(rte_eal_process_type() != RTE_PROC_PRIMARY ||
- 					ixgbe_txq_vec_setup(txq) == 0)) {
- 			PMD_INIT_LOG(DEBUG, "Vector tx enabled.");
--#if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM)
- 			dev->recycle_tx_mbufs_reuse = ixgbe_recycle_tx_mbufs_reuse_vec;
--#endif
- 			dev->tx_pkt_burst = ixgbe_xmit_pkts_vec;
- 		} else {
- 			dev->tx_pkt_burst = ixgbe_xmit_pkts_simple;
-@@ -3112,11 +3110,8 @@ ixgbe_reset_rx_queue(struct ixgbe_adapter *adapter, struct ixgbe_rx_queue *rxq)
+@@ -89,7 +89,6 @@
  
- 	rxq->pkt_first_seg = NULL;
- 	rxq->pkt_last_seg = NULL;
--
--#if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM64)
- 	rxq->rxrearm_start = 0;
- 	rxq->rxrearm_nb = 0;
--#endif
- }
+ /* forward-declare some functions */
+ static int ixgbe_is_vf(struct rte_eth_dev *dev);
+-static int ixgbe_write_default_ctx_desc(struct ci_tx_queue *txq, struct rte_mempool *mp, bool vec);
  
- static int
-@@ -3408,11 +3403,9 @@ ixgbe_dev_rx_descriptor_status(void *rx_queue, uint16_t offset)
- 	if (unlikely(offset >= rxq->nb_rx_desc))
- 		return -EINVAL;
+ /*********************************************************************
+  *
+@@ -2374,7 +2373,7 @@ ixgbe_recv_pkts_lro_bulk_alloc(void *rx_queue, struct rte_mbuf **rx_pkts,
+  *
+  **********************************************************************/
  
--#if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM64)
- 	if (rxq->vector_rx)
- 		nb_hold = rxq->rxrearm_nb;
- 	else
--#endif
- 		nb_hold = rxq->nb_rx_hold;
- 	if (offset >= rxq->nb_rx_desc - nb_hold)
- 		return RTE_ETH_RX_DESC_UNAVAIL;
-@@ -5050,10 +5043,8 @@ ixgbe_set_rx_function(struct rte_eth_dev *dev)
- 			PMD_INIT_LOG(DEBUG, "Using Vector Scattered Rx "
- 					    "callback (port=%d).",
- 				     dev->data->port_id);
--#if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM)
- 			dev->recycle_rx_descriptors_refill =
- 				ixgbe_recycle_rx_descriptors_refill_vec;
--#endif
- 			dev->rx_pkt_burst = ixgbe_recv_scattered_pkts_vec;
- 		} else if (adapter->rx_bulk_alloc_allowed) {
- 			PMD_INIT_LOG(DEBUG, "Using a Scattered with bulk "
-@@ -5082,9 +5073,7 @@ ixgbe_set_rx_function(struct rte_eth_dev *dev)
- 				    "burst size no less than %d (port=%d).",
- 			     RTE_IXGBE_DESCS_PER_LOOP,
- 			     dev->data->port_id);
--#if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM)
- 		dev->recycle_rx_descriptors_refill = ixgbe_recycle_rx_descriptors_refill_vec;
--#endif
- 		dev->rx_pkt_burst = ixgbe_recv_pkts_vec;
- 	} else if (adapter->rx_bulk_alloc_allowed) {
- 		PMD_INIT_LOG(DEBUG, "Rx Burst Bulk Alloc Preconditions are "
-@@ -5872,10 +5861,8 @@ ixgbe_recycle_rxq_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
- 	recycle_rxq_info->receive_tail = &rxq->rx_tail;
- 
- 	if (adapter->rx_vec_allowed) {
--#if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM)
- 		recycle_rxq_info->refill_requirement = RTE_IXGBE_RXQ_REARM_THRESH;
- 		recycle_rxq_info->refill_head = &rxq->rxrearm_start;
--#endif
- 	} else {
- 		recycle_rxq_info->refill_requirement = rxq->rx_free_thresh;
- 		recycle_rxq_info->refill_head = &rxq->rx_free_trigger;
-@@ -6251,6 +6238,17 @@ ixgbe_rx_vec_dev_conf_condition_check(struct rte_eth_dev __rte_unused *dev)
- 	return -1;
- }
- 
-+void ixgbe_recycle_rx_descriptors_refill_vec(void __rte_unused * rx_queue,
-+		uint16_t __rte_unused nb_mbufs)
-+{
-+}
-+
-+uint16_t ixgbe_recycle_tx_mbufs_reuse_vec(void __rte_unused * tx_queue,
-+	struct rte_eth_recycle_rxq_info __rte_unused * recycle_rxq_info)
-+{
-+	return 0;
-+}
-+
- uint16_t
- ixgbe_recv_pkts_vec(
- 	void __rte_unused *rx_queue,
+-static inline int
++int
+ ixgbe_write_default_ctx_desc(struct ci_tx_queue *txq, struct rte_mempool *mp, bool vec)
+ {
+ 	volatile struct ixgbe_adv_tx_context_desc *ctx_txd;
 diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.h b/drivers/net/intel/ixgbe/ixgbe_rxtx.h
-index c86714804f..bcd5db87e8 100644
+index bcd5db87e8..102c3c0b6d 100644
 --- a/drivers/net/intel/ixgbe/ixgbe_rxtx.h
 +++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.h
-@@ -35,10 +35,8 @@
+@@ -233,6 +233,7 @@ int ixgbe_dev_tx_done_cleanup(void *tx_queue, uint32_t free_cnt);
+ extern const uint32_t ptype_table[IXGBE_PACKET_TYPE_MAX];
+ extern const uint32_t ptype_table_tn[IXGBE_PACKET_TYPE_TN_MAX];
  
- #define RTE_IXGBE_DESCS_PER_LOOP    4
- 
--#if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM)
- #define RTE_IXGBE_RXQ_REARM_THRESH      32
- #define RTE_IXGBE_MAX_RX_BURST          RTE_IXGBE_RXQ_REARM_THRESH
--#endif
- 
- #define RX_RING_SZ ((IXGBE_MAX_RING_DESC + RTE_PMD_IXGBE_RX_MAX_BURST) * \
- 		    sizeof(union ixgbe_adv_rx_desc))
-@@ -102,10 +100,8 @@ struct ixgbe_rx_queue {
- 	uint8_t            using_ipsec;
- 	/**< indicates that IPsec RX feature is in use */
- #endif
--#if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM)
- 	uint16_t            rxrearm_nb;     /**< number of remaining to be re-armed */
- 	uint16_t            rxrearm_start;  /**< the idx we start the re-arming from */
--#endif
- 	uint16_t            rx_free_thresh; /**< max free RX desc to hold. */
- 	uint16_t            queue_id; /**< RX queue index. */
- 	uint16_t            reg_idx;  /**< RX queue register index. */
++int ixgbe_write_default_ctx_desc(struct ci_tx_queue *txq, struct rte_mempool *mp, bool vec);
+ uint16_t ixgbe_recycle_tx_mbufs_reuse_vec(void *tx_queue,
+ 		struct rte_eth_recycle_rxq_info *recycle_rxq_info);
+ void ixgbe_recycle_rx_descriptors_refill_vec(void *rx_queue, uint16_t nb_mbufs);
 -- 
 2.47.1
 
