@@ -2,76 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC5B5C61CE7
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Jun 2025 16:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CDB5C5AD49
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Jun 2025 17:09:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0BD0040283;
-	Fri,  6 Jun 2025 18:27:49 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id B4C2440263
- for <dev@dpdk.org>; Fri,  6 Jun 2025 18:27:47 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 555NTOql028592;
- Fri, 6 Jun 2025 09:27:43 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=N
- sED+W4K6TvwS4s92eHYIPY8JIOOKbj5IHUgTw4FDZ0=; b=MrixjUH84obqYqMJf
- VwzWEwTRqvue/34J49O2h1AtQktAJfZFAKpkVj27+4Ql3XuG9NrUcFX4f7NU7QEP
- 4GpxRlA7X5TcbxZPqSI7S8FScHVbThNPbhPp7qWSCZ3JHSvzbOiDLQFBpTWzsfkV
- aHoaQqdE9RJbnbUVO+MSwBiwXmH3CQwhUzPKZj3ip5idC5Xv0jeVdtR2NYhydkvP
- QJwjgYxsAkC9/A3jMlPeJjJ+CXhmtch0qrf7xON8Tc7zY/tlptKD81VOrWz9SNp8
- NW7ciDUV4stEzuHcKPS0haPdXcBkIM5aEqZl6XIoU6k3cYlbJUxaLhvxFeRZU3sT
- EWAKQ==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 473mxxhrv2-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Fri, 06 Jun 2025 09:27:43 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 6 Jun 2025 09:27:42 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 6 Jun 2025 09:27:42 -0700
-Received: from cavium-optiplex-3070-BM15.. (unknown [10.28.34.39])
- by maili.marvell.com (Postfix) with ESMTP id 206813F705D;
- Fri,  6 Jun 2025 09:27:37 -0700 (PDT)
-From: Tomasz Duszynski <tduszynski@marvell.com>
-To: <thomas@monjalon.net>
-CC: <Ruifeng.Wang@arm.com>, <bruce.richardson@intel.com>,
- <david.marchand@redhat.com>, <dev@dpdk.org>, <jerinj@marvell.com>,
- <konstantin.v.ananyev@yandex.ru>, <mattias.ronnblom@ericsson.com>,
- <mb@smartsharesystems.com>, <roretzla@linux.microsoft.com>,
- <stephen@networkplumber.org>, <tduszynski@marvell.com>,
- <zhoumin@loongson.cn>
-Subject: Re: [PATCH v17 0/4] add support for self monitoring
-Date: Fri, 6 Jun 2025 18:27:36 +0200
-Message-ID: <20250606162736.409485-1-tduszynski@marvell.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <15762368.uLZWGnKmhe@thomas>
-References: <15762368.uLZWGnKmhe@thomas>
+	by mails.dpdk.org (Postfix) with ESMTP id 1599C402F2;
+	Fri,  6 Jun 2025 19:09:31 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+ by mails.dpdk.org (Postfix) with ESMTP id E6BF440263
+ for <dev@dpdk.org>; Fri,  6 Jun 2025 19:09:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1749229770; x=1780765770;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=1ElObv5DRfqnW0oj6L2MY2J0/CsDeaMsXCjAne13nHY=;
+ b=AvAeR2BJPeRVdGyUAGWA+Ufcev/mAclb3zg2UV4nJxPe+h+WO/pShN94
+ 4lmetUMMJQzzEZ7absBbYcd3VmltbtphyqoOMD1H2ZXhZ0yjxs/kx6Z89
+ ZEPJ//IaXV2GvjIDTXGtmJHuX9xCyytR8fds2wPTlcWfluULKRQ11+pG9
+ +PckmqU+MX/dU8EanvVpo/uEdnJ4IU+lMAccV/l2Z4TIjLdXoeqLXZPgH
+ jVjrQEJXWJQ6kKv6pSmRwi98dOAQMhweYvPObkst9yNop1Zb4zIRJMiOL
+ PXSskV4xNO2LphvjBgR7qN7l/XK5fdwUfE/Imtu4VThA79KoOIl080K2M Q==;
+X-CSE-ConnectionGUID: JX5WKnW5Q/udLDET3Rcr1Q==
+X-CSE-MsgGUID: 10SQLGD4RMyQn/u6bPnuKA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11456"; a="68828375"
+X-IronPort-AV: E=Sophos;i="6.16,215,1744095600"; d="scan'208";a="68828375"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+ by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 Jun 2025 10:09:29 -0700
+X-CSE-ConnectionGUID: o5Z8uqfPQ32nWUao+xl0yQ==
+X-CSE-MsgGUID: TvwMu+g/QBm60VSZKwULqw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,215,1744095600"; d="scan'208";a="145808041"
+Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
+ by orviesa010.jf.intel.com with ESMTP; 06 Jun 2025 10:09:28 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org
+Cc: bruce.richardson@intel.com
+Subject: [PATCH v5 00/34] Intel PMD drivers Rx cleanup
+Date: Fri,  6 Jun 2025 18:08:39 +0100
+Message-ID: <cover.1749229650.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <c92131e8fcce1901018450bdf97ae004253addf7.1746538072.git.anatoly.burakov@intel.com>
+References: <c92131e8fcce1901018450bdf97ae004253addf7.1746538072.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: 7QL4jxGOPYbaG8M-kG8cQw6x9kG5rAVc
-X-Authority-Analysis: v=2.4 cv=Z7bsHGRA c=1 sm=1 tr=0 ts=684316ff cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=v90GV_Y8AAAA:8 a=8rWy6zfcAAAA:8
- a=C2enSO9FMMxTcpXQMe4A:9 a=yK6Xxz7lNNgA:10
- a=fBD7mPJ_7mWCjuCAFpJ4:22 a=YjdVzJdQTyZRADMV7wFX:22
-X-Proofpoint-GUID: 7QL4jxGOPYbaG8M-kG8cQw6x9kG5rAVc
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA2MDEyMSBTYWx0ZWRfX4vdIpHuq7d2a
- nhJcfYFhXnhw2gAgn3Z+IpEhQq1xZo7BTWLiCyLhlzRYYBHm0cbTgrZtVL0Bsta/Q2Y00cJKQyU
- x7zcokrn23gFLj7HUmY5a51fJZl8ofSl/CFvKpXnZk1iGkdmblzWkLoqxZJhddhFQjgoSDs8gfP
- STY4VsCxwAzPaRJlrpMfeVkIBEB73nrnEKdpUgB0ZxDDJ2R5sJ7KxZevk/fL6kD7LMo60RsNNAo
- qQfRuR1Pm2/OYy1VJPd4HHaUEzq8d9ddyrFFBRDKM9fI9kEX54EHBCh4L+e5QdPjxqZIo0ueyaO
- eFlaRk22a+vSry8tDb0qxw0gd0Q5lAg8/dvMOElYUmQGLLixf+w3tjir2KRvLQmIS5oGTmbajpW
- r0I2HQ4zexBQxLVSRltJAXikvlnymiLlALanR+/OobcCQKmMtYfp2r0Y7rfR0Z+YFwhvo/Z7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-06_06,2025-06-05_01,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,34 +59,142 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Thomas,
+There is certain amount of duplication between different ixgbe, i40e, ice, and
+iavf. This patchset specifically focuses on laying groundwork for deduplicating
+the Rx side of things - providing common queue definitions, using common Rx
+descriptor formats, and some low hanging fruit in terms of Rx code
+deduplication, including vectorized implementations.
 
->Hello,
->
->17/01/2025 10:00, Tomasz Duszynski:
->>  lib/pmu/meson.build                      |  22 +
->>  lib/pmu/pmu_arm64.c                      |  94 ++++
->>  lib/pmu/pmu_private.h                    |  32 ++
->>  lib/pmu/rte_pmu.c                        | 537 +++++++++++++++++++++++
->>  lib/pmu/rte_pmu.h                        | 251 +++++++++++
->>  lib/pmu/rte_pmu_pmc_arm64.h              |  30 ++
->>  lib/pmu/rte_pmu_pmc_x86_64.h             |  24 +
->
->Reading it again, I wonder why it is a separate library.
->In general we give access to the hardware in EAL.
->Why not having PMU in EAL?
+The first bunch of patches focus on small cleanups:
 
-I initially started PMU as something tightly coupled with EAL, but after
-feedback from other developers I decided to decouple it completely [1].
+- variable renames
+- definition renames
+- using one definition for 16-byte descriptors instead per-driver
+- fixing some cruft in IXGBE headers and source code
+- refactoring of IXGBE vector code
+- removing support for 16-byte descriptors from IAVF
 
-The Technical Board also discussed this and supported the idea of having
-PMU as a separate library [2].
+Starting with patch 24 comes the meat of the patchset:
 
-The main goal is to keep EAL lean and focused only on core essentials,
-making the PMU code easier to manage separately. This separation aligns
-nicely with the broader effort to simplify EAL by moving optional
-features out.
+- creating common Rx queue structure
+- unifying Rx rearm code to make use of new unified structures and definitions
+- expanding Rx rearm code to have SSE, AVX2, and AVX512 implementations
 
-[1] https://lore.kernel.org/dpdk-dev/20230111210547.GA2134@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net/
-[2] https://mails.dpdk.org/archives/dev/2023-January/260035.html#:~:text=PMU%20Library%20,principle%20for%20inclusion%20in%20DPDK
+At the end, there are a couple of patches that unify Rx and Tx mbuf recycle
+for some drivers, but more work is needed on that front because we only touch
+two drivers in each case - the others do have them, but they're implemented
+differently from the ones that were deduplicated.
+
+v5:
+- Added refactors in IXGBE
+- Addressed various bits of feedback
+- Removed support for 16-byte descriptors from IAVF
+
+v3 -> v4:
+- Added a lot of cleanups to the patchset
+- Moved to using unified Rx descriptor definitions
+- Using a single compilation flag to support 16-byte descriptors
+- Fixes for whitespace, syntax, etc.
+
+Anatoly Burakov (34):
+  net/ixgbe: remove unused field in Rx queue struct
+  net/iavf: make IPsec stats dynamically allocated
+  net/ixgbe: match variable names to other drivers
+  net/i40e: match variable name to other drivers
+  net/ice: match variable name to other drivers
+  net/i40e: rename 16-byte descriptor define
+  net/ice: rename 16-byte descriptor define
+  net/iavf: remove 16-byte descriptor define
+  net/ixgbe: simplify packet type support check
+  net/ixgbe: adjust indentation
+  net/ixgbe: remove unnecessary platform checks
+  net/ixgbe: make context desc creation non-static
+  net/ixgbe: decouple scalar and vec rxq free mbufs
+  net/ixgbe: rename vector txq free mbufs
+  net/ixgbe: refactor vector common code
+  net/ixgbe: move vector Rx/Tx code to vec common
+  net/ixgbe: simplify vector PMD compilation
+  net/ixgbe: replace always-true check
+  net/ixgbe: add a desc done function
+  net/ixgbe: clean up definitions
+  net/i40e: clean up definitions
+  net/ice: clean up definitions
+  net/iavf: clean up definitions
+  net/ixgbe: create common Rx queue structure
+  net/i40e: use the common Rx queue structure
+  net/ice: use the common Rx queue structure
+  net/iavf: use the common Rx queue structure
+  net/intel: generalize vectorized Rx rearm
+  net/i40e: use common Rx rearm code
+  net/iavf: use common Rx rearm code
+  net/ixgbe: use common Rx rearm code
+  net/intel: support wider x86 vectors for Rx rearm
+  net/intel: add common Rx mbuf recycle
+  net/intel: add common Tx mbuf recycle
+
+ app/test-pmd/config.c                         |   4 +-
+ config/rte_config.h                           |   2 +-
+ doc/guides/nics/i40e.rst                      |   4 +-
+ drivers/net/intel/common/desc.h               | 157 ++++++++
+ .../recycle_mbufs.h}                          |  94 +++--
+ drivers/net/intel/common/rx.h                 | 119 +++++-
+ drivers/net/intel/common/rx_vec_arm.h         | 105 +++++
+ drivers/net/intel/common/rx_vec_ppc.h         | 121 ++++++
+ drivers/net/intel/common/rx_vec_x86.h         | 346 ++++++++++++++++
+ drivers/net/intel/i40e/i40e_ethdev.c          |   4 +-
+ drivers/net/intel/i40e/i40e_ethdev.h          |   4 +-
+ drivers/net/intel/i40e/i40e_fdir.c            |  18 +-
+ drivers/net/intel/i40e/i40e_pf.c              |   2 +-
+ .../i40e/i40e_recycle_mbufs_vec_common.c      | 127 +-----
+ drivers/net/intel/i40e/i40e_rxtx.c            | 194 ++++-----
+ drivers/net/intel/i40e/i40e_rxtx.h            |  87 +---
+ drivers/net/intel/i40e/i40e_rxtx_common_avx.h | 215 ----------
+ .../net/intel/i40e/i40e_rxtx_vec_altivec.c    | 135 ++-----
+ drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c   |  59 ++-
+ drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c |  59 ++-
+ drivers/net/intel/i40e/i40e_rxtx_vec_common.h |   4 +-
+ drivers/net/intel/i40e/i40e_rxtx_vec_neon.c   | 124 ++----
+ drivers/net/intel/i40e/i40e_rxtx_vec_sse.c    | 130 ++----
+ drivers/net/intel/iavf/iavf.h                 |   4 +-
+ drivers/net/intel/iavf/iavf_ethdev.c          |  13 +-
+ drivers/net/intel/iavf/iavf_rxtx.c            | 269 ++++++-------
+ drivers/net/intel/iavf/iavf_rxtx.h            | 178 +--------
+ drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c   |  92 ++---
+ drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c |  85 ++--
+ drivers/net/intel/iavf/iavf_rxtx_vec_common.h | 219 +---------
+ drivers/net/intel/iavf/iavf_rxtx_vec_neon.c   |  80 +---
+ drivers/net/intel/iavf/iavf_rxtx_vec_sse.c    | 153 ++-----
+ drivers/net/intel/iavf/iavf_vchnl.c           |  20 +-
+ drivers/net/intel/ice/ice_dcf.c               |   7 +-
+ drivers/net/intel/ice/ice_dcf_ethdev.c        |  27 +-
+ drivers/net/intel/ice/ice_ethdev.c            |   2 +-
+ drivers/net/intel/ice/ice_ethdev.h            |   4 +-
+ drivers/net/intel/ice/ice_rxtx.c              | 222 +++++------
+ drivers/net/intel/ice/ice_rxtx.h              |  92 +----
+ drivers/net/intel/ice/ice_rxtx_common_avx.h   | 233 -----------
+ drivers/net/intel/ice/ice_rxtx_vec_avx2.c     |  45 +--
+ drivers/net/intel/ice/ice_rxtx_vec_avx512.c   |  53 ++-
+ drivers/net/intel/ice/ice_rxtx_vec_common.h   |   6 +-
+ drivers/net/intel/ice/ice_rxtx_vec_sse.c      | 125 ++----
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c        |  25 +-
+ drivers/net/intel/ixgbe/ixgbe_ipsec.c         |  10 +-
+ drivers/net/intel/ixgbe/ixgbe_rxtx.c          | 377 +++++++-----------
+ drivers/net/intel/ixgbe/ixgbe_rxtx.h          | 108 +----
+ ...x_vec_common.h => ixgbe_rxtx_vec_common.c} | 206 +++++-----
+ .../net/intel/ixgbe/ixgbe_rxtx_vec_common.h   | 148 ++-----
+ drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c | 163 ++------
+ drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c  | 176 ++------
+ drivers/net/intel/ixgbe/meson.build           |   6 +-
+ 53 files changed, 2090 insertions(+), 3172 deletions(-)
+ create mode 100644 drivers/net/intel/common/desc.h
+ rename drivers/net/intel/{ixgbe/ixgbe_recycle_mbufs_vec_common.c => common/recycle_mbufs.h} (60%)
+ create mode 100644 drivers/net/intel/common/rx_vec_arm.h
+ create mode 100644 drivers/net/intel/common/rx_vec_ppc.h
+ create mode 100644 drivers/net/intel/common/rx_vec_x86.h
+ delete mode 100644 drivers/net/intel/i40e/i40e_rxtx_common_avx.h
+ delete mode 100644 drivers/net/intel/ice/ice_rxtx_common_avx.h
+ copy drivers/net/intel/ixgbe/{ixgbe_rxtx_vec_common.h => ixgbe_rxtx_vec_common.c} (53%)
+
+-- 
+2.47.1
 
