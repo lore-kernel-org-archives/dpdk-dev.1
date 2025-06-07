@@ -2,47 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 512F7C61CE7
-	for <dpdk-dev@archiver.kernel.org>; Sun,  8 Jun 2025 01:19:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFACFC5B543
+	for <dpdk-dev@archiver.kernel.org>; Sun,  8 Jun 2025 01:19:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C4C634042E;
-	Sun,  8 Jun 2025 03:18:50 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 128E640430;
+	Sun,  8 Jun 2025 03:18:52 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id B67EF402E3
- for <dev@dpdk.org>; Sun,  8 Jun 2025 03:18:47 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 75DC2402D9
+ for <dev@dpdk.org>; Sun,  8 Jun 2025 03:18:49 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1749345527; x=1780881527;
+ t=1749345529; x=1780881529;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=J8vaXMfPNdg+n6LfB1/ZnDWoEg8LejDIjCnc3ep04rM=;
- b=RFTdJajbNHPYikH77rWfd15KAWvmKce0y/Cih1HSKMO6rVJXoPDzodXE
- FuvTwV1w96I18QXzxFeeZfTaHrV6R0wipfRHgNMzmsNwaWIaoKcD2ZDQU
- NE9SVZZH0RaKwjvT5t0+s78kA5JVqzdAy0JCi9jmxo64NgnnG2ZmZqukk
- G/haf8C/B4UtfG5WmScURj8qGLsAqLY1MSZDDhN7DT1nkNauQMyl5XWQl
- ykVhnS4abfvXdl48UbBAKMP+zSWUtkI6hQdWtlQdGcq5cCCp6h+g+F5Ce
- ZiR7f8vrnXXkIZkc27e0JqZ2udU5LvLPyPXeakarqWSLRR0cgB53Crl3F g==;
-X-CSE-ConnectionGUID: kCsCvfxPSym8ZNeYWOH0Zg==
-X-CSE-MsgGUID: ITyBTVTvQR6r8bPaPTcRSg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11457"; a="62856899"
-X-IronPort-AV: E=Sophos;i="6.16,219,1744095600"; d="scan'208";a="62856899"
+ bh=KxQRqZsqugRhmjU/HOxvyv5hrJNbrtXpxAzDalIWtK4=;
+ b=WeoWkfNR7hT7wc8pNvPLP2FQh28kGa3rM0E8+I3hhbp9gDfAkUK50iKi
+ 3imaE1Sjetm+Fzr2tf4KjaoDKFJ8FZEVKMRFBMgYARHfHpmcCNvYFcVxM
+ bMpVivbXXjFY7mKrqYd0mKQNCcrDzb9uF9EhUc76xyL/LMck1DL6l5Dvy
+ WIhDhTJ7qM8zSoiNrJ8l/QY1AL2e8h9PGR/4JrLQehrD/mENt5BybVuup
+ ZEL0ylcDZNG9oJfquFkHCXU5bWkEHkTcGMqWSUq8fgelYpPmVY/vQL34V
+ 1r5Ry2KwSGx26LHsyvwiw9WjgNEZB3XJlMxxMqsTQwJzhyIKZEVzBlZBu Q==;
+X-CSE-ConnectionGUID: nd6l6zt5QZ+IC6ekuuB2Lw==
+X-CSE-MsgGUID: vg06BOYkRxaUNqsRoqx/SA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11457"; a="62856900"
+X-IronPort-AV: E=Sophos;i="6.16,219,1744095600"; d="scan'208";a="62856900"
 Received: from fmviesa010.fm.intel.com ([10.60.135.150])
  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Jun 2025 18:18:47 -0700
-X-CSE-ConnectionGUID: tSVbufsHSz6mvvjKpXfQWQ==
-X-CSE-MsgGUID: C8qVvp51SG64Sf4cv8dfXA==
+ 07 Jun 2025 18:18:49 -0700
+X-CSE-ConnectionGUID: vzfwWE+CRXqDq9Rs11vrGg==
+X-CSE-MsgGUID: 0jA1fvFqSAuhOBzmfMEECQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,219,1744095600"; d="scan'208";a="146676580"
+X-IronPort-AV: E=Sophos;i="6.16,219,1744095600"; d="scan'208";a="146676583"
 Received: from unknown (HELO sprmax9..) ([10.138.182.122])
- by fmviesa010.fm.intel.com with ESMTP; 07 Jun 2025 18:18:46 -0700
+ by fmviesa010.fm.intel.com with ESMTP; 07 Jun 2025 18:18:48 -0700
 From: Soumyadeep Hore <soumyadeep.hore@intel.com>
 To: dev@dpdk.org,
 	bruce.richardson@intel.com
 Cc: aman.deep.singh@intel.com,
 	manoj.kumar.subbarao@intel.com
-Subject: [PATCH v2 4/6] net/intel: add AVX2 Support for TxPP
-Date: Sat,  7 Jun 2025 17:09:02 +0000
-Message-ID: <20250607170904.480937-5-soumyadeep.hore@intel.com>
+Subject: [PATCH v2 5/6] net/intel: add AVX512 Support for TxPP
+Date: Sat,  7 Jun 2025 17:09:03 +0000
+Message-ID: <20250607170904.480937-6-soumyadeep.hore@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250607170904.480937-1-soumyadeep.hore@intel.com>
 References: <20250606211947.473544-2-soumyadeep.hore@intel.com>
@@ -62,19 +62,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Tx Time based queues are supported using AVX2 vector.
+Tx Time based queues are supported using AVX512 vector.
 
 Signed-off-by: Soumyadeep Hore <soumyadeep.hore@intel.com>
 ---
- drivers/net/intel/ice/ice_rxtx_vec_avx2.c   | 136 +++++++++++++++++++-
- drivers/net/intel/ice/ice_rxtx_vec_common.h |  17 +++
- 2 files changed, 151 insertions(+), 2 deletions(-)
+ drivers/net/intel/ice/ice_rxtx_vec_avx512.c | 207 +++++++++++++++++++-
+ 1 file changed, 205 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/intel/ice/ice_rxtx_vec_avx2.c b/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
-index 0c54b325c6..b7412534ac 100644
---- a/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
-+++ b/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
-@@ -848,6 +848,129 @@ ice_vtx(volatile struct ice_tx_desc *txdp,
+diff --git a/drivers/net/intel/ice/ice_rxtx_vec_avx512.c b/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
+index bd49be07c9..751c0a43a1 100644
+--- a/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
++++ b/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
+@@ -912,6 +912,200 @@ ice_vtx(volatile struct ice_tx_desc *txdp, struct rte_mbuf **pkt,
  	}
  }
  
@@ -121,7 +120,7 @@ index 0c54b325c6..b7412534ac 100644
 +}
 +
 +static __rte_always_inline void
-+ice_vts(volatile struct ice_ts_desc *ts, struct rte_mbuf **pkt,
++ice_vts8(volatile struct ice_ts_desc *ts, struct rte_mbuf **pkt,
 +	uint16_t nb_pkts, uint16_t tx_tail, uint16_t nb_tx_desc,
 +	int ts_offset)
 +{
@@ -165,6 +164,77 @@ index 0c54b325c6..b7412534ac 100644
 +				ts_offset);
 +}
 +
++static __rte_always_inline void
++ice_vts(volatile struct ice_ts_desc *ts, struct rte_mbuf **pkt,
++	uint16_t nb_pkts, uint16_t tx_tail, uint16_t nb_tx_desc,
++	int ts_offset)
++{
++	uint16_t tx_id;
++
++	for (; nb_pkts > 15; ts += 16, pkt += 16, nb_pkts -= 16,
++			tx_tail += 16) {
++		tx_id = tx_tail + 16;
++		uint32_t ts_dsc15 = ice_get_ts_queue_desc(pkt[15],
++						tx_id, nb_tx_desc, ts_offset);
++		tx_id = tx_tail + 15;
++		uint32_t ts_dsc14 = ice_get_ts_queue_desc(pkt[14],
++						tx_id, nb_tx_desc, ts_offset);
++		tx_id = tx_tail + 14;
++		uint32_t ts_dsc13 = ice_get_ts_queue_desc(pkt[13],
++						tx_id, nb_tx_desc, ts_offset);
++		tx_id = tx_tail + 13;
++		uint32_t ts_dsc12 = ice_get_ts_queue_desc(pkt[12],
++						tx_id, nb_tx_desc, ts_offset);
++		tx_id = tx_tail + 12;
++		uint32_t ts_dsc11 = ice_get_ts_queue_desc(pkt[11],
++						tx_id, nb_tx_desc, ts_offset);
++		tx_id = tx_tail + 11;
++		uint32_t ts_dsc10 = ice_get_ts_queue_desc(pkt[10],
++						tx_id, nb_tx_desc, ts_offset);
++		tx_id = tx_tail + 10;
++		uint32_t ts_dsc9 = ice_get_ts_queue_desc(pkt[9],
++						tx_id, nb_tx_desc, ts_offset);
++		tx_id = tx_tail + 9;
++		uint32_t ts_dsc8 = ice_get_ts_queue_desc(pkt[8],
++						tx_id, nb_tx_desc, ts_offset);
++		tx_id = tx_tail + 8;
++		uint32_t ts_dsc7 = ice_get_ts_queue_desc(pkt[7],
++						tx_id, nb_tx_desc, ts_offset);
++		tx_id = tx_tail + 7;
++		uint32_t ts_dsc6 = ice_get_ts_queue_desc(pkt[6],
++						tx_id, nb_tx_desc, ts_offset);
++		tx_id = tx_tail + 6;
++		uint32_t ts_dsc5 = ice_get_ts_queue_desc(pkt[5],
++						tx_id, nb_tx_desc, ts_offset);
++		tx_id = tx_tail + 5;
++		uint32_t ts_dsc4 = ice_get_ts_queue_desc(pkt[4],
++						tx_id, nb_tx_desc, ts_offset);
++		tx_id = tx_tail + 4;
++		uint32_t ts_dsc3 = ice_get_ts_queue_desc(pkt[3],
++						tx_id, nb_tx_desc, ts_offset);
++		tx_id = tx_tail + 3;
++		uint32_t ts_dsc2 = ice_get_ts_queue_desc(pkt[2],
++						tx_id, nb_tx_desc, ts_offset);
++		tx_id = tx_tail + 2;
++		uint32_t ts_dsc1 = ice_get_ts_queue_desc(pkt[1],
++						tx_id, nb_tx_desc, ts_offset);
++		tx_id = tx_tail + 1;
++		uint32_t ts_dsc0 = ice_get_ts_queue_desc(pkt[0],
++						tx_id, nb_tx_desc, ts_offset);
++		__m512i desc0_15 = _mm512_set_epi32(ts_dsc15, ts_dsc14,
++						ts_dsc13, ts_dsc12, ts_dsc11, ts_dsc10,
++						ts_dsc9, ts_dsc8, ts_dsc7, ts_dsc6,
++						ts_dsc5, ts_dsc4, ts_dsc3, ts_dsc2,
++						ts_dsc1, ts_dsc0);
++		_mm512_storeu_si512(RTE_CAST_PTR(void *, ts), desc0_15);
++	}
++
++	/* do any last ones */
++	if (nb_pkts)
++		ice_vts8(ts, pkt, nb_pkts, tx_tail, nb_tx_desc,
++				ts_offset);
++}
++
 +static __rte_always_inline uint16_t
 +ice_xmit_fixed_ts_burst_vec_avx512(struct ci_tx_queue *txq,
 +				struct rte_mbuf **tx_pkts, uint16_t nb_pkts,
@@ -202,9 +272,9 @@ index 0c54b325c6..b7412534ac 100644
 +}
 +
  static __rte_always_inline uint16_t
- ice_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
- 			      uint16_t nb_pkts, bool offload)
-@@ -855,7 +978,7 @@ ice_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
+ ice_xmit_fixed_burst_vec_avx512(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 				uint16_t nb_pkts, bool do_offload)
+@@ -919,7 +1113,7 @@ ice_xmit_fixed_burst_vec_avx512(void *tx_queue, struct rte_mbuf **tx_pkts,
  	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
  	volatile struct ice_tx_desc *txdp;
  	struct ci_tx_entry_vec *txep;
@@ -213,7 +283,7 @@ index 0c54b325c6..b7412534ac 100644
  	uint64_t flags = ICE_TD_CMD;
  	uint64_t rs = ICE_TX_DESC_CMD_RS | ICE_TD_CMD;
  
-@@ -875,6 +998,10 @@ ice_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
+@@ -940,6 +1134,10 @@ ice_xmit_fixed_burst_vec_avx512(void *tx_queue, struct rte_mbuf **tx_pkts,
  
  	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_pkts);
  
@@ -224,7 +294,7 @@ index 0c54b325c6..b7412534ac 100644
  	n = (uint16_t)(txq->nb_tx_desc - tx_id);
  	if (nb_commit >= n) {
  		ci_tx_backlog_entry_vec(txep, tx_pkts, n);
-@@ -910,7 +1037,12 @@ ice_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
+@@ -975,7 +1173,12 @@ ice_xmit_fixed_burst_vec_avx512(void *tx_queue, struct rte_mbuf **tx_pkts,
  
  	txq->tx_tail = tx_id;
  
@@ -238,32 +308,6 @@ index 0c54b325c6..b7412534ac 100644
  
  	return nb_pkts;
  }
-diff --git a/drivers/net/intel/ice/ice_rxtx_vec_common.h b/drivers/net/intel/ice/ice_rxtx_vec_common.h
-index 7933c26366..9166a0408a 100644
---- a/drivers/net/intel/ice/ice_rxtx_vec_common.h
-+++ b/drivers/net/intel/ice/ice_rxtx_vec_common.h
-@@ -215,4 +215,21 @@ ice_txd_enable_offload(struct rte_mbuf *tx_pkt,
- 
- 	*txd_hi |= ((uint64_t)td_cmd) << ICE_TXD_QW1_CMD_S;
- }
-+
-+static inline uint32_t
-+ice_get_ts_queue_desc(struct rte_mbuf *pkt, uint16_t tx_tail,
-+					uint16_t nb_tx_desc, int ts_offset)
-+{
-+	uint64_t txtime;
-+	uint32_t tstamp, ts_desc;
-+
-+	tx_tail = (tx_tail > nb_tx_desc) ? (tx_tail - nb_tx_desc) :
-+			tx_tail;
-+	txtime = *RTE_MBUF_DYNFIELD(pkt, ts_offset, uint64_t *);
-+	tstamp = (uint32_t)(txtime % NS_PER_S) >>
-+			ICE_TXTIME_CTX_RESOLUTION_128NS;
-+	ts_desc = rte_cpu_to_le_32(FIELD_PREP(ICE_TXTIME_TX_DESC_IDX_M,
-+			(tx_tail)) | FIELD_PREP(ICE_TXTIME_STAMP_M, tstamp));
-+	return ts_desc;
-+}
- #endif
 -- 
 2.43.0
 
