@@ -2,53 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93ABBC5AD49
-	for <dpdk-dev@archiver.kernel.org>; Sun,  8 Jun 2025 19:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A375DC5AD49
+	for <dpdk-dev@archiver.kernel.org>; Sun,  8 Jun 2025 19:46:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D654E4042F;
-	Sun,  8 Jun 2025 21:42:14 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
- by mails.dpdk.org (Postfix) with ESMTP id 6B58A402EE
- for <dev@dpdk.org>; Sun,  8 Jun 2025 21:42:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1749411731; x=1780947731;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=56I87qJ2bxg+fjCYVXA+IETtdC0dlOyYsL/UKX6A6MY=;
- b=lzf7xHSrgovsbwJ5f56NV23GPU3W06NiitWRxCe1kxwL0401b/OCLZzU
- Y62Ux+3pCon4zKjl/okP2g5LI5H8Sg7Ry2wgklgLip0dSyra3TT10enIq
- xTm4FIZi/v4ZJur2+nQc4QObxIqE1HoQCi6iQcqBsnFYTeizds50H5uBE
- 3j72HJ6ZeLYgMGcTo37D9eaFF0JMUY7mHJcvFGVRwSQbp5amN42OtoBnp
- 13vWXzOHkE65pTJ18LXmwxghhhlmNkZH29tf+zpf/SgRloii1CHbzc/Qh
- Az7KDhVvA6VOGuxNeTE1CyMouc7M/ThhXoyFtS5mRuhi9travaGf5ED8U w==;
-X-CSE-ConnectionGUID: PASYtx+NRhm9r/AaVCwS0g==
-X-CSE-MsgGUID: JCcaPtzfQ42zSDbJp+hXUg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11458"; a="61757554"
-X-IronPort-AV: E=Sophos;i="6.16,221,1744095600"; d="scan'208";a="61757554"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
- by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Jun 2025 12:42:10 -0700
-X-CSE-ConnectionGUID: JOfG2vKrROifw1PklK4vTQ==
-X-CSE-MsgGUID: 7kN3wzCyS1WT1jisH/gkag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,221,1744095600"; d="scan'208";a="146847529"
-Received: from unknown (HELO sprmax9..) ([10.138.182.122])
- by fmviesa010.fm.intel.com with ESMTP; 08 Jun 2025 12:42:09 -0700
-From: Soumyadeep Hore <soumyadeep.hore@intel.com>
-To: dev@dpdk.org,
-	bruce.richardson@intel.com
-Cc: aman.deep.singh@intel.com,
-	manoj.kumar.subbarao@intel.com
-Subject: [PATCH v3 6/6] doc: announce TxPP support for E830 adapters
-Date: Sun,  8 Jun 2025 11:32:23 +0000
-Message-ID: <20250608113223.487043-7-soumyadeep.hore@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250608113223.487043-1-soumyadeep.hore@intel.com>
-References: <20250606211947.473544-2-soumyadeep.hore@intel.com>
- <20250608113223.487043-1-soumyadeep.hore@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 7C8F7402D5;
+	Sun,  8 Jun 2025 21:46:27 +0200 (CEST)
+Received: from fout-b8-smtp.messagingengine.com
+ (fout-b8-smtp.messagingengine.com [202.12.124.151])
+ by mails.dpdk.org (Postfix) with ESMTP id 2E8CD4026B;
+ Sun,  8 Jun 2025 21:46:26 +0200 (CEST)
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal
+ [10.202.2.52])
+ by mailfout.stl.internal (Postfix) with ESMTP id 4FB85114010E;
+ Sun,  8 Jun 2025 15:46:25 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-12.internal (MEProxy); Sun, 08 Jun 2025 15:46:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1749411985;
+ x=1749498385; bh=zlvhqFvGwyW/vP5LWN5NmVHRfCfbRbooOwhN/9LvZIE=; b=
+ Mya4n7VvU5NjmcGvoZbIvQVnpXkZ4MbgIrTPr6TlGHmcynnjl0Bv0blnIzGqKRSQ
+ afMmZEsHN0R2IHCE6Z//QupJYNe0GUv593dChIOR5l77O0OZdpljb4JLRwlIGERn
+ L7/xgf0NUymD6tLp4Jmx/CUsDwPURW6+Yhv3GhqJY2LTXG/0sU1Kdks/II0Sbi0G
+ eI+eJ/6ZtUTgc96fGvAdZf9V45nHGVJ+YjnIelPCQraeeyhyKqk/e0a6F47Am/n6
+ CE4EdB2XjASnYznoK345aIoCWT42jjeUbbeA9azzaxX7yKv5c9Xg3e8RNIVJrsVK
+ G2YhtY/WwgYjZgsR4U2JBg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749411985; x=
+ 1749498385; bh=zlvhqFvGwyW/vP5LWN5NmVHRfCfbRbooOwhN/9LvZIE=; b=X
+ 55pfjmDOf0GiXEiiR1q5PQFJSD6FXrDyiUOi1KOMXMPvHOZzj1TcKuhcj3wt6Z95
+ c96hd8bAuXbp79g5yCR1Si+Fcv1Bj1PQYkavCpie6AWRK9q8FLNR078oSXuCb8vx
+ 82GdGHidKndgdbNY4fh+R9J+Yn+fsnBO5wOfNe00xJwYt4HWGISsVRbbSHaDmBPQ
+ H+j+RIadQFiTfCobmuXSmhpKkgEWakFJ8IZTm3F3YVxT5RBJ3IGqgUqjmqpwGRWA
+ /TG27gyTITFU/WcGrbIzTxm+vU3PC/LCNNU0MVrR6uYT61yvGQvK+Do6vh0YChBP
+ tIat7oJtj6AuGcqr/J8UQ==
+X-ME-Sender: <xms:kOhFaG96nKFIu3pB0YY63Z7VnA1vmhZxsSbt_0tucjcdMW6mOgRATQ>
+ <xme:kOhFaGv36c2zUWWN47umIoV_soetw8n7NQs-VsxfPS-eC2kjlyM4DNkA55nccGhKC
+ KqLgw9zXZyuMXC_Ew>
+X-ME-Received: <xmr:kOhFaMDS7LiX5y31OknXqY_ey-CVtV2UNOZtwVwB5fjlmNEJu27Gp5iWOqQg1xwpJYU8fFo9569EIj0KAFVTLMXknw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdekvdelucetufdoteggodetrfdotf
+ fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+ rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+ htshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeen
+ ucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrg
+ hlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeek
+ ueevjeffjeegtdeggeekgfdvuefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurf
+ grrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhn
+ sggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvih
+ gurdhmrghrtghhrghnugesrhgvughhrghtrdgtohhmpdhrtghpthhtohepuggvvhesughp
+ ughkrdhorhhgpdhrtghpthhtohepsghruhgtvgdrrhhitghhrghrughsohhnsehinhhtvg
+ hlrdgtohhmpdhrtghpthhtohepshhtrggslhgvseguphgukhdrohhrghdprhgtphhtthho
+ pehrohhrvghtiihlrgeslhhinhhugidrmhhitghrohhsohhfthdrtghomhdprhgtphhtth
+ hopegrnhgrthholhihrdgsuhhrrghkohhvsehinhhtvghlrdgtohhm
+X-ME-Proxy: <xmx:kOhFaOenEZAusz14vzBV2RQsfwA_zWZQqCbpBJ3zP4Nzgy5PIlvnbA>
+ <xmx:kOhFaLPLlYt74ca-BgBAUFGFEgDNE9iRyoSrh_pQnZUws0cveRfD4g>
+ <xmx:kOhFaIkptYdYQ5a5siYszL9r2LKjL7rlZ0C2ug-BrU5-zQQ6oPgGpQ>
+ <xmx:kOhFaNtWXRYLuedUh7MQCU6UDFRDc9KEagpGD0PaP0d2xDph3hvgdA>
+ <xmx:kehFaDUS8baB21IQWPRq9UCYRtOgw29CA9egBpr0sSuMWQ__FPzfmCYQ>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 8 Jun 2025 15:46:23 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, bruce.richardson@intel.com, stable@dpdk.org,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>,
+ "Burakov, Anatoly" <anatoly.burakov@intel.com>
+Subject: Re: [PATCH] eal: warn if no lcore is available
+Date: Sun, 08 Jun 2025 21:46:22 +0200
+Message-ID: <5304331.aV6nBDHxoP@thomas>
+In-Reply-To: <cad488ce-440c-4f43-a55b-39e16e17f4ee@intel.com>
+References: <20250508051915.226465-2-david.marchand@redhat.com>
+ <cad488ce-440c-4f43-a55b-39e16e17f4ee@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -62,40 +94,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-E830 adapters currently support Tx Time based queues.
+08/05/2025 13:23, Burakov, Anatoly:
+> On 5/8/2025 7:19 AM, David Marchand wrote:
+> > On systems with more cpu than RTE_MAX_LCORE, starting DPDK with
+> > cores >= RTE_MAX_LCORE ends up with an ambiguous error log.
+> > 
+> > Example with RTE_MAX_LCORE=8:
+> > $ taskset -c 8 ./build/app/dpdk-testpmd
+> > EAL: Detected CPU lcores: 8
+> > EAL: Detected NUMA nodes: 1
+> > EAL: Invalid 'command line' arguments.
+> > EAL: Error - exiting with code: 1
+> > Cannot init EAL: Invalid argument
+> > 
+> > Add a better hint to help the user.
+> > 
+> > Fixes: 2eba8d21f3c9 ("eal: restrict cores auto detection")
+> > Cc: stable@dpdk.org
+> > 
+> > Signed-off-by: David Marchand <david.marchand@redhat.com>
+> 
+> Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
 
-Signed-off-by: Soumyadeep Hore <soumyadeep.hore@intel.com>
----
- doc/guides/nics/ice.rst | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Applied, thanks.
 
-diff --git a/doc/guides/nics/ice.rst b/doc/guides/nics/ice.rst
-index 77985ae5a2..73c5477946 100644
---- a/doc/guides/nics/ice.rst
-+++ b/doc/guides/nics/ice.rst
-@@ -415,6 +415,22 @@ and add the ``--force-max-simd-bitwidth=64`` startup parameter to disable vector
- 
-    examples/dpdk-ptpclient -c f -n 3 -a 0000:ec:00.1 --force-max-simd-bitwidth=64 -- -T 1 -p 0x1 -c 1
- 
-+Tx Packet Pacing
-+~~~~~~~~~~~~~~~~
-+
-+In order to deliver the timestamp with every packet, a special type of Tx Host Queue is
-+used, the TS Queue. This feature is currently supported only in E830 adapters.
-+
-+The tx_offload ``RTE_ETH_TX_OFFLOAD_SEND_ON_TIMESTAMP`` is used to enable the feature.
-+For example:
-+
-+.. code-block:: console
-+
-+   dpdk-testpmd -a 0000:31:00.0 -c f -n 4 -- -i --tx-offloads=0x200000
-+   set fwd txonly
-+   set txtimes 30000000,1000000
-+   start
-+
- Generic Flow Support
- ~~~~~~~~~~~~~~~~~~~~
- 
--- 
-2.43.0
+
 
