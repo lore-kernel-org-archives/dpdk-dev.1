@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 624A9C5B552
-	for <dpdk-dev@archiver.kernel.org>; Sun,  8 Jun 2025 16:49:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C79C5AD49
+	for <dpdk-dev@archiver.kernel.org>; Sun,  8 Jun 2025 17:53:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 25A7F402A9;
-	Sun,  8 Jun 2025 18:49:22 +0200 (CEST)
-Received: from fhigh-a3-smtp.messagingengine.com
- (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
- by mails.dpdk.org (Postfix) with ESMTP id EAEC440269;
- Sun,  8 Jun 2025 18:49:19 +0200 (CEST)
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal
- [10.202.2.41])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 3DB5511400E6;
- Sun,  8 Jun 2025 12:49:19 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-01.internal (MEProxy); Sun, 08 Jun 2025 12:49:19 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 820D5402A9;
+	Sun,  8 Jun 2025 19:53:06 +0200 (CEST)
+Received: from fout-a2-smtp.messagingengine.com
+ (fout-a2-smtp.messagingengine.com [103.168.172.145])
+ by mails.dpdk.org (Postfix) with ESMTP id E929940269
+ for <dev@dpdk.org>; Sun,  8 Jun 2025 19:53:04 +0200 (CEST)
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal
+ [10.202.2.43])
+ by mailfout.phl.internal (Postfix) with ESMTP id 46B2B138011B;
+ Sun,  8 Jun 2025 13:53:04 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-03.internal (MEProxy); Sun, 08 Jun 2025 13:53:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1749401359;
- x=1749487759; bh=5YGZyrwOcNpIP9+fKP0j3aGbXCUqDcOKeMDRSNtNs/w=; b=
- jnDGkPNZJoHwYqJW3jFx5c5XwNN2wsOe0ucSQrpoFlHFwPtN9ZrGkubk/0tvEtyZ
- hNUPdciQp3AA4g65ko0eRh8bSQe8nnNdhqqUR1QhsH/7VJIix4AiDHO3t1Zh02jy
- y2+MMQW/pwM1hLu+USzGUIS9uR65lE1A4DTnR5t2lHIltYmgsF4EqVWWPkAqmzFZ
- 5owyKPcPauY8I0bJ5B4rU2JkQOiKgLqMESEPKrdY3Qp6HBI359UI6m4wPfjq74Mw
- 2CQTeiALcHEoPof82owxJKsMHenAiaKDePlnTi9zHjAsUoI+WCIPiLqM8XhuVZPk
- t/wBXDmMIo47v9tzxaVLQw==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1749405184;
+ x=1749491584; bh=0biidSVZTkuBdXLZZKKwzEmJ/px6oTKNQwIbikNmfw8=; b=
+ VrywIFGjZ7L/2xiqCyGcWTgBOBVloUV1CkYJuv8cY9QFzdAKjN0/BBlhcjEKDuMk
+ 4LqCJlSi3LwsUrKafELDgQvPWopiRuv/JJppvnbzFCFaar+KmeWpulJVTwZ52s2U
+ gULS8/pgdgz5zvfiBbS42xbzC7RGViBUOcBSvCFkV8EXThXpnXOkJZaG99XUV97g
+ vcf4jKAzjSrd6gbMvwH6KVucVRoMTlqnKaMbo6SSQXNkiWyFqdTHTRzgwBsAneSQ
+ cQk7mqv0ziqSrbtpP9f9IYidmlpj9/sBZPtGS7NVGH9h9Sv+cSL3l1kRqqUfNRcU
+ KpKrIwAtsHmoUzQOFvPqjw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749401359; x=
- 1749487759; bh=5YGZyrwOcNpIP9+fKP0j3aGbXCUqDcOKeMDRSNtNs/w=; b=b
- iNtNqk6w1MXI4Di++ADrJpNgm7KSvaucCnHcQVo26tiHwV4/KAEf6EpkIiaUUNPI
- 2CtqOuHHhGqoWvUNeRamg/xkdkCJ8LkbhLEi9Hgd+RFoG/c38rqFgIakaZbIVz7y
- mKuP+fx07OADxaf0hvxZCJSu4QfqaF/mYLSHPAyY+Qh6nTZi0wlbLJndkT8NSDDk
- ueEAJ3DwQJ0DZ5VO/kUFXFVhl+PVddfUNE3RjcMQun1sNUBzJayWAj3EXGmOCZN4
- Wz3FXQP3IcRUvM8rdFRcPro7DjxIGJ9PP5X7cw0iMAOOkIgGxQImEoCOsZlSK1w1
- gJtI873tGnpIPCePVZc/A==
-X-ME-Sender: <xms:Db9FaCzoX1kpLYxMLfWKvOFXYV1KjbkjgPxdPbez4NiPChMqeYPbIA>
- <xme:Db9FaOR-87CykUAFoealV410y_sEfHdttzNTWr6Y4z1iryh5qZ9eYHp_9guvFJJfJ
- _lgmLKocgF2A3_MQA>
-X-ME-Received: <xmr:Db9FaEU3PsUzOqTjVv3IL8lspKNHcd8diPif3ddZArmlR49hfHz9bTLQlnJHsJpOzS0-plE2jBrHF7GBPIH6bRdNYQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdekudduucetufdoteggodetrfdotf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749405184; x=
+ 1749491584; bh=0biidSVZTkuBdXLZZKKwzEmJ/px6oTKNQwIbikNmfw8=; b=c
+ wHeXC2DGdgpv50ZnNV7QVmK0kWaH0jQIaGDLlknYB0Jm9E/L0ZBLw7yJ0lyDNJiD
+ NkxW8Ed+1+AwiCUUCERJyyy+zb78z2zx+0Zf6OCx2cfEWV2LwAy5RX5f+cNgZRXN
+ kOiyBL6s9tgRwaxRVTTc0J54nV7iEhHFXeMV8ED15eQjqQAeEEmciBUtoBlaleUe
+ aBEXbSzpVHvIuZBGf1fE4ySgKDCyneaHr0yoTl1ua1sH++9DciZ7HnfR1k0xzC8D
+ 06XHe6Oe3+gLskEBxWGaxHEFaNOlOwh/CLQmqFYAu92DaTiO02Ldpt879suPXrxF
+ at3Vz22IF3w/PRgwytp5w==
+X-ME-Sender: <xms:_81FaF-n4Zcbp-oNd90g9wFG_yc7MBpnK5bFyaCP5JQ8A2Crwmm87A>
+ <xme:_81FaJu5_VxSzWJsnxzlUKB8Jzqy1YWQnsF5kRQBfPJU2EaDM3v6ynGthIJzOMzTM
+ tTazVtXHvdqRnhpWw>
+X-ME-Received: <xmr:_81FaDChDQljvI_ZaAh7SJA2pJP4OIJAzGbmwTREM50I_q3qPDg8pShmEA4M70K6Fnj_fkvxA6qfPxa_ktimmxflDg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdekudekucetufdoteggodetrfdotf
  fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
  rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
  htshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthhqredttddtjeen
@@ -53,32 +53,30 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdekudduucetufdoteggod
  hlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeegtddtleejjeegffekkeektdejvedt
  heevtdekiedvueeuvdeiuddvleevjeeujeenucevlhhushhtvghrufhiiigvpedtnecurf
  grrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhn
- sggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsuhhnhi
- grnhhgrdifuhesjhgrghhurghrmhhitghrohdrtghomhdprhgtphhtthhopeguvghvsegu
- phgukhdrohhrghdprhgtphhtthhopehsthgrsghlvgesughpughkrdhorhhgpdhrtghpth
- htohepshhtvghphhgvnhesnhgvthifohhrkhhplhhumhgsvghrrdhorhhgpdhrtghpthht
- ohepfhgvrhhruhhhrdihihhgihhtsegrmhgurdgtohhmpdhrtghpthhtoheprghnughrvg
- ifrdhrhigstghhvghnkhhosehokhhtvghtlhgrsghsrdhruhdprhgtphhtthhopehmsges
- shhmrghrthhshhgrrhgvshihshhtvghmshdrtghomh
-X-ME-Proxy: <xmx:Db9FaIjypO-QLWsHE5UujOwyWu08QZkkeQy8P7L65CT5keprfu6qbw>
- <xmx:Db9FaEA4xfzkjFWWGLUJYiTXHeMktW0DprIjO_iulI2lBK1GIymacQ>
- <xmx:Db9FaJIPaaxaORMNisxMz5GmcMqU5w6-BRW7sYc6bhKzq5JjtM4Lxw>
- <xmx:Db9FaLBe7jVZ4ndj_U0HES3kmbrNNz3-Xl8fmH3rpWsg0SNcFPJAnw>
- <xmx:D79FaMXH0OFa_apmoBTFJmUoIvmotWzX3bmX5LLSYFrjk5F_-bohKouc>
+ sggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmsgessh
+ hmrghrthhshhgrrhgvshihshhtvghmshdrtghomhdprhgtphhtthhopegsrhhutggvrdhr
+ ihgthhgrrhgushhonhesihhnthgvlhdrtghomhdprhgtphhtthhopeguvghvseguphgukh
+ drohhrghdprhgtphhtthhopegrnhgurhgvfidrrhihsggthhgvnhhkohesohhkthgvthhl
+ rggsshdrrhhu
+X-ME-Proxy: <xmx:_81FaJctwpaMa0Ag2hrKRLd1kdSMfotejbJi0kLzUoadoTx1Xc29Kg>
+ <xmx:_81FaKPXGtvl8acBmwzS-paJANHWSqHrVAaGhEacCkAHKoW44rmZ5w>
+ <xmx:_81FaLneVA1EmkWal4faKz06T-2TUzLTJw290dpRtXX3m9_Hq6EBsg>
+ <xmx:_81FaEucZiCZBUCJzjEcIAppoiXRkckL4xQp-uBxcuA__gxPc8BGWg>
+ <xmx:AM5FaDMzFf3Q-LYsYvFtXi1Sv7W4SVOa1OnBpxDH2H8lCREXchRmsVWt>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 8 Jun 2025 12:49:16 -0400 (EDT)
+ 8 Jun 2025 13:53:02 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Sunyang Wu <sunyang.wu@jaguarmicro.com>
-Cc: dev@dpdk.org, stable@dpdk.org, stephen@networkplumber.org,
- ferruh.yigit@amd.com, andrew.rybchenko@oktetlabs.ru,
- Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Subject: Re: [PATCH v3] ethdev: fix the bug where the flag variables are
- assigned
-Date: Sun, 08 Jun 2025 18:49:14 +0200
-Message-ID: <5605516.V25eIC5XRa@thomas>
-In-Reply-To: <20250522074242.30376-1-sunyang.wu@jaguarmicro.com>
-References: <20250522074242.30376-1-sunyang.wu@jaguarmicro.com>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>, dev@dpdk.org,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: Re: [PATCH] mempool: micro optimizations
+Date: Sun, 08 Jun 2025 19:53:00 +0200
+Message-ID: <3772522.QkHrqEjB74@thomas>
+In-Reply-To: <e7ff43da-001a-483a-b62c-e819944864ff@oktetlabs.ru>
+References: <20250226155923.128859-1-mb@smartsharesystems.com>
+ <Z-WHzgriLwWC_3Mu@bricha3-mobl1.ger.corp.intel.com>
+ <e7ff43da-001a-483a-b62c-e819944864ff@oktetlabs.ru>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
@@ -95,32 +93,68 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-22/05/2025 09:42, Sunyang Wu:
-> Set the values of the promiscuous and all_multicast variables
-> according to the return value.
+30/03/2025 10:09, Andrew Rybchenko:
+> On 3/27/25 20:15, Bruce Richardson wrote:
+> > On Wed, Feb 26, 2025 at 03:59:22PM +0000, Morten Br=C3=B8rup wrote:
+> >> The comparisons lcore_id < RTE_MAX_LCORE and lcore_id !=3D LCORE_ID_AN=
+Y are
+> >> equivalent, but the latter compiles to fewer bytes of code space.
+> >> Similarly for lcore_id >=3D RTE_MAX_LCORE and lcore_id =3D=3D LCORE_ID=
+_ANY.
+> >>
+> >> The rte_mempool_get_ops() function is also used in the fast path, so
+> >> RTE_VERIFY() was replaced by RTE_ASSERT().
+> >>
+> >> Compilers implicitly consider comparisons of variable =3D=3D 0 likely,=
+ so
+> >> unlikely() was added to the check for no mempool cache (mp->cache_size=
+ =3D=3D
+> >> 0) in the rte_mempool_default_cache() function.
+> >>
+> >> The rte_mempool_do_generic_put() function for adding objects to a memp=
+ool
+> >> was refactored as follows:
+> >> - The comparison for the request itself being too big, which is consid=
+ered
+> >>    unlikely, was moved down and out of the code path where the cache h=
+as
+> >>    sufficient room for the added objects, which is considered the most
+> >>    likely code path.
+> >> - Added __rte_assume() about the cache length, size and threshold, for
+> >>    compiler optimization when "n" is compile time constant.
+> >> - Added __rte_assume() about "ret" being zero, so other functions using
+> >>    the value returned by this function can be potentially optimized by=
+ the
+> >>    compiler; especially when it merges multiple sequential code paths =
+of
+> >>    inlined code depending on the return value being either zero or
+> >>    negative.
+> >> - The refactored source code (with comments) made the separate comment
+> >>    describing the cache flush/add algorithm superfluous, so it was rem=
+oved.
+> >>
+> >> A few more likely()/unlikely() were added.
+> >=20
+> > In general not a big fan of using likely/unlikely, but if they give a p=
+erf
+> > benefit, we should probably take them.
+> >=20
+> > Few more comments inline below.
+> >=20
+> >> A few comments were improved for readability.
+> >>
+> >> Some assertions, RTE_ASSERT(), were added. Most importantly to assert =
+that
+> >> the return values of the mempool drivers' enqueue and dequeue operatio=
+ns
+> >> are API compliant, i.e. 0 (for success) or negative (for failure), and
+> >> never positive.
+> >>
+> >> Signed-off-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+> >=20
+> > Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 >=20
-> Fixes: af75078fece3 ("first public release")
-
-This is reset to 0 since day 1, so next root cause is not needed.
-
-> Fixes: de5ccf0775ae ("ethdev: do nothing if all-multicast mode is
-> applied again")
-> Cc: stable@dpdk.org
->=20
-> Signed-off-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
-> Signed-off-by: Sunyang Wu <sunyang.wu@jaguarmicro.com>
-
-Acked-by: Thomas Monjalon <thomas@monjalon.net>
-
-> -	dev->data->promiscuous =3D 0;
->  	diag =3D dev->dev_ops->promiscuous_disable(dev);
-> -	if (diag !=3D 0)
-> -		dev->data->promiscuous =3D 1;
-> +	if (!diag)
-> +		dev->data->promiscuous =3D 0;
-
-Updated the commit log to explain the issue,
-and changed the check to compare diag with explicit 0 for success.
+> Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
 
 Applied, thanks.
 
