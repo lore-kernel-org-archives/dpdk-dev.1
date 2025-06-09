@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54201C61CE8
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 15:39:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1AF5C61CE8
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 15:39:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 201F1427B1;
-	Mon,  9 Jun 2025 17:38:08 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0AB80427B6;
+	Mon,  9 Jun 2025 17:38:09 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id CE3754279A
- for <dev@dpdk.org>; Mon,  9 Jun 2025 17:38:05 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 187A2427A1
+ for <dev@dpdk.org>; Mon,  9 Jun 2025 17:38:06 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1749483486; x=1781019486;
+ t=1749483487; x=1781019487;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=TTMLDqKqRhp4/hssFeJAMZsGfC8mQkjWRlun1ysqRzI=;
- b=XuYjexsoG4zhkZO7bipXs1u0mgmnnIRipHYGtTR4sk7DDVhAxqmpKCRg
- tRXo6EB1m5krEa57IFJdwydiB3FTihEpX+JjrwmqML8ug2GY5wi3JbwDX
- eMp6mkAgDDGuS0ruHZmEGE4rlq+gkOd5/7f8pi1ZRo7goRpSTNSfR9jsm
- otZMBBN5JaTcLhuZp8Cy4A1aAK6RTt4BtLI6zrxgV89RrIv16f6xd1pJz
- Mtc3tabr79BT+o9QEdKGyZs3GwKrCEi0AyTDqm7Oud6LP90GbrsLFgUGY
- x8luNVdGc+qPMjnLj9qaz2CS0dGY4SGpuXA/8moj48HOqazSkHpV7rn4C Q==;
-X-CSE-ConnectionGUID: m11tmkuBTcSIHnkM/8PPFQ==
-X-CSE-MsgGUID: KCKrjEE8T4yYymRZl2PKLg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11459"; a="69012179"
-X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; d="scan'208";a="69012179"
+ bh=zR2iShE9V074Wy0A2hrbtfLO8z6qRHJT4gU7Qe2ZqOE=;
+ b=Rt9vbzlzuGnVUidYm7VZ0Vff93A9rC4Oyl+FJQGAJ0p9ovqF9AHEo0Ce
+ /c4TMaixzQntgSVwphCsnhblVYpvWki1+MPFMQEaToUHu7vVfKVIYP4on
+ /65yZPzClKkRe4otCSYGSJJ5difoNvsO4jvq5eVNMz5zrW7v36vUE4sgY
+ fgBGpBhcAyyt32VeS0zNrOLDSk7q8FDojDL/3cBXsNF4jtaQjM7ncx/Cy
+ hDqS/ZIe2knEah3bIVTI4cipEUgZnbccUdu4M1JypZ2Zh0i2eNzRYC8F+
+ 9naVp7ZIU+H4Z1DHxRa86jin2hIxAuzrazRD6wHtHF5NLWDuJMIABniGZ g==;
+X-CSE-ConnectionGUID: u7j8OrQCSyGD06kwLxsSBw==
+X-CSE-MsgGUID: 3sDKc66yTw+It18J4WMetw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11459"; a="69012183"
+X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; d="scan'208";a="69012183"
 Received: from fmviesa005.fm.intel.com ([10.60.135.145])
  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Jun 2025 08:38:06 -0700
-X-CSE-ConnectionGUID: 08Z2prqXQUOeMTFVDL51ag==
-X-CSE-MsgGUID: cNL9amCSTVOMwAeZoGBIAQ==
+ 09 Jun 2025 08:38:07 -0700
+X-CSE-ConnectionGUID: 4rmphkBEQO6yxYbxDzrQtQ==
+X-CSE-MsgGUID: tdouAKq7S72blDAkz0IJTw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; d="scan'208";a="151419644"
+X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; d="scan'208";a="151419651"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa005.fm.intel.com with ESMTP; 09 Jun 2025 08:38:04 -0700
+ by fmviesa005.fm.intel.com with ESMTP; 09 Jun 2025 08:38:05 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 Cc: bruce.richardson@intel.com
-Subject: [PATCH v6 12/33] net/ixgbe: decouple scalar and vec rxq free mbufs
-Date: Mon,  9 Jun 2025 16:37:10 +0100
-Message-ID: <738618797c9573e2946b20e87abcbefd4fcdc684.1749483382.git.anatoly.burakov@intel.com>
+Subject: [PATCH v6 13/33] net/ixgbe: rename vector txq free mbufs
+Date: Mon,  9 Jun 2025 16:37:11 +0100
+Message-ID: <8b66b094e3a32e39c031c1bdeb7d0ca7808c82ce.1749483382.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <cover.1749483381.git.anatoly.burakov@intel.com>
  <cover.1749483381.git.anatoly.burakov@intel.com>
@@ -61,63 +61,63 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, vector Rx queue release mbufs function is only called from
-inside the scalar variant. Decouple them to allow both to be defined
-separately from each other, and provide a common function that picks
-between the two when necessary.
+There is no reason why scalar and vector implementations of tx free mbufs
+function have to share the same name, in fact it is counter-productive
+because including `ixgbe_rxtx_vec_common.h` from `ixgbe_rxtx.c` will cause
+naming clashes. Rename the vector implementation to avoid naming clashes.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
 
 Notes:
-    v5 -> v6:
-    - Rename functions to _vec and _non_vec, and keep common name as is
-    
     v5:
-    - Add this commit
+    - Add this patch
 
- drivers/net/intel/ixgbe/ixgbe_rxtx.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h | 2 +-
+ drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c   | 2 +-
+ drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c    | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.c b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-index 0777f70a4b..0b949c3cfc 100644
---- a/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-@@ -2967,16 +2967,10 @@ ixgbe_free_sc_cluster(struct rte_mbuf *m)
- }
+diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
+index 018010820f..9e1abf4449 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
++++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
+@@ -12,7 +12,7 @@
+ #include "ixgbe_rxtx.h"
  
- static void __rte_cold
--ixgbe_rx_queue_release_mbufs(struct ixgbe_rx_queue *rxq)
-+ixgbe_rx_queue_release_mbufs_non_vec(struct ixgbe_rx_queue *rxq)
+ static __rte_always_inline int
+-ixgbe_tx_free_bufs(struct ci_tx_queue *txq)
++ixgbe_tx_free_bufs_vec(struct ci_tx_queue *txq)
  {
- 	unsigned i;
+ 	struct ci_tx_entry_vec *txep;
+ 	uint32_t status;
+diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c
+index f8916d44e8..3a0b2909a7 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c
++++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c
+@@ -583,7 +583,7 @@ ixgbe_xmit_fixed_burst_vec(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	nb_pkts = RTE_MIN(nb_pkts, txq->tx_rs_thresh);
  
--	/* SSE Vector driver has a different way of releasing mbufs. */
--	if (rxq->vector_rx) {
--		ixgbe_rx_queue_release_mbufs_vec(rxq);
--		return;
--	}
--
- 	if (rxq->sw_ring != NULL) {
- 		for (i = 0; i < rxq->nb_rx_desc; i++) {
- 			if (rxq->sw_ring[i].mbuf != NULL) {
-@@ -3003,6 +2997,15 @@ ixgbe_rx_queue_release_mbufs(struct ixgbe_rx_queue *rxq)
- 			}
- }
+ 	if (txq->nb_tx_free < txq->tx_free_thresh)
+-		ixgbe_tx_free_bufs(txq);
++		ixgbe_tx_free_bufs_vec(txq);
  
-+static void __rte_cold
-+ixgbe_rx_queue_release_mbufs(struct ixgbe_rx_queue *rxq)
-+{
-+	if (rxq->vector_rx)
-+		ixgbe_rx_queue_release_mbufs_vec(rxq);
-+	else
-+		ixgbe_rx_queue_release_mbufs_non_vec(rxq);
-+}
-+
- static void __rte_cold
- ixgbe_rx_queue_release(struct ixgbe_rx_queue *rxq)
- {
+ 	nb_commit = nb_pkts = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
+ 	if (unlikely(nb_pkts == 0))
+diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
+index 9417e5b11f..1e063bb243 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
++++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
+@@ -703,7 +703,7 @@ ixgbe_xmit_fixed_burst_vec(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	nb_pkts = RTE_MIN(nb_pkts, txq->tx_rs_thresh);
+ 
+ 	if (txq->nb_tx_free < txq->tx_free_thresh)
+-		ixgbe_tx_free_bufs(txq);
++		ixgbe_tx_free_bufs_vec(txq);
+ 
+ 	nb_commit = nb_pkts = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
+ 	if (unlikely(nb_pkts == 0))
 -- 
 2.47.1
 
