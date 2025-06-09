@@ -2,45 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9D46C5B552
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Jun 2025 06:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A26C5B552
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Jun 2025 06:57:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EF546402D4;
-	Tue, 10 Jun 2025 08:49:05 +0200 (CEST)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
- by mails.dpdk.org (Postfix) with ESMTP id 442AB40299
- for <dev@dpdk.org>; Tue, 10 Jun 2025 08:49:04 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.163.48])
- by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4bGfRp4TLLz1W3Ny;
- Tue, 10 Jun 2025 14:45:10 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 96AB0180087;
- Tue, 10 Jun 2025 14:49:01 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 10 Jun 2025 14:48:53 +0800
-Message-ID: <3051d7ed-ccc8-45c3-8e2e-d76efa1146c5@huawei.com>
-Date: Tue, 10 Jun 2025 14:48:53 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id A650A402D4;
+	Tue, 10 Jun 2025 08:57:40 +0200 (CEST)
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com
+ [209.85.216.41]) by mails.dpdk.org (Postfix) with ESMTP id D05AB40E34
+ for <dev@dpdk.org>; Mon,  9 Jun 2025 22:29:02 +0200 (CEST)
+Received: by mail-pj1-f41.google.com with SMTP id
+ 98e67ed59e1d1-3122368d7c4so3762653a91.1
+ for <dev@dpdk.org>; Mon, 09 Jun 2025 13:29:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1749500942; x=1750105742; darn=dpdk.org;
+ h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+ :date:message-id:reply-to;
+ bh=wOekSpd8ClCwf4Mo7V02NeYj7xJEFjlIJy4YnlFdOM8=;
+ b=dIFSwAgAhgB10DgvEebAi8X2lt9MDN3tIdkQNF9ErjaDz7e+h5tPV9/vOyKNT+VBIO
+ OLC0sr0YqLCFIdp6vVY0oOGX4GnXqCO9X/Wt0WYWwfbPRnqtJKulrDUPzXPOhHmBQsEd
+ riXHat/5VEOI0gtXQTpNYJVBP+AOD0lQ9qm7vcqlml5K/q1WPGQ4FpybPbTmihRpiWfJ
+ +32ml8qzGSVah/ctHduz15+ZcqpAfiRaUvcrD1xewhBzMgXuqA29DIbwqzgDfnM2NnsF
+ y3alhtXrsUsCewmUM2C+A9IjnvI/nxpOuYF90GIFjuRg4ZbHc72bjQYfuD1jpBuywYHa
+ 7MMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1749500942; x=1750105742;
+ h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=wOekSpd8ClCwf4Mo7V02NeYj7xJEFjlIJy4YnlFdOM8=;
+ b=QtRJMC/s6ZJNbl9MIXt6YXzAZXR1Xa3EgwKLP1BYNeVzzFX8hPEJNRiNjjv41iM3sI
+ JPMFvA7aOAo594t8AkXcRNFoOqSGEpJpnx6D5aWH+8MH7UBM3lR5HMWYY6V3FL2HoYYx
+ bxfqs7Vj1lMVpIFp5vvitxEagJPwv20k+6PiSznldFqoRKBQHZnfPkPKqA5bJlesgJWj
+ 4rcb+cHchk5uo4+XSu2qb0WvMyAzIar3JCsWW4pM3bG3eSdjjDNchlUqIcfZStBsNcMz
+ /yc+2IzeW+rparvoli6XswB6BxrLaajSu2DwUDXlpVgO1a1JepAmNPqm/8/0umS7geVb
+ 4Diw==
+X-Gm-Message-State: AOJu0YyLmk04rnvm4S3eN2HRkodH0zwTw2LXsrWRg/TZh86PskTPKQx9
+ D9/ldl1LWRE1SAi2sQIB0yt6fpcP+J75/ZCr3280+9dP4HO+60c1Dkm0fo4M1z7RqDtUGCnVIQ6
+ u6tyhLX0b3hhGcxUuClc8BPBB6faloC96+rhp
+X-Gm-Gg: ASbGncvCc7Q7nIn42ZsS7X1wS0mt6ELm9vGbBmQxuUP9oyR/OqutgBo5zwy/DkfYiYo
+ nE86ga0deOuB1bg3jvkwYaTYdbTHhXZZhuHjFmKhOkcWwfh5lKPpDVeJCK4z9ENpELLl7jb2XCO
+ tVsJzQG+r3cNboIg1AFRThAXjQrVmXrM/hErKyfKmIf+ckZZWW/PtTVqU6GBsEP8Mfpegtqxpig
+ 47hvw==
+X-Google-Smtp-Source: AGHT+IGrOO5KIcCQSbenERQ2cy/+ybM7kJmGRgsFj2Snx65CP1x9fvm5FahYIIcerf0Jfa01KBUJxGyaYpXYgdvTM8o=
+X-Received: by 2002:a17:90b:164a:b0:301:9f62:a944 with SMTP id
+ 98e67ed59e1d1-3134769f73dmr22061493a91.33.1749500941569; Mon, 09 Jun 2025
+ 13:29:01 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] test/dma: add functions to verify zero and one fill
-To: Vidya Sagar Velumuri <vvelumuri@marvell.com>, Kevin Laatz
- <kevin.laatz@intel.com>, Bruce Richardson <bruce.richardson@intel.com>
-CC: <gakhil@marvell.com>, <jerinj@marvell.com>, <anoobj@marvell.com>,
- <asasidharan@marvell.com>, <dev@dpdk.org>, Amit Prakash Shukla
- <amitprakashs@marvell.com>
-References: <20250606094031.2961842-1-vvelumuri@marvell.com>
- <20250609030314.4098409-1-vvelumuri@marvell.com>
- <20250609030314.4098409-2-vvelumuri@marvell.com>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20250609030314.4098409-2-vvelumuri@marvell.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+From: =?UTF-8?B?16jXldei15kg16nXkdeZ?= <roishabi9@gmail.com>
+Date: Mon, 9 Jun 2025 23:28:50 +0300
+X-Gm-Features: AX0GCFtBc8TlO7zDEgusv5DwdzxPXfSh82s20-TpTOp3mUrsLasRNVGu-mJJef0
+Message-ID: <CAPXY6zikwqrr_LPWeVmWCYVZ-auEh2ykoSKTGWubeefs5iZRKg@mail.gmail.com>
+Subject: acpi_cpufreq driver suggestion
+To: dev@dpdk.org
+Content-Type: multipart/alternative; boundary="00000000000028137b0637296e83"
+X-Mailman-Approved-At: Tue, 10 Jun 2025 08:57:39 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,106 +68,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Vidya,
+--00000000000028137b0637296e83
+Content-Type: text/plain; charset="UTF-8"
 
-How about add a wrap function and keep this function (could modify it's name).
+Hello, I have a suggestion for a small fix/feature for the acpi_cpufreq
+power environment.
 
-static int
-test_enqueue_fill() {
-	uint64_t pattern[3] = {0x0, 0xfedcba9876543210, 0xffffffffffffffff};
-	int i;
-	for (i = 0; i < RTE_DIM(pattern); i++) {
-		ret = test_enqueue_fill_patter(dev_id, vchan, pattern[i]);
-		if (ret)
-			return ret;
-	}
-	return 0;
-}
+acpi_cpufreq already saves the original governor setting and reverts it
+back after a `rte_power_exit` call, which is good; The problem I am facing
+is that on `power_acpi_cpufreq_init`, the frequency is immediately set to
+max without any availability of the user to saves the original frequency. I
+think it would be better for it to revert to the original frequency the
+same way the governor is reverted.
 
-On 2025/6/9 11:03, Vidya Sagar Velumuri wrote:
-> Add test cases to verify zero fill and one fill
-> 
-> Signed-off-by: Vidya Sagar Velumuri <vvelumuri@marvell.com>
-> Acked-by: Amit Prakash Shukla <amitprakashs@marvell.com>
-> 
-> diff --git a/app/test/test_dmadev.c b/app/test/test_dmadev.c
-> index 88c3d02fd6..0c67aaceb2 100644
-> --- a/app/test/test_dmadev.c
-> +++ b/app/test/test_dmadev.c
-> @@ -872,42 +872,51 @@ test_completion_handling(int16_t dev_id, uint16_t vchan)
->  static int
->  test_enqueue_fill(int16_t dev_id, uint16_t vchan)
->  {
-> +	uint64_t pattern[3] = {0x0, 0xfedcba9876543210, 0xffffffffffffffff};
->  	const unsigned int lengths[] = {8, 64, 1024, 50, 100, 89};
-> +	unsigned int i, j, k;
->  	struct rte_mbuf *dst;
->  	char *dst_data;
-> -	uint64_t pattern = 0xfedcba9876543210;
-> -	unsigned int i, j;
->  
->  	dst = rte_pktmbuf_alloc(pool);
->  	if (dst == NULL)
->  		ERR_RETURN("Failed to allocate mbuf\n");
->  	dst_data = rte_pktmbuf_mtod(dst, char *);
->  
-> -	for (i = 0; i < RTE_DIM(lengths); i++) {
-> -		/* reset dst_data */
-> -		memset(dst_data, 0, rte_pktmbuf_data_len(dst));
-> +	for (k = 0; k < RTE_DIM(pattern); k++) {
-> +		for (i = 0; i < RTE_DIM(lengths); i++) {
-> +			/* reset dst_data */
-> +			memset(dst_data, 0, rte_pktmbuf_data_len(dst));
-> +
-> +			/* perform the fill operation */
-> +			int id = rte_dma_fill(dev_id, vchan, pattern[k],
-> +					rte_pktmbuf_iova(dst), lengths[i], RTE_DMA_OP_FLAG_SUBMIT);
-> +			if (id < 0) {
-> +				if (id == -ENOTSUP) {
-> +					rte_pktmbuf_free(dst);
-> +					break;
-> +				}
-> +				ERR_RETURN("Error with rte_dma_fill\n");
-> +			}
-> +			await_hw(dev_id, vchan);
->  
-> -		/* perform the fill operation */
-> -		int id = rte_dma_fill(dev_id, vchan, pattern,
-> -				rte_pktmbuf_iova(dst), lengths[i], RTE_DMA_OP_FLAG_SUBMIT);
-> -		if (id < 0)
-> -			ERR_RETURN("Error with rte_dma_fill\n");
-> -		await_hw(dev_id, vchan);
-> +			if (rte_dma_completed(dev_id, vchan, 1, NULL, NULL) != 1)
-> +				ERR_RETURN("Error: fill operation failed (length: %u)\n",
-> +					   lengths[i]);
-> +			/* check the data from the fill operation is correct */
-> +			for (j = 0; j < lengths[i]; j++) {
-> +				char pat_byte = ((char *)&pattern[k])[j % 8];
->  
-> -		if (rte_dma_completed(dev_id, vchan, 1, NULL, NULL) != 1)
-> -			ERR_RETURN("Error: fill operation failed (length: %u)\n", lengths[i]);
-> -		/* check the data from the fill operation is correct */
-> -		for (j = 0; j < lengths[i]; j++) {
-> -			char pat_byte = ((char *)&pattern)[j % 8];
-> -			if (dst_data[j] != pat_byte)
-> -				ERR_RETURN("Error with fill operation (lengths = %u): got (%x), not (%x)\n",
-> -						lengths[i], dst_data[j], pat_byte);
-> +				if (dst_data[j] != pat_byte)
-> +					ERR_RETURN("Error with fill operation (lengths = %u): got (%x), not (%x)\n",
-> +							lengths[i], dst_data[j], pat_byte);
-> +			}
-> +			/* check that the data after the fill operation was not written to */
-> +			for (; j < rte_pktmbuf_data_len(dst); j++)
-> +				if (dst_data[j] != 0)
-> +					ERR_RETURN("Error, fill operation wrote too far (lengths = %u): got (%x), not (%x)\n",
-> +							lengths[i], dst_data[j], 0);
->  		}
-> -		/* check that the data after the fill operation was not written to */
-> -		for (; j < rte_pktmbuf_data_len(dst); j++)
-> -			if (dst_data[j] != 0)
-> -				ERR_RETURN("Error, fill operation wrote too far (lengths = %u): got (%x), not (%x)\n",
-> -						lengths[i], dst_data[j], 0);
->  	}
->  
->  	rte_pktmbuf_free(dst);
+Hope this is the right email address for this topic.
 
+--00000000000028137b0637296e83
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Hello, I have a suggestion for a small fix/feature for the=
+ acpi_cpufreq power environment.<div><br><div>acpi_cpufreq already saves th=
+e original governor setting and reverts it back after a `rte_power_exit` ca=
+ll, which is good; The problem I am facing is that on `power_acpi_cpufreq_i=
+nit`, the frequency is immediately set to max without any availability of t=
+he user to saves the original frequency. I think it would be better for it =
+to revert to the original frequency the same way the governor is reverted.<=
+/div><div><br></div><div>Hope this is the right email address for this topi=
+c.</div></div></div>
+
+--00000000000028137b0637296e83--
