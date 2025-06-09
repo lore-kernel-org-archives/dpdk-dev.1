@@ -2,78 +2,91 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC42C61CE8
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 16:25:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00E09C61CE8
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 16:34:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1FB9040E34;
-	Mon,  9 Jun 2025 18:25:00 +0200 (CEST)
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com
- [209.85.222.177])
- by mails.dpdk.org (Postfix) with ESMTP id 3612C4064F
- for <dev@dpdk.org>; Mon,  9 Jun 2025 18:24:59 +0200 (CEST)
-Received: by mail-qk1-f177.google.com with SMTP id
- af79cd13be357-7d219896edeso450055385a.1
- for <dev@dpdk.org>; Mon, 09 Jun 2025 09:24:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1749486298;
- x=1750091098; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=GTvzzNCz5NkBD9Drcvf7dcjuVKyGgrch2EeEc+glZuY=;
- b=isy9lXDdHwzbx2M9LkEm7opHdLYRwjXFW8NbtSM3/5ajl2ARVvJg6DExpll6P3rOjZ
- 7vYXaGylFYZ0jWRPaWv4k5QeZuI8gYMbJsfnmMWj1Dte5ARh85jlMjQQDqm+ziCai6m2
- 6SyZI7cMqrJtPHFogYydrJZWmFOwdDyrsnzREqQMjAicVa7fesPQNBGwIojW1cjyOkGu
- b+bGYS9MY+rBmOxCL7tzQvK37lte3J4W5sT9EC01hAI8/pOQVF0XHL81+eoBD7T72fgg
- 5+ItEUeJd2n+ZZ0XIlhYtjCnpKFZnBIgq4MNHRGB463fYfjMfoV5ZycSp4YufVeT1M/J
- BDGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749486298; x=1750091098;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=GTvzzNCz5NkBD9Drcvf7dcjuVKyGgrch2EeEc+glZuY=;
- b=SPGbl8IcrBB5wWe8DgYVgMGV1TT6t/mg+Vy8JXxBx2wwd7UdZs9PluBiIsXGJXxbxh
- K+PWHerse1AXSn+gM83v71dKQhwt6060avy2irKr02cZtm4xN02bibL8s2+gogn0+/rx
- oYk9FkEg7Uxvctcml71m4MZp78kc6RUcbl3tl+JRIGavT1UsD/X46PXTIM3aQultjLOL
- NRKMFgNKFUNlELoOg1K+tH3rELzsoHWAEuUU5QpjN4w7CDKXhVT/J3Wu16J10tItIbpY
- d0zzt8KXSKT2El2vu+PCStHJqwrzOahyjYxZy/eWA7kNwUF0wXRFEJ6h+l1CP3YoTgJO
- 96Jg==
-X-Gm-Message-State: AOJu0Yy/aJCn5y4ixuKYLXEJ5ZMBlfoFcWwJWbCSJF84T/G6L6JK0r52
- o16Hs9GQs2i7wxS2eyV1OFduJXtFafy7Usokc1zNADoYl/tKINWi7suaqtA4s3F+Gmc=
-X-Gm-Gg: ASbGncvznPclqCWd6SnMiw+Kv/4lD2do8umU/30ZW/9FvtDqcEIIs3aeaB0S/CjZIu6
- miNIxxxufJqz4oiYC+OyReZu/Z2mLPJ6W6B9ZijS857afz4LJFY02NvOUe/nAD9d1T5O78L/wGZ
- Sxm7/EsFkRAf5I6AE7FyVSN9on4wPXEC5pclt241Qnpwx7jHpQHDM6H8cJJwFZcvnA0h9a3NiYU
- 01rguTmq48jQb7SCWZJinadipaDPPhf0oke7IFVQWcjdyy7rdzp20anmVvhsB/TXQL2msFohZMZ
- ceqDGWM1t1i732I8RqJ7CO+aNeN9tRUhNt+JXpcKd3b1n4StuNv5ShKYEKbaPKpxf76XrBaqxNI
- p5sCT/xUtwYo8+J2LtoAoYp274L/2
-X-Google-Smtp-Source: AGHT+IFq908BMVtvs4IRb8W22rcJMzf1nPjMWh2E4v3ilAZ8rCh0QL6MJFzocsnAkL39k2oCZ7NrlA==
-X-Received: by 2002:a05:620a:40cc:b0:7c9:5eca:ea3b with SMTP id
- af79cd13be357-7d229887d10mr2114971885a.31.1749486298332; 
- Mon, 09 Jun 2025 09:24:58 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-6fb09adc0d9sm53416016d6.52.2025.06.09.09.24.57
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 09 Jun 2025 09:24:58 -0700 (PDT)
-Date: Mon, 9 Jun 2025 09:24:55 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Dylan Schneider <schneide@qti.qualcomm.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, Thomas Monjalon <thomas@monjalon.net>,
- Reshma Pattan <reshma.pattan@intel.com>, Jerin Jacob <jerinj@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>, Nithin Dabilpuram
- <ndabilpuram@marvell.com>, Zhirun Yan <yanzhirun_163@163.com>
-Subject: Re: [PATCH v2] pcapng: allow any protocol link type for the
- interface block
-Message-ID: <20250609092455.241e4273@hermes.local>
-In-Reply-To: <DM8PR02MB8171CB561807D476C05E013DE96BA@DM8PR02MB8171.namprd02.prod.outlook.com>
-References: <20250529171609.2448832-1-schneide@qti.qualcomm.com>
- <20250606215208.389096-1-schneide@qti.qualcomm.com>
- <20250608153439.322f6c88@hermes.local>
- <DM8PR02MB8171CB561807D476C05E013DE96BA@DM8PR02MB8171.namprd02.prod.outlook.com>
+	by mails.dpdk.org (Postfix) with ESMTP id DC1CE40E34;
+	Mon,  9 Jun 2025 18:34:08 +0200 (CEST)
+Received: from fhigh-b3-smtp.messagingengine.com
+ (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+ by mails.dpdk.org (Postfix) with ESMTP id AD94A4064F
+ for <dev@dpdk.org>; Mon,  9 Jun 2025 18:34:07 +0200 (CEST)
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal
+ [10.202.2.45])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id A14CE2540339;
+ Mon,  9 Jun 2025 12:34:06 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-05.internal (MEProxy); Mon, 09 Jun 2025 12:34:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1749486846;
+ x=1749573246; bh=n93MpkjdWYaM/U7/3rDBk/NznNt2NISbfMZ4XZpK98s=; b=
+ ON4xbPEmFvDeDDlX7OxGFu4vrnASWYlLUYMdbdHPWtI8ILbPwyMrcoDrKHXnzL4O
+ s4miunTaBZ/SLubcMtKG7jrS+YSfLrsfgwr6n6YyAGwmcnuw7N7qGpNxrHh4BVNG
+ Hs3TziebZO+dqnR+Qp0RXzmqpvm4g+QX5gNcKTQNmoYzEYD4ErXZKpjl7IxX11NH
+ TDkibqNnUYsPDZg7JDZ2aK6tJKKKLE00fNG01k/gW7+8DjX51bXPHe9IVi9Hr8iV
+ pOfQaOBsP2ZE2ENvq257LCAKRY4evc0/saHffEpEdRV+/LgGhWomtbqnRlcvWNvo
+ vZwQ5MH/LVOqFcwZTK0sLg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749486846; x=
+ 1749573246; bh=n93MpkjdWYaM/U7/3rDBk/NznNt2NISbfMZ4XZpK98s=; b=Q
+ 6l6GRI182R43w1oZBitGrC20i/N0HZAVMT7OS7djWeuGpPhMuLz4NFExKy4VTTEK
+ VwxqankjlffeSz4ekrpVCrkFkNXLC4s+2R7FabwBh7Uo2L46fLOrBZ6GpRGiY+K7
+ XisIO8h+y2tUSTKbMWb20HBD+8mtZpb0bipSF+3ClwHHgMbr1G/oTG6+5rfQ1RyZ
+ 3PcH3es/J6wQb34nNHokeW4oHv+ERefuDCaN59skafHKpMlefrE/vNZKyvYOojYo
+ A1QDYmWmoUuHpwGq4GXNEZ6GQBSj+b6ny6WitFidluUCHRpC/+RYJcftZamJ7T/G
+ KLNnC6yZGTb70cfuYK93g==
+X-ME-Sender: <xms:_QxHaGqjEpFIEzb62mKJkDtALGmdXnhzVm2CcRPccB46DpzOU96m-Q>
+ <xme:_QxHaErsbl2Q1dTfGPaqOWfKjM7P5SG-TwltR-v2Oyi50HOKwnbpqMLHvV4pOE9Ix
+ hfZqiRNVnOx7mzIEg>
+X-ME-Received: <xmr:_QxHaLNvHWiKOnGvc38TxSGvrjetfuMH6Jbh_ZlpjNsZcub9_HfcoYSUDUWAOI3Vqt7dTIZ_fDywVKfNEWaqYeRHlw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdelheefucetufdoteggodetrfdotf
+ fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+ rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+ htshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeen
+ ucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrg
+ hlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeethfdvgfeitdetheejhfekheeugfdu
+ tdetheeivdffgedvleetieejgffgiefgtdenucffohhmrghinhepkhgvrhhnvghlrdhorh
+ hgpdguphgukhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgr
+ ihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtth
+ hopeduvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthguuhhsiiihnhhskhhi
+ sehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtg
+ hpthhtoheprhhuihhfvghnghdrfigrnhhgsegrrhhmrdgtohhmpdhrtghpthhtohepsghr
+ uhgtvgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpthhtohepuggrvh
+ hiugdrmhgrrhgthhgrnhgusehrvgguhhgrthdrtghomhdprhgtphhtthhopehjvghrihhn
+ jhesmhgrrhhvvghllhdrtghomhdprhgtphhtthhopehkohhnshhtrghnthhinhdrvhdrrg
+ hnrghnhigvvheshigrnhguvgigrdhruhdprhgtphhtthhopehmrghtthhirghsrdhrohhn
+ nhgslhhomhesvghrihgtshhsohhnrdgtohhmpdhrtghpthhtohepmhgssehsmhgrrhhtsh
+ hhrghrvghshihsthgvmhhsrdgtohhm
+X-ME-Proxy: <xmx:_QxHaF7Nyj4XMPKyUzK4cuYbPVAqBsPmvRzAhlIipiNF-mmKWjY9Uw>
+ <xmx:_QxHaF6pxwNmIL-ZiFPRhV0X89iXT37m-6rbJVb-mev31wJfxG0Iew>
+ <xmx:_QxHaFgtvCXv9uxcSJJlK1N1bHNRMaI-wMRq_y-3xC53fvcM0l7vWA>
+ <xmx:_QxHaP7vmbGlFLO1432bx1P2CxlhAKCD2LBI71G7ff8nij2rjzckxw>
+ <xmx:_gxHaPuQDGhjKynR1UQnFlEJN_rFuYaStFdX871MAz_pZ5bwX6wagLxH>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 9 Jun 2025 12:34:03 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Tomasz Duszynski <tduszynski@marvell.com>
+Cc: dev@dpdk.org, Ruifeng.Wang@arm.com, bruce.richardson@intel.com,
+ david.marchand@redhat.com, jerinj@marvell.com,
+ konstantin.v.ananyev@yandex.ru, mattias.ronnblom@ericsson.com,
+ mb@smartsharesystems.com, roretzla@linux.microsoft.com,
+ stephen@networkplumber.org, zhoumin@loongson.cn
+Subject: Re: [PATCH v17 0/4] add support for self monitoring
+Date: Mon, 09 Jun 2025 18:34:01 +0200
+Message-ID: <5285753.vfdyTQepKt@thomas>
+In-Reply-To: <20250606162736.409485-1-tduszynski@marvell.com>
+References: <15762368.uLZWGnKmhe@thomas>
+ <20250606162736.409485-1-tduszynski@marvell.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,9 +100,62 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 9 Jun 2025 15:51:03 +0000
-Dylan Schneider <schneide@qti.qualcomm.com> wrote:
+06/06/2025 18:27, Tomasz Duszynski:
+> Hi Thomas,
+> 
+> >Hello,
+> >
+> >17/01/2025 10:00, Tomasz Duszynski:
+> >>  lib/pmu/meson.build                      |  22 +
+> >>  lib/pmu/pmu_arm64.c                      |  94 ++++
+> >>  lib/pmu/pmu_private.h                    |  32 ++
+> >>  lib/pmu/rte_pmu.c                        | 537 +++++++++++++++++++++++
+> >>  lib/pmu/rte_pmu.h                        | 251 +++++++++++
+> >>  lib/pmu/rte_pmu_pmc_arm64.h              |  30 ++
+> >>  lib/pmu/rte_pmu_pmc_x86_64.h             |  24 +
+> >
+> >Reading it again, I wonder why it is a separate library.
+> >In general we give access to the hardware in EAL.
+> >Why not having PMU in EAL?
+> 
+> I initially started PMU as something tightly coupled with EAL, but after
+> feedback from other developers I decided to decouple it completely [1].
+> 
+> The Technical Board also discussed this and supported the idea of having
+> PMU as a separate library [2].
+> 
+> The main goal is to keep EAL lean and focused only on core essentials,
+> making the PMU code easier to manage separately. This separation aligns
+> nicely with the broader effort to simplify EAL by moving optional
+> features out.
+> 
+> [1] https://lore.kernel.org/dpdk-dev/20230111210547.GA2134@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net/
+> [2] https://mails.dpdk.org/archives/dev/2023-January/260035.html#:~:text=PMU%20Library%20,principle%20for%20inclusion%20in%20DPDK
 
-> In this case, is it best to just pass 1 with a comment saying that is DLT_EN10MB? Or is there a way we can get it defined in all configs?
+OK I forgot this history.
+Let's go with a separate library.
 
-Just add a dependency on libpcap like other places do (see pcap PMD)
+I'm trying to merge it.
+I'm moving to a new release notes.
+I did a bit of cleanup.
+I've replaced __builtin_ffsll with rte_ffs64.
+I've exported symbols with the new macro RTE_EXPORT_EXPERIMENTAL_SYMBOL.
+Now I hit another kind of issue:
+	error: "__rte_weak" is deprecated
+I fix this one with using flags like RTE_PMU_SUPPORTED.
+(note: it replaces RTE_LIB_PMU which was not defined)
+
+And at the end I get this error for tracing:
+
+rte_eal_trace.h:136:37: error: passing argument 1 of 'rte_pmu_read' makes integer from pointer without a cast [-Wint-conversion]
+  136 |         uint64_t val = rte_pmu_read(index);
+      |                                     ^~~~~
+      |                                     |
+      |                                     char * (*)(const char *, int)
+
+I think integration in tracing is too much risky at this stage anyway,
+so I'll postpone it.
+
+I'll post my rebased version of this last patch for follow-up.
+
+
