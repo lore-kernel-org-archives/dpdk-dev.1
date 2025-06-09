@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F28D4C678DA
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 15:38:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A76C61CE8
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 15:39:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3DB7142797;
-	Mon,  9 Jun 2025 17:38:04 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 59FE942794;
+	Mon,  9 Jun 2025 17:38:05 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id 82EAE415D7
- for <dev@dpdk.org>; Mon,  9 Jun 2025 17:38:01 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id E80054278E
+ for <dev@dpdk.org>; Mon,  9 Jun 2025 17:38:02 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1749483482; x=1781019482;
+ t=1749483483; x=1781019483;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=e65+CW+oRr+mmfLVocqYXU65BN2lSvN45H3HYpJDGlw=;
- b=fcDYTWl5gKRC7GnBzjFpYC7c4GW3oo7PgI3EzAo5VqcD6CdbzVKmi1Ak
- RDSm8NlHQRt7h4Hj7Yw2cjDIhjv0QULcwZJRu9kjOrbXu97sLCq0PQ0eP
- GXwNunAqlFErX+M3ifaQ2xpxbMUjlu+RNzVtkHlR/4ZE3TG0I79+jt9hS
- IB/jqZDwFkjoLo38+cbobs+UZlgReBCi50xq+ZRS1YWlfMj9xaOhSa3Bi
- GB6UiNnXTVwvK9bdSTOXBDx/AeF2s5SzAsrFpzDduE3CVt7/5QlFS6nVN
- xd2l0jOcwFVrvwP3rOfXkh8V0gyzDlWBDk+4rEz+0EsI67hZ2YyHMOpOx Q==;
-X-CSE-ConnectionGUID: 7NxTfX77Q/m7nD4PsxzoRA==
-X-CSE-MsgGUID: DAMta4rNRkqs+56Ad+2mpg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11459"; a="69012170"
-X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; d="scan'208";a="69012170"
+ bh=WkeOksPvEHN3GAJlCulS0FoxRGdAjYoRDWA3vbh8ZqE=;
+ b=NlB5Ggm4bsHbQq2MuKvFaivqJuTsVq2mOXI6Vi+Enmpfd9iENbd5WlXO
+ YlF33mwu++WzA804xicpH++jfSnn+RBvfKl1C8W8Nefv8lWtnrwbTXIzO
+ i3tqsRpndxDTbxFsf7wSYqSteePEUs2Wy8jz9u232mv8Zhgd+xlPb1YjH
+ cNSmeKmTNuDdkUBE+mKxHQ45jGRxxpfWjk2sk+JbIX6hAx286xbJN8kW3
+ o75pa7RO3/uuxdTYs+7Oj8etdCFcFnYq3GrhLwB/js6mBeP88jV98gx6S
+ JuDobqA3ZYu7ND0Y+rfuXDdvZz3oiJdTIioN6XLY+1s5KZY5F57PapsQY g==;
+X-CSE-ConnectionGUID: xdi8ycptQvmo6fbUPiXqng==
+X-CSE-MsgGUID: JxG31dOlQGO2cT8KtdEVYA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11459"; a="69012173"
+X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; d="scan'208";a="69012173"
 Received: from fmviesa005.fm.intel.com ([10.60.135.145])
  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Jun 2025 08:38:01 -0700
-X-CSE-ConnectionGUID: ZoSQlxVqSyGsSiGafgb80g==
-X-CSE-MsgGUID: yxGEG2DSTVawQSr16XmDtg==
+ 09 Jun 2025 08:38:03 -0700
+X-CSE-ConnectionGUID: Zg3Mi2esQROyNGpcwIMwXA==
+X-CSE-MsgGUID: kjZdDMIDRWWTd7PvoCUGMg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; d="scan'208";a="151419618"
+X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; d="scan'208";a="151419628"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa005.fm.intel.com with ESMTP; 09 Jun 2025 08:38:00 -0700
+ by fmviesa005.fm.intel.com with ESMTP; 09 Jun 2025 08:38:01 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 Cc: bruce.richardson@intel.com
-Subject: [PATCH v6 09/33] net/ixgbe: simplify packet type support check
-Date: Mon,  9 Jun 2025 16:37:07 +0100
-Message-ID: <45137f4f58c1eb9e5fd3e5cc31ed802209d491ad.1749483382.git.anatoly.burakov@intel.com>
+Subject: [PATCH v6 10/33] net/ixgbe: adjust indentation
+Date: Mon,  9 Jun 2025 16:37:08 +0100
+Message-ID: <c28049f8bfce2c4040b27ba18f1284b9166f5925.1749483382.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <cover.1749483381.git.anatoly.burakov@intel.com>
  <cover.1749483381.git.anatoly.burakov@intel.com>
@@ -61,10 +61,7 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-There are no differences between scalar and vector paths when it comes to
-packet type support, and the only data path currently not covered by the
-check is the VF representor path, because it's not meant to be used
-directly anyway. Simplify the check to reflect that fact.
+There is wrong indentation in `ixgbe_set_tx_function`. Fix it.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
@@ -74,40 +71,25 @@ Notes:
     v5:
     - Add this patch
 
- drivers/net/intel/ixgbe/ixgbe_ethdev.c | 17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
+ drivers/net/intel/ixgbe/ixgbe_rxtx.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-index f1fd271a0a..928ac57a93 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-@@ -4067,21 +4067,14 @@ ixgbe_dev_supported_ptypes_get(struct rte_eth_dev *dev, size_t *no_of_elements)
- 		RTE_PTYPE_INNER_L4_UDP,
- 	};
- 
--	if (dev->rx_pkt_burst == ixgbe_recv_pkts ||
--	    dev->rx_pkt_burst == ixgbe_recv_pkts_lro_single_alloc ||
--	    dev->rx_pkt_burst == ixgbe_recv_pkts_lro_bulk_alloc ||
--	    dev->rx_pkt_burst == ixgbe_recv_pkts_bulk_alloc) {
-+	/*
-+	 * Currently, all Rx functions support all packet types, except for VF representor Rx
-+	 * function which has no data path and is not meant to be used directly.
-+	 */
-+	if (dev->rx_pkt_burst != NULL && dev->rx_pkt_burst != ixgbe_vf_representor_rx_burst) {
- 		*no_of_elements = RTE_DIM(ptypes);
- 		return ptypes;
- 	}
--
--#if defined(RTE_ARCH_X86) || defined(__ARM_NEON)
--	if (dev->rx_pkt_burst == ixgbe_recv_pkts_vec ||
--	    dev->rx_pkt_burst == ixgbe_recv_scattered_pkts_vec) {
--		*no_of_elements = RTE_DIM(ptypes);
--		return ptypes;
--	}
--#endif
- 	return NULL;
- }
- 
+diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.c b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+index f75821029d..8fbb795097 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_rxtx.c
++++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+@@ -2682,8 +2682,9 @@ ixgbe_set_tx_function(struct rte_eth_dev *dev, struct ci_tx_queue *txq)
+ 			dev->recycle_tx_mbufs_reuse = ixgbe_recycle_tx_mbufs_reuse_vec;
+ #endif
+ 			dev->tx_pkt_burst = ixgbe_xmit_pkts_vec;
+-		} else
+-		dev->tx_pkt_burst = ixgbe_xmit_pkts_simple;
++		} else {
++			dev->tx_pkt_burst = ixgbe_xmit_pkts_simple;
++		}
+ 	} else {
+ 		PMD_INIT_LOG(DEBUG, "Using full-featured tx code path");
+ 		PMD_INIT_LOG(DEBUG,
 -- 
 2.47.1
 
