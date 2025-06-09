@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86262C61CE7
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 02:56:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6033C5AD49
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 02:56:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2BF2D40A6C;
-	Mon,  9 Jun 2025 04:55:41 +0200 (CEST)
-Received: from AS8PR04CU009.outbound.protection.outlook.com
- (mail-westeuropeazon11011031.outbound.protection.outlook.com [52.101.70.31])
- by mails.dpdk.org (Postfix) with ESMTP id 7D4344066E
- for <dev@dpdk.org>; Mon,  9 Jun 2025 04:55:29 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id CB0A040A70;
+	Mon,  9 Jun 2025 04:55:42 +0200 (CEST)
+Received: from PA4PR04CU001.outbound.protection.outlook.com
+ (mail-francecentralazon11013031.outbound.protection.outlook.com
+ [40.107.162.31]) by mails.dpdk.org (Postfix) with ESMTP id A443140674
+ for <dev@dpdk.org>; Mon,  9 Jun 2025 04:55:31 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gqxjLYg92bJhQiixMzhfcfci7qUrimmUeW3kbHtDyfMJXrT1y4B15YmqdNYDS1VU631gCzVBVWxFyyZ8ir/FPyNQxEhNnA9qsWq+rRBGz29KycA5f+7ygxo7d5553QkE9mkr6WQ0emKYy+VVEMWo0zegnY3BL6VJfTdNpbZ4hBhP56Wzb8xfz8hGXHl7XNRQDQ1vmIzTFbBbf+ygcTktGF3/hJJqS42nr7BjKAzCxvGfMti7ncPb8+CYxtwdUpjJpPwu8T2gql9/+/3TyOIbFyRFLUYe/JlGPO+YPCunM+A0u5sG7kaIVSQ8OIaEpPikEMKlwPs8eeOeMBi82ToFmw==
+ b=DT+0fnoz626MwoX69UCYpikf9fSH6EYcAfEyhffPP8cqJMomew6Q+RFU7HR8auxUZpRnvBi3pVr8hILfV6b4YQTc9NgQx6fKKE8YUm3KO+G72G/dWZhgxANJnYzb8GdBfuLYPi4w11o5wgp68yhM1JR/LGYvZqv7+CrqsKuawgEIlQQjuIiCV8n2PjngM1xOwN1ZwLqUCOblr4SFOrCo+yhn2eOXHPVzLHm/sXMCT0NaMZmBR3qYLo1f8xl29PPl4PGDEhLJngbQVo3GxjqJyu6O0m5cF6Hn7J4pjXgn3Js/fiZ/gVwZrVMB8E47APuRU/vjEFiHMPIorTQYK7eHxA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nRWcIPfHSb2am1ilHJsClnMYa3QyedOwxaFuNVgaP1g=;
- b=biM4xTUYtEyyjK2WuyiYMSpYmFurcVGNsKTfzSD3ORjLh1uLrVSiv5kdvl1+S3FXIrjkKUbCTpI+FiftlIq0NoDi7GwEOWGyJRAdlBoW7d2KL9NFlSE/SupqYznQvEgn/AE2XSCcG2F38SdBoc8L907MIXrb6/lHsNJdVBr7SEvLWzo3dik3G0V60cHT5OcY8Mfkx0L7deoROOkm99GwuGTzpnUWzBOJDoyMKiH+ELDyDk4CyOasLpfhsA/Lgxe4gbokN9V/k8PUuU4YWAZgn9l7+7+TKAjOHbd+FCnafRXUhx0An91RKGP+UAFsOYNHVr6WgV4Z46IU1SdHhiKItQ==
+ bh=6gFceXfbfVLOFbThsHJ3Q0iRA22cRtUnngBPvCQV8Y4=;
+ b=kpX5u9ekzFTY28KTM9jiZ5ocIyKtHHDi9McO9rZKTdmWhPGbfzsjyyKCLtY7qCDuU8yB+xoFf0KHwraPbqD5OXtx1vxyIoO83pfSHn8b5P0fHOAhenuKX7AGK3GF8pbqX6zGjzYJ6hCciOU6lPsFUtjWEpsVmeLqlR01wounGRMeWLyoakEWe7awrIUvhHHAPA6+TLvGqEx36VvrIwJijv2O7OyRx01Fhi70BrRGcBUK04N8JMF6v+Tt1XrbxtIHeEqFHCjMCceVzX97gqAqcimYfHzyMGaEYXzKXplLVk8u8OXG2Lu+cA73J8mmkD9FPxVUbYroSZ3gwHEHmWYfog==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nRWcIPfHSb2am1ilHJsClnMYa3QyedOwxaFuNVgaP1g=;
- b=Cq2sjxixZQ1gvp5S8BjcmUDD7KzRxbCqzr6xjdYU9vaQSenY3g5Ue+VpvVqFKM3GPrmgG+on4guSBYmjRk8lbAx8JCXmsq2RgQEC8giW4nSb6ZKgED16klebDLieQf8K+NTPur7uUxePRKE52xfhZRxmZRm3K1dk8LGTrJxYnG2G1MziRwZVzCXDh5iUYbSYFB8jOmUnvbxzce7J7hs+04rRzmc2Bg46255lr1NPfE4BrEgK7nKuuzyi++us33b8at72yjjfYcbrEvpntC6l4nqy4fsY3sC9L61gq9MFI3/vsxmd8xGCwXmSa94AQnT84EkYhWY7JSlp6JHJiLtBcA==
+ bh=6gFceXfbfVLOFbThsHJ3Q0iRA22cRtUnngBPvCQV8Y4=;
+ b=ACcE7K3jYeCUHDqFsUwuUhjVLg7eqdV+3xeYG/CiOBHCilTZX+vQJquJ5CCVoQm07TsX/fIYg0utP4xuvzFScFdSOqXhZ822YtkTdD9cU8VJyEgasETBmqieVylOIHua2xGg8X2ySlXpUs9jmeKgWh3JseJdx4G0YZQQBLwdz5sx0asTWsQe0FLawra3ozcFA9Fmh0U4LbrdA2cr5OxaGtluBVJdWRy18btQhaED39VGS9nEb93Trnw1t/bEzK+2+2HH+fR8+xDwT83kKDAiCHx+Glt7KwpHvFBOAa5k5Mp9blTHapl9f/tVSlynn9O+mtxyxvzJSRjlzW79TxsrpQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from AS8PR04MB8198.eurprd04.prod.outlook.com (2603:10a6:20b:3b0::14)
  by AS8PR04MB9093.eurprd04.prod.outlook.com (2603:10a6:20b:444::20)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.20; Mon, 9 Jun
- 2025 02:55:28 +0000
+ 2025 02:55:30 +0000
 Received: from AS8PR04MB8198.eurprd04.prod.outlook.com
  ([fe80::2e32:1a4a:7d29:195]) by AS8PR04MB8198.eurprd04.prod.outlook.com
  ([fe80::2e32:1a4a:7d29:195%4]) with mapi id 15.20.8813.024; Mon, 9 Jun 2025
- 02:55:28 +0000
+ 02:55:30 +0000
 From: Gagandeep Singh <g.singh@nxp.com>
-To: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
- Hemant Agrawal <hemant.agrawal@nxp.com>,
+To: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
  Sachin Saxena <sachin.saxena@nxp.com>
 Cc: Ioana Ciornei <ioana.ciornei@nxp.com>
-Subject: [PATCH v3 09/11] net/dpaa2: retrieve DPNI API version at init time
-Date: Mon,  9 Jun 2025 08:24:48 +0530
-Message-Id: <20250609025450.3997062-10-g.singh@nxp.com>
+Subject: [PATCH v3 10/11] net/dpaa2: setup the speed cap based on the actual
+ MAC
+Date: Mon,  9 Jun 2025 08:24:49 +0530
+Message-Id: <20250609025450.3997062-11-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250609025450.3997062-1-g.singh@nxp.com>
 References: <20250602104041.3322164-1-g.singh@nxp.com>
@@ -56,78 +56,78 @@ X-ClientProxiedBy: SI1PR02CA0015.apcprd02.prod.outlook.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AS8PR04MB8198:EE_|AS8PR04MB9093:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3ac57bdf-ed34-424c-ca0c-08dda7011737
+X-MS-Office365-Filtering-Correlation-Id: 1b840ffe-9c4a-429d-876b-08dda701188b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
  ARA:13230040|376014|52116014|366016|1800799024|38350700014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?hA6PE0ufgULW3rSIwLU1R7gO192qJbtgyNp+NLNbpS74phMblHQfqiI4dEQd?=
- =?us-ascii?Q?+rRhJd7Xa5yiiO8r5qAHkiguSRmN7+2uGQJgoPrwqJAOwaA4z/k+YV0soVtC?=
- =?us-ascii?Q?VJ5YRICS7x3MOCoMG2DxP88KpgVZB+38L208ZJaBdwtH3TRmPgvSyMDh8fYR?=
- =?us-ascii?Q?/1xrpTO0j4AZA1d6/GK536mHP24vEbNH3GGaOG0TUYr7PuIJdxVTr3ettCPT?=
- =?us-ascii?Q?IaZkzTXMjddz3frSI3lm1y0GRuyh7HcS6hXOiaLCWtWFc3wZquu9nE6/eDY5?=
- =?us-ascii?Q?cKi9dvBZeCGy1f17J2n/M+5QtckiM7eJNfbNLmZ+uDmMQ5/BryMVRl4oV6N+?=
- =?us-ascii?Q?uZ+f9SDv0slP9NQbC4gnpVR7RuhWn+8HVssThXV+21lEIO6kZeBxSJS0W/Xx?=
- =?us-ascii?Q?6FrXno+5BBcEjLFXbrjqpaUm+jZVVrEr4T1L2fiUgT/viFnToeIf+uydzAGA?=
- =?us-ascii?Q?bnz2RQg7IgE0emyxngNzSVdHN4OnpXxojiQJ7V9HBjRT8ipSiBc/clSrQXd5?=
- =?us-ascii?Q?1Gf/gYM3/Z3y1l2i0isg8DIN10XIFtfA6pCv9b89+IC3uZZCQLDfaE3QREBl?=
- =?us-ascii?Q?urnNA9z5bQiKIggR44lGcs2lWbyqYx3+EW93l+dE+bIGQsj6LLWZiELq5kNx?=
- =?us-ascii?Q?FkHWq9kpbdp4Qd6Za/u10CYx7qX5KmLyhTQ1yawxa1MueegwnPQZwlnTu1du?=
- =?us-ascii?Q?nyVpCqP0E4zH2YBAaLsB0SGHXP5RUyXSzKY7aPIGfs/ckcTY4tfAqSZ4T/wN?=
- =?us-ascii?Q?py9OMcRMrntNV09jBzdy9NH93fix7VmnlxJuEsnNdoyWwz/PWWXtuIgCh8z2?=
- =?us-ascii?Q?8ZkopjTHaRRTvt+bSRL6zi4SqKXG4O4xT6izAwT6V2uVKoRbFhYuxEZ4VOLB?=
- =?us-ascii?Q?MN8ofJmc7Ygqxca2ll8t3lPOf/ZY3r2V+aYP6otuqIvJDo82fN2EtHYOCv94?=
- =?us-ascii?Q?Ebd3IQXxmDgfVzm9nlOlE6RuKAcozKx4hCoyDtfESpPL/KUava1RfiQ+W0CO?=
- =?us-ascii?Q?mudH6rBraPvZkt4Kn3OTdeazVHCgcbW5lYaD4bm8a8f0dtwGVlvcv4L5kIxl?=
- =?us-ascii?Q?Dd0w+qI/bZy6vt7xbFgmzyH50d2F91OxB1xOsOHgfTaYMhFnV/8r0aj/wA9C?=
- =?us-ascii?Q?VDwcEwxQsu5odFqX4Ah4LYHNyeB/AIlFkrxjiVX9SvhmBMocojwIzl/Ecn0R?=
- =?us-ascii?Q?kvGJsDfpW0fTJ3Te+u8DwZrYpwRKBIkG7+p+dlAlCUDSOXnojb7zgMIOw6Nm?=
- =?us-ascii?Q?UwJ/Zxvbu3YFoAb7JccHkTSkjDteAdJd4e7iaPO3B3hfRa+WQLid7qWcVr2l?=
- =?us-ascii?Q?8SGWhFTQqFYQPCshaPrGhHdkF4lz5YPIIrQFMU83kzUYeccuMlv69Zp0c3Hl?=
- =?us-ascii?Q?RvP+kOYNtjUUOAtfw/NBfVb1UxKzL1zn+mnp8T/In/ioBD3oH5baRVHgUQ/u?=
- =?us-ascii?Q?ihp7Zok2EWm8EBSte9IaMx/G/Mhfw4lCxaIB/cy3KaGic42RtJuqMqgkuapw?=
- =?us-ascii?Q?Xk1UOX+ISEH+NLs=3D?=
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?R/CtVC8P/nHaOGquS8mzfeJfSjE+zRNkZEnFH1qhnUEWd2cnUir7XzntUn25?=
+ =?us-ascii?Q?Vj1mawvOz2ueYwvVJd/1Q+GXq6RXQrsIFH2EDuQu/xnDlOnIcMbtvcV/Njmv?=
+ =?us-ascii?Q?+NayL3Myef7FYpGhaJF/ak5v2QHWmM3G3LGKcKQAOzET0DGbpw0u2WrRhoIb?=
+ =?us-ascii?Q?qpq6vlNUP7vH0FRPI4oI+HFEo0Co71z1bBHFLOQ2HCc2fC2nYO0skko3hHdS?=
+ =?us-ascii?Q?gsW9jDmuVNdFF6XuYvNC6pF9L6P3FhLRw3ojbsxG//amusC1EoYTZE3BSKxB?=
+ =?us-ascii?Q?qlOd0LKSRcQMMfnyhuVYQvsRimG33FQho0QZUyJqiiFss6CUv2/jojPDH1iY?=
+ =?us-ascii?Q?+c28P7FRw8Y8ua1svLNg6DgyqbvXZ2gTlnrIZrClsLDsUTeByGN3HO+igeaX?=
+ =?us-ascii?Q?iSZ0YvzGGn5IVhY2VBe/20rkB5SD7y3/Sl25I/85ooP8slaBuZTbN2aLB6y/?=
+ =?us-ascii?Q?zwGmgnBxl6WzfccwaZohKchAGhlGgvysy7WqgDJTpu3M2vRlGoL+p1a1UY5S?=
+ =?us-ascii?Q?Zms0iTYUNSMGXfQJK+30v2v1tvzsUWWCINRRPjHZL3QHsykXyiATfFeXvvpb?=
+ =?us-ascii?Q?KCrrUFgHJqOqQiAqDUxIuSlKz/ze8B+i0DbOj5HAjGeDeFFVl0BIcV1AoEk5?=
+ =?us-ascii?Q?dk/scD4izjYc295ikq9b+2Z1DI/1HWV21kw3s6SoQ2brCwHk3xnU0AjnvYe7?=
+ =?us-ascii?Q?JaotJ67rMCvrdX++IKyk91btxLJX14pf9v3vMgdjHUSv6KUy2Sl6f/XB+h59?=
+ =?us-ascii?Q?7jVqI9i2nKrHd3qqQ2LtZCtJF8kngMCJ0gPOw6ZspsnXEzOYERXwG1ZePNwf?=
+ =?us-ascii?Q?Thc3eNszQMTbgpZnEv9hmS6h963Wknh5MDaFL4bYFAi7sR0nj5wk9jUT7Hgp?=
+ =?us-ascii?Q?J92sHJ1iRKmVXLwQRF4J0N0AFlu3z+5axtnyjYf2+mj0ThuGdkiyb70DkKkU?=
+ =?us-ascii?Q?+d8snlXSLH2eovZ/OrinhWU4E2osYY5OSIQRjfXTalsXnRtdb4gGUrD6/t85?=
+ =?us-ascii?Q?SNAsGjaKrWxTPID4pgzT27QOPGIBHEMOBeOCMR10UG/xjtDT5XJGWDaPU1jj?=
+ =?us-ascii?Q?c4IQ0xSJ7HbJJdifrHTDrRK7Iv077nRM6TjUVT4W/gta0ot4qVBiO3yNTpMn?=
+ =?us-ascii?Q?rHek9klXbNQxCh9Bx1FNOhNeQEq61Q8vl6F8X8c1Zb1NRSvV5B675/UFc/t1?=
+ =?us-ascii?Q?3UrUbRs3YpOPqSTN8OFRPvfH03W3UvTm/lQcyqevfE1TNata0PMlVg1hSfht?=
+ =?us-ascii?Q?RqTTVTrd9BbAk1WzdvzuY4lJvelq0iQ9xQRhKbl8Nh2Jl2vEY0lXk4zLOHS3?=
+ =?us-ascii?Q?Nb0reY05JrOtmdJSAw03Bot/JFw0HVLDQX5d58FLyR6l/6e69uk0luGOGHQG?=
+ =?us-ascii?Q?5munD0H/O7fJd4VKe67cRclV4NA00GZXBlgCv68+YPtpz72FvvHu/DbhudIV?=
+ =?us-ascii?Q?/2zWSGrrN4yHkFXdsNN3ideJYr0zsLyZESLg+6xCPfy/lqTeDhv2PUkSD4y5?=
+ =?us-ascii?Q?zIGoMAWr3bJBihM=3D?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:AS8PR04MB8198.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014); DIR:OUT;
  SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?VM0/xbOUfV980l7hjLKLD3ku8cx5movf4wHivZW1GWWFKzmYYtCuufsivAjA?=
- =?us-ascii?Q?jRZyCccqrDR+kqDn/3EiaaXdobGKTJrbWvVl2obK1YndqycOcsOqekHWK3V9?=
- =?us-ascii?Q?mSx2d35/dFDQwScpe62eCYVUJhVRKvwgQ7vZaFQXfMzggBB9R3qTvNj6h6G6?=
- =?us-ascii?Q?18OmLKSgnb3tOH3Noarn6DYOM7qAehpgwYIcZyb6WheCYg6kOOHgiDpOUVAc?=
- =?us-ascii?Q?5LCg18r98dZ0UvdS7zgxULo34Il7fsFGlW7pb/kE1QRglsXULWl+xbfrLkNb?=
- =?us-ascii?Q?zhelCwrJXICkQbWti6OPKNxQV4MoUl0MLFjWx1+QUWilhQvBw0jqZHrsKQ+t?=
- =?us-ascii?Q?770dwrhzci7egcd0129G0927Ag1FTJ2479r5rqBTzJ9Y4ZbENwbYLwLsx7Sv?=
- =?us-ascii?Q?6cGaZbTuvvUv2JPuArWz4uZydhr9Eky+9aCAEZPHqVdyzeIxLc0Svj/Tv8y7?=
- =?us-ascii?Q?7Y0R9+X7ou9/GnXOd0GBIWuWld/zIMMJ9kTV1XfOpkHDmDPT/BGwwSTjhWhW?=
- =?us-ascii?Q?YiM01KGFVmwQCoINvajcKbfcGlcCkqRKwVY3pzE52wmYiF1mG5NQPvQB+IEn?=
- =?us-ascii?Q?Xe1UR2z2vLKAWbOKbq12Fkgn0j4gJ9b7Qc45EocEnVDFkUyZUpM8MMdClQ16?=
- =?us-ascii?Q?eYzWHWIyaYLAablijVwVIvQpR1b9lGOGG/WFPzGowwMwM3wNH72l8bG1IECZ?=
- =?us-ascii?Q?LB0SpMIxRHtPFJpAbA9CNiKIw0uwu0N4OqZIESbCWBpxDFGf99Eb8LmaJ5Zm?=
- =?us-ascii?Q?K/045VnLeZN9L09euv34KggA6IIqijLj8Bi+qpX+Ip8M4CQCDSMUOdj9rIxm?=
- =?us-ascii?Q?D9IwHlDee9pJPx9KA6QI4EFZavoZ4qsCRuIJUh1TYuEEKKbOxXVSvvkhyrTf?=
- =?us-ascii?Q?jUJ1HjvJFEFLZVvf0sxMHiAf1KrASQYZh55UCmHzgGae6jHNhm52GVe9bU88?=
- =?us-ascii?Q?dEr8K9vr/QOYzwbEG2LyIlDuXXshwR2O3kPuDV9FfqveJjuNKvwPvS1/kSL7?=
- =?us-ascii?Q?ljj3D3kSDrVu+w4CUw5c1/QiVDbumS2/zC2BC2ojypqWY8nIq6pm/OCzyTqR?=
- =?us-ascii?Q?dK+W1lmRkYkyY7x5YajMJIO1gPuDlVIjoPjJxyS50qQMsetJI9Nae127TozT?=
- =?us-ascii?Q?Ke3c7w6Iti8/PTNYYmsKztwn7KmWfJNEdITAzw4RRBALSWd8WzO7PogDprmR?=
- =?us-ascii?Q?iq8sV4Bl6XAQNmX3E51DtPKOahZOE0SQ5oJfuuwL2RlfcA0xr2AGqFKBCuAs?=
- =?us-ascii?Q?MLdF0zkfEUMwgIfYpda9McSJTB/BT2nD5D+HIB+0RnvTll9Im/SLggl+0pqU?=
- =?us-ascii?Q?6LRR3ljZWepRhtf8v2kxgyXqqFOzzBCEEuLATA4nFxyML9mWZT8hYSUjp7AF?=
- =?us-ascii?Q?moN34k01gzrx2qNiViR37+H50pyfmxyJCWOodfB5NAqmajK9fJpkk0Aw3HeQ?=
- =?us-ascii?Q?cEWgP/xTplCwtsrhBulVEwiqf+zE9ND83zEQva1JqoA0Bj8GBpEL08a4tXFm?=
- =?us-ascii?Q?bemtdss8RIxHIMw30isH9AwqQtL4C/0AG5oyJwFynJG9fgah1pynLXO7gVDB?=
- =?us-ascii?Q?R73TXiea5Yo8d1mVKJ0=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Z8K67HObGaQcKR3rPRxIVdlAEttM+6jYpkEClAYsG6DeN5Hj3UF/n5sONvWy?=
+ =?us-ascii?Q?RgQWsJsUnn5J+W4doZ6qznaH0WW//ghjS6TIuO9CgR/eyCCo7+guZARdKKq0?=
+ =?us-ascii?Q?o0HA9Yn+saRt1xW2FwSDVYXJAdCpvW1VwTbl2fWZKZXJdcs2gY9UBSoquZQQ?=
+ =?us-ascii?Q?RZfYpcsi/7ujo2i/Z4UKebgkFgJ9QGO6U6rQG8lhdWUaCz49F8mc6kYAso1O?=
+ =?us-ascii?Q?GT8uAnnlecU74L3KlfMOT2cp2swCcgLUNAJPTbFpYtDLWkjO8kG07sQWSwnt?=
+ =?us-ascii?Q?6qlYoxs5g+T/21FMkujkUonnoti6GhsGJ7RrlyQVntCwVAXNyU0s+NPLWgHd?=
+ =?us-ascii?Q?V2T2FLXiegPbt3O/uZEPjLnb8dOEOvEstutmzuVfqbaxtp/Vp/WCMzU88pIm?=
+ =?us-ascii?Q?8I/kABpUwU56YgLZALmU1aUg43z/P1J90dLaiL9nhWTfBm9xoXBzfjVnIzlN?=
+ =?us-ascii?Q?L9r3O/MTJqXNxpRS+WxgMHeBLBYdMimaUOdT3094X+ipL0aTkRlO5OPc/WMU?=
+ =?us-ascii?Q?r4JW+MT05Seucn2R1s2dASCRWJuCcd03hWpN+05cU7pca+6ErHvVF+8jCtRO?=
+ =?us-ascii?Q?z6BmcxTQ+HrOBwdxAg1gVv4kfIWCtwraW4ILMpKLr6YDx5PGq+RZ1ei/RLOT?=
+ =?us-ascii?Q?C8bgawCoxaHzD0BXgnGkn7skBY/wstvA0HxOkNS1WtcsEbFjOAe9jOW4sIHV?=
+ =?us-ascii?Q?1x2uZbNjCba1m1ThiAf19mhgHsNo1ATmWG1ZFyCtn+HOBaZblAiuYx8peJ2K?=
+ =?us-ascii?Q?ZV+B16Kjpb1PAKuoK9a2pr+8zpH4LwD+hZLAIiGzIGnivGmHts3BtLPsnKM+?=
+ =?us-ascii?Q?FQtMWQfZ1PjLnp3olzGgtuKwoDof2XQ4U+dNtS4UT6y+2hPbKLKW+3Cq9GnP?=
+ =?us-ascii?Q?glnfixC8PEOPAgsbR7WpGCx4vKu1NvcDcDu69ZDj22i1NOPMVs1JbLPMG+Ai?=
+ =?us-ascii?Q?yikE5hJbSfi9lg5BefS72+0IhLdcrvp6K7Src5zaZSZgAT5QZLa1kdwrCKXy?=
+ =?us-ascii?Q?HyTCFhyu/49xyLfbuvHtBx7X7+RJof9Fs2V4hlrctjWvgTTZzr7VNESvIZFG?=
+ =?us-ascii?Q?31NMedsOzq8+h7ItHWs2Dd3C1XVGelvP9obbd6117L6qvWDoMbkX1zp87oc6?=
+ =?us-ascii?Q?b8z1HCVeLg3eMPb61z/VYU/N41R+OMf2JgHO7qxlwrl5C/m4uGsehndBldYA?=
+ =?us-ascii?Q?hHQwAYbnEDTLNA2iUJlILZfCHwK0X2MsxE4FN2d4HG27HqxLRm8/ooclPDcq?=
+ =?us-ascii?Q?5ZuKkBNAHArBbvTcS6vhHYJWzRcC0R9OPVPFUizwPmeMslQBgC96WwtkIIi3?=
+ =?us-ascii?Q?dUBEX7Tow64sdHMtQYuiNWUMNZh3PWMo7zrRNCMl+iYZg4KVsBITEybFFSoW?=
+ =?us-ascii?Q?Gfbv62tqE999wYT8DHhVXf/1K/RZMjEHhJ/6I8nu0o+CNXRNKzhjXYDtons/?=
+ =?us-ascii?Q?Yg5t8kv8iC6qbr4Ml4FjA1MGP7t4SB0T4X5WVvKWsQhL/0aKGAPJR5fzp6Gx?=
+ =?us-ascii?Q?GNixqS38LSy8PQ/UGEjK3uXJxxIel4azZsOZtwjPf/90OXRVaQJoylaDumzq?=
+ =?us-ascii?Q?Fj8CzL7uVmD2YwarjvwT2SNrxikBjBQCI6qc/wjq?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3ac57bdf-ed34-424c-ca0c-08dda7011737
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b840ffe-9c4a-429d-876b-08dda701188b
 X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8198.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 02:55:28.5948 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 02:55:30.7950 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hVN6u5NlI0/GJNg/xcXmGSioVd0vaLMJ1KGTrER5/YuuZgQDLfURNpEITqG52JRK
+X-MS-Exchange-CrossTenant-UserPrincipalName: JsnOitV9ZKuneioa0qHMb1xfGN1U0n/UJSXO+TU8YzHv4IQgTb9szulFG67buhhY
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB9093
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -144,63 +144,291 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Ioana Ciornei <ioana.ciornei@nxp.com>
 
-The list of availabla DPNI APIs depends on the DPNI API version
-available on a system. Retrieve the API version in the init stage and
-store it in the private structure so that it can be used at a later
-stage.
+Previously, the speed_capa field from struct rte_eth_dev_info was
+populated with all possible speeds that the MACs on the system could
+sustain. What this meant is that the bitmap of speed capability did not
+reflect what the MAC could do in the current circumstance.
+
+Fix this by using the newly added MC command
+dpni_get_mac_speed_capability() which returns a bitmap of
+enum dpmac_link_speed. Since the MC API is a newly added one, we check
+for the DPNI version to determine is we can use the API, if not the code
+will fallback to the procedure used up until now.
+
+Also, we interogate the MC firmware only at probe time to get the needed
+into and then we store the information in the private structure to
+use it any time .dev_infos_get() is called.
 
 Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
 ---
- .mailmap                         | 1 +
- drivers/net/dpaa2/dpaa2_ethdev.c | 8 ++++++++
- drivers/net/dpaa2/dpaa2_ethdev.h | 3 +++
- 3 files changed, 12 insertions(+)
+ drivers/net/dpaa2/dpaa2_ethdev.c    | 87 ++++++++++++++++++++++++++---
+ drivers/net/dpaa2/dpaa2_ethdev.h    | 12 ++++
+ drivers/net/dpaa2/mc/dpni.c         | 21 +++++++
+ drivers/net/dpaa2/mc/fsl_dpmac.h    | 15 +++++
+ drivers/net/dpaa2/mc/fsl_dpni.h     |  5 +-
+ drivers/net/dpaa2/mc/fsl_dpni_cmd.h |  4 ++
+ 6 files changed, 134 insertions(+), 10 deletions(-)
 
-diff --git a/.mailmap b/.mailmap
-index 91e08f4a1f..93905921b1 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -606,6 +606,7 @@ Ilya Maximets <i.maximets@ovn.org> <i.maximets@samsung.com>
- Ilya V. Matveychikov <matvejchikov@gmail.com>
- Ilyes Ben Hamouda <ilyes.ben_hamouda@6wind.com>
- Intiyaz Basha <intiyaz.basha@caviumnetworks.com>
-+Ioana Ciornei <ioana.ciornei@nxp.com>
- Isaac Boukris <iboukris@gmail.com>
- Itamar Gozlan <igozlan@nvidia.com>
- Itsuro Oda <oda@valinux.co.jp>
 diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index 298fded65e..b88c9d748a 100644
+index b88c9d748a..c661e027f5 100644
 --- a/drivers/net/dpaa2/dpaa2_ethdev.c
 +++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -2814,6 +2814,14 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
- 		goto init_err;
- 	}
+@@ -290,6 +290,79 @@ dpaa2_fw_version_get(struct rte_eth_dev *dev,
+ 		return 0;
+ }
  
-+	ret = dpni_get_api_version(dpni_dev, CMD_PRI_LOW, &priv->dpni_ver_major,
-+				   &priv->dpni_ver_minor);
-+	if (ret) {
-+		DPAA2_PMD_ERR("Failure in get dpni@%d API version, err code %d",
-+			hw_id, ret);
-+		goto init_err;
++static uint32_t dpaa2_speed_to_rte_link_speed(enum dpmac_link_speed dpmac_speed)
++{
++	switch (dpmac_speed) {
++	case DPMAC_LINK_SPEED_10M:
++		return RTE_ETH_LINK_SPEED_10M;
++	case DPMAC_LINK_SPEED_100M:
++		return RTE_ETH_LINK_SPEED_100M;
++	case DPMAC_LINK_SPEED_1G:
++		return RTE_ETH_LINK_SPEED_1G;
++	case DPMAC_LINK_SPEED_2_5G:
++		return RTE_ETH_LINK_SPEED_2_5G;
++	case DPMAC_LINK_SPEED_5G:
++		return RTE_ETH_LINK_SPEED_5G;
++	case DPMAC_LINK_SPEED_10G:
++		return RTE_ETH_LINK_SPEED_10G;
++	case DPMAC_LINK_SPEED_25G:
++		return RTE_ETH_LINK_SPEED_25G;
++	case DPMAC_LINK_SPEED_40G:
++		return RTE_ETH_LINK_SPEED_40G;
++	case DPMAC_LINK_SPEED_50G:
++		return RTE_ETH_LINK_SPEED_50G;
++	case DPMAC_LINK_SPEED_100G:
++		return RTE_ETH_LINK_SPEED_100G;
++	default:
++		return 0;
++	}
++}
++
++static uint32_t dpaa2_dev_get_speed_capability(struct rte_eth_dev *dev)
++{
++	struct fsl_mc_io *dpni = (struct fsl_mc_io *)dev->process_private;
++	struct dpaa2_dev_priv *priv = dev->data->dev_private;
++	enum dpmac_link_speed speed;
++	uint32_t dpmac_speed_cap;
++	uint32_t speed_capa = 0;
++	int ret;
++
++	/* The dpni_get_mac_supported_eth_if() API is only available starting
++	 * with DPNI ver 8.6.
++	 */
++	if (dpaa2_dev_cmp_dpni_ver(priv, DPNI_GET_MAC_SUPPORTED_IFS_VER_MAJOR,
++				   DPNI_GET_MAC_SUPPORTED_IFS_VER_MINOR) < 0)
++		goto fallback;
++
++	if (priv->ep_dev_type != DPAA2_MAC)
++		goto fallback;
++
++	ret = dpni_get_mac_speed_capability(dpni, CMD_PRI_LOW, priv->token,
++					    &dpmac_speed_cap);
++	if (ret < 0) {
++		DPAA2_PMD_WARN("dpni_get_mac_speed_capability() failed with %d", ret);
++		goto fallback;
++	}
++	for (speed = DPMAC_LINK_SPEED_10M; speed < DPMAC_LINK_SPEED_MAX; speed++) {
++		if ((dpmac_speed_cap & (1 << speed)) == 0)
++			continue;
++
++		speed_capa |= dpaa2_speed_to_rte_link_speed(speed);
 +	}
 +
- 	priv->num_rx_tc = attr.num_rx_tcs;
- 	priv->num_tx_tc = attr.num_tx_tcs;
- 	priv->qos_entries = attr.qos_entries;
++	return speed_capa;
++
++fallback:
++	speed_capa = RTE_ETH_LINK_SPEED_1G | RTE_ETH_LINK_SPEED_2_5G |
++		RTE_ETH_LINK_SPEED_10G;
++
++	if (dpaa2_svr_family == SVR_LX2160A)
++		speed_capa |= RTE_ETH_LINK_SPEED_25G | RTE_ETH_LINK_SPEED_40G |
++			RTE_ETH_LINK_SPEED_50G | RTE_ETH_LINK_SPEED_100G;
++
++	return speed_capa;
++}
++
+ static int
+ dpaa2_dev_info_get(struct rte_eth_dev *dev,
+ 	struct rte_eth_dev_info *dev_info)
+@@ -307,9 +380,6 @@ dpaa2_dev_info_get(struct rte_eth_dev *dev,
+ 					dev_rx_offloads_nodis;
+ 	dev_info->tx_offload_capa = dev_tx_offloads_sup |
+ 					dev_tx_offloads_nodis;
+-	dev_info->speed_capa = RTE_ETH_LINK_SPEED_1G |
+-			RTE_ETH_LINK_SPEED_2_5G |
+-			RTE_ETH_LINK_SPEED_10G;
+ 	dev_info->dev_capa &= ~RTE_ETH_DEV_CAPA_FLOW_RULE_KEEP;
+ 
+ 	dev_info->max_hash_mac_addrs = 0;
+@@ -326,12 +396,7 @@ dpaa2_dev_info_get(struct rte_eth_dev *dev,
+ 	dev_info->default_txportconf.ring_size = CONG_ENTER_TX_THRESHOLD;
+ 	dev_info->default_rxportconf.ring_size = DPAA2_RX_DEFAULT_NBDESC;
+ 
+-	if (dpaa2_svr_family == SVR_LX2160A) {
+-		dev_info->speed_capa |= RTE_ETH_LINK_SPEED_25G |
+-				RTE_ETH_LINK_SPEED_40G |
+-				RTE_ETH_LINK_SPEED_50G |
+-				RTE_ETH_LINK_SPEED_100G;
+-	}
++	dev_info->speed_capa = priv->speed_capa;
+ 
+ 	return 0;
+ }
+@@ -1133,6 +1198,7 @@ dpaa2_supported_ptypes_get(struct rte_eth_dev *dev, size_t *no_of_elements)
+ 		/*todo -= add more types */
+ 		RTE_PTYPE_L2_ETHER,
+ 		RTE_PTYPE_L3_IPV4,
++
+ 		RTE_PTYPE_L3_IPV4_EXT,
+ 		RTE_PTYPE_L3_IPV6,
+ 		RTE_PTYPE_L3_IPV6_EXT,
+@@ -3010,6 +3076,9 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
+ 	DPAA2_PMD_INFO("%s: netdev created, connected to %s",
+ 		eth_dev->data->name, dpaa2_dev->ep_name);
+ 
++
++	priv->speed_capa = dpaa2_dev_get_speed_capability(eth_dev);
++
+ 	return 0;
+ init_err:
+ 	dpaa2_dev_close(eth_dev);
 diff --git a/drivers/net/dpaa2/dpaa2_ethdev.h b/drivers/net/dpaa2/dpaa2_ethdev.h
-index 570b1608a0..ee5ae3b70a 100644
+index ee5ae3b70a..70357f0351 100644
 --- a/drivers/net/dpaa2/dpaa2_ethdev.h
 +++ b/drivers/net/dpaa2/dpaa2_ethdev.h
-@@ -394,6 +394,9 @@ struct dpaa2_dev_priv {
- 	uint8_t max_cgs;
- 	uint8_t cgid_in_use[MAX_RX_QUEUES];
+@@ -396,6 +396,7 @@ struct dpaa2_dev_priv {
  
-+	uint16_t dpni_ver_major;
-+	uint16_t dpni_ver_minor;
-+
+ 	uint16_t dpni_ver_major;
+ 	uint16_t dpni_ver_minor;
++	uint32_t speed_capa;
+ 
  	enum rte_dpaa2_dev_type ep_dev_type;   /**< Endpoint Device Type */
  	uint16_t ep_object_id;                 /**< Endpoint DPAA2 Object ID */
- 	char ep_name[RTE_DEV_NAME_MAX_LEN];
+@@ -433,6 +434,17 @@ struct dpaa2_dev_priv {
+ 	LIST_HEAD(shaper_profiles, dpaa2_tm_shaper_profile) shaper_profiles;
+ };
+ 
++#define DPNI_GET_MAC_SUPPORTED_IFS_VER_MAJOR	8
++#define DPNI_GET_MAC_SUPPORTED_IFS_VER_MINOR	6
++
++static inline int dpaa2_dev_cmp_dpni_ver(struct dpaa2_dev_priv *priv,
++					 uint16_t ver_major, uint16_t ver_minor)
++{
++	if (priv->dpni_ver_major == ver_major)
++		return priv->dpni_ver_minor - ver_minor;
++	return priv->dpni_ver_major - ver_major;
++}
++
+ int dpaa2_distset_to_dpkg_profile_cfg(uint64_t req_dist_set,
+ 				      struct dpkg_profile_cfg *kg_cfg);
+ 
+diff --git a/drivers/net/dpaa2/mc/dpni.c b/drivers/net/dpaa2/mc/dpni.c
+index f651f29b02..a1f168dd04 100644
+--- a/drivers/net/dpaa2/mc/dpni.c
++++ b/drivers/net/dpaa2/mc/dpni.c
+@@ -3493,6 +3493,7 @@ int dpni_sp_enable(struct fsl_mc_io *mc_io, uint32_t cmd_flags, uint16_t token,
+ 	/* send command to MC */
+ 	return mc_send_command(mc_io, &cmd);
+ }
++
+ /**
+  * dpni_get_mac_statistics() - Get statistics on the connected DPMAC objects
+  * @mc_io:       Pointer to opaque I/O object
+@@ -3520,3 +3521,23 @@ int dpni_get_mac_statistics(struct fsl_mc_io *mc_io, uint32_t cmd_flags, uint16_
+ 
+ 	return mc_send_command(mc_io, &cmd);
+ }
++
++int dpni_get_mac_speed_capability(struct fsl_mc_io *mc_io, uint32_t cmd_flags, uint16_t token,
++				  uint32_t *speed_cap)
++{
++	struct dpni_rsp_mac_speed_cap *rsp_params;
++	struct mc_command cmd = { 0 };
++	int err;
++
++	cmd.header = mc_encode_cmd_header(DPNI_CMDID_GET_MAC_SPEED_CAPABILITY,
++					  cmd_flags, token);
++
++	err = mc_send_command(mc_io, &cmd);
++	if (err)
++		return err;
++
++	rsp_params = (struct dpni_rsp_mac_speed_cap *)cmd.params;
++	*speed_cap = le32_to_cpu(rsp_params->speed_cap);
++
++	return 0;
++}
+diff --git a/drivers/net/dpaa2/mc/fsl_dpmac.h b/drivers/net/dpaa2/mc/fsl_dpmac.h
+index 076da5b5a3..2b18651b7d 100644
+--- a/drivers/net/dpaa2/mc/fsl_dpmac.h
++++ b/drivers/net/dpaa2/mc/fsl_dpmac.h
+@@ -67,6 +67,21 @@ enum dpmac_eth_if {
+ 	DPMAC_ETH_IF_1000BASEX,
+ 	DPMAC_ETH_IF_USXGMII,
+ };
++
++enum dpmac_link_speed {
++	DPMAC_LINK_SPEED_10M = 0,
++	DPMAC_LINK_SPEED_100M,
++	DPMAC_LINK_SPEED_1G,
++	DPMAC_LINK_SPEED_2_5G,
++	DPMAC_LINK_SPEED_5G,
++	DPMAC_LINK_SPEED_10G,
++	DPMAC_LINK_SPEED_25G,
++	DPMAC_LINK_SPEED_40G,
++	DPMAC_LINK_SPEED_50G,
++	DPMAC_LINK_SPEED_100G,
++	DPMAC_LINK_SPEED_MAX,
++};
++
+ /*
+  * @DPMAC_FEC_NONE: RS-FEC (enabled by default) is disabled
+  * @DPMAC_FEC_RS: RS-FEC (Clause 91) mode configured
+diff --git a/drivers/net/dpaa2/mc/fsl_dpni.h b/drivers/net/dpaa2/mc/fsl_dpni.h
+index 2f8125314c..8d28b8ce76 100644
+--- a/drivers/net/dpaa2/mc/fsl_dpni.h
++++ b/drivers/net/dpaa2/mc/fsl_dpni.h
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
+  *
+  * Copyright 2013-2016 Freescale Semiconductor Inc.
+- * Copyright 2016-2023 NXP
++ * Copyright 2016-2025 NXP
+  *
+  */
+ #ifndef __FSL_DPNI_H
+@@ -2017,4 +2017,7 @@ int dpni_sp_enable(struct fsl_mc_io *mc_io, uint32_t cmd_flags, uint16_t token,
+ int dpni_get_mac_statistics(struct fsl_mc_io *mc_io, uint32_t cmd_flags, uint16_t token,
+ 			    uint64_t iova_cnt, uint64_t iova_values, uint32_t num_cnt);
+ 
++int dpni_get_mac_speed_capability(struct fsl_mc_io *mc_io, uint32_t cmd_flags, uint16_t token,
++				  uint32_t *speed_cap);
++
+ #endif /* __FSL_DPNI_H */
+diff --git a/drivers/net/dpaa2/mc/fsl_dpni_cmd.h b/drivers/net/dpaa2/mc/fsl_dpni_cmd.h
+index f653f2c0e4..cf4558d540 100644
+--- a/drivers/net/dpaa2/mc/fsl_dpni_cmd.h
++++ b/drivers/net/dpaa2/mc/fsl_dpni_cmd.h
+@@ -132,6 +132,7 @@
+ #define DPNI_CMDID_SET_QUEUE_TX_CONFIRMATION_MODE	DPNI_CMD(0x281)
+ #define DPNI_CMDID_GET_QUEUE_TX_CONFIRMATION_MODE	DPNI_CMD(0x282)
+ #define DPNI_CMDID_GET_MAC_STATISTICS			DPNI_CMD(0x283)
++#define DPNI_CMDID_GET_MAC_SPEED_CAPABILITY		DPNI_CMD(0x284)
+ 
+ /* Macros for accessing command fields smaller than 1byte */
+ #define DPNI_MASK(field)	\
+@@ -1031,5 +1032,8 @@ struct dpni_cmd_get_mac_statistics {
+ 	uint32_t num_cnt;
+ };
+ 
++struct dpni_rsp_mac_speed_cap {
++	uint32_t speed_cap;
++};
+ #pragma pack(pop)
+ #endif /* _FSL_DPNI_CMD_H */
 -- 
 2.25.1
 
