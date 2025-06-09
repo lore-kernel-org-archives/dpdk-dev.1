@@ -2,59 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8C9EC61CE8
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 11:54:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C6AC61CE8
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 11:56:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9156B40A6C;
-	Mon,  9 Jun 2025 13:54:40 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id 1DD474060F
- for <dev@dpdk.org>; Mon,  9 Jun 2025 13:54:37 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E720C40A6C;
+	Mon,  9 Jun 2025 13:56:48 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+ by mails.dpdk.org (Postfix) with ESMTP id F0CF14060F
+ for <dev@dpdk.org>; Mon,  9 Jun 2025 13:56:46 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1749470079; x=1781006079;
+ t=1749470207; x=1781006207;
  h=date:from:to:cc:subject:message-id:references:
  in-reply-to:mime-version;
- bh=Y2PaEZL/GqpLV6qJanhc5xLDfn2/ITvldaWeuydbXVU=;
- b=bgatyawM+3B5Aw/7qqGt+m6eGnU0OxnHpzZQzcJulKjm3ZC6w4gsgWYm
- UopZ2Bxl/HFeShpvcQ3cLJmmCGvL8+D1qGswImjepY+Fh/++dAXihA4NK
- p84Ge/E40ENq6bQnhn7ayACa+J8iz/zG2qJhiBAUO7zvu3FbqZyTJr2fK
- eQyy3e82mo+u+HjTHZKrGswux8X7fVn+BCFf/EYPG6JiUEkvzC3PjHkpQ
- 36N/nh8F1210oS5DT6WK/6vjkAmn5lgFaOGj/JF5CxOxEzN3MdjiT0nEQ
- VLJ8G/88TGuOm55g1VDGAfKYkcEX/o3mdHofZpIagRIc9rz6Y7iBPp+FU A==;
-X-CSE-ConnectionGUID: DX1dBhEXT5WDwWzpG48nOA==
-X-CSE-MsgGUID: PnGqWKmiQlmItbNor7bglw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11458"; a="62945376"
-X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; d="scan'208";a="62945376"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
- by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Jun 2025 04:54:36 -0700
-X-CSE-ConnectionGUID: U5rvMCCuTI+9srHdsrn4Lg==
-X-CSE-MsgGUID: x3k1ZVuwSMOZJe35zpfcWA==
+ bh=R1z8/YuLPwlc/5vL6lD7vltb8ZDtD1oFl7fIzHQXx/4=;
+ b=T5np+qysp/MRPmTE0gEVZ/CqO0ETwuO7G7+Ea5sALW6Lx7D4509NlRpk
+ GQOdC7M1H9RTDAQ1+L2pY9lR1MwuXEjSQcGSs7whGeAtj7xYsP1lAYt6F
+ 39Mq0kI8uGAn1KZX3J9mBzHTnxGA7SVk/4kaVRRZLPhMwFT8xP2WXK+aB
+ 4b1g7tR9n5KpPXengHgDrfiEQt8ibybKNpKHTXKXOq2e9HIAP396uZkhA
+ vSM1bph+hzR1CORF/+Dr0QOocuej/6yDzizJpuaQDdqEn1OD7XJD7z3Pq
+ PKX2Sx7WK3EY1kId0oNyvb/3uq1CoeyWzuq3Qq3HRHjacJ+5zmh2noE+I w==;
+X-CSE-ConnectionGUID: 8nMObBziQMqTAD1WPnyQkA==
+X-CSE-MsgGUID: Uy0R5+DwSmOzGEo9OILSpg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11458"; a="62579507"
+X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; d="scan'208";a="62579507"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Jun 2025 04:56:46 -0700
+X-CSE-ConnectionGUID: o7JlRWUtRDu0Z4eHh0VOqg==
+X-CSE-MsgGUID: zkD22UgtQUaMJULCycJetw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; d="scan'208";a="147459442"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Jun 2025 04:54:35 -0700
+X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; d="scan'208";a="146846937"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Jun 2025 04:56:45 -0700
 Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 9 Jun 2025 04:54:34 -0700
+ 15.2.1544.25; Mon, 9 Jun 2025 04:56:44 -0700
 Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
  ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Mon, 9 Jun 2025 04:54:34 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.60)
+ 15.2.1544.25 via Frontend Transport; Mon, 9 Jun 2025 04:56:44 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.81)
  by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.55; Mon, 9 Jun 2025 04:54:34 -0700
+ 15.1.2507.55; Mon, 9 Jun 2025 04:56:44 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=U2xCYgBxpLyFq70nSflVL7FFMvuV4ZYAR7b9H3B8zxcPXDYLql5dnTeGexVN2k0FTSgES2+2/NeI51ovYSTBLPiZ1smVYIWyw2v9yJC+EyAuIhVSwf65vAzg2rQH/9BodTpayT2eKudW7m4eSuS59XqJEAu/cLMtkIRAt2rIC5U9sJUZHq3fF76CBQFvPeVN2JJ6X51ZHWGD7cpxrx0MyVmdFq/Sbt2c693R3mLNH+yfxxMbq3G0dmWmcWcNAdPckFsw/4SbqbsZ+1kjfcIry6mPTJcfl5UUSxt+Ao+LPo/wgxHzU+ai2A3DAag8Lnx5gaorLSfWAF8W2LujkH3b4Q==
+ b=kmR+ExEEgyhU3oogi91dk6wmVAsFoMTQCne2FHYeiqotds/zEnbZ896qoV0tlz8lkwLM2g8fNsr0YKyIznDDjwEuxjXnGi1ncO71DkLmu9B5zB+81fNSX9p4WBrw7rcMvcL6ZyACjQPofOdBMmMhUOtsQxbYeZqqcQjaz0zmDU+kLlclLaG2m5RgwhNyu0IACH6cxtlOCNHoXyQURZAdgloNNjNd9qH4IK4ZMATuT6kKjv04GeeeJ0rKO9SP5G2ztB4eS6/Lmt8c8T4I3jI1SOthLARkm+evi3gXR4zBP3r9uHwzlR9I9J8HXiC6gJDb9S2hntYBpXOPrccpNaRKdw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=byrnE/jSeTtZegUvtv5ZW1YiLgqAmmRlqVRc20ik5hg=;
- b=QF7RyjRL2UuM9ouE+kGj+QjSASpMs88uh3CyX1C2NITCfTQvNEj94LNj3Cxo+5gK0KcFkBG1+Qk3rZN/btl4Wk7r5OhgivymzHt9KYn48U9Y1x011OBLRsUDJMlybi2FWzuab4Q3KkFUYWTSdH/1jEZSxoafZF1xdJcpZlPc6CxdqA3Gov3CqRfAppeaZ93edUwfUwIwoBJ2LTftUf7wvwfYpZA2PwXAwXw98IVV42DEsdno213+1+R4aQ7zPabT22PFuH52U5axbABhFbotY0oKdVwwWucVfDCs7LiqgRXGnZzWzbGbApFS1L3c6R9rzTU2Fs+lNlJFH+jVk15DAw==
+ bh=ZKSfq73IIhvF4oBIl15/nE0L1gq+fZauarvPZb5DVuA=;
+ b=CV4pRSq4b/MRTLbWKE0KfZnuxe993zmNC7TjyX8qrFJ+0UHi3Jj7QKEqiF7Cs+g7vtilH/JmaW+3v6UPJIno6KY+mdqqKvyyCGEdgnMIm8m1nZQY3dXYhn/lIzdyShBpPANuLCA1lqjescAOKhWwOKxrqCb83OKJFsWFy68HTydpuBSsm7s59zlBZcy/lnlBIvhNDYmMFzeAZx4ZPJdM5rNWp9IlDG3f3+7DNKCuJezh9CVGWpKeFZJGSNMgdRzHbvMTGzGqXw78GvAaAMmdss/apHRQ9AzbCKZiZa46tVFiwE80/+UrqrHGRbWrt1b04TcyIA/zfqaDZQ9CPGEtig==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
@@ -64,98 +64,96 @@ Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
  by SJ1PR11MB6108.namprd11.prod.outlook.com (2603:10b6:a03:489::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.25; Mon, 9 Jun
- 2025 11:54:32 +0000
+ 2025 11:56:42 +0000
 Received: from DS0PR11MB7309.namprd11.prod.outlook.com
  ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
  ([fe80::f120:cc1f:d78d:ae9b%5]) with mapi id 15.20.8813.021; Mon, 9 Jun 2025
- 11:54:32 +0000
-Date: Mon, 9 Jun 2025 12:54:26 +0100
+ 11:56:41 +0000
+Date: Mon, 9 Jun 2025 12:56:36 +0100
 From: Bruce Richardson <bruce.richardson@intel.com>
-To: Anatoly Burakov <anatoly.burakov@intel.com>
-CC: <dev@dpdk.org>
-Subject: Re: [PATCH v5 32/34] net/intel: support wider x86 vectors for Rx rearm
-Message-ID: <aEbLcjsxW2K9GCmy@bricha3-mobl1.ger.corp.intel.com>
-References: <cover.1749229650.git.anatoly.burakov@intel.com>
- <cover.1749229650.git.anatoly.burakov@intel.com>
- <50d03ad98dbed61ffbfec689337b20f41849c11c.1749229651.git.anatoly.burakov@intel.com>
+To: "Burakov, Anatoly" <anatoly.burakov@intel.com>
+CC: <dev@dpdk.org>, Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: Re: [PATCH v5 19/34] net/ixgbe: add a desc done function
+Message-ID: <aEbL9JxB-QK8xqMf@bricha3-mobl1.ger.corp.intel.com>
+References: <75f2d5852f52e7b81b0036cb921e661edca8569b.1749229650.git.anatoly.burakov@intel.com>
+ <a0493826-41d1-41f0-8b9c-b45c7894bb13@intel.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <50d03ad98dbed61ffbfec689337b20f41849c11c.1749229651.git.anatoly.burakov@intel.com>
-X-ClientProxiedBy: DUZPR01CA0289.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4b7::20) To DS0PR11MB7309.namprd11.prod.outlook.com
+In-Reply-To: <a0493826-41d1-41f0-8b9c-b45c7894bb13@intel.com>
+X-ClientProxiedBy: DUZPR01CA0056.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:469::7) To DS0PR11MB7309.namprd11.prod.outlook.com
  (2603:10b6:8:13e::17)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SJ1PR11MB6108:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7e41a0be-b3c0-4129-39ad-08dda74c65a4
+X-MS-Office365-Filtering-Correlation-Id: fffa5024-1b90-475e-6a7a-08dda74cb2dc
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?/i7cCgOl+eMbHARDv4SBws2bPgBCCXqL62tOa4hbWLFrS1B5QEAT6inwH0Kr?=
- =?us-ascii?Q?nuqBYx/RAMseP3kb28sLpe9PgaeHHjKeULBYKP9gy+5yFhR8A2MkRRvDC88F?=
- =?us-ascii?Q?/hf48mpiudxF+QAKevPYvtr8uzTH5ghOcbGzquXiy8A8jr/IPIADwnhRWCTQ?=
- =?us-ascii?Q?VwCoFjVzXO+J2k28u1gqqHnhK3Qg4+tXenNTYfEyAuiZshu8z0mSuX5MKvkv?=
- =?us-ascii?Q?EhPRmEhydmSMIXe0l1mv/oE+JaoXgdCHY0ql0tdzzcNOgmC6ZfxtVB5r/ehb?=
- =?us-ascii?Q?RUq0U2W6AEvwSw6ypNaDC1UpG4p4MB4/SMjhcDznTjm/zcspJQLWL0rDDMhi?=
- =?us-ascii?Q?ZpHj/47AqmKb/VngUwXmXBCN6zilFlHMQgv583rn6uP/zGburkdTGpHZzbAV?=
- =?us-ascii?Q?dNgMOcQwmKuUMQ8FXjTtWcxw4XUb/bKbxLIdPFrlqfCzno/uzh8/LxnPFkb5?=
- =?us-ascii?Q?GQ0odcE+O5/VzirrAzKxZwCicaHrtubisKiTOGzVyKoMUKap7GL6WOXP35OT?=
- =?us-ascii?Q?j3j33EaWzU45pksPG5rMCNbevgSqTbY8N8MnOydW59bDM0OI779OBmlB1Tl1?=
- =?us-ascii?Q?WnEmZaYNRdo1w2L+82x8hlLWre9lvuXU5V224QZJf3fANMT1sKho7cFRea7k?=
- =?us-ascii?Q?IT8udreYvMYlUnETpERNrnoavEi4t83+hDfaFwym8EBy4D8ObHM6NNTCL4yU?=
- =?us-ascii?Q?GHiGspFH/EKTyeJAZtJOQKDeRB5AfDEgdD28GBK8ZJKF1jY6LlYK2so/hBAO?=
- =?us-ascii?Q?u5wIunpIhChdIzU69QWtFxowSGvyXuBSpcEasHFS720Y0YE5ekizCgnA1iLO?=
- =?us-ascii?Q?xV8fWkvNDnIdGANcA2AC1jdmVyjGVV7FOapJyO3dV/fSRleWk3ltvub71a8j?=
- =?us-ascii?Q?NG1XLaTVLAdyEekuM2EExKSNfdh0Nvuli0SzJQet0dnKa3rItJpMVXlMLgUe?=
- =?us-ascii?Q?vcPaE7VnmugQ6ew7NpK6vZheWNOiyWH7BUFfFEPMBmhtSFrJW/jMdvkGgGCj?=
- =?us-ascii?Q?x1Mb2G9oP7F4EXwxRrd8WCFn0wpU50YryHCOT9ueUZfgNAK+HX1M63DQGXjU?=
- =?us-ascii?Q?xQV2Ph8R5ixt/uVGGDpH8k0sXL7Nq9FBBlSlvKUSBRpNPCEH9dzWvlS92psh?=
- =?us-ascii?Q?w6wzlvQ930+1qQ5m1VwXmrTsttHRFriuDg7qe6IBljzfiFHbExznKV8sW36B?=
- =?us-ascii?Q?tcFWJOKhFrBwXi2H/gSQC8Yw8cDjNpgsNg+yyBd+DM2/IqH7AVSSGN8CIMMd?=
- =?us-ascii?Q?N3k2FS1nBoFRCtKZ0s1F44U8vGr9VQxde+v8HSuwaLTovwdcldohfDHaShKs?=
- =?us-ascii?Q?l3i8g+IfwY1IE1iSzrwCdhbf8ixaeBN7jUegYdhVTs38dpewiQROYwK1Zskp?=
- =?us-ascii?Q?1CVnIdmOCEZRl385kqTBC8yjp22lt3imajRd7dtvz8w4HcJAqKvjjf3mbsO1?=
- =?us-ascii?Q?jM7SMYULtVM=3D?=
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ECF/5X4jI6HK0RX79u3+CTkeQ+N4uXbINlOdmfuqt/GXO5O+zmkj37BgA5Wo?=
+ =?us-ascii?Q?Bw0RBUDLAweUj3Kj1H4cU5YmaXsBcckBZeorZUtuD2mnHgDjRFkTRY9NpkNv?=
+ =?us-ascii?Q?g0mkauw8I+zNNF1KKFiSBNMMYrCjpDnRcRmh8fJZ98NUxs0IvWJgasjDAkdP?=
+ =?us-ascii?Q?zeyJkKfUwCk5yTAnyaD1j1ivvLoJU7BgjHCp/PuWYdw2c9I7P+ifWaSdEd9L?=
+ =?us-ascii?Q?GyAKZpTi1ni9BghFDF0dK8AWc8l7OLal6a2eAbVqwKs1pj0pUV0919MI/Duq?=
+ =?us-ascii?Q?dUq3KFHH9C4M1+gOqGGat8tK1i0pSH5iPEQYoBL2wtjkgQUz8rEH7pZS0xk5?=
+ =?us-ascii?Q?3+E2MaGRvfGWS5tnyg2sktUdtdzd6i1xjcvXgFRwIEXGaqsFh02P7b4xzv6T?=
+ =?us-ascii?Q?oUoLATmvkS7xWZeXLTN4+ijKkMqeAdyXUdCDfEucag96Oq/+lEul7QMUCd/j?=
+ =?us-ascii?Q?8HZYvXGkBueJoikHPrKCJraxTraQxO6q8vDH1ygWJiocrsFw2Ek8RXOJCP6v?=
+ =?us-ascii?Q?xy2VEw7W/ygfMcD1WHwlO7gDBDLPjYcKJKgKV9zo5eA5KTzIWhmWZE3PzgVk?=
+ =?us-ascii?Q?lwqHE8UDtMkuP4MGvWpfEvo/ruoB5c63+L5eH6fISafZc54+gCdAH+2QoJDd?=
+ =?us-ascii?Q?napMvGZX7wLAt0roWI+CKPjA8QstLNCv+OPtPb3lFBcdKGxJegYUjw63EKo/?=
+ =?us-ascii?Q?JvYCqAPM0Bd9fub2+2CewTV53iBVga6l9gDXTnVLgXqaINrWOEqOcVQV8vZL?=
+ =?us-ascii?Q?CUywMnUwERgSrA/D3jnvu90s2DfKqNy1bLsw8idziSNA08wGLY+cCwXnaC+o?=
+ =?us-ascii?Q?l/MyMzwUEfaOiVW72hgV5/6rcabCbHTqrCxp2btGA7RoIFd/bYPuAJ6QGJWu?=
+ =?us-ascii?Q?IfaJqQO+eY1iaeCiQyICea0PTjW+ndkjq2+BbIkWPGRA3Hi9O2jibHV5rJHL?=
+ =?us-ascii?Q?WIbwLTmhCMGCr9rYx/aaWEhiCPtg8aBw+aYU/EYB46IWPWTJ+3KBhG9UmgqZ?=
+ =?us-ascii?Q?OQgAQIx3EVC9ZiA2ITZOr2CXS22jTS9WE1fZ8h2yJzV/UvHUDwZfLF/EJH5f?=
+ =?us-ascii?Q?4o0E9nBwmR++ymmWThoVNcsJDCvs1zA1Tzi8QtpdFtjD+HEMul0rknjaT1ec?=
+ =?us-ascii?Q?JWl9wYnT/w4UJ3YBWzkcPVvB5WZC63PRVGPK8RZWwtpJC7ARsuftkWseBygc?=
+ =?us-ascii?Q?DUmALdRysp8quVOr6sDWlz9zUh94oBj0KP3kJXa8pMA+O8QIQeQGh+anKfIT?=
+ =?us-ascii?Q?6JL7sPAIK+HLlQNhI/8riEFy6haNOoEWCvqmg4rWnA6MVDyQTXxLRU0Cfqe0?=
+ =?us-ascii?Q?LOuWBhzx989/pFY+0L3RFtS9xTMNk7nD83ll+x4pJkKGDKTpLCfmo5ldepr1?=
+ =?us-ascii?Q?EPZ27VZrgbUYUBuQX324vykXGJMOMDA57Jj9ZD+WxbqaC56SVA=3D=3D?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(1800799024)(366016)(376014); DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?yFdjOGaK7EsZbGKLT5HqELOu36yFWZGP9Vu/fUQbYdLOOYO2K9209ETVfSmr?=
- =?us-ascii?Q?OuCue0MbzYw8P+6PSngAJfSd0vYTz6MDIAdfTMGuCMtbbTwEXLSbmKS0ShfS?=
- =?us-ascii?Q?ULN4YF/3vMJ7D1o1Yq8nvUT82LbaPe0gRGG8nEQVtWSBJFh4HuwFyiaKBDfc?=
- =?us-ascii?Q?7+XQZmRoTVBzQ21hmPSK84I+OcE99xr0yf9NQx9PloymlLnJLPI2ZHZyEa90?=
- =?us-ascii?Q?KKUueyt2S7siZ736nfVhjt9QOMOVOiXg7OTwDJaj51yCSxKWJgci8NsAix0O?=
- =?us-ascii?Q?/drlUT5mrxlEt+cwy9IkWefVIErQ9AXFqn3qXcTNvWfOXxPqAUTcUSMf3xe/?=
- =?us-ascii?Q?x6PPb2/fz6wWZ52vF95Cd1zkc9guwaGSEGSFQXocqxmJC3TziTWk5HzPqJlE?=
- =?us-ascii?Q?ktIfoNaW9BgTKM86XvJCleZDC0SsKmUf1sHZz/w7HyjHr1aGlF8ujGMu9l6U?=
- =?us-ascii?Q?tidthOZVal0cBbAESJmtrsIemo2RB8+YEjbQKQgeDcN06bszk39Yw3pYwUWk?=
- =?us-ascii?Q?CP1XLESil6RXI7HiMvlgB9aVe93kNYI0WuPtjc2ZYSQb9/AXtQIVCaS9TlZl?=
- =?us-ascii?Q?UXgjunRfIiHZd4GwghP3y0Rk9xr0yMVTaqEZVYmXeO4GJAm31ql7T1tr39K0?=
- =?us-ascii?Q?uhSeM/bPTJLHaOTWu4AkgNjBiRBWFB10khr86coy43+M+L2d261MvC7sJr+O?=
- =?us-ascii?Q?NphmAfsQjuXv0Gx4f7UMASxNGR+HHEDyTpePejNr1YqIWrjaGNinECgA7CTF?=
- =?us-ascii?Q?u6s+QhCpM/P0ELxd+pnEvxmz6S+Ql3TnV+O4B89/sdlpeFF0wT0d76JPqTL4?=
- =?us-ascii?Q?5TWdjxjfOI/mPUuA0eLW85h3xammR1XBlKDhkZDfPhiaIWMKfFD/LHq2ALt4?=
- =?us-ascii?Q?AnHjpkdsfyePSsZGcPntAo9lsglRTdzA7cbFTkWKjAAfEBcw+yIPjvS5rUQH?=
- =?us-ascii?Q?FeEq/Ivlqvu6Jwx3b/c9Ng6BnHAyV3c7yFKhv8qOAHhswSDKBUs0nbmgvOEH?=
- =?us-ascii?Q?zm8cxZyCH8Li7pAiNULgQefhDj90tELIlv//TdgxxBxVbRbknN2PIR0SGYql?=
- =?us-ascii?Q?Wa2IJZttORMf8/E5dQJIDBSvq+BAqAQNNJSkoZQs7ea///x4XrtDt1qaI3qu?=
- =?us-ascii?Q?tx1ygcsx/lr+8kUjsca5wGbxKCQdhoM8inJpWgUH3WotxrC3B/at8hbxAcCL?=
- =?us-ascii?Q?yrsTyk5A++YOwtouarYdDybuuzoWeZO1/Z9CGfraYljF1Kazbc8a6fyJLXoE?=
- =?us-ascii?Q?ZXCYyHREeICMLA2LAaaOdeaIUHlYLHj5apMmbaqxyPvsd4tG8YKncgp76F6H?=
- =?us-ascii?Q?lxKtgIdNlxF93F1KM4tb/aLyoZrbo0PfYdw8ukUaxJMPzteo/i8Mfn93U129?=
- =?us-ascii?Q?vQfZWZZplA3WkylmD0Lnmt/4iMA7kVOrPsrk/2JHGAcehu31rYE+4ya0Wep7?=
- =?us-ascii?Q?2XWV3SOoEzzMDRSMYBd+BEpnVd0DysrNlR8bTZ5kSX1jTecI19D9Xwko/9tl?=
- =?us-ascii?Q?QOuzSJE0WRyQY70ncDvz98EgtEvUYzo0evcIhD7u/Wm86ltbs0AiZSR/4qJl?=
- =?us-ascii?Q?++t0OqrSmlve3ck6NzA9ry8PBoV6B/vdDrVgxxGS0A94ybxNkiLKFxMrufbI?=
- =?us-ascii?Q?YQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7e41a0be-b3c0-4129-39ad-08dda74c65a4
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ZQ+VJsDx66Zy/VP7CU6WgKXy0pdMLYJTuxLo0IYmXKVdqVR0529hTfoCOp9n?=
+ =?us-ascii?Q?T5fB+C/Qp4qdAZk1WMiMFEruiEUHrW2dhL0CPGAUC3qKmW8e70KhXyb2qgdq?=
+ =?us-ascii?Q?LxmvI7JpmTqU6MU2VR6admtENYlP0s+aB+BTsbMYYR1o5u7lmYgEXLMetZ7q?=
+ =?us-ascii?Q?l0N+Vi7p+ALuy100krTNRUgrnS6GvFWadbIUPKDpDZ4FgTHrAucqacTpbTfV?=
+ =?us-ascii?Q?dwdUO5uslV0TepeDhWuiqf4ge7ypVb6rs6lnRaWhbTK3B7TPG6qh4XzCzeby?=
+ =?us-ascii?Q?hgjGXO3eXKFtCgYCQ6Pia2lYhScV7SxhYb06W6d+ENpVIwWPSXeJiVEgaKYP?=
+ =?us-ascii?Q?t5gO/Wxi/snuW17UMGGtToPAf65/jBkOOzW4j61apyjYH17WRA4v/EiDLwaF?=
+ =?us-ascii?Q?83u3BHvaQ9SN1G2Pq0aZFvQcLccy4BxHhj+jkQwiJkNX+V9Z5EC0L5kncexD?=
+ =?us-ascii?Q?1E6Hd/LLojqA62xvJ8yaFsmFV11jAt924i0u3XFX09Nj6j9QR69HY1Pz8ha1?=
+ =?us-ascii?Q?x1ZEo9MuJ2QKAJM6LNEZUlv5C60tEGWyrE1MC7cIyYiHYOzM1PzEZpd2Nv3P?=
+ =?us-ascii?Q?knFl487yN/7c7Os73535i072gcGun1maXIeZn1Bfn7rVBdAblxTn3Gq6awKY?=
+ =?us-ascii?Q?Alf8Ay6ZIfw8wJXxXv3HdL30+KhUS31yh9z2g7HaGUMqorlD7VDtJcOmezTs?=
+ =?us-ascii?Q?SM5hL126AbHzkkS4jccNMWGc+QAHEpt5kyB8ahHYFnh0ovWKVbjL9ygO3rRJ?=
+ =?us-ascii?Q?pkDTeDkdY6ztUWbLFb5c9fvgbqky4nTSCknICWkmG5QhhybEhsDJA7ik/tvm?=
+ =?us-ascii?Q?Y8dtEWlNXGlvoSMsbGEwtvx7PxGXn3k47OVFj19btxxROwaCJH1hdzBY/lJ6?=
+ =?us-ascii?Q?nOLYXjVI/eTPilRXDcPs8tPHtuPNjqG/ZNVG5TVZ13G1hGgBoGXa3ssjMlGf?=
+ =?us-ascii?Q?3xKL0tO9zRNq/c/6P1aWOMfy9aXMZ9pEp05Epu+kH+OrQGxiywYHQayykCFk?=
+ =?us-ascii?Q?3l/N5L2tyX5nA7pzBpw50M6P/Qv4YTdhATWwg32Xw8/1wCrMPx2qdUn/ssXQ?=
+ =?us-ascii?Q?3LkfRhpc/v8WrUqdsFDWuq5myEBAvS2f1SwhF49DMG9EntkdIswmUqlQmr7C?=
+ =?us-ascii?Q?YXdzOCmYV+B4jsA02WCF19B1n7nFPZWr2lYYjcTTPbB2Tjfwc8qmNcQO1tG7?=
+ =?us-ascii?Q?zTPydd7qTFbY+uJ6PM38vBWGUIHUS261NvbHCRf/K8R7GhrYhv5SDiphFGjo?=
+ =?us-ascii?Q?ED3nhOsykR1/3U6NkR0ovk08am+p3dZA3LXFhCOfb8JVg/y4HcjLtvnDjsug?=
+ =?us-ascii?Q?rnpAQW7iCobY4SuRpeg4gjccvdrAjT7Ti/4qMOMAkvhvYfITOjPy/BVRCPkN?=
+ =?us-ascii?Q?n5BQiQkHho1FohJ7+Ok3javNw9oCRuDiQBAXzebL1nBR2tENzezi+SjMsKSa?=
+ =?us-ascii?Q?hoe1F7YIIg4dVQr+xefokvAsjqG/lWubHuN+8otNe7bIj0IQixxaDQIUjLwi?=
+ =?us-ascii?Q?Y67+OHFL5sMTcL6O5DSNr33aXX06Z//nAYGVl7cYpSBDiFhH3ytEUiI0VVM9?=
+ =?us-ascii?Q?r9PBxv2rM5ZVCExaGnN/tSdf1BGUb6WryxUW80bnf+2ZQ+pwcUH6/j2Juq6l?=
+ =?us-ascii?Q?EA=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: fffa5024-1b90-475e-6a7a-08dda74cb2dc
 X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 11:54:32.3566 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 11:56:41.8757 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gOboSjv9e5JAgS1M23koEOUnDBc6Ke8qiG1SLDOARGBA3yv9Kuve7qvWY/JL3Apz2VF+kixqeyMpaqquc/xcxerIt7B8JJmLZsnhlCRsrU4=
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8LvC6N4HLFWNuLEuDbnEXLkx4ijxeegNg/C4t56OikQ4WhMp5FsKh52xtIyooz+nLTYJ/qGgU6TFVx9DGlFCaBsgP8Xi8JAhQw4bUKQGxBI=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR11MB6108
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
@@ -171,143 +169,99 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Jun 06, 2025 at 06:17:07PM +0100, Anatoly Burakov wrote:
-> Currently, for 32-byte descriptor format, only SSE instruction set is
-> supported. Add implementation for AVX2 and AVX512 instruction sets. Since
-> we are using Rx descriptor definitions from common code, we can just use
-> the generic descriptor definition, as we only ever write the first 16 bytes
-> of it, and the layout is always the same for that part.
+On Mon, Jun 09, 2025 at 11:04:39AM +0200, Burakov, Anatoly wrote:
+> On 6/6/2025 7:08 PM, Anatoly Burakov wrote:
+> > Add a function to check DD bit status, and use it everywhere we do these
+> > checks.
+> > 
+> > Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> > ---
+> > 
+> > Notes:
+> >      v5:
+> >      - Add this commit
+> > 
+> >   drivers/net/intel/ixgbe/ixgbe_rxtx.c            |  8 ++------
+> >   drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c |  4 +---
+> >   drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h | 12 +++++++++---
+> >   3 files changed, 12 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.c b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+> > index 5f0aedb4cd..50060ce64e 100644
+> > --- a/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+> > +++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+> > @@ -118,13 +118,11 @@ static __rte_always_inline int
+> >   ixgbe_tx_free_bufs(struct ci_tx_queue *txq)
+> >   {
+> >   	struct ci_tx_entry *txep;
+> > -	uint32_t status;
+> >   	int i, nb_free = 0;
+> >   	struct rte_mbuf *m, *free[RTE_IXGBE_TX_MAX_FREE_BUF_SZ];
+> >   	/* check DD bit on threshold descriptor */
+> > -	status = txq->ixgbe_tx_ring[txq->tx_next_dd].wb.status;
+> > -	if (!(status & rte_cpu_to_le_32(IXGBE_ADVTXD_STAT_DD)))
+> > +	if (!ixgbe_tx_desc_done(txq, txq->tx_next_dd))
+> >   		return 0;
+> >   	/*
+> > @@ -3412,7 +3410,6 @@ int
+> >   ixgbe_dev_tx_descriptor_status(void *tx_queue, uint16_t offset)
+> >   {
+> >   	struct ci_tx_queue *txq = tx_queue;
+> > -	volatile uint32_t *status;
+> >   	uint32_t desc;
+> >   	if (unlikely(offset >= txq->nb_tx_desc))
+> > @@ -3428,8 +3425,7 @@ ixgbe_dev_tx_descriptor_status(void *tx_queue, uint16_t offset)
+> >   			desc -= txq->nb_tx_desc;
+> >   	}
+> > -	status = &txq->ixgbe_tx_ring[desc].wb.status;
+> > -	if (*status & rte_cpu_to_le_32(IXGBE_ADVTXD_STAT_DD))
+> > +	if (ixgbe_tx_desc_done(txq, desc))
+> >   		return RTE_ETH_TX_DESC_DONE;
+> >   	return RTE_ETH_TX_DESC_FULL;
+> > diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c
+> > index cf6d3e4914..707dc7f5f9 100644
+> > --- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c
+> > +++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c
+> > @@ -215,7 +215,6 @@ ixgbe_recycle_tx_mbufs_reuse_vec(void *tx_queue,
+> >   	struct ci_tx_entry *txep;
+> >   	struct rte_mbuf **rxep;
+> >   	int i, n;
+> > -	uint32_t status;
+> >   	uint16_t nb_recycle_mbufs;
+> >   	uint16_t avail = 0;
+> >   	uint16_t mbuf_ring_size = recycle_rxq_info->mbuf_ring_size;
+> > @@ -232,8 +231,7 @@ ixgbe_recycle_tx_mbufs_reuse_vec(void *tx_queue,
+> >   		return 0;
+> >   	/* check DD bits on threshold descriptor */
+> > -	status = txq->ixgbe_tx_ring[txq->tx_next_dd].wb.status;
+> > -	if (!(status & IXGBE_ADVTXD_STAT_DD))
+> > +	if (!ixgbe_tx_desc_done(txq, txq->tx_next_dd))
+> >   		return 0;
+> >   	n = txq->tx_rs_thresh;
+> > diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
+> > index 4678a5dfd9..56e13b4125 100644
+> > --- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
+> > +++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
+> > @@ -25,19 +25,25 @@ void ixgbe_recycle_rx_descriptors_refill_vec(void *rx_queue, uint16_t nb_mbufs);
+> >   uint16_t ixgbe_recycle_tx_mbufs_reuse_vec(void *tx_queue,
+> >   		struct rte_eth_recycle_rxq_info *recycle_rxq_info);
+> > +static inline int
+> > +ixgbe_tx_desc_done(struct ci_tx_queue *txq, uint16_t idx)
+> > +{
+> > +	const uint32_t status = txq->ixgbe_tx_ring[idx].wb.status;
+> > +
+> > +	return !!(status & rte_cpu_to_le_32(IXGBE_ADVTXD_STAT_DD));
+> > +}
+> > +
 > 
-> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-> ---
+> This causes compilation errors down the line because vec_common isn't
+> included by drivers that don't support vector driver, so I'll move this to
+> ixgbe_rxtx.h in v6.
+> 
+> (alternatively, we can keep the stubs and not do conditional inclusion of
+> vector code headers)
+> 
+When fixed, you can include my ack:
 
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-Two small comments inline below.
-
->  drivers/net/intel/common/rx_vec_x86.h | 365 ++++++++++++++------------
->  1 file changed, 198 insertions(+), 167 deletions(-)
-> 
-> diff --git a/drivers/net/intel/common/rx_vec_x86.h b/drivers/net/intel/common/rx_vec_x86.h
-> index ecab8b30a6..86c599cda1 100644
-> --- a/drivers/net/intel/common/rx_vec_x86.h
-> +++ b/drivers/net/intel/common/rx_vec_x86.h
-> @@ -43,206 +43,248 @@ _ci_rxq_rearm_get_bufs(struct ci_rx_queue *rxq)
->  	return 0;
->  }
->  
-> -/*
-> - * SSE code path can handle both 16-byte and 32-byte descriptors with one code
-> - * path, as we only ever write 16 bytes at a time.
-> +/**
-> + * Reformat data from mbuf to descriptor for one RX descriptor, using SSE instruction set.
-> + *
-> + * @param mhdr pointer to first 16 bytes of mbuf header
-> + * @return 16-byte register in descriptor format.
->   */
-> -static __rte_always_inline void
-> -_ci_rxq_rearm_sse(struct ci_rx_queue *rxq)
-> +static __rte_always_inline __m128i
-> +_ci_rxq_rearm_desc_sse(const __m128i *mhdr)
->  {
->  	const __m128i hdroom = _mm_set1_epi64x(RTE_PKTMBUF_HEADROOM);
->  	const __m128i zero = _mm_setzero_si128();
-> +
-> +	/* add headroom to address values */
-> +	__m128i reg = _mm_add_epi64(*mhdr, hdroom);
-> +
-> +#if RTE_IOVA_IN_MBUF
-> +	/* load buf_addr(lo 64bit) and buf_iova(hi 64bit) */
-
-Comment doesn't seem right here - we are not doing a load op. Perhaps
-reword.
-
-> +	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, buf_iova) !=
-> +			 offsetof(struct rte_mbuf, buf_addr) + 8);
-> +	/* move IOVA to Packet Buffer Address, erase Header Buffer Address */
-> +	reg = _mm_unpackhi_epi64(reg, zero);
-> +#else
-> +	/* erase Header Buffer Address */
-> +	reg = _mm_unpacklo_epi64(reg, zero);
-> +#endif
-> +	return reg;
-> +}
-> +
-> +static __rte_always_inline void
-> +_ci_rxq_rearm_sse(struct ci_rx_queue *rxq)
-> +{
->  	const uint16_t rearm_thresh = CI_VPMD_RX_REARM_THRESH;
->  	struct ci_rx_entry *rxp = &rxq->sw_ring[rxq->rxrearm_start];
-> +	/* SSE writes 16-bytes regardless of descriptor size */
-> +	const uint8_t desc_per_reg = 1;
-> +	const uint8_t desc_per_iter = desc_per_reg * 2;
->  	volatile union ci_rx_desc *rxdp;
->  	int i;
->  
->  	rxdp = &rxq->rx_ring[rxq->rxrearm_start];
->  
->  	/* Initialize the mbufs in vector, process 2 mbufs in one loop */
-> -	for (i = 0; i < rearm_thresh; i += 2, rxp += 2, rxdp += 2) {
-> -		struct rte_mbuf *mb0 = rxp[0].mbuf;
-> -		struct rte_mbuf *mb1 = rxp[1].mbuf;
-> -
-> -#if RTE_IOVA_IN_MBUF
-> -		/* load buf_addr(lo 64bit) and buf_iova(hi 64bit) */
-> -		RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, buf_iova) !=
-> -				offsetof(struct rte_mbuf, buf_addr) + 8);
-> -#endif
-> -		__m128i addr0 = _mm_loadu_si128((__m128i *)&mb0->buf_addr);
-> -		__m128i addr1 = _mm_loadu_si128((__m128i *)&mb1->buf_addr);
-> -
-> -		/* add headroom to address values */
-> -		addr0 = _mm_add_epi64(addr0, hdroom);
-> -		addr1 = _mm_add_epi64(addr1, hdroom);
-> -
-> -#if RTE_IOVA_IN_MBUF
-> -		/* move IOVA to Packet Buffer Address, erase Header Buffer Address */
-> -		addr0 = _mm_unpackhi_epi64(addr0, zero);
-> -		addr0 = _mm_unpackhi_epi64(addr1, zero);
-> -#else
-> -		/* erase Header Buffer Address */
-> -		addr0 = _mm_unpacklo_epi64(addr0, zero);
-> -		addr1 = _mm_unpacklo_epi64(addr1, zero);
-> -#endif
-> -
-> -		/* flush desc with pa dma_addr */
-> -		_mm_store_si128(RTE_CAST_PTR(__m128i *, &rxdp[0]), addr0);
-> -		_mm_store_si128(RTE_CAST_PTR(__m128i *, &rxdp[1]), addr1);
-> +	for (i = 0; i < rearm_thresh;
-> +			i += desc_per_iter,
-> +			rxp += desc_per_iter,
-> +			rxdp += desc_per_iter) {
-> +		const __m128i reg0 = _ci_rxq_rearm_desc_sse(
-> +				RTE_CAST_PTR(const __m128i *, rxp[0].mbuf));
-> +		const __m128i reg1 = _ci_rxq_rearm_desc_sse(
-> +				RTE_CAST_PTR(const __m128i *, rxp[1].mbuf));
-> +
-> +		/* flush descriptors */
-> +		_mm_store_si128(RTE_CAST_PTR(__m128i *, &rxdp[0]), reg0);
-> +		_mm_store_si128(RTE_CAST_PTR(__m128i *, &rxdp[desc_per_reg]), reg1);
->  	}
->  }
->  
-> -#ifdef RTE_NET_INTEL_USE_16BYTE_DESC
->  #ifdef __AVX2__
-> -/* AVX2 version for 16-byte descriptors, handles 4 buffers at a time */
-> -static __rte_always_inline void
-> -_ci_rxq_rearm_avx2(struct ci_rx_queue *rxq)
-> +/**
-> + * Reformat data from mbuf to descriptor for one RX descriptor, using AVX2 instruction set.
-> + *
-> + * Note that for 32-byte descriptors, the second parameter must be zeroed out.
-
-Don't need this note any more, since this function is not used for 32-byte
-descriptors.
-
-> + *
-> + * @param mhdr0 pointer to first 16-bytes of 1st mbuf header.
-> + * @param mhdr1 pointer to first 16-bytes of 2nd mbuf header.
-> + *
-> + * @return 32-byte register with two 16-byte descriptors in it.
-> + */
-<snip>
