@@ -2,48 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6033C5AD49
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 02:56:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 417C1C5AD49
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 02:56:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CB0A040A70;
-	Mon,  9 Jun 2025 04:55:42 +0200 (CEST)
-Received: from PA4PR04CU001.outbound.protection.outlook.com
- (mail-francecentralazon11013031.outbound.protection.outlook.com
- [40.107.162.31]) by mails.dpdk.org (Postfix) with ESMTP id A443140674
- for <dev@dpdk.org>; Mon,  9 Jun 2025 04:55:31 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C42DA40B8F;
+	Mon,  9 Jun 2025 04:55:45 +0200 (CEST)
+Received: from AS8PR04CU009.outbound.protection.outlook.com
+ (mail-westeuropeazon11011002.outbound.protection.outlook.com [52.101.70.2])
+ by mails.dpdk.org (Postfix) with ESMTP id 7D2D94067B
+ for <dev@dpdk.org>; Mon,  9 Jun 2025 04:55:33 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DT+0fnoz626MwoX69UCYpikf9fSH6EYcAfEyhffPP8cqJMomew6Q+RFU7HR8auxUZpRnvBi3pVr8hILfV6b4YQTc9NgQx6fKKE8YUm3KO+G72G/dWZhgxANJnYzb8GdBfuLYPi4w11o5wgp68yhM1JR/LGYvZqv7+CrqsKuawgEIlQQjuIiCV8n2PjngM1xOwN1ZwLqUCOblr4SFOrCo+yhn2eOXHPVzLHm/sXMCT0NaMZmBR3qYLo1f8xl29PPl4PGDEhLJngbQVo3GxjqJyu6O0m5cF6Hn7J4pjXgn3Js/fiZ/gVwZrVMB8E47APuRU/vjEFiHMPIorTQYK7eHxA==
+ b=x0rUGI2Y3vMQ+4+HVk0qtT0TC72jPXuytITuemSK14OPN4oYC9BcSxb9VpLSCWrwZZeUKLUsMA4slnu6nwK66JMwnwdVr3JbOIKBeTafZKbKdS1kcNPWypMcEXa6OanqIcMjIpLuqkVhNt93DvCp6lnyI5krNS5ucrYkscpHpCVVl3P90n1AHIh0pmgjUMM6eId/TKjZtTOBaxjlqXUo+KMRxtMXXBB8lXOnaGdF6EVfuc7vK+HEgExzpQPHy+2F1jGJ6TgkWQ7fvlGxS5M+8x98xyb46ERApZvTGddJllMnGN4JUJsLNXKCbzzS+20/Mwp50clvsPwmeJ2iHcslPw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6gFceXfbfVLOFbThsHJ3Q0iRA22cRtUnngBPvCQV8Y4=;
- b=kpX5u9ekzFTY28KTM9jiZ5ocIyKtHHDi9McO9rZKTdmWhPGbfzsjyyKCLtY7qCDuU8yB+xoFf0KHwraPbqD5OXtx1vxyIoO83pfSHn8b5P0fHOAhenuKX7AGK3GF8pbqX6zGjzYJ6hCciOU6lPsFUtjWEpsVmeLqlR01wounGRMeWLyoakEWe7awrIUvhHHAPA6+TLvGqEx36VvrIwJijv2O7OyRx01Fhi70BrRGcBUK04N8JMF6v+Tt1XrbxtIHeEqFHCjMCceVzX97gqAqcimYfHzyMGaEYXzKXplLVk8u8OXG2Lu+cA73J8mmkD9FPxVUbYroSZ3gwHEHmWYfog==
+ bh=PbSMG935nAQVsn+w1fPas4D+XjTS3RLSPabxBnGNq8A=;
+ b=hNw5alFEeR8/0M1GKL4DsUwChcusiLf6+RlXaIETwgb+jmvenke1wdDSF/MmII3AMqz0Bld1keos0//kXEciXqVjk+rFoyd2qJBSb3SvK7NKMs+AtXGGqtDLbebp0AA+fZVkdsIgXVDpxMCEtOurUgIYpKkd+7Fd+LpvWLOuUo8lgI7fI5K3ZZgbSOKWujS0pX8Cqb43dqC2X0OUR+4lQlMu3X8NhwigfY+qn7FwQKBOVoKtk/UBHZ56ADsTvOKLvjthMECciHHGXNIQsVchuDJ+CD66HAbpuIH399T4TLVwdqDIIoCvBanjmGuI1m9vquY1WvNb+EVwoGLCnkd9iw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6gFceXfbfVLOFbThsHJ3Q0iRA22cRtUnngBPvCQV8Y4=;
- b=ACcE7K3jYeCUHDqFsUwuUhjVLg7eqdV+3xeYG/CiOBHCilTZX+vQJquJ5CCVoQm07TsX/fIYg0utP4xuvzFScFdSOqXhZ822YtkTdD9cU8VJyEgasETBmqieVylOIHua2xGg8X2ySlXpUs9jmeKgWh3JseJdx4G0YZQQBLwdz5sx0asTWsQe0FLawra3ozcFA9Fmh0U4LbrdA2cr5OxaGtluBVJdWRy18btQhaED39VGS9nEb93Trnw1t/bEzK+2+2HH+fR8+xDwT83kKDAiCHx+Glt7KwpHvFBOAa5k5Mp9blTHapl9f/tVSlynn9O+mtxyxvzJSRjlzW79TxsrpQ==
+ bh=PbSMG935nAQVsn+w1fPas4D+XjTS3RLSPabxBnGNq8A=;
+ b=Kk46ZhEB7Inc7pf0dDrbY6hWqcwu9O1PCBPzQC3Yzubf5ViBP26FOTfIk0CS7rqL5iAzcRgAIN+CFpjMObXcvcHBX3wxjN9s6i0cN//vi541AOkFzgOJ1bY+eB55jEvcvZcO2KYJ6MF5tP+jNcE/L83zTDW58WIQNzJAkiBwiEIh2d0B99q8EbBPWoNLaVt/5Yx6VmPStAI1skAIIQv1sb4OOpHJMItO71HgU91wXoQTUKSKw7vOEpGrpovurrXdTU1Aa9tMSxPoRF9H/4ZdIy4BwIwRN+3hKiBk2iL8Uc2JP+y+4JiXmpEDLicdSdRobLmdSbFJzEmZROKH+z96Lg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from AS8PR04MB8198.eurprd04.prod.outlook.com (2603:10a6:20b:3b0::14)
  by AS8PR04MB9093.eurprd04.prod.outlook.com (2603:10a6:20b:444::20)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.20; Mon, 9 Jun
- 2025 02:55:30 +0000
+ 2025 02:55:32 +0000
 Received: from AS8PR04MB8198.eurprd04.prod.outlook.com
  ([fe80::2e32:1a4a:7d29:195]) by AS8PR04MB8198.eurprd04.prod.outlook.com
  ([fe80::2e32:1a4a:7d29:195%4]) with mapi id 15.20.8813.024; Mon, 9 Jun 2025
- 02:55:30 +0000
+ 02:55:32 +0000
 From: Gagandeep Singh <g.singh@nxp.com>
 To: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
  Sachin Saxena <sachin.saxena@nxp.com>
-Cc: Ioana Ciornei <ioana.ciornei@nxp.com>
-Subject: [PATCH v3 10/11] net/dpaa2: setup the speed cap based on the actual
- MAC
-Date: Mon,  9 Jun 2025 08:24:49 +0530
-Message-Id: <20250609025450.3997062-11-g.singh@nxp.com>
+Subject: [PATCH v3 11/11] net/dpaa2: enable software taildrop for ordered
+ queues
+Date: Mon,  9 Jun 2025 08:24:50 +0530
+Message-Id: <20250609025450.3997062-12-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250609025450.3997062-1-g.singh@nxp.com>
 References: <20250602104041.3322164-1-g.singh@nxp.com>
@@ -56,78 +55,78 @@ X-ClientProxiedBy: SI1PR02CA0015.apcprd02.prod.outlook.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AS8PR04MB8198:EE_|AS8PR04MB9093:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1b840ffe-9c4a-429d-876b-08dda701188b
+X-MS-Office365-Filtering-Correlation-Id: 5098aa0e-7f2b-4223-941d-08dda70119a7
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
  ARA:13230040|376014|52116014|366016|1800799024|38350700014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?R/CtVC8P/nHaOGquS8mzfeJfSjE+zRNkZEnFH1qhnUEWd2cnUir7XzntUn25?=
- =?us-ascii?Q?Vj1mawvOz2ueYwvVJd/1Q+GXq6RXQrsIFH2EDuQu/xnDlOnIcMbtvcV/Njmv?=
- =?us-ascii?Q?+NayL3Myef7FYpGhaJF/ak5v2QHWmM3G3LGKcKQAOzET0DGbpw0u2WrRhoIb?=
- =?us-ascii?Q?qpq6vlNUP7vH0FRPI4oI+HFEo0Co71z1bBHFLOQ2HCc2fC2nYO0skko3hHdS?=
- =?us-ascii?Q?gsW9jDmuVNdFF6XuYvNC6pF9L6P3FhLRw3ojbsxG//amusC1EoYTZE3BSKxB?=
- =?us-ascii?Q?qlOd0LKSRcQMMfnyhuVYQvsRimG33FQho0QZUyJqiiFss6CUv2/jojPDH1iY?=
- =?us-ascii?Q?+c28P7FRw8Y8ua1svLNg6DgyqbvXZ2gTlnrIZrClsLDsUTeByGN3HO+igeaX?=
- =?us-ascii?Q?iSZ0YvzGGn5IVhY2VBe/20rkB5SD7y3/Sl25I/85ooP8slaBuZTbN2aLB6y/?=
- =?us-ascii?Q?zwGmgnBxl6WzfccwaZohKchAGhlGgvysy7WqgDJTpu3M2vRlGoL+p1a1UY5S?=
- =?us-ascii?Q?Zms0iTYUNSMGXfQJK+30v2v1tvzsUWWCINRRPjHZL3QHsykXyiATfFeXvvpb?=
- =?us-ascii?Q?KCrrUFgHJqOqQiAqDUxIuSlKz/ze8B+i0DbOj5HAjGeDeFFVl0BIcV1AoEk5?=
- =?us-ascii?Q?dk/scD4izjYc295ikq9b+2Z1DI/1HWV21kw3s6SoQ2brCwHk3xnU0AjnvYe7?=
- =?us-ascii?Q?JaotJ67rMCvrdX++IKyk91btxLJX14pf9v3vMgdjHUSv6KUy2Sl6f/XB+h59?=
- =?us-ascii?Q?7jVqI9i2nKrHd3qqQ2LtZCtJF8kngMCJ0gPOw6ZspsnXEzOYERXwG1ZePNwf?=
- =?us-ascii?Q?Thc3eNszQMTbgpZnEv9hmS6h963Wknh5MDaFL4bYFAi7sR0nj5wk9jUT7Hgp?=
- =?us-ascii?Q?J92sHJ1iRKmVXLwQRF4J0N0AFlu3z+5axtnyjYf2+mj0ThuGdkiyb70DkKkU?=
- =?us-ascii?Q?+d8snlXSLH2eovZ/OrinhWU4E2osYY5OSIQRjfXTalsXnRtdb4gGUrD6/t85?=
- =?us-ascii?Q?SNAsGjaKrWxTPID4pgzT27QOPGIBHEMOBeOCMR10UG/xjtDT5XJGWDaPU1jj?=
- =?us-ascii?Q?c4IQ0xSJ7HbJJdifrHTDrRK7Iv077nRM6TjUVT4W/gta0ot4qVBiO3yNTpMn?=
- =?us-ascii?Q?rHek9klXbNQxCh9Bx1FNOhNeQEq61Q8vl6F8X8c1Zb1NRSvV5B675/UFc/t1?=
- =?us-ascii?Q?3UrUbRs3YpOPqSTN8OFRPvfH03W3UvTm/lQcyqevfE1TNata0PMlVg1hSfht?=
- =?us-ascii?Q?RqTTVTrd9BbAk1WzdvzuY4lJvelq0iQ9xQRhKbl8Nh2Jl2vEY0lXk4zLOHS3?=
- =?us-ascii?Q?Nb0reY05JrOtmdJSAw03Bot/JFw0HVLDQX5d58FLyR6l/6e69uk0luGOGHQG?=
- =?us-ascii?Q?5munD0H/O7fJd4VKe67cRclV4NA00GZXBlgCv68+YPtpz72FvvHu/DbhudIV?=
- =?us-ascii?Q?/2zWSGrrN4yHkFXdsNN3ideJYr0zsLyZESLg+6xCPfy/lqTeDhv2PUkSD4y5?=
- =?us-ascii?Q?zIGoMAWr3bJBihM=3D?=
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?2tC0i5081LUOM6kjAHZetEhvlxhp5M4NvuxIrlNuZMyNyWpV3/ZnBVIWMMYg?=
+ =?us-ascii?Q?yPrigcihgsS/R1eZ1JEIXWOTYMoY55mCnKAbUAx3uMQaASZDyjQgTzftiSa3?=
+ =?us-ascii?Q?9g4P6owHxw4OvkDELTVo0jDbo2OxdBROjS45nhG2P4DNvb2kTKtwlH3fnaBV?=
+ =?us-ascii?Q?0keKyXkjOEVtMuj+IYeGtC31AzR3u1crq7MATrmlP2KIgOXJSwwftl1enYIN?=
+ =?us-ascii?Q?33d8ZQ8us7aKpf93dwttnbsuPNVhC7XXFxg3HboC2njF2nvnYZzcOQWJvgE3?=
+ =?us-ascii?Q?+PhevIGIC2kTxdepm1zBQvNvlYCDM7wsePS6iw2cg/QucRMQsgMhJIJA/mQE?=
+ =?us-ascii?Q?xmNwdbJoaO2wSNY+HpV3DUXFnBnY+KD/nFFUjLfdASagwc6BOyU3tSa0Si4k?=
+ =?us-ascii?Q?n52sUrc147WWLgbESAXVfY9bkMvv7E2tyhT+FlUU3C0t4FeVu1Z0LVgN9DbN?=
+ =?us-ascii?Q?/001CZg725ZpvH/t3kXxIr5JU2WHtlD1H3Zvyy9IdJtZ6FRmclIv+NL8++O+?=
+ =?us-ascii?Q?dUNF3pgsjv0ieiY6E4CI6w4N4COmRvJh/pZESa4TJnOkPrU5S3HSzgKaiGTN?=
+ =?us-ascii?Q?W2YRXAyOxqYoxUvLXHFHmZjn8VQLWzZg9cNb2MdvM8hBtdFcSbUck2krZ1ia?=
+ =?us-ascii?Q?R0bnxQhNlw7ATxnNiSbkNp+mMKa6jy8AUZ1GI4QDap+FOjpqqoDLVmWtD4U5?=
+ =?us-ascii?Q?qQJ1O4+DssECOBfvAn7/pEOCJJcvGl3+N4k6Jceq66Y7LKnvgs4uEHNN10FS?=
+ =?us-ascii?Q?DjFaOF8XAvjdvFCDDICwTLY81Lkfh5ZM2MSyJxAkRA86upvErMlwxbQcsYeL?=
+ =?us-ascii?Q?EWAHeYnRVVTU74Bzt9NexTloxWy8A6fLYVDavBMq2Pk8YmqAqkXl1M/2fR4w?=
+ =?us-ascii?Q?ydK7V/o2Yvha0d9S3VvkgNC6udSG+k5Pg6KTrKehhF5YMOVeNc5O/7I6m1kq?=
+ =?us-ascii?Q?uaGsPZUeUrlmpQDEs3kRwPS34OpHeOvL16luEhIJEtxjSfL6GmamGBMilL0a?=
+ =?us-ascii?Q?1d8cG3vLw/bwYeF2Vph9M7Mev04nU943loBpztrUAD0nR7JUub7ywJ3DhB5o?=
+ =?us-ascii?Q?0vHOVNIuixQiLLqXIcvoI24lkIADrU2IjiYSx8zdGU/gPYYjv0ubvllvrru6?=
+ =?us-ascii?Q?h9gGK64N/HA6Zs1G86nKILqZHFPeAGjpwyWrcjjT7D1+OVTmUGQ4/5InM+FG?=
+ =?us-ascii?Q?IN1o99zfsowOUTTtJX1s2wcdrZ5pt9exC5PnzRswEhgFZkaK2w4/mYtDpK7o?=
+ =?us-ascii?Q?EJ2PZiPo3ddnAh8JxK4aRqar7LFFYZGiuWgAD3YF1oePyUQYwpQHcZ7n2cG0?=
+ =?us-ascii?Q?Gfm7r2WNe2PuIyi4voOWbpM7nV4M3je7vCe9w9q0CMqpdgNXb8ZrUxelcoYg?=
+ =?us-ascii?Q?p1SXKUMAnYx3XAHeCww5ODvf3ukHMdVFCdDhK2WFtE5Pfwh8A6JLd6MzUmsk?=
+ =?us-ascii?Q?vlaCU5A+JKIKGLwGQcAwZoOFTs4cD7oKlKOOrZKwKec1FSuUZVbvijfg/3oY?=
+ =?us-ascii?Q?cFhaQjtjiulEsvw=3D?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:AS8PR04MB8198.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014); DIR:OUT;
  SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Z8K67HObGaQcKR3rPRxIVdlAEttM+6jYpkEClAYsG6DeN5Hj3UF/n5sONvWy?=
- =?us-ascii?Q?RgQWsJsUnn5J+W4doZ6qznaH0WW//ghjS6TIuO9CgR/eyCCo7+guZARdKKq0?=
- =?us-ascii?Q?o0HA9Yn+saRt1xW2FwSDVYXJAdCpvW1VwTbl2fWZKZXJdcs2gY9UBSoquZQQ?=
- =?us-ascii?Q?RZfYpcsi/7ujo2i/Z4UKebgkFgJ9QGO6U6rQG8lhdWUaCz49F8mc6kYAso1O?=
- =?us-ascii?Q?GT8uAnnlecU74L3KlfMOT2cp2swCcgLUNAJPTbFpYtDLWkjO8kG07sQWSwnt?=
- =?us-ascii?Q?6qlYoxs5g+T/21FMkujkUonnoti6GhsGJ7RrlyQVntCwVAXNyU0s+NPLWgHd?=
- =?us-ascii?Q?V2T2FLXiegPbt3O/uZEPjLnb8dOEOvEstutmzuVfqbaxtp/Vp/WCMzU88pIm?=
- =?us-ascii?Q?8I/kABpUwU56YgLZALmU1aUg43z/P1J90dLaiL9nhWTfBm9xoXBzfjVnIzlN?=
- =?us-ascii?Q?L9r3O/MTJqXNxpRS+WxgMHeBLBYdMimaUOdT3094X+ipL0aTkRlO5OPc/WMU?=
- =?us-ascii?Q?r4JW+MT05Seucn2R1s2dASCRWJuCcd03hWpN+05cU7pca+6ErHvVF+8jCtRO?=
- =?us-ascii?Q?z6BmcxTQ+HrOBwdxAg1gVv4kfIWCtwraW4ILMpKLr6YDx5PGq+RZ1ei/RLOT?=
- =?us-ascii?Q?C8bgawCoxaHzD0BXgnGkn7skBY/wstvA0HxOkNS1WtcsEbFjOAe9jOW4sIHV?=
- =?us-ascii?Q?1x2uZbNjCba1m1ThiAf19mhgHsNo1ATmWG1ZFyCtn+HOBaZblAiuYx8peJ2K?=
- =?us-ascii?Q?ZV+B16Kjpb1PAKuoK9a2pr+8zpH4LwD+hZLAIiGzIGnivGmHts3BtLPsnKM+?=
- =?us-ascii?Q?FQtMWQfZ1PjLnp3olzGgtuKwoDof2XQ4U+dNtS4UT6y+2hPbKLKW+3Cq9GnP?=
- =?us-ascii?Q?glnfixC8PEOPAgsbR7WpGCx4vKu1NvcDcDu69ZDj22i1NOPMVs1JbLPMG+Ai?=
- =?us-ascii?Q?yikE5hJbSfi9lg5BefS72+0IhLdcrvp6K7Src5zaZSZgAT5QZLa1kdwrCKXy?=
- =?us-ascii?Q?HyTCFhyu/49xyLfbuvHtBx7X7+RJof9Fs2V4hlrctjWvgTTZzr7VNESvIZFG?=
- =?us-ascii?Q?31NMedsOzq8+h7ItHWs2Dd3C1XVGelvP9obbd6117L6qvWDoMbkX1zp87oc6?=
- =?us-ascii?Q?b8z1HCVeLg3eMPb61z/VYU/N41R+OMf2JgHO7qxlwrl5C/m4uGsehndBldYA?=
- =?us-ascii?Q?hHQwAYbnEDTLNA2iUJlILZfCHwK0X2MsxE4FN2d4HG27HqxLRm8/ooclPDcq?=
- =?us-ascii?Q?5ZuKkBNAHArBbvTcS6vhHYJWzRcC0R9OPVPFUizwPmeMslQBgC96WwtkIIi3?=
- =?us-ascii?Q?dUBEX7Tow64sdHMtQYuiNWUMNZh3PWMo7zrRNCMl+iYZg4KVsBITEybFFSoW?=
- =?us-ascii?Q?Gfbv62tqE999wYT8DHhVXf/1K/RZMjEHhJ/6I8nu0o+CNXRNKzhjXYDtons/?=
- =?us-ascii?Q?Yg5t8kv8iC6qbr4Ml4FjA1MGP7t4SB0T4X5WVvKWsQhL/0aKGAPJR5fzp6Gx?=
- =?us-ascii?Q?GNixqS38LSy8PQ/UGEjK3uXJxxIel4azZsOZtwjPf/90OXRVaQJoylaDumzq?=
- =?us-ascii?Q?Fj8CzL7uVmD2YwarjvwT2SNrxikBjBQCI6qc/wjq?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?iVQLyRo2dlY2J7YSACqDlfVYdjG2Svecrno5AmTgg4NZqCUANtB3ymSGbUD5?=
+ =?us-ascii?Q?K1QuLH7UV9pJiK24wZbiQ7+FQR8PbE7q7RJpztrZVfVC4i6JJ4TN3S5Nb9fn?=
+ =?us-ascii?Q?Vptsw6BI4cIFnVVEz/JORAJJ+t7KlpIRqKsNHEoaLfbevAakRgK+a/QfcGM3?=
+ =?us-ascii?Q?VnZI2FUNw8e8w4yqagw+ndoaefUAXTWgRYpQH8wcEnmr03Lg6jww5fPfhvnZ?=
+ =?us-ascii?Q?0AwBRUajZlihPZce5Js7jeJVEqphQDwby6FQ4z0uWJEn1cIoLo08rYdZW0Hk?=
+ =?us-ascii?Q?twika5qC3auy1fZsWZ8f1+msegxX+z6Ik6+x1avFmGu4LrAhm14pyWRr/qkT?=
+ =?us-ascii?Q?4wltwImqyvEKNc7yVm1X/2V8rlxWPWP47CnVhZLd5slBQ5RZ29ZWVEe8mDZv?=
+ =?us-ascii?Q?rcnXbVbqrbnqVLkbSsWDeGU59Yj1ZgFojSjnjAidwB18h5k9nDkv1nmDLbEb?=
+ =?us-ascii?Q?hzGRLQYimA5AxKFM7phd+uwWrWodL7ht+d5vq+fH4CpQB9yRY48y0k+7adfU?=
+ =?us-ascii?Q?MyyfOu1BDI32QUNFV02IRoJgxC+E/RPwplHPXVn/PjYnD0oH4TKLvJW8/CsV?=
+ =?us-ascii?Q?inSWJ287fXGsfQHPH2OWWklwzdGQdYVxGSMyF8fcDTcPDV3+8FgithTgNSc7?=
+ =?us-ascii?Q?/x5JNF9HaNhi1Y42SprxmR7Uvm9ou8k4/At0extRerxgblmQkYBYYwsuQF/0?=
+ =?us-ascii?Q?QAN7WbBAXMpQcN+oU7Pjj/bHNrrgWCTyWCR8VROEewD06T8kpvn+WZP2u1mv?=
+ =?us-ascii?Q?0HyNJ4WWnlQa6iTUZ/0+4PKDva8kpXLGS03OPiT+r21PpjrViYjL2ymDGddS?=
+ =?us-ascii?Q?oMKtyM35EBSOCpQtRZuJne7PAdBn4ePBQNKa4op52WIPWljbaDlzoPeenNlf?=
+ =?us-ascii?Q?qHD6rgK6YBgrbHFFO8+j8f7p7vy91J+KamXXNemOlqLbH9h5iYU1h+po8LNg?=
+ =?us-ascii?Q?0mEEmWiWiCJ7kbDolsNgn3mEqogr0/oqK/BaFOlRQji53i5NCdFiNHYhH3B/?=
+ =?us-ascii?Q?MfqPCWJKjphdqbHMDRD/5otN6qdiJ71IGnktrcHNNbMk8dQvhf1GT8CBsrkc?=
+ =?us-ascii?Q?QnR0x4Wk9q5PYE5awUIOaP9ir2dmfyuL0aQ3GG8RjkLhOSms+UKgbp6YkN+d?=
+ =?us-ascii?Q?yIdV2brk6GBjBs3wjyv4knRimVzJ3aMOqVGhrScXsJ3HD3SOmajKXUMZOsX5?=
+ =?us-ascii?Q?XXfZ3/yXvl1/CmJMFBRhxmcvvcAKLp/xZV6+Gb2EOLIROpJicSs5P/VrgFrA?=
+ =?us-ascii?Q?35QNCgi37Kuq7XeGNHvd5rRTwIDPvC2fIpOAnM+CNwI3jxJe9HDzWWZNNq3r?=
+ =?us-ascii?Q?x9VS+Qssv/TtYs9AsQ0r7BH7rhBv/DcdIMBCEvBC8TrFiF7giT/RALErPdX/?=
+ =?us-ascii?Q?B/Q7GtAA2+aZbfvn7eBjjsuHqWLo+fZn5cwo7ygJvIGl+3oPl6bxPAYJVU4M?=
+ =?us-ascii?Q?351TgiVkt+o3rQHr0yTmt1tt9Ugpt2ArBe5z7NyA4upHikmFW4WvMlRoPZgd?=
+ =?us-ascii?Q?Dvzi47zMYm2ksnGc5ljcdKrCyZs0CkGtAq6uy4YMrMotnuK+g+Affh542nUb?=
+ =?us-ascii?Q?bLoc6xz3zZgXFJgLmLS8i/6QUhlBHXwMFeq/55sE?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b840ffe-9c4a-429d-876b-08dda701188b
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5098aa0e-7f2b-4223-941d-08dda70119a7
 X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8198.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 02:55:30.7950 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 02:55:32.6108 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JsnOitV9ZKuneioa0qHMb1xfGN1U0n/UJSXO+TU8YzHv4IQgTb9szulFG67buhhY
+X-MS-Exchange-CrossTenant-UserPrincipalName: CNEPp/3NvTZWmWQvhQ2kwKZIymGUH2zjSJX14iNwkcPBxo4qyVCz9593yELTK4S5
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB9093
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -142,293 +141,136 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Ioana Ciornei <ioana.ciornei@nxp.com>
+This patch adds support for software taildrop on ordered queues
+in the DPAA2 driver.
+It also enables congestion notification by default on
+traffic management (TM) queues,  which is a prerequisite for
+software taildrop functionality.
 
-Previously, the speed_capa field from struct rte_eth_dev_info was
-populated with all possible speeds that the MACs on the system could
-sustain. What this meant is that the bitmap of speed capability did not
-reflect what the MAC could do in the current circumstance.
-
-Fix this by using the newly added MC command
-dpni_get_mac_speed_capability() which returns a bitmap of
-enum dpmac_link_speed. Since the MC API is a newly added one, we check
-for the DPNI version to determine is we can use the API, if not the code
-will fallback to the procedure used up until now.
-
-Also, we interogate the MC firmware only at probe time to get the needed
-into and then we store the information in the private structure to
-use it any time .dev_infos_get() is called.
-
-Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- drivers/net/dpaa2/dpaa2_ethdev.c    | 87 ++++++++++++++++++++++++++---
- drivers/net/dpaa2/dpaa2_ethdev.h    | 12 ++++
- drivers/net/dpaa2/mc/dpni.c         | 21 +++++++
- drivers/net/dpaa2/mc/fsl_dpmac.h    | 15 +++++
- drivers/net/dpaa2/mc/fsl_dpni.h     |  5 +-
- drivers/net/dpaa2/mc/fsl_dpni_cmd.h |  4 ++
- 6 files changed, 134 insertions(+), 10 deletions(-)
+ drivers/net/dpaa2/dpaa2_rxtx.c | 24 +++++++++++++-
+ drivers/net/dpaa2/dpaa2_tm.c   | 60 ++++++++++++++++------------------
+ 2 files changed, 52 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index b88c9d748a..c661e027f5 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.c
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -290,6 +290,79 @@ dpaa2_fw_version_get(struct rte_eth_dev *dev,
- 		return 0;
+diff --git a/drivers/net/dpaa2/dpaa2_rxtx.c b/drivers/net/dpaa2/dpaa2_rxtx.c
+index 67d065bb7c..dce1da80bb 100644
+--- a/drivers/net/dpaa2/dpaa2_rxtx.c
++++ b/drivers/net/dpaa2/dpaa2_rxtx.c
+@@ -1800,8 +1800,11 @@ dpaa2_dev_tx_ordered(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 		while (qbman_result_SCN_state(dpaa2_q->cscn)) {
+ 			retry_count++;
+ 			/* Retry for some time before giving up */
+-			if (retry_count > CONG_RETRY_COUNT)
++			if (retry_count > CONG_RETRY_COUNT) {
++				if (dpaa2_q->tm_sw_td)
++					goto sw_td;
+ 				goto skip_tx;
++			}
+ 		}
+ 
+ 		frames_to_send = (nb_pkts > dpaa2_eqcr_size) ?
+@@ -1961,6 +1964,25 @@ dpaa2_dev_tx_ordered(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 			rte_pktmbuf_free_seg(buf_to_free[loop].seg);
+ 	}
+ 
++	return num_tx;
++sw_td:
++	loop = 0;
++	while (loop < num_tx) {
++		if (unlikely(RTE_MBUF_HAS_EXTBUF(*bufs)))
++			rte_pktmbuf_free(*bufs);
++		bufs++;
++		loop++;
++	}
++
++	/* free the pending buffers */
++	while (nb_pkts) {
++		rte_pktmbuf_free(*bufs);
++		bufs++;
++		nb_pkts--;
++		num_tx++;
++	}
++	dpaa2_q->tx_pkts += num_tx;
++
+ 	return num_tx;
  }
  
-+static uint32_t dpaa2_speed_to_rte_link_speed(enum dpmac_link_speed dpmac_speed)
-+{
-+	switch (dpmac_speed) {
-+	case DPMAC_LINK_SPEED_10M:
-+		return RTE_ETH_LINK_SPEED_10M;
-+	case DPMAC_LINK_SPEED_100M:
-+		return RTE_ETH_LINK_SPEED_100M;
-+	case DPMAC_LINK_SPEED_1G:
-+		return RTE_ETH_LINK_SPEED_1G;
-+	case DPMAC_LINK_SPEED_2_5G:
-+		return RTE_ETH_LINK_SPEED_2_5G;
-+	case DPMAC_LINK_SPEED_5G:
-+		return RTE_ETH_LINK_SPEED_5G;
-+	case DPMAC_LINK_SPEED_10G:
-+		return RTE_ETH_LINK_SPEED_10G;
-+	case DPMAC_LINK_SPEED_25G:
-+		return RTE_ETH_LINK_SPEED_25G;
-+	case DPMAC_LINK_SPEED_40G:
-+		return RTE_ETH_LINK_SPEED_40G;
-+	case DPMAC_LINK_SPEED_50G:
-+		return RTE_ETH_LINK_SPEED_50G;
-+	case DPMAC_LINK_SPEED_100G:
-+		return RTE_ETH_LINK_SPEED_100G;
-+	default:
-+		return 0;
-+	}
-+}
+diff --git a/drivers/net/dpaa2/dpaa2_tm.c b/drivers/net/dpaa2/dpaa2_tm.c
+index dbf66c756e..36e815c356 100644
+--- a/drivers/net/dpaa2/dpaa2_tm.c
++++ b/drivers/net/dpaa2/dpaa2_tm.c
+@@ -611,41 +611,39 @@ dpaa2_tm_configure_queue(struct rte_eth_dev *dev, struct dpaa2_tm_node *node)
+ 	}
+ 	dpaa2_q->fqid = qid.fqid;
+ 
+-	/* setting congestion notification */
+-	if (!(priv->flags & DPAA2_TX_CGR_OFF)) {
+-		struct dpni_congestion_notification_cfg cong_notif_cfg = {0};
+-
+-		cong_notif_cfg.units = DPNI_CONGESTION_UNIT_FRAMES;
+-		cong_notif_cfg.threshold_entry = dpaa2_q->nb_desc;
+-		/* Notify that the queue is not congested when the data in
+-		 * the queue is below this thershold.(90% of value)
+-		 */
+-		cong_notif_cfg.threshold_exit = (dpaa2_q->nb_desc * 9) / 10;
+-		cong_notif_cfg.message_ctx = 0;
+-		iova = DPAA2_VADDR_TO_IOVA_AND_CHECK(dpaa2_q->cscn,
+-				sizeof(struct qbman_result));
+-		if (iova == RTE_BAD_IOVA) {
+-			DPAA2_PMD_ERR("No IOMMU map for cscn(%p)", dpaa2_q->cscn);
+-			return -ENOBUFS;
+-		}
+-		cong_notif_cfg.message_iova = iova;
+-		cong_notif_cfg.dest_cfg.dest_type = DPNI_DEST_NONE;
+-		cong_notif_cfg.notification_mode =
++	/* setting taildrop through congestion notification */
++	struct dpni_congestion_notification_cfg cong_notif_cfg = {0};
 +
-+static uint32_t dpaa2_dev_get_speed_capability(struct rte_eth_dev *dev)
-+{
-+	struct fsl_mc_io *dpni = (struct fsl_mc_io *)dev->process_private;
-+	struct dpaa2_dev_priv *priv = dev->data->dev_private;
-+	enum dpmac_link_speed speed;
-+	uint32_t dpmac_speed_cap;
-+	uint32_t speed_capa = 0;
-+	int ret;
-+
-+	/* The dpni_get_mac_supported_eth_if() API is only available starting
-+	 * with DPNI ver 8.6.
++	cong_notif_cfg.units = DPNI_CONGESTION_UNIT_FRAMES;
++	cong_notif_cfg.threshold_entry = dpaa2_q->nb_desc;
++	/* Notify that the queue is not congested when the data in
++	 * the queue is below this thershold.(90% of value)
 +	 */
-+	if (dpaa2_dev_cmp_dpni_ver(priv, DPNI_GET_MAC_SUPPORTED_IFS_VER_MAJOR,
-+				   DPNI_GET_MAC_SUPPORTED_IFS_VER_MINOR) < 0)
-+		goto fallback;
++	cong_notif_cfg.threshold_exit = (dpaa2_q->nb_desc * 9) / 10;
++	cong_notif_cfg.message_ctx = 0;
 +
-+	if (priv->ep_dev_type != DPAA2_MAC)
-+		goto fallback;
-+
-+	ret = dpni_get_mac_speed_capability(dpni, CMD_PRI_LOW, priv->token,
-+					    &dpmac_speed_cap);
-+	if (ret < 0) {
-+		DPAA2_PMD_WARN("dpni_get_mac_speed_capability() failed with %d", ret);
-+		goto fallback;
++	iova = DPAA2_VADDR_TO_IOVA_AND_CHECK(dpaa2_q->cscn,
++			sizeof(struct qbman_result));
++	if (iova == RTE_BAD_IOVA) {
++		DPAA2_PMD_ERR("No IOMMU map for cscn(%p)", dpaa2_q->cscn);
++		return -ENOBUFS;
 +	}
-+	for (speed = DPMAC_LINK_SPEED_10M; speed < DPMAC_LINK_SPEED_MAX; speed++) {
-+		if ((dpmac_speed_cap & (1 << speed)) == 0)
-+			continue;
-+
-+		speed_capa |= dpaa2_speed_to_rte_link_speed(speed);
-+	}
-+
-+	return speed_capa;
-+
-+fallback:
-+	speed_capa = RTE_ETH_LINK_SPEED_1G | RTE_ETH_LINK_SPEED_2_5G |
-+		RTE_ETH_LINK_SPEED_10G;
-+
-+	if (dpaa2_svr_family == SVR_LX2160A)
-+		speed_capa |= RTE_ETH_LINK_SPEED_25G | RTE_ETH_LINK_SPEED_40G |
-+			RTE_ETH_LINK_SPEED_50G | RTE_ETH_LINK_SPEED_100G;
-+
-+	return speed_capa;
-+}
-+
- static int
- dpaa2_dev_info_get(struct rte_eth_dev *dev,
- 	struct rte_eth_dev_info *dev_info)
-@@ -307,9 +380,6 @@ dpaa2_dev_info_get(struct rte_eth_dev *dev,
- 					dev_rx_offloads_nodis;
- 	dev_info->tx_offload_capa = dev_tx_offloads_sup |
- 					dev_tx_offloads_nodis;
--	dev_info->speed_capa = RTE_ETH_LINK_SPEED_1G |
--			RTE_ETH_LINK_SPEED_2_5G |
--			RTE_ETH_LINK_SPEED_10G;
- 	dev_info->dev_capa &= ~RTE_ETH_DEV_CAPA_FLOW_RULE_KEEP;
++	cong_notif_cfg.message_iova = iova;
++	cong_notif_cfg.dest_cfg.dest_type = DPNI_DEST_NONE;
++	cong_notif_cfg.notification_mode =
+ 					DPNI_CONG_OPT_WRITE_MEM_ON_ENTER |
+ 					DPNI_CONG_OPT_WRITE_MEM_ON_EXIT |
+ 					DPNI_CONG_OPT_COHERENT_WRITE;
+-		cong_notif_cfg.cg_point = DPNI_CP_QUEUE;
++	cong_notif_cfg.cg_point = DPNI_CP_QUEUE;
  
- 	dev_info->max_hash_mac_addrs = 0;
-@@ -326,12 +396,7 @@ dpaa2_dev_info_get(struct rte_eth_dev *dev,
- 	dev_info->default_txportconf.ring_size = CONG_ENTER_TX_THRESHOLD;
- 	dev_info->default_rxportconf.ring_size = DPAA2_RX_DEFAULT_NBDESC;
+-		ret = dpni_set_congestion_notification(dpni, CMD_PRI_LOW,
+-					priv->token,
+-					DPNI_QUEUE_TX,
+-					((node->parent->channel_id << 8) | tc_id),
+-					&cong_notif_cfg);
+-		if (ret) {
+-			DPAA2_PMD_ERR("Error in setting tx congestion notification: "
+-				"err=%d", ret);
+-			return -ret;
+-		}
++	ret = dpni_set_congestion_notification(dpni, CMD_PRI_LOW,
++			priv->token, DPNI_QUEUE_TX,
++			((node->parent->channel_id << 8) | tc_id),
++			&cong_notif_cfg);
++	if (ret) {
++		DPAA2_PMD_ERR("Error in setting tx congestion notification: "
++			"err=%d", ret);
++		return -ret;
+ 	}
+ 	dpaa2_q->tm_sw_td = true;
  
--	if (dpaa2_svr_family == SVR_LX2160A) {
--		dev_info->speed_capa |= RTE_ETH_LINK_SPEED_25G |
--				RTE_ETH_LINK_SPEED_40G |
--				RTE_ETH_LINK_SPEED_50G |
--				RTE_ETH_LINK_SPEED_100G;
--	}
-+	dev_info->speed_capa = priv->speed_capa;
- 
- 	return 0;
- }
-@@ -1133,6 +1198,7 @@ dpaa2_supported_ptypes_get(struct rte_eth_dev *dev, size_t *no_of_elements)
- 		/*todo -= add more types */
- 		RTE_PTYPE_L2_ETHER,
- 		RTE_PTYPE_L3_IPV4,
-+
- 		RTE_PTYPE_L3_IPV4_EXT,
- 		RTE_PTYPE_L3_IPV6,
- 		RTE_PTYPE_L3_IPV6_EXT,
-@@ -3010,6 +3076,9 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
- 	DPAA2_PMD_INFO("%s: netdev created, connected to %s",
- 		eth_dev->data->name, dpaa2_dev->ep_name);
- 
-+
-+	priv->speed_capa = dpaa2_dev_get_speed_capability(eth_dev);
-+
- 	return 0;
- init_err:
- 	dpaa2_dev_close(eth_dev);
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.h b/drivers/net/dpaa2/dpaa2_ethdev.h
-index ee5ae3b70a..70357f0351 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.h
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.h
-@@ -396,6 +396,7 @@ struct dpaa2_dev_priv {
- 
- 	uint16_t dpni_ver_major;
- 	uint16_t dpni_ver_minor;
-+	uint32_t speed_capa;
- 
- 	enum rte_dpaa2_dev_type ep_dev_type;   /**< Endpoint Device Type */
- 	uint16_t ep_object_id;                 /**< Endpoint DPAA2 Object ID */
-@@ -433,6 +434,17 @@ struct dpaa2_dev_priv {
- 	LIST_HEAD(shaper_profiles, dpaa2_tm_shaper_profile) shaper_profiles;
- };
- 
-+#define DPNI_GET_MAC_SUPPORTED_IFS_VER_MAJOR	8
-+#define DPNI_GET_MAC_SUPPORTED_IFS_VER_MINOR	6
-+
-+static inline int dpaa2_dev_cmp_dpni_ver(struct dpaa2_dev_priv *priv,
-+					 uint16_t ver_major, uint16_t ver_minor)
-+{
-+	if (priv->dpni_ver_major == ver_major)
-+		return priv->dpni_ver_minor - ver_minor;
-+	return priv->dpni_ver_major - ver_major;
-+}
-+
- int dpaa2_distset_to_dpkg_profile_cfg(uint64_t req_dist_set,
- 				      struct dpkg_profile_cfg *kg_cfg);
- 
-diff --git a/drivers/net/dpaa2/mc/dpni.c b/drivers/net/dpaa2/mc/dpni.c
-index f651f29b02..a1f168dd04 100644
---- a/drivers/net/dpaa2/mc/dpni.c
-+++ b/drivers/net/dpaa2/mc/dpni.c
-@@ -3493,6 +3493,7 @@ int dpni_sp_enable(struct fsl_mc_io *mc_io, uint32_t cmd_flags, uint16_t token,
- 	/* send command to MC */
- 	return mc_send_command(mc_io, &cmd);
- }
-+
- /**
-  * dpni_get_mac_statistics() - Get statistics on the connected DPMAC objects
-  * @mc_io:       Pointer to opaque I/O object
-@@ -3520,3 +3521,23 @@ int dpni_get_mac_statistics(struct fsl_mc_io *mc_io, uint32_t cmd_flags, uint16_
- 
- 	return mc_send_command(mc_io, &cmd);
- }
-+
-+int dpni_get_mac_speed_capability(struct fsl_mc_io *mc_io, uint32_t cmd_flags, uint16_t token,
-+				  uint32_t *speed_cap)
-+{
-+	struct dpni_rsp_mac_speed_cap *rsp_params;
-+	struct mc_command cmd = { 0 };
-+	int err;
-+
-+	cmd.header = mc_encode_cmd_header(DPNI_CMDID_GET_MAC_SPEED_CAPABILITY,
-+					  cmd_flags, token);
-+
-+	err = mc_send_command(mc_io, &cmd);
-+	if (err)
-+		return err;
-+
-+	rsp_params = (struct dpni_rsp_mac_speed_cap *)cmd.params;
-+	*speed_cap = le32_to_cpu(rsp_params->speed_cap);
-+
-+	return 0;
-+}
-diff --git a/drivers/net/dpaa2/mc/fsl_dpmac.h b/drivers/net/dpaa2/mc/fsl_dpmac.h
-index 076da5b5a3..2b18651b7d 100644
---- a/drivers/net/dpaa2/mc/fsl_dpmac.h
-+++ b/drivers/net/dpaa2/mc/fsl_dpmac.h
-@@ -67,6 +67,21 @@ enum dpmac_eth_if {
- 	DPMAC_ETH_IF_1000BASEX,
- 	DPMAC_ETH_IF_USXGMII,
- };
-+
-+enum dpmac_link_speed {
-+	DPMAC_LINK_SPEED_10M = 0,
-+	DPMAC_LINK_SPEED_100M,
-+	DPMAC_LINK_SPEED_1G,
-+	DPMAC_LINK_SPEED_2_5G,
-+	DPMAC_LINK_SPEED_5G,
-+	DPMAC_LINK_SPEED_10G,
-+	DPMAC_LINK_SPEED_25G,
-+	DPMAC_LINK_SPEED_40G,
-+	DPMAC_LINK_SPEED_50G,
-+	DPMAC_LINK_SPEED_100G,
-+	DPMAC_LINK_SPEED_MAX,
-+};
-+
- /*
-  * @DPMAC_FEC_NONE: RS-FEC (enabled by default) is disabled
-  * @DPMAC_FEC_RS: RS-FEC (Clause 91) mode configured
-diff --git a/drivers/net/dpaa2/mc/fsl_dpni.h b/drivers/net/dpaa2/mc/fsl_dpni.h
-index 2f8125314c..8d28b8ce76 100644
---- a/drivers/net/dpaa2/mc/fsl_dpni.h
-+++ b/drivers/net/dpaa2/mc/fsl_dpni.h
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
-  *
-  * Copyright 2013-2016 Freescale Semiconductor Inc.
-- * Copyright 2016-2023 NXP
-+ * Copyright 2016-2025 NXP
-  *
-  */
- #ifndef __FSL_DPNI_H
-@@ -2017,4 +2017,7 @@ int dpni_sp_enable(struct fsl_mc_io *mc_io, uint32_t cmd_flags, uint16_t token,
- int dpni_get_mac_statistics(struct fsl_mc_io *mc_io, uint32_t cmd_flags, uint16_t token,
- 			    uint64_t iova_cnt, uint64_t iova_values, uint32_t num_cnt);
- 
-+int dpni_get_mac_speed_capability(struct fsl_mc_io *mc_io, uint32_t cmd_flags, uint16_t token,
-+				  uint32_t *speed_cap);
-+
- #endif /* __FSL_DPNI_H */
-diff --git a/drivers/net/dpaa2/mc/fsl_dpni_cmd.h b/drivers/net/dpaa2/mc/fsl_dpni_cmd.h
-index f653f2c0e4..cf4558d540 100644
---- a/drivers/net/dpaa2/mc/fsl_dpni_cmd.h
-+++ b/drivers/net/dpaa2/mc/fsl_dpni_cmd.h
-@@ -132,6 +132,7 @@
- #define DPNI_CMDID_SET_QUEUE_TX_CONFIRMATION_MODE	DPNI_CMD(0x281)
- #define DPNI_CMDID_GET_QUEUE_TX_CONFIRMATION_MODE	DPNI_CMD(0x282)
- #define DPNI_CMDID_GET_MAC_STATISTICS			DPNI_CMD(0x283)
-+#define DPNI_CMDID_GET_MAC_SPEED_CAPABILITY		DPNI_CMD(0x284)
- 
- /* Macros for accessing command fields smaller than 1byte */
- #define DPNI_MASK(field)	\
-@@ -1031,5 +1032,8 @@ struct dpni_cmd_get_mac_statistics {
- 	uint32_t num_cnt;
- };
- 
-+struct dpni_rsp_mac_speed_cap {
-+	uint32_t speed_cap;
-+};
- #pragma pack(pop)
- #endif /* _FSL_DPNI_CMD_H */
 -- 
 2.25.1
 
