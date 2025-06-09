@@ -2,20 +2,20 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC13C61CE8
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 13:07:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E029C61CE8
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 13:07:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CD2AA40EF1;
-	Mon,  9 Jun 2025 15:06:58 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id DF99640FDE;
+	Mon,  9 Jun 2025 15:06:59 +0200 (CEST)
 Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
- by mails.dpdk.org (Postfix) with ESMTP id A93444060F
- for <dev@dpdk.org>; Mon,  9 Jun 2025 15:06:56 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.162.254])
- by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bGBsr51HvzRk2r;
- Mon,  9 Jun 2025 21:02:40 +0800 (CST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5563C4060F
+ for <dev@dpdk.org>; Mon,  9 Jun 2025 15:06:57 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+ by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bGBxJ34fsztS2Q;
+ Mon,  9 Jun 2025 21:05:40 +0800 (CST)
 Received: from kwepemo500011.china.huawei.com (unknown [7.202.195.194])
- by mail.maildlp.com (Postfix) with ESMTPS id 16711180450;
- Mon,  9 Jun 2025 21:06:53 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 6E1161402DA;
+ Mon,  9 Jun 2025 21:06:52 +0800 (CST)
 Received: from localhost.localdomain (10.50.165.33) by
  kwepemo500011.china.huawei.com (7.202.195.194) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -24,9 +24,9 @@ From: Dengdui Huang <huangdengdui@huawei.com>
 To: <dev@dpdk.org>
 CC: <stephen@networkplumber.org>, <lihuisong@huawei.com>,
  <fengchengwen@huawei.com>, <liuyonglong@huawei.com>
-Subject: [PATCH 3/3] net/hns3: fix can't use vector for Rx when set VLAN filter
-Date: Mon, 9 Jun 2025 21:06:51 +0800
-Message-ID: <20250609130651.2752977-4-huangdengdui@huawei.com>
+Subject: [PATCH 1/3] net/hns3: fix the hardware GRO function is abnormal
+Date: Mon, 9 Jun 2025 21:06:49 +0800
+Message-ID: <20250609130651.2752977-2-huangdengdui@huawei.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20250609130651.2752977-1-huangdengdui@huawei.com>
 References: <20250609130651.2752977-1-huangdengdui@huawei.com>
@@ -49,32 +49,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, When RTE_ETH_RX_OFFLOAD_VLAN_FILTER offload is set,
-driver wouldn't select Rx vector algorithm. Actually, this
-algorithm support it, so open it.
+Currently, the alignment requirements of the data address in mbuf is
+64-byte on HIP08 platform. However, the GRO feature will be abnormal
+in this case.
 
-Fixes: a3d4f4d291d7 ("net/hns3: support NEON Rx")
+Many online applications already use 64-byte aligned. So a check is added
+to avoid using the GRO function when 64-byte aligned is used.
+
+Fixes: d14c995b775a ("net/hns3: check Rx DMA address alignmnent")
 Cc: stable@dpdk.org
 
 Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
 ---
- drivers/net/hns3/hns3_rxtx_vec.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/hns3/hns3_rxtx.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/net/hns3/hns3_rxtx_vec.c b/drivers/net/hns3/hns3_rxtx_vec.c
-index 9fb66ea2de..daadd7e19f 100644
---- a/drivers/net/hns3/hns3_rxtx_vec.c
-+++ b/drivers/net/hns3/hns3_rxtx_vec.c
-@@ -184,7 +184,9 @@ hns3_rx_check_vec_support(struct rte_eth_dev *dev)
+diff --git a/drivers/net/hns3/hns3_rxtx.c b/drivers/net/hns3/hns3_rxtx.c
+index bde46733b0..b7b9b9e3f2 100644
+--- a/drivers/net/hns3/hns3_rxtx.c
++++ b/drivers/net/hns3/hns3_rxtx.c
+@@ -281,6 +281,7 @@ hns3_free_all_queues(struct rte_eth_dev *dev)
+ static int
+ hns3_check_rx_dma_addr(struct hns3_hw *hw, uint64_t dma_addr)
  {
- 	struct rte_eth_rxmode *rxmode = &dev->data->dev_conf.rxmode;
- 	uint64_t offloads_mask = RTE_ETH_RX_OFFLOAD_TCP_LRO |
--				 RTE_ETH_RX_OFFLOAD_VLAN |
-+				 RTE_ETH_RX_OFFLOAD_VLAN_STRIP |
-+				 RTE_ETH_RX_OFFLOAD_VLAN_EXTEND |
-+				 RTE_ETH_RX_OFFLOAD_QINQ_STRIP |
- 				 RTE_ETH_RX_OFFLOAD_TIMESTAMP |
- 				 RTE_ETH_RX_OFFLOAD_KEEP_CRC;
++	uint64_t rx_offload = hw->data->dev_conf.rxmode.offloads;
+ 	uint64_t rem;
+ 
+ 	rem = dma_addr & (hw->rx_dma_addr_align - 1);
+@@ -289,6 +290,17 @@ hns3_check_rx_dma_addr(struct hns3_hw *hw, uint64_t dma_addr)
+ 			 "must be %u-byte aligned", hw->rx_dma_addr_align);
+ 		return -EINVAL;
+ 	}
++
++	/*
++	 * This check is for HIP08 network engine. The GRO function will be
++	 * abnormal when mbuf DMA address is 64-byte aligned.
++	 */
++	rem = dma_addr & (HNS3_RX_DMA_ADDR_ALIGN_128 - 1);
++	if ((rx_offload & RTE_ETH_RX_OFFLOAD_TCP_LRO) && rem > 0) {
++		hns3_err(hw, "Hardware GRO is not supported when mbuf DMA "
++			 "address is 64-byte aligned");
++		return -EINVAL;
++	}
+ 	return 0;
+ }
  
 -- 
 2.33.0
