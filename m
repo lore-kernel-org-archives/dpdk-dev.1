@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8388FC61DB2
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 07:05:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3975C5B552
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 07:05:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AB22640B8F;
-	Mon,  9 Jun 2025 09:05:22 +0200 (CEST)
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
- by mails.dpdk.org (Postfix) with ESMTP id CBAF740661;
- Mon,  9 Jun 2025 09:05:18 +0200 (CEST)
-X-QQ-mid: zesmtpsz9t1749452714t2b43affc
-X-QQ-Originating-IP: raM430ZCn63BFc8JIBfpdMRK2wdv0uHcmFgBLIptq48=
+	by mails.dpdk.org (Postfix) with ESMTP id 0BF1940A7A;
+	Mon,  9 Jun 2025 09:05:25 +0200 (CEST)
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+ by mails.dpdk.org (Postfix) with ESMTP id C72BB40B91
+ for <dev@dpdk.org>; Mon,  9 Jun 2025 09:05:22 +0200 (CEST)
+X-QQ-mid: zesmtpsz9t1749452716te95f881c
+X-QQ-Originating-IP: FLYyy8hWzn2+F9wT6IDuI3h1+DRrhfUodDjydcaXPME=
 Received: from w-MS-7E16.trustnetic.com ( [220.184.249.46])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Mon, 09 Jun 2025 15:05:14 +0800 (CST)
+ id ; Mon, 09 Jun 2025 15:05:16 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 10835568398516550477
-EX-QQ-RecipientCnt: 4
+X-BIZMAIL-ID: 10053156601016066695
+EX-QQ-RecipientCnt: 3
 From: Jiawen Wu <jiawenwu@trustnetic.com>
 To: dev@dpdk.org
-Cc: zaiyuwang@trustnetic.com, Jiawen Wu <jiawenwu@trustnetic.com>,
- stable@dpdk.org
-Subject: [PATCH v2 03/12] net/txgbe: fix reserved extra FDIR headroom
-Date: Mon,  9 Jun 2025 15:04:45 +0800
-Message-ID: <C2EFD7259E98FF0B+20250609070454.223387-4-jiawenwu@trustnetic.com>
+Cc: zaiyuwang@trustnetic.com,
+	Jiawen Wu <jiawenwu@trustnetic.com>
+Subject: [PATCH v2 04/12] net/txgbe: support RSS offload for SCTP port
+Date: Mon,  9 Jun 2025 15:04:46 +0800
+Message-ID: <76197192193F911C+20250609070454.223387-5-jiawenwu@trustnetic.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250609070454.223387-1-jiawenwu@trustnetic.com>
 References: <00DEAE896AFE0D2D+20250606080117.183198-1-jiawenwu@trustnetic.com>
@@ -34,23 +34,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpsz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MSrNHHHirmth57yk78xp6W69joqYxWY5t3fSGrvxdPbZlDHWk29ZwsOt
- ukaT+Lk7QFx+a4uBMLf2n58BIgMW/6z2gpL/hHJ7GtjtiaB4DCW1M3qOiMwGaTwOUKqo5/h
- hUji6pDubb9GknzXV2d7jNS4Qn6QoJsbiHJMrT8PYxAn1evJTCNAvyX+CyfUWKyyAGi29yb
- Mvjs44V/ETixlw6wsMa5zUwl9V1pbg6rOffHis5/0R6Vo8HDm++eJ/7dWLLxbAh54SVEI7g
- 8baiotsg9tyMDMuYSH+3oYXfCCSZPIKuxImk0UFsp7rUqpyIr/uvBS15uwyqKOIQuDrWHg8
- MGBMVH+lTMT1wN3vmgzvurwNWDxdJ3X0Of8gwlY5EUbo8xJJusJHoCbW1OwAfLtxmxm0ZiU
- oZKQXOmcjfYqVfiizAxNxas0E3cStqkdGv8v/5nY2ccip/SF+k5q1gE4LlsA5T37lNQfq7Z
- 4ykGQnST7YT3lGc688WspOSw5QG/IOOWJkTw+sDDU6tIXcupgi6Mit28ReYT7+ahTTu+S5J
- z4EJK+cMd2P965vBOPnBWZj6UcUEVmnvCe1Y5QqS6Y8K/ySSFIyChKVSdp6GyvcnA25iitJ
- NEqsnJG21VYAodXUA4B2itxOE5Os3bak/SGRMNKNBQFwyeSXVoRNC9JB4+udXL6naUcBF6C
- YHCP5yMM6QFl0OG9NFe1cOqkwKPw8tIjZWCLITsW+j1CT/36fMWRinJFpWFFaBAagkEJiVU
- 1xDNcrtWvkwhOy+gVEGcqn3/Jh1xjpnCBdG1Vdsn6j3gxVjVN+CfjboJc0llwBuuRAJY6w1
- 0PQmVBfQiUDVlGem4CvHxaTP97zPaOTY6MzC4b9PvfiTcs/LI3J84DI7BdyRKHC4k9FjhC0
- kn6HGulIa41E3rY9eit6HCdB9MpB/+fGrxqhvBEVyUEBotVQCMwasbmyLlGkF+9qZ4BxCS9
- Eters+9sIZTycz4Pu7VijWzgAamPVBv+FCwyvBS5irSYF2qz616AbLReFSxAAziBxkxWz1L
- nIkJXWlRXh/4pTQEKPVY4BPHuSwJy1tV20tLLvtA==
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-XMAILINFO: Nzc98Th+6mOzokPGNmeOlTEGx1Gc+o0lE5OdWSB+A7ktL0q5YqUOCXCZ
+ eVxuqK/ZqyNI4BRgEmz6S+GVAAkZ0Gvkv3YLrrvnA6qYZogYNJmyRylcqUw0/BGH+uRSgyD
+ +v5T0Xgp4okzf1oqd/56Fp1T1PmsDF/r+2jLIu8zqluVNQqchMsKrxwvuh0FDnRFy0E1ChY
+ FduZKJxX8eYbrYbSVVYKjqGmsZ+DSiOd/3cf4LXiSBu5ZHsfce+D4tiMiMOcqSHVYpskYu6
+ OxuL05lcSPa7FaKUrI+vuoCBC2nf7j4pntLt9jdZ+ziQ4kzlr9f8TYGZmX38WIEK6PbymfX
+ iXyRhLKLyvhgnAiOynK9QWQp1zqyjjFVD5PsqL5n5Qyaet5LilLPGuMepDZyR9W7J027XwT
+ OWwZHRixHnLVkcLAkd3phvKmf1/9T64/03JeDxZu+odtSuLsRwMe+e0A8Py1Q+ifsE2fsMX
+ XFBR12/s5pxspPaTJ76tonJr/qap8jsX5NHKYbbPBnIBAJdmG96RXK33iNV5pIpvebkECnl
+ dXei0jk4+WOks6AHgBOdyfEk5ES5MBLFKU6urEhB6EYj8jj3usrEaPrMCnR+f3XN9dZJQWA
+ JO6bJ9elqFYeVsmYhzZ01XcB2LeZeBTFqe58+DqQibmrx3bJblrJ1V7ZSn6ugpAYqkUkHBd
+ ngYcx1Q3+vKkwT4n5fzZXz58wfPor5T3OeFPXQYouXF2PxwJWC2EQwhuxUqTdCPLR8Mu1ts
+ vlswQkYUnJH6ASuC9PFaZV9iVkQtA4lRm2dwNslIRLrRjAa3AYssOGx0ufB46vkqphpOy2E
+ zbuQkGSR65tKUYO6G6l4dVEWs4XULLOAqIGq0BR6HDBvV6S6cH39GLy1hKZz2Xr7Ki2cWKK
+ /aE71OtiQnEIIPhkVH/vVqhHKWm4bfrfcks5dLP8f1/vfmBSANrtiVJRswVsHQjSk6O8Hu/
+ 6JARXG5POxLQkO6nlf4jCVniidz3YQgxQYdPFJZHtvOW713zlrZIRpCG9LHCOdy6b4WbJD5
+ 4ra3mjJsv3Tmm/QDcRM/DSy6OfYueQfTWCGQlHeO/63Pm3ik6D4Pe4RPcOx+c=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -65,34 +65,101 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove redundant 256KB FDIR headroom reservation. FDIR headroom was
-already allocated in txgbe_fdir_configure() when FDIR is enabled, the
-second reservation resulted in 256KB less available RX packet buffer than
-the theoretical size.
-
-Fixes: 8bdc7882f376 ("net/txgbe: support DCB")
-Cc: stable@dpdk.org
+Add support for IPv4/IPv6 SCTP RSS offload.
 
 Signed-off-by: Jiawen Wu <jiawenwu@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_hw.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/net/txgbe/base/txgbe_regs.h |  4 ++++
+ drivers/net/txgbe/txgbe_ethdev.h    |  2 ++
+ drivers/net/txgbe/txgbe_rxtx.c      | 16 ++++++++++++++++
+ 3 files changed, 22 insertions(+)
 
-diff --git a/drivers/net/txgbe/base/txgbe_hw.c b/drivers/net/txgbe/base/txgbe_hw.c
-index ae2ad87c83..76b9ee3c0a 100644
---- a/drivers/net/txgbe/base/txgbe_hw.c
-+++ b/drivers/net/txgbe/base/txgbe_hw.c
-@@ -2106,9 +2106,7 @@ void txgbe_set_pba(struct txgbe_hw *hw, int num_pb, u32 headroom,
- 	u32 rxpktsize, txpktsize, txpbthresh;
+diff --git a/drivers/net/txgbe/base/txgbe_regs.h b/drivers/net/txgbe/base/txgbe_regs.h
+index 7a9ba6976f..346c23b5da 100644
+--- a/drivers/net/txgbe/base/txgbe_regs.h
++++ b/drivers/net/txgbe/base/txgbe_regs.h
+@@ -580,6 +580,8 @@
+ #define   TXGBE_RACTL_RSSMASK           MS(16, 0xFFFF)
+ #define   TXGBE_RACTL_RSSIPV4TCP        MS(16, 0x1)
+ #define   TXGBE_RACTL_RSSIPV4           MS(17, 0x1)
++#define   TXGBE_RACTL_RSSIPV4SCTP       MS(18, 0x1)
++#define   TXGBE_RACTL_RSSIPV6SCTP       MS(19, 0x1)
+ #define   TXGBE_RACTL_RSSIPV6           MS(20, 0x1)
+ #define   TXGBE_RACTL_RSSIPV6TCP        MS(21, 0x1)
+ #define   TXGBE_RACTL_RSSIPV4UDP        MS(22, 0x1)
+@@ -1287,6 +1289,8 @@ enum txgbe_5tuple_protocol {
+ #define   TXGBE_VFPLCFG_RSSMASK         MS(16, 0xFF)
+ #define   TXGBE_VFPLCFG_RSSIPV4TCP      MS(16, 0x1)
+ #define   TXGBE_VFPLCFG_RSSIPV4         MS(17, 0x1)
++#define   TXGBE_VFPLCFG_RSSIPV4SCTP     MS(18, 0x1)
++#define   TXGBE_VFPLCFG_RSSIPV6SCTP     MS(19, 0x1)
+ #define   TXGBE_VFPLCFG_RSSIPV6         MS(20, 0x1)
+ #define   TXGBE_VFPLCFG_RSSIPV6TCP      MS(21, 0x1)
+ #define   TXGBE_VFPLCFG_RSSIPV4UDP      MS(22, 0x1)
+diff --git a/drivers/net/txgbe/txgbe_ethdev.h b/drivers/net/txgbe/txgbe_ethdev.h
+index c2d0950d2c..9295d8fbd0 100644
+--- a/drivers/net/txgbe/txgbe_ethdev.h
++++ b/drivers/net/txgbe/txgbe_ethdev.h
+@@ -65,9 +65,11 @@
+ 	RTE_ETH_RSS_IPV4 | \
+ 	RTE_ETH_RSS_NONFRAG_IPV4_TCP | \
+ 	RTE_ETH_RSS_NONFRAG_IPV4_UDP | \
++	RTE_ETH_RSS_NONFRAG_IPV4_SCTP | \
+ 	RTE_ETH_RSS_IPV6 | \
+ 	RTE_ETH_RSS_NONFRAG_IPV6_TCP | \
+ 	RTE_ETH_RSS_NONFRAG_IPV6_UDP | \
++	RTE_ETH_RSS_NONFRAG_IPV6_SCTP | \
+ 	RTE_ETH_RSS_IPV6_EX | \
+ 	RTE_ETH_RSS_IPV6_TCP_EX | \
+ 	RTE_ETH_RSS_IPV6_UDP_EX)
+diff --git a/drivers/net/txgbe/txgbe_rxtx.c b/drivers/net/txgbe/txgbe_rxtx.c
+index 4e4b78fb43..a85d417ff6 100644
+--- a/drivers/net/txgbe/txgbe_rxtx.c
++++ b/drivers/net/txgbe/txgbe_rxtx.c
+@@ -3090,6 +3090,10 @@ txgbe_dev_rss_hash_update(struct rte_eth_dev *dev,
+ 		if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_UDP ||
+ 		    rss_hf & RTE_ETH_RSS_IPV6_UDP_EX)
+ 			mrqc |= TXGBE_VFPLCFG_RSSIPV6UDP;
++		if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV4_SCTP)
++			mrqc |= TXGBE_VFPLCFG_RSSIPV4SCTP;
++		if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_SCTP)
++			mrqc |= TXGBE_VFPLCFG_RSSIPV6SCTP;
  
- 	UNREFERENCED_PARAMETER(hw);
--
--	/* Reserve headroom */
--	pbsize -= headroom;
-+	UNREFERENCED_PARAMETER(headroom);
+ 		if (rss_hf)
+ 			mrqc |= TXGBE_VFPLCFG_RSSENA;
+@@ -3120,6 +3124,10 @@ txgbe_dev_rss_hash_update(struct rte_eth_dev *dev,
+ 		if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_UDP ||
+ 		    rss_hf & RTE_ETH_RSS_IPV6_UDP_EX)
+ 			mrqc |= TXGBE_RACTL_RSSIPV6UDP;
++		if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV4_SCTP)
++			mrqc |= TXGBE_RACTL_RSSIPV4SCTP;
++		if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_SCTP)
++			mrqc |= TXGBE_RACTL_RSSIPV6SCTP;
  
- 	if (!num_pb)
- 		num_pb = 1;
+ 		if (rss_hf)
+ 			mrqc |= TXGBE_RACTL_RSSENA;
+@@ -3173,6 +3181,10 @@ txgbe_dev_rss_hash_conf_get(struct rte_eth_dev *dev,
+ 		if (mrqc & TXGBE_VFPLCFG_RSSIPV6UDP)
+ 			rss_hf |= RTE_ETH_RSS_NONFRAG_IPV6_UDP |
+ 				  RTE_ETH_RSS_IPV6_UDP_EX;
++		if (mrqc & TXGBE_VFPLCFG_RSSIPV4SCTP)
++			rss_hf |= RTE_ETH_RSS_NONFRAG_IPV4_SCTP;
++		if (mrqc & TXGBE_VFPLCFG_RSSIPV6SCTP)
++			rss_hf |= RTE_ETH_RSS_NONFRAG_IPV6_SCTP;
+ 		if (!(mrqc & TXGBE_VFPLCFG_RSSENA))
+ 			rss_hf = 0;
+ 	} else {
+@@ -3192,6 +3204,10 @@ txgbe_dev_rss_hash_conf_get(struct rte_eth_dev *dev,
+ 		if (mrqc & TXGBE_RACTL_RSSIPV6UDP)
+ 			rss_hf |= RTE_ETH_RSS_NONFRAG_IPV6_UDP |
+ 				  RTE_ETH_RSS_IPV6_UDP_EX;
++		if (mrqc & TXGBE_RACTL_RSSIPV4SCTP)
++			rss_hf |= RTE_ETH_RSS_NONFRAG_IPV4_SCTP;
++		if (mrqc & TXGBE_RACTL_RSSIPV6SCTP)
++			rss_hf |= RTE_ETH_RSS_NONFRAG_IPV6_SCTP;
+ 		if (!(mrqc & TXGBE_RACTL_RSSENA))
+ 			rss_hf = 0;
+ 	}
 -- 
 2.48.1
 
