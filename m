@@ -2,72 +2,161 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A0C7C61DB2
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 10:41:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E0BC5B552
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 10:43:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7472540EA5;
-	Mon,  9 Jun 2025 12:41:06 +0200 (CEST)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 18C4A40E54
- for <dev@dpdk.org>; Mon,  9 Jun 2025 12:41:04 +0200 (CEST)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5597oNtR022069
- for <dev@dpdk.org>; Mon, 9 Jun 2025 03:41:04 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=K
- g2MKDFY6GlCRp7vm4qlbM6VtWmtPMi3qZ/7B6O7Cnc=; b=GvAcY65M2wRZN9dVT
- l8l3dYsasdEHki7Q0rVOnzS4roVQh3YSJojmbjgyPu2cfXmo27uMwCAPyPos+O4v
- hSEM6fPPutfw+xc1TdL7p7kkzuks11sIN3t9bCj49AtHJ60Bbi76Xxeoo2eo9oyH
- eQZZ4PRFSk2sgBtWNNtyiQpqnEfB9HQIWRufo8hpRc56igLlrJcOQ128j38Uc/JB
- ZXnpLmToS9miHYS2v4+uIFMd5jyUGQDrnOQWLiSLQMKF+hT9d1bZnEEkPhNeTlco
- 1JWm1YQhLB40dFxmD/Vw+ukPu23WzR+NfF8Ptu+gBHeyavJgDJw8rh4FZ2EV2Paq
- 0ulHw==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 475ujxr99k-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Mon, 09 Jun 2025 03:41:04 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id 0E9E040E20;
+	Mon,  9 Jun 2025 12:43:58 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+ by mails.dpdk.org (Postfix) with ESMTP id 0A65440E17
+ for <dev@dpdk.org>; Mon,  9 Jun 2025 12:43:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1749465836; x=1781001836;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=XPcLWI6cknb+qYZh33TS0vGsTiZr750V2xTczb7K3o4=;
+ b=YGrZwJry86qU+gwvljwck9ZpZJ+JVb8fBkginQvIXH15Ct4iie2EgdZI
+ 1v92ay7oKquBt3tEDm9bXE0qazlg2bCGXEiz+aduxCsND20Ql74EZA7CN
+ 2bmdyDL9Nq8jjvz5jXG8KGx8pCn1cpfJ7KcRjVZOhOt0JqCkjRUNlI2UG
+ mui8oSqLRi/2bS4SynXjKDZg7RYvTfmcV6M0pgvVvNU9OAuACGtuL9gHd
+ sHKgMDCTnmYuMijI0zZoQs46LN6+CUvzrLkmeq2ayX7IeFzfzZjyqnpMw
+ ZsBU+PUd3RJiSw3lVs4lxzi/JLbj6KpN2FUYCBOJlMj7NAOsmlI8W0cSW Q==;
+X-CSE-ConnectionGUID: a6dHPi9XRIWA4jrKjacerQ==
+X-CSE-MsgGUID: OqZ6Q733QJOvSjGeDKeKmA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11458"; a="62939552"
+X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; d="scan'208";a="62939552"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Jun 2025 03:43:55 -0700
+X-CSE-ConnectionGUID: VDwaKaJMR2+nIPSHZ20XkA==
+X-CSE-MsgGUID: uXnwvadcQ6OiuFgjYiaYSw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; d="scan'208";a="146828307"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Jun 2025 03:43:54 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 9 Jun 2025 03:41:03 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 9 Jun 2025 03:41:03 -0700
-Received: from hyd1554.caveonetworks.com (unknown [10.29.56.32])
- by maili.marvell.com (Postfix) with ESMTP id 8C8B53F707D;
- Mon,  9 Jun 2025 03:41:00 -0700 (PDT)
-From: Tejasree Kondoj <ktejasree@marvell.com>
-To: Akhil Goyal <gakhil@marvell.com>
-CC: Nithinsen Kaithakadan <nkaithakadan@marvell.com>, Anoob Joseph
- <anoobj@marvell.com>, Rupesh Chiluka <rchiluka@marvell.com>, "Vidya Sagar
- Velumuri" <vvelumuri@marvell.com>, <dev@dpdk.org>
-Subject: [PATCH v2 7/7] crypto/cnxk: copy 8B iv into sess in aes ctr
-Date: Mon, 9 Jun 2025 16:10:38 +0530
-Message-ID: <20250609104038.3102767-8-ktejasree@marvell.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250609104038.3102767-1-ktejasree@marvell.com>
-References: <20250609104038.3102767-1-ktejasree@marvell.com>
+ 15.2.1544.25; Mon, 9 Jun 2025 03:43:54 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Mon, 9 Jun 2025 03:43:54 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.67) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.55; Mon, 9 Jun 2025 03:43:52 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eWy76Yf+9GVBuKSWbFGJ4XIE6SOlcV38Sq2myX+6t6Rb1/K0ZtTPByDDmRl7HGOEoykAfyh+l1eC8LANDarz65KkXQ1wNwj6dEV2W2BAte6+nffl6F+2/I0QrXUlHpZBIOgPni/CcnG4NQwZJ25Zgs8F+ME6A+fz3kRdBcrda0P71dpLVKpbVxRGAPZMJXdfeUNLrjGGZAItNBclLdOERxlp8qlceeU4CGtMUdn+EVYdofAeE41o/NKY4lYkgdtU5WJRvraFaYiMr1h4O36/5owPpaZDcy1Z50cISi0zLMHosvbAiAYqaoZRzLOYZxbZS34mqXhbL8o6Tod4Qlt6lQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7uUPhI3VTd9mpjs21onb6vl0xcgzRvbJKXAGkJcnV4A=;
+ b=ePFHYszsPwvGF83uzskSB/FVF18a6F8r75EEh3xBeT6mgf/9f9+SzB4npjpKQMaedR+q7eSI12007WTUAKQg3gR6eLfwHPJ/cdAMyOL/x5C5y8cRfx41f2tNfoLFnxUNRZ2RKPVk6TBt3J24AKLYVGGJSvFKO8vnH9iWbEplVm2O0fiUiuOUAJSv6BnxAHB5u6hsV2pesV2bQxnpIABmp+qYuWR/wtpCPA368eVbDCStbO5UgI/W2IZUuVNRDOUyJeUWvGP8tGVVqBaW7eG/pho7XGl0iQFpZx6m99oes+BOJyri0jA4gIZIw7aTaK6d/suEhzbFquDr3BLWTDw72A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by SA0PR11MB4736.namprd11.prod.outlook.com (2603:10b6:806:9f::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.29; Mon, 9 Jun
+ 2025 10:43:50 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%5]) with mapi id 15.20.8813.021; Mon, 9 Jun 2025
+ 10:43:50 +0000
+Date: Mon, 9 Jun 2025 11:43:45 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Anatoly Burakov <anatoly.burakov@intel.com>
+CC: <dev@dpdk.org>, Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: Re: [PATCH v5 13/34] net/ixgbe: decouple scalar and vec rxq free mbufs
+Message-ID: <aEa64QqzpdAgwl7g@bricha3-mobl1.ger.corp.intel.com>
+References: <cover.1749229650.git.anatoly.burakov@intel.com>
+ <cover.1749229650.git.anatoly.burakov@intel.com>
+ <4d611236d5fee9b9315093d889fe0a41a7c6cef2.1749229650.git.anatoly.burakov@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <4d611236d5fee9b9315093d889fe0a41a7c6cef2.1749229650.git.anatoly.burakov@intel.com>
+X-ClientProxiedBy: DUZPR01CA0125.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4bc::17) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: ngy_ZUJcisVzcMcJWyBZkRyI_1qQzRHc
-X-Proofpoint-ORIG-GUID: ngy_ZUJcisVzcMcJWyBZkRyI_1qQzRHc
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA5MDA4MSBTYWx0ZWRfX213PswtBbB0P
- P0G0y3i37UL5PzHPqAnVDEdjyEW7Sx+vshWcVqf4Cfh2oQnYR4rvqgHWc+9/PPgDUUt0LNlm+h5
- 1hWCoA3sdsca2pL352hH2TZstRmpHQqQMtjDddc69NV4iSloEoAziNfOV/7peGbzrjYUc+XrWin
- BwIt5j8Hu0sXaU9xO0IIn1auDrtWb5+Gky6zx5LQ7JmYiGSEgLlexrCjWaaz8sk9RNtUGadkJ5G
- lSxV4xwR4svqwwtTXsJQWrptDHvGUVIh2covL/bcYDx7tXLlwFxvICD0dq8T9zzoZ0qzrpBD6Jp
- hEQl8FxhoysAQQ95iZ6S8r7yLHtUftDv4g5sRvjCUPL0K0OtNAYkCQygN4C/14+cYBJ+9en58MB
- bdaVHE/vjUBHVgt5qu2Wc6Nh+vRkIvaZiqVzp1/61Lu+n+VWOAm/CjUvCGICgpUICPUVsHFv
-X-Authority-Analysis: v=2.4 cv=LuKSymdc c=1 sm=1 tr=0 ts=6846ba40 cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=qN3dD7gEgtA7HWq_RrcA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-09_04,2025-06-05_01,2025-03-28_01
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SA0PR11MB4736:EE_
+X-MS-Office365-Filtering-Correlation-Id: bbee6600-e431-46cb-ae1f-08dda7428530
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?qdqteVolQ8CTnzsdUL+vkYuCVe70FbuGodYt9/LFTt0NHIZOzfLJaIEqRRX4?=
+ =?us-ascii?Q?xaSSkZ2zNAQN1vqs+nc5SHTFzfAadSrvqfCgs5LlA0Xh+FZuKCLl7m8JONPi?=
+ =?us-ascii?Q?u5I/7pmd4S/7n0pQmlZekxvHsuwDRCzNE7zhR4Qc6nZcfoOtme96IaiU1BBF?=
+ =?us-ascii?Q?8ZrETALD1cBNSGKKOtukWc+aKN5BNDp0hN/VGyG0R78KnK1P/7WMjKLbue5y?=
+ =?us-ascii?Q?UocM21lJDuVRtD/E/10hANAIUyiTrEifCVQZtq0D7eKCWjymQ6PFQ7tJRxAZ?=
+ =?us-ascii?Q?4Y/U+6NswWMOBGV5jgT5I9FL6i+U2Y3tCkMm7EwS++mWmcQajqxi0POaxtAc?=
+ =?us-ascii?Q?gQyjgpKPfgcUISI9bFj0KH4O30OswgacyRQqZUnxNooBlnLWsjta3ghEyJI4?=
+ =?us-ascii?Q?F4FGrFkxSnrSAcghDqmz/Zh3tfbbDsFJE1OaxcI+Q/HVs6B0lKxnsB46rM0Q?=
+ =?us-ascii?Q?+nfxkzL7Gh+gdzI8BdEcfusoqUmlfAAtM2LO/vgKSZ3gd2Dnfmf36ugcj0wO?=
+ =?us-ascii?Q?lJ6/c9n2awMU/Rua4GpCCjvsn8+dWZRzYwNrVNKmvQO9DNWFjfD5N0R7GK+u?=
+ =?us-ascii?Q?tWwXarBOtgXYQA0yisFZ9+E79m1nbGc9tDokYiQsl1WcHzWhjDvOXWEEYb4m?=
+ =?us-ascii?Q?26HRK+Nc/EmvRCXjyje38vxmfOOet1ZqPAcCtCA1egmWgeeRviUGgS8og1Oq?=
+ =?us-ascii?Q?VjVKNfz6k6wFNQTLpeSJ6h8RrD7XUs0WoAjNJpG14kPCqZfbSLkUGQvzJAgD?=
+ =?us-ascii?Q?42s4yn5o6KFRF4NLjIAj+CohjsXEGQ5uF8+zArxuBYqgw4hvsoVQxSIAm8yE?=
+ =?us-ascii?Q?1k4xJt4VlQVnFUoIBI0llUn1tdr141fgjRLEo9aLVOYYb1UMYQS0zwd1yQrb?=
+ =?us-ascii?Q?C9NSosPKJ6YYHZunphgGYbC64PAL7SLN6Wokz8sGdX7s8odeQoDrxspxQjpH?=
+ =?us-ascii?Q?CpyrvkCGceU3kYNXk3ujqRIq8gMMlLGZqIn781wH23e6rzG3suUcnq65bcKl?=
+ =?us-ascii?Q?MqLSggvJrhlCmJ3DBeXVrN168TvycdFGj1NQLywI4r9/dzb9FmyDWm2fHZ6U?=
+ =?us-ascii?Q?Qmott42anEqKVn46fccM3nljyLe+uRjTZLuhkfuXMgkVxbLTQd95DGr0qe8m?=
+ =?us-ascii?Q?jAGIcxqVItSmwsKzlbztsjd7SRddcltMMjeG15i5//EaIQlW79N/QbihOxlQ?=
+ =?us-ascii?Q?TvDHVUzjixKMWZRAzSfSD20hp5ycW4A47EG8lZX1FlDb2UEnEUXC3t7W2PVj?=
+ =?us-ascii?Q?Jykt9Bb+IH7qwbuBw34M5k058W6Myi9orbgUE47lT5lwwjTo6UgtL5GoY5Ji?=
+ =?us-ascii?Q?+bMKw+CT/S71ijKWScJYTivXALIJNwuNTU+TB6nglFC7k4cO0CyUF+cQItNs?=
+ =?us-ascii?Q?bmsI6HY763m0JHaEy6pM6aYpwqldOd1QfWK3pTz+H5OHfokWUA=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?sllirkdWxnHnJQJYWh7xLhJeDYvd7slMwyfxcSR0duma3XKWN6navtQl4/n0?=
+ =?us-ascii?Q?yf3KJSKN7XQovV7dzD0FhhijtR2lx48eNi4C0+Q2IfYP5+mVsOrFitG1h+5O?=
+ =?us-ascii?Q?Vz77cEr35muTAyGg3/oASvdLem6XgXqe+2e11lRk8M0ASi7dM56mHNg3FyYv?=
+ =?us-ascii?Q?2F6l5uGK2gghzlhDmuCaAiavQ1S0CuvkznEQq/F8Q0muWwxXQG6t7gdZayRf?=
+ =?us-ascii?Q?70yAHmnKuwnryiX5+UGTvI/1FqIjz9kJJNkGvCH/2ikC0MZuh1OEuW4jaFLF?=
+ =?us-ascii?Q?vnUg95+u4GiR14V5OZW/Xw7+5i/IPDbX3d+Z9C+EUsqFcwdSDBA3ZqkVZgnh?=
+ =?us-ascii?Q?S7eEH+2qflvVO/RjJ9qzJny84QF1ZR6laDjcFOPKFVbcgtR01lP+I3lhJ323?=
+ =?us-ascii?Q?01x3o6EgHqqBafEdsj+2qnfShrtwYtYNpEe5GeM9bgYYBtXeSgAB7toB6Uof?=
+ =?us-ascii?Q?LTipcftAiCc36diYzhxnAUyOTS6xogzvfJPEQ8wCm6eVhRg9M00o1DN1SeiC?=
+ =?us-ascii?Q?SjDdepzAVlq0+jh2baVOLwAl21sY+UGR40V/4AA1BY2dDbic9QNpAX4FTcG6?=
+ =?us-ascii?Q?KmunkH+/gvkH0KHwEMQHtvMcK1j7ZqlfP/DAOrD8aBdkkysY2u45zHOMZH8H?=
+ =?us-ascii?Q?5C5E1iCo1egr+6ZRYcv4AwP6/6J3jVYMOjTcv4LDJDvicC9itjEtNgrLALQI?=
+ =?us-ascii?Q?1hby4DXGV2G2oZwIOlo4nrTIjJaB+5izB30BQj1cLP1rDD7EiDsyoOP4tGCP?=
+ =?us-ascii?Q?Iq9iSF+Q5Y25s0CeA5a79837lD+ihWNoqO2auYGbfrL+XwJ9b+sUhz35KJkM?=
+ =?us-ascii?Q?1AjEu9a7ZWjNmcnZeOoau9W05bMEmZDa4+I/np+8KYRZvKcxbdiJvSlIOOt6?=
+ =?us-ascii?Q?uRaEUJ5SDwXP6Mlv1FSPnie84kjXc2zrkQGosazNoKy2X4wsGWL1/srl/LlJ?=
+ =?us-ascii?Q?khCsogrVzmDGswuza0NZ8MUOcwFfM5YhwrFhWNtOv69w/3xH+g2SkRCijsDf?=
+ =?us-ascii?Q?xPJTBv6RFvPZVatppoZ1nRO3zNz+zkp/oJrEyrUsMiPQ6e/QGRFmbg5Q6X/M?=
+ =?us-ascii?Q?k04I6ZsLpki3UTO6iZO1ItamZyehdWHcUxYv6G3RO8rq1LUcsOyRlyRaSABf?=
+ =?us-ascii?Q?jKJq20oHVTWhIq8FZEjPO4inY57w+afFw4dOYASncBeeb/SJuopExGIus3+n?=
+ =?us-ascii?Q?apRVe6uER7yCwEGk4BSx6XijSBKK3U++NlyfmsBzVlsZJ1psIF/o6EqGXNdj?=
+ =?us-ascii?Q?bvUjq6OR0ITl1tXpVDTk1HA0Z0seuQs1gc5aNfVYUzRRIOzRE0xwBS0CraIG?=
+ =?us-ascii?Q?aSXVK1NfGdWBLe1Wn1TKT9NogIX69w/c0tfQrtHxFgFvNgoV0/jjeKAF3Tz7?=
+ =?us-ascii?Q?UeVDp67YpMZMhOIbxcR4QPp8Ztsg7ciBfd1XJWayy7UTWtno1+44uiNcOcvi?=
+ =?us-ascii?Q?93UI1Ss8gdmcVTs3V/ivbEFUet8aqPR75ssGpIvjg0rP5TtafE+tbZqINgr4?=
+ =?us-ascii?Q?fjKQ/mlS+srzH9/gDafVyXKGCu8JmlysX0CfXHMelTzzjuZ4Eqw3BqJGC7No?=
+ =?us-ascii?Q?UZXkxxyEMDfI686mUbDWo7N+C90xN8ulxjkux132tgPoRCoUb1fr++fk/1R3?=
+ =?us-ascii?Q?lg=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: bbee6600-e431-46cb-ae1f-08dda7428530
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 10:43:50.3056 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sydBOgZcHthe+Ec7Mq/z0Q1wzzLpy7ImxAoLGd7TvMxVNVegYD+6fazOIq3m42/RhCkoXBBOZhmKutgIMlhg6T9rUdv6XtIuXTQzzIR5k5M=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB4736
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,67 +170,90 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Nithinsen Kaithakadan <nkaithakadan@marvell.com>
+On Fri, Jun 06, 2025 at 06:08:52PM +0100, Anatoly Burakov wrote:
+> Currently, vector Rx queue release mbufs function is only called from
+> inside the scalar variant. Decouple them to allow both to be defined
+> separately from each other, and provide a common function that picks
+> between the two when necessary.
+> 
+> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> ---
+> 
+> Notes:
+>     v5:
+>     - Add this commit
+> 
 
-Copy 8 bytes of the IV into the iv field within the
-session for the AES CTR algorithm.
+One thought on the naming - not so sure about the "_common" suffix on the
+function. Might it be better to keep the "ixgbe_rx_queue_release_mbufs"
+name for the common function, and rename the scalar function to have a
+"non_vec" suffix?
 
-Signed-off-by: Nithinsen Kaithakadan <nkaithakadan@marvell.com>
----
- drivers/crypto/cnxk/cn10k_ipsec_la_ops.h | 7 ++++---
- drivers/crypto/cnxk/cn20k_ipsec_la_ops.h | 7 ++++---
- 2 files changed, 8 insertions(+), 6 deletions(-)
+Either with above suggestion, or as you have it below:
 
-diff --git a/drivers/crypto/cnxk/cn10k_ipsec_la_ops.h b/drivers/crypto/cnxk/cn10k_ipsec_la_ops.h
-index 0cc6283c7e..b9122a509a 100644
---- a/drivers/crypto/cnxk/cn10k_ipsec_la_ops.h
-+++ b/drivers/crypto/cnxk/cn10k_ipsec_la_ops.h
-@@ -32,7 +32,7 @@ ipsec_po_sa_iv_set(struct cn10k_sec_session *sess, struct rte_crypto_op *cop)
- }
- 
- static inline void
--ipsec_po_sa_aes_gcm_iv_set(struct cn10k_sec_session *sess, struct rte_crypto_op *cop)
-+ipsec_po_sa_aes_8b_iv_set(struct cn10k_sec_session *sess, struct rte_crypto_op *cop)
- {
- 	uint8_t *iv = &sess->sa.out_sa.iv.s.iv_dbg1[0];
- 	uint32_t *tmp_iv;
-@@ -63,8 +63,9 @@ process_outb_sa(struct roc_cpt_lf *lf, struct rte_crypto_op *cop, struct cn10k_s
- 	if (sess->sa.out_sa.w2.s.iv_src == ROC_IE_OT_SA_IV_SRC_FROM_SA) {
- 		if (sess->sa.out_sa.w2.s.enc_type == ROC_IE_SA_ENC_AES_GCM ||
- 		    sess->sa.out_sa.w2.s.enc_type == ROC_IE_SA_ENC_AES_CCM ||
--		    sess->sa.out_sa.w2.s.auth_type == ROC_IE_SA_AUTH_AES_GMAC)
--			ipsec_po_sa_aes_gcm_iv_set(sess, cop);
-+		    sess->sa.out_sa.w2.s.auth_type == ROC_IE_SA_AUTH_AES_GMAC ||
-+		    sess->sa.out_sa.w2.s.enc_type == ROC_IE_SA_ENC_AES_CTR)
-+			ipsec_po_sa_aes_8b_iv_set(sess, cop);
- 		else
- 			ipsec_po_sa_iv_set(sess, cop);
- 	}
-diff --git a/drivers/crypto/cnxk/cn20k_ipsec_la_ops.h b/drivers/crypto/cnxk/cn20k_ipsec_la_ops.h
-index 505fddb517..2f860c1855 100644
---- a/drivers/crypto/cnxk/cn20k_ipsec_la_ops.h
-+++ b/drivers/crypto/cnxk/cn20k_ipsec_la_ops.h
-@@ -31,7 +31,7 @@ ipsec_po_sa_iv_set(struct cn20k_sec_session *sess, struct rte_crypto_op *cop)
- }
- 
- static inline void
--ipsec_po_sa_aes_gcm_iv_set(struct cn20k_sec_session *sess, struct rte_crypto_op *cop)
-+ipsec_po_sa_aes_8b_iv_set(struct cn20k_sec_session *sess, struct rte_crypto_op *cop)
- {
- 	uint8_t *iv = &sess->sa.out_sa.iv.s.iv_dbg1[0];
- 	uint32_t *tmp_iv;
-@@ -62,8 +62,9 @@ process_outb_sa(struct roc_cpt_lf *lf, struct rte_crypto_op *cop, struct cn20k_s
- 	if (sess->sa.out_sa.w2.s.iv_src == ROC_IE_OW_SA_IV_SRC_FROM_SA) {
- 		if (sess->sa.out_sa.w2.s.enc_type == ROC_IE_SA_ENC_AES_GCM ||
- 		    sess->sa.out_sa.w2.s.enc_type == ROC_IE_SA_ENC_AES_CCM ||
--		    sess->sa.out_sa.w2.s.auth_type == ROC_IE_SA_AUTH_AES_GMAC)
--			ipsec_po_sa_aes_gcm_iv_set(sess, cop);
-+		    sess->sa.out_sa.w2.s.auth_type == ROC_IE_SA_AUTH_AES_GMAC ||
-+		    sess->sa.out_sa.w2.s.enc_type == ROC_IE_SA_ENC_AES_CTR)
-+			ipsec_po_sa_aes_8b_iv_set(sess, cop);
- 		else
- 			ipsec_po_sa_iv_set(sess, cop);
- 	}
--- 
-2.25.1
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
+
+>  drivers/net/intel/ixgbe/ixgbe_rxtx.c | 21 ++++++++++++---------
+>  1 file changed, 12 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.c b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+> index fad4a01a10..ecd1f38ac5 100644
+> --- a/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+> +++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+> @@ -2970,12 +2970,6 @@ ixgbe_rx_queue_release_mbufs(struct ixgbe_rx_queue *rxq)
+>  {
+>  	unsigned i;
+>  
+> -	/* SSE Vector driver has a different way of releasing mbufs. */
+> -	if (rxq->vector_rx) {
+> -		ixgbe_rx_queue_release_mbufs_vec(rxq);
+> -		return;
+> -	}
+> -
+>  	if (rxq->sw_ring != NULL) {
+>  		for (i = 0; i < rxq->nb_rx_desc; i++) {
+>  			if (rxq->sw_ring[i].mbuf != NULL) {
+> @@ -3002,11 +2996,20 @@ ixgbe_rx_queue_release_mbufs(struct ixgbe_rx_queue *rxq)
+>  			}
+>  }
+>  
+> +static void __rte_cold
+> +ixgbe_rx_queue_release_mbufs_common(struct ixgbe_rx_queue *rxq)
+> +{
+> +	if (rxq->vector_rx)
+> +		ixgbe_rx_queue_release_mbufs_vec(rxq);
+> +	else
+> +		ixgbe_rx_queue_release_mbufs(rxq);
+> +}
+> +
+>  static void __rte_cold
+>  ixgbe_rx_queue_release(struct ixgbe_rx_queue *rxq)
+>  {
+>  	if (rxq != NULL) {
+> -		ixgbe_rx_queue_release_mbufs(rxq);
+> +		ixgbe_rx_queue_release_mbufs_common(rxq);
+>  		rte_free(rxq->sw_ring);
+>  		rte_free(rxq->sw_sc_ring);
+>  		rte_memzone_free(rxq->mz);
+> @@ -3501,7 +3504,7 @@ ixgbe_dev_clear_queues(struct rte_eth_dev *dev)
+>  		struct ixgbe_rx_queue *rxq = dev->data->rx_queues[i];
+>  
+>  		if (rxq != NULL) {
+> -			ixgbe_rx_queue_release_mbufs(rxq);
+> +			ixgbe_rx_queue_release_mbufs_common(rxq);
+>  			ixgbe_reset_rx_queue(adapter, rxq);
+>  			dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
+>  		}
+> @@ -5701,7 +5704,7 @@ ixgbe_dev_rx_queue_stop(struct rte_eth_dev *dev, uint16_t rx_queue_id)
+>  
+>  	rte_delay_us(RTE_IXGBE_WAIT_100_US);
+>  
+> -	ixgbe_rx_queue_release_mbufs(rxq);
+> +	ixgbe_rx_queue_release_mbufs_common(rxq);
+>  	ixgbe_reset_rx_queue(adapter, rxq);
+>  	dev->data->rx_queue_state[rx_queue_id] = RTE_ETH_QUEUE_STATE_STOPPED;
+>  
+> -- 
+> 2.47.1
+> 
