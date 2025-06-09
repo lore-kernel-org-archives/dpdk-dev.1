@@ -2,160 +2,141 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C6AC61CE8
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 11:56:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A74BEC5B552
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 11:59:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E720C40A6C;
-	Mon,  9 Jun 2025 13:56:48 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
- by mails.dpdk.org (Postfix) with ESMTP id F0CF14060F
- for <dev@dpdk.org>; Mon,  9 Jun 2025 13:56:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1749470207; x=1781006207;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=R1z8/YuLPwlc/5vL6lD7vltb8ZDtD1oFl7fIzHQXx/4=;
- b=T5np+qysp/MRPmTE0gEVZ/CqO0ETwuO7G7+Ea5sALW6Lx7D4509NlRpk
- GQOdC7M1H9RTDAQ1+L2pY9lR1MwuXEjSQcGSs7whGeAtj7xYsP1lAYt6F
- 39Mq0kI8uGAn1KZX3J9mBzHTnxGA7SVk/4kaVRRZLPhMwFT8xP2WXK+aB
- 4b1g7tR9n5KpPXengHgDrfiEQt8ibybKNpKHTXKXOq2e9HIAP396uZkhA
- vSM1bph+hzR1CORF/+Dr0QOocuej/6yDzizJpuaQDdqEn1OD7XJD7z3Pq
- PKX2Sx7WK3EY1kId0oNyvb/3uq1CoeyWzuq3Qq3HRHjacJ+5zmh2noE+I w==;
-X-CSE-ConnectionGUID: 8nMObBziQMqTAD1WPnyQkA==
-X-CSE-MsgGUID: Uy0R5+DwSmOzGEo9OILSpg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11458"; a="62579507"
-X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; d="scan'208";a="62579507"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
- by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Jun 2025 04:56:46 -0700
-X-CSE-ConnectionGUID: o7JlRWUtRDu0Z4eHh0VOqg==
-X-CSE-MsgGUID: zkD22UgtQUaMJULCycJetw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; d="scan'208";a="146846937"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Jun 2025 04:56:45 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 9 Jun 2025 04:56:44 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Mon, 9 Jun 2025 04:56:44 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.81)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.55; Mon, 9 Jun 2025 04:56:44 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 3E37340A6C;
+	Mon,  9 Jun 2025 13:59:21 +0200 (CEST)
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com
+ (mail-bn7nam10on2047.outbound.protection.outlook.com [40.107.92.47])
+ by mails.dpdk.org (Postfix) with ESMTP id C5A514060F
+ for <dev@dpdk.org>; Mon,  9 Jun 2025 13:59:18 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kmR+ExEEgyhU3oogi91dk6wmVAsFoMTQCne2FHYeiqotds/zEnbZ896qoV0tlz8lkwLM2g8fNsr0YKyIznDDjwEuxjXnGi1ncO71DkLmu9B5zB+81fNSX9p4WBrw7rcMvcL6ZyACjQPofOdBMmMhUOtsQxbYeZqqcQjaz0zmDU+kLlclLaG2m5RgwhNyu0IACH6cxtlOCNHoXyQURZAdgloNNjNd9qH4IK4ZMATuT6kKjv04GeeeJ0rKO9SP5G2ztB4eS6/Lmt8c8T4I3jI1SOthLARkm+evi3gXR4zBP3r9uHwzlR9I9J8HXiC6gJDb9S2hntYBpXOPrccpNaRKdw==
+ b=YQWNcTS87ttHMD4XPzsEXIhMrUEdQotiZaTtNzJDfdR7jg8J8ZENOz+QRK4Bhh37vo2A2ruO1vkLEpDnxO5yD1zypns5ScPFaruZ6AwfzUktWTY6JwgxnCPITEfhd3UGXTlsCizET/2GalOF3Q8XWV6QTcKe8xual4QeU7bVcVPiyIWFta2Fd930/z0yPmVHLo9LHtU3aMic1hbkIMtVLkgll3V6lUyXq4dYD6F5pC4Ff2i/BMO0Vfr0PwzG5fC4hstlYtytqF+jOOO7yoRa/D3wNIaLvr5PrtZ0Y/AX4ACrgdgQmMjwbwj0uXYPhKxDg8CXog15Lo1TWV016RsYBQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZKSfq73IIhvF4oBIl15/nE0L1gq+fZauarvPZb5DVuA=;
- b=CV4pRSq4b/MRTLbWKE0KfZnuxe993zmNC7TjyX8qrFJ+0UHi3Jj7QKEqiF7Cs+g7vtilH/JmaW+3v6UPJIno6KY+mdqqKvyyCGEdgnMIm8m1nZQY3dXYhn/lIzdyShBpPANuLCA1lqjescAOKhWwOKxrqCb83OKJFsWFy68HTydpuBSsm7s59zlBZcy/lnlBIvhNDYmMFzeAZx4ZPJdM5rNWp9IlDG3f3+7DNKCuJezh9CVGWpKeFZJGSNMgdRzHbvMTGzGqXw78GvAaAMmdss/apHRQ9AzbCKZiZa46tVFiwE80/+UrqrHGRbWrt1b04TcyIA/zfqaDZQ9CPGEtig==
+ bh=z3MEmdS4Q1fn6Sxvyc9A6ESUFa5D4wvHoWXXc8ZEGlk=;
+ b=MfBpB7/4+nPQOTpImrT0R5Nqhur6xghG+Ko5LwU+rEdtDZhucbZWJALKmh8RGKZXac99roRy+dWsXUWKsXbIqn+XZv0RdX+E/D+75cSrF3oqdwWuBJbv3YI2p2t7LkcTqY25UJ0k9P5lmLpei/HofXwETLT7A5CN9ZdVQ3h3BvysQ+edwBA48L4/7XmD/7yvim/sA4XHuka+Aix4WGDgzze9NBINoO9g2XrdXt3vdZNaAevII4Y6c+SgM/DSIpxr3SDhfNJm2hibgNT0mXoQRDgFs1LkbzQ511fHqrPRMbnkYK6wEH0rC1D/wuo3IXHDYwrWe2wRJM2mPOYOLyYZFw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by SJ1PR11MB6108.namprd11.prod.outlook.com (2603:10b6:a03:489::10) with
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=z3MEmdS4Q1fn6Sxvyc9A6ESUFa5D4wvHoWXXc8ZEGlk=;
+ b=kPqE8l+SCCgNuOLLK+0yocwmJRa038LVkSScH6l4pB2bf+dUFtVGMdkcqb+RJcnMH1wbRZjGB9CFoO/XJBweUrSsCPFo2uPnOKPn4oHQjsWBOSth0sVpYxVUaPR5nWXtBJZQsruST7jCvAyqwjCWNMjiup9QCEXSoH2q97bPn7c=
+Received: from PH7PR12MB8596.namprd12.prod.outlook.com (2603:10b6:510:1b7::6)
+ by CY5PR12MB6528.namprd12.prod.outlook.com (2603:10b6:930:43::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.25; Mon, 9 Jun
- 2025 11:56:42 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%5]) with mapi id 15.20.8813.021; Mon, 9 Jun 2025
- 11:56:41 +0000
-Date: Mon, 9 Jun 2025 12:56:36 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: "Burakov, Anatoly" <anatoly.burakov@intel.com>
-CC: <dev@dpdk.org>, Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: Re: [PATCH v5 19/34] net/ixgbe: add a desc done function
-Message-ID: <aEbL9JxB-QK8xqMf@bricha3-mobl1.ger.corp.intel.com>
-References: <75f2d5852f52e7b81b0036cb921e661edca8569b.1749229650.git.anatoly.burakov@intel.com>
- <a0493826-41d1-41f0-8b9c-b45c7894bb13@intel.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.41; Mon, 9 Jun
+ 2025 11:59:15 +0000
+Received: from PH7PR12MB8596.namprd12.prod.outlook.com
+ ([fe80::a011:943d:7291:8069]) by PH7PR12MB8596.namprd12.prod.outlook.com
+ ([fe80::a011:943d:7291:8069%5]) with mapi id 15.20.8792.034; Mon, 9 Jun 2025
+ 11:59:15 +0000
+From: "Varghese, Vipin" <Vipin.Varghese@amd.com>
+To: Bruce Richardson <bruce.richardson@intel.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, "Song, Keesang" <Keesang.Song@amd.com>
+Subject: RE: [PATCH v4] build: reduce use of AVX compiler flags
+Thread-Topic: [PATCH v4] build: reduce use of AVX compiler flags
+Thread-Index: AQHb0LCFssNT35AU5kW6BTDmyPwZVbP6ZSmggAAh4ICAAEGXQA==
+Date: Mon, 9 Jun 2025 11:59:15 +0000
+Message-ID: <PH7PR12MB85969B5D596151F83DA09600826BA@PH7PR12MB8596.namprd12.prod.outlook.com>
+References: <20250325172215.3360590-1-bruce.richardson@intel.com>
+ <20250529154249.1310449-1-bruce.richardson@intel.com>
+ <PH7PR12MB85967617A71099E2F0E5C835826BA@PH7PR12MB8596.namprd12.prod.outlook.com>
+ <aEaUA7rDVyPJEvP7@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <aEaUA7rDVyPJEvP7@bricha3-mobl1.ger.corp.intel.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=5344a98f-071e-4580-8d5a-e013b1d6bdd8;
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
+ Internal Distribution Only;
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-06-09T11:52:40Z;
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Tag=10, 3, 0, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH7PR12MB8596:EE_|CY5PR12MB6528:EE_
+x-ms-office365-filtering-correlation-id: f60bdfd4-9756-4218-2c8c-08dda74d0e68
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?yg7NPPEXsf98qpgpSccRn7RQ/XrWGdrE6QvO5fmaxuzeFvjZA+0uJVK7ERzX?=
+ =?us-ascii?Q?oMEjMnXUN+x0yyzRox+weWNt795+8wdUuevU4ICsBdQAraO7PIGcmoCI9nOC?=
+ =?us-ascii?Q?QJt3xbV18JsFboPuIkBR6pSo0jWsZx+ArD9p2w52zlGTX+RjULF3I0+BQ1a6?=
+ =?us-ascii?Q?hGZzL5/KJx6C7Pt6fAkd0m1w4l/1z5I9e2w7a1SbQ2opqNtLCLRy96O+KAWs?=
+ =?us-ascii?Q?qmsIDrQ1e6Vx4of162KuHYM6KZARKDNCmabagoagukDvThOyMf8/bCoKD0fb?=
+ =?us-ascii?Q?K0VKlpqdu6QhwvgYl1Lk9aGNYAjv/78kQbKohcojSnz3cnUljWwOvuCMHync?=
+ =?us-ascii?Q?4bx1XyY+9qITiR53vWPYR1q+KmV9a/BnEd+bUUGUye2Buzr+xz8P5FW/ZLC1?=
+ =?us-ascii?Q?HfRyCVUx+aG8fz3DtoxkA/GGOi2tsugfJtDIBlWMf20sZ5Vnz0h1E1AswI/5?=
+ =?us-ascii?Q?AMr63LMdoQaXEZew1pcuWD/Ruc2MWD7GzcmBHchGOHUywxBQ5EuHailpqz2r?=
+ =?us-ascii?Q?5AQHgtC3M6mcOkl33VOXuCkW4cHWNBPY9t0p60bpMYlvyzPzoZ3gBkm8AdJo?=
+ =?us-ascii?Q?sAxOVWqoksnFK1maA3zryn4uYDUG75YiyQkraS2BWld8we0hry7nK5Ux7Ipv?=
+ =?us-ascii?Q?3PxlhKxUkLni06Ad55k4zuFN/kEkFK+vXZb27dRuwRWAO9QrmUgziLhfryWL?=
+ =?us-ascii?Q?cuWnBYZPU8ddBE2uFfRSpimqj0Z5Z6B6TMo1YRKASf/Aq5ci7Q4Fbu/ailKd?=
+ =?us-ascii?Q?g5jwapFtI/juPcFzIPsO9Abk2QnuW95RkKlcoSaqIXvLSjNjFyoVJWPsstOy?=
+ =?us-ascii?Q?hZgevmAirVFcA9Sbhi0OII5CXqsAP0dWleGmwvHNYMq5O6HoZDBT05ryRc8p?=
+ =?us-ascii?Q?V/EujUJUAhtpPp4QsYNLF3hoSgjPxX+G5B82zol21LnnglNoQXfHRt1k98NZ?=
+ =?us-ascii?Q?gwDSLPBxo7uygbXY3fQLcRb6zL33pywWSAo7Wf1PEFfBCr/Sn0iCnXaLVoGC?=
+ =?us-ascii?Q?F6wwajuebGVdzc+R1yMu8w0omu+WqzO5y92ApM45rNSqSQ2vwbDY1WjLjwSR?=
+ =?us-ascii?Q?rvtD0NbTsNakwnVn9H71gyPOOGGKGQ+ftEyunpbHG++0rvyYTQ4NMLCU6i+O?=
+ =?us-ascii?Q?nwKf4gcSThPAp5yTNBLF0jPqYtq9csA2a5DWtWzCZ4A3CeJuoeJefM2R8Mq4?=
+ =?us-ascii?Q?XtmFkWgfFXPIXizYHLzBUjVpXXqurQd9+4LhjjLUVkiD97wGA3LO7rhsMy1i?=
+ =?us-ascii?Q?vor5fTH+Y+bwyf/KS+YF8tFuJvZql404aR8PVw2GwoDp4RNjO0+sg5ilI/A3?=
+ =?us-ascii?Q?cgFgQJ+eX/KFcw5d586tQIrhN2k5lgMMx0IWi//LJleYAxD2rjUmuFgtR+Oq?=
+ =?us-ascii?Q?dZhRxdGCpLKOFx2heuGlyWDGuw97RjG6uIOsmIyB0naypwH7U72xyXrxEVWq?=
+ =?us-ascii?Q?pFBbk11z8c4=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:PH7PR12MB8596.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(376014)(1800799024)(38070700018); DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?ltRvsr/04PlatdsMlRuzJ3rb2o9rEPzG3nAk0AAze2++XXx/GM5OTM1p40JU?=
+ =?us-ascii?Q?CnYebpp8vs6h3YocynPtH2tXXpcKmzvwild+NV+0mZWZRKWSl5iEeEn/VmyK?=
+ =?us-ascii?Q?m3ZHacuO2H2YS/DQIggokSnrgV8CC6mOIbrSlvPiFEDWS+PdyJ4ZJnQOyWE4?=
+ =?us-ascii?Q?JRApwIG7wcpl2W9cXY0xfVLZLRZPtlLtKja3CfGzhbO5+SaUWarTEVmP6OKU?=
+ =?us-ascii?Q?cpthXaHyrsWSwEt4qXAlgiDuu8olTEfVh3JfSgYA0h4xafnl82OdJRnHZ4HN?=
+ =?us-ascii?Q?FB+kj4yjis40WbwJilZ2I1iTdodj6RszA3/pKacFWmPSAeJ43rEfzaTEQ/md?=
+ =?us-ascii?Q?QSHUdfNhGsHAmia/KoYC8qS9O4leSK4CxytzIxp7zAc2aclCM5gitSElW7ej?=
+ =?us-ascii?Q?jhlQORaVspucWsjxQkNOxXmtvnO7nhsjUiNEoVDz1Py7SHZWLu/zp6xDAjyr?=
+ =?us-ascii?Q?FN8jDiNF6Ijk9QYFYKCNxWP4SpbUOkJsBY4IoBzUvCjEBqIOP6aWccDBBgsb?=
+ =?us-ascii?Q?g7kFAjQXEWqjKrsOuwX8II/BgYDv6sisAcb3+dA7ARDUfaFixw/5xClF5Kcv?=
+ =?us-ascii?Q?VTXW/zph2e4LuOhTf/QxFheHVcg3cQBWvjGK0tfuMdrOL8WtTJ/GKmPZl2aR?=
+ =?us-ascii?Q?eBKyjRfT4561B7gTEsqRGCwlUzWxJoa9yAitU2MI5z2DTRZien8ZpML2bpds?=
+ =?us-ascii?Q?ryMgxClsQMjoHIO2VZ2V8CJW6aYXR50YoqsoObJ2w2ejw5K9UcGWJoiv2dWr?=
+ =?us-ascii?Q?feKyTBeta0MFNK9amW086r/ZRVHvwKeMMVmwunh8gNr3DGv6Z+ypQjLBOQft?=
+ =?us-ascii?Q?0Fpd0z7pdvYJ2zW1r6k4MSZlpxwA7SP59YL5cBc00p+OzstOht9aGepLq/DZ?=
+ =?us-ascii?Q?tYMd6muRoHIbRRSagUDWxV1rijMAoIiykqcE4mZH8I7EEUxmJvBDxpJp4b3Z?=
+ =?us-ascii?Q?Y6mQPu4N+mtKeRI+gDUfuqMBFU9vxsMWx6LNxE39inB8f0pTVktsskW3A3Nd?=
+ =?us-ascii?Q?64EUGisYHhDofHGxPofuCgJ+nOMygz8lTTosFKnlAUXfTNDDGnExHD9sZx39?=
+ =?us-ascii?Q?+TMUUMMoM+tCvy1lMUC6PB1ncDzEMEQyk3K8NxZ9uF/qlABffz4FxGFee59Y?=
+ =?us-ascii?Q?JQYxAwS3N0oBotYqcdanhv6HvF2I5oeGaglyo6uxpb3prnalExITKNREi1f1?=
+ =?us-ascii?Q?/beSS84fYO6t8DCY4uZDHzo/sMP4JwI347TAApjwb0FoyH5lDp/tZx4dIQDQ?=
+ =?us-ascii?Q?45/Em1d5iWI5lLaR09YxDfXr0WIHPrUE6LvC5u0d17ZL8gUITyd3bfNzXYgY?=
+ =?us-ascii?Q?evUVJhU6tPOeEOE+kxkDwCVdwjVRZac/4mfQmmPeqsxp9Cml7lCrNTWemdCV?=
+ =?us-ascii?Q?KB1hJdO2d0Mf+sO7dDLQjmVSo1QqF67NjIuLm8ZmvbD7nrudz0U/QBWvoZlJ?=
+ =?us-ascii?Q?ekRioV1+5vWbB7mp/6Oop2D858TXovHC6ExjkSfXtA+cDT/JkNuiKE9d+qrK?=
+ =?us-ascii?Q?RKQACZgUuq/KLCqLvRDB7YM5qkNVKTxn6TV2UAv+uzwetGFjvOk6wNFVEjbh?=
+ =?us-ascii?Q?gwznXYWHWAJTMHvpAjQ=3D?=
 Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <a0493826-41d1-41f0-8b9c-b45c7894bb13@intel.com>
-X-ClientProxiedBy: DUZPR01CA0056.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:469::7) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SJ1PR11MB6108:EE_
-X-MS-Office365-Filtering-Correlation-Id: fffa5024-1b90-475e-6a7a-08dda74cb2dc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ECF/5X4jI6HK0RX79u3+CTkeQ+N4uXbINlOdmfuqt/GXO5O+zmkj37BgA5Wo?=
- =?us-ascii?Q?Bw0RBUDLAweUj3Kj1H4cU5YmaXsBcckBZeorZUtuD2mnHgDjRFkTRY9NpkNv?=
- =?us-ascii?Q?g0mkauw8I+zNNF1KKFiSBNMMYrCjpDnRcRmh8fJZ98NUxs0IvWJgasjDAkdP?=
- =?us-ascii?Q?zeyJkKfUwCk5yTAnyaD1j1ivvLoJU7BgjHCp/PuWYdw2c9I7P+ifWaSdEd9L?=
- =?us-ascii?Q?GyAKZpTi1ni9BghFDF0dK8AWc8l7OLal6a2eAbVqwKs1pj0pUV0919MI/Duq?=
- =?us-ascii?Q?dUq3KFHH9C4M1+gOqGGat8tK1i0pSH5iPEQYoBL2wtjkgQUz8rEH7pZS0xk5?=
- =?us-ascii?Q?3+E2MaGRvfGWS5tnyg2sktUdtdzd6i1xjcvXgFRwIEXGaqsFh02P7b4xzv6T?=
- =?us-ascii?Q?oUoLATmvkS7xWZeXLTN4+ijKkMqeAdyXUdCDfEucag96Oq/+lEul7QMUCd/j?=
- =?us-ascii?Q?8HZYvXGkBueJoikHPrKCJraxTraQxO6q8vDH1ygWJiocrsFw2Ek8RXOJCP6v?=
- =?us-ascii?Q?xy2VEw7W/ygfMcD1WHwlO7gDBDLPjYcKJKgKV9zo5eA5KTzIWhmWZE3PzgVk?=
- =?us-ascii?Q?lwqHE8UDtMkuP4MGvWpfEvo/ruoB5c63+L5eH6fISafZc54+gCdAH+2QoJDd?=
- =?us-ascii?Q?napMvGZX7wLAt0roWI+CKPjA8QstLNCv+OPtPb3lFBcdKGxJegYUjw63EKo/?=
- =?us-ascii?Q?JvYCqAPM0Bd9fub2+2CewTV53iBVga6l9gDXTnVLgXqaINrWOEqOcVQV8vZL?=
- =?us-ascii?Q?CUywMnUwERgSrA/D3jnvu90s2DfKqNy1bLsw8idziSNA08wGLY+cCwXnaC+o?=
- =?us-ascii?Q?l/MyMzwUEfaOiVW72hgV5/6rcabCbHTqrCxp2btGA7RoIFd/bYPuAJ6QGJWu?=
- =?us-ascii?Q?IfaJqQO+eY1iaeCiQyICea0PTjW+ndkjq2+BbIkWPGRA3Hi9O2jibHV5rJHL?=
- =?us-ascii?Q?WIbwLTmhCMGCr9rYx/aaWEhiCPtg8aBw+aYU/EYB46IWPWTJ+3KBhG9UmgqZ?=
- =?us-ascii?Q?OQgAQIx3EVC9ZiA2ITZOr2CXS22jTS9WE1fZ8h2yJzV/UvHUDwZfLF/EJH5f?=
- =?us-ascii?Q?4o0E9nBwmR++ymmWThoVNcsJDCvs1zA1Tzi8QtpdFtjD+HEMul0rknjaT1ec?=
- =?us-ascii?Q?JWl9wYnT/w4UJ3YBWzkcPVvB5WZC63PRVGPK8RZWwtpJC7ARsuftkWseBygc?=
- =?us-ascii?Q?DUmALdRysp8quVOr6sDWlz9zUh94oBj0KP3kJXa8pMA+O8QIQeQGh+anKfIT?=
- =?us-ascii?Q?6JL7sPAIK+HLlQNhI/8riEFy6haNOoEWCvqmg4rWnA6MVDyQTXxLRU0Cfqe0?=
- =?us-ascii?Q?LOuWBhzx989/pFY+0L3RFtS9xTMNk7nD83ll+x4pJkKGDKTpLCfmo5ldepr1?=
- =?us-ascii?Q?EPZ27VZrgbUYUBuQX324vykXGJMOMDA57Jj9ZD+WxbqaC56SVA=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ZQ+VJsDx66Zy/VP7CU6WgKXy0pdMLYJTuxLo0IYmXKVdqVR0529hTfoCOp9n?=
- =?us-ascii?Q?T5fB+C/Qp4qdAZk1WMiMFEruiEUHrW2dhL0CPGAUC3qKmW8e70KhXyb2qgdq?=
- =?us-ascii?Q?LxmvI7JpmTqU6MU2VR6admtENYlP0s+aB+BTsbMYYR1o5u7lmYgEXLMetZ7q?=
- =?us-ascii?Q?l0N+Vi7p+ALuy100krTNRUgrnS6GvFWadbIUPKDpDZ4FgTHrAucqacTpbTfV?=
- =?us-ascii?Q?dwdUO5uslV0TepeDhWuiqf4ge7ypVb6rs6lnRaWhbTK3B7TPG6qh4XzCzeby?=
- =?us-ascii?Q?hgjGXO3eXKFtCgYCQ6Pia2lYhScV7SxhYb06W6d+ENpVIwWPSXeJiVEgaKYP?=
- =?us-ascii?Q?t5gO/Wxi/snuW17UMGGtToPAf65/jBkOOzW4j61apyjYH17WRA4v/EiDLwaF?=
- =?us-ascii?Q?83u3BHvaQ9SN1G2Pq0aZFvQcLccy4BxHhj+jkQwiJkNX+V9Z5EC0L5kncexD?=
- =?us-ascii?Q?1E6Hd/LLojqA62xvJ8yaFsmFV11jAt924i0u3XFX09Nj6j9QR69HY1Pz8ha1?=
- =?us-ascii?Q?x1ZEo9MuJ2QKAJM6LNEZUlv5C60tEGWyrE1MC7cIyYiHYOzM1PzEZpd2Nv3P?=
- =?us-ascii?Q?knFl487yN/7c7Os73535i072gcGun1maXIeZn1Bfn7rVBdAblxTn3Gq6awKY?=
- =?us-ascii?Q?Alf8Ay6ZIfw8wJXxXv3HdL30+KhUS31yh9z2g7HaGUMqorlD7VDtJcOmezTs?=
- =?us-ascii?Q?SM5hL126AbHzkkS4jccNMWGc+QAHEpt5kyB8ahHYFnh0ovWKVbjL9ygO3rRJ?=
- =?us-ascii?Q?pkDTeDkdY6ztUWbLFb5c9fvgbqky4nTSCknICWkmG5QhhybEhsDJA7ik/tvm?=
- =?us-ascii?Q?Y8dtEWlNXGlvoSMsbGEwtvx7PxGXn3k47OVFj19btxxROwaCJH1hdzBY/lJ6?=
- =?us-ascii?Q?nOLYXjVI/eTPilRXDcPs8tPHtuPNjqG/ZNVG5TVZ13G1hGgBoGXa3ssjMlGf?=
- =?us-ascii?Q?3xKL0tO9zRNq/c/6P1aWOMfy9aXMZ9pEp05Epu+kH+OrQGxiywYHQayykCFk?=
- =?us-ascii?Q?3l/N5L2tyX5nA7pzBpw50M6P/Qv4YTdhATWwg32Xw8/1wCrMPx2qdUn/ssXQ?=
- =?us-ascii?Q?3LkfRhpc/v8WrUqdsFDWuq5myEBAvS2f1SwhF49DMG9EntkdIswmUqlQmr7C?=
- =?us-ascii?Q?YXdzOCmYV+B4jsA02WCF19B1n7nFPZWr2lYYjcTTPbB2Tjfwc8qmNcQO1tG7?=
- =?us-ascii?Q?zTPydd7qTFbY+uJ6PM38vBWGUIHUS261NvbHCRf/K8R7GhrYhv5SDiphFGjo?=
- =?us-ascii?Q?ED3nhOsykR1/3U6NkR0ovk08am+p3dZA3LXFhCOfb8JVg/y4HcjLtvnDjsug?=
- =?us-ascii?Q?rnpAQW7iCobY4SuRpeg4gjccvdrAjT7Ti/4qMOMAkvhvYfITOjPy/BVRCPkN?=
- =?us-ascii?Q?n5BQiQkHho1FohJ7+Ok3javNw9oCRuDiQBAXzebL1nBR2tENzezi+SjMsKSa?=
- =?us-ascii?Q?hoe1F7YIIg4dVQr+xefokvAsjqG/lWubHuN+8otNe7bIj0IQixxaDQIUjLwi?=
- =?us-ascii?Q?Y67+OHFL5sMTcL6O5DSNr33aXX06Z//nAYGVl7cYpSBDiFhH3ytEUiI0VVM9?=
- =?us-ascii?Q?r9PBxv2rM5ZVCExaGnN/tSdf1BGUb6WryxUW80bnf+2ZQ+pwcUH6/j2Juq6l?=
- =?us-ascii?Q?EA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: fffa5024-1b90-475e-6a7a-08dda74cb2dc
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-OriginatorOrg: amd.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 11:56:41.8757 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8LvC6N4HLFWNuLEuDbnEXLkx4ijxeegNg/C4t56OikQ4WhMp5FsKh52xtIyooz+nLTYJ/qGgU6TFVx9DGlFCaBsgP8Xi8JAhQw4bUKQGxBI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR11MB6108
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB8596.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f60bdfd4-9756-4218-2c8c-08dda74d0e68
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jun 2025 11:59:15.2202 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: u8GOtSZ5QnijXaVFf3w+0zwZJQTWWw65FcFi5uJ0h//0wPCkl2cqtfE66EbU4OeXF/JjdC/2YVe/YE7dZ4EUWg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6528
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -169,99 +150,169 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, Jun 09, 2025 at 11:04:39AM +0200, Burakov, Anatoly wrote:
-> On 6/6/2025 7:08 PM, Anatoly Burakov wrote:
-> > Add a function to check DD bit status, and use it everywhere we do these
-> > checks.
-> > 
-> > Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-> > ---
-> > 
-> > Notes:
-> >      v5:
-> >      - Add this commit
-> > 
-> >   drivers/net/intel/ixgbe/ixgbe_rxtx.c            |  8 ++------
-> >   drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c |  4 +---
-> >   drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h | 12 +++++++++---
-> >   3 files changed, 12 insertions(+), 12 deletions(-)
-> > 
-> > diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.c b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-> > index 5f0aedb4cd..50060ce64e 100644
-> > --- a/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-> > +++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-> > @@ -118,13 +118,11 @@ static __rte_always_inline int
-> >   ixgbe_tx_free_bufs(struct ci_tx_queue *txq)
-> >   {
-> >   	struct ci_tx_entry *txep;
-> > -	uint32_t status;
-> >   	int i, nb_free = 0;
-> >   	struct rte_mbuf *m, *free[RTE_IXGBE_TX_MAX_FREE_BUF_SZ];
-> >   	/* check DD bit on threshold descriptor */
-> > -	status = txq->ixgbe_tx_ring[txq->tx_next_dd].wb.status;
-> > -	if (!(status & rte_cpu_to_le_32(IXGBE_ADVTXD_STAT_DD)))
-> > +	if (!ixgbe_tx_desc_done(txq, txq->tx_next_dd))
-> >   		return 0;
-> >   	/*
-> > @@ -3412,7 +3410,6 @@ int
-> >   ixgbe_dev_tx_descriptor_status(void *tx_queue, uint16_t offset)
-> >   {
-> >   	struct ci_tx_queue *txq = tx_queue;
-> > -	volatile uint32_t *status;
-> >   	uint32_t desc;
-> >   	if (unlikely(offset >= txq->nb_tx_desc))
-> > @@ -3428,8 +3425,7 @@ ixgbe_dev_tx_descriptor_status(void *tx_queue, uint16_t offset)
-> >   			desc -= txq->nb_tx_desc;
-> >   	}
-> > -	status = &txq->ixgbe_tx_ring[desc].wb.status;
-> > -	if (*status & rte_cpu_to_le_32(IXGBE_ADVTXD_STAT_DD))
-> > +	if (ixgbe_tx_desc_done(txq, desc))
-> >   		return RTE_ETH_TX_DESC_DONE;
-> >   	return RTE_ETH_TX_DESC_FULL;
-> > diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c
-> > index cf6d3e4914..707dc7f5f9 100644
-> > --- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c
-> > +++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c
-> > @@ -215,7 +215,6 @@ ixgbe_recycle_tx_mbufs_reuse_vec(void *tx_queue,
-> >   	struct ci_tx_entry *txep;
-> >   	struct rte_mbuf **rxep;
-> >   	int i, n;
-> > -	uint32_t status;
-> >   	uint16_t nb_recycle_mbufs;
-> >   	uint16_t avail = 0;
-> >   	uint16_t mbuf_ring_size = recycle_rxq_info->mbuf_ring_size;
-> > @@ -232,8 +231,7 @@ ixgbe_recycle_tx_mbufs_reuse_vec(void *tx_queue,
-> >   		return 0;
-> >   	/* check DD bits on threshold descriptor */
-> > -	status = txq->ixgbe_tx_ring[txq->tx_next_dd].wb.status;
-> > -	if (!(status & IXGBE_ADVTXD_STAT_DD))
-> > +	if (!ixgbe_tx_desc_done(txq, txq->tx_next_dd))
-> >   		return 0;
-> >   	n = txq->tx_rs_thresh;
-> > diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
-> > index 4678a5dfd9..56e13b4125 100644
-> > --- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
-> > +++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
-> > @@ -25,19 +25,25 @@ void ixgbe_recycle_rx_descriptors_refill_vec(void *rx_queue, uint16_t nb_mbufs);
-> >   uint16_t ixgbe_recycle_tx_mbufs_reuse_vec(void *tx_queue,
-> >   		struct rte_eth_recycle_rxq_info *recycle_rxq_info);
-> > +static inline int
-> > +ixgbe_tx_desc_done(struct ci_tx_queue *txq, uint16_t idx)
-> > +{
-> > +	const uint32_t status = txq->ixgbe_tx_ring[idx].wb.status;
-> > +
-> > +	return !!(status & rte_cpu_to_le_32(IXGBE_ADVTXD_STAT_DD));
-> > +}
-> > +
-> 
-> This causes compilation errors down the line because vec_common isn't
-> included by drivers that don't support vector driver, so I'll move this to
-> ixgbe_rxtx.h in v6.
-> 
-> (alternatively, we can keep the stubs and not do conditional inclusion of
-> vector code headers)
-> 
-When fixed, you can include my ack:
+[AMD Official Use Only - AMD Internal Distribution Only]
 
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+> -----Original Message-----
+> From: Bruce Richardson <bruce.richardson@intel.com>
+> Sent: Monday, June 9, 2025 1:28 PM
+> To: Varghese, Vipin <Vipin.Varghese@amd.com>
+> Cc: dev@dpdk.org; Song, Keesang <Keesang.Song@amd.com>
+> Subject: Re: [PATCH v4] build: reduce use of AVX compiler flags
+>
+> Caution: This message originated from an External Source. Use proper caut=
+ion
+> when opening attachments, clicking links, or responding.
+>
+>
+> On Mon, Jun 09, 2025 at 06:02:02AM +0000, Varghese, Vipin wrote:
+> > [Public]
+> >
+> > Snipped
+> >
+> > >
+> > >
+> > > When doing a build for a target that already has the instruction
+> > > sets for
+> > > AVX2/AVX512 enabled, skip emitting the AVX compiler flags, or the
+> > > skylake-avx512 '-march' flags, as they are unnecessary. Instead,
+> > > when the default flags produce the desired output, just use them
+> > > unmodified, and don't bother adding in extra enabling flags for AVX2 =
+or AVX-512.
+> > >
+> > > Depends-on: series-35006 ("doc/linux_gsg: update recommended
+> > > compiler
+> > > versions")
+> > >
+> > > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> > > ---
+> > >
+> > > V4: Fix error flagged by CI with clang builds without AVX512 - change
+> > >     "cc_avx512_args" to correct "cc_avx512_flags"
+> > >
+> > > V3: put in version check to work around an issues with some meson
+> > >     versions, (hopefully) allowing builds to pass in all CIs. The
+> > >     printout of the extra flags now only happens with meson >=3D
+> > > 0.60.2
+> > >
+> > > V2: dropped the doc update for the minimum compiler version.  Based o=
+n
+> > >     discussion, that version bump is larger than proposed in RFC and =
+is
+> > >     now a separate patch/series [series 35006 referenced above]
+> > >
+> > > ---
+> > >  config/x86/meson.build | 31 ++++++++++++++++++++-----------
+> > >  drivers/meson.build    |  9 +--------
+> > >  lib/meson.build        |  9 +--------
+> > >  3 files changed, 22 insertions(+), 27 deletions(-)
+> > >
+> > > diff --git a/config/x86/meson.build b/config/x86/meson.build index
+> > > c3564b0011..e6612dbd80 100644
+> > > --- a/config/x86/meson.build
+> > > +++ b/config/x86/meson.build
+> > > @@ -4,11 +4,13 @@
+> > >  if is_ms_compiler
+> > >      cc_avx2_flags =3D ['/arch:AVX2']
+> > >  else
+> > > -    cc_avx2_flags =3D ['-mavx2']
+> > > +    cc_avx2_flags =3D []
+> > > +    if cc.get_define('__AVX2__', args: machine_args) =3D=3D ''
+> > > +        cc_avx2_flags =3D ['-mavx2']
+> > > +    endif
+> > >  endif
+> > >
+> > >  cc_has_avx512 =3D false
+> > > -target_has_avx512 =3D false
+> > >
+> > >  dpdk_conf.set('RTE_ARCH_X86', 1)
+> > >  if dpdk_conf.get('RTE_ARCH_64')
+> > > @@ -65,26 +67,33 @@ if is_linux or cc.get_id() =3D=3D 'gcc'
+> > >      endif
+> > >  endif
+> > >
+> > > -cc_avx512_flags =3D ['-mavx512f', '-mavx512vl', '-mavx512dq',
+> > > '-mavx512bw', '- mavx512cd'] -if (binutils_ok and
+> > > cc.has_multi_arguments(cc_avx512_flags)
+> > > +avx512_march_flag =3D '-march=3Dskylake-avx512'
+> > > +cc_avx512_flags =3D []
+> > > +if (binutils_ok and cc.has_argument(avx512_march_flag)
+> > >          and '-mno-avx512f' not in get_option('c_args'))
+> > >      # check if compiler is working with _mm512_extracti64x4_epi64
+> > >      # Ref: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D82887
+> > >      code =3D '''#include <immintrin.h>
+> > >      void test(__m512i zmm){
+> > >          __m256i ymm =3D _mm512_extracti64x4_epi64(zmm, 0);}'''
+> > > -    result =3D cc.compiles(code, args : cc_avx512_flags, name : 'AVX=
+512
+> checking')
+> > > +    result =3D cc.compiles(code, args : [avx512_march_flag], name :
+> > > + 'AVX512 checking')
+> > >      if result =3D=3D false
+> > >          machine_args +=3D '-mno-avx512f'
+> > >          warning('Broken _mm512_extracti64x4_epi64, disabling AVX512 =
+support')
+> > >      else
+> > >          cc_has_avx512 =3D true
+> > > -        target_has_avx512 =3D (
+> > > -                cc.get_define('__AVX512F__', args: machine_args) !=
+=3D '' and
+> > > -                cc.get_define('__AVX512BW__', args: machine_args) !=
+=3D '' and
+> > > -                cc.get_define('__AVX512DQ__', args: machine_args) !=
+=3D '' and
+> > > -                cc.get_define('__AVX512VL__', args: machine_args) !=
+=3D ''
+> > > -            )
+> > > +        if cc.get_define('__AVX512F__', args: machine_args) =3D=3D '=
+'
+> > > +            cc_avx512_flags =3D [avx512_march_flag]
+> >
+> > Hi Bruce, we have reviewed this internally and tested the same. We woul=
+d like
+> your thought for the following.
+> >
+> > - Before patch: we were directly setting AVX512 falgs for F, BW, DQ,
+> > VL
+> > - new patch: we are setting the flags for `skylake-server` as bare mini=
+mal.
+> > - AMD supports AVX512 from `znver4 and higher`.
+> >
+> > As per GCC `https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html`, the e=
+xtra ISA
+> supported between skylake-server (super set) and znver4 and znver5 are `S=
+AHF,
+> FXSR, XSAVE, RDRND, LZCNT, HLE, PREFETCHW, SGX`.
+> > Currently for DPDK microbenchmarks and examples runs safe as it is not =
+using
+> the `SAHF, FXSR, XSAVE, RDRND, LZCNT, HLE, PREFETCHW, SGX`
+> instructions.
+> >
+> > Question: should we check if target is `AMD EPYC` then apply bare minim=
+um as
+> `-march=3Dznver4`, thus avoid possible unsupported instruction generation=
+ when non
+> `c_args for march` is passed?
+> >
+>
+> Can you clarify why you mean by the "target" here? Is there a specific va=
+lue you
+> are thinking of for the "cpu_instruction_set" option?
 
+`Target` is target CPU, when generated without any arguments we get code fo=
+r `native build`.
+
+On AMD target cpu zen4 or zen5; Before patch as per the code ` AVX512 flags=
+ for F, BW, DQ` are used in ` cc_avx512_flags`.
+
+With the patch, the cc_avx512_flags is set to `-march=3Dskylake-avx512` (wh=
+ere compiler optimizations `can add HLE, PREFETCHW, SGX`).
+
+Note: in our current testing for dpdk app and a few examples, we have not e=
+ncountered the same yet. But there might be projects where compiler may add=
+ those instructions which are unsupported in `AMD EPYC`.
+
+Hence the question we are asking is, `should we check if target is AMD-EPYC=
+, if yes use -march=3Dznver4 instead of -march=3Dskylake-server`?
+
+>
+> /Bruce
