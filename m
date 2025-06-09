@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2727C5B552
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 10:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FAF2C61CE8
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 10:40:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 90CEC40E20;
-	Mon,  9 Jun 2025 12:40:48 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 738EC40E24;
- Mon,  9 Jun 2025 12:40:47 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55940rBQ009750;
- Mon, 9 Jun 2025 03:40:46 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 47F8740E3B;
+	Mon,  9 Jun 2025 12:40:53 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id E5FF240E36;
+ Mon,  9 Jun 2025 12:40:50 +0200 (CEST)
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5599GPCf008324;
+ Mon, 9 Jun 2025 03:40:49 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=1
- Zip1AN+A4vkFTwERSVeqKgcqfzcGB9n7z8QfQndOjQ=; b=cL3aLh6wuT6khXnBL
- VP2WDE2Ewe4b4so4+PkiW3Oho4CnddUTwO0THwsWrRNFwTLNf6dmV+jr8mw6J3VL
- v8Q+Dp2UAYg7gXX2KimdLTjZj2M24yrR0D2PvOH3qpcqlt5ax8J3fBPfM9N7/bOu
- TKac2xEffZ7aDqhv0liNEYmDA1awnv+/zj9FAzq1+h6dQloyIcRxSJeD4o+Y4MRc
- i/ElwN5WfjFM2Z70qrxIYt3TKtyis0yKley3+0W7QSHM3Z5hoTUDcvqtSL0OeeUz
- D8lOHzZIo1nDSduAUbZw0trszgXrZgZx4+MR1VK10l3qT6M3LOxAuCEBoFaz02lr
- dF/Ig==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 474mxkas9q-1
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=5
+ 267HknCj7Bsb/kL78qJIBDrZqYSt+KNkdvq4XL8GIc=; b=ehiqhkbZme7fPRY9P
+ pzRxPJTP1Ku5WgCqeHf0GXwV3B1Csn1xyCfvczVD4R1ZcAkeX/bRfVr3hbO5vQKk
+ 77eDSvCPpI6TOyRv5cSQ7oHDE8Wp7lmeeKMMIGV53hekRLNszdTi2U1gLvnoF/WN
+ FjpF+6ovnZWzni9syBEFULzPieVvbEpG8+o1nTzOFEwSRldAhjBeJJ900oDefNjG
+ 9nMJ5ojh6SqcBKrWolLRF/fWSIqS3acjw5HFrJVmPRY3UCFa7kI6bBFzhjFQP93l
+ QXQ14ncMRZqqBgMasLPC/c+mwkyDeaF2tW0Qu2O2He+jHFCktgTPCzz8dcYCvb5I
+ ajB/Q==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 475vq804nv-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Mon, 09 Jun 2025 03:40:46 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ Mon, 09 Jun 2025 03:40:49 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 9 Jun 2025 03:40:45 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 9 Jun 2025 03:40:45 -0700
+ 15.2.1544.4; Mon, 9 Jun 2025 03:40:48 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 9 Jun 2025 03:40:48 -0700
 Received: from hyd1554.caveonetworks.com (unknown [10.29.56.32])
- by maili.marvell.com (Postfix) with ESMTP id 9B6EE3F707D;
- Mon,  9 Jun 2025 03:40:42 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id C078F3F707D;
+ Mon,  9 Jun 2025 03:40:45 -0700 (PDT)
 From: Tejasree Kondoj <ktejasree@marvell.com>
 To: Akhil Goyal <gakhil@marvell.com>
-CC: Anoob Joseph <anoobj@marvell.com>, Nithinsen Kaithakadan
- <nkaithakadan@marvell.com>, Rupesh Chiluka <rchiluka@marvell.com>, "Vidya
- Sagar Velumuri" <vvelumuri@marvell.com>, <dev@dpdk.org>, <stable@dpdk.org>
-Subject: [PATCH v2 1/7] crypto/cnxk: fix compilation error
-Date: Mon, 9 Jun 2025 16:10:32 +0530
-Message-ID: <20250609104038.3102767-2-ktejasree@marvell.com>
+CC: Nithinsen Kaithakadan <nkaithakadan@marvell.com>, Anoob Joseph
+ <anoobj@marvell.com>, Rupesh Chiluka <rchiluka@marvell.com>, "Vidya Sagar
+ Velumuri" <vvelumuri@marvell.com>, <dev@dpdk.org>, <stable@dpdk.org>
+Subject: [PATCH v2 2/7] common/cnxk: fix salt handling with aes-ctr
+Date: Mon, 9 Jun 2025 16:10:33 +0530
+Message-ID: <20250609104038.3102767-3-ktejasree@marvell.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250609104038.3102767-1-ktejasree@marvell.com>
 References: <20250609104038.3102767-1-ktejasree@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA5MDA4MSBTYWx0ZWRfXxwHisRkmpCk0
- TK83TAG/6fMyAEBQmV9X3mQzJv8RXF1VLccRK9lU50CwF9g/J77hI36jj82w5TYh1otXUksSy6n
- YBIiFwQJanx8N7xQZCJEtS6aoQeDOLZv+zLbJzkxjA5qQukF57vNSug1g6/QojHH30jZjR6nMj9
- kp6oSqTavrew0gUW7OjizAHqgVmaTXaHvmfW5E/emtDjL+aEMaL8vFiznHPhjytQuSs3v/iQiVS
- S8ItTsMIo9TGu/2VhCtk/5nI3uWvyX3lNz7svQJtxp6YT4agVnmqMFmottAIhWdE9eIHeGUta8A
- xLFVLrOpArDNESRsJWW/Ap9W9tD1GrxGlfV40JrC+3jH0lT4PMy+sFZrqCNd1Roku04wLe04mRD
- UjfoS8xdB8Vq7n/ZvTkkM4K51r+EIU3t+8Si1kPvWj7AWDZ0lsPQPuT9F4gflVr5JWc60kAW
-X-Proofpoint-GUID: DKqBm5NXaWXKKauWFVgVrnYvgrHfG8XX
-X-Authority-Analysis: v=2.4 cv=Lq6Symdc c=1 sm=1 tr=0 ts=6846ba2e cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=6IFa9wvqVegA:10 a=8rWy6zfcAAAA:8 a=M5GUcnROAAAA:8 a=3qcCxIY1meboau1-x00A:9
- a=YjdVzJdQTyZRADMV7wFX:22 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: DKqBm5NXaWXKKauWFVgVrnYvgrHfG8XX
+X-Proofpoint-ORIG-GUID: jocE13vxQggM2Rjlm4oOCpC2P77DKmPq
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA5MDA4MSBTYWx0ZWRfX6Ms1CbCL0MQp
+ Z0ugSXmd3Lhj5//5gqa8tGVWRgp96xdQ+zPfB9jIR05LYfxLA3DYy4c4tEPV1DKGjnpqnsNqaLL
+ D23FD58D5V4vzgwiZML4qVcdYFVdDYZ5/l4neq7MBrvez5ttZHAvKOjQU6CFEDdekVATR/fgW2Q
+ EfQXtjgvNqaoWmGdFTHZCliZqZvR0W1O79Js7BMYyAfbd5grzEbpWgY7iDGkTSbc9hOYqbXelJq
+ rZdmyQmslBXXC6XWE8NF/ihZfQ7NazrGUnKO9A+0I051LSJuqjxMgwsng9vV4fjDjbFllC3WFdh
+ zVOTKx6v+2sHmXZOYxXYTuFjF7tyfcfxtwrJokcTitLcK+vlw62WABSg1BMj6AqMHh9Kl8nZ4TU
+ ghJqry17IJWB8WHR44pPg3UXG1yI7k61OaHb5fTuC7BJpn2OD+9zGQW6Z5JH+MjsCP2Rnz0A
+X-Authority-Analysis: v=2.4 cv=Rp3FLDmK c=1 sm=1 tr=0 ts=6846ba31 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8 a=ZB-2vNBBf5iO9LUBV18A:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
+X-Proofpoint-GUID: jocE13vxQggM2Rjlm4oOCpC2P77DKmPq
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-09_04,2025-06-05_01,2025-03-28_01
@@ -81,31 +81,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Fixing compilation failure by including
-required headers.
+From: Nithinsen Kaithakadan <nkaithakadan@marvell.com>
 
-Fixes: 26bb5c4de63e ("crypto/cnxk: add CPT raw submission PMD API")
+This patch includes fix for setting correct salt value
+for CTR algorithm.
+
+Fixes: 78d03027f2cc ("common/cnxk: add IPsec common code")
+Fixes: 532963b8070 ("crypto/cnxk: move IPsec SA creation to common")
 Cc: stable@dpdk.org
 
+Signed-off-by: Nithinsen Kaithakadan <nkaithakadan@marvell.com>
 Signed-off-by: Tejasree Kondoj <ktejasree@marvell.com>
 ---
- drivers/crypto/cnxk/rte_pmd_cnxk_crypto.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/common/cnxk/cnxk_security.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/crypto/cnxk/rte_pmd_cnxk_crypto.h b/drivers/crypto/cnxk/rte_pmd_cnxk_crypto.h
-index 02278605a2..46861ab2cf 100644
---- a/drivers/crypto/cnxk/rte_pmd_cnxk_crypto.h
-+++ b/drivers/crypto/cnxk/rte_pmd_cnxk_crypto.h
-@@ -13,6 +13,9 @@
- 
- #include <stdint.h>
- 
-+#include <rte_crypto.h>
-+#include <rte_security.h>
-+
- /* Forward declarations */
- 
- /**
+diff --git a/drivers/common/cnxk/cnxk_security.c b/drivers/common/cnxk/cnxk_security.c
+index ea3b87e65c..0e6777e6ca 100644
+--- a/drivers/common/cnxk/cnxk_security.c
++++ b/drivers/common/cnxk/cnxk_security.c
+@@ -96,6 +96,9 @@ ot_ipsec_sa_common_param_fill(union roc_ot_ipsec_sa_word2 *w2, uint8_t *cipher_k
+ 				break;
+ 			case RTE_CRYPTO_CIPHER_AES_CTR:
+ 				w2->s.enc_type = ROC_IE_SA_ENC_AES_CTR;
++				memcpy(salt_key, &ipsec_xfrm->salt, 4);
++				tmp_salt = (uint32_t *)salt_key;
++				*tmp_salt = rte_be_to_cpu_32(*tmp_salt);
+ 				break;
+ 			case RTE_CRYPTO_CIPHER_3DES_CBC:
+ 				w2->s.enc_type = ROC_IE_SA_ENC_3DES_CBC;
+@@ -962,6 +965,8 @@ on_fill_ipsec_common_sa(struct rte_security_ipsec_xform *ipsec,
+ 		cipher_key_len = crypto_xform->aead.key.length;
+ 	} else {
+ 		if (cipher_xform) {
++			if (cipher_xform->cipher.algo == RTE_CRYPTO_CIPHER_AES_CTR)
++				memcpy(common_sa->iv.gcm.nonce, &ipsec->salt, 4);
+ 			cipher_key = cipher_xform->cipher.key.data;
+ 			cipher_key_len = cipher_xform->cipher.key.length;
+ 		}
+@@ -1282,6 +1287,9 @@ ow_ipsec_sa_common_param_fill(union roc_ow_ipsec_sa_word2 *w2, uint8_t *cipher_k
+ 				break;
+ 			case RTE_CRYPTO_CIPHER_AES_CTR:
+ 				w2->s.enc_type = ROC_IE_SA_ENC_AES_CTR;
++				memcpy(salt_key, &ipsec_xfrm->salt, 4);
++				tmp_salt = (uint32_t *)salt_key;
++				*tmp_salt = rte_be_to_cpu_32(*tmp_salt);
+ 				break;
+ 			case RTE_CRYPTO_CIPHER_3DES_CBC:
+ 				w2->s.enc_type = ROC_IE_SA_ENC_3DES_CBC;
 -- 
 2.25.1
 
