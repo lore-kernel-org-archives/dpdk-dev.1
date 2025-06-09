@@ -2,120 +2,169 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74826C71131
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 09:59:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C56C5B552
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 10:03:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4193840661;
-	Mon,  9 Jun 2025 11:59:44 +0200 (CEST)
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com
- (mail-sn1nam02on2047.outbound.protection.outlook.com [40.107.96.47])
- by mails.dpdk.org (Postfix) with ESMTP id CA36E40658;
- Mon,  9 Jun 2025 11:59:41 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8C32A40661;
+	Mon,  9 Jun 2025 12:03:38 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id BE56740658
+ for <dev@dpdk.org>; Mon,  9 Jun 2025 12:03:36 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5597oOL9022084;
+ Mon, 9 Jun 2025 03:03:36 -0700
+Received: from nam02-dm3-obe.outbound.protection.outlook.com
+ (mail-dm3nam02on2123.outbound.protection.outlook.com [40.107.95.123])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 475ujxr7a7-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Mon, 09 Jun 2025 03:03:35 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bnJ9o+Zb6yyLnl/P6VY5LFT3RJU/zyPYqfnM/iiTfjj/Bo0oq9EZgQsmMh3SmGXJfuPL4nJKQd5J8rscdlIHFDTwBWauZAZ/NPTk2T0rOSwOx59LpfbYMYG3xzqxXuYJg+uC24gxzwdqnbflSxgA3aoYz1mqb4QJRiQnTJ4Un99qb96agxvnUQnU7PTrxxCj2I/3XrwYm4WHx+hrw18uN/iv/K+ufzEBfn/gDHpg7tnWUDiPH62xLEU29PyJ+tX+ZUAdMNc+d1T9eq1AzIzDD4T0Y9xs+3KKqT+XFhkuGlaLndTks8+ybN/6SgYG7bIvWU2kjizt/obvow45z97hgQ==
+ b=pxDeOftPFzVvSH8o0AsJ8ysR5x0JmN8hAMgP0/sywuAoFFMl1jsu0jgo0a/JY2tBlyiGl2I/s3n+uWE44gCm91Ar+DczT2h+6H43m6YuESFLalc8zBhhikEeHB2JHnB02fuX4NZegW9ZnjWW6TVL0XZy5LWWnId0Tv9/xyQE/qzfGEHVq9HJQnTNToarZe0Pu0YcbyQcq6TSWYeuEhaQagte+rG781nh6amYCRZwlJjbhUPkMwJ6N5p4Mjnu1rUBqEPdcPtjwztMEbdnyEdpSz1jZ7vCEqpgbvP4Qcsc2FUfN2Aek1d378cjYdbNrotP22BHxIy6E7aHf3D1/3nYgA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zcHbVrLRwt9UAp9DP9+gmaXY0TNSj861Hu9mp8teJzs=;
- b=k8/xpxwjNJmmI11p6xl2pwyAFSWTEUDeSVdVSUeNeI64twm3Nkj7crf4PEGKOv2y9jynK6XCAnvcKgNuYKkxh+UFuCUVphSfSXU/AEt9f+Z/4MnMFNPhY924/3BRkDLjIaYMpvwkOuNB9PGWZuakSdX5MYGpGEKYboxMk7VtX64m6VCnxLd/HGC5sma8tU9jvhtN0sKnZKcjWLW2CTItO0yDe8aPKHAsii66GqugM+yK+CPLiQX73yUiHZncgZRq+HLYjH3UmSu2PuDPojXY3whUs0zhO264W/xlAvdfcsNfDlOQsqftSkRDkgx5FaFkAUiSOy63FHI6wc5hx5TKKw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
+ bh=l0Q8hRMlOcGW0vDtt/Ol54ixAc2Ua9vRZRnqXqgUtDk=;
+ b=rjHx06Pt1XyfvvOdsfxeSJqByODFh9KwyOpU7G5rGwTUkLtnkLLBW6uf6+M7OI1ZhqEIz47NBXyVMFkQDKDs5QSo8hlCHtDZt+mlDjCDaxkPMlKP9+rHA2+g1N1wlRLST+7Dg1CpIRWQ30hM5yaqt8Qws1POw5JVi72FPkoVkks1c1rLliJfxPcDXRvlx4h0yYoHh854Uyi6R+W98s0f8VSwM/Px5tljjQ+UG7UJrp5npkAcsCyDgstmkXYgtAGfDi/emb0XDwxXYxBPV8DyZHticklTnaJYpwjFRJTm3J6dB2dgs40kxFFuVGD7KYPosmFJRmhKAdm3AKDLiClI1Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zcHbVrLRwt9UAp9DP9+gmaXY0TNSj861Hu9mp8teJzs=;
- b=RfnnBigGEt8rq0u8/U4ylppmlRcwDMsNn1SZAcmO5kfLafPIwZ6V0PJw8d+OZKIiTMJlpQkfeZ1pq7OUN3aR5QGavcJfkdIKhDkNwR0dvC0AXNVe4I9I3cHltERmOiJWIczxhAN1u0c5HO7sWLXHINz2SZLzJjVQbgZeseHjFFo=
-Received: from MW3PR05CA0015.namprd05.prod.outlook.com (2603:10b6:303:2b::20)
- by BN7PPF2E18BD747.namprd12.prod.outlook.com
- (2603:10b6:40f:fc02::6ca) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.33; Mon, 9 Jun
- 2025 09:59:35 +0000
-Received: from SJ1PEPF00001CE8.namprd03.prod.outlook.com
- (2603:10b6:303:2b:cafe::cc) by MW3PR05CA0015.outlook.office365.com
- (2603:10b6:303:2b::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8835.12 via Frontend Transport; Mon,
- 9 Jun 2025 09:59:34 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF00001CE8.mail.protection.outlook.com (10.167.242.24) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8835.15 via Frontend Transport; Mon, 9 Jun 2025 09:59:34 +0000
-Received: from 7dbylenovo.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 9 Jun
- 2025 04:59:32 -0500
-From: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
-To: <david.hunt@intel.com>, <anatoly.burakov@intel.com>, <jerinj@marvell.com>, 
- <radu.nicolau@intel.com>, <gakhil@marvell.com>,
- <cristian.dumitrescu@intel.com>, <Ferruh.Yigit@amd.com>,
- <konstantin.ananyev@huawei.com>, <mb@smartsharesystems.com>
-CC: <dev@dpdk.org>, <haijie1@huawei.com>, <stable@dpdk.org>, Venkat Kumar Ande
- <VenkatKumar.Ande@amd.com>, Dengdui Huang <huangdengdui@huawei.com>
-Subject: [PATCH v2] examples/l3fwd: adjust Tx burst size based on Rx burst
-Date: Mon, 9 Jun 2025 09:58:27 +0000
-Message-ID: <20250609095827.4174387-1-sivaprasad.tummala@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250212045416.2393001-1-sivaprasad.tummala@amd.com>
-References: <20250212045416.2393001-1-sivaprasad.tummala@amd.com>
+ bh=l0Q8hRMlOcGW0vDtt/Ol54ixAc2Ua9vRZRnqXqgUtDk=;
+ b=HO2Qg9z2KpT11lZPzicKETah3KvW0UuVzAjc9WevZb43BOa7g4IJJQkaVqI62/2FAkrr3w2ntMa2iUhB8d/355TYjM/7fC5bUZaZ2TXwBdMwjtnNjR1wPlqksz6RQGejkeWjergiariNQmwScpPp6lCUPQ3SUzxLbSGl10ixaA0=
+Received: from PH0PR18MB4086.namprd18.prod.outlook.com (2603:10b6:510:3::9) by
+ CO6PR18MB4481.namprd18.prod.outlook.com (2603:10b6:303:13a::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.34; Mon, 9 Jun
+ 2025 10:03:33 +0000
+Received: from PH0PR18MB4086.namprd18.prod.outlook.com
+ ([fe80::ed37:4ea0:6359:f717]) by PH0PR18MB4086.namprd18.prod.outlook.com
+ ([fe80::ed37:4ea0:6359:f717%6]) with mapi id 15.20.8792.039; Mon, 9 Jun 2025
+ 10:03:33 +0000
+From: Pavan Nikhilesh Bhagavatula <pbhagavatula@marvell.com>
+To: Bruce Richardson <bruce.richardson@intel.com>
+CC: Jerin Jacob <jerinj@marvell.com>, Vamsi Krishna Attunuru
+ <vattunuru@marvell.com>, "g.singh@nxp.com" <g.singh@nxp.com>,
+ "sachin.saxena@nxp.com" <sachin.saxena@nxp.com>, "hemant.agrawal@nxp.com"
+ <hemant.agrawal@nxp.com>, "fengchengwen@huawei.com"
+ <fengchengwen@huawei.com>, "kevin.laatz@intel.com" <kevin.laatz@intel.com>,
+ "conor.walsh@intel.com" <conor.walsh@intel.com>, Gowrishankar Muthukrishnan
+ <gmuthukrishn@marvell.com>, Vidya Sagar Velumuri <vvelumuri@marvell.com>,
+ "anatoly.burakov@intel.com" <anatoly.burakov@intel.com>, "dev@dpdk.org"
+ <dev@dpdk.org>
+Subject: Re: [EXTERNAL] Re: [25.11 PATCH v3 0/5] Introduce DMA enqueue/dequeue
+ operations
+Thread-Topic: [EXTERNAL] Re: [25.11 PATCH v3 0/5] Introduce DMA
+ enqueue/dequeue operations
+Thread-Index: AQHbzIwhodN7tlHv5kuB45f0KOx3p7Pkk36AgBX/ob8=
+Date: Mon, 9 Jun 2025 10:03:33 +0000
+Message-ID: <PH0PR18MB408699863CC25944A04C2F18DE6BA@PH0PR18MB4086.namprd18.prod.outlook.com>
+References: <20250519185604.5584-1-pbhagavatula@marvell.com>
+ <20250524091316.10056-1-pbhagavatula@marvell.com>
+ <aDQjDZowik8E7Jfh@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <aDQjDZowik8E7Jfh@bricha3-mobl1.ger.corp.intel.com>
+Accept-Language: en-US, en-IN
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH0PR18MB4086:EE_|CO6PR18MB4481:EE_
+x-ms-office365-filtering-correlation-id: 5fd18495-eeb0-4440-282d-08dda73ce499
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info: =?iso-8859-1?Q?iEQTwLxN9Gb+5foxtI8i1qI1z/6vMd7h7aKVW+c5YjX5onSRp5e4aLgKAJ?=
+ =?iso-8859-1?Q?Xsnx+8y4km0y+BlGbNXOW4bhpZIHOo5tz7i+BD/wXvnGU6La6SO1CM0g1L?=
+ =?iso-8859-1?Q?w0JFaI/Ke+1P6Akxjemd1gsohVQmkxM4y9SMZgokdLfhwk4902L6S0Dm3W?=
+ =?iso-8859-1?Q?euSMxh4km+Mt6neCPGQlexmg6c2wJ1AMzBSfDyiKjUMSaXqwFSz6yzCAgZ?=
+ =?iso-8859-1?Q?gon9LfBzDQysHWtFRZm0y+l8Xqt6NJB29rMKjo1DyexLC/5N30d/HWqbYL?=
+ =?iso-8859-1?Q?LSwldXJ4szS/SHyxWkxsk2DaPwYWEzKrc0h6h3ss2joY8AWz7GDihhqgBG?=
+ =?iso-8859-1?Q?PWPqIRDQWDEvO0Lq7tyxUxgA7DmV/D94DfAoMji9dUAjStCl08+VWZow+G?=
+ =?iso-8859-1?Q?ylxNn1qdAkEA9o8BbhRzEE8ankVFokSOD7oI2GQ6kP+ktAAhSJqbYELiHi?=
+ =?iso-8859-1?Q?646c9juJhMslHvOlnPCfxtZ4/iZl963sgpVRl0JNsXTS/isPnHmx57zF8n?=
+ =?iso-8859-1?Q?Z9ceAXN/9JsYsOfV7bPCvgZ3kZ6OwMPWs4oU2fXlQd7ghh9vwEYiEukpAQ?=
+ =?iso-8859-1?Q?lXOU6xEG6BWK0P0t8vkBHww1mWxgkozzbs0rYE447AVUswoKpqXffsbDbg?=
+ =?iso-8859-1?Q?ALyIpqy0jGONtTXnuWu/qlQTmOy/NZZz7JG5hQktLXzduluL9zX4MvhUpv?=
+ =?iso-8859-1?Q?6Jfzk8OsZWkC+Z4WJ2dh7yfJQiSLGrausidFX8XL7UNkswxohRoNbmzrLv?=
+ =?iso-8859-1?Q?pct5kNtZ9XSujotnjclX12t1BvTflx/a+zJzr/5WUZdaMKvVLsCQKNJlUA?=
+ =?iso-8859-1?Q?y9br8QagGPvAPBXPOo5INTTUPZE1d88pSjfIWFszECVER6BujbZHO6Cynf?=
+ =?iso-8859-1?Q?rMKyAPGRpUZtN1G+bviOgugiY3J3i8FdkXTvoqq3PKc7plSolsmk3eUe9Q?=
+ =?iso-8859-1?Q?hICRDfooxVcKA72QDj7KtJ2rLP4+Kxr3TsVMkgV34dNBzR61oX5xCBvCjz?=
+ =?iso-8859-1?Q?GqDqygw8puMdMM1UZGNqTuAbDAO2Acfuygmu9jo6IxMHorjx8SxQOMdbDe?=
+ =?iso-8859-1?Q?VZspeLE8qm/zegGFKECa6/243hZqXbllDK3F8rcmN3/7ZTWUvUPtOf1oNu?=
+ =?iso-8859-1?Q?KEeccseHY0LR2tGDLBHI6Q/FgF+/AQjbHs6tw0yZ1y3CJj8iYdXjcibw4+?=
+ =?iso-8859-1?Q?TAVdxy/hUA7fttf/gG2jAubs2kTmQwAZYckId56b/ht0/KEghKhTINwP/I?=
+ =?iso-8859-1?Q?/GjnXtksYvdl6cIjwP9vW4CWJxscThpRkN3rBHzxJI29HX48ztn0QiLKSN?=
+ =?iso-8859-1?Q?AqwTuFYA3Jcosc/2R3QSuCuGpUUi0k4b/G9K95tunTK1qsfU73xAYQqTOf?=
+ =?iso-8859-1?Q?34GD0sqacez9EcMzX2BgSsfPG4MyL2kupW2zdpEb/glx94HoR27Pr/lOlv?=
+ =?iso-8859-1?Q?bI9RYAHcco2zwToVfzG+j4gObHyikm1ABgpyXfdmiRT1sWXu4BkoL5a9Pb?=
+ =?iso-8859-1?Q?qx4XHsmeMvDlIXieLUbgwP?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:PH0PR18MB4086.namprd18.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014)(38070700018); DIR:OUT; SFP:1102; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?w9tzAxGJafHdfvXDyXO+SkSBGVAFvA6oET+FNXVhNiuist7tfOdFj9GWF2?=
+ =?iso-8859-1?Q?wkqrQIF+BNLpYSIaKVT7ZcVCQVUuyYTu4BO+CVOqole8EbtwresO5T0Lv3?=
+ =?iso-8859-1?Q?Dgp8X/EnIPzrbAL9cnKKh2BrcAdBDG8AJcAkV2F+oFQYUQbQ9PPgzxNGuM?=
+ =?iso-8859-1?Q?8gpy3whrGPcfMl0sT7YigLu0JIVYZUMMLt6z2xG2xw9ZYXJcC2I3YCBmT9?=
+ =?iso-8859-1?Q?3TS3OWqs8fYnfBQWKATZLuxozk2ocsIyJ4ABGm2zkM/4hj3E9SucNLEfbm?=
+ =?iso-8859-1?Q?/yJFSZZQV6MS08msD3Lf0+AwBBi2p5Yt6h8crSHjhkBkDUcCOllO+mKVzH?=
+ =?iso-8859-1?Q?pHx9eyaDhu03KDLJhdHtd3EeqiDRVZKG37JCRnHNLKJJyIDZiRwgjztoEd?=
+ =?iso-8859-1?Q?8uCN+5AWZcHy/SAtSCgs2nzTtbmlRQT+EzZOIWzm+hvjy2P1pAeRZoGRHn?=
+ =?iso-8859-1?Q?rjWFELCYM9FnmCk7BGHK7fooENoaC1wJzkquI0n8p029sbeZU+ZAVpWnam?=
+ =?iso-8859-1?Q?XXpKm1ujhN29bDrogGDE8YSyd6l52fFykwGTMbQZO91gK+4K1xgK4X/0KH?=
+ =?iso-8859-1?Q?qWKHamsquxLtV/F0YCNPm3rp0ZmSZPXKSRMs0tHVrFBOA6EywhQzp7vH5h?=
+ =?iso-8859-1?Q?eNetIx7Ckmtk7KtQUrCJpv3ZcXGITe0H7snRv38S7VNDZOOzeHnOpUpZ5y?=
+ =?iso-8859-1?Q?ltIg9jvtF17bO82AO0EASfk4opY5uVEckNunP6gvIvZ3KBFzYkHrEStwLe?=
+ =?iso-8859-1?Q?nuuG8qZzmBtqXIJ2IOKtbF5XDt8MBiiCu+EuWvZtH1Watsu26ejmDUGBIx?=
+ =?iso-8859-1?Q?SX7h1EiY0wnBZMqyxCBlsO8cJnR0E0z/DXpCNcc5WqW4kbDdpDoYfZ7+Qp?=
+ =?iso-8859-1?Q?5B3DRUAnygYiOVKGXgKzW5Mq6SnomVGoPi8y1Po2UgGA5UW3BOqNtAM6Jx?=
+ =?iso-8859-1?Q?3F5vjhtxE2Bb3sVLI7cmIsWUBD0TTROAq2Z8+PnGKmr29/ZSu7jwXxD7bC?=
+ =?iso-8859-1?Q?ruNuDNtl+GYEeZm1Z6YihfPk3wOHUpCApIqG47UfxGsTvlMzHgE+Atw+Bc?=
+ =?iso-8859-1?Q?VCTVD7iKcq1vdgLeDmY6HPU08Y69hGUoChPUoJu8y38CsIAqdtEYtO4dq4?=
+ =?iso-8859-1?Q?SYJlqa9w9A3M5YEXhpa2bjlfR/pGOHgL69P6I6WM4e4pj38ahlFsdzZdKu?=
+ =?iso-8859-1?Q?aqXoE4Gi6Ik/9dZIA1qlX9yWM7jCKzWrjHjsdxPNvniyOGJcFieT/Me02Y?=
+ =?iso-8859-1?Q?DOhMdpd0KILdXYk0byNqwHFN/2KqNdmVn/u6sgnfy/ALMPdjBRND3co1qE?=
+ =?iso-8859-1?Q?7MaNJG73GJ3OBXVFrz9QP+DCcoHs+SIsKxPZdQyT6282jsTmiArb52SacM?=
+ =?iso-8859-1?Q?UUDb7Hs3EOb5f/7xx1SL8Rq1mhXvvNlNrztOfQRXu/uxgJ082CLY+8Bsvs?=
+ =?iso-8859-1?Q?bTL9mdbrjrDBpyGu8Og9JTtyqOgig+6BhzpI/qFFzxlgBELS1n4fAJmXNU?=
+ =?iso-8859-1?Q?lqGll14pi0Pys/gy8rhnHf6FalKwuhz/YJcXgUNu+C3Q8MydiABAJvzKaT?=
+ =?iso-8859-1?Q?yk6YI9RqBNMKNZj8pWMBhptVv4M7n2O6A+j4tqo6f++0y6veOm9E9ryegD?=
+ =?iso-8859-1?Q?ymE8Q1fjfckV3daUVLhSjfixEdrcLUQQNR?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.180.168.240]
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE8:EE_|BN7PPF2E18BD747:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9c91555e-f711-456d-3c91-08dda73c5661
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|36860700013|7416014|376014|1800799024|13003099007; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?CVJD4MNeNi4a1FDba7oZmfHYlfPKIfy/9O3QtfgmWhA8SPYFiIJpVGNfy5gb?=
- =?us-ascii?Q?xF41JdAAIGF5siz+HJ7hZ5/3lnQlWjhJV1k3oJe/Ji0WNXNkeoVHPW4klt7G?=
- =?us-ascii?Q?yOCr4NPA5ISMq2fjvCPAKt9l+Iew88nV5cIxpaNs5QQGak3nzpgsByAjGeZd?=
- =?us-ascii?Q?HJ+JbMOGGpv1b5SalLzcHfP4le86ez8YI5BZOk8/Th+D550gEyZro9RGlnO0?=
- =?us-ascii?Q?FPV81rybPri6hQubGDOhUQ7IheuiwU19LTqDc6tkLUtI4uSfcx7k8zufnMh7?=
- =?us-ascii?Q?DV7ogfyKjdAfDY5a5zwpmHiMnXiS4vp6dOlTEKZtLNBrCBe4bIbQsNzwKgdG?=
- =?us-ascii?Q?DjHN48ZqcWNqqjlMYeq2KqiKXnXTI1xlxy0GSTbk3Hn83MrhfQGbhc3fQ5yi?=
- =?us-ascii?Q?l3G4gRBQKFTQ/5dG5qQ/NRM9tbVqWWFSnbF4HJc+A28W+8N+ZAf1IOvLF0Gv?=
- =?us-ascii?Q?TFM/WnXU8cbIOEYJNfq9heU51Aov4nTf6zChLGJwdRm61Dsy85FtOqyBGXK5?=
- =?us-ascii?Q?vAz10oEvx54IfUcw9awd1v4JUOlPifzZqEVCvuOoBlyrv/KIei93z20yZ8QP?=
- =?us-ascii?Q?r8QFJdheDae45ldDi12IHHLvHoIyHR+PoGmIE7FaAqgg3pDg5fRQMuJLork0?=
- =?us-ascii?Q?okn4Kt/2BISQPDfMqK+bqNJegAnTXBSHFT2PrtsUmUSUPCc1FE0XivJXffX/?=
- =?us-ascii?Q?zJEQK0nH0xi/Ob8c7q+C5pLRA76ctZxD74IkTH3e7EKFu4tx3Vn2Gw2b3qSD?=
- =?us-ascii?Q?RFE8lxqnv4EXaVFWO65Q+oonIonNkXTJBJHMtZ777JqmwCSHm1wb8Yx5Ovxm?=
- =?us-ascii?Q?c4X/gywDrR1L0tU31ay8W7tpyiNFJBIurJK0DdEMDmICYjjn+50TZ9/RjW59?=
- =?us-ascii?Q?kTUee3uRW/h4j43Im9Eno/daUNBkGP5I3p8rXi3UPL5SfquhQ4uwqNcuR93k?=
- =?us-ascii?Q?YwrNJKXRf0rFA1QerCEl+TNkpizpycYrCMdFfx0T40RFpz+czlsigEoiOPps?=
- =?us-ascii?Q?RgwzQfHOQ87bmk2VqxMiwbAfLv+9S1ihsSOQNYVi0EE+uYArk9BsbOIzH2L/?=
- =?us-ascii?Q?UXjXARH96r5bxBLW/y5t/8FPJWjSafTQAu1oiWvyQz+md+6MZo4bn038pHqs?=
- =?us-ascii?Q?EwDhs6yjBhVU1rztaFE0YKZp739Ntvm/BiTyEGDU1L5nU5LoQjHi5IzhmEKX?=
- =?us-ascii?Q?jyVSljVig76p4SlnWV+jcSYhhZlav6pfNFwO6E0JbTVGvyBGU9BO8Kb+NZHE?=
- =?us-ascii?Q?XgEltrUrGp1731udRSCoQjshurgpkAncL0zcETStIy1hbWfRF2M1BOBclBJG?=
- =?us-ascii?Q?e3mqd7Q5c9h0gECJxIXI0X/U/pAKQpkAvEZA4hc5SpLV6yu323LRUoR6/fhr?=
- =?us-ascii?Q?9SWfmN88Ieq6mpHtHkdxPWmfpvCxdT+tsyjAeeo3QnBMqOXqcEweYe8RXSLc?=
- =?us-ascii?Q?+lEeKULwcOnG6NKSZLihW6yNih7dSIpTWK2CUY3ZWUV4AdnLA9KmZw=3D=3D?=
-X-Forefront-Antispam-Report: CIP:165.204.84.17; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:CAL; SFV:NSPM; H:SATLEXMB04.amd.com; PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(82310400026)(36860700013)(7416014)(376014)(1800799024)(13003099007);
- DIR:OUT; SFP:1101; 
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 09:59:34.4289 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9c91555e-f711-456d-3c91-08dda73c5661
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d; Ip=[165.204.84.17];
- Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PEPF00001CE8.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PPF2E18BD747
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR18MB4086.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5fd18495-eeb0-4440-282d-08dda73ce499
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jun 2025 10:03:33.1268 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: WhhA8sTINCSCqcFFfdtmC0vg7l2vp+D3jh4vBHOSUF/gFi26a5+TgK23LG8uWiACvouvulSe0LZ1wrr06JTUtepM4COYr0SYWBowSHvdIAY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR18MB4481
+X-Proofpoint-GUID: P3wZy5aIED1cPhMxAvavN9lqbc-2zqm1
+X-Proofpoint-ORIG-GUID: P3wZy5aIED1cPhMxAvavN9lqbc-2zqm1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA5MDA3NiBTYWx0ZWRfX/Boj/j7Wkbtm
+ 1iIqw6BxRn/lKdm6y4nBhlmtul1XZcleqyO8h+ZdIj4HvkX9QVbbZOXwEswYhDmnbQViv1QqN3I
+ l6jLZvVaTKDf+ixJ7s9mfdPzpkSGHI/OiFSx9O46wbkKN61vPXZrG2W1xsFNfjm1jBHyhBVaPwR
+ a1+Jioo9DrxXAysuBct6kDWTx/x5iMeUcr1b+3Flp6BAe/t8TF8CqX8QCZ8tohKnGzJlgN2VXU0
+ 5eLJuDkFGjIDamCM5D4oNLihWHWdwN1pslL/ke2OAW2+2K73S1oU8aI5CJ4Oz+j1isk+XHp3yaT
+ x24j4aOMVogLVugVhzqvbtJ11EzRLJGQdivumPxYpDBpwmMVGgFp5lDvkimrFUYaqivoqm8/cSV
+ +dvYCc1nEsWl8FJdMl6uZRePiNyw3W3XXNHEixxdSPbqB+ltoOW31YFSVLUKRg0lWbZhUOi7
+X-Authority-Analysis: v=2.4 cv=LuKSymdc c=1 sm=1 tr=0 ts=6846b177 cx=c_pps
+ a=G6LdU6/ch32BE/ZEG49BIA==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
+ a=6IFa9wvqVegA:10 a=-AAbraWEqlQA:10 a=NEAV23lmAAAA:8 a=M5GUcnROAAAA:8
+ a=j1ZIONBRK9pXcQU6LHEA:9 a=wPNLvfGTeEIA:10 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-09_04,2025-06-05_01,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -129,116 +178,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Previously, the TX burst size was fixed at 256, leading to performance
-degradation in certain scenarios.
-
-This patch introduces logic to set the TX burst size to match the
-configured RX burst size (--burst option, default 32, max 512)
-for better efficiency.
-
-Fixes: d5c4897ecfb2 ("examples/l3fwd: add option to set Rx burst size")
-Cc: haijie1@huawei.com
-Cc: stable@dpdk.org
-
-Signed-off-by: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
-Tested-by: Venkat Kumar Ande <VenkatKumar.Ande@amd.com>
-Tested-by: Dengdui Huang <huangdengdui@huawei.com>
----
- examples/l3fwd/l3fwd.h        |  8 ++------
- examples/l3fwd/l3fwd_common.h | 11 +++++++----
- examples/l3fwd/main.c         |  2 ++
- 3 files changed, 11 insertions(+), 10 deletions(-)
-
-diff --git a/examples/l3fwd/l3fwd.h b/examples/l3fwd/l3fwd.h
-index 0cce3406ee..bbc54bcfae 100644
---- a/examples/l3fwd/l3fwd.h
-+++ b/examples/l3fwd/l3fwd.h
-@@ -32,10 +32,6 @@
- 
- #define VECTOR_SIZE_DEFAULT   MAX_PKT_BURST
- #define VECTOR_TMO_NS_DEFAULT 1E6 /* 1ms */
--/*
-- * Try to avoid TX buffering if we have at least MAX_TX_BURST packets to send.
-- */
--#define	MAX_TX_BURST	  (MAX_PKT_BURST / 2)
- 
- #define NB_SOCKETS        8
- 
-@@ -152,8 +148,8 @@ send_single_packet(struct lcore_conf *qconf,
- 	len++;
- 
- 	/* enough pkts to be sent */
--	if (unlikely(len == MAX_PKT_BURST)) {
--		send_burst(qconf, MAX_PKT_BURST, port);
-+	if (unlikely(len == nb_pkt_per_burst)) {
-+		send_burst(qconf, nb_pkt_per_burst, port);
- 		len = 0;
- 	}
- 
-diff --git a/examples/l3fwd/l3fwd_common.h b/examples/l3fwd/l3fwd_common.h
-index d94e5f1357..6cb7de5144 100644
---- a/examples/l3fwd/l3fwd_common.h
-+++ b/examples/l3fwd/l3fwd_common.h
-@@ -25,6 +25,9 @@
-  */
- #define SENDM_PORT_OVERHEAD(x) (x)
- 
-+extern uint32_t nb_pkt_per_burst;
-+extern uint32_t max_tx_burst;
-+
- /*
-  * From http://www.rfc-editor.org/rfc/rfc1812.txt section 5.2.2:
-  * - The IP version number must be 4.
-@@ -71,7 +74,7 @@ send_packetsx4(struct lcore_conf *qconf, uint16_t port, struct rte_mbuf *m[],
- 	 * If TX buffer for that queue is empty, and we have enough packets,
- 	 * then send them straightway.
- 	 */
--	if (num >= MAX_TX_BURST && len == 0) {
-+	if (num >= max_tx_burst && len == 0) {
- 		n = rte_eth_tx_burst(port, qconf->tx_queue_id[port], m, num);
- 		if (unlikely(n < num)) {
- 			do {
-@@ -86,7 +89,7 @@ send_packetsx4(struct lcore_conf *qconf, uint16_t port, struct rte_mbuf *m[],
- 	 */
- 
- 	n = len + num;
--	n = (n > MAX_PKT_BURST) ? MAX_PKT_BURST - len : num;
-+	n = (n > nb_pkt_per_burst) ? nb_pkt_per_burst - len : num;
- 
- 	j = 0;
- 	switch (n % FWDSTEP) {
-@@ -112,9 +115,9 @@ send_packetsx4(struct lcore_conf *qconf, uint16_t port, struct rte_mbuf *m[],
- 	len += n;
- 
- 	/* enough pkts to be sent */
--	if (unlikely(len == MAX_PKT_BURST)) {
-+	if (unlikely(len == nb_pkt_per_burst)) {
- 
--		send_burst(qconf, MAX_PKT_BURST, port);
-+		send_burst(qconf, nb_pkt_per_burst, port);
- 
- 		/* copy rest of the packets into the TX buffer. */
- 		len = num - n;
-diff --git a/examples/l3fwd/main.c b/examples/l3fwd/main.c
-index ae3b4f6439..8353e8e16f 100644
---- a/examples/l3fwd/main.c
-+++ b/examples/l3fwd/main.c
-@@ -59,6 +59,7 @@ uint16_t nb_rxd = RX_DESC_DEFAULT;
- uint16_t nb_txd = TX_DESC_DEFAULT;
- uint32_t nb_pkt_per_burst = DEFAULT_PKT_BURST;
- uint32_t mb_mempool_cache_size = MEMPOOL_CACHE_SIZE;
-+uint32_t max_tx_burst = DEFAULT_PKT_BURST / 2;
- 
- /**< Ports set in promiscuous mode off by default. */
- static int promiscuous_on;
-@@ -734,6 +735,7 @@ parse_pkt_burst(const char *optarg)
- 		return;
- 	}
- 	nb_pkt_per_burst = burst_size;
-+	max_tx_burst = burst_size / 2;
- 	RTE_LOG(INFO, L3FWD, "Using PMD-provided burst value %d\n", burst_size);
- }
- 
--- 
-2.34.1
-
+Hi Bruce, =0A=
+=0A=
+>On Sat, May 24, 2025 at 02:43:10PM +0530, pbhagavatula@marvell.com wrote:=
+=0A=
+>> From: Pavan Nikhilesh <pbhagavatula@marvell.com>=0A=
+>>=0A=
+>> Introduce DMA enqueue/dequeue operations to the DMA device library.=0A=
+>>=0A=
+>> Add configuration flags to rte_dma_config instead of boolean for=0A=
+>> individual features.=0A=
+>>=0A=
+>> The enqueue/dequeue operations allow applications to communicate with th=
+e=0A=
+>> DMA device using the rte_dma_op structure, providing a more flexible and=
+=0A=
+>> efficient way to manage DMA operations.=0A=
+>>=0A=
+>=0A=
+>While I have no really strong objections to this addition to the dmadev=0A=
+>API, I'd appreciate if you could explain WHY or how this method of working=
+=0A=
+>is more efficient in your usecase? When designing the dmadev APIs=0A=
+>originally, we looked at using both an enqueue-type API as well as the=0A=
+>implemented individual-op-based APIs. IIRC at that time testing showed tha=
+t=0A=
+>using the single ops directly was faster than using the enqueue APIs, so=
+=0A=
+>I'm wondering what exactly has changed, or is different about your usecase=
+?=0A=
+>=0A=
+=0A=
+Here is an example where we see enqueue/dequeue ops to be useful especially=
+ when =0A=
+integrating with Graph library.=0A=
+=0A=
+We had to write an entire wrapper[1] for tracking sges with the current imp=
+lementation =0A=
+making our nodes[2] very complex.=0A=
+=0A=
+[1]https://github.com/MarvellEmbeddedProcessors/dao/blob/dao-devel/lib/comm=
+on/dao_dma.h=0A=
+[2]https://github.com/MarvellEmbeddedProcessors/dao/blob/3f364261de91e35569=
+9bd9af20d60ea6459f7d67/lib/virtio_net/virtio_net_deq_ext.c#L51=0A=
+=0A=
+>/Bruce=0A=
+=0A=
+Thanks,=0A=
+Pavan.=0A=
+=0A=
