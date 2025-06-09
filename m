@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2AB7C61CE8
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 21:44:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 901D8C5B552
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Jun 2025 22:42:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C471C40E34;
-	Mon,  9 Jun 2025 23:44:11 +0200 (CEST)
-Received: from fhigh-a4-smtp.messagingengine.com
- (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
- by mails.dpdk.org (Postfix) with ESMTP id B1FA2402C8
- for <dev@dpdk.org>; Mon,  9 Jun 2025 23:44:09 +0200 (CEST)
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal
- [10.202.2.45])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 2DA0111402E2;
- Mon,  9 Jun 2025 17:44:09 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-05.internal (MEProxy); Mon, 09 Jun 2025 17:44:09 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id C5D77402D4;
+	Tue, 10 Jun 2025 00:42:40 +0200 (CEST)
+Received: from fout-a3-smtp.messagingengine.com
+ (fout-a3-smtp.messagingengine.com [103.168.172.146])
+ by mails.dpdk.org (Postfix) with ESMTP id E4D8D402CD
+ for <dev@dpdk.org>; Tue, 10 Jun 2025 00:42:38 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal
+ [10.202.2.41])
+ by mailfout.phl.internal (Postfix) with ESMTP id 583631380494;
+ Mon,  9 Jun 2025 18:42:38 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-01.internal (MEProxy); Mon, 09 Jun 2025 18:42:38 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1749505449;
- x=1749591849; bh=M3BlN76xgFSzmctDFzA3v8CFWGpCOoq5WptZW1tCYU4=; b=
- oh5179Xz20CixKWI6a932cIhkXjG51ZXDywBku9+A3a3cR+pWz+gXK4reF26WXDX
- qTEearcT2lS4SxlBJNgYcOyVbxctikwzgPwQS4nYDzrkh1ZQgJbgS/GbkSlXvhUx
- znJjwXXZ+MbHp+tosLJg+4qOK2EKWSnA6ISd2sy8rlQvb1ka7vi+wC1UaqiiL2Eg
- t+Oow/0N+uqXuOWJ0ssnkEA8R7ffCPLYCOhRA5I7Fzih6U1Y6oSkBCBwGlh+Jm95
- jGVs4jy0E2Iq7FhhzgKWugwNr7UlXi/BnCnYxul1HwWOqqhll0AXVk7MxBDyJ9v2
- wuR9nJhoni602Xe/jEOmMA==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1749508958;
+ x=1749595358; bh=n0y+EPAO+CO8O+1hsBUHiyLE52M2D3MCz3FJGBnD9bM=; b=
+ d7UQ6R5pCjsYMZnJP6BvEnmQgrkSNXbNc956zAAqhb9AsrAo4ciqOXhORFkRNxtS
+ vup/D1XDwhmHgR6xIYSe9gkwshIaXY2YRnE1X9Z2ZBzsKQ99talorhM3WOPtNHe1
+ SDVTkTJvjRgjw0ZzRTcPJEOvc3z+Q9eOtEYRmb3dKQiDdItiyWfCUwcSLEpOP8+q
+ poFKkUuqqnqz41RUyiLl7fQ4f0gmcoPjx8WEbPuixqTSXPnPe1RcR0HBWrjIOQs7
+ cOW/LQSzDas9iQPFVJa4PAKVMrUMbj3JSw3WxVD/tCmoFKXRk3WALJjVIKZK5Equ
+ AgG7QtWfIjf+VdmuSLGhAQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749505449; x=
- 1749591849; bh=M3BlN76xgFSzmctDFzA3v8CFWGpCOoq5WptZW1tCYU4=; b=h
- L563VR8Zd1H8EVEGJiMHbHqyZ2l12MgSqmqwz7KEKGdbiRcKfJpgKd4gt/shkIUV
- yxi0F2QTKgbzuxhy4wUGy56WGrCJ6R5Rzd2SLP9FeQkAa64Qe7qOgvNaBu9uhiya
- Zn1COBbFoT6FW0QOgAd4eLhako4QZOYSgokDavrd72aDCxG0NuqvBeOGHXs0lKVS
- 1XGLGCSg1ayrmb7qAzJYackoozR7v97CvSKAG0Nb2A5rGjXOHmDKi2w/Va6bxVp0
- ZOT2j5geqxGY4DrQstN2hHwZ2DAOlGW1yx5sqsdH8c5Xyc97zWHq9hU+HxuTaHuu
- VXoswMq3YAlOqQ0lA5Neg==
-X-ME-Sender: <xms:qFVHaKTQPMQ7PUk7rwT6OlM30wv4AV1TFhNznk4REHI51NIG2AY6tQ>
- <xme:qFVHaPxJfgjQi5YUdZ_NK3LATorA5ELwwb44Ctg7eaIcqCXyKkHABUbAKoZSa8pGH
- P2G7XCuEIplaW7MEQ>
-X-ME-Received: <xmr:qFVHaH1A7scdJjDYhw1WGTub_6miC5IAYpldQW-xNOizQVbOGD6iVzgtJ3HoQWXEpC22OQjEO_V1L0AVosHScZrNnQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdelkeehucetufdoteggodetrfdotf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749508958; x=
+ 1749595358; bh=n0y+EPAO+CO8O+1hsBUHiyLE52M2D3MCz3FJGBnD9bM=; b=R
+ /y01hi9d/j5EV2I/H90GbeJFYrc2UKEQ2xC4vVQHZnjs4nVS9e/t/EMNfGR/5M5v
+ ZhK9sNJIsFThoVjzW0pw2dnmVBxtwt+g3CHd7uQ1h1yE2RK8hk70oIJ9egbp55uD
+ ArRZQus9EKzxNLifVUFYen9XYAXst93O/3AUNoSHq2t14/T/Iwgh0fkGK4mu2dXR
+ W29Ay/VbDzrXiKXDX1kqdoUaTxhiG0GO+MVWrUytr0y5yxxpOuDixaGhST7PgPFw
+ Lr2apFz+TV06Mprmhb2NYQYMt8DQ9wQxRkKjXqwM6QtD8en126J1AHQDI+ZBq9p0
+ 6Tu6c1me4hMIoFbYWRBdg==
+X-ME-Sender: <xms:XWNHaBxisL7s_niQreqqoswMR5wQM8lgARdFMIYgC_lsae0ZeXlyvA>
+ <xme:XWNHaBQKBat23xKrrzMjdy6vYdPGwvOJcqvsMCK9XL1G-KeuTzfgE69Wlw05EDLoW
+ VALebjF84SfMo5PBA>
+X-ME-Received: <xmr:XWNHaLWaA_LF2lZiFfq8w5TBPGAM5ftYXAA3od4AllIxT5fEF1QwriEVxKT2EAB3k7DpJRVa5TVCEFBThy0Jjqu2sw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdelleduucetufdoteggodetrfdotf
  fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
  rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
  htshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeen
@@ -53,25 +53,26 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdelkeehucetufdoteggod
  hlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeek
  ueevjeffjeegtdeggeekgfdvuefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurf
  grrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhn
- sggprhgtphhtthhopedvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhgrth
- holhihrdgsuhhrrghkohhvsehinhhtvghlrdgtohhmpdhrtghpthhtohepuggvvhesughp
- ughkrdhorhhg
-X-ME-Proxy: <xmx:qFVHaGAvgUw3TPFYxHJLIoKZOgWAZY1cXAwsdQWW_kmEx1f8YBJChA>
- <xmx:qFVHaDgwVcyF3OTdfHZ2AjQDnO60llFJ7wgh7AE8npDDg08uijlpAA>
- <xmx:qFVHaCp0Hg4j6iubJJMdN9qdqkeHmAFs1uEQu1R7Q0JgkU1D6YQoSg>
- <xmx:qFVHaGjDqlTk2DzJSAauoiADca-FcekuXsomifZI-91gLI7CT1WMwQ>
- <xmx:qVVHaCTQYuJuzdob65RjgIHbpWARNtcsFxNwEr6R58qL_OSmqSeOtOk1>
+ sggprhgtphhtthhopedvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgvph
+ hhvghnsehnvghtfihorhhkphhluhhmsggvrhdrohhrghdprhgtphhtthhopeguvghvsegu
+ phgukhdrohhrgh
+X-ME-Proxy: <xmx:XWNHaDjpRiJVrczWjXaz0W7SwcO1SxsM-TNaOR2J85NmcO4qJM5uTw>
+ <xmx:XWNHaDBhnRn4XY6UqGuX5di1CxxOHr1kwioMl54cQ4bjGU46lJhnfg>
+ <xmx:XWNHaMIdegbzUGv4QZzmqoOOqebDOigYjntexY7Lz6KkohCB0aMSbw>
+ <xmx:XWNHaCCJMJZc3VbLCAElb8RikU5ld4GX3jPPVULUl3vY_LbL7jXpag>
+ <xmx:XmNHaEmCXaLudhR8s0zaSQC4TNwVy6sqZBgiQFR5A3_LpHAZbf0fkVnd>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 9 Jun 2025 17:44:08 -0400 (EDT)
+ 9 Jun 2025 18:42:37 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Anatoly Burakov <anatoly.burakov@intel.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v1 0/4] Adjust wording for NUMA vs. socket ID in DPDK
-Date: Mon, 09 Jun 2025 23:44:06 +0200
-Message-ID: <4737527.KRxA6XjA2N@thomas>
-In-Reply-To: <cover.1732626792.git.anatoly.burakov@intel.com>
-References: <cover.1732626792.git.anatoly.burakov@intel.com>
+Subject: Re: [PATCH v2] eal: force compilation of RTE_ASSERT expression
+Date: Tue, 10 Jun 2025 00:42:35 +0200
+Message-ID: <5336192.N7aMVyhfb1@thomas>
+In-Reply-To: <20250204194759.723484-1-stephen@networkplumber.org>
+References: <20250204165516.168106-1-stephen@networkplumber.org>
+ <20250204194759.723484-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -88,49 +89,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-26/11/2024 14:14, Anatoly Burakov:
-> While initially, DPDK has used the term "socket ID" to refer to physical package
-> ID, the last time DPDK read "physical_package_id" for socket ID was ~9 years
-> ago, so it's been a while since we've actually switched over to using the term
-> "socket" to mean "NUMA node".
+04/02/2025 20:46, Stephen Hemminger:
+> Even if RTE_ENABLE_ASSERT is not enabled, the expression used should
+> still be checked for compiler warnings. Use sizeof()
+> and ternary operator in same manner as the assert() macro to
+> cause the expression to be evaluated but not generate code.
 > 
-> This wasn't a problem before, as most systems had one NUMA node per physical
-> socket. However, in the last few years, more and more systems have multiple NUMA
-> nodes per physical CPU socket. Since DPDK used NUMA nodes already, the
-> transition was pretty seamless, however now we're faced with a situation when
-> most of our documentation still uses outdated terms, and our API is ripe with
-> references to "sockets" when in actuality we mean "NUMA nodes". This could be a
-> source of confusion.
+> This was motivated by detection of problems in a driver submission
+> that was not detected until compiled with non default flags.
 > 
-> While completely renaming all of our API's would be a huge effort, will take a
-> long time and arguably wouldn't even be worth the API breakages (given that this
-> mismatch between terminology and reality is implicitly understood by most people
-> working on DPDK, and so this isn't so much of a problem in practice), we can do
-> some tweaks around the edges and at least document this unfortunate reality.
-> 
-> This patchset suggests the following changes:
-> 
-> - Update rte_socket/rte_lcore documentation to refer to NUMA nodes rather than
-> sockets
-> - Rename internal structures' fields to better reflect this intention
-> - Rename --socket-mem/--socket-limit flags to refer to NUMA rather than sockets
-> 
-> The documentation is updated to refer to new EAL flags, but is otherwise left
-> untouched, and instead the entry in "glossary" is amended to indicate that when
-> DPDK documentation refers to "sockets", it actually means "NUMA ID's". As next
-> steps, we could rename all API parameters to refer to NUMA ID rather than socket
-> ID - this would not break neither API nor ABI, and instead would be a
-> documentation change in practice.
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 
-I agree with this direction.
-Less confusion is always better.
-Please continue.
-
-Nobody complained about this path in 6 months,
-so it is applied with removal of some old useless messages in docs:
-	EAL: Detected lcore 0 on socket 0
-
-Thanks.
+Applied, thanks.
 
 
 
