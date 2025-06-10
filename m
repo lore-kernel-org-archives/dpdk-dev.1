@@ -2,50 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 863A2C61DB2
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Jun 2025 21:21:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F04B2C61DB2
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Jun 2025 21:21:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4C19640144;
-	Tue, 10 Jun 2025 23:21:38 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 77351402BD;
+	Tue, 10 Jun 2025 23:21:40 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id 43304400EF
- for <dev@dpdk.org>; Tue, 10 Jun 2025 23:21:36 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 3E286400EF
+ for <dev@dpdk.org>; Tue, 10 Jun 2025 23:21:37 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1749590497; x=1781126497;
+ t=1749590498; x=1781126498;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=V/dGcQnrANlVGDMya4gxLm2P5mGX/4aT+cf3czSy7uM=;
- b=QCyEAKOX+vcT+czNdPZ34lA5DsX2iwzYbNwGThhpRSK/k0vWjqtGpnfr
- cRiM2jEXRoOOFeeIz0etGAbGzIJwSX8EGYHgHppvVHT32qJuBJbzI0YLC
- QzT3Xe3aEbMIlu/hBf3f5QQYopqF2Rq4Khc1/eMrt0wbPlY4UJtP3Plc2
- UbJOeb+8hVRxe9zche+bL4N6wFZCXC2fUUt3zCmAc+Ewb4TQYaPAYW/ZZ
- XZ+3e5dT5OAYEb9Lizzqz7/n+fRYqPzO5HeF4YQRpKX0nz9Sjn/BEOyxB
- SNKvQpx8gUnShKk92c871/Hv24NTDEnGgarB+wn6r/2EQGfeAL4wdbXW6 Q==;
-X-CSE-ConnectionGUID: hDHK/1FpRbi70I3erBSutQ==
-X-CSE-MsgGUID: OYFNqzOFRsS7OZFT4YvuYQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11460"; a="51710195"
-X-IronPort-AV: E=Sophos;i="6.16,226,1744095600"; d="scan'208";a="51710195"
+ bh=Dfy6gCCbDGN1oTj37YDKuiDOkZpeHYTr6AD/YTmZPyA=;
+ b=PBfZnuA1J6njIZfNDqJJ/ii/iUV44Z7eZXAQujBt5XLXN7MAn068t4mJ
+ nNGxEry5tnykylmON0Wbkz4Rx33Slbv57arP573OhKmII3aL65WkqnONB
+ 1DWyPcV/g0wKDCH8gYMuYPa7ha/WrwQ0BJBW9cNgVFHzPkpxfLgj6hlS/
+ Eo6l5c1jrvQ5q69By6aqnSlZ7FHy5MAt6WY5ruYu8fqfNpYTFnyPvek6u
+ +QOoHKO8kBN9dSyqcp4YrQQbIPQE5qcg2tjsQT4QwvFldSlHMXssTaQJ2
+ ZoVgsEI28hHAeYxnaAUfldY6UOhGp8knqs3276hN2fHuE0tHseqBMuL1y w==;
+X-CSE-ConnectionGUID: FH9GSGHmT5mmEK/PW4CkfQ==
+X-CSE-MsgGUID: Zks2EUD2TOKozaRikipq0g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11460"; a="51710198"
+X-IronPort-AV: E=Sophos;i="6.16,226,1744095600"; d="scan'208";a="51710198"
 Received: from fmviesa002.fm.intel.com ([10.60.135.142])
  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Jun 2025 14:21:36 -0700
-X-CSE-ConnectionGUID: 6AILtr9XR1K6m9/Nz3xUCQ==
-X-CSE-MsgGUID: spbZJJNUSBejrF/ZjpokAA==
+ 10 Jun 2025 14:21:37 -0700
+X-CSE-ConnectionGUID: nBuPVvcMQ4+zONz14TDTIQ==
+X-CSE-MsgGUID: c225NowDTuONFp3XF0mxhQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,226,1744095600"; d="scan'208";a="170157904"
+X-IronPort-AV: E=Sophos;i="6.16,226,1744095600"; d="scan'208";a="170157907"
 Received: from unknown (HELO sprmax9..) ([10.138.182.122])
- by fmviesa002.fm.intel.com with ESMTP; 10 Jun 2025 14:21:34 -0700
+ by fmviesa002.fm.intel.com with ESMTP; 10 Jun 2025 14:21:35 -0700
 From: Soumyadeep Hore <soumyadeep.hore@intel.com>
 To: dev@dpdk.org,
 	bruce.richardson@intel.com
-Cc: aman.deep.singh@intel.com,
-	manoj.kumar.subbarao@intel.com
-Subject: [PATCH v4 0/6] Add TxPP Support for E830
-Date: Tue, 10 Jun 2025 13:11:53 +0000
-Message-ID: <20250610131159.495566-1-soumyadeep.hore@intel.com>
+Cc: aman.deep.singh@intel.com, manoj.kumar.subbarao@intel.com,
+ Paul Greenwalt <paul.greenwalt@intel.com>
+Subject: [PATCH v4 1/6] net/intel: update E830 Tx Time Queue Context Structure
+Date: Tue, 10 Jun 2025 13:11:54 +0000
+Message-ID: <20250610131159.495566-2-soumyadeep.hore@intel.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250606211947.473544-2-soumyadeep.hore@intel.com>
+In-Reply-To: <20250610131159.495566-1-soumyadeep.hore@intel.com>
 References: <20250606211947.473544-2-soumyadeep.hore@intel.com>
+ <20250610131159.495566-1-soumyadeep.hore@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -61,40 +62,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Added TxPP support for E830 adapters.
----
-v2:
-- Fixed Compilation warnings
----
-v3:
-- Fixed further Compilation warnings (uinitialised one)
----
-v4
-- Addressed Bruce's comments
----
-Paul Greenwalt (1):
-  net/intel: update E830 Tx Time Queue Context Structure
+From: Paul Greenwalt <paul.greenwalt@intel.com>
 
-Soumyadeep Hore (5):
-  net/intel: add read clock feature in ICE
-  net/intel: add TxPP Support for E830
-  net/intel: add AVX2 Support for TxPP
-  net/intel: add AVX512 Support for TxPP
-  doc: announce TxPP support for E830 adapters
+Updated the Tx Time Queue Context Structure to align with HAS.
 
- doc/guides/nics/ice.rst                     |  18 ++
- drivers/net/intel/common/tx.h               |  14 ++
- drivers/net/intel/ice/base/ice_common.c     |  22 +-
- drivers/net/intel/ice/base/ice_lan_tx_rx.h  |   4 +
- drivers/net/intel/ice/ice_ethdev.c          |  16 +-
- drivers/net/intel/ice/ice_ethdev.h          |  11 +
- drivers/net/intel/ice/ice_rxtx.c            | 229 +++++++++++++++++++-
- drivers/net/intel/ice/ice_rxtx.h            |   9 +
- drivers/net/intel/ice/ice_rxtx_vec_avx2.c   | 127 ++++++++++-
- drivers/net/intel/ice/ice_rxtx_vec_avx512.c | 198 ++++++++++++++++-
- drivers/net/intel/ice/ice_rxtx_vec_common.h |  25 +++
- 11 files changed, 651 insertions(+), 22 deletions(-)
+Signed-off-by: Soumyadeep Hore <soumyadeep.hore@intel.com>
+Signed-off-by: Paul Greenwalt <paul.greenwalt@intel.com>
+---
+ drivers/net/intel/ice/base/ice_common.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
+diff --git a/drivers/net/intel/ice/base/ice_common.c b/drivers/net/intel/ice/base/ice_common.c
+index 4de9f37989..dfc2fd69e7 100644
+--- a/drivers/net/intel/ice/base/ice_common.c
++++ b/drivers/net/intel/ice/base/ice_common.c
+@@ -1671,17 +1671,17 @@ const struct ice_ctx_ele ice_txtime_ctx_info[] = {
+ 	ICE_CTX_STORE(ice_txtime_ctx, cpuid,			8,	82),
+ 	ICE_CTX_STORE(ice_txtime_ctx, tphrd_desc,		1,	90),
+ 	ICE_CTX_STORE(ice_txtime_ctx, qlen,			13,	91),
+-	ICE_CTX_STORE(ice_txtime_ctx, timer_num,		3,	104),
+-	ICE_CTX_STORE(ice_txtime_ctx, txtime_ena_q,		1,	107),
+-	ICE_CTX_STORE(ice_txtime_ctx, drbell_mode_32,		1,	108),
+-	ICE_CTX_STORE(ice_txtime_ctx, ts_res,			4,	109),
+-	ICE_CTX_STORE(ice_txtime_ctx, ts_round_type,		2,	113),
+-	ICE_CTX_STORE(ice_txtime_ctx, ts_pacing_slot,		3,	115),
+-	ICE_CTX_STORE(ice_txtime_ctx, merging_ena,		1,	118),
+-	ICE_CTX_STORE(ice_txtime_ctx, ts_fetch_prof_id,		4,	119),
+-	ICE_CTX_STORE(ice_txtime_ctx, ts_fetch_cache_line_aln_thld, 4,	123),
+-	ICE_CTX_STORE(ice_txtime_ctx, tx_pipe_delay_mode,	1,	127),
+-	ICE_CTX_STORE(ice_txtime_ctx, int_q_state,		70,	128),
++	ICE_CTX_STORE(ice_txtime_ctx, timer_num,		1,	104),
++	ICE_CTX_STORE(ice_txtime_ctx, txtime_ena_q,		1,	105),
++	ICE_CTX_STORE(ice_txtime_ctx, drbell_mode_32,		1,	106),
++	ICE_CTX_STORE(ice_txtime_ctx, ts_res,			4,	107),
++	ICE_CTX_STORE(ice_txtime_ctx, ts_round_type,		2,	111),
++	ICE_CTX_STORE(ice_txtime_ctx, ts_pacing_slot,		3,	113),
++	ICE_CTX_STORE(ice_txtime_ctx, merging_ena,		1,	116),
++	ICE_CTX_STORE(ice_txtime_ctx, ts_fetch_prof_id,		4,	117),
++	ICE_CTX_STORE(ice_txtime_ctx, ts_fetch_cache_line_aln_thld, 4,	121),
++	ICE_CTX_STORE(ice_txtime_ctx, tx_pipe_delay_mode,	1,	125),
++	ICE_CTX_STORE(ice_txtime_ctx, int_q_state,		70,	126),
+ 	{ 0 }
+ };
+ 
 -- 
 2.47.1
 
