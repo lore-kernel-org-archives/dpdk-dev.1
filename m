@@ -2,76 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EA63C5B552
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Jun 2025 07:17:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E471C5B552
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Jun 2025 07:29:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F2892402D4;
-	Tue, 10 Jun 2025 09:17:33 +0200 (CEST)
-Received: from fout-b6-smtp.messagingengine.com
- (fout-b6-smtp.messagingengine.com [202.12.124.149])
- by mails.dpdk.org (Postfix) with ESMTP id 74EEF40299
- for <dev@dpdk.org>; Tue, 10 Jun 2025 09:17:32 +0200 (CEST)
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal
- [10.202.2.41])
- by mailfout.stl.internal (Postfix) with ESMTP id AD7E811401C0;
- Tue, 10 Jun 2025 03:17:31 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-01.internal (MEProxy); Tue, 10 Jun 2025 03:17:31 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id B1138402D4;
+	Tue, 10 Jun 2025 09:29:30 +0200 (CEST)
+Received: from fhigh-b4-smtp.messagingengine.com
+ (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+ by mails.dpdk.org (Postfix) with ESMTP id 1752540299;
+ Tue, 10 Jun 2025 09:29:29 +0200 (CEST)
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal
+ [10.202.2.46])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 440802540172;
+ Tue, 10 Jun 2025 03:29:28 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-06.internal (MEProxy); Tue, 10 Jun 2025 03:29:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1749539851;
- x=1749626251; bh=mke19AmbhY+iya43Ws2OWP16eHgrzAtpOKwnriQIxoo=; b=
- hh51q2LgjsIPKHMojMfXxZYpvUGaJnqX31CUYwvMu8gQa8u+ixTPdxEJwOaFnFR4
- TzU5KEvSlg0cBF8SUHCM2w7+i3FSQJheWFbj2fTS5s7ge3r/48r1KR8rNneC4CGc
- X7Cy585CDZYhd3VAs2lAL1dQRM46OXfSHCmPvstNmRmyW4wm4dR3FoBndbTB+oKv
- WQXRSrPfIf0ImONlZ0XoGgTbiaefeLswMOaPg2R6My1VZcZk38fO4pG0PnsXgoms
- J6TKBwwRPO+SrhPTd0BYu52j/WxYTpZFrVR+V2VMkhM+iD/u8JCi7DDn1C+3i1YF
- ZoGTdP1WR/qQ9bMvHVTXvg==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1749540568;
+ x=1749626968; bh=GkobRODaNru8uPR+3yQFiAN4pe/2l3KbpYeLOaYlEsY=; b=
+ K8fnvKUaJNoF0MxqyhD6fsltyZRKK5fIHTKEcUr29e7FYjVLk2WbjH0AcFoN+SMi
+ WwfbCMczwy24zQKSG72ilqMyBH8o3c71H2u0HrtlsMrmVbf5p45qGhZiG01r2YcA
+ 5OdIqhuR29GbWbe5WHqo/eESYRYk71lUHMLl7a/UlKmcxELqvVm9yVtZ/cqF3DBF
+ h2wpLm41758QG7PhgRrWLuAQHLGWp20PNcH21wga8Cx5QZ2lQWGFCVE3mQPKXkTr
+ OTNZScegZcLq1sNQ8+oVCd1LDo7OoOKGV0H7OcypcK8xpHfxYUVEEXpY3ehjMmwL
+ rF0QTDYO7RPcX0/TM0UpIw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749539851; x=
- 1749626251; bh=mke19AmbhY+iya43Ws2OWP16eHgrzAtpOKwnriQIxoo=; b=a
- kw9fXtaZWxBUjQPtSFlpH4zuhie81iz528V4kfYho3wFvZt8ytYLZBc5uJJwmdzv
- 159bieJJlEndlLe7A6/yV++toxkecKOAR6F6f1AZ4HeVlXwEsoCVFhhcUp1duxVu
- QLQBPkghxAw59KqeUjW3WKh19VlE8Y18riwy9VDvePAPFH5bYGjQLVRLkAK+V7sq
- ZwBkVXpncHhXRNn14nfV59CKwvzGUnsAIg1FPrmz3LtnOWQRCRlEa44Is411r4zn
- AfrxYlWOsKR7KjpMzIHX0gF7I73ubiOFZWjt4Qkko4ZUGNTPcd+EgIH51UQtd7vQ
- xpeMg4CGPyEE6DwVuzjIQ==
-X-ME-Sender: <xms:C9xHaJ9YAL-FN0I5Uw5rhTx8C6CYWi-4chVTgQvEt5KlE75-r1pN_A>
- <xme:C9xHaNuxTn-CG3YT2F1HXAd0rF4hnK0s1PvU8AqdCUl_hCsgP5pItNAxLqvxl682H
- 44B1_6wP146H1Z8nA>
-X-ME-Received: <xmr:C9xHaHDUkL99pfltul5FEBa721NdjmXQujqfJmGzy9zR6CIrqMKRjNH_9rML_Iex-4Nyi7wNb9y6VQrWqODjyjEpiQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddutdegvdcutefuodetggdotefrod
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749540568; x=
+ 1749626968; bh=GkobRODaNru8uPR+3yQFiAN4pe/2l3KbpYeLOaYlEsY=; b=l
+ Kfxpc9hSnMjHxHhLvv23WbgGOVFp4+AzkJlhoNHo1iz9kJ4xWJZCNkabAbEb/65i
+ CeE+ANT6LY2PxBU8r1PhvMqUH0kj+kUeZnW0UMjPhukEpldOHAC2jxcJhJ7EOau+
+ geF30KaX6yzy7vg2umBb/lZQoraVX/jH+9Kv+N2jJr+ekGkmkS3bwJktl4gFfbiE
+ bYOGZfyWbZ9oTElY2duJy97goYSDIPgTHzoZGGJST4onJjbpB2f/P2ESox8r1dqk
+ 6OhP79NQvnB7jQkRqpmOE50R3LYcwCzld3asplEFTVz04n3sVfgKIi5MkWDJ4RVy
+ MtkJhrMCpVG/BPnx1hAZA==
+X-ME-Sender: <xms:195HaBnidB3TrB2wkzOgPXxkkK1SJ23bHGw2hDZ4_p0xnYJzeKh3yQ>
+ <xme:195HaM3W6PL76ClJo85ylNreX2thWvchwrAQR4EsxkyFD1Z5Uf9LOdZ1Yyp_Ciu6z
+ XPNBGK2PYDwd1Jguw>
+X-ME-Received: <xmr:195HaHr7e2ACL0yNHLfZ4nTQ-AtnRe0YF5-PRBr4mFpW1H-70Y5LRewGDMNRNWiXxYNXQewRtS8yATtVo1raQgeIog>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddutdegfecutefuodetggdotefrod
  ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
  uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
  hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdej
  necuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehmohhnjh
- grlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevfffgtdeg
- keeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgeptdenuc
- frrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdp
- nhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghruh
- gtvgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpthhtohepuggvvhes
- ughpughkrdhorhhg
-X-ME-Proxy: <xmx:C9xHaNd_qus8er2b-0m3uVHcJNuEZIce9wyIyEXRxq7wMQHcGaXF1Q>
- <xmx:C9xHaONc6w7NuutoXrdtSpMbEzKZr9Sd3oJ2PhfZbVxfUTRex8Cvgg>
- <xmx:C9xHaPka1csCQcKZscEUzE1M4405y3RvlnWSyflvRxSDng3MOuQ6CQ>
- <xmx:C9xHaIvDIX6dV00QPHvv-vRSWhY787axO3e8uKN1H5PSitkCu6RV1g>
- <xmx:C9xHaDdK9RYFWo1pkAPFu7aFZF3bmtz_0v8OcMTrVZMNAfXZaz5T-Yhm>
+ grlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepkeefheeftdegtdejheeuuedtgfel
+ feeiveekieekleekffelgfdtveeiheehffdunecuffhomhgrihhnpeguphgukhdrohhrgh
+ enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehthhho
+ mhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeehpdhmohguvgepsh
+ hmthhpohhuthdprhgtphhtthhopehrjhgrrhhrhiesrhgvughhrghtrdgtohhmpdhrtghp
+ thhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohepshhtvghphhgvnhesnhgvth
+ ifohhrkhhplhhumhgsvghrrdhorhhgpdhrtghpthhtohepshhtrggslhgvseguphgukhdr
+ ohhrghdprhgtphhtthhopehsuhhnnhihlhgrnhguhhesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:195HaBkbFV6r1bNxT-1zHLqn1g0fY9XeLeRmr2sM_ZmlEPvZJ5fwpw>
+ <xmx:195HaP3DpOpRyme3aPaszz1OlEKFm-DqXq76iJo6rjC-pTytK-DHWQ>
+ <xmx:195HaAtdX4Tat_xzguMCubs0tzqpn-fn24WVjpnJzbMtoLGQGMKYlg>
+ <xmx:195HaDUR9Myw7DoDGtAlK_s48abkCgQzizbkE6arfU__I0id6oREbQ>
+ <xmx:2N5HaPrjYJFzcNRfLp4WNXS-BDyVfrcqdjdMbjAZ-IkNP3jDHJWLWSR1>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 10 Jun 2025 03:17:30 -0400 (EDT)
+ 10 Jun 2025 03:29:27 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH] doc/linux_gsg: update recommended compiler versions
-Date: Tue, 10 Jun 2025 09:17:29 +0200
-Message-ID: <4263180.ZfL8zNpBrT@thomas>
-In-Reply-To: <20250408171835.2833766-1-bruce.richardson@intel.com>
-References: <20250408171835.2833766-1-bruce.richardson@intel.com>
+To: Robin Jarry <rjarry@redhat.com>
+Cc: dev@dpdk.org, Stephen Hemminger <stephen@networkplumber.org>,
+ stable@dpdk.org, Junxiao Shi <sunnylandh@gmail.com>
+Subject: Re: [PATCH dpdk] net: fix IPv4 compat and mapped checks
+Date: Tue, 10 Jun 2025 09:29:25 +0200
+Message-ID: <6595105.Wku2Vz74k6@thomas>
+In-Reply-To: <20250224144725.271975-2-rjarry@redhat.com>
+References: <20250224144725.271975-2-rjarry@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -88,14 +91,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-08/04/2025 19:18, Bruce Richardson:
-> Rather than specifying a minimum compiler version, update the docs to
-> recommend a particular compiler version. In other words, earlier
-> versions may work, but are not officially supported, or may give reduced
-> functionality.
-[...]
-> +    GCC (version 8.0+ recommended) or Clang (version 7+ recommended),
+24/02/2025 15:47, Robin Jarry:
+> The RFC states that the first 96 bits should be compared, not the first
+> 32 bits.
+> 
+> Add unit tests to ensure this works.
+> 
+> Cc: stable@dpdk.org
+> Fixes: 3d6d85f58c1c ("net: add utilities for well known IPv6 address types")
+> Reported-by: Junxiao Shi <sunnylandh@gmail.com>
+> Closes: https://bugs.dpdk.org/show_bug.cgi?id=1664
+> Signed-off-by: Robin Jarry <rjarry@redhat.com>
 
-Please could you explain in the commit log why these versions are recommended?
+Common format in DPDK is:
+    Bugzilla ID: 1664
+    Fixes: 3d6d85f58c1c ("net: add utilities for well known IPv6 address types")
+    Cc: stable@dpdk.org
+
+Applied, thanks.
+
 
 
