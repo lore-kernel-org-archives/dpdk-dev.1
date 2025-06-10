@@ -2,87 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C9D4C5B552
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Jun 2025 16:25:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCE81C5B552
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Jun 2025 16:31:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0C52242EFD;
-	Tue, 10 Jun 2025 18:25:57 +0200 (CEST)
-Received: from fout-a6-smtp.messagingengine.com
- (fout-a6-smtp.messagingengine.com [103.168.172.149])
- by mails.dpdk.org (Postfix) with ESMTP id 164C642EAD
- for <dev@dpdk.org>; Tue, 10 Jun 2025 18:25:55 +0200 (CEST)
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal
- [10.202.2.46])
- by mailfout.phl.internal (Postfix) with ESMTP id 6994613802B8;
- Tue, 10 Jun 2025 12:25:54 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-06.internal (MEProxy); Tue, 10 Jun 2025 12:25:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1749572754;
- x=1749659154; bh=s0Orb7BVB02uPX3ISTJ78DVhKGcMssjRGIsRAYhKosA=; b=
- eh3sRI7EX5/cPVKZFCEFirTE06izIp6YUNuOj69UgLXKRyDnd6G+ENbw2KbCYMaa
- 4XsEnQkfPSSmLr5eH3wAZyJjcnXmKp5o9UGWr+eUyVi7I/9LmAwCFgHJm1i7AmRD
- GtZ00V0FFfrCUl5jrxvu17JvhshQeLUDnnrQjLgzwKrcZSbDZhfiPRTg39L1xbx6
- KFqU2OBIeQaprP/R4oHrk1jscYRaDUnKQHS0WpJQ02QiPMFuXT/tpRA6WWhh2c9v
- ybr0WGjqyCUhtMsz2hVfLQ2sQY2Dy2leJF4qlyp8LoypeLAVKtnXw4mz7mpUIMQ0
- me6I42aUnX9VY2f3Y9Isuw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749572754; x=
- 1749659154; bh=s0Orb7BVB02uPX3ISTJ78DVhKGcMssjRGIsRAYhKosA=; b=Y
- dcYUnZ5PzPudYN+QIL/FNv/W5+5+rvDAfSvFZlsmY6B4fXcehVJaDIlpOGe8EbNJ
- KASdaex9HsbULxPg6nofIQmrZ77ykoKsJ6QXkYfDgIipzqBHRfvv19OzyP138Vpl
- jjD6xVRDlbhPE/48tdXgYmbZbYdqKHf5s4cDW8WeEh1FWbLGaFldBHzdfOdlNw7Q
- Ojeilg/vuzp6V0/PXgChLr+ba7itYwmxq2MPMZNFJ6/HFyre6Wu/QTiH1iCWTRpS
- YFquQL098Jwyol30u+w+DwR7sN6THIfYvr2ctUjU7os5O50sLRboML4pHPZHreJS
- Qu3TenxoWmFnpHtij3BPQ==
-X-ME-Sender: <xms:klxIaCRyD2JkuYvkSjtPXhlYnZprx7hvXOMwTFjzHBKcQbGVDAFHnQ>
- <xme:klxIaHwNRlqK2gBfFX6eYiM1-JQmxHbqXzlHsxzN5WsxkntIkgnxLxTMRpzcnbKlv
- O-Y0RFi4wGFWqFl5Q>
-X-ME-Received: <xmr:klxIaP19oU36jRi1OWwLqgzYQXagNQJsJ4k9SoyEQGkn84X8i5CBmjao6uPWRfuUV_tbOeMHmL4o8EO3faDLdtRXbQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddutdeljecutefuodetggdotefrod
- ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
- uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
- hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdej
- necuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehmohhnjh
- grlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevfffgtdeg
- keeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgeptdenuc
- frrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdp
- nhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepnhhsrg
- igvghnrgduieesghhmrghilhdrtghomhdprhgtphhtthhopehjvghrihhnjhesmhgrrhhv
- vghllhdrtghomhdprhgtphhtthhopehkihhrrghnkhhumhgrrhhksehmrghrvhgvlhhlrd
- gtohhmpdhrtghpthhtohepnhgurggsihhlphhurhgrmhesmhgrrhhvvghllhdrtghomhdp
- rhgtphhtthhopeihrghniihhihhruhhnpgduieefseduieefrdgtohhmpdhrtghpthhtoh
- eprhhjrghrrhihsehrvgguhhgrthdrtghomhdprhgtphhtthhopegtfhhonhhtrghinhes
- rhgvughhrghtrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhg
-X-ME-Proxy: <xmx:klxIaOBeE_VVSb6Ls9bazVQ6CFURysHcYeR95NTYLDtRQPwc_j3dBg>
- <xmx:klxIaLhpQLOEv5RQEbx-pCy4Dts0BlHSb5m14tIiuIQ3xxsz5tM_yQ>
- <xmx:klxIaKrv7rdb2MeUvpayQdW6xOc0uwS_up7fk-Dsb0DWlnbJ3AownQ>
- <xmx:klxIaOhYZMs-sRU8cBBX2dYZUI0nnB1ch6YkHAzSNpPX2_7iATX3cg>
- <xmx:klxIaPqhXFraa1S9sMobOqEQZDmAf8uvKOos-lssIerDMU1BJk6gkene>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 10 Jun 2025 12:25:52 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Nitin Saxena <nsaxena16@gmail.com>
-Cc: Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, 
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Zhirun Yan <yanzhirun_163@163.com>, Robin Jarry <rjarry@redhat.com>,
- Christophe Fontaine <cfontain@redhat.com>, dev@dpdk.org
-Subject: Re: [PATCH v12 0/7] add feature arc in rte_graph
-Date: Tue, 10 Jun 2025 18:25:51 +0200
-Message-ID: <4302243.3ZeAukHxDK@thomas>
-In-Reply-To: <20250605173315.1447003-1-nsaxena@marvell.com>
-References: <20250103060612.2671836-1-nsaxena@marvell.com>
- <20250605173315.1447003-1-nsaxena@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 993BD42F06;
+	Tue, 10 Jun 2025 18:31:23 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+ by mails.dpdk.org (Postfix) with ESMTP id A9BE042EAD
+ for <dev@dpdk.org>; Tue, 10 Jun 2025 18:31:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1749573082; x=1781109082;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=wkE3eT7n6nYEk5ZESolxU4a0s9Yz09Xp+tGLIUB33fw=;
+ b=li6Z1RfTMLQmrcMgngns4WEjFtuj0kzG0oLs7M5CjyuyYfMweuVMDVeJ
+ XMBKp6ZRo407+W7VG5NHbhs1dLrqpi2WKZj5g/ZH4SL7tNGFkhCZleKDK
+ pfaeExAAy9rLfmAtHyUXcK2sYu9s5usaxrw6yB8dl+i/jCp/gyHhR4v5K
+ IRgqBX6kWH6flL/sR1VI2TWcpod2tdr0Ijkcshp4qDfStr3nfPKXXD+dA
+ VgQLohVlI8u7OCj5dGQaq4EvsUOo0ceO5uZfNrTnDwZmemqzUDhUZkBR6
+ hJTmEMkB93jaJSLI1egRw0jI3a9e1t0P4PTo2DRcE2TCYl/Kj/Yg/4qwN Q==;
+X-CSE-ConnectionGUID: RGaSuQXXSdmzbXs5+8Hdgw==
+X-CSE-MsgGUID: 7LX60vPuSCWzfPbMgamRRA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11460"; a="63101381"
+X-IronPort-AV: E=Sophos;i="6.16,225,1744095600"; d="scan'208";a="63101381"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+ by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 10 Jun 2025 09:31:20 -0700
+X-CSE-ConnectionGUID: zAzEtvWgSym08qhjrNQ6tQ==
+X-CSE-MsgGUID: aTyPFmekTEGq8YjcROZvFw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,225,1744095600"; d="scan'208";a="146868441"
+Received: from unknown (HELO silpixa00401385.ir.intel.com) ([10.237.214.33])
+ by orviesa009.jf.intel.com with ESMTP; 10 Jun 2025 09:31:19 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v3 0/3] argparse additions and rework
+Date: Tue, 10 Jun 2025 17:29:35 +0100
+Message-ID: <20250610163109.111651-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250527092113.903910-1-bruce.richardson@intel.com>
+References: <20250527092113.903910-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -96,16 +59,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Nitin Saxena (7):
->   graph: add API to override node process function
->   graph: add feature arc registrations
->   graph: add feature arc init APIs
->   graph: add feature enable/disable APIs
->   ip4: add ip4 output feature arc
->   app/graph: add custom feature nodes for ip4 output arc
->   test/graph_feature_arc: add functional tests
+This patchset is based off the work to adjust how we do argument parsing
+inside EAL. To enable argparse to be effectively used for EAL, we have
+new features and some changes in the first two patches, which are
+relatively small - though are ABI/API affecting.
 
-Applied (with some formatting cleanup), thanks.
+These add support for saving off strings and boolean values, have argparse
+stop parsing at a "--", and finally have argparse return the number of
+arguments actually parsed on success.
+
+The third patch is a bigger change. It was inspired by the fact that
+when adding the boolean and string support we had to update some
+"MAX" value defines used in the code. This is obviously not good from
+an ABI/API perspective, once the library becomes part of the stable ABI.
+In order to remove these MAX values, patch 3 looks to replace the
+#define values with enums - which means some rework splitting the
+various flags into separate categories, and similarly splitting the
+single "flags" field with separate fields specifying if an argument
+value is required, what type that value should have, and then a
+final smaller field for any additional modifiers.
+
+v3: additional doc updates to patch 3
+
+v2: minor changes to patch 2 (see log at end of that patch)
 
 
+Bruce Richardson (3):
+  argparse: add support for string and boolean args
+  argparse: make argparse EAL-args compatible
+  argparse: use enums to remove max-value defines in lists
+
+ app/test/test_argparse.c               | 229 ++++++++++++++-----------
+ doc/guides/prog_guide/argparse_lib.rst |  36 ++--
+ doc/guides/rel_notes/release_25_07.rst |  50 ++++++
+ examples/dma/dmafwd.c                  |  20 +--
+ examples/flow_filtering/main.c         |   4 +-
+ lib/argparse/rte_argparse.c            | 184 ++++++++++++--------
+ lib/argparse/rte_argparse.h            |  97 ++++++-----
+ 7 files changed, 379 insertions(+), 241 deletions(-)
+
+--
+2.48.1
 
