@@ -2,50 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 010BAC5B543
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Jun 2025 07:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC52C5B543
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Jun 2025 07:57:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 64A9F42E8C;
-	Tue, 10 Jun 2025 09:41:03 +0200 (CEST)
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
- by mails.dpdk.org (Postfix) with ESMTP id B80F742E7A
- for <dev@dpdk.org>; Tue, 10 Jun 2025 09:40:59 +0200 (CEST)
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 55A7euRxB2458264,
- This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realsil.com.cn;
- s=dkim; t=1749541257;
- bh=DkeggotEqm0cTU5TYFKOa8Nf+jefec3NuX6+cWD1oYI=;
- h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
- MIME-Version:Content-Transfer-Encoding:Content-Type;
- b=rEGSudlX7h2I34bZX+tvIiaXamhWga7EhwNfvu6K+RoGbYfOcdCLzVYdwR2upkKAG
- fYNTmhJdLPIHtDWZ0VigMjptSWRW0j1gC+sGiKAyyRS2TnCOrG2teWG0JwKeBCrIwu
- a1Noc9G6M41FLkLzEdD3o66tM8EnGSTCftWz8jBTa5/2D3wAYEl6vsNi1oa8DdQvrH
- SkPEsDwl8gXxEj2ucisFU8ZPcC8b1fpDlVockes8eLPTXTsZeO8GUQJ7qPpZ3UCrhY
- 3mHgbpiVCkcUAWO7Eo0lwRuZJpiVsK+lsPy0NGXC2DJgysSYgAxFmaQyl17fZhEk/M
- WxhLb2PfxO8Hw==
-Received: from RS-EX-MBS1.realsil.com.cn ([172.29.17.101])
- by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 55A7euRxB2458264
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
- for <dev@dpdk.org>; Tue, 10 Jun 2025 15:40:57 +0800
-Received: from RS-EX-MBS2.realsil.com.cn (172.29.17.102) by
- RS-EX-MBS1.realsil.com.cn (172.29.17.101) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id 7F627402D4;
+	Tue, 10 Jun 2025 09:57:08 +0200 (CEST)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+ by mails.dpdk.org (Postfix) with ESMTP id DF2FB40299
+ for <dev@dpdk.org>; Tue, 10 Jun 2025 09:57:06 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+ by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bGgxv3bFJzRjcn;
+ Tue, 10 Jun 2025 15:52:51 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id 3921D180450;
+ Tue, 10 Jun 2025 15:57:04 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 10 Jun 2025 15:40:57 +0800
-Received: from 172.29.32.27 (172.29.32.27) by RS-EX-MBS2.realsil.com.cn
- (172.29.17.102) with Microsoft SMTP Server id 15.2.1544.11 via Frontend
- Transport; Tue, 10 Jun 2025 15:40:57 +0800
-From: Howard Wang <howard_wang@realsil.com.cn>
-To: <dev@dpdk.org>
-CC: <pro_nic_dpdk@realtek.com>, Howard Wang <howard_wang@realsil.com.cn>
-Subject: [PATCH v2 8/8] net/r8169: update HW configuration for 8127
-Date: Tue, 10 Jun 2025 15:40:37 +0800
-Message-ID: <20250610074037.5288-9-howard_wang@realsil.com.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250610074037.5288-1-howard_wang@realsil.com.cn>
-References: <20250610074037.5288-1-howard_wang@realsil.com.cn>
+ 15.2.1544.11; Tue, 10 Jun 2025 15:57:03 +0800
+Message-ID: <7355246d-a914-48b6-acf6-4f67b3a9760b@huawei.com>
+Date: Tue, 10 Jun 2025 15:57:03 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] examples/l3fwd: adjust Tx burst size based on Rx burst
+To: huangdengdui <huangdengdui@huawei.com>, Stephen Hemminger
+ <stephen@networkplumber.org>, Sivaprasad Tummala <sivaprasad.tummala@amd.com>
+CC: <david.hunt@intel.com>, <anatoly.burakov@intel.com>, <jerinj@marvell.com>, 
+ <radu.nicolau@intel.com>, <gakhil@marvell.com>,
+ <cristian.dumitrescu@intel.com>, <Ferruh.Yigit@amd.com>,
+ <konstantin.ananyev@huawei.com>, <mb@smartsharesystems.com>, <dev@dpdk.org>,
+ Venkat Kumar Ande <VenkatKumar.Ande@amd.com>
+References: <20250212045416.2393001-1-sivaprasad.tummala@amd.com>
+ <20250609095827.4174387-1-sivaprasad.tummala@amd.com>
+ <20250609082154.489681e1@hermes.local>
+ <55beecec-89f9-43df-8eec-9e51bd72ed1c@huawei.com>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <55beecec-89f9-43df-8eec-9e51bd72ed1c@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.161]
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,250 +57,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Signed-off-by: Howard Wang <howard_wang@realsil.com.cn>
----
- drivers/net/r8169/base/rtl8127.c     |  44 ++++++++---
- drivers/net/r8169/base/rtl8127_mcu.c | 109 ++++++++++++---------------
- drivers/net/r8169/r8169_hw.h         |   2 +-
- drivers/net/r8169/r8169_phy.c        |   1 -
- 4 files changed, 80 insertions(+), 76 deletions(-)
+On 2025/6/10 14:42, huangdengdui wrote:
+> 
+> On 2025/6/9 23:21, Stephen Hemminger wrote:
+>> On Mon, 9 Jun 2025 09:58:27 +0000
+>> Sivaprasad Tummala <sivaprasad.tummala@amd.com> wrote:
+>>
+>>> Previously, the TX burst size was fixed at 256, leading to performance
+>>> degradation in certain scenarios.
+>>>
+>>> This patch introduces logic to set the TX burst size to match the
+>>> configured RX burst size (--burst option, default 32, max 512)
+>>> for better efficiency.
+>>>
+>>> Fixes: d5c4897ecfb2 ("examples/l3fwd: add option to set Rx burst size")
+>>> Cc: haijie1@huawei.com
+>>> Cc: stable@dpdk.org
+>>>
+>>> Signed-off-by: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
+>>> Tested-by: Venkat Kumar Ande <VenkatKumar.Ande@amd.com>
+>>> Tested-by: Dengdui Huang <huangdengdui@huawei.com>
+>>
+>> What driver? Why not fix the driver.
+>> If RX burst is small, there should be no way to get TX burst larger
+>> than that to happen.
+> 
+> If the Tx burst is too large, a number of mbufs will be temporarily stored in l3fwd's mbuf_table in a short period of time.
+> This leads to a decrease in the hit rate of the mempool cache, resulting in a drop in performance.
 
-diff --git a/drivers/net/r8169/base/rtl8127.c b/drivers/net/r8169/base/rtl8127.c
-index fac6165931..9e79255e3c 100644
---- a/drivers/net/r8169/base/rtl8127.c
-+++ b/drivers/net/r8169/base/rtl8127.c
-@@ -102,6 +102,13 @@ rtl_hw_phy_config_8127a_1(struct rtl_hw *hw)
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x83EF);
- 	rtl_clear_eth_phy_ocp_bit(hw, 0xB87E, 0x0E00);
- 
-+	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xBF38, 0x01F0, 0x0160);
-+	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xBF3A, 0x001F, 0x0014);
-+	rtl_clear_eth_phy_ocp_bit(hw, 0xBF28, 0x6000);
-+	rtl_clear_eth_phy_ocp_bit(hw, 0xBF2C, 0xC000);
-+	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xBF28, 0x1FFF, 0x0187);
-+	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xBF2A, 0x003F, 0x0003);
-+
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xA436, 0x8173);
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xA438, 0x8620);
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xA436, 0x8175);
-@@ -205,7 +212,7 @@ rtl_hw_phy_config_8127a_1(struct rtl_hw *hw)
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8015);
- 	rtl_set_eth_phy_ocp_bit(hw, 0xB87E, BIT_9);
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8016);
--	rtl_set_eth_phy_ocp_bit(hw, 0xB87E, BIT_11);
-+	rtl_clear_eth_phy_ocp_bit(hw, 0xB87E, BIT_11);
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FE6);
- 	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xB87E, 0xFF00, 0x0800);
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FE4);
-@@ -241,6 +248,16 @@ rtl_hw_phy_config_8127a_1(struct rtl_hw *hw)
- 	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xB87E, 0x3F00, 0x2A00);
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xA436, 0x81B1);
- 	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xA438, 0xFF00, 0x0B00);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FED);
-+	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xB87E, 0xFF00, 0x4E00);
-+
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x88AC);
-+	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xB87E, 0xFF00, 0x2300);
-+	rtl_set_eth_phy_ocp_bit(hw, 0xBF0C, 0x3800);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x88DE);
-+	rtl_clear_eth_phy_ocp_bit(hw, 0xB87E, 0xFF00);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x80B4);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87E, 0x5195);
- 
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xA436, 0x8370);
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xA438, 0x8671);
-@@ -300,21 +317,24 @@ rtl_hw_phy_config_8127a_1(struct rtl_hw *hw)
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FEE);
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xB87E, 0xFFDF);
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FF0);
--	rtl_mdio_direct_write_phy_ocp(hw, 0xB87E, 0xFFDF);
--	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FF1);
--	rtl_mdio_direct_write_phy_ocp(hw, 0xB87E, 0xDF0A);
--	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FF3);
--	rtl_mdio_direct_write_phy_ocp(hw, 0xB87E, 0x4AAA);
--	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FF5);
--	rtl_mdio_direct_write_phy_ocp(hw, 0xB87E, 0x5A0A);
--	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FF7);
--	rtl_mdio_direct_write_phy_ocp(hw, 0xB87E, 0x4AAA);
--	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FF9);
--	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xB87E, 0xFF00, 0x5A00);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87E, 0xFFFF);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FF2);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87E, 0x0A4A);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FF4);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87E, 0xAA5A);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FF6);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87E, 0x0A4A);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FF8);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87E, 0xAA5A);
- 
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x88D5);
- 	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xB87E, 0xFF00, 0x0200);
- 
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xA436, 0x84BB);
-+	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xA438, 0xFF00, 0x0A00);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xA436, 0x84C0);
-+	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xA438, 0xFF00, 0x1600);
-+
- 	rtl_set_eth_phy_ocp_bit(hw, 0xA430, BIT_1 | BIT_0);
- }
- 
-diff --git a/drivers/net/r8169/base/rtl8127_mcu.c b/drivers/net/r8169/base/rtl8127_mcu.c
-index 44e6d96d9e..facbae8132 100644
---- a/drivers/net/r8169/base/rtl8127_mcu.c
-+++ b/drivers/net/r8169/base/rtl8127_mcu.c
-@@ -11,58 +11,47 @@
- 
- /* ------------------------------------MAC 8127------------------------------------- */
- 
--static void
--_rtl_set_mac_mcu_8127a_1(struct rtl_hw *hw)
-+void
-+rtl_set_mac_mcu_8127a_1(struct rtl_hw *hw)
- {
- 	u16 entry_cnt;
- 	static const u16 mcu_patch_code[] =  {
--		0xE010, 0xE012, 0xE014, 0xE016, 0xE018, 0xE01A, 0xE0CF, 0xE180, 0xE182,
--		0xE184, 0xE186, 0xE188, 0xE18A, 0xE18C, 0xE18E, 0xE190, 0xC602, 0xBE00,
--		0x0000, 0xC602, 0xBE00, 0x0000, 0xC502, 0xBD00, 0x0000, 0xC502, 0xBD00,
--		0x0000, 0xC502, 0xBD00, 0x0000, 0xC643, 0x76C0, 0x49E1, 0xF13F, 0xC140,
--		0x7720, 0x49E0, 0xF003, 0x1B00, 0xE00A, 0x49E2, 0xF003, 0x1B04, 0xE006,
--		0x49E4, 0xF003, 0x1B08, 0xE002, 0x1B0C, 0x21B8, 0x1A0E, 0x44DA, 0xE893,
--		0x481C, 0xE884, 0xE001, 0x49E0, 0xF003, 0x1B00, 0xE00A, 0x49E2, 0xF003,
--		0x1B04, 0xE006, 0x49E4, 0xF003, 0x1B08, 0xE002, 0x1B0C, 0x21B8, 0x1A12,
--		0x44DA, 0xE87F, 0x481F, 0xE870, 0xE001, 0x49E0, 0xF003, 0x1B00, 0xE00A,
--		0x49E2, 0xF003, 0x1B04, 0xE006, 0x49E4, 0xF003, 0x1B08, 0xE002, 0x1B0C,
--		0x21B8, 0x1A1C, 0x44DA, 0xE86B, 0x481F, 0xE85C, 0xE004, 0xE04F, 0xDD98,
--		0xD450, 0x49E0, 0xF003, 0x1B00, 0xE00A, 0x49E2, 0xF003, 0x1B04, 0xE006,
--		0x49E4, 0xF003, 0x1B08, 0xE002, 0x1B0C, 0x21B8, 0x1A0E, 0x44DA, 0xE854,
--		0x489E, 0x481F, 0xE844, 0xE001, 0x1908, 0xE83E, 0x49E0, 0xF003, 0x1B00,
--		0xE00A, 0x49E2, 0xF003, 0x1B04, 0xE006, 0x49E4, 0xF003, 0x1B08, 0xE002,
--		0x1B0C, 0x21B8, 0x1A8A, 0x44DA, 0xE83D, 0x4813, 0xE82E, 0x49F9, 0xF106,
--		0x4838, 0xE837, 0x4813, 0xE828, 0xE001, 0x49E0, 0xF003, 0x1B00, 0xE00A,
--		0x49E2, 0xF003, 0x1B04, 0xE006, 0x49E4, 0xF003, 0x1B08, 0xE002, 0x1B0C,
--		0x21B8, 0x1A84, 0x44DA, 0xE823, 0x4890, 0x4811, 0xE813, 0x49F9, 0xF106,
--		0x4838, 0xE81C, 0x4890, 0x4811, 0xE80C, 0xC207, 0x7440, 0xC602, 0xBE00,
--		0x1600, 0x0FFE, 0xDE20, 0xE092, 0xC3FD, 0xE802, 0xFF80, 0xC0FB, 0x7202,
--		0x49AE, 0xF1FE, 0x9900, 0x44D3, 0x4413, 0x482F, 0x9A02, 0x7202, 0x49AE,
--		0xF1FE, 0xFF80, 0xC0EE, 0x7202, 0x49AE, 0xF1FE, 0x44D3, 0x4413, 0x48AF,
--		0x9A02, 0x7202, 0x49AE, 0xF1FE, 0x7100, 0xFF80, 0xB401, 0xB402, 0xB404,
--		0xB407, 0xC61F, 0x76C0, 0x49E1, 0xF164, 0xC11C, 0x7720, 0x1906, 0xE88A,
--		0x1B0C, 0x21B8, 0x1A40, 0x44DA, 0xE895, 0x4810, 0xE886, 0x190C, 0xE881,
--		0x1B08, 0x21B8, 0x1A26, 0x44DA, 0xE88C, 0x4890, 0x4891, 0xE87C, 0x49F9,
--		0xF107, 0x4898, 0x4899, 0xE877, 0xE003, 0xDD98, 0xD450, 0x1908, 0xE86F,
--		0x49E0, 0xF003, 0x1B00, 0xE00A, 0x49E2, 0xF003, 0x1B04, 0xE006, 0x49E2,
--		0xF003, 0x1B08, 0xE002, 0x1B0C, 0x21B8, 0x1A5C, 0x44DA, 0xE86E, 0x4897,
--		0x4898, 0x4819, 0x481A, 0xE85C, 0x49F9, 0xF109, 0x4838, 0xE865, 0x4897,
--		0x4898, 0x4819, 0x481A, 0xE853, 0xE001, 0x190A, 0xE84D, 0x1B00, 0xE85B,
--		0x44E1, 0x4838, 0xE858, 0x44E9, 0x1908, 0xE845, 0x49E0, 0xF003, 0x1B00,
--		0xE00A, 0x49E2, 0xF003, 0x1B04, 0xE006, 0x49E4, 0xF003, 0x1B08, 0xE002,
--		0x1B0C, 0x21B8, 0x1A86, 0x44DA, 0xE844, 0x44CC, 0xE835, 0x49F9, 0xF108,
--		0x4838, 0xE83E, 0x44CD, 0xE82F, 0xE003, 0xE021, 0xFFC0, 0x190A, 0xE827,
--		0x1B00, 0x4839, 0xE834, 0x249A, 0x1C00, 0x44E1, 0x1909, 0xE81F, 0x49E0,
--		0xF003, 0x1B00, 0xE00A, 0x49E2, 0xF003, 0x1B04, 0xE006, 0x49E4, 0xF003,
--		0x1B08, 0xE002, 0x1B0C, 0x21B8, 0x1A1A, 0x44DA, 0xE81E, 0xC5E4, 0x414D,
--		0x418C, 0xE80D, 0xB007, 0xB004, 0xB002, 0xB001, 0xC602, 0xBE00, 0x15E6,
--		0x0FFE, 0xDE20, 0xC3FE, 0xE802, 0xFF80, 0xC0FC, 0x7202, 0x49AE, 0xF1FE,
--		0x9900, 0x44D3, 0x4413, 0x482F, 0x9A02, 0x7202, 0x49AE, 0xF1FE, 0xFF80,
--		0xC0EF, 0x7202, 0x49AE, 0xF1FE, 0x44D3, 0x4413, 0x48AF, 0x9A02, 0x7202,
--		0x49AE, 0xF1FE, 0x7100, 0xFF80, 0xC502, 0xBD00, 0x0000, 0xC502, 0xBD00,
--		0x0000, 0xC502, 0xBD00, 0x0000, 0xC302, 0xBB00, 0x0000, 0xC602, 0xBE00,
--		0x0000, 0xC102, 0xB900, 0x0000, 0xC102, 0xB900, 0x0000, 0xC602, 0xBE00,
--		0x0000, 0xC602, 0xBE00, 0x0000, 0x6961, 0x0018, 0x0C11, 0x0A38
-+		0xE010, 0xE023, 0xE036, 0xE049, 0xE05C, 0xE075, 0xE0B1, 0xE117, 0xE11B,
-+		0xE11D, 0xE11F, 0xE121, 0xE123, 0xE125, 0xE127, 0xE129, 0x7020, 0xB405,
-+		0xB404, 0xC50F, 0x74A0, 0xC50E, 0x4025, 0xF005, 0x4850, 0x4025, 0xF002,
-+		0xE002, 0x4809, 0xB004, 0xB005, 0xC502, 0xBD00, 0x1522, 0xD006, 0x0004,
-+		0x7760, 0xB405, 0xB404, 0xC50F, 0x74A0, 0xC50E, 0x4025, 0xF005, 0x4850,
-+		0x4025, 0xF002, 0xE002, 0x4879, 0xB004, 0xB005, 0xC002, 0xB800, 0x41E2,
-+		0xD006, 0x0004, 0x7160, 0xB405, 0xB404, 0xC50F, 0x74A0, 0xC50E, 0x4025,
-+		0xF005, 0x4850, 0x4025, 0xF002, 0xE002, 0x4819, 0xB004, 0xB005, 0xC302,
-+		0xBB00, 0x508E, 0xD006, 0x0004, 0x7720, 0xB405, 0xB404, 0xC50F, 0x74A0,
-+		0xC50E, 0x4025, 0xF005, 0x4850, 0x4025, 0xF002, 0xE002, 0x4879, 0xB004,
-+		0xB005, 0xC102, 0xB900, 0x50F8, 0xD006, 0x0004, 0x61A9, 0xB403, 0xB404,
-+		0xC313, 0x7460, 0xC312, 0x4023, 0xF005, 0x4830, 0x4023, 0xF002, 0xE003,
-+		0x4997, 0xF003, 0xC00A, 0xE002, 0xC009, 0xB004, 0xB003, 0xC102, 0xB900,
-+		0x34FC, 0xD006, 0x0004, 0x02AF, 0x041F, 0xB407, 0xB406, 0xB405, 0xB404,
-+		0xB403, 0xB402, 0xB401, 0xB400, 0x49D2, 0xF116, 0xC62F, 0x77C0, 0x49F9,
-+		0xF020, 0x49FA, 0xF11E, 0x49F2, 0xF102, 0xE01B, 0x48F2, 0x9FC0, 0xC625,
-+		0x75C2, 0x4852, 0x9DC2, 0xC122, 0x7020, 0x4801, 0x4802, 0x9820, 0xE00F,
-+		0xC61A, 0x77C0, 0x49F2, 0xF10B, 0xC618, 0x77C0, 0x49F2, 0xF007, 0x48F2,
-+		0x9FC0, 0xC611, 0x75C2, 0x48D2, 0x9DC2, 0xB000, 0xB001, 0xB002, 0xB003,
-+		0xB004, 0xB005, 0xB006, 0xB007, 0x9D6C, 0xC502, 0xBD00, 0x0168, 0xE024,
-+		0xC010, 0xD410, 0xD460, 0xB407, 0xB406, 0xB405, 0xB404, 0xB403, 0xB402,
-+		0xB401, 0xB400, 0xC152, 0x7020, 0x4981, 0xF043, 0xC050, 0x7100, 0xB401,
-+		0xC14C, 0x489E, 0x481D, 0x9900, 0xC24A, 0x7340, 0x49B7, 0xF135, 0xC144,
-+		0x9900, 0xC245, 0x7340, 0xC447, 0x401C, 0xF109, 0x734C, 0x1301, 0xF12B,
-+		0xC343, 0x9B40, 0xC33E, 0x9B40, 0xE022, 0xC63A, 0x77C0, 0x48F4, 0x48F5,
-+		0x48F9, 0x48FA, 0x9FC0, 0xC231, 0x7344, 0x48B4, 0x9B44, 0xC22E, 0x7340,
-+		0x4830, 0x48B1, 0x4832, 0x483C, 0x48BD, 0x48BE, 0x48BF, 0x9B40, 0xC223,
-+		0xC32A, 0x9B48, 0xC327, 0x9B46, 0xC324, 0x9B40, 0xC321, 0x9B42, 0xC31E,
-+		0x9B40, 0xE005, 0xC113, 0x7020, 0x4881, 0x9820, 0xB001, 0xC010, 0x9900,
-+		0xB000, 0xB001, 0xB002, 0xB003, 0xB004, 0xB005, 0xB006, 0xB007, 0x2125,
-+		0xC102, 0xB900, 0x1A6C, 0xD410, 0xC000, 0xE86C, 0xB600, 0xB800, 0xB40A,
-+		0xE024, 0x5A00, 0x5A81, 0x0073, 0x5A80, 0x0042, 0x0001, 0xC104, 0xC202,
-+		0xBA00, 0x1A2E, 0xC896, 0xC302, 0xBB00, 0x0000, 0xC002, 0xB800, 0x0000,
-+		0xC002, 0xB800, 0x0000, 0xC502, 0xBD00, 0x0000, 0xC102, 0xB900, 0x0000,
-+		0xC102, 0xB900, 0x0000, 0xC602, 0xBE00, 0x0000, 0xC602, 0xBE00, 0x0000,
-+		0x6961, 0x0019, 0x050C, 0x140C
- 	};
- 
- 	entry_cnt = ARRAY_SIZE(mcu_patch_code);
-@@ -76,20 +65,16 @@ _rtl_set_mac_mcu_8127a_1(struct rtl_hw *hw)
- 
- 	rtl_mac_ocp_write(hw, 0xFC26, 0x8000);
- 
--	rtl_mac_ocp_write(hw, 0xFC32, 0x15FE);
--	rtl_mac_ocp_write(hw, 0xFC34, 0x15E4);
--
--	rtl_mac_ocp_write(hw, 0xFC48, 0x0060);
--}
--
--void
--rtl_set_mac_mcu_8127a_1(struct rtl_hw *hw)
--{
--	u8 tmp = (u8)rtl_mac_ocp_read(hw, 0xD006);
-+	rtl_mac_ocp_write(hw, 0xFC28, 0x1520);
-+	rtl_mac_ocp_write(hw, 0xFC2A, 0x41E0);
-+	rtl_mac_ocp_write(hw, 0xFC2C, 0x508C);
-+	rtl_mac_ocp_write(hw, 0xFC2E, 0x50F6);
-+	rtl_mac_ocp_write(hw, 0xFC30, 0x34FA);
-+	rtl_mac_ocp_write(hw, 0xFC32, 0x0166);
-+	rtl_mac_ocp_write(hw, 0xFC34, 0x1A6A);
-+	rtl_mac_ocp_write(hw, 0xFC36, 0x1A2C);
- 
--	if (tmp != 0x04)
--		return;
--	_rtl_set_mac_mcu_8127a_1(hw);
-+	rtl_mac_ocp_write(hw, 0xFC48, 0x00FF);
- }
- 
- /* ------------------------------------PHY 8127------------------------------------- */
-diff --git a/drivers/net/r8169/r8169_hw.h b/drivers/net/r8169/r8169_hw.h
-index 558ffaac95..ffd2914b10 100644
---- a/drivers/net/r8169/r8169_hw.h
-+++ b/drivers/net/r8169/r8169_hw.h
-@@ -137,7 +137,7 @@ extern const struct rtl_hw_ops rtl8125cp_ops;
- #define NIC_RAMCODE_VERSION_CFG_METHOD_69  (0x0023)
- #define NIC_RAMCODE_VERSION_CFG_METHOD_70  (0x0033)
- #define NIC_RAMCODE_VERSION_CFG_METHOD_71  (0x0060)
--#define NIC_RAMCODE_VERSION_CFG_METHOD_91  (0x0015)
-+#define NIC_RAMCODE_VERSION_CFG_METHOD_91  (0x0036)
- 
- #define RTL_MAC_MCU_PAGE_SIZE 256
- #define RTL_DEFAULT_MTU       1500
-diff --git a/drivers/net/r8169/r8169_phy.c b/drivers/net/r8169/r8169_phy.c
-index e547b44137..9da3a9d41b 100644
---- a/drivers/net/r8169/r8169_phy.c
-+++ b/drivers/net/r8169/r8169_phy.c
-@@ -682,7 +682,6 @@ rtl_powerdown_pll(struct rtl_hw *hw)
- 		case CFG_METHOD_69:
- 		case CFG_METHOD_70:
- 		case CFG_METHOD_71:
--		case CFG_METHOD_91:
- 			RTL_W8(hw, PMCH, RTL_R8(hw, PMCH) & ~BIT_7);
- 			break;
- 		}
--- 
-2.34.1
+This commit introduce coupling in Tx burst size and Rx burst size.
+Different arch may have differ combination for Rx/Tx burst and descriptors.
+So how about add one extra option for Tx burst size, and default the same with MAX_PKT_BURST.
+
+> 
 
