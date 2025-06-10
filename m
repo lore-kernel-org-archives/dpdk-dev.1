@@ -2,38 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD91AC5B552
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Jun 2025 13:13:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4497EC5B543
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Jun 2025 13:15:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9A18C402D4;
-	Tue, 10 Jun 2025 15:13:57 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id D375C4026D
- for <dev@dpdk.org>; Tue, 10 Jun 2025 15:13:55 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 83D9020544;
- Tue, 10 Jun 2025 15:13:55 +0200 (CEST)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Tue, 10 Jun 2025 15:13:55 +0200
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: Tyler Retzlaff <roretzla@linux.microsoft.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Maxime Coquelin <maxime.coquelin@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>, dev@dpdk.org
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH] eal: handle sysconf() negative return value
-Date: Tue, 10 Jun 2025 13:13:48 +0000
-Message-ID: <20250610131348.248800-1-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id 3ADBE402D4;
+	Tue, 10 Jun 2025 15:15:27 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 54C694026D
+ for <dev@dpdk.org>; Tue, 10 Jun 2025 15:15:26 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 402C9468C9; Tue, 10 Jun 2025 15:15:26 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/eventdev Bug 1720] failure in event_vector_adapter_autotest
+Date: Tue, 10 Jun 2025 13:15:25 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: eventdev
+X-Bugzilla-Version: unspecified
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: critical
+X-Bugzilla-Who: thomas@monjalon.net
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1720-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17495613260.1B0AF.957526
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 10 Jun 2025 13:13:55.0026 (UTC)
- FILETIME=[84826320:01DBDA09]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -47,166 +54,168 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Coverity reports some defects, where the root cause seems to be negative
-return value from sysconf() not being handled.
 
-rte_mem_page_size() has been updated to handle negative return value from
-sysconf(_SC_PAGESIZE).
+--17495613260.1B0AF.957526
+Date: Tue, 10 Jun 2025 15:15:25 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-All other functions calling sysconf(_SC_PAGESIZE) directly have been
-updated to call rte_mem_page_size() instead.
+https://bugs.dpdk.org/show_bug.cgi?id=3D1720
 
-At this time, no other calls to sysconf() have been found in DPDK.
+            Bug ID: 1720
+           Summary: failure in event_vector_adapter_autotest
+           Product: DPDK
+           Version: unspecified
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: critical
+          Priority: Normal
+         Component: eventdev
+          Assignee: dev@dpdk.org
+          Reporter: thomas@monjalon.net
+  Target Milestone: ---
 
-Also, an unrelated drive-by minor fix in eal_mem_set_dump():
-When madvise() failed, an incorrect reason was logged.
+Seen in CI:
+event_vector_adapter_autotest  FAIL            11.06s   killed by signal 11
+SIGSEGV
 
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
----
- lib/eal/freebsd/eal.c          |  3 ++-
- lib/eal/freebsd/eal_memory.c   |  7 +++----
- lib/eal/linux/eal.c            |  3 ++-
- lib/eal/unix/eal_unix_memory.c | 16 ++++++++++++++--
- lib/vhost/vduse.c              |  3 ++-
- 5 files changed, 23 insertions(+), 9 deletions(-)
+http://mails.dpdk.org/archives/test-report/2025-June/884533.html
 
-diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
-index d6fffa2170..ce7f5c3d65 100644
---- a/lib/eal/freebsd/eal.c
-+++ b/lib/eal/freebsd/eal.c
-@@ -26,6 +26,7 @@
- #include <rte_launch.h>
- #include <rte_eal.h>
- #include <rte_eal_memconfig.h>
-+#include <rte_eal_paging.h>
- #include <rte_errno.h>
- #include <rte_per_lcore.h>
- #include <rte_lcore.h>
-@@ -98,7 +99,7 @@ rte_eal_config_create(void)
- 	struct rte_config *config = rte_eal_get_configuration();
- 	const struct internal_config *internal_conf =
- 		eal_get_internal_configuration();
--	size_t page_sz = sysconf(_SC_PAGE_SIZE);
-+	size_t page_sz = rte_mem_page_size();
- 	size_t cfg_len = sizeof(struct rte_mem_config);
- 	size_t cfg_len_aligned = RTE_ALIGN(cfg_len, page_sz);
- 	void *rte_mem_cfg_addr, *mapped_mem_cfg_addr;
-diff --git a/lib/eal/freebsd/eal_memory.c b/lib/eal/freebsd/eal_memory.c
-index 3b72e13506..6d3d46a390 100644
---- a/lib/eal/freebsd/eal_memory.c
-+++ b/lib/eal/freebsd/eal_memory.c
-@@ -11,6 +11,7 @@
- #include <fcntl.h>
- 
- #include <rte_eal.h>
-+#include <rte_eal_paging.h>
- #include <rte_errno.h>
- #include <rte_log.h>
- #include <rte_string_fns.h>
-@@ -22,8 +23,6 @@
- #include "eal_memcfg.h"
- #include "eal_options.h"
- 
--#define EAL_PAGE_SIZE (sysconf(_SC_PAGESIZE))
--
- uint64_t eal_get_baseaddr(void)
- {
- 	/*
-@@ -191,7 +190,7 @@ rte_eal_hugepage_init(void)
- 			addr = mmap(addr, page_sz, PROT_READ|PROT_WRITE,
- 					MAP_SHARED | MAP_FIXED,
- 					hpi->lock_descriptor,
--					j * EAL_PAGE_SIZE);
-+					j * rte_mem_page_size());
- 			if (addr == MAP_FAILED) {
- 				EAL_LOG(ERR, "Failed to mmap buffer %u from %s",
- 						j, hpi->hugedir);
-@@ -243,7 +242,7 @@ attach_segment(const struct rte_memseg_list *msl, const struct rte_memseg *ms,
- 
- 	addr = mmap(ms->addr, ms->len, PROT_READ | PROT_WRITE,
- 			MAP_SHARED | MAP_FIXED, wa->fd_hugepage,
--			wa->seg_idx * EAL_PAGE_SIZE);
-+			wa->seg_idx * rte_mem_page_size());
- 	if (addr == MAP_FAILED || addr != ms->addr)
- 		return -1;
- 	wa->seg_idx++;
-diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
-index 20f777b8b0..ad6de9b7ee 100644
---- a/lib/eal/linux/eal.c
-+++ b/lib/eal/linux/eal.c
-@@ -31,6 +31,7 @@
- #include <rte_launch.h>
- #include <rte_eal.h>
- #include <rte_eal_memconfig.h>
-+#include <rte_eal_paging.h>
- #include <rte_errno.h>
- #include <rte_lcore.h>
- #include <rte_service_component.h>
-@@ -179,7 +180,7 @@ static int
- rte_eal_config_create(void)
- {
- 	struct rte_config *config = rte_eal_get_configuration();
--	size_t page_sz = sysconf(_SC_PAGE_SIZE);
-+	size_t page_sz = rte_mem_page_size();
- 	size_t cfg_len = sizeof(*config->mem_config);
- 	size_t cfg_len_aligned = RTE_ALIGN(cfg_len, page_sz);
- 	void *rte_mem_cfg_addr, *mapped_mem_cfg_addr;
-diff --git a/lib/eal/unix/eal_unix_memory.c b/lib/eal/unix/eal_unix_memory.c
-index c540f1e838..51de6780f2 100644
---- a/lib/eal/unix/eal_unix_memory.c
-+++ b/lib/eal/unix/eal_unix_memory.c
-@@ -85,7 +85,7 @@ eal_mem_set_dump(void *virt, size_t size, bool dump)
- 	int ret = madvise(virt, size, flags);
- 	if (ret) {
- 		EAL_LOG(DEBUG, "madvise(%p, %#zx, %d) failed: %s",
--				virt, size, flags, strerror(rte_errno));
-+				virt, size, flags, strerror(errno));
- 		rte_errno = errno;
- 	}
- 	return ret;
-@@ -141,8 +141,20 @@ rte_mem_page_size(void)
- {
- 	static size_t page_size;
- 
--	if (!page_size)
-+	if (page_size == 0) {
-+		/*
-+		 * When the sysconf value cannot be determined, sysconf()
-+		 * returns -1 without setting errno.
-+		 * To distinguish an indeterminate value from an error,
-+		 * clear errno before calling sysconf(), and check whether
-+		 * errno has been set if sysconf() returns -1.
-+		 */
-+		errno = 0;
- 		page_size = sysconf(_SC_PAGESIZE);
-+		if ((ssize_t)page_size < 0)
-+			rte_panic("sysconf(_SC_PAGESIZE) failed: %s",
-+					errno == 0 ? "Indeterminate" : strerror(errno));
-+	}
- 
- 	return page_size;
- }
-diff --git a/lib/vhost/vduse.c b/lib/vhost/vduse.c
-index a2a7d73388..9de7f04a4f 100644
---- a/lib/vhost/vduse.c
-+++ b/lib/vhost/vduse.c
-@@ -16,6 +16,7 @@
- #include <sys/stat.h>
- 
- #include <rte_common.h>
-+#include <rte_eal_paging.h>
- #include <rte_thread.h>
- 
- #include "fd_man.h"
-@@ -690,7 +691,7 @@ vduse_device_create(const char *path, bool compliant_ol_flags)
- 		dev_config->vendor_id = 0;
- 		dev_config->features = features;
- 		dev_config->vq_num = total_queues;
--		dev_config->vq_align = sysconf(_SC_PAGE_SIZE);
-+		dev_config->vq_align = rte_mem_page_size();
- 		dev_config->config_size = sizeof(struct virtio_net_config);
- 		memcpy(dev_config->config, &vnet_config, sizeof(vnet_config));
- 
--- 
-2.43.0
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
 
+--17495613260.1B0AF.957526
+Date: Tue, 10 Jun 2025 15:15:26 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - failure in event_vector_adapter_autotest"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1720">1720</a>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Summary</th>
+          <td>failure in event_vector_adapter_autotest
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>unspecified
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>critical
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>eventdev
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>thomas&#64;monjalon.net
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">Seen in CI:
+event_vector_adapter_autotest  FAIL            11.06s   killed by signal 11
+SIGSEGV
+
+<a href=3D"http://mails.dpdk.org/archives/test-report/2025-June/884533.html=
+">http://mails.dpdk.org/archives/test-report/2025-June/884533.html</a>
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1720">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17495613260.1B0AF.957526--
