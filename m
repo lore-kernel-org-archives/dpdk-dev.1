@@ -2,32 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E08CAC5B552
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Jun 2025 09:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C05AC5B552
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Jun 2025 09:14:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CE14142E99;
-	Tue, 10 Jun 2025 11:14:23 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 2FAB742E6B
+	by mails.dpdk.org (Postfix) with ESMTP id 11F5C42EA2;
+	Tue, 10 Jun 2025 11:14:25 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 692EB42E74
  for <dev@dpdk.org>; Tue, 10 Jun 2025 11:14:16 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id BED241A1D65;
- Tue, 10 Jun 2025 11:14:15 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 498312006F1;
+ Tue, 10 Jun 2025 11:14:16 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 73D6F1A067B;
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id F10F12000E8;
  Tue, 10 Jun 2025 11:14:15 +0200 (CEST)
 Received: from lsv03379.swis.in-blr01.nxp.com (lsv03379.swis.in-blr01.nxp.com
  [92.120.147.188])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id D4075180007B;
- Tue, 10 Jun 2025 17:14:14 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 49F121800225;
+ Tue, 10 Jun 2025 17:14:15 +0800 (+08)
 From: vanshika.shukla@nxp.com
-To: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
+To: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>,
  Sachin Saxena <sachin.saxena@nxp.com>
-Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [v3 06/10] mempool/dpaa: adjust pool element for LS1043A errata
-Date: Tue, 10 Jun 2025 14:44:07 +0530
-Message-Id: <20250610091411.2500413-7-vanshika.shukla@nxp.com>
+Cc: Vinod Pullabhatla <vinod.pullabhatla@nxp.com>,
+ Vanshika Shukla <vanshika.shukla@nxp.com>
+Subject: [v3 07/10] net/dpaa: add Tx rate limiting DPAA PMD API
+Date: Tue, 10 Jun 2025 14:44:08 +0530
+Message-Id: <20250610091411.2500413-8-vanshika.shukla@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250610091411.2500413-1-vanshika.shukla@nxp.com>
 References: <20250602131526.3233959-1-vanshika.shukla@nxp.com>
@@ -48,263 +50,234 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jun Yang <jun.yang@nxp.com>
+From: Vinod Pullabhatla <vinod.pullabhatla@nxp.com>
 
-Adjust every element of pool by populate callback.
-1) Make sure start DMA address is aligned with 16B.
-2) For buffer across 4KB boundary, make sure start DMA address is
-   aligned with 256B.
+Add support to set Tx rate on DPAA platform through PMD APIs
 
-Signed-off-by: Jun Yang <jun.yang@nxp.com>
+Signed-off-by: Vinod Pullabhatla <vinod.pullabhatla@nxp.com>
+Signed-off-by: Vanshika Shukla <vanshika.shukla@nxp.com>
 ---
- drivers/mempool/dpaa/dpaa_mempool.c | 145 +++++++++++++++++++++++++++-
- drivers/mempool/dpaa/dpaa_mempool.h |  11 ++-
- 2 files changed, 150 insertions(+), 6 deletions(-)
+ .mailmap                             |  1 +
+ drivers/net/dpaa/dpaa_flow.c         | 87 +++++++++++++++++++++++++++-
+ drivers/net/dpaa/fmlib/fm_lib.c      | 30 ++++++++++
+ drivers/net/dpaa/fmlib/fm_port_ext.h |  2 +-
+ drivers/net/dpaa/rte_pmd_dpaa.h      | 21 ++++++-
+ 5 files changed, 137 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mempool/dpaa/dpaa_mempool.c b/drivers/mempool/dpaa/dpaa_mempool.c
-index 6c850f5cb2..2af6ebcee2 100644
---- a/drivers/mempool/dpaa/dpaa_mempool.c
-+++ b/drivers/mempool/dpaa/dpaa_mempool.c
-@@ -1,6 +1,6 @@
+diff --git a/.mailmap b/.mailmap
+index 9135f06efc..48aee6da22 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -1642,6 +1642,7 @@ Vincent S. Cojot <vcojot@redhat.com>
+ Vinh Tran <vinh.t.tran10@gmail.com>
+ Vipin Padmam Ramesh <vipinp@vmware.com>
+ Vinod Krishna <vinod.krishna@arm.com>
++Vinod Pullabhatla <vinod.pullabhatla@nxp.com>
+ Vipin Varghese <vipin.varghese@amd.com> <vipin.varghese@intel.com>
+ Vipul Ashri <vipul.ashri@oracle.com>
+ Visa Hankala <visa@hankala.org>
+diff --git a/drivers/net/dpaa/dpaa_flow.c b/drivers/net/dpaa/dpaa_flow.c
+index 2a22b23c8f..eb4bbb097c 100644
+--- a/drivers/net/dpaa/dpaa_flow.c
++++ b/drivers/net/dpaa/dpaa_flow.c
+@@ -1,5 +1,5 @@
  /* SPDX-License-Identifier: BSD-3-Clause
-  *
-- *   Copyright 2017,2019,2023 NXP
-+ *   Copyright 2017,2019,2023-2025 NXP
-  *
+- * Copyright 2017-2019,2021-2024 NXP
++ * Copyright 2017-2019,2021-2025 NXP
   */
  
-@@ -13,6 +13,7 @@
- #include <signal.h>
- #include <pthread.h>
- #include <sys/types.h>
-+
- #include <sys/syscall.h>
- 
- #include <eal_export.h>
-@@ -29,6 +30,9 @@
- #include <dpaa_mempool.h>
- #include <dpaax_iova_table.h>
- 
-+#define FMAN_ERRATA_BOUNDARY ((uint64_t)4096)
-+#define FMAN_ERRATA_BOUNDARY_MASK (~(FMAN_ERRATA_BOUNDARY - 1))
-+
- /* List of all the memseg information locally maintained in dpaa driver. This
-  * is to optimize the PA_to_VA searches until a better mechanism (algo) is
-  * available.
-@@ -51,6 +55,7 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
- 	struct dpaa_bp_info *bp_info;
- 	uint8_t bpid;
- 	int num_bufs = 0, ret = 0;
-+	uint16_t elem_max_size;
- 	struct bman_pool_params params = {
- 		.flags = BMAN_POOL_FLAG_DYNAMIC_BPID
- 	};
-@@ -101,9 +106,11 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
- 		}
- 	}
- 
-+	elem_max_size = rte_pktmbuf_data_room_size(mp);
-+
- 	rte_dpaa_bpid_info[bpid].mp = mp;
- 	rte_dpaa_bpid_info[bpid].bpid = bpid;
--	rte_dpaa_bpid_info[bpid].size = mp->elt_size;
-+	rte_dpaa_bpid_info[bpid].size = elem_max_size;
- 	rte_dpaa_bpid_info[bpid].bp = bp;
- 	rte_dpaa_bpid_info[bpid].meta_data_size =
- 		sizeof(struct rte_mbuf) + rte_pktmbuf_priv_size(mp);
-@@ -296,6 +303,130 @@ dpaa_mbuf_get_count(const struct rte_mempool *mp)
- 	return bman_query_free_buffers(bp_info->bp);
+ /* System headers */
+@@ -669,6 +669,22 @@ static inline int get_rx_port_type(struct fman_if *fif)
+ 	return e_FM_PORT_TYPE_DUMMY;
  }
  
-+static int
-+dpaa_check_obj_bounds(char *obj, size_t pg_sz, size_t elt_sz)
++static inline int get_tx_port_type(struct fman_if *fif)
 +{
-+	if (!pg_sz || elt_sz > pg_sz)
-+		return true;
++	if (fif->mac_type == fman_offline_internal ||
++	    fif->mac_type == fman_onic)
++		return e_FM_PORT_TYPE_OH_OFFLINE_PARSING;
++	else if (fif->mac_type == fman_mac_1g)
++		return e_FM_PORT_TYPE_TX;
++	else if (fif->mac_type == fman_mac_2_5g)
++		return e_FM_PORT_TYPE_TX_2_5G;
++	else if (fif->mac_type == fman_mac_10g)
++		return e_FM_PORT_TYPE_TX_10G;
 +
-+	if (RTE_PTR_ALIGN(obj, pg_sz) !=
-+		RTE_PTR_ALIGN(obj + elt_sz - 1, pg_sz))
-+		return false;
-+	return true;
++	DPAA_PMD_ERR("MAC type unsupported");
++	return e_FM_PORT_TYPE_DUMMY;
 +}
 +
-+static void
-+dpaa_adjust_obj_bounds(char *va, size_t *offset,
-+	size_t pg_sz, size_t total, uint32_t flags)
+ static inline int set_fm_port_handle(struct dpaa_if *dpaa_intf,
+ 				     uint64_t req_dist_set,
+ 				     struct fman_if *fif)
+@@ -889,9 +905,9 @@ int dpaa_fm_init(void)
+ 	/* FM PCD Enable */
+ 	ret = fm_pcd_enable(pcd_handle);
+ 	if (ret) {
+-		fm_close(fman_handle);
+ 		fm_pcd_close(pcd_handle);
+ 		DPAA_PMD_ERR("fm_pcd_enable: Failed");
++		fm_close(fman_handle);
+ 		return -1;
+ 	}
+ 
+@@ -1073,3 +1089,70 @@ int dpaa_port_vsp_cleanup(struct dpaa_if *dpaa_intf, struct fman_if *fif)
+ 
+ 	return E_OK;
+ }
++
++int rte_pmd_dpaa_port_set_rate_limit(uint16_t port_id, uint16_t burst,
++				     uint32_t rate)
 +{
-+	size_t off = *offset;
++	t_fm_port_rate_limit port_rate_limit;
++	bool port_handle_exists = true;
++	void *handle;
++	uint32_t ret;
++	struct rte_eth_dev *dev;
++	struct dpaa_if *dpaa_intf;
++	struct fman_if *fif;
 +
-+	if (dpaa_check_obj_bounds(va + off, pg_sz, total) == false) {
-+		off += RTE_PTR_ALIGN_CEIL(va + off, pg_sz) - (va + off);
-+		if (flags & RTE_MEMPOOL_POPULATE_F_ALIGN_OBJ)
-+			off += total - ((((size_t)va + off - 1) % total) + 1);
++	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
++	dev = &rte_eth_devices[port_id];
++	dpaa_intf = dev->data->dev_private;
++	fif = dev->process_private;
++
++	memset(&port_rate_limit, 0, sizeof(port_rate_limit));
++	port_rate_limit.max_burst_size = burst;
++	port_rate_limit.rate_limit = rate;
++
++	DPAA_PMD_DEBUG("Port:%s: set max Burst =%u max Rate =%u",
++		dpaa_intf->name, burst, rate);
++
++	if (!dpaa_intf->port_handle) {
++		t_fm_port_params fm_port_params;
++
++		/* Memset FM port params */
++		memset(&fm_port_params, 0, sizeof(fm_port_params));
++
++		/* Set FM port params */
++		fm_port_params.h_fm = fm_open(0);
++		fm_port_params.port_type = get_tx_port_type(fif);
++		fm_port_params.port_id = mac_idx[fif->mac_idx];
++
++		/* FM PORT Open */
++		handle = fm_port_open(&fm_port_params);
++		fm_close(fm_port_params.h_fm);
++		if (!handle) {
++			DPAA_PMD_ERR("Can't open handle %p",
++				     fm_info.fman_handle);
++			return -ENODEV;
++		}
++
++		port_handle_exists = false;
++	} else {
++		handle = dpaa_intf->port_handle;
 +	}
 +
-+	*offset = off;
-+}
-+
-+static int
-+dpaa_mbuf_ls1043a_errata_obj_adjust(uint8_t **pobj,
-+	uint32_t header_size, size_t *poff, size_t data_room)
-+{
-+	uint8_t *obj = *pobj;
-+	size_t off = *poff, buf_addr, end;
-+
-+	if (RTE_PKTMBUF_HEADROOM % FMAN_ERRATA_BUF_START_ALIGN) {
-+		DPAA_MEMPOOL_ERR("RTE_PKTMBUF_HEADROOM(%d) NOT aligned to %d",
-+			RTE_PKTMBUF_HEADROOM,
-+			FMAN_ERRATA_BUF_START_ALIGN);
-+		return -1;
-+	}
-+	if (header_size % FMAN_ERRATA_BUF_START_ALIGN) {
-+		DPAA_MEMPOOL_ERR("Header size(%d) NOT aligned to %d",
-+			header_size,
-+			FMAN_ERRATA_BUF_START_ALIGN);
-+		return -1;
-+	}
-+
-+	/** All FMAN DMA start addresses (for example, BMAN buffer
-+	 * address, FD[address] + FD[offset]) are 16B aligned.
-+	 */
-+	buf_addr = (size_t)obj + header_size;
-+	while (!rte_is_aligned((void *)buf_addr,
-+		FMAN_ERRATA_BUF_START_ALIGN)) {
-+		off++;
-+		obj++;
-+		buf_addr = (size_t)obj + header_size;
-+	}
-+
-+	/** Frame buffers must not span a 4KB address boundary,
-+	 * unless the frame start address is 256 byte aligned.
-+	 */
-+	end = buf_addr + data_room;
-+	if (((buf_addr + RTE_PKTMBUF_HEADROOM) &
-+		FMAN_ERRATA_BOUNDARY_MASK) ==
-+		(end & FMAN_ERRATA_BOUNDARY_MASK))
-+		goto quit;
-+
-+	while (!rte_is_aligned((void *)(buf_addr + RTE_PKTMBUF_HEADROOM),
-+		FMAN_ERRATA_4K_SPAN_ADDR_ALIGN)) {
-+		off++;
-+		obj++;
-+		buf_addr = (size_t)obj + header_size;
-+	}
-+quit:
-+	*pobj = obj;
-+	*poff = off;
-+
-+	return 0;
-+}
-+
-+static int
-+dpaa_mbuf_op_pop_helper(struct rte_mempool *mp, uint32_t flags,
-+	uint32_t max_objs, void *vaddr, rte_iova_t iova,
-+	size_t len, struct dpaa_bp_info *bp_info,
-+	rte_mempool_populate_obj_cb_t *obj_cb, void *obj_cb_arg)
-+{
-+	char *va = vaddr;
-+	size_t total_elt_sz, pg_sz, off;
-+	uint32_t i;
-+	void *obj;
-+	int ret;
-+	uint16_t data_room = rte_pktmbuf_data_room_size(mp);
-+
-+	ret = rte_mempool_get_page_size(mp, &pg_sz);
-+	if (ret < 0)
-+		return ret;
-+
-+	total_elt_sz = mp->header_size + mp->elt_size + mp->trailer_size;
-+
-+	if (flags & RTE_MEMPOOL_POPULATE_F_ALIGN_OBJ)
-+		off = total_elt_sz - (((uintptr_t)(va - 1) % total_elt_sz) + 1);
++	if (burst == 0 || rate == 0)
++		ret = fm_port_delete_rate_limit(handle);
 +	else
-+		off = 0;
-+	for (i = 0; i < max_objs; i++) {
-+		/* avoid objects to cross page boundaries */
-+		dpaa_adjust_obj_bounds(va, &off, pg_sz, total_elt_sz, flags);
-+		if (off + total_elt_sz > len)
-+			break;
++		ret = fm_port_set_rate_limit(handle, &port_rate_limit);
 +
-+		off += mp->header_size;
-+		obj = va + off;
-+		if (dpaa_soc_ver() == SVR_LS1043A_FAMILY) {
-+			dpaa_mbuf_ls1043a_errata_obj_adjust((uint8_t **)&obj,
-+				bp_info->meta_data_size, &off, data_room);
-+		}
-+		obj_cb(mp, obj_cb_arg, obj,
-+			(iova == RTE_BAD_IOVA) ? RTE_BAD_IOVA : (iova + off));
-+		rte_mempool_ops_enqueue_bulk(mp, &obj, 1);
-+		off += mp->elt_size + mp->trailer_size;
++	if (ret) {
++		DPAA_PMD_ERR("Failed to %s rate limit ret = %#x.",
++			(!burst || !rate) ? "del" : "set", ret);
++	} else {
++		DPAA_PMD_DEBUG("Success to %s rate limit,",
++			(!burst || !rate) ? "del" : "set");
 +	}
 +
-+	return i;
++	if (!port_handle_exists)
++		fm_port_close(handle);
++
++	return -ret;
++}
+diff --git a/drivers/net/dpaa/fmlib/fm_lib.c b/drivers/net/dpaa/fmlib/fm_lib.c
+index b35feba004..d34993de38 100644
+--- a/drivers/net/dpaa/fmlib/fm_lib.c
++++ b/drivers/net/dpaa/fmlib/fm_lib.c
+@@ -558,3 +558,33 @@ get_device_id(t_handle h_dev)
+ 
+ 	return (t_handle)p_dev->id;
+ }
++
++uint32_t
++fm_port_delete_rate_limit(t_handle h_fm_port)
++{
++	t_device        *p_dev = (t_device *)h_fm_port;
++
++	_fml_dbg("Calling...");
++
++	if (ioctl(p_dev->fd, FM_PORT_IOC_REMOVE_RATE_LIMIT))
++		RETURN_ERROR(MINOR, E_INVALID_OPERATION, NO_MSG);
++
++	_fml_dbg("Finishing.");
++
++	return E_OK;
 +}
 +
- static int
- dpaa_populate(struct rte_mempool *mp, unsigned int max_objs,
- 	      void *vaddr, rte_iova_t paddr, size_t len,
-@@ -303,9 +434,14 @@ dpaa_populate(struct rte_mempool *mp, unsigned int max_objs,
- {
- 	struct dpaa_bp_info *bp_info;
- 	unsigned int total_elt_sz;
-+	struct dpaa_memseg *ms;
- 
- 	if (!mp || !mp->pool_data) {
- 		DPAA_MEMPOOL_ERR("Invalid mempool provided");
-+		if (dpaa_soc_ver() == SVR_LS1043A_FAMILY) {
-+			/** populate must be successful for LS1043A*/
-+			return -EINVAL;
-+		}
- 		return 0;
- 	}
- 
-@@ -321,7 +457,6 @@ dpaa_populate(struct rte_mempool *mp, unsigned int max_objs,
- 	/* Detect pool area has sufficient space for elements in this memzone */
- 	if (len >= total_elt_sz * mp->size)
- 		bp_info->flags |= DPAA_MPOOL_SINGLE_SEGMENT;
--	struct dpaa_memseg *ms;
- 
- 	/* For each memory chunk pinned to the Mempool, a linked list of the
- 	 * contained memsegs is created for searching when PA to VA
-@@ -347,8 +482,8 @@ dpaa_populate(struct rte_mempool *mp, unsigned int max_objs,
- 	 */
- 	TAILQ_INSERT_HEAD(&rte_dpaa_memsegs, ms, next);
- 
--	return rte_mempool_op_populate_helper(mp, 0, max_objs, vaddr, paddr,
--					       len, obj_cb, obj_cb_arg);
-+	return dpaa_mbuf_op_pop_helper(mp, 0, max_objs, vaddr, paddr,
-+			len, bp_info, obj_cb, obj_cb_arg);
- }
- 
- static const struct rte_mempool_ops dpaa_mpool_ops = {
-diff --git a/drivers/mempool/dpaa/dpaa_mempool.h b/drivers/mempool/dpaa/dpaa_mempool.h
-index 5ca53c7ff9..865b533b8f 100644
---- a/drivers/mempool/dpaa/dpaa_mempool.h
-+++ b/drivers/mempool/dpaa/dpaa_mempool.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  *
-- *   Copyright 2017,2019 NXP
-+ *   Copyright 2017,2019,2024 -2025 NXP
-  *
++uint32_t
++fm_port_set_rate_limit(t_handle h_fm_port, t_fm_port_rate_limit *p_rate_limit)
++{
++	t_device        *p_dev = (t_device *)h_fm_port;
++
++	_fml_dbg("Calling...");
++
++	if (ioctl(p_dev->fd, FM_PORT_IOC_SET_RATE_LIMIT, p_rate_limit))
++		RETURN_ERROR(MINOR, E_INVALID_OPERATION, NO_MSG);
++
++	_fml_dbg("Finishing.");
++
++	return E_OK;
++}
+diff --git a/drivers/net/dpaa/fmlib/fm_port_ext.h b/drivers/net/dpaa/fmlib/fm_port_ext.h
+index bb2e00222e..f1cbf37de3 100644
+--- a/drivers/net/dpaa/fmlib/fm_port_ext.h
++++ b/drivers/net/dpaa/fmlib/fm_port_ext.h
+@@ -274,7 +274,7 @@ typedef struct ioc_fm_port_congestion_groups_t {
+  * @Return	0 on success; error code otherwise.
   */
- #ifndef __DPAA_MEMPOOL_H__
-@@ -31,6 +31,15 @@
- /* Buffers are allocated from single mem segment i.e. phys contiguous */
- #define DPAA_MPOOL_SINGLE_SEGMENT  0x01
+ #define FM_PORT_IOC_SET_RATE_LIMIT \
+-	IOW(FM_IOC_TYPE_BASE, FM_PORT_IOC_NUM(3), ioc_fm_port_rate_limit_t)
++	_IOW(FM_IOC_TYPE_BASE, FM_PORT_IOC_NUM(3), ioc_fm_port_rate_limit_t)
  
-+#define FMAN_ERRATA_4K_SPAN_ADDR_ALIGN 256
-+#define FMAN_ERRATA_4K_SPAN_ADDR_MASK \
-+	(FMAN_ERRATA_4K_SPAN_ADDR_ALIGN - 1)
+ /*
+  * @Function	  fm_port_delete_rate_limit
+diff --git a/drivers/net/dpaa/rte_pmd_dpaa.h b/drivers/net/dpaa/rte_pmd_dpaa.h
+index ec45633ba2..1a847c4d43 100644
+--- a/drivers/net/dpaa/rte_pmd_dpaa.h
++++ b/drivers/net/dpaa/rte_pmd_dpaa.h
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2018 NXP
++ * Copyright 2018, 2022, 2024 NXP
+  */
+ 
+ #ifndef _PMD_DPAA_H_
+@@ -31,4 +31,23 @@
+ int
+ rte_pmd_dpaa_set_tx_loopback(uint16_t port, uint8_t on);
+ 
++/**
++ * Set TX rate limit
++ *
++ * @param port_id
++ *    The port identifier of the Ethernet device.
++ * @param burst
++ *    Max burst size(KBytes) of the Ethernet device.
++ *    0 - Disable TX rate limit.
++ * @param rate
++ *    Max rate(Kb/sec) of the Ethernet device.
++ *    0 - Disable TX rate limit.
++ * @return
++ *    0 - if successful.
++ *    <0 - if failed, with proper error code.
++ */
++int
++rte_pmd_dpaa_port_set_rate_limit(uint16_t port_id, uint16_t burst,
++				 uint32_t rate);
 +
-+#define FMAN_ERRATA_BUF_START_ALIGN 16
-+#define FMAN_ERRATA_BUF_START_MASK (FMAN_ERRATA_BUF_START_ALIGN - 1)
-+#define FMAN_ERRATA_SG_LEN_ALIGN 16
-+#define FMAN_ERRATA_SG_LEN_MASK (FMAN_ERRATA_SG_LEN_ALIGN - 1)
-+
- struct dpaa_bp_info {
- 	struct rte_mempool *mp;
- 	struct bman_pool *bp;
+ #endif /* _PMD_DPAA_H_ */
 -- 
 2.25.1
 
