@@ -2,67 +2,63 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B53C9C71135
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 20:09:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 828AFC71136
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 20:29:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6B274402DB;
-	Wed, 11 Jun 2025 22:09:31 +0200 (CEST)
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com
- [209.85.214.177])
- by mails.dpdk.org (Postfix) with ESMTP id CB0D140144
- for <dev@dpdk.org>; Wed, 11 Jun 2025 22:09:29 +0200 (CEST)
-Received: by mail-pl1-f177.google.com with SMTP id
- d9443c01a7336-235ea292956so2563495ad.1
- for <dev@dpdk.org>; Wed, 11 Jun 2025 13:09:29 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 22041402DB;
+	Wed, 11 Jun 2025 22:29:38 +0200 (CEST)
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com
+ [209.85.216.46]) by mails.dpdk.org (Postfix) with ESMTP id D6AEE40144
+ for <dev@dpdk.org>; Wed, 11 Jun 2025 22:29:36 +0200 (CEST)
+Received: by mail-pj1-f46.google.com with SMTP id
+ 98e67ed59e1d1-30e8feb1886so360014a91.0
+ for <dev@dpdk.org>; Wed, 11 Jun 2025 13:29:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1749672569; x=1750277369; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1749673776; x=1750278576; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=zPryED2slCUAGmSfEYSfk8eu2ziOZL8qdmKVnrIqWnc=;
- b=fFYCZayBe0GNqiRwvmOc8OQvSH8luJEC6waQb/wPJx2YJqsR1UjOua5ZV2ibfjSTZ4
- fUCReYKeZQtjvZ+30lKVVhzP4I7092iBGfvzjU0g/ArAJwevmN38McqIAhr+qGyrzC8G
- G0yu1Yuc8QugLYYbznDoMsMg7tWKzqA9MCYqo=
+ bh=I/jtx1gL52poSgAVSEkhDQ6pFwA0pgkDG3mdiASCnpY=;
+ b=HKrAW3PqH4BFPcabxqVOjX2jwAxOT4Rb8myKjCvBYG2icO7bVggIHn84xCp9VP68PX
+ eAWZrDTODqvMO///u7qzWDqOH6lhp2mj2ayUsvt7kozWIxKpXqQiSo5MJGCXMJLkyJMk
+ zksfhLpGTj5ry4cHvU1tbBr5qM76HDDZAzmMw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749672569; x=1750277369;
+ d=1e100.net; s=20230601; t=1749673776; x=1750278576;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=zPryED2slCUAGmSfEYSfk8eu2ziOZL8qdmKVnrIqWnc=;
- b=QGU9XkRfi3na668lAci1iSq4Gd08MclVBcTLhAegBoGYIFauMny3oKR622xU0OatF1
- 82L+sGvJ/qG668n1Md40dgG/64EcSEzfRVKEGz1U4nduQKb2ltKwLFk0n5tDo+QQLstG
- jO5yuEPTLEU2ACJe/aj9B6kfTetPWaKctzUYNQYlTC58iuoZAUuMrrMmvHOQOlx6TiW7
- TDnj+RJp/CixaMrh8n4FfQs2zaNNmW7vmn1phpf9aiHkxb3+LIY5bnkwyxbzJvYzP/Kp
- ujt1CLrEle8LHWzx8uoIy7wCwWbF1SteACcz6ZDG73sPmmR4AMZApVVXgKdq9sn4AMEs
- Qrnw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVKwwYeQ7PuCM4HSlPHnPWwEJmXjmDmzWXHGI0HsxXavn4c2biMQqPntmszuClYfmNo6I8=@dpdk.org
-X-Gm-Message-State: AOJu0YzQiPEjIFkxFrGQckhTT4nDE9MR3lH4W/sQTzMdP5a4P9WrQWUZ
- gNmqHC/ApEZjppJd3mjP0JwpCa1XK0gCYc6D3ZSdI0jPAssYlF6oKgVmTq305josKEjMx3Stm60
- X1ZuvEchdUhK1y8crNIQVz1CSicKLdFKZ4Qv7M2khdQ==
-X-Gm-Gg: ASbGncv7pLkMZ0ZAAR3pp9vE50lxl2IEGq/K0mYZLW8v3Or9FAq6NGs7aL1PKFPrVSu
- 3wFMdmSnYmO0vCuxqRJOmjG+lKwVwT/GfMLwEAwjrfw+/XRg+Q5xR9rrzDfw1ChON/+lwtpT4gB
- zjrFwbAy1SRnwP806Jmiwtqz4meqQvTPN5jc/ALtwFrtM5Ihy288oKCqfzvhXAaOjJ5ir9GQHUo
- oWG
-X-Google-Smtp-Source: AGHT+IFBZJFPRuqoxRD3Lhem7yemimz2H9aUW9n5FTp5NznKAkpLSalCNEm21WrQTCPgirgb8S+5itxRgzXi0mnKIww=
-X-Received: by 2002:a17:902:d4cc:b0:234:cc7c:d2fc with SMTP id
- d9443c01a7336-2364d8b7c7bmr5605735ad.27.1749672568878; Wed, 11 Jun 2025
- 13:09:28 -0700 (PDT)
+ bh=I/jtx1gL52poSgAVSEkhDQ6pFwA0pgkDG3mdiASCnpY=;
+ b=aFwle0la8O18fBRXHMYUEujGYN7RatJcs+SPxMwdtR+QaAlH6gkQV7pK8oSD0mToMa
+ C4wDjAtxCp9/CgbEF69OLpPOSTD/pPvFrn34eoyatmnq9W56/nAgM58bu3HFhF51MTpG
+ WSKOMK/5/htSbc3vBo7SWlz6ZDR4mMTyoF2oEI1ET/TNw5oGdRVMFxebciU5ESUxq/Lr
+ tN+BhRfyOf1gA3FwsQ/Govli81Gi0r1oXXE1KxFgmab9TbsX2JYZp3fjCt/i/10gs3Iq
+ o0rxj/cI0GFhBLvEa/Z2rVeOYpSi2994ZjRwWTl+0EHZRiopK2DKe8p15IwJJXkLBnty
+ glrw==
+X-Gm-Message-State: AOJu0YwsOs1lS0mqdgjQr0HN1Unc/jrDIuoWnfYyRgUNWfBCUPZ00QaY
+ v4uzyDOJvMp0bYj6iy95WfjL6s/RF7ovrrcZOVBwSqsDo0LwEFQ/6LNdfcjp1fnVVyfcWAw9XjF
+ bBKrghikJE9bjO7Kbyucd5ieVh4PahjC+jnAnLInH1Q==
+X-Gm-Gg: ASbGncvzJVp5NnAedhWhW31O0yPMt8wAmcYaYYFj41/BJrpJbuSA2JhBBasbtAdHWLc
+ E07FKK9zAWIAz+4zJ6KAuxr4VQixqJMdbgjhCjvaxHc8Hf9Erg3vkbqV9irgKEp3eeycApNMaOs
+ Q+YnQ2E74cW0XRFNy5zkxWbdSTdYHaavZVpjcW/QLTy6pA8FSKg5eSbeqF1ONLKASNdlCNkQXba
+ vRYIpjn07kEDJQ=
+X-Google-Smtp-Source: AGHT+IFoIA8jRG7DBNBMc+RZ3s/3nUh49gcKSASWA/Lut7APHGnSHMCL+bz2Rh2D/u/bBdwG3T6PyNNLQ35Vq0rvbI8=
+X-Received: by 2002:a17:90b:3d4e:b0:313:5d2f:5505 with SMTP id
+ 98e67ed59e1d1-313c08bbaddmr762129a91.16.1749673775721; Wed, 11 Jun 2025
+ 13:29:35 -0700 (PDT)
 MIME-Version: 1.0
-References: <20250610091411.2500413-1-vanshika.shukla@nxp.com>
- <20250611071039.2939950-1-vanshika.shukla@nxp.com>
- <20250611071039.2939950-11-vanshika.shukla@nxp.com>
- <20250611091546.3d5e101a@hermes.local>
-In-Reply-To: <20250611091546.3d5e101a@hermes.local>
+References: <20240821191557.18744-1-jspewock@iol.unh.edu>
+ <20250313033611.1896695-1-probb@iol.unh.edu>
+ <20250313033611.1896695-2-probb@iol.unh.edu>
+In-Reply-To: <20250313033611.1896695-2-probb@iol.unh.edu>
 From: Patrick Robb <probb@iol.unh.edu>
-Date: Wed, 11 Jun 2025 16:04:19 -0400
-X-Gm-Features: AX0GCFsX5K5PS5rSrXclNMUxlcNJLUGKlp22dBpwl-PK2sKTNgxuYPGQZVpYzUA
-Message-ID: <CAJvnSUBB_bJK2NJ-SemwAKoQT6FAy21FA-TCJtyTS3Te7J9eNQ@mail.gmail.com>
-Subject: Re: [v4 10/10] bus/dpaa: optimize qman enqueue check
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: vanshika.shukla@nxp.com, dev@dpdk.org, 
- Hemant Agrawal <hemant.agrawal@nxp.com>, Sachin Saxena <sachin.saxena@nxp.com>,
- Jun Yang <jun.yang@nxp.com>
-Content-Type: multipart/alternative; boundary="000000000000f10d0c06375163c7"
+Date: Wed, 11 Jun 2025 16:24:25 -0400
+X-Gm-Features: AX0GCFuOe4MuGqTmYOsPCVP0PChxlvA6-mUKVA-4zPdMyCcndOvqCWZuGxeIz9A
+Message-ID: <CAJvnSUCCU1gVA0tMf-ZUmyAB7tTwd6foL14vhRsb9OMLrz=OEA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] dts: add OS abstractions for creating virtual
+ functions
+To: Paul.Szczepanek@arm.com
+Cc: dev@dpdk.org, Luca.Vizzarro@arm.com, npratte@iol.unh.edu, 
+ dmarx@iol.unh.edu, Jeremy Spewock <jspewock@iol.unh.edu>
+Content-Type: multipart/alternative; boundary="000000000000e008d1063751ab24"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -76,16 +72,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000f10d0c06375163c7
+--000000000000e008d1063751ab24
 Content-Type: text/plain; charset="UTF-8"
 
-Loongarch is spelled with 2 o's :)
+Recheck-request: rebase=main, loongarch-compilation
 
-Recheck-request: loongarch-unit-testing
+I don't actually need a compile recheck, I'm submitting this recheck solely
+as a means of testing/demonstrating the recheck framework rebase function.
 
---000000000000f10d0c06375163c7
+--000000000000e008d1063751ab24
 Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-<div dir="ltr">Loongarch is spelled with 2 o&#39;s :)<div><br></div><div>Recheck-request: loongarch-unit-testing</div></div>
+<div dir=3D"ltr"><div dir=3D"ltr"><span class=3D"gmail-il">Recheck</span>-<=
+span class=3D"gmail-il">request</span>:=C2=A0<span class=3D"gmail-il">rebas=
+e</span>=3Dmain,=C2=A0loongarch-compilation<div><br></div><div>I don&#39;t =
+actually need a compile recheck, I&#39;m submitting this recheck solely as =
+a means of testing/demonstrating the recheck framework rebase function.</di=
+v></div></div>
 
---000000000000f10d0c06375163c7--
+--000000000000e008d1063751ab24--
