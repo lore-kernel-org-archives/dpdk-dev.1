@@ -2,77 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98598C677C4
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 10:12:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58426C677C4
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 10:26:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 420794060F;
-	Wed, 11 Jun 2025 12:12:19 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id DDCE64060F
- for <dev@dpdk.org>; Wed, 11 Jun 2025 12:12:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1749636737;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=bE6m8XybMZSs1IXnoEXlEQrTz9dsSxdCJt7J4Yr6dCs=;
- b=BoqbRuUMF0GDWp8h1Xfd5M5fQnkGWpQKFhNCoPJmJdFKvccK8ofoTlXqBNKfIANFZYl8UH
- jktw0yko1eAYs9xsd4w5WLwdaKWknQZh3gG09ETKLH6DiQdjlZNmy7vTovtZSSEK60+hE5
- hhKN3zbHu/Vh6xQpH+WqJi8NzdHCing=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-647-f3BTQfinMuK1GDe858ekDg-1; Wed, 11 Jun 2025 06:12:16 -0400
-X-MC-Unique: f3BTQfinMuK1GDe858ekDg-1
-X-Mimecast-MFC-AGG-ID: f3BTQfinMuK1GDe858ekDg_1749636735
-Received: by mail-lf1-f71.google.com with SMTP id
- 2adb3069b0e04-553522f65a8so3515797e87.1
- for <dev@dpdk.org>; Wed, 11 Jun 2025 03:12:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749636734; x=1750241534;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=bE6m8XybMZSs1IXnoEXlEQrTz9dsSxdCJt7J4Yr6dCs=;
- b=c67FR0GUjrh+iKL8+8DLlhmpIxKQqt8TehL0WI2HFsEI6Kwfrhz/wK9EOi3zJQ7i0Z
- YN/H+OPSt4klxL5ZSHnVoJAJC37Q08+CCw+bUDZDQFt/6AFFcInw5liBqZYBNbDXE/ZS
- 7jVmI5aUSfSb4RXwxhWBusV+EpKoR3JQDWddv0Pd+j/DNLLzgu0QzENL2q1PVeG3rg+w
- rRocWyqqtetaMSqAogzvl/hM38CCDVJzYVILcueFp/GBVkMmb3/5VX0IAfSMI6hGfJ4V
- ZRXrYXdiavgoP2LUaakHv/WLKr/lRR07ABiKJ5qkQyJ4/McM3Zu3UWgGayLgZvEH9QIf
- +52A==
-X-Gm-Message-State: AOJu0YxM+XLfKsjV47dKgvuGjtoTJ18rLBCAjxDxvbMpb2tLJpphGUzP
- rEmUvShrdR2Qt3oN/ubHDBHXkenckM69eScYDtyhJ7s8Btii24wpOK6hWQ6uuqqaqV1jVzK7usW
- WYcm/ZTNDpKAylE9hnSajJd177M/Ka0p/gyMoDXb25YA1G5AwqLN7tuZ3M2twgWMXEPjpvUdMJd
- JG861l94KRz0soHsM3hro=
-X-Gm-Gg: ASbGncvJwHLxD4W8R6H2tm1NoHh4q33Bep/jQv/HQQa6TDZyP4JeyM58321jlu9GSrR
- UPj/tWzfx0k2Pi69m9JhRGwmopdb5ZLluL8xZvIb2rIZRnIDZOl+/r+00KVzOOMVSz05TCw0ivO
- phMdUwEw==
-X-Received: by 2002:a05:6512:2242:b0:553:5166:5a5f with SMTP id
- 2adb3069b0e04-5539c25549cmr826466e87.53.1749636734586; 
- Wed, 11 Jun 2025 03:12:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEOABgz+OVnsKPL2V4TJKLKiNa9xQ38mUy/NzFnbAMkxkCJcF3ZU8H+jX27LHmyaSDTiMMdkvSuqpGiCPRJzqY=
-X-Received: by 2002:a05:6512:2242:b0:553:5166:5a5f with SMTP id
- 2adb3069b0e04-5539c25549cmr826454e87.53.1749636734177; Wed, 11 Jun 2025
- 03:12:14 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7B4C54060F;
+	Wed, 11 Jun 2025 12:26:29 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 4047740144;
+ Wed, 11 Jun 2025 12:26:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1749637588; x=1781173588;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=mNYznBZRwmEUG3rj9la57uWMKJ3FLUVOTbLRAsL2HwA=;
+ b=K0jhLCacexCvLIR77GsYSnpdhziflvbupyFs+5s0mxfjDmeWwzjo7iJf
+ 5OvfcoZLmWVjSCoT4iUIqfZwIEHdoBwMiKRi80dtAp/3gJSR6FaYCI92y
+ nafNviPxixzSOnSbaSGqaf8tYa+xlSkuCMx+RTFyqzlntHxn5lgv5xch3
+ jBxZf862a//lR8GtFrAvrJq+iGGA53UDJuiHNBCy0ygN37w9tdWy02yPy
+ 32S8HIHaH+yTVbd7bDsi3cYQOblkcwYY23xwG9JzpFh7yK28u/6YbTShd
+ L5vIq+qApEj+T1q7+YQxToovA8c0zRmom6uTBfa7T0iIfNPD7WGcFwaMt g==;
+X-CSE-ConnectionGUID: sAabmTDSRdaYIZ4exYWsCA==
+X-CSE-MsgGUID: y+DeCRiDSE+8h6f1IxtT7A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11460"; a="50883845"
+X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; d="scan'208";a="50883845"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+ by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Jun 2025 03:26:26 -0700
+X-CSE-ConnectionGUID: Gmr9i/eyQSqBQLDst/u+xw==
+X-CSE-MsgGUID: Va/alGRDTDeOtXvEAGzCug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,227,1744095600"; d="scan'208";a="152317371"
+Received: from unknown (HELO localhost.localdomain) ([10.239.252.253])
+ by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Jun 2025 03:26:24 -0700
+From: Mingjin Ye <mingjinx.ye@intel.com>
+To: dev@dpdk.org
+Cc: Mingjin Ye <mingjinx.ye@intel.com>, stable@dpdk.org,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH] net/ice: fix DCF RSS hash update
+Date: Wed, 11 Jun 2025 09:50:57 +0000
+Message-Id: <20250611095058.114465-1-mingjinx.ye@intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20240314093630.1066948-3-mingjinx.ye@intel.com>
- <20250513092156.1198659-1-mingjinx.ye@intel.com>
-In-Reply-To: <20250513092156.1198659-1-mingjinx.ye@intel.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 11 Jun 2025 12:12:02 +0200
-X-Gm-Features: AX0GCFvqMhXIcg2B_VPKYEM9GJY2gvbl2SfY8bgg6D7LzoHeUQD9Xxb4LS4Mw-A
-Message-ID: <CAJFAV8wzoDuL4c9E-2WaOfUOjopwqJ4opvwwLuL85nZcaR0ptQ@mail.gmail.com>
-Subject: Re: [PATCH v2] bus/vdev: revert fix devargs after multi-process bus
- scan
-To: Mingjin Ye <mingjinx.ye@intel.com>
-Cc: dev@dpdk.org, stable@dpdk.org, Thomas Monjalon <thomas@monjalon.net>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 09DUuEzlLFCBePI3DO_W6tqY0zvxWXAVsFQ9ph5Kdfg_1749636735
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,37 +60,89 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, May 13, 2025 at 11:52=E2=80=AFAM Mingjin Ye <mingjinx.ye@intel.com>=
- wrote:
->
-> This patch reverts commit f5b2eff0847d ("bus/vdev: fix devargs after
-> multi-process bus scan")
->
-> With current code, we do not add devargs to devargs list when we add a
-> vdev in secondary process (because `init` flag is set to `false`).
->
-> Because of this, when we do vdev_uninit, we call rte_devargs_remove on
-> the &devargs pointer (the one we didn't add to devargs list but did save
-> inside rte_vdev_device struct), but in secondary process, because
-> devargs were not added to the list in the first place, devargs_remove
-> does not find the associated devargs in its list and therefore does not
-> free associated resources. As a result, we get a memory leak, because we
-> free the rte_vdev_device but not its associated devargs.
->
-> Revert this patch to avoid leaking devargs on vdev uninit.
->
-> Fixes: f5b2eff0847d ("bus/vdev: fix devargs after multi-process bus scan"=
-)
-> Cc: stable@dpdk.org
->
-> Signed-off-by: Mingjin Ye <mingjinx.ye@intel.com>
+Get rss hash configuration, rss_hf is always the default value.
+The driver does nothing if the rss key is invalid during the rss
+hash update.
 
-I see back and forth on this topic but this still seems strange we
-would have to revert such an old commit.
+This patch is get the current configuration of rss_hf. Extract
+the update rss key code from ice_dcf_dev_rss_hash_update to
+ice_dcf_set_rss_key and make it consistent with the pf behaviour.
 
-Please add a unit test showing the bug.
+Fixes: c223cadc9e5f ("net/ice: support RSS hash configuration in DCF mode")
+Cc: stable@dpdk.org
 
+Signed-off-by: Mingjin Ye <mingjinx.ye@intel.com>
+---
+ drivers/net/intel/ice/ice_dcf_ethdev.c | 38 +++++++++++++++-----------
+ 1 file changed, 22 insertions(+), 16 deletions(-)
 
---=20
-David Marchand
+diff --git a/drivers/net/intel/ice/ice_dcf_ethdev.c b/drivers/net/intel/ice/ice_dcf_ethdev.c
+index efff76afa8..accabd0ab9 100644
+--- a/drivers/net/intel/ice/ice_dcf_ethdev.c
++++ b/drivers/net/intel/ice/ice_dcf_ethdev.c
+@@ -1394,31 +1394,38 @@ ice_dcf_dev_rss_reta_query(struct rte_eth_dev *dev,
+ }
+ 
+ static int
+-ice_dcf_dev_rss_hash_update(struct rte_eth_dev *dev,
+-			struct rte_eth_rss_conf *rss_conf)
++ice_dcf_set_rss_key(struct ice_dcf_hw *hw, uint8_t *key, uint8_t key_len)
+ {
+-	struct ice_dcf_adapter *adapter = dev->data->dev_private;
+-	struct ice_dcf_hw *hw = &adapter->real_hw;
+-	int ret;
+-
+-	if (!(hw->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_RSS_PF))
+-		return -ENOTSUP;
+-
+ 	/* HENA setting, it is enabled by default, no change */
+-	if (!rss_conf->rss_key || rss_conf->rss_key_len == 0) {
++	if (!key || key_len == 0) {
+ 		PMD_DRV_LOG(DEBUG, "No key to be configured");
+ 		return 0;
+-	} else if (rss_conf->rss_key_len != hw->vf_res->rss_key_size) {
++	} else if (key_len != hw->vf_res->rss_key_size) {
+ 		PMD_DRV_LOG(ERR, "The size of hash key configured "
+ 			"(%d) doesn't match the size of hardware can "
+-			"support (%d)", rss_conf->rss_key_len,
++			"support (%d)", key_len,
+ 			hw->vf_res->rss_key_size);
+ 		return -EINVAL;
+ 	}
+ 
+-	rte_memcpy(hw->rss_key, rss_conf->rss_key, rss_conf->rss_key_len);
++	rte_memcpy(hw->rss_key, key, key_len);
++
++	return ice_dcf_configure_rss_key(hw);
++}
++
++static int
++ice_dcf_dev_rss_hash_update(struct rte_eth_dev *dev,
++			struct rte_eth_rss_conf *rss_conf)
++{
++	struct ice_dcf_adapter *adapter = dev->data->dev_private;
++	struct ice_dcf_hw *hw = &adapter->real_hw;
++	int ret;
++
++	if (!(hw->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_RSS_PF))
++		return -ENOTSUP;
+ 
+-	ret = ice_dcf_configure_rss_key(hw);
++	/* set hash key */
++	ret = ice_dcf_set_rss_key(hw, rss_conf->rss_key, rss_conf->rss_key_len);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1452,8 +1459,7 @@ ice_dcf_dev_rss_hash_conf_get(struct rte_eth_dev *dev,
+ 	if (!(hw->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_RSS_PF))
+ 		return -ENOTSUP;
+ 
+-	/* Just set it to default value now. */
+-	rss_conf->rss_hf = ICE_RSS_OFFLOAD_ALL;
++	rss_conf->rss_hf = dev->data->dev_conf.rx_adv_conf.rss_conf.rss_hf;
+ 
+ 	if (!rss_conf->rss_key)
+ 		return 0;
+-- 
+2.25.1
 
