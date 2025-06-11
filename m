@@ -2,32 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A093AC677C4
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 07:10:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3785AC677C4
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 07:10:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2B7CF402C6;
-	Wed, 11 Jun 2025 09:10:43 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 448A4402F0;
+	Wed, 11 Jun 2025 09:10:46 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id DFB5A402C2
- for <dev@dpdk.org>; Wed, 11 Jun 2025 09:10:41 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id CD481402C2
+ for <dev@dpdk.org>; Wed, 11 Jun 2025 09:10:42 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B5F401A2119;
- Wed, 11 Jun 2025 09:10:41 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A38BB1A0B1F;
+ Wed, 11 Jun 2025 09:10:42 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7CA311A0B1A;
- Wed, 11 Jun 2025 09:10:41 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6A1E31A0B1A;
+ Wed, 11 Jun 2025 09:10:42 +0200 (CEST)
 Received: from lsv03379.swis.in-blr01.nxp.com (lsv03379.swis.in-blr01.nxp.com
  [92.120.147.188])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 9872E180007D;
- Wed, 11 Jun 2025 15:10:40 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 86DB11800079;
+ Wed, 11 Jun 2025 15:10:41 +0800 (+08)
 From: vanshika.shukla@nxp.com
 To: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
  Sachin Saxena <sachin.saxena@nxp.com>
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [v4 01/10] bus/dpaa: avoid using same structure and variable name
-Date: Wed, 11 Jun 2025 12:40:30 +0530
-Message-Id: <20250611071039.2939950-2-vanshika.shukla@nxp.com>
+Subject: [v4 03/10] bus/dpaa: enhance DPAA SoC version
+Date: Wed, 11 Jun 2025 12:40:32 +0530
+Message-Id: <20250611071039.2939950-4-vanshika.shukla@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250611071039.2939950-1-vanshika.shukla@nxp.com>
 References: <20250610091411.2500413-1-vanshika.shukla@nxp.com>
@@ -48,236 +48,302 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Hemant Agrawal <hemant.agrawal@nxp.com>
+From: Jun Yang <jun.yang@nxp.com>
 
-rte_dpaa_bus was being used as structure and variable name both.
+Provide internal API to identify DPAA1 SoC version instead of accessing
+global variable directly.
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
-Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/bus/dpaa/dpaa_bus.c | 56 ++++++++++++++++++-------------------
- 1 file changed, 28 insertions(+), 28 deletions(-)
+ drivers/bus/dpaa/base/qbman/qman.c |  9 +++---
+ drivers/bus/dpaa/bus_dpaa_driver.h |  9 +++---
+ drivers/bus/dpaa/dpaa_bus.c        | 48 ++++++++++++++++++++++--------
+ drivers/net/dpaa/dpaa_ethdev.c     | 29 +++++-------------
+ drivers/net/dpaa/dpaa_rxtx.c       |  4 +--
+ 5 files changed, 54 insertions(+), 45 deletions(-)
 
+diff --git a/drivers/bus/dpaa/base/qbman/qman.c b/drivers/bus/dpaa/base/qbman/qman.c
+index 11fabcaff5..fbce0638b7 100644
+--- a/drivers/bus/dpaa/base/qbman/qman.c
++++ b/drivers/bus/dpaa/base/qbman/qman.c
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
+  *
+  * Copyright 2008-2016 Freescale Semiconductor Inc.
+- * Copyright 2017,2019-2024 NXP
++ * Copyright 2017,2019-2025 NXP
+  *
+  */
+ 
+@@ -520,11 +520,12 @@ qman_init_portal(struct qman_portal *portal,
+ 	if (!c)
+ 		c = portal->config;
+ 
+-	if (dpaa_svr_family == SVR_LS1043A_FAMILY)
++	if (dpaa_soc_ver() == SVR_LS1043A_FAMILY) {
+ 		portal->use_eqcr_ci_stashing = 3;
+-	else
++	} else {
+ 		portal->use_eqcr_ci_stashing =
+-					((qman_ip_rev >= QMAN_REV30) ? 1 : 0);
++			(qman_ip_rev >= QMAN_REV30 ? 1 : 0);
++	}
+ 
+ 	/*
+ 	 * prep the low-level portal struct with the mapped addresses from the
+diff --git a/drivers/bus/dpaa/bus_dpaa_driver.h b/drivers/bus/dpaa/bus_dpaa_driver.h
+index 26a83b2cdf..d64a8e80e0 100644
+--- a/drivers/bus/dpaa/bus_dpaa_driver.h
++++ b/drivers/bus/dpaa/bus_dpaa_driver.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+  *
+- *   Copyright 2017-2022 NXP
++ *   Copyright 2017-2022, 2025 NXP
+  *
+  */
+ #ifndef BUS_DPAA_DRIVER_H
+@@ -55,11 +55,9 @@ dpaa_seqn(struct rte_mbuf *mbuf)
+ /* DPAA SoC identifier; If this is not available, it can be concluded
+  * that board is non-DPAA. Single slot is currently supported.
+  */
+-#define DPAA_SOC_ID_FILE	"/sys/devices/soc0/soc_id"
+ 
+ #define SVR_LS1043A_FAMILY	0x87920000
+ #define SVR_LS1046A_FAMILY	0x87070000
+-#define SVR_MASK		0xffff0000
+ 
+ /** Device driver supports link state interrupt */
+ #define RTE_DPAA_DRV_INTR_LSC  0x0008
+@@ -70,8 +68,6 @@ dpaa_seqn(struct rte_mbuf *mbuf)
+ #define RTE_DEV_TO_DPAA_CONST(ptr) \
+ 	container_of(ptr, const struct rte_dpaa_device, device)
+ 
+-extern unsigned int dpaa_svr_family;
+-
+ struct rte_dpaa_device;
+ struct rte_dpaa_driver;
+ 
+@@ -250,6 +246,9 @@ RTE_PMD_EXPORT_NAME(nm, __COUNTER__)
+ __rte_internal
+ struct fm_eth_port_cfg *dpaa_get_eth_port_cfg(int dev_id);
+ 
++__rte_internal
++uint32_t dpaa_soc_ver(void);
++
+ #ifdef __cplusplus
+ }
+ #endif
 diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
-index 5420733019..f5ce4a2761 100644
+index ed1f77bab7..341822c877 100644
 --- a/drivers/bus/dpaa/dpaa_bus.c
 +++ b/drivers/bus/dpaa/dpaa_bus.c
-@@ -54,7 +54,7 @@ struct rte_dpaa_bus {
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+  *
+- *   Copyright 2017-2020 NXP
++ * Copyright 2017-2025 NXP
+  *
+  */
+ /* System headers */
+@@ -46,12 +46,16 @@
+ #include <netcfg.h>
+ #include <fman.h>
+ 
++#define DPAA_SOC_ID_FILE	"/sys/devices/soc0/soc_id"
++#define DPAA_SVR_MASK 0xffff0000
++
+ struct rte_dpaa_bus {
+ 	struct rte_bus bus;
+ 	TAILQ_HEAD(, rte_dpaa_device) device_list;
+ 	TAILQ_HEAD(, rte_dpaa_driver) driver_list;
+ 	int device_count;
  	int detected;
++	uint32_t svr_ver;
  };
  
--static struct rte_dpaa_bus rte_dpaa_bus;
-+static struct rte_dpaa_bus s_rte_dpaa_bus;
- struct netcfg_info *dpaa_netcfg;
- 
+ static struct rte_dpaa_bus s_rte_dpaa_bus;
+@@ -60,9 +64,6 @@ static struct netcfg_info *dpaa_netcfg;
  /* define a variable to hold the portal_key, once created.*/
-@@ -120,7 +120,7 @@ dpaa_add_to_device_list(struct rte_dpaa_device *newdev)
- 	struct rte_dpaa_device *dev = NULL;
- 	struct rte_dpaa_device *tdev = NULL;
+ static pthread_key_t dpaa_portal_key;
  
--	RTE_TAILQ_FOREACH_SAFE(dev, &rte_dpaa_bus.device_list, next, tdev) {
-+	RTE_TAILQ_FOREACH_SAFE(dev, &s_rte_dpaa_bus.device_list, next, tdev) {
- 		comp = compare_dpaa_devices(newdev, dev);
- 		if (comp < 0) {
- 			TAILQ_INSERT_BEFORE(dev, newdev, next);
-@@ -130,7 +130,7 @@ dpaa_add_to_device_list(struct rte_dpaa_device *newdev)
- 	}
+-RTE_EXPORT_INTERNAL_SYMBOL(dpaa_svr_family)
+-unsigned int dpaa_svr_family;
+-
+ #define FSL_DPAA_BUS_NAME	dpaa_bus
  
- 	if (!inserted)
--		TAILQ_INSERT_TAIL(&rte_dpaa_bus.device_list, newdev, next);
-+		TAILQ_INSERT_TAIL(&s_rte_dpaa_bus.device_list, newdev, next);
- }
+ RTE_EXPORT_INTERNAL_SYMBOL(per_lcore_dpaa_io)
+@@ -73,6 +74,13 @@ RTE_EXPORT_INTERNAL_SYMBOL(dpaa_seqn_dynfield_offset)
+ int dpaa_seqn_dynfield_offset = -1;
  
- /*
-@@ -176,7 +176,7 @@ dpaa_create_device_list(void)
- 	struct fm_eth_port_cfg *cfg;
- 	struct fman_if *fman_intf;
- 
--	rte_dpaa_bus.device_count = 0;
-+	s_rte_dpaa_bus.device_count = 0;
- 
- 	/* Creating Ethernet Devices */
- 	for (i = 0; dpaa_netcfg && (i < dpaa_netcfg->num_ethports); i++) {
-@@ -187,7 +187,7 @@ dpaa_create_device_list(void)
- 			goto cleanup;
- 		}
- 
--		dev->device.bus = &rte_dpaa_bus.bus;
-+		dev->device.bus = &s_rte_dpaa_bus.bus;
- 		dev->device.numa_node = SOCKET_ID_ANY;
- 
- 		/* Allocate interrupt handle instance */
-@@ -226,7 +226,7 @@ dpaa_create_device_list(void)
- 		dpaa_add_to_device_list(dev);
- 	}
- 
--	rte_dpaa_bus.device_count += i;
-+	s_rte_dpaa_bus.device_count += i;
- 
- 	/* Unlike case of ETH, RTE_LIBRTE_DPAA_MAX_CRYPTODEV SEC devices are
- 	 * constantly created only if "sec" property is found in the device
-@@ -259,7 +259,7 @@ dpaa_create_device_list(void)
- 		}
- 
- 		dev->device_type = FSL_DPAA_CRYPTO;
--		dev->id.dev_id = rte_dpaa_bus.device_count + i;
-+		dev->id.dev_id = s_rte_dpaa_bus.device_count + i;
- 
- 		/* Even though RTE_CRYPTODEV_NAME_MAX_LEN is valid length of
- 		 * crypto PMD, using RTE_ETH_NAME_MAX_LEN as that is the size
-@@ -274,7 +274,7 @@ dpaa_create_device_list(void)
- 		dpaa_add_to_device_list(dev);
- 	}
- 
--	rte_dpaa_bus.device_count += i;
-+	s_rte_dpaa_bus.device_count += i;
- 
- qdma_dpaa:
- 	/* Creating QDMA Device */
-@@ -287,7 +287,7 @@ dpaa_create_device_list(void)
- 		}
- 
- 		dev->device_type = FSL_DPAA_QDMA;
--		dev->id.dev_id = rte_dpaa_bus.device_count + i;
-+		dev->id.dev_id = s_rte_dpaa_bus.device_count + i;
- 
- 		memset(dev->name, 0, RTE_ETH_NAME_MAX_LEN);
- 		sprintf(dev->name, "dpaa_qdma-%d", i+1);
-@@ -297,7 +297,7 @@ dpaa_create_device_list(void)
- 
- 		dpaa_add_to_device_list(dev);
- 	}
--	rte_dpaa_bus.device_count += i;
-+	s_rte_dpaa_bus.device_count += i;
- 
- 	return 0;
- 
-@@ -312,8 +312,8 @@ dpaa_clean_device_list(void)
- 	struct rte_dpaa_device *dev = NULL;
- 	struct rte_dpaa_device *tdev = NULL;
- 
--	RTE_TAILQ_FOREACH_SAFE(dev, &rte_dpaa_bus.device_list, next, tdev) {
--		TAILQ_REMOVE(&rte_dpaa_bus.device_list, dev, next);
-+	RTE_TAILQ_FOREACH_SAFE(dev, &s_rte_dpaa_bus.device_list, next, tdev) {
-+		TAILQ_REMOVE(&s_rte_dpaa_bus.device_list, dev, next);
- 		rte_intr_instance_free(dev->intr_handle);
- 		free(dev);
- 		dev = NULL;
-@@ -537,10 +537,10 @@ rte_dpaa_bus_scan(void)
- 		return 0;
- 	}
- 
--	if (rte_dpaa_bus.detected)
-+	if (s_rte_dpaa_bus.detected)
- 		return 0;
- 
--	rte_dpaa_bus.detected = 1;
-+	s_rte_dpaa_bus.detected = 1;
- 
- 	/* create the key, supplying a function that'll be invoked
- 	 * when a portal affined thread will be deleted.
-@@ -564,7 +564,7 @@ rte_dpaa_driver_register(struct rte_dpaa_driver *driver)
- 
- 	BUS_INIT_FUNC_TRACE();
- 
--	TAILQ_INSERT_TAIL(&rte_dpaa_bus.driver_list, driver, next);
-+	TAILQ_INSERT_TAIL(&s_rte_dpaa_bus.driver_list, driver, next);
- }
- 
- /* un-register a dpaa bus based dpaa driver */
-@@ -574,7 +574,7 @@ rte_dpaa_driver_unregister(struct rte_dpaa_driver *driver)
+ RTE_EXPORT_INTERNAL_SYMBOL(dpaa_get_eth_port_cfg)
++
++RTE_EXPORT_INTERNAL_SYMBOL(dpaa_soc_ver)
++uint32_t dpaa_soc_ver(void)
++{
++	return s_rte_dpaa_bus.svr_ver;
++}
++
+ struct fm_eth_port_cfg *
+ dpaa_get_eth_port_cfg(int dev_id)
  {
- 	BUS_INIT_FUNC_TRACE();
- 
--	TAILQ_REMOVE(&rte_dpaa_bus.driver_list, driver, next);
-+	TAILQ_REMOVE(&s_rte_dpaa_bus.driver_list, driver, next);
- }
- 
- static int
-@@ -663,11 +663,11 @@ rte_dpaa_bus_probe(void)
+@@ -663,7 +671,7 @@ rte_dpaa_bus_probe(void)
+ 	struct rte_dpaa_device *dev;
  	struct rte_dpaa_driver *drv;
  	FILE *svr_file = NULL;
- 	unsigned int svr_ver;
--	int probe_all = rte_dpaa_bus.bus.conf.scan_mode != RTE_BUS_SCAN_ALLOWLIST;
-+	int probe_all = s_rte_dpaa_bus.bus.conf.scan_mode != RTE_BUS_SCAN_ALLOWLIST;
+-	unsigned int svr_ver;
++	uint32_t svr_ver;
+ 	int probe_all = s_rte_dpaa_bus.bus.conf.scan_mode != RTE_BUS_SCAN_ALLOWLIST;
  	static int process_once;
  
- 	/* If DPAA bus is not present nothing needs to be done */
--	if (!rte_dpaa_bus.detected)
-+	if (!s_rte_dpaa_bus.detected)
+@@ -671,6 +679,29 @@ rte_dpaa_bus_probe(void)
+ 	if (!s_rte_dpaa_bus.detected)
  		return 0;
  
++	if (s_rte_dpaa_bus.bus.conf.scan_mode != RTE_BUS_SCAN_ALLOWLIST)
++		probe_all = true;
++
++	svr_file = fopen(DPAA_SOC_ID_FILE, "r");
++	if (svr_file) {
++		if (fscanf(svr_file, "svr:%x", &svr_ver) > 0)
++			s_rte_dpaa_bus.svr_ver = svr_ver & DPAA_SVR_MASK;
++		else
++			s_rte_dpaa_bus.svr_ver = 0;
++		fclose(svr_file);
++	} else {
++		s_rte_dpaa_bus.svr_ver = 0;
++	}
++	if (s_rte_dpaa_bus.svr_ver == SVR_LS1046A_FAMILY) {
++		DPAA_BUS_LOG(INFO, "This is LS1046A family SoC.");
++	} else if (s_rte_dpaa_bus.svr_ver == SVR_LS1043A_FAMILY) {
++		DPAA_BUS_LOG(INFO, "This is LS1043A family SoC.");
++	} else {
++		DPAA_BUS_LOG(WARNING,
++			"This is Unknown(%08x) DPAA1 family SoC.",
++			s_rte_dpaa_bus.svr_ver);
++	}
++
  	/* Device list creation is only done once */
-@@ -690,7 +690,7 @@ rte_dpaa_bus_probe(void)
- 	process_once = 1;
+ 	if (!process_once) {
+ 		rte_dpaa_bus_dev_build();
+@@ -699,13 +730,6 @@ rte_dpaa_bus_probe(void)
+ 	 */
+ 	rte_mbuf_set_platform_mempool_ops(DPAA_MEMPOOL_OPS_NAME);
  
- 	/* If no device present on DPAA bus nothing needs to be done */
--	if (TAILQ_EMPTY(&rte_dpaa_bus.device_list))
-+	if (TAILQ_EMPTY(&s_rte_dpaa_bus.device_list))
- 		return 0;
- 
- 	/* Register DPAA mempool ops only if any DPAA device has
-@@ -705,7 +705,7 @@ rte_dpaa_bus_probe(void)
- 		fclose(svr_file);
- 	}
- 
--	TAILQ_FOREACH(dev, &rte_dpaa_bus.device_list, next) {
-+	TAILQ_FOREACH(dev, &s_rte_dpaa_bus.device_list, next) {
+-	svr_file = fopen(DPAA_SOC_ID_FILE, "r");
+-	if (svr_file) {
+-		if (fscanf(svr_file, "svr:%x", &svr_ver) > 0)
+-			dpaa_svr_family = svr_ver & SVR_MASK;
+-		fclose(svr_file);
+-	}
+-
+ 	TAILQ_FOREACH(dev, &s_rte_dpaa_bus.device_list, next) {
  		if (dev->device_type == FSL_DPAA_ETH) {
  			ret = rte_dpaa_setup_intr(dev->intr_handle);
- 			if (ret)
-@@ -717,8 +717,8 @@ rte_dpaa_bus_probe(void)
- 	dpaax_iova_table_populate();
+diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
+index 66d62485af..7d0f830204 100644
+--- a/drivers/net/dpaa/dpaa_ethdev.c
++++ b/drivers/net/dpaa/dpaa_ethdev.c
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+  *
+  *   Copyright 2016 Freescale Semiconductor, Inc. All rights reserved.
+- *   Copyright 2017-2020,2022-2024 NXP
++ *   Copyright 2017-2020,2022-2025 NXP
+  *
+  */
+ /* System headers */
+@@ -173,7 +173,7 @@ dpaa_poll_queue_default_config(struct qm_mcc_initfq *opts)
+ 	opts->fqd.fq_ctrl = QM_FQCTRL_AVOIDBLOCK | QM_FQCTRL_CTXASTASHING |
+ 			   QM_FQCTRL_PREFERINCACHE;
+ 	opts->fqd.context_a.stashing.exclusive = 0;
+-	if (dpaa_svr_family != SVR_LS1046A_FAMILY)
++	if (dpaa_soc_ver() != SVR_LS1046A_FAMILY)
+ 		opts->fqd.context_a.stashing.annotation_cl =
+ 						DPAA_IF_RX_ANNOTATION_STASH;
+ 	opts->fqd.context_a.stashing.data_cl = DPAA_IF_RX_DATA_STASH;
+@@ -594,30 +594,15 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
  
- 	/* For each registered driver, and device, call the driver->probe */
--	TAILQ_FOREACH(dev, &rte_dpaa_bus.device_list, next) {
--		TAILQ_FOREACH(drv, &rte_dpaa_bus.driver_list, next) {
-+	TAILQ_FOREACH(dev, &s_rte_dpaa_bus.device_list, next) {
-+		TAILQ_FOREACH(drv, &s_rte_dpaa_bus.driver_list, next) {
- 			ret = rte_dpaa_device_match(drv, dev);
- 			if (ret)
- 				continue;
-@@ -765,7 +765,7 @@ rte_dpaa_find_device(const struct rte_device *start, rte_dev_cmp_t cmp,
- 		dstart = RTE_DEV_TO_DPAA_CONST(start);
- 		dev = TAILQ_NEXT(dstart, next);
- 	} else {
--		dev = TAILQ_FIRST(&rte_dpaa_bus.device_list);
-+		dev = TAILQ_FIRST(&s_rte_dpaa_bus.device_list);
- 	}
+ static int
+ dpaa_fw_version_get(struct rte_eth_dev *dev,
+-		     char *fw_version,
+-		     size_t fw_size)
++	char *fw_version, size_t fw_size)
+ {
+ 	struct fman_if *fif = dev->process_private;
+ 	int ret;
+-	FILE *svr_file = NULL;
+-	unsigned int svr_ver = 0;
  
- 	while (dev != NULL) {
-@@ -838,7 +838,7 @@ dpaa_bus_dev_iterate(const void *start, const char *str,
- 		dstart = RTE_DEV_TO_DPAA_CONST(start);
- 		dev = TAILQ_NEXT(dstart, next);
- 	} else {
--		dev = TAILQ_FIRST(&rte_dpaa_bus.device_list);
-+		dev = TAILQ_FIRST(&s_rte_dpaa_bus.device_list);
- 	}
+ 	PMD_INIT_FUNC_TRACE();
  
- 	while (dev != NULL) {
-@@ -853,7 +853,7 @@ dpaa_bus_dev_iterate(const void *start, const char *str,
- 	return NULL;
- }
+-	svr_file = fopen(DPAA_SOC_ID_FILE, "r");
+-	if (!svr_file) {
+-		DPAA_PMD_ERR("Unable to open SoC device");
+-		return -ENOTSUP; /* Not supported on this infra */
+-	}
+-	if (fscanf(svr_file, "svr:%x", &svr_ver) > 0)
+-		dpaa_svr_family = svr_ver & SVR_MASK;
+-	else
+-		DPAA_PMD_ERR("Unable to read SoC device");
+-
+-	fclose(svr_file);
+-
+ 	ret = snprintf(fw_version, fw_size, "SVR:%x-fman-v%x",
+-		       svr_ver, fif->fman->ip_rev);
++			dpaa_soc_ver(), fif->fman->ip_rev);
+ 	if (ret < 0)
+ 		return -EINVAL;
  
--static struct rte_dpaa_bus rte_dpaa_bus = {
-+static struct rte_dpaa_bus s_rte_dpaa_bus = {
- 	.bus = {
- 		.scan = rte_dpaa_bus_scan,
- 		.probe = rte_dpaa_bus_probe,
-@@ -864,10 +864,10 @@ static struct rte_dpaa_bus rte_dpaa_bus = {
- 		.unplug = dpaa_bus_unplug,
- 		.dev_iterate = dpaa_bus_dev_iterate,
- 	},
--	.device_list = TAILQ_HEAD_INITIALIZER(rte_dpaa_bus.device_list),
--	.driver_list = TAILQ_HEAD_INITIALIZER(rte_dpaa_bus.driver_list),
-+	.device_list = TAILQ_HEAD_INITIALIZER(s_rte_dpaa_bus.device_list),
-+	.driver_list = TAILQ_HEAD_INITIALIZER(s_rte_dpaa_bus.driver_list),
- 	.device_count = 0,
- };
+@@ -1190,7 +1175,7 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 		/* In multicore scenario stashing becomes a bottleneck on LS1046.
+ 		 * So do not enable stashing in this case
+ 		 */
+-		if (dpaa_svr_family != SVR_LS1046A_FAMILY)
++		if (dpaa_soc_ver() != SVR_LS1046A_FAMILY)
+ 			opts.fqd.context_a.stashing.annotation_cl =
+ 						DPAA_IF_RX_ANNOTATION_STASH;
+ 		opts.fqd.context_a.stashing.data_cl = DPAA_IF_RX_DATA_STASH;
+@@ -1218,7 +1203,7 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 				"ret:%d(%s)", rxq->fqid, ret, strerror(ret));
+ 			return ret;
+ 		}
+-		if (dpaa_svr_family == SVR_LS1043A_FAMILY) {
++		if (dpaa_soc_ver() == SVR_LS1043A_FAMILY) {
+ 			rxq->cb.dqrr_dpdk_pull_cb = dpaa_rx_cb_no_prefetch;
+ 		} else {
+ 			rxq->cb.dqrr_dpdk_pull_cb = dpaa_rx_cb;
+@@ -2520,7 +2505,7 @@ rte_dpaa_probe(struct rte_dpaa_driver *dpaa_drv,
+ 		}
  
--RTE_REGISTER_BUS(FSL_DPAA_BUS_NAME, rte_dpaa_bus.bus);
-+RTE_REGISTER_BUS(FSL_DPAA_BUS_NAME, s_rte_dpaa_bus.bus);
- RTE_LOG_REGISTER_DEFAULT(dpaa_logtype_bus, NOTICE);
+ 		/* disabling the default push mode for LS1043 */
+-		if (dpaa_svr_family == SVR_LS1043A_FAMILY)
++		if (dpaa_soc_ver() == SVR_LS1043A_FAMILY)
+ 			dpaa_push_mode_max_queue = 0;
+ 
+ 		/* if push mode queues to be enabled. Currently we are allowing
+diff --git a/drivers/net/dpaa/dpaa_rxtx.c b/drivers/net/dpaa/dpaa_rxtx.c
+index 05bd73becf..4dca63ea7e 100644
+--- a/drivers/net/dpaa/dpaa_rxtx.c
++++ b/drivers/net/dpaa/dpaa_rxtx.c
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+  *
+  *   Copyright 2016 Freescale Semiconductor, Inc. All rights reserved.
+- *   Copyright 2017,2019-2024 NXP
++ *   Copyright 2017,2019-2025 NXP
+  *
+  */
+ 
+@@ -1268,7 +1268,7 @@ dpaa_eth_ls1043a_mbuf_realloc(struct rte_mbuf *mbuf)
+ {
+ 	uint64_t len, offset;
+ 
+-	if (dpaa_svr_family != SVR_LS1043A_FAMILY)
++	if (dpaa_soc_ver() != SVR_LS1043A_FAMILY)
+ 		return 0;
+ 
+ 	while (mbuf) {
 -- 
 2.25.1
 
