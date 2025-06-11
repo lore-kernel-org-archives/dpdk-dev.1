@@ -2,50 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65D31C677C4
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 03:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 847BDC61CE7
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 06:49:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 38D2040684;
-	Wed, 11 Jun 2025 05:10:28 +0200 (CEST)
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
- by mails.dpdk.org (Postfix) with ESMTP id 9E31640674
- for <dev@dpdk.org>; Wed, 11 Jun 2025 05:10:25 +0200 (CEST)
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 55B3ANJ004079917,
- This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realsil.com.cn;
- s=dkim; t=1749611424;
- bh=j6pH+gHg3/JhpWxCWnHISsRGTLNUCk5f0l5VljH1Xzs=;
- h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
- MIME-Version:Content-Transfer-Encoding:Content-Type;
- b=w0eugqY8aGtyH9LyEkg3t46w1N1QHeffX/2sUIzjpWppZ96VcGMmZhagPLxVSmUOd
- DBaemNX1aKH1LAAx0SnYce2gbuxA9r1/1ZxIrq/2rszhYMwtNgCHvYBd/ASGgbJnST
- ta9KOCRFOqRw9sThFyqLhk9XnIS1/uV4NkliDVxSkKworJDH3yBwYJyB1zSrmHOBn4
- bJ58AlBzSEJR5VZDlXdGSnuDaUIEBF3KEwxQs3rKZBu0NLTkRdA9LMYIZDOH+oBuXi
- 59PbJp89N2kMEewKXGZG0NqPog/IWYuUaidiiBlnpnZBHQQH1gdy1pujmrmEWLpP4b
- z/bSBvld1O2CA==
-Received: from RS-EX-MBS1.realsil.com.cn ([172.29.17.101])
- by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 55B3ANJ004079917
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
- for <dev@dpdk.org>; Wed, 11 Jun 2025 11:10:23 +0800
-Received: from RS-EX-MBS2.realsil.com.cn (172.29.17.102) by
- RS-EX-MBS1.realsil.com.cn (172.29.17.101) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 11 Jun 2025 11:10:23 +0800
-Received: from 172.29.32.27 (172.29.32.27) by RS-EX-MBS2.realsil.com.cn
- (172.29.17.102) with Microsoft SMTP Server id 15.2.1544.11 via Frontend
- Transport; Wed, 11 Jun 2025 11:10:23 +0800
-From: Howard Wang <howard_wang@realsil.com.cn>
-To: <dev@dpdk.org>
-CC: <pro_nic_dpdk@realtek.com>, Howard Wang <howard_wang@realsil.com.cn>
-Subject: [PATCH v3 8/8] net/r8169: update HW configuration for 8127
-Date: Wed, 11 Jun 2025 11:10:01 +0800
-Message-ID: <20250611031001.20306-9-howard_wang@realsil.com.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250611031001.20306-1-howard_wang@realsil.com.cn>
-References: <20250611031001.20306-1-howard_wang@realsil.com.cn>
+	by mails.dpdk.org (Postfix) with ESMTP id 9AB4C402C6;
+	Wed, 11 Jun 2025 08:49:35 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 80A02402C2
+ for <dev@dpdk.org>; Wed, 11 Jun 2025 08:49:34 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 6C233468D3; Wed, 11 Jun 2025 08:49:34 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/meson Bug 1721] failed to compile DPDK
+Date: Wed, 11 Jun 2025 06:49:34 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: meson
+X-Bugzilla-Version: 24.07
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: critical
+X-Bugzilla-Who: pdamouny@nvidia.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1721-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17496245740.EF66FFaF.1547183
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,252 +54,235 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Update RTL8127's PHY configuration and MAC MCU setting.
 
-Signed-off-by: Howard Wang <howard_wang@realsil.com.cn>
----
- drivers/net/r8169/base/rtl8127.c     |  44 ++++++++---
- drivers/net/r8169/base/rtl8127_mcu.c | 109 ++++++++++++---------------
- drivers/net/r8169/r8169_hw.h         |   2 +-
- drivers/net/r8169/r8169_phy.c        |   1 -
- 4 files changed, 80 insertions(+), 76 deletions(-)
+--17496245740.EF66FFaF.1547183
+Date: Wed, 11 Jun 2025 08:49:34 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-diff --git a/drivers/net/r8169/base/rtl8127.c b/drivers/net/r8169/base/rtl8127.c
-index fac6165931..9e79255e3c 100644
---- a/drivers/net/r8169/base/rtl8127.c
-+++ b/drivers/net/r8169/base/rtl8127.c
-@@ -102,6 +102,13 @@ rtl_hw_phy_config_8127a_1(struct rtl_hw *hw)
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x83EF);
- 	rtl_clear_eth_phy_ocp_bit(hw, 0xB87E, 0x0E00);
- 
-+	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xBF38, 0x01F0, 0x0160);
-+	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xBF3A, 0x001F, 0x0014);
-+	rtl_clear_eth_phy_ocp_bit(hw, 0xBF28, 0x6000);
-+	rtl_clear_eth_phy_ocp_bit(hw, 0xBF2C, 0xC000);
-+	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xBF28, 0x1FFF, 0x0187);
-+	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xBF2A, 0x003F, 0x0003);
-+
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xA436, 0x8173);
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xA438, 0x8620);
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xA436, 0x8175);
-@@ -205,7 +212,7 @@ rtl_hw_phy_config_8127a_1(struct rtl_hw *hw)
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8015);
- 	rtl_set_eth_phy_ocp_bit(hw, 0xB87E, BIT_9);
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8016);
--	rtl_set_eth_phy_ocp_bit(hw, 0xB87E, BIT_11);
-+	rtl_clear_eth_phy_ocp_bit(hw, 0xB87E, BIT_11);
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FE6);
- 	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xB87E, 0xFF00, 0x0800);
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FE4);
-@@ -241,6 +248,16 @@ rtl_hw_phy_config_8127a_1(struct rtl_hw *hw)
- 	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xB87E, 0x3F00, 0x2A00);
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xA436, 0x81B1);
- 	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xA438, 0xFF00, 0x0B00);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FED);
-+	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xB87E, 0xFF00, 0x4E00);
-+
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x88AC);
-+	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xB87E, 0xFF00, 0x2300);
-+	rtl_set_eth_phy_ocp_bit(hw, 0xBF0C, 0x3800);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x88DE);
-+	rtl_clear_eth_phy_ocp_bit(hw, 0xB87E, 0xFF00);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x80B4);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87E, 0x5195);
- 
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xA436, 0x8370);
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xA438, 0x8671);
-@@ -300,21 +317,24 @@ rtl_hw_phy_config_8127a_1(struct rtl_hw *hw)
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FEE);
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xB87E, 0xFFDF);
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FF0);
--	rtl_mdio_direct_write_phy_ocp(hw, 0xB87E, 0xFFDF);
--	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FF1);
--	rtl_mdio_direct_write_phy_ocp(hw, 0xB87E, 0xDF0A);
--	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FF3);
--	rtl_mdio_direct_write_phy_ocp(hw, 0xB87E, 0x4AAA);
--	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FF5);
--	rtl_mdio_direct_write_phy_ocp(hw, 0xB87E, 0x5A0A);
--	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FF7);
--	rtl_mdio_direct_write_phy_ocp(hw, 0xB87E, 0x4AAA);
--	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FF9);
--	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xB87E, 0xFF00, 0x5A00);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87E, 0xFFFF);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FF2);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87E, 0x0A4A);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FF4);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87E, 0xAA5A);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FF6);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87E, 0x0A4A);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x8FF8);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xB87E, 0xAA5A);
- 
- 	rtl_mdio_direct_write_phy_ocp(hw, 0xB87C, 0x88D5);
- 	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xB87E, 0xFF00, 0x0200);
- 
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xA436, 0x84BB);
-+	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xA438, 0xFF00, 0x0A00);
-+	rtl_mdio_direct_write_phy_ocp(hw, 0xA436, 0x84C0);
-+	rtl_clear_and_set_eth_phy_ocp_bit(hw, 0xA438, 0xFF00, 0x1600);
-+
- 	rtl_set_eth_phy_ocp_bit(hw, 0xA430, BIT_1 | BIT_0);
- }
- 
-diff --git a/drivers/net/r8169/base/rtl8127_mcu.c b/drivers/net/r8169/base/rtl8127_mcu.c
-index 44e6d96d9e..facbae8132 100644
---- a/drivers/net/r8169/base/rtl8127_mcu.c
-+++ b/drivers/net/r8169/base/rtl8127_mcu.c
-@@ -11,58 +11,47 @@
- 
- /* ------------------------------------MAC 8127------------------------------------- */
- 
--static void
--_rtl_set_mac_mcu_8127a_1(struct rtl_hw *hw)
-+void
-+rtl_set_mac_mcu_8127a_1(struct rtl_hw *hw)
- {
- 	u16 entry_cnt;
- 	static const u16 mcu_patch_code[] =  {
--		0xE010, 0xE012, 0xE014, 0xE016, 0xE018, 0xE01A, 0xE0CF, 0xE180, 0xE182,
--		0xE184, 0xE186, 0xE188, 0xE18A, 0xE18C, 0xE18E, 0xE190, 0xC602, 0xBE00,
--		0x0000, 0xC602, 0xBE00, 0x0000, 0xC502, 0xBD00, 0x0000, 0xC502, 0xBD00,
--		0x0000, 0xC502, 0xBD00, 0x0000, 0xC643, 0x76C0, 0x49E1, 0xF13F, 0xC140,
--		0x7720, 0x49E0, 0xF003, 0x1B00, 0xE00A, 0x49E2, 0xF003, 0x1B04, 0xE006,
--		0x49E4, 0xF003, 0x1B08, 0xE002, 0x1B0C, 0x21B8, 0x1A0E, 0x44DA, 0xE893,
--		0x481C, 0xE884, 0xE001, 0x49E0, 0xF003, 0x1B00, 0xE00A, 0x49E2, 0xF003,
--		0x1B04, 0xE006, 0x49E4, 0xF003, 0x1B08, 0xE002, 0x1B0C, 0x21B8, 0x1A12,
--		0x44DA, 0xE87F, 0x481F, 0xE870, 0xE001, 0x49E0, 0xF003, 0x1B00, 0xE00A,
--		0x49E2, 0xF003, 0x1B04, 0xE006, 0x49E4, 0xF003, 0x1B08, 0xE002, 0x1B0C,
--		0x21B8, 0x1A1C, 0x44DA, 0xE86B, 0x481F, 0xE85C, 0xE004, 0xE04F, 0xDD98,
--		0xD450, 0x49E0, 0xF003, 0x1B00, 0xE00A, 0x49E2, 0xF003, 0x1B04, 0xE006,
--		0x49E4, 0xF003, 0x1B08, 0xE002, 0x1B0C, 0x21B8, 0x1A0E, 0x44DA, 0xE854,
--		0x489E, 0x481F, 0xE844, 0xE001, 0x1908, 0xE83E, 0x49E0, 0xF003, 0x1B00,
--		0xE00A, 0x49E2, 0xF003, 0x1B04, 0xE006, 0x49E4, 0xF003, 0x1B08, 0xE002,
--		0x1B0C, 0x21B8, 0x1A8A, 0x44DA, 0xE83D, 0x4813, 0xE82E, 0x49F9, 0xF106,
--		0x4838, 0xE837, 0x4813, 0xE828, 0xE001, 0x49E0, 0xF003, 0x1B00, 0xE00A,
--		0x49E2, 0xF003, 0x1B04, 0xE006, 0x49E4, 0xF003, 0x1B08, 0xE002, 0x1B0C,
--		0x21B8, 0x1A84, 0x44DA, 0xE823, 0x4890, 0x4811, 0xE813, 0x49F9, 0xF106,
--		0x4838, 0xE81C, 0x4890, 0x4811, 0xE80C, 0xC207, 0x7440, 0xC602, 0xBE00,
--		0x1600, 0x0FFE, 0xDE20, 0xE092, 0xC3FD, 0xE802, 0xFF80, 0xC0FB, 0x7202,
--		0x49AE, 0xF1FE, 0x9900, 0x44D3, 0x4413, 0x482F, 0x9A02, 0x7202, 0x49AE,
--		0xF1FE, 0xFF80, 0xC0EE, 0x7202, 0x49AE, 0xF1FE, 0x44D3, 0x4413, 0x48AF,
--		0x9A02, 0x7202, 0x49AE, 0xF1FE, 0x7100, 0xFF80, 0xB401, 0xB402, 0xB404,
--		0xB407, 0xC61F, 0x76C0, 0x49E1, 0xF164, 0xC11C, 0x7720, 0x1906, 0xE88A,
--		0x1B0C, 0x21B8, 0x1A40, 0x44DA, 0xE895, 0x4810, 0xE886, 0x190C, 0xE881,
--		0x1B08, 0x21B8, 0x1A26, 0x44DA, 0xE88C, 0x4890, 0x4891, 0xE87C, 0x49F9,
--		0xF107, 0x4898, 0x4899, 0xE877, 0xE003, 0xDD98, 0xD450, 0x1908, 0xE86F,
--		0x49E0, 0xF003, 0x1B00, 0xE00A, 0x49E2, 0xF003, 0x1B04, 0xE006, 0x49E2,
--		0xF003, 0x1B08, 0xE002, 0x1B0C, 0x21B8, 0x1A5C, 0x44DA, 0xE86E, 0x4897,
--		0x4898, 0x4819, 0x481A, 0xE85C, 0x49F9, 0xF109, 0x4838, 0xE865, 0x4897,
--		0x4898, 0x4819, 0x481A, 0xE853, 0xE001, 0x190A, 0xE84D, 0x1B00, 0xE85B,
--		0x44E1, 0x4838, 0xE858, 0x44E9, 0x1908, 0xE845, 0x49E0, 0xF003, 0x1B00,
--		0xE00A, 0x49E2, 0xF003, 0x1B04, 0xE006, 0x49E4, 0xF003, 0x1B08, 0xE002,
--		0x1B0C, 0x21B8, 0x1A86, 0x44DA, 0xE844, 0x44CC, 0xE835, 0x49F9, 0xF108,
--		0x4838, 0xE83E, 0x44CD, 0xE82F, 0xE003, 0xE021, 0xFFC0, 0x190A, 0xE827,
--		0x1B00, 0x4839, 0xE834, 0x249A, 0x1C00, 0x44E1, 0x1909, 0xE81F, 0x49E0,
--		0xF003, 0x1B00, 0xE00A, 0x49E2, 0xF003, 0x1B04, 0xE006, 0x49E4, 0xF003,
--		0x1B08, 0xE002, 0x1B0C, 0x21B8, 0x1A1A, 0x44DA, 0xE81E, 0xC5E4, 0x414D,
--		0x418C, 0xE80D, 0xB007, 0xB004, 0xB002, 0xB001, 0xC602, 0xBE00, 0x15E6,
--		0x0FFE, 0xDE20, 0xC3FE, 0xE802, 0xFF80, 0xC0FC, 0x7202, 0x49AE, 0xF1FE,
--		0x9900, 0x44D3, 0x4413, 0x482F, 0x9A02, 0x7202, 0x49AE, 0xF1FE, 0xFF80,
--		0xC0EF, 0x7202, 0x49AE, 0xF1FE, 0x44D3, 0x4413, 0x48AF, 0x9A02, 0x7202,
--		0x49AE, 0xF1FE, 0x7100, 0xFF80, 0xC502, 0xBD00, 0x0000, 0xC502, 0xBD00,
--		0x0000, 0xC502, 0xBD00, 0x0000, 0xC302, 0xBB00, 0x0000, 0xC602, 0xBE00,
--		0x0000, 0xC102, 0xB900, 0x0000, 0xC102, 0xB900, 0x0000, 0xC602, 0xBE00,
--		0x0000, 0xC602, 0xBE00, 0x0000, 0x6961, 0x0018, 0x0C11, 0x0A38
-+		0xE010, 0xE023, 0xE036, 0xE049, 0xE05C, 0xE075, 0xE0B1, 0xE117, 0xE11B,
-+		0xE11D, 0xE11F, 0xE121, 0xE123, 0xE125, 0xE127, 0xE129, 0x7020, 0xB405,
-+		0xB404, 0xC50F, 0x74A0, 0xC50E, 0x4025, 0xF005, 0x4850, 0x4025, 0xF002,
-+		0xE002, 0x4809, 0xB004, 0xB005, 0xC502, 0xBD00, 0x1522, 0xD006, 0x0004,
-+		0x7760, 0xB405, 0xB404, 0xC50F, 0x74A0, 0xC50E, 0x4025, 0xF005, 0x4850,
-+		0x4025, 0xF002, 0xE002, 0x4879, 0xB004, 0xB005, 0xC002, 0xB800, 0x41E2,
-+		0xD006, 0x0004, 0x7160, 0xB405, 0xB404, 0xC50F, 0x74A0, 0xC50E, 0x4025,
-+		0xF005, 0x4850, 0x4025, 0xF002, 0xE002, 0x4819, 0xB004, 0xB005, 0xC302,
-+		0xBB00, 0x508E, 0xD006, 0x0004, 0x7720, 0xB405, 0xB404, 0xC50F, 0x74A0,
-+		0xC50E, 0x4025, 0xF005, 0x4850, 0x4025, 0xF002, 0xE002, 0x4879, 0xB004,
-+		0xB005, 0xC102, 0xB900, 0x50F8, 0xD006, 0x0004, 0x61A9, 0xB403, 0xB404,
-+		0xC313, 0x7460, 0xC312, 0x4023, 0xF005, 0x4830, 0x4023, 0xF002, 0xE003,
-+		0x4997, 0xF003, 0xC00A, 0xE002, 0xC009, 0xB004, 0xB003, 0xC102, 0xB900,
-+		0x34FC, 0xD006, 0x0004, 0x02AF, 0x041F, 0xB407, 0xB406, 0xB405, 0xB404,
-+		0xB403, 0xB402, 0xB401, 0xB400, 0x49D2, 0xF116, 0xC62F, 0x77C0, 0x49F9,
-+		0xF020, 0x49FA, 0xF11E, 0x49F2, 0xF102, 0xE01B, 0x48F2, 0x9FC0, 0xC625,
-+		0x75C2, 0x4852, 0x9DC2, 0xC122, 0x7020, 0x4801, 0x4802, 0x9820, 0xE00F,
-+		0xC61A, 0x77C0, 0x49F2, 0xF10B, 0xC618, 0x77C0, 0x49F2, 0xF007, 0x48F2,
-+		0x9FC0, 0xC611, 0x75C2, 0x48D2, 0x9DC2, 0xB000, 0xB001, 0xB002, 0xB003,
-+		0xB004, 0xB005, 0xB006, 0xB007, 0x9D6C, 0xC502, 0xBD00, 0x0168, 0xE024,
-+		0xC010, 0xD410, 0xD460, 0xB407, 0xB406, 0xB405, 0xB404, 0xB403, 0xB402,
-+		0xB401, 0xB400, 0xC152, 0x7020, 0x4981, 0xF043, 0xC050, 0x7100, 0xB401,
-+		0xC14C, 0x489E, 0x481D, 0x9900, 0xC24A, 0x7340, 0x49B7, 0xF135, 0xC144,
-+		0x9900, 0xC245, 0x7340, 0xC447, 0x401C, 0xF109, 0x734C, 0x1301, 0xF12B,
-+		0xC343, 0x9B40, 0xC33E, 0x9B40, 0xE022, 0xC63A, 0x77C0, 0x48F4, 0x48F5,
-+		0x48F9, 0x48FA, 0x9FC0, 0xC231, 0x7344, 0x48B4, 0x9B44, 0xC22E, 0x7340,
-+		0x4830, 0x48B1, 0x4832, 0x483C, 0x48BD, 0x48BE, 0x48BF, 0x9B40, 0xC223,
-+		0xC32A, 0x9B48, 0xC327, 0x9B46, 0xC324, 0x9B40, 0xC321, 0x9B42, 0xC31E,
-+		0x9B40, 0xE005, 0xC113, 0x7020, 0x4881, 0x9820, 0xB001, 0xC010, 0x9900,
-+		0xB000, 0xB001, 0xB002, 0xB003, 0xB004, 0xB005, 0xB006, 0xB007, 0x2125,
-+		0xC102, 0xB900, 0x1A6C, 0xD410, 0xC000, 0xE86C, 0xB600, 0xB800, 0xB40A,
-+		0xE024, 0x5A00, 0x5A81, 0x0073, 0x5A80, 0x0042, 0x0001, 0xC104, 0xC202,
-+		0xBA00, 0x1A2E, 0xC896, 0xC302, 0xBB00, 0x0000, 0xC002, 0xB800, 0x0000,
-+		0xC002, 0xB800, 0x0000, 0xC502, 0xBD00, 0x0000, 0xC102, 0xB900, 0x0000,
-+		0xC102, 0xB900, 0x0000, 0xC602, 0xBE00, 0x0000, 0xC602, 0xBE00, 0x0000,
-+		0x6961, 0x0019, 0x050C, 0x140C
- 	};
- 
- 	entry_cnt = ARRAY_SIZE(mcu_patch_code);
-@@ -76,20 +65,16 @@ _rtl_set_mac_mcu_8127a_1(struct rtl_hw *hw)
- 
- 	rtl_mac_ocp_write(hw, 0xFC26, 0x8000);
- 
--	rtl_mac_ocp_write(hw, 0xFC32, 0x15FE);
--	rtl_mac_ocp_write(hw, 0xFC34, 0x15E4);
--
--	rtl_mac_ocp_write(hw, 0xFC48, 0x0060);
--}
--
--void
--rtl_set_mac_mcu_8127a_1(struct rtl_hw *hw)
--{
--	u8 tmp = (u8)rtl_mac_ocp_read(hw, 0xD006);
-+	rtl_mac_ocp_write(hw, 0xFC28, 0x1520);
-+	rtl_mac_ocp_write(hw, 0xFC2A, 0x41E0);
-+	rtl_mac_ocp_write(hw, 0xFC2C, 0x508C);
-+	rtl_mac_ocp_write(hw, 0xFC2E, 0x50F6);
-+	rtl_mac_ocp_write(hw, 0xFC30, 0x34FA);
-+	rtl_mac_ocp_write(hw, 0xFC32, 0x0166);
-+	rtl_mac_ocp_write(hw, 0xFC34, 0x1A6A);
-+	rtl_mac_ocp_write(hw, 0xFC36, 0x1A2C);
- 
--	if (tmp != 0x04)
--		return;
--	_rtl_set_mac_mcu_8127a_1(hw);
-+	rtl_mac_ocp_write(hw, 0xFC48, 0x00FF);
- }
- 
- /* ------------------------------------PHY 8127------------------------------------- */
-diff --git a/drivers/net/r8169/r8169_hw.h b/drivers/net/r8169/r8169_hw.h
-index 558ffaac95..ffd2914b10 100644
---- a/drivers/net/r8169/r8169_hw.h
-+++ b/drivers/net/r8169/r8169_hw.h
-@@ -137,7 +137,7 @@ extern const struct rtl_hw_ops rtl8125cp_ops;
- #define NIC_RAMCODE_VERSION_CFG_METHOD_69  (0x0023)
- #define NIC_RAMCODE_VERSION_CFG_METHOD_70  (0x0033)
- #define NIC_RAMCODE_VERSION_CFG_METHOD_71  (0x0060)
--#define NIC_RAMCODE_VERSION_CFG_METHOD_91  (0x0015)
-+#define NIC_RAMCODE_VERSION_CFG_METHOD_91  (0x0036)
- 
- #define RTL_MAC_MCU_PAGE_SIZE 256
- #define RTL_DEFAULT_MTU       1500
-diff --git a/drivers/net/r8169/r8169_phy.c b/drivers/net/r8169/r8169_phy.c
-index e547b44137..9da3a9d41b 100644
---- a/drivers/net/r8169/r8169_phy.c
-+++ b/drivers/net/r8169/r8169_phy.c
-@@ -682,7 +682,6 @@ rtl_powerdown_pll(struct rtl_hw *hw)
- 		case CFG_METHOD_69:
- 		case CFG_METHOD_70:
- 		case CFG_METHOD_71:
--		case CFG_METHOD_91:
- 			RTL_W8(hw, PMCH, RTL_R8(hw, PMCH) & ~BIT_7);
- 			break;
- 		}
--- 
-2.34.1
+https://bugs.dpdk.org/show_bug.cgi?id=3D1721
 
+            Bug ID: 1721
+           Summary: failed to compile DPDK
+           Product: DPDK
+           Version: 24.07
+          Hardware: x86
+                OS: Windows
+            Status: UNCONFIRMED
+          Severity: critical
+          Priority: Normal
+         Component: meson
+          Assignee: dev@dpdk.org
+          Reporter: pdamouny@nvidia.com
+  Target Milestone: ---
+
+commit 57c194d142d927f2f5dd757e36777910b5d77d41
+Author: David Marchand <david.marchand@redhat.com>
+Date:   Fri Mar 7 20:06:51 2025 +0100
+
+    build: use dynamically generated version maps
+
+    Switch to dynamically generated version maps.
+
+    As the map files get generated, tooling around checking, converting,
+    updating etc.. static version maps can be removed.
+
+    Signed-off-by: David Marchand <david.marchand@redhat.com>
+    Acked-by: Aaron Conole <aconole@redhat.com>
+
+
+broke compilation=20
+
+FAILED: lib/cmdline_exports.map
+"C:\Python38\python.exe" "../buildtools/gen-version-map.py" "--linker"
+"mslinker" "--abi-version" "../ABI_VERSION" "--output"
+"lib/cmdline_exports.map" "--source" "../lib/cmdline/cmdline.c"
+"../lib/cmdline/cmdline_cirbuf.c" "../lib/cmdline/cmdline_parse.c"
+"../lib/cmdline/cmdline_parse_etheraddr.c"
+"../lib/cmdline/cmdline_parse_ipaddr.c" "../lib/cmdline/cmdline_parse_num.c"
+"../lib/cmdline/cmdline_parse_bool.c" "../lib/cmdline/cmdline_parse_portlis=
+t.c"
+"../lib/cmdline/cmdline_parse_string.c" "../lib/cmdline/cmdline_rdline.c"
+"../lib/cmdline/cmdline_socket.c" "../lib/cmdline/cmdline_vt100.c"
+"../lib/cmdline/cmdline_os_windows.c"
+Traceback (most recent call last):
+  File "../buildtools/gen-version-map.py", line 30, in <module>
+    type=3Dargparse.FileType("r", encoding=3D"utf-8"),
+TypeError: __init__() got an unexpected keyword argument 'encoding'
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17496245740.EF66FFaF.1547183
+Date: Wed, 11 Jun 2025 08:49:34 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - failed to compile DPDK"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1721">1721</a>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Summary</th>
+          <td>failed to compile DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>24.07
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>x86
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>Windows
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>critical
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>meson
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>pdamouny&#64;nvidia.com
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">commit 57c194d142d927f2f5dd757e367=
+77910b5d77d41
+Author: David Marchand &lt;<a href=3D"mailto:david.marchand&#64;redhat.com"=
+>david.marchand&#64;redhat.com</a>&gt;
+Date:   Fri Mar 7 20:06:51 2025 +0100
+
+    build: use dynamically generated version maps
+
+    Switch to dynamically generated version maps.
+
+    As the map files get generated, tooling around checking, converting,
+    updating etc.. static version maps can be removed.
+
+    Signed-off-by: David Marchand &lt;<a href=3D"mailto:david.marchand&#64;=
+redhat.com">david.marchand&#64;redhat.com</a>&gt;
+    Acked-by: Aaron Conole &lt;<a href=3D"mailto:aconole&#64;redhat.com">ac=
+onole&#64;redhat.com</a>&gt;
+
+
+broke compilation=20
+
+FAILED: lib/cmdline_exports.map
+&quot;C:\Python38\python.exe&quot; &quot;../buildtools/gen-version-map.py&q=
+uot; &quot;--linker&quot;
+&quot;mslinker&quot; &quot;--abi-version&quot; &quot;../ABI_VERSION&quot; &=
+quot;--output&quot;
+&quot;lib/cmdline_exports.map&quot; &quot;--source&quot; &quot;../lib/cmdli=
+ne/cmdline.c&quot;
+&quot;../lib/cmdline/cmdline_cirbuf.c&quot; &quot;../lib/cmdline/cmdline_pa=
+rse.c&quot;
+&quot;../lib/cmdline/cmdline_parse_etheraddr.c&quot;
+&quot;../lib/cmdline/cmdline_parse_ipaddr.c&quot; &quot;../lib/cmdline/cmdl=
+ine_parse_num.c&quot;
+&quot;../lib/cmdline/cmdline_parse_bool.c&quot; &quot;../lib/cmdline/cmdlin=
+e_parse_portlist.c&quot;
+&quot;../lib/cmdline/cmdline_parse_string.c&quot; &quot;../lib/cmdline/cmdl=
+ine_rdline.c&quot;
+&quot;../lib/cmdline/cmdline_socket.c&quot; &quot;../lib/cmdline/cmdline_vt=
+100.c&quot;
+&quot;../lib/cmdline/cmdline_os_windows.c&quot;
+Traceback (most recent call last):
+  File &quot;../buildtools/gen-version-map.py&quot;, line 30, in &lt;module=
+&gt;
+    type=3Dargparse.FileType(&quot;r&quot;, encoding=3D&quot;utf-8&quot;),
+TypeError: __init__() got an unexpected keyword argument 'encoding'
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1721">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17496245740.EF66FFaF.1547183--
