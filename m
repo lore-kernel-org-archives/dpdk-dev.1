@@ -2,26 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A91AC71133
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 09:07:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D20FC677C4
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 09:08:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 787AD402EA;
-	Wed, 11 Jun 2025 11:07:47 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id BB24D402DB;
+	Wed, 11 Jun 2025 11:08:26 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 4406F402DB
- for <dev@dpdk.org>; Wed, 11 Jun 2025 11:07:46 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 160F7402C6
+ for <dev@dpdk.org>; Wed, 11 Jun 2025 11:08:25 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 3CC6C468D5; Wed, 11 Jun 2025 11:07:46 +0200 (CEST)
+ id 1189F468D5; Wed, 11 Jun 2025 11:08:25 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/core Bug 1683] use after on interrupt thread during EAL cleanup
-Date: Wed, 11 Jun 2025 09:07:46 +0000
+Subject: [DPDK/core Bug 1668] EAL: rte_eal_mp_remote_launch is able to launch
+ an lcore which is running
+Date: Wed, 11 Jun 2025 09:08:25 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: changed
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
 X-Bugzilla-Component: core
-X-Bugzilla-Version: unspecified
+X-Bugzilla-Version: 25.03
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
 X-Bugzilla-Who: david.marchand@redhat.com
@@ -32,10 +33,10 @@ X-Bugzilla-Assigned-To: dev@dpdk.org
 X-Bugzilla-Target-Milestone: ---
 X-Bugzilla-Flags: 
 X-Bugzilla-Changed-Fields: bug_status resolution
-Message-ID: <bug-1683-3-CYjdDRpcAD@http.bugs.dpdk.org/>
-In-Reply-To: <bug-1683-3@http.bugs.dpdk.org/>
-References: <bug-1683-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17496328660.E2bDf0.1628334
+Message-ID: <bug-1668-3-WIaLmy4Or6@http.bugs.dpdk.org/>
+In-Reply-To: <bug-1668-3@http.bugs.dpdk.org/>
+References: <bug-1668-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17496329040.1B820.1628860
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -55,8 +56,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17496328660.E2bDf0.1628334
-Date: Wed, 11 Jun 2025 11:07:46 +0200
+--17496329040.1B820.1628860
+Date: Wed, 11 Jun 2025 11:08:24 +0200
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -64,7 +65,7 @@ X-Bugzilla-URL: http://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1683
+https://bugs.dpdk.org/show_bug.cgi?id=3D1668
 
 David Marchand (david.marchand@redhat.com) changed:
 
@@ -73,18 +74,15 @@ David Marchand (david.marchand@redhat.com) changed:
              Status|UNCONFIRMED                 |RESOLVED
          Resolution|---                         |FIXED
 
---- Comment #7 from David Marchand (david.marchand@redhat.com) ---
-Fixed in commits cf1937a96dcf ("eal/freebsd: unregister alarm callback befo=
-re
-free") and d84bf0d9aeb4 ("eal/linux: unregister alarm callback before free"=
-).
+--- Comment #6 from David Marchand (david.marchand@redhat.com) ---
+Fixed in commit 7c37826c2b87 ("test/lcore: fix race in per-lcore test").
 
 --=20
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17496328660.E2bDf0.1628334
-Date: Wed, 11 Jun 2025 11:07:46 +0200
+--17496329040.1B820.1628860
+Date: Wed, 11 Jun 2025 11:08:24 +0200
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -102,9 +100,9 @@ m)"> <span class=3D"fn">David Marchand</span></a>
 </span> changed
           <a class=3D"bz_bug_link=20
           bz_status_RESOLVED  bz_closed"
-   title=3D"RESOLVED FIXED - use after on interrupt thread during EAL clean=
-up"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1683">bug 1683</a>
+   title=3D"RESOLVED FIXED - EAL: rte_eal_mp_remote_launch is able to launc=
+h an lcore which is running"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1668">bug 1668</a>
           <br>
              <table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=
 =3D"bz_diff_table">
@@ -133,23 +131,21 @@ up"
         <div class=3D"bz_comment_block">
             <b class=3D"bz_comment_head"><a class=3D"bz_bug_link=20
           bz_status_RESOLVED  bz_closed"
-   title=3D"RESOLVED FIXED - use after on interrupt thread during EAL clean=
-up"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1683#c7">Comment # 7</a>
+   title=3D"RESOLVED FIXED - EAL: rte_eal_mp_remote_launch is able to launc=
+h an lcore which is running"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1668#c6">Comment # 6</a>
               on <a class=3D"bz_bug_link=20
           bz_status_RESOLVED  bz_closed"
-   title=3D"RESOLVED FIXED - use after on interrupt thread during EAL clean=
-up"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1683">bug 1683</a>
+   title=3D"RESOLVED FIXED - EAL: rte_eal_mp_remote_launch is able to launc=
+h an lcore which is running"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1668">bug 1668</a>
               from <span class=3D"vcard"><a class=3D"email" href=3D"mailto:=
 david.marchand&#64;redhat.com" title=3D"David Marchand (david.marchand&#64;=
 redhat.com)"> <span class=3D"fn">David Marchand</span></a>
 </span>
             </b>
-          <pre class=3D"bz_comment_text">Fixed in commits cf1937a96dcf (&qu=
-ot;eal/freebsd: unregister alarm callback before
-free&quot;) and d84bf0d9aeb4 (&quot;eal/linux: unregister alarm callback be=
-fore free&quot;).
+          <pre class=3D"bz_comment_text">Fixed in commit 7c37826c2b87 (&quo=
+t;test/lcore: fix race in per-lcore test&quot;).
           </pre>
         </div>
       </p>
@@ -166,7 +162,7 @@ fore free&quot;).
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1683#c7">
+?id=3D1668#c6">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -175,4 +171,4 @@ ication">
     </body>
 </html>=
 
---17496328660.E2bDf0.1628334--
+--17496329040.1B820.1628860--
