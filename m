@@ -2,59 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CAECC677C4
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 09:46:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98598C677C4
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 10:12:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 301734066A;
-	Wed, 11 Jun 2025 11:46:26 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 420794060F;
+	Wed, 11 Jun 2025 12:12:19 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 9AB6340668
- for <dev@dpdk.org>; Wed, 11 Jun 2025 11:46:24 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id DDCE64060F
+ for <dev@dpdk.org>; Wed, 11 Jun 2025 12:12:17 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1749635184;
+ s=mimecast20190719; t=1749636737;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=Mxcd3w7lpTXm1PUK/TyMLpn8Ham0I/n7xkd8KLfLzFg=;
- b=RIaGqKG2WkZgNFj04hW42ytxq978FP0Bs6YbTCH1EsXhlN6dJQOQJrwuGIcxX/HCyk+iz1
- /oEYj72E4gUNCn+VK2S6jpoRqwz5NOkjRrChsk8BVpxNHXbf5lMEB7uytNADskK+9bthi+
- GC0ipiREzwHwl8pyi/K1/5TCodwOyZk=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-284-xplnZGqCPRWfhxUHPjOlew-1; Wed,
- 11 Jun 2025 05:46:18 -0400
-X-MC-Unique: xplnZGqCPRWfhxUHPjOlew-1
-X-Mimecast-MFC-AGG-ID: xplnZGqCPRWfhxUHPjOlew_1749635175
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id E121819560AE; Wed, 11 Jun 2025 09:46:14 +0000 (UTC)
-Received: from dmarchan.lan (unknown [10.44.33.8])
- by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 40A9219560AF; Wed, 11 Jun 2025 09:46:12 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
-To: dev@dpdk.org
-Cc: Andre Muezerie <andremue@linux.microsoft.com>,
- Robin Jarry <rjarry@redhat.com>, Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
-Subject: [PATCH v7 5/5] usertools: enable pmdinfo with MSVC
-Date: Wed, 11 Jun 2025 11:45:32 +0200
-Message-ID: <20250611094532.1242167-6-david.marchand@redhat.com>
-In-Reply-To: <20250611094532.1242167-1-david.marchand@redhat.com>
-References: <20250610100947.421877-1-david.marchand@redhat.com>
- <20250611094532.1242167-1-david.marchand@redhat.com>
+ bh=bE6m8XybMZSs1IXnoEXlEQrTz9dsSxdCJt7J4Yr6dCs=;
+ b=BoqbRuUMF0GDWp8h1Xfd5M5fQnkGWpQKFhNCoPJmJdFKvccK8ofoTlXqBNKfIANFZYl8UH
+ jktw0yko1eAYs9xsd4w5WLwdaKWknQZh3gG09ETKLH6DiQdjlZNmy7vTovtZSSEK60+hE5
+ hhKN3zbHu/Vh6xQpH+WqJi8NzdHCing=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-647-f3BTQfinMuK1GDe858ekDg-1; Wed, 11 Jun 2025 06:12:16 -0400
+X-MC-Unique: f3BTQfinMuK1GDe858ekDg-1
+X-Mimecast-MFC-AGG-ID: f3BTQfinMuK1GDe858ekDg_1749636735
+Received: by mail-lf1-f71.google.com with SMTP id
+ 2adb3069b0e04-553522f65a8so3515797e87.1
+ for <dev@dpdk.org>; Wed, 11 Jun 2025 03:12:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1749636734; x=1750241534;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=bE6m8XybMZSs1IXnoEXlEQrTz9dsSxdCJt7J4Yr6dCs=;
+ b=c67FR0GUjrh+iKL8+8DLlhmpIxKQqt8TehL0WI2HFsEI6Kwfrhz/wK9EOi3zJQ7i0Z
+ YN/H+OPSt4klxL5ZSHnVoJAJC37Q08+CCw+bUDZDQFt/6AFFcInw5liBqZYBNbDXE/ZS
+ 7jVmI5aUSfSb4RXwxhWBusV+EpKoR3JQDWddv0Pd+j/DNLLzgu0QzENL2q1PVeG3rg+w
+ rRocWyqqtetaMSqAogzvl/hM38CCDVJzYVILcueFp/GBVkMmb3/5VX0IAfSMI6hGfJ4V
+ ZRXrYXdiavgoP2LUaakHv/WLKr/lRR07ABiKJ5qkQyJ4/McM3Zu3UWgGayLgZvEH9QIf
+ +52A==
+X-Gm-Message-State: AOJu0YxM+XLfKsjV47dKgvuGjtoTJ18rLBCAjxDxvbMpb2tLJpphGUzP
+ rEmUvShrdR2Qt3oN/ubHDBHXkenckM69eScYDtyhJ7s8Btii24wpOK6hWQ6uuqqaqV1jVzK7usW
+ WYcm/ZTNDpKAylE9hnSajJd177M/Ka0p/gyMoDXb25YA1G5AwqLN7tuZ3M2twgWMXEPjpvUdMJd
+ JG861l94KRz0soHsM3hro=
+X-Gm-Gg: ASbGncvJwHLxD4W8R6H2tm1NoHh4q33Bep/jQv/HQQa6TDZyP4JeyM58321jlu9GSrR
+ UPj/tWzfx0k2Pi69m9JhRGwmopdb5ZLluL8xZvIb2rIZRnIDZOl+/r+00KVzOOMVSz05TCw0ivO
+ phMdUwEw==
+X-Received: by 2002:a05:6512:2242:b0:553:5166:5a5f with SMTP id
+ 2adb3069b0e04-5539c25549cmr826466e87.53.1749636734586; 
+ Wed, 11 Jun 2025 03:12:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEOABgz+OVnsKPL2V4TJKLKiNa9xQ38mUy/NzFnbAMkxkCJcF3ZU8H+jX27LHmyaSDTiMMdkvSuqpGiCPRJzqY=
+X-Received: by 2002:a05:6512:2242:b0:553:5166:5a5f with SMTP id
+ 2adb3069b0e04-5539c25549cmr826454e87.53.1749636734177; Wed, 11 Jun 2025
+ 03:12:14 -0700 (PDT)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <20240314093630.1066948-3-mingjinx.ye@intel.com>
+ <20250513092156.1198659-1-mingjinx.ye@intel.com>
+In-Reply-To: <20250513092156.1198659-1-mingjinx.ye@intel.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Wed, 11 Jun 2025 12:12:02 +0200
+X-Gm-Features: AX0GCFvqMhXIcg2B_VPKYEM9GJY2gvbl2SfY8bgg6D7LzoHeUQD9Xxb4LS4Mw-A
+Message-ID: <CAJFAV8wzoDuL4c9E-2WaOfUOjopwqJ4opvwwLuL85nZcaR0ptQ@mail.gmail.com>
+Subject: Re: [PATCH v2] bus/vdev: revert fix devargs after multi-process bus
+ scan
+To: Mingjin Ye <mingjinx.ye@intel.com>
+Cc: dev@dpdk.org, stable@dpdk.org, Thomas Monjalon <thomas@monjalon.net>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: h0Xe9WNH7eNMAxt8tiCW_Nfc4U-h9qLmbYRkyYBavWA_1749635175
+X-Mimecast-MFC-PROC-ID: 09DUuEzlLFCBePI3DO_W6tqY0zvxWXAVsFQ9ph5Kdfg_1749636735
 X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -68,115 +86,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Andre Muezerie <andremue@linux.microsoft.com>
+On Tue, May 13, 2025 at 11:52=E2=80=AFAM Mingjin Ye <mingjinx.ye@intel.com>=
+ wrote:
+>
+> This patch reverts commit f5b2eff0847d ("bus/vdev: fix devargs after
+> multi-process bus scan")
+>
+> With current code, we do not add devargs to devargs list when we add a
+> vdev in secondary process (because `init` flag is set to `false`).
+>
+> Because of this, when we do vdev_uninit, we call rte_devargs_remove on
+> the &devargs pointer (the one we didn't add to devargs list but did save
+> inside rte_vdev_device struct), but in secondary process, because
+> devargs were not added to the list in the first place, devargs_remove
+> does not find the associated devargs in its list and therefore does not
+> free associated resources. As a result, we get a memory leak, because we
+> free the rte_vdev_device but not its associated devargs.
+>
+> Revert this patch to avoid leaking devargs on vdev uninit.
+>
+> Fixes: f5b2eff0847d ("bus/vdev: fix devargs after multi-process bus scan"=
+)
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Mingjin Ye <mingjinx.ye@intel.com>
 
-Script usertools\dpdk-pmdinfo.py was enhanced to also be able to parse
-symbols from sections in PE images.
+I see back and forth on this topic but this still seems strange we
+would have to revert such an old commit.
 
-Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-Acked-by: Robin Jarry <rjarry@redhat.com>
----
- usertools/dpdk-pmdinfo.py | 53 +++++++++++++++++++++++++++++++--------
- 1 file changed, 43 insertions(+), 10 deletions(-)
+Please add a unit test showing the bug.
 
-diff --git a/usertools/dpdk-pmdinfo.py b/usertools/dpdk-pmdinfo.py
-index 9189a2fdbc..9251c69db9 100755
---- a/usertools/dpdk-pmdinfo.py
-+++ b/usertools/dpdk-pmdinfo.py
-@@ -37,8 +37,11 @@
- from pathlib import Path
- from typing import Iterable, Iterator, List, Union
- 
--import elftools
--from elftools.elf.elffile import ELFError, ELFFile
-+if os.name == "nt":
-+    import pefile
-+else:
-+    import elftools
-+    from elftools.elf.elffile import ELFError, ELFFile
- 
- 
- # ----------------------------------------------------------------------------
-@@ -114,18 +117,23 @@ def parse_pmdinfo(paths: Iterable[Path], search_plugins: bool) -> List[dict]:
-         A list of DPDK drivers info dictionaries.
-     """
-     binaries = set(paths)
--    for p in paths:
--        binaries.update(get_needed_libs(p))
--    if search_plugins:
--        # cast to list to avoid errors with update while iterating
--        binaries.update(list(get_plugin_libs(binaries)))
-+
-+    if os.name == "nt":
-+        section_name = ".rdata"
-+    else:
-+        section_name = ".rodata"
-+        for p in paths:
-+            binaries.update(get_needed_libs(p))
-+        if search_plugins:
-+            # cast to list to avoid errors with update while iterating
-+            binaries.update(list(get_plugin_libs(binaries)))
- 
-     drivers = []
- 
-     for b in binaries:
-         logging.debug("analyzing %s", b)
-         try:
--            for s in get_elf_strings(b, ".rodata", "PMD_INFO_STRING="):
-+            for s in get_section_strings(b, section_name, "PMD_INFO_STRING="):
-                 try:
-                     info = json.loads(s)
-                     scrub_pci_ids(info)
-@@ -214,7 +222,7 @@ def find_strings(buf: bytes, prefix: str) -> Iterator[str]:
-                 # end of string
-                 s = view[start:i].tobytes().decode("ascii")
-                 if s.startswith(prefix):
--                    yield s[len(prefix):]
-+                    yield s[len(prefix) :]
-             # There can be byte sequences where a non-printable byte
-             # follows a printable one. Ignore that.
-             start = None
-@@ -233,7 +241,8 @@ def elftools_version():
-     return (int(match[1]), int(match[2]))
- 
- 
--ELFTOOLS_VERSION = elftools_version()
-+if os.name != "nt":
-+    ELFTOOLS_VERSION = elftools_version()
- 
- 
- def from_elftools(s: Union[bytes, str]) -> str:
-@@ -269,6 +278,30 @@ def get_elf_strings(path: Path, section: str, prefix: str) -> Iterator[str]:
-         yield from find_strings(sec.data(), prefix)
- 
- 
-+# ----------------------------------------------------------------------------
-+def get_pe_strings(path: Path, section: str, prefix: str) -> Iterator[str]:
-+    """
-+    Extract strings from a named PE section in a file.
-+    """
-+    pe = pefile.PE(path)
-+    for sec in pe.sections:
-+        section_name = sec.Name.decode().strip("\x00")
-+        if section_name != section:
-+            continue
-+        yield from find_strings(sec.get_data(), prefix)
-+
-+
-+# ----------------------------------------------------------------------------
-+def get_section_strings(path: Path, section: str, prefix: str) -> Iterator[str]:
-+    """
-+    Extract strings from a named section in an ELF or PE file.
-+    """
-+    if os.name == "nt":
-+        yield from get_pe_strings(path, section, prefix)
-+    else:
-+        yield from get_elf_strings(path, section, prefix)
-+
-+
- # ----------------------------------------------------------------------------
- LDD_LIB_RE = re.compile(
-     r"""
--- 
-2.49.0
+
+--=20
+David Marchand
 
