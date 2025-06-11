@@ -2,84 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E8F9C61CE7
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 07:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36262C61CE7
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 08:19:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9F211402C6;
-	Wed, 11 Jun 2025 09:15:42 +0200 (CEST)
-Received: from fhigh-b2-smtp.messagingengine.com
- (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
- by mails.dpdk.org (Postfix) with ESMTP id A799B402C2
- for <dev@dpdk.org>; Wed, 11 Jun 2025 09:15:40 +0200 (CEST)
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal
- [10.202.2.46])
- by mailfhigh.stl.internal (Postfix) with ESMTP id F111F2540226;
- Wed, 11 Jun 2025 03:15:39 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-06.internal (MEProxy); Wed, 11 Jun 2025 03:15:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1749626139;
- x=1749712539; bh=RMNHnMDFSBM9c9MMQky+Rjj74TMlba+fOrDSPdAyNJY=; b=
- FhiBxu+kuDU/afsSNHJYOm8r/K14eXD5O2V62pKnpR+wQt/XzRT3onlZrl4eRCrb
- roWR5LhHfdUilkct5dnJSNjewvj5TQHWM7Bjrwn72tlck0f5i0ujeykcIWlMGqGV
- 2bKEj+VIw9Pq/5YN/D1EZd4TZgVNFHwPYic8iYtcrFr0sOMVRFwFEiiLqihyMPAU
- Ulv1sujtaxMOlXhw1iQ/cfbtv4s6pHBgXZyurIrbWWlJmeIbfZwdt4qMQXDg9Qp4
- YZ+OtQ+tWmHx7S91Y/1T0BgWUDawNrH+3OwxS9I0O6GrvAYq3pPXPKgBUUGAy1cn
- dgbGQ/DIi0Ctkg31i+We6A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749626139; x=
- 1749712539; bh=RMNHnMDFSBM9c9MMQky+Rjj74TMlba+fOrDSPdAyNJY=; b=h
- ZwHvFj0HJSQ5WcVWtCAiavKf6sjLTtgF75I72Tiw9mel9i6lWqPH9GcJ9NVq21sj
- yujlaQTiiLO6Ky4P4mZT9SPZl9I+Os5wHN9sF0CVaPP/KkSwtx/Hv0nKVLgwk+js
- V3PSnqeB9mZ6F2oADxdModbNvO+gxOHBEa6P/ZzQfsFzwHx/HKjItk62vIAP8y6G
- IAQNKBI2TDLBU8bQ7Q/npYbq7724UU2FTW1GsmrYauYOpkIoao35KwVG/U3m5/sx
- kYXly5kVWD8IU7jDmJuLU+kGdxKrFTCWOh23BD70k/eQ+duGQpEReEHt939Z8pBK
- LBTpxrUjd2Qy6Ki4QJGpg==
-X-ME-Sender: <xms:Gy1JaNy1CJ-9NOwivFfAPGvxKg_47QES6fiBJFWl4z4Gs7V1TgpZ6A>
- <xme:Gy1JaNQy30ARljIzMMMyUBzgxIiSCUEpHXb5CX2LbSiJjWhf6CcpzmHTxrJPUcF3o
- FuDc1FI_SHY6rccxg>
-X-ME-Received: <xmr:Gy1JaHV0g9Gby8ZhT5XqzYpO6yHkhrhNZnRg_Tam1EOBfLYD52m6--DYDUzLPho0QeT1k71sMShNAVNn3uMghWiR_g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdduudekjecutefuodetggdotefrod
- ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
- uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
- hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdej
- necuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehmohhnjh
- grlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevfffgtdeg
- keeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgeptdenuc
- frrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdp
- nhgspghrtghpthhtohephedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepkhhirh
- grnhhkuhhmrghrkhesmhgrrhhvvghllhdrtghomhdprhgtphhtthhopehjvghrihhnjhes
- mhgrrhhvvghllhdrtghomhdprhgtphhtthhopehnuggrsghilhhpuhhrrghmsehmrghrvh
- gvlhhlrdgtohhmpdhrtghpthhtohephigrnhiihhhirhhunhgpudeifeesudeifedrtgho
- mhdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
-X-ME-Proxy: <xmx:Gy1JaPgfWWbC06I7VvCLZojTN3IDhAfrWQHf0b7vmPxkVBVDrFjqaQ>
- <xmx:Gy1JaPAwj2v1i6janyDF4tgv7er2mecwZ-sOoGA1-YvwzG3c91EAtw>
- <xmx:Gy1JaIISFjAUg1-uNGujbJZXL-1uxliH8fMF6PlsaueSBVoaMmBNlg>
- <xmx:Gy1JaOA-fIxa384Klq6LLxTz2e8A8SFtiCuflw7lrm8r7ouIfxwi0g>
- <xmx:Gy1JaP7MwCTMW9Ndd6VQxyixyBlPWMIZM5KyZvE5iR5wIF5w4zmU3Eve>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 11 Jun 2025 03:15:38 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Kiran Kumar K <kirankumark@marvell.com>
-Cc: Jerin Jacob <jerinj@marvell.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Zhirun Yan <yanzhirun_163@163.com>, dev@dpdk.org
-Subject: Re: [PATCH v7 1/3] graph: avoid global node ID counter
-Date: Wed, 11 Jun 2025 09:15:36 +0200
-Message-ID: <4401004.BjyWNHgNrj@thomas>
-In-Reply-To: <20250505062422.588450-1-kirankumark@marvell.com>
-References: <20241126044402.1209998-1-kirankumark@marvell.com>
- <20250505062422.588450-1-kirankumark@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 18E4F402F0;
+	Wed, 11 Jun 2025 10:19:06 +0200 (CEST)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+ by mails.dpdk.org (Postfix) with ESMTP id 6F938402C5
+ for <dev@dpdk.org>; Wed, 11 Jun 2025 10:19:04 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+ by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bHJNn6rzbzRk6M;
+ Wed, 11 Jun 2025 16:14:49 +0800 (CST)
+Received: from kwepemo500011.china.huawei.com (unknown [7.202.195.194])
+ by mail.maildlp.com (Postfix) with ESMTPS id 2688E180B61;
+ Wed, 11 Jun 2025 16:19:03 +0800 (CST)
+Received: from localhost.localdomain (10.50.165.33) by
+ kwepemo500011.china.huawei.com (7.202.195.194) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 11 Jun 2025 16:19:02 +0800
+From: Dengdui Huang <huangdengdui@huawei.com>
+To: <dev@dpdk.org>
+CC: <stephen@networkplumber.org>, <lihuisong@huawei.com>,
+ <fengchengwen@huawei.com>, <liuyonglong@huawei.com>
+Subject: [PATCH 4/6] net/hns3: VF support parse max TC number
+Date: Wed, 11 Jun 2025 16:18:58 +0800
+Message-ID: <20250611081900.3658421-5-huangdengdui@huawei.com>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20250611081900.3658421-1-huangdengdui@huawei.com>
+References: <20250611081900.3658421-1-huangdengdui@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.50.165.33]
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemo500011.china.huawei.com (7.202.195.194)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -93,19 +49,70 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-05/05/2025 08:24, kirankumark@marvell.com:
-> From: Kiran Kumar K <kirankumark@marvell.com>
-> 
-> The node id is determined based on a global variable that is
-> incremented every time a node is created. Adding changes to
-> remove the global counter. Make sure that the node list is always
-> ordered by increasing node ids. When creating a new node, pick a free
-> id which is not allocated.
-> 
-> Signed-off-by: Kiran Kumar K <kirankumark@marvell.com>
-> Acked-by: Jerin Jacob <jerinj@marvell.com>
+From: Chengwen Feng <fengchengwen@huawei.com>
 
-Series applied, thanks.
+The mailbox message HNS3_MBX_GET_BASIC_INFO can obtain the maximum
+number of TCs of the device. The VF does not support multiple TCs,
+therefore, this field is not saved.
 
+Now the VF needs to support multiple TCs, therefore, this field needs
+to be saved.
 
+This commit also support dump the TC info.
+
+Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
+Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
+---
+ drivers/net/hns3/hns3_dump.c      | 2 ++
+ drivers/net/hns3/hns3_ethdev_vf.c | 1 +
+ drivers/net/hns3/hns3_mbx.h       | 2 +-
+ 3 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/hns3/hns3_dump.c b/drivers/net/hns3/hns3_dump.c
+index 6c43ec486e..63c6b4ef2c 100644
+--- a/drivers/net/hns3/hns3_dump.c
++++ b/drivers/net/hns3/hns3_dump.c
+@@ -209,6 +209,7 @@ hns3_get_device_basic_info(FILE *file, struct rte_eth_dev *dev)
+ 		"  - Device Base Info:\n"
+ 		"\t  -- name: %s\n"
+ 		"\t  -- adapter_state=%s\n"
++		"\t  -- tc_max=%u tc_num=%u\n"
+ 		"\t  -- nb_rx_queues=%u nb_tx_queues=%u\n"
+ 		"\t  -- total_tqps_num=%u tqps_num=%u intr_tqps_num=%u\n"
+ 		"\t  -- rss_size_max=%u alloc_rss_size=%u tx_qnum_per_tc=%u\n"
+@@ -221,6 +222,7 @@ hns3_get_device_basic_info(FILE *file, struct rte_eth_dev *dev)
+ 		"\t  -- intr_conf: lsc=%u rxq=%u\n",
+ 		dev->data->name,
+ 		hns3_get_adapter_state_name(hw->adapter_state),
++		hw->dcb_info.tc_max, hw->dcb_info.num_tc,
+ 		dev->data->nb_rx_queues, dev->data->nb_tx_queues,
+ 		hw->total_tqps_num, hw->tqps_num, hw->intr_tqps_num,
+ 		hw->rss_size_max, hw->alloc_rss_size, hw->tx_qnum_per_tc,
+diff --git a/drivers/net/hns3/hns3_ethdev_vf.c b/drivers/net/hns3/hns3_ethdev_vf.c
+index 1cb8a9ccc1..632409c5d0 100644
+--- a/drivers/net/hns3/hns3_ethdev_vf.c
++++ b/drivers/net/hns3/hns3_ethdev_vf.c
+@@ -853,6 +853,7 @@ hns3vf_get_basic_info(struct hns3_hw *hw)
+ 	}
+ 
+ 	basic_info = (struct hns3_basic_info *)resp_msg;
++	hw->dcb_info.tc_max = basic_info->tc_max;
+ 	hw->dcb_info.hw_tc_map = basic_info->hw_tc_map;
+ 	hw->dcb_info.num_tc = hns3vf_get_num_tc(hw);
+ 	hw->pf_vf_if_version = basic_info->pf_vf_if_version;
+diff --git a/drivers/net/hns3/hns3_mbx.h b/drivers/net/hns3/hns3_mbx.h
+index c73f34fb32..651c6b9023 100644
+--- a/drivers/net/hns3/hns3_mbx.h
++++ b/drivers/net/hns3/hns3_mbx.h
+@@ -53,7 +53,7 @@ enum HNS3_MBX_OPCODE {
+ 
+ struct hns3_basic_info {
+ 	uint8_t hw_tc_map;
+-	uint8_t rsv;
++	uint8_t tc_max;
+ 	uint16_t pf_vf_if_version;
+ 	/* capabilities of VF dependent on PF */
+ 	uint32_t caps;
+-- 
+2.33.0
 
