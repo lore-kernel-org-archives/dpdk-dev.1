@@ -2,73 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E6FC61CE7
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 12:59:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34101C61CE7
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 13:01:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C402D4066F;
-	Wed, 11 Jun 2025 14:59:57 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id F0D8F4066F;
+	Wed, 11 Jun 2025 15:01:57 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 95473402EF
- for <dev@dpdk.org>; Wed, 11 Jun 2025 14:59:56 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 5A1A0402EF
+ for <dev@dpdk.org>; Wed, 11 Jun 2025 15:01:56 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1749646796;
+ s=mimecast20190719; t=1749646915;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=Zf4h3aeij+bIWbWMkIe24MDPvlYRyeeIBS5kdDsNe6E=;
- b=ccnSeO2HVEI2Hs182HGYJoIj8hl5RCClTgkkacAOu82bjj9Tifyg41DXGFi8+3VwPZz86f
- 1ZdxWl6mZCms2cU5bQpHCobXmqwZbjmLheTPtFjmptKfg9PGx4xRM9OQxl6aH2R4kowgAy
- refmxweczfptREurPUjNaaEM2VpQiHc=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=Mb7P6qjVvvr7hCze6s0MIH3mIAt21NOF6sDAMHdVVPM=;
+ b=PHCI7s636XWdDLa5aBdl8SmkWbYeJG47ZG9WO3o0q0asH2BGGpMpMnT9nD/9N/IlJhO1rk
+ tyvF+f04pe/KF9eTDHNkJOJNz0J8MnmDtWB3cptDxmUjK8RCoOvFWv2dV+3K38kTY9Rfd3
+ q1XQfqXkPjI0LsK441XUarLKSrnI6tE=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-595-TGKLfX-uNVK0B5ZR2u8JXw-1; Wed, 11 Jun 2025 08:59:54 -0400
-X-MC-Unique: TGKLfX-uNVK0B5ZR2u8JXw-1
-X-Mimecast-MFC-AGG-ID: TGKLfX-uNVK0B5ZR2u8JXw_1749646793
-Received: by mail-lj1-f200.google.com with SMTP id
- 38308e7fff4ca-32a6c630b70so36702631fa.2
- for <dev@dpdk.org>; Wed, 11 Jun 2025 05:59:54 -0700 (PDT)
+ us-mta-288-oCv6sZ62PqCeXlL7Kc6u4w-1; Wed, 11 Jun 2025 09:01:53 -0400
+X-MC-Unique: oCv6sZ62PqCeXlL7Kc6u4w-1
+X-Mimecast-MFC-AGG-ID: oCv6sZ62PqCeXlL7Kc6u4w_1749646912
+Received: by mail-lf1-f72.google.com with SMTP id
+ 2adb3069b0e04-5535e35bb83so3117730e87.1
+ for <dev@dpdk.org>; Wed, 11 Jun 2025 06:01:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749646793; x=1750251593;
+ d=1e100.net; s=20230601; t=1749646912; x=1750251712;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=Zf4h3aeij+bIWbWMkIe24MDPvlYRyeeIBS5kdDsNe6E=;
- b=VPghQOGZiMPf4/ZEjB7BnkzHFY47iey9Hyg5N55q6bT2tv249FtWjxFR0uYPZjYEng
- 90A9lVkMe12tsrJolqX7BIPiBrTrZVfWec8Dpe7+cEVwAknAd37LZChZecB3yBo0F+vt
- xq1AVQsQA115nroO5FA2w4qRcEG+gKQBuBMaQU9T9cuf8VG90TCwJRhPh+XxwaywVQ1f
- 0cEh3dUVeJutxm4Si1oEq+klR0C9Y+qrOeu1VVAhr2tecdmFDQOrL2YKxQB/Erg1apxo
- q6iuYMQHC6+CTcAvKQHLKuWO1IdMdIdROj2UTJ2/iguMFY4EPryNVy51/DL2/X1IjuUT
- drGA==
-X-Gm-Message-State: AOJu0Yx2Ee44yXl+mZ2cqQdvXFMpDEP/YYOGt54/vmkzPEm87cK8lDTG
- rUVJg742OdslPgJWfi/eI7zRSMF+oYD3lNm1P3BzdKCkov1KNuUrPnaUIqPIVcIdpkIeRaeEO9h
- /CKzKYoCGlg2hYTWs7v+OT4w4Bibgf/QgHsVYaz1d5IkGjTCUuzgWgpVz9nfctcS4R88vNBNjLO
- HbH1MzJ9TuEsot50P/ml4=
-X-Gm-Gg: ASbGncuzj53nVHRoQ5yV3NrMVGeF44anir7DhyyghsvJ82hKBbCPyraqUu2PrxWlK55
- TBexuU30u83WBaYhRSAjpk5225/lhfIUYHWpP3GuV31LvCKbNWrBONnLf/QDMHTI1YPGKv8o4Ss
- lo1oeT/A==
-X-Received: by 2002:a05:6512:b9c:b0:549:5b54:2c68 with SMTP id
- 2adb3069b0e04-5539c1181aamr1066513e87.22.1749646792693; 
- Wed, 11 Jun 2025 05:59:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGJ+U7s5OdGhVuZHqxuHeLNoztIpsl3J199f5dvSdWSJmaDSgjB7mLEhIfdsAYFGMYRkmPr2nN0zEB+hWYtXpA=
-X-Received: by 2002:a05:6512:b9c:b0:549:5b54:2c68 with SMTP id
- 2adb3069b0e04-5539c1181aamr1066502e87.22.1749646792292; Wed, 11 Jun 2025
- 05:59:52 -0700 (PDT)
+ bh=Mb7P6qjVvvr7hCze6s0MIH3mIAt21NOF6sDAMHdVVPM=;
+ b=G+cS4ydqz74Tgc1h//1CFvMmk05wWK3x4sE3fuDevj0IeTNU6kldiEx6atWL9YxsxG
+ /0rzaatE2tXC7mn2L6qVky1S2KvAeq//obEVz8FQMSyds1+KS0kiTu4iNLwc5qD70tht
+ hQu2T1nMVFYzQN7x0fZEJCYglSkuN1nnBEIpk0HCbMcqMHPaXSpclPjk25rJQg50gohE
+ 83T7/zJg505uiUUnBerdKFkXHmaIWYGCKzfx2+vmjsad4Xw4LH6mXDnnE8OlFR1DPlFI
+ 4Q6cRy+oZ50zVVHtWFkfRdeDi61ITd1lvdgZDA4fdzTwVuDxgDouxwXX3ctEuoyNB5qb
+ EUMg==
+X-Gm-Message-State: AOJu0Yz9hier4yZoBnovFtxbx1rtwQB+zfS8YU3RCCqJtE5+NNSDaJYZ
+ bDFvVf6Xw9S1+xT6Ub1ndRIBymp84doNfp8rsipuwmCu6/TshFv31XUTv4YycbCHMVZZeY2udUV
+ kGyTxBkqss6Bbl9gXIAh5XbbLXff26F+qWINxyYBDbnwwKLo4/YKxhtJgVfzsELjlrydMg+FQ+H
+ 8neA/kawheIdfIW4yDem8=
+X-Gm-Gg: ASbGncubtqha3z2wtTkJTZEcoHmHpxUZr64rgCog/x4wmfSYLfPT3l0OGtgrEbQbE1t
+ xO4wFx66OUTjhmCaI/L9YLcjmBU9cdvhB7Y9EiCK+X0+xpZfi0APgg9qlzH9lDVmdWhPlUtdIpS
+ ovKhTOGg==
+X-Received: by 2002:a05:6512:1152:b0:553:510d:f470 with SMTP id
+ 2adb3069b0e04-5539c0a030emr1222871e87.4.1749646911605; 
+ Wed, 11 Jun 2025 06:01:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHmkcFhZQ38yrpLhMTmm3SbsabBBi/rRcl9NeiTX7BPvdoF/F3NJisG/Gyg8sa0RaQ+xFMIL3mF/DQdQ4gPRKU=
+X-Received: by 2002:a05:6512:1152:b0:553:510d:f470 with SMTP id
+ 2adb3069b0e04-5539c0a030emr1222698e87.4.1749646909376; Wed, 11 Jun 2025
+ 06:01:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <20250326133010.168470-1-ian.stokes@intel.com>
- <Z-QC_jX3z3Vva-ut@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <Z-QC_jX3z3Vva-ut@bricha3-mobl1.ger.corp.intel.com>
+References: <20250402084744.334095-1-haijie1@huawei.com>
+In-Reply-To: <20250402084744.334095-1-haijie1@huawei.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 11 Jun 2025 14:59:40 +0200
-X-Gm-Features: AX0GCFugpSmhfmY1TNWYD3PWiP9v8oZsZfWNxnmuhxCWUEuEuku0j4UhPf8OI9Q
-Message-ID: <CAJFAV8zOJGqoqWFPKXvqwOEWfTrkB17tnxH4spwE0aS3ZePZBg@mail.gmail.com>
-Subject: Re: [PATCH v1] maintainers: update for iavf and i40e
-To: Ian Stokes <ian.stokes@intel.com>
-Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>
+Date: Wed, 11 Jun 2025 15:01:37 +0200
+X-Gm-Features: AX0GCFtLdRgYdhovZqUmclw8Ye4cF2xlZK0g0nZTifna8zz9CmzmJkBvTiuQmGE
+Message-ID: <CAJFAV8xXmz-KGUZE8XtjmV0N0Nzkz_UYGA7MD31imPV=DuQbuA@mail.gmail.com>
+Subject: Re: [PATCH] maintainers: update for hns3
+To: Jie Hai <haijie1@huawei.com>
+Cc: dev@dpdk.org, thomas@monjalon.net, ferruh.yigit@amd.com, 
+ lihuisong@huawei.com, fengcengwen@huawei.com, huangdengdui@huawei.com
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: FtZH_Wh0RUm_rwEuXU2xXTHMgtd8OMNwQRYtZZzSQZo_1749646793
+X-Mimecast-MFC-PROC-ID: JO4jhZp1vkjbe447sjkmGHiwRTaFrrKvkxOCOYILzOs_1749646912
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -85,20 +85,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
-
-On Wed, Mar 26, 2025 at 2:37=E2=80=AFPM Bruce Richardson
-<bruce.richardson@intel.com> wrote:
+On Wed, Apr 2, 2025 at 10:54=E2=80=AFAM Jie Hai <haijie1@huawei.com> wrote:
 >
-> On Wed, Mar 26, 2025 at 01:30:10PM +0000, Ian Stokes wrote:
-> > Removing myself as maintainer for iavf and i40e.
-> >
-> > Signed-off-by: Ian Stokes <ian.stokes@intel.com>
-> > ---
-> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+> I am moving on to other things and dengdui is going to
+> take over the role of hns3 maintainer. Update the
+> MAINTAINERS accordingly.
 >
+> Signed-off-by: Jie Hai <haijie1@huawei.com>
 
-Thanks for all your contributions Ian.
+Thanks for all your contributions.
 Applied.
 
 
