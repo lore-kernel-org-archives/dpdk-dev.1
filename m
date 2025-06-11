@@ -2,32 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBECEC677C4
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 07:10:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D28C677C4
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 07:11:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6BBF04060F;
-	Wed, 11 Jun 2025 09:10:47 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 957F040430;
+	Wed, 11 Jun 2025 09:10:48 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 9708D402E7
- for <dev@dpdk.org>; Wed, 11 Jun 2025 09:10:43 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 30259402F0
+ for <dev@dpdk.org>; Wed, 11 Jun 2025 09:10:44 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7A16D1A2119;
- Wed, 11 Jun 2025 09:10:43 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 131911A213B;
+ Wed, 11 Jun 2025 09:10:44 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 412F61A213A;
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CEFFC1A2139;
  Wed, 11 Jun 2025 09:10:43 +0200 (CEST)
 Received: from lsv03379.swis.in-blr01.nxp.com (lsv03379.swis.in-blr01.nxp.com
  [92.120.147.188])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 5D6041800086;
- Wed, 11 Jun 2025 15:10:42 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 38489180007D;
+ Wed, 11 Jun 2025 15:10:43 +0800 (+08)
 From: vanshika.shukla@nxp.com
-To: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
+To: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>,
  Sachin Saxena <sachin.saxena@nxp.com>
-Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [v4 05/10] mempool/dpaa: fast acquire and release
-Date: Wed, 11 Jun 2025 12:40:34 +0530
-Message-Id: <20250611071039.2939950-6-vanshika.shukla@nxp.com>
+Cc: Vinod Pullabhatla <vinod.pullabhatla@nxp.com>,
+ Vanshika Shukla <vanshika.shukla@nxp.com>
+Subject: [v4 07/10] net/dpaa: add Tx rate limiting DPAA PMD API
+Date: Wed, 11 Jun 2025 12:40:36 +0530
+Message-Id: <20250611071039.2939950-8-vanshika.shukla@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250611071039.2939950-1-vanshika.shukla@nxp.com>
 References: <20250610091411.2500413-1-vanshika.shukla@nxp.com>
@@ -48,185 +50,234 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jun Yang <jun.yang@nxp.com>
+From: Vinod Pullabhatla <vinod.pullabhatla@nxp.com>
 
-Use new BMan APIs to improve performance and support burst release.
-Improve release performance ~90% by burst release.
+Add support to set Tx rate on DPAA platform through PMD APIs
 
-Signed-off-by: Jun Yang <jun.yang@nxp.com>
+Signed-off-by: Vinod Pullabhatla <vinod.pullabhatla@nxp.com>
+Signed-off-by: Vanshika Shukla <vanshika.shukla@nxp.com>
 ---
- drivers/mempool/dpaa/dpaa_mempool.c | 85 ++++++++++++-----------------
- drivers/mempool/dpaa/dpaa_mempool.h |  2 +-
- 2 files changed, 36 insertions(+), 51 deletions(-)
+ .mailmap                             |  1 +
+ drivers/net/dpaa/dpaa_flow.c         | 87 +++++++++++++++++++++++++++-
+ drivers/net/dpaa/fmlib/fm_lib.c      | 30 ++++++++++
+ drivers/net/dpaa/fmlib/fm_port_ext.h |  2 +-
+ drivers/net/dpaa/rte_pmd_dpaa.h      | 21 ++++++-
+ 5 files changed, 137 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mempool/dpaa/dpaa_mempool.c b/drivers/mempool/dpaa/dpaa_mempool.c
-index 7dacaa9513..6c850f5cb2 100644
---- a/drivers/mempool/dpaa/dpaa_mempool.c
-+++ b/drivers/mempool/dpaa/dpaa_mempool.c
-@@ -157,61 +157,46 @@ dpaa_mbuf_free_pool(struct rte_mempool *mp)
- 	}
+diff --git a/.mailmap b/.mailmap
+index 9135f06efc..48aee6da22 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -1642,6 +1642,7 @@ Vincent S. Cojot <vcojot@redhat.com>
+ Vinh Tran <vinh.t.tran10@gmail.com>
+ Vipin Padmam Ramesh <vipinp@vmware.com>
+ Vinod Krishna <vinod.krishna@arm.com>
++Vinod Pullabhatla <vinod.pullabhatla@nxp.com>
+ Vipin Varghese <vipin.varghese@amd.com> <vipin.varghese@intel.com>
+ Vipul Ashri <vipul.ashri@oracle.com>
+ Visa Hankala <visa@hankala.org>
+diff --git a/drivers/net/dpaa/dpaa_flow.c b/drivers/net/dpaa/dpaa_flow.c
+index 2a22b23c8f..eb4bbb097c 100644
+--- a/drivers/net/dpaa/dpaa_flow.c
++++ b/drivers/net/dpaa/dpaa_flow.c
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2017-2019,2021-2024 NXP
++ * Copyright 2017-2019,2021-2025 NXP
+  */
+ 
+ /* System headers */
+@@ -669,6 +669,22 @@ static inline int get_rx_port_type(struct fman_if *fif)
+ 	return e_FM_PORT_TYPE_DUMMY;
  }
  
--static void
--dpaa_buf_free(struct dpaa_bp_info *bp_info, uint64_t addr)
--{
--	struct bm_buffer buf;
--	int ret;
--
--	DPAA_MEMPOOL_DPDEBUG("Free 0x%" PRIx64 " to bpid: %d",
--			   addr, bp_info->bpid);
--
--	bm_buffer_set64(&buf, addr);
--retry:
--	ret = bman_release(bp_info->bp, &buf, 1, 0);
--	if (ret) {
--		DPAA_MEMPOOL_DEBUG("BMAN busy. Retrying...");
--		cpu_spin(CPU_SPIN_BACKOFF_CYCLES);
--		goto retry;
--	}
--}
--
- static int
- dpaa_mbuf_free_bulk(struct rte_mempool *pool,
- 		    void *const *obj_table,
--		    unsigned int n)
-+		    unsigned int count)
- {
- 	struct dpaa_bp_info *bp_info = DPAA_MEMPOOL_TO_POOL_INFO(pool);
- 	int ret;
--	unsigned int i = 0;
-+	uint32_t n = 0, i, left;
-+	uint64_t phys[DPAA_MBUF_MAX_ACQ_REL];
- 
- 	DPAA_MEMPOOL_DPDEBUG("Request to free %d buffers in bpid = %d",
--			     n, bp_info->bpid);
-+			     count, bp_info->bpid);
- 
- 	if (unlikely(!DPAA_PER_LCORE_PORTAL)) {
- 		ret = rte_dpaa_portal_init((void *)0);
- 		if (ret) {
- 			DPAA_MEMPOOL_ERR("rte_dpaa_portal_init failed with ret: %d",
- 					 ret);
--			return 0;
-+			return ret;
- 		}
- 	}
- 
--	while (i < n) {
--		uint64_t phy = rte_mempool_virt2iova(obj_table[i]);
--
--		if (unlikely(!bp_info->ptov_off)) {
--			/* buffers are from single mem segment */
--			if (bp_info->flags & DPAA_MPOOL_SINGLE_SEGMENT) {
--				bp_info->ptov_off = (size_t)obj_table[i] - phy;
--				rte_dpaa_bpid_info[bp_info->bpid].ptov_off
--						= bp_info->ptov_off;
--			}
-+	while (n < count) {
-+		/* Acquire is all-or-nothing, so we drain in 7s,
-+		 * then the remainder.
-+		 */
-+		if ((count - n) > DPAA_MBUF_MAX_ACQ_REL)
-+			left = DPAA_MBUF_MAX_ACQ_REL;
-+		else
-+			left = count - n;
++static inline int get_tx_port_type(struct fman_if *fif)
++{
++	if (fif->mac_type == fman_offline_internal ||
++	    fif->mac_type == fman_onic)
++		return e_FM_PORT_TYPE_OH_OFFLINE_PARSING;
++	else if (fif->mac_type == fman_mac_1g)
++		return e_FM_PORT_TYPE_TX;
++	else if (fif->mac_type == fman_mac_2_5g)
++		return e_FM_PORT_TYPE_TX_2_5G;
++	else if (fif->mac_type == fman_mac_10g)
++		return e_FM_PORT_TYPE_TX_10G;
 +
-+		for (i = 0; i < left; i++) {
-+			phys[i] = rte_mempool_virt2iova(obj_table[n]);
-+			phys[i] += bp_info->meta_data_size;
-+			n++;
- 		}
--
--		dpaa_buf_free(bp_info,
--			      (uint64_t)phy + bp_info->meta_data_size);
--		i = i + 1;
-+release_again:
-+		ret = bman_release_fast(bp_info->bp, phys, left);
-+		if (unlikely(ret))
-+			goto release_again;
++	DPAA_PMD_ERR("MAC type unsupported");
++	return e_FM_PORT_TYPE_DUMMY;
++}
++
+ static inline int set_fm_port_handle(struct dpaa_if *dpaa_intf,
+ 				     uint64_t req_dist_set,
+ 				     struct fman_if *fif)
+@@ -889,9 +905,9 @@ int dpaa_fm_init(void)
+ 	/* FM PCD Enable */
+ 	ret = fm_pcd_enable(pcd_handle);
+ 	if (ret) {
+-		fm_close(fman_handle);
+ 		fm_pcd_close(pcd_handle);
+ 		DPAA_PMD_ERR("fm_pcd_enable: Failed");
++		fm_close(fman_handle);
+ 		return -1;
  	}
  
- 	DPAA_MEMPOOL_DPDEBUG("freed %d buffers in bpid =%d",
-@@ -226,9 +211,9 @@ dpaa_mbuf_alloc_bulk(struct rte_mempool *pool,
- 		     unsigned int count)
- {
- 	struct rte_mbuf **m = (struct rte_mbuf **)obj_table;
--	struct bm_buffer bufs[DPAA_MBUF_MAX_ACQ_REL];
-+	uint64_t bufs[DPAA_MBUF_MAX_ACQ_REL];
- 	struct dpaa_bp_info *bp_info;
--	void *bufaddr;
-+	uint8_t *bufaddr;
- 	int i, ret;
- 	unsigned int n = 0;
+@@ -1073,3 +1089,70 @@ int dpaa_port_vsp_cleanup(struct dpaa_if *dpaa_intf, struct fman_if *fif)
  
-@@ -240,7 +225,7 @@ dpaa_mbuf_alloc_bulk(struct rte_mempool *pool,
- 	if (unlikely(count >= (RTE_MEMPOOL_CACHE_MAX_SIZE * 2))) {
- 		DPAA_MEMPOOL_ERR("Unable to allocate requested (%u) buffers",
- 				 count);
--		return -1;
-+		return -EINVAL;
- 	}
+ 	return E_OK;
+ }
++
++int rte_pmd_dpaa_port_set_rate_limit(uint16_t port_id, uint16_t burst,
++				     uint32_t rate)
++{
++	t_fm_port_rate_limit port_rate_limit;
++	bool port_handle_exists = true;
++	void *handle;
++	uint32_t ret;
++	struct rte_eth_dev *dev;
++	struct dpaa_if *dpaa_intf;
++	struct fman_if *fif;
++
++	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
++	dev = &rte_eth_devices[port_id];
++	dpaa_intf = dev->data->dev_private;
++	fif = dev->process_private;
++
++	memset(&port_rate_limit, 0, sizeof(port_rate_limit));
++	port_rate_limit.max_burst_size = burst;
++	port_rate_limit.rate_limit = rate;
++
++	DPAA_PMD_DEBUG("Port:%s: set max Burst =%u max Rate =%u",
++		dpaa_intf->name, burst, rate);
++
++	if (!dpaa_intf->port_handle) {
++		t_fm_port_params fm_port_params;
++
++		/* Memset FM port params */
++		memset(&fm_port_params, 0, sizeof(fm_port_params));
++
++		/* Set FM port params */
++		fm_port_params.h_fm = fm_open(0);
++		fm_port_params.port_type = get_tx_port_type(fif);
++		fm_port_params.port_id = mac_idx[fif->mac_idx];
++
++		/* FM PORT Open */
++		handle = fm_port_open(&fm_port_params);
++		fm_close(fm_port_params.h_fm);
++		if (!handle) {
++			DPAA_PMD_ERR("Can't open handle %p",
++				     fm_info.fman_handle);
++			return -ENODEV;
++		}
++
++		port_handle_exists = false;
++	} else {
++		handle = dpaa_intf->port_handle;
++	}
++
++	if (burst == 0 || rate == 0)
++		ret = fm_port_delete_rate_limit(handle);
++	else
++		ret = fm_port_set_rate_limit(handle, &port_rate_limit);
++
++	if (ret) {
++		DPAA_PMD_ERR("Failed to %s rate limit ret = %#x.",
++			(!burst || !rate) ? "del" : "set", ret);
++	} else {
++		DPAA_PMD_DEBUG("Success to %s rate limit,",
++			(!burst || !rate) ? "del" : "set");
++	}
++
++	if (!port_handle_exists)
++		fm_port_close(handle);
++
++	return -ret;
++}
+diff --git a/drivers/net/dpaa/fmlib/fm_lib.c b/drivers/net/dpaa/fmlib/fm_lib.c
+index b35feba004..d34993de38 100644
+--- a/drivers/net/dpaa/fmlib/fm_lib.c
++++ b/drivers/net/dpaa/fmlib/fm_lib.c
+@@ -558,3 +558,33 @@ get_device_id(t_handle h_dev)
  
- 	if (unlikely(!DPAA_PER_LCORE_PORTAL)) {
-@@ -248,7 +233,7 @@ dpaa_mbuf_alloc_bulk(struct rte_mempool *pool,
- 		if (ret) {
- 			DPAA_MEMPOOL_ERR("rte_dpaa_portal_init failed with ret: %d",
- 					 ret);
--			return -1;
-+			return ret;
- 		}
- 	}
+ 	return (t_handle)p_dev->id;
+ }
++
++uint32_t
++fm_port_delete_rate_limit(t_handle h_fm_port)
++{
++	t_device        *p_dev = (t_device *)h_fm_port;
++
++	_fml_dbg("Calling...");
++
++	if (ioctl(p_dev->fd, FM_PORT_IOC_REMOVE_RATE_LIMIT))
++		RETURN_ERROR(MINOR, E_INVALID_OPERATION, NO_MSG);
++
++	_fml_dbg("Finishing.");
++
++	return E_OK;
++}
++
++uint32_t
++fm_port_set_rate_limit(t_handle h_fm_port, t_fm_port_rate_limit *p_rate_limit)
++{
++	t_device        *p_dev = (t_device *)h_fm_port;
++
++	_fml_dbg("Calling...");
++
++	if (ioctl(p_dev->fd, FM_PORT_IOC_SET_RATE_LIMIT, p_rate_limit))
++		RETURN_ERROR(MINOR, E_INVALID_OPERATION, NO_MSG);
++
++	_fml_dbg("Finishing.");
++
++	return E_OK;
++}
+diff --git a/drivers/net/dpaa/fmlib/fm_port_ext.h b/drivers/net/dpaa/fmlib/fm_port_ext.h
+index bb2e00222e..f1cbf37de3 100644
+--- a/drivers/net/dpaa/fmlib/fm_port_ext.h
++++ b/drivers/net/dpaa/fmlib/fm_port_ext.h
+@@ -274,7 +274,7 @@ typedef struct ioc_fm_port_congestion_groups_t {
+  * @Return	0 on success; error code otherwise.
+  */
+ #define FM_PORT_IOC_SET_RATE_LIMIT \
+-	IOW(FM_IOC_TYPE_BASE, FM_PORT_IOC_NUM(3), ioc_fm_port_rate_limit_t)
++	_IOW(FM_IOC_TYPE_BASE, FM_PORT_IOC_NUM(3), ioc_fm_port_rate_limit_t)
  
-@@ -257,10 +242,11 @@ dpaa_mbuf_alloc_bulk(struct rte_mempool *pool,
- 		 * then the remainder.
- 		 */
- 		if ((count - n) > DPAA_MBUF_MAX_ACQ_REL) {
--			ret = bman_acquire(bp_info->bp, bufs,
--					   DPAA_MBUF_MAX_ACQ_REL, 0);
-+			ret = bman_acquire_fast(bp_info->bp, bufs,
-+				DPAA_MBUF_MAX_ACQ_REL);
- 		} else {
--			ret = bman_acquire(bp_info->bp, bufs, count - n, 0);
-+			ret = bman_acquire_fast(bp_info->bp, bufs,
-+				count - n);
- 		}
- 		/* In case of less than requested number of buffers available
- 		 * in pool, qbman_swp_acquire returns 0
-@@ -275,16 +261,15 @@ dpaa_mbuf_alloc_bulk(struct rte_mempool *pool,
- 			return -ENOBUFS;
- 		}
- 		/* assigning mbuf from the acquired objects */
--		for (i = 0; (i < ret) && bufs[i].addr; i++) {
-+		for (i = 0; (i < ret) && bufs[i]; i++) {
- 			/* TODO-errata - observed that bufs may be null
- 			 * i.e. first buffer is valid, remaining 6 buffers
- 			 * may be null.
- 			 */
--			bufaddr = DPAA_MEMPOOL_PTOV(bp_info, bufs[i].addr);
--			m[n] = (struct rte_mbuf *)((char *)bufaddr
--						- bp_info->meta_data_size);
--			DPAA_MEMPOOL_DPDEBUG("Paddr (%p), FD (%p) from BMAN",
--					     (void *)bufaddr, (void *)m[n]);
-+			bufaddr = DPAA_MEMPOOL_PTOV(bp_info, bufs[i]);
-+			m[n] = (void *)(bufaddr - bp_info->meta_data_size);
-+			DPAA_MEMPOOL_DPDEBUG("Vaddr(%p), mbuf(%p) from BMAN",
-+				bufaddr, m[n]);
- 			n++;
- 		}
- 	}
-diff --git a/drivers/mempool/dpaa/dpaa_mempool.h b/drivers/mempool/dpaa/dpaa_mempool.h
-index 0877068fdd..5ca53c7ff9 100644
---- a/drivers/mempool/dpaa/dpaa_mempool.h
-+++ b/drivers/mempool/dpaa/dpaa_mempool.h
-@@ -26,7 +26,7 @@
- #define DPAA_MAX_BPOOLS	256
+ /*
+  * @Function	  fm_port_delete_rate_limit
+diff --git a/drivers/net/dpaa/rte_pmd_dpaa.h b/drivers/net/dpaa/rte_pmd_dpaa.h
+index ec45633ba2..1a847c4d43 100644
+--- a/drivers/net/dpaa/rte_pmd_dpaa.h
++++ b/drivers/net/dpaa/rte_pmd_dpaa.h
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2018 NXP
++ * Copyright 2018, 2022, 2024 NXP
+  */
  
- /* Maximum release/acquire from BMAN */
--#define DPAA_MBUF_MAX_ACQ_REL  8
-+#define DPAA_MBUF_MAX_ACQ_REL  FSL_BM_BURST_MAX
+ #ifndef _PMD_DPAA_H_
+@@ -31,4 +31,23 @@
+ int
+ rte_pmd_dpaa_set_tx_loopback(uint16_t port, uint8_t on);
  
- /* Buffers are allocated from single mem segment i.e. phys contiguous */
- #define DPAA_MPOOL_SINGLE_SEGMENT  0x01
++/**
++ * Set TX rate limit
++ *
++ * @param port_id
++ *    The port identifier of the Ethernet device.
++ * @param burst
++ *    Max burst size(KBytes) of the Ethernet device.
++ *    0 - Disable TX rate limit.
++ * @param rate
++ *    Max rate(Kb/sec) of the Ethernet device.
++ *    0 - Disable TX rate limit.
++ * @return
++ *    0 - if successful.
++ *    <0 - if failed, with proper error code.
++ */
++int
++rte_pmd_dpaa_port_set_rate_limit(uint16_t port_id, uint16_t burst,
++				 uint32_t rate);
++
+ #endif /* _PMD_DPAA_H_ */
 -- 
 2.25.1
 
