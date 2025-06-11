@@ -2,63 +2,88 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 828AFC71136
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 20:29:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21A31C71136
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 22:18:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 22041402DB;
-	Wed, 11 Jun 2025 22:29:38 +0200 (CEST)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com
- [209.85.216.46]) by mails.dpdk.org (Postfix) with ESMTP id D6AEE40144
- for <dev@dpdk.org>; Wed, 11 Jun 2025 22:29:36 +0200 (CEST)
-Received: by mail-pj1-f46.google.com with SMTP id
- 98e67ed59e1d1-30e8feb1886so360014a91.0
- for <dev@dpdk.org>; Wed, 11 Jun 2025 13:29:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1749673776; x=1750278576; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=I/jtx1gL52poSgAVSEkhDQ6pFwA0pgkDG3mdiASCnpY=;
- b=HKrAW3PqH4BFPcabxqVOjX2jwAxOT4Rb8myKjCvBYG2icO7bVggIHn84xCp9VP68PX
- eAWZrDTODqvMO///u7qzWDqOH6lhp2mj2ayUsvt7kozWIxKpXqQiSo5MJGCXMJLkyJMk
- zksfhLpGTj5ry4cHvU1tbBr5qM76HDDZAzmMw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749673776; x=1750278576;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=I/jtx1gL52poSgAVSEkhDQ6pFwA0pgkDG3mdiASCnpY=;
- b=aFwle0la8O18fBRXHMYUEujGYN7RatJcs+SPxMwdtR+QaAlH6gkQV7pK8oSD0mToMa
- C4wDjAtxCp9/CgbEF69OLpPOSTD/pPvFrn34eoyatmnq9W56/nAgM58bu3HFhF51MTpG
- WSKOMK/5/htSbc3vBo7SWlz6ZDR4mMTyoF2oEI1ET/TNw5oGdRVMFxebciU5ESUxq/Lr
- tN+BhRfyOf1gA3FwsQ/Govli81Gi0r1oXXE1KxFgmab9TbsX2JYZp3fjCt/i/10gs3Iq
- o0rxj/cI0GFhBLvEa/Z2rVeOYpSi2994ZjRwWTl+0EHZRiopK2DKe8p15IwJJXkLBnty
- glrw==
-X-Gm-Message-State: AOJu0YwsOs1lS0mqdgjQr0HN1Unc/jrDIuoWnfYyRgUNWfBCUPZ00QaY
- v4uzyDOJvMp0bYj6iy95WfjL6s/RF7ovrrcZOVBwSqsDo0LwEFQ/6LNdfcjp1fnVVyfcWAw9XjF
- bBKrghikJE9bjO7Kbyucd5ieVh4PahjC+jnAnLInH1Q==
-X-Gm-Gg: ASbGncvzJVp5NnAedhWhW31O0yPMt8wAmcYaYYFj41/BJrpJbuSA2JhBBasbtAdHWLc
- E07FKK9zAWIAz+4zJ6KAuxr4VQixqJMdbgjhCjvaxHc8Hf9Erg3vkbqV9irgKEp3eeycApNMaOs
- Q+YnQ2E74cW0XRFNy5zkxWbdSTdYHaavZVpjcW/QLTy6pA8FSKg5eSbeqF1ONLKASNdlCNkQXba
- vRYIpjn07kEDJQ=
-X-Google-Smtp-Source: AGHT+IFoIA8jRG7DBNBMc+RZ3s/3nUh49gcKSASWA/Lut7APHGnSHMCL+bz2Rh2D/u/bBdwG3T6PyNNLQ35Vq0rvbI8=
-X-Received: by 2002:a17:90b:3d4e:b0:313:5d2f:5505 with SMTP id
- 98e67ed59e1d1-313c08bbaddmr762129a91.16.1749673775721; Wed, 11 Jun 2025
- 13:29:35 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1DAC44021F;
+	Thu, 12 Jun 2025 00:18:30 +0200 (CEST)
+Received: from fhigh-a2-smtp.messagingengine.com
+ (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+ by mails.dpdk.org (Postfix) with ESMTP id 929C740156
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 00:18:29 +0200 (CEST)
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal
+ [10.202.2.52])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 1515B11401F5;
+ Wed, 11 Jun 2025 18:18:29 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-12.internal (MEProxy); Wed, 11 Jun 2025 18:18:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1749680309;
+ x=1749766709; bh=9F8BF0ZU2QZ4Kcy2KLMSrBiUCYaF0RDnABz4UKTcD+I=; b=
+ mmR6zUum7leis7vCJZoH15fGDDnEmpZDfXtS5F2kf7y0fRtkUtrr0hUNtQPXwugF
+ nhWWjh7Ywyqbg0PsL7CgHDDmCWSUR5EBOg1cjvFTIzpc9Mn85tCzc3bgRfYKDhaR
+ evtx5+tXSWTQ4eLY9a+1YNEesiUQFIwaF5+a9xx0twt366QKFDBAdrSXLAzqN9aw
+ uu+8YK5UH1eK+NuQZYAnpTvx0jcC6I6+4U5puuUcDuGBi99k6rNA0Jni+w+Bv1L5
+ CoTKXvgx2Adr78TPDrf5JBW4DsX0qXd59nm5yi7b9UQxGPq2YR+yCDfIXIDOVqxT
+ bZ1Sq89YLCKXkh4IcBinhA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749680309; x=
+ 1749766709; bh=9F8BF0ZU2QZ4Kcy2KLMSrBiUCYaF0RDnABz4UKTcD+I=; b=F
+ f9w1hxoKEOtrRSUSYc6YZ+tAWmGs1uIqa/g1PBaU3XbAx5LHc7qSIEgan3HJkxVZ
+ c332eCE79216xG/oFs+vyeOgkI2qRGuMakH+/W2IRxtUFVvKaSPCD/5Ye5fbCv7Z
+ m/h/sJkCYN8t4FaNCRnpNPKEGqQsQlwpIDVgUOc2f02iJ10SJfSwuECNaNkUZ4SO
+ LlmgdyM5IywBrZwPzxD+GcuJUZauZeoWTacsUqLh8D9NCpUoecJt26DphqW0clVR
+ cFc8FthZZ9xvrNXDjQg2gDX9xhSY4r7jzmtYzw2lrF3DSuiTkcr1YKuNzM5g69rI
+ chZTGs7n1jkXCheJ7VCuA==
+X-ME-Sender: <xms:swBKaGMMThuIJ5EUwTdUMUr4vXTORIGEiEdtFkrljcnl_ddXGajfBA>
+ <xme:swBKaE9Ulkz3992xiDKz5TkvCfRTuwp1DCmNkogZZneE2BOM89fmun2i-8uVKZ6Gf
+ WTUh66zk5JzI4CRhQ>
+X-ME-Received: <xmr:swBKaNQ39d2uwUwGIJpE6YTX0Ff8kOAqJB2wFGNDE4tS1v0GGTjn-33kWpQdZ_dLstELKuYwpyUPrtZG64duaacT6w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddufeefiecutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+ uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+ hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdej
+ necuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehmohhnjh
+ grlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevfffgtdeg
+ keeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgeptdenuc
+ frrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdp
+ nhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhtvg
+ hphhgvnhesnhgvthifohhrkhhplhhumhgsvghrrdhorhhgpdhrtghpthhtohepuggvvhes
+ ughpughkrdhorhhgpdhrtghpthhtoheprhhorhgvthiilhgrsehlihhnuhigrdhmihgtrh
+ hoshhofhhtrdgtohhmpdhrtghpthhtohepmhgssehsmhgrrhhtshhhrghrvghshihsthgv
+ mhhsrdgtohhmpdhrtghpthhtohepkhhonhhsthgrnhhtihhnrdgrnhgrnhihvghvsehhuh
+ grfigvihdrtghomhdprhgtphhtthhopehrvghshhhmrgdrphgrthhtrghnsehinhhtvghl
+ rdgtohhm
+X-ME-Proxy: <xmx:tABKaGup5GXDG8qycrm-gAlT7t57XgDEZUiaEjH7tqwVn2-lkuI_Vg>
+ <xmx:tABKaOcIegftU2BmVkIrcWzN3mzC6ZZyVRRjM_B8GLt3uX1PGOVzrA>
+ <xmx:tABKaK3wz9q7PI0jRhPBmNsd8imWwXPu97v1kKtUWN3I7Fis5bBRkQ>
+ <xmx:tABKaC953lRMjUtA2SYRCSBOUk_CTBzo4evLnK8ryaN3vJA_j1nR7w>
+ <xmx:tQBKaHuxG7yMevRcKri8wRlH8t06TAUtqYToerg4x8piZsskC1sgmSVC>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 11 Jun 2025 18:18:26 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, Tyler Retzlaff <roretzla@linux.microsoft.com>,
+ Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Reshma Pattan <reshma.pattan@intel.com>
+Subject: Re: [PATCH v8 2/7] latencystats: do not use floating point
+Date: Thu, 12 Jun 2025 00:18:24 +0200
+Message-ID: <15450130.EVyyLHbfrO@thomas>
+In-Reply-To: <20250610141355.91759-3-stephen@networkplumber.org>
+References: <20240408195036.182545-1-stephen@networkplumber.org>
+ <20250610141355.91759-1-stephen@networkplumber.org>
+ <20250610141355.91759-3-stephen@networkplumber.org>
 MIME-Version: 1.0
-References: <20240821191557.18744-1-jspewock@iol.unh.edu>
- <20250313033611.1896695-1-probb@iol.unh.edu>
- <20250313033611.1896695-2-probb@iol.unh.edu>
-In-Reply-To: <20250313033611.1896695-2-probb@iol.unh.edu>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Wed, 11 Jun 2025 16:24:25 -0400
-X-Gm-Features: AX0GCFuOe4MuGqTmYOsPCVP0PChxlvA6-mUKVA-4zPdMyCcndOvqCWZuGxeIz9A
-Message-ID: <CAJvnSUCCU1gVA0tMf-ZUmyAB7tTwd6foL14vhRsb9OMLrz=OEA@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] dts: add OS abstractions for creating virtual
- functions
-To: Paul.Szczepanek@arm.com
-Cc: dev@dpdk.org, Luca.Vizzarro@arm.com, npratte@iol.unh.edu, 
- dmarx@iol.unh.edu, Jeremy Spewock <jspewock@iol.unh.edu>
-Content-Type: multipart/alternative; boundary="000000000000e008d1063751ab24"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -72,23 +97,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000e008d1063751ab24
-Content-Type: text/plain; charset="UTF-8"
+10/06/2025 16:12, Stephen Hemminger:
+> The cycle counts do not need to be stored as floating point.
+> Instead keep track of latency in cycles, and convert to
+> nanoseconds when read.
+> 
+> Use scaled math with exponential Weighted Moving Average weight
+> of .25 to avoid use of floating point for that.
+> 
+> The average latency took too long to "warm up".
+> Do what RFC 6298 suggests and initialize on first sample.
 
-Recheck-request: rebase=main, loongarch-compilation
+An error appears when compiling patch by patch on Arm:
 
-I don't actually need a compile recheck, I'm submitting this recheck solely
-as a means of testing/demonstrating the recheck framework rebase function.
+error: implicit declaration of function 'llabs'
+       glob_stats->jitter += llabs(delta)
+note: include '<stdlib.h>' or provide a declaration of 'llabs'
 
---000000000000e008d1063751ab24
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+I can fix it while merging.
 
-<div dir=3D"ltr"><div dir=3D"ltr"><span class=3D"gmail-il">Recheck</span>-<=
-span class=3D"gmail-il">request</span>:=C2=A0<span class=3D"gmail-il">rebas=
-e</span>=3Dmain,=C2=A0loongarch-compilation<div><br></div><div>I don&#39;t =
-actually need a compile recheck, I&#39;m submitting this recheck solely as =
-a means of testing/demonstrating the recheck framework rebase function.</di=
-v></div></div>
 
---000000000000e008d1063751ab24--
