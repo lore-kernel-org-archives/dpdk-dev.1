@@ -2,32 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3785AC677C4
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 07:10:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBECEC677C4
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 07:10:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 448A4402F0;
-	Wed, 11 Jun 2025 09:10:46 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6BBF04060F;
+	Wed, 11 Jun 2025 09:10:47 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id CD481402C2
- for <dev@dpdk.org>; Wed, 11 Jun 2025 09:10:42 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 9708D402E7
+ for <dev@dpdk.org>; Wed, 11 Jun 2025 09:10:43 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A38BB1A0B1F;
- Wed, 11 Jun 2025 09:10:42 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7A16D1A2119;
+ Wed, 11 Jun 2025 09:10:43 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6A1E31A0B1A;
- Wed, 11 Jun 2025 09:10:42 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 412F61A213A;
+ Wed, 11 Jun 2025 09:10:43 +0200 (CEST)
 Received: from lsv03379.swis.in-blr01.nxp.com (lsv03379.swis.in-blr01.nxp.com
  [92.120.147.188])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 86DB11800079;
- Wed, 11 Jun 2025 15:10:41 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 5D6041800086;
+ Wed, 11 Jun 2025 15:10:42 +0800 (+08)
 From: vanshika.shukla@nxp.com
 To: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
  Sachin Saxena <sachin.saxena@nxp.com>
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [v4 03/10] bus/dpaa: enhance DPAA SoC version
-Date: Wed, 11 Jun 2025 12:40:32 +0530
-Message-Id: <20250611071039.2939950-4-vanshika.shukla@nxp.com>
+Subject: [v4 05/10] mempool/dpaa: fast acquire and release
+Date: Wed, 11 Jun 2025 12:40:34 +0530
+Message-Id: <20250611071039.2939950-6-vanshika.shukla@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250611071039.2939950-1-vanshika.shukla@nxp.com>
 References: <20250610091411.2500413-1-vanshika.shukla@nxp.com>
@@ -50,300 +50,183 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jun Yang <jun.yang@nxp.com>
 
-Provide internal API to identify DPAA1 SoC version instead of accessing
-global variable directly.
+Use new BMan APIs to improve performance and support burst release.
+Improve release performance ~90% by burst release.
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/bus/dpaa/base/qbman/qman.c |  9 +++---
- drivers/bus/dpaa/bus_dpaa_driver.h |  9 +++---
- drivers/bus/dpaa/dpaa_bus.c        | 48 ++++++++++++++++++++++--------
- drivers/net/dpaa/dpaa_ethdev.c     | 29 +++++-------------
- drivers/net/dpaa/dpaa_rxtx.c       |  4 +--
- 5 files changed, 54 insertions(+), 45 deletions(-)
+ drivers/mempool/dpaa/dpaa_mempool.c | 85 ++++++++++++-----------------
+ drivers/mempool/dpaa/dpaa_mempool.h |  2 +-
+ 2 files changed, 36 insertions(+), 51 deletions(-)
 
-diff --git a/drivers/bus/dpaa/base/qbman/qman.c b/drivers/bus/dpaa/base/qbman/qman.c
-index 11fabcaff5..fbce0638b7 100644
---- a/drivers/bus/dpaa/base/qbman/qman.c
-+++ b/drivers/bus/dpaa/base/qbman/qman.c
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
-  *
-  * Copyright 2008-2016 Freescale Semiconductor Inc.
-- * Copyright 2017,2019-2024 NXP
-+ * Copyright 2017,2019-2025 NXP
-  *
-  */
- 
-@@ -520,11 +520,12 @@ qman_init_portal(struct qman_portal *portal,
- 	if (!c)
- 		c = portal->config;
- 
--	if (dpaa_svr_family == SVR_LS1043A_FAMILY)
-+	if (dpaa_soc_ver() == SVR_LS1043A_FAMILY) {
- 		portal->use_eqcr_ci_stashing = 3;
--	else
-+	} else {
- 		portal->use_eqcr_ci_stashing =
--					((qman_ip_rev >= QMAN_REV30) ? 1 : 0);
-+			(qman_ip_rev >= QMAN_REV30 ? 1 : 0);
-+	}
- 
- 	/*
- 	 * prep the low-level portal struct with the mapped addresses from the
-diff --git a/drivers/bus/dpaa/bus_dpaa_driver.h b/drivers/bus/dpaa/bus_dpaa_driver.h
-index 26a83b2cdf..d64a8e80e0 100644
---- a/drivers/bus/dpaa/bus_dpaa_driver.h
-+++ b/drivers/bus/dpaa/bus_dpaa_driver.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  *
-- *   Copyright 2017-2022 NXP
-+ *   Copyright 2017-2022, 2025 NXP
-  *
-  */
- #ifndef BUS_DPAA_DRIVER_H
-@@ -55,11 +55,9 @@ dpaa_seqn(struct rte_mbuf *mbuf)
- /* DPAA SoC identifier; If this is not available, it can be concluded
-  * that board is non-DPAA. Single slot is currently supported.
-  */
--#define DPAA_SOC_ID_FILE	"/sys/devices/soc0/soc_id"
- 
- #define SVR_LS1043A_FAMILY	0x87920000
- #define SVR_LS1046A_FAMILY	0x87070000
--#define SVR_MASK		0xffff0000
- 
- /** Device driver supports link state interrupt */
- #define RTE_DPAA_DRV_INTR_LSC  0x0008
-@@ -70,8 +68,6 @@ dpaa_seqn(struct rte_mbuf *mbuf)
- #define RTE_DEV_TO_DPAA_CONST(ptr) \
- 	container_of(ptr, const struct rte_dpaa_device, device)
- 
--extern unsigned int dpaa_svr_family;
--
- struct rte_dpaa_device;
- struct rte_dpaa_driver;
- 
-@@ -250,6 +246,9 @@ RTE_PMD_EXPORT_NAME(nm, __COUNTER__)
- __rte_internal
- struct fm_eth_port_cfg *dpaa_get_eth_port_cfg(int dev_id);
- 
-+__rte_internal
-+uint32_t dpaa_soc_ver(void);
-+
- #ifdef __cplusplus
+diff --git a/drivers/mempool/dpaa/dpaa_mempool.c b/drivers/mempool/dpaa/dpaa_mempool.c
+index 7dacaa9513..6c850f5cb2 100644
+--- a/drivers/mempool/dpaa/dpaa_mempool.c
++++ b/drivers/mempool/dpaa/dpaa_mempool.c
+@@ -157,61 +157,46 @@ dpaa_mbuf_free_pool(struct rte_mempool *mp)
+ 	}
  }
- #endif
-diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
-index ed1f77bab7..341822c877 100644
---- a/drivers/bus/dpaa/dpaa_bus.c
-+++ b/drivers/bus/dpaa/dpaa_bus.c
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  *
-- *   Copyright 2017-2020 NXP
-+ * Copyright 2017-2025 NXP
-  *
-  */
- /* System headers */
-@@ -46,12 +46,16 @@
- #include <netcfg.h>
- #include <fman.h>
  
-+#define DPAA_SOC_ID_FILE	"/sys/devices/soc0/soc_id"
-+#define DPAA_SVR_MASK 0xffff0000
-+
- struct rte_dpaa_bus {
- 	struct rte_bus bus;
- 	TAILQ_HEAD(, rte_dpaa_device) device_list;
- 	TAILQ_HEAD(, rte_dpaa_driver) driver_list;
- 	int device_count;
- 	int detected;
-+	uint32_t svr_ver;
- };
- 
- static struct rte_dpaa_bus s_rte_dpaa_bus;
-@@ -60,9 +64,6 @@ static struct netcfg_info *dpaa_netcfg;
- /* define a variable to hold the portal_key, once created.*/
- static pthread_key_t dpaa_portal_key;
- 
--RTE_EXPORT_INTERNAL_SYMBOL(dpaa_svr_family)
--unsigned int dpaa_svr_family;
+-static void
+-dpaa_buf_free(struct dpaa_bp_info *bp_info, uint64_t addr)
+-{
+-	struct bm_buffer buf;
+-	int ret;
 -
- #define FSL_DPAA_BUS_NAME	dpaa_bus
- 
- RTE_EXPORT_INTERNAL_SYMBOL(per_lcore_dpaa_io)
-@@ -73,6 +74,13 @@ RTE_EXPORT_INTERNAL_SYMBOL(dpaa_seqn_dynfield_offset)
- int dpaa_seqn_dynfield_offset = -1;
- 
- RTE_EXPORT_INTERNAL_SYMBOL(dpaa_get_eth_port_cfg)
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(dpaa_soc_ver)
-+uint32_t dpaa_soc_ver(void)
-+{
-+	return s_rte_dpaa_bus.svr_ver;
-+}
-+
- struct fm_eth_port_cfg *
- dpaa_get_eth_port_cfg(int dev_id)
- {
-@@ -663,7 +671,7 @@ rte_dpaa_bus_probe(void)
- 	struct rte_dpaa_device *dev;
- 	struct rte_dpaa_driver *drv;
- 	FILE *svr_file = NULL;
--	unsigned int svr_ver;
-+	uint32_t svr_ver;
- 	int probe_all = s_rte_dpaa_bus.bus.conf.scan_mode != RTE_BUS_SCAN_ALLOWLIST;
- 	static int process_once;
- 
-@@ -671,6 +679,29 @@ rte_dpaa_bus_probe(void)
- 	if (!s_rte_dpaa_bus.detected)
- 		return 0;
- 
-+	if (s_rte_dpaa_bus.bus.conf.scan_mode != RTE_BUS_SCAN_ALLOWLIST)
-+		probe_all = true;
-+
-+	svr_file = fopen(DPAA_SOC_ID_FILE, "r");
-+	if (svr_file) {
-+		if (fscanf(svr_file, "svr:%x", &svr_ver) > 0)
-+			s_rte_dpaa_bus.svr_ver = svr_ver & DPAA_SVR_MASK;
-+		else
-+			s_rte_dpaa_bus.svr_ver = 0;
-+		fclose(svr_file);
-+	} else {
-+		s_rte_dpaa_bus.svr_ver = 0;
-+	}
-+	if (s_rte_dpaa_bus.svr_ver == SVR_LS1046A_FAMILY) {
-+		DPAA_BUS_LOG(INFO, "This is LS1046A family SoC.");
-+	} else if (s_rte_dpaa_bus.svr_ver == SVR_LS1043A_FAMILY) {
-+		DPAA_BUS_LOG(INFO, "This is LS1043A family SoC.");
-+	} else {
-+		DPAA_BUS_LOG(WARNING,
-+			"This is Unknown(%08x) DPAA1 family SoC.",
-+			s_rte_dpaa_bus.svr_ver);
-+	}
-+
- 	/* Device list creation is only done once */
- 	if (!process_once) {
- 		rte_dpaa_bus_dev_build();
-@@ -699,13 +730,6 @@ rte_dpaa_bus_probe(void)
- 	 */
- 	rte_mbuf_set_platform_mempool_ops(DPAA_MEMPOOL_OPS_NAME);
- 
--	svr_file = fopen(DPAA_SOC_ID_FILE, "r");
--	if (svr_file) {
--		if (fscanf(svr_file, "svr:%x", &svr_ver) > 0)
--			dpaa_svr_family = svr_ver & SVR_MASK;
--		fclose(svr_file);
+-	DPAA_MEMPOOL_DPDEBUG("Free 0x%" PRIx64 " to bpid: %d",
+-			   addr, bp_info->bpid);
+-
+-	bm_buffer_set64(&buf, addr);
+-retry:
+-	ret = bman_release(bp_info->bp, &buf, 1, 0);
+-	if (ret) {
+-		DPAA_MEMPOOL_DEBUG("BMAN busy. Retrying...");
+-		cpu_spin(CPU_SPIN_BACKOFF_CYCLES);
+-		goto retry;
 -	}
+-}
 -
- 	TAILQ_FOREACH(dev, &s_rte_dpaa_bus.device_list, next) {
- 		if (dev->device_type == FSL_DPAA_ETH) {
- 			ret = rte_dpaa_setup_intr(dev->intr_handle);
-diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index 66d62485af..7d0f830204 100644
---- a/drivers/net/dpaa/dpaa_ethdev.c
-+++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  *
-  *   Copyright 2016 Freescale Semiconductor, Inc. All rights reserved.
-- *   Copyright 2017-2020,2022-2024 NXP
-+ *   Copyright 2017-2020,2022-2025 NXP
-  *
-  */
- /* System headers */
-@@ -173,7 +173,7 @@ dpaa_poll_queue_default_config(struct qm_mcc_initfq *opts)
- 	opts->fqd.fq_ctrl = QM_FQCTRL_AVOIDBLOCK | QM_FQCTRL_CTXASTASHING |
- 			   QM_FQCTRL_PREFERINCACHE;
- 	opts->fqd.context_a.stashing.exclusive = 0;
--	if (dpaa_svr_family != SVR_LS1046A_FAMILY)
-+	if (dpaa_soc_ver() != SVR_LS1046A_FAMILY)
- 		opts->fqd.context_a.stashing.annotation_cl =
- 						DPAA_IF_RX_ANNOTATION_STASH;
- 	opts->fqd.context_a.stashing.data_cl = DPAA_IF_RX_DATA_STASH;
-@@ -594,30 +594,15 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
- 
  static int
- dpaa_fw_version_get(struct rte_eth_dev *dev,
--		     char *fw_version,
--		     size_t fw_size)
-+	char *fw_version, size_t fw_size)
+ dpaa_mbuf_free_bulk(struct rte_mempool *pool,
+ 		    void *const *obj_table,
+-		    unsigned int n)
++		    unsigned int count)
  {
- 	struct fman_if *fif = dev->process_private;
+ 	struct dpaa_bp_info *bp_info = DPAA_MEMPOOL_TO_POOL_INFO(pool);
  	int ret;
--	FILE *svr_file = NULL;
--	unsigned int svr_ver = 0;
+-	unsigned int i = 0;
++	uint32_t n = 0, i, left;
++	uint64_t phys[DPAA_MBUF_MAX_ACQ_REL];
  
- 	PMD_INIT_FUNC_TRACE();
+ 	DPAA_MEMPOOL_DPDEBUG("Request to free %d buffers in bpid = %d",
+-			     n, bp_info->bpid);
++			     count, bp_info->bpid);
  
--	svr_file = fopen(DPAA_SOC_ID_FILE, "r");
--	if (!svr_file) {
--		DPAA_PMD_ERR("Unable to open SoC device");
--		return -ENOTSUP; /* Not supported on this infra */
--	}
--	if (fscanf(svr_file, "svr:%x", &svr_ver) > 0)
--		dpaa_svr_family = svr_ver & SVR_MASK;
--	else
--		DPAA_PMD_ERR("Unable to read SoC device");
--
--	fclose(svr_file);
--
- 	ret = snprintf(fw_version, fw_size, "SVR:%x-fman-v%x",
--		       svr_ver, fif->fman->ip_rev);
-+			dpaa_soc_ver(), fif->fman->ip_rev);
- 	if (ret < 0)
- 		return -EINVAL;
- 
-@@ -1190,7 +1175,7 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
- 		/* In multicore scenario stashing becomes a bottleneck on LS1046.
- 		 * So do not enable stashing in this case
- 		 */
--		if (dpaa_svr_family != SVR_LS1046A_FAMILY)
-+		if (dpaa_soc_ver() != SVR_LS1046A_FAMILY)
- 			opts.fqd.context_a.stashing.annotation_cl =
- 						DPAA_IF_RX_ANNOTATION_STASH;
- 		opts.fqd.context_a.stashing.data_cl = DPAA_IF_RX_DATA_STASH;
-@@ -1218,7 +1203,7 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
- 				"ret:%d(%s)", rxq->fqid, ret, strerror(ret));
- 			return ret;
+ 	if (unlikely(!DPAA_PER_LCORE_PORTAL)) {
+ 		ret = rte_dpaa_portal_init((void *)0);
+ 		if (ret) {
+ 			DPAA_MEMPOOL_ERR("rte_dpaa_portal_init failed with ret: %d",
+ 					 ret);
+-			return 0;
++			return ret;
  		}
--		if (dpaa_svr_family == SVR_LS1043A_FAMILY) {
-+		if (dpaa_soc_ver() == SVR_LS1043A_FAMILY) {
- 			rxq->cb.dqrr_dpdk_pull_cb = dpaa_rx_cb_no_prefetch;
- 		} else {
- 			rxq->cb.dqrr_dpdk_pull_cb = dpaa_rx_cb;
-@@ -2520,7 +2505,7 @@ rte_dpaa_probe(struct rte_dpaa_driver *dpaa_drv,
+ 	}
+ 
+-	while (i < n) {
+-		uint64_t phy = rte_mempool_virt2iova(obj_table[i]);
+-
+-		if (unlikely(!bp_info->ptov_off)) {
+-			/* buffers are from single mem segment */
+-			if (bp_info->flags & DPAA_MPOOL_SINGLE_SEGMENT) {
+-				bp_info->ptov_off = (size_t)obj_table[i] - phy;
+-				rte_dpaa_bpid_info[bp_info->bpid].ptov_off
+-						= bp_info->ptov_off;
+-			}
++	while (n < count) {
++		/* Acquire is all-or-nothing, so we drain in 7s,
++		 * then the remainder.
++		 */
++		if ((count - n) > DPAA_MBUF_MAX_ACQ_REL)
++			left = DPAA_MBUF_MAX_ACQ_REL;
++		else
++			left = count - n;
++
++		for (i = 0; i < left; i++) {
++			phys[i] = rte_mempool_virt2iova(obj_table[n]);
++			phys[i] += bp_info->meta_data_size;
++			n++;
  		}
+-
+-		dpaa_buf_free(bp_info,
+-			      (uint64_t)phy + bp_info->meta_data_size);
+-		i = i + 1;
++release_again:
++		ret = bman_release_fast(bp_info->bp, phys, left);
++		if (unlikely(ret))
++			goto release_again;
+ 	}
  
- 		/* disabling the default push mode for LS1043 */
--		if (dpaa_svr_family == SVR_LS1043A_FAMILY)
-+		if (dpaa_soc_ver() == SVR_LS1043A_FAMILY)
- 			dpaa_push_mode_max_queue = 0;
- 
- 		/* if push mode queues to be enabled. Currently we are allowing
-diff --git a/drivers/net/dpaa/dpaa_rxtx.c b/drivers/net/dpaa/dpaa_rxtx.c
-index 05bd73becf..4dca63ea7e 100644
---- a/drivers/net/dpaa/dpaa_rxtx.c
-+++ b/drivers/net/dpaa/dpaa_rxtx.c
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  *
-  *   Copyright 2016 Freescale Semiconductor, Inc. All rights reserved.
-- *   Copyright 2017,2019-2024 NXP
-+ *   Copyright 2017,2019-2025 NXP
-  *
-  */
- 
-@@ -1268,7 +1268,7 @@ dpaa_eth_ls1043a_mbuf_realloc(struct rte_mbuf *mbuf)
+ 	DPAA_MEMPOOL_DPDEBUG("freed %d buffers in bpid =%d",
+@@ -226,9 +211,9 @@ dpaa_mbuf_alloc_bulk(struct rte_mempool *pool,
+ 		     unsigned int count)
  {
- 	uint64_t len, offset;
+ 	struct rte_mbuf **m = (struct rte_mbuf **)obj_table;
+-	struct bm_buffer bufs[DPAA_MBUF_MAX_ACQ_REL];
++	uint64_t bufs[DPAA_MBUF_MAX_ACQ_REL];
+ 	struct dpaa_bp_info *bp_info;
+-	void *bufaddr;
++	uint8_t *bufaddr;
+ 	int i, ret;
+ 	unsigned int n = 0;
  
--	if (dpaa_svr_family != SVR_LS1043A_FAMILY)
-+	if (dpaa_soc_ver() != SVR_LS1043A_FAMILY)
- 		return 0;
+@@ -240,7 +225,7 @@ dpaa_mbuf_alloc_bulk(struct rte_mempool *pool,
+ 	if (unlikely(count >= (RTE_MEMPOOL_CACHE_MAX_SIZE * 2))) {
+ 		DPAA_MEMPOOL_ERR("Unable to allocate requested (%u) buffers",
+ 				 count);
+-		return -1;
++		return -EINVAL;
+ 	}
  
- 	while (mbuf) {
+ 	if (unlikely(!DPAA_PER_LCORE_PORTAL)) {
+@@ -248,7 +233,7 @@ dpaa_mbuf_alloc_bulk(struct rte_mempool *pool,
+ 		if (ret) {
+ 			DPAA_MEMPOOL_ERR("rte_dpaa_portal_init failed with ret: %d",
+ 					 ret);
+-			return -1;
++			return ret;
+ 		}
+ 	}
+ 
+@@ -257,10 +242,11 @@ dpaa_mbuf_alloc_bulk(struct rte_mempool *pool,
+ 		 * then the remainder.
+ 		 */
+ 		if ((count - n) > DPAA_MBUF_MAX_ACQ_REL) {
+-			ret = bman_acquire(bp_info->bp, bufs,
+-					   DPAA_MBUF_MAX_ACQ_REL, 0);
++			ret = bman_acquire_fast(bp_info->bp, bufs,
++				DPAA_MBUF_MAX_ACQ_REL);
+ 		} else {
+-			ret = bman_acquire(bp_info->bp, bufs, count - n, 0);
++			ret = bman_acquire_fast(bp_info->bp, bufs,
++				count - n);
+ 		}
+ 		/* In case of less than requested number of buffers available
+ 		 * in pool, qbman_swp_acquire returns 0
+@@ -275,16 +261,15 @@ dpaa_mbuf_alloc_bulk(struct rte_mempool *pool,
+ 			return -ENOBUFS;
+ 		}
+ 		/* assigning mbuf from the acquired objects */
+-		for (i = 0; (i < ret) && bufs[i].addr; i++) {
++		for (i = 0; (i < ret) && bufs[i]; i++) {
+ 			/* TODO-errata - observed that bufs may be null
+ 			 * i.e. first buffer is valid, remaining 6 buffers
+ 			 * may be null.
+ 			 */
+-			bufaddr = DPAA_MEMPOOL_PTOV(bp_info, bufs[i].addr);
+-			m[n] = (struct rte_mbuf *)((char *)bufaddr
+-						- bp_info->meta_data_size);
+-			DPAA_MEMPOOL_DPDEBUG("Paddr (%p), FD (%p) from BMAN",
+-					     (void *)bufaddr, (void *)m[n]);
++			bufaddr = DPAA_MEMPOOL_PTOV(bp_info, bufs[i]);
++			m[n] = (void *)(bufaddr - bp_info->meta_data_size);
++			DPAA_MEMPOOL_DPDEBUG("Vaddr(%p), mbuf(%p) from BMAN",
++				bufaddr, m[n]);
+ 			n++;
+ 		}
+ 	}
+diff --git a/drivers/mempool/dpaa/dpaa_mempool.h b/drivers/mempool/dpaa/dpaa_mempool.h
+index 0877068fdd..5ca53c7ff9 100644
+--- a/drivers/mempool/dpaa/dpaa_mempool.h
++++ b/drivers/mempool/dpaa/dpaa_mempool.h
+@@ -26,7 +26,7 @@
+ #define DPAA_MAX_BPOOLS	256
+ 
+ /* Maximum release/acquire from BMAN */
+-#define DPAA_MBUF_MAX_ACQ_REL  8
++#define DPAA_MBUF_MAX_ACQ_REL  FSL_BM_BURST_MAX
+ 
+ /* Buffers are allocated from single mem segment i.e. phys contiguous */
+ #define DPAA_MPOOL_SINGLE_SEGMENT  0x01
 -- 
 2.25.1
 
