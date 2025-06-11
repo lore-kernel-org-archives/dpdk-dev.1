@@ -2,72 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B97DC677C4
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 02:01:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A459C61DB2
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 03:10:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 210B040144;
-	Wed, 11 Jun 2025 04:01:02 +0200 (CEST)
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com
- [209.85.160.180])
- by mails.dpdk.org (Postfix) with ESMTP id 3DF71400EF
- for <dev@dpdk.org>; Wed, 11 Jun 2025 04:01:01 +0200 (CEST)
-Received: by mail-qt1-f180.google.com with SMTP id
- d75a77b69052e-4a58b120bedso79327351cf.2
- for <dev@dpdk.org>; Tue, 10 Jun 2025 19:01:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1749607260;
- x=1750212060; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=zcSrNMzEK3kr3O8lyRxqWvQI4AX80Ak+a18o8T7DZoY=;
- b=q1UQZe6aJ2rd4BjKE18jIck4adTJGgD1rBrAOhrvJD9b1yLE8qdAoMiay5rFuyf/J6
- Jg6nRyQjYzg19p+pBtY+6us0F0Ickp/NEt03Y2rXySvr8Ex3kv0ZXmyu/U2gR8RsfWvg
- kA/1HNEqo2WhPU/2x4CX9dPde704w1A+4Ai00xmVyQnCLRVfBwhEjh978mEsSunNZJHk
- GARF4lZo0LJiAOKoEjd2nEPgvu5gdv3hU16dOYuC/baxAL0PKB5Lk83sCucXS75CsCLS
- plo+CjFraxnn2jJcS8sHlpd+yQOdAFiR2e3CDFJQVi4iBsWqx18boxCeRwGvi+AtFdIX
- d8QQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749607260; x=1750212060;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=zcSrNMzEK3kr3O8lyRxqWvQI4AX80Ak+a18o8T7DZoY=;
- b=BDK9cnwXd/UZvxdSnHtK8x6VpCIQOLSqd6X8nwCFPUDnqkbk2LfywfhKFXoD2AVv/+
- d0nHgKlOW2A/4VELmOa8lx8CdvhBoIDRu//YW8AuCJINdttjmfkyGblSs0/Ai3PuKcfK
- aLAUpMikSFFADb5NvT/SntRKONyh9/bwpUIJaKp8vWoxT1rGkg334U+ZZdZy1XGGdQZK
- r5RP7Kpzm4ETx5kRAN6FtvGpv8KwR65da2T4i5bVWjuRjvEeyFvl9mzxbXqGrJp/pUs5
- wyt6gFD769Eakx18hh2kw9vcWhuPfUUO5IoEdBSzjdwy14OQskVAH/k6TWmccvXCfrdE
- zedw==
-X-Gm-Message-State: AOJu0Yy0Vv1Q5EyqvEffYB8Ch90o78cwIhRil4dOYIMCWzMC5plsLqvp
- r/1eNPymBWuSqMCIQARkyHhYQfVrxLd3vG83ikamjzzq90SdyC2Y+WqgEMNCzH/SMBu5EEfaii6
- Ft9dp
-X-Gm-Gg: ASbGncukyYKrgfvJLypPOTULl0eNMazcnrEBiqnHOmIyNdzkAZ2L1jOb5c5HHukSCL3
- CWig+JDzVrUVKy0rpoSG12eoNXnnDkRvrnulKJUTZXUiyxPHXyg+kpzCeYvTHAcl0L7AS1rZkK5
- lce7EcaxT1dOt8bVs6w7W7dt7zSjzDwG0q3gioXzCPCJn3ubU8iAzqfMQwTP1tCsKZhIcwhxrPb
- Nu7/x37lcwZWg3rNxULUDpZMvxXKEv0zvaERPOLdVAkT32D+PB9ih0YCL2LJOeVjDfZ2zhmN7n+
- Cw5yJU+eQc+37TUvfEf58YLWzYUBDX6njirFgxsgwe/4K2Z5WEXwwa/Y/y28aIbi0tdGMK+iKt0
- thpUJ8o09T0G5nppqwQM8gKwYMwxR/SzoDOMeI+4=
-X-Google-Smtp-Source: AGHT+IGvJ2an9DvKGri8pTMKPEny/55Q8sirxx45lCmsrR1JO/w2iG1+B2ZLjtcGYHSboU32q3Gt5Q==
-X-Received: by 2002:a05:622a:1c19:b0:4a6:f546:e157 with SMTP id
- d75a77b69052e-4a713b8ba0emr32893441cf.4.1749607260308; 
- Tue, 10 Jun 2025 19:01:00 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-4a619852d27sm82627681cf.42.2025.06.10.19.00.59
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 10 Jun 2025 19:01:00 -0700 (PDT)
-Date: Tue, 10 Jun 2025 19:00:53 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Jiawen Wu <jiawenwu@trustnetic.com>
-Cc: dev@dpdk.org, zaiyuwang@trustnetic.com
-Subject: Re: [PATCH 00/12] Fixes and supports for Wangxun NICs
-Message-ID: <20250610190053.07167571@hermes.local>
-In-Reply-To: <00DEAE896AFE0D2D+20250606080117.183198-1-jiawenwu@trustnetic.com>
-References: <00DEAE896AFE0D2D+20250606080117.183198-1-jiawenwu@trustnetic.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 7912D402DF;
+	Wed, 11 Jun 2025 05:10:12 +0200 (CEST)
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+ by mails.dpdk.org (Postfix) with ESMTP id CBCFD402D6
+ for <dev@dpdk.org>; Wed, 11 Jun 2025 05:10:10 +0200 (CEST)
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 55B3A6EY04079669,
+ This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realsil.com.cn;
+ s=dkim; t=1749611407;
+ bh=9SCCo6hhmLkNrDza723s0BH4BBJRJ4LSzwORCTlYXYY=;
+ h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+ Content-Transfer-Encoding:Content-Type;
+ b=T3cW8qHnSy0MbAUGpOiesOIBQf3SMt1UYMmhU92ahxDoIxNdBOSDKst8EBxiZMx1N
+ XrrgyyWKpnz3hmgUmVmNfg0v2RQ/mu4Hk3iDnCoLNvBwXg9QEmxGNHzMKQx7p8+Vjb
+ Q6bRCXgkT+FLsX29nas/67TZYnQEIa1RGnFg8O3UewTsbtcu05dNXM12HvAGXrTKUy
+ kpSqA2Nl1QjYhSI3tpSk3XAeKiVFy0BGbJKh21+snaGdQgYzaODHkJOEmOWJjgK/w6
+ vyV61HAWojxDDHfJUaroTcYZP3p0YHo4HaloL0npY1Vo1XMhkmu5PvzC6GZjePoKIQ
+ bz4h/askUdsZg==
+Received: from RS-EX-MBS2.realsil.com.cn ([172.29.17.102])
+ by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 55B3A6EY04079669
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
+ for <dev@dpdk.org>; Wed, 11 Jun 2025 11:10:07 +0800
+Received: from RS-EX-MBS2.realsil.com.cn (172.29.17.102) by
+ RS-EX-MBS2.realsil.com.cn (172.29.17.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 11 Jun 2025 11:10:06 +0800
+Received: from 172.29.32.27 (172.29.32.27) by RS-EX-MBS2.realsil.com.cn
+ (172.29.17.102) with Microsoft SMTP Server id 15.2.1544.11 via Frontend
+ Transport; Wed, 11 Jun 2025 11:10:06 +0800
+From: Howard Wang <howard_wang@realsil.com.cn>
+To: <dev@dpdk.org>
+CC: <pro_nic_dpdk@realtek.com>, Howard Wang <howard_wang@realsil.com.cn>
+Subject: [PATCH v3 0/8] net/r8169: support more cards
+Date: Wed, 11 Jun 2025 11:09:53 +0800
+Message-ID: <20250611031001.20306-1-howard_wang@realsil.com.cn>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,48 +57,93 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri,  6 Jun 2025 16:01:05 +0800
-Jiawen Wu <jiawenwu@trustnetic.com> wrote:
+This patch series includes the following updates:
 
-> Fix some bugs and improve flow filters.
-> 
-> Jiawen Wu (12):
->   net/txgbe: support flow filter for VF
->   net/txgbe: refactor FDIR filter to improve functionality
->   net/txgbe: fix reserved extra FDIR headroom
->   net/txgbe: support RSS offload for SCTP port
->   net/ngbe: support RSS offload for SCTP port
->   net/txgbe: fix MAC control frame forwarding
->   net/ngbe: fix MAC control frame forwarding
->   net/txgbe: fix incorrect device statistics
->   net/ngbe: fix incorrect device statistics
->   net/txgbe: restrict VLAN strip configuration on VF
->   net/ngbe: restrict VLAN strip configuration on VF
->   net/txgbe: add missing LRO flag in mbuf when LRO enabled
-> 
->  drivers/net/ngbe/base/ngbe_hw.c     |   9 +
->  drivers/net/ngbe/base/ngbe_regs.h   |   2 +
->  drivers/net/ngbe/base/ngbe_type.h   |   1 +
->  drivers/net/ngbe/ngbe_ethdev.c      |   6 +-
->  drivers/net/ngbe/ngbe_ethdev.h      |   2 +
->  drivers/net/ngbe/ngbe_ethdev_vf.c   |  24 +-
->  drivers/net/ngbe/ngbe_rxtx.c        |   8 +
->  drivers/net/txgbe/base/txgbe_hw.c   |  23 +-
->  drivers/net/txgbe/base/txgbe_hw.h   |   1 +
->  drivers/net/txgbe/base/txgbe_mbx.h  |  17 +
->  drivers/net/txgbe/base/txgbe_regs.h |   4 +
->  drivers/net/txgbe/base/txgbe_type.h |  21 +-
->  drivers/net/txgbe/base/txgbe_vf.c   |  29 +
->  drivers/net/txgbe/base/txgbe_vf.h   |   2 +
->  drivers/net/txgbe/txgbe_ethdev.c    |  18 +-
->  drivers/net/txgbe/txgbe_ethdev.h    |  16 +-
->  drivers/net/txgbe/txgbe_ethdev_vf.c | 111 +++-
->  drivers/net/txgbe/txgbe_fdir.c      |  62 +-
->  drivers/net/txgbe/txgbe_flow.c      | 857 ++++++++++++++++++++--------
->  drivers/net/txgbe/txgbe_rxtx.c      |  18 +
->  20 files changed, 943 insertions(+), 288 deletions(-)
-> 
+Add support for the RTL8168 1G NIC series.
+Add support for the RTL8127 10G NIC.
+Add support for the RTL8125CP NIC.
+Update hardware configuration for RTL8125 and RTL8126.
 
-Applied to next-net with some minor changes to commit messages
-to workaround complaints from devtools/check-git-log.sh.
-The script is fussy about the use of the word Fix in commit logs.
+Howard Wang (8):
+  net/r8169: add support for RTL8168 series
+  net/r8169: update HW configurations for 8125 and 8126
+  net/r8169: add support for RTL8127
+  net/r8169: remove cmac feature for RTL8125AP
+  net/r8169: add RTL8127AP dash support
+  net/r8169: add support for RTL8125CP
+  net/r8169: add support for RTL8127ATF serdes interface
+  net/r8169: update HW configuration for 8127
+
+ doc/guides/nics/r8169.rst              |    9 +-
+ drivers/net/r8169/base/rtl8125a.c      |    8 +-
+ drivers/net/r8169/base/rtl8125a.h      |    1 -
+ drivers/net/r8169/base/rtl8125a_mcu.c  |   24 +-
+ drivers/net/r8169/base/rtl8125b.c      |    9 +-
+ drivers/net/r8169/base/rtl8125b.h      |    1 -
+ drivers/net/r8169/base/rtl8125b_mcu.c  |    8 -
+ drivers/net/r8169/base/rtl8125bp.c     |    5 +
+ drivers/net/r8169/base/rtl8125bp_mcu.c |  200 +--
+ drivers/net/r8169/base/rtl8125cp.c     |   73 +
+ drivers/net/r8169/base/rtl8125cp_mcu.c |   78 +
+ drivers/net/r8169/base/rtl8125cp_mcu.h |   10 +
+ drivers/net/r8169/base/rtl8125d.c      |  104 +-
+ drivers/net/r8169/base/rtl8125d_mcu.c  | 1479 +++++++++++++-----
+ drivers/net/r8169/base/rtl8125d_mcu.h  |    2 +-
+ drivers/net/r8169/base/rtl8126a.c      |   17 +-
+ drivers/net/r8169/base/rtl8126a_mcu.c  |  900 ++++++-----
+ drivers/net/r8169/base/rtl8127.c       |  385 +++++
+ drivers/net/r8169/base/rtl8127_mcu.c   |  601 ++++++++
+ drivers/net/r8169/base/rtl8127_mcu.h   |   12 +
+ drivers/net/r8169/base/rtl8168ep.c     |  221 +++
+ drivers/net/r8169/base/rtl8168ep.h     |   15 +
+ drivers/net/r8169/base/rtl8168ep_mcu.c |  177 +++
+ drivers/net/r8169/base/rtl8168fp.c     |  195 +++
+ drivers/net/r8169/base/rtl8168fp.h     |   14 +
+ drivers/net/r8169/base/rtl8168fp_mcu.c |  270 ++++
+ drivers/net/r8169/base/rtl8168g.c      |  297 ++++
+ drivers/net/r8169/base/rtl8168g.h      |   15 +
+ drivers/net/r8169/base/rtl8168g_mcu.c  | 1936 ++++++++++++++++++++++++
+ drivers/net/r8169/base/rtl8168h.c      |  447 ++++++
+ drivers/net/r8169/base/rtl8168h.h      |   21 +
+ drivers/net/r8169/base/rtl8168h_mcu.c  | 1186 +++++++++++++++
+ drivers/net/r8169/base/rtl8168kb.c     |    5 +
+ drivers/net/r8169/base/rtl8168m.c      |   19 +
+ drivers/net/r8169/meson.build          |   14 +
+ drivers/net/r8169/r8169_compat.h       |   78 +-
+ drivers/net/r8169/r8169_dash.c         |  447 +++++-
+ drivers/net/r8169/r8169_dash.h         |    9 +-
+ drivers/net/r8169/r8169_ethdev.c       |  122 +-
+ drivers/net/r8169/r8169_ethdev.h       |   39 +-
+ drivers/net/r8169/r8169_fiber.c        |  201 +++
+ drivers/net/r8169/r8169_fiber.h        |   42 +
+ drivers/net/r8169/r8169_hw.c           | 1841 +++++++++++++++++-----
+ drivers/net/r8169/r8169_hw.h           |   74 +-
+ drivers/net/r8169/r8169_phy.c          | 1018 ++++++++++---
+ drivers/net/r8169/r8169_phy.h          |   16 +-
+ drivers/net/r8169/r8169_rxtx.c         |  275 +++-
+ 47 files changed, 11315 insertions(+), 1605 deletions(-)
+ create mode 100644 drivers/net/r8169/base/rtl8125cp.c
+ create mode 100644 drivers/net/r8169/base/rtl8125cp_mcu.c
+ create mode 100644 drivers/net/r8169/base/rtl8125cp_mcu.h
+ create mode 100644 drivers/net/r8169/base/rtl8127.c
+ create mode 100644 drivers/net/r8169/base/rtl8127_mcu.c
+ create mode 100644 drivers/net/r8169/base/rtl8127_mcu.h
+ create mode 100644 drivers/net/r8169/base/rtl8168ep.c
+ create mode 100644 drivers/net/r8169/base/rtl8168ep.h
+ create mode 100644 drivers/net/r8169/base/rtl8168ep_mcu.c
+ create mode 100644 drivers/net/r8169/base/rtl8168fp.c
+ create mode 100644 drivers/net/r8169/base/rtl8168fp.h
+ create mode 100644 drivers/net/r8169/base/rtl8168fp_mcu.c
+ create mode 100644 drivers/net/r8169/base/rtl8168g.c
+ create mode 100644 drivers/net/r8169/base/rtl8168g.h
+ create mode 100644 drivers/net/r8169/base/rtl8168g_mcu.c
+ create mode 100644 drivers/net/r8169/base/rtl8168h.c
+ create mode 100644 drivers/net/r8169/base/rtl8168h.h
+ create mode 100644 drivers/net/r8169/base/rtl8168h_mcu.c
+ create mode 100644 drivers/net/r8169/base/rtl8168m.c
+ create mode 100644 drivers/net/r8169/r8169_fiber.c
+ create mode 100644 drivers/net/r8169/r8169_fiber.h
+
+-- 
+2.34.1
+
