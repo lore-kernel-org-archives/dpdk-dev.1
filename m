@@ -2,79 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FBE3C678DC
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 14:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2334CC678DC
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 14:31:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 15275402EA;
-	Wed, 11 Jun 2025 16:14:51 +0200 (CEST)
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com
- [209.85.221.48]) by mails.dpdk.org (Postfix) with ESMTP id A1DD3402DB
- for <dev@dpdk.org>; Wed, 11 Jun 2025 16:14:50 +0200 (CEST)
-Received: by mail-wr1-f48.google.com with SMTP id
- ffacd0b85a97d-3a4eb4acf29so79859f8f.0
- for <dev@dpdk.org>; Wed, 11 Jun 2025 07:14:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=6wind.com; s=google; t=1749651290; x=1750256090; darn=dpdk.org;
- h=content-transfer-encoding:in-reply-to:organization:content-language
- :from:references:cc:to:subject:reply-to:user-agent:mime-version:date
- :message-id:from:to:cc:subject:date:message-id:reply-to;
- bh=NtPSxN3f/hSKLGrEdTW5DuLPmWgVBhZIqrCaEy4i/uw=;
- b=dZ8kF5H+tGv1hq6QOsTK1o0fnd1dleng9HTISen/qOLCdiX9+7LBdK7rLzru2ZbbkM
- iE55g1uKUDnsPjL4B+D5WsbpJlhwSDQ6RwTcUoYi3a5t/2FNzJnZxnXQUumdZ2usVeAa
- cOlJF4glfuT1RXLfrUI8Bc1lvIRaRKG7A5Bh1Su9FCj522SqEbGnq6DumrWRTFrqfgjV
- 61gUTDjLpwhEzvQZXR40J20NugC1sEZfZe5msos1igW0cCQfLgWEa4s78Tq9jeHN7QH2
- PP5cPKeuuC/YYitRT8f5/P9VWQAS1H0DYt5FkSHr+z2MHDU2IvSpuaJe2vJ7w2Sd9xub
- Bplg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749651290; x=1750256090;
- h=content-transfer-encoding:in-reply-to:organization:content-language
- :from:references:cc:to:subject:reply-to:user-agent:mime-version:date
- :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=NtPSxN3f/hSKLGrEdTW5DuLPmWgVBhZIqrCaEy4i/uw=;
- b=R1A2lST/vLW658dL5e3OgraO4gsOBEDg6SqiQ835+FVAzs3lDV6ClxqAcySrJeb5tv
- Ee5sXU/P8vwuuMOyDYCNDHNMxK8e747aExNXRdwXSDwKlpG63yGbWUDZD7imZ4AJ6D56
- 9TPaKGb+jILSptTi0QliZQjhqjeOIAeVyKbcusxJee6zEV8TaZs9f02AkaOBwzUN50sb
- APlwlsW3zoZB9fIjmzBnWu0HjZ7scAqi3cxe+duvpNHX4/UPcW44uUpKqQZAYygu2t6V
- uvsUZJvjtImYU5fJLW51BYKWPnDikdg+OMk6mWdmleCrrXNVl/wb0ASkLqaFD0P5ZOEv
- ZTEQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWxNs0fvEBZc8CXUp5nti1ynAVQRXDLJoLWJJH9mCVH/IFtXOZRD4kI7IMzn1AIkaMm7kw=@dpdk.org
-X-Gm-Message-State: AOJu0Yx0TerSjBE1JAgTBHFwEQX48aGE3QZ6SO6QLrlcX7W/rCZg6wYN
- O2NyKNRX5By0o4cA4Gd6tLNaLIBOKwOSWEaLuHyLUAtsZhBijh31jvnzoMb6HAprz7k=
-X-Gm-Gg: ASbGncuQz0147KsFU++qb13+A3a0gsX6hrFXS7KgynA5ozBola4lXpyGZBuPcAxOzU8
- vAwbbKUMXXAF5cxY5F9BUFBN9wmYNNQBTKOaMUG8wz7vffTQfWYVaV1wvNjphw5wNLg7r8q+uqd
- 3Q5IBUeR+YBIuSJveX7bnUGZuMLAN4hscoSwwp+QuPo184Hrbj2QafK6FueHDzMwogKwfNhyV2/
- qlWraWVCiN4pi2iJDH9JacQzMMKwCUXn/XO3MzdZEoUhQI5zNzuQSRs7xfycrd9jFnx0uEPMDjM
- TSEoh55lPOKzHnKlTg1atjRz92b7cEmMnc/twvtdOoD6eRUJJJrxaB7d8tT6Z7yfg8COUt2AOyL
- jezaRKKytEA7PWy4B3vVSffzm+C1GJlB+0fkhNMVHDb8lvgok5A==
-X-Google-Smtp-Source: AGHT+IF5QjGtnTK3+avwKtK8lcdvBbTrsoW9iXv34rilJUfVk5XsaRgbij1H/xCqNfyhBwowL/oWNw==
-X-Received: by 2002:a05:6000:2082:b0:3a4:da29:d13f with SMTP id
- ffacd0b85a97d-3a5586b89d0mr1076827f8f.3.1749651290044; 
- Wed, 11 Jun 2025 07:14:50 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:b41:c160:7f7c:5244:66f5:568b?
- ([2a01:e0a:b41:c160:7f7c:5244:66f5:568b])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3a53229de53sm15349693f8f.8.2025.06.11.07.14.48
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Wed, 11 Jun 2025 07:14:49 -0700 (PDT)
-Message-ID: <3d09359f-6e38-4e48-9d4e-6bc203c49e61@6wind.com>
-Date: Wed, 11 Jun 2025 16:14:48 +0200
+	by mails.dpdk.org (Postfix) with ESMTP id ACA44402EA;
+	Wed, 11 Jun 2025 16:31:44 +0200 (CEST)
+Received: from fout-a4-smtp.messagingengine.com
+ (fout-a4-smtp.messagingengine.com [103.168.172.147])
+ by mails.dpdk.org (Postfix) with ESMTP id 8D49A402DB
+ for <dev@dpdk.org>; Wed, 11 Jun 2025 16:31:43 +0200 (CEST)
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal
+ [10.202.2.52])
+ by mailfout.phl.internal (Postfix) with ESMTP id 2AE1A138049B;
+ Wed, 11 Jun 2025 10:31:43 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-12.internal (MEProxy); Wed, 11 Jun 2025 10:31:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1749652303;
+ x=1749738703; bh=vWOwQrmkJEJNsVXrQrfSV0N5TRlxp1eFdYB53vc7+O8=; b=
+ arvJhHIoiQ6lpZJlxiDLtQ96ZnxsoveuVYIwoSjI2VA/S+8ZVZtShHDn4MUI4xxC
+ tzSmmKGWp+bJVINCDV38RtR8wIoLt9Em8LQgdlWtkpnXeFZRpcER/ZpxADp7Jk2u
+ wfWqlhisXBKmYtYliSUgt64XogOeLPfPF8YyJzzCYOwfyeZj5SzyA9yy+oyBb61D
+ 6bOHcq8TgBJoDeLYONSVzJ/i+azMstJDfcqT2aKlH2seBk/F1h3+wsPHm2I0z6I0
+ +g59WCcFZHqSprVgUCdfP622fbieT3hFWdA8yg3XfCuMVJSCuOwZLL7dIV+eSdWN
+ hj9Zzrf2Qb2baNeSiuA7xA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749652303; x=
+ 1749738703; bh=vWOwQrmkJEJNsVXrQrfSV0N5TRlxp1eFdYB53vc7+O8=; b=H
+ vvraRNNu0L6Y0hbAyAyzg1ZIhnNc0YeeB4Btr+QKf+/7W4cQqn5H8K7+Cq5V6+Yw
+ vFvVrbHlAtH445+6Ou9JaJRAcBQMH0n3tmAdTm8bFd55dF2PQ8VWrF5yGehSrO59
+ Vn7VgItMPbqI6bmFZhlPHjW+Sja18QDjVQoep5BdR31r9X5nv9lyJyFfWhee+aZy
+ nyL9tONAH+YeG4DYA0isxq7ZdAZgtLDdlKc73+Mhs24Stiwbp4+niij9LOduXEul
+ +jo6QzL9LARTVbwfsPiogytIWwI36SuVZeI8JZ5Z13GWpDRMhXr7VdU8lPXc85tL
+ hATlHYW1AKgzul1P8/kaw==
+X-ME-Sender: <xms:TpNJaOHkVAooXh9AZSm6ny4l-Mu0d1-XTeJesjJQb-NrmmjKfLeLoQ>
+ <xme:TpNJaPW1KRHKUOwNDlGun1OrKDpTm6qM7UwUAx4cDvNGb3vGUuen4IpF8linqMJO0
+ N6GPhw3vh9KE8m3ag>
+X-ME-Received: <xmr:TpNJaILvePMZH5FeyKNPHlLU7YfJvyVi0beoN56Qz_p_zaySg738LZg2vTiq7l33PnsLBtAlXzqKNCT8HjBS66_IHQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdduvdegfecutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+ uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+ hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdej
+ necuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehmohhnjh
+ grlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevfffgtdeg
+ keeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgeptdenuc
+ frrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdp
+ nhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhtvg
+ hphhgvnhesnhgvthifohhrkhhplhhumhgsvghrrdhorhhgpdhrtghpthhtohepuggvvhes
+ ughpughkrdhorhhg
+X-ME-Proxy: <xmx:TpNJaIEyaB4HoPfVtuoX8POakEE0Zkt91beOkIMUhCJmDFfxiMGocw>
+ <xmx:TpNJaEUr7TgaknQ9wK1nxxyBwabU_06C-K7iqx7WYhL65IzTnta5ig>
+ <xmx:TpNJaLMGXoyZZCJfQbUzTHwCIQLar-jZnOeZfUTEpcFVxPHGKEr-LA>
+ <xmx:TpNJaL09rxd3xwrdCWHGQdjTtoTnAiBP7uoeu3mtAZW__vrQdjtbSA>
+ <xmx:T5NJaHbT6pZrF37-ugmNTbToxviP_sSlrtimKasRXz7MyNWpNFt32CO3>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 11 Jun 2025 10:31:42 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v9 00/15] fix insecure use of memset bugs
+Date: Wed, 11 Jun 2025 16:31:40 +0200
+Message-ID: <13352429.BaYr0rKQ5T@thomas>
+In-Reply-To: <20250220164151.9606-1-stephen@networkplumber.org>
+References: <20241114011129.451243-1-stephen@networkplumber.org>
+ <20250220164151.9606-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] PCI: Explicitly put devices into D0 when initializing
-To: Bjorn Helgaas <helgaas@kernel.org>, Mario Limonciello <superm1@kernel.org>
-Cc: mario.limonciello@amd.com, bhelgaas@google.com,
- rafael.j.wysocki@intel.com, huang.ying.caritas@gmail.com,
- stern@rowland.harvard.edu, linux-pci@vger.kernel.org,
- Olivier MATZ <olivier.matz@6wind.com>, "dev@dpdk.org" <dev@dpdk.org>
-References: <20250505230632.GA1007257@bhelgaas>
-From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
-Content-Language: en-US
-Organization: 6WIND
-In-Reply-To: <20250505230632.GA1007257@bhelgaas>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,110 +87,26 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-Reply-To: nicolas.dichtel@6wind.com
 Errors-To: dev-bounces@dpdk.org
 
-Le 06/05/2025 à 01:06, Bjorn Helgaas a écrit :
-> On Wed, Apr 23, 2025 at 11:31:32PM -0500, Mario Limonciello wrote:
->> From: Mario Limonciello <mario.limonciello@amd.com>
->>
->> AMD BIOS team has root caused an issue that NVME storage failed to come
->> back from suspend to a lack of a call to _REG when NVME device was probed.
->>
->> commit 112a7f9c8edbf ("PCI/ACPI: Call _REG when transitioning D-states")
->> added support for calling _REG when transitioning D-states, but this only
->> works if the device actually "transitions" D-states.
->>
->> commit 967577b062417 ("PCI/PM: Keep runtime PM enabled for unbound PCI
->> devices") added support for runtime PM on PCI devices, but never actually
->> 'explicitly' sets the device to D0.
->>
->> To make sure that devices are in D0 and that platform methods such as
->> _REG are called, explicitly set all devices into D0 during initialization.
->>
->> Fixes: 967577b062417 ("PCI/PM: Keep runtime PM enabled for unbound PCI devices")
->> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> 
-> Applied to pci/pm for v6.16, thanks!
-> 
+> Stephen Hemminger (15):
+>   eal: introduce new secure memory zero
+>   app/test: remove unused variable
+>   eal: add new secure free function
+>   app/test: use unit test runner for malloc tests
+>   app/test: add test for rte_free_sensitive
+>   common/cnxk: remove unused variable
+>   crypto/qat: force zero of keys
+>   crypto/qat: fix size calculation for memset
+>   crypto/qat: use secure free for keys
+>   bus/uacce: remove memset before free
+>   compress/octeontx: remove unnecessary memset
+>   test: remove unneeded memset
+>   net/ntnic: check result of malloc
+>   net/ntnic: remove unnecessary memset
+>   devtools/cocci: add script to find problematic memset
 
-I've a regression after this commit.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=4d4c10f763d7
+Applied with a bit of squashing and a release note, thanks.
 
-I've started a QEMU with "-cpu host" on an AMD (AMD Ryzen 5 3600 6-Core
-Processor) machine + virtio-net interfaces. When I try to start a testpmd (a
-DPDK app), it cannot find the virtio port. The ioctl VFIO_GROUP_GET_DEVICE_FD fails.
 
-To reproduce the issue:
-qemu-system-x86_64 --enable-kvm -m 5G -cpu host \
-	-smp sockets=1,cores=2,threads=2 \
-	-snapshot -vga none -display none -nographic \
-	-drive if=none,file=/opt/vm/ubuntu-24.04-with-linux-net.qcow2,id=hda \
-	-device virtio-blk,drive=hda \
-	-device virtio-net,netdev=eth0,addr=03 -netdev user,id=eth0 \
-	-device virtio-net,netdev=eth1,addr=04 -netdev socket,id=eth1,mcast=230.0.0.1:1234
 
-git clone git://dpdk.org/dpdk
-cd dpdk/
-meson build-static --werror --default-library=static --debug
-ninja -C build-static
-echo 3 > /proc/sys/vm/drop_caches
-echo 256 > /sys/devices/system/node/node0/hugepages/hugepages-2048kB/nr_hugepages
-modprobe vfio-pci
-lspci
-python3 ./usertools/dpdk-devbind.py --noiommu-mode -b vfio-pci 0000:00:04.0
-./build-static/app/dpdk-testpmd -l 1,2 --socket-mem 512,0 -a 0000:00:04.0 -- -i
-
-Here is the output:
-EAL: Detected CPU lcores: 4
-EAL: Detected NUMA nodes: 1
-EAL: Detected static linkage of DPDK
-EAL: Multi-process socket /var/run/dpdk/rte/mp_socket
-EAL: Selected IOVA mode 'PA'
-EAL: VFIO support initialized
-EAL: Using IOMMU type 8 (No-IOMMU)
-EAL: Getting a vfio_dev_fd for 0000:00:04.0 failed
-PCI_BUS: Cannot get offset of region 0.
-PCI_BUS: fail to disable req notifier.
-PCI_BUS: fail to disable req notifier.
-VIRTIO_INIT: eth_virtio_pci_init(): Failed to init PCI device
-PCI_BUS: Requested device 0000:00:04.0 cannot be used
-EAL: Bus (pci) probe failed.
-testpmd: No probed ethernet devices
-Interactive-mode selected
-testpmd: create a new mbuf pool <mb_pool_0>: n=155456, size=2176, socket=0
-testpmd: preferred mempool ops selected: ring_mp_mc
-Done
-testpmd>
-
-=> the problem starts at the line "Getting a vfio_dev_fd for 0000:00:04.0 failed"
-https://git.dpdk.org/dpdk/tree/lib/eal/linux/eal_vfio.c#n966
-
-FWIW, here is the output when it starts correctly:
-EAL: Detected CPU lcores: 4
-EAL: Detected NUMA nodes: 1
-EAL: Detected static linkage of DPDK
-EAL: Multi-process socket /var/run/dpdk/rte/mp_socket
-EAL: Selected IOVA mode 'PA'
-EAL: VFIO support initialized
-EAL: Using IOMMU type 8 (No-IOMMU)
-Interactive-mode selected
-Warning: NUMA should be configured manually by using --port-numa-config and
---ring-numa-config parameters along with --numa.
-testpmd: create a new mbuf pool <mb_pool_0>: n=155456, size=2176, socket=0
-testpmd: preferred mempool ops selected: ring_mp_mc
-
-Warning! port-topology=paired and odd forward ports number, the last port will
-pair with itself.
-
-Configuring Port 0 (socket 0)
-EAL: Error disabling MSI-X interrupts for fd 277
-Port 0: DE:ED:01:E0:1B:75
-Checking link statuses...
-Done
-testpmd>
-
-Any help would be appreciated.
-
-Regards,
-Nicolas
