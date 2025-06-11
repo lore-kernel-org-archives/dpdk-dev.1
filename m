@@ -2,75 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0260C71136
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 16:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9974DC71136
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 16:51:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AA371402DB;
-	Wed, 11 Jun 2025 18:50:14 +0200 (CEST)
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com
- [209.85.160.177])
- by mails.dpdk.org (Postfix) with ESMTP id 3EDBE40144
- for <dev@dpdk.org>; Wed, 11 Jun 2025 18:50:13 +0200 (CEST)
-Received: by mail-qt1-f177.google.com with SMTP id
- d75a77b69052e-4a43e277198so904011cf.1
- for <dev@dpdk.org>; Wed, 11 Jun 2025 09:50:13 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id BEA4E402DB;
+	Wed, 11 Jun 2025 18:51:03 +0200 (CEST)
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com
+ [209.85.222.176])
+ by mails.dpdk.org (Postfix) with ESMTP id 4B94D402DB
+ for <dev@dpdk.org>; Wed, 11 Jun 2025 18:51:02 +0200 (CEST)
+Received: by mail-qk1-f176.google.com with SMTP id
+ af79cd13be357-7c5a88b34a6so5702785a.3
+ for <dev@dpdk.org>; Wed, 11 Jun 2025 09:51:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1749660612;
- x=1750265412; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1749660661;
+ x=1750265461; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=E0dlvGLKo4B0sIQDbIAvZ7VcbmAfpOj6tEwhlh9YTog=;
- b=TsNTvWVH/A/jcBC/12L5G4+bwtoesI0pKp3IvBIIuBfo/xAqbIW3IZU8j4Q7BI3R14
- 7vDyjevWQjzFkB8hPpFXLQ4cWBn40G/3H61FmZim7iiQnb5n5Da3Ki+5doDm06qbdsvD
- tnTzW6GYY3zwqOWVDrLi3WXWESkHyPNtwwlNppFJqCc4Ft2ErKHYQbR4mNNvl3K14eR0
- uaapjmB3r1IPuELftkEngkDbS0k2pPTcEjz4ffUL1BOxtcYUreP34rgFJFI5d8oqbkRy
- iaeSRYZkw93n9edibHBNBfenrRcWwg3k9bWF7/nGHgHM+84vLekqOewCuH5wwB69LjzC
- RUUg==
+ bh=Z0W76TImiBnfFq2moFVCrgHfO7oxQJotTbC2P61OKNM=;
+ b=m7VcKJsTdV7wUwOixDABveekxffTCZ7VlBLLP3mBUzGVZsX51/x03GmX0XegqjbOkl
+ a5BssWBlVwx2y4ml9DViaQHV9+YXxFdtJuxxmi6pHxOC1mo7Ynm0fDleHYfKFzqq0/8k
+ dngAqn5H+1LkW5YARsB5mOY4NHQMxf1mMVcFNcz5Qyarw+T8myd9ltpnHekHehLEWUoA
+ xm/qVMPez4JYZd9cqQJwODnauK5NmCZrx66sDdNxAKPCu0O5QnPyBxv2/tcXu+Vo0eft
+ A7JxEnnpWgS2F0nMhU+YHKGOqCfz2vbyAp7Jghxnw62mAOhGNFq7v79HqrgITVId7ybe
+ f0yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749660612; x=1750265412;
+ d=1e100.net; s=20230601; t=1749660661; x=1750265461;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=E0dlvGLKo4B0sIQDbIAvZ7VcbmAfpOj6tEwhlh9YTog=;
- b=Eg2CBvEvDepjeW2KJRv2OOhDJ8gHqbM+DW7tZDSyoB2+wsC7BY+CFp3XEw+6DRGxH6
- a8aYYAuw+LhWH3MRRBaJWhr/UkqPHfrlc9Zhi5UiLbCY0kwB2jy2VpLB4SdESDty+6Ex
- pPY3jM63blMhJuKs7rxtSgohR3WAYiv86KAuM3xmacAJDFMU53K3vRE/6rRjizQdwdCS
- XYRTk2LisMFV7vgqgxFBdZMyPEZvdFRq121e7ng8y27Izic6ywqSq9mw0Mu4kwMgF7+6
- K/YfbUrVkUksy+4kgCk6lnYM2jhezX94stHGjux/GzWxidrii8X7qK8693r42jEpFjfX
- exGA==
-X-Gm-Message-State: AOJu0YyHdLYEgAQshOZonODvrRjcjyiO20P8QtLaip0JvrzGO5foP0Xp
- swYb5otnOLvfJgeOJHjZI79W1A4EeYscD2pxcHd3jZLQrqr/jhsVrlw/QRP2qo2X9eY=
-X-Gm-Gg: ASbGncuE7fulVXFyqqDHIpzLMHjFsKty5KQV0pUzLhvLVda5pJ1ex2zW/l1y2ODQtpr
- l3PbqY6kXcDLyGD2niWo3T4oabx9bF08+563zg3dsjhKc316hEbm3UWMt3xSlYAxvfWMm5BwzEa
- VTW0xikYPvUQVPHk3aNoF6+l07sBFhmrkPOh88tDO4SNBSTlXWZSNvw5B1WukgHUhIuVpqgwquw
- tP9dCdnaHPekYuFpmXjbcuHR1Fj8PPm27jy5mPVrWCJ6LKRRTQMUF4Qy1gRue8nNWE1EMBg1Ls0
- Qf+VOZOiI9VIFCybt89mMNy1aht1jsOIYQMPyvotTAptLABSnrLTM4eCJZAgLBnfOFgyBvUq7Mx
- zx4oGIYxzHv5zaFzdLmzp+Sf3vkUcl6Q4uGA1lVQ=
-X-Google-Smtp-Source: AGHT+IFqNYz+tGiC5eca9MVL9FsLi9tbJuUOgoOCSptQiKIH07UNaPHTShD2LR/EupwVDLIxYz10ZA==
-X-Received: by 2002:a05:622a:1b14:b0:4a6:e7a8:65b2 with SMTP id
- d75a77b69052e-4a713b855aemr50358511cf.10.1749660612246; 
- Wed, 11 Jun 2025 09:50:12 -0700 (PDT)
+ bh=Z0W76TImiBnfFq2moFVCrgHfO7oxQJotTbC2P61OKNM=;
+ b=I1hFm7H6j/wDPZU/b57+fttDnbNgHudjMvQJZil+cUZ56lKw/3E3XYTEp9qfxXn9Cs
+ 7Mciwyh9/+iqyu/p81GEs3nKzgBG3OAOar3AQmYjnTlJlJv8MNchacsJxN+HlHreV3uv
+ a7ArH0+0bNJI0Eu7wHrj7DlwfD+FCwybJw3Ci3W8q0WYQL5P/cMNRGqIjxeqRsk5AgVm
+ vUJGzL44OxJ/+uqrtfcERNNhq3oQbnQ+EHPlyjAiK38d/e77q2LxpwLTI5h9m35kb6v6
+ eTC+8VTO9sy37ts3N8oNjFystAN67J8sDBy9M0mNN7uJbpLl2mbzmE79yHPj1xal0AOm
+ dQ6A==
+X-Gm-Message-State: AOJu0YxOUDu0JU4CaV6/dTTDrwTnJqnjFEC8JhSA0c/L3MjqIPcj/odS
+ BRKRjpaGtCidOUYxsHmaQfKcgolDwrOmQ6WyhEOOa3b5Y6KuuJSu+wvfu4NVvrxh+8o=
+X-Gm-Gg: ASbGncvj1su93aLHEzWTmF+ypWyJrRZR6u1mfml/hYJeU/9u7b2UCcBfENnqbg6OdTc
+ +0BBTKsX1RUfjFrFAirOamhaPLpaIGGWbMBrkeY+1i+sLflvq/ifW0uZSRvh+EdjuM04m++x/YC
+ jcLFlQAPUuWGRwQK2F6CgpQEM6RhAHTPb1VuCLcolVUSrFKxgFVE2pKiS9DlGdD0Hr8hYzdcL6v
+ mt/zE25Vw8QWRoC4rGL+wZyC3f1Qr2PShN9+Diu2sBkOeIgke3E4zbUtwqhYHmz61t8cn//0gnK
+ t+/qXAvLC37qYLtbDp9HnkxUvje3E1zQJljZp+caJ3bp72t1wMaMs7NVa+wRDu9s690orWA15+S
+ De+Al0/mfh2FfQaX1xUI2ZLHWM4sq2mlt2m/Pe6I=
+X-Google-Smtp-Source: AGHT+IHdGR2uL5tmBMMw4ZEcDyzcYhIB3HLk0fXna8sp8ONqA+EvLR+UoBjm0L1AxcocSE7xujD4Eg==
+X-Received: by 2002:a05:620a:4083:b0:7c9:269f:b654 with SMTP id
+ af79cd13be357-7d3b2a6c44dmr36898985a.27.1749660661493; 
+ Wed, 11 Jun 2025 09:51:01 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-4a6198669acsm89955581cf.65.2025.06.11.09.50.11
+ 6a1803df08f44-6fb09ac84b5sm84232676d6.29.2025.06.11.09.51.00
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 11 Jun 2025 09:50:12 -0700 (PDT)
-Date: Wed, 11 Jun 2025 09:50:08 -0700
+ Wed, 11 Jun 2025 09:51:01 -0700 (PDT)
+Date: Wed, 11 Jun 2025 09:50:58 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Gagandeep Singh <g.singh@nxp.com>
+To: vanshika.shukla@nxp.com
 Cc: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>, Sachin Saxena
- <sachin.saxena@nxp.com>, Apeksha Gupta <apeksha.gupta@nxp.com>, Vanshika
- Shukla <vanshika.shukla@nxp.com>
-Subject: Re: [PATCH v4 07/11] net/dpaa2: support dpmac Tx stats
-Message-ID: <20250611095008.24886ed5@hermes.local>
-In-Reply-To: <20250611105149.655144-8-g.singh@nxp.com>
-References: <20250609025450.3997062-1-g.singh@nxp.com>
- <20250611105149.655144-1-g.singh@nxp.com>
- <20250611105149.655144-8-g.singh@nxp.com>
+ <sachin.saxena@nxp.com>, Jun Yang <jun.yang@nxp.com>
+Subject: Re: [v4 02/10] bus/dpaa: add FMan node
+Message-ID: <20250611095058.19efbede@hermes.local>
+In-Reply-To: <20250611071039.2939950-3-vanshika.shukla@nxp.com>
+References: <20250610091411.2500413-1-vanshika.shukla@nxp.com>
+ <20250611071039.2939950-1-vanshika.shukla@nxp.com>
+ <20250611071039.2939950-3-vanshika.shukla@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,28 +83,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 11 Jun 2025 16:21:45 +0530
-Gagandeep Singh <g.singh@nxp.com> wrote:
+On Wed, 11 Jun 2025 12:40:31 +0530
+vanshika.shukla@nxp.com wrote:
 
-> From: Apeksha Gupta <apeksha.gupta@nxp.com>
-> 
-> Added all mac counters including Tx stats buckets for
-> packet sizes.
-> 
-> Signed-off-by: Apeksha Gupta <apeksha.gupta@nxp.com>
-> Signed-off-by: Vanshika Shukla <vanshika.shukla@nxp.com>
+> From: Jun Yang <jun.yang@nxp.com>
+>=20
+> Add FMan node(s) and associate FMan to it's interface(port).
+> This method describes FMan attributes and avoid accessing FMan from
+> port directly.
+> Logically, something like IEEE 1588 is FMan global resource,
+> which is in range of 0xF_E000=E2=80=930xF_EFFF.
+> Port specific resource is in range of 0x8_0000=E2=80=930xB_FFFF.
+>=20
+> Signed-off-by: Jun Yang <jun.yang@nxp.com>
 
-Spelling error, should get fixed.
+This looks like a typo
 
-### [PATCH] net/dpaa2: support dpmac Tx stats
+### [PATCH] bus/dpaa: add FMan node
 
-WARNING:TYPO_SPELLING: 'trasmitted' may be misspelled - perhaps 'transmitted'?
-#41: FILE: drivers/net/dpaa2/mc/fsl_dpmac.h:433:
-+ * @DPMAC_CNT_EGR_FCS_ERR: counts trasmitted frames with a CRC-32 error except
-                                   ^^^^^^^^^^
-
-WARNING:TYPO_SPELLING: 'trasmitted' may be misspelled - perhaps 'transmitted'?
-#45: FILE: drivers/net/dpaa2/mc/fsl_dpmac.h:437:
-+ * @DPMAC_CNT_EGR_ALL_FRAME: counts all trasmitted frames, good or bad.
-                                         ^^^^^^^^^^
-
+WARNING:TYPO_SPELLING: 'contextA' may be misspelled - perhaps 'context'?
+#147: FILE: drivers/bus/dpaa/base/fman/fman.c:125:
++		 * Set A2V, OVOM, EBD bits in contextA to allow external
+ 		                              ^^^^^^^^
