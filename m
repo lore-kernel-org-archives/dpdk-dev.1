@@ -2,20 +2,20 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36262C61CE7
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 08:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69847C61CE7
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 08:19:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 18E4F402F0;
-	Wed, 11 Jun 2025 10:19:06 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2789C40649;
+	Wed, 11 Jun 2025 10:19:07 +0200 (CEST)
 Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
- by mails.dpdk.org (Postfix) with ESMTP id 6F938402C5
+ by mails.dpdk.org (Postfix) with ESMTP id 514FF402C2
  for <dev@dpdk.org>; Wed, 11 Jun 2025 10:19:04 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.163.252])
- by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bHJNn6rzbzRk6M;
- Wed, 11 Jun 2025 16:14:49 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+ by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bHJSG6MbLztS46;
+ Wed, 11 Jun 2025 16:17:50 +0800 (CST)
 Received: from kwepemo500011.china.huawei.com (unknown [7.202.195.194])
- by mail.maildlp.com (Postfix) with ESMTPS id 2688E180B61;
- Wed, 11 Jun 2025 16:19:03 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 8A7711402DA;
+ Wed, 11 Jun 2025 16:19:02 +0800 (CST)
 Received: from localhost.localdomain (10.50.165.33) by
  kwepemo500011.china.huawei.com (7.202.195.194) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -24,9 +24,9 @@ From: Dengdui Huang <huangdengdui@huawei.com>
 To: <dev@dpdk.org>
 CC: <stephen@networkplumber.org>, <lihuisong@huawei.com>,
  <fengchengwen@huawei.com>, <liuyonglong@huawei.com>
-Subject: [PATCH 4/6] net/hns3: VF support parse max TC number
-Date: Wed, 11 Jun 2025 16:18:58 +0800
-Message-ID: <20250611081900.3658421-5-huangdengdui@huawei.com>
+Subject: [PATCH 2/6] net/hns3: remove duplicate struct field
+Date: Wed, 11 Jun 2025 16:18:56 +0800
+Message-ID: <20250611081900.3658421-3-huangdengdui@huawei.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20250611081900.3658421-1-huangdengdui@huawei.com>
 References: <20250611081900.3658421-1-huangdengdui@huawei.com>
@@ -51,68 +51,255 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Chengwen Feng <fengchengwen@huawei.com>
 
-The mailbox message HNS3_MBX_GET_BASIC_INFO can obtain the maximum
-number of TCs of the device. The VF does not support multiple TCs,
-therefore, this field is not saved.
-
-Now the VF needs to support multiple TCs, therefore, this field needs
-to be saved.
-
-This commit also support dump the TC info.
+The struct hns3_hw and hns3_hw.dcb_info both has num_tc field, their
+meanings are the same, to ensure code readability, remove the num_tc
+field of struct hns3_hw.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
 ---
- drivers/net/hns3/hns3_dump.c      | 2 ++
- drivers/net/hns3/hns3_ethdev_vf.c | 1 +
- drivers/net/hns3/hns3_mbx.h       | 2 +-
- 3 files changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/hns3/hns3_dcb.c       | 44 ++++++++++++-------------------
+ drivers/net/hns3/hns3_dump.c      |  2 +-
+ drivers/net/hns3/hns3_ethdev.c    |  4 +--
+ drivers/net/hns3/hns3_ethdev.h    |  3 +--
+ drivers/net/hns3/hns3_ethdev_vf.c |  2 +-
+ drivers/net/hns3/hns3_tm.c        |  6 ++---
+ 6 files changed, 25 insertions(+), 36 deletions(-)
 
-diff --git a/drivers/net/hns3/hns3_dump.c b/drivers/net/hns3/hns3_dump.c
-index 6c43ec486e..63c6b4ef2c 100644
---- a/drivers/net/hns3/hns3_dump.c
-+++ b/drivers/net/hns3/hns3_dump.c
-@@ -209,6 +209,7 @@ hns3_get_device_basic_info(FILE *file, struct rte_eth_dev *dev)
- 		"  - Device Base Info:\n"
- 		"\t  -- name: %s\n"
- 		"\t  -- adapter_state=%s\n"
-+		"\t  -- tc_max=%u tc_num=%u\n"
- 		"\t  -- nb_rx_queues=%u nb_tx_queues=%u\n"
- 		"\t  -- total_tqps_num=%u tqps_num=%u intr_tqps_num=%u\n"
- 		"\t  -- rss_size_max=%u alloc_rss_size=%u tx_qnum_per_tc=%u\n"
-@@ -221,6 +222,7 @@ hns3_get_device_basic_info(FILE *file, struct rte_eth_dev *dev)
- 		"\t  -- intr_conf: lsc=%u rxq=%u\n",
- 		dev->data->name,
- 		hns3_get_adapter_state_name(hw->adapter_state),
-+		hw->dcb_info.tc_max, hw->dcb_info.num_tc,
- 		dev->data->nb_rx_queues, dev->data->nb_tx_queues,
- 		hw->total_tqps_num, hw->tqps_num, hw->intr_tqps_num,
- 		hw->rss_size_max, hw->alloc_rss_size, hw->tx_qnum_per_tc,
-diff --git a/drivers/net/hns3/hns3_ethdev_vf.c b/drivers/net/hns3/hns3_ethdev_vf.c
-index 1cb8a9ccc1..632409c5d0 100644
---- a/drivers/net/hns3/hns3_ethdev_vf.c
-+++ b/drivers/net/hns3/hns3_ethdev_vf.c
-@@ -853,6 +853,7 @@ hns3vf_get_basic_info(struct hns3_hw *hw)
+diff --git a/drivers/net/hns3/hns3_dcb.c b/drivers/net/hns3/hns3_dcb.c
+index 2f917fef9e..88c6242d66 100644
+--- a/drivers/net/hns3/hns3_dcb.c
++++ b/drivers/net/hns3/hns3_dcb.c
+@@ -623,7 +623,7 @@ hns3_set_rss_size(struct hns3_hw *hw, uint16_t nb_rx_q)
+ 	uint16_t used_rx_queues;
+ 	uint16_t i;
+ 
+-	rx_qnum_per_tc = nb_rx_q / hw->num_tc;
++	rx_qnum_per_tc = nb_rx_q / hw->dcb_info.num_tc;
+ 	if (rx_qnum_per_tc > hw->rss_size_max) {
+ 		hns3_err(hw, "rx queue number of per tc (%u) is greater than "
+ 			 "value (%u) hardware supported.",
+@@ -631,11 +631,11 @@ hns3_set_rss_size(struct hns3_hw *hw, uint16_t nb_rx_q)
+ 		return -EINVAL;
  	}
  
- 	basic_info = (struct hns3_basic_info *)resp_msg;
-+	hw->dcb_info.tc_max = basic_info->tc_max;
- 	hw->dcb_info.hw_tc_map = basic_info->hw_tc_map;
- 	hw->dcb_info.num_tc = hns3vf_get_num_tc(hw);
- 	hw->pf_vf_if_version = basic_info->pf_vf_if_version;
-diff --git a/drivers/net/hns3/hns3_mbx.h b/drivers/net/hns3/hns3_mbx.h
-index c73f34fb32..651c6b9023 100644
---- a/drivers/net/hns3/hns3_mbx.h
-+++ b/drivers/net/hns3/hns3_mbx.h
-@@ -53,7 +53,7 @@ enum HNS3_MBX_OPCODE {
+-	used_rx_queues = hw->num_tc * rx_qnum_per_tc;
++	used_rx_queues = hw->dcb_info.num_tc * rx_qnum_per_tc;
+ 	if (used_rx_queues != nb_rx_q) {
+ 		hns3_err(hw, "rx queue number (%u) configured must be an "
+ 			 "integral multiple of valid tc number (%u).",
+-			 nb_rx_q, hw->num_tc);
++			 nb_rx_q, hw->dcb_info.num_tc);
+ 		return -EINVAL;
+ 	}
+ 	hw->alloc_rss_size = rx_qnum_per_tc;
+@@ -665,12 +665,12 @@ hns3_tc_queue_mapping_cfg(struct hns3_hw *hw, uint16_t nb_tx_q)
+ 	uint16_t tx_qnum_per_tc;
+ 	uint8_t i;
  
- struct hns3_basic_info {
+-	tx_qnum_per_tc = nb_tx_q / hw->num_tc;
+-	used_tx_queues = hw->num_tc * tx_qnum_per_tc;
++	tx_qnum_per_tc = nb_tx_q / hw->dcb_info.num_tc;
++	used_tx_queues = hw->dcb_info.num_tc * tx_qnum_per_tc;
+ 	if (used_tx_queues != nb_tx_q) {
+ 		hns3_err(hw, "tx queue number (%u) configured must be an "
+ 			 "integral multiple of valid tc number (%u).",
+-			 nb_tx_q, hw->num_tc);
++			 nb_tx_q, hw->dcb_info.num_tc);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -678,7 +678,7 @@ hns3_tc_queue_mapping_cfg(struct hns3_hw *hw, uint16_t nb_tx_q)
+ 	hw->tx_qnum_per_tc = tx_qnum_per_tc;
+ 	for (i = 0; i < HNS3_MAX_TC_NUM; i++) {
+ 		tc_queue = &hw->tc_queue[i];
+-		if (hw->hw_tc_map & BIT(i) && i < hw->num_tc) {
++		if (hw->hw_tc_map & BIT(i) && i < hw->dcb_info.num_tc) {
+ 			tc_queue->enable = true;
+ 			tc_queue->tqp_offset = i * hw->tx_qnum_per_tc;
+ 			tc_queue->tqp_count = hw->tx_qnum_per_tc;
+@@ -720,15 +720,15 @@ hns3_queue_to_tc_mapping(struct hns3_hw *hw, uint16_t nb_rx_q, uint16_t nb_tx_q)
+ {
+ 	int ret;
+ 
+-	if (nb_rx_q < hw->num_tc) {
++	if (nb_rx_q < hw->dcb_info.num_tc) {
+ 		hns3_err(hw, "number of Rx queues(%u) is less than number of TC(%u).",
+-			 nb_rx_q, hw->num_tc);
++			 nb_rx_q, hw->dcb_info.num_tc);
+ 		return -EINVAL;
+ 	}
+ 
+-	if (nb_tx_q < hw->num_tc) {
++	if (nb_tx_q < hw->dcb_info.num_tc) {
+ 		hns3_err(hw, "number of Tx queues(%u) is less than number of TC(%u).",
+-			 nb_tx_q, hw->num_tc);
++			 nb_tx_q, hw->dcb_info.num_tc);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -739,15 +739,6 @@ hns3_queue_to_tc_mapping(struct hns3_hw *hw, uint16_t nb_rx_q, uint16_t nb_tx_q)
+ 	return hns3_tc_queue_mapping_cfg(hw, nb_tx_q);
+ }
+ 
+-static int
+-hns3_dcb_update_tc_queue_mapping(struct hns3_hw *hw, uint16_t nb_rx_q,
+-				 uint16_t nb_tx_q)
+-{
+-	hw->num_tc = hw->dcb_info.num_tc;
+-
+-	return hns3_queue_to_tc_mapping(hw, nb_rx_q, nb_tx_q);
+-}
+-
+ int
+ hns3_dcb_info_init(struct hns3_hw *hw)
+ {
+@@ -1028,7 +1019,7 @@ hns3_q_to_qs_map(struct hns3_hw *hw)
+ 	uint32_t i, j;
+ 	int ret;
+ 
+-	for (i = 0; i < hw->num_tc; i++) {
++	for (i = 0; i < hw->dcb_info.num_tc; i++) {
+ 		tc_queue = &hw->tc_queue[i];
+ 		for (j = 0; j < tc_queue->tqp_count; j++) {
+ 			q_id = tc_queue->tqp_offset + j;
+@@ -1053,7 +1044,7 @@ hns3_pri_q_qs_cfg(struct hns3_hw *hw)
+ 		return -EINVAL;
+ 
+ 	/* Cfg qs -> pri mapping */
+-	for (i = 0; i < hw->num_tc; i++) {
++	for (i = 0; i < hw->dcb_info.num_tc; i++) {
+ 		ret = hns3_qs_to_pri_map_cfg(hw, i, i);
+ 		if (ret) {
+ 			hns3_err(hw, "qs_to_pri mapping fail: %d", ret);
+@@ -1448,8 +1439,8 @@ hns3_dcb_info_cfg(struct hns3_adapter *hns)
+ 	for (i = 0; i < HNS3_MAX_USER_PRIO; i++)
+ 		hw->dcb_info.prio_tc[i] = dcb_rx_conf->dcb_tc[i];
+ 
+-	ret = hns3_dcb_update_tc_queue_mapping(hw, hw->data->nb_rx_queues,
+-					       hw->data->nb_tx_queues);
++	ret = hns3_queue_to_tc_mapping(hw, hw->data->nb_rx_queues,
++				       hw->data->nb_tx_queues);
+ 	if (ret)
+ 		hns3_err(hw, "update tc queue mapping failed, ret = %d.", ret);
+ 
+@@ -1635,8 +1626,7 @@ hns3_dcb_init(struct hns3_hw *hw)
+ 		 */
+ 		default_tqp_num = RTE_MIN(hw->rss_size_max,
+ 					  hw->tqps_num / hw->dcb_info.num_tc);
+-		ret = hns3_dcb_update_tc_queue_mapping(hw, default_tqp_num,
+-						       default_tqp_num);
++		ret = hns3_queue_to_tc_mapping(hw, default_tqp_num, default_tqp_num);
+ 		if (ret) {
+ 			hns3_err(hw,
+ 				 "update tc queue mapping failed, ret = %d.",
+@@ -1673,7 +1663,7 @@ hns3_update_queue_map_configure(struct hns3_adapter *hns)
+ 	if ((uint32_t)mq_mode & RTE_ETH_MQ_RX_DCB_FLAG)
+ 		return 0;
+ 
+-	ret = hns3_dcb_update_tc_queue_mapping(hw, nb_rx_q, nb_tx_q);
++	ret = hns3_queue_to_tc_mapping(hw, nb_rx_q, nb_tx_q);
+ 	if (ret) {
+ 		hns3_err(hw, "failed to update tc queue mapping, ret = %d.",
+ 			 ret);
+diff --git a/drivers/net/hns3/hns3_dump.c b/drivers/net/hns3/hns3_dump.c
+index f21d32e6a2..6c43ec486e 100644
+--- a/drivers/net/hns3/hns3_dump.c
++++ b/drivers/net/hns3/hns3_dump.c
+@@ -914,7 +914,7 @@ hns3_is_link_fc_mode(struct hns3_adapter *hns)
+ 	if (hw->current_fc_status == HNS3_FC_STATUS_PFC)
+ 		return false;
+ 
+-	if (hw->num_tc > 1 && !pf->support_multi_tc_pause)
++	if (hw->dcb_info.num_tc > 1 && !pf->support_multi_tc_pause)
+ 		return false;
+ 
+ 	return true;
+diff --git a/drivers/net/hns3/hns3_ethdev.c b/drivers/net/hns3/hns3_ethdev.c
+index 50c6ed0744..6b8fd3383a 100644
+--- a/drivers/net/hns3/hns3_ethdev.c
++++ b/drivers/net/hns3/hns3_ethdev.c
+@@ -5432,7 +5432,7 @@ hns3_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf)
+ 		return -EOPNOTSUPP;
+ 	}
+ 
+-	if (hw->num_tc > 1 && !pf->support_multi_tc_pause) {
++	if (hw->dcb_info.num_tc > 1 && !pf->support_multi_tc_pause) {
+ 		hns3_err(hw, "in multi-TC scenarios, MAC pause is not supported.");
+ 		return -EOPNOTSUPP;
+ 	}
+@@ -5509,7 +5509,7 @@ hns3_get_dcb_info(struct rte_eth_dev *dev, struct rte_eth_dcb_info *dcb_info)
+ 	for (i = 0; i < dcb_info->nb_tcs; i++)
+ 		dcb_info->tc_bws[i] = hw->dcb_info.pg_info[0].tc_dwrr[i];
+ 
+-	for (i = 0; i < hw->num_tc; i++) {
++	for (i = 0; i < hw->dcb_info.num_tc; i++) {
+ 		dcb_info->tc_queue.tc_rxq[0][i].base = hw->alloc_rss_size * i;
+ 		dcb_info->tc_queue.tc_txq[0][i].base =
+ 						hw->tc_queue[i].tqp_offset;
+diff --git a/drivers/net/hns3/hns3_ethdev.h b/drivers/net/hns3/hns3_ethdev.h
+index d164b9e38c..e4160f6eae 100644
+--- a/drivers/net/hns3/hns3_ethdev.h
++++ b/drivers/net/hns3/hns3_ethdev.h
+@@ -130,7 +130,7 @@ struct hns3_tc_info {
+ };
+ 
+ struct hns3_dcb_info {
+-	uint8_t num_tc;
++	uint8_t num_tc;     /* Total number of enabled TCs */
+ 	uint8_t num_pg;     /* It must be 1 if vNET-Base schd */
+ 	uint8_t pg_dwrr[HNS3_PG_NUM];
+ 	uint8_t prio_tc[HNS3_MAX_USER_PRIO];
+@@ -534,7 +534,6 @@ struct hns3_hw {
+ 	uint16_t rss_ind_tbl_size;
+ 	uint16_t rss_key_size;
+ 
+-	uint8_t num_tc;             /* Total number of enabled TCs */
  	uint8_t hw_tc_map;
--	uint8_t rsv;
-+	uint8_t tc_max;
- 	uint16_t pf_vf_if_version;
- 	/* capabilities of VF dependent on PF */
- 	uint32_t caps;
+ 	enum hns3_fc_mode requested_fc_mode; /* FC mode requested by user */
+ 	struct hns3_dcb_info dcb_info;
+diff --git a/drivers/net/hns3/hns3_ethdev_vf.c b/drivers/net/hns3/hns3_ethdev_vf.c
+index ea9225cd26..5f4ae1d979 100644
+--- a/drivers/net/hns3/hns3_ethdev_vf.c
++++ b/drivers/net/hns3/hns3_ethdev_vf.c
+@@ -854,7 +854,7 @@ hns3vf_get_basic_info(struct hns3_hw *hw)
+ 
+ 	basic_info = (struct hns3_basic_info *)resp_msg;
+ 	hw->hw_tc_map = basic_info->hw_tc_map;
+-	hw->num_tc = hns3vf_get_num_tc(hw);
++	hw->dcb_info.num_tc = hns3vf_get_num_tc(hw);
+ 	hw->pf_vf_if_version = basic_info->pf_vf_if_version;
+ 	hns3vf_update_caps(hw, basic_info->caps);
+ 
+diff --git a/drivers/net/hns3/hns3_tm.c b/drivers/net/hns3/hns3_tm.c
+index 1c2ad71133..fe97b4ab92 100644
+--- a/drivers/net/hns3/hns3_tm.c
++++ b/drivers/net/hns3/hns3_tm.c
+@@ -519,13 +519,13 @@ hns3_tm_tc_node_add(struct rte_eth_dev *dev, uint32_t node_id,
+ 
+ 	if (node_id >= pf->tm_conf.nb_nodes_max - 1 ||
+ 	    node_id < pf->tm_conf.nb_leaf_nodes_max ||
+-	    hns3_tm_calc_node_tc_no(&pf->tm_conf, node_id) >= hw->num_tc) {
++	    hns3_tm_calc_node_tc_no(&pf->tm_conf, node_id) >= hw->dcb_info.num_tc) {
+ 		error->type = RTE_TM_ERROR_TYPE_NODE_ID;
+ 		error->message = "invalid tc node ID";
+ 		return -EINVAL;
+ 	}
+ 
+-	if (pf->tm_conf.nb_tc_node >= hw->num_tc) {
++	if (pf->tm_conf.nb_tc_node >= hw->dcb_info.num_tc) {
+ 		error->type = RTE_TM_ERROR_TYPE_NODE_ID;
+ 		error->message = "too many TCs";
+ 		return -EINVAL;
+@@ -974,7 +974,7 @@ hns3_tm_configure_check(struct hns3_hw *hw, struct rte_tm_error *error)
+ 		}
+ 
+ 		if (hns3_tm_calc_node_tc_no(tm_conf, tm_node->id) >=
+-			hw->num_tc) {
++			hw->dcb_info.num_tc) {
+ 			error->type = RTE_TM_ERROR_TYPE_NODE_ID;
+ 			error->message = "node's TC not exist";
+ 			return false;
 -- 
 2.33.0
 
