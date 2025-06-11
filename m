@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DF3DC71136
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 17:09:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8B3FC71137
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 17:15:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 29887402DB;
-	Wed, 11 Jun 2025 19:09:10 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A03DB402DB;
+	Wed, 11 Jun 2025 19:15:50 +0200 (CEST)
 Received: from fhigh-a7-smtp.messagingengine.com
  (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
- by mails.dpdk.org (Postfix) with ESMTP id B8FA640144
- for <dev@dpdk.org>; Wed, 11 Jun 2025 19:09:08 +0200 (CEST)
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal
- [10.202.2.44])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 275F611401D6;
- Wed, 11 Jun 2025 13:09:08 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-04.internal (MEProxy); Wed, 11 Jun 2025 13:09:08 -0400
+ by mails.dpdk.org (Postfix) with ESMTP id AA5C540144
+ for <dev@dpdk.org>; Wed, 11 Jun 2025 19:15:49 +0200 (CEST)
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal
+ [10.202.2.43])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 4ABFF114023E;
+ Wed, 11 Jun 2025 13:15:49 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-03.internal (MEProxy); Wed, 11 Jun 2025 13:15:49 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1749661748;
- x=1749748148; bh=ynUK2AIOF7cSYAdgITd2Bv9SxY2FppDgtlg5jT7Dqu8=; b=
- Oi3dGb6ZhIW7oOur6ciZEUmN+zryxV/uxT1v1nDFgt4+F+AiFjbLA4a9xaLbA5bz
- sP3LarI4/L1WPXosG5TxYyjA03/BIzlJLFmL+08+HLUOtSCIRlZdzm1YlbAuIuX2
- GG+MYLF8ueFhI+xmtl0ZQUs/I7jm6wCHgLOU22Bjh7cUKoxnkViGYKo/F6oBmVPX
- hjhMipIIh8aYMpwwm0VU7t3DzeD1T8uqZYuPuyYf0W4m+dlBS/ct5EQW91cyf67G
- IWUAKCz0raqx4YOIKDeWGhZn9RUcLdURbCR/+GngpqikL0va81YRHrF67+mnNfgT
- FhvcHMbSsFkVVcYKUoWXqQ==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1749662149;
+ x=1749748549; bh=rUXQpk1B1drVf7JvdBxbEKd5O5VkM4dUE94i0V8G1lY=; b=
+ JrLr7Vra8NvNQbb81shEHqyNG35p3QNeIx0oMSjQhVxAkuPjPEndXfSGjGk1bfpj
+ ldWV7YJNKqV42GPc/QFbLl/bExUUkX3l9keG75d5PZeLY6TlMEdRFgyogwDlFQM9
+ zFrGDkdLQ1pZNShz5zJ0ddNq8GMeUBXNUiQDTo3WRfiKyK75ogV+PyVClYAkOayV
+ dt1DWcfGdUa4gh7Qd9LbkLoL82LoupGXBjBtMqMEl8ASlZEt7uQQxyYKiu2Wdqt0
+ 4n27v/ZjcOdn/lhrFzKtKiBZVp1SzIYGy5CVXuc1Qwm9hLn2/gujUy/f7QXF7l2w
+ nXVAW66Eqbt1Qisk1RZD4Q==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749661748; x=
- 1749748148; bh=ynUK2AIOF7cSYAdgITd2Bv9SxY2FppDgtlg5jT7Dqu8=; b=Z
- rV9zsCj8UpnMOSNO+jirRYN2awxY8lgTHkKNtyW6oTFBQ8jK90U1ewa3iLSbRIxq
- 6+HAFOljpuXmvU1Sv3mxOroDc1yb8wyHUmQzUIGYl7NLQJbbuSDbjWoJKeyuQrp1
- JcCuymquABX2HRyP0ADwdZrSOwQRpzRizVT4ug7MSh4hVMhgGcJIROmdMLZRXn/9
- HYNZZ1dHn3l8lCaggiO2eAxtswc/PVCM1syx+cga/O2yup9MHZBODWPzQv4UI6T3
- s7FD0sVaPvlXBfkeD7TvdkdPQ7E8FaIHX0LflQNg1owqpH2uD1M4NrU/RN+7Cg5H
- kyN+xmu4UbL7ONMDAWzsQ==
-X-ME-Sender: <xms:M7hJaPY3xy-Ob7IGpMmqdtort5Rh_Cidin5krj-c5ib68e0pj7hzMQ>
- <xme:M7hJaObz14bf7teWo5Ay14H0shIwBMNYcAaoa8U-kDnV_BjpcpPTuVDEP8GDZ-G6L
- cc5C9S_c49tfrbQcw>
-X-ME-Received: <xmr:M7hJaB_Ve7K_0wg5oL9G6jNUpR5plgL4tqOBOVGaCrztOVHQ7mNlzem6GEfEjUbV6QBK6PtFcU8LGP8a8i0hxQq-Ow>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdduvdejhecutefuodetggdotefrod
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749662149; x=
+ 1749748549; bh=rUXQpk1B1drVf7JvdBxbEKd5O5VkM4dUE94i0V8G1lY=; b=O
+ q4+m7sSmtT4gB03WXCxJRwNmbQ/WAqgo3hAcGE3Kmd1xysbX2RwCgM9cMKSXc+B+
+ VcSnEQjPGHaLmtiD5LNg7/0zSIUgtYWDP+0+JJV5YT87HO7PcpQmYx7ptDpvUDr0
+ 0oRBOFgZQTCHjZ9oYFW5JjCSjfV3rRaj576S9Sf3gtLCeQ1dV+b5n31INkzc30oq
+ R51PX9Mgkn3OnOt2yjIlc+m/Vu5aRw5EZoBvD+rtdGTXHvh02wohV1ikwUQBX4fJ
+ KN/KxfQvCxkunJ+Y31igfnBvVtWqkIWgCMQCG+lo0oz6Frsinx5w1kvwhRruawL+
+ ZegIjCGZRtBn9NnsKMCtA==
+X-ME-Sender: <xms:xLlJaDbUr7nCy_uU6YBBM1tItQLBM6DxmQKr4-MMoJOfUHJdEKBarA>
+ <xme:xLlJaCb7Q8bxh7-HMkq88-UI8N5w9c1CW3rDlTTaPZzbks1IOKNLjA3vxlokS_HdV
+ RdHreISdOPxyBkH_Q>
+X-ME-Received: <xmr:xLlJaF9r_vCkJLNZvivkqH6lfPwWEHRW0MnXLkbZsaPpwlGOpYej-FUAasUKTzx5GvUWY5sEs5neHXkK3a0PefmmPQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdduvdejiecutefuodetggdotefrod
  ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
  uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
  hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdej
@@ -53,26 +53,26 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdduvdejhecutefuodetgg
  grlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevfffgtdeg
  keeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgeptdenuc
  frrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdp
- nhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghruh
- gtvgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpthhtohepuggvvhes
- ughpughkrdhorhhg
-X-ME-Proxy: <xmx:M7hJaFoEq99vu7hZFw7T-t4eUSJHDBGU_2FSKc2Qh0KIAmcjoPt9Qg>
- <xmx:M7hJaKp69SwdjJNYV0zqeqi7MeJO7qD2wN5qMT61wGVR7YYwvKh_5w>
- <xmx:M7hJaLSSWLIw3KWTyH1XKqf1nocXa-WJpWDauR69PbU0Yxl0VbMd6w>
- <xmx:M7hJaCrAEUy3mi_b78XRnWLqsgUYqcrUffqmz1nASxZUqu9jOj2w4w>
- <xmx:NLhJaIYTBToHeY5HF-9WTqSn2Fa4TiT4iCUp06_cvjPHplApRNzpaE86>
+ nhgspghrtghpthhtohepfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvh
+ hiugdrmhgrrhgthhgrnhgusehrvgguhhgrthdrtghomhdprhgtphhtthhopeguvghvsegu
+ phgukhdrohhrghdprhgtphhtthhopehpsghhrghgrghvrghtuhhlrgesmhgrrhhvvghllh
+ drtghomh
+X-ME-Proxy: <xmx:xLlJaJp9QtMhIqB8Wg7oApJuDPd8Wi7_4bDlvyb4Pk4dsOM1EqcDAA>
+ <xmx:xLlJaOqaY0KGvQtYmF97gB2iNuhAsGENW-6Fxz3VtzFaWEOpVmnPgA>
+ <xmx:xLlJaPTNNf4EdS7exPlAU19ch4EraRl3RzlvaCrsOrZcILigfkG7KQ>
+ <xmx:xLlJaGp6f3sgbIZerZPAH4ob5x2vczyM8j244mx91z8WACzhOvRl2w>
+ <xmx:xblJaF-dnRJm3RlslELWsvK2MS7S66tXGVrdSTwaS11rNj3FMGQKKzPv>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 11 Jun 2025 13:09:07 -0400 (EDT)
+ 11 Jun 2025 13:15:48 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v4 0/3] argparse additions and rework
-Date: Wed, 11 Jun 2025 19:09:06 +0200
-Message-ID: <4056767.kXSN5OTJKJ@thomas>
-In-Reply-To: <20250611123649.481811-1-bruce.richardson@intel.com>
-References: <20250527092113.903910-1-bruce.richardson@intel.com>
- <20250611123649.481811-1-bruce.richardson@intel.com>
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, Pavan Nikhilesh <pbhagavatula@marvell.com>
+Subject: Re: [PATCH] test/event: disable vector adapter test
+Date: Wed, 11 Jun 2025 19:15:46 +0200
+Message-ID: <7983044.zQ0Gbyo6oJ@thomas>
+In-Reply-To: <20250611133751.1477562-1-david.marchand@redhat.com>
+References: <20250611133751.1477562-1-david.marchand@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -89,11 +89,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Bruce Richardson (3):
->   argparse: add support for string and boolean args
->   argparse: make argparse EAL-args compatible
->   argparse: use enums to remove max-value defines in lists
+11/06/2025 15:37, David Marchand:
+> This test triggers random failures in the CI.
+> Disable it until we have a fix.
+> 
+> Bugzilla ID: 1720
+> Fixes: de09387f1313 ("eventdev/vector: add default software vector adapter")
+> 
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
 
 Applied, thanks.
+
 
 
