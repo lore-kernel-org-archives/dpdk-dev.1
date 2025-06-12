@@ -2,75 +2,28 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BF59C61CE8
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 08:43:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AEBBC71136
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 08:59:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 57F6D40685;
-	Thu, 12 Jun 2025 10:43:10 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 6C0184003C
- for <dev@dpdk.org>; Thu, 12 Jun 2025 10:43:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1749717787;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=9/yzxx6dHH217l7t6BuFOWuYu7iQMXh1XXxlKKwd6sY=;
- b=O0WUH6a2zZ5xMbT9IPB7PDQ7JvWE1BzD3+g5pw8lG7xs90VpqSA9Huyh1tGA60sj9Nl7sr
- sernf1vWRW2BUTvKh8+0wescbhDTJnYU9tQR34bLJZoRDJAx1UlifTP6YTj8i/eOdtLxus
- BM4seAFgwb8gGqd3BZjCAKtSrN4MCQw=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-691-eyyXCEnvPvy8DelAorErng-1; Thu, 12 Jun 2025 04:43:06 -0400
-X-MC-Unique: eyyXCEnvPvy8DelAorErng-1
-X-Mimecast-MFC-AGG-ID: eyyXCEnvPvy8DelAorErng_1749717785
-Received: by mail-lf1-f69.google.com with SMTP id
- 2adb3069b0e04-553266b8574so835295e87.1
- for <dev@dpdk.org>; Thu, 12 Jun 2025 01:43:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749717785; x=1750322585;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=9/yzxx6dHH217l7t6BuFOWuYu7iQMXh1XXxlKKwd6sY=;
- b=n4WWW02JYAAKJHQsKW8X01CdhN+kZCB3Ll0ZgOyoQEVAGWhGLS/rurCzIyCTvixbTY
- G/qukx4YqPFGM68UsCcXwZDdvhQgxTSG5jVeHL7Z6mKF1LElCl5D38pLB82duewIlA/P
- +WRDbNEmcZAnuHAPs4AoYxbDWeGXAWvy6bjcFWjBzBqENLqcaWDIE9fwTGzIf8Yi0C0I
- tc7yHulzLCCDzsbh0O/9VVFvPV027J+zujKdIaAghj/cd84CNiYEEQO8aiS+UeaxBxyo
- MzZ9hYBtx2M4ceemwGB24kPp4P4a64uA9ZXtHVozpLntGwUeQofrgVLjF9JfcXrD4KOG
- 4qmQ==
-X-Gm-Message-State: AOJu0YxlLAt/9TiSwbOOTU63MwP5lvw6SLLzxFqKgslsh9y9InAohApk
- ubWKVEUiti+nbX9ZbwtE3Z09DazJXwYxtRzn1V5cax5w7rvhYQWDgDja3XW/x5PHJKZ7Ua7tMBu
- b2kJ/Y062llwo9tgV/MzNuAvR+YC+VS5q3slRNs+9vtW8ZY3wYsPd6y6WnXgNmEAsfvenSSg00P
- BQtZBYo2gSLZT8rwafy1vA9+5yN6qqlQ==
-X-Gm-Gg: ASbGnctB4R3kcckwmLz5WrJ2szjSY0vWr+TuRPf6nRpOGzjNbugIwX4MGs/MWOYVSHv
- T9ZWb4LlONw8WbDclQIpTrqTfewL97uEgggz7QchxuDk8JXow7JC2SQdqC9l32KTjwUlEvnos7b
- c496Pm4g==
-X-Received: by 2002:a05:6512:118d:b0:553:2912:cfdc with SMTP id
- 2adb3069b0e04-553a5435fcemr750762e87.9.1749717785058; 
- Thu, 12 Jun 2025 01:43:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFfbbFdGLv5J8zXoaJeC8AJfbgmrZZ3UkiHs8n/k1k6fuEwUEqjB/8m8R1qvPL+qHLFx2ODGhRoM94jeJc5hlc=
-X-Received: by 2002:a05:6512:118d:b0:553:2912:cfdc with SMTP id
- 2adb3069b0e04-553a5435fcemr750751e87.9.1749717784652; Thu, 12 Jun 2025
- 01:43:04 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id ECC284021F;
+	Thu, 12 Jun 2025 10:59:17 +0200 (CEST)
+Received: from out28-217.mail.aliyun.com (out28-217.mail.aliyun.com
+ [115.124.28.217])
+ by mails.dpdk.org (Postfix) with ESMTP id 0D32E4003C
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 10:59:16 +0200 (CEST)
+Received: from localhost.localdomain(mailfrom:kyo.liu@nebula-matrix.com
+ fp:SMTPD_---.dJxIn83_1749718753 cluster:ay29) by smtp.aliyun-inc.com;
+ Thu, 12 Jun 2025 16:59:13 +0800
+From: Kyo Liu <kyo.liu@nebula-matrix.com>
+To: kyo.liu@nebula-matrix.com,
+	dev@dpdk.org
+Subject: [PATCH v1 00/17] NBL PMD for Nebulamatrix NICs
+Date: Thu, 12 Jun 2025 08:58:21 +0000
+Message-ID: <20250612085840.729830-1-kyo.liu@nebula-matrix.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-References: <20250120095238.7888-1-zaiyuwang@trustnetic.com>
-In-Reply-To: <20250120095238.7888-1-zaiyuwang@trustnetic.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 12 Jun 2025 10:42:52 +0200
-X-Gm-Features: AX0GCFvDi2X-hh4OzgEkWl_gvbR2G9qOCu71SnLQ3x83Tq5LAAII78zR3ARYOvA
-Message-ID: <CAJFAV8wVL0xNWta5zR-T1TDaww5Z_KYbEcAqb8d3w3_K+qfQdA@mail.gmail.com>
-Subject: Re: [PATCH] maintainers: update for ngbe/txgbe drivers
-To: Zaiyu Wang <zaiyuwang@trustnetic.com>
-Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: jQtrd3ZX9PEWwfjeyElbk1VmJnF80RPMCyNvHPrl8C4_1749717785
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,17 +37,131 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, Jan 20, 2025 at 10:53=E2=80=AFAM Zaiyu Wang <zaiyuwang@trustnetic.c=
-om> wrote:
->
-> Add myself as co-maintainer for Wangxun drivers.
->
-> Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
-Acked-by: Jiawen Wu <jiawenwu@trustnetic.com>
+This nbl PMD (**librte_net_nbl**) provides poll mode driver for 
+NebulaMatrix serials NICs.
 
-Applied, thanks.
+Features:
+---------
+- MTU update
+- promisc mode set
+- xstats
+- Basic stats 
+
+Support NICs:
+-------------
+- S1205CQ-A00CHT
+- S1105AS-A00CHT
+- S1055AS-A00CHT
+- S1052AS-A00CHT
+- S1051AS-A00CHT
+- S1045XS-A00CHT
+- S1205CQ-A00CSP
+- S1055AS-A00CSP
+- S1052AS-A00CSP
 
 
---=20
-David Marchand
+Kyo Liu (17):
+  net/nbl: add doc and minimum nbl build framework
+  net/nbl: add simple probe/remove and log module
+  net/nbl:  add PHY layer definitions and implementation
+  net/nbl:  add Channel layer definitions and implementation
+  net/nbl:  add Resource layer definitions and implementation
+  net/nbl:  add Dispatch layer definitions and implementation
+  net/nbl:  add Dev layer definitions and implementation
+  net/nbl:  add complete device init and uninit functionality
+  net/nbl:  add uio and vfio mode for nbl
+  net/nbl:  bus/pci: introduce get_iova_mode for pci dev
+  net/nbl:  add nbl coexistence mode for nbl
+  net/nbl: add nbl ethdev configuration
+  net/nbl: add nbl device rxtx queue setup and release ops
+  net/nbl: add nbl device start and stop ops
+  net/nbl: add nbl device tx and rx burst
+  net/nbl: add nbl device xstats and stats
+  net/nbl: nbl device support set mtu and promisc
+
+ .mailmap                                      |    5 +
+ MAINTAINERS                                   |    9 +
+ doc/guides/nics/features/nbl.ini              |    9 +
+ doc/guides/nics/index.rst                     |    1 +
+ doc/guides/nics/nbl.rst                       |   42 +
+ doc/guides/rel_notes/release_25_07.rst        |    5 +
+ drivers/bus/pci/bus_pci_driver.h              |   11 +
+ drivers/bus/pci/linux/pci.c                   |    2 +
+ drivers/net/meson.build                       |    1 +
+ drivers/net/nbl/meson.build                   |   26 +
+ drivers/net/nbl/nbl_common/nbl_common.c       |   47 +
+ drivers/net/nbl/nbl_common/nbl_common.h       |   10 +
+ drivers/net/nbl/nbl_common/nbl_thread.c       |   88 ++
+ drivers/net/nbl/nbl_common/nbl_userdev.c      |  758 ++++++++++
+ drivers/net/nbl/nbl_common/nbl_userdev.h      |   21 +
+ drivers/net/nbl/nbl_core.c                    |  100 ++
+ drivers/net/nbl/nbl_core.h                    |   98 ++
+ drivers/net/nbl/nbl_dev/nbl_dev.c             | 1007 ++++++++++++++
+ drivers/net/nbl/nbl_dev/nbl_dev.h             |   65 +
+ drivers/net/nbl/nbl_dispatch.c                | 1226 +++++++++++++++++
+ drivers/net/nbl/nbl_dispatch.h                |   31 +
+ drivers/net/nbl/nbl_ethdev.c                  |  167 +++
+ drivers/net/nbl/nbl_ethdev.h                  |   32 +
+ drivers/net/nbl/nbl_hw/nbl_channel.c          |  853 ++++++++++++
+ drivers/net/nbl/nbl_hw/nbl_channel.h          |  127 ++
+ .../nbl_hw_leonis/nbl_phy_leonis_snic.c       |  230 ++++
+ .../nbl_hw_leonis/nbl_phy_leonis_snic.h       |   53 +
+ .../nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c |  253 ++++
+ .../nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.h |   10 +
+ drivers/net/nbl/nbl_hw/nbl_phy.h              |   28 +
+ drivers/net/nbl/nbl_hw/nbl_resource.c         |    5 +
+ drivers/net/nbl/nbl_hw/nbl_resource.h         |  153 ++
+ drivers/net/nbl/nbl_hw/nbl_txrx.c             |  906 ++++++++++++
+ drivers/net/nbl/nbl_hw/nbl_txrx.h             |  136 ++
+ drivers/net/nbl/nbl_hw/nbl_txrx_ops.h         |   91 ++
+ drivers/net/nbl/nbl_include/nbl_def_channel.h |  434 ++++++
+ drivers/net/nbl/nbl_include/nbl_def_common.h  |  128 ++
+ drivers/net/nbl/nbl_include/nbl_def_dev.h     |  107 ++
+ .../net/nbl/nbl_include/nbl_def_dispatch.h    |   95 ++
+ drivers/net/nbl/nbl_include/nbl_def_phy.h     |   35 +
+ .../net/nbl/nbl_include/nbl_def_resource.h    |   87 ++
+ drivers/net/nbl/nbl_include/nbl_include.h     |  212 +++
+ drivers/net/nbl/nbl_include/nbl_logs.h        |   25 +
+ .../net/nbl/nbl_include/nbl_product_base.h    |   37 +
+ 44 files changed, 7766 insertions(+)
+ create mode 100644 doc/guides/nics/features/nbl.ini
+ create mode 100644 doc/guides/nics/nbl.rst
+ create mode 100644 drivers/net/nbl/meson.build
+ create mode 100644 drivers/net/nbl/nbl_common/nbl_common.c
+ create mode 100644 drivers/net/nbl/nbl_common/nbl_common.h
+ create mode 100644 drivers/net/nbl/nbl_common/nbl_thread.c
+ create mode 100644 drivers/net/nbl/nbl_common/nbl_userdev.c
+ create mode 100644 drivers/net/nbl/nbl_common/nbl_userdev.h
+ create mode 100644 drivers/net/nbl/nbl_core.c
+ create mode 100644 drivers/net/nbl/nbl_core.h
+ create mode 100644 drivers/net/nbl/nbl_dev/nbl_dev.c
+ create mode 100644 drivers/net/nbl/nbl_dev/nbl_dev.h
+ create mode 100644 drivers/net/nbl/nbl_dispatch.c
+ create mode 100644 drivers/net/nbl/nbl_dispatch.h
+ create mode 100644 drivers/net/nbl/nbl_ethdev.c
+ create mode 100644 drivers/net/nbl/nbl_ethdev.h
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_channel.c
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_channel.h
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.c
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.h
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.h
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_phy.h
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_resource.c
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_resource.h
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_txrx.c
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_txrx.h
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_txrx_ops.h
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_def_channel.h
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_def_common.h
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_def_dev.h
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_def_dispatch.h
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_def_phy.h
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_def_resource.h
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_include.h
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_logs.h
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_product_base.h
+
+-- 
+2.43.0
 
