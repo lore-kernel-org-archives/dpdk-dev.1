@@ -2,47 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CECBC61CE8
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 10:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C954C61CE8
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 10:18:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 898504021F;
-	Thu, 12 Jun 2025 12:16:01 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 8BDFE4003C
- for <dev@dpdk.org>; Thu, 12 Jun 2025 12:15:59 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 36FA240DDE;
+	Thu, 12 Jun 2025 12:18:23 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+ by mails.dpdk.org (Postfix) with ESMTP id AB1F54021F
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 12:18:21 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1749723359; x=1781259359;
+ t=1749723502; x=1781259502;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=D7dii8+3Cc2NE178+jY1PlwbmmrJZv8znT+7ZpqtrUQ=;
- b=F6MjSIkCpKxd4/BN4BsWkAY898QPJ4yGUk/p70V7Y/BQfYVWqTxfaC3x
- xkEM/fJQqiMWA0qUqtF5CElXsvP51L6SA266LAWx87v6u1zwq/eJxZ/6m
- mJamZGadRgAOqSh1VtC80AUaw+6s6YYRoVoz8KzTUak0avC0ZHSMVzldM
- fW8TLJOR6Vp+ZLgrh++aEs0gC0KQGXJOQjwcbaXrArT3YVX7B2iSw2X5u
- zQsJZKQc202LLyrgpIDAP8XuBGM0su19lIp/duWD/H1mgbJdzZcmw46KW
- 6Yq/ZfZ0Fj9mVw8NUKzv/Mk/RQ7fQjccEsc48xKaWv+SQ7HKHldVOqQZc Q==;
-X-CSE-ConnectionGUID: msPYu2PLQvOQaGQQTjxhNQ==
-X-CSE-MsgGUID: sdq6411zTYSITgcx/IbFqQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11461"; a="63239789"
-X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; d="scan'208";a="63239789"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
- by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 12 Jun 2025 03:15:58 -0700
-X-CSE-ConnectionGUID: uXe1cwGUQMC0VT5dECslLA==
-X-CSE-MsgGUID: NIDGC3fPRyi3XxTGx1koRg==
+ bh=BNI8cCUHsYSZiPoenrES8eL4iU7tkWHX8VqeAMLrO68=;
+ b=TyhagzAH06PdAkFqVUL8PtclomzKDhib+bXGtXzPnJtlpIcYov8Tol5T
+ mdBijMZ7OEny3+7QG4mzKsLqcpaa67RDhk+vYhQGyNT1PI9dpoTV0qSyW
+ 1SN762cWuGLlwL+1lIYkwyLK5Smt2ii2PDZ9kOuAAgO4fMIB4r6s4KnVb
+ UK4EHCcovc1SXksZKDcVozxZrILDRzZzHwbwazA5DpRCnz8EkEjZvlsud
+ IndBfwGumwcHZzyVSjutFdcX0Z0+GSdGpQbhtFmvbkQsUh4+wk/zjOjzD
+ ZFTy1Ebji+DiFigumW90408elH0aNt/OuvRd6QKhWtsmocKmOCTyBuOBA g==;
+X-CSE-ConnectionGUID: h9GZpPqAQwqsxx0mYih5OQ==
+X-CSE-MsgGUID: urhF8Up8RZ6pDBUYr/NFrQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11461"; a="51118774"
+X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; d="scan'208";a="51118774"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 12 Jun 2025 03:18:21 -0700
+X-CSE-ConnectionGUID: oJHNP4lbTaewzsw+OWw5jw==
+X-CSE-MsgGUID: EacQk2C6SmqbqB7gWcAlig==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; d="scan'208";a="148374149"
+X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; d="scan'208";a="147826597"
 Received: from unknown (HELO silpixa00401749.ger.corp.intel.com)
  ([10.237.222.190])
- by fmviesa009.fm.intel.com with ESMTP; 12 Jun 2025 03:15:57 -0700
+ by fmviesa008.fm.intel.com with ESMTP; 12 Jun 2025 03:18:20 -0700
 From: Radu Nicolau <radu.nicolau@intel.com>
 To: Kai Ji <kai.ji@intel.com>
 Cc: dev@dpdk.org,
 	Radu Nicolau <radu.nicolau@intel.com>
 Subject: [PATCH v3] crypto/qat: remove ZUC 256 support
-Date: Thu, 12 Jun 2025 10:15:21 +0000
-Message-ID: <20250612101555.240720-1-radu.nicolau@intel.com>
+Date: Thu, 12 Jun 2025 10:18:01 +0000
+Message-ID: <20250612101816.241875-1-radu.nicolau@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250603103054.60606-1-radu.nicolau@intel.com>
 References: <20250603103054.60606-1-radu.nicolau@intel.com>
@@ -67,9 +67,9 @@ sequence remove ZUC 256 support from Gen 3 and 5 hardware
 Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
 Acked-by: Kai Ji <kai.ji@intel.com>
 ---
-v3: updated description
+v3: update description
 
- doc/guides/rel_notes/release_25_07.rst       |  5 ++
+ doc/guides/rel_notes/release_25_07.rst       |  6 +++
  drivers/common/qat/qat_adf/icp_qat_hw.h      |  2 +-
  drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c | 43 ++--------------
  drivers/crypto/qat/dev/qat_crypto_pmd_gen5.c | 52 +++-----------------
@@ -77,19 +77,20 @@ v3: updated description
  drivers/crypto/qat/dev/qat_sym_pmd_gen1.c    | 33 -------------
  drivers/crypto/qat/qat_sym_session.c         | 25 ++--------
  drivers/crypto/qat/qat_sym_session.h         |  1 -
- 8 files changed, 18 insertions(+), 163 deletions(-)
+ 8 files changed, 19 insertions(+), 163 deletions(-)
 
 diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
-index 19be7740c4..c999688cf7 100644
+index 19be7740c4..7eed9337ba 100644
 --- a/doc/guides/rel_notes/release_25_07.rst
 +++ b/doc/guides/rel_notes/release_25_07.rst
-@@ -145,6 +145,11 @@ New Features
+@@ -145,6 +145,12 @@ New Features
  Removed Items
  -------------
  
 +* **Removed ZUC-256 algorithms from Intel QuickAssist Technology (QAT) PMD.**
 +
-+  Support for ZUC-256 cipher and integrity algorithms was removed from
++  Due to changes in the specification related to IV size and initialization sequence
++  support for ZUC-256 cipher and integrity algorithms was removed from
 +  Gen 3 and Gen 5 PMD.
 +
  .. This section should contain removed items in this release. Sample format:
