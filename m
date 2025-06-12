@@ -2,50 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58CCCC61CE8
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 12:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42181C61CE8
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 12:25:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0E55D41104;
+	by mails.dpdk.org (Postfix) with ESMTP id E391841148;
 	Thu, 12 Jun 2025 14:25:09 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id B8805410F6
- for <dev@dpdk.org>; Thu, 12 Jun 2025 14:25:07 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 59103410F6
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 14:25:08 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1749731108; x=1781267108;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=j+CQ/xVB9OzrLaJjhzhhW3iHQQgZ5yzOobi8w4xkJcY=;
- b=R9VQVypEZ0vvq5J2wCQacDNGK2BbtJNWiffJ5Ri/h+mL4Ft1vN7ptaVI
- ZqOxgncZH6FKymYbr0nLQCZHCzFz/embv6vzhDkzXjl7ISq2iTlK6u6Xo
- PzcD2aRlbNztIXycjWlFmowUPprmtoD6ZorYjiGJ19ls+/Qekgl4ODqq7
- IIETCNp2/Lh8DSA/WUQ7NVeeoioyqbr9cFMGR18U/NexgSDcRk4rSjX8v
- jPYd0f1qefV6fwHWK3IaLHuZaNpL1bwkOz8AIu/k354Pw6P9HAJ7CT5p2
- N/AV9BsoQ1qCvGLPZwEPbMr+YCyZ/JyHnSblI7ETGK6PJIPPLic1szkGC A==;
-X-CSE-ConnectionGUID: 7j7bZr5aRjSoY1XlXauB1w==
-X-CSE-MsgGUID: SdGoIrG6RaG1XkNL8guj8g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="62557376"
-X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; d="scan'208";a="62557376"
+ bh=2RThylbBrrQmipF8eA1gSZQwUgm1mbHG6ZCrGuMgfBg=;
+ b=FHB4sz1zdCKbyfrH75nQeLMN+zD4JaofFD8M2jM47UD0ffu5OKumSHjU
+ c6Xr7QB5G1LWhGfOj7qcJasSWbQSXd/sn7j7LnOL4SHjdmnDJ97+bz9B0
+ jIJcn3eXWWP/JvHy2dWsiidPgTOPQHm1zRog8W5riOhFq5pPfYaR0V3GC
+ 25VPFABpTuNoCJgLBZ68y2pJ34f+7PUcv8pl8JeYsR7Ux4Kw6SDYFd1JY
+ NUTB0YmOnpu/xusgx/PL3qOq9MxDfyiDc6qQUVXxX8DOroP2MqbDoPnzj
+ oOwNEricw+krd9MRoEZNdK9XyWELHLJVNpgxLGRAx/Rq9g1df7a56/9mP Q==;
+X-CSE-ConnectionGUID: if+4JPwLSSquZHywpDpo8w==
+X-CSE-MsgGUID: vunyRYopRJuZpeE54faFCg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="62557373"
+X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; d="scan'208";a="62557373"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
  12 Jun 2025 05:25:01 -0700
-X-CSE-ConnectionGUID: 9TDetH/LQciViZEy/+AJSA==
-X-CSE-MsgGUID: YlPLRl9LQfetFeJBk3wetA==
+X-CSE-ConnectionGUID: B3ml+/tARL2wYR49+r85vA==
+X-CSE-MsgGUID: OlfJw8m2QDyA1Wc7Eyt+1g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; d="scan'208";a="152650657"
+X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; d="scan'208";a="152650622"
 Received: from unknown (HELO srv24..) ([10.138.182.231])
- by fmviesa004.fm.intel.com with ESMTP; 12 Jun 2025 05:24:55 -0700
+ by fmviesa004.fm.intel.com with ESMTP; 12 Jun 2025 05:24:53 -0700
 From: Shaiq Wani <shaiq.wani@intel.com>
 To: dev@dpdk.org,
 	bruce.richardson@intel.com,
 	aman.deep.singh@intel.com
-Subject: [PATCH v1 1/2] doc: update recommended matching list for cpfl PMD
-Date: Thu, 12 Jun 2025 17:55:42 +0530
-Message-Id: <20250612122543.146876-2-shaiq.wani@intel.com>
+Subject: [PATCH v1 0/2] doc: update recommended matching list 
+Date: Thu, 12 Jun 2025 17:55:41 +0530
+Message-Id: <20250612122543.146876-1-shaiq.wani@intel.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250612122543.146876-1-shaiq.wani@intel.com>
+In-Reply-To: <20250612121322.146355-1-shaiq.wani@intel.com>
 References: <20250612121322.146355-1-shaiq.wani@intel.com>
- <20250612122543.146876-1-shaiq.wani@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -61,27 +60,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Updated the recommended MEV-ts release version corresponding
-to DPDK release in the cpfl driver documentation.
+v1 - fixed the series name.
 
-Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
----
+Shaiq Wani (2):
+  doc: update recommended matching list for cpfl PMD
+  doc: update recommended matching list for idpf PMD
+
  doc/guides/nics/cpfl.rst | 2 ++
- 1 file changed, 2 insertions(+)
+ doc/guides/nics/idpf.rst | 2 ++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/doc/guides/nics/cpfl.rst b/doc/guides/nics/cpfl.rst
-index 3bfab2136d..aa5bed4136 100644
---- a/doc/guides/nics/cpfl.rst
-+++ b/doc/guides/nics/cpfl.rst
-@@ -39,6 +39,8 @@ Here is the suggested matching list which has been tested and verified.
-    +------------+------------------+
-    |    24.11   |       1.6        |
-    +------------+------------------+
-+   |    25.07   |       2.0        |
-+   +------------+------------------+
- 
- 
- Configuration
 -- 
 2.34.1
 
