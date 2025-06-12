@@ -2,52 +2,163 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C954C61CE8
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 10:18:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF70C71136
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 10:19:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 36FA240DDE;
-	Thu, 12 Jun 2025 12:18:23 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
- by mails.dpdk.org (Postfix) with ESMTP id AB1F54021F
- for <dev@dpdk.org>; Thu, 12 Jun 2025 12:18:21 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 822A040E26;
+	Thu, 12 Jun 2025 12:19:39 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+ by mails.dpdk.org (Postfix) with ESMTP id 9FA2E4003C
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 12:19:37 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1749723502; x=1781259502;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=BNI8cCUHsYSZiPoenrES8eL4iU7tkWHX8VqeAMLrO68=;
- b=TyhagzAH06PdAkFqVUL8PtclomzKDhib+bXGtXzPnJtlpIcYov8Tol5T
- mdBijMZ7OEny3+7QG4mzKsLqcpaa67RDhk+vYhQGyNT1PI9dpoTV0qSyW
- 1SN762cWuGLlwL+1lIYkwyLK5Smt2ii2PDZ9kOuAAgO4fMIB4r6s4KnVb
- UK4EHCcovc1SXksZKDcVozxZrILDRzZzHwbwazA5DpRCnz8EkEjZvlsud
- IndBfwGumwcHZzyVSjutFdcX0Z0+GSdGpQbhtFmvbkQsUh4+wk/zjOjzD
- ZFTy1Ebji+DiFigumW90408elH0aNt/OuvRd6QKhWtsmocKmOCTyBuOBA g==;
-X-CSE-ConnectionGUID: h9GZpPqAQwqsxx0mYih5OQ==
-X-CSE-MsgGUID: urhF8Up8RZ6pDBUYr/NFrQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11461"; a="51118774"
-X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; d="scan'208";a="51118774"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
- by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 12 Jun 2025 03:18:21 -0700
-X-CSE-ConnectionGUID: oJHNP4lbTaewzsw+OWw5jw==
-X-CSE-MsgGUID: EacQk2C6SmqbqB7gWcAlig==
+ t=1749723577; x=1781259577;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=jyBme5xkpuxUKzoO94HepRdJoOtW6p1q9PiKGd1NFys=;
+ b=UMhHn9wdaEj7zfmVbOKxr1j43xI6G5uwVQxqWsJzNv7wJgobie0l2m+W
+ vHKeB8pJKq6556wPItvzbs49/L58KMRqC+VA19q8yaqqqDaQbs0qTAV0K
+ YdC0ppmFtPrJL871a1qlrcUhFqrr4JB7iluXfRW66vgbzJWsexRhnU7zb
+ a7jxXR0cJiekgOP/Nr31/zpb1dEIZphq6NIz0nGHD2G+nanMHDKlsIc8s
+ hrGv+2bE9zsGw74elRYogspDqJIWMccSu6tP26NRjUVcc2xysrPf/mB8U
+ 4OO+qqbAdSD9Mk726TfmPNJ+oh5YFwnYROS1URh38URoZqL+IeYfH20cC A==;
+X-CSE-ConnectionGUID: POEcJnICRDamp3q4EaO/3Q==
+X-CSE-MsgGUID: HAEdDq6MSqafsO17irvY3A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11461"; a="55697643"
+X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; d="scan'208";a="55697643"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+ by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 12 Jun 2025 03:19:36 -0700
+X-CSE-ConnectionGUID: o8diljrSSIGW6EMinrhjHA==
+X-CSE-MsgGUID: ec1EhsQGRdOEY73NKltCQA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; d="scan'208";a="147826597"
-Received: from unknown (HELO silpixa00401749.ger.corp.intel.com)
- ([10.237.222.190])
- by fmviesa008.fm.intel.com with ESMTP; 12 Jun 2025 03:18:20 -0700
-From: Radu Nicolau <radu.nicolau@intel.com>
-To: Kai Ji <kai.ji@intel.com>
-Cc: dev@dpdk.org,
-	Radu Nicolau <radu.nicolau@intel.com>
-Subject: [PATCH v3] crypto/qat: remove ZUC 256 support
-Date: Thu, 12 Jun 2025 10:18:01 +0000
-Message-ID: <20250612101816.241875-1-radu.nicolau@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250603103054.60606-1-radu.nicolau@intel.com>
-References: <20250603103054.60606-1-radu.nicolau@intel.com>
+X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; d="scan'208";a="147967842"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 12 Jun 2025 03:19:37 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 12 Jun 2025 03:19:35 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Thu, 12 Jun 2025 03:19:35 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (40.107.220.44)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 12 Jun 2025 03:19:35 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tg4+drc0UilCnzMjUcbkPKmWkJYEXeecKcRv48PdQAWA0X4S6JQjX5jbWDcmwp82sMV3ewPOsgpUPcNVyxfCPOKaIpWuI5vGwGSJT85nodLkfDr5caAi1Di3uu96GnL//yOYsDq1vyQ/3tRCXeHXs7quPKrLM/yawXwLvbEytF/WlzDxd5FxJRmh/UodEDZOO5Dr+TeBBo0fdP/Ced6gOUxJIz3syUNb9cP2PNMYGrR909OvPtunXqS5w+c8rE6ntPzZmPp4+k8axwa4/R4FafLS5KmwCai+4PZuytT6LYBDtAv7fQEZmuNd0XR5Zt/mlLLgXgTQMHlfYJZ3ao0yDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ew2nImBzeeBcyMPW9+vlRuqLlaQI9ccApWH28fD6JjE=;
+ b=rYwbZhWsKXimCLgFad4EL+U3/V3NEjgqRv+5r4rAn/NCzvSOfd/V6hB9EwvQq+HzY16gCJmuTv+Npin3gk38wtupApn9eMO2Ol5Wqbd/6RApObw1ESA+8C6Y5eH/q6F0l3B/f61BDnYM7OFDmQRX96EEW+gbvJApP+kx2F/lSYUgMxi4Fl8SVtS2ZgS/+uDGQNcZ76enlyfWDiJXYA6XZMCWRENRmlHOn6OD5RngnRhvz/a2kCKhkro2JSqq9cuvbmmvrboq1IPvp4ZP4y0PVUNjhh5HOhQAP5oHwsjcIrOuqaGZLTlipw+2E3wQ95lakADtV9lbyc7Du1xm68EsBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by SA1PR11MB8544.namprd11.prod.outlook.com (2603:10b6:806:3a3::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.29; Thu, 12 Jun
+ 2025 10:19:01 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%5]) with mapi id 15.20.8835.018; Thu, 12 Jun 2025
+ 10:19:01 +0000
+Date: Thu, 12 Jun 2025 11:18:56 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: "Varghese, Vipin" <Vipin.Varghese@amd.com>
+CC: Anatoly Burakov <anatoly.burakov@intel.com>, "dev@dpdk.org"
+ <dev@dpdk.org>, Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: Re: [PATCH v6 23/33] net/ixgbe: create common Rx queue structure
+Message-ID: <aEqpkOa_oxW8pR3h@bricha3-mobl1.ger.corp.intel.com>
+References: <cover.1749483381.git.anatoly.burakov@intel.com>
+ <cover.1749483381.git.anatoly.burakov@intel.com>
+ <67e447a725410d7ef1af5317e3c7e1ee487792c3.1749483382.git.anatoly.burakov@intel.com>
+ <PH7PR12MB8596F835791ABF579E92C6B88274A@PH7PR12MB8596.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <PH7PR12MB8596F835791ABF579E92C6B88274A@PH7PR12MB8596.namprd12.prod.outlook.com>
+X-ClientProxiedBy: DU6P191CA0023.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:10:540::17) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SA1PR11MB8544:EE_
+X-MS-Office365-Filtering-Correlation-Id: cfb25817-1cc5-4668-ec6c-08dda99a8ce0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?oQS07EAe0nmg0rk970Ni+SN5tsF3SW/tnEtnT5sl/jkzR1xc0mxId5p6uL7U?=
+ =?us-ascii?Q?NUkuahKPzcyp1jrRtW82nVC0nImDIr+hPv1szB0Vwb/NKDbwSLWvB2p7tr/k?=
+ =?us-ascii?Q?dj1Ylg0PTxs8exy3fPFamnqclQt+oc+pqZ3V9H8PPYT/wuHjRPWl9sLfWT7k?=
+ =?us-ascii?Q?LOPGZWbyW0AsMZTt1kUau0JYlsWR/rM1SYP7dIweMN+CapTa4T1lzoYGp4Gs?=
+ =?us-ascii?Q?eKXMffI7A9J4QxHQ0PdTREy1KCXkcr+lGaj2ajAi5F4uBgykUIZXX/E8M2fc?=
+ =?us-ascii?Q?0Ks3/sd6QnVgcPKxL1D/ILkcBiNP3Hrh7bT2/mTHgt5d9KfjxClcirxfqZSE?=
+ =?us-ascii?Q?t4R/+b6BJXupjC6yMdMX2zGcK2dOnN+Y6ihIR9wBRKjcBkHRhRudd0tfUexh?=
+ =?us-ascii?Q?xjY5hJ2iSslSmmpoKVKd7ydh9jr+r+iArMVJpsfj5aN3ouKpj6W7jrRsFBxc?=
+ =?us-ascii?Q?Jr6aZ4+4Y8I/DomDwSuVUzkuqjLdSZN3O7F5PWegtPG1KVq2eSR6qYnRiWP0?=
+ =?us-ascii?Q?7prhlKYudE/diezELUU6O5UBfPgStb4nIXXF6PiFHIdO0MrNr8rA3BqLQPaj?=
+ =?us-ascii?Q?A3N+/iA68sTzcU72KokfEd7/koOnOpbHLXaEy6MAXZaNP3X1ktJgaUiwe8JQ?=
+ =?us-ascii?Q?vUccqaAOCqnntMVQUJy3Q9eritl2jrknHpNHtvA1hDVg9NUeHibqllxnhFPV?=
+ =?us-ascii?Q?zxPxaYkKMsV2YQJzHMwELHuz42uDhNk8lzbG+3NniCMqKmUuK+cSiVgN4rFp?=
+ =?us-ascii?Q?fysYkL49eYJk1dASgZNKS7HDbVaK6IGEHYXQ6o/d9nN+fNFSQuc9YOak4dqM?=
+ =?us-ascii?Q?EjzO5wN1BEnwRLXcs/2StzfpjEsaB1RgXzBJiqPO0/0nwLipI8HXWR1cLCO3?=
+ =?us-ascii?Q?95WEeiXa60CyH+Ci7PX2F4IrkohZb9wJ068oQ4tig0GxBjMSHu3OUMHhOcgx?=
+ =?us-ascii?Q?O9y+HAJyC0W6WWl3sLi1T5M2HlilXgVl6TH43OC0mWRIrOOSYKnQk8FR3EM7?=
+ =?us-ascii?Q?AedalLUX+q4qF5tR6krKqB4TvI4z6IKCy0elraobnwg761pxLvwOnI6nTFGS?=
+ =?us-ascii?Q?9KvyGI3/aBMIb86ze/cIn07x5nQFKdXjRifh7dcntQE0yZQw9cvGP0cw4csW?=
+ =?us-ascii?Q?MAqMi9ztxL19+sNFzcq1MLU13ywCTy4RIXWAFss/TynXMzUjMbk0xMOBKzDq?=
+ =?us-ascii?Q?9pBx0Cu61Hfg6YIWTPnb/hFZvRosOkofAGcCAjCboUuz4nWPv3XOcwpHWlgq?=
+ =?us-ascii?Q?itHi+oMAZzyfxasqLbJVpmn4zaXLEOlunRExX1kwAGMCrOMNm2WTX7bJnWuS?=
+ =?us-ascii?Q?NxKucHoh8n0leKeETmQuWcbmSXR6BfJoQ2h1WTKftlgBs8QvIsvPXwt2Y9lJ?=
+ =?us-ascii?Q?rWrJrWM=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Ii5lHEsDPXQQVWc6oTOveqyCKP7cmmMICpt+SAqAoo8gXoaWZrswtowbQBtE?=
+ =?us-ascii?Q?uFYhEllv/naEezl777GN3TwkekyMTJ79ls2nvi5jfpaeRTxzdHSI9lW8R4A3?=
+ =?us-ascii?Q?CD6OiPe5SifsUsQxF2HfXVtCWYzqkT7FEO+gHvbdk8Vh6ZfuRu0l9nWcn6c6?=
+ =?us-ascii?Q?s79XdBUZ+s3i1+JM5gCxt7ObRnDzYNm1sh+Q/JUMPn3hXVc1RZNKLajRqRS6?=
+ =?us-ascii?Q?aafKTufl2bWEFIsdUHrOTqsddyCKxNlfaqYa+NeSntGMKZXHT//RZqyFxv3O?=
+ =?us-ascii?Q?bWl+/ZXYZ1vp3X5fPWAo0qIpj+/ZwXGgxJ4neIhT6vklSgiFZDS1DwasVops?=
+ =?us-ascii?Q?gDQIKHcIIlT2Ju79TCOM6AsEhKaqhTwfCBajNXIbAk10pDkV/6wcG6omrTlN?=
+ =?us-ascii?Q?Mm9wdP6oyKURPZ5FgUWwnSazvowJYssSzIjEHo7fZHTEYK/hP68C+PVYtt2T?=
+ =?us-ascii?Q?XV8xsEF8EkFF2O9oP577ACa4+WcO8MN73r04TagQirnMhxPoFvBANrPP2zte?=
+ =?us-ascii?Q?2e4CgW7osPlhWPqPX5+mSXR3Jp900jXD3MHvHgnLopicqjYlniIKTcZxua/F?=
+ =?us-ascii?Q?h63HrE/bD4l7wSBVJyNiXy6uCjhfbpjjFtcjzmXwrOHgMhB1bb0r0rKFFWuL?=
+ =?us-ascii?Q?TaFXi3fLW6Q8B7RfattAywnHH4v6WNkBOBlmgGXexi6/R3pKo8/l4LcRY2pt?=
+ =?us-ascii?Q?mI2/eTeyFSN6tAVa4ESxxy8K7NR4N98Hr1UNcBRhd+QRlgnMPCZ0Dvmdj2dh?=
+ =?us-ascii?Q?A7rwnlKIB8/ei6x1kH9Rr9e+Q3fhgqEABAdPlrDXcejSCScdxOjWR4sTYUQb?=
+ =?us-ascii?Q?5UIB8HVt4wHJzadU+v7DzJI0mIMfbT9U1zTL8ZNVe4wkaZctdfZvy0Nh+DgZ?=
+ =?us-ascii?Q?9bb9mp5EouD002hB2OXv0kcCv4NLkniiQJYz3IE1f1zxpDWJIzdN1PEci4DO?=
+ =?us-ascii?Q?poU8gKonQ5TsivkhIUkWrlU6uikxfWSDrnye7slK4cL24NSq6p9N2P1exaJJ?=
+ =?us-ascii?Q?ubdIsjajSjxgHeE0+uAhWYbNJS50T+DahU6FJ+iztlAG6EKVd6qFK3q8NM0C?=
+ =?us-ascii?Q?6mEBZ+tErHexxkUq/HrkbTtAxgrwVoe8PaaKVQHH9t7JC3paZ/iXMCm3CQFj?=
+ =?us-ascii?Q?EqQ7OKLuejAGzX0kkEMwVF1qZgJ50DICVa3WX98t8Mg/YwAcvNqcVGpgFjQt?=
+ =?us-ascii?Q?TztIongmNXRH+r5iVPib6LqJjboDk1tAgWYjKdRotjWHEtoyk3zZNPvar8PV?=
+ =?us-ascii?Q?YnWdJnHXQe2q/RBRE6Shcyh+adsin5LFQneLgHOzaTQo0eUROcdm+1nKIG7L?=
+ =?us-ascii?Q?nFY1v29rMZYUEG0vToNhJ59bQLzIaRcJUQSyAGq4ZLVIeY0SeFHFhwNfiwQp?=
+ =?us-ascii?Q?3oVyGVHA7TqCVuPNkMMh4F38tCcUesmncReyYPCeeGWf3tBJB7SK50MZuS8P?=
+ =?us-ascii?Q?FHuGDqXCc1A6PWAZxloDhVh8qL/sdq1qMtpPq3FeNcBLTsRNFEd8mmkMauEX?=
+ =?us-ascii?Q?cc3XPyFY+teD7nHd+jL+9DKGna5xlSrTkn0+HXNjx/umL7bASH++kUspQdiD?=
+ =?us-ascii?Q?+BbP3REH4WG0aSBTwA4IFtAfrIJck7EyNIdeVI2XNfPXLVxtpR+khBhkaPR4?=
+ =?us-ascii?Q?Bw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: cfb25817-1cc5-4668-ec6c-08dda99a8ce0
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2025 10:19:01.2667 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LQ5fUhf1olTo8G5w7K1clKnJCYQlEIDOJFgB2gTNealaqjl7phD/gQRZp1LuL1/o6McMM8fWabc8mhBybBuycdFCk1CveYf4/+Dj1RN8Jrg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8544
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,411 +172,963 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Due to changes in the specification related to IV size and initialization
-sequence remove ZUC 256 support from Gen 3 and 5 hardware
+On Thu, Jun 12, 2025 at 10:12:23AM +0000, Varghese, Vipin wrote:
+> [Public]
+> 
+> Hi Bruce & Anatoly,
+> 
+> We are facing an issue while apply patch 23 individually or series.
+> 
+> We get the following error for individual apply
+> 
+> ```
+> $ git apply p23.patch --verbose
+> Checking patch drivers/net/intel/common/rx.h...
+> Checking patch drivers/net/intel/ixgbe/ixgbe_ethdev.c...
+> Checking patch drivers/net/intel/ixgbe/ixgbe_rxtx.c...
+> error: while searching for:
+>                 len += IXGBE_RX_MAX_BURST;
+> 
+>         rxq->sw_ring = rte_zmalloc_socket("rxq->sw_ring",
+>                                           sizeof(struct ixgbe_rx_entry) * len,
+>                                           RTE_CACHE_LINE_SIZE, socket_id);
+>         if (!rxq->sw_ring) {
+>                 ixgbe_rx_queue_release(rxq);
+> 
+> error: patch failed: drivers/net/intel/ixgbe/ixgbe_rxtx.c:3309
+> error: drivers/net/intel/ixgbe/ixgbe_rxtx.c: patch does not apply
+> Checking patch drivers/net/intel/ixgbe/ixgbe_rxtx.h...
+> error: while searching for:
+> #define IXGBE_MAX_RING_DESC     8192
+> 
+> #define IXGBE_TX_MAX_BURST            32
+> #define IXGBE_RX_MAX_BURST            32
+> #define IXGBE_TX_MAX_FREE_BUF_SZ      64
+> 
+> #define IXGBE_VPMD_DESCS_PER_LOOP     4
+> 
+> error: patch failed: drivers/net/intel/ixgbe/ixgbe_rxtx.h:32
+> error: drivers/net/intel/ixgbe/ixgbe_rxtx.h: patch does not apply
+> Checking patch drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c...
+> Checking patch drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h...
+> Checking patch drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c...
+> error: while searching for:
+>  * - floor align nb_pkts to a IXGBE_VPMD_DESCS_PER_LOOP power-of-two
+>  */
+> static inline uint16_t
+> _recv_raw_pkts_vec(struct ixgbe_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+>                    uint16_t nb_pkts, uint8_t *split_packet)
+> {
+>         volatile union ixgbe_adv_rx_desc *rxdp;
+>         struct ixgbe_rx_entry *sw_ring;
+>         uint16_t nb_pkts_recd;
+>         int pos;
+>         uint8x16_t shuf_msk = {
+> 
+> error: patch failed: drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c:282
+> error: drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c: patch does not apply
+> Checking patch drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c...
+> error: while searching for:
+>  * - floor align nb_pkts to a IXGBE_VPMD_DESCS_PER_LOOP power-of-two
+>  */
+> static inline uint16_t
+> _recv_raw_pkts_vec(struct ixgbe_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+>                 uint16_t nb_pkts, uint8_t *split_packet)
+> {
+>         volatile union ixgbe_adv_rx_desc *rxdp;
+>         struct ixgbe_rx_entry *sw_ring;
+>         uint16_t nb_pkts_recd;
+> #ifdef RTE_LIB_SECURITY
+>         uint8_t use_ipsec = rxq->using_ipsec;
+> 
+> error: patch failed: drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c:327
+> error: drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c: patch does not apply
+> ```
+> 
+> And we get following error in series apply
+> 
+> ```
+> $ git apply ../../Intel-PMD-drivers-Rx-cleanup.patch
+> error: patch failed: drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c:173
+> error: drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c: patch does not apply
+> ```
+> 
+> > -----Original Message-----
+> > From: Anatoly Burakov <anatoly.burakov@intel.com>
+> > Sent: Monday, June 9, 2025 9:07 PM
+> > To: dev@dpdk.org; Bruce Richardson <bruce.richardson@intel.com>; Vladimir
+> > Medvedkin <vladimir.medvedkin@intel.com>
+> > Subject: [PATCH v6 23/33] net/ixgbe: create common Rx queue structure
+> >
+> > Caution: This message originated from an External Source. Use proper caution
+> > when opening attachments, clicking links, or responding.
+> >
+> >
+> > In preparation for deduplication effort, generalize the Rx queue structure.
+> >
+> > The entire Rx queue structure is moved to common/rx.h, clarifying the comments
+> > where necessary, and separating common parts from ixgbe-specific parts.
+> >
+> > Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> > Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+> > ---
+> >
+> > Notes:
+> >     v5:
+> >     - Sort ixgbe-specific fields by size
+> >
+> >     v3 -> v4:
+> >     - Separate out some of the changes from this commit into previous commits
+> >     - Rename CI_RX_BURST to CI_RX_MAX_BURST to match the driver naming
+> > convention
+> >
+> >  drivers/net/intel/common/rx.h                 |  67 ++++++++++-
+> >  drivers/net/intel/ixgbe/ixgbe_ethdev.c        |   8 +-
+> >  drivers/net/intel/ixgbe/ixgbe_rxtx.c          | 108 +++++++++---------
+> >  drivers/net/intel/ixgbe/ixgbe_rxtx.h          |  61 +---------
+> >  .../net/intel/ixgbe/ixgbe_rxtx_vec_common.c   |  12 +-
+> >  .../net/intel/ixgbe/ixgbe_rxtx_vec_common.h   |   5 +-
+> >  drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c |  14 +--
+> > drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c  |  14 +--
+> >  8 files changed, 146 insertions(+), 143 deletions(-)
+> >
+> > diff --git a/drivers/net/intel/common/rx.h b/drivers/net/intel/common/rx.h index
+> > abb01ba5e7..b60ca24dfb 100644
+> > --- a/drivers/net/intel/common/rx.h
+> > +++ b/drivers/net/intel/common/rx.h
+> > @@ -10,14 +10,75 @@
+> >  #include <rte_mbuf.h>
+> >  #include <rte_ethdev.h>
+> >
+> > -#define CI_RX_BURST 32
+> > +#define CI_RX_MAX_BURST 32
+> > +
+> > +struct ci_rx_queue;
+> > +
+> > +struct ci_rx_entry {
+> > +       struct rte_mbuf *mbuf; /* mbuf associated with RX descriptor. */
+> > +};
+> > +
+> > +struct ci_rx_entry_sc {
+> > +       struct rte_mbuf *fbuf; /* First segment of the fragmented
+> > +packet.*/ };
+> > +
+> > +/**
+> > + * Structure associated with each RX queue.
+> > + */
+> > +struct ci_rx_queue {
+> > +       struct rte_mempool  *mp; /**< mbuf pool to populate RX ring. */
+> > +       union { /* RX ring virtual address */
+> > +               volatile union ixgbe_adv_rx_desc *ixgbe_rx_ring;
+> > +       };
+> > +       volatile uint8_t *qrx_tail;   /**< register address of tail */
+> > +       struct ci_rx_entry *sw_ring; /**< address of RX software ring. */
+> > +       struct ci_rx_entry_sc *sw_sc_ring; /**< address of scattered Rx software
+> > ring. */
+> > +       rte_iova_t rx_ring_phys_addr; /**< RX ring DMA address. */
+> > +       struct rte_mbuf *pkt_first_seg; /**< First segment of current packet. */
+> > +       struct rte_mbuf *pkt_last_seg; /**< Last segment of current packet. */
+> > +       /** hold packets to return to application */
+> > +       struct rte_mbuf *rx_stage[CI_RX_MAX_BURST * 2];
+> > +       uint16_t nb_rx_desc; /**< number of RX descriptors. */
+> > +       uint16_t rx_tail;  /**< current value of tail register. */
+> > +       uint16_t rx_nb_avail; /**< nr of staged pkts ready to ret to app */
+> > +       uint16_t nb_rx_hold; /**< number of held free RX desc. */
+> > +       uint16_t rx_next_avail; /**< idx of next staged pkt to ret to app */
+> > +       uint16_t rx_free_thresh; /**< max free RX desc to hold. */
+> > +       uint16_t rx_free_trigger; /**< triggers rx buffer allocation */
+> > +       uint16_t rxrearm_nb;     /**< number of remaining to be re-armed */
+> > +       uint16_t rxrearm_start;  /**< the idx we start the re-arming from */
+> > +       uint16_t queue_id; /**< RX queue index. */
+> > +       uint16_t port_id;  /**< Device port identifier. */
+> > +       uint16_t reg_idx;  /**< RX queue register index. */
+> > +       uint8_t crc_len;  /**< 0 if CRC stripped, 4 otherwise. */
+> > +       bool rx_deferred_start; /**< queue is not started on dev start. */
+> > +       bool vector_rx; /**< indicates that vector RX is in use */
+> > +       bool drop_en;  /**< if 1, drop packets if no descriptors are available. */
+> > +       uint64_t mbuf_initializer; /**< value to init mbufs */
+> > +       uint64_t offloads; /**< Rx offloads with RTE_ETH_RX_OFFLOAD_* */
+> > +       /** need to alloc dummy mbuf, for wraparound when scanning hw ring */
+> > +       struct rte_mbuf fake_mbuf;
+> > +       const struct rte_memzone *mz;
+> > +       union {
+> > +               struct { /* ixgbe specific values */
+> > +                       /** flags to set in mbuf when a vlan is detected. */
+> > +                       uint64_t vlan_flags;
+> > +                       /** Packet type mask for different NICs. */
+> > +                       uint16_t pkt_type_mask;
+> > +                       /** indicates that IPsec RX feature is in use */
+> > +                       uint8_t using_ipsec;
+> > +                       /** UDP frames with a 0 checksum can be marked as checksum
+> > errors. */
+> > +                       uint8_t rx_udp_csum_zero_err;
+> > +               };
+> > +       };
+> > +};
+> >
+> >  static inline uint16_t
+> >  ci_rx_reassemble_packets(struct rte_mbuf **rx_bufs, uint16_t nb_bufs, uint8_t
+> > *split_flags,
+> >                 struct rte_mbuf **pkt_first_seg, struct rte_mbuf **pkt_last_seg,
+> >                 const uint8_t crc_len)
+> >  {
+> > -       struct rte_mbuf *pkts[CI_RX_BURST] = {0}; /*finished pkts*/
+> > +       struct rte_mbuf *pkts[CI_RX_MAX_BURST] = {0}; /*finished pkts*/
+> >         struct rte_mbuf *start = *pkt_first_seg;
+> >         struct rte_mbuf *end = *pkt_last_seg;
+> >         unsigned int pkt_idx, buf_idx;
+> > @@ -97,7 +158,7 @@ static inline bool
+> >  ci_rxq_vec_capable(uint16_t nb_desc, uint16_t rx_free_thresh, uint64_t offloads)  {
+> >         if (!rte_is_power_of_2(nb_desc) ||
+> > -                       rx_free_thresh < CI_RX_BURST ||
+> > +                       rx_free_thresh < CI_RX_MAX_BURST ||
+> >                         (nb_desc % rx_free_thresh) != 0)
+> >                 return false;
+> >
+> > diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+> > b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+> > index 928ac57a93..f8b99d4de5 100644
+> > --- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+> > +++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+> > @@ -2022,7 +2022,7 @@ ixgbe_vlan_hw_strip_bitmap_set(struct rte_eth_dev
+> > *dev, uint16_t queue, bool on)  {
+> >         struct ixgbe_hwstrip *hwstrip =
+> >                 IXGBE_DEV_PRIVATE_TO_HWSTRIP_BITMAP(dev->data-
+> > >dev_private);
+> > -       struct ixgbe_rx_queue *rxq;
+> > +       struct ci_rx_queue *rxq;
+> >
+> >         if (queue >= IXGBE_MAX_RX_QUEUE_NUM)
+> >                 return;
+> > @@ -2157,7 +2157,7 @@ ixgbe_vlan_hw_strip_config(struct rte_eth_dev *dev)
+> >         struct rte_eth_rxmode *rxmode = &dev->data->dev_conf.rxmode;
+> >         uint32_t ctrl;
+> >         uint16_t i;
+> > -       struct ixgbe_rx_queue *rxq;
+> > +       struct ci_rx_queue *rxq;
+> >         bool on;
+> >
+> >         PMD_INIT_FUNC_TRACE();
+> > @@ -2200,7 +2200,7 @@ ixgbe_config_vlan_strip_on_all_queues(struct
+> > rte_eth_dev *dev, int mask)  {
+> >         uint16_t i;
+> >         struct rte_eth_rxmode *rxmode;
+> > -       struct ixgbe_rx_queue *rxq;
+> > +       struct ci_rx_queue *rxq;
+> >
+> >         if (mask & RTE_ETH_VLAN_STRIP_MASK) {
+> >                 rxmode = &dev->data->dev_conf.rxmode; @@ -5782,7 +5782,7 @@
+> > ixgbevf_vlan_strip_queue_set(struct rte_eth_dev *dev, uint16_t queue, int on)  static
+> > int  ixgbevf_vlan_offload_config(struct rte_eth_dev *dev, int mask)  {
+> > -       struct ixgbe_rx_queue *rxq;
+> > +       struct ci_rx_queue *rxq;
+> >         uint16_t i;
+> >         int on = 0;
+> >
+> > diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.c b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+> > index 5b2067bc0e..bbe665a6ff 100644
+> > --- a/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+> > +++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
+> > @@ -1403,11 +1403,11 @@ int
+> >  ixgbe_get_monitor_addr(void *rx_queue, struct rte_power_monitor_cond *pmc)  {
+> >         volatile union ixgbe_adv_rx_desc *rxdp;
+> > -       struct ixgbe_rx_queue *rxq = rx_queue;
+> > +       struct ci_rx_queue *rxq = rx_queue;
+> >         uint16_t desc;
+> >
+> >         desc = rxq->rx_tail;
+> > -       rxdp = &rxq->rx_ring[desc];
+> > +       rxdp = &rxq->ixgbe_rx_ring[desc];
+> >         /* watch for changes in status bit */
+> >         pmc->addr = &rxdp->wb.upper.status_error;
+> >
+> > @@ -1547,10 +1547,10 @@ rx_desc_error_to_pkt_flags(uint32_t rx_status,
+> > uint16_t pkt_info,  #error "PMD IXGBE: LOOK_AHEAD must be 8\n"
+> >  #endif
+> >  static inline int
+> > -ixgbe_rx_scan_hw_ring(struct ixgbe_rx_queue *rxq)
+> > +ixgbe_rx_scan_hw_ring(struct ci_rx_queue *rxq)
+> >  {
+> >         volatile union ixgbe_adv_rx_desc *rxdp;
+> > -       struct ixgbe_rx_entry *rxep;
+> > +       struct ci_rx_entry *rxep;
+> >         struct rte_mbuf *mb;
+> >         uint16_t pkt_len;
+> >         uint64_t pkt_flags;
+> > @@ -1562,7 +1562,7 @@ ixgbe_rx_scan_hw_ring(struct ixgbe_rx_queue *rxq)
+> >         uint64_t vlan_flags = rxq->vlan_flags;
+> >
+> >         /* get references to current descriptor and S/W ring entry */
+> > -       rxdp = &rxq->rx_ring[rxq->rx_tail];
+> > +       rxdp = &rxq->ixgbe_rx_ring[rxq->rx_tail];
+> >         rxep = &rxq->sw_ring[rxq->rx_tail];
+> >
+> >         status = rxdp->wb.upper.status_error; @@ -1647,10 +1647,10 @@
+> > ixgbe_rx_scan_hw_ring(struct ixgbe_rx_queue *rxq)  }
+> >
+> >  static inline int
+> > -ixgbe_rx_alloc_bufs(struct ixgbe_rx_queue *rxq, bool reset_mbuf)
+> > +ixgbe_rx_alloc_bufs(struct ci_rx_queue *rxq, bool reset_mbuf)
+> >  {
+> >         volatile union ixgbe_adv_rx_desc *rxdp;
+> > -       struct ixgbe_rx_entry *rxep;
+> > +       struct ci_rx_entry *rxep;
+> >         struct rte_mbuf *mb;
+> >         uint16_t alloc_idx;
+> >         __le64 dma_addr;
+> > @@ -1664,7 +1664,7 @@ ixgbe_rx_alloc_bufs(struct ixgbe_rx_queue *rxq, bool
+> > reset_mbuf)
+> >         if (unlikely(diag != 0))
+> >                 return -ENOMEM;
+> >
+> > -       rxdp = &rxq->rx_ring[alloc_idx];
+> > +       rxdp = &rxq->ixgbe_rx_ring[alloc_idx];
+> >         for (i = 0; i < rxq->rx_free_thresh; ++i) {
+> >                 /* populate the static rte mbuf fields */
+> >                 mb = rxep[i].mbuf;
+> > @@ -1691,7 +1691,7 @@ ixgbe_rx_alloc_bufs(struct ixgbe_rx_queue *rxq, bool
+> > reset_mbuf)  }
+> >
+> >  static inline uint16_t
+> > -ixgbe_rx_fill_from_stage(struct ixgbe_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+> > +ixgbe_rx_fill_from_stage(struct ci_rx_queue *rxq, struct rte_mbuf
+> > +**rx_pkts,
+> >                          uint16_t nb_pkts)  {
+> >         struct rte_mbuf **stage = &rxq->rx_stage[rxq->rx_next_avail];
+> > @@ -1715,7 +1715,7 @@ static inline uint16_t  rx_recv_pkts(void *rx_queue,
+> > struct rte_mbuf **rx_pkts,
+> >              uint16_t nb_pkts)
+> >  {
+> > -       struct ixgbe_rx_queue *rxq = (struct ixgbe_rx_queue *)rx_queue;
+> > +       struct ci_rx_queue *rxq = (struct ci_rx_queue *)rx_queue;
+> >         uint16_t nb_rx = 0;
+> >
+> >         /* Any previously recv'd pkts will be returned from the Rx stage */ @@ -
+> > 1804,11 +1804,11 @@ uint16_t  ixgbe_recv_pkts(void *rx_queue, struct rte_mbuf
+> > **rx_pkts,
+> >                 uint16_t nb_pkts)
+> >  {
+> > -       struct ixgbe_rx_queue *rxq;
+> > +       struct ci_rx_queue *rxq;
+> >         volatile union ixgbe_adv_rx_desc *rx_ring;
+> >         volatile union ixgbe_adv_rx_desc *rxdp;
+> > -       struct ixgbe_rx_entry *sw_ring;
+> > -       struct ixgbe_rx_entry *rxe;
+> > +       struct ci_rx_entry *sw_ring;
+> > +       struct ci_rx_entry *rxe;
+> >         struct rte_mbuf *rxm;
+> >         struct rte_mbuf *nmb;
+> >         union ixgbe_adv_rx_desc rxd;
+> > @@ -1826,7 +1826,7 @@ ixgbe_recv_pkts(void *rx_queue, struct rte_mbuf
+> > **rx_pkts,
+> >         nb_hold = 0;
+> >         rxq = rx_queue;
+> >         rx_id = rxq->rx_tail;
+> > -       rx_ring = rxq->rx_ring;
+> > +       rx_ring = rxq->ixgbe_rx_ring;
+> >         sw_ring = rxq->sw_ring;
+> >         vlan_flags = rxq->vlan_flags;
+> >         while (nb_rx < nb_pkts) {
+> > @@ -2031,7 +2031,7 @@ static inline void  ixgbe_fill_cluster_head_buf(
+> >         struct rte_mbuf *head,
+> >         union ixgbe_adv_rx_desc *desc,
+> > -       struct ixgbe_rx_queue *rxq,
+> > +       struct ci_rx_queue *rxq,
+> >         uint32_t staterr)
+> >  {
+> >         uint32_t pkt_info;
+> > @@ -2093,10 +2093,10 @@ static inline uint16_t  ixgbe_recv_pkts_lro(void
+> > *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts,
+> >                     bool bulk_alloc)
+> >  {
+> > -       struct ixgbe_rx_queue *rxq = rx_queue;
+> > -       volatile union ixgbe_adv_rx_desc *rx_ring = rxq->rx_ring;
+> > -       struct ixgbe_rx_entry *sw_ring = rxq->sw_ring;
+> > -       struct ixgbe_scattered_rx_entry *sw_sc_ring = rxq->sw_sc_ring;
+> > +       struct ci_rx_queue *rxq = rx_queue;
+> > +       volatile union ixgbe_adv_rx_desc *rx_ring = rxq->ixgbe_rx_ring;
+> > +       struct ci_rx_entry *sw_ring = rxq->sw_ring;
+> > +       struct ci_rx_entry_sc *sw_sc_ring = rxq->sw_sc_ring;
+> >         uint16_t rx_id = rxq->rx_tail;
+> >         uint16_t nb_rx = 0;
+> >         uint16_t nb_hold = rxq->nb_rx_hold; @@ -2104,10 +2104,10 @@
+> > ixgbe_recv_pkts_lro(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts,
+> >
+> >         while (nb_rx < nb_pkts) {
+> >                 bool eop;
+> > -               struct ixgbe_rx_entry *rxe;
+> > -               struct ixgbe_scattered_rx_entry *sc_entry;
+> > -               struct ixgbe_scattered_rx_entry *next_sc_entry = NULL;
+> > -               struct ixgbe_rx_entry *next_rxe = NULL;
+> > +               struct ci_rx_entry *rxe;
+> > +               struct ci_rx_entry_sc *sc_entry;
+> > +               struct ci_rx_entry_sc *next_sc_entry = NULL;
+> > +               struct ci_rx_entry *next_rxe = NULL;
+> >                 struct rte_mbuf *first_seg;
+> >                 struct rte_mbuf *rxm;
+> >                 struct rte_mbuf *nmb = NULL; @@ -2949,7 +2949,7 @@
+> > ixgbe_free_sc_cluster(struct rte_mbuf *m)  }
+> >
+> >  static void __rte_cold
+> > -ixgbe_rx_queue_release_mbufs_non_vec(struct ixgbe_rx_queue *rxq)
+> > +ixgbe_rx_queue_release_mbufs_non_vec(struct ci_rx_queue *rxq)
+> >  {
+> >         unsigned i;
+> >
+> > @@ -2980,7 +2980,7 @@ ixgbe_rx_queue_release_mbufs_non_vec(struct
+> > ixgbe_rx_queue *rxq)  }
+> >
+> >  static void __rte_cold
+> > -ixgbe_rx_queue_release_mbufs(struct ixgbe_rx_queue *rxq)
+> > +ixgbe_rx_queue_release_mbufs(struct ci_rx_queue *rxq)
+> >  {
+> >         if (rxq->vector_rx)
+> >                 ixgbe_rx_queue_release_mbufs_vec(rxq);
+> > @@ -2989,7 +2989,7 @@ ixgbe_rx_queue_release_mbufs(struct ixgbe_rx_queue
+> > *rxq)  }
+> >
+> >  static void __rte_cold
+> > -ixgbe_rx_queue_release(struct ixgbe_rx_queue *rxq)
+> > +ixgbe_rx_queue_release(struct ci_rx_queue *rxq)
+> >  {
+> >         if (rxq != NULL) {
+> >                 ixgbe_rx_queue_release_mbufs(rxq);
+> > @@ -3015,7 +3015,7 @@ ixgbe_dev_rx_queue_release(struct rte_eth_dev *dev,
+> > uint16_t qid)
+> >   *           function must be used.
+> >   */
+> >  static inline int __rte_cold
+> > -check_rx_burst_bulk_alloc_preconditions(struct ixgbe_rx_queue *rxq)
+> > +check_rx_burst_bulk_alloc_preconditions(struct ci_rx_queue *rxq)
+> >  {
+> >         int ret = 0;
+> >
+> > @@ -3052,7 +3052,7 @@ check_rx_burst_bulk_alloc_preconditions(struct
+> > ixgbe_rx_queue *rxq)
+> >
+> >  /* Reset dynamic ixgbe_rx_queue fields back to defaults */  static void __rte_cold -
+> > ixgbe_reset_rx_queue(struct ixgbe_adapter *adapter, struct ixgbe_rx_queue *rxq)
+> > +ixgbe_reset_rx_queue(struct ixgbe_adapter *adapter, struct ci_rx_queue
+> > +*rxq)
+> >  {
+> >         static const union ixgbe_adv_rx_desc zeroed_desc = {{0}};
+> >         unsigned i;
+> > @@ -3073,7 +3073,7 @@ ixgbe_reset_rx_queue(struct ixgbe_adapter *adapter,
+> > struct ixgbe_rx_queue *rxq)
+> >          * reads extra memory as zeros.
+> >          */
+> >         for (i = 0; i < len; i++) {
+> > -               rxq->rx_ring[i] = zeroed_desc;
+> > +               rxq->ixgbe_rx_ring[i] = zeroed_desc;
+> >         }
+> >
+> >         /*
+> > @@ -3185,7 +3185,7 @@ ixgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
+> >                          struct rte_mempool *mp)  {
+> >         const struct rte_memzone *rz;
+> > -       struct ixgbe_rx_queue *rxq;
+> > +       struct ci_rx_queue *rxq;
+> >         struct ixgbe_hw     *hw;
+> >         uint16_t len;
+> >         struct ixgbe_adapter *adapter = dev->data->dev_private; @@ -3214,7
+> > +3214,7 @@ ixgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
+> >         }
+> >
+> >         /* First allocate the rx queue data structure */
+> > -       rxq = rte_zmalloc_socket("ethdev RX queue", sizeof(struct ixgbe_rx_queue),
+> > +       rxq = rte_zmalloc_socket("ethdev RX queue", sizeof(struct
+> > + ci_rx_queue),
+> >                                  RTE_CACHE_LINE_SIZE, socket_id);
+> >         if (rxq == NULL)
+> >                 return -ENOMEM;
+> > @@ -3284,7 +3284,7 @@ ixgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
+> >                         IXGBE_PCI_REG_ADDR(hw, IXGBE_RDT(rxq->reg_idx));
+> >
+> >         rxq->rx_ring_phys_addr = rz->iova;
+> > -       rxq->rx_ring = (union ixgbe_adv_rx_desc *) rz->addr;
+> > +       rxq->ixgbe_rx_ring = (union ixgbe_adv_rx_desc *)rz->addr;
+> >
+> >         /*
+> >          * Certain constraints must be met in order to use the bulk buffer @@ -3309,7
+> > +3309,7 @@ ixgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
+> >                 len += IXGBE_RX_MAX_BURST;
+> >
+> >         rxq->sw_ring = rte_zmalloc_socket("rxq->sw_ring",
+> > -                                         sizeof(struct ixgbe_rx_entry) * len,
+> > +                                         sizeof(struct ci_rx_entry) *
+> > + len,
+> >                                           RTE_CACHE_LINE_SIZE, socket_id);
+> >         if (!rxq->sw_ring) {
+> >                 ixgbe_rx_queue_release(rxq); @@ -3326,7 +3326,7 @@
+> > ixgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
+> >          */
+> >         rxq->sw_sc_ring =
+> >                 rte_zmalloc_socket("rxq->sw_sc_ring",
+> > -                                  sizeof(struct ixgbe_scattered_rx_entry) * len,
+> > +                                  sizeof(struct ci_rx_entry_sc) * len,
+> >                                    RTE_CACHE_LINE_SIZE, socket_id);
+> >         if (!rxq->sw_sc_ring) {
+> >                 ixgbe_rx_queue_release(rxq); @@ -3335,7 +3335,7 @@
+> > ixgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
+> >
+> >         PMD_INIT_LOG(DEBUG, "sw_ring=%p sw_sc_ring=%p hw_ring=%p "
+> >                             "dma_addr=0x%"PRIx64,
+> > -                    rxq->sw_ring, rxq->sw_sc_ring, rxq->rx_ring,
+> > +                    rxq->sw_ring, rxq->sw_sc_ring, rxq->ixgbe_rx_ring,
+> >                      rxq->rx_ring_phys_addr);
+> >
+> >         if (!rte_is_power_of_2(nb_desc)) { @@ -3359,11 +3359,11 @@
+> > ixgbe_dev_rx_queue_count(void *rx_queue)  {  #define
+> > IXGBE_RXQ_SCAN_INTERVAL 4
+> >         volatile union ixgbe_adv_rx_desc *rxdp;
+> > -       struct ixgbe_rx_queue *rxq;
+> > +       struct ci_rx_queue *rxq;
+> >         uint32_t desc = 0;
+> >
+> >         rxq = rx_queue;
+> > -       rxdp = &(rxq->rx_ring[rxq->rx_tail]);
+> > +       rxdp = &rxq->ixgbe_rx_ring[rxq->rx_tail];
+> >
+> >         while ((desc < rxq->nb_rx_desc) &&
+> >                 (rxdp->wb.upper.status_error & @@ -3371,7 +3371,7 @@
+> > ixgbe_dev_rx_queue_count(void *rx_queue)
+> >                 desc += IXGBE_RXQ_SCAN_INTERVAL;
+> >                 rxdp += IXGBE_RXQ_SCAN_INTERVAL;
+> >                 if (rxq->rx_tail + desc >= rxq->nb_rx_desc)
+> > -                       rxdp = &(rxq->rx_ring[rxq->rx_tail +
+> > +                       rxdp = &(rxq->ixgbe_rx_ring[rxq->rx_tail +
+> >                                 desc - rxq->nb_rx_desc]);
+> >         }
+> >
+> > @@ -3381,7 +3381,7 @@ ixgbe_dev_rx_queue_count(void *rx_queue)  int
+> > ixgbe_dev_rx_descriptor_status(void *rx_queue, uint16_t offset)  {
+> > -       struct ixgbe_rx_queue *rxq = rx_queue;
+> > +       struct ci_rx_queue *rxq = rx_queue;
+> >         volatile uint32_t *status;
+> >         uint32_t nb_hold, desc;
+> >
+> > @@ -3399,7 +3399,7 @@ ixgbe_dev_rx_descriptor_status(void *rx_queue,
+> > uint16_t offset)
+> >         if (desc >= rxq->nb_rx_desc)
+> >                 desc -= rxq->nb_rx_desc;
+> >
+> > -       status = &rxq->rx_ring[desc].wb.upper.status_error;
+> > +       status = &rxq->ixgbe_rx_ring[desc].wb.upper.status_error;
+> >         if (*status & rte_cpu_to_le_32(IXGBE_RXDADV_STAT_DD))
+> >                 return RTE_ETH_RX_DESC_DONE;
+> >
+> > @@ -3482,7 +3482,7 @@ ixgbe_dev_clear_queues(struct rte_eth_dev *dev)
+> >         }
+> >
+> >         for (i = 0; i < dev->data->nb_rx_queues; i++) {
+> > -               struct ixgbe_rx_queue *rxq = dev->data->rx_queues[i];
+> > +               struct ci_rx_queue *rxq = dev->data->rx_queues[i];
+> >
+> >                 if (rxq != NULL) {
+> >                         ixgbe_rx_queue_release_mbufs(rxq);
+> > @@ -4644,9 +4644,9 @@ ixgbe_vmdq_tx_hw_configure(struct ixgbe_hw *hw)  }
+> >
+> >  static int __rte_cold
+> > -ixgbe_alloc_rx_queue_mbufs(struct ixgbe_rx_queue *rxq)
+> > +ixgbe_alloc_rx_queue_mbufs(struct ci_rx_queue *rxq)
+> >  {
+> > -       struct ixgbe_rx_entry *rxe = rxq->sw_ring;
+> > +       struct ci_rx_entry *rxe = rxq->sw_ring;
+> >         uint64_t dma_addr;
+> >         unsigned int i;
+> >
+> > @@ -4666,7 +4666,7 @@ ixgbe_alloc_rx_queue_mbufs(struct ixgbe_rx_queue
+> > *rxq)
+> >
+> >                 dma_addr =
+> >                         rte_cpu_to_le_64(rte_mbuf_data_iova_default(mbuf));
+> > -               rxd = &rxq->rx_ring[i];
+> > +               rxd = &rxq->ixgbe_rx_ring[i];
+> >                 rxd->read.hdr_addr = 0;
+> >                 rxd->read.pkt_addr = dma_addr;
+> >                 rxe[i].mbuf = mbuf;
+> > @@ -5083,7 +5083,7 @@ ixgbe_set_rx_function(struct rte_eth_dev *dev)
+> >                 dev->rx_pkt_burst == ixgbe_recv_pkts_vec);
+> >
+> >         for (i = 0; i < dev->data->nb_rx_queues; i++) {
+> > -               struct ixgbe_rx_queue *rxq = dev->data->rx_queues[i];
+> > +               struct ci_rx_queue *rxq = dev->data->rx_queues[i];
+> >
+> >                 rxq->vector_rx = rx_using_sse;  #ifdef RTE_LIB_SECURITY @@ -
+> > 5161,7 +5161,7 @@ ixgbe_set_rsc(struct rte_eth_dev *dev)
+> >
+> >         /* Per-queue RSC configuration (chapter 4.6.7.2.2 of 82599 Spec) */
+> >         for (i = 0; i < dev->data->nb_rx_queues; i++) {
+> > -               struct ixgbe_rx_queue *rxq = dev->data->rx_queues[i];
+> > +               struct ci_rx_queue *rxq = dev->data->rx_queues[i];
+> >                 uint32_t srrctl =
+> >                         IXGBE_READ_REG(hw, IXGBE_SRRCTL(rxq->reg_idx));
+> >                 uint32_t rscctl =
+> > @@ -5237,7 +5237,7 @@ int __rte_cold
+> >  ixgbe_dev_rx_init(struct rte_eth_dev *dev)  {
+> >         struct ixgbe_hw     *hw;
+> > -       struct ixgbe_rx_queue *rxq;
+> > +       struct ci_rx_queue *rxq;
+> >         uint64_t bus_addr;
+> >         uint32_t rxctrl;
+> >         uint32_t fctrl;
+> > @@ -5533,7 +5533,7 @@ ixgbe_dev_rxtx_start(struct rte_eth_dev *dev)  {
+> >         struct ixgbe_hw     *hw;
+> >         struct ci_tx_queue *txq;
+> > -       struct ixgbe_rx_queue *rxq;
+> > +       struct ci_rx_queue *rxq;
+> >         uint32_t txdctl;
+> >         uint32_t dmatxctl;
+> >         uint32_t rxctrl;
+> > @@ -5620,7 +5620,7 @@ int __rte_cold
+> >  ixgbe_dev_rx_queue_start(struct rte_eth_dev *dev, uint16_t rx_queue_id)  {
+> >         struct ixgbe_hw     *hw;
+> > -       struct ixgbe_rx_queue *rxq;
+> > +       struct ci_rx_queue *rxq;
+> >         uint32_t rxdctl;
+> >         int poll_ms;
+> >
+> > @@ -5663,7 +5663,7 @@ ixgbe_dev_rx_queue_stop(struct rte_eth_dev *dev,
+> > uint16_t rx_queue_id)  {
+> >         struct ixgbe_hw     *hw;
+> >         struct ixgbe_adapter *adapter = dev->data->dev_private;
+> > -       struct ixgbe_rx_queue *rxq;
+> > +       struct ci_rx_queue *rxq;
+> >         uint32_t rxdctl;
+> >         int poll_ms;
+> >
+> > @@ -5797,7 +5797,7 @@ void
+> >  ixgbe_rxq_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
+> >         struct rte_eth_rxq_info *qinfo)
+> >  {
+> > -       struct ixgbe_rx_queue *rxq;
+> > +       struct ci_rx_queue *rxq;
+> >
+> >         rxq = dev->data->rx_queues[queue_id];
+> >
+> > @@ -5835,7 +5835,7 @@ void
+> >  ixgbe_recycle_rxq_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
+> >         struct rte_eth_recycle_rxq_info *recycle_rxq_info)  {
+> > -       struct ixgbe_rx_queue *rxq;
+> > +       struct ci_rx_queue *rxq;
+> >         struct ixgbe_adapter *adapter = dev->data->dev_private;
+> >
+> >         rxq = dev->data->rx_queues[queue_id]; @@ -5861,7 +5861,7 @@ int
+> > __rte_cold  ixgbevf_dev_rx_init(struct rte_eth_dev *dev)  {
+> >         struct ixgbe_hw     *hw;
+> > -       struct ixgbe_rx_queue *rxq;
+> > +       struct ci_rx_queue *rxq;
+> >         struct rte_eth_rxmode *rxmode = &dev->data->dev_conf.rxmode;
+> >         uint32_t frame_size = dev->data->mtu + IXGBE_ETH_OVERHEAD;
+> >         uint64_t bus_addr;
+> > @@ -6048,7 +6048,7 @@ ixgbevf_dev_rxtx_start(struct rte_eth_dev *dev)  {
+> >         struct ixgbe_hw     *hw;
+> >         struct ci_tx_queue *txq;
+> > -       struct ixgbe_rx_queue *rxq;
+> > +       struct ci_rx_queue *rxq;
+> >         uint32_t txdctl;
+> >         uint32_t rxdctl;
+> >         uint16_t i;
+> > diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.h b/drivers/net/intel/ixgbe/ixgbe_rxtx.h
+> > index 9047ee4763..aad7ee81ee 100644
+> > --- a/drivers/net/intel/ixgbe/ixgbe_rxtx.h
+> > +++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.h
+> > @@ -7,6 +7,7 @@
+> >
+> >  #include "ixgbe_type.h"
+> >
+> > +#include "../common/rx.h"
+> >  #include "../common/tx.h"
+> >
+> >  /*
+> > @@ -32,7 +33,7 @@
+> >  #define        IXGBE_MAX_RING_DESC     8192
+> >
+> >  #define IXGBE_TX_MAX_BURST            32
+> > -#define IXGBE_RX_MAX_BURST            32
+> > +#define IXGBE_RX_MAX_BURST            CI_RX_MAX_BURST
+> >  #define IXGBE_TX_MAX_FREE_BUF_SZ      64
+> >
+> >  #define IXGBE_VPMD_DESCS_PER_LOOP     4
+> > @@ -66,64 +67,6 @@
+> >  #define IXGBE_PACKET_TYPE_TN_MAX            0X100
+> >  #define IXGBE_PACKET_TYPE_SHIFT             0X04
+> >
+> > -/**
+> > - * Structure associated with each descriptor of the RX ring of a RX queue.
+> > - */
+> > -struct ixgbe_rx_entry {
+> > -       struct rte_mbuf *mbuf; /**< mbuf associated with RX descriptor. */
+> > -};
+> > -
+> > -struct ixgbe_scattered_rx_entry {
+> > -       struct rte_mbuf *fbuf; /**< First segment of the fragmented packet. */
+> > -};
+> > -
+> > -/**
+> > - * Structure associated with each RX queue.
+> > - */
+> > -struct ixgbe_rx_queue {
+> > -       struct rte_mempool  *mp; /**< mbuf pool to populate RX ring. */
+> > -       volatile union ixgbe_adv_rx_desc *rx_ring; /**< RX ring virtual address. */
+> > -       uint64_t            rx_ring_phys_addr; /**< RX ring DMA address. */
+> > -       volatile uint32_t   *qrx_tail; /**< RDT register address. */
+> > -       struct ixgbe_rx_entry *sw_ring; /**< address of RX software ring. */
+> > -       struct ixgbe_scattered_rx_entry *sw_sc_ring; /**< address of scattered Rx
+> > software ring. */
+> > -       struct rte_mbuf *pkt_first_seg; /**< First segment of current packet. */
+> > -       struct rte_mbuf *pkt_last_seg; /**< Last segment of current packet. */
+> > -       uint64_t            mbuf_initializer; /**< value to init mbufs */
+> > -       uint16_t            nb_rx_desc; /**< number of RX descriptors. */
+> > -       uint16_t            rx_tail;  /**< current value of RDT register. */
+> > -       uint16_t            nb_rx_hold; /**< number of held free RX desc. */
+> > -       uint16_t rx_nb_avail; /**< nr of staged pkts ready to ret to app */
+> > -       uint16_t rx_next_avail; /**< idx of next staged pkt to ret to app */
+> > -       uint16_t rx_free_trigger; /**< triggers rx buffer allocation */
+> > -       uint8_t            vector_rx;
+> > -       /**< indicates that vector RX is in use */
+> > -#ifdef RTE_LIB_SECURITY
+> > -       uint8_t            using_ipsec;
+> > -       /**< indicates that IPsec RX feature is in use */
+> > -#endif
+> > -       uint16_t            rxrearm_nb;     /**< number of remaining to be re-armed */
+> > -       uint16_t            rxrearm_start;  /**< the idx we start the re-arming from */
+> > -       uint16_t            rx_free_thresh; /**< max free RX desc to hold. */
+> > -       uint16_t            queue_id; /**< RX queue index. */
+> > -       uint16_t            reg_idx;  /**< RX queue register index. */
+> > -       uint16_t            pkt_type_mask;  /**< Packet type mask for different NICs. */
+> > -       uint16_t            port_id;  /**< Device port identifier. */
+> > -       uint8_t             crc_len;  /**< 0 if CRC stripped, 4 otherwise. */
+> > -       uint8_t             drop_en;  /**< If not 0, set SRRCTL.Drop_En. */
+> > -       uint8_t             rx_deferred_start; /**< not in global dev start. */
+> > -       /** UDP frames with a 0 checksum can be marked as checksum errors. */
+> > -       uint8_t             rx_udp_csum_zero_err;
+> > -       /** flags to set in mbuf when a vlan is detected. */
+> > -       uint64_t            vlan_flags;
+> > -       uint64_t            offloads; /**< Rx offloads with RTE_ETH_RX_OFFLOAD_* */
+> > -       /** need to alloc dummy mbuf, for wraparound when scanning hw ring */
+> > -       struct rte_mbuf fake_mbuf;
+> > -       /** hold packets to return to application */
+> > -       struct rte_mbuf *rx_stage[IXGBE_RX_MAX_BURST * 2];
+> > -       const struct rte_memzone *mz;
+> > -};
+> > -
+> >  /**
+> >   * IXGBE CTX Constants
+> >   */
+> > diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c
+> > b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c
+> > index 707dc7f5f9..5f231b9012 100644
+> > --- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c
+> > +++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c
+> > @@ -61,7 +61,7 @@ ixgbe_reset_tx_queue_vec(struct ci_tx_queue *txq)  }
+> >
+> >  void __rte_cold
+> > -ixgbe_rx_queue_release_mbufs_vec(struct ixgbe_rx_queue *rxq)
+> > +ixgbe_rx_queue_release_mbufs_vec(struct ci_rx_queue *rxq)
+> >  {
+> >         unsigned int i;
+> >
+> > @@ -90,7 +90,7 @@ ixgbe_rx_queue_release_mbufs_vec(struct ixgbe_rx_queue
+> > *rxq)  }
+> >
+> >  int __rte_cold
+> > -ixgbe_rxq_vec_setup(struct ixgbe_rx_queue *rxq)
+> > +ixgbe_rxq_vec_setup(struct ci_rx_queue *rxq)
+> >  {
+> >         rxq->mbuf_initializer = ci_rxq_mbuf_initializer(rxq->port_id);
+> >         return 0;
+> > @@ -126,7 +126,7 @@ ixgbe_rx_vec_dev_conf_condition_check(struct
+> > rte_eth_dev *dev)
+> >                 return -1;
+> >
+> >         for (uint16_t i = 0; i < dev->data->nb_rx_queues; i++) {
+> > -               struct ixgbe_rx_queue *rxq = dev->data->rx_queues[i];
+> > +               struct ci_rx_queue *rxq = dev->data->rx_queues[i];
+> >                 if (!rxq)
+> >                         continue;
+> >                 if (!ci_rxq_vec_capable(rxq->nb_rx_desc, rxq->rx_free_thresh, rxq-
+> > >offloads)) @@ -173,15 +173,15 @@ ixgbe_xmit_pkts_vec(void *tx_queue, struct
+> > rte_mbuf **tx_pkts,  void  ixgbe_recycle_rx_descriptors_refill_vec(void *rx_queue,
+> > uint16_t nb_mbufs)  {
+> > -       struct ixgbe_rx_queue *rxq = rx_queue;
+> > -       struct ixgbe_rx_entry *rxep;
+> > +       struct ci_rx_queue *rxq = rx_queue;
+> > +       struct ci_rx_entry *rxep;
+> >         volatile union ixgbe_adv_rx_desc *rxdp;
+> >         uint16_t rx_id;
+> >         uint64_t paddr;
+> >         uint64_t dma_addr;
+> >         uint16_t i;
+> >
+> > -       rxdp = rxq->rx_ring + rxq->rxrearm_start;
+> > +       rxdp = rxq->ixgbe_rx_ring + rxq->rxrearm_start;
+> >         rxep = &rxq->sw_ring[rxq->rxrearm_start];
+> >
+> >         for (i = 0; i < nb_mbufs; i++) { diff --git
+> > a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
+> > b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
+> > index e05696f584..e54f532497 100644
+> > --- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
+> > +++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
+> > @@ -12,9 +12,9 @@
+> >  #include "ixgbe_rxtx.h"
+> >
+> >  int ixgbe_rx_vec_dev_conf_condition_check(struct rte_eth_dev *dev); -int
+> > ixgbe_rxq_vec_setup(struct ixgbe_rx_queue *rxq);
+> > +int ixgbe_rxq_vec_setup(struct ci_rx_queue *rxq);
+> >  int ixgbe_txq_vec_setup(struct ci_tx_queue *txq); -void
+> > ixgbe_rx_queue_release_mbufs_vec(struct ixgbe_rx_queue *rxq);
+> > +void ixgbe_rx_queue_release_mbufs_vec(struct ci_rx_queue *rxq);
+> >  void ixgbe_reset_tx_queue_vec(struct ci_tx_queue *txq);  void
+> > ixgbe_tx_free_swring_vec(struct ci_tx_queue *txq);  uint16_t
+> > ixgbe_recv_pkts_vec(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
+> > @@ -79,5 +79,4 @@ ixgbe_tx_free_bufs_vec(struct ci_tx_queue *txq)
+> >
+> >         return txq->tx_rs_thresh;
+> >  }
+> > -
+> >  #endif
+> > diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c
+> > b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c
+> > index 2d42b7b1c1..ce492f2ff1 100644
+> > --- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c
+> > +++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c
+> > @@ -12,19 +12,19 @@
+> >  #include "ixgbe_rxtx_vec_common.h"
+> >
+> >  static inline void
+> > -ixgbe_rxq_rearm(struct ixgbe_rx_queue *rxq)
+> > +ixgbe_rxq_rearm(struct ci_rx_queue *rxq)
+> >  {
+> >         int i;
+> >         uint16_t rx_id;
+> >         volatile union ixgbe_adv_rx_desc *rxdp;
+> > -       struct ixgbe_rx_entry *rxep = &rxq->sw_ring[rxq->rxrearm_start];
+> > +       struct ci_rx_entry *rxep = &rxq->sw_ring[rxq->rxrearm_start];
+> >         struct rte_mbuf *mb0, *mb1;
+> >         uint64x2_t dma_addr0, dma_addr1;
+> >         uint64x2_t zero = vdupq_n_u64(0);
+> >         uint64_t paddr;
+> >         uint8x8_t p;
+> >
+> > -       rxdp = rxq->rx_ring + rxq->rxrearm_start;
+> > +       rxdp = rxq->ixgbe_rx_ring + rxq->rxrearm_start;
+> >
+> >         /* Pull 'n' more MBUFs into the software ring */
+> >         if (unlikely(rte_mempool_get_bulk(rxq->mp,
+> > @@ -282,11 +282,11 @@ desc_to_ptype_v(uint64x2_t descs[4], uint16_t
+> > pkt_type_mask,
+> >   * - floor align nb_pkts to a IXGBE_VPMD_DESCS_PER_LOOP power-of-two
+> >   */
+> >  static inline uint16_t
+> > -_recv_raw_pkts_vec(struct ixgbe_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+> > +_recv_raw_pkts_vec(struct ci_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+> >                    uint16_t nb_pkts, uint8_t *split_packet)  {
+> >         volatile union ixgbe_adv_rx_desc *rxdp;
+> > -       struct ixgbe_rx_entry *sw_ring;
+> > +       struct ci_rx_entry *sw_ring;
+> >         uint16_t nb_pkts_recd;
+> >         int pos;
+> >         uint8x16_t shuf_msk = {
+> > @@ -309,7 +309,7 @@ _recv_raw_pkts_vec(struct ixgbe_rx_queue *rxq, struct
+> > rte_mbuf **rx_pkts,
+> >         /* Just the act of getting into the function from the application is
+> >          * going to cost about 7 cycles
+> >          */
+> > -       rxdp = rxq->rx_ring + rxq->rx_tail;
+> > +       rxdp = rxq->ixgbe_rx_ring + rxq->rx_tail;
+> >
+> >         rte_prefetch_non_temporal(rxdp);
+> >
+> > @@ -488,7 +488,7 @@ static uint16_t
+> >  ixgbe_recv_scattered_burst_vec(void *rx_queue, struct rte_mbuf **rx_pkts,
+> >                                uint16_t nb_pkts)  {
+> > -       struct ixgbe_rx_queue *rxq = rx_queue;
+> > +       struct ci_rx_queue *rxq = rx_queue;
+> >         uint8_t split_flags[IXGBE_VPMD_RX_BURST] = {0};
+> >
+> >         /* get some new buffers */
+> > diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
+> > b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
+> > index f5bb7eb0bd..f977489b95 100644
+> > --- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
+> > +++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
+> > @@ -13,12 +13,12 @@
+> >  #include <rte_vect.h>
+> >
+> >  static inline void
+> > -ixgbe_rxq_rearm(struct ixgbe_rx_queue *rxq)
+> > +ixgbe_rxq_rearm(struct ci_rx_queue *rxq)
+> >  {
+> >         int i;
+> >         uint16_t rx_id;
+> >         volatile union ixgbe_adv_rx_desc *rxdp;
+> > -       struct ixgbe_rx_entry *rxep = &rxq->sw_ring[rxq->rxrearm_start];
+> > +       struct ci_rx_entry *rxep = &rxq->sw_ring[rxq->rxrearm_start];
+> >         struct rte_mbuf *mb0, *mb1;
+> >         __m128i hdr_room = _mm_set_epi64x(RTE_PKTMBUF_HEADROOM,
+> >                         RTE_PKTMBUF_HEADROOM); @@ -26,7 +26,7 @@
+> > ixgbe_rxq_rearm(struct ixgbe_rx_queue *rxq)
+> >
+> >         const __m128i hba_msk = _mm_set_epi64x(0, UINT64_MAX);
+> >
+> > -       rxdp = rxq->rx_ring + rxq->rxrearm_start;
+> > +       rxdp = rxq->ixgbe_rx_ring + rxq->rxrearm_start;
+> >
+> >         /* Pull 'n' more MBUFs into the software ring */
+> >         if (rte_mempool_get_bulk(rxq->mp, @@ -327,11 +327,11 @@
+> > desc_to_ptype_v(__m128i descs[4], uint16_t pkt_type_mask,
+> >   * - floor align nb_pkts to a IXGBE_VPMD_DESCS_PER_LOOP power-of-two
+> >   */
+> >  static inline uint16_t
+> > -_recv_raw_pkts_vec(struct ixgbe_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+> > +_recv_raw_pkts_vec(struct ci_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+> >                 uint16_t nb_pkts, uint8_t *split_packet)  {
+> >         volatile union ixgbe_adv_rx_desc *rxdp;
+> > -       struct ixgbe_rx_entry *sw_ring;
+> > +       struct ci_rx_entry *sw_ring;
+> >         uint16_t nb_pkts_recd;
+> >  #ifdef RTE_LIB_SECURITY
+> >         uint8_t use_ipsec = rxq->using_ipsec; @@ -377,7 +377,7 @@
+> > _recv_raw_pkts_vec(struct ixgbe_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+> >         /* Just the act of getting into the function from the application is
+> >          * going to cost about 7 cycles
+> >          */
+> > -       rxdp = rxq->rx_ring + rxq->rx_tail;
+> > +       rxdp = rxq->ixgbe_rx_ring + rxq->rx_tail;
+> >
+> >         rte_prefetch0(rxdp);
+> >
+> > @@ -609,7 +609,7 @@ static uint16_t
+> >  ixgbe_recv_scattered_burst_vec(void *rx_queue, struct rte_mbuf **rx_pkts,
+> >                                uint16_t nb_pkts)  {
+> > -       struct ixgbe_rx_queue *rxq = rx_queue;
+> > +       struct ci_rx_queue *rxq = rx_queue;
+> >         uint8_t split_flags[IXGBE_VPMD_RX_BURST] = {0};
+> >
+> >         /* get some new buffers */
+> > --
+> > 2.47.1
+> 
+> Please note, we are using the following steps to validate the patch
+> 
+> ```
+> 1. git clone https://dpdk.org/git/dpdk
+> 2. git chekout
+> 3. git apply <patch>
+> ```
+> Can you please suggest if we are missing something? We would like to test the patch on E810
+>
 
-Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
-Acked-by: Kai Ji <kai.ji@intel.com>
----
-v3: update description
+The patches should apply cleanly to next-net-intel tree rather than main
+tree - they applied for me without issue yesterday.
 
- doc/guides/rel_notes/release_25_07.rst       |  6 +++
- drivers/common/qat/qat_adf/icp_qat_hw.h      |  2 +-
- drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c | 43 ++--------------
- drivers/crypto/qat/dev/qat_crypto_pmd_gen5.c | 52 +++-----------------
- drivers/crypto/qat/dev/qat_crypto_pmd_gens.h | 20 --------
- drivers/crypto/qat/dev/qat_sym_pmd_gen1.c    | 33 -------------
- drivers/crypto/qat/qat_sym_session.c         | 25 ++--------
- drivers/crypto/qat/qat_sym_session.h         |  1 -
- 8 files changed, 19 insertions(+), 163 deletions(-)
+However, in testing them, I've found some issues with the patches, which we
+are now fixing, and doing additional performance tests. Therefore, I'd
+suggest waiting for the next version of the patchset before testing.
 
-diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
-index 19be7740c4..7eed9337ba 100644
---- a/doc/guides/rel_notes/release_25_07.rst
-+++ b/doc/guides/rel_notes/release_25_07.rst
-@@ -145,6 +145,12 @@ New Features
- Removed Items
- -------------
- 
-+* **Removed ZUC-256 algorithms from Intel QuickAssist Technology (QAT) PMD.**
-+
-+  Due to changes in the specification related to IV size and initialization sequence
-+  support for ZUC-256 cipher and integrity algorithms was removed from
-+  Gen 3 and Gen 5 PMD.
-+
- .. This section should contain removed items in this release. Sample format:
- 
-    * Add a short 1-2 sentence description of the removed item
-diff --git a/drivers/common/qat/qat_adf/icp_qat_hw.h b/drivers/common/qat/qat_adf/icp_qat_hw.h
-index 1d61a0b833..e929b16df2 100644
---- a/drivers/common/qat/qat_adf/icp_qat_hw.h
-+++ b/drivers/common/qat/qat_adf/icp_qat_hw.h
-@@ -367,7 +367,7 @@ enum icp_qat_hw_cipher_convert {
- #define ICP_QAT_HW_CHACHAPOLY_ICV_SZ 16
- #define ICP_QAT_HW_CHACHAPOLY_AAD_MAX_LOG 14
- #define ICP_QAT_HW_ZUC_256_KEY_SZ 32
--#define ICP_QAT_HW_ZUC_256_IV_SZ 24
-+#define ICP_QAT_HW_ZUC_256_IV_SZ 16
- 
- #define ICP_QAT_HW_CIPHER_MAX_KEY_SZ ICP_QAT_HW_AES_256_F8_KEY_SZ
- 
-diff --git a/drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c b/drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c
-index 478e766b97..f2ff952482 100644
---- a/drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c
-+++ b/drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c
-@@ -204,7 +204,6 @@ qat_sym_crypto_cap_get_gen3(struct qat_cryptodev_private *internals,
- 	uint32_t legacy_size = sizeof(qat_sym_crypto_legacy_caps_gen3);
- 	capa_num = size/sizeof(struct rte_cryptodev_capabilities);
- 	legacy_capa_num = legacy_size/sizeof(struct rte_cryptodev_capabilities);
--	struct rte_cryptodev_capabilities *cap;
- 
- 	if (unlikely(internals->qat_dev->options.legacy_alg))
- 		size = size + legacy_size;
-@@ -258,14 +257,6 @@ qat_sym_crypto_cap_get_gen3(struct qat_cryptodev_private *internals,
- 			continue;
- 		}
- 
--		if (slice_map & ICP_ACCEL_MASK_ZUC_256_SLICE && (
--			check_auth_capa(&capabilities[iter],
--				RTE_CRYPTO_AUTH_ZUC_EIA3) ||
--			check_cipher_capa(&capabilities[iter],
--				RTE_CRYPTO_CIPHER_ZUC_EEA3))) {
--			continue;
--		}
--
- 		if (internals->qat_dev->options.has_wireless_slice && (
- 			check_auth_capa(&capabilities[iter],
- 				RTE_CRYPTO_AUTH_KASUMI_F9) ||
-@@ -277,28 +268,8 @@ qat_sym_crypto_cap_get_gen3(struct qat_cryptodev_private *internals,
- 				RTE_CRYPTO_CIPHER_DES_DOCSISBPI)))
- 			continue;
- 
--		*(addr + curr_capa) = *(capabilities + iter);
--
--		if (internals->qat_dev->options.has_wireless_slice && (
--			check_auth_capa(&capabilities[iter],
--				RTE_CRYPTO_AUTH_ZUC_EIA3))) {
--			cap = addr + curr_capa;
--			cap->sym.auth.key_size.max = 32;
--			cap->sym.auth.key_size.increment = 16;
--			cap->sym.auth.iv_size.max = 25;
--			cap->sym.auth.iv_size.increment = 1;
--			cap->sym.auth.digest_size.max = 16;
--			cap->sym.auth.digest_size.increment = 4;
--		}
--		if (internals->qat_dev->options.has_wireless_slice && (
--			check_cipher_capa(&capabilities[iter],
--				RTE_CRYPTO_CIPHER_ZUC_EEA3))) {
--			cap = addr + curr_capa;
--			cap->sym.cipher.key_size.max = 32;
--			cap->sym.cipher.key_size.increment = 16;
--			cap->sym.cipher.iv_size.max = 25;
--			cap->sym.cipher.iv_size.increment = 1;
--		}
-+		memcpy(addr + curr_capa, capabilities + iter,
-+			sizeof(struct rte_cryptodev_capabilities));
- 		curr_capa++;
- 	}
- 	internals->qat_dev_capabilities = internals->capa_mz->addr;
-@@ -557,16 +528,8 @@ qat_sym_crypto_set_session_gen3(void *cdev, void *session)
- 				(ctx->qat_cipher_alg ==
- 				ICP_QAT_HW_CIPHER_ALGO_SNOW_3G_UEA2 ||
- 				ctx->qat_cipher_alg ==
--				ICP_QAT_HW_CIPHER_ALGO_ZUC_3G_128_EEA3 ||
--				ctx->qat_cipher_alg == ICP_QAT_HW_CIPHER_ALGO_ZUC_256))) {
-+				ICP_QAT_HW_CIPHER_ALGO_ZUC_3G_128_EEA3))) {
- 			qat_sym_session_set_ext_hash_flags_gen2(ctx, 0);
--		} else if ((internals->qat_dev->options.has_wireless_slice) &&
--			(ctx->qat_hash_alg == ICP_QAT_HW_AUTH_ALGO_ZUC_256_MAC_32 ||
--				ctx->qat_hash_alg == ICP_QAT_HW_AUTH_ALGO_ZUC_256_MAC_64 ||
--				ctx->qat_hash_alg == ICP_QAT_HW_AUTH_ALGO_ZUC_256_MAC_128) &&
--				ctx->qat_cipher_alg != ICP_QAT_HW_CIPHER_ALGO_ZUC_256) {
--			qat_sym_session_set_ext_hash_flags_gen2(ctx,
--					1 << ICP_QAT_FW_AUTH_HDR_FLAG_ZUC_EIA3_BITPOS);
- 		}
- 
- 		ret = 0;
-diff --git a/drivers/crypto/qat/dev/qat_crypto_pmd_gen5.c b/drivers/crypto/qat/dev/qat_crypto_pmd_gen5.c
-index 7d2d234959..5714420e1e 100644
---- a/drivers/crypto/qat/dev/qat_crypto_pmd_gen5.c
-+++ b/drivers/crypto/qat/dev/qat_crypto_pmd_gen5.c
-@@ -113,11 +113,11 @@ static struct rte_cryptodev_capabilities qat_sym_crypto_caps_gen5[] = {
- 		CAP_RNG_ZERO(aad_size), CAP_RNG_ZERO(iv_size)),
- 	QAT_SYM_CIPHER_CAP(ZUC_EEA3,
- 		CAP_SET(block_size, 16),
--		CAP_RNG(key_size, 16, 32, 16), CAP_RNG(iv_size, 16, 25, 1)),
-+		CAP_RNG(key_size, 16, 16, 0), CAP_RNG(iv_size, 16, 16, 0)),
- 	QAT_SYM_AUTH_CAP(ZUC_EIA3,
- 		CAP_SET(block_size, 16),
--		CAP_RNG(key_size, 16, 32, 16), CAP_RNG(digest_size, 4, 16, 4),
--		CAP_RNG_ZERO(aad_size), CAP_RNG(iv_size, 16, 25, 1)),
-+		CAP_RNG(key_size, 16, 16, 0), CAP_RNG(digest_size, 4, 16, 4),
-+		CAP_RNG_ZERO(aad_size), CAP_RNG(iv_size, 16, 16, 0)),
- 	QAT_SYM_CIPHER_CAP(SNOW3G_UEA2,
- 		CAP_SET(block_size, 16),
- 		CAP_RNG(key_size, 16, 16, 0), CAP_RNG(iv_size, 16, 16, 0)),
-@@ -128,32 +128,6 @@ static struct rte_cryptodev_capabilities qat_sym_crypto_caps_gen5[] = {
- 	RTE_CRYPTODEV_END_OF_CAPABILITIES_LIST()
- };
- 
--static int
--check_cipher_capa(const struct rte_cryptodev_capabilities *cap,
--		enum rte_crypto_cipher_algorithm algo)
--{
--	if (cap->op != RTE_CRYPTO_OP_TYPE_SYMMETRIC)
--		return 0;
--	if (cap->sym.xform_type != RTE_CRYPTO_SYM_XFORM_CIPHER)
--		return 0;
--	if (cap->sym.cipher.algo != algo)
--		return 0;
--	return 1;
--}
--
--static int
--check_auth_capa(const struct rte_cryptodev_capabilities *cap,
--		enum rte_crypto_auth_algorithm algo)
--{
--	if (cap->op != RTE_CRYPTO_OP_TYPE_SYMMETRIC)
--		return 0;
--	if (cap->sym.xform_type != RTE_CRYPTO_SYM_XFORM_AUTH)
--		return 0;
--	if (cap->sym.auth.algo != algo)
--		return 0;
--	return 1;
--}
--
- static int
- qat_sym_crypto_cap_get_gen5(struct qat_cryptodev_private *internals,
- 			const char *capa_memz_name,
-@@ -195,15 +169,8 @@ qat_sym_crypto_cap_get_gen5(struct qat_cryptodev_private *internals,
- 	capabilities = qat_sym_crypto_caps_gen5;
- 
- 	for (i = 0; i < capa_num; i++, iter++) {
--		if (slice_map & ICP_ACCEL_MASK_ZUC_256_SLICE && (
--			check_auth_capa(&capabilities[iter],
--				RTE_CRYPTO_AUTH_ZUC_EIA3) ||
--			check_cipher_capa(&capabilities[iter],
--				RTE_CRYPTO_CIPHER_ZUC_EEA3))) {
--			continue;
--		}
--
--		*(addr + curr_capa) = *(capabilities + iter);
-+		memcpy(addr + curr_capa, capabilities + iter,
-+			sizeof(struct rte_cryptodev_capabilities));
- 		curr_capa++;
- 	}
- 	internals->qat_dev_capabilities = internals->capa_mz->addr;
-@@ -232,15 +199,8 @@ qat_sym_crypto_set_session_gen5(void *cdev, void *session)
- 				(ctx->qat_cipher_alg ==
- 				ICP_QAT_HW_CIPHER_ALGO_SNOW_3G_UEA2 ||
- 				ctx->qat_cipher_alg ==
--				ICP_QAT_HW_CIPHER_ALGO_ZUC_3G_128_EEA3 ||
--				ctx->qat_cipher_alg == ICP_QAT_HW_CIPHER_ALGO_ZUC_256)) {
-+				ICP_QAT_HW_CIPHER_ALGO_ZUC_3G_128_EEA3)) {
- 			qat_sym_session_set_ext_hash_flags_gen2(ctx, 0);
--		} else if ((ctx->qat_hash_alg == ICP_QAT_HW_AUTH_ALGO_ZUC_256_MAC_32 ||
--				ctx->qat_hash_alg == ICP_QAT_HW_AUTH_ALGO_ZUC_256_MAC_64 ||
--				ctx->qat_hash_alg == ICP_QAT_HW_AUTH_ALGO_ZUC_256_MAC_128) &&
--				ctx->qat_cipher_alg != ICP_QAT_HW_CIPHER_ALGO_ZUC_256) {
--			qat_sym_session_set_ext_hash_flags_gen2(ctx,
--					1 << ICP_QAT_FW_AUTH_HDR_FLAG_ZUC_EIA3_BITPOS);
- 		}
- 
- 		ret = 0;
-diff --git a/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h b/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h
-index 846636f57d..1f19c69f88 100644
---- a/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h
-+++ b/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h
-@@ -881,26 +881,6 @@ qat_sym_convert_op_to_vec_aead(struct rte_crypto_op *op,
- 	return 0;
- }
- 
--static inline void
--zuc256_modify_iv(uint8_t *iv)
--{
--	uint8_t iv_tmp[8];
--
--	iv_tmp[0] = iv[16];
--	/* pack the last 8 bytes of IV to 6 bytes.
--	 * discard the 2 MSB bits of each byte
--	 */
--	iv_tmp[1] = (((iv[17] & 0x3f) << 2) | ((iv[18] >> 4) & 0x3));
--	iv_tmp[2] = (((iv[18] & 0xf) << 4) | ((iv[19] >> 2) & 0xf));
--	iv_tmp[3] = (((iv[19] & 0x3) << 6) | (iv[20] & 0x3f));
--
--	iv_tmp[4] = (((iv[21] & 0x3f) << 2) | ((iv[22] >> 4) & 0x3));
--	iv_tmp[5] = (((iv[22] & 0xf) << 4) | ((iv[23] >> 2) & 0xf));
--	iv_tmp[6] = (((iv[23] & 0x3) << 6) | (iv[24] & 0x3f));
--
--	memcpy(iv + 16, iv_tmp, 8);
--}
--
- static __rte_always_inline void
- qat_set_cipher_iv(struct icp_qat_fw_la_cipher_req_params *cipher_param,
- 		struct rte_crypto_va_iova_ptr *iv_ptr, uint32_t iv_len,
-diff --git a/drivers/crypto/qat/dev/qat_sym_pmd_gen1.c b/drivers/crypto/qat/dev/qat_sym_pmd_gen1.c
-index 561166203c..8cb85fd8df 100644
---- a/drivers/crypto/qat/dev/qat_sym_pmd_gen1.c
-+++ b/drivers/crypto/qat/dev/qat_sym_pmd_gen1.c
-@@ -248,9 +248,6 @@ qat_sym_build_op_cipher_gen1(void *in_op, struct qat_sym_session *ctx,
- 		return -EINVAL;
- 	}
- 
--	if (ctx->is_zuc256)
--		zuc256_modify_iv(cipher_iv.va);
--
- 	enqueue_one_cipher_job_gen1(ctx, req, &cipher_iv, ofs, total_len, op_cookie);
- 
- 	qat_sym_debug_log_dump(req, ctx, in_sgl.vec, in_sgl.num, &cipher_iv,
-@@ -303,9 +300,6 @@ qat_sym_build_op_auth_gen1(void *in_op, struct qat_sym_session *ctx,
- 		return -EINVAL;
- 	}
- 
--	if (ctx->is_zuc256)
--		zuc256_modify_iv(auth_iv.va);
--
- 	enqueue_one_auth_job_gen1(ctx, req, &digest, &auth_iv, ofs,
- 			total_len);
- 
-@@ -396,11 +390,6 @@ qat_sym_build_op_chain_gen1(void *in_op, struct qat_sym_session *ctx,
- 		return -EINVAL;
- 	}
- 
--	if (ctx->is_zuc256) {
--		zuc256_modify_iv(cipher_iv.va);
--		zuc256_modify_iv(auth_iv.va);
--	}
--
- 	enqueue_one_chain_job_gen1(ctx, req, in_sgl.vec, in_sgl.num,
- 			out_sgl.vec, out_sgl.num, &cipher_iv, &digest, &auth_iv,
- 			ofs, total_len, cookie);
-@@ -527,9 +516,6 @@ qat_sym_dp_enqueue_single_cipher_gen1(void *qp_data, uint8_t *drv_ctx,
- 	if (unlikely(data_len < 0))
- 		return -1;
- 
--	if (ctx->is_zuc256)
--		zuc256_modify_iv(iv->va);
--
- 	enqueue_one_cipher_job_gen1(ctx, req, iv, ofs, (uint32_t)data_len, cookie);
- 
- 	qat_sym_debug_log_dump(req, ctx, data, n_data_vecs, iv,
-@@ -591,9 +577,6 @@ qat_sym_dp_enqueue_cipher_jobs_gen1(void *qp_data, uint8_t *drv_ctx,
- 		if (unlikely(data_len < 0 || error))
- 			break;
- 
--		if (ctx->is_zuc256)
--			zuc256_modify_iv(vec->iv[i].va);
--
- 		enqueue_one_cipher_job_gen1(ctx, req, &vec->iv[i], ofs,
- 			(uint32_t)data_len, cookie);
- 		tail = (tail + tx_queue->msg_size) & tx_queue->modulo_mask;
-@@ -644,9 +627,6 @@ qat_sym_dp_enqueue_single_auth_gen1(void *qp_data, uint8_t *drv_ctx,
- 	if (unlikely(data_len < 0))
- 		return -1;
- 
--	if (ctx->is_zuc256)
--		zuc256_modify_iv(auth_iv->va);
--
- 	if (ctx->qat_hash_alg == ICP_QAT_HW_AUTH_ALGO_NULL) {
- 		null_digest.iova = cookie->digest_null_phys_addr;
- 		job_digest = &null_digest;
-@@ -716,9 +696,6 @@ qat_sym_dp_enqueue_auth_jobs_gen1(void *qp_data, uint8_t *drv_ctx,
- 		if (unlikely(data_len < 0 || error))
- 			break;
- 
--		if (ctx->is_zuc256)
--			zuc256_modify_iv(vec->auth_iv[i].va);
--
- 		if (ctx->qat_hash_alg == ICP_QAT_HW_AUTH_ALGO_NULL) {
- 			null_digest.iova = cookie->digest_null_phys_addr;
- 			job_digest = &null_digest;
-@@ -774,11 +751,6 @@ qat_sym_dp_enqueue_single_chain_gen1(void *qp_data, uint8_t *drv_ctx,
- 	if (unlikely(data_len < 0))
- 		return -1;
- 
--	if (ctx->is_zuc256) {
--		zuc256_modify_iv(cipher_iv->va);
--		zuc256_modify_iv(auth_iv->va);
--	}
--
- 	if (ctx->qat_hash_alg == ICP_QAT_HW_AUTH_ALGO_NULL) {
- 		null_digest.iova = cookie->digest_null_phys_addr;
- 		job_digest = &null_digest;
-@@ -849,11 +821,6 @@ qat_sym_dp_enqueue_chain_jobs_gen1(void *qp_data, uint8_t *drv_ctx,
- 		if (unlikely(data_len < 0 || error))
- 			break;
- 
--		if (ctx->is_zuc256) {
--			zuc256_modify_iv(vec->iv[i].va);
--			zuc256_modify_iv(vec->auth_iv[i].va);
--		}
--
- 		if (ctx->qat_hash_alg == ICP_QAT_HW_AUTH_ALGO_NULL) {
- 			null_digest.iova = cookie->digest_null_phys_addr;
- 			job_digest = &null_digest;
-diff --git a/drivers/crypto/qat/qat_sym_session.c b/drivers/crypto/qat/qat_sym_session.c
-index 6cc3f966f4..98ab82ffb3 100644
---- a/drivers/crypto/qat/qat_sym_session.c
-+++ b/drivers/crypto/qat/qat_sym_session.c
-@@ -541,8 +541,6 @@ qat_sym_session_configure_cipher(struct rte_cryptodev *dev,
- 			goto error_out;
- 		}
- 		session->qat_mode = ICP_QAT_HW_CIPHER_ECB_MODE;
--		if (cipher_xform->key.length == ICP_QAT_HW_ZUC_256_KEY_SZ)
--			session->is_zuc256 = 1;
- 		if (internals->qat_dev->options.has_wireless_slice)
- 			is_wireless = 1;
- 		break;
-@@ -989,25 +987,8 @@ qat_sym_session_configure_auth(struct rte_cryptodev *dev,
- 				rte_cryptodev_get_auth_algo_string(auth_xform->algo));
- 			return -ENOTSUP;
- 		}
--		if (key_length == ICP_QAT_HW_ZUC_3G_EEA3_KEY_SZ)
-+		if (key_length == ICP_QAT_HW_ZUC_3G_EEA3_KEY_SZ) {
- 			session->qat_hash_alg = ICP_QAT_HW_AUTH_ALGO_ZUC_3G_128_EIA3;
--		else if (key_length == ICP_QAT_HW_ZUC_256_KEY_SZ) {
--			switch (auth_xform->digest_length) {
--			case 4:
--				session->qat_hash_alg = ICP_QAT_HW_AUTH_ALGO_ZUC_256_MAC_32;
--				break;
--			case 8:
--				session->qat_hash_alg = ICP_QAT_HW_AUTH_ALGO_ZUC_256_MAC_64;
--				break;
--			case 16:
--				session->qat_hash_alg = ICP_QAT_HW_AUTH_ALGO_ZUC_256_MAC_128;
--				break;
--			default:
--				QAT_LOG(ERR, "Invalid digest length: %d",
--						auth_xform->digest_length);
--				return -ENOTSUP;
--			}
--			session->is_zuc256 = 1;
- 		} else {
- 			QAT_LOG(ERR, "Invalid key length: %d", key_length);
- 			return -ENOTSUP;
-@@ -2238,8 +2219,8 @@ int qat_sym_cd_cipher_set(struct qat_sym_session *cdesc,
- 		cdesc->qat_proto_flag = QAT_CRYPTO_PROTO_FLAG_ZUC;
- 	} else if (cdesc->qat_cipher_alg ==
- 			ICP_QAT_HW_CIPHER_ALGO_ZUC_256) {
--		if (cdesc->cipher_iv.length != 23 && cdesc->cipher_iv.length != 25) {
--			QAT_LOG(ERR, "Invalid IV length for ZUC256, must be 23 or 25.");
-+		if (cdesc->cipher_iv.length != ICP_QAT_HW_ZUC_256_IV_SZ) {
-+			QAT_LOG(ERR, "Invalid IV length for ZUC256");
- 			return -EINVAL;
- 		}
- 		total_key_size = ICP_QAT_HW_ZUC_256_KEY_SZ +
-diff --git a/drivers/crypto/qat/qat_sym_session.h b/drivers/crypto/qat/qat_sym_session.h
-index 2ef2066646..0c7b9cc6cf 100644
---- a/drivers/crypto/qat/qat_sym_session.h
-+++ b/drivers/crypto/qat/qat_sym_session.h
-@@ -147,7 +147,6 @@ struct qat_sym_session {
- 	uint8_t is_auth;
- 	uint8_t is_cnt_zero;
- 	/* Some generations need different setup of counter */
--	uint8_t is_zuc256;
- 	uint8_t is_wireless;
- 	uint32_t slice_types;
- 	struct rte_net_crc *crc;
--- 
-2.43.0
+Thanks for looking to test these too, though. Looking forward to getting
+feedback based on the results you see.
 
+/Bruce
