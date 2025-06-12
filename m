@@ -2,26 +2,25 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C08AC61CE8
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 09:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A3CBC61CE8
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 09:01:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BCA7D40EE2;
-	Thu, 12 Jun 2025 10:59:40 +0200 (CEST)
-Received: from out28-149.mail.aliyun.com (out28-149.mail.aliyun.com
- [115.124.28.149])
- by mails.dpdk.org (Postfix) with ESMTP id 5199940E13
+	by mails.dpdk.org (Postfix) with ESMTP id B41D2410D2;
+	Thu, 12 Jun 2025 10:59:42 +0200 (CEST)
+Received: from out28-50.mail.aliyun.com (out28-50.mail.aliyun.com
+ [115.124.28.50]) by mails.dpdk.org (Postfix) with ESMTP id 1557340E18
  for <dev@dpdk.org>; Thu, 12 Jun 2025 10:59:25 +0200 (CEST)
 Received: from localhost.localdomain(mailfrom:kyo.liu@nebula-matrix.com
- fp:SMTPD_---.dJxInMS_1749718763 cluster:ay29) by smtp.aliyun-inc.com;
- Thu, 12 Jun 2025 16:59:23 +0800
+ fp:SMTPD_---.dJxInNg_1749718763 cluster:ay29) by smtp.aliyun-inc.com;
+ Thu, 12 Jun 2025 16:59:24 +0800
 From: Kyo Liu <kyo.liu@nebula-matrix.com>
 To: kyo.liu@nebula-matrix.com,
 	dev@dpdk.org
 Cc: Dimon Zhao <dimon.zhao@nebula-matrix.com>,
  Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
-Subject: [PATCH v1 15/17] net/nbl: add nbl device tx and rx burst
-Date: Thu, 12 Jun 2025 08:58:36 +0000
-Message-ID: <20250612085840.729830-16-kyo.liu@nebula-matrix.com>
+Subject: [PATCH v1 16/17] net/nbl: add nbl device xstats and stats
+Date: Thu, 12 Jun 2025 08:58:37 +0000
+Message-ID: <20250612085840.729830-17-kyo.liu@nebula-matrix.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250612085840.729830-1-kyo.liu@nebula-matrix.com>
 References: <20250612085840.729830-1-kyo.liu@nebula-matrix.com>
@@ -40,661 +39,527 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Implement NBL device tx and rx burst
+Implement NBL device xstats and stats functions
 
 Signed-off-by: Kyo Liu <kyo.liu@nebula-matrix.com>
 ---
- drivers/net/nbl/nbl_dev/nbl_dev.c             | 108 +++++-
- drivers/net/nbl/nbl_dev/nbl_dev.h             |   5 +
- drivers/net/nbl/nbl_dispatch.c                |  62 ++++
- drivers/net/nbl/nbl_ethdev.c                  |   7 +
- drivers/net/nbl/nbl_ethdev.h                  |  19 +
- .../nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c |   1 +
- drivers/net/nbl/nbl_hw/nbl_resource.h         |   2 +
- drivers/net/nbl/nbl_hw/nbl_txrx.c             | 325 ++++++++++++++++++
- drivers/net/nbl/nbl_hw/nbl_txrx.h             |  19 +-
- drivers/net/nbl/nbl_hw/nbl_txrx_ops.h         |  91 +++++
- drivers/net/nbl/nbl_include/nbl_def_channel.h |   4 +
- drivers/net/nbl/nbl_include/nbl_def_common.h  |   1 +
- .../net/nbl/nbl_include/nbl_def_dispatch.h    |   3 +
- .../net/nbl/nbl_include/nbl_def_resource.h    |   7 +
- drivers/net/nbl/nbl_include/nbl_include.h     |  31 ++
- 15 files changed, 683 insertions(+), 2 deletions(-)
- create mode 100644 drivers/net/nbl/nbl_hw/nbl_txrx_ops.h
+ drivers/net/nbl/nbl_dev/nbl_dev.c             | 148 +++++++++++++++++-
+ drivers/net/nbl/nbl_dev/nbl_dev.h             |   2 +
+ drivers/net/nbl/nbl_dispatch.c                | 111 +++++++++++++
+ .../nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c | 113 +++++++++++++
+ drivers/net/nbl/nbl_hw/nbl_txrx.c             | 112 ++++++++++++-
+ drivers/net/nbl/nbl_include/nbl_def_channel.h |   5 +
+ .../net/nbl/nbl_include/nbl_def_dispatch.h    |   9 ++
+ .../net/nbl/nbl_include/nbl_def_resource.h    |  12 +-
+ drivers/net/nbl/nbl_include/nbl_include.h     |   4 +
+ 9 files changed, 510 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.c b/drivers/net/nbl/nbl_dev/nbl_dev.c
-index bdd06613e6..949d42506d 100644
+index 949d42506d..4fa132ae1c 100644
 --- a/drivers/net/nbl/nbl_dev/nbl_dev.c
 +++ b/drivers/net/nbl/nbl_dev/nbl_dev.c
-@@ -291,6 +291,99 @@ static void nbl_rx_queues_release(struct rte_eth_dev *eth_dev, uint16_t queue_id
- 	disp_ops->release_rx_ring(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), queue_id);
+@@ -384,6 +384,129 @@ static int nbl_stats_get(struct rte_eth_dev *eth_dev, struct rte_eth_stats *rte_
+ 	return disp_ops->get_stats(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), rte_stats);
  }
  
-+static int nbl_dev_infos_get(struct rte_eth_dev *eth_dev __rte_unused,
-+			     struct rte_eth_dev_info *dev_info)
-+{
-+	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
-+	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
-+	struct nbl_dev_ring_mgt *ring_mgt = &dev_mgt->net_dev->ring_mgt;
-+	struct nbl_board_port_info *board_info = &dev_mgt->common->board_info;
-+	u8 speed_mode = board_info->speed;
-+
-+	dev_info->min_mtu = RTE_ETHER_MIN_MTU;
-+	dev_info->max_mtu = NBL_MAX_JUMBO_FRAME_SIZE - NBL_PKT_HDR_PAD;
-+	dev_info->max_rx_pktlen = NBL_FRAME_SIZE_MAX;
-+	dev_info->max_mac_addrs = dev_mgt->net_dev->max_mac_num;
-+	dev_info->max_rx_queues = ring_mgt->rx_ring_num;
-+	dev_info->max_tx_queues = ring_mgt->tx_ring_num;
-+	/* rx buffer size must be 2KB, 4KB, 8KB or 16KB */
-+	dev_info->min_rx_bufsize = NBL_DEV_MIN_RX_BUFSIZE;
-+	dev_info->flow_type_rss_offloads = NBL_RSS_OFFLOAD_TYPE;
-+
-+	dev_info->hash_key_size = NBL_EPRO_RSS_SK_SIZE;
-+
-+	dev_info->tx_desc_lim = (struct rte_eth_desc_lim) {
-+		.nb_max = 32768,
-+		.nb_min = 128,
-+		.nb_align = 1,
-+		.nb_seg_max = 128,
-+		.nb_mtu_seg_max = 128,
-+	};
-+
-+	dev_info->rx_desc_lim = (struct rte_eth_desc_lim) {
-+		.nb_max = 32768,
-+		.nb_min = 128,
-+		.nb_align = 1,
-+		.nb_seg_max = 128,
-+		.nb_mtu_seg_max = 128,
-+	};
-+
-+	dev_info->speed_capa = RTE_ETH_LINK_SPEED_10G;
-+	dev_info->max_rx_pktlen = NBL_FRAME_SIZE_MAX;
-+
-+	dev_info->default_rxportconf.nb_queues = ring_mgt->rx_ring_num;
-+	dev_info->default_txportconf.nb_queues = ring_mgt->tx_ring_num;
-+	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_UDP_CKSUM |
-+				    RTE_ETH_TX_OFFLOAD_TCP_CKSUM |
-+				    RTE_ETH_TX_OFFLOAD_TCP_TSO |
-+				    RTE_ETH_TX_OFFLOAD_UDP_TSO |
-+				    RTE_ETH_TX_OFFLOAD_MULTI_SEGS;
-+	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_CHECKSUM |
-+				    RTE_ETH_RX_OFFLOAD_SCATTER;
-+
-+	switch (speed_mode) {
-+	case NBL_FW_PORT_SPEED_100G:
-+		dev_info->speed_capa |= RTE_ETH_LINK_SPEED_100G;
-+		/* FALLTHROUGH */
-+	case NBL_FW_PORT_SPEED_50G:
-+		dev_info->speed_capa |= RTE_ETH_LINK_SPEED_50G;
-+		/* FALLTHROUGH */
-+	case NBL_FW_PORT_SPEED_25G:
-+		dev_info->speed_capa |= RTE_ETH_LINK_SPEED_25G;
-+		/* FALLTHROUGH */
-+	case NBL_FW_PORT_SPEED_10G:
-+		dev_info->speed_capa |= RTE_ETH_LINK_SPEED_10G;
-+		break;
-+	default:
-+		dev_info->speed_capa = RTE_ETH_LINK_SPEED_25G;
-+	}
-+
-+	return 0;
-+}
-+
-+static int nbl_link_update(struct rte_eth_dev *eth_dev, int wait_to_complete __rte_unused)
-+{
-+	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
-+	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
-+	struct rte_eth_link link = { 0 };
-+
-+	link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
-+	link.link_status = !!dev_mgt->net_dev->eth_link_info.link_status;
-+	if (link.link_status)
-+		link.link_speed = dev_mgt->net_dev->eth_link_info.link_speed;
-+
-+	return rte_eth_linkstatus_set(eth_dev, &link);
-+}
-+
-+static int nbl_stats_get(struct rte_eth_dev *eth_dev, struct rte_eth_stats *rte_stats)
++static int nbl_stats_reset(struct rte_eth_dev *eth_dev)
 +{
 +	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
 +	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
 +	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
 +
-+	return disp_ops->get_stats(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), rte_stats);
++	return disp_ops->reset_stats(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt));
++}
++
++static int nbl_dev_update_hw_xstats(struct nbl_dev_mgt *dev_mgt, struct rte_eth_xstat *xstats,
++				    u16 hw_xstats_cnt, u16 *xstats_cnt)
++{
++	struct nbl_common_info *common = NBL_DEV_MGT_TO_COMMON(dev_mgt);
++	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
++	u64 *hw_stats;
++	int i;
++	u16 count = *xstats_cnt;
++
++	hw_stats = rte_zmalloc("nbl_xstats_cnt", hw_xstats_cnt * sizeof(u64), 0);
++	if (!hw_stats)
++		return -ENOMEM;
++
++	disp_ops->get_private_stat_data(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
++					common->eth_id, hw_stats, hw_xstats_cnt * sizeof(u64));
++	for (i = 0; i < hw_xstats_cnt; i++) {
++		xstats[count].value = hw_stats[i] - dev_mgt->net_dev->hw_xstats_offset[i];
++		xstats[count].id = count;
++		count++;
++	}
++
++	*xstats_cnt = count;
++	rte_free(hw_stats);
++	return 0;
++}
++
++static int nbl_xstats_get(struct rte_eth_dev *eth_dev,
++			  struct rte_eth_xstat *xstats, unsigned int n)
++{
++	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
++	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
++	struct nbl_common_info *common = NBL_DEV_MGT_TO_COMMON(dev_mgt);
++	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
++	int ret = 0;
++	u16 txrx_xstats_cnt = 0, hw_xstats_cnt = 0, xstats_cnt = 0;
++
++	if (!xstats)
++		return 0;
++
++	ret = disp_ops->get_txrx_xstats_cnt(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), &txrx_xstats_cnt);
++	if (!common->is_vf)
++		ret |= disp_ops->get_hw_xstats_cnt(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
++						   &hw_xstats_cnt);
++	if (ret)
++		return -EIO;
++
++	if (n < (txrx_xstats_cnt + hw_xstats_cnt))
++		return txrx_xstats_cnt + hw_xstats_cnt;
++
++	if (txrx_xstats_cnt)
++		ret = disp_ops->get_txrx_xstats(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
++						xstats, &xstats_cnt);
++	if (hw_xstats_cnt)
++		ret |= nbl_dev_update_hw_xstats(dev_mgt, xstats, hw_xstats_cnt, &xstats_cnt);
++
++	if (ret)
++		return -EIO;
++
++	return xstats_cnt;
++}
++
++static int nbl_xstats_get_names(struct rte_eth_dev *eth_dev,
++				struct rte_eth_xstat_name *xstats_names,
++				__rte_unused unsigned int limit)
++{
++	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
++	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
++	struct nbl_common_info *common = NBL_DEV_MGT_TO_COMMON(dev_mgt);
++	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
++	u16 txrx_xstats_cnt = 0, hw_xstats_cnt = 0, xstats_cnt = 0;
++	int ret = 0;
++
++	ret = disp_ops->get_txrx_xstats_cnt(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), &txrx_xstats_cnt);
++	if (!common->is_vf)
++		ret |= disp_ops->get_hw_xstats_cnt(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
++							&hw_xstats_cnt);
++	if (ret)
++		return -EIO;
++
++	if (!xstats_names)
++		return txrx_xstats_cnt + hw_xstats_cnt;
++
++	if (txrx_xstats_cnt)
++		ret = disp_ops->get_txrx_xstats_names(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
++						      xstats_names, &xstats_cnt);
++	if (hw_xstats_cnt)
++		ret |= disp_ops->get_hw_xstats_names(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
++						     xstats_names, &xstats_cnt);
++	if (ret)
++		return -EIO;
++
++	return xstats_cnt;
++}
++
++
++
++static int nbl_xstats_reset(struct rte_eth_dev *eth_dev)
++{
++	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
++	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
++	struct nbl_common_info *common = NBL_DEV_MGT_TO_COMMON(dev_mgt);
++	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
++	struct nbl_dev_net_mgt *net_dev = dev_mgt->net_dev;
++
++	if (!common->is_vf) {
++		disp_ops->get_private_stat_data(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
++						dev_mgt->common->eth_id,
++						net_dev->hw_xstats_offset, net_dev->hw_xstats_size);
++	}
++
++	nbl_stats_reset(eth_dev);
++	return 0;
 +}
 +
  struct nbl_dev_ops dev_ops = {
  	.dev_configure = nbl_dev_configure,
  	.dev_start = nbl_dev_port_start,
-@@ -300,6 +393,9 @@ struct nbl_dev_ops dev_ops = {
- 	.rx_queue_setup = nbl_rx_queue_setup,
- 	.tx_queue_release = nbl_tx_queues_release,
- 	.rx_queue_release = nbl_rx_queues_release,
-+	.dev_infos_get = nbl_dev_infos_get,
-+	.link_update = nbl_link_update,
-+	.stats_get = nbl_stats_get,
+@@ -396,6 +519,10 @@ struct nbl_dev_ops dev_ops = {
+ 	.dev_infos_get = nbl_dev_infos_get,
+ 	.link_update = nbl_link_update,
+ 	.stats_get = nbl_stats_get,
++	.stats_reset = nbl_stats_reset,
++	.xstats_get = nbl_xstats_get,
++	.xstats_get_names = nbl_xstats_get_names,
++	.xstats_reset = nbl_xstats_reset,
  };
  
  static int nbl_dev_setup_chan_queue(struct nbl_adapter *adapter)
-@@ -372,12 +468,17 @@ static int nbl_dev_leonis_start(void *p)
- {
- 	struct nbl_adapter *adapter = (struct nbl_adapter *)p;
- 	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
-+	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
- 	int ret = 0;
+@@ -438,6 +565,7 @@ static int nbl_dev_common_start(struct nbl_dev_mgt *dev_mgt)
+ 	struct nbl_board_port_info *board_info;
+ 	u8 *mac;
+ 	int ret;
++	u16 priv_cnt = 0;
  
- 	dev_mgt->common = NBL_ADAPTER_TO_COMMON(adapter);
- 	ret = nbl_dev_common_start(dev_mgt);
- 	if (ret)
- 		return ret;
+ 	board_info = &common->board_info;
+ 	disp_ops->get_board_info(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), board_info);
+@@ -456,8 +584,25 @@ static int nbl_dev_common_start(struct nbl_dev_mgt *dev_mgt)
+ 			goto add_multi_rule_failed;
+ 	}
+ 
+-	return 0;
++	net_dev->hw_xstats_offset = NULL;
++	if (!dev_mgt->common->is_vf)
++		disp_ops->get_hw_xstats_cnt(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), &priv_cnt);
++	if (priv_cnt) {
++		net_dev->hw_xstats_offset = rte_zmalloc("nbl_xstats_cnt",
++							priv_cnt * sizeof(u64), 0);
++		net_dev->hw_xstats_size = priv_cnt * sizeof(u64);
++		if (!net_dev->hw_xstats_offset) {
++			ret = -ENOMEM;
++			goto alloc_xstats_offset_failed;
++		}
 +
-+	disp_ops->get_link_state(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
-+				 dev_mgt->net_dev->eth_id,
-+				 &dev_mgt->net_dev->eth_link_info);
- 	return 0;
- }
++		disp_ops->get_private_stat_data(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
++						dev_mgt->common->eth_id,
++						net_dev->hw_xstats_offset, net_dev->hw_xstats_size);
++	}
  
-@@ -564,7 +665,7 @@ static int nbl_dev_setup_net_dev(struct nbl_dev_mgt *dev_mgt,
- 	return ret;
- }
++	return 0;
++alloc_xstats_offset_failed:
+ add_multi_rule_failed:
+ 	disp_ops->del_macvlan(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), mac, 0, net_dev->vsi_id);
  
--int nbl_dev_init(void *p, __rte_unused struct rte_eth_dev *eth_dev)
-+int nbl_dev_init(void *p, struct rte_eth_dev *eth_dev)
- {
- 	struct nbl_adapter *adapter = (struct nbl_adapter *)p;
- 	struct nbl_dev_mgt **dev_mgt;
-@@ -618,6 +719,11 @@ int nbl_dev_init(void *p, __rte_unused struct rte_eth_dev *eth_dev)
+@@ -719,6 +864,7 @@ int nbl_dev_init(void *p, struct rte_eth_dev *eth_dev)
  			       eth_dev->data->mac_addrs[0].addr_bytes);
  
  	adapter->state = NBL_ETHDEV_INITIALIZED;
-+	disp_ops->get_resource_pt_ops(NBL_DEV_MGT_TO_DISP_PRIV(*dev_mgt),
-+				      &(*dev_mgt)->pt_ops, 0);
-+
-+	eth_dev->tx_pkt_burst = (*dev_mgt)->pt_ops.tx_pkt_burst;
-+	eth_dev->rx_pkt_burst = (*dev_mgt)->pt_ops.rx_pkt_burst;
- 
- 	return 0;
++	eth_dev->data->dev_flags |= RTE_ETH_DEV_AUTOFILL_QUEUE_XSTATS;
+ 	disp_ops->get_resource_pt_ops(NBL_DEV_MGT_TO_DISP_PRIV(*dev_mgt),
+ 				      &(*dev_mgt)->pt_ops, 0);
  
 diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.h b/drivers/net/nbl/nbl_dev/nbl_dev.h
-index 44deea3f3b..f58699a51e 100644
+index f58699a51e..1541aebba5 100644
 --- a/drivers/net/nbl/nbl_dev/nbl_dev.h
 +++ b/drivers/net/nbl/nbl_dev/nbl_dev.h
-@@ -17,6 +17,9 @@
- #define NBL_DEV_MGT_TO_ETH_DEV(dev_mgt)		((dev_mgt)->net_dev->eth_dev)
- #define NBL_DEV_MGT_TO_COMMON(dev_mgt)		((dev_mgt)->common)
- 
-+#define NBL_FRAME_SIZE_MAX		(9600)
-+#define NBL_DEV_MIN_RX_BUFSIZE	2048
-+
- struct nbl_dev_ring {
- 	u16 index;
- 	u64 dma;
-@@ -37,6 +40,7 @@ struct nbl_dev_ring_mgt {
- struct nbl_dev_net_mgt {
+@@ -41,6 +41,8 @@ struct nbl_dev_net_mgt {
  	struct rte_eth_dev *eth_dev;
  	struct nbl_dev_ring_mgt ring_mgt;
-+	struct nbl_eth_link_info eth_link_info;
+ 	struct nbl_eth_link_info eth_link_info;
++	u64 *hw_xstats_offset;
++	u32 hw_xstats_size;
  	u16 vsi_id;
  	u8 eth_mode;
  	u8 eth_id;
-@@ -49,6 +53,7 @@ struct nbl_dev_mgt {
- 	struct nbl_channel_ops_tbl *chan_ops_tbl;
- 	struct nbl_dev_net_mgt *net_dev;
- 	struct nbl_common_info *common;
-+	struct nbl_resource_pt_ops pt_ops;
- };
- 
- struct nbl_product_dev_ops *nbl_dev_get_product_ops(enum nbl_product_type product_type);
 diff --git a/drivers/net/nbl/nbl_dispatch.c b/drivers/net/nbl/nbl_dispatch.c
-index 2d44909aab..33964641c4 100644
+index 33964641c4..e18b543ad6 100644
 --- a/drivers/net/nbl/nbl_dispatch.c
 +++ b/drivers/net/nbl/nbl_dispatch.c
-@@ -676,6 +676,57 @@ static void nbl_disp_chan_remove_cqs_req(void *priv, u16 vsi_id)
- 	chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt), &chan_send);
+@@ -724,9 +724,94 @@ static int nbl_disp_get_stats(void *priv, struct rte_eth_stats *rte_stats)
+ {
+ 	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
+ 	struct nbl_resource_ops *res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++
+ 	return res_ops->get_stats(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), rte_stats);
  }
  
-+static void nbl_disp_get_res_pt_ops(void *priv, struct nbl_resource_pt_ops *pt_ops, bool offload)
++static int nbl_disp_reset_stats(void *priv)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++
++	return res_ops->reset_stats(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt));
++}
++
++static int nbl_disp_get_txrx_xstats_cnt(void *priv, u16 *xstats_cnt)
 +{
 +	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
 +	struct nbl_resource_ops *res_ops;
 +
 +	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
-+	NBL_OPS_CALL(res_ops->get_resource_pt_ops,
-+		     (NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), pt_ops, offload));
++	return res_ops->get_txrx_xstats_cnt(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), xstats_cnt);
 +}
 +
-+static void nbl_disp_get_link_state(void *priv, u8 eth_id, struct nbl_eth_link_info *eth_link_info)
++static int nbl_disp_get_txrx_xstats(void *priv, struct rte_eth_xstat *xstats, u16 *xstats_cnt)
 +{
 +	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
 +	struct nbl_resource_ops *res_ops;
 +
 +	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
-+
-+	/* if donot have res_ops->get_link_state(), default eth is up */
-+	if (res_ops->get_link_state) {
-+		res_ops->get_link_state(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt),
-+					eth_id, eth_link_info);
-+	} else {
-+		eth_link_info->link_status = 1;
-+		eth_link_info->link_speed = RTE_ETH_LINK_SPEED_25G;
-+	}
++	return res_ops->get_txrx_xstats(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), xstats, xstats_cnt);
 +}
 +
-+static void nbl_disp_chan_get_link_state_req(void *priv, u8 eth_id,
-+					     struct nbl_eth_link_info *eth_link_info)
++static int nbl_disp_get_txrx_xstats_names(void *priv, struct rte_eth_xstat_name *xstats_names,
++					  u16 *xstats_cnt)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops;
++
++	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++	return res_ops->get_txrx_xstats_names(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt),
++					 xstats_names, xstats_cnt);
++}
++
++static int nbl_disp_get_hw_xstats_cnt(void *priv, u16 *xstats_cnt)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops;
++
++	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++	return res_ops->get_hw_xstats_cnt(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), xstats_cnt);
++}
++
++static int nbl_disp_get_hw_xstats_names(void *priv, struct rte_eth_xstat_name *xstats_names,
++					u16 *xstats_cnt)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops;
++
++	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++	return res_ops->get_hw_xstats_names(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt),
++					    xstats_names, xstats_cnt);
++}
++
++static void nbl_disp_get_private_stat_data(void *priv, u32 eth_id, u64 *data,
++					   __rte_unused u32 data_len)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops;
++
++	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++	NBL_OPS_CALL(res_ops->get_private_stat_data,
++		     (NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), eth_id, data));
++}
++
++static void nbl_disp_get_private_stat_data_req(void *priv, u32 eth_id, u64 *data, u32 data_len)
 +{
 +	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
 +	struct nbl_channel_ops *chan_ops;
-+	struct nbl_chan_param_get_link_state param = {0};
-+	struct nbl_chan_send_info chan_send;
++	struct nbl_chan_send_info chan_send = {0};
++	struct nbl_chan_param_get_private_stat_data param = {0};
 +
 +	chan_ops = NBL_DISP_MGT_TO_CHAN_OPS(disp_mgt);
 +
 +	param.eth_id = eth_id;
-+
-+	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_GET_LINK_STATE, &param, sizeof(param),
-+		      eth_link_info, sizeof(*eth_link_info), 1);
++	param.data_len = data_len;
++	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_GET_ETH_STATS, &param,
++		      sizeof(param), data, data_len, 1);
 +	chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt), &chan_send);
-+}
-+
-+static int nbl_disp_get_stats(void *priv, struct rte_eth_stats *rte_stats)
-+{
-+	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
-+	struct nbl_resource_ops *res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
-+	return res_ops->get_stats(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), rte_stats);
 +}
 +
  #define NBL_DISP_OPS_TBL						\
  do {									\
  	NBL_DISP_SET_OPS(alloc_txrx_queues, nbl_disp_alloc_txrx_queues,	\
-@@ -797,6 +848,17 @@ do {									\
- 	NBL_DISP_SET_OPS(remove_cqs, nbl_disp_remove_cqs,		\
- 			 NBL_DISP_CTRL_LVL_MGT, NBL_CHAN_MSG_REMOVE_CQS,\
- 			 nbl_disp_chan_remove_cqs_req, NULL);		\
-+	NBL_DISP_SET_OPS(get_resource_pt_ops,				\
-+			 nbl_disp_get_res_pt_ops,			\
+@@ -859,6 +944,32 @@ do {									\
+ 	NBL_DISP_SET_OPS(get_stats, nbl_disp_get_stats,			\
+ 			 NBL_DISP_CTRL_LVL_ALWAYS, -1,			\
+ 			 NULL, NULL);					\
++	NBL_DISP_SET_OPS(reset_stats, nbl_disp_reset_stats,		\
 +			 NBL_DISP_CTRL_LVL_ALWAYS, -1,			\
 +			 NULL, NULL);					\
-+	NBL_DISP_SET_OPS(get_link_state, nbl_disp_get_link_state,	\
++	NBL_DISP_SET_OPS(get_txrx_xstats_cnt,				\
++			 nbl_disp_get_txrx_xstats_cnt,			\
++			 NBL_DISP_CTRL_LVL_ALWAYS, -1,			\
++			 NULL, NULL);					\
++	NBL_DISP_SET_OPS(get_txrx_xstats, nbl_disp_get_txrx_xstats,	\
++			 NBL_DISP_CTRL_LVL_ALWAYS, -1,			\
++			 NULL, NULL);					\
++	NBL_DISP_SET_OPS(get_txrx_xstats_names,				\
++			 nbl_disp_get_txrx_xstats_names,		\
++			 NBL_DISP_CTRL_LVL_ALWAYS, -1,			\
++			 NULL, NULL);					\
++	NBL_DISP_SET_OPS(get_hw_xstats_cnt, nbl_disp_get_hw_xstats_cnt,	\
++			 NBL_DISP_CTRL_LVL_ALWAYS, -1,			\
++			 NULL, NULL);					\
++	NBL_DISP_SET_OPS(get_hw_xstats_names,				\
++			 nbl_disp_get_hw_xstats_names,			\
++			 NBL_DISP_CTRL_LVL_ALWAYS, -1,			\
++			 NULL, NULL);					\
++	NBL_DISP_SET_OPS(get_private_stat_data,				\
++			 nbl_disp_get_private_stat_data,		\
 +			 NBL_DISP_CTRL_LVL_MGT,				\
-+			 NBL_CHAN_MSG_GET_LINK_STATE,			\
-+			 nbl_disp_chan_get_link_state_req, NULL);	\
-+	NBL_DISP_SET_OPS(get_stats, nbl_disp_get_stats,			\
-+			 NBL_DISP_CTRL_LVL_ALWAYS, -1,			\
-+			 NULL, NULL);					\
++			 NBL_CHAN_MSG_GET_ETH_STATS,			\
++			 nbl_disp_get_private_stat_data_req, NULL);	\
  } while (0)
  
  /* Structure starts here, adding an op should not modify anything below */
-diff --git a/drivers/net/nbl/nbl_ethdev.c b/drivers/net/nbl/nbl_ethdev.c
-index 5cbeed6a33..06543f6716 100644
---- a/drivers/net/nbl/nbl_ethdev.c
-+++ b/drivers/net/nbl/nbl_ethdev.c
-@@ -41,6 +41,13 @@ do {									\
- 	NBL_DEV_NET_OPS(dev_configure,		dev_ops->dev_configure);\
- 	NBL_DEV_NET_OPS(dev_start,		dev_ops->dev_start);	\
- 	NBL_DEV_NET_OPS(dev_stop,		dev_ops->dev_stop);	\
-+	NBL_DEV_NET_OPS(dev_infos_get,		dev_ops->dev_infos_get);\
-+	NBL_DEV_NET_OPS(tx_queue_setup,		dev_ops->tx_queue_setup);\
-+	NBL_DEV_NET_OPS(rx_queue_setup,		dev_ops->rx_queue_setup);\
-+	NBL_DEV_NET_OPS(rx_queue_release,	dev_ops->rx_queue_release);\
-+	NBL_DEV_NET_OPS(tx_queue_release,	dev_ops->tx_queue_release);\
-+	NBL_DEV_NET_OPS(link_update,		dev_ops->link_update);	\
-+	NBL_DEV_NET_OPS(stats_get,		dev_ops->stats_get);	\
- } while (0)
- 
- static void nbl_set_eth_dev_ops(struct nbl_adapter *adapter,
-diff --git a/drivers/net/nbl/nbl_ethdev.h b/drivers/net/nbl/nbl_ethdev.h
-index e20a7b940e..4d522746c0 100644
---- a/drivers/net/nbl/nbl_ethdev.h
-+++ b/drivers/net/nbl/nbl_ethdev.h
-@@ -10,4 +10,23 @@
- #define ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev) \
- 	((struct nbl_adapter *)((eth_dev)->data->dev_private))
- 
-+#define NBL_MAX_JUMBO_FRAME_SIZE		(9600)
-+#define NBL_PKT_HDR_PAD				(26)
-+#define NBL_RSS_OFFLOAD_TYPE ( \
-+	RTE_ETH_RSS_IPV4 | \
-+	RTE_ETH_RSS_FRAG_IPV4 | \
-+	RTE_ETH_RSS_NONFRAG_IPV4_TCP | \
-+	RTE_ETH_RSS_NONFRAG_IPV4_UDP | \
-+	RTE_ETH_RSS_NONFRAG_IPV4_SCTP | \
-+	RTE_ETH_RSS_NONFRAG_IPV4_OTHER | \
-+	RTE_ETH_RSS_IPV6 | \
-+	RTE_ETH_RSS_FRAG_IPV6 | \
-+	RTE_ETH_RSS_NONFRAG_IPV6_TCP | \
-+	RTE_ETH_RSS_NONFRAG_IPV6_UDP | \
-+	RTE_ETH_RSS_NONFRAG_IPV6_SCTP | \
-+	RTE_ETH_RSS_NONFRAG_IPV6_OTHER | \
-+	RTE_ETH_RSS_VXLAN | \
-+	RTE_ETH_RSS_GENEVE | \
-+	RTE_ETH_RSS_NVGRE)
-+
- #endif
 diff --git a/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c
-index b785774f67..e7036373f1 100644
+index e7036373f1..41ae423ff0 100644
 --- a/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c
 +++ b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c
-@@ -105,6 +105,7 @@ int nbl_res_init_leonis(void *p, struct rte_eth_dev *eth_dev)
- 	NBL_RES_MGT_TO_CHAN_OPS_TBL(&(*res_mgt_leonis)->res_mgt) = chan_ops_tbl;
- 	NBL_RES_MGT_TO_PHY_OPS_TBL(&(*res_mgt_leonis)->res_mgt) = phy_ops_tbl;
- 	NBL_RES_MGT_TO_ETH_DEV(&(*res_mgt_leonis)->res_mgt) = eth_dev;
-+	NBL_RES_MGT_TO_COMMON(&(*res_mgt_leonis)->res_mgt) = &adapter->common;
+@@ -4,7 +4,120 @@
  
- 	ret = nbl_res_start(*res_mgt_leonis);
- 	if (ret)
-diff --git a/drivers/net/nbl/nbl_hw/nbl_resource.h b/drivers/net/nbl/nbl_hw/nbl_resource.h
-index 543054a2cb..ad5ac22d61 100644
---- a/drivers/net/nbl/nbl_hw/nbl_resource.h
-+++ b/drivers/net/nbl/nbl_hw/nbl_resource.h
-@@ -46,6 +46,7 @@ struct nbl_res_tx_ring {
- 	volatile uint8_t *notify;
- 	struct rte_eth_dev *eth_dev;
- 	struct nbl_common_info *common;
-+	struct nbl_txq_stats txq_stats;
- 	u64 default_hdr[2];
+ #include "nbl_res_leonis.h"
  
- 	enum nbl_product_type product;
-@@ -86,6 +87,7 @@ struct nbl_res_rx_ring {
- 	volatile uint8_t *notify;
- 	struct rte_eth_dev *eth_dev;
- 	struct nbl_common_info *common;
-+	struct nbl_rxq_stats rxq_stats;
- 	uint64_t mbuf_initializer; /**< value to init mbufs */
- 	struct rte_mbuf fake_mbuf;
++/* store statistics names */
++struct nbl_xstats_name {
++	char name[RTE_ETH_XSTATS_NAME_SIZE];
++};
++
++static const struct nbl_xstats_name nbl_stats_strings[] = {
++	{"eth_frames_tx"},
++	{"eth_frames_tx_ok"},
++	{"eth_frames_tx_badfcs"},
++	{"eth_unicast_frames_tx_ok"},
++	{"eth_multicast_frames_tx_ok"},
++	{"eth_broadcast_frames_tx_ok"},
++	{"eth_macctrl_frames_tx_ok"},
++	{"eth_fragment_frames_tx"},
++	{"eth_fragment_frames_tx_ok"},
++	{"eth_pause_frames_tx"},
++	{"eth_pause_macctrl_frames_tx"},
++	{"eth_pfc_frames_tx"},
++	{"eth_pfc_frames_tx_prio0"},
++	{"eth_pfc_frames_tx_prio1"},
++	{"eth_pfc_frames_tx_prio2"},
++	{"eth_pfc_frames_tx_prio3"},
++	{"eth_pfc_frames_tx_prio4"},
++	{"eth_pfc_frames_tx_prio5"},
++	{"eth_pfc_frames_tx_prio6"},
++	{"eth_pfc_frames_tx_prio7"},
++	{"eth_verify_frames_tx"},
++	{"eth_respond_frames_tx"},
++	{"eth_frames_tx_64B"},
++	{"eth_frames_tx_65_to_127B"},
++	{"eth_frames_tx_128_to_255B"},
++	{"eth_frames_tx_256_to_511B"},
++	{"eth_frames_tx_512_to_1023B"},
++	{"eth_frames_tx_1024_to_1535B"},
++	{"eth_frames_tx_1536_to_2047B"},
++	{"eth_frames_tx_2048_to_MAXB"},
++	{"eth_undersize_frames_tx_goodfcs"},
++	{"eth_oversize_frames_tx_goodfcs"},
++	{"eth_undersize_frames_tx_badfcs"},
++	{"eth_oversize_frames_tx_badfcs"},
++	{"eth_octets_tx"},
++	{"eth_octets_tx_ok"},
++	{"eth_octets_tx_badfcs"},
++	{"eth_frames_rx"},
++	{"eth_frames_rx_ok"},
++	{"eth_frames_rx_badfcs"},
++	{"eth_undersize_frames_rx_goodfcs"},
++	{"eth_undersize_frames_rx_badfcs"},
++	{"eth_oversize_frames_rx_goodfcs"},
++	{"eth_oversize_frames_rx_badfcs"},
++	{"eth_frames_rx_misc_error"},
++	{"eth_frames_rx_misc_dropped"},
++	{"eth_unicast_frames_rx_ok"},
++	{"eth_multicast_frames_rx_ok"},
++	{"eth_broadcast_frames_rx_ok"},
++	{"eth_pause_frames_rx"},
++	{"eth_pfc_frames_rx"},
++	{"eth_pfc_frames_rx_prio0"},
++	{"eth_pfc_frames_rx_prio1"},
++	{"eth_pfc_frames_rx_prio2"},
++	{"eth_pfc_frames_rx_prio3"},
++	{"eth_pfc_frames_rx_prio4"},
++	{"eth_pfc_frames_rx_prio5"},
++	{"eth_pfc_frames_rx_prio6"},
++	{"eth_pfc_frames_rx_prio7"},
++	{"eth_macctrl_frames_rx"},
++	{"eth_verify_frames_rx_ok"},
++	{"eth_respond_frames_rx_ok"},
++	{"eth_fragment_frames_rx_ok"},
++	{"eth_fragment_rx_smdc_nocontext"},
++	{"eth_fragment_rx_smds_seq_error"},
++	{"eth_fragment_rx_smdc_seq_error"},
++	{"eth_fragment_rx_frag_cnt_error"},
++	{"eth_frames_assembled_ok"},
++	{"eth_frames_assembled_error"},
++	{"eth_frames_rx_64B"},
++	{"eth_frames_rx_65_to_127B"},
++	{"eth_frames_rx_128_to_255B"},
++	{"eth_frames_rx_256_to_511B"},
++	{"eth_frames_rx_512_to_1023B"},
++	{"eth_frames_rx_1024_to_1535B"},
++	{"eth_frames_rx_1536_to_2047B"},
++	{"eth_frames_rx_2048_to_MAXB"},
++	{"eth_octets_rx"},
++	{"eth_octets_rx_ok"},
++	{"eth_octets_rx_badfcs"},
++	{"eth_octets_rx_dropped"},
++};
++
++static int nbl_get_xstats_cnt(__rte_unused void *priv, u16 *xstats_cnt)
++{
++	*xstats_cnt = ARRAY_SIZE(nbl_stats_strings);
++	return 0;
++}
++
++static int nbl_get_xstats_names(__rte_unused void *priv,
++				struct rte_eth_xstat_name *xstats_names,
++				u16 *xstats_cnt)
++{
++	u32 i = 0;
++	u16 count = *xstats_cnt;
++
++	for (i = 0; i < ARRAY_SIZE(nbl_stats_strings); i++) {
++		strlcpy(xstats_names[count].name, nbl_stats_strings[i].name,
++			sizeof(nbl_stats_strings[count].name));
++		count++;
++	}
++	*xstats_cnt = count;
++	return 0;
++}
++
+ static struct nbl_resource_ops res_ops = {
++	.get_hw_xstats_cnt = nbl_get_xstats_cnt,
++	.get_hw_xstats_names = nbl_get_xstats_names,
+ };
  
+ static bool is_ops_inited;
 diff --git a/drivers/net/nbl/nbl_hw/nbl_txrx.c b/drivers/net/nbl/nbl_hw/nbl_txrx.c
-index 27b549beda..361415cd21 100644
+index 361415cd21..0436f0df88 100644
 --- a/drivers/net/nbl/nbl_hw/nbl_txrx.c
 +++ b/drivers/net/nbl/nbl_hw/nbl_txrx.c
-@@ -4,6 +4,7 @@
+@@ -538,6 +538,7 @@ nbl_res_txrx_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, u16 nb_pkts, u
+ 			txe->mbuf = tx_pkt;
  
- #include "nbl_txrx.h"
- #include "nbl_include.h"
-+#include "nbl_txrx_ops.h"
+ 			data_len = tx_pkt->data_len;
++			txq->txq_stats.tx_bytes += tx_pkt->data_len;
+ 			dma_addr = rte_mbuf_data_iova(tx_pkt);
+ 			tx_desc->addr = NBL_DMA_ADDERSS_FULL_TRANSLATE(txq, dma_addr) + addr_offset;
+ 			tx_desc->len = data_len - addr_offset;
+@@ -617,6 +618,8 @@ nbl_res_txrx_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts, u16 nb_pkts)
+ 			rx_ext_hdr = (union nbl_rx_extend_head *)((char *)rx_mbuf->buf_addr +
+ 								  RTE_PKTMBUF_HEADROOM);
+ 			num_sg = rx_ext_hdr->common.num_buffers;
++			if (num_sg > 1)
++				rxq->rxq_stats.rx_multi_descs++;
  
- static int nbl_res_txrx_alloc_rings(void *priv, u16 tx_num, u16 rx_num, u16 queue_offset)
- {
-@@ -399,6 +400,328 @@ static void nbl_res_txrx_update_rx_ring(void *priv, u16 index)
- 				 rx_ring->next_to_use));
+ 			rx_mbuf->nb_segs = num_sg;
+ 			rx_mbuf->data_len = rx_desc->len - rxq->exthdr_len;
+@@ -644,15 +647,19 @@ nbl_res_txrx_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts, u16 nb_pkts)
+ 		if (--num_sg)
+ 			continue;
+ 		if (drop) {
++			rxq->rxq_stats.rx_drop_proto++;
+ 			rte_pktmbuf_free(rx_mbuf);
+ 			continue;
+ 		}
+ 		rx_pkts[nb_recv_pkts++] = rx_mbuf;
++		rxq->rxq_stats.rx_bytes += rx_mbuf->pkt_len;
+ 	}
+ 
+ 	/* BUG on dumplicate pkt free */
+-	if (unlikely(num_sg))
++	if (unlikely(num_sg)) {
++		rxq->rxq_stats.rx_ierror++;
+ 		rte_pktmbuf_free(rx_mbuf);
++	}
+ 	/* clean memory */
+ 	rxq->next_to_clean = desc_index;
+ 	fill_num = rxq->vq_free_cnt;
+@@ -722,6 +729,105 @@ static int nbl_res_txrx_get_stats(void *priv, struct rte_eth_stats *rte_stats)
+ 	return 0;
  }
  
-+static inline void nbl_fill_rx_ring(struct nbl_res_rx_ring *rxq,
-+				    struct rte_mbuf **cookie, uint16_t fill_num)
-+{
-+	volatile struct nbl_packed_desc *rx_desc;
-+	struct nbl_rx_entry *rx_entry;
-+	uint64_t dma_addr;
-+	uint16_t desc_index, i, flags;
-+
-+	desc_index = rxq->next_to_use;
-+	for (i = 0; i < fill_num; i++) {
-+		rx_desc = &rxq->desc[desc_index];
-+		rx_entry = &rxq->rx_entry[desc_index];
-+		rx_entry->mbuf = cookie[i];
-+
-+		flags = rxq->avail_used_flags;
-+		desc_index++;
-+		if (desc_index >= rxq->nb_desc) {
-+			desc_index = 0;
-+			rxq->avail_used_flags ^= NBL_PACKED_DESC_F_AVAIL_USED;
-+		}
-+		if ((desc_index & 0x3) == 0) {
-+			rte_prefetch0(&rxq->rx_entry[desc_index]);
-+			rte_prefetch0(&rxq->desc[desc_index]);
-+		}
-+
-+		cookie[i]->data_off = RTE_PKTMBUF_HEADROOM;
-+		rx_desc->len =
-+			rte_cpu_to_le_32(cookie[i]->buf_len - RTE_PKTMBUF_HEADROOM);
-+		dma_addr = NBL_DMA_ADDERSS_FULL_TRANSLATE(rxq,
-+							  rte_mbuf_data_iova_default(cookie[i]));
-+		rx_desc->addr = rte_cpu_to_le_64(dma_addr);
-+
-+		rte_io_wmb();
-+		rx_desc->flags = flags;
-+	}
-+
-+	rxq->vq_free_cnt -= fill_num;
-+	rxq->next_to_use = desc_index;
-+}
-+
-+static u16
-+nbl_res_txrx_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, u16 nb_pkts, u16 extend_set)
-+{
-+	struct nbl_res_tx_ring *txq;
-+	union nbl_tx_extend_head *tx_region;
-+	volatile struct nbl_packed_desc *tx_ring;
-+	struct nbl_tx_entry *sw_ring;
-+	volatile struct nbl_packed_desc *tx_desc, *head_desc;
-+	struct nbl_tx_entry *txe;
-+	struct rte_mbuf *tx_pkt;
-+	union nbl_tx_extend_head *u;
-+	rte_iova_t net_hdr_mem;
-+	uint64_t dma_addr;
-+	u16 nb_xmit_pkts;
-+	u16 desc_index, head_index, head_flags;
-+	u16 data_len, header_len = 0;
-+	u16 nb_descs;
-+	u16 can_push;
-+	u16 required_headroom;
-+	u16 tx_extend_len;
-+	u16 addr_offset;
-+
-+	txq = tx_queue;
-+	tx_ring = txq->desc;
-+	sw_ring = txq->tx_entry;
-+	desc_index = txq->next_to_use;
-+	txe = &sw_ring[txq->next_to_use];
-+	tx_region = txq->net_hdr_mz->addr;
-+	net_hdr_mem = NBL_DMA_ADDERSS_FULL_TRANSLATE(txq, txq->net_hdr_mz->iova);
-+
-+	if (txq->vq_free_cnt < NBL_TX_FREE_THRESH)
-+		nbl_tx_free_bufs(txq);
-+
-+	for (nb_xmit_pkts = 0; nb_xmit_pkts < nb_pkts; nb_xmit_pkts++) {
-+		required_headroom = txq->exthdr_len;
-+		tx_extend_len = txq->exthdr_len;
-+		addr_offset = 0;
-+
-+		tx_pkt = *tx_pkts++;
-+		if (txq->vlan_tci && txq->vlan_proto) {
-+			required_headroom += sizeof(struct rte_vlan_hdr);
-+			/* extend_hdr + ether_hdr + vlan_hdr */
-+			tx_extend_len = required_headroom + sizeof(struct rte_ether_hdr);
-+		}
-+
-+		if (rte_pktmbuf_headroom(tx_pkt) >= required_headroom) {
-+			can_push = 1;
-+			u = rte_pktmbuf_mtod_offset(tx_pkt, union nbl_tx_extend_head *,
-+						    -required_headroom);
-+		} else {
-+			can_push = 0;
-+			u = (union nbl_tx_extend_head *)(&tx_region[desc_index]);
-+		}
-+		nb_descs = !can_push + tx_pkt->nb_segs;
-+
-+		if (nb_descs > txq->vq_free_cnt) {
-+			/* need retry */
-+			nbl_tx_free_bufs(txq);
-+			if (nb_descs > txq->vq_free_cnt)
-+				goto exit;
-+		}
-+
-+		head_index = desc_index;
-+		head_desc = &tx_ring[desc_index];
-+		txe = &sw_ring[desc_index];
-+
-+		if (!extend_set)
-+			memcpy(u, &txq->default_hdr, txq->exthdr_len);
-+
-+		if (txq->offloads)
-+			header_len = txq->prep_tx_ehdr(u, tx_pkt);
-+
-+		head_flags = txq->avail_used_flags;
-+		head_desc->id = tx_pkt->tso_segsz;
-+
-+		/* add next tx desc to tx list */
-+		if (!can_push) {
-+			head_flags |= NBL_VRING_DESC_F_NEXT;
-+			txe->mbuf = NULL;
-+			/* padding */
-+			head_desc->addr = net_hdr_mem +
-+					RTE_PTR_DIFF(&tx_region[desc_index], tx_region);
-+			head_desc->len = tx_extend_len;
-+			txe->first_id = head_index;
-+			desc_index++;
-+			txq->vq_free_cnt--;
-+			if (desc_index >= txq->nb_desc) {
-+				desc_index = 0;
-+				txq->avail_used_flags ^= NBL_PACKED_DESC_F_AVAIL_USED;
-+			}
-+		}
-+
-+		do {
-+			tx_desc = &tx_ring[desc_index];
-+			txe = &sw_ring[desc_index];
-+			txe->mbuf = tx_pkt;
-+
-+			data_len = tx_pkt->data_len;
-+			dma_addr = rte_mbuf_data_iova(tx_pkt);
-+			tx_desc->addr = NBL_DMA_ADDERSS_FULL_TRANSLATE(txq, dma_addr) + addr_offset;
-+			tx_desc->len = data_len - addr_offset;
-+			addr_offset = 0;
-+
-+			if (desc_index == head_index) {
-+				tx_desc->addr -= txq->exthdr_len;
-+				tx_desc->len += txq->exthdr_len;
-+			} else {
-+				tx_desc->flags = txq->avail_used_flags | NBL_VRING_DESC_F_NEXT;
-+				head_flags |= NBL_VRING_DESC_F_NEXT;
-+			}
-+
-+			tx_pkt = tx_pkt->next;
-+			txe->first_id = head_index;
-+			desc_index++;
-+			txq->vq_free_cnt--;
-+			if (desc_index >= txq->nb_desc) {
-+				desc_index = 0;
-+				txq->avail_used_flags ^= NBL_PACKED_DESC_F_AVAIL_USED;
-+			}
-+		} while (tx_pkt);
-+		tx_desc->flags &= ~(u16)NBL_VRING_DESC_F_NEXT;
-+		head_desc->len += (header_len << NBL_TX_TOTAL_HEADERLEN_SHIFT);
-+		rte_io_wmb();
-+		head_desc->flags = head_flags;
-+		txq->next_to_use = desc_index;
-+	}
-+
-+exit:
-+	/* kick hw_notify_addr */
-+	rte_write32(txq->notify_qid, txq->notify);
-+	txq->txq_stats.tx_packets += nb_xmit_pkts;
-+	return nb_xmit_pkts;
-+}
-+
-+static u16
-+nbl_res_txrx_pf_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, u16 nb_pkts)
-+{
-+	return nbl_res_txrx_xmit_pkts(tx_queue, tx_pkts, nb_pkts, 0);
-+}
-+
-+static u16
-+nbl_res_txrx_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts, u16 nb_pkts)
-+{
-+	struct nbl_res_rx_ring *rxq;
-+	volatile struct nbl_packed_desc *rx_ring;
-+	volatile struct nbl_packed_desc *rx_desc;
-+	struct nbl_rx_entry *sw_ring;
-+	struct nbl_rx_entry *rx_entry;
-+	struct rte_mbuf *rx_mbuf, *last_mbuf;
-+	uint32_t num_sg = 0;
-+	uint16_t nb_recv_pkts = 0;
-+	uint16_t desc_index;
-+	uint16_t fill_num;
-+	volatile union nbl_rx_extend_head *rx_ext_hdr;
-+	int drop;
-+	struct rte_mbuf *new_pkts[NBL_RXQ_REARM_THRESH];
-+
-+	rxq = rx_queue;
-+	rx_ring = rxq->desc;
-+	sw_ring = rxq->rx_entry;
-+	desc_index = rxq->next_to_clean;
-+	while (nb_recv_pkts < nb_pkts) {
-+		rx_desc = &rx_ring[desc_index];
-+		rx_entry = &sw_ring[desc_index];
-+		drop = 0;
-+
-+		if (!desc_is_used(rx_desc, rxq->used_wrap_counter))
-+			break;
-+
-+		rte_io_rmb();
-+		if (!num_sg) {
-+			rx_mbuf = rx_entry->mbuf;
-+			last_mbuf = rx_mbuf;
-+
-+			rx_ext_hdr = (union nbl_rx_extend_head *)((char *)rx_mbuf->buf_addr +
-+								  RTE_PKTMBUF_HEADROOM);
-+			num_sg = rx_ext_hdr->common.num_buffers;
-+
-+			rx_mbuf->nb_segs = num_sg;
-+			rx_mbuf->data_len = rx_desc->len - rxq->exthdr_len;
-+			rx_mbuf->pkt_len = rx_desc->len - rxq->exthdr_len;
-+			rx_mbuf->port = rxq->port_id;
-+			rx_mbuf->data_off = RTE_PKTMBUF_HEADROOM + rxq->exthdr_len;
-+		} else {
-+			last_mbuf->next = rx_entry->mbuf;
-+			last_mbuf = rx_entry->mbuf;
-+
-+			last_mbuf->data_len = rx_desc->len;
-+			last_mbuf->pkt_len = rx_desc->len;
-+			last_mbuf->data_off = RTE_PKTMBUF_HEADROOM;
-+			rx_mbuf->pkt_len += rx_desc->len;
-+		}
-+
-+		rxq->vq_free_cnt++;
-+		desc_index++;
-+
-+		if (desc_index >= rxq->nb_desc) {
-+			desc_index = 0;
-+			rxq->used_wrap_counter ^= 1;
-+		}
-+
-+		if (--num_sg)
-+			continue;
-+		if (drop) {
-+			rte_pktmbuf_free(rx_mbuf);
-+			continue;
-+		}
-+		rx_pkts[nb_recv_pkts++] = rx_mbuf;
-+	}
-+
-+	/* BUG on dumplicate pkt free */
-+	if (unlikely(num_sg))
-+		rte_pktmbuf_free(rx_mbuf);
-+	/* clean memory */
-+	rxq->next_to_clean = desc_index;
-+	fill_num = rxq->vq_free_cnt;
-+	/* to be continue: rx free thresh */
-+	if (fill_num > NBL_RXQ_REARM_THRESH) {
-+		if (likely(!rte_pktmbuf_alloc_bulk(rxq->mempool, new_pkts, NBL_RXQ_REARM_THRESH)))
-+			nbl_fill_rx_ring(rxq, new_pkts, NBL_RXQ_REARM_THRESH);
-+	}
-+
-+	rxq->rxq_stats.rx_packets += nb_recv_pkts;
-+
-+	return nb_recv_pkts;
-+}
-+
-+static void nbl_res_get_pt_ops(void *priv, struct nbl_resource_pt_ops *pt_ops, bool offload)
-+{
-+	RTE_SET_USED(priv);
-+	RTE_SET_USED(offload);
-+	pt_ops->tx_pkt_burst = nbl_res_txrx_pf_xmit_pkts;
-+	pt_ops->rx_pkt_burst = nbl_res_txrx_recv_pkts;
-+}
-+
-+static int nbl_res_txrx_get_stats(void *priv, struct rte_eth_stats *rte_stats)
++static int
++nbl_res_txrx_reset_stats(void *priv)
 +{
 +	struct nbl_resource_mgt *res_mgt = (struct nbl_resource_mgt *)priv;
 +	struct rte_eth_dev *eth_dev = res_mgt->eth_dev;
@@ -703,314 +568,190 @@ index 27b549beda..361415cd21 100644
 +	struct nbl_res_tx_ring  *txq;
 +	struct nbl_txq_stats *txq_stats;
 +	uint32_t i;
-+	uint16_t idx;
 +
 +	/* Add software counters. */
 +	for (i = 0; i < eth_dev->data->nb_rx_queues; i++) {
 +		rxq = eth_dev->data->rx_queues[i];
-+		if (unlikely(rxq  == NULL))
-+			return -EINVAL;
++		if (unlikely(rxq == NULL))
++			continue;
 +
 +		rxq_stats = &rxq->rxq_stats;
-+		idx = rxq->queue_id;
-+
-+		rte_stats->q_ipackets[idx] += rxq_stats->rx_packets;
-+		rte_stats->q_ibytes[idx] += rxq_stats->rx_bytes;
-+
-+		rte_stats->ipackets += rxq_stats->rx_packets;
-+		rte_stats->ibytes += rxq_stats->rx_bytes;
-+		rte_stats->rx_nombuf += rxq_stats->rx_nombuf;
-+		rte_stats->ierrors += rxq_stats->rx_ierror;
++		memset(rxq_stats, 0, sizeof(struct nbl_rxq_stats));
 +	}
 +
 +	for (i = 0; i < eth_dev->data->nb_tx_queues; i++) {
 +		txq = eth_dev->data->tx_queues[i];
-+		if (unlikely(txq  == NULL))
-+			return -EINVAL;
++		if (unlikely(txq == NULL))
++			continue;
++
 +		txq_stats = &txq->txq_stats;
-+		idx = txq->queue_id;
-+
-+		rte_stats->q_opackets[idx] += txq_stats->tx_packets;
-+		rte_stats->q_obytes[idx] += txq_stats->tx_bytes;
-+
-+		rte_stats->opackets += txq_stats->tx_packets;
-+		rte_stats->obytes += txq_stats->tx_bytes;
-+		rte_stats->oerrors += txq_stats->tx_errors;
++		memset(txq_stats, 0, sizeof(struct nbl_txq_stats));
 +	}
 +
++	return 0;
++}
++
++/* store statistics names */
++struct nbl_txrx_xstats_name {
++	char name[RTE_ETH_XSTATS_NAME_SIZE];
++};
++
++static const struct nbl_txrx_xstats_name nbl_stats_strings[] = {
++	{"rx_multidescs_packets"},
++	{"rx_drop_noport_packets"},
++	{"rx_drop_proto_packets"},
++};
++
++static int nbl_res_txrx_get_xstats_cnt(__rte_unused void *priv, u16 *xstats_cnt)
++{
++	*xstats_cnt = ARRAY_SIZE(nbl_stats_strings);
++	return 0;
++}
++
++static int nbl_res_txrx_get_xstats(void *priv, struct rte_eth_xstat *xstats, u16 *xstats_cnt)
++{
++	struct nbl_resource_mgt *res_mgt = (struct nbl_resource_mgt *)priv;
++	struct nbl_txrx_mgt *txrx_mgt = NBL_RES_MGT_TO_TXRX_MGT(res_mgt);
++	struct nbl_res_rx_ring *rxq;
++	uint64_t rx_multi_descs = 0, rx_drop_noport = 0, rx_drop_proto = 0;
++	unsigned int i = 0;
++	u16 count = *xstats_cnt;
++
++	/* todo: get eth stats from emp */
++	for (i = 0; i < txrx_mgt->rx_ring_num; i++) {
++		rxq = NBL_RES_MGT_TO_RX_RING(res_mgt, i);
++
++		if (unlikely(rxq == NULL))
++			return -EINVAL;
++
++		rx_multi_descs += rxq->rxq_stats.rx_multi_descs;
++		rx_drop_noport += rxq->rxq_stats.rx_drop_noport;
++		rx_drop_proto += rxq->rxq_stats.rx_drop_proto;
++	}
++
++	xstats[count].value = rx_multi_descs;
++	xstats[count].id = count;
++	xstats[count + 1].value = rx_drop_noport;
++	xstats[count + 1].id = count + 1;
++	xstats[count + 2].value = rx_drop_proto;
++	xstats[count + 2].id = count + 2;
++
++	*xstats_cnt = count + 3;
++
++	return 0;
++}
++
++static int nbl_res_txrx_get_xstats_names(__rte_unused void *priv,
++					 struct rte_eth_xstat_name *xstats_names,
++					 u16 *xstats_cnt)
++{
++	unsigned int i = 0;
++	u16 count = *xstats_cnt;
++
++	for (i = 0; i < ARRAY_SIZE(nbl_stats_strings); i++) {
++		strlcpy(xstats_names[count].name, nbl_stats_strings[i].name,
++			sizeof(nbl_stats_strings[count].name));
++		count++;
++	}
++	*xstats_cnt = count;
 +	return 0;
 +}
 +
  /* NBL_TXRX_SET_OPS(ops_name, func)
   *
   * Use X Macros to reduce setup and remove codes.
-@@ -415,6 +738,8 @@ do {										\
- 	NBL_TXRX_SET_OPS(stop_rx_ring, nbl_res_txrx_stop_rx_ring);		\
- 	NBL_TXRX_SET_OPS(release_rx_ring, nbl_res_txrx_release_rx_ring);	\
+@@ -740,6 +846,10 @@ do {										\
  	NBL_TXRX_SET_OPS(update_rx_ring, nbl_res_txrx_update_rx_ring);		\
-+	NBL_TXRX_SET_OPS(get_resource_pt_ops, nbl_res_get_pt_ops);		\
-+	NBL_TXRX_SET_OPS(get_stats, nbl_res_txrx_get_stats);			\
+ 	NBL_TXRX_SET_OPS(get_resource_pt_ops, nbl_res_get_pt_ops);		\
+ 	NBL_TXRX_SET_OPS(get_stats, nbl_res_txrx_get_stats);			\
++	NBL_TXRX_SET_OPS(reset_stats, nbl_res_txrx_reset_stats);		\
++	NBL_TXRX_SET_OPS(get_txrx_xstats_cnt, nbl_res_txrx_get_xstats_cnt);	\
++	NBL_TXRX_SET_OPS(get_txrx_xstats_names, nbl_res_txrx_get_xstats_names);	\
++	NBL_TXRX_SET_OPS(get_txrx_xstats, nbl_res_txrx_get_xstats);		\
  } while (0)
  
  /* Structure starts here, adding an op should not modify anything below */
-diff --git a/drivers/net/nbl/nbl_hw/nbl_txrx.h b/drivers/net/nbl/nbl_hw/nbl_txrx.h
-index 5cf6e83c3f..d0d4b6128d 100644
---- a/drivers/net/nbl/nbl_hw/nbl_txrx.h
-+++ b/drivers/net/nbl/nbl_hw/nbl_txrx.h
-@@ -18,10 +18,19 @@
- #define NBL_PACKED_DESC_F_AVAIL_USED		(NBL_PACKED_DESC_F_AVAIL_BIT | \
- 						 NBL_PACKED_DESC_F_USED_BIT)
- 
--#define NBL_TX_RS_THRESH			(32)
- #define NBL_TX_HEADER_LEN			(32)
- #define NBL_VQ_HDR_NAME_MAXSIZE			(32)
- 
-+#define NBL_VRING_DESC_F_NEXT			RTE_BIT64(0)
-+#define NBL_VRING_DESC_F_WRITE			RTE_BIT64(1)
-+#define NBL_FREE_DESC_THRES			16
-+#define NBL_USED_DESC_THRES			32
-+#define NBL_TX_TOTAL_HEADERLEN_SHIFT		24
-+#define NBL_TX_FREE_THRESH			32
-+#define NBL_TX_RS_THRESH			32
-+
-+#define NBL_RXQ_REARM_THRESH			32
-+
- #define NBL_DESC_PER_LOOP_VEC_MAX		(8)
- #define NBL_BUF_LEN_16K				(16384)
- #define NBL_BUF_LEN_8K				(8192)
-@@ -114,6 +123,14 @@ union nbl_rx_extend_head {
- 		u32 num_buffers :8;
- 		u32 hash_value;
- 	} leonis;
-+
-+	struct nbl_rx_ehdr_common {
-+		u32 dw0;
-+		u32 dw1;
-+		u32 dw2:24;
-+		u32 num_buffers:8;
-+		u32 dw3;
-+	} common;
- };
- 
- #endif
-diff --git a/drivers/net/nbl/nbl_hw/nbl_txrx_ops.h b/drivers/net/nbl/nbl_hw/nbl_txrx_ops.h
-new file mode 100644
-index 0000000000..2ab4b09683
---- /dev/null
-+++ b/drivers/net/nbl/nbl_hw/nbl_txrx_ops.h
-@@ -0,0 +1,91 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
-+ */
-+
-+#ifndef _NBL_TXRX_OPS_H_
-+#define _NBL_TXRX_OPS_H_
-+
-+#define NBL_TX_MAX_FREE_BUF_SZ		64
-+#define NBL_RXQ_REARM_THRESH		32
-+
-+static __rte_always_inline struct rte_mbuf *nbl_pktmbuf_prefree_seg(struct rte_mbuf *m)
-+{
-+	if (likely(m))
-+		return rte_pktmbuf_prefree_seg(m);
-+
-+	return NULL;
-+}
-+
-+static __rte_always_inline int
-+desc_is_used(volatile struct nbl_packed_desc *desc, bool wrap_counter)
-+{
-+	uint16_t used, avail, flags;
-+
-+	flags = desc->flags;
-+	used = !!(flags & NBL_PACKED_DESC_F_USED_BIT);
-+	avail = !!(flags & NBL_PACKED_DESC_F_AVAIL_BIT);
-+
-+	return avail == used && used == wrap_counter;
-+}
-+
-+static __rte_always_inline int
-+nbl_tx_free_bufs(struct nbl_res_tx_ring *txq)
-+{
-+	struct rte_mbuf *m, *free[NBL_TX_MAX_FREE_BUF_SZ];
-+	struct nbl_tx_entry *txep;
-+	uint32_t n;
-+	uint32_t i;
-+	uint32_t next_to_clean;
-+	int nb_free = 0;
-+
-+	next_to_clean = txq->tx_entry[txq->next_to_clean].first_id;
-+	/* check DD bits on threshold descriptor */
-+	if (!desc_is_used(&txq->desc[next_to_clean], txq->used_wrap_counter))
-+		return 0;
-+
-+	n = 32;
-+
-+	 /* first buffer to free from S/W ring is at index
-+	  * tx_next_dd - (tx_rs_thresh-1)
-+	  */
-+	/* consider headroom */
-+	txep = &txq->tx_entry[txq->next_to_clean - (n - 1)];
-+	m = nbl_pktmbuf_prefree_seg(txep[0].mbuf);
-+	if (likely(m)) {
-+		free[0] = m;
-+		nb_free = 1;
-+		for (i = 1; i < n; i++) {
-+			m = nbl_pktmbuf_prefree_seg(txep[i].mbuf);
-+			if (likely(m)) {
-+				if (likely(m->pool == free[0]->pool)) {
-+					free[nb_free++] = m;
-+				} else {
-+					rte_mempool_put_bulk(free[0]->pool,
-+							     (void *)free,
-+							     nb_free);
-+					free[0] = m;
-+					nb_free = 1;
-+				}
-+			}
-+		}
-+		rte_mempool_put_bulk(free[0]->pool, (void **)free, nb_free);
-+	} else {
-+		for (i = 1; i < n; i++) {
-+			m = nbl_pktmbuf_prefree_seg(txep[i].mbuf);
-+			if (m)
-+				rte_mempool_put(m->pool, m);
-+		}
-+	}
-+
-+	/* buffers were freed, update counters */
-+	txq->vq_free_cnt = (uint16_t)(txq->vq_free_cnt + NBL_TX_RS_THRESH);
-+	txq->next_to_clean = (uint16_t)(txq->next_to_clean + NBL_TX_RS_THRESH);
-+	if (txq->next_to_clean >= txq->nb_desc) {
-+		txq->next_to_clean = NBL_TX_RS_THRESH - 1;
-+		txq->used_wrap_counter ^= 1;
-+	}
-+
-+	return 32;
-+}
-+
-+#endif
 diff --git a/drivers/net/nbl/nbl_include/nbl_def_channel.h b/drivers/net/nbl/nbl_include/nbl_def_channel.h
-index f20cc1ab7c..ba960ebdbf 100644
+index ba960ebdbf..30cb14b746 100644
 --- a/drivers/net/nbl/nbl_include/nbl_def_channel.h
 +++ b/drivers/net/nbl/nbl_include/nbl_def_channel.h
-@@ -370,6 +370,10 @@ struct nbl_chan_param_remove_cqs {
- 	u16 vsi_id;
+@@ -399,6 +399,11 @@ enum nbl_chan_state {
+ 	NBL_CHAN_STATE_MAX
  };
  
-+struct nbl_chan_param_get_link_state {
-+	u8 eth_id;
++struct nbl_chan_param_get_private_stat_data {
++	u32 eth_id;
++	u32 data_len;
 +};
 +
- struct nbl_chan_send_info {
- 	uint16_t dstid;
- 	uint16_t msg_type;
-diff --git a/drivers/net/nbl/nbl_include/nbl_def_common.h b/drivers/net/nbl/nbl_include/nbl_def_common.h
-index 722a372548..2d8b1be036 100644
---- a/drivers/net/nbl/nbl_include/nbl_def_common.h
-+++ b/drivers/net/nbl/nbl_include/nbl_def_common.h
-@@ -23,6 +23,7 @@
- 
- #define NBL_TWO_ETHERNET_MAX_MAC_NUM		(512)
- #define NBL_FOUR_ETHERNET_MAX_MAC_NUM		(1024)
-+#define NBL_EPRO_RSS_SK_SIZE			(40)
- 
- #define NBL_DEV_USER_TYPE	('n')
- #define NBL_DEV_USER_DATA_LEN	(2044)
+ struct nbl_channel_ops {
+ 	int (*send_msg)(void *priv, struct nbl_chan_send_info *chan_send);
+ 	int (*send_ack)(void *priv, struct nbl_chan_ack_info *chan_ack);
 diff --git a/drivers/net/nbl/nbl_include/nbl_def_dispatch.h b/drivers/net/nbl/nbl_include/nbl_def_dispatch.h
-index e38c5a84aa..20510f7fa2 100644
+index 20510f7fa2..92dbc428ef 100644
 --- a/drivers/net/nbl/nbl_include/nbl_def_dispatch.h
 +++ b/drivers/net/nbl/nbl_include/nbl_def_dispatch.h
-@@ -19,6 +19,7 @@ enum {
- };
- 
- struct nbl_dispatch_ops {
-+	void (*get_resource_pt_ops)(void *priv, struct nbl_resource_pt_ops *pt_ops, bool offload);
- 	int (*register_net)(void *priv,
- 			    struct nbl_register_net_param *register_param,
- 			    struct nbl_register_net_result *register_result);
-@@ -67,6 +68,8 @@ struct nbl_dispatch_ops {
- 	u16 (*recv_pkts)(void *priv, void *rx_queue, struct rte_mbuf **rx_pkts, u16 nb_pkts);
- 	u16 (*get_vsi_global_qid)(void *priv, u16 vsi_id, u16 local_qid);
+@@ -70,6 +70,15 @@ struct nbl_dispatch_ops {
  	void (*get_board_info)(void *priv, struct nbl_board_port_info *board_info);
-+	void (*get_link_state)(void *priv, u8 eth_id, struct nbl_eth_link_info *eth_link_info);
-+	int (*get_stats)(void *priv, struct rte_eth_stats *rte_stats);
+ 	void (*get_link_state)(void *priv, u8 eth_id, struct nbl_eth_link_info *eth_link_info);
+ 	int (*get_stats)(void *priv, struct rte_eth_stats *rte_stats);
++	int (*reset_stats)(void *priv);
++	int (*get_txrx_xstats_cnt)(void *priv, u16 *xstats_cnt);
++	int (*get_txrx_xstats)(void *priv, struct rte_eth_xstat *xstats, u16 *xstats_cnt);
++	int (*get_txrx_xstats_names)(void *priv, struct rte_eth_xstat_name *xstats_names,
++				     u16 *xstats_cnt);
++	int (*get_hw_xstats_cnt)(void *priv, u16 *xstats_cnt);
++	int (*get_hw_xstats_names)(void *priv, struct rte_eth_xstat_name *xstats_names,
++				   u16 *xstats_cnt);
++	void (*get_private_stat_data)(void *priv, u32 eth_id, u64 *data, u32 data_len);
  
  	void (*dummy_func)(void *priv);
  };
 diff --git a/drivers/net/nbl/nbl_include/nbl_def_resource.h b/drivers/net/nbl/nbl_include/nbl_def_resource.h
-index 5fec287581..da683cd957 100644
+index da683cd957..f9864e261b 100644
 --- a/drivers/net/nbl/nbl_include/nbl_def_resource.h
 +++ b/drivers/net/nbl/nbl_include/nbl_def_resource.h
-@@ -11,7 +11,13 @@
- #define NBL_RES_OPS_TBL_TO_OPS(res_ops_tbl)		((res_ops_tbl)->ops)
- #define NBL_RES_OPS_TBL_TO_PRIV(res_ops_tbl)		((res_ops_tbl)->priv)
- 
-+struct nbl_resource_pt_ops {
-+	eth_rx_burst_t rx_pkt_burst;
-+	eth_tx_burst_t tx_pkt_burst;
-+};
-+
- struct nbl_resource_ops {
-+	void (*get_resource_pt_ops)(void *priv, struct nbl_resource_pt_ops *pt_ops, bool offload);
- 	int (*register_net)(void *priv,
- 			    struct nbl_register_net_param *register_param,
- 			    struct nbl_register_net_result *register_result);
-@@ -61,6 +67,7 @@ struct nbl_resource_ops {
- 	int (*cfg_dsch)(void *priv, u16 vsi_id, bool vld);
- 	int (*setup_cqs)(void *priv, u16 vsi_id, u16 real_qps, bool rss_indir_set);
- 	void (*remove_cqs)(void *priv, u16 vsi_id);
-+	void (*get_link_state)(void *priv, u8 eth_id, struct nbl_eth_link_info *eth_link_info);
- };
- 
- struct nbl_resource_ops_tbl {
+@@ -42,6 +42,14 @@ struct nbl_resource_ops {
+ 	void (*release_rx_ring)(void *priv, u16 queue_idx);
+ 	int (*get_stats)(void *priv, struct rte_eth_stats *rte_stats);
+ 	int (*reset_stats)(void *priv);
++	int (*get_txrx_xstats_cnt)(void *priv, u16 *xstats_cnt);
++	int (*get_txrx_xstats)(void *priv, struct rte_eth_xstat *xstats, u16 *xstats_cnt);
++	int (*get_txrx_xstats_names)(void *priv, struct rte_eth_xstat_name *xstats_names,
++				     u16 *xstats_cnt);
++	int (*get_hw_xstats_cnt)(void *priv, u16 *xstats_cnt);
++	int (*get_hw_xstats_names)(void *priv, struct rte_eth_xstat_name *xstats_names,
++				   u16 *xstats_cnt);
++	void (*get_private_stat_data)(void *priv, u32 eth_id, u64 *data);
+ 	void (*update_rx_ring)(void *priv, u16 queue_idx);
+ 	u16 (*get_tx_ehdr_len)(void *priv);
+ 	int (*alloc_txrx_queues)(void *priv, u16 vsi_id, u16 queue_num);
+@@ -54,10 +62,6 @@ struct nbl_resource_ops {
+ 	void (*cfg_txrx_vlan)(void *priv, u16 vlan_tci, u16 vlan_proto);
+ 	int (*txrx_burst_mode_get)(void *priv, struct rte_eth_dev *dev,
+ 				   struct rte_eth_burst_mode *mode, bool is_tx);
+-	int (*get_txrx_xstats_cnt)(void *priv, u16 *xstats_cnt);
+-	int (*get_txrx_xstats)(void *priv, struct rte_eth_xstat *xstats, u16 *xstats_cnt);
+-	int (*get_txrx_xstats_names)(void *priv, struct rte_eth_xstat_name *xstats_names,
+-				     u16 *xstats_cnt);
+ 	int (*add_macvlan)(void *priv, u8 *mac, u16 vlan_id, u16 vsi_id);
+ 	void (*del_macvlan)(void *priv, u8 *mac, u16 vlan_id, u16 vsi_id);
+ 	int (*add_multi_rule)(void *priv, u16 vsi_id);
 diff --git a/drivers/net/nbl/nbl_include/nbl_include.h b/drivers/net/nbl/nbl_include/nbl_include.h
-index 7f751ea9ce..06aaad09d8 100644
+index 06aaad09d8..3faf4b969f 100644
 --- a/drivers/net/nbl/nbl_include/nbl_include.h
 +++ b/drivers/net/nbl/nbl_include/nbl_include.h
-@@ -77,6 +77,13 @@ enum nbl_product_type {
- 	NBL_PRODUCT_MAX,
- };
+@@ -58,6 +58,10 @@ typedef int32_t s32;
+ typedef int16_t s16;
+ typedef int8_t s8;
  
-+enum nbl_fw_port_speed {
-+	NBL_FW_PORT_SPEED_10G,
-+	NBL_FW_PORT_SPEED_25G,
-+	NBL_FW_PORT_SPEED_50G,
-+	NBL_FW_PORT_SPEED_100G,
-+};
++#ifndef ARRAY_SIZE
++#define ARRAY_SIZE(arr) RTE_DIM(arr)
++#endif
 +
- struct nbl_func_caps {
- 	enum nbl_product_type product_type;
- 	u32 is_vf:1;
-@@ -174,4 +181,28 @@ struct nbl_register_net_result {
- 	bool trusted;
- };
- 
-+struct nbl_eth_link_info {
-+	u8 link_status;
-+	u32 link_speed;
-+};
-+
-+struct nbl_rxq_stats {
-+	uint64_t rx_packets;
-+	uint64_t rx_bytes;
-+	uint64_t rx_nombuf;
-+	uint64_t rx_multi_descs;
-+
-+	uint64_t rx_ierror;
-+	uint64_t rx_drop_noport;
-+	uint64_t rx_drop_proto;
-+};
-+
-+struct nbl_txq_stats {
-+	uint64_t tx_packets;
-+	uint64_t tx_bytes;
-+	uint64_t tx_errors;
-+	uint64_t tx_descs;
-+	uint64_t tx_tso_packets;
-+};
-+
- #endif
+ /* Used for macros to pass checkpatch */
+ #define NBL_NAME(x)				x
+ #define BIT(a)					(1UL << (a))
 -- 
 2.43.0
 
