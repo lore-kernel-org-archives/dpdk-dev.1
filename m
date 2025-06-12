@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71FDFC71135
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 00:30:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96490C71135
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 00:41:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 840CE4021F;
-	Thu, 12 Jun 2025 02:30:02 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 90D144021F;
+	Thu, 12 Jun 2025 02:41:09 +0200 (CEST)
 Received: from fout-b7-smtp.messagingengine.com
  (fout-b7-smtp.messagingengine.com [202.12.124.150])
- by mails.dpdk.org (Postfix) with ESMTP id DE33D40156
- for <dev@dpdk.org>; Thu, 12 Jun 2025 02:30:01 +0200 (CEST)
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal
- [10.202.2.49])
- by mailfout.stl.internal (Postfix) with ESMTP id 4881411401AA;
- Wed, 11 Jun 2025 20:30:01 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-09.internal (MEProxy); Wed, 11 Jun 2025 20:30:01 -0400
+ by mails.dpdk.org (Postfix) with ESMTP id 84D0540156
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 02:41:08 +0200 (CEST)
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal
+ [10.202.2.43])
+ by mailfout.stl.internal (Postfix) with ESMTP id C365F11401E7;
+ Wed, 11 Jun 2025 20:41:07 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-03.internal (MEProxy); Wed, 11 Jun 2025 20:41:07 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1749688201;
- x=1749774601; bh=6+OQp1eWkELT/imwHiQn9BI/gQMMZqtCRshkbimknf8=; b=
- Euxn8Sz/vaRwNPkbmfPwIqvOxlDaoaGFM0X4bplQJjRsHoGC66lomuI959sdNw0c
- sJ56ZDG5tL0+Z4IK2VxKtUdargOFTsD8E7EEpKG1FbkNRbHgyJWVcSgcTutI74CP
- ijZq74nFjId64SBMRN2B3kbv0VfQBqbTNbi0OlbFACKPzzgaWBqSIqSAJXH7o6pP
- 1cowQjQLPvGdDceSyfzV7P2YVurVof4cWBiyajJos/n8MmdRhK1tnCYjREeCMqB6
- WRHfDzUWGh/4vAIf/dDLV7i74WMc5cgiNJn5Bs2EuU6OoPl3mhQ12v24DqDLoay5
- c8maJCIIxMSX6QBDkuIIXg==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1749688867;
+ x=1749775267; bh=Fi7LjgOjxhNO/Wsbhcycc7Dsq48JMpKX7iYzoG2JPeI=; b=
+ epi06gsjQxR6Y83xzYOIBnJFBZebTXSjfLLqztDpaw24329Ub1+l9ySqiBPRZ0Qk
+ IiaR212odWxT7btzREzTJc78S56NaVHCoedpE4euyBuvsoyJXu8/HqvG/piIL9OZ
+ oV9g+8B7GvlJ6uCW9IpVMnGIOOn31oDg7pP1c+iWX+T0DkFTBv9SAa6Vr3QFPlGS
+ W0ymeMVmzJ0KUu66j3ZSO6QbtLdgcEyyBX43NuqWUn6Me68wb4yy17tT1gKdUQlq
+ 2GFyyzfXih31ampXOrIJixeDb7SyTrmi9fz9QYfc3SyNMzemtzHLBUcV3vot418Q
+ 13QJIbmwYOTjXCyEBp6iJQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749688201; x=
- 1749774601; bh=6+OQp1eWkELT/imwHiQn9BI/gQMMZqtCRshkbimknf8=; b=P
- O5TDL9Xtm+eMz9BagGsCWF/HjrTf0ASZVI1xAH8+dd9H/TxI3FX3akOw4ocwojwJ
- U8jfdktStFbJb7ALB5VwWOPcBA26lNn8cbmfhVoiBWf1tm5IHgoo72BHHlby3Nu8
- aHvKeh7y4E3EodSxBp/Nxb1tluKg5JjN/jtcNG6BUH3HK3ijbUGQFCh+wtXejrZi
- fx9g0Ovzho3//fVhyp8aqbN+F1AZsw75f2cAdhhv5Q0/z/xY1dK3I15F5/HksG14
- BL67xtPWkRQfr9ycE+tPL16l8Hwech8cYr4aBltF/UGQFxVCXmsq0yGOQVxmrtw2
- vwxnlJ78jr8iHP0YhMpEQ==
-X-ME-Sender: <xms:iB9KaPL0XbE1QPopm6HhCqnaweQY7q8_kG291G1qFzAZxJn3_1Lxqw>
- <xme:iB9KaDLTIOJP5ZlB6SbnfeQ_5c3W3tT1yp09y8sLVkD-8okgNYATVTyBKL14Skghz
- tu3ZS6J4YCO8_VFtw>
-X-ME-Received: <xmr:iB9KaHswMcs5GSBkFfcxHO4OaJh8VhEMcjUlQWXUi3MmJUSiRNpnxnfFrIn6-Eabaw_Ecs79faIPK20Wyn9LU7_7HQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddufeeifecutefuodetggdotefrod
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749688867; x=
+ 1749775267; bh=Fi7LjgOjxhNO/Wsbhcycc7Dsq48JMpKX7iYzoG2JPeI=; b=l
+ +goPFYw10tgrQSawjZ8gJNwwKrA1aPlxxLY3TrEhQORl8ExiHMyxGGVSqBkxdyVT
+ 13/RPOZGUYnijaD5j6RzILeTO98dOF18gwtgnSuEsr6ST3wxnb86bn0jwCM/E9de
+ tuooUl7jwzHTiW+0ZtpGy+vGJxzTA85P3t/HJb1eh5C0caL1fSt6IN1z6cye92Yz
+ llzqxuNdZ3lwtkA0XsZ88KhPxeO4199O8pjzO/aJtWIrvdnlWwxO1LWnko6xb0s0
+ qNo0FskW1UspQk7kvW1h2BFp4sfa5MdHFnAg8Ct4AcE/v+fcZYgx0vvXaQniJFfs
+ rVzCdSNiHgIDnA4FIpm9w==
+X-ME-Sender: <xms:IyJKaCt58YMUj49wFGTOWh-jiqAj673e-or1I1bknC61V8Bl2davTw>
+ <xme:IyJKaHdVR2bObkGTsJTl-yWyG6fQlFbTPsoiY2wMlKUSiJuVBohyjrDCaV404X7rR
+ bb62zjwjT8eXjdqqQ>
+X-ME-Received: <xmr:IyJKaNylPJYR1Wa0L4SIHGkxZK8OiCgw8AUrsqNNrUnHfx-fyui0A3iYo8y20WVPiE1ld6-QCofAOjaytQ8bgYN0bw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddufeeihecutefuodetggdotefrod
  ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
  uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
  hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdej
@@ -53,30 +53,28 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddufeeifecutefuodetgg
  grlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevfffgtdeg
  keeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgeptdenuc
  frrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdp
- nhgspghrtghpthhtohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhhirg
- ifvghnfihusehtrhhushhtnhgvthhitgdrtghomhdprhgtphhtthhopeguvghvseguphgu
- khdrohhrghdprhgtphhtthhopeiirghihihufigrnhhgsehtrhhushhtnhgvthhitgdrtg
- homhdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkphhluhhmsggvrhdrohhr
- gh
-X-ME-Proxy: <xmx:iB9KaIaSx1U-wPAbNZM75_ukupT1FpQWKLRgx7CB5SNB0pvjQfnQZA>
- <xmx:iB9KaGaLaVethkfmp6iF38u7H5HIq9oo7ae7eWipxnnmBJHqBjqlcg>
- <xmx:iB9KaMCaHIIIKOTOYtRnyO0qA-EbS9t3lGdErXBZLOaM-yF6scSlow>
- <xmx:iB9KaEb107QsVCzHJub2nKEu3QiJ0GOUd0TLj_DrD3GFMkElhrGQew>
- <xmx:iR9KaAj-xI15oSYGN0bXJR9HQIfghfZK4NhmCnoTPG3_xBc6XMm3RCW9>
+ nhgspghrtghpthhtohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnug
+ hrvghmuhgvsehlihhnuhigrdhmihgtrhhoshhofhhtrdgtohhmpdhrtghpthhtohepughm
+ ihhtrhihrdhkohiilhhiuhhksehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhhorhgvth
+ iilhgrsehlihhnuhigrdhmihgtrhhoshhofhhtrdgtohhmpdhrtghpthhtohepuggvvhes
+ ughpughkrdhorhhg
+X-ME-Proxy: <xmx:IyJKaNOyiWiNY4tu0bLgruP6ExqlsQuchiWmZYHM4ycy0sL_ldK_Iw>
+ <xmx:IyJKaC96EkrIE44wNqF-SEn97NCPhnHSHYDFws0j4Rq7LhKV0sxksg>
+ <xmx:IyJKaFXc3gljG0JFxnAo9L2MC0qt5p2ltZUaiafmiZ2GwgGJhm0FTA>
+ <xmx:IyJKaLe_0bT7KkH4UmaGk1L0Dx-Brm4AdVT9GnVUkQ1dfziTUPjGkQ>
+ <xmx:IyJKaC0CHFw9pqoqMi_ZJ0uERciXyfgomWKlIEadsbefwBZlSOxLrj02>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 11 Jun 2025 20:29:59 -0400 (EDT)
+ 11 Jun 2025 20:41:06 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Jiawen Wu <jiawenwu@trustnetic.com>
-Cc: dev@dpdk.org, zaiyuwang@trustnetic.com,
- Stephen Hemminger <stephen@networkplumber.org>
-Subject: Re: [PATCH 02/12] net/txgbe: refactor FDIR filter to improve
- functionality
-Date: Thu, 12 Jun 2025 02:29:58 +0200
-Message-ID: <11711540.2WqB4rESCP@thomas>
-In-Reply-To: <2430F12A7223B66B+20250606080117.183198-3-jiawenwu@trustnetic.com>
-References: <20250606080117.183198-1-jiawenwu@trustnetic.com>
- <2430F12A7223B66B+20250606080117.183198-3-jiawenwu@trustnetic.com>
+To: Andre Muezerie <andremue@linux.microsoft.com>
+Cc: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>, dev@dpdk.org
+Subject: Re: [PATCH] eal: add asprintf() function for Windows
+Date: Thu, 12 Jun 2025 02:41:05 +0200
+Message-ID: <7942373.1B3tZ46Xf9@thomas>
+In-Reply-To: <1746495789-14101-1-git-send-email-andremue@linux.microsoft.com>
+References: <1746495789-14101-1-git-send-email-andremue@linux.microsoft.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -93,23 +91,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-06/06/2025 10:01, Jiawen Wu:
-> There were some defects in the original configuration for flow director
-> filter. Now make the following improvements:
+06/05/2025 03:43, Andre Muezerie:
+> The asprintf function is not part of the C standard library but is a
+> GNU extension commonly available in Unix-like systems. It dynamically
+> allocates memory to store the formatted output string, similar to
+> sprintf, but avoids buffer overflow issues by automatically sizing
+> the buffer.
 > 
-> 1) Fix incorrect parsing to ntuple filter when set the pattern likes:
->    flow create ... ipv4 / udp dst is ... / raw ... / end actions ... / end
-> 2) Fix flex offset base to set item RAW relative = 1, and convert RAW
->    pattern string to hex bytes to match the hardware identification.
-> 3) Fix to create FDIR rules for VXLAN/GRE/NVGRE/GENEVE packets, they will
->    match the rules in the inner layers.
-> 4) Support IPv6 perfect mode.
-> 5) Add packet type mask to match more types of packets if the pattern is
->    default.
+> Instead of rewriting it or coming up with some other replacement, this
+> patch makes use of the implementation provided by Neved4.
 
-That's a lot of various changes for a single patch.
-Please could you split it?
-
-
+Why not using eal_asprintf()?
 
 
