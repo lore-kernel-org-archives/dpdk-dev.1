@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A648BC71135
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 00:14:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71FDFC71135
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 00:30:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BD4EB40A84;
-	Thu, 12 Jun 2025 02:14:16 +0200 (CEST)
-Received: from fhigh-b5-smtp.messagingengine.com
- (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
- by mails.dpdk.org (Postfix) with ESMTP id C618F40A75
- for <dev@dpdk.org>; Thu, 12 Jun 2025 02:14:14 +0200 (CEST)
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal
- [10.202.2.42])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 1E2D02540189;
- Wed, 11 Jun 2025 20:14:14 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-02.internal (MEProxy); Wed, 11 Jun 2025 20:14:14 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 840CE4021F;
+	Thu, 12 Jun 2025 02:30:02 +0200 (CEST)
+Received: from fout-b7-smtp.messagingengine.com
+ (fout-b7-smtp.messagingengine.com [202.12.124.150])
+ by mails.dpdk.org (Postfix) with ESMTP id DE33D40156
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 02:30:01 +0200 (CEST)
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal
+ [10.202.2.49])
+ by mailfout.stl.internal (Postfix) with ESMTP id 4881411401AA;
+ Wed, 11 Jun 2025 20:30:01 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-09.internal (MEProxy); Wed, 11 Jun 2025 20:30:01 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1749687253;
- x=1749773653; bh=22Q4l20ungCZ+qCv3Pi2JCbM2DkKELkW6gmpqC9RQHE=; b=
- dRURF39u0g33bc/upIU2mJKeMFCgPB/+j6u20tcaI3KXc+L5USdZWQoWaZGWSTut
- a0aj/AJ0UTzmwM/6IcjrrX3r/NgDUN2rqSTKNXHkfLNVXmfjS41cWtmrTxApszbf
- IaSYOM344fnhqCSqjDoXb/FCcL3r9m2yfLo9uOUaCd708FGFae6NOavnZfzE7zbF
- t9PllYgEIHWlaR+xCq52WarS9GBf9U+5j9VnPMUDTUerAk8KzxXEZJXcFJlTYv1a
- Du1ltw3DGat4jFnIJ7C7MsBgYPwBeoxl55SyaH28wLDpcui/c39//3o0XuEJBX4t
- vayIHo3FX2LGpYnrXLeqgg==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1749688201;
+ x=1749774601; bh=6+OQp1eWkELT/imwHiQn9BI/gQMMZqtCRshkbimknf8=; b=
+ Euxn8Sz/vaRwNPkbmfPwIqvOxlDaoaGFM0X4bplQJjRsHoGC66lomuI959sdNw0c
+ sJ56ZDG5tL0+Z4IK2VxKtUdargOFTsD8E7EEpKG1FbkNRbHgyJWVcSgcTutI74CP
+ ijZq74nFjId64SBMRN2B3kbv0VfQBqbTNbi0OlbFACKPzzgaWBqSIqSAJXH7o6pP
+ 1cowQjQLPvGdDceSyfzV7P2YVurVof4cWBiyajJos/n8MmdRhK1tnCYjREeCMqB6
+ WRHfDzUWGh/4vAIf/dDLV7i74WMc5cgiNJn5Bs2EuU6OoPl3mhQ12v24DqDLoay5
+ c8maJCIIxMSX6QBDkuIIXg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749687253; x=
- 1749773653; bh=22Q4l20ungCZ+qCv3Pi2JCbM2DkKELkW6gmpqC9RQHE=; b=e
- ZllD+Q+4R+jSqAgDT3Dnv0G9N/772poszkVP0FX6qnIpf6j/sHCAsQK6wGG7xaV9
- rqOU9Dqt+Zc5Vw8lbgD0dWQ1aa68ET+ifPxcdwX9E1RvAhOCP7nQXKwGXFqtcEio
- JHoLvTliZGYXxrtgZfdUCVnLBuuq/DqSWsH9p39zTsI2qYwfzsw2pP9Tcq8CioCr
- d0dLCsZuR+XQ/MJh3HmJYMtDDdlqfQRGYPPKEQ6nfBa1CjD2ArA8pqvUDwt7HCdp
- fCgzd64/983dxp7QOZ5GBi9H1O6kxTxYyRUJ7g0dVcSMpjfTzc78wbdJDQzIdqWW
- SAcRhF76TVOIc/rNFy67g==
-X-ME-Sender: <xms:1RtKaJs_opDgztAOkdoaX0xy_MWwdRSixd-jWoGtp99T8N3gSzwoYA>
- <xme:1RtKaCdzFK8bB5sBYxsUnQBS0Qg7PKIBnyEmfqQnd1gKH6BNEGp4lHBrGpWaDZMSF
- yglaAB4BI28vzRPaQ>
-X-ME-Received: <xmr:1RtKaMxpftxexm6gqG2r3UdOS0F6DeGkZnzrLmWpRnwN9TKv4vzDX1G6OLCUbBg075haDdhu2qhJSyGiWXOcFiDDtg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddufeeitdcutefuodetggdotefrod
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749688201; x=
+ 1749774601; bh=6+OQp1eWkELT/imwHiQn9BI/gQMMZqtCRshkbimknf8=; b=P
+ O5TDL9Xtm+eMz9BagGsCWF/HjrTf0ASZVI1xAH8+dd9H/TxI3FX3akOw4ocwojwJ
+ U8jfdktStFbJb7ALB5VwWOPcBA26lNn8cbmfhVoiBWf1tm5IHgoo72BHHlby3Nu8
+ aHvKeh7y4E3EodSxBp/Nxb1tluKg5JjN/jtcNG6BUH3HK3ijbUGQFCh+wtXejrZi
+ fx9g0Ovzho3//fVhyp8aqbN+F1AZsw75f2cAdhhv5Q0/z/xY1dK3I15F5/HksG14
+ BL67xtPWkRQfr9ycE+tPL16l8Hwech8cYr4aBltF/UGQFxVCXmsq0yGOQVxmrtw2
+ vwxnlJ78jr8iHP0YhMpEQ==
+X-ME-Sender: <xms:iB9KaPL0XbE1QPopm6HhCqnaweQY7q8_kG291G1qFzAZxJn3_1Lxqw>
+ <xme:iB9KaDLTIOJP5ZlB6SbnfeQ_5c3W3tT1yp09y8sLVkD-8okgNYATVTyBKL14Skghz
+ tu3ZS6J4YCO8_VFtw>
+X-ME-Received: <xmr:iB9KaHswMcs5GSBkFfcxHO4OaJh8VhEMcjUlQWXUi3MmJUSiRNpnxnfFrIn6-Eabaw_Ecs79faIPK20Wyn9LU7_7HQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddufeeifecutefuodetggdotefrod
  ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
  uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
  hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdej
@@ -53,25 +53,30 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddufeeitdcutefuodetgg
  grlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevfffgtdeg
  keeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgeptdenuc
  frrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdp
- nhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepfigrnh
- hgrdhjuhhnlhhonhhgudesiihtvgdrtghomhdrtghnpdhrtghpthhtohepuggvvhesughp
- ughkrdhorhhg
-X-ME-Proxy: <xmx:1RtKaAPA0yk4bebImgB8ofdU3dYX64n5b0YgCZe5MC9WmUo4p3q44g>
- <xmx:1RtKaJ83s-bRIoVaXV6cbqFQmEI279G996s96_g8HJ4GS3RIZTpemQ>
- <xmx:1RtKaAUlwudctg4-WiufcoCMLDWAMGXlPT2a1lSBxMdhbm1O87vmpQ>
- <xmx:1RtKaKfSJQSu8l-AayrveV9cUCUG3SkL0jNhURUlgP91YtfrA047Dg>
- <xmx:1RtKaPMhui2CE1Pb6q8VrM8vBJ7IZ98334FMxBAQvu6GkiPmGbzy-pCi>
+ nhgspghrtghpthhtohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhhirg
+ ifvghnfihusehtrhhushhtnhgvthhitgdrtghomhdprhgtphhtthhopeguvghvseguphgu
+ khdrohhrghdprhgtphhtthhopeiirghihihufigrnhhgsehtrhhushhtnhgvthhitgdrtg
+ homhdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkphhluhhmsggvrhdrohhr
+ gh
+X-ME-Proxy: <xmx:iB9KaIaSx1U-wPAbNZM75_ukupT1FpQWKLRgx7CB5SNB0pvjQfnQZA>
+ <xmx:iB9KaGaLaVethkfmp6iF38u7H5HIq9oo7ae7eWipxnnmBJHqBjqlcg>
+ <xmx:iB9KaMCaHIIIKOTOYtRnyO0qA-EbS9t3lGdErXBZLOaM-yF6scSlow>
+ <xmx:iB9KaEb107QsVCzHJub2nKEu3QiJ0GOUd0TLj_DrD3GFMkElhrGQew>
+ <xmx:iR9KaAj-xI15oSYGN0bXJR9HQIfghfZK4NhmCnoTPG3_xBc6XMm3RCW9>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 11 Jun 2025 20:14:12 -0400 (EDT)
+ 11 Jun 2025 20:29:59 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Junlong Wang <wang.junlong1@zte.com.cn>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v1 1/3] net/zxdh: modify some MAC config issues
-Date: Thu, 12 Jun 2025 02:14:11 +0200
-Message-ID: <11989263.ag9G3TJQzC@thomas>
-In-Reply-To: <20250607023020.3051575-1-wang.junlong1@zte.com.cn>
-References: <20250607023020.3051575-1-wang.junlong1@zte.com.cn>
+To: Jiawen Wu <jiawenwu@trustnetic.com>
+Cc: dev@dpdk.org, zaiyuwang@trustnetic.com,
+ Stephen Hemminger <stephen@networkplumber.org>
+Subject: Re: [PATCH 02/12] net/txgbe: refactor FDIR filter to improve
+ functionality
+Date: Thu, 12 Jun 2025 02:29:58 +0200
+Message-ID: <11711540.2WqB4rESCP@thomas>
+In-Reply-To: <2430F12A7223B66B+20250606080117.183198-3-jiawenwu@trustnetic.com>
+References: <20250606080117.183198-1-jiawenwu@trustnetic.com>
+ <2430F12A7223B66B+20250606080117.183198-3-jiawenwu@trustnetic.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -88,20 +93,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
-
-07/06/2025 04:30, Junlong Wang:
-> modify some mac config issues,
-> which were discovered during the testing process.
+06/06/2025 10:01, Jiawen Wu:
+> There were some defects in the original configuration for flow director
+> filter. Now make the following improvements:
 > 
-> Signed-off-by: Junlong Wang <wang.junlong1@zte.com.cn>
+> 1) Fix incorrect parsing to ntuple filter when set the pattern likes:
+>    flow create ... ipv4 / udp dst is ... / raw ... / end actions ... / end
+> 2) Fix flex offset base to set item RAW relative = 1, and convert RAW
+>    pattern string to hex bytes to match the hardware identification.
+> 3) Fix to create FDIR rules for VXLAN/GRE/NVGRE/GENEVE packets, they will
+>    match the rules in the inner layers.
+> 4) Support IPv6 perfect mode.
+> 5) Add packet type mask to match more types of packets if the pattern is
+>    default.
 
-That's not how we fix issues in general in DPDK.
-We want to provide tracking history, so:
-- we split the fixes per issue
-- we provide the cause origin (with "Fixes:" line)
+That's a lot of various changes for a single patch.
+Please could you split it?
 
-Please could split and better comment these fixes?
-Thanks
+
 
 
