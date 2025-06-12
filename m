@@ -2,74 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6061C71136
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 17:49:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EEF6C71136
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 20:12:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C113E410FB;
-	Thu, 12 Jun 2025 19:49:54 +0200 (CEST)
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com
- [209.85.222.176])
- by mails.dpdk.org (Postfix) with ESMTP id BCC26400D6
- for <dev@dpdk.org>; Thu, 12 Jun 2025 19:49:52 +0200 (CEST)
-Received: by mail-qk1-f176.google.com with SMTP id
- af79cd13be357-7d09a032914so107370485a.3
- for <dev@dpdk.org>; Thu, 12 Jun 2025 10:49:52 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id AAB7D42DD9;
+	Thu, 12 Jun 2025 22:12:24 +0200 (CEST)
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com
+ [209.85.160.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 17CD7410FB
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 22:12:23 +0200 (CEST)
+Received: by mail-qt1-f171.google.com with SMTP id
+ d75a77b69052e-4a58c2430edso14363491cf.1
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 13:12:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1749750592;
- x=1750355392; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=9Vgdib4wvPccIbevn3+fcXQawWrq39Wn633vh5qcjOg=;
- b=CijZVBh+HwFVna0Rjjh7N/X/lSGGcxYKmZOtKa0HQO4AbUxhAXDjRC+NVIjoOhemnE
- zfIP2JYpUKJ8GFwFNJNcmybbJcLrnoKlgOhLlP5aJcegCAmfdUYowXxZaLj6+vYRbFtL
- MPKK1jurLIR7iL0k8OK51OWtSVDrKHZgHKJWuagxsIjI/YRXZTwU/uowrfqu6J7K7hdY
- 9v3y5dwGs+THske4yQxg287mY1Mfr1fAM4jv45+84hVMq3Dr65gUUXZzxhkDEQoDRZAA
- vLGWM6Q8PEfxnvxDDrumvJTskZeCpTMmI83s8BbXD+VqevH53vX1QvKZPmNiHIZ7gqps
- a8tQ==
+ d=iol.unh.edu; s=unh-iol; t=1749759142; x=1750363942; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=pKuPpY0MYegQqg8RISofR/UAhJgiOO7fTxfzQzDOghA=;
+ b=ChyZZcCLINixD6yDk992U/S28dcQ3wydAtqArttjQxIMUh2833wz4u3sQX18ZaaER0
+ t542tzDAHRPK5wzI1aDoxyxufsWrF6+Om0guvXQPDMDJLcTA2slt8no9gTue3cKf6ivd
+ 6gQkTA5RgNMQeZbHkkzwjXmVEzHdbMSuMdQS0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749750592; x=1750355392;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=9Vgdib4wvPccIbevn3+fcXQawWrq39Wn633vh5qcjOg=;
- b=Wy5sW9Fn2Kjb6r5aakMt7bLSXfuFc8BS+JkD5qhkICFqbe25IWcYHBP+VaHnFjBxCp
- FfwXbqtwqj1A5wGB7FNNAMZplyw7OnKVi/iZF8K1nevFEQLio+e4lJFOiPuvzGgjbSiZ
- M0NW+ePz/uhC4vFsS3H5rfOS5hja/goySBMK0UxyTpEol4oc3u2I5xu25u5v2y9YVbEX
- FsAjLoTXooUKnag4Ty1vfq4j8sBzjggA791CbyAHYvOEFGApwefrnF8raonpQmyOb85B
- Kd/BTSQeYZRNiK73xquMNN1aeHIShIV2NeXOxadymoBU0Y7BeU0B2VnGJL2sDmPi7kd3
- ATCA==
-X-Gm-Message-State: AOJu0YxRBrAKj4XvqiQd66ukBxCkAJQ9C0PcHXqKk3bUZ4dA1P4d+Fey
- P7wkrWyuUZmN62g56bzu35Vwx/tLwnnipLZb8yIz/1WXDTEA1AHiNWVQcYwZhyQPWR4QUyc1fLL
- yQ13N
-X-Gm-Gg: ASbGnctr4t6h9tKVw1EiSTt6P3ASj0eFvc1+R8ijn/NyP2e9HBPCRBKjJfB3mAGxPBt
- kCnaF4hrilOylsLpgbDx8mEvrHVSsA2ctrGDS1ln879QMPIgCeBmMjQUdfzJgA8Al6aADhKOJXe
- xI0zJ13B3Twr8brpRMsX/tXyDM0dhtHRs3lW75ww3LEAWdum2cfKiZ9UfW0w3hfPsF6+kKNLJFZ
- f+ynhYBoodEoXn2OCjQ1rxXKTVhKMXcXacwA+ufzT5rjDxxewK6s/i2QhqRR0xtm3Iqd5uwd1el
- cAMNYv1uBkrChOUrCjfC3uLIPzuWMs57MDmNUFpFfFOuOw0xPbHAht5J+xGRTsBapNqHzR6mf+w
- CoKxPAUoJnbEkXrE/cnu6z4aBXmjhBVVjVfbHJHw=
-X-Google-Smtp-Source: AGHT+IHc7YwR4YQliXpa+D1aY+K0IKCZOnosiDfWt+dpnWI5SIllFKdytAE9Oh0o1viB+NDKmtWqjw==
-X-Received: by 2002:a05:620a:1a85:b0:7d2:26e8:d186 with SMTP id
- af79cd13be357-7d3bc47d91amr34768285a.36.1749750591831; 
- Thu, 12 Jun 2025 10:49:51 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ d=1e100.net; s=20230601; t=1749759142; x=1750363942;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=pKuPpY0MYegQqg8RISofR/UAhJgiOO7fTxfzQzDOghA=;
+ b=HSSCccRTur+qbMEchlvf90/f3P5b2MXZU4NPVlK0s/QiTy4c/j6yADUPWDhkbFls+N
+ v7bdx9z3a0TV3ZyCNj/VCJjxl5ifyYWUm2aezfoSReGAhalUpifFGERrPoZ339CRUIQM
+ gzxn58QZHn166ik5KlTcwuVxZKvjG6KY5wuJez9o1XiQmERirECIjIPPsbjsJWW1T8sz
+ Xiss/DTkB//H1UtpBJWoITMcLskCYKPyqRoIGOQDPxupIFrlbDGAngmYUecJ+mMUslQv
+ VGzy0/BBDuM/r50rei5oivh5uPdZv9wuk2jLobL7c6wdyF24JhyXrkK0bUP3EkQhKeWr
+ 4ffQ==
+X-Gm-Message-State: AOJu0YyLUypYJwcNbk2YtKiiEBHIUlKeEdQvUO6VnPcGibC6YU2JyX9X
+ 1XqIN3uXYBvlcJ2YyeOXuDhKU1Bn/UqkmJYdoy5qIgOVE1wkOtKEwab5zsFJXGVmQR6SohDHzFC
+ yqz5C
+X-Gm-Gg: ASbGncuk3XiDnFGV44LTPqSB/dObD9krNxX683EmsOex7Ja7LduvUlBL0UxYtp6G3j2
+ L4XNlYMsWD0J1GQQm6VA015QUj0etan/5knr3t48fBZC5kfY7LBsK4Pdm0oGomXUZfo46MyRXni
+ TiGqb8tJS4C0RO3Ab+88dd6SDBSUhr7IFMSe5Dr8VX5RN6HOzPpVyEbkeFk+fCtS2px4DTELknQ
+ 1po+NWnbNN2MN1cJyUEeBh1/GlUIP+6cpP490LUHpOMjACxQk7W/coQZFMzGaDA8E5x4y1b4Uw/
+ xCFYeWaG0UZ/6Rj0g6WyaLly9qtNUIMeym1RJVMGyo0qEprUwpzuhWuBUBnzRGgBghKngE5f
+X-Google-Smtp-Source: AGHT+IGp6xJrbPcbW0h39UHt8LoxNf1hFgMFGXS3GGdvdtxDhKCmdaev4AwPTjJAiZeryCQN9O845Q==
+X-Received: by 2002:a05:622a:59ca:b0:49a:6859:1c10 with SMTP id
+ d75a77b69052e-4a73057c375mr6318041cf.24.1749759142348; 
+ Thu, 12 Jun 2025 13:12:22 -0700 (PDT)
+Received: from fedora.iol.unh.edu ([2606:4100:3880:1271:ac5d:4186:4dc6:47eb])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7d3b8dc9313sm66892585a.24.2025.06.12.10.49.50
+ af79cd13be357-7d3b8dc9666sm80299585a.2.2025.06.12.13.12.21
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 12 Jun 2025 10:49:51 -0700 (PDT)
-Date: Thu, 12 Jun 2025 10:49:48 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Kyo Liu <kyo.liu@nebula-matrix.com>
-Cc: dev@dpdk.org, Dimon Zhao <dimon.zhao@nebula-matrix.com>, Leon Yu
- <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
-Subject: Re: [PATCH v1 02/17] net/nbl: add simple probe/remove and log module
-Message-ID: <20250612104948.6404d009@hermes.local>
-In-Reply-To: <20250612085840.729830-3-kyo.liu@nebula-matrix.com>
-References: <20250612085840.729830-1-kyo.liu@nebula-matrix.com>
- <20250612085840.729830-3-kyo.liu@nebula-matrix.com>
+ Thu, 12 Jun 2025 13:12:21 -0700 (PDT)
+From: Dean Marx <dmarx@iol.unh.edu>
+To: probb@iol.unh.edu, luca.vizzarro@arm.com, yoan.picchi@foss.arm.com,
+ Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com
+Cc: dev@dpdk.org,
+	Dean Marx <dmarx@iol.unh.edu>
+Subject: [PATCH v1] dts: fix devbind initialization bug
+Date: Thu, 12 Jun 2025 16:12:20 -0400
+Message-ID: <20250612201220.614724-1-dmarx@iol.unh.edu>
+X-Mailer: git-send-email 2.49.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,79 +75,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 12 Jun 2025 08:58:23 +0000
-Kyo Liu <kyo.liu@nebula-matrix.com> wrote:
+Rearrange the topology and DPDK setup/teardown calls during
+test runs to ensure the devbind script is not called
+while the DPDK tmp directory doesn't exist.
 
-> diff --git a/drivers/net/nbl/nbl_include/nbl_include.h b/drivers/net/nbl/nbl_include/nbl_include.h
-> new file mode 100644
-> index 0000000000..1697f50a75
-> --- /dev/null
-> +++ b/drivers/net/nbl/nbl_include/nbl_include.h
-> @@ -0,0 +1,53 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright 2025 Nebulamatrix Technology Co., Ltd.
-> + */
-> +
-> +#ifndef _NBL_INCLUDE_H_
-> +#define _NBL_INCLUDE_H_
-> +
-> +#include <ctype.h>
-> +#include <dirent.h>
-> +#include <errno.h>
-> +#include <fcntl.h>
-> +#include <inttypes.h>
-> +#include <limits.h>
-> +#include <linux/netlink.h>
-> +#include <linux/rtnetlink.h>
-> +#include <linux/genetlink.h>
-> +#include <linux/ethtool.h>
-> +#include <netinet/in.h>
-> +#include <net/if.h>
-> +#include <net/if_arp.h>
-> +#include <pthread.h>
+Fixes: 4cef16f1f0a4 ("dts: improve port handling")
 
-DPDK locks and thread are preferred over direct access
-to pthread.
+Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
+---
+ dts/framework/test_run.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> +#include <signal.h>
+diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
+index cff0085317..4287028b4b 100644
+--- a/dts/framework/test_run.py
++++ b/dts/framework/test_run.py
+@@ -344,8 +344,8 @@ def next(self) -> State | None:
+ 
+         test_run.ctx.sut_node.setup()
+         test_run.ctx.tg_node.setup()
+-        test_run.ctx.topology.setup()
+         test_run.ctx.dpdk.setup()
++        test_run.ctx.topology.setup()
+         test_run.ctx.tg.setup(test_run.ctx.topology)
+ 
+         self.result.ports = test_run.ctx.topology.sut_ports + test_run.ctx.topology.tg_ports
+@@ -433,8 +433,8 @@ def next(self) -> State | None:
+         """Next state."""
+         self.test_run.ctx.shell_pool.terminate_current_pool()
+         self.test_run.ctx.tg.teardown()
+-        self.test_run.ctx.dpdk.teardown()
+         self.test_run.ctx.topology.teardown()
++        self.test_run.ctx.dpdk.teardown()
+         self.test_run.ctx.tg_node.teardown()
+         self.test_run.ctx.sut_node.teardown()
+         self.result.update_teardown(Result.PASS)
+-- 
+2.49.0
 
-Not used, do not include
-
-> +#include <stdarg.h>
-> +#include <stdbool.h>
-> +#include <stdint.h>
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <string.h>
-> +#include <sys/eventfd.h>
-
-Direct use of eventfd is non-portable and should be avoided
-in drivers.
-
-> +#include <sys/ioctl.h>
-> +#include <sys/mman.h>
-> +#include <sys/queue.h>
-> +#include <sys/stat.h>
-
-Driver does not use this header?
-
-> +#include <sys/types.h>
-> +#include <unistd.h>
-> +
-> +#include <rte_ethdev.h>
-> +#include <ethdev_driver.h>
-> +#include <ethdev_pci.h>
-> +#include <bus_pci_driver.h>
-> +
-> +#include "nbl_logs.h"
-> +
-> +typedef uint64_t u64;
-> +typedef uint32_t u32;
-> +typedef uint16_t u16;
-> +typedef uint8_t u8;
-> +typedef int64_t s64;
-> +typedef int32_t s32;
-> +typedef int16_t s16;
-> +typedef int8_t s8;
-> +
-> +#endif
