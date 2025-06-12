@@ -2,103 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63912C71136
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 15:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D8A4C71136
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 15:47:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 080C342796;
-	Thu, 12 Jun 2025 17:44:19 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id C86D642789
- for <dev@dpdk.org>; Thu, 12 Jun 2025 17:44:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1749743056;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=eXfDhS5C/xBVm850gdjJugtfBiBuJBF/GMqi3adSyBY=;
- b=UeAchf4qEBLee/noLUhd34SWZaU0yuQDxMcAY5tnSWbcp3+tDPs4yVdqPDIFwcMt2UuITk
- c4ifh/3Zjy0ZGCnzftzwbObN7Vqa2pWpfFfVmZGDHWcsVUxcqC8RJyaTn6n4K6YwAxCcpb
- GahfgmHioJv1PsfsjIlsjDKVOjgVPWk=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-471-dv4vpuS1Pkyjk_dWVIT8Gg-1; Thu,
- 12 Jun 2025 11:44:13 -0400
-X-MC-Unique: dv4vpuS1Pkyjk_dWVIT8Gg-1
-X-Mimecast-MFC-AGG-ID: dv4vpuS1Pkyjk_dWVIT8Gg_1749743052
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 3EC1E1956096; Thu, 12 Jun 2025 15:44:12 +0000 (UTC)
-Received: from [10.44.22.3] (unknown [10.44.22.3])
- by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id B26FA30044CC; Thu, 12 Jun 2025 15:44:07 +0000 (UTC)
-Message-ID: <a1de494d-ca2b-43db-bcda-c25a537ab17f@redhat.com>
-Date: Thu, 12 Jun 2025 17:44:02 +0200
+	by mails.dpdk.org (Postfix) with ESMTP id A7D6642796;
+	Thu, 12 Jun 2025 17:47:58 +0200 (CEST)
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com
+ [209.85.222.175])
+ by mails.dpdk.org (Postfix) with ESMTP id AB71442789
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 17:47:57 +0200 (CEST)
+Received: by mail-qk1-f175.google.com with SMTP id
+ af79cd13be357-7d09f11657cso113997285a.0
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 08:47:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1749743277;
+ x=1750348077; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=teDqNed0H3uStpi6gQ8+0TMnvPVhiEPI9FAVqiiCTtA=;
+ b=Vg9JFBcWuknjEYZIQ604GzrR+RSUFtMhlK3IZeDH5I/zk2CtWQ/n/65ighKTVykEOT
+ 4zSJLl4YngzAR2VmJ7Ui7S0i2pAis9Q5Lk9ocIWxZ0KSG36Bwr1m9wDICs1Yow/2q7cS
+ Ux4bmGqmMi1MZRxxdyasJqfcXBcSEUf+R08USnjFHil2I1OWRxNv0LxHD6wrp1Oe0ni7
+ G4liFOJ3NEK6CMRodm402sTITGZHrS3VJDXnDvYaM28WTyl+MYHsF34IzPVIpVMHb7aI
+ tgCbLCRQ4IwlDO0mG5LYpPVuEQlnBTF6qyN5OUGkJpr4ntJXQQKSZJlmdqLMrg0gvJpu
+ vIfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1749743277; x=1750348077;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=teDqNed0H3uStpi6gQ8+0TMnvPVhiEPI9FAVqiiCTtA=;
+ b=kA2uxu5bnITrYov0ONbY5Wei2yS+GuXS7H33o0sS2kuHHz/50OjZ39foYb8U54K8VE
+ CiHHXrNl4qW1hSzgold8S1NwFSixGAdUd/d/HYUQLY0yGmvYY991zSF+gAZnnDrsO8Lz
+ SeI9+eQTQr66dlGvbTCWX3Rhreex2u0gLN01gCmb3z81A0vu3ubVB8ATd9wwFl/BPOwi
+ VmI+26VJmALd55JRcbsTwIPWv0p2w/c0dFRIUZ8NGps7EWSranaFckL06rJdLe1ro2TZ
+ HbQgmycY0fCxVjCXCKlR5v51eagQjsMPKT2pyn2gvztKiHLHgykyaExP8Trf1HO+8Iih
+ VAfA==
+X-Gm-Message-State: AOJu0YwmEMtMlx42v0jJK1mjzaIIUza5uW/i068TU9SvIR0zd/m4RAJK
+ zKoO+FyKisl1EaruJrI4JAHb8McEN3vgXiXB2/1Bx1R4/HO8Qwphv+JSRE+vidGgey8=
+X-Gm-Gg: ASbGnctbE8c1Ra3bo4Ivwm10jFspOk6RPNcCLij8vkHdzoEO1pZW24F6vF9OVwLQ89q
+ jCXul0zZqARLsCCSbf3kp/czK8WXWwaFJu9Dnx8IFZ5Jde1bTPSpe8dvHFedSxhq1WfxpjsaFzA
+ Q8PgsEGXoy0qo2IHcxAmCLSMadoV2ov7LLZAdLWn1u/41/D6CM8uDK0D5kZricaAr4FR+Jb0D5/
+ T4/zPIQAEcmCaifeGJ9RsAzerCFSAat1ahpMR2BhQA0oGc0zLgcj+DcC7JmBjAoo4CyypXST9MV
+ SolY5W74yfQ0CxdQyaUovMVri3tMc7qqwKbxrXIkp41rxt8UrplZ1yPM/syO2Ys/PMlJZk4jTx6
+ LjnJAc89I4l7h3+9zhzgsrDehh/Jbf3pNH0HBXSA=
+X-Google-Smtp-Source: AGHT+IHo+2YtI+1j97pEMpI6gER2BbqMYzWYyf2BUUeIYxPiKGqGX13AJOLA+ujEgQvJ+DLpTeQjEg==
+X-Received: by 2002:a05:620a:254f:b0:7c5:50ab:de07 with SMTP id
+ af79cd13be357-7d3a8833b2fmr1161307185a.21.1749743276771; 
+ Thu, 12 Jun 2025 08:47:56 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ af79cd13be357-7d3b8eac91bsm54324985a.76.2025.06.12.08.47.56
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 12 Jun 2025 08:47:56 -0700 (PDT)
+Date: Thu, 12 Jun 2025 08:47:53 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, Reshma Pattan <reshma.pattan@intel.com>
+Subject: Re: [PATCH v8 7/7] test: update to latencystats tests
+Message-ID: <20250612084753.12b1bddc@hermes.local>
+In-Reply-To: <CAJFAV8y1TqpS6_oN-j9n_PY8mHqCD05n8YU3Jq5VwfXwJUd=dA@mail.gmail.com>
+References: <20240408195036.182545-1-stephen@networkplumber.org>
+ <20250610141355.91759-1-stephen@networkplumber.org>
+ <20250610141355.91759-8-stephen@networkplumber.org>
+ <CAJFAV8y1TqpS6_oN-j9n_PY8mHqCD05n8YU3Jq5VwfXwJUd=dA@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] vhost: fix net control virtqueue used length
-To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, dev@dpdk.org
-Cc: David Marchand <david.marchand@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>, stable@dpdk.org
-References: <20250605113534.917903-1-eperezma@redhat.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <20250605113534.917903-1-eperezma@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: cxhPBnp940WB2cOxYZcHMMerO-BtqlT4cniqtYPqScI_1749743052
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -112,35 +83,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+On Thu, 12 Jun 2025 09:00:22 +0200
+David Marchand <david.marchand@redhat.com> wrote:
 
+> On Tue, Jun 10, 2025 at 4:14=E2=80=AFPM Stephen Hemminger
+> <stephen@networkplumber.org> wrote:
+> >
+> > No need for loop and memset() here. Just use structure
+> > initialization.  Remove unnecessary initializations.
+> >
+> > Look at the number of samples, min, max and average
+> > numbers to make sure they look correct.
+> > Forward for longer to make sure multiple samples are taken.
+> >
+> > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org> =20
+>=20
+> We have random failures on aarch64 in OBS.
+> https://bugs.dpdk.org/show_bug.cgi?id=3D1723
+>=20
+> It may be related to this change, does it make the test more
+> susceptible to timing issues?
+>=20
+>=20
 
-On 6/5/25 1:35 PM, Eugenio Pérez wrote:
-> By the standard this is the number of bytes written.
-> 
-> Fixes: 474f4d7840ad ("vhost: add control virtqueue")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
-> ---
->   lib/vhost/virtio_net_ctrl.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/lib/vhost/virtio_net_ctrl.c b/lib/vhost/virtio_net_ctrl.c
-> index 63c0a06b4f..603a8db728 100644
-> --- a/lib/vhost/virtio_net_ctrl.c
-> +++ b/lib/vhost/virtio_net_ctrl.c
-> @@ -229,7 +229,7 @@ virtio_net_ctrl_push(struct virtio_net *dev, struct virtio_net_ctrl_elem *ctrl_e
->   
->   	used_elem = &cvq->used->ring[cvq->last_used_idx & (cvq->size - 1)];
->   	used_elem->id = ctrl_elem->head_idx;
-> -	used_elem->len = ctrl_elem->n_descs;
-> +	used_elem->len = sizeof(*ctrl_elem->desc_ack);
->   
->   	cvq->last_used_idx++;
->   
-
-Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
-
-Thanks,
-Maxime
-
+Let me fire up my Raspberry Pi and see.
