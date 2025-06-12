@@ -2,162 +2,165 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF70C71136
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 10:19:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A239AC71141
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 10:32:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 822A040E26;
-	Thu, 12 Jun 2025 12:19:39 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id 9FA2E4003C
- for <dev@dpdk.org>; Thu, 12 Jun 2025 12:19:37 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A4D724021F;
+	Thu, 12 Jun 2025 12:32:02 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 7D0E54003C
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 12:32:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1749723577; x=1781259577;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=jyBme5xkpuxUKzoO94HepRdJoOtW6p1q9PiKGd1NFys=;
- b=UMhHn9wdaEj7zfmVbOKxr1j43xI6G5uwVQxqWsJzNv7wJgobie0l2m+W
- vHKeB8pJKq6556wPItvzbs49/L58KMRqC+VA19q8yaqqqDaQbs0qTAV0K
- YdC0ppmFtPrJL871a1qlrcUhFqrr4JB7iluXfRW66vgbzJWsexRhnU7zb
- a7jxXR0cJiekgOP/Nr31/zpb1dEIZphq6NIz0nGHD2G+nanMHDKlsIc8s
- hrGv+2bE9zsGw74elRYogspDqJIWMccSu6tP26NRjUVcc2xysrPf/mB8U
- 4OO+qqbAdSD9Mk726TfmPNJ+oh5YFwnYROS1URh38URoZqL+IeYfH20cC A==;
-X-CSE-ConnectionGUID: POEcJnICRDamp3q4EaO/3Q==
-X-CSE-MsgGUID: HAEdDq6MSqafsO17irvY3A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11461"; a="55697643"
-X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; d="scan'208";a="55697643"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
- by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 12 Jun 2025 03:19:36 -0700
-X-CSE-ConnectionGUID: o8diljrSSIGW6EMinrhjHA==
-X-CSE-MsgGUID: ec1EhsQGRdOEY73NKltCQA==
+ t=1749724322; x=1781260322;
+ h=from:to:cc:subject:date:message-id:references:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=TWJT7DYf+yi1ftY2cN2OmiK2tEjXUQCTY0XghprH1CU=;
+ b=kF1KRnEh27niyWPRz/Xb2xFyLwkPdZ1+G8b1fOz1dR7GswhNFnpZqNU+
+ JEmwOjk5z7tT293LJAykE8umSREDyzSDOxFskmzF4mYhtkFiWVMmjngtY
+ 1Ksj6fVpTY545tslm1+mrFo9RkF/t9olhntnH3G/ivT7C/uKWyNXQ3BgP
+ PaSmSGXd5E7NShwtDkE4vTxf1T6ZL969jsyVfId3atVdCS3bCQd5cRn6S
+ OZwrJdv2MgSF4th/R1GbUr+7x6JeottVM42eLr1EHcujm3L63x+M5lcfE
+ 4GhOYiVgLlVO09hYu48c8bUbwb6VXIf64KrCf7Qm/KdwGVPHQmWoel9JH Q==;
+X-CSE-ConnectionGUID: 1N/5b2ksTa6ugTnSzRas1g==
+X-CSE-MsgGUID: +rmSrXVCSkSn0YJA/Jte1w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11461"; a="51004473"
+X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; d="scan'208";a="51004473"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+ by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 12 Jun 2025 03:32:01 -0700
+X-CSE-ConnectionGUID: ZjZ8Y6MLSwG53FMnB1LfzQ==
+X-CSE-MsgGUID: 20mJhGxRRJ+jdMNBii3VmQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; d="scan'208";a="147967842"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 12 Jun 2025 03:19:37 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 12 Jun 2025 03:19:35 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; d="scan'208";a="148377253"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 12 Jun 2025 03:32:00 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
  ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Thu, 12 Jun 2025 03:19:35 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (40.107.220.44)
+ 15.2.1544.25; Thu, 12 Jun 2025 03:31:59 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Thu, 12 Jun 2025 03:31:59 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.71)
  by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 12 Jun 2025 03:19:35 -0700
+ 15.2.1544.25; Thu, 12 Jun 2025 03:31:59 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tg4+drc0UilCnzMjUcbkPKmWkJYEXeecKcRv48PdQAWA0X4S6JQjX5jbWDcmwp82sMV3ewPOsgpUPcNVyxfCPOKaIpWuI5vGwGSJT85nodLkfDr5caAi1Di3uu96GnL//yOYsDq1vyQ/3tRCXeHXs7quPKrLM/yawXwLvbEytF/WlzDxd5FxJRmh/UodEDZOO5Dr+TeBBo0fdP/Ced6gOUxJIz3syUNb9cP2PNMYGrR909OvPtunXqS5w+c8rE6ntPzZmPp4+k8axwa4/R4FafLS5KmwCai+4PZuytT6LYBDtAv7fQEZmuNd0XR5Zt/mlLLgXgTQMHlfYJZ3ao0yDA==
+ b=igTzxbxBpJN9M9a+h4eSIIG5uXcPKbSRSYw3EDfPy3Ebbbhg2rgCa6bYWwnSABde3S4bGwqmk2LEgZTOyAfBrBhK2TTNfWED6UsvYFSdhf+HHNZT1Du9VbL+IMZBOFaJIVRiT0kX5vQL/A9wNraeP9J5+eeuWhUFxzo6f9iESCxnDu571h0YseAwt9BtJU0vcZDYyQT1HmOPbMHyeE79sRiEy7XceOWWAMZbFKLFg2w53xGtDkj8KC3vQFlm7Jk5FctruxbpjTlqhBzCa8v6rDyWQMgHbgYvXyW5IDRiaw0FQgruoCEEiGGL6OVLjoSJdcfJ6x76x2zeQ4vfs9CjLg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ew2nImBzeeBcyMPW9+vlRuqLlaQI9ccApWH28fD6JjE=;
- b=rYwbZhWsKXimCLgFad4EL+U3/V3NEjgqRv+5r4rAn/NCzvSOfd/V6hB9EwvQq+HzY16gCJmuTv+Npin3gk38wtupApn9eMO2Ol5Wqbd/6RApObw1ESA+8C6Y5eH/q6F0l3B/f61BDnYM7OFDmQRX96EEW+gbvJApP+kx2F/lSYUgMxi4Fl8SVtS2ZgS/+uDGQNcZ76enlyfWDiJXYA6XZMCWRENRmlHOn6OD5RngnRhvz/a2kCKhkro2JSqq9cuvbmmvrboq1IPvp4ZP4y0PVUNjhh5HOhQAP5oHwsjcIrOuqaGZLTlipw+2E3wQ95lakADtV9lbyc7Du1xm68EsBA==
+ bh=X94t3Mp3OKww7zTaLia+GZyoBDUQnYBtSEfkAqJkJnU=;
+ b=ALJoRpr8oMln85QZSagqCFvu3VKLdHKEZ8p6iUMEZZ7TbKg1ft7HVwmDLwkr0vLblktxNtxk2hHrsW8Gj62aNLzAhQ1lxxuFTTJ2gcM22yjbA+nqB85Rw3D7QctmoEEYHEwY0JBc1WBe4oZOCNqbt3HmEyK1ri5CCjuxm0cYx3dm8KWsrXIjDvY2aUrpIL6bTctJCp9beXT+7lq7E/vmLx60DzY/y6d806/3njJJQedWeFvKGLOz+Z1637rAfOI18F6vsLPG+jL3i3Nq1CDwKMoKsE3KzoMkzx7lcFAXSFDVPcTt8Aoclo13BpyDxAYimDFYHXjzlpaZFjipSXuV7Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
+Received: from DM3PPF7D18F34A1.namprd11.prod.outlook.com
+ (2603:10b6:f:fc00::f32) by PH8PR11MB8062.namprd11.prod.outlook.com
+ (2603:10b6:510:251::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.18; Thu, 12 Jun
+ 2025 10:31:30 +0000
+Received: from DM3PPF7D18F34A1.namprd11.prod.outlook.com
+ ([fe80::19b1:dfa1:9d1f:38e9]) by DM3PPF7D18F34A1.namprd11.prod.outlook.com
+ ([fe80::19b1:dfa1:9d1f:38e9%8]) with mapi id 15.20.8769.025; Thu, 12 Jun 2025
+ 10:31:30 +0000
+From: "Loftus, Ciara" <ciara.loftus@intel.com>
+To: "Hore, Soumyadeep" <soumyadeep.hore@intel.com>, "dev@dpdk.org"
+ <dev@dpdk.org>, "Richardson, Bruce" <bruce.richardson@intel.com>
+CC: "Singh, Aman Deep" <aman.deep.singh@intel.com>, "Subbarao, Manoj Kumar"
+ <manoj.kumar.subbarao@intel.com>
+Subject: RE: [PATCH v4 3/6] net/intel: add TxPP Support for E830
+Thread-Topic: [PATCH v4 3/6] net/intel: add TxPP Support for E830
+Thread-Index: AQHb2k3CmUPgRgYILkW5XI6Y2fxDhbP/UR4g
+Date: Thu, 12 Jun 2025 10:31:30 +0000
+Message-ID: <DM3PPF7D18F34A1DCBEBCDE7C91289CCB5A8E74A@DM3PPF7D18F34A1.namprd11.prod.outlook.com>
+References: <20250606211947.473544-2-soumyadeep.hore@intel.com>
+ <20250610131159.495566-1-soumyadeep.hore@intel.com>
+ <20250610131159.495566-4-soumyadeep.hore@intel.com>
+In-Reply-To: <20250610131159.495566-4-soumyadeep.hore@intel.com>
+Accept-Language: en-IE, en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by SA1PR11MB8544.namprd11.prod.outlook.com (2603:10b6:806:3a3::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.29; Thu, 12 Jun
- 2025 10:19:01 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%5]) with mapi id 15.20.8835.018; Thu, 12 Jun 2025
- 10:19:01 +0000
-Date: Thu, 12 Jun 2025 11:18:56 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: "Varghese, Vipin" <Vipin.Varghese@amd.com>
-CC: Anatoly Burakov <anatoly.burakov@intel.com>, "dev@dpdk.org"
- <dev@dpdk.org>, Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: Re: [PATCH v6 23/33] net/ixgbe: create common Rx queue structure
-Message-ID: <aEqpkOa_oxW8pR3h@bricha3-mobl1.ger.corp.intel.com>
-References: <cover.1749483381.git.anatoly.burakov@intel.com>
- <cover.1749483381.git.anatoly.burakov@intel.com>
- <67e447a725410d7ef1af5317e3c7e1ee487792c3.1749483382.git.anatoly.burakov@intel.com>
- <PH7PR12MB8596F835791ABF579E92C6B88274A@PH7PR12MB8596.namprd12.prod.outlook.com>
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM3PPF7D18F34A1:EE_|PH8PR11MB8062:EE_
+x-ms-office365-filtering-correlation-id: cf64e3af-7dd1-4598-b91f-08dda99c4b7b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?+Hcz8RETILblyS1ImsW+lZJEqcs8Lo/cbCJyHsEwuRj19aDlNAw7pJDmLi06?=
+ =?us-ascii?Q?iuVFIEt+1F6np8snKL0Nfh9/dssmsmUdzsqO/pSE3p4FSNPe8tsDQq0bDiDa?=
+ =?us-ascii?Q?RiH3YOk8mLrxGQoa3FKl6p/Qdk4zNwZRoiRBmt99E6j7X9qDbR9PGpgdc0wY?=
+ =?us-ascii?Q?DaOirStsjBt2zncRkDFoyHauIMP4T94sFkf1SWz+6GEdviu8liQm6/GnZbf/?=
+ =?us-ascii?Q?J9THOoPDnWuU6I9HHkdNuBgv6/t7Rvv2r5Pjc3WlKPFEkcOaplvGfOsHlBwZ?=
+ =?us-ascii?Q?XCRH96ZpNRtQfydwjXtwm8VCYOwoeRWbhb4J7qYe00lcpZ/AWXJUsZ58KIwk?=
+ =?us-ascii?Q?ECYS/cRYriK3rsbYIliqEpm8kml0PeeMmInqXpJmcvfy8QFQl6N7L6oR4ljn?=
+ =?us-ascii?Q?urkaFInH/p/Te4u5l3hQnM5oV0MeoAn4VgtzSUJztyKI1aXcUsOEo6pjFugo?=
+ =?us-ascii?Q?ewYL0yqsQbYse3RQ0YCmBh3Hw6VI++atk0wJiRU5EbzjB8lc90L9JdIZJaVg?=
+ =?us-ascii?Q?SiJisX9gEQqz7E6rk6si86StJCcJjZ7vk+ox/kIw9Ly3iVQHKeGpblpqSF3e?=
+ =?us-ascii?Q?LFK9xeCAyEb2quK7Wz/NEbrwH+6Oebo9et4kCRmDVdVW2oUQszk1Q5bxFVDv?=
+ =?us-ascii?Q?kTvaz5v82JJuFJWYCbqHTq5NMx9fNPaiDDIS/2SoxeX0G22Hfx5c++bH2v5I?=
+ =?us-ascii?Q?uHESq3cLYt9Ol/ASbZOSo4nkjINsdo6OJv9ID+KNRj2NG6f3+r1j4gIqn+Hh?=
+ =?us-ascii?Q?wGAJzg1iRpHoml81e1w1t/1VBw9hasjyDBdRGRqDASU8eiSLoNdsU2dRAnVP?=
+ =?us-ascii?Q?XpS6bULqX9U3jha4zQROURIOdLTpWZJd/ZkMhFpypSwYWSuV7wPkpvY+w2CG?=
+ =?us-ascii?Q?Uc78LbKbtaYMAok4o4X19zm3INiBZTARR+WPymxsqbme+3SR1RcCi1sH9nYO?=
+ =?us-ascii?Q?wTEEH/M0AEnqO46rym0J/UfiOozeYjtJHIOSF2+kvMQzbrJtMxajOhP47i4a?=
+ =?us-ascii?Q?OraWY7l0iVbrcSL+QNQm0ZAsQ2/wjFkqmvoqBw8WQccmflCclrHj1fx1PPNJ?=
+ =?us-ascii?Q?G0De2abEE0kqSaRZMn8lel+4eAKgUcLz4QmrZNbnefjCFiWHwocNGgr0MxUp?=
+ =?us-ascii?Q?njR8yeFZiaqA5oyGN6lNdJ6UDQDZoWKrxtO5N5+ZErYi/PQ96jYTPfOQU7Zt?=
+ =?us-ascii?Q?tTRo6g9GpnStDOqI1o4Wj7PMCrdHlN93IZq/ktjZvLJRJyvIhxolp8qN7PLu?=
+ =?us-ascii?Q?gLT/7BjBJCLeXuhb1CJUJJnFoYeZmkkb94Ik6ZTF7sIYKbprCBWqRp13U56j?=
+ =?us-ascii?Q?2N5VKS6RQdxgspmfrR1jV/P48RPZMuAJDuX7rpv+qD99j5DRvKkpOcKWlM7V?=
+ =?us-ascii?Q?pQAY930b9uMHo3QcTcWSg1G3/BtDkfupmc9Wfr1qV1TxW1NSjCWZ6bTwO+b8?=
+ =?us-ascii?Q?B1w71Pm61D6GBZIwvPqbbud2VwpO4doO2zzgUtAnpEduldBq+1attw=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM3PPF7D18F34A1.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014)(38070700018); DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?gdKcfcG1z/RBp7y3/IgA2xaLUwFHkQDWvNRf18qLA/OxThkLzAoSwM6KMM6r?=
+ =?us-ascii?Q?h8Hp/fBGpoubTyOOiaOuQYFZTrk299w0/1HA6rMV5dQrscleVrrIGyxptW1p?=
+ =?us-ascii?Q?qUzpJFw7eN+bwPNuj0A9EHCTsm3QLj/cXrAxfC38FwG0MMOIXd6VOZeFXDUI?=
+ =?us-ascii?Q?8LQUA80kUiRacGQbSOL9ZOVX7LEtns0M0HxvGH8q6Dgu3lzuhKQg2/F70j/T?=
+ =?us-ascii?Q?JI8cBfEYOzD4lXDUfVy28JBMOaJNcesdHmb+1IOhuIvFWqItA9c0gSXKw/mM?=
+ =?us-ascii?Q?PnAw4mzjtRpVupUSYRwgBk9M1kN5qjmmZ2DypPKYfuCLAjlFVrOr8G6dXQY6?=
+ =?us-ascii?Q?ktts6nkt+oGi1i60wNijLwyOjI8U0mJRBQs0AMeaKm87mccGJlpaDnTDY+Af?=
+ =?us-ascii?Q?d9KoW4sqigHfoKMCjKyFTJx8drmfEKVxp+VDGYIy7is4msmApgyIS7NdUB3q?=
+ =?us-ascii?Q?v8f80DchKh6eQ+lohpQT3qIkgMmgk3DvU5H0qjBTxwLtdL6lW6hIgbBSMWdv?=
+ =?us-ascii?Q?jO/Ntri24P06AqKClz9bUf+0iWDkXKYiCk4yOLkl7i0p/EvArUHhzfjrhXpl?=
+ =?us-ascii?Q?UyDBoPXkwgUCNG6TwhboagDyBQsnz/MbESyqGnpBRks7TFtYb+MyHenJS/oR?=
+ =?us-ascii?Q?ImBsB7ExjoGMQkfVrDBhqSLeSCG0Y8bD0LLRDpZcTsM50Rsq2R6pXzOrR1V1?=
+ =?us-ascii?Q?9TF/Dqcn9+3jSyfSyxyXpcTcLy0V+GCRWDg4PhqGp3AwFA3LxyARwo4NX4aa?=
+ =?us-ascii?Q?Vx/A2QYFMZ5E2iRP7OrPr1B0fxHIbbT5glm6d/iaN+itydPrwjnA8BRycFiU?=
+ =?us-ascii?Q?0O6ySwbwfOfFgMXENwmB+ERyJ6oYFdXkhmdaBP5FWjX33anySkunNyLCrCnL?=
+ =?us-ascii?Q?dcqwq5qLmQ+6ef3tTcgUI0NLcmf1ytod8fPaTATMq8JMFyVo8Mu0nreq76ii?=
+ =?us-ascii?Q?BxnxAzEbtJA544fZ6fiXDmqT4cu4mZe5alsMr8BWp0k1sxdUDcHfV0ONb+fp?=
+ =?us-ascii?Q?q8byhaDQcLhGfFo7B92TjHZYW16rX8T5hVVD+Co+aQA+2XvyVT8wUzYEZWLl?=
+ =?us-ascii?Q?K6SvBW2kV6ieJmIpkV8UpE0FqTwaMUZdpgayuDUyYvxe/43g+sgL1cKcOZQN?=
+ =?us-ascii?Q?WEz1lZBHRpvak6Uf98ho16Lis9nXdsRrLHne0zPcYB8DI8I2487i/NSAWvFr?=
+ =?us-ascii?Q?OoYS1fjjkLnhXUHvZUjoDfbenVbv7w8f44Wua3nMlIIwkIq/EHBi+XyogknI?=
+ =?us-ascii?Q?9W3Iwns+vOPdG6dnSBCrAlO9gfG8KV/4ziUjyk0gaB04ABgk5t+6DCjXqVVG?=
+ =?us-ascii?Q?sloDuhdO/OVSB+5ROiawOGx8jvVGtf6Bcfn7ZXKdODIuXCQ1nB+uz3QUcJmj?=
+ =?us-ascii?Q?8vuZ1wisTatqsvIphinaZ3FjX1zlgn5eEn3sreEHFyoFn7CuZpEJpWluLVaD?=
+ =?us-ascii?Q?gfAdsWp22BAadDWUeflLZw8mGRJMu2nnzVIfbG81+1HH3NKR3nFWNUjXCi1k?=
+ =?us-ascii?Q?NLD1IsDZeH1QHbUXl5/mu2AtGGgsF/ZwmfI91CXIBNHbAi8Ksu+e+Hg38Q9G?=
+ =?us-ascii?Q?jk0Masqqt2TQyvWKWtRXYXqTKbQerE5E3lidPwQu?=
 Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <PH7PR12MB8596F835791ABF579E92C6B88274A@PH7PR12MB8596.namprd12.prod.outlook.com>
-X-ClientProxiedBy: DU6P191CA0023.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:10:540::17) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SA1PR11MB8544:EE_
-X-MS-Office365-Filtering-Correlation-Id: cfb25817-1cc5-4668-ec6c-08dda99a8ce0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?oQS07EAe0nmg0rk970Ni+SN5tsF3SW/tnEtnT5sl/jkzR1xc0mxId5p6uL7U?=
- =?us-ascii?Q?NUkuahKPzcyp1jrRtW82nVC0nImDIr+hPv1szB0Vwb/NKDbwSLWvB2p7tr/k?=
- =?us-ascii?Q?dj1Ylg0PTxs8exy3fPFamnqclQt+oc+pqZ3V9H8PPYT/wuHjRPWl9sLfWT7k?=
- =?us-ascii?Q?LOPGZWbyW0AsMZTt1kUau0JYlsWR/rM1SYP7dIweMN+CapTa4T1lzoYGp4Gs?=
- =?us-ascii?Q?eKXMffI7A9J4QxHQ0PdTREy1KCXkcr+lGaj2ajAi5F4uBgykUIZXX/E8M2fc?=
- =?us-ascii?Q?0Ks3/sd6QnVgcPKxL1D/ILkcBiNP3Hrh7bT2/mTHgt5d9KfjxClcirxfqZSE?=
- =?us-ascii?Q?t4R/+b6BJXupjC6yMdMX2zGcK2dOnN+Y6ihIR9wBRKjcBkHRhRudd0tfUexh?=
- =?us-ascii?Q?xjY5hJ2iSslSmmpoKVKd7ydh9jr+r+iArMVJpsfj5aN3ouKpj6W7jrRsFBxc?=
- =?us-ascii?Q?Jr6aZ4+4Y8I/DomDwSuVUzkuqjLdSZN3O7F5PWegtPG1KVq2eSR6qYnRiWP0?=
- =?us-ascii?Q?7prhlKYudE/diezELUU6O5UBfPgStb4nIXXF6PiFHIdO0MrNr8rA3BqLQPaj?=
- =?us-ascii?Q?A3N+/iA68sTzcU72KokfEd7/koOnOpbHLXaEy6MAXZaNP3X1ktJgaUiwe8JQ?=
- =?us-ascii?Q?vUccqaAOCqnntMVQUJy3Q9eritl2jrknHpNHtvA1hDVg9NUeHibqllxnhFPV?=
- =?us-ascii?Q?zxPxaYkKMsV2YQJzHMwELHuz42uDhNk8lzbG+3NniCMqKmUuK+cSiVgN4rFp?=
- =?us-ascii?Q?fysYkL49eYJk1dASgZNKS7HDbVaK6IGEHYXQ6o/d9nN+fNFSQuc9YOak4dqM?=
- =?us-ascii?Q?EjzO5wN1BEnwRLXcs/2StzfpjEsaB1RgXzBJiqPO0/0nwLipI8HXWR1cLCO3?=
- =?us-ascii?Q?95WEeiXa60CyH+Ci7PX2F4IrkohZb9wJ068oQ4tig0GxBjMSHu3OUMHhOcgx?=
- =?us-ascii?Q?O9y+HAJyC0W6WWl3sLi1T5M2HlilXgVl6TH43OC0mWRIrOOSYKnQk8FR3EM7?=
- =?us-ascii?Q?AedalLUX+q4qF5tR6krKqB4TvI4z6IKCy0elraobnwg761pxLvwOnI6nTFGS?=
- =?us-ascii?Q?9KvyGI3/aBMIb86ze/cIn07x5nQFKdXjRifh7dcntQE0yZQw9cvGP0cw4csW?=
- =?us-ascii?Q?MAqMi9ztxL19+sNFzcq1MLU13ywCTy4RIXWAFss/TynXMzUjMbk0xMOBKzDq?=
- =?us-ascii?Q?9pBx0Cu61Hfg6YIWTPnb/hFZvRosOkofAGcCAjCboUuz4nWPv3XOcwpHWlgq?=
- =?us-ascii?Q?itHi+oMAZzyfxasqLbJVpmn4zaXLEOlunRExX1kwAGMCrOMNm2WTX7bJnWuS?=
- =?us-ascii?Q?NxKucHoh8n0leKeETmQuWcbmSXR6BfJoQ2h1WTKftlgBs8QvIsvPXwt2Y9lJ?=
- =?us-ascii?Q?rWrJrWM=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(376014)(366016); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Ii5lHEsDPXQQVWc6oTOveqyCKP7cmmMICpt+SAqAoo8gXoaWZrswtowbQBtE?=
- =?us-ascii?Q?uFYhEllv/naEezl777GN3TwkekyMTJ79ls2nvi5jfpaeRTxzdHSI9lW8R4A3?=
- =?us-ascii?Q?CD6OiPe5SifsUsQxF2HfXVtCWYzqkT7FEO+gHvbdk8Vh6ZfuRu0l9nWcn6c6?=
- =?us-ascii?Q?s79XdBUZ+s3i1+JM5gCxt7ObRnDzYNm1sh+Q/JUMPn3hXVc1RZNKLajRqRS6?=
- =?us-ascii?Q?aafKTufl2bWEFIsdUHrOTqsddyCKxNlfaqYa+NeSntGMKZXHT//RZqyFxv3O?=
- =?us-ascii?Q?bWl+/ZXYZ1vp3X5fPWAo0qIpj+/ZwXGgxJ4neIhT6vklSgiFZDS1DwasVops?=
- =?us-ascii?Q?gDQIKHcIIlT2Ju79TCOM6AsEhKaqhTwfCBajNXIbAk10pDkV/6wcG6omrTlN?=
- =?us-ascii?Q?Mm9wdP6oyKURPZ5FgUWwnSazvowJYssSzIjEHo7fZHTEYK/hP68C+PVYtt2T?=
- =?us-ascii?Q?XV8xsEF8EkFF2O9oP577ACa4+WcO8MN73r04TagQirnMhxPoFvBANrPP2zte?=
- =?us-ascii?Q?2e4CgW7osPlhWPqPX5+mSXR3Jp900jXD3MHvHgnLopicqjYlniIKTcZxua/F?=
- =?us-ascii?Q?h63HrE/bD4l7wSBVJyNiXy6uCjhfbpjjFtcjzmXwrOHgMhB1bb0r0rKFFWuL?=
- =?us-ascii?Q?TaFXi3fLW6Q8B7RfattAywnHH4v6WNkBOBlmgGXexi6/R3pKo8/l4LcRY2pt?=
- =?us-ascii?Q?mI2/eTeyFSN6tAVa4ESxxy8K7NR4N98Hr1UNcBRhd+QRlgnMPCZ0Dvmdj2dh?=
- =?us-ascii?Q?A7rwnlKIB8/ei6x1kH9Rr9e+Q3fhgqEABAdPlrDXcejSCScdxOjWR4sTYUQb?=
- =?us-ascii?Q?5UIB8HVt4wHJzadU+v7DzJI0mIMfbT9U1zTL8ZNVe4wkaZctdfZvy0Nh+DgZ?=
- =?us-ascii?Q?9bb9mp5EouD002hB2OXv0kcCv4NLkniiQJYz3IE1f1zxpDWJIzdN1PEci4DO?=
- =?us-ascii?Q?poU8gKonQ5TsivkhIUkWrlU6uikxfWSDrnye7slK4cL24NSq6p9N2P1exaJJ?=
- =?us-ascii?Q?ubdIsjajSjxgHeE0+uAhWYbNJS50T+DahU6FJ+iztlAG6EKVd6qFK3q8NM0C?=
- =?us-ascii?Q?6mEBZ+tErHexxkUq/HrkbTtAxgrwVoe8PaaKVQHH9t7JC3paZ/iXMCm3CQFj?=
- =?us-ascii?Q?EqQ7OKLuejAGzX0kkEMwVF1qZgJ50DICVa3WX98t8Mg/YwAcvNqcVGpgFjQt?=
- =?us-ascii?Q?TztIongmNXRH+r5iVPib6LqJjboDk1tAgWYjKdRotjWHEtoyk3zZNPvar8PV?=
- =?us-ascii?Q?YnWdJnHXQe2q/RBRE6Shcyh+adsin5LFQneLgHOzaTQo0eUROcdm+1nKIG7L?=
- =?us-ascii?Q?nFY1v29rMZYUEG0vToNhJ59bQLzIaRcJUQSyAGq4ZLVIeY0SeFHFhwNfiwQp?=
- =?us-ascii?Q?3oVyGVHA7TqCVuPNkMMh4F38tCcUesmncReyYPCeeGWf3tBJB7SK50MZuS8P?=
- =?us-ascii?Q?FHuGDqXCc1A6PWAZxloDhVh8qL/sdq1qMtpPq3FeNcBLTsRNFEd8mmkMauEX?=
- =?us-ascii?Q?cc3XPyFY+teD7nHd+jL+9DKGna5xlSrTkn0+HXNjx/umL7bASH++kUspQdiD?=
- =?us-ascii?Q?+BbP3REH4WG0aSBTwA4IFtAfrIJck7EyNIdeVI2XNfPXLVxtpR+khBhkaPR4?=
- =?us-ascii?Q?Bw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: cfb25817-1cc5-4668-ec6c-08dda99a8ce0
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2025 10:19:01.2667 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LQ5fUhf1olTo8G5w7K1clKnJCYQlEIDOJFgB2gTNealaqjl7phD/gQRZp1LuL1/o6McMM8fWabc8mhBybBuycdFCk1CveYf4/+Dj1RN8Jrg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8544
+X-MS-Exchange-CrossTenant-AuthSource: DM3PPF7D18F34A1.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cf64e3af-7dd1-4598-b91f-08dda99c4b7b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jun 2025 10:31:30.2762 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: TvLsrMUAVih2zksabQVmc4bEqwg964eapSPTSGwgn6dG5diTAUMuZAhrcutFepaEVYjPMZDv2RLz20/VJk3iGA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB8062
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -172,963 +175,547 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Jun 12, 2025 at 10:12:23AM +0000, Varghese, Vipin wrote:
-> [Public]
-> 
-> Hi Bruce & Anatoly,
-> 
-> We are facing an issue while apply patch 23 individually or series.
-> 
-> We get the following error for individual apply
-> 
-> ```
-> $ git apply p23.patch --verbose
-> Checking patch drivers/net/intel/common/rx.h...
-> Checking patch drivers/net/intel/ixgbe/ixgbe_ethdev.c...
-> Checking patch drivers/net/intel/ixgbe/ixgbe_rxtx.c...
-> error: while searching for:
->                 len += IXGBE_RX_MAX_BURST;
-> 
->         rxq->sw_ring = rte_zmalloc_socket("rxq->sw_ring",
->                                           sizeof(struct ixgbe_rx_entry) * len,
->                                           RTE_CACHE_LINE_SIZE, socket_id);
->         if (!rxq->sw_ring) {
->                 ixgbe_rx_queue_release(rxq);
-> 
-> error: patch failed: drivers/net/intel/ixgbe/ixgbe_rxtx.c:3309
-> error: drivers/net/intel/ixgbe/ixgbe_rxtx.c: patch does not apply
-> Checking patch drivers/net/intel/ixgbe/ixgbe_rxtx.h...
-> error: while searching for:
-> #define IXGBE_MAX_RING_DESC     8192
-> 
-> #define IXGBE_TX_MAX_BURST            32
-> #define IXGBE_RX_MAX_BURST            32
-> #define IXGBE_TX_MAX_FREE_BUF_SZ      64
-> 
-> #define IXGBE_VPMD_DESCS_PER_LOOP     4
-> 
-> error: patch failed: drivers/net/intel/ixgbe/ixgbe_rxtx.h:32
-> error: drivers/net/intel/ixgbe/ixgbe_rxtx.h: patch does not apply
-> Checking patch drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c...
-> Checking patch drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h...
-> Checking patch drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c...
-> error: while searching for:
->  * - floor align nb_pkts to a IXGBE_VPMD_DESCS_PER_LOOP power-of-two
->  */
-> static inline uint16_t
-> _recv_raw_pkts_vec(struct ixgbe_rx_queue *rxq, struct rte_mbuf **rx_pkts,
->                    uint16_t nb_pkts, uint8_t *split_packet)
+> Subject: [PATCH v4 3/6] net/intel: add TxPP Support for E830
+>=20
+> Add support for Tx Time based queues. This is used to schedule
+> packets based on Tx timestamp.
+>=20
+> Signed-off-by: Soumyadeep Hore <soumyadeep.hore@intel.com>
+> ---
+>  drivers/net/intel/common/tx.h              |  14 ++
+>  drivers/net/intel/ice/base/ice_lan_tx_rx.h |   4 +
+>  drivers/net/intel/ice/ice_ethdev.c         |   3 +-
+>  drivers/net/intel/ice/ice_ethdev.h         |  11 +
+>  drivers/net/intel/ice/ice_rxtx.c           | 229 ++++++++++++++++++++-
+>  drivers/net/intel/ice/ice_rxtx.h           |   9 +
+>  6 files changed, 261 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.=
+h
+> index b0a68bae44..1fbbe40cce 100644
+> --- a/drivers/net/intel/common/tx.h
+> +++ b/drivers/net/intel/common/tx.h
+> @@ -30,6 +30,19 @@ struct ci_tx_entry_vec {
+>=20
+>  typedef void (*ice_tx_release_mbufs_t)(struct ci_tx_queue *txq);
+>=20
+> +/**
+> + * Structure associated with Tx Time based queue
+> + */
+> +struct txtime {
+> +	volatile struct ice_ts_desc	*ice_ts_ring;  /* Tx time ring virtual
+> address */
+> +	uint16_t nb_ts_desc;	/* number of Tx Time descriptors */
+> +	uint16_t ts_tail;  /* current value of tail register */
+> +	int ts_offset;	/* dynamic mbuf Tx timestamp field offset */
+> +	uint64_t ts_flag;	/* dynamic mbuf Tx timestamp flag */
+> +	rte_iova_t ts_ring_dma;	/* TX time ring DMA address */
+> +	const struct rte_memzone *ts_mz;
+> +};
+
+I recommend taking this out of the common file since it is only used by one=
+ Intel driver. If support is added for another we can move it at that point=
+.
+
+> +
+>  struct ci_tx_queue {
+>  	union { /* TX ring virtual address */
+>  		volatile struct i40e_tx_desc *i40e_tx_ring;
+> @@ -77,6 +90,7 @@ struct ci_tx_queue {
+>  	union {
+>  		struct { /* ICE driver specific values */
+>  			uint32_t q_teid; /* TX schedule node id. */
+> +			struct txtime tsq; /* Tx Time based queue */
+>  		};
+>  		struct { /* I40E driver specific values */
+>  			uint8_t dcb_tc;
+> diff --git a/drivers/net/intel/ice/base/ice_lan_tx_rx.h
+> b/drivers/net/intel/ice/base/ice_lan_tx_rx.h
+> index f92382346f..cd02d2b4eb 100644
+> --- a/drivers/net/intel/ice/base/ice_lan_tx_rx.h
+> +++ b/drivers/net/intel/ice/base/ice_lan_tx_rx.h
+> @@ -1278,6 +1278,8 @@ struct ice_ts_desc {
+>  #define ICE_TXTIME_MAX_QUEUE		2047
+>  #define ICE_SET_TXTIME_MAX_Q_AMOUNT	127
+>  #define ICE_OP_TXTIME_MAX_Q_AMOUNT	2047
+> +#define ICE_TXTIME_FETCH_TS_DESC_DFLT	8
+> +#define ICE_TXTIME_FETCH_PROFILE_CNT	16
+>  /* Tx Time queue context data
+>   *
+>   * The sizes of the variables may be larger than needed due to crossing =
+byte
+> @@ -1303,10 +1305,12 @@ struct ice_txtime_ctx {
+>  	u8 drbell_mode_32;
+>  #define ICE_TXTIME_CTX_DRBELL_MODE_32	1
+>  	u8 ts_res;
+> +#define ICE_TXTIME_CTX_RESOLUTION_128NS 7
+>  	u8 ts_round_type;
+>  	u8 ts_pacing_slot;
+>  	u8 merging_ena;
+>  	u8 ts_fetch_prof_id;
+> +#define ICE_TXTIME_CTX_FETCH_PROF_ID_0 0
+>  	u8 ts_fetch_cache_line_aln_thld;
+>  	u8 tx_pipe_delay_mode;
+>  	u8 int_q_state; /* width not needed - internal - DO NOT WRITE!!! */
+> diff --git a/drivers/net/intel/ice/ice_ethdev.c
+> b/drivers/net/intel/ice/ice_ethdev.c
+> index 9478ba92df..3af9f6ba38 100644
+> --- a/drivers/net/intel/ice/ice_ethdev.c
+> +++ b/drivers/net/intel/ice/ice_ethdev.c
+> @@ -4139,7 +4139,8 @@ ice_dev_info_get(struct rte_eth_dev *dev, struct
+> rte_eth_dev_info *dev_info)
+>  			RTE_ETH_TX_OFFLOAD_VXLAN_TNL_TSO |
+>  			RTE_ETH_TX_OFFLOAD_GRE_TNL_TSO |
+>  			RTE_ETH_TX_OFFLOAD_IPIP_TNL_TSO |
+> -			RTE_ETH_TX_OFFLOAD_GENEVE_TNL_TSO;
+> +			RTE_ETH_TX_OFFLOAD_GENEVE_TNL_TSO |
+> +			RTE_ETH_TX_OFFLOAD_SEND_ON_TIMESTAMP;
+>  		dev_info->flow_type_rss_offloads |=3D ICE_RSS_OFFLOAD_ALL;
+>  	}
+>=20
+> diff --git a/drivers/net/intel/ice/ice_ethdev.h
+> b/drivers/net/intel/ice/ice_ethdev.h
+> index bfe093afca..f39c4b0471 100644
+> --- a/drivers/net/intel/ice/ice_ethdev.h
+> +++ b/drivers/net/intel/ice/ice_ethdev.h
+> @@ -17,6 +17,17 @@
+>  #include "base/ice_flow.h"
+>  #include "base/ice_sched.h"
+>=20
+> +#define FIELD_GET(_mask, _reg) \
+> +	(__extension__ ({ \
+> +		typeof(_mask) _x =3D (_mask); \
+> +		(typeof(_x))(((_reg) & (_x)) >> rte_bsf32(_x)); \
+> +	}))
+> +#define FIELD_PREP(_mask, _val) \
+> +	(__extension__ ({ \
+> +		typeof(_mask) _x =3D (_mask); \
+> +		((typeof(_x))(_val) << rte_bsf32(_x)) & (_x); \
+> +	}))
+> +
+
+I suggest moving these macros to ice_rxtx.h.
+
+
+>  #define ICE_ADMINQ_LEN               32
+>  #define ICE_SBIOQ_LEN                32
+>  #define ICE_MAILBOXQ_LEN             32
+> diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice=
+_rxtx.c
+> index ba1435b9de..94d42ddf06 100644
+> --- a/drivers/net/intel/ice/ice_rxtx.c
+> +++ b/drivers/net/intel/ice/ice_rxtx.c
+> @@ -740,6 +740,50 @@ ice_rx_queue_stop(struct rte_eth_dev *dev,
+> uint16_t rx_queue_id)
+>  	return 0;
+>  }
+>=20
+> +/**
+> + * ice_setup_txtime_ctx - setup a struct ice_txtime_ctx instance
+> + * @txq: The queue on which tstamp ring to configure
+> + * @txtime_ctx: Pointer to the Tx time queue context structure to be
+> initialized
+> + * @txtime_ena: Tx time enable flag, set to true if Tx time should be en=
+abled
+> + */
+> +static int
+> +ice_setup_txtime_ctx(struct ci_tx_queue *txq,
+> +		     struct ice_txtime_ctx *txtime_ctx, bool txtime_ena)
+> +{
+> +	struct ice_vsi *vsi =3D txq->ice_vsi;
+> +	struct ice_hw *hw =3D ICE_VSI_TO_HW(vsi);
+> +
+> +	txtime_ctx->base =3D txq->tsq.ts_ring_dma >>
+> ICE_TX_CMPLTNQ_CTX_BASE_S;
+> +
+> +	/* Tx time Queue Length */
+> +	txtime_ctx->qlen =3D txq->tsq.nb_ts_desc;
+> +
+> +	if (txtime_ena)
+> +		txtime_ctx->txtime_ena_q =3D 1;
+> +
+> +	/* PF number */
+> +	txtime_ctx->pf_num =3D hw->pf_id;
+> +
+> +	switch (vsi->type) {
+> +	case ICE_VSI_PF:
+> +		txtime_ctx->vmvf_type =3D ICE_TLAN_CTX_VMVF_TYPE_PF;
+> +		break;
+> +	default:
+> +		PMD_DRV_LOG(ERR, "Unable to set VMVF type for VSI type
+> %d",
+> +				vsi->type);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* make sure the context is associated with the right VSI */
+> +	txtime_ctx->src_vsi =3D vsi->vsi_id;
+> +
+> +	txtime_ctx->ts_res =3D ICE_TXTIME_CTX_RESOLUTION_128NS;
+> +	txtime_ctx->drbell_mode_32 =3D ICE_TXTIME_CTX_DRBELL_MODE_32;
+> +	txtime_ctx->ts_fetch_prof_id =3D ICE_TXTIME_CTX_FETCH_PROF_ID_0;
+> +
+> +	return 0;
+> +}
+> +
+>  int
+>  ice_tx_queue_start(struct rte_eth_dev *dev, uint16_t tx_queue_id)
+>  {
+> @@ -799,11 +843,6 @@ ice_tx_queue_start(struct rte_eth_dev *dev,
+> uint16_t tx_queue_id)
+>  	ice_set_ctx(hw, (uint8_t *)&tx_ctx, txq_elem->txqs[0].txq_ctx,
+>  		    ice_tlan_ctx_info);
+>=20
+> -	txq->qtx_tail =3D hw->hw_addr + QTX_COMM_DBELL(txq->reg_idx);
+> -
+> -	/* Init the Tx tail register*/
+> -	ICE_PCI_REG_WRITE(txq->qtx_tail, 0);
+> -
+>  	/* Fix me, we assume TC always 0 here */
+>  	err =3D ice_ena_vsi_txq(hw->port_info, vsi->idx, 0, tx_queue_id, 1,
+>  			txq_elem, buf_len, NULL);
+> @@ -826,6 +865,39 @@ ice_tx_queue_start(struct rte_eth_dev *dev,
+> uint16_t tx_queue_id)
+>  	/* record what kind of descriptor cleanup we need on teardown */
+>  	txq->vector_tx =3D ad->tx_vec_allowed;
+>=20
+> +	if (txq->tsq.ts_flag > 0) {
+> +		struct ice_aqc_set_txtime_qgrp *ts_elem;
+> +		u8 ts_buf_len =3D ice_struct_size(ts_elem, txtimeqs, 1);
+> +		struct ice_txtime_ctx txtime_ctx =3D { 0 };
+> +
+> +		ts_elem =3D ice_malloc(hw, ts_buf_len);
+> +		ice_setup_txtime_ctx(txq, &txtime_ctx,
+> +						true);
+
+Nit: this does not need to be broken into two lines.
+
+> +		ice_set_ctx(hw, (u8 *)&txtime_ctx,
+> +				ts_elem->txtimeqs[0].txtime_ctx,
+> +				ice_txtime_ctx_info);
+> +
+> +		txq->qtx_tail =3D hw->hw_addr +
+> +				E830_GLQTX_TXTIME_DBELL_LSB(txq-
+> >reg_idx);
+> +
+> +		/* Init the Tx time tail register*/
+> +		ICE_PCI_REG_WRITE(txq->qtx_tail, 0);
+> +
+> +		err =3D ice_aq_set_txtimeq(hw, txq->reg_idx, 1, ts_elem,
+> +				ts_buf_len, NULL);
+> +		rte_free(ts_elem);
+> +		if (err) {
+> +			PMD_DRV_LOG(ERR, "Failed to set Tx Time queue
+> context, error: %d", err);
+> +			rte_free(txq_elem);
+> +			return err;
+> +		}
+> +	} else {
+> +		txq->qtx_tail =3D hw->hw_addr + QTX_COMM_DBELL(txq-
+> >reg_idx);
+> +
+> +		/* Init the Tx tail register*/
+> +		ICE_PCI_REG_WRITE(txq->qtx_tail, 0);
+> +	}
+> +
+>  	dev->data->tx_queue_state[tx_queue_id] =3D
+> RTE_ETH_QUEUE_STATE_STARTED;
+>=20
+>  	rte_free(txq_elem);
+> @@ -1046,6 +1118,20 @@ ice_reset_tx_queue(struct ci_tx_queue *txq)
+>=20
+>  	txq->last_desc_cleaned =3D (uint16_t)(txq->nb_tx_desc - 1);
+>  	txq->nb_tx_free =3D (uint16_t)(txq->nb_tx_desc - 1);
+> +
+> +	if (txq->tsq.ts_flag > 0) {
+> +		size =3D sizeof(struct ice_ts_desc) * txq->tsq.nb_ts_desc;
+> +		for (i =3D 0; i < size; i++)
+> +			((volatile char *)txq->tsq.ice_ts_ring)[i] =3D 0;
+> +
+> +		for (i =3D 0; i < txq->tsq.nb_ts_desc; i++) {
+> +			volatile struct ice_ts_desc *tsd =3D
+> +							&txq-
+> >tsq.ice_ts_ring[i];
+> +			tsd->tx_desc_idx_tstamp =3D 0;
+> +		}
+> +
+> +		txq->tsq.ts_tail =3D 0;
+> +	}
+>  }
+>=20
+>  int
+> @@ -1080,6 +1166,19 @@ ice_tx_queue_stop(struct rte_eth_dev *dev,
+> uint16_t tx_queue_id)
+>  	q_ids[0] =3D txq->reg_idx;
+>  	q_teids[0] =3D txq->q_teid;
+>=20
+> +	if (txq->tsq.ts_flag > 0) {
+> +		struct ice_aqc_ena_dis_txtime_qgrp txtime_pg;
+> +		dev->dev_ops->timesync_disable(dev);
+> +		status =3D ice_aq_ena_dis_txtimeq(hw, q_ids[0], 1, 0,
+> +					     &txtime_pg, NULL);
+> +		if (status !=3D ICE_SUCCESS) {
+> +			PMD_DRV_LOG(DEBUG, "Failed to disable Tx time
+> queue");
+> +			return -EINVAL;
+> +		}
+> +		txq->tsq.ts_flag =3D 0;
+> +		txq->tsq.ts_offset =3D -1;
+> +	}
+> +
+>  	/* Fix me, we assume TC always 0 here */
+>  	status =3D ice_dis_vsi_txq(hw->port_info, vsi->idx, 0, 1, &q_handle,
+>  				q_ids, q_teids, ICE_NO_RESET, 0, NULL);
+> @@ -1166,6 +1265,7 @@ ice_rx_queue_setup(struct rte_eth_dev *dev,
+>  		   struct rte_mempool *mp)
+>  {
+>  	struct ice_pf *pf =3D ICE_DEV_PRIVATE_TO_PF(dev->data->dev_private);
+> +	struct ice_hw *hw =3D ICE_DEV_PRIVATE_TO_HW(dev->data-
+> >dev_private);
+>  	struct ice_adapter *ad =3D
+>  		ICE_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
+>  	struct ice_vsi *vsi =3D pf->main_vsi;
+> @@ -1249,7 +1349,7 @@ ice_rx_queue_setup(struct rte_eth_dev *dev,
+>  	rxq->xtr_field_offs =3D ad->devargs.xtr_field_offs;
+>=20
+>  	/* Allocate the maximum number of RX ring hardware descriptor. */
+> -	len =3D ICE_MAX_RING_DESC;
+> +	len =3D ICE_MAX_NUM_DESC_BY_MAC(hw);
+>=20
+>  	/**
+>  	 * Allocating a little more memory because vectorized/bulk_alloc Rx
+> @@ -1337,6 +1437,37 @@ ice_rx_queue_release(void *rxq)
+>  	rte_free(q);
+>  }
+>=20
+> +/**
+> + * ice_calc_ts_ring_count - Calculate the number of timestamp descriptor=
+s
+> + * @hw: pointer to the hardware structure
+> + * @tx_desc_count: number of Tx descriptors in the ring
+> + *
+> + * Return: the number of timestamp descriptors
+> + */
+> +static uint16_t
+> +ice_calc_ts_ring_count(struct ice_hw *hw, u16 tx_desc_count)
+> +{
+> +	u16 prof =3D ICE_TXTIME_CTX_FETCH_PROF_ID_0;
+> +	u16 max_fetch_desc =3D 0;
+> +	u16 fetch;
+> +	u32 reg;
+> +	u16 i;
+> +
+> +	for (i =3D 0; i < ICE_TXTIME_FETCH_PROFILE_CNT; i++) {
+> +		reg =3D rd32(hw, E830_GLTXTIME_FETCH_PROFILE(prof, 0));
+> +		fetch =3D
+> FIELD_GET(E830_GLTXTIME_FETCH_PROFILE_FETCH_TS_DESC_M,
+> +				  reg);
+> +		max_fetch_desc =3D max(fetch, max_fetch_desc);
+> +	}
+> +
+> +	if (!max_fetch_desc)
+> +		max_fetch_desc =3D ICE_TXTIME_FETCH_TS_DESC_DFLT;
+> +
+> +	max_fetch_desc =3D RTE_ALIGN(max_fetch_desc,
+> ICE_REQ_DESC_MULTIPLE);
+> +
+> +	return tx_desc_count + max_fetch_desc;
+> +}
+> +
+>  int
+>  ice_tx_queue_setup(struct rte_eth_dev *dev,
+>  		   uint16_t queue_idx,
+> @@ -1345,6 +1476,7 @@ ice_tx_queue_setup(struct rte_eth_dev *dev,
+>  		   const struct rte_eth_txconf *tx_conf)
+>  {
+>  	struct ice_pf *pf =3D ICE_DEV_PRIVATE_TO_PF(dev->data->dev_private);
+> +	struct ice_hw *hw =3D ICE_DEV_PRIVATE_TO_HW(dev->data-
+> >dev_private);
+>  	struct ice_vsi *vsi =3D pf->main_vsi;
+>  	struct ci_tx_queue *txq;
+>  	const struct rte_memzone *tz;
+> @@ -1469,7 +1601,8 @@ ice_tx_queue_setup(struct rte_eth_dev *dev,
+>  	}
+>=20
+>  	/* Allocate TX hardware ring descriptors. */
+> -	ring_size =3D sizeof(struct ice_tx_desc) * ICE_MAX_RING_DESC;
+> +	ring_size =3D sizeof(struct ice_tx_desc) *
+> +				ICE_MAX_NUM_DESC_BY_MAC(hw);
+>  	ring_size =3D RTE_ALIGN(ring_size, ICE_DMA_MEM_ALIGN);
+>  	tz =3D rte_eth_dma_zone_reserve(dev, "ice_tx_ring", queue_idx,
+>  				      ring_size, ICE_RING_BASE_ALIGN,
+> @@ -1507,6 +1640,42 @@ ice_tx_queue_setup(struct rte_eth_dev *dev,
+>  		return -ENOMEM;
+>  	}
+>=20
+> +	if (vsi->type =3D=3D ICE_VSI_PF &&
+> +		(offloads & RTE_ETH_TX_OFFLOAD_SEND_ON_TIMESTAMP)
+> &&
+> +		txq->tsq.ts_offset =3D=3D 0 && hw->phy_model =3D=3D ICE_PHY_E830)
+
+Perhaps we should log an error if the user tries to enable this offload on =
+an unsupported device. At the moment we silently fail.
+
 > {
->         volatile union ixgbe_adv_rx_desc *rxdp;
->         struct ixgbe_rx_entry *sw_ring;
->         uint16_t nb_pkts_recd;
->         int pos;
->         uint8x16_t shuf_msk = {
-> 
-> error: patch failed: drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c:282
-> error: drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c: patch does not apply
-> Checking patch drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c...
-> error: while searching for:
->  * - floor align nb_pkts to a IXGBE_VPMD_DESCS_PER_LOOP power-of-two
->  */
-> static inline uint16_t
-> _recv_raw_pkts_vec(struct ixgbe_rx_queue *rxq, struct rte_mbuf **rx_pkts,
->                 uint16_t nb_pkts, uint8_t *split_packet)
-> {
->         volatile union ixgbe_adv_rx_desc *rxdp;
->         struct ixgbe_rx_entry *sw_ring;
->         uint16_t nb_pkts_recd;
-> #ifdef RTE_LIB_SECURITY
->         uint8_t use_ipsec = rxq->using_ipsec;
-> 
-> error: patch failed: drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c:327
-> error: drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c: patch does not apply
-> ```
-> 
-> And we get following error in series apply
-> 
-> ```
-> $ git apply ../../Intel-PMD-drivers-Rx-cleanup.patch
-> error: patch failed: drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c:173
-> error: drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c: patch does not apply
-> ```
-> 
-> > -----Original Message-----
-> > From: Anatoly Burakov <anatoly.burakov@intel.com>
-> > Sent: Monday, June 9, 2025 9:07 PM
-> > To: dev@dpdk.org; Bruce Richardson <bruce.richardson@intel.com>; Vladimir
-> > Medvedkin <vladimir.medvedkin@intel.com>
-> > Subject: [PATCH v6 23/33] net/ixgbe: create common Rx queue structure
-> >
-> > Caution: This message originated from an External Source. Use proper caution
-> > when opening attachments, clicking links, or responding.
-> >
-> >
-> > In preparation for deduplication effort, generalize the Rx queue structure.
-> >
-> > The entire Rx queue structure is moved to common/rx.h, clarifying the comments
-> > where necessary, and separating common parts from ixgbe-specific parts.
-> >
-> > Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-> > Acked-by: Bruce Richardson <bruce.richardson@intel.com>
-> > ---
-> >
-> > Notes:
-> >     v5:
-> >     - Sort ixgbe-specific fields by size
-> >
-> >     v3 -> v4:
-> >     - Separate out some of the changes from this commit into previous commits
-> >     - Rename CI_RX_BURST to CI_RX_MAX_BURST to match the driver naming
-> > convention
-> >
-> >  drivers/net/intel/common/rx.h                 |  67 ++++++++++-
-> >  drivers/net/intel/ixgbe/ixgbe_ethdev.c        |   8 +-
-> >  drivers/net/intel/ixgbe/ixgbe_rxtx.c          | 108 +++++++++---------
-> >  drivers/net/intel/ixgbe/ixgbe_rxtx.h          |  61 +---------
-> >  .../net/intel/ixgbe/ixgbe_rxtx_vec_common.c   |  12 +-
-> >  .../net/intel/ixgbe/ixgbe_rxtx_vec_common.h   |   5 +-
-> >  drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c |  14 +--
-> > drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c  |  14 +--
-> >  8 files changed, 146 insertions(+), 143 deletions(-)
-> >
-> > diff --git a/drivers/net/intel/common/rx.h b/drivers/net/intel/common/rx.h index
-> > abb01ba5e7..b60ca24dfb 100644
-> > --- a/drivers/net/intel/common/rx.h
-> > +++ b/drivers/net/intel/common/rx.h
-> > @@ -10,14 +10,75 @@
-> >  #include <rte_mbuf.h>
-> >  #include <rte_ethdev.h>
-> >
-> > -#define CI_RX_BURST 32
-> > +#define CI_RX_MAX_BURST 32
-> > +
-> > +struct ci_rx_queue;
-> > +
-> > +struct ci_rx_entry {
-> > +       struct rte_mbuf *mbuf; /* mbuf associated with RX descriptor. */
-> > +};
-> > +
-> > +struct ci_rx_entry_sc {
-> > +       struct rte_mbuf *fbuf; /* First segment of the fragmented
-> > +packet.*/ };
-> > +
-> > +/**
-> > + * Structure associated with each RX queue.
-> > + */
-> > +struct ci_rx_queue {
-> > +       struct rte_mempool  *mp; /**< mbuf pool to populate RX ring. */
-> > +       union { /* RX ring virtual address */
-> > +               volatile union ixgbe_adv_rx_desc *ixgbe_rx_ring;
-> > +       };
-> > +       volatile uint8_t *qrx_tail;   /**< register address of tail */
-> > +       struct ci_rx_entry *sw_ring; /**< address of RX software ring. */
-> > +       struct ci_rx_entry_sc *sw_sc_ring; /**< address of scattered Rx software
-> > ring. */
-> > +       rte_iova_t rx_ring_phys_addr; /**< RX ring DMA address. */
-> > +       struct rte_mbuf *pkt_first_seg; /**< First segment of current packet. */
-> > +       struct rte_mbuf *pkt_last_seg; /**< Last segment of current packet. */
-> > +       /** hold packets to return to application */
-> > +       struct rte_mbuf *rx_stage[CI_RX_MAX_BURST * 2];
-> > +       uint16_t nb_rx_desc; /**< number of RX descriptors. */
-> > +       uint16_t rx_tail;  /**< current value of tail register. */
-> > +       uint16_t rx_nb_avail; /**< nr of staged pkts ready to ret to app */
-> > +       uint16_t nb_rx_hold; /**< number of held free RX desc. */
-> > +       uint16_t rx_next_avail; /**< idx of next staged pkt to ret to app */
-> > +       uint16_t rx_free_thresh; /**< max free RX desc to hold. */
-> > +       uint16_t rx_free_trigger; /**< triggers rx buffer allocation */
-> > +       uint16_t rxrearm_nb;     /**< number of remaining to be re-armed */
-> > +       uint16_t rxrearm_start;  /**< the idx we start the re-arming from */
-> > +       uint16_t queue_id; /**< RX queue index. */
-> > +       uint16_t port_id;  /**< Device port identifier. */
-> > +       uint16_t reg_idx;  /**< RX queue register index. */
-> > +       uint8_t crc_len;  /**< 0 if CRC stripped, 4 otherwise. */
-> > +       bool rx_deferred_start; /**< queue is not started on dev start. */
-> > +       bool vector_rx; /**< indicates that vector RX is in use */
-> > +       bool drop_en;  /**< if 1, drop packets if no descriptors are available. */
-> > +       uint64_t mbuf_initializer; /**< value to init mbufs */
-> > +       uint64_t offloads; /**< Rx offloads with RTE_ETH_RX_OFFLOAD_* */
-> > +       /** need to alloc dummy mbuf, for wraparound when scanning hw ring */
-> > +       struct rte_mbuf fake_mbuf;
-> > +       const struct rte_memzone *mz;
-> > +       union {
-> > +               struct { /* ixgbe specific values */
-> > +                       /** flags to set in mbuf when a vlan is detected. */
-> > +                       uint64_t vlan_flags;
-> > +                       /** Packet type mask for different NICs. */
-> > +                       uint16_t pkt_type_mask;
-> > +                       /** indicates that IPsec RX feature is in use */
-> > +                       uint8_t using_ipsec;
-> > +                       /** UDP frames with a 0 checksum can be marked as checksum
-> > errors. */
-> > +                       uint8_t rx_udp_csum_zero_err;
-> > +               };
-> > +       };
-> > +};
-> >
-> >  static inline uint16_t
-> >  ci_rx_reassemble_packets(struct rte_mbuf **rx_bufs, uint16_t nb_bufs, uint8_t
-> > *split_flags,
-> >                 struct rte_mbuf **pkt_first_seg, struct rte_mbuf **pkt_last_seg,
-> >                 const uint8_t crc_len)
-> >  {
-> > -       struct rte_mbuf *pkts[CI_RX_BURST] = {0}; /*finished pkts*/
-> > +       struct rte_mbuf *pkts[CI_RX_MAX_BURST] = {0}; /*finished pkts*/
-> >         struct rte_mbuf *start = *pkt_first_seg;
-> >         struct rte_mbuf *end = *pkt_last_seg;
-> >         unsigned int pkt_idx, buf_idx;
-> > @@ -97,7 +158,7 @@ static inline bool
-> >  ci_rxq_vec_capable(uint16_t nb_desc, uint16_t rx_free_thresh, uint64_t offloads)  {
-> >         if (!rte_is_power_of_2(nb_desc) ||
-> > -                       rx_free_thresh < CI_RX_BURST ||
-> > +                       rx_free_thresh < CI_RX_MAX_BURST ||
-> >                         (nb_desc % rx_free_thresh) != 0)
-> >                 return false;
-> >
-> > diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-> > b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-> > index 928ac57a93..f8b99d4de5 100644
-> > --- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-> > +++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-> > @@ -2022,7 +2022,7 @@ ixgbe_vlan_hw_strip_bitmap_set(struct rte_eth_dev
-> > *dev, uint16_t queue, bool on)  {
-> >         struct ixgbe_hwstrip *hwstrip =
-> >                 IXGBE_DEV_PRIVATE_TO_HWSTRIP_BITMAP(dev->data-
-> > >dev_private);
-> > -       struct ixgbe_rx_queue *rxq;
-> > +       struct ci_rx_queue *rxq;
-> >
-> >         if (queue >= IXGBE_MAX_RX_QUEUE_NUM)
-> >                 return;
-> > @@ -2157,7 +2157,7 @@ ixgbe_vlan_hw_strip_config(struct rte_eth_dev *dev)
-> >         struct rte_eth_rxmode *rxmode = &dev->data->dev_conf.rxmode;
-> >         uint32_t ctrl;
-> >         uint16_t i;
-> > -       struct ixgbe_rx_queue *rxq;
-> > +       struct ci_rx_queue *rxq;
-> >         bool on;
-> >
-> >         PMD_INIT_FUNC_TRACE();
-> > @@ -2200,7 +2200,7 @@ ixgbe_config_vlan_strip_on_all_queues(struct
-> > rte_eth_dev *dev, int mask)  {
-> >         uint16_t i;
-> >         struct rte_eth_rxmode *rxmode;
-> > -       struct ixgbe_rx_queue *rxq;
-> > +       struct ci_rx_queue *rxq;
-> >
-> >         if (mask & RTE_ETH_VLAN_STRIP_MASK) {
-> >                 rxmode = &dev->data->dev_conf.rxmode; @@ -5782,7 +5782,7 @@
-> > ixgbevf_vlan_strip_queue_set(struct rte_eth_dev *dev, uint16_t queue, int on)  static
-> > int  ixgbevf_vlan_offload_config(struct rte_eth_dev *dev, int mask)  {
-> > -       struct ixgbe_rx_queue *rxq;
-> > +       struct ci_rx_queue *rxq;
-> >         uint16_t i;
-> >         int on = 0;
-> >
-> > diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.c b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-> > index 5b2067bc0e..bbe665a6ff 100644
-> > --- a/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-> > +++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.c
-> > @@ -1403,11 +1403,11 @@ int
-> >  ixgbe_get_monitor_addr(void *rx_queue, struct rte_power_monitor_cond *pmc)  {
-> >         volatile union ixgbe_adv_rx_desc *rxdp;
-> > -       struct ixgbe_rx_queue *rxq = rx_queue;
-> > +       struct ci_rx_queue *rxq = rx_queue;
-> >         uint16_t desc;
-> >
-> >         desc = rxq->rx_tail;
-> > -       rxdp = &rxq->rx_ring[desc];
-> > +       rxdp = &rxq->ixgbe_rx_ring[desc];
-> >         /* watch for changes in status bit */
-> >         pmc->addr = &rxdp->wb.upper.status_error;
-> >
-> > @@ -1547,10 +1547,10 @@ rx_desc_error_to_pkt_flags(uint32_t rx_status,
-> > uint16_t pkt_info,  #error "PMD IXGBE: LOOK_AHEAD must be 8\n"
-> >  #endif
-> >  static inline int
-> > -ixgbe_rx_scan_hw_ring(struct ixgbe_rx_queue *rxq)
-> > +ixgbe_rx_scan_hw_ring(struct ci_rx_queue *rxq)
-> >  {
-> >         volatile union ixgbe_adv_rx_desc *rxdp;
-> > -       struct ixgbe_rx_entry *rxep;
-> > +       struct ci_rx_entry *rxep;
-> >         struct rte_mbuf *mb;
-> >         uint16_t pkt_len;
-> >         uint64_t pkt_flags;
-> > @@ -1562,7 +1562,7 @@ ixgbe_rx_scan_hw_ring(struct ixgbe_rx_queue *rxq)
-> >         uint64_t vlan_flags = rxq->vlan_flags;
-> >
-> >         /* get references to current descriptor and S/W ring entry */
-> > -       rxdp = &rxq->rx_ring[rxq->rx_tail];
-> > +       rxdp = &rxq->ixgbe_rx_ring[rxq->rx_tail];
-> >         rxep = &rxq->sw_ring[rxq->rx_tail];
-> >
-> >         status = rxdp->wb.upper.status_error; @@ -1647,10 +1647,10 @@
-> > ixgbe_rx_scan_hw_ring(struct ixgbe_rx_queue *rxq)  }
-> >
-> >  static inline int
-> > -ixgbe_rx_alloc_bufs(struct ixgbe_rx_queue *rxq, bool reset_mbuf)
-> > +ixgbe_rx_alloc_bufs(struct ci_rx_queue *rxq, bool reset_mbuf)
-> >  {
-> >         volatile union ixgbe_adv_rx_desc *rxdp;
-> > -       struct ixgbe_rx_entry *rxep;
-> > +       struct ci_rx_entry *rxep;
-> >         struct rte_mbuf *mb;
-> >         uint16_t alloc_idx;
-> >         __le64 dma_addr;
-> > @@ -1664,7 +1664,7 @@ ixgbe_rx_alloc_bufs(struct ixgbe_rx_queue *rxq, bool
-> > reset_mbuf)
-> >         if (unlikely(diag != 0))
-> >                 return -ENOMEM;
-> >
-> > -       rxdp = &rxq->rx_ring[alloc_idx];
-> > +       rxdp = &rxq->ixgbe_rx_ring[alloc_idx];
-> >         for (i = 0; i < rxq->rx_free_thresh; ++i) {
-> >                 /* populate the static rte mbuf fields */
-> >                 mb = rxep[i].mbuf;
-> > @@ -1691,7 +1691,7 @@ ixgbe_rx_alloc_bufs(struct ixgbe_rx_queue *rxq, bool
-> > reset_mbuf)  }
-> >
-> >  static inline uint16_t
-> > -ixgbe_rx_fill_from_stage(struct ixgbe_rx_queue *rxq, struct rte_mbuf **rx_pkts,
-> > +ixgbe_rx_fill_from_stage(struct ci_rx_queue *rxq, struct rte_mbuf
-> > +**rx_pkts,
-> >                          uint16_t nb_pkts)  {
-> >         struct rte_mbuf **stage = &rxq->rx_stage[rxq->rx_next_avail];
-> > @@ -1715,7 +1715,7 @@ static inline uint16_t  rx_recv_pkts(void *rx_queue,
-> > struct rte_mbuf **rx_pkts,
-> >              uint16_t nb_pkts)
-> >  {
-> > -       struct ixgbe_rx_queue *rxq = (struct ixgbe_rx_queue *)rx_queue;
-> > +       struct ci_rx_queue *rxq = (struct ci_rx_queue *)rx_queue;
-> >         uint16_t nb_rx = 0;
-> >
-> >         /* Any previously recv'd pkts will be returned from the Rx stage */ @@ -
-> > 1804,11 +1804,11 @@ uint16_t  ixgbe_recv_pkts(void *rx_queue, struct rte_mbuf
-> > **rx_pkts,
-> >                 uint16_t nb_pkts)
-> >  {
-> > -       struct ixgbe_rx_queue *rxq;
-> > +       struct ci_rx_queue *rxq;
-> >         volatile union ixgbe_adv_rx_desc *rx_ring;
-> >         volatile union ixgbe_adv_rx_desc *rxdp;
-> > -       struct ixgbe_rx_entry *sw_ring;
-> > -       struct ixgbe_rx_entry *rxe;
-> > +       struct ci_rx_entry *sw_ring;
-> > +       struct ci_rx_entry *rxe;
-> >         struct rte_mbuf *rxm;
-> >         struct rte_mbuf *nmb;
-> >         union ixgbe_adv_rx_desc rxd;
-> > @@ -1826,7 +1826,7 @@ ixgbe_recv_pkts(void *rx_queue, struct rte_mbuf
-> > **rx_pkts,
-> >         nb_hold = 0;
-> >         rxq = rx_queue;
-> >         rx_id = rxq->rx_tail;
-> > -       rx_ring = rxq->rx_ring;
-> > +       rx_ring = rxq->ixgbe_rx_ring;
-> >         sw_ring = rxq->sw_ring;
-> >         vlan_flags = rxq->vlan_flags;
-> >         while (nb_rx < nb_pkts) {
-> > @@ -2031,7 +2031,7 @@ static inline void  ixgbe_fill_cluster_head_buf(
-> >         struct rte_mbuf *head,
-> >         union ixgbe_adv_rx_desc *desc,
-> > -       struct ixgbe_rx_queue *rxq,
-> > +       struct ci_rx_queue *rxq,
-> >         uint32_t staterr)
-> >  {
-> >         uint32_t pkt_info;
-> > @@ -2093,10 +2093,10 @@ static inline uint16_t  ixgbe_recv_pkts_lro(void
-> > *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts,
-> >                     bool bulk_alloc)
-> >  {
-> > -       struct ixgbe_rx_queue *rxq = rx_queue;
-> > -       volatile union ixgbe_adv_rx_desc *rx_ring = rxq->rx_ring;
-> > -       struct ixgbe_rx_entry *sw_ring = rxq->sw_ring;
-> > -       struct ixgbe_scattered_rx_entry *sw_sc_ring = rxq->sw_sc_ring;
-> > +       struct ci_rx_queue *rxq = rx_queue;
-> > +       volatile union ixgbe_adv_rx_desc *rx_ring = rxq->ixgbe_rx_ring;
-> > +       struct ci_rx_entry *sw_ring = rxq->sw_ring;
-> > +       struct ci_rx_entry_sc *sw_sc_ring = rxq->sw_sc_ring;
-> >         uint16_t rx_id = rxq->rx_tail;
-> >         uint16_t nb_rx = 0;
-> >         uint16_t nb_hold = rxq->nb_rx_hold; @@ -2104,10 +2104,10 @@
-> > ixgbe_recv_pkts_lro(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts,
-> >
-> >         while (nb_rx < nb_pkts) {
-> >                 bool eop;
-> > -               struct ixgbe_rx_entry *rxe;
-> > -               struct ixgbe_scattered_rx_entry *sc_entry;
-> > -               struct ixgbe_scattered_rx_entry *next_sc_entry = NULL;
-> > -               struct ixgbe_rx_entry *next_rxe = NULL;
-> > +               struct ci_rx_entry *rxe;
-> > +               struct ci_rx_entry_sc *sc_entry;
-> > +               struct ci_rx_entry_sc *next_sc_entry = NULL;
-> > +               struct ci_rx_entry *next_rxe = NULL;
-> >                 struct rte_mbuf *first_seg;
-> >                 struct rte_mbuf *rxm;
-> >                 struct rte_mbuf *nmb = NULL; @@ -2949,7 +2949,7 @@
-> > ixgbe_free_sc_cluster(struct rte_mbuf *m)  }
-> >
-> >  static void __rte_cold
-> > -ixgbe_rx_queue_release_mbufs_non_vec(struct ixgbe_rx_queue *rxq)
-> > +ixgbe_rx_queue_release_mbufs_non_vec(struct ci_rx_queue *rxq)
-> >  {
-> >         unsigned i;
-> >
-> > @@ -2980,7 +2980,7 @@ ixgbe_rx_queue_release_mbufs_non_vec(struct
-> > ixgbe_rx_queue *rxq)  }
-> >
-> >  static void __rte_cold
-> > -ixgbe_rx_queue_release_mbufs(struct ixgbe_rx_queue *rxq)
-> > +ixgbe_rx_queue_release_mbufs(struct ci_rx_queue *rxq)
-> >  {
-> >         if (rxq->vector_rx)
-> >                 ixgbe_rx_queue_release_mbufs_vec(rxq);
-> > @@ -2989,7 +2989,7 @@ ixgbe_rx_queue_release_mbufs(struct ixgbe_rx_queue
-> > *rxq)  }
-> >
-> >  static void __rte_cold
-> > -ixgbe_rx_queue_release(struct ixgbe_rx_queue *rxq)
-> > +ixgbe_rx_queue_release(struct ci_rx_queue *rxq)
-> >  {
-> >         if (rxq != NULL) {
-> >                 ixgbe_rx_queue_release_mbufs(rxq);
-> > @@ -3015,7 +3015,7 @@ ixgbe_dev_rx_queue_release(struct rte_eth_dev *dev,
-> > uint16_t qid)
-> >   *           function must be used.
-> >   */
-> >  static inline int __rte_cold
-> > -check_rx_burst_bulk_alloc_preconditions(struct ixgbe_rx_queue *rxq)
-> > +check_rx_burst_bulk_alloc_preconditions(struct ci_rx_queue *rxq)
-> >  {
-> >         int ret = 0;
-> >
-> > @@ -3052,7 +3052,7 @@ check_rx_burst_bulk_alloc_preconditions(struct
-> > ixgbe_rx_queue *rxq)
-> >
-> >  /* Reset dynamic ixgbe_rx_queue fields back to defaults */  static void __rte_cold -
-> > ixgbe_reset_rx_queue(struct ixgbe_adapter *adapter, struct ixgbe_rx_queue *rxq)
-> > +ixgbe_reset_rx_queue(struct ixgbe_adapter *adapter, struct ci_rx_queue
-> > +*rxq)
-> >  {
-> >         static const union ixgbe_adv_rx_desc zeroed_desc = {{0}};
-> >         unsigned i;
-> > @@ -3073,7 +3073,7 @@ ixgbe_reset_rx_queue(struct ixgbe_adapter *adapter,
-> > struct ixgbe_rx_queue *rxq)
-> >          * reads extra memory as zeros.
-> >          */
-> >         for (i = 0; i < len; i++) {
-> > -               rxq->rx_ring[i] = zeroed_desc;
-> > +               rxq->ixgbe_rx_ring[i] = zeroed_desc;
-> >         }
-> >
-> >         /*
-> > @@ -3185,7 +3185,7 @@ ixgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
-> >                          struct rte_mempool *mp)  {
-> >         const struct rte_memzone *rz;
-> > -       struct ixgbe_rx_queue *rxq;
-> > +       struct ci_rx_queue *rxq;
-> >         struct ixgbe_hw     *hw;
-> >         uint16_t len;
-> >         struct ixgbe_adapter *adapter = dev->data->dev_private; @@ -3214,7
-> > +3214,7 @@ ixgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
-> >         }
-> >
-> >         /* First allocate the rx queue data structure */
-> > -       rxq = rte_zmalloc_socket("ethdev RX queue", sizeof(struct ixgbe_rx_queue),
-> > +       rxq = rte_zmalloc_socket("ethdev RX queue", sizeof(struct
-> > + ci_rx_queue),
-> >                                  RTE_CACHE_LINE_SIZE, socket_id);
-> >         if (rxq == NULL)
-> >                 return -ENOMEM;
-> > @@ -3284,7 +3284,7 @@ ixgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
-> >                         IXGBE_PCI_REG_ADDR(hw, IXGBE_RDT(rxq->reg_idx));
-> >
-> >         rxq->rx_ring_phys_addr = rz->iova;
-> > -       rxq->rx_ring = (union ixgbe_adv_rx_desc *) rz->addr;
-> > +       rxq->ixgbe_rx_ring = (union ixgbe_adv_rx_desc *)rz->addr;
-> >
-> >         /*
-> >          * Certain constraints must be met in order to use the bulk buffer @@ -3309,7
-> > +3309,7 @@ ixgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
-> >                 len += IXGBE_RX_MAX_BURST;
-> >
-> >         rxq->sw_ring = rte_zmalloc_socket("rxq->sw_ring",
-> > -                                         sizeof(struct ixgbe_rx_entry) * len,
-> > +                                         sizeof(struct ci_rx_entry) *
-> > + len,
-> >                                           RTE_CACHE_LINE_SIZE, socket_id);
-> >         if (!rxq->sw_ring) {
-> >                 ixgbe_rx_queue_release(rxq); @@ -3326,7 +3326,7 @@
-> > ixgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
-> >          */
-> >         rxq->sw_sc_ring =
-> >                 rte_zmalloc_socket("rxq->sw_sc_ring",
-> > -                                  sizeof(struct ixgbe_scattered_rx_entry) * len,
-> > +                                  sizeof(struct ci_rx_entry_sc) * len,
-> >                                    RTE_CACHE_LINE_SIZE, socket_id);
-> >         if (!rxq->sw_sc_ring) {
-> >                 ixgbe_rx_queue_release(rxq); @@ -3335,7 +3335,7 @@
-> > ixgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
-> >
-> >         PMD_INIT_LOG(DEBUG, "sw_ring=%p sw_sc_ring=%p hw_ring=%p "
-> >                             "dma_addr=0x%"PRIx64,
-> > -                    rxq->sw_ring, rxq->sw_sc_ring, rxq->rx_ring,
-> > +                    rxq->sw_ring, rxq->sw_sc_ring, rxq->ixgbe_rx_ring,
-> >                      rxq->rx_ring_phys_addr);
-> >
-> >         if (!rte_is_power_of_2(nb_desc)) { @@ -3359,11 +3359,11 @@
-> > ixgbe_dev_rx_queue_count(void *rx_queue)  {  #define
-> > IXGBE_RXQ_SCAN_INTERVAL 4
-> >         volatile union ixgbe_adv_rx_desc *rxdp;
-> > -       struct ixgbe_rx_queue *rxq;
-> > +       struct ci_rx_queue *rxq;
-> >         uint32_t desc = 0;
-> >
-> >         rxq = rx_queue;
-> > -       rxdp = &(rxq->rx_ring[rxq->rx_tail]);
-> > +       rxdp = &rxq->ixgbe_rx_ring[rxq->rx_tail];
-> >
-> >         while ((desc < rxq->nb_rx_desc) &&
-> >                 (rxdp->wb.upper.status_error & @@ -3371,7 +3371,7 @@
-> > ixgbe_dev_rx_queue_count(void *rx_queue)
-> >                 desc += IXGBE_RXQ_SCAN_INTERVAL;
-> >                 rxdp += IXGBE_RXQ_SCAN_INTERVAL;
-> >                 if (rxq->rx_tail + desc >= rxq->nb_rx_desc)
-> > -                       rxdp = &(rxq->rx_ring[rxq->rx_tail +
-> > +                       rxdp = &(rxq->ixgbe_rx_ring[rxq->rx_tail +
-> >                                 desc - rxq->nb_rx_desc]);
-> >         }
-> >
-> > @@ -3381,7 +3381,7 @@ ixgbe_dev_rx_queue_count(void *rx_queue)  int
-> > ixgbe_dev_rx_descriptor_status(void *rx_queue, uint16_t offset)  {
-> > -       struct ixgbe_rx_queue *rxq = rx_queue;
-> > +       struct ci_rx_queue *rxq = rx_queue;
-> >         volatile uint32_t *status;
-> >         uint32_t nb_hold, desc;
-> >
-> > @@ -3399,7 +3399,7 @@ ixgbe_dev_rx_descriptor_status(void *rx_queue,
-> > uint16_t offset)
-> >         if (desc >= rxq->nb_rx_desc)
-> >                 desc -= rxq->nb_rx_desc;
-> >
-> > -       status = &rxq->rx_ring[desc].wb.upper.status_error;
-> > +       status = &rxq->ixgbe_rx_ring[desc].wb.upper.status_error;
-> >         if (*status & rte_cpu_to_le_32(IXGBE_RXDADV_STAT_DD))
-> >                 return RTE_ETH_RX_DESC_DONE;
-> >
-> > @@ -3482,7 +3482,7 @@ ixgbe_dev_clear_queues(struct rte_eth_dev *dev)
-> >         }
-> >
-> >         for (i = 0; i < dev->data->nb_rx_queues; i++) {
-> > -               struct ixgbe_rx_queue *rxq = dev->data->rx_queues[i];
-> > +               struct ci_rx_queue *rxq = dev->data->rx_queues[i];
-> >
-> >                 if (rxq != NULL) {
-> >                         ixgbe_rx_queue_release_mbufs(rxq);
-> > @@ -4644,9 +4644,9 @@ ixgbe_vmdq_tx_hw_configure(struct ixgbe_hw *hw)  }
-> >
-> >  static int __rte_cold
-> > -ixgbe_alloc_rx_queue_mbufs(struct ixgbe_rx_queue *rxq)
-> > +ixgbe_alloc_rx_queue_mbufs(struct ci_rx_queue *rxq)
-> >  {
-> > -       struct ixgbe_rx_entry *rxe = rxq->sw_ring;
-> > +       struct ci_rx_entry *rxe = rxq->sw_ring;
-> >         uint64_t dma_addr;
-> >         unsigned int i;
-> >
-> > @@ -4666,7 +4666,7 @@ ixgbe_alloc_rx_queue_mbufs(struct ixgbe_rx_queue
-> > *rxq)
-> >
-> >                 dma_addr =
-> >                         rte_cpu_to_le_64(rte_mbuf_data_iova_default(mbuf));
-> > -               rxd = &rxq->rx_ring[i];
-> > +               rxd = &rxq->ixgbe_rx_ring[i];
-> >                 rxd->read.hdr_addr = 0;
-> >                 rxd->read.pkt_addr = dma_addr;
-> >                 rxe[i].mbuf = mbuf;
-> > @@ -5083,7 +5083,7 @@ ixgbe_set_rx_function(struct rte_eth_dev *dev)
-> >                 dev->rx_pkt_burst == ixgbe_recv_pkts_vec);
-> >
-> >         for (i = 0; i < dev->data->nb_rx_queues; i++) {
-> > -               struct ixgbe_rx_queue *rxq = dev->data->rx_queues[i];
-> > +               struct ci_rx_queue *rxq = dev->data->rx_queues[i];
-> >
-> >                 rxq->vector_rx = rx_using_sse;  #ifdef RTE_LIB_SECURITY @@ -
-> > 5161,7 +5161,7 @@ ixgbe_set_rsc(struct rte_eth_dev *dev)
-> >
-> >         /* Per-queue RSC configuration (chapter 4.6.7.2.2 of 82599 Spec) */
-> >         for (i = 0; i < dev->data->nb_rx_queues; i++) {
-> > -               struct ixgbe_rx_queue *rxq = dev->data->rx_queues[i];
-> > +               struct ci_rx_queue *rxq = dev->data->rx_queues[i];
-> >                 uint32_t srrctl =
-> >                         IXGBE_READ_REG(hw, IXGBE_SRRCTL(rxq->reg_idx));
-> >                 uint32_t rscctl =
-> > @@ -5237,7 +5237,7 @@ int __rte_cold
-> >  ixgbe_dev_rx_init(struct rte_eth_dev *dev)  {
-> >         struct ixgbe_hw     *hw;
-> > -       struct ixgbe_rx_queue *rxq;
-> > +       struct ci_rx_queue *rxq;
-> >         uint64_t bus_addr;
-> >         uint32_t rxctrl;
-> >         uint32_t fctrl;
-> > @@ -5533,7 +5533,7 @@ ixgbe_dev_rxtx_start(struct rte_eth_dev *dev)  {
-> >         struct ixgbe_hw     *hw;
-> >         struct ci_tx_queue *txq;
-> > -       struct ixgbe_rx_queue *rxq;
-> > +       struct ci_rx_queue *rxq;
-> >         uint32_t txdctl;
-> >         uint32_t dmatxctl;
-> >         uint32_t rxctrl;
-> > @@ -5620,7 +5620,7 @@ int __rte_cold
-> >  ixgbe_dev_rx_queue_start(struct rte_eth_dev *dev, uint16_t rx_queue_id)  {
-> >         struct ixgbe_hw     *hw;
-> > -       struct ixgbe_rx_queue *rxq;
-> > +       struct ci_rx_queue *rxq;
-> >         uint32_t rxdctl;
-> >         int poll_ms;
-> >
-> > @@ -5663,7 +5663,7 @@ ixgbe_dev_rx_queue_stop(struct rte_eth_dev *dev,
-> > uint16_t rx_queue_id)  {
-> >         struct ixgbe_hw     *hw;
-> >         struct ixgbe_adapter *adapter = dev->data->dev_private;
-> > -       struct ixgbe_rx_queue *rxq;
-> > +       struct ci_rx_queue *rxq;
-> >         uint32_t rxdctl;
-> >         int poll_ms;
-> >
-> > @@ -5797,7 +5797,7 @@ void
-> >  ixgbe_rxq_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
-> >         struct rte_eth_rxq_info *qinfo)
-> >  {
-> > -       struct ixgbe_rx_queue *rxq;
-> > +       struct ci_rx_queue *rxq;
-> >
-> >         rxq = dev->data->rx_queues[queue_id];
-> >
-> > @@ -5835,7 +5835,7 @@ void
-> >  ixgbe_recycle_rxq_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
-> >         struct rte_eth_recycle_rxq_info *recycle_rxq_info)  {
-> > -       struct ixgbe_rx_queue *rxq;
-> > +       struct ci_rx_queue *rxq;
-> >         struct ixgbe_adapter *adapter = dev->data->dev_private;
-> >
-> >         rxq = dev->data->rx_queues[queue_id]; @@ -5861,7 +5861,7 @@ int
-> > __rte_cold  ixgbevf_dev_rx_init(struct rte_eth_dev *dev)  {
-> >         struct ixgbe_hw     *hw;
-> > -       struct ixgbe_rx_queue *rxq;
-> > +       struct ci_rx_queue *rxq;
-> >         struct rte_eth_rxmode *rxmode = &dev->data->dev_conf.rxmode;
-> >         uint32_t frame_size = dev->data->mtu + IXGBE_ETH_OVERHEAD;
-> >         uint64_t bus_addr;
-> > @@ -6048,7 +6048,7 @@ ixgbevf_dev_rxtx_start(struct rte_eth_dev *dev)  {
-> >         struct ixgbe_hw     *hw;
-> >         struct ci_tx_queue *txq;
-> > -       struct ixgbe_rx_queue *rxq;
-> > +       struct ci_rx_queue *rxq;
-> >         uint32_t txdctl;
-> >         uint32_t rxdctl;
-> >         uint16_t i;
-> > diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx.h b/drivers/net/intel/ixgbe/ixgbe_rxtx.h
-> > index 9047ee4763..aad7ee81ee 100644
-> > --- a/drivers/net/intel/ixgbe/ixgbe_rxtx.h
-> > +++ b/drivers/net/intel/ixgbe/ixgbe_rxtx.h
-> > @@ -7,6 +7,7 @@
-> >
-> >  #include "ixgbe_type.h"
-> >
-> > +#include "../common/rx.h"
-> >  #include "../common/tx.h"
-> >
-> >  /*
-> > @@ -32,7 +33,7 @@
-> >  #define        IXGBE_MAX_RING_DESC     8192
-> >
-> >  #define IXGBE_TX_MAX_BURST            32
-> > -#define IXGBE_RX_MAX_BURST            32
-> > +#define IXGBE_RX_MAX_BURST            CI_RX_MAX_BURST
-> >  #define IXGBE_TX_MAX_FREE_BUF_SZ      64
-> >
-> >  #define IXGBE_VPMD_DESCS_PER_LOOP     4
-> > @@ -66,64 +67,6 @@
-> >  #define IXGBE_PACKET_TYPE_TN_MAX            0X100
-> >  #define IXGBE_PACKET_TYPE_SHIFT             0X04
-> >
-> > -/**
-> > - * Structure associated with each descriptor of the RX ring of a RX queue.
-> > - */
-> > -struct ixgbe_rx_entry {
-> > -       struct rte_mbuf *mbuf; /**< mbuf associated with RX descriptor. */
-> > -};
-> > -
-> > -struct ixgbe_scattered_rx_entry {
-> > -       struct rte_mbuf *fbuf; /**< First segment of the fragmented packet. */
-> > -};
-> > -
-> > -/**
-> > - * Structure associated with each RX queue.
-> > - */
-> > -struct ixgbe_rx_queue {
-> > -       struct rte_mempool  *mp; /**< mbuf pool to populate RX ring. */
-> > -       volatile union ixgbe_adv_rx_desc *rx_ring; /**< RX ring virtual address. */
-> > -       uint64_t            rx_ring_phys_addr; /**< RX ring DMA address. */
-> > -       volatile uint32_t   *qrx_tail; /**< RDT register address. */
-> > -       struct ixgbe_rx_entry *sw_ring; /**< address of RX software ring. */
-> > -       struct ixgbe_scattered_rx_entry *sw_sc_ring; /**< address of scattered Rx
-> > software ring. */
-> > -       struct rte_mbuf *pkt_first_seg; /**< First segment of current packet. */
-> > -       struct rte_mbuf *pkt_last_seg; /**< Last segment of current packet. */
-> > -       uint64_t            mbuf_initializer; /**< value to init mbufs */
-> > -       uint16_t            nb_rx_desc; /**< number of RX descriptors. */
-> > -       uint16_t            rx_tail;  /**< current value of RDT register. */
-> > -       uint16_t            nb_rx_hold; /**< number of held free RX desc. */
-> > -       uint16_t rx_nb_avail; /**< nr of staged pkts ready to ret to app */
-> > -       uint16_t rx_next_avail; /**< idx of next staged pkt to ret to app */
-> > -       uint16_t rx_free_trigger; /**< triggers rx buffer allocation */
-> > -       uint8_t            vector_rx;
-> > -       /**< indicates that vector RX is in use */
-> > -#ifdef RTE_LIB_SECURITY
-> > -       uint8_t            using_ipsec;
-> > -       /**< indicates that IPsec RX feature is in use */
-> > -#endif
-> > -       uint16_t            rxrearm_nb;     /**< number of remaining to be re-armed */
-> > -       uint16_t            rxrearm_start;  /**< the idx we start the re-arming from */
-> > -       uint16_t            rx_free_thresh; /**< max free RX desc to hold. */
-> > -       uint16_t            queue_id; /**< RX queue index. */
-> > -       uint16_t            reg_idx;  /**< RX queue register index. */
-> > -       uint16_t            pkt_type_mask;  /**< Packet type mask for different NICs. */
-> > -       uint16_t            port_id;  /**< Device port identifier. */
-> > -       uint8_t             crc_len;  /**< 0 if CRC stripped, 4 otherwise. */
-> > -       uint8_t             drop_en;  /**< If not 0, set SRRCTL.Drop_En. */
-> > -       uint8_t             rx_deferred_start; /**< not in global dev start. */
-> > -       /** UDP frames with a 0 checksum can be marked as checksum errors. */
-> > -       uint8_t             rx_udp_csum_zero_err;
-> > -       /** flags to set in mbuf when a vlan is detected. */
-> > -       uint64_t            vlan_flags;
-> > -       uint64_t            offloads; /**< Rx offloads with RTE_ETH_RX_OFFLOAD_* */
-> > -       /** need to alloc dummy mbuf, for wraparound when scanning hw ring */
-> > -       struct rte_mbuf fake_mbuf;
-> > -       /** hold packets to return to application */
-> > -       struct rte_mbuf *rx_stage[IXGBE_RX_MAX_BURST * 2];
-> > -       const struct rte_memzone *mz;
-> > -};
-> > -
-> >  /**
-> >   * IXGBE CTX Constants
-> >   */
-> > diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c
-> > b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c
-> > index 707dc7f5f9..5f231b9012 100644
-> > --- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c
-> > +++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.c
-> > @@ -61,7 +61,7 @@ ixgbe_reset_tx_queue_vec(struct ci_tx_queue *txq)  }
-> >
-> >  void __rte_cold
-> > -ixgbe_rx_queue_release_mbufs_vec(struct ixgbe_rx_queue *rxq)
-> > +ixgbe_rx_queue_release_mbufs_vec(struct ci_rx_queue *rxq)
-> >  {
-> >         unsigned int i;
-> >
-> > @@ -90,7 +90,7 @@ ixgbe_rx_queue_release_mbufs_vec(struct ixgbe_rx_queue
-> > *rxq)  }
-> >
-> >  int __rte_cold
-> > -ixgbe_rxq_vec_setup(struct ixgbe_rx_queue *rxq)
-> > +ixgbe_rxq_vec_setup(struct ci_rx_queue *rxq)
-> >  {
-> >         rxq->mbuf_initializer = ci_rxq_mbuf_initializer(rxq->port_id);
-> >         return 0;
-> > @@ -126,7 +126,7 @@ ixgbe_rx_vec_dev_conf_condition_check(struct
-> > rte_eth_dev *dev)
-> >                 return -1;
-> >
-> >         for (uint16_t i = 0; i < dev->data->nb_rx_queues; i++) {
-> > -               struct ixgbe_rx_queue *rxq = dev->data->rx_queues[i];
-> > +               struct ci_rx_queue *rxq = dev->data->rx_queues[i];
-> >                 if (!rxq)
-> >                         continue;
-> >                 if (!ci_rxq_vec_capable(rxq->nb_rx_desc, rxq->rx_free_thresh, rxq-
-> > >offloads)) @@ -173,15 +173,15 @@ ixgbe_xmit_pkts_vec(void *tx_queue, struct
-> > rte_mbuf **tx_pkts,  void  ixgbe_recycle_rx_descriptors_refill_vec(void *rx_queue,
-> > uint16_t nb_mbufs)  {
-> > -       struct ixgbe_rx_queue *rxq = rx_queue;
-> > -       struct ixgbe_rx_entry *rxep;
-> > +       struct ci_rx_queue *rxq = rx_queue;
-> > +       struct ci_rx_entry *rxep;
-> >         volatile union ixgbe_adv_rx_desc *rxdp;
-> >         uint16_t rx_id;
-> >         uint64_t paddr;
-> >         uint64_t dma_addr;
-> >         uint16_t i;
-> >
-> > -       rxdp = rxq->rx_ring + rxq->rxrearm_start;
-> > +       rxdp = rxq->ixgbe_rx_ring + rxq->rxrearm_start;
-> >         rxep = &rxq->sw_ring[rxq->rxrearm_start];
-> >
-> >         for (i = 0; i < nb_mbufs; i++) { diff --git
-> > a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
-> > b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
-> > index e05696f584..e54f532497 100644
-> > --- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
-> > +++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_common.h
-> > @@ -12,9 +12,9 @@
-> >  #include "ixgbe_rxtx.h"
-> >
-> >  int ixgbe_rx_vec_dev_conf_condition_check(struct rte_eth_dev *dev); -int
-> > ixgbe_rxq_vec_setup(struct ixgbe_rx_queue *rxq);
-> > +int ixgbe_rxq_vec_setup(struct ci_rx_queue *rxq);
-> >  int ixgbe_txq_vec_setup(struct ci_tx_queue *txq); -void
-> > ixgbe_rx_queue_release_mbufs_vec(struct ixgbe_rx_queue *rxq);
-> > +void ixgbe_rx_queue_release_mbufs_vec(struct ci_rx_queue *rxq);
-> >  void ixgbe_reset_tx_queue_vec(struct ci_tx_queue *txq);  void
-> > ixgbe_tx_free_swring_vec(struct ci_tx_queue *txq);  uint16_t
-> > ixgbe_recv_pkts_vec(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
-> > @@ -79,5 +79,4 @@ ixgbe_tx_free_bufs_vec(struct ci_tx_queue *txq)
-> >
-> >         return txq->tx_rs_thresh;
-> >  }
-> > -
-> >  #endif
-> > diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c
-> > b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c
-> > index 2d42b7b1c1..ce492f2ff1 100644
-> > --- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c
-> > +++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_neon.c
-> > @@ -12,19 +12,19 @@
-> >  #include "ixgbe_rxtx_vec_common.h"
-> >
-> >  static inline void
-> > -ixgbe_rxq_rearm(struct ixgbe_rx_queue *rxq)
-> > +ixgbe_rxq_rearm(struct ci_rx_queue *rxq)
-> >  {
-> >         int i;
-> >         uint16_t rx_id;
-> >         volatile union ixgbe_adv_rx_desc *rxdp;
-> > -       struct ixgbe_rx_entry *rxep = &rxq->sw_ring[rxq->rxrearm_start];
-> > +       struct ci_rx_entry *rxep = &rxq->sw_ring[rxq->rxrearm_start];
-> >         struct rte_mbuf *mb0, *mb1;
-> >         uint64x2_t dma_addr0, dma_addr1;
-> >         uint64x2_t zero = vdupq_n_u64(0);
-> >         uint64_t paddr;
-> >         uint8x8_t p;
-> >
-> > -       rxdp = rxq->rx_ring + rxq->rxrearm_start;
-> > +       rxdp = rxq->ixgbe_rx_ring + rxq->rxrearm_start;
-> >
-> >         /* Pull 'n' more MBUFs into the software ring */
-> >         if (unlikely(rte_mempool_get_bulk(rxq->mp,
-> > @@ -282,11 +282,11 @@ desc_to_ptype_v(uint64x2_t descs[4], uint16_t
-> > pkt_type_mask,
-> >   * - floor align nb_pkts to a IXGBE_VPMD_DESCS_PER_LOOP power-of-two
-> >   */
-> >  static inline uint16_t
-> > -_recv_raw_pkts_vec(struct ixgbe_rx_queue *rxq, struct rte_mbuf **rx_pkts,
-> > +_recv_raw_pkts_vec(struct ci_rx_queue *rxq, struct rte_mbuf **rx_pkts,
-> >                    uint16_t nb_pkts, uint8_t *split_packet)  {
-> >         volatile union ixgbe_adv_rx_desc *rxdp;
-> > -       struct ixgbe_rx_entry *sw_ring;
-> > +       struct ci_rx_entry *sw_ring;
-> >         uint16_t nb_pkts_recd;
-> >         int pos;
-> >         uint8x16_t shuf_msk = {
-> > @@ -309,7 +309,7 @@ _recv_raw_pkts_vec(struct ixgbe_rx_queue *rxq, struct
-> > rte_mbuf **rx_pkts,
-> >         /* Just the act of getting into the function from the application is
-> >          * going to cost about 7 cycles
-> >          */
-> > -       rxdp = rxq->rx_ring + rxq->rx_tail;
-> > +       rxdp = rxq->ixgbe_rx_ring + rxq->rx_tail;
-> >
-> >         rte_prefetch_non_temporal(rxdp);
-> >
-> > @@ -488,7 +488,7 @@ static uint16_t
-> >  ixgbe_recv_scattered_burst_vec(void *rx_queue, struct rte_mbuf **rx_pkts,
-> >                                uint16_t nb_pkts)  {
-> > -       struct ixgbe_rx_queue *rxq = rx_queue;
-> > +       struct ci_rx_queue *rxq = rx_queue;
-> >         uint8_t split_flags[IXGBE_VPMD_RX_BURST] = {0};
-> >
-> >         /* get some new buffers */
-> > diff --git a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
-> > b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
-> > index f5bb7eb0bd..f977489b95 100644
-> > --- a/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
-> > +++ b/drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c
-> > @@ -13,12 +13,12 @@
-> >  #include <rte_vect.h>
-> >
-> >  static inline void
-> > -ixgbe_rxq_rearm(struct ixgbe_rx_queue *rxq)
-> > +ixgbe_rxq_rearm(struct ci_rx_queue *rxq)
-> >  {
-> >         int i;
-> >         uint16_t rx_id;
-> >         volatile union ixgbe_adv_rx_desc *rxdp;
-> > -       struct ixgbe_rx_entry *rxep = &rxq->sw_ring[rxq->rxrearm_start];
-> > +       struct ci_rx_entry *rxep = &rxq->sw_ring[rxq->rxrearm_start];
-> >         struct rte_mbuf *mb0, *mb1;
-> >         __m128i hdr_room = _mm_set_epi64x(RTE_PKTMBUF_HEADROOM,
-> >                         RTE_PKTMBUF_HEADROOM); @@ -26,7 +26,7 @@
-> > ixgbe_rxq_rearm(struct ixgbe_rx_queue *rxq)
-> >
-> >         const __m128i hba_msk = _mm_set_epi64x(0, UINT64_MAX);
-> >
-> > -       rxdp = rxq->rx_ring + rxq->rxrearm_start;
-> > +       rxdp = rxq->ixgbe_rx_ring + rxq->rxrearm_start;
-> >
-> >         /* Pull 'n' more MBUFs into the software ring */
-> >         if (rte_mempool_get_bulk(rxq->mp, @@ -327,11 +327,11 @@
-> > desc_to_ptype_v(__m128i descs[4], uint16_t pkt_type_mask,
-> >   * - floor align nb_pkts to a IXGBE_VPMD_DESCS_PER_LOOP power-of-two
-> >   */
-> >  static inline uint16_t
-> > -_recv_raw_pkts_vec(struct ixgbe_rx_queue *rxq, struct rte_mbuf **rx_pkts,
-> > +_recv_raw_pkts_vec(struct ci_rx_queue *rxq, struct rte_mbuf **rx_pkts,
-> >                 uint16_t nb_pkts, uint8_t *split_packet)  {
-> >         volatile union ixgbe_adv_rx_desc *rxdp;
-> > -       struct ixgbe_rx_entry *sw_ring;
-> > +       struct ci_rx_entry *sw_ring;
-> >         uint16_t nb_pkts_recd;
-> >  #ifdef RTE_LIB_SECURITY
-> >         uint8_t use_ipsec = rxq->using_ipsec; @@ -377,7 +377,7 @@
-> > _recv_raw_pkts_vec(struct ixgbe_rx_queue *rxq, struct rte_mbuf **rx_pkts,
-> >         /* Just the act of getting into the function from the application is
-> >          * going to cost about 7 cycles
-> >          */
-> > -       rxdp = rxq->rx_ring + rxq->rx_tail;
-> > +       rxdp = rxq->ixgbe_rx_ring + rxq->rx_tail;
-> >
-> >         rte_prefetch0(rxdp);
-> >
-> > @@ -609,7 +609,7 @@ static uint16_t
-> >  ixgbe_recv_scattered_burst_vec(void *rx_queue, struct rte_mbuf **rx_pkts,
-> >                                uint16_t nb_pkts)  {
-> > -       struct ixgbe_rx_queue *rxq = rx_queue;
-> > +       struct ci_rx_queue *rxq = rx_queue;
-> >         uint8_t split_flags[IXGBE_VPMD_RX_BURST] = {0};
-> >
-> >         /* get some new buffers */
-> > --
-> > 2.47.1
-> 
-> Please note, we are using the following steps to validate the patch
-> 
-> ```
-> 1. git clone https://dpdk.org/git/dpdk
-> 2. git chekout
-> 3. git apply <patch>
-> ```
-> Can you please suggest if we are missing something? We would like to test the patch on E810
->
+> +		int ret =3D
+> +			rte_mbuf_dyn_tx_timestamp_register(&txq-
+> >tsq.ts_offset,
+> +							 &txq->tsq.ts_flag);
+> +		if (ret) {
+> +			PMD_INIT_LOG(ERR, "Cannot register Tx mbuf
+> field/flag "
+> +							"for timestamp");
+> +			return -EINVAL;
+> +		}
+> +		dev->dev_ops->timesync_enable(dev);
+> +
+> +		ring_size =3D sizeof(struct ice_ts_desc) *
+> +					ICE_MAX_NUM_DESC_BY_MAC(hw);
+> +		ring_size =3D RTE_ALIGN(ring_size, ICE_DMA_MEM_ALIGN);
+> +		const struct rte_memzone *ts_z =3D
+> +					rte_eth_dma_zone_reserve(dev,
+> "ice_tstamp_ring",
+> +					queue_idx, ring_size,
+> ICE_RING_BASE_ALIGN,
+> +				    socket_id);
+> +		if (!ts_z) {
+> +			ice_tx_queue_release(txq);
+> +			PMD_INIT_LOG(ERR, "Failed to reserve DMA memory
+> "
+> +							"for TX timestamp");
+> +			return -ENOMEM;
+> +		}
+> +		txq->tsq.ts_mz =3D ts_z;
+> +		txq->tsq.ice_ts_ring =3D ts_z->addr;
+> +		txq->tsq.ts_ring_dma =3D ts_z->iova;
+> +		txq->tsq.nb_ts_desc =3D
+> +				ice_calc_ts_ring_count(ICE_VSI_TO_HW(vsi),
+> +							txq->nb_tx_desc);
+> +	} else {
+> +		txq->tsq.ice_ts_ring =3D NULL;
+> +	}
+> +
+>  	ice_reset_tx_queue(txq);
+>  	txq->q_set =3D true;
+>  	dev->data->tx_queues[queue_idx] =3D txq;
+> @@ -1539,6 +1708,8 @@ ice_tx_queue_release(void *txq)
+>=20
+>  	ci_txq_release_all_mbufs(q, false);
+>  	rte_free(q->sw_ring);
+> +	if (q->tsq.ts_mz)
+> +		rte_memzone_free(q->tsq.ts_mz);
+>  	rte_memzone_free(q->mz);
+>  	rte_free(q);
+>  }
+> @@ -2961,6 +3132,7 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf
+> **tx_pkts, uint16_t nb_pkts)
+>  	struct rte_mbuf *m_seg;
+>  	uint32_t cd_tunneling_params;
+>  	uint16_t tx_id;
+> +	uint16_t ts_id =3D -1;
+>  	uint16_t nb_tx;
+>  	uint16_t nb_used;
+>  	uint16_t nb_ctx;
+> @@ -2979,6 +3151,9 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf
+> **tx_pkts, uint16_t nb_pkts)
+>  	tx_id =3D txq->tx_tail;
+>  	txe =3D &sw_ring[tx_id];
+>=20
+> +	if (txq->tsq.ts_flag > 0)
+> +		ts_id =3D txq->tsq.ts_tail;
+> +
+>  	/* Check if the descriptor ring needs to be cleaned. */
+>  	if (txq->nb_tx_free < txq->tx_free_thresh)
+>  		(void)ice_xmit_cleanup(txq);
+> @@ -3166,10 +3341,48 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf
+> **tx_pkts, uint16_t nb_pkts)
+>  		txd->cmd_type_offset_bsz |=3D
+>  			rte_cpu_to_le_64(((uint64_t)td_cmd) <<
+>  					 ICE_TXD_QW1_CMD_S);
+> +
+> +		if (txq->tsq.ts_flag > 0) {
+> +			uint64_t txtime =3D *RTE_MBUF_DYNFIELD(tx_pkt,
+> +					txq->tsq.ts_offset, uint64_t *);
+> +			uint32_t tstamp =3D (uint32_t)(txtime % NS_PER_S) >>
+> +
+> 	ICE_TXTIME_CTX_RESOLUTION_128NS;
+> +			if (tx_id =3D=3D 0)
+> +				txq-
+> >tsq.ice_ts_ring[ts_id].tx_desc_idx_tstamp =3D
+> +
+> 	rte_cpu_to_le_32(FIELD_PREP(ICE_TXTIME_TX_DESC_IDX_M,
+> +						txq->nb_tx_desc) |
+> FIELD_PREP(ICE_TXTIME_STAMP_M,
+> +						tstamp));
+> +			else
+> +				txq-
+> >tsq.ice_ts_ring[ts_id].tx_desc_idx_tstamp =3D
+> +
+> 	rte_cpu_to_le_32(FIELD_PREP(ICE_TXTIME_TX_DESC_IDX_M,
+> +						tx_id) |
+> FIELD_PREP(ICE_TXTIME_STAMP_M, tstamp));
+> +			ts_id++;
+> +			/* Handling MDD issue causing Tx Hang */
+> +			if (ts_id =3D=3D txq->tsq.nb_ts_desc) {
+> +				uint16_t fetch =3D txq->tsq.nb_ts_desc - txq-
+> >nb_tx_desc;
+> +				ts_id =3D 0;
+> +				for (; ts_id < fetch; ts_id++) {
+> +					if (tx_id =3D=3D 0)
+> +						txq-
+> >tsq.ice_ts_ring[ts_id].tx_desc_idx_tstamp =3D
+> +
+> 	rte_cpu_to_le_32(FIELD_PREP(ICE_TXTIME_TX_DESC_IDX_M,
+> +								txq-
+> >nb_tx_desc) | FIELD_PREP(ICE_TXTIME_STAMP_M,
+> +								tstamp));
+> +					else
+> +						txq-
+> >tsq.ice_ts_ring[ts_id].tx_desc_idx_tstamp =3D
+> +
+> 	rte_cpu_to_le_32(FIELD_PREP(ICE_TXTIME_TX_DESC_IDX_M,
+> +								tx_id) |
+> FIELD_PREP(ICE_TXTIME_STAMP_M, tstamp));
+> +				}
+> +			}
+> +		}
+>  	}
+>  end_of_tx:
+>  	/* update Tail register */
+> -	ICE_PCI_REG_WRITE(txq->qtx_tail, tx_id);
+> +	if (txq->tsq.ts_flag > 0) {
+> +		ICE_PCI_REG_WRITE(txq->qtx_tail, ts_id);
+> +		txq->tsq.ts_tail =3D ts_id;
+> +	} else {
+> +		ICE_PCI_REG_WRITE(txq->qtx_tail, tx_id);
+> +	}
+>  	txq->tx_tail =3D tx_id;
+>=20
+>  	return nb_tx;
+> diff --git a/drivers/net/intel/ice/ice_rxtx.h b/drivers/net/intel/ice/ice=
+_rxtx.h
+> index 500d630679..a9e8b5c5e9 100644
+> --- a/drivers/net/intel/ice/ice_rxtx.h
+> +++ b/drivers/net/intel/ice/ice_rxtx.h
+> @@ -11,9 +11,18 @@
+>  #define ICE_ALIGN_RING_DESC  32
+>  #define ICE_MIN_RING_DESC    64
+>  #define ICE_MAX_RING_DESC    (8192 - 32)
+> +#define ICE_MAX_RING_DESC_E830	  8096
+> +#define ICE_MAX_NUM_DESC_BY_MAC(hw) ((hw)->phy_model =3D=3D \
+> +					ICE_PHY_E830 ? \
+> +				    ICE_MAX_RING_DESC_E830 : \
+> +				    ICE_MAX_RING_DESC)
+>  #define ICE_DMA_MEM_ALIGN    4096
+>  #define ICE_RING_BASE_ALIGN  128
+>=20
+> +#define ICE_TXTIME_TX_DESC_IDX_M	RTE_GENMASK32(12, 0)
+> +#define ICE_TXTIME_STAMP_M		RTE_GENMASK32(31, 13)
+> +#define ICE_REQ_DESC_MULTIPLE	32
+> +
+>  #define ICE_RX_MAX_BURST 32
+>  #define ICE_TX_MAX_BURST 32
+>=20
+> --
+> 2.47.1
 
-The patches should apply cleanly to next-net-intel tree rather than main
-tree - they applied for me without issue yesterday.
-
-However, in testing them, I've found some issues with the patches, which we
-are now fixing, and doing additional performance tests. Therefore, I'd
-suggest waiting for the next version of the patchset before testing.
-
-Thanks for looking to test these too, though. Looking forward to getting
-feedback based on the results you see.
-
-/Bruce
