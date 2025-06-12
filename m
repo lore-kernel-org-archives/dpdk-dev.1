@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96490C71135
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 00:41:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF003C71135
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 01:01:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 90D144021F;
-	Thu, 12 Jun 2025 02:41:09 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 195AA4021F;
+	Thu, 12 Jun 2025 03:01:09 +0200 (CEST)
 Received: from fout-b7-smtp.messagingengine.com
  (fout-b7-smtp.messagingengine.com [202.12.124.150])
- by mails.dpdk.org (Postfix) with ESMTP id 84D0540156
- for <dev@dpdk.org>; Thu, 12 Jun 2025 02:41:08 +0200 (CEST)
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal
- [10.202.2.43])
- by mailfout.stl.internal (Postfix) with ESMTP id C365F11401E7;
- Wed, 11 Jun 2025 20:41:07 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-03.internal (MEProxy); Wed, 11 Jun 2025 20:41:07 -0400
+ by mails.dpdk.org (Postfix) with ESMTP id DC57840156
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 03:01:06 +0200 (CEST)
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal
+ [10.202.2.46])
+ by mailfout.stl.internal (Postfix) with ESMTP id 38EDB11401F0;
+ Wed, 11 Jun 2025 21:01:06 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-06.internal (MEProxy); Wed, 11 Jun 2025 21:01:06 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1749688867;
- x=1749775267; bh=Fi7LjgOjxhNO/Wsbhcycc7Dsq48JMpKX7iYzoG2JPeI=; b=
- epi06gsjQxR6Y83xzYOIBnJFBZebTXSjfLLqztDpaw24329Ub1+l9ySqiBPRZ0Qk
- IiaR212odWxT7btzREzTJc78S56NaVHCoedpE4euyBuvsoyJXu8/HqvG/piIL9OZ
- oV9g+8B7GvlJ6uCW9IpVMnGIOOn31oDg7pP1c+iWX+T0DkFTBv9SAa6Vr3QFPlGS
- W0ymeMVmzJ0KUu66j3ZSO6QbtLdgcEyyBX43NuqWUn6Me68wb4yy17tT1gKdUQlq
- 2GFyyzfXih31ampXOrIJixeDb7SyTrmi9fz9QYfc3SyNMzemtzHLBUcV3vot418Q
- 13QJIbmwYOTjXCyEBp6iJQ==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1749690066;
+ x=1749776466; bh=vTnpfOkfSJTpKromCBQpG5TSeMx3Ed7gDhAFMlgkvw0=; b=
+ ExM8kYRHJXQVddEkmXhgo+bKjlDf4QJ5MysQe4RUSZWKAeW8INYzGfPxA1oAwya8
+ g7lyUl+ZZ5SMKaemyjARF5aCzJS5+RFE2KJ1kF6TDNgstXOC7T7/8uY4hyHkyp7k
+ /T9vBoIJ73aT1eriXj25qBvUdXN+25xxES0wPc51pAz9SJ8ZaNyBPHyhL0Uuw2NN
+ T6n+FTbyn6usTTfzVm0m6ce7oCMyHfqv6L1u8Kb/+1E9JSB+VzlpZi2FDDG/hZRr
+ tFXcKCms4JZFYDtscUgHYsU15RAYIg12OH9476bBAtQaDZJ15q3Fl6u0q2Tco1my
+ +flnIjj8vGofpsb3AQEdSA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749688867; x=
- 1749775267; bh=Fi7LjgOjxhNO/Wsbhcycc7Dsq48JMpKX7iYzoG2JPeI=; b=l
- +goPFYw10tgrQSawjZ8gJNwwKrA1aPlxxLY3TrEhQORl8ExiHMyxGGVSqBkxdyVT
- 13/RPOZGUYnijaD5j6RzILeTO98dOF18gwtgnSuEsr6ST3wxnb86bn0jwCM/E9de
- tuooUl7jwzHTiW+0ZtpGy+vGJxzTA85P3t/HJb1eh5C0caL1fSt6IN1z6cye92Yz
- llzqxuNdZ3lwtkA0XsZ88KhPxeO4199O8pjzO/aJtWIrvdnlWwxO1LWnko6xb0s0
- qNo0FskW1UspQk7kvW1h2BFp4sfa5MdHFnAg8Ct4AcE/v+fcZYgx0vvXaQniJFfs
- rVzCdSNiHgIDnA4FIpm9w==
-X-ME-Sender: <xms:IyJKaCt58YMUj49wFGTOWh-jiqAj673e-or1I1bknC61V8Bl2davTw>
- <xme:IyJKaHdVR2bObkGTsJTl-yWyG6fQlFbTPsoiY2wMlKUSiJuVBohyjrDCaV404X7rR
- bb62zjwjT8eXjdqqQ>
-X-ME-Received: <xmr:IyJKaNylPJYR1Wa0L4SIHGkxZK8OiCgw8AUrsqNNrUnHfx-fyui0A3iYo8y20WVPiE1ld6-QCofAOjaytQ8bgYN0bw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddufeeihecutefuodetggdotefrod
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749690066; x=
+ 1749776466; bh=vTnpfOkfSJTpKromCBQpG5TSeMx3Ed7gDhAFMlgkvw0=; b=j
+ 8azt6F2SY+DkCiRlmgDfCvdKCIS3oLwCnE2JRiSiX18dvgQS4m2mQj56oOVx3sNa
+ hfYooRZq8i8zY3m7//CL7pRDNCp40y2Z2Eo0Mm84SrPV2aCwwqVC+Rk8qvyfcfGS
+ +gSG2NMxNgL2UpggSJgT0+nQB6z98MrilvE2rhn4d/HmwkzghnAT1Co++u6ngsrX
+ roNcYhXLhxZA3imX+JbAqNPTXSdC78z7dG7HJRzI9wrZDmi0wQt9mQjtUz4hu4q8
+ jk/3MuVWqYQI9Tz2FTiVakVzDEcMYJI45X9NS0kLNGXU/C3HsRYndKpuF9OTsPbF
+ xbwtvoRQgt3hT442YCylg==
+X-ME-Sender: <xms:0SZKaD96I8vHZmWwFTn8bLlPXhuan8k8X-NuXR-vqAFNWDwX4qkJgQ>
+ <xme:0SZKaPvC-fnsVLbD0h4jRMkeikJ9leHdfRKBVuEecdkgjhf11Ih7IwM2SqKyCLltQ
+ ZaMoBmFV__BV0TY7Q>
+X-ME-Received: <xmr:0SZKaBDfSTUqS-2gZ_icai2ApqaZH9BxTnL8N0F9M54zQ-aYGrUKtOhXwbEmWlIt4C7wHuP0RlVJOGRX6RzHDekTMQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddufeeilecutefuodetggdotefrod
  ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
  uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
  hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdej
@@ -58,23 +58,23 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddufeeihecutefuodetgg
  ihhtrhihrdhkohiilhhiuhhksehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhhorhgvth
  iilhgrsehlihhnuhigrdhmihgtrhhoshhofhhtrdgtohhmpdhrtghpthhtohepuggvvhes
  ughpughkrdhorhhg
-X-ME-Proxy: <xmx:IyJKaNOyiWiNY4tu0bLgruP6ExqlsQuchiWmZYHM4ycy0sL_ldK_Iw>
- <xmx:IyJKaC96EkrIE44wNqF-SEn97NCPhnHSHYDFws0j4Rq7LhKV0sxksg>
- <xmx:IyJKaFXc3gljG0JFxnAo9L2MC0qt5p2ltZUaiafmiZ2GwgGJhm0FTA>
- <xmx:IyJKaLe_0bT7KkH4UmaGk1L0Dx-Brm4AdVT9GnVUkQ1dfziTUPjGkQ>
- <xmx:IyJKaC0CHFw9pqoqMi_ZJ0uERciXyfgomWKlIEadsbefwBZlSOxLrj02>
+X-ME-Proxy: <xmx:0SZKaPfFf9ZQN0bV5l2rHD_BnqLL2ZkIFvCd8EjhSzRRxc6vEnTL6w>
+ <xmx:0SZKaIP4Og7CKBxp9u5Fc9N-pUP1VAlZ9lQ8V4W9N4OxxFJiifq6tg>
+ <xmx:0SZKaBkeDD796LI-EAD5hDckzrfQ-KKHRbjb8zcMSTR8tBg7QZl1IQ>
+ <xmx:0SZKaCvY3C3YWdaDcPTBMLczWYB2KBUZg9pA2RbDSuvhS_4aEaczqQ>
+ <xmx:0iZKaOGB4DMdYiEnvkMDiSQi8RAdfQy1J5oY8V1yzsNArZxkvzOnno1X>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 11 Jun 2025 20:41:06 -0400 (EDT)
+ 11 Jun 2025 21:01:05 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: Andre Muezerie <andremue@linux.microsoft.com>
 Cc: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>,
  Tyler Retzlaff <roretzla@linux.microsoft.com>, dev@dpdk.org
-Subject: Re: [PATCH] eal: add asprintf() function for Windows
-Date: Thu, 12 Jun 2025 02:41:05 +0200
-Message-ID: <7942373.1B3tZ46Xf9@thomas>
-In-Reply-To: <1746495789-14101-1-git-send-email-andremue@linux.microsoft.com>
-References: <1746495789-14101-1-git-send-email-andremue@linux.microsoft.com>
+Subject: Re: [PATCH] eal: add getline() function for Windows
+Date: Thu, 12 Jun 2025 03:01:03 +0200
+Message-ID: <4381337.bcXerOTE6V@thomas>
+In-Reply-To: <1746477607-14961-1-git-send-email-andremue@linux.microsoft.com>
+References: <1746477607-14961-1-git-send-email-andremue@linux.microsoft.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -91,16 +91,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-06/05/2025 03:43, Andre Muezerie:
-> The asprintf function is not part of the C standard library but is a
-> GNU extension commonly available in Unix-like systems. It dynamically
-> allocates memory to store the formatted output string, similar to
-> sprintf, but avoids buffer overflow issues by automatically sizing
-> the buffer.
+05/05/2025 22:40, Andre Muezerie:
+> Existing DPDK code uses getline(), which is a POSIX function and is
+> not available in the Windows APIs.
 > 
 > Instead of rewriting it or coming up with some other replacement, this
-> patch makes use of the implementation provided by Neved4.
+> patch makes use of the implementation provided by NetBSD to make it
+> possible to compile code dependent on getline on Windows.
+> 
+> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
 
-Why not using eal_asprintf()?
+It has been approved by the techboard on May 28,
+and the govboard on May 30,
+so the patch is applied, thanks.
+
 
 
