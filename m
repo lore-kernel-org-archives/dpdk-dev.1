@@ -2,103 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0248DC71136
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 13:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D119C71136
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 14:07:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9E97842789;
-	Thu, 12 Jun 2025 15:56:27 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 5313640ED4
- for <dev@dpdk.org>; Thu, 12 Jun 2025 15:56:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1749736585;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=GdvuWdxgYwiAR5z7ZxTpaEZ9+RbyhYX0cHafrGu+FQA=;
- b=T0pYF9ZvfpItaZL3H/4gbqaK5F++0vcZ86iea2GtOCBSniSMg+f0eS9mWVDUt/3HdFPUgm
- 4cOa2PY/h8k2fuymVg675k/HxUHIrY7OCWGCQRDf9Z6uOg/RKthfSVJ5mdmMBeTm71+Du4
- UJ9RACT99ikhMFD7OLk3MgBwnshb9RU=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-34-JkU6LJT4N7iNr3aJwWji6w-1; Thu,
- 12 Jun 2025 09:56:22 -0400
-X-MC-Unique: JkU6LJT4N7iNr3aJwWji6w-1
-X-Mimecast-MFC-AGG-ID: JkU6LJT4N7iNr3aJwWji6w_1749736580
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 8347A1800343; Thu, 12 Jun 2025 13:56:20 +0000 (UTC)
-Received: from [10.44.22.19] (unknown [10.44.22.19])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 1F7B2180045B; Thu, 12 Jun 2025 13:56:15 +0000 (UTC)
-Message-ID: <be8da555-af1c-47af-8225-f5b43d8b6dbf@redhat.com>
-Date: Thu, 12 Jun 2025 15:55:45 +0200
+	by mails.dpdk.org (Postfix) with ESMTP id 4C2F542789;
+	Thu, 12 Jun 2025 16:07:03 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 6E68941104
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 16:07:01 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 6033D20544;
+ Thu, 12 Jun 2025 16:07:00 +0200 (CEST)
+Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
+ smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
+ Thu, 12 Jun 2025 16:06:59 +0200
+From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+To: Tyler Retzlaff <roretzla@linux.microsoft.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Maxime Coquelin <maxime.coquelin@redhat.com>,
+ Chenbo Xia <chenbox@nvidia.com>, Tomasz Duszynski <tduszynski@marvell.com>,
+ Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org
+Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+Subject: [PATCH v2] eal: handle sysconf(_SC_PAGESIZE) negative return value
+Date: Thu, 12 Jun 2025 14:06:57 +0000
+Message-ID: <20250612140657.313785-1-mb@smartsharesystems.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250610131348.248800-1-mb@smartsharesystems.com>
+References: <20250610131348.248800-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] vhost: search the split vq desc and avail in RO areas
-To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, dev@dpdk.org
-Cc: Chenbo Xia <chenbox@nvidia.com>, stable@dpdk.org
-References: <20250605113552.918120-1-eperezma@redhat.com>
- <20250605113552.918120-2-eperezma@redhat.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <20250605113552.918120-2-eperezma@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 2t6Lbegt-xQwi-oNFeDBN3eaQBDu6nR1oMNFz1PdFNA_1749736580
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 12 Jun 2025 14:06:59.0401 (UTC)
+ FILETIME=[435EF390:01DBDBA3]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -112,63 +50,249 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+eal: handle sysconf(_SC_PAGESIZE) negative return value
 
+Coverity reports some defects, where the root cause seems to be negative
+return value from sysconf(_SC_PAGESIZE) not being handled.
 
-On 6/5/25 1:35 PM, Eugenio Pérez wrote:
-> QEMU's shadow virtqueue and VDUSE exposes these areas as read-only. If
-> we don't change it, vhost_iova_to_vva do not consider them as valid and
-> returns that they're not found.
-> 
-> Fixes: eefac9536a90 ("vhost: postpone device creation until rings are mapped")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
-> ---
->   lib/vhost/vhost.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/lib/vhost/vhost.c b/lib/vhost/vhost.c
-> index 0353a04dc8..95a99bace6 100644
-> --- a/lib/vhost/vhost.c
-> +++ b/lib/vhost/vhost.c
-> @@ -497,7 +497,7 @@ vring_translate_split(struct virtio_net *dev, struct vhost_virtqueue *vq)
->   	size = req_size;
->   	vq->desc = (struct vring_desc *)(uintptr_t)vhost_iova_to_vva(dev, vq,
->   						vq->ring_addrs.desc_user_addr,
-> -						&size, VHOST_ACCESS_RW);
-> +						&size, VHOST_ACCESS_RO);
->   	if (!vq->desc || size != req_size)
->   		return -1;
->   
-> @@ -508,7 +508,7 @@ vring_translate_split(struct virtio_net *dev, struct vhost_virtqueue *vq)
->   	size = req_size;
->   	vq->avail = (struct vring_avail *)(uintptr_t)vhost_iova_to_vva(dev, vq,
->   						vq->ring_addrs.avail_user_addr,
-> -						&size, VHOST_ACCESS_RW);
-> +						&size, VHOST_ACCESS_RO);
->   	if (!vq->avail || size != req_size)
->   		return -1;
->   
+rte_mem_page_size() was updated to handle negative return value from
+sysconf(_SC_PAGESIZE).
 
-I propose below text for the commit message:
+All other functions calling sysconf(_SC_PAGESIZE) directly were updated to
+call rte_mem_page_size() instead.
 
-"
-The virtqueues driver areas are read-only for the device.
-While they are exposed as Read/Write to Vhost-user and regular VDUSE
-backends, they are only exposed as Read-only when the control Virtqueue
-is shadowed by QEMU with VDUSE backend.
+At this time, no other calls to sysconf(_SC_PAGESIZE) have been found in
+the DPDK libraries.
 
-This patch makes the backend to request these areas as Read-only, so 
-that it can be accessed in all the configurations.
-"
+PS: "_SC_PAGESIZE" has the alias "_SC_PAGE_SIZE". Both are covered here.
 
-Also, as requested by David, patch 2 will be squashed into this one.
+Moved the PMU library to the correct location in the meson.build file; it
+depends on the EAL, not vice versa.
 
-Eugenio, is that Ok for you?
+And an unrelated drive-by minor fix in eal_mem_set_dump():
+When madvise() failed, an incorrect reason was logged.
 
-With above suggested changes:
-Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
+---
+v2:
+* Clarify in title and description that only sysconf(_SC_PAGESIZE) is
+  covered, and in description that only DPDK libs have been patched.
+* Include new PMU library in patch after rebasing.
+v1:
+* Improve comment about errno for indeterminate sysconf() values.
+  (Stephen)
+---
+ lib/eal/freebsd/eal.c          |  3 ++-
+ lib/eal/freebsd/eal_memory.c   |  7 +++----
+ lib/eal/linux/eal.c            |  3 ++-
+ lib/eal/unix/eal_unix_memory.c | 16 ++++++++++++++--
+ lib/meson.build                |  2 +-
+ lib/pmu/pmu.c                  |  8 ++++----
+ lib/vhost/vduse.c              |  3 ++-
+ 7 files changed, 28 insertions(+), 14 deletions(-)
 
-Thanks,
-Maxime
+diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
+index 82382d6e8f..c1ab8d86d2 100644
+--- a/lib/eal/freebsd/eal.c
++++ b/lib/eal/freebsd/eal.c
+@@ -26,6 +26,7 @@
+ #include <rte_launch.h>
+ #include <rte_eal.h>
+ #include <rte_eal_memconfig.h>
++#include <rte_eal_paging.h>
+ #include <rte_errno.h>
+ #include <rte_per_lcore.h>
+ #include <rte_lcore.h>
+@@ -98,7 +99,7 @@ rte_eal_config_create(void)
+ 	struct rte_config *config = rte_eal_get_configuration();
+ 	const struct internal_config *internal_conf =
+ 		eal_get_internal_configuration();
+-	size_t page_sz = sysconf(_SC_PAGE_SIZE);
++	size_t page_sz = rte_mem_page_size();
+ 	size_t cfg_len = sizeof(struct rte_mem_config);
+ 	size_t cfg_len_aligned = RTE_ALIGN(cfg_len, page_sz);
+ 	void *rte_mem_cfg_addr, *mapped_mem_cfg_addr;
+diff --git a/lib/eal/freebsd/eal_memory.c b/lib/eal/freebsd/eal_memory.c
+index 3b72e13506..6d3d46a390 100644
+--- a/lib/eal/freebsd/eal_memory.c
++++ b/lib/eal/freebsd/eal_memory.c
+@@ -11,6 +11,7 @@
+ #include <fcntl.h>
+ 
+ #include <rte_eal.h>
++#include <rte_eal_paging.h>
+ #include <rte_errno.h>
+ #include <rte_log.h>
+ #include <rte_string_fns.h>
+@@ -22,8 +23,6 @@
+ #include "eal_memcfg.h"
+ #include "eal_options.h"
+ 
+-#define EAL_PAGE_SIZE (sysconf(_SC_PAGESIZE))
+-
+ uint64_t eal_get_baseaddr(void)
+ {
+ 	/*
+@@ -191,7 +190,7 @@ rte_eal_hugepage_init(void)
+ 			addr = mmap(addr, page_sz, PROT_READ|PROT_WRITE,
+ 					MAP_SHARED | MAP_FIXED,
+ 					hpi->lock_descriptor,
+-					j * EAL_PAGE_SIZE);
++					j * rte_mem_page_size());
+ 			if (addr == MAP_FAILED) {
+ 				EAL_LOG(ERR, "Failed to mmap buffer %u from %s",
+ 						j, hpi->hugedir);
+@@ -243,7 +242,7 @@ attach_segment(const struct rte_memseg_list *msl, const struct rte_memseg *ms,
+ 
+ 	addr = mmap(ms->addr, ms->len, PROT_READ | PROT_WRITE,
+ 			MAP_SHARED | MAP_FIXED, wa->fd_hugepage,
+-			wa->seg_idx * EAL_PAGE_SIZE);
++			wa->seg_idx * rte_mem_page_size());
+ 	if (addr == MAP_FAILED || addr != ms->addr)
+ 		return -1;
+ 	wa->seg_idx++;
+diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
+index 54bee4a2cf..52efb8626b 100644
+--- a/lib/eal/linux/eal.c
++++ b/lib/eal/linux/eal.c
+@@ -31,6 +31,7 @@
+ #include <rte_launch.h>
+ #include <rte_eal.h>
+ #include <rte_eal_memconfig.h>
++#include <rte_eal_paging.h>
+ #include <rte_errno.h>
+ #include <rte_lcore.h>
+ #include <rte_service_component.h>
+@@ -179,7 +180,7 @@ static int
+ rte_eal_config_create(void)
+ {
+ 	struct rte_config *config = rte_eal_get_configuration();
+-	size_t page_sz = sysconf(_SC_PAGE_SIZE);
++	size_t page_sz = rte_mem_page_size();
+ 	size_t cfg_len = sizeof(*config->mem_config);
+ 	size_t cfg_len_aligned = RTE_ALIGN(cfg_len, page_sz);
+ 	void *rte_mem_cfg_addr, *mapped_mem_cfg_addr;
+diff --git a/lib/eal/unix/eal_unix_memory.c b/lib/eal/unix/eal_unix_memory.c
+index 61e914b8db..562b2b6d92 100644
+--- a/lib/eal/unix/eal_unix_memory.c
++++ b/lib/eal/unix/eal_unix_memory.c
+@@ -89,7 +89,7 @@ eal_mem_set_dump(void *virt, size_t size, bool dump)
+ 	int ret = madvise(virt, size, flags);
+ 	if (ret) {
+ 		EAL_LOG(DEBUG, "madvise(%p, %#zx, %d) failed: %s",
+-				virt, size, flags, strerror(rte_errno));
++				virt, size, flags, strerror(errno));
+ 		rte_errno = errno;
+ 	}
+ 	return ret;
+@@ -147,8 +147,20 @@ rte_mem_page_size(void)
+ {
+ 	static size_t page_size;
+ 
+-	if (!page_size)
++	if (page_size == 0) {
++		/*
++		 * When the sysconf value cannot be determined, sysconf()
++		 * returns -1 without setting errno.
++		 * To distinguish an indeterminate value from an error,
++		 * clear errno before calling sysconf(), and check whether
++		 * errno has been set if sysconf() returns -1.
++		 */
++		errno = 0;
+ 		page_size = sysconf(_SC_PAGESIZE);
++		if ((ssize_t)page_size < 0)
++			rte_panic("sysconf(_SC_PAGESIZE) failed: %s",
++					errno == 0 ? "Indeterminate" : strerror(errno));
++	}
+ 
+ 	return page_size;
+ }
+diff --git a/lib/meson.build b/lib/meson.build
+index 1934cb4a29..7c1c21e6bc 100644
+--- a/lib/meson.build
++++ b/lib/meson.build
+@@ -13,7 +13,6 @@ libraries = [
+         'kvargs', # eal depends on kvargs
+         'argparse',
+         'telemetry', # basic info querying
+-        'pmu',
+         'eal', # everything depends on eal
+         'ptr_compress',
+         'ring',
+@@ -49,6 +48,7 @@ libraries = [
+         'lpm',
+         'member',
+         'pcapng',
++        'pmu',
+         'power',
+         'rawdev',
+         'regexdev',
+diff --git a/lib/pmu/pmu.c b/lib/pmu/pmu.c
+index 46b0b450ac..267d48c3d6 100644
+--- a/lib/pmu/pmu.c
++++ b/lib/pmu/pmu.c
+@@ -14,6 +14,7 @@
+ 
+ #include <eal_export.h>
+ #include <rte_bitops.h>
++#include <rte_eal_paging.h>
+ #include <rte_tailq.h>
+ #include <rte_log.h>
+ 
+@@ -215,13 +216,12 @@ open_events(struct rte_pmu_event_group *group)
+ static int
+ mmap_events(struct rte_pmu_event_group *group)
+ {
+-	long page_size = sysconf(_SC_PAGE_SIZE);
+ 	unsigned int i;
+ 	void *addr;
+ 	int ret;
+ 
+ 	for (i = 0; i < rte_pmu.num_group_events; i++) {
+-		addr = mmap(0, page_size, PROT_READ, MAP_SHARED, group->fds[i], 0);
++		addr = mmap(0, rte_mem_page_size(), PROT_READ, MAP_SHARED, group->fds[i], 0);
+ 		if (addr == MAP_FAILED) {
+ 			ret = -errno;
+ 			goto out;
+@@ -233,7 +233,7 @@ mmap_events(struct rte_pmu_event_group *group)
+ 	return 0;
+ out:
+ 	for (; i; i--) {
+-		munmap(group->mmap_pages[i - 1], page_size);
++		munmap(group->mmap_pages[i - 1], rte_mem_page_size());
+ 		group->mmap_pages[i - 1] = NULL;
+ 	}
+ 
+@@ -250,7 +250,7 @@ cleanup_events(struct rte_pmu_event_group *group)
+ 
+ 	for (i = 0; i < rte_pmu.num_group_events; i++) {
+ 		if (group->mmap_pages[i]) {
+-			munmap(group->mmap_pages[i], sysconf(_SC_PAGE_SIZE));
++			munmap(group->mmap_pages[i], rte_mem_page_size());
+ 			group->mmap_pages[i] = NULL;
+ 		}
+ 
+diff --git a/lib/vhost/vduse.c b/lib/vhost/vduse.c
+index a2a7d73388..9de7f04a4f 100644
+--- a/lib/vhost/vduse.c
++++ b/lib/vhost/vduse.c
+@@ -16,6 +16,7 @@
+ #include <sys/stat.h>
+ 
+ #include <rte_common.h>
++#include <rte_eal_paging.h>
+ #include <rte_thread.h>
+ 
+ #include "fd_man.h"
+@@ -690,7 +691,7 @@ vduse_device_create(const char *path, bool compliant_ol_flags)
+ 		dev_config->vendor_id = 0;
+ 		dev_config->features = features;
+ 		dev_config->vq_num = total_queues;
+-		dev_config->vq_align = sysconf(_SC_PAGE_SIZE);
++		dev_config->vq_align = rte_mem_page_size();
+ 		dev_config->config_size = sizeof(struct virtio_net_config);
+ 		memcpy(dev_config->config, &vnet_config, sizeof(vnet_config));
+ 
+-- 
+2.43.0
 
