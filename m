@@ -2,46 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B18C61CE8
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 11:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70768C61CE8
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 11:12:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C5A6E40FB5;
-	Thu, 12 Jun 2025 13:12:06 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id AF0FE410DC;
+	Thu, 12 Jun 2025 13:12:08 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
- by mails.dpdk.org (Postfix) with ESMTP id CA9D0410DC
- for <dev@dpdk.org>; Thu, 12 Jun 2025 13:12:04 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 6B97C40ED1
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 13:12:06 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1749726726; x=1781262726;
+ t=1749726727; x=1781262727;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=WPLoE8xndOh8GmklcV7m3fVc9XMNQqcA0Xm/3K4rFgA=;
- b=XzCgohJu2V4gXgSj6qyNhr+nj7DZivcjKUIa7xhr1BP3TzN0cLYdXXD9
- TsOJh0L3UFpdW7TIHP/f8eYlMZLlL2Npr7DJiBBrQqpnUNjYppih6T12d
- y9hMobuvLxBqoFaWNPLNfZUSa8Mrh2ykv/OioGTTnFWD2YWmBOHTD/lii
- mmyn4dn1OptPe5PpVbiS4aqv8QGUhlg6bk1cOl+w3pXQfNb3yG8aiGGi1
- QYKSaxNUvupHnUQHl4SP5N9vREWypOQYmpI5QbHi9zTLDcUkYsHsVey1J
- 3IXioODSiyRcyxx3U05x5KWLWoeh5DnE1RpdxDDFsZJQF3in6aaFxGrJm w==;
-X-CSE-ConnectionGUID: y3RV1vuTTF6yTepqXcaqNQ==
-X-CSE-MsgGUID: NZwRfAGnRkqSWWELjjeSWg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11461"; a="62177537"
-X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; d="scan'208";a="62177537"
+ bh=wtIG0noST226Jd94jK7Nmar74R5oIVzAHc/Ap0nS5uQ=;
+ b=OLNmCRBYW9n5J9EwoCqrzljm390VhhKDXZBqcVziiCQQcrBj5Z7otu8u
+ wNHy69sjwvQVqBlMRSu3bmJfp1TT5lQ/8Z2yQ9Pyb9VNatX7apgbZqWsN
+ UrMea3wKae2qjOZKl733fcVbjYp8V1igB5umkg8TG4yohS8jY016s2aS9
+ 565d9Qj0+KvMan7sG3S0sDvKMAbB+KXBDxk0Yn40fQX0ZsRzj7xeeN7y5
+ zcIvlcKD9QBlcVT1lutIhcKbQrrMMORRIyxPnOiapsB0S++8lHbvXpaex
+ 9IUKtsAvGnmOTbL1jCejMNE06Ns0TfdL22mnZuV+9bBpm6IBl5toi0h6t g==;
+X-CSE-ConnectionGUID: NqFgzFQ5SgGbWpfSIwQ6+g==
+X-CSE-MsgGUID: +hxNMeogSIeu8YGHE3zlgw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11461"; a="62177541"
+X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; d="scan'208";a="62177541"
 Received: from fmviesa007.fm.intel.com ([10.60.135.147])
  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 12 Jun 2025 04:12:05 -0700
-X-CSE-ConnectionGUID: ApMnk8BTSviK7xM8YRVvRA==
-X-CSE-MsgGUID: hgDRexj4TBOC3ijji/pkjg==
+ 12 Jun 2025 04:12:07 -0700
+X-CSE-ConnectionGUID: G5H7uHWLScSb5kVKR3j0IA==
+X-CSE-MsgGUID: P6DAS0mJTP21KiH7sIB55A==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; d="scan'208";a="147371313"
+X-IronPort-AV: E=Sophos;i="6.16,230,1744095600"; d="scan'208";a="147371320"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by fmviesa007.fm.intel.com with ESMTP; 12 Jun 2025 04:12:03 -0700
+ by fmviesa007.fm.intel.com with ESMTP; 12 Jun 2025 04:12:05 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Aman Singh <aman.deep.singh@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Ian Stokes <ian.stokes@intel.com>
-Subject: [PATCH v7 06/33] net/i40e: rename 16-byte descriptor define
-Date: Thu, 12 Jun 2025 12:11:12 +0100
-Message-ID: <b3428b16ad8191fba87d47089fbc4e994562d862.1749726639.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v7 07/33] net/ice: rename 16-byte descriptor define
+Date: Thu, 12 Jun 2025 12:11:13 +0100
+Message-ID: <1a24f3dfdc3aa1b504d4d7b21cdd137056b4bb78.1749726639.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <cover.1749726639.git.anatoly.burakov@intel.com>
  <cover.1749726639.git.anatoly.burakov@intel.com>
@@ -62,8 +61,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 In preparation for having a common definition for 16-byte and 32-byte Rx
-descriptors, rename `RTE_LIBRTE_I40E_16BYTE_RX_DESC` to
-`RTE_NET_INTEL_USE_16BYTE_DESC``.
+descriptors, rename RTE_LIBRTE_ICE_16BYTE_RX_DESC to
+RTE_NET_INTEL_USE_16BYTE_DESC.
 
 Suggested-by: Bruce Richardson <bruce.richardson@intel.com>
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
@@ -74,290 +73,246 @@ Notes:
     v3 -> v4:
     - Add this commit
 
- app/test-pmd/config.c                         |  4 ++--
- config/rte_config.h                           |  2 +-
- doc/guides/nics/i40e.rst                      |  4 +++-
- drivers/net/intel/i40e/i40e_fdir.c            |  2 +-
- drivers/net/intel/i40e/i40e_pf.c              |  2 +-
- drivers/net/intel/i40e/i40e_rxtx.c            | 10 +++++-----
- drivers/net/intel/i40e/i40e_rxtx.h            |  2 +-
- drivers/net/intel/i40e/i40e_rxtx_common_avx.h |  2 +-
- drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c   |  8 ++++----
- drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c |  8 ++++----
- drivers/net/intel/i40e/i40e_rxtx_vec_neon.c   |  4 ++--
- drivers/net/intel/i40e/i40e_rxtx_vec_sse.c    |  4 ++--
- 12 files changed, 27 insertions(+), 25 deletions(-)
+ drivers/net/intel/ice/ice_dcf.c             |  2 +-
+ drivers/net/intel/ice/ice_dcf_ethdev.c      |  2 +-
+ drivers/net/intel/ice/ice_rxtx.c            | 30 ++++++++++-----------
+ drivers/net/intel/ice/ice_rxtx.h            |  2 +-
+ drivers/net/intel/ice/ice_rxtx_common_avx.h |  2 +-
+ drivers/net/intel/ice/ice_rxtx_vec_avx2.c   |  2 +-
+ drivers/net/intel/ice/ice_rxtx_vec_avx512.c |  2 +-
+ drivers/net/intel/ice/ice_rxtx_vec_sse.c    |  2 +-
+ 8 files changed, 22 insertions(+), 22 deletions(-)
 
-diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
-index e89af21cec..1f43f3bbd8 100644
---- a/app/test-pmd/config.c
-+++ b/app/test-pmd/config.c
-@@ -4481,7 +4481,7 @@ ring_rxd_display_dword(union igb_ring_dword dword)
+diff --git a/drivers/net/intel/ice/ice_dcf.c b/drivers/net/intel/ice/ice_dcf.c
+index fa95aaaba6..2f7c239491 100644
+--- a/drivers/net/intel/ice/ice_dcf.c
++++ b/drivers/net/intel/ice/ice_dcf.c
+@@ -1214,7 +1214,7 @@ ice_dcf_configure_queues(struct ice_dcf_hw *hw)
+ 		vc_qp->rxq.dma_ring_addr = rxq[i]->rx_ring_phys_addr;
+ 		vc_qp->rxq.databuffer_size = rxq[i]->rx_buf_len;
  
- static void
- ring_rx_descriptor_display(const struct rte_memzone *ring_mz,
--#ifndef RTE_LIBRTE_I40E_16BYTE_RX_DESC
+-#ifndef RTE_LIBRTE_ICE_16BYTE_RX_DESC
 +#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
- 			   portid_t port_id,
- #else
- 			   __rte_unused portid_t port_id,
-@@ -4490,7 +4490,7 @@ ring_rx_descriptor_display(const struct rte_memzone *ring_mz,
- {
- 	struct igb_ring_desc_16_bytes *ring =
- 		(struct igb_ring_desc_16_bytes *)ring_mz->addr;
--#ifndef RTE_LIBRTE_I40E_16BYTE_RX_DESC
-+#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
- 	int ret;
- 	struct rte_eth_dev_info dev_info;
- 
-diff --git a/config/rte_config.h b/config/rte_config.h
-index 86897de75e..6191ba3ae0 100644
---- a/config/rte_config.h
-+++ b/config/rte_config.h
-@@ -137,7 +137,7 @@
- 
- /* i40e defines */
- #define RTE_LIBRTE_I40E_RX_ALLOW_BULK_ALLOC 1
--// RTE_LIBRTE_I40E_16BYTE_RX_DESC is not set
-+/* RTE_NET_INTEL_USE_16BYTE_DESC is not set */
- #define RTE_LIBRTE_I40E_QUEUE_NUM_PER_PF 64
- #define RTE_LIBRTE_I40E_QUEUE_NUM_PER_VF 4
- #define RTE_LIBRTE_I40E_QUEUE_NUM_PER_VM 4
-diff --git a/doc/guides/nics/i40e.rst b/doc/guides/nics/i40e.rst
-index ba592d23fe..234757cd7a 100644
---- a/doc/guides/nics/i40e.rst
-+++ b/doc/guides/nics/i40e.rst
-@@ -961,7 +961,9 @@ Use 16 Bytes RX Descriptor Size
- As i40e PMD supports both 16 and 32 bytes RX descriptor sizes, and 16 bytes size can provide helps to high performance of small packets.
- In ``config/rte_config.h`` set the following to use 16 bytes size RX descriptors::
- 
--   #define RTE_LIBRTE_I40E_16BYTE_RX_DESC 1
-+   #define RTE_NET_INTEL_USE_16BYTE_DESC 1
-+
-+Note however that setting this up will make it so that all PMD's supporting this definition will also use 16-byte descriptors.
- 
- Input set requirement of each pctype for FDIR
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-diff --git a/drivers/net/intel/i40e/i40e_fdir.c b/drivers/net/intel/i40e/i40e_fdir.c
-index 94e3ab44e3..734218b67d 100644
---- a/drivers/net/intel/i40e/i40e_fdir.c
-+++ b/drivers/net/intel/i40e/i40e_fdir.c
-@@ -112,7 +112,7 @@ i40e_fdir_rx_queue_init(struct i40e_rx_queue *rxq)
- 	rx_ctx.hbuff = 0;
- 	rx_ctx.base = rxq->rx_ring_phys_addr / I40E_QUEUE_BASE_ADDR_UNIT;
- 	rx_ctx.qlen = rxq->nb_rx_desc;
--#ifndef RTE_LIBRTE_I40E_16BYTE_RX_DESC
-+#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
- 	rx_ctx.dsize = 1;
- #endif
- 	rx_ctx.dtype = i40e_header_split_none;
-diff --git a/drivers/net/intel/i40e/i40e_pf.c b/drivers/net/intel/i40e/i40e_pf.c
-index 4a47a8f7ee..ebe1deeade 100644
---- a/drivers/net/intel/i40e/i40e_pf.c
-+++ b/drivers/net/intel/i40e/i40e_pf.c
-@@ -401,7 +401,7 @@ i40e_pf_host_hmc_config_rxq(struct i40e_hw *hw,
- 	rx_ctx.hbuff = rxq->hdr_size >> I40E_RXQ_CTX_HBUFF_SHIFT;
- 	rx_ctx.base = rxq->dma_ring_addr / I40E_QUEUE_BASE_ADDR_UNIT;
- 	rx_ctx.qlen = rxq->ring_len;
--#ifndef RTE_LIBRTE_I40E_16BYTE_RX_DESC
-+#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
- 	rx_ctx.dsize = 1;
- #endif
- 
-diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
-index b4caa3bdd5..5f54bcc225 100644
---- a/drivers/net/intel/i40e/i40e_rxtx.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx.c
-@@ -125,7 +125,7 @@ i40e_rxd_to_vlan_tci(struct rte_mbuf *mb, volatile union i40e_rx_desc *rxdp)
- 	} else {
- 		mb->vlan_tci = 0;
- 	}
--#ifndef RTE_LIBRTE_I40E_16BYTE_RX_DESC
-+#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
- 	if (rte_le_to_cpu_16(rxdp->wb.qword2.ext_status) &
- 		(1 << I40E_RX_DESC_EXT_STATUS_L2TAG2P_SHIFT)) {
- 		mb->ol_flags |= RTE_MBUF_F_RX_QINQ_STRIPPED | RTE_MBUF_F_RX_QINQ |
-@@ -217,7 +217,7 @@ static inline uint64_t
- i40e_rxd_build_fdir(volatile union i40e_rx_desc *rxdp, struct rte_mbuf *mb)
- {
- 	uint64_t flags = 0;
--#ifndef RTE_LIBRTE_I40E_16BYTE_RX_DESC
-+#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
- 	uint16_t flexbh, flexbl;
- 
- 	flexbh = (rte_le_to_cpu_32(rxdp->wb.qword2.ext_status) >>
-@@ -2925,10 +2925,10 @@ i40e_alloc_rx_queue_mbufs(struct i40e_rx_queue *rxq)
+ 		if (hw->vf_res->vf_cap_flags &
+ 		    VIRTCHNL_VF_OFFLOAD_RX_FLEX_DESC &&
+ 		    hw->supported_rxdid &
+diff --git a/drivers/net/intel/ice/ice_dcf_ethdev.c b/drivers/net/intel/ice/ice_dcf_ethdev.c
+index efff76afa8..d3fd5d7122 100644
+--- a/drivers/net/intel/ice/ice_dcf_ethdev.c
++++ b/drivers/net/intel/ice/ice_dcf_ethdev.c
+@@ -308,7 +308,7 @@ alloc_rxq_mbufs(struct ice_rx_queue *rxq)
  		rxd = &rxq->rx_ring[i];
  		rxd->read.pkt_addr = dma_addr;
  		rxd->read.hdr_addr = 0;
--#ifndef RTE_LIBRTE_I40E_16BYTE_RX_DESC
+-#ifndef RTE_LIBRTE_ICE_16BYTE_RX_DESC
 +#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
  		rxd->read.rsvd1 = 0;
  		rxd->read.rsvd2 = 0;
--#endif /* RTE_LIBRTE_I40E_16BYTE_RX_DESC */
-+#endif /* RTE_NET_INTEL_USE_16BYTE_DESC */
- 
- 		rxe[i].mbuf = mbuf;
- 	}
-@@ -3010,7 +3010,7 @@ i40e_rx_queue_init(struct i40e_rx_queue *rxq)
- 
- 	rx_ctx.base = rxq->rx_ring_phys_addr / I40E_QUEUE_BASE_ADDR_UNIT;
- 	rx_ctx.qlen = rxq->nb_rx_desc;
--#ifndef RTE_LIBRTE_I40E_16BYTE_RX_DESC
-+#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
- 	rx_ctx.dsize = 1;
  #endif
- 	rx_ctx.dtype = rxq->hs_mode;
-diff --git a/drivers/net/intel/i40e/i40e_rxtx.h b/drivers/net/intel/i40e/i40e_rxtx.h
-index 9db044f280..568f0536ac 100644
---- a/drivers/net/intel/i40e/i40e_rxtx.h
-+++ b/drivers/net/intel/i40e/i40e_rxtx.h
-@@ -68,7 +68,7 @@ enum i40e_header_split_mode {
- 			       I40E_HEADER_SPLIT_SCTP)
+diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
+index 81962a1f9a..19569b6a38 100644
+--- a/drivers/net/intel/ice/ice_rxtx.c
++++ b/drivers/net/intel/ice/ice_rxtx.c
+@@ -86,7 +86,7 @@ ice_rxd_to_pkt_fields_by_comms_generic(__rte_unused struct ice_rx_queue *rxq,
+ 		mb->hash.rss = rte_le_to_cpu_32(desc->rss_hash);
+ 	}
  
- /* HW desc structure, both 16-byte and 32-byte types are supported */
--#ifdef RTE_LIBRTE_I40E_16BYTE_RX_DESC
+-#ifndef RTE_LIBRTE_ICE_16BYTE_RX_DESC
++#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
+ 	if (desc->flow_id != 0xFFFFFFFF) {
+ 		mb->ol_flags |= RTE_MBUF_F_RX_FDIR | RTE_MBUF_F_RX_FDIR_ID;
+ 		mb->hash.fdir.hi = rte_le_to_cpu_32(desc->flow_id);
+@@ -101,7 +101,7 @@ ice_rxd_to_pkt_fields_by_comms_ovs(__rte_unused struct ice_rx_queue *rxq,
+ {
+ 	volatile struct ice_32b_rx_flex_desc_comms_ovs *desc =
+ 			(volatile struct ice_32b_rx_flex_desc_comms_ovs *)rxdp;
+-#ifndef RTE_LIBRTE_ICE_16BYTE_RX_DESC
++#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
+ 	uint16_t stat_err;
+ #endif
+ 
+@@ -110,7 +110,7 @@ ice_rxd_to_pkt_fields_by_comms_ovs(__rte_unused struct ice_rx_queue *rxq,
+ 		mb->hash.fdir.hi = rte_le_to_cpu_32(desc->flow_id);
+ 	}
+ 
+-#ifndef RTE_LIBRTE_ICE_16BYTE_RX_DESC
++#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
+ 	stat_err = rte_le_to_cpu_16(desc->status_error0);
+ 	if (likely(stat_err & (1 << ICE_RX_FLEX_DESC_STATUS0_RSS_VALID_S))) {
+ 		mb->ol_flags |= RTE_MBUF_F_RX_RSS_HASH;
+@@ -134,7 +134,7 @@ ice_rxd_to_pkt_fields_by_comms_aux_v1(struct ice_rx_queue *rxq,
+ 		mb->hash.rss = rte_le_to_cpu_32(desc->rss_hash);
+ 	}
+ 
+-#ifndef RTE_LIBRTE_ICE_16BYTE_RX_DESC
++#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
+ 	if (desc->flow_id != 0xFFFFFFFF) {
+ 		mb->ol_flags |= RTE_MBUF_F_RX_FDIR | RTE_MBUF_F_RX_FDIR_ID;
+ 		mb->hash.fdir.hi = rte_le_to_cpu_32(desc->flow_id);
+@@ -178,7 +178,7 @@ ice_rxd_to_pkt_fields_by_comms_aux_v2(struct ice_rx_queue *rxq,
+ 		mb->hash.rss = rte_le_to_cpu_32(desc->rss_hash);
+ 	}
+ 
+-#ifndef RTE_LIBRTE_ICE_16BYTE_RX_DESC
++#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
+ 	if (desc->flow_id != 0xFFFFFFFF) {
+ 		mb->ol_flags |= RTE_MBUF_F_RX_FDIR | RTE_MBUF_F_RX_FDIR_ID;
+ 		mb->hash.fdir.hi = rte_le_to_cpu_32(desc->flow_id);
+@@ -374,7 +374,7 @@ ice_program_hw_rx_queue(struct ice_rx_queue *rxq)
+ 	rx_ctx.qlen = rxq->nb_rx_desc;
+ 	rx_ctx.dbuf = rxq->rx_buf_len >> ICE_RLAN_CTX_DBUF_S;
+ 	rx_ctx.hbuf = rxq->rx_hdr_len >> ICE_RLAN_CTX_HBUF_S;
+-#ifndef RTE_LIBRTE_ICE_16BYTE_RX_DESC
++#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
+ 	rx_ctx.dsize = 1; /* 32B descriptors */
+ #endif
+ 	rx_ctx.rxmax = rxq->max_pkt_len;
+@@ -501,7 +501,7 @@ ice_alloc_rx_queue_mbufs(struct ice_rx_queue *rxq)
+ 			rxd->read.pkt_addr = rte_cpu_to_le_64(rte_mbuf_data_iova_default(mbuf_pay));
+ 		}
+ 
+-#ifndef RTE_LIBRTE_ICE_16BYTE_RX_DESC
++#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
+ 		rxd->read.rsvd1 = 0;
+ 		rxd->read.rsvd2 = 0;
+ #endif
+@@ -1668,7 +1668,7 @@ ice_rxd_to_vlan_tci(struct rte_mbuf *mb, volatile union ice_rx_flex_desc *rxdp)
+ 		mb->vlan_tci = 0;
+ 	}
+ 
+-#ifndef RTE_LIBRTE_ICE_16BYTE_RX_DESC
++#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
+ 	if (rte_le_to_cpu_16(rxdp->wb.status_error1) &
+ 	    (1 << ICE_RX_FLEX_DESC_STATUS1_L2TAG2P_S)) {
+ 		mb->ol_flags |= RTE_MBUF_F_RX_QINQ_STRIPPED | RTE_MBUF_F_RX_QINQ |
+@@ -1705,7 +1705,7 @@ ice_rx_scan_hw_ring(struct ice_rx_queue *rxq)
+ 	int32_t i, j, nb_rx = 0;
+ 	uint64_t pkt_flags = 0;
+ 	uint32_t *ptype_tbl = rxq->vsi->adapter->ptype_tbl;
+-#ifndef RTE_LIBRTE_ICE_16BYTE_RX_DESC
++#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
+ 	bool is_tsinit = false;
+ 	uint64_t ts_ns;
+ 	struct ice_vsi *vsi = rxq->vsi;
+@@ -1721,7 +1721,7 @@ ice_rx_scan_hw_ring(struct ice_rx_queue *rxq)
+ 	if (!(stat_err0 & (1 << ICE_RX_FLEX_DESC_STATUS0_DD_S)))
+ 		return 0;
+ 
+-#ifndef RTE_LIBRTE_ICE_16BYTE_RX_DESC
++#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
+ 	if (rxq->offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP) {
+ 		uint64_t sw_cur_time = rte_get_timer_cycles() / (rte_get_timer_hz() / 1000);
+ 
+@@ -1783,7 +1783,7 @@ ice_rx_scan_hw_ring(struct ice_rx_queue *rxq)
+ 				rte_le_to_cpu_16(rxdp[j].wb.ptype_flex_flags0)];
+ 			ice_rxd_to_vlan_tci(mb, &rxdp[j]);
+ 			rxd_to_pkt_fields_ops[rxq->rxdid](rxq, mb, &rxdp[j]);
+-#ifndef RTE_LIBRTE_ICE_16BYTE_RX_DESC
++#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
+ 			if (rxq->ts_flag > 0 &&
+ 			    (rxq->offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP)) {
+ 				rxq->time_high =
+@@ -2023,7 +2023,7 @@ ice_recv_scattered_pkts(void *rx_queue,
+ 	uint64_t dma_addr;
+ 	uint64_t pkt_flags;
+ 	uint32_t *ptype_tbl = rxq->vsi->adapter->ptype_tbl;
+-#ifndef RTE_LIBRTE_ICE_16BYTE_RX_DESC
++#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
+ 	bool is_tsinit = false;
+ 	uint64_t ts_ns;
+ 	struct ice_vsi *vsi = rxq->vsi;
+@@ -2151,7 +2151,7 @@ ice_recv_scattered_pkts(void *rx_queue,
+ 		ice_rxd_to_vlan_tci(first_seg, &rxd);
+ 		rxd_to_pkt_fields_ops[rxq->rxdid](rxq, first_seg, &rxd);
+ 		pkt_flags = ice_rxd_error_to_pkt_flags(rx_stat_err0);
+-#ifndef RTE_LIBRTE_ICE_16BYTE_RX_DESC
++#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
+ 		if (rxq->ts_flag > 0 &&
+ 		    (rxq->offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP)) {
+ 			rxq->time_high =
+@@ -2540,7 +2540,7 @@ ice_recv_pkts(void *rx_queue,
+ 	uint64_t dma_addr;
+ 	uint64_t pkt_flags;
+ 	uint32_t *ptype_tbl = rxq->vsi->adapter->ptype_tbl;
+-#ifndef RTE_LIBRTE_ICE_16BYTE_RX_DESC
++#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
+ 	bool is_tsinit = false;
+ 	uint64_t ts_ns;
+ 	struct ice_vsi *vsi = rxq->vsi;
+@@ -2649,7 +2649,7 @@ ice_recv_pkts(void *rx_queue,
+ 		ice_rxd_to_vlan_tci(rxm, &rxd);
+ 		rxd_to_pkt_fields_ops[rxq->rxdid](rxq, rxm, &rxd);
+ 		pkt_flags = ice_rxd_error_to_pkt_flags(rx_stat_err0);
+-#ifndef RTE_LIBRTE_ICE_16BYTE_RX_DESC
++#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
+ 		if (rxq->ts_flag > 0 &&
+ 		    (rxq->offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP)) {
+ 			rxq->time_high =
+diff --git a/drivers/net/intel/ice/ice_rxtx.h b/drivers/net/intel/ice/ice_rxtx.h
+index 3c5c014b41..d2d521c4f5 100644
+--- a/drivers/net/intel/ice/ice_rxtx.h
++++ b/drivers/net/intel/ice/ice_rxtx.h
+@@ -23,7 +23,7 @@
+ #define ICE_CHK_Q_ENA_COUNT        100
+ #define ICE_CHK_Q_ENA_INTERVAL_US  100
+ 
+-#ifdef RTE_LIBRTE_ICE_16BYTE_RX_DESC
 +#ifdef RTE_NET_INTEL_USE_16BYTE_DESC
- #define i40e_rx_desc i40e_16byte_rx_desc
+ #define ice_rx_flex_desc ice_16b_rx_flex_desc
  #else
- #define i40e_rx_desc i40e_32byte_rx_desc
-diff --git a/drivers/net/intel/i40e/i40e_rxtx_common_avx.h b/drivers/net/intel/i40e/i40e_rxtx_common_avx.h
-index b66a808f9f..7d2bda624b 100644
---- a/drivers/net/intel/i40e/i40e_rxtx_common_avx.h
-+++ b/drivers/net/intel/i40e/i40e_rxtx_common_avx.h
-@@ -41,7 +41,7 @@ i40e_rxq_rearm_common(struct i40e_rx_queue *rxq, __rte_unused bool avx512)
+ #define ice_rx_flex_desc ice_32b_rx_flex_desc
+diff --git a/drivers/net/intel/ice/ice_rxtx_common_avx.h b/drivers/net/intel/ice/ice_rxtx_common_avx.h
+index c62e60c70e..a68cf8512d 100644
+--- a/drivers/net/intel/ice/ice_rxtx_common_avx.h
++++ b/drivers/net/intel/ice/ice_rxtx_common_avx.h
+@@ -38,7 +38,7 @@ ice_rxq_rearm_common(struct ice_rx_queue *rxq, __rte_unused bool avx512)
  		return;
  	}
  
--#ifndef RTE_LIBRTE_I40E_16BYTE_RX_DESC
+-#ifndef RTE_LIBRTE_ICE_16BYTE_RX_DESC
 +#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
  	struct rte_mbuf *mb0, *mb1;
  	__m128i dma_addr0, dma_addr1;
  	__m128i hdr_room = _mm_set_epi64x(RTE_PKTMBUF_HEADROOM,
-diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c b/drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c
-index 9c406e7a6f..4469c73c56 100644
---- a/drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c
-@@ -21,7 +21,7 @@ i40e_rxq_rearm(struct i40e_rx_queue *rxq)
- 	i40e_rxq_rearm_common(rxq, false);
- }
+diff --git a/drivers/net/intel/ice/ice_rxtx_vec_avx2.c b/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
+index 0c54b325c6..6fe5ffa6f4 100644
+--- a/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
++++ b/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
+@@ -440,7 +440,7 @@ _ice_recv_raw_pkts_vec_avx2(struct ice_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+ 		} /* if() on fdir_enabled */
  
--#ifndef RTE_LIBRTE_I40E_16BYTE_RX_DESC
+ 		if (offload) {
+-#ifndef RTE_LIBRTE_ICE_16BYTE_RX_DESC
 +#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
- /* Handles 32B descriptor FDIR ID processing:
-  * rxdp: receive descriptor ring, required to load 2nd 16B half of each desc
-  * rx_pkts: required to store metadata back to mbufs
-@@ -99,7 +99,7 @@ desc_fdir_processing_32b(volatile union i40e_rx_desc *rxdp,
- 	/* NOT REACHED, see above switch returns */
- 	return _mm256_setzero_si256();
- }
--#endif /* RTE_LIBRTE_I40E_16BYTE_RX_DESC */
-+#endif /* RTE_NET_INTEL_USE_16BYTE_DESC */
+ 			/**
+ 			 * needs to load 2nd 16B of each desc for RSS hash parsing,
+ 			 * will cause performance drop to get into this context.
+diff --git a/drivers/net/intel/ice/ice_rxtx_vec_avx512.c b/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
+index bd49be07c9..490d1ae059 100644
+--- a/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
++++ b/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
+@@ -462,7 +462,7 @@ _ice_recv_raw_pkts_vec_avx512(struct ice_rx_queue *rxq,
+ 		} /* if() on fdir_enabled */
  
- #define PKTLEN_SHIFT     10
- 
-@@ -398,7 +398,7 @@ _recv_raw_pkts_vec_avx2(struct i40e_rx_queue *rxq, struct rte_mbuf **rx_pkts,
- 		 * not always performed. Branch over the code when not enabled.
- 		 */
- 		if (rxq->fdir_enabled) {
--#ifdef RTE_LIBRTE_I40E_16BYTE_RX_DESC
-+#ifdef RTE_NET_INTEL_USE_16BYTE_DESC
- 			/* 16B descriptor code path:
- 			 * RSS and FDIR ID use the same offset in the desc, so
- 			 * only one can be present at a time. The code below
-@@ -490,7 +490,7 @@ _recv_raw_pkts_vec_avx2(struct i40e_rx_queue *rxq, struct rte_mbuf **rx_pkts,
- 			fdir_add_flags = desc_fdir_processing_32b(rxdp, rx_pkts, i, 6);
- 			mbuf_flags = _mm256_or_si256(mbuf_flags, fdir_add_flags);
- 			/* End 32B desc handling */
--#endif /* RTE_LIBRTE_I40E_16BYTE_RX_DESC */
-+#endif /* RTE_NET_INTEL_USE_16BYTE_DESC */
- 
- 		} /* if() on FDIR enabled */
- 
-diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c b/drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c
-index d8244556c0..bb25acf398 100644
---- a/drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c
-@@ -23,7 +23,7 @@ i40e_rxq_rearm(struct i40e_rx_queue *rxq)
- 	i40e_rxq_rearm_common(rxq, true);
- }
- 
--#ifndef RTE_LIBRTE_I40E_16BYTE_RX_DESC
+ 		if (do_offload) {
+-#ifndef RTE_LIBRTE_ICE_16BYTE_RX_DESC
 +#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
- /* Handles 32B descriptor FDIR ID processing:
-  * rxdp: receive descriptor ring, required to load 2nd 16B half of each desc
-  * rx_pkts: required to store metadata back to mbufs
-@@ -102,7 +102,7 @@ desc_fdir_processing_32b(volatile union i40e_rx_desc *rxdp,
- 	/* NOT REACHED, see above switch returns */
- 	return _mm256_setzero_si256();
- }
--#endif /* RTE_LIBRTE_I40E_16BYTE_RX_DESC */
-+#endif /* RTE_NET_INTEL_USE_16BYTE_DESC */
+ 			/**
+ 			 * needs to load 2nd 16B of each desc for RSS hash parsing,
+ 			 * will cause performance drop to get into this context.
+diff --git a/drivers/net/intel/ice/ice_rxtx_vec_sse.c b/drivers/net/intel/ice/ice_rxtx_vec_sse.c
+index 97f05ba45e..719b37645e 100644
+--- a/drivers/net/intel/ice/ice_rxtx_vec_sse.c
++++ b/drivers/net/intel/ice/ice_rxtx_vec_sse.c
+@@ -477,7 +477,7 @@ _ice_recv_raw_pkts_vec(struct ice_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+ 		pkt_mb1 = _mm_add_epi16(pkt_mb1, crc_adjust);
+ 		pkt_mb0 = _mm_add_epi16(pkt_mb0, crc_adjust);
  
- #define PKTLEN_SHIFT     10
- 
-@@ -419,7 +419,7 @@ _recv_raw_pkts_vec_avx512(struct i40e_rx_queue *rxq, struct rte_mbuf **rx_pkts,
- 		 * not always performed. Branch over the code when not enabled.
- 		 */
- 		if (rxq->fdir_enabled) {
--#ifdef RTE_LIBRTE_I40E_16BYTE_RX_DESC
-+#ifdef RTE_NET_INTEL_USE_16BYTE_DESC
- 			/* 16B descriptor code path:
- 			 * RSS and FDIR ID use the same offset in the desc, so
- 			 * only one can be present at a time. The code below
-@@ -539,7 +539,7 @@ _recv_raw_pkts_vec_avx512(struct i40e_rx_queue *rxq, struct rte_mbuf **rx_pkts,
- 			mbuf_flags =
- 				_mm256_or_si256(mbuf_flags, fdir_add_flags);
- 			/* End 32B desc handling */
--#endif /* RTE_LIBRTE_I40E_16BYTE_RX_DESC */
-+#endif /* RTE_NET_INTEL_USE_16BYTE_DESC */
- 
- 		} /* if() on FDIR enabled */
- 
-diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c b/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c
-index 317a0323bb..695b4e1040 100644
---- a/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c
-@@ -77,7 +77,7 @@ i40e_rxq_rearm(struct i40e_rx_queue *rxq)
- 	I40E_PCI_REG_WRITE_RELAXED(rxq->qrx_tail, rx_id);
- }
- 
--#ifndef RTE_LIBRTE_I40E_16BYTE_RX_DESC
+-#ifndef RTE_LIBRTE_ICE_16BYTE_RX_DESC
 +#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
- /* NEON version of FDIR mark extraction for 4 32B descriptors at a time */
- static inline uint32x4_t
- descs_to_fdir_32b(volatile union i40e_rx_desc *rxdp, struct rte_mbuf **rx_pkt)
-@@ -284,7 +284,7 @@ desc_to_olflags_v(struct i40e_rx_queue *rxq, volatile union i40e_rx_desc *rxdp,
- 
- 	/* Extract FDIR ID only if FDIR is enabled to avoid useless work */
- 	if (rxq->fdir_enabled) {
--#ifndef RTE_LIBRTE_I40E_16BYTE_RX_DESC
-+#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
- 		uint32x4_t v_fdir_ol_flags = descs_to_fdir_32b(rxdp, rx_pkts);
- #else
- 		(void)rxdp; /* rxdp not required for 16B desc mode */
-diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_sse.c b/drivers/net/intel/i40e/i40e_rxtx_vec_sse.c
-index 25a3ef7352..920089fe3e 100644
---- a/drivers/net/intel/i40e/i40e_rxtx_vec_sse.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx_vec_sse.c
-@@ -86,7 +86,7 @@ i40e_rxq_rearm(struct i40e_rx_queue *rxq)
- 	I40E_PCI_REG_WC_WRITE(rxq->qrx_tail, rx_id);
- }
- 
--#ifndef RTE_LIBRTE_I40E_16BYTE_RX_DESC
-+#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
- /* SSE version of FDIR mark extraction for 4 32B descriptors at a time */
- static inline __m128i
- descs_to_fdir_32b(volatile union i40e_rx_desc *rxdp, struct rte_mbuf **rx_pkt)
-@@ -285,7 +285,7 @@ desc_to_olflags_v(struct i40e_rx_queue *rxq, volatile union i40e_rx_desc *rxdp,
- 
- 	/* Extract FDIR ID only if FDIR is enabled to avoid useless work */
- 	if (rxq->fdir_enabled) {
--#ifndef RTE_LIBRTE_I40E_16BYTE_RX_DESC
-+#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
- 		__m128i v_fdir_ol_flags = descs_to_fdir_32b(rxdp, rx_pkts);
- #else
- 		(void)rxdp; /* rxdp not required for 16B desc mode */
+ 		/**
+ 		 * needs to load 2nd 16B of each desc for RSS hash parsing,
+ 		 * will cause performance drop to get into this context.
 -- 
 2.47.1
 
