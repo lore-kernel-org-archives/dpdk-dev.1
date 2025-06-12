@@ -2,74 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 379F3C71136
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 03:10:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7090DC71136
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 07:00:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2966340A73;
-	Thu, 12 Jun 2025 05:10:01 +0200 (CEST)
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com
- [209.85.222.177])
- by mails.dpdk.org (Postfix) with ESMTP id CB0484021F
- for <dev@dpdk.org>; Thu, 12 Jun 2025 05:09:59 +0200 (CEST)
-Received: by mail-qk1-f177.google.com with SMTP id
- af79cd13be357-7d0a2220fb0so57813185a.3
- for <dev@dpdk.org>; Wed, 11 Jun 2025 20:09:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1749697799;
- x=1750302599; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=woNWuB12r02XpFz+Jbqh8Q871tGqJ6uAz4w3P10kU5Q=;
- b=ipCaWLQYSbfUxv2V2fw6ldwMt8N07N3E65TVjz8jn1EvXE9G3svfdR8iNprM8I3Cse
- Br3kqHMUMJowQmukXkV3Qoq8tCwW5FPbTbT/uEdSfsMAE/uum1we4t2Rs4yvSLXcPUKt
- nRzzwDDEVxPoPP7dUcn8IAnih0CTiX17WjGWUjN6hppCpRZMkAtTV110g/Be2Y5s4jnY
- IkHX5grAPnXBBkDYPx33Pf5xjvyUDf1MVJKl15YgzIOrPCIIZLOapWO81V+FbxXn8Qax
- Zx0sNdB5hrOxZvIxsDTa04ULieQwvGVazo5e7KiOyx5qyzyzPE2bL+zR+I+7BFLZMjNy
- l46Q==
+	by mails.dpdk.org (Postfix) with ESMTP id 143C34066F;
+	Thu, 12 Jun 2025 09:00:41 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id B24684021F
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 09:00:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1749711639;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=6ODCnlJ+nuRBlU99P4frV6kcRl4HxhlO1PMjoBLAulc=;
+ b=ELcJl5ABn6JtNCYbR/aPBR+eeLYSY7o3XomSSRhiGNhJAnhBCUR+rIWpTNGBqzTQsbbTmv
+ X/q8Uas39T6Ht++XEV1NU8iFtVmu02Rflut6TU+HA7yRP/A/dnLvuxBS6k2RHpwgSs60B1
+ yyRSwYrcKnDl6bAUVdvcKo6NgckSXiA=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-75-Ifi_Xfk7MlKwLaBML7Gz0w-1; Thu, 12 Jun 2025 03:00:37 -0400
+X-MC-Unique: Ifi_Xfk7MlKwLaBML7Gz0w-1
+X-Mimecast-MFC-AGG-ID: Ifi_Xfk7MlKwLaBML7Gz0w_1749711636
+Received: by mail-lf1-f69.google.com with SMTP id
+ 2adb3069b0e04-5536608f515so298766e87.1
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 00:00:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749697799; x=1750302599;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ d=1e100.net; s=20230601; t=1749711636; x=1750316436;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=woNWuB12r02XpFz+Jbqh8Q871tGqJ6uAz4w3P10kU5Q=;
- b=R7iM2IPIsRrEJHff2t1/kWFaMz36Es27Wwe0VgSxXLRzlFHVk/jYt5v1NNGTt7tXlu
- +uilifsBzOtuU3xWG6RE/EP+Lx8SQvoe59keZH4oJw8qQqMb9Zq5L2q+xUWinmma5o+V
- 404X1XZOGFRMmbHDmTuwW+tnzFd8QKZ7Nf1im1fQqp3kK3SssG0qzq5xrfUK+XBTumgK
- dxaKbzWGh4MJSUsNWZm5A5AHhCDJY+Als7iXyH+afTr6wQiarZpTbtLGKt5QradJ1+0y
- G5KmPzFaNBZ8cyqjtwamdg54bA1ProOVwtIDT9eQoJJx8RX0hLygB3WkswOost+XCY7o
- LGTQ==
-X-Gm-Message-State: AOJu0YxxsypsgtEGih3QVE5QqHLGvn2kXuFKA5aS1pqo8qDm0fMNf4y5
- WN2tHYnqJQ9Ucuj76sRdqQBj0iirjaJ3CtRnJeIiNF3F1eIEjj9QHjBEIlDCElkv+wVYhbAG/te
- fQYdF
-X-Gm-Gg: ASbGncvTE1uK56rlBviNfjzfwDYoSwMpICfQrzSEyXnIu6G22P3PPRvxZB6qdktqJ8g
- CegYvuvuCOEvXH3e6IQJGksv0PYvuCSATsYq1skdU6K3098WWfPa9UxgYa8PWAptzanEKi5kRkE
- xtx35XgQVaHHwQpISTlJpBO3ZvoR+W4QtIX0z9DYiQusvUACOGGcbCfr6vWPdvMXANQCY6RoMAP
- FexS+gneqqGw6uKPlxstAIOo1mzaPgH8tRnWxRzlnwm8i5pZ9KOPM9RwwX26ZlhYyoL+8vmADO2
- u1QsXdFnq/tljCKZoWLf6I+5AkRiIhlz+8oUZ7wZBUsDL2cmvrH4JWOWb9PI2IPsQ48osVkHeM7
- MMbCqQPRV1d8nXV/RrBhZEchCm4QGCpemD79/m9eQKhxe0/Y=
-X-Google-Smtp-Source: AGHT+IFIiISxDfjJR0YihRQWo6Emz5czXZPlWA84M/tQToMM8KJawwpmZfQP5bXqsGZcU76Rxqj/fQ==
-X-Received: by 2002:a05:620a:a91a:b0:7d3:96ba:8561 with SMTP id
- af79cd13be357-7d3b35c8a63mr220258785a.8.1749697798920; 
- Wed, 11 Jun 2025 20:09:58 -0700 (PDT)
-Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7d3b527db71sm58095385a.79.2025.06.11.20.09.57
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 11 Jun 2025 20:09:58 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Junlong Wang <wang.junlong1@zte.com.cn>, Lijie Shan <shan.lijie@zte.com.cn>
-Subject: [PATCH] more replace memcpy with structure assignment
-Date: Wed, 11 Jun 2025 20:08:51 -0700
-Message-ID: <20250612030952.611893-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <5311136.0WQXIW03uk@thomas>
-References: <5311136.0WQXIW03uk@thomas>
+ bh=6ODCnlJ+nuRBlU99P4frV6kcRl4HxhlO1PMjoBLAulc=;
+ b=JV9rUaeDfrT0sDpV0Vrs2IDxnRBSirg5VzTgDoY6P3z/jkLYCQ7g5cK4tb4wGeQ8U3
+ Wf8pa/FD9U3sZzHBJZQIlDtju8MY5rP7GNFHBRSkxz4Z3qYh8CIYQwJsJH5GY9qsliBk
+ ApbN140ZWJJZfWDU3OC2J3jLVcds4qoo0o2Mhve2UYi4mXG7X8nKOakqSsnkeJNx47Lw
+ gG90R7cWs1uqVQm5OnYq+IMQq/1PuU0T/2SkoL3L/Pa4YNlkebysk0auqH4fpy27PtHt
+ gxVV2PMYFy9+85JAKtcyCayBDciXcuXbes48tpnLmBa/9COUXymCiZludx76429Db+hE
+ ilSA==
+X-Gm-Message-State: AOJu0YzxYgrjnx81SVO17QCF6HeKwOBfuyZDAH2klvZ1dpoC9fHWKqEH
+ Y8kqsK2iSgcN+hiHhw57cHgVVM4Nl9/qlMAxF1h2kHzkTeoiEFuGLL74NI0QBnvhm7HDh8Jz+P1
+ ngPOPc5ZAlBHe73fLJVxmIynWyqNJyEpKWG7d2L3No1lIZfeSGNBo5zpuEhsi3DJBQ6EcbV8kAb
+ PMaehLv0/kakpW+Ras/YB/rGGFFH7QbA==
+X-Gm-Gg: ASbGncsg/+kmuSvPfsn+XwXlgwvoXSnCTUNKPkQNiVdZHqiRyvJNF5haqgNwX3QpFhb
+ KJj8t+kKRk/8JaJllrBhfGzzBqfiSLjiTbbTmY4dweffiiJBOA5HCFvEHTxk769slUPTAl9JtP4
+ 6FFirt2w==
+X-Received: by 2002:a05:6512:ad0:b0:553:663c:584e with SMTP id
+ 2adb3069b0e04-5539c268fd3mr1853735e87.47.1749711635811; 
+ Thu, 12 Jun 2025 00:00:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHvpbehOZGpshYrJiUHZsnhdbMnY0cBUwm/iToOsGORtxWqrrvwJuKKkX1QCLdoI62KOvwgF7HwjA7TOwCpUEQ=
+X-Received: by 2002:a05:6512:ad0:b0:553:663c:584e with SMTP id
+ 2adb3069b0e04-5539c268fd3mr1853729e87.47.1749711635355; Thu, 12 Jun 2025
+ 00:00:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240408195036.182545-1-stephen@networkplumber.org>
+ <20250610141355.91759-1-stephen@networkplumber.org>
+ <20250610141355.91759-8-stephen@networkplumber.org>
+In-Reply-To: <20250610141355.91759-8-stephen@networkplumber.org>
+From: David Marchand <david.marchand@redhat.com>
+Date: Thu, 12 Jun 2025 09:00:22 +0200
+X-Gm-Features: AX0GCFvLRk75Myoydc-l9nQJI9-2Bvkm1l43YGjGzsI2PMMcT_oa90Qtih_xf7o
+Message-ID: <CAJFAV8y1TqpS6_oN-j9n_PY8mHqCD05n8YU3Jq5VwfXwJUd=dA@mail.gmail.com>
+Subject: Re: [PATCH v8 7/7] test: update to latencystats tests
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, Reshma Pattan <reshma.pattan@intel.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 4MG2xD3FrvpOWfBMYA6XbcbAUnG6pRsL9FK05wIaHK4_1749711636
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,71 +86,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Prefer using simple structure assignment instead of memcpy.
-Using a structure assignment preserves type information and
-compiler checks types already.
+On Tue, Jun 10, 2025 at 4:14=E2=80=AFPM Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+>
+> No need for loop and memset() here. Just use structure
+> initialization.  Remove unnecessary initializations.
+>
+> Look at the number of samples, min, max and average
+> numbers to make sure they look correct.
+> Forward for longer to make sure multiple samples are taken.
+>
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
-Reran cocci script against -rc1 and did minor replacement of "*&"
+We have random failures on aarch64 in OBS.
+https://bugs.dpdk.org/show_bug.cgi?id=3D1723
 
- drivers/common/sfc_efx/base/efx_mae.c | 2 +-
- drivers/net/zxdh/zxdh_ethdev_ops.c    | 8 ++++----
- 2 files changed, 5 insertions(+), 5 deletions(-)
+It may be related to this change, does it make the test more
+susceptible to timing issues?
 
-diff --git a/drivers/common/sfc_efx/base/efx_mae.c b/drivers/common/sfc_efx/base/efx_mae.c
-index 1429e7dd0a..4533e5cae6 100644
---- a/drivers/common/sfc_efx/base/efx_mae.c
-+++ b/drivers/common/sfc_efx/base/efx_mae.c
-@@ -1353,7 +1353,7 @@ efx_mae_match_spec_clone(
- 		goto fail1;
- 	}
- 
--	memcpy(clone, orig, sizeof (efx_mae_match_spec_t));
-+	*clone = *orig;
- 
- 	*clonep = clone;
- 
-diff --git a/drivers/net/zxdh/zxdh_ethdev_ops.c b/drivers/net/zxdh/zxdh_ethdev_ops.c
-index f8e8d26c50..268f78900c 100644
---- a/drivers/net/zxdh/zxdh_ethdev_ops.c
-+++ b/drivers/net/zxdh/zxdh_ethdev_ops.c
-@@ -444,7 +444,7 @@ zxdh_dev_mac_addr_set(struct rte_eth_dev *dev, struct rte_ether_addr *addr)
- 	} else {
- 		struct zxdh_mac_filter *mac_filter = &msg_info.data.mac_filter_msg;
- 		mac_filter->filter_flag = ZXDH_MAC_UNFILTER;
--		memcpy(&mac_filter->mac, addr, sizeof(struct rte_ether_addr));
-+		mac_filter->mac = *addr;
- 		zxdh_msg_head_build(hw, ZXDH_MAC_ADD, &msg_info);
- 		ret = zxdh_vf_send_msg_to_pf(dev, &msg_info, sizeof(msg_info), NULL, 0);
- 		if (ret) {
-@@ -460,7 +460,7 @@ zxdh_dev_mac_addr_set(struct rte_eth_dev *dev, struct rte_ether_addr *addr)
- 
- 		mac_filter->filter_flag = ZXDH_MAC_UNFILTER;
- 		mac_filter->mac_flag = true;
--		memcpy(&mac_filter->mac, old_addr, sizeof(struct rte_ether_addr));
-+		mac_filter->mac = *old_addr;
- 		zxdh_msg_head_build(hw, ZXDH_MAC_DEL, &msg_info);
- 		ret = zxdh_vf_send_msg_to_pf(dev, &msg_info, sizeof(msg_info), NULL, 0);
- 		if (ret) {
-@@ -532,7 +532,7 @@ zxdh_dev_mac_addr_add(struct rte_eth_dev *dev, struct rte_ether_addr *mac_addr,
- 		struct zxdh_mac_filter *mac_filter = &msg_info.data.mac_filter_msg;
- 
- 		mac_filter->filter_flag = ZXDH_MAC_FILTER;
--		memcpy(&mac_filter->mac, mac_addr, sizeof(struct rte_ether_addr));
-+		mac_filter->mac = *mac_addr;
- 		zxdh_msg_head_build(hw, ZXDH_MAC_ADD, &msg_info);
- 		if (rte_is_unicast_ether_addr(mac_addr)) {
- 			if (hw->uc_num < ZXDH_MAX_UC_MAC_ADDRS) {
-@@ -614,7 +614,7 @@ void zxdh_dev_mac_addr_remove(struct rte_eth_dev *dev, uint32_t index)
- 		struct zxdh_mac_filter *mac_filter = &msg_info.data.mac_filter_msg;
- 
- 		mac_filter->filter_flag = ZXDH_MAC_FILTER;
--		memcpy(&mac_filter->mac, mac_addr, sizeof(struct rte_ether_addr));
-+		mac_filter->mac = *mac_addr;
- 		zxdh_msg_head_build(hw, ZXDH_MAC_DEL, &msg_info);
- 		if (rte_is_unicast_ether_addr(mac_addr)) {
- 			if (hw->uc_num <= ZXDH_MAX_UC_MAC_ADDRS) {
--- 
-2.47.2
+
+--=20
+David Marchand
 
