@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5981C71135
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Jun 2025 23:38:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E98CDC71136
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 00:11:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D1D494021F;
-	Thu, 12 Jun 2025 01:38:10 +0200 (CEST)
-Received: from fhigh-a3-smtp.messagingengine.com
- (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
- by mails.dpdk.org (Postfix) with ESMTP id CFB3B40156
- for <dev@dpdk.org>; Thu, 12 Jun 2025 01:38:08 +0200 (CEST)
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal
- [10.202.2.46])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 41E311140228;
- Wed, 11 Jun 2025 19:38:08 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-06.internal (MEProxy); Wed, 11 Jun 2025 19:38:08 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id CC4EC4021F;
+	Thu, 12 Jun 2025 02:11:12 +0200 (CEST)
+Received: from fout-b7-smtp.messagingengine.com
+ (fout-b7-smtp.messagingengine.com [202.12.124.150])
+ by mails.dpdk.org (Postfix) with ESMTP id 18DB940156
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 02:11:11 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal
+ [10.202.2.41])
+ by mailfout.stl.internal (Postfix) with ESMTP id 52A9E11400A8;
+ Wed, 11 Jun 2025 20:11:10 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-01.internal (MEProxy); Wed, 11 Jun 2025 20:11:10 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1749685088;
- x=1749771488; bh=ALZkjULQPz0XNnfMY8AecgYza29IXD+eNxSCqqCmdm0=; b=
- Md/PWyVBFjX8ZMz/ZHFCqKhB88ncfmpSyAi5h9AwKCzCyuPv8n+lgDyx0cRyButX
- CcTkB+wgX2l4ylI0nGPNNrD0+ID47TDuM0wp5gxv2HfPxh1Unk90lFN7U9SN3gJT
- ibjELUJ3HloeTSCwSRBofwVps+lWP+yiv3v0nn1YQUhEhL+VHtsIJ0BWFe0wiZRM
- SRRusC2AiegY+HjFngkqZ5ace4+inmVbiMANCttSAT9xPLEn6TZkwsW86/FRVuB6
- iMGXxH/1oDSpj7h8Wye84OQ2LLVT/Q4j9PYlAatLs8v3JT6KUAgbPwSeKCqjSJXP
- Fq7opgtMZDFqby5XmZNMZQ==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1749687070;
+ x=1749773470; bh=p5pV59q2J6FCRJiagGkTn0o6ez1jfcJNBbsz7ZnsFpk=; b=
+ VI1VA2uiOkmTbRlzFmwulYEdd0+1ekOPYU04LlaQI3DFwdOaWJ8Uz7RkeFD3oLw4
+ bmm/SgaInjJEYugK63kcxeFrzE6yAZfuhz8B83ZnwGfkPADMGhGBTyJQVGqbYSqX
+ 2Bbn7RcdiTpcfN93KjCvT92aesaOP+0lobT94XlX0bi0lIqNbsn+H0A8m+8o1ycd
+ eXhWplN8G1I2XiF6B6eyIdQK/S8kYNu8Iowcl57p4CVSFS+tiivm+H5fEoRIneoJ
+ zdCr8S71Hu6WbSN+NsTh2ULaNIx5uH9QNkIcwml+6WudehwQwKgcEhKAFZMQdgHv
+ 6To1U0GfvtEx3/GU8pqHHA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749685088; x=
- 1749771488; bh=ALZkjULQPz0XNnfMY8AecgYza29IXD+eNxSCqqCmdm0=; b=k
- WeGY+D4Hye9pv0T6yUOvGDmCD2YyE9A6717K24V+7jKIjaic3uNbeVNGecFT7r3Z
- AQI3SA6DqZw0PVbR3+uu9AWMa5SuVLZ9qLRo+oiuBIdSofO6Wtw1f+wlJUtg7TzB
- PL/wrwpuqOA6ocZRbdT9ib8XR6XD4P/WpX6DLxgknV3nnp9SId6THmsEGr2e7hjz
- PP/63jYgMkPDi+z+gWsUG65xFkp+UyURZqNaxLWvQCofhiYeka9sSBXvvBhCfSzb
- wWtho/GhEdx784upKBcBTpoYeYwnQWDp1HSqT+upmygR/BL+ZVx1SzymuDYrP2Ow
- Hj6rXBbAEDQ1wr3vI0ZnA==
-X-ME-Sender: <xms:XxNKaEnR0UHZuG_RNNIlKvgyaeVB_friQpggb59U1a-_reyuCjFIEg>
- <xme:XxNKaD3Onw2itbtXmYOQIcaaDvlzB8kvjonEqQhgl6vydDR8nh-m3UxQlai08IH2d
- PrA_uBJnQV-mzREsQ>
-X-ME-Received: <xmr:XxNKaCr28V1RWqU2i-nBk8obOK-B_-mtJwQiBwJnnm13BsfUTSUwRif_akgcXmYWkEsy0JHoGpFiz69oIL_lYf7zqg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddufeehvdcutefuodetggdotefrod
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749687070; x=
+ 1749773470; bh=p5pV59q2J6FCRJiagGkTn0o6ez1jfcJNBbsz7ZnsFpk=; b=D
+ riD/E0+Z2wpEpQVJSpsBYt0nwImNHwvaJGCF1DfxpXiZ9OgMHGP52LoiC58HVaEp
+ /eSklk++tUtg3ojwtOGQQWixqT7PaxzGUhmKGn66Vxsez37RS7kZmiZ7a+7ZMof8
+ oUL3nDYd7MnsS698puRsECuBMS8sH84mmTYG45+Svhm1FhuiZnV/yIghdMoQFlZe
+ GQY6xM4O7gRx+rOcSfkYoeAx2fCWhx3exXLZ+fSHenzi3cwheQ3V4Ugo745qR856
+ q/HUYgKN+Ouqcmhke0uAlL6G4EQ+CsIG6JYfpQBa8nIoX/f/JYPdjYW0HJM2Yp/Z
+ q78CTc8DjopU6EMF6J30Q==
+X-ME-Sender: <xms:HRtKaF-95xCBdal8A5HDpcceU2grm6e5t61d17DqnwB9hMHKphlq7A>
+ <xme:HRtKaJsXWaRs4utyl0pAv_pg5LuptqprZl1Tb0LbNkhaIvO0GsNGcJxK4bnr4D4qW
+ qMhf7Mys4ZnS-3awQ>
+X-ME-Received: <xmr:HRtKaDCnaCmQNcpZ3KWIjSMb6in_akc5y80m8x0PDD9BUxK8QWGQu5ZSrtKRsR9tDUQVgypaPQHMPVWh3-vd_d1kNw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddufeehlecutefuodetggdotefrod
  ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
  uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
  hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdej
@@ -53,25 +53,25 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddufeehvdcutefuodetgg
  grlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevfffgtdeg
  keeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgeptdenuc
  frrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdp
- nhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhtvg
- hphhgvnhesnhgvthifohhrkhhplhhumhgsvghrrdhorhhgpdhrtghpthhtohepuggvvhes
+ nhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghruh
+ gtvgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpthhtohepuggvvhes
  ughpughkrdhorhhg
-X-ME-Proxy: <xmx:XxNKaAn4ygKSceAFDGBcLpdpAhK40Mx-ESxGB_8GpZItQ5sXRm-7gA>
- <xmx:YBNKaC120z34XQSrOkjC1BemCfwC0IatKUyrciuNmBA7Qti9WxL27g>
- <xmx:YBNKaHtbmMd8bFrSfWgsumqMd_ZVpjwIkCktVXFpjr82MuaZIAY8ew>
- <xmx:YBNKaOUGEVDUBGQ9C-pwyjlAjOY0ugzEU5pHOFQHiRs6wGfBOvzeZQ>
- <xmx:YBNKaB4100Q2_kHtT07OJ4WOJ5ElYvexMbuq7Y54hU4SjwS7dCTFL38A>
+X-ME-Proxy: <xmx:HRtKaJe756zhUeCoWSkwcwM-1fs6Y6rzCDmWWkX7GFIQ2iWY8ZUdsw>
+ <xmx:HRtKaKNNrO7xMvGuhzgw5TkMu6nY8eILMY5tIITpBZ6ykspe6s6CSA>
+ <xmx:HRtKaLkcSNqiIJ1KJQttul6_nw-pK1EgIGX1daRBXBRG8MOyhCZNmg>
+ <xmx:HRtKaEsCrBWE3IVbIOETLNg4T7EEYnfs52iVri55HihoM-f6UavG2g>
+ <xmx:HhtKaPfkHGkk05zRJX163slGRjQKFE4DUjhi3_r6lw9w5PRxBRpyolAr>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 11 Jun 2025 19:38:07 -0400 (EDT)
+ 11 Jun 2025 20:11:09 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>
+To: Bruce Richardson <bruce.richardson@intel.com>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH 00/32] Use structure assignment instead of memcpy
-Date: Thu, 12 Jun 2025 01:38:05 +0200
-Message-ID: <5311136.0WQXIW03uk@thomas>
-In-Reply-To: <20250208203142.242284-1-stephen@networkplumber.org>
-References: <20250208203142.242284-1-stephen@networkplumber.org>
+Subject: Re: [PATCH] doc: add release note entry for EAL lcores flag
+Date: Thu, 12 Jun 2025 02:11:07 +0200
+Message-ID: <4590883.TLnPLrj5Ze@thomas>
+In-Reply-To: <20250610145055.1497390-1-bruce.richardson@intel.com>
+References: <20250610145055.1497390-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -88,53 +88,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-08/02/2025 21:21, Stephen Hemminger:
-> This patch series reduces use of memcpy and rte_memcpy
-> in DPDK. It changes memcpy to a simple assignment operator
-> which easier to read, generates the same code, and
-> keeps type safety.
+10/06/2025 16:50, Bruce Richardson:
+> Add an entry in the release notes about the "-l" flag now being the
+> same as the "--lcores" flag. Refer to the GSG for examples.
 > 
-> Historically memcpy was used in textbooks because there
-> was no structure assignement in original K&R C.
+> Fixes: 1ea3833e9c4e ("eal: merge corelist and core mapping options")
 > 
-> Stephen Hemminger (32):
->   devtools/cocci: prefer structure assignment over memcpy
->   app/testpmd: replace memcpy with assignment
->   app/graph: replace memcpy with structure assignment
->   crypto/dpaa_sec: replace memcpy with assignment
->   dma/dpaa2: replace memcpy with assignment
->   eventdev: replace memcpy with assignment
->   event/dpaa2: replace memcpy with structure assignment
->   event/dsw: replace memcpy with assignment
->   ml/cnxk: replace memcpy with assignment
->   examples: replace memcpy with assignment
->   node: replace memcpy with assignment
->   pipeline: replace memcpy with assignment
->   sched: replace memcpy with structure assignment
->   table: replace memcpy with structure assignment
->   net/ntnic: replace memcpy with structure assignment
->   net/bnxt: replace memcpy with structure assignment
->   crypto/qat: replace memcpy with structure assignment
->   mempool/cnxk: replace memcpy with structure assignment
->   net/dpaa2: replace memcpy with assignment
->   net/enic: replace memcpy with assignment
->   net/intel/i40e: replace memcpy with structure assignment
->   net/nfp: replace memcpy with assignment
->   net/txgbe: replace memcpy with assignment
->   net/bnx2x: replace memcpy with structure assignment
->   net/dpaa2: replace memcpy with structure assignment
->   net/bonding: replace memcpy with structure assignment
->   net/cnxk: replace memcpy with structure assignment
->   net/enic: replace memcpy with structure assignment
->   net/iavf: replace memcpy with structure assignment
->   net/ice: replace memcpy with structure assignment
->   test: replace memcpy with structure assignment
->   test/cryptodev: replace memcpy with structure assignment
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 
-Applied and squashed, thanks.
-
-I tried to run the cocci script on my laptop but it took forever,
-so I hope there is no more occurrences remaining.
+Applied, thanks.
 
 
 
