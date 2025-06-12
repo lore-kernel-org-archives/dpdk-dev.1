@@ -2,27 +2,26 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DEADC61CE8
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 08:59:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71FEBC71141
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 08:59:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5693240E0A;
-	Thu, 12 Jun 2025 10:59:25 +0200 (CEST)
-Received: from out28-100.mail.aliyun.com (out28-100.mail.aliyun.com
- [115.124.28.100])
- by mails.dpdk.org (Postfix) with ESMTP id BEF8D40DDB
+	by mails.dpdk.org (Postfix) with ESMTP id 7E3F140E1B;
+	Thu, 12 Jun 2025 10:59:26 +0200 (CEST)
+Received: from out28-3.mail.aliyun.com (out28-3.mail.aliyun.com [115.124.28.3])
+ by mails.dpdk.org (Postfix) with ESMTP id E723040DDD
  for <dev@dpdk.org>; Thu, 12 Jun 2025 10:59:19 +0200 (CEST)
 Received: from localhost.localdomain(mailfrom:kyo.liu@nebula-matrix.com
- fp:SMTPD_---.dJxInDS_1749718757 cluster:ay29) by smtp.aliyun-inc.com;
- Thu, 12 Jun 2025 16:59:17 +0800
+ fp:SMTPD_---.dJxInE8_1749718757 cluster:ay29) by smtp.aliyun-inc.com;
+ Thu, 12 Jun 2025 16:59:18 +0800
 From: Kyo Liu <kyo.liu@nebula-matrix.com>
 To: kyo.liu@nebula-matrix.com,
 	dev@dpdk.org
 Cc: Dimon Zhao <dimon.zhao@nebula-matrix.com>,
  Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
-Subject: [PATCH v1 05/17] =?UTF-8?q?net/nbl:=C2=A0=20add=20Resource=20laye?=
+Subject: [PATCH v1 06/17] =?UTF-8?q?net/nbl:=C2=A0=20add=20Dispatch=20laye?=
  =?UTF-8?q?r=20definitions=20and=20implementation?=
-Date: Thu, 12 Jun 2025 08:58:26 +0000
-Message-ID: <20250612085840.729830-6-kyo.liu@nebula-matrix.com>
+Date: Thu, 12 Jun 2025 08:58:27 +0000
+Message-ID: <20250612085840.729830-7-kyo.liu@nebula-matrix.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250612085840.729830-1-kyo.liu@nebula-matrix.com>
 References: <20250612085840.729830-1-kyo.liu@nebula-matrix.com>
@@ -42,530 +41,690 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-add Resource layer related definetions
+add Dispatch layer related definetions
 
 Signed-off-by: Kyo Liu <kyo.liu@nebula-matrix.com>
 ---
- drivers/net/nbl/meson.build                   |   3 +
- drivers/net/nbl/nbl_core.c                    |  11 +-
+ drivers/net/nbl/meson.build                   |   1 +
+ drivers/net/nbl/nbl_core.c                    |   7 +
  drivers/net/nbl/nbl_core.h                    |   4 +
- .../nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c | 137 ++++++++++++++++
- .../nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.h |  10 ++
- drivers/net/nbl/nbl_hw/nbl_resource.c         |   5 +
- drivers/net/nbl/nbl_hw/nbl_resource.h         |  51 ++++++
- drivers/net/nbl/nbl_hw/nbl_txrx.c             | 148 ++++++++++++++++++
- drivers/net/nbl/nbl_hw/nbl_txrx.h             |  10 ++
- .../net/nbl/nbl_include/nbl_def_resource.h    |  47 ++++++
- drivers/net/nbl/nbl_include/nbl_include.h     |  20 +++
- 11 files changed, 444 insertions(+), 2 deletions(-)
- create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c
- create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.h
- create mode 100644 drivers/net/nbl/nbl_hw/nbl_resource.c
- create mode 100644 drivers/net/nbl/nbl_hw/nbl_resource.h
- create mode 100644 drivers/net/nbl/nbl_hw/nbl_txrx.c
- create mode 100644 drivers/net/nbl/nbl_hw/nbl_txrx.h
- create mode 100644 drivers/net/nbl/nbl_include/nbl_def_resource.h
+ drivers/net/nbl/nbl_dispatch.c                | 466 ++++++++++++++++++
+ drivers/net/nbl/nbl_dispatch.h                |  29 ++
+ drivers/net/nbl/nbl_include/nbl_def_channel.h |  18 +
+ drivers/net/nbl/nbl_include/nbl_def_common.h  |   4 +
+ .../net/nbl/nbl_include/nbl_def_dispatch.h    |  77 +++
+ .../net/nbl/nbl_include/nbl_def_resource.h    |   5 +
+ drivers/net/nbl/nbl_include/nbl_include.h     |  17 +
+ 10 files changed, 628 insertions(+)
+ create mode 100644 drivers/net/nbl/nbl_dispatch.c
+ create mode 100644 drivers/net/nbl/nbl_dispatch.h
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_def_dispatch.h
 
 diff --git a/drivers/net/nbl/meson.build b/drivers/net/nbl/meson.build
-index c849cab185..f34121260e 100644
+index f34121260e..23601727ef 100644
 --- a/drivers/net/nbl/meson.build
 +++ b/drivers/net/nbl/meson.build
-@@ -15,5 +15,8 @@ sources = files(
+@@ -12,6 +12,7 @@ includes += include_directories('nbl_hw')
+ sources = files(
+         'nbl_ethdev.c',
+         'nbl_core.c',
++        'nbl_dispatch.c',
          'nbl_common/nbl_common.c',
          'nbl_common/nbl_thread.c',
          'nbl_hw/nbl_channel.c',
-+        'nbl_hw/nbl_resource.c',
-+        'nbl_hw/nbl_txrx.c',
-         'nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.c',
-+        'nbl_hw/nbl_hw_leonis/nbl_res_leonis.c',
- )
 diff --git a/drivers/net/nbl/nbl_core.c b/drivers/net/nbl/nbl_core.c
-index f4388fe3b5..70600401fe 100644
+index 70600401fe..548eb3a2fd 100644
 --- a/drivers/net/nbl/nbl_core.c
 +++ b/drivers/net/nbl/nbl_core.c
-@@ -8,8 +8,8 @@ static struct nbl_product_core_ops nbl_product_core_ops[NBL_PRODUCT_MAX] = {
- 	{
- 		.phy_init	= nbl_phy_init_leonis_snic,
- 		.phy_remove	= nbl_phy_remove_leonis_snic,
--		.res_init	= NULL,
--		.res_remove	= NULL,
-+		.res_init	= nbl_res_init_leonis,
-+		.res_remove	= nbl_res_remove_leonis,
- 		.chan_init	= nbl_chan_init_leonis,
- 		.chan_remove	= nbl_chan_remove_leonis,
- 	},
-@@ -46,8 +46,14 @@ int nbl_core_init(struct nbl_adapter *adapter, struct rte_eth_dev *eth_dev)
+@@ -50,8 +50,14 @@ int nbl_core_init(struct nbl_adapter *adapter, struct rte_eth_dev *eth_dev)
  	if (ret)
- 		goto chan_init_fail;
+ 		goto res_init_fail;
  
-+	ret = product_base_ops->res_init(adapter, eth_dev);
++	ret = nbl_disp_init(adapter);
 +	if (ret)
-+		goto res_init_fail;
++		goto disp_init_fail;
 +
  	return 0;
  
-+res_init_fail:
-+	product_base_ops->chan_remove(adapter);
++disp_init_fail:
++	product_base_ops->res_remove(adapter);
+ res_init_fail:
+ 	product_base_ops->chan_remove(adapter);
  chan_init_fail:
- 	product_base_ops->phy_remove(adapter);
- phy_init_fail:
-@@ -60,6 +66,7 @@ void nbl_core_remove(struct nbl_adapter *adapter)
+@@ -66,6 +72,7 @@ void nbl_core_remove(struct nbl_adapter *adapter)
  
  	product_base_ops = nbl_core_get_product_ops(adapter->caps.product_type);
  
-+	product_base_ops->res_remove(adapter);
++	nbl_disp_remove(adapter);
+ 	product_base_ops->res_remove(adapter);
  	product_base_ops->chan_remove(adapter);
  	product_base_ops->phy_remove(adapter);
- }
 diff --git a/drivers/net/nbl/nbl_core.h b/drivers/net/nbl/nbl_core.h
-index a6c1103c77..f693913b47 100644
+index f693913b47..2730539050 100644
 --- a/drivers/net/nbl/nbl_core.h
 +++ b/drivers/net/nbl/nbl_core.h
-@@ -9,6 +9,7 @@
- #include "nbl_def_common.h"
+@@ -10,6 +10,7 @@
  #include "nbl_def_phy.h"
  #include "nbl_def_channel.h"
-+#include "nbl_def_resource.h"
+ #include "nbl_def_resource.h"
++#include "nbl_def_dispatch.h"
  
  #define NBL_VENDOR_ID				(0x1F0F)
  #define NBL_DEVICE_ID_M18110			(0x3403)
-@@ -33,9 +34,11 @@
- 
+@@ -35,10 +36,12 @@
  #define NBL_ADAPTER_TO_PHY_MGT(adapter)		((adapter)->core.phy_mgt)
  #define NBL_ADAPTER_TO_CHAN_MGT(adapter)	((adapter)->core.chan_mgt)
-+#define NBL_ADAPTER_TO_RES_MGT(adapter)		((adapter)->core.res_mgt)
+ #define NBL_ADAPTER_TO_RES_MGT(adapter)		((adapter)->core.res_mgt)
++#define NBL_ADAPTER_TO_DISP_MGT(adapter)	((adapter)->core.disp_mgt)
  
  #define NBL_ADAPTER_TO_PHY_OPS_TBL(adapter)	((adapter)->intf.phy_ops_tbl)
  #define NBL_ADAPTER_TO_CHAN_OPS_TBL(adapter)	((adapter)->intf.channel_ops_tbl)
-+#define NBL_ADAPTER_TO_RES_OPS_TBL(adapter)	((adapter)->intf.resource_ops_tbl)
+ #define NBL_ADAPTER_TO_RES_OPS_TBL(adapter)	((adapter)->intf.resource_ops_tbl)
++#define NBL_ADAPTER_TO_DISP_OPS_TBL(adapter)	((adapter)->intf.dispatch_ops_tbl)
  
  struct nbl_core {
  	void *phy_mgt;
-@@ -48,6 +51,7 @@ struct nbl_core {
- struct nbl_interface {
+@@ -52,6 +55,7 @@ struct nbl_interface {
  	struct nbl_phy_ops_tbl *phy_ops_tbl;
  	struct nbl_channel_ops_tbl *channel_ops_tbl;
-+	struct nbl_resource_ops_tbl *resource_ops_tbl;
+ 	struct nbl_resource_ops_tbl *resource_ops_tbl;
++	struct nbl_dispatch_ops_tbl *dispatch_ops_tbl;
  };
  
  struct nbl_adapter {
-diff --git a/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c
+diff --git a/drivers/net/nbl/nbl_dispatch.c b/drivers/net/nbl/nbl_dispatch.c
 new file mode 100644
-index 0000000000..6327aa55b4
+index 0000000000..ffeeba3048
 --- /dev/null
-+++ b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c
-@@ -0,0 +1,137 @@
++++ b/drivers/net/nbl/nbl_dispatch.c
+@@ -0,0 +1,466 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright 2025 Nebulamatrix Technology Co., Ltd.
 + */
 +
-+#include "nbl_res_leonis.h"
++#include "nbl_dispatch.h"
 +
-+static struct nbl_resource_ops res_ops = {
-+};
-+
-+static bool is_ops_inited;
-+
-+static void nbl_res_remove_ops(struct nbl_resource_ops_tbl **res_ops_tbl)
++static int nbl_disp_alloc_txrx_queues(void *priv, u16 vsi_id, u16 queue_num)
 +{
-+	rte_free(*res_ops_tbl);
-+	*res_ops_tbl = NULL;
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops;
++
++	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++	return res_ops->alloc_txrx_queues(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt),
++					  vsi_id, queue_num);
 +}
 +
-+static int nbl_res_setup_ops(struct nbl_resource_ops_tbl **res_ops_tbl,
-+			     struct nbl_resource_mgt_leonis *res_mgt_leonis)
++static int nbl_disp_chan_alloc_txrx_queues_req(void *priv, u16 vsi_id,
++					       u16 queue_num)
 +{
-+	int ret = 0;
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_channel_ops *chan_ops;
++	struct nbl_chan_param_alloc_txrx_queues param = {0};
++	struct nbl_chan_param_alloc_txrx_queues result = {0};
++	struct nbl_chan_send_info chan_send;
 +
-+	*res_ops_tbl = rte_zmalloc("nbl_res_ops", sizeof(struct nbl_resource_ops_tbl), 0);
-+	if (!*res_ops_tbl)
-+		return -ENOMEM;
++	chan_ops = NBL_DISP_MGT_TO_CHAN_OPS(disp_mgt);
 +
-+	if (!is_ops_inited) {
-+		ret = nbl_txrx_setup_ops(&res_ops);
-+		if (ret)
-+			goto set_ops_failed;
++	param.vsi_id = vsi_id;
++	param.queue_num = queue_num;
 +
-+		is_ops_inited = true;
-+	}
-+
-+	NBL_RES_OPS_TBL_TO_OPS(*res_ops_tbl) = &res_ops;
-+	NBL_RES_OPS_TBL_TO_PRIV(*res_ops_tbl) = res_mgt_leonis;
-+
-+	return ret;
-+
-+set_ops_failed:
-+	rte_free(*res_ops_tbl);
-+	return ret;
-+}
-+
-+static void nbl_res_stop(struct nbl_resource_mgt_leonis *res_mgt_leonis)
-+{
-+	struct nbl_resource_mgt *res_mgt = &res_mgt_leonis->res_mgt;
-+	nbl_txrx_mgt_stop(res_mgt);
-+}
-+
-+static int nbl_res_start(struct nbl_resource_mgt_leonis *res_mgt_leonis)
-+{
-+	struct nbl_resource_mgt *res_mgt = &res_mgt_leonis->res_mgt;
-+	int ret;
-+
-+	ret = nbl_txrx_mgt_start(res_mgt);
-+	if (ret)
-+		goto txrx_failed;
++	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_ALLOC_TXRX_QUEUES, &param,
++		      sizeof(param), &result, sizeof(result), 1);
++	chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt), &chan_send);
 +
 +	return 0;
-+
-+txrx_failed:
-+	return ret;
 +}
 +
-+static void
-+nbl_res_remove_res_mgt(struct nbl_resource_mgt_leonis **res_mgt_leonis)
++static void nbl_disp_free_txrx_queues(void *priv, u16 vsi_id)
 +{
-+	rte_free(*res_mgt_leonis);
-+	*res_mgt_leonis = NULL;
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops;
++
++	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++	res_ops->free_txrx_queues(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), vsi_id);
++}
++
++static void nbl_disp_chan_free_txrx_queues_req(void *priv, u16 vsi_id)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_channel_ops *chan_ops;
++	struct nbl_chan_param_free_txrx_queues param = {0};
++	struct nbl_chan_send_info chan_send;
++
++	chan_ops = NBL_DISP_MGT_TO_CHAN_OPS(disp_mgt);
++
++	param.vsi_id = vsi_id;
++
++	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_FREE_TXRX_QUEUES, &param,
++		      sizeof(param), NULL, 0, 1);
++	chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt), &chan_send);
++}
++
++static void nbl_disp_clear_queues(void *priv, u16 vsi_id)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++
++	NBL_OPS_CALL(res_ops->clear_queues, (NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), vsi_id));
++}
++
++static void nbl_disp_chan_clear_queues_req(void *priv, u16 vsi_id)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_channel_ops *chan_ops = NBL_DISP_MGT_TO_CHAN_OPS(disp_mgt);
++	struct nbl_chan_send_info chan_send = {0};
++
++	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_CLEAR_QUEUE, &vsi_id, sizeof(vsi_id),
++		      NULL, 0, 1);
++	chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt), &chan_send);
++}
++
++static int nbl_disp_start_tx_ring(void *priv,
++				  struct nbl_start_tx_ring_param *param,
++				  u64 *dma_addr)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops;
++
++	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++	return res_ops->start_tx_ring(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt),
++				      param, dma_addr);
++}
++
++static void nbl_disp_release_tx_ring(void *priv, u16 queue_idx)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops;
++
++	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++	return res_ops->release_tx_ring(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt),
++				     queue_idx);
++}
++
++static void nbl_disp_stop_tx_ring(void *priv, u16 queue_idx)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops;
++
++	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++	return res_ops->stop_tx_ring(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt),
++				     queue_idx);
++}
++
++static int nbl_disp_start_rx_ring(void *priv,
++				  struct nbl_start_rx_ring_param *param,
++				  u64 *dma_addr)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops;
++
++	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++	return res_ops->start_rx_ring(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt),
++				      param, dma_addr);
++}
++
++static int nbl_disp_alloc_rx_bufs(void *priv, u16 queue_idx)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops;
++
++	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++	return res_ops->alloc_rx_bufs(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt),
++				      queue_idx);
++}
++
++static void nbl_disp_release_rx_ring(void *priv, u16 queue_idx)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops;
++
++	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++	return res_ops->release_rx_ring(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt),
++				     queue_idx);
++}
++
++static void nbl_disp_stop_rx_ring(void *priv, u16 queue_idx)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops;
++
++	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++	return res_ops->stop_rx_ring(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt),
++				     queue_idx);
++}
++
++static void nbl_disp_update_rx_ring(void *priv, u16 index)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops;
++
++	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++	res_ops->update_rx_ring(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), index);
++}
++
++static int nbl_disp_alloc_rings(void *priv, u16 tx_num, u16 rx_num, u16 queue_offset)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops;
++
++	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++	return res_ops->alloc_rings(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt),
++				    tx_num, rx_num, queue_offset);
++}
++
++static void nbl_disp_remove_rings(void *priv)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops;
++
++	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++	res_ops->remove_rings(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt));
 +}
 +
 +static int
-+nbl_res_setup_res_mgt(struct nbl_resource_mgt_leonis **res_mgt_leonis)
++nbl_disp_setup_queue(void *priv, struct nbl_txrx_queue_param *param, bool is_tx)
 +{
-+	*res_mgt_leonis = rte_zmalloc("nbl_res_mgt",
-+				      sizeof(struct nbl_resource_mgt_leonis),
-+				      0);
-+	if (!*res_mgt_leonis)
-+		return -ENOMEM;
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops;
 +
-+	return 0;
++	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++	return res_ops->setup_queue(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt),
++				    param, is_tx);
 +}
 +
-+int nbl_res_init_leonis(void *p, struct rte_eth_dev *eth_dev)
++static int
++nbl_disp_chan_setup_queue_req(void *priv,
++			      struct nbl_txrx_queue_param *queue_param,
++			      bool is_tx)
 +{
-+	struct nbl_resource_mgt_leonis **res_mgt_leonis;
-+	struct nbl_resource_ops_tbl **res_ops_tbl;
-+	struct nbl_phy_ops_tbl *phy_ops_tbl;
-+	struct nbl_channel_ops_tbl *chan_ops_tbl;
-+	struct nbl_adapter *adapter = (struct nbl_adapter *)p;
-+	int ret = 0;
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_channel_ops *chan_ops;
++	struct nbl_chan_param_setup_queue param = {0};
++	struct nbl_chan_send_info chan_send;
 +
-+	res_mgt_leonis = (struct nbl_resource_mgt_leonis **)&NBL_ADAPTER_TO_RES_MGT(adapter);
-+	res_ops_tbl = &NBL_ADAPTER_TO_RES_OPS_TBL(adapter);
-+	phy_ops_tbl = NBL_ADAPTER_TO_PHY_OPS_TBL(adapter);
-+	chan_ops_tbl = NBL_ADAPTER_TO_CHAN_OPS_TBL(adapter);
++	chan_ops = NBL_DISP_MGT_TO_CHAN_OPS(disp_mgt);
 +
-+	ret = nbl_res_setup_res_mgt(res_mgt_leonis);
-+	if (ret)
-+		goto setup_mgt_fail;
++	memcpy(&param.queue_param, queue_param, sizeof(param.queue_param));
++	param.is_tx = is_tx;
 +
-+	NBL_RES_MGT_TO_CHAN_OPS_TBL(&(*res_mgt_leonis)->res_mgt) = chan_ops_tbl;
-+	NBL_RES_MGT_TO_PHY_OPS_TBL(&(*res_mgt_leonis)->res_mgt) = phy_ops_tbl;
-+	NBL_RES_MGT_TO_ETH_DEV(&(*res_mgt_leonis)->res_mgt) = eth_dev;
-+
-+	ret = nbl_res_start(*res_mgt_leonis);
-+	if (ret)
-+		goto start_fail;
-+
-+	ret = nbl_res_setup_ops(res_ops_tbl, *res_mgt_leonis);
-+	if (ret)
-+		goto setup_ops_fail;
-+
-+	return 0;
-+
-+setup_ops_fail:
-+	nbl_res_stop(*res_mgt_leonis);
-+start_fail:
-+	nbl_res_remove_res_mgt(res_mgt_leonis);
-+setup_mgt_fail:
-+	return ret;
++	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_SETUP_QUEUE, &param,
++		      sizeof(param), NULL, 0, 1);
++	return chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt), &chan_send);
 +}
 +
-+void nbl_res_remove_leonis(void *p)
++static void nbl_disp_remove_all_queues(void *priv, u16 vsi_id)
 +{
-+	struct nbl_resource_mgt_leonis **res_mgt_leonis;
-+	struct nbl_resource_ops_tbl **res_ops_tbl;
-+	struct nbl_adapter *adapter = (struct nbl_adapter *)p;
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops;
 +
-+	res_mgt_leonis = (struct nbl_resource_mgt_leonis **)&NBL_ADAPTER_TO_RES_MGT(adapter);
-+	res_ops_tbl = &NBL_ADAPTER_TO_RES_OPS_TBL(adapter);
-+
-+	nbl_res_remove_ops(res_ops_tbl);
-+	nbl_res_stop(*res_mgt_leonis);
-+	nbl_res_remove_res_mgt(res_mgt_leonis);
-+}
-diff --git a/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.h b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.h
-new file mode 100644
-index 0000000000..d14f868d55
---- /dev/null
-+++ b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.h
-@@ -0,0 +1,10 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
-+ */
-+
-+#ifndef _NBL_RES_LEONIS_H_
-+#define _NBL_RES_LEONIS_H_
-+
-+#include "nbl_resource.h"
-+
-+#endif
-diff --git a/drivers/net/nbl/nbl_hw/nbl_resource.c b/drivers/net/nbl/nbl_hw/nbl_resource.c
-new file mode 100644
-index 0000000000..47baaa2a91
---- /dev/null
-+++ b/drivers/net/nbl/nbl_hw/nbl_resource.c
-@@ -0,0 +1,5 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
-+ */
-+
-+#include "nbl_resource.h"
-diff --git a/drivers/net/nbl/nbl_hw/nbl_resource.h b/drivers/net/nbl/nbl_hw/nbl_resource.h
-new file mode 100644
-index 0000000000..2ea79563cc
---- /dev/null
-+++ b/drivers/net/nbl/nbl_hw/nbl_resource.h
-@@ -0,0 +1,51 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
-+ */
-+
-+#ifndef _NBL_RESOURCE_H_
-+#define _NBL_RESOURCE_H_
-+
-+#include "nbl_ethdev.h"
-+#include "nbl_include.h"
-+#include <stdint.h>
-+
-+#define NBL_RES_MGT_TO_PHY_OPS_TBL(res_mgt)	((res_mgt)->phy_ops_tbl)
-+#define NBL_RES_MGT_TO_PHY_OPS(res_mgt)		(NBL_RES_MGT_TO_PHY_OPS_TBL(res_mgt)->ops)
-+#define NBL_RES_MGT_TO_PHY_PRIV(res_mgt)	(NBL_RES_MGT_TO_PHY_OPS_TBL(res_mgt)->priv)
-+#define NBL_RES_MGT_TO_CHAN_OPS_TBL(res_mgt)	((res_mgt)->chan_ops_tbl)
-+#define NBL_RES_MGT_TO_CHAN_OPS(res_mgt)	(NBL_RES_MGT_TO_CHAN_OPS_TBL(res_mgt)->ops)
-+#define NBL_RES_MGT_TO_CHAN_PRIV(res_mgt)	(NBL_RES_MGT_TO_CHAN_OPS_TBL(res_mgt)->priv)
-+#define NBL_RES_MGT_TO_ETH_DEV(res_mgt)		((res_mgt)->eth_dev)
-+#define NBL_RES_MGT_TO_TXRX_MGT(res_mgt)	((res_mgt)->txrx_mgt)
-+
-+struct nbl_res_tx_ring {
-+};
-+
-+struct nbl_res_rx_ring {
-+};
-+
-+struct nbl_txrx_mgt {
-+	rte_spinlock_t tx_lock;
-+	struct nbl_res_tx_ring **tx_rings;
-+	struct nbl_res_rx_ring **rx_rings;
-+	u8 tx_ring_num;
-+	u8 rx_ring_num;
-+};
-+
-+struct nbl_resource_mgt {
-+	struct rte_eth_dev *eth_dev;
-+	struct nbl_channel_ops_tbl *chan_ops_tbl;
-+	struct nbl_phy_ops_tbl *phy_ops_tbl;
-+	struct nbl_txrx_mgt *txrx_mgt;
-+};
-+
-+struct nbl_resource_mgt_leonis {
-+	struct nbl_resource_mgt res_mgt;
-+};
-+
-+int nbl_txrx_mgt_start(struct nbl_resource_mgt *res_mgt);
-+void nbl_txrx_mgt_stop(struct nbl_resource_mgt *res_mgt);
-+int nbl_txrx_setup_ops(struct nbl_resource_ops *resource_ops);
-+void nbl_txrx_remove_ops(struct nbl_resource_ops *resource_ops);
-+
-+#endif
-diff --git a/drivers/net/nbl/nbl_hw/nbl_txrx.c b/drivers/net/nbl/nbl_hw/nbl_txrx.c
-new file mode 100644
-index 0000000000..0df204e425
---- /dev/null
-+++ b/drivers/net/nbl/nbl_hw/nbl_txrx.c
-@@ -0,0 +1,148 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
-+ */
-+
-+#include "nbl_txrx.h"
-+#include "nbl_include.h"
-+
-+static int nbl_res_txrx_alloc_rings(void *priv, u16 tx_num, u16 rx_num, u16 queue_offset)
-+{
-+	RTE_SET_USED(priv);
-+	RTE_SET_USED(tx_num);
-+	RTE_SET_USED(rx_num);
-+	RTE_SET_USED(queue_offset);
-+	return 0;
++	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++	res_ops->remove_all_queues(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), vsi_id);
 +}
 +
-+static void nbl_res_txrx_remove_rings(void *priv)
++static void nbl_disp_chan_remove_all_queues_req(void *priv, u16 vsi_id)
 +{
-+	RTE_SET_USED(priv);
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_channel_ops *chan_ops;
++	struct nbl_chan_param_remove_all_queues param = {0};
++	struct nbl_chan_send_info chan_send;
++
++	chan_ops = NBL_DISP_MGT_TO_CHAN_OPS(disp_mgt);
++
++	param.vsi_id = vsi_id;
++
++	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_REMOVE_ALL_QUEUES,
++		      &param, sizeof(param), NULL, 0, 1);
++	chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt), &chan_send);
 +}
 +
-+static int nbl_res_txrx_start_tx_ring(void *priv,
-+				      struct nbl_start_tx_ring_param *param,
-+				      u64 *dma_addr)
-+{
-+	RTE_SET_USED(priv);
-+	RTE_SET_USED(param);
-+	RTE_SET_USED(dma_addr);
-+	return 0;
-+}
-+
-+static void nbl_res_txrx_stop_tx_ring(void *priv, u16 queue_idx)
-+{
-+	RTE_SET_USED(priv);
-+	RTE_SET_USED(queue_idx);
-+}
-+
-+static void nbl_res_txrx_release_txring(void *priv, u16 queue_idx)
-+{
-+	RTE_SET_USED(priv);
-+	RTE_SET_USED(queue_idx);
-+}
-+
-+static int nbl_res_txrx_start_rx_ring(void *priv,
-+				      struct nbl_start_rx_ring_param *param,
-+				      u64 *dma_addr)
-+{
-+	RTE_SET_USED(priv);
-+	RTE_SET_USED(param);
-+	RTE_SET_USED(dma_addr);
-+	return 0;
-+}
-+
-+static int nbl_res_alloc_rx_bufs(void *priv, u16 queue_idx)
-+{
-+	RTE_SET_USED(priv);
-+	RTE_SET_USED(queue_idx);
-+	return 0;
-+}
-+
-+static void nbl_res_txrx_stop_rx_ring(void *priv, u16 queue_idx)
-+{
-+	RTE_SET_USED(priv);
-+	RTE_SET_USED(queue_idx);
-+}
-+
-+static void nbl_res_txrx_release_rx_ring(void *priv, u16 queue_idx)
-+{
-+	RTE_SET_USED(priv);
-+	RTE_SET_USED(queue_idx);
-+}
-+
-+static void nbl_res_txrx_update_rx_ring(void *priv, u16 index)
-+{
-+	RTE_SET_USED(priv);
-+	RTE_SET_USED(index);
-+}
-+
-+/* NBL_TXRX_SET_OPS(ops_name, func)
-+ *
-+ * Use X Macros to reduce setup and remove codes.
-+ */
-+#define NBL_TXRX_OPS_TBL							\
-+do {										\
-+	NBL_TXRX_SET_OPS(alloc_rings, nbl_res_txrx_alloc_rings);		\
-+	NBL_TXRX_SET_OPS(remove_rings, nbl_res_txrx_remove_rings);		\
-+	NBL_TXRX_SET_OPS(start_tx_ring, nbl_res_txrx_start_tx_ring);		\
-+	NBL_TXRX_SET_OPS(stop_tx_ring, nbl_res_txrx_stop_tx_ring);		\
-+	NBL_TXRX_SET_OPS(release_tx_ring, nbl_res_txrx_release_txring);		\
-+	NBL_TXRX_SET_OPS(start_rx_ring, nbl_res_txrx_start_rx_ring);		\
-+	NBL_TXRX_SET_OPS(alloc_rx_bufs, nbl_res_alloc_rx_bufs);			\
-+	NBL_TXRX_SET_OPS(stop_rx_ring, nbl_res_txrx_stop_rx_ring);		\
-+	NBL_TXRX_SET_OPS(release_rx_ring, nbl_res_txrx_release_rx_ring);	\
-+	NBL_TXRX_SET_OPS(update_rx_ring, nbl_res_txrx_update_rx_ring);		\
++#define NBL_DISP_OPS_TBL						\
++do {									\
++	NBL_DISP_SET_OPS(alloc_txrx_queues, nbl_disp_alloc_txrx_queues,	\
++			 NBL_DISP_CTRL_LVL_MGT,				\
++			 NBL_CHAN_MSG_ALLOC_TXRX_QUEUES,		\
++			 nbl_disp_chan_alloc_txrx_queues_req,		\
++			 NULL);						\
++	NBL_DISP_SET_OPS(free_txrx_queues, nbl_disp_free_txrx_queues,	\
++			 NBL_DISP_CTRL_LVL_MGT,				\
++			 NBL_CHAN_MSG_FREE_TXRX_QUEUES,			\
++			 nbl_disp_chan_free_txrx_queues_req,		\
++			 NULL);						\
++	NBL_DISP_SET_OPS(alloc_rings, nbl_disp_alloc_rings,		\
++			 NBL_DISP_CTRL_LVL_ALWAYS, -1,			\
++			 NULL, NULL);					\
++	NBL_DISP_SET_OPS(remove_rings, nbl_disp_remove_rings,		\
++			 NBL_DISP_CTRL_LVL_ALWAYS, -1,			\
++			 NULL, NULL);					\
++	NBL_DISP_SET_OPS(start_tx_ring, nbl_disp_start_tx_ring,		\
++			 NBL_DISP_CTRL_LVL_ALWAYS, -1, NULL, NULL);	\
++	NBL_DISP_SET_OPS(stop_tx_ring, nbl_disp_stop_tx_ring,		\
++			 NBL_DISP_CTRL_LVL_ALWAYS, -1, NULL, NULL);	\
++	NBL_DISP_SET_OPS(release_tx_ring, nbl_disp_release_tx_ring,	\
++			 NBL_DISP_CTRL_LVL_ALWAYS, -1, NULL, NULL);	\
++	NBL_DISP_SET_OPS(start_rx_ring, nbl_disp_start_rx_ring,		\
++			 NBL_DISP_CTRL_LVL_ALWAYS, -1, NULL, NULL);	\
++	NBL_DISP_SET_OPS(alloc_rx_bufs, nbl_disp_alloc_rx_bufs,		\
++			 NBL_DISP_CTRL_LVL_ALWAYS, -1, NULL, NULL);	\
++	NBL_DISP_SET_OPS(stop_rx_ring, nbl_disp_stop_rx_ring,		\
++			 NBL_DISP_CTRL_LVL_ALWAYS, -1, NULL, NULL);	\
++	NBL_DISP_SET_OPS(release_rx_ring, nbl_disp_release_rx_ring,	\
++			 NBL_DISP_CTRL_LVL_ALWAYS, -1, NULL, NULL);	\
++	NBL_DISP_SET_OPS(update_rx_ring, nbl_disp_update_rx_ring,	\
++			 NBL_DISP_CTRL_LVL_ALWAYS, -1,			\
++			 NULL, NULL);					\
++	NBL_DISP_SET_OPS(setup_queue, nbl_disp_setup_queue,		\
++			 NBL_DISP_CTRL_LVL_MGT,				\
++			 NBL_CHAN_MSG_SETUP_QUEUE,			\
++			 nbl_disp_chan_setup_queue_req, NULL);		\
++	NBL_DISP_SET_OPS(remove_all_queues, nbl_disp_remove_all_queues,	\
++			 NBL_DISP_CTRL_LVL_MGT,				\
++			 NBL_CHAN_MSG_REMOVE_ALL_QUEUES,		\
++			 nbl_disp_chan_remove_all_queues_req, NULL);	\
++	NBL_DISP_SET_OPS(clear_queues, nbl_disp_clear_queues,		\
++			 NBL_DISP_CTRL_LVL_MGT,				\
++			 NBL_CHAN_MSG_CLEAR_QUEUE,			\
++			 nbl_disp_chan_clear_queues_req, NULL);		\
 +} while (0)
 +
 +/* Structure starts here, adding an op should not modify anything below */
-+static int nbl_txrx_setup_mgt(struct nbl_txrx_mgt **txrx_mgt)
++static int nbl_disp_setup_msg(struct nbl_dispatch_mgt *disp_mgt)
 +{
-+	*txrx_mgt = rte_zmalloc("nbl_txrx_mgt", sizeof(struct nbl_txrx_mgt), 0);
-+	if (!*txrx_mgt)
++	struct nbl_channel_ops *chan_ops;
++	int ret = 0;
++
++	chan_ops = NBL_DISP_MGT_TO_CHAN_OPS(disp_mgt);
++
++#define NBL_DISP_SET_OPS(disp_op, res_func, ctrl_lvl2, msg_type, msg_req, msg_resp)		\
++do {												\
++	typeof(msg_type) _msg_type = (msg_type);						\
++	typeof(msg_resp) _msg_resp = (msg_resp);						\
++	uint32_t _ctrl_lvl = rte_bit_relaxed_get32(ctrl_lvl2, &disp_mgt->ctrl_lvl);		\
++	if (_msg_type >= 0 && _msg_resp != NULL && _ctrl_lvl)					\
++		ret += chan_ops->register_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt),		\
++					      _msg_type, _msg_resp, disp_mgt);			\
++} while (0)
++	NBL_DISP_OPS_TBL;
++#undef  NBL_DISP_SET_OPS
++
++	return ret;
++}
++
++/* Ctrl lvl means that if a certain level is set, then all disp_ops that decleared this lvl
++ * will go directly to res_ops, rather than send a channel msg, and vice versa.
++ */
++static int nbl_disp_setup_ctrl_lvl(struct nbl_dispatch_mgt *disp_mgt, u32 lvl)
++{
++	struct nbl_dispatch_ops *disp_ops;
++
++	disp_ops = NBL_DISP_MGT_TO_DISP_OPS(disp_mgt);
++
++	rte_bit_relaxed_set32(lvl, &disp_mgt->ctrl_lvl);
++
++#define NBL_DISP_SET_OPS(disp_op, res_func, ctrl, msg_type, msg_req, msg_resp)		\
++do {											\
++	disp_ops->NBL_NAME(disp_op) =							\
++		rte_bit_relaxed_get32(ctrl, &disp_mgt->ctrl_lvl) ? res_func : msg_req; ;\
++} while (0)
++	NBL_DISP_OPS_TBL;
++#undef  NBL_DISP_SET_OPS
++
++	return 0;
++}
++
++static int nbl_disp_setup_disp_mgt(struct nbl_dispatch_mgt **disp_mgt)
++{
++	*disp_mgt = rte_zmalloc("nbl_disp_mgt", sizeof(struct nbl_dispatch_mgt), 0);
++	if (!*disp_mgt)
 +		return -ENOMEM;
 +
 +	return 0;
 +}
 +
-+static void nbl_txrx_remove_mgt(struct nbl_txrx_mgt **txrx_mgt)
++static void nbl_disp_remove_disp_mgt(struct nbl_dispatch_mgt **disp_mgt)
 +{
-+	rte_free(*txrx_mgt);
-+	*txrx_mgt = NULL;
++	rte_free(*disp_mgt);
++	*disp_mgt = NULL;
 +}
 +
-+int nbl_txrx_mgt_start(struct nbl_resource_mgt *res_mgt)
++static void nbl_disp_remove_ops(struct nbl_dispatch_ops_tbl **disp_ops_tbl)
 +{
-+	struct nbl_txrx_mgt **txrx_mgt;
-+
-+	txrx_mgt = &NBL_RES_MGT_TO_TXRX_MGT(res_mgt);
-+
-+	return nbl_txrx_setup_mgt(txrx_mgt);
++	rte_free(NBL_DISP_OPS_TBL_TO_OPS(*disp_ops_tbl));
++	rte_free(*disp_ops_tbl);
++	*disp_ops_tbl = NULL;
 +}
 +
-+void nbl_txrx_mgt_stop(struct nbl_resource_mgt *res_mgt)
++static int nbl_disp_setup_ops(struct nbl_dispatch_ops_tbl **disp_ops_tbl,
++			      struct nbl_dispatch_mgt *disp_mgt)
 +{
-+	struct nbl_txrx_mgt **txrx_mgt;
++	struct nbl_dispatch_ops *disp_ops;
 +
-+	txrx_mgt = &NBL_RES_MGT_TO_TXRX_MGT(res_mgt);
++	*disp_ops_tbl = rte_zmalloc("nbl_disp_ops_tbl", sizeof(struct nbl_dispatch_ops_tbl), 0);
++	if (!*disp_ops_tbl)
++		return -ENOMEM;
 +
-+	if (!(*txrx_mgt))
-+		return;
++	disp_ops = rte_zmalloc("nbl_dispatch_ops", sizeof(struct nbl_dispatch_ops), 0);
++	if (!disp_ops) {
++		rte_free(*disp_ops_tbl);
++		return -ENOMEM;
++	}
 +
-+	nbl_txrx_remove_mgt(txrx_mgt);
-+}
-+
-+int nbl_txrx_setup_ops(struct nbl_resource_ops *res_ops)
-+{
-+#define NBL_TXRX_SET_OPS(name, func) do {res_ops->NBL_NAME(name) = func; ; } while (0)
-+	NBL_TXRX_OPS_TBL;
-+#undef  NBL_TXRX_SET_OPS
++	NBL_DISP_OPS_TBL_TO_OPS(*disp_ops_tbl) = disp_ops;
++	NBL_DISP_OPS_TBL_TO_PRIV(*disp_ops_tbl) = disp_mgt;
 +
 +	return 0;
 +}
 +
-+void nbl_txrx_remove_ops(struct nbl_resource_ops *res_ops)
++int nbl_disp_init(void *p)
 +{
-+#define NBL_TXRX_SET_OPS(name, func) do {res_ops->NBL_NAME(name) = NULL; ; } while (0)
-+	NBL_TXRX_OPS_TBL;
-+#undef  NBL_TXRX_SET_OPS
++	struct nbl_adapter *adapter = (struct nbl_adapter *)p;
++	struct nbl_dispatch_mgt **disp_mgt;
++	struct nbl_dispatch_ops_tbl **disp_ops_tbl;
++	struct nbl_resource_ops_tbl *res_ops_tbl;
++	struct nbl_channel_ops_tbl *chan_ops_tbl;
++	struct nbl_product_dispatch_ops *disp_product_ops = NULL;
++	int ret = 0;
++
++	disp_mgt = (struct nbl_dispatch_mgt **)&NBL_ADAPTER_TO_DISP_MGT(adapter);
++	disp_ops_tbl = &NBL_ADAPTER_TO_DISP_OPS_TBL(adapter);
++	res_ops_tbl = NBL_ADAPTER_TO_RES_OPS_TBL(adapter);
++	chan_ops_tbl = NBL_ADAPTER_TO_CHAN_OPS_TBL(adapter);
++	disp_product_ops = nbl_dispatch_get_product_ops(adapter->caps.product_type);
++
++	ret = nbl_disp_setup_disp_mgt(disp_mgt);
++	if (ret)
++		return ret;
++
++	ret = nbl_disp_setup_ops(disp_ops_tbl, *disp_mgt);
++	if (ret)
++		goto setup_ops_fail;
++
++	NBL_DISP_MGT_TO_RES_OPS_TBL(*disp_mgt) = res_ops_tbl;
++	NBL_DISP_MGT_TO_CHAN_OPS_TBL(*disp_mgt) = chan_ops_tbl;
++	NBL_DISP_MGT_TO_DISP_OPS_TBL(*disp_mgt) = *disp_ops_tbl;
++
++	if (disp_product_ops->dispatch_init) {
++		ret = disp_product_ops->dispatch_init(*disp_mgt);
++		if (ret)
++			goto dispatch_init_fail;
++	}
++
++	ret = nbl_disp_setup_ctrl_lvl(*disp_mgt, NBL_DISP_CTRL_LVL_ALWAYS);
++	if (ret)
++		goto setup_ctrl_lvl_fail;
++	return 0;
++
++setup_ctrl_lvl_fail:
++	disp_product_ops->dispatch_uninit(*disp_mgt);
++dispatch_init_fail:
++	nbl_disp_remove_ops(disp_ops_tbl);
++setup_ops_fail:
++	nbl_disp_remove_disp_mgt(disp_mgt);
++
++	return ret;
 +}
-diff --git a/drivers/net/nbl/nbl_hw/nbl_txrx.h b/drivers/net/nbl/nbl_hw/nbl_txrx.h
++
++void nbl_disp_remove(void *p)
++{
++	struct nbl_adapter *adapter = (struct nbl_adapter *)p;
++	struct nbl_dispatch_mgt **disp_mgt;
++	struct nbl_dispatch_ops_tbl **disp_ops_tbl;
++
++	disp_mgt = (struct nbl_dispatch_mgt **)&NBL_ADAPTER_TO_DISP_MGT(adapter);
++	disp_ops_tbl = &NBL_ADAPTER_TO_DISP_OPS_TBL(adapter);
++
++	nbl_disp_remove_ops(disp_ops_tbl);
++	nbl_disp_remove_disp_mgt(disp_mgt);
++}
++
++static int nbl_disp_leonis_init(void *p)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)p;
++	int ret;
++
++	nbl_disp_setup_ctrl_lvl(disp_mgt, NBL_DISP_CTRL_LVL_NET);
++	ret = nbl_disp_setup_msg(disp_mgt);
++
++	return ret;
++}
++
++static int nbl_disp_leonis_uninit(void *p)
++{
++	RTE_SET_USED(p);
++	return 0;
++}
++
++static struct nbl_product_dispatch_ops nbl_product_dispatch_ops[NBL_PRODUCT_MAX] = {
++	{
++		.dispatch_init		= nbl_disp_leonis_init,
++		.dispatch_uninit	= nbl_disp_leonis_uninit,
++	},
++};
++
++struct nbl_product_dispatch_ops *nbl_dispatch_get_product_ops(enum nbl_product_type product_type)
++{
++	return &nbl_product_dispatch_ops[product_type];
++}
+diff --git a/drivers/net/nbl/nbl_dispatch.h b/drivers/net/nbl/nbl_dispatch.h
 new file mode 100644
-index 0000000000..56dbd3c587
+index 0000000000..dcdf87576a
 --- /dev/null
-+++ b/drivers/net/nbl/nbl_hw/nbl_txrx.h
-@@ -0,0 +1,10 @@
++++ b/drivers/net/nbl/nbl_dispatch.h
+@@ -0,0 +1,29 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright 2025 Nebulamatrix Technology Co., Ltd.
 + */
 +
-+#ifndef _NBL_TXRX_H_
-+#define _NBL_TXRX_H_
++#ifndef _NBL_DISPATCH_H_
++#define _NBL_DISPATCH_H_
 +
-+#include "nbl_resource.h"
++#include "nbl_ethdev.h"
++
++#define NBL_DISP_MGT_TO_RES_OPS_TBL(disp_mgt)	((disp_mgt)->res_ops_tbl)
++#define NBL_DISP_MGT_TO_RES_OPS(disp_mgt)	(NBL_DISP_MGT_TO_RES_OPS_TBL(disp_mgt)->ops)
++#define NBL_DISP_MGT_TO_RES_PRIV(disp_mgt)	(NBL_DISP_MGT_TO_RES_OPS_TBL(disp_mgt)->priv)
++#define NBL_DISP_MGT_TO_CHAN_OPS_TBL(disp_mgt)	((disp_mgt)->chan_ops_tbl)
++#define NBL_DISP_MGT_TO_CHAN_OPS(disp_mgt)	(NBL_DISP_MGT_TO_CHAN_OPS_TBL(disp_mgt)->ops)
++#define NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt)	(NBL_DISP_MGT_TO_CHAN_OPS_TBL(disp_mgt)->priv)
++#define NBL_DISP_MGT_TO_DISP_OPS_TBL(disp_mgt)	((disp_mgt)->disp_ops_tbl)
++#define NBL_DISP_MGT_TO_DISP_OPS(disp_mgt)	(NBL_DISP_MGT_TO_DISP_OPS_TBL(disp_mgt)->ops)
++#define NBL_DISP_MGT_TO_DISP_PRIV(disp_mgt)	(NBL_DISP_MGT_TO_DISP_OPS_TBL(disp_mgt)->priv)
++
++struct nbl_dispatch_mgt {
++	struct nbl_resource_ops_tbl *res_ops_tbl;
++	struct nbl_channel_ops_tbl *chan_ops_tbl;
++	struct nbl_dispatch_ops_tbl *disp_ops_tbl;
++	uint32_t ctrl_lvl;
++};
++
++struct nbl_product_dispatch_ops *nbl_dispatch_get_product_ops(enum nbl_product_type product_type);
 +
 +#endif
-diff --git a/drivers/net/nbl/nbl_include/nbl_def_resource.h b/drivers/net/nbl/nbl_include/nbl_def_resource.h
+diff --git a/drivers/net/nbl/nbl_include/nbl_def_channel.h b/drivers/net/nbl/nbl_include/nbl_def_channel.h
+index faf5d3ed3d..25d54a435d 100644
+--- a/drivers/net/nbl/nbl_include/nbl_def_channel.h
++++ b/drivers/net/nbl/nbl_include/nbl_def_channel.h
+@@ -281,6 +281,24 @@ enum nbl_chan_msg_type {
+ 	NBL_CHAN_MSG_MAX,
+ };
+ 
++struct nbl_chan_param_alloc_txrx_queues {
++	u16 vsi_id;
++	u16 queue_num;
++};
++
++struct nbl_chan_param_free_txrx_queues {
++	u16 vsi_id;
++};
++
++struct nbl_chan_param_setup_queue {
++	struct nbl_txrx_queue_param queue_param;
++	bool is_tx;
++};
++
++struct nbl_chan_param_remove_all_queues {
++	u16 vsi_id;
++};
++
+ struct nbl_chan_send_info {
+ 	uint16_t dstid;
+ 	uint16_t msg_type;
+diff --git a/drivers/net/nbl/nbl_include/nbl_def_common.h b/drivers/net/nbl/nbl_include/nbl_def_common.h
+index 0bfc6a233b..fb2ccb28bf 100644
+--- a/drivers/net/nbl/nbl_include/nbl_def_common.h
++++ b/drivers/net/nbl/nbl_include/nbl_def_common.h
+@@ -13,6 +13,10 @@
+ #  define NBL_PRIU64		"llu"
+ # endif
+ 
++#define NBL_OPS_CALL(func, para)	\
++	({ typeof(func) _func = (func);	\
++	 (!_func) ? 0 : _func para; })
++
+ struct nbl_dma_mem {
+ 	void *va;
+ 	uint64_t pa;
+diff --git a/drivers/net/nbl/nbl_include/nbl_def_dispatch.h b/drivers/net/nbl/nbl_include/nbl_def_dispatch.h
 new file mode 100644
-index 0000000000..c1cf041c74
+index 0000000000..5fd890b699
 --- /dev/null
-+++ b/drivers/net/nbl/nbl_include/nbl_def_resource.h
-@@ -0,0 +1,47 @@
++++ b/drivers/net/nbl/nbl_include/nbl_def_dispatch.h
+@@ -0,0 +1,77 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright 2025 Nebulamatrix Technology Co., Ltd.
 + */
 +
-+#ifndef _NBL_DEF_RESOURCE_H_
-+#define _NBL_DEF_RESOURCE_H_
++#ifndef _NBL_DEF_DISPATCH_H_
++#define _NBL_DEF_DISPATCH_H_
 +
 +#include "nbl_include.h"
-+#include "rte_ethdev_core.h"
 +
-+#define NBL_RES_OPS_TBL_TO_OPS(res_ops_tbl)		((res_ops_tbl)->ops)
-+#define NBL_RES_OPS_TBL_TO_PRIV(res_ops_tbl)		((res_ops_tbl)->priv)
++#define NBL_DISP_OPS_TBL_TO_OPS(disp_ops_tbl)	((disp_ops_tbl)->ops)
++#define NBL_DISP_OPS_TBL_TO_PRIV(disp_ops_tbl)	((disp_ops_tbl)->priv)
 +
-+struct nbl_resource_ops {
++enum {
++	NBL_DISP_CTRL_LVL_NEVER = 0,
++	NBL_DISP_CTRL_LVL_MGT,
++	NBL_DISP_CTRL_LVL_NET,
++	NBL_DISP_CTRL_LVL_ALWAYS,
++	NBL_DISP_CTRL_LVL_MAX,
++};
++
++struct nbl_dispatch_ops {
++	int (*add_macvlan)(void *priv, u8 *mac, u16 vlan_id, u16 vsi_id);
++	int (*get_mac_addr)(void *priv, u8 *mac);
++	void (*del_macvlan)(void *priv, u8 *mac, u16 vlan_id, u16 vsi_id);
++	int (*add_multi_rule)(void *priv, u16 vsi);
++	void (*del_multi_rule)(void *priv, u16 vsi);
++	int (*cfg_multi_mcast)(void *priv, u16 vsi, u16 enable);
++	void (*clear_flow)(void *priv, u16 vsi_id);
++	void (*get_firmware_version)(void *priv, char *firmware_verion, u8 max_len);
++	int (*set_promisc_mode)(void *priv, u16 vsi_id, u16 mode);
++	int (*alloc_txrx_queues)(void *priv, u16 vsi_id, u16 queue_num);
++	void (*free_txrx_queues)(void *priv, u16 vsi_id);
++	u16 (*get_vsi_id)(void *priv);
++	void (*get_eth_id)(void *priv, u16 vsi_id, u8 *eth_mode, u8 *eth_id);
++	int (*setup_txrx_queues)(void *priv, u16 vsi_id, u16 queue_num);
++	void (*remove_txrx_queues)(void *priv, u16 vsi_id);
 +	int (*alloc_rings)(void *priv, u16 tx_num, u16 rx_num, u16 queue_offset);
 +	void (*remove_rings)(void *priv);
 +	int (*start_tx_ring)(void *priv, struct nbl_start_tx_ring_param *param, u64 *dma_addr);
@@ -575,63 +734,77 @@ index 0000000000..c1cf041c74
 +	int (*alloc_rx_bufs)(void *priv, u16 queue_idx);
 +	void (*stop_rx_ring)(void *priv, u16 queue_idx);
 +	void (*release_rx_ring)(void *priv, u16 queue_idx);
-+	int (*get_stats)(void *priv, struct rte_eth_stats *rte_stats);
-+	int (*reset_stats)(void *priv);
-+	void (*update_rx_ring)(void *priv, u16 queue_idx);
++	void (*update_rx_ring)(void *priv, u16 index);
 +	u16 (*get_tx_ehdr_len)(void *priv);
-+	u64 (*restore_abnormal_ring)(void *priv, u16 local_queue_id, int type);
-+	int (*restart_abnormal_ring)(void *priv, int ring_index, int type);
 +	void (*cfg_txrx_vlan)(void *priv, u16 vlan_tci, u16 vlan_proto);
-+	int (*txrx_burst_mode_get)(void *priv, struct rte_eth_dev *dev,
-+				   struct rte_eth_burst_mode *mode, bool is_tx);
-+	int (*get_txrx_xstats_cnt)(void *priv, u16 *xstats_cnt);
-+	int (*get_txrx_xstats)(void *priv, struct rte_eth_xstat *xstats, u16 *xstats_cnt);
-+	int (*get_txrx_xstats_names)(void *priv, struct rte_eth_xstat_name *xstats_names,
-+				     u16 *xstats_cnt);
++	int (*setup_queue)(void *priv, struct nbl_txrx_queue_param *param, bool is_tx);
++	void (*remove_all_queues)(void *priv, u16 vsi_id);
++	int (*register_vsi2q)(void *priv, u16 vsi_index, u16 vsi_id,
++			      u16 queue_offset, u16 queue_num);
++	int (*setup_q2vsi)(void *priv, u16 vsi_id);
++	void (*remove_q2vsi)(void *priv, u16 vsi_id);
++	int (*setup_rss)(void *priv, u16 vsi_id);
++	void (*remove_rss)(void *priv, u16 vsi_id);
++	int (*cfg_dsch)(void *priv, u16 vsi_id, bool vld);
++	int (*setup_cqs)(void *priv, u16 vsi_id, u16 real_qps);
++	void (*remove_cqs)(void *priv, u16 vsi_id);
++	int (*set_rxfh_indir)(void *priv, u16 vsi_id, u32 *indir, u32 indir_size);
++	void (*clear_queues)(void *priv, u16 vsi_id);
++	u16 (*xmit_pkts)(void *priv, void *tx_queue, struct rte_mbuf **tx_pkts, u16 nb_pkts);
++	u16 (*recv_pkts)(void *priv, void *rx_queue, struct rte_mbuf **rx_pkts, u16 nb_pkts);
++	u16 (*get_vsi_global_qid)(void *priv, u16 vsi_id, u16 local_qid);
++
++	void (*dummy_func)(void *priv);
 +};
 +
-+struct nbl_resource_ops_tbl {
-+	struct nbl_resource_ops *ops;
++struct nbl_dispatch_ops_tbl {
++	struct nbl_dispatch_ops *ops;
 +	void *priv;
 +};
 +
-+int nbl_res_init_leonis(void *p, struct rte_eth_dev *eth_dev);
-+void nbl_res_remove_leonis(void *p);
++int nbl_disp_init(void *p);
++void nbl_disp_remove(void *p);
 +
 +#endif
+diff --git a/drivers/net/nbl/nbl_include/nbl_def_resource.h b/drivers/net/nbl/nbl_include/nbl_def_resource.h
+index c1cf041c74..43302df842 100644
+--- a/drivers/net/nbl/nbl_include/nbl_def_resource.h
++++ b/drivers/net/nbl/nbl_include/nbl_def_resource.h
+@@ -25,6 +25,11 @@ struct nbl_resource_ops {
+ 	int (*reset_stats)(void *priv);
+ 	void (*update_rx_ring)(void *priv, u16 queue_idx);
+ 	u16 (*get_tx_ehdr_len)(void *priv);
++	int (*alloc_txrx_queues)(void *priv, u16 vsi_id, u16 queue_num);
++	void (*free_txrx_queues)(void *priv, u16 vsi_id);
++	void (*clear_queues)(void *priv, u16 vsi_id);
++	int (*setup_queue)(void *priv, struct nbl_txrx_queue_param *param, bool is_tx);
++	void (*remove_all_queues)(void *priv, u16 vsi_id);
+ 	u64 (*restore_abnormal_ring)(void *priv, u16 local_queue_id, int type);
+ 	int (*restart_abnormal_ring)(void *priv, int ring_index, int type);
+ 	void (*cfg_txrx_vlan)(void *priv, u16 vlan_tci, u16 vlan_proto);
 diff --git a/drivers/net/nbl/nbl_include/nbl_include.h b/drivers/net/nbl/nbl_include/nbl_include.h
-index 72a5a9a078..caf77dc8d6 100644
+index caf77dc8d6..9337666d16 100644
 --- a/drivers/net/nbl/nbl_include/nbl_include.h
 +++ b/drivers/net/nbl/nbl_include/nbl_include.h
-@@ -56,6 +56,9 @@ typedef int32_t s32;
- typedef int16_t s16;
- typedef int8_t s8;
+@@ -92,4 +92,21 @@ struct nbl_start_tx_ring_param {
+ 	const struct rte_eth_txconf *conf;
+ };
  
-+/* Used for macros to pass checkpatch */
-+#define NBL_NAME(x)					x
-+
- enum nbl_product_type {
- 	NBL_LEONIS_TYPE,
- 	NBL_DRACO_TYPE,
-@@ -72,4 +75,21 @@ struct nbl_func_caps {
- 
- #define BIT(a)			(1UL << (a))
- 
-+struct nbl_start_rx_ring_param {
-+	u16 queue_idx;
-+	u16 nb_desc;
-+	u32 socket_id;
-+	enum nbl_product_type product;
-+	const struct rte_eth_rxconf *conf;
-+	struct rte_mempool *mempool;
-+};
-+
-+struct nbl_start_tx_ring_param {
-+	u16 queue_idx;
-+	u16 nb_desc;
-+	u32 socket_id;
-+	enum nbl_product_type product;
-+	const struct rte_eth_txconf *conf;
++struct nbl_txrx_queue_param {
++	u16 vsi_id;
++	u64 dma;
++	u64 avail;
++	u64 used;
++	u16 desc_num;
++	u16 local_queue_id;
++	u16 intr_en;
++	u16 intr_mask;
++	u16 global_vector_id;
++	u16 half_offload_en;
++	u16 split;
++	u16 extend_header;
++	u16 cxt;
++	u16 rxcsum;
 +};
 +
  #endif
