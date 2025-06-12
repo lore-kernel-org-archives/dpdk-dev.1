@@ -2,65 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D85DC61CE8
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 17:44:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FABBC61CE8
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 17:46:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 447D0410FB;
-	Thu, 12 Jun 2025 19:44:57 +0200 (CEST)
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com
- [209.85.219.41]) by mails.dpdk.org (Postfix) with ESMTP id 35951400D6
- for <dev@dpdk.org>; Thu, 12 Jun 2025 19:44:55 +0200 (CEST)
-Received: by mail-qv1-f41.google.com with SMTP id
- 6a1803df08f44-6fb0eb0f0fbso12369286d6.1
- for <dev@dpdk.org>; Thu, 12 Jun 2025 10:44:55 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 634CF410FB;
+	Thu, 12 Jun 2025 19:46:50 +0200 (CEST)
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com
+ [209.85.160.52]) by mails.dpdk.org (Postfix) with ESMTP id E36E6400D6
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 19:46:48 +0200 (CEST)
+Received: by mail-oa1-f52.google.com with SMTP id
+ 586e51a60fabf-2ea6dd628a7so604204fac.1
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 10:46:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1749750294;
- x=1750355094; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1749750408;
+ x=1750355208; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ZvADpfQWxce72BcFfekdoIlhJSfSvpvMo582OKi3MDU=;
- b=Q573V5Tlaa7n9eO9PTY0+BT8FOfzsUwHaVZXmdj6sS1+1D+N3+j1L5x90toC2hTwCc
- /FCcEYK0FBmH5rDn6gGzjNJMjHTmbiwzyeJXt4XSypk5WZOffbJS3N7IjQ5kVSUHQUj/
- s4VIBucfRDzXN4llf+A+7ji2Xjgd//T1PxoA6oZBwK5+2p0rbI12bka6mGC8xRxeiAB/
- UOaUyLQAh0o47njiIbL0aUltraf+bZgvitgyQiTaV1F8GaGN+QBuV8vXj2SKhVgffo7H
- 2wUIXsxMlWLuELiY1mdncN+sP6e2GKleuE6DojbJyJt7V/g+z4HBUkhKCDEqIq5jGJHJ
- AvXQ==
+ bh=Cih0/TpV4wUZDtt6xl7zezAUGJyk70I4jkvWO+tsaL4=;
+ b=mID2XidCQvr9wpxqtKTQS7iwZk3E7O3DRk9GhRg6rMRXHeSz58JirpVKHQgo/rAKMk
+ UrsizRZktms2dtnbUkEiqC4aYqtwC3qRWGHqI1CpsoYRC2CfnassYxPm6JNzWdwVIW18
+ 5fwblYdPfFVp812tyyOoAyGpFz1sjqzrzGIgKB3XfrQEiqdYAu6YcsvOv3hdSYBYlwMX
+ mxh9koUXGR12dcAnpPir33UiFmke3bXPqshyTCjv/80qo8iLYnwzll9Ilfbi1jhbk66P
+ 1ky8T++0qeW1IruqcOgYui/3nrCX/utf9roxKyXYOtEhnfpYkKQWew/pE4DcYKUnjhtt
+ J1kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749750294; x=1750355094;
+ d=1e100.net; s=20230601; t=1749750408; x=1750355208;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=ZvADpfQWxce72BcFfekdoIlhJSfSvpvMo582OKi3MDU=;
- b=a9uynZ6nK0wmAymloO/Qa7eH6suzAJwsH76QF4RLlNraL4f7EBeyBFhdlHypoXsXnd
- Nj5f/K6JOK6/VHNQmvhKdXRyGu0TveW9BdCggQZuUkMJloGq9WjikVP2g3F36rJy930u
- Q8HSZrtu+O8cH1ShBU7QgrdXtinhGcUdOYmyFS71NIJ4YtP76OI77p6/VunUTZOsCELH
- 7pIugV3hA/YjBIfMNwl1IVFyWPB5nzVcl5KneY03N80OpS20Ua20w8Kp+C/8cLjqfNNx
- Xl31nblFIr2NItLrNJ25lrzmaurLUXFDcIrULE+Dl5sVljL41hA+lz/6U9k0QarF/wX0
- cQmA==
-X-Gm-Message-State: AOJu0Yz3mAUrYmRx8PBTOyuQERqi7aO9JQlE/w+9NSfE+WSSv0M8P6Mi
- stI2Oi7jHbnrkNqIjdRumKZuKxj5VZvWzEsvVBzDt03sEF7M87qFRU5KOL/MmfTXwKI=
-X-Gm-Gg: ASbGncsC9ZoNRAbVoUsrC5XeGvokcuZIY/KpDfSO55dJPZZv7LQqVW4FHKM3a0jwI1K
- IyVZ/nJkt+l5V31G0vtw4goFk2qnZXPuVc8kVPVmRiykbjgQzOmz9ocdX4qLcPG8GbbUnc3qbYC
- wVEfwsRVwLQg0U5bsT96w5Dfii7SW1lDzTO66BQ1RMWZf9V/J91NnMaGeEEZmMdinn8xTjChpLR
- B/Z+/xOlN7WIDJi4K13hLFwaGJ13YJxKCtOadi10hQd/a4LRdSSA0GBSe9aT50gdC4IvkIrTHK5
- E4mjel3lZXXEq7zFYAiXQlNo+mHmkvoykmD9m96frDyKfqpKbJfvOTxf5CBUPYPWaVGUUNEHKvq
- z14SGc7xJqSAD0YYRZ5mrUgzPF5HHc+03BdzMHS0=
-X-Google-Smtp-Source: AGHT+IH8JzFiq5YiO9Dt5OzDFrl0Mo1iOdMFZyHKbz34doMcqSkni/afRr8yTC+OoLZYSarTztwpsA==
-X-Received: by 2002:ad4:5de1:0:b0:6e6:5b8e:7604 with SMTP id
- 6a1803df08f44-6fb3477cb91mr72484846d6.12.1749750294268; 
- Thu, 12 Jun 2025 10:44:54 -0700 (PDT)
+ bh=Cih0/TpV4wUZDtt6xl7zezAUGJyk70I4jkvWO+tsaL4=;
+ b=c9PTf8gzkfJXmpQVhjTB6o5aSzy9TEVe4gWAjiKZRIdEfJSlEJNS0cz6JnLWxraKSv
+ j6e0KzW5y4eNitxYUwYA6fSpWazifG13AdZ4H9xPg+znBuUBkRkiRIWBz5lu2UKoOCm9
+ ZhLJDEdm7RSRb3qWZCft3VaeoAbONdHWX5PggNNSBOvAOYsxnaUOEu0KwySJIVjbbOy2
+ Uv7mXWTWPDjN+zf1su4SJiJ8nsFL858rz0vuq/L+jicLvy/vhJUBeroUUtWdPwVYFmbR
+ qYDBlnjHn0ROrHWcHxBgH75z0hbPogNfK/d6HukNGzsMInZnn574cKebbHKZVVjhBmV+
+ E5Yw==
+X-Gm-Message-State: AOJu0Yxt/s0gQvAB5XVkABEEDGjgStSswQJHOY2s4eqHy7ApAPfch6qr
+ FMoW9kIwb/10N4B88GsycHQ4KGR/6rDllan7Bx4onbreeU/wB13NxknLa7JmJEe19xfnyQMZZLb
+ 9Kisq
+X-Gm-Gg: ASbGnct+zLgxDifSW3K/wxgkJSKBiA5yQV8YkMejkN41zL9rTbC+r8oXHQcc3X/B9Dv
+ NWk458hZA523n9XLNAg6BrXseZzoBq/G9X+dxROZbQ5IRrAGyHVfJqkVvxr1ZYdnQjhOjJgtYFp
+ yZNKc4yynT8mo+i0Viddxdbxo5hcUX1gDJLxVGHzDNa7VjAl1eHt4cOd7z+Vogx8BiIozX9KPTt
+ uEW+UHz7vpIyfFGs1x1+lFs8zzkNvkvqjGSxSt+E6wlIkPyccat6bze9lRhExux7kqLRHWjm/6T
+ s2rA4eYLHjmRHmjni1T4TDpDo1987u+73sJMjqHbvkS5LA3ZpiU/I/CRPX0pKNfxYPjlSWpYxpf
+ mSfm3KANuNxPrTBicap9i0V6F8NmfhcdhLIblTmz+Xvr6VhXrgg==
+X-Google-Smtp-Source: AGHT+IGfCq1tk/atLcHlgkvrs5dM7HXt5BcLLnqce8JhIEt48dM0Ymg+/Uri24xWGz9obEyXAF/NpA==
+X-Received: by 2002:a05:622a:1f06:b0:48d:8053:d8ee with SMTP id
+ d75a77b69052e-4a72ff12925mr1118281cf.36.1749750391925; 
+ Thu, 12 Jun 2025 10:46:31 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-6fb35c5812csm12347766d6.93.2025.06.12.10.44.53
+ d75a77b69052e-4a72a50145esm6528681cf.70.2025.06.12.10.46.31
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 12 Jun 2025 10:44:54 -0700 (PDT)
-Date: Thu, 12 Jun 2025 10:44:51 -0700
+ Thu, 12 Jun 2025 10:46:31 -0700 (PDT)
+Date: Thu, 12 Jun 2025 10:46:29 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Kyo Liu <kyo.liu@nebula-matrix.com>
 Cc: dev@dpdk.org
 Subject: Re: [PATCH v1 00/17] NBL PMD for Nebulamatrix NICs
-Message-ID: <20250612104451.4b0dbdd7@hermes.local>
+Message-ID: <20250612104629.3b281a34@hermes.local>
 In-Reply-To: <20250612085840.729830-1-kyo.liu@nebula-matrix.com>
 References: <20250612085840.729830-1-kyo.liu@nebula-matrix.com>
 MIME-Version: 1.0
@@ -210,22 +211,68 @@ nic.h
 >  create mode 100644 drivers/net/nbl/nbl_include/nbl_product_base.h
 >=20
 
-The script check-git-log complains about case in several places.
-It is not a hard requirement that this be followed, but best to follow it.
+Several spelling errors found by checkpatch should get fixed.
 
-Wrong headline prefix:
-	net/nbl: =C2=A0bus/pci: introduce get_iova_mode for pci dev
-Wrong headline case:
-			"net/nbl: nbl device support set mtu and promisc": mtu --> MTU
-Wrong headline case:
-			"net/nbl: =C2=A0bus/pci: introduce get_iova_mode for pci dev": pci --> P=
-CI
-Wrong headline case:
-			"net/nbl: add nbl device tx and rx burst": rx --> Rx
-Wrong headline case:
-			"net/nbl: add nbl device tx and rx burst": tx --> Tx
-Wrong headline case:
-			"net/nbl:=C2=A0 add uio and vfio mode for nbl": vfio --> VFIO
-Contributor name/email mismatch with .mailmap:=20
-	Kyo Liu <kyo.liu@nebula-matrix.com> is unknown in .mailmap
 
+WARNING:TYPO_SPELLING: 'definetions' may be misspelled - perhaps 'definitio=
+ns'?
+#10:=20
+add Channel layer related definetions and nbl_thread
+                          ^^^^^^^^^^^
+
+
+WARNING:TYPO_SPELLING: 'donot' may be misspelled - perhaps 'do not'?
+#534: FILE: drivers/net/nbl/nbl_hw/nbl_channel.c:267:
++			NBL_LOG(INFO, "payload_len donot match ack_len!,"
+ 			                           ^^^^^
+
+WARNING:TYPO_SPELLING: 'indivisual' may be misspelled - perhaps 'individual=
+'?
+#1054: FILE: drivers/net/nbl/nbl_hw/nbl_channel.h:109:
++ * Every indivisual mgt must have the common mgt as its first member, and =
+contains its unique
+          ^^^^^^^^^^
+
+WARNING:TYPO_SPELLING: 'definetions' may be misspelled - perhaps 'definitio=
+ns'?
+#10:=20
+add Resource layer related definetions
+                           ^^^^^^^^^^^
+
+WARNING:TYPO_SPELLING: 'definetions' may be misspelled - perhaps 'definitio=
+ns'?
+#10:=20
+add Dispatch layer related definetions
+                           ^^^^^^^^^^^
+
+WARNING:TYPO_SPELLING: 'definetions' may be misspelled - perhaps 'definitio=
+ns'?
+#10:=20
+add Dev layer related definetions
+                      ^^^^^^^^^^^
+
+total: 0 errors, 1 warnings, 0 checks, 432 lines checked
+
+### [PATCH] net/nbl: add nbl device tx and rx burst
+
+WARNING:TYPO_SPELLING: 'donot' may be misspelled - perhaps 'do not'?
+#218: FILE: drivers/net/nbl/nbl_dispatch.c:696:
++	/* if donot have res_ops->get_link_state(), default eth is up */
+ 	      ^^^^^
+
+WARNING:TYPO_SPELLING: 'dumplicate' may be misspelled - perhaps 'duplicate'?
+#617: FILE: drivers/net/nbl/nbl_hw/nbl_txrx.c:653:
++	/* BUG on dumplicate pkt free */
+ 	          ^^^^^^^^^^
+
+total: 0 errors, 2 warnings, 0 checks, 859 lines checked
+
+### [PATCH] net/nbl: nbl device support set mtu and promisc
+
+WARNING:TYPO_SPELLING: 'faild' may be misspelled - perhaps 'failed'?
+#176: FILE: drivers/net/nbl/nbl_dispatch.c:867:
++			NBL_LOG(ERR, "userspace send set_promisc_mode ioctl msg faild ret %d", =
+ret);
+ 			                                                        ^^^^^
+
+total: 0 errors, 1 warnings, 0 checks, 265 lines checked
