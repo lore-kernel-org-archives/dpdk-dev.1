@@ -2,71 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05CC3C71136
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 17:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D85DC61CE8
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 17:44:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C1DFD410FB;
-	Thu, 12 Jun 2025 19:40:40 +0200 (CEST)
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com
- [209.85.160.178])
- by mails.dpdk.org (Postfix) with ESMTP id C1990400D6
- for <dev@dpdk.org>; Thu, 12 Jun 2025 19:40:38 +0200 (CEST)
-Received: by mail-qt1-f178.google.com with SMTP id
- d75a77b69052e-4a6f6d52af7so14236761cf.1
- for <dev@dpdk.org>; Thu, 12 Jun 2025 10:40:38 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 447D0410FB;
+	Thu, 12 Jun 2025 19:44:57 +0200 (CEST)
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com
+ [209.85.219.41]) by mails.dpdk.org (Postfix) with ESMTP id 35951400D6
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 19:44:55 +0200 (CEST)
+Received: by mail-qv1-f41.google.com with SMTP id
+ 6a1803df08f44-6fb0eb0f0fbso12369286d6.1
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 10:44:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1749750038;
- x=1750354838; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1749750294;
+ x=1750355094; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=wA8mL6fs+vt4O6I0nMkawxKwvhvqzgLhPmRkv7ekQcE=;
- b=x/D2NRoQwjwc148wziofL7anZ5vDXsbgfVH9MPAQ6S3XtpjJ03R9ro9oyQDv00OYrY
- im9t9pH/8aIAyJ+OnSmzIWPZyw/dYCxFG+6ro3AQn/pAykBZfZwQvWN6uzoud69QKpT5
- n6Ew9/F9NcWOoaYzOlWY4cS+7fMHuYxs3m/da9oiVjMK0ByOUxeTVrX6M/HRZE3F9Dwx
- yLBumqvW/k4pgbuhFksOIk4gWqkRyDht+3VbzwN9A6AIuPYkRM8kRPlNSBf4ST6o2nSm
- HzRULb9NEnAiF8rnliC0dPwl5zBrJGrKnHbuf5MEWfcZcwIAmUxZ28mitkGwEatwO+ZH
- lG+A==
+ bh=ZvADpfQWxce72BcFfekdoIlhJSfSvpvMo582OKi3MDU=;
+ b=Q573V5Tlaa7n9eO9PTY0+BT8FOfzsUwHaVZXmdj6sS1+1D+N3+j1L5x90toC2hTwCc
+ /FCcEYK0FBmH5rDn6gGzjNJMjHTmbiwzyeJXt4XSypk5WZOffbJS3N7IjQ5kVSUHQUj/
+ s4VIBucfRDzXN4llf+A+7ji2Xjgd//T1PxoA6oZBwK5+2p0rbI12bka6mGC8xRxeiAB/
+ UOaUyLQAh0o47njiIbL0aUltraf+bZgvitgyQiTaV1F8GaGN+QBuV8vXj2SKhVgffo7H
+ 2wUIXsxMlWLuELiY1mdncN+sP6e2GKleuE6DojbJyJt7V/g+z4HBUkhKCDEqIq5jGJHJ
+ AvXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749750038; x=1750354838;
+ d=1e100.net; s=20230601; t=1749750294; x=1750355094;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=wA8mL6fs+vt4O6I0nMkawxKwvhvqzgLhPmRkv7ekQcE=;
- b=CFBe9AGPPtO/fJDoDW9ReFdIcXllHaL/bINB2XT+ctL7aiPS5BBteJAf0SLRjo+vEh
- tcCOgPx9/xXBv3CyFGKup/Cyj/pg+XHtYWrI0slIx0MExjru3unIMhjKKSeTijcDEzvu
- LtIt9T40MzMWOGQYxIAfQAdtPEPzVCfb+EgMqJdVkMpow0a3OhGpYYooqciaBQCqY7uC
- KoOJY/gpVfcSk/tGpU5Fw5DWPxYo+uRYzV45/wqCqHIdTsPPkOmUxSzbxoEcvBIn5un4
- CQBZ0c/KO48KqEnJeZWce4tuXGzsBmQ6644jgXW40/G0EU8zz4BluDGunOqmqmhrBogK
- j2fw==
-X-Gm-Message-State: AOJu0YxcOuG4P7leD2/U5DUu7d2hbQVk0C3ZDgPGyd1uzVLRX7ahMpvW
- jEOyFd7lfYrAi5craY+Ql1jdrP40TV7afPU1BoaKPbOVh6rdvQzBNHlkYXoqXxwxl3w=
-X-Gm-Gg: ASbGncuWISyfhpcbf3V29g3oq36jYXXS0MHNHq/H27/M6IequQC4DdG2dJr/05ghyN4
- wgY+KmuXb8SD9zIUaNypJ2urF8MgzWIVuVjXhbBxEyJRLozIaqAi225Kmbuk4L7ChcRSdywP5Um
- gQJ/IRSneld0SngAKUxNjHaY8bmnbtwsdtui6KRnoPrkCKRfsZ0VOR0DHvN/6dclROK4Zd02zK7
- XqBCs9KAGYDNWG6j4iUuQt8llCpiLRj7h6znXpo1/jTaldOBMy9lFxcSyOME+O85B9wkGDJvoic
- 7u8ju28eV8BHI+c/cmo6Z1bnNu1NiE1T0dIWNU3eIhK2ZQpAs0r6Dt118LOIwa/oGzkdoX085Lr
- XcdVjZHWyHZbJjm5X/LOJj4Y6oOZ9nsdIWKGsuJE=
-X-Google-Smtp-Source: AGHT+IEdsP6pi75i3H9aZZ8RLRpcYv7jicE4onlnnTN/KifFrF38GXusk7YWOjhH3NTJEZEednAPIQ==
-X-Received: by 2002:a05:622a:1e09:b0:4a6:c5ee:6ced with SMTP id
- d75a77b69052e-4a72fe5b358mr1366311cf.4.1749750037873; 
- Thu, 12 Jun 2025 10:40:37 -0700 (PDT)
+ bh=ZvADpfQWxce72BcFfekdoIlhJSfSvpvMo582OKi3MDU=;
+ b=a9uynZ6nK0wmAymloO/Qa7eH6suzAJwsH76QF4RLlNraL4f7EBeyBFhdlHypoXsXnd
+ Nj5f/K6JOK6/VHNQmvhKdXRyGu0TveW9BdCggQZuUkMJloGq9WjikVP2g3F36rJy930u
+ Q8HSZrtu+O8cH1ShBU7QgrdXtinhGcUdOYmyFS71NIJ4YtP76OI77p6/VunUTZOsCELH
+ 7pIugV3hA/YjBIfMNwl1IVFyWPB5nzVcl5KneY03N80OpS20Ua20w8Kp+C/8cLjqfNNx
+ Xl31nblFIr2NItLrNJ25lrzmaurLUXFDcIrULE+Dl5sVljL41hA+lz/6U9k0QarF/wX0
+ cQmA==
+X-Gm-Message-State: AOJu0Yz3mAUrYmRx8PBTOyuQERqi7aO9JQlE/w+9NSfE+WSSv0M8P6Mi
+ stI2Oi7jHbnrkNqIjdRumKZuKxj5VZvWzEsvVBzDt03sEF7M87qFRU5KOL/MmfTXwKI=
+X-Gm-Gg: ASbGncsC9ZoNRAbVoUsrC5XeGvokcuZIY/KpDfSO55dJPZZv7LQqVW4FHKM3a0jwI1K
+ IyVZ/nJkt+l5V31G0vtw4goFk2qnZXPuVc8kVPVmRiykbjgQzOmz9ocdX4qLcPG8GbbUnc3qbYC
+ wVEfwsRVwLQg0U5bsT96w5Dfii7SW1lDzTO66BQ1RMWZf9V/J91NnMaGeEEZmMdinn8xTjChpLR
+ B/Z+/xOlN7WIDJi4K13hLFwaGJ13YJxKCtOadi10hQd/a4LRdSSA0GBSe9aT50gdC4IvkIrTHK5
+ E4mjel3lZXXEq7zFYAiXQlNo+mHmkvoykmD9m96frDyKfqpKbJfvOTxf5CBUPYPWaVGUUNEHKvq
+ z14SGc7xJqSAD0YYRZ5mrUgzPF5HHc+03BdzMHS0=
+X-Google-Smtp-Source: AGHT+IH8JzFiq5YiO9Dt5OzDFrl0Mo1iOdMFZyHKbz34doMcqSkni/afRr8yTC+OoLZYSarTztwpsA==
+X-Received: by 2002:ad4:5de1:0:b0:6e6:5b8e:7604 with SMTP id
+ 6a1803df08f44-6fb3477cb91mr72484846d6.12.1749750294268; 
+ Thu, 12 Jun 2025 10:44:54 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-4a72a4b1620sm6572241cf.43.2025.06.12.10.40.36
+ 6a1803df08f44-6fb35c5812csm12347766d6.93.2025.06.12.10.44.53
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 12 Jun 2025 10:40:37 -0700 (PDT)
-Date: Thu, 12 Jun 2025 10:40:34 -0700
+ Thu, 12 Jun 2025 10:44:54 -0700 (PDT)
+Date: Thu, 12 Jun 2025 10:44:51 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Kyo Liu <kyo.liu@nebula-matrix.com>
-Cc: dev@dpdk.org, Chenbo Xia <chenbox@nvidia.com>, Nipun Gupta
- <nipun.gupta@amd.com>
-Subject: Re: [PATCH v1 10/17] net/nbl:  bus/pci: introduce get_iova_mode for
- pci dev
-Message-ID: <20250612104034.5d5abac9@hermes.local>
-In-Reply-To: <20250612085840.729830-11-kyo.liu@nebula-matrix.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v1 00/17] NBL PMD for Nebulamatrix NICs
+Message-ID: <20250612104451.4b0dbdd7@hermes.local>
+In-Reply-To: <20250612085840.729830-1-kyo.liu@nebula-matrix.com>
 References: <20250612085840.729830-1-kyo.liu@nebula-matrix.com>
- <20250612085840.729830-11-kyo.liu@nebula-matrix.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -83,64 +79,153 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 12 Jun 2025 08:58:31 +0000
+On Thu, 12 Jun 2025 08:58:21 +0000
 Kyo Liu <kyo.liu@nebula-matrix.com> wrote:
 
-> I propose this patch for DPDK to enable coexistence between
-> DPDK and kernel drivers for regular NICs.This solution requires
-> adding a new pci_ops in rte_pci_driver, through which DPDK will
-> retrieve the required IOVA mode from the vendor driver.
-> This mechanism is necessary to handle different IOMMU
-> configurations and operating modes. Below is a detailed
-> analysis of various scenarios:
+> This nbl PMD (**librte_net_nbl**) provides poll mode driver for=20
+> NebulaMatrix serials NICs.
 >=20
-> 1. When IOMMU is enabled:
-> 1.1 With PT (Pass-Through) enabled:
-> In this case, the domain type is IOMMU_DOMAIN_IDENTITY,
-> which prevents vendor drivers from setting IOVA->PA mapping tables.
-> Therefore, DPDK must use PA mode. To achieve this:
-> The vendor kernel driver will register a character device (cdev) to
-> communicate with DPDK. This cdev handles device operations
-> (open, mmap, etc.) and ultimately
-> programs the hardware registers.
+> Features:
+> ---------
+> - MTU update
+> - promisc mode set
+> - xstats
+> - Basic stats=20
 >=20
-> 1.2 With PT disabled:
-> Here, the vendor driver doesn't enforce specific IOVA mode requirements.
-> Our implementation will:
-> Integrate a mediated device (mdev) in the vendor driver.
-> This mdev interacts with DPDK and manages IOVA->PA mapping configurations.
+> Support NICs:
+> -------------
+> - S1205CQ-A00CHT
+> - S1105AS-A00CHT
+> - S1055AS-A00CHT
+> - S1052AS-A00CHT
+> - S1051AS-A00CHT
+> - S1045XS-A00CHT
+> - S1205CQ-A00CSP
+> - S1055AS-A00CSP
+> - S1052AS-A00CSP
 >=20
-> 2. When IOMMU is disabled:
-> The vendor driver mandates PA mode (consistent with DPDK's PA mode
-> requirement in this scenario).
-> A character device (cdev) will similarly be registered for DPDK
-> communication.
 >=20
-> Summary:
-> The solution leverages multiple technologies:
-> mdev for IOVA management when IOMMU is partially enabled.
-> VFIO for device passthrough operations.
-> cdev for register programming coordination.
-> A new pci_ops interface in DPDK to dynamically determine IOVA modes.
-> This architecture enables clean coexistence by establishing standardized
-> communication channels between DPDK and vendor drivers across different
-> IOMMU configurations.
+> Kyo Liu (17):
+>   net/nbl: add doc and minimum nbl build framework
+>   net/nbl: add simple probe/remove and log module
+>   net/nbl:=C2=A0 add PHY layer definitions and implementation
+>   net/nbl:=C2=A0 add Channel layer definitions and implementation
+>   net/nbl:=C2=A0 add Resource layer definitions and implementation
+>   net/nbl:=C2=A0 add Dispatch layer definitions and implementation
+>   net/nbl:=C2=A0 add Dev layer definitions and implementation
+>   net/nbl:=C2=A0 add complete device init and uninit functionality
+>   net/nbl:=C2=A0 add uio and vfio mode for nbl
+>   net/nbl: =C2=A0bus/pci: introduce get_iova_mode for pci dev
+>   net/nbl:=C2=A0 add nbl coexistence mode for nbl
+>   net/nbl: add nbl ethdev configuration
+>   net/nbl:=C2=A0add nbl device rxtx queue setup and release ops
+>   net/nbl: add nbl device start and stop ops
+>   net/nbl: add nbl device tx and rx burst
+>   net/nbl: add nbl device xstats and stats
+>   net/nbl: nbl device support set mtu and promisc
 >=20
-> Motivation for the Patch:
-> This patch is introduced to prepare for the upcoming open-source
-> contribution of our NebulaMatrix SNIC driver to DPDK. We aim to
-> ensure that our SNIC can seamlessly coexist with kernel drivers
-> using this mechanism. By adopting the proposed
-> architecture=E2=80=94leveraging dynamic IOVA mode negotiation via pci_ops,
-> mediated devices (mdev), and character device (cdev)
-> interactions=E2=80=94we enable our SNIC to operate in hybrid environments
-> here both DPDK and kernel drivers may manage the same hardware.
-> This design aligns with DPDK=E2=80=99s scalability goals and ensures
-> compatibility across diverse IOMMU configurations, which is critical
-> for real-world deployment scenarios.
+>  .mailmap                                      |    5 +
+>  MAINTAINERS                                   |    9 +
+>  doc/guides/nics/features/nbl.ini              |    9 +
+>  doc/guides/nics/index.rst                     |    1 +
+>  doc/guides/nics/nbl.rst                       |   42 +
+>  doc/guides/rel_notes/release_25_07.rst        |    5 +
+>  drivers/bus/pci/bus_pci_driver.h              |   11 +
+>  drivers/bus/pci/linux/pci.c                   |    2 +
+>  drivers/net/meson.build                       |    1 +
+>  drivers/net/nbl/meson.build                   |   26 +
+>  drivers/net/nbl/nbl_common/nbl_common.c       |   47 +
+>  drivers/net/nbl/nbl_common/nbl_common.h       |   10 +
+>  drivers/net/nbl/nbl_common/nbl_thread.c       |   88 ++
+>  drivers/net/nbl/nbl_common/nbl_userdev.c      |  758 ++++++++++
+>  drivers/net/nbl/nbl_common/nbl_userdev.h      |   21 +
+>  drivers/net/nbl/nbl_core.c                    |  100 ++
+>  drivers/net/nbl/nbl_core.h                    |   98 ++
+>  drivers/net/nbl/nbl_dev/nbl_dev.c             | 1007 ++++++++++++++
+>  drivers/net/nbl/nbl_dev/nbl_dev.h             |   65 +
+>  drivers/net/nbl/nbl_dispatch.c                | 1226 +++++++++++++++++
+>  drivers/net/nbl/nbl_dispatch.h                |   31 +
+>  drivers/net/nbl/nbl_ethdev.c                  |  167 +++
+>  drivers/net/nbl/nbl_ethdev.h                  |   32 +
+>  drivers/net/nbl/nbl_hw/nbl_channel.c          |  853 ++++++++++++
+>  drivers/net/nbl/nbl_hw/nbl_channel.h          |  127 ++
+>  .../nbl_hw_leonis/nbl_phy_leonis_snic.c       |  230 ++++
+>  .../nbl_hw_leonis/nbl_phy_leonis_snic.h       |   53 +
+>  .../nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c |  253 ++++
+>  .../nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.h |   10 +
+>  drivers/net/nbl/nbl_hw/nbl_phy.h              |   28 +
+>  drivers/net/nbl/nbl_hw/nbl_resource.c         |    5 +
+>  drivers/net/nbl/nbl_hw/nbl_resource.h         |  153 ++
+>  drivers/net/nbl/nbl_hw/nbl_txrx.c             |  906 ++++++++++++
+>  drivers/net/nbl/nbl_hw/nbl_txrx.h             |  136 ++
+>  drivers/net/nbl/nbl_hw/nbl_txrx_ops.h         |   91 ++
+>  drivers/net/nbl/nbl_include/nbl_def_channel.h |  434 ++++++
+>  drivers/net/nbl/nbl_include/nbl_def_common.h  |  128 ++
+>  drivers/net/nbl/nbl_include/nbl_def_dev.h     |  107 ++
+>  .../net/nbl/nbl_include/nbl_def_dispatch.h    |   95 ++
+>  drivers/net/nbl/nbl_include/nbl_def_phy.h     |   35 +
+>  .../net/nbl/nbl_include/nbl_def_resource.h    |   87 ++
+>  drivers/net/nbl/nbl_include/nbl_include.h     |  212 +++
+>  drivers/net/nbl/nbl_include/nbl_logs.h        |   25 +
+>  .../net/nbl/nbl_include/nbl_product_base.h    |   37 +
+>  44 files changed, 7766 insertions(+)
+>  create mode 100644 doc/guides/nics/features/nbl.ini
+>  create mode 100644 doc/guides/nics/nbl.rst
+>  create mode 100644 drivers/net/nbl/meson.build
+>  create mode 100644 drivers/net/nbl/nbl_common/nbl_common.c
+>  create mode 100644 drivers/net/nbl/nbl_common/nbl_common.h
+>  create mode 100644 drivers/net/nbl/nbl_common/nbl_thread.c
+>  create mode 100644 drivers/net/nbl/nbl_common/nbl_userdev.c
+>  create mode 100644 drivers/net/nbl/nbl_common/nbl_userdev.h
+>  create mode 100644 drivers/net/nbl/nbl_core.c
+>  create mode 100644 drivers/net/nbl/nbl_core.h
+>  create mode 100644 drivers/net/nbl/nbl_dev/nbl_dev.c
+>  create mode 100644 drivers/net/nbl/nbl_dev/nbl_dev.h
+>  create mode 100644 drivers/net/nbl/nbl_dispatch.c
+>  create mode 100644 drivers/net/nbl/nbl_dispatch.h
+>  create mode 100644 drivers/net/nbl/nbl_ethdev.c
+>  create mode 100644 drivers/net/nbl/nbl_ethdev.h
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_channel.c
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_channel.h
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_s=
+nic.c
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_s=
+nic.h
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.h
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_phy.h
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_resource.c
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_resource.h
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_txrx.c
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_txrx.h
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_txrx_ops.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_def_channel.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_def_common.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_def_dev.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_def_dispatch.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_def_phy.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_def_resource.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_include.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_logs.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_product_base.h
 >=20
-> Signed-off-by: Kyo Liu <kyo.liu@nebula-matrix.com>
 
-This needs more review, there are alternatives.
-Will not be part of this 25.07 release, maybe for 25.11 but want input
-from other community members since potential impact for all drivers.
+The script check-git-log complains about case in several places.
+It is not a hard requirement that this be followed, but best to follow it.
+
+Wrong headline prefix:
+	net/nbl: =C2=A0bus/pci: introduce get_iova_mode for pci dev
+Wrong headline case:
+			"net/nbl: nbl device support set mtu and promisc": mtu --> MTU
+Wrong headline case:
+			"net/nbl: =C2=A0bus/pci: introduce get_iova_mode for pci dev": pci --> P=
+CI
+Wrong headline case:
+			"net/nbl: add nbl device tx and rx burst": rx --> Rx
+Wrong headline case:
+			"net/nbl: add nbl device tx and rx burst": tx --> Tx
+Wrong headline case:
+			"net/nbl:=C2=A0 add uio and vfio mode for nbl": vfio --> VFIO
+Contributor name/email mismatch with .mailmap:=20
+	Kyo Liu <kyo.liu@nebula-matrix.com> is unknown in .mailmap
+
