@@ -2,74 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04EECC71136
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 17:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1288C61CE8
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 17:35:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 93E84410FB;
-	Thu, 12 Jun 2025 19:09:34 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 07AF6400D6
- for <dev@dpdk.org>; Thu, 12 Jun 2025 19:09:32 +0200 (CEST)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55C9Sveo017771
- for <dev@dpdk.org>; Thu, 12 Jun 2025 10:09:32 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=s
- JBjY6iYaezuUnOfn01e0Y/NtzypqyX+R7iwaxwhJ60=; b=bTUVMIYSv+vgV2Ssu
- v2pfgVbbEeTAuvs3P48IrqThtV68o+t8EZz7IyCvH8XTfP6mdv2cMjppjchICAdX
- qF+4eJjkaokIxbrdwuZi2N8XJ1VXNqKMgq3rndLlH1y1Co2zc7KFlao0xZ2IuswZ
- s2CifyhxgHTswmqK9w0L+L7Z1sIVyECUhxmvCtO34C2tNgxnvOdjLzBpgt+1+DZZ
- c/GS+NqCz/o1R2puOpRLP+H1ytJHgZsUXrWTRaUeEgf2Am2xWht4ONouobNNtfUe
- FHxhruuxGD9wMB640PD5YFQAE1b2uOzBgnTLt+AnNb9aaVKf/KR2QC8K+C9OPKWs
- hzERA==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 477va4s15f-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Thu, 12 Jun 2025 10:09:31 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 12 Jun 2025 10:09:30 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 12 Jun 2025 10:09:30 -0700
-Received: from LYYJYPGKF4.marvell.com (unknown [10.28.164.240])
- by maili.marvell.com (Postfix) with ESMTP id 3FA313F7060;
- Thu, 12 Jun 2025 10:09:26 -0700 (PDT)
-From: <pbhagavatula@marvell.com>
-To: <jerinj@marvell.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>, "Kiran
- Kumar K" <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>,
- Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>,
- "Pavan Nikhilesh" <pbhagavatula@marvell.com>,
- Shijith Thotton <sthotton@marvell.com>
-CC: <dev@dpdk.org>
-Subject: [PATCH v4] event/cnxk: add event vector adapter support
-Date: Thu, 12 Jun 2025 22:39:22 +0530
-Message-ID: <20250612170923.36114-1-pbhagavatula@marvell.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250604124305.80579-1-pbhagavatula@marvell.com>
-References: <20250604124305.80579-1-pbhagavatula@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id E315C410FB;
+	Thu, 12 Jun 2025 19:35:12 +0200 (CEST)
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com
+ [209.85.219.47]) by mails.dpdk.org (Postfix) with ESMTP id 679E5400D6
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 19:35:11 +0200 (CEST)
+Received: by mail-qv1-f47.google.com with SMTP id
+ 6a1803df08f44-6faff792f9bso12469786d6.1
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 10:35:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1749749710;
+ x=1750354510; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=GxJuMxx6GbEIQfBQ9jjDMsKj4eVvYD1/P6b8aQ/ey/4=;
+ b=jmcT3OLkP/Zu4yRBJOm0IRCrTny9vZK640UoGkI3xCnuabMhhMfrHbGFog5LhYcGDz
+ 2Cb/oxunx+Ua3A1zImM92gMmnVRIjqWR30G2WuCs6wiF7SYcAnc2dcLZPeMAAIlhwPdJ
+ K5RFTyvnqtNDHdWcvPE4sBvvZ7pEmzMdV+pSBLgUjeDCX8GOSL+5Fqm5Gy55krlqcdfM
+ uHaMbrZz6ofEDKo6PMlgU81gsDCBF7gaQxEyPHe8yktfVBwpQhfJsq59o7auOqHwtJSU
+ d/F9tQJZ88emsiLHn9wmOCwcsqWZddHfdA5GfQ2juCxDGG3BCN/TnDVTe0ubq5zvJa+C
+ ZJDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1749749710; x=1750354510;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=GxJuMxx6GbEIQfBQ9jjDMsKj4eVvYD1/P6b8aQ/ey/4=;
+ b=VjBKUgf94p58EQ/NsYthhLCowMIL4IP8dJVpCdy60n/+5bynvZxULm4Yo5uKZUMXnS
+ peo/g/NL5iPJt2tZN2oo5uGIW3QGkWznxfI07vHcxTMxHcbblckcRTG0UwwVoUkIC3yB
+ e4C+LJ+/oXRDmgsJVHXxSDtcItkcyxXuNQlFPuHZl9/kQ7MMioaVi2LSc4ek/Yk/59TS
+ CWNCe2lttIXgcjgyKNhpiuzXdUrg7qfKRtMiWozO9dHL8x1cEp7zIxlmGozBm6PO3s9Y
+ fQWXVEz3gXaedgfA9qTmF2nyEpBXnblsCbmZsQHagR9FivKGQrGzTWI1abLp7N0Qs4di
+ tiJg==
+X-Gm-Message-State: AOJu0Yz32shi8y9H8+KyBCxjhSsSG8ASGDYDbF1qBYNvRRPlStnxADQe
+ o9sgdX5kPTXDDJwIIinMyjTQ2ypQwVP3WTFEoJuDgP4Duhm3066YydsiUC9SWyU4Gud/o+vsyAD
+ coC7g
+X-Gm-Gg: ASbGncui+XecCIjacyth2ODHRP1Ay2GV5Y12ZqEo5S04VKVkiFruCCzHiyH3+GT3uNL
+ 3uYRLuy89pXvAOR/D280NBq5q3ULqOUG4xyv+CSTcHESe7QrEFU12idOL9VwyISLGAwnO83687M
+ A6l18ooF0+uhW3/eGxDTTMP8hcG/lHsjgHJHlxs6gsZOiVWDljSPgz1SNe/x5mGDU9pkJP8uqVE
+ nShJsjT6n7b7jYtOQJN8ETAbXstXev1GLm5dWYzOATscBN2wmO9HNQQr5I+NvDfZK/AeiNQtvEW
+ 2l5t2SphRxADF6w+V899f7Ul+3vg3hsZn4tS2T/51RJYruJiBQZVuT9A6GxmwKLS95Nl7/1B+wh
+ 9zG1QmpMNQLFP+mi/+o+IoJ5QCe0hAeOp0hEMGRk=
+X-Google-Smtp-Source: AGHT+IHuxELvv6d0HtAWkXbluSxjw8eVYOfCxQKcj1COg8sYX3AtpCvFBiQT2sV50KwgNhortt0z1Q==
+X-Received: by 2002:ad4:5f45:0:b0:6fa:bba5:c617 with SMTP id
+ 6a1803df08f44-6fb2c3284cbmr143776116d6.10.1749749709769; 
+ Thu, 12 Jun 2025 10:35:09 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-6fb35b2fd88sm12489846d6.31.2025.06.12.10.35.09
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 12 Jun 2025 10:35:09 -0700 (PDT)
+Date: Thu, 12 Jun 2025 10:35:04 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Kyo Liu <kyo.liu@nebula-matrix.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v1 00/17] NBL PMD for Nebulamatrix NICs
+Message-ID: <20250612103504.152ddb1f@hermes.local>
+In-Reply-To: <20250612085840.729830-1-kyo.liu@nebula-matrix.com>
+References: <20250612085840.729830-1-kyo.liu@nebula-matrix.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEyMDEzMSBTYWx0ZWRfX5gXGuWseF7KD
- 33mwY3cua+44y/z7yyb9hVPnSe/PPiBPc58EcW50+I+q+QqtL8RSrsWXS8gGiqDLVdZABWXxOg8
- lhBQzRZHrjKN/qvzChAK4eXUvxGwLzeatZ+etiUXaWPo5SK2M3jw8TAQz/hVAybu7cyblVUqom9
- IQb6YCARpw/yStPD6XODJ47FDE8D6GqHmCCxQneZyaq28Sj3WRkaV2v7tcn6ouQLOnw9RZx6nmo
- 4oOoEAlfFpBEVtANXcFp0mj85XsIWKxJydWGuvvxE1z0V5t7VRejsMfIeNdtQk6zjQdflOI5JSu
- auxdgkRSdJMrdUJ65kizWPl7cprxXUIOEBMlZRR7lzpVYTnuYFRbEYKVCEAb0Ja7AekHZnhA0cQ
- U1f179OZVUnycuok8excH5LejBJNJSdzhp23Dgez4h0KoPFuCGRcZeRu0wyadzywdEPpKp8B
-X-Proofpoint-ORIG-GUID: nbf2wYSRKVUEuyNOHFXxGgmWOBFjqVqH
-X-Proofpoint-GUID: nbf2wYSRKVUEuyNOHFXxGgmWOBFjqVqH
-X-Authority-Analysis: v=2.4 cv=G8QcE8k5 c=1 sm=1 tr=0 ts=684b09cb cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=sXgmuBsvd_0s3Wv3ioQA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-12_09,2025-06-12_02,2025-03-28_01
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,296 +80,194 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Pavan Nikhilesh <pbhagavatula@marvell.com>
+On Thu, 12 Jun 2025 08:58:21 +0000
+Kyo Liu <kyo.liu@nebula-matrix.com> wrote:
 
-Add event vector adapter support to CN20K event device.
+> This nbl PMD (**librte_net_nbl**) provides poll mode driver for=20
+> NebulaMatrix serials NICs.
+>=20
+> Features:
+> ---------
+> - MTU update
+> - promisc mode set
+> - xstats
+> - Basic stats=20
+>=20
+> Support NICs:
+> -------------
+> - S1205CQ-A00CHT
+> - S1105AS-A00CHT
+> - S1055AS-A00CHT
+> - S1052AS-A00CHT
+> - S1051AS-A00CHT
+> - S1045XS-A00CHT
+> - S1205CQ-A00CSP
+> - S1055AS-A00CSP
+> - S1052AS-A00CSP
+>=20
+>=20
+> Kyo Liu (17):
+>   net/nbl: add doc and minimum nbl build framework
+>   net/nbl: add simple probe/remove and log module
+>   net/nbl:=C2=A0 add PHY layer definitions and implementation
+>   net/nbl:=C2=A0 add Channel layer definitions and implementation
+>   net/nbl:=C2=A0 add Resource layer definitions and implementation
+>   net/nbl:=C2=A0 add Dispatch layer definitions and implementation
+>   net/nbl:=C2=A0 add Dev layer definitions and implementation
+>   net/nbl:=C2=A0 add complete device init and uninit functionality
+>   net/nbl:=C2=A0 add uio and vfio mode for nbl
+>   net/nbl: =C2=A0bus/pci: introduce get_iova_mode for pci dev
+>   net/nbl:=C2=A0 add nbl coexistence mode for nbl
+>   net/nbl: add nbl ethdev configuration
+>   net/nbl:=C2=A0add nbl device rxtx queue setup and release ops
+>   net/nbl: add nbl device start and stop ops
+>   net/nbl: add nbl device tx and rx burst
+>   net/nbl: add nbl device xstats and stats
+>   net/nbl: nbl device support set mtu and promisc
+>=20
+>  .mailmap                                      |    5 +
+>  MAINTAINERS                                   |    9 +
+>  doc/guides/nics/features/nbl.ini              |    9 +
+>  doc/guides/nics/index.rst                     |    1 +
+>  doc/guides/nics/nbl.rst                       |   42 +
+>  doc/guides/rel_notes/release_25_07.rst        |    5 +
+>  drivers/bus/pci/bus_pci_driver.h              |   11 +
+>  drivers/bus/pci/linux/pci.c                   |    2 +
+>  drivers/net/meson.build                       |    1 +
+>  drivers/net/nbl/meson.build                   |   26 +
+>  drivers/net/nbl/nbl_common/nbl_common.c       |   47 +
+>  drivers/net/nbl/nbl_common/nbl_common.h       |   10 +
+>  drivers/net/nbl/nbl_common/nbl_thread.c       |   88 ++
+>  drivers/net/nbl/nbl_common/nbl_userdev.c      |  758 ++++++++++
+>  drivers/net/nbl/nbl_common/nbl_userdev.h      |   21 +
+>  drivers/net/nbl/nbl_core.c                    |  100 ++
+>  drivers/net/nbl/nbl_core.h                    |   98 ++
+>  drivers/net/nbl/nbl_dev/nbl_dev.c             | 1007 ++++++++++++++
+>  drivers/net/nbl/nbl_dev/nbl_dev.h             |   65 +
+>  drivers/net/nbl/nbl_dispatch.c                | 1226 +++++++++++++++++
+>  drivers/net/nbl/nbl_dispatch.h                |   31 +
+>  drivers/net/nbl/nbl_ethdev.c                  |  167 +++
+>  drivers/net/nbl/nbl_ethdev.h                  |   32 +
+>  drivers/net/nbl/nbl_hw/nbl_channel.c          |  853 ++++++++++++
+>  drivers/net/nbl/nbl_hw/nbl_channel.h          |  127 ++
+>  .../nbl_hw_leonis/nbl_phy_leonis_snic.c       |  230 ++++
+>  .../nbl_hw_leonis/nbl_phy_leonis_snic.h       |   53 +
+>  .../nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c |  253 ++++
+>  .../nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.h |   10 +
+>  drivers/net/nbl/nbl_hw/nbl_phy.h              |   28 +
+>  drivers/net/nbl/nbl_hw/nbl_resource.c         |    5 +
+>  drivers/net/nbl/nbl_hw/nbl_resource.h         |  153 ++
+>  drivers/net/nbl/nbl_hw/nbl_txrx.c             |  906 ++++++++++++
+>  drivers/net/nbl/nbl_hw/nbl_txrx.h             |  136 ++
+>  drivers/net/nbl/nbl_hw/nbl_txrx_ops.h         |   91 ++
+>  drivers/net/nbl/nbl_include/nbl_def_channel.h |  434 ++++++
+>  drivers/net/nbl/nbl_include/nbl_def_common.h  |  128 ++
+>  drivers/net/nbl/nbl_include/nbl_def_dev.h     |  107 ++
+>  .../net/nbl/nbl_include/nbl_def_dispatch.h    |   95 ++
+>  drivers/net/nbl/nbl_include/nbl_def_phy.h     |   35 +
+>  .../net/nbl/nbl_include/nbl_def_resource.h    |   87 ++
+>  drivers/net/nbl/nbl_include/nbl_include.h     |  212 +++
+>  drivers/net/nbl/nbl_include/nbl_logs.h        |   25 +
+>  .../net/nbl/nbl_include/nbl_product_base.h    |   37 +
+>  44 files changed, 7766 insertions(+)
+>  create mode 100644 doc/guides/nics/features/nbl.ini
+>  create mode 100644 doc/guides/nics/nbl.rst
+>  create mode 100644 drivers/net/nbl/meson.build
+>  create mode 100644 drivers/net/nbl/nbl_common/nbl_common.c
+>  create mode 100644 drivers/net/nbl/nbl_common/nbl_common.h
+>  create mode 100644 drivers/net/nbl/nbl_common/nbl_thread.c
+>  create mode 100644 drivers/net/nbl/nbl_common/nbl_userdev.c
+>  create mode 100644 drivers/net/nbl/nbl_common/nbl_userdev.h
+>  create mode 100644 drivers/net/nbl/nbl_core.c
+>  create mode 100644 drivers/net/nbl/nbl_core.h
+>  create mode 100644 drivers/net/nbl/nbl_dev/nbl_dev.c
+>  create mode 100644 drivers/net/nbl/nbl_dev/nbl_dev.h
+>  create mode 100644 drivers/net/nbl/nbl_dispatch.c
+>  create mode 100644 drivers/net/nbl/nbl_dispatch.h
+>  create mode 100644 drivers/net/nbl/nbl_ethdev.c
+>  create mode 100644 drivers/net/nbl/nbl_ethdev.h
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_channel.c
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_channel.h
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_s=
+nic.c
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_s=
+nic.h
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.h
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_phy.h
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_resource.c
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_resource.h
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_txrx.c
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_txrx.h
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_txrx_ops.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_def_channel.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_def_common.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_def_dev.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_def_dispatch.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_def_phy.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_def_resource.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_include.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_logs.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_product_base.h
+>=20
 
-Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
----
-v2 Changes:
- - Add depends on series tag.
- - Fix compilation.
-v3 Changes:
- - Rebase.
- - Fix errors from check-meson.py
-v4 Changes:
- - Rebase.
-
- drivers/common/cnxk/roc_sso.c          |   4 +-
- drivers/common/cnxk/roc_sso.h          |   2 +-
- drivers/event/cnxk/cn20k_eventdev.c    |   8 +-
- drivers/event/cnxk/cnxk_vector_adptr.c | 148 +++++++++++++++++++++++++
- drivers/event/cnxk/cnxk_vector_adptr.h |  22 ++++
- drivers/event/cnxk/meson.build         |   1 +
- 6 files changed, 181 insertions(+), 4 deletions(-)
- create mode 100644 drivers/event/cnxk/cnxk_vector_adptr.c
- create mode 100644 drivers/event/cnxk/cnxk_vector_adptr.h
-
-diff --git a/drivers/common/cnxk/roc_sso.c b/drivers/common/cnxk/roc_sso.c
-index 4996329018fb..1d82e5b9782c 100644
---- a/drivers/common/cnxk/roc_sso.c
-+++ b/drivers/common/cnxk/roc_sso.c
-@@ -514,7 +514,8 @@ sso_agq_op_wait(struct roc_sso *roc_sso, uint16_t hwgrp)
- }
-
- int
--roc_sso_hwgrp_agq_alloc(struct roc_sso *roc_sso, uint16_t hwgrp, struct roc_sso_agq_data *data)
-+roc_sso_hwgrp_agq_alloc(struct roc_sso *roc_sso, uint16_t hwgrp, struct roc_sso_agq_data *data,
-+			uint32_t *agq_id)
- {
- 	struct sso *sso = roc_sso_to_sso_priv(roc_sso);
- 	struct sso_aggr_setconfig *req;
-@@ -621,6 +622,7 @@ roc_sso_hwgrp_agq_alloc(struct roc_sso *roc_sso, uint16_t hwgrp, struct roc_sso_
-
- 	plt_wmb();
- 	sso->agg_used[hwgrp]++;
-+	*agq_id = off;
-
- 	return 0;
- }
-diff --git a/drivers/common/cnxk/roc_sso.h b/drivers/common/cnxk/roc_sso.h
-index f73128087a53..f1ad34bcc745 100644
---- a/drivers/common/cnxk/roc_sso.h
-+++ b/drivers/common/cnxk/roc_sso.h
-@@ -112,7 +112,7 @@ int __roc_api roc_sso_hwgrp_stash_config(struct roc_sso *roc_sso,
- void __roc_api roc_sso_hws_gwc_invalidate(struct roc_sso *roc_sso, uint8_t *hws,
- 					  uint8_t nb_hws);
- int __roc_api roc_sso_hwgrp_agq_alloc(struct roc_sso *roc_sso, uint16_t hwgrp,
--				      struct roc_sso_agq_data *data);
-+				      struct roc_sso_agq_data *data, uint32_t *agq_id);
- void __roc_api roc_sso_hwgrp_agq_free(struct roc_sso *roc_sso, uint16_t hwgrp, uint32_t agq_id);
- void __roc_api roc_sso_hwgrp_agq_release(struct roc_sso *roc_sso, uint16_t hwgrp);
- uint32_t __roc_api roc_sso_hwgrp_agq_from_tag(struct roc_sso *roc_sso, uint16_t hwgrp, uint32_t tag,
-diff --git a/drivers/event/cnxk/cn20k_eventdev.c b/drivers/event/cnxk/cn20k_eventdev.c
-index 0688cf97e5d6..9d68397b88a4 100644
---- a/drivers/event/cnxk/cn20k_eventdev.c
-+++ b/drivers/event/cnxk/cn20k_eventdev.c
-@@ -10,6 +10,7 @@
- #include "cn20k_worker.h"
- #include "cnxk_common.h"
- #include "cnxk_eventdev.h"
-+#include "cnxk_vector_adptr.h"
- #include "cnxk_worker.h"
-
- #define CN20K_SET_EVDEV_DEQ_OP(dev, deq_op, deq_ops)                                               \
-@@ -708,11 +709,11 @@ cn20k_sso_rx_adapter_vwqe_enable(struct cnxk_sso_evdev *dev, uint16_t port_id, u
- 	data.vwqe_wait_tmo = queue_conf->vector_timeout_ns / ((SSO_AGGR_DEF_TMO + 1) * 100);
- 	data.xqe_type = 0;
-
--	rc = roc_sso_hwgrp_agq_alloc(&dev->sso, queue_conf->ev.queue_id, &data);
-+	agq = UINT32_MAX;
-+	rc = roc_sso_hwgrp_agq_alloc(&dev->sso, queue_conf->ev.queue_id, &data, &agq);
- 	if (rc < 0)
- 		return rc;
-
--	agq = roc_sso_hwgrp_agq_from_tag(&dev->sso, queue_conf->ev.queue_id, tag_mask, 0);
- 	return agq;
- }
-
-@@ -1081,6 +1082,9 @@ static struct eventdev_ops cn20k_sso_dev_ops = {
-
- 	.timer_adapter_caps_get = cn20k_tim_caps_get,
-
-+	.vector_adapter_caps_get = cnxk_vector_caps_get,
-+	.vector_adapter_info_get = cnxk_vector_info_get,
-+
- 	.xstats_get = cnxk_sso_xstats_get,
- 	.xstats_reset = cnxk_sso_xstats_reset,
- 	.xstats_get_names = cnxk_sso_xstats_get_names,
-diff --git a/drivers/event/cnxk/cnxk_vector_adptr.c b/drivers/event/cnxk/cnxk_vector_adptr.c
-new file mode 100644
-index 000000000000..0495258cbb5c
---- /dev/null
-+++ b/drivers/event/cnxk/cnxk_vector_adptr.c
-@@ -0,0 +1,148 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(C) 2025 Marvell.
-+ */
-+#include <event_vector_adapter_pmd.h>
-+#include <eventdev_pmd.h>
-+
-+#include "roc_api.h"
-+
-+#include "cnxk_eventdev.h"
-+#include "cnxk_vector_adptr.h"
-+#include "cnxk_worker.h"
-+
-+static int
-+cnxk_sso_vector_adapter_create(struct rte_event_vector_adapter *adapter)
-+{
-+	struct rte_event_vector_adapter_conf *conf;
-+	struct cnxk_event_vector_adapter *adptr;
-+	uint32_t agq, tag_mask, stag_mask;
-+	struct roc_sso_agq_data data;
-+	struct cnxk_sso_evdev *dev;
-+	uint8_t queue_id;
-+	int rc;
-+
-+	adptr = rte_zmalloc("cnxk_event_vector_adapter", sizeof(struct cnxk_event_vector_adapter),
-+			    RTE_CACHE_LINE_SIZE);
-+	if (adptr == NULL) {
-+		plt_err("Failed to allocate memory for vector adapter");
-+		return -ENOMEM;
-+	}
-+
-+	conf = &adapter->data->conf;
-+
-+	queue_id = adapter->data->conf.ev.queue_id;
-+	dev = cnxk_sso_pmd_priv(&rte_eventdevs[conf->event_dev_id]);
-+	adapter->data->adapter_priv = adptr;
-+
-+	tag_mask = conf->ev.event & 0xFFFFFFFF;
-+	stag_mask = (conf->ev_fallback.event & 0xFFFFFFFF) >> 20;
-+
-+	memset(&data, 0, sizeof(struct roc_sso_agq_data));
-+	data.tag = tag_mask;
-+	data.tt = conf->ev.sched_type;
-+	data.stag = stag_mask;
-+	data.vwqe_aura = roc_npa_aura_handle_to_aura(conf->vector_mp->pool_id);
-+	data.vwqe_max_sz_exp = rte_log2_u32(conf->vector_sz);
-+	data.vwqe_wait_tmo = conf->vector_timeout_ns / ((SSO_AGGR_DEF_TMO + 1) * 100);
-+	data.xqe_type = 0;
-+
-+	agq = UINT32_MAX;
-+	rc = roc_sso_hwgrp_agq_alloc(&dev->sso, queue_id, &data, &agq);
-+	if (rc < 0 || agq == UINT32_MAX) {
-+		plt_err("Failed to allocate aggregation queue for queue_id=%d", queue_id);
-+		adapter->data->adapter_priv = NULL;
-+		rte_free(adptr);
-+		return rc;
-+	}
-+
-+	adptr->agq = agq;
-+	adptr->tt = SSO_TT_AGG;
-+	adptr->base = roc_sso_hwgrp_base_get(&dev->sso, queue_id);
-+
-+	return 0;
-+}
-+
-+static int
-+cnxk_sso_vector_adapter_destroy(struct rte_event_vector_adapter *adapter)
-+{
-+	struct cnxk_event_vector_adapter *adptr;
-+	struct cnxk_sso_evdev *dev;
-+	uint16_t queue_id;
-+
-+	if (adapter == NULL || adapter->data == NULL)
-+		return -EINVAL;
-+
-+	adptr = adapter->data->adapter_priv;
-+	if (adptr == NULL)
-+		return -EINVAL;
-+
-+	queue_id = adapter->data->conf.ev.queue_id;
-+	dev = cnxk_sso_pmd_priv(&rte_eventdevs[adapter->data->conf.event_dev_id]);
-+
-+	roc_sso_hwgrp_agq_free(&dev->sso, queue_id, adptr->agq);
-+	rte_free(adptr);
-+	adapter->data->adapter_priv = NULL;
-+
-+	return 0;
-+}
-+
-+static int
-+cnxk_sso_vector_adapter_enqueue(struct rte_event_vector_adapter *adapter, uint64_t objs[],
-+				uint16_t num_elem, uint64_t flags)
-+{
-+	struct cnxk_event_vector_adapter *adptr;
-+	uint16_t n = num_elem;
-+	uint64_t add_work0;
-+
-+	adptr = adapter->data->adapter_priv;
-+	plt_wmb();
-+
-+	add_work0 = adptr->agq | ((uint64_t)(adptr->tt) << 32);
-+	roc_store_pair(add_work0 | ((uint64_t)!!(flags & RTE_EVENT_VECTOR_ENQ_SOV) << 34),
-+		       objs[num_elem - n], adptr->base);
-+	while (--n > 1)
-+		roc_store_pair(add_work0, objs[num_elem - n], adptr->base);
-+	if (n)
-+		roc_store_pair(add_work0 | ((uint64_t)!!(flags & RTE_EVENT_VECTOR_ENQ_EOV) << 35),
-+			       objs[num_elem - n], adptr->base);
-+
-+	return num_elem;
-+}
-+
-+static struct event_vector_adapter_ops vector_ops = {
-+	.create = cnxk_sso_vector_adapter_create,
-+	.destroy = cnxk_sso_vector_adapter_destroy,
-+	.enqueue = cnxk_sso_vector_adapter_enqueue,
-+};
-+
-+int
-+cnxk_vector_caps_get(const struct rte_eventdev *evdev, uint32_t *caps,
-+		     const struct event_vector_adapter_ops **ops)
-+{
-+	RTE_SET_USED(evdev);
-+
-+	*caps = RTE_EVENT_VECTOR_ADAPTER_CAP_INTERNAL_PORT;
-+	*ops = &vector_ops;
-+
-+	return 0;
-+}
-+
-+int
-+cnxk_vector_info_get(const struct rte_eventdev *evdev, struct rte_event_vector_adapter_info *info)
-+{
-+	RTE_SET_USED(evdev);
-+	if (info == NULL)
-+		return -EINVAL;
-+
-+	info->max_vector_adapters_per_event_queue =
-+		SSO_AGGR_MAX_CTX > UINT8_MAX ? UINT8_MAX : SSO_AGGR_MAX_CTX;
-+	info->log2_sz = true;
-+	info->min_vector_sz = RTE_BIT32(ROC_NIX_VWQE_MIN_SIZE_LOG2);
-+	info->max_vector_sz = RTE_BIT32(ROC_NIX_VWQE_MAX_SIZE_LOG2);
-+	info->min_vector_timeout_ns = (SSO_AGGR_DEF_TMO + 1) * 100;
-+	info->max_vector_timeout_ns = (BITMASK_ULL(11, 0) + 1) * info->min_vector_timeout_ns;
-+
-+	info->log2_sz = true;
-+
-+	return 0;
-+}
-diff --git a/drivers/event/cnxk/cnxk_vector_adptr.h b/drivers/event/cnxk/cnxk_vector_adptr.h
-new file mode 100644
-index 000000000000..f60b0f4edd89
---- /dev/null
-+++ b/drivers/event/cnxk/cnxk_vector_adptr.h
-@@ -0,0 +1,22 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(C) 2025 Marvell.
-+ */
-+
-+#ifndef __CNXK_VECTOR_ADPTR_H__
-+#define __CNXK_VECTOR_ADPTR_H__
-+
-+#include <rte_event_vector_adapter.h>
-+#include <rte_eventdev.h>
-+
-+struct cnxk_event_vector_adapter {
-+	uint8_t tt;
-+	uint32_t agq;  /**< Aggregation queue ID */
-+	uint64_t base; /**< Base address of the adapter */
-+};
-+
-+int cnxk_vector_caps_get(const struct rte_eventdev *evdev, uint32_t *caps,
-+			 const struct event_vector_adapter_ops **ops);
-+int cnxk_vector_info_get(const struct rte_eventdev *evdev,
-+			 struct rte_event_vector_adapter_info *info);
-+
-+#endif /* __CNXK_VECTOR_ADPTR_H__ */
-diff --git a/drivers/event/cnxk/meson.build b/drivers/event/cnxk/meson.build
-index 9461ae33e443..677ebc9e2814 100644
---- a/drivers/event/cnxk/meson.build
-+++ b/drivers/event/cnxk/meson.build
-@@ -26,6 +26,7 @@ sources = files(
-         'cnxk_eventdev_stats.c',
-         'cnxk_tim_evdev.c',
-         'cnxk_tim_worker.c',
-+        'cnxk_vector_adptr.c',
- )
-
- disable_template = false
---
-2.39.5 (Apple Git-154)
-
+Build failure on 32 bit. Need to us %zu instead of PRIU64 here.
+FAILED: drivers/libtmp_rte_net_nbl.a.p/net_nbl_nbl_hw_nbl_channel.c.o=20
+gcc -Idrivers/libtmp_rte_net_nbl.a.p -Idrivers -I../drivers -Idrivers/net/n=
+bl -I../drivers/net/nbl -I../drivers/net/nbl/nbl_include -I../drivers/net/n=
+bl/nbl_hw -I../drivers/net/nbl/nbl_common -Ilib/ethdev -I../lib/ethdev -Ili=
+b/eal/common -I../lib/eal/common -I. -I.. -Iconfig -I../config -Ilib/eal/in=
+clude -I../lib/eal/include -Ilib/eal/linux/include -I../lib/eal/linux/inclu=
+de -Ilib/eal/x86/include -I../lib/eal/x86/include -I../kernel/linux -Ilib/e=
+al -I../lib/eal -Ilib/kvargs -I../lib/kvargs -Ilib/log -I../lib/log -Ilib/m=
+etrics -I../lib/metrics -Ilib/telemetry -I../lib/telemetry -Ilib/net -I../l=
+ib/net -Ilib/mbuf -I../lib/mbuf -Ilib/mempool -I../lib/mempool -Ilib/ring -=
+I../lib/ring -Ilib/meter -I../lib/meter -Idrivers/bus/pci -I../drivers/bus/=
+pci -I../drivers/bus/pci/linux -Ilib/pci -I../lib/pci -Idrivers/bus/vdev -I=
+../drivers/bus/vdev -fdiagnostics-color=3Dalways -D_FILE_OFFSET_BITS=3D64 -=
+Wall -Winvalid-pch -Wextra -Werror -std=3Dc11 -O3 -include rte_config.h -Wv=
+la -Wcast-qual -Wdeprecated -Wformat -Wformat-nonliteral -Wformat-security =
+-Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wold-style-de=
+finition -Wpointer-arith -Wsign-compare -Wstrict-prototypes -Wundef -Wwrite=
+-strings -Wno-packed-not-aligned -Wno-missing-field-initializers -Wno-point=
+er-to-int-cast -D_GNU_SOURCE -m32 -fPIC -march=3Dnative -mrtm -DALLOW_EXPER=
+IMENTAL_API -DALLOW_INTERNAL_API -Wno-format-truncation -Wno-address-of-pac=
+ked-member -DRTE_LOG_DEFAULT_LOGTYPE=3Dpmd.net.nbl -MD -MQ drivers/libtmp_r=
+te_net_nbl.a.p/net_nbl_nbl_hw_nbl_channel.c.o -MF drivers/libtmp_rte_net_nb=
+l.a.p/net_nbl_nbl_hw_nbl_channel.c.o.d -o drivers/libtmp_rte_net_nbl.a.p/ne=
+t_nbl_nbl_hw_nbl_channel.c.o -c ../drivers/net/nbl/nbl_hw/nbl_channel.c
+In file included from ../lib/eal/include/rte_debug.h:17,
+                 from ../lib/eal/include/rte_bitops.h:23,
+                 from ../lib/ethdev/rte_cman.h:8,
+                 from ../lib/ethdev/rte_ethdev.h:159,
+                 from ../drivers/net/nbl/nbl_include/nbl_include.h:37,
+                 from ../drivers/net/nbl/nbl_include/nbl_product_base.h:8,
+                 from ../drivers/net/nbl/nbl_core.h:8,
+                 from ../drivers/net/nbl/nbl_ethdev.h:8,
+                 from ../drivers/net/nbl/nbl_hw/nbl_channel.h:8,
+                 from ../drivers/net/nbl/nbl_hw/nbl_channel.c:5:
+../drivers/net/nbl/nbl_hw/nbl_channel.c: In function =E2=80=98nbl_chan_upda=
+te_txqueue=E2=80=99:
+../drivers/net/nbl/nbl_hw/nbl_channel.c:394:76: error: format =E2=80=98%llu=
+=E2=80=99 expects argument of type =E2=80=98long long unsigned int=E2=80=99=
+, but argument 5 has type =E2=80=98size_t=E2=80=99 {aka =E2=80=98unsigned i=
+nt=E2=80=99} [-Werror=3Dformat=3D]
+  394 |                 NBL_LOG(ERR, "arg_len: %" NBL_PRIU64 ", too long!",=
+ arg_len);
+      |                                                                    =
+        ^
+../lib/log/rte_log.h:334:39: note: in definition of macro =E2=80=98RTE_LOG=
+=E2=80=99
+  334 |                  RTE_LOGTYPE_ ## t, # t ": " __VA_ARGS__)
+      |                                       ^
+../drivers/net/nbl/nbl_include/nbl_logs.h:19:9: note: in expansion of macro=
+ =E2=80=98RTE_LOG_LINE_PREFIX=E2=80=99
+   19 |         RTE_LOG_LINE_PREFIX(level, NBL_DRIVER, "%s: ", __func__, __=
+VA_ARGS__)
+      |         ^~~~~~~~~~~~~~~~~~~
+../drivers/net/nbl/nbl_hw/nbl_channel.c:394:17: note: in expansion of macro=
+ =E2=80=98NBL_LOG=E2=80=99
+  394 |                 NBL_LOG(ERR, "arg_len: %" NBL_PRIU64 ", too long!",=
+ arg_len);
+      |                 ^~~~~~~
+cc1: all warnings being treated as errors
