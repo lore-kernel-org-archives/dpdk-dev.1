@@ -2,102 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC93C61CE8
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 13:25:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA81FC71136
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 13:39:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 989CF41104;
-	Thu, 12 Jun 2025 15:25:12 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 39992402C1
- for <dev@dpdk.org>; Thu, 12 Jun 2025 15:25:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1749734710;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=zeNVTwA/8JbvWtVwFOsBfEfLyg0GxqyWTjfQfR5sf00=;
- b=WeVgopQw2eXF1pI7hUD5a4FwEYkObPr41XF9R72dVSbCplmzrJr49AdMBH/bYhtQmKIBVd
- XmCUPD9nErHEtuqrBmLdQOp+RXpbrEFKAo/GuIOrV+aJOS2l1ymdBktTGk+ZrNB0yxiX5z
- N4zuz/DkywqRjKuq6ciA+jUZ9a1RI4w=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-231-gJbJtCT7NCSh3I8dAzO2DA-1; Thu,
- 12 Jun 2025 09:25:07 -0400
-X-MC-Unique: gJbJtCT7NCSh3I8dAzO2DA-1
-X-Mimecast-MFC-AGG-ID: gJbJtCT7NCSh3I8dAzO2DA_1749734706
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 325D5195608D; Thu, 12 Jun 2025 13:25:06 +0000 (UTC)
-Received: from [10.44.22.19] (unknown [10.44.22.19])
- by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 72B8919560AF; Thu, 12 Jun 2025 13:25:04 +0000 (UTC)
-Message-ID: <7e80623a-7412-4ec3-808f-ccf31ff8629b@redhat.com>
-Date: Thu, 12 Jun 2025 15:24:59 +0200
+	by mails.dpdk.org (Postfix) with ESMTP id D1ECF41104;
+	Thu, 12 Jun 2025 15:39:30 +0200 (CEST)
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com
+ [209.85.160.178])
+ by mails.dpdk.org (Postfix) with ESMTP id F1A7440ED4
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 15:39:28 +0200 (CEST)
+Received: by mail-qt1-f178.google.com with SMTP id
+ d75a77b69052e-48d71b77cc0so11858321cf.1
+ for <dev@dpdk.org>; Thu, 12 Jun 2025 06:39:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1749735568; x=1750340368; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=mxMCwrs3GMPGxW8f5uW94+kQNcqZ5tyXLkwFnH5gN6M=;
+ b=IO1vmolp0ldK/eE1uGSXqoMi+sHNTAhizGo7XQwY3ecVfoI9CxPLjtu46iZolTSDQE
+ C0vqaspUX+opxAtdeJgAnRRZcuQ8olXnnTZNj5UeL7pLtcJGQrYMuNSDqNLDYF1xpjTi
+ GNPEkoRWZuRyd+AXitCFfEQW2aIsN736ZBFNkWz/eyKy2HKoiJHew4SirZyiWswF/Bl/
+ HsiEQX2/H+zp3wR8PBMwLU1MpsEj809mxOzyVnLiCSTX/bVcgQsAh3kSLRWr9cXYNFBd
+ Y20naGLEE7VFJADor/jOL2JQaAYHejvsTkK/Mfe+bAAdgUeC7MXireAG50MwJkanhYdI
+ dUhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1749735568; x=1750340368;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=mxMCwrs3GMPGxW8f5uW94+kQNcqZ5tyXLkwFnH5gN6M=;
+ b=D/rI0M9S8kzmfxVJwL3izpA65VjeQJ6CsadMWQciq4IXHfJCQDiiqsLs12qIR/BsvZ
+ aQ5wcmN+vmvP7alM2esvlDJhby1wpLjQSk/OKfalcVH6+RIFWmw/0mJuhfCFtg0t7qDp
+ rf8mTeKm6rTY1vjrZkfHwZ7QJFhUkbWS+v/qrKC+P5wpRa7GDWG4WvN1YTesigRPBbTk
+ ey/d2CSw3Mtd3oVpbwpx9tqDF0Sf0cPg90wp134CktSIgrTEB/X+vntJiTEWwULY2efk
+ gK4ayZlR0QZSHeGlDwhi52oIhSRUohNaGu7q6HbUvEUmbsmvYJfHqyOBn3O5uVFSl2Ts
+ 2I7Q==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVt2HaSE5LTbNeAXdIdiMjVea+MyI6mF/02iAxYbnGh7tFFazPNc4+HGPlQWL0bWVHa2QE=@dpdk.org
+X-Gm-Message-State: AOJu0YzsxxRH7WISClOW1h0wLH692G/hZ2IUZYrrlU9WIgxQmatUyybr
+ SI6RQIVwWn+UHo1qrmCHHCar8DQhZDFr5mwntpdLIJSseWjJNYgy9IW/Q++lkPmHuQIwMzBjpPA
+ noXrveSNjv6NKVjyBC7nQ9DKqWLwLtm8=
+X-Gm-Gg: ASbGnctzHA+zJCKIhZxkgvakclIJ2oI3Vg0iNZHZwMSmrjsMK3uvdsYfKT/ZSOunWaf
+ vJq1oGklW3N+V7fifwL/d8WBxvNg9eUOhCXI3yBZHTGtx5wyJtpDBZA1uk3J/AHDOpPAMItD9gF
+ 9TxVpWdu3hwqeZOllPC02YTAAmX18TicN0NC5fxlOuMA==
+X-Google-Smtp-Source: AGHT+IEm3H04esMrN+H8PTzY4qqjiMXfteBLpoRiZNEqm9fFxFHG06jkD2FrhnzmAZOMTbyEgYkCYOI2WOY1qw4r0e8=
+X-Received: by 2002:a05:622a:5c8e:b0:490:8ffd:9a90 with SMTP id
+ d75a77b69052e-4a724386d2dmr44622741cf.45.1749735568166; Thu, 12 Jun 2025
+ 06:39:28 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/virtio: Fix check of threshold for Tx freeing
-To: Hengqi Chen <hengqi.chen@gmail.com>, dev@dpdk.org
-Cc: Baoyuan Li <updoing@sina.com>, Chenbo Xia <chenbox@nvidia.com>
-References: <20250609072347.1748785-1-hengqi.chen@gmail.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <20250609072347.1748785-1-hengqi.chen@gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: OSjxeVdzriQHh-_wONOp61T0Q7vChxcz9va7P9V8bwo_1749734706
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250327111344.2205-1-pbhagavatula@marvell.com>
+In-Reply-To: <20250327111344.2205-1-pbhagavatula@marvell.com>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Thu, 12 Jun 2025 19:09:02 +0530
+X-Gm-Features: AX0GCFtUR5XkZJNqHUxYbrOgHvFqXl_bdqC_N2Hvi2yCOwCDADqLstlKMaRvsrE
+Message-ID: <CALBAE1PSsm4o-a8_7tJfT=Shiq7xMLvakLgGH0kBRuhiH9e=gg@mail.gmail.com>
+Subject: Re: [PATCH] devtools: exclude atomic checks for common cnxk
+To: pbhagavatula@marvell.com
+Cc: jerinj@marvell.com, Thomas Monjalon <thomas@monjalon.net>, dev@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -111,51 +75,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+On Thu, Mar 27, 2025 at 4:50=E2=80=AFPM <pbhagavatula@marvell.com> wrote:
+>
+> From: Pavan Nikhilesh <pbhagavatula@marvell.com>
+>
+> Since driver/common/cnxk has common code that is
+> used across multiple platforms, allow use of
+> GCC builtin atomic functions.
+>
+> Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
 
+Acked-by: Jerin Jacob <jerinj@marvell.com>
 
-On 6/9/25 9:23 AM, Hengqi Chen wrote:
-> Like most dirvers, make the fast path of virtio_xmit_cleanup() behave as
-> described by the comments of rte_eth_txconf::tx_free_thresh ([0]):
->      Start freeing Tx buffers if there are
->      less free descriptors than this value.
-> 
-> The rationale behind this change is that:
->    * vq->vq_nentries is set during device probe with the queue size specified
->      by vhost backend, this value does not reflect the real nb_tx_desc
->    * the real available tx desc is set to vq->vq_free_cnt via the nb_tx_desc
->      param of rte_eth_tx_queue_setup() API
->    * so `nb_used > vq->vq_nentries - vq->vq_free_thresh` could never be true
->      if say nb_tx_desc=2048, vq->vq_nentries=4096, vq->vq_free_thresh=32,
->      see bug report 1716 ([1]) for details.
-> 
-> Bugzilla ID: 1716
-> 
->    [0]: https://github.com/DPDK/dpdk/commit/72514b5d5543
->    [1]: https://bugs.dpdk.org/show_bug.cgi?id=1716
-> 
-> Signed-off-by: Baoyuan Li <updoing@sina.com>
-> Signed-off-by: Hengqi Chen <hengqi.chen@gmail.com>
 > ---
->   drivers/net/virtio/virtio_rxtx.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/virtio/virtio_rxtx.c b/drivers/net/virtio/virtio_rxtx.c
-> index edecd2011f..ab97f03d7d 100644
-> --- a/drivers/net/virtio/virtio_rxtx.c
-> +++ b/drivers/net/virtio/virtio_rxtx.c
-> @@ -1873,7 +1873,7 @@ virtio_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
->   
->   	nb_used = virtqueue_nused(vq);
->   
-> -	if (likely(nb_used > vq->vq_nentries - vq->vq_free_thresh))
-> +	if (likely(vq->vq_free_cnt < vq->vq_free_thresh))
->   		virtio_xmit_cleanup(vq, nb_used);
->   
->   	for (nb_tx = 0; nb_tx < nb_pkts; nb_tx++) {
-
-Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
-
-Thanks,
-Maxime
-
-
+>  Rest of drivers i.e., drivers/*/cnxk have been migrated to use stdatomic=
+s in:
+>  https://patchwork.dpdk.org/project/dpdk/patch/20250327111120.1641-1-pbha=
+gavatula@marvell.com/
+>
+>  devtools/checkpatches.sh | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/devtools/checkpatches.sh b/devtools/checkpatches.sh
+> index c9088bb403..2470d4fa83 100755
+> --- a/devtools/checkpatches.sh
+> +++ b/devtools/checkpatches.sh
+> @@ -139,6 +139,7 @@ check_forbidden_additions() { # <patch>
+>
+>         # refrain from using compiler __atomic_xxx builtins
+>         awk -v FOLDERS=3D"lib drivers app examples" \
+> +               -v SKIP_FILES=3D'drivers/common/cnxk/' \
+>                 -v EXPRESSIONS=3D"__atomic_.*\\\( __ATOMIC_(RELAXED|CONSU=
+ME|ACQUIRE|RELEASE|ACQ_REL|SEQ_CST)" \
+>                 -v RET_ON_FAIL=3D1 \
+>                 -v MESSAGE=3D'Using __atomic_xxx/__ATOMIC_XXX built-ins, =
+prefer rte_atomic_xxx/rte_memory_order_xxx' \
+> --
+> 2.43.0
+>
