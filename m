@@ -2,65 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA6AC71135
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Jun 2025 23:15:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C818C71135
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Jun 2025 23:19:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9BC34402AF;
-	Sat, 14 Jun 2025 01:15:27 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4B53F402AF;
+	Sat, 14 Jun 2025 01:19:53 +0200 (CEST)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 64FBF40275
- for <dev@dpdk.org>; Sat, 14 Jun 2025 01:15:26 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55DLtCK5018841
- for <dev@dpdk.org>; Fri, 13 Jun 2025 16:15:25 -0700
+ by mails.dpdk.org (Postfix) with ESMTP id 5CD4B40275
+ for <dev@dpdk.org>; Sat, 14 Jun 2025 01:19:51 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55DM5cLV009290
+ for <dev@dpdk.org>; Fri, 13 Jun 2025 16:19:50 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=g2uF9LezegQ4/v1zAuNT5Xt
- aKiwWs0ckCrZAHa/BWj4=; b=gRlfSHSDSuauef4XwW2Ax/QmSVVv0Wn8+ZDDtez
- ENOWRiLPFdb26uHb6+4dvjvGXRim0Up4ibJvSdY8Mm2+LQYdH0oOSTeqvaarISnt
- OCxkipK5sjFk4OWb6c1lXAvhMrbQ6Ufcmmn1w2YT7j1DX73zlU+vVwZ01z58LxoI
- DDUiSHOuo27zbtWWpX6yJmShggd+Rpp3ytrYsQAbcrrvIHzyvSmZHi7lIv1Q9Di1
- S/1Q1+aWthsG9h2kUwkC3WI+YO2ckLVPz297TI936fel9Dob1YtNRJH/dZIdl5Pd
- nZ4LRcyyg+89RohjALrlS+gDVlZH+hS8Q6cEK4yBj+2x1xg==
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=3
+ eniKIXPQMmCkZ0AKWpz0zy22T35wiulNJwWU11juo8=; b=ZDPOMgcRszzCzeyyG
+ QdbiSpL44qlVB9p4yetLZDrnS/wfkbwC6UTEJNKQe0lfX6eCbgS82AJ7e4FOPZns
+ V45TKqJ4GxwTZCMkEhbtgQRFmQ8WyGWHH9XXyGxgAL8pE+Mruk8CDPxNYxEYDdRt
+ sGjiAPVsl3fGxHoPfbKlFFmhdvA3YijMhLSvNHi+Wn7rWiq7Kgzg3UPhZFa1hgf8
+ XX81665WfUqHmJa0/+E5U+XgKxZlXbZPkcTkszP2ZhfWUFHAzC+pM7+nq++ntOGZ
+ GiCPk2AFBUurksfYWEkMNw2qz7ifd01U+Gu0Qpx16Nj1J7+sswFLey2ieQaqJb0B
+ F37FQ==
 Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4788ns2axp-1
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 478vfm83cb-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Fri, 13 Jun 2025 16:15:25 -0700 (PDT)
+ for <dev@dpdk.org>; Fri, 13 Jun 2025 16:19:50 -0700 (PDT)
 Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
  DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 13 Jun 2025 16:15:24 -0700
+ 15.2.1544.4; Fri, 13 Jun 2025 16:19:49 -0700
 Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
  (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 13 Jun 2025 16:15:24 -0700
+ Transport; Fri, 13 Jun 2025 16:19:49 -0700
 Received: from LYYJYPGKF4.marvell.com (unknown [10.28.164.240])
- by maili.marvell.com (Postfix) with ESMTP id 507075B6931;
- Fri, 13 Jun 2025 16:15:22 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 75E955B6931;
+ Fri, 13 Jun 2025 16:19:46 -0700 (PDT)
 From: <pbhagavatula@marvell.com>
-To: <jerinj@marvell.com>, Amit Prakash Shukla <amitprakashs@marvell.com>,
- Pavan Nikhilesh <pbhagavatula@marvell.com>
+To: <jerinj@marvell.com>, Pavan Nikhilesh <pbhagavatula@marvell.com>, "Shijith
+ Thotton" <sthotton@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori
+ <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>, Harman Kalra
+ <hkalra@marvell.com>
 CC: <dev@dpdk.org>
-Subject: [PATCH] doc: fix missing feature matrix for event device
-Date: Sat, 14 Jun 2025 04:45:19 +0530
-Message-ID: <20250613231519.32933-1-pbhagavatula@marvell.com>
+Subject: [PATCH v5] event/cnxk: add event vector adapter support
+Date: Sat, 14 Jun 2025 04:49:42 +0530
+Message-ID: <20250613231942.35167-1-pbhagavatula@marvell.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250612170923.36114-1-pbhagavatula@marvell.com>
+References: <20250612170923.36114-1-pbhagavatula@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: sVwbd_DGNwtSi3VLHpzlLJmYfRtpJC-Y
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEzMDE3MSBTYWx0ZWRfX9musmXX/NBMv
- DpsRgmInCAseSufSj1VWsSp1fbLcj2CrkEV2XTBMgsKSygYzNMKepp1aiyqvtc13gJ+l7YvZDme
- n9BRicCHRrb7L81U3vQzLnglrojU5wbbhviE7Sl1rEXsymzDEwgqqsd36vRTsEzLtjHhN2oSnXI
- CO9/jJn+Yj6W0sI5d99K7cpIceWuNEx1eKUf73ybYAeEXsgI0CNuioYFV/My1C26O5qAKg8wcZ9
- N0rT4UlgVDug1ExKnpcuz0zBJFv6Mj+lRfvZtBxQxxRlxaBX5Res4u5Z/uePly1eOVQqvrrjPGg
- a3AxrH/k7D6ypgPxJD/qaMJTCztpezkSffubfIZo+8Vt8RrEWeEEmjKUKGMMTB1aa4grGunHXRj
- AKbAkFeCpNL69uQzVMLlFM5wbqA5YARVyTU1ZteSQ61KqSWCfymCvL7otAwZFRQAJ4jt0hP9
-X-Proofpoint-ORIG-GUID: sVwbd_DGNwtSi3VLHpzlLJmYfRtpJC-Y
-X-Authority-Analysis: v=2.4 cv=G7ocE8k5 c=1 sm=1 tr=0 ts=684cb10d cx=c_pps
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEzMDE3MSBTYWx0ZWRfX6SK85xSzri/w
+ KpGLyfRhlWXrOnyRzMtqAaVNNfM6t6wkdVKC5S93wy3eDPPW440JdBPI7zas8wBjz/85UigF56X
+ 9g3WDr9XoTn8oW0mWSa0TcRdNL71sJJxybjuy8NwLpUu7JY2Sac2sLjtoYIOdnCJkyCRjWgL6gV
+ nYSc/JJg3NCzAjaKA4An0id1UoolgOXuxfxkBjbNKZCkQxrMeqWZGNzRjRcPfSWSWEys9kMaMFV
+ LSPqre8Gj0Zo9lGb4ZnWuvyFOCjdFN4UBCApZYu5Uxg9KJXsro8vA8L+KP1KBP8dLWde6sRyggO
+ 5UPmja7SJ6OmNkXt5kTbAkxLHcrdl3g3QX6eqEiCCmR3Ajr58wfm5kz39lsADfuhROlOfVsxxzR
+ vdNvdRnCG4md8SGVt/tG09P72jIORh+8oGRCBKA6O4KCP7tIRf171wUgbIytaaaTioYfJ8E4
+X-Authority-Analysis: v=2.4 cv=fcOty1QF c=1 sm=1 tr=0 ts=684cb216 cx=c_pps
  a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=RCNVbf192YJgKJdcm-wA:9
+ a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=jj5ADaKJhNVWRwEBF1IA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: LKWjeEzadubeSAFtdPwfXOwXYdNbvKvL
+X-Proofpoint-ORIG-GUID: LKWjeEzadubeSAFtdPwfXOwXYdNbvKvL
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-13_04,2025-06-13_01,2025-03-28_01
@@ -79,108 +86,341 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Pavan Nikhilesh <pbhagavatula@marvell.com>
 
-Fix missing feature matrix addition for event device DMA and
-vector adapters.
-
-Fixes: 66a30a29387a ("eventdev/dma: introduce DMA adapter")
-Fixes: e12c3754da7a ("eventdev/vector: introduce event vector adapter")
+Add event vector adapter support to CN20K event device.
 
 Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
 ---
- .gitignore                             |  2 ++
- doc/guides/conf.py                     | 12 +++++++++++-
- doc/guides/eventdevs/features/cnxk.ini |  8 ++++++++
- doc/guides/eventdevs/overview.rst      | 15 +++++++++++++++
- 4 files changed, 36 insertions(+), 1 deletion(-)
+v2 Changes:
+ - Add depends on series tag.
+ - Fix compilation.
+v3 Changes:
+ - Rebase.
+ - Fix errors from check-meson.py
+v4 Changes:
+ - Rebase.
+v5 Changes:
+ - Update documentation and release notes.
 
-diff --git a/.gitignore b/.gitignore
-index 48b4ce2908f9..c5349f6e979c 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -26,6 +26,8 @@ doc/guides/eventdevs/overview_rx_adptr_feature_table.txt
- doc/guides/eventdevs/overview_tx_adptr_feature_table.txt
- doc/guides/eventdevs/overview_crypto_adptr_feature_table.txt
- doc/guides/eventdevs/overview_timer_adptr_feature_table.txt
-+doc/guides/eventdevs/overview_dma_adptr_feature_table.txt
-+doc/guides/eventdevs/overview_vector_adptr_feature_table.txt
- 
- # ignore generated ctags/cscope files
- cscope.out.po
-diff --git a/doc/guides/conf.py b/doc/guides/conf.py
-index 565f5705d8b8..4b1059c202b5 100644
---- a/doc/guides/conf.py
-+++ b/doc/guides/conf.py
-@@ -477,11 +477,21 @@ def setup(app):
-                             'Crypto adapter Features',
-                             'Features availability for Crypto adapters',
-                             'Feature')
--    table_file = dirname(__file__) + '/eventdevs/overview_timer_adptr_feature_table.txt'
-+    table_file = dirname(__file__) + '/eventdevs/overview_dma_adptr_feature_table.txt'
-     generate_overview_table(table_file, 5,
-+                            'DMA adapter Features',
-+                            'Features availability for DMA adapters',
-+                            'Feature')
-+    table_file = dirname(__file__) + '/eventdevs/overview_timer_adptr_feature_table.txt'
-+    generate_overview_table(table_file, 6,
-                             'Timer adapter Features',
-                             'Features availability for Timer adapters',
-                             'Feature')
-+    table_file = dirname(__file__) + '/eventdevs/overview_vector_adptr_feature_table.txt'
-+    generate_overview_table(table_file, 7,
-+                            'Vector adapter Features',
-+                            'Features availability for Vector adapters',
-+                            'Feature')
- 
-     if Version(sphinx_version) < Version('1.3.1'):
-         print('Upgrade sphinx to version >= 1.3.1 for '
+ doc/guides/eventdevs/cnxk.rst          |   2 +
+ doc/guides/eventdevs/features/cnxk.ini |   4 +
+ doc/guides/rel_notes/release_25_07.rst |   6 +
+ drivers/common/cnxk/roc_sso.c          |   4 +-
+ drivers/common/cnxk/roc_sso.h          |   2 +-
+ drivers/event/cnxk/cn20k_eventdev.c    |   8 +-
+ drivers/event/cnxk/cnxk_vector_adptr.c | 148 +++++++++++++++++++++++++
+ drivers/event/cnxk/cnxk_vector_adptr.h |  22 ++++
+ drivers/event/cnxk/meson.build         |   1 +
+ 9 files changed, 193 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/event/cnxk/cnxk_vector_adptr.c
+ create mode 100644 drivers/event/cnxk/cnxk_vector_adptr.h
+
+diff --git a/doc/guides/eventdevs/cnxk.rst b/doc/guides/eventdevs/cnxk.rst
+index 44771ecbde78..8fc3c698691b 100644
+--- a/doc/guides/eventdevs/cnxk.rst
++++ b/doc/guides/eventdevs/cnxk.rst
+@@ -50,6 +50,8 @@ Features of the OCTEON cnxk SSO PMD are:
+   to eventdev configurable per each Rx queue in Rx adapter.
+ - Event vector transmission via Tx adapter.
+ - Up to 2 event link profiles.
++- HW managed event vectorization on CN20K via ``rte_event_vector_adapter`` for
++  work originating from CPU.
+
+ Prerequisites and Compilation procedure
+ ---------------------------------------
 diff --git a/doc/guides/eventdevs/features/cnxk.ini b/doc/guides/eventdevs/features/cnxk.ini
-index 5ba528f0861d..af093dda61f3 100644
+index 5ba528f0861d..381734284e5d 100644
 --- a/doc/guides/eventdevs/features/cnxk.ini
 +++ b/doc/guides/eventdevs/features/cnxk.ini
-@@ -29,6 +29,14 @@ event_vector               = Y
+@@ -35,3 +35,7 @@ session_private_data       = Y
+
+ [Timer adapter Features]
  internal_port              = Y
- event_vector               = Y
- 
-+;
-+; Features of a default DMA adapter.
-+;
-+[DMA adapter Features]
-+internal_port_op_new       = Y
-+internal_port_op_fwd       = Y
-+internal_port_vchan_ev_bind =
 +
- [Crypto adapter Features]
- internal_port_op_fwd       = Y
- session_private_data       = Y
-diff --git a/doc/guides/eventdevs/overview.rst b/doc/guides/eventdevs/overview.rst
-index 3c5ee515f8b5..decae3bd4eaa 100644
---- a/doc/guides/eventdevs/overview.rst
-+++ b/doc/guides/eventdevs/overview.rst
-@@ -32,9 +32,24 @@ Crypto device adapter supported features
- 
- .. include:: overview_crypto_adptr_feature_table.txt
- 
-+DMA adapter supported features
-+------------------------------
++[Vector adapter Features]
++internal_port              = Y
++sov_eov                    = Y
+diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
+index 19be7740c438..dd0106db8ef1 100644
+--- a/doc/guides/rel_notes/release_25_07.rst
++++ b/doc/guides/rel_notes/release_25_07.rst
+@@ -141,6 +141,12 @@ New Features
+   String values are simply saved as-is,
+   while the boolean support allows for values "true", "false", "1" or "0".
+
++* **Added event vector adapter support in CN20K event device driver.**
 +
-+.. _table_dma_adapter_features:
++  Added support for the event vector adapter in the CN20K event device driver.
++  This allows the CN20K to offload ``rte_event_vector`` creation and aggregation
++  of objects originating from the CPU.
 +
-+.. include:: overview_dma_adptr_feature_table.txt
+
+ Removed Items
+ -------------
+diff --git a/drivers/common/cnxk/roc_sso.c b/drivers/common/cnxk/roc_sso.c
+index 4996329018fb..1d82e5b9782c 100644
+--- a/drivers/common/cnxk/roc_sso.c
++++ b/drivers/common/cnxk/roc_sso.c
+@@ -514,7 +514,8 @@ sso_agq_op_wait(struct roc_sso *roc_sso, uint16_t hwgrp)
+ }
+
+ int
+-roc_sso_hwgrp_agq_alloc(struct roc_sso *roc_sso, uint16_t hwgrp, struct roc_sso_agq_data *data)
++roc_sso_hwgrp_agq_alloc(struct roc_sso *roc_sso, uint16_t hwgrp, struct roc_sso_agq_data *data,
++			uint32_t *agq_id)
+ {
+ 	struct sso *sso = roc_sso_to_sso_priv(roc_sso);
+ 	struct sso_aggr_setconfig *req;
+@@ -621,6 +622,7 @@ roc_sso_hwgrp_agq_alloc(struct roc_sso *roc_sso, uint16_t hwgrp, struct roc_sso_
+
+ 	plt_wmb();
+ 	sso->agg_used[hwgrp]++;
++	*agq_id = off;
+
+ 	return 0;
+ }
+diff --git a/drivers/common/cnxk/roc_sso.h b/drivers/common/cnxk/roc_sso.h
+index f73128087a53..f1ad34bcc745 100644
+--- a/drivers/common/cnxk/roc_sso.h
++++ b/drivers/common/cnxk/roc_sso.h
+@@ -112,7 +112,7 @@ int __roc_api roc_sso_hwgrp_stash_config(struct roc_sso *roc_sso,
+ void __roc_api roc_sso_hws_gwc_invalidate(struct roc_sso *roc_sso, uint8_t *hws,
+ 					  uint8_t nb_hws);
+ int __roc_api roc_sso_hwgrp_agq_alloc(struct roc_sso *roc_sso, uint16_t hwgrp,
+-				      struct roc_sso_agq_data *data);
++				      struct roc_sso_agq_data *data, uint32_t *agq_id);
+ void __roc_api roc_sso_hwgrp_agq_free(struct roc_sso *roc_sso, uint16_t hwgrp, uint32_t agq_id);
+ void __roc_api roc_sso_hwgrp_agq_release(struct roc_sso *roc_sso, uint16_t hwgrp);
+ uint32_t __roc_api roc_sso_hwgrp_agq_from_tag(struct roc_sso *roc_sso, uint16_t hwgrp, uint32_t tag,
+diff --git a/drivers/event/cnxk/cn20k_eventdev.c b/drivers/event/cnxk/cn20k_eventdev.c
+index 0688cf97e5d6..9d68397b88a4 100644
+--- a/drivers/event/cnxk/cn20k_eventdev.c
++++ b/drivers/event/cnxk/cn20k_eventdev.c
+@@ -10,6 +10,7 @@
+ #include "cn20k_worker.h"
+ #include "cnxk_common.h"
+ #include "cnxk_eventdev.h"
++#include "cnxk_vector_adptr.h"
+ #include "cnxk_worker.h"
+
+ #define CN20K_SET_EVDEV_DEQ_OP(dev, deq_op, deq_ops)                                               \
+@@ -708,11 +709,11 @@ cn20k_sso_rx_adapter_vwqe_enable(struct cnxk_sso_evdev *dev, uint16_t port_id, u
+ 	data.vwqe_wait_tmo = queue_conf->vector_timeout_ns / ((SSO_AGGR_DEF_TMO + 1) * 100);
+ 	data.xqe_type = 0;
+
+-	rc = roc_sso_hwgrp_agq_alloc(&dev->sso, queue_conf->ev.queue_id, &data);
++	agq = UINT32_MAX;
++	rc = roc_sso_hwgrp_agq_alloc(&dev->sso, queue_conf->ev.queue_id, &data, &agq);
+ 	if (rc < 0)
+ 		return rc;
+
+-	agq = roc_sso_hwgrp_agq_from_tag(&dev->sso, queue_conf->ev.queue_id, tag_mask, 0);
+ 	return agq;
+ }
+
+@@ -1081,6 +1082,9 @@ static struct eventdev_ops cn20k_sso_dev_ops = {
+
+ 	.timer_adapter_caps_get = cn20k_tim_caps_get,
+
++	.vector_adapter_caps_get = cnxk_vector_caps_get,
++	.vector_adapter_info_get = cnxk_vector_info_get,
 +
+ 	.xstats_get = cnxk_sso_xstats_get,
+ 	.xstats_reset = cnxk_sso_xstats_reset,
+ 	.xstats_get_names = cnxk_sso_xstats_get_names,
+diff --git a/drivers/event/cnxk/cnxk_vector_adptr.c b/drivers/event/cnxk/cnxk_vector_adptr.c
+new file mode 100644
+index 000000000000..0495258cbb5c
+--- /dev/null
++++ b/drivers/event/cnxk/cnxk_vector_adptr.c
+@@ -0,0 +1,148 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(C) 2025 Marvell.
++ */
++#include <event_vector_adapter_pmd.h>
++#include <eventdev_pmd.h>
 +
- Timer adapter supported features
- --------------------------------
- 
- .. _table_timer_adapter_features:
- 
- .. include:: overview_timer_adptr_feature_table.txt
++#include "roc_api.h"
 +
-+Event vector adapter supported features
-+---------------------------------------
++#include "cnxk_eventdev.h"
++#include "cnxk_vector_adptr.h"
++#include "cnxk_worker.h"
 +
-+.. _table_vector_adapter_features:
++static int
++cnxk_sso_vector_adapter_create(struct rte_event_vector_adapter *adapter)
++{
++	struct rte_event_vector_adapter_conf *conf;
++	struct cnxk_event_vector_adapter *adptr;
++	uint32_t agq, tag_mask, stag_mask;
++	struct roc_sso_agq_data data;
++	struct cnxk_sso_evdev *dev;
++	uint8_t queue_id;
++	int rc;
 +
-+.. include:: overview_vector_adptr_feature_table.txt
--- 
++	adptr = rte_zmalloc("cnxk_event_vector_adapter", sizeof(struct cnxk_event_vector_adapter),
++			    RTE_CACHE_LINE_SIZE);
++	if (adptr == NULL) {
++		plt_err("Failed to allocate memory for vector adapter");
++		return -ENOMEM;
++	}
++
++	conf = &adapter->data->conf;
++
++	queue_id = adapter->data->conf.ev.queue_id;
++	dev = cnxk_sso_pmd_priv(&rte_eventdevs[conf->event_dev_id]);
++	adapter->data->adapter_priv = adptr;
++
++	tag_mask = conf->ev.event & 0xFFFFFFFF;
++	stag_mask = (conf->ev_fallback.event & 0xFFFFFFFF) >> 20;
++
++	memset(&data, 0, sizeof(struct roc_sso_agq_data));
++	data.tag = tag_mask;
++	data.tt = conf->ev.sched_type;
++	data.stag = stag_mask;
++	data.vwqe_aura = roc_npa_aura_handle_to_aura(conf->vector_mp->pool_id);
++	data.vwqe_max_sz_exp = rte_log2_u32(conf->vector_sz);
++	data.vwqe_wait_tmo = conf->vector_timeout_ns / ((SSO_AGGR_DEF_TMO + 1) * 100);
++	data.xqe_type = 0;
++
++	agq = UINT32_MAX;
++	rc = roc_sso_hwgrp_agq_alloc(&dev->sso, queue_id, &data, &agq);
++	if (rc < 0 || agq == UINT32_MAX) {
++		plt_err("Failed to allocate aggregation queue for queue_id=%d", queue_id);
++		adapter->data->adapter_priv = NULL;
++		rte_free(adptr);
++		return rc;
++	}
++
++	adptr->agq = agq;
++	adptr->tt = SSO_TT_AGG;
++	adptr->base = roc_sso_hwgrp_base_get(&dev->sso, queue_id);
++
++	return 0;
++}
++
++static int
++cnxk_sso_vector_adapter_destroy(struct rte_event_vector_adapter *adapter)
++{
++	struct cnxk_event_vector_adapter *adptr;
++	struct cnxk_sso_evdev *dev;
++	uint16_t queue_id;
++
++	if (adapter == NULL || adapter->data == NULL)
++		return -EINVAL;
++
++	adptr = adapter->data->adapter_priv;
++	if (adptr == NULL)
++		return -EINVAL;
++
++	queue_id = adapter->data->conf.ev.queue_id;
++	dev = cnxk_sso_pmd_priv(&rte_eventdevs[adapter->data->conf.event_dev_id]);
++
++	roc_sso_hwgrp_agq_free(&dev->sso, queue_id, adptr->agq);
++	rte_free(adptr);
++	adapter->data->adapter_priv = NULL;
++
++	return 0;
++}
++
++static int
++cnxk_sso_vector_adapter_enqueue(struct rte_event_vector_adapter *adapter, uint64_t objs[],
++				uint16_t num_elem, uint64_t flags)
++{
++	struct cnxk_event_vector_adapter *adptr;
++	uint16_t n = num_elem;
++	uint64_t add_work0;
++
++	adptr = adapter->data->adapter_priv;
++	plt_wmb();
++
++	add_work0 = adptr->agq | ((uint64_t)(adptr->tt) << 32);
++	roc_store_pair(add_work0 | ((uint64_t)!!(flags & RTE_EVENT_VECTOR_ENQ_SOV) << 34),
++		       objs[num_elem - n], adptr->base);
++	while (--n > 1)
++		roc_store_pair(add_work0, objs[num_elem - n], adptr->base);
++	if (n)
++		roc_store_pair(add_work0 | ((uint64_t)!!(flags & RTE_EVENT_VECTOR_ENQ_EOV) << 35),
++			       objs[num_elem - n], adptr->base);
++
++	return num_elem;
++}
++
++static struct event_vector_adapter_ops vector_ops = {
++	.create = cnxk_sso_vector_adapter_create,
++	.destroy = cnxk_sso_vector_adapter_destroy,
++	.enqueue = cnxk_sso_vector_adapter_enqueue,
++};
++
++int
++cnxk_vector_caps_get(const struct rte_eventdev *evdev, uint32_t *caps,
++		     const struct event_vector_adapter_ops **ops)
++{
++	RTE_SET_USED(evdev);
++
++	*caps = RTE_EVENT_VECTOR_ADAPTER_CAP_INTERNAL_PORT;
++	*ops = &vector_ops;
++
++	return 0;
++}
++
++int
++cnxk_vector_info_get(const struct rte_eventdev *evdev, struct rte_event_vector_adapter_info *info)
++{
++	RTE_SET_USED(evdev);
++	if (info == NULL)
++		return -EINVAL;
++
++	info->max_vector_adapters_per_event_queue =
++		SSO_AGGR_MAX_CTX > UINT8_MAX ? UINT8_MAX : SSO_AGGR_MAX_CTX;
++	info->log2_sz = true;
++	info->min_vector_sz = RTE_BIT32(ROC_NIX_VWQE_MIN_SIZE_LOG2);
++	info->max_vector_sz = RTE_BIT32(ROC_NIX_VWQE_MAX_SIZE_LOG2);
++	info->min_vector_timeout_ns = (SSO_AGGR_DEF_TMO + 1) * 100;
++	info->max_vector_timeout_ns = (BITMASK_ULL(11, 0) + 1) * info->min_vector_timeout_ns;
++
++	info->log2_sz = true;
++
++	return 0;
++}
+diff --git a/drivers/event/cnxk/cnxk_vector_adptr.h b/drivers/event/cnxk/cnxk_vector_adptr.h
+new file mode 100644
+index 000000000000..f60b0f4edd89
+--- /dev/null
++++ b/drivers/event/cnxk/cnxk_vector_adptr.h
+@@ -0,0 +1,22 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(C) 2025 Marvell.
++ */
++
++#ifndef __CNXK_VECTOR_ADPTR_H__
++#define __CNXK_VECTOR_ADPTR_H__
++
++#include <rte_event_vector_adapter.h>
++#include <rte_eventdev.h>
++
++struct cnxk_event_vector_adapter {
++	uint8_t tt;
++	uint32_t agq;  /**< Aggregation queue ID */
++	uint64_t base; /**< Base address of the adapter */
++};
++
++int cnxk_vector_caps_get(const struct rte_eventdev *evdev, uint32_t *caps,
++			 const struct event_vector_adapter_ops **ops);
++int cnxk_vector_info_get(const struct rte_eventdev *evdev,
++			 struct rte_event_vector_adapter_info *info);
++
++#endif /* __CNXK_VECTOR_ADPTR_H__ */
+diff --git a/drivers/event/cnxk/meson.build b/drivers/event/cnxk/meson.build
+index 9461ae33e443..677ebc9e2814 100644
+--- a/drivers/event/cnxk/meson.build
++++ b/drivers/event/cnxk/meson.build
+@@ -26,6 +26,7 @@ sources = files(
+         'cnxk_eventdev_stats.c',
+         'cnxk_tim_evdev.c',
+         'cnxk_tim_worker.c',
++        'cnxk_vector_adptr.c',
+ )
+
+ disable_template = false
+--
 2.39.5 (Apple Git-154)
 
