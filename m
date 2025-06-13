@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50673C71135
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Jun 2025 21:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA6AC71135
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Jun 2025 23:15:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 12AC0402C1;
-	Fri, 13 Jun 2025 23:53:45 +0200 (CEST)
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com
- [209.85.216.54]) by mails.dpdk.org (Postfix) with ESMTP id A2CE4402B6
- for <dev@dpdk.org>; Fri, 13 Jun 2025 23:53:43 +0200 (CEST)
-Received: by mail-pj1-f54.google.com with SMTP id
- 98e67ed59e1d1-311da0bef4aso2922832a91.3
- for <dev@dpdk.org>; Fri, 13 Jun 2025 14:53:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1749851622; x=1750456422; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=mi9OIlCYTdabNio6AptUnBHRXlsqNAk+0BVNK9IGsS4=;
- b=bpVR8x7E/eaIbOgO3FXdF6aqC9Fz6XzSRjljQ9Pd7G3qBMbfn6qDQXJAluEy2IbX9H
- Otr+QqJPMkBnaL2GegcvjUmXoXLj4JG9+V9FbAorpyoM+V+V7AgFs8EX1HdaIWwtR5+J
- 6XWof6rH3ZTs0ro+6LYOHgvcTGPPohv/JVlZQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749851622; x=1750456422;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=mi9OIlCYTdabNio6AptUnBHRXlsqNAk+0BVNK9IGsS4=;
- b=VBj62rPPdXQeMXjJWFd8LKb9SUIDPIvSfFG9u8FofWP6IyeCE9S3y4KYtgOeyoQLUO
- IqzLkG0vTaNq9SaVSxRqr21O7k5JeC+KdBnbN9+UdeO3gVKcFaYz+I1zdAnel3VGcLRI
- gQHNA+Gd9Ex3bYzw3EtYuJqUwXmAMBZS9lmt8o8tZUX6pVmW2XmLKuqKGEUj2gsi+Yb/
- Oc1WtaUbW3GFDvWhK8WZqt047aOOwbrfJpc4ePCtd2YKXF0eYHzn2rJCKNg8pQKY5vD1
- g1u256tJSkpBBXa2V2s9nVh9lFlmExosppmaBsVREcB0yPPF2plRxMUPcdurL1Ba3sPa
- l0zw==
-X-Gm-Message-State: AOJu0YyFhIgRdciUmhYnlQ6+u/qIfy4DuHSTFuyKd7GK8wafGv/5NIay
- BX6fb/tOE0+90GbcneDDc/22sr4FWKzyvzp07ctUkxj/JfZtPbumBlwsnGS8qrGyQ2nxgwZxdTQ
- WsquX4qXViQSJ7XkOZsubRjdd0gWbZ44pmdr61CyxTQ==
-X-Gm-Gg: ASbGncucm02kgc2M/1p1Cd4x4Pg3Je7L5Nyo+fpwIcRMu9Azu47W4WPod0xlUFbXgTQ
- Zkw4jzWUps25qwUHDQEK7whTIIyuI1w2V4Z1Q1rubD7RcnEiQSXJwh70k3PC+1+7a+yjrugiz52
- LPbVVgN0O8tG6cTAECLmyzTTnMEJej6DDYFNaSm6ZrCYijhAE0SOsC2Pm+4Qt82nrDrD+4xBfW0
- bA/
-X-Google-Smtp-Source: AGHT+IFzrqabDbZO4mf11/DcQ9PeERfcNtwYcSmV8LZm9C0qMqXzc3oft5MjSxX8iew4JNHU9JG0nvslCuiIKySLVx8=
-X-Received: by 2002:a17:90b:1b48:b0:311:df4b:4b91 with SMTP id
- 98e67ed59e1d1-313f1ca77e4mr1944366a91.7.1749851622655; Fri, 13 Jun 2025
- 14:53:42 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9BC34402AF;
+	Sat, 14 Jun 2025 01:15:27 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 64FBF40275
+ for <dev@dpdk.org>; Sat, 14 Jun 2025 01:15:26 +0200 (CEST)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55DLtCK5018841
+ for <dev@dpdk.org>; Fri, 13 Jun 2025 16:15:25 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=g2uF9LezegQ4/v1zAuNT5Xt
+ aKiwWs0ckCrZAHa/BWj4=; b=gRlfSHSDSuauef4XwW2Ax/QmSVVv0Wn8+ZDDtez
+ ENOWRiLPFdb26uHb6+4dvjvGXRim0Up4ibJvSdY8Mm2+LQYdH0oOSTeqvaarISnt
+ OCxkipK5sjFk4OWb6c1lXAvhMrbQ6Ufcmmn1w2YT7j1DX73zlU+vVwZ01z58LxoI
+ DDUiSHOuo27zbtWWpX6yJmShggd+Rpp3ytrYsQAbcrrvIHzyvSmZHi7lIv1Q9Di1
+ S/1Q1+aWthsG9h2kUwkC3WI+YO2ckLVPz297TI936fel9Dob1YtNRJH/dZIdl5Pd
+ nZ4LRcyyg+89RohjALrlS+gDVlZH+hS8Q6cEK4yBj+2x1xg==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4788ns2axp-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Fri, 13 Jun 2025 16:15:25 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 13 Jun 2025 16:15:24 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 13 Jun 2025 16:15:24 -0700
+Received: from LYYJYPGKF4.marvell.com (unknown [10.28.164.240])
+ by maili.marvell.com (Postfix) with ESMTP id 507075B6931;
+ Fri, 13 Jun 2025 16:15:22 -0700 (PDT)
+From: <pbhagavatula@marvell.com>
+To: <jerinj@marvell.com>, Amit Prakash Shukla <amitprakashs@marvell.com>,
+ Pavan Nikhilesh <pbhagavatula@marvell.com>
+CC: <dev@dpdk.org>
+Subject: [PATCH] doc: fix missing feature matrix for event device
+Date: Sat, 14 Jun 2025 04:45:19 +0530
+Message-ID: <20250613231519.32933-1-pbhagavatula@marvell.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 MIME-Version: 1.0
-References: <20250613081018.2790825-1-david.marchand@redhat.com>
- <CAJFAV8ziisXinUmbOSZ7r2EHoioqgEL-KS7Y1dCY=MH2AmnxDQ@mail.gmail.com>
-In-Reply-To: <CAJFAV8ziisXinUmbOSZ7r2EHoioqgEL-KS7Y1dCY=MH2AmnxDQ@mail.gmail.com>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Fri, 13 Jun 2025 17:48:30 -0400
-X-Gm-Features: AX0GCFvL8NoHSjTxb-00ioWKZCt0dTMvZxNG1-cmbEBwHBocuhNog4j7pqnHwyw
-Message-ID: <CAJvnSUD8aW-y_qdLN_GnRQfUns9H2QZcbKjg3TtauRXJ4Ojx4g@mail.gmail.com>
-Subject: Re: [PATCH] common/mlx5: fix dependency detection on Windows
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, andremue@linux.microsoft.com, 
- Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>, 
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, 
- Matan Azrad <matan@nvidia.com>, Thomas Monjalon <thomas@monjalon.net>, 
- Tal Shnaiderman <talshn@nvidia.com>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>, 
- Manit Mahajan <mmahajan@iol.unh.edu>
-Content-Type: multipart/alternative; boundary="00000000000060dc4e06377b1436"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: sVwbd_DGNwtSi3VLHpzlLJmYfRtpJC-Y
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEzMDE3MSBTYWx0ZWRfX9musmXX/NBMv
+ DpsRgmInCAseSufSj1VWsSp1fbLcj2CrkEV2XTBMgsKSygYzNMKepp1aiyqvtc13gJ+l7YvZDme
+ n9BRicCHRrb7L81U3vQzLnglrojU5wbbhviE7Sl1rEXsymzDEwgqqsd36vRTsEzLtjHhN2oSnXI
+ CO9/jJn+Yj6W0sI5d99K7cpIceWuNEx1eKUf73ybYAeEXsgI0CNuioYFV/My1C26O5qAKg8wcZ9
+ N0rT4UlgVDug1ExKnpcuz0zBJFv6Mj+lRfvZtBxQxxRlxaBX5Res4u5Z/uePly1eOVQqvrrjPGg
+ a3AxrH/k7D6ypgPxJD/qaMJTCztpezkSffubfIZo+8Vt8RrEWeEEmjKUKGMMTB1aa4grGunHXRj
+ AKbAkFeCpNL69uQzVMLlFM5wbqA5YARVyTU1ZteSQ61KqSWCfymCvL7otAwZFRQAJ4jt0hP9
+X-Proofpoint-ORIG-GUID: sVwbd_DGNwtSi3VLHpzlLJmYfRtpJC-Y
+X-Authority-Analysis: v=2.4 cv=G7ocE8k5 c=1 sm=1 tr=0 ts=684cb10d cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=RCNVbf192YJgKJdcm-wA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-13_04,2025-06-13_01,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -77,85 +77,110 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---00000000000060dc4e06377b1436
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: Pavan Nikhilesh <pbhagavatula@marvell.com>
 
-Good catch David on this system having a partial install of mlx5dev
-header/library.
+Fix missing feature matrix addition for event device DMA and
+vector adapters.
 
-NVIDIA guys, do any of you have a link to the current install procedure or
-package? If not I can probably find whatever is correct. Thanks.
+Fixes: 66a30a29387a ("eventdev/dma: introduce DMA adapter")
+Fixes: e12c3754da7a ("eventdev/vector: introduce event vector adapter")
 
-Either way we'll update devx on the Windows system Monday - thanks for your
-patience.
+Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
+---
+ .gitignore                             |  2 ++
+ doc/guides/conf.py                     | 12 +++++++++++-
+ doc/guides/eventdevs/features/cnxk.ini |  8 ++++++++
+ doc/guides/eventdevs/overview.rst      | 15 +++++++++++++++
+ 4 files changed, 36 insertions(+), 1 deletion(-)
 
-On Fri, Jun 13, 2025 at 5:42=E2=80=AFAM David Marchand <david.marchand@redh=
-at.com>
-wrote:
+diff --git a/.gitignore b/.gitignore
+index 48b4ce2908f9..c5349f6e979c 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -26,6 +26,8 @@ doc/guides/eventdevs/overview_rx_adptr_feature_table.txt
+ doc/guides/eventdevs/overview_tx_adptr_feature_table.txt
+ doc/guides/eventdevs/overview_crypto_adptr_feature_table.txt
+ doc/guides/eventdevs/overview_timer_adptr_feature_table.txt
++doc/guides/eventdevs/overview_dma_adptr_feature_table.txt
++doc/guides/eventdevs/overview_vector_adptr_feature_table.txt
+ 
+ # ignore generated ctags/cscope files
+ cscope.out.po
+diff --git a/doc/guides/conf.py b/doc/guides/conf.py
+index 565f5705d8b8..4b1059c202b5 100644
+--- a/doc/guides/conf.py
++++ b/doc/guides/conf.py
+@@ -477,11 +477,21 @@ def setup(app):
+                             'Crypto adapter Features',
+                             'Features availability for Crypto adapters',
+                             'Feature')
+-    table_file = dirname(__file__) + '/eventdevs/overview_timer_adptr_feature_table.txt'
++    table_file = dirname(__file__) + '/eventdevs/overview_dma_adptr_feature_table.txt'
+     generate_overview_table(table_file, 5,
++                            'DMA adapter Features',
++                            'Features availability for DMA adapters',
++                            'Feature')
++    table_file = dirname(__file__) + '/eventdevs/overview_timer_adptr_feature_table.txt'
++    generate_overview_table(table_file, 6,
+                             'Timer adapter Features',
+                             'Features availability for Timer adapters',
+                             'Feature')
++    table_file = dirname(__file__) + '/eventdevs/overview_vector_adptr_feature_table.txt'
++    generate_overview_table(table_file, 7,
++                            'Vector adapter Features',
++                            'Features availability for Vector adapters',
++                            'Feature')
+ 
+     if Version(sphinx_version) < Version('1.3.1'):
+         print('Upgrade sphinx to version >= 1.3.1 for '
+diff --git a/doc/guides/eventdevs/features/cnxk.ini b/doc/guides/eventdevs/features/cnxk.ini
+index 5ba528f0861d..af093dda61f3 100644
+--- a/doc/guides/eventdevs/features/cnxk.ini
++++ b/doc/guides/eventdevs/features/cnxk.ini
+@@ -29,6 +29,14 @@ event_vector               = Y
+ internal_port              = Y
+ event_vector               = Y
+ 
++;
++; Features of a default DMA adapter.
++;
++[DMA adapter Features]
++internal_port_op_new       = Y
++internal_port_op_fwd       = Y
++internal_port_vchan_ev_bind =
++
+ [Crypto adapter Features]
+ internal_port_op_fwd       = Y
+ session_private_data       = Y
+diff --git a/doc/guides/eventdevs/overview.rst b/doc/guides/eventdevs/overview.rst
+index 3c5ee515f8b5..decae3bd4eaa 100644
+--- a/doc/guides/eventdevs/overview.rst
++++ b/doc/guides/eventdevs/overview.rst
+@@ -32,9 +32,24 @@ Crypto device adapter supported features
+ 
+ .. include:: overview_crypto_adptr_feature_table.txt
+ 
++DMA adapter supported features
++------------------------------
++
++.. _table_dma_adapter_features:
++
++.. include:: overview_dma_adptr_feature_table.txt
++
++
+ Timer adapter supported features
+ --------------------------------
+ 
+ .. _table_timer_adapter_features:
+ 
+ .. include:: overview_timer_adptr_feature_table.txt
++
++Event vector adapter supported features
++---------------------------------------
++
++.. _table_vector_adapter_features:
++
++.. include:: overview_vector_adptr_feature_table.txt
+-- 
+2.39.5 (Apple Git-154)
 
-> On Fri, Jun 13, 2025 at 10:10=E2=80=AFAM David Marchand
-> <david.marchand@redhat.com> wrote:
-> >
-> > Don't *require* mlx5dev library when testing its presence.
->
-> For the record, this was seen in a UNH env that seems to have
-> partially installed mlx5 dependencies.
->
-> Has header "mlx5devx.h" : YES
-> drivers\common\mlx5\windows\meson.build:10:0: ERROR: C shared or
-> static library 'mlx5devx' not found
->
-> >
-> > Fixes: 85c51a4ffab8 ("common/mlx5: get Windows dependency from standard
-> variables")
-> >
-> > Signed-off-by: David Marchand <david.marchand@redhat.com>
->
->
-> --
-> David Marchand
->
->
-
---00000000000060dc4e06377b1436
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">Good catch David on this system having a partial install o=
-f mlx5dev header/library.<div><br></div><div>NVIDIA guys, do any of you hav=
-e a link to the current install procedure or package? If not I can probably=
- find whatever is correct. Thanks.</div><div><br></div><div>Either=C2=A0way=
- we&#39;ll update devx on the=C2=A0Windows system Monday - thanks for your =
-patience.</div></div><br><div class=3D"gmail_quote"><div dir=3D"ltr" class=
-=3D"gmail_attr">On Fri, Jun 13, 2025 at 5:42=E2=80=AFAM David Marchand &lt;=
-<a href=3D"mailto:david.marchand@redhat.com" target=3D"_blank">david.marcha=
-nd@redhat.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" sty=
-le=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);paddi=
-ng-left:1ex">On Fri, Jun 13, 2025 at 10:10=E2=80=AFAM David Marchand<br>
-&lt;<a href=3D"mailto:david.marchand@redhat.com" target=3D"_blank">david.ma=
-rchand@redhat.com</a>&gt; wrote:<br>
-&gt;<br>
-&gt; Don&#39;t *require* mlx5dev library when testing its presence.<br>
-<br>
-For the record, this was seen in a UNH env that seems to have<br>
-partially installed mlx5 dependencies.<br>
-<br>
-Has header &quot;mlx5devx.h&quot; : YES<br>
-drivers\common\mlx5\windows\meson.build:10:0: ERROR: C shared or<br>
-static library &#39;mlx5devx&#39; not found<br>
-<br>
-&gt;<br>
-&gt; Fixes: 85c51a4ffab8 (&quot;common/mlx5: get Windows dependency from st=
-andard variables&quot;)<br>
-&gt;<br>
-&gt; Signed-off-by: David Marchand &lt;<a href=3D"mailto:david.marchand@red=
-hat.com" target=3D"_blank">david.marchand@redhat.com</a>&gt;<br>
-<br>
-<br>
--- <br>
-David Marchand<br>
-<br>
-</blockquote></div>
-
---00000000000060dc4e06377b1436--
