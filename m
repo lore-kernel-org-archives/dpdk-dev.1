@@ -2,30 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10BBCC71135
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Jun 2025 08:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9968CC71135
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Jun 2025 08:44:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AB87642ED0;
-	Fri, 13 Jun 2025 10:42:52 +0200 (CEST)
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
- by mails.dpdk.org (Postfix) with ESMTP id 257CE42EC3;
- Fri, 13 Jun 2025 10:42:48 +0200 (CEST)
-X-QQ-mid: esmtpsz18t1749804166t55244157
-X-QQ-Originating-IP: 2WuNeJh7K76jhl8X/Sumav3Pk0/e99Ob82b1VVc0SWA=
+	by mails.dpdk.org (Postfix) with ESMTP id C2A5242F53;
+	Fri, 13 Jun 2025 10:42:54 +0200 (CEST)
+Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+ by mails.dpdk.org (Postfix) with ESMTP id 4CD8142ED0;
+ Fri, 13 Jun 2025 10:42:50 +0200 (CEST)
+X-QQ-mid: esmtpsz18t1749804168tcd7c7bf5
+X-QQ-Originating-IP: RI7Jnhmu3v/7cNVgjAMHlCU3TfVXhwFZPYkRVfZDRsg=
 Received: from lap-jiawenwu.trustnetic.com ( [36.20.60.58])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Fri, 13 Jun 2025 16:42:45 +0800 (CST)
+ id ; Fri, 13 Jun 2025 16:42:47 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 7477168587411949137
+X-BIZMAIL-ID: 4820752736188005470
 EX-QQ-RecipientCnt: 4
 From: Jiawen Wu <jiawenwu@trustnetic.com>
 To: dev@dpdk.org
 Cc: zaiyuwang@trustnetic.com, Jiawen Wu <jiawenwu@trustnetic.com>,
  stable@dpdk.org
-Subject: [PATCH v3 16/17] net/ngbe: restrict VLAN strip configuration on VF
-Date: Fri, 13 Jun 2025 16:41:58 +0800
-Message-Id: <20250613084159.22184-17-jiawenwu@trustnetic.com>
+Subject: [PATCH v3 17/17] net/txgbe: add missing LRO flag in mbuf when LRO
+ enabled
+Date: Fri, 13 Jun 2025 16:41:59 +0800
+Message-Id: <20250613084159.22184-18-jiawenwu@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20250613084159.22184-1-jiawenwu@trustnetic.com>
 References: <00DEAE896AFE0D2D+20250606080117.183198-1-jiawenwu@trustnetic.com>
@@ -34,23 +35,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NQzH8pzEc5hGbGVq1c1IWQ+tIJ9cb3t0nPeRn1VtxMfObHWFvyjub0Mt
- gJ/3od41jzUzocL9MMILtZGXEPav2fjjHjvTCSzUnrNG9oSOtk6bWJss1nmIoINAlJW54WQ
- 1V8hCcH8+GNL6tfApxjcNgXH/3Hl6OC1HypFdhhRPWr55//cRL38bCeYCmKlPfXikliBieH
- eT8s2RUVIeboElVCewo3zUJ+tsI7pEt1Ob+whhEzSxU+vGY7YSm2+T6FbiqdnyfJuoT/KfO
- 7144pYPju3/3gVh47VtfHm3GvXagbZIrmNbIO+aG4bQJ+7pKTjH8PFOSa5pOrhVJglY0d78
- 5xoZFkmHdlxxp7v7EkEqYI1hSINtP37HH95KZ5N6+g2GUKwHkrcRBknxnNGvy9bQYSlffwQ
- 54n8Yzx0nMt/+m0CRbTwTyF8F0RXQKZtRNPn5wjlx7C7WLSauugG18sIVida8Hz+dCM4Mss
- hMPlw1KHYNFuRd2jI578cBsXFfLOuKgMCOylLm32P/PWLsLO3QoBsETydql9YDhCRFAEKXG
- +Ia8IS02cv35wcVywb3GE7xq7D9Y59N/MlVBgA9CbS2G/0R52ZZ8A/zKn/d8MRh856u5t38
- fHL+1TIYLPUmpuNQ2u8zprxB9YWNs5nV1EqG4lNBTEbPyivIAYya0d1A9DSE1Tb/SNr9cPx
- MyR4kKkZNmjFTAyajS9I8vxrSRHK+ZuPRyctgtjaI6peyJyR7Kze/o/SW7cb7r1060bp+mz
- FYIRw9Q8DaPSGToh7ne2VZygbJR13NzeSXgMKUQxNQXjT8ybkI2BzLnODLL43ZYewwArhpZ
- UusmKK8blHuwcjEX4hsQumTA9/xl0qBjq4TpMnt3/mgziCUlE/SFF/jLk5pnwhhZWvcWJ1k
- 3zeQdJryImXj9IraiOzdozR0q223LYHo8N2pSA0NUkAAyjySQlCIxoBtVQgK7dQPaiNAiuF
- /x+GoquGVKhTHg+Q8YcHAj3ZOtnpfYbHYXs5HIzu5ha9OoTowE/S4u/TOS8fBDtzaA3E+gZ
- sB/0fLlzGhyVf/1mZ/GSykQhVatRD8w06D2P5dG9lHuWewqF+78fCV6DE0a60=
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-XMAILINFO: OYMEOeTae7mlIN3nWYrY+O+kV/2MtUYvmD+rN+NbN+Tbe1mIBTcFs1vi
+ Ene/4HHCu0oTJIiU6rPdsEz35Z356sT7pFAlfQ0GhbFxuCGs3hSdE+ONZMVafMh+mtOiaKl
+ pySFuDGklsAmf2JmXheCiaczxQPiPBz2i41mv8m3/FbLTVr5v7dFdE3K+cTS3WJ0cP1hq4M
+ XFQEQzAa4JUZIGBFXqYb65qFvVQzNaoBq/CWdbwxu8uoUWc3JPqJvdCMQavAP0wJlgKfxcM
+ V0qXZfw8oa2t+c+T1GkumQrBobCPn7pjRdi9c5/kfLO+nypHgA3rbRSWLWpLxJhXWWyk8xP
+ k0gjondVxjAjixHBjZCzOPzZiWyjkCp/wcZiluVzvAOVc2NK6fdXBzim6izXJFwwTx2vDrd
+ +FdjpmFMP2BGgE1YFloLkZWSKHuKJwXwV6qOpku5cFdZ5ToTY0rl0/mwmhLPe1hVzlCXYvi
+ OIfLwHWp4tJl3+7pvnj4j5Q1mPDhQ5s4WYUXVqND+trG4TCqhiAHFSgBjsWqliy82mmmazK
+ M3m+IeyUnsdlnQ1Z1WRL9TXG/gyW0a4CEVKgiai85P9gH8N1dW5p4QtLO4Dh6wVG9DWKCba
+ m/2l/7H1nc79rFQrC/0iHNLLiB/GBnkB8KJJ7QGp0PlBwzvj5yxnl7eU8MQbV4WWoPLDQ86
+ Ij+1uKJwO9fSpCWomtoXn0TA68KOFqeIl697KJb1cNYespqpe5yxsp8J/fKM1Lr/Fw5m3pI
+ ESpj2bg5yPfjUnbAfkfqJ8MtGgokl2p2SaIqhW0oBGehjr0DA5f70HNuaV2SytpguhdvwNx
+ Xv2IWgLLop9L4Xt4KHaYJhtFy5fuwt+b5yy4l/n+At5YDMGCf5XNpwIJELJHyRUz62wzCD4
+ fK/mTzF6sxhG6ZHIDoneAgK4hHuwaPCCDNOrusTXV0RebhA3ySLfn08K7I1y9yotCdY8wkG
+ kyFh6wBd3Cr3kuSMrVFwfaP/pGPUyLf+MISdxV4MIYjK3BO2sSy7I9DzBlRRZZXwt6lDnzt
+ gsaqIWYIu0U8bAGA00XR9KFvbMCekCMLoNfpE6vytOITUhuaaRbSKK3YLkV1/b4iksmdATQ
+ g==
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -65,79 +67,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Fix the same issue as PF in commit baca8ec066dc ("net/ngbe: restrict
-configuration of VLAN strip offload").
+When LRO is enabled, the driver must set the LRO flag in received
+aggregated packets to indicate LRO processing to upper-layer
+applications. Add the missing LRO flag into the ol_flags field of mbuf
+to fix it.
 
-There is a hardware limitation that Rx ring config register is not
-writable when Rx ring is enabled, i.e. the TXGBE_RXCFG_ENA bit is set.
-But disabling the ring when there is traffic will cause ring get stuck.
-So restrict the configuration of VLAN strip offload only if device is
-started.
-
-Fixes: f47dc03c706f ("net/ngbe: add VLAN ops for VF device")
+Fixes: 0e484278c85f ("net/txgbe: support Rx")
 Cc: stable@dpdk.org
 
 Signed-off-by: Jiawen Wu <jiawenwu@trustnetic.com>
 ---
- drivers/net/ngbe/ngbe_ethdev_vf.c | 24 ++++++++++++++++++++++--
- 1 file changed, 22 insertions(+), 2 deletions(-)
+ drivers/net/txgbe/txgbe_rxtx.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ngbe/ngbe_ethdev_vf.c b/drivers/net/ngbe/ngbe_ethdev_vf.c
-index 5d68f1602d..846bc981f6 100644
---- a/drivers/net/ngbe/ngbe_ethdev_vf.c
-+++ b/drivers/net/ngbe/ngbe_ethdev_vf.c
-@@ -828,7 +828,7 @@ ngbevf_vlan_filter_set(struct rte_eth_dev *dev, uint16_t vlan_id, int on)
- }
- 
- static void
--ngbevf_vlan_strip_queue_set(struct rte_eth_dev *dev, uint16_t queue, int on)
-+ngbevf_vlan_strip_q_set(struct rte_eth_dev *dev, uint16_t queue, int on)
- {
- 	struct ngbe_hw *hw = ngbe_dev_hw(dev);
- 	uint32_t ctrl;
-@@ -848,6 +848,19 @@ ngbevf_vlan_strip_queue_set(struct rte_eth_dev *dev, uint16_t queue, int on)
- 	ngbe_vlan_hw_strip_bitmap_set(dev, queue, on);
- }
- 
-+static void
-+ngbevf_vlan_strip_queue_set(struct rte_eth_dev *dev, uint16_t queue, int on)
-+{
-+	struct ngbe_hw *hw = ngbe_dev_hw(dev);
-+
-+	if (!hw->adapter_stopped) {
-+		PMD_DRV_LOG(ERR, "Please stop port first");
-+		return;
-+	}
-+
-+	ngbevf_vlan_strip_q_set(dev, queue, on);
-+}
-+
- static int
- ngbevf_vlan_offload_config(struct rte_eth_dev *dev, int mask)
- {
-@@ -860,7 +873,7 @@ ngbevf_vlan_offload_config(struct rte_eth_dev *dev, int mask)
- 		for (i = 0; i < dev->data->nb_rx_queues; i++) {
- 			rxq = dev->data->rx_queues[i];
- 			on = !!(rxq->offloads &	RTE_ETH_RX_OFFLOAD_VLAN_STRIP);
--			ngbevf_vlan_strip_queue_set(dev, i, on);
-+			ngbevf_vlan_strip_q_set(dev, i, on);
- 		}
- 	}
- 
-@@ -870,6 +883,13 @@ ngbevf_vlan_offload_config(struct rte_eth_dev *dev, int mask)
- static int
- ngbevf_vlan_offload_set(struct rte_eth_dev *dev, int mask)
- {
-+	struct ngbe_hw *hw = ngbe_dev_hw(dev);
-+
-+	if (!hw->adapter_stopped && (mask & RTE_ETH_VLAN_STRIP_MASK)) {
-+		PMD_DRV_LOG(ERR, "Please stop port first");
-+		return -EPERM;
-+	}
-+
- 	ngbe_config_vlan_strip_on_all_queues(dev, mask);
- 
- 	ngbevf_vlan_offload_config(dev, mask);
+diff --git a/drivers/net/txgbe/txgbe_rxtx.c b/drivers/net/txgbe/txgbe_rxtx.c
+index a85d417ff6..e6f33739c4 100644
+--- a/drivers/net/txgbe/txgbe_rxtx.c
++++ b/drivers/net/txgbe/txgbe_rxtx.c
+@@ -1793,6 +1793,8 @@ txgbe_fill_cluster_head_buf(struct rte_mbuf *head, struct txgbe_rx_desc *desc,
+ 	pkt_flags = rx_desc_status_to_pkt_flags(staterr, rxq->vlan_flags);
+ 	pkt_flags |= rx_desc_error_to_pkt_flags(staterr);
+ 	pkt_flags |= txgbe_rxd_pkt_info_to_pkt_flags(pkt_info);
++	if (TXGBE_RXD_RSCCNT(desc->qw0.dw0))
++		pkt_flags |= RTE_MBUF_F_RX_LRO;
+ 	head->ol_flags = pkt_flags;
+ 	head->packet_type = txgbe_rxd_pkt_info_to_pkt_type(pkt_info,
+ 						rxq->pkt_type_mask);
 -- 
 2.48.1
 
