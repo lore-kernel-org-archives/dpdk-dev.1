@@ -2,51 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77449C71135
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Jun 2025 08:07:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 324B5C61DB2
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Jun 2025 08:08:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CAD7742E81;
-	Fri, 13 Jun 2025 10:07:57 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5A29A42E7B;
+	Fri, 13 Jun 2025 10:08:40 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id D003E42E81
- for <dev@dpdk.org>; Fri, 13 Jun 2025 10:07:56 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 5D5F5402E2
+ for <dev@dpdk.org>; Fri, 13 Jun 2025 10:08:38 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1749802076;
+ s=mimecast20190719; t=1749802118;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=ChsA/5iaMANg/Q+FfNTZXoIrwXh2aDF1Yi/uIFeN1NA=;
- b=QrpuV8Z/X1JBiAzJbTwgT16VHLA6/a+yNY2UmaU0lUUQymzhIDyylL2WKfOGY6qruNC/+j
- 7O0OccmOEoe/Zd7M15ZFuFh+wFkAXGHazRSvec5NT7/hgfA+mzw3kxy8zPzz8R0dY4V3S7
- CM7Iv8kJLgSYCGuXo7xkmn4qUZB7nkc=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ bh=/vUlWcMHEOzdjKTaKxsqls1Jr7uAHVs17T8lrzP7DMU=;
+ b=K4yQJxpACyb5vyRKyAkA3cJaK71NWGPkScuTdY9r61sexAuOoGUFsYnTMC55cbUx8NSyP9
+ 19y84nUSkI5iAKMhveToGxsytO52pPxw+VOPPcx1KYqrYwaliAHCNxozLSNCaxhHH3b9yt
+ CDZtUSqwWIjWpfIH5oG1qB4TF3lhKtI=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-296-aeEIshURP8Oxt_A94MN2Qg-1; Fri,
- 13 Jun 2025 04:07:53 -0400
-X-MC-Unique: aeEIshURP8Oxt_A94MN2Qg-1
-X-Mimecast-MFC-AGG-ID: aeEIshURP8Oxt_A94MN2Qg_1749802072
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-375-8a800ZniM-KV8cEOMpYc3A-1; Fri,
+ 13 Jun 2025 04:08:34 -0400
+X-MC-Unique: 8a800ZniM-KV8cEOMpYc3A-1
+X-Mimecast-MFC-AGG-ID: 8a800ZniM-KV8cEOMpYc3A_1749802113
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 56BF719560AA; Fri, 13 Jun 2025 08:07:52 +0000 (UTC)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 7384B180028D; Fri, 13 Jun 2025 08:08:33 +0000 (UTC)
 Received: from [10.44.22.3] (unknown [10.44.22.3])
- by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 5F8941956050; Fri, 13 Jun 2025 08:07:50 +0000 (UTC)
-Message-ID: <f4fd1522-7721-486e-9c24-fca88052679d@redhat.com>
-Date: Fri, 13 Jun 2025 10:07:47 +0200
+ by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 7ED3530044CC; Fri, 13 Jun 2025 08:08:26 +0000 (UTC)
+Message-ID: <f29b7a1f-5e1d-446e-8fca-45c8e7f8e451@redhat.com>
+Date: Fri, 13 Jun 2025 10:08:23 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] vhost: fix net control virtqueue used length
-To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, dev@dpdk.org
-Cc: David Marchand <david.marchand@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>, stable@dpdk.org
-References: <20250605113534.917903-1-eperezma@redhat.com>
+Subject: Re: [PATCH] net/virtio: Fix check of threshold for Tx freeing
+To: Hengqi Chen <hengqi.chen@gmail.com>, dev@dpdk.org
+Cc: Baoyuan Li <updoing@sina.com>, Chenbo Xia <chenbox@nvidia.com>
+References: <20250609072347.1748785-1-hengqi.chen@gmail.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -91,14 +90,14 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20250605113534.917903-1-eperezma@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <20250609072347.1748785-1-hengqi.chen@gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: nVq4WNYiJLO8i7hACLwMhTo7Lc9fVVVH82WfWCFB5gA_1749802072
+X-Mimecast-MFC-PROC-ID: KFNOxM2fYCgGbdr63-mRjWydZoEOtwU90OJETjBeSwc_1749802113
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -114,32 +113,47 @@ Errors-To: dev-bounces@dpdk.org
 
 
 
-On 6/5/25 1:35 PM, Eugenio Pérez wrote:
-> By the standard this is the number of bytes written.
+On 6/9/25 9:23 AM, Hengqi Chen wrote:
+> Like most dirvers, make the fast path of virtio_xmit_cleanup() behave as
+> described by the comments of rte_eth_txconf::tx_free_thresh ([0]):
+>      Start freeing Tx buffers if there are
+>      less free descriptors than this value.
 > 
-> Fixes: 474f4d7840ad ("vhost: add control virtqueue")
-> Cc: stable@dpdk.org
+> The rationale behind this change is that:
+>    * vq->vq_nentries is set during device probe with the queue size specified
+>      by vhost backend, this value does not reflect the real nb_tx_desc
+>    * the real available tx desc is set to vq->vq_free_cnt via the nb_tx_desc
+>      param of rte_eth_tx_queue_setup() API
+>    * so `nb_used > vq->vq_nentries - vq->vq_free_thresh` could never be true
+>      if say nb_tx_desc=2048, vq->vq_nentries=4096, vq->vq_free_thresh=32,
+>      see bug report 1716 ([1]) for details.
 > 
-> Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
+> Bugzilla ID: 1716
+> 
+>    [0]: https://github.com/DPDK/dpdk/commit/72514b5d5543
+>    [1]: https://bugs.dpdk.org/show_bug.cgi?id=1716
+> 
+> Signed-off-by: Baoyuan Li <updoing@sina.com>
+> Signed-off-by: Hengqi Chen <hengqi.chen@gmail.com>
 > ---
->   lib/vhost/virtio_net_ctrl.c | 2 +-
+>   drivers/net/virtio/virtio_rxtx.c | 2 +-
 >   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/lib/vhost/virtio_net_ctrl.c b/lib/vhost/virtio_net_ctrl.c
-> index 63c0a06b4f..603a8db728 100644
-> --- a/lib/vhost/virtio_net_ctrl.c
-> +++ b/lib/vhost/virtio_net_ctrl.c
-> @@ -229,7 +229,7 @@ virtio_net_ctrl_push(struct virtio_net *dev, struct virtio_net_ctrl_elem *ctrl_e
+> diff --git a/drivers/net/virtio/virtio_rxtx.c b/drivers/net/virtio/virtio_rxtx.c
+> index edecd2011f..ab97f03d7d 100644
+> --- a/drivers/net/virtio/virtio_rxtx.c
+> +++ b/drivers/net/virtio/virtio_rxtx.c
+> @@ -1873,7 +1873,7 @@ virtio_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
 >   
->   	used_elem = &cvq->used->ring[cvq->last_used_idx & (cvq->size - 1)];
->   	used_elem->id = ctrl_elem->head_idx;
-> -	used_elem->len = ctrl_elem->n_descs;
-> +	used_elem->len = sizeof(*ctrl_elem->desc_ack);
+>   	nb_used = virtqueue_nused(vq);
 >   
->   	cvq->last_used_idx++;
+> -	if (likely(nb_used > vq->vq_nentries - vq->vq_free_thresh))
+> +	if (likely(vq->vq_free_cnt < vq->vq_free_thresh))
+>   		virtio_xmit_cleanup(vq, nb_used);
 >   
+>   	for (nb_tx = 0; nb_tx < nb_pkts; nb_tx++) {
 
-Applied to next-virtio/for-net-next.
+Applied to next-virtio/for-net-next
 
 Thanks,
 Maxime
