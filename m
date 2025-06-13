@@ -2,61 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F0D4C71136
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Jun 2025 19:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50673C71135
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Jun 2025 21:53:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 068EF402C1;
-	Fri, 13 Jun 2025 21:00:39 +0200 (CEST)
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com
- [209.85.216.50]) by mails.dpdk.org (Postfix) with ESMTP id B5139402B6
- for <dev@dpdk.org>; Fri, 13 Jun 2025 21:00:37 +0200 (CEST)
-Received: by mail-pj1-f50.google.com with SMTP id
- 98e67ed59e1d1-311a6236effso2187808a91.2
- for <dev@dpdk.org>; Fri, 13 Jun 2025 12:00:37 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 12AC0402C1;
+	Fri, 13 Jun 2025 23:53:45 +0200 (CEST)
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com
+ [209.85.216.54]) by mails.dpdk.org (Postfix) with ESMTP id A2CE4402B6
+ for <dev@dpdk.org>; Fri, 13 Jun 2025 23:53:43 +0200 (CEST)
+Received: by mail-pj1-f54.google.com with SMTP id
+ 98e67ed59e1d1-311da0bef4aso2922832a91.3
+ for <dev@dpdk.org>; Fri, 13 Jun 2025 14:53:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1749841237; x=1750446037; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1749851622; x=1750456422; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=ktiHUJqkqLHsO+FbqiIaDeo9ppwdH9e4tCmRMkDURPY=;
- b=Dcos22qs0UI+ch6cCWhuw/ZCm9i01BS837/ZtEM7p0Jtc7u91aXKn8aYtLx2shodgf
- aYE7/SoKOKdxOXMkSIN+jWZfV6oUazbZKX//uvJPmx7eClBZ5WL5a2qZEc9plL14sb81
- K8vlG4aMQCEh/gy4BSfzgdPVo5PReoryP2mh0=
+ bh=mi9OIlCYTdabNio6AptUnBHRXlsqNAk+0BVNK9IGsS4=;
+ b=bpVR8x7E/eaIbOgO3FXdF6aqC9Fz6XzSRjljQ9Pd7G3qBMbfn6qDQXJAluEy2IbX9H
+ Otr+QqJPMkBnaL2GegcvjUmXoXLj4JG9+V9FbAorpyoM+V+V7AgFs8EX1HdaIWwtR5+J
+ 6XWof6rH3ZTs0ro+6LYOHgvcTGPPohv/JVlZQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749841237; x=1750446037;
+ d=1e100.net; s=20230601; t=1749851622; x=1750456422;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=ktiHUJqkqLHsO+FbqiIaDeo9ppwdH9e4tCmRMkDURPY=;
- b=OoX0QQYS4YT2F3fpVgB/ElHLzhqWebqqG2VWKng6p01wmHM3LX4YPFpuoXDnTJcODQ
- UpdNzC3zrKUN2qv9kbePcFM/DgQ0n/eLheOFOldXEtMcMJtQJHlbva+U+fC+Q+cU6NAs
- bxZwtjnSCAx7VunDV25a8MV7HsJU8LsjT3ocfElU/CaspC9l6XqrVyk+7yxHW1zlGb2M
- 1MacBGDxhPbt3D37l3cwLhr5JjSdCnMZhc95N14DRULquCqNETfaD3RUqePWLTcbZ+4S
- rPIiUyieyS8uESXSBmimvm5UCrmR7zV0WIvEgkz5IOA2V6bnzS6ykIKk4f8zQwW3U27A
- /3vA==
-X-Gm-Message-State: AOJu0YxJP0zXdmXK3uA8ECfxpA4gjErtgMXyCczom2fA+JW6eFXxXz9u
- cCIkea2pQfNxd19ljBpU3FYjUOCWTVCFp+6wtKsxoJzjQ3c0v6X8EPL+4f8Ly1vQNCt96VYcsNJ
- F1t5S77tI/EfvTeGvVKyKsTrznm0AAzSx5CiLKeOKhQ==
-X-Gm-Gg: ASbGnctYipR8zDb2BVdLX/nZG7UlhzUz1J9gEfY663X5rS41spC2BhOWwZV/3XwAHqM
- UyebSUvH2tpqYRUiSlTBhTzXJynIUFt/aDT4cV73CCR8kPICOkT3i4JTtEPIyWT7zfdJUMKG7VM
- R4x1kVK3ptZqhwTcqIjxWq8LP9vQj2Dor8KA9RQckCHPgti73PYj5ct7oxJnBWG633Ntl60TGSn
- j1x
-X-Google-Smtp-Source: AGHT+IEAwiCW0+jhiPwJWAtWT/trQLp9vnIn1WuxvP3vfbgoZOepcfYukMS5fN75m76fpvWsBBupLBmeu3fsiF2xe54=
-X-Received: by 2002:a17:90b:1d50:b0:312:da0d:3d85 with SMTP id
- 98e67ed59e1d1-313f1ca1042mr1065845a91.6.1749841236725; Fri, 13 Jun 2025
- 12:00:36 -0700 (PDT)
+ bh=mi9OIlCYTdabNio6AptUnBHRXlsqNAk+0BVNK9IGsS4=;
+ b=VBj62rPPdXQeMXjJWFd8LKb9SUIDPIvSfFG9u8FofWP6IyeCE9S3y4KYtgOeyoQLUO
+ IqzLkG0vTaNq9SaVSxRqr21O7k5JeC+KdBnbN9+UdeO3gVKcFaYz+I1zdAnel3VGcLRI
+ gQHNA+Gd9Ex3bYzw3EtYuJqUwXmAMBZS9lmt8o8tZUX6pVmW2XmLKuqKGEUj2gsi+Yb/
+ Oc1WtaUbW3GFDvWhK8WZqt047aOOwbrfJpc4ePCtd2YKXF0eYHzn2rJCKNg8pQKY5vD1
+ g1u256tJSkpBBXa2V2s9nVh9lFlmExosppmaBsVREcB0yPPF2plRxMUPcdurL1Ba3sPa
+ l0zw==
+X-Gm-Message-State: AOJu0YyFhIgRdciUmhYnlQ6+u/qIfy4DuHSTFuyKd7GK8wafGv/5NIay
+ BX6fb/tOE0+90GbcneDDc/22sr4FWKzyvzp07ctUkxj/JfZtPbumBlwsnGS8qrGyQ2nxgwZxdTQ
+ WsquX4qXViQSJ7XkOZsubRjdd0gWbZ44pmdr61CyxTQ==
+X-Gm-Gg: ASbGncucm02kgc2M/1p1Cd4x4Pg3Je7L5Nyo+fpwIcRMu9Azu47W4WPod0xlUFbXgTQ
+ Zkw4jzWUps25qwUHDQEK7whTIIyuI1w2V4Z1Q1rubD7RcnEiQSXJwh70k3PC+1+7a+yjrugiz52
+ LPbVVgN0O8tG6cTAECLmyzTTnMEJej6DDYFNaSm6ZrCYijhAE0SOsC2Pm+4Qt82nrDrD+4xBfW0
+ bA/
+X-Google-Smtp-Source: AGHT+IFzrqabDbZO4mf11/DcQ9PeERfcNtwYcSmV8LZm9C0qMqXzc3oft5MjSxX8iew4JNHU9JG0nvslCuiIKySLVx8=
+X-Received: by 2002:a17:90b:1b48:b0:311:df4b:4b91 with SMTP id
+ 98e67ed59e1d1-313f1ca77e4mr1944366a91.7.1749851622655; Fri, 13 Jun 2025
+ 14:53:42 -0700 (PDT)
 MIME-Version: 1.0
-References: <1735243903-26857-1-git-send-email-andremue@linux.microsoft.com>
- <1749737842-30538-1-git-send-email-andremue@linux.microsoft.com>
- <1749737842-30538-4-git-send-email-andremue@linux.microsoft.com>
-In-Reply-To: <1749737842-30538-4-git-send-email-andremue@linux.microsoft.com>
+References: <20250613081018.2790825-1-david.marchand@redhat.com>
+ <CAJFAV8ziisXinUmbOSZ7r2EHoioqgEL-KS7Y1dCY=MH2AmnxDQ@mail.gmail.com>
+In-Reply-To: <CAJFAV8ziisXinUmbOSZ7r2EHoioqgEL-KS7Y1dCY=MH2AmnxDQ@mail.gmail.com>
 From: Patrick Robb <probb@iol.unh.edu>
-Date: Fri, 13 Jun 2025 14:55:24 -0400
-X-Gm-Features: AX0GCFuTj-J-lDKU0k7nNAelR5eV_fhkZd0HlNIMSK1QfhTXR-PRfqwMUoLiUIY
-Message-ID: <CAJvnSUB29gmV3PuHgvos5HwuuyJDWBt-LgNQyQFs1NWJeHo7sA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] drivers: enable drivers to be compiled with MSVC
-To: Andre Muezerie <andremue@linux.microsoft.com>
-Cc: dev@dpdk.org, Manit Mahajan <mmahajan@iol.unh.edu>
-Content-Type: multipart/alternative; boundary="00000000000054261b063778a92b"
+Date: Fri, 13 Jun 2025 17:48:30 -0400
+X-Gm-Features: AX0GCFvL8NoHSjTxb-00ioWKZCt0dTMvZxNG1-cmbEBwHBocuhNog4j7pqnHwyw
+Message-ID: <CAJvnSUD8aW-y_qdLN_GnRQfUns9H2QZcbKjg3TtauRXJ4Ojx4g@mail.gmail.com>
+Subject: Re: [PATCH] common/mlx5: fix dependency detection on Windows
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, andremue@linux.microsoft.com, 
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>, 
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, 
+ Matan Azrad <matan@nvidia.com>, Thomas Monjalon <thomas@monjalon.net>, 
+ Tal Shnaiderman <talshn@nvidia.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>, 
+ Manit Mahajan <mmahajan@iol.unh.edu>
+Content-Type: multipart/alternative; boundary="00000000000060dc4e06377b1436"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -70,23 +77,85 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---00000000000054261b063778a92b
+--00000000000060dc4e06377b1436
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Recheck-request: iol-compile-amd64-testing
+Good catch David on this system having a partial install of mlx5dev
+header/library.
 
-Just sending this recheck request to ensure that our reporting script is
-fixed and that it reports a FAIL instead of a WARN. Once that's done, we'll
-upgrade the meson version on the system and do another retest.
+NVIDIA guys, do any of you have a link to the current install procedure or
+package? If not I can probably find whatever is correct. Thanks.
 
---00000000000054261b063778a92b
+Either way we'll update devx on the Windows system Monday - thanks for your
+patience.
+
+On Fri, Jun 13, 2025 at 5:42=E2=80=AFAM David Marchand <david.marchand@redh=
+at.com>
+wrote:
+
+> On Fri, Jun 13, 2025 at 10:10=E2=80=AFAM David Marchand
+> <david.marchand@redhat.com> wrote:
+> >
+> > Don't *require* mlx5dev library when testing its presence.
+>
+> For the record, this was seen in a UNH env that seems to have
+> partially installed mlx5 dependencies.
+>
+> Has header "mlx5devx.h" : YES
+> drivers\common\mlx5\windows\meson.build:10:0: ERROR: C shared or
+> static library 'mlx5devx' not found
+>
+> >
+> > Fixes: 85c51a4ffab8 ("common/mlx5: get Windows dependency from standard
+> variables")
+> >
+> > Signed-off-by: David Marchand <david.marchand@redhat.com>
+>
+>
+> --
+> David Marchand
+>
+>
+
+--00000000000060dc4e06377b1436
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"ltr">Recheck-request:=C2=A0iol-compile-amd64-testing<div><br></=
-div><div>Just sending this recheck request to ensure that our reporting scr=
-ipt is fixed and that it reports a FAIL instead of a WARN. Once that&#39;s =
-done, we&#39;ll upgrade the meson version on the system and do another rete=
-st.</div></div>
+<div dir=3D"ltr">Good catch David on this system having a partial install o=
+f mlx5dev header/library.<div><br></div><div>NVIDIA guys, do any of you hav=
+e a link to the current install procedure or package? If not I can probably=
+ find whatever is correct. Thanks.</div><div><br></div><div>Either=C2=A0way=
+ we&#39;ll update devx on the=C2=A0Windows system Monday - thanks for your =
+patience.</div></div><br><div class=3D"gmail_quote"><div dir=3D"ltr" class=
+=3D"gmail_attr">On Fri, Jun 13, 2025 at 5:42=E2=80=AFAM David Marchand &lt;=
+<a href=3D"mailto:david.marchand@redhat.com" target=3D"_blank">david.marcha=
+nd@redhat.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" sty=
+le=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);paddi=
+ng-left:1ex">On Fri, Jun 13, 2025 at 10:10=E2=80=AFAM David Marchand<br>
+&lt;<a href=3D"mailto:david.marchand@redhat.com" target=3D"_blank">david.ma=
+rchand@redhat.com</a>&gt; wrote:<br>
+&gt;<br>
+&gt; Don&#39;t *require* mlx5dev library when testing its presence.<br>
+<br>
+For the record, this was seen in a UNH env that seems to have<br>
+partially installed mlx5 dependencies.<br>
+<br>
+Has header &quot;mlx5devx.h&quot; : YES<br>
+drivers\common\mlx5\windows\meson.build:10:0: ERROR: C shared or<br>
+static library &#39;mlx5devx&#39; not found<br>
+<br>
+&gt;<br>
+&gt; Fixes: 85c51a4ffab8 (&quot;common/mlx5: get Windows dependency from st=
+andard variables&quot;)<br>
+&gt;<br>
+&gt; Signed-off-by: David Marchand &lt;<a href=3D"mailto:david.marchand@red=
+hat.com" target=3D"_blank">david.marchand@redhat.com</a>&gt;<br>
+<br>
+<br>
+-- <br>
+David Marchand<br>
+<br>
+</blockquote></div>
 
---00000000000054261b063778a92b--
+--00000000000060dc4e06377b1436--
