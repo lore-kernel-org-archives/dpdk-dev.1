@@ -2,57 +2,82 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B627FC61DB2
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Jun 2025 08:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA667C71135
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Jun 2025 09:42:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1416E42EDE;
-	Fri, 13 Jun 2025 10:43:08 +0200 (CEST)
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
- by mails.dpdk.org (Postfix) with ESMTP id 51C8B402E2;
- Fri, 13 Jun 2025 10:43:05 +0200 (CEST)
-X-QQ-mid: esmtpsz18t1749804161t60b109cc
-X-QQ-Originating-IP: p151aObuXIE629B3AoD24NNJ4VPSsPwk/dYVxdkQ1WQ=
-Received: from lap-jiawenwu.trustnetic.com ( [36.20.60.58])
- by bizesmtp.qq.com (ESMTP) with 
- id ; Fri, 13 Jun 2025 16:42:41 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 9166380683830308591
-EX-QQ-RecipientCnt: 4
-From: Jiawen Wu <jiawenwu@trustnetic.com>
-To: dev@dpdk.org
-Cc: zaiyuwang@trustnetic.com, Jiawen Wu <jiawenwu@trustnetic.com>,
- stable@dpdk.org
-Subject: [PATCH v3 14/17] net/ngbe: fix incorrect device statistics
-Date: Fri, 13 Jun 2025 16:41:56 +0800
-Message-Id: <20250613084159.22184-15-jiawenwu@trustnetic.com>
-X-Mailer: git-send-email 2.21.0.windows.1
-In-Reply-To: <20250613084159.22184-1-jiawenwu@trustnetic.com>
-References: <00DEAE896AFE0D2D+20250606080117.183198-1-jiawenwu@trustnetic.com>
- <20250613084159.22184-1-jiawenwu@trustnetic.com>
+	by mails.dpdk.org (Postfix) with ESMTP id CFA9242E4E;
+	Fri, 13 Jun 2025 11:42:44 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 1DD7140151
+ for <dev@dpdk.org>; Fri, 13 Jun 2025 11:42:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1749807762;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=rkJh0F4UE/DmL5WT9CJdhB031JFSvATdVQVE5/ty3WE=;
+ b=R9QCV+vMetI6Na8QK7tfpsvgjvIKK0bukXHbGg9XB48Zr5sowHNytsL6xryeZVeURag7/m
+ +NHqldmoPImzDxedfbluEjG88/1EaRSoJI1JA/NZZJGKvpym3z1bKsXyR6C2Pz244G10D+
+ XvzM0bMteXo3Y7yi+5Nd+WRm6jna/wo=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-613-FwN-SA2vPhqpJgAyFg62ig-1; Fri, 13 Jun 2025 05:42:41 -0400
+X-MC-Unique: FwN-SA2vPhqpJgAyFg62ig-1
+X-Mimecast-MFC-AGG-ID: FwN-SA2vPhqpJgAyFg62ig_1749807760
+Received: by mail-lf1-f69.google.com with SMTP id
+ 2adb3069b0e04-553acdcd5a1so946140e87.2
+ for <dev@dpdk.org>; Fri, 13 Jun 2025 02:42:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1749807759; x=1750412559;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=rkJh0F4UE/DmL5WT9CJdhB031JFSvATdVQVE5/ty3WE=;
+ b=Aqni5i7OzhvRcGbL+K8oyiCnLQ0qC/4vauWsarSA0eW5/fbEEwV0tM6432DS6IAN78
+ hpv1fo+EHz3yjpxueBrOTxdCxQm1iTMpNqr8N5v4qKPufS2Wwd9sgjUWVCxjLxie4gVN
+ 5ocCybWuCHdeMSGkJiX1Hs2r4wWXbHegKp/pamcbaeEfwbtt1nHO4eufUEhxldwti/De
+ zjl8PhDPyrxo91AevHH6UCGVal6uPoaQJdQdY7OB1qzx1nAinnI4Fe9Np52gKtbMq1Ws
+ hbmcXauIAaDYbu3u2V5ctGEhXcTqNoKKxGPZZFvn7b75OCJqlVdZsejyhwmjVs0izKm+
+ S+6g==
+X-Gm-Message-State: AOJu0YzaucrysOlE2TnequI4Y+WYpiNxMu0zwPueQttcPvwsmXs+OlnP
+ dFvPEN965W9JixuXgA7nhDKnPa+WNyzgZ+GP2Ee7CR/V/Mh4aEu8UQJz7YVoPmTRpzlA5nmC+0g
+ 8Zm3Yf4Vs/6S7+WBumiPhr1lzmSJ1zfjR2OEWvmMeiw20qAFig0iQ2q25AoUchQ0/XLxybAzYOp
+ Gu8Dz89P4G2YDIb3U+SZOLaHxr8LAmTA==
+X-Gm-Gg: ASbGncsWXiUWGKMgWvtlxtuFvvuPjSU166plA3Zsmqgq3YLVo1NrW+fJdgZKj/IWvdb
+ fSoD233HuGDTKWabb/xvemoEjAMpGDaR7rGrDem2AFtRFPxzhjzXIzXyHuIhTRuRoG5/gwcUm3i
+ WzR7UM8g==
+X-Received: by 2002:a05:6512:318e:b0:553:af30:1e8b with SMTP id
+ 2adb3069b0e04-553af98e506mr628310e87.38.1749807759199; 
+ Fri, 13 Jun 2025 02:42:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFFwzgh2J5ajq5h3aSBdXV5OJQ2uZ1hRuErfRrgB32gZ81u1NcbfWDhmODweAyrL+oTnUhvDlg0znoaI89nOxA=
+X-Received: by 2002:a05:6512:318e:b0:553:af30:1e8b with SMTP id
+ 2adb3069b0e04-553af98e506mr628293e87.38.1749807758811; Fri, 13 Jun 2025
+ 02:42:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: N/DcPz7jUYXlBa3tBrJXimSgRhkB+29Lyjo2hOmM1VIit2CfVaS1mwkm
- 0qjbLEtH43WXuW/IebGpuQiE3p1tSYbxQ2QzlPL/Hgvb6J6y866dhWy7F02C280/UUZxyjx
- iA5h1x6uuR95RUt3SzVV2f+bdUaaeWj9e09KVR8vpKnrMm0ftEbRsZ1ZgYoxaixBxW3rC0L
- BL/fvDxMm7S5WI/NjYOv6ATco/HQuM+iJR2uJJ3BsoJCVZChKM6RBwRTVw2SeQ9kbFCjlfo
- lBgVGu6176zhqmasOVOSjmIUlbCq9wBI7b/B/Ja7jnJXAEEtYa3n6vZzSfZVJOAiPTAgPEE
- GRdV1/lxqkvW9UFFauMWVyrZNzpS4pl+WMV8W/ZKM7CF+MQwn455Z2Ywn0VoxFbsw/vUglw
- ruqVxqCi94PIsXjKzVUYceEe4TEmHcin4oE1kPt4NaMxQzcJcQhHRVdFnpIszuw0JfIA95H
- Zyl1e/5oEl5EWYkdfMvwDSJ17QGhV/UeQfHwFLx55mQtI4T/qHpcWTDtVkh8hMiRuTyyI8r
- ZykfW0dA8Dwgj1Qb5Y0ko44T5GqOQUpPT3Ix8JNbTgHtH6SDqfKgTAA2RXfjtB3sCdjxSFl
- Komtuxw9PfPNFbnIzaSaOHNjmSZfBvtE2i8OqjGJ6Wu0uCA0XCrVP3aq7NsaJwXWrxRFdIi
- eWCRVxCVoi2fa740ryryLYiAzm6YW6L6o62ZGUWgSmPWITuEU1f5MXNxIuhoSjtb5wZHiVe
- LQKMW+UpcGbDSRFjWBJPA5Gplhmv57V1tf3HcfSp0JjdPZm3LktLw5dlLPUhYLRAkoUbMaG
- kS4EaG6qH7nJzlFetElMuw2KGGFMjTmofrQIZh7hborwUWRcb95vYiKpmP4Zc4BBjR0a9Mp
- BLRlrP4WYsF4Q0dqTBngZNvjsgjem52EpC00wHzYwqfPPrUpnE3Jvzf7OXyISCESSHShRpl
- eLcZuD1wGMFHik+moSo85j9/QIcKF/JMLrJ5KO4TqstEfp9IIhrS5apQqR+i+vak0dzNAKN
- fBPmJrfj4C7pyv1Me1geOTOXfDY+DpZqd5rEiu6BdxiKf+v7wfuZtM7QoK0oOyD6zxI74rM
- aJ9RvjYN8ex
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-X-QQ-RECHKSPAM: 0
+References: <20250613081018.2790825-1-david.marchand@redhat.com>
+In-Reply-To: <20250613081018.2790825-1-david.marchand@redhat.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Fri, 13 Jun 2025 11:42:27 +0200
+X-Gm-Features: AX0GCFuywHPgP8BkBhp0i2VH1kS_scQ_zPUBeZ4mcxRquaxTNbE6fWYH9lGsfGs
+Message-ID: <CAJFAV8ziisXinUmbOSZ7r2EHoioqgEL-KS7Y1dCY=MH2AmnxDQ@mail.gmail.com>
+Subject: Re: [PATCH] common/mlx5: fix dependency detection on Windows
+To: dev@dpdk.org
+Cc: probb@iol.unh.edu, andremue@linux.microsoft.com, 
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>, 
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, 
+ Matan Azrad <matan@nvidia.com>, Thomas Monjalon <thomas@monjalon.net>, 
+ Tal Shnaiderman <talshn@nvidia.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: JHrJP6uqJihZOPpwJRqPvdps0AwDa8UK-FKq7wplea0_1749807760
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -66,45 +91,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The extend statistic "rx_undersize_errors" is incorrectly read as the
-counter of frames received with a length error, which names
-"rx_length_error". And "rx_undersize_errors" is the counter of
-shorter-than-64B frames received without any errors.
+On Fri, Jun 13, 2025 at 10:10=E2=80=AFAM David Marchand
+<david.marchand@redhat.com> wrote:
+>
+> Don't *require* mlx5dev library when testing its presence.
 
-In addition, "tx_broadcast_packets" should use rd64() to get the full
-count on the low and high registers.
+For the record, this was seen in a UNH env that seems to have
+partially installed mlx5 dependencies.
 
-Fixes: fdb1e851975a ("net/ngbe: support basic statistics")
-Cc: stable@dpdk.org
+Has header "mlx5devx.h" : YES
+drivers\common\mlx5\windows\meson.build:10:0: ERROR: C shared or
+static library 'mlx5devx' not found
 
-Signed-off-by: Jiawen Wu <jiawenwu@trustnetic.com>
----
- drivers/net/ngbe/ngbe_ethdev.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> Fixes: 85c51a4ffab8 ("common/mlx5: get Windows dependency from standard v=
+ariables")
+>
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
 
-diff --git a/drivers/net/ngbe/ngbe_ethdev.c b/drivers/net/ngbe/ngbe_ethdev.c
-index a8f847de8d..d3ac40299f 100644
---- a/drivers/net/ngbe/ngbe_ethdev.c
-+++ b/drivers/net/ngbe/ngbe_ethdev.c
-@@ -1429,7 +1429,7 @@ ngbe_read_stats_registers(struct ngbe_hw *hw,
- 	hw_stats->rx_total_bytes += rd64(hw, NGBE_MACRXGBOCTL);
- 
- 	hw_stats->rx_broadcast_packets += rd64(hw, NGBE_MACRXOCTL);
--	hw_stats->tx_broadcast_packets += rd32(hw, NGBE_MACTXOCTL);
-+	hw_stats->tx_broadcast_packets += rd64(hw, NGBE_MACTXOCTL);
- 
- 	hw_stats->rx_size_64_packets += rd64(hw, NGBE_MACRX1TO64L);
- 	hw_stats->rx_size_65_to_127_packets += rd64(hw, NGBE_MACRX65TO127L);
-@@ -1448,7 +1448,8 @@ ngbe_read_stats_registers(struct ngbe_hw *hw,
- 	hw_stats->tx_size_1024_to_max_packets +=
- 			rd64(hw, NGBE_MACTX1024TOMAXL);
- 
--	hw_stats->rx_undersize_errors += rd64(hw, NGBE_MACRXERRLENL);
-+	hw_stats->rx_length_errors += rd64(hw, NGBE_MACRXERRLENL);
-+	hw_stats->rx_undersize_errors += rd32(hw, NGBE_MACRXUNDERSIZE);
- 	hw_stats->rx_oversize_cnt += rd32(hw, NGBE_MACRXOVERSIZE);
- 	hw_stats->rx_jabber_errors += rd32(hw, NGBE_MACRXJABBER);
- 
--- 
-2.48.1
+
+--=20
+David Marchand
 
