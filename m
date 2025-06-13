@@ -2,51 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E55AC61DB2
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Jun 2025 08:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B48DBC71135
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Jun 2025 08:07:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5D450402E2;
-	Fri, 13 Jun 2025 10:07:11 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A809742E85;
+	Fri, 13 Jun 2025 10:07:29 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id A8E5F402A1
- for <dev@dpdk.org>; Fri, 13 Jun 2025 10:07:09 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 142ED42E7B
+ for <dev@dpdk.org>; Fri, 13 Jun 2025 10:07:28 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1749802029;
+ s=mimecast20190719; t=1749802047;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=5Cmrayv0LD7sIxkyxCr+lHYY6w2W5qvh+j0h2bEOVWg=;
- b=WFB7YbORPJ6fITtU6VFhBKKR2SJNCwHKPJW/032CPf1OyPj+3n6uK/9QGiwLPaqrx1cWOL
- F7s11fWils//oVcAPVZVyZG/HUd67Gjub7VinK/ElUGdl5b4mLZkjNTRt1YTbGuNwxeQYi
- zOfh98HjzkH4696XoJFLPuZoHYE0GAg=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ bh=QSl/Itu3hBZHQWlmtd7mEsvqmzA3RUODpZtgx0fBd9A=;
+ b=FZORuawR2xLBnrHmeJYowdDwvfv80qBc2at+k0+u+cENFO7ih/rVTNOPABbgEaujZcZOIh
+ uTo9OdhIsPwUzvc/406t1OPmlz3+CW37e11r8PHPDWu1oiVOw4yZB3NQwrLHSQilg5+w34
+ WcyY1aDeMTSv6QvJ1emvXb5OvZKIXBU=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-635-WEYAJCV1PfSmDN12qWIfrw-1; Fri,
- 13 Jun 2025 04:07:07 -0400
-X-MC-Unique: WEYAJCV1PfSmDN12qWIfrw-1
-X-Mimecast-MFC-AGG-ID: WEYAJCV1PfSmDN12qWIfrw_1749802027
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-688-j7P781tLMY-JMS3_8RFTmg-1; Fri,
+ 13 Jun 2025 04:07:23 -0400
+X-MC-Unique: j7P781tLMY-JMS3_8RFTmg-1
+X-Mimecast-MFC-AGG-ID: j7P781tLMY-JMS3_8RFTmg_1749802042
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id A17A81809C8F; Fri, 13 Jun 2025 08:07:06 +0000 (UTC)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 572D41956080; Fri, 13 Jun 2025 08:07:22 +0000 (UTC)
 Received: from [10.44.22.3] (unknown [10.44.22.3])
- by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 7E75D1956050; Fri, 13 Jun 2025 08:07:04 +0000 (UTC)
-Message-ID: <ed0b4025-3050-4b18-a60c-8aa362a149b8@redhat.com>
-Date: Fri, 13 Jun 2025 10:07:01 +0200
+ by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id B3CBA19560A3; Fri, 13 Jun 2025 08:07:20 +0000 (UTC)
+Message-ID: <f7688cbc-8194-478f-b6fc-3ddb35479db5@redhat.com>
+Date: Fri, 13 Jun 2025 10:07:17 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] Search the split vq desc and avail in RO areas
-To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, dev@dpdk.org,
- Thomas Monjalon <thomas@monjalon.net>
+Subject: Re: [PATCH 2/2] vhost: search the packed vq driver area in RO areas
+To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, dev@dpdk.org
 Cc: Chenbo Xia <chenbox@nvidia.com>, stable@dpdk.org
 References: <20250605113552.918120-1-eperezma@redhat.com>
+ <20250605113552.918120-3-eperezma@redhat.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -91,10 +91,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20250605113552.918120-1-eperezma@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <20250605113552.918120-3-eperezma@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Wx4Py5cLWNT6iufzYhJcU9IK4YSPXsNznh9cRo8SM7c_1749802027
+X-Mimecast-MFC-PROC-ID: WgFYEpPsCqSMlbbvebIqlzo5ZCiAaN9FoeL6FnY_IaY_1749802042
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -115,23 +115,34 @@ Errors-To: dev-bounces@dpdk.org
 
 
 On 6/5/25 1:35 PM, Eugenio Pérez wrote:
-> QEMU's shadow virtqueue and VDUSE exposes these areas as read-only. If
-> we don't change it, vhost_iova_to_vva do not consider them as valid and
+> QEMU's shadow virtqueue and VDUSE exposes this as read-only. If we
+> don't change it, vhost_iova_to_vva do not consider them as valid and
 > returns that they're not found.
 > 
-> Eugenio Pérez (2):
->    vhost: search the split vq desc and avail in RO areas
->    vhost: search the packed vq driver area in RO areas
+> Fixes: 2d1541e2b6b3 ("vhost: add vring address setup for packed queues")
+> Cc: stable@dpdk.org
 > 
->   lib/vhost/vhost.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
+> Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
+> ---
+>   lib/vhost/vhost.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/lib/vhost/vhost.c b/lib/vhost/vhost.c
+> index 95a99bace6..a2e3e2635d 100644
+> --- a/lib/vhost/vhost.c
+> +++ b/lib/vhost/vhost.c
+> @@ -544,7 +544,7 @@ vring_translate_packed(struct virtio_net *dev, struct vhost_virtqueue *vq)
+>   	size = req_size;
+>   	vq->driver_event = (struct vring_packed_desc_event *)(uintptr_t)
+>   		vhost_iova_to_vva(dev, vq, vq->ring_addrs.avail_user_addr,
+> -				&size, VHOST_ACCESS_RW);
+> +				&size, VHOST_ACCESS_RO);
+>   	if (!vq->driver_event || size != req_size)
+>   		return -1;
+>   
 
-Applied to next-virtio/for-net-next with suggested changes.
-
-Thomas, patch 2 has been squashed into patch 1.
+Squashed into patch 1.
 
 Thanks,
 Maxime
-
 
