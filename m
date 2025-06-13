@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8362C61DB2
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Jun 2025 08:42:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A29C71135
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Jun 2025 08:42:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4B72342ECD;
-	Fri, 13 Jun 2025 10:42:25 +0200 (CEST)
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
- by mails.dpdk.org (Postfix) with ESMTP id 16270402E2;
- Fri, 13 Jun 2025 10:42:20 +0200 (CEST)
-X-QQ-mid: esmtpsz18t1749804137t29fb0454
-X-QQ-Originating-IP: krf6hvMExDdxCN/GzCDcM9KJ1ppeGZiNw4IoSKMeEOU=
+	by mails.dpdk.org (Postfix) with ESMTP id 72B0A42EC5;
+	Fri, 13 Jun 2025 10:42:31 +0200 (CEST)
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+ by mails.dpdk.org (Postfix) with ESMTP id C70BF42EC1;
+ Fri, 13 Jun 2025 10:42:27 +0200 (CEST)
+X-QQ-mid: esmtpsz18t1749804145t7c3c506a
+X-QQ-Originating-IP: FijplzoiumGO+AqdCERBEtzuaLYLQNBdEjmoGine8hA=
 Received: from lap-jiawenwu.trustnetic.com ( [36.20.60.58])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Fri, 13 Jun 2025 16:42:15 +0800 (CST)
+ id ; Fri, 13 Jun 2025 16:42:24 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 15836818761092713411
+X-BIZMAIL-ID: 16471880715651769317
 EX-QQ-RecipientCnt: 4
 From: Jiawen Wu <jiawenwu@trustnetic.com>
 To: dev@dpdk.org
 Cc: zaiyuwang@trustnetic.com, Jiawen Wu <jiawenwu@trustnetic.com>,
  stable@dpdk.org
-Subject: [PATCH v3 02/17] net/txgbe: fix incorrect parsing to ntuple filter
-Date: Fri, 13 Jun 2025 16:41:44 +0800
-Message-Id: <20250613084159.22184-3-jiawenwu@trustnetic.com>
+Subject: [PATCH v3 06/17] net/txgbe: fix FDIR perfect mode for IPv6 packets
+Date: Fri, 13 Jun 2025 16:41:48 +0800
+Message-Id: <20250613084159.22184-7-jiawenwu@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20250613084159.22184-1-jiawenwu@trustnetic.com>
 References: <00DEAE896AFE0D2D+20250606080117.183198-1-jiawenwu@trustnetic.com>
@@ -34,23 +34,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OeEhaKIXvy7RIGvrlUby++0XJlF8+Gdz0NEU9GrZO8nCG7MCI6ndDgDp
- 67AvBxEu+IeLFDHzdPRlZapku4XzBtD4slEoU0IxRC/fnD8t/RFQGOly3AlwHbBAspv+cVx
- dDn609zBi8PcXQTMHtTDhlg9iSpbzcKxRz+RhGx4ui8fNxrEYq7o+bJ9dORPpBfQ03xrWTp
- dkN5c2tOgDdpyg1ycEcP44ddrlP5kpkXSUt0jT9Xa2YEZF0shHjd0McZ3sTSJdLGyM/oRqC
- Mgug1IukCmHcNJuAiuamYKdbtcUHuArjCHxPVD7IDp1OJ5aRaAA6wWC9xOTCS7XCDG857Fe
- 4fKVvnzoPqCZqGUqH5ultVcLVjkvkOvH3T+4auD1NC7Um8Kv7FSUZTIpUFQltt8/6XKaNGX
- 72rvXr+ZoktKuiydrAarV3uZAxmFUsNXsLvNMZ677dCV+gMI9IsVn2ZKBkWMVjyOZR64ODp
- zrA5SqBgYo4deq41d4u4+hco/loHKeTkPBJmPzanPQYgdL2IAFixoquBKp9BpovnSdxtNuG
- pbnRAd09YZKcsKKGuwkZellHkfdQCSd/RUaOPdGiYvk+ILozwPhME2fU+tRyoqJ9+IZF7DI
- 13NBFXyRViDmdcchcJqvuEgDEEUijqPDla+JhXrO10sBzTjSw5IZdJLMz2skLh4U5Zdln/Y
- wypH1roxcEIVtkP5msJOFR6ylbw1MtC5Zyw/ssfo+L6rhxzvnaaEbFZ9A5JO8riQgFxjJMQ
- PR39GaPZ29tFib4q5ZusJv9iZLnYOOwI7hDbkNuz/7oAIJEkABx5rqcLZETwE7c0LvxB56g
- SAkglCytxYwS5NLiHIpFhJFyvM5fVkvqGlLf2hkeHXv4+Ns4X1/avqkNATP64OTUcUpFibt
- qLL3Sx5K4gKorXmEsJ6f1kfNGK6obaeF7hhG/xMYs073/rmTdirNDHsY4IFrURWr4EYIWlW
- 4ksmy0y35TL9xRZizhxkfqr/2uCGuVevTsR4Z64TNSC8+vKYAiHTpduwG2YAZrSgI2RRy2C
- 9QRK8bOI9y/5pSezWFEbix+jypTznKIGbXHBGlSw==
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-XMAILINFO: N/18iCB8Aki/+MIuyJCcStXoXkGbJCFUlN5Oih5qVQo3Rlx2/Ct4zNn3
+ h9XDZgTgqnTHvWD4fGszM4hWRBAnaeOX5cilS0RzzvoUwvzSl6eWPkhRmt0bomPC5sTmITP
+ EH6yB2otgrehDVW+cmbFN0+Ao/w4VP772o6avPtDATUL3ambzLjnXpaNCwqHOtSwP5qldl5
+ yXJid6rKJ/q8D1gDY0e1tZCs4F03ztS4sv1J6mdMJN+Oj6uOmwHBx7TwmwZzB9G/Z2x0rBq
+ 4QyirHGCkDj0+RIWkjKHsys1xhjR46fbNLwm7MjFf+EXM7thx89lcAlB81WOebWwqtwbKZb
+ A5wS07ngW1szt+HwePQG/X2/rsqVestgrhMKAIgjnGWq3VgoU+dB5woQkT3Myszgoz4ZIKt
+ JgdT0eKmYgPLDtGlDbzDD5V5ndQSRNC74h1nvaksIFvTm9gbuh69w0kqj4+OH4GYIUbzF/e
+ SrfMc1KUaMEJ6eIuKfjLPMxdCeiDSlO2V/Z1Du4y9ePTgd7hNgt/lhonZIIbEQQ+rF+qK/6
+ /6hrXl46bhWIpd1MvgTbHrkgpcnj5XsFy9rAdhd4k66aZrLUJM7ScVbqNb8VyT4z3YLMV1j
+ h9DjAdq+SeYVQvlFlOPvho27gx8xOFENRpsKvpBUNFLO43Ay3IysaAQWpFnplIzRICbNnZa
+ 65IVAUMNVuEPOFmBQBO6o60XUQOz4AWpZk4Lb5drQmTmam8TgC1q4FLomY3EUYwEi32tRZd
+ luQnbYI9KadDKFsOvSw8hlIPoYWrqnN/rANQJI1d035xbgO45uqNdeimzFGFu2NnQRamtZm
+ N+gwQ8qrzYrcTXHpFgk/vpM7V0yVt+kuZzLrh54FQVITZmialWrDollcgqgQg4OCvo/y/Ou
+ f+ydZ7Y810/D+QmJbsnpPxtbR8u63ntwwJzTGANAhlfqL3G95zIAlr0x7ACUSqzd5rz6vjI
+ 753zFoU/j87qLFuxvR9p900wwyjBstxKiH8s5Q/3ixxtMu9kGILDJxn+IhM+ybqZHsXV/do
+ y1Cyksgx8yxkPtGqq+ejfTWAHNioz+UE51wT+pAg2Anqmmml4V
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -65,42 +65,83 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The rule is incorrectly parsed to ntuple filter when setting the pattern
-likes:
-flow create ... ipv4 / udp dst is ... / raw ... / end actions ... / end
+Perfect mode of FDIR rules to filter IPv6 packets is supported by
+hardware. Remove the restriction and fix the setting.
 
-It causes the rule to be created successfully, but not works. Fix it to
-parse for FDIR rules.
-
-Fixes: b7eeecb17556 ("net/txgbe: parse n-tuple filter")
+Fixes: b973ee26747a ("net/txgbe: parse flow director filter")
 Cc: stable@dpdk.org
 
 Signed-off-by: Jiawen Wu <jiawenwu@trustnetic.com>
 ---
- drivers/net/txgbe/txgbe_flow.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/txgbe/txgbe_fdir.c | 22 ++++++++--------------
+ drivers/net/txgbe/txgbe_flow.c |  7 +------
+ 2 files changed, 9 insertions(+), 20 deletions(-)
 
+diff --git a/drivers/net/txgbe/txgbe_fdir.c b/drivers/net/txgbe/txgbe_fdir.c
+index 0d12fb9a11..0efd43b59a 100644
+--- a/drivers/net/txgbe/txgbe_fdir.c
++++ b/drivers/net/txgbe/txgbe_fdir.c
+@@ -210,15 +210,12 @@ txgbe_fdir_set_input_mask(struct rte_eth_dev *dev)
+ 	wr32(hw, TXGBE_FDIRSIP4MSK, ~info->mask.src_ipv4_mask);
+ 	wr32(hw, TXGBE_FDIRDIP4MSK, ~info->mask.dst_ipv4_mask);
+ 
+-	if (mode == RTE_FDIR_MODE_SIGNATURE) {
+-		/*
+-		 * Store source and destination IPv6 masks (bit reversed)
+-		 */
+-		fdiripv6m = TXGBE_FDIRIP6MSK_DST(info->mask.dst_ipv6_mask) |
+-			    TXGBE_FDIRIP6MSK_SRC(info->mask.src_ipv6_mask);
+-
+-		wr32(hw, TXGBE_FDIRIP6MSK, ~fdiripv6m);
+-	}
++	/*
++	 * Store source and destination IPv6 masks (bit reversed)
++	 */
++	fdiripv6m = TXGBE_FDIRIP6MSK_DST(info->mask.dst_ipv6_mask) |
++		    TXGBE_FDIRIP6MSK_SRC(info->mask.src_ipv6_mask);
++	wr32(hw, TXGBE_FDIRIP6MSK, ~fdiripv6m);
+ 
+ 	return 0;
+ }
+@@ -642,6 +639,8 @@ fdir_write_perfect_filter(struct txgbe_hw *hw,
+ 	fdircmd |= TXGBE_FDIRPICMD_QP(queue);
+ 	fdircmd |= TXGBE_FDIRPICMD_POOL(input->vm_pool);
+ 
++	if (input->flow_type & TXGBE_ATR_L3TYPE_IPV6)
++		fdircmd |= TXGBE_FDIRPICMD_IP6;
+ 	wr32(hw, TXGBE_FDIRPICMD, fdircmd);
+ 
+ 	PMD_DRV_LOG(DEBUG, "Rx Queue=%x hash=%x", queue, fdirhash);
+@@ -810,11 +809,6 @@ txgbe_fdir_filter_program(struct rte_eth_dev *dev,
+ 		is_perfect = TRUE;
+ 
+ 	if (is_perfect) {
+-		if (rule->input.flow_type & TXGBE_ATR_L3TYPE_IPV6) {
+-			PMD_DRV_LOG(ERR, "IPv6 is not supported in"
+-				    " perfect mode!");
+-			return -ENOTSUP;
+-		}
+ 		fdirhash = atr_compute_perfect_hash(&rule->input,
+ 				TXGBE_DEV_FDIR_CONF(dev)->pballoc);
+ 		fdirhash |= TXGBE_FDIRPIHASH_IDX(rule->soft_id);
 diff --git a/drivers/net/txgbe/txgbe_flow.c b/drivers/net/txgbe/txgbe_flow.c
-index 1d854d0767..269f0b54e3 100644
+index c7cbf96a46..145ee8a452 100644
 --- a/drivers/net/txgbe/txgbe_flow.c
 +++ b/drivers/net/txgbe/txgbe_flow.c
-@@ -361,7 +361,7 @@ cons_parse_ntuple_filter(const struct rte_flow_attr *attr,
+@@ -1812,12 +1812,7 @@ txgbe_parse_fdir_filter_normal(struct rte_eth_dev *dev __rte_unused,
+ 		rule->input.flow_type = TXGBE_ATR_FLOW_TYPE_IPV6;
+ 		rule->mask.pkt_type_mask &= ~TXGBE_ATR_TYPE_MASK_L3P;
  
- 	if (item->type != RTE_FLOW_ITEM_TYPE_END &&
- 		(!item->spec && !item->mask)) {
--		goto action;
-+		goto item_end;
- 	}
- 
- 	/* get the TCP/UDP/SCTP info */
-@@ -490,6 +490,7 @@ cons_parse_ntuple_filter(const struct rte_flow_attr *attr,
- 		goto action;
- 	}
- 
-+item_end:
- 	/* check if the next not void item is END */
- 	item = next_no_void_pattern(pattern, item);
- 	if (item->type != RTE_FLOW_ITEM_TYPE_END) {
+-		/**
+-		 * 1. must signature match
+-		 * 2. not support last
+-		 */
+-		if (rule->mode != RTE_FDIR_MODE_SIGNATURE ||
+-		    item->last) {
++		if (item->last) {
+ 			memset(rule, 0, sizeof(struct txgbe_fdir_rule));
+ 			rte_flow_error_set(error, EINVAL,
+ 				RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
 -- 
 2.48.1
 
