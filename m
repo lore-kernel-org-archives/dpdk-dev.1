@@ -2,68 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45529C71155
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Jun 2025 16:07:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1780BC71136
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Jun 2025 16:07:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D0BF44067D;
-	Mon, 16 Jun 2025 18:07:30 +0200 (CEST)
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com
- [209.85.210.170])
- by mails.dpdk.org (Postfix) with ESMTP id 42AF54066A
- for <dev@dpdk.org>; Mon, 16 Jun 2025 18:07:29 +0200 (CEST)
-Received: by mail-pf1-f170.google.com with SMTP id
- d2e1a72fcca58-748c3afd0dbso474963b3a.0
- for <dev@dpdk.org>; Mon, 16 Jun 2025 09:07:29 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id CB3A34066E;
+	Mon, 16 Jun 2025 18:07:32 +0200 (CEST)
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com
+ [209.85.210.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 8BDE140689
+ for <dev@dpdk.org>; Mon, 16 Jun 2025 18:07:31 +0200 (CEST)
+Received: by mail-pf1-f181.google.com with SMTP id
+ d2e1a72fcca58-74800b81f1bso3890707b3a.1
+ for <dev@dpdk.org>; Mon, 16 Jun 2025 09:07:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1750090048;
- x=1750694848; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1750090051;
+ x=1750694851; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=9uNTSUdMT39Bx9qV+/2J8A+V80kOw2d+sDqfCWDt/tg=;
- b=iAjwZQw+o+q6F/yptI+r7Smd8nJo53c+zjm0xtTH0fhQE7gpLBDeRTtcJztk2cHwXq
- NPizCowh9mh1AemyyL+6cRR37e3x8tF3kaiJCjlEKYlvV0cSd/CqSWpY0j+KmoQ1iTdR
- T/fNqfYS8oUTVmUuKWyMTXmZk96fDBpPdY9nk9QZ+VrP+tDEoeKYR8jXDC/Kxcs9MlQt
- WyZw4UZ+cTSV+UHBsFhfojpP6hRP+PV3s8VQPHtWEgcMTTsKAD9kJ+WplOR9LE6cSK+K
- UUW34yRNipx9nMlzhxGh7RGpHuvh9khMXfPwGtrNVIDNl/EFdmwAUnssRhPh8vevHl71
- V0pg==
+ bh=SZ8uncjoUpysChQKemgDy35PhDD54EgHFGRPcAU3U1g=;
+ b=PgqdwFA8gCxQtC7oR6TK2g/y5oXmCXArsOMNf9986ih7W9qdIm2lI5mR/xfL1h2Kbo
+ 5b5GFBZ/fpBxvmftxNkRbzq1LhJkrL+2vsTDvA3BMHe93d+mM2ATVdFHxyiw4wTZ8hSR
+ I8LoWoJCx26U4ATW7fokdfXX89+hCkSHh9DSvliJAxUdLyxJJF/hVt5qeWH3PGlCqSbY
+ 5GCmIFBnLLFNQWUSF+nPrPlLHh9lRF+g/Dxjkv3sdkLEl53vOJLuoS32MSgZD7xeJm8c
+ Fk8O2FwLohgayAdjqscKYYW8Auxxk3p6jUYTCh1Hrj4ag9NyEILvtY++issSw0UPsrSl
+ t2cQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1750090048; x=1750694848;
+ d=1e100.net; s=20230601; t=1750090051; x=1750694851;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=9uNTSUdMT39Bx9qV+/2J8A+V80kOw2d+sDqfCWDt/tg=;
- b=ArioAWNcNj1QSaiujlvC68fj/kJ55rHvox3YZSzuy8vSbW9ixnDEY8kNfIVzWcIs7H
- 5osdyqdrbhE/7idsE3yzczRZMcF6XE4TBq8LyhnOiuFS1TupW+HRzCEITedmvL1+bQEh
- Q7LObGXmZdZgZ99qoE56oKJyCQNJcBBPswEmVBvFyMIWVacBL4NS9MjKZxopk/89jBQ2
- LxTJHswK+pb0RMkdYGUs/JQsp9KRVVpRUv8bk5/GiByE2VZsZ9xDk95axyZKm0T1gpwc
- EmH9W4j5NzVKo/HLb+u4TDihTexeWKsIMklnw4/875VPUbP0glxQFWecI70DvNH4z1J8
- Vx/g==
-X-Gm-Message-State: AOJu0Yw3TH/V3ZPkHs/xymyJJz/dO/SoCAGZLcO5mWohrvjLb2l/l9V0
- 3MHcT4NTCeM7Bsstyl0SwPciRBdCTzcTHugEqxEVzTEnvUMPlR6YiSnyhwg3Y+3DjqAjX0K8MAk
- Wr12/
-X-Gm-Gg: ASbGnctht2QFVqnowods7qtk/wxxuCnjxH0Wj/DvjoP0Y+bYh5yKVSZ1kcAmdAKsjFq
- d8VG1w7nvED0Ucx4jBdApJhcBAkOMWkBfpLDYlD9jSWnfW9ezy4YgRRAwaEuZ3VNeaD5J2s5j4K
- U+Jxx2lsjSZGWnNWD9AU40/xxlIDY32935WJHC9HnJLzv20uaXZMQts5EufZL2J+vRBjfrd2Vlo
- iphwOJAVSGcE4W9CDc1a3e/r7PbbqCwNRuQy5hKBBEEVEs3ve5+th+kpfNAVRRbPY+9CtLJIC3e
- RjmJmsAD+U2a30EEHFGXgCmGLz0FedQqCPuq7baGoN8dChNoC6NQqAYtIcXdWu7mMxlroTFQ+02
- Z7kvVAc7bTeawcze8iREaRZTlWIICwAw3n9vV
-X-Google-Smtp-Source: AGHT+IEXRpVaWkBDuP3JnYHzW+LJKXpQXI5mImG1ZmSA/mIicIhEfW1g0O1uZ5DpnGfN8fwHoVrXHQ==
-X-Received: by 2002:a05:6a00:399d:b0:736:33fd:f57d with SMTP id
- d2e1a72fcca58-7489cfc360dmr10087573b3a.17.1750090048256; 
- Mon, 16 Jun 2025 09:07:28 -0700 (PDT)
+ bh=SZ8uncjoUpysChQKemgDy35PhDD54EgHFGRPcAU3U1g=;
+ b=eRoKkoJRZdv3TbVIY4pFhFF/uxibvGN6tiOvKux2ZmqL7O6H6MqeyntMB68VCW+zGX
+ X+S1g3y8QWWTCfBXeBbeKPhxe9/e+dGVhNn9k7n8VCmOel8guuajw81BrO/Nu5hNhZzH
+ WIqh9d+f9MGJ5e0T5D4STYfArwNWLS2sKs/tk8e470w9NTSjkNdv+UUitOrIL96kVlFW
+ oaKKARjfYoGOFBfUys2QP7I8l28WU6V9cw1oydSTQtFli1QtIN1UHft/z9roFvT3hjeC
+ wF5x26idjkd1wTt193yNOXmglgepSTcWxln9OPnzJNp9nMaZ3eOPZ8iR21gg1kAJ4hzb
+ unxA==
+X-Gm-Message-State: AOJu0YyDYthLL7jqqZJgi6qcSNCUx5Rujw5b8OHlxTaabVZ9mkaoS24H
+ vNRLSAMVWt5t9hkY5rznurmfmfMsgbkohk921jv7IQFgA5Sn+5DzxoMMk4Z1d13xeUvIu84Mro2
+ ++RqK
+X-Gm-Gg: ASbGncs6Cm4AWQPJ5L+EfxasseMNDJy4Jcu9ouFqM2WyilS1tlbH+sJ/q2Wk52OiX+5
+ FjbUi4HmZHwfAzffxw5btg2K1OjEfj3Iia7oSrN8UleZuwzK6tHuYLcmWi+BezQDtcscESyS+6k
+ paN54ynhftHN/WBUcqByJSuWQrwDZ562GbWENfz+nr6DvuRGOvVnZa9H5vImuPoUMT3G1pYAVyD
+ uWiSy7jsWepppOkHALd3pAqofDU2PufvUpkfJjfsRRRU4TfpGUSg28HUpi3hmjVNANcffOlvG3U
+ cZppJI484fh9kO13byZZtC8/Hxy+l7F8TAMtA8+dAGL8fI3h1yaUgpTD9inKlQv/DcPaCJGC3m4
+ vowIq5PPMbZof+jAdoW3XXeaUHf95+CBGj2TG
+X-Google-Smtp-Source: AGHT+IGpVfEMaBKqx2GH2ZZqM+/4IkOrYuVyVoGS55TO4wbfEFeJAdTEUjAAOK8IT2TF7bMCBL2MYA==
+X-Received: by 2002:a05:6a00:2d20:b0:748:3485:b99d with SMTP id
+ d2e1a72fcca58-7489cfd3197mr14079742b3a.18.1750090050638; 
+ Mon, 16 Jun 2025 09:07:30 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-748900d252esm6992623b3a.163.2025.06.16.09.07.26
+ d2e1a72fcca58-748900d252esm6992623b3a.163.2025.06.16.09.07.28
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 16 Jun 2025 09:07:27 -0700 (PDT)
+ Mon, 16 Jun 2025 09:07:30 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
-	stable@dpdk.org
-Subject: [PATCH v2 1/2] latencystats: fix receive sample MP issues
-Date: Mon, 16 Jun 2025 09:04:32 -0700
-Message-ID: <20250616160718.49938-2-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v2 2/2] latencystats: optimize locking on transmit
+Date: Mon, 16 Jun 2025 09:04:33 -0700
+Message-ID: <20250616160718.49938-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250616160718.49938-1-stephen@networkplumber.org>
 References: <20250613003547.39239-1-stephen@networkplumber.org>
@@ -83,112 +82,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The receive callback was not safe with multiple queues.
-If one receive queue callback decides to take a sample it
-needs to add that sample and do atomic update to the previous
-TSC sample value. Add a new lock for that.
-
-Optimize the check for when to take sample so that
-it only needs to lock when likely to need a sample.
-
-Also, add code to handle TSC wraparound in comparison.
-Perhaps this should move to rte_cycles.h?
+If transmit callback is called, and there are no packets
+in the burst with timestamp set, then the expensive operations
+of locking and accessing TSC can be skipped.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Fixes: 5cd3cac9ed22 ("latency: added new library for latency stats")
-Cc: stable@dpdk.org
 ---
- lib/latencystats/rte_latencystats.c | 51 ++++++++++++++++++-----------
- 1 file changed, 32 insertions(+), 19 deletions(-)
+ lib/latencystats/rte_latencystats.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
 diff --git a/lib/latencystats/rte_latencystats.c b/lib/latencystats/rte_latencystats.c
-index 6873a44a92..2b994656fb 100644
+index 2b994656fb..cd790fd49f 100644
 --- a/lib/latencystats/rte_latencystats.c
 +++ b/lib/latencystats/rte_latencystats.c
-@@ -22,6 +22,7 @@
- #include <rte_metrics.h>
- #include <rte_spinlock.h>
- #include <rte_string_fns.h>
-+#include <rte_stdatomic.h>
- 
- #include "rte_latencystats.h"
- 
-@@ -45,11 +46,20 @@ timestamp_dynfield(struct rte_mbuf *mbuf)
- 			timestamp_dynfield_offset, rte_mbuf_timestamp_t *);
- }
- 
-+/* Compare two 64 bit timer counter but deal with wraparound correctly. */
-+static inline bool tsc_after(uint64_t t0, uint64_t t1)
-+{
-+	return (int64_t)(t1 - t0) < 0;
-+}
-+
-+#define tsc_before(a, b) tsc_after(b, a)
-+
- static const char *MZ_RTE_LATENCY_STATS = "rte_latencystats";
- static int latency_stats_index;
-+
-+static rte_spinlock_t sample_lock = RTE_SPINLOCK_INITIALIZER;
- static uint64_t samp_intvl;
--static uint64_t timer_tsc;
--static uint64_t prev_tsc;
-+static RTE_ATOMIC(uint64_t) next_tsc;
- 
- #define LATENCY_AVG_SCALE     4
- #define LATENCY_JITTER_SCALE 16
-@@ -147,25 +157,27 @@ add_time_stamps(uint16_t pid __rte_unused,
- 		void *user_cb __rte_unused)
+@@ -191,17 +191,26 @@ calc_latency(uint16_t pid __rte_unused,
+ 		void *_ __rte_unused)
  {
  	unsigned int i;
--	uint64_t diff_tsc, now;
-+	uint64_t now = rte_rdtsc();
+-	uint64_t now, latency;
++	uint64_t ts_flags = 0;
+ 	static uint64_t prev_latency;
  
--	/*
--	 * For every sample interval,
--	 * time stamp is marked on one received packet.
--	 */
 -	now = rte_rdtsc();
--	for (i = 0; i < nb_pkts; i++) {
--		diff_tsc = now - prev_tsc;
--		timer_tsc += diff_tsc;
--
--		if ((pkts[i]->ol_flags & timestamp_dynflag) == 0
--				&& (timer_tsc >= samp_intvl)) {
--			*timestamp_dynfield(pkts[i]) = now;
--			pkts[i]->ol_flags |= timestamp_dynflag;
--			timer_tsc = 0;
-+	/* Check without locking */
-+	if (likely(tsc_before(now, rte_atomic_load_explicit(&next_tsc, rte_memory_order_relaxed))))
++	for (i = 0; i < nb_pkts; i++)
++		ts_flags |= (pkts[i]->ol_flags & timestamp_dynflag);
+ 
++	/* no samples in this burst, skip locking */
++	if (likely(ts_flags == 0))
 +		return nb_pkts;
 +
-+	/* Try and get sample, skip if sample is being done by other core. */
-+	if (likely(rte_spinlock_trylock(&sample_lock))) {
-+		for (i = 0; i < nb_pkts; i++) {
-+			struct rte_mbuf *m = pkts[i];
++	uint64_t now = rte_rdtsc();
+ 	rte_spinlock_lock(&glob_stats->lock);
+ 	for (i = 0; i < nb_pkts; i++) {
+-		if (!(pkts[i]->ol_flags & timestamp_dynflag))
++		struct rte_mbuf *m = pkts[i];
++		uint64_t latency;
 +
-+			/* skip if already timestamped */
-+			if (unlikely(m->ol_flags & timestamp_dynflag))
-+				continue;
-+
-+			m->ol_flags |= timestamp_dynflag;
-+			*timestamp_dynfield(m) = now;
-+			rte_atomic_store_explicit(&next_tsc, now + samp_intvl, rte_memory_order_relaxed);
-+			break;
- 		}
--		prev_tsc = now;
--		now = rte_rdtsc();
-+		rte_spinlock_unlock(&sample_lock);
- 	}
++		if (!(m->ol_flags & timestamp_dynflag))
+ 			continue;
  
- 	return nb_pkts;
-@@ -270,6 +282,7 @@ rte_latencystats_init(uint64_t app_samp_intvl,
- 	glob_stats = mz->addr;
- 	rte_spinlock_init(&glob_stats->lock);
- 	samp_intvl = (uint64_t)(app_samp_intvl * cycles_per_ns);
-+	next_tsc = rte_rdtsc();
+-		latency = now - *timestamp_dynfield(pkts[i]);
++		latency = now - *timestamp_dynfield(m);
  
- 	/** Register latency stats with stats library */
- 	for (i = 0; i < NUM_LATENCY_STATS; i++)
+ 		if (glob_stats->samples++ == 0) {
+ 			glob_stats->min_latency = latency;
 -- 
 2.47.2
 
