@@ -2,76 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E974BC71136
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Jun 2025 18:05:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82D91C71136
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Jun 2025 18:35:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A841040677;
-	Mon, 16 Jun 2025 20:05:42 +0200 (CEST)
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
- [209.85.214.171])
- by mails.dpdk.org (Postfix) with ESMTP id 708DC40670
- for <dev@dpdk.org>; Mon, 16 Jun 2025 20:05:41 +0200 (CEST)
-Received: by mail-pl1-f171.google.com with SMTP id
- d9443c01a7336-235ef62066eso73455425ad.3
- for <dev@dpdk.org>; Mon, 16 Jun 2025 11:05:41 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 54B57402E7;
+	Mon, 16 Jun 2025 20:35:32 +0200 (CEST)
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com
+ [209.85.219.52]) by mails.dpdk.org (Postfix) with ESMTP id DDDBA402D5
+ for <dev@dpdk.org>; Mon, 16 Jun 2025 20:35:30 +0200 (CEST)
+Received: by mail-qv1-f52.google.com with SMTP id
+ 6a1803df08f44-6facacf521eso50108416d6.3
+ for <dev@dpdk.org>; Mon, 16 Jun 2025 11:35:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1750097140;
- x=1750701940; darn=dpdk.org; 
+ d=iol.unh.edu; s=unh-iol; t=1750098930; x=1750703730; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=riX4D0rP+9LkJrJvaLLaavXWQZC2eKlgu/4EbWyRI4o=;
- b=CPnuBTRDIpCgAX1FApZ55fpX9lyEp+PoFBvfTz+9PXtIl5JDN4MooMkYVqjBUvRJJe
- bWGdOrk4pPUhwBytP1pvf5BTUGfWfyRkVWnFRNtBtapw95/aQY3B2SRQxETpsySMTTZ8
- OYHbWMQ4SQSkjoS0TakCRV9KtubSYtatruFTzP54o9BR6U24iEo7h9wrpJDtR2ZNQpzx
- imJXzDXunibn5a1DiTIH3O3+NqHqoyU7U0xuh1rb3c6fF3AjF4XZS4r6M/eWUfLsO1/W
- DeuLo2YdGHQwSURSGKyKl1ihs+XnD1qFgAwz5mE6XqsT79p8diVlKyqn5yOw10emoxbs
- eO2g==
+ bh=oeSXj+LJrbvFmLYXkd5jLkmSqEnzCv0jg2xZ0cIUiSQ=;
+ b=O2LxQya7oWcI8vdSCVn+HULK2nilxwms8Ke0MdWYbdhIySMyyYy7Fdh34AtQOihkR9
+ LwU0XUPa7C9CvMuWs4HjVo3HCpau3VnQaPJBwLJtHHLVt9ZTHjo0+7jsR4Olo1P7DdcI
+ efJnDVcmeLOf1zLXZD0GSETBhYX1lIcf3rklQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1750097140; x=1750701940;
+ d=1e100.net; s=20230601; t=1750098930; x=1750703730;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=riX4D0rP+9LkJrJvaLLaavXWQZC2eKlgu/4EbWyRI4o=;
- b=N+1IlnPFHWh63NN+aI1nBWrnoV+tgYaJ6C3QeI6QygkcaImh+Y6zWfxA0ZOSv0NURe
- m+sgJWJpNmSTIpLdgYw83K0XTd14oNSD25DglANVDQwWnBF5b0I/5YVtbgtLBcae7Fxa
- dUfWOIegSvDeEz56BReKGpKVuVSn/RRIC8rRBTwvmZzwSrjRj3lDhldcb06vRk3cUfvx
- sTQpwIokMBON4fZ/Ub5qQnbli6AptAJc0t70ajw/iENDMQd9zQa31o8jAWmGPEmozhIY
- xWBGB7Tp5vTW50T+z6rYtGmI1YfJvV80kNiTSUoY2tRkRM+DAoTq4XsrsqgMGfc97RbU
- P0Ew==
-X-Gm-Message-State: AOJu0YzPt0ktNqjzXa9q87+Ffw3qEjyfUTm619WhrfXELqIBcvvWS8Jw
- QDikhJuYD5ZuEE9oEsXGH9uZOrAqNjbYjRjsJ92ACc800ADwkPFw+EJxNhWOlgmoSws=
-X-Gm-Gg: ASbGncvROp91lPWjApIImYN15HqpmGv07IQU/oe2aCNv1X3Z9fcEDLfcdrMscSwolUJ
- vqvbEDEg+e4lj3v5VjQUOo9teP9udD+9lQ7YzxCcn3Gmdr4eudApFISfERiARMrXcVq2EKEYlUt
- 9N/KJmTKY5aduIRWdu7/GkrTZd/YiKjbbCS2sj2DQO5gVkozW1WuIvCF4VMMnmnqBCeyYEcNocv
- zeGsX5UR3GTYMNgW3Q6xsn0s3li6Ns5Cbhp7yKoZTTy9fskbjVwghj+4qhuSIrE13X+p0H18ujZ
- oHKdngUYT/VmfbSdHZlNOtjcoqsbirZ3N2ZweAyulW6p+kIrr0qM/At4cVyc2UohDsW3G1vuaAL
- wyi3IMDEegpzPodMwIVIpAOGbYHCWkgIeuZJu1yo=
-X-Google-Smtp-Source: AGHT+IGMzaLQ3ATrBwXTBq9uu7h7FNYDlOPlv3R2mHgFpwqyszqupyIP/Jtt5kg3mKsjlD9pFVAjew==
-X-Received: by 2002:a17:902:f711:b0:234:8eeb:d824 with SMTP id
- d9443c01a7336-2366b40b69bmr133978545ad.48.1750097137982; 
- Mon, 16 Jun 2025 11:05:37 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=oeSXj+LJrbvFmLYXkd5jLkmSqEnzCv0jg2xZ0cIUiSQ=;
+ b=BsXeikgAJDUjWHm6wzKjAphBrwufpU2BikLqaxYXgm0FVmlHCCN4MEFEIAvkS0lvtp
+ 03gSIanZ+xp69bKfvVPvlaKIq3U2xKvkQ0dVbERdpltwdXVN2DgesEc6B1/AEGE/2kSV
+ i/edQDfV6Ju8e4Icaza4oyLmTqbeSdx98lwLHgGt0qy1urq2s3M1JqhW2llTtrOgw9T9
+ 3SDc1Bo+/qJLsGzXM+jBF9f3DTEivfmKEl65eU9KCMxSm2EKAxRusGc1SzuWY1e3k3Xj
+ 2B7it95PLEEQGjOP1pGyNymprrW1UEVosAFrNqWV0LYxaduM5L9tmDJOsDfQLvHoKjPa
+ 41OA==
+X-Gm-Message-State: AOJu0YwcshQ3eahanqCTS0UDE6UnJXfRxSWvm/mHeo42J7J1cvNhK5P8
+ Rp3LLTm/pGoLu5wT93ik7ab83FbADDPtxFGyGmO52BEFPyPZIHkW9MG8t/TjWmJwvAw=
+X-Gm-Gg: ASbGncsJ7uf8mxpMaGMw6FCATcxTe1klZ1GjQqJiPkmeEqeL8eYjxv4HOf1JokOexS3
+ efKPa50SHsSDuULd23frzHv52dNqAPbwnai+YMDhD1Bi7St94u7qX0QwEM8bdnUMUOXqyp7YHx6
+ L3trcoNiE3+8LPOSvPeE9/XT+46UQ2gWJuQOmcjFhBNffG5on6jiaj7NmD6JiDk0sO2MGz7C0jI
+ aan5qRcILCLuk4Cv/fhIXQPnLWcgfXzyFd56T+ow5kbFz3+9yEJFh6NgxhQ2sGl+AphkoIEMCDl
+ b5vSzTED+RX/hSnKO9/5ZGxJMD2qJk/GTpFhpHasBfHlW1CSfn6jB4z0FdWTL9a4cqS6IhUb
+X-Google-Smtp-Source: AGHT+IHgmvQbU/MTFQ9qhJn5MwlVdZxjtl0ClX2sTh4jl8RtjgV8/HSzhCcZshWL3a8c/2oXzpv0vg==
+X-Received: by 2002:ad4:54c4:0:b0:6fb:4c6d:d4d9 with SMTP id
+ 6a1803df08f44-6fb4c6dd6d1mr100422066d6.13.1750098930044; 
+ Mon, 16 Jun 2025 11:35:30 -0700 (PDT)
+Received: from fedora.iol.unh.edu ([2606:4100:3880:1271:ac5d:4186:4dc6:47eb])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2365deb887csm64337985ad.192.2025.06.16.11.05.34
+ 6a1803df08f44-6fb35c841d0sm54130716d6.111.2025.06.16.11.35.29
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 16 Jun 2025 11:05:37 -0700 (PDT)
-Date: Mon, 16 Jun 2025 11:05:28 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Schneide <schneide@qti.qualcomm.com>
-Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, Reshma Pattan
- <reshma.pattan@intel.com>, Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K
- <kirankumark@marvell.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Zhirun Yan <yanzhirun_163@163.com>
-Subject: Re: [PATCH v2] pcapng: allow any protocol link type for the
- interface block
-Message-ID: <20250616110528.4cf6775d@hermes.local>
-In-Reply-To: <20250609211937.345620-1-schneide@qti.qualcomm.com>
-References: <20250529171609.2448832-1-schneide@qti.qualcomm.com>
- <20250609211937.345620-1-schneide@qti.qualcomm.com>
+ Mon, 16 Jun 2025 11:35:29 -0700 (PDT)
+From: Dean Marx <dmarx@iol.unh.edu>
+To: probb@iol.unh.edu, luca.vizzarro@arm.com, yoan.picchi@foss.arm.com,
+ Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com
+Cc: dev@dpdk.org,
+	Dean Marx <dmarx@iol.unh.edu>
+Subject: [PATCH v2] dts: fix devbind initialization bug
+Date: Mon, 16 Jun 2025 14:35:27 -0400
+Message-ID: <20250616183527.645888-1-dmarx@iol.unh.edu>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250612201220.614724-1-dmarx@iol.unh.edu>
+References: <20250612201220.614724-1-dmarx@iol.unh.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,23 +76,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon,  9 Jun 2025 15:19:37 -0600
-Schneide <schneide@qti.qualcomm.com> wrote:
+Rearrange the topology and DPDK setup/teardown calls during
+test runs to ensure the devbind script is not called
+while the DPDK tmp directory doesn't exist.
 
-> From: Dylan Schneider <schneide@qti.qualcomm.com>
-> 
-> Allow the user to specify protocol link type when creating pcapng files.
-> This change is needed to specify the protocol type in the pcapng file,
-> DLT_EN10MB specifies ethernet packets only. This will allow dissectors
-> for other protocols to be used on files generated by pcapng.
-> 
-> Includes a breaking change to rte_pcapng_add_interface to add link_type
-> parameter. Existing calls to the function have been updated to pass
-> DLT_EN10MB for the link type argument.
-> 
-> Fixes: d1da6d0d04c7 ("pcapng: require per-interface information")
-> Signed-off-by: Dylan Schneider <schneide@qti.qualcomm.com>
-> Cc: stephen@networkplumber.org
-> ---
+Fixes: 4cef16f1f0a4 ("dts: improve port handling")
 
-Recheck-request: aws-unit-testing
+Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
+---
+ dts/framework/test_run.py | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
+index cff0085317..60a9ec8148 100644
+--- a/dts/framework/test_run.py
++++ b/dts/framework/test_run.py
+@@ -344,8 +344,9 @@ def next(self) -> State | None:
+ 
+         test_run.ctx.sut_node.setup()
+         test_run.ctx.tg_node.setup()
+-        test_run.ctx.topology.setup()
+         test_run.ctx.dpdk.setup()
++        test_run.ctx.topology.setup()
++        self.test_run.ctx.topology.configure_ports("sut", "dpdk")
+         test_run.ctx.tg.setup(test_run.ctx.topology)
+ 
+         self.result.ports = test_run.ctx.topology.sut_ports + test_run.ctx.topology.tg_ports
+@@ -433,8 +434,8 @@ def next(self) -> State | None:
+         """Next state."""
+         self.test_run.ctx.shell_pool.terminate_current_pool()
+         self.test_run.ctx.tg.teardown()
+-        self.test_run.ctx.dpdk.teardown()
+         self.test_run.ctx.topology.teardown()
++        self.test_run.ctx.dpdk.teardown()
+         self.test_run.ctx.tg_node.teardown()
+         self.test_run.ctx.sut_node.teardown()
+         self.result.update_teardown(Result.PASS)
+-- 
+2.49.0
+
