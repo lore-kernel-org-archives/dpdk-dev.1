@@ -2,65 +2,64 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1D27C71136
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Jun 2025 06:34:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7597C71135
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Jun 2025 06:54:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0B51240292;
-	Mon, 16 Jun 2025 08:34:06 +0200 (CEST)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id B9B724027A;
- Mon, 16 Jun 2025 08:34:03 +0200 (CEST)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55FNUlZc002932;
- Sun, 15 Jun 2025 23:34:02 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id EF78940292;
+	Mon, 16 Jun 2025 08:53:59 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 622BC4027A
+ for <dev@dpdk.org>; Mon, 16 Jun 2025 08:53:58 +0200 (CEST)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55FNWVtn030507;
+ Sun, 15 Jun 2025 23:53:57 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=6Q7loBDmekk21ZdGDVqIldL
- iYfECkcQHv/ZZaazDfuM=; b=czE+azJi6NX3cxGDdVuD7qOLtl6Tb1dsKYBB6IY
- Da0P0nqBzfV/L/8J9cwtZ0y8aLRF8bbPbHJ3hHSO4Hpf8OyT9IK/523mZR8P96T5
- mxB5ksGYRCmgbBogfv1oRbsLT0b7jHSJj01CSJx5fTR+PsOU2a6jpEbrI25qUtlX
- t05ylXabary+Bi9ny5wT4qfMQxlYetaOiKMvIYSiK1D+c8K989+sMmkjk6W8mO/y
- NYi2qg3jinc43wXXhYRHVrlKbMTyGYgPyu7N8fG2ItK1QLsZ1vO3iswi1bYbqqXz
- yEbMBonyor2iqk/Cxr7POv356PtJuTdD7vDkI0vBiNgAqIA==
+ :mime-version:subject:to; s=pfpt0220; bh=1BJDVaEfJSQKtBLuCdd2t+l
+ 52c2VKmTul4U4adIfx7I=; b=dHl/Na9g8Kez6mXCfs3LBXm2CeCN4oNvkth//FE
+ 1B/nuDO2qCVECX9EMTJP42Lkk/pYlK9YUPvIcWGOZKptLBwRtFM3iSncd/baGOd3
+ Xxuoiz3KQl5nI5GlQTsC+UELo4rwNnHnzHt+oGLQ6mm7KUOWDsSfmA3Q3V6ecAYN
+ eu12XRHU688bGTpOSQ+FETzlyeT8JNK6yGPtaqEtqaNVQ0fUin7W+WfHCbiLxM4w
+ SodESH9jHTOCTsyPRZh6aa0cyUWQpXCb7n//xwt/E5TnRJHzvnypcVHkz2ADMyZC
+ xbA5lybALTPuZsOpEN9KHoK0ySIq7szVfeo7jQXFL6A6dMA==
 Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 47a7vqgkaq-2
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 47a7w70m9a-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Sun, 15 Jun 2025 23:34:02 -0700 (PDT)
+ Sun, 15 Jun 2025 23:53:57 -0700 (PDT)
 Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
  DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Sun, 15 Jun 2025 23:34:01 -0700
+ 15.2.1544.4; Sun, 15 Jun 2025 23:53:56 -0700
 Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
  (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Sun, 15 Jun 2025 23:34:01 -0700
-Received: from ssarananaga.marvell.com (unknown [10.29.57.26])
- by maili.marvell.com (Postfix) with ESMTP id 55F785E6875;
- Sun, 15 Jun 2025 23:33:54 -0700 (PDT)
-From: Sucharitha Sarananaga <ssarananaga@marvell.com>
+ Transport; Sun, 15 Jun 2025 23:53:56 -0700
+Received: from cavium-optiplex-3070-BM15.. (unknown [10.28.34.39])
+ by maili.marvell.com (Postfix) with ESMTP id BB55B5E6875;
+ Sun, 15 Jun 2025 23:53:54 -0700 (PDT)
+From: Tomasz Duszynski <tduszynski@marvell.com>
 To: <dev@dpdk.org>
-CC: <gakhil@marvell.com>, <anoobj@marvell.com>, <fanzhang.oss@gmail.com>,
- Sucharitha Sarananaga <ssarananaga@marvell.com>, <stable@dpdk.org>
-Subject: [PATCH] app/test: update EdDSA test vector description
-Date: Mon, 16 Jun 2025 06:33:50 +0000
-Message-ID: <20250616063350.2507803-1-ssarananaga@marvell.com>
-X-Mailer: git-send-email 2.49.0
+CC: <jerinj@marvell.com>, <thomas@monjalon.net>, Tomasz Duszynski
+ <tduszynski@marvell.com>
+Subject: [PATCH 0/6] lib/pmu: cleanups and trace integration
+Date: Mon, 16 Jun 2025 08:53:35 +0200
+Message-ID: <20250616065341.3233106-1-tduszynski@marvell.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: s_oupGitYZiSqEiyMyXGw3XM86-AV3pL
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE2MDA0MiBTYWx0ZWRfXxh6ZNXjXBgDW
- Tre8su4rbqpP3jhw7k3desD6Qlz2uwJuSpu17ZLnlNB4yreTAVzAzlaTEYwtaWevSIonTnyqcpG
- b9o+yFpL3KkJ02QNai+2ZLyVAtW8FmKz1uPfA3ihO5rXd8ZASQjG4Ef37+u1qBYYNRswZVhIlNT
- CGhkHBe0d8Ot8erpbH7NN9YcwMiR5cTYC/fFEi50Mm7Xcq+HWjzr053/woKBzlqYDitz+I/v3DJ
- mkKQjVVlkaJfYrMdGSGAZ5VLkCMCeuwz/ceGvtt088+AIZEpteupJa6OaNS46fnQ9WzWeWdnKyx
- Ebqe0x4Q0/EQ9njoWeALJ7+LiuWS7e9bUB1XHu+sDRr70KsuT8NPci9QlF5H8tRIoDx6RVdH4+2
- KBMsLYapTNkNm3s7xk//CdBd+nXzmGPlNta4kr3xEUBwF5lZwm5rxD5PxMeUSCoHqjwnfOz0
-X-Authority-Analysis: v=2.4 cv=Q9jS452a c=1 sm=1 tr=0 ts=684fbada cx=c_pps
+X-Authority-Analysis: v=2.4 cv=BIyzrEQG c=1 sm=1 tr=0 ts=684fbf85 cx=c_pps
  a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=6IFa9wvqVegA:10 a=8rWy6zfcAAAA:8 a=M5GUcnROAAAA:8 a=KZLAmaRDJF1Z5URG2g8A:9
- a=YjdVzJdQTyZRADMV7wFX:22 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: s_oupGitYZiSqEiyMyXGw3XM86-AV3pL
+ a=6IFa9wvqVegA:10 a=QrosmFFJ1KrBhTjf9f0A:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE2MDA0NCBTYWx0ZWRfXxaAAXEK/KEvH
+ UOBCNeWjMI5Lc/JleUtVH3DhjIzhKjr0nrYqsJMRaBAJz9Ursxlzrf7sjeYexpIQKpetcm0EGjQ
+ 1ka3ikPoxVvkuExT8PtmZ2roGLOqXnuVXoitxPia2QY/R2pm/kTfIQ2wn1s0Arwf2GfCg3ojsze
+ 0nRjDZ2/bHSN8TTkdtcbwmkKRLIRVQnlAKC+ic61RFgSVjH0aKQi2pgOglpD66zjaS30dMXLPpj
+ /OrXnAI039iboc5VOD/L92UOMzTCD7/m9k+od+TByqQLRV84FP1xFOKDd4mCdXEFRZj9fjhQ2aM
+ MrJH+5iQgi6i/+Sj8MmaN6x0/CF0ELdxJfQKRmX3Ks/jlJ0UF7n8a0Oi4dZvKUcQMbH5spdZnwc
+ MHiEamLKsUrXl8jJko23+o+swvG17JTCbtvm/BXFq2hy9K4raIc8QGVnsLMx8j/TMcAcoq4V
+X-Proofpoint-ORIG-GUID: Y1tBlvvS4Wj4SstvrisVExSaG0fdx8vM
+X-Proofpoint-GUID: Y1tBlvvS4Wj4SstvrisVExSaG0fdx8vM
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-16_02,2025-06-13_01,2025-03-28_01
@@ -77,30 +76,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Changed the message parameter from 1 to 3 in the EdDSA 25519PH test
-vector description.
+This series does some cleanup and refactoring around the rc1 code like: trimming unused headers,
+switching to callbacks for per-arch handling, and adding trace support. It also re-enables existing
+base test to help catch reported issues on some architectures.
 
-Fixes: 2fba5232e77e ("test/crypto: add asymmetric EdDSA cases")
-Cc: stable@dpdk.org
+Tomasz Duszynski (6):
+  lib/pmu: quiesce rte_pmu_read deprecation warning in chkincs
+  lib/pmu: export only necessary arch headers
+  lib/pmu: reimplement per-arch ops as callbacks
+  lib/pmu: use build system defined RTE_LIB_PMU macro
+  test/pmu: enable fast test
+  trace: add PMU
 
-Signed-off-by: Sucharitha Sarananaga <ssarananaga@marvell.com>
----
- app/test/test_cryptodev_eddsa_test_vectors.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ MAINTAINERS                                |  1 +
+ app/test/test_pmu.c                        |  4 +-
+ app/test/test_trace_perf.c                 | 10 +++
+ doc/guides/prog_guide/profile_app.rst      |  5 ++
+ doc/guides/prog_guide/trace_lib.rst        | 31 ++++++++
+ doc/guides/rel_notes/release_25_07.rst     |  2 +
+ lib/eal/common/eal_common_trace.c          |  5 +-
+ lib/eal/common/eal_common_trace_pmu.c      | 38 ++++++++++
+ lib/eal/common/eal_common_trace_points.c   |  6 ++
+ lib/eal/common/eal_trace.h                 |  4 +
+ lib/eal/common/meson.build                 |  1 +
+ lib/eal/include/rte_eal_trace.h            | 16 ++++
+ lib/eal/include/rte_trace_point.h          |  7 ++
+ lib/eal/include/rte_trace_point_register.h |  2 +
+ lib/eal/meson.build                        |  3 +
+ lib/meson.build                            |  3 +-
+ lib/pmu/meson.build                        | 10 +--
+ lib/pmu/pmu.c                              | 86 +++++++++++++++++-----
+ lib/pmu/pmu_arm64.c                        | 19 +++--
+ lib/pmu/pmu_private.h                      | 43 +++++++++--
+ lib/pmu/rte_pmu.h                          | 31 +++++++-
+ 21 files changed, 284 insertions(+), 43 deletions(-)
+ create mode 100644 lib/eal/common/eal_common_trace_pmu.c
 
-diff --git a/app/test/test_cryptodev_eddsa_test_vectors.h b/app/test/test_cryptodev_eddsa_test_vectors.h
-index 047b667640..cb04f96834 100644
---- a/app/test/test_cryptodev_eddsa_test_vectors.h
-+++ b/app/test/test_cryptodev_eddsa_test_vectors.h
-@@ -340,7 +340,7 @@ crypto_testsuite_eddsa_params eddsa_test_params[] = {
- 	.instance = RTE_CRYPTO_EDCURVE_25519CTX
- },
- {
--	.description = "EdDSA 25519PH (msg=1, ph=1)",
-+	.description = "EdDSA 25519PH (msg=3, ph=1)",
- 	.pkey = {
- 		.data = {
- 			0x83, 0x3f, 0xe6, 0x24, 0x09, 0x23, 0x7b, 0x9d,
--- 
-2.49.0
+--
+2.34.1
 
