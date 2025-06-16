@@ -2,35 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F301C71155
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Jun 2025 16:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBED1C71155
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Jun 2025 16:15:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EEA34402BC;
-	Mon, 16 Jun 2025 18:14:52 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 5BA1D4021E;
- Mon, 16 Jun 2025 18:14:52 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 1E346200E2;
- Mon, 16 Jun 2025 18:14:52 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 1F139402BC;
+	Mon, 16 Jun 2025 18:15:50 +0200 (CEST)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mails.dpdk.org (Postfix) with ESMTP id DBD034021E
+ for <dev@dpdk.org>; Mon, 16 Jun 2025 18:15:48 +0200 (CEST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C44B81515;
+ Mon, 16 Jun 2025 09:15:26 -0700 (PDT)
+Received: from [10.57.48.125] (unknown [10.57.48.125])
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3A66A3F673;
+ Mon, 16 Jun 2025 09:15:46 -0700 (PDT)
+Message-ID: <1e2a1edc-23af-4c42-91aa-2c75ed2cce53@arm.com>
+Date: Mon, 16 Jun 2025 17:15:24 +0100
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: DPDK libs as one big shared object
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Mon, 16 Jun 2025 18:14:49 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FD01@smartserver.smartshare.dk>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: DPDK libs as one big shared object
-Thread-Index: Adve2cjXRdUgmVzQTXCQB5mG0JHn+Q==
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: <dev@dpdk.org>
-Cc: <techboard@dpdk.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] doc: elaborate on per test suite configuration dts docs
+To: Nicholas Pratte <npratte@iol.unh.edu>, thomas@monjalon.net,
+ probb@iol.unh.edu, dmarx@iol.unh.edu, paul.szczepanek@arm.com,
+ Honnappa.Nagarahalli@arm.com, thomas.wilks@arm.com,
+ yoan.picchi@foss.arm.com, stephen@networkplumber.org
+Cc: dev@dpdk.org
+References: <20250516202600.632070-2-npratte@iol.unh.edu>
+Content-Language: en-GB
+From: Luca Vizzarro <Luca.Vizzarro@arm.com>
+In-Reply-To: <20250516202600.632070-2-npratte@iol.unh.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -44,13 +45,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Why are we still building one .so file per DPDK library, instead of just =
-building one big dpdk.so for all DPDK libraries?
-I think it's legacy from when DPDK libraries were versioned =
-individually, and thus not relevant anymore.
+Agree with Dean's changes. Also the start marker is broken, but can 
+easily be added.
 
-Wouldn't building one big dpdk.so eliminate the problems with circular =
-dependencies between DPDK libraries?
-
--Morten
+Reviewed-by: Luca Vizzarro <luca.vizzarro@arm.com>
 
