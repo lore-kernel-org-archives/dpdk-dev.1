@@ -2,45 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D4A4C71155
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Jun 2025 14:31:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7C1C71136
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Jun 2025 14:41:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DDDC9402BC;
-	Mon, 16 Jun 2025 16:31:02 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 07B44402B5
- for <dev@dpdk.org>; Mon, 16 Jun 2025 16:31:01 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id BD0EB200E2;
- Mon, 16 Jun 2025 16:31:00 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id D6E21402BC;
+	Mon, 16 Jun 2025 16:41:22 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 77B8C402B5
+ for <dev@dpdk.org>; Mon, 16 Jun 2025 16:41:21 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 57150468C1; Mon, 16 Jun 2025 16:41:21 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/core Bug 1724] test_pktmbuf_read_from_offset tests for
+ incorrect overflow behaviour of rte_pktmbuf_read
+Date: Mon, 16 Jun 2025 14:41:21 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: core
+X-Bugzilla-Version: unspecified
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: minor
+X-Bugzilla-Who: marat.khalili@huawei.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1724-3@http.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17500848810.7B7D0.1549279
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v2 2/2] ethdev: remove callback checks from fast path
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Mon, 16 Jun 2025 16:30:57 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FCFC@smartserver.smartshare.dk>
-In-Reply-To: <CO6PR18MB3860D388FFE168A3ED50D5F4B470A@CO6PR18MB3860.namprd18.prod.outlook.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v2 2/2] ethdev: remove callback checks from fast path
-Thread-Index: AQHbw0+l0RHSW4O8306bysHIPKBvWrPn4SoAgBQkLbCACab9cIAAY0DA
-References: <20250429181132.2544771-1-skori@marvell.com>
- <20250512150732.65743-1-skori@marvell.com>
- <20250512150732.65743-2-skori@marvell.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FC9E@smartserver.smartshare.dk>
- <CO6PR18MB386002BE3B4FF5646A41404AB46AA@CO6PR18MB3860.namprd18.prod.outlook.com>
- <CO6PR18MB3860D388FFE168A3ED50D5F4B470A@CO6PR18MB3860.namprd18.prod.outlook.com>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Sunil Kumar Kori" <skori@marvell.com>,
- "Konstantin Ananyev" <konstantin.ananyev@huawei.com>
-Cc: <dev@dpdk.org>, "Thomas Monjalon" <thomas@monjalon.net>,
- "Ferruh Yigit" <ferruh.yigit@amd.com>,
- "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,42 +55,185 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBTdW5pbCBLdW1hciBLb3JpIFttYWlsdG86c2tvcmlAbWFydmVsbC5jb21dDQo+IFNl
-bnQ6IE1vbmRheSwgMTYgSnVuZSAyMDI1IDEwLjM2DQo+IA0KPiA+ID4gPiBGcm9tOiBTdW5pbCBL
-dW1hciBLb3JpIDxza29yaUBtYXJ2ZWxsLmNvbT4NCj4gPiA+ID4gU2VudDogTW9uZGF5LCAxMiBN
-YXkgMjAyNSAxNy4wNw0KPiA+ID4gPg0KPiA+ID4gPiBydGVfZXRoX2ZwX29wcyBjb250YWlucyBv
-cHMgZm9yIGZhc3QgcGF0aCBBUElzLiBFYWNoIEFQSSB2YWxpZGF0ZXMNCj4gPiA+ID4gYXZhaWxh
-YmlsaXR5IG9mIGNhbGxiYWNrIGFuZCB0aGVuIGludm9rZSBpdC4NCj4gPiA+ID4gVGhlc2UgY2hl
-Y2tzIGltcGFjdCBkYXRhIHBhdGggcGVyZm9ybWFjZS4NCj4gPiA+DQo+ID4gPiBQaWNraW5nIHVw
-IHRoZSBkaXNjdXNzaW9uIGZyb20gYW5vdGhlciB0aHJlYWQgWzFdOg0KPiA+ID4NCj4gPiA+ID4g
-RnJvbTogS29uc3RhbnRpbiBBbmFueWV2IFttYWlsdG86a29uc3RhbnRpbi5hbmFueWV2QGh1YXdl
-aS5jb21dDQo+ID4gPiA+IFNlbnQ6IFdlZG5lc2RheSwgMjggTWF5IDIwMjUgMTEuMTQNCj4gPiA+
-ID4NCj4gPiA+ID4gU28gd2hhdCB3ZSBhcmUgc2F2aW5nIHdpdGggdGhhdCBwYXRjaDogb25lIGNt
-cCBhbmQgb25lIHVuLXRha2VuIGJyYW5jaDoNCj4gPiA+ID4gQEAgLTYzOTksOCArNjM5OSw2IEBA
-IHJ0ZV9ldGhfcnhfcXVldWVfY291bnQodWludDE2X3QgcG9ydF9pZCwNCj4gPiA+ID4gdWludDE2
-X3QNCj4gPiA+ID4gcXVldWVfaWQpDQo+ID4gPiA+ICAJCXJldHVybiAtRUlOVkFMOw0KPiA+ID4g
-PiAgI2VuZGlmDQo+ID4gPiA+DQo+ID4gPiA+IC0JaWYgKHAtPnJ4X3F1ZXVlX2NvdW50ID09IE5V
-TEwpDQo+ID4gPiA+IC0JCXJldHVybiAtRU5PVFNVUDsNCj4gPiA+ID4gIAlyZXR1cm4gcC0+cnhf
-cXVldWVfY291bnQocWQpOw0KPiA+ID4gPiAgfQ0KPiA+ID4NCj4gPiA+IFRoZXNlIGFyZSBpbmxp
-bmUgZnVuY3Rpb25zLCBzbyB3ZSBhbHNvIHNhdmUgc29tZSBjb2RlIHNwYWNlLA0KPiA+ID4gaW5z
-dHJ1Y3Rpb24gY2FjaGUsIGFuZCBwb3NzaWJseSBhbiBlbnRyeSBpbiB0aGUgYnJhbmNoIHByZWRp
-Y3RvciAtDQo+ID4gPiBldmVyeXdoZXJlIHRoZXNlIGZ1bmN0aW9ucyBhcmUgaW5zdGFudGlhdGVk
-IGJ5IHRoZSBjb21waWxlci4NCj4gPiA+DQo+ID4gPiA+DQo+ID4gPiA+IEkgd29uZGVyIGlzIGhv
-dyByZWFsaXN0aWMgKGFuZCBtZWFzdXJhYmxlKSBpcyB0aGUgZ2Fpbj8NCj4gPiA+DQo+ID4gPiBU
-aGUgcGVyZm9ybWFuY2Ugb3B0aW1pemF0aW9uIGlzIG1haW5seSB0YXJnZXRpbmcgdGhlIG1idWYg
-cmVjeWNsZQ0KPiA+ID4gb3BlcmF0aW9ucywgaS5lLiB0aGUgaG90IGZhc3QgcGF0aCwgd2hlcmUg
-ZXZlcnkgY3ljbGUgY291bnRzLg0KPiA+ID4gQW5kIHdoaWxlIG9wdGltaXppbmcgdGhvc2UsIHRo
-ZSBvdGhlciBldGhkZXYgZmFzdCBwYXRoIGNhbGxiYWNrcyBhcmUNCj4gPiA+IGFsc28gb3B0aW1p
-emVkLg0KPiA+ID4NCj4gPiA+IFllcywgYWx0aG91Z2ggd2UgYWxsIGFncmVlIHRoYXQgdGhlcmUg
-aXMgbm8gZG93bnNpZGUgdG8gdGhpcw0KPiA+ID4gb3B0aW1pemF0aW9uLCBpdCB3b3VsZCBiZSBu
-aWNlIHRvIHNlZSBzb21lIHBlcmZvcm1hbmNlIG51bWJlcnMuDQo+ID4gPg0KPiA+IFN1cmUsIEkg
-d2lsbCBnZXQgcGVyZm9ybWFuY2UgbnVtYmVycyBmb3IgTWFydmVsbCBwbGF0Zm9ybSBhbmQgd2ls
-bCBzaGFyZS4NCj4gPg0KPiANCj4gSGkgTW9ydGVuLA0KPiBJIGdvdCBwZXJmb3JtYW5jZSBudW1i
-ZXJzIG9uIG11bHRpcGxlIE1hcnZlbGwncyBwbGF0Zm9ybXMgYW5kIG9ic2VydmVkIGdhaW4NCj4g
-YXJvdW5kIDAuMSUgKH4yMEsgcHBzKSB3aXRoIHRoaXMgcGF0Y2guIE90aGVyIHRoYW4gdGhpcywg
-dGhlcmUgYXJlIG90aGVyIGZhc3QNCj4gcGF0aCBjYWxsYmFja3MgKHJ4X3BrdF9idXJzdCBhbmQg
-dHhfcGt0X2J1cnN0KSB3aGljaCBhdm9pZCB0aGlzIGNoZWNrLg0KPiANCj4gSU1PLCB0aGlzIHBh
-dGNoIGhhcyBubyBuZWdhdGl2ZSBpbXBhY3QgYW5kIHNsaWdodCBpbXByb3ZlbWVudCAmIGNsZWFu
-dXAgdGhlDQo+IGZhc3QgcGF0aC4gUGxlYXNlIHN1Z2dlc3QuDQoNCkkgc3RpbGwgbGlrZSB0aGlz
-IHBhdGNoLCBzbyBJIGNvbmZpcm0gbXkgQUNLOg0KDQpBY2tlZC1ieTogTW9ydGVuIEJyw7hydXAg
-PG1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNvbT4NCg0K
+
+--17500848810.7B7D0.1549279
+Date: Mon, 16 Jun 2025 16:41:21 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+https://bugs.dpdk.org/show_bug.cgi?id=3D1724
+
+            Bug ID: 1724
+           Summary: test_pktmbuf_read_from_offset tests for incorrect
+                    overflow behaviour of rte_pktmbuf_read
+           Product: DPDK
+           Version: unspecified
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: minor
+          Priority: Normal
+         Component: core
+          Assignee: dev@dpdk.org
+          Reporter: marat.khalili@huawei.com
+  Target Milestone: ---
+
+Test function test_pktmbuf_read_from_offset as one of its checks
+surprisingly verifies that the following call succeeds even though
+rte_pktmbuf_read never guarantees this behaviour in its documentation:
+
+    rte_pktmbuf_read(m, hdr_len, UINT_MAX, NULL);
+
+The reason this call succeeds is due to 32-bit unsigned integer
+overflow, but it is unlikely that this behaviour is intentional and
+needs testing. It is very likely instead that the check condition was
+reversed by mistake. Other similar calls that follow are being correctly
+verified as failing. And, there were no checks of valid offset and
+excessive length combinations that would cause the call to fail.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17500848810.7B7D0.1549279
+Date: Mon, 16 Jun 2025 16:41:21 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - test_pktmbuf_read_from_offset tests for incorrect=
+ overflow behaviour of rte_pktmbuf_read"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1724">1724</a>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Summary</th>
+          <td>test_pktmbuf_read_from_offset tests for incorrect overflow be=
+haviour of rte_pktmbuf_read
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>unspecified
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>minor
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>core
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>marat.khalili&#64;huawei.com
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">Test function test_pktmbuf_read_fr=
+om_offset as one of its checks
+surprisingly verifies that the following call succeeds even though
+rte_pktmbuf_read never guarantees this behaviour in its documentation:
+
+    rte_pktmbuf_read(m, hdr_len, UINT_MAX, NULL);
+
+The reason this call succeeds is due to 32-bit unsigned integer
+overflow, but it is unlikely that this behaviour is intentional and
+needs testing. It is very likely instead that the check condition was
+reversed by mistake. Other similar calls that follow are being correctly
+verified as failing. And, there were no checks of valid offset and
+excessive length combinations that would cause the call to fail.
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1724">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17500848810.7B7D0.1549279--
