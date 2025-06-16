@@ -2,51 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F18C71135
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Jun 2025 10:50:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58CD2C71136
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Jun 2025 10:53:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1FE6840656;
-	Mon, 16 Jun 2025 12:50:08 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id A5BAF40684
- for <dev@dpdk.org>; Mon, 16 Jun 2025 12:50:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1750071007; x=1781607007;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=Zm+92am3nvKeGP5gaB4IAokB0tBjuoxd93vWPbesUW4=;
- b=AyilpNcz9DrH9k7JJSCLWX7okQG+8jou9+HkPR1YV8GEkoePB3wdrWz8
- SwZ/BJv2wMGT4GIdVUQz+dDBjRS7nYXqw/kZIBTGMzVZRnO7cQ7fYC9Ho
- eUdnXMCSZAww8I8hgtLRrrViGqXQ6iDCcj+ZoaFAmzJKgckoGKok5X4rN
- IHvRoO41knqM3N3c5ZSmrJiYu1D7iBFvY2M7jpc0WsszBGCNjYc0Zb1u3
- mjrxiEsV6ONSG2AZYFdMrN2XkIb7O3cH9VESwq9hG3b8QS2NgWr2XjEGL
- naprb3xcIoLm0dly/7lLA/6Q0uHkKPsr22ypZdJwNGBxRS4R94XzG+frJ Q==;
-X-CSE-ConnectionGUID: gN+5vwtkT4+dU6cyV/DP1g==
-X-CSE-MsgGUID: 28eXV9k+TPSXSBbCgf8ovw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="54828171"
-X-IronPort-AV: E=Sophos;i="6.16,241,1744095600"; d="scan'208";a="54828171"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
- by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Jun 2025 03:50:06 -0700
-X-CSE-ConnectionGUID: 72w6PFj4TDiPe+siiGzScQ==
-X-CSE-MsgGUID: /d0ucPcYSIOGWqmsdGYrrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,241,1744095600"; d="scan'208";a="148281566"
-Received: from silpixa00401385.ir.intel.com ([10.237.214.33])
- by fmviesa006.fm.intel.com with ESMTP; 16 Jun 2025 03:50:05 -0700
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 3/3] test/argparse: add test for repeated arguments
-Date: Mon, 16 Jun 2025 11:49:43 +0100
-Message-ID: <20250616104944.3425929-4-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250616104944.3425929-1-bruce.richardson@intel.com>
-References: <20250616104944.3425929-1-bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 86B4B40616;
+	Mon, 16 Jun 2025 12:53:30 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id EC12040430
+ for <dev@dpdk.org>; Mon, 16 Jun 2025 12:53:28 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55GAdGCF008442;
+ Mon, 16 Jun 2025 03:53:28 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=j
+ L4tykhBXS1Ry8O5GHYk/nhWv+Yq44neR2DLARaH2ow=; b=PkuOybyNps/pYsrZ5
+ yh8dk4T+j68POj3WrZ2Kxre3T+/iKwpmw2dQYHAjZhhA1ei6+qb6swW1nclsOmCa
+ 6lxFogm6h4lbDpxLAojto7dhn8pU5d22auQyA0ruWu+e0NH4smCeUJ4LkTrobC+g
+ FdpGkPlKQEL6H606jOLblF88L7xVczcnfy95OBDOyeHwso8lx/SPtQCmZ0haVM1W
+ tSbp/IwcwRTQQ4dxoJ9nc698kjhmTOtfv0eXT9xQdAhvRVFQOLW0xQlxQ8zjTGey
+ 7h1KaX7soelms5bW3pIKTGmuvVkIOVl/Z55wckyVVS5HJdDPKU+hDhOru1XtJ094
+ jPdJA==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 47ahpb013t-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Mon, 16 Jun 2025 03:53:27 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Mon, 16 Jun 2025 03:53:27 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 16 Jun 2025 03:53:27 -0700
+Received: from cavium-optiplex-3070-BM15.. (unknown [10.28.34.39])
+ by maili.marvell.com (Postfix) with ESMTP id 6F1235E6875;
+ Mon, 16 Jun 2025 03:53:25 -0700 (PDT)
+From: Tomasz Duszynski <tduszynski@marvell.com>
+To: <thomas@monjalon.net>
+CC: <dev@dpdk.org>, <jerinj@marvell.com>, <tduszynski@marvell.com>
+Subject: Re: [PATCH 4/6] lib/pmu: use build system defined RTE_LIB_PMU macro
+Date: Mon, 16 Jun 2025 12:53:24 +0200
+Message-ID: <20250616105324.3249828-1-tduszynski@marvell.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <5659935.eFTFzoEnKi@thomas>
+References: <5659935.eFTFzoEnKi@thomas>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE2MDA2NyBTYWx0ZWRfX+izWF2wOAXsT
+ BHctVlnOMXvBRRS6wW4KwXVWr/Xu28a5CfVYxvpqNImiBiFvO3Uclv1TxpP6qkEDQu9oTscR239
+ S6vIg6/B4cXVuq+s8QI5THKEOqRbxki0yh24LEU0rsOYL+RbCk702U368U0iYviKmHZ0yycOoPO
+ i0BgRT0ACxyJrWSLryiyIjjV8A5zjE9hfsTWjS0XlcwxF5HL11i13VSXoNylD/oz05sXLIVIwzQ
+ ZHBEW0KlhHFaomK/Zkur6wIcfS2T0ITNC1nGfMbWnfDL5d79NFiPJSPzXl5UwY1VUNhCMNkgXEw
+ hQtsb8XepmsFYzGiCqnu13qIWDbWS+SWEZnGfYuvLT3pDFmXhCR08t9QiFUHaSYYXriYRfFLGMm
+ zdi6EmeF17cTxDFvPrJIVCsoSLZzJO/99n3+0DuSZQsd+375mK3ytHdGfC6Zh9bKPMFjaDdm
+X-Authority-Analysis: v=2.4 cv=UcdRSLSN c=1 sm=1 tr=0 ts=684ff7a7 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=6IFa9wvqVegA:10 a=EfJid7QcyGkaUtjXi6gA:9
+X-Proofpoint-GUID: FQgvLjHqJ61eh2F26MabHJSE03fISqF9
+X-Proofpoint-ORIG-GUID: FQgvLjHqJ61eh2F26MabHJSE03fISqF9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-16_04,2025-06-13_01,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,66 +78,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add a test case to check that argparse throws an error when an argument
-is repeated on the commandline without the SUPPORT_MULTI flag. Also test
-that multiple arguments are correctly handled with the flag.
+>16/06/2025 08:53, Tomasz Duszynski:
+>> RTE_LIB_PMU is defined by build system automatically if DPDK is build
+>> for Linux. Otherwise it's missing.
+>>
+>> That said all cases where conditional compilation is required
+>> can be handled without introducing other macros.
+>
+>You don't need to know if it is compiled for an unsupported arch?
+>
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
- app/test/test_argparse.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+No, if arch isn't supported reading whatever counter returns 0. On the other hand
+if architecture does not require extra setup (eg., x86-64) all works
+automatically because Linux has consistent API for each supported arch.
 
-diff --git a/app/test/test_argparse.c b/app/test/test_argparse.c
-index 57b85c4bf0..0a229752fa 100644
---- a/app/test/test_argparse.c
-+++ b/app/test/test_argparse.c
-@@ -329,6 +329,38 @@ test_argparse_invalid_option(void)
- 	return 0;
- }
- 
-+static int
-+test_argparse_invalid_repeated_option(void)
-+{
-+	/* test that we allow repeated args only with the MULTI flag */
-+	struct rte_argparse *obj;
-+	char *argv[3];
-+	int ret;
-+
-+	/* check that we error out with two "-a" flags */
-+	obj = test_argparse_init_obj();
-+	obj->args[0].val_saver = NULL;
-+	obj->args[1].val_saver = NULL;
-+	argv[0] = test_strdup(obj->prog_name);
-+	argv[1] = test_strdup("-a");
-+	argv[2] = test_strdup("-a");
-+	ret = rte_argparse_parse(obj, 3, argv);
-+	TEST_ASSERT(ret == -EINVAL, "Argparse did not error out with two '-a' flags!");
-+
-+	obj = test_argparse_init_obj();
-+	obj->args[0].val_saver = NULL;
-+	obj->args[1].val_saver = NULL;
-+	obj->args[0].flags |= RTE_ARGPARSE_FLAG_SUPPORT_MULTI;
-+	/* check that we allow two "-a" flags with MULTI flag set */
-+	argv[0] = test_strdup(obj->prog_name);
-+	argv[1] = test_strdup("-a");
-+	argv[2] = test_strdup("-a");
-+	ret = rte_argparse_parse(obj, 3, argv);
-+	TEST_ASSERT(ret == 3, "Argparse failed to handle duplicate '-a' flags!");
-+
-+	return 0;
-+}
-+
- static int
- test_argparse_opt_autosave_parse_int_of_no_val(void)
- {
-@@ -864,6 +896,7 @@ static struct unit_test_suite argparse_test_suite = {
- 		TEST_CASE(test_argparse_invalid_arg_flags),
- 		TEST_CASE(test_argparse_invalid_arg_repeat),
- 		TEST_CASE(test_argparse_invalid_option),
-+		TEST_CASE(test_argparse_invalid_repeated_option),
- 		TEST_CASE(test_argparse_opt_autosave_parse_int_of_no_val),
- 		TEST_CASE(test_argparse_opt_autosave_parse_int_of_required_val),
- 		TEST_CASE(test_argparse_opt_autosave_parse_int_of_optional_val),
--- 
-2.48.1
+>What will happen when calling the unit test on RISC-V?
 
+Test will be skipped because event is set to 'NULL' by default. Supported
+architectures override it with valid name.
