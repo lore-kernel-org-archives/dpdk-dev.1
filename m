@@ -2,46 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7C1C71136
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Jun 2025 14:41:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2286C71136
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Jun 2025 15:06:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D6E21402BC;
-	Mon, 16 Jun 2025 16:41:22 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 77B8C402B5
- for <dev@dpdk.org>; Mon, 16 Jun 2025 16:41:21 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 57150468C1; Mon, 16 Jun 2025 16:41:21 +0200 (CEST)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/core Bug 1724] test_pktmbuf_read_from_offset tests for
- incorrect overflow behaviour of rte_pktmbuf_read
-Date: Mon, 16 Jun 2025 14:41:21 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: core
-X-Bugzilla-Version: unspecified
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: minor
-X-Bugzilla-Who: marat.khalili@huawei.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1724-3@http.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17500848810.7B7D0.1549279
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id EB000402BC;
+	Mon, 16 Jun 2025 17:06:10 +0200 (CEST)
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com
+ [209.85.160.177])
+ by mails.dpdk.org (Postfix) with ESMTP id 79CD74021E
+ for <dev@dpdk.org>; Mon, 16 Jun 2025 17:06:09 +0200 (CEST)
+Received: by mail-qt1-f177.google.com with SMTP id
+ d75a77b69052e-4a5840ec53dso50182871cf.0
+ for <dev@dpdk.org>; Mon, 16 Jun 2025 08:06:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1750086369; x=1750691169; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=glOpouWkQ+aenEH4GDP2v6T69z0sf7c3C6jcTGpkCYI=;
+ b=OhycOfic2jRgqtZ0YfuhZRLL4im6CpRJGA2QByRYb8g73HnokKKsyLl6MviQajpzrc
+ PdHOm2/UtvaM5/cjvwlK0wb8nJ3C04KPtzu/PCg42Lidv+aMhefD15HdenYerdRXhytJ
+ 9zGSC3/64O0bgYN9YTmJ7jniYwTrPjOckHgdkhaLil3kqx50f6FmMwk/yQIQsvapiUVp
+ qQXVn5ZuNJTavPKUSsMrZpkc3QAxNS2HAYAWA8MnexKCg15LZuWi/bxibNUBy/8FYDrS
+ acdJb8NyTYJYE8zaI+XO6KL+DJhd/+5kDo4fGh/B6SQR0DD98DOPOg2G7nzhzf1M92Xb
+ U62Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1750086369; x=1750691169;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=glOpouWkQ+aenEH4GDP2v6T69z0sf7c3C6jcTGpkCYI=;
+ b=M6KuaIWGsVYVSXF6eK8DZWVsn4d9lAmw7xra+JsB5lps3M6exIhj1xEG+jMg/aSkyD
+ jeQTZhv/t2u+BHCwQUZ0LSKMAcDN0QzB6Ct8NoXC3b2S4ZuDbwUNw0kZWrHAyGHSvfVx
+ qIb0H0dj0G8hbdRIpe4cIN7QKHh5Djk1bVdOHBCk5+47ZK7ZgXa4h4ZW2nAJ3N5Ks2iA
+ 6Cgz3HPfLh/mf0+KROAzRZRXNQ8nHgD5CDQBbnxZ/20ERgxUNq63t+JyTKeCXSsQTfrP
+ YYagu9nn4TSAKtSDru801COPGrfBNLbt8Sfs+1tpj7tQJ3Ml+Vhw6GoIfnq6lOPi/Wsy
+ cPhA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVbbtip2f56PmxwfgbG4qAr3VYBYdJui+f8TJ+z+33+SXDMnkF2TuqCH075QTbt2YEVrYw=@dpdk.org
+X-Gm-Message-State: AOJu0YwJtXM1ICpcgL7Dfx90AD23GwjqevySp1TZe/F/TGbjrZq8gtag
+ Ibq6z9k5t/1ZfV56L+MW/wcD2ePRAm1CJknRk41Ptj8tPL6mZbGJFQA0vHr4hfn5plVGAYfLGDJ
+ FNQ8OxZm8MXgPjxuMAtstBSKQQggKF5s4oSLv
+X-Gm-Gg: ASbGnctcOv3wGxn9bvS+hpAKJE3NTPPu24hCz+Xf0kgW1kG5vVPY7+xEupvGkb0TRub
+ UNXS3/CJ+ocDuRL8hP2LKSuWNynTafipg/CVaMKRj9qbSSls3/XD+/GeLX3luJlE/X8NBVLYGOZ
+ n1UcGPj/yME5HAgo8IDxl/f7IZNGPb65m0Zmor6FiL3Q==
+X-Google-Smtp-Source: AGHT+IHqAphdxmCOKKkDN/EXIXhjhsbSFOK4IR9XDtSGll0uEmalp+YxyhDt/B9MRfdpanXhFC4GLd9Qq+IV1+AFUog=
+X-Received: by 2002:a05:622a:1890:b0:4a6:fa8e:50a8 with SMTP id
+ d75a77b69052e-4a73c4fcea9mr164214571cf.2.1750086368614; Mon, 16 Jun 2025
+ 08:06:08 -0700 (PDT)
 MIME-Version: 1.0
+References: <20250613231519.32933-1-pbhagavatula@marvell.com>
+In-Reply-To: <20250613231519.32933-1-pbhagavatula@marvell.com>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Mon, 16 Jun 2025 20:35:42 +0530
+X-Gm-Features: AX0GCFuW09B0uTM2qf-8QMTCQ1hMePvUfPDSOq1SQCGqM1pnWqh5RgjjcS6ytiU
+Message-ID: <CALBAE1O3gUvoxBcQRjYWqc-d28h_QpGNr8UVsnRhV-pzakr0XQ@mail.gmail.com>
+Subject: Re: [PATCH] doc: fix missing feature matrix for event device
+To: pbhagavatula@marvell.com, Thomas Monjalon <thomas@monjalon.net>, 
+ David Marchand <david.marchand@redhat.com>
+Cc: jerinj@marvell.com, Amit Prakash Shukla <amitprakashs@marvell.com>,
+ dev@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,185 +77,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+On Mon, Jun 16, 2025 at 2:02=E2=80=AFPM <pbhagavatula@marvell.com> wrote:
+>
+> From: Pavan Nikhilesh <pbhagavatula@marvell.com>
+>
+> Fix missing feature matrix addition for event device DMA and
+> vector adapters.
+>
+> Fixes: 66a30a29387a ("eventdev/dma: introduce DMA adapter")
+> Fixes: e12c3754da7a ("eventdev/vector: introduce event vector adapter")
+>
+> Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
 
---17500848810.7B7D0.1549279
-Date: Mon, 16 Jun 2025 16:41:21 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-https://bugs.dpdk.org/show_bug.cgi?id=3D1724
-
-            Bug ID: 1724
-           Summary: test_pktmbuf_read_from_offset tests for incorrect
-                    overflow behaviour of rte_pktmbuf_read
-           Product: DPDK
-           Version: unspecified
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: minor
-          Priority: Normal
-         Component: core
-          Assignee: dev@dpdk.org
-          Reporter: marat.khalili@huawei.com
-  Target Milestone: ---
-
-Test function test_pktmbuf_read_from_offset as one of its checks
-surprisingly verifies that the following call succeeds even though
-rte_pktmbuf_read never guarantees this behaviour in its documentation:
-
-    rte_pktmbuf_read(m, hdr_len, UINT_MAX, NULL);
-
-The reason this call succeeds is due to 32-bit unsigned integer
-overflow, but it is unlikely that this behaviour is intentional and
-needs testing. It is very likely instead that the check condition was
-reversed by mistake. Other similar calls that follow are being correctly
-verified as failing. And, there were no checks of valid offset and
-excessive length combinations that would cause the call to fail.
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
-
---17500848810.7B7D0.1549279
-Date: Mon, 16 Jun 2025 16:41:21 +0200
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-<html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
-bz_new_table">
-        <tr>
-          <th>Bug ID</th>
-          <td><a class=3D"bz_bug_link=20
-          bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - test_pktmbuf_read_from_offset tests for incorrect=
- overflow behaviour of rte_pktmbuf_read"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1724">1724</a>
-          </td>
-        </tr>
-
-        <tr>
-          <th>Summary</th>
-          <td>test_pktmbuf_read_from_offset tests for incorrect overflow be=
-haviour of rte_pktmbuf_read
-          </td>
-        </tr>
-
-        <tr>
-          <th>Product</th>
-          <td>DPDK
-          </td>
-        </tr>
-
-        <tr>
-          <th>Version</th>
-          <td>unspecified
-          </td>
-        </tr>
-
-        <tr>
-          <th>Hardware</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>OS</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>Status</th>
-          <td>UNCONFIRMED
-          </td>
-        </tr>
-
-        <tr>
-          <th>Severity</th>
-          <td>minor
-          </td>
-        </tr>
-
-        <tr>
-          <th>Priority</th>
-          <td>Normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Component</th>
-          <td>core
-          </td>
-        </tr>
-
-        <tr>
-          <th>Assignee</th>
-          <td>dev&#64;dpdk.org
-          </td>
-        </tr>
-
-        <tr>
-          <th>Reporter</th>
-          <td>marat.khalili&#64;huawei.com
-          </td>
-        </tr>
-
-        <tr>
-          <th>Target Milestone</th>
-          <td>---
-          </td>
-        </tr></table>
-      <p>
-        <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">Test function test_pktmbuf_read_fr=
-om_offset as one of its checks
-surprisingly verifies that the following call succeeds even though
-rte_pktmbuf_read never guarantees this behaviour in its documentation:
-
-    rte_pktmbuf_read(m, hdr_len, UINT_MAX, NULL);
-
-The reason this call succeeds is due to 32-bit unsigned integer
-overflow, but it is unlikely that this behaviour is intentional and
-needs testing. It is very likely instead that the check condition was
-reversed by mistake. Other similar calls that follow are being correctly
-verified as failing. And, there were no checks of valid offset and
-excessive length combinations that would cause the call to fail.
-          </pre>
-        </div>
-      </p>
-
-
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1724">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17500848810.7B7D0.1549279--
+Acked-by: Jerin Jacob <jerinj@marvell.com>
+Tested-by: Jerin Jacob <jerinj@marvell.com>
