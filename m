@@ -2,28 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25237C71159
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Jun 2025 03:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A16BC71159
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Jun 2025 03:24:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D23C040A6B;
-	Tue, 17 Jun 2025 05:24:15 +0200 (CEST)
-Received: from out28-103.mail.aliyun.com (out28-103.mail.aliyun.com
- [115.124.28.103])
- by mails.dpdk.org (Postfix) with ESMTP id 4E2084069D
+	by mails.dpdk.org (Postfix) with ESMTP id DEA8D40A4B;
+	Tue, 17 Jun 2025 05:24:17 +0200 (CEST)
+Received: from out28-126.mail.aliyun.com (out28-126.mail.aliyun.com
+ [115.124.28.126])
+ by mails.dpdk.org (Postfix) with ESMTP id 4E37740156
  for <dev@dpdk.org>; Tue, 17 Jun 2025 05:24:13 +0200 (CEST)
 Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
- fp:SMTPD_---.dNoTyXt_1750130638 cluster:ay29) by smtp.aliyun-inc.com;
- Tue, 17 Jun 2025 11:24:09 +0800
+ fp:SMTPD_---.dNoTyn8_1750130649 cluster:ay29) by smtp.aliyun-inc.com;
+ Tue, 17 Jun 2025 11:24:10 +0800
 From: "dimon.zhao" <dimon.zhao@nebula-matrix.com>
 To: dimon.zhao@nebula-matrix.com,
 	kyo.liu@nebula-matrix.com,
 	dev@dpdk.org
-Subject: [PATCH v2 00/16] NBL PMD for Nebulamatrix NICs
-Date: Mon, 16 Jun 2025 20:23:37 -0700
-Message-Id: <20250617032353.3036379-1-dimon.zhao@nebula-matrix.com>
+Cc: Thomas Monjalon <thomas@monjalon.net>, Leon Yu <leon.yu@nebula-matrix.com>,
+ Sam Chen <sam.chen@nebula-matrix.com>
+Subject: [PATCH v2 01/16] net/nbl: add doc and minimum nbl build framework
+Date: Mon, 16 Jun 2025 20:23:38 -0700
+Message-Id: <20250617032353.3036379-2-dimon.zhao@nebula-matrix.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250617032353.3036379-1-dimon.zhao@nebula-matrix.com>
+References: <20250617032353.3036379-1-dimon.zhao@nebula-matrix.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -38,123 +41,198 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Features:
----------
-- MTU update
-- promisc mode set
-- xstats
-- Basic stats 
+add minimum PMD code, doc and build infrastructure for nbl driver.
 
-Support NICs:
--------------
-- S1205CQ-A00CHT
-- S1105AS-A00CHT
-- S1055AS-A00CHT
-- S1052AS-A00CHT
-- S1051AS-A00CHT
-- S1045XS-A00CHT
-- S1205CQ-A00CSP
-- S1055AS-A00CSP
-- S1052AS-A00CSP
-
-Dimon Zhao (16):
-  net/nbl: add doc and minimum nbl build framework
-  net/nbl: add simple probe/remove and log module
-  net/nbl: add PHY layer definitions and implementation
-  net/nbl: add Channel layer definitions and implementation
-  net/nbl: add Resource layer definitions and implementation
-  net/nbl: add Dispatch layer definitions and implementation
-  net/nbl: add Dev layer definitions and implementation
-  net/nbl: add complete device init and uninit functionality
-  net/nbl: add UIO and VFIO mode for nbl
-  net/nbl: add nbl coexistence mode for nbl
-  net/nbl: add nbl ethdev configuration
-  net/nbl: add nbl device rxtx queue setup and release ops
-  net/nbl: add nbl device start and stop ops
-  net/nbl: add nbl device Tx and Rx burst
-  net/nbl: add nbl device xstats and stats
-  net/nbl: nbl device support set MTU and promisc
-
- .mailmap                                      |    5 +
- MAINTAINERS                                   |    9 +
- doc/guides/nics/features/nbl.ini              |    9 +
- doc/guides/nics/index.rst                     |    1 +
- doc/guides/nics/nbl.rst                       |   42 +
- drivers/net/meson.build                       |    1 +
- drivers/net/nbl/meson.build                   |   26 +
- drivers/net/nbl/nbl_common/nbl_common.c       |   47 +
- drivers/net/nbl/nbl_common/nbl_common.h       |   10 +
- drivers/net/nbl/nbl_common/nbl_thread.c       |   88 ++
- drivers/net/nbl/nbl_common/nbl_userdev.c      |  743 ++++++++++
- drivers/net/nbl/nbl_common/nbl_userdev.h      |   21 +
- drivers/net/nbl/nbl_core.c                    |  100 ++
- drivers/net/nbl/nbl_core.h                    |   98 ++
- drivers/net/nbl/nbl_dev/nbl_dev.c             | 1007 ++++++++++++++
- drivers/net/nbl/nbl_dev/nbl_dev.h             |   65 +
- drivers/net/nbl/nbl_dispatch.c                | 1227 +++++++++++++++++
- drivers/net/nbl/nbl_dispatch.h                |   31 +
- drivers/net/nbl/nbl_ethdev.c                  |  161 +++
- drivers/net/nbl/nbl_ethdev.h                  |   32 +
- drivers/net/nbl/nbl_hw/nbl_channel.c          |  853 ++++++++++++
- drivers/net/nbl/nbl_hw/nbl_channel.h          |  127 ++
- .../nbl_hw_leonis/nbl_phy_leonis_snic.c       |  230 +++
- .../nbl_hw_leonis/nbl_phy_leonis_snic.h       |   53 +
- .../nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c |  253 ++++
- .../nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.h |   10 +
- drivers/net/nbl/nbl_hw/nbl_phy.h              |   28 +
- drivers/net/nbl/nbl_hw/nbl_resource.c         |    5 +
- drivers/net/nbl/nbl_hw/nbl_resource.h         |  153 ++
- drivers/net/nbl/nbl_hw/nbl_txrx.c             |  907 ++++++++++++
- drivers/net/nbl/nbl_hw/nbl_txrx.h             |  136 ++
- drivers/net/nbl/nbl_hw/nbl_txrx_ops.h         |   91 ++
- drivers/net/nbl/nbl_include/nbl_def_channel.h |  434 ++++++
- drivers/net/nbl/nbl_include/nbl_def_common.h  |  128 ++
- drivers/net/nbl/nbl_include/nbl_def_dev.h     |  107 ++
- .../net/nbl/nbl_include/nbl_def_dispatch.h    |   95 ++
- drivers/net/nbl/nbl_include/nbl_def_phy.h     |   35 +
- .../net/nbl/nbl_include/nbl_def_resource.h    |   87 ++
- drivers/net/nbl/nbl_include/nbl_include.h     |  203 +++
- drivers/net/nbl/nbl_include/nbl_logs.h        |   25 +
- .../net/nbl/nbl_include/nbl_product_base.h    |   37 +
- 41 files changed, 7720 insertions(+)
+Signed-off-by: dimon.zhao <dimon.zhao@nebula-matrix.com>
+---
+ .mailmap                         |  5 ++++
+ MAINTAINERS                      |  9 +++++++
+ doc/guides/nics/features/nbl.ini |  9 +++++++
+ doc/guides/nics/index.rst        |  1 +
+ doc/guides/nics/nbl.rst          | 42 ++++++++++++++++++++++++++++++++
+ drivers/net/meson.build          |  1 +
+ drivers/net/nbl/meson.build      | 11 +++++++++
+ drivers/net/nbl/nbl_ethdev.c     |  3 +++
+ 8 files changed, 81 insertions(+)
  create mode 100644 doc/guides/nics/features/nbl.ini
  create mode 100644 doc/guides/nics/nbl.rst
  create mode 100644 drivers/net/nbl/meson.build
- create mode 100644 drivers/net/nbl/nbl_common/nbl_common.c
- create mode 100644 drivers/net/nbl/nbl_common/nbl_common.h
- create mode 100644 drivers/net/nbl/nbl_common/nbl_thread.c
- create mode 100644 drivers/net/nbl/nbl_common/nbl_userdev.c
- create mode 100644 drivers/net/nbl/nbl_common/nbl_userdev.h
- create mode 100644 drivers/net/nbl/nbl_core.c
- create mode 100644 drivers/net/nbl/nbl_core.h
- create mode 100644 drivers/net/nbl/nbl_dev/nbl_dev.c
- create mode 100644 drivers/net/nbl/nbl_dev/nbl_dev.h
- create mode 100644 drivers/net/nbl/nbl_dispatch.c
- create mode 100644 drivers/net/nbl/nbl_dispatch.h
  create mode 100644 drivers/net/nbl/nbl_ethdev.c
- create mode 100644 drivers/net/nbl/nbl_ethdev.h
- create mode 100644 drivers/net/nbl/nbl_hw/nbl_channel.c
- create mode 100644 drivers/net/nbl/nbl_hw/nbl_channel.h
- create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.c
- create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.h
- create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c
- create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.h
- create mode 100644 drivers/net/nbl/nbl_hw/nbl_phy.h
- create mode 100644 drivers/net/nbl/nbl_hw/nbl_resource.c
- create mode 100644 drivers/net/nbl/nbl_hw/nbl_resource.h
- create mode 100644 drivers/net/nbl/nbl_hw/nbl_txrx.c
- create mode 100644 drivers/net/nbl/nbl_hw/nbl_txrx.h
- create mode 100644 drivers/net/nbl/nbl_hw/nbl_txrx_ops.h
- create mode 100644 drivers/net/nbl/nbl_include/nbl_def_channel.h
- create mode 100644 drivers/net/nbl/nbl_include/nbl_def_common.h
- create mode 100644 drivers/net/nbl/nbl_include/nbl_def_dev.h
- create mode 100644 drivers/net/nbl/nbl_include/nbl_def_dispatch.h
- create mode 100644 drivers/net/nbl/nbl_include/nbl_def_phy.h
- create mode 100644 drivers/net/nbl/nbl_include/nbl_def_resource.h
- create mode 100644 drivers/net/nbl/nbl_include/nbl_include.h
- create mode 100644 drivers/net/nbl/nbl_include/nbl_logs.h
- create mode 100644 drivers/net/nbl/nbl_include/nbl_product_base.h
 
+diff --git a/.mailmap b/.mailmap
+index 8483d96ec5..c46d273447 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -362,6 +362,7 @@ Diana Wang <na.wang@corigine.com>
+ Didier Pallard <didier.pallard@6wind.com>
+ Dilshod Urazov <dilshod.urazov@oktetlabs.ru>
+ Dima Ruinskiy <dima.ruinskiy@intel.com>
++Dimon Zhao <dimon.zhao@nebula-matrix.com>
+ Ding Zhi <zhi.ding@6wind.com>
+ Diogo Behrens <diogo.behrens@huawei.com>
+ Dirk-Holger Lenz <dirk.lenz@ng4t.com>
+@@ -833,6 +834,7 @@ Kumar Amber <kumar.amber@intel.com>
+ Kumara Parameshwaran <kumaraparamesh92@gmail.com> <kparameshwar@vmware.com>
+ Kumar Sanghvi <kumaras@chelsio.com>
+ Kyle Larose <klarose@sandvine.com>
++Kyo Liu <kyo.liu@nebula-matrix.com>
+ Lance Richardson <lance.richardson@broadcom.com>
+ Laszlo Ersek <lersek@redhat.com>
+ Laura Stroe <laura.stroe@intel.com>
+@@ -847,6 +849,7 @@ Lei Gong <arei.gonglei@huawei.com>
+ Lei Ji <jilei8@huawei.com>
+ Lei Yao <lei.a.yao@intel.com>
+ Leonid Myravjev <myravjev@amicon.ru>
++Leon Yu <leon.yu@nebula-matrix.com>
+ Leo Xu <yongquanx@nvidia.com>
+ Leszek Zygo <leszek.zygo@intel.com>
+ Levend Sayar <levendsayar@gmail.com>
+@@ -1352,6 +1355,7 @@ Saikrishna Edupuganti <saikrishna.edupuganti@intel.com>
+ Saleh Alsouqi <salehals@nvidia.com> <salehals@mellanox.com>
+ Salem Sol <salems@nvidia.com>
+ Sam Andrew <samandrew@microsoft.com>
++Sam Chen <sam.chen@nebula-matrix.com>
+ Sameh Gobriel <sameh.gobriel@intel.com>
+ Sam Grove <sam.grove@sifive.com>
+ Samik Gupta <samik.gupta@broadcom.com>
+@@ -1850,3 +1854,4 @@ Ziye Yang <ziye.yang@intel.com>
+ Zoltan Kiss <zoltan.kiss@schaman.hu> <zoltan.kiss@linaro.org>
+ Zorik Machulsky <zorik@amazon.com>
+ Zyta Szpak <zyta@marvell.com> <zr@semihalf.com> <zyta.szpak@semihalf.com>
++Leon Yu <leon.yu@nebula-matrix.com>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0e9357f3a3..5d0ff04999 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1010,6 +1010,15 @@ F: drivers/net/rnp/
+ F: doc/guides/nics/rnp.rst
+ F: doc/guides/nics/features/rnp.ini
+ 
++nebulamatrix nbl
++M: Dimon Zhao <dimon.zhao@nebula-matrix.com>
++M: Kyo Liu<kyo.liu@nebula-matrix.com>
++M: Leon Yu <leon.yu@nebula-matrix.com>
++M: Sam Chen <sam.chen@nebula-matrix.com>
++F: drivers/net/nbl
++F: doc/guides/nics/nbl.rst
++F: doc/guides/nics/features/nbl.ini
++
+ Realtek r8169
+ M: Howard Wang <howard_wang@realsil.com.cn>
+ M: Chunhao Lin <hau@realtek.com>
+diff --git a/doc/guides/nics/features/nbl.ini b/doc/guides/nics/features/nbl.ini
+new file mode 100644
+index 0000000000..6daabe6ed3
+--- /dev/null
++++ b/doc/guides/nics/features/nbl.ini
+@@ -0,0 +1,9 @@
++;
++; Supported features of the 'nbl' network poll mode driver.
++;
++; Refer to default.ini for the full list of available PMD features.
++;
++[Features]
++Linux                = Y
++ARMv8                = Y
++x86-64               = Y
+diff --git a/doc/guides/nics/index.rst b/doc/guides/nics/index.rst
+index 57d161c526..84d4ece101 100644
+--- a/doc/guides/nics/index.rst
++++ b/doc/guides/nics/index.rst
+@@ -50,6 +50,7 @@ Network Interface Controller Drivers
+     mvneta
+     mvpp2
+     netvsc
++    nbl
+     nfb
+     nfp
+     ngbe
+diff --git a/doc/guides/nics/nbl.rst b/doc/guides/nics/nbl.rst
+new file mode 100644
+index 0000000000..6cd09fe97f
+--- /dev/null
++++ b/doc/guides/nics/nbl.rst
+@@ -0,0 +1,42 @@
++.. SPDX-License-Identifier: BSD-3-Clause
++   Copyright 2025 Nebulamatrix Technology Co., Ltd
++
++NBL Poll Mode Driver
++====================
++
++The NBL PMD (**librte_net_nbl**) provides poll mode driver support for
++10/25/50/100/200 Gbps Nebulamatrix Series Network Adapters.
++
++
++Supported NICs
++--------------
++
++The following Nebulamatrix device models are supported by the same nbl driver:
++
++  - S1205CQ-A00CHT
++  - S1105AS-A00CHT
++  - S1055AS-A00CHT
++  - S1052AS-A00CHT
++  - S1051AS-A00CHT
++  - S1045XS-A00CHT
++  - S1205CQ-A00CSP
++  - S1055AS-A00CSP
++  - S1052AS-A00CSP
++
++
++Prerequisites
++-------------
++
++- Follow the DPDK :ref:`Getting Started Guide for Linux <linux_gsg>`
++  to setup the basic DPDK environment.
++
++- Learn about `Nebulamatrix Series NICs
++  <https://www.nebula-matrix.com/main>`_.
++
++
++Limitations or Known Issues
++---------------------------
++
++32-bit architectures are not supported.
++
++Windows and BSD are not supported yet.
+diff --git a/drivers/net/meson.build b/drivers/net/meson.build
+index 61f8cddb30..517e78d18b 100644
+--- a/drivers/net/meson.build
++++ b/drivers/net/meson.build
+@@ -40,6 +40,7 @@ drivers = [
+         'mlx5',
+         'mvneta',
+         'mvpp2',
++        'nbl',
+         'netvsc',
+         'nfb',
+         'nfp',
+diff --git a/drivers/net/nbl/meson.build b/drivers/net/nbl/meson.build
+new file mode 100644
+index 0000000000..4cfbdb023f
+--- /dev/null
++++ b/drivers/net/nbl/meson.build
+@@ -0,0 +1,11 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright 2025 NebulaMatrix Technology Co., Ltd.
++
++if not is_linux
++    build = false
++    reason = 'only supported on Linux'
++endif
++
++sources = files(
++        'nbl_ethdev.c',
++)
+diff --git a/drivers/net/nbl/nbl_ethdev.c b/drivers/net/nbl/nbl_ethdev.c
+new file mode 100644
+index 0000000000..3ad8e4033a
+--- /dev/null
++++ b/drivers/net/nbl/nbl_ethdev.c
+@@ -0,0 +1,3 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
++ */
 -- 
 2.34.1
 
