@@ -2,68 +2,160 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADBE4C71136
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Jun 2025 10:58:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D40C7115B
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Jun 2025 11:33:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8111040E2D;
-	Tue, 17 Jun 2025 12:58:30 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 14A7240609
- for <dev@dpdk.org>; Tue, 17 Jun 2025 12:58:28 +0200 (CEST)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55H9FoCH031732
- for <dev@dpdk.org>; Tue, 17 Jun 2025 03:58:28 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=+0ynC6hkAqi149qB4UF1qAF
- r/qw4Xl38c78I+dZneF0=; b=FMaZvcNbUb5gBzFSFqqUcBi+FnNgXtMg4sDK7jk
- ub3oHElbgn239sCcvfGBUhf/qNYjdQzjvRX3iN7ZqUh6Gx7E2V/E82rT/WBsZPIR
- CvDmpNJSKQ/iFOxQTe2R9OrorKwojFRzGwmC8Odgl9mXO7rvGjHyiM4uQFo0RdfQ
- 4UFa7ATTMQTeS5SgzOXB3ioxfp5hRz8rujD30rqkUE51Vc/qGRIsnxsypVEraVi7
- bVzhq3YWq6zmByhjRtqjDwOn3MSTZ6b80TKmG+Rbsrpdimv4yeXChvruifZ5PV6f
- xqPdUGJf4Cfx664CEg37dZuo9nXSqfWtm0M+4XLIE63Z89Q==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 47b5jcr5nh-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Tue, 17 Jun 2025 03:58:27 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id 9938E40E03;
+	Tue, 17 Jun 2025 13:33:55 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+ by mails.dpdk.org (Postfix) with ESMTP id 82D6B40609;
+ Tue, 17 Jun 2025 13:33:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1750160034; x=1781696034;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=Bls/es4zepsErJ+GW72s52i5Pgr5HGTDM0HDIsoMLZw=;
+ b=bYznOrEpRHIFXtP1Bl6TGEoxrgQknlToaU8z0fU+RojfsI4OllxW8END
+ 9yeuSvgHO/KBiNjrnzCH2vEBnLu85Ke3MaIeVavZjb81+Znef7fpBmF3J
+ RY7BGfkP0DNuSqY3xE54Wr8CQeEVzBaQhea26pFuwWfZKoC8Mf1tVnMrw
+ UsDXHYjqh8ZTL6gh1h9tRdtQF084Dy4zbXKvbEnVU38O3slt3VKDyTH5n
+ W2/cAKP2BxkGodPxzmgbNb1AlegSQvfFbfKg94LvPlcfRZvrgi1usijE2
+ VWTiHfsLUs8w089rqMCVJE9qayT7se57fQomJ5KsrOfopMF9fk4rGDrV9 A==;
+X-CSE-ConnectionGUID: R7hNxrXhToOO49ALwP1Bng==
+X-CSE-MsgGUID: Y8fofkRvSE2Vxf7GffwwkA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="69904643"
+X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; d="scan'208";a="69904643"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+ by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 17 Jun 2025 04:33:53 -0700
+X-CSE-ConnectionGUID: p3NARfFaQvaMkfcqIj8PNQ==
+X-CSE-MsgGUID: 08Q+9YdpSCm0C7UjoO+mZA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,243,1744095600"; d="scan'208";a="154045202"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+ by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 17 Jun 2025 04:33:52 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 17 Jun 2025 03:58:27 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 17 Jun 2025 03:58:27 -0700
-Received: from nkaithakadan-dkr.marvell.com (unknown [10.29.45.70])
- by maili.marvell.com (Postfix) with ESMTP id BCCE262676B;
- Tue, 17 Jun 2025 03:58:24 -0700 (PDT)
-From: Nithinsen Kaithakadan <nkaithakadan@marvell.com>
-To: <dev@dpdk.org>
-CC: <adwivedi@marvell.com>, <anoobj@marvell.com>, <ktejasree@marvell.com>,
- <gakhil@marvell.com>
-Subject: [PATCH] crypto/cnxk: add crypto adapter for cn20k
-Date: Tue, 17 Jun 2025 10:58:23 +0000
-Message-ID: <20250617105823.105906-1-nkaithakadan@marvell.com>
-X-Mailer: git-send-email 2.48.1
+ 15.2.1544.25; Tue, 17 Jun 2025 04:33:51 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Tue, 17 Jun 2025 04:33:51 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.64)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 17 Jun 2025 04:33:51 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=T5TIAQmjG8Ujn5hIng6MKhfjRxZSYz/jVS3btOMru7oTQIdMKkSk8SkZc0RGEyYpYXKEL1WWwcmi1V2hfrQOLOYmEcpMhFjkE3CHaODO+p9vnFMeGg+1naAL2iI9eP443bidWo8TPxzxELdkt4HzuZcBqUK1RF7T5aE57+JmV147+me3AkOcRjmFhu/J2eayu84kB5c5MgwSMrC33lwMyA1t1Z4YM9ie5vNs8qm8VHaoibvo1lMsseigYWbiszY/xsErilqHC4mdi9cOSzjwCYwNGiyEzbMAZciMIW27jhJik6qmCANIzUdxHiBJSkd0Iyc2Bt/L59SL6DS3hkxaWA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=okUjF3oTxEmsrAE20AKVGSV2ssJfpEP1Rsg8QCezXys=;
+ b=YLmuCoX/rMh0nPBJaHG9QJOR/+KPE+l2DHaNDzJFEavoYqr20w2mhzQF0V1e6+zPbjmKCi5GU92WRPEk3KmVFpNNGgXf7f/+uyeA1fJ+zRTYXIll01MeI8o9qO+dJ9YWq+Ab0iI1jGjJ713wvSKQ+NakugRf/N5zegqOgg9AwiqL8KfGLs2lrErNcFj0dY/oEjT6mhL07HRPhYyL1eZanX3MT8uJg+jlbatIJOtr3a9OrYRk2gxfM+Gjx32N0aPoySasw1oi1c4DCIXukQC7PYP65LZtB986fSXPu3ekYQUSemclb08zXj1JD4EeXAwXPSzMaqY0zKp7uyuELSMH8w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by DM3PR11MB8758.namprd11.prod.outlook.com (2603:10b6:0:47::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.27; Tue, 17 Jun
+ 2025 11:33:50 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%5]) with mapi id 15.20.8835.027; Tue, 17 Jun 2025
+ 11:33:50 +0000
+Date: Tue, 17 Jun 2025 12:33:44 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Mingjin Ye <mingjinx.ye@intel.com>
+CC: <dev@dpdk.org>, <stable@dpdk.org>, Anatoly Burakov
+ <anatoly.burakov@intel.com>
+Subject: Re: [PATCH] net/ice: fix DCF RSS hash update
+Message-ID: <aFFSmKEoal481ZzA@bricha3-mobl1.ger.corp.intel.com>
+References: <20250611095058.114465-1-mingjinx.ye@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250611095058.114465-1-mingjinx.ye@intel.com>
+X-ClientProxiedBy: DU2PR04CA0239.eurprd04.prod.outlook.com
+ (2603:10a6:10:2b1::34) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=YaK95xRf c=1 sm=1 tr=0 ts=68514a53 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=q0dj6y5YAAAA:8 a=TFNM7SZaCu4IQicpeOEA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22 a=Q7RaSUWP1pO7HXdsjIRs:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE3MDA4OCBTYWx0ZWRfXwhsRkQafdugB
- Eq7hITzLFKA8gua4zXdf2UKdJPEkM0JGIzF4xovmXq7wLJQruRXRQvxLXncUYySXdmesnaCaGOc
- umwod/E1lM0XJrOzbS/OTQ9qBy9sW8lzSALrleW6M+Dj8hPT6fggJSanUokxFQcaHotZULu0EUk
- dCT/yF7mns8i/c6lpFi7Yrf9vFUeZ7Z8WPUTRktfJr8DylWNjpNvDXQ2LIu8Q6EX52xXdlU00gm
- hUnVA6xlpKkR03DIpOvjmGlVn2JMJkNRWWqEYr+ABvjozgvQIlNS6UQMTYkY+GOaEleIVDjmruJ
- DuL1txFkDvgHCRQYBOnTLAmEC4OZQTcqC1wZBLMAYyQaSA8TXh/00fzMEwOHJQsxO8TaLo8w2iY
- FboHmqdbtDzWVnOR5PaniKwzOQ8H1Na6pYoGVZLzHy1zCj8Yw7h1QahMxPrtZZ4URh6U526P
-X-Proofpoint-GUID: hODC3VR_bP-FojmteseOJcXANdJhnG83
-X-Proofpoint-ORIG-GUID: hODC3VR_bP-FojmteseOJcXANdJhnG83
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-17_04,2025-06-13_01,2025-03-28_01
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DM3PR11MB8758:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2d3f5d5b-6fdf-45ca-83c5-08ddad92d47e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?CBBOfuJPmyu39VHebXePXItEP43PF8puWF95rUXhHS4r2bdTpFstowziyfDi?=
+ =?us-ascii?Q?vTmTiG+CyPeqoCTDnQiJnvzejrymIFW21haU4zlZJaSIrlAfFq4q0qA5cu4n?=
+ =?us-ascii?Q?L/GjnUtdlWsKsv0E0YjzagRIGqxX00/CgR2J4q0XmNeyCzmBHUNVnJB/XtAE?=
+ =?us-ascii?Q?TZBIoHHm87nx7nAifqI4nq7FM22/Qnvf/hGEmq+N0YwRBiRfmeKUcVeK6Eds?=
+ =?us-ascii?Q?TQjFFyGryaYEnEsT5P6GkPdgM0JY3gbGzR7Jjjb2+U+8nB5N1A0YnRFuiJA6?=
+ =?us-ascii?Q?a70KkZNy6pCkv8Xw//b9VUCTQbzSu/saeJQTea8bu22X80+k/p+jdniPJKsi?=
+ =?us-ascii?Q?Gid2pUaZRq4zRwfAEQ3HWZZ56WQ5GEnPyjaxPciwn3kJbfgMCCuBscsrdBgG?=
+ =?us-ascii?Q?HAkzuY+Ws7TqaeWZShQJY4Iv580EuAWQVCwjptNO4hxHch/859vmS8H9iXio?=
+ =?us-ascii?Q?5B77HywwzuDyvb5GSSjW05cq+QVMdtJ5YiGxoVpfMP8Z5vNhMWy7sUWr1TOu?=
+ =?us-ascii?Q?Cc5ZJOYzixUaKhpEfd8MlfnNurOn7Y2WHlL7rh4Osxi8HQdDxSIleX/yUIZE?=
+ =?us-ascii?Q?zUEaw5QCF6KzP7degTFy3c4l8ckMacmAGPmzuNxQwLnTWX015kPeHTZYaGMk?=
+ =?us-ascii?Q?rfxWElgD6fRVWjZPiKq86NQO9p8A+/jZZOJJ8J8L7jJafyZUDOhQXn8vq3sj?=
+ =?us-ascii?Q?0VIiy6lKbe/l0SXLaiFIAZM/BnKqCITMi6w+K6NChOO+/k+bihILMKZi0qiA?=
+ =?us-ascii?Q?+TDaTCBWblqQmhdIs1xwA5Bd8Z6I3RqE+eREp++3oQ6PhqrfzO0VmUNv0JMN?=
+ =?us-ascii?Q?uV/Oh8VnrAOsKwKN6e5nTZPF9DrZiS7oJCRpMCoryLCV8pwTNmyHqi9Rnmwb?=
+ =?us-ascii?Q?J3YH2zxdk2HKrUPoEjutsBp0hJdZmOhCrAykiTXtQw8DDYkYG7+24sbR5zui?=
+ =?us-ascii?Q?LUrEcxxXg0M+Ye/yqUviV/OMDxwRU+ro/d+zzHLZZR/q/+oeHqAtTOdJVmlh?=
+ =?us-ascii?Q?BPMCmKv8QBl3H8TFS1Q95nY0tHKbUof9zWpZ1ATUwVhF3htQiAMgNjhpbrc9?=
+ =?us-ascii?Q?RSHLT/b1ir++uIswKOG4IU+sQtFNw6XwWVSqph5K3evFljJKq1BU5NLNtRGk?=
+ =?us-ascii?Q?lJ/36ehAcoscTJLg8pxvZJEYgc5j13Ydm1jrOC5NTVW2K54AesYOMW1nN15F?=
+ =?us-ascii?Q?O7oZhYyYylHcf7K9GXG24yaakjxSFu3PKodJpJbAKuFdgwJmeAwgSE5WRrh/?=
+ =?us-ascii?Q?j1n7bHWbNwXsHt64NMnqPfJTivay3KFP9O5UVrEhmn56w0lzX39q3Oo7/z+O?=
+ =?us-ascii?Q?IQGF5jUMuqmg2XjrHs7PQRx/+P9ZbEYQKD6Q7PTFT1vF25PErqIBGuATOkkw?=
+ =?us-ascii?Q?j+C0+oTuHtVdYE94ShCZdsfXpbF+8+2ahe24dGbRbIq2W2ChIA=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(366016)(1800799024); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?DKv+eNwrWXnkU0jQu0Fn/N2G9QsQ/utxTgJpzVw5zSTD20eav6wdJnniKilh?=
+ =?us-ascii?Q?4iLXa9MMVLk1T8rArYae5ICJT/Ji5vMLba7ooKUuwiJzla7GK3JI/7iM1jU5?=
+ =?us-ascii?Q?YgsTilfKDTG8SqzJ/fibxUL+QK/v9TO8v39x8BWvUO36edbmSpo+on1SCM3P?=
+ =?us-ascii?Q?OBKOVHEJ2BwucBOBof1xxX7eL6VRrqUA/JjawiGYgn4ohXSSVvCx8jBTBPHi?=
+ =?us-ascii?Q?EiW4XQrBm56iZGMCgc4cUwGPidnZp6YOwPOvklB6Y0Vg9eKg9tvHOCKtjWU7?=
+ =?us-ascii?Q?qsXrSyoOGWcTw+jO+PHSIuk+r6qkrHss9l6lC7qu7X+/JSEAPMafvA+v5lIC?=
+ =?us-ascii?Q?AenAJw/i4+7fiCE13omM9YeZtq+8QOwegOhFjqdD2mOFVGEqEatxzP+B8lay?=
+ =?us-ascii?Q?pNKjzE0gZ1z1fYtyKdGl9xGUz4qUgsQ7hPRpKPFznxNk42n6HvX1auqBvCLP?=
+ =?us-ascii?Q?2UDCnkjDI7CCLtq6YXe9OGVUS8kDJ119uSUEm8C/pTfJ4iemLuPc1DdDwVDG?=
+ =?us-ascii?Q?u8+v4sRY4I3pln+/nhNCgNa253pK5ws5YT5s6NcTwvvx4GKgl5TKAJnssSqS?=
+ =?us-ascii?Q?Cz4luoTnmDEcpbN/3CplyNACKS6X5DB/KHToebOQ1QWKhVk2XHBEbKBT5Hrg?=
+ =?us-ascii?Q?xcUvoqC3qhMqcU36OjoCStRM3WElw4Sj7fR/U5I314wk33eQ/Tw3tjEBfAof?=
+ =?us-ascii?Q?ydi73QWc+Hde7vcP91hKWxhOveacMZ2uuHsrucDIwGOwYMmH2aMka5jaOVYc?=
+ =?us-ascii?Q?fSyQVCbTVyBA9irQxWwEstTFREcF5UbFtBofqFo/a8LPQhC1sNcpSPUP4e62?=
+ =?us-ascii?Q?pup2VqJWPmpUQvtpRJpfNhzx7qqFRsqI4lJlf7QNX82zfTAs548zEERb98If?=
+ =?us-ascii?Q?iFBvWvpkpQ6fFx1GbucGg2tUImOGaax514i98UkVx9gUHoNjXImBZZbbqAZE?=
+ =?us-ascii?Q?r83TlS9DNkJ1YyLI8vKrwXwK0oh0JZB/R2IwXSWTbUNLTOhncFTAgOEPl2O4?=
+ =?us-ascii?Q?CTN0vv2cTqEsmKPs2cqict2GZrnp7SVWXfE+hfA9pOKgBoFWF2Y/IbPIyumC?=
+ =?us-ascii?Q?YOChQZaR38Hi4UpNlbpf9VUW9OWcXAgKIyEGZJwKDIpxAPYCeW8EQQSzof/W?=
+ =?us-ascii?Q?Cwa34FiV3n7ffS2dN/t6UM79hSq7khLjLLhpjnDJe1cqnXcLFIF5kfO7r2a/?=
+ =?us-ascii?Q?a4FtV3KPuVngsvfrbzEIvbp1iR+6C62qa3WQK3PWmscFkwTF7dXRZVAW9nqH?=
+ =?us-ascii?Q?a4OBtYiFRM55n0wCLI3xqVWoBOA2NAGegZPXvWbslib1fUFghjVJBDVHFEiV?=
+ =?us-ascii?Q?i/NZ4Q7KmahKVZefu1WtmrWCeaep8B4Ni7uWVK8lzGT884xmUyyImvkQqI4Q?=
+ =?us-ascii?Q?rrMmqe/kZx3Q+656kljurJCE4lF69jp6uyYdTORFvbeD73oOEPp5k+OyhdbE?=
+ =?us-ascii?Q?IY90jZjhAUWKHny8JJHnYSYybRwLZvlutdi4NJFnlZ40GSbaIDbDEAyLPp4u?=
+ =?us-ascii?Q?SF1T6Vr1U0xHE1fh+R+4/hjrJ0K0QS9rgdwoO9b0lgRXv1X9lcAvm8N6Mc8V?=
+ =?us-ascii?Q?IoIHRi6vbB4pDKIVlGH7gskSkEJS6IIMDchja/UF3Nsog2ZldgMZJoivh8na?=
+ =?us-ascii?Q?Ww=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2d3f5d5b-6fdf-45ca-83c5-08ddad92d47e
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2025 11:33:50.0594 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KhbWLo+gbPz0OmDjvkAyX83GjBlTpdFZhW6RBJqpEVonylp5aNOI6/ClZjAIdO8r6G8yBCCtlpi5QpiXtT91CKLe2MOE580o8aYh+Rro/Pg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR11MB8758
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -77,812 +169,107 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add crypto adapter support for CN20K crypto PMD.
+On Wed, Jun 11, 2025 at 09:50:57AM +0000, Mingjin Ye wrote:
+> Get rss hash configuration, rss_hf is always the default value.
+> The driver does nothing if the rss key is invalid during the rss
+> hash update.
+> 
+> This patch is get the current configuration of rss_hf. Extract
+> the update rss key code from ice_dcf_dev_rss_hash_update to
+> ice_dcf_set_rss_key and make it consistent with the pf behaviour.
+> 
+> Fixes: c223cadc9e5f ("net/ice: support RSS hash configuration in DCF mode")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Mingjin Ye <mingjinx.ye@intel.com>
 
-Signed-off-by: Nithinsen Kaithakadan <nkaithakadan@marvell.com>
----
- .../crypto/cnxk/cn20k_cryptodev_event_dp.h    |  14 +
- drivers/crypto/cnxk/cn20k_cryptodev_ops.c     | 585 +++++++++++++++++-
- drivers/crypto/cnxk/cn20k_cryptodev_ops.h     |   4 +
- drivers/event/cnxk/cn20k_eventdev.c           |  69 +++
- drivers/event/cnxk/cn20k_worker.h             |   7 +-
- 5 files changed, 666 insertions(+), 13 deletions(-)
- create mode 100644 drivers/crypto/cnxk/cn20k_cryptodev_event_dp.h
+Hi,
 
-diff --git a/drivers/crypto/cnxk/cn20k_cryptodev_event_dp.h b/drivers/crypto/cnxk/cn20k_cryptodev_event_dp.h
-new file mode 100644
-index 0000000000..3e8784ba88
---- /dev/null
-+++ b/drivers/crypto/cnxk/cn20k_cryptodev_event_dp.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(C) 2025 Marvell.
-+ */
-+
-+#ifndef _CN20K_CRYPTODEV_EVENT_DP_H_
-+#define _CN20K_CRYPTODEV_EVENT_DP_H_
-+
-+__rte_internal
-+uintptr_t cn20k_cpt_crypto_adapter_dequeue(uintptr_t get_work1);
-+
-+__rte_internal
-+uintptr_t cn20k_cpt_crypto_adapter_vector_dequeue(uintptr_t get_work1);
-+
-+#endif /* _CN20K_CRYPTODEV_EVENT_DP_H_ */
-diff --git a/drivers/crypto/cnxk/cn20k_cryptodev_ops.c b/drivers/crypto/cnxk/cn20k_cryptodev_ops.c
-index ba586d79e8..b0f1e33daf 100644
---- a/drivers/crypto/cnxk/cn20k_cryptodev_ops.c
-+++ b/drivers/crypto/cnxk/cn20k_cryptodev_ops.c
-@@ -9,34 +9,47 @@
- #include <rte_hexdump.h>
- #include <rte_vect.h>
- 
-+#include "hw/nix.h"
-+#include "hw/npa.h"
-+#include "hw/tim.h"
- #include "roc_cpt.h"
- #include "roc_idev.h"
-+#include "roc_mbox.h"
-+#include "roc_sso.h"
-+#include "roc_sso_dp.h"
-+#include "roc_tim.h"
- 
- #include "cn20k_cryptodev.h"
-+#include "cn20k_cryptodev_event_dp.h"
- #include "cn20k_cryptodev_ops.h"
- #include "cn20k_cryptodev_sec.h"
-+#include "cn20k_eventdev.h"
- #include "cn20k_ipsec_la_ops.h"
- #include "cn20k_tls_ops.h"
- #include "cnxk_ae.h"
- #include "cnxk_cryptodev.h"
- #include "cnxk_cryptodev_ops.h"
-+#include "cnxk_eventdev.h"
- #include "cnxk_se.h"
- 
- #include "rte_pmd_cnxk_crypto.h"
- 
--static int
--cn20k_cpt_crypto_adapter_ev_mdata_set(struct rte_cryptodev *dev __rte_unused, void *sess,
--				      enum rte_crypto_op_type op_type,
--				      enum rte_crypto_op_sess_type sess_type, void *mdata)
--{
--	(void)dev;
--	(void)sess;
--	(void)op_type;
--	(void)sess_type;
--	(void)mdata;
-+/* Holds information required to send crypto operations in one burst */
-+struct ops_burst {
-+	struct rte_crypto_op *op[CN20K_CPT_PKTS_PER_LOOP];
-+	uint64_t w2[CN20K_CPT_PKTS_PER_LOOP];
-+	struct cn20k_sso_hws *ws;
-+	struct cnxk_cpt_qp *qp;
-+	uint16_t nb_ops;
-+};
- 
--	return 0;
--}
-+/* Holds information required to send vector of operations */
-+struct vec_request {
-+	struct cpt_inflight_req *req;
-+	struct rte_event_vector *vec;
-+	union cpt_inst_w7 w7;
-+	uint64_t w2;
-+};
- 
- static inline struct cnxk_se_sess *
- cn20k_cpt_sym_temp_sess_create(struct cnxk_cpt_qp *qp, struct rte_crypto_op *op)
-@@ -284,6 +297,485 @@ cn20k_cpt_enqueue_burst(void *qptr, struct rte_crypto_op **ops, uint16_t nb_ops)
- 	return count + i;
- }
- 
-+static int
-+cn20k_cpt_crypto_adapter_ev_mdata_set(struct rte_cryptodev *dev __rte_unused, void *sess,
-+				      enum rte_crypto_op_type op_type,
-+				      enum rte_crypto_op_sess_type sess_type, void *mdata)
-+{
-+	union rte_event_crypto_metadata *ec_mdata = mdata;
-+	struct rte_event *rsp_info;
-+	struct cnxk_cpt_qp *qp;
-+	uint64_t w2, tag_type;
-+	uint8_t cdev_id;
-+	int16_t qp_id;
-+
-+	/* Get queue pair */
-+	cdev_id = ec_mdata->request_info.cdev_id;
-+	qp_id = ec_mdata->request_info.queue_pair_id;
-+	qp = rte_cryptodevs[cdev_id].data->queue_pairs[qp_id];
-+
-+	if (!qp->ca.enabled)
-+		return -EINVAL;
-+
-+	/* Prepare w2 */
-+	tag_type = qp->ca.vector_sz ? RTE_EVENT_TYPE_CRYPTODEV_VECTOR : RTE_EVENT_TYPE_CRYPTODEV;
-+	rsp_info = &ec_mdata->response_info;
-+	w2 = CNXK_CPT_INST_W2((tag_type << 28) | (rsp_info->sub_event_type << 20) |
-+				      rsp_info->flow_id,
-+			      rsp_info->sched_type, rsp_info->queue_id, 0);
-+
-+	/* Set meta according to session type */
-+	if (op_type == RTE_CRYPTO_OP_TYPE_SYMMETRIC) {
-+		if (sess_type == RTE_CRYPTO_OP_SECURITY_SESSION) {
-+			struct cn20k_sec_session *sec_sess = (struct cn20k_sec_session *)sess;
-+
-+			sec_sess->qp = qp;
-+			sec_sess->inst.w2 = w2;
-+		} else if (sess_type == RTE_CRYPTO_OP_WITH_SESSION) {
-+			struct cnxk_se_sess *priv;
-+
-+			priv = (struct cnxk_se_sess *)sess;
-+			priv->qp = qp;
-+			priv->cpt_inst_w2 = w2;
-+		} else
-+			return -EINVAL;
-+	} else if (op_type == RTE_CRYPTO_OP_TYPE_ASYMMETRIC) {
-+		if (sess_type == RTE_CRYPTO_OP_WITH_SESSION) {
-+			struct cnxk_ae_sess *priv;
-+
-+			priv = (struct cnxk_ae_sess *)sess;
-+			priv->qp = qp;
-+			priv->cpt_inst_w2 = w2;
-+		} else
-+			return -EINVAL;
-+	} else
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static inline int
-+cn20k_ca_meta_info_extract(struct rte_crypto_op *op, struct cnxk_cpt_qp **qp, uint64_t *w2)
-+{
-+	if (op->type == RTE_CRYPTO_OP_TYPE_SYMMETRIC) {
-+		if (op->sess_type == RTE_CRYPTO_OP_SECURITY_SESSION) {
-+			struct cn20k_sec_session *sec_sess;
-+
-+			sec_sess = (struct cn20k_sec_session *)op->sym->session;
-+
-+			*qp = sec_sess->qp;
-+			*w2 = sec_sess->inst.w2;
-+		} else if (op->sess_type == RTE_CRYPTO_OP_WITH_SESSION) {
-+			struct cnxk_se_sess *priv;
-+
-+			priv = (struct cnxk_se_sess *)op->sym->session;
-+			*qp = priv->qp;
-+			*w2 = priv->cpt_inst_w2;
-+		} else {
-+			union rte_event_crypto_metadata *ec_mdata;
-+			struct rte_event *rsp_info;
-+			uint8_t cdev_id;
-+			uint16_t qp_id;
-+
-+			if (unlikely(op->private_data_offset == 0))
-+				return -EINVAL;
-+			ec_mdata = (union rte_event_crypto_metadata *)((uint8_t *)op +
-+								       op->private_data_offset);
-+			rsp_info = &ec_mdata->response_info;
-+			cdev_id = ec_mdata->request_info.cdev_id;
-+			qp_id = ec_mdata->request_info.queue_pair_id;
-+			*qp = rte_cryptodevs[cdev_id].data->queue_pairs[qp_id];
-+			*w2 = CNXK_CPT_INST_W2((RTE_EVENT_TYPE_CRYPTODEV << 28) | rsp_info->flow_id,
-+					       rsp_info->sched_type, rsp_info->queue_id, 0);
-+		}
-+	} else if (op->type == RTE_CRYPTO_OP_TYPE_ASYMMETRIC) {
-+		if (op->sess_type == RTE_CRYPTO_OP_WITH_SESSION) {
-+			struct cnxk_ae_sess *priv;
-+
-+			priv = (struct cnxk_ae_sess *)op->asym->session;
-+			*qp = priv->qp;
-+			*w2 = priv->cpt_inst_w2;
-+		} else
-+			return -EINVAL;
-+	} else
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static inline void
-+cn20k_cpt_vec_inst_fill(struct vec_request *vec_req, struct cpt_inst_s *inst,
-+			struct cnxk_cpt_qp *qp, union cpt_inst_w7 w7)
-+{
-+	const union cpt_res_s res = {.cn20k.compcode = CPT_COMP_NOT_DONE};
-+	struct cpt_inflight_req *infl_req = vec_req->req;
-+
-+	const union cpt_inst_w4 w4 = {
-+		.s.opcode_major = ROC_SE_MAJOR_OP_MISC,
-+		.s.opcode_minor = ROC_SE_MISC_MINOR_OP_PASSTHROUGH,
-+		.s.param1 = 1,
-+		.s.param2 = 1,
-+		.s.dlen = 0,
-+	};
-+
-+	w7.s.egrp = ROC_CPT_DFLT_ENG_GRP_SE;
-+
-+	infl_req->vec = vec_req->vec;
-+	infl_req->qp = qp;
-+
-+	inst->res_addr = (uint64_t)&infl_req->res;
-+	rte_atomic_store_explicit((RTE_ATOMIC(uint64_t) *)(&infl_req->res.u64[0]), res.u64[0],
-+				  rte_memory_order_relaxed);
-+
-+	inst->w0.u64 = 0;
-+	inst->w2.u64 = vec_req->w2;
-+	inst->w3.u64 = CNXK_CPT_INST_W3(1, infl_req);
-+	inst->w4.u64 = w4.u64;
-+	inst->w5.u64 = 0;
-+	inst->w6.u64 = 0;
-+	inst->w7.u64 = w7.u64;
-+}
-+
-+static void
-+cn20k_cpt_vec_pkt_submission_timeout_handle(void)
-+{
-+	plt_dp_err("Vector packet submission timedout");
-+	abort();
-+}
-+
-+static inline void
-+cn20k_cpt_vec_submit(struct vec_request vec_tbl[], uint16_t vec_tbl_len, struct cnxk_cpt_qp *qp)
-+{
-+	uint64_t lmt_base, lmt_id, io_addr;
-+	union cpt_fc_write_s fc;
-+	struct cpt_inst_s *inst;
-+	uint16_t burst_size;
-+	uint64_t *fc_addr;
-+	int i;
-+
-+	if (vec_tbl_len == 0)
-+		return;
-+
-+	const uint32_t fc_thresh = qp->lmtline.fc_thresh;
-+	/*
-+	 * Use 10 mins timeout for the poll. It is not possible to recover from partial submission
-+	 * of vector packet. Actual packets for processing are submitted to CPT prior to this
-+	 * routine. Hence, any failure for submission of vector packet would indicate an
-+	 * unrecoverable error for the application.
-+	 */
-+	const uint64_t timeout = rte_get_timer_cycles() + 10 * 60 * rte_get_timer_hz();
-+
-+	lmt_base = qp->lmtline.lmt_base;
-+	io_addr = qp->lmtline.io_addr;
-+	fc_addr = qp->lmtline.fc_addr;
-+	ROC_LMT_BASE_ID_GET(lmt_base, lmt_id);
-+	inst = (struct cpt_inst_s *)lmt_base;
-+
-+again:
-+	burst_size = RTE_MIN(CN20K_PKTS_PER_STEORL, vec_tbl_len);
-+	for (i = 0; i < burst_size; i++)
-+		cn20k_cpt_vec_inst_fill(&vec_tbl[i], &inst[i], qp, vec_tbl[0].w7);
-+
-+	do {
-+		fc.u64[0] = rte_atomic_load_explicit((RTE_ATOMIC(uint64_t) *)fc_addr,
-+						     rte_memory_order_relaxed);
-+		if (likely(fc.s.qsize < fc_thresh))
-+			break;
-+		if (unlikely(rte_get_timer_cycles() > timeout))
-+			cn20k_cpt_vec_pkt_submission_timeout_handle();
-+	} while (true);
-+
-+	cn20k_cpt_lmtst_dual_submit(&io_addr, lmt_id, &i);
-+
-+	vec_tbl_len -= i;
-+
-+	if (vec_tbl_len > 0) {
-+		vec_tbl += i;
-+		goto again;
-+	}
-+}
-+
-+static inline int
-+ca_lmtst_vec_submit(struct ops_burst *burst, struct vec_request vec_tbl[], uint16_t *vec_tbl_len)
-+{
-+	struct cpt_inflight_req *infl_reqs[CN20K_CPT_PKTS_PER_LOOP];
-+	uint16_t lmt_id, len = *vec_tbl_len;
-+	struct cpt_inst_s *inst, *inst_base;
-+	struct cpt_inflight_req *infl_req;
-+	struct rte_event_vector *vec;
-+	uint64_t lmt_base, io_addr;
-+	union cpt_fc_write_s fc;
-+	struct cnxk_cpt_qp *qp;
-+	uint64_t *fc_addr;
-+	int ret, i, vi;
-+
-+	qp = burst->qp;
-+
-+	lmt_base = qp->lmtline.lmt_base;
-+	io_addr = qp->lmtline.io_addr;
-+	fc_addr = qp->lmtline.fc_addr;
-+
-+	const uint32_t fc_thresh = qp->lmtline.fc_thresh;
-+
-+	ROC_LMT_BASE_ID_GET(lmt_base, lmt_id);
-+	inst_base = (struct cpt_inst_s *)lmt_base;
-+
-+#ifdef CNXK_CRYPTODEV_DEBUG
-+	if (unlikely(!qp->ca.enabled)) {
-+		rte_errno = EINVAL;
-+		return 0;
-+	}
-+#endif
-+
-+	/* Perform fc check before putting packets into vectors */
-+	fc.u64[0] =
-+		rte_atomic_load_explicit((RTE_ATOMIC(uint64_t) *)fc_addr, rte_memory_order_relaxed);
-+	if (unlikely(fc.s.qsize > fc_thresh)) {
-+		rte_errno = EAGAIN;
-+		return 0;
-+	}
-+
-+	if (unlikely(rte_mempool_get_bulk(qp->ca.req_mp, (void **)infl_reqs, burst->nb_ops))) {
-+		rte_errno = ENOMEM;
-+		return 0;
-+	}
-+
-+	for (i = 0; i < burst->nb_ops; i++) {
-+		inst = &inst_base[i];
-+		infl_req = infl_reqs[i];
-+		infl_req->op_flags = 0;
-+
-+		ret = cn20k_cpt_fill_inst(qp, &burst->op[i], inst, infl_req);
-+		if (unlikely(ret != 1)) {
-+			plt_cpt_dbg("Could not process op: %p", burst->op[i]);
-+			if (i != 0)
-+				goto submit;
-+			else
-+				goto put;
-+		}
-+
-+		infl_req->res.cn20k.compcode = CPT_COMP_NOT_DONE;
-+		infl_req->qp = qp;
-+		inst->w3.u64 = 0x1;
-+
-+		/* Lookup for existing vector by w2 */
-+		for (vi = len - 1; vi >= 0; vi--) {
-+			if (vec_tbl[vi].w2 != burst->w2[i])
-+				continue;
-+			vec = vec_tbl[vi].vec;
-+			if (unlikely(vec->nb_elem == qp->ca.vector_sz))
-+				continue;
-+			vec->ptrs[vec->nb_elem++] = infl_req;
-+			goto next_op; /* continue outer loop */
-+		}
-+
-+		/* No available vectors found, allocate a new one */
-+		if (unlikely(rte_mempool_get(qp->ca.vector_mp, (void **)&vec_tbl[len].vec))) {
-+			rte_errno = ENOMEM;
-+			if (i != 0)
-+				goto submit;
-+			else
-+				goto put;
-+		}
-+		/* Also preallocate in-flight request, that will be used to
-+		 * submit misc passthrough instruction
-+		 */
-+		if (unlikely(rte_mempool_get(qp->ca.req_mp, (void **)&vec_tbl[len].req))) {
-+			rte_mempool_put(qp->ca.vector_mp, vec_tbl[len].vec);
-+			rte_errno = ENOMEM;
-+			if (i != 0)
-+				goto submit;
-+			else
-+				goto put;
-+		}
-+		vec_tbl[len].w2 = burst->w2[i];
-+		vec_tbl[len].vec->ptrs[0] = infl_req;
-+		vec_tbl[len].vec->nb_elem = 1;
-+		len++;
-+
-+next_op:;
-+	}
-+
-+	/* Submit operations in burst */
-+submit:
-+	if (CNXK_TT_FROM_TAG(burst->ws->gw_rdata) == SSO_TT_ORDERED)
-+		roc_sso_hws_head_wait(burst->ws->base);
-+
-+	cn20k_cpt_lmtst_dual_submit(&io_addr, lmt_id, &i);
-+
-+	/* Store w7 of last successfully filled instruction */
-+	inst = &inst_base[2 * (i - 1)];
-+	vec_tbl[0].w7 = inst->w7;
-+
-+put:
-+	if (i != burst->nb_ops)
-+		rte_mempool_put_bulk(qp->ca.req_mp, (void *)&infl_reqs[i], burst->nb_ops - i);
-+
-+	*vec_tbl_len = len;
-+
-+	return i;
-+}
-+
-+static inline uint16_t
-+ca_lmtst_burst_submit(struct ops_burst *burst)
-+{
-+	struct cpt_inflight_req *infl_reqs[CN20K_CPT_PKTS_PER_LOOP];
-+	struct cpt_inst_s *inst, *inst_base;
-+	struct cpt_inflight_req *infl_req;
-+	uint64_t lmt_base, io_addr;
-+	union cpt_fc_write_s fc;
-+	struct cnxk_cpt_qp *qp;
-+	uint64_t *fc_addr;
-+	uint16_t lmt_id;
-+	int ret, i, j;
-+
-+	qp = burst->qp;
-+
-+	lmt_base = qp->lmtline.lmt_base;
-+	io_addr = qp->lmtline.io_addr;
-+	fc_addr = qp->lmtline.fc_addr;
-+
-+	const uint32_t fc_thresh = qp->lmtline.fc_thresh;
-+
-+	ROC_LMT_BASE_ID_GET(lmt_base, lmt_id);
-+	inst_base = (struct cpt_inst_s *)lmt_base;
-+
-+#ifdef CNXK_CRYPTODEV_DEBUG
-+	if (unlikely(!qp->ca.enabled)) {
-+		rte_errno = EINVAL;
-+		return 0;
-+	}
-+#endif
-+
-+	if (unlikely(rte_mempool_get_bulk(qp->ca.req_mp, (void **)infl_reqs, burst->nb_ops))) {
-+		rte_errno = ENOMEM;
-+		return 0;
-+	}
-+
-+	for (i = 0; i < burst->nb_ops; i++) {
-+		inst = &inst_base[i];
-+		infl_req = infl_reqs[i];
-+		infl_req->op_flags = 0;
-+
-+		ret = cn20k_cpt_fill_inst(qp, &burst->op[i], inst, infl_req);
-+		if (unlikely(ret != 1)) {
-+			plt_dp_dbg("Could not process op: %p", burst->op[i]);
-+			if (i != 0)
-+				goto submit;
-+			else
-+				goto put;
-+		}
-+
-+		infl_req->res.cn20k.compcode = CPT_COMP_NOT_DONE;
-+		infl_req->qp = qp;
-+		inst->w0.u64 = 0;
-+		inst->res_addr = (uint64_t)&infl_req->res;
-+		inst->w2.u64 = burst->w2[i];
-+		inst->w3.u64 = CNXK_CPT_INST_W3(1, infl_req);
-+	}
-+
-+	fc.u64[0] =
-+		rte_atomic_load_explicit((RTE_ATOMIC(uint64_t) *)fc_addr, rte_memory_order_relaxed);
-+	if (unlikely(fc.s.qsize > fc_thresh)) {
-+		rte_errno = EAGAIN;
-+		for (j = 0; j < i; j++) {
-+			infl_req = infl_reqs[j];
-+			if (unlikely(infl_req->op_flags & CPT_OP_FLAGS_METABUF))
-+				rte_mempool_put(qp->meta_info.pool, infl_req->mdata);
-+		}
-+		i = 0;
-+		goto put;
-+	}
-+
-+submit:
-+	if (CNXK_TT_FROM_TAG(burst->ws->gw_rdata) == SSO_TT_ORDERED)
-+		roc_sso_hws_head_wait(burst->ws->base);
-+
-+	cn20k_cpt_lmtst_dual_submit(&io_addr, lmt_id, &i);
-+
-+put:
-+	if (unlikely(i != burst->nb_ops))
-+		rte_mempool_put_bulk(qp->ca.req_mp, (void *)&infl_reqs[i], burst->nb_ops - i);
-+
-+	return i;
-+}
-+
-+uint16_t __rte_hot
-+cn20k_cpt_crypto_adapter_enqueue(void *ws, struct rte_event ev[], uint16_t nb_events)
-+{
-+	uint16_t submitted, count = 0, vec_tbl_len = 0;
-+	struct vec_request vec_tbl[nb_events];
-+	struct rte_crypto_op *op;
-+	struct ops_burst burst;
-+	struct cnxk_cpt_qp *qp;
-+	bool is_vector = false;
-+	uint64_t w2;
-+	int ret, i;
-+
-+	burst.ws = ws;
-+	burst.qp = NULL;
-+	burst.nb_ops = 0;
-+
-+	for (i = 0; i < nb_events; i++) {
-+		op = ev[i].event_ptr;
-+		ret = cn20k_ca_meta_info_extract(op, &qp, &w2);
-+		if (unlikely(ret)) {
-+			rte_errno = EINVAL;
-+			goto vec_submit;
-+		}
-+
-+		/* Queue pair change check */
-+		if (qp != burst.qp) {
-+			if (burst.nb_ops) {
-+				if (is_vector) {
-+					submitted =
-+						ca_lmtst_vec_submit(&burst, vec_tbl, &vec_tbl_len);
-+					/*
-+					 * Vector submission is required on qp change, but not in
-+					 * other cases, since we could send several vectors per
-+					 * lmtst instruction only for same qp
-+					 */
-+					cn20k_cpt_vec_submit(vec_tbl, vec_tbl_len, burst.qp);
-+					vec_tbl_len = 0;
-+				} else {
-+					submitted = ca_lmtst_burst_submit(&burst);
-+				}
-+				count += submitted;
-+				if (unlikely(submitted != burst.nb_ops))
-+					goto vec_submit;
-+				burst.nb_ops = 0;
-+			}
-+			is_vector = qp->ca.vector_sz;
-+			burst.qp = qp;
-+		}
-+		burst.w2[burst.nb_ops] = w2;
-+		burst.op[burst.nb_ops] = op;
-+
-+		/* Max nb_ops per burst check */
-+		if (++burst.nb_ops == CN20K_CPT_PKTS_PER_LOOP) {
-+			if (is_vector)
-+				submitted = ca_lmtst_vec_submit(&burst, vec_tbl, &vec_tbl_len);
-+			else
-+				submitted = ca_lmtst_burst_submit(&burst);
-+			count += submitted;
-+			if (unlikely(submitted != burst.nb_ops))
-+				goto vec_submit;
-+			burst.nb_ops = 0;
-+		}
-+	}
-+	/* Submit the rest of crypto operations */
-+	if (burst.nb_ops) {
-+		if (is_vector)
-+			count += ca_lmtst_vec_submit(&burst, vec_tbl, &vec_tbl_len);
-+		else
-+			count += ca_lmtst_burst_submit(&burst);
-+	}
-+
-+vec_submit:
-+	cn20k_cpt_vec_submit(vec_tbl, vec_tbl_len, burst.qp);
-+	return count;
-+}
-+
- static inline void
- cn20k_cpt_ipsec_post_process(struct rte_crypto_op *cop, struct cpt_cn20k_res_s *res)
- {
-@@ -593,6 +1085,75 @@ cn20k_cpt_dequeue_post_process(struct cnxk_cpt_qp *qp, struct rte_crypto_op *cop
- 	}
- }
- 
-+uintptr_t
-+cn20k_cpt_crypto_adapter_dequeue(uintptr_t get_work1)
-+{
-+	struct cpt_inflight_req *infl_req;
-+	struct rte_crypto_op *cop;
-+	struct cnxk_cpt_qp *qp;
-+	union cpt_res_s res;
-+
-+	infl_req = (struct cpt_inflight_req *)(get_work1);
-+	cop = infl_req->cop;
-+	qp = infl_req->qp;
-+
-+	res.u64[0] = rte_atomic_load_explicit((RTE_ATOMIC(uint64_t) *)(&infl_req->res.u64[0]),
-+					      rte_memory_order_relaxed);
-+
-+	cn20k_cpt_dequeue_post_process(qp, infl_req->cop, infl_req, &res.cn20k);
-+
-+	if (unlikely(infl_req->op_flags & CPT_OP_FLAGS_METABUF))
-+		rte_mempool_put(qp->meta_info.pool, infl_req->mdata);
-+
-+	rte_mempool_put(qp->ca.req_mp, infl_req);
-+	return (uintptr_t)cop;
-+}
-+
-+uintptr_t
-+cn20k_cpt_crypto_adapter_vector_dequeue(uintptr_t get_work1)
-+{
-+	struct cpt_inflight_req *infl_req, *vec_infl_req;
-+	struct rte_mempool *meta_mp, *req_mp;
-+	struct rte_event_vector *vec;
-+	struct rte_crypto_op *cop;
-+	struct cnxk_cpt_qp *qp;
-+	union cpt_res_s res;
-+	int i;
-+
-+	vec_infl_req = (struct cpt_inflight_req *)(get_work1);
-+
-+	vec = vec_infl_req->vec;
-+	qp = vec_infl_req->qp;
-+	meta_mp = qp->meta_info.pool;
-+	req_mp = qp->ca.req_mp;
-+
-+#ifdef CNXK_CRYPTODEV_DEBUG
-+	res.u64[0] = rte_atomic_load_explicit((RTE_ATOMIC(uint64_t) *)(&vec_infl_req->res.u64[0]),
-+					      rte_memory_order_relaxed);
-+	PLT_ASSERT(res.cn20k.compcode == CPT_COMP_GOOD);
-+	PLT_ASSERT(res.cn20k.uc_compcode == 0);
-+#endif
-+
-+	for (i = 0; i < vec->nb_elem; i++) {
-+		infl_req = vec->ptrs[i];
-+		cop = infl_req->cop;
-+
-+		res.u64[0] = rte_atomic_load_explicit(
-+			(RTE_ATOMIC(uint64_t) *)(&infl_req->res.u64[0]), rte_memory_order_relaxed);
-+		cn20k_cpt_dequeue_post_process(qp, cop, infl_req, &res.cn20k);
-+
-+		vec->ptrs[i] = cop;
-+		if (unlikely(infl_req->op_flags & CPT_OP_FLAGS_METABUF))
-+			rte_mempool_put(meta_mp, infl_req->mdata);
-+
-+		rte_mempool_put(req_mp, infl_req);
-+	}
-+
-+	rte_mempool_put(req_mp, vec_infl_req);
-+
-+	return (uintptr_t)vec;
-+}
-+
- static uint16_t
- cn20k_cpt_dequeue_burst(void *qptr, struct rte_crypto_op **ops, uint16_t nb_ops)
- {
-diff --git a/drivers/crypto/cnxk/cn20k_cryptodev_ops.h b/drivers/crypto/cnxk/cn20k_cryptodev_ops.h
-index 752ca588e0..56f814a142 100644
---- a/drivers/crypto/cnxk/cn20k_cryptodev_ops.h
-+++ b/drivers/crypto/cnxk/cn20k_cryptodev_ops.h
-@@ -33,6 +33,10 @@ uint16_t __rte_hot cn20k_cryptodev_sec_inb_rx_inject(void *dev, struct rte_mbuf
- __rte_internal
- int cn20k_cryptodev_sec_rx_inject_configure(void *device, uint16_t port_id, bool enable);
- 
-+__rte_internal
-+uint16_t __rte_hot cn20k_cpt_crypto_adapter_enqueue(void *ws, struct rte_event ev[],
-+						    uint16_t nb_events);
-+
- static __rte_always_inline void __rte_hot
- cn20k_cpt_lmtst_dual_submit(uint64_t *io_addr, const uint16_t lmt_id, int *i)
- {
-diff --git a/drivers/event/cnxk/cn20k_eventdev.c b/drivers/event/cnxk/cn20k_eventdev.c
-index 0688cf97e5..7d003ae2fc 100644
---- a/drivers/event/cnxk/cn20k_eventdev.c
-+++ b/drivers/event/cnxk/cn20k_eventdev.c
-@@ -4,6 +4,7 @@
- 
- #include "roc_api.h"
- 
-+#include "cn20k_cryptodev_ops.h"
- #include "cn20k_ethdev.h"
- #include "cn20k_eventdev.h"
- #include "cn20k_tx_worker.h"
-@@ -346,6 +347,7 @@ cn20k_sso_fp_fns_set(struct rte_eventdev *event_dev)
- 	event_dev->enqueue_new_burst = cn20k_sso_hws_enq_new_burst;
- 	event_dev->enqueue_forward_burst = cn20k_sso_hws_enq_fwd_burst;
- 
-+	event_dev->ca_enqueue = cn20k_cpt_crypto_adapter_enqueue;
- 	event_dev->profile_switch = cn20k_sso_hws_profile_switch;
- 	event_dev->preschedule_modify = cn20k_sso_hws_preschedule_modify;
- 	event_dev->preschedule = cn20k_sso_hws_preschedule;
-@@ -1037,6 +1039,48 @@ cn20k_sso_tx_adapter_queue_del(uint8_t id, const struct rte_eventdev *event_dev,
- 	return cn20k_sso_updt_tx_adptr_data(event_dev);
- }
- 
-+static int
-+cn20k_crypto_adapter_caps_get(const struct rte_eventdev *event_dev,
-+			      const struct rte_cryptodev *cdev, uint32_t *caps)
-+{
-+	CNXK_VALID_DEV_OR_ERR_RET(event_dev->dev, "event_cn20k", ENOTSUP);
-+	CNXK_VALID_DEV_OR_ERR_RET(cdev->device, "crypto_cn20k", ENOTSUP);
-+
-+	*caps = RTE_EVENT_CRYPTO_ADAPTER_CAP_INTERNAL_PORT_OP_FWD |
-+		RTE_EVENT_CRYPTO_ADAPTER_CAP_SESSION_PRIVATE_DATA |
-+		RTE_EVENT_CRYPTO_ADAPTER_CAP_EVENT_VECTOR;
-+
-+	return 0;
-+}
-+
-+static int
-+cn20k_crypto_adapter_qp_add(const struct rte_eventdev *event_dev, const struct rte_cryptodev *cdev,
-+			    int32_t queue_pair_id,
-+			    const struct rte_event_crypto_adapter_queue_conf *conf)
-+{
-+	int ret;
-+
-+	CNXK_VALID_DEV_OR_ERR_RET(event_dev->dev, "event_cn20k", EINVAL);
-+	CNXK_VALID_DEV_OR_ERR_RET(cdev->device, "crypto_cn20k", EINVAL);
-+
-+	cn20k_sso_fp_fns_set((struct rte_eventdev *)(uintptr_t)event_dev);
-+
-+	ret = cnxk_crypto_adapter_qp_add(event_dev, cdev, queue_pair_id, conf);
-+	cn20k_sso_set_priv_mem(event_dev, NULL);
-+
-+	return ret;
-+}
-+
-+static int
-+cn20k_crypto_adapter_qp_del(const struct rte_eventdev *event_dev, const struct rte_cryptodev *cdev,
-+			    int32_t queue_pair_id)
-+{
-+	CNXK_VALID_DEV_OR_ERR_RET(event_dev->dev, "event_cn20k", EINVAL);
-+	CNXK_VALID_DEV_OR_ERR_RET(cdev->device, "crypto_cn20k", EINVAL);
-+
-+	return cnxk_crypto_adapter_qp_del(cdev, queue_pair_id);
-+}
-+
- static int
- cn20k_tim_caps_get(const struct rte_eventdev *evdev, uint64_t flags, uint32_t *caps,
- 		   const struct event_timer_adapter_ops **ops)
-@@ -1044,6 +1088,26 @@ cn20k_tim_caps_get(const struct rte_eventdev *evdev, uint64_t flags, uint32_t *c
- 	return cnxk_tim_caps_get(evdev, flags, caps, ops, cn20k_sso_set_priv_mem);
- }
- 
-+static int
-+cn20k_crypto_adapter_vec_limits(const struct rte_eventdev *event_dev,
-+				const struct rte_cryptodev *cdev,
-+				struct rte_event_crypto_adapter_vector_limits *limits)
-+{
-+	CNXK_VALID_DEV_OR_ERR_RET(event_dev->dev, "event_cn20k", EINVAL);
-+	CNXK_VALID_DEV_OR_ERR_RET(cdev->device, "crypto_cn20k", EINVAL);
-+
-+	limits->log2_sz = false;
-+	limits->min_sz = 0;
-+	limits->max_sz = UINT16_MAX;
-+	/* Unused timeout, in software implementation we aggregate all crypto
-+	 * operations passed to the enqueue function
-+	 */
-+	limits->min_timeout_ns = 0;
-+	limits->max_timeout_ns = 0;
-+
-+	return 0;
-+}
-+
- static struct eventdev_ops cn20k_sso_dev_ops = {
- 	.dev_infos_get = cn20k_sso_info_get,
- 	.dev_configure = cn20k_sso_dev_configure,
-@@ -1081,6 +1145,11 @@ static struct eventdev_ops cn20k_sso_dev_ops = {
- 
- 	.timer_adapter_caps_get = cn20k_tim_caps_get,
- 
-+	.crypto_adapter_caps_get = cn20k_crypto_adapter_caps_get,
-+	.crypto_adapter_queue_pair_add = cn20k_crypto_adapter_qp_add,
-+	.crypto_adapter_queue_pair_del = cn20k_crypto_adapter_qp_del,
-+	.crypto_adapter_vector_limits_get = cn20k_crypto_adapter_vec_limits,
-+
- 	.xstats_get = cnxk_sso_xstats_get,
- 	.xstats_reset = cnxk_sso_xstats_reset,
- 	.xstats_get_names = cnxk_sso_xstats_get_names,
-diff --git a/drivers/event/cnxk/cn20k_worker.h b/drivers/event/cnxk/cn20k_worker.h
-index 6ed1f78a86..27cd4d5479 100644
---- a/drivers/event/cnxk/cn20k_worker.h
-+++ b/drivers/event/cnxk/cn20k_worker.h
-@@ -8,6 +8,7 @@
- #include <rte_event_timer_adapter.h>
- #include <rte_eventdev.h>
- 
-+#include "cn20k_cryptodev_event_dp.h"
- #include "cn20k_eventdev.h"
- #include "cn20k_rx.h"
- #include "cnxk_worker.h"
-@@ -166,7 +167,11 @@ cn20k_sso_hws_post_process(struct cn20k_sso_hws *ws, uint64_t *u64, const uint32
- 
- 	u64[0] = (u64[0] & (0x3ull << 32)) << 6 | (u64[0] & (0x3FFull << 36)) << 4 |
- 		 (u64[0] & 0xffffffff);
--	if (CNXK_EVENT_TYPE_FROM_TAG(u64[0]) == RTE_EVENT_TYPE_ETHDEV) {
-+	if (CNXK_EVENT_TYPE_FROM_TAG(u64[0]) == RTE_EVENT_TYPE_CRYPTODEV) {
-+		u64[1] = cn20k_cpt_crypto_adapter_dequeue(u64[1]);
-+	} else if (CNXK_EVENT_TYPE_FROM_TAG(u64[0]) == RTE_EVENT_TYPE_CRYPTODEV_VECTOR) {
-+		u64[1] = cn20k_cpt_crypto_adapter_vector_dequeue(u64[1]);
-+	} else if (CNXK_EVENT_TYPE_FROM_TAG(u64[0]) == RTE_EVENT_TYPE_ETHDEV) {
- 		uint8_t port = CNXK_SUB_EVENT_FROM_TAG(u64[0]);
- 		uintptr_t cpth = 0;
- 		uint64_t mbuf;
--- 
-2.48.1
+some comments inline below.
 
+/Bruce
+
+> ---
+>  drivers/net/intel/ice/ice_dcf_ethdev.c | 38 +++++++++++++++-----------
+>  1 file changed, 22 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/net/intel/ice/ice_dcf_ethdev.c b/drivers/net/intel/ice/ice_dcf_ethdev.c
+> index efff76afa8..accabd0ab9 100644
+> --- a/drivers/net/intel/ice/ice_dcf_ethdev.c
+> +++ b/drivers/net/intel/ice/ice_dcf_ethdev.c
+> @@ -1394,31 +1394,38 @@ ice_dcf_dev_rss_reta_query(struct rte_eth_dev *dev,
+>  }
+>  
+>  static int
+> -ice_dcf_dev_rss_hash_update(struct rte_eth_dev *dev,
+> -			struct rte_eth_rss_conf *rss_conf)
+> +ice_dcf_set_rss_key(struct ice_dcf_hw *hw, uint8_t *key, uint8_t key_len)
+>  {
+> -	struct ice_dcf_adapter *adapter = dev->data->dev_private;
+> -	struct ice_dcf_hw *hw = &adapter->real_hw;
+> -	int ret;
+> -
+> -	if (!(hw->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_RSS_PF))
+> -		return -ENOTSUP;
+> -
+>  	/* HENA setting, it is enabled by default, no change */
+> -	if (!rss_conf->rss_key || rss_conf->rss_key_len == 0) {
+> +	if (!key || key_len == 0) {
+>  		PMD_DRV_LOG(DEBUG, "No key to be configured");
+>  		return 0;
+> -	} else if (rss_conf->rss_key_len != hw->vf_res->rss_key_size) {
+> +	} else if (key_len != hw->vf_res->rss_key_size) {
+>  		PMD_DRV_LOG(ERR, "The size of hash key configured "
+>  			"(%d) doesn't match the size of hardware can "
+> -			"support (%d)", rss_conf->rss_key_len,
+> +			"support (%d)", key_len,
+>  			hw->vf_res->rss_key_size);
+>  		return -EINVAL;
+>  	}
+>  
+> -	rte_memcpy(hw->rss_key, rss_conf->rss_key, rss_conf->rss_key_len);
+> +	rte_memcpy(hw->rss_key, key, key_len);
+> +
+> +	return ice_dcf_configure_rss_key(hw);
+> +}
+> +
+> +static int
+> +ice_dcf_dev_rss_hash_update(struct rte_eth_dev *dev,
+> +			struct rte_eth_rss_conf *rss_conf)
+> +{
+> +	struct ice_dcf_adapter *adapter = dev->data->dev_private;
+> +	struct ice_dcf_hw *hw = &adapter->real_hw;
+> +	int ret;
+> +
+> +	if (!(hw->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_RSS_PF))
+> +		return -ENOTSUP;
+>  
+> -	ret = ice_dcf_configure_rss_key(hw);
+> +	/* set hash key */
+> +	ret = ice_dcf_set_rss_key(hw, rss_conf->rss_key, rss_conf->rss_key_len);
+>  	if (ret)
+>  		return ret;
+>  
+
+This part of the diff (from start of the patch to here) is just extracting
+the existing code into a new function, right? There is no change to
+behaviour here?
+
+> @@ -1452,8 +1459,7 @@ ice_dcf_dev_rss_hash_conf_get(struct rte_eth_dev *dev,
+>  	if (!(hw->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_RSS_PF))
+>  		return -ENOTSUP;
+>  
+> -	/* Just set it to default value now. */
+> -	rss_conf->rss_hf = ICE_RSS_OFFLOAD_ALL;
+> +	rss_conf->rss_hf = dev->data->dev_conf.rx_adv_conf.rss_conf.rss_hf;
+>  
+
+This line seems to be the main fix in this patch. Is it worth splitting the
+patch in two - having this fix and the code refactor above in separate
+patches?
+
+>  	if (!rss_conf->rss_key)
+>  		return 0;
+> -- 
+> 2.25.1
+> 
