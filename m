@@ -2,53 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1842AC71136
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Jun 2025 08:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 606CCC71136
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Jun 2025 09:37:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 78B7740E21;
-	Tue, 17 Jun 2025 10:24:23 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
- by mails.dpdk.org (Postfix) with ESMTP id 543A740DC9
- for <dev@dpdk.org>; Tue, 17 Jun 2025 10:24:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1750148660; x=1781684660;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=ABhDCLdvJaw6hcbwZC8nL3RbP4noP4nZiMy0UMGDCzQ=;
- b=ZXAxeMGVjk9IR+xJc3I7FBAb4WeY/IHeN4dG2p3iGTEiUtKnGV3PzhAl
- v5ITGQc+iqRP33R9qKfhguRau8T8mYcUivuIyFaFhCrmf7D7kvvXDjYr5
- m+XICjTzmZHIEX3N5h8BkVLHauSeec2SDthA7jdAWmXTEHRdqtucIDVC5
- O1NWE9HgZVwm7IYD2XILD4x+0TwxhHTAUm/pweVspjbdntiesqbx9i6dq
- pWeuW0wHnhsrjBN/VkOWrzeFuMJOehBzor+kikpmrfo+BGZn2YnFt4J96
- oO7w0B2sjptanQa9w/2xKvzGadragheYEeDX6zQaUPLZfwkSkT3OurGkQ Q==;
-X-CSE-ConnectionGUID: ADHp/0WrSQy5q8MnxmBQgA==
-X-CSE-MsgGUID: f87aUXW/Sua8znzEbHipAw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="52449731"
-X-IronPort-AV: E=Sophos;i="6.16,242,1744095600"; d="scan'208";a="52449731"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
- by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 17 Jun 2025 01:24:19 -0700
-X-CSE-ConnectionGUID: S5ACD5GeRkmfsDBiz5IOFg==
-X-CSE-MsgGUID: m0H+TkxTRtmgYj0iwMbrSg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,242,1744095600"; d="scan'208";a="148563843"
-Received: from unknown (HELO sprmax9..) ([10.138.182.122])
- by fmviesa006.fm.intel.com with ESMTP; 17 Jun 2025 01:24:17 -0700
-From: Soumyadeep Hore <soumyadeep.hore@intel.com>
-To: dev@dpdk.org,
-	bruce.richardson@intel.com
-Cc: aman.deep.singh@intel.com,
-	manoj.kumar.subbarao@intel.com
-Subject: [PATCH v5 4/4] doc: announce TxPP support for E830 adapters
-Date: Tue, 17 Jun 2025 00:14:29 +0000
-Message-ID: <20250617001429.551262-5-soumyadeep.hore@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 1F7BA40B8C;
+	Tue, 17 Jun 2025 11:37:31 +0200 (CEST)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+ by mails.dpdk.org (Postfix) with ESMTP id BEDD340A89
+ for <dev@dpdk.org>; Tue, 17 Jun 2025 11:37:28 +0200 (CEST)
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mxct.zte.com.cn (FangMail) with ESMTPS id 4bM1xH1CyMz4x5rh;
+ Tue, 17 Jun 2025 17:37:23 +0800 (CST)
+Received: from szxlzmapp03.zte.com.cn ([10.5.231.207])
+ by mse-fl2.zte.com.cn with SMTP id 55H9b1Fk042003;
+ Tue, 17 Jun 2025 17:37:01 +0800 (+08)
+ (envelope-from chen.bingbin@zte.com.cn)
+Received: from localhost.localdomain (unknown [192.168.6.15])
+ by smtp (Zmail) with SMTP; Tue, 17 Jun 2025 17:37:04 +0800
+X-Zmail-TransId: 3e8168513737008-5fbad
+From: Bingbin Chen <chen.bingbin@zte.com.cn>
+To: stephen@networkplumber.org, wang.junlong1@zte.com.cn,
+ yang.yonggang@zte.com.cn
+Cc: dev@dpdk.org, Bingbin Chen <chen.bingbin@zte.com.cn>
+Subject: [PATCH v1 0/2] add support flow director ops
+Date: Tue, 17 Jun 2025 17:31:14 +0800
+Message-ID: <20250617093114.3570444-1-chen.bingbin@zte.com.cn>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250617001429.551262-1-soumyadeep.hore@intel.com>
-References: <20250610131159.495566-2-soumyadeep.hore@intel.com>
- <20250617001429.551262-1-soumyadeep.hore@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed;
+	boundary="=====_001_next====="
+X-MAIL: mse-fl2.zte.com.cn 55H9b1Fk042003
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68513753.000/4bM1xH1CyMz4x5rh
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -62,49 +50,93 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-E830 adapters currently support Tx Time based queues.
 
-Signed-off-by: Soumyadeep Hore <soumyadeep.hore@intel.com>
----
- doc/guides/nics/ice.rst | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
 
-diff --git a/doc/guides/nics/ice.rst b/doc/guides/nics/ice.rst
-index 77985ae5a2..e7d1fb2e1b 100644
---- a/doc/guides/nics/ice.rst
-+++ b/doc/guides/nics/ice.rst
-@@ -415,6 +415,31 @@ and add the ``--force-max-simd-bitwidth=64`` startup parameter to disable vector
- 
-    examples/dpdk-ptpclient -c f -n 3 -a 0000:ec:00.1 --force-max-simd-bitwidth=64 -- -T 1 -p 0x1 -c 1
- 
-+Tx Packet Pacing
-+~~~~~~~~~~~~~~~~
-+
-+In order to deliver the timestamp with every packet, a special type of Tx Host Queue is
-+used, the TS Queue. This feature is currently supported only in E830 adapters.
-+
-+The tx_offload ``RTE_ETH_TX_OFFLOAD_SEND_ON_TIMESTAMP`` is used to enable the feature.
-+In order to deliver timestamps internally ``set txtimes`` is used where inter burst
-+and intra burst time interval in nsecs is provided.
-+For example:
-+
-+.. code-block:: console
-+
-+   dpdk-testpmd -a 0000:31:00.0 -c f -n 4 -- -i --tx-offloads=0x200000
-+   set fwd txonly
-+   set txtimes <inter_burst>,<intra_burst>
-+   start
-+
-+Based on the offload Tx Time Queue will be enabled during ice_tx_queue_setup()
-+only for E830 adapters. The initial time should be fetched using
-+rte_eth_read_clock(). Further the timestamps should be calculated based on the
-+inter_burst and intra_burst times, then storing it into proper format as to be
-+placed in packet header. The timestamps should then be copied to packet mbufs
-+and packet header length should be adjusted accordingly.
-+
- Generic Flow Support
- ~~~~~~~~~~~~~~~~~~~~
- 
--- 
-2.43.0
+--=====_001_next=====
+Content-Type: multipart/related;
+	boundary="=====_002_next====="
+
+
+--=====_002_next=====
+Content-Type: multipart/alternative;
+	boundary="=====_003_next====="
+
+
+--=====_003_next=====
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+VjE6DQogIC0gYWRkIHN1cHBvcnQgZmxvdyBkaXJlY3RvciBvcHMuDQoNCkJpbmdiaW4gQ2hlbiAo
+Mik6DQogIG5ldC96eGRoOiBucHNkayBhZGQgZmxvdyBkaXJlY3RvciB0YWJsZSBvcHMNCiAgbmV0
+L3p4ZGg6IGFkZCBzdXBwb3J0IGZsb3cgZGlyZWN0b3Igb3BzDQoNCiBkb2MvZ3VpZGVzL25pY3Mv
+ZmVhdHVyZXMvenhkaC5pbmkgIHwgICAxNiArDQogZG9jL2d1aWRlcy9uaWNzL3p4ZGgucnN0ICAg
+ICAgICAgICB8ICAgIDEgKw0KIGRyaXZlcnMvbmV0L3p4ZGgvbWVzb24uYnVpbGQgICAgICAgfCAg
+ICAxICsNCiBkcml2ZXJzL25ldC96eGRoL3p4ZGhfY29tbW9uLmggICAgIHwgICAgMSArDQogZHJp
+dmVycy9uZXQvenhkaC96eGRoX2V0aGRldi5jICAgICB8ICAgMjcgKw0KIGRyaXZlcnMvbmV0L3p4
+ZGgvenhkaF9ldGhkZXYuaCAgICAgfCAgIDEzICstDQogZHJpdmVycy9uZXQvenhkaC96eGRoX2V0
+aGRldl9vcHMuYyB8ICAgIDIgKy0NCiBkcml2ZXJzL25ldC96eGRoL3p4ZGhfZXRoZGV2X29wcy5o
+IHwgICAgMSArDQogZHJpdmVycy9uZXQvenhkaC96eGRoX2Zsb3cuYyAgICAgICB8IDIwMDQgKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKw0KIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9mbG93Lmgg
+ICAgICAgfCAgMjM3ICsrKysNCiBkcml2ZXJzL25ldC96eGRoL3p4ZGhfbXNnLmMgICAgICAgIHwg
+IDI2MyArKystDQogZHJpdmVycy9uZXQvenhkaC96eGRoX21zZy5oICAgICAgICB8ICAgMzEgKy0N
+CiBkcml2ZXJzL25ldC96eGRoL3p4ZGhfbnAuYyAgICAgICAgIHwgMTY2NCArKysrKysrKysrKysr
+KysrKysrKysrKw0KIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9ucC5oICAgICAgICAgfCAgIDQyICst
+DQogZHJpdmVycy9uZXQvenhkaC96eGRoX3RhYmxlcy5oICAgICB8ICAgMTAgKy0NCiAxNSBmaWxl
+cyBjaGFuZ2VkLCA0MjQxIGluc2VydGlvbnMoKyksIDcyIGRlbGV0aW9ucygtKQ0KIGNyZWF0ZSBt
+b2RlIDEwMDY0NCBkcml2ZXJzL25ldC96eGRoL3p4ZGhfZmxvdy5jDQogY3JlYXRlIG1vZGUgMTAw
+NjQ0IGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9mbG93LmgNCg0KLS0gDQoyLjI3LjA=
+
+
+--=====_003_next=====
+Content-Type: text/html ;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+VjE6PGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNwO2FkZCZuYnNwO3N1cHBvcnQmbmJzcDtmbG93Jm5i
+c3A7ZGlyZWN0b3ImbmJzcDtvcHMuPGJyIC8+DTxiciAvPkJpbmdiaW4mbmJzcDtDaGVuJm5ic3A7
+KDIpOjxiciAvPiZuYnNwOyZuYnNwO25ldC96eGRoOiZuYnNwO25wc2RrJm5ic3A7YWRkJm5ic3A7
+ZmxvdyZuYnNwO2RpcmVjdG9yJm5ic3A7dGFibGUmbmJzcDtvcHM8YnIgLz4mbmJzcDsmbmJzcDtu
+ZXQvenhkaDombmJzcDthZGQmbmJzcDtzdXBwb3J0Jm5ic3A7ZmxvdyZuYnNwO2RpcmVjdG9yJm5i
+c3A7b3BzPGJyIC8+DTxiciAvPiZuYnNwO2RvYy9ndWlkZXMvbmljcy9mZWF0dXJlcy96eGRoLmlu
+aSZuYnNwOyZuYnNwO3wmbmJzcDsmbmJzcDsmbmJzcDsxNiZuYnNwOys8YnIgLz4mbmJzcDtkb2Mv
+Z3VpZGVzL25pY3MvenhkaC5yc3QmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7MSZu
+YnNwOys8YnIgLz4mbmJzcDtkcml2ZXJzL25ldC96eGRoL21lc29uLmJ1aWxkJm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOzEm
+bmJzcDsrPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRoX2NvbW1vbi5oJm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOzEmbmJzcDsrPGJy
+IC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRoX2V0aGRldi5jJm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7fCZuYnNwOyZuYnNwOyZuYnNwOzI3Jm5ic3A7KzxiciAvPiZuYnNwO2RyaXZl
+cnMvbmV0L3p4ZGgvenhkaF9ldGhkZXYuaCZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wm
+bmJzcDsmbmJzcDsmbmJzcDsxMyZuYnNwOystPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96
+eGRoX2V0aGRldl9vcHMuYyZuYnNwO3wmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsyJm5ic3A7Ky08
+YnIgLz4mbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhfZXRoZGV2X29wcy5oJm5ic3A7fCZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOzEmbmJzcDsrPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96
+eGRoX2Zsb3cuYyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJz
+cDsyMDA0Jm5ic3A7KysrKysrKysrKysrKysrKysrKysrKysrKysrKzxiciAvPiZuYnNwO2RyaXZl
+cnMvbmV0L3p4ZGgvenhkaF9mbG93LmgmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDt8Jm5ic3A7Jm5ic3A7MjM3Jm5ic3A7KysrKzxiciAvPiZuYnNwO2RyaXZlcnMvbmV0
+L3p4ZGgvenhkaF9tc2cuYyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwO3wmbmJzcDsmbmJzcDsyNjMmbmJzcDsrKystPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQv
+enhkaC96eGRoX21zZy5oJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7fCZuYnNwOyZuYnNwOyZuYnNwOzMxJm5ic3A7Ky08YnIgLz4mbmJzcDtkcml2ZXJzL25l
+dC96eGRoL3p4ZGhfbnAuYyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwO3wmbmJzcDsxNjY0Jm5ic3A7KysrKysrKysrKysrKysrKysrKysrKys8YnIg
+Lz4mbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhfbnAuaCZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJzcDsmbmJzcDsmbmJzcDs0MiZuYnNw
+OystPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRoX3RhYmxlcy5oJm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZuYnNwOyZuYnNwOyZuYnNwOzEwJm5ic3A7Ky08YnIgLz4mbmJz
+cDsxNSZuYnNwO2ZpbGVzJm5ic3A7Y2hhbmdlZCwmbmJzcDs0MjQxJm5ic3A7aW5zZXJ0aW9ucygr
+KSwmbmJzcDs3MiZuYnNwO2RlbGV0aW9ucygtKTxiciAvPiZuYnNwO2NyZWF0ZSZuYnNwO21vZGUm
+bmJzcDsxMDA2NDQmbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhfZmxvdy5jPGJyIC8+Jm5ic3A7
+Y3JlYXRlJm5ic3A7bW9kZSZuYnNwOzEwMDY0NCZuYnNwO2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9m
+bG93Lmg8YnIgLz4NPGJyIC8+LS0mbmJzcDsNPGJyIC8+Mi4yNy4wPGJyIC8+
+
+
+--=====_003_next=====--
+
+--=====_002_next=====--
+
+--=====_001_next=====--
 
