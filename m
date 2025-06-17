@@ -2,73 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B369C71136
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Jun 2025 14:08:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D504C71136
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Jun 2025 14:16:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A8020410E8;
-	Tue, 17 Jun 2025 16:08:33 +0200 (CEST)
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com
- [209.85.219.45]) by mails.dpdk.org (Postfix) with ESMTP id 1F95E40BA4
- for <dev@dpdk.org>; Tue, 17 Jun 2025 16:08:32 +0200 (CEST)
-Received: by mail-qv1-f45.google.com with SMTP id
- 6a1803df08f44-6f8aa9e6ffdso52185646d6.3
- for <dev@dpdk.org>; Tue, 17 Jun 2025 07:08:32 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7F277410F1;
+	Tue, 17 Jun 2025 16:16:41 +0200 (CEST)
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com
+ [209.85.160.172])
+ by mails.dpdk.org (Postfix) with ESMTP id B8C0640BA4
+ for <dev@dpdk.org>; Tue, 17 Jun 2025 16:16:39 +0200 (CEST)
+Received: by mail-qt1-f172.google.com with SMTP id
+ d75a77b69052e-4a44b0ed780so83843311cf.3
+ for <dev@dpdk.org>; Tue, 17 Jun 2025 07:16:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1750169311;
- x=1750774111; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ d=gmail.com; s=20230601; t=1750169799; x=1750774599; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
  :message-id:reply-to;
- bh=TDc+tz0ZY0De/zT0Ei2G1pt/M9opSjQG41L+XFuPxqo=;
- b=hU4xt9sZCoxSaNetnxIcSB+6MfvZa9XuUtUaJTDwpuU8NoJzRir6UM6trmd55X7eP6
- 2NhQklNNwlX1XqBKjtsu4t58lracpWnGWhW0gWPUGbHUFPJ1unvI9LmpRAHJjDfDDaRi
- ShgsqjS51kvXqnzhsdg3m6clabz1yj3HbFA7lrWjJBjmXUgYB1JV+2nzr5VOgIHWFuvy
- TPW2TJbInlFs749jU0gNKFzUgavcqp68Ejf4tmVCEgtCX5Xnkx8RvrETTZQn2ScFmzum
- srkuh5TJFg9wbQ/Cat0FP9MwoUvQoTfD10hVzcOoQCHOLgcevyTJe8Xi4Rp8WMUVQWmH
- JNrw==
+ bh=N1Y2d0QxXIGxyWt/sv7B452g2+SxvV9NJvoqTjE2InQ=;
+ b=ce2ZypsBSfgLjSPSm1H6WzKDmsxrg/iKvyouA2F/pXAIXe1OTRt3miZBpLQJRojrSp
+ Hne9lwCzNLo02ZCvwAFJLzPz+hIUUrvNT+CzR/tTf+5dwa1WpF58vIJCjTyPlECxHZp1
+ Rhj49fhdRVvQQqHpCUnw6rqDk8NIO4P+c3IQ4/WBKOnFgyxy5+dc8vTAJC+yYS77vxJw
+ 4qxWXjBdZArZx68J71mHO4LvO8Ja0dsf6VInAoKpJ4ST8c7QROBEJ68Z4WTBdvtV8flm
+ 2uch9ns9yWFy0bdYNuVr6AO+drsW6j2g7KIkcjBaGAyBFcr6GHagdb2OYtJ708iLMwJ0
+ E8mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1750169311; x=1750774111;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ d=1e100.net; s=20230601; t=1750169799; x=1750774599;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=TDc+tz0ZY0De/zT0Ei2G1pt/M9opSjQG41L+XFuPxqo=;
- b=PAS6vj08w6yEFF9XfABKBK8tHJNIhsGWJnCWLgBA4BSfV0jvKEeCEM7jFiSiXmz07R
- APBt9L9tZrbHUn4aR5xD6uATA2ZuSCE3WmoWyGJMpyG6mqglIr3VRZLfuE4+ixI6UbHW
- v0v5yhfhHYs5L0BgnLz2ta9Qr+xGcxjRE2QB/gSK5/fr0cUIZX9DahmvdYkczw31Tg+O
- rg1AqT0jLLeYYN2hqf658FyqP73JnvKPKQN6rtIaVJct+dlj/nwtWO6NmA5QlZ1ibJuE
- U5mNvj58yfz27cu6JU+HYm3he28UxTYfOy7RcKRGRMI3fRBHNyjljZIUWJ2g4xQ28he8
- YkIg==
+ bh=N1Y2d0QxXIGxyWt/sv7B452g2+SxvV9NJvoqTjE2InQ=;
+ b=w2rlxLh7zRNU/geqHdT7NAecgtICHIyL9ndjf29kkzSR40K2DtECUytgnQ6/gMUeEN
+ 0Vu0R4C6GCxjke0CVvCMRovWGLCNAhB0JD4RH0ugYh2ePTjz+yBrf801DJhst8pziqek
+ ocRd4rxlHi0F4Sy5pK9GYdpo0aK+V0ZTj8gcmGs6RV4NO500XgPCq8/juOGnNVr5lxLh
+ YkfkmuO4cy0UyZojVUqvHhQFV/7XaAuWWK9v/kW1cHtoFjyiZ5ETzsBtuZ5ymXA3PNjg
+ Pyb5tA4fLt2y5vs7Wh+UTEL7H94KxLIXaGXia6TDic1mUIjklV82vFNhHCKdIR5ho1zV
+ W/ZQ==
 X-Forwarded-Encrypted: i=1;
- AJvYcCWh8OAqsj1v7Zg9zPF4BWNADAxAL6cjUcPCM2Wj8VM4/hBWT1XXm1E0fwSAh4wbyOyJu/8=@dpdk.org
-X-Gm-Message-State: AOJu0YySDz/JOml+iPd1sFc2QVq/c70ZDqlTlQgiU0I9phfP6WcKtgqu
- NNL2lSlF+WIgpXZbxBqDZl6EdRithotJPscmymv6Lpzu6Pgmu2iuFh2mN7ZzHyvif88=
-X-Gm-Gg: ASbGnctcc0PJZh6uq0CPdoxeZH7jOnOoJGg0Ksd/SgRA5wc105To+bw2gVBmJRvBLa4
- V2oXIMsbgpqsT8wH96bD0DGg/uKpSmoMbaSy3xdGsRQ2TBgwQVIm7p9oQY0QWfVys8HjWBQwSCH
- 22OqNIn/gmOIvpCYHehn2jeLq6Q4fJH2lDgrt3HLpqI//dFujHIDun1ogSr8cC7u6VZxOQyO+mN
- iih8Q/AKdvbuxVNL83y4wTH8FlPFIJLYVmp9b4M8FhEGC/FIh4EDayQJlf7K5JIa51uEo4F2PSW
- JGo3A9pM1EOkjSBmKjlXUH+zaHlRAccMyYsXODRnPYEKcICRIOmuxKY1bXXxUeNq+1TqJk6Rola
- 4W8IcerS5GVtNAogzV5MZWzzuWQzJWD+21ncjLqA=
-X-Google-Smtp-Source: AGHT+IEMl4xX1ZXN8wRMVwS5AqD2RMS8Fv5le+9D0eHIaKy1+2bfSu0PXn+dTQRV0uGolwm60A3IOw==
-X-Received: by 2002:ad4:560e:0:b0:6fb:4cbc:5b86 with SMTP id
- 6a1803df08f44-6fb4cbc5f74mr140004366d6.18.1750169311397; 
- Tue, 17 Jun 2025 07:08:31 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-6fb53b5f7fdsm25101206d6.105.2025.06.17.07.08.30
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 17 Jun 2025 07:08:31 -0700 (PDT)
-Date: Tue, 17 Jun 2025 07:08:28 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bingbin Chen <chen.bingbin@zte.com.cn>
-Cc: wang.junlong1@zte.com.cn, yang.yonggang@zte.com.cn, dev@dpdk.org
-Subject: Re: [PATCH v1 1/2] net/zxdh: npsdk add flow director table ops
-Message-ID: <20250617070828.47d67dd6@hermes.local>
-In-Reply-To: <20250617093225.3570498-1-chen.bingbin@zte.com.cn>
-References: <20250617093114.3570444-1-chen.bingbin@zte.com.cn>
- <20250617093225.3570498-1-chen.bingbin@zte.com.cn>
+ AJvYcCXz6eP4pQ7kPN+XzNgbvwmyOSg832KRkvndHr4H4pmZYo+TFuAoqiLbUknMTF9Af07BLcI=@dpdk.org
+X-Gm-Message-State: AOJu0Yzb61Lj5OUXMNpMkUHd5QJUkK0mzp2LSvbZXaWehsrtXUqlP9cF
+ ECDPzLbBJPryewHhvE8JZ8IswA5TabVOQjDrhZpUUS+6no7k9MYXPHO/om/Pde+gLEzjx6i6lui
+ sxklD4p0/lxq00FNDhqJpmSIZ6sbgX6E=
+X-Gm-Gg: ASbGncvYpPrX71BDM9kA9WVV4GxpvOVJ7f8G4zU1F4uLRuZA+6oXQtrh41yQfQateZl
+ vUT4DX4tYSgoXf5iYrHqRiwdLfy8DiAkO1FsUAHajnZcz1UUJSllmmhCkQz5Oj+5vCyFFpxAlVZ
+ YyXT3rIwX4WEcT9RJnFn0BeV3eLHkNi+ba4ZSWYAGSsQ==
+X-Google-Smtp-Source: AGHT+IFjV6W4zwXLwFtsQW0iTNRFceuGtRuOF3+ewUJQ+KYD9IbTDIorI9+4aAf2uURDGjtIwyT6UP9lAbS2CSr50uc=
+X-Received: by 2002:a05:622a:2d5:b0:4a2:719b:122e with SMTP id
+ d75a77b69052e-4a73c53b18dmr217739911cf.18.1750169798659; Tue, 17 Jun 2025
+ 07:16:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250617105209.50526-1-marat.khalili@huawei.com>
+ <20250617105209.50526-2-marat.khalili@huawei.com>
+ <20250617062716.17e6b86e@hermes.local>
+In-Reply-To: <20250617062716.17e6b86e@hermes.local>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Tue, 17 Jun 2025 19:46:11 +0530
+X-Gm-Features: AX0GCFtUYC5AY88vjJbNXhqIVGUbsiw3p1mrAElNjitS4hYxIr7w-gpcMUrxo2k
+Message-ID: <CALBAE1MCqfhVvcfEY2R+m=FiBXpeznoktHnkGKkOVf4G+onjtA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] lib/graph: rte_malloc for cache-aligned structs
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: Marat Khalili <marat.khalili@huawei.com>, Jerin Jacob <jerinj@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>, 
+ Zhirun Yan <yanzhirun_163@163.com>, dev@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,36 +80,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 17 Jun 2025 17:32:25 +0800
-Bingbin Chen <chen.bingbin@zte.com.cn> wrote:
+On Tue, Jun 17, 2025 at 7:07=E2=80=AFPM Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+>
+> On Tue, 17 Jun 2025 11:52:08 +0100
+> Marat Khalili <marat.khalili@huawei.com> wrote:
+>
+> > This was flagged by undefined behaviour sanitizer: struct
+> > rte_graph_cluster_stats is declared as `__rte_cache_aligned` but was
+> > allocated using stdlib realloc which caused misaligned allocation. More
+> > than one test needs to be executed in series in order to reproduce the
+> > problem using graph_autotest, e.g:
+> >
+> >     app/dpdk-test --no-huge --no-pci -m128 graph_autotest graph_autotes=
+t
+> >
+> > First sanitizer message  (similar ones follow):
+> >
+> >     lib/graph/graph_stats.c:209:13: runtime error: member access within
+> >     misaligned address 0x606000008ea0 for type 'struct
+> >     rte_graph_cluster_stats', which requires 64 byte alignment
+> >
+> > To fix the issue replace realloc calls with rte_malloc and rte_realloc
+> > specifying correct alignment, use rte_free to free the result.
+> >
+> > Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
+>
+> There is a way to get aligned memory,
+>
+>        #include <stdlib.h>
+>
+>        int posix_memalign(void **memptr, size_t alignment, size_t size);
+>        void *aligned_alloc(size_t alignment, size_t size);
 
-> +	uint32_t msg_result = 0;
-> +	uint32_t acl_index = 0;
-> +	ZXDH_AGENT_CHANNEL_ACL_MSG_T msgcfg = {
-> +		.dev_id = 0,
-> +		.type = ZXDH_ACL_MSG,
-> +		.oper = ZXDH_ACL_INDEX_REQUEST,
-> +		.vport = vport,
-> +		.sdt_no = sdt_no,
-> +	};
-> +	ZXDH_AGENT_CHANNEL_MSG_T agent_msg = {
-> +		.msg = (void *)&msgcfg,
-> +		.msg_len = sizeof(ZXDH_AGENT_CHANNEL_ACL_MSG_T),
-> +	};
-> +
-> +	rc = zxdh_np_agent_channel_sync_send(dev_id, &agent_msg, rsp_buff, sizeof(rsp_buff));
-> +	if (rc != ZXDH_OK) {
-> +		PMD_DRV_LOG(ERR, "agent send msg failed");
-> +		return ZXDH_ERR;
-> +	}
-> +
-> +	msg_result = rsp_buff[0];
-> +	acl_index = rsp_buff[1];
-> +
-> +	PMD_DRV_LOG(DEBUG, "dev_id: %d, msg_result: %d", dev_id, msg_result);
-> +	PMD_DRV_LOG(DEBUG, "dev_id: %d, acl_index: %d", dev_id, acl_index);
-> +
+There is a need for aligned realloc. I think it is not there in
+standard libraries.
 
-Some compiler versions will complain about printing an unsigned type (msg_result)
-with a signed format (%d). This problem exists many places in DPDK so no urgent
-need to address it.
+
+
+>
