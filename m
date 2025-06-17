@@ -2,47 +2,28 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59EB0C71155
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Jun 2025 04:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E42C71155
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Jun 2025 06:12:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7637D40697;
-	Tue, 17 Jun 2025 06:56:15 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id 8E00740156
- for <dev@dpdk.org>; Tue, 17 Jun 2025 06:56:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1750136174; x=1781672174;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=5A3UN4ga+0DJ1+LMVF/SSy67rYNmcBzvNrn/srRrGgc=;
- b=fw+bLZorm1P+tu8EjN4y+lqxBAjSEmGz4yy9XQVmZKpCg1xjwFnnMEdw
- UwbHJ2wKqALA3vXOCx3Rq2UNVtj0TPm1Db+5Kg/0W/+CZcGvKbHcPGJvD
- jh3ICJoQYopwEFMS2W54N6rsYO/tmnMkarRmWGU+CJgGMGV6CZdSyoBc3
- S5BQ9rgtumYJz/u+WJy0UZM52GqkMSqDSMImWaOOycFPalQxcyhutDDg9
- 2q45C0oIpGmmGkpUSSvK7Il73xeoVQxYTTN7GllxGpToo2SZwpehtyFpy
- MBLL40toeYlMYDFLelS/eNyXtjyqoT216uT0NWKlLiuWpVeDpgCFbAD88 A==;
-X-CSE-ConnectionGUID: AEjx6CJxTcGJWZ2e+2CYhw==
-X-CSE-MsgGUID: BkIyA3+7SR2WMk85UFL+xw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11465"; a="69739079"
-X-IronPort-AV: E=Sophos;i="6.16,242,1744095600"; d="scan'208";a="69739079"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
- by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Jun 2025 21:56:13 -0700
-X-CSE-ConnectionGUID: UF0xXGjHTiGiPqcWZt3zlA==
-X-CSE-MsgGUID: p3sQEojUSE+inqtdBm02iQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,242,1744095600"; d="scan'208";a="153627157"
-Received: from srf-bkc.iind.intel.com ([10.49.110.107])
- by orviesa004.jf.intel.com with ESMTP; 16 Jun 2025 21:56:10 -0700
-From: Tirthendu Sarkar <tirthendu.sarkar@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, pravin.pathak@intel.com,
- Tirthendu Sarkar <tirthendu.sarkar@intel.com>
-Subject: [PATCH] event/dlb2: add datapath support in secondary processes
-Date: Tue, 17 Jun 2025 00:56:07 -0400
-Message-ID: <20250617045607.245070-1-tirthendu.sarkar@intel.com>
-X-Mailer: git-send-email 2.47.1
+	by mails.dpdk.org (Postfix) with ESMTP id 55A4040A70;
+	Tue, 17 Jun 2025 08:12:11 +0200 (CEST)
+Received: from out28-92.mail.aliyun.com (out28-92.mail.aliyun.com
+ [115.124.28.92]) by mails.dpdk.org (Postfix) with ESMTP id EAC0E406BB
+ for <dev@dpdk.org>; Tue, 17 Jun 2025 08:12:08 +0200 (CEST)
+Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
+ fp:SMTPD_---.dO-dyVn_1750140725 cluster:ay29) by smtp.aliyun-inc.com;
+ Tue, 17 Jun 2025 14:12:06 +0800
+From: "dimon.zhao" <dimon.zhao@nebula-matrix.com>
+To: dimon.zhao@nebula-matrix.com,
+	kyo.liu@nebula-matrix.com,
+	dev@dpdk.org
+Cc: Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
+Subject: [PATCH v2 03/16] net/nbl: add PHY layer definitions and implementation
+Date: Mon, 16 Jun 2025 23:11:45 -0700
+Message-Id: <20250617061158.3097233-4-dimon.zhao@nebula-matrix.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250617061158.3097233-1-dimon.zhao@nebula-matrix.com>
+References: <20250617061158.3097233-1-dimon.zhao@nebula-matrix.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -58,264 +39,465 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The producer port and consumer queue addresses are configured during
-port setup. These are needed during enqueue and dequeue operations.
-For a eventdev that is configured in primary process, these need to be
-stored so that secondary processes can retrieve them for doing enueue
-and dequeue.
+add PHY layer related definitions and product ops
 
-Store producer port and consumer queue addresses during port setup and
-retrieve them back in local data during secondary init.
-
-Additionally, add checks to retrieve stored addresses in primary data path
-for ports configured in secondary.
-
-Signed-off-by: Tirthendu Sarkar <tirthendu.sarkar@intel.com>
+Signed-off-by: dimon.zhao <dimon.zhao@nebula-matrix.com>
 ---
- drivers/event/dlb2/dlb2.c                  | 23 ++++++++-
- drivers/event/dlb2/dlb2_iface.c            |  2 +-
- drivers/event/dlb2/dlb2_iface.h            |  2 +-
- drivers/event/dlb2/pf/base/dlb2_hw_types.h |  2 +
- drivers/event/dlb2/pf/dlb2_pf.c            | 57 +++++++++++++++++-----
- 5 files changed, 70 insertions(+), 16 deletions(-)
+ drivers/net/nbl/meson.build                   |  2 +
+ drivers/net/nbl/nbl_core.c                    | 54 ++++++++--
+ drivers/net/nbl/nbl_core.h                    | 30 +++++-
+ drivers/net/nbl/nbl_ethdev.c                  |  4 +-
+ .../nbl_hw_leonis/nbl_phy_leonis_snic.c       | 99 +++++++++++++++++++
+ .../nbl_hw_leonis/nbl_phy_leonis_snic.h       | 10 ++
+ drivers/net/nbl/nbl_hw/nbl_phy.h              | 28 ++++++
+ drivers/net/nbl/nbl_include/nbl_def_phy.h     | 35 +++++++
+ drivers/net/nbl/nbl_include/nbl_include.h     | 15 +++
+ .../net/nbl/nbl_include/nbl_product_base.h    | 37 +++++++
+ 10 files changed, 300 insertions(+), 14 deletions(-)
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.c
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.h
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_phy.h
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_def_phy.h
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_product_base.h
 
-diff --git a/drivers/event/dlb2/dlb2.c b/drivers/event/dlb2/dlb2.c
-index 286241ea41..08291b10b8 100644
---- a/drivers/event/dlb2/dlb2.c
-+++ b/drivers/event/dlb2/dlb2.c
-@@ -3257,6 +3257,9 @@ __dlb2_event_enqueue_burst_reorder(void *event_port,
+diff --git a/drivers/net/nbl/meson.build b/drivers/net/nbl/meson.build
+index 013a4126f6..4ec1273100 100644
+--- a/drivers/net/nbl/meson.build
++++ b/drivers/net/nbl/meson.build
+@@ -7,8 +7,10 @@ if not is_linux
+ endif
  
- 	port_data = &dlb2_port[qm_port->id][PORT_TYPE(qm_port)];
+ includes += include_directories('nbl_include')
++includes += include_directories('nbl_hw')
  
-+	if (!port_data->mmaped)
-+		dlb2_iface_low_level_io_init(&ev_port->dlb2->qm_instance);
+ sources = files(
+         'nbl_ethdev.c',
+         'nbl_core.c',
++        'nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.c',
+ )
+diff --git a/drivers/net/nbl/nbl_core.c b/drivers/net/nbl/nbl_core.c
+index 63b707f0ba..fc7222d526 100644
+--- a/drivers/net/nbl/nbl_core.c
++++ b/drivers/net/nbl/nbl_core.c
+@@ -4,27 +4,67 @@
+ 
+ #include "nbl_core.h"
+ 
+-int nbl_core_init(const struct nbl_adapter *adapter, const struct rte_eth_dev *eth_dev)
++static struct nbl_product_core_ops nbl_product_core_ops[NBL_PRODUCT_MAX] = {
++	{
++		.phy_init	= nbl_phy_init_leonis_snic,
++		.phy_remove	= nbl_phy_remove_leonis_snic,
++		.res_init	= NULL,
++		.res_remove	= NULL,
++		.chan_init	= NULL,
++		.chan_remove	= NULL,
++	},
++};
 +
- 	num_tx = RTE_MIN(num, ev_port->conf.enqueue_depth);
- #if DLB2_BYPASS_FENCE_ON_PP == 1
- 	if (!qm_port->is_producer) /* Call memory fense once at the start */
-@@ -3390,6 +3393,10 @@ __dlb2_event_enqueue_burst(void *event_port,
- 	i = 0;
- 
- 	port_data = &dlb2_port[qm_port->id][PORT_TYPE(qm_port)];
-+
-+	if (!port_data->mmaped)
-+		dlb2_iface_low_level_io_init(&ev_port->dlb2->qm_instance);
-+
- 	num_tx = RTE_MIN(num, ev_port->conf.enqueue_depth);
- 	while (i < num_tx) {
- 		uint8_t sched_types[DLB2_NUM_QES_PER_CACHE_LINE];
-@@ -4448,11 +4455,17 @@ dlb2_event_dequeue_burst(void *event_port, struct rte_event *ev, uint16_t num,
- 	struct dlb2_port *qm_port = &ev_port->qm_port;
- 	struct dlb2_eventdev *dlb2 = ev_port->dlb2;
- 	struct dlb2_reorder *order = qm_port->order;
-+	struct process_local_port_data *port_data;
- 	uint16_t cnt;
- 
- 	RTE_ASSERT(ev_port->setup_done);
- 	RTE_ASSERT(ev != NULL);
- 
-+	port_data = &dlb2_port[qm_port->id][PORT_TYPE(qm_port)];
-+
-+	if (!port_data->mmaped)
-+		dlb2_iface_low_level_io_init(&dlb2->qm_instance);
-+
- 	if (ev_port->implicit_release && ev_port->outstanding_releases > 0) {
- 		uint16_t out_rels = ev_port->outstanding_releases;
- 		if (qm_port->reorder_en) {
-@@ -4495,11 +4508,17 @@ dlb2_event_dequeue_burst_sparse(void *event_port, struct rte_event *ev,
- 	struct dlb2_port *qm_port = &ev_port->qm_port;
- 	struct dlb2_eventdev *dlb2 = ev_port->dlb2;
- 	struct dlb2_reorder *order = qm_port->order;
-+	struct process_local_port_data *port_data;
- 	uint16_t cnt;
- 
- 	RTE_ASSERT(ev_port->setup_done);
- 	RTE_ASSERT(ev != NULL);
- 
-+	port_data = &dlb2_port[qm_port->id][PORT_TYPE(qm_port)];
-+
-+	if (!port_data->mmaped)
-+		dlb2_iface_low_level_io_init(&dlb2->qm_instance);
-+
- 	if (ev_port->implicit_release && ev_port->outstanding_releases > 0) {
- 		uint16_t out_rels = ev_port->outstanding_releases;
- 		if (qm_port->reorder_en) {
-@@ -4983,7 +5002,7 @@ dlb2_primary_eventdev_probe(struct rte_eventdev *dev,
- 
- 	rte_spinlock_init(&dlb2->qm_instance.resource_lock);
- 
--	dlb2_iface_low_level_io_init();
-+	dlb2_iface_low_level_io_init(NULL);
- 
- 	dlb2_entry_points_init(dev);
- 
-@@ -5015,7 +5034,7 @@ dlb2_secondary_eventdev_probe(struct rte_eventdev *dev,
- 		return err;
- 	}
- 
--	dlb2_iface_low_level_io_init();
-+	dlb2_iface_low_level_io_init(&dlb2->qm_instance);
- 
- 	dlb2_entry_points_init(dev);
- 
-diff --git a/drivers/event/dlb2/dlb2_iface.c b/drivers/event/dlb2/dlb2_iface.c
-index 100db434d0..72d5b82bc5 100644
---- a/drivers/event/dlb2/dlb2_iface.c
-+++ b/drivers/event/dlb2/dlb2_iface.c
-@@ -12,7 +12,7 @@
-  * If PCI (PF PMD),  these will be implemented locally in user mode.
-  */
- 
--void (*dlb2_iface_low_level_io_init)(void);
-+void (*dlb2_iface_low_level_io_init)(struct dlb2_hw_dev *handle);
- 
- int (*dlb2_iface_open)(struct dlb2_hw_dev *handle, const char *name);
- 
-diff --git a/drivers/event/dlb2/dlb2_iface.h b/drivers/event/dlb2/dlb2_iface.h
-index dc0c446ce8..5106b860b9 100644
---- a/drivers/event/dlb2/dlb2_iface.h
-+++ b/drivers/event/dlb2/dlb2_iface.h
-@@ -11,7 +11,7 @@
-  * If PCI (PF PMD),  these will be implemented locally in user mode.
-  */
- 
--extern void (*dlb2_iface_low_level_io_init)(void);
-+extern void (*dlb2_iface_low_level_io_init)(struct dlb2_hw_dev *handle);
- 
- extern int (*dlb2_iface_open)(struct dlb2_hw_dev *handle, const char *name);
- 
-diff --git a/drivers/event/dlb2/pf/base/dlb2_hw_types.h b/drivers/event/dlb2/pf/base/dlb2_hw_types.h
-index be09363893..6a935f0bcd 100644
---- a/drivers/event/dlb2/pf/base/dlb2_hw_types.h
-+++ b/drivers/event/dlb2/pf/base/dlb2_hw_types.h
-@@ -139,6 +139,7 @@ struct dlb2_dir_pq_pair {
- 	struct dlb2_list_entry func_list;
- 	struct dlb2_resource_id id;
- 	struct dlb2_resource_id domain_id;
-+	struct process_local_port_data port_data;
- 	u32 ref_cnt;
- 	u8 init_tkn_cnt;
- 	u8 queue_configured;
-@@ -178,6 +179,7 @@ struct dlb2_ldb_port {
- 	struct dlb2_resource_id domain_id;
- 	/* The qid_map represents the hardware QID mapping state. */
- 	struct dlb2_ldb_port_qid_map qid_map[DLB2_MAX_NUM_QIDS_PER_LDB_CQ];
-+	struct process_local_port_data port_data;
- 	u32 hist_list_entry_base;
- 	u32 hist_list_entry_limit;
- 	u32 ref_cnt;
-diff --git a/drivers/event/dlb2/pf/dlb2_pf.c b/drivers/event/dlb2/pf/dlb2_pf.c
-index ed4e6e424c..ac432b81ad 100644
---- a/drivers/event/dlb2/pf/dlb2_pf.c
-+++ b/drivers/event/dlb2/pf/dlb2_pf.c
-@@ -45,20 +45,39 @@ static unsigned int dlb2_qe_sa_pct = 1;
- static unsigned int dlb2_qid_sa_pct;
- 
- static void
--dlb2_pf_low_level_io_init(void)
-+dlb2_pf_low_level_io_init(struct dlb2_hw_dev *handle)
++static struct nbl_product_core_ops *nbl_core_get_product_ops(enum nbl_product_type product_type)
  {
- 	int i;
--	/* Addresses will be initialized at port create */
--	for (i = 0; i < DLB2_MAX_NUM_PORTS(DLB2_HW_V2_5); i++) {
--		/* First directed ports */
--		dlb2_port[i][DLB2_DIR_PORT].pp_addr = NULL;
--		dlb2_port[i][DLB2_DIR_PORT].cq_base = NULL;
--		dlb2_port[i][DLB2_DIR_PORT].mmaped = true;
--
--		/* Now load balanced ports */
--		dlb2_port[i][DLB2_LDB_PORT].pp_addr = NULL;
--		dlb2_port[i][DLB2_LDB_PORT].cq_base = NULL;
--		dlb2_port[i][DLB2_LDB_PORT].mmaped = true;
+-	RTE_SET_USED(adapter);
+-	RTE_SET_USED(eth_dev);
++	return &nbl_product_core_ops[product_type];
++}
 +
-+	if (handle == NULL) {
-+		/* Addresses will be initialized at port create in primary process*/
-+		for (i = 0; i < DLB2_MAX_NUM_PORTS(DLB2_HW_V2_5); i++) {
-+			/* First directed ports */
-+			dlb2_port[i][DLB2_DIR_PORT].pp_addr = NULL;
-+			dlb2_port[i][DLB2_DIR_PORT].cq_base = NULL;
-+			dlb2_port[i][DLB2_DIR_PORT].mmaped = false;
++static void nbl_init_func_caps(struct rte_pci_device *pci_dev, struct nbl_func_caps *caps)
++{
++	if (pci_dev->id.device_id >= NBL_DEVICE_ID_M18110 &&
++	    pci_dev->id.device_id <= NBL_DEVICE_ID_M18100_VF)
++		caps->product_type = NBL_LEONIS_TYPE;
++}
 +
-+			/* Now load balanced ports */
-+			dlb2_port[i][DLB2_LDB_PORT].pp_addr = NULL;
-+			dlb2_port[i][DLB2_LDB_PORT].cq_base = NULL;
-+			dlb2_port[i][DLB2_LDB_PORT].mmaped = false;
-+		}
-+	} else {
-+		/* Retrieve stored addresses in secondary processes */
-+		struct dlb2_dev *dlb2_dev = (struct dlb2_dev *)handle->pf_dev;
-+		struct dlb2_ldb_port *ldb_ports = dlb2_dev->hw.rsrcs.ldb_ports;
-+		struct dlb2_dir_pq_pair *dir_ports = dlb2_dev->hw.rsrcs.dir_pq_pairs;
++int nbl_core_init(struct nbl_adapter *adapter, struct rte_eth_dev *eth_dev)
++{
++	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
++	struct nbl_product_core_ops *product_base_ops = NULL;
++	int ret = 0;
 +
-+		for (i = 0; i < DLB2_MAX_NUM_LDB_PORTS; i++) {
-+			dlb2_port[i][DLB2_LDB_PORT].cq_base = ldb_ports[i].port_data.cq_base;
-+			dlb2_port[i][DLB2_LDB_PORT].pp_addr = ldb_ports[i].port_data.pp_addr;
-+			dlb2_port[i][DLB2_LDB_PORT].mmaped = true;
-+		}
-+		for (i = 0; i < DLB2_MAX_NUM_DIR_PORTS_V2_5; i++) {
-+			dlb2_port[i][DLB2_DIR_PORT].cq_base = dir_ports[i].port_data.cq_base;
-+			dlb2_port[i][DLB2_DIR_PORT].pp_addr = dir_ports[i].port_data.pp_addr;
-+			dlb2_port[i][DLB2_DIR_PORT].mmaped = true;
-+		}
- 	}
++	nbl_init_func_caps(pci_dev, &adapter->caps);
++
++	product_base_ops = nbl_core_get_product_ops(adapter->caps.product_type);
++
++	/* every product's phy/chan/res layer has a great difference, so call their own init ops */
++	ret = product_base_ops->phy_init(adapter);
++	if (ret)
++		goto phy_init_fail;
+ 
+ 	return 0;
++
++phy_init_fail:
++	return -EINVAL;
  }
  
-@@ -304,6 +323,7 @@ dlb2_pf_ldb_port_create(struct dlb2_hw_dev *handle,
- 			enum dlb2_cq_poll_modes poll_mode)
+-void nbl_core_remove(const struct nbl_adapter *adapter)
++void nbl_core_remove(struct nbl_adapter *adapter)
  {
- 	struct dlb2_dev *dlb2_dev = (struct dlb2_dev *)handle->pf_dev;
-+	struct process_local_port_data *port_data;
- 	struct dlb2_cmd_response response = {0};
- 	struct dlb2_port_memory port_memory;
- 	int ret, cq_alloc_depth;
-@@ -355,6 +375,7 @@ dlb2_pf_ldb_port_create(struct dlb2_hw_dev *handle,
- 		(void *)(pp_base + (rte_mem_page_size() * response.id));
- 
- 	dlb2_port[response.id][DLB2_LDB_PORT].cq_base = (void *)(port_base);
-+	dlb2_port[response.id][DLB2_LDB_PORT].mmaped = true;
- 	memset(&port_memory, 0, sizeof(port_memory));
- 
- 	dlb2_port[response.id][DLB2_LDB_PORT].mz = mz;
-@@ -363,6 +384,11 @@ dlb2_pf_ldb_port_create(struct dlb2_hw_dev *handle,
- 
- 	cfg->response = response;
- 
-+	/* Store cq_base and pp_addr for secondary processes*/
-+	port_data = &dlb2_dev->hw.rsrcs.ldb_ports[response.id].port_data;
-+	port_data->pp_addr = dlb2_port[response.id][DLB2_LDB_PORT].pp_addr;
-+	port_data->cq_base = (struct dlb2_dequeue_qe *)cq_base;
+-	RTE_SET_USED(adapter);
++	struct nbl_product_core_ops *product_base_ops = NULL;
 +
- 	return 0;
++	product_base_ops = nbl_core_get_product_ops(adapter->caps.product_type);
++
++	product_base_ops->phy_remove(adapter);
+ }
  
- create_port_err:
-@@ -380,6 +406,7 @@ dlb2_pf_dir_port_create(struct dlb2_hw_dev *handle,
- 			enum dlb2_cq_poll_modes poll_mode)
+-int nbl_core_start(const struct nbl_adapter *adapter)
++int nbl_core_start(struct nbl_adapter *adapter)
  {
- 	struct dlb2_dev *dlb2_dev = (struct dlb2_dev *)handle->pf_dev;
-+	struct process_local_port_data *port_data;
- 	struct dlb2_cmd_response response = {0};
- 	struct dlb2_port_memory port_memory;
+ 	RTE_SET_USED(adapter);
+ 
+ 	return 0;
+ }
+ 
+-void nbl_core_stop(const struct nbl_adapter *adapter)
++void nbl_core_stop(struct nbl_adapter *adapter)
+ {
+ 	RTE_SET_USED(adapter);
+ }
+diff --git a/drivers/net/nbl/nbl_core.h b/drivers/net/nbl/nbl_core.h
+index 4ba13e5bd7..2d0e39afa2 100644
+--- a/drivers/net/nbl/nbl_core.h
++++ b/drivers/net/nbl/nbl_core.h
+@@ -5,7 +5,8 @@
+ #ifndef _NBL_CORE_H_
+ #define _NBL_CORE_H_
+ 
+-#include "nbl_include.h"
++#include "nbl_product_base.h"
++#include "nbl_def_phy.h"
+ 
+ #define NBL_VENDOR_ID				(0x1F0F)
+ #define NBL_DEVICE_ID_M18110			(0x3403)
+@@ -27,14 +28,33 @@
+ #define NBL_DEVICE_ID_M18100_VF			(0x3413)
+ 
+ #define NBL_MAX_INSTANCE_CNT 516
++
++#define NBL_ADAPTER_TO_PHY_MGT(adapter)		((adapter)->core.phy_mgt)
++#define NBL_ADAPTER_TO_PHY_OPS_TBL(adapter)	((adapter)->intf.phy_ops_tbl)
++
++struct nbl_core {
++	void *phy_mgt;
++	void *res_mgt;
++	void *disp_mgt;
++	void *chan_mgt;
++	void *dev_mgt;
++};
++
++struct nbl_interface {
++	struct nbl_phy_ops_tbl *phy_ops_tbl;
++};
++
+ struct nbl_adapter {
+ 	TAILQ_ENTRY(nbl_adapter) next;
+ 	struct rte_pci_device *pci_dev;
++	struct nbl_core core;
++	struct nbl_interface intf;
++	struct nbl_func_caps caps;
+ };
+ 
+-int nbl_core_init(const struct nbl_adapter *adapter, const struct rte_eth_dev *eth_dev);
+-void nbl_core_remove(const struct nbl_adapter *adapter);
+-int nbl_core_start(const struct nbl_adapter *adapter);
+-void nbl_core_stop(const struct nbl_adapter *adapter);
++int nbl_core_init(struct nbl_adapter *adapter, struct rte_eth_dev *eth_dev);
++void nbl_core_remove(struct nbl_adapter *adapter);
++int nbl_core_start(struct nbl_adapter *adapter);
++void nbl_core_stop(struct nbl_adapter *adapter);
+ 
+ #endif
+diff --git a/drivers/net/nbl/nbl_ethdev.c b/drivers/net/nbl/nbl_ethdev.c
+index 9f44d21b8e..261f8a522a 100644
+--- a/drivers/net/nbl/nbl_ethdev.c
++++ b/drivers/net/nbl/nbl_ethdev.c
+@@ -9,7 +9,7 @@ RTE_LOG_REGISTER_SUFFIX(nbl_logtype_driver, driver, INFO);
+ 
+ static int nbl_dev_release_pf(struct rte_eth_dev *eth_dev)
+ {
+-	const struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
++	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
+ 
+ 	if (!adapter)
+ 		return -EINVAL;
+@@ -33,7 +33,7 @@ struct eth_dev_ops nbl_eth_dev_ops = {
+ 
+ static int nbl_eth_dev_init(struct rte_eth_dev *eth_dev)
+ {
+-	const struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
++	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
  	int ret;
-@@ -431,6 +458,7 @@ dlb2_pf_dir_port_create(struct dlb2_hw_dev *handle,
  
- 	dlb2_port[response.id][DLB2_DIR_PORT].cq_base =
- 		(void *)(port_base);
-+	dlb2_port[response.id][DLB2_DIR_PORT].mmaped = true;
- 	memset(&port_memory, 0, sizeof(port_memory));
- 
- 	dlb2_port[response.id][DLB2_DIR_PORT].mz = mz;
-@@ -439,6 +467,11 @@ dlb2_pf_dir_port_create(struct dlb2_hw_dev *handle,
- 
- 	cfg->response = response;
- 
-+	/* Store cq_base and pp_addr for secondary processes*/
-+	port_data = &dlb2_dev->hw.rsrcs.dir_pq_pairs[response.id].port_data;
-+	port_data->pp_addr = dlb2_port[response.id][DLB2_DIR_PORT].pp_addr;
-+	port_data->cq_base = (struct dlb2_dequeue_qe *)cq_base;
+ 	PMD_INIT_FUNC_TRACE();
+diff --git a/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.c b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.c
+new file mode 100644
+index 0000000000..febee34edd
+--- /dev/null
++++ b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.c
+@@ -0,0 +1,99 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
++ */
 +
- 	return 0;
++#include "nbl_phy_leonis_snic.h"
++
++static inline void nbl_wr32(void *priv, u64 reg, u32 value)
++{
++	struct nbl_phy_mgt *phy_mgt = (struct nbl_phy_mgt *)priv;
++
++	rte_write32(rte_cpu_to_le_32(value), ((phy_mgt)->hw_addr + (reg)));
++}
++
++static void nbl_phy_update_tail_ptr(void *priv, u16 notify_qid, u16 tail_ptr)
++{
++	nbl_wr32(priv, NBL_NOTIFY_ADDR, ((u32)tail_ptr << NBL_TAIL_PTR_OFT | (u32)notify_qid));
++}
++
++static u8 *nbl_phy_get_tail_ptr(void *priv)
++{
++	struct nbl_phy_mgt *phy_mgt = (struct nbl_phy_mgt *)priv;
++
++	return phy_mgt->hw_addr;
++}
++
++static struct nbl_phy_ops phy_ops = {
++	.update_tail_ptr		= nbl_phy_update_tail_ptr,
++	.get_tail_ptr			= nbl_phy_get_tail_ptr,
++};
++
++static int nbl_phy_setup_ops(struct nbl_phy_ops_tbl **phy_ops_tbl,
++			     struct nbl_phy_mgt_leonis_snic *phy_mgt_leonis_snic)
++{
++	*phy_ops_tbl = rte_zmalloc("nbl_phy_ops", sizeof(struct nbl_phy_ops_tbl), 0);
++	if (!*phy_ops_tbl)
++		return -ENOMEM;
++
++	NBL_PHY_OPS_TBL_TO_OPS(*phy_ops_tbl) = &phy_ops;
++	NBL_PHY_OPS_TBL_TO_PRIV(*phy_ops_tbl) = phy_mgt_leonis_snic;
++
++	return 0;
++}
++
++static void nbl_phy_remove_ops(struct nbl_phy_ops_tbl **phy_ops_tbl)
++{
++	rte_free(*phy_ops_tbl);
++	*phy_ops_tbl = NULL;
++}
++
++int nbl_phy_init_leonis_snic(void *p)
++{
++	struct nbl_phy_mgt_leonis_snic **phy_mgt_leonis_snic;
++	struct nbl_phy_mgt *phy_mgt;
++	struct nbl_phy_ops_tbl **phy_ops_tbl;
++	struct nbl_adapter *adapter = (struct nbl_adapter *)p;
++	struct rte_pci_device *pci_dev = adapter->pci_dev;
++	int ret = 0;
++
++	phy_mgt_leonis_snic = (struct nbl_phy_mgt_leonis_snic **)&NBL_ADAPTER_TO_PHY_MGT(adapter);
++	phy_ops_tbl = &NBL_ADAPTER_TO_PHY_OPS_TBL(adapter);
++
++	*phy_mgt_leonis_snic = rte_zmalloc("nbl_phy_mgt",
++					   sizeof(struct nbl_phy_mgt_leonis_snic), 0);
++	if (!*phy_mgt_leonis_snic) {
++		ret = -ENOMEM;
++		goto alloc_phy_mgt_failed;
++	}
++
++	phy_mgt = &(*phy_mgt_leonis_snic)->phy_mgt;
++
++	phy_mgt->hw_addr = (u8 *)pci_dev->mem_resource[0].addr;
++	phy_mgt->memory_bar_pa = pci_dev->mem_resource[0].phys_addr;
++	phy_mgt->mailbox_bar_hw_addr = (u8 *)pci_dev->mem_resource[2].addr;
++
++	ret = nbl_phy_setup_ops(phy_ops_tbl, *phy_mgt_leonis_snic);
++	if (ret)
++		goto setup_ops_failed;
++
++	return ret;
++
++setup_ops_failed:
++	rte_free(*phy_mgt_leonis_snic);
++alloc_phy_mgt_failed:
++	return ret;
++}
++
++void nbl_phy_remove_leonis_snic(void *p)
++{
++	struct nbl_phy_mgt_leonis_snic **phy_mgt_leonis_snic;
++	struct nbl_phy_ops_tbl **phy_ops_tbl;
++	struct nbl_adapter *adapter = (struct nbl_adapter *)p;
++
++	phy_mgt_leonis_snic = (struct nbl_phy_mgt_leonis_snic **)&adapter->core.phy_mgt;
++	phy_ops_tbl = &NBL_ADAPTER_TO_PHY_OPS_TBL(adapter);
++
++	rte_free(*phy_mgt_leonis_snic);
++
++	nbl_phy_remove_ops(phy_ops_tbl);
++}
+diff --git a/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.h b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.h
+new file mode 100644
+index 0000000000..5440cf41be
+--- /dev/null
++++ b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.h
+@@ -0,0 +1,10 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
++ */
++
++#ifndef _NBL_PHY_LEONIS_SNIC_H_
++#define _NBL_PHY_LEONIS_SNIC_H_
++
++#include "../nbl_phy.h"
++
++#endif
+diff --git a/drivers/net/nbl/nbl_hw/nbl_phy.h b/drivers/net/nbl/nbl_hw/nbl_phy.h
+new file mode 100644
+index 0000000000..38b7fc2ec5
+--- /dev/null
++++ b/drivers/net/nbl/nbl_hw/nbl_phy.h
+@@ -0,0 +1,28 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
++ */
++
++#ifndef _NBL_PHY_H_
++#define _NBL_PHY_H_
++
++#include "nbl_ethdev.h"
++
++#define NBL_NOTIFY_ADDR			(0x00000000)
++#define NBL_BYTES_IN_REG		(4)
++#define NBL_TAIL_PTR_OFT		(16)
++#define NBL_LO_DWORD(x)			((u32)((x) & 0xFFFFFFFF))
++#define NBL_HI_DWORD(x)			((u32)(((x) >> 32) & 0xFFFFFFFF))
++
++struct nbl_phy_mgt {
++	u8 *hw_addr;
++	u64 memory_bar_pa;
++	u8 *mailbox_bar_hw_addr;
++	u64 notify_addr;
++	u32 version;
++};
++
++struct nbl_phy_mgt_leonis_snic {
++	struct nbl_phy_mgt phy_mgt;
++};
++
++#endif
+diff --git a/drivers/net/nbl/nbl_include/nbl_def_phy.h b/drivers/net/nbl/nbl_include/nbl_def_phy.h
+new file mode 100644
+index 0000000000..09a3e125a9
+--- /dev/null
++++ b/drivers/net/nbl/nbl_include/nbl_def_phy.h
+@@ -0,0 +1,35 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
++ */
++
++#ifndef _NBL_DEF_PHY_H_
++#define _NBL_DEF_PHY_H_
++
++#include "nbl_include.h"
++
++#define NBL_PHY_OPS_TBL_TO_OPS(phy_ops_tbl)	((phy_ops_tbl)->ops)
++#define NBL_PHY_OPS_TBL_TO_PRIV(phy_ops_tbl)	((phy_ops_tbl)->priv)
++
++struct nbl_phy_ops {
++	/* queue */
++	void (*update_tail_ptr)(void *priv, u16 notify_qid, u16 tail_ptr);
++	u8 *(*get_tail_ptr)(void *priv);
++
++	/* mailbox */
++	void (*config_mailbox_rxq)(void *priv, uint64_t dma_addr, int size_bwid);
++	void (*config_mailbox_txq)(void *priv, uint64_t dma_addr, int size_bwid);
++	void (*stop_mailbox_rxq)(void *priv);
++	void (*stop_mailbox_txq)(void *priv);
++	uint16_t (*get_mailbox_rx_tail_ptr)(void *priv);
++	void (*update_mailbox_queue_tail_ptr)(void *priv, uint16_t tail_ptr, uint8_t txrx);
++};
++
++struct nbl_phy_ops_tbl {
++	struct nbl_phy_ops *ops;
++	void *priv;
++};
++
++int nbl_phy_init_leonis_snic(void *adapter);
++void nbl_phy_remove_leonis_snic(void *adapter);
++
++#endif
+diff --git a/drivers/net/nbl/nbl_include/nbl_include.h b/drivers/net/nbl/nbl_include/nbl_include.h
+index 3c7573f3bf..554bb95f16 100644
+--- a/drivers/net/nbl/nbl_include/nbl_include.h
++++ b/drivers/net/nbl/nbl_include/nbl_include.h
+@@ -28,6 +28,7 @@
+ #include <ethdev_driver.h>
+ #include <ethdev_pci.h>
+ #include <bus_pci_driver.h>
++#include <rte_io.h>
  
- create_port_err:
+ #include "nbl_logs.h"
+ 
+@@ -40,4 +41,18 @@ typedef int32_t s32;
+ typedef int16_t s16;
+ typedef int8_t s8;
+ 
++enum nbl_product_type {
++	NBL_LEONIS_TYPE,
++	NBL_DRACO_TYPE,
++	NBL_BOOTIS_TYPE,
++	NBL_PRODUCT_MAX,
++};
++
++struct nbl_func_caps {
++	enum nbl_product_type product_type;
++	u32 is_vf:1;
++	u32 is_user:1;
++	u32 rsv:30;
++};
++
+ #endif
+diff --git a/drivers/net/nbl/nbl_include/nbl_product_base.h b/drivers/net/nbl/nbl_include/nbl_product_base.h
+new file mode 100644
+index 0000000000..7b9c2ccf72
+--- /dev/null
++++ b/drivers/net/nbl/nbl_include/nbl_product_base.h
+@@ -0,0 +1,37 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
++ */
++
++#ifndef _NBL_DEF_PRODUCT_BASE_H_
++#define _NBL_DEF_PRODUCT_BASE_H_
++
++#include "nbl_include.h"
++
++struct nbl_product_core_ops {
++	int (*phy_init)(void *p);
++	void (*phy_remove)(void *p);
++	int (*res_init)(void *p, struct rte_eth_dev *eth_dev);
++	void (*res_remove)(void *p);
++	int (*chan_init)(void *p);
++	void (*chan_remove)(void *p);
++};
++
++struct nbl_product_dev_ops {
++	int (*dev_init)(void *adapter);
++	void (*dev_uninit)(void *adapter);
++	int (*dev_start)(void *adapter);
++	void (*dev_stop)(void *adapter);
++};
++
++struct nbl_product_dispatch_ops {
++	int (*dispatch_init)(void *mgt);
++	int (*dispatch_uninit)(void *mgt);
++};
++
++struct nbl_product_dev_external_ops {
++	int (*external_pf_ops_get)(struct rte_eth_dev *dev, void *arg);
++	int (*external_rep_ops_get)(struct rte_eth_dev *dev, void *arg);
++	int (*external_bond_ops_get)(struct rte_eth_dev *dev, void *arg);
++};
++
++#endif
 -- 
-2.43.5
+2.34.1
 
