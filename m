@@ -2,31 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51147C7114A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Jun 2025 06:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 619E4C7114A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Jun 2025 06:35:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9E4C840ED4;
-	Tue, 17 Jun 2025 08:12:31 +0200 (CEST)
-Received: from out28-129.mail.aliyun.com (out28-129.mail.aliyun.com
- [115.124.28.129])
- by mails.dpdk.org (Postfix) with ESMTP id DB37040DDE
- for <dev@dpdk.org>; Tue, 17 Jun 2025 08:12:17 +0200 (CEST)
-Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
- fp:SMTPD_---.dO-dykO_1750140735 cluster:ay29) by smtp.aliyun-inc.com;
- Tue, 17 Jun 2025 14:12:15 +0800
-From: "dimon.zhao" <dimon.zhao@nebula-matrix.com>
-To: dimon.zhao@nebula-matrix.com,
-	kyo.liu@nebula-matrix.com,
-	dev@dpdk.org
-Cc: Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
-Subject: [PATCH v2 16/16] net/nbl: nbl device support set MTU and promisc
-Date: Mon, 16 Jun 2025 23:11:58 -0700
-Message-Id: <20250617061158.3097233-17-dimon.zhao@nebula-matrix.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250617061158.3097233-1-dimon.zhao@nebula-matrix.com>
-References: <20250617061158.3097233-1-dimon.zhao@nebula-matrix.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 62F2E402ED;
+	Tue, 17 Jun 2025 08:35:03 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 46B2A402DC
+ for <dev@dpdk.org>; Tue, 17 Jun 2025 08:35:02 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 31D5E469D4; Tue, 17 Jun 2025 08:35:02 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/ethdev Bug 1725] iavf pmd vlan Issue: dpdk-22.11.0
+Date: Tue, 17 Jun 2025 06:35:01 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: ethdev
+X-Bugzilla-Version: 22.11
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: major
+X-Bugzilla-Who: amiyaranjan.mohakud@gmail.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1725-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17501421020.aae5b.2061179
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -40,335 +54,306 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Implement NBL device set MTU and promisc functions
 
-Signed-off-by: dimon.zhao <dimon.zhao@nebula-matrix.com>
----
- drivers/net/nbl/nbl_core.h                    |  2 +
- drivers/net/nbl/nbl_dev/nbl_dev.c             | 60 +++++++++++++++
- drivers/net/nbl/nbl_dev/nbl_dev.h             |  4 +-
- drivers/net/nbl/nbl_dispatch.c                | 77 +++++++++++++++++++
- drivers/net/nbl/nbl_dispatch.h                |  2 +
- drivers/net/nbl/nbl_ethdev.c                  | 31 +++++---
- drivers/net/nbl/nbl_include/nbl_def_channel.h | 10 +++
- .../net/nbl/nbl_include/nbl_def_dispatch.h    |  1 +
- .../net/nbl/nbl_include/nbl_def_resource.h    |  2 +
- 9 files changed, 176 insertions(+), 13 deletions(-)
+--17501421020.aae5b.2061179
+Date: Tue, 17 Jun 2025 08:35:01 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-diff --git a/drivers/net/nbl/nbl_core.h b/drivers/net/nbl/nbl_core.h
-index 997544b112..d3fe1d02d2 100644
---- a/drivers/net/nbl/nbl_core.h
-+++ b/drivers/net/nbl/nbl_core.h
-@@ -51,6 +51,8 @@
- #define NBL_IS_NOT_COEXISTENCE(common)		({ typeof(common) _common = (common);	\
- 						_common->nl_socket_route < 0 ||		\
- 						_common->ifindex < 0; })
-+#define NBL_IS_COEXISTENCE(common)		((common)->devfd != -1)
-+
- struct nbl_core {
- 	void *phy_mgt;
- 	void *res_mgt;
-diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.c b/drivers/net/nbl/nbl_dev/nbl_dev.c
-index 4fa132ae1c..6e26989e1c 100644
---- a/drivers/net/nbl/nbl_dev/nbl_dev.c
-+++ b/drivers/net/nbl/nbl_dev/nbl_dev.c
-@@ -507,6 +507,63 @@ static int nbl_xstats_reset(struct rte_eth_dev *eth_dev)
- 	return 0;
- }
- 
-+static int nbl_mtu_set(struct rte_eth_dev *eth_dev, uint16_t mtu)
-+{
-+	struct rte_eth_dev_data *dev_data = eth_dev->data;
-+	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
-+	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
-+	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
-+	uint32_t frame_size = mtu + NBL_ETH_OVERHEAD;
-+	int ret;
-+
-+	/* check if mtu is within the allowed range */
-+	if (mtu < RTE_ETHER_MIN_MTU || frame_size > NBL_FRAME_SIZE_MAX)
-+		return -EINVAL;
-+
-+	/* mtu setting is forbidden if port is start */
-+	if (dev_data->dev_started) {
-+		NBL_LOG(ERR, "port %d must be stopped before configuration", dev_data->port_id);
-+		return -EBUSY;
-+	}
-+
-+	dev_data->dev_conf.rxmode.mtu = frame_size;
-+	ret = disp_ops->set_mtu(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), dev_mgt->net_dev->vsi_id, mtu);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int nbl_promiscuous_enable(struct rte_eth_dev *eth_dev)
-+{
-+	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
-+	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
-+	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
-+	struct nbl_common_info *common = &adapter->common;
-+
-+	if (!common->is_vf)
-+		disp_ops->set_promisc_mode(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
-+					   dev_mgt->net_dev->vsi_id, 1);
-+	dev_mgt->net_dev->promisc = 1;
-+
-+	return 0;
-+}
-+
-+static int nbl_promiscuous_disable(struct rte_eth_dev *eth_dev)
-+{
-+	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
-+	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
-+	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
-+	struct nbl_common_info *common = &adapter->common;
-+
-+	if (!common->is_vf)
-+		disp_ops->set_promisc_mode(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
-+					   dev_mgt->net_dev->vsi_id, 0);
-+	dev_mgt->net_dev->promisc = 0;
-+
-+	return 0;
-+}
-+
- struct nbl_dev_ops dev_ops = {
- 	.dev_configure = nbl_dev_configure,
- 	.dev_start = nbl_dev_port_start,
-@@ -523,6 +580,9 @@ struct nbl_dev_ops dev_ops = {
- 	.xstats_get = nbl_xstats_get,
- 	.xstats_get_names = nbl_xstats_get_names,
- 	.xstats_reset = nbl_xstats_reset,
-+	.promiscuous_disable = nbl_promiscuous_disable,
-+	.promiscuous_enable = nbl_promiscuous_enable,
-+	.mtu_set = nbl_mtu_set,
- };
- 
- static int nbl_dev_setup_chan_queue(struct nbl_adapter *adapter)
-diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.h b/drivers/net/nbl/nbl_dev/nbl_dev.h
-index 1541aebba5..a97a53bc02 100644
---- a/drivers/net/nbl/nbl_dev/nbl_dev.h
-+++ b/drivers/net/nbl/nbl_dev/nbl_dev.h
-@@ -47,7 +47,9 @@ struct nbl_dev_net_mgt {
- 	u8 eth_mode;
- 	u8 eth_id;
- 	u16 max_mac_num;
--	bool trust;
-+	u8 trust:1;
-+	u8 promisc:1;
-+	u8 rsv:6;
- };
- 
- struct nbl_dev_mgt {
-diff --git a/drivers/net/nbl/nbl_dispatch.c b/drivers/net/nbl/nbl_dispatch.c
-index a9a23f8083..9eb868f504 100644
---- a/drivers/net/nbl/nbl_dispatch.c
-+++ b/drivers/net/nbl/nbl_dispatch.c
-@@ -812,6 +812,74 @@ static void nbl_disp_get_private_stat_data_req(void *priv, u32 eth_id, u64 *data
- 	chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt), &chan_send);
- }
- 
-+static int nbl_disp_set_mtu(void *priv, u16 vsi_id, u16 mtu)
-+{
-+	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
-+	struct nbl_resource_ops *res_ops;
-+	int ret = 0;
-+
-+	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
-+	ret = NBL_OPS_CALL(res_ops->set_mtu, (NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), vsi_id, mtu));
-+	return ret;
-+}
-+
-+static int nbl_disp_chan_set_mtu_req(void *priv, u16 vsi_id, u16 mtu)
-+{
-+	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
-+	struct nbl_channel_ops *chan_ops = NBL_DISP_MGT_TO_CHAN_OPS(disp_mgt);
-+	struct nbl_chan_send_info chan_send = {0};
-+	struct nbl_chan_param_set_mtu param = {0};
-+
-+	param.mtu = mtu;
-+	param.vsi_id = vsi_id;
-+
-+	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_MTU_SET,
-+		      &param, sizeof(param), NULL, 0, 1);
-+	return chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt),
-+				  &chan_send);
-+}
-+
-+static int nbl_disp_set_promisc_mode(void *priv, u16 vsi_id, u16 mode)
-+{
-+	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
-+	struct nbl_resource_ops *res_ops;
-+	int ret = 0;
-+
-+	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
-+	ret = NBL_OPS_CALL(res_ops->set_promisc_mode,
-+			   (NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), vsi_id, mode));
-+	return ret;
-+}
-+
-+static int nbl_disp_chan_set_promisc_mode_req(void *priv, u16 vsi_id, u16 mode)
-+{
-+	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
-+	struct nbl_common_info *common;
-+	struct nbl_channel_ops *chan_ops;
-+	struct nbl_chan_param_set_promisc_mode param = {0};
-+	struct nbl_chan_send_info chan_send = {0};
-+	int ret = 0;
-+
-+	common = NBL_DISP_MGT_TO_COMMON(disp_mgt);
-+	if (NBL_IS_COEXISTENCE(common)) {
-+		ret = ioctl(common->devfd, NBL_DEV_USER_SET_PROMISC_MODE, &mode);
-+		if (ret) {
-+			NBL_LOG(ERR, "userspace send set_promisc_mode ioctl msg failed ret %d",
-+				ret);
-+			return ret;
-+		}
-+		return 0;
-+	}
-+
-+	chan_ops = NBL_DISP_MGT_TO_CHAN_OPS(disp_mgt);
-+	param.vsi_id = vsi_id;
-+	param.mode = mode;
-+	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_SET_PROSISC_MODE,
-+		      &param, sizeof(param), NULL, 0, 1);
-+	return chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt),
-+				  &chan_send);
-+}
-+
- #define NBL_DISP_OPS_TBL						\
- do {									\
- 	NBL_DISP_SET_OPS(alloc_txrx_queues, nbl_disp_alloc_txrx_queues,	\
-@@ -970,6 +1038,14 @@ do {									\
- 			 NBL_DISP_CTRL_LVL_MGT,				\
- 			 NBL_CHAN_MSG_GET_ETH_STATS,			\
- 			 nbl_disp_get_private_stat_data_req, NULL);	\
-+	NBL_DISP_SET_OPS(set_promisc_mode, nbl_disp_set_promisc_mode,	\
-+			 NBL_DISP_CTRL_LVL_MGT,				\
-+			 NBL_CHAN_MSG_SET_PROSISC_MODE,			\
-+			 nbl_disp_chan_set_promisc_mode_req, NULL);	\
-+	NBL_DISP_SET_OPS(set_mtu, nbl_disp_set_mtu,			\
-+			 NBL_DISP_CTRL_LVL_MGT,	NBL_CHAN_MSG_MTU_SET,	\
-+			 nbl_disp_chan_set_mtu_req,			\
-+			 NULL);						\
- } while (0)
- 
- /* Structure starts here, adding an op should not modify anything below */
-@@ -1085,6 +1161,7 @@ int nbl_disp_init(void *p)
- 	NBL_DISP_MGT_TO_RES_OPS_TBL(*disp_mgt) = res_ops_tbl;
- 	NBL_DISP_MGT_TO_CHAN_OPS_TBL(*disp_mgt) = chan_ops_tbl;
- 	NBL_DISP_MGT_TO_DISP_OPS_TBL(*disp_mgt) = *disp_ops_tbl;
-+	NBL_DISP_MGT_TO_COMMON(*disp_mgt) = NBL_ADAPTER_TO_COMMON(adapter);
- 
- 	if (disp_product_ops->dispatch_init) {
- 		ret = disp_product_ops->dispatch_init(*disp_mgt);
-diff --git a/drivers/net/nbl/nbl_dispatch.h b/drivers/net/nbl/nbl_dispatch.h
-index dcdf87576a..d1572769fe 100644
---- a/drivers/net/nbl/nbl_dispatch.h
-+++ b/drivers/net/nbl/nbl_dispatch.h
-@@ -16,11 +16,13 @@
- #define NBL_DISP_MGT_TO_DISP_OPS_TBL(disp_mgt)	((disp_mgt)->disp_ops_tbl)
- #define NBL_DISP_MGT_TO_DISP_OPS(disp_mgt)	(NBL_DISP_MGT_TO_DISP_OPS_TBL(disp_mgt)->ops)
- #define NBL_DISP_MGT_TO_DISP_PRIV(disp_mgt)	(NBL_DISP_MGT_TO_DISP_OPS_TBL(disp_mgt)->priv)
-+#define NBL_DISP_MGT_TO_COMMON(disp_mgt)	((disp_mgt)->common)
- 
- struct nbl_dispatch_mgt {
- 	struct nbl_resource_ops_tbl *res_ops_tbl;
- 	struct nbl_channel_ops_tbl *chan_ops_tbl;
- 	struct nbl_dispatch_ops_tbl *disp_ops_tbl;
-+	struct nbl_common_info *common;
- 	uint32_t ctrl_lvl;
- };
- 
-diff --git a/drivers/net/nbl/nbl_ethdev.c b/drivers/net/nbl/nbl_ethdev.c
-index 12d52c9d76..70e28d9fc4 100644
---- a/drivers/net/nbl/nbl_ethdev.c
-+++ b/drivers/net/nbl/nbl_ethdev.c
-@@ -36,18 +36,25 @@ struct eth_dev_ops nbl_eth_dev_ops = {
- 	.dev_close = nbl_dev_close,
- };
- 
--#define NBL_DEV_NET_OPS_TBL						\
--do {									\
--	NBL_DEV_NET_OPS(dev_configure,		dev_ops->dev_configure);\
--	NBL_DEV_NET_OPS(dev_start,		dev_ops->dev_start);	\
--	NBL_DEV_NET_OPS(dev_stop,		dev_ops->dev_stop);	\
--	NBL_DEV_NET_OPS(dev_infos_get,		dev_ops->dev_infos_get);\
--	NBL_DEV_NET_OPS(tx_queue_setup,		dev_ops->tx_queue_setup);\
--	NBL_DEV_NET_OPS(rx_queue_setup,		dev_ops->rx_queue_setup);\
--	NBL_DEV_NET_OPS(rx_queue_release,	dev_ops->rx_queue_release);\
--	NBL_DEV_NET_OPS(tx_queue_release,	dev_ops->tx_queue_release);\
--	NBL_DEV_NET_OPS(link_update,		dev_ops->link_update);	\
--	NBL_DEV_NET_OPS(stats_get,		dev_ops->stats_get);	\
-+#define NBL_DEV_NET_OPS_TBL							\
-+do {										\
-+	NBL_DEV_NET_OPS(dev_configure,		dev_ops->dev_configure);	\
-+	NBL_DEV_NET_OPS(dev_start,		dev_ops->dev_start);		\
-+	NBL_DEV_NET_OPS(dev_stop,		dev_ops->dev_stop);		\
-+	NBL_DEV_NET_OPS(dev_infos_get,		dev_ops->dev_infos_get);	\
-+	NBL_DEV_NET_OPS(tx_queue_setup,		dev_ops->tx_queue_setup);	\
-+	NBL_DEV_NET_OPS(rx_queue_setup,		dev_ops->rx_queue_setup);	\
-+	NBL_DEV_NET_OPS(rx_queue_release,	dev_ops->rx_queue_release);	\
-+	NBL_DEV_NET_OPS(tx_queue_release,	dev_ops->tx_queue_release);	\
-+	NBL_DEV_NET_OPS(link_update,		dev_ops->link_update);		\
-+	NBL_DEV_NET_OPS(promiscuous_enable,	dev_ops->promiscuous_enable);	\
-+	NBL_DEV_NET_OPS(promiscuous_disable,	dev_ops->promiscuous_disable);	\
-+	NBL_DEV_NET_OPS(stats_get,		dev_ops->stats_get);		\
-+	NBL_DEV_NET_OPS(stats_reset,		dev_ops->stats_reset);		\
-+	NBL_DEV_NET_OPS(xstats_get,		dev_ops->xstats_get);		\
-+	NBL_DEV_NET_OPS(xstats_get_names,	dev_ops->xstats_get_names);	\
-+	NBL_DEV_NET_OPS(xstats_reset,		dev_ops->xstats_reset);		\
-+	NBL_DEV_NET_OPS(mtu_set,		dev_ops->mtu_set);		\
- } while (0)
- 
- static void nbl_set_eth_dev_ops(struct nbl_adapter *adapter,
-diff --git a/drivers/net/nbl/nbl_include/nbl_def_channel.h b/drivers/net/nbl/nbl_include/nbl_def_channel.h
-index 30cb14b746..4c8e6eebd0 100644
---- a/drivers/net/nbl/nbl_include/nbl_def_channel.h
-+++ b/drivers/net/nbl/nbl_include/nbl_def_channel.h
-@@ -404,6 +404,16 @@ struct nbl_chan_param_get_private_stat_data {
- 	u32 data_len;
- };
- 
-+struct nbl_chan_param_set_promisc_mode {
-+	u16 vsi_id;
-+	u16 mode;
-+};
-+
-+struct nbl_chan_param_set_mtu {
-+	u16 vsi_id;
-+	u16 mtu;
-+};
-+
- struct nbl_channel_ops {
- 	int (*send_msg)(void *priv, struct nbl_chan_send_info *chan_send);
- 	int (*send_ack)(void *priv, struct nbl_chan_ack_info *chan_ack);
-diff --git a/drivers/net/nbl/nbl_include/nbl_def_dispatch.h b/drivers/net/nbl/nbl_include/nbl_def_dispatch.h
-index ac2cf922e1..f01ec5abe5 100644
---- a/drivers/net/nbl/nbl_include/nbl_def_dispatch.h
-+++ b/drivers/net/nbl/nbl_include/nbl_def_dispatch.h
-@@ -33,6 +33,7 @@ struct nbl_dispatch_ops {
- 	void (*clear_flow)(void *priv, u16 vsi_id);
- 	void (*get_firmware_version)(void *priv, char *firmware_version, u8 max_len);
- 	int (*set_promisc_mode)(void *priv, u16 vsi_id, u16 mode);
-+	int (*set_mtu)(void *priv, u16 vsi_id, u16 mtu);
- 	int (*alloc_txrx_queues)(void *priv, u16 vsi_id, u16 queue_num);
- 	void (*free_txrx_queues)(void *priv, u16 vsi_id);
- 	u16 (*get_vsi_id)(void *priv);
-diff --git a/drivers/net/nbl/nbl_include/nbl_def_resource.h b/drivers/net/nbl/nbl_include/nbl_def_resource.h
-index f9864e261b..a26856ad3b 100644
---- a/drivers/net/nbl/nbl_include/nbl_def_resource.h
-+++ b/drivers/net/nbl/nbl_include/nbl_def_resource.h
-@@ -72,6 +72,8 @@ struct nbl_resource_ops {
- 	int (*setup_cqs)(void *priv, u16 vsi_id, u16 real_qps, bool rss_indir_set);
- 	void (*remove_cqs)(void *priv, u16 vsi_id);
- 	void (*get_link_state)(void *priv, u8 eth_id, struct nbl_eth_link_info *eth_link_info);
-+	int (*set_promisc_mode)(void *priv, u16 vsi_id, u16 mode);
-+	int (*set_mtu)(void *priv, u16 vsi_id, u16 mtu);
- };
- 
- struct nbl_resource_ops_tbl {
--- 
-2.34.1
+https://bugs.dpdk.org/show_bug.cgi?id=3D1725
 
+            Bug ID: 1725
+           Summary: iavf pmd vlan Issue: dpdk-22.11.0
+           Product: DPDK
+           Version: 22.11
+          Hardware: x86
+                OS: Linux
+            Status: UNCONFIRMED
+          Severity: major
+          Priority: Normal
+         Component: ethdev
+          Assignee: dev@dpdk.org
+          Reporter: amiyaranjan.mohakud@gmail.com
+  Target Milestone: ---
+
+Hi All,
+
+I'm encountering an issue with XL710 SR-IOV on KVM for VLAN packets with
+DPDK-22.11.0 version.=20
+
+Issue Description: I have disabled RTE_ETH_RX_OFFLOAD_VLAN_STRIP in
+rte_eth_conf and calling rte_eth_dev_configure and expecting my dpdk
+application to receive the packets with vlan tags. Later I added some vlans
+using rte_eth_dev_vlan_filter() and I see that the vlan is getting stripped=
+ off
+ for the incoming packets.=20
+
+Setup Details:(KVM SR-IOV)
+
+KVM Host: Ubuntu 20.04.6 LTS: kernel version: 5.4.0-216-generic #236-Ubuntu
+NIC: XL710
+3b:00.0 Ethernet controller: Intel Corporation Ethernet Controller XL710 for
+40GbE QSFP+ (rev 02)
+3b:00.1 Ethernet controller: Intel Corporation Ethernet Controller XL710 for
+40GbE QSFP+ (rev 02)
+i40e PF Driver: Out of tree 2.20.12
+Firmware: 9.00/9.40=20
+DPDK Version: 22.11.0
+
+
+Observation/Analysis:
+
+I could see that even after disabling RTE_ETH_RX_OFFLOAD_VLAN_STRIP offload
+flag, when I receive the packets, the mbuf offload flags (RTE_MBUF_F_RX_VLA=
+N |
+RTE_MBUF_F_RX_VLAN_STRIPPED) are set inside the mbuf. This confirms that the
+driver is stripping off the vlans.
+
+
+I tried with recommended PF driver version for DPDK-22.11.0 as per
+https://mails.dpdk.org/archives/dev/2023-November/281700.html and DPDK-22.11
+release note https://doc.dpdk.org/guides/rel_notes/release_22_11.html. Stil=
+l it
+did not help.
+
+
+       Intel=C2=AE Ethernet Converged Network Adapter XL710-QDA2 (2X40G)
+    Firmware version(PF): 9.00 0x8000ce86 1.3179.0
+    Device id (pf/vf): 8086:1583 / 8086:154c
+    Driver version(out-tree): 2.20.12 (i40e)
+    Driver version(in-tree): 5.15.0-46-generic (i40e)
+
+
+Upon debugging further, I came across a DPDK commit:
+https://github.com/DPDK/dpdk/commit/e25c7ed114b296ddaa583427824acc30bcf9c85d
+which says it sets the vlan_strip on in PF when we set vlan filter on VF.=20
+
+I picked the fix, but still it did not help.
+
+Later when I debugged further, I found that the vf_cap_flags is set to
+VIRTCHNL_VF_OFFLOAD_VLAN_V2 for the above PF driver and still it sets the
+vlan_strip on. I extended the dpdk commit for the VIRTCHNL_VF_OFFLOAD_VLAN_=
+V2
+case which fixed the issue.
+
+
+I just want to know if it's a known issue for the VIRTCHNL_VF_OFFLOAD_VLAN_=
+V2
+case. I understand it's a known issue for VIRTCHNL_VF_OFFLOAD_VLAN_V1 and d=
+pdk
+has a fix for it.=20
+Do we need to add the fix for VIRTCHNL_VF_OFFLOAD_VLAN_V2 as well. Can we
+mainstream it? If yes, please let me know so that I can raise a pull request
+for it, if required.
+
+Regards
+Amiya
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17501421020.aae5b.2061179
+Date: Tue, 17 Jun 2025 08:35:02 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - iavf pmd vlan Issue: dpdk-22.11.0"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1725">1725</a>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Summary</th>
+          <td>iavf pmd vlan Issue: dpdk-22.11.0
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>22.11
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>x86
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>Linux
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>major
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>ethdev
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>amiyaranjan.mohakud&#64;gmail.com
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">Hi All,
+
+I'm encountering an issue with XL710 SR-IOV on KVM for VLAN packets with
+DPDK-22.11.0 version.=20
+
+Issue Description: I have disabled RTE_ETH_RX_OFFLOAD_VLAN_STRIP in
+rte_eth_conf and calling rte_eth_dev_configure and expecting my dpdk
+application to receive the packets with vlan tags. Later I added some vlans
+using rte_eth_dev_vlan_filter() and I see that the vlan is getting stripped=
+ off
+ for the incoming packets.=20
+
+Setup Details:(KVM SR-IOV)
+
+KVM Host: Ubuntu 20.04.6 LTS: kernel version: 5.4.0-216-generic #236-Ubuntu
+NIC: XL710
+3b:00.0 Ethernet controller: Intel Corporation Ethernet Controller XL710 for
+40GbE QSFP+ (rev 02)
+3b:00.1 Ethernet controller: Intel Corporation Ethernet Controller XL710 for
+40GbE QSFP+ (rev 02)
+i40e PF Driver: Out of tree 2.20.12
+Firmware: 9.00/9.40=20
+DPDK Version: 22.11.0
+
+
+Observation/Analysis:
+
+I could see that even after disabling RTE_ETH_RX_OFFLOAD_VLAN_STRIP offload
+flag, when I receive the packets, the mbuf offload flags (RTE_MBUF_F_RX_VLA=
+N |
+RTE_MBUF_F_RX_VLAN_STRIPPED) are set inside the mbuf. This confirms that the
+driver is stripping off the vlans.
+
+
+I tried with recommended PF driver version for DPDK-22.11.0 as per
+<a href=3D"https://mails.dpdk.org/archives/dev/2023-November/281700.html">h=
+ttps://mails.dpdk.org/archives/dev/2023-November/281700.html</a> and DPDK-2=
+2.11
+release note <a href=3D"https://doc.dpdk.org/guides/rel_notes/release_22_11=
+.html">https://doc.dpdk.org/guides/rel_notes/release_22_11.html</a>. Still =
+it
+did not help.
+
+
+       Intel=C2=AE Ethernet Converged Network Adapter XL710-QDA2 (2X40G)
+    Firmware version(PF): 9.00 0x8000ce86 1.3179.0
+    Device id (pf/vf): 8086:1583 / 8086:154c
+    Driver version(out-tree): 2.20.12 (i40e)
+    Driver version(in-tree): 5.15.0-46-generic (i40e)
+
+
+Upon debugging further, I came across a DPDK commit:
+<a href=3D"https://github.com/DPDK/dpdk/commit/e25c7ed114b296ddaa583427824a=
+cc30bcf9c85d">https://github.com/DPDK/dpdk/commit/e25c7ed114b296ddaa5834278=
+24acc30bcf9c85d</a>
+which says it sets the vlan_strip on in PF when we set vlan filter on VF.=20
+
+I picked the fix, but still it did not help.
+
+Later when I debugged further, I found that the vf_cap_flags is set to
+VIRTCHNL_VF_OFFLOAD_VLAN_V2 for the above PF driver and still it sets the
+vlan_strip on. I extended the dpdk commit for the VIRTCHNL_VF_OFFLOAD_VLAN_=
+V2
+case which fixed the issue.
+
+
+I just want to know if it's a known issue for the VIRTCHNL_VF_OFFLOAD_VLAN_=
+V2
+case. I understand it's a known issue for VIRTCHNL_VF_OFFLOAD_VLAN_V1 and d=
+pdk
+has a fix for it.=20
+Do we need to add the fix for VIRTCHNL_VF_OFFLOAD_VLAN_V2 as well. Can we
+mainstream it? If yes, please let me know so that I can raise a pull request
+for it, if required.
+
+Regards
+Amiya
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1725">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17501421020.aae5b.2061179--
