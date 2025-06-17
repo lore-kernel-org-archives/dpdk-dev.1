@@ -2,26 +2,25 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E247C71157
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Jun 2025 06:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF399C7114A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Jun 2025 06:13:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 095C240E39;
-	Tue, 17 Jun 2025 08:12:23 +0200 (CEST)
-Received: from out28-102.mail.aliyun.com (out28-102.mail.aliyun.com
- [115.124.28.102])
- by mails.dpdk.org (Postfix) with ESMTP id D1F5140B9B
+	by mails.dpdk.org (Postfix) with ESMTP id 1EC3840E2B;
+	Tue, 17 Jun 2025 08:12:24 +0200 (CEST)
+Received: from out28-93.mail.aliyun.com (out28-93.mail.aliyun.com
+ [115.124.28.93]) by mails.dpdk.org (Postfix) with ESMTP id CA1D440A89
  for <dev@dpdk.org>; Tue, 17 Jun 2025 08:12:14 +0200 (CEST)
 Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
- fp:SMTPD_---.dO-dydP_1750140730 cluster:ay29) by smtp.aliyun-inc.com;
- Tue, 17 Jun 2025 14:12:11 +0800
+ fp:SMTPD_---.dO-dyff_1750140732 cluster:ay29) by smtp.aliyun-inc.com;
+ Tue, 17 Jun 2025 14:12:12 +0800
 From: "dimon.zhao" <dimon.zhao@nebula-matrix.com>
 To: dimon.zhao@nebula-matrix.com,
 	kyo.liu@nebula-matrix.com,
 	dev@dpdk.org
 Cc: Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
-Subject: [PATCH v2 09/16] net/nbl: add UIO and VFIO mode for nbl
-Date: Mon, 16 Jun 2025 23:11:51 -0700
-Message-Id: <20250617061158.3097233-10-dimon.zhao@nebula-matrix.com>
+Subject: [PATCH v2 11/16] net/nbl: add nbl ethdev configuration
+Date: Mon, 16 Jun 2025 23:11:53 -0700
+Message-Id: <20250617061158.3097233-12-dimon.zhao@nebula-matrix.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250617061158.3097233-1-dimon.zhao@nebula-matrix.com>
 References: <20250617061158.3097233-1-dimon.zhao@nebula-matrix.com>
@@ -40,120 +39,81 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-NBL device support UIO/VFIO
+NBL device add ethdev configuration
 
 Signed-off-by: dimon.zhao <dimon.zhao@nebula-matrix.com>
 ---
- drivers/net/nbl/meson.build                   |  1 +
- drivers/net/nbl/nbl_common/nbl_userdev.c      | 24 +++++++++++++++++++
- drivers/net/nbl/nbl_common/nbl_userdev.h      | 10 ++++++++
- .../nbl_hw_leonis/nbl_phy_leonis_snic.c       |  7 ++++++
- drivers/net/nbl/nbl_include/nbl_def_common.h  |  4 ++++
- 5 files changed, 46 insertions(+)
- create mode 100644 drivers/net/nbl/nbl_common/nbl_userdev.c
- create mode 100644 drivers/net/nbl/nbl_common/nbl_userdev.h
+ drivers/net/nbl/nbl_dev/nbl_dev.c         | 33 +++++++++++++++++++++--
+ drivers/net/nbl/nbl_include/nbl_include.h |  3 ++-
+ 2 files changed, 33 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/nbl/meson.build b/drivers/net/nbl/meson.build
-index 7f4abd3db0..a3e700d93d 100644
---- a/drivers/net/nbl/meson.build
-+++ b/drivers/net/nbl/meson.build
-@@ -16,6 +16,7 @@ sources = files(
-         'nbl_dispatch.c',
-         'nbl_common/nbl_common.c',
-         'nbl_common/nbl_thread.c',
-+	'nbl_common/nbl_userdev.c',
-         'nbl_dev/nbl_dev.c',
-         'nbl_hw/nbl_channel.c',
-         'nbl_hw/nbl_resource.c',
-diff --git a/drivers/net/nbl/nbl_common/nbl_userdev.c b/drivers/net/nbl/nbl_common/nbl_userdev.c
-new file mode 100644
-index 0000000000..87b943ccd7
---- /dev/null
-+++ b/drivers/net/nbl/nbl_common/nbl_userdev.c
-@@ -0,0 +1,24 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
-+ */
+diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.c b/drivers/net/nbl/nbl_dev/nbl_dev.c
+index f02ed7f94e..4eea07c1ff 100644
+--- a/drivers/net/nbl/nbl_dev/nbl_dev.c
++++ b/drivers/net/nbl/nbl_dev/nbl_dev.c
+@@ -4,15 +4,44 @@
+ 
+ #include "nbl_dev.h"
+ 
+-static int nbl_dev_configure(struct rte_eth_dev *eth_dev)
++static int nbl_dev_port_configure(struct nbl_adapter *adapter)
+ {
+-	RTE_SET_USED(eth_dev);
++	adapter->state = NBL_ETHDEV_CONFIGURED;
 +
-+#include "nbl_userdev.h"
-+
-+int nbl_pci_map_device(struct nbl_adapter *adapter)
+ 	return 0;
+ }
+ 
++static int nbl_dev_configure(struct rte_eth_dev *eth_dev)
 +{
-+	struct rte_pci_device *pci_dev = adapter->pci_dev;
-+	int ret = 0;
++	struct rte_eth_dev_data *dev_data = eth_dev->data;
++	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
++	int ret;
 +
-+	ret = rte_pci_map_device(pci_dev);
-+	if (ret)
-+		NBL_LOG(ERR, "device %s uio or vfio map failed", pci_dev->device.name);
++	NBL_LOG(INFO, "Begin to configure the device, state: %d", adapter->state);
 +
++	if (dev_data == NULL || adapter == NULL)
++		return -EINVAL;
++
++	dev_data->dev_conf.intr_conf.lsc = 0;
++
++	switch (adapter->state) {
++	case NBL_ETHDEV_CONFIGURED:
++	case NBL_ETHDEV_INITIALIZED:
++		ret = nbl_dev_port_configure(adapter);
++		break;
++	default:
++		ret = -EINVAL;
++		break;
++	}
++
++	NBL_LOG(INFO, "configure the device done %d", ret);
 +	return ret;
 +}
 +
-+void nbl_pci_unmap_device(struct nbl_adapter *adapter)
-+{
-+	struct rte_pci_device *pci_dev = adapter->pci_dev;
+ static int nbl_dev_port_start(struct rte_eth_dev *eth_dev)
+ {
+ 	RTE_SET_USED(eth_dev);
 +
-+	return rte_pci_unmap_device(pci_dev);
-+}
-diff --git a/drivers/net/nbl/nbl_common/nbl_userdev.h b/drivers/net/nbl/nbl_common/nbl_userdev.h
-new file mode 100644
-index 0000000000..11cc29999c
---- /dev/null
-+++ b/drivers/net/nbl/nbl_common/nbl_userdev.h
-@@ -0,0 +1,10 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
-+ */
-+
-+#ifndef _NBL_USERDEV_H_
-+#define _NBL_USERDEV_H_
-+
-+#include "nbl_ethdev.h"
-+
-+#endif
-diff --git a/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.c b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.c
-index 49ada3b525..9ed375bc1e 100644
---- a/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.c
-+++ b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.c
-@@ -183,6 +183,11 @@ int nbl_phy_init_leonis_snic(void *p)
- 	phy_mgt_leonis_snic = (struct nbl_phy_mgt_leonis_snic **)&NBL_ADAPTER_TO_PHY_MGT(adapter);
- 	phy_ops_tbl = &NBL_ADAPTER_TO_PHY_OPS_TBL(adapter);
- 
-+	/* map device */
-+	ret = nbl_pci_map_device(adapter);
-+	if (ret)
-+		return ret;
-+
- 	*phy_mgt_leonis_snic = rte_zmalloc("nbl_phy_mgt",
- 					   sizeof(struct nbl_phy_mgt_leonis_snic), 0);
- 	if (!*phy_mgt_leonis_snic) {
-@@ -205,6 +210,7 @@ int nbl_phy_init_leonis_snic(void *p)
- setup_ops_failed:
- 	rte_free(*phy_mgt_leonis_snic);
- alloc_phy_mgt_failed:
-+	nbl_pci_unmap_device(adapter);
- 	return ret;
+ 	return 0;
  }
  
-@@ -220,4 +226,5 @@ void nbl_phy_remove_leonis_snic(void *p)
- 	rte_free(*phy_mgt_leonis_snic);
+diff --git a/drivers/net/nbl/nbl_include/nbl_include.h b/drivers/net/nbl/nbl_include/nbl_include.h
+index 2f5e426c91..33b2c25684 100644
+--- a/drivers/net/nbl/nbl_include/nbl_include.h
++++ b/drivers/net/nbl/nbl_include/nbl_include.h
+@@ -131,9 +131,10 @@ struct nbl_common_info {
+ 	/* curr_network 0 means kernel network, 1 means user network */
+ 	u8 curr_network:1;
+ 	u8 is_vf:1;
++	u8 pf_start:1;
+ 	u8 specific_dma:1;
+ 	u8 dma_set_msb:1;
+-	u8 rsv:3;
++	u8 rsv:2;
+ 	struct nbl_board_port_info board_info;
+ };
  
- 	nbl_phy_remove_ops(phy_ops_tbl);
-+	nbl_pci_unmap_device(adapter);
- }
-diff --git a/drivers/net/nbl/nbl_include/nbl_def_common.h b/drivers/net/nbl/nbl_include/nbl_def_common.h
-index b7955abfab..0b87c3003d 100644
---- a/drivers/net/nbl/nbl_include/nbl_def_common.h
-+++ b/drivers/net/nbl/nbl_include/nbl_def_common.h
-@@ -48,4 +48,8 @@ void nbl_free_dma_mem(struct nbl_dma_mem *mem);
- int nbl_thread_add_work(struct nbl_work *work);
- void nbl_thread_del_work(struct nbl_work *work);
- 
-+struct nbl_adapter;
-+int nbl_pci_map_device(struct nbl_adapter *adapter);
-+void nbl_pci_unmap_device(struct nbl_adapter *adapter);
-+
- #endif
 -- 
 2.34.1
 
