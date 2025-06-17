@@ -2,73 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C59C2C7115B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Jun 2025 15:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70FCAC71136
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Jun 2025 15:28:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D2AD740E19;
-	Tue, 17 Jun 2025 17:22:45 +0200 (CEST)
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com
- [209.85.160.181])
- by mails.dpdk.org (Postfix) with ESMTP id DB94D402C5
- for <dev@dpdk.org>; Tue, 17 Jun 2025 17:22:43 +0200 (CEST)
-Received: by mail-qt1-f181.google.com with SMTP id
- d75a77b69052e-4a4bb155edeso70467071cf.2
- for <dev@dpdk.org>; Tue, 17 Jun 2025 08:22:43 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id A495141132;
+	Tue, 17 Jun 2025 17:28:17 +0200 (CEST)
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com
+ [209.85.222.174])
+ by mails.dpdk.org (Postfix) with ESMTP id AA030402C5
+ for <dev@dpdk.org>; Tue, 17 Jun 2025 17:28:16 +0200 (CEST)
+Received: by mail-qk1-f174.google.com with SMTP id
+ af79cd13be357-7d3da67de87so187780585a.3
+ for <dev@dpdk.org>; Tue, 17 Jun 2025 08:28:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1750173763;
- x=1750778563; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ d=gmail.com; s=20230601; t=1750174096; x=1750778896; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
  :message-id:reply-to;
- bh=wQjCatVikXoE/PpDu/gGcOq/OvcnLnFtDj6yaHpIeMk=;
- b=bJmTIx0nxv9HClZKdlva2NcbIqMzbiM2xzJKkkPn7e2ZneUhY/Kue2EKlRzoHZ4gOj
- BsanzieVbBMIQScMYk54MoyNLpQVEpsM6iftb1NdNOSTDVcX+WpyalSkmLtMD9itqm7G
- 5dR/EFi2TKmHJDBJ0oAtHZSV0JyiV+KhGDdGTi+ozEkTiYPHfszJgrZpXF4vktVNMXEn
- +Vb7rHQ6pA5tACvoF0Reu88MDm5FD4CctGUQ86FCmGycX++4DFxaCL5A+VFN03zmKmZN
- fsA8wwrSJUz3uek5Mfs15fjJluXvtH3nztGargxhGFIEtSsX7YP+JegYvNJE2ocRdnw1
- /mYQ==
+ bh=k1LOEkzNFfvKA7XO6U25oVKb8WiBiZvDW69tAPYIn0E=;
+ b=jC7hTDjETtlUukeOpV5U/LI0NZx2avKf8Fthnd6usGjdPzSRZzhI2SXEL6EkVlLdc+
+ Yu4HiRjC9RgqCv4AFN1PQ0/749Krp9+Y0VVnLJmjTmg9bkGHO9yGh5fgeu6bH1UCRGkQ
+ jl2t5HT6yfxaShtWyWT4Vb6TXgnInZ/joEW+QO6Eiu7MwOP2USCAzGG9VEVPQlKQMD26
+ niIV2Y4gEQYAu1m6botB+ylbvznGk45e8N29a8MaNBYZRPzGq92t2WcAKGrDIjy2g1vJ
+ b+I+mBWsA0kd0QgneVLmX2mpOrgNIj4wP6GhblWEBPMmoQ3zwvlTQk38CbwWhsPYrPic
+ uShQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1750173763; x=1750778563;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ d=1e100.net; s=20230601; t=1750174096; x=1750778896;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=wQjCatVikXoE/PpDu/gGcOq/OvcnLnFtDj6yaHpIeMk=;
- b=TRAhY3k31cMNf0hA68riSdEXkSFHvkIFx+C7thn6l7Cls8Yi4VGo0Ho3XLJQCGWJyF
- q3872sMCxt/17EnlRDHKwOTqv4//4FFT3ut0V7DG0r1WLDxZ4yA0JZ7BK3jMtxe/DqZE
- IfWtwLrVdf/tJK1d3L16tJJO+Cdzt3Mr3ePj1tXNbWb22TKCj3Ct+sd5l9zkqSLrIQsx
- QP90H0j9GgQb2SXiKhBEsGvsU2zl6+QjxArK4FpXsRzcxKCftcY7pnvKXcBGPVncmsKF
- q/kb5STc14ZINXBsCZ0F3hZHEaYZ3Yw0eBoHkhQW//7ZAluGUj3qKWE5RcqCG2FXno02
- nqnA==
-X-Gm-Message-State: AOJu0YwOCUkTVHqzlbynQEYxCntMQL7md7BzOv8x2znPkXnRjhPk/rJ0
- /84x7UFoqnVrCDlvV2kpWIRBe08nJ8wV1IA/RV4Kp89v0uNXfnFnDiXXb8i2uzpnCaRxIJ045zw
- dx1df
-X-Gm-Gg: ASbGncvbA989bi4sJYjDbg1uBCpMomJNBGCvxWgM9KxybOQwctrtTnxgn+Icd3W2IQi
- po4/AH/B6lyNw8IHmjxUgQ6ENwgEpYKc65sto6RNj8WWlyRaZxQ1Q8s2bPQpM1LcSq8YE+Gk+FD
- zpQ+3g2AJQ0tzmhxA0ArCKhuacgNXH/39ext4Ok9BMtmqlSGqngIOimlguERPP4Oxb36a9gQBFU
- TXe3dF1enRIXbTIeNNy5Mm3leSQCrwzFPNrhVusFl/EkeDAEHoTruGxgvwN9wlV0jtIEvI5v8BU
- v71KPgOul04T+F8Qk2NQs411fG27jbV00bkZb+vk/33W86EA1keWeMSOoWv0Vh8j6oK9B2JM4BP
- kvWQdbqZpktmjbydzCD/UuDrqC9PFK+7R0m/3tvo=
-X-Google-Smtp-Source: AGHT+IHSCMcIrEIcgqqLA9zj59iCyYyLf0T6EzVnhvg3QmwIRloW14RDdBwJtaAeIE5cU7SLC4LxRg==
-X-Received: by 2002:ac8:5ace:0:b0:494:78d5:baea with SMTP id
- d75a77b69052e-4a73c662a0amr190345341cf.51.1750173763016; 
- Tue, 17 Jun 2025 08:22:43 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-4a72a2f4fc5sm62594191cf.26.2025.06.17.08.22.42
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 17 Jun 2025 08:22:42 -0700 (PDT)
-Date: Tue, 17 Jun 2025 08:22:39 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Jiawen Wu <jiawenwu@trustnetic.com>
-Cc: dev@dpdk.org, zaiyuwang@trustnetic.com
-Subject: Re: [PATCH v3 00/17] Fixes and supports for Wangxun NICs
-Message-ID: <20250617082239.64d9f884@hermes.local>
-In-Reply-To: <20250613084159.22184-1-jiawenwu@trustnetic.com>
-References: <00DEAE896AFE0D2D+20250606080117.183198-1-jiawenwu@trustnetic.com>
- <20250613084159.22184-1-jiawenwu@trustnetic.com>
+ bh=k1LOEkzNFfvKA7XO6U25oVKb8WiBiZvDW69tAPYIn0E=;
+ b=U5ZfGJYPY1VW9q4Z8LtOBiKhfOcQNHH+r+tn4KSVmSvyWBcVLgY6RGtS+5lJGPFsIP
+ Ygpj9TkOerGy9Gu06SDUMfvjrBW2GSNorIyh0W4zbDj+Es1yfO0hUhvD52gyGG9c8XaH
+ ikXs8WVhZpMKRnFukuWG5tYlXir/reVzrFtqAWMSh/1hh6zI8mMBpvmuQTw55ZVKQ3Vi
+ aM+KDxO9KollgP68QvXdMrZ5xusNgZZ7WjTBy7+pPuI3PDXBAkYWuAbB+9gQmsFKVHTg
+ d7BTkW3d3vuvQRQwWDAE71WtYFwTDtu4ECG8tWb2uSFQG0iFFPvF+I14hkDrbSBHq2U9
+ mlnQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUSstzx0WdA60P6y6Upxj7ToB+LMPtZRFjVk85nhcZKy3yaTcId9aXnMhGTLOv2xApb1p4=@dpdk.org
+X-Gm-Message-State: AOJu0YxIi48hkfrXc+v9Ripw7kKvEGRIT5VTPnJl7gouFW2rnDlZ+3A6
+ g2QBvtePTfcQMZcmnMSCTwYMhQoekOeMnE/50WwE+L79sSg08P66gJHxvXhFZMItzKuoT01oenO
+ F3NscL11etdhnlrrAu658EmGJCoUmE0k=
+X-Gm-Gg: ASbGncsd05TXLRVHUOfknwcromy44P9Jat1fGtYx18CdzTqW8cp4BoBlRpsZcPnDo/J
+ KoV0rXbxboGlR8o/QGYCXiAf8g++gyT1t15q8ysNUiKjY0ig1OpSDLRkHIT7lFtydB6qwIlRmmE
+ X0iPoWbgG5yriAv1YambvDOGqS+4EgJ4MHQ/8+dNosBQ==
+X-Google-Smtp-Source: AGHT+IFLBDby0L6dchSu/BGCwVvki19IDUmlKFOM16ib3lIXasyUhw789fh0YyQ4VhUBfAQthdmqR9hAi8NMb4i2cDw=
+X-Received: by 2002:a05:620a:2954:b0:7c5:50ab:de07 with SMTP id
+ af79cd13be357-7d3c6c1ab9fmr1950822985a.21.1750174095945; Tue, 17 Jun 2025
+ 08:28:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250617151339.28794-1-marat.khalili@huawei.com>
+ <20250617151339.28794-2-marat.khalili@huawei.com>
+In-Reply-To: <20250617151339.28794-2-marat.khalili@huawei.com>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Tue, 17 Jun 2025 20:57:49 +0530
+X-Gm-Features: AX0GCFvbaFOMvbPIP5ElRbKT_eTvtYsKeLcLQvpzOXLkNtSS6C5X5NqowVTMRWY
+Message-ID: <CALBAE1M2Ux9Kr2GvS7BjNLn8nM_DvjWnkhp2pwdESKq-WJeRiw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] lib/graph: default-align rte_graph_cluster_stats
+To: Marat Khalili <marat.khalili@huawei.com>
+Cc: Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, 
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Zhirun Yan <yanzhirun_163@163.com>, 
+ Pavan Nikhilesh <pbhagavatula@marvell.com>, dev@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,59 +79,78 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 13 Jun 2025 16:41:42 +0800
-Jiawen Wu <jiawenwu@trustnetic.com> wrote:
+On Tue, Jun 17, 2025 at 8:44=E2=80=AFPM Marat Khalili <marat.khalili@huawei=
+.com> wrote:
+>
+> This was flagged by undefined behaviour sanitizer: struct
+> rte_graph_cluster_stats is declared as `__rte_cache_aligned` but was
+> allocated using stdlib realloc which caused misaligned allocation. More
+> than one test needs to be executed in series in order to reproduce the
+> problem using graph_autotest, e.g:
+>
+>     app/dpdk-test --no-huge --no-pci -m128 graph_autotest graph_autotest
+>
+> First sanitizer message  (similar ones follow):
+>
+>     lib/graph/graph_stats.c:209:13: runtime error: member access within
+>     misaligned address 0x606000008ea0 for type 'struct
+>     rte_graph_cluster_stats', which requires 64 byte alignment
+>
+> To fix the issue remove `__rte_cache_aligned` attribute from struct
+> rte_graph_cluster_stats and struct rte_graph_cluster_node_stats that it
+> contains. There is no need to keep them cache-aligned since they are
+> only used in the slow path.
+>
+> Fixes: af1ae8b6a32 ("graph: implement stats")
+>
+> Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
+> ---
+>
+> v2: Following the suggestions from Jerin Jacob changed the fix to simply
+> remove non-default alignment. Although there are many ways to make
+> alignment work, I personally agree that it is probably better to keep
+> the code simple as long as performance is not an issue.
+>
+> Although reducing _actual_ alignment of allocated objects would probably
+> be a binary compatibility issue, here we are only changing _declared_
+> alignment to match the actual one, so it will more likely fix things
+> than break them.
+>
+> devtools/test-meson-builds.sh completes successfully.
+>
+>  lib/graph/graph_stats.c | 2 +-
+>  lib/graph/rte_graph.h   | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/lib/graph/graph_stats.c b/lib/graph/graph_stats.c
+> index 57cd72e7cc..4324717f33 100644
+> --- a/lib/graph/graph_stats.c
+> +++ b/lib/graph/graph_stats.c
+> @@ -29,7 +29,7 @@ struct cluster_node {
+>         struct rte_node *nodes[];
+>  };
+>
+> -struct __rte_cache_aligned rte_graph_cluster_stats {
+> +struct rte_graph_cluster_stats {
+>         /* Header */
+>         rte_graph_cluster_stats_cb_t fn;
+>         uint32_t cluster_node_size; /* Size of struct cluster_node */
+> diff --git a/lib/graph/rte_graph.h b/lib/graph/rte_graph.h
+> index 097d0dc9d5..826204cad9 100644
+> --- a/lib/graph/rte_graph.h
+> +++ b/lib/graph/rte_graph.h
+> @@ -202,7 +202,7 @@ struct rte_graph_cluster_stats_param {
+>   *
+>   * @see struct rte_graph_cluster_stats_param::fn
+>   */
+> -struct __rte_cache_aligned rte_graph_cluster_node_stats {
+> +struct rte_graph_cluster_node_stats {
 
-> Fix some bugs and improve flow filters.
-> 
-> v2 -> v3:
-> - Split the patch 2/12 for various changes
-> 
-> v1 -> v2:
-> - Add new flow feature geneve and gre into txgbe.ini
-> 
-> Jiawen Wu (17):
->   net/txgbe: support flow filter for VF
->   net/txgbe: fix incorrect parsing to ntuple filter
->   net/txgbe: fix raw pattern match for FDIR rules
->   net/txgbe: fix packet type for FDIR filters
->   net/txgbe: fix to create FDIR filters for SCTP packets
->   net/txgbe: fix FDIR perfect mode for IPv6 packets
->   net/txgbe: fix to create FDIR filters for tunnel packets
->   net/txgbe: fix reserved extra FDIR headroom
->   net/txgbe: support RSS offload for SCTP port
->   net/ngbe: support RSS offload for SCTP port
->   net/txgbe: fix MAC control frame forwarding
->   net/ngbe: fix MAC control frame forwarding
->   net/txgbe: fix incorrect device statistics
->   net/ngbe: fix incorrect device statistics
->   net/txgbe: restrict VLAN strip configuration on VF
->   net/ngbe: restrict VLAN strip configuration on VF
->   net/txgbe: add missing LRO flag in mbuf when LRO enabled
-> 
->  doc/guides/nics/features/txgbe.ini  |   2 +
->  drivers/net/ngbe/base/ngbe_hw.c     |   9 +
->  drivers/net/ngbe/base/ngbe_regs.h   |   2 +
->  drivers/net/ngbe/base/ngbe_type.h   |   1 +
->  drivers/net/ngbe/ngbe_ethdev.c      |   6 +-
->  drivers/net/ngbe/ngbe_ethdev.h      |   2 +
->  drivers/net/ngbe/ngbe_ethdev_vf.c   |  24 +-
->  drivers/net/ngbe/ngbe_rxtx.c        |   8 +
->  drivers/net/txgbe/base/txgbe_hw.c   |  23 +-
->  drivers/net/txgbe/base/txgbe_hw.h   |   1 +
->  drivers/net/txgbe/base/txgbe_mbx.h  |  17 +
->  drivers/net/txgbe/base/txgbe_regs.h |   4 +
->  drivers/net/txgbe/base/txgbe_type.h |  21 +-
->  drivers/net/txgbe/base/txgbe_vf.c   |  29 +
->  drivers/net/txgbe/base/txgbe_vf.h   |   2 +
->  drivers/net/txgbe/txgbe_ethdev.c    |  18 +-
->  drivers/net/txgbe/txgbe_ethdev.h    |  16 +-
->  drivers/net/txgbe/txgbe_ethdev_vf.c | 111 +++-
->  drivers/net/txgbe/txgbe_fdir.c      |  62 +-
->  drivers/net/txgbe/txgbe_flow.c      | 857 ++++++++++++++++++++--------
->  drivers/net/txgbe/txgbe_rxtx.c      |  18 +
->  21 files changed, 945 insertions(+), 288 deletions(-)
-> 
+This is a fastpath structure. No need to change the alignment here.
 
-Please don't mix new features and bug fixed into the same patchset.
-Will continue review of the patchset as is, but avoid this in future.
+>         uint64_t ts;        /**< Current timestamp. */
+>         uint64_t calls;     /**< Current number of calls made. */
+>         uint64_t objs;      /**< Current number of objs processed. */
+> --
+> 2.43.0
+>
