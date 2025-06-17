@@ -2,20 +2,20 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27CB1C71157
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Jun 2025 23:06:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F09EC71157
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Jun 2025 23:08:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1236A4028D;
-	Wed, 18 Jun 2025 01:06:52 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B6F9140A6E;
+	Wed, 18 Jun 2025 01:08:47 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 0A48740279
- for <dev@dpdk.org>; Wed, 18 Jun 2025 01:06:51 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 6D9F840279
+ for <dev@dpdk.org>; Wed, 18 Jun 2025 01:08:46 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id F264E469E0; Wed, 18 Jun 2025 01:06:50 +0200 (CEST)
+ id 4CD4A469E0; Wed, 18 Jun 2025 01:08:46 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/other Bug 1726] possible overrun bugs in soring found with LTO
-Date: Tue, 17 Jun 2025 23:06:50 +0000
+Subject: [DPDK/other Bug 1727] arparse LTO warnings
+Date: Tue, 17 Jun 2025 23:08:46 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -34,8 +34,8 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1726-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17502016100.6E3ba9Fe.2594744
+Message-ID: <bug-1727-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17502017260.8BcB1Ec.2595619
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: https://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -55,8 +55,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17502016100.6E3ba9Fe.2594744
-Date: Wed, 18 Jun 2025 01:06:50 +0200
+--17502017260.8BcB1Ec.2595619
+Date: Wed, 18 Jun 2025 01:08:46 +0200
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -64,10 +64,10 @@ X-Bugzilla-URL: https://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1726
+https://bugs.dpdk.org/show_bug.cgi?id=3D1727
 
-            Bug ID: 1726
-           Summary: possible overrun bugs in soring found with LTO
+            Bug ID: 1727
+           Summary: arparse LTO warnings
            Product: DPDK
            Version: unspecified
           Hardware: All
@@ -80,281 +80,562 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D1726
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-Enabling LTO in build allows compiler to detect more bugs such as out of bo=
-unds
-references inside libraries. Several warnings in soring
+Enabling LTO detects more warnings in argparse test.
+Looks like argparse is referencing invalid arguments before checking.
 
-In function =E2=80=98__rte_ring_dequeue_elems_128=E2=80=99,
-    inlined from =E2=80=98__rte_ring_do_dequeue_elems=E2=80=99 at
-../lib/ring/rte_ring_elem_pvt.h:279:3,
-    inlined from =E2=80=98soring_dequeue=E2=80=99 at ../lib/ring/soring.c:3=
-15:3,
-    inlined from =E2=80=98rte_soring_dequeue_bulk=E2=80=99 at ../lib/ring/s=
-oring.c:552:9,
-    inlined from =E2=80=98test_soring_stages=E2=80=99 at ../app/test/test_s=
-oring.c:181:14:
-../lib/ring/rte_ring_elem_pvt.h:250:25: warning: writing 32 bytes into a re=
-gion
-of size 0 [-Wstringop-overflow=3D]
-  250 |                         memcpy((obj + i), (const void *)(ring + idx=
-),
-32);
-      |                         ^
-../app/test/test_soring.c: In function =E2=80=98test_soring_stages=E2=80=99:
-../app/test/test_soring.c:157:18: note: at offset 128 into destination obje=
-ct
-=E2=80=98dequeued_objs=E2=80=99 of size 128
-  157 |         uint32_t dequeued_objs[32];
-      |                  ^
-In function =E2=80=98__rte_ring_dequeue_elems_128=E2=80=99,
-    inlined from =E2=80=98__rte_ring_do_dequeue_elems=E2=80=99 at
-../lib/ring/rte_ring_elem_pvt.h:279:3,
-    inlined from =E2=80=98soring_dequeue=E2=80=99 at ../lib/ring/soring.c:3=
-15:3,
-    inlined from =E2=80=98rte_soring_dequeue_bulk=E2=80=99 at ../lib/ring/s=
-oring.c:552:9,
-    inlined from =E2=80=98test_soring_stages=E2=80=99 at ../app/test/test_s=
-oring.c:181:14:
-../lib/ring/rte_ring_elem_pvt.h:250:25: warning: writing 32 bytes into a re=
-gion
-of size 0 [-Wstringop-overflow=3D]
-  250 |                         memcpy((obj + i), (const void *)(ring + idx=
-),
-32);
-      |                         ^
-../app/test/test_soring.c: In function =E2=80=98test_soring_stages=E2=80=99:
-../app/test/test_soring.c:157:18: note: at offset 160 into destination obje=
-ct
-=E2=80=98dequeued_objs=E2=80=99 of size 128
-  157 |         uint32_t dequeued_objs[32];
-      |                  ^
-In function =E2=80=98__rte_ring_dequeue_elems_128=E2=80=99,
-    inlined from =E2=80=98__rte_ring_do_dequeue_elems=E2=80=99 at
-../lib/ring/rte_ring_elem_pvt.h:279:3,
-    inlined from =E2=80=98soring_dequeue=E2=80=99 at ../lib/ring/soring.c:3=
-15:3,
-    inlined from =E2=80=98rte_soring_dequeue_bulk=E2=80=99 at ../lib/ring/s=
-oring.c:552:9,
-    inlined from =E2=80=98test_soring_stages=E2=80=99 at ../app/test/test_s=
-oring.c:181:14:
-../lib/ring/rte_ring_elem_pvt.h:250:25: warning: writing 32 bytes into a re=
-gion
-of size 0 [-Wstringop-overflow=3D]
-  250 |                         memcpy((obj + i), (const void *)(ring + idx=
-),
-32);
-      |                         ^
-../app/test/test_soring.c: In function =E2=80=98test_soring_stages=E2=80=99:
-../app/test/test_soring.c:157:18: note: at offset 192 into destination obje=
-ct
-=E2=80=98dequeued_objs=E2=80=99 of size 128
-  157 |         uint32_t dequeued_objs[32];
-      |                  ^
-In function =E2=80=98__rte_ring_dequeue_elems_128=E2=80=99,
-    inlined from =E2=80=98__rte_ring_do_dequeue_elems=E2=80=99 at
-../lib/ring/rte_ring_elem_pvt.h:279:3,
-    inlined from =E2=80=98soring_dequeue=E2=80=99 at ../lib/ring/soring.c:3=
-15:3,
-    inlined from =E2=80=98rte_soring_dequeue_bulk=E2=80=99 at ../lib/ring/s=
-oring.c:552:9,
-    inlined from =E2=80=98test_soring_stages=E2=80=99 at ../app/test/test_s=
-oring.c:181:14:
-../lib/ring/rte_ring_elem_pvt.h:250:25: warning: writing 32 bytes into a re=
-gion
-of size 0 [-Wstringop-overflow=3D]
-  250 |                         memcpy((obj + i), (const void *)(ring + idx=
-),
-32);
-      |                         ^
-../app/test/test_soring.c: In function =E2=80=98test_soring_stages=E2=80=99:
-../app/test/test_soring.c:157:18: note: at offset 224 into destination obje=
-ct
-=E2=80=98dequeued_objs=E2=80=99 of size 128
-  157 |         uint32_t dequeued_objs[32];
-      |                  ^
-In function =E2=80=98__rte_ring_dequeue_elems_128=E2=80=99,
-    inlined from =E2=80=98__rte_ring_do_dequeue_elems=E2=80=99 at
-../lib/ring/rte_ring_elem_pvt.h:279:3,
-    inlined from =E2=80=98soring_dequeue=E2=80=99 at ../lib/ring/soring.c:3=
-15:3,
-    inlined from =E2=80=98rte_soring_dequeue_bulk=E2=80=99 at ../lib/ring/s=
-oring.c:552:9,
-    inlined from =E2=80=98test_soring_stages=E2=80=99 at ../app/test/test_s=
-oring.c:181:14:
-../lib/ring/rte_ring_elem_pvt.h:250:25: warning: writing 32 bytes into a re=
-gion
-of size 0 [-Wstringop-overflow=3D]
-  250 |                         memcpy((obj + i), (const void *)(ring + idx=
-),
-32);
-      |                         ^
-../app/test/test_soring.c: In function =E2=80=98test_soring_stages=E2=80=99:
-../app/test/test_soring.c:157:18: note: at offset 256 into destination obje=
-ct
-=E2=80=98dequeued_objs=E2=80=99 of size 128
-  157 |         uint32_t dequeued_objs[32];
-      |                  ^
-In function =E2=80=98__rte_ring_dequeue_elems_128=E2=80=99,
-    inlined from =E2=80=98__rte_ring_do_dequeue_elems=E2=80=99 at
-../lib/ring/rte_ring_elem_pvt.h:279:3,
-    inlined from =E2=80=98soring_dequeue=E2=80=99 at ../lib/ring/soring.c:3=
-15:3,
-    inlined from =E2=80=98rte_soring_dequeue_bulk=E2=80=99 at ../lib/ring/s=
-oring.c:552:9,
-    inlined from =E2=80=98test_soring_stages=E2=80=99 at ../app/test/test_s=
-oring.c:181:14:
-../lib/ring/rte_ring_elem_pvt.h:250:25: warning: writing 32 bytes into a re=
-gion
-of size 0 [-Wstringop-overflow=3D]
-  250 |                         memcpy((obj + i), (const void *)(ring + idx=
-),
-32);
-      |                         ^
-../app/test/test_soring.c: In function =E2=80=98test_soring_stages=E2=80=99:
-../app/test/test_soring.c:157:18: note: at offset 288 into destination obje=
-ct
-=E2=80=98dequeued_objs=E2=80=99 of size 128
-  157 |         uint32_t dequeued_objs[32];
-      |                  ^
-In function =E2=80=98__rte_ring_dequeue_elems_128=E2=80=99,
-    inlined from =E2=80=98__rte_ring_do_dequeue_elems=E2=80=99 at
-../lib/ring/rte_ring_elem_pvt.h:279:3,
-    inlined from =E2=80=98soring_dequeue=E2=80=99 at ../lib/ring/soring.c:3=
-15:3,
-    inlined from =E2=80=98rte_soring_dequeue_bulk=E2=80=99 at ../lib/ring/s=
-oring.c:552:9,
-    inlined from =E2=80=98test_soring_stages=E2=80=99 at ../app/test/test_s=
-oring.c:181:14:
-../lib/ring/rte_ring_elem_pvt.h:250:25: warning: writing 32 bytes into a re=
-gion
-of size 0 [-Wstringop-overflow=3D]
-  250 |                         memcpy((obj + i), (const void *)(ring + idx=
-),
-32);
-      |                         ^
-../app/test/test_soring.c: In function =E2=80=98test_soring_stages=E2=80=99:
-../app/test/test_soring.c:157:18: note: at offset 320 into destination obje=
-ct
-=E2=80=98dequeued_objs=E2=80=99 of size 128
-  157 |         uint32_t dequeued_objs[32];
-      |                  ^
-In function =E2=80=98__rte_ring_dequeue_elems_128=E2=80=99,
-    inlined from =E2=80=98__rte_ring_do_dequeue_elems=E2=80=99 at
-../lib/ring/rte_ring_elem_pvt.h:279:3,
-    inlined from =E2=80=98soring_dequeue=E2=80=99 at ../lib/ring/soring.c:3=
-15:3,
-    inlined from =E2=80=98rte_soring_dequeue_bulk=E2=80=99 at ../lib/ring/s=
-oring.c:552:9,
-    inlined from =E2=80=98test_soring_stages=E2=80=99 at ../app/test/test_s=
-oring.c:181:14:
-../lib/ring/rte_ring_elem_pvt.h:250:25: warning: writing 32 bytes into a re=
-gion
-of size 0 [-Wstringop-overflow=3D]
-  250 |                         memcpy((obj + i), (const void *)(ring + idx=
-),
-32);
-      |                         ^
-../app/test/test_soring.c: In function =E2=80=98test_soring_stages=E2=80=99:
-../app/test/test_soring.c:157:18: note: at offset 352 into destination obje=
-ct
-=E2=80=98dequeued_objs=E2=80=99 of size 128
-  157 |         uint32_t dequeued_objs[32];
-      |                  ^
-In function =E2=80=98__rte_ring_dequeue_elems_128=E2=80=99,
-    inlined from =E2=80=98__rte_ring_do_dequeue_elems=E2=80=99 at
-../lib/ring/rte_ring_elem_pvt.h:279:3,
-    inlined from =E2=80=98soring_dequeue=E2=80=99 at ../lib/ring/soring.c:3=
-15:3,
-    inlined from =E2=80=98rte_soring_dequeue_bulk=E2=80=99 at ../lib/ring/s=
-oring.c:552:9,
-    inlined from =E2=80=98test_soring_stages=E2=80=99 at ../app/test/test_s=
-oring.c:181:14:
-../lib/ring/rte_ring_elem_pvt.h:250:25: warning: writing 32 bytes into a re=
-gion
-of size 0 [-Wstringop-overflow=3D]
-  250 |                         memcpy((obj + i), (const void *)(ring + idx=
-),
-32);
-      |                         ^
-../app/test/test_soring.c: In function =E2=80=98test_soring_stages=E2=80=99:
-../app/test/test_soring.c:157:18: note: at offset 384 into destination obje=
-ct
-=E2=80=98dequeued_objs=E2=80=99 of size 128
-  157 |         uint32_t dequeued_objs[32];
-      |                  ^
-In function =E2=80=98__rte_ring_dequeue_elems_128=E2=80=99,
-    inlined from =E2=80=98__rte_ring_do_dequeue_elems=E2=80=99 at
-../lib/ring/rte_ring_elem_pvt.h:279:3,
-    inlined from =E2=80=98soring_dequeue=E2=80=99 at ../lib/ring/soring.c:3=
-15:3,
-    inlined from =E2=80=98rte_soring_dequeue_bulk=E2=80=99 at ../lib/ring/s=
-oring.c:552:9,
-    inlined from =E2=80=98test_soring_stages=E2=80=99 at ../app/test/test_s=
-oring.c:181:14:
-../lib/ring/rte_ring_elem_pvt.h:250:25: warning: writing 32 bytes into a re=
-gion
-of size 0 [-Wstringop-overflow=3D]
-  250 |                         memcpy((obj + i), (const void *)(ring + idx=
-),
-32);
-      |                         ^
-../app/test/test_soring.c: In function =E2=80=98test_soring_stages=E2=80=99:
-../app/test/test_soring.c:157:18: note: at offset 416 into destination obje=
-ct
-=E2=80=98dequeued_objs=E2=80=99 of size 128
-  157 |         uint32_t dequeued_objs[32];
-      |                  ^
-In function =E2=80=98__rte_ring_dequeue_elems_128=E2=80=99,
-    inlined from =E2=80=98__rte_ring_do_dequeue_elems=E2=80=99 at
-../lib/ring/rte_ring_elem_pvt.h:279:3,
-    inlined from =E2=80=98soring_dequeue=E2=80=99 at ../lib/ring/soring.c:3=
-15:3,
-    inlined from =E2=80=98rte_soring_dequeue_bulk=E2=80=99 at ../lib/ring/s=
-oring.c:552:9,
-    inlined from =E2=80=98test_soring_stages=E2=80=99 at ../app/test/test_s=
-oring.c:181:14:
-../lib/ring/rte_ring_elem_pvt.h:250:25: warning: writing 32 bytes into a re=
-gion
-of size 0 [-Wstringop-overflow=3D]
-  250 |                         memcpy((obj + i), (const void *)(ring + idx=
-),
-32);
-      |                         ^
-../app/test/test_soring.c: In function =E2=80=98test_soring_stages=E2=80=99:
-../app/test/test_soring.c:157:18: note: at offset 448 into destination obje=
-ct
-=E2=80=98dequeued_objs=E2=80=99 of size 128
-  157 |         uint32_t dequeued_objs[32];
-      |                  ^
-In function =E2=80=98__rte_ring_dequeue_elems_128=E2=80=99,
-    inlined from =E2=80=98__rte_ring_do_dequeue_elems=E2=80=99 at
-../lib/ring/rte_ring_elem_pvt.h:279:3,
-    inlined from =E2=80=98soring_dequeue=E2=80=99 at ../lib/ring/soring.c:3=
-15:3,
-    inlined from =E2=80=98rte_soring_dequeue_bulk=E2=80=99 at ../lib/ring/s=
-oring.c:552:9,
-    inlined from =E2=80=98test_soring_stages=E2=80=99 at ../app/test/test_s=
-oring.c:181:14:
-../lib/ring/rte_ring_elem_pvt.h:250:25: warning: writing 32 bytes into a re=
-gion
-of size 0 [-Wstringop-overflow=3D]
-  250 |                         memcpy((obj + i), (const void *)(ring + idx=
-),
-32);
-      |                         ^
-../app/test/test_soring.c: In function =E2=80=98test_soring_stages=E2=80=99:
-../app/test/test_soring.c:157:18: note: at offset 480 into destination obje=
-ct
-=E2=80=98dequeued_objs=E2=80=99 of size 128
-  157 |         uint32_t dequeued_objs[32];
+n function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_basic_param=E2=80=99 at
+../app/test/test_argparse.c:118:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_bas=
+ic_param=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_basic_param=E2=80=99 at
+../app/test/test_argparse.c:123:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_bas=
+ic_param=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_name=E2=80=99 at
+../app/test/test_argparse.c:137:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_name=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_name=E2=80=99 at
+../app/test/test_argparse.c:142:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_name=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_name=E2=80=99 at
+../app/test/test_argparse.c:147:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_name=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_name=E2=80=99 at
+../app/test/test_argparse.c:152:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_name=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_name=E2=80=99 at
+../app/test/test_argparse.c:158:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_name=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_name=E2=80=99 at
+../app/test/test_argparse.c:163:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_name=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_name=E2=80=99 at
+../app/test/test_argparse.c:168:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_name=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_help=E2=80=99 at
+../app/test/test_argparse.c:182:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_help=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_has_val=E2=80=99 at
+../app/test/test_argparse.c:203:9:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_has=
+_val=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_saver=E2=80=99 at
+../app/test/test_argparse.c:221:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_saver=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_saver=E2=80=99 at
+../app/test/test_argparse.c:229:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_saver=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_saver=E2=80=99 at
+../app/test/test_argparse.c:237:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_saver=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_saver=E2=80=99 at
+../app/test/test_argparse.c:245:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_saver=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_flags=E2=80=99 at
+../app/test/test_argparse.c:263:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_flags=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_flags=E2=80=99 at
+../app/test/test_argparse.c:269:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_flags=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_flags=E2=80=99 at
+../app/test/test_argparse.c:281:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_flags=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_repeat=E2=80=99 at
+../app/test/test_argparse.c:296:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_repeat=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_repeat=E2=80=99 at
+../app/test/test_argparse.c:302:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_repeat=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_option=E2=80=99 at
+../app/test/test_argparse.c:317:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_opt=
+ion=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_option=E2=80=99 at
+../app/test/test_argparse.c:323:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_opt=
+ion=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_opt_autosave_parse_int_of_no_val=E2=
+=80=99 at
+../app/test/test_argparse.c:340:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function
+=E2=80=98test_argparse_opt_autosave_parse_int_of_no_val=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_opt_autosave_parse_int_of_required_=
+val=E2=80=99 at
+../app/test/test_argparse.c:373:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function
+=E2=80=98test_argparse_opt_autosave_parse_int_of_required_val=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_opt_autosave_parse_int_of_optional_=
+val=E2=80=99 at
+../app/test/test_argparse.c:417:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function
+=E2=80=98test_argparse_opt_autosave_parse_int_of_optional_val=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_opt_callback_parse_int_of_no_val=E2=
+=80=99 at
+../app/test/test_argparse.c:490:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function
+=E2=80=98test_argparse_opt_callback_parse_int_of_no_val=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_opt_callback_parse_int_of_required_=
+val=E2=80=99 at
+../app/test/test_argparse.c:541:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function
+=E2=80=98test_argparse_opt_callback_parse_int_of_required_val=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_opt_callback_parse_int_of_optional_=
+val=E2=80=99 at
+../app/test/test_argparse.c:605:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function
+=E2=80=98test_argparse_opt_callback_parse_int_of_optional_val=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_pos_autosave_parse_int=E2=80=99 at
+../app/test/test_argparse.c:659:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function
+=E2=80=98test_argparse_pos_autosave_parse_int=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_pos_callback_parse_int=E2=80=99 at
+../app/test/test_argparse.c:721:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&dst->args[i], &src->args[i],
+sizeof(src->args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function
+=E2=80=98test_argparse_pos_callback_parse_int=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
       |
 
 --=20
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17502016100.6E3ba9Fe.2594744
-Date: Wed, 18 Jun 2025 01:06:50 +0200
+--17502017260.8BcB1Ec.2595619
+Date: Wed, 18 Jun 2025 01:08:46 +0200
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -372,14 +653,14 @@ bz_new_table">
           <th>Bug ID</th>
           <td><a class=3D"bz_bug_link=20
           bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - possible overrun bugs in soring found with LTO"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1726">1726</a>
+   title=3D"UNCONFIRMED - arparse LTO warnings"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1727">1727</a>
           </td>
         </tr>
 
         <tr>
           <th>Summary</th>
-          <td>possible overrun bugs in soring found with LTO
+          <td>arparse LTO warnings
           </td>
         </tr>
 
@@ -450,273 +731,555 @@ bz_new_table">
         </tr></table>
       <p>
         <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">Enabling LTO in build allows compi=
-ler to detect more bugs such as out of bounds
-references inside libraries. Several warnings in soring
+          <pre class=3D"bz_comment_text">Enabling LTO detects more warnings=
+ in argparse test.
+Looks like argparse is referencing invalid arguments before checking.
 
-In function =E2=80=98__rte_ring_dequeue_elems_128=E2=80=99,
-    inlined from =E2=80=98__rte_ring_do_dequeue_elems=E2=80=99 at
-../lib/ring/rte_ring_elem_pvt.h:279:3,
-    inlined from =E2=80=98soring_dequeue=E2=80=99 at ../lib/ring/soring.c:3=
-15:3,
-    inlined from =E2=80=98rte_soring_dequeue_bulk=E2=80=99 at ../lib/ring/s=
-oring.c:552:9,
-    inlined from =E2=80=98test_soring_stages=E2=80=99 at ../app/test/test_s=
-oring.c:181:14:
-../lib/ring/rte_ring_elem_pvt.h:250:25: warning: writing 32 bytes into a re=
-gion
-of size 0 [-Wstringop-overflow=3D]
-  250 |                         memcpy((obj + i), (const void *)(ring + idx=
-),
-32);
-      |                         ^
-../app/test/test_soring.c: In function =E2=80=98test_soring_stages=E2=80=99:
-../app/test/test_soring.c:157:18: note: at offset 128 into destination obje=
-ct
-=E2=80=98dequeued_objs=E2=80=99 of size 128
-  157 |         uint32_t dequeued_objs[32];
-      |                  ^
-In function =E2=80=98__rte_ring_dequeue_elems_128=E2=80=99,
-    inlined from =E2=80=98__rte_ring_do_dequeue_elems=E2=80=99 at
-../lib/ring/rte_ring_elem_pvt.h:279:3,
-    inlined from =E2=80=98soring_dequeue=E2=80=99 at ../lib/ring/soring.c:3=
-15:3,
-    inlined from =E2=80=98rte_soring_dequeue_bulk=E2=80=99 at ../lib/ring/s=
-oring.c:552:9,
-    inlined from =E2=80=98test_soring_stages=E2=80=99 at ../app/test/test_s=
-oring.c:181:14:
-../lib/ring/rte_ring_elem_pvt.h:250:25: warning: writing 32 bytes into a re=
-gion
-of size 0 [-Wstringop-overflow=3D]
-  250 |                         memcpy((obj + i), (const void *)(ring + idx=
-),
-32);
-      |                         ^
-../app/test/test_soring.c: In function =E2=80=98test_soring_stages=E2=80=99:
-../app/test/test_soring.c:157:18: note: at offset 160 into destination obje=
-ct
-=E2=80=98dequeued_objs=E2=80=99 of size 128
-  157 |         uint32_t dequeued_objs[32];
-      |                  ^
-In function =E2=80=98__rte_ring_dequeue_elems_128=E2=80=99,
-    inlined from =E2=80=98__rte_ring_do_dequeue_elems=E2=80=99 at
-../lib/ring/rte_ring_elem_pvt.h:279:3,
-    inlined from =E2=80=98soring_dequeue=E2=80=99 at ../lib/ring/soring.c:3=
-15:3,
-    inlined from =E2=80=98rte_soring_dequeue_bulk=E2=80=99 at ../lib/ring/s=
-oring.c:552:9,
-    inlined from =E2=80=98test_soring_stages=E2=80=99 at ../app/test/test_s=
-oring.c:181:14:
-../lib/ring/rte_ring_elem_pvt.h:250:25: warning: writing 32 bytes into a re=
-gion
-of size 0 [-Wstringop-overflow=3D]
-  250 |                         memcpy((obj + i), (const void *)(ring + idx=
-),
-32);
-      |                         ^
-../app/test/test_soring.c: In function =E2=80=98test_soring_stages=E2=80=99:
-../app/test/test_soring.c:157:18: note: at offset 192 into destination obje=
-ct
-=E2=80=98dequeued_objs=E2=80=99 of size 128
-  157 |         uint32_t dequeued_objs[32];
-      |                  ^
-In function =E2=80=98__rte_ring_dequeue_elems_128=E2=80=99,
-    inlined from =E2=80=98__rte_ring_do_dequeue_elems=E2=80=99 at
-../lib/ring/rte_ring_elem_pvt.h:279:3,
-    inlined from =E2=80=98soring_dequeue=E2=80=99 at ../lib/ring/soring.c:3=
-15:3,
-    inlined from =E2=80=98rte_soring_dequeue_bulk=E2=80=99 at ../lib/ring/s=
-oring.c:552:9,
-    inlined from =E2=80=98test_soring_stages=E2=80=99 at ../app/test/test_s=
-oring.c:181:14:
-../lib/ring/rte_ring_elem_pvt.h:250:25: warning: writing 32 bytes into a re=
-gion
-of size 0 [-Wstringop-overflow=3D]
-  250 |                         memcpy((obj + i), (const void *)(ring + idx=
-),
-32);
-      |                         ^
-../app/test/test_soring.c: In function =E2=80=98test_soring_stages=E2=80=99:
-../app/test/test_soring.c:157:18: note: at offset 224 into destination obje=
-ct
-=E2=80=98dequeued_objs=E2=80=99 of size 128
-  157 |         uint32_t dequeued_objs[32];
-      |                  ^
-In function =E2=80=98__rte_ring_dequeue_elems_128=E2=80=99,
-    inlined from =E2=80=98__rte_ring_do_dequeue_elems=E2=80=99 at
-../lib/ring/rte_ring_elem_pvt.h:279:3,
-    inlined from =E2=80=98soring_dequeue=E2=80=99 at ../lib/ring/soring.c:3=
-15:3,
-    inlined from =E2=80=98rte_soring_dequeue_bulk=E2=80=99 at ../lib/ring/s=
-oring.c:552:9,
-    inlined from =E2=80=98test_soring_stages=E2=80=99 at ../app/test/test_s=
-oring.c:181:14:
-../lib/ring/rte_ring_elem_pvt.h:250:25: warning: writing 32 bytes into a re=
-gion
-of size 0 [-Wstringop-overflow=3D]
-  250 |                         memcpy((obj + i), (const void *)(ring + idx=
-),
-32);
-      |                         ^
-../app/test/test_soring.c: In function =E2=80=98test_soring_stages=E2=80=99:
-../app/test/test_soring.c:157:18: note: at offset 256 into destination obje=
-ct
-=E2=80=98dequeued_objs=E2=80=99 of size 128
-  157 |         uint32_t dequeued_objs[32];
-      |                  ^
-In function =E2=80=98__rte_ring_dequeue_elems_128=E2=80=99,
-    inlined from =E2=80=98__rte_ring_do_dequeue_elems=E2=80=99 at
-../lib/ring/rte_ring_elem_pvt.h:279:3,
-    inlined from =E2=80=98soring_dequeue=E2=80=99 at ../lib/ring/soring.c:3=
-15:3,
-    inlined from =E2=80=98rte_soring_dequeue_bulk=E2=80=99 at ../lib/ring/s=
-oring.c:552:9,
-    inlined from =E2=80=98test_soring_stages=E2=80=99 at ../app/test/test_s=
-oring.c:181:14:
-../lib/ring/rte_ring_elem_pvt.h:250:25: warning: writing 32 bytes into a re=
-gion
-of size 0 [-Wstringop-overflow=3D]
-  250 |                         memcpy((obj + i), (const void *)(ring + idx=
-),
-32);
-      |                         ^
-../app/test/test_soring.c: In function =E2=80=98test_soring_stages=E2=80=99:
-../app/test/test_soring.c:157:18: note: at offset 288 into destination obje=
-ct
-=E2=80=98dequeued_objs=E2=80=99 of size 128
-  157 |         uint32_t dequeued_objs[32];
-      |                  ^
-In function =E2=80=98__rte_ring_dequeue_elems_128=E2=80=99,
-    inlined from =E2=80=98__rte_ring_do_dequeue_elems=E2=80=99 at
-../lib/ring/rte_ring_elem_pvt.h:279:3,
-    inlined from =E2=80=98soring_dequeue=E2=80=99 at ../lib/ring/soring.c:3=
-15:3,
-    inlined from =E2=80=98rte_soring_dequeue_bulk=E2=80=99 at ../lib/ring/s=
-oring.c:552:9,
-    inlined from =E2=80=98test_soring_stages=E2=80=99 at ../app/test/test_s=
-oring.c:181:14:
-../lib/ring/rte_ring_elem_pvt.h:250:25: warning: writing 32 bytes into a re=
-gion
-of size 0 [-Wstringop-overflow=3D]
-  250 |                         memcpy((obj + i), (const void *)(ring + idx=
-),
-32);
-      |                         ^
-../app/test/test_soring.c: In function =E2=80=98test_soring_stages=E2=80=99:
-../app/test/test_soring.c:157:18: note: at offset 320 into destination obje=
-ct
-=E2=80=98dequeued_objs=E2=80=99 of size 128
-  157 |         uint32_t dequeued_objs[32];
-      |                  ^
-In function =E2=80=98__rte_ring_dequeue_elems_128=E2=80=99,
-    inlined from =E2=80=98__rte_ring_do_dequeue_elems=E2=80=99 at
-../lib/ring/rte_ring_elem_pvt.h:279:3,
-    inlined from =E2=80=98soring_dequeue=E2=80=99 at ../lib/ring/soring.c:3=
-15:3,
-    inlined from =E2=80=98rte_soring_dequeue_bulk=E2=80=99 at ../lib/ring/s=
-oring.c:552:9,
-    inlined from =E2=80=98test_soring_stages=E2=80=99 at ../app/test/test_s=
-oring.c:181:14:
-../lib/ring/rte_ring_elem_pvt.h:250:25: warning: writing 32 bytes into a re=
-gion
-of size 0 [-Wstringop-overflow=3D]
-  250 |                         memcpy((obj + i), (const void *)(ring + idx=
-),
-32);
-      |                         ^
-../app/test/test_soring.c: In function =E2=80=98test_soring_stages=E2=80=99:
-../app/test/test_soring.c:157:18: note: at offset 352 into destination obje=
-ct
-=E2=80=98dequeued_objs=E2=80=99 of size 128
-  157 |         uint32_t dequeued_objs[32];
-      |                  ^
-In function =E2=80=98__rte_ring_dequeue_elems_128=E2=80=99,
-    inlined from =E2=80=98__rte_ring_do_dequeue_elems=E2=80=99 at
-../lib/ring/rte_ring_elem_pvt.h:279:3,
-    inlined from =E2=80=98soring_dequeue=E2=80=99 at ../lib/ring/soring.c:3=
-15:3,
-    inlined from =E2=80=98rte_soring_dequeue_bulk=E2=80=99 at ../lib/ring/s=
-oring.c:552:9,
-    inlined from =E2=80=98test_soring_stages=E2=80=99 at ../app/test/test_s=
-oring.c:181:14:
-../lib/ring/rte_ring_elem_pvt.h:250:25: warning: writing 32 bytes into a re=
-gion
-of size 0 [-Wstringop-overflow=3D]
-  250 |                         memcpy((obj + i), (const void *)(ring + idx=
-),
-32);
-      |                         ^
-../app/test/test_soring.c: In function =E2=80=98test_soring_stages=E2=80=99:
-../app/test/test_soring.c:157:18: note: at offset 384 into destination obje=
-ct
-=E2=80=98dequeued_objs=E2=80=99 of size 128
-  157 |         uint32_t dequeued_objs[32];
-      |                  ^
-In function =E2=80=98__rte_ring_dequeue_elems_128=E2=80=99,
-    inlined from =E2=80=98__rte_ring_do_dequeue_elems=E2=80=99 at
-../lib/ring/rte_ring_elem_pvt.h:279:3,
-    inlined from =E2=80=98soring_dequeue=E2=80=99 at ../lib/ring/soring.c:3=
-15:3,
-    inlined from =E2=80=98rte_soring_dequeue_bulk=E2=80=99 at ../lib/ring/s=
-oring.c:552:9,
-    inlined from =E2=80=98test_soring_stages=E2=80=99 at ../app/test/test_s=
-oring.c:181:14:
-../lib/ring/rte_ring_elem_pvt.h:250:25: warning: writing 32 bytes into a re=
-gion
-of size 0 [-Wstringop-overflow=3D]
-  250 |                         memcpy((obj + i), (const void *)(ring + idx=
-),
-32);
-      |                         ^
-../app/test/test_soring.c: In function =E2=80=98test_soring_stages=E2=80=99:
-../app/test/test_soring.c:157:18: note: at offset 416 into destination obje=
-ct
-=E2=80=98dequeued_objs=E2=80=99 of size 128
-  157 |         uint32_t dequeued_objs[32];
-      |                  ^
-In function =E2=80=98__rte_ring_dequeue_elems_128=E2=80=99,
-    inlined from =E2=80=98__rte_ring_do_dequeue_elems=E2=80=99 at
-../lib/ring/rte_ring_elem_pvt.h:279:3,
-    inlined from =E2=80=98soring_dequeue=E2=80=99 at ../lib/ring/soring.c:3=
-15:3,
-    inlined from =E2=80=98rte_soring_dequeue_bulk=E2=80=99 at ../lib/ring/s=
-oring.c:552:9,
-    inlined from =E2=80=98test_soring_stages=E2=80=99 at ../app/test/test_s=
-oring.c:181:14:
-../lib/ring/rte_ring_elem_pvt.h:250:25: warning: writing 32 bytes into a re=
-gion
-of size 0 [-Wstringop-overflow=3D]
-  250 |                         memcpy((obj + i), (const void *)(ring + idx=
-),
-32);
-      |                         ^
-../app/test/test_soring.c: In function =E2=80=98test_soring_stages=E2=80=99:
-../app/test/test_soring.c:157:18: note: at offset 448 into destination obje=
-ct
-=E2=80=98dequeued_objs=E2=80=99 of size 128
-  157 |         uint32_t dequeued_objs[32];
-      |                  ^
-In function =E2=80=98__rte_ring_dequeue_elems_128=E2=80=99,
-    inlined from =E2=80=98__rte_ring_do_dequeue_elems=E2=80=99 at
-../lib/ring/rte_ring_elem_pvt.h:279:3,
-    inlined from =E2=80=98soring_dequeue=E2=80=99 at ../lib/ring/soring.c:3=
-15:3,
-    inlined from =E2=80=98rte_soring_dequeue_bulk=E2=80=99 at ../lib/ring/s=
-oring.c:552:9,
-    inlined from =E2=80=98test_soring_stages=E2=80=99 at ../app/test/test_s=
-oring.c:181:14:
-../lib/ring/rte_ring_elem_pvt.h:250:25: warning: writing 32 bytes into a re=
-gion
-of size 0 [-Wstringop-overflow=3D]
-  250 |                         memcpy((obj + i), (const void *)(ring + idx=
-),
-32);
-      |                         ^
-../app/test/test_soring.c: In function =E2=80=98test_soring_stages=E2=80=99:
-../app/test/test_soring.c:157:18: note: at offset 480 into destination obje=
-ct
-=E2=80=98dequeued_objs=E2=80=99 of size 128
-  157 |         uint32_t dequeued_objs[32];
+n function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_basic_param=E2=80=99 at
+../app/test/test_argparse.c:118:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_bas=
+ic_param=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_basic_param=E2=80=99 at
+../app/test/test_argparse.c:123:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_bas=
+ic_param=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_name=E2=80=99 at
+../app/test/test_argparse.c:137:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_name=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_name=E2=80=99 at
+../app/test/test_argparse.c:142:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_name=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_name=E2=80=99 at
+../app/test/test_argparse.c:147:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_name=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_name=E2=80=99 at
+../app/test/test_argparse.c:152:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_name=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_name=E2=80=99 at
+../app/test/test_argparse.c:158:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_name=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_name=E2=80=99 at
+../app/test/test_argparse.c:163:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_name=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_name=E2=80=99 at
+../app/test/test_argparse.c:168:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_name=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_help=E2=80=99 at
+../app/test/test_argparse.c:182:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_help=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_has_val=E2=80=99 at
+../app/test/test_argparse.c:203:9:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_has=
+_val=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_saver=E2=80=99 at
+../app/test/test_argparse.c:221:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_saver=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_saver=E2=80=99 at
+../app/test/test_argparse.c:229:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_saver=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_saver=E2=80=99 at
+../app/test/test_argparse.c:237:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_saver=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_saver=E2=80=99 at
+../app/test/test_argparse.c:245:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_saver=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_flags=E2=80=99 at
+../app/test/test_argparse.c:263:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_flags=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_flags=E2=80=99 at
+../app/test/test_argparse.c:269:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_flags=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_flags=E2=80=99 at
+../app/test/test_argparse.c:281:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_flags=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_repeat=E2=80=99 at
+../app/test/test_argparse.c:296:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_repeat=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_arg_repeat=E2=80=99 at
+../app/test/test_argparse.c:302:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_arg=
+_repeat=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_option=E2=80=99 at
+../app/test/test_argparse.c:317:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_opt=
+ion=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_invalid_option=E2=80=99 at
+../app/test/test_argparse.c:323:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function =E2=80=98test_argparse_invalid_opt=
+ion=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_opt_autosave_parse_int_of_no_val=E2=
+=80=99 at
+../app/test/test_argparse.c:340:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function
+=E2=80=98test_argparse_opt_autosave_parse_int_of_no_val=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_opt_autosave_parse_int_of_required_=
+val=E2=80=99 at
+../app/test/test_argparse.c:373:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function
+=E2=80=98test_argparse_opt_autosave_parse_int_of_required_val=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_opt_autosave_parse_int_of_optional_=
+val=E2=80=99 at
+../app/test/test_argparse.c:417:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function
+=E2=80=98test_argparse_opt_autosave_parse_int_of_optional_val=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_opt_callback_parse_int_of_no_val=E2=
+=80=99 at
+../app/test/test_argparse.c:490:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function
+=E2=80=98test_argparse_opt_callback_parse_int_of_no_val=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_opt_callback_parse_int_of_required_=
+val=E2=80=99 at
+../app/test/test_argparse.c:541:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function
+=E2=80=98test_argparse_opt_callback_parse_int_of_required_val=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_opt_callback_parse_int_of_optional_=
+val=E2=80=99 at
+../app/test/test_argparse.c:605:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function
+=E2=80=98test_argparse_opt_callback_parse_int_of_optional_val=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_pos_autosave_parse_int=E2=80=99 at
+../app/test/test_argparse.c:659:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function
+=E2=80=98test_argparse_pos_autosave_parse_int=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
+      |                                    ^
+In function =E2=80=98test_argparse_copy=E2=80=99,
+    inlined from =E2=80=98test_argparse_init_obj=E2=80=99 at ../app/test/te=
+st_argparse.c:108:2,
+    inlined from =E2=80=98test_argparse_pos_callback_parse_int=E2=80=99 at
+../app/test/test_argparse.c:721:8:
+../app/test/test_argparse.c:96:17: warning: =E2=80=98memcpy=E2=80=99 writin=
+g 56 bytes into a
+region of size 0 overflows the destination [-Wstringop-overflow=3D]
+   96 |                 memcpy(&amp;dst-&gt;args[i], &amp;src-&gt;args[i],
+sizeof(src-&gt;args[i]));
+      |                 ^
+../app/test/test_argparse.c: In function
+=E2=80=98test_argparse_pos_callback_parse_int=E2=80=99:
+../app/test/test_argparse.c:106:36: note: at offset 184 into destination ob=
+ject
+=E2=80=98obj=E2=80=99 of size 184
+  106 |         static struct rte_argparse obj =3D argparse_templater();
       |
           </pre>
         </div>
@@ -734,7 +1297,7 @@ ct
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1726">
+?id=3D1727">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -743,4 +1306,4 @@ ication">
     </body>
 </html>=
 
---17502016100.6E3ba9Fe.2594744--
+--17502017260.8BcB1Ec.2595619--
