@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7E1AC71136
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Jun 2025 15:20:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C59C2C7115B
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Jun 2025 15:22:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2444E41104;
-	Tue, 17 Jun 2025 17:20:11 +0200 (CEST)
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com
- [209.85.222.179])
- by mails.dpdk.org (Postfix) with ESMTP id 4AAD441104
- for <dev@dpdk.org>; Tue, 17 Jun 2025 17:20:09 +0200 (CEST)
-Received: by mail-qk1-f179.google.com with SMTP id
- af79cd13be357-7d094d1fd7cso839177785a.3
- for <dev@dpdk.org>; Tue, 17 Jun 2025 08:20:09 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D2AD740E19;
+	Tue, 17 Jun 2025 17:22:45 +0200 (CEST)
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com
+ [209.85.160.181])
+ by mails.dpdk.org (Postfix) with ESMTP id DB94D402C5
+ for <dev@dpdk.org>; Tue, 17 Jun 2025 17:22:43 +0200 (CEST)
+Received: by mail-qt1-f181.google.com with SMTP id
+ d75a77b69052e-4a4bb155edeso70467071cf.2
+ for <dev@dpdk.org>; Tue, 17 Jun 2025 08:22:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1750173608;
- x=1750778408; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1750173763;
+ x=1750778563; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=1zVC3+ndJepJb9H4NjYgzvYv7P6mHlwKV6J4zQZPV6c=;
- b=bOgvfoKzmuO6DSpN7073hTesza0eHhtGK5oVj+ZSVwc3jeOmxM98Fj62uG8kQblaaj
- HVfl5k31/AaOY0C+kVELAbxpvK2LkfFTZb5rowPP7ftf31NxzL7ssgM5bgJ5c0fuqlNM
- vbX44TjYIQd5khd7FOQi/Mk9J2OUIgejfEaBWZoDgV+t0d3Td+1K0ZvfRd2aIXglABo0
- Eml0NvUxxYSd/IJgTtTTZO1f830PYv7wIveTO/GxTV4y/v2A7xY5SBtpHMBLetswoniy
- Jg3rb5MKEHxeOriLaXLFx6JxRwZZ5FNGq/YYZc0rdLbDPKskwRfQM1rx/J3qaUihyFUv
- H3hQ==
+ bh=wQjCatVikXoE/PpDu/gGcOq/OvcnLnFtDj6yaHpIeMk=;
+ b=bJmTIx0nxv9HClZKdlva2NcbIqMzbiM2xzJKkkPn7e2ZneUhY/Kue2EKlRzoHZ4gOj
+ BsanzieVbBMIQScMYk54MoyNLpQVEpsM6iftb1NdNOSTDVcX+WpyalSkmLtMD9itqm7G
+ 5dR/EFi2TKmHJDBJ0oAtHZSV0JyiV+KhGDdGTi+ozEkTiYPHfszJgrZpXF4vktVNMXEn
+ +Vb7rHQ6pA5tACvoF0Reu88MDm5FD4CctGUQ86FCmGycX++4DFxaCL5A+VFN03zmKmZN
+ fsA8wwrSJUz3uek5Mfs15fjJluXvtH3nztGargxhGFIEtSsX7YP+JegYvNJE2ocRdnw1
+ /mYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1750173608; x=1750778408;
+ d=1e100.net; s=20230601; t=1750173763; x=1750778563;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=1zVC3+ndJepJb9H4NjYgzvYv7P6mHlwKV6J4zQZPV6c=;
- b=TWdqQq8d9k4FnAEVuSTXCxNzYiiLUNWb9Bm7rxq4Kxb0qY3jEJPOQ/7vzsKKxku/Br
- RaAmJ7pUOfwnNdTkyTGLrbN+wsBDEY52WM5/if7OA2Np5CUU4yYwoeCU/miCxRCbAPts
- TSbVYNOW3PTysNrh+51hLyutrVn6CPNXZfqHh6CSEI3R+61LbdogSE2RyeeDoiCvYEe2
- mCWw6AF/9Pn60oF29lKQUCKOow91gZEzua+WUI9r7NQMS6CQRH3A7AyZZWXE24aD65ys
- kRonXTExF0VgcIII22dXR9E5A5GYYSjuZpPdEaj8ATRncuGMWZZ8NZMRXPSjrTBv5tEN
- 8LXA==
-X-Gm-Message-State: AOJu0YwD7Mp9Hgsr70Yph1kKdpXlHbqpHcVKgJcwt3XcWAZ/spveGSPy
- 6WPXXwWxWlaffhGWRL7Z1AXLGEq22wIQpPWDj5jrdx+ThbC1iqfT4YY14xSzNyk4jGP561ei58u
- AEMVj
-X-Gm-Gg: ASbGncv5ATdg1ovtZ/ABrh4QCcY5jFOIzCsX8/Tw2MpdeSNtDG9/vxEvGPV2UtpSNrd
- ybMJg0PdYbxKgW4EzU4Szul2TvwaLlMasZLNYc75zbL53AXNKsBOa0m0oXUjAmRP3Tckli5dU8K
- C24vdX1ivRtPTpPBSG9R6c4CQqY+Y7Q9rzB5rd3zGISM0TMnIPNg0YTsWR1OI2i5SUOZeM3KdvL
- glCwI+bf2yK5EOUINU3vXnh2a58qjo8m6riG2tiQ7MCf1LOo5oeDa0Q6lZQR+NvzV/rLWjJiGcT
- 4jXU1ETUsr9AFS0IA/tcVwJr7DuGKqg0+MXEWY7QGzFrLMy0ar6tAKbaP6r5zbKBXJNvPNoQD8P
- SA2mpPPALi36+MZOT+ay1TzyM4lQBHNZwk82btdk=
-X-Google-Smtp-Source: AGHT+IFd3/JrRH8dZY5ZHCiVvFr3t6iwqmbahq8ozBF5CDtgPMBq1I+zuclueM03lV6NJxxSkcPZXw==
-X-Received: by 2002:a05:620a:44d0:b0:7d3:90ab:804 with SMTP id
- af79cd13be357-7d3c6d124eemr2212782085a.58.1750173608552; 
- Tue, 17 Jun 2025 08:20:08 -0700 (PDT)
+ bh=wQjCatVikXoE/PpDu/gGcOq/OvcnLnFtDj6yaHpIeMk=;
+ b=TRAhY3k31cMNf0hA68riSdEXkSFHvkIFx+C7thn6l7Cls8Yi4VGo0Ho3XLJQCGWJyF
+ q3872sMCxt/17EnlRDHKwOTqv4//4FFT3ut0V7DG0r1WLDxZ4yA0JZ7BK3jMtxe/DqZE
+ IfWtwLrVdf/tJK1d3L16tJJO+Cdzt3Mr3ePj1tXNbWb22TKCj3Ct+sd5l9zkqSLrIQsx
+ QP90H0j9GgQb2SXiKhBEsGvsU2zl6+QjxArK4FpXsRzcxKCftcY7pnvKXcBGPVncmsKF
+ q/kb5STc14ZINXBsCZ0F3hZHEaYZ3Yw0eBoHkhQW//7ZAluGUj3qKWE5RcqCG2FXno02
+ nqnA==
+X-Gm-Message-State: AOJu0YwOCUkTVHqzlbynQEYxCntMQL7md7BzOv8x2znPkXnRjhPk/rJ0
+ /84x7UFoqnVrCDlvV2kpWIRBe08nJ8wV1IA/RV4Kp89v0uNXfnFnDiXXb8i2uzpnCaRxIJ045zw
+ dx1df
+X-Gm-Gg: ASbGncvbA989bi4sJYjDbg1uBCpMomJNBGCvxWgM9KxybOQwctrtTnxgn+Icd3W2IQi
+ po4/AH/B6lyNw8IHmjxUgQ6ENwgEpYKc65sto6RNj8WWlyRaZxQ1Q8s2bPQpM1LcSq8YE+Gk+FD
+ zpQ+3g2AJQ0tzmhxA0ArCKhuacgNXH/39ext4Ok9BMtmqlSGqngIOimlguERPP4Oxb36a9gQBFU
+ TXe3dF1enRIXbTIeNNy5Mm3leSQCrwzFPNrhVusFl/EkeDAEHoTruGxgvwN9wlV0jtIEvI5v8BU
+ v71KPgOul04T+F8Qk2NQs411fG27jbV00bkZb+vk/33W86EA1keWeMSOoWv0Vh8j6oK9B2JM4BP
+ kvWQdbqZpktmjbydzCD/UuDrqC9PFK+7R0m/3tvo=
+X-Google-Smtp-Source: AGHT+IHSCMcIrEIcgqqLA9zj59iCyYyLf0T6EzVnhvg3QmwIRloW14RDdBwJtaAeIE5cU7SLC4LxRg==
+X-Received: by 2002:ac8:5ace:0:b0:494:78d5:baea with SMTP id
+ d75a77b69052e-4a73c662a0amr190345341cf.51.1750173763016; 
+ Tue, 17 Jun 2025 08:22:43 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7d3b8eacbc7sm658702985a.62.2025.06.17.08.20.07
+ d75a77b69052e-4a72a2f4fc5sm62594191cf.26.2025.06.17.08.22.42
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 17 Jun 2025 08:20:08 -0700 (PDT)
-Date: Tue, 17 Jun 2025 08:20:05 -0700
+ Tue, 17 Jun 2025 08:22:42 -0700 (PDT)
+Date: Tue, 17 Jun 2025 08:22:39 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Junlong Wang <wang.junlong1@zte.com.cn>
-Cc: dev@dpdk.org, stable@dpdk.org
-Subject: Re: [PATCH v2 1/5] net/zxdh: fix meson.build issus in compilation
-Message-ID: <20250617082005.2977069a@hermes.local>
-In-Reply-To: <20250617020503.3554511-1-wang.junlong1@zte.com.cn>
-References: <20250607023020.3051575-1-wang.junlong1@zte.com.cn>
- <20250617020503.3554511-1-wang.junlong1@zte.com.cn>
+To: Jiawen Wu <jiawenwu@trustnetic.com>
+Cc: dev@dpdk.org, zaiyuwang@trustnetic.com
+Subject: Re: [PATCH v3 00/17] Fixes and supports for Wangxun NICs
+Message-ID: <20250617082239.64d9f884@hermes.local>
+In-Reply-To: <20250613084159.22184-1-jiawenwu@trustnetic.com>
+References: <00DEAE896AFE0D2D+20250606080117.183198-1-jiawenwu@trustnetic.com>
+ <20250613084159.22184-1-jiawenwu@trustnetic.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,46 +82,59 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 17 Jun 2025 10:04:59 +0800
-Junlong Wang <wang.junlong1@zte.com.cn> wrote:
+On Fri, 13 Jun 2025 16:41:42 +0800
+Jiawen Wu <jiawenwu@trustnetic.com> wrote:
 
-> fix meson.build issus in compilation, which
-> caused the inability to compile in the arm64 environment.
+> Fix some bugs and improve flow filters.
 > 
-> Fixes: 29e89288ff14 ("net/zxdh: add driver skeleton")
-> Cc: stable@dpdk.org
+> v2 -> v3:
+> - Split the patch 2/12 for various changes
 > 
-> Signed-off-by: Junlong Wang <wang.junlong1@zte.com.cn>
-> ---
+> v1 -> v2:
+> - Add new flow feature geneve and gre into txgbe.ini
+> 
+> Jiawen Wu (17):
+>   net/txgbe: support flow filter for VF
+>   net/txgbe: fix incorrect parsing to ntuple filter
+>   net/txgbe: fix raw pattern match for FDIR rules
+>   net/txgbe: fix packet type for FDIR filters
+>   net/txgbe: fix to create FDIR filters for SCTP packets
+>   net/txgbe: fix FDIR perfect mode for IPv6 packets
+>   net/txgbe: fix to create FDIR filters for tunnel packets
+>   net/txgbe: fix reserved extra FDIR headroom
+>   net/txgbe: support RSS offload for SCTP port
+>   net/ngbe: support RSS offload for SCTP port
+>   net/txgbe: fix MAC control frame forwarding
+>   net/ngbe: fix MAC control frame forwarding
+>   net/txgbe: fix incorrect device statistics
+>   net/ngbe: fix incorrect device statistics
+>   net/txgbe: restrict VLAN strip configuration on VF
+>   net/ngbe: restrict VLAN strip configuration on VF
+>   net/txgbe: add missing LRO flag in mbuf when LRO enabled
+> 
+>  doc/guides/nics/features/txgbe.ini  |   2 +
+>  drivers/net/ngbe/base/ngbe_hw.c     |   9 +
+>  drivers/net/ngbe/base/ngbe_regs.h   |   2 +
+>  drivers/net/ngbe/base/ngbe_type.h   |   1 +
+>  drivers/net/ngbe/ngbe_ethdev.c      |   6 +-
+>  drivers/net/ngbe/ngbe_ethdev.h      |   2 +
+>  drivers/net/ngbe/ngbe_ethdev_vf.c   |  24 +-
+>  drivers/net/ngbe/ngbe_rxtx.c        |   8 +
+>  drivers/net/txgbe/base/txgbe_hw.c   |  23 +-
+>  drivers/net/txgbe/base/txgbe_hw.h   |   1 +
+>  drivers/net/txgbe/base/txgbe_mbx.h  |  17 +
+>  drivers/net/txgbe/base/txgbe_regs.h |   4 +
+>  drivers/net/txgbe/base/txgbe_type.h |  21 +-
+>  drivers/net/txgbe/base/txgbe_vf.c   |  29 +
+>  drivers/net/txgbe/base/txgbe_vf.h   |   2 +
+>  drivers/net/txgbe/txgbe_ethdev.c    |  18 +-
+>  drivers/net/txgbe/txgbe_ethdev.h    |  16 +-
+>  drivers/net/txgbe/txgbe_ethdev_vf.c | 111 +++-
+>  drivers/net/txgbe/txgbe_fdir.c      |  62 +-
+>  drivers/net/txgbe/txgbe_flow.c      | 857 ++++++++++++++++++++--------
+>  drivers/net/txgbe/txgbe_rxtx.c      |  18 +
+>  21 files changed, 945 insertions(+), 288 deletions(-)
+> 
 
-This series looks much better but please revise the commit message (again).
-To help with stable (and user reports) it is better to include more
-precise wording of what the problem is. It is clearer if you use the
-word "fix" instead of "modify". Also, describe what the bug is.
-This applies to several of these patches.
-If it is a bug fix it could be marked for stable. Although this driver
-is new and experimental so won't get backported.
-
-Instead of:
-
-Subject: net/zxdh: modify some MAC config issues
-
-modify some mac config issues,
-which were discovered during the testing process.
-
-Fixes: 1c8f68b64cfc ("net/zxdh: optimize MAC operations")
-
-Signed-off-by: Junlong Wang <wang.junlong1@zte.com.cn>
-
-
-Something like:
-
-Subject: net/zxdh: fix issues related to MAC configuration
-
-Fix error handling when MAC configuration fails.
-This is issue was discovered during internal testing.
-
-Fixes: 1c8f68b64cfc ("net/zxdh: optimize MAC operations")
-Cc: stable@dpdk.org
-
-Signed-off-by: Junlong Wang <wang.junlong1@zte.com.cn>
+Please don't mix new features and bug fixed into the same patchset.
+Will continue review of the patchset as is, but avoid this in future.
