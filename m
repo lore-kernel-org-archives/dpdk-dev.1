@@ -2,32 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01316C7115A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Jun 2025 11:05:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D21D1C7115A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Jun 2025 11:05:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E97CC42D9F;
-	Wed, 18 Jun 2025 13:05:39 +0200 (CEST)
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
- by mails.dpdk.org (Postfix) with ESMTP id 3623542D80;
- Wed, 18 Jun 2025 13:05:36 +0200 (CEST)
-X-QQ-mid: esmtpgz10t1750244728t0d81f284
-X-QQ-Originating-IP: WiCC6ajt35NEmchGRGY7G3Ob95JtdcrBk2Xbv0tK24A=
+	by mails.dpdk.org (Postfix) with ESMTP id 5062042D92;
+	Wed, 18 Jun 2025 13:05:42 +0200 (CEST)
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+ by mails.dpdk.org (Postfix) with ESMTP id 346CE42D90;
+ Wed, 18 Jun 2025 13:05:38 +0200 (CEST)
+X-QQ-mid: esmtpgz10t1750244735t7b692825
+X-QQ-Originating-IP: w0MEG03rf58iRG7BGADaS6iy5a993uGS9tbSGMKj6f4=
 Received: from localhost.localdomain ( [203.174.112.180])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Wed, 18 Jun 2025 19:05:22 +0800 (CST)
+ id ; Wed, 18 Jun 2025 19:05:32 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 4490012609733460719
-EX-QQ-RecipientCnt: 6
+X-BIZMAIL-ID: 8175233228688132742
+EX-QQ-RecipientCnt: 5
 From: Wenbo Cao <caowenbo@mucse.com>
-To: stephen@networkplumber.org, Wenbo Cao <caowenbo@mucse.com>,
- Ferruh Yigit <ferruh.yigit@amd.com>
+To: stephen@networkplumber.org,
+	Wenbo Cao <caowenbo@mucse.com>
 Cc: dev@dpdk.org,
 	yaojun@mucse.com,
 	stable@dpdk.org
-Subject: [PATCH v0 1/3] net/rnp: add check firmware respond info
-Date: Wed, 18 Jun 2025 19:05:14 +0800
-Message-Id: <20250618110516.90113-2-caowenbo@mucse.com>
+Subject: [PATCH v0 3/3] net/rnp: fix TSO segmentation for packets of 64KB
+Date: Wed, 18 Jun 2025 19:05:16 +0800
+Message-Id: <20250618110516.90113-4-caowenbo@mucse.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250618110516.90113-1-caowenbo@mucse.com>
 References: <20250618110516.90113-1-caowenbo@mucse.com>
@@ -35,23 +35,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz5a-0
-X-QQ-XMAILINFO: NQ/JKI5VIEMilu5fCp4A61FSb7v3lPHfijfJbI8WOG7ASEvHAXP7G1OR
- iIxp8RTWrWufzk/uP8FT630CnTrkvHKY5S0+u4WQfRDjYzB4+t5GOU8xykR6IaMM11cd+/j
- kEQeYzDBCHjIv3gcjVGdOXyb0rOTVSB+E3irJGLVJQvB4G0MULhhcz0yjXx8HkUNipTs0Aq
- R0DiuzDYUoZjEPNuJdSGH5/2BIzPl/3JnP+2mcWCLuWulxIOwnUitBRAbgrF25e5lf9YLgS
- rC39+1EWMUDRpqqMddhU32L9mrVexYbfp1B1BImXIA1U4xCn+VtNQfAfzF51pi+KJ78knm7
- zDGe3rbNb4GxBr7Arc9DVFEFxPJUGCL4qnRlOOOgi0ZwWtFeTanqJW2zOg0EbhiyHsc5Ouj
- BAm7vJcm9ye1xkfSCtUpigdCgEPfOQex7Gu0lHpTj1yDkAksbc4SdIJuM25GWfNLX7pzMpc
- 6Z7ZVlK9CykdnuMOwDa+eKtT3fmWNd4exBfqmdgZyhQAg+ugF41kEN2XrLBiGuXzNdkodMS
- UydnAVg3DDmL5mJg7jMmzPifR1fcJxcryd8LFDGljnyF5mn3k0mxVFNGbS/HiBTyTuffpNg
- jS1UzB+SszVxXrkKcrqbNzrGUOyAmv7vhhHoa6oWidCu6Q1Ot3jF9fnOrqPYi0pQrGB+xAR
- o3SwjETE/X23qiHESOhxdM1RFqPOD/z5ZyBTMBnc2Zm0fR4J8PA1NbUkICL1luQviM2zTy4
- h2nlvbViXLcUAsXyJwQ9tN1hgJTs00NOYBisOYD3zvCjt77ufU+T1AsV9Y61DDRSfgJ1GID
- 3x58yZ4Mww+UuZyu2YpklEOW1fhG0t3xCCnwoPDoSTlGMJKb8QpN0vATykGgPJ9xIZ5ZPsq
- 0x3/uEKk02WrFwg9Ayuv1PKgjMHzmRq7eJRjzc9ekprPcAHmWHby4J3AuSPrnFIcplT9kT4
- wJF/VUATkU7ieQeSSgNDf/MOZgKbvXgGVCxRHvHlaaEi4o1Ie8HKNRfmM5j/UKn3GT7f1Hj
- jutn+pfcVlHXvn7U+W
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-XMAILINFO: M/zeJvo3IvQszds0Jj47/n6Tf4204AWKX1H5I91WLzf3146oOgRnFAsi
+ qr5gw/0JsCGMUK1MQrNqexQRSYsdX5jWgddyyPyXSu5YpOa8dqqsjWMQZ970UbEe3SinOb9
+ +r8MGTMwnXKA06XNOBM+dbyF1VMCn7vbij7h66YCnhB36H5aCKl1T7hmEmxlG3NeWgRH3PV
+ yUukGthNIes6Ypoc5pj4AP5q+5OYOj4O9kWsftkscuVvINLWzTI8KMSGmJVYeAQbLRf8pnq
+ b3MTpUdkFcykoO+tQBQ3735LC51rn4hBVpa8pE3VY5chk4DcsifndNFiJPoaRDIancEqaqp
+ bmW/buSF1xhxJi/U3UC+bdus68nAI6GPOVIF2wqyTthSCLGQ9CDkHCCaBYW2cb2F+FYtyOq
+ KbqnAoGCbi1e2SltIKCcVAdPgq4rvjCLqLhDHnQd5FoLcbQQnz8lmit2lOVt3T8T60pA8dY
+ myb6UGN2ZAyAE7X2zXzyN/gorESgUyHJpPgfOnCtHr0ZzgpTnQBOxc8b7REtP/ToC9S1rLV
+ WF51GX007V5IHwHY2svfyNfug2IAuX5b0yBmX+zpj9f2Bcfso9FU/ctLBXx1SLNnX0vaUMA
+ KPVY6Z9l1bY1fSd0RCqSo41QV7Xwt0vayB8vVvK9cdIq4sNBRUfjSTwXlfbdIVkUKI7jKxr
+ lyo7V8IEohZpxYNCXUN4uQHnIH/kNcoH2mJpTgFvSZYaOx3ZiwRY8mKB4qXoWLFzinYbfO9
+ E/5zrXlUecQf+dN7LJr6UMsJ3iv1k2fsS6iUOVj/p/6zjt0qYLy2z0CkQ/SzZhC02WSglxN
+ HiUSf8aetpHNvUrdUVL4Izj4VHffPkxLUkamyg/szGih5910oDlzhbTB448Rb8ctjl+mHR0
+ Od91sCmDrrqyeBjuwtVyrwqjVdF+gzEd6VPf3n5PcNt9hHKto5lRodC74JtC/Gg7KR8Scjf
+ 6474bbYmoT1SGCJfbT5on/P0GPlqlyw2OJvvVeO3aDcuEyi8SAM2MyFUDNITs4COE+ses1e
+ 9EQkGZTUmN2E9oEKPQ
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -66,113 +66,101 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add logic checks at critical points to detect potentially illegal
-firmware information, preventing subsequent logic exceptions.
+Packets exceeding 64KB TSO size must be fragmented
+across multiple descriptors,Otherwise, it may cause
+TSO fragmentation anomalies.
 
-Fixes: 52aae4ed4ffb ("net/rnp: add device capabilities")
-Fixes: 52dfb84e14be ("net/rnp: add device init and uninit")
+Fixes: 4530e70f1e32 ("net/rnp: support Tx TSO offload")
 Cc: stable@dpdk.org
 
 Signed-off-by: Wenbo Cao <caowenbo@mucse.com>
 ---
- drivers/net/rnp/base/rnp_fw_cmd.h |  1 +
- drivers/net/rnp/base/rnp_mbx_fw.c | 15 ++++++++++++++-
- drivers/net/rnp/rnp_ethdev.c      | 16 ++++++++--------
- 3 files changed, 23 insertions(+), 9 deletions(-)
+ drivers/net/rnp/rnp_rxtx.c | 48 ++++++++++++++++++++++++++++++++++----
+ 1 file changed, 44 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/rnp/base/rnp_fw_cmd.h b/drivers/net/rnp/base/rnp_fw_cmd.h
-index 26db07ad36..f6c0d77f1d 100644
---- a/drivers/net/rnp/base/rnp_fw_cmd.h
-+++ b/drivers/net/rnp/base/rnp_fw_cmd.h
-@@ -159,6 +159,7 @@ struct rnp_mac_addr_rep {
- #define RNP_SPEED_CAP_100M_HALF  RTE_BIT32(11)
- #define RNP_SPEED_CAP_1GB_HALF   RTE_BIT32(12)
- 
-+#define RNP_SPEED_VALID_MASK	RTE_GENMASK32(12, 2)
- enum rnp_pma_phy_type {
- 	RNP_PHY_TYPE_NONE = 0,
- 	RNP_PHY_TYPE_1G_BASE_KX,
-diff --git a/drivers/net/rnp/base/rnp_mbx_fw.c b/drivers/net/rnp/base/rnp_mbx_fw.c
-index 3e7cf7f9ad..9e0b1730c2 100644
---- a/drivers/net/rnp/base/rnp_mbx_fw.c
-+++ b/drivers/net/rnp/base/rnp_mbx_fw.c
-@@ -230,6 +230,7 @@ rnp_fw_get_phy_capability(struct rnp_eth_port *port,
- 	return 0;
+diff --git a/drivers/net/rnp/rnp_rxtx.c b/drivers/net/rnp/rnp_rxtx.c
+index 62e2eec007..eacee1a8de 100644
+--- a/drivers/net/rnp/rnp_rxtx.c
++++ b/drivers/net/rnp/rnp_rxtx.c
+@@ -1157,6 +1157,21 @@ rnp_need_ctrl_desc(uint64_t flags)
+ 	return (flags & mask) ? 1 : 0;
  }
  
-+#define RNP_MAX_LANE_MASK	(0xf)
- int rnp_mbx_fw_get_capability(struct rnp_eth_port *port)
- {
- 	struct rnp_phy_abilities_rep ability;
-@@ -252,17 +253,29 @@ int rnp_mbx_fw_get_capability(struct rnp_eth_port *port)
- 		hw->nic_mode = ability.nic_mode;
- 		/* get phy<->lane mapping info */
- 		lane_cnt = rte_popcount32(hw->lane_mask);
-+		if (lane_cnt > RNP_MAX_PORT_OF_PF) {
-+			RNP_PMD_LOG(ERR, "firmware invalid lane_mask");
-+			return -EINVAL;
-+		}
- 		temp_mask = hw->lane_mask;
-+		if (temp_mask == 0 || temp_mask > RNP_MAX_LANE_MASK) {
-+			RNP_PMD_LOG(ERR, "lane_mask is invalid 0x%.2x", temp_mask);
-+			return -EINVAL;
-+		}
- 		if (ability.e.ports_is_sgmii_valid)
- 			is_sgmii_bits = ability.e.lane_is_sgmii;
- 		for (idx = 0; idx < lane_cnt; idx++) {
- 			hw->phy_port_ids[idx] = port_ids[idx];
-+			if (temp_mask == 0) {
-+				RNP_PMD_LOG(ERR, "temp_mask is zero at idx=%d", idx);
-+				return -EINVAL;
++#define RNP_MAX_TSO_SEG_LEN	(4096)
++static inline uint16_t
++rnp_calc_pkt_desc(struct rte_mbuf *tx_pkt)
++{
++	struct rte_mbuf *txd = tx_pkt;
++	uint16_t count = 0;
++
++	while (txd != NULL) {
++		count += DIV_ROUND_UP(txd->data_len, RNP_MAX_TSO_SEG_LEN);
++		txd = txd->next;
++	}
++
++	return count;
++}
++
+ static void
+ rnp_build_tx_control_desc(struct rnp_tx_queue *txq,
+ 			  volatile struct rnp_tx_desc *txbd,
+@@ -1392,6 +1407,10 @@ rnp_multiseg_xmit_pkts(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		tx_pkt = tx_pkts[nb_tx];
+ 		ctx_desc_use = rnp_need_ctrl_desc(tx_pkt->ol_flags);
+ 		nb_used_bd = tx_pkt->nb_segs + ctx_desc_use;
++		if (tx_pkt->ol_flags & RTE_MBUF_F_TX_TCP_SEG)
++			nb_used_bd = (uint16_t)(rnp_calc_pkt_desc(tx_pkt) + ctx_desc_use);
++		else
++			nb_used_bd = tx_pkt->nb_segs + ctx_desc_use;
+ 		tx_last = (uint16_t)(tx_id + nb_used_bd - 1);
+ 		if (tx_last >= txq->attr.nb_desc)
+ 			tx_last = (uint16_t)(tx_last - txq->attr.nb_desc);
+@@ -1414,8 +1433,11 @@ rnp_multiseg_xmit_pkts(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 		m_seg = tx_pkt;
+ 		first_seg = 1;
+ 		do {
++			uint16_t remain_len = 0;
++			uint64_t dma_addr = 0;
++
+ 			txbd = &txq->tx_bdr[tx_id];
+-			txbd->d.cmd = 0;
++			*txbd = txq->zero_desc;
+ 			txn = &txq->sw_ring[txe->next_id];
+ 			if ((first_seg && m_seg->ol_flags)) {
+ 				rnp_setup_tx_offload(txq, txbd,
+@@ -1428,11 +1450,29 @@ rnp_multiseg_xmit_pkts(void *_txq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 				rte_pktmbuf_free_seg(txe->mbuf);
+ 				txe->mbuf = NULL;
+ 			}
++			dma_addr = rnp_get_dma_addr(&txq->attr, m_seg);
++			remain_len = m_seg->data_len;
+ 			txe->mbuf = m_seg;
++			while ((tx_pkt->ol_flags & RTE_MBUF_F_TX_TCP_SEG) &&
++					unlikely(remain_len > RNP_MAX_TSO_SEG_LEN)) {
++				txbd->d.addr = dma_addr;
++				txbd->d.blen = rte_cpu_to_le_32(RNP_MAX_TSO_SEG_LEN);
++				dma_addr += RNP_MAX_TSO_SEG_LEN;
++				remain_len -= RNP_MAX_TSO_SEG_LEN;
++				txe->last_id = tx_last;
++				tx_id = txe->next_id;
++				txe = txn;
++				if (txe->mbuf) {
++					rte_pktmbuf_free_seg(txe->mbuf);
++					txe->mbuf = NULL;
++				}
++				txbd = &txq->tx_bdr[tx_id];
++				*txbd = txq->zero_desc;
++				txn = &txq->sw_ring[txe->next_id];
 +			}
- 			lane_bit = ffs(temp_mask) - 1;
- 			lane_idx = port_ids[idx] % lane_cnt;
- 			hw->lane_of_port[lane_idx] = lane_bit;
- 			is_sgmii = lane_bit & is_sgmii_bits ? 1 : 0;
- 			hw->lane_is_sgmii[lane_idx] = is_sgmii;
--			temp_mask &= ~RTE_BIT32(lane_bit);
-+			temp_mask &= ~(1ULL << lane_bit);
- 		}
- 		hw->max_port_num = lane_cnt;
- 	}
-diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
-index de1c077f61..7b996913c8 100644
---- a/drivers/net/rnp/rnp_ethdev.c
-+++ b/drivers/net/rnp/rnp_ethdev.c
-@@ -751,17 +751,17 @@ rnp_get_speed_caps(struct rte_eth_dev *dev)
- {
- 	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
- 	uint32_t speed_cap = 0;
--	uint32_t i = 0, speed;
- 	uint32_t support_link;
--	uint32_t link_types;
-+	uint32_t speed = 0;
-+	int bit_pos = 0;
- 
- 	support_link = port->attr.phy_meta.supported_link;
--	link_types = rte_popcount64(support_link);
--	if (!link_types)
-+	if (support_link == 0)
- 		return 0;
--	for (i = 0; i < link_types; i++) {
--		speed = ffs(support_link) - 1;
--		switch (RTE_BIT32(speed)) {
-+	while (support_link) {
-+		bit_pos = ffs(support_link) - 1;
-+		speed = RTE_BIT32(bit_pos) & RNP_SPEED_VALID_MASK;
-+		switch (speed) {
- 		case RNP_SPEED_CAP_10M_FULL:
- 			speed_cap |= RTE_ETH_LINK_SPEED_10M;
- 			break;
-@@ -789,7 +789,7 @@ rnp_get_speed_caps(struct rte_eth_dev *dev)
- 		default:
- 			speed_cap |= 0;
- 		}
--		support_link &= ~RTE_BIT32(speed);
-+		support_link &= ~(1ULL << bit_pos);
- 	}
- 	if (!port->attr.phy_meta.link_autoneg)
- 		speed_cap |= RTE_ETH_LINK_SPEED_FIXED;
+ 			txe->last_id = tx_last;
+-			txbd->d.addr = rnp_get_dma_addr(&txq->attr, m_seg);
+-			txbd->d.blen = rte_cpu_to_le_32(m_seg->data_len);
+-			txbd->d.cmd &= ~RNP_CMD_EOP;
++			txbd->d.addr = dma_addr;
++			txbd->d.blen = rte_cpu_to_le_32(remain_len);
+ 			m_seg = m_seg->next;
+ 			tx_id = txe->next_id;
+ 			txe = txn;
 -- 
 2.25.1
 
