@@ -2,82 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E35ABC71157
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Jun 2025 09:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65337C71157
+	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Jun 2025 09:47:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2E9A8427E5;
-	Wed, 18 Jun 2025 11:43:10 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 8295340EE2
- for <dev@dpdk.org>; Wed, 18 Jun 2025 11:43:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1750239789;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=1BwUzst6NSWrPF+bmYRfK2Gq28PaILhCDDmKyjaprVg=;
- b=Ko8SL23pz6NAWJMOiS3XxmPgDJWIPfceEdZuNFHAORRfepMF83cSn1At80urLNmNzt/X3v
- 80ezkVCbei+PFyz8XI8mOZdOK1T6AxVaJCaZeyPzZTxgL7isE3hy+pYuAVOHvZt8ZP/80c
- Lt4P0XtEZLNxWnVZrKmdgrM8fhIrs9I=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-557-55Ih4fh-PeCkpyau8w43BA-1; Wed, 18 Jun 2025 05:43:07 -0400
-X-MC-Unique: 55Ih4fh-PeCkpyau8w43BA-1
-X-Mimecast-MFC-AGG-ID: 55Ih4fh-PeCkpyau8w43BA_1750239786
-Received: by mail-lf1-f72.google.com with SMTP id
- 2adb3069b0e04-553addbf0beso3483599e87.2
- for <dev@dpdk.org>; Wed, 18 Jun 2025 02:43:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1750239786; x=1750844586;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=1BwUzst6NSWrPF+bmYRfK2Gq28PaILhCDDmKyjaprVg=;
- b=cDkd0iWBQRmx6W6682vFT1+9YCD+U3gehcMfHZnnOHeFVHQmHgEU45Bd9gG0eTV8iq
- NSqX/ZMbmiIzpqIymjmUWM+kh7FugH7LS40MnzSjksXOS+GZbl6lPfhqhYADPwNvq6MA
- XeECndbQlvo8dl5cqwGFNh6L7iSYqGE/ftXDiyVmfXd71Ctn9P2YlMsWvIRSHP61Ex2b
- HrqVrgAdUMGjoz4CUFLNiUa/kI5vuny4jFJ9VitVJEnS5VS72Atfr//iZ97d97Bkd7pj
- 4324wLxqEXIWqM6D5MCmRjQh/FXk+qE+MWyuh0NsguxMElc2kmcyaa6ARzB5GuuPTKot
- EuwA==
-X-Gm-Message-State: AOJu0YxngugP31b7hwgssJqNNMNprSN58tNQbe4ETJqVC687Ddj1enkl
- Tfd0MsiNCwLYZYUxZ3mrvdiNHilh9QEdAnSkXbXNLC9EVMicuHDo1U8GZrmXDgtGu5yBFZMbvTV
- UZwsGXIA5EvjRfkc3+EnQCeNI4+ezbioclgn7IYmCadOTOpxn6K56MtkoaYtePWjUDnE19s9Xr9
- cMvhG569quObopS6jCCO0=
-X-Gm-Gg: ASbGnctXPe8HAkGdVN2HQjoIBF9MYKd8Nb6B+ap4PzlYWUNx7LpXcdc4B7ZinKr7YZL
- +eBg9AXLTcc+1IpLDEE6eZMTtKlotdv7XXpWAQ3BJlMdIUD3EvZf0MtA0ygYYDHA90qDzLg707v
- uBK/kTEQ==
-X-Received: by 2002:a19:8c11:0:b0:553:30fc:cee4 with SMTP id
- 2adb3069b0e04-553b6f4c989mr3088452e87.49.1750239786065; 
- Wed, 18 Jun 2025 02:43:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFlG9GUkQMYvkJrY8cZB/T/Zz/jqdz61uxhqVthLNgh0YW5/e5Lqz4qT53EKuWErYEkanop29qS/PiKfByC2zA=
-X-Received: by 2002:a19:8c11:0:b0:553:30fc:cee4 with SMTP id
- 2adb3069b0e04-553b6f4c989mr3088439e87.49.1750239785635; Wed, 18 Jun 2025
- 02:43:05 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 96E0842C24;
+	Wed, 18 Jun 2025 11:47:17 +0200 (CEST)
+Received: from fout-a7-smtp.messagingengine.com
+ (fout-a7-smtp.messagingengine.com [103.168.172.150])
+ by mails.dpdk.org (Postfix) with ESMTP id 867B940EE2
+ for <dev@dpdk.org>; Wed, 18 Jun 2025 11:47:16 +0200 (CEST)
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal
+ [10.202.2.42])
+ by mailfout.phl.internal (Postfix) with ESMTP id 0E7C413803AD;
+ Wed, 18 Jun 2025 05:47:16 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-02.internal (MEProxy); Wed, 18 Jun 2025 05:47:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1750240036;
+ x=1750326436; bh=WTcVHqS4XBkZsobgEKgxINfqqpwjhwQjioU8nWfWsXY=; b=
+ BS3BpAhLXvj+s2nMkYxpmVeeJ/Mt8CMpK8NBek+HasPl095A2vLYAxZHgQ86LhHc
+ I457DIo6xJyciV7makIkXpjouJjr2/F9ylciPbM4P6wmwBRqfiDdPuKd6sgsqecd
+ Q7LGD3ZBO92H/ILEi9B1/OAKxUjQhf+zsJOUb4eucyaoU7k/VoHnPcMAUMq/HVys
+ lU+a0PFmVnBKokKl2Mzd9GnRoj9OVa4T6/4XVEF+CA9XRayWHKXhjtz0+SzZmtzB
+ PvuCMW3Cm06r2XO3etmvSDqN1dvu9T+9Lk5/KYqtmeAqgKjxGiHgs9NG3PXzfJh5
+ Fw4vjApKW1sHEUoBvwHt0w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1750240036; x=
+ 1750326436; bh=WTcVHqS4XBkZsobgEKgxINfqqpwjhwQjioU8nWfWsXY=; b=C
+ X6Zi3PnDImi9CSFq9FXOsbuD+Oq2mUfNb3rsU5HOKBZzl08FJdPNyrXtpkhE8P0f
+ FNOpHlzNYGX54w68jZxAKEz1FDG9yczgqeESkoZz1p82tAHDIrcYHdgEC8b8IUIT
+ XzD3U91yj+tvwO6Rf+4B0JfFZ8wxEnbgSPTJax58lx+hgBBWAKg+meVLhxi1nFIF
+ qp6esBB8aB7PA9yPuwmvFr1QRSnr6rhtzYMU6AdmvV6mwkO7d8y9ObXPeOT1KBK2
+ 695Ahq72qJS8RewnQyeIocMi5dY7rhKqvPU6z04ucgknzCIXOgS5YiEBTu2OT95X
+ vmD/Qnoe48VM9KEa9sh1Q==
+X-ME-Sender: <xms:I4tSaCR3xrmG-XDJGDa5Y0wSD09m5akwdVJz1n42-i5AzYAGDzHl3A>
+ <xme:I4tSaHwusb0aCTaAIa8lpjTk9u9tMfqNvJtdaEy-V3Yr8RNzUstT3-aIrrMIdN5e7
+ vIzPfqEOC_qQOQGEg>
+X-ME-Received: <xmr:I4tSaP2K5E2iObqzXCXKkfKBvV2pZgq23xyBvOmoWE8RftGbVP_68L_Q8N5pLGLhrSOGD55w1JZgue6T8c-tHqPQHg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddvfedvucetufdoteggodetrfdotf
+ fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+ rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+ htshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthhqredttddtjeen
+ ucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrg
+ hlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpefftdeuhfehvdekleelveffvdelhfel
+ hedvgedtvddvudeuieevtdfgjedvudegfeenucffohhmrghinhepughpughkrdhorhhgne
+ cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhm
+ rghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohephedpmhhouggvpehsmh
+ htphhouhhtpdhrtghpthhtohepthguuhhsiiihnhhskhhisehmrghrvhgvlhhlrdgtohhm
+ pdhrtghpthhtohepmhgssehsmhgrrhhtshhhrghrvghshihsthgvmhhsrdgtohhmpdhrtg
+ hpthhtohepjhgvrhhinhhjsehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohepsghruhgt
+ vgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpthhtohepuggvvhesug
+ hpughkrdhorhhg
+X-ME-Proxy: <xmx:I4tSaODnTUs4SjGShSu6rvT9fzJ1moxpxQjN3Z_HgRzNlHdfFg-_ew>
+ <xmx:I4tSaLi-Qk3syEl52WBydTc49LoQ1Q28_yuA00IcUJCR4Fka_JF-aw>
+ <xmx:I4tSaKogS7-B_O8DXtkfMralc4bB9he3Mfifp9tMlkaXnkluKnZBFw>
+ <xmx:I4tSaOg1q-0FvcBW1Qg1Qr1qzM2wzis7E7uweGiwhEvZTnliIuqOsw>
+ <xmx:JItSaEA7fhWx-6gjN4l9S6n-JVa6Qd7iVCO_eI6J-KfOe_SU4lX1y1rJ>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 18 Jun 2025 05:47:14 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Tomasz Duszynski <tduszynski@marvell.com>,
+ Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
+Cc: jerinj@marvell.com, bruce.richardson@intel.com, dev@dpdk.org
+Subject: Re: [PATCH v2 6/6] trace: add PMU
+Date: Wed, 18 Jun 2025 11:47:13 +0200
+Message-ID: <3793563.K4a6FZZPjd@thomas>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FD08@smartserver.smartshare.dk>
+References: <20250616065341.3233106-1-tduszynski@marvell.com>
+ <20250618065618.4045910-7-tduszynski@marvell.com>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FD08@smartserver.smartshare.dk>
 MIME-Version: 1.0
-References: <20250613081018.2790825-1-david.marchand@redhat.com>
-In-Reply-To: <20250613081018.2790825-1-david.marchand@redhat.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 18 Jun 2025 11:42:53 +0200
-X-Gm-Features: AX0GCFvMqA5S7fXt-8iwybjpqPS9Tym4ok3LUqhUvsKCCWH_4N8hnPyRWq_YlNc
-Message-ID: <CAJFAV8w5wG2S=KwZuG96f0Law8nBL7R3GcbYd65Ksb-hL=7=ZQ@mail.gmail.com>
-Subject: Re: [PATCH] common/mlx5: fix dependency detection on Windows
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, probb@iol.unh.edu, andremue@linux.microsoft.com, 
- Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>, 
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, 
- Matan Azrad <matan@nvidia.com>, Thomas Monjalon <thomas@monjalon.net>, 
- Tal Shnaiderman <talshn@nvidia.com>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: hdWhGZv2gNTJOxEsWGlxRzQMDqukwHykv-ler2qmEJ4_1750239786
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -91,19 +94,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Jun 13, 2025 at 10:10=E2=80=AFAM David Marchand
-<david.marchand@redhat.com> wrote:
->
-> Don't *require* mlx5dev library when testing its presence.
->
-> Fixes: 85c51a4ffab8 ("common/mlx5: get Windows dependency from standard v=
-ariables")
->
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
+18/06/2025 09:16, Morten Br=C3=B8rup:
+> > diff --git a/lib/meson.build b/lib/meson.build
+> > index 1934cb4a29..87b567f01b 100644
+> > --- a/lib/meson.build
+> > +++ b/lib/meson.build
+> > @@ -13,7 +13,7 @@ libraries =3D [
+> >          'kvargs', # eal depends on kvargs
+> >          'argparse',
+> >          'telemetry', # basic info querying
+> > -        'pmu',
+> > +        'pmu', # trace depends on pmu
+> >          'eal', # everything depends on eal
+> >          'ptr_compress',
+> >          'ring',
+>=20
+> @Tomasz,
+>=20
+> Please re-read my v1 review feedback [1]:
+> The PMU library should depend on the EAL, not the other way around!
 
-Applied with updated commitlog.
+It should depend on the low-level EAL, yes.
+But as of now, EAL is not split so it is better to avoid EAL dependency if =
+possible.
+
+> How else is the PMU library supposed to use EAL functions like rte_mem_pa=
+ge_size()?
+>=20
+> @Jerin or @Bruce, do any of you have some suggestions for how to achieve =
+the proper dependency chain here?
+
+I propose we don't use rte_mem_page_size() in PMU lib for now,
+so we keep not depending on EAL, to avoid mixing all in future.
+Later we could fix it if we manage to have high level EAL as a separate lib=
+rary.
+
+> Worst case, we will have to move PMU into EAL. :-(
+>=20
+> [1]: https://inbox.dpdk.org/dev/98CBD80474FA8B44BF855DF32C47DC35E9FCFA@sm=
+artserver.smartshare.dk/T/#u
+>=20
+> Besides that, good stuff. :-)
 
 
---=20
-David Marchand
 
