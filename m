@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0B07C7115B
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Jun 2025 08:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCAF9C71157
+	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Jun 2025 08:37:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2EBB5427DF;
-	Wed, 18 Jun 2025 10:37:01 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4B865427E7;
+	Wed, 18 Jun 2025 10:37:03 +0200 (CEST)
 Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
  [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 3D02B427DF
- for <dev@dpdk.org>; Wed, 18 Jun 2025 10:37:00 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 64593427E5
+ for <dev@dpdk.org>; Wed, 18 Jun 2025 10:37:02 +0200 (CEST)
 Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55I7qnc6023247
- for <dev@dpdk.org>; Wed, 18 Jun 2025 01:36:59 -0700
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55I7qn1S023246
+ for <dev@dpdk.org>; Wed, 18 Jun 2025 01:37:01 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=f
- 49WjMl+uGT74HyX9W2v8f0cUi8zmXYBd4Dl7uAvPNk=; b=Cr672+YjAyxJZUFDb
- CdRRVQnBpuCvRu8i2ViDgWx1AOfZr1nlP9L3Xn4cj5U8z5OVjpdS7KHm5bfM8XQ6
- lbeIS/7jcbdtNT21Apz+0MoLfBNmspaVvOovaqLwk4QMd8FJslBxcrSE8iOLLBU4
- RyWyEm64vuJ1IZjYZg0tzBV5+o8pAF9Pj97LVuomq61Wm4eAFFHWRp/EBl/tr4mr
- Ae0Rdyqt+xGJhIK8W6Nkzjt58u/Gu9mzX/YW7cyc2MljO/V+u8oAGCvj8bC0sbh4
- d68UdQ8kGeInq2saUH0A26SjRsr/LLCulyCX0vJP7eHzjTYCZdfba1zJim1qaXGk
- ptEww==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=c
+ EshsJB+N/knKAiHlgTGX3hjTuWO5sPKjS3HBX6dV6I=; b=Wa1YHSvlCAgq4zC/6
+ MbgjLqMdUiexADTa6CHxmmsxFyyXPHsN+aId0+yjO8cEiDoI5l19zxtTIBFCCc6C
+ NUH/uQruj0G5AjJ2FB5p96WirQszn5ucYfW7tf7M13fkV1BlQq6KnTNIdr1Koh9z
+ 0j3dbYnoGHIXbg/JP6fz0Z/+xxQL5hzDlSmGe7fMcTpgeXy6ZKpWDC4cnBCmEcJW
+ gUI9n/pRCHWD6qFcfxHC4KODhY1vZaBAbZuMuylIeqI97Jltw7xZa+QF/U1vauQX
+ dqjZa6UnH9ZQGOyeTeplLn+pQD0DcINet38MiZzheM1JTRv8Gh0Vt8/wEflVJWd9
+ M3AKw==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 47bsf2r2gv-1
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 47bsf2r2h2-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Wed, 18 Jun 2025 01:36:58 -0700 (PDT)
+ for <dev@dpdk.org>; Wed, 18 Jun 2025 01:37:01 -0700 (PDT)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 18 Jun 2025 01:36:57 -0700
+ 15.2.1544.4; Wed, 18 Jun 2025 01:37:00 -0700
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 18 Jun 2025 01:36:57 -0700
+ Transport; Wed, 18 Jun 2025 01:37:00 -0700
 Received: from nkaithakadan-dkr.marvell.com (unknown [10.29.45.70])
- by maili.marvell.com (Postfix) with ESMTP id 214813F7043;
- Wed, 18 Jun 2025 01:36:54 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 326103F7043;
+ Wed, 18 Jun 2025 01:36:57 -0700 (PDT)
 From: Nithinsen Kaithakadan <nkaithakadan@marvell.com>
 To: <dev@dpdk.org>
 CC: <adwivedi@marvell.com>, <anoobj@marvell.com>, <ktejasree@marvell.com>,
  <gakhil@marvell.com>, <pbhagavatula@marvell.com>
-Subject: [PATCH v3 1/2] crypto/cnxk: add crypto adapter for cn20k
-Date: Wed, 18 Jun 2025 08:36:49 +0000
-Message-ID: <20250618083651.637234-2-nkaithakadan@marvell.com>
+Subject: [PATCH v3 2/2] crypto/cnxk: add sessionless asym cn20k support
+Date: Wed, 18 Jun 2025 08:36:50 +0000
+Message-ID: <20250618083651.637234-3-nkaithakadan@marvell.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250618083651.637234-1-nkaithakadan@marvell.com>
 References: <20250618083651.637234-1-nkaithakadan@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: FpMPt8pKXDUZ-iglA1N6VA2DseEGs82Z
-X-Proofpoint-GUID: FpMPt8pKXDUZ-iglA1N6VA2DseEGs82Z
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE4MDA3NCBTYWx0ZWRfX1DixT6qE6WAh
- cz+Cv/h+0Yp/ui/sCQeaFsrHihcq11QlL3kYu00bHLqTzalwfviR59kIa1JyuZasigrBelK5lHs
- zAbubMZz0aWp1pnMO5HDkX4KHTIhQKWTtH0EWsspdM0xLbjm8rQ6Tj8LpzxgmvJkQK6lsgrZ0i6
- n95omzWjh/1cXwLT3idvc6zXj1TOVwvhfp6CJp5xrLrVrlT7FfK0f9tZSB/462/xcmjAWl/GlGo
- wKkYCPnuSkK8x9Ih875zqW3Bd1dExo2CTyLY/75oQ+3JQytnc6dfG3f17Bz85oyb8j2i41xnbM/
- 8yeDZi3I2b1jp0gREEq6Ol0tH5g1JgZ7I0QCUiLh44HkoBRO20nk+mR1LaGwL8gC8F6SkH95rYD
- URfDVA/puNZWVCIVHZowUYPHWRRqD6vQzeb0DppA3wDl03G3vh5NoAoALXVopJbXgRRqLorj
-X-Authority-Analysis: v=2.4 cv=Yu4PR5YX c=1 sm=1 tr=0 ts=68527aaa cx=c_pps
+X-Proofpoint-ORIG-GUID: rxdcT6Em_cUMMgE4B7vbLjrxRqwqLlyc
+X-Proofpoint-GUID: rxdcT6Em_cUMMgE4B7vbLjrxRqwqLlyc
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE4MDA3NCBTYWx0ZWRfXzvXNpOqGkQ5r
+ 2RP3NKHVM9rgj3SSoupCNSGHlLlksuyUumj5ZA3pVfmDsNTe63Vfk3IiFj+4s9EVCjZhEzrBO5b
+ nifcvmz+OG3Yk8MicyyJ6dARG3q/zeCEcdLcrKuLoGN0FuDZlxSt3F84U7DURd6Wz46gy3fUqZ7
+ PKh5jcfE7+tZ57amUlP5q4Cu4W6iCt3doZvrlg5iUl64Fv29uv1zZu2kLIA5+SbtZs8scOML7lG
+ ty839wwfisQXm75mcbIKWG1Fm3adYpcVBYDV99Qtm30pz2jR6hZjHZPi77vK5bH5eKlPok5YJx+
+ 6vP6T55Og0pWgzG5/nyiLddNXRzc8VfKqkmyvf3/qUQ2mMBLY6froamfz30q7ix4vhYurBbCSl2
+ m6n5Vd/ykSUbd0Ml8ozarbFhfqct9RI9s+qTqavdUeiL0Vt/f9/OBTkHETqyfqe/6vY4ZzTR
+X-Authority-Analysis: v=2.4 cv=Yu4PR5YX c=1 sm=1 tr=0 ts=68527aad cx=c_pps
  a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=q0dj6y5YAAAA:8 a=TFNM7SZaCu4IQicpeOEA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22 a=Q7RaSUWP1pO7HXdsjIRs:22
+ a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=b53FG8YMO_0E9cW673wA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-18_03,2025-06-18_02,2025-03-28_01
@@ -80,180 +80,125 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add crypto adapter support for CN20K crypto PMD.
+Add support for sessionless asymmetric operations for cn20k.
 
 Signed-off-by: Nithinsen Kaithakadan <nkaithakadan@marvell.com>
 ---
- .../crypto/cnxk/cn20k_cryptodev_event_dp.h    |  14 +
- drivers/crypto/cnxk/cn20k_cryptodev_ops.c     | 588 +++++++++++++++++-
- drivers/crypto/cnxk/cn20k_cryptodev_ops.h     |   4 +
- drivers/event/cnxk/cn20k_eventdev.c           |  69 ++
- drivers/event/cnxk/cn20k_worker.h             |   7 +-
- 5 files changed, 669 insertions(+), 13 deletions(-)
- create mode 100644 drivers/crypto/cnxk/cn20k_cryptodev_event_dp.h
+ doc/guides/cryptodevs/features/cn20k.ini  |  1 +
+ drivers/crypto/cnxk/cn20k_cryptodev_ops.c | 91 +++++++++++++++++++++--
+ 2 files changed, 87 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/crypto/cnxk/cn20k_cryptodev_event_dp.h b/drivers/crypto/cnxk/cn20k_cryptodev_event_dp.h
-new file mode 100644
-index 0000000000..3e8784ba88
---- /dev/null
-+++ b/drivers/crypto/cnxk/cn20k_cryptodev_event_dp.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(C) 2025 Marvell.
-+ */
-+
-+#ifndef _CN20K_CRYPTODEV_EVENT_DP_H_
-+#define _CN20K_CRYPTODEV_EVENT_DP_H_
-+
-+__rte_internal
-+uintptr_t cn20k_cpt_crypto_adapter_dequeue(uintptr_t get_work1);
-+
-+__rte_internal
-+uintptr_t cn20k_cpt_crypto_adapter_vector_dequeue(uintptr_t get_work1);
-+
-+#endif /* _CN20K_CRYPTODEV_EVENT_DP_H_ */
+diff --git a/doc/guides/cryptodevs/features/cn20k.ini b/doc/guides/cryptodevs/features/cn20k.ini
+index 76553d190e..ff00a8a107 100644
+--- a/doc/guides/cryptodevs/features/cn20k.ini
++++ b/doc/guides/cryptodevs/features/cn20k.ini
+@@ -17,6 +17,7 @@ Symmetric sessionless  = Y
+ RSA PRIV OP KEY EXP    = Y
+ RSA PRIV OP KEY QT     = Y
+ Digest encrypted       = Y
++Asymmetric sessionless = Y
+ Sym raw data path API  = Y
+ Inner checksum         = Y
+ Rx inject              = Y
 diff --git a/drivers/crypto/cnxk/cn20k_cryptodev_ops.c b/drivers/crypto/cnxk/cn20k_cryptodev_ops.c
-index ba586d79e8..f94ab3750c 100644
+index f94ab3750c..6ef7c5bb22 100644
 --- a/drivers/crypto/cnxk/cn20k_cryptodev_ops.c
 +++ b/drivers/crypto/cnxk/cn20k_cryptodev_ops.c
-@@ -9,34 +9,47 @@
- #include <rte_hexdump.h>
- #include <rte_vect.h>
- 
-+#include "hw/nix.h"
-+#include "hw/npa.h"
-+#include "hw/tim.h"
- #include "roc_cpt.h"
- #include "roc_idev.h"
-+#include "roc_mbox.h"
-+#include "roc_sso.h"
-+#include "roc_sso_dp.h"
-+#include "roc_tim.h"
- 
- #include "cn20k_cryptodev.h"
-+#include "cn20k_cryptodev_event_dp.h"
- #include "cn20k_cryptodev_ops.h"
- #include "cn20k_cryptodev_sec.h"
-+#include "cn20k_eventdev.h"
- #include "cn20k_ipsec_la_ops.h"
- #include "cn20k_tls_ops.h"
- #include "cnxk_ae.h"
- #include "cnxk_cryptodev.h"
- #include "cnxk_cryptodev_ops.h"
-+#include "cnxk_eventdev.h"
- #include "cnxk_se.h"
- 
- #include "rte_pmd_cnxk_crypto.h"
- 
--static int
--cn20k_cpt_crypto_adapter_ev_mdata_set(struct rte_cryptodev *dev __rte_unused, void *sess,
--				      enum rte_crypto_op_type op_type,
--				      enum rte_crypto_op_sess_type sess_type, void *mdata)
--{
--	(void)dev;
--	(void)sess;
--	(void)op_type;
--	(void)sess_type;
--	(void)mdata;
-+/* Holds information required to send crypto operations in one burst */
-+struct ops_burst {
-+	struct rte_crypto_op *op[CN20K_CPT_PKTS_PER_LOOP];
-+	uint64_t w2[CN20K_CPT_PKTS_PER_LOOP];
-+	struct cn20k_sso_hws *ws;
-+	struct cnxk_cpt_qp *qp;
-+	uint16_t nb_ops;
-+};
- 
--	return 0;
--}
-+/* Holds information required to send vector of operations */
-+struct vec_request {
-+	struct cpt_inflight_req *req;
-+	struct rte_event_vector *vec;
-+	union cpt_inst_w7 w7;
-+	uint64_t w2;
-+};
- 
- static inline struct cnxk_se_sess *
- cn20k_cpt_sym_temp_sess_create(struct cnxk_cpt_qp *qp, struct rte_crypto_op *op)
-@@ -284,6 +297,486 @@ cn20k_cpt_enqueue_burst(void *qptr, struct rte_crypto_op **ops, uint16_t nb_ops)
- 	return count + i;
+@@ -79,6 +79,55 @@ cn20k_cpt_sym_temp_sess_create(struct cnxk_cpt_qp *qp, struct rte_crypto_op *op)
+ 	return NULL;
  }
  
-+static int
-+cn20k_cpt_crypto_adapter_ev_mdata_set(struct rte_cryptodev *dev __rte_unused, void *sess,
-+				      enum rte_crypto_op_type op_type,
-+				      enum rte_crypto_op_sess_type sess_type, void *mdata)
++static inline struct cnxk_ae_sess *
++cn20k_cpt_asym_temp_sess_create(struct cnxk_cpt_qp *qp, struct rte_crypto_op *op)
 +{
-+	union rte_event_crypto_metadata *ec_mdata = mdata;
-+	struct rte_event *rsp_info;
-+	struct cnxk_cpt_qp *qp;
-+	uint64_t w2, tag_type;
-+	uint8_t cdev_id;
-+	int16_t qp_id;
++	struct rte_crypto_asym_op *asym_op = op->asym;
++	struct roc_cpt *roc_cpt = qp->lf.roc_cpt;
++	struct rte_cryptodev_asym_session *sess;
++	struct cnxk_ae_sess *priv;
++	struct cnxk_cpt_vf *vf;
++	union cpt_inst_w7 w7;
++	struct hw_ctx_s *hwc;
 +
-+	/* Get queue pair */
-+	cdev_id = ec_mdata->request_info.cdev_id;
-+	qp_id = ec_mdata->request_info.queue_pair_id;
-+	qp = rte_cryptodevs[cdev_id].data->queue_pairs[qp_id];
++	/* Create temporary session */
++	if (rte_mempool_get(qp->sess_mp, (void **)&sess) < 0)
++		return NULL;
 +
-+	if (!qp->ca.enabled)
-+		return -EINVAL;
++	priv = (struct cnxk_ae_sess *)sess;
++	if (cnxk_ae_fill_session_parameters(priv, asym_op->xform))
++		goto sess_put;
 +
-+	/* Prepare w2 */
-+	tag_type = qp->ca.vector_sz ? RTE_EVENT_TYPE_CRYPTODEV_VECTOR : RTE_EVENT_TYPE_CRYPTODEV;
-+	rsp_info = &ec_mdata->response_info;
-+	w2 = CNXK_CPT_INST_W2((tag_type << 28) | (rsp_info->sub_event_type << 20) |
-+				      rsp_info->flow_id,
-+			      rsp_info->sched_type, rsp_info->queue_id, 0);
++	priv->lf = &qp->lf;
 +
-+	/* Set meta according to session type */
-+	if (op_type == RTE_CRYPTO_OP_TYPE_SYMMETRIC) {
-+		if (sess_type == RTE_CRYPTO_OP_SECURITY_SESSION) {
-+			struct cn20k_sec_session *sec_sess = (struct cn20k_sec_session *)sess;
++	if (roc_errata_cpt_hang_on_mixed_ctx_val()) {
++		hwc = &priv->hw_ctx;
++		hwc->w0.s.aop_valid = 1;
++		hwc->w0.s.ctx_hdr_size = 0;
++		hwc->w0.s.ctx_size = 1;
++		hwc->w0.s.ctx_push_size = 1;
 +
-+			sec_sess->qp = qp;
-+			sec_sess->inst.w2 = w2;
-+		} else if (sess_type == RTE_CRYPTO_OP_WITH_SESSION) {
-+			struct cnxk_se_sess *priv;
++		w7.s.ctx_val = 1;
++		w7.s.cptr = (uint64_t)hwc;
++	}
 +
-+			priv = (struct cnxk_se_sess *)sess;
-+			priv->qp = qp;
-+			priv->cpt_inst_w2 = w2;
-+		} else
-+			return -EINVAL;
-+	} else if (op_type == RTE_CRYPTO_OP_TYPE_ASYMMETRIC) {
-+		if (sess_type == RTE_CRYPTO_OP_WITH_SESSION) {
-+			struct cnxk_ae_sess *priv;
++	w7.u64 = 0;
++	w7.s.egrp = roc_cpt->eng_grp[CPT_ENG_TYPE_AE];
 +
-+			priv = (struct cnxk_ae_sess *)sess;
-+			priv->qp = qp;
-+			priv->cpt_inst_w2 = w2;
-+		} else
-+			return -EINVAL;
-+	} else
-+		return -EINVAL;
++	vf = container_of(roc_cpt, struct cnxk_cpt_vf, cpt);
++	priv->cpt_inst_w7 = w7.u64;
++	priv->cnxk_fpm_iova = vf->cnxk_fpm_iova;
++	priv->ec_grp = vf->ec_grp;
 +
-+	return 0;
++	asym_op->session = sess;
++
++	return priv;
++
++sess_put:
++	rte_mempool_put(qp->sess_mp, sess);
++	return NULL;
 +}
 +
-+static inline int
-+cn20k_ca_meta_info_extract(struct rte_crypto_op *op, struct cnxk_cpt_qp **qp, uint64_t *w2)
-+{
-+	if (op->type == RTE_CRYPTO_OP_TYPE_SYMMETRIC) {
-+		if (op->sess_type == RTE_CRYPTO_OP_SECURITY_SESSION) {
-+			struct cn20k_sec_session *sec_sess;
+ static __rte_always_inline int __rte_hot
+ cpt_sec_ipsec_inst_fill(struct cnxk_cpt_qp *qp, struct rte_crypto_op *op,
+ 			struct cn20k_sec_session *sess, struct cpt_inst_s *inst,
+@@ -178,7 +227,6 @@ cn20k_cpt_fill_inst(struct cnxk_cpt_qp *qp, struct rte_crypto_op *ops[], struct
+ 			w7 = sess->cpt_inst_w7;
+ 		}
+ 	} else if (op->type == RTE_CRYPTO_OP_TYPE_ASYMMETRIC) {
+-
+ 		if (op->sess_type == RTE_CRYPTO_OP_WITH_SESSION) {
+ 			asym_op = op->asym;
+ 			ae_sess = (struct cnxk_ae_sess *)asym_op->session;
+@@ -187,9 +235,22 @@ cn20k_cpt_fill_inst(struct cnxk_cpt_qp *qp, struct rte_crypto_op *ops[], struct
+ 				return 0;
+ 			w7 = ae_sess->cpt_inst_w7;
+ 		} else {
+-			plt_dp_err("Not supported Asym op without session");
+-			return 0;
++			ae_sess = cn20k_cpt_asym_temp_sess_create(qp, op);
++			if (unlikely(ae_sess == NULL)) {
++				plt_dp_err("Could not create temp session");
++				return 0;
++			}
 +
-+			sec_sess = (struct cn20k_sec_session *)op->sym->session;
++			ret = cnxk_ae_enqueue(qp, op, infl_req, &inst[0], ae_sess);
++			if (unlikely(ret)) {
++				cnxk_ae_session_clear(NULL,
++						      (struct rte_cryptodev_asym_session *)ae_sess);
++				rte_mempool_put(qp->sess_mp, ae_sess);
++				return 0;
++			}
++			w7 = ae_sess->cpt_inst_w7;
+ 		}
 +
-+			*qp = sec_sess->qp;
-+			*w2 = sec_sess->inst.w2;
-+		} else if (op->sess_type == RTE_CRYPTO_OP_WITH_SESSION) {
-+			struct cnxk_se_sess *priv;
-+
-+			priv = (struct cnxk_se_sess *)op->sym->session;
-+			*qp = priv->qp;
-+			*w2 = priv->cpt_inst_w2;
+ 	} else {
+ 		plt_dp_err("Unsupported op type");
+ 		return 0;
+@@ -395,8 +456,23 @@ cn20k_ca_meta_info_extract(struct rte_crypto_op *op, struct cnxk_cpt_qp **qp, ui
+ 			priv = (struct cnxk_ae_sess *)op->asym->session;
+ 			*qp = priv->qp;
+ 			*w2 = priv->cpt_inst_w2;
+-		} else
+-			return -EINVAL;
 +		} else {
 +			union rte_event_crypto_metadata *ec_mdata;
 +			struct rte_event *rsp_info;
@@ -271,624 +216,21 @@ index ba586d79e8..f94ab3750c 100644
 +			*w2 = CNXK_CPT_INST_W2((RTE_EVENT_TYPE_CRYPTODEV << 28) | rsp_info->flow_id,
 +					       rsp_info->sched_type, rsp_info->queue_id, 0);
 +		}
-+	} else if (op->type == RTE_CRYPTO_OP_TYPE_ASYMMETRIC) {
-+		if (op->sess_type == RTE_CRYPTO_OP_WITH_SESSION) {
-+			struct cnxk_ae_sess *priv;
-+
-+			priv = (struct cnxk_ae_sess *)op->asym->session;
-+			*qp = priv->qp;
-+			*w2 = priv->cpt_inst_w2;
-+		} else
-+			return -EINVAL;
-+	} else
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static inline void
-+cn20k_cpt_vec_inst_fill(struct vec_request *vec_req, struct cpt_inst_s *inst,
-+			struct cnxk_cpt_qp *qp, union cpt_inst_w7 w7)
-+{
-+	const union cpt_res_s res = {.cn20k.compcode = CPT_COMP_NOT_DONE};
-+	struct cpt_inflight_req *infl_req = vec_req->req;
-+
-+	const union cpt_inst_w4 w4 = {
-+		.s.opcode_major = ROC_SE_MAJOR_OP_MISC,
-+		.s.opcode_minor = ROC_SE_MISC_MINOR_OP_PASSTHROUGH,
-+		.s.param1 = 1,
-+		.s.param2 = 1,
-+		.s.dlen = 0,
-+	};
-+
-+	w7.s.egrp = ROC_CPT_DFLT_ENG_GRP_SE;
-+
-+	infl_req->vec = vec_req->vec;
-+	infl_req->qp = qp;
-+
-+	inst->res_addr = (uint64_t)&infl_req->res;
-+	rte_atomic_store_explicit((RTE_ATOMIC(uint64_t) *)(&infl_req->res.u64[0]), res.u64[0],
-+				  rte_memory_order_relaxed);
-+
-+	inst->w0.u64 = 0;
-+	inst->w2.u64 = vec_req->w2;
-+	inst->w3.u64 = CNXK_CPT_INST_W3(1, infl_req);
-+	inst->w4.u64 = w4.u64;
-+	inst->w5.u64 = 0;
-+	inst->w6.u64 = 0;
-+	inst->w7.u64 = w7.u64;
-+}
-+
-+static void
-+cn20k_cpt_vec_pkt_submission_timeout_handle(void)
-+{
-+	plt_dp_err("Vector packet submission timedout");
-+	abort();
-+}
-+
-+static inline void
-+cn20k_cpt_vec_submit(struct vec_request vec_tbl[], uint16_t vec_tbl_len, struct cnxk_cpt_qp *qp)
-+{
-+	uint64_t lmt_base, lmt_id, io_addr;
-+	union cpt_fc_write_s fc;
-+	struct cpt_inst_s *inst;
-+	uint16_t burst_size;
-+	uint64_t *fc_addr;
-+	int i;
-+
-+	if (vec_tbl_len == 0)
-+		return;
-+
-+	const uint32_t fc_thresh = qp->lmtline.fc_thresh;
-+	/*
-+	 * Use 10 mins timeout for the poll. It is not possible to recover from partial submission
-+	 * of vector packet. Actual packets for processing are submitted to CPT prior to this
-+	 * routine. Hence, any failure for submission of vector packet would indicate an
-+	 * unrecoverable error for the application.
-+	 */
-+	const uint64_t timeout = rte_get_timer_cycles() + 10 * 60 * rte_get_timer_hz();
-+
-+	lmt_base = qp->lmtline.lmt_base;
-+	io_addr = qp->lmtline.io_addr;
-+	fc_addr = qp->lmtline.fc_addr;
-+	ROC_LMT_BASE_ID_GET(lmt_base, lmt_id);
-+	inst = (struct cpt_inst_s *)lmt_base;
-+
-+again:
-+	burst_size = RTE_MIN(CN20K_PKTS_PER_STEORL, vec_tbl_len);
-+	for (i = 0; i < burst_size; i++)
-+		cn20k_cpt_vec_inst_fill(&vec_tbl[i], &inst[i], qp, vec_tbl[0].w7);
-+
-+	do {
-+		fc.u64[0] = rte_atomic_load_explicit((RTE_ATOMIC(uint64_t) *)fc_addr,
-+						     rte_memory_order_relaxed);
-+		if (likely(fc.s.qsize < fc_thresh))
-+			break;
-+		if (unlikely(rte_get_timer_cycles() > timeout))
-+			cn20k_cpt_vec_pkt_submission_timeout_handle();
-+	} while (true);
-+
-+	cn20k_cpt_lmtst_dual_submit(&io_addr, lmt_id, &i);
-+
-+	vec_tbl_len -= i;
-+
-+	if (vec_tbl_len > 0) {
-+		vec_tbl += i;
-+		goto again;
-+	}
-+}
-+
-+static inline int
-+ca_lmtst_vec_submit(struct ops_burst *burst, struct vec_request vec_tbl[], uint16_t *vec_tbl_len)
-+{
-+	struct cpt_inflight_req *infl_reqs[CN20K_CPT_PKTS_PER_LOOP];
-+	uint16_t lmt_id, len = *vec_tbl_len;
-+	struct cpt_inst_s *inst, *inst_base;
-+	struct cpt_inflight_req *infl_req;
-+	struct rte_event_vector *vec;
-+	uint64_t lmt_base, io_addr;
-+	union cpt_fc_write_s fc;
-+	struct cnxk_cpt_qp *qp;
-+	uint64_t *fc_addr;
-+	int ret, i, vi;
-+
-+	qp = burst->qp;
-+
-+	lmt_base = qp->lmtline.lmt_base;
-+	io_addr = qp->lmtline.io_addr;
-+	fc_addr = qp->lmtline.fc_addr;
-+
-+	const uint32_t fc_thresh = qp->lmtline.fc_thresh;
-+
-+	ROC_LMT_BASE_ID_GET(lmt_base, lmt_id);
-+	inst_base = (struct cpt_inst_s *)lmt_base;
-+
-+#ifdef CNXK_CRYPTODEV_DEBUG
-+	if (unlikely(!qp->ca.enabled)) {
-+		rte_errno = EINVAL;
-+		return 0;
-+	}
-+#endif
-+
-+	/* Perform fc check before putting packets into vectors */
-+	fc.u64[0] =
-+		rte_atomic_load_explicit((RTE_ATOMIC(uint64_t) *)fc_addr, rte_memory_order_relaxed);
-+	if (unlikely(fc.s.qsize > fc_thresh)) {
-+		rte_errno = EAGAIN;
-+		return 0;
-+	}
-+
-+	if (unlikely(rte_mempool_get_bulk(qp->ca.req_mp, (void **)infl_reqs, burst->nb_ops))) {
-+		rte_errno = ENOMEM;
-+		return 0;
-+	}
-+
-+	for (i = 0; i < burst->nb_ops; i++) {
-+		inst = &inst_base[i];
-+		infl_req = infl_reqs[i];
-+		infl_req->op_flags = 0;
-+
-+		ret = cn20k_cpt_fill_inst(qp, &burst->op[i], inst, infl_req);
-+		if (unlikely(ret != 1)) {
-+			plt_cpt_dbg("Could not process op: %p", burst->op[i]);
-+			if (i != 0)
-+				goto submit;
-+			else
-+				goto put;
+ 	} else
+ 		return -EINVAL;
+ 
+@@ -1083,6 +1159,11 @@ cn20k_cpt_dequeue_post_process(struct cnxk_cpt_qp *qp, struct rte_crypto_op *cop
+ 			rte_mempool_put(qp->sess_mp, cop->sym->session);
+ 			cop->sym->session = NULL;
+ 		}
++		if (cop->type == RTE_CRYPTO_OP_TYPE_ASYMMETRIC) {
++			cnxk_ae_session_clear(NULL, cop->asym->session);
++			rte_mempool_put(qp->sess_mp, cop->asym->session);
++			cop->asym->session = NULL;
 +		}
-+
-+		infl_req->res.cn20k.compcode = CPT_COMP_NOT_DONE;
-+		infl_req->qp = qp;
-+		inst->w3.u64 = 0x1;
-+
-+		/* Lookup for existing vector by w2 */
-+		for (vi = len - 1; vi >= 0; vi--) {
-+			if (vec_tbl[vi].w2 != burst->w2[i])
-+				continue;
-+			vec = vec_tbl[vi].vec;
-+			if (unlikely(vec->nb_elem == qp->ca.vector_sz))
-+				continue;
-+			vec->ptrs[vec->nb_elem++] = infl_req;
-+			goto next_op; /* continue outer loop */
-+		}
-+
-+		/* No available vectors found, allocate a new one */
-+		if (unlikely(rte_mempool_get(qp->ca.vector_mp, (void **)&vec_tbl[len].vec))) {
-+			rte_errno = ENOMEM;
-+			if (i != 0)
-+				goto submit;
-+			else
-+				goto put;
-+		}
-+		/* Also preallocate in-flight request, that will be used to
-+		 * submit misc passthrough instruction
-+		 */
-+		if (unlikely(rte_mempool_get(qp->ca.req_mp, (void **)&vec_tbl[len].req))) {
-+			rte_mempool_put(qp->ca.vector_mp, vec_tbl[len].vec);
-+			rte_errno = ENOMEM;
-+			if (i != 0)
-+				goto submit;
-+			else
-+				goto put;
-+		}
-+		vec_tbl[len].w2 = burst->w2[i];
-+		vec_tbl[len].vec->ptrs[0] = infl_req;
-+		vec_tbl[len].vec->nb_elem = 1;
-+		len++;
-+
-+next_op:;
-+	}
-+
-+	/* Submit operations in burst */
-+submit:
-+	if (CNXK_TT_FROM_TAG(burst->ws->gw_rdata) == SSO_TT_ORDERED)
-+		roc_sso_hws_head_wait(burst->ws->base);
-+
-+	cn20k_cpt_lmtst_dual_submit(&io_addr, lmt_id, &i);
-+
-+	/* Store w7 of last successfully filled instruction */
-+	inst = &inst_base[2 * (i - 1)];
-+	vec_tbl[0].w7 = inst->w7;
-+
-+put:
-+	if (i != burst->nb_ops)
-+		rte_mempool_put_bulk(qp->ca.req_mp, (void *)&infl_reqs[i], burst->nb_ops - i);
-+
-+	*vec_tbl_len = len;
-+
-+	return i;
-+}
-+
-+static inline uint16_t
-+ca_lmtst_burst_submit(struct ops_burst *burst)
-+{
-+	struct cpt_inflight_req *infl_reqs[CN20K_CPT_PKTS_PER_LOOP];
-+	struct cpt_inst_s *inst, *inst_base;
-+	struct cpt_inflight_req *infl_req;
-+	uint64_t lmt_base, io_addr;
-+	union cpt_fc_write_s fc;
-+	struct cnxk_cpt_qp *qp;
-+	uint64_t *fc_addr;
-+	uint16_t lmt_id;
-+	int ret, i, j;
-+
-+	qp = burst->qp;
-+
-+	lmt_base = qp->lmtline.lmt_base;
-+	io_addr = qp->lmtline.io_addr;
-+	fc_addr = qp->lmtline.fc_addr;
-+
-+	const uint32_t fc_thresh = qp->lmtline.fc_thresh;
-+
-+	ROC_LMT_BASE_ID_GET(lmt_base, lmt_id);
-+	inst_base = (struct cpt_inst_s *)lmt_base;
-+
-+#ifdef CNXK_CRYPTODEV_DEBUG
-+	if (unlikely(!qp->ca.enabled)) {
-+		rte_errno = EINVAL;
-+		return 0;
-+	}
-+#endif
-+
-+	if (unlikely(rte_mempool_get_bulk(qp->ca.req_mp, (void **)infl_reqs, burst->nb_ops))) {
-+		rte_errno = ENOMEM;
-+		return 0;
-+	}
-+
-+	for (i = 0; i < burst->nb_ops; i++) {
-+		inst = &inst_base[i];
-+		infl_req = infl_reqs[i];
-+		infl_req->op_flags = 0;
-+
-+		ret = cn20k_cpt_fill_inst(qp, &burst->op[i], inst, infl_req);
-+		if (unlikely(ret != 1)) {
-+			plt_dp_dbg("Could not process op: %p", burst->op[i]);
-+			if (i != 0)
-+				goto submit;
-+			else
-+				goto put;
-+		}
-+
-+		infl_req->res.cn20k.compcode = CPT_COMP_NOT_DONE;
-+		infl_req->qp = qp;
-+		inst->w0.u64 = 0;
-+		inst->res_addr = (uint64_t)&infl_req->res;
-+		inst->w2.u64 = burst->w2[i];
-+		inst->w3.u64 = CNXK_CPT_INST_W3(1, infl_req);
-+	}
-+
-+	fc.u64[0] =
-+		rte_atomic_load_explicit((RTE_ATOMIC(uint64_t) *)fc_addr, rte_memory_order_relaxed);
-+	if (unlikely(fc.s.qsize > fc_thresh)) {
-+		rte_errno = EAGAIN;
-+		for (j = 0; j < i; j++) {
-+			infl_req = infl_reqs[j];
-+			if (unlikely(infl_req->op_flags & CPT_OP_FLAGS_METABUF))
-+				rte_mempool_put(qp->meta_info.pool, infl_req->mdata);
-+		}
-+		i = 0;
-+		goto put;
-+	}
-+
-+submit:
-+	if (CNXK_TT_FROM_TAG(burst->ws->gw_rdata) == SSO_TT_ORDERED)
-+		roc_sso_hws_head_wait(burst->ws->base);
-+
-+	cn20k_cpt_lmtst_dual_submit(&io_addr, lmt_id, &i);
-+
-+put:
-+	if (unlikely(i != burst->nb_ops))
-+		rte_mempool_put_bulk(qp->ca.req_mp, (void *)&infl_reqs[i], burst->nb_ops - i);
-+
-+	return i;
-+}
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(cn20k_cpt_crypto_adapter_enqueue)
-+uint16_t __rte_hot
-+cn20k_cpt_crypto_adapter_enqueue(void *ws, struct rte_event ev[], uint16_t nb_events)
-+{
-+	uint16_t submitted, count = 0, vec_tbl_len = 0;
-+	struct vec_request vec_tbl[nb_events];
-+	struct rte_crypto_op *op;
-+	struct ops_burst burst;
-+	struct cnxk_cpt_qp *qp;
-+	bool is_vector = false;
-+	uint64_t w2;
-+	int ret, i;
-+
-+	burst.ws = ws;
-+	burst.qp = NULL;
-+	burst.nb_ops = 0;
-+
-+	for (i = 0; i < nb_events; i++) {
-+		op = ev[i].event_ptr;
-+		ret = cn20k_ca_meta_info_extract(op, &qp, &w2);
-+		if (unlikely(ret)) {
-+			rte_errno = EINVAL;
-+			goto vec_submit;
-+		}
-+
-+		/* Queue pair change check */
-+		if (qp != burst.qp) {
-+			if (burst.nb_ops) {
-+				if (is_vector) {
-+					submitted =
-+						ca_lmtst_vec_submit(&burst, vec_tbl, &vec_tbl_len);
-+					/*
-+					 * Vector submission is required on qp change, but not in
-+					 * other cases, since we could send several vectors per
-+					 * lmtst instruction only for same qp
-+					 */
-+					cn20k_cpt_vec_submit(vec_tbl, vec_tbl_len, burst.qp);
-+					vec_tbl_len = 0;
-+				} else {
-+					submitted = ca_lmtst_burst_submit(&burst);
-+				}
-+				count += submitted;
-+				if (unlikely(submitted != burst.nb_ops))
-+					goto vec_submit;
-+				burst.nb_ops = 0;
-+			}
-+			is_vector = qp->ca.vector_sz;
-+			burst.qp = qp;
-+		}
-+		burst.w2[burst.nb_ops] = w2;
-+		burst.op[burst.nb_ops] = op;
-+
-+		/* Max nb_ops per burst check */
-+		if (++burst.nb_ops == CN20K_CPT_PKTS_PER_LOOP) {
-+			if (is_vector)
-+				submitted = ca_lmtst_vec_submit(&burst, vec_tbl, &vec_tbl_len);
-+			else
-+				submitted = ca_lmtst_burst_submit(&burst);
-+			count += submitted;
-+			if (unlikely(submitted != burst.nb_ops))
-+				goto vec_submit;
-+			burst.nb_ops = 0;
-+		}
-+	}
-+	/* Submit the rest of crypto operations */
-+	if (burst.nb_ops) {
-+		if (is_vector)
-+			count += ca_lmtst_vec_submit(&burst, vec_tbl, &vec_tbl_len);
-+		else
-+			count += ca_lmtst_burst_submit(&burst);
-+	}
-+
-+vec_submit:
-+	cn20k_cpt_vec_submit(vec_tbl, vec_tbl_len, burst.qp);
-+	return count;
-+}
-+
- static inline void
- cn20k_cpt_ipsec_post_process(struct rte_crypto_op *cop, struct cpt_cn20k_res_s *res)
- {
-@@ -593,6 +1086,77 @@ cn20k_cpt_dequeue_post_process(struct cnxk_cpt_qp *qp, struct rte_crypto_op *cop
  	}
  }
  
-+RTE_EXPORT_INTERNAL_SYMBOL(cn20k_cpt_crypto_adapter_dequeue)
-+uintptr_t
-+cn20k_cpt_crypto_adapter_dequeue(uintptr_t get_work1)
-+{
-+	struct cpt_inflight_req *infl_req;
-+	struct rte_crypto_op *cop;
-+	struct cnxk_cpt_qp *qp;
-+	union cpt_res_s res;
-+
-+	infl_req = (struct cpt_inflight_req *)(get_work1);
-+	cop = infl_req->cop;
-+	qp = infl_req->qp;
-+
-+	res.u64[0] = rte_atomic_load_explicit((RTE_ATOMIC(uint64_t) *)(&infl_req->res.u64[0]),
-+					      rte_memory_order_relaxed);
-+
-+	cn20k_cpt_dequeue_post_process(qp, infl_req->cop, infl_req, &res.cn20k);
-+
-+	if (unlikely(infl_req->op_flags & CPT_OP_FLAGS_METABUF))
-+		rte_mempool_put(qp->meta_info.pool, infl_req->mdata);
-+
-+	rte_mempool_put(qp->ca.req_mp, infl_req);
-+	return (uintptr_t)cop;
-+}
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(cn20k_cpt_crypto_adapter_vector_dequeue)
-+uintptr_t
-+cn20k_cpt_crypto_adapter_vector_dequeue(uintptr_t get_work1)
-+{
-+	struct cpt_inflight_req *infl_req, *vec_infl_req;
-+	struct rte_mempool *meta_mp, *req_mp;
-+	struct rte_event_vector *vec;
-+	struct rte_crypto_op *cop;
-+	struct cnxk_cpt_qp *qp;
-+	union cpt_res_s res;
-+	int i;
-+
-+	vec_infl_req = (struct cpt_inflight_req *)(get_work1);
-+
-+	vec = vec_infl_req->vec;
-+	qp = vec_infl_req->qp;
-+	meta_mp = qp->meta_info.pool;
-+	req_mp = qp->ca.req_mp;
-+
-+#ifdef CNXK_CRYPTODEV_DEBUG
-+	res.u64[0] = rte_atomic_load_explicit((RTE_ATOMIC(uint64_t) *)(&vec_infl_req->res.u64[0]),
-+					      rte_memory_order_relaxed);
-+	PLT_ASSERT(res.cn20k.compcode == CPT_COMP_GOOD);
-+	PLT_ASSERT(res.cn20k.uc_compcode == 0);
-+#endif
-+
-+	for (i = 0; i < vec->nb_elem; i++) {
-+		infl_req = vec->ptrs[i];
-+		cop = infl_req->cop;
-+
-+		res.u64[0] = rte_atomic_load_explicit(
-+			(RTE_ATOMIC(uint64_t) *)(&infl_req->res.u64[0]), rte_memory_order_relaxed);
-+		cn20k_cpt_dequeue_post_process(qp, cop, infl_req, &res.cn20k);
-+
-+		vec->ptrs[i] = cop;
-+		if (unlikely(infl_req->op_flags & CPT_OP_FLAGS_METABUF))
-+			rte_mempool_put(meta_mp, infl_req->mdata);
-+
-+		rte_mempool_put(req_mp, infl_req);
-+	}
-+
-+	rte_mempool_put(req_mp, vec_infl_req);
-+
-+	return (uintptr_t)vec;
-+}
-+
- static uint16_t
- cn20k_cpt_dequeue_burst(void *qptr, struct rte_crypto_op **ops, uint16_t nb_ops)
- {
-diff --git a/drivers/crypto/cnxk/cn20k_cryptodev_ops.h b/drivers/crypto/cnxk/cn20k_cryptodev_ops.h
-index 752ca588e0..56f814a142 100644
---- a/drivers/crypto/cnxk/cn20k_cryptodev_ops.h
-+++ b/drivers/crypto/cnxk/cn20k_cryptodev_ops.h
-@@ -33,6 +33,10 @@ uint16_t __rte_hot cn20k_cryptodev_sec_inb_rx_inject(void *dev, struct rte_mbuf
- __rte_internal
- int cn20k_cryptodev_sec_rx_inject_configure(void *device, uint16_t port_id, bool enable);
- 
-+__rte_internal
-+uint16_t __rte_hot cn20k_cpt_crypto_adapter_enqueue(void *ws, struct rte_event ev[],
-+						    uint16_t nb_events);
-+
- static __rte_always_inline void __rte_hot
- cn20k_cpt_lmtst_dual_submit(uint64_t *io_addr, const uint16_t lmt_id, int *i)
- {
-diff --git a/drivers/event/cnxk/cn20k_eventdev.c b/drivers/event/cnxk/cn20k_eventdev.c
-index 0688cf97e5..7d003ae2fc 100644
---- a/drivers/event/cnxk/cn20k_eventdev.c
-+++ b/drivers/event/cnxk/cn20k_eventdev.c
-@@ -4,6 +4,7 @@
- 
- #include "roc_api.h"
- 
-+#include "cn20k_cryptodev_ops.h"
- #include "cn20k_ethdev.h"
- #include "cn20k_eventdev.h"
- #include "cn20k_tx_worker.h"
-@@ -346,6 +347,7 @@ cn20k_sso_fp_fns_set(struct rte_eventdev *event_dev)
- 	event_dev->enqueue_new_burst = cn20k_sso_hws_enq_new_burst;
- 	event_dev->enqueue_forward_burst = cn20k_sso_hws_enq_fwd_burst;
- 
-+	event_dev->ca_enqueue = cn20k_cpt_crypto_adapter_enqueue;
- 	event_dev->profile_switch = cn20k_sso_hws_profile_switch;
- 	event_dev->preschedule_modify = cn20k_sso_hws_preschedule_modify;
- 	event_dev->preschedule = cn20k_sso_hws_preschedule;
-@@ -1037,6 +1039,48 @@ cn20k_sso_tx_adapter_queue_del(uint8_t id, const struct rte_eventdev *event_dev,
- 	return cn20k_sso_updt_tx_adptr_data(event_dev);
- }
- 
-+static int
-+cn20k_crypto_adapter_caps_get(const struct rte_eventdev *event_dev,
-+			      const struct rte_cryptodev *cdev, uint32_t *caps)
-+{
-+	CNXK_VALID_DEV_OR_ERR_RET(event_dev->dev, "event_cn20k", ENOTSUP);
-+	CNXK_VALID_DEV_OR_ERR_RET(cdev->device, "crypto_cn20k", ENOTSUP);
-+
-+	*caps = RTE_EVENT_CRYPTO_ADAPTER_CAP_INTERNAL_PORT_OP_FWD |
-+		RTE_EVENT_CRYPTO_ADAPTER_CAP_SESSION_PRIVATE_DATA |
-+		RTE_EVENT_CRYPTO_ADAPTER_CAP_EVENT_VECTOR;
-+
-+	return 0;
-+}
-+
-+static int
-+cn20k_crypto_adapter_qp_add(const struct rte_eventdev *event_dev, const struct rte_cryptodev *cdev,
-+			    int32_t queue_pair_id,
-+			    const struct rte_event_crypto_adapter_queue_conf *conf)
-+{
-+	int ret;
-+
-+	CNXK_VALID_DEV_OR_ERR_RET(event_dev->dev, "event_cn20k", EINVAL);
-+	CNXK_VALID_DEV_OR_ERR_RET(cdev->device, "crypto_cn20k", EINVAL);
-+
-+	cn20k_sso_fp_fns_set((struct rte_eventdev *)(uintptr_t)event_dev);
-+
-+	ret = cnxk_crypto_adapter_qp_add(event_dev, cdev, queue_pair_id, conf);
-+	cn20k_sso_set_priv_mem(event_dev, NULL);
-+
-+	return ret;
-+}
-+
-+static int
-+cn20k_crypto_adapter_qp_del(const struct rte_eventdev *event_dev, const struct rte_cryptodev *cdev,
-+			    int32_t queue_pair_id)
-+{
-+	CNXK_VALID_DEV_OR_ERR_RET(event_dev->dev, "event_cn20k", EINVAL);
-+	CNXK_VALID_DEV_OR_ERR_RET(cdev->device, "crypto_cn20k", EINVAL);
-+
-+	return cnxk_crypto_adapter_qp_del(cdev, queue_pair_id);
-+}
-+
- static int
- cn20k_tim_caps_get(const struct rte_eventdev *evdev, uint64_t flags, uint32_t *caps,
- 		   const struct event_timer_adapter_ops **ops)
-@@ -1044,6 +1088,26 @@ cn20k_tim_caps_get(const struct rte_eventdev *evdev, uint64_t flags, uint32_t *c
- 	return cnxk_tim_caps_get(evdev, flags, caps, ops, cn20k_sso_set_priv_mem);
- }
- 
-+static int
-+cn20k_crypto_adapter_vec_limits(const struct rte_eventdev *event_dev,
-+				const struct rte_cryptodev *cdev,
-+				struct rte_event_crypto_adapter_vector_limits *limits)
-+{
-+	CNXK_VALID_DEV_OR_ERR_RET(event_dev->dev, "event_cn20k", EINVAL);
-+	CNXK_VALID_DEV_OR_ERR_RET(cdev->device, "crypto_cn20k", EINVAL);
-+
-+	limits->log2_sz = false;
-+	limits->min_sz = 0;
-+	limits->max_sz = UINT16_MAX;
-+	/* Unused timeout, in software implementation we aggregate all crypto
-+	 * operations passed to the enqueue function
-+	 */
-+	limits->min_timeout_ns = 0;
-+	limits->max_timeout_ns = 0;
-+
-+	return 0;
-+}
-+
- static struct eventdev_ops cn20k_sso_dev_ops = {
- 	.dev_infos_get = cn20k_sso_info_get,
- 	.dev_configure = cn20k_sso_dev_configure,
-@@ -1081,6 +1145,11 @@ static struct eventdev_ops cn20k_sso_dev_ops = {
- 
- 	.timer_adapter_caps_get = cn20k_tim_caps_get,
- 
-+	.crypto_adapter_caps_get = cn20k_crypto_adapter_caps_get,
-+	.crypto_adapter_queue_pair_add = cn20k_crypto_adapter_qp_add,
-+	.crypto_adapter_queue_pair_del = cn20k_crypto_adapter_qp_del,
-+	.crypto_adapter_vector_limits_get = cn20k_crypto_adapter_vec_limits,
-+
- 	.xstats_get = cnxk_sso_xstats_get,
- 	.xstats_reset = cnxk_sso_xstats_reset,
- 	.xstats_get_names = cnxk_sso_xstats_get_names,
-diff --git a/drivers/event/cnxk/cn20k_worker.h b/drivers/event/cnxk/cn20k_worker.h
-index 6ed1f78a86..27cd4d5479 100644
---- a/drivers/event/cnxk/cn20k_worker.h
-+++ b/drivers/event/cnxk/cn20k_worker.h
-@@ -8,6 +8,7 @@
- #include <rte_event_timer_adapter.h>
- #include <rte_eventdev.h>
- 
-+#include "cn20k_cryptodev_event_dp.h"
- #include "cn20k_eventdev.h"
- #include "cn20k_rx.h"
- #include "cnxk_worker.h"
-@@ -166,7 +167,11 @@ cn20k_sso_hws_post_process(struct cn20k_sso_hws *ws, uint64_t *u64, const uint32
- 
- 	u64[0] = (u64[0] & (0x3ull << 32)) << 6 | (u64[0] & (0x3FFull << 36)) << 4 |
- 		 (u64[0] & 0xffffffff);
--	if (CNXK_EVENT_TYPE_FROM_TAG(u64[0]) == RTE_EVENT_TYPE_ETHDEV) {
-+	if (CNXK_EVENT_TYPE_FROM_TAG(u64[0]) == RTE_EVENT_TYPE_CRYPTODEV) {
-+		u64[1] = cn20k_cpt_crypto_adapter_dequeue(u64[1]);
-+	} else if (CNXK_EVENT_TYPE_FROM_TAG(u64[0]) == RTE_EVENT_TYPE_CRYPTODEV_VECTOR) {
-+		u64[1] = cn20k_cpt_crypto_adapter_vector_dequeue(u64[1]);
-+	} else if (CNXK_EVENT_TYPE_FROM_TAG(u64[0]) == RTE_EVENT_TYPE_ETHDEV) {
- 		uint8_t port = CNXK_SUB_EVENT_FROM_TAG(u64[0]);
- 		uintptr_t cpth = 0;
- 		uint64_t mbuf;
 -- 
 2.48.1
 
