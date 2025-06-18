@@ -2,39 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E25C7115A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Jun 2025 10:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BB5C71157
+	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Jun 2025 11:05:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7868D42D0B;
-	Wed, 18 Jun 2025 12:37:30 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 3322140151
- for <dev@dpdk.org>; Wed, 18 Jun 2025 12:37:29 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id CE32820462;
- Wed, 18 Jun 2025 12:37:28 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 9AAD042D2B;
+	Wed, 18 Jun 2025 13:05:30 +0200 (CEST)
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
+ by mails.dpdk.org (Postfix) with ESMTP id 20D36427E6
+ for <dev@dpdk.org>; Wed, 18 Jun 2025 13:05:26 +0200 (CEST)
+X-QQ-mid: esmtpgz10t1750244721t10745142
+X-QQ-Originating-IP: F/IAlN+o+7S8BT3xbUO52RxOtnV++QZpmMMgmaO9hAM=
+Received: from localhost.localdomain ( [203.174.112.180])
+ by bizesmtp.qq.com (ESMTP) with 
+ id ; Wed, 18 Jun 2025 19:05:19 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 10823971345831428772
+EX-QQ-RecipientCnt: 4
+From: Wenbo Cao <caowenbo@mucse.com>
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org,
+	yaojun@mucse.com,
+	Wenbo Cao <caowenbo@mucse.com>
+Subject: [PATCH v0 0/3] [v0]drivers/net fixed Coverity issue
+Date: Wed, 18 Jun 2025 19:05:13 +0800
+Message-Id: <20250618110516.90113-1-caowenbo@mucse.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH v2 6/6] trace: add PMU
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Wed, 18 Jun 2025 12:37:25 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FD0E@smartserver.smartshare.dk>
-In-Reply-To: <20250618102320.97107-1-tduszynski@marvell.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v2 6/6] trace: add PMU
-Thread-Index: AdvgOwmmZ92y7pYiRKKV1HjEKRPZ7wAAZjtw
-References: <98CBD80474FA8B44BF855DF32C47DC35E9FD08@smartserver.smartshare.dk>
- <20250618102320.97107-1-tduszynski@marvell.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Tomasz Duszynski" <tduszynski@marvell.com>
-Cc: <bruce.richardson@intel.com>, <dev@dpdk.org>, <jerinj@marvell.com>,
- <thomas@monjalon.net>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz5a-0
+X-QQ-XMAILINFO: Np+AlqyfvJHVh7rZoWjhrbLDwszbv9HK5oAN66mqdoxy4Jn6wViROj2p
+ fcxLET2Ob+xtrKetNpXshTCCank0aK3aa01yq9eVWHAFrZ5gi2D2bOArc7vHO4VHp7Dgr0N
+ l/0liD6Nie0ZdywPeCw4l7DJvbyG+dPQqGzZLqrPiEVSU/ceEALFG6WsoTTIq98OW1u2dGe
+ PVKT2ynhTO4FV8wwKTmqLf3czuhzov5c3OZh16jEggG9BNSjR+siaJOobrFow6XgdiBNBnm
+ o9aE5xMto6X8hUfoP72N+WeD8umwjcQRbsQvf2yyjtjNJlkw7wpxRIAUNdNIIBBb296suub
+ 1WiNtnHR6VIIHD7AjeJzBP1ObV6sEB82Xqs7cO6qCL0HeGcRGe6PalCeztrIZ7HTmLsuKas
+ 3cCFRTxI6pGabXjQ0ZuEfX4rQwHfMs5XpCUiaYvMa+qd1G5HoqDXZffiOgr7MSW8c13fI+x
+ gN0BDAyeB4ynfdbprnnm0k3jktbz77rKE3+ngyE9Lmrf+5aVan/C5C26YgEghTbKiPEgQNL
+ ecRWvAdmbNobjbF/7OpkMEZIYKmg/eaCMkbFk5XxqOoY/MgZ1kgMQRXVSb/eIyp3wTFydpC
+ xyqcxTSkWcCrSwjZw0vzCranunLiKE1/gKcT1K7pyU3OBko/mehKD3pLDpuDUJvSBoXHUyA
+ ptHopfRcSCJTnNUURGps2Z47sNYh5F+CyT3/gkL7vX2sutoKD1EX2XHQHQeHD53Bg8YlnZL
+ hSWn6X+uuLnA7lcS+ymIYH0SpyCVW3fZc9GFU5BzkayXupGTHQVe01ENM1BI7fOHrFeP89N
+ 9X1Trxi7rwU9k3Wp5j9Wv0MfF1tuutkBbFHP5TeUuQNqFv2gEmWdKTkgiAGAg0IPshlegKU
+ uEX9zWOACwE9WH4QHMIKrYqxTbwMiNcXnk4GVVQIGkgSylhZLlFVebMmXX6v9+PMMlPFxoR
+ AqXqB7r6UVpXZzlUSVULu7QD8D299r8hsc+NjCQrQ3sUa/EQ5NYFjFqUh
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,63 +62,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Tomasz Duszynski [mailto:tduszynski@marvell.com]
-> Sent: Wednesday, 18 June 2025 12.23
->=20
-> >> diff --git a/lib/meson.build b/lib/meson.build
-> >> index 1934cb4a29..87b567f01b 100644
-> >> --- a/lib/meson.build
-> >> +++ b/lib/meson.build
-> >> @@ -13,7 +13,7 @@ libraries =3D [
-> >>          'kvargs', # eal depends on kvargs
-> >>          'argparse',
-> >>          'telemetry', # basic info querying
-> >> -        'pmu',
-> >> +        'pmu', # trace depends on pmu
-> >>          'eal', # everything depends on eal
-> >>          'ptr_compress',
-> >>          'ring',
-> >
-> >@Tomasz,
-> >
-> >Please re-read my v1 review feedback [1]:
-> >The PMU library should depend on the EAL, not the other way around!
-> >How else is the PMU library supposed to use EAL functions like
-> rte_mem_page_size()?
->=20
-> Hi Morten,
->=20
-> Not addressing your comments wasn't intentional - just missed your =
-reply prior
-> to sending
-> v2.
->=20
-> Tracing is tightly tied to eal right now so adding anything "external" =
-there
-> brings in extra
-> deps. That's why I can't move pmu further down in the lib hierarchy - =
-dpdk
-> won't build if I do.
->=20
-> Once tracing is moved out into its own library, that kind of change =
-should be
-> possible.
+This patchset primarily optimizes the robustness of code logic and
+resolves anomalies in TSO segmentation.
 
-OK. Thomas seems to agree with this approach, so I will accept it too. =
-:-)
+v0:
+  *:fixed the below issue:
+  	Coverity issue: 468860,468866,468858
+	Fixes: 4530e70f1e32 ("net/rnp: support Tx TSO offload")
+	Fixes: 52dfb84e14be ("net/rnp: add device init and uninit")
+	Fixes: 52aae4ed4ffb ("net/rnp: add device capabilities")
+  *:fixed 64k tso
 
->=20
-> >
-> >@Jerin or @Bruce, do any of you have some suggestions for how to =
-achieve the
-> proper dependency chain here?
-> >
-> >Worst case, we will have to move PMU into EAL. :-(
-> >
-> >[1]:
-> =
-https://inbox.dpdk.org/dev/98CBD80474FA8B44BF855DF32C47DC35E9FCFA@smartse=
-rver.
-> smartshare.dk/T/#u
-> >
-> >Besides that, good stuff. :-)
+Wenbo Cao (3):
+  net/rnp: add check firmware respond info
+  net/rnp: fix Tunnel-TSO VLAN header untrusted loop bound
+  net/rnp: fix TSO segmentation for packets of 64KB
+
+ drivers/net/rnp/base/rnp_fw_cmd.h |   1 +
+ drivers/net/rnp/base/rnp_mbx_fw.c |  15 +++-
+ drivers/net/rnp/rnp_ethdev.c      |  16 ++---
+ drivers/net/rnp/rnp_rxtx.c        | 110 ++++++++++++++++++++++++------
+ drivers/net/rnp/rnp_rxtx.h        |   1 +
+ 5 files changed, 112 insertions(+), 31 deletions(-)
+
+-- 
+2.25.1
+
