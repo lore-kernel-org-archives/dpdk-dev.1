@@ -2,87 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C630C71157
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Jun 2025 09:25:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC6FCC7115B
+	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Jun 2025 09:26:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E6F73427A2;
-	Wed, 18 Jun 2025 11:25:07 +0200 (CEST)
-Received: from fout-a7-smtp.messagingengine.com
- (fout-a7-smtp.messagingengine.com [103.168.172.150])
- by mails.dpdk.org (Postfix) with ESMTP id 5BD0840EE2
- for <dev@dpdk.org>; Wed, 18 Jun 2025 11:25:06 +0200 (CEST)
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal
- [10.202.2.42])
- by mailfout.phl.internal (Postfix) with ESMTP id AE246138043E;
- Wed, 18 Jun 2025 05:25:05 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-02.internal (MEProxy); Wed, 18 Jun 2025 05:25:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1750238705;
- x=1750325105; bh=PkWyt9J2TAAGWNxLO8j4nhUvxOrQFAtNXzW75WjBq60=; b=
- Er1RhwK1PJ8LeiC6LRyw+sdtjVSQt6VsvPJVurkiQVOJ0EyhbolGdYMIG0XWqUzQ
- k926B+ZRoxDfTS3Uqm84pbJHAO2rg+eEzB+i7ccKtZb4MAcjLaVkuQ9OrNJLWC/g
- yJVRzOY4GJ7H+PeoQu8qIwUn7cesikOKbcZNvFESf4Rl5z/JRVF3ZmxA2/xbWFsC
- KJkx9Z1QaSd9fOKjjTeBk6NMDV4JE4R9nFXth+KUtWTLhzOWHqVkVaV/bPEKMlr+
- tacTklsGqu4Z0I53l+PzCij1KReswqbmy+rn4PpOwrTpPzxcNsSigMJ29myftuQZ
- e04hPoRbvA4LBixX2B1eyw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1750238705; x=
- 1750325105; bh=PkWyt9J2TAAGWNxLO8j4nhUvxOrQFAtNXzW75WjBq60=; b=K
- rNPFmntJqPjAh3DEgstTH6rsUfY2QmNuQtjkrhgwQY9l6wW5xbCq/+1FX1dKLNe7
- 6g4PaP7vx0UTCmkIbvsKFq3Wsb15YK+ivOcaMgI4Ei0P8lDNeV/PsYXo00vUurPS
- f2WoIVIFO5iejThZiikqV2g9D3zq82bNtYH1/+yxKtbUpVSdlT/sGqlwTeFpmhnd
- oBNVtrnJNbMtNEzArltAR5O5knAaYEkned95aK62+aWNbFvWv1+hfKhWo5hxFSoU
- Jxoatwyzm/2ukqdEmPHdlaSThaG/ysBdGU9NG/6McOgCQhZsJitEOUMJdq0Mtmon
- QD7cMSCxwdb/rUklOvfCw==
-X-ME-Sender: <xms:8IVSaEIMoqA6BdlSE1Beim__os-asjEyVRnWUPexoHAsVYnH86Ualw>
- <xme:8IVSaEKg0MzP1aBImrTHMtUqfqFnakmGrg0mzOF-wT14sPseKBX0BDHgMtCDgzufy
- c5HMwDXQxbJAruAyw>
-X-ME-Received: <xmr:8IVSaEvgB5VBE0iFsU-_Ox0KMqHS3yk8gvw7RWwO_opcaH35oZthm2nLBs_W7wKzNptHAw5TLJ0KHGY6Hrn8RUgaOQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddvvdejucetufdoteggodetrfdotf
- fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
- rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
- htshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthhqredttddtjeen
- ucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrg
- hlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeegtddtleejjeegffekkeektdejvedt
- heevtdekiedvueeuvdeiuddvleevjeeujeenucevlhhushhtvghrufhiiigvpedtnecurf
- grrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhn
- sggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehhohifrg
- hruggpfigrnhhgsehrvggrlhhsihhlrdgtohhmrdgtnhdprhgtphhtthhopegrnhgurhgv
- mhhuvgeslhhinhhugidrmhhitghrohhsohhfthdrtghomhdprhgtphhtthhopeguvghvse
- guphgukhdrohhrghdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonhesihhn
- thgvlhdrtghomhdprhgtphhtthhopegurghvihgurdhmrghrtghhrghnugesrhgvughhrg
- htrdgtohhm
-X-ME-Proxy: <xmx:8IVSaBZO5ZtDn06wRBUStFVwqgoQ-LUEt5A5uPsCAO974v4RW5xC_A>
- <xmx:8IVSaLbHVbEymKGKuGXdd5ys-qib9UE5tuSmhjdH22BiYHNgcEE7qg>
- <xmx:8IVSaNAoogOCe1tSSfeyLxWUutXbVrFtOKXBQ6u-rIV7PPjUKwoicw>
- <xmx:8IVSaBbSE6_Xhv1p34cdlXw4KbEVAgkHXWJbC67pxBLI1kmT96_QNg>
- <xmx:8YVSaI0gTnD7WlJFNQDeM8m7ELG6dJPqGFz-Q723HjDZO0bP42aG5CAZ>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 18 Jun 2025 05:25:03 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: howard_wang <howard_wang@realsil.com.cn>
-Cc: Andre Muezerie <andremue@linux.microsoft.com>, dev@dpdk.org,
- Bruce Richardson <bruce.richardson@intel.com>,
- David Marchand <david.marchand@redhat.com>
-Subject: Re: [PATCH v3 2/3] drivers/net: remove use of non-standard array range
- initialization
-Date: Wed, 18 Jun 2025 11:25:01 +0200
-Message-ID: <5034944.6M6d0yLqnL@thomas>
-In-Reply-To: <CAJFAV8yxnGmBKJhTQp3js4QObjwaySHxTS9MekSmwgkVkY9xdg@mail.gmail.com>
-References: <1735243903-26857-1-git-send-email-andremue@linux.microsoft.com>
- <1749737842-30538-3-git-send-email-andremue@linux.microsoft.com>
- <CAJFAV8yxnGmBKJhTQp3js4QObjwaySHxTS9MekSmwgkVkY9xdg@mail.gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 1DC0A427D1;
+	Wed, 18 Jun 2025 11:26:46 +0200 (CEST)
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com
+ [209.85.160.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 3823240EE2
+ for <dev@dpdk.org>; Wed, 18 Jun 2025 11:26:45 +0200 (CEST)
+Received: by mail-qt1-f170.google.com with SMTP id
+ d75a77b69052e-4a5a196f057so144000891cf.3
+ for <dev@dpdk.org>; Wed, 18 Jun 2025 02:26:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1750238804; x=1750843604; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=4tDZvPYcrD10RxMuqB/Hqb2WwmKFFcwwQW1AkxyPMmw=;
+ b=Te4g4rwe9ufGVg2G99AJ8McN4MEW2cQ+wpa1GIawRXsWTAW+V5OvzYwFlHgBGla8zq
+ ZGJbxVJXnIL9U1SIvkGA/P75ATRdsLvn1Xf6MsRPBddMd5R/0G/4pP7wafDQDoPptiwc
+ 044NDmFzyUPO0DHjk+knYrkSwlwAvkWUyURIrtYHznjDocGN/B74kcbgai9nsms+Kmde
+ /mZdoBT5IXbKMbAIUL7cIXvVUENGimTEcxK/w5YBzEUFGJ681wR2VOaoACw76hONoPl/
+ y2nrJWyPfAFTiZD3GixTkHstyoQJYa0ZJ2a5k0AoaONJrkc3IOuw+V6+/guK4BXAE/Th
+ SdfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1750238804; x=1750843604;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=4tDZvPYcrD10RxMuqB/Hqb2WwmKFFcwwQW1AkxyPMmw=;
+ b=OVtIADTPUEAqLzSDdTzJJ6TUuyG0pvv4y83PMNH2t7WMzF4zuAWR/HusFcydBARl2m
+ EzimmtI1MV1G+/P0hEibDD2Lm7XFbvT54yYdUTNHTjoKnGppONid3FAyPyFrIMm/sb3G
+ a8oYfVmX1NRv2dXK1eA9z3vnaEBxBHkL8wHWHLDhd7zTXjrzczyk0J2510dyI9irgU5O
+ ChKofbI/XS4dFOigFfL4q+ZPKFexHxoVMZkBnX75iSUP2pdohxk/yp37Su9olvpsY+qu
+ 0i8lTnmfpghdywptekse6op9WuwF5F/G2zFp2p7igETukFmMm2QlPCjRjNM7q/qvHvo2
+ /7/g==
+X-Gm-Message-State: AOJu0YxdSnTlmcyS2VVjEhvd1LmIjzOJ8DIM7DJqMWNRzrGg2KOSaBXv
+ pHnFR2TM9otWw6uCspzn1c7tv+uiF69uv5u7NDEFoh30ujgRhDGWxgLCv/l0NbLR9G1ADU21HJ6
+ XSFIxKSEg0Iy6loNsKfOG/u57lwSM+o8=
+X-Gm-Gg: ASbGncv+4zoZKKY+elQv/DsmSByihVFAOi5Tmg9vNY37wTzCvA//NsnQoPP8+cNM5Jx
+ /c8DJkucPZoBY4RtSsrJsShlRJJ+0J8pJ9sUmJyVv8J48nqQAK7tbP/6H9XKkB/C2D8tT8w6J6H
+ iEy3+6CIiJ9CYy4PRXMIqEukLAIyuu3xxpehP/ItGYxw==
+X-Google-Smtp-Source: AGHT+IGV77yMob8fo6yjwBcGc4V33bqGs0He2x13hhyCpf93TyF0QlqWUG+ZyJ9MBc0q0L18x9PzcghR/gp+KHYvmZ4=
+X-Received: by 2002:ac8:5a8c:0:b0:4a3:adbb:494a with SMTP id
+ d75a77b69052e-4a73c596f7emr280005051cf.28.1750238804507; Wed, 18 Jun 2025
+ 02:26:44 -0700 (PDT)
 MIME-Version: 1.0
+References: <20250509042401.2634765-1-pravin.pathak@intel.com>
+ <20250617182631.257612-1-pravin.pathak@intel.com>
+ <20250617182631.257612-5-pravin.pathak@intel.com>
+In-Reply-To: <20250617182631.257612-5-pravin.pathak@intel.com>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Wed, 18 Jun 2025 14:56:18 +0530
+X-Gm-Features: AX0GCFttJTgg5UV-YXVoR-BeDfVJCfCcFldHrjxZyNfuT_hfun5u2dHc-OMj1qg
+Message-ID: <CALBAE1OOfvi-+2bnkWteS1TVYjjNT26asMCXCZ7rswOJTsCPrQ@mail.gmail.com>
+Subject: Re: [PATCH v3 4/7] event/dlb2: support managing history list resource
+To: Pravin Pathak <pravin.pathak@intel.com>
+Cc: dev@dpdk.org, jerinj@marvell.com, mike.ximing.chen@intel.com, 
+ bruce.richardson@intel.com, thomas@monjalon.net, david.marchand@redhat.com, 
+ nipun.gupta@amd.com, chenbox@nvidia.com, tirthendu.sarkar@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -96,40 +77,147 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-16/06/2025 09:37, David Marchand:
-> On Thu, Jun 12, 2025 at 4:18=E2=80=AFPM Andre Muezerie
-> <andremue@linux.microsoft.com> wrote:
-> > diff --git a/drivers/net/r8169/base/rtl8125a_mcu.c b/drivers/net/r8169/=
-base/rtl8125a_mcu.c
-> > index 5a69b3e094..c9bf5fc6ad 100644
-> > --- a/drivers/net/r8169/base/rtl8125a_mcu.c
-> > +++ b/drivers/net/r8169/base/rtl8125a_mcu.c
-> > @@ -162,7 +162,13 @@ static void
-> >  rtl_release_phy_mcu_patch_key_lock(struct rtl_hw *hw)
-> >  {
-> >         switch (hw->mcfg) {
-> > -       case CFG_METHOD_48 ... CFG_METHOD_53:
-> > +       /* CFG_METHOD_48 ... CFG_METHOD_53 */
-> > +       case CFG_METHOD_48:
-> > +       case CFG_METHOD_49:
-> > +       case CFG_METHOD_50:
-> > +       case CFG_METHOD_51:
-> > +       case CFG_METHOD_52:
-> > +       case CFG_METHOD_53:
-> >                 rtl_mdio_direct_write_phy_ocp(hw, 0xA436, 0x0000);
-> >                 rtl_mdio_direct_write_phy_ocp(hw, 0xA438, 0x0000);
-> >                 rtl_clear_eth_phy_ocp_bit(hw, 0xB82E, BIT_0);
->=20
-> I don't have a strong opinion against this change.
-> The driver maintainer already acked this change.
->=20
-> So just some comment, on the form.
-> switch() here does not seem well suited since this driver code is
-> validating a range of values.
-> if (hw->mcfg >=3D CFG_METHOD_48 && hw->mcfg <=3D CFG_METHOD_53) seems more
-> robust and is easier to read.
+On Wed, Jun 18, 2025 at 12:52=E2=80=AFAM Pravin Pathak <pravin.pathak@intel=
+.com> wrote:
+>
+> Add support for setting application specified port history
+> Set HL equal to CQ depth when inflight control is enabled
+> Added command line parameters 'use_default_hl' (default: 1)
+>    and 'alloc_hl_entries'
+>  - When 'use_default_hl =3D 1'
+>    * Per port HL is set to DLB2_FIXED_CQ_HL_SIZE (32)
+>    * Recommended CQ depth by dlb2_eventdev_port_default_conf_get()
+>      is DLB2_FIXED_CQ_HL_SIZE/2
+>    * command line parameter alloc_hl_entries is ignored
+>  - When 'use_default_hl =3D 0'
+>    * Per LDB port HL =3D 2 * CQ depth
+>    * Recommended CQ depth by dlb2_eventdev_port_default_conf_get()
+>      is DLB2_FIXED_CQ_HL_SIZE
+>    * User should calculate needed HL entries based on CQ depths the
+>      application will use and specify it as command line parameter
+>      'alloc_hl_entries'.  This will be used to allocate HL entries.
+>       alloc_hl_entries =3D (Sum of all LDB ports CQ depths * 2)
+>    * If alloc_hl_entries is not specified, then
+>      Total HL entries for the eventdev  =3D num_ldb_ports * 64
+>
+> Signed-off-by: Pravin Pathak <pravin.pathak@intel.com>
+> Signed-off-by: Tirthendu Sarkar <tirthendu.sarkar@intel.com>
+> ---
 
-Yes I agree with David.
-Please could you fix this code to have simpler code with some "if"?
+> -/*!
+> +/**
+>   * @warning
+>   * @b EXPERIMENTAL: this API may change, or be removed, without prior no=
+tice
+>   *
+> @@ -91,6 +91,52 @@ rte_pmd_dlb2_set_token_pop_mode(uint8_t dev_id,
+>                                 uint8_t port_id,
+>                                 enum dlb2_token_pop_mode mode);
+>
+> +/** Set inflight threshold for flow migration */
+> +#define DLB2_SET_PORT_FLOW_MIGRATION_THRESHOLD RTE_BIT64(0)
+> +
+> +/** Set port history list */
+> +#define DLB2_SET_PORT_HL RTE_BIT64(1)
+> +
+> +/**
+> + * @warning
+> + * @b EXPERIMENTAL: this API may change, or be removed, without prior no=
+tice
+
+This is NOT API
+
+> + *
+> + * Sets TDT threshold and HL size for a DLB2 port.
+> + */
+> +struct rte_pmd_dlb2_port_param {
+> +       uint16_t inflight_threshold : 12;
+> +       uint16_t port_hl;
+
+Doxygen comments for each field is missing.
 
 
+> +};
+> +
+> +/**
+> + * @warning
+> + * @b EXPERIMENTAL: this API may change, or be removed, without prior no=
+tice
+> + *
+> + * Configure various port parameters.
+> + * This function must be called before calling rte_event_port_setup()
+> + * for the port, and after calling rte_event_dev_configure().
+> + *
+> + * @param dev_id
+> + *    The identifier of the event device.
+> + * @param port_id
+> + *    The identifier of the event port.
+> + * @param flags
+> + *    Bitmask of the parameters being set.
+> + * @param val
+> + *    Structure coantaining the values of parameters being set.
+
+coantaining - Typo
+
+
+> + *
+> + * @return
+> + * - 0: Success
+> + * - EINVAL: Invalid dev_id, port_id, or mode
+> + * - EINVAL: The DLB2 is not configured, is already running, or the port=
+ is
+> + *   already setup
+> + */
+> +__rte_experimental
+> +int
+> +rte_pmd_dlb2_set_port_param(uint8_t dev_id,
+> +                           uint8_t port_id,
+> +                           uint64_t flags,
+> +                           void *val);
+
+Why void * - Is it rte_pmd_dlb2_port_param * pointer. Right?
+
+Also fix following issues
+
+1)[for-main]dell[dpdk-next-eventdev] $ git diff HEAD~7..HEAD | grep \(void\=
+)
++       (void) enqueue_depth;
+
+use RTE_SET_USED
+
+2)
+
+### [PATCH] event/dlb2: support managing history list resource
+
+Warning in drivers/event/dlb2/dlb2.c:
+Using %l format, prefer %PRI*64 if type is [u]int64_t
+
+### [PATCH] event/dlb2: fix qid depth xstat in vector path
+
+WARNING:LINE_CONTINUATIONS: Avoid unnecessary line continuations
+#21: FILE: drivers/event/dlb2/dlb2.c:4148:
++               DLB2_INC_STAT(qm_port->ev_port->stats.queue[ev_qid3].\
+
+WARNING:LINE_CONTINUATIONS: Avoid unnecessary line continuations
+#30: FILE: drivers/event/dlb2/dlb2.c:4157:
++               DLB2_INC_STAT(qm_port->ev_port->stats.queue[ev_qid2].\
+
+WARNING:LINE_CONTINUATIONS: Avoid unnecessary line continuations
+#39: FILE: drivers/event/dlb2/dlb2.c:4167:
++               DLB2_INC_STAT(qm_port->ev_port->stats.queue[ev_qid1].\
+
+WARNING:LINE_CONTINUATIONS: Avoid unnecessary line continuations
+#48: FILE: drivers/event/dlb2/dlb2.c:4176:
++               DLB2_INC_STAT(qm_port->ev_port->stats.queue[ev_qid0].\
+
+total: 0 errors, 4 warnings, 32 lines checked
+
+
+
+
+>  #ifdef __cplusplus
+>  }
+>  #endif
+> --
+> 2.39.1
+>
