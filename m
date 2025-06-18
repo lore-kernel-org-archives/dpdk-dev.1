@@ -2,54 +2,64 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E4D3C7115B
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Jun 2025 07:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A0FC71157
+	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Jun 2025 07:44:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CCC83427D7;
-	Wed, 18 Jun 2025 09:44:24 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id 0DB38427CD;
- Wed, 18 Jun 2025 09:44:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1750232663; x=1781768663;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=1rUPu8bnXmIciwvq5X6mi5at6paQS5x3c0K8xP6y9sw=;
- b=ABCEJDNr9WvuBFVCQ6/zseteqVg4wuZNaR0DTrb6DYapQg3nHBY/V4B0
- RAW9W0jZiF+UZnoxf9H9WhBtLhKk1xcp+SGIEIkopBUNVVcpGTxgmBqDV
- 2PzaG5qitoZDeG80nmLRWr0jTBk8xOpiDcaIm8yNvRlz6HkiQN5HWq1wp
- 2DQE9jCQzQs0ZCnAn5OInIsxC4PoquAuGNYRVEsIgCs/z/pkZfNzxyEfn
- RnYVv91PMJnJAg57ur64IJ36Fs226ECDEdIv3vdhLjPoIvqhyt0iBGbmF
- CByMjTcS3dlGfwXdw1IjXH5rZsBslyG2N4ZZM4vkNWbt/haCczcZBQRtG A==;
-X-CSE-ConnectionGUID: L0+SGKDNSBGMCKTol6aN/Q==
-X-CSE-MsgGUID: blGiG90TR5uahovcGtHF5g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11467"; a="63096910"
-X-IronPort-AV: E=Sophos;i="6.16,245,1744095600"; d="scan'208";a="63096910"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
- by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Jun 2025 00:44:22 -0700
-X-CSE-ConnectionGUID: 3GrV5qi0TmuirV+Tmw5ESQ==
-X-CSE-MsgGUID: seoG6bxVTA+ntY8LBVc/9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,245,1744095600"; d="scan'208";a="150112993"
-Received: from unknown (HELO localhost.localdomain) ([10.239.252.253])
- by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Jun 2025 00:44:20 -0700
-From: Mingjin Ye <mingjinx.ye@intel.com>
-To: dev@dpdk.org
-Cc: Mingjin Ye <mingjinx.ye@intel.com>, stable@dpdk.org,
- Bruce Richardson <bruce.richardson@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v2 2/2] net/ice: fix updating DCF RSS hash
-Date: Wed, 18 Jun 2025 07:08:44 +0000
-Message-Id: <20250618070844.174484-2-mingjinx.ye@intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250618070844.174484-1-mingjinx.ye@intel.com>
-References: <20250611095058.114465-1-mingjinx.ye@intel.com>
- <20250618070844.174484-1-mingjinx.ye@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 1B0F3427D4;
+	Wed, 18 Jun 2025 09:44:46 +0200 (CEST)
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com
+ [209.85.160.173])
+ by mails.dpdk.org (Postfix) with ESMTP id E1859427CA
+ for <dev@dpdk.org>; Wed, 18 Jun 2025 09:44:43 +0200 (CEST)
+Received: by mail-qt1-f173.google.com with SMTP id
+ d75a77b69052e-4a4bb155edeso78156821cf.2
+ for <dev@dpdk.org>; Wed, 18 Jun 2025 00:44:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1750232683; x=1750837483; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=+XKugvZSpLigCyKjqedDWmuax4Yw2adaY5UhCwMQU1Y=;
+ b=D4/3oe0UmO0uO6yKheuGdYpw+w3/unBSTBMGzlho3a2OMYLBXTbkNOHt21z8pQJ0bN
+ bOLxtN31+vUUL9mwNdw8nWfq8jg3/oKejNpY/aWrNuSoXoFMF6uFAM5sFgcyFMs4aRk0
+ Sgh/1qba7Sb7gesGWHZzgTSTXr8ocVdMk/nN41EeYSHP9CkXwatveMOIA9gP9TdM8Wj0
+ LrGcUpghaOcw7bzkmeB/IwpvQVUZ3MZeQrr8OrUeiuvqnht7e2qfcHiuZJJwEqeTLcnm
+ cHHjKGgETn4pBi1D9VscY8G1Q7711pg19ds1Ru5siM2z/+3Ly+Lcp+GGf7klTwTGeO+A
+ gbmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1750232683; x=1750837483;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=+XKugvZSpLigCyKjqedDWmuax4Yw2adaY5UhCwMQU1Y=;
+ b=w/aIEio5TdHKMQ7c8AkWFu95yufVTc8HsRmYeyeUslQj2ZNC0IvB+NH5Xy2yb6ll5Q
+ fKPDgjjwXSwTjoapfiTbViPmI/RYFfvcTfk5cJ2DMV01o45PMkY5lIAmsCSfEA02z9uN
+ z7eUMjWtZ0Nkf2AniytXYyfc+sIRN3bmKKidPGEvYn+f4GCSDlSfjSAWVgF4duJX0QMf
+ 1z5bKJ5uAlufECCqfrLTpdC3csQ1sJgj2XZvgYLRTdRdocgGGSv0S88FgdGhw8ueXSV6
+ OPQgXIbhhgUAZ2cuVrdZ654omclicrjJ0hxksnD3d1XLT95wIZeKXd2WNNKtHi2DfL5Q
+ +KiA==
+X-Gm-Message-State: AOJu0Yy1bexW83LYCtPR4bPZx114sgPQIXLRIJSsVVhszht7W1XCQBQs
+ mDcwijI46YZVciaKwnNCccpjSf1o4A1NTaFgIbeOJph34+97hxfreGtgXL6PSgxcJSNjm1jiAvd
+ XYYunCWLe2PYhVE8drd3Hr0kWD+ZpJt2ZUg7j
+X-Gm-Gg: ASbGncu/pD+nz56lMG6jW+/2Nkiaq8F5YIXp0QRb5HDCggpaXAHAoxLxUV4csjL/MHZ
+ CR2p9pPd4cD4G5AW5VFFMR+ta9akUbRMod9Y9EwIowFQNAwqqNp2qb/6ZgXUx7ZG0SmrXL6w+PZ
+ 2g6NrhOsFTsyFEUoAJeZl1bZim2alZRq/YGNeb2CaP/w==
+X-Google-Smtp-Source: AGHT+IHT2qViTmB+UnEH9sbtzangwEyCyD1cXxIrKgUdxl4NE1HdXrWqlmT0gw0qOM6cPGiqWTw3esFASYMnNw9lFOM=
+X-Received: by 2002:ac8:7d4c:0:b0:4a7:6586:8e5 with SMTP id
+ d75a77b69052e-4a76586270emr13966451cf.40.1750232683068; Wed, 18 Jun 2025
+ 00:44:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250617045607.245070-1-tirthendu.sarkar@intel.com>
+In-Reply-To: <20250617045607.245070-1-tirthendu.sarkar@intel.com>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Wed, 18 Jun 2025 13:14:16 +0530
+X-Gm-Features: AX0GCFuUMvpBZmKq1mRlJsSOFNu__rdAGR_01xKxj2T2lVEkuzNhVmthRa6uW_E
+Message-ID: <CALBAE1NdVPbCE1u6vzJAF+LabC0qRgnRrqcn5fYL8GyGAEO6mg@mail.gmail.com>
+Subject: Re: [PATCH] event/dlb2: add datapath support in secondary processes
+To: Tirthendu Sarkar <tirthendu.sarkar@intel.com>
+Cc: dev@dpdk.org, bruce.richardson@intel.com, pravin.pathak@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -63,79 +73,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The driver does nothing if the rss key is invalid during the rss
-hash update.
+On Tue, Jun 17, 2025 at 6:42=E2=80=AFPM Tirthendu Sarkar
+<tirthendu.sarkar@intel.com> wrote:
+>
+> The producer port and consumer queue addresses are configured during
+> port setup. These are needed during enqueue and dequeue operations.
+> For a eventdev that is configured in primary process, these need to be
+> stored so that secondary processes can retrieve them for doing enueue
+> and dequeue.
+>
+> Store producer port and consumer queue addresses during port setup and
+> retrieve them back in local data during secondary init.
+>
+> Additionally, add checks to retrieve stored addresses in primary data pat=
+h
+> for ports configured in secondary.
+>
+> Signed-off-by: Tirthendu Sarkar <tirthendu.sarkar@intel.com>
 
-Extract the update rss key code from ice_dcf_dev_rss_hash_update to
-ice_dcf_set_rss_key and make it consistent with the pf behaviour.
+Updated the git commit as follows and applied to
+dpdk-next-net-eventdev/for-main. Thanks
 
-Fixes: c223cadc9e5f ("net/ice: support RSS hash configuration in DCF mode")
-Cc: stable@dpdk.org
-
-Signed-off-by: Mingjin Ye <mingjinx.ye@intel.com>
----
-v2: Split into 2 patches
----
- drivers/net/intel/ice/ice_dcf_ethdev.c | 35 +++++++++++++++-----------
- 1 file changed, 21 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/net/intel/ice/ice_dcf_ethdev.c b/drivers/net/intel/ice/ice_dcf_ethdev.c
-index a21b6e5972..accabd0ab9 100644
---- a/drivers/net/intel/ice/ice_dcf_ethdev.c
-+++ b/drivers/net/intel/ice/ice_dcf_ethdev.c
-@@ -1394,31 +1394,38 @@ ice_dcf_dev_rss_reta_query(struct rte_eth_dev *dev,
- }
- 
- static int
--ice_dcf_dev_rss_hash_update(struct rte_eth_dev *dev,
--			struct rte_eth_rss_conf *rss_conf)
-+ice_dcf_set_rss_key(struct ice_dcf_hw *hw, uint8_t *key, uint8_t key_len)
- {
--	struct ice_dcf_adapter *adapter = dev->data->dev_private;
--	struct ice_dcf_hw *hw = &adapter->real_hw;
--	int ret;
--
--	if (!(hw->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_RSS_PF))
--		return -ENOTSUP;
--
- 	/* HENA setting, it is enabled by default, no change */
--	if (!rss_conf->rss_key || rss_conf->rss_key_len == 0) {
-+	if (!key || key_len == 0) {
- 		PMD_DRV_LOG(DEBUG, "No key to be configured");
- 		return 0;
--	} else if (rss_conf->rss_key_len != hw->vf_res->rss_key_size) {
-+	} else if (key_len != hw->vf_res->rss_key_size) {
- 		PMD_DRV_LOG(ERR, "The size of hash key configured "
- 			"(%d) doesn't match the size of hardware can "
--			"support (%d)", rss_conf->rss_key_len,
-+			"support (%d)", key_len,
- 			hw->vf_res->rss_key_size);
- 		return -EINVAL;
- 	}
- 
--	rte_memcpy(hw->rss_key, rss_conf->rss_key, rss_conf->rss_key_len);
-+	rte_memcpy(hw->rss_key, key, key_len);
-+
-+	return ice_dcf_configure_rss_key(hw);
-+}
-+
-+static int
-+ice_dcf_dev_rss_hash_update(struct rte_eth_dev *dev,
-+			struct rte_eth_rss_conf *rss_conf)
-+{
-+	struct ice_dcf_adapter *adapter = dev->data->dev_private;
-+	struct ice_dcf_hw *hw = &adapter->real_hw;
-+	int ret;
-+
-+	if (!(hw->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_RSS_PF))
-+		return -ENOTSUP;
- 
--	ret = ice_dcf_configure_rss_key(hw);
-+	/* set hash key */
-+	ret = ice_dcf_set_rss_key(hw, rss_conf->rss_key, rss_conf->rss_key_len);
- 	if (ret)
- 		return ret;
- 
--- 
-2.25.1
-
+event/dlb2: support secondary processes datapath
