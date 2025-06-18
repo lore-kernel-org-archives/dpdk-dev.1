@@ -2,61 +2,82 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E827CC71157
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Jun 2025 09:37:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E35ABC71157
+	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Jun 2025 09:43:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AA124427C4;
-	Wed, 18 Jun 2025 11:37:41 +0200 (CEST)
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
- by mails.dpdk.org (Postfix) with ESMTP id B9F2540EE2
- for <dev@dpdk.org>; Wed, 18 Jun 2025 11:37:39 +0200 (CEST)
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 55I9bXHv93934826,
- This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realsil.com.cn;
- s=dkim; t=1750239453;
- bh=UteE+B3ZV/OJC3GitaiDVfKogv9vZuoF/AQKxR4GBQU=;
- h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
- Content-Type:Content-Transfer-Encoding:MIME-Version;
- b=MJvIT+pS1a+gzoMh37+ch6pe6YGTOjF4CO9cg1gcUDEM8R5m0FQhH6hJYv7Rk/vdj
- +n/xKV7aVjjNMMDKO83oL5medJacw9MV2ISRlrpTFBhu3B0VJNvxfoXKOcvHtxjtGQ
- 3fkcILsiW2Bdp/g8MGeaVEdL37WYGCS5HIxo5gWKTv+ievC8YYGLrhhMJ4x+txWBkV
- E+frrl5NwPMzXjXpvE4Fes8dQViaPDXnLXG335/6bQharlNxrgVCfxsjTpepUrUdeM
- d3mRe7ufQCdX3pJPOXmDXAbWbF+xRJBbkcfq6AwlgvIdQo9AxhasOLIaCb4NDKPqYv
- hQHFrwVX3eBGA==
-Received: from RS-EX-MBS4.realsil.com.cn ([172.29.17.104])
- by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 55I9bXHv93934826
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
- Wed, 18 Jun 2025 17:37:33 +0800
-Received: from RS-EX-MBS4.realsil.com.cn (172.29.17.104) by
- RS-EX-MBS4.realsil.com.cn (172.29.17.104) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 18 Jun 2025 17:37:33 +0800
-Received: from RS-EX-MBS4.realsil.com.cn ([172.29.17.104]) by
- RS-EX-MBS4.realsil.com.cn ([172.29.17.104]) with mapi id 15.02.1544.011; Wed,
- 18 Jun 2025 17:37:33 +0800
-From: =?utf-8?B?546L6aKi?= <howard_wang@realsil.com.cn>
-To: Thomas Monjalon <thomas@monjalon.net>
-CC: Andre Muezerie <andremue@linux.microsoft.com>, "dev@dpdk.org"
- <dev@dpdk.org>, Bruce Richardson <bruce.richardson@intel.com>,
- David Marchand <david.marchand@redhat.com>
-Subject: =?utf-8?B?562U5aSNOiBbUEFUQ0ggdjMgMi8zXSBkcml2ZXJzL25ldDogcmVtb3ZlIHVz?=
- =?utf-8?Q?e_of_non-standard_array_range_initialization?=
-Thread-Topic: [PATCH v3 2/3] drivers/net: remove use of non-standard array
- range initialization
-Thread-Index: AQHb3pGg7EZo7W5je0mVPSEZvbv2ELQIInuAgACJZ7A=
-Date: Wed, 18 Jun 2025 09:37:33 +0000
-Message-ID: <1d5377af85fe4025badbf8b717a8a877@realsil.com.cn>
-References: <1735243903-26857-1-git-send-email-andremue@linux.microsoft.com>
- <1749737842-30538-3-git-send-email-andremue@linux.microsoft.com>
- <CAJFAV8yxnGmBKJhTQp3js4QObjwaySHxTS9MekSmwgkVkY9xdg@mail.gmail.com>
- <5034944.6M6d0yLqnL@thomas>
-In-Reply-To: <5034944.6M6d0yLqnL@thomas>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-x-originating-ip: [172.29.17.210]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id 2E9A8427E5;
+	Wed, 18 Jun 2025 11:43:10 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 8295340EE2
+ for <dev@dpdk.org>; Wed, 18 Jun 2025 11:43:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1750239789;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=1BwUzst6NSWrPF+bmYRfK2Gq28PaILhCDDmKyjaprVg=;
+ b=Ko8SL23pz6NAWJMOiS3XxmPgDJWIPfceEdZuNFHAORRfepMF83cSn1At80urLNmNzt/X3v
+ 80ezkVCbei+PFyz8XI8mOZdOK1T6AxVaJCaZeyPzZTxgL7isE3hy+pYuAVOHvZt8ZP/80c
+ Lt4P0XtEZLNxWnVZrKmdgrM8fhIrs9I=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-557-55Ih4fh-PeCkpyau8w43BA-1; Wed, 18 Jun 2025 05:43:07 -0400
+X-MC-Unique: 55Ih4fh-PeCkpyau8w43BA-1
+X-Mimecast-MFC-AGG-ID: 55Ih4fh-PeCkpyau8w43BA_1750239786
+Received: by mail-lf1-f72.google.com with SMTP id
+ 2adb3069b0e04-553addbf0beso3483599e87.2
+ for <dev@dpdk.org>; Wed, 18 Jun 2025 02:43:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1750239786; x=1750844586;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=1BwUzst6NSWrPF+bmYRfK2Gq28PaILhCDDmKyjaprVg=;
+ b=cDkd0iWBQRmx6W6682vFT1+9YCD+U3gehcMfHZnnOHeFVHQmHgEU45Bd9gG0eTV8iq
+ NSqX/ZMbmiIzpqIymjmUWM+kh7FugH7LS40MnzSjksXOS+GZbl6lPfhqhYADPwNvq6MA
+ XeECndbQlvo8dl5cqwGFNh6L7iSYqGE/ftXDiyVmfXd71Ctn9P2YlMsWvIRSHP61Ex2b
+ HrqVrgAdUMGjoz4CUFLNiUa/kI5vuny4jFJ9VitVJEnS5VS72Atfr//iZ97d97Bkd7pj
+ 4324wLxqEXIWqM6D5MCmRjQh/FXk+qE+MWyuh0NsguxMElc2kmcyaa6ARzB5GuuPTKot
+ EuwA==
+X-Gm-Message-State: AOJu0YxngugP31b7hwgssJqNNMNprSN58tNQbe4ETJqVC687Ddj1enkl
+ Tfd0MsiNCwLYZYUxZ3mrvdiNHilh9QEdAnSkXbXNLC9EVMicuHDo1U8GZrmXDgtGu5yBFZMbvTV
+ UZwsGXIA5EvjRfkc3+EnQCeNI4+ezbioclgn7IYmCadOTOpxn6K56MtkoaYtePWjUDnE19s9Xr9
+ cMvhG569quObopS6jCCO0=
+X-Gm-Gg: ASbGnctXPe8HAkGdVN2HQjoIBF9MYKd8Nb6B+ap4PzlYWUNx7LpXcdc4B7ZinKr7YZL
+ +eBg9AXLTcc+1IpLDEE6eZMTtKlotdv7XXpWAQ3BJlMdIUD3EvZf0MtA0ygYYDHA90qDzLg707v
+ uBK/kTEQ==
+X-Received: by 2002:a19:8c11:0:b0:553:30fc:cee4 with SMTP id
+ 2adb3069b0e04-553b6f4c989mr3088452e87.49.1750239786065; 
+ Wed, 18 Jun 2025 02:43:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFlG9GUkQMYvkJrY8cZB/T/Zz/jqdz61uxhqVthLNgh0YW5/e5Lqz4qT53EKuWErYEkanop29qS/PiKfByC2zA=
+X-Received: by 2002:a19:8c11:0:b0:553:30fc:cee4 with SMTP id
+ 2adb3069b0e04-553b6f4c989mr3088439e87.49.1750239785635; Wed, 18 Jun 2025
+ 02:43:05 -0700 (PDT)
 MIME-Version: 1.0
+References: <20250613081018.2790825-1-david.marchand@redhat.com>
+In-Reply-To: <20250613081018.2790825-1-david.marchand@redhat.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Wed, 18 Jun 2025 11:42:53 +0200
+X-Gm-Features: AX0GCFvMqA5S7fXt-8iwybjpqPS9Tym4ok3LUqhUvsKCCWH_4N8hnPyRWq_YlNc
+Message-ID: <CAJFAV8w5wG2S=KwZuG96f0Law8nBL7R3GcbYd65Ksb-hL=7=ZQ@mail.gmail.com>
+Subject: Re: [PATCH] common/mlx5: fix dependency detection on Windows
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, probb@iol.unh.edu, andremue@linux.microsoft.com, 
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>, 
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, 
+ Matan Azrad <matan@nvidia.com>, Thomas Monjalon <thomas@monjalon.net>, 
+ Tal Shnaiderman <talshn@nvidia.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: hdWhGZv2gNTJOxEsWGlxRzQMDqukwHykv-ler2qmEJ4_1750239786
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -70,45 +91,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-RGVhciBUaG9tYXMsDQoNCk9LLCBJIHdpbGwgdXBkYXRlIHRoaXMgcGFydCBpbiB0aGUgbmV4dCBj
-b2RlIHJlZmFjdG9yaW5nLg0KDQpCeSB0aGUgd2F5LCBJIHdvdWxkIGxpa2UgdG8gYXNrIGhvdyB0
-byByZXNvbHZlIHRoaXMgZXJyb3IuIEZyb20gd2hhdCBJIGNhbiBzZWUsIGl0IGRvZXMgbm90IHNl
-ZW0gdG8gYmUgcmVsYXRlZCB0byB0aGUgcGF0Y2hlcyBJIHVwbG9hZGVkLg0KaHR0cHM6Ly9tYWls
-cy5kcGRrLm9yZy9hcmNoaXZlcy90ZXN0LXJlcG9ydC8yMDI1LUp1bmUvODg2ODE1Lmh0bWwNCg0K
-VGhhbmtzIQ0KSG93YXJkIFdhbmcNCg0KLS0tLS3pgq7ku7bljp/ku7YtLS0tLQ0K5Y+R5Lu25Lq6
-OiBUaG9tYXMgTW9uamFsb24gPHRob21hc0Btb25qYWxvbi5uZXQ+IA0K5Y+R6YCB5pe26Ze0OiAy
-MDI15bm0NuaciDE45pelIDE3OjI1DQrmlLbku7bkuro6IOeOi+mioiA8aG93YXJkX3dhbmdAcmVh
-bHNpbC5jb20uY24+DQrmioTpgIE6IEFuZHJlIE11ZXplcmllIDxhbmRyZW11ZUBsaW51eC5taWNy
-b3NvZnQuY29tPjsgZGV2QGRwZGsub3JnOyBCcnVjZSBSaWNoYXJkc29uIDxicnVjZS5yaWNoYXJk
-c29uQGludGVsLmNvbT47IERhdmlkIE1hcmNoYW5kIDxkYXZpZC5tYXJjaGFuZEByZWRoYXQuY29t
-Pg0K5Li76aKYOiBSZTogW1BBVENIIHYzIDIvM10gZHJpdmVycy9uZXQ6IHJlbW92ZSB1c2Ugb2Yg
-bm9uLXN0YW5kYXJkIGFycmF5IHJhbmdlIGluaXRpYWxpemF0aW9uDQoNCg0KRXh0ZXJuYWwgbWFp
-bCA6IFRoaXMgZW1haWwgb3JpZ2luYXRlZCBmcm9tIG91dHNpZGUgdGhlIG9yZ2FuaXphdGlvbi4g
-RG8gbm90IHJlcGx5LCBjbGljayBsaW5rcywgb3Igb3BlbiBhdHRhY2htZW50cyB1bmxlc3MgeW91
-IHJlY29nbml6ZSB0aGUgc2VuZGVyIGFuZCBrbm93IHRoZSBjb250ZW50IGlzIHNhZmUuDQoNCg0K
-DQoxNi8wNi8yMDI1IDA5OjM3LCBEYXZpZCBNYXJjaGFuZDoNCj4gT24gVGh1LCBKdW4gMTIsIDIw
-MjUgYXQgNDoxOOKAr1BNIEFuZHJlIE11ZXplcmllIA0KPiA8YW5kcmVtdWVAbGludXgubWljcm9z
-b2Z0LmNvbT4gd3JvdGU6DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L3I4MTY5L2Jhc2Uv
-cnRsODEyNWFfbWN1LmMgDQo+ID4gYi9kcml2ZXJzL25ldC9yODE2OS9iYXNlL3J0bDgxMjVhX21j
-dS5jDQo+ID4gaW5kZXggNWE2OWIzZTA5NC4uYzliZjVmYzZhZCAxMDA2NDQNCj4gPiAtLS0gYS9k
-cml2ZXJzL25ldC9yODE2OS9iYXNlL3J0bDgxMjVhX21jdS5jDQo+ID4gKysrIGIvZHJpdmVycy9u
-ZXQvcjgxNjkvYmFzZS9ydGw4MTI1YV9tY3UuYw0KPiA+IEBAIC0xNjIsNyArMTYyLDEzIEBAIHN0
-YXRpYyB2b2lkDQo+ID4gIHJ0bF9yZWxlYXNlX3BoeV9tY3VfcGF0Y2hfa2V5X2xvY2soc3RydWN0
-IHJ0bF9odyAqaHcpICB7DQo+ID4gICAgICAgICBzd2l0Y2ggKGh3LT5tY2ZnKSB7DQo+ID4gLSAg
-ICAgICBjYXNlIENGR19NRVRIT0RfNDggLi4uIENGR19NRVRIT0RfNTM6DQo+ID4gKyAgICAgICAv
-KiBDRkdfTUVUSE9EXzQ4IC4uLiBDRkdfTUVUSE9EXzUzICovDQo+ID4gKyAgICAgICBjYXNlIENG
-R19NRVRIT0RfNDg6DQo+ID4gKyAgICAgICBjYXNlIENGR19NRVRIT0RfNDk6DQo+ID4gKyAgICAg
-ICBjYXNlIENGR19NRVRIT0RfNTA6DQo+ID4gKyAgICAgICBjYXNlIENGR19NRVRIT0RfNTE6DQo+
-ID4gKyAgICAgICBjYXNlIENGR19NRVRIT0RfNTI6DQo+ID4gKyAgICAgICBjYXNlIENGR19NRVRI
-T0RfNTM6DQo+ID4gICAgICAgICAgICAgICAgIHJ0bF9tZGlvX2RpcmVjdF93cml0ZV9waHlfb2Nw
-KGh3LCAweEE0MzYsIDB4MDAwMCk7DQo+ID4gICAgICAgICAgICAgICAgIHJ0bF9tZGlvX2RpcmVj
-dF93cml0ZV9waHlfb2NwKGh3LCAweEE0MzgsIDB4MDAwMCk7DQo+ID4gICAgICAgICAgICAgICAg
-IHJ0bF9jbGVhcl9ldGhfcGh5X29jcF9iaXQoaHcsIDB4QjgyRSwgQklUXzApOw0KPg0KPiBJIGRv
-bid0IGhhdmUgYSBzdHJvbmcgb3BpbmlvbiBhZ2FpbnN0IHRoaXMgY2hhbmdlLg0KPiBUaGUgZHJp
-dmVyIG1haW50YWluZXIgYWxyZWFkeSBhY2tlZCB0aGlzIGNoYW5nZS4NCj4NCj4gU28ganVzdCBz
-b21lIGNvbW1lbnQsIG9uIHRoZSBmb3JtLg0KPiBzd2l0Y2goKSBoZXJlIGRvZXMgbm90IHNlZW0g
-d2VsbCBzdWl0ZWQgc2luY2UgdGhpcyBkcml2ZXIgY29kZSBpcyANCj4gdmFsaWRhdGluZyBhIHJh
-bmdlIG9mIHZhbHVlcy4NCj4gaWYgKGh3LT5tY2ZnID49IENGR19NRVRIT0RfNDggJiYgaHctPm1j
-ZmcgPD0gQ0ZHX01FVEhPRF81Mykgc2VlbXMgbW9yZSANCj4gcm9idXN0IGFuZCBpcyBlYXNpZXIg
-dG8gcmVhZC4NCg0KWWVzIEkgYWdyZWUgd2l0aCBEYXZpZC4NClBsZWFzZSBjb3VsZCB5b3UgZml4
-IHRoaXMgY29kZSB0byBoYXZlIHNpbXBsZXIgY29kZSB3aXRoIHNvbWUgImlmIj8NCg0KDQo=
+On Fri, Jun 13, 2025 at 10:10=E2=80=AFAM David Marchand
+<david.marchand@redhat.com> wrote:
+>
+> Don't *require* mlx5dev library when testing its presence.
+>
+> Fixes: 85c51a4ffab8 ("common/mlx5: get Windows dependency from standard v=
+ariables")
+>
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+
+Applied with updated commitlog.
+
+
+--=20
+David Marchand
+
