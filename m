@@ -2,73 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 556D9C71157
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Jun 2025 08:30:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E28F1C71157
+	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Jun 2025 08:36:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6DF92427BD;
-	Wed, 18 Jun 2025 10:30:15 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id AA077427AC
- for <dev@dpdk.org>; Wed, 18 Jun 2025 10:30:13 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55HNXgTh023489;
- Wed, 18 Jun 2025 01:30:13 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 1F9EA427AC;
+	Wed, 18 Jun 2025 10:36:58 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id ABA2B40EE2
+ for <dev@dpdk.org>; Wed, 18 Jun 2025 10:36:56 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55HNSimr016784
+ for <dev@dpdk.org>; Wed, 18 Jun 2025 01:36:55 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=H
- WKoW9oZy+4S4pDpi043LJYDPERZm2s5El9lb8s2F3Y=; b=Ce4YUefGATAQjR1zC
- v/TscF0m/d99JT5whX7H7R+wpO49oGkw62AuNoxRRKNpKdX3pKFI5V6z+A4+yxxu
- 0Fbs015AMSS6kTra/wq61wNZYzF1yi39b4Q/Gi3KBKVABxuf9YQ0L3AJM3cdmcrb
- 65L8t+O7VLHWFyuiMaVrJ1J0P50d2IVUPKzc2KkIeJvb6PE5wU1kGYyzwAIogJm0
- NapKP0WidOl6vti/WOhAD3QNiWF7+Tqij8qVQxywqJdp0swpfYstyxflvf50RrCh
- VSDpW4WZ7zdgwkwPA8A6B/Ge94SG9JXT8LzeqzGHtKYC9QEKODsoHMnm16JZt5E1
- 1BG8A==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 47bj4xrvmv-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Wed, 18 Jun 2025 01:30:12 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=kVh0xOp/Ed04nXnIdM+3c0m
+ +DkU0sT8BSMfs61W4fIk=; b=BOSai0+rsfwi0id79yIdpl7856Qqr3Is6rKc73k
+ lye9vlgBHm1mTdoLH+MbTr9XZGyBU7vpC5R6mUaHNcEqeoX7esiGGCCdpocP6Ilz
+ rcl7g7kKipR1tJhkuAbgEyFLzxSQLZ5dWSv+Bnv5uCvt/dTTE7eYynXontiQyZpK
+ upDD+gVLj1s8HUUGWQy4H6GQwoV3WsI8pnjB/fUvTWpCpDwPsIRSMUnR+syD2ok9
+ EuYzIsg+ovei/GFYAncqCCkm8O99TFreDKeoykhdgN+X1czKAeJ6V79WXeqeWAoK
+ 5Rfj6l/DDiFPhWpYXUko5BkY0wx+ptWO20EEkVBQ1NP0QKg==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 47bj2kgw5k-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Wed, 18 Jun 2025 01:36:55 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 18 Jun 2025 01:30:12 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 18 Jun 2025 01:30:12 -0700
-Received: from localhost.localdomain (unknown [10.28.36.154])
- by maili.marvell.com (Postfix) with ESMTP id 2B70D3F7043;
- Wed, 18 Jun 2025 01:30:08 -0700 (PDT)
-From: Rakesh Kudurumalla <rkudurumalla@marvell.com>
-To: Radu Nicolau <radu.nicolau@intel.com>, Akhil Goyal <gakhil@marvell.com>,
- Volodymyr Fialko <vfialko@marvell.com>
-CC: <dev@dpdk.org>, <jerinj@marvell.com>, <ndabilpuram@marvell.com>, "Rakesh
- Kudurumalla" <rkudurumalla@marvell.com>
-Subject: [PATCH v2 1/1] examples/ipsec-secgw: resolve segfault for IPsec
- packets
-Date: Wed, 18 Jun 2025 14:00:06 +0530
-Message-ID: <20250618083006.1679656-1-rkudurumalla@marvell.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250407072155.1255817-1-rkudurumalla@marvell.com>
-References: <20250407072155.1255817-1-rkudurumalla@marvell.com>
+ 15.2.1544.4; Wed, 18 Jun 2025 01:36:54 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 18 Jun 2025 01:36:54 -0700
+Received: from nkaithakadan-dkr.marvell.com (unknown [10.29.45.70])
+ by maili.marvell.com (Postfix) with ESMTP id 4A8C73F7063;
+ Wed, 18 Jun 2025 01:36:52 -0700 (PDT)
+From: Nithinsen Kaithakadan <nkaithakadan@marvell.com>
+To: <dev@dpdk.org>
+CC: <adwivedi@marvell.com>, <anoobj@marvell.com>, <ktejasree@marvell.com>,
+ <gakhil@marvell.com>, <pbhagavatula@marvell.com>
+Subject: [PATCH v3 0/2] add crypto adapter support in cn20k
+Date: Wed, 18 Jun 2025 08:36:48 +0000
+Message-ID: <20250618083651.637234-1-nkaithakadan@marvell.com>
+X-Mailer: git-send-email 2.48.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=ULrdHDfy c=1 sm=1 tr=0 ts=68527914 cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=5tCQYSj4js87i-xCb6kA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE4MDA3MyBTYWx0ZWRfXzVnpgx59QV5n
- jDG0XkoACPPdD88IIBhzp3oULzJF6vl4Qm6n7AQ4Ad3Qko1ftuEilsupb/KKMUNtHiWNA2zV+8p
- KMmvXRHdzXnFLKJsqrWCD5sk2Vy3FhsmsQiaJ7OkocG1oZJesooFefmUhraNOpE6ibyqsTdGgBB
- /ISn/NhhCt8gQlTD6w4hrIJsrJ5VTo8ISWCFJMbyZnpgZoGXk0Kwe0PPzG422NL6XGOsmEEJ7JT
- 4Dov30dow9RSG1JsZ5xHaUFiiaia/MnOX02UbxTZoa2WqYn5JYgPgVRDT39ECBISD0QDmdXxPVP
- 58v5ZOqqvHPe5Oyu+w2N3bdlYo9SxEDSHAkUaAhjlYVi/xqgFyzoP245dtjShNMXgHWSMHBB54y
- z5UB0uISUPJQI7Sp8v7cxfvx6e1MHBgxELrrwBuQNQkJG9zkbSTw5IhZpG2HhXLD5b9m43TX
-X-Proofpoint-GUID: y42SHskFY0wGLVUxyjtiWuyjUFnvARqX
-X-Proofpoint-ORIG-GUID: y42SHskFY0wGLVUxyjtiWuyjUFnvARqX
+X-Authority-Analysis: v=2.4 cv=Q9jS452a c=1 sm=1 tr=0 ts=68527aa7 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=6IFa9wvqVegA:10 a=f922ecHyS2UEbBIbVm0A:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE4MDA3NCBTYWx0ZWRfX3OcxSEITH9jO
+ L4iHeUwqu9QtShxobdUJw0E0jiYwzY2zueC1OcDBDilbvD43TJm2iWyr5k61neWeAJu/PKg3/x+
+ a9Ca8cYl7U88iO055/Y1UkIQVZSgS2vc8JNEJ/MBv6Xxn2yc/8rtBEqruBzlYjt5pdUtp4XrtnG
+ qJHi+qd0PYYdGcQdC6rJXMFp6wtIJzfZ3SYsqH/2olLt9BIsPKDlt9W9b9bs/m4M26jISXDIEFv
+ 22Lgkd5Z04yauY6AL5SM0mDos9wuexvwRLxdSR7I4blGRdifN5krGuHiDrlo2xFkZfEcyKAYEQ/
+ RkeIZTRfTPmHPBKFNX46ydyt8sctwZuRSGpvkRe4VshrphB+yUZMoHmedkT83p7tXFGuHMLwROh
+ IMcSh/W7VUmSIcjR7B/jgR9Rf4iAXuyPkUpLpQBZaZ29qC6u2P8hQZAybWSHMUs94k3Jg+5j
+X-Proofpoint-GUID: ai7sjiILAx8msHiWhbTUWFONStJMOKvv
+X-Proofpoint-ORIG-GUID: ai7sjiILAx8msHiWhbTUWFONStJMOKvv
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-18_03,2025-06-13_01,2025-03-28_01
+ definitions=2025-06-18_03,2025-06-18_02,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,44 +76,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-launching ipsec-segw application in event vector mode
-after traffic has started results in segfault because
-we are receiving few IPSEC packet and application is trying
-to decrypt IPSEC packets using lookaside protocol.
-This contradicts inline event mode.This patch fixes the same
-by freeing IPSEC packets and processing only plain packets.
+This series introduces support for the crypto adapter in
+CN20K and incorporates sessionless asymmetric changes.
 
-Fixes: 1d5078c6cf19 ("examples/ipsec-secgw: support event vector in lookaside mode")
+v2:
+- fix compilation failures
 
-Signed-off-by: Rakesh Kudurumalla <rkudurumalla@marvell.com>
----
-V2: Add fixes tag
- examples/ipsec-secgw/ipsec_worker.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+v3:
+- add dependent patch
 
-diff --git a/examples/ipsec-secgw/ipsec_worker.c b/examples/ipsec-secgw/ipsec_worker.c
-index e0690fc8d9..04609964cd 100644
---- a/examples/ipsec-secgw/ipsec_worker.c
-+++ b/examples/ipsec-secgw/ipsec_worker.c
-@@ -700,6 +700,9 @@ ipsec_ev_inbound_route_pkts(struct rte_event_vector *vec,
- 	struct rte_ipsec_session *sess;
- 	struct rte_mbuf *pkt;
- 	struct ipsec_sa *sa;
-+	uint8_t mask = (1UL << RTE_SECURITY_ACTION_TYPE_INLINE_CRYPTO) |
-+		       (1UL << RTE_SECURITY_ACTION_TYPE_INLINE_PROTOCOL);
-+
- 
- 	j = ipsec_ev_route_ip_pkts(vec, rt, t);
- 
-@@ -707,7 +710,7 @@ ipsec_ev_inbound_route_pkts(struct rte_event_vector *vec,
- 	for (i = 0; i < t->ipsec.num; i++) {
- 		pkt = t->ipsec.pkts[i];
- 		sa = ipsec_mask_saptr(t->ipsec.saptr[i]);
--		if (unlikely(sa == NULL)) {
-+		if (unlikely(sa == NULL) || ((1UL << sa->sessions[0].type) & mask)) {
- 			free_pkts(&pkt, 1);
- 			continue;
- 		}
+Nithinsen Kaithakadan (2):
+  crypto/cnxk: add crypto adapter for cn20k
+  crypto/cnxk: add sessionless asym cn20k support
+
+ doc/guides/cryptodevs/features/cn20k.ini      |   1 +
+ .../crypto/cnxk/cn20k_cryptodev_event_dp.h    |  14 +
+ drivers/crypto/cnxk/cn20k_cryptodev_ops.c     | 675 +++++++++++++++++-
+ drivers/crypto/cnxk/cn20k_cryptodev_ops.h     |   4 +
+ drivers/event/cnxk/cn20k_eventdev.c           |  69 ++
+ drivers/event/cnxk/cn20k_worker.h             |   7 +-
+ 6 files changed, 754 insertions(+), 16 deletions(-)
+ create mode 100644 drivers/crypto/cnxk/cn20k_cryptodev_event_dp.h
+
 -- 
-2.25.1
+2.48.1
 
