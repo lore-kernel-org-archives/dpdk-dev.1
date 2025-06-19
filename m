@@ -2,151 +2,126 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA6BC71136
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Jun 2025 05:44:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43010C7115E
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Jun 2025 07:02:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C10BD427E4;
-	Thu, 19 Jun 2025 07:44:31 +0200 (CEST)
-Received: from AM0PR83CU005.outbound.protection.outlook.com
- (mail-westeuropeazon11010013.outbound.protection.outlook.com [52.101.69.13])
- by mails.dpdk.org (Postfix) with ESMTP id 186424279F
- for <dev@dpdk.org>; Thu, 19 Jun 2025 07:44:30 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2B17A4279F;
+	Thu, 19 Jun 2025 09:02:09 +0200 (CEST)
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com
+ (mail-bn1nam02on2077.outbound.protection.outlook.com [40.107.212.77])
+ by mails.dpdk.org (Postfix) with ESMTP id 720354025E
+ for <dev@dpdk.org>; Thu, 19 Jun 2025 09:02:06 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=agK+tD4pCTiZnwltyYnTYgoNnJ7QrnESk7HilznKfvg+7b6Dk7x3DgUKVgMnWZqRqoKU1tsyvupj8BjXP7/s/vXUzeABT/JwQXY1P9sNlmWU9aiacHuRnAdH/52oF286XVFwcF6s5AY/M5qW2ZhsCs3Edfowq4+Q37khTt5Vy4Q0lImAWxILhujRg5ulLJgl3AOpNa/xo0bxjmRqNU8qj8YmiUytTsAqUaG6TiE+zy4tfAcba/fD38QU0ZYLNsTymY4/6EAh1y6vtzmj3GcAyL23PtkV+FpYqDb7AWDy3sbELS/u1wxdKgQFD9+ufWgVF9Vsc6PPbr1qzKbWlUK9wQ==
+ b=txpsbVUyfA0KxGuLazSyFrk4EgAqwvDK/0SrBGWqyAnowqe+rWyh5SoRgsgQ59a6ZJ17glbvmn53v+07klmDfXy2EpR478fIeykqXECdH4OskFxFcJCM/DwOZ/eFQqOL+Qtj+Ag07x2/OaIArC6QkoPocSi+JvggT/2EQ3oICBg2hl3tXxvEAuLal8cDNWEKHDrdlRVVMzyj48+IgqUoOxpGaeE/H7Pra2fFh7mFtgNrZmUyqQHYiHRe+1rHIEwr9fk/t/9zlDRyJxCd360WnN2B58Ya3/9to5ebHJ8w8EO/yRi3185ehtF6zkM56iKhZ6XE5Gs5krSmhHPK89Gs9A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Vvw4coYyJ2q3cRijNTePmrj3m84kOOnYX+A29YhP28M=;
- b=KBXWN0uikK3Qvp6GluHlC359L7s/umcTEn/kzhqaTNZPCViOPOtgg/cNW0EIi0xshgNt4gXmA7ZonjlqvE1cupbWM8xqjXxpHxRn+0HsrPKW0tG8zG9Ju8Zg9ekXplt1RRWDSyY3WrNnYXTeQNKfzV1KDQvY8d8rXOC+GwUnEvC4jnWBT18j9IdYV1Lg+eOYMXGE8FuFmqv9xAFGe1Jj/0oVAa3dDAAblkINI+sOFPDVKCH13bm9fiq+imVBd9Xsmpq2JLz6kPbMTvjNJzFrRRTG+MCN84+F3aK9ZF78TUaueiqDQV9stRpImH3yaM+dFsWE8r0YCvgBJpwyMFDw9Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
+ bh=jf9DeNLkuGw670KHNYxNmLMR3jHqy4OhU+6BT5FUo3Q=;
+ b=IWZKKscCsZZVEnOCTXpmHAM5cctOE1jxicxTMyXJ/uPjB+O0nfIrY23FSionJCP8thcjFa+XLGfscWINghK4IiiFPLTWSzasLacJcG88bww1anBctzTXAbvHJNnZoVv3BAxtHjwI+/f1KJm/phMou4okWPrnqJuyiTSbiOJdOzH2L/aXMSPZtuw2exLrOthC6Ap+F3RPN2/kJtNWGv2KBuoYljEVbGpAPnQnvpMp1ltCpB6xbnf7v3+9oU46gKqrb9RMYCJ3NrHw2i2fah0zDYjT7l/4s3aMtpT3opOoFnAlTigK4voUDoUATUTQvuVzqwjcP/bc477yTOea0tXnBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Vvw4coYyJ2q3cRijNTePmrj3m84kOOnYX+A29YhP28M=;
- b=VijLUHwsdwAvG+awc+NxjMw6AJNyvEH83FTuDbcYyT6DKO1C1r8IicgrDVuqFeqyt38/WeRJgHMRCVxk9fCxfkWKXCrP0677Hn2OJbw7xVVBeFbFQzcF1HxGg+SRIJxTtDSLi46t18ZNk2UGLRJkLRUPqiP68i5TaSP02MCAKQI0jJuK545yfHztu6JHqzeZrDsqR2hSiVsa4APbATm2v6KHNW6WUtIj0bVYeXij5BkWA0qipVeOmb0Y8q3Dj57FawIbBgKsBtDDI6k/sRkSntRlQIbW2qiwskjOJa1tZsTxVa8+3xO7+Nl6PZNa36kiS9VkKcGuYHujc8kXPR1ORQ==
-Received: from AS8PR04MB8979.eurprd04.prod.outlook.com (2603:10a6:20b:42e::7)
- by DU4PR04MB11340.eurprd04.prod.outlook.com (2603:10a6:10:5d2::5)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.22; Thu, 19 Jun
- 2025 05:44:29 +0000
-Received: from AS8PR04MB8979.eurprd04.prod.outlook.com
- ([fe80::d766:4f5d:d928:866a]) by AS8PR04MB8979.eurprd04.prod.outlook.com
- ([fe80::d766:4f5d:d928:866a%4]) with mapi id 15.20.8857.022; Thu, 19 Jun 2025
- 05:44:29 +0000
-From: Vanshika Shukla <vanshika.shukla@nxp.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: "dev@dpdk.org" <dev@dpdk.org>, Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>, Jun Yang <jun.yang@nxp.com>
-Subject: RE: [EXT] Re: [v4 02/10] bus/dpaa: add FMan node
-Thread-Topic: [EXT] Re: [v4 02/10] bus/dpaa: add FMan node
-Thread-Index: AQHb2vEFeJgxWwhMuUKDN8bY+oUmArQKBG8w
-Date: Thu, 19 Jun 2025 05:44:28 +0000
-Message-ID: <AS8PR04MB8979F17D474E4DC437BD0BA6F47DA@AS8PR04MB8979.eurprd04.prod.outlook.com>
-References: <20250610091411.2500413-1-vanshika.shukla@nxp.com>
- <20250611071039.2939950-1-vanshika.shukla@nxp.com>
- <20250611071039.2939950-3-vanshika.shukla@nxp.com>
- <20250611095058.19efbede@hermes.local>
-In-Reply-To: <20250611095058.19efbede@hermes.local>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS8PR04MB8979:EE_|DU4PR04MB11340:EE_
-x-ms-office365-filtering-correlation-id: ee8f84d9-0f33-4d38-b6ea-08ddaef45bb0
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?aEJGMG1qT3NBdUpYdm1uK3h3T3ZvYzFDWXhRMWNieVMydFNZQ0hKYUx3cUd2?=
- =?utf-8?B?aHVHQnI5VzNUWDRzbGRiWllLczNTZUFpdWxCYU5PM21ZQ1FqZlorV29ybjNv?=
- =?utf-8?B?b3hFcUdoM2dSWXBWeHhSMmgwbE5lLyszQlhFSCtWUjViR1lVSTlqWDJ2OTE1?=
- =?utf-8?B?dng4NjhKWURQbjR1QW1ZZFYvZVRHRVR1NnZqT0p4cHNIaWRMTDZjWUI5emI4?=
- =?utf-8?B?cFptUnU2bXZiNUZ4bE5rRDJ5N1R4bTRobWt0MkxJZ3paQ1B5bnlXQjYxWjVz?=
- =?utf-8?B?YmNFTi8rQ1l3RjhSNFV4Y0VqTmVVYk9jSnFQaEo3eVd6ekExWkhlWEcva3Rj?=
- =?utf-8?B?SHVyOGgwdjRGaXQwOFlwMkhLdGlDRFB6a1FtSElpbHZzVUN4Nmw0S0dxTmw5?=
- =?utf-8?B?VmtOT3JhMEM4WENjVVJoTDErWWFTSFdlbGlwZGVxRU04SmRVMmFZTTU0dUx2?=
- =?utf-8?B?dG5HOW5vSXVMT2VqcDdTbmdLekhsSDJQYVk1Q2YwektJRGh0dDJqbEZDQkRX?=
- =?utf-8?B?NFZERys4NUVxK1pqTWljb01BakxScmk1TWMwVmswNGVmL3dvazh2SW9hRTla?=
- =?utf-8?B?YkVqSVpZRUlvTzlscHpDUjVqVjdNMTNxaDFxT09yNTA5NTk0VDNpZTlHQ0xj?=
- =?utf-8?B?aStMVDdEMGhMRVZEOE5WQnA5SzRUc29HZ3RBUGliR0JscWZub0tJKzBYUmk3?=
- =?utf-8?B?NlNCS2ZnRmdXeFNPR01iT2cvUkx6Yy8wYkdjZHVIWnFUTURIYnBSYjdWRm9J?=
- =?utf-8?B?NUt5b3RiVHR2a05VV2xPamZuY3JrQVBUU01hSlRCVjlLTHFvNjVNN09JVnQw?=
- =?utf-8?B?ZllDaU9Sdll4Mmh2VDN0cnlZN2Z6SDBjYlVycXM2QmprZDc0VEtWNDBUcURW?=
- =?utf-8?B?djdCdlI0aTZnL0duWkJRVmtXdTRPY3U0MHhYdUk4SmRmb2lBc2ovMExQV3dh?=
- =?utf-8?B?dExLZys0Tzh5czZUbWxEWWI5dHBCS3Vkc25BV3NSVkVFVzZOQ2o3a0NIWW1k?=
- =?utf-8?B?U3JpWGUvT1F3ODQweUczQ0ZCUk5Gc1Riem1QM1JSbEorRzJvVU9FNWkwOHBG?=
- =?utf-8?B?T1R0ZU9PZWJERVBRMmRqYXNTcUNKUTVka0w0OFRVUkg4cFpRcHo2SUJBTVdP?=
- =?utf-8?B?MktWQVg5UFc4MHF6Y2dIMnhtQVQrc1QxZmdnNG9mYm11TGhsWFoxNnVRY3VP?=
- =?utf-8?B?YlBqL1dFWC9HalVlcEVPNDkzWDJiZHhVQm82VEd5YnA3WnRLTk90SE5ia2Zz?=
- =?utf-8?B?LzBscXl6SW5zWC9iYzFVSGhBcytBUFp5bWluS0ZVRlFURDhMaU9ocFhKdkcx?=
- =?utf-8?B?QjkxdjF0OEFTQ1NJZ1RhaGhQVmRiTjlGd0puRGhrRDB3bzJHTVdIcnVOWmhp?=
- =?utf-8?B?VHRoR2Jna2ZjMWxNbTdKK2ttRWdyVHpXOVpoZXZjdGFMMTdUeFBWNHoyM3Bm?=
- =?utf-8?B?M0tndWZQV1JUcHcvVCtEWmowc0YySndXWWpGaGdqTDhKOURpakJMeHFpdFMw?=
- =?utf-8?B?UERGdXYyTmJUNVFYOUNuMExGcHNkdk53WEtPN0pjYlVqKy8rdlpXUmlHejlr?=
- =?utf-8?B?SmpJOEg2dkpzenpuV2JIUUwrR25MbnNNcE9tY3hoZ3BCb2Rqd0ZmYjVVcUt4?=
- =?utf-8?B?cjhTZ1EzeXlVc08vK2p0Nkp2bnpRd2FsV05aZyt3NTdidktVY3NXcCtiRUR6?=
- =?utf-8?B?UWZYSnNnSEdwUElNYnBaTmVwZXBlRDNwbzRZZUJ6KysxWFFMZ0RTVU1hMi90?=
- =?utf-8?B?Q29jWE9IakFVdzk3eTVNYW43WFdBcm9Mdlh2Uy8rWTdESkdPZjJvV0JPMU9v?=
- =?utf-8?B?Qnp0aUROSlRkSEhhdnl3bHhDS0thODkveFo3dnNOSlNEdDJNTWZzcGFndWpo?=
- =?utf-8?B?bFNkVWhBQ2NPeUJ5aXAwRFpURkhTODhkeEppemZPcW1zSmY1RXk1T2tENzVO?=
- =?utf-8?B?S0wyNEJrQmU2UkVKZTFndVlGR243UWtZZ2RpeVZtQjVNS3BWWjdHWVN5enhp?=
- =?utf-8?Q?P7iDTpMLuUUTa3IcSIs2zWHERxceDs=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:AS8PR04MB8979.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024)(38070700018); DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Zi8zMVpJUGFUMTN4T3FhVnNhU3Ewck9NUThVT1Z4dkJXd09iMHVzV0RSODUr?=
- =?utf-8?B?ZCt1YlN3UFRPMUZVWW5vdFNqM3pBcS8wTUNTeEVCUE9rQy9ZVG5DZnRTYzB3?=
- =?utf-8?B?cEVXcFpRQmFlUFpNMWMxTytyeDZoWEFKa2J2VGtRb3I5akMraUwzQnFjY2xG?=
- =?utf-8?B?MGNRZU9CSmZVZmVwSlRVR21ONCtvWHNKTjdGRDVYS1YvZEc3T1lCWVZWdlZv?=
- =?utf-8?B?bXhxbURMTmhud3VTZy96OU1iS2lwbWp5WW1yV3hLZUVPR1BKKzY3cWJqVm1I?=
- =?utf-8?B?T1VYT1NHeUNvWi82U2JEZnVEVnY5bU9aa0YyNDY5RVIrUzdXS3o0NklteVpk?=
- =?utf-8?B?SmdIZUxLU2g5R002WEI2NUpFTVdKZnl4WlBycEx0dEFpV3EybWNmR21zQjdB?=
- =?utf-8?B?RS8rbnI5STlsZlNmTW5ZOEh1NG9PdXMvbE5nQ3UvZXRDTXlKSC9aTjJ2VVdM?=
- =?utf-8?B?QWlMeXpvRXk1eFNFR2pCZXU0eUtWZ1JPM29JbmpySlB5clgzTGJ5cStwbkt4?=
- =?utf-8?B?TThYTkJtV2Y2S1VWSzlCamFlUnNrN0NKckp0NkJBbExSRGNIQUtrNHE4Zml6?=
- =?utf-8?B?UjRaN2VxOThzOGxtRmFadC9wcW51SFU2NGFrdHVpOHYyRGxxNEV6Q2pVUU5E?=
- =?utf-8?B?dW5BUitublRZVDEyTTBVSS9HM28zY1lGU0tEU0pXZkVKa2RYQmxLOGE1aDRH?=
- =?utf-8?B?K3diQVQ4MktzVUQ4Um9IbXBuTXFHdXB0Z3lId2pmNmEzMjEySzVacnhWTG0r?=
- =?utf-8?B?Z2xxdldJZ1JMZ3c1bEZVZmxxR2o3MlJOVjBoZzc5S2ZkWDBJZlJvT084YUNk?=
- =?utf-8?B?RFVVV1ptYUFGUXlBSGVCUnF3cis5cklFUTJPS0tGaW9PYWp3dExhYjkvQWR6?=
- =?utf-8?B?eWNQZnRnZ2hTL0EwSnl2UmpCUkgvUFMyVGpmbTFJcy9rTjNHYnZFSnlNRnVs?=
- =?utf-8?B?aTVtOEowSEdXeFBzQ0MxYmc2cFFWK2NyK1hiSmgrZnc4UVErZFVCM0k1Q2Ny?=
- =?utf-8?B?QjhVRThnSmNuejgzem16QVJ4VENGa0pjWjBmUE1aTmgzcWUwNEZQOWdvOS8v?=
- =?utf-8?B?eWlFSm1xdTlyQ2FVS2lNcVlObGNpaGQwcmJyTmozY21MNVYrWVNCT21LeWVk?=
- =?utf-8?B?ZnphRUFpZ3gxdy9TTWZsN0hRYm5tdHJRN1RBNUN1YzE5TmNwdFpGMWNQOWhi?=
- =?utf-8?B?ajVOUWUwdU5zVSs0V2dJdFVERWQvbzFXTm5vbFc2TmdUOE1vajQxTDhnSStt?=
- =?utf-8?B?RFVjMzJ2TnlPWUswMmEyU3h6eFR3c1N0anYvOFhrbEJiNHVsS3NJRDRjbWRh?=
- =?utf-8?B?YkRUcExkdWowaThVUnd3R0JvM0NYYzU3b05MamgvejFPQ2ZaZDRIcklzQjNn?=
- =?utf-8?B?b0IzS0dQV0ZVeXVqbm83Y0pQZEZZb25ZVGRMSjMrdlhHSHZHUTZwMDVKZ3B1?=
- =?utf-8?B?QVJUTTFXRDNJa09zOU1pVm84QTJOYkNvYThsUUNQbnMwK0tkdjhFQTZuMktN?=
- =?utf-8?B?QTdCV2hHK25UbC9KZ0RaQ0xxM29xbncrZVZ5KzFpMUxPbFcwNGdweGlLSjlX?=
- =?utf-8?B?aWEvbG5CaUFCUG1pT0Q3M0ZiMnNFcUR3R0N1SXNiMlRFQ2l1MlE1MjA5RlFP?=
- =?utf-8?B?eFU1WXFLcFk2RUNiWksxN0NVTkxLQTB6WTNqaGR0K2VsYnJLMzVFeVZ5eVN2?=
- =?utf-8?B?b1MycGlSdlJkcTBxa3cwaTRLblplRXBDN24rRklwZE5qSDFnQ0tldzFtOWNz?=
- =?utf-8?B?U2V4ZDB1K25qYjFOUnYwNmxkN3UxMWJsY3FXajBVNHlsalFJNkIxVjkxaGVW?=
- =?utf-8?B?dnNzQVFnMEFXZU5pL1ROd25naFcvNTM1MlcxVEhTdXEwdjQweXJITHlxSlgw?=
- =?utf-8?B?TzFCNWY2SktHOGhhQUMvMmQzQ3cxVFVLMkcraE16SFZVNUpGeXRWbHU0Mi9I?=
- =?utf-8?B?WXFvVlhVdjkydy9hTFlnNkVRcmZsSHNWRVBQaDdEcWc0M0FDdDRNTkF2bmhS?=
- =?utf-8?B?UXVHcmtYcXNwV01zQ0VXNTdhUVFlWldUUENKUytnbTM5emdFLzhkaU9EYmo1?=
- =?utf-8?B?K0xxY0hldFV0cy9ubWdVeWg4TmJPRWcxS2dRSlYxMENKTXQzT2lMejRUMURw?=
- =?utf-8?Q?3bWBWkC7RuAM4HZkyjgc/msa6?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ bh=jf9DeNLkuGw670KHNYxNmLMR3jHqy4OhU+6BT5FUo3Q=;
+ b=rNqwHZnVPegz7GLDkHiKQp8U7ZFClbxnpFWaoC6w7xtmx7Wu0SQpid2hbwieSHD9t28qaOA3w2NXYBQJ5iWWRUQWwVlsKfhp4tANdJ6u67HrZcQR/RRfyaFdO4JocvPZjQ05fmKgPtWK9yCuY0B67N/O/JFsCGeR8pMLMBnMTa0+NAFjL21Q195rFQrNDTw7BlG1/f9ldW8c7HCZk7P0txcA49/O+1eTsQJUwxn15bp9nUl4PxkuFTkp+XJOUKIhnnyjo0gjHGQUaWomApc4nEx2O9sPO9mWZjCFDcGHYsPD7k040NnJAZJ47ciksqExzAfl/7+ZbJ649Hw6LQvaew==
+Received: from SA9P223CA0021.NAMP223.PROD.OUTLOOK.COM (2603:10b6:806:26::26)
+ by CH2PR12MB9517.namprd12.prod.outlook.com (2603:10b6:610:27f::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.29; Thu, 19 Jun
+ 2025 07:01:56 +0000
+Received: from SA2PEPF00003F66.namprd04.prod.outlook.com
+ (2603:10b6:806:26:cafe::fc) by SA9P223CA0021.outlook.office365.com
+ (2603:10b6:806:26::26) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8835.30 via Frontend Transport; Thu,
+ 19 Jun 2025 07:01:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SA2PEPF00003F66.mail.protection.outlook.com (10.167.248.41) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8857.21 via Frontend Transport; Thu, 19 Jun 2025 07:01:56 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 19 Jun
+ 2025 00:01:42 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 19 Jun
+ 2025 00:01:41 -0700
+Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.129.68.10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Thu, 19 Jun 2025 00:01:38 -0700
+From: Maayan Kashani <mkashani@nvidia.com>
+To: <dev@dpdk.org>
+CC: <mkashani@nvidia.com>, <dsosnowski@nvidia.com>, <rasland@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>,
+ Ori Kam <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
+ <matan@nvidia.com>
+Subject: [PATCH] net/mlx5: mlx5 malloc NUMA fallback
+Date: Thu, 19 Jun 2025 10:01:32 +0300
+Message-ID: <20250619070132.35181-1-mkashani@nvidia.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8979.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ee8f84d9-0f33-4d38-b6ea-08ddaef45bb0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jun 2025 05:44:28.9490 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: K4TGWMCKV7Z6l140X82HWTy4+NvKdFjFW9YJdu0e7n+xD64jficAL6yWbRpztw58hk8pTnUjml2l2BrTb1/PFg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB11340
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00003F66:EE_|CH2PR12MB9517:EE_
+X-MS-Office365-Filtering-Correlation-Id: 69335477-2c85-4923-bc7d-08ddaeff2dcb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|36860700013|1800799024|82310400026|376014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?GPWrcpqbQ6HTV/t2HjXxRXRkTc+3fo7gcL6kMGhVQwrodwu+Ij5WAxxriVD8?=
+ =?us-ascii?Q?8gYYT9AhvxW/oAFSRHkSftscVVIc0MHtWMvin7nKWn/4TrJiaXDEnKJRw+9n?=
+ =?us-ascii?Q?tkMk8mXmSMkqWOdXyIE0kcpTerbf/6HcueII1AofhHa3iv46R9NjbwJBn3Eh?=
+ =?us-ascii?Q?MsCean6ahMOQkQxi6Qt4VhVu4TK7CZFBhL1XNVr7YBGifib3bEgdE2LUvTNg?=
+ =?us-ascii?Q?Ru4TfeRW0e/m4ORrV9K/djjiS+8ZDUetzOy5pPTAzf1mrvjEh/IgThV5n/9w?=
+ =?us-ascii?Q?rUzBR6AJqVQIfg2f73D6LR+Q4amNws+59jYlgfjWeap1NOGzJePb+2/lWzjz?=
+ =?us-ascii?Q?czEcjD56rTATyNLdowf5+GDG746PfBUK9q310h9Q57h+9KIaylZd0iqpFNLH?=
+ =?us-ascii?Q?iAtyZ9Rn5SonOih6b2tMCnA80OT2TIlrwUtB+Q+gFXy3xV5IHyPgRwzTZcfD?=
+ =?us-ascii?Q?k97AHUiDXSs1+JcTHSM1ukmTtgXwnKoE5p+wGfZZtlq5xtdTVV9YYX0qQwWX?=
+ =?us-ascii?Q?Vosi6KXS+16Whq3AEUdZUS7pCdu0uzCRQ7vMRRwOFRSQ+8UsaAzk1VWC7ky/?=
+ =?us-ascii?Q?w5NtjWw53svoEYOpiCvdxRy+4kl6ouxL0eJUMuz4SxtA+Z9H5Ve2V71WxCsl?=
+ =?us-ascii?Q?Wltq6Y6UQyZjJXHt/fy9JNsHt08REYsayivPszgiakNHkA5TNAcsWvh5t20i?=
+ =?us-ascii?Q?teubD+PrywFK1ZfH1F5NNwAqCodZg+S9X7tuBO8HJpbz2ek18/cPfysbFdQ4?=
+ =?us-ascii?Q?jz46ZHs0aPciN1CuiF3xPahUo/dhserz+w709IUcEpO+5t3zWG75lpJZpklz?=
+ =?us-ascii?Q?6pCJQkdX8lx7NCFpjnyiXBUAOs3nsr2ueSWDocAEdIBHuhNb6gVk42ikYRlz?=
+ =?us-ascii?Q?gOYJ4WjY36nHCNduqxzu9/WnR7PisW4yUHnKVpSG2LaG05Uxfa9GUhcnkEV2?=
+ =?us-ascii?Q?2tXABRZB2jgqdVi4YkgDXGSBdbzU1ei2O6JbS8HD9MxXs5JwGiUf9QpJguNz?=
+ =?us-ascii?Q?50e08CcKFodlcv9efe81TICoofnJ28kcDU547QU4rj5YtL+9YwgGSGpkixKo?=
+ =?us-ascii?Q?vqlIiEFDzqxGzEi+h5fqWModcqFYoe9c31O2vp3B/ZP8lxnruu56ls4j/BNP?=
+ =?us-ascii?Q?jGLYqhHPQXdsyuA90NzzccKPyYLABKYvI17cXNxsgS1huBwcFOtifYs4tHrr?=
+ =?us-ascii?Q?JJEBWRc+krR25Kaq1kEZpQf9RcoJdE5rN1o7S7iOg1IF3EPGKyvpyy7l5M6P?=
+ =?us-ascii?Q?Lxg4SXejYSHSqXuC4WT3WNs4kZSgJ26QO6ofHDTKiceJiS3XHZ04RrBeJebm?=
+ =?us-ascii?Q?VUzi7Q77qCaXGpovk7zuU2zwuM4GLF46oX8SQ1xY1WiDkzt3iBFCVF7JVmKd?=
+ =?us-ascii?Q?d8wQWDEuRZQhLD7jWT3D3DjVgJrHkPQ15z1hHP/awgUaL1LxlQDuRH60uK6n?=
+ =?us-ascii?Q?hnLqm3p+zDWsAD8x2qXPH1PdZFLCv7QErCV2x1xaH2JlFQGSO7H5tj4AjhOp?=
+ =?us-ascii?Q?nmU6riKnMPxIi5zEiJmSlr3KqXgBEkZD+NVR?=
+X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2025 07:01:56.3295 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 69335477-2c85-4923-bc7d-08ddaeff2dcb
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: SA2PEPF00003F66.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB9517
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -160,29 +135,487 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-SGkgU3RlcGhlbiwNCg0KUGxlYXNlIGlnbm9yZSB0aGlzLiBUaGlzIGlzIHZhbGlkIHdydCB0byBE
-UEFBLg0KDQpUaGFua3MhDQoNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9t
-OiBTdGVwaGVuIEhlbW1pbmdlciA8c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmc+DQo+IFNlbnQ6
-IDExIEp1bmUgMjAyNSAyMjoyMQ0KPiBUbzogVmFuc2hpa2EgU2h1a2xhIDx2YW5zaGlrYS5zaHVr
-bGFAbnhwLmNvbT4NCj4gQ2M6IGRldkBkcGRrLm9yZzsgSGVtYW50IEFncmF3YWwgPGhlbWFudC5h
-Z3Jhd2FsQG54cC5jb20+OyBTYWNoaW4NCj4gU2F4ZW5hIDxzYWNoaW4uc2F4ZW5hQG54cC5jb20+
-OyBKdW4gWWFuZyA8anVuLnlhbmdAbnhwLmNvbT4NCj4gU3ViamVjdDogW0VYVF0gUmU6IFt2NCAw
-Mi8xMF0gYnVzL2RwYWE6IGFkZCBGTWFuIG5vZGUNCj4gDQo+IENhdXRpb246IFRoaXMgaXMgYW4g
-ZXh0ZXJuYWwgZW1haWwuIFBsZWFzZSB0YWtlIGNhcmUgd2hlbiBjbGlja2luZyBsaW5rcyBvcg0K
-PiBvcGVuaW5nIGF0dGFjaG1lbnRzLiBXaGVuIGluIGRvdWJ0LCByZXBvcnQgdGhlIG1lc3NhZ2Ug
-dXNpbmcgdGhlICdSZXBvcnQNCj4gdGhpcyBlbWFpbCcgYnV0dG9uDQo+IA0KPiANCj4gT24gV2Vk
-LCAxMSBKdW4gMjAyNSAxMjo0MDozMSArMDUzMA0KPiB2YW5zaGlrYS5zaHVrbGFAbnhwLmNvbSB3
-cm90ZToNCj4gDQo+ID4gRnJvbTogSnVuIFlhbmcgPGp1bi55YW5nQG54cC5jb20+DQo+ID4NCj4g
-PiBBZGQgRk1hbiBub2RlKHMpIGFuZCBhc3NvY2lhdGUgRk1hbiB0byBpdCdzIGludGVyZmFjZShw
-b3J0KS4NCj4gPiBUaGlzIG1ldGhvZCBkZXNjcmliZXMgRk1hbiBhdHRyaWJ1dGVzIGFuZCBhdm9p
-ZCBhY2Nlc3NpbmcgRk1hbiBmcm9tDQo+ID4gcG9ydCBkaXJlY3RseS4NCj4gPiBMb2dpY2FsbHks
-IHNvbWV0aGluZyBsaWtlIElFRUUgMTU4OCBpcyBGTWFuIGdsb2JhbCByZXNvdXJjZSwgd2hpY2gg
-aXMNCj4gPiBpbiByYW5nZSBvZiAweEZfRTAwMOKAkzB4Rl9FRkZGLg0KPiA+IFBvcnQgc3BlY2lm
-aWMgcmVzb3VyY2UgaXMgaW4gcmFuZ2Ugb2YgMHg4XzAwMDDigJMweEJfRkZGRi4NCj4gPg0KPiA+
-IFNpZ25lZC1vZmYtYnk6IEp1biBZYW5nIDxqdW4ueWFuZ0BueHAuY29tPg0KPiANCj4gVGhpcyBs
-b29rcyBsaWtlIGEgdHlwbw0KPiANCj4gIyMjIFtQQVRDSF0gYnVzL2RwYWE6IGFkZCBGTWFuIG5v
-ZGUNCj4gDQo+IFdBUk5JTkc6VFlQT19TUEVMTElORzogJ2NvbnRleHRBJyBtYXkgYmUgbWlzc3Bl
-bGxlZCAtIHBlcmhhcHMgJ2NvbnRleHQnPw0KPiAjMTQ3OiBGSUxFOiBkcml2ZXJzL2J1cy9kcGFh
-L2Jhc2UvZm1hbi9mbWFuLmM6MTI1Og0KPiArICAgICAgICAgICAgICAgICogU2V0IEEyViwgT1ZP
-TSwgRUJEIGJpdHMgaW4gY29udGV4dEEgdG8gYWxsb3cgZXh0ZXJuYWwNCj4gICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIF5eXl5eXl5eDQo=
+If mlx5 malloc with specified socket failed,
+malloc function would return an error.
+
+Cross NUMA support means that when there is no
+memory on the local NUMA, use other available
+NUMA memory for port init and start.
+
+To support cross NUMA,
+added a flag to enable NUMA fallback to any NUMA.
+Fallback will be enabled only if this flag is set.
+
+Add a NUMA tolerant wraper to mlx5 malloc calls in
+ipool and devx/memory region initializations
+to support cross NUMA in device probing and port start stage.
+
+Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
+---
+ drivers/common/mlx5/mlx5_common_devx.c |  8 ++---
+ drivers/common/mlx5/mlx5_common_mr.c   |  6 ++--
+ drivers/common/mlx5/mlx5_devx_cmds.c   |  4 +--
+ drivers/common/mlx5/mlx5_malloc.c      | 20 +++++++++--
+ drivers/common/mlx5/mlx5_malloc.h      | 20 +++++++++++
+ drivers/net/mlx5/mlx5.c                |  4 +--
+ drivers/net/mlx5/mlx5_devx.c           |  6 ++--
+ drivers/net/mlx5/mlx5_flow_hw.c        | 21 +++++++-----
+ drivers/net/mlx5/mlx5_rxq.c            |  2 +-
+ drivers/net/mlx5/mlx5_trigger.c        | 16 ++++-----
+ drivers/net/mlx5/mlx5_txq.c            |  4 +--
+ drivers/net/mlx5/mlx5_utils.c          | 46 ++++++++++++++++++++------
+ 12 files changed, 111 insertions(+), 46 deletions(-)
+
+diff --git a/drivers/common/mlx5/mlx5_common_devx.c b/drivers/common/mlx5/mlx5_common_devx.c
+index cd1292b92ba..aace5283e7d 100644
+--- a/drivers/common/mlx5/mlx5_common_devx.c
++++ b/drivers/common/mlx5/mlx5_common_devx.c
+@@ -110,8 +110,8 @@ mlx5_devx_cq_create(void *ctx, struct mlx5_devx_cq *cq_obj, uint16_t log_desc_n,
+ 	umem_size = sizeof(struct mlx5_cqe) * num_of_cqes;
+ 	umem_dbrec = RTE_ALIGN(umem_size, MLX5_DBR_SIZE);
+ 	umem_size += MLX5_DBR_SIZE;
+-	umem_buf = mlx5_malloc(MLX5_MEM_RTE | MLX5_MEM_ZERO, umem_size,
+-			       alignment, socket);
++	umem_buf = mlx5_malloc_numa_tolerant(MLX5_MEM_RTE | MLX5_MEM_ZERO, umem_size,
++					     alignment, socket);
+ 	if (!umem_buf) {
+ 		DRV_LOG(ERR, "Failed to allocate memory for CQ.");
+ 		rte_errno = ENOMEM;
+@@ -484,8 +484,8 @@ mlx5_devx_wq_init(void *ctx, uint32_t wqe_size, uint16_t log_wqbb_n, int socket,
+ 	umem_size = wqe_size * (1 << log_wqbb_n);
+ 	umem_dbrec = RTE_ALIGN(umem_size, MLX5_DBR_SIZE);
+ 	umem_size += MLX5_DBR_SIZE;
+-	umem_buf = mlx5_malloc(MLX5_MEM_RTE | MLX5_MEM_ZERO, umem_size,
+-			       alignment, socket);
++	umem_buf = mlx5_malloc_numa_tolerant(MLX5_MEM_RTE | MLX5_MEM_ZERO, umem_size,
++					     alignment, socket);
+ 	if (!umem_buf) {
+ 		DRV_LOG(ERR, "Failed to allocate memory for RQ.");
+ 		rte_errno = ENOMEM;
+diff --git a/drivers/common/mlx5/mlx5_common_mr.c b/drivers/common/mlx5/mlx5_common_mr.c
+index c41ffff2d5a..62cbc9bc001 100644
+--- a/drivers/common/mlx5/mlx5_common_mr.c
++++ b/drivers/common/mlx5/mlx5_common_mr.c
+@@ -225,9 +225,9 @@ mlx5_mr_btree_init(struct mlx5_mr_btree *bt, int n, int socket)
+ 	}
+ 	MLX5_ASSERT(!bt->table && !bt->size);
+ 	memset(bt, 0, sizeof(*bt));
+-	bt->table = mlx5_malloc(MLX5_MEM_RTE | MLX5_MEM_ZERO,
+-				sizeof(struct mr_cache_entry) * n,
+-				0, socket);
++	bt->table = mlx5_malloc_numa_tolerant(MLX5_MEM_RTE | MLX5_MEM_ZERO,
++					      sizeof(struct mr_cache_entry) * n,
++					      0, socket);
+ 	if (bt->table == NULL) {
+ 		rte_errno = ENOMEM;
+ 		DRV_LOG(DEBUG,
+diff --git a/drivers/common/mlx5/mlx5_devx_cmds.c b/drivers/common/mlx5/mlx5_devx_cmds.c
+index 39a4298b58c..15ca63fba9f 100644
+--- a/drivers/common/mlx5/mlx5_devx_cmds.c
++++ b/drivers/common/mlx5/mlx5_devx_cmds.c
+@@ -1537,7 +1537,7 @@ mlx5_devx_cmd_create_rq(void *ctx,
+ 	struct mlx5_devx_wq_attr *wq_attr;
+ 	struct mlx5_devx_obj *rq = NULL;
+ 
+-	rq = mlx5_malloc(MLX5_MEM_ZERO, sizeof(*rq), 0, socket);
++	rq = mlx5_malloc_numa_tolerant(MLX5_MEM_ZERO, sizeof(*rq), 0, socket);
+ 	if (!rq) {
+ 		DRV_LOG(ERR, "Failed to allocate RQ data");
+ 		rte_errno = ENOMEM;
+@@ -1680,7 +1680,7 @@ mlx5_devx_cmd_create_rmp(void *ctx,
+ 	struct mlx5_devx_wq_attr *wq_attr;
+ 	struct mlx5_devx_obj *rmp = NULL;
+ 
+-	rmp = mlx5_malloc(MLX5_MEM_ZERO, sizeof(*rmp), 0, socket);
++	rmp = mlx5_malloc_numa_tolerant(MLX5_MEM_ZERO, sizeof(*rmp), 0, socket);
+ 	if (!rmp) {
+ 		DRV_LOG(ERR, "Failed to allocate RMP data");
+ 		rte_errno = ENOMEM;
+diff --git a/drivers/common/mlx5/mlx5_malloc.c b/drivers/common/mlx5/mlx5_malloc.c
+index d56b4fb5a89..159182ee3cd 100644
+--- a/drivers/common/mlx5/mlx5_malloc.c
++++ b/drivers/common/mlx5/mlx5_malloc.c
+@@ -162,6 +162,13 @@ mlx5_alloc_align(size_t size, unsigned int align, unsigned int zero)
+ 	return buf;
+ }
+ 
++static void *
++mlx5_malloc_socket_internal(size_t size, unsigned int align, int socket, bool zero)
++{
++	return zero ? rte_zmalloc_socket(NULL, size, align, socket) :
++		      rte_malloc_socket(NULL, size, align, socket);
++}
++
+ RTE_EXPORT_INTERNAL_SYMBOL(mlx5_malloc)
+ void *
+ mlx5_malloc(uint32_t flags, size_t size, unsigned int align, int socket)
+@@ -181,9 +188,18 @@ mlx5_malloc(uint32_t flags, size_t size, unsigned int align, int socket)
+ 		rte_mem = mlx5_sys_mem.enable ? false : true;
+ 	if (rte_mem) {
+ 		if (flags & MLX5_MEM_ZERO)
+-			addr = rte_zmalloc_socket(NULL, size, align, socket);
++			addr = mlx5_malloc_socket_internal(size, align, socket, true);
+ 		else
+-			addr = rte_malloc_socket(NULL, size, align, socket);
++			addr = mlx5_malloc_socket_internal(size, align, socket, false);
++		if (addr == NULL && socket != SOCKET_ID_ANY && (flags & MLX5_NUMA_TOLERANT)) {
++			size_t alloc_size = size;
++			addr = mlx5_malloc_socket_internal(size, align, SOCKET_ID_ANY,
++				!!(flags & MLX5_MEM_ZERO));
++			if (addr) {
++				(DRV_LOG(WARNING, "Allocated %p (size %zu socket %d) through NUMA tolerant fallback",
++					(addr), (alloc_size), (socket)));
++			}
++		}
+ 		mlx5_mem_update_msl(addr);
+ #ifdef RTE_LIBRTE_MLX5_DEBUG
+ 		if (addr)
+diff --git a/drivers/common/mlx5/mlx5_malloc.h b/drivers/common/mlx5/mlx5_malloc.h
+index 9086a4f3f22..545a1124c24 100644
+--- a/drivers/common/mlx5/mlx5_malloc.h
++++ b/drivers/common/mlx5/mlx5_malloc.h
+@@ -28,6 +28,8 @@ enum mlx5_mem_flags {
+ 	/* Memory should be allocated from rte hugepage. */
+ 	MLX5_MEM_ZERO = 1 << 2,
+ 	/* Memory should be cleared to zero. */
++	MLX5_NUMA_TOLERANT = 1 << 3,
++	/* Fallback to any NUMA if the memory allocation fails. */
+ };
+ 
+ /**
+@@ -101,6 +103,24 @@ void *mlx5_realloc(void *addr, uint32_t flags, size_t size, unsigned int align,
+ __rte_internal
+ void mlx5_free(void *addr);
+ 
++#if defined(RTE_TOOLCHAIN_GCC) || defined(RTE_TOOLCHAIN_CLANG)
++#define mlx5_malloc_numa_tolerant(flags, size, align, socket) (__extension__ ({			\
++		void *mem = mlx5_malloc((uint32_t)(flags), (size_t)(size), (align), (socket));	\
++		if (mem == NULL) {								\
++			mem = mlx5_malloc((uint32_t)(flags), (size_t)(size),			\
++					  (align), SOCKET_ID_ANY);				\
++			if (mem != NULL) {							\
++				DRV_LOG(WARNING,						\
++				"Allocated %p (size %zu socket %d) through NUMA tolerant fallback",\
++					(mem), ((size_t)(size)), (socket));			\
++			}									\
++		}										\
++		mem;										\
++	}))
++#else
++#define mlx5_malloc_numa_tolerant(flags, size, align, socket)
++	(mlx5_malloc((flags) | MLX5_NUMA_TOLERANT, (size), (align), (socket)));
++#endif
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/drivers/net/mlx5/mlx5.c b/drivers/net/mlx5/mlx5.c
+index b4bd43aae25..29700524458 100644
+--- a/drivers/net/mlx5/mlx5.c
++++ b/drivers/net/mlx5/mlx5.c
+@@ -2271,8 +2271,8 @@ mlx5_proc_priv_init(struct rte_eth_dev *dev)
+ 	 */
+ 	ppriv_size = sizeof(struct mlx5_proc_priv) +
+ 		     priv->txqs_n * sizeof(struct mlx5_uar_data);
+-	ppriv = mlx5_malloc(MLX5_MEM_RTE | MLX5_MEM_ZERO, ppriv_size,
+-			    RTE_CACHE_LINE_SIZE, dev->device->numa_node);
++	ppriv = mlx5_malloc_numa_tolerant(MLX5_MEM_RTE | MLX5_MEM_ZERO, ppriv_size,
++					  RTE_CACHE_LINE_SIZE, dev->device->numa_node);
+ 	if (!ppriv) {
+ 		rte_errno = ENOMEM;
+ 		return -rte_errno;
+diff --git a/drivers/net/mlx5/mlx5_devx.c b/drivers/net/mlx5/mlx5_devx.c
+index 9711746edba..41e4142c1f8 100644
+--- a/drivers/net/mlx5/mlx5_devx.c
++++ b/drivers/net/mlx5/mlx5_devx.c
+@@ -1095,14 +1095,14 @@ mlx5_rxq_devx_obj_drop_create(struct rte_eth_dev *dev)
+ 	 * They are required to hold pointers for cleanup
+ 	 * and are only accessible via drop queue DevX objects.
+ 	 */
+-	rxq = mlx5_malloc(MLX5_MEM_ZERO, sizeof(*rxq), 0, socket_id);
++	rxq = mlx5_malloc_numa_tolerant(MLX5_MEM_ZERO, sizeof(*rxq), 0, socket_id);
+ 	if (rxq == NULL) {
+ 		DRV_LOG(ERR, "Port %u could not allocate drop queue private",
+ 			dev->data->port_id);
+ 		rte_errno = ENOMEM;
+ 		goto error;
+ 	}
+-	rxq_ctrl = mlx5_malloc(MLX5_MEM_ZERO, sizeof(*rxq_ctrl),
++	rxq_ctrl = mlx5_malloc_numa_tolerant(MLX5_MEM_ZERO, sizeof(*rxq_ctrl),
+ 			       0, socket_id);
+ 	if (rxq_ctrl == NULL) {
+ 		DRV_LOG(ERR, "Port %u could not allocate drop queue control",
+@@ -1110,7 +1110,7 @@ mlx5_rxq_devx_obj_drop_create(struct rte_eth_dev *dev)
+ 		rte_errno = ENOMEM;
+ 		goto error;
+ 	}
+-	rxq_obj = mlx5_malloc(MLX5_MEM_ZERO, sizeof(*rxq_obj), 0, socket_id);
++	rxq_obj = mlx5_malloc_numa_tolerant(MLX5_MEM_ZERO, sizeof(*rxq_obj), 0, socket_id);
+ 	if (rxq_obj == NULL) {
+ 		DRV_LOG(ERR, "Port %u could not allocate drop queue object",
+ 			dev->data->port_id);
+diff --git a/drivers/net/mlx5/mlx5_flow_hw.c b/drivers/net/mlx5/mlx5_flow_hw.c
+index e26093522fb..c6e732df77f 100644
+--- a/drivers/net/mlx5/mlx5_flow_hw.c
++++ b/drivers/net/mlx5/mlx5_flow_hw.c
+@@ -5069,7 +5069,8 @@ flow_hw_table_create(struct rte_eth_dev *dev,
+ 	tbl_mem_size = sizeof(*tbl);
+ 	tbl_mem_size += nb_action_templates * priv->nb_queue * sizeof(tbl->rule_acts[0]);
+ 	/* Allocate the table memory. */
+-	tbl = mlx5_malloc(MLX5_MEM_ZERO, tbl_mem_size, RTE_CACHE_LINE_SIZE, rte_socket_id());
++	tbl = mlx5_malloc_numa_tolerant(MLX5_MEM_ZERO, tbl_mem_size,
++					RTE_CACHE_LINE_SIZE, rte_socket_id());
+ 	if (!tbl)
+ 		goto error;
+ 	tbl->cfg = *table_cfg;
+@@ -5078,8 +5079,10 @@ flow_hw_table_create(struct rte_eth_dev *dev,
+ 	if (!tbl->flow)
+ 		goto error;
+ 	/* Allocate table of auxiliary flow rule structs. */
+-	tbl->flow_aux = mlx5_malloc(MLX5_MEM_ZERO, sizeof(struct rte_flow_hw_aux) * nb_flows,
+-				    RTE_CACHE_LINE_SIZE, rte_dev_numa_node(dev->device));
++	tbl->flow_aux = mlx5_malloc_numa_tolerant(MLX5_MEM_ZERO,
++						  sizeof(struct rte_flow_hw_aux) * nb_flows,
++						  RTE_CACHE_LINE_SIZE,
++						  rte_dev_numa_node(dev->device));
+ 	if (!tbl->flow_aux)
+ 		goto error;
+ 	/* Register the flow group. */
+@@ -8031,7 +8034,7 @@ __flow_hw_actions_template_create(struct rte_eth_dev *dev,
+ 	if (orig_act_len <= 0)
+ 		return NULL;
+ 	len += RTE_ALIGN(orig_act_len, 16);
+-	at = mlx5_malloc(MLX5_MEM_ZERO, len + sizeof(*at),
++	at = mlx5_malloc_numa_tolerant(MLX5_MEM_ZERO, len + sizeof(*at),
+ 			 RTE_CACHE_LINE_SIZE, rte_socket_id());
+ 	if (!at) {
+ 		rte_flow_error_set(error, ENOMEM,
+@@ -8200,7 +8203,7 @@ flow_hw_prepend_item(const struct rte_flow_item *items,
+ 
+ 	/* Allocate new array of items. */
+ 	size = sizeof(*copied_items) * (nb_items + 1);
+-	copied_items = mlx5_malloc(MLX5_MEM_ZERO, size, 0, rte_socket_id());
++	copied_items = mlx5_malloc_numa_tolerant(MLX5_MEM_ZERO, size, 0, rte_socket_id());
+ 	if (!copied_items) {
+ 		rte_flow_error_set(error, ENOMEM,
+ 				   RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
+@@ -9017,7 +9020,7 @@ flow_hw_pattern_template_create(struct rte_eth_dev *dev,
+ 		tmpl_items = items;
+ 	}
+ setup_pattern_template:
+-	it = mlx5_malloc(MLX5_MEM_ZERO, sizeof(*it), 0, rte_socket_id());
++	it = mlx5_malloc_numa_tolerant(MLX5_MEM_ZERO, sizeof(*it), 0, rte_socket_id());
+ 	if (!it) {
+ 		rte_flow_error_set(error, ENOMEM,
+ 				   RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
+@@ -9037,7 +9040,8 @@ flow_hw_pattern_template_create(struct rte_eth_dev *dev,
+ 		goto error;
+ 	}
+ 	it_items_size = RTE_ALIGN(it_items_size, 16);
+-	it->items = mlx5_malloc(MLX5_MEM_ZERO, it_items_size, 0, rte_dev_numa_node(dev->device));
++	it->items = mlx5_malloc_numa_tolerant(MLX5_MEM_ZERO, it_items_size, 0,
++				rte_dev_numa_node(dev->device));
+ 	if (it->items == NULL) {
+ 		rte_flow_error_set(error, ENOMEM,
+ 				   RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
+@@ -11441,7 +11445,8 @@ flow_hw_create_ctrl_rx_tables(struct rte_eth_dev *dev)
+ 	int ret;
+ 
+ 	MLX5_ASSERT(!priv->hw_ctrl_rx);
+-	priv->hw_ctrl_rx = mlx5_malloc(MLX5_MEM_ZERO, sizeof(*priv->hw_ctrl_rx),
++	priv->hw_ctrl_rx = mlx5_malloc_numa_tolerant(MLX5_MEM_ZERO,
++				       sizeof(*priv->hw_ctrl_rx),
+ 				       RTE_CACHE_LINE_SIZE, rte_socket_id());
+ 	if (!priv->hw_ctrl_rx) {
+ 		DRV_LOG(ERR, "Failed to allocate memory for Rx control flow tables");
+diff --git a/drivers/net/mlx5/mlx5_rxq.c b/drivers/net/mlx5/mlx5_rxq.c
+index b676e5394b0..628af59fcc7 100644
+--- a/drivers/net/mlx5/mlx5_rxq.c
++++ b/drivers/net/mlx5/mlx5_rxq.c
+@@ -1793,7 +1793,7 @@ mlx5_rxq_new(struct rte_eth_dev *dev, uint16_t idx, uint16_t desc,
+ 		desc >>= mprq_log_actual_stride_num;
+ 		alloc_size += desc * sizeof(struct mlx5_mprq_buf *);
+ 	}
+-	tmpl = mlx5_malloc(MLX5_MEM_RTE | MLX5_MEM_ZERO, alloc_size, 0, socket);
++	tmpl = mlx5_malloc_numa_tolerant(MLX5_MEM_RTE | MLX5_MEM_ZERO, alloc_size, 0, socket);
+ 	if (!tmpl) {
+ 		rte_errno = ENOMEM;
+ 		return NULL;
+diff --git a/drivers/net/mlx5/mlx5_trigger.c b/drivers/net/mlx5/mlx5_trigger.c
+index 485984f9b06..f33cd86e609 100644
+--- a/drivers/net/mlx5/mlx5_trigger.c
++++ b/drivers/net/mlx5/mlx5_trigger.c
+@@ -64,8 +64,8 @@ mlx5_txq_start(struct rte_eth_dev *dev)
+ 		if (!txq_ctrl->is_hairpin)
+ 			txq_alloc_elts(txq_ctrl);
+ 		MLX5_ASSERT(!txq_ctrl->obj);
+-		txq_ctrl->obj = mlx5_malloc(flags, sizeof(struct mlx5_txq_obj),
+-					    0, txq_ctrl->socket);
++		txq_ctrl->obj = mlx5_malloc_numa_tolerant(flags, sizeof(struct mlx5_txq_obj),
++							  0, txq_ctrl->socket);
+ 		if (!txq_ctrl->obj) {
+ 			DRV_LOG(ERR, "Port %u Tx queue %u cannot allocate "
+ 				"memory resources.", dev->data->port_id,
+@@ -82,9 +82,9 @@ mlx5_txq_start(struct rte_eth_dev *dev)
+ 		if (!txq_ctrl->is_hairpin) {
+ 			size_t size = txq_data->cqe_s * sizeof(*txq_data->fcqs);
+ 
+-			txq_data->fcqs = mlx5_malloc(flags, size,
+-						     RTE_CACHE_LINE_SIZE,
+-						     txq_ctrl->socket);
++			txq_data->fcqs = mlx5_malloc_numa_tolerant(flags, size,
++								   RTE_CACHE_LINE_SIZE,
++								   txq_ctrl->socket);
+ 			if (!txq_data->fcqs) {
+ 				DRV_LOG(ERR, "Port %u Tx queue %u cannot "
+ 					"allocate memory (FCQ).",
+@@ -182,9 +182,9 @@ mlx5_rxq_ctrl_prepare(struct rte_eth_dev *dev, struct mlx5_rxq_ctrl *rxq_ctrl,
+ 			return ret;
+ 	}
+ 	MLX5_ASSERT(!rxq_ctrl->obj);
+-	rxq_ctrl->obj = mlx5_malloc(MLX5_MEM_RTE | MLX5_MEM_ZERO,
+-				    sizeof(*rxq_ctrl->obj), 0,
+-				    rxq_ctrl->socket);
++	rxq_ctrl->obj = mlx5_malloc_numa_tolerant(MLX5_MEM_RTE | MLX5_MEM_ZERO,
++						  sizeof(*rxq_ctrl->obj), 0,
++						  rxq_ctrl->socket);
+ 	if (!rxq_ctrl->obj) {
+ 		DRV_LOG(ERR, "Port %u Rx queue %u can't allocate resources.",
+ 			dev->data->port_id, idx);
+diff --git a/drivers/net/mlx5/mlx5_txq.c b/drivers/net/mlx5/mlx5_txq.c
+index 5fee5bc4e87..fd9c477aa9f 100644
+--- a/drivers/net/mlx5/mlx5_txq.c
++++ b/drivers/net/mlx5/mlx5_txq.c
+@@ -1056,8 +1056,8 @@ mlx5_txq_new(struct rte_eth_dev *dev, uint16_t idx, uint16_t desc,
+ 	struct mlx5_txq_ctrl *tmpl;
+ 	uint16_t max_wqe;
+ 
+-	tmpl = mlx5_malloc(MLX5_MEM_RTE | MLX5_MEM_ZERO, sizeof(*tmpl) +
+-			   desc * sizeof(struct rte_mbuf *), 0, socket);
++	tmpl = mlx5_malloc_numa_tolerant(MLX5_MEM_RTE | MLX5_MEM_ZERO, sizeof(*tmpl) +
++					 desc * sizeof(struct rte_mbuf *), 0, socket);
+ 	if (!tmpl) {
+ 		rte_errno = ENOMEM;
+ 		return NULL;
+diff --git a/drivers/net/mlx5/mlx5_utils.c b/drivers/net/mlx5/mlx5_utils.c
+index f8cd7bc0439..5752efa108f 100644
+--- a/drivers/net/mlx5/mlx5_utils.c
++++ b/drivers/net/mlx5/mlx5_utils.c
+@@ -10,6 +10,29 @@
+ 
+ /********************* Indexed pool **********************/
+ 
++#if defined(RTE_TOOLCHAIN_GCC) || defined(RTE_TOOLCHAIN_CLANG)
++#define pool_malloc(pool, flags, size, align, socket) (__extension__ ({				\
++	struct mlx5_indexed_pool *p = (struct mlx5_indexed_pool *)(pool);			\
++	uint32_t f = (uint32_t)(flags);								\
++	size_t s = (size_t)(size);								\
++	uint32_t a = (uint32_t)(align);								\
++	int so = (int)(socket);									\
++	void *mem = p->cfg.malloc(f, s, a, so);							\
++	if (mem == NULL) {									\
++		mem = p->cfg.malloc(f, s, a, SOCKET_ID_ANY);					\
++		if (mem) {									\
++			DRV_LOG(WARNING,							\
++			"Allocated %p (size %zu socket %d) through NUMA tolerant fallback",	\
++			mem, s, so);								\
++		}										\
++	}											\
++	mem;											\
++}))
++#else
++#define pool_malloc(pool, flags, size, align, socket)
++	(pool)->cfg.malloc((uint32_t)(flags) | NUMA_TOLERANT, (size), (align), (socket));
++#endif
++
+ int mlx5_logtype_ipool;
+ 
+ /* Initialize driver log type. */
+@@ -149,7 +172,7 @@ mlx5_ipool_grow(struct mlx5_indexed_pool *pool)
+ 		int n_grow = pool->n_trunk_valid ? pool->n_trunk :
+ 			     RTE_CACHE_LINE_SIZE / sizeof(void *);
+ 
+-		p = pool->cfg.malloc(0, (pool->n_trunk_valid + n_grow) *
++		p = pool_malloc(pool, MLX5_MEM_ZERO, (pool->n_trunk_valid + n_grow) *
+ 				     sizeof(struct mlx5_indexed_trunk *),
+ 				     RTE_CACHE_LINE_SIZE, rte_socket_id());
+ 		if (!p)
+@@ -179,7 +202,7 @@ mlx5_ipool_grow(struct mlx5_indexed_pool *pool)
+ 	/* rte_bitmap requires memory cacheline aligned. */
+ 	trunk_size += RTE_CACHE_LINE_ROUNDUP(data_size * pool->cfg.size);
+ 	trunk_size += bmp_size;
+-	trunk = pool->cfg.malloc(0, trunk_size,
++	trunk = pool_malloc(pool, MLX5_MEM_ZERO, trunk_size,
+ 				 RTE_CACHE_LINE_SIZE, rte_socket_id());
+ 	if (!trunk)
+ 		return -ENOMEM;
+@@ -253,9 +276,10 @@ mlx5_ipool_grow_bmp(struct mlx5_indexed_pool *pool, uint32_t new_size)
+ 	pool->cache_validator.bmp_size = new_size;
+ 	bmp_mem_size = rte_bitmap_get_memory_footprint(new_size);
+ 
+-	pool->cache_validator.bmp_mem = pool->cfg.malloc(MLX5_MEM_ZERO, bmp_mem_size,
+-										RTE_CACHE_LINE_SIZE,
+-										rte_socket_id());
++	pool->cache_validator.bmp_mem = pool_malloc(pool, MLX5_MEM_ZERO,
++							 bmp_mem_size,
++							 RTE_CACHE_LINE_SIZE,
++							 rte_socket_id());
+ 	if (unlikely(!pool->cache_validator.bmp_mem)) {
+ 		DRV_LOG_IPOOL(ERR, "Unable to allocate memory for a new bitmap");
+ 		return;
+@@ -343,7 +367,7 @@ mlx5_ipool_allocate_from_global(struct mlx5_indexed_pool *pool, int cidx)
+ 			     RTE_CACHE_LINE_SIZE / sizeof(void *);
+ 		cur_max_idx = mlx5_trunk_idx_offset_get(pool, trunk_n + n_grow);
+ 		/* Resize the trunk array. */
+-		p = pool->cfg.malloc(0, ((trunk_idx + n_grow) *
++		p = pool_malloc(pool, MLX5_MEM_ZERO, ((trunk_idx + n_grow) *
+ 			sizeof(struct mlx5_indexed_trunk *)) +
+ 			(cur_max_idx * sizeof(uint32_t)) + sizeof(*p),
+ 			RTE_CACHE_LINE_SIZE, rte_socket_id());
+@@ -365,7 +389,7 @@ mlx5_ipool_allocate_from_global(struct mlx5_indexed_pool *pool, int cidx)
+ 	trunk_size = sizeof(*trunk);
+ 	data_size = mlx5_trunk_size_get(pool, trunk_idx);
+ 	trunk_size += RTE_CACHE_LINE_ROUNDUP(data_size * pool->cfg.size);
+-	trunk = pool->cfg.malloc(0, trunk_size,
++	trunk = pool_malloc(pool, MLX5_MEM_ZERO, trunk_size,
+ 				 RTE_CACHE_LINE_SIZE, rte_socket_id());
+ 	if (unlikely(!trunk)) {
+ 		pool->cfg.free(p);
+@@ -429,7 +453,7 @@ _mlx5_ipool_get_cache(struct mlx5_indexed_pool *pool, int cidx, uint32_t idx)
+ 
+ 	MLX5_ASSERT(idx);
+ 	if (unlikely(!pool->cache[cidx])) {
+-		pool->cache[cidx] = pool->cfg.malloc(MLX5_MEM_ZERO,
++		pool->cache[cidx] = pool_malloc(pool, MLX5_MEM_ZERO,
+ 			sizeof(struct mlx5_ipool_per_lcore) +
+ 			(pool->cfg.per_core_cache * sizeof(uint32_t)),
+ 			RTE_CACHE_LINE_SIZE, SOCKET_ID_ANY);
+@@ -515,7 +539,7 @@ _mlx5_ipool_malloc_cache(struct mlx5_indexed_pool *pool, int cidx,
+ 			 uint32_t *idx)
+ {
+ 	if (unlikely(!pool->cache[cidx])) {
+-		pool->cache[cidx] = pool->cfg.malloc(MLX5_MEM_ZERO,
++		pool->cache[cidx] = pool_malloc(pool, MLX5_MEM_ZERO,
+ 			sizeof(struct mlx5_ipool_per_lcore) +
+ 			(pool->cfg.per_core_cache * sizeof(uint32_t)),
+ 			RTE_CACHE_LINE_SIZE, SOCKET_ID_ANY);
+@@ -577,7 +601,7 @@ _mlx5_ipool_free_cache(struct mlx5_indexed_pool *pool, int cidx, uint32_t idx)
+ 	 * case check if local cache on core B was allocated before.
+ 	 */
+ 	if (unlikely(!pool->cache[cidx])) {
+-		pool->cache[cidx] = pool->cfg.malloc(MLX5_MEM_ZERO,
++		pool->cache[cidx] = pool_malloc(pool, MLX5_MEM_ZERO,
+ 			sizeof(struct mlx5_ipool_per_lcore) +
+ 			(pool->cfg.per_core_cache * sizeof(uint32_t)),
+ 			RTE_CACHE_LINE_SIZE, SOCKET_ID_ANY);
+@@ -881,7 +905,7 @@ mlx5_ipool_flush_cache(struct mlx5_indexed_pool *pool)
+ 	/* Reset bmp. */
+ 	bmp_num = mlx5_trunk_idx_offset_get(pool, gc->n_trunk_valid);
+ 	mem_size = rte_bitmap_get_memory_footprint(bmp_num);
+-	pool->bmp_mem = pool->cfg.malloc(MLX5_MEM_ZERO, mem_size,
++	pool->bmp_mem = pool_malloc(pool, MLX5_MEM_ZERO, mem_size,
+ 					 RTE_CACHE_LINE_SIZE, rte_socket_id());
+ 	if (!pool->bmp_mem) {
+ 		DRV_LOG(ERR, "Ipool bitmap mem allocate failed.\n");
+-- 
+2.21.0
+
