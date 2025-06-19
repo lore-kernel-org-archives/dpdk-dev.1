@@ -2,69 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8003C7115A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Jun 2025 15:45:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B17C5C7115C
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Jun 2025 15:45:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B6D444025E;
-	Thu, 19 Jun 2025 17:45:08 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id C5865400D7
- for <dev@dpdk.org>; Thu, 19 Jun 2025 17:45:06 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55J8StFx014575;
- Thu, 19 Jun 2025 08:45:06 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 98CB542E77;
+	Thu, 19 Jun 2025 17:45:11 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 3954B42E77
+ for <dev@dpdk.org>; Thu, 19 Jun 2025 17:45:10 +0200 (CEST)
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55JChWlE025415;
+ Thu, 19 Jun 2025 08:45:09 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=Y
- lF/8B3fbEad3a7v5xgrglVdYgYZz8T+8kIr0XPSWRQ=; b=SzZviRV8GWFFEeIhA
- kVHff/tdSjrm7OI9rKjFi2lVu59kyKeNNHaoocGYHE0mTgBEWCr4WrUpJO+yB/Nd
- TngRd0F1QYMyYleYjYGMd9DfyQVN2pVmFF5cWPbhJyycDXk6SEaCejZjb8d9DHoT
- 0ZmDaytfLsxZAYa1tn5vXg38B8uSmqqkp+NxH9Hga7gaSF28h6tZ0mp922EAbNAD
- E/X5alK0aZ9w0H9KtVyLEIKJJkOSWBE0Yp5iuZgssxm2Xt9FoJHxarIBFVPvCPfK
- 5tVGk3D/MmpvNjMMJhC1/t4zrjEdXk2+qjzmYDkkqGTx4tHBuI0KHLwJ8E0Vp/8C
- BPpXw==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=p
+ wFVkwUAdRMny7CeHQmRexC84OBgY8ZcdrmIppwuD/k=; b=HxkAxCB0Z1xYnRlB1
+ TqFrEVyDDQwxMNgZmEQZFLGNLtXhI4+N6Dtig5jhZkQEHABglPfRLo+wqSOvlNED
+ SjzQ6KPF9un7RqEmLT1InOxotSNN99KW1yQqmSHCTKDbvcwlPXh5AWstpzkUgkSP
+ 6tvw+8ugAjDKSviaosW5SvJY6Iiigxlk0ziZlnqrNDzpiqiYbjq9bVZfeUfd9ysR
+ v8JZBmPMJqJuQ5z2nNfPzRDiy+a3O5xb0Se9g774n6mpcDhvt0rET7Bu1NuNw8T3
+ IZ/QQBp3ODaPCZutJJ/CRB4bL6gkv7sCIW5wJIj9DVHlcD0cwlFSbCUXse9gRs6U
+ hUhZA==
 Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 47cf2u8v9w-1
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 47cgturjnt-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 19 Jun 2025 08:45:05 -0700 (PDT)
+ Thu, 19 Jun 2025 08:45:09 -0700 (PDT)
 Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
  DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 19 Jun 2025 08:45:05 -0700
+ 15.2.1544.4; Thu, 19 Jun 2025 08:45:08 -0700
 Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
  (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 19 Jun 2025 08:45:04 -0700
+ Transport; Thu, 19 Jun 2025 08:45:08 -0700
 Received: from cavium-PowerEdge-R640.. (unknown [10.28.36.207])
- by maili.marvell.com (Postfix) with ESMTP id 6AF053F7080;
- Thu, 19 Jun 2025 08:45:02 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 5CCA23F707A;
+ Thu, 19 Jun 2025 08:45:05 -0700 (PDT)
 From: Nitin Saxena <nsaxena@marvell.com>
 To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Pavan Nikhilesh
  <pbhagavatula@marvell.com>, Robin Jarry <rjarry@redhat.com>, "Christophe
  Fontaine" <cfontain@redhat.com>
 CC: <dev@dpdk.org>, Jerin Jacob <jerinj@marvell.com>, Nitin Saxena
  <nsaxena16@gmail.com>
-Subject: [PATCH v7 0/2] node: add mbuf dynamic field for nodes
-Date: Thu, 19 Jun 2025 21:14:48 +0530
-Message-ID: <20250619154501.3869031-1-nsaxena@marvell.com>
+Subject: [PATCH v7 1/2] node: add global node mbuf dynfield
+Date: Thu, 19 Jun 2025 21:14:49 +0530
+Message-ID: <20250619154501.3869031-2-nsaxena@marvell.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250401042053.3518757-1-nsaxena@marvell.com>
+In-Reply-To: <20250619154501.3869031-1-nsaxena@marvell.com>
 References: <20250401042053.3518757-1-nsaxena@marvell.com>
+ <20250619154501.3869031-1-nsaxena@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE5MDEzMCBTYWx0ZWRfXxtUh0r1asdTg
- A3+bAoL7b2u3BZMYtrT+9uI3lvIF+IuZKgPvF7z20zrNCDJNz01AR2tX59r2lvg1gEwPcHnpwp2
- kcGAKPV0X6ZO1T3pEY8pxf6iuTSBryZllZq9aKjJ2hSlUerSNfljZd8qATDnKsk8D1RWlw22YCr
- 08jO8qJ5mmBBgpNXjExzv2/zFSwWqkxbdNhMB9jNjd/389HeZqZde82mr/hbnzmfKFNW8/YrolX
- 9EeBh446Ib66nOA9o+rxMN/0HCjE95qtaSIfXoDSl8SMWPrHOgwPlfSSeH51EtLtD8BQOBAQrbq
- fjUzL83Er+u6iuVQyovBlAtsNzAHloJs8ceqEKRpAcmiaO/CbFORNonqtPOJwZBv3UQjE6PQjzZ
- 5exfjK4rpu7eqKKLVVvslQu4MTiIDNGnfjvusIgM64OqiI9k1F8pC4lMypJHi04SaT6Nei0K
-X-Proofpoint-GUID: J4UTTa3kZ9EiE8H9g2APpqin2PrxHOnh
-X-Proofpoint-ORIG-GUID: J4UTTa3kZ9EiE8H9g2APpqin2PrxHOnh
-X-Authority-Analysis: v=2.4 cv=dsXbC0g4 c=1 sm=1 tr=0 ts=68543081 cx=c_pps
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE5MDEzMCBTYWx0ZWRfX9MYEy9DgsiND
+ VKhKfc0qEz35Jt2ozPU+toNrA2euOlAg2u3ihz41Rp3ADjrLOBJf8uMaGKBgWTQjFGo5ZUaIU4H
+ WYSoWdCUmujWOmdHDGqzzdBNY3lEYeQ0QIelUwGa7BmEgLB5UvbU4wUTItGCjSKOupNpGIgEah5
+ GwPww+ZrgMR7qNjdkqJ1DLnEkFYe2ZZf9/wr6kl1GPp4USscPB0Hduq6aqiHrhcQ+72xniTUz3h
+ UcFrFObvIbSCSuta7h4flPNSNbAsaWmSMNKOHuF1xYeu/HB7IBHoO8UL+EISlvraz6eI27eHKi4
+ vTdxvlw4mIS3Qhc28gaMaNabGoI882HVgFCP1eu8oipmotyV8OadGck744nANQfPhKlDAid9ESK
+ ei7TZIFSNFbLrGjw2ZXlkfr9zupMONADeBWt5PHhMrmGFxW1Tr1p+Q0Fv1e5EROD7USNcBzR
+X-Proofpoint-ORIG-GUID: 4QvCK3iaWe1c5Mo9PW1KeO3OZPsiY48a
+X-Authority-Analysis: v=2.4 cv=UI7dHDfy c=1 sm=1 tr=0 ts=68543085 cx=c_pps
  a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=6IFa9wvqVegA:10 a=W6WRBxtj2BSr6DOQD-gA:9
+ a=6IFa9wvqVegA:10 a=M5GUcnROAAAA:8 a=1JAuN0nwE2wljfIIqDIA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: 4QvCK3iaWe1c5Mo9PW1KeO3OZPsiY48a
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-19_06,2025-06-18_03,2025-03-28_01
@@ -81,72 +83,295 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently each rte_node registers separate mbuf dynamic fields for their
-own purpose. This leads to wastage of mbuf space as once mbuf get passed
-a particular node, the registered dynamic field(by that node) is no
-longer used.
+This patch defines rte_node specific dynamic field structure
+(rte_node_mbuf_dynfield_t)
 
-This patch series adds a global/common mbuf dynamic field which is
-reusable by all the nodes(including out-of-tree nodes). This helps to
-repurpose same mbuf dynamic field for other nodes. It contains two types
-of fields: (a) persistent (b) overloadable.
+rte_node_mbuf_dynfield_t structure holds two types of fields
+- Persistent data fields which are preserved across graph walk.
+  Currently size of persistent data fields is zero.
+- Overloadable data fields which are used by any two adjacent nodes.
+  Same fields can be repurposed by any other adjacent nodes
 
-While persistent fields are those which does not often changes during a
-graph walk such as rx/tx interface, buffer flags etc. Currently there
-are no persistent fields added but they can be added later
+This dynfield can be also be used by out-of-tree nodes.
 
-Overloadable fields are those which can be used by two adjacent nodes.
-Same overloadable fields can be repurposed by other two adjacent nodes.
-
-This patch series also updates ip4/ip6 lookup/rewrite nodes to use
-overlaodable mbuf dynamic fields.
-
-Changes in v7:
-- Rebase on latest main with changes rte_ip4_lookup_fib nodes as well
-- Verified ip4 output arc functionality with both "ip4_lookup" and
-  "ip4_lookup_fib" nodes
-
-Changes in v6:
-- Incorporate comments from Pavan
-
-Changes in v5
-- Rebase on latest main with version.map changes
-- Bring back memzone based node mbuf dynfield for secondary
-  process [Pavan]
-
-Changes in v4
-- Fix github CI
-
-Changes in v3:
-- Fix CI build error
-
-Changes in v2:
-- removed usage of memzone for saving mbuf dynfield [Stephen]
-- fixed checkpatch issues
-- redefine RTE_NODE_MBUF_OVERLOADABLE_FIELDS_SIZE to 8 byte which are
-  currently in use. Size can increase later based on the usage
-
-
-Nitin Saxena (2):
-  node: add global node mbuf dynfield
-  node: use node mbuf dynfield in ip4 nodes
-
+Signed-off-by: Nitin Saxena <nsaxena@marvell.com>
+---
  doc/api/doxy-api-index.md              |   2 +
  doc/guides/rel_notes/release_25_07.rst |   6 +
- lib/node/ip4_lookup.c                  |  14 +--
- lib/node/ip4_lookup_fib.c              |  17 ++-
- lib/node/ip4_rewrite.c                 |  32 ++---
- lib/node/ip6_lookup.c                  |  15 +--
- lib/node/ip6_lookup_fib.c              |  17 ++-
- lib/node/ip6_rewrite.c                 |  14 +--
  lib/node/meson.build                   |   2 +
  lib/node/node_mbuf_dynfield.c          |  59 ++++++++++
- lib/node/node_private.h                |  40 +------
- lib/node/rte_node_mbuf_dynfield.h      | 155 +++++++++++++++++++++++++
- 12 files changed, 274 insertions(+), 99 deletions(-)
+ lib/node/rte_node_mbuf_dynfield.h      | 146 +++++++++++++++++++++++++
+ 5 files changed, 215 insertions(+)
  create mode 100644 lib/node/node_mbuf_dynfield.c
  create mode 100644 lib/node/rte_node_mbuf_dynfield.h
 
+diff --git a/doc/api/doxy-api-index.md b/doc/api/doxy-api-index.md
+index 1254e32b25..a9d8cbf2dc 100644
+--- a/doc/api/doxy-api-index.md
++++ b/doc/api/doxy-api-index.md
+@@ -222,6 +222,8 @@ The public API headers are grouped by topics:
+     [ip4_node](@ref rte_node_ip4_api.h),
+     [ip6_node](@ref rte_node_ip6_api.h),
+     [udp4_input_node](@ref rte_node_udp4_input_api.h)
++  * graph_nodes_mbuf:
++    [node_mbuf_dynfield](@ref rte_node_mbuf_dynfield.h)
+
+ - **basic**:
+   [bitops](@ref rte_bitops.h),
+diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
+index 19be7740c4..4be2d88ec9 100644
+--- a/doc/guides/rel_notes/release_25_07.rst
++++ b/doc/guides/rel_notes/release_25_07.rst
+@@ -141,6 +141,12 @@ New Features
+   String values are simply saved as-is,
+   while the boolean support allows for values "true", "false", "1" or "0".
+
++* **Added rte_nodes specific shared mbuf dynamic field.**
++
++  Instead each rte_node registers its own mbuf dynamic field for its specific
++  purpose, a global/shared structure is added which can be used/overloaded by
++  any node (including out-of-tree nodes). This minimizes footprint of node
++  specific mbuf dynamic field.
+
+ Removed Items
+ -------------
+diff --git a/lib/node/meson.build b/lib/node/meson.build
+index 8355c111fe..de0f118871 100644
+--- a/lib/node/meson.build
++++ b/lib/node/meson.build
+@@ -8,6 +8,7 @@ if is_windows
+ endif
+
+ sources = files(
++        'node_mbuf_dynfield.c',
+         'ethdev_ctrl.c',
+         'ethdev_rx.c',
+         'ethdev_tx.c',
+@@ -34,6 +35,7 @@ headers = files(
+         'rte_node_ip6_api.h',
+         'rte_node_pkt_cls_api.h',
+         'rte_node_udp4_input_api.h',
++        'rte_node_mbuf_dynfield.h',
+ )
+
+ # Strict-aliasing rules are violated by uint8_t[] to context size casts.
+diff --git a/lib/node/node_mbuf_dynfield.c b/lib/node/node_mbuf_dynfield.c
+new file mode 100644
+index 0000000000..6fbbf9604c
+--- /dev/null
++++ b/lib/node/node_mbuf_dynfield.c
+@@ -0,0 +1,59 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(C) 2025 Marvell International Ltd.
++ */
++#include <rte_memzone.h>
++#include <rte_node_mbuf_dynfield.h>
++#include <node_private.h>
++#include <eal_export.h>
++#include <rte_errno.h>
++
++#define NODE_MBUF_DYNFIELD_MEMZONE_NAME "__rte_node_mbuf_dynfield"
++
++struct node_mbuf_dynfield_mz {
++	int dynfield_offset;
++};
++
++static const struct rte_mbuf_dynfield node_mbuf_dynfield_desc = {
++	.name = "rte_node_mbuf_dynfield",
++	.size = sizeof(rte_node_mbuf_dynfield_t),
++	.align = alignof(rte_node_mbuf_dynfield_t),
++};
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_node_mbuf_dynfield_register, 25.07);
++int rte_node_mbuf_dynfield_register(void)
++{
++	struct node_mbuf_dynfield_mz *f = NULL;
++	const struct rte_memzone *mz = NULL;
++	int dyn_offset;
++
++	RTE_BUILD_BUG_ON(sizeof(rte_node_mbuf_dynfield_t) < RTE_NODE_MBUF_DYNFIELD_SIZE);
++	RTE_BUILD_BUG_ON(sizeof(rte_node_mbuf_overload_fields_t) <
++			 RTE_NODE_MBUF_OVERLOADABLE_FIELDS_SIZE);
++
++	mz = rte_memzone_lookup(NODE_MBUF_DYNFIELD_MEMZONE_NAME);
++
++	if (!mz) {
++		mz = rte_memzone_reserve_aligned(NODE_MBUF_DYNFIELD_MEMZONE_NAME,
++						 sizeof(struct node_mbuf_dynfield_mz),
++						 SOCKET_ID_ANY, 0,
++						 RTE_CACHE_LINE_SIZE);
++		if (!mz) {
++			node_err("node_mbuf_dyn", "rte_memzone_reserve_aligned failed");
++			rte_errno = ENOMEM;
++			return -1;
++		}
++		dyn_offset = rte_mbuf_dynfield_register(&node_mbuf_dynfield_desc);
++		if (dyn_offset < 0) {
++			node_err("node_mbuf_dyn", "rte_mbuf_dynfield_register failed");
++			return dyn_offset;
++		}
++		f = (struct node_mbuf_dynfield_mz *)mz->addr;
++		f->dynfield_offset = dyn_offset;
++
++		node_dbg("node_mbuf_dyn", "memzone: %s of size: %zu at offset : %d",
++			 mz->name, mz->len, f->dynfield_offset);
++	} else {
++		f = (struct node_mbuf_dynfield_mz *)mz->addr;
++	}
++	return f->dynfield_offset;
++}
+diff --git a/lib/node/rte_node_mbuf_dynfield.h b/lib/node/rte_node_mbuf_dynfield.h
+new file mode 100644
+index 0000000000..1069c07d44
+--- /dev/null
++++ b/lib/node/rte_node_mbuf_dynfield.h
+@@ -0,0 +1,146 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(C) 2025 Marvell International Ltd.
++ */
++
++#ifndef _RTE_GRAPH_MBUF_DYNFIELD_H_
++#define _RTE_GRAPH_MBUF_DYNFIELD_H_
++
++#include <rte_common.h>
++#include <rte_mbuf.h>
++#include <rte_mbuf_dyn.h>
++
++/**
++ * @file: rte_node_mbuf_dynfield.h
++ *
++ * @warning
++ * @b EXPERIMENTAL: this API may change without prior notice.
++ *
++ * Defines rte_node specific mbuf dynamic field region [rte_node_mbuf_dynfield_t] which
++ * can used by both DPDK in-built and out-of-tree nodes for storing per-mbuf
++ * fields for graph walk
++ */
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#ifndef RTE_NODE_MBUF_PERSISTENT_FIELDS_SIZE
++/** Size of persistent mbuf fields */
++#define RTE_NODE_MBUF_PERSISTENT_FIELDS_SIZE          (0)
++#endif /* RTE_NODE_MBUF_PERSISTENT_FIELDS_SIZE */
++
++#ifndef RTE_NODE_MBUF_OVERLOADABLE_FIELDS_SIZE
++/** Size of overloadable mbuf fields */
++#define RTE_NODE_MBUF_OVERLOADABLE_FIELDS_SIZE        (8)
++#endif /* RTE_NODE_MBUF_OVERLOADABLE_FIELDS_SIZE */
++
++/** Size of node mbuf dynamic field */
++#define RTE_NODE_MBUF_DYNFIELD_SIZE     \
++	(RTE_NODE_MBUF_PERSISTENT_FIELDS_SIZE + RTE_NODE_MBUF_OVERLOADABLE_FIELDS_SIZE)
++
++/**
++ * Node mbuf overloadable data.
++ *
++ * Out-of-tree nodes can repurpose overloadable fields via
++ * rte_node_mbuf_overload_fields_get(mbuf). Overloadable fields are not
++ * preserved and typically can be used with-in two adjacent nodes in the graph.
++ */
++typedef struct rte_node_mbuf_overload_fields {
++	union {
++		uint8_t data[RTE_NODE_MBUF_OVERLOADABLE_FIELDS_SIZE];
++	};
++} rte_node_mbuf_overload_fields_t;
++
++/**
++ * rte_node specific mbuf dynamic field structure [rte_node_mbuf_dynfield_t]
++ *
++ * It holds two types of fields:
++ * 1. Persistent fields: Fields which are preserved across nodes during graph walk.
++ *    - Eg: rx/tx interface etc
++ * 2. Overloadable fields: Fields which can be repurposed by two adjacent nodes.
++ */
++typedef struct rte_node_mbuf_dynfield {
++	/**
++	 * Persistent mbuf region across nodes in graph walk
++	 *
++	 * These fields are preserved across graph walk and can be accessed by
++	 * rte_node_mbuf_dynfield_get() in fast path.
++	 */
++	union {
++		uint8_t persistent_data[RTE_NODE_MBUF_PERSISTENT_FIELDS_SIZE];
++	};
++	/**
++	 * Overloadable mbuf fields across graph walk. Fields which can change
++	 *
++	 * Two adjacent nodes (producer, consumer) can use this memory region for
++	 * sharing per-mbuf specific information. Once mbuf leaves a consumer node,
++	 * this region can be repurposed by another sets of [producer, consumer] node.
++	 *
++	 * In fast path, this region can be accessed by rte_node_mbuf_overload_fields_get()
++	 */
++	rte_node_mbuf_overload_fields_t overloadable_data;
++} rte_node_mbuf_dynfield_t;
++
++/**
++ * For a given mbuf and dynamic offset, return pointer to rte_node_mbuf_dynfield_t *
++ *
++ * @param m
++ *   Mbuf
++ * @param offset
++ *   Dynamic offset returned by @ref rte_node_mbuf_dynfield_register()
++ * @return
++ *  Pointer to node specific mbuf dynamic field structure
++ */
++__rte_experimental
++static __rte_always_inline rte_node_mbuf_dynfield_t *
++rte_node_mbuf_dynfield_get(struct rte_mbuf *m, const int offset)
++{
++	return RTE_MBUF_DYNFIELD(m, offset, struct rte_node_mbuf_dynfield *);
++}
++
++/**
++ * For a given mbuf and dynamic offset, return pointer to overloadable fields
++ * Nodes can typecast returned pointer to reuse for their own purpose
++ *
++ * @param m
++ *   Mbuf
++ * @param offset
++ *   Dynamic offset returned by @ref rte_node_mbuf_dynfield_register()
++ * @return
++ * Pointer to node mbuf overloadable fields
++ */
++__rte_experimental
++static __rte_always_inline rte_node_mbuf_overload_fields_t *
++rte_node_mbuf_overload_fields_get(struct rte_mbuf *m, const int offset)
++{
++	rte_node_mbuf_dynfield_t *f = NULL;
++
++	f = RTE_MBUF_DYNFIELD(m, offset, rte_node_mbuf_dynfield_t *);
++
++	return &(f->overloadable_data);
++}
++
++/**
++ *  Register rte_node specific common mbuf dynamic field region. Can be called
++ *  in rte_node_register()->init() function to save offset in node->ctx
++ *
++ *  In process() function, node->ctx can be passed to
++ *  - rte_node_mbuf_dynfield_get(mbuf, offset)
++ *  - rte_node_mbuf_overload_fields_get(mbuf, offset)
++ *
++ *  Can be called multiple times by any number of nodes in init() function.
++ *  - Very first call registers dynamic field and returns offset
++ *  - Subsequent calls return same offset
++ *
++ *  @return
++ *   <0 on error: rte_errno set to one of:
++ *    - ENOMEM - no memory
++ *   >=0 on success: dynamic field offset
++ */
++__rte_experimental
++int rte_node_mbuf_dynfield_register(void);
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif
 --
 2.43.0
 
