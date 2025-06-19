@@ -2,52 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64817C7115B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Jun 2025 13:37:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8003C7115A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Jun 2025 15:45:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EFDCD42E7F;
-	Thu, 19 Jun 2025 15:37:24 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id 04C1242E86
- for <dev@dpdk.org>; Thu, 19 Jun 2025 15:37:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1750340244; x=1781876244;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=KeJMJ2WVEDDZkDWwNwdX1dmy0PX11dr5ucmbwpvQGus=;
- b=DAc9uvHjIxVuRdqlqs/ALORPzgI4N7LaxTllN+41RFdApzbTnZ8RthtW
- E6IyeNcEA2y74DHqJ2Cug8FnrIzjT/K/y/Busfbm5JG0xNbBGa81p18k/
- hzQRVaNWh5uYmH0QXDJdJ4b7YG5Y+9XhQZRDhbvyuAaW+0nJ6YhGQeP/9
- uxEJdnRRPX3Zu9eT1diZqEaoGPN/yW+rm0ttf0bCxYg8mXfPjXZ5ZDcIJ
- baNAqfv/86Dz+nR9Ftc3hEKIAeCYIPL8M9LN1riUNu2viX485rkpgQkvj
- 94PIr0JMTA/NAkWZQnt6MhA43n/fVUHBYK0WVEjGacfqLIsLGISTvkn0b g==;
-X-CSE-ConnectionGUID: mAKbm7V8QiiOl2dqRpFJWA==
-X-CSE-MsgGUID: 1OTSBPKmSCCB3Meephkwdg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="52684343"
-X-IronPort-AV: E=Sophos;i="6.16,248,1744095600"; d="scan'208";a="52684343"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
- by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Jun 2025 06:37:23 -0700
-X-CSE-ConnectionGUID: mio3RruZTpa3ykhOd/1bTg==
-X-CSE-MsgGUID: bvtTaZEiRomajMcW5yhraQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,248,1744095600"; d="scan'208";a="187867145"
-Received: from silpixa00401177.ir.intel.com (HELO vm177..) ([10.237.213.77])
- by orviesa001.jf.intel.com with ESMTP; 19 Jun 2025 06:37:22 -0700
-From: Ciara Loftus <ciara.loftus@intel.com>
-To: dev@dpdk.org
-Cc: vladimir.medvedkin@intel.com,
-	Ciara Loftus <ciara.loftus@intel.com>
-Subject: [PATCH 3/3] net/iavf: support vlan insertion offload for the avx-512
- path
-Date: Thu, 19 Jun 2025 13:36:58 +0000
-Message-Id: <20250619133658.13494-3-ciara.loftus@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250619133658.13494-1-ciara.loftus@intel.com>
-References: <20250619133658.13494-1-ciara.loftus@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id B6D444025E;
+	Thu, 19 Jun 2025 17:45:08 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id C5865400D7
+ for <dev@dpdk.org>; Thu, 19 Jun 2025 17:45:06 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55J8StFx014575;
+ Thu, 19 Jun 2025 08:45:06 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=Y
+ lF/8B3fbEad3a7v5xgrglVdYgYZz8T+8kIr0XPSWRQ=; b=SzZviRV8GWFFEeIhA
+ kVHff/tdSjrm7OI9rKjFi2lVu59kyKeNNHaoocGYHE0mTgBEWCr4WrUpJO+yB/Nd
+ TngRd0F1QYMyYleYjYGMd9DfyQVN2pVmFF5cWPbhJyycDXk6SEaCejZjb8d9DHoT
+ 0ZmDaytfLsxZAYa1tn5vXg38B8uSmqqkp+NxH9Hga7gaSF28h6tZ0mp922EAbNAD
+ E/X5alK0aZ9w0H9KtVyLEIKJJkOSWBE0Yp5iuZgssxm2Xt9FoJHxarIBFVPvCPfK
+ 5tVGk3D/MmpvNjMMJhC1/t4zrjEdXk2+qjzmYDkkqGTx4tHBuI0KHLwJ8E0Vp/8C
+ BPpXw==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 47cf2u8v9w-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Thu, 19 Jun 2025 08:45:05 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 19 Jun 2025 08:45:05 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 19 Jun 2025 08:45:04 -0700
+Received: from cavium-PowerEdge-R640.. (unknown [10.28.36.207])
+ by maili.marvell.com (Postfix) with ESMTP id 6AF053F7080;
+ Thu, 19 Jun 2025 08:45:02 -0700 (PDT)
+From: Nitin Saxena <nsaxena@marvell.com>
+To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Pavan Nikhilesh
+ <pbhagavatula@marvell.com>, Robin Jarry <rjarry@redhat.com>, "Christophe
+ Fontaine" <cfontain@redhat.com>
+CC: <dev@dpdk.org>, Jerin Jacob <jerinj@marvell.com>, Nitin Saxena
+ <nsaxena16@gmail.com>
+Subject: [PATCH v7 0/2] node: add mbuf dynamic field for nodes
+Date: Thu, 19 Jun 2025 21:14:48 +0530
+Message-ID: <20250619154501.3869031-1-nsaxena@marvell.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250401042053.3518757-1-nsaxena@marvell.com>
+References: <20250401042053.3518757-1-nsaxena@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjE5MDEzMCBTYWx0ZWRfXxtUh0r1asdTg
+ A3+bAoL7b2u3BZMYtrT+9uI3lvIF+IuZKgPvF7z20zrNCDJNz01AR2tX59r2lvg1gEwPcHnpwp2
+ kcGAKPV0X6ZO1T3pEY8pxf6iuTSBryZllZq9aKjJ2hSlUerSNfljZd8qATDnKsk8D1RWlw22YCr
+ 08jO8qJ5mmBBgpNXjExzv2/zFSwWqkxbdNhMB9jNjd/389HeZqZde82mr/hbnzmfKFNW8/YrolX
+ 9EeBh446Ib66nOA9o+rxMN/0HCjE95qtaSIfXoDSl8SMWPrHOgwPlfSSeH51EtLtD8BQOBAQrbq
+ fjUzL83Er+u6iuVQyovBlAtsNzAHloJs8ceqEKRpAcmiaO/CbFORNonqtPOJwZBv3UQjE6PQjzZ
+ 5exfjK4rpu7eqKKLVVvslQu4MTiIDNGnfjvusIgM64OqiI9k1F8pC4lMypJHi04SaT6Nei0K
+X-Proofpoint-GUID: J4UTTa3kZ9EiE8H9g2APpqin2PrxHOnh
+X-Proofpoint-ORIG-GUID: J4UTTa3kZ9EiE8H9g2APpqin2PrxHOnh
+X-Authority-Analysis: v=2.4 cv=dsXbC0g4 c=1 sm=1 tr=0 ts=68543081 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=6IFa9wvqVegA:10 a=W6WRBxtj2BSr6DOQD-gA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-19_06,2025-06-18_03,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,336 +81,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Re-enable support for VLAN insertion and implement support for QinQ
-insertion on the iavf avx-512 transmit path.
+Currently each rte_node registers separate mbuf dynamic fields for their
+own purpose. This leads to wastage of mbuf space as once mbuf get passed
+a particular node, the registered dynamic field(by that node) is no
+longer used.
 
-Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
----
- drivers/net/intel/iavf/iavf_rxtx.h            |  6 +-
- drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c   | 24 +++----
- drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c | 62 ++++++++++++++-----
- drivers/net/intel/iavf/iavf_rxtx_vec_common.h | 17 ++++-
- 4 files changed, 76 insertions(+), 33 deletions(-)
+This patch series adds a global/common mbuf dynamic field which is
+reusable by all the nodes(including out-of-tree nodes). This helps to
+repurpose same mbuf dynamic field for other nodes. It contains two types
+of fields: (a) persistent (b) overloadable.
 
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.h b/drivers/net/intel/iavf/iavf_rxtx.h
-index 0b5d67e718..d04722a5ed 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.h
-+++ b/drivers/net/intel/iavf/iavf_rxtx.h
-@@ -30,8 +30,6 @@
- #define IAVF_VPMD_TX_MAX_FREE_BUF 64
- 
- #define IAVF_TX_NO_VECTOR_FLAGS (				 \
--		RTE_ETH_TX_OFFLOAD_VLAN_INSERT |		 \
--		RTE_ETH_TX_OFFLOAD_QINQ_INSERT |		 \
- 		RTE_ETH_TX_OFFLOAD_MULTI_SEGS |		 \
- 		RTE_ETH_TX_OFFLOAD_TCP_TSO |		 \
- 		RTE_ETH_TX_OFFLOAD_VXLAN_TNL_TSO |	 \
-@@ -48,7 +46,9 @@
- 
- #define IAVF_TX_VECTOR_OFFLOAD_CTX (			\
- 		RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM |	\
--		RTE_ETH_TX_OFFLOAD_OUTER_UDP_CKSUM)
-+		RTE_ETH_TX_OFFLOAD_OUTER_UDP_CKSUM |	\
-+		RTE_ETH_TX_OFFLOAD_VLAN_INSERT |	\
-+		RTE_ETH_TX_OFFLOAD_QINQ_INSERT)
- 
- #define IAVF_RX_VECTOR_OFFLOAD (				 \
- 		RTE_ETH_RX_OFFLOAD_CHECKSUM |		 \
-diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-index 88e35dc3e9..d08a3ac269 100644
---- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-@@ -1649,14 +1649,14 @@ iavf_recv_scattered_pkts_vec_avx2_flex_rxd_offload(void *rx_queue,
- 
- static __rte_always_inline void
- iavf_vtx1(volatile struct iavf_tx_desc *txdp,
--	  struct rte_mbuf *pkt, uint64_t flags, bool offload)
-+	  struct rte_mbuf *pkt, uint64_t flags, bool offload, uint8_t vlan_flag)
- {
- 	uint64_t high_qw =
- 		(IAVF_TX_DESC_DTYPE_DATA |
- 		 ((uint64_t)flags  << IAVF_TXD_QW1_CMD_SHIFT) |
- 		 ((uint64_t)pkt->data_len << IAVF_TXD_QW1_TX_BUF_SZ_SHIFT));
- 	if (offload)
--		iavf_txd_enable_offload(pkt, &high_qw);
-+		iavf_txd_enable_offload(pkt, &high_qw, vlan_flag);
- 
- 	__m128i descriptor = _mm_set_epi64x(high_qw,
- 				pkt->buf_iova + pkt->data_off);
-@@ -1665,14 +1665,14 @@ iavf_vtx1(volatile struct iavf_tx_desc *txdp,
- 
- static __rte_always_inline void
- iavf_vtx(volatile struct iavf_tx_desc *txdp,
--	 struct rte_mbuf **pkt, uint16_t nb_pkts,  uint64_t flags, bool offload)
-+	 struct rte_mbuf **pkt, uint16_t nb_pkts,  uint64_t flags, bool offload, uint8_t vlan_flag)
- {
- 	const uint64_t hi_qw_tmpl = (IAVF_TX_DESC_DTYPE_DATA |
- 			((uint64_t)flags  << IAVF_TXD_QW1_CMD_SHIFT));
- 
- 	/* if unaligned on 32-bit boundary, do one to align */
- 	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
--		iavf_vtx1(txdp, *pkt, flags, offload);
-+		iavf_vtx1(txdp, *pkt, flags, offload, vlan_flag);
- 		nb_pkts--, txdp++, pkt++;
- 	}
- 
-@@ -1683,25 +1683,25 @@ iavf_vtx(volatile struct iavf_tx_desc *txdp,
- 			((uint64_t)pkt[3]->data_len <<
- 			 IAVF_TXD_QW1_TX_BUF_SZ_SHIFT);
- 		if (offload)
--			iavf_txd_enable_offload(pkt[3], &hi_qw3);
-+			iavf_txd_enable_offload(pkt[3], &hi_qw3, vlan_flag);
- 		uint64_t hi_qw2 =
- 			hi_qw_tmpl |
- 			((uint64_t)pkt[2]->data_len <<
- 			 IAVF_TXD_QW1_TX_BUF_SZ_SHIFT);
- 		if (offload)
--			iavf_txd_enable_offload(pkt[2], &hi_qw2);
-+			iavf_txd_enable_offload(pkt[2], &hi_qw2, vlan_flag);
- 		uint64_t hi_qw1 =
- 			hi_qw_tmpl |
- 			((uint64_t)pkt[1]->data_len <<
- 			 IAVF_TXD_QW1_TX_BUF_SZ_SHIFT);
- 		if (offload)
--			iavf_txd_enable_offload(pkt[1], &hi_qw1);
-+			iavf_txd_enable_offload(pkt[1], &hi_qw1, vlan_flag);
- 		uint64_t hi_qw0 =
- 			hi_qw_tmpl |
- 			((uint64_t)pkt[0]->data_len <<
- 			 IAVF_TXD_QW1_TX_BUF_SZ_SHIFT);
- 		if (offload)
--			iavf_txd_enable_offload(pkt[0], &hi_qw0);
-+			iavf_txd_enable_offload(pkt[0], &hi_qw0, vlan_flag);
- 
- 		__m256i desc2_3 =
- 			_mm256_set_epi64x
-@@ -1721,7 +1721,7 @@ iavf_vtx(volatile struct iavf_tx_desc *txdp,
- 
- 	/* do any last ones */
- 	while (nb_pkts) {
--		iavf_vtx1(txdp, *pkt, flags, offload);
-+		iavf_vtx1(txdp, *pkt, flags, offload, vlan_flag);
- 		txdp++, pkt++, nb_pkts--;
- 	}
- }
-@@ -1756,11 +1756,11 @@ iavf_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
- 	if (nb_commit >= n) {
- 		ci_tx_backlog_entry_vec(txep, tx_pkts, n);
- 
--		iavf_vtx(txdp, tx_pkts, n - 1, flags, offload);
-+		iavf_vtx(txdp, tx_pkts, n - 1, flags, offload, txq->vlan_flag);
- 		tx_pkts += (n - 1);
- 		txdp += (n - 1);
- 
--		iavf_vtx1(txdp, *tx_pkts++, rs, offload);
-+		iavf_vtx1(txdp, *tx_pkts++, rs, offload, txq->vlan_flag);
- 
- 		nb_commit = (uint16_t)(nb_commit - n);
- 
-@@ -1774,7 +1774,7 @@ iavf_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
- 
- 	ci_tx_backlog_entry_vec(txep, tx_pkts, nb_commit);
- 
--	iavf_vtx(txdp, tx_pkts, nb_commit, flags, offload);
-+	iavf_vtx(txdp, tx_pkts, nb_commit, flags, offload, txq->vlan_flag);
- 
- 	tx_id = (uint16_t)(tx_id + nb_commit);
- 	if (tx_id > txq->tx_next_rs) {
-diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
-index f2af028bef..ad21ada440 100644
---- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
-@@ -1853,14 +1853,14 @@ tx_backlog_entry_avx512(struct ci_tx_entry_vec *txep,
- static __rte_always_inline void
- iavf_vtx1(volatile struct iavf_tx_desc *txdp,
- 	  struct rte_mbuf *pkt, uint64_t flags,
--	  bool offload)
-+	  bool offload, uint8_t vlan_flag)
- {
- 	uint64_t high_qw =
- 		(IAVF_TX_DESC_DTYPE_DATA |
- 		 ((uint64_t)flags  << IAVF_TXD_QW1_CMD_SHIFT) |
- 		 ((uint64_t)pkt->data_len << IAVF_TXD_QW1_TX_BUF_SZ_SHIFT));
- 	if (offload)
--		iavf_txd_enable_offload(pkt, &high_qw);
-+		iavf_txd_enable_offload(pkt, &high_qw, vlan_flag);
- 
- 	__m128i descriptor = _mm_set_epi64x(high_qw,
- 					    pkt->buf_iova + pkt->data_off);
-@@ -1872,14 +1872,14 @@ iavf_vtx1(volatile struct iavf_tx_desc *txdp,
- static __rte_always_inline void
- iavf_vtx(volatile struct iavf_tx_desc *txdp,
- 		struct rte_mbuf **pkt, uint16_t nb_pkts,  uint64_t flags,
--		bool offload)
-+		bool offload, uint8_t vlan_flag)
- {
- 	const uint64_t hi_qw_tmpl = (IAVF_TX_DESC_DTYPE_DATA |
- 			((uint64_t)flags  << IAVF_TXD_QW1_CMD_SHIFT));
- 
- 	/* if unaligned on 32-bit boundary, do one to align */
- 	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
--		iavf_vtx1(txdp, *pkt, flags, offload);
-+		iavf_vtx1(txdp, *pkt, flags, offload, vlan_flag);
- 		nb_pkts--, txdp++, pkt++;
- 	}
- 
-@@ -1902,10 +1902,10 @@ iavf_vtx(volatile struct iavf_tx_desc *txdp,
- 			((uint64_t)pkt[0]->data_len <<
- 			 IAVF_TXD_QW1_TX_BUF_SZ_SHIFT);
- 		if (offload) {
--			iavf_txd_enable_offload(pkt[3], &hi_qw3);
--			iavf_txd_enable_offload(pkt[2], &hi_qw2);
--			iavf_txd_enable_offload(pkt[1], &hi_qw1);
--			iavf_txd_enable_offload(pkt[0], &hi_qw0);
-+			iavf_txd_enable_offload(pkt[3], &hi_qw3, vlan_flag);
-+			iavf_txd_enable_offload(pkt[2], &hi_qw2, vlan_flag);
-+			iavf_txd_enable_offload(pkt[1], &hi_qw1, vlan_flag);
-+			iavf_txd_enable_offload(pkt[0], &hi_qw0, vlan_flag);
- 		}
- 
- 		__m512i desc0_3 =
-@@ -1923,7 +1923,7 @@ iavf_vtx(volatile struct iavf_tx_desc *txdp,
- 
- 	/* do any last ones */
- 	while (nb_pkts) {
--		iavf_vtx1(txdp, *pkt, flags, offload);
-+		iavf_vtx1(txdp, *pkt, flags, offload, vlan_flag);
- 		txdp++, pkt++, nb_pkts--;
- 	}
- }
-@@ -2101,7 +2101,7 @@ ctx_vtx1(volatile struct iavf_tx_desc *txdp, struct rte_mbuf *pkt,
- 				((uint64_t)flags  << IAVF_TXD_QW1_CMD_SHIFT) |
- 				((uint64_t)pkt->data_len << IAVF_TXD_QW1_TX_BUF_SZ_SHIFT));
- 	if (offload)
--		iavf_txd_enable_offload(pkt, &high_data_qw);
-+		iavf_txd_enable_offload(pkt, &high_data_qw, vlan_flag);
- 
- 	__m256i ctx_data_desc = _mm256_set_epi64x(high_data_qw, pkt->buf_iova + pkt->data_off,
- 							high_ctx_qw, low_ctx_qw);
-@@ -2149,6 +2149,22 @@ ctx_vtx(volatile struct iavf_tx_desc *txdp,
- 					(uint64_t)pkt[1]->vlan_tci << IAVF_TXD_QW1_L2TAG1_SHIFT;
- 			}
- 		}
-+		if (pkt[1]->ol_flags & RTE_MBUF_F_TX_QINQ) {
-+			hi_ctx_qw1 |= IAVF_TX_CTX_DESC_IL2TAG2 << IAVF_TXD_CTX_QW1_CMD_SHIFT;
-+			if (vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2) {
-+				/* Inner tag at L2TAG2, outer tag at L2TAG1. */
-+				low_ctx_qw1 |= (uint64_t)pkt[1]->vlan_tci <<
-+							IAVF_TXD_CTX_QW0_L2TAG2_PARAM;
-+				hi_data_qw1 |= (uint64_t)pkt[1]->vlan_tci_outer <<
-+							IAVF_TXD_QW1_L2TAG1_SHIFT;
-+			} else {
-+				/* Outer tag at L2TAG2, inner tag at L2TAG1. */
-+				low_ctx_qw1 |= (uint64_t)pkt[1]->vlan_tci_outer <<
-+							IAVF_TXD_CTX_QW0_L2TAG2_PARAM;
-+				hi_data_qw1 |= (uint64_t)pkt[1]->vlan_tci <<
-+							IAVF_TXD_QW1_L2TAG1_SHIFT;
-+			}
-+		}
- 		if (IAVF_CHECK_TX_LLDP(pkt[1]))
- 			hi_ctx_qw1 |= IAVF_TX_CTX_DESC_SWTCH_UPLINK
- 				<< IAVF_TXD_CTX_QW1_CMD_SHIFT;
-@@ -2164,13 +2180,29 @@ ctx_vtx(volatile struct iavf_tx_desc *txdp,
- 					(uint64_t)pkt[0]->vlan_tci << IAVF_TXD_QW1_L2TAG1_SHIFT;
- 			}
- 		}
-+		if (pkt[0]->ol_flags & RTE_MBUF_F_TX_QINQ) {
-+			hi_ctx_qw0 |= IAVF_TX_CTX_DESC_IL2TAG2 << IAVF_TXD_CTX_QW1_CMD_SHIFT;
-+			if (vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2) {
-+				/* Inner tag at L2TAG2, outer tag at L2TAG1. */
-+				low_ctx_qw0 |= (uint64_t)pkt[0]->vlan_tci <<
-+							IAVF_TXD_CTX_QW0_L2TAG2_PARAM;
-+				hi_data_qw0 |= (uint64_t)pkt[0]->vlan_tci_outer <<
-+							IAVF_TXD_QW1_L2TAG1_SHIFT;
-+			} else {
-+				/* Outer tag at L2TAG2, inner tag at L2TAG1. */
-+				low_ctx_qw0 |= (uint64_t)pkt[0]->vlan_tci_outer <<
-+							IAVF_TXD_CTX_QW0_L2TAG2_PARAM;
-+				hi_data_qw0 |= (uint64_t)pkt[0]->vlan_tci <<
-+							IAVF_TXD_QW1_L2TAG1_SHIFT;
-+			}
-+		}
- 		if (IAVF_CHECK_TX_LLDP(pkt[0]))
- 			hi_ctx_qw0 |= IAVF_TX_CTX_DESC_SWTCH_UPLINK
- 				<< IAVF_TXD_CTX_QW1_CMD_SHIFT;
- 
- 		if (offload) {
--			iavf_txd_enable_offload(pkt[1], &hi_data_qw1);
--			iavf_txd_enable_offload(pkt[0], &hi_data_qw0);
-+			iavf_txd_enable_offload(pkt[1], &hi_data_qw1, vlan_flag);
-+			iavf_txd_enable_offload(pkt[0], &hi_data_qw0, vlan_flag);
- 			iavf_fill_ctx_desc_tunnelling_field(&low_ctx_qw1, pkt[1]);
- 			iavf_fill_ctx_desc_tunnelling_field(&low_ctx_qw0, pkt[0]);
- 		}
-@@ -2219,11 +2251,11 @@ iavf_xmit_fixed_burst_vec_avx512(void *tx_queue, struct rte_mbuf **tx_pkts,
- 	if (nb_commit >= n) {
- 		tx_backlog_entry_avx512(txep, tx_pkts, n);
- 
--		iavf_vtx(txdp, tx_pkts, n - 1, flags, offload);
-+		iavf_vtx(txdp, tx_pkts, n - 1, flags, offload, txq->vlan_flag);
- 		tx_pkts += (n - 1);
- 		txdp += (n - 1);
- 
--		iavf_vtx1(txdp, *tx_pkts++, rs, offload);
-+		iavf_vtx1(txdp, *tx_pkts++, rs, offload, txq->vlan_flag);
- 
- 		nb_commit = (uint16_t)(nb_commit - n);
- 
-@@ -2238,7 +2270,7 @@ iavf_xmit_fixed_burst_vec_avx512(void *tx_queue, struct rte_mbuf **tx_pkts,
- 
- 	tx_backlog_entry_avx512(txep, tx_pkts, nb_commit);
- 
--	iavf_vtx(txdp, tx_pkts, nb_commit, flags, offload);
-+	iavf_vtx(txdp, tx_pkts, nb_commit, flags, offload, txq->vlan_flag);
- 
- 	tx_id = (uint16_t)(tx_id + nb_commit);
- 	if (tx_id > txq->tx_next_rs) {
-diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_common.h b/drivers/net/intel/iavf/iavf_rxtx_vec_common.h
-index 38e9a206d9..68b694b39e 100644
---- a/drivers/net/intel/iavf/iavf_rxtx_vec_common.h
-+++ b/drivers/net/intel/iavf/iavf_rxtx_vec_common.h
-@@ -99,7 +99,8 @@ iavf_tx_vec_queue_default(struct ci_tx_queue *txq)
- 	 */
- 	if (txq->offloads & (IAVF_TX_VECTOR_OFFLOAD | IAVF_TX_VECTOR_OFFLOAD_CTX)) {
- 		if (txq->offloads & IAVF_TX_VECTOR_OFFLOAD_CTX) {
--			if (txq->vlan_flag == IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2) {
-+			if (txq->vlan_flag == IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2 ||
-+					txq->offloads & RTE_ETH_TX_OFFLOAD_QINQ_INSERT) {
- 				txq->use_ctx = 1;
- 				return IAVF_VECTOR_CTX_OFFLOAD_PATH;
- 			} else {
-@@ -167,7 +168,7 @@ iavf_tx_vec_dev_check_default(struct rte_eth_dev *dev)
- 
- static __rte_always_inline void
- iavf_txd_enable_offload(__rte_unused struct rte_mbuf *tx_pkt,
--			uint64_t *txd_hi)
-+			uint64_t *txd_hi, uint8_t vlan_flag)
- {
- #if defined(IAVF_TX_CSUM_OFFLOAD) || defined(IAVF_TX_VLAN_QINQ_OFFLOAD)
- 	uint64_t ol_flags = tx_pkt->ol_flags;
-@@ -228,11 +229,21 @@ iavf_txd_enable_offload(__rte_unused struct rte_mbuf *tx_pkt,
- #endif
- 
- #ifdef IAVF_TX_VLAN_QINQ_OFFLOAD
--	if (ol_flags & (RTE_MBUF_F_TX_VLAN | RTE_MBUF_F_TX_QINQ)) {
-+	if (ol_flags & RTE_MBUF_F_TX_VLAN && vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG1) {
- 		td_cmd |= IAVF_TX_DESC_CMD_IL2TAG1;
- 		*txd_hi |= ((uint64_t)tx_pkt->vlan_tci <<
- 			    IAVF_TXD_QW1_L2TAG1_SHIFT);
- 	}
-+
-+	if (ol_flags & RTE_MBUF_F_TX_QINQ) {
-+		td_cmd |= IAVF_TX_DESC_CMD_IL2TAG1;
-+		if (vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG1)
-+			*txd_hi |= ((uint64_t)tx_pkt->vlan_tci <<
-+					IAVF_TXD_QW1_L2TAG1_SHIFT);
-+		else
-+			*txd_hi |= ((uint64_t)tx_pkt->vlan_tci_outer <<
-+					IAVF_TXD_QW1_L2TAG1_SHIFT);
-+	}
- #endif
- 
- 	*txd_hi |= ((uint64_t)td_cmd) << IAVF_TXD_QW1_CMD_SHIFT;
--- 
-2.34.1
+While persistent fields are those which does not often changes during a
+graph walk such as rx/tx interface, buffer flags etc. Currently there
+are no persistent fields added but they can be added later
+
+Overloadable fields are those which can be used by two adjacent nodes.
+Same overloadable fields can be repurposed by other two adjacent nodes.
+
+This patch series also updates ip4/ip6 lookup/rewrite nodes to use
+overlaodable mbuf dynamic fields.
+
+Changes in v7:
+- Rebase on latest main with changes rte_ip4_lookup_fib nodes as well
+- Verified ip4 output arc functionality with both "ip4_lookup" and
+  "ip4_lookup_fib" nodes
+
+Changes in v6:
+- Incorporate comments from Pavan
+
+Changes in v5
+- Rebase on latest main with version.map changes
+- Bring back memzone based node mbuf dynfield for secondary
+  process [Pavan]
+
+Changes in v4
+- Fix github CI
+
+Changes in v3:
+- Fix CI build error
+
+Changes in v2:
+- removed usage of memzone for saving mbuf dynfield [Stephen]
+- fixed checkpatch issues
+- redefine RTE_NODE_MBUF_OVERLOADABLE_FIELDS_SIZE to 8 byte which are
+  currently in use. Size can increase later based on the usage
+
+
+Nitin Saxena (2):
+  node: add global node mbuf dynfield
+  node: use node mbuf dynfield in ip4 nodes
+
+ doc/api/doxy-api-index.md              |   2 +
+ doc/guides/rel_notes/release_25_07.rst |   6 +
+ lib/node/ip4_lookup.c                  |  14 +--
+ lib/node/ip4_lookup_fib.c              |  17 ++-
+ lib/node/ip4_rewrite.c                 |  32 ++---
+ lib/node/ip6_lookup.c                  |  15 +--
+ lib/node/ip6_lookup_fib.c              |  17 ++-
+ lib/node/ip6_rewrite.c                 |  14 +--
+ lib/node/meson.build                   |   2 +
+ lib/node/node_mbuf_dynfield.c          |  59 ++++++++++
+ lib/node/node_private.h                |  40 +------
+ lib/node/rte_node_mbuf_dynfield.h      | 155 +++++++++++++++++++++++++
+ 12 files changed, 274 insertions(+), 99 deletions(-)
+ create mode 100644 lib/node/node_mbuf_dynfield.c
+ create mode 100644 lib/node/rte_node_mbuf_dynfield.h
+
+--
+2.43.0
 
