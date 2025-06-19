@@ -2,54 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC417C71159
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Jun 2025 07:11:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9987BC71159
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Jun 2025 07:11:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4D0A342E5E;
-	Thu, 19 Jun 2025 09:11:41 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 746A442E58;
+	Thu, 19 Jun 2025 09:11:44 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 5BCCC42DD9
- for <dev@dpdk.org>; Thu, 19 Jun 2025 09:11:39 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 771EC42E5A
+ for <dev@dpdk.org>; Thu, 19 Jun 2025 09:11:43 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1750317098;
+ s=mimecast20190719; t=1750317102;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=3tgOUZwb17XRaMThT2KI8CAnuJYpaMfR+UADjTiyVaU=;
- b=PZjnNhqTbfcrYrX9kXUvNXA2IbZ7j5fkKbEZ8nul9ULXRMdDBXNyMuq2EYCBmR9dPZ4d55
- FtA/y+kRKghhI/SQTSH7FbzEivRx3J/trz36n9UZq0IYxDQ1pY80taYEFCndLrTMtUHE0M
- 4PNaR+V2omoh+Mba+A/KLQYTpmmFhlA=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ bh=El6OmV1roko/OO0wvMEz3t6dtClBPmKTCP+mVQexORw=;
+ b=ELyWt94jduoqOjnBeeg9oyGX9P8gpcIWnNeQNALY+XhbXW3t/hRbZQGn7BI5iOS1cGCBxV
+ pbSlf5pJO3CpS//0UQmS82NcHYgVNryOkWzPuoUP10zLvNmtTVE40eTsgxNJO2vmWVDEiI
+ g0z/HVK5WQSWeS/+LoWK/nsgvWCYXkU=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-517-Lq9Kfg91N0KA1Mj3ybU5Hw-1; Thu,
- 19 Jun 2025 03:11:37 -0400
-X-MC-Unique: Lq9Kfg91N0KA1Mj3ybU5Hw-1
-X-Mimecast-MFC-AGG-ID: Lq9Kfg91N0KA1Mj3ybU5Hw_1750317096
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-638-nscg3ePVPD2kH0Op7fH8IA-1; Thu,
+ 19 Jun 2025 03:11:41 -0400
+X-MC-Unique: nscg3ePVPD2kH0Op7fH8IA-1
+X-Mimecast-MFC-AGG-ID: nscg3ePVPD2kH0Op7fH8IA_1750317100
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 29E3C19560AD; Thu, 19 Jun 2025 07:11:36 +0000 (UTC)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 673501800286; Thu, 19 Jun 2025 07:11:40 +0000 (UTC)
 Received: from dmarchan.lan (unknown [10.44.33.8])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 0D97618003FC; Thu, 19 Jun 2025 07:11:34 +0000 (UTC)
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 42DF1195608F; Thu, 19 Jun 2025 07:11:39 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
 Cc: stable@dpdk.org
-Subject: [PATCH 05/10] cmdline: fix port list parsing
-Date: Thu, 19 Jun 2025 09:10:31 +0200
-Message-ID: <20250619071037.37325-6-david.marchand@redhat.com>
+Subject: [PATCH 06/10] cmdline: fix highest bit port list parsing
+Date: Thu, 19 Jun 2025 09:10:32 +0200
+Message-ID: <20250619071037.37325-7-david.marchand@redhat.com>
 In-Reply-To: <20250619071037.37325-1-david.marchand@redhat.com>
 References: <20250619071037.37325-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: -8KFiyaFVJTUBmQYq6gFnSiFZTOoAPoCe49wV5qVKt0_1750317096
+X-Mimecast-MFC-PROC-ID: ByUSZDMbYhK_Nu1BVHAWykW_aNQz-4QHE2na1B2EBcM_1750317100
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -66,62 +66,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Doing arithmetics with the NULL pointer is undefined.
+pl->map is a uint32_t.
 
 Caught by UBSan:
 
-../lib/cmdline/cmdline_parse_portlist.c:40:19: runtime error:
-	applying non-zero offset 1 to null pointer
+../lib/cmdline/cmdline_parse_portlist.c:27:17: runtime error:
+	left shift of 1 by 31 places cannot be represented in type 'int'
 SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior
-	../lib/cmdline/cmdline_parse_portlist.c:40:19 in
+	../lib/cmdline/cmdline_parse_portlist.c:27:17 in
 
 Fixes: af75078fece3 ("first public release")
 Cc: stable@dpdk.org
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- lib/cmdline/cmdline_parse_portlist.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ lib/cmdline/cmdline_parse_portlist.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/lib/cmdline/cmdline_parse_portlist.c b/lib/cmdline/cmdline_parse_portlist.c
-index ef6ce223b5..0c07cc02b5 100644
+index 0c07cc02b5..3ef427d32a 100644
 --- a/lib/cmdline/cmdline_parse_portlist.c
 +++ b/lib/cmdline/cmdline_parse_portlist.c
-@@ -4,6 +4,7 @@
-  * All rights reserved.
-  */
+@@ -11,7 +11,9 @@
+ #include <errno.h>
  
-+#include <stdbool.h>
- #include <stdio.h>
- #include <stdlib.h>
- #include <string.h>
-@@ -37,10 +38,11 @@ parse_ports(cmdline_portlist_t *pl, const char *str)
- 	const char *first, *last;
- 	char *end;
+ #include <eal_export.h>
++#include <rte_bitops.h>
+ #include <rte_string_fns.h>
++
+ #include "cmdline_parse.h"
+ #include "cmdline_parse_portlist.h"
  
--	for (first = str, last = first;
--	    first != NULL && last != NULL;
--	    first = last + 1) {
-+	if (str == NULL)
-+		return 0;
- 
-+	last = first = str;
-+	do {
- 		last = strchr(first, ',');
- 
- 		errno = 0;
-@@ -65,7 +67,10 @@ parse_ports(cmdline_portlist_t *pl, const char *str)
- 			return -1;
- 
- 		parse_set_list(pl, ps, pe);
--	}
-+		if (last == NULL)
-+			break;
-+		first = last + 1;
-+	} while (true);
- 
- 	return 0;
+@@ -27,7 +29,7 @@ static void
+ parse_set_list(cmdline_portlist_t *pl, size_t low, size_t high)
+ {
+ 	do {
+-		pl->map |= (1 << low++);
++		pl->map |= RTE_BIT32(low++);
+ 	} while (low <= high);
  }
+ 
 -- 
 2.49.0
 
