@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7A9C71136
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Jun 2025 04:03:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3078BC71136
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Jun 2025 04:03:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2228742DE9;
-	Thu, 19 Jun 2025 06:03:28 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5593142E0C;
+	Thu, 19 Jun 2025 06:03:29 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
- by mails.dpdk.org (Postfix) with ESMTP id B8FC942DD4;
- Thu, 19 Jun 2025 06:03:25 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id CA9A342DDE;
+ Thu, 19 Jun 2025 06:03:27 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1750305806; x=1781841806;
+ t=1750305808; x=1781841808;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=+G4Cb/oaZl8kOmd1sqAQjLC+FUJDyaUFbwYjuUiVTKo=;
- b=XNwlc6Ad9w0+aQ55HUOXzD9QGwioFTINP5MYddzT0htxQRQHJbkrVb8s
- Tz+YPeXcj79kOp70IKRw28SWi4ulUBZC9/Ly615LRGadIqGgeiq6sHKkR
- exuk6UKc1UbzW1TSf+b6DrVilDk3XMc/CcF92IPWJJLwWwPSMqWjy+xop
- fxZs/c87hrDkhju8CImgd8GskD/DhTdteegjrYPcfj0cmdY4XDpSNkzgN
- JyluwWjEc+zSpjION5nGxxfgxFpVHSNDb7w2OKd8NAl2TRtt4JrbfKNtO
- fFr/VgM2EueW/ljtSIs3j0SYfcmcqQIquQ7huLRAaN2EHdvB8pxdw36Tu g==;
-X-CSE-ConnectionGUID: qSdDjNKMRkSjAYCSxjaqZQ==
-X-CSE-MsgGUID: V3hdWp5eSVWxDgrXnF/eYw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="63592743"
-X-IronPort-AV: E=Sophos;i="6.16,247,1744095600"; d="scan'208";a="63592743"
+ bh=g4B+RmbDR0iz7DpgqP6Qs6OpGR735pNl5dfwKoFU6GI=;
+ b=T0rZ4RL1/uEiPXZrphmH0P7DjoX1ZHMpksJ69R1xix/0boCwPuW5gyZU
+ dEEqxVQVKx2ef9+nLVlm61VvmYByHchVejXEWMzSsC1cB0cdXPrI9Wokz
+ ek7O39fIkvKy9aY+AU7u4NgrMBVhu+TrN2DVtgdS7VwBSDqZz/hvrvyrJ
+ lWLSZ1+8QnuZ6m95JJ4fNLQTNKkMhjzi0JMLSxY0BL2Q0An4SmtnuuD0G
+ f/2g+F9o8JfmBmfj0rG7CTR4xj1S/jP3G6ei9fpLfa7i8L0vtBHTYSKx2
+ CX7zYnWgMN4gr9ajNiQsOcDiYi7QI8O6gH9X4+BPd3myR0aTo/jDR7Fjv g==;
+X-CSE-ConnectionGUID: VRZrqDdmSYa2qaNu8wNMUw==
+X-CSE-MsgGUID: WSXGdf2USTmt1MtMro9wIg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="63592753"
+X-IronPort-AV: E=Sophos;i="6.16,247,1744095600"; d="scan'208";a="63592753"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Jun 2025 21:03:25 -0700
-X-CSE-ConnectionGUID: yrZIunM4T5mkXO5U/hZwvQ==
-X-CSE-MsgGUID: DmSb8GuIQn2iXLLIyE7scw==
+ 18 Jun 2025 21:03:28 -0700
+X-CSE-ConnectionGUID: u4yhkPNuQL+5U2DfIJVlaA==
+X-CSE-MsgGUID: OWvavU5XRRO7e1NoanDmZw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,247,1744095600"; d="scan'208";a="150665496"
+X-IronPort-AV: E=Sophos;i="6.16,247,1744095600"; d="scan'208";a="150665513"
 Received: from txanpdk02.an.intel.com ([10.123.117.76])
- by orviesa007.jf.intel.com with ESMTP; 18 Jun 2025 21:03:24 -0700
+ by orviesa007.jf.intel.com with ESMTP; 18 Jun 2025 21:03:26 -0700
 From: Pravin Pathak <pravin.pathak@intel.com>
 To: dev@dpdk.org
 Cc: jerinj@marvell.com, mike.ximing.chen@intel.com, bruce.richardson@intel.com,
  thomas@monjalon.net, david.marchand@redhat.com, nipun.gupta@amd.com,
  chenbox@nvidia.com, tirthendu.sarkar@intel.com,
  Pravin Pathak <pravin.pathak@intel.com>, stable@dpdk.org
-Subject: [PATCH v4 2/7] event/dlb2: fix validaton of LDB port COS ID arguments
-Date: Wed, 18 Jun 2025 23:03:11 -0500
-Message-Id: <20250619040316.317733-3-pravin.pathak@intel.com>
+Subject: [PATCH v4 3/7] event/dlb2: fix num single link ports for DLB2.5
+Date: Wed, 18 Jun 2025 23:03:12 -0500
+Message-Id: <20250619040316.317733-4-pravin.pathak@intel.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20250619040316.317733-1-pravin.pathak@intel.com>
 References: <20250509042401.2634765-1-pravin.pathak@intel.com>
@@ -63,113 +63,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-While providing port_cos as vdev/pf CLI argument, the port numbers should
-take into account all ports (LDB and DIR) that are created by the
-application and the same order should be provided for port_cos parameter.
-This fix add checks to ensure that above is validated correctly.
+DLB 2.0 device has 64 single linked or directed ports.
+DLB 2.5 device has 96 single linked ports.
+This commit fixes issue of rte_event_dev_info_get returning 64
+instead of 96 single link ports for DLB2.5
 
-Fixes: bec8901bfe9f ("event/dlb2: support ldb port specific COS")
+Fixes: 4ce7bf9ec1c7 ("event/dlb2: add v2.5 get resources")
 Cc: stable@dpdk.org
 
 Signed-off-by: Pravin Pathak <pravin.pathak@intel.com>
 ---
- drivers/event/dlb2/dlb2.c      | 32 +++++++++++++++++++++++---------
- drivers/event/dlb2/dlb2_priv.h |  1 -
- 2 files changed, 23 insertions(+), 10 deletions(-)
+ drivers/event/dlb2/dlb2.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/event/dlb2/dlb2.c b/drivers/event/dlb2/dlb2.c
-index bec1e88074..8722e62948 100644
+index 8722e62948..69dc3cf7c9 100644
 --- a/drivers/event/dlb2/dlb2.c
 +++ b/drivers/event/dlb2/dlb2.c
-@@ -194,10 +194,8 @@ dlb2_init_port_cos(struct dlb2_eventdev *dlb2, int *port_cos)
- 	for (q = 0; q < DLB2_MAX_NUM_PORTS_ALL; q++) {
- 		dlb2->ev_ports[q].cos_id = port_cos[q];
- 		if (port_cos[q] != DLB2_COS_DEFAULT &&
--		    dlb2->cos_ports[port_cos[q]] < DLB2_MAX_NUM_LDB_PORTS_PER_COS) {
-+		    dlb2->cos_ports[port_cos[q]] < DLB2_MAX_NUM_LDB_PORTS_PER_COS)
- 			dlb2->cos_ports[port_cos[q]]++;
--			dlb2->max_cos_port = q;
--		}
- 	}
- }
+@@ -241,16 +241,16 @@ dlb2_hw_query_resources(struct dlb2_eventdev *dlb2)
+ 	 * The capabilities (CAPs) were set at compile time.
+ 	 */
  
-@@ -531,8 +529,8 @@ set_port_cos(const char *key __rte_unused,
- 	     const char *value,
- 	     void *opaque)
- {
-+	int first, last, cos_id, i, ports_per_cos[DLB2_COS_NUM_VALS] = {0};
- 	struct dlb2_port_cos *port_cos = opaque;
--	int first, last, cos_id, i;
+-	if (dlb2->max_cq_depth != DLB2_DEFAULT_CQ_DEPTH)
+-		num_ldb_ports = DLB2_MAX_HL_ENTRIES / dlb2->max_cq_depth;
+-	else
+-		num_ldb_ports = dlb2->hw_rsrc_query_results.num_ldb_ports;
++	num_ldb_ports = dlb2->hw_rsrc_query_results.num_ldb_ports;
  
- 	if (value == NULL || opaque == NULL) {
- 		DLB2_LOG_ERR("NULL pointer");
-@@ -566,6 +564,14 @@ set_port_cos(const char *key __rte_unused,
- 	for (i = first; i <= last; i++)
- 		port_cos->cos_id[i] = cos_id; /* indexed by port */
+ 	evdev_dlb2_default_info.max_event_queues =
+ 		dlb2->hw_rsrc_query_results.num_ldb_queues;
  
-+	for (i = 0; i < DLB2_MAX_NUM_PORTS_ALL; i++)
-+		if (port_cos->cos_id[i] != DLB2_COS_DEFAULT &&
-+			++ports_per_cos[port_cos->cos_id[i]] > DLB2_MAX_NUM_LDB_PORTS_PER_COS) {
-+			DLB2_LOG_ERR("Error parsing ldb port cos_id devarg: More than 16 ports for "
-+				"cos_id %d.", port_cos->cos_id[i]);
-+			return -EINVAL;
-+		}
+ 	evdev_dlb2_default_info.max_event_ports = num_ldb_ports;
+ 
++	evdev_dlb2_default_info.max_single_link_event_port_queue_pairs =
++		dlb2->hw_rsrc_query_results.num_dir_ports;
 +
- 	return 0;
- }
- 
-@@ -866,9 +872,10 @@ dlb2_hw_create_sched_domain(struct dlb2_eventdev *dlb2,
- 			    const struct dlb2_hw_rsrcs *resources_asked,
- 			    uint8_t device_version)
- {
--	int ret = 0;
--	uint32_t cos_ports = 0;
-+	uint32_t total_asked_ports;
- 	struct dlb2_create_sched_domain_args *cfg;
-+	uint32_t cos_ports = 0, max_cos_port = 0;
-+	int ret = 0;
- 
- 	if (resources_asked == NULL) {
- 		DLB2_LOG_ERR("dlb2: dlb2_create NULL parameter");
-@@ -876,6 +883,8 @@ dlb2_hw_create_sched_domain(struct dlb2_eventdev *dlb2,
- 		goto error_exit;
- 	}
- 
-+	total_asked_ports = resources_asked->num_ldb_ports + resources_asked->num_dir_ports;
-+
- 	/* Map generic qm resources to dlb2 resources */
- 	cfg = &handle->cfg.resources;
- 
-@@ -897,9 +906,14 @@ dlb2_hw_create_sched_domain(struct dlb2_eventdev *dlb2,
- 	cos_ports = dlb2->cos_ports[0] + dlb2->cos_ports[1] +
- 		    dlb2->cos_ports[2] + dlb2->cos_ports[3];
- 
--	if (cos_ports > resources_asked->num_ldb_ports ||
--	    (cos_ports && dlb2->max_cos_port >= resources_asked->num_ldb_ports)) {
--		DLB2_LOG_ERR("dlb2: num_ldb_ports < cos_ports");
-+	for (int i = 0; i < DLB2_MAX_NUM_PORTS_ALL; i++) {
-+		if (dlb2->ev_ports[i].cos_id != DLB2_COS_DEFAULT)
-+			max_cos_port = i;
-+	}
-+
-+	if (cos_ports > resources_asked->num_ldb_ports || max_cos_port >= total_asked_ports) {
-+		DLB2_LOG_ERR("dlb2: Insufficient num_ldb_ports=%d: cos_ports=%d max_cos_port=%d",
-+			resources_asked->num_ldb_ports, cos_ports, max_cos_port);
- 		ret = EINVAL;
- 		goto error_exit;
- 	}
-diff --git a/drivers/event/dlb2/dlb2_priv.h b/drivers/event/dlb2/dlb2_priv.h
-index 4dd7532519..285d427397 100644
---- a/drivers/event/dlb2/dlb2_priv.h
-+++ b/drivers/event/dlb2/dlb2_priv.h
-@@ -649,7 +649,6 @@ struct dlb2_eventdev {
- 	};
- 	uint32_t cos_ports[DLB2_COS_NUM_VALS]; /* total ldb ports in each class */
- 	uint32_t cos_bw[DLB2_COS_NUM_VALS]; /* bandwidth per cos domain */
--	uint8_t max_cos_port; /* Max LDB port from any cos */
- 	bool enable_cq_weight;
- };
- 
+ 	if (dlb2->version == DLB2_HW_V2_5) {
+ 		evdev_dlb2_default_info.max_num_events =
+ 			dlb2->hw_rsrc_query_results.num_credits;
 -- 
 2.39.1
 
