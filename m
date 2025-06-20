@@ -2,45 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0CF4C7115C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Jun 2025 13:11:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D2AEC7115C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Jun 2025 13:30:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CC71242EF2;
-	Fri, 20 Jun 2025 15:11:35 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id AA537402F2
- for <dev@dpdk.org>; Fri, 20 Jun 2025 15:11:34 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id A0E1846A0E; Fri, 20 Jun 2025 15:11:34 +0200 (CEST)
-From: bugzilla@dpdk.org
+	by mails.dpdk.org (Postfix) with ESMTP id 567E042EFC;
+	Fri, 20 Jun 2025 15:30:29 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+ by mails.dpdk.org (Postfix) with ESMTP id 153E6402F2
+ for <dev@dpdk.org>; Fri, 20 Jun 2025 15:30:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1750426228; x=1781962228;
+ h=from:to:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=50PMQaZgo/e1VpFjohFgMvHGb7Usp0QN/I5God/EAPk=;
+ b=RVlLqp+IvOD4Gaz0E9Qa+/5sFU7BDsjYrUPeFVm2meSc+H8hrHGQNRls
+ hKieC/bNSRmGN5kYwejBEifj7creEWcZ+BAfCFfD0PnV3aXXlGB6vpCCQ
+ z/1XJ9KyLlOW4FpMs9KZOMnWyA4225xMyg1neEmCATjEV39v/5+j+qMqP
+ I/e6n2Qm14SfzWSFzDZ4JbGoByXUTqJPcgilRZ0pUpEyMy58CZBvYuvCM
+ ZGIWWsMwQiFzqqutPFxsUPIdz90NyVMLR1cH01YRdrkNWkGE+hZbCVJMT
+ e2fXRbXmSD3q+E9w85Eo202LSUFmlwUd0GXPyFM28pMgu/onzLoA97Qrp w==;
+X-CSE-ConnectionGUID: n0ast45hTY+9hJli0wnrGQ==
+X-CSE-MsgGUID: OpHu+W71SVm0b149h/tygw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="75219019"
+X-IronPort-AV: E=Sophos;i="6.16,251,1744095600"; d="scan'208";a="75219019"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 20 Jun 2025 06:30:26 -0700
+X-CSE-ConnectionGUID: gAdcE3mBQwy0KDFmCjz6GQ==
+X-CSE-MsgGUID: LzrlwbPgQcGQ1GYAmP69NA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,251,1744095600"; d="scan'208";a="150407256"
+Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
+ by orviesa006.jf.intel.com with ESMTP; 20 Jun 2025 06:30:25 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1729] RSS offload types are undocumented
-Date: Fri, 20 Jun 2025 13:11:34 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
-X-Bugzilla-Version: 25.03
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: mb@smartsharesystems.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1729-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17504250940.e17AEa5E.338522
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+Subject: [PATCH v1 1/1] memory: handle invalid socket ID's when allocating
+Date: Fri, 20 Jun 2025 14:30:23 +0100
+Message-ID: <4e785f17154922f775c56558947b2f967f25b23c.1750426216.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.47.1
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,187 +56,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+This issue was reported by static analysis. It is a false positive,
+because both `rte_socket_count` and `rte_socket_id_by_idx` only report
+information about physical sockets, and these specific calls are made
+during EAL initialization, so no other sockets (i.e. external) could have
+been available, so it is pretty much impossible to get invalid return here.
 
---17504250940.e17AEa5E.338522
-Date: Fri, 20 Jun 2025 15:11:34 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+Still, to avoid future false positives, we can fix it here.
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1729
+Coverity issue: 470131
 
-            Bug ID: 1729
-           Summary: RSS offload types are undocumented
-           Product: DPDK
-           Version: 25.03
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: ethdev
-          Assignee: dev@dpdk.org
-          Reporter: mb@smartsharesystems.com
-  Target Milestone: ---
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+---
+ lib/eal/linux/eal_memory.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-A list of macros are defined for RSS offload types [1].
-They have no descriptions, and some of them have very similar names, so it's
-unclear what exactly they mean.
+diff --git a/lib/eal/linux/eal_memory.c b/lib/eal/linux/eal_memory.c
+index 59f35b415e..e433c1afee 100644
+--- a/lib/eal/linux/eal_memory.c
++++ b/lib/eal/linux/eal_memory.c
+@@ -1785,8 +1785,14 @@ memseg_primary_init_32(void)
+ 		unsigned int main_lcore_socket;
+ 		struct rte_config *cfg = rte_eal_get_configuration();
+ 		bool skip;
++		int ret;
+ 
+-		socket_id = rte_socket_id_by_idx(i);
++		ret = rte_socket_id_by_idx(i);
++		if (ret == -1) {
++			EAL_LOG(ERR, "Cannot get socket ID for socket index %u", i);
++			return -1;
++		}
++		socket_id = (unsigned int)ret;
+ 
+ #ifndef RTE_EAL_NUMA_AWARE_HUGEPAGES
+ 		/* we can still sort pages by socket in legacy mode */
+-- 
+2.47.1
 
-Examples:
-- Does RTE_ETH_RSS_IPV4 provide the same RSS offload as (RTE_ETH_RSS_FRAG_I=
-PV4
-| RTE_ETH_RSS_NONFRAG_IPV4_OTHER)?
-- What does RTE_ETH_RSS_IPV6_EX do, compared to RTE_ETH_RSS_IPV6?
-
-[1]: https://elixir.bootlin.com/dpdk/v25.03/source/lib/ethdev/rte_ethdev.h#=
-L553
-
-Each of these macros should be documented.
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
-
---17504250940.e17AEa5E.338522
-Date: Fri, 20 Jun 2025 15:11:34 +0200
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-<html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
-bz_new_table">
-        <tr>
-          <th>Bug ID</th>
-          <td><a class=3D"bz_bug_link=20
-          bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - RSS offload types are undocumented"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1729">1729</a>
-          </td>
-        </tr>
-
-        <tr>
-          <th>Summary</th>
-          <td>RSS offload types are undocumented
-          </td>
-        </tr>
-
-        <tr>
-          <th>Product</th>
-          <td>DPDK
-          </td>
-        </tr>
-
-        <tr>
-          <th>Version</th>
-          <td>25.03
-          </td>
-        </tr>
-
-        <tr>
-          <th>Hardware</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>OS</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>Status</th>
-          <td>UNCONFIRMED
-          </td>
-        </tr>
-
-        <tr>
-          <th>Severity</th>
-          <td>normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Priority</th>
-          <td>Normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Component</th>
-          <td>ethdev
-          </td>
-        </tr>
-
-        <tr>
-          <th>Assignee</th>
-          <td>dev&#64;dpdk.org
-          </td>
-        </tr>
-
-        <tr>
-          <th>Reporter</th>
-          <td>mb&#64;smartsharesystems.com
-          </td>
-        </tr>
-
-        <tr>
-          <th>Target Milestone</th>
-          <td>---
-          </td>
-        </tr></table>
-      <p>
-        <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">A list of macros are defined for R=
-SS offload types [1].
-They have no descriptions, and some of them have very similar names, so it's
-unclear what exactly they mean.
-
-Examples:
-- Does RTE_ETH_RSS_IPV4 provide the same RSS offload as (RTE_ETH_RSS_FRAG_I=
-PV4
-| RTE_ETH_RSS_NONFRAG_IPV4_OTHER)?
-- What does RTE_ETH_RSS_IPV6_EX do, compared to RTE_ETH_RSS_IPV6?
-
-[1]: <a href=3D"https://elixir.bootlin.com/dpdk/v25.03/source/lib/ethdev/rt=
-e_ethdev.h#L553">https://elixir.bootlin.com/dpdk/v25.03/source/lib/ethdev/r=
-te_ethdev.h#L553</a>
-
-Each of these macros should be documented.
-          </pre>
-        </div>
-      </p>
-
-
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1729">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17504250940.e17AEa5E.338522--
