@@ -2,159 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E350CC7115C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Jun 2025 13:38:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C036AC7115B
+	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Jun 2025 18:33:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2ACE242F04;
-	Fri, 20 Jun 2025 15:38:03 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
- by mails.dpdk.org (Postfix) with ESMTP id 14032402F2
- for <dev@dpdk.org>; Fri, 20 Jun 2025 15:38:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1750426682; x=1781962682;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=GvyT3rtR6c4IuP6WX2MLI/sKx69CDYrT6n2m+ofzZ0s=;
- b=GfBiRJgL2hjzr5e+xmz0PRvK4GMiXwbCMH7+oSsfyC6LJKG5mmRBeElB
- DsCvRozvCH457EKv8Juk1n9VS31ezVs0VlkZAh3ihpmZnwMwo1MBzRsBg
- sK0AgjJfdzUCUBEKsjf87c8Ge5zLbH8OM6XMjWtFFH8oAa8LFp+Vnnl4m
- zvZ27337hLFKWrjRWvvwrAXAnr4XY1voqyrVG5AvKzea6o1KOy7YDK6vt
- xeQPE+SW8+C8iNUEjR1iJpCvIKKgowobLerRxf+sP/7aftb9+YkRfTNGz
- PwZrIhyd1jo5vUfJQQthBBauvQpLcUHPOVhJZORYUWmaccvahPaDCCWNe A==;
-X-CSE-ConnectionGUID: x/KOup70Ss6heg3yrdyXEA==
-X-CSE-MsgGUID: /NtAu2saRFmoeTZAX/klsw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11469"; a="63296202"
-X-IronPort-AV: E=Sophos;i="6.16,251,1744095600"; d="scan'208";a="63296202"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
- by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 20 Jun 2025 06:38:01 -0700
-X-CSE-ConnectionGUID: NUWE+PVZSleMy/j09wH1gw==
-X-CSE-MsgGUID: BbY8mbR3RUWgPDjHxejBoQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,251,1744095600"; d="scan'208";a="155466464"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 20 Jun 2025 06:38:01 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Fri, 20 Jun 2025 06:38:00 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Fri, 20 Jun 2025 06:38:00 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.41)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Fri, 20 Jun 2025 06:37:59 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QNfB9uD6RFjJdZYZJQ1JlVSkNWUq+qpY8bBnFWnwL/sRcgPZVaHFPHNXxW7pU6FhZmoMo+2Gu2TXvro2FtjPn5ffADeYCN1c7P/6McyQC4T/qtXyvflbbBW/+WbFTuCrbBwWQ9KtykrKCFnAV9jabYw2UxPwPVEVUMUmD9UscB7VH8BNKuWLirqgN5Jkl7NolbJl9O0eBze95WCwCGEwbgXr5yGmlnqaDM/28YDTIrR9vfDkdwjqO51+dlYkJ56RsbeQwUn0P/7mkcoIz9Ig9XN7TNjkNNNgbDfbY6LBX138Pp83TeBn702zhvM7P4o5Cn5+ZaHD1iJ+bvdx3fA8zw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MPQkqR3Pfn598HVkRza53nbQo6Ru5WZuLF9HTGnFBe8=;
- b=mtWC0wjR3dF2ehFvyJj4ZCOpd/vXk3CcucWYQJhEBuI3gi5nF/fBM8AcDA5FYqGDEh0MVS3P1oSQztbHiGn1wezWz5zGE37UdEKs+KUWf5LI/YLbbOD0EsJczcIXWsh7d9Ja8WflB0XCm5VarZh2G/X2q5yxTWWRNKwumTu+Lmi+O5tCsTNwCoGg0+0x+dzqpwGEMtKoJO5gWogMJ9p89ul4t1OXRa1OVZKizLVo4YYBAMkAChVPkJ6EOMOzs/D8nCFaK74MFRYiomolLC6A9B0IYk+nwQKonPI6UXP2j7k8NCrqK4LV4TtWqAZn6jBVkEZ97KeaiIdXUcXUblPLPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by CY5PR11MB6509.namprd11.prod.outlook.com (2603:10b6:930:43::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.31; Fri, 20 Jun
- 2025 13:37:58 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.8857.020; Fri, 20 Jun 2025
- 13:37:57 +0000
-Date: Fri, 20 Jun 2025 14:37:53 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Anatoly Burakov <anatoly.burakov@intel.com>
-CC: <dev@dpdk.org>
-Subject: Re: [PATCH v1 1/1] memory: handle invalid socket ID's when allocating
-Message-ID: <aFVkMQ6jc27mTJG2@bricha3-mobl1.ger.corp.intel.com>
-References: <4e785f17154922f775c56558947b2f967f25b23c.1750426216.git.anatoly.burakov@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <4e785f17154922f775c56558947b2f967f25b23c.1750426216.git.anatoly.burakov@intel.com>
-X-ClientProxiedBy: DU7P189CA0019.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:10:552::19) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id BCC874029E;
+	Fri, 20 Jun 2025 20:33:38 +0200 (CEST)
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com
+ [209.85.210.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 5CAE240267
+ for <dev@dpdk.org>; Fri, 20 Jun 2025 20:33:37 +0200 (CEST)
+Received: by mail-pf1-f181.google.com with SMTP id
+ d2e1a72fcca58-74264d1832eso2913534b3a.0
+ for <dev@dpdk.org>; Fri, 20 Jun 2025 11:33:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1750444416; x=1751049216; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=r6rNAh2b7J/L5SKa/Wmw+oTQraCg/rs+RtykrQNuq9E=;
+ b=jiDy0GWBhbXxSUtT9rfcE+Bwe8lkfVULBZMCcBKzz1yFeUHRuKeNsl0/ElC7hAChBN
+ 6kz/kd9wRKRrJIQM5op11aVVFg1tn3kBoYxHX02j37vWzpP6j+AYqTUBzpsTgcoaJWMZ
+ AeH+NT6YmfRtRTl6JFLH/P8JyPa3OTFt8L+4j4uy6VROW90e8KnrLXKZARLMjLlRwq/w
+ P6U5BsT/HSbLHK9IYN2foNAT74YjtOKg7zg+6lwnrrAJ+jY7HET+IUeyw9xrYRF6Mp9O
+ v06IyOyH+iDRLa6fxXI0gb69OwX0btV1rYuELNUkEUFiAqw5NnSjkf52HhBnRbGvMARt
+ m/hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1750444416; x=1751049216;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=r6rNAh2b7J/L5SKa/Wmw+oTQraCg/rs+RtykrQNuq9E=;
+ b=RgALJbRW4yDJsq2A7OKotSsyaWQA8FPgBytlttkQe9ry+9khrnkxanT6v3ueEu7G4z
+ dkXuW1wG9nnB+fTDUthVouVV45UQmpwE0n5mrQYfdhz+cwi8l80fQmVPxJ+V+Yq8iPtx
+ EuMEcLfRmw655ULYyDEcFAFraYCNnuCWmSMVfRVD7jDA0vbEPugzNex1YgMmu86un1QQ
+ vfF9e2iNIngCWDPWVovc74iNKKIpfwhIp1ryOp4ddex5iYRgYSkPHyb8v1+GbA5qMtbl
+ wdl9BauLap16cFH5boqZznvHvd9BG/Di+1sgzIfHJRTbiEigUV6iUKboa4HJY8MdRSb0
+ QSwg==
+X-Gm-Message-State: AOJu0YwZXWg+Wfj3GvO4RHGhxUaEVlT9CkG7lhtpYENlCuieQetO2xsC
+ 1MwRHyaKb6ppxGDNahIYc4PkFx9EL9k1lq/2baKVjBJkwiJlCtYq1LeSskuFlA==
+X-Gm-Gg: ASbGnctvQLsglxiVSTmXpYkCv0jFsjLhsTOxy7HMfrsmyOQZTtezbkWj/t9+YoPjb5o
+ C3cewNIF0sxzhBNAwH02mkIk5LkZAQegwKaSJ7+wN3Vv1IGHNNbLvXPEV3Txah6aJ1dj1OE0Xjx
+ Fj+1czfrSFF3g56U/94padR7hgVnSoit4ESefKJkuilt2dzZJyyi692eSSzlYBjCDTo8o0kdM7K
+ rRVTXQmPT5afm6vEk+7qOd9duptjNjsZq/xlqgl691R1mQqFWwwzHG3z4j7JkQhEq/0vjlDCFEt
+ AqK3SWAdl5I926KJlQ2OWFIUq/DslOABLMH7ekAVbM1oOVYts437lC4KEkH+N6mIPXloVN7oA8F
+ WsxikAjFKQ6nvwXN+5YRIwWQK77osYLIphec=
+X-Google-Smtp-Source: AGHT+IFJ9L6QM4XJObVu+YGvBslZQYk/BIU+y9RaoRp3UXlUqZ00+wcRZD4LkQqtar+Q2XfYASf9iA==
+X-Received: by 2002:a05:6a00:10c6:b0:740:b5f9:287b with SMTP id
+ d2e1a72fcca58-7490d4f532bmr5042098b3a.1.1750444415954; 
+ Fri, 20 Jun 2025 11:33:35 -0700 (PDT)
+Received: from localhost.localdomain ([2402:e280:2162:53:7162:efab:e386:259])
+ by smtp.gmail.com with ESMTPSA id
+ d2e1a72fcca58-7490a64a90csm2520543b3a.119.2025.06.20.11.33.33
+ (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+ Fri, 20 Jun 2025 11:33:35 -0700 (PDT)
+From: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
+To: dev@dpdk.org
+Cc: amiyaranjan.mohakud@gmail.com
+Subject: [PATCH] net/iavf: fix VLAN offload strip flag
+Date: Sat, 21 Jun 2025 00:03:28 +0530
+Message-Id: <20250620183328.68408-1-amiyaranjan.mohakud@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|CY5PR11MB6509:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0abe37bb-eb07-4e69-e21c-08ddafffab03
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?e6gNTVGM+mQLA45nuOJtADpYcz64wCwcVBzBBq2vPUkQnLXQtAtwTFoAb+VY?=
- =?us-ascii?Q?6OsGimx1ejGGClR+oWxzUME/erpX5VTZ57NOfwZIlguw8xneCKuQFbRNtGsS?=
- =?us-ascii?Q?ZLT7IdQe0v1+DC5dZrffvlf/NxApznGvKk9gH5uWK+2bTJkF8xhCnApneMhu?=
- =?us-ascii?Q?S+biTrgIczfd76FPqKQRv1smmz39+UDeZ2pn3G2CSAlFIyoGJdGGqiHON9rm?=
- =?us-ascii?Q?tvlj2Y8ZKQjqrE6lU/5BP2x5sAleT4nN7kNmp9cut3zhjL+MG3IRbqzSU82W?=
- =?us-ascii?Q?bO+GioFMcc6TVu5iuOVOgzDBhNfoIEVcpZldDKWaNf4OrPQ/lnq72yR2jO0d?=
- =?us-ascii?Q?C6KMBT19C1igBRdeMJ/0V3q8x6kgzL1es09I6jwKE+UshWgfsRZMODWwZJZ/?=
- =?us-ascii?Q?o8F2ClCQrWES4iNDUblYTihxclq/F+S2FBAsU0y0C7w4IPk36uskQzV1u0r7?=
- =?us-ascii?Q?QPDo1VzDTTBxNxrG3TxTRUrhokcaHdz6s5pP5gvxkWxDvb0n+ZPvH6NAZuML?=
- =?us-ascii?Q?7qmg2QJF7rzkODxU/ZrE4E98t4+WKGSUz2jmgXpwjvf/AddvkCEOoGlPvUFh?=
- =?us-ascii?Q?bWwD0WCW/h+GfIegRn+XKqccQ07Ov0DTmODu3bI3inBsJ6VvWQXYEvFYwCSP?=
- =?us-ascii?Q?gE4xZq4Os9JghCZ1WPE7iw+33+qJOogq3KMRlSDha0Vh//TxuLeEVG9pG9wT?=
- =?us-ascii?Q?LJ9FzG16uwWdLH5h8XqwONzZ2rvwkWKlSy1jg5nfkpHEJwwz5twMLTBYjg8b?=
- =?us-ascii?Q?HuieF00v4Acr/tLkVvZVIwrvA8ObUczu3YdT01UKkDqqIzqg5TTAY40fEp8D?=
- =?us-ascii?Q?Qmlm/QUlDd7dSGdTXP/1mjVafdB6+Z1T8pVZuv3l/iQfPkPGkdCeNv+cF8Gc?=
- =?us-ascii?Q?HReHdYu/IiJtIpvJZgaYUQm68EoCexP3YkkZ/3D+E1Yjot+omYJDv94Xs4q+?=
- =?us-ascii?Q?09uUVieaBpMNS9gnPNZtk6R2hn7t8ylienxAkXmVTIfEBbRnMUsvTnbjePix?=
- =?us-ascii?Q?ARXHJF3rIK2stuYk/5cr80j9LerRAKlR26lpe89zNstiVsKa4qNjLF/IbHsA?=
- =?us-ascii?Q?SbFlbzGo43tkgZAd8+bT5HiYt8/UNhNuqUbMw5MDJ7EvOdrT74f015gKSYBr?=
- =?us-ascii?Q?ITqWWBH5nDIIa5kLWnMbDIwqazE+B7amZr0Lwf9W4k7dX+OCsyyikhSJWdCH?=
- =?us-ascii?Q?TMq0TepF3U1RHuILdsGVeFTRu71XdyTqgnu+rcJI4Nncg3ww7EEWWu+49Y87?=
- =?us-ascii?Q?duxJHwp1bRJc81rN5NuN2tIivmcQFzBEXuGuDt84femgXk06OnoH+2ACv1Pz?=
- =?us-ascii?Q?gjcJapLB/GeuOfHPeg2ovq6qPHlYYehCJonhr1WS49WH6Mc3M8yq4g+gw2TN?=
- =?us-ascii?Q?C1xt41Q6xeKdGRM7gMyNfszeZEqcbogWNhbM5nqjXowIe7dYrw=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(1800799024); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?dVLKoKQDLKxy45o4LGvBwGZmDKxtOwFuf+ht/VSeo0rWW6e6deFBtYQri0Lh?=
- =?us-ascii?Q?U8hs5eZzxHcs2+s73IVEBdHJ9ZFps8/bMJErGVt+5AX1G+oezKtHWeySBpl2?=
- =?us-ascii?Q?qd6v4gBDw+E2jdA2s/Diz6c4/ha0jDlKEX2e3VWh0JQMRU4eoK5AVpG6ji7S?=
- =?us-ascii?Q?pefbpSmvqJDA9I8nJVAtklPC5BQ2IlnRxoENBgjv6kDuEIaYc9q+PizB8F7n?=
- =?us-ascii?Q?gIMWxyf02UpAoGCM/Dsg9dKduEefPTHGgSiy9d49JUyXmuNTSXmNZewonLPX?=
- =?us-ascii?Q?9zFGTbTXwRjrCCyiNY1GgT16sxvfj6rr3Qer39FEM30f80iGiAcMo8MteJ2f?=
- =?us-ascii?Q?x/leBbgVqIb0htt7sxIQx5pidZRIeV1vm+WMF+KPzamVda6ZUeg/asc9yxOe?=
- =?us-ascii?Q?eKZuIcHYQIxY8NFrCy3Y1/71OK4sVkMrDxlKyg2VkU4tJNV4MPQtTtWawmfd?=
- =?us-ascii?Q?aGNqEZKIgi3OrFB9LsIm0rLLANu9wjs0w6xkmqv1SDIwPL9+JojJI/7vPkiv?=
- =?us-ascii?Q?q4edUq9qtDrc/U2XDjGbnNr8TVIo0yFpsHURrWtWMOoUMqphM5BfKsvpxezt?=
- =?us-ascii?Q?NsMB2L/GeL8ofPVYFjZPcbP2iZh1WMZ2/MmA9IT1Qf3OWDhpLYGljliTxlMs?=
- =?us-ascii?Q?5NIG9/cgH1OsHdeMdHJolhs/xK9YEwnnTMEtb640B2I8H8Vp/jcF4umDIFo7?=
- =?us-ascii?Q?L0eBHYKmEnSGEEuWEjmM0wtsM2BLjgXMS9LwbsmmMlGT8Rt12bTOmhK71Aqt?=
- =?us-ascii?Q?rIjhfcgB8DcnGhQPSa98yjnMvU7Nv2VIsX+InyZVl0f/150zE/AJLeNrfmQy?=
- =?us-ascii?Q?icQTG07X8V0KzGdzJg0mCjeGN0TnHVhMf/yFuoIt0ERq0xZY/zt0CtrWrafd?=
- =?us-ascii?Q?Fw9AkeaCjYwo58f+Q/PP/Gr4JQ8KM7ay6SowhQLKaT6ySCFoIrDHvdipYrGP?=
- =?us-ascii?Q?3arY9Z+YiFLBtgwtQ09LqR5Zb9CQRJtLatYasfNQQc6EWW5Y5+wFIPRUcOd1?=
- =?us-ascii?Q?Ezv0d/y9dTEueNFv/kQnwGARQ66BWSY93I6zg1Q6/zsiPX0rnBBnxYdWHgLF?=
- =?us-ascii?Q?pt3Rzzv2g0+I8gzYNmjaw6GI9yPMIN4BYcJzAQEhCA0vqsNRiqi6CkD+d9oK?=
- =?us-ascii?Q?mB3SVyhVtyKvaqzz1U2j41Pw6EgsvdJx86+obTh3u86rP0hfggz4LmN9xltJ?=
- =?us-ascii?Q?C7ebbBmbxzOQMvOxqvS5+NTEbqsVPFXXwJ4G1XwgVTWlO8Fx3Cm0fG4fEhTV?=
- =?us-ascii?Q?3iH1X+dBYic01H9XWdviQjSzmyEIhYsVfbd4u/5HPIBdvJBS2Nezz3TPu/TT?=
- =?us-ascii?Q?k412bTjf9thqTK2MMuR1qRvGhyTG+OiqHG8Zi7+4B+tdsRsMeh6v+VP1ih/W?=
- =?us-ascii?Q?lPxzib5KWkccKgvcfh6JLPgEky7v3x00stwxukAHXssM4D6yNc7Q6I0KBV7M?=
- =?us-ascii?Q?+yYs6aDMidw6a1McHQt6WvY8LAgQLqEx+7KLsIFMRRqRhtoDd3niSrNYYIL1?=
- =?us-ascii?Q?FFZXejP/VH32ieBlA6JJF4AsruURhAADE3+OOkhhI3XT02a+4MGJQgnSOhWR?=
- =?us-ascii?Q?XgAu8ZWNxQwvhK6ouW2/PXgDE1QL+V50GkDT1V4VShLCGKLd/iasCFcumbPu?=
- =?us-ascii?Q?Uw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0abe37bb-eb07-4e69-e21c-08ddafffab03
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2025 13:37:57.9000 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Kna263h+SsypK+1X+n7Gh0VADzpPIVtV06Z8PeKnNL7PBJh3o0vTOjrbCfTJS4iXB6xZ0Bo/qtoO10SFebOkv/TAJg99KPmjkUeFz2e9H3Q=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR11MB6509
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -168,18 +76,97 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Jun 20, 2025 at 02:30:23PM +0100, Anatoly Burakov wrote:
-> This issue was reported by static analysis. It is a false positive,
-> because both `rte_socket_count` and `rte_socket_id_by_idx` only report
-> information about physical sockets, and these specific calls are made
-> during EAL initialization, so no other sockets (i.e. external) could have
-> been available, so it is pretty much impossible to get invalid return here.
-> 
-> Still, to avoid future false positives, we can fix it here.
-> 
-> Coverity issue: 470131
-> 
-> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-> ---
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+For i40e kernel drivers which support either vlan(v1) or vlan(v2)
+VIRTCHNL OP,it will set strip on when setting filter on. But dpdk
+side will not change strip flag. To be consistent with dpdk side,
+explicitly disable strip again.
+
+Bugzilla ID:1725
+
+Signed-off-by: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
+---
+ drivers/net/iavf/iavf_ethdev.c | 48 ++++++++++++++++++++--------------
+ 1 file changed, 29 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/net/iavf/iavf_ethdev.c b/drivers/net/iavf/iavf_ethdev.c
+index 656a4c6176..62e75f3626 100644
+--- a/drivers/net/iavf/iavf_ethdev.c
++++ b/drivers/net/iavf/iavf_ethdev.c
+@@ -1344,13 +1344,38 @@ iavf_dev_del_mac_addr(struct rte_eth_dev *dev, uint32_t index)
+ 	vf->mac_num--;
+ }
+ 
++static int
++iavf_disable_vlan_strip_ex(struct rte_eth_dev *dev, int on)
++{
++	/* For i40e kernel drivers which supports both vlan(v1 & v2) VIRTCHNL OP,
++	 * it will set strip on when setting filter on but dpdk side will not
++	 * change strip flag. To be consistent with dpdk side, explicitly disable
++	 * strip again.
++	 *
++	 */
++	struct iavf_adapter *adapter =
++		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
++	struct rte_eth_conf *dev_conf = &dev->data->dev_conf;
++	int err;
++
++	if (adapter->hw.mac.type == IAVF_MAC_XL710 ||
++	    adapter->hw.mac.type == IAVF_MAC_VF ||
++	    adapter->hw.mac.type == IAVF_MAC_X722_VF) {
++		if (on && !(dev_conf->rxmode.offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP)) {
++			err = iavf_disable_vlan_strip(adapter);
++			if (err)
++				return -EIO;
++		}
++	}
++	return 0;
++}
++
+ static int
+ iavf_dev_vlan_filter_set(struct rte_eth_dev *dev, uint16_t vlan_id, int on)
+ {
+ 	struct iavf_adapter *adapter =
+ 		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
+ 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
+-	struct rte_eth_conf *dev_conf = &dev->data->dev_conf;
+ 	int err;
+ 
+ 	if (adapter->closed)
+@@ -1360,7 +1385,8 @@ iavf_dev_vlan_filter_set(struct rte_eth_dev *dev, uint16_t vlan_id, int on)
+ 		err = iavf_add_del_vlan_v2(adapter, vlan_id, on);
+ 		if (err)
+ 			return -EIO;
+-		return 0;
++
++		return iavf_disable_vlan_strip_ex(dev, on);
+ 	}
+ 
+ 	if (!(vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_VLAN))
+@@ -1370,23 +1396,7 @@ iavf_dev_vlan_filter_set(struct rte_eth_dev *dev, uint16_t vlan_id, int on)
+ 	if (err)
+ 		return -EIO;
+ 
+-	/* For i40e kernel driver which only supports vlan(v1) VIRTCHNL OP,
+-	 * it will set strip on when setting filter on but dpdk side will not
+-	 * change strip flag. To be consistent with dpdk side, disable strip
+-	 * again.
+-	 *
+-	 * For i40e kernel driver which supports vlan v2, dpdk will invoke vlan v2
+-	 * related function, so it won't go through here.
+-	 */
+-	if (adapter->hw.mac.type == IAVF_MAC_XL710 ||
+-	    adapter->hw.mac.type == IAVF_MAC_X722_VF) {
+-		if (on && !(dev_conf->rxmode.offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP)) {
+-			err = iavf_disable_vlan_strip(adapter);
+-			if (err)
+-				return -EIO;
+-		}
+-	}
+-	return 0;
++	return iavf_disable_vlan_strip_ex(dev, on);
+ }
+ 
+ static void
+-- 
+2.39.5 (Apple Git-154)
 
