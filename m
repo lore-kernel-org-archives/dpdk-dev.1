@@ -2,124 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA8E9C7115D
-	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Jun 2025 10:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75B1BC71155
+	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Jun 2025 10:50:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4779542ED4;
-	Fri, 20 Jun 2025 12:42:48 +0200 (CEST)
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com
- (mail-sn1nam02on2045.outbound.protection.outlook.com [40.107.96.45])
- by mails.dpdk.org (Postfix) with ESMTP id 9796242EC6
- for <dev@dpdk.org>; Fri, 20 Jun 2025 12:42:46 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bg0N8p9HZP2E9TFJ5tc+GRLZjiauyhrVNae1sDFFPl5xrDhRj49fPu7rg39BtAuhs7qu2hWEYYPkcQ8eWLyerrMM/RHtYtG/PSy56I71iNGpZl/NlRrijQbxecLI9njAcm5gTOxVijoB7tO/ecB7fPZUXa9N3C7y+ZqrQ1Nt0W1xqQ8XLEJQBemSS5It5uqLQV4F+rLCIZW3iOkgcx2lWBgu4UxWn51rxtZWqHtB5Z/C6MQB85yngVVb61JwLdE+GSAPtFOQzEmxQlsI06rnTpjNd1GRcLpFfbZPiat9oTadQFKBds+AzqqO8boHYIZ9Hnudw5q4k6tnEPaqVlgUFg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=L66l3zVGIpSO/9oPpeAjX73s4rdOTA0/OVVwMESEoSw=;
- b=VzU7aqpTRpUEaP3QSye0cb0QbBGS5n8GsaaPc6sCvBWtRafO5U3cLhoGtBZm4jfVEkSPAqG3jcUCQsSTmQ3n/Sps7l4IqPPCELAaJny5ZXw8QXaD18QZqxvY3kQKHP1W3sIEZKqZYwqiqC3CM/LFCnXCVG7G5KHR+OUnwntNIYBsrCiKtteTpf+rFAf+adSpcysEtWX743XLYHYVLBu7Xg75FRy6r8pD/coJe3vh8iHUMpc98+9xjPvuLjOBIQEWcLIdt21Pt8jv4+Gns71Oclz+U7/fzPGAayJaKKPRS29t2pmXnzNsy6kt359Kdjgyqp/UJ2g3z2gWYMHgNf+XwQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=L66l3zVGIpSO/9oPpeAjX73s4rdOTA0/OVVwMESEoSw=;
- b=H06frghiNuydzQ38VvpE9ET433aWlMR/A6gMIHWO9tBIqy2TvtCX22qc/g4uFg2K12Vt3XcPI+KKDU/LGJwQeQiZNFNroLQz16WMuoP/kLlWO0MBW7qaHv5UJC95Dlnh9QwAt0mnWknT6TkZD3Y/TG4yc9iDhWVyM5eoIXT19O34EYwFZGyk5H/bA2VWb7dxyPFQkrFEdfojgeUHRbTCdjmEJH7rV/b+DCnXn/rmCTVRcFcJYHBpOphJRssndgSkNayyRMxJxDNBF6lDo5IAXrhw1xF00afHdyNF22n7NUxz613IFlIrtTtHz3eqnN1s0bam5CoXcSU3/PT+gZgDbg==
-Received: from MW4PR04CA0108.namprd04.prod.outlook.com (2603:10b6:303:83::23)
- by SN7PR12MB8603.namprd12.prod.outlook.com (2603:10b6:806:260::15)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.28; Fri, 20 Jun
- 2025 10:42:42 +0000
-Received: from SJ1PEPF00001CE3.namprd05.prod.outlook.com
- (2603:10b6:303:83:cafe::2c) by MW4PR04CA0108.outlook.office365.com
- (2603:10b6:303:83::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8857.26 via Frontend Transport; Fri,
- 20 Jun 2025 10:42:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SJ1PEPF00001CE3.mail.protection.outlook.com (10.167.242.11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8857.21 via Frontend Transport; Fri, 20 Jun 2025 10:42:41 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 20 Jun
- 2025 03:42:29 -0700
-Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 20 Jun
- 2025 03:42:27 -0700
-From: Junfeng Guo <junfengg@nvidia.com>
-To: <dev@dpdk.org>
-CC: <dsosnowski@nvidia.com>, <viacheslavo@nvidia.com>, <bingz@nvidia.com>,
- <orika@nvidia.com>, <suanmingm@nvidia.com>, <matan@nvidia.com>
-Subject: [PATCH 1/2] net/mlx5/hws: recognize IPIP in definer layer
-Date: Fri, 20 Jun 2025 13:42:02 +0300
-Message-ID: <20250620104203.261435-2-junfengg@nvidia.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20250620104203.261435-1-junfengg@nvidia.com>
-References: <20250620104203.261435-1-junfengg@nvidia.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 52BCF42EC7;
+	Fri, 20 Jun 2025 12:50:38 +0200 (CEST)
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com
+ [209.85.160.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 1F55242EC5;
+ Fri, 20 Jun 2025 12:50:37 +0200 (CEST)
+Received: by mail-qt1-f179.google.com with SMTP id
+ d75a77b69052e-4a52d82adcaso23021481cf.0; 
+ Fri, 20 Jun 2025 03:50:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1750416636; x=1751021436; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=xNvd4K7Nr9kTZ+qLzy6SGTRbNoRDRufVJoPOpdJNl0o=;
+ b=OGlSER+8yOzNfIERg5qU9NP+9kunMbwnZFuT0k4CXLkiyTYsnRWoioO54lH6SKwK3U
+ LX10Fjm7wo0/vmiHsNoloB1LFd8SMVn9IA28WNKv8pxpg5a5cg6PyXokEozWM58rCFu5
+ AKmPPrwL8K7KgLN/hY5iQm4yI27cPI4Xwi+7Efv/SPEE6uG72/ipLMSX9xpYcdyzkVHH
+ 2d71bOKhsp2acwiZ07m1WyGsY/hJBJpNLaGWDI5T6EOZJN2EcWfKj/jr0aNqFgDRJaA1
+ wrohpI/FjUjP9YeRp7R5kewpYMcOuLBtjzyYjCgZgbuNexX33B6PMbcNX0Tt0/wiymiF
+ +qGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1750416636; x=1751021436;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=xNvd4K7Nr9kTZ+qLzy6SGTRbNoRDRufVJoPOpdJNl0o=;
+ b=w40Ht5y2DfxIKbVRMsBwaOefZV64YTTi1xM+DBVd561t8+t+bnEcazgnUD6j8I3AjV
+ JeZnCxvSuyfD4WVg8kc5SifGpuZqhY14PK5GEHzVUnDnQEMqx7YodYhsrW1wShs/LPsk
+ M/QLEvIS/mI364VzgR5p4i5+ucn9iaA1D0gdggdZ6zUBpus8NoS69WHJgQwtOSkEBsL8
+ W40nZvoPmSHw/25w4JP7rzUNx5xFPrjY2CcIXKJhSD9FCE/tD5tyz292Az05s2IImJJ5
+ 4yc7Ew7sy9TJ4GQbk3f2/BKiSs/q20VhK9Yk8KxdprbjOJn8XXbIRrtXHD0x1iKqtRlG
+ bxQg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUm9G8OveCKNQ9cLVXsXJPSqy68JEPmhot5aS27m5Pjc9SivUQFuyp4MZ+QFfXCA8GRt5AmXdg=@dpdk.org
+X-Gm-Message-State: AOJu0YxegB2jS4UhO769Aiv8B6nqDyQbWb9BtfMNlOLf+dIrCErxmJz0
+ /caayAAId7qXmUmUluIqsYxlz/kmtyIdptGkyES9yMSgrtrXduftQaNdSe+cBxrZWpiBO034zBI
+ pMYRmmb8rtI1p4X+WvrKa6329Iuks3PY=
+X-Gm-Gg: ASbGncvmloWEUzl208SxCEgSYpaQ8fEprjeEXG00WXjvY/anNd0e4y2wXfxYiJ9Vz9k
+ JD00j0+5EIztYgYsHhOoLG5Iq9+wqwZXpGvACJ56UKVS+bUbBaKvoqUu+4PAYaLkS9LX5NbdnDh
+ cfzEE6FYtxFNWjyEGS2qscuhyxQAxzC+OkmKE4AK0oew==
+X-Google-Smtp-Source: AGHT+IHA6Gh/0Wcmalw/s40rPukjigow4zCUEzZ7XXYtQm87dmJAx2Rjlr6gKUY8nKL8fuONqaaZDag7qaAfTW2drlE=
+X-Received: by 2002:a05:622a:180b:b0:4a6:f416:48c8 with SMTP id
+ d75a77b69052e-4a77a21e7a6mr36424781cf.23.1750416636196; Fri, 20 Jun 2025
+ 03:50:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.126.231.35]
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE3:EE_|SN7PR12MB8603:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9e77215a-68f7-4a3b-3397-08ddafe72eff
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|36860700013|1800799024|82310400026; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?gLDf49LUvNyv/28mVLPap1rTSQmavxPNRvnQ38b6iFIe6D1KKrDKWpQLor+I?=
- =?us-ascii?Q?dDC3X8/5qTYOHdEONC2ljj7bzWt0viP8q7SFCS5mouEDt8MMEwZbX3YBLVln?=
- =?us-ascii?Q?iQZhEV6SYkieSDtvrPcUE6+X/vKR4SY51O8Zq65mCTLWZuLm6BrcXhSZxOLK?=
- =?us-ascii?Q?EVMFAPEnrWhNOH4/eO6VS4uNkuLgRcgLWN/hCgJcDuUJ3OfcuK5V3WQ2jwGA?=
- =?us-ascii?Q?c77SUR6QBkbrjONoVjsHQAVVw6rETX4DaDkYdrdUg+xYHHfXCES06Cv5hae9?=
- =?us-ascii?Q?c+oZKiwdWNc9YxNgYG1OBuDal2ZO8jkkI/snrpJFBlXPEeV4b2VHwyhV3fbH?=
- =?us-ascii?Q?1ZdI9/a6/Zabsp12Q88N6pE9fmPmqWc05/0i6qXXFYtgorCcvRpgCabCLW1v?=
- =?us-ascii?Q?BU3bhvRAelo3YfnpHKtYhB59yQrfLK40TZMvf3C2XyIWOFkONruASQ+gA7cU?=
- =?us-ascii?Q?HxHVeLKBW2DnEPkyGQPvVpTRd1vgyUIVlt2FlBOV8/goVcAzgYQsF+sRScUp?=
- =?us-ascii?Q?6bZhHYnmKqLGwPoKxJfbvENa+0sMi6Pq+cp1bTxyouhtxa7rnX95hsPhhxpL?=
- =?us-ascii?Q?PtM8DTVk0PqGQChxeIOq+JuhuJnKM1ocNrn4+7o99X48XYCSYRtlfmicqejJ?=
- =?us-ascii?Q?qGkFfw6PpdTMqn6jlI0ioWuVwyfxvb9ym1XH1OmWpLdk3OwgOfQDW97VLLDI?=
- =?us-ascii?Q?AI0c6iy9JDKqa6GXVav9PJdSqdTBiiotBzWlSI31caBRfDo9ARArKrxJxf76?=
- =?us-ascii?Q?zvBSpcFCQyktg6mW6TqbhmuU8y6SpKs0Qy4dNLG16ex4q9N0A95wBzFj1dxA?=
- =?us-ascii?Q?aAiuyPxALg7VYj/A4Gbkf1cjegQ98xcMHnrARpHRqgLdQuPPPiDDt+AgjG/P?=
- =?us-ascii?Q?25KglPcHaRX5nXVLOz4DgZ64IrTckZXOVavHlq7iPDfVbl5op3oc55AyGCWG?=
- =?us-ascii?Q?X9lknr6pxtz5KF0beueewRFYOEeC5VSu7EGLAdUKhjmpt0fpSnIZy5lr4Ug1?=
- =?us-ascii?Q?i82pAmtonF5N9LglclcIGamthYtoCu/Qc8LlzjLI7BCm+/m79ota6/Z82BZQ?=
- =?us-ascii?Q?Z0srytDguNZavMpmbfn1zEtdv5Q3wSD6eBBjC5PssHsZJDB7IJC5bs0vNebu?=
- =?us-ascii?Q?1VCL7zAi7aELpYcvwDsgFwLcJfo5JeRpgoysqnukuHqQufxzf9kjBgpUowmR?=
- =?us-ascii?Q?H1iYdKPr8iowM0heoBPO0S+8NkmVbBEsUA6EO+f4MivHHUAuOVZndkNv8Wvy?=
- =?us-ascii?Q?B/kb6H6jaajZqOzY5lR85lTWpuk3FhbeChI1rYshLrwThC4DC967s1y6aXRk?=
- =?us-ascii?Q?2J6foc8TzTrO/9UwOLcFSFvaQ4B59gOcY9Zhawq+4mLXyRiuuMTHoKnpRyPV?=
- =?us-ascii?Q?/GLGDoVymUPlNJSFogdFTgIsjZ4ugtUz6jjGRBHeCc68ky0US04lJfZ3HC0+?=
- =?us-ascii?Q?t89FgWV5q1XNdsH6YJpipmoMFOgE0S555cNf4I8YwPidgD4FRs1MsFQlJb9g?=
- =?us-ascii?Q?cpNuQ6WDo+gUo7/e+rqVQACXkbxupk+nKZQI?=
-X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026); DIR:OUT;
- SFP:1101; 
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2025 10:42:41.6539 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e77215a-68f7-4a3b-3397-08ddafe72eff
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PEPF00001CE3.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8603
+References: <20250619223150.346724-1-pravin.pathak@intel.com>
+In-Reply-To: <20250619223150.346724-1-pravin.pathak@intel.com>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Fri, 20 Jun 2025 16:20:10 +0530
+X-Gm-Features: AX0GCFufEn_LFBc68CzJkjPrIk67nAgbsRpUR-Eme6sNrKq_WUwHZlV3ckuPkQM
+Message-ID: <CALBAE1NY6LbE6FQ_279nFeo2v=LG88f5pjhA+hf3u1cKuUBG7Q@mail.gmail.com>
+Subject: Re: [PATCH v1] event/dlb2: fixes names of DLB2 token pop enums
+To: Pravin Pathak <pravin.pathak@intel.com>
+Cc: dev@dpdk.org, jerinj@marvell.com, mike.ximing.chen@intel.com, 
+ bruce.richardson@intel.com, thomas@monjalon.net, david.marchand@redhat.com, 
+ nipun.gupta@amd.com, chenbox@nvidia.com, tirthendu.sarkar@intel.com, 
+ stable@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -133,49 +78,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Definers are HW objects that are used for matching, rte items are
-translated to definers, each definer holds the fields and bit-masks
-used for HW flow matching.
+On Fri, Jun 20, 2025 at 4:07=E2=80=AFAM Pravin Pathak <pravin.pathak@intel.=
+com> wrote:
+>
+> added RTE_PMD_DLB2_ prefix to dlb2 token pop mode enmus
+> to avoid name comflict. These enums are passed to public
+> API rte_pmd_dlb2_set_token_pop_mode().
+>
+> Fixes: c667583d82f4 ("event/dlb2: add token pop API")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Pravin Pathak <pravin.pathak@intel.com>
 
-This patch recognize IP-in-IP tunnel type in definer layer, including
-the following combinations:
- - IPv4 over IPv4
- - IPv4 over IPv6
- - IPv6 over IPv4
- - IPv6 over IPv6
+Updated the git commit as follows and applied to
+dpdk-next-net-eventdev/for-main. Thanks
 
-Signed-off-by: Junfeng Guo <junfengg@nvidia.com>
-Acked-by: Bing Zhao <bingz@nvidia.com>
----
- drivers/net/mlx5/hws/mlx5dr_definer.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/net/mlx5/hws/mlx5dr_definer.c b/drivers/net/mlx5/hws/mlx5dr_definer.c
-index 9c11d6c2cb..7464d95373 100644
---- a/drivers/net/mlx5/hws/mlx5dr_definer.c
-+++ b/drivers/net/mlx5/hws/mlx5dr_definer.c
-@@ -3322,11 +3322,21 @@ mlx5dr_definer_conv_items_to_hl(struct mlx5dr_context *ctx,
- 				(MLX5_FLOW_LAYER_OUTER_VLAN | MLX5_FLOW_LAYER_OUTER_L2);
- 			break;
- 		case RTE_FLOW_ITEM_TYPE_IPV4:
-+			if (cd.last_item == RTE_FLOW_ITEM_TYPE_IPV4 ||
-+			    cd.last_item == RTE_FLOW_ITEM_TYPE_IPV6) {
-+				cd.tunnel = true;
-+				item_flags |= MLX5_FLOW_LAYER_IPIP;
-+			}
- 			ret = mlx5dr_definer_conv_item_ipv4(&cd, items, i);
- 			item_flags |= cd.tunnel ? MLX5_FLOW_LAYER_INNER_L3_IPV4 :
- 						  MLX5_FLOW_LAYER_OUTER_L3_IPV4;
- 			break;
- 		case RTE_FLOW_ITEM_TYPE_IPV6:
-+			if (cd.last_item == RTE_FLOW_ITEM_TYPE_IPV4 ||
-+			    cd.last_item == RTE_FLOW_ITEM_TYPE_IPV6) {
-+				cd.tunnel = true;
-+				item_flags |= MLX5_FLOW_LAYER_IPIP;
-+			}
- 			ret = mlx5dr_definer_conv_item_ipv6(&cd, items, i);
- 			item_flags |= cd.tunnel ? MLX5_FLOW_LAYER_INNER_L3_IPV6 :
- 						  MLX5_FLOW_LAYER_OUTER_L3_IPV6;
--- 
-2.45.0
+    event/dlb2: fix public symbol name space
 
+    Added RTE_PMD_DLB2_ prefix to dlb2 token pop mode enums
+    to avoid namespace conflict. These enums are passed to public
+    API rte_pmd_dlb2_set_token_pop_mode().
+
+    Fixes: c667583d82f4 ("event/dlb2: add token pop API")
+    Cc: stable@dpdk.org
+
+    Signed-off-by: Pravin Pathak <pravin.pathak@intel.com>
