@@ -2,67 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75B1BC71155
-	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Jun 2025 10:50:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE9E6C71155
+	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Jun 2025 10:54:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 52BCF42EC7;
-	Fri, 20 Jun 2025 12:50:38 +0200 (CEST)
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com
- [209.85.160.179])
- by mails.dpdk.org (Postfix) with ESMTP id 1F55242EC5;
- Fri, 20 Jun 2025 12:50:37 +0200 (CEST)
-Received: by mail-qt1-f179.google.com with SMTP id
- d75a77b69052e-4a52d82adcaso23021481cf.0; 
- Fri, 20 Jun 2025 03:50:37 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B550A42EC6;
+	Fri, 20 Jun 2025 12:54:14 +0200 (CEST)
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com
+ [209.85.222.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 20FAB42EC5
+ for <dev@dpdk.org>; Fri, 20 Jun 2025 12:54:13 +0200 (CEST)
+Received: by mail-qk1-f169.google.com with SMTP id
+ af79cd13be357-7c56a3def84so176543085a.0
+ for <dev@dpdk.org>; Fri, 20 Jun 2025 03:54:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1750416636; x=1751021436; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1750416852; x=1751021652; darn=dpdk.org;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:from:to:cc:subject:date
  :message-id:reply-to;
- bh=xNvd4K7Nr9kTZ+qLzy6SGTRbNoRDRufVJoPOpdJNl0o=;
- b=OGlSER+8yOzNfIERg5qU9NP+9kunMbwnZFuT0k4CXLkiyTYsnRWoioO54lH6SKwK3U
- LX10Fjm7wo0/vmiHsNoloB1LFd8SMVn9IA28WNKv8pxpg5a5cg6PyXokEozWM58rCFu5
- AKmPPrwL8K7KgLN/hY5iQm4yI27cPI4Xwi+7Efv/SPEE6uG72/ipLMSX9xpYcdyzkVHH
- 2d71bOKhsp2acwiZ07m1WyGsY/hJBJpNLaGWDI5T6EOZJN2EcWfKj/jr0aNqFgDRJaA1
- wrohpI/FjUjP9YeRp7R5kewpYMcOuLBtjzyYjCgZgbuNexX33B6PMbcNX0Tt0/wiymiF
- +qGQ==
+ bh=Rcf4qnzVgcXe+QIsj1LiFUeYvcUWM1ia7Tm5pBxlY/A=;
+ b=WXCDDrMcEw+Zoi7oNbKbGzjgvaRVi8tj3/Op+ydWVHE1lUwdfgsMuevjmZusANGkfF
+ lZAsXTpiSWSAIKNfTd7mMkeEiE2W6X9pYJNSoPnfoM+0CxV+DrGKSdnTutuRDj94j8aN
+ QI0ObCh9aKmO0Y9Sojkz97EcsHNv46xZ9x+0kJ8fnDrngPkMpUNXEdlzdbEJrVR0xgwZ
+ 9T4slcRBf1Z/MsmtAHF4z+cNqgLi3IFl4EVpLmG2/GTtNf2aUApag4bhvHk/wBazRsLT
+ 7z/EH3+qEfzbcpfTM8j+4O3LY1I9w7Mh2c3F94F6cn22ZZe0qmfrZD3S3hlSE4MTd9JR
+ d3Gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1750416636; x=1751021436;
+ d=1e100.net; s=20230601; t=1750416852; x=1751021652;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=xNvd4K7Nr9kTZ+qLzy6SGTRbNoRDRufVJoPOpdJNl0o=;
- b=w40Ht5y2DfxIKbVRMsBwaOefZV64YTTi1xM+DBVd561t8+t+bnEcazgnUD6j8I3AjV
- JeZnCxvSuyfD4WVg8kc5SifGpuZqhY14PK5GEHzVUnDnQEMqx7YodYhsrW1wShs/LPsk
- M/QLEvIS/mI364VzgR5p4i5+ucn9iaA1D0gdggdZ6zUBpus8NoS69WHJgQwtOSkEBsL8
- W40nZvoPmSHw/25w4JP7rzUNx5xFPrjY2CcIXKJhSD9FCE/tD5tyz292Az05s2IImJJ5
- 4yc7Ew7sy9TJ4GQbk3f2/BKiSs/q20VhK9Yk8KxdprbjOJn8XXbIRrtXHD0x1iKqtRlG
- bxQg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUm9G8OveCKNQ9cLVXsXJPSqy68JEPmhot5aS27m5Pjc9SivUQFuyp4MZ+QFfXCA8GRt5AmXdg=@dpdk.org
-X-Gm-Message-State: AOJu0YxegB2jS4UhO769Aiv8B6nqDyQbWb9BtfMNlOLf+dIrCErxmJz0
- /caayAAId7qXmUmUluIqsYxlz/kmtyIdptGkyES9yMSgrtrXduftQaNdSe+cBxrZWpiBO034zBI
- pMYRmmb8rtI1p4X+WvrKa6329Iuks3PY=
-X-Gm-Gg: ASbGncvmloWEUzl208SxCEgSYpaQ8fEprjeEXG00WXjvY/anNd0e4y2wXfxYiJ9Vz9k
- JD00j0+5EIztYgYsHhOoLG5Iq9+wqwZXpGvACJ56UKVS+bUbBaKvoqUu+4PAYaLkS9LX5NbdnDh
- cfzEE6FYtxFNWjyEGS2qscuhyxQAxzC+OkmKE4AK0oew==
-X-Google-Smtp-Source: AGHT+IHA6Gh/0Wcmalw/s40rPukjigow4zCUEzZ7XXYtQm87dmJAx2Rjlr6gKUY8nKL8fuONqaaZDag7qaAfTW2drlE=
-X-Received: by 2002:a05:622a:180b:b0:4a6:f416:48c8 with SMTP id
- d75a77b69052e-4a77a21e7a6mr36424781cf.23.1750416636196; Fri, 20 Jun 2025
- 03:50:36 -0700 (PDT)
+ bh=Rcf4qnzVgcXe+QIsj1LiFUeYvcUWM1ia7Tm5pBxlY/A=;
+ b=oor2V61Yd1k86Ub+rXSIS8wGfW4NKc8H4Zh43Cp0vYPe2kZ10SIPuTgniwF2qOoSe+
+ QLl/8vAGSAIywAusHOLWDYQvJ82YFixCYrdk7Ou3xnHV84s1ZvDy6gplm7De3XWPeMsw
+ QzN9Vm37op+7BQ0HQn5T8aAyzFpXjOJ9Pzk9W25KyUZbmxDG3qTfS2ImhNt+IztDPI6F
+ SxxO+Ve0PTLV8ji/DHQsxVdUjrsI8Do5+HrxcKD8UrgHmEXCrAXfUf33wBNN59gy0Wql
+ 9rfYQxljx0DmHtNX7EUxOBB9olaby5m/mVKpzfP1iCwatLZPhEjnI5CBklmR73HtK6Gk
+ 4vGA==
+X-Gm-Message-State: AOJu0YxCJqdsxQOOgdfljL++8fwcWugvZQx0i9D34mancPOkJvSGRapA
+ lY/vFEVuPS/fkQ8u5acLoQaR0I/FwUkI4uU7KINgkBrXUeqGDCddPDsI2jl5pDlEmvovSQ3AsMb
+ pCOf+k/HydyyShHPa/0IotFHPrMraPGk=
+X-Gm-Gg: ASbGnctlj0J/8G9PITuYc9LKjKKXeGufPgR7CMM/mqXG/XsTsHGMRy1Y60Whz4uF1oq
+ SVcosSdbG7K2O0WSQMUEycGVdwnszpajIxVX7EL6wSyA8Bp0tFLOOM0OIt8W++5jYLsXPRkwDWA
+ aqQto0WkiP/NNKj1tNls1fFwdif6sKSPDUf8nYHV9VVA==
+X-Google-Smtp-Source: AGHT+IG55Dgc9cfkVSapsOSSjKBc2yZcwXKuu84xSaTindYaBUJ+0jkNiVdQmlBDr1dAGwI5TEBfhALq3QhH3MQVJwI=
+X-Received: by 2002:a05:620a:45a6:b0:7ca:f349:4265 with SMTP id
+ af79cd13be357-7d3f98bfd6dmr301180685a.4.1750416852276; Fri, 20 Jun 2025
+ 03:54:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <20250619223150.346724-1-pravin.pathak@intel.com>
-In-Reply-To: <20250619223150.346724-1-pravin.pathak@intel.com>
+References: <20250620050950.2548925-1-rbhansali@marvell.com>
+ <20250620050950.2548925-2-rbhansali@marvell.com>
+In-Reply-To: <20250620050950.2548925-2-rbhansali@marvell.com>
 From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Fri, 20 Jun 2025 16:20:10 +0530
-X-Gm-Features: AX0GCFufEn_LFBc68CzJkjPrIk67nAgbsRpUR-Eme6sNrKq_WUwHZlV3ckuPkQM
-Message-ID: <CALBAE1NY6LbE6FQ_279nFeo2v=LG88f5pjhA+hf3u1cKuUBG7Q@mail.gmail.com>
-Subject: Re: [PATCH v1] event/dlb2: fixes names of DLB2 token pop enums
-To: Pravin Pathak <pravin.pathak@intel.com>
-Cc: dev@dpdk.org, jerinj@marvell.com, mike.ximing.chen@intel.com, 
- bruce.richardson@intel.com, thomas@monjalon.net, david.marchand@redhat.com, 
- nipun.gupta@amd.com, chenbox@nvidia.com, tirthendu.sarkar@intel.com, 
- stable@dpdk.org
+Date: Fri, 20 Jun 2025 16:23:46 +0530
+X-Gm-Features: AX0GCFstVIzhjFvC9Ad7yIwkku3a_ZIM51F5f7_9WuREBFkLaH6JMoIOlHjGC-E
+Message-ID: <CALBAE1N1mSNT55EGG1xd62ac5XJC5+2_H9b3TLVGt672b7cMgw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] common/cnxk: add null pointer checks
+To: Rahul Bhansali <rbhansali@marvell.com>
+Cc: dev@dpdk.org, Nithin Dabilpuram <ndabilpuram@marvell.com>, 
+ Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, 
+ Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>,
+ jerinj@marvell.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
@@ -78,29 +77,11 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Jun 20, 2025 at 4:07=E2=80=AFAM Pravin Pathak <pravin.pathak@intel.=
+On Fri, Jun 20, 2025 at 10:57=E2=80=AFAM Rahul Bhansali <rbhansali@marvell.=
 com> wrote:
 >
-> added RTE_PMD_DLB2_ prefix to dlb2 token pop mode enmus
-> to avoid name comflict. These enums are passed to public
-> API rte_pmd_dlb2_set_token_pop_mode().
+> Adds null pointer check before executing CPT instruction.
 >
-> Fixes: c667583d82f4 ("event/dlb2: add token pop API")
-> Cc: stable@dpdk.org
->
-> Signed-off-by: Pravin Pathak <pravin.pathak@intel.com>
+> Signed-off-by: Rahul Bhansali <rbhansali@marvell.com>
 
-Updated the git commit as follows and applied to
-dpdk-next-net-eventdev/for-main. Thanks
-
-
-    event/dlb2: fix public symbol name space
-
-    Added RTE_PMD_DLB2_ prefix to dlb2 token pop mode enums
-    to avoid namespace conflict. These enums are passed to public
-    API rte_pmd_dlb2_set_token_pop_mode().
-
-    Fixes: c667583d82f4 ("event/dlb2: add token pop API")
-    Cc: stable@dpdk.org
-
-    Signed-off-by: Pravin Pathak <pravin.pathak@intel.com>
+Add Fixes tag and start the commit with common/cnxk: fix ...
