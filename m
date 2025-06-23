@@ -2,73 +2,125 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB65EC77B7C
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Jun 2025 18:11:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC90BC7115B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Jun 2025 18:35:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B9D3D402E6;
-	Mon, 23 Jun 2025 20:11:51 +0200 (CEST)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
- [209.85.214.182])
- by mails.dpdk.org (Postfix) with ESMTP id BE7A940151;
- Mon, 23 Jun 2025 20:11:50 +0200 (CEST)
-Received: by mail-pl1-f182.google.com with SMTP id
- d9443c01a7336-236192f8770so32186045ad.0; 
- Mon, 23 Jun 2025 11:11:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1750702309; x=1751307109; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=I9wHh8SWhhg7G3TTsziPr8cXRKv006//WVvXbWyqBDM=;
- b=AYAO+zFutIWdHCIB7e983ByIAjcr1c5fe1VYHYPnZHAghq9+F+a3tSJ6kJ1m2LjyG9
- QuF7tNZ/cHdb7SfcA2cuSNs8tDhdIfTH4KLCa6KItwpN+dBrzlktgHtM2vCzlZmVAaVP
- QZhWWDTk1s+z7J+fSRmKiVkcr1BZLL6UOqhFiUcCpfhK0h9z7nyQ12Ni09hYAT38TyVW
- 31CaU5o7Zvic6y2If3Wk49LGMloLbQ0GGD7xtZLD4w0OR7Oi3kWZFCbjDOh1wW6jQfhV
- h9GKf9tXjRtLovoJk7UtmEGVyCR7N7T/fjsOlNMzTTKvfgaF3jzkd/8oTpWxMFWFh5fH
- ZXng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1750702309; x=1751307109;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=I9wHh8SWhhg7G3TTsziPr8cXRKv006//WVvXbWyqBDM=;
- b=b8zsN16+kznqe2x7jilr3S05Fmzv8u2O1K1ooMO9uzoukhjuP7VxircK9rJ4brD3VS
- 3FHtEa0FV1iAsZDHWUhKW9Q2aNaIVUkAgKzMY7U09VHlZxfBdbSxdR8kM2ynElXBz0KJ
- 5AJlG470j/24vf71kOSk6Z/4Ksi+fRx2U+OLu3IkQIaaRqD2cGvxfR9d6MBMJ708v+as
- 7olFaz0sUup3+2fxJOaA4+UTNOgUlIn/OKo3ZfdfbPYN4a4/P+VMftuovKlJbtQ0+DCD
- eu+iRv6uXZEw5ZkzigWc5qKJ6Mbozo8t/SlvXr3ZzAwjvZ+SZw7fHbUQeMBjeh/yUnAf
- Jd9Q==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUJS54fEF1VO0b5DfmdxEIVZ6uGnhagwUDJGnxQRZiOMkUiqV+1n//DJ4KiExHztmbpz4Y+YuA=@dpdk.org
-X-Gm-Message-State: AOJu0YyykZjjmPovaH7U39KTncm56HdZkbY2EzpeccLR5L1uxoB9xTmB
- QEK45ZCZIAQCRwqXGV1p/8BuKPbLjp+Nm7n5RNBAmrm6IFsDWb60nKt31dy7XA==
-X-Gm-Gg: ASbGncuUHC964M77JjQo+9OWKWnU5/w0IRnorF1meWDMRf1AvOiVreJNEiPA08egjx0
- vmkwePJ1V9GqKlUbQsuXJNgn3JicmnM4HKq8IX0s/96sd8M9tc0s4h3evSPHXm4Za9WhdLy54Fs
- pEhZlgCbdgvhERlatc/XtUTMMECPKPzdtH5FR9NY0JY1RF/DQT/ECYwdmID6C4EtR1KiWUzab/+
- GC557zNQjSZbNF7DRyEVGyDC64di6v1rr2bFWdcFqh8Elr2RdVFNUsa5sGDwYj+naxniuQbUXsx
- 6SFe7Q6KdrZ/ut27ramNvip8uW2FI4qVikuke/cMOAVlyXrH3tdzrj0WTyUuIye85Q4LarI6OpC
- 3Vz0noI6ggNV1YeHN0rXQreMi0RJFwuMpQCmB68o=
-X-Google-Smtp-Source: AGHT+IE0x4dE1AOdw+DdHLiVVmh4A7c9HRi3MJXviBeIOxWf7okbVuBipEFPjoZrAjwYCB6+RcjuRQ==
-X-Received: by 2002:a17:903:244d:b0:234:11e2:f41 with SMTP id
- d9443c01a7336-238024491aemr7161445ad.6.1750702309432; 
- Mon, 23 Jun 2025 11:11:49 -0700 (PDT)
-Received: from localhost.localdomain ([192.19.252.250])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-237eec29a77sm48544105ad.165.2025.06.23.11.11.47
- (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Mon, 23 Jun 2025 11:11:48 -0700 (PDT)
-From: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
-To: dev@dpdk.org
-Cc: amiyaranjan.mohakud@gmail.com,
-	stable@dpdk.org
-Subject: [PATCH v2] net/iavf: fix VLAN offload strip flag
-Date: Mon, 23 Jun 2025 23:41:36 +0530
-Message-Id: <20250623181136.48239-1-amiyaranjan.mohakud@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250621015624.35284-1-amiyaranjan.mohakud@gmail.com>
-References: <20250621015624.35284-1-amiyaranjan.mohakud@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id CAA6540613;
+	Mon, 23 Jun 2025 20:35:32 +0200 (CEST)
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com
+ (mail-dm6nam04on2049.outbound.protection.outlook.com [40.107.102.49])
+ by mails.dpdk.org (Postfix) with ESMTP id 476AF40151
+ for <dev@dpdk.org>; Mon, 23 Jun 2025 20:35:31 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=O0hV/poNFYM+gJTTevAO8RRVsX4GPTIb9iQRt6wvBviAmJrANYlJaiCX47xnRiPZLM8YhBetb9b7jAEBF/zTH9GK94LNJTXIiIm+eNCNEJpDhUeqaZy/ZnduZRQ84xYfvY6WCEgiGviRy3FESo+B48bhWte9Xgd9bMSQm+ei8fX3EPcCBNSEb6YXVMPuHJmlQ0Jjm5QY1LG7WVioEJNvtrjUcF/Q4qLQPLg/+CHjD0fxOlufB8j7c1ac3wgW6t9xpjdFpXMq00l20tcb1G3u0DxigQnMonZtHuHjW/AbQIzwe2ThmpNY+/ABMLVz1ySTDQCba9REjBEmXydywrVr5A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ex50KQBXlmnnc2kzEodJLaIDW/QdptHd6sF5wxkZZYo=;
+ b=I7oC3OIfA+tRWM52Y5hG9KeV3HgtagoKXgVXss2J+NOv1kJIw5E8oJvpcAKbXZWBTTH24F51T7bu5WbhbPpUnNGTYq2CXU2wslxndSLdSYIGpSEFsa/FPvweQe/LtfP79cQjeq0XYX+Q8CRVuTJpb1mD9F5dxXwkAv6+B75/nc3A/rVzJV26pvh1sVRRDMZ5uDyGyXrGMSrcQa1HgQ2TN8mq8zfldI9ucxF3yl1DqXjLDoDoxQTjMwF8gSVg2qrlEn0xsnvaIlx++THCaVvW/kyROqkBBl/EiOHFfkfxOZ44nVkL+1wVt64ySX8TCrNS4aHOiTVfHprYR/QdjCX1XQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ex50KQBXlmnnc2kzEodJLaIDW/QdptHd6sF5wxkZZYo=;
+ b=cN6QfHA2h577N/X1VDR+FRLsmc9cw/7bBI9h/dlEtxfzdnUMGpfmklncrhsGoroxY7ohotePMc5ywkcAwDaubFILHEi83h5JShPr1OAyCTr2l8qja6B3PZJntSLG8PMHCguOiPuxJt3J5z27WQozheMrSdSjvRPHGskRHdoePsn6Acls2HRi/bPdQzl9kE/hb+G3cLVhQ6LADaCPhUDWmK4dE/oKhh/WbPQUIE6DbWSV+sbcoyZ5OnfjrJW7SSWE81a5IuEvNywASnhpKmnR1D3Ff7ToIlaF1JdEyLiHJCvjRojRguAK1TgXb5QT+S5WQKkiWxwJADx+cgpMT12uyQ==
+Received: from CH0PR04CA0029.namprd04.prod.outlook.com (2603:10b6:610:76::34)
+ by SA1PR12MB7318.namprd12.prod.outlook.com (2603:10b6:806:2b3::18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.28; Mon, 23 Jun
+ 2025 18:35:26 +0000
+Received: from CH2PEPF0000013D.namprd02.prod.outlook.com
+ (2603:10b6:610:76:cafe::74) by CH0PR04CA0029.outlook.office365.com
+ (2603:10b6:610:76::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8857.29 via Frontend Transport; Mon,
+ 23 Jun 2025 18:35:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CH2PEPF0000013D.mail.protection.outlook.com (10.167.244.69) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8880.14 via Frontend Transport; Mon, 23 Jun 2025 18:35:25 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 23 Jun
+ 2025 11:35:12 -0700
+Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 23 Jun
+ 2025 11:35:10 -0700
+From: Bing Zhao <bingz@nvidia.com>
+To: <viacheslavo@nvidia.com>, <matan@nvidia.com>
+CC: <dev@dpdk.org>, <thomas@monjalon.net>, <dsosnowski@nvidia.com>,
+ <suanmingm@nvidia.com>, <rasland@nvidia.com>
+Subject: [PATCH v2 0/3] Use consecutive Tx queues' memory
+Date: Mon, 23 Jun 2025 21:34:53 +0300
+Message-ID: <20250623183456.130666-1-bingz@nvidia.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250623173524.128125-1:x-bingz@nvidia.com>
+References: <20250623173524.128125-1:x-bingz@nvidia.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.230.35]
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF0000013D:EE_|SA1PR12MB7318:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4b268d76-3eee-40cb-c631-08ddb284b8a9
+X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|36860700013|82310400026|376014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?cUhojEkakvdXyteXsCk7/K+ZVNziqlQ4Ucvs8hv/gWAybV2Rb38wtRssMjYQ?=
+ =?us-ascii?Q?BE7VidcKmKZjSWE5mAZw+xXIFuKU2w9hRQlTin9k1a57iSSNuLiIg7rMJGe5?=
+ =?us-ascii?Q?5XlGaW5Ozqp2dzvg9hl04TXu35IhCAHIsp/t10Hd2jiWTwpL0QPt+Ne5L1vj?=
+ =?us-ascii?Q?VD6wEr+l2/Nec/X0hHc/lhuTkIzbZLlm3aOe5Z76X+Bb90SqG4kKyMSd1w6W?=
+ =?us-ascii?Q?+XGMvdJATv/Wh0L03aJ2DeWRu0f2nfLEYqwplMT81jG0ztRwt4/vs1HIHsHc?=
+ =?us-ascii?Q?eIPQwWcsKIQi9sd/EfwvQqSzE+FsZMsf9YI7vFVMoZGssifoVG28BCnVNNLf?=
+ =?us-ascii?Q?MF02PYN10dpErgOTtSOWkkX0a7ra/KSb0sY+VfogzlMgQQNEJ3Ev1X/X5mlD?=
+ =?us-ascii?Q?krTpz842PKlDazaQFJIlllCV+cRIamb7mTbqqfkJvfu9Ht2tHN/7WOv7RA85?=
+ =?us-ascii?Q?rBBraHWZvjdaODjm0Bbfd5BaGYnQ+/+mPhqPqZl+8r967TRI6bgI4Y4dmqYm?=
+ =?us-ascii?Q?stJqNASD5X6/HjkwrQHfM7Zt3xLe4X5zFfp/IfJGdxIktOKQYgS4X32Ln8yZ?=
+ =?us-ascii?Q?CxCc82nQtF7BCnsjCeoXj79ddgYKxY7XvYPksg9wZSJ2wo9LUEp+qlDxIAD9?=
+ =?us-ascii?Q?r0rqsfCxmDfxrvhTPoqRbO1Ta71GXQ00wEBPLKFo36ncsKffGlKCtZV3834g?=
+ =?us-ascii?Q?11LmyWCmVwMOE7x7gMK85FRjJ/WkboDJ/+x6+XNUKNIwnVygTZI1+bdj1DEW?=
+ =?us-ascii?Q?xcsZivChDlnAxFQDgXF5h/s5AHgkN1x77XbJiV+y21U2oeuIkloDlhg2IHYP?=
+ =?us-ascii?Q?sj1xyT+WsT4O+iPOQPKnAIyAp1rRt1rDnQFphwuB0Tqra0AClU/2YSccInTr?=
+ =?us-ascii?Q?zS3I88sBurMO6np127+bFwHmgXwY7qFodfRbo8fLPqIuqrOrHwrPtxKVk9Df?=
+ =?us-ascii?Q?kjlFaMjfueKda4XNJxWnlaAVMEddRtPcnJ+u6nzDA2cGB5Y1hFRiKQ1EMhIm?=
+ =?us-ascii?Q?xUh5mBOSGK9pTbIqqkIq+cUoU8QoLq7gnQtD6bxummeR8SgmY2TwWd7fnIMI?=
+ =?us-ascii?Q?/2rkjCttpCXX5iTtYFzr8Aqih9jmZJQwZXGNz79m09XfpKpyAhwRbSzR8x2T?=
+ =?us-ascii?Q?PEUHbWEBAsrQAItzaZYgNpNLHWWPfi2rlJ1xY2s6NBayTlZW9fmFHMkb+U4T?=
+ =?us-ascii?Q?yvzHhHNkT7XZOo02mkvq+RCXzgGDiwzRT9rkLqY5uoIUZDDDmTipbPUqdtog?=
+ =?us-ascii?Q?M/fL7kRFoInuL5VGx1fMrFUVi90tFEea7p6NN5nI4+eaw7N0DOgEjraMx+OH?=
+ =?us-ascii?Q?JcVJoHkgAUaJb9H+axzC9httlSkEz3qlJj1p4gj8pfi5UZ1UpSpwV3pmrt7T?=
+ =?us-ascii?Q?igJs6NJK3fukl76fHbxaQBD6hTclryEXb7WhxbJLpYLwj0QpFZkeDpOzcbV8?=
+ =?us-ascii?Q?35qq9lFn+dB/VU+YUGNwAEBWdAV5ST5ReFuhY7lBQWGlHTupBFMT8IbT3bsi?=
+ =?us-ascii?Q?ViiroBCHMBFUUxmXmsL8z2iL/EAlzE4tiDTA?=
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jun 2025 18:35:25.8721 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b268d76-3eee-40cb-c631-08ddb284b8a9
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CH2PEPF0000013D.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7318
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,101 +134,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-For i40e kernel drivers which support either vlan(v1) or vlan(v2)
-VIRTCHNL OP,it will set strip on when setting filter on. But dpdk
-side will not change strip flag. To be consistent with dpdk side,
-explicitly disable strip again.
+This patchset will move all the mlx5 Tx queues memory to a
+consecutive memory area. All the WQEBBs will be allocated based
+on the offset of this memory area.
 
-Bugzilla ID:1725
-Cc: stable@dpdk.org
-
-v2:
-- Fixed indentation in commit message
-
-Signed-off-by: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
 ---
- drivers/net/intel/iavf/iavf_ethdev.c | 48 +++++++++++++++++-----------
- 1 file changed, 29 insertions(+), 19 deletions(-)
+v2:
+ 1. add a new fix for legacy code of WQE calculation
+ 2. fix the style
+---
 
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index b3dacbef84..f93e7bf9ae 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -1378,13 +1378,38 @@ iavf_dev_del_mac_addr(struct rte_eth_dev *dev, uint32_t index)
- 	vf->mac_num--;
- }
- 
-+static int
-+iavf_disable_vlan_strip_ex(struct rte_eth_dev *dev, int on)
-+{
-+	/* For i40e kernel drivers which supports both vlan(v1 & v2) VIRTCHNL OP,
-+	 * it will set strip on when setting filter on but dpdk side will not
-+	 * change strip flag. To be consistent with dpdk side, explicitly disable
-+	 * strip again.
-+	 *
-+	 */
-+	struct iavf_adapter *adapter =
-+		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
-+	struct rte_eth_conf *dev_conf = &dev->data->dev_conf;
-+	int err;
-+
-+	if (adapter->hw.mac.type == IAVF_MAC_XL710 ||
-+	    adapter->hw.mac.type == IAVF_MAC_VF ||
-+	    adapter->hw.mac.type == IAVF_MAC_X722_VF) {
-+		if (on && !(dev_conf->rxmode.offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP)) {
-+			err = iavf_disable_vlan_strip(adapter);
-+			if (err)
-+				return -EIO;
-+		}
-+	}
-+	return 0;
-+}
-+
- static int
- iavf_dev_vlan_filter_set(struct rte_eth_dev *dev, uint16_t vlan_id, int on)
- {
- 	struct iavf_adapter *adapter =
- 		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
--	struct rte_eth_conf *dev_conf = &dev->data->dev_conf;
- 	int err;
- 
- 	if (adapter->closed)
-@@ -1394,7 +1419,8 @@ iavf_dev_vlan_filter_set(struct rte_eth_dev *dev, uint16_t vlan_id, int on)
- 		err = iavf_add_del_vlan_v2(adapter, vlan_id, on);
- 		if (err)
- 			return -EIO;
--		return 0;
-+
-+		return iavf_disable_vlan_strip_ex(dev, on);
- 	}
- 
- 	if (!(vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_VLAN))
-@@ -1404,23 +1430,7 @@ iavf_dev_vlan_filter_set(struct rte_eth_dev *dev, uint16_t vlan_id, int on)
- 	if (err)
- 		return -EIO;
- 
--	/* For i40e kernel driver which only supports vlan(v1) VIRTCHNL OP,
--	 * it will set strip on when setting filter on but dpdk side will not
--	 * change strip flag. To be consistent with dpdk side, disable strip
--	 * again.
--	 *
--	 * For i40e kernel driver which supports vlan v2, dpdk will invoke vlan v2
--	 * related function, so it won't go through here.
--	 */
--	if (adapter->hw.mac.type == IAVF_MAC_XL710 ||
--	    adapter->hw.mac.type == IAVF_MAC_X722_VF) {
--		if (on && !(dev_conf->rxmode.offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP)) {
--			err = iavf_disable_vlan_strip(adapter);
--			if (err)
--				return -EIO;
--		}
--	}
--	return 0;
-+	return iavf_disable_vlan_strip_ex(dev, on);
- }
- 
- static void
+
+Bing Zhao (3):
+  net/mlx5: fix the WQE size calculation for Tx queue
+  net/mlx5: add new devarg for Tx queue consecutive memory
+  net/mlx5: use consecutive memory for all Tx queues
+
+ drivers/common/mlx5/mlx5_common.h      |  2 +
+ drivers/common/mlx5/mlx5_common_devx.c | 77 +++++++++++++++++---------
+ drivers/common/mlx5/mlx5_common_devx.h |  2 +-
+ drivers/common/mlx5/mlx5_devx_cmds.h   |  5 ++
+ drivers/net/mlx5/hws/mlx5dr_internal.h |  1 -
+ drivers/net/mlx5/mlx5.c                | 14 +++++
+ drivers/net/mlx5/mlx5.h                |  7 +++
+ drivers/net/mlx5/mlx5_devx.c           | 34 ++++++++++--
+ drivers/net/mlx5/mlx5_flow_aso.c       |  2 +-
+ drivers/net/mlx5/mlx5_trigger.c        | 56 +++++++++++++++++++
+ drivers/net/mlx5/mlx5_tx.h             |  2 +
+ drivers/net/mlx5/mlx5_txpp.c           |  2 +-
+ drivers/net/mlx5/mlx5_txq.c            | 30 ++++++++--
+ 13 files changed, 194 insertions(+), 40 deletions(-)
+
 -- 
-2.39.5 (Apple Git-154)
+2.34.1
 
