@@ -2,54 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76562C7115B
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Jun 2025 13:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EFFEC77B7F
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Jun 2025 13:53:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5242140658;
-	Mon, 23 Jun 2025 15:15:17 +0200 (CEST)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
- by mails.dpdk.org (Postfix) with ESMTP id 0805340151
- for <dev@dpdk.org>; Mon, 23 Jun 2025 15:15:14 +0200 (CEST)
-Received: from loongson.cn (unknown [10.2.10.34])
- by gateway (Coremail) with SMTP id _____8CxG6xgU1loXaUbAQ--.21443S3;
- Mon, 23 Jun 2025 21:15:13 +0800 (CST)
-Received: from [10.2.10.34] (unknown [10.2.10.34])
- by front1 (Coremail) with SMTP id qMiowMCx7MRfU1losmgnAQ--.53253S3;
- Mon, 23 Jun 2025 21:15:11 +0800 (CST)
-Subject: Re: [PATCH v2 2/2] common/cnxk: fix null pointer checks
-From: zhoumin <zhoumin@loongson.cn>
+	by mails.dpdk.org (Postfix) with ESMTP id 993A140648;
+	Mon, 23 Jun 2025 15:52:59 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 43F7D40151
+ for <dev@dpdk.org>; Mon, 23 Jun 2025 15:52:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1750686777;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=jxJ8G3DEFEdXyN2Qk1FcBJxUzsKJWaqMh4/fmOqkEAo=;
+ b=Cn2NlSUBKYPeoO3hC/4G+6VoPnytBNdHZ8bUOP4NISBdBzF8A3ZsApcvGn1g3mXrA8O406
+ CdpGyshQNrwRQmk3JgGVTgDj4z51EOEZqmVrqLCYMhveoY0ws9CxMvc/NSOm6gIsPPa42i
+ pUiOlfN8VbA7VXuUV67yC57F9itUobQ=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-376-rRr10GaRMACkX0uydIvjtQ-1; Mon,
+ 23 Jun 2025 09:52:54 -0400
+X-MC-Unique: rRr10GaRMACkX0uydIvjtQ-1
+X-Mimecast-MFC-AGG-ID: rRr10GaRMACkX0uydIvjtQ_1750686773
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id BCEAA18011DF; Mon, 23 Jun 2025 13:52:53 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.44.32.240])
+ by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 5791A1803AFF; Mon, 23 Jun 2025 13:52:52 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-References: <20250620050950.2548925-1-rbhansali@marvell.com>
- <20250623044907.2906896-1-rbhansali@marvell.com>
- <20250623044907.2906896-2-rbhansali@marvell.com>
- <781ca7b3-24b4-937a-d706-2b3199f5173d@loongson.cn>
- <ea0fb4f4-c900-a31d-4c46-d8bb40d5617f@loongson.cn>
-Message-ID: <538fa8d5-ceb9-77a7-91ef-df7df178e78f@loongson.cn>
-Date: Mon, 23 Jun 2025 21:15:11 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+Cc: Aaron Conole <aconole@redhat.com>,
+ Michael Santana <maicolgabriel@hotmail.com>
+Subject: [PATCH v2 01/10] ci: save ccache on failure
+Date: Mon, 23 Jun 2025 15:52:31 +0200
+Message-ID: <20250623135242.461965-2-david.marchand@redhat.com>
+In-Reply-To: <20250623135242.461965-1-david.marchand@redhat.com>
+References: <20250619071037.37325-1-david.marchand@redhat.com>
+ <20250623135242.461965-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <ea0fb4f4-c900-a31d-4c46-d8bb40d5617f@loongson.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-CM-TRANSID: qMiowMCx7MRfU1losmgnAQ--.53253S3
-X-CM-SenderInfo: 52kr3ztlq6z05rqj20fqof0/1tbiAQECAWhYh2wO3gADsL
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
- ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
- BjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
- xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
- j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxV
- AFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAF
- wI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
- Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE
- 14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
- AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
- rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUJVWUXw
- CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
- 67AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
- 0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUrNtx
- DUUUU
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 6lA2s675AZSV3Uh5QFLXcxQ4z-riBJbOmUcoSIbUOt8_1750686773
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -63,5 +68,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Recheck-request: rebase=next-net-mrvl-for-main, loongarch-compilation
+When troubleshooting unit test failures and repeating jobs in GHA,
+the absence of ccache makes the whole process way slower.
+
+Signed-off-by: David Marchand <david.marchand@redhat.com>
+---
+ .github/workflows/build.yml | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
+index e5f17ef6ac..6c4bc664d0 100644
+--- a/.github/workflows/build.yml
++++ b/.github/workflows/build.yml
+@@ -164,6 +164,12 @@ jobs:
+         chmod o-w $HOME
+     - name: Build and test
+       run: .ci/linux-build.sh
++    - name: Save ccache on failure
++      if: failure()
++      uses: actions/cache/save@v4
++      with:
++        path: ~/.ccache
++        key: ${{ steps.get_ref_keys.outputs.ccache }}-${{ github.ref }}
+     - name: Upload logs on failure
+       if: failure()
+       uses: actions/upload-artifact@v4
+-- 
+2.49.0
 
