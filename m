@@ -2,37 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60A7FC77B7F
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Jun 2025 12:50:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECAC3C7115B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Jun 2025 13:01:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5019440650;
-	Mon, 23 Jun 2025 14:50:23 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1CBA740654;
+	Mon, 23 Jun 2025 15:01:37 +0200 (CEST)
 Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
- by mails.dpdk.org (Postfix) with ESMTP id 9CE0440151
- for <dev@dpdk.org>; Mon, 23 Jun 2025 14:50:20 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 0334140151
+ for <dev@dpdk.org>; Mon, 23 Jun 2025 15:01:34 +0200 (CEST)
 Received: from loongson.cn (unknown [10.2.10.34])
- by gateway (Coremail) with SMTP id _____8AxHHKJTVloDqMbAQ--.62168S3;
- Mon, 23 Jun 2025 20:50:18 +0800 (CST)
+ by gateway (Coremail) with SMTP id _____8CxPuMrUFloR6QbAQ--.27253S3;
+ Mon, 23 Jun 2025 21:01:32 +0800 (CST)
 Received: from [10.2.10.34] (unknown [10.2.10.34])
- by front1 (Coremail) with SMTP id qMiowMAxzxuITVlok2InAQ--.960S3;
- Mon, 23 Jun 2025 20:50:17 +0800 (CST)
+ by front1 (Coremail) with SMTP id qMiowMAxzMQrUFloXGUnAQ--.53607S3;
+ Mon, 23 Jun 2025 21:01:31 +0800 (CST)
 Subject: Re: [PATCH v2 2/2] common/cnxk: fix null pointer checks
+From: zhoumin <zhoumin@loongson.cn>
 To: dev@dpdk.org
 References: <20250620050950.2548925-1-rbhansali@marvell.com>
  <20250623044907.2906896-1-rbhansali@marvell.com>
  <20250623044907.2906896-2-rbhansali@marvell.com>
-From: zhoumin <zhoumin@loongson.cn>
-Message-ID: <781ca7b3-24b4-937a-d706-2b3199f5173d@loongson.cn>
-Date: Mon, 23 Jun 2025 20:50:16 +0800
+ <781ca7b3-24b4-937a-d706-2b3199f5173d@loongson.cn>
+Message-ID: <ea0fb4f4-c900-a31d-4c46-d8bb40d5617f@loongson.cn>
+Date: Mon, 23 Jun 2025 21:01:31 +0800
 User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <20250623044907.2906896-2-rbhansali@marvell.com>
+In-Reply-To: <781ca7b3-24b4-937a-d706-2b3199f5173d@loongson.cn>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-CM-TRANSID: qMiowMAxzxuITVlok2InAQ--.960S3
-X-CM-SenderInfo: 52kr3ztlq6z05rqj20fqof0/1tbiAgECAWhYjm0MRgAFsc
+X-CM-TRANSID: qMiowMAxzMQrUFloXGUnAQ--.53607S3
+X-CM-SenderInfo: 52kr3ztlq6z05rqj20fqof0/1tbiAQECAWhYh2wO3QAAsL
 X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
  ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
  BjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
@@ -40,14 +41,14 @@ X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
  j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxV
  AFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAF
  wI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
- Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE
+ Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE
  14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
  AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
  rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUJVWUXw
  CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
  67AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
- 0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUzsqW
- UUUUU
+ 0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUrNtx
+ DUUUU
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,5 +62,5 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Recheck-request: rebase=main, loongarch-compilation
+Recheck-request: rebase=next-net-mrvl-for-main, loongarch-compilation
 
