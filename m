@@ -2,52 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE40C7115B
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Jun 2025 08:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36A68C7115B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Jun 2025 09:33:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8880E400D6;
-	Mon, 23 Jun 2025 10:53:05 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id A00CB40041
- for <dev@dpdk.org>; Mon, 23 Jun 2025 10:53:01 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.186.216])
- by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bQhYc4WD9z6L5dC;
- Mon, 23 Jun 2025 16:48:04 +0800 (CST)
-Received: from frapeml500001.china.huawei.com (unknown [7.182.85.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 428A41402F6;
- Mon, 23 Jun 2025 16:53:00 +0800 (CST)
-Received: from frapeml500002.china.huawei.com (7.182.85.205) by
- frapeml500001.china.huawei.com (7.182.85.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 23 Jun 2025 10:52:59 +0200
-Received: from frapeml500002.china.huawei.com ([7.182.85.205]) by
- frapeml500002.china.huawei.com ([7.182.85.205]) with mapi id 15.01.2507.039;
- Mon, 23 Jun 2025 10:52:59 +0200
-From: Marat Khalili <marat.khalili@huawei.com>
-To: Jerin Jacob <jerinjacobk@gmail.com>, Jerin Jacob <jerinj@marvell.com>
-CC: Kiran Kumar K <kirankumark@marvell.com>, Nithin Dabilpuram
- <ndabilpuram@marvell.com>, Zhirun Yan <yanzhirun_163@163.com>, "Pavan
- Nikhilesh" <pbhagavatula@marvell.com>, "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH v2 2/2] lib/graph: default-align rte_graph_cluster_stats
-Thread-Topic: [PATCH v2 2/2] lib/graph: default-align rte_graph_cluster_stats
-Thread-Index: AQHb35qbEhTUzhsGtk2Rms1nqJghJrQHWAeAgAAiR4D//+PJgIAAIfAAgAj3PLA=
-Date: Mon, 23 Jun 2025 08:52:59 +0000
-Message-ID: <5f12c8f250084fa3bb40c994cf8ea095@huawei.com>
-References: <20250617151339.28794-1-marat.khalili@huawei.com>
- <20250617151339.28794-2-marat.khalili@huawei.com>
- <CALBAE1M2Ux9Kr2GvS7BjNLn8nM_DvjWnkhp2pwdESKq-WJeRiw@mail.gmail.com>
- <df33e20237384492bd1fafbdd2e71c56@huawei.com>
- <CALBAE1Mggs++Wi34uxFU_hp8fOhn9=Nfuy+dAOTU83JucsWTdA@mail.gmail.com>
- <f09fa980a01443ebaec61ad7fbe5f436@huawei.com>
-In-Reply-To: <f09fa980a01443ebaec61ad7fbe5f436@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.137.64]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id 5D805402DF;
+	Mon, 23 Jun 2025 11:33:08 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id C459240041
+ for <dev@dpdk.org>; Mon, 23 Jun 2025 11:33:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1750671185;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=K5mC2lWadMcO+NFWfeWZLS91i2dZ/ao9sOXJqAfT7IA=;
+ b=GRE1lbhInzhU72zuJet5ct/oaDZ4OwZ2LcsYkP8ELYihS2cmvetSmZ+z1iFAUDfRxCDLrw
+ x6licgHE1xUbvv7Nd8QuYYTZptwlUHAkctMwa3646kcW07nFixULlo++dclCFTr+hZbZ1n
+ 3x4GzQvtbF1FjeUTTJLW37Hk9849A/Y=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-224-l4rUkVa8PBikJKZKov-Vzw-1; Mon, 23 Jun 2025 05:33:03 -0400
+X-MC-Unique: l4rUkVa8PBikJKZKov-Vzw-1
+X-Mimecast-MFC-AGG-ID: l4rUkVa8PBikJKZKov-Vzw_1750671178
+Received: by mail-lf1-f71.google.com with SMTP id
+ 2adb3069b0e04-553acdcd5a1so2067045e87.2
+ for <dev@dpdk.org>; Mon, 23 Jun 2025 02:32:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1750671177; x=1751275977;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=K5mC2lWadMcO+NFWfeWZLS91i2dZ/ao9sOXJqAfT7IA=;
+ b=YDuJTCY+/DpyWzO3Ag5f8a7MvzSmGj1HOvmodusRQW5Oey1A5D9i2hgZ0DS72bI8HW
+ 8KbfxtbAd15WFFhPGnB/Sljqh866+jU8bNVpzuIYzUUppARsgz8K6XWh/ISJUzyOxanY
+ PezRy00JGmcAxfM4hGVVuoIxeiBGR9/Db7gBpXMystwKDygVP4Fmyo4ETqA7zzQZjDJt
+ uj9jFQxtS1XyKPcn3EZi+QzjwcA7hQ3bmpqpx6o7CqHv0WSKD1yfPlvfph3mvb1oUnS+
+ bZ1SSTV8fK7O2YkMrBpK3sD42SvWKfXoaLmwI0kLyZ197ILcYxSHs2dVlEu3FUuMdK27
+ KSQg==
+X-Gm-Message-State: AOJu0Yy0BoWTAJUaIkSB/8OeFvGwdVo0EoMczOzVkM+/kawJqxK7rvAN
+ 880AMTnr5EOBJWA/Wy7DEA86tAT2nGlpR7JMtPgC4f2qklw5OJNA2OZ63S4o7UaLg4tTVTu5Ne5
+ /NnM4Jo/sxqTcqEM+pShg0YAwZECtAwx0hp7PbBJZazxjmje6Cutl0pyvDIk+nWP+F4dT6sZT43
+ 0+NCy6AttEQmnKcOGblIk=
+X-Gm-Gg: ASbGncvJ2fEKpfHoEpz0xuoNy6sOw4KWUt+gHwkWY9j9nm7Z3KP04hn62YDR7FhXXWe
+ pyhemKf4entIRMEw+WfEeImqliHyeHnulTBu6pUM8+/CX9FVftPS4YnbgV+HG4pgsccZFWUdWJo
+ YmTu7O3w==
+X-Received: by 2002:a05:6512:110f:b0:553:2eff:8d74 with SMTP id
+ 2adb3069b0e04-553e3c076f6mr3716185e87.42.1750671177566; 
+ Mon, 23 Jun 2025 02:32:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE6eNVLu3obko6CgPut+CaEDnilL28SejfoGuhv8Bh3URnwoFS4cWRJ04Zp2n0ASllqzF1aoSBH/5oVirL5JIw=
+X-Received: by 2002:a05:6512:110f:b0:553:2eff:8d74 with SMTP id
+ 2adb3069b0e04-553e3c076f6mr3716172e87.42.1750671177130; Mon, 23 Jun 2025
+ 02:32:57 -0700 (PDT)
 MIME-Version: 1.0
+References: <20250619071037.37325-1-david.marchand@redhat.com>
+ <20250619071037.37325-7-david.marchand@redhat.com>
+ <aFUoJKk95dFnOy0Y@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <aFUoJKk95dFnOy0Y@bricha3-mobl1.ger.corp.intel.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Mon, 23 Jun 2025 11:32:43 +0200
+X-Gm-Features: AX0GCFsnxmf7c9ldCPi2hW6123nXdHuik9YwATakJCdPtlY61cw8AF_HvjiW7As
+Message-ID: <CAJFAV8zFijpsajyvu=6LJLh2ZSConPO3=rW+8iWC3y+mP005Rw@mail.gmail.com>
+Subject: Re: [PATCH 06/10] cmdline: fix highest bit port list parsing
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, stable@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: wwI5QXUT9rx3qQUVZujSrSUnTW7AwrxhV3Ia4pVeyBc_1750671178
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,58 +86,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-R2VudGx5IHJlbWluZGluZyBhYm91dCB0aGlzIGlzc3VlLCBJIHN0aWxsIGhvcGUgdG8gc2VlIGdy
-YXBoIHRlc3RzIHBhc3NpbmcgdW5kZXIgc2FuaXRpemVyLg0KDQpXZSBjYW5ub3QganVzdCByZW1v
-dmUgX19ydGVfY2FjaGVfYWxpZ25lZCBmcm9tIHJ0ZV9ncmFwaF9jbHVzdGVyX3N0YXRzIHdpdGhv
-dXQgcmVtb3ZpbmcgaXQgZnJvbSBydGVfZ3JhcGhfY2x1c3Rlcl9ub2RlX3N0YXRzIGJlY2F1c2Ug
-b2YgaG93IEMgd29ya3MuIEJ1dCB3ZSBjYW4gcGVyaGFwcyB1c2UgcnRlX21hbGxvYyB0byBhbGln
-biBvdXIgYWxsb2NhdGlvbnMgaW4gYSB3YXkgdGhhdCBtYXRjaGVzIHRoZSBkZWNsYXJhdGlvbi4g
-V291bGQgaXQgYmUgYW4gb2sgc29sdXRpb24/DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0t
-LS0NCj4gRnJvbTogTWFyYXQgS2hhbGlsaSA8bWFyYXQua2hhbGlsaUBodWF3ZWkuY29tPg0KPiBT
-ZW50OiBUdWVzZGF5IDE3IEp1bmUgMjAyNSAxNzo0MA0KPiBUbzogSmVyaW4gSmFjb2IgPGplcmlu
-amFjb2JrQGdtYWlsLmNvbT4NCj4gQ2M6IEplcmluIEphY29iIDxqZXJpbmpAbWFydmVsbC5jb20+
-OyBLaXJhbiBLdW1hciBLDQo+IDxraXJhbmt1bWFya0BtYXJ2ZWxsLmNvbT47IE5pdGhpbiBEYWJp
-bHB1cmFtDQo+IDxuZGFiaWxwdXJhbUBtYXJ2ZWxsLmNvbT47IFpoaXJ1biBZYW4gPHlhbnpoaXJ1
-bl8xNjNAMTYzLmNvbT47IFBhdmFuDQo+IE5pa2hpbGVzaCA8cGJoYWdhdmF0dWxhQG1hcnZlbGwu
-Y29tPjsgZGV2QGRwZGsub3JnDQo+IFN1YmplY3Q6IFJFOiBbUEFUQ0ggdjIgMi8yXSBsaWIvZ3Jh
-cGg6IGRlZmF1bHQtYWxpZ24gcnRlX2dyYXBoX2NsdXN0ZXJfc3RhdHMNCj4gDQo+ID4gLS0tLS1P
-cmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPiBGcm9tOiBKZXJpbiBKYWNvYiA8amVyaW5qYWNvYmtA
-Z21haWwuY29tPg0KPiA+IFNlbnQ6IFR1ZXNkYXkgMTcgSnVuZSAyMDI1IDE2OjUwDQo+ID4NCj4g
-PiA+ID4gPiAtc3RydWN0IF9fcnRlX2NhY2hlX2FsaWduZWQgcnRlX2dyYXBoX2NsdXN0ZXJfbm9k
-ZV9zdGF0cyB7DQo+ID4gPiA+ID4gK3N0cnVjdCBydGVfZ3JhcGhfY2x1c3Rlcl9ub2RlX3N0YXRz
-IHsNCj4gPiA+ID4NCj4gPiA+ID4gVGhpcyBpcyBhIGZhc3RwYXRoIHN0cnVjdHVyZS4gTm8gbmVl
-ZCB0byBjaGFuZ2UgdGhlIGFsaWdubWVudCBoZXJlLg0KPiA+ID4NCj4gPiA+IHJ0ZV9ncmFwaF9j
-bHVzdGVyX3N0YXRzIGluY2x1ZGVzIGl0LCBzbyB1bmZvcnR1bmF0ZWx5IHdvdWxkIHN0YXkgY2Fj
-aGUtDQo+ID4gYWxpZ25lZCByZWdhcmRsZXNzIG9mIHRoZSBhdHRyaWJ1dGVzIHVubGVzcyB3ZSBt
-YWtlDQo+ID4gcnRlX2dyYXBoX2NsdXN0ZXJfbm9kZV9zdGF0cyBkZWZhdWx0LWFsaWduZWQgYXMg
-d2VsbC4gSWYgeW91IGFyZSBzdXJlIHRoYXQNCj4gPiB3ZSBuZWVkIHRvIGtlZXAgbm9kZSBvbmUg
-Y2FjaGUtYWxpZ25lZCB3ZSBjYW4gcmV0dXJuIHRvIHJ0ZV9tYWxsb2MNCj4gPiBzb2x1dGlvbiAo
-b3IgcG9zaXhfbWVtYWxpZ24sIGJ1dCBJIHdvdWxkIHByZWZlciBub3QgdG8gaGFuZC1jb2RlIGFs
-aWduZWQNCj4gPiByZWFsbG9jKS4NCj4gPg0KPiA+IEkgdGhpbmssIGV4aXN0aW5nIGZvbGxvd2lu
-ZyBjb2RlIHdpbGwgdGFrZSBjYXJlIG9mIHRoaXMuIEFyZSB5b3UNCj4gPiBzZWVpbmcgdGhlIHNh
-bml0aXplciBpc3N1ZSBpZiB0aGUgY2hhbmdlIGlzIG9ubHkgdXBkYXRpbmcNCj4gPiBydGVfZ3Jh
-cGhfY2x1c3Rlcl9zdGF0cyBhbGlnbm1lbnQ/DQo+IA0KPiBZZXMsIHN0aWxsIHNlZWluZyB0aGUg
-c2FuaXRpemVyIGlzc3VlLiBBbmQgaWYgZmFpbHMgZXZlbiBiZWZvcmUgcmVhY2hpbmcgY2x1c3Rl
-cnMsDQo+IG9uIHRoZSBzdHJ1Y3QgcnRlX2dyYXBoX2NsdXN0ZXJfc3RhdHMgaXRzZWxmIGJlY2F1
-c2UgSSBiZWxpZXZlIGFsaWdubWVudA0KPiBwcm9wYWdhdGVzIGZyb20gbWVtYmVycyB0byBlbmNs
-b3Npbmcgc3RydWN0cy4NCj4gDQo+ID4gICAgICAgICAvKiBGb3IgYSBnaXZlbiBjbHVzdGVyLCBt
-YXggbm9kZXMgd2lsbCBiZSB0aGUgbWF4IG51bWJlciBvZiBncmFwaHMgKi8NCj4gPiAgICAgICAg
-IGNsdXN0ZXJfbm9kZV9zaXplICs9IGNsdXN0ZXItPm5iX2dyYXBocyAqIHNpemVvZihzdHJ1Y3Qg
-cnRlX25vZGUgKik7DQo+ID4gICAgICAgICBjbHVzdGVyX25vZGVfc2l6ZSA9IFJURV9BTElHTihj
-bHVzdGVyX25vZGVfc2l6ZSwNCj4gPiBSVEVfQ0FDSEVfTElORV9TSVpFKTsNCj4gDQo+IFBsZWFz
-ZSBjb3JyZWN0IG1lIGlmIEkgYW0gd3JvbmcsIEFGQUlVIGl0IGxvb2tzIGxpa2UgdGhpcyBpbiBt
-ZW1vcnk6DQo+IC0gcnRlX2dyYXBoX2NsdXN0ZXJfc3RhdHMNCj4gLSBjbHVzdGVyX25vZGUNCj4g
-ICAtIHJ0ZV9ncmFwaF9jbHVzdGVyX25vZGVfc3RhdHMNCj4gLSBydGVfbm9kZSAqW25iX2dyYXBo
-c10NCj4gLSBwYWRkaW5nIG9mIHJ0ZV9ub2RlIHBvaW50ZXJzIGFycmF5IHRvIGNhY2hlbGluZQ0K
-PiAtIGNsdXN0ZXJfbm9kZQ0KPiAgIC0gcnRlX2dyYXBoX2NsdXN0ZXJfbm9kZV9zdGF0cw0KPiAt
-IHJ0ZV9ub2RlICpbbmJfZ3JhcGhzXS4uLg0KPiANCj4gY2x1c3Rlcl9ub2RlX3NpemUgY2FsY3Vs
-YXRpb24gYWJvdmUgZW5zdXJlcyBjb3JyZWN0IGRpc3RhbmNlIGJldHdlZW4NCj4gY2x1c3Rlcl9u
-b2RlIHN0cnVjdHMgZHVlIHRvIHByZXNlbmNlIG9mIHRoZSBydGVfbm9kZSBwb2ludGVycyBhcnJh
-eXMgaW4NCj4gYmV0d2VlbiwgYnV0IGFsaWdubWVudCBvZiB0aGUgZmlyc3QgY2x1c3Rlcl9ub2Rl
-IHN0aWxsIGRlcGVuZHMgb24gdGhlDQo+IGFsaWdubWVudCBvZiBydGVfZ3JhcGhfY2x1c3Rlcl9z
-dGF0cywgYW5kIGVhY2ggb2YgdGhlIG5leHQgb25lcyBkZXBlbmRzIG9uDQo+IHRoZSBwcmV2aW91
-cy4gV2UgY291bGQgb2YgY291cnNlIHJlLWFsaWduIHRoZSBmaXJzdCBvbmUgbWFudWFsbHkgKGlu
-IGVhY2ggbG9vcCwNCj4gYWZ0ZXIgYWxsb2NhdGluZyBzb21lIGV4dHJhIHNwYWNlKSwgYnV0IHRv
-IG1lIGl0IGxvb2tzIGxpa2UgdGhlIGpvYiBydGVfbWFsbG9jDQo+IGNvdWxkIGVhc2llciBkbyBm
-b3IgdXMuIFdoYXQgZG8geW91IHRoaW5rIHdvdWxkIGJlIHRoZSByaWdodCB3YXkgZm9yd2FyZD8N
-Cg==
+On Fri, Jun 20, 2025 at 11:22=E2=80=AFAM Bruce Richardson
+<bruce.richardson@intel.com> wrote:
+>
+> On Thu, Jun 19, 2025 at 09:10:32AM +0200, David Marchand wrote:
+> > pl->map is a uint32_t.
+> >
+> > Caught by UBSan:
+> >
+> > ../lib/cmdline/cmdline_parse_portlist.c:27:17: runtime error:
+> >       left shift of 1 by 31 places cannot be represented in type 'int'
+> > SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior
+> >       ../lib/cmdline/cmdline_parse_portlist.c:27:17 in
+> >
+> > Fixes: af75078fece3 ("first public release")
+> > Cc: stable@dpdk.org
+> >
+> > Signed-off-by: David Marchand <david.marchand@redhat.com>
+> > ---
+> >  lib/cmdline/cmdline_parse_portlist.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/lib/cmdline/cmdline_parse_portlist.c b/lib/cmdline/cmdline=
+_parse_portlist.c
+> > index 0c07cc02b5..3ef427d32a 100644
+> > --- a/lib/cmdline/cmdline_parse_portlist.c
+> > +++ b/lib/cmdline/cmdline_parse_portlist.c
+> > @@ -11,7 +11,9 @@
+> >  #include <errno.h>
+> >
+> >  #include <eal_export.h>
+> > +#include <rte_bitops.h>
+> >  #include <rte_string_fns.h>
+> > +
+> >  #include "cmdline_parse.h"
+> >  #include "cmdline_parse_portlist.h"
+> >
+> > @@ -27,7 +29,7 @@ static void
+> >  parse_set_list(cmdline_portlist_t *pl, size_t low, size_t high)
+> >  {
+> >       do {
+> > -             pl->map |=3D (1 << low++);
+> > +             pl->map |=3D RTE_BIT32(low++);
+> >       } while (low <=3D high);
+> >  }
+> >
+> While this is correct, the use of "++" in a call to a macro sets off some
+> alarm bells for me!
+> Can we put the "++" in the while instead, as "++low"?
+
+It would be safer yes.
+
+
+--=20
+David Marchand
+
