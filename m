@@ -2,58 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3EF8C77B7F
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Jun 2025 13:54:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F02C7115B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Jun 2025 13:56:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BEF424066F;
-	Mon, 23 Jun 2025 15:53:45 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 71E1E4065C;
+	Mon, 23 Jun 2025 15:56:13 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 3F3904066C
- for <dev@dpdk.org>; Mon, 23 Jun 2025 15:53:44 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 15EBE40151
+ for <dev@dpdk.org>; Mon, 23 Jun 2025 15:56:12 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1750686823;
+ s=mimecast20190719; t=1750686971;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ to:to:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=AiJCImN3GlKSvp0rh4opeZfNf4X0doGfTyTiQNzgZWo=;
- b=P3kEMwiLjnyBntXVCXf+f0ck5UkPsaWhgg5HGklTUFmjOw43kT2zVZrSfFaBr93gqQ8kmq
- NMFzd2R+ar75RJ8e+MDhz+tHzybC0phkcY+CjGEZQ3ERhEBA3ROwKkL4xxjxUPvR7yqA9E
- VHSv7+SjfW3NxFHUdFRU6AR1CFPz1ao=
+ bh=69QsebkOhiODTNgMevN53nnjbfwvIpB53zitXY2m3RE=;
+ b=d/cxIXIUO/P7Rund+UM22nPSeD4FqafrOu79BGFOs7X6UjOjKcUTFm2lwjHS/ZodtmoFoU
+ 1JxNUy/ZjLsjoDALnpw5EHRFxhEy0+CSaF19LLpcGAroUl6RJzHPOKlgFYS11Ystjs5Vvd
+ BrDDlVapMl6lwS++1sN5zoc5LhKCwZc=
 Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-574-AjfQntW-NBmpwTSIqI1WsQ-1; Mon,
- 23 Jun 2025 09:53:40 -0400
-X-MC-Unique: AjfQntW-NBmpwTSIqI1WsQ-1
-X-Mimecast-MFC-AGG-ID: AjfQntW-NBmpwTSIqI1WsQ_1750686819
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-403-zQ4YtZkYNnql5aTKZs93YQ-1; Mon,
+ 23 Jun 2025 09:52:50 -0400
+X-MC-Unique: zQ4YtZkYNnql5aTKZs93YQ-1
+X-Mimecast-MFC-AGG-ID: zQ4YtZkYNnql5aTKZs93YQ_1750686769
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
  by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 5825F195609E; Mon, 23 Jun 2025 13:53:39 +0000 (UTC)
+ id 54555195609E
+ for <dev@dpdk.org>; Mon, 23 Jun 2025 13:52:49 +0000 (UTC)
 Received: from dmarchan.lan (unknown [10.44.32.240])
- by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 1488C19560A3; Mon, 23 Jun 2025 13:53:36 +0000 (UTC)
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 78A1F180045B
+ for <dev@dpdk.org>; Mon, 23 Jun 2025 13:52:48 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Cc: Aaron Conole <aconole@redhat.com>,
- Michael Santana <maicolgabriel@hotmail.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Thomas Monjalon <thomas@monjalon.net>
-Subject: [PATCH v2 10/10] build: support Undefined Behavior Sanitizer
-Date: Mon, 23 Jun 2025 15:52:40 +0200
-Message-ID: <20250623135242.461965-11-david.marchand@redhat.com>
-In-Reply-To: <20250623135242.461965-1-david.marchand@redhat.com>
+Subject: [PATCH v2 00/10] Run with UBSan in GHA
+Date: Mon, 23 Jun 2025 15:52:30 +0200
+Message-ID: <20250623135242.461965-1-david.marchand@redhat.com>
+In-Reply-To: <20250619071037.37325-1-david.marchand@redhat.com>
 References: <20250619071037.37325-1-david.marchand@redhat.com>
- <20250623135242.461965-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: zZSsJULEqcGYWWT6j5X2vt9Y-Jyg2Ke3F3a6XZs1f_Y_1750686819
+X-Mimecast-MFC-PROC-ID: tQpf9-zX7VlDebK8SxBVl4VX1K7_WxnBMjEO72nn6wc_1750686769
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -70,180 +67,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Enable UBSan in GHA.
-There are still a lot of issues so only run unit tests for a "mini"
-target.
+This series fixes a number of issues reported by UBSan and adds a simple
+job in GHA to avoid introducing undefined behavior in the core
+components.
+There is way more work/fixes to do if we want to run with a full set of
+components, but baby steps first.
 
-Building with debugoptimized forces -O2 and consumes too much memory
-with UBSan, prefer plain build (iow -O0) even though this hides a number
-of build issues.
 
-Signed-off-by: David Marchand <david.marchand@redhat.com>
----
- .ci/linux-build.sh          | 27 +++++++++++++++++++++++++--
- .github/workflows/build.yml |  5 +++++
- app/test/suites/meson.build |  3 +--
- config/meson.build          | 18 +++++++++++++++++-
- devtools/words-case.txt     |  1 +
- 5 files changed, 49 insertions(+), 5 deletions(-)
+-- 
+David Marchand
 
-diff --git a/.ci/linux-build.sh b/.ci/linux-build.sh
-index e9272d3931..905c11b1bf 100755
---- a/.ci/linux-build.sh
-+++ b/.ci/linux-build.sh
-@@ -44,6 +44,13 @@ catch_coredump() {
-     return 1
- }
- 
-+catch_ubsan() {
-+    [ "$UBSAN" = "true" ] || return 0
-+    grep -q UndefinedBehaviorSanitizer $2 2>/dev/null || return 0
-+    grep -E "($1|UndefinedBehaviorSanitizer)" $2
-+    return 1
-+}
-+
- check_traces() {
-     which babeltrace >/dev/null || return 0
-     for file in $(sudo find $HOME -name metadata); do
-@@ -100,7 +107,6 @@ fi
- 
- OPTS="$OPTS -Dplatform=generic"
- OPTS="$OPTS -Ddefault_library=$DEF_LIB"
--OPTS="$OPTS -Dbuildtype=$buildtype"
- if [ "$STDATOMIC" = "true" ]; then
- 	OPTS="$OPTS -Denable_stdatomic=true"
- else
-@@ -117,13 +123,28 @@ else
- fi
- OPTS="$OPTS -Dlibdir=lib"
- 
-+buildtype=debugoptimized
-+sanitizer=
- if [ "$ASAN" = "true" ]; then
--    OPTS="$OPTS -Db_sanitize=address"
-+    sanitizer=${sanitizer:+$sanitizer,}address
-+fi
-+
-+if [ "$UBSAN" = "true" ]; then
-+    sanitizer=${sanitizer:+$sanitizer,}undefined
-+    if [ "$RUN_TESTS" = "true" ]; then
-+        # UBSan takes too much memory with -O2
-+        buildtype=plain
-+    fi
-+fi
-+
-+if [ -n "$sanitizer" ]; then
-+    OPTS="$OPTS -Db_sanitize=$sanitizer"
-     if [ "${CC%%clang}" != "$CC" ]; then
-         OPTS="$OPTS -Db_lundef=false"
-     fi
- fi
- 
-+OPTS="$OPTS -Dbuildtype=$buildtype"
- OPTS="$OPTS -Dwerror=true"
- 
- if [ -d build ]; then
-@@ -141,6 +162,7 @@ if [ -z "$cross_file" ]; then
-     configure_coredump
-     devtools/test-null.sh || failed="true"
-     catch_coredump
-+    catch_ubsan DPDK:fast-tests build/meson-logs/testlog.txt
-     check_traces
-     [ "$failed" != "true" ]
- fi
-@@ -182,6 +204,7 @@ if [ "$RUN_TESTS" = "true" ]; then
-     configure_coredump
-     sudo meson test -C build --suite fast-tests -t 3 || failed="true"
-     catch_coredump
-+    catch_ubsan DPDK:fast-tests build/meson-logs/testlog.txt
-     check_traces
-     [ "$failed" != "true" ]
- fi
-diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
-index 6c4bc664d0..4353bb97d8 100644
---- a/.github/workflows/build.yml
-+++ b/.github/workflows/build.yml
-@@ -54,6 +54,7 @@ jobs:
-       RISCV64: ${{ matrix.config.cross == 'riscv64' }}
-       RUN_TESTS: ${{ contains(matrix.config.checks, 'tests') }}
-       STDATOMIC: ${{ contains(matrix.config.checks, 'stdatomic') }}
-+      UBSAN: ${{ contains(matrix.config.checks, 'ubsan') }}
- 
-     strategy:
-       fail-fast: false
-@@ -62,6 +63,10 @@ jobs:
-           - os: ubuntu-22.04
-             compiler: gcc
-             mini: mini
-+          - os: ubuntu-22.04
-+            compiler: clang
-+            mini: mini
-+            checks: tests+ubsan
-           - os: ubuntu-22.04
-             compiler: gcc
-             checks: stdatomic
-diff --git a/app/test/suites/meson.build b/app/test/suites/meson.build
-index e482373330..0cba63ee12 100644
---- a/app/test/suites/meson.build
-+++ b/app/test/suites/meson.build
-@@ -72,8 +72,7 @@ foreach suite:test_suites
-             elif not has_hugepage
-                 continue  #skip this tests
-             endif
--            if not asan and (get_option('b_sanitize') == 'address'
--                    or get_option('b_sanitize') == 'address,undefined')
-+            if not asan and get_option('b_sanitize').contains('address')
-                 continue  # skip this test
-             endif
- 
-diff --git a/config/meson.build b/config/meson.build
-index f31fef216c..b8a8511a7f 100644
---- a/config/meson.build
-+++ b/config/meson.build
-@@ -499,7 +499,7 @@ if get_option('b_lto')
-     endif
- endif
- 
--if get_option('b_sanitize') == 'address' or get_option('b_sanitize') == 'address,undefined'
-+if get_option('b_sanitize').contains('address')
-     if is_windows
-         error('ASan is not supported on windows')
-     endif
-@@ -519,6 +519,22 @@ if get_option('b_sanitize') == 'address' or get_option('b_sanitize') == 'address
-     endif
- endif
- 
-+if get_option('b_sanitize').contains('undefined')
-+    if is_windows
-+        error('UBSan is not supported on windows')
-+    endif
-+
-+    if cc.get_id() == 'gcc'
-+        ubsan_dep = cc.find_library('ubsan', required: true)
-+        if (not cc.links('int main(int argc, char *argv[]) { return 0; }',
-+                dependencies: ubsan_dep))
-+            error('broken dependency, "libubsan"')
-+        endif
-+        add_project_link_arguments('-lubsan', language: 'c')
-+        dpdk_extra_ldflags += '-lubsan'
-+    endif
-+endif
-+
- if get_option('default_library') == 'both'
-     error( '''
-  Unsupported value "both" for "default_library" option.
-diff --git a/devtools/words-case.txt b/devtools/words-case.txt
-index bc35c160ba..d315fde8fe 100644
---- a/devtools/words-case.txt
-+++ b/devtools/words-case.txt
-@@ -105,6 +105,7 @@ TSO
- TTL
- Tx
- uAPI
-+UBSan
- UDM
- UDP
- ULP
+Changes since v1:
+- small updates on patches 5 and 6,
+
+David Marchand (10):
+  ci: save ccache on failure
+  test/telemetry: fix test calling all commands
+  test/mempool: fix test without stack driver
+  eal: fix plugin dir walk
+  cmdline: fix port list parsing
+  cmdline: fix highest bit port list parsing
+  tailq: fix cast macro for null pointer
+  hash: fix unaligned access in predictable RSS
+  stack: fix unaligned accesses on 128-bit
+  build: support Undefined Behavior Sanitizer
+
+ .ci/linux-build.sh                   | 27 +++++++++++++++++++++--
+ .github/workflows/build.yml          | 11 ++++++++++
+ app/test/suites/meson.build          |  3 +--
+ app/test/suites/test_telemetry.sh    |  2 +-
+ app/test/test_mempool.c              | 32 +++++++++++++++++-----------
+ config/meson.build                   | 18 +++++++++++++++-
+ devtools/words-case.txt              |  1 +
+ lib/cmdline/cmdline_parse_portlist.c | 15 +++++++------
+ lib/eal/common/eal_common_options.c  | 15 +++++++++----
+ lib/eal/include/rte_tailq.h          |  2 +-
+ lib/hash/rte_thash.c                 |  6 +++---
+ lib/stack/rte_stack_lf_c11.h         |  8 +++----
+ lib/stack/rte_stack_lf_generic.h     |  8 +++----
+ 13 files changed, 107 insertions(+), 41 deletions(-)
+
 -- 
 2.49.0
 
