@@ -2,59 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D3C4C77B7F
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Jun 2025 16:15:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8794C7115B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Jun 2025 16:45:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8E28B40430;
-	Mon, 23 Jun 2025 18:15:11 +0200 (CEST)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com
- [209.85.128.170])
- by mails.dpdk.org (Postfix) with ESMTP id 369E9402E6
- for <dev@dpdk.org>; Mon, 23 Jun 2025 18:15:10 +0200 (CEST)
-Received: by mail-yw1-f170.google.com with SMTP id
- 00721157ae682-70e64b430daso42772707b3.3
- for <dev@dpdk.org>; Mon, 23 Jun 2025 09:15:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=linuxfoundation.org; s=google; t=1750695309; x=1751300109; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
- :date:message-id:reply-to;
- bh=GALKUNNyidPkRPrdjoYTb6Dku1NSodSJzVS+aLHhEXA=;
- b=g1a+3cpRxzWq4KvFqjDlkwnvwVKmTOALYJrpUI2YdDdlnNa+zmwMT9Agyu5Myv3mmZ
- OxWzRSKh52RRBKdV8pgG42FZy0XUWPTEBtz6gQ3exAnsgMHQ+BlCrW5TXlODq4ue1bVW
- OyMn9Rs+ei6Z8Y/3fmkMWFeUZXuh4Rifzdh3w=
+	by mails.dpdk.org (Postfix) with ESMTP id 965A5402E1;
+	Mon, 23 Jun 2025 18:45:17 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id CD42C40151
+ for <dev@dpdk.org>; Mon, 23 Jun 2025 18:45:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1750697115;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=OCI297KccGdaCE7wHahZmEew6g3cMXPnEQ/bII0ZyqM=;
+ b=ABwsZNxzw2119SbCY12xXnbcf0izQRSbPwxeYkJYb+tU1ZTGP6+JmH3iYm8p0swkLzHp/x
+ h6ixETI+RF4C84/J8Y0V/u5TrNsk/XpD9co0JJ9WAozI0L/QeILSevd0jd39Uo1nbfidB4
+ CeE8ULbjRiwgC02PyKetihIt4Izw+Zw=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-686-dkjqYmEeNb2IaRDJotzVyA-1; Mon, 23 Jun 2025 12:45:09 -0400
+X-MC-Unique: dkjqYmEeNb2IaRDJotzVyA-1
+X-Mimecast-MFC-AGG-ID: dkjqYmEeNb2IaRDJotzVyA_1750697108
+Received: by mail-lf1-f69.google.com with SMTP id
+ 2adb3069b0e04-551ec3101c7so1745162e87.2
+ for <dev@dpdk.org>; Mon, 23 Jun 2025 09:45:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1750695309; x=1751300109;
- h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=GALKUNNyidPkRPrdjoYTb6Dku1NSodSJzVS+aLHhEXA=;
- b=dm/ugQVa+meNADq1ajVf1EwxrWeZbEellNFb0yjV5y2VLP3g4RNawv6wOaXJcBJj4V
- w4Kft+ICMgCZ6bnXkHWEI+GRa+liyl8fl6LoaEpIkBnNFoL3uUKkTqDM5PH0m0/0DlRi
- IBGupEfCu6+pU5PW/a68s+eVjTgmdvKM2Feg2yLDCcBFOAL20rE4iSKdkZXMJ6M0WwfF
- k7aODRsC/ZxsR5cKZE0EEQE1wFbiDL8hg43RkXOOvFfsQiM35quYpS3uYPKVqqkBHiCk
- Cvxg3v8uwE3wVD5fTNgZU9z1EpPQ/zOIWcjwKEss51RyT7fRsqdXMqvx9koLi78ihH5l
- XwiQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVK0UrWo4xo3yoppkXS+TiVUjiseLXkQLcgPzNvO+b86GpYSIJLlAywqMcDZuzDvTl5i5s=@dpdk.org
-X-Gm-Message-State: AOJu0YyoGBpZoaoxJ8cZx9p0d4hP/QKSRjoJMvN/JwksHoUbumtcb7CN
- oxEvD8BpJaEbGkKwwCcWJHnwxXeRaEoe7D1N9WPQXwflkKGuJPMshfH+KkD+ORiP5MWec3BERyp
- KPXFNVuI1pZ5ilkZAFBVK+i4S5og+cuuln9NCcI8lLQ==
-X-Gm-Gg: ASbGncvNa8FWGxh3N7KpdtHbSgKhu286bbZ44bRChfXV1CEZc1Og5YIq5twDbzf1xpM
- 77MmeB2rhZe2+rxWDLdGlBvOcdu5Pw/REO8BfPAp5W41lLPuf8wsj0LL1Lx88srtqXwpsTnWWGM
- KHHPBzThNEhhIixWOSdjvdIPZywpO3hUT+qM0DUMEsaK0=
-X-Google-Smtp-Source: AGHT+IEg0g6L1EDg2Z/zs2pDpi26G7KORBAB2eAAabJZGeI48RU4YJBortx8PmBLzkjZBP+Na+kMAOFzK4AsfOngO4c=
-X-Received: by 2002:a05:690c:7082:b0:70e:73ae:766c with SMTP id
- 00721157ae682-712c649aa49mr172488527b3.22.1750695309309; Mon, 23 Jun 2025
- 09:15:09 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1750697107; x=1751301907;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=OCI297KccGdaCE7wHahZmEew6g3cMXPnEQ/bII0ZyqM=;
+ b=MN7huTdOIAdLjsF9GcN+Os49IeKPo2xaco7foxeaKL+thWUk5k3PIGy5wQQxGYF/E8
+ ghJeq7wQPx8Cxqs0zOAslTNJJAsJU+gysAqBH3mn7TmQubAIApBp8J4b3NpyM067+GT5
+ 3uAbvq+eghMtSbRKf63wOsrjD0YcbVfXU1WCcaU1b/fEPKAab+xHrY0Kv61h7BdB1kWN
+ B1lCrzkve/KYzPvA5s+XckO0xjrv8V+gLS60vuIkM+1Uq85nAvYLSAjzkiovOzqlDDgf
+ LUS2cWodHSy1vqUOhoZAYFRYEor0wt5a2l0V0bEiQF2WrSP+VBmQqU647xCYwLHHuQkz
+ hedg==
+X-Gm-Message-State: AOJu0YyauIhKvMHu3m5sCRMHUt8vyb66ertSPvDGNf4M0OUejOVNCWcv
+ yZGojeMVWF/aD5N72QVzyGTVuJN48BY2dyfgD+ZRsGzS1JpYd0HIub86AO6J17lyrN9W4C8XzFb
+ omhILtD7ptv6lOEn0T1meVwtwtzWLnIGB6KqLCVfp7KVj4V26sUfElukN5na0lIPcSiQ24RFnQh
+ UZquol8xDrV1WMWIvvNgo=
+X-Gm-Gg: ASbGnctJjoTlRIB5xsQp2nL7sd878MdWgjUPR61mNGZIHG1bsFUBIQpPoTxVKjsqPrF
+ 1tNm891Rec2WNWyIuK45pVjSt4LD/u66f0g6ytPd5919/GnxCEG6JzPXl/3poJ0Q+GltTut0Ub4
+ TWc1GCCQ==
+X-Received: by 2002:a05:6512:239d:b0:553:268e:5018 with SMTP id
+ 2adb3069b0e04-553e3be91c3mr4196673e87.31.1750697107554; 
+ Mon, 23 Jun 2025 09:45:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFavR0xd6Jbf0AYremXH8k/AhEbnQt8K/Zx7boSn8OimHrlgsurrXxyfzoS88UukwzNleExrMO+P11jwl2qtcE=
+X-Received: by 2002:a05:6512:239d:b0:553:268e:5018 with SMTP id
+ 2adb3069b0e04-553e3be91c3mr4196661e87.31.1750697107108; Mon, 23 Jun 2025
+ 09:45:07 -0700 (PDT)
 MIME-Version: 1.0
-From: Nathan Southern <nsouthern@linuxfoundation.org>
-Date: Mon, 23 Jun 2025 11:14:58 -0500
-X-Gm-Features: Ac12FXxkSmJPMXKp_RGCtoOm1wGPtHhbppcRHOX99dXSM-MzYKfwAq1r6leoJ9E
-Message-ID: <CAKoDjhwfnV=CUPSnmHabk74TJnDUz=nVJyHQiX7oveyG8YRh2w@mail.gmail.com>
-Subject: CFP Deadline Extended - DPDK Bay Area Summit - September 2025
-To: announce@dpdk.org, dev@dpdk.org
-Cc: govboard <govboard@dpdk.org>, dpdk-techboard <techboard@dpdk.org>, 
- "sylvia.vasquez@intel.com" <sylvia.vasquez@intel.com>
-Content-Type: multipart/alternative; boundary="0000000000000589f506383f84a1"
+References: <20250313113829.1480907-1-bruce.richardson@intel.com>
+ <20250527152913.279011-1-bruce.richardson@intel.com>
+ <20250527152913.279011-2-bruce.richardson@intel.com>
+ <CAJFAV8zpV=KUDha1tknK0cgv0cboG0htvJZ1kujtx=EJ7hXQHw@mail.gmail.com>
+ <aFl8-3IuF9WU_YAe@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <aFl8-3IuF9WU_YAe@bricha3-mobl1.ger.corp.intel.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Mon, 23 Jun 2025 18:44:55 +0200
+X-Gm-Features: AX0GCFvZ7QN_1zJQORdffjLZPWere1vwJ6Sdwb32Wz_gDpm4hHRijUpSA_wDmdM
+Message-ID: <CAJFAV8wTVaEpA4whNtEXbrEpD1Kvny4oNZ_di=-maF+4A+tRuA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/3] eal: deprecate old coremask-based EAL parameters
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: -5_U0Gk96PwHKdNuQNiCvh9JxRYCiMpuDjHSkmR2iYk_1750697108
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -68,74 +88,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000000589f506383f84a1
-Content-Type: text/plain; charset="UTF-8"
+On Mon, Jun 23, 2025 at 6:13=E2=80=AFPM Bruce Richardson
+<bruce.richardson@intel.com> wrote:
+> > This patch will need some rebase.
+> >
+> > I see you fixed a few docs, but there are quite some misses in
+> > copy/pasted blocks:
+> >
+> I'll take a look and respin this.
+>
+> I'm think of separating it into two patches: first patch with the doc
+> updates to remove use of -c flag. This should happen independent of the
+> deprecation, I think, and second patch just the deprecation notice. Does
+> that sound reasonable?
 
-Dear DPDK Community,
-
-Our CFP deadline for the 2025 Bay Area Summit in Santa Clara, Sep. 17-18,
-2025, has been formally extended by two weeks, through Sunday, July 6 at
-11:59pm Pacific Time.
-
-You can reach the CFP page here
-<https://sessionize.com/dpdk-bay-area-summit-2025/>.
-
-We look forward to receiving and reviewing your submissions. Thank you for
-your interest and let us know if you have any questions.
-
-With appreciation,
-
-Nathan
+Yes, we can already cleanup the docs (advertising lists instead of
+mask), and then have the deprecation notice.
 
 
-Nathan C. Southern, Senior Program Coordinator
+--=20
+David Marchand
 
-Data Plane Development Kit (DPDK)
-
-The Linux Foundation
-
-248.835.4812 (mobile)
-
-nsouthern@linuxfoundation.org
-
---0000000000000589f506383f84a1
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><br><div>Dear DPDK Community,</div><div><br></div><div>Our=
- CFP deadline for the 2025 Bay Area Summit in Santa Clara, Sep. 17-18, 2025=
-, has been formally extended by two weeks, through Sunday, July 6 at 11:59p=
-m Pacific Time.</div><div><br></div><div>You can reach the CFP page <a href=
-=3D"https://sessionize.com/dpdk-bay-area-summit-2025/">here</a>.=C2=A0</div=
-><div><br></div><div>We look forward to receiving and reviewing your submis=
-sions. Thank you for your interest and let us know if you have any question=
-s.</div><div><br></div><div>With appreciation,</div><div><br></div><div>Nat=
-han</div><div><br></div><div><br></div><div><p style=3D"margin:0px;font-str=
-etch:normal;font-size:13px;line-height:normal;font-family:&quot;Helvetica N=
-eue&quot;;font-size-adjust:none;font-kerning:auto;font-variant-alternates:n=
-ormal;font-variant-ligatures:normal;font-variant-numeric:normal;font-varian=
-t-east-asian:normal;font-feature-settings:normal">Nathan C. Southern, Senio=
-r Program Coordinator</p>
-<p style=3D"margin:0px;font-stretch:normal;font-size:13px;line-height:norma=
-l;font-family:&quot;Helvetica Neue&quot;;font-size-adjust:none;font-kerning=
-:auto;font-variant-alternates:normal;font-variant-ligatures:normal;font-var=
-iant-numeric:normal;font-variant-east-asian:normal;font-feature-settings:no=
-rmal">Data Plane Development Kit (DPDK)</p>
-<p style=3D"margin:0px;font-stretch:normal;font-size:13px;line-height:norma=
-l;font-family:&quot;Helvetica Neue&quot;;font-size-adjust:none;font-kerning=
-:auto;font-variant-alternates:normal;font-variant-ligatures:normal;font-var=
-iant-numeric:normal;font-variant-east-asian:normal;font-feature-settings:no=
-rmal">The Linux Foundation</p>
-<p style=3D"margin:0px;font-stretch:normal;font-size:13px;line-height:norma=
-l;font-family:&quot;Helvetica Neue&quot;;font-size-adjust:none;font-kerning=
-:auto;font-variant-alternates:normal;font-variant-ligatures:normal;font-var=
-iant-numeric:normal;font-variant-east-asian:normal;font-feature-settings:no=
-rmal">248.835.4812 (mobile)</p>
-<p style=3D"margin:0px;font-stretch:normal;font-size:13px;line-height:norma=
-l;font-family:&quot;Helvetica Neue&quot;;font-size-adjust:none;font-kerning=
-:auto;font-variant-alternates:normal;font-variant-ligatures:normal;font-var=
-iant-numeric:normal;font-variant-east-asian:normal;font-feature-settings:no=
-rmal"><a href=3D"mailto:nsouthern@linuxfoundation.org">nsouthern@linuxfound=
-ation.org</a></p></div></div>
-
---0000000000000589f506383f84a1--
