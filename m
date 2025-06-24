@@ -2,68 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F5CDC77B7F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Jun 2025 11:16:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 626E4C77B7F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Jun 2025 11:27:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0378440275;
-	Tue, 24 Jun 2025 13:16:32 +0200 (CEST)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com
- [209.85.167.50]) by mails.dpdk.org (Postfix) with ESMTP id 8189140264
- for <dev@dpdk.org>; Tue, 24 Jun 2025 13:16:30 +0200 (CEST)
-Received: by mail-lf1-f50.google.com with SMTP id
- 2adb3069b0e04-54b10594812so5238004e87.1
- for <dev@dpdk.org>; Tue, 24 Jun 2025 04:16:30 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3CDE14067C;
+	Tue, 24 Jun 2025 13:27:04 +0200 (CEST)
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
+ [209.85.214.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 009A340264
+ for <dev@dpdk.org>; Tue, 24 Jun 2025 07:10:24 +0200 (CEST)
+Received: by mail-pl1-f170.google.com with SMTP id
+ d9443c01a7336-2353a2bc210so42818465ad.2
+ for <dev@dpdk.org>; Mon, 23 Jun 2025 22:10:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1750763789; x=1751368589; darn=dpdk.org;
+ d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1750741823;
+ x=1751346623; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=1XQYIdS3AN8qeBR8oF3ZRAuOD6tDoqaybmiNKSOULvk=;
- b=Fj5RNoAR9mF5Td7I+QzEqvMW8/f/yD4/ekCweyimm0Adjk1F2rzSUzpsNF9S8BkEw/
- lGoL/uSmLF0zpYanuq1/vtNLlgRxcjmXmU37DhzNZij1ZJvIlU44uZ3IMOtfFlO90qP8
- qcMtLmL0xHAi5/Q6l4cX2MD/jd7TnQVUC0R0vswK63AJegMsZA/aFq0fTW3TF2JdUfvm
- 4E9RBCqwc76tY0qArSYtKt/vyPqT/dgrIBx3PEbCRUUoJWytHbllDlQXT2PqI9kUKBn1
- gecP+phWQCg+/u861fGfOc3mOKSjxLe3GobzvHQiJ7J2gMKfbHnHZ9VAQds4MhDK0lNo
- iaMg==
+ bh=26bX2qGFgbuo6FmnJ50p3bVj3RXWcnJ/RhZ3phH6XlI=;
+ b=S8YYgqAXj7gGk1eUseDQbgkKyl6wfZjPWhlSgFUlW5xyvm3blUQxxg73BDDr8xThcN
+ +Y4SEES4WUPMCPsBLAyp+nadkPzxWGQ/lNK6nUFp5Rno4NAcUblgiZqyuS5KO5soQcyY
+ ygEWZ4X4ngULf21r0S0uZ89eThsgIlc/3frMOpztTHlA4YJ86gNTI4glEJ+r3zH60eZj
+ wrvCj5ZA6NJBv5nT/44WIYOzjnoxzUYvdHoLKiu5OogzTevbFA6Gd/qX0kzod7YhaVne
+ Pnj6rflnNN7CTiHQgiebo/dbQ6KGkUWZdiOcQkaYSQUHh0FVWVppj1WxNVVeBoRyo6U6
+ JCJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1750763789; x=1751368589;
+ d=1e100.net; s=20230601; t=1750741823; x=1751346623;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=1XQYIdS3AN8qeBR8oF3ZRAuOD6tDoqaybmiNKSOULvk=;
- b=F/wkjhU44f65YXpDaIQyCYN+ltvTqxEpwrCOhCKM3wlrMhf8YvgVjESsbdtKUUjViA
- YEPfp+I8TNOpLfRcaT12XLJ+9eVUveAJ1cv7qhkeMmhnJaP/9D5iYEl76QTqMmGmj1A+
- D8t+s612qfYEs9EIbpSS/tYZ0jQxeOKcsoLDWnhBIvtOM1X/UfTYZVnb4i2tueRyUBWD
- wSnNuewNntZXrUz5UK1ZhvMR3CXNLSOVXw3K/EgnRCdJ8cVwlUHhOF2koU/5fGW5G0J6
- hX/J6luhSRqqkzWOEsSHJuoqx6GOYNpE4xsSZfLQFK9xd+7JhImRdy9onstSlsrgMTYP
- xn2Q==
-X-Gm-Message-State: AOJu0YztEb2aI5ogFcEBxSy1U91fKMAiWY5YiHY5TwXyNaCHFyzrFP6l
- D9VBt9EKAeFGwHdGbNKA56iTuaCwAP51NZkmWjvGvJ6j32sS/VCwTxwjyuwY0XmrY0U=
-X-Gm-Gg: ASbGncuZNBu+fDVsFXYyhb9/R8rjQYuIY+6YMYR+aZL1AFfFYJgERI6UX7bm7r+uODL
- FTvCzTgOX2aW4Vc9uQEa/dm7AYibxk0fAOF5O4zrEW2jPbqjnrRo9Ev8i+O7oKVpQuKnKytjbfm
- ytAFCPKMdTZFmWxeGAqGn6++m45maigoeejk0BrnOAjhmOZEG64OQl7nniz66A8PEXfc6NEKIiB
- RL4y3LRGOzYYfmv+07OgOQw7e3U2GcsQClcCbgV71U4mBRu1b5F4ibaEJKcxYRxszbFatedmEfW
- +nXU7k1DWkMalCFdEC+OJvFEszaoP+5wGOwTsFU9GjAdSdPcOWDV52cE6Z1PQGUwFaGQ2ZXKfD5
- 7JXUYZA1xFck=
-X-Google-Smtp-Source: AGHT+IHnrlasuPpvD3GFFjTBPVnbtdIkwyjs9IH4ekCS5AJ1Ego2/z5aOHOUdMWCEgvxwCYMa4m+2w==
-X-Received: by 2002:a05:6512:3f23:b0:553:3892:5ead with SMTP id
- 2adb3069b0e04-553e3ba8024mr4429027e87.2.1750763789366; 
- Tue, 24 Jun 2025 04:16:29 -0700 (PDT)
-Received: from loota.corp.supercell.net ([194.100.101.5])
+ bh=26bX2qGFgbuo6FmnJ50p3bVj3RXWcnJ/RhZ3phH6XlI=;
+ b=WYzHRy2DHeJcdiDIbtF6BOWe7x9lKYAapmk5geMGIeNVBDOdqf8gPCmaRV1DZbbqGK
+ v0NT3dqLVCs/Gf1WGWm9l71xEUPGFrHFlQ36AvuD5PqG8l4R1Tk146EymfbWH7rgN1hF
+ RGtqW76jkCx3qgdcweQDHMvSdUw4q4zDOMthXjjDQYIgwpnABAfyv5jFuIJEq8Rhtl1F
+ Aw9Fzox8ZUj6jBfehxHAQTMeI7voalGAlPYBwTBNM0i1vxb0yrco69ZdB/xLHwgPBmm/
+ XCUFn7NoaVi8tVCn+I+wtbvqpOazoDqooR3YCUbUiSFBMHgRa/ftz5+/xapiBD1HcpF6
+ AQbg==
+X-Gm-Message-State: AOJu0YxAeFEwNSkmfDwznZcxRATBgXwYOsQo2WNOhhYejFNdBFhFUg+S
+ 5hPYOOoayzjlV3IzbBuTMaJnwQu0xn+nMDa0Rh6yLPUL37KYks3Hpnuy2eRPTj1ZNqvWTbRPq4d
+ jkqdfF0Bfkw==
+X-Gm-Gg: ASbGncvTcW0ue9QCyh6C+BInhRRrdUACmpf23bnV5I6/cFh1v+nGlnNeMVeTvirwb8k
+ 51Hp+Aqdc8OYKHeYtgOnrB74+K5kjxOXXzqaMtLWgUj56w2E41Kj+T2IDDYb/wg1s13+VgQ4jM+
+ QEYVkShUCqViy4OBVPupPLVHO2f1g4kac2ghWaMEHy6ScUbTX2S7cD7JwqxPewgw/SFnx3SyYjj
+ G+8r6CZ9hZSOZAz7jBa+wm5aSltifee1Nq3wtLEu3Ie7Wc/Ao1SwK9oOTR8jEodPdP46yZMGEue
+ UHdOTQYntTWtLc9gw5zx2mlvckrRjkLA4HPtT/3XPIbfmRBZJyOtZEVEF5TznHwrc2qYDrOKSac
+ IK9hwqRvIJ0BU
+X-Google-Smtp-Source: AGHT+IG7NKCuxEXPdnTNiDTG60pfXJmXGkryv+d4PUqaoKDRl2dzA03zvcj0iqow60H0nhaaZhY8PA==
+X-Received: by 2002:a17:902:ec8c:b0:234:a139:1203 with SMTP id
+ d9443c01a7336-237d9960355mr243693845ad.32.1750741823137; 
+ Mon, 23 Jun 2025 22:10:23 -0700 (PDT)
+Received: from localhost.localdomain ([64.62.143.197])
  by smtp.gmail.com with ESMTPSA id
- 2adb3069b0e04-553e41d7026sm1809320e87.247.2025.06.24.04.16.28
+ d9443c01a7336-237d839357csm99782035ad.6.2025.06.23.22.10.22
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 24 Jun 2025 04:16:28 -0700 (PDT)
-From: Edvard Fagerholm <edvard.fagerholm@gmail.com>
+ Mon, 23 Jun 2025 22:10:22 -0700 (PDT)
+From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
 To: dev@dpdk.org
-Cc: Edvard Fagerholm <edvard.fagerholm@gmail.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
-Subject: [PATCH] cpp: Fix missing extern "C" closing bracket
-Date: Tue, 24 Jun 2025 14:12:53 +0300
-Message-Id: <20250624111253.2074168-1-edvard.fagerholm@gmail.com>
-X-Mailer: git-send-email 2.34.1
+Cc: rasland@nvidia.com,
+	Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+Subject: [PATCH] net/mlx5: fix segfault on indirect action age query with
+ conntrack
+Date: Tue, 24 Jun 2025 01:10:15 -0400
+Message-ID: <20250624051015.3145137-1-14pwcse1224@uetpeshawar.edu.pk>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Mailman-Approved-At: Tue, 24 Jun 2025 13:27:02 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -77,58 +81,79 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-RTE_FORCE_INTRINSICS with a C++ compiler causes rte_atomic.h and
-rte_byteorder.h to emit on x86 an extern "C" without a closing
-brace.
----
- lib/eal/x86/include/rte_atomic.h    | 4 ++--
- lib/eal/x86/include/rte_byteorder.h | 9 +++++----
- 2 files changed, 7 insertions(+), 6 deletions(-)
+This patch fixes a segmentation fault that occurs when querying the
+age action of an indirect flow rule using connection tracking.
 
-diff --git a/lib/eal/x86/include/rte_atomic.h b/lib/eal/x86/include/rte_atomic.h
-index c72c47c83e..68629016b4 100644
---- a/lib/eal/x86/include/rte_atomic.h
-+++ b/lib/eal/x86/include/rte_atomic.h
-@@ -282,10 +282,10 @@ static inline int rte_atomic32_dec_and_test(rte_atomic32_t *v)
- 	return ret != 0;
- }
+Steps to reproduce:
+ 1. Create an indirect action:
+    flow indirect_action 0 create ingress action conntrack / end
+
+ 2. Create a root flow rule with a jump:
+    flow create 0 ingress pattern eth / ipv4 / tcp / end /
+         actions jump group 3 / end
+
+ 3. Create a group 3 rule using the indirect action:
+    flow create 0 group 3 ingress pattern eth / ipv4 / tcp / end /
+         actions indirect 0 / jump group 5 / end
+
+ 4. Create a group 5 rule matching on conntrack state:
+    flow create 0 group 5 ingress pattern eth / ipv4 / tcp /
+         conntrack is 1 / end actions queue index 5 / end
+
+ 5. Querying the first rule causes a segmentation fault:
+    flow query 0 1 age
+
+This patch ensures proper handling of the indirect action with
+conntrack to prevent this crash.
+
+Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+---
+ .mailmap                        | 1 +
+ drivers/net/mlx5/mlx5_flow.c    | 2 ++
+ drivers/net/mlx5/mlx5_flow_dv.c | 5 +++++
+ 3 files changed, 8 insertions(+)
+
+diff --git a/.mailmap b/.mailmap
+index 8483d96ec5..5c9ea95346 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -812,6 +812,7 @@ Kevin Scott <kevin.c.scott@intel.com>
+ Kevin Traynor <ktraynor@redhat.com>
+ Ke Xu <ke1.xu@intel.com>
+ Ke Zhang <ke1x.zhang@intel.com>
++Khadem Ullah <14pwcse@uetpeshawar.edu.pk>
+ Khoa To <khot@microsoft.com>
+ Kiran KN <kirankn@juniper.net>
+ Kiran Kumar K <kirankumark@marvell.com> <kkokkilagadda@caviumnetworks.com> <kiran.kokkilagadda@caviumnetworks.com>
+diff --git a/drivers/net/mlx5/mlx5_flow.c b/drivers/net/mlx5/mlx5_flow.c
+index 3d49a2d833..5c799ea4ce 100644
+--- a/drivers/net/mlx5/mlx5_flow.c
++++ b/drivers/net/mlx5/mlx5_flow.c
+@@ -4550,6 +4550,8 @@ flow_aso_age_get_by_idx(struct rte_eth_dev *dev, uint32_t age_idx)
+ 	struct mlx5_aso_age_pool *pool;
  
--#ifdef __cplusplus
--}
- #endif
+ 	rte_rwlock_read_lock(&mng->resize_rwl);
++	if (mng->pools == NULL)
++		return NULL;
+ 	pool = mng->pools[pool_idx];
+ 	rte_rwlock_read_unlock(&mng->resize_rwl);
+ 	return &pool->actions[offset - 1];
+diff --git a/drivers/net/mlx5/mlx5_flow_dv.c b/drivers/net/mlx5/mlx5_flow_dv.c
+index c217634d9b..f81ce20385 100644
+--- a/drivers/net/mlx5/mlx5_flow_dv.c
++++ b/drivers/net/mlx5/mlx5_flow_dv.c
+@@ -18086,6 +18086,11 @@ flow_dv_query_age(struct rte_eth_dev *dev, struct rte_flow *flow,
+ 	if (flow->age) {
+ 		struct mlx5_aso_age_action *act =
+ 				     flow_aso_age_get_by_idx(dev, flow->age);
++		if (!act)
++			return rte_flow_error_set
++					(error, EINVAL,
++					 RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
++					 NULL, "cannot read age data");
  
-+#ifdef __cplusplus
-+}
- #endif
- 
- #ifdef RTE_ARCH_I686
-diff --git a/lib/eal/x86/include/rte_byteorder.h b/lib/eal/x86/include/rte_byteorder.h
-index 5a49ffcd50..62a87c1aa6 100644
---- a/lib/eal/x86/include/rte_byteorder.h
-+++ b/lib/eal/x86/include/rte_byteorder.h
-@@ -48,10 +48,6 @@ static inline uint32_t rte_arch_bswap32(uint32_t _x)
- 	return x;
- }
- 
--#ifdef __cplusplus
--}
--#endif
--
- #define rte_bswap16(x) ((uint16_t)(__builtin_constant_p(x) ?		\
- 				   rte_constant_bswap16(x) :		\
- 				   rte_arch_bswap16(x)))
-@@ -69,6 +65,11 @@ static inline uint32_t rte_arch_bswap32(uint32_t _x)
- #else
- #include "rte_byteorder_64.h"
- #endif
-+
-+#endif
-+
-+#ifdef __cplusplus
-+}
- #endif
- 
- #define rte_cpu_to_le_16(x) (x)
+ 		age_param = &act->age_params;
+ 	} else if (flow->counter) {
 -- 
-2.34.1
+2.43.0
 
