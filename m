@@ -2,46 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9984CC77B7F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Jun 2025 13:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7ADBC77B7C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Jun 2025 13:34:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 767CC402B6;
-	Tue, 24 Jun 2025 15:34:22 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E30FC40A6B;
+	Tue, 24 Jun 2025 15:34:25 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id E4B894026B
- for <dev@dpdk.org>; Tue, 24 Jun 2025 15:34:20 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 8433E40A70
+ for <dev@dpdk.org>; Tue, 24 Jun 2025 15:34:23 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1750772062; x=1782308062;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=SUIleT+PuoYDhBcHwqn4cStl6wg5ONWDRD9pO1o1INI=;
- b=d66D+NNpQ1jYddXlO7R0b4h6KYpw5X1ohCMSDeSyEVOR/w/tS0p+IJ4j
- VPloKB5e/ZyIySnjrObwrTgiTRWu1qxJuRr0WjR9cHxEG2z91LpHOE3Yp
- jL/UGBK2Y481vkF2V+6ET0duNRgAx7loO2zjjKCp0DuNtB1oygk/bSlBw
- OyOEopjLr+UKFo3JF5Z70oIIwDA6HlFD7gsmOtbKXVmDWZqve7wyI/Mkc
- 0T5HlZ2r3cKC+gCBTcovbanzFEhrAzid9M9na/1DDh8xLGm1Ec22BqOwY
- /N+XAEDeFGsf9UaM/vRXD2YYKujg8GVPfUkQEkY/JcDdS0XIpo5UBKrOQ A==;
-X-CSE-ConnectionGUID: 15mRqVXAR92ptFs7D/1/gQ==
-X-CSE-MsgGUID: OCUi17OpSqiw9W/BlK6/fw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="53112026"
-X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; d="scan'208";a="53112026"
+ t=1750772064; x=1782308064;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=0IpBQ7w6ZNWOkh4Vw4YgHY5sAyKERc5EIZuAtT4YPyQ=;
+ b=RqvtPS6Zas0s6okCwXCrqWfpx+Sc16mjcX58zi+OS6Vg7/W6SCkFj+Tz
+ wUNTyVKtHYSF4GnUJJbYcGChXlmC+cNSVYiHM3iAhh/Eh0RMkUYM+YpKA
+ yl2BRjpvw2S5VwVS5wQ41NpQcuX2EAKD4lXul+38g4NB4mb7ljc/VHAGl
+ XN+Kejtm3niU+E7jGKwS4cHEXxp2LY0t5PvdHEV+ESawAAKjDRHXQwE+0
+ cXsDsyUZ7se7hJrFkHrcnABL6O+hikfQXaNDrj/+JXI1ShM6KEc+V+G0p
+ rHDO4ZqjcW7J4Z0RilMOStJaMaL2VzNZxOL0FhXmAje6aWOWuD+JFkNHg A==;
+X-CSE-ConnectionGUID: tYo5d9bqQ2KiUP1EDPel2g==
+X-CSE-MsgGUID: vNJjayCGRc6m9Uy4IMYLWA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="53112037"
+X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; d="scan'208";a="53112037"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Jun 2025 06:34:20 -0700
-X-CSE-ConnectionGUID: XkvxeLC/Rxeu9tNcPeqDBg==
-X-CSE-MsgGUID: j+eWZXofSe+Ti0R5pXULbg==
+ 24 Jun 2025 06:34:24 -0700
+X-CSE-ConnectionGUID: elWdYoyDSIG7tFAe+g5R3A==
+X-CSE-MsgGUID: kY92ZLvZTh6CNfQBNLsd5Q==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; d="scan'208";a="157410751"
+X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; d="scan'208";a="157410757"
 Received: from silpixa00401385.ir.intel.com ([10.237.214.33])
- by fmviesa004.fm.intel.com with ESMTP; 24 Jun 2025 06:34:18 -0700
+ by fmviesa004.fm.intel.com with ESMTP; 24 Jun 2025 06:34:21 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH 0/2] use core lists not masks in documentation
-Date: Tue, 24 Jun 2025 14:34:06 +0100
-Message-ID: <20250624133409.550372-1-bruce.richardson@intel.com>
+Subject: [PATCH 1/2] doc/eal: add doc entry for service core list flag
+Date: Tue, 24 Jun 2025 14:34:07 +0100
+Message-ID: <20250624133409.550372-2-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250624133409.550372-1-bruce.richardson@intel.com>
+References: <20250624133409.550372-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -57,60 +59,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-For real-world use with dozens if not hundreds of cores, use of core
-masks becomes unwieldy. Core lists are preferred so update the examples
-and DPDK docs to refer to core lists over core masks i.e.
+In the list of EAL arguments, only the "-s" flag for service cores was
+documented. Add an entry for the "-S" one too, which takes a core list
+instead of a core mask.
 
-* use "-l" EAL option rather than "-c"
-* use "-S" service core list option rather than "-s"
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ doc/guides/linux_gsg/eal_args.include.rst | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Bruce Richardson (2):
-  doc/eal: add doc entry for service core list flag
-  doc: use core lists rather than masks in guides
-
- doc/guides/bbdevs/acc100.rst                  |  2 +-
- doc/guides/bbdevs/fpga_5gnr_fec.rst           |  4 +-
- doc/guides/bbdevs/fpga_lte_fec.rst            |  2 +-
- doc/guides/bbdevs/vrb1.rst                    |  2 +-
- doc/guides/bbdevs/vrb2.rst                    |  2 +-
- doc/guides/cryptodevs/octeontx.rst            |  2 +-
- doc/guides/eventdevs/dlb2.rst                 |  6 +--
- doc/guides/faq/faq.rst                        |  8 ++--
- doc/guides/freebsd_gsg/build_sample_apps.rst  |  8 ++--
- doc/guides/howto/packet_capture_framework.rst |  2 +-
- doc/guides/linux_gsg/build_sample_apps.rst    | 10 ++---
- doc/guides/linux_gsg/eal_args.include.rst     |  5 +++
- doc/guides/mempool/cnxk.rst                   |  2 +-
- doc/guides/mempool/octeontx.rst               |  2 +-
- doc/guides/nics/cnxk.rst                      |  2 +-
- doc/guides/nics/cpfl.rst                      |  2 +-
- doc/guides/nics/dpaa.rst                      |  2 +-
- doc/guides/nics/dpaa2.rst                     |  4 +-
- doc/guides/nics/fail_safe.rst                 |  8 ++--
- doc/guides/nics/ice.rst                       |  4 +-
- doc/guides/nics/softnic.rst                   |  4 +-
- doc/guides/prog_guide/meson_ut.rst            |  2 +-
- doc/guides/prog_guide/multi_proc_support.rst  |  2 +-
- doc/guides/prog_guide/service_cores.rst       |  8 ++--
- doc/guides/sample_app_ug/bbdev_app.rst        |  6 +--
- doc/guides/sample_app_ug/ip_pipeline.rst      |  2 +-
- doc/guides/sample_app_ug/ipsec_secgw.rst      |  4 +-
- .../sample_app_ug/l2_forward_macsec.rst       |  4 +-
- doc/guides/sample_app_ug/l3_forward.rst       |  2 +-
- doc/guides/sample_app_ug/multi_process.rst    |  8 ++--
- doc/guides/sample_app_ug/ntb.rst              |  2 +-
- doc/guides/sample_app_ug/pipeline.rst         |  2 +-
- doc/guides/sample_app_ug/qos_scheduler.rst    |  2 +-
- doc/guides/sample_app_ug/test_pipeline.rst    |  2 +-
- doc/guides/sample_app_ug/vdpa.rst             |  2 +-
- doc/guides/tools/comp_perf.rst                |  5 +--
- doc/guides/tools/cryptoperf.rst               |  5 +--
- doc/guides/tools/graph.rst                    | 13 +++----
- doc/guides/tools/testbbdev.rst                |  2 +-
- doc/guides/tools/testeventdev.rst             | 39 +++++++++----------
- doc/guides/tools/testmldev.rst                | 27 +++++++------
- 41 files changed, 110 insertions(+), 112 deletions(-)
-
---
+diff --git a/doc/guides/linux_gsg/eal_args.include.rst b/doc/guides/linux_gsg/eal_args.include.rst
+index 359721eb6a..6ee79877c1 100644
+--- a/doc/guides/linux_gsg/eal_args.include.rst
++++ b/doc/guides/linux_gsg/eal_args.include.rst
+@@ -79,6 +79,11 @@ Lcore-related options
+ 
+     Hexadecimal bitmask of cores to be used as service cores.
+ 
++*   ``-S <service core list>``
++
++    List of cores to be used as service cores.
++
++
+ Device-related options
+ ~~~~~~~~~~~~~~~~~~~~~~
+ 
+-- 
 2.48.1
 
