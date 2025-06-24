@@ -2,48 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 190B2C77B7F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Jun 2025 16:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2577BC77B7C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Jun 2025 18:14:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EA97A4026B;
-	Tue, 24 Jun 2025 18:21:06 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 1F4734025E
- for <dev@dpdk.org>; Tue, 24 Jun 2025 18:21:05 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.186.216])
- by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bRVVy1Gtrz6D9Cn;
- Wed, 25 Jun 2025 00:18:34 +0800 (CST)
-Received: from frapeml100003.china.huawei.com (unknown [7.182.85.60])
- by mail.maildlp.com (Postfix) with ESMTPS id 7D4D11402F3;
- Wed, 25 Jun 2025 00:21:04 +0800 (CST)
-Received: from frapeml500002.china.huawei.com (7.182.85.205) by
- frapeml100003.china.huawei.com (7.182.85.60) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 24 Jun 2025 18:21:04 +0200
-Received: from frapeml500002.china.huawei.com ([7.182.85.205]) by
- frapeml500002.china.huawei.com ([7.182.85.205]) with mapi id 15.01.2507.039;
- Tue, 24 Jun 2025 18:21:04 +0200
-From: Marat Khalili <marat.khalili@huawei.com>
-To: David Marchand <david.marchand@redhat.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-Subject: RE: [PATCH v2 03/10] test/mempool: fix test without stack driver
-Thread-Topic: [PATCH v2 03/10] test/mempool: fix test without stack driver
-Thread-Index: AQHb5EY/UfouCu1UDkClX/TKGqNkR7QSfytQ
-Date: Tue, 24 Jun 2025 16:21:04 +0000
-Message-ID: <524c0591814c4176934340196408ad2a@huawei.com>
-References: <20250619071037.37325-1-david.marchand@redhat.com>
- <20250623135242.461965-1-david.marchand@redhat.com>
- <20250623135242.461965-4-david.marchand@redhat.com>
-In-Reply-To: <20250623135242.461965-4-david.marchand@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.138.16]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 1653B402A6;
+	Tue, 24 Jun 2025 20:14:26 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 7BE4C4025E
+ for <dev@dpdk.org>; Tue, 24 Jun 2025 20:14:25 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 34C1820849;
+ Tue, 24 Jun 2025 20:14:25 +0200 (CEST)
+Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
+ smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
+ Tue, 24 Jun 2025 20:14:22 +0200
+From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+To: Tetsuya Mukawa <mtetsuyah@gmail.com>,
+ Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org
+Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+Subject: [PATCH] net/null: Add fast mbuf release TX offload
+Date: Tue, 24 Jun 2025 18:14:16 +0000
+Message-ID: <20250624181416.167181-1-mb@smartsharesystems.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 24 Jun 2025 18:14:22.0831 (UTC)
+ FILETIME=[CFB39FF0:01DBE533]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,6 +44,83 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Looks good.
+Added fast mbuf release, re-using the existing mbuf pool pointer
+in the queue structure.
 
-Reviewed-by: Marat Khalili <marat.khalili@huawei.com>
+Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
+---
+ drivers/net/null/rte_eth_null.c | 30 +++++++++++++++++++++++++++---
+ 1 file changed, 27 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/null/rte_eth_null.c b/drivers/net/null/rte_eth_null.c
+index 8a9b74a03b..12c0d8d1ff 100644
+--- a/drivers/net/null/rte_eth_null.c
++++ b/drivers/net/null/rte_eth_null.c
+@@ -34,6 +34,17 @@ struct pmd_internals;
+ struct null_queue {
+ 	struct pmd_internals *internals;
+ 
++	/**
++	 * For RX queue:
++	 *  Mempool to allocate mbufs from.
++	 *
++	 * For TX queue:
++	 *  Mempool to free mbufs to, if fast release of mbufs is enabled.
++	 *  UINTPTR_MAX if the mempool for fast release of mbufs has not yet been detected.
++	 *  NULL if fast release of mbufs is not enabled.
++	 *
++	 *  @see RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE
++	 */
+ 	struct rte_mempool *mb_pool;
+ 	void *dummy_packet;
+ 
+@@ -151,7 +162,16 @@ eth_null_tx(void *q, struct rte_mbuf **bufs, uint16_t nb_bufs)
+ 	for (i = 0; i < nb_bufs; i++)
+ 		bytes += rte_pktmbuf_pkt_len(bufs[i]);
+ 
+-	rte_pktmbuf_free_bulk(bufs, nb_bufs);
++	if (h->mb_pool != NULL) { /* RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE */
++		if (unlikely(h->mb_pool == (void *)UINTPTR_MAX)) {
++			if (unlikely(nb_bufs == 0))
++				return 0; /* Do not dereference uninitialized bufs[0]. */
++			h->mb_pool = bufs[0]->pool;
++		}
++		rte_mbuf_raw_free_bulk(h->mb_pool, bufs, nb_bufs);
++	} else {
++		rte_pktmbuf_free_bulk(bufs, nb_bufs);
++	}
+ 	rte_atomic_fetch_add_explicit(&h->tx_pkts, nb_bufs, rte_memory_order_relaxed);
+ 	rte_atomic_fetch_add_explicit(&h->tx_bytes, bytes, rte_memory_order_relaxed);
+ 
+@@ -259,7 +279,7 @@ static int
+ eth_tx_queue_setup(struct rte_eth_dev *dev, uint16_t tx_queue_id,
+ 		uint16_t nb_tx_desc __rte_unused,
+ 		unsigned int socket_id __rte_unused,
+-		const struct rte_eth_txconf *tx_conf __rte_unused)
++		const struct rte_eth_txconf *tx_conf)
+ {
+ 	struct rte_mbuf *dummy_packet;
+ 	struct pmd_internals *internals;
+@@ -284,6 +304,9 @@ eth_tx_queue_setup(struct rte_eth_dev *dev, uint16_t tx_queue_id,
+ 
+ 	internals->tx_null_queues[tx_queue_id].internals = internals;
+ 	internals->tx_null_queues[tx_queue_id].dummy_packet = dummy_packet;
++	internals->tx_null_queues[tx_queue_id].mb_pool =
++			tx_conf->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE ?
++			(void *)UINTPTR_MAX : NULL;
+ 
+ 	return 0;
+ }
+@@ -309,7 +332,8 @@ eth_dev_info(struct rte_eth_dev *dev,
+ 	dev_info->max_rx_queues = RTE_DIM(internals->rx_null_queues);
+ 	dev_info->max_tx_queues = RTE_DIM(internals->tx_null_queues);
+ 	dev_info->min_rx_bufsize = 0;
+-	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS | RTE_ETH_TX_OFFLOAD_MT_LOCKFREE;
++	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS |
++			RTE_ETH_TX_OFFLOAD_MT_LOCKFREE | RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE;
+ 
+ 	dev_info->reta_size = internals->reta_size;
+ 	dev_info->flow_type_rss_offloads = internals->flow_type_rss_offloads;
+-- 
+2.43.0
+
