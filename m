@@ -2,57 +2,61 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD8AFC7EE2A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Jun 2025 18:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5EC7C7EE2A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Jun 2025 21:53:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8844E40DD2;
-	Wed, 25 Jun 2025 20:28:00 +0200 (CEST)
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com
- [209.85.210.202])
- by mails.dpdk.org (Postfix) with ESMTP id 002D9406A2
- for <dev@dpdk.org>; Wed, 25 Jun 2025 20:27:59 +0200 (CEST)
-Received: by mail-pf1-f202.google.com with SMTP id
- d2e1a72fcca58-748efefedb5so230126b3a.2
- for <dev@dpdk.org>; Wed, 25 Jun 2025 11:27:59 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B7417406A2;
+	Wed, 25 Jun 2025 23:53:19 +0200 (CEST)
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com
+ [209.85.219.41]) by mails.dpdk.org (Postfix) with ESMTP id 835BA4066E
+ for <dev@dpdk.org>; Wed, 25 Jun 2025 23:53:18 +0200 (CEST)
+Received: by mail-qv1-f41.google.com with SMTP id
+ 6a1803df08f44-6f8a87f0c0fso5190976d6.0
+ for <dev@dpdk.org>; Wed, 25 Jun 2025 14:53:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20230601; t=1750876079; x=1751480879; darn=dpdk.org;
- h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
- :date:message-id:reply-to;
- bh=xmZF/K1ll3t/VkD6pu3/bTPD6pyia8hUbgKYQygfQAs=;
- b=L4ooxDbEOrq9BY7lrfb6T9UEciTKNMiLB35dUnIPow617OKNddrxTt8/wAGAvO6Brv
- hJjHAQvmoLexvPEQoaM5LKIMTK4n9H/gGY7XbcqM8LUcbwHF15CpMtMkXxwm5Y8GjjIM
- oMG7H+6Gn/Vlf8jyPHiUTxcSHsIVY5UbA1Y1Np0+qjWffYmZvmz9txExbdi5RRgKk0yo
- OXI1cMaalULIJNLCR3mKo2PYhMRE8EkNnPEkBOTm3XkZ5MLtLNVnYbFALVBn7EphqJMc
- pZ5r465jBhu9wiDGz+H3P6jPOH7wbNKatTAuLihA2L1OzukUrz1OZ6p6+aVHLnIXdWR+
- j9Yw==
+ d=google.com; s=20230601; t=1750888398; x=1751493198; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=fzE8umbjOmapp5abNhmUzl1cvjniIfYiqCHh/Nx6UxA=;
+ b=nTk/jS0DggAD0dZt0ZfbYQ31l+HTkT3Yxpejisuav1/xheABKi9ZXPkous0YGu/5nz
+ tIwOMqfpN2xG01TFA26nq0edfFqYjmEtP6Ubkooi3trlhtGUyC0SLs4boktHpZsSxE2C
+ WyVjLaX3+CYTQVeIb+LT+fNkstACkeHYG27L9fNvKznIn/neVAezAqkuSTuaoxzCEpwB
+ jhF/mWaYRiMGHgGzpaWPM7ej0Ivq6vnwkaRFNVjUO/gLm7dw/Na5c1LBqC6IO6QsPgEu
+ u7E1oLO45n/SQnSQkkwvGeyYvG3N7KHwXqP6n1Ca5GlTdSDWXFRhYWKFvIohNb+poSp4
+ mnLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1750876079; x=1751480879;
- h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=xmZF/K1ll3t/VkD6pu3/bTPD6pyia8hUbgKYQygfQAs=;
- b=jwBWgx1VrJ7IlpoDbxQG4J+DSpjZXgTRRNVF3qC+NsX4+0ARkfdRz7pvVBCjYijVUA
- S7HjVk4+D5ux0Y0CQICOloK0wtZElC5gxzj9A8Jnn1oiWJ4XqV10FHGI78CzFJF7oPpn
- vE9JXYQ2umRR4tfVotHTJczZRls5cyZGw5YmeTv0qGiJqLI1H1OaNSq8L8rPArkQ2N6Q
- QRRWtlnpSAicbDLC5ORVqT15p4HIGsulGKdG3fNA2oeFbDHmN/EiH1S5qAqLdQZftYxN
- IeLOILZwGQckmr4+6fbzKgnQt4Hukp/cGYfiz4t3Rbbi5wTlmsDtFnVcFOJQE5kFW70r
- VZxw==
-X-Gm-Message-State: AOJu0YxnA80ZLyUafuRyZKop76trzQv7INq5y1KzsnbQBl0fw/lY34sX
- mUHIPl1ZVwct4vTZCKpuG9vALYVNZBEVCTjYAuOEyhFMdRAzSZpSyX/MlmcBY5KHrfxXFh7L4QV
- h6B79Vvv/92zLt+eXaCP8nApyGQ==
-X-Google-Smtp-Source: AGHT+IEeXJs+SqCsNqRSYS6W1xt1dMv3PE+gaARBD9FSpvbT0iDC33+3o2UDgycrmvmU3dejPx+F4OUdaDKsZwtIiQ==
-X-Received: from pfjf20.prod.google.com ([2002:a05:6a00:22d4:b0:746:22b3:4c0d])
- (user=jtranoleary job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a21:b93:b0:21a:eb6a:b84b with SMTP id
- adf61e73a8af0-2207f289b52mr6969224637.30.1750876079075; 
- Wed, 25 Jun 2025 11:27:59 -0700 (PDT)
-Date: Wed, 25 Jun 2025 18:27:51 +0000
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250625182751.1936925-1-jtranoleary@google.com>
-Subject: [PATCH] net/gve: support gve driver on FreeBSD
-From: "Jasper Tran O'Leary" <jtranoleary@google.com>
-To: joshwash@google.com
-Cc: dev@dpdk.org, "Jasper Tran O'Leary" <jtranoleary@google.com>
+ d=1e100.net; s=20230601; t=1750888398; x=1751493198;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=fzE8umbjOmapp5abNhmUzl1cvjniIfYiqCHh/Nx6UxA=;
+ b=I8xgye1fQSC7mk5diwZe7oRKlpbLGAVcgu4uO1OwrxNXDqmgva8FLJzrCcPOmZ1Zax
+ JebBK9iraI8O02Op+5TZIRhIEWAsmPoQWlUFNgRoyxlpdNg/wQtCqMAies8AxKzpNWjm
+ XwJW1NZNLoEYitBPWZM+AMH+SaPAvSQGvYL4BMhRiTZzonXzBfBwE69OlpEHUNbLx1Vo
+ uLP4PVqzc0ehx8odz7zPEwwo6cUS/0KfJsLimds6wpDJVz+8Mxc1geepcEUjCA9tYPka
+ p3JnNCwE530MYbxudJ/twiZ6W1Enqdud43zGI8xgmJAcv6xdV/s4ni/PvXCDcK9xR/nl
+ cReQ==
+X-Gm-Message-State: AOJu0Yym4A08vUToHSU4sngrDW+kVUbc2/k+hjS6rf1vvnrovytVpYYP
+ 6rrFeEuGvz0kUghIOBxUB9bbNGFbytDFtadZhl/6ITKjbinCL4vyomRcH0FishDaRo6vqmW4vSm
+ uPDToOPLsL48kwUQl2/FPG+AMhJMGa7VvOlxmo/dy
+X-Gm-Gg: ASbGncv8DfqAST/j6HUVgCCILACS+xC4mrgYT6vcXMfLjK9LTTzRiGyKI+ciiNfW3kV
+ v2uwU31vCazLUk4u/2EBWeCAg5RY7ciPkabPLdWLaoD+Ry8nFxSWItg0adtJCSzfzpyDtOWL+Qs
+ p7VublE2wDzI18kyVn0iQGpKtvg7ZzQbqCXzCiUI+DZwMHhbhgdS8qtGZEBz3z28u/DLfUf/Viv
+ A==
+X-Google-Smtp-Source: AGHT+IETS6PdVD8Dn705ggYLvg9AbODs/61HAgoDOqU2Jst/RH/TbSB+7Wl2Ey2A8+NVjQvOqneytOlizpsGgeoJCKA=
+X-Received: by 2002:a05:6214:d0f:b0:6fd:4b21:f2bf with SMTP id
+ 6a1803df08f44-6fd5ee846a8mr72468476d6.0.1750888397504; Wed, 25 Jun 2025
+ 14:53:17 -0700 (PDT)
+MIME-Version: 1.0
+References: <20250625182751.1936925-1-jtranoleary@google.com>
+In-Reply-To: <20250625182751.1936925-1-jtranoleary@google.com>
+From: Joshua Washington <joshwash@google.com>
+Date: Wed, 25 Jun 2025 14:53:06 -0700
+X-Gm-Features: Ac12FXxwU4NflMm9kjr2MUMrJBvNPtbb3po09by4e1YAaZXWUGnnhe-hHmnVTWQ
+Message-ID: <CALuQH+VNfMG7cCk7HVpu0+yudNbGaO++CsmEhjjrhPOQ71-iDQ@mail.gmail.com>
+Subject: Re: [PATCH] net/gve: support gve driver on FreeBSD
+To: "Jasper Tran O'Leary" <jtranoleary@google.com>
+Cc: dev@dpdk.org
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -67,69 +71,4 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This commit adds small changes so that the gve driver can build when
-FreeBSD is the host operating system.
-
-Signed-off-by: Jasper Tran O'Leary <jtranoleary@google.com>
----
- .mailmap                         | 1 +
- drivers/net/gve/base/gve_osdep.h | 2 +-
- drivers/net/gve/gve_ethdev.c     | 2 +-
- drivers/net/gve/meson.build      | 4 ++--
- 4 files changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/.mailmap b/.mailmap
-index 8483d96ec5..4ce891b223 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -650,6 +650,7 @@ Jaroslaw Gawin <jaroslawx.gawin@intel.com>
- Jaroslaw Ilgiewicz <jaroslaw.ilgiewicz@intel.com>
- Jason He <jason.he@broadcom.com>
- Jason Wang <jasowang@redhat.com>
-+Jasper Tran O'Leary <jtranoleary@google.com>
- Jasvinder Singh <jasvinder.singh@intel.com>
- Jay Ding <jay.ding@broadcom.com>
- Jay Jayatheerthan <jay.jayatheerthan@intel.com>
-diff --git a/drivers/net/gve/base/gve_osdep.h b/drivers/net/gve/base/gve_osdep.h
-index 5eb33930cd..365d44fdba 100644
---- a/drivers/net/gve/base/gve_osdep.h
-+++ b/drivers/net/gve/base/gve_osdep.h
-@@ -25,7 +25,7 @@
-
- #include "../gve_logs.h"
-
--#ifdef RTE_EXEC_ENV_LINUX
-+#if defined(RTE_EXEC_ENV_LINUX) || defined(RTE_EXEC_ENV_FREEBSD)
- #include <sys/utsname.h>
- #endif
-
-diff --git a/drivers/net/gve/gve_ethdev.c b/drivers/net/gve/gve_ethdev.c
-index e471a34e61..bdb7f1d075 100644
---- a/drivers/net/gve/gve_ethdev.c
-+++ b/drivers/net/gve/gve_ethdev.c
-@@ -1366,5 +1366,5 @@ static struct rte_pci_driver rte_gve_pmd = {
-
- RTE_PMD_REGISTER_PCI(net_gve, rte_gve_pmd);
- RTE_PMD_REGISTER_PCI_TABLE(net_gve, pci_id_gve_map);
--RTE_PMD_REGISTER_KMOD_DEP(net_gve, "* igb_uio | vfio-pci");
-+RTE_PMD_REGISTER_KMOD_DEP(net_gve, "* igb_uio | vfio-pci | nic_uio");
- RTE_LOG_REGISTER_SUFFIX(gve_logtype_driver, driver, NOTICE);
-diff --git a/drivers/net/gve/meson.build b/drivers/net/gve/meson.build
-index ed5ef0a1fc..14a17db4bf 100644
---- a/drivers/net/gve/meson.build
-+++ b/drivers/net/gve/meson.build
-@@ -1,9 +1,9 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright(C) 2022 Intel Corporation
-
--if not is_linux
-+if not is_linux and not is_freebsd
-     build = false
--    reason = 'only supported on Linux'
-+    reason = 'only supported on Linux and FreeBSD'
-     subdir_done()
- endif
-
---
-2.49.0
-
+Acked-by: Joshua Washington <joshwash@google.com>
