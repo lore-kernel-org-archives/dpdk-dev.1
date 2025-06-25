@@ -2,56 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FEEAC7EE30
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Jun 2025 12:53:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B85C7115C
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Jun 2025 13:42:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CD33740F16;
-	Wed, 25 Jun 2025 14:52:35 +0200 (CEST)
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
- by mails.dpdk.org (Postfix) with ESMTP id F2F3A40E4B
- for <dev@dpdk.org>; Wed, 25 Jun 2025 14:52:33 +0200 (CEST)
-X-QQ-mid: esmtpsz21t1750855949te638f4f2
-X-QQ-Originating-IP: c6fte20klDnDtentnOHVQj9+AP1ycssrz4Z59t77cMI=
-Received: from DSK-zaiyuwang.trustnetic.com ( [60.186.80.242])
- by bizesmtp.qq.com (ESMTP) with 
- id ; Wed, 25 Jun 2025 20:52:26 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 18311408740715137751
-EX-QQ-RecipientCnt: 4
-From: Zaiyu Wang <zaiyuwang@trustnetic.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 344D1402E0;
+	Wed, 25 Jun 2025 15:42:19 +0200 (CEST)
+Received: from fhigh-a1-smtp.messagingengine.com
+ (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+ by mails.dpdk.org (Postfix) with ESMTP id 5BB58402B9
+ for <dev@dpdk.org>; Wed, 25 Jun 2025 15:42:18 +0200 (CEST)
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal
+ [10.202.2.43])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id E627F1400073;
+ Wed, 25 Jun 2025 09:42:17 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-03.internal (MEProxy); Wed, 25 Jun 2025 09:42:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:date:date:from:from
+ :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+ :to; s=fm2; t=1750858937; x=1750945337; bh=5/V/DT2rvTO6MG25SGDJE
+ /SfWT9UsxyV1UiWr82Qe+M=; b=x08yZcWgH5V+SCghtUzkTVARnvTme+mw7vob/
+ cuNHpAkmAxeYzHeU9rfKUljP2B/Mj0gmUzjHQLaaB3hakWatSYx9fNO1m47Mge5w
+ AzOJh5mKAnLiKtmKBKblrbnm5710eB51pAMx5LWotZDVUEOv4WSiJ6rk4i52y7Ux
+ +3SkB5Sb6ZW1Kcfdn3553USe7O6FF3ZRGNz1GqPPcZQFl6tegNIjEGqATuwRYa5m
+ r1V1Jds/iVwTwWJOOcoRkxbe4iaDM/Zv/Gz/YJyTHloGfsmovwyl/NCJr6vJ8HYO
+ 2Qml7jr78q7rtuSLkfiZnOqlMVnnfpDOjEB4sTBzrYlfyAV7g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:date:date:feedback-id:feedback-id:from:from
+ :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+ :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+ 1750858937; x=1750945337; bh=5/V/DT2rvTO6MG25SGDJE/SfWT9UsxyV1Ui
+ Wr82Qe+M=; b=KoWOrM760lFoiio5uh8h8JQOW4pbnI383EG0xBLRIBBDJkCt9PJ
+ F8CV5pWAz3MEQDEMyQVMnEl0sVY5deOQ1rmzXRaVnaWmZxc+hVjFOShSh31gkfMT
+ VyPmP31S6lD/pMr4c/C2QSn4LEYbM7BKP+gdMhJCUG6gvTpBj3T+o3tREIpxS+PS
+ xoAubs8qSr4dixXkTN1ALp8TXoGh6eV3OhYOxZaBeMzOSi4xi5kapNxgJpn/ZSYp
+ d4ihTBVxuR0ivycgHDZx5qWhkZp8QTNCh7J5of25skqFsnQsOQ3+LrkUivbXvOuf
+ DMz3U7BwhO/4KPcLkBnikQbR5c77HUFv0jQ==
+X-ME-Sender: <xms:ufxbaLS4JBNWDtMzUZSTqhv2h4iEHO9Q3rnks9G29Mb3dUQqtzH6lA>
+ <xme:ufxbaMx4esoYNf0vy66NVBe4nTr35sjxZKoA_J62gGojMUuFkbBa0kxI7Xhkc55nx
+ kNPUmjTwt46H9HRnQ>
+X-ME-Received: <xmr:ufxbaA0PHXpqfkTSvPEFoWlxJA-xdUZREOhPRLIj7eT09HGb1opFAZh_WuTQQF_OXjoEtkmgleipRbIA7_wuHGtw8C0EgE8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddvvdelvdcutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+ ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+ hrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefvhhhomhgrshcuofho
+ nhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrth
+ htvghrnhepveevfeevieeihfetudekgeekleeigeffueekveduteeuffeiudevteeiudek
+ feelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepth
+ hhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepfedpmhhouggv
+ pehsmhhtphhouhhtpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtoh
+ epfhgvrhhruhhhrdihihhgihhtsegrmhgurdgtohhmpdhrtghpthhtoheprghnughrvgif
+ rdhrhigstghhvghnkhhosehokhhtvghtlhgrsghsrdhruh
+X-ME-Proxy: <xmx:ufxbaLCCxIR9yBCDSyFngRBN02bjSmDysT4jtnZfxWfdrmI-aqwaIg>
+ <xmx:ufxbaEiJmWucRUac4vJE1os6-ajGAH9ijvqc5nA0Y4ucEfRiJYRgNw>
+ <xmx:ufxbaPq__EAchFEBHJ_WuJvit65Dh7GCYnZ0DvxyKkFzewcL2yfRgw>
+ <xmx:ufxbaPjqLfktmZ-Bd8nd3ID4gPvgDZr-24Py5XL5Cd96l3hspKD-AA>
+ <xmx:ufxbaJVJ1VvKa-Aio0Q4qc1dEq6Nks2N1kYqgDwLRS0sdI1BEgLHFHzk>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 25 Jun 2025 09:42:16 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
 To: dev@dpdk.org
-Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, Jiawen Wu <jiawenwu@trustnetic.com>,
- Jian Wang <jianwang@trustnetic.com>
-Subject: [PATCH v2 15/15] doc: update for txgbe
-Date: Wed, 25 Jun 2025 20:50:47 +0800
-Message-Id: <20250625125047.18072-16-zaiyuwang@trustnetic.com>
-X-Mailer: git-send-email 2.21.0.windows.1
-In-Reply-To: <20250625125047.18072-1-zaiyuwang@trustnetic.com>
-References: <20250418094131.24136-1-zaiyuwang@trustnetic.com>
- <20250625125047.18072-1-zaiyuwang@trustnetic.com>
+Cc: Ferruh Yigit <ferruh.yigit@amd.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: [PATCH] ethdev: sync ethtool link modes with Linux 6.15
+Date: Wed, 25 Jun 2025 15:42:02 +0200
+Message-ID: <20250625134202.3193570-1-thomas@monjalon.net>
+X-Mailer: git-send-email 2.47.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz5a-1
-X-QQ-XMAILINFO: M0qzrJwwKu7jJ8jSi7FBRxI/x0Kvcm3KPDJueQDSjcSjScpj26qrUa8v
- LxHTRlcgVHoC8C00q+y3DQ8m/AFVnSWrn52ZRd4DotEUHCPoBTnluKS4fjjmQXsBcNIM2Pu
- dw9ngX0nwqwW9msTQH4tHOTp1BAUuI00cx4q4LH90+NfUicdwxFWIdCgD141+DUNBcSLoHp
- +Zei8SKSswgwwPghWQNBn2rgjpupYqRclG9Z2IxMU7OMo4g+NBh9mZf1Q8TeictfTU7j9Ml
- /Vph40e/Gty1BZ0HsE7yCBi+93ySYPuDYhuU+X6/l1OA6BM+g/dj+RVUae+k9+aSSDu5gZa
- Axm7vgpUrh5BnOlYzTBO+rnk/R9ERV4ex/ZpN6oVUEsnZrX8zUdvXqW4Fk2IHGIreSHdo5p
- TTTkDHujnDk0qS27WBcV8iENhfKErEjMUQaBU4FC+M4XbzANzY4f0dTfP7eJsEXirFGC+Cs
- wMlRnbFTB4rzD8b9MLgOCVdbLmx0ykv/Ve2j6RTvJo7wTtvaJ4FYSgYoGBZrJqF4UNZzguP
- +CYCUJDTnC52fbOmaFdfsfav1gChQifbr8idhX1H1JNmKwFY4ID+/1ROebRANUg1sC6sgCC
- qnRtk0ZzoHlkaicV1qqrKIHHrPiAdUG7eXXg0sot1t6Zw8FaxR2+o0dlhAwGltkB4/06oZN
- vZykJ/nNEnoLoZJuLtDiAIBYTe1K5NTCfYD4L1/muM4VUU+wqIl0AkpCy0FyHllIPN2kyfY
- ByW5RIruJU+Z4gYpwHhZgxeh7MuoLAES9ahI2PiAhIpbNcaVFHKOUXI4hawPkITnt1mq1qp
- Ue8hnZCKOm2ilTtgZEmCeKo9DrFghLOkYPqVghi91tLYGitPlq5Y/fKZu/7OI8pEZN/xXom
- uza3B0WHjEkMKcWynQb7zb1rmboLrnrybBv26ahFPYNdp0ZmLBoPBT8A9rl4tr3ZIZ5DjCE
- 5iAIRhiwmgOb3hVbsrhPl5xTdKhHBjB78O2fObRvTUIONLICaUXKWfay7QgW5F6f5GHmGFI
- GePBB0w7oVpllZtXoKkWPEUFuJNgjN0FWgu3+i4Q==
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -65,32 +85,60 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add new types of Wangxun NICs into txgbe supported NICs list.
+Update ethtool link modes with new ones added in Linux 6.15.
+These values won't change as they are part of the Linux uAPI.
+Note: extracting them avoids to depend on a kernel version.
 
-Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
+The parsing command is updated to generate padding
+accordingly to the alignments in the DPDK source file.
+
+Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
 ---
- doc/guides/nics/txgbe.rst | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ lib/ethdev/ethdev_linux_ethtool.c | 24 ++++++++++++++++++++++--
+ 1 file changed, 22 insertions(+), 2 deletions(-)
 
-diff --git a/doc/guides/nics/txgbe.rst b/doc/guides/nics/txgbe.rst
-index 93fb592759..ccf645d51f 100644
---- a/doc/guides/nics/txgbe.rst
-+++ b/doc/guides/nics/txgbe.rst
-@@ -4,8 +4,12 @@
- TXGBE Poll Mode Driver
- ======================
+diff --git a/lib/ethdev/ethdev_linux_ethtool.c b/lib/ethdev/ethdev_linux_ethtool.c
+index ec42d3054a..f508cdba6c 100644
+--- a/lib/ethdev/ethdev_linux_ethtool.c
++++ b/lib/ethdev/ethdev_linux_ethtool.c
+@@ -17,8 +17,9 @@
+  *
+  * The array below is built from bit definitions with this shell command:
+  *   sed -rn 's;.*(ETHTOOL_LINK_MODE_)([0-9]+)([0-9a-zA-Z_]*).*= *([0-9]*).*;'\
+- *           '[\4] = \2, /\* \1\2\3 *\/;p' /usr/include/linux/ethtool.h |
+- *   awk '/_Half_/{$3=$3+1","}1'
++ *           '[\4] \2 \1\2\3;p' /usr/include/linux/ethtool.h |
++ *   awk '/_Half_/{$2=$2+1}1' |
++ *   awk '{printf "\t%5s = %7s, /\* %s *\/\n", $1, $2, $3}'
+  */
+ static const uint32_t link_modes[] = {
+ 	  [0] =      11, /* ETHTOOL_LINK_MODE_10baseT_Half_BIT */
+@@ -110,6 +111,25 @@ static const uint32_t link_modes[] = {
+ 	 [99] =      10, /* ETHTOOL_LINK_MODE_10baseT1S_Full_BIT */
+ 	[100] =      11, /* ETHTOOL_LINK_MODE_10baseT1S_Half_BIT */
+ 	[101] =      11, /* ETHTOOL_LINK_MODE_10baseT1S_P2MP_Half_BIT */
++	[102] =      10, /* ETHTOOL_LINK_MODE_10baseT1BRR_Full_BIT */
++	[103] =  200000, /* ETHTOOL_LINK_MODE_200000baseCR_Full_BIT */
++	[104] =  200000, /* ETHTOOL_LINK_MODE_200000baseKR_Full_BIT */
++	[105] =  200000, /* ETHTOOL_LINK_MODE_200000baseDR_Full_BIT */
++	[106] =  200000, /* ETHTOOL_LINK_MODE_200000baseDR_2_Full_BIT */
++	[107] =  200000, /* ETHTOOL_LINK_MODE_200000baseSR_Full_BIT */
++	[108] =  200000, /* ETHTOOL_LINK_MODE_200000baseVR_Full_BIT */
++	[109] =  400000, /* ETHTOOL_LINK_MODE_400000baseCR2_Full_BIT */
++	[110] =  400000, /* ETHTOOL_LINK_MODE_400000baseKR2_Full_BIT */
++	[111] =  400000, /* ETHTOOL_LINK_MODE_400000baseDR2_Full_BIT */
++	[112] =  400000, /* ETHTOOL_LINK_MODE_400000baseDR2_2_Full_BIT */
++	[113] =  400000, /* ETHTOOL_LINK_MODE_400000baseSR2_Full_BIT */
++	[114] =  400000, /* ETHTOOL_LINK_MODE_400000baseVR2_Full_BIT */
++	[115] =  800000, /* ETHTOOL_LINK_MODE_800000baseCR4_Full_BIT */
++	[116] =  800000, /* ETHTOOL_LINK_MODE_800000baseKR4_Full_BIT */
++	[117] =  800000, /* ETHTOOL_LINK_MODE_800000baseDR4_Full_BIT */
++	[118] =  800000, /* ETHTOOL_LINK_MODE_800000baseDR4_2_Full_BIT */
++	[119] =  800000, /* ETHTOOL_LINK_MODE_800000baseSR4_Full_BIT */
++	[120] =  800000, /* ETHTOOL_LINK_MODE_800000baseVR4_Full_BIT */
+ };
  
--The TXGBE PMD (librte_pmd_txgbe) provides poll mode driver support
--for Wangxun 10 Gigabit Ethernet NICs.
-+Supported NICs
-+--------
-+
-+- Wangxun 10 Gigabit Ethernet NICs
-+- Wangxun 25 Gigabit Ethernet NICs
-+- Wangxun 40 Gigabit Ethernet NICs
- 
- Features
- --------
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_eth_link_speed_ethtool)
 -- 
-2.21.0.windows.1
+2.47.1
 
