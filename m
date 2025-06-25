@@ -2,64 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96A67C77B7C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Jun 2025 17:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD8AFC7EE2A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Jun 2025 18:28:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D833040B90;
-	Wed, 25 Jun 2025 19:44:26 +0200 (CEST)
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com
- [209.85.216.51]) by mails.dpdk.org (Postfix) with ESMTP id 4FC7A40B90
- for <dev@dpdk.org>; Wed, 25 Jun 2025 19:44:25 +0200 (CEST)
-Received: by mail-pj1-f51.google.com with SMTP id
- 98e67ed59e1d1-3138b2f0249so76296a91.2
- for <dev@dpdk.org>; Wed, 25 Jun 2025 10:44:25 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 8844E40DD2;
+	Wed, 25 Jun 2025 20:28:00 +0200 (CEST)
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com
+ [209.85.210.202])
+ by mails.dpdk.org (Postfix) with ESMTP id 002D9406A2
+ for <dev@dpdk.org>; Wed, 25 Jun 2025 20:27:59 +0200 (CEST)
+Received: by mail-pf1-f202.google.com with SMTP id
+ d2e1a72fcca58-748efefedb5so230126b3a.2
+ for <dev@dpdk.org>; Wed, 25 Jun 2025 11:27:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1750873464; x=1751478264; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=tmtHbtNhmI1dgK3IObXvZx4+BL+bL9Ttva7YwdBYlW8=;
- b=fKpcGHvzPZX9Vz/IzylgdRSVmreFHJR3keYIa1mMQlvYpiN6y5WlmZLWTdUpGBUgYH
- znuhvYJ2Pl87HuGe1CxPQW5Q5I77+dNd2D2L8lRon+0u+tql2snG4rTjw722rKhQKHUd
- WM0iPRX8jWTEKf0CW5JZPW8wMbejVaTEUaFGk=
+ d=google.com; s=20230601; t=1750876079; x=1751480879; darn=dpdk.org;
+ h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+ :date:message-id:reply-to;
+ bh=xmZF/K1ll3t/VkD6pu3/bTPD6pyia8hUbgKYQygfQAs=;
+ b=L4ooxDbEOrq9BY7lrfb6T9UEciTKNMiLB35dUnIPow617OKNddrxTt8/wAGAvO6Brv
+ hJjHAQvmoLexvPEQoaM5LKIMTK4n9H/gGY7XbcqM8LUcbwHF15CpMtMkXxwm5Y8GjjIM
+ oMG7H+6Gn/Vlf8jyPHiUTxcSHsIVY5UbA1Y1Np0+qjWffYmZvmz9txExbdi5RRgKk0yo
+ OXI1cMaalULIJNLCR3mKo2PYhMRE8EkNnPEkBOTm3XkZ5MLtLNVnYbFALVBn7EphqJMc
+ pZ5r465jBhu9wiDGz+H3P6jPOH7wbNKatTAuLihA2L1OzukUrz1OZ6p6+aVHLnIXdWR+
+ j9Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1750873464; x=1751478264;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=tmtHbtNhmI1dgK3IObXvZx4+BL+bL9Ttva7YwdBYlW8=;
- b=F+QQEqtf0rKNtmepgqOYySUDLD1ybS1MOT4h19Wf4KRV5Wbhpd6j/AECmsoIXc8r0R
- zfRy2RCKCsr98rXquX+qkO0Gld9POzNjTg2hQT6JCjp1ONQoXQYFm9uUrfa5G7lqWGnm
- Uo+EvaYbi029y4tT7yES8+3L7IN8l3GHI+L1ZbHDqO/SsGcfaaH6JdxuLz9z2yRQG7Aa
- sz6oiZggrchOq+tEEPh294noFbXQ7u2I+VYGSeU6RwJN3hqhLGQ2HsY6VAe0VZlT8/31
- rH+pAqP5w0+F7FA4gcwmkBGh3EOlLH9SW+eqkAZx/Xe5GFGEACk4A1cJTIb2CLa9cePh
- x6OA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWtXkH0vwkaYdlAplzW0dVywg7QA0z6aynjtcpm1GVuyfHh3LWNiXgnajfjPaK2ulnMTXc=@dpdk.org
-X-Gm-Message-State: AOJu0YyOTTsto6fvuooUCA7KAf4EbbazNB8Nmy+BzvZemRRbSiEOOzmg
- seBxOEXPLlK7OwXf8/VqjV199CYF8GWfy4rYHPhlyC+hxXnYaKgU5X9YgfrGUp1gMV2yIycDu0y
- EKIm++7BHAjmxDl0vKiA9Rc5aZth/mDI7SqfAlV78oA==
-X-Gm-Gg: ASbGnctJQ0g8CysAiyCB38PHnyl37BtA/m+zV7VdmUT4Vyn2GFUOYTlTtcKzTAlcvEa
- 9el4FEZOVFlfoX0X6ykHk8nqIMuHrsiLe73lFgkqeEMlHaPjMD8t83U6hNbxfuwdWopNV4sSEhY
- vabB5QBF4j2UwvAAcr6wHjNsWXN6eo+43oqLZH14DBvZn6+wUkbXWlGcR00AdnLmjrxQGDFQuB2
- XVVFCrSbkbE1y4=
-X-Google-Smtp-Source: AGHT+IGWzkWb7dWEKQ8VfZW7UwShzXK3NgvMfMexEsoU0c5IYWA+sTJsvHMsb5h8Svl9sPiPpqFBU6LzhlGwGE01f+4=
-X-Received: by 2002:a17:90b:2c87:b0:316:e77:e2cf with SMTP id
- 98e67ed59e1d1-31616040aeamr1079043a91.35.1750873463985; Wed, 25 Jun 2025
- 10:44:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <20250519181957.228084-1-dmarx@iol.unh.edu>
- <20250521192629.294265-1-dmarx@iol.unh.edu>
- <20250521192629.294265-3-dmarx@iol.unh.edu>
-In-Reply-To: <20250521192629.294265-3-dmarx@iol.unh.edu>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Wed, 25 Jun 2025 13:38:58 -0400
-X-Gm-Features: AX0GCFsmpwAOmqGwgAYGrX0ReINFEmOdO4KMRZuElH18LH8wgBUAhceR8uOyklY
-Message-ID: <CAJvnSUAxk9D_NL9O7CQv8heESHyMW=Z+ceeRYgMO7BTLD3khHg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] dts: add flow validation
-To: Dean Marx <dmarx@iol.unh.edu>
-Cc: luca.vizzarro@arm.com, yoan.picchi@foss.arm.com, 
- Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com, dev@dpdk.org
-Content-Type: multipart/alternative; boundary="000000000000de2d98063868fe4c"
+ d=1e100.net; s=20230601; t=1750876079; x=1751480879;
+ h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=xmZF/K1ll3t/VkD6pu3/bTPD6pyia8hUbgKYQygfQAs=;
+ b=jwBWgx1VrJ7IlpoDbxQG4J+DSpjZXgTRRNVF3qC+NsX4+0ARkfdRz7pvVBCjYijVUA
+ S7HjVk4+D5ux0Y0CQICOloK0wtZElC5gxzj9A8Jnn1oiWJ4XqV10FHGI78CzFJF7oPpn
+ vE9JXYQ2umRR4tfVotHTJczZRls5cyZGw5YmeTv0qGiJqLI1H1OaNSq8L8rPArkQ2N6Q
+ QRRWtlnpSAicbDLC5ORVqT15p4HIGsulGKdG3fNA2oeFbDHmN/EiH1S5qAqLdQZftYxN
+ IeLOILZwGQckmr4+6fbzKgnQt4Hukp/cGYfiz4t3Rbbi5wTlmsDtFnVcFOJQE5kFW70r
+ VZxw==
+X-Gm-Message-State: AOJu0YxnA80ZLyUafuRyZKop76trzQv7INq5y1KzsnbQBl0fw/lY34sX
+ mUHIPl1ZVwct4vTZCKpuG9vALYVNZBEVCTjYAuOEyhFMdRAzSZpSyX/MlmcBY5KHrfxXFh7L4QV
+ h6B79Vvv/92zLt+eXaCP8nApyGQ==
+X-Google-Smtp-Source: AGHT+IEeXJs+SqCsNqRSYS6W1xt1dMv3PE+gaARBD9FSpvbT0iDC33+3o2UDgycrmvmU3dejPx+F4OUdaDKsZwtIiQ==
+X-Received: from pfjf20.prod.google.com ([2002:a05:6a00:22d4:b0:746:22b3:4c0d])
+ (user=jtranoleary job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a21:b93:b0:21a:eb6a:b84b with SMTP id
+ adf61e73a8af0-2207f289b52mr6969224637.30.1750876079075; 
+ Wed, 25 Jun 2025 11:27:59 -0700 (PDT)
+Date: Wed, 25 Jun 2025 18:27:51 +0000
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250625182751.1936925-1-jtranoleary@google.com>
+Subject: [PATCH] net/gve: support gve driver on FreeBSD
+From: "Jasper Tran O'Leary" <jtranoleary@google.com>
+To: joshwash@google.com
+Cc: dev@dpdk.org, "Jasper Tran O'Leary" <jtranoleary@google.com>
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -73,220 +67,69 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000de2d98063868fe4c
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+This commit adds small changes so that the gve driver can build when
+FreeBSD is the host operating system.
 
-On Wed, May 21, 2025 at 3:26=E2=80=AFPM Dean Marx <dmarx@iol.unh.edu> wrote=
-:
+Signed-off-by: Jasper Tran O'Leary <jtranoleary@google.com>
+---
+ .mailmap                         | 1 +
+ drivers/net/gve/base/gve_osdep.h | 2 +-
+ drivers/net/gve/gve_ethdev.c     | 2 +-
+ drivers/net/gve/meson.build      | 4 ++--
+ 4 files changed, 5 insertions(+), 4 deletions(-)
 
-> Add a method for validating flow rules to the testpmd shell class.
-> Implement test case skipping for flow rules that do not pass
-> validation.
->
-> Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
-> ---
->  dts/framework/remote_session/testpmd_shell.py | 15 ++++
->  dts/framework/test_run.py                     |  3 +
->  dts/framework/test_suite.py                   | 21 ++++-
->  dts/tests/TestSuite_flow.py                   | 90 +++++++++++++------
->  4 files changed, 102 insertions(+), 27 deletions(-)
->
-> diff --git a/dts/framework/remote_session/testpmd_shell.py
-> b/dts/framework/remote_session/testpmd_shell.py
-> index bd5f2659bd..c2c7ade60a 100644
-> --- a/dts/framework/remote_session/testpmd_shell.py
-> +++ b/dts/framework/remote_session/testpmd_shell.py
-> @@ -1961,6 +1961,21 @@ def flow_create(self, flow_rule: FlowRule, port_id=
-:
-> int) -> int:
->              self._logger.debug(f"Failed to create flow
-> rule:\n{flow_output}")
->              raise InteractiveCommandExecutionError(f"Failed to create
-> flow rule:\n{flow_output}")
->
-> +    def flow_validate(self, flow_rule: FlowRule, port_id: int) -> bool:
-> +        """Validates a flow rule in the testpmd session.
-> +
-> +        Args:
-> +            flow_rule: :class:`FlowRule` object used for validating
-> testpmd flow rule.
-> +            port_id: Integer representing the port to use.
-> +
-> +        Returns:
-> +            Boolean representing whether rule is valid or not.
-> +        """
-> +        flow_output =3D self.send_command(f"flow validate {port_id}
-> {flow_rule}")
-> +        if "Flow rule validated" in flow_output:
-> +            return True
-> +        return False
-> +
->      def flow_delete(self, flow_id: int, port_id: int, verify: bool =3D
-> True) -> None:
->          """Deletes the specified flow rule from the testpmd session.
->
-> diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
-> index 0fdc57ea9c..cf4af19e8f 100644
-> --- a/dts/framework/test_run.py
-> +++ b/dts/framework/test_run.py
-> @@ -644,6 +644,9 @@ def next(self) -> State | None:
->                  return self
->
->              self.result.update(Result.FAIL, e)
-> +        except SkippedTestException as e:
-> +            self.logger.info(f"Test case execution SKIPPED: {e}")
-> +            self.result.update(Result.SKIP, e)
->          else:
->              self.result.update(Result.PASS)
->              self.logger.info(f"{self.description.capitalize()} PASSED.")
-> diff --git a/dts/framework/test_suite.py b/dts/framework/test_suite.py
-> index e07c327b77..34e9eb54ea 100644
-> --- a/dts/framework/test_suite.py
-> +++ b/dts/framework/test_suite.py
-> @@ -39,7 +39,7 @@
->      PacketFilteringConfig,
->  )
->
-> -from .exception import ConfigurationError, InternalError,
-> TestCaseVerifyError
-> +from .exception import ConfigurationError, InternalError,
-> SkippedTestException, TestCaseVerifyError
->  from .logger import DTSLogger, get_dts_logger
->  from .utils import get_packet_summaries, to_pascal_case
->
-> @@ -411,6 +411,25 @@ def _fail_test_case_verify(self, failure_description=
-:
-> str) -> None:
->              self._logger.debug(command_res.command)
->          raise TestCaseVerifyError(failure_description)
->
-> +    def verify_skip(self, condition: bool, skip_reason: str) -> None:
->
+diff --git a/.mailmap b/.mailmap
+index 8483d96ec5..4ce891b223 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -650,6 +650,7 @@ Jaroslaw Gawin <jaroslawx.gawin@intel.com>
+ Jaroslaw Ilgiewicz <jaroslaw.ilgiewicz@intel.com>
+ Jason He <jason.he@broadcom.com>
+ Jason Wang <jasowang@redhat.com>
++Jasper Tran O'Leary <jtranoleary@google.com>
+ Jasvinder Singh <jasvinder.singh@intel.com>
+ Jay Ding <jay.ding@broadcom.com>
+ Jay Jayatheerthan <jay.jayatheerthan@intel.com>
+diff --git a/drivers/net/gve/base/gve_osdep.h b/drivers/net/gve/base/gve_osdep.h
+index 5eb33930cd..365d44fdba 100644
+--- a/drivers/net/gve/base/gve_osdep.h
++++ b/drivers/net/gve/base/gve_osdep.h
+@@ -25,7 +25,7 @@
 
-Maybe rename to "verify_else_skip" so it is more descriptive? Up to you.
+ #include "../gve_logs.h"
 
+-#ifdef RTE_EXEC_ENV_LINUX
++#if defined(RTE_EXEC_ENV_LINUX) || defined(RTE_EXEC_ENV_FREEBSD)
+ #include <sys/utsname.h>
+ #endif
 
->
->
+diff --git a/drivers/net/gve/gve_ethdev.c b/drivers/net/gve/gve_ethdev.c
+index e471a34e61..bdb7f1d075 100644
+--- a/drivers/net/gve/gve_ethdev.c
++++ b/drivers/net/gve/gve_ethdev.c
+@@ -1366,5 +1366,5 @@ static struct rte_pci_driver rte_gve_pmd = {
 
-Reviewed-by: Patrick Robb <probb@iol.unh.edu>
+ RTE_PMD_REGISTER_PCI(net_gve, rte_gve_pmd);
+ RTE_PMD_REGISTER_PCI_TABLE(net_gve, pci_id_gve_map);
+-RTE_PMD_REGISTER_KMOD_DEP(net_gve, "* igb_uio | vfio-pci");
++RTE_PMD_REGISTER_KMOD_DEP(net_gve, "* igb_uio | vfio-pci | nic_uio");
+ RTE_LOG_REGISTER_SUFFIX(gve_logtype_driver, driver, NOTICE);
+diff --git a/drivers/net/gve/meson.build b/drivers/net/gve/meson.build
+index ed5ef0a1fc..14a17db4bf 100644
+--- a/drivers/net/gve/meson.build
++++ b/drivers/net/gve/meson.build
+@@ -1,9 +1,9 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(C) 2022 Intel Corporation
 
---000000000000de2d98063868fe4c
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+-if not is_linux
++if not is_linux and not is_freebsd
+     build = false
+-    reason = 'only supported on Linux'
++    reason = 'only supported on Linux and FreeBSD'
+     subdir_done()
+ endif
 
-<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
-mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, May 21,=
- 2025 at 3:26=E2=80=AFPM Dean Marx &lt;<a href=3D"mailto:dmarx@iol.unh.edu"=
->dmarx@iol.unh.edu</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote=
-" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);=
-padding-left:1ex">Add a method for validating flow rules to the testpmd she=
-ll class.<br>
-Implement test case skipping for flow rules that do not pass<br>
-validation.<br>
-<br>
-Signed-off-by: Dean Marx &lt;<a href=3D"mailto:dmarx@iol.unh.edu" target=3D=
-"_blank">dmarx@iol.unh.edu</a>&gt;<br>
----<br>
-=C2=A0dts/framework/remote_session/testpmd_shell.py | 15 ++++<br>
-=C2=A0dts/framework/test_run.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0|=C2=A0 3 +<br>
-=C2=A0dts/framework/test_suite.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0| 21 ++++-<br>
-=C2=A0dts/tests/TestSuite_flow.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0| 90 +++++++++++++------<br>
-=C2=A04 files changed, 102 insertions(+), 27 deletions(-)<br>
-<br>
-diff --git a/dts/framework/remote_session/testpmd_shell.py b/dts/framework/=
-remote_session/testpmd_shell.py<br>
-index bd5f2659bd..c2c7ade60a 100644<br>
---- a/dts/framework/remote_session/testpmd_shell.py<br>
-+++ b/dts/framework/remote_session/testpmd_shell.py<br>
-@@ -1961,6 +1961,21 @@ def flow_create(self, flow_rule: FlowRule, port_id: =
-int) -&gt; int:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0self._logger.debug(f&quot;F=
-ailed to create flow rule:\n{flow_output}&quot;)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0raise InteractiveCommandExe=
-cutionError(f&quot;Failed to create flow rule:\n{flow_output}&quot;)<br>
-<br>
-+=C2=A0 =C2=A0 def flow_validate(self, flow_rule: FlowRule, port_id: int) -=
-&gt; bool:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Validates a flow rule in the=
- testpmd session.<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Args:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 flow_rule: :class:`FlowRule` obj=
-ect used for validating testpmd flow rule.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 port_id: Integer representing th=
-e port to use.<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Returns:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 Boolean representing whether rul=
-e is valid or not.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 flow_output =3D self.send_command(f&quot;flow =
-validate {port_id} {flow_rule}&quot;)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 if &quot;Flow rule validated&quot; in flow_out=
-put:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return True<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 return False<br>
-+<br>
-=C2=A0 =C2=A0 =C2=A0def flow_delete(self, flow_id: int, port_id: int, verif=
-y: bool =3D True) -&gt; None:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;Deletes the specified f=
-low rule from the testpmd session.<br>
-<br>
-diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py<br>
-index 0fdc57ea9c..cf4af19e8f 100644<br>
---- a/dts/framework/test_run.py<br>
-+++ b/dts/framework/test_run.py<br>
-@@ -644,6 +644,9 @@ def next(self) -&gt; State | None:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return self<b=
-r>
-<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0self.result.update(Result.F=
-AIL, e)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 except SkippedTestException as e:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 <a href=3D"http://self.logger.in=
-fo" rel=3D"noreferrer" target=3D"_blank">self.logger.info</a>(f&quot;Test c=
-ase execution SKIPPED: {e}&quot;)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 self.result.update(Result.SKIP, =
-e)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0else:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0self.result.update(Result.P=
-ASS)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0<a href=3D"http://self.logg=
-er.info" rel=3D"noreferrer" target=3D"_blank">self.logger.info</a>(f&quot;{=
-self.description.capitalize()} PASSED.&quot;)<br>
-diff --git a/dts/framework/test_suite.py b/dts/framework/test_suite.py<br>
-index e07c327b77..34e9eb54ea 100644<br>
---- a/dts/framework/test_suite.py<br>
-+++ b/dts/framework/test_suite.py<br>
-@@ -39,7 +39,7 @@<br>
-=C2=A0 =C2=A0 =C2=A0PacketFilteringConfig,<br>
-=C2=A0)<br>
-<br>
--from .exception import ConfigurationError, InternalError, TestCaseVerifyEr=
-ror<br>
-+from .exception import ConfigurationError, InternalError, SkippedTestExcep=
-tion, TestCaseVerifyError<br>
-=C2=A0from .logger import DTSLogger, get_dts_logger<br>
-=C2=A0from .utils import get_packet_summaries, to_pascal_case<br>
-<br>
-@@ -411,6 +411,25 @@ def _fail_test_case_verify(self, failure_description: =
-str) -&gt; None:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0self._logger.debug(command_=
-res.command)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0raise TestCaseVerifyError(failure_descrip=
-tion)<br>
-<br>
-+=C2=A0 =C2=A0 def verify_skip(self, condition: bool, skip_reason: str) -&g=
-t; None:<br></blockquote><div><br></div><div>Maybe rename to &quot;verify_e=
-lse_skip&quot; so it is more descriptive? Up to you.</div><div>=C2=A0</div>=
-<blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-=
-left:1px solid rgb(204,204,204);padding-left:1ex"><br></blockquote><div><br=
-></div><div><br></div><div>Reviewed-by: Patrick Robb &lt;<a href=3D"mailto:=
-probb@iol.unh.edu">probb@iol.unh.edu</a>&gt;=C2=A0</div></div></div>
+--
+2.49.0
 
---000000000000de2d98063868fe4c--
