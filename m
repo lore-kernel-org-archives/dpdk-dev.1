@@ -2,64 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1896FC77B7C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Jun 2025 17:20:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 703DCC7EE2A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Jun 2025 17:30:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CF9CD40BA6;
-	Wed, 25 Jun 2025 19:20:56 +0200 (CEST)
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com
- [209.85.215.172])
- by mails.dpdk.org (Postfix) with ESMTP id CB38640B90
- for <dev@dpdk.org>; Wed, 25 Jun 2025 19:20:54 +0200 (CEST)
-Received: by mail-pg1-f172.google.com with SMTP id
- 41be03b00d2f7-b321bd36a41so71574a12.2
- for <dev@dpdk.org>; Wed, 25 Jun 2025 10:20:54 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6A20440E03;
+	Wed, 25 Jun 2025 19:30:31 +0200 (CEST)
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com
+ [209.85.215.176])
+ by mails.dpdk.org (Postfix) with ESMTP id D7AB840B90
+ for <dev@dpdk.org>; Wed, 25 Jun 2025 19:30:29 +0200 (CEST)
+Received: by mail-pg1-f176.google.com with SMTP id
+ 41be03b00d2f7-b26f7d2c1f1so143958a12.0
+ for <dev@dpdk.org>; Wed, 25 Jun 2025 10:30:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1750872054; x=1751476854; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1750872629; x=1751477429; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=S7nBCQjcaSTyY0970msBmCQvISNLL1FrtlzwiEiIbmo=;
- b=D7vYo+u0o3xhCRHS/YYGEo2InD73FTq7UjRFExk92iDMVMGwK+t9LTWBGTUCGqAvB1
- iMl5loG+PBM82HJ8U5Z42RGrQWRZmo9aAGA+HA10ps7KjiV09fdMKz3Macg0Uq1N1awF
- +LeQ3FpQSUcbBVN/UbzMOCopTUTVAntTlSTOs=
+ bh=Tkl0Dd2y1LPKTlmO1vXFkU9fBfwkKdJt2yk4PtMS7vk=;
+ b=QUk3eUDahFvyk70to6kwJpSE4uGebPnCI2+waq8dmqMrb0tjPBJ3pmCi65Y/EB3UPx
+ CeIjNf5HppxZvJxLMZIGHqpRIg4Xz2x43zKI4+Zh8H9wonYqYpxOKfs9KUpGZn2d0YCx
+ 1j6O8kNbESUlrWoHXCoCgvhcRSzdEA0PhYzT0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1750872054; x=1751476854;
+ d=1e100.net; s=20230601; t=1750872629; x=1751477429;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=S7nBCQjcaSTyY0970msBmCQvISNLL1FrtlzwiEiIbmo=;
- b=otyxfWDDg+Qyw6E4SiBwoHKgWTL1Pr4wJyGuNTBTv/ACbznriU3CWucLDuGj4Fe2g1
- BeZ2AVKCFhLnPxecNFdT/nLHlxjMR8Ay+FYR3icz7CNu4tPuWmViM+d3PUmyCVs671PT
- 9Fx1fD4+Q4L0/A+D9FBgV92JRAtv3b+RMbpz592gxm+n71/vp/4u0WHY6rTQ1i6hIBM6
- RFTs9AKx2JbSnQu/b+/XWb+QCTNepMvbjKO3vD/v9i3Y3V6N+9p/+IVMsNb5EKHjYEqn
- P6RSPm/UDslieEpOdm5xMI4ovrwb8a+aVwqdasVYZ19KKcZUjMgNGELQ8Qu67JjS6773
- Eg6w==
+ bh=Tkl0Dd2y1LPKTlmO1vXFkU9fBfwkKdJt2yk4PtMS7vk=;
+ b=SpWVwYKIqkN5qPxwAVJndn6WYf2y7u9AuwbZ+6dfpkawXWK/3KtasHolXHKhC9bg4N
+ 1qOpME/5kaij0W+b/pdXIFiMTQoLBj+3Z3RmEowbOpuJOaIoCke0PyHvU3tU88Zh1I32
+ eyguGNnF/i74LLt+ztOJEyR0SCPx7dvo+T2zMnQUac/KaAiMLK9iSStuJzpCN4xBaepi
+ ZE6TdFjus8FbqbSGR7Voxb5mPiMbh8hzrBhjEk+JwZ0+BDWKoAPw/7oMNd93Z4wGrg6p
+ GxK0uxi/e+bxxNOOapui77JNdNz33hDlM2+baX10l9t7SSa+Pno1sbtATIMfWqPL1slv
+ y/Zg==
 X-Forwarded-Encrypted: i=1;
- AJvYcCVHBr44BexxntkU3eUDjjXAIOOGc5/33ZtUq6hImSOTMAVVK5kl7gIwqNkXkoB+Ihm8Ck8=@dpdk.org
-X-Gm-Message-State: AOJu0Yy6XU7h+EuJgQcqL3zUkwtdG1rA//FNPOg/t31XUHouoadt7dA+
- lDiu0wX7gSVAeIRhMSIy1Cn3f5TRQ6RFiKd19M4wmu6z8u8KZ2yz2IZreXxEVL2dACB37r0END9
- 171CDXFku/FmaOOKTAE4HFbIZ1fg0KypI18nSeUaDvA==
-X-Gm-Gg: ASbGnctobAPW5a6VvjGqDfk99hgyk7j+lz2vOvy/Wo0T5CvLL7VYN5frqAQSpa9Hve5
- 4VQtnFUxHeyYzV9brwLfJOR6e8DxcqNGU/24gOUPJYxJD3/oldvpEktSyAn6yOXbs1LnW4wjBjO
- O2NlAyyA68+/sdJZgDNfEKwML+qEvM6kFdbaDxj9jNG4Aizvg025NW2yxd2uzi37s3nSMpY1ugu
- VsZ
-X-Google-Smtp-Source: AGHT+IHrZL8L90rr2LBxQZp/nMJ5PyX79QTcfyPK1PadeNKYzG23OXKpO6bL/CmoISR/26zflIp+sS8mtRNJJAIahLI=
-X-Received: by 2002:a17:90b:5610:b0:311:e731:523a with SMTP id
- 98e67ed59e1d1-315f2613891mr6146495a91.11.1750872053630; Wed, 25 Jun 2025
- 10:20:53 -0700 (PDT)
+ AJvYcCXqOpzvf9W3qR3eezHOX8S8YdmNv7VVU9RdLJf2KukluVvnLcqV2JeQqsUnMrOJ1uenifE=@dpdk.org
+X-Gm-Message-State: AOJu0YxG438s+HW3ui7/dpDFxsdU2w5Txv1Mz49LtqzbPy11g3goPi8y
+ g2yDe7R8I8kmKNPINi+NCA0KT6zI/0C68i7GEaeZPGpLq5L/CnR3V67JBXEKaz8FKDcFlnao7pO
+ IZTxz+pUwpJAT86wWNFVhwdcK3U70rlm/xDznapx2VA==
+X-Gm-Gg: ASbGncvZAm5MyBKIEVZ42eHZnb5m4tnXwh0bIFzY73XKRkgWVMXyYcMLtRhCcrr4d3k
+ i2ca875FhvmT1H+3Ctchpw+lMBETaa9N5jU3Gy5nrvrF+C1BPV7qRy6RjyLJzz8dG6WUNig2Erj
+ LF4Ib6ffI+xXNMmj2dpixz6bqKLK4jucup8zG6pYxMZyq6NudiigHXZXI7CoOBxpzkxICh2nYNj
+ UBR
+X-Google-Smtp-Source: AGHT+IFjGglj0Y7yYXccFQNtqjgQb/0D84GzkAUpDGB/K2Z04VXHkI7TpS5FMDAfT1ojzwWLtwVeMUYv8CbZxnvelM4=
+X-Received: by 2002:a17:90b:4fcb:b0:312:e279:9ccf with SMTP id
+ 98e67ed59e1d1-315f25caa70mr5253154a91.5.1750872628752; Wed, 25 Jun 2025
+ 10:30:28 -0700 (PDT)
 MIME-Version: 1.0
 References: <20250519181957.228084-1-dmarx@iol.unh.edu>
  <20250521192629.294265-1-dmarx@iol.unh.edu>
-In-Reply-To: <20250521192629.294265-1-dmarx@iol.unh.edu>
+ <20250521192629.294265-2-dmarx@iol.unh.edu>
+In-Reply-To: <20250521192629.294265-2-dmarx@iol.unh.edu>
 From: Patrick Robb <probb@iol.unh.edu>
-Date: Wed, 25 Jun 2025 13:15:28 -0400
-X-Gm-Features: AX0GCFspyn4qRE6HHUaGm4rHq4ITAVxXm3yb0YpixmXgXWcTgE81Nv10hv8KoeI
-Message-ID: <CAJvnSUANro_BV+VkrD5s_ArOEcC-0qN3qhWSBwT38ZuMrOMk_g@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] dts: add rte flow test suite
+Date: Wed, 25 Jun 2025 13:25:03 -0400
+X-Gm-Features: AX0GCFvV4h3mW4Fc86w2Resf_1Gah_IJdwPYYbhwge89Ync_em3Vb0cnZIPu81U
+Message-ID: <CAJvnSUB27wVvV-2YW1xVH6nniDRAC9whTPvKTinRJFeJAOgqfw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] dts: add jump and priority tests to flow suite
 To: Dean Marx <dmarx@iol.unh.edu>
 Cc: luca.vizzarro@arm.com, yoan.picchi@foss.arm.com, 
  Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com, dev@dpdk.org
-Content-Type: multipart/alternative; boundary="000000000000cde667063868aa0b"
+Content-Type: multipart/alternative; boundary="000000000000159003063868cd98"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -73,233 +74,151 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000cde667063868aa0b
+--000000000000159003063868cd98
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Wed, May 21, 2025 at 3:26=E2=80=AFPM Dean Marx <dmarx@iol.unh.edu> wrote=
 :
 
-> Add an RTE Flow API testing suite, which covers some basic
-> synchronous Flow API rules that should be supported across PMDs.
-> This suite will be added to over time, as the Flow API is too large
-> to cover all in one suite, and sending one monolithic series
-> would be impossible.
+> Add jump action verification method and test case to Flow API test suite,
+> as well as a case for validating flows with different priority levels.
 >
 > Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
 > ---
->  dts/tests/TestSuite_flow.py | 585 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 585 insertions(+)
->  create mode 100644 dts/tests/TestSuite_flow.py
+>  dts/tests/TestSuite_flow.py | 187 +++++++++++++++++++++++++++++++-----
+>  1 file changed, 165 insertions(+), 22 deletions(-)
 >
 > diff --git a/dts/tests/TestSuite_flow.py b/dts/tests/TestSuite_flow.py
-> new file mode 100644
-> index 0000000000..15566205c9
-> --- /dev/null
+> index 15566205c9..06bd3bedc5 100644
+> --- a/dts/tests/TestSuite_flow.py
 > +++ b/dts/tests/TestSuite_flow.py
-> @@ -0,0 +1,585 @@
-> +# SPDX-License-Identifier: BSD-3-Clause
-> +# Copyright(c) 2025 University of New Hampshire
-> +
-> +"""RTE Flow testing suite.
-> +
-> +This suite verifies a range of flow rules built using patterns
-> +and actions from the RTE Flow API. It would be impossible to cover
-> +every valid flow rule, but this suite aims to test the most
-> +important and common functionalities across PMDs.
-> +
-> +"""
-> +
-> +from collections.abc import Callable
-> +from itertools import zip_longest
-> +from typing import Any, Iterator, cast
-> +
-> +from scapy.layers.inet import IP, TCP, UDP
-> +from scapy.layers.inet6 import IPv6
-> +from scapy.layers.l2 import Dot1Q, Ether
-> +from scapy.packet import Packet, Raw
-> +
-> +from framework.remote_session.testpmd_shell import FlowRule, TestPmdShel=
-l
-> +from framework.test_suite import TestSuite, func_test
-> +from framework.testbed_model.capability import NicCapability,
-> TopologyType, requires
-> +
-> +
-> +@requires(topology_type=3DTopologyType.two_links)
->
-
-I am thinking this testsuite might be valid for 1 link instead of requiring
-2 links.
-
-
-> +@requires(NicCapability.FLOW_CTRL)
-> +class TestFlow(TestSuite):
-> +    """RTE Flow test suite.
-> +
-> +    This suite consists of 10 test cases:
-> +    1. Queue Action Ethernet: Verifies queue actions with ethernet
-> patterns
-> +    2. Queue Action IP: Verifies queue actions with IPv4 and IPv6 patter=
-ns
-> +    3. Queue Action L4: Verifies queue actions with TCP and UDP patterns
-> +    4. Queue Action VLAN: Verifies queue actions with VLAN patterns
-> +    5. Drop Action Eth: Verifies drop action with ethernet patterns
->
-
-You are using both Ethernet and Eth - choose 1
-
-
-> +    6. Drop Action IP: Verifies drop actions with IPV4 and IPv6 patterns
-> +    7. Drop Action L4: Verifies drop actions with TCP and UDP patterns
-> +    8. Drop Action VLAN: Verifies drop actions with VLAN patterns
-> +    9. Modify Field Action: Verifies packet modification patterns
-> +    10. Egress Rules: Verifies previously covered rules are still valid
-> as egress.
-> +
-> +    """
-> +
-> +    def runner(
-> +        self,
-> +        verification_method: Callable[..., Any],
-> +        flows: list[FlowRule],
-> +        packets: list[Packet],
-> +        expected_packets: list[Packet] | None =3D None,
-> +        *args: Any,
-> +        **kwargs: Any,
-> +    ) -> None:
-> +        """Runner method that validates each flow using the correspondin=
-g
-> verification method.
-> +
-> +        Args:
-> +            verification_method: Callable that performs verification
-> logic.
-> +            flows: List of flow rules to create and test.
-> +            packets: List of packets corresponding to each flow.
-> +            expected_packets: List of packets to check sent packets
-> against in modification cases.
-> +            *args: Additional positional arguments to pass to the
-> verification method.
-> +            **kwargs: Additional keyword arguments to pass to the
-> verification method.
-> +        """
-> +
-> +        def zip_lists(
-> +            rules: list[FlowRule],
-> +            packets1: list[Packet],
-> +            packets2: list[Packet] | None,
-> +        ) -> Iterator[tuple[FlowRule, Packet, Packet | None]]:
-> +            """Method that creates an iterable zip containing lists used
-> in runner.
-> +
-> +            Args:
-> +                rules: List of flow rules.
-> +                packets1: List of packets.
-> +                packets2: Optional list of packets, excluded from zip if
-> not passed to runner.
-> +            """
-> +            return cast(
-> +                Iterator[tuple[FlowRule, Packet, Packet | None]],
-> +                zip_longest(rules, packets1, packets2 or [],
-> fillvalue=3DNone),
-> +            )
-> +
-> +        with TestPmdShell(rx_queues=3D4, tx_queues=3D4) as testpmd:
-> +            for flow, packet, expected_packet in zip_lists(flows,
-> packets, expected_packets):
-> +                flow_id =3D testpmd.flow_create(flow_rule=3Dflow, port_i=
-d=3D0)
-> +
-> +                if verification_method =3D=3D self.send_packet_and_verif=
-y:
-> +                    verification_method(*args, **kwargs)
-> +
-> +                elif verification_method =3D=3D
-> self.send_packet_and_verify_queue:
-> +                    verification_method(
-> +                        packet=3Dpacket, test_queue=3Dkwargs["test_queue=
-"],
-> testpmd=3Dtestpmd
-> +                    )
-> +
-> +                elif verification_method =3D=3D
-> self.send_packet_and_verify_modification:
-> +                    verification_method(packet=3Dpacket,
-> expected_packet=3Dexpected_packet)
-> +
-> +                testpmd.flow_delete(flow_id, port_id=3D0)
-> +
+> @@ -29,7 +29,7 @@
+>  class TestFlow(TestSuite):
+>      """RTE Flow test suite.
 >
 >
-
+> +
 > +    @func_test
-> +    def test_egress_rules(self) -> None:
-> +        """Validate flow rules with egress directions.
+> +    def test_jump_action(self) -> None:
+> +        """Validate flow rules with different group levels and jump
+> actions.
 > +
 > +        Steps:
 > +            Create a list of packets to test, with a corresponding flow
 > list.
 > +            Launch testpmd with the necessary configuration.
-> +            Send each packet in the list, check reception status.
+> +            Create each flow rule in testpmd.
+> +            Send each packet in the list, check Rx queue ID.
 > +
 > +        Verify:
-> +            Check that each packet is dropped.
-> +
-> +        One packet will be sent as a confidence check, to ensure packets
-> are being
-> +        received under normal circumstances.
+> +            Check that each packet is received on the appropriate Rx
+> queue.
 > +        """
-> +        packet_list =3D [
-> +            Ether(src=3D"02:00:00:00:00:00"),
-> +            IP(src=3D"192.168.1.1"),
-> +            TCP(sport=3D1234),
-> +            UDP(sport=3D5000),
-> +        ]
+> +        packet_list =3D [Ether() / IP(), Ether() / IP() / TCP(), Ether()=
+ /
+> IP() / UDP()]
 > +        flow_list =3D [
+> +            FlowRule(direction=3D"ingress", group_id=3D0, pattern=3D["et=
+h"],
+> actions=3D["jump group 1"]),
+> +            FlowRule(direction=3D"ingress", group_id=3D0, pattern=3D["ip=
+v4"],
+> actions=3D["jump group 2"]),
 > +            FlowRule(
-> +                direction=3D"egress", pattern=3D["eth src is
-> 02:00:00:00:00:00"], actions=3D["drop"]
+> +                direction=3D"ingress", group_id=3D0, pattern=3D["eth / i=
+pv4"],
+> actions=3D["queue index 1"]
 > +            ),
-> +            FlowRule(direction=3D"egress", pattern=3D["ipv4 src is
-> 192.168.1.1"], actions=3D["drop"]),
-> +            FlowRule(direction=3D"egress", pattern=3D["tcp src is 1234"]=
-,
-> actions=3D["drop"]),
-> +            FlowRule(direction=3D"egress", pattern=3D["udp src is 5000"]=
-,
-> actions=3D["drop"]),
+> +            FlowRule(
+> +                direction=3D"ingress",
+> +                group_id=3D0,
+> +                pattern=3D["eth / ipv4 / tcp"],
+> +                actions=3D["queue index 2"],
+> +            ),
+> +            FlowRule(
+> +                direction=3D"ingress",
+> +                group_id=3D0,
+> +                pattern=3D["eth / ipv4 / udp"],
+> +                actions=3D["queue index 3"],
+> +            ),
 > +        ]
-> +        # Verify packet reception without flow rule
-> +        self.send_packet_and_verify(packet=3DRaw(load=3D"xxxxx"),
-> should_receive=3DTrue)
-> +        self.runner(
-> +            verification_method=3Dself.send_packet_and_verify,
-> +            flows=3Dflow_list,
-> +            packets=3Dpacket_list,
-> +            should_receive=3DFalse,
-> +        )
+> +        expected_queue_list =3D [1, 2, 3]
+> +        with TestPmdShell(rx_queues=3D4, tx_queues=3D4) as testpmd:
+> +            self.send_packet_and_verify_jump(
+> +                packets=3Dpacket_list,
+> +                flow_rules=3Dflow_list,
+> +                test_queues=3Dexpected_queue_list,
+> +                testpmd=3Dtestpmd,
+> +            )
 >
 
-It looks like for testing these egress rules you are adding the egress flow
-rule on port 0, but we are actually egressing on port 1 (if 2 link topology
-is enforced as you decorate this testsuite with). So, if my understanding
-is correct, then you need to egress on port 1, or on ctx.topology egress
-port (same thing).
+It looks like the 2nd and 3rd flow rule need to be added to group_id 1 and
+2 respectively, instead of 0 and 0, in order for the jumps to groups 1 and
+2 to have the desired effect you are validating on.
 
 
+> +
+> +    @func_test
+> +    def test_priority_attribute(self) -> None:
+> +        """Validate flow rules with queue actions and ethernet patterns.
+> +
+> +        Steps:
+> +            Create a list of packets to test, with a corresponding flow
+> list.
+> +            Launch testpmd.
+> +            Create first flow rule in flow list.
+> +            Send first packet in packet list, capture verbose output.
+> +            Delete flow rule, repeat for all flows/packets.
+> +
+> +        Verify:
+> +            Check that each packet is received on the appropriate queue.
+> +        """
+> +        test_packet =3D Ether() / IP() / Raw()
+> +        flow_list =3D [
+> +            FlowRule(
+> +                direction=3D"ingress",
+> +                priority_level=3D3,
+> +                pattern=3D["eth / ipv4"],
+> +                actions=3D["queue index 1"],
+> +            ),
+> +            FlowRule(
+> +                direction=3D"ingress",
+> +                priority_level=3D2,
+> +                pattern=3D["eth / ipv4"],
+> +                actions=3D["queue index 2"],
+> +            ),
+> +            FlowRule(
+> +                direction=3D"ingress",
+> +                priority_level=3D1,
+> +                pattern=3D["eth / ipv4"],
+> +                actions=3D["queue index 3"],
+> +            ),
+> +        ]
+> +        expected_queue_list =3D [1, 2, 3]
+> +        with TestPmdShell(rx_queues=3D4, tx_queues=3D4) as testpmd:
+> +            testpmd.set_verbose(level=3D1)
+> +            for flow, expected_queue in zip(flow_list,
+> expected_queue_list):
+> +                testpmd.flow_create(flow_rule=3Dflow, port_id=3D0)
+> +                testpmd.start()
+> +                self.send_packet_and_capture(test_packet)
+> +                verbose_output =3D
+> testpmd.extract_verbose_output(testpmd.stop())
+> +                received =3D False
+> +                for testpmd_packet in verbose_output:
+> +                    if testpmd_packet.queue_id =3D=3D expected_queue:
+> +                        received =3D True
+> +                self.verify(received, f"Packet was not received on queue
+> {expected_queue}")
 > --
 > 2.49.0
 >
->
-Remember to include a testsuite rst like
-https://git.dpdk.org/dpdk/commit/?id=3Dd23083df08114975987753a887f1d1deed38=
-7ce2
 
 
 Reviewed-by: Patrick Robb <probb@iol.unh.edu>
 
---000000000000cde667063868aa0b
+--000000000000159003063868cd98
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -308,246 +227,179 @@ mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, May 21,=
  2025 at 3:26=E2=80=AFPM Dean Marx &lt;<a href=3D"mailto:dmarx@iol.unh.edu"=
 >dmarx@iol.unh.edu</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote=
 " style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);=
-padding-left:1ex">Add an RTE Flow API testing suite, which covers some basi=
-c<br>
-synchronous Flow API rules that should be supported across PMDs.<br>
-This suite will be added to over time, as the Flow API is too large<br>
-to cover all in one suite, and sending one monolithic series<br>
-would be impossible.<br>
+padding-left:1ex">Add jump action verification method and test case to Flow=
+ API test suite,<br>
+as well as a case for validating flows with different priority levels.<br>
 <br>
 Signed-off-by: Dean Marx &lt;<a href=3D"mailto:dmarx@iol.unh.edu" target=3D=
 "_blank">dmarx@iol.unh.edu</a>&gt;<br>
 ---<br>
-=C2=A0dts/tests/TestSuite_flow.py | 585 +++++++++++++++++++++++++++++++++++=
-+<br>
-=C2=A01 file changed, 585 insertions(+)<br>
-=C2=A0create mode 100644 dts/tests/TestSuite_flow.py<br>
+=C2=A0dts/tests/TestSuite_flow.py | 187 +++++++++++++++++++++++++++++++----=
+-<br>
+=C2=A01 file changed, 165 insertions(+), 22 deletions(-)<br>
 <br>
 diff --git a/dts/tests/TestSuite_flow.py b/dts/tests/TestSuite_flow.py<br>
-new file mode 100644<br>
-index 0000000000..15566205c9<br>
---- /dev/null<br>
+index 15566205c9..06bd3bedc5 100644<br>
+--- a/dts/tests/TestSuite_flow.py<br>
 +++ b/dts/tests/TestSuite_flow.py<br>
-@@ -0,0 +1,585 @@<br>
-+# SPDX-License-Identifier: BSD-3-Clause<br>
-+# Copyright(c) 2025 University of New Hampshire<br>
+@@ -29,7 +29,7 @@<br>
+=C2=A0class TestFlow(TestSuite):<br>
+=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;RTE Flow test suite.<br>
+<br><br>
 +<br>
-+&quot;&quot;&quot;RTE Flow testing suite.<br>
-+<br>
-+This suite verifies a range of flow rules built using patterns<br>
-+and actions from the RTE Flow API. It would be impossible to cover<br>
-+every valid flow rule, but this suite aims to test the most<br>
-+important and common functionalities across PMDs.<br>
-+<br>
-+&quot;&quot;&quot;<br>
-+<br>
-+from collections.abc import Callable<br>
-+from itertools import zip_longest<br>
-+from typing import Any, Iterator, cast<br>
-+<br>
-+from scapy.layers.inet import IP, TCP, UDP<br>
-+from scapy.layers.inet6 import IPv6<br>
-+from scapy.layers.l2 import Dot1Q, Ether<br>
-+from scapy.packet import Packet, Raw<br>
-+<br>
-+from framework.remote_session.testpmd_shell import FlowRule, TestPmdShell<=
-br>
-+from framework.test_suite import TestSuite, func_test<br>
-+from framework.testbed_model.capability import NicCapability, TopologyType=
-, requires<br>
-+<br>
-+<br>
-+@requires(topology_type=3DTopologyType.two_links)<br></blockquote><div><br=
-></div><div>I am thinking this testsuite might be valid for 1 link instead =
-of requiring 2 links.</div><div>=C2=A0</div><blockquote class=3D"gmail_quot=
-e" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204)=
-;padding-left:1ex">
-+@requires(NicCapability.FLOW_CTRL)<br>
-+class TestFlow(TestSuite):<br>
-+=C2=A0 =C2=A0 &quot;&quot;&quot;RTE Flow test suite.<br>
-+<br>
-+=C2=A0 =C2=A0 This suite consists of 10 test cases:<br>
-+=C2=A0 =C2=A0 1. Queue Action Ethernet: Verifies queue actions with ethern=
-et patterns<br>
-+=C2=A0 =C2=A0 2. Queue Action IP: Verifies queue actions with IPv4 and IPv=
-6 patterns<br>
-+=C2=A0 =C2=A0 3. Queue Action L4: Verifies queue actions with TCP and UDP =
-patterns<br>
-+=C2=A0 =C2=A0 4. Queue Action VLAN: Verifies queue actions with VLAN patte=
-rns<br>
-+=C2=A0 =C2=A0 5. Drop Action Eth: Verifies drop action with ethernet patte=
-rns<br></blockquote><div><br></div><div>You are using both Ethernet and Eth=
- - choose 1</div><div>=C2=A0</div><blockquote class=3D"gmail_quote" style=
-=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding=
--left:1ex">
-+=C2=A0 =C2=A0 6. Drop Action IP: Verifies drop actions with IPV4 and IPv6 =
-patterns<br>
-+=C2=A0 =C2=A0 7. Drop Action L4: Verifies drop actions with TCP and UDP pa=
-tterns<br>
-+=C2=A0 =C2=A0 8. Drop Action VLAN: Verifies drop actions with VLAN pattern=
-s<br>
-+=C2=A0 =C2=A0 9. Modify Field Action: Verifies packet modification pattern=
-s<br>
-+=C2=A0 =C2=A0 10. Egress Rules: Verifies previously covered rules are stil=
-l valid as egress.<br>
-+<br>
-+=C2=A0 =C2=A0 &quot;&quot;&quot;<br>
-+<br>
-+=C2=A0 =C2=A0 def runner(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 self,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 verification_method: Callable[..., Any],<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 flows: list[FlowRule],<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 packets: list[Packet],<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 expected_packets: list[Packet] | None =3D None=
-,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 *args: Any,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 **kwargs: Any,<br>
-+=C2=A0 =C2=A0 ) -&gt; None:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Runner method that validates=
- each flow using the corresponding verification method.<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Args:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 verification_method: Callable th=
-at performs verification logic.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 flows: List of flow rules to cre=
-ate and test.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 packets: List of packets corresp=
-onding to each flow.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 expected_packets: List of packet=
-s to check sent packets against in modification cases.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 *args: Additional positional arg=
-uments to pass to the verification method.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 **kwargs: Additional keyword arg=
-uments to pass to the verification method.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 def zip_lists(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 rules: list[FlowRule],<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 packets1: list[Packet],<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 packets2: list[Packet] | None,<b=
-r>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 ) -&gt; Iterator[tuple[FlowRule, Packet, Packe=
-t | None]]:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Method that cr=
-eates an iterable zip containing lists used in runner.<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 Args:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 rules: List of flo=
-w rules.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 packets1: List of =
-packets.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 packets2: Optional=
- list of packets, excluded from zip if not passed to runner.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return cast(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 Iterator[tuple[Flo=
-wRule, Packet, Packet | None]],<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 zip_longest(rules,=
- packets1, packets2 or [], fillvalue=3DNone),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 with TestPmdShell(rx_queues=3D4, tx_queues=3D4=
-) as testpmd:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 for flow, packet, expected_packe=
-t in zip_lists(flows, packets, expected_packets):<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 flow_id =3D testpm=
-d.flow_create(flow_rule=3Dflow, port_id=3D0)<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if verification_me=
-thod =3D=3D self.send_packet_and_verify:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 veri=
-fication_method(*args, **kwargs)<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 elif verification_=
-method =3D=3D self.send_packet_and_verify_queue:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 veri=
-fication_method(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 packet=3Dpacket, test_queue=3Dkwargs[&quot;test_queue&quot;], te=
-stpmd=3Dtestpmd<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br=
->
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 elif verification_=
-method =3D=3D self.send_packet_and_verify_modification:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 veri=
-fication_method(packet=3Dpacket, expected_packet=3Dexpected_packet)<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 testpmd.flow_delet=
-e(flow_id, port_id=3D0)<br>
-+<br><br></blockquote><div>=C2=A0</div><blockquote class=3D"gmail_quote" st=
-yle=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padd=
-ing-left:1ex">
 +=C2=A0 =C2=A0 @func_test<br>
-+=C2=A0 =C2=A0 def test_egress_rules(self) -&gt; None:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Validate flow rules with egr=
-ess directions.<br>
++=C2=A0 =C2=A0 def test_jump_action(self) -&gt; None:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Validate flow rules with dif=
+ferent group levels and jump actions.<br>
 +<br>
 +=C2=A0 =C2=A0 =C2=A0 =C2=A0 Steps:<br>
 +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 Create a list of packets to test=
 , with a corresponding flow list.<br>
 +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 Launch testpmd with the necessar=
 y configuration.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 Create each flow rule in testpmd=
+.<br>
 +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 Send each packet in the list, ch=
-eck reception status.<br>
+eck Rx queue ID.<br>
 +<br>
 +=C2=A0 =C2=A0 =C2=A0 =C2=A0 Verify:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 Check that each packet is droppe=
-d.<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 One packet will be sent as a confidence check,=
- to ensure packets are being<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 received under normal circumstances.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 Check that each packet is receiv=
+ed on the appropriate Rx queue.<br>
 +=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 packet_list =3D [<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 Ether(src=3D&quot;02:00:00:00:00=
-:00&quot;),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 IP(src=3D&quot;192.168.1.1&quot;=
-),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 TCP(sport=3D1234),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 UDP(sport=3D5000),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 packet_list =3D [Ether() / IP(), Ether() / IP(=
+) / TCP(), Ether() / IP() / UDP()]<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 flow_list =3D [<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 FlowRule(direction=3D&quot;ingre=
+ss&quot;, group_id=3D0, pattern=3D[&quot;eth&quot;], actions=3D[&quot;jump =
+group 1&quot;]),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 FlowRule(direction=3D&quot;ingre=
+ss&quot;, group_id=3D0, pattern=3D[&quot;ipv4&quot;], actions=3D[&quot;jump=
+ group 2&quot;]),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 FlowRule(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 direction=3D&quot;=
+ingress&quot;, group_id=3D0, pattern=3D[&quot;eth / ipv4&quot;], actions=3D=
+[&quot;queue index 1&quot;]<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 FlowRule(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 direction=3D&quot;=
+ingress&quot;,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 group_id=3D0,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 pattern=3D[&quot;e=
+th / ipv4 / tcp&quot;],<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 actions=3D[&quot;q=
+ueue index 2&quot;],<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 FlowRule(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 direction=3D&quot;=
+ingress&quot;,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 group_id=3D0,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 pattern=3D[&quot;e=
+th / ipv4 / udp&quot;],<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 actions=3D[&quot;q=
+ueue index 3&quot;],<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ),<br>
 +=C2=A0 =C2=A0 =C2=A0 =C2=A0 ]<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 expected_queue_list =3D [1, 2, 3]<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 with TestPmdShell(rx_queues=3D4, tx_queues=3D4=
+) as testpmd:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 self.send_packet_and_verify_jump=
+(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 packets=3Dpacket_l=
+ist,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 flow_rules=3Dflow_=
+list,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 test_queues=3Dexpe=
+cted_queue_list,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 testpmd=3Dtestpmd,=
+<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br></blockquote><div><br></div=
+><div>It looks like the 2nd and 3rd flow rule need to be added to group_id =
+1 and 2 respectively, instead of 0 and 0, in order for the jumps to groups =
+1 and 2 to have the desired effect you are validating on.</div><div>=C2=A0<=
+/div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;bo=
+rder-left:1px solid rgb(204,204,204);padding-left:1ex">
++<br>
++=C2=A0 =C2=A0 @func_test<br>
++=C2=A0 =C2=A0 def test_priority_attribute(self) -&gt; None:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Validate flow rules with que=
+ue actions and ethernet patterns.<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 Steps:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 Create a list of packets to test=
+, with a corresponding flow list.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 Launch testpmd.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 Create first flow rule in flow l=
+ist.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 Send first packet in packet list=
+, capture verbose output.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 Delete flow rule, repeat for all=
+ flows/packets.<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 Verify:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 Check that each packet is receiv=
+ed on the appropriate queue.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 test_packet =3D Ether() / IP() / Raw()<br>
 +=C2=A0 =C2=A0 =C2=A0 =C2=A0 flow_list =3D [<br>
 +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 FlowRule(<br>
 +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 direction=3D&quot;=
-egress&quot;, pattern=3D[&quot;eth src is 02:00:00:00:00:00&quot;], actions=
-=3D[&quot;drop&quot;]<br>
+ingress&quot;,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 priority_level=3D3=
+,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 pattern=3D[&quot;e=
+th / ipv4&quot;],<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 actions=3D[&quot;q=
+ueue index 1&quot;],<br>
 +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 FlowRule(direction=3D&quot;egres=
-s&quot;, pattern=3D[&quot;ipv4 src is 192.168.1.1&quot;], actions=3D[&quot;=
-drop&quot;]),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 FlowRule(direction=3D&quot;egres=
-s&quot;, pattern=3D[&quot;tcp src is 1234&quot;], actions=3D[&quot;drop&quo=
-t;]),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 FlowRule(direction=3D&quot;egres=
-s&quot;, pattern=3D[&quot;udp src is 5000&quot;], actions=3D[&quot;drop&quo=
-t;]),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 FlowRule(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 direction=3D&quot;=
+ingress&quot;,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 priority_level=3D2=
+,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 pattern=3D[&quot;e=
+th / ipv4&quot;],<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 actions=3D[&quot;q=
+ueue index 2&quot;],<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 FlowRule(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 direction=3D&quot;=
+ingress&quot;,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 priority_level=3D1=
+,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 pattern=3D[&quot;e=
+th / ipv4&quot;],<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 actions=3D[&quot;q=
+ueue index 3&quot;],<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ),<br>
 +=C2=A0 =C2=A0 =C2=A0 =C2=A0 ]<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 # Verify packet reception without flow rule<br=
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 expected_queue_list =3D [1, 2, 3]<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 with TestPmdShell(rx_queues=3D4, tx_queues=3D4=
+) as testpmd:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 testpmd.set_verbose(level=3D1)<b=
+r>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 for flow, expected_queue in zip(=
+flow_list, expected_queue_list):<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 testpmd.flow_creat=
+e(flow_rule=3Dflow, port_id=3D0)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 testpmd.start()<br=
 >
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 self.send_packet_and_verify(packet=3DRaw(load=
-=3D&quot;xxxxx&quot;), should_receive=3DTrue)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 self.runner(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 verification_method=3Dself.send_=
-packet_and_verify,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 flows=3Dflow_list,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 packets=3Dpacket_list,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 should_receive=3DFalse,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br></blockquote><div><br></div><div>It looks=
- like for testing these egress rules you are adding the egress flow rule on=
- port 0, but we are actually egressing on port 1 (if 2 link topology is enf=
-orced as you decorate this testsuite with). So, if my understanding is corr=
-ect, then you need to egress on port 1, or on ctx.topology egress port (sam=
-e thing).</div><div>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"=
-margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-lef=
-t:1ex">
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 self.send_packet_a=
+nd_capture(test_packet)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 verbose_output =3D=
+ testpmd.extract_verbose_output(testpmd.stop())<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 received =3D False=
+<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 for testpmd_packet=
+ in verbose_output:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if t=
+estpmd_packet.queue_id =3D=3D expected_queue:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 received =3D True<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 self.verify(receiv=
+ed, f&quot;Packet was not received on queue {expected_queue}&quot;)<br>
 -- <br>
-2.49.0<br>
-<br></blockquote><div><br></div><div>Remember to include a testsuite rst li=
-ke=C2=A0<a href=3D"https://git.dpdk.org/dpdk/commit/?id=3Dd23083df081149759=
-87753a887f1d1deed387ce2">https://git.dpdk.org/dpdk/commit/?id=3Dd23083df081=
-14975987753a887f1d1deed387ce2</a>=C2=A0</div><div><br></div><div>Reviewed-b=
-y: Patrick Robb &lt;<a href=3D"mailto:probb@iol.unh.edu">probb@iol.unh.edu<=
-/a>&gt;</div></div></div>
+2.49.0<br></blockquote><div><br></div><div><br></div><div>Reviewed-by: Patr=
+ick Robb &lt;<a href=3D"mailto:probb@iol.unh.edu">probb@iol.unh.edu</a>&gt;=
+=C2=A0</div></div></div>
 
---000000000000cde667063868aa0b--
+--000000000000159003063868cd98--
