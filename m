@@ -2,51 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BFF4C7115C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Jun 2025 08:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7710DC7EE30
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Jun 2025 09:29:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E016C40608;
-	Wed, 25 Jun 2025 10:43:43 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6E9134060B;
+	Wed, 25 Jun 2025 11:29:23 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id AA35D402B1;
- Wed, 25 Jun 2025 10:43:41 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.186.31])
- by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bRwLl2w3Sz6GFWx;
- Wed, 25 Jun 2025 16:42:55 +0800 (CST)
-Received: from frapeml500004.china.huawei.com (unknown [7.182.85.22])
- by mail.maildlp.com (Postfix) with ESMTPS id CDFE71402EF;
- Wed, 25 Jun 2025 16:43:40 +0800 (CST)
-Received: from frapeml500002.china.huawei.com (7.182.85.205) by
- frapeml500004.china.huawei.com (7.182.85.22) with Microsoft SMTP Server
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 2A66E402B1
+ for <dev@dpdk.org>; Wed, 25 Jun 2025 11:29:21 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bRxMR2Y03z6M4MK;
+ Wed, 25 Jun 2025 17:28:35 +0800 (CST)
+Received: from frapeml500002.china.huawei.com (unknown [7.182.85.205])
+ by mail.maildlp.com (Postfix) with ESMTPS id C65E314027A;
+ Wed, 25 Jun 2025 17:29:20 +0800 (CST)
+Received: from localhost.localdomain (10.220.239.45) by
+ frapeml500002.china.huawei.com (7.182.85.205) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 25 Jun 2025 10:43:40 +0200
-Received: from frapeml500002.china.huawei.com ([7.182.85.205]) by
- frapeml500002.china.huawei.com ([7.182.85.205]) with mapi id 15.01.2507.039;
- Wed, 25 Jun 2025 10:43:40 +0200
+ 15.1.2507.39; Wed, 25 Jun 2025 11:29:20 +0200
 From: Marat Khalili <marat.khalili@huawei.com>
-To: David Marchand <david.marchand@redhat.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: "stable@dpdk.org" <stable@dpdk.org>, Bruce Richardson
- <bruce.richardson@intel.com>, Tyler Retzlaff <roretzla@linux.microsoft.com>,
- Timothy Redaelli <tredaelli@redhat.com>, Maxime Coquelin
- <maxime.coquelin@redhat.com>
-Subject: RE: [PATCH v2 04/10] eal: fix plugin dir walk
-Thread-Topic: [PATCH v2 04/10] eal: fix plugin dir walk
-Thread-Index: AQHb5EZCWPj59agRZEiyDQRreHMndbQTjA/g
-Date: Wed, 25 Jun 2025 08:43:40 +0000
-Message-ID: <dc88c2152e8e4cfbb55c91d99655661d@huawei.com>
-References: <20250619071037.37325-1-david.marchand@redhat.com>
- <20250623135242.461965-1-david.marchand@redhat.com>
- <20250623135242.461965-5-david.marchand@redhat.com>
-In-Reply-To: <20250623135242.461965-5-david.marchand@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.137.64]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+To: David Marchand <david.marchand@redhat.com>, Jerin Jacob
+ <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, Nithin
+ Dabilpuram <ndabilpuram@marvell.com>, Zhirun Yan <yanzhirun_163@163.com>,
+ Pavan Nikhilesh <pbhagavatula@marvell.com>, Robin Jarry <rjarry@redhat.com>
+CC: <dev@dpdk.org>
+Subject: [PATCH v3] lib/graph: lib/graph: fix memset with NULL
+Date: Wed, 25 Jun 2025 10:27:21 +0100
+Message-ID: <20250625092722.70938-1-marat.khalili@huawei.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250617151339.28794-1-marat.khalili@huawei.com>
+References: <20250617151339.28794-1-marat.khalili@huawei.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.220.239.45]
+X-ClientProxiedBy: frapeml100001.china.huawei.com (7.182.85.63) To
+ frapeml500002.china.huawei.com (7.182.85.205)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,45 +51,53 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Thank you for doing this.
+This was flagged by undefined behaviour sanitizer: memset should not be
+called with NULL first argument. (memset requires first argument to be
+pointer to a memory object, so passing NULL may result in an undefined
+behaviour including among other things optimizer potentially removing
+code paths depending on stat->xstat_count being NULL.)
 
-> +static bool
-> +ends_with(const char *str, size_t str_len, const char *tail)
+Sanitizer message:
 
-I too think we should have a general ends_with, I for one had to code one j=
-ust this week. However, I do not think it should support non-null-terminate=
-d strings.
+    lib/graph/graph_stats.c:473:2: runtime error: null pointer passed as
+    argument 1, which is declared to never be null
 
-> +{
-> +	size_t tail_len =3D strlen(tail);
-> +
-> +	return str_len >=3D tail_len && strncmp(&str[str_len - tail_len], tail,
-> tail_len) =3D=3D 0;
-> +}
+Add a check that stat->xstat_cntrs is not zero before the call, since
+stat->xstat_count can only be NULL when stat->xstat_cntrs is zero.
 
-Note that when str is not null-terminated and both str_len and tail_len are=
- zeroes &str[str_len - tail_len] will dereference one character after the e=
-nd before taking a reference to it again, which would be a UB. (Won't happe=
-n in your case of course since your tail is always non-empty, but may happe=
-n if this function is moved into a general-use library.)
+Fixes: 070db97e017 ("graph: support node xstats")
 
-> @@ -417,13 +425,12 @@ eal_plugindir_init(const char *path)
->  	}
->=20
->  	while ((dent =3D readdir(d)) !=3D NULL) {
-> +		size_t nlen =3D strnlen(dent->d_name, sizeof(dent->d_name));
->  		struct stat sb;
-> -		int nlen =3D strnlen(dent->d_name, sizeof(dent->d_name));
->=20
->  		/* check if name ends in .so or .so.ABI_VERSION */
-> -		if (strcmp(&dent->d_name[nlen - 3], ".so") !=3D 0 &&
-> -		    strcmp(&dent->d_name[nlen - 4 - strlen(ABI_VERSION)],
-> -			   ".so."ABI_VERSION) !=3D 0)
-> +		if (!ends_with(dent->d_name, nlen, ".so") &&
-> +				!ends_with(dent->d_name, nlen, ".so."ABI_VERSION))
->  			continue;
+Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
+---
 
-I do not think we should try to handle the non-null-terminated dent->d_name=
- case here, I'd just delete nlen and everything related to it. To be super-=
-defensive we could add a check that `memchr(dent->d_name, 0, sizeof(dent->d=
-_name)) !=3D NULL`, but I don't think it's needed.
+Thanks to Jerin Jacob and David Marchand for the reviews.
+
+v3:
+* Addressing comments from David Marchand change to check the length
+instead of the pointer, fix formatting.
+* Drop the other half of the two-patch set since the problem it was
+addressing was already getting fixed elsewhere.
+
+v2: Following the suggestions from Jerin Jacob changed the Subject and
+added Fixes line.
+
+ lib/graph/graph_stats.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/lib/graph/graph_stats.c b/lib/graph/graph_stats.c
+index bb202577e9..9e330c8e61 100644
+--- a/lib/graph/graph_stats.c
++++ b/lib/graph/graph_stats.c
+@@ -470,7 +470,8 @@ cluster_node_arregate_stats(struct cluster_node *cluster, bool dispatch)
+ 	uint64_t *xstat;
+ 	uint8_t i;
+ 
+-	memset(stat->xstat_count, 0, sizeof(uint64_t) * stat->xstat_cntrs);
++	if (stat->xstat_cntrs != 0)
++		memset(stat->xstat_count, 0, sizeof(uint64_t) * stat->xstat_cntrs);
+ 	for (count = 0; count < cluster->nb_nodes; count++) {
+ 		node = cluster->nodes[count];
+ 
+-- 
+2.43.0
+
