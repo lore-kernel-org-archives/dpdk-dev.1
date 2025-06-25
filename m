@@ -2,64 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F49C77B7C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Jun 2025 04:12:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC7E3C7115C
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Jun 2025 04:47:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 549474068E;
-	Wed, 25 Jun 2025 06:12:28 +0200 (CEST)
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com
- [209.85.215.177])
- by mails.dpdk.org (Postfix) with ESMTP id 1F6AF40697
- for <dev@dpdk.org>; Wed, 25 Jun 2025 06:12:27 +0200 (CEST)
-Received: by mail-pg1-f177.google.com with SMTP id
- 41be03b00d2f7-b31d489a76dso5586922a12.1
- for <dev@dpdk.org>; Tue, 24 Jun 2025 21:12:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1750824746; x=1751429546; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=0Ttvi7S4a/XTQjic+/uY0QX/tBRsuWuaHlK/R6qJAmw=;
- b=GVa51lkH2pKUd/agfKWK7zz4d30I8wXLCN/om8gO3gpZWIdn7BRDkdHyqNVuicjSM5
- hPeVt6Mq8XYj58J9nX/hmDbqh+TjqEPi1CSBo5lY5jpM8o1/69kNG54IqHDyUU71Olub
- bbW9DOzTgnZqqufax9vaL8MYqYFX3sdA18sXw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1750824746; x=1751429546;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=0Ttvi7S4a/XTQjic+/uY0QX/tBRsuWuaHlK/R6qJAmw=;
- b=ntyJle5bjvc4HUj0AfW2Li8NFCq2MkOgP8q00a6LgWX1CrTDbHjscxFcX6f9yx2uih
- /IEZc8kxGKDZqqqhVLQm+v2v27UhKA6BJ2GRNEtehTypyKOTL7UrPhf4oBojgR/IWN0t
- JwAezwa29eFIHxjXLtuh3OBXxvaWmOG+60/+7VMaiNm14KCmEkN9iRWPjenVvI6gI6Kw
- 4zcxCD79EN/4KBrWcbDBwGAsOfvup6SsKRBSi5w7/hdqdns08P0ch99Mca9dRXonnHjk
- uE54paWr9sdnk7d2kVpTsFNABZzY5ydMIn12X4NkgHklKws683fVfhLDbQhWJ+VMYIak
- pSGQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXLFW3ox9jiKHD4D6E11zO23I2s09uE0YXjkOo/4sOPmI9Z8Fjv7DvtCiTFcVz8iBL0vAQ=@dpdk.org
-X-Gm-Message-State: AOJu0Yy7kUqZ7EEqV9GgSyI/bxmBA0G2Byg4alSNgVGnxyzYvZVK4wD+
- 4sc0XuIAtROaPpbMyOkmLedo8EEkcIYMd/yWLaAX5jj6v0t/TfzJJZJlRK9L7qgyghZKbOXifgd
- 0elI5IqI0jT/J5aNm6Ih1S9UkOgNcXuv81wLBT5az6w==
-X-Gm-Gg: ASbGnculmtTWM1Xm5Rztho0vsTMVoGLsTXBhjPByY73MPp21V4ASvelcnCPpfNjPbo5
- zfed69Vyx33kII1bc27jnaZuECLnjW9oYGkVmUk+CBYLLy+GL8Lsyt2BQvXldfpiFqcd0zou61S
- 4u0gQmWj0yYAygXA7uYvL+GIbQem2fH8nUwAgFLlOuws3auJ1pv2NSlteH/fQ=
-X-Google-Smtp-Source: AGHT+IFVZyw6Hd4vy+bYcQln1ropw2ssP5/ZPKpA6S9i/AMscTgZldPYwwZ6wC3VH9Nf/sIiSnf0BSiyt6IzXne/Veo=
-X-Received: by 2002:a17:90b:574d:b0:312:f0d0:bc4 with SMTP id
- 98e67ed59e1d1-315f25e3026mr2146191a91.5.1750824746286; Tue, 24 Jun 2025
- 21:12:26 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9A4A340655;
+	Wed, 25 Jun 2025 06:47:38 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 06F3F4060A
+ for <dev@dpdk.org>; Wed, 25 Jun 2025 06:47:36 +0200 (CEST)
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55OLKwTo031361;
+ Tue, 24 Jun 2025 21:47:36 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=g
+ 36prPWQ5eEbFbfcWLtvPz9NVibEp62I+mTY3Pu/4PA=; b=NqniTbNnHGPA3c9fW
+ 0VwBkiagS3OF4VD0nKppci6yojgW0V+7gMT3gMQxljZ70WU4mqPis0V1CPT7z6AI
+ SJbnoA99MRdk5kWnCVY7PW8RJS9ggomjyClqnDZm40rMwc538VOoy0y3A9rh4XZQ
+ k0luAt/BPX+1Xq9urpS3s/3KghCw0nrzStNVCqNyJ8ItQZ/0hXAU/9s9xRcGXbBB
+ va5XsEQmLeLqkuJhBdpWuZyL4jOUQddAjYQUGLPTj3gNTfOl7iahMay1+MTsCL0d
+ 7hujmsUgzOE+oW6PPXirp53wxluxJY6chLXDYEGhdA9IRTQ/fTcOAV09Ghwnv6/7
+ Zx7FA==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 47g3ungrg8-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Tue, 24 Jun 2025 21:47:35 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 24 Jun 2025 21:47:35 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 24 Jun 2025 21:47:35 -0700
+Received: from cavium-optiplex-3070-BM15.. (unknown [10.28.34.39])
+ by maili.marvell.com (Postfix) with ESMTP id CECEA3F705C;
+ Tue, 24 Jun 2025 21:47:32 -0700 (PDT)
+From: Tomasz Duszynski <tduszynski@marvell.com>
+To: <tduszynski@marvell.com>
+CC: <bruce.richardson@intel.com>, <dev@dpdk.org>, <jerinj@marvell.com>,
+ <mb@smartsharesystems.com>, <thomas@monjalon.net>,
+ <david.marchand@redhat.com>
+Subject: [PATCH v5 0/8] lib/pmu: cleanups and trace integration
+Date: Wed, 25 Jun 2025 06:47:22 +0200
+Message-ID: <20250625044730.2435526-1-tduszynski@marvell.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250624122930.1783177-1-tduszynski@marvell.com>
+References: <20250624122930.1783177-1-tduszynski@marvell.com>
 MIME-Version: 1.0
-References: <20250527153734.368235-2-dmarx@iol.unh.edu>
- <20250603172827.458725-1-dmarx@iol.unh.edu>
- <20250603172827.458725-2-dmarx@iol.unh.edu>
-In-Reply-To: <20250603172827.458725-2-dmarx@iol.unh.edu>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Wed, 25 Jun 2025 00:07:00 -0400
-X-Gm-Features: AX0GCFvs42nggjVT7Ekxlc90xF1oSnl6RWkKdQ2rJZZ3pkvgudpamgP6SCB6BVs
-Message-ID: <CAJvnSUAGND5nTFHp71_d4ELqY20bcLC8Oc-OAhWz0V1jcpvOhA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] dts: rewrite dts rst
-To: Dean Marx <dmarx@iol.unh.edu>
-Cc: luca.vizzarro@arm.com, yoan.picchi@foss.arm.com, 
- Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com, dev@dpdk.org
-Content-Type: multipart/alternative; boundary="0000000000001118f206385da73b"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=efU9f6EH c=1 sm=1 tr=0 ts=685b7f67 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=6IFa9wvqVegA:10 a=iR-xy-VhiHNNf1baXf0A:9
+X-Proofpoint-ORIG-GUID: b6fMOOJvWMlbsDjbMipl7sF_uYe6wOdy
+X-Proofpoint-GUID: b6fMOOJvWMlbsDjbMipl7sF_uYe6wOdy
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDAzNCBTYWx0ZWRfX2relIn2aCFak
+ QzkAQjMrLunBZJsU9m2MWlu17K6d8Wks+xWI23lyGReE8c/rSW0O2uu6TQgjyoYUWImLiPKOKJN
+ N57WPecKuVjQloAQak5eEtvACz7iKtZ+jBfpuANoA4ixvIjGhadtqtSiFw1pjiRjmy3md0OXlJ5
+ AFL8G5bgHhYbsiB1yVRMwlnml5MO5gak1ESEn0FvCVoBBETp0OE5tYaRy2ejDVCDtuR+DcWKRyd
+ Lf1u2J0JviNa70OlYUzoOh32+gQR6aPZoJALpNBB+mIN92CmpaLBk5vE6bV2NaK/lPnQvdWnit6
+ 8IYbumxCDtL4I3MuRz/Bqflhj1Ggdtd7TxIHYw6bj3f21lgoBWNLvNmDwVP/5bIPOqvmiu+YF63
+ ALtRhkG7oPlWjYj9nRJZp0s+OK8aK+hQPhYQdmuYTp7k8Kaj+nBzZGTn049CzJ0DwMEB/zmW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-25_01,2025-06-23_07,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -73,14 +80,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000001118f206385da73b
-Content-Type: text/plain; charset="UTF-8"
+This series does some cleanup and refactoring around the rc1 code like: trimming unused headers,
+switching to callbacks for per-arch handling, and adding trace support. It also re-enables existing
+base test to help catch reported issues on some architectures.
 
-Applied to next-dts, thanks Dean.
+v5:
+- add missing patch that quiesces chincs check
+v4:
+- change fast test so that it won't fail on misconfigured system
+- fix compilation on windows
+v3:
+- do not export __rte_pmu_trace_read because that breaks compilation
+  on windows - script generating map files does not handle conditional
+  compilation
+- skip testing if paranoia is at wrong level
+v2:
+- explicitly check against NULL
+- make pmu lib optional by checking if dpdk config has RTE_LIB_PMU
 
---0000000000001118f206385da73b
-Content-Type: text/html; charset="UTF-8"
+Tomasz Duszynski (8):
+  lib/pmu: quiesce rte_pmu_read deprecation warning in chkincs
+  lib/pmu: export only necessary arch headers
+  lib/pmu: reimplement per-arch ops as callbacks
+  lib/pmu: do not try enabling perf counter access on arm64
+  lib/pmu: use build system defined RTE_LIB_PMU macro
+  test/pmu: enable fast test
+  trace: add PMU
+  lib/pmu: fix out-of-bound access
 
-<div dir="ltr">Applied to next-dts, thanks Dean.</div>
+ MAINTAINERS                                |  1 +
+ app/test/test_pmu.c                        | 51 +++++++++++-
+ app/test/test_trace_perf.c                 | 10 +++
+ doc/guides/prog_guide/profile_app.rst      |  5 ++
+ doc/guides/prog_guide/trace_lib.rst        | 31 ++++++++
+ doc/guides/rel_notes/release_25_07.rst     |  2 +
+ lib/eal/common/eal_common_trace.c          |  5 +-
+ lib/eal/common/eal_common_trace_pmu.c      | 38 +++++++++
+ lib/eal/common/eal_common_trace_points.c   | 20 +++++
+ lib/eal/common/eal_trace.h                 |  4 +
+ lib/eal/common/meson.build                 |  1 +
+ lib/eal/include/rte_eal_trace.h            | 16 ++++
+ lib/eal/include/rte_trace_point.h          |  7 ++
+ lib/eal/include/rte_trace_point_register.h |  2 +
+ lib/eal/meson.build                        |  3 +
+ lib/meson.build                            |  2 +-
+ lib/pmu/meson.build                        | 10 +--
+ lib/pmu/pmu.c                              | 92 ++++++++++++++++------
+ lib/pmu/pmu_arm64.c                        | 59 +++++---------
+ lib/pmu/pmu_private.h                      | 51 ++++++++++--
+ lib/pmu/rte_pmu.h                          | 31 +++++++-
+ 21 files changed, 360 insertions(+), 81 deletions(-)
+ create mode 100644 lib/eal/common/eal_common_trace_pmu.c
 
---0000000000001118f206385da73b--
+--
+2.34.1
+
