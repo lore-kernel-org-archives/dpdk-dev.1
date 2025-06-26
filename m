@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 612D0C7EE30
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Jun 2025 21:50:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AEACC7EE30
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Jun 2025 21:51:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3DF2640659;
-	Thu, 26 Jun 2025 23:50:42 +0200 (CEST)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
- [209.85.214.182])
- by mails.dpdk.org (Postfix) with ESMTP id 93FB540647
- for <dev@dpdk.org>; Thu, 26 Jun 2025 23:50:39 +0200 (CEST)
-Received: by mail-pl1-f182.google.com with SMTP id
- d9443c01a7336-236192f8770so13103665ad.0
- for <dev@dpdk.org>; Thu, 26 Jun 2025 14:50:39 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 65CF04066A;
+	Thu, 26 Jun 2025 23:50:44 +0200 (CEST)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
+ [209.85.214.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 39FA640650
+ for <dev@dpdk.org>; Thu, 26 Jun 2025 23:50:41 +0200 (CEST)
+Received: by mail-pl1-f174.google.com with SMTP id
+ d9443c01a7336-23636167b30so15934105ad.1
+ for <dev@dpdk.org>; Thu, 26 Jun 2025 14:50:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1750974639;
- x=1751579439; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1750974640;
+ x=1751579440; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=6RRR9eA/VjkaYicI9/HIE4oyEG75yO0SDON1FiHsu8A=;
- b=0Ww2+zhqVrN48+v5UeMQPMyl3hKuLCjKlWU/xfwz+UMcIbfyNrHJjcu81zXKOeKIju
- tHZ8KdLjLdVTdnZ5eBOIr5Fk1bY5cRLnSEpiPa3meaP5Zu90mkIz2ZxFef4RD0+15g/t
- tfVcEC8fYTURzu7zkpfFkyP1iiNcngi7//1+KNVx0693w3XH/wQJPTE9/LKYL39WvpQn
- Dd3UQeGpUg9ey5A5pfxzQxy1w6cejBEr7JYC1UuIQFtpWYtusXeJ4w3nyT5WtqtwXPaF
- iAcMj+AEQQ4HybHhOJhhcVigzEJ/9c1f/sSZxiMFnYc5TbDEHjdX10oBxOzyqT2/ddLu
- uwjA==
+ bh=jTmi1s3LwkEGpb3flspyB/x39dVrCuNX5x0+XpIVqiY=;
+ b=vENosct0GEmrJQob14LG/BAIxjQqHUCD5p/cLD0Ph6KtQYYelenH9Lho3w11B7Hs0y
+ TdQQYm6eC5HHQ9J45BbSakq/QT7GHmqgamgPiU6gS4nBsAcFVB3gSImQf8tOuTNVc2fh
+ idwfBvgw/nsGm0H27nu2+IM3PkMiKcX71vycqWd4uzywJRnVJSm355gZAkUjhY4breaL
+ KCPHNuqlSL7o7d0hZKDG4dVG9I2ETOvhWTKgBnflEzLcQ/3bSTcMUPu1ZMqsF/41yPoy
+ cNx/hq6vnpj7+5yorqsdgrmsRbclBApLvIplNxB0wakUXr2DdtHHoZNicq4SCI3UXMrV
+ vB1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1750974639; x=1751579439;
+ d=1e100.net; s=20230601; t=1750974640; x=1751579440;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=6RRR9eA/VjkaYicI9/HIE4oyEG75yO0SDON1FiHsu8A=;
- b=aK+AgmwVhyrovmXqnLmjJaQTpvkV+USRCvqaaWiybpuKc5ew8mA635taU03qCa5ANw
- v4WD+SoFcSjatnJFQf1+n+WRdHawU5AlPDxxojMr2F2rht63My7Tc2vXQyVtbkM3f96s
- UfU4LAhiMuFNVntAvUfSV6Tm1snTQnKgA/dumd/NFLkR/4oV9g+iezy1JOEqFLPLreKr
- wDdT7spz7HPi7BwfWkAavnC3skgY6vA94mo8peKe6rwPkSPO6nPU4f9qDozAcXjov2W/
- 8rlAgeOAo6nBtCfL4FT9XoGiXHOMDIduzP60kdQGxOWNHwb5dk/vX4IkU4N6v4W/daO4
- bxBw==
-X-Gm-Message-State: AOJu0YwPZPkjgBFKhmQrJh7+ltuPMpYpFmZEEve/pDayi+hgZycVneKY
- BOHmeQ/GYKaKaMEUC2YzvNtsTBkw9/rhEhh+gELGDlMASxgz0MLYfelrxxtYDP6MdmY=
-X-Gm-Gg: ASbGncv1Bhb+nLKh1URT6Q6jL0ZketoQK+NHu2YaX0c0VEuiSZ2Pei5nQM0n8fL7DMj
- cKtL1+f33kzosVFH0U66W1ivduTrUnbNgL10uABSQSuJtV85oi7i2d4NRs6uHvjRsEYANDwaa72
- wEjPljcDZ0PbmuxzPUm0fplsGBI/pWUXCMSKG+4CwtKl6Hm99bDcdjhGlXTwV1we9cBFIzAF9xH
- NHQBVTM+SS+7lAvMFEI2Dv5HcF0Noblg+O/9JCEdTchQLaGr1GVNxF2dmQZUpJKMMLjX1cT+zjt
- XpN+ddWonn+xorni6120eeEm8FfFHbvtVI8s43nCW3YRTlxpVc9W8zfFm60Lb/83Nzd//RlrIc/
- BZSP/ZlUaHvyJYvaQfMf/TImbr0kGwcxkL6HEBDg=
-X-Google-Smtp-Source: AGHT+IFybZP8pTDAUMj+W740o+7GSv0w1qhfNommZgYty3z0uNKpBouPvOiRRpO+sDNqGjyB5l5ndg==
-X-Received: by 2002:a17:903:8c6:b0:232:59b:5923 with SMTP id
- d9443c01a7336-23ac6375c83mr8837655ad.23.1750974638707; 
- Thu, 26 Jun 2025 14:50:38 -0700 (PDT)
+ bh=jTmi1s3LwkEGpb3flspyB/x39dVrCuNX5x0+XpIVqiY=;
+ b=mLvxyHLvZL+FQMT1GfbUMjNYln54P2krTmGAQXgBH6v+UTQdQasej/gST2mzIJNoNl
+ jzg5ZEO4aj0g0QkDcoqekq1+TN3mD4B++qO83P6pF5s1+VbW0Z3sOgjJLuOxKjQ7DWST
+ hfzuibKhkyoFXa7Z7ZxSC4yi7xr+5DTeM2B03vSHU2fnF5FJfEhE3q47HF5zYo5lEkCX
+ nLftXifS9PqTCwwTBWEfwlQzl527cggEIh/AXcFNpalXpjrpZG/sFHeo2qG969LtBTgH
+ rqXFyz6ISqXhvn2T2Zxut44pD3fZU/k0nAP/2SYiXnTKcECAFvr/MKBcWmcYUFk5G6Wv
+ 5I3A==
+X-Gm-Message-State: AOJu0YyX32nfrweORo3o7/aQbp7ELhD3StZh1+LPtK3nZqjj2iPpt/Ro
+ uKLie5e5SZjXfsiaHhbiBA/WE0VheTkXeT5GZq1zFFFViZ7XSYz/k8nVDKAno3eyPQc=
+X-Gm-Gg: ASbGncuc5vcu6jsftQHsjO0aqubfd3dN+gGgMUEBjiPKaf1IMnPPNTc7bTQ1qcVIB6b
+ XVIswalb/7HKiNCZu2Sa416gBiq4fgCwO+bMt+9KtXk29hdlvphYkp73xpe0STC58bPwgAjImnl
+ +vKelqzz+fZsrJPGt504O0kmDji2JRFK/eIqci38HrpTNrBxhsrZaphQ7V1wloIcBrw51xsljyI
+ 84h36/wWcaihykcw5Jt3B+u9djDtFV9RWMHiiSRhjOsg67SfvZqFXMVsbLFcrvlrNr4PHz44hVl
+ iKTASNEblTN0BiVOOp4S+xbHcyP7Bxra1HaLd5ZTF4gjSHFDuIab359huYPMuS5dabtn5kL13s/
+ Qx9lEF52vqtTfNvbyPoWioicWG8kFQUtRqzo6AaI=
+X-Google-Smtp-Source: AGHT+IFja5gtYvHZSUVi8x/INOUxVxGkaj5BV+p7r0QjmMZs3d1NM3XCBZO06+BOj7b7+/qW8r+Ueg==
+X-Received: by 2002:a17:902:e74b:b0:237:c8de:f289 with SMTP id
+ d9443c01a7336-23ac46342c8mr13130345ad.36.1750974640432; 
+ Thu, 26 Jun 2025 14:50:40 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-23acb2e25b9sm610335ad.2.2025.06.26.14.50.38
+ d9443c01a7336-23acb2e25b9sm610335ad.2.2025.06.26.14.50.40
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 26 Jun 2025 14:50:38 -0700 (PDT)
-Date: Thu, 26 Jun 2025 14:40:01 -0700
+ Thu, 26 Jun 2025 14:50:40 -0700 (PDT)
+Date: Thu, 26 Jun 2025 14:30:07 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Feifei Wang <wff_light@vip.163.com>
-Cc: dev@dpdk.org, Feifei Wang <wangfeifei40@huawei.com>, Yi Chen
- <chenyi221@huawei.com>, Xin Wang <wangxin679@h-partners.com>
-Subject: Re: [RFC 14/18] net/hinic3: add Rx/Tx functions
-Message-ID: <20250626144001.77f2340d@hermes.local>
-In-Reply-To: <20250418090621.9638-15-wff_light@vip.163.com>
+Cc: dev@dpdk.org, Feifei Wang <wangfeifei40@huawei.com>, Xin Wang
+ <wangxin679@h-partners.com>, Yi Chen <chenyi221@huawei.com>
+Subject: Re: [RFC 13/18] net/hinic3: add dev ops
+Message-ID: <20250626143007.582d4d8a@hermes.local>
+In-Reply-To: <20250418090621.9638-14-wff_light@vip.163.com>
 References: <20250418090621.9638-1-wff_light@vip.163.com>
- <20250418090621.9638-15-wff_light@vip.163.com>
+ <20250418090621.9638-14-wff_light@vip.163.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,84 +82,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 18 Apr 2025 17:06:00 +0800
+On Fri, 18 Apr 2025 17:05:59 +0800
 Feifei Wang <wff_light@vip.163.com> wrote:
 
-> From: Feifei Wang <wangfeifei40@huawei.com>
-> 
-> This patch add package sending and receiving function codes.
-> 
-> Signed-off-by: Feifei Wang <wangfeifei40@huawei.com>
-> Signed-off-by: Yi Chen <chenyi221@huawei.com>
-> Reviewed-by: Xin Wang <wangxin679@h-partners.com>
-> ---
+> +static int
+> +hinic3_fw_version_get(struct rte_eth_dev *dev, char *fw_version, size_t fw_size)
+> +{
+> +	struct hinic3_nic_dev *nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
+> +	char mgmt_ver[MGMT_VERSION_MAX_LEN] = {0};
+> +	int err;
+> +
+> +	err = hinic3_get_mgmt_version(nic_dev->hwdev, mgmt_ver,
+> +				      HINIC3_MGMT_VERSION_MAX_LEN);
+> +	if (err) {
+> +		PMD_DRV_LOG(ERR, "Get fw version failed");
+> +		return -EIO;
+> +	}
+> +
+> +	if (fw_size < strlen((char *)mgmt_ver) + 1)
+> +		return (strlen((char *)mgmt_ver) + 1);
+> +
+> +	(void)snprintf(fw_version, fw_size, "%s", mgmt_ver);
 
-This code has lots of places where __rte_unused is added, but
-the arguments are used.
-
-diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index 51dd5f76fc..7faf3c6dcc 100644
---- a/drivers/net/hinic3/hinic3_ethdev.c
-+++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -677,7 +677,7 @@ hinic3_reset_tx_queue(struct rte_eth_dev *dev)
- static int
- hinic3_rx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
- 		      unsigned int socket_id,
--		      __rte_unused const struct rte_eth_rxconf *rx_conf,
-+		      const struct rte_eth_rxconf *rx_conf,
- 		      struct rte_mempool *mp)
- {
- 	struct hinic3_nic_dev *nic_dev;
-@@ -898,7 +898,7 @@ hinic3_rx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
- static int
- hinic3_tx_queue_setup(struct rte_eth_dev *dev, uint16_t qid, uint16_t nb_desc,
- 		      unsigned int socket_id,
--		      __rte_unused const struct rte_eth_txconf *tx_conf)
-+		      const struct rte_eth_txconf *tx_conf)
- {
- 	struct hinic3_nic_dev *nic_dev;
- 	struct hinic3_hwdev *hwdev;
-@@ -1127,8 +1127,8 @@ hinic3_tx_queue_release(struct rte_eth_dev *dev, uint16_t queue_id)
-  * 0 on success, non-zero on failure.
-  */
- static int
--hinic3_dev_rx_queue_start(__rte_unused struct rte_eth_dev *dev,
--			  __rte_unused uint16_t rq_id)
-+hinic3_dev_rx_queue_start(struct rte_eth_dev *dev,
-+			  uint16_t rq_id)
- {
- 	struct hinic3_rxq *rxq = NULL;
- 	int rc;
-@@ -1168,8 +1168,8 @@ hinic3_dev_rx_queue_start(__rte_unused struct rte_eth_dev *dev,
-  * 0 on success, non-zero on failure.
-  */
- static int
--hinic3_dev_rx_queue_stop(__rte_unused struct rte_eth_dev *dev,
--			 __rte_unused uint16_t rq_id)
-+hinic3_dev_rx_queue_stop(struct rte_eth_dev *dev,
-+			 uint16_t rq_id)
- {
- 	struct hinic3_rxq *rxq = NULL;
- 	int rc;
-@@ -1199,8 +1199,8 @@ hinic3_dev_rx_queue_stop(__rte_unused struct rte_eth_dev *dev,
- }
- 
- static int
--hinic3_dev_tx_queue_start(__rte_unused struct rte_eth_dev *dev,
--			  __rte_unused uint16_t sq_id)
-+hinic3_dev_tx_queue_start(struct rte_eth_dev *dev,
-+			  uint16_t sq_id)
- {
- 	struct hinic3_txq *txq = NULL;
- 
-@@ -1214,8 +1214,8 @@ hinic3_dev_tx_queue_start(__rte_unused struct rte_eth_dev *dev,
- }
- 
- static int
--hinic3_dev_tx_queue_stop(__rte_unused struct rte_eth_dev *dev,
--			 __rte_unused uint16_t sq_id)
-+hinic3_dev_tx_queue_stop(struct rte_eth_dev *dev,
-+			 uint16_t sq_id)
- {
- 	struct hinic3_txq *txq = NULL;
- 	int rc;
+Good place to use strlcpy, in fact the cocci script may even find it.
