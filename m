@@ -2,73 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C22C77B7F
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Jun 2025 04:34:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE2F0C7115B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Jun 2025 05:32:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C3DD24067E;
-	Thu, 26 Jun 2025 06:34:13 +0200 (CEST)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com
- [209.85.208.52])
- by mails.dpdk.org (Postfix) with ESMTP id 0886F4060F;
- Thu, 26 Jun 2025 06:34:12 +0200 (CEST)
-Received: by mail-ed1-f52.google.com with SMTP id
- 4fb4d7f45d1cf-607ec30df2bso1070980a12.1; 
- Wed, 25 Jun 2025 21:34:11 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7CBDE40B98;
+	Thu, 26 Jun 2025 07:32:11 +0200 (CEST)
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com
+ [209.85.160.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 8B9274060F
+ for <dev@dpdk.org>; Thu, 26 Jun 2025 07:32:09 +0200 (CEST)
+Received: by mail-qt1-f170.google.com with SMTP id
+ d75a77b69052e-4a585dc5f4aso7909291cf.2
+ for <dev@dpdk.org>; Wed, 25 Jun 2025 22:32:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1750912451; x=1751517251; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=UKdddVCTy85iXd1E+Ay+pg9YOz4UHG7hfftqffOBdS0=;
- b=A6ggHxsImcH8Hla9mvjhy91PhVzuIkoacUiZhm5PM6v+D4xgrk4QUUSF5BzZRqaHnv
- BUFkrmtYjqL7KVHo97jgg7/yoc8pD4XTq64eNpXSqwnODIepQLKEW6cMDZC/YugmIM6H
- oAWWmLG4W1emletkcSMmBtntlZqogEsljrDWXJsPb2HeNIjjIc7K+ZpyothjTfvLYlVb
- QN0kSl7DnHN3nFZJApJqp8mFPOWBms/ZJ/PcV1O59FiZlrfM8U8wU2T2q/I/Vg43cfB3
- SH7Jdmnuyw0S73aP8UeTykhBRFRrcbByPW6gd/I4IN/ouDRp/4ah2UHsPOafXJJKrNAx
- v6qw==
+ d=gmail.com; s=20230601; t=1750915929; x=1751520729; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=l3XeEbz/8PJVQr3U7hBSwIzqa++WSwgcX4g32d5aYOU=;
+ b=YZwxcsi7oH1NR47WYNcNmiRdsEEzYZZxsv7DQ2IyIw8POj5FyTi2FEkW1HAK5adFgf
+ XNwqf96366mmvR06+lXwgjO7y8fh+wDl7wcboLZ71NOAowHZT7WbD7ICtZmEAlBh/1iE
+ K1txb81mK0JzNIG9Gp1wm4on6mkz6ntTSK1R9e8JCYK+NPvokyN8wP4BxbIK40rlXjC6
+ rNrfht3cZxFFvVb+oGqybxfv+osvlABPzb32RxEJIpfpBeZwsMDgKrkLntwimg3rLp0w
+ UZrlwsj9/Yx0aGAEou5EDy/8qBAo5GaQiLSS5KB7AdO1ypzBpUyUTIa7FP1gr/CTbPYL
+ Pehg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1750912451; x=1751517251;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=UKdddVCTy85iXd1E+Ay+pg9YOz4UHG7hfftqffOBdS0=;
- b=EJBgYeJow6UaV4m0WAlFHdEnLKSXlkjf4Bl/DaxBJXaMVAFXMpW2lVhuqKqHBRPnOU
- gF+XNo9mcs6YJw3a6VyKKLj4MpPIInav5Yvr/Ay/msTR0GJL2+OHySego2VbayWJh7VD
- 5+/WYGqiIOSxVIx6cP8IthzlyPWk2X17ZfgZh/8SKGuBN8vIjfeV4HGVgYhQ1rL4F6Md
- 8TpROziCgmtusOzyw0Lgk3k5MWBq+J1AlhmrgAWB6IwoKUzRtSJR/O/dwOC1PoLGrWZA
- OH75eWCGjhFBS4wWgGL1EIxdRy8xRxDCVS30xXdIQA42RBKjpNJOrqWBnbmSw6nvYw1X
- FV1A==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWNSFFuBCIBl7ndzaXs4DS3fhe5/ZwCNS9ZSLoDOLhqdKUW205AW3z653UtIS6eWRceRIym+/Kz@dpdk.org,
- AJvYcCXpbUtkPNs0hPO3GEMyPmrLvSFT+ADWwQMEJSZA9XKAsI92yhvPjujbcqG8t4I9VkM8dsg=@dpdk.org
-X-Gm-Message-State: AOJu0Yy5MXkXNJDQpKaCZYwA5jDgVFjUpAMdYZ7hEnsPF1a3JKDXKe6J
- hkYRnzHPNHPmXWc3exTGdKBPcD5T9AUqb9uGZ1FDTjSbd31iA0+scLfvZsrtFk51HJipk7mCVJl
- CLzywLNLxIYRj/irMJgyNQYu0DmYX+rSTxA==
-X-Gm-Gg: ASbGnctUijjIFEgBBGt4r8K05ZNoDlnKv+b06IUbG5nSxtgs1C0bD8UwiYz2axk5qms
- gdTAmJf7KBjtfKgHWpowvEYMZ1K2Wv0oUtshxf5eBDu9Ssodg+gqX18ePfWeOdtcwfOub2mztZC
- 7v9/YlHHSSAzowR3HWsU/2jVrQUXKfUPCwIgkHL36k6zH3pUDYUkBU
-X-Google-Smtp-Source: AGHT+IH+8A+QOZl4tfv08GAyBIX8kwv2Qz0TjIqpUdb+bPzPAWMKTk+5ZZQmeZhf71wQr6a1s87z4aM/YoZjGDcEKzo=
-X-Received: by 2002:a17:907:db0a:b0:ae0:9fce:c578 with SMTP id
- a640c23a62f3a-ae0be86192cmr582922266b.18.1750912451181; Wed, 25 Jun 2025
- 21:34:11 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1750915929; x=1751520729;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=l3XeEbz/8PJVQr3U7hBSwIzqa++WSwgcX4g32d5aYOU=;
+ b=r/XY9AZ7bt0FdDRJzoPQbPyiGM+JkMhoRhv+gMINWpjGyHmnv/reoF9cmDEh1Bo44v
+ z83kp0Gdvh8/UI2NMUxmXU3e83ikw6PbyGY4fPz3rMey2nBl24XQh68SUc0qmHJOruHa
+ aloFXdlMc3adnXnA3adhT6ShVeYMAY5C0wNsDTzaYSgb4B3Er78iLSqqNrAsvN9bh9g6
+ aQ/MOBRoR4WKgqge+sVquDldL0rW1Gdy4CypZd8ctdqBZEocQcSOOf7y/kCyVQRTY5mI
+ Rksw2bflfiyxInwI0znA+5FH9GzKVTYxmceuNGC4JotQLWIDG4HKyYFj9ixPNF1Nu+1C
+ mGsw==
+X-Gm-Message-State: AOJu0YxHtj+VOn/8SBepxGsMIuOAcSWpVewD0iZKrAJRHOmQC4xEo/Lt
+ NDHgb60WKFvXbK03K0JgvFrMmQfI9/ng62qIU0HMk3qYZ+ON923nrXbQuntgGp31QHqwncDdSPO
+ nyJcvtfOmKL85guUMyZ7al4ri1efTbXRLiAoT
+X-Gm-Gg: ASbGncuThOIRRrInXr7cgLO4o1dqKMN/zxM/sWpgtNfcLkX6gLBfBDWveDWjqY40n3f
+ WKTFwnMox2w1jXl9CvAXxhTZ5kG9AR2Ofd+nFRcxsQ+N5/IWF5+uxWQxVhKl6fKr4K0+D/zV88y
+ gyHN+IxwBAkN8oyvnszY4MI4jj2XiQIss2insPTUHCLLZb0hx+CYvn
+X-Google-Smtp-Source: AGHT+IFHhb96Mviljs+1Ief/2XhddaqsNlzjJGBVycxn2kOic3kXxMOlqpUDIgQLEbQHEhJZRBZYF8wuaLJ5Ry8FzF4=
+X-Received: by 2002:a05:622a:5d3:b0:4a7:a905:d5b1 with SMTP id
+ d75a77b69052e-4a7c068c1c8mr94627621cf.15.1750915928687; Wed, 25 Jun 2025
+ 22:32:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <20250621015624.35284-1-amiyaranjan.mohakud@gmail.com>
- <20250623181136.48239-1-amiyaranjan.mohakud@gmail.com>
- <CAL+mCpOU+q542mGrA+aT+nO8Rs4dtAY==U2SbvYJFvVd1e4qCA@mail.gmail.com>
- <DM3PPF7D18F34A1A1141693EF5A3DDF8B588E78A@DM3PPF7D18F34A1.namprd11.prod.outlook.com>
- <CAL+mCpMZDed=QQ-RH0Y0GT095Cnyhz2rsvg8abKuM4_U13-eGw@mail.gmail.com>
- <DM3PPF7D18F34A1770F61E83BA4D365FDDD8E7BA@DM3PPF7D18F34A1.namprd11.prod.outlook.com>
- <aFwdMdNiHftewTi0@bricha3-mobl1.ger.corp.intel.com>
- <CAL+mCpOumEh6H8H6B9eLF=T-Hz6D8HwQOYCMjcAmpWVNS7JnPA@mail.gmail.com>
-In-Reply-To: <CAL+mCpOumEh6H8H6B9eLF=T-Hz6D8HwQOYCMjcAmpWVNS7JnPA@mail.gmail.com>
-From: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
-Date: Thu, 26 Jun 2025 10:04:00 +0530
-X-Gm-Features: Ac12FXzD8Uyv7CM8uvovmFFLaaHLTRoVos_xCqxOxYCzn_w5h0oVnsXKbI-pcm8
-Message-ID: <CAL+mCpNm36+5Cc=4KLWdGjAOsgNGv+o4xUoMv86Fx7q9rPNngQ@mail.gmail.com>
-Subject: Re: [PATCH v2] net/iavf: fix VLAN offload strip flag
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: "Loftus, Ciara" <ciara.loftus@intel.com>, "dev@dpdk.org" <dev@dpdk.org>, 
- "stable@dpdk.org" <stable@dpdk.org>
-Content-Type: multipart/alternative; boundary="000000000000af80b10638721281"
+References: <20250620050950.2548925-1-rbhansali@marvell.com>
+ <20250623044907.2906896-1-rbhansali@marvell.com>
+ <20250623044907.2906896-2-rbhansali@marvell.com>
+In-Reply-To: <20250623044907.2906896-2-rbhansali@marvell.com>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Thu, 26 Jun 2025 11:01:42 +0530
+X-Gm-Features: Ac12FXz2J-n1grzuYF5fvrWV5dhw5BoA8JIdq5Hga2CXwVBx0d2g3APmOWx541E
+Message-ID: <CALBAE1OMRj9s7ONbqvRrN8p5V9-5-yzv9JA4HTbBZzWuOCJ8aQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] common/cnxk: fix null pointer checks
+To: Rahul Bhansali <rbhansali@marvell.com>
+Cc: dev@dpdk.org, Nithin Dabilpuram <ndabilpuram@marvell.com>, 
+ Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, 
+ Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>, 
+ Vidya Sagar Velumuri <vvelumuri@marvell.com>, Jerin Jacob <jerinj@marvell.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,122 +78,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000af80b10638721281
-Content-Type: text/plain; charset="UTF-8"
-
-Just an additional note: It needs to be back ported to all LTS releases
-till v22.11. Hope it will be taken care of.
-
-Thanks
-Amiya
-
-
-On Thu, 26 Jun 2025 at 09:04, Amiya Ranjan Mohakud <
-amiyaranjan.mohakud@gmail.com> wrote:
-
-> Thanks Bruce and Ciara for the review/acceptance of the patch.
+On Mon, Jun 23, 2025 at 10:19=E2=80=AFAM Rahul Bhansali <rbhansali@marvell.=
+com> wrote:
 >
-> Thanks
-> Amiya
+> Adds null pointer check before executing CPT instruction.
 >
+> Fixes: 4d00b8c6a331 ("common/cnxk: allocate dynamic BPIDs")
+> Fixes: 4af4e36a93d7 ("common/cnxk: support inline device API without ROC =
+NIX")
 >
-> On Wed, 25 Jun 2025 at 21:31, Bruce Richardson <bruce.richardson@intel.com>
-> wrote:
->
->> On Wed, Jun 25, 2025 at 02:01:15PM +0000, Loftus, Ciara wrote:
->> > >
->> > > Thanks.
->> > >
->> > > Just wanted to know  - what are the next steps of the review and
->> approval
->> > > process?
->> > >
->> > > There is a test suite "ci/intel-Testing" failing now with v2 which
->> passed in v1. (
->> > > We know for sure, there is absolutely no code change between v1 and v2
->> > > except the commit message). Is there a way to trigger the test suite
->> again?
->> >
->> > Hi Amiya,
->> >
->> > There is no further action required on your end since the failure seems
->> like an issue with the test infrastructure. If the maintainer for the intel
->> next-net tree is happy with the patch they will pull it into the tree.
->> >
->> > Thanks,
->> > Ciara
->> >
->> Agree test failures look like false positives, as they are errors with the
->> PF driver and virtio driver, while this patch changes the VF driver.
->>
->> Patch applied to dpdk-next-net-intel.
->>
->> Thanks,
->> /Bruce
->>
->
+> Signed-off-by: Rahul Bhansali <rbhansali@marvell.com>
 
---000000000000af80b10638721281
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Series applied to dpdk-next-net-mrvl/for-main. Thanks.
 
-<div dir=3D"ltr"><div><div style=3D"font-family:verdana,sans-serif;color:rg=
-b(103,78,167)" class=3D"gmail_default">Just an additional note: It needs to=
- be back ported to all LTS releases till v22.11. Hope it will be taken care=
- of.</div><br clear=3D"all"></div><div><div dir=3D"ltr" class=3D"gmail_sign=
-ature" data-smartmail=3D"gmail_signature"><div dir=3D"ltr"><div><span style=
-=3D"font-family:verdana,sans-serif">Thanks</span></div><div><span style=3D"=
-font-family:verdana,sans-serif">Amiya</span><br></div></div></div></div><br=
-></div><br><div class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr=
-" class=3D"gmail_attr">On Thu, 26 Jun 2025 at 09:04, Amiya Ranjan Mohakud &=
-lt;<a href=3D"mailto:amiyaranjan.mohakud@gmail.com">amiyaranjan.mohakud@gma=
-il.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"m=
-argin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left=
-:1ex"><div dir=3D"ltr"><div><div style=3D"font-family:verdana,sans-serif;co=
-lor:rgb(103,78,167)" class=3D"gmail_default">Thanks=C2=A0Bruce and Ciara fo=
-r the review/acceptance of the patch.</div><br clear=3D"all"></div><div><di=
-v dir=3D"ltr" class=3D"gmail_signature"><div dir=3D"ltr"><div><span style=
-=3D"font-family:verdana,sans-serif">Thanks</span></div><div><span style=3D"=
-font-family:verdana,sans-serif">Amiya</span><br></div></div></div></div><br=
-></div><br><div class=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail_attr"=
->On Wed, 25 Jun 2025 at 21:31, Bruce Richardson &lt;<a href=3D"mailto:bruce=
-.richardson@intel.com" target=3D"_blank">bruce.richardson@intel.com</a>&gt;=
- wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px =
-0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">On Wed, =
-Jun 25, 2025 at 02:01:15PM +0000, Loftus, Ciara wrote:<br>
-&gt; &gt; <br>
-&gt; &gt; Thanks.<br>
-&gt; &gt; <br>
-&gt; &gt; Just wanted to know=C2=A0 - what are the next steps of the review=
- and approval<br>
-&gt; &gt; process?<br>
-&gt; &gt; <br>
-&gt; &gt; There is a test suite &quot;ci/intel-Testing&quot; failing now wi=
-th v2 which passed in v1. (<br>
-&gt; &gt; We know for sure, there is absolutely no code change between v1 a=
-nd v2<br>
-&gt; &gt; except the commit message). Is there a way to trigger the test su=
-ite again?<br>
-&gt; <br>
-&gt; Hi Amiya,<br>
-&gt; <br>
-&gt; There is no further action required on your end since the failure seem=
-s like an issue with the test infrastructure. If the maintainer for the int=
-el next-net tree is happy with the patch they will pull it into the tree.<b=
-r>
-&gt; <br>
-&gt; Thanks,<br>
-&gt; Ciara<br>
-&gt; <br>
-Agree test failures look like false positives, as they are errors with the<=
-br>
-PF driver and virtio driver, while this patch changes the VF driver.<br>
-<br>
-Patch applied to dpdk-next-net-intel.<br>
-<br>
-Thanks,<br>
-/Bruce<br>
-</blockquote></div>
-</blockquote></div>
 
---000000000000af80b10638721281--
+> ---
+> Changes in v2: Updated fixes in commit message.
+>
+>  drivers/common/cnxk/roc_nix_inl.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_=
+nix_inl.c
+> index bee8e25c7c..c7637ddbdc 100644
+> --- a/drivers/common/cnxk/roc_nix_inl.c
+> +++ b/drivers/common/cnxk/roc_nix_inl.c
+> @@ -1312,7 +1312,7 @@ static int
+>  nix_inl_legacy_inb_init(struct roc_nix *roc_nix)
+>  {
+>         struct nix *nix =3D roc_nix_to_nix_priv(roc_nix);
+> -       struct roc_cpt_inline_ipsec_inb_cfg cfg;
+> +       struct roc_cpt_inline_ipsec_inb_cfg cfg =3D {0};
+>         struct idev_cfg *idev =3D idev_get_cfg();
+>         uint16_t bpids[ROC_NIX_MAX_BPID_CNT];
+>         struct roc_cpt *roc_cpt;
+> @@ -2219,7 +2219,7 @@ roc_nix_inl_sa_sync(struct roc_nix *roc_nix, void *=
+sa, bool inb,
+>         if (idev)
+>                 inl_dev =3D idev->nix_inl_dev;
+>
+> -       if (!inl_dev && roc_nix =3D=3D NULL)
+> +       if ((!inl_dev && roc_nix =3D=3D NULL) || sa =3D=3D NULL)
+>                 return -EINVAL;
+>
+>         if (roc_nix) {
+> @@ -2299,7 +2299,7 @@ roc_nix_inl_ctx_write(struct roc_nix *roc_nix, void=
+ *sa_dptr, void *sa_cptr,
+>         if (idev)
+>                 inl_dev =3D idev->nix_inl_dev;
+>
+> -       if (!inl_dev && roc_nix =3D=3D NULL)
+> +       if ((!inl_dev && roc_nix =3D=3D NULL) || sa_dptr =3D=3D NULL || s=
+a_cptr =3D=3D NULL)
+>                 return -EINVAL;
+>
+>         if (roc_nix) {
+> --
+> 2.25.1
+>
