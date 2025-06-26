@@ -2,60 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E087C7EE30
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Jun 2025 21:19:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5427C7EE30
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Jun 2025 21:41:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CD06D40270;
-	Thu, 26 Jun 2025 23:19:45 +0200 (CEST)
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com
- [209.85.215.201])
- by mails.dpdk.org (Postfix) with ESMTP id 2CE5F4026F
- for <dev@dpdk.org>; Thu, 26 Jun 2025 23:19:44 +0200 (CEST)
-Received: by mail-pg1-f201.google.com with SMTP id
- 41be03b00d2f7-b31ff607527so1059954a12.0
- for <dev@dpdk.org>; Thu, 26 Jun 2025 14:19:44 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id F34CC4021F;
+	Thu, 26 Jun 2025 23:41:56 +0200 (CEST)
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com
+ [209.85.214.175])
+ by mails.dpdk.org (Postfix) with ESMTP id DA3FC400D5
+ for <dev@dpdk.org>; Thu, 26 Jun 2025 23:41:54 +0200 (CEST)
+Received: by mail-pl1-f175.google.com with SMTP id
+ d9443c01a7336-2366e5e4dbaso24813865ad.1
+ for <dev@dpdk.org>; Thu, 26 Jun 2025 14:41:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20230601; t=1750972783; x=1751577583; darn=dpdk.org;
- h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
- :date:from:to:cc:subject:date:message-id:reply-to;
- bh=h0kr7+S+tm+kOd7TTUhI9uSYJjssZ04VlUTkJFTeMQg=;
- b=ElA0AvY9tZ9VKdMy+cpKiHr04tsPmOnCkhAcT1Jxje2P72sMQsL8fq1ilLaZpa6nOJ
- bshVFMjlY6gl7kHdxsWFrRtA753MmipETtwLm7E3W3R4n08NHrgHPJ/VvF59LRy8x4ot
- f+wFotmWCZgI0/pDQcorAaKm08sX8Be1Lfh9ZuMQ5TS0iBvgdPCuTtx5hVcALX4cT/5N
- 0cUM9PwbG53+ssfoiC5L/7f+NnLyZtfML9VvSxsWybmlSdkYb36z9GeH0XGhguWSwVg4
- 8PaoTkUkn8w5cQcJNLnHjJUYlyC2HQMbrDX++LlDBqlvBK+nsiD+Qw+x8vpqgB2FNrUA
- fKyg==
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1750974114;
+ x=1751578914; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=O2Lx279VCrnSomP22DrcECHW9ED2XA6I2F2OhGQbicc=;
+ b=epABJ94fynzUQnU07br3Ln/771Zhs3oVgllEPbT0e280GuWM7qfKGUyg2PtowmqXq3
+ A2T2vaONq++dPk+Rib/8+FnPJ9aXcwLmjqNjFmk5RdSuhzmKCCfuqvvW3P7U3q+8SkuI
+ d+ge17OEWMODQv7Aby8IVqIuZc6odZig+RkI0vIIXP4qwjjbyDV6SjTf+JbGQrcJ+8sV
+ GUgPApG+S8FIOUv9ND17tS0lZea8Qq0xkKtTG8RKhcuGxkAGmJPgvN5XgGkLVubIb3By
+ ttca9N54pUsH9iGDPg3lJqnsiH9TAkp9PjwGCiGedcmrfZWJVTkKhyH6/jnytBAEEuPR
+ CA5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1750972783; x=1751577583;
- h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
- :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=h0kr7+S+tm+kOd7TTUhI9uSYJjssZ04VlUTkJFTeMQg=;
- b=eNGJBmOHCEiDbiK/xQ1YtyIcKmX9UW2zoC2zUS3gOMrbHnyRKfAP4KGT2ZIW8uwkR2
- 3EwGeNGHabaUjRMiTTbA/EAAwTPIyybKrmsu2z2BXy45fueH06Vaab11hhfupcochbNR
- EO8EUXPJQpJTYedABcVoxo7NkC6nSKq78Xf14jf/11P/Og+lvEfMJ4N8t8UWi++qvUri
- BUYwHOHPA1aCJKcabG78P4w31PxGcMtX6Dm8XA3RLRQ2Mu4H5Z3RkYjUDgBgPvrJGQQT
- RXoRtXhazZumuXhr8MRkJiZ9nJcfN40gQJs4NjT9QUaGZ796Iwf/QfCu95GHHXNdqHmt
- Sxiw==
-X-Gm-Message-State: AOJu0Yx3phCEMKmoZyImp6rL+CkwvD4SBaDERIDZ+7RTwTmYN0yHDoPH
- lkgzy88EQYlgZfI/sjgXpzfr8zcUevNmrwqh10ZGcg+Qxm78E00ENBF/dKfxGrf9jpPkpbPdi8l
- 5dDzg3iRRlI+pPsGwrxhJh94jWA==
-X-Google-Smtp-Source: AGHT+IGbo/sbVKPpph3tHcHIwlhpqH0LdSQzar18LT8E7LgtRjJQoDgJXHrnnPNmTzpt6KgHNcCf22+emHjp56uXdw==
-X-Received: from pgb12.prod.google.com ([2002:a05:6a02:340c:b0:b2f:64be:6881])
- (user=jtranoleary job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:9194:b0:1fa:9819:c0a5 with SMTP id
- adf61e73a8af0-220a1277105mr695644637.11.1750972783286; 
- Thu, 26 Jun 2025 14:19:43 -0700 (PDT)
-Date: Thu, 26 Jun 2025 21:19:21 +0000
-In-Reply-To: <20250625182751.1936925-1-jtranoleary@google.com>
-Mime-Version: 1.0
-References: <20250625182751.1936925-1-jtranoleary@google.com>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250626211921.2291937-1-jtranoleary@google.com>
-Subject: [PATCH v2] net/gve: support gve driver on FreeBSD
-From: "Jasper Tran O'Leary" <jtranoleary@google.com>
-To: joshwash@google.com
-Cc: dev@dpdk.org, "Jasper Tran O'Leary" <jtranoleary@google.com>
-Content-Type: text/plain; charset="UTF-8"
+ d=1e100.net; s=20230601; t=1750974114; x=1751578914;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=O2Lx279VCrnSomP22DrcECHW9ED2XA6I2F2OhGQbicc=;
+ b=qHe0t7Y4drK8eBGuDbv8JGRDa6ypaeqj+9mArsh7w5+FBbyqPBDvhwZeM+O/zgZo4q
+ YaZ5fdGWJ0LXER2PaY0aP+sUB/tmnNrXG1lSRg3p5czed9dAsn3qpyFtp95y3Vn78ndh
+ NYj8h+D2TNjdq7BHPPOUU7LwlhXVHWq9lwTfr8zT+P3yZ03nJqULGlJwny6mUB+9sRV9
+ EUet1wGth4kMHhOH8J4kAbgZLelBZdYpwIiDiWJmBcecm9hzLtlt5qGu28ZZKvfvtHLE
+ T4MTlumqewWK0GbfIICHP5C29qJiqPj5+NgIlAadPXishsmP2vpOw4yUonWEsRlh6cMO
+ 2I5g==
+X-Gm-Message-State: AOJu0YxO5KgUCu39GoU6sg+bi6+9IlhW4j0Z9Slyn/CJXw3OSGqa58Nd
+ qXfnpLP93uCca3yVMVZJfO9GucqDGd0XTUosm4SNLZqs348fglprJghngtC7C86SVeo=
+X-Gm-Gg: ASbGncv9NiCWPjfBDsKl7YkiYpsuHetMdAPbxf2WloERPbHETvxNpKcUOYOKPDEhLzY
+ S3WP3EDfKhS50uLvL296s0R41+8cpGMbeL3wjkwM6xf7eJk8GIypnYSw4+MuMus+F1+JpzEcEZj
+ S3hZocdJIY4ATfgMGcmvAQTunpsYXVeTzKiesI/v304LVFzd2mXXUAY5YjZp7CVYDZ/0iduJEuK
+ CACzViUcucT8dqX448t+OGW+Kgp/VOqBftY9XjVonBwlTloCMVHo76EXOndpHULUEutbRzccsNp
+ n+SxFp1jKYhXN832UIdWFbZ0iP3hkRnuulUrP899hjuTT+fGOFbel52JrsVD2DAQE6y9LxI86Gb
+ rZa9SLzdc7kmORqVjqDIt3hmhw7hfKr6bXG/MwOk=
+X-Google-Smtp-Source: AGHT+IGXCS1XfJBQUqc07wgzYBh9l/fuQtMmAHZUboIHdPNLgnb4y9ilkxkET9w0TtXfUITuDy1Xkw==
+X-Received: by 2002:a17:903:807:b0:234:1e11:95a3 with SMTP id
+ d9443c01a7336-2390a4a8832mr59027915ad.13.1750974113903; 
+ Thu, 26 Jun 2025 14:41:53 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-23acb3c39c7sm311885ad.210.2025.06.26.14.41.53
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 26 Jun 2025 14:41:53 -0700 (PDT)
+Date: Thu, 26 Jun 2025 14:41:51 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Feifei Wang <wff_light@vip.163.com>
+Cc: dev@dpdk.org, Feifei Wang <wangfeifei40@huawei.com>, Yi Chen
+ <chenyi221@huawei.com>, Xin Wang <wangxin679@h-partners.com>
+Subject: Re: [RFC 14/18] net/hinic3: add Rx/Tx functions
+Message-ID: <20250626144151.05cc2708@hermes.local>
+In-Reply-To: <20250418090621.9638-15-wff_light@vip.163.com>
+References: <20250418090621.9638-1-wff_light@vip.163.com>
+ <20250418090621.9638-15-wff_light@vip.163.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,84 +82,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This commit adds small changes so that the gve driver can build when
-FreeBSD is the host operating system.
+On Fri, 18 Apr 2025 17:06:00 +0800
+Feifei Wang <wff_light@vip.163.com> wrote:
 
-Signed-off-by: Jasper Tran O'Leary <jtranoleary@google.com>
-Acked-by: Joshua Washington <joshwash@google.com>
----
- .mailmap                         | 1 +
- doc/guides/nics/features/gve.ini | 1 +
- drivers/net/gve/base/gve_osdep.h | 2 --
- drivers/net/gve/gve_ethdev.c     | 2 +-
- drivers/net/gve/meson.build      | 4 ++--
- 5 files changed, 5 insertions(+), 5 deletions(-)
+> From: Feifei Wang <wangfeifei40@huawei.com>
+> 
+> This patch add package sending and receiving function codes.
+> 
+> Signed-off-by: Feifei Wang <wangfeifei40@huawei.com>
+> Signed-off-by: Yi Chen <chenyi221@huawei.com>
+> Reviewed-by: Xin Wang <wangxin679@h-partners.com>
+> ---
 
-diff --git a/.mailmap b/.mailmap
-index 8483d96ec5..4ce891b223 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -650,6 +650,7 @@ Jaroslaw Gawin <jaroslawx.gawin@intel.com>
- Jaroslaw Ilgiewicz <jaroslaw.ilgiewicz@intel.com>
- Jason He <jason.he@broadcom.com>
- Jason Wang <jasowang@redhat.com>
-+Jasper Tran O'Leary <jtranoleary@google.com>
- Jasvinder Singh <jasvinder.singh@intel.com>
- Jay Ding <jay.ding@broadcom.com>
- Jay Jayatheerthan <jay.jayatheerthan@intel.com>
-diff --git a/doc/guides/nics/features/gve.ini b/doc/guides/nics/features/gve.ini
-index f18b829eda..ed040a01dd 100644
---- a/doc/guides/nics/features/gve.ini
-+++ b/doc/guides/nics/features/gve.ini
-@@ -14,6 +14,7 @@ RSS key update       = Y
- RSS reta update      = Y
- L4 checksum offload  = Y
- Basic stats          = Y
-+FreeBSD              = Y
- Linux                = Y
- x86-32               = Y
- x86-64               = Y
-diff --git a/drivers/net/gve/base/gve_osdep.h b/drivers/net/gve/base/gve_osdep.h
-index 5eb33930cd..c47ce4da85 100644
---- a/drivers/net/gve/base/gve_osdep.h
-+++ b/drivers/net/gve/base/gve_osdep.h
-@@ -25,9 +25,7 @@
+If your driver doesn't implement these call backs, then leave them
+as NULL. That way application will get correct error.
 
- #include "../gve_logs.h"
+> static uint32_t
+> hinic3_dev_rx_queue_count(__rte_unused void *rx_queue)
+> {
+> 	return 0;
+> }
+> 
+> static int
+> hinic3_dev_rx_descriptor_status(__rte_unused void *rx_queue,
+> 				__rte_unused uint16_t offset)
+> {
+> 	return 0;
+> }
+> 
+> static int
+> hinic3_dev_tx_descriptor_status(__rte_unused void *tx_queue,
+> 				__rte_unused uint16_t offset)
+> {
+> 	return 0;
+> }
 
--#ifdef RTE_EXEC_ENV_LINUX
- #include <sys/utsname.h>
--#endif
-
- #ifndef u8
- #define u8 uint8_t
-diff --git a/drivers/net/gve/gve_ethdev.c b/drivers/net/gve/gve_ethdev.c
-index e471a34e61..bdb7f1d075 100644
---- a/drivers/net/gve/gve_ethdev.c
-+++ b/drivers/net/gve/gve_ethdev.c
-@@ -1366,5 +1366,5 @@ static struct rte_pci_driver rte_gve_pmd = {
-
- RTE_PMD_REGISTER_PCI(net_gve, rte_gve_pmd);
- RTE_PMD_REGISTER_PCI_TABLE(net_gve, pci_id_gve_map);
--RTE_PMD_REGISTER_KMOD_DEP(net_gve, "* igb_uio | vfio-pci");
-+RTE_PMD_REGISTER_KMOD_DEP(net_gve, "* igb_uio | vfio-pci | nic_uio");
- RTE_LOG_REGISTER_SUFFIX(gve_logtype_driver, driver, NOTICE);
-diff --git a/drivers/net/gve/meson.build b/drivers/net/gve/meson.build
-index ed5ef0a1fc..add431c2bb 100644
---- a/drivers/net/gve/meson.build
-+++ b/drivers/net/gve/meson.build
-@@ -1,9 +1,9 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright(C) 2022 Intel Corporation
-
--if not is_linux
-+if is_windows
-     build = false
--    reason = 'only supported on Linux'
-+    reason = 'not supported on Windows'
-     subdir_done()
- endif
-
---
-2.49.0
-
+There are several more bogus stubs such as ptype support etc.
