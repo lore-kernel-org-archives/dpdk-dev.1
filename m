@@ -2,71 +2,131 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A80C7EE30
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Jun 2025 13:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC23EC7EE30
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Jun 2025 13:07:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4F8B0402D3;
-	Thu, 26 Jun 2025 15:07:19 +0200 (CEST)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com
- [209.85.214.180])
- by mails.dpdk.org (Postfix) with ESMTP id AF33B40156
- for <dev@dpdk.org>; Thu, 26 Jun 2025 15:07:17 +0200 (CEST)
-Received: by mail-pl1-f180.google.com with SMTP id
- d9443c01a7336-236377f00a1so11023295ad.3
- for <dev@dpdk.org>; Thu, 26 Jun 2025 06:07:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1750943237;
- x=1751548037; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=oEmYbJVk8mEPyCG4GxGlfjC2h+EhEBw2Rx6RviTkstA=;
- b=E1elysDDfFrbGS19U/TB872t0U1nwGM79/FHce5vCbyxqnMxpZUwihNqEBfnrGZ2F8
- +b99boPLQleERN/ZWnr4R02B6pCRg14JTzvaGMKLNUbK768/y4ujhKtJ5Z5MxdOeyNNo
- hzQ/YX9A8b0NhJ1Cf5gILoXUHmQofP6lbFGu/MK0Yj2gIpVe0Sy8GsoORoAoytACsvZW
- tm3+G9DkBzxNCqUXO6qciuxFKN1df4tH4Eit//bPE98L0ZCILAITKkT+BvtrAlMtogN9
- mmaPoRmceVzc7Q8Te5Oh0tq0Oc+0oGw6gvu82EDEBghC5ZhRdTQNU/Azodl7sWUnYhq5
- TrgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1750943237; x=1751548037;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=oEmYbJVk8mEPyCG4GxGlfjC2h+EhEBw2Rx6RviTkstA=;
- b=MEijBT+OVen/rGtzNAhioD9njwMacN9RqBlO4VWlOMV6/H883oPjzk/dBj3HP1MeAO
- /MuUgC1o52aS4dbTIKnpBAdd9A85F8V6ENp4XO+aJ2GlL1W3Ajot73g/RF2DoyfyJQgC
- CJIGYmScUJjE4rO22zxPblelDIsXfi2UPHI/wxejye09lIqthCPjaTIsE5/Kwcvqq8Oo
- 6n4NZQiCD3e2sBrxTW/o3wyBHfhWgvISvjZtso/UJzbt5bhXyZa5hoRDjQH7raegFqsr
- fJYaY4eBhUuM0uCJ6U+RgOg1vD5gSLNi46ysFgczKL+tGNHCfsSEF76PdEbezt5GrYs6
- jxAw==
-X-Gm-Message-State: AOJu0YyCDZj2R7LdzAllJBoUVquDscAFJ9FYr/4lbD9KM9ElkbYZtOlG
- SmguIgFMrOt7Lu1LyYqiEmLKNxrIAxie4x06/fJII2yF0+ucrNNWX5KTR86dUNkE6uPaGRtK410
- 3ODxL
-X-Gm-Gg: ASbGncuUF3Z2vudn7Ej5HYwqXH6u+ugJyMnCACh3kuCibWX28UGDy0iuqaeQJnUXeDI
- LSjI4EhrrtUFyteV0peXtj4U4WbllYjDJqtNxBkrqz0j+WTb5hKkeGUeo4sZ+KqyGT4kxqkQ768
- wRifiAxn4S9Tpn0vYSkHV4WHQpH8GxzVAh/nAv1GH0tlXFbYbFmRMt+jjNdeqKe8gqeDQW/ukZs
- D6KKnsSsDeqV2ya8zAUXQKHJNOQIyJ/t3QUhKQ4Ff9sTfgbfvim1ANswaVbFow2Oe0Alta7cMCM
- B0n0f/TJVvY9boQ1JlRArf1WZjMYZRj1if2pFrTu9eyNT3nUAQSICw3LZ3Oto/DGU66W2Arczl8
- UKASqVO8JnPMo
-X-Google-Smtp-Source: AGHT+IExY1G3CwrPJudT1WxTZgDt7Foh1dgVnoTk2Rm3CVtp1IzAiSQCbKMQEJi4fPxRwT6mVIIKSg==
-X-Received: by 2002:a17:902:f711:b0:236:6f5f:caaf with SMTP id
- d9443c01a7336-23823fd61bfmr116977045ad.15.1750943236471; 
- Thu, 26 Jun 2025 06:07:16 -0700 (PDT)
-Received: from localhost.localdomain ([64.62.143.197])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-237d867c0d9sm155104415ad.177.2025.06.26.06.07.15
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 26 Jun 2025 06:07:16 -0700 (PDT)
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-To: dev@dpdk.org
-Cc: rasland@nvidia.com, Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>,
- stable@dpdk.org
-Subject: [PATCH v2] net/mlx5: fix segfault on indirect action age query with
- conntrack
-Date: Thu, 26 Jun 2025 09:07:02 -0400
-Message-ID: <20250626130702.3921887-1-14pwcse1224@uetpeshawar.edu.pk>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id 4D721402AE;
+	Thu, 26 Jun 2025 15:07:47 +0200 (CEST)
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com
+ (mail-co1nam11on2058.outbound.protection.outlook.com [40.107.220.58])
+ by mails.dpdk.org (Postfix) with ESMTP id B1FBA402A3
+ for <dev@dpdk.org>; Thu, 26 Jun 2025 15:07:45 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nk7orxZL0SSPfV4QtAw9sRptm0cblwRRPMfeEIpxYFn/3NwespGgoKl2n3D5csr0V12RNQAl2K6aaGGUq3db6GKaZQ1FDxlKnQYalGyBAQaf82vcxL8WnE37cAyROGiEysyiD89AtwSpeIrWOy8go1rNbmddy7j4/zr1zq3cX09VT1W/77AmCX7uoVaNAVpN1UeHlUakUUoa64IzaGgRcP5DU3vqzFu/fBQ2Kp4gIH2sl2fJScRPxwQJP+G+Kkroblqoi35UmBDqBvfwW0qU3vClv29WiEg0uylLOnoTrSeyWcK0taV5kUtFATlfah0V4HtkHMCLP2v2QIrc6In4qQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vtdVXrQlfzGeC76eciG0yqjB6Iff6hOMEVv4/k4NaRU=;
+ b=hijsjSMru7J4Pqf+/RmEZj8qinVV7HOkj5Ea5UHoqHOXtyTlvy68YEyJJButYxH2RzJhGIptCHjGiX3Ztibbng2pP8IxKHadYMX4HM8ykCvSOYfVSBb4TNRRZN8Vt5oOn0Cl9E4S69/EWLs/CQ917In2WeOG8GemUi7bYdVmc/H8WomYb2UfgWAJvSToLHz0M2FpBh2AJ+1GW8/buMRErS9WkTjnb4Hzub0h5id+BeW15GtaKk/BvJ+WF8SHVmAHjTMRl5mVOfqkKKUECmrgqGrFuvFvZiCBxcx5XEKieJ5MdZSTdAqYo8ITpWvm1aZNY7OxqiHCvZP4zMXJxmD8wA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=nokia-sbell.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vtdVXrQlfzGeC76eciG0yqjB6Iff6hOMEVv4/k4NaRU=;
+ b=AcHwEYNpAKGjLNsGHPrbH0OBHb01neZbFZpA0QFiqQYXEn+JaDqkFDFxDtGPai8DF9QxX5sqsMcjaNIIhdQhB/IzygFWlGKM+romSUQFoG6pn1TjwI85v65qLw5tcMgMwVHqsQRJYPvWUH+djTOl5gGgM0Rm0rgYEw83eZHSyXWL44gHElf6kMY0VhS2wgV/hTeqne1bskDEqt3j3ZJron1L+/nc9mAh6yuG9nbhducK2h5gDxOhFkne8nnnIGpNLzH8tE3dUPsAmH7Iy083HvUd7lQTrI183E6ZyXYd8FhLueD5/kT7W5jUC7l/a6BZfe3aHPsBrWV+FYfuXtFQUQ==
+Received: from BN9PR03CA0650.namprd03.prod.outlook.com (2603:10b6:408:13b::25)
+ by PH8PR12MB7028.namprd12.prod.outlook.com (2603:10b6:510:1bf::15)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.28; Thu, 26 Jun
+ 2025 13:07:42 +0000
+Received: from BN2PEPF000044A3.namprd02.prod.outlook.com
+ (2603:10b6:408:13b:cafe::45) by BN9PR03CA0650.outlook.office365.com
+ (2603:10b6:408:13b::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.21 via Frontend Transport; Thu,
+ 26 Jun 2025 13:07:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BN2PEPF000044A3.mail.protection.outlook.com (10.167.243.154) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8880.14 via Frontend Transport; Thu, 26 Jun 2025 13:07:40 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 26 Jun
+ 2025 06:07:16 -0700
+Received: from localhost (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 26 Jun
+ 2025 06:07:15 -0700
+Date: Thu, 26 Jun 2025 15:06:48 +0200
+From: Dariusz Sosnowski <dsosnowski@nvidia.com>
+To: Yang Ming <ming.1.yang@nokia-sbell.com>
+CC: Moses Young <mosesyyoung@gmail.com>, "dev@dpdk.org" <dev@dpdk.org>, "Bing
+ Zhao" <bingz@nvidia.com>, "stephen@networkplumber.org"
+ <stephen@networkplumber.org>, "julien.meunier@nokia.com"
+ <julien.meunier@nokia.com>, Maayan Kashani <mkashani@nvidia.com>
+Subject: Re: [PATCH v2 2/2] net/mlx5: enhance log file path
+Message-ID: <20250626130637.c4a5jtfoglb3ssha@ds-vm-debian.local>
+References: <20241213092444.2987-1-ming.1.yang@nokia-sbell.com>
+ <20250321132750.4237-1-ming.1.yang@nokia-sbell.com>
+ <20250321132750.4237-2-ming.1.yang@nokia-sbell.com>
+ <59bb400d-5e49-4ecb-941e-2513894d6930@nokia-sbell.com>
+ <0a6576b7-5981-4a7d-b33f-aae011b86a00@gmail.com>
+ <PH7PR12MB701812C6D5EBD32CCB17D1D0B26CA@PH7PR12MB7018.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <PH7PR12MB701812C6D5EBD32CCB17D1D0B26CA@PH7PR12MB7018.namprd12.prod.outlook.com>
+X-Originating-IP: [10.126.231.35]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF000044A3:EE_|PH8PR12MB7028:EE_
+X-MS-Office365-Filtering-Correlation-Id: f6f31670-7e78-4a87-f000-08ddb4b26e88
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|36860700013|1800799024|376014|82310400026|7053199007; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?R+OuNRqX46Kvxt3LXrzXJ3fSMlBucRpfPJRaHeevuW5+2bLqBrdjK3I8z14e?=
+ =?us-ascii?Q?cY+z5IRYQMRfn0gV4V6D6oSWHuvoSJzqeMPLmnVgsBVDc/GFTR3S2lM1ysJq?=
+ =?us-ascii?Q?2MJitTORwKushjmnJl8MOA737qHOubbpAdetCUnd6GjAv5RBT62e9X3OjGqk?=
+ =?us-ascii?Q?a5WpRLH5yi+IvbYf2mntQjVWII59C5sRkMfTvEo9XMWZuaC0Q0Scf0hTp3ia?=
+ =?us-ascii?Q?KvnhX8wwTLs+7mFRthQQHJMlv314a+nNka1h2izTVk0LvA7TvsrCKmS1W33W?=
+ =?us-ascii?Q?OJD7nFJs8uRDuRCpy1fpb4IDjDCg7+qte12BP54sB+eJh49jdGbyJpzvrqR2?=
+ =?us-ascii?Q?zr/m3Hm+RI5U6RC0/G0re5GXtYMRhIyr+tLtKLNZEcaSDAmc39xqkH71AXbT?=
+ =?us-ascii?Q?mWuMgyK9g+1Ai1TnepxhADrxyBCrNhncJ6Uuj8Xs6Oy2XagtuvLOhF31LyRL?=
+ =?us-ascii?Q?RlrDU84dM7LlIf7Bfr9pw7HEbCKUKg9xtJvHp09bLm0d0z3j77ovjhPZln+5?=
+ =?us-ascii?Q?3ktO6PtrPxZsOodA65kKPuzrVrUO9FPRwav8TTYKCRst7HNjUY1SfBCRpFq3?=
+ =?us-ascii?Q?SdlR0FO8Mu9DWlpiuF744/usJfTywi591KJxKkkB0Dh4Z1Hvp6/qxe9EwS4n?=
+ =?us-ascii?Q?ER9tYzOgdVARE+0b1XDYs0mPIshio1pPe6/ypUrgpDJS4lvNIxz7QSTuY0CV?=
+ =?us-ascii?Q?l3VL9cNH9mx9hN2oZjZXNE2wK18dJxDKDoxEX8DrSqTiIewA1UZCMoBf14or?=
+ =?us-ascii?Q?5PF2XYrA6xSUg1UuqgI8gxWn8aXAk8Q0DtCtBhSHXZMW5HrdmefFHjkJVKup?=
+ =?us-ascii?Q?cv5EDfBB73OG/j1vXvjLy4LMGbCBNONh/rUZ9t3Nay0K0z0fynV+OZG07RiL?=
+ =?us-ascii?Q?MY7/phvCTZgAOmtF8xdmReJfEDHCx8+IhdaW5xBtr8/4+AwrCygE7wBFNitF?=
+ =?us-ascii?Q?nlOAhmd7BsAxjIk5U7Ttq4uVMH/nir3JTAjM1hbTNT8gW0nRYaHn8STZC01z?=
+ =?us-ascii?Q?1oeYJpnUfHZ7oo/oc5bAMS+waJlivvKb4pdgSuRmgC6R0RMlM6sOLs/piTIK?=
+ =?us-ascii?Q?v/7ugbxulZEEHy5qDXEXzBdPNFuOCDrIOR59lj8Rn+iE14Qv4uIa6HEu4bgD?=
+ =?us-ascii?Q?pe9GvD9Qx9nfSwLFwf1WVTB10Rhe8B+heQhR73kjaxIZn772Ln2VKX21d02w?=
+ =?us-ascii?Q?9HNs79xTlJmBSsIuRFiaAdKR/Z9ZBnRUQ9FbEYn4cgwJbhbnC7Yut5NKDGdZ?=
+ =?us-ascii?Q?qbgDtP7Ipt3vYx92vFeJhP88q0cXTgkj+SRNFtH05mJ8DdllPZfENlwehici?=
+ =?us-ascii?Q?GCY2S6pEdYYHSeytVJMYn99C7I2J8YQ9DOooNkAW5PebI+FkmlbumOWXkzAT?=
+ =?us-ascii?Q?NXIDiVFDb4L1In+2KR7pL0NLEtLkmrRcPVXXbon7HphDCxOfVPXn9OSoAu44?=
+ =?us-ascii?Q?sMyFHvIrhlm+Xy8lT7styBLLDrTDK+nHx4e/VU/nUK9geSKs1v9d8A6U/J0W?=
+ =?us-ascii?Q?xsZdR1e5lcbkXQL6EyJILesVZP19cL4NvBw6tvT4rGrdoa80ifdb5qpMrg?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026)(7053199007);
+ DIR:OUT; SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2025 13:07:40.6325 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f6f31670-7e78-4a87-f000-08ddb4b26e88
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN2PEPF000044A3.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7028
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,77 +140,57 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-v2:
- - Added missing check for AGE + CT conflict in flow_dv_query().
- - Removed unnecessary null check from flow_aso_age_get_by_idx().
- - Added Fixes tag for LTS tracking.
- - Ensured .mailmap and Signed-off-by addresses match.
+Hi Yang,
 
-This patch fixes a segmentation fault that occurs when querying the
-AGE action of a flow rule that uses indirect connection tracking (CT).
+This patch breaks compilation on Windows:
+https://lab.dpdk.org/results/dashboard/testruns/logs/1600918/
 
-Background:
-AGE and CT indices share a union in the mlx5 flow struct. When using CT
-without age, the age index is invalid. Querying AGE in this case leads
-to a crash due to reading an invalid pointer.
+The problem is that mlx5_rxtx.c is used on both Linux and Windows.
 
-Fix:
-Add a check in `flow_dv_query()` to prevent AGE queries on indirect CT
-actions. This is the correct fix rather than null-checking the pool.
+Would you be able to fix the patch?
+I suggest to do the following:
 
-Steps to reproduce:
- 1. Create an indirect CT action:
-    flow indirect_action 0 create ingress action conntrack / end
+- Declare a function mlx5_os_debug_dump_file_open() in mlx5.h.
+- Define it in drivers/net/mlx5/linux/mlx5_os.c.
+  Here the existing logic from the patch can be used to open the file.
+- Define it in drivers/net/mlx5/windows/mlx5_os.c.
+  Here we can rely on rte_eal_get_runtime_dir() only,
+  since MLX5_SYSTEM_LOG_DIR is not defined correctly to work
+  on Windows as well.
+  (see https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/access-waccess?view=msvc-170)
+- Replace the opening of the file in mlx5_dump_debug_information()
+  with mlx5_os_debug_dump_file_open().
 
- 2. Create a root rule with jump:
-    flow create 0 ingress pattern eth / ipv4 / tcp / end actions jump group 3 / end
+Best regards,
+Dariusz Sosnowski
 
- 3. Create a group 3 rule using the indirect action:
-    flow create 0 group 3 ingress pattern eth / ipv4 / tcp / end actions indirect 0 / jump group 5 / end
-
- 4. Create a group 5 rule matching CT state:
-    flow create 0 group 5 ingress pattern eth / ipv4 / tcp / conntrack is 1 / end actions queue index 5 / end
-
- 5. Querying the first rule causes segfault:
-    flow query 0 1 age
-
-Fixes: 2d084f69aa26 ("net/mlx5: add translation of connection tracking action")
-Cc: stable@dpdk.org
-
-Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
----
- .mailmap                        | 1 +
- drivers/net/mlx5/mlx5_flow_dv.c | 5 +++++
- 2 files changed, 6 insertions(+)
-
-diff --git a/.mailmap b/.mailmap
-index 8483d96ec5..6126f7e472 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -812,6 +812,7 @@ Kevin Scott <kevin.c.scott@intel.com>
- Kevin Traynor <ktraynor@redhat.com>
- Ke Xu <ke1.xu@intel.com>
- Ke Zhang <ke1x.zhang@intel.com>
-+Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
- Khoa To <khot@microsoft.com>
- Kiran KN <kirankn@juniper.net>
- Kiran Kumar K <kirankumark@marvell.com> <kkokkilagadda@caviumnetworks.com> <kiran.kokkilagadda@caviumnetworks.com>
-diff --git a/drivers/net/mlx5/mlx5_flow_dv.c b/drivers/net/mlx5/mlx5_flow_dv.c
-index c217634d9b..7ce093e075 100644
---- a/drivers/net/mlx5/mlx5_flow_dv.c
-+++ b/drivers/net/mlx5/mlx5_flow_dv.c
-@@ -18134,6 +18134,11 @@ flow_dv_query(struct rte_eth_dev *dev,
- 						  error);
- 			break;
- 		case RTE_FLOW_ACTION_TYPE_AGE:
-+			if (flow->indirect_type == MLX5_INDIRECT_ACTION_TYPE_CT)
-+				return rte_flow_error_set(error, ENOTSUP,
-+						  RTE_FLOW_ERROR_TYPE_ACTION,
-+						  actions,
-+						  "age not available");
- 			ret = flow_dv_query_age(dev, flow, data, error);
- 			break;
- 		default:
--- 
-2.43.0
-
+On Wed, Jun 04, 2025 at 06:54:05AM +0000, Maayan Kashani wrote:
+> Hi, Yang,
+> Thanks for contributing,
+> There are some failing CI tests.
+> Can you fix it?
+>  https://patches.dpdk.org/project/dpdk/patch/20250321132750.4237-2-ming.1.yang@nokia-sbell.com/
+> 
+> Regards,
+> Maayan Kashani
+> 
+> > -----Original Message-----
+> > From: Moses Young <mosesyyoung@gmail.com>
+> > Sent: Monday, 12 May 2025 13:13
+> > To: Yang Ming <ming.1.yang@nokia-sbell.com>; dev@dpdk.org
+> > Cc: Bing Zhao <bingz@nvidia.com>; Dariusz Sosnowski
+> > <dsosnowski@nvidia.com>; stephen@networkplumber.org;
+> > julien.meunier@nokia.com
+> > Subject: Re: [PATCH v2 2/2] net/mlx5: enhance log file path
+> > 
+> > External email: Use caution opening links or attachments
+> > 
+> > 
+> > > Hi Experts,
+> > >
+> > > is there any chance to review and accept this patch?
+> > >
+> > > Brs,
+> > >
+> > > Yang Ming
+> > >
