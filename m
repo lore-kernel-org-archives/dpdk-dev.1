@@ -2,73 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B75C7EE30
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Jun 2025 20:04:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE6DC7EE30
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Jun 2025 21:14:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6C7294026F;
-	Thu, 26 Jun 2025 22:04:51 +0200 (CEST)
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com
- [209.85.219.45]) by mails.dpdk.org (Postfix) with ESMTP id D0B944026C
- for <dev@dpdk.org>; Thu, 26 Jun 2025 22:04:50 +0200 (CEST)
-Received: by mail-qv1-f45.google.com with SMTP id
- 6a1803df08f44-6fb1be9ba89so13440116d6.2
- for <dev@dpdk.org>; Thu, 26 Jun 2025 13:04:50 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6CF0740270;
+	Thu, 26 Jun 2025 23:14:56 +0200 (CEST)
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com
+ [209.85.219.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 66A814026F
+ for <dev@dpdk.org>; Thu, 26 Jun 2025 23:14:55 +0200 (CEST)
+Received: by mail-yb1-f175.google.com with SMTP id
+ 3f1490d57ef6-e81826d5b72so1228684276.3
+ for <dev@dpdk.org>; Thu, 26 Jun 2025 14:14:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1750968290;
- x=1751573090; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ d=google.com; s=20230601; t=1750972494; x=1751577294; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
  :message-id:reply-to;
- bh=990+ZyxwSu2XCQGPqqVXl5/ZY7HmsCwGiJGerkgcsGw=;
- b=yiaVmy7qzFhqVc1NS6UoRqlFsLDfaGarAgcr6ltN4GeyVr9IdF5CRXzRMQ8616ocSf
- bXnxhciHHxvtL4amknclsS5pSwvErndC8YcBuC3XvX5yv/RlfVujAE38S7w1OCGRqGAk
- cA5JdK7JywDkGnNG+fZfiFVua7xvBIAYYK6K+RyebgBXQuPrGC33RjIWAwx25oYNA5Gj
- W6Jt54sG58FbGRy//3l+fr1W1j54/TXhbDK68K9mGrPts6q5lb2a7tfuriIwbEyImMKZ
- aqUSV8uJXNMd5FOo0ePkbna/9ZV/FIxJg/kCT/wYgtMsw+I9Qei/Z+TmDvvmgcBdP1Jr
- VSeA==
+ bh=FOLd2wVG27k/Ap81PeWNMcJdCNfL/IO7LM1V1DqNnUY=;
+ b=oKFJeqmgtOkkDLjS2eKcPXshrPhQH5u/8MFxrGijwgqDg+HmMOdfLy6XipaV3atc8t
+ pfxvoq2zEmTgqDsJiZHL2vwGCJoQbqngxcO5SRr8XTO3GKICIcGQp25A3a+3awGo/Jtt
+ 4KXfNypMZxUcrGFPEe3fmfQySPk2hU6RfzRU0aWf8BDcJRwkWb6RwXejGFaEC3cmXG0N
+ XNDobBe5VPmZaCj0j6YDyKai8TZ2MjdggNvaycee7brUwQJWDb21MG9u9aGPdiM3pjPu
+ LpD2hqVLUPd8bUmXltW/56aGNrUHaFYVX/HMCU6JusL9Axr6OIYhRxggPeOSsmU/X+OC
+ CR6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1750968290; x=1751573090;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ d=1e100.net; s=20230601; t=1750972494; x=1751577294;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=990+ZyxwSu2XCQGPqqVXl5/ZY7HmsCwGiJGerkgcsGw=;
- b=tuKzUpnePckZwFF0WCKy8wL2csjem6eRTuHkS+id4rv5mWbXFIygvvLcewncUfcVtQ
- TLlte7caXXXovE7kbcL4yYOabgBCsOtQXkGFEIS261d177u2Lxf4Tm6JI6AF+DgWhT+z
- UBTgMD5Kd0soNZHuRo1w5eID53zvRp3tX9mrY0vgxS4bv7Ed5ga2zA4Wjk5VTNnZyoNP
- IetBYBb3rjdhnURLSZGzcEUXnFo11byu857E1aKnyJwpiqfc/n5Y3pYB8ZSAHGVcpmS4
- WaDXjfumvS6/B+eyoauhHvbH2fQLmHlW6lnO0FMdG7ua+DMmFL2vrmkvlOc00mOk9zIX
- IqWw==
-X-Gm-Message-State: AOJu0Yw+rZcwe/1KBQ+RcsWgCB9fSJ/2ftefH+zL9fMzSLPsLRseN2QS
- //jWxnoe6zk28gDymsxEjY5vmsNKXpSrivMMTU27p9OZUzdec7apLxFphlASEal893k=
-X-Gm-Gg: ASbGncs5CAwAbl0xUshN58XcuE+t0GhTNbwRFMRsVb59tiXPms3Jdk5wk38PRVlqAGx
- 2iuEPEGBbJMfnToFICDueD6TtZ35EM7BH8BDU4y4bezp5u8oTrD/l9+EPqfWBNO96COhZLPqMrB
- Qo0c0SNJxcrFrH68tXrwfgwuyyFu40TfBBepFHu+my8qYX+BKct57ASkVY4vg2/0hHKzrg1YEvG
- AXdDedVQlNDtNf0hzArACvQvKEnkwDrMJ3FnnfQ9j+NGUppki5kC87KrCfFUJJ+r3Po2M+PMNAR
- ft1sQtbfzsDhRyk0XSk4ypX16wyfgaPMIO2YNVjH2LLR78MxfOGkbKo7zqiv/yJavNqnGlEEii1
- 6sMPEa+v8Ia2HgEH3Hq9C+WqLv2yoM7qpSBHFYiSE9Ld4boNCaA==
-X-Google-Smtp-Source: AGHT+IHAQd3HR6uYT/BoNj4+6Gt4wdtV5izNdIvSseEH4jWpSt0dwlvVAnc+yVjjjkjWdLOWonk2+Q==
-X-Received: by 2002:ad4:5bcf:0:b0:6fb:4caf:5d04 with SMTP id
- 6a1803df08f44-700031c6a5bmr12831886d6.45.1750968290146; 
- Thu, 26 Jun 2025 13:04:50 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-6fd7730aaf8sm11278286d6.109.2025.06.26.13.04.49
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 26 Jun 2025 13:04:50 -0700 (PDT)
-Date: Thu, 26 Jun 2025 13:04:47 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Feifei Wang <wff_light@vip.163.com>
-Cc: dev@dpdk.org, Feifei Wang <wangfeifei40@huawei.com>, Yi Chen
- <chenyi221@huawei.com>, Xin Wang <wangxin679@h-partners.com>
-Subject: Re: [V2 14/18] net/hinic3: add Rx/Tx functions
-Message-ID: <20250626130447.37985cfc@hermes.local>
-In-Reply-To: <20250625022827.3091-15-wff_light@vip.163.com>
-References: <20250418090621.9638-1-wff_light@vip.163.com>
- <20250625022827.3091-1-wff_light@vip.163.com>
- <20250625022827.3091-15-wff_light@vip.163.com>
+ bh=FOLd2wVG27k/Ap81PeWNMcJdCNfL/IO7LM1V1DqNnUY=;
+ b=rNxmBB79pl9TLvMsbKuwOhlEylRNJWu2kYcyHt5hm6m8IPKOfRfPBO3Z1TuFTtMzIC
+ t/OKlgxNjrS02e4uGZ4Y32BcUesfCvRXRRGKB4bWcErriVT5krYMoudH3euwU1mCqzgD
+ s/W7vPuiJtbA9EJbBfPu72j4+ePTgyrjS0919H3kN0TS0u7zA7JGdzkNwnkLYYfPaLr4
+ MnBdfM9XsjIGKLaeYAzloZFQ2gXstJo4262zObLrhhoB7L0v6U5bNG9ZIiMXlAH7f8dZ
+ XdIXyhedUqdhqJoL8LkGXj97XCRsQF2tNBPYUs3eUOJkjW+bbiPVIcQzUQM1yq4atFQk
+ DrYQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVfQx4Mb8FTJ98odkfqWjSMC9EJH+eS3VPllT/L9/LMDDgl2tk/kYftMvkUQHR4ssYfXyE=@dpdk.org
+X-Gm-Message-State: AOJu0YyI7aQWh+JPVYJmln/xRwRyYI+2ATi2y46aKAGdaT2/Tz1Mccwo
+ BTcfDVCINkxNX2Vu4qdXASggv/lo3UspFj0YNb16pNNpVaMLWCvDwSk60hY5WbCqibECS8uV0Bh
+ 9jp3CS/FGLuDoJ/ueRMbdwSOBxOf6ZOiTCkBV8Fw2
+X-Gm-Gg: ASbGncuy6v892LjCQGkb2RyyKZBR0iLetu4D2mmrXzmSD0MmC8mpM5CgavKeIS3VmHf
+ srpVivgmlXd/A7dgUoXty4EM2hVtjML1Pb7rWSYPkAecEIUiQ+r4lDbxr/D7u8Kyzn713ttLi+L
+ XP3LlhjJFgLfPp7/kgMsIZur1xQf/oQB2eSI55W/xAgnn23TDh4H0VEnE6Wi6815l538rpJ9VU9
+ A==
+X-Google-Smtp-Source: AGHT+IE05QPhMKMuMB9KN6EOy9fgIoNI/l2AyrGeNctWKRnjSVEep2DjxbnKKUABwFdK7tMsgwcrV82Gdtwd2G+v0Eg=
+X-Received: by 2002:a05:6902:1890:b0:e85:e364:3d4 with SMTP id
+ 3f1490d57ef6-e87a7b8c6d7mr1360016276.44.1750972494397; Thu, 26 Jun 2025
+ 14:14:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250625182751.1936925-1-jtranoleary@google.com>
+ <20250626071022.232b146b@hermes.local>
+In-Reply-To: <20250626071022.232b146b@hermes.local>
+From: "Jasper Tran O'Leary" <jtranoleary@google.com>
+Date: Thu, 26 Jun 2025 14:14:43 -0700
+X-Gm-Features: Ac12FXwCKc7_UWreTyOmEW2TgiMFZLsRfPHLIB3HyzcAyLF6Z9wnjuNEZTDQJiA
+Message-ID: <CAAESxLK6q5AjcMyNuHYmnqb8S2085nqTS-ogBqAvHV=xqzZqvg@mail.gmail.com>
+Subject: Re: [PATCH] net/gve: support gve driver on FreeBSD
+To: stephen@networkplumber.org, Bruce Richardson <bruce.richardson@intel.com>, 
+ David Marchand <david.marchand@redhat.com>
+Cc: joshwash@google.com, dev@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,31 +78,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 25 Jun 2025 10:28:10 +0800
-Feifei Wang <wff_light@vip.163.com> wrote:
+Thank you all for the feedback; I've made these changes and will resubmit.
 
-> +#ifdef HINIC3_XSTAT_MBUF_USE
-> +		rxq->rxq_stats.rx_free_mbuf_bytes += pkts;
-> +#endif
-> +	}
-> +	rxq->rxq_stats.burst_pkts = pkts;
-> +	rxq->rxq_stats.tsc = rte_get_timer_cycles();
-> +out:
-> +	/* 10. Rearm mbuf to rxq. */
-> +	hinic3_rearm_rxq_mbuf(rxq);
-> +
-> +#ifdef HINIC3_XSTAT_PROF_RX
-> +	/* Do profiling stats. */
-> +	t2 = rte_get_tsc_cycles();
-> +	rxq->rxq_stats.app_tsc = t1 - rxq->prof_rx_end_tsc;
-> +	rxq->prof_rx_end_tsc = t2;
-> +	rxq->rxq_stats.pmd_tsc = t2 - t1;
-> +#endif
-
-I understand why you would want #ifdef's while testing a new driver.
-But once it is released, they become latent problems.
-The #ifdef code never gets tested, and may or may not have bugs
-that are waiting to happen.
-
-Please try and stick to the standard ifdefs that other drivers use.
-For example for mbuf, maybe put it under mbuf debug #ifdef?
+On Thu, Jun 26, 2025 at 7:10=E2=80=AFAM Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+>
+> On Wed, 25 Jun 2025 18:27:51 +0000
+> "Jasper Tran O'Leary" <jtranoleary@google.com> wrote:
+>
+> > This commit adds small changes so that the gve driver can build when
+> > FreeBSD is the host operating system.
+> >
+> > Signed-off-by: Jasper Tran O'Leary <jtranoleary@google.com>
+> > ---
+>
+> Looks good, fix the feedback and resubmit.
