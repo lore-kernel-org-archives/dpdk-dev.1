@@ -2,44 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DDCC7EE32
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Jun 2025 09:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B22C7EE32
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Jun 2025 09:51:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 666DA40156;
-	Thu, 26 Jun 2025 11:37:00 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 7497B400D6
- for <dev@dpdk.org>; Thu, 26 Jun 2025 11:36:59 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 6424446A62; Thu, 26 Jun 2025 11:36:59 +0200 (CEST)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/other Bug 1731] FIB insertion error(-28) after remove all rules
-Date: Thu, 26 Jun 2025 09:36:58 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: other
-X-Bugzilla-Version: 25.03
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: kipi@servers.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone attachments.created
-Message-ID: <bug-1731-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17509306190.EBB6bBC9B.170225
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id CB5D340156;
+	Thu, 26 Jun 2025 11:51:35 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56])
+ by mails.dpdk.org (Postfix) with ESMTP id 1C199400D6;
+ Thu, 26 Jun 2025 11:51:34 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bSYqM2GG8z67DlR;
+ Thu, 26 Jun 2025 17:51:27 +0800 (CST)
+Received: from frapeml100004.china.huawei.com (unknown [7.182.85.167])
+ by mail.maildlp.com (Postfix) with ESMTPS id 55AF1140447;
+ Thu, 26 Jun 2025 17:51:33 +0800 (CST)
+Received: from frapeml500002.china.huawei.com (7.182.85.205) by
+ frapeml100004.china.huawei.com (7.182.85.167) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 26 Jun 2025 11:51:33 +0200
+Received: from frapeml500002.china.huawei.com ([7.182.85.205]) by
+ frapeml500002.china.huawei.com ([7.182.85.205]) with mapi id 15.01.2507.039;
+ Thu, 26 Jun 2025 11:51:33 +0200
+From: Marat Khalili <marat.khalili@huawei.com>
+To: David Marchand <david.marchand@redhat.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, "stable@dpdk.org" <stable@dpdk.org>, "Bruce
+ Richardson" <bruce.richardson@intel.com>
+Subject: RE: [PATCH v2 02/10] test/telemetry: fix test calling all commands
+Thread-Topic: [PATCH v2 02/10] test/telemetry: fix test calling all commands
+Thread-Index: AQHb5EY4znvM8M6LkkyM82eIHpHGJ7QSdYHggAKKJICAADJ2MA==
+Date: Thu, 26 Jun 2025 09:51:33 +0000
+Message-ID: <afe059471e604b5c9319cb7312e69c23@huawei.com>
+References: <20250619071037.37325-1-david.marchand@redhat.com>
+ <20250623135242.461965-1-david.marchand@redhat.com>
+ <20250623135242.461965-3-david.marchand@redhat.com>
+ <08ce2412f18d477199d3e02fdcf9bcd4@huawei.com>
+ <CAJFAV8wb9ec_O2Dj8vX8YF9ksXzSDgCGefCaNEFs7HfeKhWjMA@mail.gmail.com>
+In-Reply-To: <CAJFAV8wb9ec_O2Dj8vX8YF9ksXzSDgCGefCaNEFs7HfeKhWjMA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.137.64]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -54,221 +60,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-
---17509306190.EBB6bBC9B.170225
-Date: Thu, 26 Jun 2025 11:36:59 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-https://bugs.dpdk.org/show_bug.cgi?id=3D1731
-
-            Bug ID: 1731
-           Summary: FIB insertion error(-28) after remove all rules
-           Product: DPDK
-           Version: 25.03
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: other
-          Assignee: dev@dpdk.org
-          Reporter: kipi@servers.com
-  Target Milestone: ---
-
-Created attachment 321
-  --> https://bugs.dpdk.org/attachment.cgi?id=3D321&action=3Dedit
-FIB error example
-
-The error is due to overflow of the internal FIB counter "rsvd_tbl8s". After
-this error occurs, it is impossible to add any rules even the FIB is empty.
-
-To reproduce this error, simply insert two IP addresses of the following ty=
-pe
-with the same next-hope parameter (this is important):
-struct Network {
-    uint32_t ip;
-    uint16_t prefix;
-};
-
-/*
-    first insertion with prefix less than 25 doesn't allocate tbl8 entry
-    second insertion with prefix more than 24 will allocate tbl8 entry BUT =
-only
-when we pass the different next hope
-*/
-const struct Network state[] =3D {
-    {0x3000000, 15}, {0x3000520, 29}
-};
-
-and delete them. Deleting the first rule will allocate tbl8 entry but
-"rsvd_tbl8s" counter won't increment. Deleting the second rule will decrease
-the counter "rsvd_tbl8s" and it will overflow.
-
-The full reproduce program is in attachment.
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
-
---17509306190.EBB6bBC9B.170225
-Date: Thu, 26 Jun 2025 11:36:59 +0200
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-<html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
-bz_new_table">
-        <tr>
-          <th>Bug ID</th>
-          <td><a class=3D"bz_bug_link=20
-          bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - FIB insertion error(-28) after remove all rules"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1731">1731</a>
-          </td>
-        </tr>
-
-        <tr>
-          <th>Summary</th>
-          <td>FIB insertion error(-28) after remove all rules
-          </td>
-        </tr>
-
-        <tr>
-          <th>Product</th>
-          <td>DPDK
-          </td>
-        </tr>
-
-        <tr>
-          <th>Version</th>
-          <td>25.03
-          </td>
-        </tr>
-
-        <tr>
-          <th>Hardware</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>OS</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>Status</th>
-          <td>UNCONFIRMED
-          </td>
-        </tr>
-
-        <tr>
-          <th>Severity</th>
-          <td>normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Priority</th>
-          <td>Normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Component</th>
-          <td>other
-          </td>
-        </tr>
-
-        <tr>
-          <th>Assignee</th>
-          <td>dev&#64;dpdk.org
-          </td>
-        </tr>
-
-        <tr>
-          <th>Reporter</th>
-          <td>kipi&#64;servers.com
-          </td>
-        </tr>
-
-        <tr>
-          <th>Target Milestone</th>
-          <td>---
-          </td>
-        </tr></table>
-      <p>
-        <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">Created <span class=3D""><a href=
-=3D"attachment.cgi?id=3D321" name=3D"attach_321" title=3D"FIB error example=
-">attachment 321</a> <a href=3D"attachment.cgi?id=3D321&amp;action=3Dedit" =
-title=3D"FIB error example">[details]</a></span>
-FIB error example
-
-The error is due to overflow of the internal FIB counter &quot;rsvd_tbl8s&q=
-uot;. After
-this error occurs, it is impossible to add any rules even the FIB is empty.
-
-To reproduce this error, simply insert two IP addresses of the following ty=
-pe
-with the same next-hope parameter (this is important):
-struct Network {
-    uint32_t ip;
-    uint16_t prefix;
-};
-
-/*
-    first insertion with prefix less than 25 doesn't allocate tbl8 entry
-    second insertion with prefix more than 24 will allocate tbl8 entry BUT =
-only
-when we pass the different next hope
-*/
-const struct Network state[] =3D {
-    {0x3000000, 15}, {0x3000520, 29}
-};
-
-and delete them. Deleting the first rule will allocate tbl8 entry but
-&quot;rsvd_tbl8s&quot; counter won't increment. Deleting the second rule wi=
-ll decrease
-the counter &quot;rsvd_tbl8s&quot; and it will overflow.
-
-The full reproduce program is in attachment.
-          </pre>
-        </div>
-      </p>
-
-
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1731">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17509306190.EBB6bBC9B.170225--
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBEYXZpZCBNYXJjaGFuZCA8ZGF2
+aWQubWFyY2hhbmRAcmVkaGF0LmNvbT4NCj4gU2VudDogVGh1cnNkYXkgMjYgSnVuZSAyMDI1IDA5
+OjMzDQo+IA0KPiBUaGUgcHJvYmxlbSBsaWVzIGluIHRoZSB1c2Ugb2Ygc3Vic2hlbGwgYW5kIHBp
+cGVzIGFuZCB0aGF0IGEgZmFpbHVyZQ0KPiBpcyBub3QgcHJvcGFnYXRlZC4NCj4gQWRkaW5nIGEg
+dGVzdCBvbmx5IHRoZSB0aGUgdGVsZW1ldHJ5IHNjcmlwdCB3b3VsZCBub3QgY2F0Y2ggb3RoZXIN
+Cj4gZXJyb3JzIChsaWtlIGZvciBleGFtcGxlLCBpZiB0aGUganEgY29tbWFuZCBzdGFydHMgdG8g
+c3BldyBlcnJvcnMpLg0KDQpZZXMsIEkgYWdyZWUuDQoNCj4gVGhlIG1vc3QgZWxlZ2FudCB3b3Vs
+ZCBiZSB0byB1c2UgZXJydHJhY2UgYW5kIHBpcGVmYWlsIG9wdGlvbnMsIGJ1dA0KPiB0aGUgZXJy
+dHJhY2UgaXMgYSBiYXNoaXNtIChpb3cgbm90IFBPU0lYKSwgYW5kIHBpcGVmYWlsIGlzIFBPU0lY
+IG9ubHkNCj4gc2luY2UgMjAyMiBhbmQgbWFueSBzaGVsbCAobGlrZSBkYXNoIGluIFVidW50dSAy
+Mi4wNC8yNC4wNCkgZG9uJ3QNCj4gaW1wbGVtZW50IGl0Lg0KDQpZZXMsIGFsc28gdHJ1ZS4NCg0K
+PiBXZSBjb3VsZCB0cnkgc29tZXRoaW5nIGxpa2U6DQo+IA0KPiBkaWZmIC0tZ2l0IGEvYXBwL3Rl
+c3Qvc3VpdGVzL3Rlc3RfdGVsZW1ldHJ5LnNoDQo+IGIvYXBwL3Rlc3Qvc3VpdGVzL3Rlc3RfdGVs
+ZW1ldHJ5LnNoDQo+IGluZGV4IGNhNmFiZTI2NmUuLmE4MWI0YWRkOTAgMTAwNzU1DQo+IC0tLSBh
+L2FwcC90ZXN0L3N1aXRlcy90ZXN0X3RlbGVtZXRyeS5zaA0KPiArKysgYi9hcHAvdGVzdC9zdWl0
+ZXMvdGVzdF90ZWxlbWV0cnkuc2gNCj4gQEAgLTE1LDcgKzE1LDcgQEAgY2FsbF9hbGxfdGVsZW1l
+dHJ5KCkgew0KPiAgICAgIHRlbGVtZXRyeV9zY3JpcHQ9JHJvb3RkaXIvdXNlcnRvb2xzL2RwZGst
+dGVsZW1ldHJ5LnB5DQo+ICAgICAgZWNobyA+JHRtcG91dHB1dA0KPiAgICAgIGVjaG8gIlRlbGVt
+ZXRyeSBjb21tYW5kcyBsb2c6IiA+PiR0bXBvdXRwdXQNCj4gLSAgICBmb3IgY21kIGluICQoZWNo
+byAvIHwgJHRlbGVtZXRyeV9zY3JpcHQgfCBqcSAtciAnLlsiLyJdW10nKQ0KPiArICAgIGVjaG8g
+LyB8ICR0ZWxlbWV0cnlfc2NyaXB0IHwganEgLXIgJy5bIi8iXVtdJyB8IHdoaWxlIHJlYWQgY21k
+DQo+ICAgICAgZG8NCj4gICAgICAgICAgZm9yIGlucHV0IGluICRjbWQgJGNtZCwwICRjbWQseg0K
+PiAgICAgICAgICBkbw0KPiBAQCAtMjUsNCArMjUsNSBAQCBjYWxsX2FsbF90ZWxlbWV0cnkoKSB7
+DQo+ICAgICAgZG9uZQ0KPiAgfQ0KPiANCj4gLShzbGVlcCAxICYmIGNhbGxfYWxsX3RlbGVtZXRy
+eSAmJiBlY2hvIHF1aXQpIHwgJEANCj4gKyEgc2V0IC1vIHwgZ3JlcCAtcSBwaXBlZmFpbCB8fCBz
+ZXQgLW8gcGlwZWZhaWwNCj4gKyhzZXQgLWU7ICEgc2V0IC1vIHwgZ3JlcCAtcSBwaXBlZmFpbCB8
+fCBzZXQgLW8gcGlwZWZhaWw7IHNsZWVwIDEgJiYNCj4gY2FsbF9hbGxfdGVsZW1ldHJ5ICYmIGVj
+aG8gcXVpdCkgfCAkQA0KDQpJIDEwMCUgYWdyZWUgd2l0aCB0aGUgaWRlYSwgYnV0IHNhZGx5IEkn
+bSBub3QgZmFtaWxpYXIgd2l0aCBzaGVsbCBzY3JpcHRpbmcgZW5vdWdoIHRvIHN1Z2dlc3Qgb3Ig
+cmV2aWV3IHRoaXMgZGlmZi4gSXMgYGZvciBjbWQgaW5gIGFsd2F5cyBlcXVpdmFsZW50IHRvIGB3
+aGlsZSByZWFkIGNtZGA/IElzIENJIGV2ZXIgZXhlY3V0aW5nIGl0IGluIGJhc2ggZm9yIG91ciBh
+dHRlbXB0IHRvIHNldCBwaXBlZmFpbCB0byBiZSBqdXN0aWZpZWQ/IElzIGl0IGlkaW9tYXRpYz8g
+SSBob3BlIHNvbWVvbmUgZWxzZSBoZXJlIGNhbiBoZWxwIHdpdGggdGhpcy4NCg0KUGVyaGFwcyB0
+aGlzIHNob3VsZCBqdXN0IGJlIHJlLXdyaXR0ZW4gaW4gUHl0aG9uLiBJdCBkZXBlbmRzIG9uIGEg
+UHl0aG9uIHNjcmlwdCBhbnl3YXkuDQo=
