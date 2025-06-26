@@ -2,54 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0169C7115B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Jun 2025 03:34:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C22C77B7F
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Jun 2025 04:34:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AEFDC40A8A;
-	Thu, 26 Jun 2025 05:34:13 +0200 (CEST)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com
- [209.85.218.42])
- by mails.dpdk.org (Postfix) with ESMTP id 897144060F;
- Thu, 26 Jun 2025 05:34:12 +0200 (CEST)
-Received: by mail-ej1-f42.google.com with SMTP id
- a640c23a62f3a-adb4e36904bso113331566b.1; 
- Wed, 25 Jun 2025 20:34:12 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C3DD24067E;
+	Thu, 26 Jun 2025 06:34:13 +0200 (CEST)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com
+ [209.85.208.52])
+ by mails.dpdk.org (Postfix) with ESMTP id 0886F4060F;
+ Thu, 26 Jun 2025 06:34:12 +0200 (CEST)
+Received: by mail-ed1-f52.google.com with SMTP id
+ 4fb4d7f45d1cf-607ec30df2bso1070980a12.1; 
+ Wed, 25 Jun 2025 21:34:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1750908852; x=1751513652; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1750912451; x=1751517251; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=fSlpKloX2vhTWwlU3moTEaGtJU9uNL5MxpWH6IbOqco=;
- b=MZXFSUJLLMt82mxHPe2RCQ9S3qfQdrLYQpeFAqzYtJFIiJ3uUga5n7o0dde0VGCgPn
- yxQcGoecIi3wBYgaHLV7gl5gr/JkWzDZFjDobd/dQx/pYKD3I3jAWcXRY3em82smJcla
- B8p6vOolD+UQcGM5ZjASGbV9AEN55iS5n8pOVZ6NEL1+dv8LN6rMaWkCb+yvV91YEOwA
- mSKwpmls2JWFHZv1xysW9HASIJXd0CtZObG+2m/2FdGEQDhXP4EabMNrrUUal7EPoGT1
- wE3vPmenjtqkqXCykMZ0r0IEqjw+KBORchelSimi2GvVK7kbb96ee5LPbeOCBpfi1dpb
- piYA==
+ bh=UKdddVCTy85iXd1E+Ay+pg9YOz4UHG7hfftqffOBdS0=;
+ b=A6ggHxsImcH8Hla9mvjhy91PhVzuIkoacUiZhm5PM6v+D4xgrk4QUUSF5BzZRqaHnv
+ BUFkrmtYjqL7KVHo97jgg7/yoc8pD4XTq64eNpXSqwnODIepQLKEW6cMDZC/YugmIM6H
+ oAWWmLG4W1emletkcSMmBtntlZqogEsljrDWXJsPb2HeNIjjIc7K+ZpyothjTfvLYlVb
+ QN0kSl7DnHN3nFZJApJqp8mFPOWBms/ZJ/PcV1O59FiZlrfM8U8wU2T2q/I/Vg43cfB3
+ SH7Jdmnuyw0S73aP8UeTykhBRFRrcbByPW6gd/I4IN/ouDRp/4ah2UHsPOafXJJKrNAx
+ v6qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1750908852; x=1751513652;
+ d=1e100.net; s=20230601; t=1750912451; x=1751517251;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=fSlpKloX2vhTWwlU3moTEaGtJU9uNL5MxpWH6IbOqco=;
- b=vfokNaAHY4NoJhNfISaq+AY+/I4BJkTaGlvVK4VcSUQVBC9z9TSIj4GvN/vyJ3ESI1
- AnCBf1efzXMVJu/5GJ3lHWRom7/1i7xV7dy9H8EqWybZaQ6lx9OUf57KZoO7oQpIn///
- bY1MuGE+66oYaDIKLFmVo9W0togKkJWShYfnIT8om03QEK1U4hr2V4Llg5uK8BDlVK8d
- k24bxZG9OT3cwRj6s13Mo4qIXTa3NSwNnTifBCWbFNRsUNSJo2B3HcTF+OmeyrhLrDk5
- uWkyud7jML+gLas42sv9Ke+oZLo6hWJoMxV0MeW1IRL3k47F9MAV6KjsjREkOnmPkDtX
- 3QBQ==
+ bh=UKdddVCTy85iXd1E+Ay+pg9YOz4UHG7hfftqffOBdS0=;
+ b=EJBgYeJow6UaV4m0WAlFHdEnLKSXlkjf4Bl/DaxBJXaMVAFXMpW2lVhuqKqHBRPnOU
+ gF+XNo9mcs6YJw3a6VyKKLj4MpPIInav5Yvr/Ay/msTR0GJL2+OHySego2VbayWJh7VD
+ 5+/WYGqiIOSxVIx6cP8IthzlyPWk2X17ZfgZh/8SKGuBN8vIjfeV4HGVgYhQ1rL4F6Md
+ 8TpROziCgmtusOzyw0Lgk3k5MWBq+J1AlhmrgAWB6IwoKUzRtSJR/O/dwOC1PoLGrWZA
+ OH75eWCGjhFBS4wWgGL1EIxdRy8xRxDCVS30xXdIQA42RBKjpNJOrqWBnbmSw6nvYw1X
+ FV1A==
 X-Forwarded-Encrypted: i=1;
- AJvYcCW1lHxm7nSxLnzZFFZS+NhRq5RRjvcuIlWxETlrb9nyDRUtEWD9IaIL4GiYCwoKjiq5Z7Q=@dpdk.org,
- AJvYcCXU6FFOjn6M3557w8loNZ00U/G/k2JgbidAXGo4/OlKU+oC8Jrg62ZA76dnECnHJk1V7HhxTzCP@dpdk.org
-X-Gm-Message-State: AOJu0YwJNEn7eMdwXdD62bV/pWOO20VHRY8JlzqcWqRJlJkQpkuYztdE
- E8f9HVKZ5Ewosb6RSif5qglXDTQqDo0rfEt2WC9bn/e0i9fiGSrOdySvwrYPZb/mUpRKllynWRZ
- 2FRVTwrjc/dYM8kHPT5yj8ovdwU3ptzZtrA==
-X-Gm-Gg: ASbGncuELwUhh5weVecyX38ZsmtaA5Eks46o6+GTyAKcfwsY8LOJw2WXUHeeKv8e8Pf
- huUrNZgkwJnPTyR29SFYUL2Gl76DOY/4MNVQ+ldubBwxZuzqP8fs/g3ZgqTHO5fEoPSWfy4nrft
- 03/bsFjOiA3oYQj4fw3HIY4SdeEqkfjxOENy2lWCBjIg==
-X-Google-Smtp-Source: AGHT+IGplPINaERwo1XIWu8txRrt204Uo8I8DdTXWSlK+2a1Tajolf2SPxKaFrWiUzP6u0+ccu6EQKuWC+DAKDMbohE=
-X-Received: by 2002:a17:906:6a0c:b0:ae0:5137:fc44 with SMTP id
- a640c23a62f3a-ae0be85f47bmr613940766b.18.1750908851655; Wed, 25 Jun 2025
- 20:34:11 -0700 (PDT)
+ AJvYcCWNSFFuBCIBl7ndzaXs4DS3fhe5/ZwCNS9ZSLoDOLhqdKUW205AW3z653UtIS6eWRceRIym+/Kz@dpdk.org,
+ AJvYcCXpbUtkPNs0hPO3GEMyPmrLvSFT+ADWwQMEJSZA9XKAsI92yhvPjujbcqG8t4I9VkM8dsg=@dpdk.org
+X-Gm-Message-State: AOJu0Yy5MXkXNJDQpKaCZYwA5jDgVFjUpAMdYZ7hEnsPF1a3JKDXKe6J
+ hkYRnzHPNHPmXWc3exTGdKBPcD5T9AUqb9uGZ1FDTjSbd31iA0+scLfvZsrtFk51HJipk7mCVJl
+ CLzywLNLxIYRj/irMJgyNQYu0DmYX+rSTxA==
+X-Gm-Gg: ASbGnctUijjIFEgBBGt4r8K05ZNoDlnKv+b06IUbG5nSxtgs1C0bD8UwiYz2axk5qms
+ gdTAmJf7KBjtfKgHWpowvEYMZ1K2Wv0oUtshxf5eBDu9Ssodg+gqX18ePfWeOdtcwfOub2mztZC
+ 7v9/YlHHSSAzowR3HWsU/2jVrQUXKfUPCwIgkHL36k6zH3pUDYUkBU
+X-Google-Smtp-Source: AGHT+IH+8A+QOZl4tfv08GAyBIX8kwv2Qz0TjIqpUdb+bPzPAWMKTk+5ZZQmeZhf71wQr6a1s87z4aM/YoZjGDcEKzo=
+X-Received: by 2002:a17:907:db0a:b0:ae0:9fce:c578 with SMTP id
+ a640c23a62f3a-ae0be86192cmr582922266b.18.1750912451181; Wed, 25 Jun 2025
+ 21:34:11 -0700 (PDT)
 MIME-Version: 1.0
 References: <20250621015624.35284-1-amiyaranjan.mohakud@gmail.com>
  <20250623181136.48239-1-amiyaranjan.mohakud@gmail.com>
@@ -58,16 +58,17 @@ References: <20250621015624.35284-1-amiyaranjan.mohakud@gmail.com>
  <CAL+mCpMZDed=QQ-RH0Y0GT095Cnyhz2rsvg8abKuM4_U13-eGw@mail.gmail.com>
  <DM3PPF7D18F34A1770F61E83BA4D365FDDD8E7BA@DM3PPF7D18F34A1.namprd11.prod.outlook.com>
  <aFwdMdNiHftewTi0@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <aFwdMdNiHftewTi0@bricha3-mobl1.ger.corp.intel.com>
+ <CAL+mCpOumEh6H8H6B9eLF=T-Hz6D8HwQOYCMjcAmpWVNS7JnPA@mail.gmail.com>
+In-Reply-To: <CAL+mCpOumEh6H8H6B9eLF=T-Hz6D8HwQOYCMjcAmpWVNS7JnPA@mail.gmail.com>
 From: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
-Date: Thu, 26 Jun 2025 09:04:00 +0530
-X-Gm-Features: Ac12FXz6c1dMHNoF8Vb_u3mptQXoED3FEnRzhMCB351vg9hDIFPz27oUE_q3FXA
-Message-ID: <CAL+mCpOumEh6H8H6B9eLF=T-Hz6D8HwQOYCMjcAmpWVNS7JnPA@mail.gmail.com>
+Date: Thu, 26 Jun 2025 10:04:00 +0530
+X-Gm-Features: Ac12FXzD8Uyv7CM8uvovmFFLaaHLTRoVos_xCqxOxYCzn_w5h0oVnsXKbI-pcm8
+Message-ID: <CAL+mCpNm36+5Cc=4KLWdGjAOsgNGv+o4xUoMv86Fx7q9rPNngQ@mail.gmail.com>
 Subject: Re: [PATCH v2] net/iavf: fix VLAN offload strip flag
 To: Bruce Richardson <bruce.richardson@intel.com>
 Cc: "Loftus, Ciara" <ciara.loftus@intel.com>, "dev@dpdk.org" <dev@dpdk.org>, 
  "stable@dpdk.org" <stable@dpdk.org>
-Content-Type: multipart/alternative; boundary="0000000000002318820638713c63"
+Content-Type: multipart/alternative; boundary="000000000000af80b10638721281"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,67 +82,89 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000002318820638713c63
+--000000000000af80b10638721281
 Content-Type: text/plain; charset="UTF-8"
 
-Thanks Bruce and Ciara for the review/acceptance of the patch.
+Just an additional note: It needs to be back ported to all LTS releases
+till v22.11. Hope it will be taken care of.
 
 Thanks
 Amiya
 
 
-On Wed, 25 Jun 2025 at 21:31, Bruce Richardson <bruce.richardson@intel.com>
-wrote:
+On Thu, 26 Jun 2025 at 09:04, Amiya Ranjan Mohakud <
+amiyaranjan.mohakud@gmail.com> wrote:
 
-> On Wed, Jun 25, 2025 at 02:01:15PM +0000, Loftus, Ciara wrote:
-> > >
-> > > Thanks.
-> > >
-> > > Just wanted to know  - what are the next steps of the review and
-> approval
-> > > process?
-> > >
-> > > There is a test suite "ci/intel-Testing" failing now with v2 which
-> passed in v1. (
-> > > We know for sure, there is absolutely no code change between v1 and v2
-> > > except the commit message). Is there a way to trigger the test suite
-> again?
-> >
-> > Hi Amiya,
-> >
-> > There is no further action required on your end since the failure seems
-> like an issue with the test infrastructure. If the maintainer for the intel
-> next-net tree is happy with the patch they will pull it into the tree.
-> >
-> > Thanks,
-> > Ciara
-> >
-> Agree test failures look like false positives, as they are errors with the
-> PF driver and virtio driver, while this patch changes the VF driver.
+> Thanks Bruce and Ciara for the review/acceptance of the patch.
 >
-> Patch applied to dpdk-next-net-intel.
+> Thanks
+> Amiya
 >
-> Thanks,
-> /Bruce
+>
+> On Wed, 25 Jun 2025 at 21:31, Bruce Richardson <bruce.richardson@intel.com>
+> wrote:
+>
+>> On Wed, Jun 25, 2025 at 02:01:15PM +0000, Loftus, Ciara wrote:
+>> > >
+>> > > Thanks.
+>> > >
+>> > > Just wanted to know  - what are the next steps of the review and
+>> approval
+>> > > process?
+>> > >
+>> > > There is a test suite "ci/intel-Testing" failing now with v2 which
+>> passed in v1. (
+>> > > We know for sure, there is absolutely no code change between v1 and v2
+>> > > except the commit message). Is there a way to trigger the test suite
+>> again?
+>> >
+>> > Hi Amiya,
+>> >
+>> > There is no further action required on your end since the failure seems
+>> like an issue with the test infrastructure. If the maintainer for the intel
+>> next-net tree is happy with the patch they will pull it into the tree.
+>> >
+>> > Thanks,
+>> > Ciara
+>> >
+>> Agree test failures look like false positives, as they are errors with the
+>> PF driver and virtio driver, while this patch changes the VF driver.
+>>
+>> Patch applied to dpdk-next-net-intel.
+>>
+>> Thanks,
+>> /Bruce
+>>
 >
 
---0000000000002318820638713c63
+--000000000000af80b10638721281
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 <div dir=3D"ltr"><div><div style=3D"font-family:verdana,sans-serif;color:rg=
-b(103,78,167)" class=3D"gmail_default">Thanks=C2=A0Bruce and Ciara for the =
-review/acceptance of the patch.</div><br clear=3D"all"></div><div><div dir=
-=3D"ltr" class=3D"gmail_signature" data-smartmail=3D"gmail_signature"><div =
-dir=3D"ltr"><div><span style=3D"font-family:verdana,sans-serif">Thanks</spa=
-n></div><div><span style=3D"font-family:verdana,sans-serif">Amiya</span><br=
-></div></div></div></div><br></div><br><div class=3D"gmail_quote gmail_quot=
-e_container"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, 25 Jun 2025 at 2=
-1:31, Bruce Richardson &lt;<a href=3D"mailto:bruce.richardson@intel.com">br=
-uce.richardson@intel.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail=
-_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204=
-,204);padding-left:1ex">On Wed, Jun 25, 2025 at 02:01:15PM +0000, Loftus, C=
-iara wrote:<br>
+b(103,78,167)" class=3D"gmail_default">Just an additional note: It needs to=
+ be back ported to all LTS releases till v22.11. Hope it will be taken care=
+ of.</div><br clear=3D"all"></div><div><div dir=3D"ltr" class=3D"gmail_sign=
+ature" data-smartmail=3D"gmail_signature"><div dir=3D"ltr"><div><span style=
+=3D"font-family:verdana,sans-serif">Thanks</span></div><div><span style=3D"=
+font-family:verdana,sans-serif">Amiya</span><br></div></div></div></div><br=
+></div><br><div class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr=
+" class=3D"gmail_attr">On Thu, 26 Jun 2025 at 09:04, Amiya Ranjan Mohakud &=
+lt;<a href=3D"mailto:amiyaranjan.mohakud@gmail.com">amiyaranjan.mohakud@gma=
+il.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"m=
+argin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left=
+:1ex"><div dir=3D"ltr"><div><div style=3D"font-family:verdana,sans-serif;co=
+lor:rgb(103,78,167)" class=3D"gmail_default">Thanks=C2=A0Bruce and Ciara fo=
+r the review/acceptance of the patch.</div><br clear=3D"all"></div><div><di=
+v dir=3D"ltr" class=3D"gmail_signature"><div dir=3D"ltr"><div><span style=
+=3D"font-family:verdana,sans-serif">Thanks</span></div><div><span style=3D"=
+font-family:verdana,sans-serif">Amiya</span><br></div></div></div></div><br=
+></div><br><div class=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail_attr"=
+>On Wed, 25 Jun 2025 at 21:31, Bruce Richardson &lt;<a href=3D"mailto:bruce=
+.richardson@intel.com" target=3D"_blank">bruce.richardson@intel.com</a>&gt;=
+ wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px =
+0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">On Wed, =
+Jun 25, 2025 at 02:01:15PM +0000, Loftus, Ciara wrote:<br>
 &gt; &gt; <br>
 &gt; &gt; Thanks.<br>
 &gt; &gt; <br>
@@ -175,5 +198,6 @@ Patch applied to dpdk-next-net-intel.<br>
 Thanks,<br>
 /Bruce<br>
 </blockquote></div>
+</blockquote></div>
 
---0000000000002318820638713c63--
+--000000000000af80b10638721281--
