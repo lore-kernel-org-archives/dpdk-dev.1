@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97458C7115B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Jun 2025 08:10:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51540C7115B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Jun 2025 08:11:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1EEEE411F3;
-	Thu, 26 Jun 2025 10:09:58 +0200 (CEST)
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
- by mails.dpdk.org (Postfix) with ESMTP id A593941144
- for <dev@dpdk.org>; Thu, 26 Jun 2025 10:09:55 +0200 (CEST)
-X-QQ-mid: zesmtpsz9t1750925389t446b7585
-X-QQ-Originating-IP: ZwSIgsJDUCTv0TRjAHad6fHk1xqkHGE0+Z6Wfxo0AAQ=
+	by mails.dpdk.org (Postfix) with ESMTP id D5B134275B;
+	Thu, 26 Jun 2025 10:10:00 +0200 (CEST)
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
+ by mails.dpdk.org (Postfix) with ESMTP id F310240ECF
+ for <dev@dpdk.org>; Thu, 26 Jun 2025 10:09:57 +0200 (CEST)
+X-QQ-mid: zesmtpsz9t1750925393t7108ec0a
+X-QQ-Originating-IP: ILob/Rqjbi0ZA5YthvSCZzNArJE173NhaF+Z4/KV5ug=
 Received: from DSK-zaiyuwang.trustnetic.com ( [36.27.0.255])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Thu, 26 Jun 2025 16:09:46 +0800 (CST)
+ id ; Thu, 26 Jun 2025 16:09:50 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 4919625554015540512
+X-BIZMAIL-ID: 7567884965860849541
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, Jiawen Wu <jiawenwu@trustnetic.com>,
  Jian Wang <jianwang@trustnetic.com>
-Subject: [PATCH v3 14/15] net/txgbe: add other hardware-related changes
-Date: Thu, 26 Jun 2025 16:02:19 +0800
-Message-Id: <20250626080221.22488-15-zaiyuwang@trustnetic.com>
+Subject: [PATCH v3 15/15] doc: update for txgbe
+Date: Thu, 26 Jun 2025 16:02:20 +0800
+Message-Id: <20250626080221.22488-16-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20250626080221.22488-1-zaiyuwang@trustnetic.com>
 References: <20250418094131.24136-1-zaiyuwang@trustnetic.com>
@@ -34,24 +34,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpsz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz5a-1
-X-QQ-XMAILINFO: NGdvwxE97Awehy7nXKkJbVS0hpAox5g1KZSD/bh6IpsYG8H47aZzGJPm
- O/S5e+hlBwO/bhSk6R1uWQIpKLw1c+vB9MVbp0CQq4X5r6yAejwj4ehiyyLIec1s0XxBf7k
- qtBsETY8/4hmwP6dnomjABdTI7eoP5xvVsJeJjT9kOczDiyXM6TKdithhvZt2tW114rVlfD
- hagiNpd1IgWnfQ/Rz79NROI2R0HH5M5S9xZrhQBnCptvBHxct7vSCx74HlkQvipz193vLDx
- kAatfurFQezRe03cSSRSPzHxhU4RySJPsFF+Cs661W2RQHf9pM9SK74km+7QDrFYAU5oKTN
- OYZX1KpYe3US9qL5AK6hn3i8M9ZP2lHaAPu/Ii5bqBCdGxu0WqAwYvhC5CVXq5yg1sb7npZ
- 2qlEfiUo0QdVbPQgHWATaXCOcaK/pMm17Hxeo/KktPTtht/rRyGVNtEauQk91YMrfKNLMN0
- qYWypxumJHXeHi4dkcvX8pO1IZEMjvpzT6ZtV41zG7ZajZAfNgy9dM1ijS5c2OWTkUzu+Iq
- v44KmTQ1zWaT9MlTGqvBmv52Uf4ITSm0Skc0EHh1f+GylLbGaIR+25jfoOi1G6tkdssCTW3
- 4/WepklqzgQX7yv80GnKdq3dA9pvBruOKMyzhtdWZwakcRgbA3nGZKoXD69rYtpkBNTgoUR
- U/oMKrunqvGk2joph1WjGYh4fAYbnV6YB37V50MbC07QykQEd3z34sZcXgAxshHB32WlAGY
- vrdU5LKbolM27rsVGjr/lv+JZSzWerzZkI2tq4IUcLcbhybLIJ4WgfMcxnL3rmXrA+HrjQq
- ZxxBOp2ZQuUNVy0WQ0w9o7mF57ieWDgqgYBa14pdS5NVwI7KW6PgCajSttwXq+Syc8Ov4Kc
- MYy4/xo55GfKSt/fXY0qQ2MoLAM4jOPwrILUiz3DuN+ST+SxfGAGEtBbjL/P2DRnNFMYG37
- 4mFqZt4sylNeo+w/FzXlGXb9e9b7MlLvX3pWIhU+KhLPTLWI7LULP0z92qsBXXxokLsclMe
- zPyIaV5OqI7ooQOGk/rZMHADr0bYX8l2eSAMUaR338pFYdAiwqnEKZT7BWkN1FXfdDkK1//
- Q==
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-XMAILINFO: NlS/C0FXcHUSGqjytOKzzvika4QiRcgxVr9B1WHqga3Ci5MLFEEicpA4
+ QEtmVPX98WMrCuvTNLhoMmocSHHvzBT1RypraiOZVpi2H7WIc/keiqKbL8YwV9ncH9X8wdG
+ OjufTpD4BZtalmteQo8cv3twY+K58gLbSs/6KCCjvU5jffjSsgTB3OopCQZQW91bjNRvbgK
+ IutJDt2rjGHqKWOiH4ziVY5XPXwhdsxdJCc39Vxn968cEQFsdqGHVMZ9l1mP/6uBPLRHdjU
+ 1SsoJ/LfQGZKeZ3FspbwzWAGs+MVaTlOkuNDdoJKI0g2EVaWpRXqP4C6GtUyL+wehFRsY6Y
+ 78wrrHE6nDPSaohIGR5LY+FdBFnpx1cvLHpQ2Q66M/vTkHcBlnQUBLLwAFpgiCeu0q+Zfbx
+ jBIDUu+rnvwcH6jIiCzAByynk9SXQg83Q5PGHX0dddAqNXv7GocVyHcy2emw3/gcTnE0Uip
+ CDThjYjtXNYgHJ6CMmVNDJBzlYVbQl1mF4U/ltgNTDZnJi1yELKpowtypO5M7KBdBsPiIya
+ ENiNA1yKPf2dCuGargmLmv/wX9HWvENPaqyJRVDD5wxKMc5LWMUKRO1QnFygiPL/BD7jdKu
+ kRXDJaKy7LZNkKRX9dmqIaR4a/w8+VyWouoFy7Myj18IHdD4dDOboW4AnTIWNznTlogq2FU
+ Ye0Jdg2Ba7tNsF6fxYwj391F+1M2lyfGM5JVR+EVRVsxHr7wJ4svRyAvk7ZV+6Pz8GbR8DP
+ eWGiZz2Jt4TsJxrlg0eIEnilG4XMO3F5SiHhz97YTPLFE++kg+746tHCWGCm2Z3Rkm5ckrW
+ hS3fHtyNAOvshHSL79XSjSoaFBzH8gb8xmpUxlaI/mjWnrW5lkfBLntCxt4X8Hck1aKvr4L
+ VjIK2eftyTbWf80YJ2GkeL9f2BV1q3xhIVji77DjRAZkbpwNHgypPv0UCsQCQ+JfK73AQrZ
+ 6WrLlcF+kkr6lOZAYlSyWPjI3GctJ+g1+8z5nXuALzKm3BsjPZjswC0AxX+tuP2EnsdKdT5
+ upIlf+M5CvT4Puegw3BiindpP7hM35G7ao1oSY9kmtgaQkYHu5rDmlZsSxX7+16FODMve+X
+ w==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -66,424 +66,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add other hardware-related changes for Amber-Lite NICs, such as PF
-queue rate limit, enable/disable tx laser.
+Add new types of Wangxun NICs(Amber-Lite NIC models) into txgbe
+supported NICs list.
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_hw.c    | 113 +++++++++++++++++++++------
- drivers/net/txgbe/base/txgbe_osdep.h |   2 +
- drivers/net/txgbe/base/txgbe_phy.c   |  35 +++++++++
- drivers/net/txgbe/base/txgbe_regs.h  |  23 ++++++
- drivers/net/txgbe/base/txgbe_type.h  |  27 +++++++
- drivers/net/txgbe/txgbe_ethdev.c     |  72 ++++++++++++++---
- 6 files changed, 238 insertions(+), 34 deletions(-)
+ doc/guides/nics/txgbe.rst | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/txgbe/base/txgbe_hw.c b/drivers/net/txgbe/base/txgbe_hw.c
-index b4d79b4176..e0bcf41e3e 100644
---- a/drivers/net/txgbe/base/txgbe_hw.c
-+++ b/drivers/net/txgbe/base/txgbe_hw.c
-@@ -2213,27 +2213,56 @@ void txgbe_clear_tx_pending(struct txgbe_hw *hw)
-  *
-  *  Returns the thermal sensor data structure
-  **/
-+#define PHYINIT_TIMEOUT 1000
- s32 txgbe_get_thermal_sensor_data(struct txgbe_hw *hw)
- {
- 	struct txgbe_thermal_sensor_data *data = &hw->mac.thermal_sensor_data;
- 	s64 tsv;
- 	u32 ts_stat;
-+	u32 data_code;
-+	int temp_data, temp_fraction;
-+	int i = 0;
+diff --git a/doc/guides/nics/txgbe.rst b/doc/guides/nics/txgbe.rst
+index 93fb592759..e7b657f9a0 100644
+--- a/doc/guides/nics/txgbe.rst
++++ b/doc/guides/nics/txgbe.rst
+@@ -4,8 +4,12 @@
+ TXGBE Poll Mode Driver
+ ======================
  
- 	/* Only support thermal sensors attached to physical port 0 */
- 	if (hw->bus.lan_id != 0)
- 		return TXGBE_NOT_IMPLEMENTED;
+-The TXGBE PMD (librte_pmd_txgbe) provides poll mode driver support
+-for Wangxun 10 Gigabit Ethernet NICs.
++Supported NICs
++--------------
++
++- Wangxun 10 Gigabit Ethernet NICs
++- Wangxun 25 Gigabit Ethernet NICs
++- Wangxun 40 Gigabit Ethernet NICs
  
--	ts_stat = rd32(hw, TXGBE_TSSTAT);
--	tsv = (s64)TXGBE_TSSTAT_DATA(ts_stat);
--	tsv = tsv > 1200 ? tsv : 1200;
--	tsv = -(48380 << 8) / 1000
--		+ tsv * (31020 << 8) / 100000
--		- tsv * tsv * (18201 << 8) / 100000000
--		+ tsv * tsv * tsv * (81542 << 8) / 1000000000000
--		- tsv * tsv * tsv * tsv * (16743 << 8) / 1000000000000000;
--	tsv >>= 8;
-+	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40) {
-+		wr32(hw, TXGBE_AML_TS_ENA, 0x0001);
- 
--	data->sensor[0].temp = (s16)tsv;
-+		while (1) {
-+			data_code = rd32(hw, TXGBE_AML_TS_STS);
-+			if ((data_code & TXGBE_AML_TS_STS_VLD) != 0)
-+				break;
-+			msleep(1);
-+			if (i++ > PHYINIT_TIMEOUT) {
-+				PMD_DRV_LOG(ERR, "ERROR: Wait 0x1033c Timeout!!!");
-+				return -1;
-+			}
-+		}
-+
-+		data_code = data_code & 0xFFF;
-+		temp_data = 419400 + 2205 * (data_code * 1000 / 4094 - 500);
-+
-+		/* Change double Temperature to int */
-+		tsv = temp_data / 10000;
-+		temp_fraction = temp_data - (tsv * 10000);
-+		if (temp_fraction >= 5000)
-+			tsv += 1;
-+		data->sensor[0].temp = (s16)tsv;
-+	} else {
-+		ts_stat = rd32(hw, TXGBE_TSSTAT);
-+		tsv = (s64)TXGBE_TSSTAT_DATA(ts_stat);
-+		tsv = tsv > 1200 ? tsv : 1200;
-+		tsv = -(48380 << 8) / 1000
-+			+ tsv * (31020 << 8) / 100000
-+			- tsv * tsv * (18201 << 8) / 100000000
-+			+ tsv * tsv * tsv * (81542 << 8) / 1000000000000
-+			- tsv * tsv * tsv * tsv * (16743 << 8) / 1000000000000000;
-+		tsv >>= 8;
-+
-+		data->sensor[0].temp = (s16)tsv;
-+	}
- 
- 	return 0;
- }
-@@ -2254,16 +2283,32 @@ s32 txgbe_init_thermal_sensor_thresh(struct txgbe_hw *hw)
- 	if (hw->bus.lan_id != 0)
- 		return TXGBE_NOT_IMPLEMENTED;
- 
--	wr32(hw, TXGBE_TSCTRL, TXGBE_TSCTRL_EVALMD);
--	wr32(hw, TXGBE_TSINTR,
--		TXGBE_TSINTR_AEN | TXGBE_TSINTR_DEN);
--	wr32(hw, TXGBE_TSEN, TXGBE_TSEN_ENA);
--
--
- 	data->sensor[0].alarm_thresh = 100;
--	wr32(hw, TXGBE_TSATHRE, 677);
- 	data->sensor[0].dalarm_thresh = 90;
--	wr32(hw, TXGBE_TSDTHRE, 614);
-+
-+	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40) {
-+		wr32(hw, TXGBE_AML_TS_ENA, 0x0);
-+		wr32(hw, TXGBE_AML_INTR_RAW_LO, TXGBE_AML_INTR_CL_LO);
-+		wr32(hw, TXGBE_AML_INTR_RAW_HI, TXGBE_AML_INTR_CL_HI);
-+
-+		wr32(hw, TXGBE_AML_INTR_HIGH_EN, TXGBE_AML_INTR_EN_HI);
-+		wr32(hw, TXGBE_AML_INTR_LOW_EN, TXGBE_AML_INTR_EN_LO);
-+
-+		wr32m(hw, TXGBE_AML_TS_CTL1, TXGBE_AML_EVAL_MODE_MASK, 0x10);
-+		wr32m(hw, TXGBE_AML_TS_CTL1, TXGBE_AML_ALARM_THRE_MASK, 0x186a0000);
-+		wr32m(hw, TXGBE_AML_TS_CTL1, TXGBE_AML_DALARM_THRE_MASK, 0x16f60);
-+		wr32(hw, TXGBE_AML_TS_ENA, 0x1);
-+	} else {
-+		wr32(hw, TXGBE_TSCTRL, TXGBE_TSCTRL_EVALMD);
-+		wr32(hw, TXGBE_TSINTR,
-+			 TXGBE_TSINTR_AEN | TXGBE_TSINTR_DEN);
-+		wr32(hw, TXGBE_TSEN, TXGBE_TSEN_ENA);
-+
-+		data->sensor[0].alarm_thresh = 100;
-+		wr32(hw, TXGBE_TSATHRE, 677);
-+		data->sensor[0].dalarm_thresh = 90;
-+		wr32(hw, TXGBE_TSDTHRE, 614);
-+	}
- 
- 	return 0;
- }
-@@ -3172,12 +3217,28 @@ void txgbe_disable_tx_laser_multispeed_fiber(struct txgbe_hw *hw)
- {
- 	u32 esdp_reg = rd32(hw, TXGBE_GPIODATA);
- 
--	if (txgbe_close_notify(hw))
--		txgbe_led_off(hw, TXGBE_LEDCTL_UP | TXGBE_LEDCTL_10G |
--				TXGBE_LEDCTL_1G | TXGBE_LEDCTL_ACTIVE);
-+	if (txgbe_close_notify(hw)) {
-+		/* over write led when ifconfig down */
-+		if (hw->mac.type == txgbe_mac_aml40) {
-+			txgbe_led_off(hw, TXGBE_LEDCTL_UP | TXGBE_AMLITE_LED_LINK_40G |
-+					TXGBE_AMLITE_LED_LINK_ACTIVE);
-+		} else if  (hw->mac.type == txgbe_mac_aml)
-+			txgbe_led_off(hw, TXGBE_LEDCTL_UP | TXGBE_AMLITE_LED_LINK_25G |
-+					TXGBE_AMLITE_LED_LINK_10G | TXGBE_AMLITE_LED_LINK_ACTIVE);
-+		else
-+			txgbe_led_off(hw, TXGBE_LEDCTL_UP | TXGBE_LEDCTL_10G |
-+					TXGBE_LEDCTL_1G | TXGBE_LEDCTL_ACTIVE);
-+	}
- 
- 	/* Disable Tx laser; allow 100us to go dark per spec */
--	esdp_reg |= (TXGBE_GPIOBIT_0 | TXGBE_GPIOBIT_1);
-+	if (hw->mac.type == txgbe_mac_aml40) {
-+		wr32m(hw, TXGBE_GPIODIR, TXGBE_GPIOBIT_1, TXGBE_GPIOBIT_1);
-+		esdp_reg &= ~TXGBE_GPIOBIT_1;
-+	} else if (hw->mac.type == txgbe_mac_aml) {
-+		esdp_reg |= TXGBE_GPIOBIT_1;
-+	} else {
-+		esdp_reg |= (TXGBE_GPIOBIT_0 | TXGBE_GPIOBIT_1);
-+	}
- 	wr32(hw, TXGBE_GPIODATA, esdp_reg);
- 	txgbe_flush(hw);
- 	usec_delay(100);
-@@ -3199,7 +3260,13 @@ void txgbe_enable_tx_laser_multispeed_fiber(struct txgbe_hw *hw)
- 		wr32(hw, TXGBE_LEDCTL, 0);
- 
- 	/* Enable Tx laser; allow 100ms to light up */
--	esdp_reg &= ~(TXGBE_GPIOBIT_0 | TXGBE_GPIOBIT_1);
-+
-+	if (hw->mac.type == txgbe_mac_aml40) {
-+		wr32m(hw, TXGBE_GPIODIR, TXGBE_GPIOBIT_1, TXGBE_GPIOBIT_1);
-+		esdp_reg |= TXGBE_GPIOBIT_1;
-+	} else {
-+		esdp_reg &= ~(TXGBE_GPIOBIT_0 | TXGBE_GPIOBIT_1);
-+	}
- 	wr32(hw, TXGBE_GPIODATA, esdp_reg);
- 	txgbe_flush(hw);
- 	msec_delay(100);
-diff --git a/drivers/net/txgbe/base/txgbe_osdep.h b/drivers/net/txgbe/base/txgbe_osdep.h
-index a1477653e2..05071aca22 100644
---- a/drivers/net/txgbe/base/txgbe_osdep.h
-+++ b/drivers/net/txgbe/base/txgbe_osdep.h
-@@ -162,6 +162,8 @@ static inline u64 REVERT_BIT_MASK64(u64 mask)
- 	       ((mask & 0xFFFFFFFF00000000) >> 32);
- }
- 
-+#define BIT(nr)         (1UL << (nr))
-+
- #define IOMEM
- 
- #define prefetch(x) rte_prefetch0(x)
-diff --git a/drivers/net/txgbe/base/txgbe_phy.c b/drivers/net/txgbe/base/txgbe_phy.c
-index 81e9aee295..bf7260a295 100644
---- a/drivers/net/txgbe/base/txgbe_phy.c
-+++ b/drivers/net/txgbe/base/txgbe_phy.c
-@@ -173,6 +173,41 @@ s32 txgbe_get_phy_id(struct txgbe_hw *hw)
- 	u32 err;
- 	u16 phy_id_high = 0;
- 	u16 phy_id_low = 0;
-+	u32 i = 0;
-+	u32 status;
-+
-+	if (hw->mac.type == txgbe_mac_aml) {
-+		hw->phy.addr = 0;
-+
-+		for (i = 0; i < 32; i++) {
-+			hw->phy.addr = i;
-+			status = txgbe_read_phy_reg_mdi(hw, TXGBE_MD_PHY_ID_HIGH, 0, &phy_id_high);
-+			if (status) {
-+				DEBUGOUT("txgbe_read_phy_reg_mdi failed 1");
-+				return status;
-+			}
-+			DEBUGOUT("%d: phy_id_high 0x%x", i, phy_id_high);
-+			if ((phy_id_high & 0xFFFF) == 0x0141)
-+				break;
-+		}
-+
-+		if (i == 32) {
-+			DEBUGOUT("txgbe_read_phy_reg_mdi failed");
-+			return TXGBE_ERR_PHY;
-+		}
-+
-+		status = txgbe_read_phy_reg_mdi(hw, TXGBE_MD_PHY_ID_LOW, 0, &phy_id_low);
-+		if (status) {
-+			DEBUGOUT("txgbe_read_phy_reg_mdi failed 2");
-+			return status;
-+		}
-+		hw->phy.id = (u32)(phy_id_high & 0xFFFF) << 6;
-+		hw->phy.id |= (u32)((phy_id_low & 0xFC00) >> 10);
-+
-+		DEBUGOUT("phy_id 0x%x", hw->phy.id);
-+
-+		return status;
-+	}
- 
- 	err = hw->phy.read_reg(hw, TXGBE_MD_PHY_ID_HIGH,
- 				      TXGBE_MD_DEV_PMA_PMD,
-diff --git a/drivers/net/txgbe/base/txgbe_regs.h b/drivers/net/txgbe/base/txgbe_regs.h
-index 98d1070daa..f32f17428b 100644
---- a/drivers/net/txgbe/base/txgbe_regs.h
-+++ b/drivers/net/txgbe/base/txgbe_regs.h
-@@ -302,6 +302,17 @@
- #define   TXGBE_PORT_LINK1000M          MS(2, 0x1)
- #define   TXGBE_PORT_LINK100M           MS(3, 0x1)
- #define   TXGBE_PORT_LANID(r)           RS(r, 8, 0x1)
-+#define   TXGBE_AMLITE_CFG_LED_CTL_LINK_BSY_SEL  MS(5, 0x1)
-+#define   TXGBE_AMLITE_CFG_LED_CTL_LINK_10G_SEL  MS(4, 0x1)
-+#define   TXGBE_AMLITE_CFG_LED_CTL_LINK_25G_SEL  MS(3, 0x1)
-+#define   TXGBE_AMLITE_CFG_LED_CTL_LINK_40G_SEL  MS(2, 0x1)
-+#define   TXGBE_AMLITE_CFG_LED_CTL_LINK_50G_SEL  MS(1, 0x1)
-+#define   TXGBE_AMLITE_LED_LINK_ACTIVE    TXGBE_AMLITE_CFG_LED_CTL_LINK_BSY_SEL
-+#define   TXGBE_AMLITE_LED_LINK_10G       TXGBE_AMLITE_CFG_LED_CTL_LINK_10G_SEL
-+#define   TXGBE_AMLITE_LED_LINK_25G       TXGBE_AMLITE_CFG_LED_CTL_LINK_25G_SEL
-+#define   TXGBE_AMLITE_LED_LINK_40G       TXGBE_AMLITE_CFG_LED_CTL_LINK_40G_SEL
-+#define   TXGBE_AMLITE_LED_LINK_50G       TXGBE_AMLITE_CFG_LED_CTL_LINK_50G_SEL
-+
- #define TXGBE_EXTAG                     0x014408
- #define   TXGBE_EXTAG_ETAG_MASK         MS(0, 0xFFFF)
- #define   TXGBE_EXTAG_ETAG(v)           LS(v, 0, 0xFFFF)
-@@ -1641,6 +1652,18 @@ enum txgbe_5tuple_protocol {
- #define   TXGBE_ARBTXRATE_MIN(v)        LS(v, 0, 0x3FFF)
- #define   TXGBE_ARBTXRATE_MAX(v)        LS(v, 16, 0x3FFF)
- 
-+#define TXGBE_TDM_RL_QUEUE_IDX          0x018210
-+#define TXGBE_TDM_RL_QUEUE_CFG          0x018214
-+#define   TXGBE_TDM_FACTOR_INT_MASK     MS(16, 0xFFFF)
-+#define   TXGBE_TDM_FACTOR_FRA_MASK     MS(0, 0xFFFC)
-+#define   TXGBE_TDM_FACTOR_INT_SHIFT    16
-+#define   TXGBE_TDM_FACTOR_FRA_SHIFT    2
-+
-+#define TXGBE_TDM_RL_VM_IDX             0x018218
-+#define TXGBE_TDM_RL_VM_CFG             0x01821C
-+#define TXGBE_TDM_RL_CFG                0x018400
-+#define TXGBE_TDM_RL_EN                 MS(0, 0x1)
-+
- /* qos */
- #define TXGBE_ARBTXCTL                  0x018200
- #define   TXGBE_ARBTXCTL_RRM            MS(1, 0x1)
-diff --git a/drivers/net/txgbe/base/txgbe_type.h b/drivers/net/txgbe/base/txgbe_type.h
-index 3833f1420a..aad8a15129 100644
---- a/drivers/net/txgbe/base/txgbe_type.h
-+++ b/drivers/net/txgbe/base/txgbe_type.h
-@@ -37,6 +37,33 @@
- #include "txgbe_osdep.h"
- #include "txgbe_devids.h"
- 
-+/* Sensors for AMLITE PVT(Process Voltage Temperature) */
-+#define TXGBE_AML_INTR_RAW_HI           0x10300
-+#define TXGBE_AML_INTR_RAW_ME           0x10304
-+#define TXGBE_AML_INTR_RAW_LO           0x10308
-+#define TXGBE_AML_TS_CTL1               0x10330
-+#define TXGBE_AML_TS_CTL2               0x10334
-+#define TXGBE_AML_TS_ENA                0x10338
-+#define TXGBE_AML_TS_STS                0x1033C
-+#define TXGBE_AML_INTR_HIGH_EN          0x10318
-+#define TXGBE_AML_INTR_MED_EN           0x1031C
-+#define TXGBE_AML_INTR_LOW_EN           0x10320
-+#define TXGBE_AML_INTR_HIGH_STS         0x1030C
-+#define TXGBE_AML_INTR_MED_STS          0x10310
-+#define TXGBE_AML_INTR_LOW_STS          0x10314
-+
-+#define TXGBE_AML_TS_STS_VLD            0x00001000U
-+#define TXGBE_AML_INTR_EN_HI            0x00000002U
-+#define TXGBE_AML_INTR_EN_ME            0x00000001U
-+#define TXGBE_AML_INTR_EN_LO            0x00000001U
-+#define TXGBE_AML_INTR_CL_HI            0x00000002U
-+#define TXGBE_AML_INTR_CL_ME            0x00000001U
-+#define TXGBE_AML_INTR_CL_LO            0x00000001U
-+#define TXGBE_AML_EVAL_MODE_MASK        0x00000010U
-+#define TXGBE_AML_CAL_MODE_MASK         0x00000008U
-+#define TXGBE_AML_ALARM_THRE_MASK       0x1FFE0000U
-+#define TXGBE_AML_DALARM_THRE_MASK      0x0001FFE0U
-+
- struct txgbe_thermal_diode_data {
- 	s16 temp;
- 	s16 alarm_thresh;
-diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-index 9fd4923b6d..9032f52951 100644
---- a/drivers/net/txgbe/txgbe_ethdev.c
-+++ b/drivers/net/txgbe/txgbe_ethdev.c
-@@ -4243,33 +4243,80 @@ txgbe_configure_msix(struct rte_eth_dev *dev)
- 			| TXGBE_ITR_WRDSA);
- }
- 
-+static u16 txgbe_frac_to_bi(u16 frac, u16 denom, int max_bits)
-+{
-+	u16 value = 0;
-+
-+	while (frac > 0 && max_bits > 0) {
-+		max_bits -= 1;
-+		frac *= 2;
-+		if (frac >= denom) {
-+			value |= BIT(max_bits);
-+			frac -= denom;
-+		}
-+	}
-+
-+	return value;
-+}
-+
- int
- txgbe_set_queue_rate_limit(struct rte_eth_dev *dev,
- 			   uint16_t queue_idx, uint32_t tx_rate)
- {
- 	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
- 	uint32_t bcnrc_val;
-+	int factor_int, factor_fra;
-+	uint32_t link_speed;
- 
- 	if (queue_idx >= hw->mac.max_tx_queues)
- 		return -EINVAL;
- 
--	if (tx_rate != 0) {
--		bcnrc_val = TXGBE_ARBTXRATE_MAX(tx_rate);
--		bcnrc_val |= TXGBE_ARBTXRATE_MIN(tx_rate / 2);
--	} else {
--		bcnrc_val = 0;
--	}
--
- 	/*
- 	 * Set global transmit compensation time to the MMW_SIZE in ARBTXMMW
- 	 * register. MMW_SIZE=0x014 if 9728-byte jumbo is supported.
- 	 */
- 	wr32(hw, TXGBE_ARBTXMMW, 0x14);
- 
--	/* Set ARBTXRATE of queue X */
--	wr32(hw, TXGBE_ARBPOOLIDX, queue_idx);
--	wr32(hw, TXGBE_ARBTXRATE, bcnrc_val);
--	txgbe_flush(hw);
-+	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40) {
-+		if (tx_rate) {
-+			u16 frac;
-+
-+			link_speed = dev->data->dev_link.link_speed;
-+			tx_rate  = tx_rate * 105 / 100;
-+			/* Calculate the rate factor values to set */
-+			factor_int = link_speed / tx_rate;
-+			frac = (link_speed % tx_rate) * 10000 / tx_rate;
-+			factor_fra = txgbe_frac_to_bi(frac, 10000, 14);
-+			if (tx_rate > link_speed) {
-+				factor_int = 1;
-+				factor_fra = 0;
-+			}
-+
-+			wr32(hw, TXGBE_TDM_RL_QUEUE_IDX, queue_idx);
-+			wr32m(hw, TXGBE_TDM_RL_QUEUE_CFG,
-+			      TXGBE_TDM_FACTOR_INT_MASK, factor_int << TXGBE_TDM_FACTOR_INT_SHIFT);
-+			wr32m(hw, TXGBE_TDM_RL_QUEUE_CFG,
-+			      TXGBE_TDM_FACTOR_FRA_MASK, factor_fra << TXGBE_TDM_FACTOR_FRA_SHIFT);
-+			wr32m(hw, TXGBE_TDM_RL_QUEUE_CFG,
-+			      TXGBE_TDM_RL_EN, TXGBE_TDM_RL_EN);
-+		} else {
-+			wr32(hw, TXGBE_TDM_RL_QUEUE_IDX, queue_idx);
-+			wr32m(hw, TXGBE_TDM_RL_QUEUE_CFG,
-+			      TXGBE_TDM_RL_EN, 0);
-+		}
-+	} else {
-+		if (tx_rate != 0) {
-+			bcnrc_val = TXGBE_ARBTXRATE_MAX(tx_rate);
-+			bcnrc_val |= TXGBE_ARBTXRATE_MIN(tx_rate / 2);
-+		} else {
-+			bcnrc_val = 0;
-+		}
-+
-+		/* Set ARBTXRATE of queue X */
-+		wr32(hw, TXGBE_ARBPOOLIDX, queue_idx);
-+		wr32(hw, TXGBE_ARBTXRATE, bcnrc_val);
-+		txgbe_flush(hw);
-+	}
- 
- 	return 0;
- }
-@@ -5121,7 +5168,10 @@ txgbe_rss_update_sp(enum txgbe_mac_type mac_type)
- {
- 	switch (mac_type) {
- 	case txgbe_mac_raptor:
-+	case txgbe_mac_aml:
-+	case txgbe_mac_aml40:
- 	case txgbe_mac_raptor_vf:
-+	case txgbe_mac_aml_vf:
- 		return 1;
- 	default:
- 		return 0;
+ Features
+ --------
 -- 
 2.21.0.windows.1
 
