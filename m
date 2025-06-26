@@ -2,57 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51540C7115B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Jun 2025 08:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48FAAC7115B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Jun 2025 08:32:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D5B134275B;
-	Thu, 26 Jun 2025 10:10:00 +0200 (CEST)
-Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
- by mails.dpdk.org (Postfix) with ESMTP id F310240ECF
- for <dev@dpdk.org>; Thu, 26 Jun 2025 10:09:57 +0200 (CEST)
-X-QQ-mid: zesmtpsz9t1750925393t7108ec0a
-X-QQ-Originating-IP: ILob/Rqjbi0ZA5YthvSCZzNArJE173NhaF+Z4/KV5ug=
-Received: from DSK-zaiyuwang.trustnetic.com ( [36.27.0.255])
- by bizesmtp.qq.com (ESMTP) with 
- id ; Thu, 26 Jun 2025 16:09:50 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 7567884965860849541
-EX-QQ-RecipientCnt: 4
-From: Zaiyu Wang <zaiyuwang@trustnetic.com>
-To: dev@dpdk.org
-Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, Jiawen Wu <jiawenwu@trustnetic.com>,
- Jian Wang <jianwang@trustnetic.com>
-Subject: [PATCH v3 15/15] doc: update for txgbe
-Date: Thu, 26 Jun 2025 16:02:20 +0800
-Message-Id: <20250626080221.22488-16-zaiyuwang@trustnetic.com>
-X-Mailer: git-send-email 2.21.0.windows.1
-In-Reply-To: <20250626080221.22488-1-zaiyuwang@trustnetic.com>
-References: <20250418094131.24136-1-zaiyuwang@trustnetic.com>
- <20250626080221.22488-1-zaiyuwang@trustnetic.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 83712402AE;
+	Thu, 26 Jun 2025 10:32:50 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 0CDDC40287
+ for <dev@dpdk.org>; Thu, 26 Jun 2025 10:32:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1750926768;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=g8eDx9uS33v1vJ5M02TsIFt5yZiltZW6LrOmCWNH0wA=;
+ b=Rc2WYAH0djdfPM8HCTx9OEnr+GjrX/tZY4bIFqgYUPjUW1Z6uuK7enOn1yayyH9kL9+hOn
+ tVP2gXxvLPDYvx/oChMmWjXFJXekK1rJnVqteWWZGNVLmWRuN9ev4fIGrOxfu9JuG2WXPt
+ LI9kOKQ1hobSx71EzLLTvtIcbPbBpKA=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-257-xNRuTKePNu6aALXVQTh47A-1; Thu, 26 Jun 2025 04:32:47 -0400
+X-MC-Unique: xNRuTKePNu6aALXVQTh47A-1
+X-Mimecast-MFC-AGG-ID: xNRuTKePNu6aALXVQTh47A_1750926765
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-553acdcd5a1so363481e87.2
+ for <dev@dpdk.org>; Thu, 26 Jun 2025 01:32:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1750926765; x=1751531565;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=g8eDx9uS33v1vJ5M02TsIFt5yZiltZW6LrOmCWNH0wA=;
+ b=Lp2zF+zLOuWbcJyVLEnJYm2lZIoi3Dt2MZ14z14i5pDPASHxwqjlpBijEpJ+KPqeZ+
+ dX3PyslCiXR4TPd5gQdXkv7VGbHHAhjAbsDfDgPNKKYdcDuvjp3n5vbOxXf8gAIUHVjj
+ 0N5FfgFV0vHAvIkmXucqqcbVxXcIgPi1L9FbaDcXGs5s6Y1dhvUT8b51jl1/zHqgaZBs
+ g7xw4utSfJBZUQR+IFXTy2Tj0UIOCIiRxKGB055GOqcQ8wFId3rcB0dXEscyuHpaae0m
+ qOb8phvSIzyS4hy/OknyCZszx6q2lWBh+i8iJkshK2PLbIXqIrvrLCJtFCuputvw/VrB
+ eDwA==
+X-Gm-Message-State: AOJu0YwVe4gKzyWqAD7cSMyj3zYuncjZcCPzc3OVmfUy9mDwb5ECmC9a
+ 4fm9Z3lk4HEeCqaSBhbqu3SZfFukJZxqqqs9wmBScKzUwUooMBS3F4iVd73esCNTylTGzTpJ2PJ
+ XKwhtMrad6qMx7Pkzqz5DmPYhzZVFvfkLIa9UJasjdvaxBqY9UL9H1HroWru5zn9P8TZrtdSUMH
+ UN+eepcAYejOYaf6zOIOQ=
+X-Gm-Gg: ASbGncvHiO1gWER2wSFgU5VKf79Hc1rXKrjty60iUdY48jgg5LI5AldqjVYImCQFMbu
+ EnOUNJC9FFwGAP7o5o+TR5amS08J/fFB2KFplaQxP5K0zf6LEC4FdWjxCmUVQ9rvUBDCjR45ttn
+ fw/bPBhQ==
+X-Received: by 2002:a05:6512:3b89:b0:553:3770:c912 with SMTP id
+ 2adb3069b0e04-554fdfb1bb9mr2116346e87.47.1750926765227; 
+ Thu, 26 Jun 2025 01:32:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFQ6A0fc+qZDlvYRLnUzZJhxctWHj8KMxYhevKe0aj99G4sthGEQGqsUz51+t+LyhzdsUal4NW50AqNR6fl2No=
+X-Received: by 2002:a05:6512:3b89:b0:553:3770:c912 with SMTP id
+ 2adb3069b0e04-554fdfb1bb9mr2116340e87.47.1750926764771; Thu, 26 Jun 2025
+ 01:32:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz5a-1
-X-QQ-XMAILINFO: NlS/C0FXcHUSGqjytOKzzvika4QiRcgxVr9B1WHqga3Ci5MLFEEicpA4
- QEtmVPX98WMrCuvTNLhoMmocSHHvzBT1RypraiOZVpi2H7WIc/keiqKbL8YwV9ncH9X8wdG
- OjufTpD4BZtalmteQo8cv3twY+K58gLbSs/6KCCjvU5jffjSsgTB3OopCQZQW91bjNRvbgK
- IutJDt2rjGHqKWOiH4ziVY5XPXwhdsxdJCc39Vxn968cEQFsdqGHVMZ9l1mP/6uBPLRHdjU
- 1SsoJ/LfQGZKeZ3FspbwzWAGs+MVaTlOkuNDdoJKI0g2EVaWpRXqP4C6GtUyL+wehFRsY6Y
- 78wrrHE6nDPSaohIGR5LY+FdBFnpx1cvLHpQ2Q66M/vTkHcBlnQUBLLwAFpgiCeu0q+Zfbx
- jBIDUu+rnvwcH6jIiCzAByynk9SXQg83Q5PGHX0dddAqNXv7GocVyHcy2emw3/gcTnE0Uip
- CDThjYjtXNYgHJ6CMmVNDJBzlYVbQl1mF4U/ltgNTDZnJi1yELKpowtypO5M7KBdBsPiIya
- ENiNA1yKPf2dCuGargmLmv/wX9HWvENPaqyJRVDD5wxKMc5LWMUKRO1QnFygiPL/BD7jdKu
- kRXDJaKy7LZNkKRX9dmqIaR4a/w8+VyWouoFy7Myj18IHdD4dDOboW4AnTIWNznTlogq2FU
- Ye0Jdg2Ba7tNsF6fxYwj391F+1M2lyfGM5JVR+EVRVsxHr7wJ4svRyAvk7ZV+6Pz8GbR8DP
- eWGiZz2Jt4TsJxrlg0eIEnilG4XMO3F5SiHhz97YTPLFE++kg+746tHCWGCm2Z3Rkm5ckrW
- hS3fHtyNAOvshHSL79XSjSoaFBzH8gb8xmpUxlaI/mjWnrW5lkfBLntCxt4X8Hck1aKvr4L
- VjIK2eftyTbWf80YJ2GkeL9f2BV1q3xhIVji77DjRAZkbpwNHgypPv0UCsQCQ+JfK73AQrZ
- 6WrLlcF+kkr6lOZAYlSyWPjI3GctJ+g1+8z5nXuALzKm3BsjPZjswC0AxX+tuP2EnsdKdT5
- upIlf+M5CvT4Puegw3BiindpP7hM35G7ao1oSY9kmtgaQkYHu5rDmlZsSxX7+16FODMve+X
- w==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+References: <20250619071037.37325-1-david.marchand@redhat.com>
+ <20250623135242.461965-1-david.marchand@redhat.com>
+ <20250623135242.461965-3-david.marchand@redhat.com>
+ <08ce2412f18d477199d3e02fdcf9bcd4@huawei.com>
+In-Reply-To: <08ce2412f18d477199d3e02fdcf9bcd4@huawei.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Thu, 26 Jun 2025 10:32:33 +0200
+X-Gm-Features: Ac12FXyH7nQba201kn0CjUkjg1vmUro_aRwYoim9HG3AwrFt2BuPVodA9wtu2dE
+Message-ID: <CAJFAV8wb9ec_O2Dj8vX8YF9ksXzSDgCGefCaNEFs7HfeKhWjMA@mail.gmail.com>
+Subject: Re: [PATCH v2 02/10] test/telemetry: fix test calling all commands
+To: Marat Khalili <marat.khalili@huawei.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>, "stable@dpdk.org" <stable@dpdk.org>, 
+ Bruce Richardson <bruce.richardson@intel.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: RCLTp005mGvibIxM4VnO3Ql6sMlcyaqESqFpM_NFBj4_1750926765
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -66,33 +88,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add new types of Wangxun NICs(Amber-Lite NIC models) into txgbe
-supported NICs list.
+On Tue, Jun 24, 2025 at 6:00=E2=80=AFPM Marat Khalili <marat.khalili@huawei=
+.com> wrote:
+>
+> Reviewed-by: Marat Khalili <marat.khalili@huawei.com>
+>
+> Just an idea, in case you have another iteration: could we maybe add a sm=
+all check that $telemetry_script actually exists and executable to avoid si=
+milar situations in the future? Can be as simple as:
+>
+> test -f "$telemetry_script"
+> test -x "$telemetry_script"
+>
+> Due to -e in the first line it should fail the script of any of these tes=
+ts fail.
 
-Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
----
- doc/guides/nics/txgbe.rst | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+The problem lies in the use of subshell and pipes and that a failure
+is not propagated.
+Adding a test only the the telemetry script would not catch other
+errors (like for example, if the jq command starts to spew errors).
 
-diff --git a/doc/guides/nics/txgbe.rst b/doc/guides/nics/txgbe.rst
-index 93fb592759..e7b657f9a0 100644
---- a/doc/guides/nics/txgbe.rst
-+++ b/doc/guides/nics/txgbe.rst
-@@ -4,8 +4,12 @@
- TXGBE Poll Mode Driver
- ======================
- 
--The TXGBE PMD (librte_pmd_txgbe) provides poll mode driver support
--for Wangxun 10 Gigabit Ethernet NICs.
-+Supported NICs
-+--------------
-+
-+- Wangxun 10 Gigabit Ethernet NICs
-+- Wangxun 25 Gigabit Ethernet NICs
-+- Wangxun 40 Gigabit Ethernet NICs
- 
- Features
- --------
--- 
-2.21.0.windows.1
+The most elegant would be to use errtrace and pipefail options, but
+the errtrace is a bashism (iow not POSIX), and pipefail is POSIX only
+since 2022 and many shell (like dash in Ubuntu 22.04/24.04) don't
+implement it.
+
+We could try something like:
+
+diff --git a/app/test/suites/test_telemetry.sh
+b/app/test/suites/test_telemetry.sh
+index ca6abe266e..a81b4add90 100755
+--- a/app/test/suites/test_telemetry.sh
++++ b/app/test/suites/test_telemetry.sh
+@@ -15,7 +15,7 @@ call_all_telemetry() {
+     telemetry_script=3D$rootdir/usertools/dpdk-telemetry.py
+     echo >$tmpoutput
+     echo "Telemetry commands log:" >>$tmpoutput
+-    for cmd in $(echo / | $telemetry_script | jq -r '.["/"][]')
++    echo / | $telemetry_script | jq -r '.["/"][]' | while read cmd
+     do
+         for input in $cmd $cmd,0 $cmd,z
+         do
+@@ -25,4 +25,5 @@ call_all_telemetry() {
+     done
+ }
+
+-(sleep 1 && call_all_telemetry && echo quit) | $@
++! set -o | grep -q pipefail || set -o pipefail
++(set -e; ! set -o | grep -q pipefail || set -o pipefail; sleep 1 &&
+call_all_telemetry && echo quit) | $@
+
+
+
+--=20
+David Marchand
 
