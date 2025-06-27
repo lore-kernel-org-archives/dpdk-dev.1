@@ -2,69 +2,125 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E88C77B7F
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Jun 2025 08:01:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AED81C7EE31
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Jun 2025 08:25:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 424D6402E1;
-	Fri, 27 Jun 2025 10:01:32 +0200 (CEST)
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com
- [209.85.222.177])
- by mails.dpdk.org (Postfix) with ESMTP id D9B4A4025D;
- Fri, 27 Jun 2025 10:01:30 +0200 (CEST)
-Received: by mail-qk1-f177.google.com with SMTP id
- af79cd13be357-7d20f799fe9so204181185a.2; 
- Fri, 27 Jun 2025 01:01:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1751011290; x=1751616090; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=d5gwtROjUIMK5Zj+V7mcClH4pDu9hP9Sd1MEYx9qvzM=;
- b=XV5qB8oLq5wT6cR/hnBHsscfoa8nkDrkPwa2Wh3ID8ChHcgtTF5+pQQw1Ca6uXTRuj
- 39yEKXd1TG0pu8ljFDjueLAHp1uYVVSX16wH/HgwL4Q45gMONhi6fu0/YS6JhEZPBoei
- Tc4QDPKmhhItmBxv3CpGWf1ikJKSuD5EZ3ATs7Dxdk16ZAzz5qm1Ey1sgSk86At2e9Fb
- 5hKbNloAa7+ADxIe7VazpkwYS5IAZrRqSPmMMXyLOI+w8oHAdNGnSYhvj77FrYAlaQJp
- 6GP1PCXPatrjMrxsISzBECSfPxtphmelBJF8pIfKFYnUhNttjehH24TJFQS9oovIeuqY
- JVZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1751011290; x=1751616090;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=d5gwtROjUIMK5Zj+V7mcClH4pDu9hP9Sd1MEYx9qvzM=;
- b=rXz5NHb8YLowzjlPSCBJRTrKgnf2x7gByKiUaYLjj4PPjJdv4pzPdleFnKQAaO6R88
- 73bKrtc32rq2EsENp0BZHAncJLTr6y+GhKZE8uEEpCi5+HaUPa2S3cQQI6Zr44cRSq1L
- mRGh2TrPcvPSBxQKyOHHw8mQaZoNpdnIfh45Hqh8DAnRXhnAR/SP3Pghn9RWYj82Ncc5
- vvskTDhzy+VsB3A9Ca9cNlG7BCsQie1dHhtlqYC2+aX+iLTLfS+aEqxW5yLqbkcZ/KA2
- GEQChDYXsS5F4GxL6zOeFahb775G7miGB/JIDk6RFsFW5rq117DFvy+2wRmkcxKIte3l
- NRRg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUCQD3MNfyd9Q13qdELzDEO7P/RjKHmGIQA1WY1k5yNEPkHp6by5cUF++/+ZDpZ5IerXSqTrOVEMpph@dpdk.org,
- AJvYcCUkQqg5AadvHHWoeda7eP5zHxMQ8UIJ6kFjtwHd4dsLABPszxjUE6fKAGanvKwHA/Zv8R8=@dpdk.org
-X-Gm-Message-State: AOJu0Yz3x17yY9Pr/k+1ZizyJzqfDx121h59hA0VI02fC0jxO+81nWXM
- bnFRaQIfJUiaORmv3ZyUlaMtsiuRc/KZ/9wSYNeB7J5sYY5FfO1WlPpQjkW+Fn/YYQ67O1v4U0M
- Jvxh+6Uq1LFaBd88hiKm752AutpNjxXc=
-X-Gm-Gg: ASbGnctUUAIw6VIb3CZFhkb14d/00mwy36dPsrW3kg1vPSDZx4mIlNRn/nyf+BXVEON
- 5Cn7IGzB9M16dc+YFjLuBT2JJy+jfA/DGxAlrElVM52/20Dxyp3o0gAofaZ8lxbXMul4nQu9iOH
- rvqzl0R+VFeBIDTSQfdzou5TTdNQg3/fQb6HRzTW9Lsg==
-X-Google-Smtp-Source: AGHT+IE6jniZTg+x8Wg8Px9x4VWi/cqbgsaqepb0Gy5ZjqOUgO3FsUlI6g3HFMAJrWZs4/i+l0EnpRyM+1uPMMO5j4o=
-X-Received: by 2002:a05:620a:2993:b0:7d4:292d:8f09 with SMTP id
- af79cd13be357-7d44398937dmr335839085a.44.1751011290030; Fri, 27 Jun 2025
- 01:01:30 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 436E8402DF;
+	Fri, 27 Jun 2025 10:25:34 +0200 (CEST)
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com
+ (mail-dm6nam12on2085.outbound.protection.outlook.com [40.107.243.85])
+ by mails.dpdk.org (Postfix) with ESMTP id 860E64025D;
+ Fri, 27 Jun 2025 10:25:32 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VW0E0FpTevC9Ul88sOYRsXn3IxTSrIq6YiiteSd4X8yuUmt53sdxZYQTOd2JcoP25qB16xx6oslES8CqO4Z1H2DkFzL2HJeW/2YxNvh/C+KLwX1YojdikuVb+OLckW1kXS9xnZ6vVQjCLPGJf6+3ltPGNVCFrPM9m5Ee2g8ri/FMln4cG+dgm48H+fmD0zYakSbH5OWo3EiP5X0/GmT90lS23wiEiOWqamOrGWdj2paMUWGE37Ze7+A1tlb16LIMJJIbs2tyOUw+y3aJqnJo8k+xBiV8tD5LR5zg6ZjSZADiHJN7HzrgbKr8Peg7kD0VbPfnUrOP2vYlZ+C+cJiUDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7JWrKgpggiMSy/6UGBqtXmldJ+EjvX5oFlzl6LhGZO0=;
+ b=GlsQCGHIr7LyYEae92Y7n///JFnlFJ0X85ClLUCOl0ksVbHnHYezqbH4bCcid6s9/NSnQuiKXW4L5bGblhLJBzH8H2qrziERmQDA/dnh49DgCJQCvGUbe8OgbLAYjmkKJwsbme4+8W85gzGFVzzqjL1SUXt8wygW64bIWKf3VrpsgY12C0yJaZbZ3zBoG+pydWwTeVD2bu9pF8FVyCL+xPTt96vzVrHxnq12tx1ASywYX9kgl1iN4s6ucHvsjWKEf6m7KuTPPTqD9ceBCEcCdpNvSLycbNAtcQPCxAFCiCsAcPNmbano3M/phmc23aueiF2BoF8dBa4SX82Cu8DM8w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7JWrKgpggiMSy/6UGBqtXmldJ+EjvX5oFlzl6LhGZO0=;
+ b=c4uA9FfclgmiP9zvIKQLRpkY0pgFdnXuYH2TLutGaZEixuDn8whpsB1ym/42MFbnlE3I3Onp50YberwyDW1v80eXagPkRV9BYc8F872SEqk8J4XV9U73wPObXEdhAFcB/0rwGP7oleH5VLIP8VXsNck5rbVzqRIqaqbd41sU0trs7gjEzcu6X40jW2lQnWmrCnw6UrapcjKjv5r9/0sSMJSJWTbroMd85SG60h5vLY+x3zY9j/IuVEDail/6JuV5VWXE8ozM082Fk6d9B8tHJ4iiBCLKS6BagBkcJhbkFrwwM64gxAMXWvyRa13V0/shPHabv+WGK8U6WSU32CcbIQ==
+Received: from BYAPR05CA0070.namprd05.prod.outlook.com (2603:10b6:a03:74::47)
+ by PH7PR12MB8056.namprd12.prod.outlook.com (2603:10b6:510:269::21)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.35; Fri, 27 Jun
+ 2025 08:25:29 +0000
+Received: from SJ1PEPF000023CB.namprd02.prod.outlook.com
+ (2603:10b6:a03:74:cafe::2e) by BYAPR05CA0070.outlook.office365.com
+ (2603:10b6:a03:74::47) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.11 via Frontend Transport; Fri,
+ 27 Jun 2025 08:25:29 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ1PEPF000023CB.mail.protection.outlook.com (10.167.244.5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8880.14 via Frontend Transport; Fri, 27 Jun 2025 08:25:29 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 27 Jun
+ 2025 01:25:18 -0700
+Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 27 Jun
+ 2025 01:25:15 -0700
+From: Bing Zhao <bingz@nvidia.com>
+To: <viacheslavo@nvidia.com>, <matan@nvidia.com>
+CC: <dev@dpdk.org>, <thomas@monjalon.net>, <dsosnowski@nvidia.com>,
+ <suanmingm@nvidia.com>, <rasland@nvidia.com>, <stable@dpdk.org>
+Subject: [PATCH] net/mlx5: fix the WQE size calculation for Tx queue
+Date: Fri, 27 Jun 2025 11:25:02 +0300
+Message-ID: <20250627082502.26088-1-bingz@nvidia.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250623173524.128125-1:x-bingz@nvidia.com>
+References: <20250623173524.128125-1:x-bingz@nvidia.com>
 MIME-Version: 1.0
-References: <BY3PR18MB478574FF76D2777FFACB1B00C877A@BY3PR18MB4785.namprd18.prod.outlook.com>
- <ccab20d4-8620-407c-b7a9-de5b81c4d6e8@nvidia.com>
-In-Reply-To: <ccab20d4-8620-407c-b7a9-de5b81c4d6e8@nvidia.com>
-From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Fri, 27 Jun 2025 13:31:03 +0530
-X-Gm-Features: Ac12FXxagi5Cbnicb1NuJGIC7q9OK8t0Oar_1DxCp2VbtfK3eWC83sIT0Uot44M
-Message-ID: <CALBAE1MTeqJKGy1EzXV1oCq2SxmN-Y4fm4LwwkAwcHbDy_2w3Q@mail.gmail.com>
-Subject: Re: Proposal: AI-Based Code Review for DPDK
-To: Ori Kam <orika@nvidia.com>, Aaron Conole <aconole@redhat.com>
-Cc: Jerin Jacob <jerinj@marvell.com>, dev <dev@dpdk.org>, 
- "techboard@dpdk.org" <techboard@dpdk.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.230.35]
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023CB:EE_|PH7PR12MB8056:EE_
+X-MS-Office365-Filtering-Correlation-Id: a75b5a07-580b-4562-0995-08ddb5542d15
+X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|36860700013|82310400026|376014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?t2N8aP5u0pqtD8y90f0T093DsrAiuXFWSqv7tE8ct6IjOf14L5tCM/SQ3Suv?=
+ =?us-ascii?Q?w0QT+UWDBU1bvv85m9/7kWRouJvaO3PNi3l3wZrCnTbPtMdRSe4diH6ERfD7?=
+ =?us-ascii?Q?r2Lz0WhECqL4ZNovFCPqU0TP5dxHPMDAG6wr0RJLDHQkkYdXuw6PGiyAVx6z?=
+ =?us-ascii?Q?n8JHIBxP74PgVUO3KcW9t1QnpeDWFn4S17Z7Rst2S1ognMALn4142F8GpwTz?=
+ =?us-ascii?Q?o8xBsaU0Ec/IQIkPZKNksTq9V1gLcofFds7MtV0/LCwKrURSeOJg5lGZ4raz?=
+ =?us-ascii?Q?jSonW5iLBisBVZCdbi8QeK4yx7fJpfWDQMGSWzmQH0EBVz2YP/ez+ukQyNoQ?=
+ =?us-ascii?Q?KREvHOmXBu4Er1CWfnqZ8vThLWBmNiH8FCFGhJehk2mpHAoCkNaQSFA6vfmK?=
+ =?us-ascii?Q?AD4IyD1z3LIpzoGbCycLxVG9f7B4d6kW23SXl2BOwWbuzUBLD2CKI+6Tk4QN?=
+ =?us-ascii?Q?YB8utZEcErQ5taBDDNk/YkoSdk9xtJOwYJtR+9vU00FqzjOnpEUUnvJ8BCf6?=
+ =?us-ascii?Q?3TFN92ACx1kgaA5bOUghDFMieKC+bslFaM5iApKn8ConF4+siTjaRqwWCDCu?=
+ =?us-ascii?Q?PJq4PqMC7VpfpBsD2qHPDdKlH5XlVumcYd6Mp4CS2sd9LzHLHqztalRZ2SO6?=
+ =?us-ascii?Q?m9CR/Go0kXmw4a8sQ7fDDc5ELGyqcJM8TOKBUymP78fyuLMdtH9GJVK1vaf+?=
+ =?us-ascii?Q?RqwsObNgZw02xOHsmJADRla7BRHqk7fIDyfbkZ70NlfRQHs53BhIcGznhzsN?=
+ =?us-ascii?Q?9a2VgXWjsdDAjdpmdK25GznLysipYhIlwGHMSqe9wcO/wmRaAxXI1gp+8fUv?=
+ =?us-ascii?Q?Lxj+qWwdD6/DuVSts1OsSoeMVi2Stv83NAuTH/d5REJAQFkzcG3HHjVu50ox?=
+ =?us-ascii?Q?ahpDi6kl92tzDzVNAbE1HEkRydOHqnnK0bZfaQoffnLCthohGh4YNJZCaAHM?=
+ =?us-ascii?Q?6htIvojYSMRWqT2td5m6OULRcuN4zPzw++MUHFVR5jzspbahiVNHiukgdA2O?=
+ =?us-ascii?Q?KXqmIYmUHyuI1Uqu4DxIuaLcchUbac4FLWMPOvifGJMb0TrpAmDhfmyn8f2Z?=
+ =?us-ascii?Q?Yu8+MyD5K7AlIQyAbdd7WSKsoREzCO9wIVPjoQPTIEe5WVECZ3hB2092vTvZ?=
+ =?us-ascii?Q?HdVapjzHxX2cfGZJoZ8cDn5T29cmXTnJZ5i+Ays92AIr7z7GwcytdkWBfwIv?=
+ =?us-ascii?Q?6pNYxBl5DjDF31xdHDI6Qt7ufnCrdcMyazGNza5a/lrIHeeSaNJQ8GWef3Ub?=
+ =?us-ascii?Q?g81SqVOo1VuE9mp2u8J8iDX/fvzq9frvW2Hwio6f5sNOH9T2p+GlG+tz/Ir7?=
+ =?us-ascii?Q?LDwFbhHniEf3Bfx1J4CijIVxX9YCH1Q1OIBx0Mj87ZzVeCM/xUuyIpYfWBsA?=
+ =?us-ascii?Q?EfNnTwcSsSTpmQU4km7VeexlG+V9p5OBX0GRo3bB6lTRyCkQ966G8egwCiEG?=
+ =?us-ascii?Q?besKo9hayLXapwFCDEE+0V+Q4h2k3pj/Tn5V/otjvORFvx8uM34MC23fhhzm?=
+ =?us-ascii?Q?0yx9zRHECW+U3nhw85sMzty0e+ITCpkBdRyW?=
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2025 08:25:29.4412 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a75b5a07-580b-4562-0995-08ddb5542d15
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PEPF000023CB.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8056
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -78,102 +134,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Jun 19, 2025 at 7:42=E2=80=AFPM Ori Kam <orika@nvidia.com> wrote:
->
->
-> Nice idea,
-> Some comments:
->
->
-> 1. The first link is broken for me.
+The txq_calc_wqebb_cnt() should be consistent with the calculation in
+the function mlx5_txq_devx_obj_new(). Or when the input descriptor
+number is 512, the WQE size will be wrongly considered to be 30 when
+no max_inline_data is zero in some cases. The total number of WQE will
+be considered as 256 and that is incorrect.
 
-Yes.  https://github.com/DPDK/dpdk-ai-code-review is the proposed name
-of the repository. It is not created yet.
+Adjusting the WQE size will solve the wrong calculation when the
+calculated WQE size is less than 64B.
 
->
-> 2. I like the idea that there is a separate GitHub repository. If I
->     understand correctly the new repository is a clone of the main one,
->     and only used by the bot is that correct?
+Fixes: 38b4b397a57d ("net/mlx5: add Tx configuration and setup")
+Cc: viacheslavo@nvidia.com
+Cc: stable@dpdk.org
 
-Yes.
+Signed-off-by: Bing Zhao <bingz@nvidia.com>
+Acked-by: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
+---
+ drivers/net/mlx5/mlx5_txq.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->
-> 3. I think main usage is also for the reviewer, just like in your example=
-.
+diff --git a/drivers/net/mlx5/mlx5_txq.c b/drivers/net/mlx5/mlx5_txq.c
+index 5fee5bc4e8..62b3fc4f25 100644
+--- a/drivers/net/mlx5/mlx5_txq.c
++++ b/drivers/net/mlx5/mlx5_txq.c
+@@ -709,6 +709,7 @@ txq_calc_wqebb_cnt(struct mlx5_txq_ctrl *txq_ctrl)
+ 		   MLX5_WSEG_SIZE -
+ 		   MLX5_ESEG_MIN_INLINE_SIZE +
+ 		   txq_ctrl->max_inline_data;
++	wqe_size = RTE_MAX(wqe_size, MLX5_WQE_SIZE);
+ 	return rte_align32pow2(wqe_size * desc) / MLX5_WQE_SIZE;
+ }
+ 
+-- 
+2.34.1
 
-Yes
-
->
-> 4. The only thing I=E2=80=99m missing is that there is no =E2=80=9Cperson=
-al touch=E2=80=9D
->     meaning that each reviewer puts emphasis on different things. It will
->     be great if the AI can learn from previous reviews of the reviewer
->     and add review accordingly.
-
-Yes. However, It looks like https://docs.sourcery.ai/Code-Review/ dont
-have that feature.
-
->
-> 5. It will also be great if the AI could target people who may be
->     interested in this patch.  And send them some notification or tell
->     the developer to add them in the to
-
-Good input.
-
-
-Adding @Aaron Conole . He has some plans to implement this workflow.
-
-
->
-> Best,
-> Ori
->
-> On 13/06/2025 13:03, Jerin Jacob wrote:
-> >
-> > Goals
-> > -------
-> >
-> > # Leverage modern AI-powered code review tools to accelerate and supple=
-ment human review efforts.
-> > # Prevent AI-generated comments from cluttering the mailing list or pol=
-luting the main DPDK GitHub repository.
-> >
-> > Setup
-> > -------
-> >
-> > # Create a dedicated repository:
-> > Set up a new repository, for example: https://github.com/DPDK/dpdk-ai-c=
-ode-review, under the official DPDK GitHub organization.
-> > This ensures that AI-generated pull requests do not interfere with the =
-main repository (https://github.com/DPDK/dpdk).
-> >
-> > # Select an AI review tool:
-> > Use a free, open-source-friendly AI code review service.
-> > One potential candidate is Sourcery: https://sourcery.ai/pricing
-> >
-> > # Connect the tool:
-> > Integrate Sourcery with the new repository via: https://app.sourcery.ai=
-/?product=3Dprod_opensource
-> >
-> > # Trigger AI reviews:
-> > Once integrated, any pull request to this repository will automatically=
- trigger a code review by the AI tool.
-> > Example of a test PR reviewed by the AI bot:
-> > https://github.com/MarvellEmbeddedProcessors/dao/pull/2
-> >
-> > Workflow
-> > -------------
-> >
-> > # When a patch is sent to the DPDK mailing list, a bot will convert it =
-into a GitHub pull request on the dpdk-ai-code-review repository.
-> > # The AI tool will review the pull request and leave comments directly =
-on the PR.
-> > # Once the AI review is complete, the bot will close the PR and share t=
-he PR URL:
-> > - As a comment in Patchwork URL for the given patch
-> > - With the patch author directly.
-> > # The author can review the AI-generated comments by visiting the PR UR=
-L, if they choose to do so.
-> >
-> >
->
