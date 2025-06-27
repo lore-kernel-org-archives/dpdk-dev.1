@@ -2,74 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D4BFC7EE2A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Jun 2025 16:00:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8900C77B7F
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Jun 2025 16:05:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 182EB402AE;
-	Fri, 27 Jun 2025 18:00:50 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 03232402AE;
+	Fri, 27 Jun 2025 18:05:09 +0200 (CEST)
 Received: from fhigh-a8-smtp.messagingengine.com
  (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
- by mails.dpdk.org (Postfix) with ESMTP id 2CD98400D5
- for <dev@dpdk.org>; Fri, 27 Jun 2025 18:00:48 +0200 (CEST)
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal
- [10.202.2.46])
- by mailfhigh.phl.internal (Postfix) with ESMTP id CE9551400190;
- Fri, 27 Jun 2025 12:00:47 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-06.internal (MEProxy); Fri, 27 Jun 2025 12:00:47 -0400
+ by mails.dpdk.org (Postfix) with ESMTP id 2C25A400D5
+ for <dev@dpdk.org>; Fri, 27 Jun 2025 18:05:08 +0200 (CEST)
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal
+ [10.202.2.51])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 90A301400177;
+ Fri, 27 Jun 2025 12:05:07 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-11.internal (MEProxy); Fri, 27 Jun 2025 12:05:07 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1751040047;
- x=1751126447; bh=ZwPSfCyXOkGPKIu4EyxhhWOXcNWnIkff+/2cKql2frw=; b=
- gP4FaeGb6xf6tGQoGq4dDxuT9blBdF0P6Zcue99QoxP+1PGeZA285AQ14hzNBHX/
- /OQ8/npenRy5S4nZvNvM0w4amzgtt3a7af6EoaJWw8si9Uzv4NXnBCwGNfyKAWia
- L+60mSUB82W+vQddbDU/rU8Mysd8BhZsIiJi2wiwc3c/58M0s8WQoTKUlLYo1Ptg
- aBYpqJpFl851biwAf30li0YGsPC1m2jQ5NebxSuTAkvm7t7X6DDRpvIJLHKqQPRh
- 22v1Bcu4V/xRWjtsyyWcIrbbSQPTjfA5jqPAkV7XIZoT2UqmyuPJcHH+N8x/RDQg
- 435qXAixCeK3zo+J2lB+Ow==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1751040307;
+ x=1751126707; bh=vnG3jhqZmGmEWIIrRimfCBA5aahApMRmNPlKuwxbMvw=; b=
+ tBPdke9ABJHAx3xZQ7WqCifyNSgZg9mXRjUXDaTwTH4i/HzVqYG+QPfhuhwjcdr4
+ QT3iLCsAmIKHnMwsrH1NKagsceHasbbYIoQ/No0RaS9E2cz8RhnoqzYeQmMFz4sU
+ eb/J5/fKsZbVHQmd2JSXAKYDWjrGiP7U/TrRJ4/LjxTW9Yn9Z+cAJBHuANnbUr/6
+ OC8ptQiy2Oonc2+eLmEzQxQ1yRtUSkrxWmHiraXjKHoJowmziHds3Z20hMygJn4f
+ uat+0XgKt9XrzwPqy26DX0exz3bHNXnKT7sPjij5+vzEvmDD9RQvZx2Ol0kYUjyA
+ pPR130qMYJW7j205SvQbQw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751040047; x=
- 1751126447; bh=ZwPSfCyXOkGPKIu4EyxhhWOXcNWnIkff+/2cKql2frw=; b=S
- I0GMY2eh6SrXDv+dliRnaZ4d6sKOZSdaVNZf1xomxns6bGwBh5RS8Dy7Cwhp+fuv
- ijBn6+49i7Q7A/ME6L33NXSVF8wXKMms8hlKg0HWi6TUMhlMuaidWGHb6tVYPsoU
- htxL91smz8slEcC+qMeapGZ63z3XIwajr3Rhmidhz8KzxM+33l9Jcm5mlE0xp4gY
- 3UIu3Qyf15PwFOSyP+Ysl3P6ehHaa5y/Ejf4dksWb+mqdSZA6BFU2iaX9RlpIw5Q
- nY9CCofsRvG89aUh16WtPVF5G9eEg2MSdXx3rrkeCmRJMJ5QdsfAb9RGhSEPW85L
- YNglclizQqYS1KVcmfRTg==
-X-ME-Sender: <xms:L8BeaLB43WGaEOemkSUJJff5sJ9Mdvw8A35fTsilYlVvy7cDmi7lBA>
- <xme:L8BeaBif8M9bW2D3xjT0m6Jfn8Y3CkS53WR_cIQ6nM_ZMuYRJJAbCNw84erH8PU6d
- sec4OsX8ZEgFsY3tw>
-X-ME-Received: <xmr:L8BeaGml4yk55-jTpiXTQLJaK67knpXvGXfkq32Y3CzJBgJI-L_LSOgJ9DV9A7ttc4Yjh5bxmeEKvLEaWegh95GJIA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefgeekucetufdoteggodetrfdotf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751040307; x=
+ 1751126707; bh=vnG3jhqZmGmEWIIrRimfCBA5aahApMRmNPlKuwxbMvw=; b=d
+ EtxGPKBW2Y7uJwI/vxNkOcDXrUvdrwSnh2H/Ym1L30ydpSFvNB3vmo51d3zN4+c0
+ R96i8Yndw3/ira0qgujzcuQ8F9aL43d7Ukj8X+jH+tKNviUua7swIuDwO/OHGh+O
+ 4eGBwd5AaQKoktR5ymWsAbcdbUIXv7JcPSViJJaCtF5ugO8pjEHM3sQFXOGqqM8X
+ M2lItMo0pa43KNyJB5c8PighTyJ/aSrp7rNhy+xpddWklq0tQqX2MZYLXbO6q27p
+ Z+c4kOu4Hog8RKzXnK2xOneqDFTp53TmNQhC6b387SvUCYb514jq221MuW/RYxjz
+ 1jb8ajdZzJIlcQjuwg+Pw==
+X-ME-Sender: <xms:M8FeaE2JrW60hTEGfwbvvr_9ykZa0fPIgyBYtFaYf5omRKzfRP7LJQ>
+ <xme:M8FeaPG_MKqOJQRiSESx5LxOJuR5_QpMUee8uAJjuO6SNP0_ZcTEMXxLTQBvKl48t
+ 9z2Qkw0nGLl4qoMyQ>
+X-ME-Received: <xmr:M8FeaM6XwCqeJVqt5LJHsvsQHmeBLQf4T-kk02XgAC45E_9sZ0HcWFjavXnRMZicP6CGoR4Cay4id4sWcmFYqGhb0A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefgeelucetufdoteggodetrfdotf
  fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
- lhhouhhtmecufedttdenucenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttd
- ejnecuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehmohhn
- jhgrlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevfffgtd
- egkeeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgeptden
- ucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgvth
- dpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepphhr
- ihhikhhonhgvsehikhhirdhfihdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
-X-ME-Proxy: <xmx:L8BeaNwvOSylECCSsvYMj-ihN4lN7RmApwkGVcWLg-OC1ZqWf80zag>
- <xmx:L8BeaATNbFh1r1ehMFd59x7_oS0HY4XPRuNRBy_7y6HWC6v2K4ooFw>
- <xmx:L8BeaAZ_G1_8crS5kNVkav7UXYC1n450S18edkuzG009w7qJ76cyjQ>
- <xmx:L8BeaBQL-vL_it_8fMpdXyLRUpak-XDzwpJCriZgjthHPUr9-ENrKQ>
- <xmx:L8BeaLkC-5Qr89IsEiPq-PRmE5ESek4A0ldHf4xIThsGtbvgPySoSgyj>
+ lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+ ephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghsucfo
+ ohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtffrrg
+ htthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdvuefg
+ feekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+ hthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeekpdhmohgu
+ vgepshhmthhpohhuthdprhgtphhtthhopehstghhnhgvihguvgesqhhtihdrqhhurghltg
+ homhhmrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohep
+ rhgvshhhmhgrrdhprghtthgrnhesihhnthgvlhdrtghomhdprhgtphhtthhopehsthgvph
+ hhvghnsehnvghtfihorhhkphhluhhmsggvrhdrohhrghdprhgtphhtthhopehjvghrihhn
+ jhesmhgrrhhvvghllhdrtghomhdprhgtphhtthhopehkihhrrghnkhhumhgrrhhksehmrg
+ hrvhgvlhhlrdgtohhmpdhrtghpthhtohepnhgurggsihhlphhurhgrmhesmhgrrhhvvghl
+ lhdrtghomhdprhgtphhtthhopeihrghniihhihhruhhnpgduieefseduieefrdgtohhm
+X-ME-Proxy: <xmx:M8FeaN0iLxdmLQ-uA6_jKn8vIkv4tLgTmPp7cqHs3dNrX15kwudb_w>
+ <xmx:M8FeaHEqZD6fJtBMtVzSB1HwODYkZgJwK39TjJw9k3h6_cHs1-bycg>
+ <xmx:M8FeaG802i3zMQyPNtUZH_R-JeAP8Zn3qQsevwzy-m9l0pODglqfkw>
+ <xmx:M8FeaMme9ZsS99rqPB99lZoeB55nJ-U0vk-DIwykuGTsXdZ6Eza6VA>
+ <xmx:M8FeaMyqVnv0T-5uCoH-_t0LZ6PHywOL7DS6oswXY7VxoXkWc4vSZ2pm>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 27 Jun 2025 12:00:47 -0400 (EDT)
+ 27 Jun 2025 12:05:05 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: priikone@iki.fi
-Cc: dev@dpdk.org
-Subject: Re: [PATCH] bus/pci: fix automatic interrupt type selection
-Date: Fri, 27 Jun 2025 18:00:45 +0200
-Message-ID: <7218036.9CP3fYhb5E@thomas>
-In-Reply-To: <8f5b22d3bedef793bf489c230b52b145@iki.fi>
-References: <8f5b22d3bedef793bf489c230b52b145@iki.fi>
+To: Dylan Schneider <schneide@qti.qualcomm.com>
+Cc: dev@dpdk.org, Reshma Pattan <reshma.pattan@intel.com>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Zhirun Yan <yanzhirun_163@163.com>
+Subject: Re: [PATCH v2] pcapng: allow any protocol link type for the interface
+ block
+Date: Fri, 27 Jun 2025 18:05:03 +0200
+Message-ID: <3799976.Ii9rTq9gLj@thomas>
+In-Reply-To: <20250609211937.345620-1-schneide@qti.qualcomm.com>
+References: <20250529171609.2448832-1-schneide@qti.qualcomm.com>
+ <20250609211937.345620-1-schneide@qti.qualcomm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -86,13 +98,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-20/06/2025 13:47, priikone@iki.fi:
-> Check if kernel returns 0 interrupt vectors and try another interrupt
-> type in that case.  Failing to check the vector count can select an
-> interrupt type that's unusable.
+09/06/2025 23:19, Schneide:
+> From: Dylan Schneider <schneide@qti.qualcomm.com>
 > 
-> Signed-off-by: Pekka Riikonen <priikone@iki.fi>
+> Allow the user to specify protocol link type when creating pcapng files.
+> This change is needed to specify the protocol type in the pcapng file,
+> DLT_EN10MB specifies ethernet packets only. This will allow dissectors
+> for other protocols to be used on files generated by pcapng.
+> 
+> Includes a breaking change to rte_pcapng_add_interface to add link_type
+> parameter. Existing calls to the function have been updated to pass
+> DLT_EN10MB for the link type argument.
+> 
+> Fixes: d1da6d0d04c7 ("pcapng: require per-interface information")
+> Signed-off-by: Dylan Schneider <schneide@qti.qualcomm.com>
+> Cc: stephen@networkplumber.org
 
-Please could you be explicit about the use case you are trying to fix?
+Excuse me, I'm a bit lost because you have sent 3 v2,
+and there is no changelog.
+I suppose I should assume this last v2 fixed the comments done by Stephen.
 
 
