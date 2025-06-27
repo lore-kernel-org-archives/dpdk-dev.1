@@ -2,83 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 065ABC77B7F
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Jun 2025 10:19:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D872C77B7F
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Jun 2025 10:19:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 038BA4026B;
-	Fri, 27 Jun 2025 12:19:19 +0200 (CEST)
-Received: from fhigh-b8-smtp.messagingengine.com
- (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
- by mails.dpdk.org (Postfix) with ESMTP id 5D8DF4025D
- for <dev@dpdk.org>; Fri, 27 Jun 2025 12:19:17 +0200 (CEST)
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal
- [10.202.2.51])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 8DD877A019F;
- Fri, 27 Jun 2025 06:19:16 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-11.internal (MEProxy); Fri, 27 Jun 2025 06:19:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1751019556;
- x=1751105956; bh=rEf/ZfTnrKThZ5mgnyCCRxNXaEFx/CDEHtJl9yXHyq0=; b=
- DWF58wSpG8CUYYim1pb85Ug57d5WWATxP5sOd0zqNuyNpKd3Nb0E7YtnuUTr9uos
- I8OOAGvpzLJGHCTU0WTAYr5ZYwFKpHSUqJ0nnggSeinUCNke5bAss9EU2c+gt799
- nOSO8SPKQedTouxY9+Pwmn19ZpUWHtdefBVm7O1E8lV9xPndfaL4uHxVAR0t9J4e
- eByCGb52DP4RfgP/mXPAcO5mXHuB4GrbIhsUNGD5v/Z20KQ79Myn9gLV4wOHUYCt
- 0SGPVJjz+wWIRh3ChARdxj9vLHcitFWXR+ieC0ww/0sV095U0gkFUoOcAfOZeDCO
- O7CudyoAdY2eavYGjfRyGA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751019556; x=
- 1751105956; bh=rEf/ZfTnrKThZ5mgnyCCRxNXaEFx/CDEHtJl9yXHyq0=; b=d
- Hx4ixCivt6My11fzP3Sri1iEkJs9GTbkG0OwENn2/6L94GfwN624vIbO2Vwbblm7
- rzFRzTlnFUXC64ZbqdcHpAs3FwWRFtqHoYFSSozq8aKkz29LvyNrrMeFtMQF/NK7
- 1IaHNYwWNqOf+HGcvCQntTrlTTkzsq/ZW7XqRRRxhxbbgx/o6dBybUDSVBdD3VXi
- piOD72MxC73hA8N1LEcXdRjv2eKuaIJGDvC8QZVqOQJv2rouJB1s4CEmo2LZ8JFI
- SrdmG0/s250TGlHoBJfOuV+W9Rz423PQ0Z8lBu9JldcWooP6fjg8bz0bITLyiKs1
- rWjtBv3bNAa4fmS4gDSMw==
-X-ME-Sender: <xms:JHBeaIoJru8tJIF9hvf4F6R5EUTr89bUvE9Os1UsgEeEnv-RCi86Fw>
- <xme:JHBeaOon2igqPvc8Av9oQgwmJp6ny77Ebw2lwiey6GX4p17wkjqlUNNwIJC3uEVhW
- -jjRPHRwymEKL9b_A>
-X-ME-Received: <xmr:JHBeaNOS1xNPJKALTzooGKLerlNuLCifmK__Q_1XS3woKsZr3HKr9AtQ6ha7OyOduCcpq55D2CQ49bZ3E1MpjCq9Tg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddvkedtucetufdoteggodetrfdotf
- fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
- lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
- ephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghsucfo
- ohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtffrrg
- htthgvrhhnpeegtddtleejjeegffekkeektdejvedtheevtdekiedvueeuvdeiuddvleev
- jeeujeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
- hthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeegpdhmohgu
- vgepshhmthhpohhuthdprhgtphhtthhopegrnhgurhgvmhhuvgeslhhinhhugidrmhhitg
- hrohhsohhfthdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphht
- thhopegumhhithhrhidrkhhoiihlihhukhesghhmrghilhdrtghomhdprhgtphhtthhope
- hrohhrvghtiihlrgeslhhinhhugidrmhhitghrohhsohhfthdrtghomh
-X-ME-Proxy: <xmx:JHBeaP6BGrr22FcRL6ILnHaGue-OF0mGbxlABUCGPlqUC2Bo5UmSDw>
- <xmx:JHBeaH5Rf2QYym4s66G45FxNTf-HFjdLxE3r_lRR4O6we4miivA-6w>
- <xmx:JHBeaPiCexIb-AMh8OGanBB0sBGLt3pW0GchjTpjZ5HimxbyQIXeHQ>
- <xmx:JHBeaB4lfxVQI8aqiSLOzUXAHRvUOEQ2JuuKMvubFEPf_VunXtjilA>
- <xmx:JHBeaAQmM4HcAsrHJC7U0M-lsLJkiF9KCwm9VEmD8AfJPBo_lmevHrMp>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 27 Jun 2025 06:19:15 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Andre Muezerie <andremue@linux.microsoft.com>
-Cc: dev@dpdk.org, Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>
-Subject: Re: [PATCH] eal: add asprintf() function for Windows
-Date: Fri, 27 Jun 2025 12:19:13 +0200
-Message-ID: <5542814.uBEoKPz9u1@thomas>
-In-Reply-To: <20250612144648.GB3279@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1746495789-14101-1-git-send-email-andremue@linux.microsoft.com>
- <7942373.1B3tZ46Xf9@thomas>
- <20250612144648.GB3279@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+	by mails.dpdk.org (Postfix) with ESMTP id EB26E4064C;
+	Fri, 27 Jun 2025 12:19:22 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 33CB640613;
+ Fri, 27 Jun 2025 12:19:19 +0200 (CEST)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55R1PXou013496;
+ Fri, 27 Jun 2025 03:19:18 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=VEeDcoOMB5z3Tlb66mHd5Po
+ 9qQRA9sOGpv3o5MA7uY0=; b=D75mbqzu4/av59Kyo8b7vuFqd4Oz1ONo2OKPaX3
+ GCAGNzDjHYb+SY16R4/hTBb7hrb/vNPIKWBR0DCzU347nd4DWbuQy7VPW6ZRB86D
+ J7x11vz7I2aWtBA1bw1VQm++vwlgEt0a3/EUqqt/7l3gu+PgFarm5tUcme2Gumvq
+ A8rWf4eGjNOUUqaOKVNLJ2TWmjBzuhNqHC64LiiuAGdQdjUy2u55nCbWr9fARmY6
+ LsODaCfMBFOe45zmOLCeDmf4AI5zh5TBHf0lfgMMWS7QDqVq0EivNR/Z07MVNmLi
+ 4IiAGEo6Bc7jGAotC+qb+EXtSDEUB5QkE4MEQQo9/wtgl7A==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 47hfx693eg-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Fri, 27 Jun 2025 03:19:18 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 27 Jun 2025 03:19:17 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 27 Jun 2025 03:19:17 -0700
+Received: from hyd1smc1171.caveonetworks.com (unknown [10.29.44.112])
+ by maili.marvell.com (Postfix) with ESMTP id 366CA5C68E3;
+ Fri, 27 Jun 2025 03:19:14 -0700 (PDT)
+From: Mohamed Feroz Abdul Majeeth <mabdulmajeet@marvell.com>
+To: <dev@dpdk.org>
+CC: <jerinj@marvell.com>, <vattunuru@marvell.com>, Mohamed Feroz Abdul Majeeth
+ <mabdulmajeet@marvell.com>, <stable@dpdk.org>
+Subject: [PATCH v0 1/1] net/octeon_ep: fix increase mbox timeout
+Date: Fri, 27 Jun 2025 15:48:53 +0530
+Message-ID: <20250627101853.5632-1-mabdulmajeet@marvell.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI3MDA4NCBTYWx0ZWRfX3avn4Fhlc35L
+ QfowlhHlUY9yZWWq1IDgL0ubJCHN9vhP5LgjBkywhEczt6STLleebtBDFyxeMGU5oNmW7P7+HqB
+ Lmtoy8VjsH93cdcscTTdXMeem5yy8SS7sNC45Fv7ArtnGANlaj/enBCuOPiCHmYJcHNN0FhrDv3
+ dhhYq32GWluZMghk8Ry61Utao9PoVbYn8qkRxKUxw1S5Wxp7ZY88SMlb9/zaP3o5ZzCyCpTE3bK
+ TMUeKaCST+dRdciFedgJ9rxhgwTqaIIVYAoeaONuetS4Ua3svDR6uW0FiwK9lVr8lhCsMmrLOLI
+ UAHtduCnMxW0ifeNhMbGu4PDnk6+c2cOaQZPukmhmOq18bCSk4pPrB6oEn6WwcUsgBilA14fi0o
+ kuv4YeDxw/TvefRTHr2+j5l4zyQjQ1gnj9Vorb6D7TLgGGYNkd16ugNFCR0C2MHI9ilxrJ7E
+X-Proofpoint-GUID: DihjaV0epCo7cQwe3i-fm26De-X42cjP
+X-Proofpoint-ORIG-GUID: DihjaV0epCo7cQwe3i-fm26De-X42cjP
+X-Authority-Analysis: v=2.4 cv=N+4pF39B c=1 sm=1 tr=0 ts=685e7026 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=6IFa9wvqVegA:10 a=8rWy6zfcAAAA:8 a=M5GUcnROAAAA:8 a=QyXUC8HyAAAA:8
+ a=KKAkSRfTAAAA:8 a=vggBfdFIAAAA:8 a=oCJs8q-oAAAA:8
+ a=2GBw5BhrixcMllT8lyYA:9 a=YjdVzJdQTyZRADMV7wFX:22 a=OBjm3rFKGHvpk9ecZwUJ:22
+ a=cvBusfyB2V15izCimMoJ:22 a=qUF70SbvcHBaGhGVny9j:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-27_03,2025-06-26_05,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -92,30 +79,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-12/06/2025 16:46, Andre Muezerie:
-> On Thu, Jun 12, 2025 at 02:41:05AM +0200, Thomas Monjalon wrote:
-> > 06/05/2025 03:43, Andre Muezerie:
-> > > The asprintf function is not part of the C standard library but is a
-> > > GNU extension commonly available in Unix-like systems. It dynamically
-> > > allocates memory to store the formatted output string, similar to
-> > > sprintf, but avoids buffer overflow issues by automatically sizing
-> > > the buffer.
-> > >=20
-> > > Instead of rewriting it or coming up with some other replacement, this
-> > > patch makes use of the implementation provided by Neved4.
-> >=20
-> > Why not using eal_asprintf()?
-> >=20
->=20
-> There are many calls being made directly to asprintf() which made me
-> believe there wasn=E2=80=99t an equivalent available for Windows yet.
->=20
-> Thanks for pointing out that is not the case.
->=20
-> I=E2=80=99ll make the necessary changes to call eal_asprintf() instead.
+Extend the mailbox timeout to 2500 ms in the Octeon driver
+to ensure firmware responses are received, preventing premature
+timeouts in mailbox request handling. This improves reliability
+of control network APIs, addressing issues where the previous
+timeout was too short for consistent operation.
 
-Thanks to the define in lib/eal/common/eal_private.h,
-asprintf should automatically call eal_asprintf on Windows.
+Fixes: c836a7ba33ee ("net/octeon_ep: support mailbox between VF and PF")
+Cc: stable@dpdk.org
 
+Signed-off-by: Mohamed Feroz Abdul Majeeth <mabdulmajeet@marvell.com>
+---
+ .mailmap                            | 1 +
+ drivers/net/octeon_ep/otx_ep_mbox.h | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/.mailmap b/.mailmap
+index 8483d96ec5..753853b396 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -1850,3 +1850,4 @@ Ziye Yang <ziye.yang@intel.com>
+ Zoltan Kiss <zoltan.kiss@schaman.hu> <zoltan.kiss@linaro.org>
+ Zorik Machulsky <zorik@amazon.com>
+ Zyta Szpak <zyta@marvell.com> <zr@semihalf.com> <zyta.szpak@semihalf.com>
++Mohamed Feroz Abdul Majeeth <mabdulmajeet@marvell.com>
+diff --git a/drivers/net/octeon_ep/otx_ep_mbox.h b/drivers/net/octeon_ep/otx_ep_mbox.h
+index 4f7afe7635..1a49780ce1 100644
+--- a/drivers/net/octeon_ep/otx_ep_mbox.h
++++ b/drivers/net/octeon_ep/otx_ep_mbox.h
+@@ -69,7 +69,7 @@ enum otx_ep_link_autoneg {
+ 	OTX_EP_LINK_AUTONEG,
+ };
+ 
+-#define OTX_EP_MBOX_TIMEOUT_MS     1200
++#define OTX_EP_MBOX_TIMEOUT_MS     2500
+ #define OTX_EP_MBOX_MAX_RETRIES    2
+ #define OTX_EP_MBOX_MAX_DATA_SIZE  6
+ #define OTX_EP_MBOX_MAX_DATA_BUF_SIZE 256
+-- 
+2.34.1
 
