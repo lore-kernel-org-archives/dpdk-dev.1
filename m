@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBDFEC7EE33
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Jun 2025 08:53:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE2DC7EE33
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Jun 2025 09:04:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 36E6A4026D;
-	Fri, 27 Jun 2025 10:53:23 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
- by mails.dpdk.org (Postfix) with ESMTP id 083204025D
- for <dev@dpdk.org>; Fri, 27 Jun 2025 10:53:20 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5CF304026D;
+	Fri, 27 Jun 2025 11:04:25 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+ by mails.dpdk.org (Postfix) with ESMTP id 227C14025D;
+ Fri, 27 Jun 2025 11:04:21 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1751014401; x=1782550401;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=E7eDNI5a5eECTNX2LOF0mhnrTg975AGhNeMbNRrWjzc=;
- b=VQloHPNwcav0pbQz5JxWp1Mm33Lf5OEoAfhWJVDMYxnljnt32OmND3Qf
- ACG8ko5a2hpv3mnLnqV7LR2zH+QadUHY5/m0uwEkh26jZ7hml5kUBcqKH
- F4J+j5N3wFY7JC8pNuNqnhqf42xVY7rYaJzgFVS+nTY3FgyYvNCkn+ryy
- KXInSZ3pFUZ5cscR26hfMgBvhDxi1S29h96rPUH4WcdNVWzTdTxp8nL+I
- q5IZrEE12xVVVAIjIpmJLvic7xjx7B2n3N0j84PL7dyXplt67Sxerit2l
- Lz/+nUiaKchU90i4XF9BmYGvvy9SMznZ7wt6E0KyxqR6OAoXA3rG7fegq A==;
-X-CSE-ConnectionGUID: sJwMmLxDQHaBe/3E0tm5yg==
-X-CSE-MsgGUID: /4fUVL+CSLSLRSypHX8MGQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="52556470"
-X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; d="scan'208";a="52556470"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
- by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Jun 2025 01:53:19 -0700
-X-CSE-ConnectionGUID: mGYfd64WR8qzl+fdR6+GWw==
-X-CSE-MsgGUID: kTPGgg+RRmiNLruRnJ6t3A==
+ t=1751015063; x=1782551063;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=W4Ru//F6hIVDrYv9PW6U19/ITtgNKpyBzfLaWBHEFZM=;
+ b=TyHIftrVVpHvs+j0jkXYJMb/py18AXFrxIJwI7LpPQBHXlYsZ8TUL+SZ
+ zDxwXdoXWxDZr/A4nlyDsytBBLrwx3L2zqKk3FNkqtteEmlA3LV8mLtKJ
+ XM8zm9SyhRX/uNnKLvh4/9QfjcxoFQf2sGup8QUEqcTunfai6PtJaAmUN
+ l7zFf+MqcjOzUp2M3iOK08Br1E2YJ2HgKyi1ct7iG64Ab5hIuw4MPqmtD
+ ZPcZqDTJdHO5BsCdgIptmKecm5SPw2PjCR0EDodKM24qMNaw1h0KWOk6n
+ 1CEUpWl4QpQwIHoTTAvcHRODyp16lbPvWtzU9dfvhEqInIp9jdeXuJU+S w==;
+X-CSE-ConnectionGUID: twBdL+PRTcC2rzUj89zvZw==
+X-CSE-MsgGUID: 9bSXsKlGQtqhA5XARdHq2g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="53449389"
+X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; d="scan'208";a="53449389"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+ by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 27 Jun 2025 02:04:21 -0700
+X-CSE-ConnectionGUID: wotGXjacS3StEHtvGDUlPw==
+X-CSE-MsgGUID: S0kqjVZ3RAq8JxGy5AzBPA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; d="scan'208";a="152840022"
-Received: from unknown (HELO sprmax9..) ([10.138.182.122])
- by fmviesa006.fm.intel.com with ESMTP; 27 Jun 2025 01:53:18 -0700
-From: Soumyadeep Hore <soumyadeep.hore@intel.com>
-To: dev@dpdk.org,
-	bruce.richardson@intel.com
-Cc: aman.deep.singh@intel.com,
-	manoj.kumar.subbarao@intel.com
-Subject: [PATCH v2] net/ice: update null check for TxPP support
-Date: Fri, 27 Jun 2025 00:43:59 +0000
-Message-ID: <20250627004359.633934-1-soumyadeep.hore@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250627002044.632971-1-soumyadeep.hore@intel.com>
-References: <20250627002044.632971-1-soumyadeep.hore@intel.com>
+X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; d="scan'208";a="189948602"
+Received: from unknown (HELO localhost.localdomain) ([10.239.252.210])
+ by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 27 Jun 2025 02:04:19 -0700
+From: Yuan Wang <yuanx.wang@intel.com>
+To: anatoly.burakov@intel.com,
+	vladimir.medvedkin@intel.com
+Cc: dev@dpdk.org,
+	Yuan Wang <yuanx.wang@intel.com>,
+	stable@dpdk.org
+Subject: [PATCH] net/ixgbe: fix sctp mask in flow director
+Date: Fri, 27 Jun 2025 16:59:53 +0800
+Message-ID: <20250627085953.286939-1-yuanx.wang@intel.com>
+X-Mailer: git-send-email 2.47.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -61,71 +61,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The absence of NULL checking was causing segmentation fault.
+Since the default value of the port mask is set to 0, the port mask does
+not change in some cases when creating SCTP flow rules, which results in
+incorrect L4P register configuration.
 
-Signed-off-by: Soumyadeep Hore <soumyadeep.hore@intel.com>
+This patch fixes this issue by setting the mask to 0xffff in these cases.
+
+Fixes: c81daae2383a (net/ixgbe: fix port mask default value in filter)
+Cc: stable@dpdk.org
+
+Signed-off-by: Yuan Wang <yuanx.wang@intel.com>
 ---
- drivers/net/intel/ice/ice_rxtx.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/net/intel/ixgbe/ixgbe_flow.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
-index e33fd74543..814d8793d2 100644
---- a/drivers/net/intel/ice/ice_rxtx.c
-+++ b/drivers/net/intel/ice/ice_rxtx.c
-@@ -865,7 +865,7 @@ ice_tx_queue_start(struct rte_eth_dev *dev, uint16_t tx_queue_id)
- 	/* record what kind of descriptor cleanup we need on teardown */
- 	txq->vector_tx = ad->tx_vec_allowed;
+diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
+index 6278646720..9f2e470ad9 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_flow.c
++++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
+@@ -2161,6 +2161,8 @@ ixgbe_parse_fdir_filter_normal(struct rte_eth_dev *dev,
+ 					item, "Not supported by fdir filter");
+ 				return -rte_errno;
+ 			}
++			rule->mask.src_port_mask = 0xffff;
++			rule->mask.dst_port_mask = 0xffff;
+ 		}
  
--	if (txq->tsq->ts_flag > 0) {
-+	if (txq->tsq != NULL && txq->tsq->ts_flag > 0) {
- 		struct ice_aqc_set_txtime_qgrp *ts_elem;
- 		u8 ts_buf_len = ice_struct_size(ts_elem, txtimeqs, 1);
- 		struct ice_txtime_ctx txtime_ctx = { 0 };
-@@ -1118,7 +1118,7 @@ ice_reset_tx_queue(struct ci_tx_queue *txq)
- 	txq->last_desc_cleaned = (uint16_t)(txq->nb_tx_desc - 1);
- 	txq->nb_tx_free = (uint16_t)(txq->nb_tx_desc - 1);
- 
--	if (txq->tsq->ts_flag > 0) {
-+	if (txq->tsq != NULL && txq->tsq->ts_flag > 0) {
- 		for (i = 0; i < txq->tsq->nb_ts_desc; i++) {
- 			volatile struct ice_ts_desc *tsd =
- 							&txq->tsq->ice_ts_ring[i];
-@@ -1161,7 +1161,7 @@ ice_tx_queue_stop(struct rte_eth_dev *dev, uint16_t tx_queue_id)
- 	q_ids[0] = txq->reg_idx;
- 	q_teids[0] = txq->q_teid;
- 
--	if (txq->tsq->ts_flag > 0) {
-+	if (txq->tsq != NULL && txq->tsq->ts_flag > 0) {
- 		struct ice_aqc_ena_dis_txtime_qgrp txtime_pg;
- 		dev->dev_ops->timesync_disable(dev);
- 		status = ice_aq_ena_dis_txtimeq(hw, q_ids[0], 1, 0,
-@@ -3162,7 +3162,7 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 	tx_id = txq->tx_tail;
- 	txe = &sw_ring[tx_id];
- 
--	if (txq->tsq->ts_flag > 0)
-+	if (txq->tsq != NULL && txq->tsq->ts_flag > 0)
- 		ts_id = txq->tsq->ts_tail;
- 
- 	/* Check if the descriptor ring needs to be cleaned. */
-@@ -3353,7 +3353,7 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 			rte_cpu_to_le_64(((uint64_t)td_cmd) <<
- 					 ICE_TXD_QW1_CMD_S);
- 
--		if (txq->tsq->ts_flag > 0) {
-+		if (txq->tsq != NULL && txq->tsq->ts_flag > 0) {
- 			uint64_t txtime = *RTE_MBUF_DYNFIELD(tx_pkt,
- 					txq->tsq->ts_offset, uint64_t *);
- 			uint32_t tstamp = (uint32_t)(txtime % NS_PER_S) >>
-@@ -3383,7 +3383,7 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 	}
- end_of_tx:
- 	/* update Tail register */
--	if (txq->tsq->ts_flag > 0) {
-+	if (txq->tsq != NULL && txq->tsq->ts_flag > 0) {
- 		ICE_PCI_REG_WRITE(txq->qtx_tail, ts_id);
- 		txq->tsq->ts_tail = ts_id;
- 	} else {
+ 		item = next_no_fuzzy_pattern(pattern, item);
 -- 
-2.43.0
+2.47.1
 
