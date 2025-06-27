@@ -2,82 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A39F7C7EE2A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Jun 2025 20:09:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5893C7EE2A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Jun 2025 21:07:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9E1A84026D;
-	Fri, 27 Jun 2025 22:09:00 +0200 (CEST)
-Received: from fout-a1-smtp.messagingengine.com
- (fout-a1-smtp.messagingengine.com [103.168.172.144])
- by mails.dpdk.org (Postfix) with ESMTP id 3DE7B400EF
- for <dev@dpdk.org>; Fri, 27 Jun 2025 22:08:59 +0200 (CEST)
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal
- [10.202.2.44])
- by mailfout.phl.internal (Postfix) with ESMTP id 96DC9EC027C;
- Fri, 27 Jun 2025 16:08:58 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-04.internal (MEProxy); Fri, 27 Jun 2025 16:08:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1751054938;
- x=1751141338; bh=CDQmZM8LBB5WLg9AFKO03tZIZqevVAed+R7FqcBxcKk=; b=
- R2jVWsZBZLnYQ43nx/9n44JDKnvjZpuQ96tstKLsQGzjMSo4eQzV6/QPMMyAb72i
- co0A+CiBgo/sdBwmrncpSt4GFUBphBq9x3IpxBUuWbQ0Khex8C/W7b7OAqaDcOVf
- ywYnG3ZOhPqFMY74ufTuXEMxcVHvlyHXLNupB4NXVA9VBqSVKlhdO/vXRoYu78M6
- enMGaJHA9/OSE1TZ29E8iqR9PYVK3rg1mNE/YnbP+K0d4SvmUC75sFx481JNvl+V
- yoDwxtXkWIPgxA2H59CvT3rU0bT9n7svh4v41HkQ59zTLlSt1kAOUKIR6VhIOP7D
- w806G71S3uQCSLxHblleVA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751054938; x=
- 1751141338; bh=CDQmZM8LBB5WLg9AFKO03tZIZqevVAed+R7FqcBxcKk=; b=W
- k/65sBXWNkY3GJeO4HnDmfEomdOb2I0antGjBuZ2hE5XoccitF4dtHbuPnNZIg9M
- ehJjVX5ikhRlv6hHmaVSxCGFpl0Lsh9f07PgaBMwl6Q3FIwnsI5S3RknUm8DTg3+
- xDqEINiXkWhBLdRk3cBGbBWkMQc2T7F+1hIEgkatU9pplOu8MgHcEU9r6vWXjfOk
- JoCRF7gSTEtHvgWgz1j5iWvlyyNm4XQ2q+WVX1cBF7lHY5bOeah1NScQShKgAUOI
- qQy8102N7z4xqT6KPTfIeoRxHUEIv23t6rjG90uitctofpwB+QjRZDmmsx2ZvdH+
- cbVH4SAMelsZHc2NehMnA==
-X-ME-Sender: <xms:WfpeaNyioTtBWHM-6CDmYnYnOe5wqR_UwYOmHjbLlgokAa7LiaRB7w>
- <xme:WfpeaNQb6s55a0SJF5B5sUj0KicbJUwoysop5aoUTySRHFsPZDUi0zhpE_WLcukAr
- wDwZk3c01zY8YR_1w>
-X-ME-Received: <xmr:WfpeaHWpfuWkJxZMNISeFB6myq27x0GtEh7SH__Xw1lR5qNEVAMW-flu475qZJ1Hr0rONh5HChKWENXakKOnFD9FZA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefleejucetufdoteggodetrfdotf
- fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
- lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
- ephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghsucfo
- ohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtffrrg
- htthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdvuefg
- feekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
- hthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeegpdhmohgu
- vgepshhmthhpohhuthdprhgtphhtthhopehprhhiihhkohhnvgesihhkihdrfhhipdhrtg
- hpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtoheptghhvghnsghogiesnhhv
- ihguihgrrdgtohhmpdhrtghpthhtohepnhhiphhunhdrghhuphhtrgesrghmugdrtghomh
-X-ME-Proxy: <xmx:WfpeaPiw7HUFSpnXlbxYOl8r_waxjJuH4-_lJr6UEgirseCamHAYYA>
- <xmx:WfpeaPDtqU2A2FTmZrUELKH-UpaAXwcJPgj28jD7ySHE_F89ng-jAw>
- <xmx:WfpeaIKLRrc0Aj4UOTDdMYsyNzqyEc8iLUonMSdxYB5SaII0982Fmw>
- <xmx:WfpeaODD1TQx_T_ZdQn9PHWgcx-estoqf9r-2IamIOyd6i_V_z-bXg>
- <xmx:WvpeaAk5LYtvE3MR5kiZHx0YAnJQaKr_IODq2-bwog6NtTEWtigqty_g>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 27 Jun 2025 16:08:57 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Pekka Riikonen <priikone@iki.fi>
-Cc: dev@dpdk.org, Chenbo Xia <chenbox@nvidia.com>,
- Nipun Gupta <nipun.gupta@amd.com>
-Subject: Re: [PATCH] bus/pci: fix automatic interrupt type selection
-Date: Fri, 27 Jun 2025 22:08:54 +0200
-Message-ID: <4268105.sGnKIMrFRI@thomas>
-In-Reply-To: <cdbd9d284dd174f99601f032ca6ee8fa@iki.fi>
-References: <8f5b22d3bedef793bf489c230b52b145@iki.fi>
- <7218036.9CP3fYhb5E@thomas>
- <cdbd9d284dd174f99601f032ca6ee8fa@iki.fi>
+	by mails.dpdk.org (Postfix) with ESMTP id C1D394026D;
+	Fri, 27 Jun 2025 23:07:57 +0200 (CEST)
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com
+ [209.85.210.173])
+ by mails.dpdk.org (Postfix) with ESMTP id C974F400EF
+ for <dev@dpdk.org>; Fri, 27 Jun 2025 23:07:56 +0200 (CEST)
+Received: by mail-pf1-f173.google.com with SMTP id
+ d2e1a72fcca58-7426c44e014so3213309b3a.3
+ for <dev@dpdk.org>; Fri, 27 Jun 2025 14:07:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751058476;
+ x=1751663276; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=DaPRoh5BFhq7bAFpo3z1BRw4GyZittETPKS9eNlRvWc=;
+ b=e12NZPiRYD5qOfd/3dV2U4BB4mHtc1oFnxtW+UiX6tMRSODhWClYDviHjAsAlQJ+kO
+ 3S5I/r0M+hKD8KTAFL7fB38hotQxp/y2WHZbpK1CW2le0fDzFMmYy+AywU8M+RvwtAec
+ 40fzGA729D9VxJvGEmOmlyQZ5Or9H+7BFRaSKkpB8/r4VCr4c8YFPT6s67iTZuVjFikB
+ Wd3pzUZbejjT/lQ7dIJmXK1u/7dAsClDPXPIuAhb1YE04UE9evxL/T+1EBg+cyLNDPec
+ 04lA6qp+OdUWwh7H++wNKDfeJQ/RM6NTOSfpzc+ORoi7D4x8Yli/nBa/W2jGPxR3sFgO
+ rXqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1751058476; x=1751663276;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=DaPRoh5BFhq7bAFpo3z1BRw4GyZittETPKS9eNlRvWc=;
+ b=xPKAb2pkQgPMkN01RKLs6rX0vfcy53DhzeJTLkGRWbylE19o3eyiGkLZ14SpYFiZA4
+ v410Yss5R243Hu2ZS54mUTQBcdqx1jJdBjIa9QRtrbJK14QqqWrnh/FegOHYZmtJdQsJ
+ Q7oqzSl0JHCAkeznRLfpMSCxAJw4qUICoZwsCeHBaNHin6y/lFrXsphaJAhx5KrDky0g
+ EW7io21dAb+gFFLSD3baGNjCCbElaidMO/DcYCc//nqIM405fg6hWPIBrqlPUk7NYJk1
+ DLeX0AvD9ISxhUL5c8ZNpI8KwRb1aWq3SLEECcM8Mv/BoQtdvk/uS1hEk3JhTYX9f7V9
+ 5yrQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXBd13ESov4o+lLOpb+LC1a0aFbv5OKVFeZHyQDGv23MBkLPbTZxRCCioKn4B6GJVY484E=@dpdk.org
+X-Gm-Message-State: AOJu0Yy3TX5Z9AiEaqCJ4UEL79PLFH6v/lUo57dgk4eV/m/ptuuIbnPp
+ EqlpCzzpZJrxRG1D7AOrYoLvvMXxsR22hkTZuW6abvbZsL8n6/vlG0YnDZNz/E4lZX8rkn3qeL4
+ ejO5N
+X-Gm-Gg: ASbGncvD8qT0Y0ImCkbNpn2DnLBRJPYv9qx2G66jL3GOc0toRkkLsRmC8dxt7vT1q4/
+ W638+OwALBfItt/KW/OTLj+6+Rqs/Pt6P98RLLwiplq5VtrwbvjHRv4AmHWL4Vc3uedU5FI0uAj
+ HKb1MLyn4x+suB0jc3o0jJ4KBNXAQsjbdU2Nc7bVh/jy7Mrb/RXUN1Ulva5iIVnHHzWz7Awwe2n
+ eg0KPATpZkEmI1YrMVlBC6b50stOoH/VTYsHtbesmpEUdz18JdglVT0nN4rZPj68VgvvFfiJEDX
+ +ygjvyvJXlgiBfReAq3yXOt5Q8cwvpUUQsl91hqOOEQL2hdlipfqetgE4gheXFu357LvXAMO1Es
+ atqFFOo4tdXdeksPRXQvKVytfhqDSUzzORvS6Tm3P96ueZ3X8gw==
+X-Google-Smtp-Source: AGHT+IH4FStmXenNu5soNQlPN3787Qq+2Yr0JhkLxcPmd9e5pYxOizmtN/z2SI1+gn1CEgFjYqYY3g==
+X-Received: by 2002:a05:6a20:4308:b0:220:2caa:3018 with SMTP id
+ adf61e73a8af0-220a16a2187mr8277468637.24.1751058475678; 
+ Fri, 27 Jun 2025 14:07:55 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d2e1a72fcca58-74af57ed353sm2865920b3a.153.2025.06.27.14.07.55
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 27 Jun 2025 14:07:55 -0700 (PDT)
+Date: Fri, 27 Jun 2025 14:07:52 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: "dimon.zhao" <dimon.zhao@nebula-matrix.com>
+Cc: kyo.liu@nebula-matrix.com, dev@dpdk.org
+Subject: Re: [PATCH v3 00/16] NBL PMD for Nebulamatrix NICs
+Message-ID: <20250627140752.0220aee5@hermes.local>
+In-Reply-To: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
+References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -91,26 +83,174 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-27/06/2025 21:33, Pekka Riikonen:
-> On 2025-06-27 19:00, Thomas Monjalon wrote:
-> > 20/06/2025 13:47, priikone@iki.fi:
-> >> Check if kernel returns 0 interrupt vectors and try another interrupt
-> >> type in that case.  Failing to check the vector count can select an
-> >> interrupt type that's unusable.
-> >> 
-> >> Signed-off-by: Pekka Riikonen <priikone@iki.fi>
-> > 
-> > Please could you be explicit about the use case you are trying to fix?
-> 
-> This particular case was with e1000em that only supported INTx, but the 
-> function selected MSI-X simply because it's the first one attempted, 
-> even though it got 0 vectors.  Enabling interrupts then failed.  If the 
-> function had checked the vector count it would have correctly selected 
-> INTx.  Now, my setup might have been quite old but it doesn't change 
-> that it selected wrong interrupt type.
+On Thu, 26 Jun 2025 18:40:06 -0700
+"dimon.zhao" <dimon.zhao@nebula-matrix.com> wrote:
 
-OK thank you, it helps for the review, and could be added to the commit log.
+> Features:
+> ---------
+> - MTU update
+> - promisc mode set
+> - xstats
+> - Basic stats=C2=A0
+>=20
+> Support NICs:
+> -------------
+> - S1205CQ-A00CHT
+> - S1105AS-A00CHT
+> - S1055AS-A00CHT
+> - S1052AS-A00CHT
+> - S1051AS-A00CHT
+> - S1045XS-A00CHT
+> - S1205CQ-A00CSP
+> - S1055AS-A00CSP
+> - S1052AS-A00CSP
+>=20
+> Dimon Zhao (16):
+>   net/nbl: add doc and minimum nbl build framework
+>   net/nbl: add simple probe/remove and log module
+>   net/nbl: add PHY layer definitions and implementation
+>   net/nbl: add Channel layer definitions and implementation
+>   net/nbl: add Resource layer definitions and implementation
+>   net/nbl: add Dispatch layer definitions and implementation
+>   net/nbl: add Dev layer definitions and implementation
+>   net/nbl: add complete device init and uninit functionality
+>   net/nbl: add UIO and VFIO mode for nbl
+>   net/nbl: add nbl coexistence mode for nbl
+>   net/nbl: add nbl ethdev configuration
+>   net/nbl: add nbl device rxtx queue setup and release ops
+>   net/nbl: add nbl device start and stop ops
+>   net/nbl: add nbl device Tx and Rx burst
+>   net/nbl: add nbl device xstats and stats
+>   net/nbl: nbl device support set MTU and promisc
+>=20
+>  .mailmap                                      |    4 +
+>  MAINTAINERS                                   |    9 +
+>  doc/guides/nics/features/nbl.ini              |    9 +
+>  doc/guides/nics/index.rst                     |    1 +
+>  doc/guides/nics/nbl.rst                       |   42 +
+>  drivers/net/meson.build                       |    1 +
+>  drivers/net/nbl/meson.build                   |   26 +
+>  drivers/net/nbl/nbl_common/nbl_common.c       |   47 +
+>  drivers/net/nbl/nbl_common/nbl_common.h       |   10 +
+>  drivers/net/nbl/nbl_common/nbl_thread.c       |   88 ++
+>  drivers/net/nbl/nbl_common/nbl_userdev.c      |  743 ++++++++++
+>  drivers/net/nbl/nbl_common/nbl_userdev.h      |   21 +
+>  drivers/net/nbl/nbl_core.c                    |  100 ++
+>  drivers/net/nbl/nbl_core.h                    |   98 ++
+>  drivers/net/nbl/nbl_dev/nbl_dev.c             | 1007 ++++++++++++++
+>  drivers/net/nbl/nbl_dev/nbl_dev.h             |   65 +
+>  drivers/net/nbl/nbl_dispatch.c                | 1227 +++++++++++++++++
+>  drivers/net/nbl/nbl_dispatch.h                |   31 +
+>  drivers/net/nbl/nbl_ethdev.c                  |  161 +++
+>  drivers/net/nbl/nbl_ethdev.h                  |   32 +
+>  drivers/net/nbl/nbl_hw/nbl_channel.c          |  853 ++++++++++++
+>  drivers/net/nbl/nbl_hw/nbl_channel.h          |  127 ++
+>  .../nbl_hw_leonis/nbl_phy_leonis_snic.c       |  230 +++
+>  .../nbl_hw_leonis/nbl_phy_leonis_snic.h       |   53 +
+>  .../nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c |  253 ++++
+>  .../nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.h |   10 +
+>  drivers/net/nbl/nbl_hw/nbl_phy.h              |   28 +
+>  drivers/net/nbl/nbl_hw/nbl_resource.c         |    5 +
+>  drivers/net/nbl/nbl_hw/nbl_resource.h         |  153 ++
+>  drivers/net/nbl/nbl_hw/nbl_txrx.c             |  907 ++++++++++++
+>  drivers/net/nbl/nbl_hw/nbl_txrx.h             |  136 ++
+>  drivers/net/nbl/nbl_hw/nbl_txrx_ops.h         |   91 ++
+>  drivers/net/nbl/nbl_include/nbl_def_channel.h |  434 ++++++
+>  drivers/net/nbl/nbl_include/nbl_def_common.h  |  128 ++
+>  drivers/net/nbl/nbl_include/nbl_def_dev.h     |  107 ++
+>  .../net/nbl/nbl_include/nbl_def_dispatch.h    |   95 ++
+>  drivers/net/nbl/nbl_include/nbl_def_phy.h     |   35 +
+>  .../net/nbl/nbl_include/nbl_def_resource.h    |   87 ++
+>  drivers/net/nbl/nbl_include/nbl_include.h     |  203 +++
+>  drivers/net/nbl/nbl_include/nbl_logs.h        |   25 +
+>  .../net/nbl/nbl_include/nbl_product_base.h    |   37 +
+>  41 files changed, 7719 insertions(+)
+>  create mode 100644 doc/guides/nics/features/nbl.ini
+>  create mode 100644 doc/guides/nics/nbl.rst
+>  create mode 100644 drivers/net/nbl/meson.build
+>  create mode 100644 drivers/net/nbl/nbl_common/nbl_common.c
+>  create mode 100644 drivers/net/nbl/nbl_common/nbl_common.h
+>  create mode 100644 drivers/net/nbl/nbl_common/nbl_thread.c
+>  create mode 100644 drivers/net/nbl/nbl_common/nbl_userdev.c
+>  create mode 100644 drivers/net/nbl/nbl_common/nbl_userdev.h
+>  create mode 100644 drivers/net/nbl/nbl_core.c
+>  create mode 100644 drivers/net/nbl/nbl_core.h
+>  create mode 100644 drivers/net/nbl/nbl_dev/nbl_dev.c
+>  create mode 100644 drivers/net/nbl/nbl_dev/nbl_dev.h
+>  create mode 100644 drivers/net/nbl/nbl_dispatch.c
+>  create mode 100644 drivers/net/nbl/nbl_dispatch.h
+>  create mode 100644 drivers/net/nbl/nbl_ethdev.c
+>  create mode 100644 drivers/net/nbl/nbl_ethdev.h
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_channel.c
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_channel.h
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_s=
+nic.c
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_s=
+nic.h
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.h
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_phy.h
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_resource.c
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_resource.h
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_txrx.c
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_txrx.h
+>  create mode 100644 drivers/net/nbl/nbl_hw/nbl_txrx_ops.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_def_channel.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_def_common.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_def_dev.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_def_dispatch.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_def_phy.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_def_resource.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_include.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_logs.h
+>  create mode 100644 drivers/net/nbl/nbl_include/nbl_product_base.h
+>=20
 
-Adding PCI bus maintainers for review.
+This submission is too late to make 25.07 release; but here is first
+pass review, will do more when you follow up.
 
+The driver compiles and for all variations of compilers, etc
+this is good. Doc say 32 bit not supported, but build works
+and not flagged by meson build checks.
+
+Saw the following minor things:
+
+There are some checkpatch warnings about unused macro argument.
+Ok, to keep but would be better to fix.
+
+The check-git-log scrip flags:
+Contributor name/email mismatch with .mailmap:
+	dimon.zhao <dimon.zhao@nebula-matrix.com> is unknown in .mailmap
+Probably just capitalization in some patch.
+
+You don't say if driver is save from primary secondary process?
+
+The driver has more features like multi-q and jumbo frame which
+are not called out in doc_guides/nics/features/nbl.rst
+
+Don't use rte_memcpy (instead just use memcpy).
+rte_memcpy should be reserved for variable length copies in the
+data path.
+
+The following are more major issues:
+
+Kernel module(s):
+You need explicitly mention kernel modules with RTE_PMD_REGISTER_KMOD_DEP(_)
+and if it is a not upstream module provide a link to the kernel source.
+
+Control thread.
+Adding additional threads can be a problem in embedded systems.
+And especially if those threads end up polling.
+Even worse since all control threads share a single lcore.
+If you need a control thread then figure out a way to make it blocking
+using eventfd or pipe? DPDK tries to avoid doing work queue type
+things.
+
+The setup of the DPDK ethdev ops is done dynamically via macros.
+This is just added confusion and makes the driver different than all
+the others without any benefit. Just follow the existing design
+pattern. Ops table should be const.
+
+I also look at comparing features in doc vs ethdev ops
+and this makes review harder.
 
