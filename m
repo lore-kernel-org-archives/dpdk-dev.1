@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F09FEC7EE31
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Jun 2025 10:44:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D32C7EE31
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Jun 2025 10:46:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5752940658;
-	Fri, 27 Jun 2025 12:44:50 +0200 (CEST)
-Received: from fout-b2-smtp.messagingengine.com
- (fout-b2-smtp.messagingengine.com [202.12.124.145])
- by mails.dpdk.org (Postfix) with ESMTP id A6BDF4025D
- for <dev@dpdk.org>; Fri, 27 Jun 2025 12:44:49 +0200 (CEST)
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal
- [10.202.2.46])
- by mailfout.stl.internal (Postfix) with ESMTP id 256441D0029B;
- Fri, 27 Jun 2025 06:44:49 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-06.internal (MEProxy); Fri, 27 Jun 2025 06:44:49 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id E981C4026B;
+	Fri, 27 Jun 2025 12:46:35 +0200 (CEST)
+Received: from fhigh-b8-smtp.messagingengine.com
+ (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+ by mails.dpdk.org (Postfix) with ESMTP id 075F04025D
+ for <dev@dpdk.org>; Fri, 27 Jun 2025 12:46:34 +0200 (CEST)
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal
+ [10.202.2.43])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 76EDC7A025E;
+ Fri, 27 Jun 2025 06:46:33 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-03.internal (MEProxy); Fri, 27 Jun 2025 06:46:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1751021089;
- x=1751107489; bh=oiu15o71aalyuIwPFIufqYGbAv5FCwuCingdxmIKAeY=; b=
- JO6gGuE6KsHnYCQaHoRkyLJRsXhVTNW45fDIp7JWwYx8lFYyTVbNi/SR3UBX4+eL
- +vaRB0gFYE/dLCAdAVAsKcnUujuEJhwOVcEqkHhwmqx/45TPB2M68+PpaJDDhZcv
- fh+NPkTtiWyv0LXcTyyxk/F9TcM4Zl3KqP3nycakzCnEH5NJsReRXefNDsTKHj7K
- vLu391sB7dSlcTv6GkoHjRWyiB+UsMHUy+AO0s6TOku1ctLwkuOaif3K4xLE9sSR
- rwJ7Ec9eTa3H6pfOsNXhDEcJwhzCTNl1qZzPkdq+t1cpTQdLq7kWTZQtsyEjmnUa
- FFPti56OneKXsZq8pZtXNw==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1751021193;
+ x=1751107593; bh=4WmOXrywMVG22HaXUp+OSO0nfV7grOideKJD/rWN3mA=; b=
+ bpioXB+gwcJfUiD/dr5hhMYp5wN9Aj3bGKsqmgEDlZ75R9hwhUtkcVkDx5nJj+qo
+ HbvxG56rofaMhLJ/tXQ6W1DUHyfXLvwbIUgJi37v4EL4FdcUNqdc42YuTFG3GNRL
+ ZAjoxES3Ff5k30CQ7JJT3DFg8PLV1Q0X3NgghUsWmmiETIfpN+F+JaUZbJrdlxnc
+ aOoXr2ZSNKhbp3V+u8asXasjshsTQ9Dg1t8eRIdQfC2zUfMA1WeSQ5SZ+EhKm36L
+ GgcmiOTMPBHtaXXf7MYRwvpsEHGkqccC0WFTjf+RaskL6pHYJqfFtspWt4L5n2yK
+ yyWqYGBP10ZYf6EZYNjheQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751021089; x=
- 1751107489; bh=oiu15o71aalyuIwPFIufqYGbAv5FCwuCingdxmIKAeY=; b=c
- KgMRGP6YKWBluSmntHjWl6pAoynjx/dhhPDLrXj500zO66TcRm2BYCt//zaethBA
- GZSfuHs3tGodeoRQQ27lj9G+bijbFkrLCAcJHxTGQ3KDCsREoyGLk2cf84j2up3w
- tSDdchAabwGHSptdqWhKx6rfGI76odUK1X/VBkZB0vxFMnSL48uZQ7NZ17Scjddc
- uomirqo+D9w94AMiCW214MauNHzKkhbTrwR5HceO589oOWdMru5p8kREF2K7zt1u
- MMUVNaZ0HbsEDypgzMK5NjVY8sYdbceKZF94DK4sRkVEs5bcNtfzZfB4Ep0e7e4o
- oH5jeXoYm4B5qC0hjZxjw==
-X-ME-Sender: <xms:IHZeaHPdqdjMIPgZjp_e-W8j51K4ZPNkf1fpuj3LvrLwD_-qAp1pMA>
- <xme:IHZeaB-4QgUnXan9WgNLNWo0cqqWaNdctcldKliMZ63S4uXJiY-OfliA_WBRDx3vS
- mBYFBMXMvmRTeRpSQ>
-X-ME-Received: <xmr:IHZeaGSXyMQqwdDEW_T3CCjiVMsKZQf8ckLrQowazNiF7c92ExlVQxx0ps1cpfzR34904OuprabLmAF5-ai6-2Z-Zg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddvkeehucetufdoteggodetrfdotf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751021193; x=
+ 1751107593; bh=4WmOXrywMVG22HaXUp+OSO0nfV7grOideKJD/rWN3mA=; b=c
+ c22rgyDf7XZMzU7EJ8SfOamdey00656A/6TRbztsaSY/1C2LxCGGrbJfYChsv+PO
+ 84K/buiEMjFL9ajXO2XXWf/9UPuFaR+cgj7FvmFaebB9y9r1DmG6qMwnb2xVSJYc
+ uevjOBt8utdzr2tmOWlfgzXKbGyQDtf/ZBibd4AkrU97RnSD40nD049lQIhCD+Vw
+ eOuPZsftOLH7PEobAmr+Q9GjHsN08yWL2U1vupZVdHkg5ew6B7uaaw+ERyWPbu9t
+ cWWWzD1nXtrUq1iZKENBE1vcL8KjlItIrubdvKUmC0Ccz7k3KW1lqaLXsaVJk55j
+ ZOGzlqp4jHivFih4lPkCg==
+X-ME-Sender: <xms:iXZeaGdwwqIvHMtPE7n8WkxJCtwtoUQE_nolFdqajt6MjBty_GfTzw>
+ <xme:iXZeaAOCsDZbDSKu7Vq7Xyd4Kvo7oGawVFz6G-0ONvY38bZyQGu7iXVdtQ6lDMlb5
+ RfFMreqlTMqhVGFVQ>
+X-ME-Received: <xmr:iXZeaHhlGkqJvUyFeU2HVxnwLdrgICDuZdLOv49SIl5-sDV0HOXAFw7iyuzIQ2RM7VtpQZhb-Xd_wYQoyoC8LDCE5A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddvkeeiucetufdoteggodetrfdotf
  fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
  lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
  ephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghsucfo
@@ -55,23 +55,25 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddvkeehucetufdoteggod
  hthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeefpdhmohgu
  vgepshhmthhpohhuthdprhgtphhtthhopegrnhgrthholhihrdgsuhhrrghkohhvsehinh
  htvghlrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohep
- rhhorhgvthiilhgrsehlihhnuhigrdhmihgtrhhoshhofhhtrdgtohhm
-X-ME-Proxy: <xmx:IHZeaLu5f47DT_PAOZ5fUhCoo5CXqXWyqB_h1lwbaMcuHiNgznFWOA>
- <xmx:IHZeaPfa5wv6Od8HwuQ_89R0vIlZs5uwZ-5ScWZCWGxnkzL2efrgtA>
- <xmx:IHZeaH3BDO8lfL45gioLUKmCBxBdxPlblrb8Vr9wFeaYmBGi0kEALg>
- <xmx:IHZeaL9BHnauGvDj0gT0GVHWGpr22KOVQCgN7LgjFMWKQppGEOyLjw>
- <xmx:IHZeaJcjeczRD5Geul0tO5ALcOh31mT0DLHVU8ZsRIlgxQqa8OodePAG>
+ sghruhgtvgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtohhm
+X-ME-Proxy: <xmx:iXZeaD9w6iPvRmazwHJOFqP9B-a_-bkYmPKlamRWh9pOatcSlJFv1g>
+ <xmx:iXZeaCspAkQMIsYWXD_i7oL0dWCyNhPlzt7ivACLyB5y3l3rVHtbsg>
+ <xmx:iXZeaKHFcqQ_M6XAQSwEe0bHXJ8IW21cgXlpslU4i3s8siRSYjh_Cw>
+ <xmx:iXZeaBNddmNHDeJVQkmEU-K8cCpuD-qUoXXKu_lJUdD_gbsj1QQSTg>
+ <xmx:iXZeaKTQQkV6vBVAfa8oAfyP5cv3mcGMxwhdpgAVK4GU8XvouLvzXky2>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 27 Jun 2025 06:44:48 -0400 (EDT)
+ 27 Jun 2025 06:46:32 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: Anatoly Burakov <anatoly.burakov@intel.com>
-Cc: dev@dpdk.org, Tyler Retzlaff <roretzla@linux.microsoft.com>
-Subject: Re: [PATCH v1 1/1] malloc: handle invalid socket ID's when allocating
-Date: Fri, 27 Jun 2025 12:44:47 +0200
-Message-ID: <8674337.c0te8JeNC1@thomas>
-In-Reply-To: <02ee77dec888cd2ece830f63c5163c4ad7d3d3a5.1750067739.git.anatoly.burakov@intel.com>
-References: <02ee77dec888cd2ece830f63c5163c4ad7d3d3a5.1750067739.git.anatoly.burakov@intel.com>
+Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>
+Subject: Re: [PATCH v1 1/1] memory: handle invalid socket ID's when allocating
+Date: Fri, 27 Jun 2025 12:46:31 +0200
+Message-ID: <3865806.FMhQkTaH9n@thomas>
+In-Reply-To: <3956282.MyG8hOvIyE@thomas>
+References: <4e785f17154922f775c56558947b2f967f25b23c.1750426216.git.anatoly.burakov@intel.com>
+ <aFVkMQ6jc27mTJG2@bricha3-mobl1.ger.corp.intel.com>
+ <3956282.MyG8hOvIyE@thomas>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -88,19 +90,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-16/06/2025 11:55, Anatoly Burakov:
-> This issue was reported by static analysis. It is a false positive,
-> because both `rte_socket_count` and `rte_socket_id_by_idx` only report
-> information about physical sockets (so return value of -1 cannot happen,
-> as we only get into this function when socket ID parameter is -1, which
-> excludes external memory from consideration), but to avoid future false
-> positives, we can fix it here.
+27/06/2025 12:44, Thomas Monjalon:
+> 20/06/2025 15:37, Bruce Richardson:
+> > On Fri, Jun 20, 2025 at 02:30:23PM +0100, Anatoly Burakov wrote:
+> > > This issue was reported by static analysis. It is a false positive,
+> > > because both `rte_socket_count` and `rte_socket_id_by_idx` only report
+> > > information about physical sockets, and these specific calls are made
+> > > during EAL initialization, so no other sockets (i.e. external) could have
+> > > been available, so it is pretty much impossible to get invalid return here.
+> > > 
+> > > Still, to avoid future false positives, we can fix it here.
+> > > 
+> > > Coverity issue: 470131
+> > > 
+> > > Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> > Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 > 
-> Coverity issue: 470137
-> 
-> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> Applied, thanks?
 
-Applied, thanks.
+Sorry for this typo, it was not supposed to be a question mark.
+Yes you absolutely deserve some thanks for your continuous maintenance
+of the DPDK memory subsystem. Thank you Anatoly :)
 
 
 
