@@ -2,88 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28ABBC77B7F
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Jun 2025 07:25:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 882ADC77B7F
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Jun 2025 07:53:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 45B5B402DC;
-	Fri, 27 Jun 2025 09:25:10 +0200 (CEST)
-Received: from fout-b8-smtp.messagingengine.com
- (fout-b8-smtp.messagingengine.com [202.12.124.151])
- by mails.dpdk.org (Postfix) with ESMTP id B72AD4026C;
- Fri, 27 Jun 2025 09:25:08 +0200 (CEST)
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal
- [10.202.2.46])
- by mailfout.stl.internal (Postfix) with ESMTP id CABC21D00214;
- Fri, 27 Jun 2025 03:25:07 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-06.internal (MEProxy); Fri, 27 Jun 2025 03:25:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1751009107;
- x=1751095507; bh=OVujw1wzOYjmy1unLkQtfrIPJzMsNVwHytv67mAwJ+8=; b=
- fBkY/Ela+So4cfXFhpGzlglDYamjpEPRHmahHwEg+ay6Q2hIHEkG3L9Vp3aLaWKP
- XXVh105i4znCwu2V+4RqarQ38LSrM7xPOD4362fHr20hhBXy1W9yAnFOVUr+AtwL
- 6CO8qGATWeGXTl+elbXzWPAnBiFwIDa5Pd7YKvQHDOEbpZFZUZZ6aQX+ydd6r1pg
- bJSbDjtwCAlmwBQQbrHCgeHhiehotFh+iFTWaL7aC7Q0DCgVGqKkSfFb1J0FYNwX
- TogsxYoHKc39Gmll0DEg+n7nnzPyHdVVyIjNtFTWFR2WdeRXlEpu/hLzy8/1SuQ9
- THFG237+KEAdUnaaSftw7Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751009107; x=
- 1751095507; bh=OVujw1wzOYjmy1unLkQtfrIPJzMsNVwHytv67mAwJ+8=; b=I
- l1rqFkwFI+hK7kCFRszJVjkXyNVTGN0jdrvG4KHJGD0K1FvxodrALxweE+joCkiQ
- 2Cm4FMxzwSoTHA9BNoY04z8qM9ZlNNwzSZxMOX7eGgfLJdQFetVcc1p/My9lufaG
- R23n7R1e9qqTtTUWDhKBQ5dWErWH5b3rEEa5pndeByYY+HP7kyXtA9mMKjjAfE/Q
- v2+DI7T3ziain8puvWBkzhdGsOx9QM02R/fkkKDiqBwEYKxsUKEbKWcnj9+IwKzq
- iD/1fapDlaF4uasmyT7jWjnerXGff19INbCMhsUY+CZs/2WuK+rCa1OxMOnylOzy
- 2xld2NMhxXToZLH5Az/XQ==
-X-ME-Sender: <xms:UkdeaAxz8SYxilumSvgyMJqYX8nk8qwW6NQJuJlVs_wmULgB3yb9BQ>
- <xme:UkdeaETgMEEiuXq_q9KkqAIbbLS8QvM4Zn_qYGAMtnqUA4-slWJr8RNsDK2_bhUz0
- 1qZSpa9xJPWFQBpNg>
-X-ME-Received: <xmr:UkdeaCXtXFl4l-IAgTENacZTC7EcTqTCX-V9lV8v8DbsKrEVnQX9LtQZSxS8-pKIGM4cQF4QSW3i5NsyiEcBc7tvfA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddvgeeiucetufdoteggodetrfdotf
- fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
- lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
- ephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghsucfo
- ohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtffrrg
- htthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdvuefg
- feekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
- hthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedutddpmhho
- uggvpehsmhhtphhouhhtpdhrtghpthhtohepudegphiftghsvgduvddvgeesuhgvthhpvg
- hshhgrfigrrhdrvgguuhdrphhkpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhr
- tghpthhtoheprhgrshhlrghnugesnhhvihguihgrrdgtohhmpdhrtghpthhtohepshhtrg
- gslhgvseguphgukhdrohhrghdprhgtphhtthhopehvihgrtghhvghslhgrvhhosehnvhhi
- ughirgdrtghomhdprhgtphhtthhopegsihhnghiisehnvhhiughirgdrtghomhdprhgtph
- htthhopehorhhikhgrsehnvhhiughirgdrtghomhdprhgtphhtthhopehsuhgrnhhmihhn
- ghhmsehnvhhiughirgdrtghomhdprhgtphhtthhopehmrghtrghnsehnvhhiughirgdrtg
- homh
-X-ME-Proxy: <xmx:UkdeaOiin4KiYxdqSXx08MtGSxvUYvuUPtexvNJWQTeQuZluaXLeCA>
- <xmx:UkdeaCCReKS3HGWCD9xmmkkaFb7JWMH3_bXUMPiIQiVOs5NaeEYLeA>
- <xmx:UkdeaPImH2TeMkb8KIejl15ayOwB7pLirzftMmWNNtrsgo-B47BVrg>
- <xmx:UkdeaJCS9tN2RQrQti1r_z2yS5KdPy_GGo8OBMo52OqSTPf9RgY37w>
- <xmx:U0deaOPj81IlmcpE7g0VaTI6J-GLJBF6QM4q_nWQC0bjPMb88NLRQFLx>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 27 Jun 2025 03:25:04 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Cc: dev@dpdk.org, rasland@nvidia.com, stable@dpdk.org, viacheslavo@nvidia.com, 
- bingz@nvidia.com, orika@nvidia.com, suanmingm@nvidia.com, matan@nvidia.com,
- Dariusz Sosnowski <dsosnowski@nvidia.com>
-Subject: Re: [PATCH v2] net/mlx5: fix segfault on indirect action age query
- with conntrack
-Date: Fri, 27 Jun 2025 09:25:02 +0200
-Message-ID: <10060217.iedYuu7f5S@thomas>
-In-Reply-To: <20250626133251.cfa7hd5tbclo3xjo@ds-vm-debian.local>
-References: <20250626130702.3921887-1-14pwcse1224@uetpeshawar.edu.pk>
- <20250626133251.cfa7hd5tbclo3xjo@ds-vm-debian.local>
+	by mails.dpdk.org (Postfix) with ESMTP id 8A9634026D;
+	Fri, 27 Jun 2025 09:53:54 +0200 (CEST)
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com
+ [209.85.160.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 00DCD4025D
+ for <dev@dpdk.org>; Fri, 27 Jun 2025 09:53:53 +0200 (CEST)
+Received: by mail-qt1-f172.google.com with SMTP id
+ d75a77b69052e-4a43972dcd7so24767161cf.3
+ for <dev@dpdk.org>; Fri, 27 Jun 2025 00:53:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1751010832; x=1751615632; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=uiYKVyzp/mqPyUB57qYAQPJXxPsAhJ2nslzrUBHRCNE=;
+ b=fXf4JnUyv3uw7NkmtmSR2k2t2mTtNBfRPUFXNTwPSqUwrGY17KGnmkhOQg0eDlk1RL
+ 6+3rIMp6cczVXQi5PWXuqACXEiGk2Asd12rGhOacOPwCR2wPgPSPLrvagm0C94QxMbBr
+ pFONz2fpuKJb8nuiKDineGB5vHFf941SaUPGr8SkJY0CwAKm5g+Muwe0AEOjYzJKJoDg
+ UZk8M7SYi7WrG64rznasN8n0IAS9Q9dnTU5ZEJ12ffj0TuHqgZ9WQY+tyOdfNyQCYdey
+ fVT3h3cgF53K/W+Ako8/+L4x4Qja1cbUJLfJ5BA38AOxhp6vT6KN3Uoje4SagXC6zqz4
+ gq7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1751010832; x=1751615632;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=uiYKVyzp/mqPyUB57qYAQPJXxPsAhJ2nslzrUBHRCNE=;
+ b=coNNzRtuWHhB6ihS3B2JyYP8ZDcq8fEZ4i75utZ+97mc5cI/VrT2tmHJdnuIi5zViB
+ vTAhEdx3SZDb9/HTGiy2ODG1JSehwKpH3cofxQPjdq0uIiKuyLJfxInOBIa2KmC+RMho
+ /9QtWtH9W61FarWN8DvexCGNV0k1FbtIRelm7Ialnw2LtGtZTR5iHt/MUcDmXOhP7tw7
+ 01Rb+0du9Gvz4b6VcixIB6Peo3nVhpYcuv5f/HewiUrKczUvNFX0E8q65dc/kG//NMB6
+ trbSstSgQ9HxwzQZGlYnPguuEtJv84Ildup+i74qMqIyO5grwUkGVS4VHGDnmc3T/BdG
+ xjXQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWvS7LPbM6Vu2CKIX0CTKPB7+64jIztLZvDq7ZShrJZDOAtECrYF4TK9L27GOK3a2FIL14=@dpdk.org
+X-Gm-Message-State: AOJu0YxRekCXH1Fhc3IbMnpJcAKFXXBVpuaWTcGKrO7vv3vhPnPukvZU
+ QzxbyYgPuo9taOKrv8U6dP+WEGz07R/oZEYWEzJ920JowybsGoPt6AWz+IaBenYfcxd5hOuuKZf
+ 69gzxieKDOUbNCq+kLfO4Vepefqnva7Q=
+X-Gm-Gg: ASbGncvxoSrJlvJ51CyUwzTKsrU9aqZNWmgorP/rTVn1sFyO8mW2dyWORDngv0HbJSG
+ Mx7zaegEW/MSgNGNeAqZf8IsERrycbEGYTQZCHd0+k0eWQ2lmFmb6ZbvoWn/BoVoxuhpb63Kol3
+ J58dpFe6j5EYlig8UR0XqN/1YrHyLzWPb0+WHkrblFIQ==
+X-Google-Smtp-Source: AGHT+IFXON2aaemlzz9i7nkAOaqcgmG8WPGf4d0WDQX4km/DG+mgeFHqpkoIlEI+0U2FZ1xpuCWjMQye9IpiPQb1eKs=
+X-Received: by 2002:a05:622a:11d3:b0:4a3:6cbf:1fb4 with SMTP id
+ d75a77b69052e-4a7fcbab30emr37400811cf.29.1751010832284; Fri, 27 Jun 2025
+ 00:53:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+References: <20250612001338.71098-1-pbhagavatula@marvell.com>
+ <PH0PR18MB40860834C1DE674B225A0AB7DE7DA@PH0PR18MB4086.namprd18.prod.outlook.com>
+In-Reply-To: <PH0PR18MB40860834C1DE674B225A0AB7DE7DA@PH0PR18MB4086.namprd18.prod.outlook.com>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Fri, 27 Jun 2025 13:23:26 +0530
+X-Gm-Features: Ac12FXz13nvnTZ7ay2l5wXhKYG95qC_p-nT_0KNJbNzqxjB8YNtaZcCJesEOcSI
+Message-ID: <CALBAE1NOg-1QSdSJ+s2SBHYBn06QAqUe4CrugnzLeHmDdvr1oA@mail.gmail.com>
+Subject: Re: [PATCH] test/event: fix event vector adapter timeouts
+To: Pavan Nikhilesh Bhagavatula <pbhagavatula@marvell.com>
+Cc: Jerin Jacob <jerinj@marvell.com>,
+ "thomas@monjalon.net" <thomas@monjalon.net>, 
+ "david.marchand@redhat.com" <david.marchand@redhat.com>,
+ "dev@dpdk.org" <dev@dpdk.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -97,19 +79,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-26/06/2025 15:32, Dariusz Sosnowski:
-> Thank you very much for changes and detailed descriptions.
-> It helped a lot during review.
-> 
-> Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
-> 
-> On Thu, Jun 26, 2025 at 09:07:02AM -0400, Khadem Ullah wrote:
-> > v2:
-> >  - Added missing check for AGE + CT conflict in flow_dv_query().
-> >  - Removed unnecessary null check from flow_aso_age_get_by_idx().
-> >  - Added Fixes tag for LTS tracking.
-> >  - Ensured .mailmap and Signed-off-by addresses match.
+On Thu, Jun 19, 2025 at 6:52=E2=80=AFPM Pavan Nikhilesh Bhagavatula
+<pbhagavatula@marvell.com> wrote:
+>
+> >Sent: Thursday, June 12, 2025 05:43
+> >To: Jerin Jacob; thomas@monjalon.net; david.marchand@redhat.com; Pavan N=
+ikhilesh Bhagavatula
+> >Cc: dev@dpdk.org
+> >Subject: [PATCH] test/event: fix event vector adapter timeouts
+> >
+> >From: Pavan Nikhilesh <pbhagavatula@marvell.com>
+> >
+> >Update event vector adapter test to depend on service
+> >core cycles instead of system cycles when waiting for
+> >events.
+> >Reorder event_type check to make sure event received
+> >is a vector before dereferencing vector structure.
+> >
+> >Bugzilla ID: 1720
+> >Fixes: de09387f1313 ("eventdev/vector: add default software vector adapt=
+er")
 
-Applied, thanks.
+Acked-by: Jerin Jacob <jerinj@marvell.com>
 
 
+>
+> Recheck-request: rebase=3Dmain, iol-unit-amd64-testing
