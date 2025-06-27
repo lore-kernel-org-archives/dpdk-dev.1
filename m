@@ -2,81 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D32C7EE31
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Jun 2025 10:46:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E06B8C7EE31
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Jun 2025 10:57:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E981C4026B;
-	Fri, 27 Jun 2025 12:46:35 +0200 (CEST)
-Received: from fhigh-b8-smtp.messagingengine.com
- (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
- by mails.dpdk.org (Postfix) with ESMTP id 075F04025D
- for <dev@dpdk.org>; Fri, 27 Jun 2025 12:46:34 +0200 (CEST)
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal
- [10.202.2.43])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 76EDC7A025E;
- Fri, 27 Jun 2025 06:46:33 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-03.internal (MEProxy); Fri, 27 Jun 2025 06:46:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1751021193;
- x=1751107593; bh=4WmOXrywMVG22HaXUp+OSO0nfV7grOideKJD/rWN3mA=; b=
- bpioXB+gwcJfUiD/dr5hhMYp5wN9Aj3bGKsqmgEDlZ75R9hwhUtkcVkDx5nJj+qo
- HbvxG56rofaMhLJ/tXQ6W1DUHyfXLvwbIUgJi37v4EL4FdcUNqdc42YuTFG3GNRL
- ZAjoxES3Ff5k30CQ7JJT3DFg8PLV1Q0X3NgghUsWmmiETIfpN+F+JaUZbJrdlxnc
- aOoXr2ZSNKhbp3V+u8asXasjshsTQ9Dg1t8eRIdQfC2zUfMA1WeSQ5SZ+EhKm36L
- GgcmiOTMPBHtaXXf7MYRwvpsEHGkqccC0WFTjf+RaskL6pHYJqfFtspWt4L5n2yK
- yyWqYGBP10ZYf6EZYNjheQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751021193; x=
- 1751107593; bh=4WmOXrywMVG22HaXUp+OSO0nfV7grOideKJD/rWN3mA=; b=c
- c22rgyDf7XZMzU7EJ8SfOamdey00656A/6TRbztsaSY/1C2LxCGGrbJfYChsv+PO
- 84K/buiEMjFL9ajXO2XXWf/9UPuFaR+cgj7FvmFaebB9y9r1DmG6qMwnb2xVSJYc
- uevjOBt8utdzr2tmOWlfgzXKbGyQDtf/ZBibd4AkrU97RnSD40nD049lQIhCD+Vw
- eOuPZsftOLH7PEobAmr+Q9GjHsN08yWL2U1vupZVdHkg5ew6B7uaaw+ERyWPbu9t
- cWWWzD1nXtrUq1iZKENBE1vcL8KjlItIrubdvKUmC0Ccz7k3KW1lqaLXsaVJk55j
- ZOGzlqp4jHivFih4lPkCg==
-X-ME-Sender: <xms:iXZeaGdwwqIvHMtPE7n8WkxJCtwtoUQE_nolFdqajt6MjBty_GfTzw>
- <xme:iXZeaAOCsDZbDSKu7Vq7Xyd4Kvo7oGawVFz6G-0ONvY38bZyQGu7iXVdtQ6lDMlb5
- RfFMreqlTMqhVGFVQ>
-X-ME-Received: <xmr:iXZeaHhlGkqJvUyFeU2HVxnwLdrgICDuZdLOv49SIl5-sDV0HOXAFw7iyuzIQ2RM7VtpQZhb-Xd_wYQoyoC8LDCE5A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddvkeeiucetufdoteggodetrfdotf
- fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
- lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
- ephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghsucfo
- ohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtffrrg
- htthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdvuefg
- feekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
- hthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeefpdhmohgu
- vgepshhmthhpohhuthdprhgtphhtthhopegrnhgrthholhihrdgsuhhrrghkohhvsehinh
- htvghlrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohep
- sghruhgtvgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:iXZeaD9w6iPvRmazwHJOFqP9B-a_-bkYmPKlamRWh9pOatcSlJFv1g>
- <xmx:iXZeaCspAkQMIsYWXD_i7oL0dWCyNhPlzt7ivACLyB5y3l3rVHtbsg>
- <xmx:iXZeaKHFcqQ_M6XAQSwEe0bHXJ8IW21cgXlpslU4i3s8siRSYjh_Cw>
- <xmx:iXZeaBNddmNHDeJVQkmEU-K8cCpuD-qUoXXKu_lJUdD_gbsj1QQSTg>
- <xmx:iXZeaKTQQkV6vBVAfa8oAfyP5cv3mcGMxwhdpgAVK4GU8XvouLvzXky2>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 27 Jun 2025 06:46:32 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Anatoly Burakov <anatoly.burakov@intel.com>
-Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>
-Subject: Re: [PATCH v1 1/1] memory: handle invalid socket ID's when allocating
-Date: Fri, 27 Jun 2025 12:46:31 +0200
-Message-ID: <3865806.FMhQkTaH9n@thomas>
-In-Reply-To: <3956282.MyG8hOvIyE@thomas>
-References: <4e785f17154922f775c56558947b2f967f25b23c.1750426216.git.anatoly.burakov@intel.com>
- <aFVkMQ6jc27mTJG2@bricha3-mobl1.ger.corp.intel.com>
- <3956282.MyG8hOvIyE@thomas>
+	by mails.dpdk.org (Postfix) with ESMTP id 023624026B;
+	Fri, 27 Jun 2025 12:57:49 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id C2DB64025D
+ for <dev@dpdk.org>; Fri, 27 Jun 2025 12:57:47 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55R1wHfl026882;
+ Fri, 27 Jun 2025 03:57:46 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=Y
+ 1M4ZuuCE2AZl6rpOtAXoqAfeyCn8ETE+NblSXzoBcE=; b=dCAhWkrv8No1Tv94l
+ QYHMiBIcW5KL08WiZJadKf7byupC9vejpTwZZdx1pHTVVHw2JCaZ/bNv+uJRaMAB
+ 4vX+iI74cnl4J7862STcXpXCV3ODfmRJlIsOckBfFjUw2EkT+O/OzCxDknd9/PrH
+ GsRsdURA+EkY95MbnHVozo8I6eWjRVMaRhz2yfw8QSnMPWLeaymOj9zdQUCTzVlE
+ Cfm4AyeD/p4Zfj+X0MDoUxEuygVB/meqN3Kz0fRkeEvv1rfxGn6ioB3psTHssSqI
+ A3BkmsRrESiuoCOQe2pTprZqbUZff6Sf1ZUnOhVpKjukvXxMYKaFqglbqXc1zFPv
+ LZU5w==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 47hfxph710-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Fri, 27 Jun 2025 03:57:46 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 27 Jun 2025 03:57:45 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 27 Jun 2025 03:57:45 -0700
+Received: from cavium-optiplex-3070-BM15.. (unknown [10.28.34.39])
+ by maili.marvell.com (Postfix) with ESMTP id 998E75C68E3;
+ Fri, 27 Jun 2025 03:57:42 -0700 (PDT)
+From: Tomasz Duszynski <tduszynski@marvell.com>
+To: <tduszynski@marvell.com>
+CC: <bruce.richardson@intel.com>, <dev@dpdk.org>, <jerinj@marvell.com>,
+ <mb@smartsharesystems.com>, <thomas@monjalon.net>,
+ <david.marchand@redhat.com>
+Subject: [PATCH v6 0/8] lib/pmu: cleanups and trace integration
+Date: Fri, 27 Jun 2025 12:57:32 +0200
+Message-ID: <20250627105740.3388237-1-tduszynski@marvell.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250625044730.2435526-1-tduszynski@marvell.com>
+References: <20250625044730.2435526-1-tduszynski@marvell.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI3MDA4OSBTYWx0ZWRfX04rFXyjvBWsg
+ 4Thu4BYOBmktaO6OonJwfe4UpwS3653qtbh6yrZJTN5EUEGfe2PfNBDjh0cWWHUDLQdei3YAGhR
+ XI0hCQOnyk84v222ilsUVZNa4oHEqj3nPGytUifHxupglWXMgr/Qb9R3tMingeDD/oqWs7+OX/E
+ GH27w7RyN0OrPzpwQ9Wn5QMwQRDca0qwK7Y4xIasCRFrV10+a97Hqkbvk+Ff3q7EXoclJ8mAsSH
+ /8WaafOQ72o0SkCmFkuEmR/orNe1KX9djPYoIiMYhGJqOD5a0QX5FIWjGU9yxfIV3JFkYj3K3JG
+ N+FAymZmddkjWFQNTQ/ANZcw/GNXamxD4GjWZ2faVafNFeWlofDizHNWHDDqx1mWv6WVNJSAcFq
+ jenwiDPynNlUG/qhiZVJPnRaedYZiZCGXn27txvIl+hJ9j60kjQZIaV82P9UhgTDBRbawlDY
+X-Proofpoint-GUID: 11xNikjb18p5fxl7xE9QDQMO9bu1Wsus
+X-Proofpoint-ORIG-GUID: 11xNikjb18p5fxl7xE9QDQMO9bu1Wsus
+X-Authority-Analysis: v=2.4 cv=D/BHKuRj c=1 sm=1 tr=0 ts=685e792a cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=6IFa9wvqVegA:10 a=iR-xy-VhiHNNf1baXf0A:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-27_04,2025-06-26_05,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -90,27 +80,62 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-27/06/2025 12:44, Thomas Monjalon:
-> 20/06/2025 15:37, Bruce Richardson:
-> > On Fri, Jun 20, 2025 at 02:30:23PM +0100, Anatoly Burakov wrote:
-> > > This issue was reported by static analysis. It is a false positive,
-> > > because both `rte_socket_count` and `rte_socket_id_by_idx` only report
-> > > information about physical sockets, and these specific calls are made
-> > > during EAL initialization, so no other sockets (i.e. external) could have
-> > > been available, so it is pretty much impossible to get invalid return here.
-> > > 
-> > > Still, to avoid future false positives, we can fix it here.
-> > > 
-> > > Coverity issue: 470131
-> > > 
-> > > Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-> > Acked-by: Bruce Richardson <bruce.richardson@intel.com>
-> 
-> Applied, thanks?
+This series does some cleanup and refactoring around the rc1 code like: trimming unused headers,
+switching to callbacks for per-arch handling, and adding trace support. It also re-enables existing
+base test to help catch reported issues on some architectures.
 
-Sorry for this typo, it was not supposed to be a question mark.
-Yes you absolutely deserve some thanks for your continuous maintenance
-of the DPDK memory subsystem. Thank you Anatoly :)
+v6:
+- add more logs to functional test
+- skip test in case of setup failure, user must make sure
+  system is properly configured to get valid results
+v5:
+- add missing patch that quiesces chincs check
+v4:
+- change fast test so that it won't fail on misconfigured system
+- fix compilation on windows
+v3:
+- do not export __rte_pmu_trace_read because that breaks compilation
+  on windows - script generating map files does not handle conditional
+  compilation
+- skip testing if paranoia is at wrong level
+v2:
+- explicitly check against NULL
+- make pmu lib optional by checking if dpdk config has RTE_LIB_PMU
 
+Tomasz Duszynski (8):
+  lib/pmu: quiesce rte_pmu_read deprecation warning in chkincs
+  lib/pmu: export only necessary arch headers
+  lib/pmu: reimplement per-arch ops as callbacks
+  lib/pmu: do not try enabling perf counter access on arm64
+  lib/pmu: use build system defined RTE_LIB_PMU macro
+  test/pmu: enable test
+  trace: add PMU
+  lib/pmu: fix out-of-bound access
 
+ MAINTAINERS                                |  1 +
+ app/test/test_pmu.c                        | 58 ++++++++++++--
+ app/test/test_trace_perf.c                 | 10 +++
+ doc/guides/prog_guide/profile_app.rst      |  5 ++
+ doc/guides/prog_guide/trace_lib.rst        | 31 ++++++++
+ doc/guides/rel_notes/release_25_07.rst     |  2 +
+ lib/eal/common/eal_common_trace.c          |  5 +-
+ lib/eal/common/eal_common_trace_pmu.c      | 38 +++++++++
+ lib/eal/common/eal_common_trace_points.c   | 20 +++++
+ lib/eal/common/eal_trace.h                 |  4 +
+ lib/eal/common/meson.build                 |  1 +
+ lib/eal/include/rte_eal_trace.h            | 16 ++++
+ lib/eal/include/rte_trace_point.h          |  7 ++
+ lib/eal/include/rte_trace_point_register.h |  2 +
+ lib/eal/meson.build                        |  3 +
+ lib/meson.build                            |  2 +-
+ lib/pmu/meson.build                        | 10 +--
+ lib/pmu/pmu.c                              | 92 ++++++++++++++++------
+ lib/pmu/pmu_arm64.c                        | 59 +++++---------
+ lib/pmu/pmu_private.h                      | 51 ++++++++++--
+ lib/pmu/rte_pmu.h                          | 31 +++++++-
+ 21 files changed, 366 insertions(+), 82 deletions(-)
+ create mode 100644 lib/eal/common/eal_common_trace_pmu.c
+
+--
+2.34.1
 
