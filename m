@@ -2,75 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69807C7EE39
-	for <dpdk-dev@archiver.kernel.org>; Sat, 28 Jun 2025 22:44:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6853FC54ED1
+	for <dpdk-dev@archiver.kernel.org>; Sat, 28 Jun 2025 22:49:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C6F3A402E0;
-	Sun, 29 Jun 2025 00:44:33 +0200 (CEST)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
- [209.85.214.182])
- by mails.dpdk.org (Postfix) with ESMTP id 3216040288
- for <dev@dpdk.org>; Sun, 29 Jun 2025 00:44:32 +0200 (CEST)
-Received: by mail-pl1-f182.google.com with SMTP id
- d9443c01a7336-2366e5e4dbaso35706895ad.1
- for <dev@dpdk.org>; Sat, 28 Jun 2025 15:44:32 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3FBCD4025D;
+	Sun, 29 Jun 2025 00:49:33 +0200 (CEST)
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
+ [209.85.214.169])
+ by mails.dpdk.org (Postfix) with ESMTP id C10C940144
+ for <dev@dpdk.org>; Sun, 29 Jun 2025 00:49:31 +0200 (CEST)
+Received: by mail-pl1-f169.google.com with SMTP id
+ d9443c01a7336-237311f5a54so5442685ad.2
+ for <dev@dpdk.org>; Sat, 28 Jun 2025 15:49:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751150671;
- x=1751755471; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751150971;
+ x=1751755771; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=wOfQdQNp/Vs50YJet/xP9tv7ZowzJw3aI+QBcf4HHIw=;
- b=crDmVNRuIX4YOf3VclQLq1b3wpAVRY/IuvXzVHUOIIMeGyqxv4t96xn9adyFrL6b1J
- qGdPkElXPgz6lLVCsTNolFc/tNIya87CEVSW/OhyG29kiysIUKMxEQsXFC4t58Jh2CL9
- y7v5QnEV9mmso72KkctxXGCo5107TuIJPpmxiLCcGcbZ3L6/T3da9Y6jw6pENCRqJjl6
- w+GOoYSchM7q0e8m83XWqCLH0gycxzxIVeTnIbH7y8vsddED8DXmyRkHcRsA/Lo9f254
- iSu+qB3gG9Dno0XGntp1f6JDT/sX3L0/vmlD+uVcZeTD44tEPoHBihK23z8/Qn7FriB/
- uhtA==
+ bh=DFb5mSgNXCwRTaWVHCwbfMABkuS4o6MzLUrKvL+Q0eA=;
+ b=EN2l8cNrBvzMx9w3U9vvgXn39l9vpE69eeGw2D8/pu0hkwY4t3VK4vQf+Nh9Fj6Sw6
+ DaSeBFlZcKde+9lwLu+0eN9CTYGshlCxuBWTyshWMlWKTtFEcIVGRVfgZwebLHU/dBEA
+ W/jz0US9F26UDNnCCwGhavdCDAqJnSVzI0BhzlzHw6XRXSe1ETltOvf45R2kWhNR/IwD
+ fk32d506LmAN6W+ve/TewsvT+JcfxuCxjoRblG1LqI1PDl0fxUHFmhIvgx62sBjF3bke
+ OCFLH3XjptHzSuW02Nv7aqjh4eQ7n5WPSABUr8NERosgW51ODfOTxAOu5vBEuSWMnY3Q
+ bGjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1751150671; x=1751755471;
+ d=1e100.net; s=20230601; t=1751150971; x=1751755771;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=wOfQdQNp/Vs50YJet/xP9tv7ZowzJw3aI+QBcf4HHIw=;
- b=TixmdYO0xKLoalWwSgbDKagPCx2uY5AmnR6uPMTV3U3+PLJn9rXEUKDMWA//DQQbV6
- Cor1t0AtTVynaeIfloInTayWsHndk/XWXraafAjE48SWLhivUAS1xSWT82nJDyy5v3o4
- E3oGm3IQi8lVUxzMjyRP4+1sJ4KD5zgc39bdm2+JUj6TYHNuo0liXWwB+JRBiNgtaBXw
- kx/ckcIBJgkSLjdgLNahjawGIvq9HSsOBD8WvdzZ4qm8HF/aOxIiGUFEo1tm4zXSpnCp
- jUfUmhuXvn93H61YODusBwfu6ZEcTdxAyzRHKWEM1miVv0AoGOf+68jXh22FkH6Y9qYq
- ZbVg==
+ bh=DFb5mSgNXCwRTaWVHCwbfMABkuS4o6MzLUrKvL+Q0eA=;
+ b=rxIncjlYMusnTpG/X6teyo9ci/7YiTV0X7GOzr6/y5gGxS/B7lJHrT/VvSjROgnlV1
+ ArQ1C954UQ3eyU0xHPMIsYQOYMgUMmwAjECw98T7qh1Td5AqRvBdRGk4R6oNn04vxXZu
+ ONSEMKVjh2CBpSXSIEMxiCcu9bbwl4j00bd/9Zz63RTK202DmK42nYv47FoZB4yE1bbC
+ 0AI8rJhJlMbCOcrJ7hD9rA7dSazIklZ31dzZ6iO3BUCAtXfX/6kFTzhuEM8N8aUyQp0q
+ zV3fLhhg3WykNSQJuT+MasWMCYcdoO6/tZNH5qtCucAV3lhJjl7azUdFXl14bvWW54BH
+ g9IA==
 X-Forwarded-Encrypted: i=1;
- AJvYcCU0/rf52M71booNfgtqSrf9Fjl7YnKs8WaVbZF0Nlm/FPHynjwOnC6vjpkMUXgA1PaLvvY=@dpdk.org
-X-Gm-Message-State: AOJu0YyoLVph2JNoeJuZ5KFZyxrAkczBHIt7NebDZT6Ow7SYJdyEeLHf
- wg07YrTk9EFSXdCVKchL+Rk4LGlGXKd2p7tu61hB9KZDtTiLwx39zw9aHcfE/1Bzagw=
-X-Gm-Gg: ASbGncuVom9kix9Q/LDjcQPrU4aJIqlw9iByi2kqmcwLh723b4nrpTMZBYOH70f4l9y
- smQqO5qSAgN3DTG5HPRccog5rJACKr7u1WrD6SCguHT6YNoGOWJ2Su8OBwPvpBi43NE+MzC0siw
- LNF8Kni5D8H+ncTTEZrzS/d/F9L5ru5ctHOH9V+m6Zg1q4J34k/cJ32/vo0dKLNRdVQI0EVwc/y
- PkhIBPqP/Hq3/n4S+TYGOCJkt8Ki8Jr1PDDFIeqbqEVTcq/2h+SszdvQBrpzY0wnZA7HsmPKm39
- N29ba+caY9gvO3vtmBOspMs0cg+QXqM1Dq9ZTLnkDZd3LIxF6BTxSq4kTSJPPMxzaRhH5qPYqUS
- 27sYFbt3PNMG847BdL/ru/fyeWCu3IZNVN/Jwx+w=
-X-Google-Smtp-Source: AGHT+IE/C1XCwknp3Evk4BxK4zp6mnn0WgMa/GI6u+pSe40w/Ekljk1cF8Erjbd7zfqqxMKunuP/Pw==
-X-Received: by 2002:a17:902:e847:b0:236:71a5:4417 with SMTP id
- d9443c01a7336-238e9e05a5cmr178151905ad.5.1751150671096; 
- Sat, 28 Jun 2025 15:44:31 -0700 (PDT)
+ AJvYcCWv6Vn+THNWStsRltHZMwFkYgpHjMeIz+ebhCKkYd4oMV9N7GUrZ8uQrMn3DGJVtRp9JQg=@dpdk.org
+X-Gm-Message-State: AOJu0YyDgyWlz3oYQt5gZTS7ascsh30Q+8cZbExXh/Pci+HVvkG3hYYc
+ efGtrKTUG8d2UV51U3RdWdUBi4dAo6rHhTBA37JdaPIrEia2D0dwt9JDM2f+ujs5028=
+X-Gm-Gg: ASbGncuPAOpa/DByPzxi4PM+zfe0nYcJuipFyHI2Z2ZQVe/SMRCDVmwzuXli9qtE5x2
+ RP6JFuVDqAsElAktYG6Glpsm4bGTP65+J3XQhX/Ch2jIhdgiH+87bMk7cxP9awF7cHVNUkwVCMB
+ /1ufb7Mkqpk5XjE9N3Ru95M8mEAgkEeFAp2xRarFTNsTdwIgzfHw2P7SYVcJs3nERKB7Z6Tsfl9
+ 3nJBkKUyWqz/tGtMzRIwAtvHYbryMkd3T3l1RO3DN+ktXs74LhDCh1jypPdmu0ae8m7DzN+hK7V
+ BKAEw1vwwseMs843TfYnmZUGtftm+rCvLXBADaKxifV9DzVYpsKvGasLn6YB6CzXTf7FQNDoQFh
+ MUzU91x8b+aKIKkrY9d14/vB2ghO4a5ljdjlmykI=
+X-Google-Smtp-Source: AGHT+IHdhWdpTqmeyhZIcEkAaoy3DJPTCI1wKD74Z06nB4/T5150VexfqGGgywWeORf8QMKfkM44OQ==
+X-Received: by 2002:a17:903:1a2e:b0:235:7c6:ebc2 with SMTP id
+ d9443c01a7336-23ac2d86931mr105754675ad.4.1751150970803; 
+ Sat, 28 Jun 2025 15:49:30 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-23acb3c8b81sm44698925ad.242.2025.06.28.15.44.30
+ d9443c01a7336-23acb3b8be5sm45392825ad.189.2025.06.28.15.49.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 28 Jun 2025 15:44:30 -0700 (PDT)
-Date: Sat, 28 Jun 2025 15:44:28 -0700
+ Sat, 28 Jun 2025 15:49:30 -0700 (PDT)
+Date: Sat, 28 Jun 2025 15:49:27 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Wenbo Cao <caowenbo@mucse.com>
-Cc: Ferruh Yigit <ferruh.yigit@amd.com>, dev@dpdk.org, yaojun@mucse.com,
- stable@dpdk.org
-Subject: Re: [PATCH v1 1/3] net/rnp: add check firmware respond info
-Message-ID: <20250628154428.1de592f9@hermes.local>
-In-Reply-To: <20250618121113.17302-2-caowenbo@mucse.com>
-References: <20250618121113.17302-1-caowenbo@mucse.com>
- <20250618121113.17302-2-caowenbo@mucse.com>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
+Cc: "Thomas Monjalon" <thomas@monjalon.net>, "Tyler Retzlaff"
+ <roretzla@linux.microsoft.com>, "Anatoly Burakov"
+ <anatoly.burakov@intel.com>, "Bruce Richardson"
+ <bruce.richardson@intel.com>, "Maxime Coquelin"
+ <maxime.coquelin@redhat.com>, "Chenbo Xia" <chenbox@nvidia.com>, "Tomasz
+ Duszynski" <tduszynski@marvell.com>, <dev@dpdk.org>
+Subject: Re: [PATCH v3 2/3] eal: handle sysconf(_SC_PAGESIZE) negative
+ return value
+Message-ID: <20250628154927.6161b011@hermes.local>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FD5B@smartserver.smartshare.dk>
+References: <20250610131348.248800-1-mb@smartsharesystems.com>
+ <6180155.ReJHH8Nr61@thomas>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FD53@smartserver.smartshare.dk>
+ <21665758.gIjEHFZm8d@thomas>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FD5B@smartserver.smartshare.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,95 +92,99 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 18 Jun 2025 20:11:11 +0800
-Wenbo Cao <caowenbo@mucse.com> wrote:
+On Sat, 28 Jun 2025 18:45:44 +0200
+Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
 
-> diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
-> index de1c077f61..7b996913c8 100644
-> --- a/drivers/net/rnp/rnp_ethdev.c
-> +++ b/drivers/net/rnp/rnp_ethdev.c
-> @@ -751,17 +751,17 @@ rnp_get_speed_caps(struct rte_eth_dev *dev)
->  {
->  	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
->  	uint32_t speed_cap = 0;
-> -	uint32_t i = 0, speed;
->  	uint32_t support_link;
-> -	uint32_t link_types;
-> +	uint32_t speed = 0;
-> +	int bit_pos = 0;
->  
->  	support_link = port->attr.phy_meta.supported_link;
-> -	link_types = rte_popcount64(support_link);
-> -	if (!link_types)
-> +	if (support_link == 0)
->  		return 0;
-> -	for (i = 0; i < link_types; i++) {
-> -		speed = ffs(support_link) - 1;
-> -		switch (RTE_BIT32(speed)) {
-> +	while (support_link) {
-> +		bit_pos = ffs(support_link) - 1;
-> +		speed = RTE_BIT32(bit_pos) & RNP_SPEED_VALID_MASK;
-> +		switch (speed) {
->  		case RNP_SPEED_CAP_10M_FULL:
->  			speed_cap |= RTE_ETH_LINK_SPEED_10M;
->  			break;
-> @@ -789,7 +789,7 @@ rnp_get_speed_caps(struct rte_eth_dev *dev)
->  		default:
->  			speed_cap |= 0;
->  		}
-> -		support_link &= ~RTE_BIT32(speed);
-> +		support_link &= ~(1ULL << bit_pos);
->  	}
->  	if (!port->attr.phy_meta.link_autoneg)
->  		speed_cap |= RTE_ETH_LINK_SPEED_FIXED;
+> > From: Thomas Monjalon [mailto:thomas@monjalon.net]
+> > Sent: Friday, 27 June 2025 20.30
+> >=20
+> > 27/06/2025 19:49, Morten Br=C3=B8rup: =20
+> > > > From: Thomas Monjalon [mailto:thomas@monjalon.net]
+> > > > Sent: Friday, 27 June 2025 19.35
+> > > >
+> > > > 27/06/2025 18:38, Morten Br=C3=B8rup: =20
+> > > > > > From: Thomas Monjalon [mailto:thomas@monjalon.net]
+> > > > > > Sent: Friday, 27 June 2025 17.58
+> > > > > >
+> > > > > > 24/06/2025 10:03, Morten Br=C3=B8rup: =20
+> > > > > > > +		if ((ssize_t)page_size < 0)
+> > > > > > > +			rte_panic("sysconf(_SC_PAGESIZE) failed: %s",
+> > > > > > > +					errno =3D=3D 0 ? "Indeterminate" : =20
+> > > > > > strerror(errno));
+> > > > > >
+> > > > > > We don't want more rte_panic().
+> > > > > > You could log the problem and return 0 here.
+> > > > > > It will be a problem later, but it may allow the application to=
+ =20
+> > > > cleanup =20
+> > > > > > instead of abrupting crashing. =20
+> > > > >
+> > > > > Disagree.
+> > > > > That would be likely to cause crash with division by zero later.
+> > > > > Better to fail early. =20
+> > > >
+> > > > Which division by zero? =20
+> > >
+> > > Functions dividing by page size. E.g.:
+> > > =20
+> > https://elixir.bootlin.com/dpdk/v25.03/source/lib/eal/common/eal_common_
+> > memory.c#L313 =20
+> > > =20
+> > > >
+> > > > I don't think a library should take this decision on behalf of the =
+=20
+> > app. =20
+> > >
+> > > I expect lots of things to break if sysconf(_SC_PAGESIZE) fails, so =
+=20
+> > the purpose of this patch is to centralize error handling here, and only
+> > continue/return with non-failing values. =20
+> > >
+> > > Otherwise, everywhere using rte_mem_page_size() or =20
+> > sysconf(_SC_PAGESIZE) should implement error handling (or ignore
+> > errors). =20
+> > > That's a lot of places, so I'm not going to provide a patch doing =20
+> > that.
+> >=20
+> > I understand.
+> >=20
+> > The problem is that we don't have an exception mechanism in this
+> > language. =20
+>=20
+> Yep.
+> And everyone assumes sysconf(_SC_PAGESIZE) never fails, which is probably=
+ correct, so nobody implemented error handling for it. Not even in rte_mem_=
+page_size().
+> Coverity detected the missing error handling, and warns: "Although rte_me=
+m_page_size() is declared to return unsigned int, it may actually return a =
+negative value." This defect applies to all functions calling rte_mem_page_=
+size().
+> This patch adds error handling to ensure that rte_mem_page_size() only re=
+turns non-negative values, or doesn=E2=80=99t return at all - i.e. fails wi=
+th rte_panic() - so Coverity is satisfied with callers not implementing err=
+or handling for it.
+>=20
+> It would be borderline waste of time fixing all the callers, so I fixed t=
+he root cause to satisfy Coverity.
+>=20
+> From an higher level perspective:
+> This is a low level EAL function to determine the page size. I would cons=
+ider it reasonable for such a low level EAL function to never fail.
+> If some O/S decides to not have a "system page size", and fail with "Inde=
+terminate", e.g. to support multiple page sizes, we would need to handle th=
+at somehow. But let's ignore that until it actually happens, if ever.
+>=20
+> If you are skeptical about this patch 2/3 in the series, we can escalate =
+the discussion to the tech board. If you really hate this patch 2/3, I will=
+ honor a NAK from you. The patch is not important for me; I'm just trying t=
+o clean up.
+>=20
 
+In such cases, I look at glibc source and see if handles it or not.
+Looks like only used a couple of places there, the result of sysconf(_SC_PA=
+GE_SIZE) is checked
+in one of the tests; but is not checked in the loading of locale's.  It exp=
+ects a valid power of 2
+value there.
 
-Prefer not to mix raw masks and use of rte_bitops.
-Better to stick to rte_bitops which is portable to Windows as well.
-Can be simplified like:
-
-static uint32_t
-rnp_get_speed_caps(struct rte_eth_dev *dev)
-{
-	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
-	uint32_t speed_cap = 0;
-	uint32_t support_link = port->attr.phy_meta.supported_link & RNP_SPEED_VALID_MASK;
-
-	while (support_link != 0) {
-		unsigned int bit_pos = rte_ffs32(support_link);
-		uint32_t speed = RTE_BIT32(bit_pos);
-
-		switch (speed) {
-		case RNP_SPEED_CAP_10M_FULL:
-			speed_cap |= RTE_ETH_LINK_SPEED_10M;
-			break;
-		case RNP_SPEED_CAP_100M_FULL:
-			speed_cap |= RTE_ETH_LINK_SPEED_100M;
-			break;
-		case RNP_SPEED_CAP_1GB_FULL:
-			speed_cap |= RTE_ETH_LINK_SPEED_1G;
-			break;
-		case RNP_SPEED_CAP_10GB_FULL:
-			speed_cap |= RTE_ETH_LINK_SPEED_10G;
-			break;
-		case RNP_SPEED_CAP_40GB_FULL:
-			speed_cap |= RTE_ETH_LINK_SPEED_40G;
-			break;
-		case RNP_SPEED_CAP_25GB_FULL:
-			speed_cap |= RTE_ETH_LINK_SPEED_25G;
-			break;
-		case RNP_SPEED_CAP_10M_HALF:
-			speed_cap |= RTE_ETH_LINK_SPEED_10M_HD;
-			break;
-		case RNP_SPEED_CAP_100M_HALF:
-			speed_cap |= RTE_ETH_LINK_SPEED_100M_HD;
-			break;
-		}
-		support_link &= ~speed;
-	}
-	if (!port->attr.phy_meta.link_autoneg)
-		speed_cap |= RTE_ETH_LINK_SPEED_FIXED;
-
-	return speed_cap;
-}
-
+Ok to just die if value isn't valid.
