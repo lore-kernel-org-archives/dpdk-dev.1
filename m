@@ -2,43 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47316C7EE32
-	for <dpdk-dev@archiver.kernel.org>; Sat, 28 Jun 2025 07:28:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D839C7EE32
+	for <dpdk-dev@archiver.kernel.org>; Sat, 28 Jun 2025 07:28:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CCCD140E21;
-	Sat, 28 Jun 2025 09:26:39 +0200 (CEST)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.222])
- by mails.dpdk.org (Postfix) with ESMTP id 8932940DCA
- for <dev@dpdk.org>; Sat, 28 Jun 2025 09:26:33 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B557840E35;
+	Sat, 28 Jun 2025 09:26:41 +0200 (CEST)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.220])
+ by mails.dpdk.org (Postfix) with ESMTP id 0D96D40DCE
+ for <dev@dpdk.org>; Sat, 28 Jun 2025 09:26:34 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=E+BoFnrLvtTySp1W5M55bnGnE1u2nElQitZH5u6BpO4=;
- b=p3y38kp68afguedPL6DvrwcubyqKTRqSzohnuYQw0X0U7ZmGUOV1Ufb7yJI1NG
- nXCV0ZEqrmeMamoHBFmovn4yc1YPtxR1OV4H6MDn7Z2bUY0p8tBsvACJwXbAXoN1
- Vmr+1eIe5aaxCQSLLDoNYIq3h29P6GNt/DRA2jG0mHzbE=
+ MIME-Version; bh=cqMzDVozk1o/jgqoSZDq5jJXQSjGihy6vwSb0CtPVvk=;
+ b=frXJ+BGRD8W+slQBIXHzeMHB0B2y/dJvQtFpxURxww0xJm8fWskPTmNxmGBf3U
+ ffTppITfZA30k7mioY+OHRx7O7MEXiH1VIY3i+EnB9j7czX6CcM7rFbk+eLnoXV5
+ dJqT/TuZR99JnOXxUmCvwg9X4zRTKE40RUyKrr8NIBMao=
 Received: from localhost.localdomain (unknown [114.116.198.59])
- by gzsmtp2 (Coremail) with SMTP id As8vCgDnrwERmV9o+dKKAw--.5048S20;
- Sat, 28 Jun 2025 15:26:31 +0800 (CST)
+ by gzsmtp2 (Coremail) with SMTP id As8vCgDnrwERmV9o+dKKAw--.5048S22;
+ Sat, 28 Jun 2025 15:26:33 +0800 (CST)
 From: Feifei Wang <wff_light@vip.163.com>
 To: dev@dpdk.org
-Cc: gongfan1@huawei.com, Xin Wang <wangxin679@h-partners.com>,
- Feifei Wang <wangfeifei40@huawei.com>, Yi Chen <chenyi221@huawei.com>
-Subject: [V3 16/18] net/hinic3: add RSS promiscuous ops
-Date: Sat, 28 Jun 2025 15:25:39 +0800
-Message-ID: <20250628072552.1311-17-wff_light@vip.163.com>
+Cc: gongfan1@huawei.com, Yi Chen <chenyi221@huawei.com>,
+ Xin Wang <wangxin679@h-partners.com>, Feifei Wang <wangfeifei40@huawei.com>
+Subject: [V3 18/18] drivers/net: add hinic3 PMD build and doc files
+Date: Sat, 28 Jun 2025 15:25:41 +0800
+Message-ID: <20250628072552.1311-19-wff_light@vip.163.com>
 X-Mailer: git-send-email 2.47.0.windows.2
 In-Reply-To: <20250628072552.1311-1-wff_light@vip.163.com>
 References: <20250418090621.9638-1-wff_light@vip.163.com>
  <20250628072552.1311-1-wff_light@vip.163.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-CM-TRANSID: As8vCgDnrwERmV9o+dKKAw--.5048S20
-X-Coremail-Antispam: 1Uf129KBjvAXoW3CFWkZF1rKry7KF43ZF18Xwb_yoW8Gr1xWo
- WxGrsxKwnxtr1Sy34vqrs3AFZrXFWkC3Z3C39YkrsxXFs7XFyUGFy5Xan3Jw1jqr90vr9r
- AFnaqFy0qa97J3Wrn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU7QzVDUUUU
+X-CM-TRANSID: As8vCgDnrwERmV9o+dKKAw--.5048S22
+X-Coremail-Antispam: 1Uf129KBjvJXoW3WFy3AFW8WrW5KrW7WrW3Jrb_yoW7KF18pa
+ 1UCaySvr40qr4xt3Z3AFyxAFWFvw18KFyjkw43Ca4rZryDAFy5ZayUKFWYkF9Fqr12yFyf
+ ZFn8C393KFnYqw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jO9N3UUUUU=
 X-Originating-IP: [114.116.198.59]
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiARt6CmhfYNdknQAAsT
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiBBt6CmhfYcRWDwAAsk
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,500 +52,253 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Xin Wang <wangxin679@h-partners.com>=0D
+From: Yi Chen <chenyi221@huawei.com>=0D
 
-Add RSS and promiscuous ops related function codes.=0D
+The meson.build file is added to this patch to enable=0D
+the hinic3 compilation function.=0D
 =0D
-Signed-off-by: Xin Wang <wangxin679@h-partners.com>=0D
+Signed-off-by: Yi Chen <chenyi221@huawei.com>=0D
+Reviewed-by: Xin Wang <wangxin679@h-partners.com>=0D
 Reviewed-by: Feifei Wang <wangfeifei40@huawei.com>=0D
-Reviewed-by: Yi Chen <chenyi221@huawei.com>=0D
 ---=0D
- drivers/net/hinic3/hinic3_ethdev.c | 370 +++++++++++++++++++++++++++++=0D
- drivers/net/hinic3/hinic3_ethdev.h |  31 +++=0D
- 2 files changed, 401 insertions(+)=0D
+ doc/guides/nics/features/hinic3.ini | 62 +++++++++++++++++++++++++++++=0D
+ drivers/net/hinic3/base/meson.build | 50 +++++++++++++++++++++++=0D
+ drivers/net/hinic3/meson.build      | 33 +++++++++++++++=0D
+ drivers/net/hinic3/mml/meson.build  | 33 ++++-----------=0D
+ drivers/net/meson.build             |  1 +=0D
+ 5 files changed, 154 insertions(+), 25 deletions(-)=0D
+ create mode 100644 doc/guides/nics/features/hinic3.ini=0D
+ create mode 100644 drivers/net/hinic3/base/meson.build=0D
+ create mode 100644 drivers/net/hinic3/meson.build=0D
 =0D
-diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3=
-_ethdev.c=0D
-index ac36c49afc..0807e017c2 100644=0D
---- a/drivers/net/hinic3/hinic3_ethdev.c=0D
-+++ b/drivers/net/hinic3/hinic3_ethdev.c=0D
-@@ -2277,6 +2277,281 @@ hinic3_dev_allmulticast_disable(struct rte_eth_dev =
-*dev)=0D
- 	return 0;=0D
- }=0D
+diff --git a/doc/guides/nics/features/hinic3.ini b/doc/guides/nics/features=
+/hinic3.ini=0D
+new file mode 100644=0D
+index 0000000000..a30236fe09=0D
+--- /dev/null=0D
++++ b/doc/guides/nics/features/hinic3.ini=0D
+@@ -0,0 +1,62 @@=0D
++;=0D
++; Supported features of the 'hinic3' network poll mode driver.=0D
++;=0D
++; Refer to default.ini for the full list of available PMD features.=0D
++;=0D
++[Features]=0D
++Speed capabilities   =3D Y=0D
++Link speed configuration =3D Y=0D
++Link status          =3D Y=0D
++Link status event    =3D Y ?=0D
++Rx interrupt         =3D Y=0D
++Queue start/stop     =3D Y=0D
++Runtime Rx queue setup =3D Y=0D
++Runtime Tx queue setup =3D Y=0D
++Burst mode info      =3D Y=0D
++Fast mbuf free       =3D Y=0D
++Free Tx mbuf on demand =3D Y=0D
++MTU update           =3D Y=0D
++Scattered Rx         =3D Y=0D
++TSO                  =3D Y=0D
++LRO                  =3D Y=0D
++Promiscuous mode     =3D Y=0D
++Allmulticast mode    =3D Y=0D
++Unicast MAC filter   =3D Y=0D
++Multicast MAC filter =3D Y=0D
++RSS hash             =3D Y=0D
++RSS key update       =3D Y=0D
++RSS reta update      =3D Y=0D
++RSS reta query       =3D Y=0D
++VLAN filter          =3D Y=0D
++Flow control         =3D Y=0D
++Traffic manager      =3D Y=0D
++CRC offload          =3D Y=0D
++FEC                  =3D Y=0D
++L3 checksum offload  =3D Y=0D
++L4 checksum offload  =3D Y=0D
++Inner L3 checksum    =3D Y=0D
++Inner L4 checksum    =3D Y=0D
++Packet type parsing  =3D Y=0D
++Basic stats          =3D Y=0D
++Extended stats       =3D Y=0D
++Stats per queue      =3D Y=0D
++FW version           =3D Y=0D
++Registers dump       =3D Y=0D
++Module EEPROM dump   =3D Y=0D
++Timesync             =3D Y=0D
++Multiprocess aware   =3D Y=0D
++Linux                =3D Y=0D
++x86-64               =3D Y=0D
++ARMv8                =3D Y=0D
++=0D
++[rte_flow items]=0D
++any                  =3D Y=0D
++eth                  =3D Y=0D
++icmp                 =3D Y=0D
++ipv4                 =3D Y=0D
++ipv6                 =3D Y=0D
++tcp                  =3D Y=0D
++udp                  =3D Y=0D
++vxlan                =3D Y=0D
++[rte_flow actions]=0D
++queue                =3D Y=0D
+diff --git a/drivers/net/hinic3/base/meson.build b/drivers/net/hinic3/base/=
+meson.build=0D
+new file mode 100644=0D
+index 0000000000..b6a3a6cfe7=0D
+--- /dev/null=0D
++++ b/drivers/net/hinic3/base/meson.build=0D
+@@ -0,0 +1,50 @@=0D
++# SPDX-License-Identifier: BSD-3-Clause=0D
++# Copyright(c) 2025 Huawei Technologies Co., Ltd=0D
++=0D
++sources =3D files(=0D
++        'hinic3_cmdq.c',=0D
++        'hinic3_eqs.c',=0D
++        'hinic3_hw_cfg.c',=0D
++        'hinic3_hw_comm.c',=0D
++        'hinic3_hwdev.c',=0D
++        'hinic3_hwif.c',=0D
++        'hinic3_mbox.c',=0D
++        'hinic3_mgmt.c',=0D
++        'hinic3_nic_cfg.c',=0D
++        'hinic3_nic_event.c',=0D
++        'hinic3_wq.c',=0D
++)=0D
++=0D
++extra_flags =3D []=0D
++=0D
++# The driver runs only on arch64 machine, remove 32bit warnings=0D
++if not dpdk_conf.get('RTE_ARCH_64')=0D
++    extra_flags +=3D [=0D
++            '-Wno-int-to-pointer-cast',=0D
++            '-Wno-pointer-to-int-cast',=0D
++    ]=0D
++endif=0D
++=0D
++foreach flag: extra_flags=0D
++    if cc.has_argument(flag)=0D
++        cflags +=3D flag=0D
++    endif=0D
++endforeach=0D
++=0D
++deps +=3D ['hash']=0D
++c_args =3D cflags=0D
++includes +=3D include_directories('../')=0D
++=0D
++base_lib =3D static_library(=0D
++    'spnic_base',=0D
++    sources,=0D
++    dependencies: [=0D
++        static_rte_eal,=0D
++        static_rte_ethdev,=0D
++        static_rte_bus_pci,=0D
++        static_rte_hash,=0D
++    ],=0D
++    include_directories: includes,=0D
++    c_args: c_args,=0D
++)=0D
++base_objs =3D base_lib.extract_all_objects()=0D
+diff --git a/drivers/net/hinic3/meson.build b/drivers/net/hinic3/meson.buil=
+d=0D
+new file mode 100644=0D
+index 0000000000..42fb5bc194=0D
+--- /dev/null=0D
++++ b/drivers/net/hinic3/meson.build=0D
+@@ -0,0 +1,33 @@=0D
++# SPDX-License-Identifier: BSD-3-Clause=0D
++# Copyright(c) 2025 Huawei Technologies Co., Ltd=0D
++=0D
++if not is_linux=0D
++    build =3D false=0D
++    reason =3D 'only supported on Linux'=0D
++    subdir_done()=0D
++endif=0D
++=0D
++if (arch_subdir !=3D 'x86' and arch_subdir !=3D 'arm'=0D
++        or not dpdk_conf.get('RTE_ARCH_64'))=0D
++    build =3D false=0D
++    reason =3D 'only supported on x86_64 and aarch64'=0D
++    subdir_done()=0D
++endif=0D
++=0D
++cflags +=3D ['-DHW_CONVERT_ENDIAN']=0D
++=0D
++subdir('base')=0D
++subdir('mml')=0D
++objs =3D [base_objs] + [mml_objs]=0D
++=0D
++sources =3D files(=0D
++        'hinic3_ethdev.c',=0D
++        'hinic3_fdir.c',=0D
++        'hinic3_flow.c',=0D
++        'hinic3_nic_io.c',=0D
++        'hinic3_rx.c',=0D
++        'hinic3_tx.c',=0D
++)=0D
++=0D
++includes +=3D include_directories('base')=0D
++includes +=3D include_directories('mml')=0D
+diff --git a/drivers/net/hinic3/mml/meson.build b/drivers/net/hinic3/mml/me=
+son.build=0D
+index f8d2650d8d..67bba4f067 100644=0D
+--- a/drivers/net/hinic3/mml/meson.build=0D
++++ b/drivers/net/hinic3/mml/meson.build=0D
+@@ -2,36 +2,19 @@=0D
+ # Copyright(c) 2025 Huawei Technologies Co., Ltd=0D
  =0D
-+/**=0D
-+ * Enable promiscuous mode.=0D
-+ *=0D
-+ * @param[in] dev=0D
-+ * Pointer to ethernet device structure.=0D
-+ *=0D
-+ * @return=0D
-+ * 0 on success, non-zero on failure.=0D
-+ */=0D
-+static int=0D
-+hinic3_dev_promiscuous_enable(struct rte_eth_dev *dev)=0D
-+{=0D
-+	struct hinic3_nic_dev *nic_dev =3D HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev)=
-;=0D
-+	u32 rx_mode;=0D
-+	int err;=0D
-+=0D
-+	err =3D hinic3_mutex_lock(&nic_dev->rx_mode_mutex);=0D
-+	if (err)=0D
-+		return err;=0D
-+=0D
-+	rx_mode =3D nic_dev->rx_mode | HINIC3_RX_MODE_PROMISC;=0D
-+=0D
-+	err =3D hinic3_set_rx_mode(nic_dev->hwdev, rx_mode);=0D
-+	if (err) {=0D
-+		hinic3_mutex_unlock(&nic_dev->rx_mode_mutex);=0D
-+		PMD_DRV_LOG(ERR, "Enable promiscuous failed");=0D
-+		return err;=0D
-+	}=0D
-+=0D
-+	nic_dev->rx_mode =3D rx_mode;=0D
-+=0D
-+	hinic3_mutex_unlock(&nic_dev->rx_mode_mutex);=0D
-+=0D
-+	PMD_DRV_LOG(INFO,=0D
-+		    "Enable promiscuous, nic_dev: %s, port_id: %d, promisc: %d",=0D
-+		    nic_dev->dev_name, dev->data->port_id,=0D
-+		    dev->data->promiscuous);=0D
-+	return 0;=0D
-+}=0D
-+=0D
-+/**=0D
-+ * Disable promiscuous mode.=0D
-+ *=0D
-+ * @param[in] dev=0D
-+ * Pointer to ethernet device structure.=0D
-+ *=0D
-+ * @return=0D
-+ * 0 on success, non-zero on failure.=0D
-+ */=0D
-+static int=0D
-+hinic3_dev_promiscuous_disable(struct rte_eth_dev *dev)=0D
-+{=0D
-+	struct hinic3_nic_dev *nic_dev =3D HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev)=
-;=0D
-+	u32 rx_mode;=0D
-+	int err;=0D
-+=0D
-+	err =3D hinic3_mutex_lock(&nic_dev->rx_mode_mutex);=0D
-+	if (err)=0D
-+		return err;=0D
-+=0D
-+	rx_mode =3D nic_dev->rx_mode & (~HINIC3_RX_MODE_PROMISC);=0D
-+=0D
-+	err =3D hinic3_set_rx_mode(nic_dev->hwdev, rx_mode);=0D
-+	if (err) {=0D
-+		hinic3_mutex_unlock(&nic_dev->rx_mode_mutex);=0D
-+		PMD_DRV_LOG(ERR, "Disable promiscuous failed");=0D
-+		return err;=0D
-+	}=0D
-+=0D
-+	nic_dev->rx_mode =3D rx_mode;=0D
-+=0D
-+	hinic3_mutex_unlock(&nic_dev->rx_mode_mutex);=0D
-+=0D
-+	PMD_DRV_LOG(INFO,=0D
-+		"Disable promiscuous, nic_dev: %s, port_id: %d, promisc: %d",=0D
-+		nic_dev->dev_name, dev->data->port_id, dev->data->promiscuous);=0D
-+	return 0;=0D
-+}=0D
-+=0D
-+/**=0D
-+ * Get flow control configuration, including auto-negotiation and RX/TX pa=
-use=0D
-+ * settings.=0D
-+ *=0D
-+ * @param[in] dev=0D
-+ * Pointer to ethernet device structure.=0D
-+ *=0D
-+ * @param[out] fc_conf=0D
-+ * The flow control configuration to be filled.=0D
-+ *=0D
-+ * @return=0D
-+ * 0 on success, non-zero on failure.=0D
-+ */=0D
-+=0D
-+/**=0D
-+ * Update the RSS hash key and RSS hash type.=0D
-+ *=0D
-+ * @param[in] dev=0D
-+ * Pointer to ethernet device structure.=0D
-+ * @param[in] rss_conf=0D
-+ * RSS configuration data.=0D
-+ *=0D
-+ * @return=0D
-+ * 0 on success, non-zero on failure.=0D
-+ */=0D
-+static int=0D
-+hinic3_rss_hash_update(struct rte_eth_dev *dev,=0D
-+		       struct rte_eth_rss_conf *rss_conf)=0D
-+{=0D
-+	struct hinic3_nic_dev *nic_dev =3D HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev)=
-;=0D
-+	struct hinic3_rss_type rss_type =3D {0};=0D
-+	u64 rss_hf =3D rss_conf->rss_hf;=0D
-+	int err =3D 0;=0D
-+=0D
-+	if (nic_dev->rss_state =3D=3D HINIC3_RSS_DISABLE) {=0D
-+		if (rss_hf !=3D 0)=0D
-+			return -EINVAL;=0D
-+=0D
-+		PMD_DRV_LOG(INFO, "RSS is not enabled");=0D
-+		return 0;=0D
-+	}=0D
-+=0D
-+	if (rss_conf->rss_key_len > HINIC3_RSS_KEY_SIZE) {=0D
-+		PMD_DRV_LOG(ERR, "Invalid RSS key, rss_key_len: %d",=0D
-+			    rss_conf->rss_key_len);=0D
-+		return -EINVAL;=0D
-+	}=0D
-+=0D
-+	if (rss_conf->rss_key) {=0D
-+		err =3D hinic3_rss_set_hash_key(nic_dev->hwdev, nic_dev->rss_key,=0D
-+					      HINIC3_RSS_KEY_SIZE);=0D
-+		if (err) {=0D
-+			PMD_DRV_LOG(ERR, "Set RSS hash key failed");=0D
-+			return err;=0D
-+		}=0D
-+		memcpy((void *)nic_dev->rss_key, (void *)rss_conf->rss_key,=0D
-+		       (size_t)rss_conf->rss_key_len);=0D
-+	}=0D
-+=0D
-+	rss_type.ipv4 =3D (rss_hf & (RTE_ETH_RSS_IPV4 | RTE_ETH_RSS_FRAG_IPV4 |=0D
-+				   RTE_ETH_RSS_NONFRAG_IPV4_OTHER))=0D
-+				? 1=0D
-+				: 0;=0D
-+	rss_type.tcp_ipv4 =3D (rss_hf & RTE_ETH_RSS_NONFRAG_IPV4_TCP) ? 1 : 0;=0D
-+	rss_type.ipv6 =3D (rss_hf & (RTE_ETH_RSS_IPV6 | RTE_ETH_RSS_FRAG_IPV6 |=0D
-+				   RTE_ETH_RSS_NONFRAG_IPV6_OTHER))=0D
-+				? 1=0D
-+				: 0;=0D
-+	rss_type.ipv6_ext =3D (rss_hf & RTE_ETH_RSS_IPV6_EX) ? 1 : 0;=0D
-+	rss_type.tcp_ipv6 =3D (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_TCP) ? 1 : 0;=0D
-+	rss_type.tcp_ipv6_ext =3D (rss_hf & RTE_ETH_RSS_IPV6_TCP_EX) ? 1 : 0;=0D
-+	rss_type.udp_ipv4 =3D (rss_hf & RTE_ETH_RSS_NONFRAG_IPV4_UDP) ? 1 : 0;=0D
-+	rss_type.udp_ipv6 =3D (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_UDP) ? 1 : 0;=0D
-+=0D
-+	err =3D hinic3_set_rss_type(nic_dev->hwdev, rss_type);=0D
-+	if (err)=0D
-+		PMD_DRV_LOG(ERR, "Set RSS type failed");=0D
-+=0D
-+	return err;=0D
-+}=0D
-+=0D
-+/**=0D
-+ * Get the RSS hash configuration.=0D
-+ *=0D
-+ * @param[in] dev=0D
-+ * Pointer to ethernet device structure.=0D
-+ * @param[out] rss_conf=0D
-+ * RSS configuration data.=0D
-+ *=0D
-+ * @return=0D
-+ * 0 on success, non-zero on failure.=0D
-+ */=0D
-+static int=0D
-+hinic3_rss_conf_get(struct rte_eth_dev *dev, struct rte_eth_rss_conf *rss_=
-conf)=0D
-+{=0D
-+	struct hinic3_nic_dev *nic_dev =3D HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev)=
-;=0D
-+	struct hinic3_rss_type rss_type =3D {0};=0D
-+	int err;=0D
-+=0D
-+	if (!rss_conf)=0D
-+		return -EINVAL;=0D
-+=0D
-+	if (nic_dev->rss_state =3D=3D HINIC3_RSS_DISABLE) {=0D
-+		rss_conf->rss_hf =3D 0;=0D
-+		PMD_DRV_LOG(INFO, "RSS is not enabled");=0D
-+		return 0;=0D
-+	}=0D
-+=0D
-+	if (rss_conf->rss_key && rss_conf->rss_key_len >=3D HINIC3_RSS_KEY_SIZE) =
-{=0D
-+		/*=0D
-+		 * Get RSS key from driver to reduce the frequency of the MPU=0D
-+		 * accessing the RSS memory.=0D
-+		 */=0D
-+		rss_conf->rss_key_len =3D sizeof(nic_dev->rss_key);=0D
-+		memcpy((void *)rss_conf->rss_key, (void *)nic_dev->rss_key,=0D
-+		       (size_t)rss_conf->rss_key_len);=0D
-+	}=0D
-+=0D
-+	err =3D hinic3_get_rss_type(nic_dev->hwdev, &rss_type);=0D
-+	if (err)=0D
-+		return err;=0D
-+=0D
-+	rss_conf->rss_hf =3D 0;=0D
-+	rss_conf->rss_hf |=3D=0D
-+		rss_type.ipv4 ? (RTE_ETH_RSS_IPV4 | RTE_ETH_RSS_FRAG_IPV4 |=0D
-+				 RTE_ETH_RSS_NONFRAG_IPV4_OTHER)=0D
-+			      : 0;=0D
-+	rss_conf->rss_hf |=3D rss_type.tcp_ipv4 ? RTE_ETH_RSS_NONFRAG_IPV4_TCP=0D
-+					      : 0;=0D
-+	rss_conf->rss_hf |=3D=0D
-+		rss_type.ipv6 ? (RTE_ETH_RSS_IPV6 | RTE_ETH_RSS_FRAG_IPV6 |=0D
-+				 RTE_ETH_RSS_NONFRAG_IPV6_OTHER)=0D
-+			      : 0;=0D
-+	rss_conf->rss_hf |=3D rss_type.ipv6_ext ? RTE_ETH_RSS_IPV6_EX : 0;=0D
-+	rss_conf->rss_hf |=3D rss_type.tcp_ipv6 ? RTE_ETH_RSS_NONFRAG_IPV6_TCP=0D
-+					      : 0;=0D
-+	rss_conf->rss_hf |=3D rss_type.tcp_ipv6_ext ? RTE_ETH_RSS_IPV6_TCP_EX : 0=
-;=0D
-+	rss_conf->rss_hf |=3D rss_type.udp_ipv4 ? RTE_ETH_RSS_NONFRAG_IPV4_UDP=0D
-+					      : 0;=0D
-+	rss_conf->rss_hf |=3D rss_type.udp_ipv6 ? RTE_ETH_RSS_NONFRAG_IPV6_UDP=0D
-+					      : 0;=0D
-+=0D
-+	return 0;=0D
-+}=0D
-+=0D
-+/**=0D
-+ * Get the RETA indirection table.=0D
-+ *=0D
-+ * @param[in] dev=0D
-+ * Pointer to ethernet device structure.=0D
-+ * @param[out] reta_conf=0D
-+ * Pointer to RETA configuration structure array.=0D
-+ * @param[in] reta_size=0D
-+ * Size of the RETA table.=0D
-+ *=0D
-+ * @return=0D
-+ * 0 on success, non-zero on failure.=0D
-+ */=0D
-+static int=0D
-+hinic3_rss_reta_query(struct rte_eth_dev *dev,=0D
-+		      struct rte_eth_rss_reta_entry64 *reta_conf,=0D
-+		      uint16_t reta_size)=0D
-+{=0D
-+	struct hinic3_nic_dev *nic_dev =3D HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev)=
-;=0D
-+	u32 indirtbl[HINIC3_RSS_INDIR_SIZE] =3D {0};=0D
-+	u16 idx, shift;=0D
-+	u16 i;=0D
-+	int err;=0D
-+=0D
-+	if (nic_dev->rss_state =3D=3D HINIC3_RSS_DISABLE) {=0D
-+		PMD_DRV_LOG(INFO, "RSS is not enabled");=0D
-+		return 0;=0D
-+	}=0D
-+=0D
-+	if (reta_size !=3D HINIC3_RSS_INDIR_SIZE) {=0D
-+		PMD_DRV_LOG(ERR, "Invalid reta size, reta_size: %d", reta_size);=0D
-+		return -EINVAL;=0D
-+	}=0D
-+=0D
-+	err =3D hinic3_rss_get_indir_tbl(nic_dev->hwdev, indirtbl,=0D
-+				       HINIC3_RSS_INDIR_SIZE);=0D
-+	if (err) {=0D
-+		PMD_DRV_LOG(ERR, "Get RSS retas table failed, error: %d", err);=0D
-+		return err;=0D
-+	}=0D
-+=0D
-+	for (i =3D 0; i < reta_size; i++) {=0D
-+		idx =3D i / RTE_ETH_RETA_GROUP_SIZE;=0D
-+		shift =3D i % RTE_ETH_RETA_GROUP_SIZE;=0D
-+		if (reta_conf[idx].mask & (1ULL << shift))=0D
-+			reta_conf[idx].reta[shift] =3D (uint16_t)indirtbl[i];=0D
-+	}=0D
-+=0D
-+	return 0;=0D
-+}=0D
-+=0D
- static int=0D
- hinic3_get_eeprom(__rte_unused struct rte_eth_dev *dev,=0D
- 		  struct rte_dev_eeprom_info *info)=0D
-@@ -2287,6 +2562,68 @@ hinic3_get_eeprom(__rte_unused struct rte_eth_dev *d=
-ev,=0D
- 				  &info->length, MAX_BUF_OUT_LEN);=0D
- }=0D
+ sources =3D files(=0D
+-    'hinic3_dbg.c',=0D
+-    'hinic3_mml_cmd.c',=0D
+-    'hinic3_mml_ioctl.c',=0D
+-    'hinic3_mml_lib.c',=0D
+-    'hinic3_mml_main.c',=0D
+-    'hinic3_mml_queue.c',=0D
++        'hinic3_dbg.c',=0D
++        'hinic3_mml_cmd.c',=0D
++        'hinic3_mml_ioctl.c',=0D
++        'hinic3_mml_lib.c',=0D
++        'hinic3_mml_main.c',=0D
++        'hinic3_mml_queue.c',=0D
+ )=0D
  =0D
-+/**=0D
-+ * Update the RETA indirection table.=0D
-+ *=0D
-+ * @param[in] dev=0D
-+ * Pointer to ethernet device structure.=0D
-+ * @param[in] reta_conf=0D
-+ * Pointer to RETA configuration structure array.=0D
-+ * @param[in] reta_size=0D
-+ * Size of the RETA table.=0D
-+ *=0D
-+ * @return=0D
-+ * 0 on success, non-zero on failure.=0D
-+ */=0D
-+static int=0D
-+hinic3_rss_reta_update(struct rte_eth_dev *dev,=0D
-+		       struct rte_eth_rss_reta_entry64 *reta_conf,=0D
-+		       uint16_t reta_size)=0D
-+{=0D
-+	struct hinic3_nic_dev *nic_dev =3D HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev)=
-;=0D
-+	u32 indirtbl[HINIC3_RSS_INDIR_SIZE] =3D {0};=0D
-+	u16 idx, shift;=0D
-+	u16 i;=0D
-+	int err;=0D
-+=0D
-+	if (nic_dev->rss_state =3D=3D HINIC3_RSS_DISABLE)=0D
-+		return 0;=0D
-+=0D
-+	if (reta_size !=3D HINIC3_RSS_INDIR_SIZE) {=0D
-+		PMD_DRV_LOG(ERR, "Invalid reta size, reta_size: %d", reta_size);=0D
-+		return -EINVAL;=0D
-+	}=0D
-+=0D
-+	err =3D hinic3_rss_get_indir_tbl(nic_dev->hwdev, indirtbl,=0D
-+				       HINIC3_RSS_INDIR_SIZE);=0D
-+	if (err)=0D
-+		return err;=0D
-+=0D
-+	/* Update RSS reta table. */=0D
-+	for (i =3D 0; i < reta_size; i++) {=0D
-+		idx =3D i / RTE_ETH_RETA_GROUP_SIZE;=0D
-+		shift =3D i % RTE_ETH_RETA_GROUP_SIZE;=0D
-+		if (reta_conf[idx].mask & (1ULL << shift))=0D
-+			indirtbl[i] =3D reta_conf[idx].reta[shift];=0D
-+	}=0D
-+=0D
-+	for (i =3D 0; i < reta_size; i++) {=0D
-+		if (indirtbl[i] >=3D nic_dev->num_rqs) {=0D
-+			PMD_DRV_LOG(ERR,=0D
-+				"Invalid reta entry, index: %d, num_rqs: %d",=0D
-+				indirtbl[i], nic_dev->num_rqs);=0D
-+			return -EFAULT;=0D
-+		}=0D
-+	}=0D
-+=0D
-+	err =3D hinic3_rss_set_indir_tbl(nic_dev->hwdev, indirtbl,=0D
-+				       HINIC3_RSS_INDIR_SIZE);=0D
-+	if (err)=0D
-+		PMD_DRV_LOG(ERR, "Set RSS reta table failed");=0D
-+=0D
-+	return err;=0D
-+}=0D
-+=0D
- /**=0D
-  * Get device generic statistics.=0D
-  *=0D
-@@ -2857,6 +3194,29 @@ hinic3_set_mc_addr_list(struct rte_eth_dev *dev,=0D
- 	return 0;=0D
- }=0D
+-extra_flags =3D [=0D
+-    '-Wno-cast-qual',=0D
+-    '-Wno-format',=0D
+-    '-Wno-format-nonliteral',=0D
+-    '-Wno-format-security',=0D
+-    '-Wno-missing-braces',=0D
+-    '-Wno-missing-field-initializers',=0D
+-    '-Wno-missing-prototypes',=0D
+-    '-Wno-pointer-sign',=0D
+-    '-Wno-pointer-to-int-cast',=0D
+-    '-Wno-sign-compare',=0D
+-    '-Wno-strict-aliasing',=0D
+-    '-Wno-unused-parameter',=0D
+-    '-Wno-unused-value',=0D
+-    '-Wno-unused-variable',=0D
+-]=0D
+-=0D
+ # The driver runs only on arch64 machine, remove 32bit warnings=0D
+ if not dpdk_conf.get('RTE_ARCH_64')=0D
+     extra_flags +=3D [=0D
+-        '-Wno-int-to-pointer-cast',=0D
+-        '-Wno-pointer-to-int-cast',=0D
++            '-Wno-int-to-pointer-cast',=0D
++            '-Wno-pointer-to-int-cast',=0D
+     ]=0D
+ endif=0D
  =0D
-+/**=0D
-+ * Manage flow director filter operations.=0D
-+ *=0D
-+ * @param[in] dev=0D
-+ * Pointer to ethernet device structure.=0D
-+ * @param[in] filter_type=0D
-+ * Filter type.=0D
-+ * @param[in] filter_op=0D
-+ * Operation to perform.=0D
-+ * @param[in] arg=0D
-+ * Pointer to operation-specific structure.=0D
-+ *=0D
-+ * @return=0D
-+ * 0 on success, non-zero on failure.=0D
-+ */=0D
-+static int=0D
-+hinic3_dev_filter_ctrl(struct rte_eth_dev *dev, const struct rte_flow_ops =
-**arg)=0D
-+{=0D
-+	RTE_SET_USED(dev);=0D
-+	*arg =3D &hinic3_flow_ops;=0D
-+	return 0;=0D
-+}=0D
-+=0D
- static int=0D
- hinic3_get_reg(__rte_unused struct rte_eth_dev *dev,=0D
- 	       __rte_unused struct rte_dev_reg_info *regs)=0D
-@@ -2890,6 +3250,12 @@ static const struct eth_dev_ops hinic3_pmd_ops =3D {=
-=0D
- 	.vlan_offload_set              =3D hinic3_vlan_offload_set,=0D
- 	.allmulticast_enable           =3D hinic3_dev_allmulticast_enable,=0D
- 	.allmulticast_disable          =3D hinic3_dev_allmulticast_disable,=0D
-+	.promiscuous_enable            =3D hinic3_dev_promiscuous_enable,=0D
-+	.promiscuous_disable           =3D hinic3_dev_promiscuous_disable,=0D
-+	.rss_hash_update               =3D hinic3_rss_hash_update,=0D
-+	.rss_hash_conf_get             =3D hinic3_rss_conf_get,=0D
-+	.reta_update                   =3D hinic3_rss_reta_update,=0D
-+	.reta_query                    =3D hinic3_rss_reta_query,=0D
- 	.get_eeprom                    =3D hinic3_get_eeprom,=0D
- 	.stats_get                     =3D hinic3_dev_stats_get,=0D
- 	.stats_reset                   =3D hinic3_dev_stats_reset,=0D
-@@ -2931,6 +3297,10 @@ static const struct eth_dev_ops hinic3_pmd_vf_ops =
-=3D {=0D
- 	.vlan_offload_set              =3D hinic3_vlan_offload_set,=0D
- 	.allmulticast_enable           =3D hinic3_dev_allmulticast_enable,=0D
- 	.allmulticast_disable          =3D hinic3_dev_allmulticast_disable,=0D
-+	.rss_hash_update               =3D hinic3_rss_hash_update,=0D
-+	.rss_hash_conf_get             =3D hinic3_rss_conf_get,=0D
-+	.reta_update                   =3D hinic3_rss_reta_update,=0D
-+	.reta_query                    =3D hinic3_rss_reta_query,=0D
- 	.get_eeprom                    =3D hinic3_get_eeprom,=0D
- 	.stats_get                     =3D hinic3_dev_stats_get,=0D
- 	.stats_reset                   =3D hinic3_dev_stats_reset,=0D
-diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3=
-_ethdev.h=0D
-index e0d5b4602c..90ca21491f 100644=0D
---- a/drivers/net/hinic3/hinic3_ethdev.h=0D
-+++ b/drivers/net/hinic3/hinic3_ethdev.h=0D
-@@ -97,6 +97,10 @@ struct hinic3_nic_dev {=0D
- 	u16 rx_buff_len;=0D
- 	u16 mtu_size;=0D
- =0D
-+	u16 rss_state;=0D
-+	u8 num_rss; /**< Number of RSS queues. */=0D
-+	u8 rsvd0;   /**< Reserved field 0. */=0D
-+=0D
- 	u32 rx_mode;=0D
- 	u8 rx_queue_list[HINIC3_MAX_QUEUE_NUM];=0D
- 	rte_spinlock_t queue_list_lock;=0D
-@@ -106,6 +110,8 @@ struct hinic3_nic_dev {=0D
- 	u32 default_cos;=0D
- 	u32 rx_csum_en;=0D
- =0D
-+	u8 rss_key[HINIC3_RSS_KEY_SIZE];=0D
-+=0D
- 	RTE_ATOMIC(u64) dev_status;=0D
- =0D
- 	struct rte_ether_addr default_addr;=0D
-@@ -116,4 +122,29 @@ struct hinic3_nic_dev {=0D
- 	u32 vfta[HINIC3_VFTA_SIZE]; /**< VLAN bitmap. */=0D
- };=0D
- =0D
-+/**=0D
-+ * Enable interrupt for the specified RX queue.=0D
-+ *=0D
-+ * @param[in] dev=0D
-+ * Pointer to ethernet device structure.=0D
-+ * @param[in] queue_id=0D
-+ * The ID of the receive queue for which the interrupt is being enabled.=0D
-+ * @return=0D
-+ * 0 on success, a negative error code on failure.=0D
-+ */=0D
-+int hinic3_dev_rx_queue_intr_enable(struct rte_eth_dev *dev, uint16_t queu=
-e_id);=0D
-+=0D
-+/**=0D
-+ * Disable interrupt for the specified RX queue.=0D
-+ *=0D
-+ * @param[in] dev=0D
-+ * Pointer to ethernet device structure.=0D
-+ * @param[in] queue_id=0D
-+ * The ID of the receive queue for which the interrupt is being disabled.=
-=0D
-+ * @return=0D
-+ * 0 on success, a negative error code on failure.=0D
-+ */=0D
-+int hinic3_dev_rx_queue_intr_disable(struct rte_eth_dev *dev,=0D
-+				     uint16_t queue_id);=0D
-+=0D
- #endif /* _HINIC3_ETHDEV_H_ */=0D
+diff --git a/drivers/net/meson.build b/drivers/net/meson.build=0D
+index 61f8cddb30..2d32068ed2 100644=0D
+--- a/drivers/net/meson.build=0D
++++ b/drivers/net/meson.build=0D
+@@ -23,6 +23,7 @@ drivers =3D [=0D
+         'failsafe',=0D
+         'gve',=0D
+         'hinic',=0D
++        'hinic3',=0D
+         'hns3',=0D
+         'intel/e1000',=0D
+         'intel/fm10k',=0D
 -- =0D
 2.45.1.windows.1=0D
 =0D
