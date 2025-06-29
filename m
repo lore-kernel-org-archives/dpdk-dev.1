@@ -2,73 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA7EAC71136
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Jun 2025 01:56:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8B68C7EE39
+	for <dpdk-dev@archiver.kernel.org>; Sun, 29 Jun 2025 22:30:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 863A840BA6;
-	Thu, 12 Jun 2025 03:56:53 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2E90C402E3;
+	Mon, 30 Jun 2025 00:30:45 +0200 (CEST)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
- by mails.dpdk.org (Postfix) with ESMTP id DF3824021F;
- Thu, 12 Jun 2025 03:56:51 +0200 (CEST)
-Received: from fhigh-b6-smtp.messagingengine.com
- (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
- by mails.dpdk.org (Postfix) with ESMTP id 2748240156
- for <announce@dpdk.org>; Thu, 12 Jun 2025 03:56:51 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 8973B4025D;
+ Mon, 30 Jun 2025 00:30:43 +0200 (CEST)
+Received: from fhigh-b4-smtp.messagingengine.com
+ (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+ by mails.dpdk.org (Postfix) with ESMTP id BA44540151
+ for <announce@dpdk.org>; Mon, 30 Jun 2025 00:30:42 +0200 (CEST)
 Received: from phl-compute-03.internal (phl-compute-03.phl.internal
  [10.202.2.43])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 821412540188;
- Wed, 11 Jun 2025 21:56:50 -0400 (EDT)
+ by mailfhigh.stl.internal (Postfix) with ESMTP id E1BFA7A0099;
+ Sun, 29 Jun 2025 18:30:41 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-03.internal (MEProxy); Wed, 11 Jun 2025 21:56:50 -0400
+ by phl-compute-03.internal (MEProxy); Sun, 29 Jun 2025 18:30:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:content-transfer-encoding:content-type:content-type:date:date
  :from:from:in-reply-to:message-id:mime-version:reply-to:subject
- :subject:to:to; s=fm1; t=1749693410; x=1749779810; bh=ELpRar/0so
- DKcZh25YWWDk7Ay11i7lVHtwnEqKW8m/s=; b=T8QsqGpQ8R4F3fcDGscTHH15H/
- trHGMDck5YlAMItlm3w5SRSN5fbnjtmle3ks//znHgfEeEkouOt0HhJ32M5akgMP
- JDRM7CKu0Ub32SDHb4lSlxWQv1P2IkNxih3rI4jdFNMXe/YwiZCUQJrrNedEvn5o
- /oVfM3x+/q5sMStwztfydtILnC4WqxTkf8U4ThFEo1jIJvIFakC98SgYEMYU4Ez1
- JhBtCQQ8VvVQdeXloGyJxsR4I0YKuHKTmS0yMf/CStIBQhMVbyqHufXdigLJ75Ag
- TnWsQrihekA1PyIAWPmZ5HiJL0xem8CO5SF2IOIzicwGo5XeEfCgQfGnasZQ==
+ :subject:to:to; s=fm2; t=1751236241; x=1751322641; bh=Ufm0ZXpY/X
+ X8kFiGzYE7WKTkiPbAWUPik46t/pNChu0=; b=LSCG8SMh4fh25+cWz6PbniCGNw
+ n4C0KZLCim+hvw3Yx/jQDUKE11QDT+ODkjEGV7EjZwW3hEGdLmexJccEkZ11bYqW
+ WZ4/adhLbJ6LnvkzqsEftHSh32dtS9Dy64hUbnqu61jAInW+VrS63rIbOmXtLG1n
+ Nm9ac7Q4miWInqrBOBagD+JmcdqP/TLhRN5VE2HR+kvbpMgJIbpNoR0FFHAmUolh
+ hQuX+tDTwZbwd4rKIO9DaoXLoiHDz5fl6stJiJIFBfRMMhO6kBnxQotE3/BaIS0c
+ jzOiTjR5meBDwEMmt3BUYWaB0XoXm+ImJO/wr6YwoIv8joY/Oo8JsO53FZ7A==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:content-transfer-encoding:content-type
  :content-type:date:date:feedback-id:feedback-id:from:from
  :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
- 1749693410; x=1749779810; bh=ELpRar/0soDKcZh25YWWDk7Ay11i7lVHtwn
- EqKW8m/s=; b=Y0q2cjlMg+L0ooW+lNQFnKq1y7BtWdx/hVPEFes2e8lODEgrP5U
- WZQtsOBmY34uZJX68MQRIb8HuZfJhUCOfFdrGpqzqJLmVsT4LSOQ7f8bRU86KyUw
- 0rCnileh8AKfaDzQH3cjum8ylXdJnsbnQ0z9dTZmrWTdaCALtC5xF1oOzDM8g8Hn
- 7g51MZO8vVjIlS7BBvqVJV9dN/cg+OAVwdQvZbA807hXY3XsvtLZdGISRbQGn7cM
- xuU/dnU1qMgLASByKFBMdP28KKZQiwmNa5cdWt48Lj647dEKjonSeV4rqewfmxE3
- JM6XkJbO09axdB/gal8BCroiDxGC1s+W9VQ==
-X-ME-Sender: <xms:4jNKaBksP0WGb87uSSK91KEs3Wiq1AtCTSJLDS3F9yVHyP6YWJ4JRw>
- <xme:4jNKaM1YhtoFPf9E6x_0HfZqaNaZd4eMhLmg9KygUcEOZr1GlCyQQiQnm3taRGnvL
- jv6d1OlP7--cb38SQ>
-X-ME-Received: <xmr:4jNKaHpVWFnQNdKFj0e_0LTVBbXIEiQNz9Iejy0dzZpiPAsJ_qpc2LjN_0UVM7zoXXAS340sLK8FSYn-6FsFBsdLog>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddufeektdcutefuodetggdotefrod
- ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
- uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhephffvuf
- ffkfgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhn
- uceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepue
- eguefhteduvddtjeevjeehgfegjeegieeileevveegieffvdehheejveevkeefnecuffho
- mhgrihhnpeguphgukhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
- epmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgt
- phhtthhopedupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhhnohhunhgtvg
- esughpughkrdhorhhg
-X-ME-Proxy: <xmx:4jNKaBltw0R6-2CZ2Pk9bFKLGij00OdNubep6K-GzEIlctdoSYC09A>
- <xmx:4jNKaP2tiVgXDC7cb39Bn4QoSD5oACkJM47ZxQYbpw2yvJXbawR90A>
- <xmx:4jNKaAv_ErH8N9d1uUffrD-ZGxG7eY8r4dxnGxmSqVj6lMgF3da4pg>
- <xmx:4jNKaDUL_JBZAJJnIu-mX-LFtwz8-liAV2sdqSRfwlmBADqhKiwf_Q>
- <xmx:4jNKaEmwG5gRu_upxDyXFHfoqGqUBbj6ZhKBTOuY-qWc9dhq0DjSGw5j>
+ :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+ 1751236241; x=1751322641; bh=Ufm0ZXpY/XX8kFiGzYE7WKTkiPbAWUPik46
+ t/pNChu0=; b=jq7DcUrnaZZA4Hr7nL2CgXqdi66L9qo4xoY6Ustt8dCCj58ijkr
+ OAaA545ACdTIDf77+oCUybDWx0+1ZOpLxhrhO6V7VFAUg2hR3+Efe0dKHJAKRxtI
+ Szl24iGFf6aCj1jKV11MWdFQkXdlKTwq4c067fOc+2WVUKNaH1kGU/pmYekT6BmA
+ 1L7vkbMdXkyeFtrEtF2wIO88FXHDLDADMG2QON1ndKuODMwVKicsCkN19J3HH9je
+ B0LnfcLNWO3QjMn9j8IXPjyj9410cP8XnegzcnYWaeyj2nuAMKn4cOzlBzwYZohY
+ 7HrXxpVQEcbmWSJizVGd+7wOnMTwxAslVqQ==
+X-ME-Sender: <xms:kb5haMq37F_IWKhAM4OXELm8hNkuauHLfK1UYPiIVaSAf3292XJ1pw>
+ <xme:kb5haCrZF2eSB9J1um97gWNW8o4PhsK9IkXuH_-qFNSucSC5qq_R3SxEa8iGWXSvE
+ PmBWnSfv1uFhM4FOA>
+X-ME-Received: <xmr:kb5haBOLW-iaX1jYu5GOe2tucPRlvetsYjI4zZCWXCSYoL8RlKGvMMSSBwYtGC_pG00rJLUDgzvUIFDBNHiOhGJFtw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddutddtfecutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+ ihhlohhuthemuceftddtnecunecujfgurhephffvufffkfgggfgtsehtufertddttdejne
+ cuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgr
+ lhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepueeguefhteduvddtjeevjeehgfegje
+ egieeileevveegieffvdehheejveevkeefnecuffhomhgrihhnpeguphgukhdrohhrghen
+ ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomh
+ grshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedupdhmohguvgepshhm
+ thhpohhuthdprhgtphhtthhopegrnhhnohhunhgtvgesughpughkrdhorhhg
+X-ME-Proxy: <xmx:kb5haD61VCJXWJc_-X8TaO-IqDOrhM9IVUQFtbz8lg5ejfA2jPEJGw>
+ <xmx:kb5haL6jUs5cnyiRgHjwbqTeh09jhINXfEUSqiJnikb0fGhM0ehvWw>
+ <xmx:kb5haDgIW1BEZ_SW1qge8y3NLr1DWDjyjHQWlOW8DwRhVDB6Ui823g>
+ <xmx:kb5haF5hYpaixELslAdho3TiAoIv_rtRzhEje0BXbWmr5s1-pUAOOA>
+ <xmx:kb5haOYBMnaZGNUuK8qZVZuKG9ABx8HbH1WW6Oje4l-acBJ1ruueG5HN>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA for
- <announce@dpdk.org>; Wed, 11 Jun 2025 21:56:49 -0400 (EDT)
+ <announce@dpdk.org>; Sun, 29 Jun 2025 18:30:41 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: announce@dpdk.org
-Subject: release candidate 25.07-rc1
-Date: Thu, 12 Jun 2025 03:56:48 +0200
-Message-ID: <5554581.qSoW2BAyJ8@thomas>
+Subject: release candidate 25.07-rc2
+Date: Mon, 30 Jun 2025 00:30:38 +0200
+Message-ID: <4829359.Nya5fj1elA@thomas>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -87,29 +86,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 A new DPDK release candidate is ready for testing:
-	https://git.dpdk.org/dpdk/tag/?id=v25.07-rc1
+	https://git.dpdk.org/dpdk/tag/?id=v25.07-rc2
 
-There are 542 new patches in this snapshot.
+There are 141 new patches in this snapshot.
 
 Release notes:
 	https://doc.dpdk.org/guides/rel_notes/release_25_07.html
 
-Highlights of 25.07-rc1:
-	- Mucse RNP driver
-	- ZTE Storage Data Accelerator (ZSDA) crypto driver
-	- Performance Monitoring Unit (PMU) library
-	- mempool optimization
-	- zeroing of sensitive memory
-	- RSS type for RoCE v2
-	- graph feature arc and nodes for FIB
-	- eventdev vector adapter
-	- argparse enhanced
-	- more libraries enabled with Windows MSVC
-	- export symbols with macros instead of .map file
+Most significant changes are in multiple drivers.
 
-Please test and report issues on bugs.dpdk.org.
+Please test and report issues on https://bugs.dpdk.org
 
-DPDK 25.07-rc2 is expected in two weeks.
+DPDK 25.07-rc3 is expected in one week,
+with a focus on fixes, tests, examples and doc.
 
 Thank you everyone
 
