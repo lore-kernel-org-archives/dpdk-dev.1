@@ -2,71 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5744CC7EE30
-	for <dpdk-dev@archiver.kernel.org>; Sun, 29 Jun 2025 17:08:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D19C2C7EE30
+	for <dpdk-dev@archiver.kernel.org>; Sun, 29 Jun 2025 17:23:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D1A5240669;
-	Sun, 29 Jun 2025 19:08:00 +0200 (CEST)
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com
- (mail-bn8nam04on2075.outbound.protection.outlook.com [40.107.100.75])
- by mails.dpdk.org (Postfix) with ESMTP id 3B072406BC
- for <dev@dpdk.org>; Sun, 29 Jun 2025 19:07:59 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 19A07402D2;
+	Sun, 29 Jun 2025 19:23:35 +0200 (CEST)
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com
+ (mail-mw2nam10on2057.outbound.protection.outlook.com [40.107.94.57])
+ by mails.dpdk.org (Postfix) with ESMTP id B2B5C40288
+ for <dev@dpdk.org>; Sun, 29 Jun 2025 19:23:33 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SWY48nXu2EBm6MoYWpQOqqVZKw6gepCsetgUGW4sgZHKqhXLQ/XfOOQptaSpEWaiudC6NBp555D3CRPHtXD9IJ+IamwRh9sBJBcpsjtwMbyNL34UqcIhK/b3TO7nNS94SlQ/8s9fYfXQssET4yeDyzkeF09ok9SZWmQKy7OjC9OzcO12Jlv7t0QVemLOzuYf8rRztZcOeQbUsdNKO7vuX+noF2fjfSGPjyn+m2p08CWoMhIaJwrftkbaf7OuLlHNUJNr1CpAFvJfdB5qk/Ctv+yPRdcBfO20QGFz1bjJXsAGF2EG/0hQCXUCYW1pX5+GQ/KZfJ5wOMSMSydnz8BSSA==
+ b=rjG5I9qIxvtA3dj0x2j7tHD9OY5DrksPshOGw0Q5JGl6lKNpku6Pm1WpvEEfZht9+p0PRA5Vr71tKM2fdo1xw7sJD4yZqqtgkYXaNwadSyWcvaxk+xCeXxEAJWVizbjNYdCLSLL4sm7K4AeUlcjBmUacZgtgR9WcbzzS8kHLahMKcQ2m4WWFcIeyMGrvqaAY640A0GV502dA/B7lOpG+KOj7rvSXNZ1TGhxwKn7tabDsuUDELljUYVDW8UD1AqTcnpt9//Nk8rjsc4BzOSuMYJ9LnrRdMA2XNGepwSWD6HYGHz0fRYGfPIELMIZi8vY97Lvq1gmPPvNZKv1ZGGft+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rerW+ygu1mukS2LYhveEv/XbPIJRyG94jMK/DlYcEYo=;
- b=kWsoppjwsfsYLxgdcGIZFgb86aFf2INyKFBC5iH0DmmuTfedRRCDguFiDd6oGkrvz6Wtqroo+lyAQ5zMnZxbd11y+3qEOtnOz5Ff2+7mGyF5G4ej319JaQaGHAeuqPPR7zlcwCFWlzURI4hg8LbFfzgCQn5B715iEWY3yClE03LFVNnQ4yILzfVn50NpPlDDnQYzoPML+NSc9ktrYcURRucdiHO1Heh8YFN7vZjpW743l3P+t8bjj6svi5SP0YEHyqJ4SsyRndKUEgbYqHoWT/PLWq8VY/FWBVc4Np3CaYhIJ9kh+4lLXh0CUoXlCj1rS8YplAn4mmakH3KhQ3CAjg==
+ bh=yT3EEmvnnX0cChc3Z/c1Xp5+NlPr+PY/SL6wogWkLFI=;
+ b=VHGpBjyKbM+Y6dUcgfhqa9SME8Upv/U47LArUg+EEy8wA+kwV5PxFWwHa3njZhAPAvxGDslTGg3POSCWzdLDpwWxDpwLN4xMFViOQ5ZzEDBhGgmcF/4V1rcMZfFJ/TV8XgNaLy627lT4XCUDa4+1GU5vqeV/5simtFR8ZvJ3YWsEo3rDKfqknTpuodKBsdjc1CNgRTZ9RpESLaMmGQRUF1rSZNyREO2rjSj2FANzidnrifGwHmv3AeCP78O/bgVut+mYsz0xzZuM7PrDs1//uluru5BlgZCLHv4H1HsK0LGtaREbFqt22vlk47hF7mEN/r0ACmUkHHkoGs/lGrkG1A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rerW+ygu1mukS2LYhveEv/XbPIJRyG94jMK/DlYcEYo=;
- b=E1mxRv1CmwIeKanY4QEmFMXs0u+zgTd8GXst0mO79F1VvtRBWqsH7+guePyAqnMTpfL5ldoNk55M6sIZ4OLSwwhhIge01CabAJlYo+acuf9x3B3maWTwrVTIic9uj+AEXmryp63YKZQKp0IS0Vo5Q1EPvuuEDDAjFngfKSsn+ovLX3gjfI443n9xaJR8DYWFZHqDFTf+uabALsy1W+/1FdSYXpNu57/a1NlCS6rZcOAB7qU0I+/JEnpR1YjTrp515+AEwxtGLSqnJIR7+KkkDL9uBFr4q6kZePXKjxE0OqnKF5WWrmu6YbClGS4YhGEAx3KgQ6HhrxS8cBHIWTUQEQ==
-Received: from BYAPR07CA0061.namprd07.prod.outlook.com (2603:10b6:a03:60::38)
- by CH1PR12MB9599.namprd12.prod.outlook.com (2603:10b6:610:2ae::14)
+ bh=yT3EEmvnnX0cChc3Z/c1Xp5+NlPr+PY/SL6wogWkLFI=;
+ b=E7QCh5d0N/9MOWsfwrKzu1A7Gu4l7SiyCATdb46hlC0zMKOhiQPiwveIJyr+cr478JGgNqcHEKMN9kLG7zLjuwFIJHQKXAugGlrVyIyFPV+7uxoZyUnk4xHbQf7tZrNbVAfBDzJUZTrIRYd1HTPQvtEkzIWuxKI22sAxtI+k4RdQdyclg3GDTg/5g6mM7nAhDn3lgKySaO3cvrwoy+6+bx15X3ge9ygt3LYrVw9FOhml3FlnRnLMeoL5TIoLkR5SBFgtt0nMctv9LaQDoTWEhZ7DugZisptttnoox5+mos9sNYWR3wADtsOWnuPtbBXo5xQiglqD97LCbgYn7GNcVQ==
+Received: from CH2PR12CA0011.namprd12.prod.outlook.com (2603:10b6:610:57::21)
+ by BL1PR12MB5802.namprd12.prod.outlook.com (2603:10b6:208:392::16)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.26; Sun, 29 Jun
- 2025 17:07:54 +0000
-Received: from SJ5PEPF000001F3.namprd05.prod.outlook.com
- (2603:10b6:a03:60:cafe::4f) by BYAPR07CA0061.outlook.office365.com
- (2603:10b6:a03:60::38) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.27 via Frontend Transport; Sun,
- 29 Jun 2025 17:07:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.16; Sun, 29 Jun
+ 2025 17:23:30 +0000
+Received: from CH2PEPF00000099.namprd02.prod.outlook.com
+ (2603:10b6:610:57:cafe::1d) by CH2PR12CA0011.outlook.office365.com
+ (2603:10b6:610:57::21) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.17 via Frontend Transport; Sun,
+ 29 Jun 2025 17:23:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com;
  dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SJ5PEPF000001F3.mail.protection.outlook.com (10.167.242.71) with Microsoft
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CH2PEPF00000099.mail.protection.outlook.com (10.167.244.20) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8901.15 via Frontend Transport; Sun, 29 Jun 2025 17:07:53 +0000
+ 15.20.8901.15 via Frontend Transport; Sun, 29 Jun 2025 17:23:30 +0000
 Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 29 Jun
- 2025 10:07:37 -0700
+ 2025 10:23:20 -0700
 Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
  (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sun, 29 Jun
- 2025 10:07:34 -0700
+ 2025 10:23:18 -0700
 From: Bing Zhao <bingz@nvidia.com>
 To: <viacheslavo@nvidia.com>, <matan@nvidia.com>
 CC: <dev@dpdk.org>, <thomas@monjalon.net>, <dsosnowski@nvidia.com>,
  <suanmingm@nvidia.com>, <rasland@nvidia.com>
-Subject: [PATCH v4 4/5] net/mlx5: pass the information in Tx queue start
-Date: Sun, 29 Jun 2025 20:07:08 +0300
-Message-ID: <20250629170709.69960-5-bingz@nvidia.com>
+Subject: [PATCH v5 0/5] Use consecutive Tx queues' memory
+Date: Sun, 29 Jun 2025 20:22:58 +0300
+Message-ID: <20250629172303.72049-1-bingz@nvidia.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250629170709.69960-1-bingz@nvidia.com>
-References: <20250627163729.50460-1-bingz@nvidia.com>
- <20250629170709.69960-1-bingz@nvidia.com>
+In-Reply-To: <20250629170709.69960-1x-bingz@nvidia.com>
+References: <20250629170709.69960-1x-bingz@nvidia.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -75,53 +74,53 @@ X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
  rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F3:EE_|CH1PR12MB9599:EE_
-X-MS-Office365-Filtering-Correlation-Id: d7341dca-534c-497a-aa6c-08ddb72f7c8b
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000099:EE_|BL1PR12MB5802:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7e4e1852-3773-410b-2686-08ddb731aae5
 X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|82310400026|376014|36860700013; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?yiZb+5b1/Q/ie9k4LH+Aape9mCK0eXYIVRqIAWtxN0TEtyqXhAm6fSVud7sz?=
- =?us-ascii?Q?s4bPeFKEzdlJhPZdFWfjJnab1f+JmvMdzMqoOOUjUQQfPoHSnWjKv66AbVZ4?=
- =?us-ascii?Q?1TYjOd+2oWWyPTBwWQN/sx62i0FxuWzltSCBIzuV0IgIdai/uMK5VhViBRU1?=
- =?us-ascii?Q?hBQF1qg7jwHg/XdOAv0C/EbN1TcJf4WgcWsmJEckkrUHnFk3Ow1vd3awRmjq?=
- =?us-ascii?Q?GyUjHjFM03PEWRQoJ8FSsb2UiFDlYCEOBUQEytP4GKkoAMDtKzv+Xo1/rYfH?=
- =?us-ascii?Q?AwNbhGtTBxqdpp1quTD/f5s/3yeZWBo/SpSbXtXIx+W+eAZ+o2RBs2C7tKem?=
- =?us-ascii?Q?DtHpx2Qx/diTLd9wIU3MF6NS4oby+4JrQxCm3U156hR2SEFUUi//iA1MFTT4?=
- =?us-ascii?Q?L9p6twohyzHhBLEoeU3HCFwFmKGECarZSR+QE2d1nGUbf8nN6+LXKH/8oC7Z?=
- =?us-ascii?Q?EehEv6tS1KYuwn8WpsG/ti6UEjX2EnebqX4CyqdUvH37TZKELzkI934Xg7c0?=
- =?us-ascii?Q?268LitYeyz22P570NPp4TLzuOpNdD6rth3w5RMABPUAaBwRmXOowglvM7u7e?=
- =?us-ascii?Q?rgDc2gCLNtIV/tox4dwKHuUvivdIXX6HWAtKOtlFSxnitf6Y2Pgi5H9c+MA1?=
- =?us-ascii?Q?Yj3MwMxcpUvEYFRigni2H2uWXRprza2KprcuoIn3UmJ3ho0QrZbXh/IGAzRS?=
- =?us-ascii?Q?vhNy9i0tmkLVae7DdGRs9fn9U7sP+UvFBGEcp2cyNfJ36ZaFARGaseM7dteQ?=
- =?us-ascii?Q?NjrlxcAHTvrtKILhFIVahNEc94gQZgt41R0vZW3MWmr9pZYX5eX4++m/NugG?=
- =?us-ascii?Q?pmGlv3F2HfpsvxlQlbxWO8JoDNePmdylfEQkx1LUV4tSuZOwAH6nnEfJ3y0b?=
- =?us-ascii?Q?mJZK+XYzcWrrXgnfkH/qzDoGSvyMZZssnIeveVKaqKNULSL2F7A44XxdxTwS?=
- =?us-ascii?Q?UIolWisccteR4jMuk5zcYP1fKt812DU4D1j0bNGcJREQAIlWNksHbb48xG0L?=
- =?us-ascii?Q?GjZhZBn7WC8LjG/G6wc5raEaITxY+DUN0tuCINMJMfHfmfPqB1B/CDfAd2JZ?=
- =?us-ascii?Q?Zf/yS64905BDkLZr7vDPQQsXBDdHHMmKEU1aOEyM1eyJ9nS7VDL1EZZ++NYk?=
- =?us-ascii?Q?subu0Mvex5CH8L5NT3f+tix86n10RBnBnrzEW5N6zplO9dgvxTLOUdtNktjR?=
- =?us-ascii?Q?HmpCwtlFxiJij25pCGaBLP/7L9vff2Pm1ZYvF7D4kajOkLUK+zdNO9bpMZtp?=
- =?us-ascii?Q?hHeT7A9yx7lxwrXvIbfndJC2xD03vOkYvczQUkuDq4qzqqD++2zzEH3If/k+?=
- =?us-ascii?Q?KOYfvWyVrCwWHQYdp44POlfHZ+QLUUcSTyT3etxTBSYN85KYPj/OC+RoIdyI?=
- =?us-ascii?Q?TSWNtVU3HBbjxjXpfmJ3KAtiknGxmoqAvM9QpDFQFoCOOtAkZsMwN8Y2ErmZ?=
- =?us-ascii?Q?T0mm1JvyIVZt/CpScxEgUDgkCdRbJT3Kv5z7kZudqek1hL40xwmXZDEf8n7B?=
- =?us-ascii?Q?ENicDRWnKiudtqYyf/h4/CmOnYT/duFkzYsy?=
-X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013); DIR:OUT;
+ ARA:13230040|36860700013|1800799024|82310400026|376014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?9x5dTp0oKx61PalNHUtzoCqp83TFQz1ldNH9r2PvYmZlQ0UDs64UtOZMq3XT?=
+ =?us-ascii?Q?nV30a655vuEP4URvdNdsy4ERFkCDHKTVj4XHhS1P8AEtYU9j86ReX9cnUytD?=
+ =?us-ascii?Q?6qYrX+G8eIwAEOMkiFig5La6rT1Uak8uaWSVBSRAFcOt3OlGXxn2mtcRtlL0?=
+ =?us-ascii?Q?CUmkIx5UxS9DrtOKMc0kRJaZfZUJ17JREPfrF+3k2xTjKFg1rvQC/lTb9OIR?=
+ =?us-ascii?Q?qyKoO82HxJx4XTxA6zpaV/Gbg3mZwy7nB/Bzhpx57MAVVUlDgVLg9JvS26oo?=
+ =?us-ascii?Q?AtR9/nmBruQWJAhK177TO7PeVKpTcLXZgW3huM/4MLoYNSg6bmdujBIc6pIw?=
+ =?us-ascii?Q?yGSFP3qy07Q30hJAIPzJpUA/i8g24zKSWQrqEAdeucYlebdNB+xYDsbUSFhp?=
+ =?us-ascii?Q?aSMHWjfyvOnMWoFc/gmXXdKdpbQWiaMOWumlAyJLF9dPs8FEuPcStir//n62?=
+ =?us-ascii?Q?0UnhW+nZu+XWOTEt3iTOvjzTsJMNhDAm81W3s9WgLYqCsdiIuaq0REgtw9vX?=
+ =?us-ascii?Q?HkXf02ACmVlke/xvEBaMwFplaEbi1C7EcSwhajyRE8ujrvvHLYPbrYkbuSIW?=
+ =?us-ascii?Q?i5qmMRA4vLRxAHYNsKK7OWQ2dd7szsOXFZUjE9UI9AUJBrnMu7+VXwDfPiB0?=
+ =?us-ascii?Q?sq3e025bnTVdr76/1Bq28D6pAgKTm058quokIhaDOepuzk5pNdpbsGkHfASQ?=
+ =?us-ascii?Q?YU8Jn1nWkvHRh/vzabXZbJwPsrGZy8rPJqV0i3MQHBNgC425AAcvc8w7lS9b?=
+ =?us-ascii?Q?k1EXXYmmVA8B8QbhFk4/xrXkyuabfGClgd1ivUCE8ojYr1gyZCDPT9Dj5Nly?=
+ =?us-ascii?Q?kgkfi2Y2ggjqvzAh85EFf255O3ShqnFvhXT1pHzLH3SIJn/b6xRARJR0g7tx?=
+ =?us-ascii?Q?c1bpGh8O+XbShkTdgwyX0EKBb+V9fPKaveNJHYDpASSFK58vXqyCV16avcqp?=
+ =?us-ascii?Q?wOHn8tugTarpVkqRdXUpNv9pD2jxA/6FRssq3LYPoSsA+5Kn6FL+M6Bb/YLu?=
+ =?us-ascii?Q?YbeoF2UjwqKK1/cKJmsamLvG04gGRWgUARqcPSbye1Ge0NnTmeSTplcD36B3?=
+ =?us-ascii?Q?9NAlDrPZozN7zQxWzzHXorTQs4Nr8UibkbjvnkCZpE6GBG2FFf8iQRcYKTO4?=
+ =?us-ascii?Q?BrRFM5coO8YHarGJllyn8psGPxef5u+gDhck9BYAEErIdn1JQHs3N9jHlenL?=
+ =?us-ascii?Q?KyIvx8LrX6Cqw+yF0nLgfgOOgNCrSxs9finT+Yeu1XiVMDkR5W1YkC5dj7Wl?=
+ =?us-ascii?Q?qq4nviJHo7Tk1Qbleh86yTNlhvAjklmevCkzGzf1jhLrUnrhDbBm/ocZYGL6?=
+ =?us-ascii?Q?EyeMgZfenEvtwkgX5i+d34Dc2O34xiv7baMhrGDWDW6/3KLA4ZNS7qMy2rIk?=
+ =?us-ascii?Q?YAKOxhfizgTkdlv7iUIs+SEJfyMT/IVKnGK1/T0iR5/z85Gz7MrBxZoXe+UD?=
+ =?us-ascii?Q?CxAzswtwvFZVUI7r7HpIsXpWDiDFrAiRBDh1uFizzXtj2v6oT9DAUgrfsMht?=
+ =?us-ascii?Q?lkVV5dctT+iTjUm4M/4neZy4CejcnEXr7cly?=
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014); DIR:OUT;
  SFP:1101; 
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jun 2025 17:07:53.5971 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d7341dca-534c-497a-aa6c-08ddb72f7c8b
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jun 2025 17:23:30.3328 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7e4e1852-3773-410b-2686-08ddb731aae5
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
  Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: SJ5PEPF000001F3.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: CH2PEPF00000099.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PR12MB9599
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5802
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -135,215 +134,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The actual Devx object of SQs and CQs are only created in the
-function mlx5_txq_start() in the device stage.
+This patchset will move all the mlx5 Tx queues memory to a
+consecutive memory area. All the WQEBBs will be allocated based
+on the offset of this memory area.
 
-By changing the 1-level iteration to 2-level iterations, the Tx
-queue with a big number of queue depth will be set up firstly.
-This will help to split the memory from big trunks to small trunks.
-
-In the testing, such assignment will help to improve the performance
-a little bit. All the doorbells will be grouped and padded at the end
-of the umem area.
-
-The umem object and offsets information are passed to the Devx
-creation function for the further usage.
-
-Signed-off-by: Bing Zhao <bingz@nvidia.com>
 ---
- drivers/common/mlx5/mlx5_devx_cmds.h | 10 ++++
- drivers/net/mlx5/mlx5_devx.c         | 26 ++++++++-
- drivers/net/mlx5/mlx5_trigger.c      | 82 +++++++++++++++-------------
- 3 files changed, 77 insertions(+), 41 deletions(-)
+v2:
+  1. add a new fix for legacy code of WQE calculation
+  2. fix the style
+v3:
+  1. change the devarg and add description.
+  2. reorganize the code with different commits order.
+v4:
+  1. fix building failure on Windows and OSes with different compilers
+  2. update the rst
+  3. addressing comments and fix bugs
+v5:
+  1. solve one size_t coverity warning
+---
 
-diff --git a/drivers/common/mlx5/mlx5_devx_cmds.h b/drivers/common/mlx5/mlx5_devx_cmds.h
-index 6c726a0d46..f5fda02c1e 100644
---- a/drivers/common/mlx5/mlx5_devx_cmds.h
-+++ b/drivers/common/mlx5/mlx5_devx_cmds.h
-@@ -483,6 +483,11 @@ struct mlx5_devx_create_sq_attr {
- 	uint32_t packet_pacing_rate_limit_index:16;
- 	uint32_t tis_lst_sz:16;
- 	uint32_t tis_num:24;
-+	uint32_t q_off;
-+	void *umem;
-+	void *umem_obj;
-+	uint32_t q_len;
-+	uint32_t db_off;
- 	struct mlx5_devx_wq_attr wq_attr;
- };
- 
-@@ -514,6 +519,11 @@ struct mlx5_devx_cq_attr {
- 	uint64_t db_umem_offset;
- 	uint32_t eqn;
- 	uint64_t db_addr;
-+	void *umem;
-+	void *umem_obj;
-+	uint32_t q_off;
-+	uint32_t q_len;
-+	uint32_t db_off;
- };
- 
- /* Virtq attributes structure, used by VIRTQ operations. */
-diff --git a/drivers/net/mlx5/mlx5_devx.c b/drivers/net/mlx5/mlx5_devx.c
-index 3d49e096ef..0ee16ba4f0 100644
---- a/drivers/net/mlx5/mlx5_devx.c
-+++ b/drivers/net/mlx5/mlx5_devx.c
-@@ -1493,10 +1493,22 @@ mlx5_txq_create_devx_sq_resources(struct rte_eth_dev *dev, uint16_t idx,
- 			mlx5_ts_format_conv(cdev->config.hca_attr.sq_ts_format),
- 		.tis_num = mlx5_get_txq_tis_num(dev, idx),
- 	};
-+	uint32_t db_start = priv->consec_tx_mem.sq_total_size + priv->consec_tx_mem.cq_total_size;
-+	int ret;
- 
- 	/* Create Send Queue object with DevX. */
--	return mlx5_devx_sq_create(cdev->ctx, &txq_obj->sq_obj,
--				   log_desc_n, &sq_attr, priv->sh->numa_node);
-+	if (priv->sh->config.txq_mem_algn) {
-+		sq_attr.umem = priv->consec_tx_mem.umem;
-+		sq_attr.umem_obj = priv->consec_tx_mem.umem_obj;
-+		sq_attr.q_off = priv->consec_tx_mem.sq_cur_off;
-+		sq_attr.db_off = db_start + (2 * idx) * MLX5_DBR_SIZE;
-+		sq_attr.q_len = txq_data->sq_mem_len;
-+	}
-+	ret = mlx5_devx_sq_create(cdev->ctx, &txq_obj->sq_obj,
-+				  log_desc_n, &sq_attr, priv->sh->numa_node);
-+	if (!ret && priv->sh->config.txq_mem_algn)
-+		priv->consec_tx_mem.sq_cur_off += txq_data->sq_mem_len;
-+	return ret;
- }
- #endif
- 
-@@ -1536,6 +1548,7 @@ mlx5_txq_devx_obj_new(struct rte_eth_dev *dev, uint16_t idx)
- 	uint32_t cqe_n, log_desc_n;
- 	uint32_t wqe_n, wqe_size;
- 	int ret = 0;
-+	uint32_t db_start = priv->consec_tx_mem.sq_total_size + priv->consec_tx_mem.cq_total_size;
- 
- 	MLX5_ASSERT(txq_data);
- 	MLX5_ASSERT(txq_obj);
-@@ -1557,6 +1570,13 @@ mlx5_txq_devx_obj_new(struct rte_eth_dev *dev, uint16_t idx)
- 		rte_errno = EINVAL;
- 		return 0;
- 	}
-+	if (priv->sh->config.txq_mem_algn) {
-+		cq_attr.umem = priv->consec_tx_mem.umem;
-+		cq_attr.umem_obj = priv->consec_tx_mem.umem_obj;
-+		cq_attr.q_off = priv->consec_tx_mem.cq_cur_off;
-+		cq_attr.db_off = db_start + (2 * idx + 1) * MLX5_DBR_SIZE;
-+		cq_attr.q_len = txq_data->cq_mem_len;
-+	}
- 	/* Create completion queue object with DevX. */
- 	ret = mlx5_devx_cq_create(sh->cdev->ctx, &txq_obj->cq_obj, log_desc_n,
- 				  &cq_attr, priv->sh->numa_node);
-@@ -1641,6 +1661,8 @@ mlx5_txq_devx_obj_new(struct rte_eth_dev *dev, uint16_t idx)
- #endif
- 	txq_ctrl->uar_mmap_offset =
- 			mlx5_os_get_devx_uar_mmap_offset(sh->tx_uar.obj);
-+	if (priv->sh->config.txq_mem_algn)
-+		priv->consec_tx_mem.cq_cur_off += txq_data->cq_mem_len;
- 	ppriv->uar_table[txq_data->idx] = sh->tx_uar.bf_db;
- 	dev->data->tx_queue_state[idx] = RTE_ETH_QUEUE_STATE_STARTED;
- 	return 0;
-diff --git a/drivers/net/mlx5/mlx5_trigger.c b/drivers/net/mlx5/mlx5_trigger.c
-index 00ffb39ecb..855d7518b9 100644
---- a/drivers/net/mlx5/mlx5_trigger.c
-+++ b/drivers/net/mlx5/mlx5_trigger.c
-@@ -51,52 +51,56 @@ static int
- mlx5_txq_start(struct rte_eth_dev *dev)
- {
- 	struct mlx5_priv *priv = dev->data->dev_private;
--	unsigned int i;
-+	uint32_t log_max_wqe = log2above(mlx5_dev_get_max_wq_size(priv->sh));
-+	uint32_t flags = MLX5_MEM_RTE | MLX5_MEM_ZERO;
-+	unsigned int i, cnt;
- 	int ret;
- 
--	for (i = 0; i != priv->txqs_n; ++i) {
--		struct mlx5_txq_ctrl *txq_ctrl = mlx5_txq_get(dev, i);
--		struct mlx5_txq_data *txq_data = &txq_ctrl->txq;
--		uint32_t flags = MLX5_MEM_RTE | MLX5_MEM_ZERO;
-+	for (cnt = log_max_wqe; cnt > 0; cnt -= 1) {
-+		for (i = 0; i != priv->txqs_n; ++i) {
-+			struct mlx5_txq_ctrl *txq_ctrl = mlx5_txq_get(dev, i);
-+			struct mlx5_txq_data *txq_data = &txq_ctrl->txq;
- 
--		if (!txq_ctrl)
--			continue;
--		if (!txq_ctrl->is_hairpin)
--			txq_alloc_elts(txq_ctrl);
--		MLX5_ASSERT(!txq_ctrl->obj);
--		txq_ctrl->obj = mlx5_malloc_numa_tolerant(flags, sizeof(struct mlx5_txq_obj),
--							  0, txq_ctrl->socket);
--		if (!txq_ctrl->obj) {
--			DRV_LOG(ERR, "Port %u Tx queue %u cannot allocate "
--				"memory resources.", dev->data->port_id,
--				txq_data->idx);
--			rte_errno = ENOMEM;
--			goto error;
--		}
--		ret = priv->obj_ops.txq_obj_new(dev, i);
--		if (ret < 0) {
--			mlx5_free(txq_ctrl->obj);
--			txq_ctrl->obj = NULL;
--			goto error;
--		}
--		if (!txq_ctrl->is_hairpin) {
--			size_t size = txq_data->cqe_s * sizeof(*txq_data->fcqs);
--
--			txq_data->fcqs = mlx5_malloc_numa_tolerant(flags, size,
--								   RTE_CACHE_LINE_SIZE,
--								   txq_ctrl->socket);
--			if (!txq_data->fcqs) {
--				DRV_LOG(ERR, "Port %u Tx queue %u cannot "
--					"allocate memory (FCQ).",
--					dev->data->port_id, i);
-+			if (!txq_ctrl || txq_data->elts_n != cnt)
-+				continue;
-+			if (!txq_ctrl->is_hairpin)
-+				txq_alloc_elts(txq_ctrl);
-+			MLX5_ASSERT(!txq_ctrl->obj);
-+			txq_ctrl->obj = mlx5_malloc_numa_tolerant(flags,
-+								  sizeof(struct mlx5_txq_obj),
-+								  0, txq_ctrl->socket);
-+			if (!txq_ctrl->obj) {
-+				DRV_LOG(ERR, "Port %u Tx queue %u cannot allocate "
-+					"memory resources.", dev->data->port_id,
-+					txq_data->idx);
- 				rte_errno = ENOMEM;
- 				goto error;
- 			}
--		}
--		DRV_LOG(DEBUG, "Port %u txq %u updated with %p.",
--			dev->data->port_id, i, (void *)&txq_ctrl->obj);
--		LIST_INSERT_HEAD(&priv->txqsobj, txq_ctrl->obj, next);
-+			ret = priv->obj_ops.txq_obj_new(dev, i);
-+			if (ret < 0) {
-+				mlx5_free(txq_ctrl->obj);
-+				txq_ctrl->obj = NULL;
-+				goto error;
-+			}
-+			if (!txq_ctrl->is_hairpin) {
-+				size_t size = txq_data->cqe_s * sizeof(*txq_data->fcqs);
-+
-+				txq_data->fcqs = mlx5_malloc_numa_tolerant(flags, size,
-+									   RTE_CACHE_LINE_SIZE,
-+									   txq_ctrl->socket);
-+				if (!txq_data->fcqs) {
-+					DRV_LOG(ERR, "Port %u Tx queue %u cannot "
-+						"allocate memory (FCQ).",
-+						dev->data->port_id, i);
-+					rte_errno = ENOMEM;
-+					goto error;
-+				}
-+			}
-+			DRV_LOG(DEBUG, "Port %u txq %u updated with %p.",
-+				dev->data->port_id, i, (void *)&txq_ctrl->obj);
-+			LIST_INSERT_HEAD(&priv->txqsobj, txq_ctrl->obj, next);
- 	}
-+}
- 	return 0;
- error:
- 	ret = rte_errno; /* Save rte_errno before cleanup. */
+Bing Zhao (5):
+  net/mlx5: add new devarg for Tx queue consecutive memory
+  net/mlx5: calculate the memory length for all Tx queues
+  net/mlx5: allocate and release unique resources for Tx queues
+  net/mlx5: pass the information in Tx queue start
+  net/mlx5: use consecutive memory for Tx queue creation
+
+ doc/guides/nics/mlx5.rst               |  25 ++++
+ drivers/common/mlx5/mlx5_common_devx.c | 160 +++++++++++++++--------
+ drivers/common/mlx5/mlx5_common_devx.h |   2 +
+ drivers/common/mlx5/mlx5_devx_cmds.h   |  10 ++
+ drivers/net/mlx5/mlx5.c                |  36 +++++
+ drivers/net/mlx5/mlx5.h                |  15 ++-
+ drivers/net/mlx5/mlx5_devx.c           |  26 +++-
+ drivers/net/mlx5/mlx5_trigger.c        | 173 +++++++++++++++++++------
+ drivers/net/mlx5/mlx5_tx.h             |   2 +
+ drivers/net/mlx5/mlx5_txq.c            |  67 +++++++++-
+ 10 files changed, 418 insertions(+), 98 deletions(-)
+
 -- 
 2.34.1
 
