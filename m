@@ -2,72 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE651C7EE30
-	for <dpdk-dev@archiver.kernel.org>; Sun, 29 Jun 2025 18:00:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F20B9C7EE39
+	for <dpdk-dev@archiver.kernel.org>; Sun, 29 Jun 2025 18:01:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1F6D4402D2;
-	Sun, 29 Jun 2025 20:00:23 +0200 (CEST)
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com
- [209.85.222.170])
- by mails.dpdk.org (Postfix) with ESMTP id 7C20140288
- for <dev@dpdk.org>; Sun, 29 Jun 2025 20:00:21 +0200 (CEST)
-Received: by mail-qk1-f170.google.com with SMTP id
- af79cd13be357-7d20451c016so77100085a.1
- for <dev@dpdk.org>; Sun, 29 Jun 2025 11:00:21 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 48E4A4066A;
+	Sun, 29 Jun 2025 20:01:00 +0200 (CEST)
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com
+ [209.85.222.175])
+ by mails.dpdk.org (Postfix) with ESMTP id DBB004065E
+ for <dev@dpdk.org>; Sun, 29 Jun 2025 20:00:58 +0200 (CEST)
+Received: by mail-qk1-f175.google.com with SMTP id
+ af79cd13be357-7d41cd4114aso677725185a.2
+ for <dev@dpdk.org>; Sun, 29 Jun 2025 11:00:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751220020;
- x=1751824820; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751220058;
+ x=1751824858; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=XHeF7WlFhuhAfPA2ohYAhUc06q34oX8ItkPcCauHxZc=;
- b=ZUyNggaVB9MTIjR2BBKKbgVyX8SY1IA48EiTn7FzeB0LotWpvmKmf+/4xuq89LXshY
- yyY6ArZaovhEv+37S5XPRRBWD+TSnqrDr46f3QoBvVvKJsJ1aHhGFGopbIGxVpc2I8gS
- qfbZ4kYC1286CO5rk9mv7/OfjP9ZrHBjf3b83c71syUNtRT3/aLxaqsfpFT1cS1e2dC/
- NjAOr9JG8WJprujxKhW9dkr4lnMmLyDnetAGDm8iysNai7m6ag6b4ayK6MogrwohYROf
- U2+30o5oOORaRHueECpeexi+Q/p3MdSjJFF3E8AqbK93YGDaG5NURx1H1Q36nxHnXo+D
- Mhhg==
+ bh=minUwTUUBfEDB0FQbaQaXpwetOAv8g08hMsEUtN8uwg=;
+ b=kW85UywPZqyutDRsntw6c7X9zoCBXRgrgRQOQmbwjAb79sBipHpTFpTRYDGe7yU5z1
+ 7jzhTRnREXEv+/gt8U2zNxmijNfXfHq9h3O6uVCS9UvXWW3eVIReXgkQ/xpawtUpAWwm
+ mpzB5boVbEW4LOQPD9bhyhQweGiwP3mWXNIC0sVVTJt1jQBPSXNxPigckzXr2rVis3Bn
+ fpKH5aQ15Ssq+seMB7z2tT4hTA+9D+xETDm119KozZyAtltHIUjqep8joE3KflHrDEP/
+ EpWhjIqkf2gHYLo8iKwXE6BZTAak+c3Kb0XmDa5ocTfNpaH57995cfTJUkxlSGfq2UXm
+ fZAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1751220020; x=1751824820;
+ d=1e100.net; s=20230601; t=1751220058; x=1751824858;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=XHeF7WlFhuhAfPA2ohYAhUc06q34oX8ItkPcCauHxZc=;
- b=khJwCcoqqy6YbbybMJfPE24iyCEEVKkZZ+nE20j3qOI7kKdKsTUzLDi/V2dJOrtd2k
- teieic97p3xPsO+/yy3f+2cuGyu4D448PWuS2tjcyMA8lZFzfecQPFXa+sHNYEjpII09
- e6n1TTFJJZkQEy6jtB93cOrN/AkVmHsCD2AAE4pmpuad1BjHhRC4O18mpssDOpsteDSI
- Vuyebd9fjM3tKPAAJ2AXngyT0uEUYFYB+pXU3BG4JwsRhdSv7JGUpvNmh4nej6JRiA7v
- HYanC9WzoU3Hd3cHAHJe/MpfW+maR8v05OMy55VYXPgDXZP8jf68SDg8h2fgIFeTUW5A
- Z0RQ==
-X-Gm-Message-State: AOJu0YwiMXmG+ZW0lHVgCqkX+TLtvNsQNq7PP1tY4zflhp6CW2iPjcgk
- SE02IAQccmqKfqXQKwEMmRZJCrkzlFcZWxJIcF0oXZlk/M/d5WRfx3QgsNUVkHTczl0=
-X-Gm-Gg: ASbGncvo1iAZTYiomfN5yqQLmsiX/f+zySJWHjzyVhmj5/KkOb9oqRnzyoNk2CBx6m/
- hYyobRYtiP22F59DVhKsGUMS93jExULG7kv+54oa9+O27rSlBNww97dTfxDBGUa+Crih3oyv1AJ
- dq5KFrkSgaUVw5vO5Rrz55B/Ul/t7BuY3/QlnMIj4L7oKQtLVnA8L/v+xl9vCYhYZpvb9K2qL4W
- Dh6PQy67m3hIEh8oaIoxT1f2Kr2dU4R+JGCUg0c1zu6BpjohcEe4b1wNEQ6c0dQgsIVgwE6RxUq
- 4B6I4UWhetXprFZ0FYW+JqIUYOwCbEAvqlm+31z4s2jytgEermn05Ig6ATVUk2z8R6To/FbV7w4
- +b2ewGxlEzYt3QgNdI6konq5QP91z+FEm78m5PaQ=
-X-Google-Smtp-Source: AGHT+IGEPiOPqE89Ll0Xws5Yu/UVYXqT1gWkzgC2E2GU0mGc+iyMGIUE1vxduH8m1x7CxhjkbdEKtg==
-X-Received: by 2002:a05:620a:470c:b0:7d2:3db:6816 with SMTP id
- af79cd13be357-7d443a07613mr1680069085a.47.1751220020589; 
- Sun, 29 Jun 2025 11:00:20 -0700 (PDT)
+ bh=minUwTUUBfEDB0FQbaQaXpwetOAv8g08hMsEUtN8uwg=;
+ b=ETCZVu5ojTVzOGysLwGEwpsPixCfqFdfXO/96ylXcVqTSCt92hfq2nK1eJBAqC9Mph
+ 5yydiDamb0eC2tBFkdjtKhbsQdyxpKfIbPatLb4fk1sbY4xVWyzPhmWTXToM8kgPySQR
+ lWeOFk+ZBHlqLcGOvBtGNMJmcA6dXMnwJbcXTkmtpOSKddprYap4Wpa+kuxg6BPLHn07
+ 0+8m+E23GYns6wY1slTvskXCI82zdMift30UwVXODn/+5SbhcYRXMQ5wkJQSjIp4Yy4y
+ Jr6dWbhKjUYon/AVCNSXoMJM2yLx+xorhU3hectl3DTV6jfmntIqSvbgBIAAOlkddttC
+ eH1w==
+X-Gm-Message-State: AOJu0YyQi3CZu7gpw90a6db98K9I/RD0pSkLO5LTQcgV8+f+2Rf3eIbi
+ N//AlbltF9tH+fK5suUkIAiuc9w5phHCeAypAEydPHBm1aoXY9ZIFF45zDnR9yR9vKI=
+X-Gm-Gg: ASbGncv/O53RWo7ptMPUqTK55h/I89bp9JhJFLFPJiAVSJ6BXj2pbeMB9UlEdzO0rbR
+ XsB6neXYtQyFhIEvaohU6BnvmEJk6aow8o9EGQ00cAM0LReylUtKiTj3gSLzxXUUezEWmUyTNbo
+ JTWbbJQZS0yPjk/9qAosB6LswmVylNyOgtQBkVMVTAOmE4N+zKlsEDn/XrZ+6mAl4UT7rl6fOvN
+ RjRshUwsoA+ZrsyOgWykzC1fABx1prUy76BudCSPuQ62HUO7wMiI97sWyv8cBnD0m55EetmHSnD
+ dlyz4d6MVYpuMAnnzTste3LYVa2E5HWVK/pulhvLLEmtWWV427PCkH9CVqcH5fFzOL5Eie14P+n
+ HL9XL6YGugFpmUJBbYweceeWyIaZ5pyuTJm19U7U=
+X-Google-Smtp-Source: AGHT+IHqOiJU8iEDdUR8gjWe+ttCee8h1Rg1gE7EhelEeuF2sHUY8qmCdgK6z8a3l7Yclhw4APeBzA==
+X-Received: by 2002:a05:620a:470b:b0:7d4:4970:6753 with SMTP id
+ af79cd13be357-7d44970685dmr1106300885a.55.1751220057407; 
+ Sun, 29 Jun 2025 11:00:57 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-4a7fc5ad60asm46219561cf.81.2025.06.29.11.00.19
+ af79cd13be357-7d443235ed1sm463866885a.100.2025.06.29.11.00.56
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 29 Jun 2025 11:00:20 -0700 (PDT)
-Date: Sun, 29 Jun 2025 11:00:17 -0700
+ Sun, 29 Jun 2025 11:00:57 -0700 (PDT)
+Date: Sun, 29 Jun 2025 10:57:37 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Feifei Wang <wff_light@vip.163.com>
-Cc: dev@dpdk.org, gongfan1@huawei.com, Feifei Wang
- <wangfeifei40@huawei.com>, Yi Chen <chenyi221@huawei.com>, Xin Wang
- <wangxin679@h-partners.com>
-Subject: Re: [V3 14/18] net/hinic3: add Rx/Tx functions
-Message-ID: <20250629110017.32d4bfa5@hermes.local>
-In-Reply-To: <20250628072552.1311-15-wff_light@vip.163.com>
+Cc: dev@dpdk.org, gongfan1@huawei.com, Yi Chen <chenyi221@huawei.com>,
+ Feifei Wang <wangfeifei40@huawei.com>, Xin Wang <wangxin679@h-partners.com>
+Subject: Re: [V3 01/18] add some basic files about hinic3 driver
+Message-ID: <20250629105737.5e0d6edc@hermes.local>
+In-Reply-To: <20250628072552.1311-2-wff_light@vip.163.com>
 References: <20250418090621.9638-1-wff_light@vip.163.com>
  <20250628072552.1311-1-wff_light@vip.163.com>
- <20250628072552.1311-15-wff_light@vip.163.com>
+ <20250628072552.1311-2-wff_light@vip.163.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,33 +83,63 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, 28 Jun 2025 15:25:37 +0800
+On Sat, 28 Jun 2025 15:25:24 +0800
 Feifei Wang <wff_light@vip.163.com> wrote:
 
-> +#define HINIC3_RX_EMPTY_THRESHOLD 3
-> +u16
-> +hinic3_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts, u16 nb_pkts)
-> +{
-> +	struct hinic3_rxq *rxq = rx_queue;
-> +	struct hinic3_rx_info *rx_info = NULL;
-> +	volatile struct hinic3_rq_cqe *rx_cqe = NULL;
-> +	struct rte_mbuf *rxm = NULL;
-> +	u16 sw_ci, rx_buf_len, wqebb_cnt = 0, pkts = 0;
-> +	u32 status, pkt_len, vlan_len, offload_type, lro_num;
-> +	u64 rx_bytes = 0;
-> +	u32 hash_value;
+> --- /dev/null
+> +++ b/doc/guides/nics/hinic3.rst
+> @@ -0,0 +1,51 @@
+> +..  SPDX-License-Identifier: BSD-3-Clause
+> +    Copyright(c) 2025 Huawei Technologies Co., Ltd
 > +
-> +#ifdef HINIC3_XSTAT_PROF_RX
-> +	uint64_t t1 = rte_get_tsc_cycles();
-> +	uint64_t t2;
-> +#endif
-> +	if (((rte_get_timer_cycles() - rxq->rxq_stats.tsc) < rxq->wait_time_cycle) &&
-> +	    rxq->rxq_stats.empty >= HINIC3_RX_EMPTY_THRESHOLD)
-> +		goto out;
+> +HINIC Poll Mode Driver
+> +======================
 > +
+> +The hinic3 PMD (**librte_net_hinic3**) provides poll mode driver support
+> +for 25Gbps/100Gbps/200Gbps Huawei SPx series Network Adapters.
+> +
+> +Features
+> +--------
+> +
+> +- Multi arch support: x86_64, ARMv8.
+> +- Multiple queues for TX and RX
+> +- Receiver Side Scaling (RSS)
+> +- flow filtering
+> +- Checksum offload
+> +- TSO offload
+> +- Promiscuous mode
+> +- Port hardware statistics
+> +- Link state information
+> +- Link flow control
+> +- Scattered and gather for TX and RX
+> +- Allmulticast mode
+> +- MTU update
+> +- Multicast MAC filter
+> +- Flow API
+> +- Set Link down or up
+> +- VLAN filter and VLAN offload
+> +- SR-IOV - Partially supported at this point, VFIO only
+> +- FW version
+> +- LRO
+> +
+> +Prerequisites
+> +-------------
+> +
+> +- Learning about Huawei Hi1823 Series Intelligent NICs using
+> +  `<https://www.hikunpeng.com/compute/component/nic>`_.
+> +
+> +- Follow the DPDK :ref:`Getting Started Guide for Linux <linux_gsg>` to setup the basic DPDK environment.
+> +
+> +
+> +Driver compilation and testing
+> +------------------------------
+> +
+> +Refer to the document :ref:`compiling and testing a PMD for a NIC <pmd_build_and_test>`
+> +for details.
+> +
+> +Limitations or Known issues
+> +---------------------------
+> +X86-32, Windows, and BSD are not supported yet.
+> \ No newline at end of file
 
-NAK
-Doing this kind of empty threshold on receive is non-standard.
-Driver should not be doing it here.
-Many applications do polling optimization in themselves in the polling loop.
-This driver specific tweak would interfere with that.
+Fix your editor settings all DPDK doc files should end with a newline.
