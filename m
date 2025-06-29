@@ -2,129 +2,125 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6B70C7EE39
-	for <dpdk-dev@archiver.kernel.org>; Sun, 29 Jun 2025 17:08:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C01C7EE39
+	for <dpdk-dev@archiver.kernel.org>; Sun, 29 Jun 2025 17:08:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3803340666;
-	Sun, 29 Jun 2025 19:07:46 +0200 (CEST)
-Received: from PA4PR04CU001.outbound.protection.outlook.com
- (mail-francecentralazon11013028.outbound.protection.outlook.com
- [40.107.162.28]) by mails.dpdk.org (Postfix) with ESMTP id E898C402E8
- for <dev@dpdk.org>; Sun, 29 Jun 2025 19:07:36 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A79B740678;
+	Sun, 29 Jun 2025 19:07:47 +0200 (CEST)
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com
+ (mail-dm6nam12on2048.outbound.protection.outlook.com [40.107.243.48])
+ by mails.dpdk.org (Postfix) with ESMTP id E7153402EB
+ for <dev@dpdk.org>; Sun, 29 Jun 2025 19:07:45 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NOUPU+9Q/I0IPpjYso5qvIi39xF3W7jcAOnZE3AcvywLLIKOW5sfZmPsACi0QrR9Ujrup1W70eET2I0IBY/pYcmre9xwnf8A/n3CakKtGd3BB3tmxScKKKVjZpfq6s+rSGJznYtwMh29PqXYX+X0cSk/fpojuiVw3BiusFp57I/5nUqJYoxZZsmR5TWuOeixk73Xs1aHEQQWhIVPIHLauqOgErUzV1VSBkcg53CurCA6LozPh4UdnGdgnIBXinYehxswYkKxQHngAi5baLcGCoGrOPI0F9QamHB18QA0V8ScMV5qfzCLcwikNQn78GwRw+MoILdQq/Rbc925wztV+Q==
+ b=l/BNeqXryX3Wm+xycNaIlv+pGci3ODMXh1tZYaYpYLWJWwzILv4SGlovThL2lrvtxKxNaHOWjYCVwR6o7JkgEyoggqOC8M70z1fBfligTKWD296rMymdv2AwoXbGo59kLO/zDp8Xautr+D2FdcTpfBEJzh9g2goVlRTTvQCzNbphJnbBjjbqzM9hnA9EmgCXbpVD7ncafWQeLCaBObpgCgAiScW0kqVABf3NXw8M+p/AABODzlIUM515BDLksJmG8NmB6FQh6iu8jxSqRCMRglE0o8b1Vi0EyYheN0zYxdyJ5r2Y6oLJ9x8LMK9nq1Jr1NtbdYhNVWWynZAnBbuJwA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7lWvz3QAXcL4wceJdbsK246QtcT/4J67TxPlG7UWNlQ=;
- b=UAX+KFCTQbIytz/AWec0dtrWy4tk1mi5TYuPwWAPpnz3e/RUNqPEGD1JYe5Dp1JlmFo0uxAV9KdzdXuQVq5WEx+aFNCIDQpeA2LdEJjtEMyVRqDRJzgDzi9gxrUEppW1ehYbFi6lW00riRBLSjTlbA8DqhjNv7LdXDGJDjCDAqmTNNKspZFSeqRKNCr2AR/m5EnJuz5nmuf7H5ZH5a8NVKdphCwk2kOWUyymlNcy3QR6hIpqUp49o0SyTO5K+GQAt2CTNcGYkt4mFGe41lo/VxgrpxyivWsPGz0kkkx8rKfbObNfPnGqEMd34YHgROUSiLoXIIkPgbZrTKR8bUEMPA==
+ bh=RN7bzApOi5+bpbLULN3LlCA9BQ9cjDCDw8MhjkA1opw=;
+ b=QpZzBv98SVLLaAbpdAHOO+SBBG1N5KpJfZbTaKpJHIacs5h6kUYFPUdH82wELBkKAqRxx2bQU75gNy04B2E3j9w7cELYh/cAouFtKnC4KfiEd1rkFMVVEgtnc5aNuNQvEuXP26hwLu0FmjJc3+hv/NHPN6y59ofU+5NbT07cwnJqtNHWJHScgBnJ5ITkB+fl12LxTlYFrBpOBykJ+kojysQSeU+9DSRMUOkpiIManmXGln8FFyJuauz9+QtWKmgFLL4Z/9nUv6+dbhliRDw5pWOCpVBBWSg+MAUGsvN/687o7POBni5VGS7cl6C4+10Ki2wQdFHdlW1cmgnkJAmMig==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 192.176.1.74) smtp.rcpttodomain=dpdk.org smtp.mailfrom=ericsson.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com; 
+ 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
- s=selector1;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7lWvz3QAXcL4wceJdbsK246QtcT/4J67TxPlG7UWNlQ=;
- b=K/2/gK96Jb6xik9e60anuR3oiLdpbrRjrkvIkFMmYjl4JYgSKcdLFzy7aqK4kA5lYGlETZjAdzgFJkR3A9QYiUstJo3cqXTimI53+t7W2mf3mlsP8aQHsWYpsCfbEI0b/iKlwvN7vgdwbAVwXFwEEHJEHmX7xF5rJR6rbj/1uvrB3fZXoRA4yXNj/1QrJzQtoVLqIK95SIpuuyK9v6kXtP4ILEEqD57wiI6JFHyoDoEZkRuc1ipY47A84LS5NyWD0Qe88GHx+LVFZ5GH249YrI/7DAw7PKBQ1V9bMV6SSMMNlNxaNSeN/8HOlpRCNN5yx/uMeNO3e/Ju+v8ORumkZA==
-Received: from DBBPR09CA0048.eurprd09.prod.outlook.com (2603:10a6:10:d4::36)
- by OSKPR07MB10448.eurprd07.prod.outlook.com (2603:10a6:e10:9d::8) with
+ bh=RN7bzApOi5+bpbLULN3LlCA9BQ9cjDCDw8MhjkA1opw=;
+ b=IpgV+ldvC0XPYC3S7ObBtbBiWYyChQjtM/SmYQ/ewVw5B0LD2sIN33Tm5JFwFQ5UzwKptGf633UiZKm9taZaXUv69Kta9f2Z6SmIJ8jhZqU2P1VJcJ27ZrlRHQkiinF055aurSNogIBpM3r1NJfCaXcJVDGlFX03S9i8OLneUF0kV8rcs6NXeQS+XbgUkS4H7AWsO/PID7pJfcXKbCY/KtTR5esogE+HzpPv4wNARN477or8ILnYYqIjeGGVOLtZpe7H/TNypl3mtj9aiZT26l21gXkO9nAUk0+ahE1ywMtjXHGevQavFHus07fPTQO/qWbSM05UXruWzlpwx0G6kQ==
+Received: from BYAPR07CA0056.namprd07.prod.outlook.com (2603:10b6:a03:60::33)
+ by DM4PR12MB6088.namprd12.prod.outlook.com (2603:10b6:8:af::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.21; Sun, 29 Jun
- 2025 17:07:33 +0000
-Received: from DB3PEPF0000885C.eurprd02.prod.outlook.com
- (2603:10a6:10:d4:cafe::7) by DBBPR09CA0048.outlook.office365.com
- (2603:10a6:10:d4::36) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.28 via Frontend Transport; Sun,
- 29 Jun 2025 17:07:33 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 192.176.1.74)
- smtp.mailfrom=ericsson.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=ericsson.com;
-Received-SPF: Pass (protection.outlook.com: domain of ericsson.com designates
- 192.176.1.74 as permitted sender)
- receiver=protection.outlook.com; 
- client-ip=192.176.1.74; helo=oa.msg.ericsson.com; pr=C
-Received: from oa.msg.ericsson.com (192.176.1.74) by
- DB3PEPF0000885C.mail.protection.outlook.com (10.167.242.7) with Microsoft
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.26; Sun, 29 Jun
+ 2025 17:07:40 +0000
+Received: from SJ5PEPF000001F3.namprd05.prod.outlook.com
+ (2603:10b6:a03:60:cafe::ba) by BYAPR07CA0056.outlook.office365.com
+ (2603:10b6:a03:60::33) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.27 via Frontend Transport; Sun,
+ 29 Jun 2025 17:07:40 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SJ5PEPF000001F3.mail.protection.outlook.com (10.167.242.71) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8901.15 via Frontend Transport; Sun, 29 Jun 2025 17:07:33 +0000
-Received: from seliicinfr00049.seli.gic.ericsson.se (153.88.142.248) by
- smtp-central.internal.ericsson.com (100.87.178.69) with Microsoft SMTP Server
- id 15.2.1544.14; Sun, 29 Jun 2025 19:07:32 +0200
-Received: from breslau.. (seliicwb00002.seli.gic.ericsson.se [10.156.25.100])
- by seliicinfr00049.seli.gic.ericsson.se (Postfix) with ESMTP id
- CBEA1380070; Sun, 29 Jun 2025 19:07:32 +0200 (CEST)
-From: =?UTF-8?q?Mattias=20R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>
-To: <dev@dpdk.org>, Jerin Jacob <jerinj@marvell.com>
-CC: =?UTF-8?q?Mattias=20R=C3=B6nnblom?= <hofors@lysator.liu.se>, "Maria
- Lingemark" <maria.lingemark@ericsson.com>, Luka Jankovic
- <luka.jankovic@ericsson.com>, Sriram Yagnaraman
- <sriram.yagnaraman@ericsson.com>, =?UTF-8?q?Mattias=20R=C3=B6nnblom?=
- <mattias.ronnblom@ericsson.com>
-Subject: [RFC 0/4] Add support for event credit preallocation
-Date: Sun, 29 Jun 2025 18:52:10 +0200
-Message-ID: <20250629165214.3468-1-mattias.ronnblom@ericsson.com>
-X-Mailer: git-send-email 2.43.0
+ 15.20.8901.15 via Frontend Transport; Sun, 29 Jun 2025 17:07:40 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 29 Jun
+ 2025 10:07:26 -0700
+Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sun, 29 Jun
+ 2025 10:07:24 -0700
+From: Bing Zhao <bingz@nvidia.com>
+To: <viacheslavo@nvidia.com>, <matan@nvidia.com>
+CC: <dev@dpdk.org>, <thomas@monjalon.net>, <dsosnowski@nvidia.com>,
+ <suanmingm@nvidia.com>, <rasland@nvidia.com>
+Subject: [PATCH v4 0/5] Use consecutive Tx queues' memory
+Date: Sun, 29 Jun 2025 20:07:04 +0300
+Message-ID: <20250629170709.69960-1-bingz@nvidia.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250627163729.50460-1-bingz@nvidia.com>
+References: <20250627163729.50460-1-bingz@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.230.35]
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB3PEPF0000885C:EE_|OSKPR07MB10448:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7b8b3a60-d8eb-4072-386e-08ddb72f7079
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F3:EE_|DM4PR12MB6088:EE_
+X-MS-Office365-Filtering-Correlation-Id: 67853d14-592a-4d64-319e-08ddb72f74a0
+X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700013|1800799024|82310400026|376014; 
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?Z3hwQzcrL3NXS2taUmt1ZzJXZkVPYWlpR3F3UElTL25leWJBQzNNT2NPS01J?=
- =?utf-8?B?UXVBbEozUU85RU83bDQ2VmRTa2RLQnBCSzBxT2N2SGRvNkxnSTN4TGxEN1Ay?=
- =?utf-8?B?NHA4eVo4WDNhM0gvTFU3cnEzZXY5TnhsYmtTMWNqajlrMWpmWWs0emdqbTB3?=
- =?utf-8?B?QmpwRGNuSSt5Y1N4ZnErcHhMeWJicnJRaVNUMUUvYm9TU2JPWmNYSCtDUUEw?=
- =?utf-8?B?Zk1oQ20vNTMzT3ViSXA1dWhzTi9XV3g5TWtRUnJ2eUlXM1VkSDYwSkMzc1FT?=
- =?utf-8?B?VFZUVWVnWnVJbW40Q2kvTFc5cXZhVDYxM1ZPRkpvTUYrdHIyeThYOUswNjlY?=
- =?utf-8?B?a3c0czN5SmxHWFA4WjFnMitNbnVieW9xOWQxSWxvdDJlc29jSmRNbUFKUUFN?=
- =?utf-8?B?L3ZzNnNaMnc5S1dWSWJMQjQ5UGhldWgwOUcyR3VYb3BuS3BtcVhkVVNaWkY4?=
- =?utf-8?B?Z2Z2RmsyY1dBVUxlVlg1UzNrSERmWHhkc1FXOFdySlJobXFsMEl5QVYvZlBM?=
- =?utf-8?B?MGpwY3BuZGJITzQzU2FGdFBLU2dRVmhRaHRQZ0MxcGo5REMxSTdzK3NLbmlS?=
- =?utf-8?B?RjllcTlua1ZDNThEUDJDZTQzc1Vnd1RkbDU2WkRPRDN3Sm9XRGh1d2c5YThp?=
- =?utf-8?B?d1lpSldML0U1c0RXMTZmT3pvb1BiNVNiRURJWGNSTEVRUFJtUXJpelRlYlJT?=
- =?utf-8?B?M0s5WWNYZ01ZZWtQQnlMVUtuYVMycVdGeDh5WGRVMWVLMUN5a2dBZVk3NVRV?=
- =?utf-8?B?Y3JSZkVmMVZwQzdHZlN1WmF6NzcycTgzaUVuYStqNDhxd29PUlpJS0ZKaXJK?=
- =?utf-8?B?RzF5bUFlT2Z4cHBoMUMybXYwSnNrVzZFTGlObnUvWmV1UmRBUW04UzRUbFpn?=
- =?utf-8?B?bSsxQmxsbmlRNGxxS2c1OU91T3M0bG9GeVJLVHNjRFdzOG9aaTA4cHNCcWZz?=
- =?utf-8?B?RjE5dmZkNVVZTUtkSDlWM0hnU2JITzlJaHcxN1l2WmlDNmNtckN5WWxBQmNh?=
- =?utf-8?B?dTVua2RLQWo0b25oOC9UQ3MyKzFEclBCOFNoVWNzdU1lUk0wdUJ0NHI1dzRs?=
- =?utf-8?B?UmU1a2xScTdqeEJqR2F6R2lPNXFES0c3ekZ3L2syQnBQNmhTTVBOaHJIc29X?=
- =?utf-8?B?bS93VjYrTit1RkFaaXJWSWlzQUVVOHFueFp3VnBTd1o1SGRBUWE4RlNCSGhY?=
- =?utf-8?B?a2MvK1JrZHZ3K0xSNVFQZElmNW5mTjNjK0UyUWpaU3BmdUhtVEtCRWU2WFJF?=
- =?utf-8?B?THVvd09oaW9QMHBmQTEzdDZodzJpeDNDeitrM3R2SkNDZnkycDNjSUZVQWc0?=
- =?utf-8?B?R2pPbFdzZDRVTXJWQndlOG9NOEVxM1VvYllRYjVPZ0RpNmtBRlI4bG0zT1Iy?=
- =?utf-8?B?bnNSMmR3MTlXYTE5bzZZdXNjV0FTK2lTTW1Dby81QzgvdHJaS2JYME5PbEZU?=
- =?utf-8?B?WDNSYmZVdEhqQ1QzNCtYSDExazkvQ25ZY0t2NHRxTS90WThxZW5QVzhkbld2?=
- =?utf-8?B?T0srMmNxZ0x1Sm5qMVNISllnbTlvTlYvK1Z3QWdOZTRPcWxHZWcwL0wwMTBE?=
- =?utf-8?B?Qy9UUGhJT2xYMFNEa2tvOWo5V0Q5UU9NejhYZUhHNWNLQkhSSjdPV0JhNHVx?=
- =?utf-8?B?Z093bTdpQ0VxZXZWclNmYVl1ajEwNURoN1NkL3A0dlBhbFBkNDFndUdTYnhT?=
- =?utf-8?B?QWIwV1lZUUg3TXdrb2ZCT2NCZGdTbUpXSWdkT1h6STkrVm11SzJTdmdXaXN3?=
- =?utf-8?B?SjI3QUhXUGN5YmloM2cvVFJucTlpeTQzOGwybDhHVXg4QWswMk9uMnNzQkpM?=
- =?utf-8?B?b2RXT2ZBTTJVYldCcTNQT3FVc0FNdFE2K0dXQXRpaThWMWsvdTFWT1hmVnZp?=
- =?utf-8?B?c0tjdFY0VWZsNXlvY1J2YXJqUGJvaXlySWJzdENsNFJUUWxJUVQxaFdyWmZm?=
- =?utf-8?B?alRLVWhPc1RHUjhidUk3aUN4V1NvbDk3aExzRy9SajhIamJNU1krblQvQWNi?=
- =?utf-8?B?OVlnV1RsZngrWUtBdytJdkFRVDFmYXBwS2szZWtvLzJ3ekVzYVduSTJGRUJO?=
- =?utf-8?Q?B1Rl41?=
-X-Forefront-Antispam-Report: CIP:192.176.1.74; CTRY:SE; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:oa.msg.ericsson.com; PTR:office365.se.ericsson.net;
- CAT:NONE; SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);
- DIR:OUT; SFP:1101; 
-X-OriginatorOrg: ericsson.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jun 2025 17:07:33.4060 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7b8b3a60-d8eb-4072-386e-08ddb72f7079
-X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f; Ip=[192.176.1.74];
- Helo=[oa.msg.ericsson.com]
-X-MS-Exchange-CrossTenant-AuthSource: DB3PEPF0000885C.eurprd02.prod.outlook.com
+ ARA:13230040|36860700013|1800799024|376014|82310400026; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?zSpRXKgjm1p07u/h3UilZiD9si/ygu9FcPajyDuTxym1sVjK6bIQO2aPqP/b?=
+ =?us-ascii?Q?GMM1U9Z7Ig0sfStojX2VHzblwHb5dlzBGMCS6neXivp8ORuFUTP+wiuZc2rI?=
+ =?us-ascii?Q?X/mxMqtOdwJFkpVxVJAV9Dc3QPUySmg/VWfLkAr/KJAYsLo75KiJIm7XiA0Z?=
+ =?us-ascii?Q?BLnEyTGZFI+272OJ1y4/7f4wCJOob2/e+ZzqQHeADOrDjXVZRPl/7e4AI2j2?=
+ =?us-ascii?Q?ZZwnLesFS8SEnnhQA5GxzmgP0VGvhYd4C4fGDHmpihYGWUl9KeV2zfQaf5P5?=
+ =?us-ascii?Q?a8cNau2GNZOzz13YF5msVcXrzS1ihUETrbB7tjJbO2puSzLouYpxPlmiV1Ip?=
+ =?us-ascii?Q?zfbRMR2wcNb7gNcmIVA0uMaUf94TRjnF6ajtVsZrcyWX1YKt3Arkc6v0uTbn?=
+ =?us-ascii?Q?+zDMduJx0e2lgdpCKHd71BDP7VU9WIi9fYTDG1QepdOk3mNiASOVmNEqR3Vm?=
+ =?us-ascii?Q?jNPVOMz+72XefGw1VqYkJVvmHPXe9XdMGFDBdDSX2qrpUt6Vb58jyRaDZbVR?=
+ =?us-ascii?Q?QaeAGtfhzA4AgE3hwYFVa27C7Dp7Z0RwypPrfqUc7obHehkIJT5hfzwK5SXS?=
+ =?us-ascii?Q?tmS7bJg4YCnaJC4czVXdmFJ+Mt6ZiAPQKYUsc9tcUZBKPUyXmPjQBQSnk/2c?=
+ =?us-ascii?Q?vMhhXiiRCgOhjy8EddPfAUJbOUETj+VGjSVlt7nr4VKlXNJmIM266kVoEDAj?=
+ =?us-ascii?Q?QuVeFIi/gSvUabHWwku+YzHMu6jMP5H8NJjcexgiTcyxnnmEbvTYRfzwcr7U?=
+ =?us-ascii?Q?pGKB8WjTLph1c3XVLMoHdWVRbwhlplswzkoTZ5kuYNXkmUl5RMScBzoPHIU5?=
+ =?us-ascii?Q?eRRqKz0t23W640SQ7GYfhyvOHs2veo1CoqgYaJOmMNPefa6Gcuya0YdFLjEN?=
+ =?us-ascii?Q?ecu4lEvlJO7s+pAjDwC5wiMxqkuXux2IMp1ka9qYxkwmPyGf5gI9qL9GGCQp?=
+ =?us-ascii?Q?6zY7k0o1CAVJdyFPlOZYVPjjiz9x4s/o5U+Tys/hsDhQYpTiqmx2+nWLy2X/?=
+ =?us-ascii?Q?O92WntesVJwOfs/yhjA8MQU3cwo5W4HjYhbB9DCWk95llfuC0rW1+d6mCPPA?=
+ =?us-ascii?Q?4t6a/uZOls6gGYZYnIfyQ0BNqlYnXaRpNSNpXXy15GheoTimpAHsIrL/c2el?=
+ =?us-ascii?Q?bQtx79+ec4yaCdwPj7V8xAsGXc8bzkzXt9uwJU5C16xgw54UC02ZiSpydTp+?=
+ =?us-ascii?Q?gWdJLx083pE31PqjyTF2XXBSe2MzODDIG5QCsY7wf/Zv+7bn02rFvndy0qM1?=
+ =?us-ascii?Q?S5BOjONTxMkBT7PvfglUTNlebKcUWd7DKJWxw7eL3FR0Qp7e7qlLm3Xew1HS?=
+ =?us-ascii?Q?w3bXTrp8/I73wd95WW9lAc7ZT/VF37oPkuPLsXHmbxoeoIS0EYDfwZ3Ynj0N?=
+ =?us-ascii?Q?8NZHWWFd/ugXOI7uGmtOr1EQYxEJSN3gCc2/D4feMcCU2sQXNb8DxwK7qGfb?=
+ =?us-ascii?Q?ylOrZvQ3iCERITWSEUfBnPnHc/4hIoCWx5c3WiEohHw7o0MQovKD6cEYOhur?=
+ =?us-ascii?Q?1NY4fdCvll4b9I37EBI1xqqTlr8WHO4mLb8i?=
+X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jun 2025 17:07:40.3125 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67853d14-592a-4d64-319e-08ddb72f74a0
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: SJ5PEPF000001F3.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSKPR07MB10448
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6088
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -138,91 +134,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Events of type RTE_EVENT_OP_NEW are often generated as a result of
-some stimuli from the world outside the event machine. Examples of
-such input can be a timeout in an application-managed timer wheel, a
-control plane message on a lockless ring, an incoming packet
-triggering the release of buffered packets, or a descriptor arriving
-on some hardware queue.
+This patchset will move all the mlx5 Tx queues memory to a
+consecutive memory area. All the WQEBBs will be allocated based
+on the offset of this memory area.
 
-In non-event-triggered cases, the external-trigger-to-eventdev-event
-mechanism serves the same role as various Eventdev adapters, but for
-input that does not have native Eventdev support.
+---
+v2:
+  1. add a new fix for legacy code of WQE calculation
+  2. fix the style
+v3:
+  1. change the devarg and add description.
+  2. reorganize the code with different commits order.
+v4:
+  1. fix building failure on Windows and OSes with different compilers
+  2. update the rst
+  3. addressing comments and fix bugs
+---
 
-The actual RTE_EVENT_OP_NEW event enqueue is often preceded by a
-processing. Such processing may be both expensive or effectively
-irreversible. In addition, in case the enqueue is likely to fail,
-there is not even a point in polling the external source for new
-input.
+Bing Zhao (5):
+  net/mlx5: add new devarg for Tx queue consecutive memory
+  net/mlx5: calculate the memory length for all Tx queues
+  net/mlx5: allocate and release unique resources for Tx queues
+  net/mlx5: pass the information in Tx queue start
+  net/mlx5: use consecutive memory for Tx queue creation
 
-In such a scenario, efficiency could potentially be improved and code
-complexity reduced in case the application could know ahead of time,
-with some certainty, that the enqueue operation will succeed.
-
-Event devices have a mechanism that puts an upper bound to the number
-of in-flight (buffered) events. In many cases (e.g., DLB, DSW, and SW)
-there is a credit system putting an upper bound on the number of
-in-flight events. A new event consumes a credit, which is returned
-to the credit pool when the event is released. In the current
-Eventdev API, all this happens "under the hood" and is not visible
-to the application.
-
-This patchset optionally splits the enqueue operation into two steps:
-1) rte_event_credit_alloc() to allocate "slots" for the events, in the
-   form of credits. One credit grants the application the right to
-   enqueue one event of the type RTE_EVENT_OP_NEW_PREALLOCED.
-2) The actual enqueue operation, with the rte_event.op set to
-   RTE_EVENT_OP_NEW_PREALLOCED.
-
-The new operation type RTE_EVENT_OP_NEW_PREALLOCED is identical to
-RTE_EVENT_OP_NEW, with the only exception that credit allocation
-(either conceptually or literally) has already been successfully
-completed.
-
-Whether or not a credit allocation will succeed depends on the
-new_event_threshold of the request. In the current Eventdev API,
-new_event_threshold is strictly a port-level configuration. Beyond
-simply allocating a credit, this patchset also address flexibility in
-terms of making the new_event_threshold a per-allocation property.
-
-Control over new_event_threshold is very important to tune system
-behavior at overload.
-
-In the general case, failure to allocate a credit is only one reason
-an enqueue operation may fail. API semantics-wise, the possession of a
-credit does not guarantee that the subsequent enqueue operation will
-succeed. Certain event device implementations may come with stronger
-guarantees.
-
-In case the application decides not to (or fails to) spend its credits
-enqueuing RTE_EVENT_OP_NEW_PREALLOCED events, it may return them using
-the new rte_event_credit_free() function.
-
-For performance and API consistency reasons, a new preallocation-optimized
-enqueue function rte_event_enqueue_prealloced_burst() is added.
-
-To allow the application to query if the credit management and the new
-enqueue function are available on a particular event device, a new
-capability RTE_EVENT_DEV_CAP_CREDIT_PREALLOCATION is added.
-
-Mattias Rönnblom (4):
-  eventdev: add support for credit preallocation
-  event/dsw: add support for credit preallocation
-  eventdev: add enqueue optimized for prealloced events
-  event/dsw: implement enqueue optimized for prealloced events
-
- drivers/event/dsw/dsw_evdev.c        |   6 +-
- drivers/event/dsw/dsw_evdev.h        |   9 ++
- drivers/event/dsw/dsw_event.c        |  86 ++++++++++--
- drivers/event/dsw/dsw_xstats.c       |   3 +
- lib/eventdev/eventdev_pmd.h          |   6 +
- lib/eventdev/eventdev_private.c      |  24 ++++
- lib/eventdev/eventdev_trace_points.c |   8 ++
- lib/eventdev/rte_eventdev.h          | 193 +++++++++++++++++++++++++++
- lib/eventdev/rte_eventdev_core.h     |  12 ++
- lib/eventdev/rte_eventdev_trace_fp.h |  19 +++
- 10 files changed, 354 insertions(+), 12 deletions(-)
+ doc/guides/nics/mlx5.rst               |  25 ++++
+ drivers/common/mlx5/mlx5_common_devx.c | 160 +++++++++++++++--------
+ drivers/common/mlx5/mlx5_common_devx.h |   2 +
+ drivers/common/mlx5/mlx5_devx_cmds.h   |  10 ++
+ drivers/net/mlx5/mlx5.c                |  36 +++++
+ drivers/net/mlx5/mlx5.h                |  15 ++-
+ drivers/net/mlx5/mlx5_devx.c           |  26 +++-
+ drivers/net/mlx5/mlx5_trigger.c        | 173 +++++++++++++++++++------
+ drivers/net/mlx5/mlx5_tx.h             |   2 +
+ drivers/net/mlx5/mlx5_txq.c            |  67 +++++++++-
+ 10 files changed, 418 insertions(+), 98 deletions(-)
 
 -- 
-2.43.0
+2.34.1
 
