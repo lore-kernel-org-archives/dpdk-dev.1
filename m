@@ -2,74 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F20B9C7EE39
-	for <dpdk-dev@archiver.kernel.org>; Sun, 29 Jun 2025 18:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6CBDC7EE39
+	for <dpdk-dev@archiver.kernel.org>; Sun, 29 Jun 2025 18:11:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 48E4A4066A;
-	Sun, 29 Jun 2025 20:01:00 +0200 (CEST)
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com
- [209.85.222.175])
- by mails.dpdk.org (Postfix) with ESMTP id DBB004065E
- for <dev@dpdk.org>; Sun, 29 Jun 2025 20:00:58 +0200 (CEST)
-Received: by mail-qk1-f175.google.com with SMTP id
- af79cd13be357-7d41cd4114aso677725185a.2
- for <dev@dpdk.org>; Sun, 29 Jun 2025 11:00:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751220058;
- x=1751824858; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=minUwTUUBfEDB0FQbaQaXpwetOAv8g08hMsEUtN8uwg=;
- b=kW85UywPZqyutDRsntw6c7X9zoCBXRgrgRQOQmbwjAb79sBipHpTFpTRYDGe7yU5z1
- 7jzhTRnREXEv+/gt8U2zNxmijNfXfHq9h3O6uVCS9UvXWW3eVIReXgkQ/xpawtUpAWwm
- mpzB5boVbEW4LOQPD9bhyhQweGiwP3mWXNIC0sVVTJt1jQBPSXNxPigckzXr2rVis3Bn
- fpKH5aQ15Ssq+seMB7z2tT4hTA+9D+xETDm119KozZyAtltHIUjqep8joE3KflHrDEP/
- EpWhjIqkf2gHYLo8iKwXE6BZTAak+c3Kb0XmDa5ocTfNpaH57995cfTJUkxlSGfq2UXm
- fZAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1751220058; x=1751824858;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=minUwTUUBfEDB0FQbaQaXpwetOAv8g08hMsEUtN8uwg=;
- b=ETCZVu5ojTVzOGysLwGEwpsPixCfqFdfXO/96ylXcVqTSCt92hfq2nK1eJBAqC9Mph
- 5yydiDamb0eC2tBFkdjtKhbsQdyxpKfIbPatLb4fk1sbY4xVWyzPhmWTXToM8kgPySQR
- lWeOFk+ZBHlqLcGOvBtGNMJmcA6dXMnwJbcXTkmtpOSKddprYap4Wpa+kuxg6BPLHn07
- 0+8m+E23GYns6wY1slTvskXCI82zdMift30UwVXODn/+5SbhcYRXMQ5wkJQSjIp4Yy4y
- Jr6dWbhKjUYon/AVCNSXoMJM2yLx+xorhU3hectl3DTV6jfmntIqSvbgBIAAOlkddttC
- eH1w==
-X-Gm-Message-State: AOJu0YyQi3CZu7gpw90a6db98K9I/RD0pSkLO5LTQcgV8+f+2Rf3eIbi
- N//AlbltF9tH+fK5suUkIAiuc9w5phHCeAypAEydPHBm1aoXY9ZIFF45zDnR9yR9vKI=
-X-Gm-Gg: ASbGncv/O53RWo7ptMPUqTK55h/I89bp9JhJFLFPJiAVSJ6BXj2pbeMB9UlEdzO0rbR
- XsB6neXYtQyFhIEvaohU6BnvmEJk6aow8o9EGQ00cAM0LReylUtKiTj3gSLzxXUUezEWmUyTNbo
- JTWbbJQZS0yPjk/9qAosB6LswmVylNyOgtQBkVMVTAOmE4N+zKlsEDn/XrZ+6mAl4UT7rl6fOvN
- RjRshUwsoA+ZrsyOgWykzC1fABx1prUy76BudCSPuQ62HUO7wMiI97sWyv8cBnD0m55EetmHSnD
- dlyz4d6MVYpuMAnnzTste3LYVa2E5HWVK/pulhvLLEmtWWV427PCkH9CVqcH5fFzOL5Eie14P+n
- HL9XL6YGugFpmUJBbYweceeWyIaZ5pyuTJm19U7U=
-X-Google-Smtp-Source: AGHT+IHqOiJU8iEDdUR8gjWe+ttCee8h1Rg1gE7EhelEeuF2sHUY8qmCdgK6z8a3l7Yclhw4APeBzA==
-X-Received: by 2002:a05:620a:470b:b0:7d4:4970:6753 with SMTP id
- af79cd13be357-7d44970685dmr1106300885a.55.1751220057407; 
- Sun, 29 Jun 2025 11:00:57 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7d443235ed1sm463866885a.100.2025.06.29.11.00.56
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 29 Jun 2025 11:00:57 -0700 (PDT)
-Date: Sun, 29 Jun 2025 10:57:37 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Feifei Wang <wff_light@vip.163.com>
-Cc: dev@dpdk.org, gongfan1@huawei.com, Yi Chen <chenyi221@huawei.com>,
- Feifei Wang <wangfeifei40@huawei.com>, Xin Wang <wangxin679@h-partners.com>
-Subject: Re: [V3 01/18] add some basic files about hinic3 driver
-Message-ID: <20250629105737.5e0d6edc@hermes.local>
-In-Reply-To: <20250628072552.1311-2-wff_light@vip.163.com>
-References: <20250418090621.9638-1-wff_light@vip.163.com>
- <20250628072552.1311-1-wff_light@vip.163.com>
- <20250628072552.1311-2-wff_light@vip.163.com>
+	by mails.dpdk.org (Postfix) with ESMTP id A340940288;
+	Sun, 29 Jun 2025 20:11:28 +0200 (CEST)
+Received: from fhigh-b2-smtp.messagingengine.com
+ (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+ by mails.dpdk.org (Postfix) with ESMTP id 6A11A4025D
+ for <dev@dpdk.org>; Sun, 29 Jun 2025 20:11:27 +0200 (CEST)
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal
+ [10.202.2.49])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id A60177A00B2;
+ Sun, 29 Jun 2025 14:11:26 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-09.internal (MEProxy); Sun, 29 Jun 2025 14:11:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1751220686;
+ x=1751307086; bh=ww69qsfePfX+sb7Qu80+BFqGxq3hXlOE3T/pFE65eh0=; b=
+ EBYhiLZUXB2fpq/FN2VnnNnPLl6fd2/zK0ex9k7ufGEqC8LP51GW5w9ekbiwBWUb
+ GVUucHV+0fyRPR11b+Jb9FLyc8cEkdjO2+HhQttcOgik7juuxknV3vppd3wJ2gfQ
+ TUnxFOJUhToSvf6TlLx7lg/WV9j0bHlgCRhoBoAMljg704pO/CBgc/GIOp+FuOaO
+ 74y72ZEVsix0ltsKxp7+i5iKWUn/v61YHMgqPQ0hVJucBV5PG8mpMPlNzsOc+Si3
+ QqDAOWzVZjOg9gZYp1l2LlnCnimO1mvYJmj+OILOCrS6wS7vfkFBVldTcj1fOP02
+ EkGkF0vrz0g/tne59GmXMg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751220686; x=
+ 1751307086; bh=ww69qsfePfX+sb7Qu80+BFqGxq3hXlOE3T/pFE65eh0=; b=i
+ YO7kyFPg7rrjdAcA0OOvSYgTZ1nZyscrjNPJK7p38qDoNNKhG3Bm2Dzgh2ipkmRI
+ YT8ntMOZnwTgboMj83wLVitzPudV+iMRwyOFiPkuhbnX4L/eWaPHpTfH1UlWlza8
+ qJjeZGil8fTiQHa4HVrI2jO+sd/DecS6UrXPFRqp2ZhBFkYPIEmg3NwLT1AMNvC6
+ ztZYF+3GROI7ag5OlX684Uuje80JNlkSg7RjnJwIHwaY1njoFJjRfEvDg4Ygbi1l
+ nTVw21HAXxEzUr+fZHJWrDH+kbUug/oomHy2bMWast7pcSOK0YgwotYggOZFkJ4X
+ PzKwTQtJm9yZx95P+StOQ==
+X-ME-Sender: <xms:zYFhaHWfUZdIDJ7fZz9raMQTut_a2iQyVos7UdlXxhDM0dNCcpapsA>
+ <xme:zYFhaPke1oCG0ZypJS6L__ZVZBENjy1uc-3p3R2iidAWnierpwDyuRWmjr-3MMSS-
+ ZmJo9_9eO6j2Qj4QA>
+X-ME-Received: <xmr:zYFhaDY-663r1JRLP62XtFwR0-_9I5eg0R0n9dnC19zXkwkJSJpgp6Jcp4BFTF_QVXBSwZBCDuR7ufJY-tg4j32wQA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdelhedtucetufdoteggodetrfdotf
+ fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
+ lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+ ephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghsucfo
+ ohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtffrrg
+ htthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdvuefg
+ feekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+ hthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeejpdhmohgu
+ vgepshhmthhpohhuthdprhgtphhtthhopegsihhnghiisehnvhhiughirgdrtghomhdprh
+ gtphhtthhopehvihgrtghhvghslhgrvhhosehnvhhiughirgdrtghomhdprhgtphhtthho
+ pehmrghtrghnsehnvhhiughirgdrtghomhdprhgtphhtthhopeguvghvseguphgukhdroh
+ hrghdprhgtphhtthhopegushhoshhnohifshhkihesnhhvihguihgrrdgtohhmpdhrtghp
+ thhtohepshhurghnmhhinhhgmhesnhhvihguihgrrdgtohhmpdhrtghpthhtoheprhgrsh
+ hlrghnugesnhhvihguihgrrdgtohhm
+X-ME-Proxy: <xmx:zoFhaCVtudkkwyG_sNmzuUQRiPFkfXnOu5zTS2GoqwZABQMcRETfXw>
+ <xmx:zoFhaBl7Yjy6d1DneQ8mTK-0ZHa3LAjSW1v0UvUD0uu45oUviIGo5w>
+ <xmx:zoFhaPd7edoRpBgfxIICmWZUEebrNpwpa9-De5DmjMhHQBs59uA37w>
+ <xmx:zoFhaLFDaxddVhzdQzAxA2ktvLhsUmPQVWQHT28VBqtMjNxeTAJwmA>
+ <xmx:zoFhaHH_mtEtEV4lkMPuGHXpb-1pOQjMbVL3M_1_Rzd6EdEOIWRSVizn>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 29 Jun 2025 14:11:24 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Bing Zhao <bingz@nvidia.com>
+Cc: viacheslavo@nvidia.com, matan@nvidia.com, dev@dpdk.org,
+ dsosnowski@nvidia.com, suanmingm@nvidia.com, rasland@nvidia.com
+Subject: Re: [PATCH v5 0/5] Use consecutive Tx queues' memory
+Date: Sun, 29 Jun 2025 20:11:22 +0200
+Message-ID: <8912871.uz5P2jW1tq@thomas>
+In-Reply-To: <20250629172303.72049-1-bingz@nvidia.com>
+References: <20250629170709.69960-1x-bingz@nvidia.com>
+ <20250629172303.72049-1-bingz@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,63 +93,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, 28 Jun 2025 15:25:24 +0800
-Feifei Wang <wff_light@vip.163.com> wrote:
+> Bing Zhao (5):
+>   net/mlx5: add new devarg for Tx queue consecutive memory
+>   net/mlx5: calculate the memory length for all Tx queues
+>   net/mlx5: allocate and release unique resources for Tx queues
+>   net/mlx5: pass the information in Tx queue start
+>   net/mlx5: use consecutive memory for Tx queue creation
 
-> --- /dev/null
-> +++ b/doc/guides/nics/hinic3.rst
-> @@ -0,0 +1,51 @@
-> +..  SPDX-License-Identifier: BSD-3-Clause
-> +    Copyright(c) 2025 Huawei Technologies Co., Ltd
-> +
-> +HINIC Poll Mode Driver
-> +======================
-> +
-> +The hinic3 PMD (**librte_net_hinic3**) provides poll mode driver support
-> +for 25Gbps/100Gbps/200Gbps Huawei SPx series Network Adapters.
-> +
-> +Features
-> +--------
-> +
-> +- Multi arch support: x86_64, ARMv8.
-> +- Multiple queues for TX and RX
-> +- Receiver Side Scaling (RSS)
-> +- flow filtering
-> +- Checksum offload
-> +- TSO offload
-> +- Promiscuous mode
-> +- Port hardware statistics
-> +- Link state information
-> +- Link flow control
-> +- Scattered and gather for TX and RX
-> +- Allmulticast mode
-> +- MTU update
-> +- Multicast MAC filter
-> +- Flow API
-> +- Set Link down or up
-> +- VLAN filter and VLAN offload
-> +- SR-IOV - Partially supported at this point, VFIO only
-> +- FW version
-> +- LRO
-> +
-> +Prerequisites
-> +-------------
-> +
-> +- Learning about Huawei Hi1823 Series Intelligent NICs using
-> +  `<https://www.hikunpeng.com/compute/component/nic>`_.
-> +
-> +- Follow the DPDK :ref:`Getting Started Guide for Linux <linux_gsg>` to setup the basic DPDK environment.
-> +
-> +
-> +Driver compilation and testing
-> +------------------------------
-> +
-> +Refer to the document :ref:`compiling and testing a PMD for a NIC <pmd_build_and_test>`
-> +for details.
-> +
-> +Limitations or Known issues
-> +---------------------------
-> +X86-32, Windows, and BSD are not supported yet.
-> \ No newline at end of file
+Applied, thanks.
 
-Fix your editor settings all DPDK doc files should end with a newline.
+
+
