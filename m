@@ -2,82 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0642C7EE39
-	for <dpdk-dev@archiver.kernel.org>; Sun, 29 Jun 2025 20:13:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82CF1C7EE30
+	for <dpdk-dev@archiver.kernel.org>; Sun, 29 Jun 2025 20:22:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ECB974025D;
-	Sun, 29 Jun 2025 22:13:12 +0200 (CEST)
-Received: from fout-b5-smtp.messagingengine.com
- (fout-b5-smtp.messagingengine.com [202.12.124.148])
- by mails.dpdk.org (Postfix) with ESMTP id 2780B40151
- for <dev@dpdk.org>; Sun, 29 Jun 2025 22:13:12 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id CBCD34025D;
+	Sun, 29 Jun 2025 22:22:43 +0200 (CEST)
+Received: from fhigh-b3-smtp.messagingengine.com
+ (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+ by mails.dpdk.org (Postfix) with ESMTP id B01EF40151
+ for <dev@dpdk.org>; Sun, 29 Jun 2025 22:22:42 +0200 (CEST)
 Received: from phl-compute-01.internal (phl-compute-01.phl.internal
  [10.202.2.41])
- by mailfout.stl.internal (Postfix) with ESMTP id 5EFBD1D000BF;
- Sun, 29 Jun 2025 16:13:11 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-01.internal (MEProxy); Sun, 29 Jun 2025 16:13:11 -0400
+ by mailfhigh.stl.internal (Postfix) with ESMTP id D43CF7A0034;
+ Sun, 29 Jun 2025 16:22:41 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-01.internal (MEProxy); Sun, 29 Jun 2025 16:22:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1751227991;
- x=1751314391; bh=TjqhCwMON/brgvP5Yh5eflMEdX4KnX3MAOE8gHAgz5k=; b=
- WsdQ58YGU1Zc8NGucpTLxjyKxQrzFoX++JE7/BbWTB27Uq4FUeH4XUwMDckpzOe6
- qF59M4FjhhB++EsmrdeE7erddKOutofTMYOgAZMgOGWi4++txkVyXhYHfK65FYDg
- M4A7kEvbuHseYD+v6eKeiq9bUw7U1hfFc9UMIXXchKaMVXMXG+cdV7Dbq2nUTgTe
- S/6hV1LzCjUcUokr/mnNQ/FmzD4FHZBiOOyAMFMH1sETd0vEtMPYQp7ElaKhp7/0
- 1EHtCrfdhjUJiuKg0qih0UBk+hxk/3FuNRYMC3Ic2679N5WalClCPl66a6Snd2op
- g5ELHSiDC5fmG20apl/VYQ==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1751228561;
+ x=1751314961; bh=P95PU9d4FWuTqWoZXozFFjwL10PBNszgVRAL7axxH7A=; b=
+ Y/Teh/hi7u2xfbR41x2AfUhAmbPthUYwAFsG0NdlZHoiDE2nVmU5k9DKJVzMKAEF
+ apA26LR/WHYpDShoX6mS9ws1a9ngc9zeuYi9eDwfEN2kUw4GJJZ7dM95NsCVYwWt
+ UHYyhCMPj4YNt0IPcVBHRBZ91YARpV7RVOrKzvFUUyKCNgjfWPwLfjrSGMAwTJCm
+ awTQK+o6kxdr8ufikuN+n/z7TNnBJiPW6JqYgmFash7sL/ryr2gzjqRlTGic+ZWl
+ agJkp3kfIZSdfCnQBnON772nUcQodGE4w8oLx/wshNGt8tdBLWW55D/KMz4//Shx
+ PMtOQtuu/rIieyXph5yoDw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751227991; x=
- 1751314391; bh=TjqhCwMON/brgvP5Yh5eflMEdX4KnX3MAOE8gHAgz5k=; b=e
- wFOI4nLggOXkbtKIujmvHxYuvW88CT+l+4KbC9Yqp8WkGS2gNqredzGp0LY5Jt0o
- ZwyawjtOAtVU+iOL03pzfZxVPdpa1JxUuUazBPnmtokYHm8+NM3E+hJtNtHKXoSB
- thhnPDmkslvZkwbUXf5AwtlWXUBKHqvDmwOrkBjuN4LQFRPLsg1xbtSNSN7GpHLo
- WE3vBLPd0wNYjHJ7FXXIV9Z0KsLIXcKq3cvGuZi0Hy14xmCUn2lOW0I08+cGLZsB
- GwrCi6eT+kfCIUzf3DTksu85LlKjzJq1RbRb7cfsszoPDzCghpk5vGhesIifc8J4
- Pc3iZ0ys+K1Qut2fW5wOw==
-X-ME-Sender: <xms:Vp5haES2aKZwLM8URRUiEz534QpCjEVDDKO32snNzZT_V4t1-gfmHA>
- <xme:Vp5haBzP_DQbxTuh1KMHl-w5G4oe1pHv4RmOW1a386SlRpWEbZsyQZDAxEgqSFDmV
- _rZeTyzqp636KXIQQ>
-X-ME-Received: <xmr:Vp5haB2v5952I99Y735nHRApZReKb56ehlxV-CYVSy7a9Q0Q09bvny2gePwnkv5R4NCeY5ZTGQrOBRew7TrCf8Ot2g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeljeehucetufdoteggodetrfdotf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751228561; x=
+ 1751314961; bh=P95PU9d4FWuTqWoZXozFFjwL10PBNszgVRAL7axxH7A=; b=P
+ AL66Bw0Wf66c+ArKHME6GqvOzFKK5WJQB0nwd3Tp9hNrIYyw3/36fGHvMyB4CFOq
+ xgl5gpuYSdqYqfwReh4pxuqMh53jyJWooCLqBdvkVLbyFF7+4pna19pDTLVwZaW8
+ x/a2HG7KSShf34RS5Zb3UZkTxyb2k4f8OZwvPgHD5QkqumQFYuATY4LGHmjVH/gy
+ qPqJg6YT5UCrhRdIj3cLRBwymKxJJLJjzg3O7NsWX8UrmHQTaE+BB6W73OOljmXQ
+ sgCaQL1xMjARgKPf2S4dyNpfWBbbVTppoQNh2Z5+QJWbXrGxnhzE0HvDBR2o1ooh
+ QG+rmZdUzs192EV1XXPfw==
+X-ME-Sender: <xms:kaBhaBWxivCbUmFUSxyJp5wG_9aZkXn70DVVQ0cgtxvUmXYuuuprgg>
+ <xme:kaBhaBlgeMNkXsC25QM4txQ1RsKHthnEOWOb14KkUBGjbK9_bo8gCcHzteYx1AQOO
+ LKTiRQwFMKk7RR9cg>
+X-ME-Received: <xmr:kaBhaNa4A53SoJV79IRPqQktpxwNKeebRYmD-_tn9rYHzbbhkWNnCgJ2lTLkmZaOu1Th2ZUMQdwUI2SXCvn7bPAcWQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeljeejucetufdoteggodetrfdotf
  fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
  lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
- ephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghsucfo
+ ephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghsucfo
  ohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtffrrg
- htthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdvuefg
- feekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
- hthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeehpdhmohgu
- vgepshhmthhpohhuthdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkphhluh
- hmsggvrhdrohhrghdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthho
- pegrnhgurhgvfidrrhihsggthhgvnhhkohesohhkthgvthhlrggsshdrrhhupdhrtghpth
- htohepfigrnhhgrdhjuhhnlhhonhhgudesiihtvgdrtghomhdrtghnpdhrtghpthhtohep
- shhhrghnrdhlihhjihgvseiithgvrdgtohhmrdgtnh
-X-ME-Proxy: <xmx:Vp5haIAJmenpgyd0QkPqUnWTY2JASd59D_ra1ahXArwRb9xL8CaFNw>
- <xmx:Vp5haNjP9fKYUukynQYLWdFSUrC_7F3Y924G-AhC3npleEesVIh0AA>
- <xmx:Vp5haEorbLfhB5gDmrqiKPkbtta9EDZAdgKKtOlxThVcR1oRgDmJzQ>
- <xmx:Vp5haAh8yM7rj4EDpZEtMKd9quVrhTy6-YJiR2VGqn5fBuOMI0_cSQ>
- <xmx:V55haAoyrn00SHH6zDOVp3UJHfOVENfnQu_IktwzS492c4eSI-kl6DbP>
+ htthgvrhhnpeegtddtleejjeegffekkeektdejvedtheevtdekiedvueeuvdeiuddvleev
+ jeeujeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+ hthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhmohgu
+ vgepshhmthhpohhuthdprhgtphhtthhopehpsghhrghgrghvrghtuhhlrgesmhgrrhhvvg
+ hllhdrtghomhdprhgtphhtthhopegurghvihgurdhmrghrtghhrghnugesrhgvughhrght
+ rdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohepjhgvrh
+ hinhhjsehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtoheprghmihhtphhrrghkrghshhhs
+ sehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohepjhgvrhhinhhjrggtohgskhesghhmrg
+ hilhdrtghomh
+X-ME-Proxy: <xmx:kaBhaEVj0XDzfJjR7NmPoy2g4qXYxMXC2it3uKFIWXmFVTsYK2iBfA>
+ <xmx:kaBhaLkGN76DRqwhs6MtA0qsNcA3Dwf8M0GlFxdjUncqF_0cSFCr7w>
+ <xmx:kaBhaBev6o54Ren2CqlY59Mo3jz36j3y2wOyqL--JcxwfCUjaJY3UQ>
+ <xmx:kaBhaFHIDIFfa0JFIIfgVHGjP4Mxsabuxakjmtg8p3lN_e5gc9XxbQ>
+ <xmx:kaBhaPwSLtnGOD7uATTTSw33n-JK9QKLlTTnFOCOUQW8uxBUm7365Od2>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 29 Jun 2025 16:13:09 -0400 (EDT)
+ 29 Jun 2025 16:22:40 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Junlong Wang <wang.junlong1@zte.com.cn>, Lijie Shan <shan.lijie@zte.com.cn>
-Subject: Re: [PATCH] more replace memcpy with structure assignment
-Date: Sun, 29 Jun 2025 22:13:07 +0200
-Message-ID: <4478590.aKNjEaI27c@thomas>
-In-Reply-To: <20250612030952.611893-1-stephen@networkplumber.org>
-References: <5311136.0WQXIW03uk@thomas>
- <20250612030952.611893-1-stephen@networkplumber.org>
+To: pbhagavatula@marvell.com
+Cc: David Marchand <david.marchand@redhat.com>, dev@dpdk.org,
+ jerinj@marvell.com, Amit Prakash Shukla <amitprakashs@marvell.com>,
+ Jerin Jacob <jerinjacobk@gmail.com>
+Subject: Re: [PATCH] doc: fix missing feature matrix for event device
+Date: Sun, 29 Jun 2025 22:22:39 +0200
+Message-ID: <5264375.2vfOZ694Ok@thomas>
+In-Reply-To: <CALBAE1O3gUvoxBcQRjYWqc-d28h_QpGNr8UVsnRhV-pzakr0XQ@mail.gmail.com>
+References: <20250613231519.32933-1-pbhagavatula@marvell.com>
+ <CALBAE1O3gUvoxBcQRjYWqc-d28h_QpGNr8UVsnRhV-pzakr0XQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -92,12 +94,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-12/06/2025 05:08, Stephen Hemminger:
-> Prefer using simple structure assignment instead of memcpy.
-> Using a structure assignment preserves type information and
-> compiler checks types already.
-> 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+16/06/2025 17:05, Jerin Jacob:
+> On Mon, Jun 16, 2025 at 2:02=E2=80=AFPM <pbhagavatula@marvell.com> wrote:
+> >
+> > From: Pavan Nikhilesh <pbhagavatula@marvell.com>
+> >
+> > Fix missing feature matrix addition for event device DMA and
+> > vector adapters.
+> >
+> > Fixes: 66a30a29387a ("eventdev/dma: introduce DMA adapter")
+> > Fixes: e12c3754da7a ("eventdev/vector: introduce event vector adapter")
+> >
+> > Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
+>=20
+> Acked-by: Jerin Jacob <jerinj@marvell.com>
+> Tested-by: Jerin Jacob <jerinj@marvell.com>
 
 Applied, thanks.
 
