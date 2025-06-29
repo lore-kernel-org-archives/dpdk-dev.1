@@ -2,72 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06F61C7EE39
-	for <dpdk-dev@archiver.kernel.org>; Sun, 29 Jun 2025 16:45:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45DF1C7EE39
+	for <dpdk-dev@archiver.kernel.org>; Sun, 29 Jun 2025 16:45:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 01B2F4060C;
-	Sun, 29 Jun 2025 18:45:24 +0200 (CEST)
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com
- [209.85.222.172])
- by mails.dpdk.org (Postfix) with ESMTP id C6D2A4025D
- for <dev@dpdk.org>; Sun, 29 Jun 2025 18:45:10 +0200 (CEST)
-Received: by mail-qk1-f172.google.com with SMTP id
- af79cd13be357-7c5f720c717so497126385a.0
- for <dev@dpdk.org>; Sun, 29 Jun 2025 09:45:10 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E658240615;
+	Sun, 29 Jun 2025 18:45:26 +0200 (CEST)
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com
+ [209.85.222.177])
+ by mails.dpdk.org (Postfix) with ESMTP id 7B9434025D
+ for <dev@dpdk.org>; Sun, 29 Jun 2025 18:45:13 +0200 (CEST)
+Received: by mail-qk1-f177.google.com with SMTP id
+ af79cd13be357-7d098f7bd77so429865285a.0
+ for <dev@dpdk.org>; Sun, 29 Jun 2025 09:45:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751215510;
- x=1751820310; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751215513;
+ x=1751820313; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ahc4kL6+UfBMavlJRmStyvvjqLhKZyS9G/vBhqcCiF0=;
- b=QpBUHYafqQl+0pQRyKGZgvhHNuMCtjggt1Yca6VmmhBduT8kLygC2SeHREkefcF948
- dBzQvRbj5ZBrTmOr6Rx3oGmoYupyPoP7lrqb72gUAJGSQ83cvdFf0riw+a3PLlOM0D+F
- C1Up/Y/kMwwfe2xEMphCP3R8pPUIZOVype0z7y20gWxLdOxMnnSoNi1EgBg8qnk3uIaz
- PN1q4LyVjEd/V/RpEUQtZFMTdhrPXH6kHpYpqWRX3QQaDX/l27z0QYLJyG1wWIGgNNQ3
- 1U276gQTJJPkWdbxBQ7o9C2o8EpVtcjIJXmgemhn6FUVeWl+0XUhR+Sju5mrHbCO3zwt
- /d/g==
+ bh=y12w40sA9sQT3kbPlkzyrN8+P43Ef3FPEyY76RLPRQk=;
+ b=u2DZCVZzfy3O73BiXkeTDpZOvCUUbJKzcQhxBMX3Hqaa/ENQlUTM3jxsDam6w/kCm6
+ 7SGHaIQXNdxbKdO+7TC51hJEJYKgtNvjp5oOP1ewsP/UWqGJQYVDE93tyERZ1ZB4hX7M
+ KaDzBqAo0aWuauX2CS9ImakcIFyoOdt/nfR9BzYPYfCIhWh0vRR0wmiNcaoSUx86ycAa
+ RWe/QWPEhOy9HRKE8QYycwEVm6gVMuOoQLYl9agppfcMrUmo8lRQz1IEukHTMhyrZyQq
+ aalPiJNEy3qKoRIDiJfnOihH663hXm/0EIAMiBtwQZHsioveeKQwi2uP9LwdypkztxeO
+ jP6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1751215510; x=1751820310;
+ d=1e100.net; s=20230601; t=1751215513; x=1751820313;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=ahc4kL6+UfBMavlJRmStyvvjqLhKZyS9G/vBhqcCiF0=;
- b=dhvw/d9jJf7FnVq1+ErXBM0zdyOth8AUAQVtFnnm/KBuTs8iAsOv/B5mnr8sTJKTsj
- ZFb2LrjSSrq9wt9cbOTCpemlfNSzIxRbZl4xnPDytbV84oZwZJu9sJNd8NB872hic7cW
- 1jlUooTd7yGIVDasL7lgjDobDhaS40DGcs6b1G69mDhNpUBqoDToY5LbNdHih/WMPVnf
- 57IdE5h4fiC8HGTBrfUQcKLBzdcC82oYaasIz6MPULROnxppEfjN4gWWcirSFeffG4yt
- OHvargz6KUl/gxNXd1u9Ht0Z+RBMXtHzEi8+1Vq4Dg1vmdEttKIpBP41kJ9BLSL58VD6
- 9VwA==
-X-Gm-Message-State: AOJu0YzEeHCNEZxN9rbR8lidaq/JGDrHJv6FFMoEMTXh2vfkTvVG/aDS
- Pus7Oq/xbSKMtgk55puIDPqIh4JQcQS/EnHK1znWnIxQE8rgzZIPFqkZldjSAjAXeGHQSM7yitA
- He1h727w=
-X-Gm-Gg: ASbGncu2wX+ZfRzULxrKYCm/a2BI6+edPizYn3JdY0yPHSV0FiX26xb1zcJj4RF73k3
- dizPgPu4hUMkhoMcDnxQ/Pvoa1o8LzII2sb8yq7NcZ08NhWiEGzfszmkSE5lR0ML7/Rz+gauh/I
- 7lhh/av/9hm1xni4Q+SL8tOmDTNNeuWJr0rYunpb5VheyCZjT5FuA8zdZQlLBFWv4sxB535FShU
- tpNw/6Ag+TUArjfRUrf1bHHXGJqThzJes2G8s9IEI8Ztx1zE0Jiq/ZgVJp3YDEwiMkuP4isyCNq
- IkGKue1pYX3JsSdiG+muePTlMgiLYVs60Z6wmcu/OCNXd8v0axBsqliYoISFtK+17lAbyTlBfA7
- cbHYhNGREtwGQJIOwx6w1YsAc1Bbp2ecam2FEae8=
-X-Google-Smtp-Source: AGHT+IF6XQtSe96yPrUb11QbmD7WdzF8fk1f9kpu/agWG3awLbqBPA7mYE9/o7z8mIb4CUQAdnJ4wg==
-X-Received: by 2002:a05:620a:4488:b0:7d0:a2c1:975b with SMTP id
- af79cd13be357-7d444177679mr1505329685a.14.1751215510062; 
- Sun, 29 Jun 2025 09:45:10 -0700 (PDT)
+ bh=y12w40sA9sQT3kbPlkzyrN8+P43Ef3FPEyY76RLPRQk=;
+ b=oDOCIHAPEWE7Zq+x/skwQ74yARwwbK7mbRsnt33OS3AtG5XeQRCNJCw1Wg8g7AfTff
+ WaRI5oLGYLsU469gxYTUxCmAghrMAghtOf8yGqY7bIxMMm2WBqgUNaVVlvizy6FdMvp+
+ w31O7i9/2g88I5dXHFTNp+NKmx3LntesMnOCBaabhQgVEgKDUFHWu7OCJZm74XT5WWtD
+ FerdiJJfeggWsg71mdy2er/GClImtoh0kgFnVRKaZg/CK2PTeAm2nmhDMKQAqbD3RIPL
+ wyHCYxcZGznFVYfWwybWy8Z1OIxjV6uSAvgMfbMuBzZ5cwpg2/cQk+y6xTAPDp94dA9S
+ ld3Q==
+X-Gm-Message-State: AOJu0YwqL1vhqYDVuKlQIclcAihxUGZk2Dwj/ROgsfLkflGPlGsQxPL1
+ q4xz1u220sxdcpflxtk1SqRuW0duASe3sN2vo1HTaVgOeyrTwZQ3MVXzyoqsUUUXLWY=
+X-Gm-Gg: ASbGncvjONCpzAJvu5jpf+IZji7L9b8WvIcbUqsLVveA7eYzYTNUMIXtlt8/Ve9phrt
+ 9lDCChqK4VOz/TmiF3r+IjP5Lw/SjzhZNnO7n3u53GuTIgQIC5dbo6KvxjTy/HLVZnQQrM3XCAT
+ BJ8ExMaE4KDTbw+2sTjcfuH1vvZw/mf1QsVVJxAhMgg95vn0Wq2/MuGM/On1WCLYf+cBEeRpn1+
+ KYFpHUn8brlEEfJzFCkJczkr6snnW+IlZTjAlh8e5iP2FMgUAWhfJMXuAsYPCsY95xvCQ4YTjtD
+ J8ca6Oa/vmbzQWKcgp0B/5f4sXlKcAiDVVrJ0bBHLnTYeqSsgt1o/wSRI99opRuwQm1QwN3MhAN
+ yGP+JDCkyJWKZm4AdsNzyYhKlT0Lpt+vtLeOfnZg=
+X-Google-Smtp-Source: AGHT+IGTMFzHxytMsRX8E0Q6cX1G7btRO3Z0SvlRiXgo+a5UIDB1NTh9aazgeH66aJl1DAdXAlZVXw==
+X-Received: by 2002:a05:620a:3953:b0:7d4:3cf6:15f3 with SMTP id
+ af79cd13be357-7d43cf61700mr1724850185a.25.1751215512782; 
+ Sun, 29 Jun 2025 09:45:12 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7d44316547bsm456985385a.27.2025.06.29.09.45.09
+ af79cd13be357-7d44316547bsm456985385a.27.2025.06.29.09.45.12
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 29 Jun 2025 09:45:09 -0700 (PDT)
-Date: Sun, 29 Jun 2025 09:37:25 -0700
+ Sun, 29 Jun 2025 09:45:12 -0700 (PDT)
+Date: Sun, 29 Jun 2025 09:43:54 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: vanshika.shukla@nxp.com
 Cc: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>, Sachin Saxena
- <sachin.saxena@nxp.com>, Jun Yang <jun.yang@nxp.com>
-Subject: Re: [v4 06/10] mempool/dpaa: adjust pool element for LS1043A errata
-Message-ID: <20250629093725.7e4bf5de@hermes.local>
-In-Reply-To: <20250611071039.2939950-7-vanshika.shukla@nxp.com>
+ <sachin.saxena@nxp.com>
+Subject: Re: [v4 08/10] net/dpaa: add devargs for enabling err packets on
+ main queue
+Message-ID: <20250629094354.77fbef83@hermes.local>
+In-Reply-To: <20250611071039.2939950-9-vanshika.shukla@nxp.com>
 References: <20250610091411.2500413-1-vanshika.shukla@nxp.com>
  <20250611071039.2939950-1-vanshika.shukla@nxp.com>
- <20250611071039.2939950-7-vanshika.shukla@nxp.com>
+ <20250611071039.2939950-9-vanshika.shukla@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,41 +84,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 11 Jun 2025 12:40:35 +0530
+On Wed, 11 Jun 2025 12:40:37 +0530
 vanshika.shukla@nxp.com wrote:
 
-> From: Jun Yang <jun.yang@nxp.com>
-> 
-> Adjust every element of pool by populate callback.
-> 1) Make sure start DMA address is aligned with 16B.
-> 2) For buffer across 4KB boundary, make sure start DMA address is
->    aligned with 256B.
-> 
-> Signed-off-by: Jun Yang <jun.yang@nxp.com>
-> ---
->  drivers/mempool/dpaa/dpaa_mempool.c | 145 +++++++++++++++++++++++++++-
->  drivers/mempool/dpaa/dpaa_mempool.h |  11 ++-
->  2 files changed, 150 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/mempool/dpaa/dpaa_mempool.c b/drivers/mempool/dpaa/dpaa_mempool.c
-> index 6c850f5cb2..2af6ebcee2 100644
-> --- a/drivers/mempool/dpaa/dpaa_mempool.c
-> +++ b/drivers/mempool/dpaa/dpaa_mempool.c
-> @@ -1,6 +1,6 @@
->  /* SPDX-License-Identifier: BSD-3-Clause
->   *
-> - *   Copyright 2017,2019,2023 NXP
-> + *   Copyright 2017,2019,2023-2025 NXP
->   *
->   */
+> diff --git a/doc/guides/nics/dpaa.rst b/doc/guides/nics/dpaa.rst
+> index de3ae96e07..cc9aef7f83 100644
+> --- a/doc/guides/nics/dpaa.rst
+> +++ b/doc/guides/nics/dpaa.rst
+> @@ -277,6 +277,9 @@ for details.
 >  
-> @@ -13,6 +13,7 @@
->  #include <signal.h>
->  #include <pthread.h>
->  #include <sys/types.h>
-> +
->  #include <sys/syscall.h>
+>  * Use dev arg option ``drv_ieee1588=1`` to enable IEEE 1588 support
+>    at driver level, e.g. ``dpaa:fm1-mac3,drv_ieee1588=1``.
+> +* Use dev arg option ``recv_err_pkts=1`` to receive all packets including
+> +  error packets and thus disabling hardware based packet handing
+> +  at driver level, e.g. ``dpaa:fm1-mac3,recv_err_pkts=1``.
 >  
->  #include <eal_export.h>
 
-Please don't introduce unnecessary whitespace changes.
+Need blank line between items in list for doxygen to work.
