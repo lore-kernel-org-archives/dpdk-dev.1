@@ -2,82 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C99FC7EE39
-	for <dpdk-dev@archiver.kernel.org>; Sun, 29 Jun 2025 16:37:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24410C7EE30
+	for <dpdk-dev@archiver.kernel.org>; Sun, 29 Jun 2025 16:45:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6B6E140288;
-	Sun, 29 Jun 2025 18:37:38 +0200 (CEST)
-Received: from fhigh-b1-smtp.messagingengine.com
- (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
- by mails.dpdk.org (Postfix) with ESMTP id 995BE4025D
- for <dev@dpdk.org>; Sun, 29 Jun 2025 18:37:36 +0200 (CEST)
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal
- [10.202.2.51])
- by mailfhigh.stl.internal (Postfix) with ESMTP id B06E97A006C;
- Sun, 29 Jun 2025 12:37:35 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-11.internal (MEProxy); Sun, 29 Jun 2025 12:37:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1751215055;
- x=1751301455; bh=ZzDafF88cjhajBYPWyI6c4wQ8+CEtwIJeLcA+B3E9Pc=; b=
- MQgnPIQ9Q0bHV4mlTY1UKhD6G8W/BVuAwdfMH850iR6bFIpptTiSLGaafkYkqVRl
- Ix44zTNAdKQ3jVzjRqDjhFCu+OyMzjNmlk4CY21wpuy+YPwPJXO34dH26NV0QEzy
- 2Rq9WuyivHp4vJZ5fCjoAw1g+YrJS+MLtYOCP4i5G4ENCAIPJ2f3D1iQuBPz5Drq
- OhBoka8cZCXWE770aJ1fWpluXCGKj8+1mdYTuGdA0VViJOcfnxHy223Vphwmov6W
- OuXgP6tdMfP0DBJx1tyvKJ1bxbgyCHIYVkjiUDmfGqdfzLuaBdpKpwTb0mZQkun/
- wEJYNm84Kcs3BCL8yzMOhw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751215055; x=
- 1751301455; bh=ZzDafF88cjhajBYPWyI6c4wQ8+CEtwIJeLcA+B3E9Pc=; b=V
- RLsRevMSOKENlBWV1QC6OqUKbiXaKAbyZMHIF4SL/LjYqgT4wXUNgvx5dJwa0P4H
- hnWKl6DovRdqBQBomO6ClkJ2Tb8K2Y8uZKJFNTLIFnix2jhgNCjuxLpKKPvLHxs1
- jBzf6d43BrfU26MtsX55YVKOIUV6dt1YUIDrZwlS3agFrKNpxTVdlgaPvvDKDn69
- G9iSLdM/QPxutOqIQnW0q5tJ4Ucnwud4XpbvUi6c5gTOhVNoVhQhS42GUjUd3jc6
- HK0FXMc2t1+sZcC9oWnEUXVIwnVsz2JBct9SJzRyI23btrPKRs3VVwfWBkLBhydn
- M61KjoKMIzGEXhYeJ2foQ==
-X-ME-Sender: <xms:zmthaOvuJD3hBgKtxJCDhNdIyRrG3_1XTp5a81wZtreS-DArgJYp8w>
- <xme:zmthaDf4-ole3sq2K3cx6FvkQgV-ZhF8kvBrAgnycMkqfYTIsJz9PPU9keYOemPzp
- 2hpa3zWhMYAVOBd0w>
-X-ME-Received: <xmr:zmthaJxx8bZu4mXjcc5T1r-51Cy0rBXyINe16LJAAomloBbKqUljCdxsYdyffbFlNibPys4MMikE0D02Jm9U7SCRQw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdelfedvucetufdoteggodetrfdotf
- fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
- lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
- ephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghsucfo
- ohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtffrrg
- htthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdvuefg
- feekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
- hthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeegpdhmohgu
- vgepshhmthhpohhuthdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkphhluh
- hmsggvrhdrohhrghdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthho
- pehfvghrrhhuhhdrhihighhithesrghmugdrtghomhdprhgtphhtthhopegrnhgurhgvfi
- drrhihsggthhgvnhhkohesohhkthgvthhlrggsshdrrhhu
-X-ME-Proxy: <xmx:zmthaJPzkhnNN0zocpJfkVo5bpLBAELEvbgzmlrvgtlb894MUJXJug>
- <xmx:zmthaO-LLyzC6MsKXNxlD7UBYmdJHjt9Eu--bcEO3V7zKxojkqQ_DQ>
- <xmx:zmthaBXrMUtriIscjix0LNNbTvumtr9sSqqzocqPQB6x6fZhMu7giA>
- <xmx:zmthaHeHbz3_LLXRs6bXJcdc5Zb8nwkgJekJaMEgdD_ztrKmbHg9jA>
- <xmx:z2thaBRIYwh9A0mU8SQCzS4Xunw9XWtHh6F2l6P8xm2NdRExJJjj5Dle>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 29 Jun 2025 12:37:33 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, Ferruh Yigit <ferruh.yigit@amd.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: Re: [PATCH] ethdev: sync ethtool link modes with Linux 6.15
-Date: Sun, 29 Jun 2025 18:37:31 +0200
-Message-ID: <11997994.uMvqGB8zbg@thomas>
-In-Reply-To: <3888072.ucjEoNaZvj@thomas>
-References: <20250625134202.3193570-1-thomas@monjalon.net>
- <20250626072651.79d51099@hermes.local> <3888072.ucjEoNaZvj@thomas>
+	by mails.dpdk.org (Postfix) with ESMTP id 4B98C402DB;
+	Sun, 29 Jun 2025 18:45:17 +0200 (CEST)
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com
+ [209.85.222.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 0C9874025D
+ for <dev@dpdk.org>; Sun, 29 Jun 2025 18:44:58 +0200 (CEST)
+Received: by mail-qk1-f175.google.com with SMTP id
+ af79cd13be357-7d3efcb9bd6so362708785a.1
+ for <dev@dpdk.org>; Sun, 29 Jun 2025 09:44:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751215498;
+ x=1751820298; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=AMdWIGdF1uYWRwv+edNt1ZqyOFiXRntmrVQy1GRRoL8=;
+ b=SIigxdh+gXabDvXE7vjLWs4XxZ7TOvgNZbc5hQQ13FnXL7jwVSAeJ291tb4HkoGWWb
+ yl9fl4QqjE+U1+C9tnv3tvGblNWcL5wgvd3EFd/kz8UcYsgETOsVPJx9rX5C2Vpoodfo
+ 724dGyhGllucAUf70TISA3qzaiijDfLfBKsfZh7XXgV6B444l2SQUbtFPCA1Oy7jOXzd
+ S2z2Y04yDs0JEn2XK2lyZzjuWXPkZz0ByzPkijJWzQmKG2G+wVcxB323n646hlj7O5+k
+ 9zX4/pGVxYPXMUbV8WIaZg2s6EY3ZP1mnkToF0nG3/Mv/FeO07N/URbNpW7AFMICJp43
+ jDGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1751215498; x=1751820298;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=AMdWIGdF1uYWRwv+edNt1ZqyOFiXRntmrVQy1GRRoL8=;
+ b=iIiZZgKkdKXabIEjSUSfmRoooIjhPkNyNjRBkTo87ucL7D0SluRAIzVho5D4U8kTKn
+ QgubdMFMVTujZhn+08F8eL6JH5AKpM7HfgaSHYR3NxZDxF54ff2LUReLMHXq+L3PzeBG
+ OqfzgaZdUqfJ0wEq2W5xKHN16x6j3LDSOde/r1HJz9KSoJ9wK4nWyMwG9lQ7M0BRJvre
+ wANR55K+wCU06O/F3QxbWWz+kyHXE4E+VlCODkYK+1F/Tv//KqxDBe1mLzvz87D4vVom
+ YTMoYZv4bp9XD3yfFvf+nnJ6gqRbD4ZcEmaIkLOc0wYrmnmIr8e/mhD9kkmlRtIBUr6R
+ rysQ==
+X-Gm-Message-State: AOJu0YwFftEzoPpG5WHuiPJqGebzzcD1IbStt0Wo4mVTwT97ge6arkrK
+ SX7b7/5OPp+h3mn6CbwA3aGjctbTHuslRikZjQLwwVvTm+RQpLVzC9Jabm93Dea3kZs=
+X-Gm-Gg: ASbGncsqm8N4IQmDVMvLYlo1O2+o/wRKukpJxeRxe20LTbJXKLnrX45pMRVsvMBzSJ1
+ f+WPunWSQmZMVRSCrqF9+s6Kfv9CT4NZiklBd6lBE/EDSw++xvjDrzQ/T+lO1PADDFvF+2wHuQ+
+ jc2Jfbk6Pp24CBUMxP2O0igoQwWKSJtZdmKCFpvCKKOh2MUa2DRGlfeCW4WuqP8XRGdhMmCk4kk
+ i9PRtCrVPwaQvxFMBY4GL62jXXylSR6d6J6pNmPt7GGILQK33b8wD9FK96xzpHG9iLqtOKMwAet
+ KXYWd1GS2qgrMBbOaMJBGPByNJBuhvHH/8VoaTcKwM9s0MbngLvq2kSzf9/LzvL4VB4d2uqu4w4
+ YzPOryk2fb7miLcNC8yFXf0boQ+ZKiWCf7FDgk9U=
+X-Google-Smtp-Source: AGHT+IG54qtPJoMpYhtnoP2Adf3axZAQ1bBlhoj87smJHCkEkrrNiyMVVYri6r6uKpAtFv16qS387A==
+X-Received: by 2002:a05:620a:8812:b0:7d3:f3e1:b8db with SMTP id
+ af79cd13be357-7d443990aa7mr1179945385a.31.1751215498158; 
+ Sun, 29 Jun 2025 09:44:58 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ af79cd13be357-7d44316547bsm456985385a.27.2025.06.29.09.44.57
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sun, 29 Jun 2025 09:44:58 -0700 (PDT)
+Date: Sun, 29 Jun 2025 09:35:47 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: vanshika.shukla@nxp.com
+Cc: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>, Sachin Saxena
+ <sachin.saxena@nxp.com>, Jun Yang <jun.yang@nxp.com>
+Subject: Re: [v4 04/10] bus/dpaa: optimize bman acquire/release
+Message-ID: <20250629093547.48b3b23c@hermes.local>
+In-Reply-To: <20250611071039.2939950-5-vanshika.shukla@nxp.com>
+References: <20250610091411.2500413-1-vanshika.shukla@nxp.com>
+ <20250611071039.2939950-1-vanshika.shukla@nxp.com>
+ <20250611071039.2939950-5-vanshika.shukla@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -91,43 +83,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-26/06/2025 17:13, Thomas Monjalon:
-> 26/06/2025 16:26, Stephen Hemminger:
-> > On Wed, 25 Jun 2025 15:42:02 +0200
-> > Thomas Monjalon <thomas@monjalon.net> wrote:
-> > 
-> > > diff --git a/lib/ethdev/ethdev_linux_ethtool.c b/lib/ethdev/ethdev_linux_ethtool.c
-> > > index ec42d3054a..f508cdba6c 100644
-> > > --- a/lib/ethdev/ethdev_linux_ethtool.c
-> > > +++ b/lib/ethdev/ethdev_linux_ethtool.c
-> > > @@ -17,8 +17,9 @@
-> > >   *
-> > >   * The array below is built from bit definitions with this shell command:
-> > >   *   sed -rn 's;.*(ETHTOOL_LINK_MODE_)([0-9]+)([0-9a-zA-Z_]*).*= *([0-9]*).*;'\
-> > > - *           '[\4] = \2, /\* \1\2\3 *\/;p' /usr/include/linux/ethtool.h |
-> > > - *   awk '/_Half_/{$3=$3+1","}1'
-> > > + *           '[\4] \2 \1\2\3;p' /usr/include/linux/ethtool.h |
-> > > + *   awk '/_Half_/{$2=$2+1}1' |
-> > > + *   awk '{printf "\t%5s = %7s, /\* %s *\/\n", $1, $2, $3}'
-> > >   */
-> > 
-> > The commands in the comment never worked verbatim.
-> 
-> It works on my machine.
-> 
-> > $  sed -rn 's;.*(ETHTOOL_LINK_MODE_)([0-9]+)([0-9a-zA-Z_]*).*= *([0-9]*).*;'\
-> >            '[\4] \2 \1\2\3;p' /usr/include/linux/ethtool.h |
-> >    awk '/_Half_/{$2=$2+1}1' |
-> >    awk '{printf "\t%5s = %7s, /\* %s *\/\n", $1, $2, $3}'
-> > 
-> > > > > sed: -e expression #1, char 63: unterminated `s' command
-> > awk: cmd. line:1: warning: escape sequence `\*' treated as plain `*'
-> > awk: cmd. line:1: warning: escape sequence `\/' treated as plain `/'
-> 
-> The backslashes were added to help the syntax highlighting.
-> But I can remove them.
+On Wed, 11 Jun 2025 12:40:33 +0530
+vanshika.shukla@nxp.com wrote:
 
-Unfortunately we cannot remove the backslashes,
-otherwise compilation of the comment is failing.
+> -#define BMAN_BUF_MASK 0x0000fffffffffffful
+> +RTE_EXPORT_INTERNAL_SYMBOL(bman_release_fast)
+> +int
+> +bman_release_fast(struct bman_pool *pool, const uint64_t *bufs,
+> +	uint8_t num)
+> +{
+> +	struct bman_portal *p;
+> +	struct bm_rcr_entry *r;
+> +	uint8_t i, avail;
+> +	uint64_t bpid = pool->params.bpid;
+> +	struct bm_hw_buf_desc bm_bufs[FSL_BM_BURST_MAX];
+> +
+> +#ifdef RTE_LIBRTE_DPAA_HWDEBUG
+> +	if (!num || (num > FSL_BM_BURST_MAX))
+> +		return -EINVAL;
+> +	if (pool->params.flags & BMAN_POOL_FLAG_NO_RELEASE)
+> +		return -EINVAL;
+> +#endif
+> +
+> +	p = get_affine_portal();
+> +	avail = bm_rcr_get_avail(&p->p);
+> +	if (avail < 2)
+> +		update_rcr_ci(p, avail);
+> +	r = bm_rcr_start(&p->p);
+> +	if (unlikely(!r))
+> +		return -EBUSY;
+> +
+> +	/*
+> +	 * we can copy all but the first entry, as this can trigger badness
+> +	 * with the valid-bit
+> +	 */
+> +	bm_bufs[0].bpid = bpid;
+> +	bm_bufs[0].hi_addr = cpu_to_be16(HI16_OF_U48(bufs[0]));
+> +	bm_bufs[0].lo_addr = cpu_to_be32(LO32_OF_U48(bufs[0]));
+> +	for (i = 1; i < num; i++) {
+> +		bm_bufs[i].hi_addr = cpu_to_be16(HI16_OF_U48(bufs[i]));
+> +		bm_bufs[i].lo_addr = cpu_to_be32(LO32_OF_U48(bufs[i]));
+> +	}
+> +
+> +	rte_memcpy(r->bufs, bm_bufs, sizeof(struct bm_buffer) * num);
 
+Use memcpy instead. There are more compiler and security checks around
+memcpy().
 
+> +
+> +	bm_rcr_pvb_commit(&p->p, BM_RCR_VERB_CMD_BPID_SINGLE |
+> +		(num & BM_RCR_VERB_BUFCOUNT_MASK));
+> +
+> +	return 0;
+> +}
