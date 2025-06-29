@@ -2,83 +2,90 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6CBDC7EE39
-	for <dpdk-dev@archiver.kernel.org>; Sun, 29 Jun 2025 18:11:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED2DAC7EE30
+	for <dpdk-dev@archiver.kernel.org>; Sun, 29 Jun 2025 19:52:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A340940288;
-	Sun, 29 Jun 2025 20:11:28 +0200 (CEST)
-Received: from fhigh-b2-smtp.messagingengine.com
- (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
- by mails.dpdk.org (Postfix) with ESMTP id 6A11A4025D
- for <dev@dpdk.org>; Sun, 29 Jun 2025 20:11:27 +0200 (CEST)
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal
- [10.202.2.49])
- by mailfhigh.stl.internal (Postfix) with ESMTP id A60177A00B2;
- Sun, 29 Jun 2025 14:11:26 -0400 (EDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0E13F4025D;
+	Sun, 29 Jun 2025 21:52:47 +0200 (CEST)
+Received: from fout-b5-smtp.messagingengine.com
+ (fout-b5-smtp.messagingengine.com [202.12.124.148])
+ by mails.dpdk.org (Postfix) with ESMTP id CF7A440151
+ for <dev@dpdk.org>; Sun, 29 Jun 2025 21:52:44 +0200 (CEST)
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal
+ [10.202.2.43])
+ by mailfout.stl.internal (Postfix) with ESMTP id D752A1D000A0;
+ Sun, 29 Jun 2025 15:52:43 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-09.internal (MEProxy); Sun, 29 Jun 2025 14:11:26 -0400
+ by phl-compute-03.internal (MEProxy); Sun, 29 Jun 2025 15:52:44 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1751220686;
- x=1751307086; bh=ww69qsfePfX+sb7Qu80+BFqGxq3hXlOE3T/pFE65eh0=; b=
- EBYhiLZUXB2fpq/FN2VnnNnPLl6fd2/zK0ex9k7ufGEqC8LP51GW5w9ekbiwBWUb
- GVUucHV+0fyRPR11b+Jb9FLyc8cEkdjO2+HhQttcOgik7juuxknV3vppd3wJ2gfQ
- TUnxFOJUhToSvf6TlLx7lg/WV9j0bHlgCRhoBoAMljg704pO/CBgc/GIOp+FuOaO
- 74y72ZEVsix0ltsKxp7+i5iKWUn/v61YHMgqPQ0hVJucBV5PG8mpMPlNzsOc+Si3
- QqDAOWzVZjOg9gZYp1l2LlnCnimO1mvYJmj+OILOCrS6wS7vfkFBVldTcj1fOP02
- EkGkF0vrz0g/tne59GmXMg==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1751226763;
+ x=1751313163; bh=hf+vLy8rbQXgglzaomVT39bPgVy9QxkbtRWzHp1GXHY=; b=
+ eXg5en8wwSHulkuJ5kTs3IofZR3UxbpZ19eW1u++Du4DtkBc+HWw0sYXOxonhgqw
+ USKqYboYIST6VaPqzPveZjHjNRn6dtA86seL6jD/X2A4ba/Qm/KTbWgf+9IvBEzg
+ DXL+i9PdnC0mNb1GWFjY2aDGRVnXL/dec1E35XW08YlNrTum3uv+IdJ1TkktHkhh
+ eTwcfVv1sPXXuIEdQV0Y5a1pgYO+aLbsEhakauSvNMuejtWoT5MYlpam5XyAgDSZ
+ WvpKHebAX6Np5cSwc7IC3RoyiCkrt6UNv+D3hq2Rz9fNMsyX2PmlsjyCaGxfHO09
+ Xf0e7pwqavlDXnnbucHGdw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751220686; x=
- 1751307086; bh=ww69qsfePfX+sb7Qu80+BFqGxq3hXlOE3T/pFE65eh0=; b=i
- YO7kyFPg7rrjdAcA0OOvSYgTZ1nZyscrjNPJK7p38qDoNNKhG3Bm2Dzgh2ipkmRI
- YT8ntMOZnwTgboMj83wLVitzPudV+iMRwyOFiPkuhbnX4L/eWaPHpTfH1UlWlza8
- qJjeZGil8fTiQHa4HVrI2jO+sd/DecS6UrXPFRqp2ZhBFkYPIEmg3NwLT1AMNvC6
- ztZYF+3GROI7ag5OlX684Uuje80JNlkSg7RjnJwIHwaY1njoFJjRfEvDg4Ygbi1l
- nTVw21HAXxEzUr+fZHJWrDH+kbUug/oomHy2bMWast7pcSOK0YgwotYggOZFkJ4X
- PzKwTQtJm9yZx95P+StOQ==
-X-ME-Sender: <xms:zYFhaHWfUZdIDJ7fZz9raMQTut_a2iQyVos7UdlXxhDM0dNCcpapsA>
- <xme:zYFhaPke1oCG0ZypJS6L__ZVZBENjy1uc-3p3R2iidAWnierpwDyuRWmjr-3MMSS-
- ZmJo9_9eO6j2Qj4QA>
-X-ME-Received: <xmr:zYFhaDY-663r1JRLP62XtFwR0-_9I5eg0R0n9dnC19zXkwkJSJpgp6Jcp4BFTF_QVXBSwZBCDuR7ufJY-tg4j32wQA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdelhedtucetufdoteggodetrfdotf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751226763; x=
+ 1751313163; bh=hf+vLy8rbQXgglzaomVT39bPgVy9QxkbtRWzHp1GXHY=; b=I
+ RJ+6Tx35EOF39d5HQ3XU1xMCko+HuAfzBTGWpp9pcbo5b81utI33AxXV0Jw9zh+Z
+ uk0XwLZ9J8Xjj3HzeuQlITZU/37jxHPpbo7qQEWvrrlCVxM7XE1BSLeQF59UvCue
+ S2nGYEf35q23Phkj0FRivofHjWf9wGHBXIH6bA4xaG3/dhcnyXqLnZYXSeSucD7R
+ 1PLaoTu39oponEzKe8RmP4JPQyFC5yfAmvFzt1mphU7ZAgjp+r1IOiPTs7Y2j30Q
+ Oh6BsviVrH5gFanM6sDvnk4Xw2CPBmzyGf8aanpjLF1PxEslWJL64N6y8kHOor0v
+ Wm0q5Ri/D6OzkeTbghXrg==
+X-ME-Sender: <xms:iplhaLmYIA0tl3floeusgM20XOYCR0pzrbdjs37xVznLh9yELkWXqQ>
+ <xme:iplhaO1YmWCZ-in6KPlxbWzo4F9cNmxnKJ6qbyxbqm9u2aY8xviXQxiBERLgZMiNU
+ ymnI8ha0_91-pj4qQ>
+X-ME-Received: <xmr:iplhaBojDF_A4riF-OTcg3h89e5zstbwyCkFlgqZfiD0-8gjyyzhCIHRBDD_yvN4U3IZ2jwuGR0NdUq-Nh8tpGjlAw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeljeduucetufdoteggodetrfdotf
  fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
  lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
- ephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghsucfo
+ ephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghsucfo
  ohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtffrrg
- htthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdvuefg
- feekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
- hthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeejpdhmohgu
- vgepshhmthhpohhuthdprhgtphhtthhopegsihhnghiisehnvhhiughirgdrtghomhdprh
- gtphhtthhopehvihgrtghhvghslhgrvhhosehnvhhiughirgdrtghomhdprhgtphhtthho
- pehmrghtrghnsehnvhhiughirgdrtghomhdprhgtphhtthhopeguvghvseguphgukhdroh
- hrghdprhgtphhtthhopegushhoshhnohifshhkihesnhhvihguihgrrdgtohhmpdhrtghp
- thhtohepshhurghnmhhinhhgmhesnhhvihguihgrrdgtohhmpdhrtghpthhtoheprhgrsh
- hlrghnugesnhhvihguihgrrdgtohhm
-X-ME-Proxy: <xmx:zoFhaCVtudkkwyG_sNmzuUQRiPFkfXnOu5zTS2GoqwZABQMcRETfXw>
- <xmx:zoFhaBl7Yjy6d1DneQ8mTK-0ZHa3LAjSW1v0UvUD0uu45oUviIGo5w>
- <xmx:zoFhaPd7edoRpBgfxIICmWZUEebrNpwpa9-De5DmjMhHQBs59uA37w>
- <xmx:zoFhaLFDaxddVhzdQzAxA2ktvLhsUmPQVWQHT28VBqtMjNxeTAJwmA>
- <xmx:zoFhaHH_mtEtEV4lkMPuGHXpb-1pOQjMbVL3M_1_Rzd6EdEOIWRSVizn>
+ htthgvrhhnpeegtddtleejjeegffekkeektdejvedtheevtdekiedvueeuvdeiuddvleev
+ jeeujeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+ hthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeelpdhmohgu
+ vgepshhmthhpohhuthdprhgtphhtthhopehmsgesshhmrghrthhshhgrrhgvshihshhtvg
+ hmshdrtghomhdprhgtphhtthhopehrohhrvghtiihlrgeslhhinhhugidrmhhitghrohhs
+ ohhfthdrtghomhdprhgtphhtthhopegrnhgrthholhihrdgsuhhrrghkohhvsehinhhtvg
+ hlrdgtohhmpdhrtghpthhtohepsghruhgtvgdrrhhitghhrghrughsohhnsehinhhtvghl
+ rdgtohhmpdhrtghpthhtohepmhgrgihimhgvrdgtohhquhgvlhhinhesrhgvughhrghtrd
+ gtohhmpdhrtghpthhtoheptghhvghnsghogiesnhhvihguihgrrdgtohhmpdhrtghpthht
+ ohepthguuhhsiiihnhhskhhisehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohepshhtvg
+ hphhgvnhesnhgvthifohhrkhhplhhumhgsvghrrdhorhhgpdhrtghpthhtohepuggvvhes
+ ughpughkrdhorhhg
+X-ME-Proxy: <xmx:i5lhaDm6j4zT6re2c0GDc1EUJnZd5vFv_sg7y86PiyoKiOsp0lX5aQ>
+ <xmx:i5lhaJ1EUVE9i-d2FRu-pXBV66O1DPNXVdxM61K0Q7ML6z4HZbci2Q>
+ <xmx:i5lhaCvh4YpN7TUEk19YMfVYJQtVr6ZO4V-1aTE7ote8KxkzvwdbIw>
+ <xmx:i5lhaNUSu2LsXTtCxcYljq5Z983W2Ipc_YC9FXc80v_q7sO0Sjhx6g>
+ <xmx:i5lhaDS2Q-6hU6YkuVTDtx8ZUe_YZmaZDicnGMuLjdo4_M9YviTU8FBm>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 29 Jun 2025 14:11:24 -0400 (EDT)
+ 29 Jun 2025 15:52:41 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Bing Zhao <bingz@nvidia.com>
-Cc: viacheslavo@nvidia.com, matan@nvidia.com, dev@dpdk.org,
- dsosnowski@nvidia.com, suanmingm@nvidia.com, rasland@nvidia.com
-Subject: Re: [PATCH v5 0/5] Use consecutive Tx queues' memory
-Date: Sun, 29 Jun 2025 20:11:22 +0200
-Message-ID: <8912871.uz5P2jW1tq@thomas>
-In-Reply-To: <20250629172303.72049-1-bingz@nvidia.com>
-References: <20250629170709.69960-1x-bingz@nvidia.com>
- <20250629172303.72049-1-bingz@nvidia.com>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
+Cc: Tyler Retzlaff <roretzla@linux.microsoft.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Maxime Coquelin <maxime.coquelin@redhat.com>,
+ Chenbo Xia <chenbox@nvidia.com>, Tomasz Duszynski <tduszynski@marvell.com>,
+ Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org
+Subject: Re: [PATCH v3 0/3] handle sysconf(_SC_PAGESIZE) negative return value
+Date: Sun, 29 Jun 2025 21:52:39 +0200
+Message-ID: <3846164.teYOa0iCNi@thomas>
+In-Reply-To: <20250624080333.127618-1-mb@smartsharesystems.com>
+References: <20250610131348.248800-1-mb@smartsharesystems.com>
+ <20250624080333.127618-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -93,14 +100,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Bing Zhao (5):
->   net/mlx5: add new devarg for Tx queue consecutive memory
->   net/mlx5: calculate the memory length for all Tx queues
->   net/mlx5: allocate and release unique resources for Tx queues
->   net/mlx5: pass the information in Tx queue start
->   net/mlx5: use consecutive memory for Tx queue creation
+24/06/2025 10:03, Morten Br=C3=B8rup:
+> Coverity reports some defects, where the root cause seems to be negative
+> return value from sysconf(_SC_PAGESIZE) not being handled.
+> This series addresses those defects in the DPDK libraries.
+>=20
+> PS: "_SC_PAGESIZE" has the alias "_SC_PAGE_SIZE". Both are covered here.
+>=20
+> Morten Br=C3=B8rup (3):
+>   eal/unix: fix log message for madvise() failure
+>   eal: handle sysconf(_SC_PAGESIZE) negative return value
+>   pmu: handle sysconf(_SC_PAGESIZE) negative return value
 
 Applied, thanks.
-
 
 
