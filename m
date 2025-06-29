@@ -2,70 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D45C7EE30
-	for <dpdk-dev@archiver.kernel.org>; Sun, 29 Jun 2025 17:41:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD574C7EE30
+	for <dpdk-dev@archiver.kernel.org>; Sun, 29 Jun 2025 17:44:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D08BB402D2;
-	Sun, 29 Jun 2025 19:41:37 +0200 (CEST)
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com
- [209.85.219.43]) by mails.dpdk.org (Postfix) with ESMTP id E3C7240288
- for <dev@dpdk.org>; Sun, 29 Jun 2025 19:41:36 +0200 (CEST)
-Received: by mail-qv1-f43.google.com with SMTP id
- 6a1803df08f44-6face367320so16294996d6.3
- for <dev@dpdk.org>; Sun, 29 Jun 2025 10:41:36 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 130C840612;
+	Sun, 29 Jun 2025 19:44:25 +0200 (CEST)
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com
+ [209.85.222.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 47E7640288
+ for <dev@dpdk.org>; Sun, 29 Jun 2025 19:44:24 +0200 (CEST)
+Received: by mail-qk1-f182.google.com with SMTP id
+ af79cd13be357-7d09ab17244so141497085a.0
+ for <dev@dpdk.org>; Sun, 29 Jun 2025 10:44:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751218896;
- x=1751823696; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751219063;
+ x=1751823863; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=KE4d+UNWPSTB7l3+5uFH4ebO9gM+KiS6Pa3YS8nrcq8=;
- b=VsiEm9vMNUDtfxWmOIkIg3WnFNTXTpOn1PyTmvRXA/WnzdzHlpfJ8cklR5hbMbAYmo
- CbzDOtQxCmth3ixCm1LIloAYlxoM7fEdagaJmOZYRu5DJXYNmzu+vpe0B3QneqFEAsUx
- D5/8//pYJ8N9P5sFAjUyYTit9jbaOGyoKD5NzBoH/X2gkt4gH7tD3HEG3QX6TZe4YFmi
- uqBNKJOu59ktAeyeRm5ndx68IfRdbu2IbEgL+vP1WNv+MDKRHLj5kygTjRk5ue4LFAal
- +BQQY7TpQUfnzZkmB7yBF04JiTpiqudDccfQZUviayew0HYo+tRJCxuMqDyM5ArXYLYM
- XTLw==
+ bh=7Z/aA6Yrt76ok31yUCxjPqVgtnLdoDwYFt/1bGxFFQY=;
+ b=qqAsL+nZxyA0IRWHfwQW/U9nzqKe0ifaDCmMgkk4w8J/KFC1rWhhFfN4btlwpUMXBW
+ beN8HQ2rftePooYUye1TAhg1KJdSLpy11tpEFPRprDkiuhCc+gjGbSwTPY98NRr4RUy9
+ MEPYGsYFyhvokW9THjKNrbbgRKdFHCihVMNK8hvXQnFgZaQbIm/T002Iu2M7EUnW9nTr
+ 2iIcIbCkj88L6WT2RfTMjkMGLILSx49zkVSrVwd1m1nKGkJ9fCWVelA18styCFX4Vnak
+ XZEly31xJOgSV04g4Il2wosxdwoWhTce3mkGZeHGfXWOcYuR9nDdAW2XNyRCsYfGNtzl
+ WNSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1751218896; x=1751823696;
+ d=1e100.net; s=20230601; t=1751219063; x=1751823863;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=KE4d+UNWPSTB7l3+5uFH4ebO9gM+KiS6Pa3YS8nrcq8=;
- b=WfNrM992IWFeLE61U9cqFOX1KZql1rEsfdsZfnlGnASJJ8+lePzz3UvlzMeOduo0BY
- De45twQ0eTIufmbhekePEzPsxwbtz2mkZ2L1+mPP8S5D+mJE1IEhqUbWI2w9ZqjYnfhY
- ySvkt9gtGXIWjb/fegBt0Kf/q1xVbG73dG11wJAEVDApgu5xe+BtPeanlJB5lKWgwAwI
- qhVozPP77HU511U2bLQLnei/304JzNNCdss2RjAj1JPHApGq/22xtLn0GxwrF026tp3f
- fuT1ft4u96eIHdsAcFz6NbrDVYl9CrhZxF7qUoA3/DcJwOuzfRkU7tTR7F4ClgywFYoL
- cAEA==
-X-Gm-Message-State: AOJu0YxeFYNug6BSmwBpaTkJZ7aGmyncXMDGPUl5z0bQ8QFY7VZkslWp
- ruPO7xLGTa+NCserOnvUIM5U0zAg1XQLY73c4KxnZcqkzC3gBg6R6aIGU9GUd+3Sv5almwjBhc/
- ABHqzpkQ=
-X-Gm-Gg: ASbGncvSX82Leod9gWFedVRo8dY1PL5THjuhABEI6/FHl1RBvXCJl6Sf9ob1DTRghUG
- 5aEvPw8Ur4EhoYOepvJrw6BI2Kfw50pqynILbqf/FUarHcS+06wSUSft92bldbRrepVOlPd8wTP
- pgYE6l3aF4PD/HLa+5YdSUNlpqgn0WA/KfPLL4EStcrVn6YOPf3iXBzV9rXCVi+R1PVHk4ddXvA
- 3a7c5ViTMQYvpybpm+J9U+JOwyyJThCh/JPFud7r1JvjmwbwvWfh9m/IuAzdxVIMMyqwtrHZWqF
- sz2g0G8cw8Ub0BIdoiiDrgv9wLLfb0wyDfc47/ujZsfSFrV57dsVHH1Ubr83yr7JS60tEzVu8kn
- NO1p720CT8dVturbrrXHeoS8+NmmuT46OOFXus3I=
-X-Google-Smtp-Source: AGHT+IFTYzIUhN7wbqV02bbG5Yf3p2PEfjf0Crbnxij/CJHhjqAxQyHNGPqwjssLll/H/nrqHIRkhg==
-X-Received: by 2002:ad4:5fcf:0:b0:6fa:bd17:32a with SMTP id
- 6a1803df08f44-70003c91fb8mr168574046d6.29.1751218896141; 
- Sun, 29 Jun 2025 10:41:36 -0700 (PDT)
+ bh=7Z/aA6Yrt76ok31yUCxjPqVgtnLdoDwYFt/1bGxFFQY=;
+ b=Gw0TrNLJknYqy6rPfTnpxhZLwJ4cxutE/x+k9yPh6TLaQfxqGp9nfoprc7egU1T16/
+ ZX/e9bRMqmkYdb9bcidn7xr8VHCp+eRVFC/cnVAOUDo5K1PMgJHHOviBsjaOk7nz0RgN
+ 2dDzSC4uV6VEc29z87hAJKNCKgqjNlXGoFVA6P+rrW9YsRH3hA7im7DZxjmJLvB+cLGJ
+ F1fXzXRRdYz37YH+ZeYyxegXsuwAZEq+eTJBHF0vKA9My4b8cGKvc2gRtt8tA15Y12fx
+ E8fmQoKRFuMyyju1FGqv/0RuL7hyZ4DCWp2puH6s5v3ujQfQTDppsxO0dTaz9lK1AmnH
+ ZwNA==
+X-Gm-Message-State: AOJu0YylJ04kwgLfhZ9ZddYwasFUrZwpvDXFwO5MDoClHsr/lK8mU7Ma
+ My3hAKz9UkW69fwNhFnqDZv5Jr9GxNFh1+Ldr+d6518eGdbTdN2k+LdXRSXyEOuCM9/THWJyeG0
+ dxnneJ28=
+X-Gm-Gg: ASbGncuIKBxeFsdDGw3KiXy+90cIyY9p7tdxKGtABLoQaIgyJPV2+3OQLj8xOfM9reb
+ MHl6HoBcfdKycgKwCMg5s7kfYM6Zax6SpADpzmuUe7+pnDUObSTeBi1GKvlCgL8KtQgammIK/cT
+ hZKx4w8coPApThhuR7pjDHwP2RdATNQRfymKE6yavEfuLmIIygolzDC4sC4hSltBqmaveWvzyd9
+ I+3PY2rzyvbOxwnKYK2BQNLEHVdOePGOWoQeB+9HyeNLVdQph0vpvFc/0JCjiBH6U1hdwS6WTZ7
+ ceFVRx7/wbGKfbhBiQxYSTLkVszdyvsB/uHeboVZN/iNqF3PnIBYllIxBEYy3APy/JuiOwPjvW6
+ Ns2Ag1xjwENSqYb/pEdSRXv6jOHToKYUvUvfUe11B2H/MCDgm3g==
+X-Google-Smtp-Source: AGHT+IG5wLduBJgr4bWcqLld/yUY7fW5/Q2Ir4FS+1HPoXxaF7Ae/GFy+rs8x1I/R9HsrVIjJjxJBQ==
+X-Received: by 2002:ad4:5d49:0:b0:6fa:cc39:84 with SMTP id
+ 6a1803df08f44-70001e5be0dmr168136036d6.13.1751219063599; 
+ Sun, 29 Jun 2025 10:44:23 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-6fd7730ad9asm54187516d6.107.2025.06.29.10.41.35
+ 6a1803df08f44-6fd7718d8f2sm54803616d6.23.2025.06.29.10.44.22
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 29 Jun 2025 10:41:36 -0700 (PDT)
-Date: Sun, 29 Jun 2025 10:40:55 -0700
+ Sun, 29 Jun 2025 10:44:23 -0700 (PDT)
+Date: Sun, 29 Jun 2025 10:44:20 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Dengdui Huang <huangdengdui@huawei.com>
-Cc: <dev@dpdk.org>, <lihuisong@huawei.com>, <fengchengwen@huawei.com>,
- <liuyonglong@huawei.com>
-Subject: Re: [PATCH 6/6] net/hns3: VF support multi-TCs configure
-Message-ID: <20250629104055.0b38c168@hermes.local>
-In-Reply-To: <20250611081900.3658421-7-huangdengdui@huawei.com>
-References: <20250611081900.3658421-1-huangdengdui@huawei.com>
- <20250611081900.3658421-7-huangdengdui@huawei.com>
+To: Wenbo Cao <caowenbo@mucse.com>
+Cc: dev@dpdk.org, yaojun@mucse.com
+Subject: Re: [PATCH v0 0/3] [v0]drivers/net fixed Coverity issue
+Message-ID: <20250629104420.39505cf0@hermes.local>
+In-Reply-To: <20250618121113.17302-1-caowenbo@mucse.com>
+References: <20250618121113.17302-1-caowenbo@mucse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,31 +81,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 11 Jun 2025 16:19:00 +0800
-Dengdui Huang <huangdengdui@huawei.com> wrote:
+On Wed, 18 Jun 2025 20:11:10 +0800
+Wenbo Cao <caowenbo@mucse.com> wrote:
 
-> +#pragma pack(1)
-> +#define HNS3_MBX_PRIO_SHIFT	4
-> +#define HNS3_MBX_PRIO_MASK	0xFu
-> +struct hns3_mbx_tc_config {
-> +	/*
-> +	 * Each four bits correspond to one priority's TC.
-> +	 * Bit0-3 correspond to priority-0's TC, bit4-7 correspond to
-> +	 * priority-1's TC, and so on.
-> +	 */
-> +	uint32_t prio_tc_map;
-> +	uint8_t tc_dwrr[HNS3_MAX_TC_NUM];
-> +	uint8_t num_tc;
-> +	/*
-> +	 * Each bit correspond to one TC's scheduling mode, 0 means SP
-> +	 * scheduling mode, 1 means DWRR scheduling mode.
-> +	 * Bit0 corresponds to TC0, bit1 corresponds to TC1, and so on.
-> +	 */
-> +	uint8_t tc_sch_mode;
->  };
-> +#pragma pack()
->  
+> v1:
+>   *:fixed compile issue
+> v0:
+>   *:fixed the below issue:
+>   	Coverity issue: 468860,468866,468858
+> 	Fixes: 4530e70f1e32 ("net/rnp: support Tx TSO offload")
+> 	Fixes: 52dfb84e14be ("net/rnp: add device init and uninit")
+> 	Fixes: 52aae4ed4ffb ("net/rnp: add device capabilities")
+>   *:fixed 64k tso
+> 
+> Wenbo Cao (3):
+>   net/rnp: add check firmware respond info
+>   net/rnp: fix Tunnel-TSO VLAN header untrusted loop bound
+>   net/rnp: fix TSO segmentation for packets of 64KB
+> 
+>  drivers/net/rnp/base/rnp_fw_cmd.h |   1 +
+>  drivers/net/rnp/base/rnp_mbx_fw.c |  15 +++-
+>  drivers/net/rnp/rnp_ethdev.c      |  16 ++--
+>  drivers/net/rnp/rnp_rxtx.c        | 118 +++++++++++++++++++++++-------
+>  drivers/net/rnp/rnp_rxtx.h        |   1 +
+>  5 files changed, 117 insertions(+), 34 deletions(-)
+> 
 
-DPDK has portable macros for packing __rte_packed_begin and __rte_packed_end.
-Please change to using those macros.
-Then rebase, retest and resubmit this patcheset
+Overall this patchset looks fine.
+Could you try out the suggest bit changes, and resubmit please.
