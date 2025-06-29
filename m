@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8303C7EE30
-	for <dpdk-dev@archiver.kernel.org>; Sun, 29 Jun 2025 17:08:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5744CC7EE30
+	for <dpdk-dev@archiver.kernel.org>; Sun, 29 Jun 2025 17:08:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A4EA7406B8;
-	Sun, 29 Jun 2025 19:07:58 +0200 (CEST)
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com
- (mail-mw2nam12on2074.outbound.protection.outlook.com [40.107.244.74])
- by mails.dpdk.org (Postfix) with ESMTP id 48978406B7
- for <dev@dpdk.org>; Sun, 29 Jun 2025 19:07:56 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D1A5240669;
+	Sun, 29 Jun 2025 19:08:00 +0200 (CEST)
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com
+ (mail-bn8nam04on2075.outbound.protection.outlook.com [40.107.100.75])
+ by mails.dpdk.org (Postfix) with ESMTP id 3B072406BC
+ for <dev@dpdk.org>; Sun, 29 Jun 2025 19:07:59 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=a9vyxLSQ9DSXFluZfGTLaG+PW7ftPCB13bd2izrwR0TDkzjbn7mfp22LphH0qC+oO5MBmUwhBXuNwWpVFizNsQtQZT9V15zFkScnlmoygk/z6ZK0Xzzif0SP0YAOva1mDLEnrx/mMwETowEGBzxFqR4yw835w3VoPxcyxTk3N7DpBhD3PbsuwTTlPi9vVwY3uGuQ4WokpJ1kT5xkUpemUHT7WO5tV8UXSdV7K19ofcRbJc1bv+8v7UhrV1gI2LtPNoqobAkVfOs+dohCGVwy47tFBhYrA3opi6pv2dsYDA/Ha9sIkcOSdDu766t/op81ef+cXX+5g5gB65GZ2d1IgA==
+ b=SWY48nXu2EBm6MoYWpQOqqVZKw6gepCsetgUGW4sgZHKqhXLQ/XfOOQptaSpEWaiudC6NBp555D3CRPHtXD9IJ+IamwRh9sBJBcpsjtwMbyNL34UqcIhK/b3TO7nNS94SlQ/8s9fYfXQssET4yeDyzkeF09ok9SZWmQKy7OjC9OzcO12Jlv7t0QVemLOzuYf8rRztZcOeQbUsdNKO7vuX+noF2fjfSGPjyn+m2p08CWoMhIaJwrftkbaf7OuLlHNUJNr1CpAFvJfdB5qk/Ctv+yPRdcBfO20QGFz1bjJXsAGF2EG/0hQCXUCYW1pX5+GQ/KZfJ5wOMSMSydnz8BSSA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EQn4ugqjjcfZQTakxnj31+GQ+N3o1fZCaCRUJojBDm8=;
- b=PGbwKj7CdSy7UiwM+/7yS+81JTYrbabpJs+u9+rdpX7yiGV7ajBvOSqpfcpyNfo6gS+MNi68lgJ0fk8A9YRPzZyU2y6bDZS++NXCbI1bWGzJ4AcFd6A68p2f7yMGJ4T//oFL1D71y/zxJLDCTXONyLr6uYI2QhK4F3q1qjpVcQA/7WlyKggyi0C3h4tf+UQITAPURMJKJzAYxJr30SgdIJL6XrC/B0FbqjnNASutRIrIbQovPx1ziDTqq1Gj+7fvPTdJRE1J/TdS1w2MYE2658RwwMfvVE0ojHpV/v1tONUNUtt+Uvm6vmHl2FoyBRG/TSwwOeQCTZX2wyGx4lTHGQ==
+ bh=rerW+ygu1mukS2LYhveEv/XbPIJRyG94jMK/DlYcEYo=;
+ b=kWsoppjwsfsYLxgdcGIZFgb86aFf2INyKFBC5iH0DmmuTfedRRCDguFiDd6oGkrvz6Wtqroo+lyAQ5zMnZxbd11y+3qEOtnOz5Ff2+7mGyF5G4ej319JaQaGHAeuqPPR7zlcwCFWlzURI4hg8LbFfzgCQn5B715iEWY3yClE03LFVNnQ4yILzfVn50NpPlDDnQYzoPML+NSc9ktrYcURRucdiHO1Heh8YFN7vZjpW743l3P+t8bjj6svi5SP0YEHyqJ4SsyRndKUEgbYqHoWT/PLWq8VY/FWBVc4Np3CaYhIJ9kh+4lLXh0CUoXlCj1rS8YplAn4mmakH3KhQ3CAjg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EQn4ugqjjcfZQTakxnj31+GQ+N3o1fZCaCRUJojBDm8=;
- b=Ci84vluOvkzbDYj6YVLWNYL4Mf2yN5SrX+D4gKXdDBbwXi4seSHvZbjvb195hnfu4vBILipzIr2fe9mHDEGgBnSubbv1cI4WX9ry3mcFLEPgvYOHB0+Lh9Nqb/Utr0nL/44kVXLJaml1Ahc8YR77T+838rwVjIA/hBrmLMa/eJnbab4mFZeFq4Dhe0ooG1ydBnJnrvYdvEel7yB6qtKmeHyX6nB2zT8TVa53L79Os8U0tu8civ4OAMBoDsBhI2dKOZCrLzMTYjLSpV8aXLz3Ow59ouvrYhdbKvjVRfjT30zh8kNRUr4FPSwJan0e52kCzOgtvuHAMkUeWFNVObEoFg==
-Received: from PH1PEPF000132FB.NAMP220.PROD.OUTLOOK.COM (2603:10b6:518:1::2c)
- by SA1PR12MB7365.namprd12.prod.outlook.com (2603:10b6:806:2ba::22)
+ bh=rerW+ygu1mukS2LYhveEv/XbPIJRyG94jMK/DlYcEYo=;
+ b=E1mxRv1CmwIeKanY4QEmFMXs0u+zgTd8GXst0mO79F1VvtRBWqsH7+guePyAqnMTpfL5ldoNk55M6sIZ4OLSwwhhIge01CabAJlYo+acuf9x3B3maWTwrVTIic9uj+AEXmryp63YKZQKp0IS0Vo5Q1EPvuuEDDAjFngfKSsn+ovLX3gjfI443n9xaJR8DYWFZHqDFTf+uabALsy1W+/1FdSYXpNu57/a1NlCS6rZcOAB7qU0I+/JEnpR1YjTrp515+AEwxtGLSqnJIR7+KkkDL9uBFr4q6kZePXKjxE0OqnKF5WWrmu6YbClGS4YhGEAx3KgQ6HhrxS8cBHIWTUQEQ==
+Received: from BYAPR07CA0061.namprd07.prod.outlook.com (2603:10b6:a03:60::38)
+ by CH1PR12MB9599.namprd12.prod.outlook.com (2603:10b6:610:2ae::14)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.32; Sun, 29 Jun
- 2025 17:07:52 +0000
-Received: from CY4PEPF0000EDD3.namprd03.prod.outlook.com
- (2a01:111:f403:f912::) by PH1PEPF000132FB.outlook.office365.com
- (2603:1036:903:47::3) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.29 via Frontend Transport; Sun,
- 29 Jun 2025 17:07:52 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.26; Sun, 29 Jun
+ 2025 17:07:54 +0000
+Received: from SJ5PEPF000001F3.namprd05.prod.outlook.com
+ (2603:10b6:a03:60:cafe::4f) by BYAPR07CA0061.outlook.office365.com
+ (2603:10b6:a03:60::38) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.27 via Frontend Transport; Sun,
+ 29 Jun 2025 17:07:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com;
  dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CY4PEPF0000EDD3.mail.protection.outlook.com (10.167.241.199) with Microsoft
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SJ5PEPF000001F3.mail.protection.outlook.com (10.167.242.71) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8901.15 via Frontend Transport; Sun, 29 Jun 2025 17:07:52 +0000
+ 15.20.8901.15 via Frontend Transport; Sun, 29 Jun 2025 17:07:53 +0000
 Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 29 Jun
- 2025 10:07:39 -0700
+ 2025 10:07:37 -0700
 Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
  (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sun, 29 Jun
- 2025 10:07:37 -0700
+ 2025 10:07:34 -0700
 From: Bing Zhao <bingz@nvidia.com>
 To: <viacheslavo@nvidia.com>, <matan@nvidia.com>
 CC: <dev@dpdk.org>, <thomas@monjalon.net>, <dsosnowski@nvidia.com>,
  <suanmingm@nvidia.com>, <rasland@nvidia.com>
-Subject: [PATCH v4 5/5] net/mlx5: use consecutive memory for Tx queue creation
-Date: Sun, 29 Jun 2025 20:07:09 +0300
-Message-ID: <20250629170709.69960-6-bingz@nvidia.com>
+Subject: [PATCH v4 4/5] net/mlx5: pass the information in Tx queue start
+Date: Sun, 29 Jun 2025 20:07:08 +0300
+Message-ID: <20250629170709.69960-5-bingz@nvidia.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250629170709.69960-1-bingz@nvidia.com>
 References: <20250627163729.50460-1-bingz@nvidia.com>
@@ -75,53 +75,53 @@ X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
  rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD3:EE_|SA1PR12MB7365:EE_
-X-MS-Office365-Filtering-Correlation-Id: fdd4a8f7-04bc-416b-2a08-08ddb72f7ba7
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F3:EE_|CH1PR12MB9599:EE_
+X-MS-Office365-Filtering-Correlation-Id: d7341dca-534c-497a-aa6c-08ddb72f7c8b
 X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|36860700013|376014|1800799024; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?hgmwyXzdy6dleDTqnWAdEVVYLuTCIdj/CWb6OZ0oYANMCHnNDZhbuUvP4nGx?=
- =?us-ascii?Q?XpgUYsnoebXgbnlyD5yj559lp8j3+spNzlincUbiV4EHW2CWQeLk3hsywP8y?=
- =?us-ascii?Q?HHjPBiS7RYihNrc5zbWC9ZQKIb1f1IJGHkfUwKwSpbUG/cvImQOv5ZM4L3Fx?=
- =?us-ascii?Q?DsRbRy8bvyPFUKSpEs2Amqubz/6siDdYgwtfF7icpVkqvItPOdXFXxSaBc1Z?=
- =?us-ascii?Q?SHm5G7VGT/kVFJChog+CSoBn6QMtbg16qmP/VwD4giv/MN5MsRijDGv9B7Ek?=
- =?us-ascii?Q?VRKGbWUT17dmVsPgeRWkMZ8HdHpm5wGQy+Y7E3+4HEKQ56NhCYAXzhl/0gj5?=
- =?us-ascii?Q?THxpwAJ8krRVi2wqjMDVBB2fek1gJgLCEBt85YD3kPsfEosqmppDrVNKfXSr?=
- =?us-ascii?Q?XGbQcYZgUudwLsKlLJoPiWj+V94CTOwo1Nzff4oXecp3q7CewDjhxsFjeRRq?=
- =?us-ascii?Q?4JpdNztYDlm5mlcQeXHdMhiHKOwR7a2GGDyZTDnF7IqIQNwphiA8sl1HmzXj?=
- =?us-ascii?Q?AecmuWd0eOy/r/NEjVpKWbX4PtwLjP+l9WftSUmqU7nSogs5rjx1tX3T2qiP?=
- =?us-ascii?Q?hipu0xp0V2MxsDVtQ7UjsuLDMpq1+4HSqTyQqZhej8KjmUey0ECQ1AUcm1D5?=
- =?us-ascii?Q?zj8ir7cBmhAb2mNom3jkl+o1tuSHzeFqmPD0PYFPOHUNW9kqWbwTw2fpyjbG?=
- =?us-ascii?Q?j/QQy0n4ZA5XlNGgyuW2avfaCT4PIBHs3lDmjPBiOpB6D3oPwUFA2X2EuXQK?=
- =?us-ascii?Q?vnD+KZJDYHeDaGNqDY+meghFumHuzQWDytQ7gvHcPoQuQB7BbdrylqpNwxes?=
- =?us-ascii?Q?EUwj3brbpR/hVu1gGJHbnNiMgNBE8X4zPAvg5AR5U0sIURKLioQU6aT6D4E5?=
- =?us-ascii?Q?rx9OB7DUikit1RhO0iLR0+ZX0uSwPdbur+HskMq8ztiLCM5ikdujH/W0Ebqj?=
- =?us-ascii?Q?Pe72+CUNzfhd8qLNmbfYo92u41euWWueVOdchnAcT6dXYavbBTqZUWsxCrve?=
- =?us-ascii?Q?SYAmZm2sLj8kNXMgjHtPo3ktjC+JPsoi2dyAqERSAanO/d719Trdnjc0nqB6?=
- =?us-ascii?Q?65bRJjPneVl2Dx+uYQJTEimaENOn7RWK0n5Ntdpl7SCUsgi3wsY6RTURhWAs?=
- =?us-ascii?Q?hUMLL/fH2OlIoOfDRWB2hPMeQLTaZzf0SbzNOcLlXMfLohHuYAcU85oMKRSa?=
- =?us-ascii?Q?7L36Mz0gDQssSLJy0xM0PnE0XAjXaaHodxVwaLAHMXVl4S0ENN/T7A6eWYun?=
- =?us-ascii?Q?MJqJ1FYav301Ocp1AnDxai3XRIO50w2BpejxpjfoYD3owd3lS+19M1RmJ4Kk?=
- =?us-ascii?Q?FELkYDcVhGcL7u9z7EvxROCv5QES3+k8QLHNn1+gp+e5VX3inGK1gBX01wih?=
- =?us-ascii?Q?C1TnBk4SnkNIrKMzRuTNTSV9TfN+GB4Ts4Sh28eUBzMYla3nPA4M1K6MS/lP?=
- =?us-ascii?Q?JPEv/drF0Gq++HosmM78A8ce+geh0SDHMCLI122v8RyMLyTMvtGmJF/dH+b2?=
- =?us-ascii?Q?+Osp2EaICjG6X5+crUhFTKevu+cVdcbsqMME?=
-X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024); DIR:OUT;
+ ARA:13230040|1800799024|82310400026|376014|36860700013; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?yiZb+5b1/Q/ie9k4LH+Aape9mCK0eXYIVRqIAWtxN0TEtyqXhAm6fSVud7sz?=
+ =?us-ascii?Q?s4bPeFKEzdlJhPZdFWfjJnab1f+JmvMdzMqoOOUjUQQfPoHSnWjKv66AbVZ4?=
+ =?us-ascii?Q?1TYjOd+2oWWyPTBwWQN/sx62i0FxuWzltSCBIzuV0IgIdai/uMK5VhViBRU1?=
+ =?us-ascii?Q?hBQF1qg7jwHg/XdOAv0C/EbN1TcJf4WgcWsmJEckkrUHnFk3Ow1vd3awRmjq?=
+ =?us-ascii?Q?GyUjHjFM03PEWRQoJ8FSsb2UiFDlYCEOBUQEytP4GKkoAMDtKzv+Xo1/rYfH?=
+ =?us-ascii?Q?AwNbhGtTBxqdpp1quTD/f5s/3yeZWBo/SpSbXtXIx+W+eAZ+o2RBs2C7tKem?=
+ =?us-ascii?Q?DtHpx2Qx/diTLd9wIU3MF6NS4oby+4JrQxCm3U156hR2SEFUUi//iA1MFTT4?=
+ =?us-ascii?Q?L9p6twohyzHhBLEoeU3HCFwFmKGECarZSR+QE2d1nGUbf8nN6+LXKH/8oC7Z?=
+ =?us-ascii?Q?EehEv6tS1KYuwn8WpsG/ti6UEjX2EnebqX4CyqdUvH37TZKELzkI934Xg7c0?=
+ =?us-ascii?Q?268LitYeyz22P570NPp4TLzuOpNdD6rth3w5RMABPUAaBwRmXOowglvM7u7e?=
+ =?us-ascii?Q?rgDc2gCLNtIV/tox4dwKHuUvivdIXX6HWAtKOtlFSxnitf6Y2Pgi5H9c+MA1?=
+ =?us-ascii?Q?Yj3MwMxcpUvEYFRigni2H2uWXRprza2KprcuoIn3UmJ3ho0QrZbXh/IGAzRS?=
+ =?us-ascii?Q?vhNy9i0tmkLVae7DdGRs9fn9U7sP+UvFBGEcp2cyNfJ36ZaFARGaseM7dteQ?=
+ =?us-ascii?Q?NjrlxcAHTvrtKILhFIVahNEc94gQZgt41R0vZW3MWmr9pZYX5eX4++m/NugG?=
+ =?us-ascii?Q?pmGlv3F2HfpsvxlQlbxWO8JoDNePmdylfEQkx1LUV4tSuZOwAH6nnEfJ3y0b?=
+ =?us-ascii?Q?mJZK+XYzcWrrXgnfkH/qzDoGSvyMZZssnIeveVKaqKNULSL2F7A44XxdxTwS?=
+ =?us-ascii?Q?UIolWisccteR4jMuk5zcYP1fKt812DU4D1j0bNGcJREQAIlWNksHbb48xG0L?=
+ =?us-ascii?Q?GjZhZBn7WC8LjG/G6wc5raEaITxY+DUN0tuCINMJMfHfmfPqB1B/CDfAd2JZ?=
+ =?us-ascii?Q?Zf/yS64905BDkLZr7vDPQQsXBDdHHMmKEU1aOEyM1eyJ9nS7VDL1EZZ++NYk?=
+ =?us-ascii?Q?subu0Mvex5CH8L5NT3f+tix86n10RBnBnrzEW5N6zplO9dgvxTLOUdtNktjR?=
+ =?us-ascii?Q?HmpCwtlFxiJij25pCGaBLP/7L9vff2Pm1ZYvF7D4kajOkLUK+zdNO9bpMZtp?=
+ =?us-ascii?Q?hHeT7A9yx7lxwrXvIbfndJC2xD03vOkYvczQUkuDq4qzqqD++2zzEH3If/k+?=
+ =?us-ascii?Q?KOYfvWyVrCwWHQYdp44POlfHZ+QLUUcSTyT3etxTBSYN85KYPj/OC+RoIdyI?=
+ =?us-ascii?Q?TSWNtVU3HBbjxjXpfmJ3KAtiknGxmoqAvM9QpDFQFoCOOtAkZsMwN8Y2ErmZ?=
+ =?us-ascii?Q?T0mm1JvyIVZt/CpScxEgUDgkCdRbJT3Kv5z7kZudqek1hL40xwmXZDEf8n7B?=
+ =?us-ascii?Q?ENicDRWnKiudtqYyf/h4/CmOnYT/duFkzYsy?=
+X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013); DIR:OUT;
  SFP:1101; 
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jun 2025 17:07:52.1290 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fdd4a8f7-04bc-416b-2a08-08ddb72f7ba7
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jun 2025 17:07:53.5971 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d7341dca-534c-497a-aa6c-08ddb72f7c8b
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
  Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000EDD3.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: SJ5PEPF000001F3.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7365
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PR12MB9599
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -135,282 +135,215 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The queue starting addresses offsets of a umem and doorbell offsets
-are already passed to the Devx object creation function.
+The actual Devx object of SQs and CQs are only created in the
+function mlx5_txq_start() in the device stage.
 
-When the queue length is not zero, it means that the memory was
-pre-allocated and the new object creation with consecutive memory
-should be enabled.
+By changing the 1-level iteration to 2-level iterations, the Tx
+queue with a big number of queue depth will be set up firstly.
+This will help to split the memory from big trunks to small trunks.
 
-When destroying the SQ / CQ objects, if it is in consecutive mode,
-the umem and MR should not be released and the global resources
-should only be released when stopping the device.
+In the testing, such assignment will help to improve the performance
+a little bit. All the doorbells will be grouped and padded at the end
+of the umem area.
+
+The umem object and offsets information are passed to the Devx
+creation function for the further usage.
 
 Signed-off-by: Bing Zhao <bingz@nvidia.com>
 ---
- drivers/common/mlx5/mlx5_common_devx.c | 160 +++++++++++++++++--------
- drivers/common/mlx5/mlx5_common_devx.h |   2 +
- 2 files changed, 110 insertions(+), 52 deletions(-)
+ drivers/common/mlx5/mlx5_devx_cmds.h | 10 ++++
+ drivers/net/mlx5/mlx5_devx.c         | 26 ++++++++-
+ drivers/net/mlx5/mlx5_trigger.c      | 82 +++++++++++++++-------------
+ 3 files changed, 77 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/common/mlx5/mlx5_common_devx.c b/drivers/common/mlx5/mlx5_common_devx.c
-index aace5283e7..e237558ec2 100644
---- a/drivers/common/mlx5/mlx5_common_devx.c
-+++ b/drivers/common/mlx5/mlx5_common_devx.c
-@@ -30,6 +30,8 @@ mlx5_devx_cq_destroy(struct mlx5_devx_cq *cq)
- {
- 	if (cq->cq)
- 		claim_zero(mlx5_devx_cmd_destroy(cq->cq));
-+	if (cq->consec)
-+		return;
- 	if (cq->umem_obj)
- 		claim_zero(mlx5_os_umem_dereg(cq->umem_obj));
- 	if (cq->umem_buf)
-@@ -93,6 +95,7 @@ mlx5_devx_cq_create(void *ctx, struct mlx5_devx_cq *cq_obj, uint16_t log_desc_n,
+diff --git a/drivers/common/mlx5/mlx5_devx_cmds.h b/drivers/common/mlx5/mlx5_devx_cmds.h
+index 6c726a0d46..f5fda02c1e 100644
+--- a/drivers/common/mlx5/mlx5_devx_cmds.h
++++ b/drivers/common/mlx5/mlx5_devx_cmds.h
+@@ -483,6 +483,11 @@ struct mlx5_devx_create_sq_attr {
+ 	uint32_t packet_pacing_rate_limit_index:16;
+ 	uint32_t tis_lst_sz:16;
+ 	uint32_t tis_num:24;
++	uint32_t q_off;
++	void *umem;
++	void *umem_obj;
++	uint32_t q_len;
++	uint32_t db_off;
+ 	struct mlx5_devx_wq_attr wq_attr;
+ };
+ 
+@@ -514,6 +519,11 @@ struct mlx5_devx_cq_attr {
+ 	uint64_t db_umem_offset;
  	uint32_t eqn;
- 	uint32_t num_of_cqes = RTE_BIT32(log_desc_n);
- 	int ret;
-+	uint32_t umem_offset, umem_id;
+ 	uint64_t db_addr;
++	void *umem;
++	void *umem_obj;
++	uint32_t q_off;
++	uint32_t q_len;
++	uint32_t db_off;
+ };
  
- 	if (page_size == (size_t)-1 || alignment == (size_t)-1) {
- 		DRV_LOG(ERR, "Failed to get page_size.");
-@@ -108,29 +111,44 @@ mlx5_devx_cq_create(void *ctx, struct mlx5_devx_cq *cq_obj, uint16_t log_desc_n,
- 	}
- 	/* Allocate memory buffer for CQEs and doorbell record. */
- 	umem_size = sizeof(struct mlx5_cqe) * num_of_cqes;
--	umem_dbrec = RTE_ALIGN(umem_size, MLX5_DBR_SIZE);
--	umem_size += MLX5_DBR_SIZE;
--	umem_buf = mlx5_malloc_numa_tolerant(MLX5_MEM_RTE | MLX5_MEM_ZERO, umem_size,
--					     alignment, socket);
--	if (!umem_buf) {
--		DRV_LOG(ERR, "Failed to allocate memory for CQ.");
--		rte_errno = ENOMEM;
--		return -rte_errno;
--	}
--	/* Register allocated buffer in user space with DevX. */
--	umem_obj = mlx5_os_umem_reg(ctx, (void *)(uintptr_t)umem_buf, umem_size,
--				    IBV_ACCESS_LOCAL_WRITE);
--	if (!umem_obj) {
--		DRV_LOG(ERR, "Failed to register umem for CQ.");
--		rte_errno = errno;
--		goto error;
-+	if (!attr->q_len) {
-+		umem_dbrec = RTE_ALIGN(umem_size, MLX5_DBR_SIZE);
-+		umem_size += MLX5_DBR_SIZE;
-+		umem_buf = mlx5_malloc_numa_tolerant(MLX5_MEM_RTE | MLX5_MEM_ZERO, umem_size,
-+						     alignment, socket);
-+		if (!umem_buf) {
-+			DRV_LOG(ERR, "Failed to allocate memory for CQ.");
-+			rte_errno = ENOMEM;
-+			return -rte_errno;
-+		}
-+		/* Register allocated buffer in user space with DevX. */
-+		umem_obj = mlx5_os_umem_reg(ctx, (void *)(uintptr_t)umem_buf, umem_size,
-+					    IBV_ACCESS_LOCAL_WRITE);
-+		if (!umem_obj) {
-+			DRV_LOG(ERR, "Failed to register umem for CQ.");
-+			rte_errno = errno;
-+			goto error;
-+		}
-+		umem_offset = 0;
-+		umem_id = mlx5_os_get_umem_id(umem_obj);
-+	} else {
-+		if (umem_size != attr->q_len) {
-+			DRV_LOG(ERR, "Mismatch between saved length and calc length of CQ %u-%u",
-+				umem_size, attr->q_len);
-+			rte_errno = EINVAL;
-+			return -rte_errno;
-+		}
-+		umem_buf = attr->umem;
-+		umem_offset = attr->q_off;
-+		umem_dbrec = attr->db_off;
-+		umem_id = mlx5_os_get_umem_id(attr->umem_obj);
- 	}
- 	/* Fill attributes for CQ object creation. */
- 	attr->q_umem_valid = 1;
--	attr->q_umem_id = mlx5_os_get_umem_id(umem_obj);
--	attr->q_umem_offset = 0;
-+	attr->q_umem_id = umem_id;
-+	attr->q_umem_offset = umem_offset;
- 	attr->db_umem_valid = 1;
--	attr->db_umem_id = attr->q_umem_id;
-+	attr->db_umem_id = umem_id;
- 	attr->db_umem_offset = umem_dbrec;
- 	attr->eqn = eqn;
- 	attr->log_cq_size = log_desc_n;
-@@ -142,19 +160,29 @@ mlx5_devx_cq_create(void *ctx, struct mlx5_devx_cq *cq_obj, uint16_t log_desc_n,
- 		rte_errno  = ENOMEM;
- 		goto error;
- 	}
--	cq_obj->umem_buf = umem_buf;
--	cq_obj->umem_obj = umem_obj;
-+	if (!attr->q_len) {
-+		cq_obj->umem_buf = umem_buf;
-+		cq_obj->umem_obj = umem_obj;
-+		cq_obj->db_rec = RTE_PTR_ADD(cq_obj->umem_buf, umem_dbrec);
-+		cq_obj->consec = false;
-+	} else {
-+		cq_obj->umem_buf = RTE_PTR_ADD(umem_buf, umem_offset);
-+		cq_obj->umem_obj = attr->umem_obj;
-+		cq_obj->db_rec = RTE_PTR_ADD(umem_buf, umem_dbrec);
-+		cq_obj->consec = true;
+ /* Virtq attributes structure, used by VIRTQ operations. */
+diff --git a/drivers/net/mlx5/mlx5_devx.c b/drivers/net/mlx5/mlx5_devx.c
+index 3d49e096ef..0ee16ba4f0 100644
+--- a/drivers/net/mlx5/mlx5_devx.c
++++ b/drivers/net/mlx5/mlx5_devx.c
+@@ -1493,10 +1493,22 @@ mlx5_txq_create_devx_sq_resources(struct rte_eth_dev *dev, uint16_t idx,
+ 			mlx5_ts_format_conv(cdev->config.hca_attr.sq_ts_format),
+ 		.tis_num = mlx5_get_txq_tis_num(dev, idx),
+ 	};
++	uint32_t db_start = priv->consec_tx_mem.sq_total_size + priv->consec_tx_mem.cq_total_size;
++	int ret;
+ 
+ 	/* Create Send Queue object with DevX. */
+-	return mlx5_devx_sq_create(cdev->ctx, &txq_obj->sq_obj,
+-				   log_desc_n, &sq_attr, priv->sh->numa_node);
++	if (priv->sh->config.txq_mem_algn) {
++		sq_attr.umem = priv->consec_tx_mem.umem;
++		sq_attr.umem_obj = priv->consec_tx_mem.umem_obj;
++		sq_attr.q_off = priv->consec_tx_mem.sq_cur_off;
++		sq_attr.db_off = db_start + (2 * idx) * MLX5_DBR_SIZE;
++		sq_attr.q_len = txq_data->sq_mem_len;
 +	}
- 	cq_obj->cq = cq;
--	cq_obj->db_rec = RTE_PTR_ADD(cq_obj->umem_buf, umem_dbrec);
- 	/* Mark all CQEs initially as invalid. */
- 	mlx5_cq_init(cq_obj, num_of_cqes);
- 	return 0;
- error:
- 	ret = rte_errno;
--	if (umem_obj)
--		claim_zero(mlx5_os_umem_dereg(umem_obj));
--	if (umem_buf)
--		mlx5_free((void *)(uintptr_t)umem_buf);
-+	if (!attr->q_len) {
-+		if (umem_obj)
-+			claim_zero(mlx5_os_umem_dereg(umem_obj));
-+		if (umem_buf)
-+			mlx5_free((void *)(uintptr_t)umem_buf);
-+	}
- 	rte_errno = ret;
- 	return -rte_errno;
++	ret = mlx5_devx_sq_create(cdev->ctx, &txq_obj->sq_obj,
++				  log_desc_n, &sq_attr, priv->sh->numa_node);
++	if (!ret && priv->sh->config.txq_mem_algn)
++		priv->consec_tx_mem.sq_cur_off += txq_data->sq_mem_len;
++	return ret;
  }
-@@ -171,6 +199,8 @@ mlx5_devx_sq_destroy(struct mlx5_devx_sq *sq)
+ #endif
+ 
+@@ -1536,6 +1548,7 @@ mlx5_txq_devx_obj_new(struct rte_eth_dev *dev, uint16_t idx)
+ 	uint32_t cqe_n, log_desc_n;
+ 	uint32_t wqe_n, wqe_size;
+ 	int ret = 0;
++	uint32_t db_start = priv->consec_tx_mem.sq_total_size + priv->consec_tx_mem.cq_total_size;
+ 
+ 	MLX5_ASSERT(txq_data);
+ 	MLX5_ASSERT(txq_obj);
+@@ -1557,6 +1570,13 @@ mlx5_txq_devx_obj_new(struct rte_eth_dev *dev, uint16_t idx)
+ 		rte_errno = EINVAL;
+ 		return 0;
+ 	}
++	if (priv->sh->config.txq_mem_algn) {
++		cq_attr.umem = priv->consec_tx_mem.umem;
++		cq_attr.umem_obj = priv->consec_tx_mem.umem_obj;
++		cq_attr.q_off = priv->consec_tx_mem.cq_cur_off;
++		cq_attr.db_off = db_start + (2 * idx + 1) * MLX5_DBR_SIZE;
++		cq_attr.q_len = txq_data->cq_mem_len;
++	}
+ 	/* Create completion queue object with DevX. */
+ 	ret = mlx5_devx_cq_create(sh->cdev->ctx, &txq_obj->cq_obj, log_desc_n,
+ 				  &cq_attr, priv->sh->numa_node);
+@@ -1641,6 +1661,8 @@ mlx5_txq_devx_obj_new(struct rte_eth_dev *dev, uint16_t idx)
+ #endif
+ 	txq_ctrl->uar_mmap_offset =
+ 			mlx5_os_get_devx_uar_mmap_offset(sh->tx_uar.obj);
++	if (priv->sh->config.txq_mem_algn)
++		priv->consec_tx_mem.cq_cur_off += txq_data->cq_mem_len;
+ 	ppriv->uar_table[txq_data->idx] = sh->tx_uar.bf_db;
+ 	dev->data->tx_queue_state[idx] = RTE_ETH_QUEUE_STATE_STARTED;
+ 	return 0;
+diff --git a/drivers/net/mlx5/mlx5_trigger.c b/drivers/net/mlx5/mlx5_trigger.c
+index 00ffb39ecb..855d7518b9 100644
+--- a/drivers/net/mlx5/mlx5_trigger.c
++++ b/drivers/net/mlx5/mlx5_trigger.c
+@@ -51,52 +51,56 @@ static int
+ mlx5_txq_start(struct rte_eth_dev *dev)
  {
- 	if (sq->sq)
- 		claim_zero(mlx5_devx_cmd_destroy(sq->sq));
-+	if (sq->consec)
-+		return;
- 	if (sq->umem_obj)
- 		claim_zero(mlx5_os_umem_dereg(sq->umem_obj));
- 	if (sq->umem_buf)
-@@ -220,6 +250,7 @@ mlx5_devx_sq_create(void *ctx, struct mlx5_devx_sq *sq_obj, uint16_t log_wqbb_n,
- 	uint32_t umem_size, umem_dbrec;
- 	uint32_t num_of_wqbbs = RTE_BIT32(log_wqbb_n);
+ 	struct mlx5_priv *priv = dev->data->dev_private;
+-	unsigned int i;
++	uint32_t log_max_wqe = log2above(mlx5_dev_get_max_wq_size(priv->sh));
++	uint32_t flags = MLX5_MEM_RTE | MLX5_MEM_ZERO;
++	unsigned int i, cnt;
  	int ret;
-+	uint32_t umem_offset, umem_id;
  
- 	if (alignment == (size_t)-1) {
- 		DRV_LOG(ERR, "Failed to get WQE buf alignment.");
-@@ -228,30 +259,45 @@ mlx5_devx_sq_create(void *ctx, struct mlx5_devx_sq *sq_obj, uint16_t log_wqbb_n,
+-	for (i = 0; i != priv->txqs_n; ++i) {
+-		struct mlx5_txq_ctrl *txq_ctrl = mlx5_txq_get(dev, i);
+-		struct mlx5_txq_data *txq_data = &txq_ctrl->txq;
+-		uint32_t flags = MLX5_MEM_RTE | MLX5_MEM_ZERO;
++	for (cnt = log_max_wqe; cnt > 0; cnt -= 1) {
++		for (i = 0; i != priv->txqs_n; ++i) {
++			struct mlx5_txq_ctrl *txq_ctrl = mlx5_txq_get(dev, i);
++			struct mlx5_txq_data *txq_data = &txq_ctrl->txq;
+ 
+-		if (!txq_ctrl)
+-			continue;
+-		if (!txq_ctrl->is_hairpin)
+-			txq_alloc_elts(txq_ctrl);
+-		MLX5_ASSERT(!txq_ctrl->obj);
+-		txq_ctrl->obj = mlx5_malloc_numa_tolerant(flags, sizeof(struct mlx5_txq_obj),
+-							  0, txq_ctrl->socket);
+-		if (!txq_ctrl->obj) {
+-			DRV_LOG(ERR, "Port %u Tx queue %u cannot allocate "
+-				"memory resources.", dev->data->port_id,
+-				txq_data->idx);
+-			rte_errno = ENOMEM;
+-			goto error;
+-		}
+-		ret = priv->obj_ops.txq_obj_new(dev, i);
+-		if (ret < 0) {
+-			mlx5_free(txq_ctrl->obj);
+-			txq_ctrl->obj = NULL;
+-			goto error;
+-		}
+-		if (!txq_ctrl->is_hairpin) {
+-			size_t size = txq_data->cqe_s * sizeof(*txq_data->fcqs);
+-
+-			txq_data->fcqs = mlx5_malloc_numa_tolerant(flags, size,
+-								   RTE_CACHE_LINE_SIZE,
+-								   txq_ctrl->socket);
+-			if (!txq_data->fcqs) {
+-				DRV_LOG(ERR, "Port %u Tx queue %u cannot "
+-					"allocate memory (FCQ).",
+-					dev->data->port_id, i);
++			if (!txq_ctrl || txq_data->elts_n != cnt)
++				continue;
++			if (!txq_ctrl->is_hairpin)
++				txq_alloc_elts(txq_ctrl);
++			MLX5_ASSERT(!txq_ctrl->obj);
++			txq_ctrl->obj = mlx5_malloc_numa_tolerant(flags,
++								  sizeof(struct mlx5_txq_obj),
++								  0, txq_ctrl->socket);
++			if (!txq_ctrl->obj) {
++				DRV_LOG(ERR, "Port %u Tx queue %u cannot allocate "
++					"memory resources.", dev->data->port_id,
++					txq_data->idx);
+ 				rte_errno = ENOMEM;
+ 				goto error;
+ 			}
+-		}
+-		DRV_LOG(DEBUG, "Port %u txq %u updated with %p.",
+-			dev->data->port_id, i, (void *)&txq_ctrl->obj);
+-		LIST_INSERT_HEAD(&priv->txqsobj, txq_ctrl->obj, next);
++			ret = priv->obj_ops.txq_obj_new(dev, i);
++			if (ret < 0) {
++				mlx5_free(txq_ctrl->obj);
++				txq_ctrl->obj = NULL;
++				goto error;
++			}
++			if (!txq_ctrl->is_hairpin) {
++				size_t size = txq_data->cqe_s * sizeof(*txq_data->fcqs);
++
++				txq_data->fcqs = mlx5_malloc_numa_tolerant(flags, size,
++									   RTE_CACHE_LINE_SIZE,
++									   txq_ctrl->socket);
++				if (!txq_data->fcqs) {
++					DRV_LOG(ERR, "Port %u Tx queue %u cannot "
++						"allocate memory (FCQ).",
++						dev->data->port_id, i);
++					rte_errno = ENOMEM;
++					goto error;
++				}
++			}
++			DRV_LOG(DEBUG, "Port %u txq %u updated with %p.",
++				dev->data->port_id, i, (void *)&txq_ctrl->obj);
++			LIST_INSERT_HEAD(&priv->txqsobj, txq_ctrl->obj, next);
  	}
- 	/* Allocate memory buffer for WQEs and doorbell record. */
- 	umem_size = MLX5_WQE_SIZE * num_of_wqbbs;
--	umem_dbrec = RTE_ALIGN(umem_size, MLX5_DBR_SIZE);
--	umem_size += MLX5_DBR_SIZE;
--	umem_buf = mlx5_malloc(MLX5_MEM_RTE | MLX5_MEM_ZERO, umem_size,
--			       alignment, socket);
--	if (!umem_buf) {
--		DRV_LOG(ERR, "Failed to allocate memory for SQ.");
--		rte_errno = ENOMEM;
--		return -rte_errno;
--	}
--	/* Register allocated buffer in user space with DevX. */
--	umem_obj = mlx5_os_umem_reg(ctx, (void *)(uintptr_t)umem_buf, umem_size,
--				    IBV_ACCESS_LOCAL_WRITE);
--	if (!umem_obj) {
--		DRV_LOG(ERR, "Failed to register umem for SQ.");
--		rte_errno = errno;
--		goto error;
-+	if (!attr->q_len) {
-+		umem_dbrec = RTE_ALIGN(umem_size, MLX5_DBR_SIZE);
-+		umem_size += MLX5_DBR_SIZE;
-+		umem_buf = mlx5_malloc(MLX5_MEM_RTE | MLX5_MEM_ZERO, umem_size,
-+				       alignment, socket);
-+		if (!umem_buf) {
-+			DRV_LOG(ERR, "Failed to allocate memory for SQ.");
-+				rte_errno = ENOMEM;
-+				return -rte_errno;
-+		}
-+		/* Register allocated buffer in user space with DevX. */
-+		umem_obj = mlx5_os_umem_reg(ctx, (void *)(uintptr_t)umem_buf, umem_size,
-+					    IBV_ACCESS_LOCAL_WRITE);
-+		if (!umem_obj) {
-+			DRV_LOG(ERR, "Failed to register umem for SQ.");
-+			rte_errno = errno;
-+			goto error;
-+		}
-+		umem_offset = 0;
-+		umem_id = mlx5_os_get_umem_id(umem_obj);
-+	} else {
-+		if (umem_size != attr->q_len) {
-+			DRV_LOG(ERR, "Mismatch between saved length and calc length of WQ %u-%u",
-+				umem_size, attr->q_len);
-+			rte_errno = EINVAL;
-+			return -rte_errno;
-+		}
-+		umem_buf = attr->umem;
-+		umem_offset = attr->q_off;
-+		umem_dbrec = attr->db_off;
-+		umem_id = mlx5_os_get_umem_id(attr->umem_obj);
- 	}
- 	/* Fill attributes for SQ object creation. */
- 	attr->wq_attr.wq_type = MLX5_WQ_TYPE_CYCLIC;
- 	attr->wq_attr.wq_umem_valid = 1;
--	attr->wq_attr.wq_umem_id = mlx5_os_get_umem_id(umem_obj);
--	attr->wq_attr.wq_umem_offset = 0;
-+	attr->wq_attr.wq_umem_id = umem_id;
-+	attr->wq_attr.wq_umem_offset = umem_offset;
- 	attr->wq_attr.dbr_umem_valid = 1;
--	attr->wq_attr.dbr_umem_id = attr->wq_attr.wq_umem_id;
-+	attr->wq_attr.dbr_umem_id = umem_id;
- 	attr->wq_attr.dbr_addr = umem_dbrec;
- 	attr->wq_attr.log_wq_stride = rte_log2_u32(MLX5_WQE_SIZE);
- 	attr->wq_attr.log_wq_sz = log_wqbb_n;
-@@ -263,17 +309,27 @@ mlx5_devx_sq_create(void *ctx, struct mlx5_devx_sq *sq_obj, uint16_t log_wqbb_n,
- 		rte_errno = ENOMEM;
- 		goto error;
- 	}
--	sq_obj->umem_buf = umem_buf;
--	sq_obj->umem_obj = umem_obj;
-+	if (!attr->q_len) {
-+		sq_obj->umem_buf = umem_buf;
-+		sq_obj->umem_obj = umem_obj;
-+		sq_obj->db_rec = RTE_PTR_ADD(sq_obj->umem_buf, umem_dbrec);
-+		sq_obj->consec = false;
-+	} else {
-+		sq_obj->umem_buf = RTE_PTR_ADD(umem_buf, attr->q_off);
-+		sq_obj->umem_obj = attr->umem_obj;
-+		sq_obj->db_rec = RTE_PTR_ADD(umem_buf, attr->db_off);
-+		sq_obj->consec = true;
-+	}
- 	sq_obj->sq = sq;
--	sq_obj->db_rec = RTE_PTR_ADD(sq_obj->umem_buf, umem_dbrec);
++}
  	return 0;
  error:
- 	ret = rte_errno;
--	if (umem_obj)
--		claim_zero(mlx5_os_umem_dereg(umem_obj));
--	if (umem_buf)
--		mlx5_free((void *)(uintptr_t)umem_buf);
-+	if (!attr->q_len) {
-+		if (umem_obj)
-+			claim_zero(mlx5_os_umem_dereg(umem_obj));
-+		if (umem_buf)
-+			mlx5_free((void *)(uintptr_t)umem_buf);
-+	}
- 	rte_errno = ret;
- 	return -rte_errno;
- }
-diff --git a/drivers/common/mlx5/mlx5_common_devx.h b/drivers/common/mlx5/mlx5_common_devx.h
-index 743f06042c..4cb9111dbb 100644
---- a/drivers/common/mlx5/mlx5_common_devx.h
-+++ b/drivers/common/mlx5/mlx5_common_devx.h
-@@ -21,6 +21,7 @@ struct mlx5_devx_cq {
- 		volatile struct mlx5_cqe *cqes; /* The CQ ring buffer. */
- 	};
- 	volatile uint32_t *db_rec; /* The CQ doorbell record. */
-+	bool consec; /* Using consecutive memory. */
- };
- 
- /* DevX Send Queue structure. */
-@@ -33,6 +34,7 @@ struct mlx5_devx_sq {
- 		volatile struct mlx5_aso_wqe *aso_wqes;
- 	};
- 	volatile uint32_t *db_rec; /* The SQ doorbell record. */
-+	bool consec; /* Using consecutive memory. */
- };
- 
- /* DevX Queue Pair structure. */
+ 	ret = rte_errno; /* Save rte_errno before cleanup. */
 -- 
 2.34.1
 
