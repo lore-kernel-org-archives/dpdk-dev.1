@@ -2,65 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 697CDC8302D
-	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 11:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37DB9C8302D
+	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 11:41:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 94B2840264;
-	Mon, 30 Jun 2025 13:22:15 +0200 (CEST)
-Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com
- [52.119.213.150])
- by mails.dpdk.org (Postfix) with ESMTP id F1AF24025D
- for <dev@dpdk.org>; Mon, 30 Jun 2025 13:22:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
- t=1751282534; x=1782818534;
- h=from:to:cc:subject:date:message-id:references:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=yR1fNWdfBfdZ5u+eKYF9Rdbz8ZmSx7s99+y73BU6hgs=;
- b=VybEk0cupxxdA4+kXOEq08mER1lrRa4KHZ3ociyY+KJzMKaFM5700JCF
- y5sVS9+wH/8QWqr1u/Z/kkpZWgt25pLbwuCiXvqWzez1+fDygWeXlyI1I
- yF2ZOxRorJHLupNK+XD8xlDXiWHX/uR6nBg9JMX0y9t6aHMs7V6Q2Ts+Y
- V+YHodfzReiNW/cth2BeLx9A1xIJq/xiedcHcPB0Mys6jMPkIySNq6JmV
- u86zVkij8fckISp7UlYvaK+V5jmFwz+8UsQvgd7zKswonBKu+Ci0hNvqG
- dXQSOEwtq3gnQ564cquStwvrO6oMAi6cRSv5GRjsSFGrFu4KOPJ/y2koA Q==;
-X-IronPort-AV: E=Sophos;i="6.16,277,1744070400"; d="scan'208";a="737822759"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO
- smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
- by smtp-border-fw-52002.iad7.amazon.com with
- ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 11:22:12 +0000
-Received: from EX19MTAEUA001.ant.amazon.com [10.0.10.100:11170]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.9.108:2525]
- with esmtp (Farcaster)
- id cc77f9b9-b3c4-41c9-9c11-32da3f563ae2; Mon, 30 Jun 2025 11:22:09 +0000 (UTC)
-X-Farcaster-Flow-ID: cc77f9b9-b3c4-41c9-9c11-32da3f563ae2
-Received: from EX19D007EUA002.ant.amazon.com (10.252.50.68) by
- EX19MTAEUA001.ant.amazon.com (10.252.50.223) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Mon, 30 Jun 2025 11:22:09 +0000
-Received: from EX19D007EUA002.ant.amazon.com (10.252.50.68) by
- EX19D007EUA002.ant.amazon.com (10.252.50.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Mon, 30 Jun 2025 11:22:09 +0000
-Received: from EX19D007EUA002.ant.amazon.com ([fe80::1295:20d9:141e:47cc]) by
- EX19D007EUA002.ant.amazon.com ([fe80::1295:20d9:141e:47cc%3]) with
- mapi id 15.02.1544.014; Mon, 30 Jun 2025 11:22:09 +0000
-From: "Brandes, Shai" <shaibran@amazon.com>
-To: "stephen@networkplumber.org" <stephen@networkplumber.org>
-CC: "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH 0/7] net/ena: release 2.13.0
-Thread-Topic: [PATCH 0/7] net/ena: release 2.13.0
-Thread-Index: AQHb6bAlJIfdEg3ANkWDepWgEArCorQbjeOw
-Date: Mon, 30 Jun 2025 11:22:08 +0000
-Message-ID: <21bfbaca7d7249e7a28808fc5c51bacb@amazon.com>
-References: <20250630111358.3476-1-shaibran@amazon.com>
-In-Reply-To: <20250630111358.3476-1-shaibran@amazon.com>
-Accept-Language: en-US
+	by mails.dpdk.org (Postfix) with ESMTP id 69B4440264;
+	Mon, 30 Jun 2025 13:40:59 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 76FAE4025D
+ for <dev@dpdk.org>; Mon, 30 Jun 2025 13:40:57 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bW42q3wVMz6M548;
+ Mon, 30 Jun 2025 19:40:03 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+ by mail.maildlp.com (Postfix) with ESMTPS id 1996F1402EC;
+ Mon, 30 Jun 2025 19:40:56 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ frapeml500008.china.huawei.com (7.182.85.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 30 Jun 2025 13:40:55 +0200
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Mon, 30 Jun 2025 13:40:55 +0200
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>, "Bruce
+ Richardson" <bruce.richardson@intel.com>, "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: [PATCH] net/i40e: Fast release optimizations
+Thread-Topic: [PATCH] net/i40e: Fast release optimizations
+Thread-Index: AQHb5M8cy6WBmzI3MUC2TH1cjpMU4LQbm/iw
+Date: Mon, 30 Jun 2025 11:40:55 +0000
+Message-ID: <cda18d9197ed4ee9bd5ed73fd02bd032@huawei.com>
+References: <20250624061238.89259-1-mb@smartsharesystems.com>
+In-Reply-To: <20250624061238.89259-1-mb@smartsharesystems.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [10.1.213.9]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+x-originating-ip: [10.48.148.141]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -75,74 +54,107 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Stephen, this is the revised patchset that cleanly applies on top of dpd=
-k-next-net origin/main branch after aligning the release notes.
-I noticed that rc2 has already been released - we would greatly appreciate =
-it if you could include the ENA changes in rc3.
-ENA is a self-contained module, and the previous maintainer approved that m=
-ode of operation.
-Hopefully, an exception can be made in this case as we originally submitted=
- the patchset over a month ago, and it has been in the "awaiting upstream" =
-state since then.
-Thanks again for your time and continued support.
-
-> -----Original Message-----
-> From: Brandes, Shai <shaibran@amazon.com>
-> Sent: Monday, June 30, 2025 2:14 PM
-> To: stephen@networkplumber.org
-> Cc: dev@dpdk.org; Brandes, Shai <shaibran@amazon.com>
-> Subject: [PATCH 0/7] net/ena: release 2.13.0
->=20
-> This patchset includes an upgrade of the ENA HAL, introduces a new featur=
-e,
-> and addresses three bug fixes.
->=20
-> Thank you in advance to the net maintainers and community members for
-> your time and effort reviewing the code.
->=20
-> Best regards,
-> Shai Brandes
-> AWS Elastic Network Adapter team
->=20
-> ---
-> v2:
-> Removed patch "net/ena: fix virtual address calc for unaligned BARs"
-> which contained a problematic casting when compiling with 32-bit system
->=20
-> v3:
-> no change, there was some technical issue when sending the emails where
-> part of the patches apeared on different series.
->=20
-> v4:
-> Each patch in the series should compile independently.
-> Patch 4/7 causes a compile error that was missed, as the full series pass=
-ed our
-> directed tests when applied together
->=20
-> v5:
-> Reworked the patchset so it applies cleanly on origin/main due to release
-> notes mismatch.
->=20
-> Shai Brandes (7):
->   net/ena/base: avoid recalculating desc per entry
->   net/ena/base: coding style changes
->   net/ena: separate doorbell logic for Rx and Tx
->   net/ena: support fragment bypass mode
->   net/ena: fix unhandled interrupt config failure
->   net/ena: fix aenq timeout with low poll interval
->   net/ena: upgrade driver version to 2.13.0
->=20
->  doc/guides/nics/ena.rst                       | 13 ++-
->  doc/guides/rel_notes/release_25_07.rst        |  9 ++
->  drivers/net/ena/base/ena_com.c                | 40 +++++++-
->  drivers/net/ena/base/ena_com.h                |  7 ++
->  .../net/ena/base/ena_defs/ena_admin_defs.h    | 14 +++
->  drivers/net/ena/base/ena_eth_com.c            |  6 +-
->  drivers/net/ena/base/ena_eth_com.h            | 15 ++-
->  drivers/net/ena/ena_ethdev.c                  | 98 +++++++++++++++----
->  drivers/net/ena/ena_ethdev.h                  |  4 +-
->  9 files changed, 175 insertions(+), 31 deletions(-)
->=20
-> --
-> 2.17.1
-
+DQoNCj4gV2hlbiBmYXN0IHJlbGVhc2luZyBtYnVmcywgdGhlIG1idWZzIGFyZSBub3QgYWNjZXNz
+ZWQsIHNvIGRvIG5vdCBwcmVmZXRjaA0KPiB0aGVtLg0KPiBUaGlzIHNhdmVzIGEgbWJ1ZiBsb2Fk
+IG9wZXJhdGlvbiBmb3IgZWFjaCBmYXN0IHJlbGVhc2VkIFRYIG1idWYuDQo+IA0KPiBXaGVuIGZh
+c3QgcmVsZWFzZSBvZiBtYnVmcyBpcyBlbmFibGVkIGZvciBhIFRYIHF1ZXVlLCBjYWNoZSB0aGUg
+bWJ1Zg0KPiBtZW1wb29sIHBvaW50ZXIgaW4gdGhlIFRYIHF1ZXVlIHN0cnVjdHVyZS4NCj4gVGhp
+cyBzYXZlcyBvbmUgbWJ1ZiBsb2FkIG9wZXJhdGlvbiBmb3IgZWFjaCBidXJzdCBvZiBmYXN0IHJl
+bGVhc2VkIFRYDQo+IG1idWZzLg0KPiANCj4gVGhlIHR4ZXAtPm1idWYgcG9pbnRlciBpcyBub3Qg
+dXNlZCBhZnRlciB0aGUgbWJ1ZiBoYXMgYmVlbiBmcmVlZCwgc28gZG8NCj4gbm90IHJlc2V0IHRo
+ZSBwb2ludGVyLg0KPiBUaGlzIHNhdmVzIGEgdHhlcCBzdG9yZSBvcGVyYXRpb24gZm9yIGVhY2gg
+VFggbWJ1ZiBmcmVlZC4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IE1vcnRlbiBCcsO4cnVwIDxtYkBz
+bWFydHNoYXJlc3lzdGVtcy5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9uZXQvaW50ZWwvY29tbW9u
+L3R4LmggICAgICAgICAgICAgICAgIHwgIDUgKysrDQo+ICAuLi4vaTQwZS9pNDBlX3JlY3ljbGVf
+bWJ1ZnNfdmVjX2NvbW1vbi5jICAgICAgfCAgNCArLQ0KPiAgZHJpdmVycy9uZXQvaW50ZWwvaTQw
+ZS9pNDBlX3J4dHguYyAgICAgICAgICAgIHwgMzkgKysrKysrKysrKy0tLS0tLS0tLQ0KPiAgMyBm
+aWxlcyBjaGFuZ2VkLCAyOCBpbnNlcnRpb25zKCspLCAyMCBkZWxldGlvbnMoLSkNCj4gDQo+IGRp
+ZmYgLS1naXQgYS9kcml2ZXJzL25ldC9pbnRlbC9jb21tb24vdHguaCBiL2RyaXZlcnMvbmV0L2lu
+dGVsL2NvbW1vbi90eC5oDQo+IGluZGV4IGIwYTY4YmFlNDQuLjU0YzliODQ1ZjcgMTAwNjQ0DQo+
+IC0tLSBhL2RyaXZlcnMvbmV0L2ludGVsL2NvbW1vbi90eC5oDQo+ICsrKyBiL2RyaXZlcnMvbmV0
+L2ludGVsL2NvbW1vbi90eC5oDQo+IEBAIC02Miw2ICs2MiwxMSBAQCBzdHJ1Y3QgY2lfdHhfcXVl
+dWUgew0KPiAgCXVpbnQxNl90IHR4X25leHRfZGQ7DQo+ICAJdWludDE2X3QgdHhfbmV4dF9yczsN
+Cj4gIAl1aW50NjRfdCBvZmZsb2FkczsNCj4gKwkvKiBNZW1wb29sIHBvaW50ZXIgZm9yIGZhc3Qg
+cmVsZWFzZSBvZiBtYnVmcy4NCj4gKwkgKiBOVUxMIGlmIGRpc2FibGVkLCBVSU5UUFRSX01BWCBp
+ZiBlbmFibGVkIGFuZCBub3QgeWV0IGtub3duLg0KPiArCSAqIEluaXRpYWxpemVkIGF0IGZpcnN0
+IHVzZS4NCj4gKwkgKi8NCj4gKwlzdHJ1Y3QgcnRlX21lbXBvb2wgKmZhc3RfZnJlZV9tcDsNCj4g
+IAl1aW50NjRfdCBtYnVmX2Vycm9yczsNCj4gIAlydGVfaW92YV90IHR4X3JpbmdfZG1hOyAgICAg
+ICAgLyogVFggcmluZyBETUEgYWRkcmVzcyAqLw0KPiAgCWJvb2wgdHhfZGVmZXJyZWRfc3RhcnQ7
+IC8qIGRvbid0IHN0YXJ0IHRoaXMgcXVldWUgaW4gZGV2IHN0YXJ0ICovDQo+IGRpZmYgLS1naXQg
+YS9kcml2ZXJzL25ldC9pbnRlbC9pNDBlL2k0MGVfcmVjeWNsZV9tYnVmc192ZWNfY29tbW9uLmMg
+Yi9kcml2ZXJzL25ldC9pbnRlbC9pNDBlL2k0MGVfcmVjeWNsZV9tYnVmc192ZWNfY29tbW9uLmMN
+Cj4gaW5kZXggMjg3NWM1NzhhZi4uYTQ2NjA1Y2VlOSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9u
+ZXQvaW50ZWwvaTQwZS9pNDBlX3JlY3ljbGVfbWJ1ZnNfdmVjX2NvbW1vbi5jDQo+ICsrKyBiL2Ry
+aXZlcnMvbmV0L2ludGVsL2k0MGUvaTQwZV9yZWN5Y2xlX21idWZzX3ZlY19jb21tb24uYw0KPiBA
+QCAtMTA2LDcgKzEwNiw5IEBAIGk0MGVfcmVjeWNsZV90eF9tYnVmc19yZXVzZV92ZWModm9pZCAq
+dHhfcXVldWUsDQo+ICAJaWYgKHR4cS0+b2ZmbG9hZHMgJiBSVEVfRVRIX1RYX09GRkxPQURfTUJV
+Rl9GQVNUX0ZSRUUpIHsNCj4gIAkJLyogQXZvaWQgdHhxIGNvbnRhaW5zIGJ1ZmZlcnMgZnJvbSB1
+bmV4cGVjdGVkIG1lbXBvb2wuICovDQo+ICAJCWlmICh1bmxpa2VseShyZWN5Y2xlX3J4cV9pbmZv
+LT5tcA0KPiAtCQkJCQkhPSB0eGVwWzBdLm1idWYtPnBvb2wpKQ0KPiArCQkJCSE9IChsaWtlbHko
+dHhxLT5mYXN0X2ZyZWVfbXAgIT0gKHZvaWQgKilVSU5UUFRSX01BWCkgPw0KPiArCQkJCXR4cS0+
+ZmFzdF9mcmVlX21wIDoNCj4gKwkJCQkodHhxLT5mYXN0X2ZyZWVfbXAgPSB0eGVwWzBdLm1idWYt
+PnBvb2wpKSkpDQo+ICAJCQlyZXR1cm4gMDsNCj4gDQo+ICAJCS8qIERpcmVjdGx5IHB1dCBtYnVm
+cyBmcm9tIFR4IHRvIFJ4LiAqLw0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvaW50ZWwvaTQw
+ZS9pNDBlX3J4dHguYyBiL2RyaXZlcnMvbmV0L2ludGVsL2k0MGUvaTQwZV9yeHR4LmMNCj4gaW5k
+ZXggYzNmZjJlMDVjMy4uNjc5YzEzNDBiOCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9uZXQvaW50
+ZWwvaTQwZS9pNDBlX3J4dHguYw0KPiArKysgYi9kcml2ZXJzL25ldC9pbnRlbC9pNDBlL2k0MGVf
+cnh0eC5jDQo+IEBAIC0xMzMyLDcgKzEzMzIsNyBAQCBzdGF0aWMgX19ydGVfYWx3YXlzX2lubGlu
+ZSBpbnQNCj4gIGk0MGVfdHhfZnJlZV9idWZzKHN0cnVjdCBjaV90eF9xdWV1ZSAqdHhxKQ0KPiAg
+ew0KPiAgCXN0cnVjdCBjaV90eF9lbnRyeSAqdHhlcDsNCj4gLQl1aW50MTZfdCB0eF9yc190aHJl
+c2ggPSB0eHEtPnR4X3JzX3RocmVzaDsNCj4gKwljb25zdCB1aW50MTZfdCB0eF9yc190aHJlc2gg
+PSB0eHEtPnR4X3JzX3RocmVzaDsNCj4gIAl1aW50MTZfdCBpID0gMCwgaiA9IDA7DQo+ICAJc3Ry
+dWN0IHJ0ZV9tYnVmICpmcmVlW1JURV9JNDBFX1RYX01BWF9GUkVFX0JVRl9TWl07DQo+ICAJY29u
+c3QgdWludDE2X3QgayA9IFJURV9BTElHTl9GTE9PUih0eF9yc190aHJlc2gsIFJURV9JNDBFX1RY
+X01BWF9GUkVFX0JVRl9TWik7DQo+IEBAIC0xMzQ1LDQxICsxMzQ1LDQwIEBAIGk0MGVfdHhfZnJl
+ZV9idWZzKHN0cnVjdCBjaV90eF9xdWV1ZSAqdHhxKQ0KPiANCj4gIAl0eGVwID0gJnR4cS0+c3df
+cmluZ1t0eHEtPnR4X25leHRfZGQgLSAodHhfcnNfdGhyZXNoIC0gMSldOw0KPiANCj4gLQlmb3Ig
+KGkgPSAwOyBpIDwgdHhfcnNfdGhyZXNoOyBpKyspDQo+IC0JCXJ0ZV9wcmVmZXRjaDAoKHR4ZXAg
+KyBpKS0+bWJ1Zik7DQo+IC0NCj4gIAlpZiAodHhxLT5vZmZsb2FkcyAmIFJURV9FVEhfVFhfT0ZG
+TE9BRF9NQlVGX0ZBU1RfRlJFRSkgew0KPiArCQlzdHJ1Y3QgcnRlX21lbXBvb2wgKiBjb25zdCBm
+YXN0X2ZyZWVfbXAgPQ0KPiArCQkJCWxpa2VseSh0eHEtPmZhc3RfZnJlZV9tcCAhPSAodm9pZCAq
+KVVJTlRQVFJfTUFYKSA/DQo+ICsJCQkJdHhxLT5mYXN0X2ZyZWVfbXAgOg0KPiArCQkJCSh0eHEt
+PmZhc3RfZnJlZV9tcCA9IHR4ZXBbMF0ubWJ1Zi0+cG9vbCk7DQo+ICsNCg0KTml0IGlkZWEuDQpB
+Y2tlZC1ieTogS29uc3RhbnRpbiBBbmFueWV2IDxrb25zdGFudGluLmFuYW55ZXZAaHVhd2VpLmNv
+bT4NCg0KSnVzdCBhcyBhIHN1Z2dlc3Rpb24gZm9yIGZ1cnRoZXIgaW1wcm92ZW1lbnQ6DQpjYW4g
+d2UgdXBkYXRlICgmIGNoZWNrKSB0eHEtPmZhc3RfZnJlZV9tcCBub3QgYXQgdHhfZnJlZV9idWZz
+KCkgdGltZSwNCmJ1dCB3aGVuIHdlIGZpbGwgdHhlcFtdIGFuZCBmaWxsaW5nIHR4ZFtdIGJhc2Vk
+IG9uIG1idWYgdmFsdWVzPw0KSW4gdGhlb3J5IGl0IHNob3VsZCBhbGxvdyB0byByZW1vdmUgdGhl
+IGNoZWNrIGFib3ZlLg0KQWxzbywgYWdhaW4gaW4gdGhlb3J5LCBpdCBvcGVucyBvcHBvcnR1bml0
+eSAod2l0aCBzb21lIGV4dHJhIGVmZm9ydCkgdG8gdXNlICBzaW1pbGFyIG9wdGltaXphdGlvbiBy
+dGVfbWVtcG9vbF9wdXRfYnVsaykNCmV2ZW4gZm9yIGNhc2VzIHdoZW4gIFJURV9FVEhfVFhfT0ZG
+TE9BRF9NQlVGX0ZBU1RfRlJFRSBpcyBub3Qgc2V0LiANCiANCg0KPiAgCQlpZiAoaykgew0KPiAg
+CQkJZm9yIChqID0gMDsgaiAhPSBrOyBqICs9IFJURV9JNDBFX1RYX01BWF9GUkVFX0JVRl9TWikg
+ew0KPiAtCQkJCWZvciAoaSA9IDA7IGkgPCBSVEVfSTQwRV9UWF9NQVhfRlJFRV9CVUZfU1o7ICsr
+aSwgKyt0eGVwKSB7DQo+ICsJCQkJZm9yIChpID0gMDsgaSA8IFJURV9JNDBFX1RYX01BWF9GUkVF
+X0JVRl9TWjsgKytpLCArK3R4ZXApDQo+ICAJCQkJCWZyZWVbaV0gPSB0eGVwLT5tYnVmOw0KPiAt
+CQkJCQl0eGVwLT5tYnVmID0gTlVMTDsNCj4gLQkJCQl9DQo+IC0JCQkJcnRlX21lbXBvb2xfcHV0
+X2J1bGsoZnJlZVswXS0+cG9vbCwgKHZvaWQgKiopZnJlZSwNCj4gKwkJCQlydGVfbWVtcG9vbF9w
+dXRfYnVsayhmYXN0X2ZyZWVfbXAsICh2b2lkICoqKWZyZWUsDQo+ICAJCQkJCQlSVEVfSTQwRV9U
+WF9NQVhfRlJFRV9CVUZfU1opOw0KPiAgCQkJfQ0KPiAgCQl9DQo+IA0KPiAgCQlpZiAobSkgew0K
+PiAtCQkJZm9yIChpID0gMDsgaSA8IG07ICsraSwgKyt0eGVwKSB7DQo+ICsJCQlmb3IgKGkgPSAw
+OyBpIDwgbTsgKytpLCArK3R4ZXApDQo+ICAJCQkJZnJlZVtpXSA9IHR4ZXAtPm1idWY7DQo+IC0J
+CQkJdHhlcC0+bWJ1ZiA9IE5VTEw7DQo+IC0JCQl9DQo+IC0JCQlydGVfbWVtcG9vbF9wdXRfYnVs
+ayhmcmVlWzBdLT5wb29sLCAodm9pZCAqKilmcmVlLCBtKTsNCj4gKwkJCXJ0ZV9tZW1wb29sX3B1
+dF9idWxrKGZhc3RfZnJlZV9tcCwgKHZvaWQgKiopZnJlZSwgbSk7DQo+ICAJCX0NCj4gIAl9IGVs
+c2Ugew0KPiAtCQlmb3IgKGkgPSAwOyBpIDwgdHhxLT50eF9yc190aHJlc2g7ICsraSwgKyt0eGVw
+KSB7DQo+ICsJCWZvciAoaSA9IDA7IGkgPCB0eF9yc190aHJlc2g7IGkrKykNCj4gKwkJCXJ0ZV9w
+cmVmZXRjaDAoKHR4ZXAgKyBpKS0+bWJ1Zik7DQo+ICsNCj4gKwkJZm9yIChpID0gMDsgaSA8IHR4
+X3JzX3RocmVzaDsgKytpLCArK3R4ZXApDQo+ICAJCQlydGVfcGt0bWJ1Zl9mcmVlX3NlZyh0eGVw
+LT5tYnVmKTsNCj4gLQkJCXR4ZXAtPm1idWYgPSBOVUxMOw0KPiAtCQl9DQo+ICAJfQ0KPiANCj4g
+LQl0eHEtPm5iX3R4X2ZyZWUgPSAodWludDE2X3QpKHR4cS0+bmJfdHhfZnJlZSArIHR4cS0+dHhf
+cnNfdGhyZXNoKTsNCj4gLQl0eHEtPnR4X25leHRfZGQgPSAodWludDE2X3QpKHR4cS0+dHhfbmV4
+dF9kZCArIHR4cS0+dHhfcnNfdGhyZXNoKTsNCj4gKwl0eHEtPm5iX3R4X2ZyZWUgPSAodWludDE2
+X3QpKHR4cS0+bmJfdHhfZnJlZSArIHR4X3JzX3RocmVzaCk7DQo+ICsJdHhxLT50eF9uZXh0X2Rk
+ID0gKHVpbnQxNl90KSh0eHEtPnR4X25leHRfZGQgKyB0eF9yc190aHJlc2gpOw0KPiAgCWlmICh0
+eHEtPnR4X25leHRfZGQgPj0gdHhxLT5uYl90eF9kZXNjKQ0KPiAtCQl0eHEtPnR4X25leHRfZGQg
+PSAodWludDE2X3QpKHR4cS0+dHhfcnNfdGhyZXNoIC0gMSk7DQo+ICsJCXR4cS0+dHhfbmV4dF9k
+ZCA9ICh1aW50MTZfdCkodHhfcnNfdGhyZXNoIC0gMSk7DQo+IA0KPiAtCXJldHVybiB0eHEtPnR4
+X3JzX3RocmVzaDsNCj4gKwlyZXR1cm4gdHhfcnNfdGhyZXNoOw0KPiAgfQ0KPiANCj4gIC8qIFBv
+cHVsYXRlIDQgZGVzY3JpcHRvcnMgd2l0aCBkYXRhIGZyb20gNCBtYnVmcyAqLw0KPiBAQCAtMjU0
+Niw2ICsyNTQ1LDggQEAgaTQwZV9kZXZfdHhfcXVldWVfc2V0dXAoc3RydWN0IHJ0ZV9ldGhfZGV2
+ICpkZXYsDQo+ICAJdHhxLT5yZWdfaWR4ID0gcmVnX2lkeDsNCj4gIAl0eHEtPnBvcnRfaWQgPSBk
+ZXYtPmRhdGEtPnBvcnRfaWQ7DQo+ICAJdHhxLT5vZmZsb2FkcyA9IG9mZmxvYWRzOw0KPiArCXR4
+cS0+ZmFzdF9mcmVlX21wID0gb2ZmbG9hZHMgJiBSVEVfRVRIX1RYX09GRkxPQURfTUJVRl9GQVNU
+X0ZSRUUgPw0KPiArCQkJKHZvaWQgKilVSU5UUFRSX01BWCA6IE5VTEw7DQo+ICAJdHhxLT5pNDBl
+X3ZzaSA9IHZzaTsNCj4gIAl0eHEtPnR4X2RlZmVycmVkX3N0YXJ0ID0gdHhfY29uZi0+dHhfZGVm
+ZXJyZWRfc3RhcnQ7DQo+IA0KPiAtLQ0KPiAyLjQzLjANCg0K
