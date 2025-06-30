@@ -2,73 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C768CC83029
-	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 14:59:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23482C8302B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 15:02:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0445A402CB;
-	Mon, 30 Jun 2025 16:59:40 +0200 (CEST)
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com
- [209.85.219.48]) by mails.dpdk.org (Postfix) with ESMTP id 8581A402A5
- for <dev@dpdk.org>; Mon, 30 Jun 2025 16:59:38 +0200 (CEST)
-Received: by mail-qv1-f48.google.com with SMTP id
- 6a1803df08f44-6fb01566184so40451506d6.1
- for <dev@dpdk.org>; Mon, 30 Jun 2025 07:59:38 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6BAA5402A5;
+	Mon, 30 Jun 2025 17:02:06 +0200 (CEST)
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com
+ [209.85.210.176])
+ by mails.dpdk.org (Postfix) with ESMTP id 2468B40291
+ for <dev@dpdk.org>; Mon, 30 Jun 2025 17:02:05 +0200 (CEST)
+Received: by mail-pf1-f176.google.com with SMTP id
+ d2e1a72fcca58-74af4af04fdso3274296b3a.1
+ for <dev@dpdk.org>; Mon, 30 Jun 2025 08:02:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751295578;
- x=1751900378; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751295724;
+ x=1751900524; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=S4Gw7dKI6x1TubtDxEdeVNEJorijsVO4h5SEnhXxrUY=;
- b=ebQEagvqEXTFxyJsevkI1iqKCBDFhkqLvktopR423HW9qih9XB7UmSxPd7A7BynyqM
- YlNUiFfJxMeFO0N/MqNIlOB1EBXbObs5tnGm632UxPP2YSPaQ/EKroJRXqOdtgk5IUQx
- NNcsiEU+wINCOUwXg3+vMY+rCV9t1xYJ7zSI6mqbxM1enJU9SdBGubTP3hgTRfewzdMo
- XbtgdfYTfdgNzMiFyXdpndd03Cy/7M2jbopDPotHo+bkzBb4iMxTOBDDRfrDq8jtztun
- 1H4MKt5UqHYeTgyUPvQ7dqJXJ5QzU4ara2WqDGsIHpgHxJjSMNw0dZIiPngdlo5AmXNI
- s15w==
+ bh=w2D4QViomfLEZpMRDUzmhI81NSfQBgcHwgK9JsZQPxw=;
+ b=fJmaq0FPTJi+maycpZa53VjArgaUdEGlNLkDYSxeRpPkaRdHh+mxnu07Ytda1DrrSs
+ nBu+0TtvET8Cmf3QAcBbKlHefss1fNUOTPbexbhz4/4eL9N9GC2eQCELEmNpEoJOp6qN
+ haXh9LB5T+uTjGXJY3IFHDQ5y/Ur+zVpoSBsis/H9ZeK12RFLrXo7vfwp4nIgVIQlZvG
+ ZFTvEblXwPSnQ1sH6uGLJ3dK7Av3LroJmfwbWC5YhjpgLvf9sC2cLpoj3ZxRN3UzxFqT
+ g+f0R//ePelu3zy6bdnO1kcOldlhQGCg7vnAWP1sw5qncZanw58P4HmsHlNj1xY6X+60
+ UmnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1751295578; x=1751900378;
+ d=1e100.net; s=20230601; t=1751295724; x=1751900524;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=S4Gw7dKI6x1TubtDxEdeVNEJorijsVO4h5SEnhXxrUY=;
- b=lEaysy0PmUgrk+gQVKl3HXq2M6VC2YBP89Pi1cyjeZoIMSfGzWERl7Rv3oNyLOFvCd
- tU2ElGSgBjJ2zRhQEO3X2zqT/7x5pglszPtixVIXd4ucMhJmDlo3c3IJwh++hkn+/zOQ
- QfHMsYfTMjxUxRzECQ9WrvIr1xrIGnFYGIpQBeheLYMvkfauFeuS6eUr5K+8A6twnqB+
- NixjAreos121FBar8Tw9Gghf+jYrAe6nOsc8//fDNFXXQxWicGZwON1veG0IDndnx46f
- hAvZqozH5BBQujkOlh2Xv8ohLY4myTWlGPq/LI6u1A417OB1kJyh8xd4wZAziWrKRKXh
- /tVQ==
-X-Gm-Message-State: AOJu0YzK6NpmM207Xfe/GkXaPNrMQbNj9YYM4dTFRuzM0sN3PccnQCxa
- prlfL2LLo8G0OI5RhgXQewZAKLSP1JoNxCvYdWGT42K6+yuKhB0c3oS0HNydEteDo9vMt+9m15Z
- K6AOQ
-X-Gm-Gg: ASbGncsFYSCxmfowyiwxmrk8IZ8Hpomkr5CFlMi73SpYzzasReunMAXOJM6pKccKX02
- bz/EWrSMwh7hCoyxqb/5NocmP/86RjysSyk7Gr2unyppCkG4DWJYR02xugl2lKFhF/IfhfD5W93
- mw4mcDi9Cj++93N9Qbm6Wx77dWDQCbTWwg5KXZgYs87fkq3hjKF9BFYq37pi5Nbb/j9MuceVO5X
- PNaHVPezHdtN89XImqTfSiMb/g6HK3BJyvpHPspuZTYkwQTOcsNntc2W06dN47J1JiuZS1Ec8xN
- 0hARlG/nQT2DovZTpUp4sgFaqYs5dlt5ynNTW4xkHR+HA02KhSD897fzFzUCdGD3LH33j1qerXc
- k6rOaxO1LueJ1M3MpoBll4Q70ybq4qSgpvIaL
-X-Google-Smtp-Source: AGHT+IHrgxj5AjWgFE/QFPvthpRDSnIRwVoPFaA9kNXGytiFq0J3Y+O0pLLpuJlYTFIPusVe9Sl3wg==
-X-Received: by 2002:a05:6214:b66:b0:701:77a:88b with SMTP id
- 6a1803df08f44-701077a08a5mr26110576d6.21.1751295577710; 
- Mon, 30 Jun 2025 07:59:37 -0700 (PDT)
-Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=w2D4QViomfLEZpMRDUzmhI81NSfQBgcHwgK9JsZQPxw=;
+ b=qPHMy3uAQQfENczUyjZ/HbmcDCEYxojFvkxmRwaSmj9cSClOGhYwY6KhPhUrmT5is0
+ lPiQIrlFXaBf2scAL4AJQPwBgE1uCftSekfpFx34GGS3TX6812B0lek3ljPcoQbBkQwI
+ 1wO6EWIBSWQ1LoS++YPq/WFP1QMFSYG2AFt8oOj8FwNHQszOXsHVcd/OwwmqT7zV2Rwj
+ edurArBWgaSB3AaOmx0rkjuzP3gCY35ExtQEV014W80yc/LqMED1r+3e04moLfPuZ6kV
+ RdzgQxs7a0+TCNB6XtuMHmsC98gY3D3GLLz7fPlHzcEeyFVAuYUJmUZT5f5JgeWdkp7V
+ S+Kw==
+X-Gm-Message-State: AOJu0Yw1JS3PSEGkWxC3nTIcrlweoHV78CjvVCTaOsLTo19rjDHbKSwA
+ iN5pR85Pg9u1tHIpG2stX0zYh6BREDyTYRal8196uVoO3reYFKgrJwJ1X1WKKyTZgSM=
+X-Gm-Gg: ASbGncu1ymM5vhW8xMwG6K/Hm78f9IpPRJeDC03sG64AR7CJRM95ckTDJFIa1HKnOE+
+ 9zwYJ7mkvW90LA2bR8l0+C/iYN2eKcAM1wDjWKkhVcMcImOYNM3r8dJoGPCIehVWnV9ycjA7JH9
+ /NM7wIhjz46Gih9Nem5JmJzg1zC+UikNgP+9nj1K29qoQrjd2VH+S97Do8XxEe3KhJQM2VcaeGj
+ IRAllQe4UKdZh9MUugNDNJhglhMlUS043Jrouol9e0BDJke7GmeeUCo18F0A6ci9XBRveGJLYSL
+ 7JhbDcov9v49pHneWoL+PrpZgO3CZSGwf5RkO4HeC2vZ+RxyIylvjWaY8rmE/0a8PINyEdnH4OU
+ SCwtHVgUECUivBQsOjSDVpS0cRYRt4pfsYqgPSMw=
+X-Google-Smtp-Source: AGHT+IG5lc3defBPmDKE7KYKtpR2UqVmGv41PJeuVcWJnFsWq0v9DgjMD+GduwpdMdvdMDSwdIH94A==
+X-Received: by 2002:a05:6a20:12d0:b0:1f3:31fe:c1da with SMTP id
+ adf61e73a8af0-220a0cf7360mr21510354637.11.1751295724102; 
+ Mon, 30 Jun 2025 08:02:04 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-6fd771d9c00sm68379566d6.48.2025.06.30.07.59.36
+ d2e1a72fcca58-74af541d233sm9764646b3a.61.2025.06.30.08.02.03
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 30 Jun 2025 07:59:37 -0700 (PDT)
+ Mon, 30 Jun 2025 08:02:03 -0700 (PDT)
+Date: Mon, 30 Jun 2025 08:02:02 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
-	fengchengwen@huawei.com
-Subject: [PATCH v2] test/argparse: change initialization to workaround LTO
-Date: Mon, 30 Jun 2025 07:58:49 -0700
-Message-ID: <20250630145934.56969-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250627162305.340042-1-stephen@networkplumber.org>
-References: <20250627162305.340042-1-stephen@networkplumber.org>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH 25.11 0/3] remove fallbacks for old Linux versions
+Message-ID: <20250630080202.2d026cdb@hermes.local>
+In-Reply-To: <20250630132904.1704901-1-bruce.richardson@intel.com>
+References: <20250630132904.1704901-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,86 +80,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When compiled with Link Time Optimization, the existing code
-generated an error, because the compiler was unable to intuit
-that there was space in the flexible array.
+On Mon, 30 Jun 2025 13:29:01 +0000
+Bruce Richardson <bruce.richardson@intel.com> wrote:
 
-In function ‘test_argparse_copy’,
-    inlined from ‘test_argparse_init_obj’ at ../app/test/test_argparse.c:108:2,
-    inlined from ‘test_argparse_opt_callback_parse_int_of_no_val’ at ../app/test/test_argparse.c:490:8:
-../app/test/test_argparse.c:96:17: warning: ‘memcpy’ writing 56 bytes into a region of size 0 overflows the destination [-Wstringop-overflow=]
-   96 |                 memcpy(&dst->args[i], &src->args[i], sizeof(src->args[i]));
+> We no longer support versions of linux before 4.19[1], therefore
+> all supported linux versions support F_ADD_SEALS (Linux 3.17+) and
+> MFD_HUGETLB (Linux 4.14+), so no need to have #ifdefs and fallbacks to
+> support systems which do not support those features.
+> 
+> [1] https://doc.dpdk.org/guides/linux_gsg/sys_reqs.html#system-software
+> 
+> Bruce Richardson (3):
+>   eal/linux: remove fallbacks for old Linux versions
+>   vhost: : remove fallbacks for old Linux versions
+>   memif: : remove fallbacks for old Linux versions
+> 
+>  drivers/net/memif/rte_eth_memif.h |  41 -------
+>  lib/eal/linux/eal_memalloc.c      | 174 +++++-------------------------
+>  lib/eal/linux/eal_memory.c        |   7 --
+>  lib/vhost/vhost_user.c            |   7 --
+>  4 files changed, 24 insertions(+), 205 deletions(-)
+> 
 
-Initialiizing a structure with flexible array is special case
-and compiler expands the structure to fit. But inside the copy
-function it no longer knew that.
-
-The workaround is to put the copy inside the same function
-and use structure assignment. Also macro should be uppper case.
-
-Fixes: 6c5c6571601c ("argparse: verify argument config")
-Cc: fengchengwen@huawei.com
-
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
-v2 - simpler fix is to just inline the copy
-
- app/test/test_argparse.c | 31 +++++++++++++++----------------
- 1 file changed, 15 insertions(+), 16 deletions(-)
-
-diff --git a/app/test/test_argparse.c b/app/test/test_argparse.c
-index 0a229752fa..d5b777e321 100644
---- a/app/test/test_argparse.c
-+++ b/app/test/test_argparse.c
-@@ -71,7 +71,7 @@ test_argparse_callback(uint32_t index, const char *value, void *opaque)
- }
- 
- /* valid templater, must contain at least two args. */
--#define argparse_templater() { \
-+#define ARGPARSE_TEMPLATE { \
- 	.prog_name = "test_argparse", \
- 	.usage = "-a xx -b yy", \
- 	.descriptor = NULL, \
-@@ -87,25 +87,24 @@ test_argparse_callback(uint32_t index, const char *value, void *opaque)
- 	}, \
- }
- 
--static void
--test_argparse_copy(struct rte_argparse *dst, struct rte_argparse *src)
--{
--	uint32_t i;
--	memcpy(dst, src, sizeof(*src));
--	for (i = 0; /* NULL */; i++) {
--		memcpy(&dst->args[i], &src->args[i], sizeof(src->args[i]));
--		if (src->args[i].name_long == NULL)
--			break;
--	}
--}
- 
- static struct rte_argparse *
- test_argparse_init_obj(void)
- {
--	static struct rte_argparse backup = argparse_templater();
--	static struct rte_argparse obj = argparse_templater();
--	/* Because obj may be overwritten, do a deep copy. */
--	test_argparse_copy(&obj, &backup);
-+	/* Note: initialization of structure with flexible arrary
-+	 * increases the size of the variable to match.
-+	 */
-+	static const struct rte_argparse backup = ARGPARSE_TEMPLATE;
-+	static struct rte_argparse obj = ARGPARSE_TEMPLATE;
-+	unsigned int i;
-+
-+	obj = backup;
-+	for (i = 0; ; i++) {
-+		obj.args[i] = backup.args[i];
-+		if (backup.args[i].name_long == NULL)
-+			break;
-+	}
-+
- 	return &obj;
- }
- 
--- 
-2.47.2
-
+Series-Acked-by: Stephen Hemminger <stephen@networkplumber.org>
