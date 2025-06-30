@@ -2,50 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C2EC7EE39
-	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 11:15:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F950C8302D
+	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 11:15:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 81F5340647;
-	Mon, 30 Jun 2025 13:15:25 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id 52C5840264;
- Mon, 30 Jun 2025 13:15:24 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.186.216])
- by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bW3R83WRKz6L4xS;
- Mon, 30 Jun 2025 19:12:36 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
- by mail.maildlp.com (Postfix) with ESMTPS id CFABC1402EC;
- Mon, 30 Jun 2025 19:15:23 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml500008.china.huawei.com (7.182.85.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 30 Jun 2025 13:15:23 +0200
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Mon, 30 Jun 2025 13:15:23 +0200
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: Bruce Richardson <bruce.richardson@intel.com>, "dev@dpdk.org"
- <dev@dpdk.org>
-CC: "david.marchand@redhat.com" <david.marchand@redhat.com>,
- "thomas@monjalon.net" <thomas@monjalon.net>, "techboard@dpdk.org"
- <techboard@dpdk.org>, Vipin Varghese <vipin.varghese@amd.com>, Tyler Retzlaff
- <roretzla@linux.microsoft.com>
-Subject: RE: [PATCH] eal: deprecate old coremask-based EAL parameters
-Thread-Topic: [PATCH] eal: deprecate old coremask-based EAL parameters
-Thread-Index: AQHb5Q3NZ0DT7MzfT0e52k+z9udUtbQbljmw
-Date: Mon, 30 Jun 2025 11:15:23 +0000
-Message-ID: <8c78d94234504755b0b7b4bcd3884e3f@huawei.com>
-References: <20250624134139.552315-1-bruce.richardson@intel.com>
-In-Reply-To: <20250624134139.552315-1-bruce.richardson@intel.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.48.148.141]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id B432A40669;
+	Mon, 30 Jun 2025 13:15:51 +0200 (CEST)
+Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com
+ [99.78.197.219])
+ by mails.dpdk.org (Postfix) with ESMTP id 3E6AD40264;
+ Mon, 30 Jun 2025 13:15:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+ t=1751282150; x=1782818150;
+ h=from:to:cc:subject:date:message-id:mime-version;
+ bh=Bu9V+Tprvb8yz8yYyFBLp9pbhN0qGd7EEnAMhckfWEo=;
+ b=rchbLTf7wDoqq0dQ1qVrOEgMYf81ZGdnTIRexaoKu72tjN8YY7QZ/81X
+ XkOhUidzNEG/CcLJ1XRxoY2wbN+kW4hP8F0oEzhW45fLOl5SBhYpe8xCb
+ 6JKSu6cD2gnIcJETcWOqUthC5BAI3v6YDLFuww4Ew8hsB+nQfCHTZIC3y
+ gdzaQloiylAOMnG6K72cFei6yF6V3WadXG8GoRnZSnNAzVsiWgWkiRodH
+ lWZ7U89H5yTWUxJ3t35v3XI+M12JKi7qQ+CZe2j8kJ6gtI2ca+2A5mhdC
+ rTP/9agnZ917n4hmIPx1gHHznbZPGaCUGKkIjVsDNv2w+DOjni6m6oJZK Q==;
+X-IronPort-AV: E=Sophos;i="6.16,277,1744070400"; d="scan'208";a="211678442"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO
+ smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+ by smtp-border-fw-80008.pdx80.corp.amazon.com with
+ ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 11:15:48 +0000
+Received: from EX19MTAEUC001.ant.amazon.com [10.0.43.254:64187]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.42.139:2525]
+ with esmtp (Farcaster)
+ id 47e6e77a-77d5-4e04-bfb0-82864ab81b36; Mon, 30 Jun 2025 11:15:47 +0000 (UTC)
+X-Farcaster-Flow-ID: 47e6e77a-77d5-4e04-bfb0-82864ab81b36
+Received: from EX19D007EUA002.ant.amazon.com (10.252.50.68) by
+ EX19MTAEUC001.ant.amazon.com (10.252.51.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Mon, 30 Jun 2025 11:15:46 +0000
+Received: from HFA15-CG15235BS.amazon.com (10.1.213.9) by
+ EX19D007EUA002.ant.amazon.com (10.252.50.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Mon, 30 Jun 2025 11:15:44 +0000
+From: Shai Brandes <shaibran@amazon.com>
+To: <stephen@networkplumber.org>
+CC: <dev@dpdk.org>, Shai Brandes <shaibran@amazon.com>, <stable@dpdk.org>
+Subject: [PATCH 5/7] net/ena: fix unhandled interrupt config failure
+Date: Mon, 30 Jun 2025 14:15:25 +0300
+Message-ID: <20250630111525.3534-1-shaibran@amazon.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.1.213.9]
+X-ClientProxiedBy: EX19D041UWA003.ant.amazon.com (10.13.139.105) To
+ EX19D007EUA002.ant.amazon.com (10.252.50.68)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,181 +65,71 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+Fixed the device initialization routine to correctly handle
+failure during the registration or enabling of interrupts
+when operating in control path interrupt mode.
 
+Fixes: ca1dfa85f0d3 ("net/ena: add control path pure polling mode")
+Cc: stable@dpdk.org
+Signed-off-by: Shai Brandes <shaibran@amazon.com>
+Reviewed-by: Amit Bernstein <amitbern@amazon.com>
+Reviewed-by: Yosef Raisman <yraisman@amazon.com>
+---
+ doc/guides/rel_notes/release_25_07.rst |  2 ++
+ drivers/net/ena/ena_ethdev.c           | 20 ++++++++++++++++++--
+ 2 files changed, 20 insertions(+), 2 deletions(-)
 
-> -----Original Message-----
-> From: Bruce Richardson <bruce.richardson@intel.com>
-> Sent: Tuesday, June 24, 2025 2:42 PM
-> To: dev@dpdk.org
-> Cc: david.marchand@redhat.com; thomas@monjalon.net; techboard@dpdk.org; B=
-ruce Richardson <bruce.richardson@intel.com>;
-> Vipin Varghese <vipin.varghese@amd.com>; Tyler Retzlaff <roretzla@linux.m=
-icrosoft.com>
-> Subject: [PATCH] eal: deprecate old coremask-based EAL parameters
->=20
-> As the number of cores/cpus on platforms has increased over the years,
-> the use of coremasks rather than core-lists for identifying DPDK cores
-> has become more and more unwieldy. At this point, let's deprecate the
-> coremask-based EAL parameters for future removal, and point users to the
-> core-list based versions instead.
->=20
-> Depends-on: series-35540 ("use core lists not masks in documentation")
->=20
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> Acked-by: Vipin Varghese <vipin.varghese@amd.com>
-> ---
->  doc/guides/linux_gsg/build_sample_apps.rst |  7 +++----
->  doc/guides/linux_gsg/eal_args.include.rst  |  9 ---------
->  doc/guides/rel_notes/deprecation.rst       | 10 ++++++++++
->  lib/eal/common/eal_common_options.c        |  6 ++++++
->  lib/eal/include/rte_lcore.h                |  1 -
->  5 files changed, 19 insertions(+), 14 deletions(-)
->=20
-> diff --git a/doc/guides/linux_gsg/build_sample_apps.rst b/doc/guides/linu=
-x_gsg/build_sample_apps.rst
-> index 8b8026705b..9ce564e881 100644
-> --- a/doc/guides/linux_gsg/build_sample_apps.rst
-> +++ b/doc/guides/linux_gsg/build_sample_apps.rst
-> @@ -126,10 +126,9 @@ and that cores 0-3 are present and are to be used fo=
-r running the application)::
->  Logical Core Use by Applications
->  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->=20
-> -The coremask (-c 0x0f) or corelist (-l 0-3) parameter is always mandator=
-y for DPDK applications.
-> -Each bit of the mask corresponds to the equivalent logical core number a=
-s reported by Linux. The preferred corelist option is a cleaner
-> method to define cores to be used.
-> +The corelist (-l/--lcores 0-3) parameter is always mandatory for DPDK ap=
-plications.
->  Since these logical core numbers, and their mapping to specific cores on=
- specific NUMA sockets, can vary from platform to platform,
-> -it is recommended that the core layout for each platform be considered w=
-hen choosing the coremask/corelist to use in each case.
-> +it is recommended that the core layout for each platform be considered w=
-hen choosing the corelist to use in each case.
->=20
->  On initialization of the EAL layer by a DPDK application, the logical co=
-res to be used and their socket location are displayed.
->  This information can also be determined for all cores on the system by e=
-xamining the ``/proc/cpuinfo`` file, for example, by running
-> cat ``/proc/cpuinfo``.
-> @@ -151,7 +150,7 @@ This can be useful when using other processors to und=
-erstand the mapping of the
->=20
->  .. warning::
->=20
-> -    The logical core layout can change between different board layouts a=
-nd should be checked before selecting an application
-> coremask/corelist.
-> +    The logical core layout can change between different board layouts a=
-nd should be checked before selecting an application corelist.
->=20
->  Hugepage Memory Use by Applications
->  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> diff --git a/doc/guides/linux_gsg/eal_args.include.rst b/doc/guides/linux=
-_gsg/eal_args.include.rst
-> index 6ee79877c1..b0cd757569 100644
-> --- a/doc/guides/linux_gsg/eal_args.include.rst
-> +++ b/doc/guides/linux_gsg/eal_args.include.rst
-> @@ -4,10 +4,6 @@
->  Lcore-related options
->  ~~~~~~~~~~~~~~~~~~~~~
->=20
-> -*   ``-c <core mask>``
-> -
-> -    Set the hexadecimal bitmask of the cores to run on.
-> -
->  *   ``-l/--lcores <core list>``
->=20
->      List of cores to run on
-> @@ -75,15 +71,10 @@ Lcore-related options
->=20
->      Core ID that is used as main.
->=20
-> -*   ``-s <service core mask>``
-> -
-> -    Hexadecimal bitmask of cores to be used as service cores.
-> -
->  *   ``-S <service core list>``
->=20
->      List of cores to be used as service cores.
->=20
-> -
->  Device-related options
->  ~~~~~~~~~~~~~~~~~~~~~~
->=20
-> diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/=
-deprecation.rst
-> index 36489f6e68..2ea898ff8a 100644
-> --- a/doc/guides/rel_notes/deprecation.rst
-> +++ b/doc/guides/rel_notes/deprecation.rst
-> @@ -17,6 +17,16 @@ Other API and ABI deprecation notices are to be posted=
- below.
->  Deprecation Notices
->  -------------------
->=20
-> +* EAL: The ``-c <coremask>`` commandline parameter is deprecated
-> +  and will be removed in a future release.
-> +  Use the ``-l <corelist>`` or ``--lcores=3D<corelist>`` parameters inst=
-ead
-> +  to specify the cores to be used when running a DPDK application.
-> +
-> +* EAL: The ``-s <service-coremask>`` commandline parameter is deprecated
-> +  and will be removed in a future release.
-> +  Use the ``-S <service-corelist>`` parameter instead
-> +  to specify the cores to be used for background services in DPDK.
-> +
->  * build: The ``enable_kmods`` option is deprecated and will be removed i=
-n a future release.
->    Setting/clearing the option has no impact on the build.
->    Instead, kernel modules will be always built for OS's where out-of-tre=
-e kernel modules
-> diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_com=
-mon_options.c
-> index 83b6fc7e89..f0a9ddeeb7 100644
-> --- a/lib/eal/common/eal_common_options.c
-> +++ b/lib/eal/common/eal_common_options.c
-> @@ -616,6 +616,9 @@ eal_parse_service_coremask(const char *coremask)
->  	int val;
->  	uint32_t taken_lcore_count =3D 0;
->=20
-> +	EAL_LOG(WARNING, "'-s <service-coremask>' is deprecated, and will be re=
-moved in a future release.");
-> +	EAL_LOG(WARNING, "\tUse '-S <service-corelist>' option instead.");
-> +
->  	if (coremask =3D=3D NULL)
->  		return -1;
->  	/* Remove all blank characters ahead and after .
-> @@ -779,6 +782,9 @@ rte_eal_parse_coremask(const char *coremask, int *cor=
-es)
->  		cores[idx] =3D -1;
->  	idx =3D 0;
->=20
-> +	EAL_LOG(WARNING, "'-c <coremask>' option is deprecated, and will be rem=
-oved in a future release");
-> +	EAL_LOG(WARNING, "\tUse '-l <corelist>' or '--lcores=3D<corelist>' opti=
-on instead");
-> +
->  	/* Remove all blank characters ahead and after .
->  	 * Remove 0x/0X if exists.
->  	 */
-> diff --git a/lib/eal/include/rte_lcore.h b/lib/eal/include/rte_lcore.h
-> index 44959779a1..10f965b4f0 100644
-> --- a/lib/eal/include/rte_lcore.h
-> +++ b/lib/eal/include/rte_lcore.h
-> @@ -102,7 +102,6 @@ unsigned int rte_lcore_count(void);
->   * When option -c or -l is given, the index corresponds
->   * to the order in the list.
->   * For example:
-> - * -c 0x30, lcore 4 has index 0, and 5 has index 1.
->   * -l 22,18 lcore 22 has index 0, and 18 has index 1.
->   *
->   * @param lcore_id
-> --
-
-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-=20
-
-> 2.48.1
+diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
+index 822b3d4595..6c09ad30dd 100644
+--- a/doc/guides/rel_notes/release_25_07.rst
++++ b/doc/guides/rel_notes/release_25_07.rst
+@@ -76,6 +76,8 @@ New Features
+ 
+   * Added support for enabling fragment bypass mode for egress packets.
+     This mode bypasses the PPS limit enforced by EC2 for fragmented egress packets on every ENI.
++  * Fixed the device initialization routine to correctly handle failure during the registration
++    or enabling of interrupts when operating in control path interrupt mode.
+ 
+ * **Added Mucse rnp net driver.**
+ 
+diff --git a/drivers/net/ena/ena_ethdev.c b/drivers/net/ena/ena_ethdev.c
+index 8ef6e55248..eb33ca2c6e 100644
+--- a/drivers/net/ena/ena_ethdev.c
++++ b/drivers/net/ena/ena_ethdev.c
+@@ -2465,8 +2465,16 @@ static int eth_ena_dev_init(struct rte_eth_dev *eth_dev)
+ 
+ 	if (!adapter->control_path_poll_interval) {
+ 		/* Control path interrupt mode */
+-		rte_intr_callback_register(intr_handle, ena_control_path_handler, eth_dev);
+-		rte_intr_enable(intr_handle);
++		rc = rte_intr_callback_register(intr_handle, ena_control_path_handler, eth_dev);
++		if (unlikely(rc < 0)) {
++			PMD_DRV_LOG_LINE(ERR, "Failed to register control path interrupt");
++			goto err_stats_destroy;
++		}
++		rc = rte_intr_enable(intr_handle);
++		if (unlikely(rc < 0)) {
++			PMD_DRV_LOG_LINE(ERR, "Failed to enable control path interrupt");
++			goto err_control_path_destroy;
++		}
+ 		ena_com_set_admin_polling_mode(ena_dev, false);
+ 	} else {
+ 		/* Control path polling mode */
+@@ -2485,6 +2493,14 @@ static int eth_ena_dev_init(struct rte_eth_dev *eth_dev)
+ 
+ 	return 0;
+ err_control_path_destroy:
++	if (!adapter->control_path_poll_interval) {
++		rc = rte_intr_callback_unregister_sync(intr_handle,
++					ena_control_path_handler,
++					eth_dev);
++		if (unlikely(rc < 0))
++			PMD_INIT_LOG_LINE(ERR, "Failed to unregister interrupt handler");
++	}
++err_stats_destroy:
+ 	rte_free(adapter->drv_stats);
+ err_indirect_table_destroy:
+ 	ena_indirect_table_release(adapter);
+-- 
+2.17.1
 
