@@ -2,56 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D264C8302D
-	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 11:16:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0983C8302D
+	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 11:17:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B1BCB40661;
-	Mon, 30 Jun 2025 13:16:51 +0200 (CEST)
-Received: from smtp-fw-9105.amazon.com (smtp-fw-9105.amazon.com
- [207.171.188.204])
- by mails.dpdk.org (Postfix) with ESMTP id B41804025D
- for <dev@dpdk.org>; Mon, 30 Jun 2025 13:16:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
- t=1751282210; x=1782818210;
- h=from:to:cc:subject:date:message-id:mime-version;
- bh=MVmM70bRxgmmJMryVO/ANBpSKgscdorVf92zh3iinbY=;
- b=j4stGZjpPGQgNOw2u+/D+sfJo8FKXvMSqIPIO80ChXUY3KTsENmsanyi
- FKK5aVlq7HPGGHKAywJj48aYWRnT+TXj/I4pQWqtVtA2TDYPUfCQOrcBz
- CSQN0kySg4wWkoJgmybfXMRW8KK5SL6Kp3/QkXdEhCU+QAgHyR1LIN2HD
- cqQ6o8VQhELYzYIAAKmYsHNhV024qhno1iIVK+Rlang55pBe8vyh6HZbE
- djIDvS0aulGDhRqBd7ImyyC92FuiSRi9YLW5em8UGiB2IYzAMeajQIFdC
- X0bQofnh7NUICf7pqbm4l7G0TDVAYLIwYMzzJIrD3CDkTjXgDsleswkNn g==;
-X-IronPort-AV: E=Sophos;i="6.16,277,1744070400"; d="scan'208";a="34658808"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO
- smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
- by smtp-border-fw-9105.sea19.amazon.com with
- ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 11:16:43 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [10.0.43.254:19795]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.4.208:2525]
- with esmtp (Farcaster)
- id 35e17f6f-5c61-4e42-a917-3e0461a3679d; Mon, 30 Jun 2025 11:16:42 +0000 (UTC)
-X-Farcaster-Flow-ID: 35e17f6f-5c61-4e42-a917-3e0461a3679d
-Received: from EX19D007EUA002.ant.amazon.com (10.252.50.68) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.79) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Mon, 30 Jun 2025 11:16:41 +0000
-Received: from HFA15-CG15235BS.amazon.com (10.1.213.9) by
- EX19D007EUA002.ant.amazon.com (10.252.50.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Mon, 30 Jun 2025 11:16:39 +0000
-From: Shai Brandes <shaibran@amazon.com>
-To: <stephen@networkplumber.org>
-CC: <dev@dpdk.org>, Shai Brandes <shaibran@amazon.com>
-Subject: [PATCH 7/7] net/ena: upgrade driver version to 2.13.0
-Date: Mon, 30 Jun 2025 14:16:24 +0300
-Message-ID: <20250630111624.3677-1-shaibran@amazon.com>
-X-Mailer: git-send-email 2.17.1
+	by mails.dpdk.org (Postfix) with ESMTP id F066440264;
+	Mon, 30 Jun 2025 13:17:10 +0200 (CEST)
+Received: from mail.lysator.liu.se (mail.lysator.liu.se [130.236.254.3])
+ by mails.dpdk.org (Postfix) with ESMTP id 19B8440264
+ for <dev@dpdk.org>; Mon, 30 Jun 2025 13:17:09 +0200 (CEST)
+Received: from mail.lysator.liu.se (localhost [127.0.0.1])
+ by mail.lysator.liu.se (Postfix) with ESMTP id 8E2BE1A1DA
+ for <dev@dpdk.org>; Mon, 30 Jun 2025 13:17:08 +0200 (CEST)
+Received: by mail.lysator.liu.se (Postfix, from userid 1004)
+ id 7FB031A290; Mon, 30 Jun 2025 13:17:08 +0200 (CEST)
+Received: from [192.168.1.85] (h-62-63-215-114.A163.priv.bahnhof.se
+ [62.63.215.114])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+ (No client certificate requested)
+ by mail.lysator.liu.se (Postfix) with ESMTPSA id F18781A17A;
+ Mon, 30 Jun 2025 13:17:04 +0200 (CEST)
+Message-ID: <bc0299d2-052d-4188-ab18-987360d65cb4@lysator.liu.se>
+Date: Mon, 30 Jun 2025 13:17:04 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.1.213.9]
-X-ClientProxiedBy: EX19D040UWA001.ant.amazon.com (10.13.139.22) To
- EX19D007EUA002.ant.amazon.com (10.252.50.68)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] event/dlb2: add dequeue interrupt mode support
+To: Jerin Jacob <jerinjacobk@gmail.com>,
+ Pravin Pathak <pravin.pathak@intel.com>
+Cc: dev@dpdk.org, jerinj@marvell.com, mike.ximing.chen@intel.com,
+ bruce.richardson@intel.com, thomas@monjalon.net, david.marchand@redhat.com,
+ nipun.gupta@amd.com, chenbox@nvidia.com, tirthendu.sarkar@intel.com,
+ Pavan Nikhilesh <pbhagavatula@marvell.com>,
+ Shijith Thotton <sthotton@marvell.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@oss.nxp.com>, harry.chang@intel.com,
+ =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>
+References: <20250628045112.655999-1-pravin.pathak@intel.com>
+ <CALBAE1NrMu3znG6N+iSQacxHWpoGmCe=azvTbkjEUQZGLY+DmA@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <hofors@lysator.liu.se>
+In-Reply-To: <CALBAE1NrMu3znG6N+iSQacxHWpoGmCe=azvTbkjEUQZGLY+DmA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -65,28 +58,73 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Upgraded the driver version to 2.13.0.
+On 2025-06-30 11:19, Jerin Jacob wrote:
+> On Sat, Jun 28, 2025 at 11:17 AM Pravin Pathak <pravin.pathak@intel.com> wrote:
+>>
+>> DLB2 port interrupt is implemented using DPDK interrupt
+>> framework. This allows eventdev dequeue API to sleep when
+>> the port queue is empty and gets wakeup when event arrives
+>> at the port. Port dequeue mode is configured using devargs
+>> argument port_dequeue_wait. Supported modes are polling and
+>> interrupt. Default mode is polling.
+>> This commit also adds code to handle device error interrupts
+>> and print alarm details.
+>>
+>> Signed-off-by: Pravin Pathak <pravin.pathak@intel.com>
+>> Signed-off-by: Tirthendu Sarkar <tirthendu.sarkar@intel.com>
+>> ---
+>>   doc/guides/eventdevs/dlb2.rst              |  20 +
+>>   drivers/event/dlb2/dlb2.c                  | 236 +++++-
+>>   drivers/event/dlb2/dlb2_iface.c            |   7 +
+>>   drivers/event/dlb2/dlb2_iface.h            |   8 +
+>>   drivers/event/dlb2/dlb2_priv.h             |  18 +
+>>   drivers/event/dlb2/dlb2_user.h             | 112 +++
+>>   drivers/event/dlb2/pf/base/dlb2_hw_types.h |  70 ++
+>>   drivers/event/dlb2/pf/base/dlb2_osdep.h    |  46 ++
+>>   drivers/event/dlb2/pf/base/dlb2_regs.h     | 149 +++-
+>>   drivers/event/dlb2/pf/base/dlb2_resource.c | 825 +++++++++++++++++++++
+>>   drivers/event/dlb2/pf/base/dlb2_resource.h |   6 +
+>>   drivers/event/dlb2/pf/dlb2_pf.c            | 223 ++++++
+>>   12 files changed, 1711 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/doc/guides/eventdevs/dlb2.rst b/doc/guides/eventdevs/dlb2.rst
+>> index 8ec7168f20..a4ba857351 100644
+>> --- a/doc/guides/eventdevs/dlb2.rst
+>> +++ b/doc/guides/eventdevs/dlb2.rst
+>> @@ -477,6 +477,26 @@ Example command to use as meson option for credit handling:
+>>
+>>          meson configure -Dc_args='-DDLB_SW_CREDITS_CHECKS=0 -DDLB_HW_CREDITS_CHECKS=1'
+>>
+>> +Interrupt Mode Support
+>> +~~~~~~~~~~~~~~~~~~~~~~
+>> +DLB dequeue supports interrupt mode for the API rte_event_dequeue_burst().
+>> +The default port dequeue mode is polling. Dequeue wait mode can be configured
+>> +on per eventdev port basis using devargs argument 'port_dequeue_wait'. In
+>> +interrupt mode, if the port queue is empty, the application thread will block
+>> +on the interrupt until a new event arrives. It enters blocking mode only after
+>> +any specified timeout. During the timeout, it will poll the port queue for
+>> +events as usual. Interrupt mode uses the DPDK interrupt support framework.
+>> +
+>> +    .. code-block:: console
+>> +
+>> +       --allow ea:00.0,port_dequeue_wait=all:interrupt
+> 
+> Adding other eventdev PMD mainatainers.
+> 
+> Looks like it can be a generic feature. i.e set this option is dev_configure()
+> If there is no objection, Please send a new patch around that.
 
-Signed-off-by: Shai Brandes <shaibran@amazon.com>
-Reviewed-by: Amit Bernstein <amitbern@amazon.com>
-Reviewed-by: Yosef Raisman <yraisman@amazon.com>
----
- drivers/net/ena/ena_ethdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I've considered implementing this in DSW, although in a different manner 
+(with eventfds and poll()).
 
-diff --git a/drivers/net/ena/ena_ethdev.c b/drivers/net/ena/ena_ethdev.c
-index 04a698b58c..f5cf5c3811 100644
---- a/drivers/net/ena/ena_ethdev.c
-+++ b/drivers/net/ena/ena_ethdev.c
-@@ -22,7 +22,7 @@
- #include <ena_eth_io_defs.h>
- 
- #define DRV_MODULE_VER_MAJOR	2
--#define DRV_MODULE_VER_MINOR	12
-+#define DRV_MODULE_VER_MINOR	13
- #define DRV_MODULE_VER_SUBMINOR	0
- 
- #define __MERGE_64B_H_L(h, l) (((uint64_t)h << 32) | l)
--- 
-2.17.1
+The dequeue timeout will still be honored in "interrupt mode", correct? 
+It wasn't obvious from the description.
+
+What's being configured should just be a threshold time at which the 
+event device would go from busy-polling to blocking the thread.
+
+Maybe it should be called something with "blocking" or "sleeping", 
+instead of "interrupt", since interrupts are never directly involved.
+
+Anyway, seems like a good candidate for a generic feature to me.
 
