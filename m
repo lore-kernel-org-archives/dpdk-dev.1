@@ -2,50 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0280EC7EE39
-	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 11:14:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC31DC8302D
+	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 11:14:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C9C5740656;
-	Mon, 30 Jun 2025 13:14:40 +0200 (CEST)
-Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
- by mails.dpdk.org (Postfix) with ESMTP id 8F10440656
- for <dev@dpdk.org>; Mon, 30 Jun 2025 13:14:39 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E025840664;
+	Mon, 30 Jun 2025 13:14:44 +0200 (CEST)
+Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com
+ [207.171.188.206])
+ by mails.dpdk.org (Postfix) with ESMTP id 0F31D40661
+ for <dev@dpdk.org>; Mon, 30 Jun 2025 13:14:42 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
- t=1751282080; x=1782818080;
+ t=1751282084; x=1782818084;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version;
- bh=xGA8VQ9blNr6HSjXXavyFK9u4VCFE4JFhYNcKE+EvWA=;
- b=iHLrBAh07ClJQiUEn0IdEY8fDQ31UqBUSFj5lfPrMiRuSkASBDGivmGT
- /b35WrqDMDGAqG2o5VvQMThw0tIQwly7m16DBKxhGL3d8bIBg/tRrPRiL
- G/vqLYUP8E9mCrQslny9eBK+h9XFKLkl8irvLx7bJuAZHJA61kAfKFlWx
- SMBkfDXLM+yWxoIh2YyApigNt6n1+CuYv5cR/lUTYsegDi9MBdVT9iCnd
- hNBEopJkQRSsO73A2JNY0hAAL6srue3V+SyPosoztJVwWxgPDJ+mT8n9x
- CUeoEeoGVj5bFr/oGO1LjL967d6Urtwe8N93H9qN7aFQ7icGYmJdYLM/8 Q==;
-X-IronPort-AV: E=Sophos;i="6.16,277,1744070400"; d="scan'208";a="514298125"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO
- smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.6])
- by smtp-border-fw-6002.iad6.amazon.com with
- ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 11:14:38 +0000
-Received: from EX19MTAEUC001.ant.amazon.com [10.0.43.254:6986]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.9.108:2525]
+ bh=M64SQy/H4oZpPt2teWvXxpXYMAcU8mC2sR8o2jDYIDs=;
+ b=bMnCD04reDc/peF1E8DPPWGe1ltNRgmsM5ZYAEbFKgIsnlVPt9LKf5E2
+ cLbLUP+o3ug8gwNvTe51P77xSPjoaQ+7aLYhELDuUc/5TC7nfANLPxYAQ
+ hWFYfVOktgU4vnHVBKcD/tBpl+8dJjwzbtu6FYsmVn6JwwCrtoQYyrYwO
+ 3/ZO2JuoZ7bavEbBMNOvzD/WrtsKrqUd/hu4kIPvdG731LlIPCWzVMk0K
+ OGDaxk/Seicr3a/io275pWVeHftZ9Q/b+qiHZPu8ViYKEe7qJgBuhRuSS
+ 0pphWLR6Y1UWE95BpdrPxJkMekf8s7qHfKGXjz5eJaz5tvL0p8a2ZZRSe g==;
+X-IronPort-AV: E=Sophos;i="6.16,277,1744070400"; d="scan'208";a="839174792"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO
+ smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+ by smtp-border-fw-9106.sea19.amazon.com with
+ ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 11:14:36 +0000
+Received: from EX19MTAEUC002.ant.amazon.com [10.0.17.79:32113]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.4.208:2525]
  with esmtp (Farcaster)
- id b7e2a0c3-1a8e-45c7-a27b-4cfa18e64774; Mon, 30 Jun 2025 11:14:36 +0000 (UTC)
-X-Farcaster-Flow-ID: b7e2a0c3-1a8e-45c7-a27b-4cfa18e64774
+ id 785a8dde-c945-4793-a707-ce691a9b5f25; Mon, 30 Jun 2025 11:14:34 +0000 (UTC)
+X-Farcaster-Flow-ID: 785a8dde-c945-4793-a707-ce691a9b5f25
 Received: from EX19D007EUA002.ant.amazon.com (10.252.50.68) by
- EX19MTAEUC001.ant.amazon.com (10.252.51.193) with Microsoft SMTP Server
+ EX19MTAEUC002.ant.amazon.com (10.252.51.245) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Mon, 30 Jun 2025 11:14:36 +0000
+ Mon, 30 Jun 2025 11:14:33 +0000
 Received: from HFA15-CG15235BS.amazon.com (10.1.213.9) by
  EX19D007EUA002.ant.amazon.com (10.252.50.68) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Mon, 30 Jun 2025 11:14:34 +0000
+ Mon, 30 Jun 2025 11:14:31 +0000
 From: Shai Brandes <shaibran@amazon.com>
 To: <stephen@networkplumber.org>
 CC: <dev@dpdk.org>, Shai Brandes <shaibran@amazon.com>
-Subject: [PATCH 3/7] net/ena: separate doorbell logic for Rx and Tx
-Date: Mon, 30 Jun 2025 14:13:54 +0300
-Message-ID: <20250630111358.3476-4-shaibran@amazon.com>
+Subject: [PATCH 2/7] net/ena/base: coding style changes
+Date: Mon, 30 Jun 2025 14:13:53 +0300
+Message-ID: <20250630111358.3476-3-shaibran@amazon.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20250630111358.3476-1-shaibran@amazon.com>
 References: <20250630111358.3476-1-shaibran@amazon.com>
@@ -67,81 +68,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The function ena_com_write_sq_doorbell() currently
-checks for LLQ mode using is_llq_max_tx_burst_exists()
-which is relevant only for TX queues.
-Since RX queues do not operate in LLQ mode, this check
-is unnecessary for the RX path.
-
-This patch separates the doorbell write logic into two
-distinct handlers for RX and TX, eliminating the
-irrelevant LLQ check in the RX path.
+Reordered variable declarations to follow the
+reverse Christmas tree style.
 
 Signed-off-by: Shai Brandes <shaibran@amazon.com>
 Reviewed-by: Amit Bernstein <amitbern@amazon.com>
 Reviewed-by: Yosef Raisman <yraisman@amazon.com>
 ---
- drivers/net/ena/base/ena_eth_com.h | 15 ++++++++++++++-
- drivers/net/ena/ena_ethdev.c       |  6 +++---
- 2 files changed, 17 insertions(+), 4 deletions(-)
+ drivers/net/ena/base/ena_com.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ena/base/ena_eth_com.h b/drivers/net/ena/base/ena_eth_com.h
-index 8a12ed5fba..9e0a7af325 100644
---- a/drivers/net/ena/base/ena_eth_com.h
-+++ b/drivers/net/ena/base/ena_eth_com.h
-@@ -159,7 +159,20 @@ static inline bool ena_com_is_doorbell_needed(struct ena_com_io_sq *io_sq,
- 	return num_entries_needed > io_sq->entries_in_tx_burst_left;
- }
- 
--static inline int ena_com_write_sq_doorbell(struct ena_com_io_sq *io_sq)
-+static inline int ena_com_write_rx_sq_doorbell(struct ena_com_io_sq *io_sq)
-+{
-+	u16 tail = io_sq->tail;
-+
-+	ena_trc_dbg(ena_com_io_sq_to_ena_dev(io_sq),
-+		    "Write submission queue doorbell for queue: %d tail: %d\n",
-+		    io_sq->qid, tail);
-+
-+	ENA_REG_WRITE32(io_sq->bus, tail, io_sq->db_addr);
-+
-+	return 0;
-+}
-+
-+static inline int ena_com_write_tx_sq_doorbell(struct ena_com_io_sq *io_sq)
+diff --git a/drivers/net/ena/base/ena_com.c b/drivers/net/ena/base/ena_com.c
+index 238716de29..588dc61387 100644
+--- a/drivers/net/ena/base/ena_com.c
++++ b/drivers/net/ena/base/ena_com.c
+@@ -308,8 +308,8 @@ static struct ena_comp_ctx *ena_com_submit_admin_cmd(struct ena_com_admin_queue
+ 						     struct ena_admin_acq_entry *comp,
+ 						     size_t comp_size_in_bytes)
  {
- 	u16 max_entries_in_tx_burst = io_sq->llq_info.max_entries_in_tx_burst;
- 	u16 tail = io_sq->tail;
-diff --git a/drivers/net/ena/ena_ethdev.c b/drivers/net/ena/ena_ethdev.c
-index a13506890f..d8ff6851d2 100644
---- a/drivers/net/ena/ena_ethdev.c
-+++ b/drivers/net/ena/ena_ethdev.c
-@@ -1835,7 +1835,7 @@ static int ena_populate_rx_queue(struct ena_ring *rxq, unsigned int count)
- 	/* When we submitted free resources to device... */
- 	if (likely(i > 0)) {
- 		/* ...let HW know that it can fill buffers with data. */
--		ena_com_write_sq_doorbell(rxq->ena_com_io_sq);
-+		ena_com_write_rx_sq_doorbell(rxq->ena_com_io_sq);
+-	unsigned long flags = 0;
+ 	struct ena_comp_ctx *comp_ctx;
++	unsigned long flags = 0;
  
- 		rxq->next_to_use = next_to_use;
- 	}
-@@ -3163,7 +3163,7 @@ static int ena_xmit_mbuf(struct ena_ring *tx_ring, struct rte_mbuf *mbuf)
- 		PMD_TX_LOG_LINE(DEBUG,
- 			"LLQ Tx max burst size of queue %d achieved, writing doorbell to send burst",
- 			tx_ring->id);
--		ena_com_write_sq_doorbell(tx_ring->ena_com_io_sq);
-+		ena_com_write_tx_sq_doorbell(tx_ring->ena_com_io_sq);
- 		tx_ring->tx_stats.doorbells++;
- 		tx_ring->pkts_without_db = false;
- 	}
-@@ -3296,7 +3296,7 @@ static uint16_t eth_ena_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 	/* If there are ready packets to be xmitted... */
- 	if (likely(tx_ring->pkts_without_db)) {
- 		/* ...let HW do its best :-) */
--		ena_com_write_sq_doorbell(tx_ring->ena_com_io_sq);
-+		ena_com_write_tx_sq_doorbell(tx_ring->ena_com_io_sq);
- 		tx_ring->tx_stats.doorbells++;
- 		tx_ring->pkts_without_db = false;
- 	}
+ 	ENA_SPINLOCK_LOCK(admin_queue->q_lock, flags);
+ 	if (unlikely(!admin_queue->running_state)) {
+@@ -616,10 +616,10 @@ static int ena_com_wait_and_process_admin_cq_polling(struct ena_comp_ctx *comp_c
+  */
+ static int ena_com_set_llq(struct ena_com_dev *ena_dev)
+ {
++	struct ena_com_llq_info *llq_info = &ena_dev->llq_info;
+ 	struct ena_com_admin_queue *admin_queue;
+-	struct ena_admin_set_feat_cmd cmd;
+ 	struct ena_admin_set_feat_resp resp;
+-	struct ena_com_llq_info *llq_info = &ena_dev->llq_info;
++	struct ena_admin_set_feat_cmd cmd;
+ 	int ret;
+ 
+ 	memset(&cmd, 0x0, sizeof(cmd));
 -- 
 2.17.1
 
