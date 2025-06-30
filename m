@@ -2,45 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37DB9C8302D
-	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 11:41:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0126C8302D
+	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 11:44:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 69B4440264;
-	Mon, 30 Jun 2025 13:40:59 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 76FAE4025D
- for <dev@dpdk.org>; Mon, 30 Jun 2025 13:40:57 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.186.216])
- by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bW42q3wVMz6M548;
- Mon, 30 Jun 2025 19:40:03 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
- by mail.maildlp.com (Postfix) with ESMTPS id 1996F1402EC;
- Mon, 30 Jun 2025 19:40:56 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml500008.china.huawei.com (7.182.85.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 30 Jun 2025 13:40:55 +0200
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Mon, 30 Jun 2025 13:40:55 +0200
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>, "Bruce
- Richardson" <bruce.richardson@intel.com>, "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH] net/i40e: Fast release optimizations
-Thread-Topic: [PATCH] net/i40e: Fast release optimizations
-Thread-Index: AQHb5M8cy6WBmzI3MUC2TH1cjpMU4LQbm/iw
-Date: Mon, 30 Jun 2025 11:40:55 +0000
-Message-ID: <cda18d9197ed4ee9bd5ed73fd02bd032@huawei.com>
-References: <20250624061238.89259-1-mb@smartsharesystems.com>
-In-Reply-To: <20250624061238.89259-1-mb@smartsharesystems.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.48.148.141]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id 1CE9340264;
+	Mon, 30 Jun 2025 13:44:26 +0200 (CEST)
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com
+ [209.85.160.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 5E6734025D
+ for <dev@dpdk.org>; Mon, 30 Jun 2025 13:44:25 +0200 (CEST)
+Received: by mail-qt1-f174.google.com with SMTP id
+ d75a77b69052e-4a43afb04a7so12899161cf.0
+ for <dev@dpdk.org>; Mon, 30 Jun 2025 04:44:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1751283864; x=1751888664; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=rd5yGqmxGQLqfUZ7NeQdfpQZmVwBIYDuFQ5x+5IASK0=;
+ b=RnebFTuClP2FBoHoJKycgpLU4voTvHDbkxItONj7VsQOxPp5h26tvbWBAVonuO1pBs
+ HoXxzaeFxLnNYqcStQ+XkK1MxBxRcn09rjJD4TZ0G5sdtQWfb6OFaBbX8T9HEkZGZmeN
+ eECXLhrdBl9b4ZMo7uOoidwze5bl5NuZWK2C10tMJFQz2sck/XrsRz7aqmc19G+u47wH
+ WCyulG70jl3bFPCmJJLhwGq6D4Cj74uJqQfUeL+EeaXh/8fsQSw1Jhkzk3dfrBq+gsKN
+ /DksaNVC9HnEu5VFowP13uSA2d0csCY3ifa7UEtcHQ6siFqi8FyqyLbvSkIjxahfG+zY
+ HHCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1751283864; x=1751888664;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=rd5yGqmxGQLqfUZ7NeQdfpQZmVwBIYDuFQ5x+5IASK0=;
+ b=NHcqvL2wlW0sa36EOqO2Xoiy9zvVbb+63hsiYBpWknQ9xkNZrBWjlW22qDIK3mCQjG
+ J5ScU1K9TvtO+vzr824FyOv756Wx9V1aOrUk8b1Pkcs7ft9zPErej9SenVaZw9pv+8ya
+ d6iy8HE95/NtOzNMbEeWD0ZRkVfod31QEdqpCvfwvRRe7bMH3bPM6c2ka4iTz7VBjj5I
+ dToJ4CpuTT3lFAtrlIWhataX358Ecd532Yr7oC88HQRqWv0J/odrWaPZ+Im+tRE6YkcX
+ pNVGx4wwTsPiFL+5sr+h7Xx/ysAhN/hIG0VbHCmMkLQPhXuCW2hhOZrlN69CfIBL3ec8
+ 9qhg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVQlNEUcTNqX4X3gUDJpeZnEO6Mo1OD0P04Uve1LYPJS7hzvJds8XVXy0OIKXtmRMbvFOI=@dpdk.org
+X-Gm-Message-State: AOJu0YxalAyul1sDdvon/gDw9qwFZvlpgE+iKSi+Rg8NGzbpiFBfd/Sr
+ GNQfsJLNvgU43uB5Uthp/qEKb42evWX7WZ2GpPz/dXi/DfSYwQrcxus3PvKFL7XrQPgSghYDDLR
+ QFKIpddi4E9Ng25kb93a6m5f0yFYT+0c=
+X-Gm-Gg: ASbGncuXwDQHqs4iwZ3LBBPvuM3MSNIBjAD9EkdpOD7iZNcf5+65oqVORq0H6pL05IS
+ U6k3Fao4uL43GlhZlOD+dljG65GA8MEuYb7Pm0eAdrdipXpfaynboE1mp8ZuZXnxtM/AfcqXkAB
+ G6/qeNqnQDzd+ByenodvktQWqlkebi3A1E7OMkPJUx+w==
+X-Google-Smtp-Source: AGHT+IHYfCohZyvCjLl2K6OvmR1avm+Ja9UOejjMbAFEpo97sTUUp6ZF7Gxc6GwvJ2E9Mm2m3bnRQnOcziLgtaszfqY=
+X-Received: by 2002:a05:622a:58c8:b0:49d:89bf:298f with SMTP id
+ d75a77b69052e-4a7fcadf884mr200025771cf.22.1751283864039; Mon, 30 Jun 2025
+ 04:44:24 -0700 (PDT)
 MIME-Version: 1.0
+References: <20250628045112.655999-1-pravin.pathak@intel.com>
+ <CALBAE1NrMu3znG6N+iSQacxHWpoGmCe=azvTbkjEUQZGLY+DmA@mail.gmail.com>
+ <bc0299d2-052d-4188-ab18-987360d65cb4@lysator.liu.se>
+In-Reply-To: <bc0299d2-052d-4188-ab18-987360d65cb4@lysator.liu.se>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Mon, 30 Jun 2025 17:13:57 +0530
+X-Gm-Features: Ac12FXyf1VXr37r1a47G63fnQ9qbSIVZzqYvCh12PL6CweVYlSNwTKivh5Tib0I
+Message-ID: <CALBAE1MUrpZqWA=E78QiWy7k=H8QrYQ-=4vme4eHqSm8avBHJg@mail.gmail.com>
+Subject: Re: [PATCH v1] event/dlb2: add dequeue interrupt mode support
+To: =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <hofors@lysator.liu.se>
+Cc: Pravin Pathak <pravin.pathak@intel.com>, dev@dpdk.org, jerinj@marvell.com, 
+ mike.ximing.chen@intel.com, bruce.richardson@intel.com, thomas@monjalon.net,
+ david.marchand@redhat.com, nipun.gupta@amd.com, chenbox@nvidia.com, 
+ tirthendu.sarkar@intel.com, Pavan Nikhilesh <pbhagavatula@marvell.com>, 
+ Shijith Thotton <sthotton@marvell.com>, Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@oss.nxp.com>, harry.chang@intel.com, 
+ =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,107 +83,95 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQoNCj4gV2hlbiBmYXN0IHJlbGVhc2luZyBtYnVmcywgdGhlIG1idWZzIGFyZSBub3QgYWNjZXNz
-ZWQsIHNvIGRvIG5vdCBwcmVmZXRjaA0KPiB0aGVtLg0KPiBUaGlzIHNhdmVzIGEgbWJ1ZiBsb2Fk
-IG9wZXJhdGlvbiBmb3IgZWFjaCBmYXN0IHJlbGVhc2VkIFRYIG1idWYuDQo+IA0KPiBXaGVuIGZh
-c3QgcmVsZWFzZSBvZiBtYnVmcyBpcyBlbmFibGVkIGZvciBhIFRYIHF1ZXVlLCBjYWNoZSB0aGUg
-bWJ1Zg0KPiBtZW1wb29sIHBvaW50ZXIgaW4gdGhlIFRYIHF1ZXVlIHN0cnVjdHVyZS4NCj4gVGhp
-cyBzYXZlcyBvbmUgbWJ1ZiBsb2FkIG9wZXJhdGlvbiBmb3IgZWFjaCBidXJzdCBvZiBmYXN0IHJl
-bGVhc2VkIFRYDQo+IG1idWZzLg0KPiANCj4gVGhlIHR4ZXAtPm1idWYgcG9pbnRlciBpcyBub3Qg
-dXNlZCBhZnRlciB0aGUgbWJ1ZiBoYXMgYmVlbiBmcmVlZCwgc28gZG8NCj4gbm90IHJlc2V0IHRo
-ZSBwb2ludGVyLg0KPiBUaGlzIHNhdmVzIGEgdHhlcCBzdG9yZSBvcGVyYXRpb24gZm9yIGVhY2gg
-VFggbWJ1ZiBmcmVlZC4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IE1vcnRlbiBCcsO4cnVwIDxtYkBz
-bWFydHNoYXJlc3lzdGVtcy5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9uZXQvaW50ZWwvY29tbW9u
-L3R4LmggICAgICAgICAgICAgICAgIHwgIDUgKysrDQo+ICAuLi4vaTQwZS9pNDBlX3JlY3ljbGVf
-bWJ1ZnNfdmVjX2NvbW1vbi5jICAgICAgfCAgNCArLQ0KPiAgZHJpdmVycy9uZXQvaW50ZWwvaTQw
-ZS9pNDBlX3J4dHguYyAgICAgICAgICAgIHwgMzkgKysrKysrKysrKy0tLS0tLS0tLQ0KPiAgMyBm
-aWxlcyBjaGFuZ2VkLCAyOCBpbnNlcnRpb25zKCspLCAyMCBkZWxldGlvbnMoLSkNCj4gDQo+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL25ldC9pbnRlbC9jb21tb24vdHguaCBiL2RyaXZlcnMvbmV0L2lu
-dGVsL2NvbW1vbi90eC5oDQo+IGluZGV4IGIwYTY4YmFlNDQuLjU0YzliODQ1ZjcgMTAwNjQ0DQo+
-IC0tLSBhL2RyaXZlcnMvbmV0L2ludGVsL2NvbW1vbi90eC5oDQo+ICsrKyBiL2RyaXZlcnMvbmV0
-L2ludGVsL2NvbW1vbi90eC5oDQo+IEBAIC02Miw2ICs2MiwxMSBAQCBzdHJ1Y3QgY2lfdHhfcXVl
-dWUgew0KPiAgCXVpbnQxNl90IHR4X25leHRfZGQ7DQo+ICAJdWludDE2X3QgdHhfbmV4dF9yczsN
-Cj4gIAl1aW50NjRfdCBvZmZsb2FkczsNCj4gKwkvKiBNZW1wb29sIHBvaW50ZXIgZm9yIGZhc3Qg
-cmVsZWFzZSBvZiBtYnVmcy4NCj4gKwkgKiBOVUxMIGlmIGRpc2FibGVkLCBVSU5UUFRSX01BWCBp
-ZiBlbmFibGVkIGFuZCBub3QgeWV0IGtub3duLg0KPiArCSAqIEluaXRpYWxpemVkIGF0IGZpcnN0
-IHVzZS4NCj4gKwkgKi8NCj4gKwlzdHJ1Y3QgcnRlX21lbXBvb2wgKmZhc3RfZnJlZV9tcDsNCj4g
-IAl1aW50NjRfdCBtYnVmX2Vycm9yczsNCj4gIAlydGVfaW92YV90IHR4X3JpbmdfZG1hOyAgICAg
-ICAgLyogVFggcmluZyBETUEgYWRkcmVzcyAqLw0KPiAgCWJvb2wgdHhfZGVmZXJyZWRfc3RhcnQ7
-IC8qIGRvbid0IHN0YXJ0IHRoaXMgcXVldWUgaW4gZGV2IHN0YXJ0ICovDQo+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL25ldC9pbnRlbC9pNDBlL2k0MGVfcmVjeWNsZV9tYnVmc192ZWNfY29tbW9uLmMg
-Yi9kcml2ZXJzL25ldC9pbnRlbC9pNDBlL2k0MGVfcmVjeWNsZV9tYnVmc192ZWNfY29tbW9uLmMN
-Cj4gaW5kZXggMjg3NWM1NzhhZi4uYTQ2NjA1Y2VlOSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9u
-ZXQvaW50ZWwvaTQwZS9pNDBlX3JlY3ljbGVfbWJ1ZnNfdmVjX2NvbW1vbi5jDQo+ICsrKyBiL2Ry
-aXZlcnMvbmV0L2ludGVsL2k0MGUvaTQwZV9yZWN5Y2xlX21idWZzX3ZlY19jb21tb24uYw0KPiBA
-QCAtMTA2LDcgKzEwNiw5IEBAIGk0MGVfcmVjeWNsZV90eF9tYnVmc19yZXVzZV92ZWModm9pZCAq
-dHhfcXVldWUsDQo+ICAJaWYgKHR4cS0+b2ZmbG9hZHMgJiBSVEVfRVRIX1RYX09GRkxPQURfTUJV
-Rl9GQVNUX0ZSRUUpIHsNCj4gIAkJLyogQXZvaWQgdHhxIGNvbnRhaW5zIGJ1ZmZlcnMgZnJvbSB1
-bmV4cGVjdGVkIG1lbXBvb2wuICovDQo+ICAJCWlmICh1bmxpa2VseShyZWN5Y2xlX3J4cV9pbmZv
-LT5tcA0KPiAtCQkJCQkhPSB0eGVwWzBdLm1idWYtPnBvb2wpKQ0KPiArCQkJCSE9IChsaWtlbHko
-dHhxLT5mYXN0X2ZyZWVfbXAgIT0gKHZvaWQgKilVSU5UUFRSX01BWCkgPw0KPiArCQkJCXR4cS0+
-ZmFzdF9mcmVlX21wIDoNCj4gKwkJCQkodHhxLT5mYXN0X2ZyZWVfbXAgPSB0eGVwWzBdLm1idWYt
-PnBvb2wpKSkpDQo+ICAJCQlyZXR1cm4gMDsNCj4gDQo+ICAJCS8qIERpcmVjdGx5IHB1dCBtYnVm
-cyBmcm9tIFR4IHRvIFJ4LiAqLw0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvaW50ZWwvaTQw
-ZS9pNDBlX3J4dHguYyBiL2RyaXZlcnMvbmV0L2ludGVsL2k0MGUvaTQwZV9yeHR4LmMNCj4gaW5k
-ZXggYzNmZjJlMDVjMy4uNjc5YzEzNDBiOCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9uZXQvaW50
-ZWwvaTQwZS9pNDBlX3J4dHguYw0KPiArKysgYi9kcml2ZXJzL25ldC9pbnRlbC9pNDBlL2k0MGVf
-cnh0eC5jDQo+IEBAIC0xMzMyLDcgKzEzMzIsNyBAQCBzdGF0aWMgX19ydGVfYWx3YXlzX2lubGlu
-ZSBpbnQNCj4gIGk0MGVfdHhfZnJlZV9idWZzKHN0cnVjdCBjaV90eF9xdWV1ZSAqdHhxKQ0KPiAg
-ew0KPiAgCXN0cnVjdCBjaV90eF9lbnRyeSAqdHhlcDsNCj4gLQl1aW50MTZfdCB0eF9yc190aHJl
-c2ggPSB0eHEtPnR4X3JzX3RocmVzaDsNCj4gKwljb25zdCB1aW50MTZfdCB0eF9yc190aHJlc2gg
-PSB0eHEtPnR4X3JzX3RocmVzaDsNCj4gIAl1aW50MTZfdCBpID0gMCwgaiA9IDA7DQo+ICAJc3Ry
-dWN0IHJ0ZV9tYnVmICpmcmVlW1JURV9JNDBFX1RYX01BWF9GUkVFX0JVRl9TWl07DQo+ICAJY29u
-c3QgdWludDE2X3QgayA9IFJURV9BTElHTl9GTE9PUih0eF9yc190aHJlc2gsIFJURV9JNDBFX1RY
-X01BWF9GUkVFX0JVRl9TWik7DQo+IEBAIC0xMzQ1LDQxICsxMzQ1LDQwIEBAIGk0MGVfdHhfZnJl
-ZV9idWZzKHN0cnVjdCBjaV90eF9xdWV1ZSAqdHhxKQ0KPiANCj4gIAl0eGVwID0gJnR4cS0+c3df
-cmluZ1t0eHEtPnR4X25leHRfZGQgLSAodHhfcnNfdGhyZXNoIC0gMSldOw0KPiANCj4gLQlmb3Ig
-KGkgPSAwOyBpIDwgdHhfcnNfdGhyZXNoOyBpKyspDQo+IC0JCXJ0ZV9wcmVmZXRjaDAoKHR4ZXAg
-KyBpKS0+bWJ1Zik7DQo+IC0NCj4gIAlpZiAodHhxLT5vZmZsb2FkcyAmIFJURV9FVEhfVFhfT0ZG
-TE9BRF9NQlVGX0ZBU1RfRlJFRSkgew0KPiArCQlzdHJ1Y3QgcnRlX21lbXBvb2wgKiBjb25zdCBm
-YXN0X2ZyZWVfbXAgPQ0KPiArCQkJCWxpa2VseSh0eHEtPmZhc3RfZnJlZV9tcCAhPSAodm9pZCAq
-KVVJTlRQVFJfTUFYKSA/DQo+ICsJCQkJdHhxLT5mYXN0X2ZyZWVfbXAgOg0KPiArCQkJCSh0eHEt
-PmZhc3RfZnJlZV9tcCA9IHR4ZXBbMF0ubWJ1Zi0+cG9vbCk7DQo+ICsNCg0KTml0IGlkZWEuDQpB
-Y2tlZC1ieTogS29uc3RhbnRpbiBBbmFueWV2IDxrb25zdGFudGluLmFuYW55ZXZAaHVhd2VpLmNv
-bT4NCg0KSnVzdCBhcyBhIHN1Z2dlc3Rpb24gZm9yIGZ1cnRoZXIgaW1wcm92ZW1lbnQ6DQpjYW4g
-d2UgdXBkYXRlICgmIGNoZWNrKSB0eHEtPmZhc3RfZnJlZV9tcCBub3QgYXQgdHhfZnJlZV9idWZz
-KCkgdGltZSwNCmJ1dCB3aGVuIHdlIGZpbGwgdHhlcFtdIGFuZCBmaWxsaW5nIHR4ZFtdIGJhc2Vk
-IG9uIG1idWYgdmFsdWVzPw0KSW4gdGhlb3J5IGl0IHNob3VsZCBhbGxvdyB0byByZW1vdmUgdGhl
-IGNoZWNrIGFib3ZlLg0KQWxzbywgYWdhaW4gaW4gdGhlb3J5LCBpdCBvcGVucyBvcHBvcnR1bml0
-eSAod2l0aCBzb21lIGV4dHJhIGVmZm9ydCkgdG8gdXNlICBzaW1pbGFyIG9wdGltaXphdGlvbiBy
-dGVfbWVtcG9vbF9wdXRfYnVsaykNCmV2ZW4gZm9yIGNhc2VzIHdoZW4gIFJURV9FVEhfVFhfT0ZG
-TE9BRF9NQlVGX0ZBU1RfRlJFRSBpcyBub3Qgc2V0LiANCiANCg0KPiAgCQlpZiAoaykgew0KPiAg
-CQkJZm9yIChqID0gMDsgaiAhPSBrOyBqICs9IFJURV9JNDBFX1RYX01BWF9GUkVFX0JVRl9TWikg
-ew0KPiAtCQkJCWZvciAoaSA9IDA7IGkgPCBSVEVfSTQwRV9UWF9NQVhfRlJFRV9CVUZfU1o7ICsr
-aSwgKyt0eGVwKSB7DQo+ICsJCQkJZm9yIChpID0gMDsgaSA8IFJURV9JNDBFX1RYX01BWF9GUkVF
-X0JVRl9TWjsgKytpLCArK3R4ZXApDQo+ICAJCQkJCWZyZWVbaV0gPSB0eGVwLT5tYnVmOw0KPiAt
-CQkJCQl0eGVwLT5tYnVmID0gTlVMTDsNCj4gLQkJCQl9DQo+IC0JCQkJcnRlX21lbXBvb2xfcHV0
-X2J1bGsoZnJlZVswXS0+cG9vbCwgKHZvaWQgKiopZnJlZSwNCj4gKwkJCQlydGVfbWVtcG9vbF9w
-dXRfYnVsayhmYXN0X2ZyZWVfbXAsICh2b2lkICoqKWZyZWUsDQo+ICAJCQkJCQlSVEVfSTQwRV9U
-WF9NQVhfRlJFRV9CVUZfU1opOw0KPiAgCQkJfQ0KPiAgCQl9DQo+IA0KPiAgCQlpZiAobSkgew0K
-PiAtCQkJZm9yIChpID0gMDsgaSA8IG07ICsraSwgKyt0eGVwKSB7DQo+ICsJCQlmb3IgKGkgPSAw
-OyBpIDwgbTsgKytpLCArK3R4ZXApDQo+ICAJCQkJZnJlZVtpXSA9IHR4ZXAtPm1idWY7DQo+IC0J
-CQkJdHhlcC0+bWJ1ZiA9IE5VTEw7DQo+IC0JCQl9DQo+IC0JCQlydGVfbWVtcG9vbF9wdXRfYnVs
-ayhmcmVlWzBdLT5wb29sLCAodm9pZCAqKilmcmVlLCBtKTsNCj4gKwkJCXJ0ZV9tZW1wb29sX3B1
-dF9idWxrKGZhc3RfZnJlZV9tcCwgKHZvaWQgKiopZnJlZSwgbSk7DQo+ICAJCX0NCj4gIAl9IGVs
-c2Ugew0KPiAtCQlmb3IgKGkgPSAwOyBpIDwgdHhxLT50eF9yc190aHJlc2g7ICsraSwgKyt0eGVw
-KSB7DQo+ICsJCWZvciAoaSA9IDA7IGkgPCB0eF9yc190aHJlc2g7IGkrKykNCj4gKwkJCXJ0ZV9w
-cmVmZXRjaDAoKHR4ZXAgKyBpKS0+bWJ1Zik7DQo+ICsNCj4gKwkJZm9yIChpID0gMDsgaSA8IHR4
-X3JzX3RocmVzaDsgKytpLCArK3R4ZXApDQo+ICAJCQlydGVfcGt0bWJ1Zl9mcmVlX3NlZyh0eGVw
-LT5tYnVmKTsNCj4gLQkJCXR4ZXAtPm1idWYgPSBOVUxMOw0KPiAtCQl9DQo+ICAJfQ0KPiANCj4g
-LQl0eHEtPm5iX3R4X2ZyZWUgPSAodWludDE2X3QpKHR4cS0+bmJfdHhfZnJlZSArIHR4cS0+dHhf
-cnNfdGhyZXNoKTsNCj4gLQl0eHEtPnR4X25leHRfZGQgPSAodWludDE2X3QpKHR4cS0+dHhfbmV4
-dF9kZCArIHR4cS0+dHhfcnNfdGhyZXNoKTsNCj4gKwl0eHEtPm5iX3R4X2ZyZWUgPSAodWludDE2
-X3QpKHR4cS0+bmJfdHhfZnJlZSArIHR4X3JzX3RocmVzaCk7DQo+ICsJdHhxLT50eF9uZXh0X2Rk
-ID0gKHVpbnQxNl90KSh0eHEtPnR4X25leHRfZGQgKyB0eF9yc190aHJlc2gpOw0KPiAgCWlmICh0
-eHEtPnR4X25leHRfZGQgPj0gdHhxLT5uYl90eF9kZXNjKQ0KPiAtCQl0eHEtPnR4X25leHRfZGQg
-PSAodWludDE2X3QpKHR4cS0+dHhfcnNfdGhyZXNoIC0gMSk7DQo+ICsJCXR4cS0+dHhfbmV4dF9k
-ZCA9ICh1aW50MTZfdCkodHhfcnNfdGhyZXNoIC0gMSk7DQo+IA0KPiAtCXJldHVybiB0eHEtPnR4
-X3JzX3RocmVzaDsNCj4gKwlyZXR1cm4gdHhfcnNfdGhyZXNoOw0KPiAgfQ0KPiANCj4gIC8qIFBv
-cHVsYXRlIDQgZGVzY3JpcHRvcnMgd2l0aCBkYXRhIGZyb20gNCBtYnVmcyAqLw0KPiBAQCAtMjU0
-Niw2ICsyNTQ1LDggQEAgaTQwZV9kZXZfdHhfcXVldWVfc2V0dXAoc3RydWN0IHJ0ZV9ldGhfZGV2
-ICpkZXYsDQo+ICAJdHhxLT5yZWdfaWR4ID0gcmVnX2lkeDsNCj4gIAl0eHEtPnBvcnRfaWQgPSBk
-ZXYtPmRhdGEtPnBvcnRfaWQ7DQo+ICAJdHhxLT5vZmZsb2FkcyA9IG9mZmxvYWRzOw0KPiArCXR4
-cS0+ZmFzdF9mcmVlX21wID0gb2ZmbG9hZHMgJiBSVEVfRVRIX1RYX09GRkxPQURfTUJVRl9GQVNU
-X0ZSRUUgPw0KPiArCQkJKHZvaWQgKilVSU5UUFRSX01BWCA6IE5VTEw7DQo+ICAJdHhxLT5pNDBl
-X3ZzaSA9IHZzaTsNCj4gIAl0eHEtPnR4X2RlZmVycmVkX3N0YXJ0ID0gdHhfY29uZi0+dHhfZGVm
-ZXJyZWRfc3RhcnQ7DQo+IA0KPiAtLQ0KPiAyLjQzLjANCg0K
+On Mon, Jun 30, 2025 at 4:47=E2=80=AFPM Mattias R=C3=B6nnblom <hofors@lysat=
+or.liu.se> wrote:
+>
+> On 2025-06-30 11:19, Jerin Jacob wrote:
+> > On Sat, Jun 28, 2025 at 11:17=E2=80=AFAM Pravin Pathak <pravin.pathak@i=
+ntel.com> wrote:
+> >>
+> >> DLB2 port interrupt is implemented using DPDK interrupt
+> >> framework. This allows eventdev dequeue API to sleep when
+> >> the port queue is empty and gets wakeup when event arrives
+> >> at the port. Port dequeue mode is configured using devargs
+> >> argument port_dequeue_wait. Supported modes are polling and
+> >> interrupt. Default mode is polling.
+> >> This commit also adds code to handle device error interrupts
+> >> and print alarm details.
+> >>
+> >> Signed-off-by: Pravin Pathak <pravin.pathak@intel.com>
+> >> Signed-off-by: Tirthendu Sarkar <tirthendu.sarkar@intel.com>
+> >> ---
+> >>   doc/guides/eventdevs/dlb2.rst              |  20 +
+> >>   drivers/event/dlb2/dlb2.c                  | 236 +++++-
+> >>   drivers/event/dlb2/dlb2_iface.c            |   7 +
+> >>   drivers/event/dlb2/dlb2_iface.h            |   8 +
+> >>   drivers/event/dlb2/dlb2_priv.h             |  18 +
+> >>   drivers/event/dlb2/dlb2_user.h             | 112 +++
+> >>   drivers/event/dlb2/pf/base/dlb2_hw_types.h |  70 ++
+> >>   drivers/event/dlb2/pf/base/dlb2_osdep.h    |  46 ++
+> >>   drivers/event/dlb2/pf/base/dlb2_regs.h     | 149 +++-
+> >>   drivers/event/dlb2/pf/base/dlb2_resource.c | 825 +++++++++++++++++++=
+++
+> >>   drivers/event/dlb2/pf/base/dlb2_resource.h |   6 +
+> >>   drivers/event/dlb2/pf/dlb2_pf.c            | 223 ++++++
+> >>   12 files changed, 1711 insertions(+), 9 deletions(-)
+> >>
+> >> diff --git a/doc/guides/eventdevs/dlb2.rst b/doc/guides/eventdevs/dlb2=
+.rst
+> >> index 8ec7168f20..a4ba857351 100644
+> >> --- a/doc/guides/eventdevs/dlb2.rst
+> >> +++ b/doc/guides/eventdevs/dlb2.rst
+> >> @@ -477,6 +477,26 @@ Example command to use as meson option for credit=
+ handling:
+> >>
+> >>          meson configure -Dc_args=3D'-DDLB_SW_CREDITS_CHECKS=3D0 -DDLB=
+_HW_CREDITS_CHECKS=3D1'
+> >>
+> >> +Interrupt Mode Support
+> >> +~~~~~~~~~~~~~~~~~~~~~~
+> >> +DLB dequeue supports interrupt mode for the API rte_event_dequeue_bur=
+st().
+> >> +The default port dequeue mode is polling. Dequeue wait mode can be co=
+nfigured
+> >> +on per eventdev port basis using devargs argument 'port_dequeue_wait'=
+. In
+> >> +interrupt mode, if the port queue is empty, the application thread wi=
+ll block
+> >> +on the interrupt until a new event arrives. It enters blocking mode o=
+nly after
+> >> +any specified timeout. During the timeout, it will poll the port queu=
+e for
+> >> +events as usual. Interrupt mode uses the DPDK interrupt support frame=
+work.
+> >> +
+> >> +    .. code-block:: console
+> >> +
+> >> +       --allow ea:00.0,port_dequeue_wait=3Dall:interrupt
+> >
+> > Adding other eventdev PMD mainatainers.
+> >
+> > Looks like it can be a generic feature. i.e set this option is dev_conf=
+igure()
+> > If there is no objection, Please send a new patch around that.
+>
+> I've considered implementing this in DSW, although in a different manner
+> (with eventfds and poll()).
+>
+> The dequeue timeout will still be honored in "interrupt mode", correct?
+> It wasn't obvious from the description.
+
+How is it in Intel PMD?
+
+>
+> What's being configured should just be a threshold time at which the
+> event device would go from busy-polling to blocking the thread.
+>
+> Maybe it should be called something with "blocking" or "sleeping",
+> instead of "interrupt", since interrupts are never directly involved.
+
+Agree. or make it a power save mode or so.
+
+>
+> Anyway, seems like a good candidate for a generic feature to me.
+>
