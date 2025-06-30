@@ -2,130 +2,135 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB74C8302D
-	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 09:59:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3CCEC7EE39
+	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 10:02:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7E4B34067D;
-	Mon, 30 Jun 2025 11:58:34 +0200 (CEST)
-Received: from DUZPR83CU001.outbound.protection.outlook.com
- (mail-northeuropeazon11012030.outbound.protection.outlook.com [52.101.66.30])
- by mails.dpdk.org (Postfix) with ESMTP id B793940264
- for <dev@dpdk.org>; Mon, 30 Jun 2025 11:58:28 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E3292402A0;
+	Mon, 30 Jun 2025 12:02:35 +0200 (CEST)
+Received: from OSPPR02CU001.outbound.protection.outlook.com
+ (mail-norwayeastazon11013054.outbound.protection.outlook.com [40.107.159.54])
+ by mails.dpdk.org (Postfix) with ESMTP id 39E6F40264
+ for <dev@dpdk.org>; Mon, 30 Jun 2025 12:02:34 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZmXvaQ+bXPSWkrAfQbLgRgZJ1GlpfncUEthnz+VzdJRiP9VjrvRfZf4nX4tuw2MV534w2KF8Buq02zC1f7XbNToZURFdyLkTdyDbDfNpisi9LSTp0lah4N3HYLwNtIN1774Xt0b9/Nh/g06EidGRFSzW8T1q11sRqdQ4N0nL15Vu7QXileEK3KV9cvpWXrk0XT6S8feqGSVTgCVRoM6idzzMarhI51tTgAQ07mJNU4zlJwLnLUJokQJbaHwdiJWEqIyHaAz2Pee2/G+e896vUFxMwzwTkLSN3bGb7B6OO3bytEok9SRGRf0qumU3XfEZKIApPlyLD2gjoiJFvCjc4g==
+ b=yEV2tjsO+NZmlSipvb+RaycHhAz6RUsiZBdMYfRbyooXvDinPRwbP5TL/NIhxmK4Z7PgESt/g9qvJwWkJzYS4lBI/ErnptGD4imiB6ofUCIX0Xd2g8dJfMH6kIp26zJb9hI7Qa/8PnYhVuLYukTdQlHEtXV2e+iw57GFBU8Xme+G6f0ShfacXNNb9CI0ymHu0q1deibWM7d1iFjQ5sggbgWpS2SR0hZy9dqtRxhrFryFTFm8ScjSbG/u8M3xMDh3moIdDG/wCsn0qesnpSDkcnWN0ML6BNpmHgeKu62pqssuri2uCfu88nT+ozdhj1jJAITjV8pczFeU2s+p/J/eiw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BQMQDV8S61Yc6evp970OKlZttWOCYevg5erLwsYR8OM=;
- b=BGFwalyyq/xbNO1XKenaAESXcBDQQJZ91YcNKsJuFSFPSow0tvZAeuHi/uQ86twjGXJlBhTjdqriEwEzBXSzO2PULhGs40CC0O9JyMBzEYBgn5X9RJFHQmRzqRZ+kaQMDMz8PYHYOF+0LliNoC8Hd9yGZYxdl46rJen1Qytu42VA386GLca7DTiL6k1wgtI0+eShFgF5xQY+SRO0gwfwLEBTwmR2YTVOntKSQs2UKyyufLsaNFxJsN474MePvllyqaIM4rqBIYVjlGi0hlNDIg34WqC6HpjKbnp4Ig2pLg4mO2aM0WbDMpIOfB43Ssvl+9LrmDyrmBpcwaFE8eSA0Q==
+ bh=m0h52N7h8x4neoEScoZg9bpLJTXwecKPiwSsbMMjIFw=;
+ b=lqjtQSF6xzU0Mw2CDmia6xTDIduog+UP7WWj+SnkzeI43AxS4DiCtECAJxx5UCfD8sM2Qrogx180WZBEZyb5sf8XMMxIMCuzm6hg2l7PDarLE3SGoh+HeHb3YV0085WwyLMA5yk4z71u49i2xpz3eZCN6FPndBZz3/1gwNbmJRLWJS+ZSNt2iy3J3Xw7AKQGB6VtEWRpbjRWeVsR9vThq3iEka9nPvpSZp3eBF7NllCO4h1mRZcb8QKqNG6+OcouG0JqT4o0y5f4JTle85o9LznyK5JFmenQt5psriNAS6rbKZhxApMLVSvenAPky7891h8w4HYpvJDamZG4AFIonQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BQMQDV8S61Yc6evp970OKlZttWOCYevg5erLwsYR8OM=;
- b=Y5DXdzlEd7yZOsHJygvNDANXob1zINnQ7lTl9ihkY/kGqjWnRQjZrbMaZ9xkrDfU+vgsbZGIdLNiWDz+TauMSmj2RI8p7wERGUyeZEdZ2zQiN7pyIm3Jtp4Z9SOehVCwZ5JFNe+cJlkxCFMUektox/p68Givxd2LVAP2LMnR3zSLby4fQhqocXQ4W9hEwkfjeAAnnCxnYBCmFrw+okOSWe2a1W3z+YOTRz5/sr0KYZWjWBjUG+B5Uq+kOrMJKPJwQRVRAw626/JIpW4lxPgghRZ+eKh5B8wgyf9rHGWGR6G9BXBoyERxDqT7/LxPZlkwMBsPIRIDysEmGjg2XxB5SQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
+ bh=m0h52N7h8x4neoEScoZg9bpLJTXwecKPiwSsbMMjIFw=;
+ b=TxPklzRAkHWOc8oZZcCM64rR88Yqe/mZ0EhcFidmiDMHalCa/oMa7/Hdtl87rz44NLWvEKsTdWH+EL7YnCpu8tOWHwjVWeIsDGqnfOrOqVdy+N8I80/0Y9WpdGxm61xmBj015XfUME4lgiHL2EZXflmCijeLkkRyzIsPSOgm8vgHEhUwtPaIZRARY3mYO4Fy0OUPXAmkHnFnrgdAfw9s17yZH7qG+cRRziJUZwb/7zfGu7Hb7QYh7po/+wCBGqZFsw/qoDe2Y2GVlnoZ25hClunGOFPOZSvJT7bB/ZV4P7VAcBigkpsp7eZytbTDiEBEyB8ML5+NmEPz8Igt6BY0TA==
 Received: from AS8PR04MB8198.eurprd04.prod.outlook.com (2603:10a6:20b:3b0::14)
  by DBAPR04MB7367.eurprd04.prod.outlook.com (2603:10a6:10:1aa::15)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.29; Mon, 30 Jun
- 2025 09:58:27 +0000
+ 2025 10:02:32 +0000
 Received: from AS8PR04MB8198.eurprd04.prod.outlook.com
  ([fe80::2e32:1a4a:7d29:195]) by AS8PR04MB8198.eurprd04.prod.outlook.com
  ([fe80::2e32:1a4a:7d29:195%4]) with mapi id 15.20.8880.029; Mon, 30 Jun 2025
- 09:58:27 +0000
-From: Gagandeep Singh <g.singh@nxp.com>
-To: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>
-Subject: [PATCH v6 6/6] net/dpaa2: enable software taildrop for ordered queues
-Date: Mon, 30 Jun 2025 15:28:00 +0530
-Message-Id: <20250630095800.2943863-7-g.singh@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250630095800.2943863-1-g.singh@nxp.com>
-References: <20250613021125.790614-1-g.singh@nxp.com>
- <20250630095800.2943863-1-g.singh@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MAXP287CA0016.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a00:49::34) To AS8PR04MB8198.eurprd04.prod.outlook.com
- (2603:10a6:20b:3b0::14)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8198:EE_|DBAPR04MB7367:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7dce5394-0437-414f-3848-08ddb7bca8c0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|19092799006|366016|52116014|376014|1800799024|38350700014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?HZEdprgWQWv2ELEsE6gIYVjiKwPr9iROEJygy10iJHM9zFt6xo1HBKKSpWde?=
- =?us-ascii?Q?WQR+xHBVQ4K5JU60uCT5xiyxxdyBsMUxWbwM03UVYNtqD4xAFPb6TiiHMj0i?=
- =?us-ascii?Q?cCsg3vutHm6kMohTRZE5WwOKftT+k7L6mjm6HmSc0XGTzxKbipwkL13p1sso?=
- =?us-ascii?Q?nKlpIKKZm0hNkefoApzdasY6S2iv+91swRUlc3YzZM8DvI8QaiW4N4ncpRNC?=
- =?us-ascii?Q?0t0S04V4NSy4jlU8746xK8vJWOnY8VjUVW5cNPOPKQB+ZKJh39cRYhVTfdeD?=
- =?us-ascii?Q?FEuxTJr1vfXoORhMSTjFoJa4Mnp90DmVugDLUAQ1rhlKUskqTQuXx8JbhOyO?=
- =?us-ascii?Q?YJEaiNYBexnDwRkBqHXj+OqBNi5LbTb4UFNIg0fCcvPv54LAPffXK2iQ8tPp?=
- =?us-ascii?Q?BatiXsxBLbmdLuV4hCpbr1BxdhzA3r1qmSazsU/9aK75ReB7oA16zJa0DzH4?=
- =?us-ascii?Q?hwaJykZteea02CECUBQUhsuijys+iHxlA6Nh4TGVBSRUa74unzkHiYcaDUBX?=
- =?us-ascii?Q?Fgn5dP32vag49chKJFVYhL5db5KARrflXbf2sMlG49L1Zs9rdtAIaFf//7tj?=
- =?us-ascii?Q?Bvn4egaB593cUbmabR8yd4J7kEr2+AMBOXALiPlwwjv/u5kE1/QhnB39ZehL?=
- =?us-ascii?Q?OztIIXuE8IuhGD9qZivCZH9og8D0pLT1v99X4hnx7K4Vo3Zte4vtPqWq4qgO?=
- =?us-ascii?Q?5jyJr7HCFOv5yWbCtr6JIML1U2OrT8Ue0UuTRBI8OKHNcXj9y3gNisnhaKdZ?=
- =?us-ascii?Q?/KhuZT6mHYLuGXUMPASodAM5Rqyw1dPtTGgydd8atPJE3LuZyTGXbHKP8E8A?=
- =?us-ascii?Q?oFeCFegYqPKmbM36OnPjXH8P3wJHSYCaztOpwPzx6CuYPkfyJtrhCYXMtRdS?=
- =?us-ascii?Q?VwrWR4oSQXQc3xR3y+wB/uJ6UjbDm1QCi6h+bKu3FHBA4qOpeoXP1jLUuRsD?=
- =?us-ascii?Q?gHdXxHbxBQcVYUtlSB+f3MkeygCZcmTCDvWsNfMOHENHea7RaEjot0IyWeqp?=
- =?us-ascii?Q?JK4z2u5XWprqwWuWAXNST+lEa/uXR09CKlHbpJ59yYvaqqDwkmyb288V0SWN?=
- =?us-ascii?Q?CKvj+bP7P1XwTCCzv00qXzdSkDaB4H3kWRbuQnW8D0aIN1jK6d2t0icf5mKk?=
- =?us-ascii?Q?IkrliU3Mn7J+ssFQqgcGCTlnfpGvGwjm8Ee50XVKlG4KScz/53BugCDPoyMU?=
- =?us-ascii?Q?MQ6JJ5Rf8vg4zIh2Z8ajJdQSX74L3dl39iVjNblCDM7WhVvIBb+Xk7rxeOc6?=
- =?us-ascii?Q?8RI6rdhDSjKd1nolPZ0p270MTxGt4yEqxpYfziKZT9t79OGhnbmAaksw+8ME?=
- =?us-ascii?Q?RV9f1VSUOMZpZ6sEn9Jtn7Bc+Dy43nTaP0pKVwowUs8rgDLZTJgh6asOdC1J?=
- =?us-ascii?Q?/EcqB5H/xMs9Y9L/2gsUUt4B0z1hNL/JP0V1CXHTL1S4fHMSQ8uLG6gj17Qw?=
- =?us-ascii?Q?FV+IMpdjfWwpHprIrQ3MfZPygrnAKDLMyqKtxT5JU6YfGlQ4Cb5/D7GNyUhk?=
- =?us-ascii?Q?ZLALn/CKYl4Y69o=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ 10:02:32 +0000
+From: Gagandeep Singh <G.Singh@nxp.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: "dev@dpdk.org" <dev@dpdk.org>, Hemant Agrawal <hemant.agrawal@nxp.com>
+Subject: Re: [PATCH 00/11] NXP DPAA2 driver enhancements and fixes
+Thread-Topic: [PATCH 00/11] NXP DPAA2 driver enhancements and fixes
+Thread-Index: AQHb0TJsOcCMQDmbCUC/k/K7cODMFbQak0CAgAEVhvM=
+Date: Mon, 30 Jun 2025 10:02:32 +0000
+Message-ID: <AS8PR04MB81984927114BE947589A905EE146A@AS8PR04MB8198.eurprd04.prod.outlook.com>
+References: <20250530071344.2939434-1-g.singh@nxp.com>
+ <20250629102535.154ea015@hermes.local>
+In-Reply-To: <20250629102535.154ea015@hermes.local>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AS8PR04MB8198:EE_|DBAPR04MB7367:EE_
+x-ms-office365-filtering-correlation-id: 9a288e03-42e8-4ac9-2ea8-08ddb7bd3afe
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|19092799006|366016|376014|1800799024|38070700018|7053199007|8096899003;
+x-microsoft-antispam-message-info: =?iso-8859-1?Q?Xz441uxSzW9mHGNbDV/gS1iqTPrauqhtxdmzED5DE8c9JCPKD6XOEetqgD?=
+ =?iso-8859-1?Q?g3Qrpobbbs6g1mTmcVIl8R9qZsGeWFMLauG3YPuewgJu4v0yU63gHQKzDF?=
+ =?iso-8859-1?Q?oPHmcBtcLcaHpLICHkU19BmcYqxSYFBJMEui9pUCdFuUPtmwVWb5yqX7GD?=
+ =?iso-8859-1?Q?dulPATor/QMNwn0osOjiaMC7EYNmgvibhkWXSYy/p3JgA/M4bMLPJFOm15?=
+ =?iso-8859-1?Q?LQGh8VWbKpWBTapn2cBjuwbCWgXdBT5ybN1l/CrKplTkNIN8dFVDFSQFJY?=
+ =?iso-8859-1?Q?xXGHMKQilr+hsadWOPXst6efrwoPrd9TzgyCmUkaIBHBRLaQtmc5y5qiMR?=
+ =?iso-8859-1?Q?2sdNnVMdk2JHdop2I8P4g/gsAllIelJQzt++Y+bySCkHVephTbKKH8er8m?=
+ =?iso-8859-1?Q?LqY48OvVy1NTn8avKylcc+rI0IBxTICyl5O10khzBfAJC+KtzIt//CUD9J?=
+ =?iso-8859-1?Q?7y8yLe4NpWroLncVvregaDcpD10t7la8Ccl0wkJkusWWUP64pljFtBf1US?=
+ =?iso-8859-1?Q?vh6xwuZk/321dF7x/9pA9h1raTdjtY4fmjAMUywv6oZXBizTX8ego7o5yh?=
+ =?iso-8859-1?Q?KMa7nkC9jVOwUwpnBR6MXf1lAq3Q2gj5JqGCKawAbrPK7qW5AJteoAc5Zw?=
+ =?iso-8859-1?Q?hVhtOBFRAWE+IBBES2CntkwrDC59iAEkXs9c2jsT7cjjlO7Jkg/dz20moR?=
+ =?iso-8859-1?Q?93UzVS1fSPuaAUyYTURoz2aeoPaRCSQvlVTB9PwnJ21bCGWj34gaCfhJab?=
+ =?iso-8859-1?Q?sepefRuyeadVOCMSSm0tJscNgARo3HyF5eOZPxrHQwFJCbj/u/VT4luR4U?=
+ =?iso-8859-1?Q?Ne2uuiUnAqJF/B9LibeXM1HfqBdd3r3038W2mRaG8n9EIVgYPxlMTssC55?=
+ =?iso-8859-1?Q?703HW67LQapQqJDon8gQq1dpe9whqzyeZ52GdJKpRvpNwAnjDtFXbsKOcT?=
+ =?iso-8859-1?Q?xJwBKaEx6+FCBxg0b7OUa/T3IZQYJwi8Molp0i9606IZYSBVEj0KlfqBYj?=
+ =?iso-8859-1?Q?1ChwuVbcUpHTaw07dl927+Iwdsx8CesKQSOJ6Fl9M5sbtq6G3KHTJSR8eY?=
+ =?iso-8859-1?Q?SVk+X7OGYV9t2DtX70Bh6AUm/qYkp/Olhr/wXBaxfNq0WpmOJopz9GyNRd?=
+ =?iso-8859-1?Q?wYlqCivV5GSgl2+6B8aB/+lOexmLdAAhuwJOL5GVHqB5+pPBZW9OLcsgin?=
+ =?iso-8859-1?Q?no1ta6CFDTnoizatJjspmQKbAq5yGIKoLf5S4XZfzw+uSOeve6MJCKSq0M?=
+ =?iso-8859-1?Q?2SCv9OYuMo0AroP/7jIWsupJuifYr0lUtFKoudatTSXMsIjHfUJPoskGzH?=
+ =?iso-8859-1?Q?tDLG4QrYO13ow02Zug5Nqsyly0mDjtJz3kfJVD1Vq4H7IpiyNzLoj7hjpn?=
+ =?iso-8859-1?Q?NcqDGWF0EhoPs2GsNtTmPzAlK21dE48afRUT4BX6bm1OUPOpGy62DJmBrT?=
+ =?iso-8859-1?Q?9oJkl6qxjJczsibH1oVCKc6fxJieLbzdm+9GVP9hXxLEg0sM7NgFQQWYKx?=
+ =?iso-8859-1?Q?RCQerOixb5cDTJsXU05Q/RCfr4llhIrgqkfr1H5raGNZYCjWop/kR8kxAc?=
+ =?iso-8859-1?Q?lvC/Kcc=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:AS8PR04MB8198.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(19092799006)(366016)(52116014)(376014)(1800799024)(38350700014);
+ SFS:(13230040)(19092799006)(366016)(376014)(1800799024)(38070700018)(7053199007)(8096899003);
  DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?4aVG6J8AmhUi9PaJze9BLe6WJ6J6x6TGArkoE9vWM8PToLK3Wb8KBKBEY5tC?=
- =?us-ascii?Q?WvPrnax5QWBssGwbPprmsuOtTFz+s4chPw1AQ+rUI4r77xX1z1XOdpPhyGCf?=
- =?us-ascii?Q?m9hXhumysrkC49aDA+aGEYctrryyWuT41jfW4iWbc2/oj6cLEJBcBpvrzhtt?=
- =?us-ascii?Q?CB7z2+jTIjZN0mrqQTiQNUC8NjT6GUf7/pJxHhxpQ833BIeFHmCF1HN/9sb8?=
- =?us-ascii?Q?/LsVb5tBATARC1Ghse8gmWPAjgA7dIVQDqzyF8YcxpLv0Mbj0HVGJOEOcSDr?=
- =?us-ascii?Q?3aZhVHa0+OZMs0MhcvZu887v2bzP1a8kHtQYJdBgt/uPjnihTzy06cp8D9Pe?=
- =?us-ascii?Q?lziBSn/pdShUd/Qz/JD5xsyo/VZBf3jG78NwpTxSPl2gak8hW6/K0rb5sdSb?=
- =?us-ascii?Q?rFvrQQ59HZi6rfdJZyo3D6AlOKRKiytvh3gaTJ3vzT75pw/+aWGbbOoj3yQQ?=
- =?us-ascii?Q?y2Chfvqm9cgU4/uCY9iLiIs8jvsqHcF0ZtZVQO1suD7GCcCqzWva9MFiCPrS?=
- =?us-ascii?Q?Ql4yq8kgPYOerA4lb4MjoXApxHyDDD0Ay44BokBylFhh2O+f27kENiae6Jae?=
- =?us-ascii?Q?usAQles794MNMvKiWNyyp8QB46jLKALPxatdD+PzMPEloIKU3VR/YsakmzNP?=
- =?us-ascii?Q?8ofcQQmaZy21W/tKiLaDh/exbKT4ZSTFypzsz7KcdUjOYO6JgRARJQplVs0y?=
- =?us-ascii?Q?BVcTZ96cUNLs8HVw+EvMaz3cGRHUotzzEvURVClO2d/ELRnCzNNj6as3i0kn?=
- =?us-ascii?Q?rlzzSk0wjPqGPq29YMaTzSVz1/0KCERg4sYFE08BwHs323tvTXpkbwDqoWEV?=
- =?us-ascii?Q?ARnDWLlDunMDUCNfGD/vvM0eBPlm4UPbPazbbyVg++TKT4TCVZCmzYD7sBNg?=
- =?us-ascii?Q?Hi0+TUUKhTSaw4XRk+DDGp8F6FUbY4G10sGvrtuxNRWJKJ00HG5BzBQwJ1qf?=
- =?us-ascii?Q?V+2cs3lXT/bDcU3dqYw/Bj6Xyj5dSY76C9UpoUYf+AWdxP30yPzQC8ofxbIx?=
- =?us-ascii?Q?25xzeew7NAQIf9OfMNdWqjL0KLF2gFcYHRLm4KYQxM+tbRZYPiui9FtYZVMw?=
- =?us-ascii?Q?3WS1jTtbn47Ft7jT9PVTHQud1uPNzTOpGIkx9OcRKAauV2EQqQBck07QxMM9?=
- =?us-ascii?Q?wUqbg5lVOkIKY326QYupuhchCUh9QmRAsKyIi+/vHT/foMHbaNRMFX0v0xwi?=
- =?us-ascii?Q?8SOwyDgILf+qCjfiahp81F+j4ePDUgt1cVzCDvqDbnB6d2mBmUf+k37mjxNZ?=
- =?us-ascii?Q?7SjRJT1cj0orAucPo4rEmDKVMS99OKhDa46yT447gGJ0vOIuZ6IudqI8+p1K?=
- =?us-ascii?Q?Q15eXjGPHMbNhvkLcYIW2ppG6nRtusTSpXO7lzUhe65znzeISyZdHzZX0IPY?=
- =?us-ascii?Q?NSeElEubYUQMNhuUrzupHbHF03xjX9QkaWrPIogr6zb38PvwgvFNLvgmATE5?=
- =?us-ascii?Q?ePvZjOPc6iH0OgBa3EbxDMQbEtImigS4iby8dkSSAz/iEKPCXzSlIxz5yp/B?=
- =?us-ascii?Q?tYAeAGggDQ/C2xPh+OH0yFn3lEQWweM1L2OQunNYHVeAJV5u7cPy5eKP2LUH?=
- =?us-ascii?Q?sxDj5wAkQPZr0mqEp5WKWRYp23EfpdHLnmvJlg0f?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?6lu0KZIFxpBSPvvuhw3Yfe43ESdic5Xa6YHm75k8Vez2z4P7KoWBgsjr3U?=
+ =?iso-8859-1?Q?cIIKj2JqIijG7k8JfTP5TA+gsfmLAZPhlgEDlalL7N3jE0cQxwkE8O5M4H?=
+ =?iso-8859-1?Q?ZBQ0vKGZv3Qe0eWZ1tgbbf88/iUIJzqyCkxJ8yl1wS6ewiXVILu3Ooxyls?=
+ =?iso-8859-1?Q?q2+8fJCCqLV9eQqTX1NetFcSr44uyty8Of7EXiRIWeC+o8kMqVYDwQ9Z3L?=
+ =?iso-8859-1?Q?F8BOljYRF9wvmA8VfH1sc82UTp2/CqxmmS32KpeWbgVoWWOTU3S6hLkrg7?=
+ =?iso-8859-1?Q?U4CAGmwrXrJzBeeb1JNmv6GIMRTR2xeQAd7P8Ox/yKPwwh+NWRettIBgVC?=
+ =?iso-8859-1?Q?YwjGaYT8UYT4ZTKGHHdJPB2Fg6yLRxlm0mAwxbQeJK725i7297CTwttthz?=
+ =?iso-8859-1?Q?dVNrBHzB0H1q8Xpk+WgTiM96m51P2tUMJqa+snHanGa8ySB7BGyBio3wuD?=
+ =?iso-8859-1?Q?3gDCA5/SCIuOu7dVVimShpr4lqiCos+XQcDMqWfpZEb4VHWftCayuB+YG4?=
+ =?iso-8859-1?Q?qpjK2TP5+HPRtpM62VmjBGRPN1r8QPMcn355oj7UDDvW4LwhlyU7JUkiZv?=
+ =?iso-8859-1?Q?l2sJhfpDjXfkNwg88J3svQ7B+CFeMNVw6yOK6NEJ0SpObkSGXpV3gTC+ZG?=
+ =?iso-8859-1?Q?IrYXn67+xM8tsBxjp/1GTPL/JKv89pg0xslqTNyAMGk2d4XParX5NeIekE?=
+ =?iso-8859-1?Q?dwsphxtVBEvQqijKcBgjV9kd4WZdvwF7nOAhyB6wp8YHEBgENfdXQaMtg3?=
+ =?iso-8859-1?Q?q/BZzw3nCJDPKXBouepr/QO+FQG49pqg4/ak2UyOJ2TZgjU0Y/l/uMidzt?=
+ =?iso-8859-1?Q?rti9svCHKHwXrpmd1jXc3+v0ToK0RIeD5X62/RgyO9T7v71rBZof9JLO8E?=
+ =?iso-8859-1?Q?h73+U2Agisxqwk18+2PQL8nBVBZ2c0lmyv0mHe92bNU/SwL6fPYvsMG++O?=
+ =?iso-8859-1?Q?P01ma5dUhrm+RjFUDmO78Ab8IMg6kpCaQ+mxf7wImkqKF1i0oXuNrKB+iL?=
+ =?iso-8859-1?Q?YKfT6MskiKPD5w5Fs3SakwESquk75kdPm/LsnRlgigoc4WGphgftPlY0jg?=
+ =?iso-8859-1?Q?x+lXkxRV1fgWE3sr+xV7PtJ4Fi2riWHc1/QLsTmfK+103XIkF6ZCEbE9mx?=
+ =?iso-8859-1?Q?BCo6CB9KM0JOocd59fw7z0gGQ6apRKJFAqiAkswkEMMlUMvBq3XHMjQpRM?=
+ =?iso-8859-1?Q?Y62NF7qsoUUZCTdk4SEV9YYZR75njZSsSn7oFGW1PmuZkWXJj6IYWCDZOe?=
+ =?iso-8859-1?Q?5uleWmSmb3MiuHfB1Dr0g/bh/pWtoe5AtGrfKLSGjLogcOsG1rVKiW2Zi9?=
+ =?iso-8859-1?Q?dFZVJkT8ENmh/oI3VgZ/QLPt1cpKj548cyIg/758drfX+4HPhnttl/5LQx?=
+ =?iso-8859-1?Q?VmpmvsRwukNJpgXRzqKW4WwwX0ds31PvqrJMCGOfubBHmpkbNNRL4Wacr9?=
+ =?iso-8859-1?Q?sdM2bOUj3hETDBfD6cmTclXH23OfiRNCLekM59mjaImstIw5CsuZGbn3Zu?=
+ =?iso-8859-1?Q?UjiavphGrkxUznGxsXaQSZk4/mDmeuZugyMuBGaT/hERTs0sz4f9ata/u7?=
+ =?iso-8859-1?Q?GAawTg6lgRFogIVavBTU4D4XN8WoYXwkjNJwC/2YOw03hSMY7kbAFpfIkc?=
+ =?iso-8859-1?Q?Lyk0UEsgpBRiE=3D?=
+Content-Type: multipart/alternative;
+ boundary="_000_AS8PR04MB81984927114BE947589A905EE146AAS8PR04MB8198eurp_"
+MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7dce5394-0437-414f-3848-08ddb7bca8c0
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8198.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2025 09:58:27.0880 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PL93L5UUjvhIIaXb7jAb+K160QKIcMnnxlEpZZVBgG0qgGtWe4HJ69swW+QomtMQ
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8198.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a288e03-42e8-4ac9-2ea8-08ddb7bd3afe
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jun 2025 10:02:32.2488 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: m+BfdScMvCXzeG/LKqa8WZXgjebwRzKvzx7SLQvsq0kHHs2o3QT3a97u8kyMPwpM
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7367
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -140,149 +145,133 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch adds support for software taildrop on ordered queues
-in the DPAA2 driver.
-It also enables congestion notification by default on
-traffic management (TM) queues,  which is a prerequisite for
-software taildrop functionality.
+--_000_AS8PR04MB81984927114BE947589A905EE146AAS8PR04MB8198eurp_
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
----
- doc/guides/rel_notes/release_25_07.rst |  1 +
- drivers/net/dpaa2/dpaa2_rxtx.c         | 24 ++++++++++-
- drivers/net/dpaa2/dpaa2_tm.c           | 60 +++++++++++++-------------
- 3 files changed, 53 insertions(+), 32 deletions(-)
+Hi,
 
-diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
-index 53a1c8756d..dd8bc74946 100644
---- a/doc/guides/rel_notes/release_25_07.rst
-+++ b/doc/guides/rel_notes/release_25_07.rst
-@@ -163,6 +163,7 @@ New Features
- * **Updated DPAA2 ethernet driver.**
- 
-   * Added DPBP APIs for setting mempool depletion thresholds.
-+  * Enabled software taildrop for ordered queues.
- 
- Removed Items
- -------------
-diff --git a/drivers/net/dpaa2/dpaa2_rxtx.c b/drivers/net/dpaa2/dpaa2_rxtx.c
-index 67d065bb7c..dce1da80bb 100644
---- a/drivers/net/dpaa2/dpaa2_rxtx.c
-+++ b/drivers/net/dpaa2/dpaa2_rxtx.c
-@@ -1800,8 +1800,11 @@ dpaa2_dev_tx_ordered(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 		while (qbman_result_SCN_state(dpaa2_q->cscn)) {
- 			retry_count++;
- 			/* Retry for some time before giving up */
--			if (retry_count > CONG_RETRY_COUNT)
-+			if (retry_count > CONG_RETRY_COUNT) {
-+				if (dpaa2_q->tm_sw_td)
-+					goto sw_td;
- 				goto skip_tx;
-+			}
- 		}
- 
- 		frames_to_send = (nb_pkts > dpaa2_eqcr_size) ?
-@@ -1961,6 +1964,25 @@ dpaa2_dev_tx_ordered(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 			rte_pktmbuf_free_seg(buf_to_free[loop].seg);
- 	}
- 
-+	return num_tx;
-+sw_td:
-+	loop = 0;
-+	while (loop < num_tx) {
-+		if (unlikely(RTE_MBUF_HAS_EXTBUF(*bufs)))
-+			rte_pktmbuf_free(*bufs);
-+		bufs++;
-+		loop++;
-+	}
-+
-+	/* free the pending buffers */
-+	while (nb_pkts) {
-+		rte_pktmbuf_free(*bufs);
-+		bufs++;
-+		nb_pkts--;
-+		num_tx++;
-+	}
-+	dpaa2_q->tx_pkts += num_tx;
-+
- 	return num_tx;
- }
- 
-diff --git a/drivers/net/dpaa2/dpaa2_tm.c b/drivers/net/dpaa2/dpaa2_tm.c
-index dbf66c756e..36e815c356 100644
---- a/drivers/net/dpaa2/dpaa2_tm.c
-+++ b/drivers/net/dpaa2/dpaa2_tm.c
-@@ -611,41 +611,39 @@ dpaa2_tm_configure_queue(struct rte_eth_dev *dev, struct dpaa2_tm_node *node)
- 	}
- 	dpaa2_q->fqid = qid.fqid;
- 
--	/* setting congestion notification */
--	if (!(priv->flags & DPAA2_TX_CGR_OFF)) {
--		struct dpni_congestion_notification_cfg cong_notif_cfg = {0};
--
--		cong_notif_cfg.units = DPNI_CONGESTION_UNIT_FRAMES;
--		cong_notif_cfg.threshold_entry = dpaa2_q->nb_desc;
--		/* Notify that the queue is not congested when the data in
--		 * the queue is below this thershold.(90% of value)
--		 */
--		cong_notif_cfg.threshold_exit = (dpaa2_q->nb_desc * 9) / 10;
--		cong_notif_cfg.message_ctx = 0;
--		iova = DPAA2_VADDR_TO_IOVA_AND_CHECK(dpaa2_q->cscn,
--				sizeof(struct qbman_result));
--		if (iova == RTE_BAD_IOVA) {
--			DPAA2_PMD_ERR("No IOMMU map for cscn(%p)", dpaa2_q->cscn);
--			return -ENOBUFS;
--		}
--		cong_notif_cfg.message_iova = iova;
--		cong_notif_cfg.dest_cfg.dest_type = DPNI_DEST_NONE;
--		cong_notif_cfg.notification_mode =
-+	/* setting taildrop through congestion notification */
-+	struct dpni_congestion_notification_cfg cong_notif_cfg = {0};
-+
-+	cong_notif_cfg.units = DPNI_CONGESTION_UNIT_FRAMES;
-+	cong_notif_cfg.threshold_entry = dpaa2_q->nb_desc;
-+	/* Notify that the queue is not congested when the data in
-+	 * the queue is below this thershold.(90% of value)
-+	 */
-+	cong_notif_cfg.threshold_exit = (dpaa2_q->nb_desc * 9) / 10;
-+	cong_notif_cfg.message_ctx = 0;
-+
-+	iova = DPAA2_VADDR_TO_IOVA_AND_CHECK(dpaa2_q->cscn,
-+			sizeof(struct qbman_result));
-+	if (iova == RTE_BAD_IOVA) {
-+		DPAA2_PMD_ERR("No IOMMU map for cscn(%p)", dpaa2_q->cscn);
-+		return -ENOBUFS;
-+	}
-+	cong_notif_cfg.message_iova = iova;
-+	cong_notif_cfg.dest_cfg.dest_type = DPNI_DEST_NONE;
-+	cong_notif_cfg.notification_mode =
- 					DPNI_CONG_OPT_WRITE_MEM_ON_ENTER |
- 					DPNI_CONG_OPT_WRITE_MEM_ON_EXIT |
- 					DPNI_CONG_OPT_COHERENT_WRITE;
--		cong_notif_cfg.cg_point = DPNI_CP_QUEUE;
-+	cong_notif_cfg.cg_point = DPNI_CP_QUEUE;
- 
--		ret = dpni_set_congestion_notification(dpni, CMD_PRI_LOW,
--					priv->token,
--					DPNI_QUEUE_TX,
--					((node->parent->channel_id << 8) | tc_id),
--					&cong_notif_cfg);
--		if (ret) {
--			DPAA2_PMD_ERR("Error in setting tx congestion notification: "
--				"err=%d", ret);
--			return -ret;
--		}
-+	ret = dpni_set_congestion_notification(dpni, CMD_PRI_LOW,
-+			priv->token, DPNI_QUEUE_TX,
-+			((node->parent->channel_id << 8) | tc_id),
-+			&cong_notif_cfg);
-+	if (ret) {
-+		DPAA2_PMD_ERR("Error in setting tx congestion notification: "
-+			"err=%d", ret);
-+		return -ret;
- 	}
- 	dpaa2_q->tm_sw_td = true;
- 
--- 
-2.25.1
+Thank you for your feedback. I have revised the series, accordingly, removi=
+ng several feature-related changes and retaining only the essential changes=
+ and fixes. Our intention in submitting the full series early in the month =
+was to facilitate timely review and potential inclusion in this release. Pl=
+ease let me know if any further modifications are required.
 
+Regards,
+Gagan
+
+________________________________
+From: Stephen Hemminger <stephen@networkplumber.org>
+Sent: Sunday, June 29, 2025 10:55 PM
+To: Gagandeep Singh <G.Singh@nxp.com>
+Cc: dev@dpdk.org <dev@dpdk.org>; Hemant Agrawal <hemant.agrawal@nxp.com>
+Subject: Re: [PATCH 00/11] NXP DPAA2 driver enhancements and fixes
+
+On Fri, 30 May 2025 12:43:33 +0530
+Gagandeep Singh <g.singh@nxp.com> wrote:
+
+> This patch series introduces enhancements and fixes to the
+> NXP DPAA2 Ethernet driver.
+> It includes support for
+>  - software taildrop on ordered queues.
+>  - setup speed capabilities.
+>  - DPAA2 resource version.
+>  - MAC level statistics.
+>  - improve PA-VA conversion.
+>  - add buffer pool depletion state configuration.
+>  - fixes for shaper rate and buffer prepration.
+>
+
+
+At this late stage in 25.07 release, please don't mix fixes with
+new stuff. Also new features should be in release note.
+
+Please resend with fixes only for 25.07
+
+--_000_AS8PR04MB81984927114BE947589A905EE146AAS8PR04MB8198eurp_
+Content-Type: text/html; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
+1">
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
+olor: rgb(0, 0, 0);">
+Hi,</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
+olor: rgb(0, 0, 0);">
+Thank you for your feedback. I have revised the series, accordingly, removi=
+ng several feature-related changes and retaining only the essential changes=
+ and fixes. Our intention in submitting the full series early in the month =
+was to facilitate timely review
+ and potential inclusion in this release. Please let me know if any further=
+ modifications are required.</div>
+<div id=3D"appendonsend"></div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
+olor: rgb(0, 0, 0);">
+Regards,</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
+olor: rgb(0, 0, 0);">
+Gagan</div>
+<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
+: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<hr style=3D"display: inline-block; width: 98%;">
+<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
+: 12pt; color: rgb(0, 0, 0);">
+<b>From:</b>&nbsp;Stephen Hemminger &lt;stephen@networkplumber.org&gt;<br>
+<b>Sent:</b>&nbsp;Sunday, June 29, 2025 10:55 PM<br>
+<b>To:</b>&nbsp;Gagandeep Singh &lt;G.Singh@nxp.com&gt;<br>
+<b>Cc:</b>&nbsp;dev@dpdk.org &lt;dev@dpdk.org&gt;; Hemant Agrawal &lt;heman=
+t.agrawal@nxp.com&gt;<br>
+<b>Subject:</b>&nbsp;Re: [PATCH 00/11] NXP DPAA2 driver enhancements and fi=
+xes </div>
+<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
+: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"font-size: 11pt;">On Fri, 30 May 2025 12:43:33 +0530<br>
+Gagandeep Singh &lt;g.singh@nxp.com&gt; wrote:<br>
+<br>
+&gt; This patch series introduces enhancements and fixes to the<br>
+&gt; NXP DPAA2 Ethernet driver.<br>
+&gt; It includes support for<br>
+&gt;&nbsp; - software taildrop on ordered queues.<br>
+&gt;&nbsp; - setup speed capabilities.<br>
+&gt;&nbsp; - DPAA2 resource version.<br>
+&gt;&nbsp; - MAC level statistics.<br>
+&gt;&nbsp; - improve PA-VA conversion.<br>
+&gt;&nbsp; - add buffer pool depletion state configuration.<br>
+&gt;&nbsp; - fixes for shaper rate and buffer prepration.<br>
+&gt;<br>
+<br>
+<br>
+At this late stage in 25.07 release, please don't mix fixes with<br>
+new stuff. Also new features should be in release note.<br>
+<br>
+Please resend with fixes only for 25.07<br>
+</div>
+</body>
+</html>
+
+--_000_AS8PR04MB81984927114BE947589A905EE146AAS8PR04MB8198eurp_--
