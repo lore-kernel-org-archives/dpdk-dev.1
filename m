@@ -2,160 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F0A0C8302D
-	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 09:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0DE5C7EE39
+	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 09:20:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 435DE40264;
-	Mon, 30 Jun 2025 11:11:52 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id 645674025D;
- Mon, 30 Jun 2025 11:11:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1751274710; x=1782810710;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=KzJSEHhyVKRTl38nesiMkSLKwItM6ejGlcpvs4iKv2E=;
- b=fhdYUBVtfJRmjeN73Ra0bxFCkSloaSbIXEYecah0frIr07Ryh0SIIA4X
- HC5zA0y/mqD/D9naOTLjoc7oyNghErrIOCodpqhbWPIIKxorwBXGcbTTn
- RE6IoSrcbEVpA2bct1fgPZpEOiPvqOl1oRn57SDKFx/NNz74udVJ3CZz7
- SAo7TjQu486TjqW5T4ExyfZ2CfK4WQ+omA6XDMe0wrIOggwGUBAJohCIb
- pkr80JoV0YStxAaLdN2WaK2+MglI75rWNqp5HJQJFG6l31ANcPEhgXM54
- 5mqa07kbxmWc5DnGKCUODtBXmYvv8P+G4dOR91PsaD0TFYE12qsv86CUF A==;
-X-CSE-ConnectionGUID: CD+LY/U0T9qnf/cDpwkADw==
-X-CSE-MsgGUID: xFZD//Q3RzK9VqQLHabNYQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="71062506"
-X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; d="scan'208";a="71062506"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
- by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 30 Jun 2025 02:11:11 -0700
-X-CSE-ConnectionGUID: JtwbumfnRGKecuPNubMT4A==
-X-CSE-MsgGUID: aQPfkrvFTWmyC/KKLPIUQA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; d="scan'208";a="184325638"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
- by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 30 Jun 2025 02:11:11 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 30 Jun 2025 02:11:10 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Mon, 30 Jun 2025 02:11:10 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.52)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 30 Jun 2025 02:11:10 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ROtz4JhPDU56aSZYKu2eGwewHhPh3MUuSC7tXoqV38rCOy3fD0GtoKOL2Axc2IBnII0uYl6MYxwEMC/iZ42HKv0YeOgcu+Nh4uPAdZcoKAxlE+yZsYcW1RuKQFZhqbEW5WAvyuaYaDNhvm1/inD+4LGcQ2KhM4TRlDs3C6WVW6J5m6tQWwUrOyvYogDLBajdBL4f4OmVzmlokr5YA0XOTXlfx7tUjGwEuYsaEl+AUDuUvIqfvzW35kRVmC1QtRvPAboykkocQfV6e85C1w3+tPUYYpTQDTuHWNyjjg69nXFwhtpF21jn+Lh+CyodmWloI5RP/+kIqTRpGubPy5h4Bw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5+Be0/moy6IjXwbPNmTpLpDb5Qje7BoFeJ75zpP/mVY=;
- b=tLOptOhBnWLhdV/DVlnVKp2jJM+WNJtOr3KsrZO/bpVsGy0J6V6Lhk0QDf3Z3n7dw4eUMoKNF4FOM/EnR5wPdeCZFxxHxFx2gajZfq1PxhMdx7prJP0bD1d/yEOEbXKDesG/oEKfcqJ+9I5IxcNO+TaQVew2+mz7cI8RD1CezTFJm20b56ZiyLm7dbI6T0ouYUhP3cuoZhegdNY7TVCoMbRahC9Vy23nPvbhy3/gG3SUyCqrcaTBZTiFqmq9+MWmU8TNwNLo2kS/UYm9Brg7VILJzeJLKQodT3a8gfwowqPRpGlG9gxlLRe70KBinn+tnBCGDFCRLI3quM4Dt2qIRA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by BY1PR11MB8030.namprd11.prod.outlook.com (2603:10b6:a03:522::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.29; Mon, 30 Jun
- 2025 09:10:54 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.8880.027; Mon, 30 Jun 2025
- 09:10:53 +0000
-Date: Mon, 30 Jun 2025 10:10:48 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Yuan Wang <yuanx.wang@intel.com>
-CC: <anatoly.burakov@intel.com>, <vladimir.medvedkin@intel.com>,
- <dev@dpdk.org>, <stable@dpdk.org>
-Subject: Re: [PATCH] net/ixgbe: fix sctp mask in flow director
-Message-ID: <aGJUmNRzQU7SARCl@bricha3-mobl1.ger.corp.intel.com>
-References: <20250627085953.286939-1-yuanx.wang@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250627085953.286939-1-yuanx.wang@intel.com>
-X-ClientProxiedBy: DUZPR01CA0343.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4b8::23) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id 1C14840264;
+	Mon, 30 Jun 2025 11:20:10 +0200 (CEST)
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com
+ [209.85.160.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 9D3F64025D
+ for <dev@dpdk.org>; Mon, 30 Jun 2025 11:20:09 +0200 (CEST)
+Received: by mail-qt1-f174.google.com with SMTP id
+ d75a77b69052e-4a8244e897fso1645111cf.1
+ for <dev@dpdk.org>; Mon, 30 Jun 2025 02:20:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1751275209; x=1751880009; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=5qUdV0CddSleUi9jf14jR103oo9nE/RZcyY++Z0MNTU=;
+ b=m00NUpE0Qgq1vDkRksn8J5VK0TDcbioB3y8WHbFt3/XE5d/mCcaI2TDlT8wKpcRKGC
+ EAdbxS6SFtTh1t3ottYEORCJO4I3DnAOsO4dDbzFP/K8IDcS8wytTu2VulJEIhhVkBxB
+ 85T2ytGxukUmgbDE0aL9jNi9o3h2R37W3r/Sd4aOYfMuM1GaRRBIt859X2kcbIGFTo5j
+ DHwIBv6/ooT23zs1ES2Hz/135TO02lArjhN6dvVjf49klQBO/RBbWrS2Pw9B1zhqpc2P
+ M+eUGXXUUOfsBNQgvbZ2ZIzoYXKlkITKRllNB1mkPRv0IDRqlLD1RNUFWI026GN4vykc
+ e2/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1751275209; x=1751880009;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=5qUdV0CddSleUi9jf14jR103oo9nE/RZcyY++Z0MNTU=;
+ b=PZkBGommwDtx02FwKhKMPvZ9Z0bMyhKxtlghDnPcQteBkdD2nlfon8OB3TGivOja5J
+ 8qVovuK+fsjjHrVSia1NOP3rDFdTDAbG7mmDcoeVn4slDXaNjJuKZD902xMDeyt+TgBR
+ IFuNqQGyK1v696DdHacasOyWfJDM3iGh6KVCbUk1e+QeT1xkBk5BAiYZ2S/e+KIxxAv0
+ lX/mUML1bpn1wCDR0ihudylsptfWYRFH0I3VaNVUl0vKhEvYyKX3v8iJZ+GrQhNf8itL
+ GLFW891nb8EJSKcYvhjMq3vGJGYUmZCgt//Qy2wjz6NR9NZehfIYGjmSlxIgG6L2QXfo
+ lH1Q==
+X-Gm-Message-State: AOJu0Yzm3Ta6d7B8gLstdFhViVxqzzac/37HHVIctphk0LxCwPk69VNA
+ qpYm3MTbItLkYtsZdT8jLKe6yuMWGq/PlGAR8M7ugLnBxCwHdRl5UUYEgRyi0Fg3vOddKBPjeGY
+ zsHZOMMD6Gdh6t7EWoGUE/CqXx5VfyI0=
+X-Gm-Gg: ASbGncv08Khz7GtfC44ZRMzR5ngdsuMGevpylAc6XUkV/1GqMjcxieen2z+73M+0eXf
+ F0Pe8MYul5FjPaiy7CDgsU/GQr361LaK9x0Ai80bv3cu8rietX+if/UzZgZCHmkdZ8/03Z4LqDI
+ 6reC4Jvcia8qZ0+T3MLziPTNF/eZhn/h/UEK2HyGlnLw==
+X-Google-Smtp-Source: AGHT+IEnUayJuGCeea1gmgOiMWGdxWB778fwBPSguLBrZbnVoQuEnh23VQKKpc9tW2MRpaHqDP+sevS5dTHIfZDkvgE=
+X-Received: by 2002:a05:622a:58c8:b0:48c:5c4d:68e7 with SMTP id
+ d75a77b69052e-4a7fc9d5228mr200263171cf.6.1751275208793; Mon, 30 Jun 2025
+ 02:20:08 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|BY1PR11MB8030:EE_
-X-MS-Office365-Filtering-Correlation-Id: 02e55002-5b53-4e04-5d81-08ddb7b603fb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?JP8bMuh9PnFodRNsvH7wkn9XyKYMTv8OvPs9RL1NUuj2ZQ0GrYVkbMdFCCNl?=
- =?us-ascii?Q?R67nolXUjFpDiEEd2juZedcY0nhmTAYBCYuZvwbCcCgy7WRPn19er85jWxUP?=
- =?us-ascii?Q?jsMmTTcR6iJg5QqEQmsufPlUcdEOpjktAMNsX+VIvvHm1QwlVqdttBQD4xgX?=
- =?us-ascii?Q?AHINwLJtlRuo4KPh1bc0UcpLzKsMKkfH2JZywJtDEG54XinY8BhPxsANRA3E?=
- =?us-ascii?Q?8U7uFNxvDVUz21vIXDfrImKjAJLHgZdUBvWdHxDBIVeg2orql6yP14yoNaJc?=
- =?us-ascii?Q?RcBFCWOqgu/nDSiKuc0fEY3F1Mz09cF+pw1vpLciWzMNod0tEjG5Zko+GMNl?=
- =?us-ascii?Q?oNQXCgTJiEHmCqeMcw/8ACj2Qx3B2Rl951/CtOLyQu1W/o1Gr8QrfH0CHVDg?=
- =?us-ascii?Q?SYefyWEEdd5/uKQR39PqjP0IU6x+/aGQ53xE1pZSQzXYry8p59SZJeY1uj68?=
- =?us-ascii?Q?6UqBA1hdjIpZE859Xl8jcTq37LfVwuJU2fVR6SIm4y++xx/HpVyXr3YEhTVV?=
- =?us-ascii?Q?ShGGxB7SpxSr49B2+9bMPMfgUlV/m+70NYJzW0faDgvwKPCThdKpNhB9Src9?=
- =?us-ascii?Q?LG9Rnwr2WFzRxFNNdyM0+4S0qLKK4URuqYAzp1pbtm5RQENXVeQ9+QIU5WcH?=
- =?us-ascii?Q?0MH78LTLgKnaQ25g9QMaw8NPQFTj6SwHJa55S8a/xVCG3kXqkiZPWqtADGwO?=
- =?us-ascii?Q?lDClOFDrJF9HkqEqftwAbcUgabxMsHkpkRAxG9rkGWZmv2Otb5JP78McZZgs?=
- =?us-ascii?Q?y5v1Rmwm0Fkng7pKUOR70ia1bTEw9NHeY/Es9mLP9GeeQijzmFS3gt26s7Gd?=
- =?us-ascii?Q?rdfwk2hsLBntrhMCkHTczAJJl/TtqGa0zv+pxSUuVvld7083Ny2nWhQYvRCG?=
- =?us-ascii?Q?BrkgHUlaWAymV25qHW+atajFDOX0zDzfNv5ikTPUX81tj/ll/fl1F+wUncOx?=
- =?us-ascii?Q?7pmM9ZZYUNnuQmsyWxkXdhKOYGOorhkBNohSpcQuIPO4ADvzn/5pDnWmDxvb?=
- =?us-ascii?Q?54zRCxpUXYn5kdYz6Fgt95WDTbzNvKrEsJInKFWCCNpepOfnk0E7b3KUicy+?=
- =?us-ascii?Q?6RpkjVtaBx2WaHP6nXhFjiCbH4PJOrsWXu6bW1rZb3C5bDV7X1gEvMAsyCgG?=
- =?us-ascii?Q?3Bcq9fl6L8UFECWOHMYV1Mhx8slYlCHs2d3Uur+9X18zyejz0c9UZOrcNdOu?=
- =?us-ascii?Q?FvPV76H7vfNlT38CG2ejt5gjg2yNwol7EjNNSg31Z3IliuZkYqy1AFP6x7ya?=
- =?us-ascii?Q?zTeEsc2G2KNAu/jy5Jquke7Y7pmFMIRDDeTgYeZhLtafwoYuFKr4huRn2a3O?=
- =?us-ascii?Q?Qui6K0EmdMojXFvwNUn1ekX9AAr2kSlO9+trfE1dQ/a1kI4OMEjxlks+QT64?=
- =?us-ascii?Q?CJs6798WKKe8wYbOBGbT8C1g2Y+dqVWdJPxBu0dIeiW71Bpx8A=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?BhYvn2h6s5xf4xyRze9xLwuRFpZ4RuqgI/X5wYgZprmPkSpNJsDPjMlxwDYY?=
- =?us-ascii?Q?XNkqvEbo7edpPi73FstI5T/FqS6QYXx3sHcipbbQJbzD48b6EcKI8kcztV5v?=
- =?us-ascii?Q?5uUOPRtkmvYi8fVICApbSiRiqzqXORkWi9vjRBgueq5nXXkNsK/n7x+c6Y+X?=
- =?us-ascii?Q?CsOP8Oh3vQy1taG2u0VMjBv2itaNNfVbg8OY5me1s33M/zjOltpui92uQDnA?=
- =?us-ascii?Q?5Ox3JsCnPwdKvseuL1Ho+xR6juIeF2HlD3+FY+RxxgQilA0rc7IxAWMPrxI9?=
- =?us-ascii?Q?rWgBAAjBGpWZmpy33RIrgT3Qo6miZPGKbvVOY4sWdOXDR8nNZ7emOwpmSUF4?=
- =?us-ascii?Q?WO+BtJmnI3Jd26fnKIMIZFfkoDYU4WXuZelNMOYgAUzvJn0wFxlIja20bC1X?=
- =?us-ascii?Q?OJaTcTLNA/+YO+lzsKu7CEBC8u08FLjNYPEDaiNKZAAiMMHXe33z2o6B71u8?=
- =?us-ascii?Q?/8L/yHoBlJtrHoT3UO21PMFV9hj6AVhZQSj/Ieoci59WhhTqlVLGlRrM+/p8?=
- =?us-ascii?Q?ZfO9cEt7+GfS2mCeg0PB5a/MuaXpujZ1jPpHiKz7aea7KSgrosnZs0EcMuj9?=
- =?us-ascii?Q?eWmRXSBBDybATVRozJnhTcTiZDP6HnHJeHz79hgBwx7A6VoAt++loFjYP8kM?=
- =?us-ascii?Q?gt1APO4y3ayoQ5xwjWhUFGf6bqLpLmHHC9nJ/jHJmJhnyWhdIxOJu1vT/Z0q?=
- =?us-ascii?Q?i60MW/R8F+z01bcer8DnO4sn2SM7BLf461DtOD3ZLEtCQUb92B56nzE6rHR9?=
- =?us-ascii?Q?ixWNh+TIHoHZjkWXVAHVquWQzmWzyYo0hTY2gRTA6ClyHjeo6wvGp967qjz0?=
- =?us-ascii?Q?15q9PqOXv6YrxDkSzq7BvMb6jKcFmTESJrdr8CGd3atEl8kB4opQkL2NPlnF?=
- =?us-ascii?Q?TNaAdkgVubL8vWyJaGAh6m3tEheUFCwhqqCMMaP0GSN/uUFYbxYRzqxgcePp?=
- =?us-ascii?Q?auglebVd0RpFqRQqCptZpaVEN7BYkWHHF0dBwaE+qCH2kDue9Xftomz1UWX/?=
- =?us-ascii?Q?0P9aJyy9qmD05aEOq6y9Mxtw6AD6veC7o7A10TU14ntPDEVhphT8q0TsuDBV?=
- =?us-ascii?Q?LbLOGhDPteoeP1EIneBwwKgcL2rtT+CdAFdXfQau+ui5cfhrB3V6HLPI8Zy3?=
- =?us-ascii?Q?qpG9Qaxp8WJUeWKnFZTdi1njPu07YT+H86/gG3dZjrlL1RK/ZEV1EF1ZDImh?=
- =?us-ascii?Q?yQTn8fqHIqUT1A37Mf45fyYNUAtqf/H0XnbzZI/n+1/f0KIeFfMPsrFSyRI8?=
- =?us-ascii?Q?mIBAJvGBVsV1h068wzThmwA3suPfuXWMyZ9LDgr6rbVvnli2GMk4SNyquOJ+?=
- =?us-ascii?Q?2nTgLLyGZofmb3UK8ktEOT2f/TGTq27+GnvbVE7luRbMQR6Y0N9qn7jApPzl?=
- =?us-ascii?Q?hhKzZhJerwIlhlKcoakE878/zPlm0VPtFEoIkk5OCj0dPb2pipG9Ov94pdlW?=
- =?us-ascii?Q?7Ndp5opq4rk7RfQfXzEupJdqCpBxiPcF2yAvx05jFNvdikof1sPh+vIB7DaD?=
- =?us-ascii?Q?wH5sosUKB9jeTTzDl0iIqkFitm763g8qUEI5m1s5/vL9GPuJ6fzuf7MMTM21?=
- =?us-ascii?Q?eyF2SHgkRb3p7oyz6YqaCEJz2otqFQ+Nd8ADHRQ1CnfTWuzs/mBnZWUBSYQm?=
- =?us-ascii?Q?vQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02e55002-5b53-4e04-5d81-08ddb7b603fb
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2025 09:10:53.7988 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: N4OgLHs1uWisIjECdJkdRclrQkcgHQGGHX6Zpe3aAbIagPIgzodS1pbiVFciJ6SiygcYiSdfnIXtjeyLcRS32zI17z7EBQiySPbcwA2gzj4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR11MB8030
-X-OriginatorOrg: intel.com
+References: <20250628045112.655999-1-pravin.pathak@intel.com>
+In-Reply-To: <20250628045112.655999-1-pravin.pathak@intel.com>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Mon, 30 Jun 2025 14:49:42 +0530
+X-Gm-Features: Ac12FXxpVUGE0cTJ-gu8iWDsjN5H64POlLYKU5783btsBiWOy9heiEn7zNAz9kI
+Message-ID: <CALBAE1NrMu3znG6N+iSQacxHWpoGmCe=azvTbkjEUQZGLY+DmA@mail.gmail.com>
+Subject: Re: [PATCH v1] event/dlb2: add dequeue interrupt mode support
+To: Pravin Pathak <pravin.pathak@intel.com>
+Cc: dev@dpdk.org, jerinj@marvell.com, mike.ximing.chen@intel.com, 
+ bruce.richardson@intel.com, thomas@monjalon.net, david.marchand@redhat.com, 
+ nipun.gupta@amd.com, chenbox@nvidia.com, tirthendu.sarkar@intel.com, 
+ Pavan Nikhilesh <pbhagavatula@marvell.com>,
+ Shijith Thotton <sthotton@marvell.com>, 
+ Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@oss.nxp.com>, harry.chang@intel.com,
+ =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -169,39 +80,69 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Jun 27, 2025 at 04:59:53PM +0800, Yuan Wang wrote:
-> Since the default value of the port mask is set to 0, the port mask does
-> not change in some cases when creating SCTP flow rules, which results in
-> incorrect L4P register configuration.
-> 
-> This patch fixes this issue by setting the mask to 0xffff in these cases.
-> 
-> Fixes: c81daae2383a (net/ixgbe: fix port mask default value in filter)
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Yuan Wang <yuanx.wang@intel.com>
+On Sat, Jun 28, 2025 at 11:17=E2=80=AFAM Pravin Pathak <pravin.pathak@intel=
+.com> wrote:
+>
+> DLB2 port interrupt is implemented using DPDK interrupt
+> framework. This allows eventdev dequeue API to sleep when
+> the port queue is empty and gets wakeup when event arrives
+> at the port. Port dequeue mode is configured using devargs
+> argument port_dequeue_wait. Supported modes are polling and
+> interrupt. Default mode is polling.
+> This commit also adds code to handle device error interrupts
+> and print alarm details.
+>
+> Signed-off-by: Pravin Pathak <pravin.pathak@intel.com>
+> Signed-off-by: Tirthendu Sarkar <tirthendu.sarkar@intel.com>
 > ---
->  drivers/net/intel/ixgbe/ixgbe_flow.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
-> index 6278646720..9f2e470ad9 100644
-> --- a/drivers/net/intel/ixgbe/ixgbe_flow.c
-> +++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
-> @@ -2161,6 +2161,8 @@ ixgbe_parse_fdir_filter_normal(struct rte_eth_dev *dev,
->  					item, "Not supported by fdir filter");
->  				return -rte_errno;
->  			}
-> +			rule->mask.src_port_mask = 0xffff;
-> +			rule->mask.dst_port_mask = 0xffff;
->  		}
->  
+>  doc/guides/eventdevs/dlb2.rst              |  20 +
+>  drivers/event/dlb2/dlb2.c                  | 236 +++++-
+>  drivers/event/dlb2/dlb2_iface.c            |   7 +
+>  drivers/event/dlb2/dlb2_iface.h            |   8 +
+>  drivers/event/dlb2/dlb2_priv.h             |  18 +
+>  drivers/event/dlb2/dlb2_user.h             | 112 +++
+>  drivers/event/dlb2/pf/base/dlb2_hw_types.h |  70 ++
+>  drivers/event/dlb2/pf/base/dlb2_osdep.h    |  46 ++
+>  drivers/event/dlb2/pf/base/dlb2_regs.h     | 149 +++-
+>  drivers/event/dlb2/pf/base/dlb2_resource.c | 825 +++++++++++++++++++++
+>  drivers/event/dlb2/pf/base/dlb2_resource.h |   6 +
+>  drivers/event/dlb2/pf/dlb2_pf.c            | 223 ++++++
+>  12 files changed, 1711 insertions(+), 9 deletions(-)
+>
+> diff --git a/doc/guides/eventdevs/dlb2.rst b/doc/guides/eventdevs/dlb2.rs=
+t
+> index 8ec7168f20..a4ba857351 100644
+> --- a/doc/guides/eventdevs/dlb2.rst
+> +++ b/doc/guides/eventdevs/dlb2.rst
+> @@ -477,6 +477,26 @@ Example command to use as meson option for credit ha=
+ndling:
+>
+>         meson configure -Dc_args=3D'-DDLB_SW_CREDITS_CHECKS=3D0 -DDLB_HW_=
+CREDITS_CHECKS=3D1'
+>
+> +Interrupt Mode Support
+> +~~~~~~~~~~~~~~~~~~~~~~
+> +DLB dequeue supports interrupt mode for the API rte_event_dequeue_burst(=
+).
+> +The default port dequeue mode is polling. Dequeue wait mode can be confi=
+gured
+> +on per eventdev port basis using devargs argument 'port_dequeue_wait'. I=
+n
+> +interrupt mode, if the port queue is empty, the application thread will =
+block
+> +on the interrupt until a new event arrives. It enters blocking mode only=
+ after
+> +any specified timeout. During the timeout, it will poll the port queue f=
+or
+> +events as usual. Interrupt mode uses the DPDK interrupt support framewor=
+k.
+> +
+> +    .. code-block:: console
+> +
+> +       --allow ea:00.0,port_dequeue_wait=3Dall:interrupt
 
-Hi,
+Adding other eventdev PMD mainatainers.
 
-can you give a quick example of how to demonstrate the issue here, so I can
-test the patch? Presumably without this patch some packets are incorrectly
-classified/filtered based on the rte_flow rules?
-
-Thanks,
-/Bruce
+Looks like it can be a generic feature. i.e set this option is dev_configur=
+e()
+If there is no objection, Please send a new patch around that.
