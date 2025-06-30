@@ -2,60 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B50FC7EE39
-	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 11:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C2EC7EE39
+	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 11:15:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D54AB4066C;
-	Mon, 30 Jun 2025 13:14:45 +0200 (CEST)
-Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com
- [52.119.213.156])
- by mails.dpdk.org (Postfix) with ESMTP id 4657D40665
- for <dev@dpdk.org>; Mon, 30 Jun 2025 13:14:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
- t=1751282084; x=1782818084;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version;
- bh=eI5MJ5/euqO/FBNjSABvSZU7UOhWHEYmllCOTlcZQMY=;
- b=Zhj7n48lun5SVWqe5OnUkPqdaGDX6s5CjxEKkolq+A5ShhKojZR6WUrd
- OlONkarxiwqYceZ6lGNRcNqrztvBA5SB8zXxOl6ZoAYZ1qb4HbL+/9dHP
- GYGCYAoeCVCxRjE9RuThnQX7MgdzHzYPiO8IDkA/ist7Zz1MEoqowvLoD
- kgbvxAj0zfzsNG+Y5i2XhJ2kvyCm/DhdTqFnqZqp0yKIzCn8okTfxmAa9
- 6bK0VmB+jqtotE42CdUPYoerlQ5PNXY3behcbOL2YDg+/SnvZR7qRIhtJ
- OnyIE+5dB0czErjUMHkejLWOnlypB0Ml4UVXtS+Ml8mcjYL4D4XryvOlg g==;
-X-IronPort-AV: E=Sophos;i="6.16,277,1744070400"; d="scan'208";a="759899650"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO
- smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
- by smtp-border-fw-52005.iad7.amazon.com with
- ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 11:14:41 +0000
-Received: from EX19MTAEUA001.ant.amazon.com [10.0.17.79:42464]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.40.132:2525]
- with esmtp (Farcaster)
- id 0dfa611b-bfde-4ccc-b02c-6317db860523; Mon, 30 Jun 2025 11:14:39 +0000 (UTC)
-X-Farcaster-Flow-ID: 0dfa611b-bfde-4ccc-b02c-6317db860523
-Received: from EX19D007EUA002.ant.amazon.com (10.252.50.68) by
- EX19MTAEUA001.ant.amazon.com (10.252.50.223) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Mon, 30 Jun 2025 11:14:39 +0000
-Received: from HFA15-CG15235BS.amazon.com (10.1.213.9) by
- EX19D007EUA002.ant.amazon.com (10.252.50.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Mon, 30 Jun 2025 11:14:36 +0000
-From: Shai Brandes <shaibran@amazon.com>
-To: <stephen@networkplumber.org>
-CC: <dev@dpdk.org>, Shai Brandes <shaibran@amazon.com>, Yosef Raisman
- <yraisman@amazon.com>
-Subject: [PATCH 4/7] net/ena: support fragment bypass mode
-Date: Mon, 30 Jun 2025 14:13:55 +0300
-Message-ID: <20250630111358.3476-5-shaibran@amazon.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250630111358.3476-1-shaibran@amazon.com>
-References: <20250630111358.3476-1-shaibran@amazon.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 81F5340647;
+	Mon, 30 Jun 2025 13:15:25 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56])
+ by mails.dpdk.org (Postfix) with ESMTP id 52C5840264;
+ Mon, 30 Jun 2025 13:15:24 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bW3R83WRKz6L4xS;
+ Mon, 30 Jun 2025 19:12:36 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+ by mail.maildlp.com (Postfix) with ESMTPS id CFABC1402EC;
+ Mon, 30 Jun 2025 19:15:23 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ frapeml500008.china.huawei.com (7.182.85.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 30 Jun 2025 13:15:23 +0200
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Mon, 30 Jun 2025 13:15:23 +0200
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: Bruce Richardson <bruce.richardson@intel.com>, "dev@dpdk.org"
+ <dev@dpdk.org>
+CC: "david.marchand@redhat.com" <david.marchand@redhat.com>,
+ "thomas@monjalon.net" <thomas@monjalon.net>, "techboard@dpdk.org"
+ <techboard@dpdk.org>, Vipin Varghese <vipin.varghese@amd.com>, Tyler Retzlaff
+ <roretzla@linux.microsoft.com>
+Subject: RE: [PATCH] eal: deprecate old coremask-based EAL parameters
+Thread-Topic: [PATCH] eal: deprecate old coremask-based EAL parameters
+Thread-Index: AQHb5Q3NZ0DT7MzfT0e52k+z9udUtbQbljmw
+Date: Mon, 30 Jun 2025 11:15:23 +0000
+Message-ID: <8c78d94234504755b0b7b4bcd3884e3f@huawei.com>
+References: <20250624134139.552315-1-bruce.richardson@intel.com>
+In-Reply-To: <20250624134139.552315-1-bruce.richardson@intel.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.48.148.141]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.1.213.9]
-X-ClientProxiedBy: EX19D033UWA002.ant.amazon.com (10.13.139.10) To
- EX19D007EUA002.ant.amazon.com (10.252.50.68)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,285 +59,181 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Introduce devarg `enable_frag_bypass` to toggle the fragment bypass
-mode for egress packets.
 
-When enabled, this feature bypasses the PPS limit enforced by EC2 for
-fragmented egress packets on every ENI. Note that enabling this might
-negatively impact network performance.
 
-By default, this feature is disabled. To enable it set
-`enable_frag_bypass=1`. If it cannot be enabled, a warning will be
-printed, but driver initialization will proceed as normal.
+> -----Original Message-----
+> From: Bruce Richardson <bruce.richardson@intel.com>
+> Sent: Tuesday, June 24, 2025 2:42 PM
+> To: dev@dpdk.org
+> Cc: david.marchand@redhat.com; thomas@monjalon.net; techboard@dpdk.org; B=
+ruce Richardson <bruce.richardson@intel.com>;
+> Vipin Varghese <vipin.varghese@amd.com>; Tyler Retzlaff <roretzla@linux.m=
+icrosoft.com>
+> Subject: [PATCH] eal: deprecate old coremask-based EAL parameters
+>=20
+> As the number of cores/cpus on platforms has increased over the years,
+> the use of coremasks rather than core-lists for identifying DPDK cores
+> has become more and more unwieldy. At this point, let's deprecate the
+> coremask-based EAL parameters for future removal, and point users to the
+> core-list based versions instead.
+>=20
+> Depends-on: series-35540 ("use core lists not masks in documentation")
+>=20
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> Acked-by: Vipin Varghese <vipin.varghese@amd.com>
+> ---
+>  doc/guides/linux_gsg/build_sample_apps.rst |  7 +++----
+>  doc/guides/linux_gsg/eal_args.include.rst  |  9 ---------
+>  doc/guides/rel_notes/deprecation.rst       | 10 ++++++++++
+>  lib/eal/common/eal_common_options.c        |  6 ++++++
+>  lib/eal/include/rte_lcore.h                |  1 -
+>  5 files changed, 19 insertions(+), 14 deletions(-)
+>=20
+> diff --git a/doc/guides/linux_gsg/build_sample_apps.rst b/doc/guides/linu=
+x_gsg/build_sample_apps.rst
+> index 8b8026705b..9ce564e881 100644
+> --- a/doc/guides/linux_gsg/build_sample_apps.rst
+> +++ b/doc/guides/linux_gsg/build_sample_apps.rst
+> @@ -126,10 +126,9 @@ and that cores 0-3 are present and are to be used fo=
+r running the application)::
+>  Logical Core Use by Applications
+>  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>=20
+> -The coremask (-c 0x0f) or corelist (-l 0-3) parameter is always mandator=
+y for DPDK applications.
+> -Each bit of the mask corresponds to the equivalent logical core number a=
+s reported by Linux. The preferred corelist option is a cleaner
+> method to define cores to be used.
+> +The corelist (-l/--lcores 0-3) parameter is always mandatory for DPDK ap=
+plications.
+>  Since these logical core numbers, and their mapping to specific cores on=
+ specific NUMA sockets, can vary from platform to platform,
+> -it is recommended that the core layout for each platform be considered w=
+hen choosing the coremask/corelist to use in each case.
+> +it is recommended that the core layout for each platform be considered w=
+hen choosing the corelist to use in each case.
+>=20
+>  On initialization of the EAL layer by a DPDK application, the logical co=
+res to be used and their socket location are displayed.
+>  This information can also be determined for all cores on the system by e=
+xamining the ``/proc/cpuinfo`` file, for example, by running
+> cat ``/proc/cpuinfo``.
+> @@ -151,7 +150,7 @@ This can be useful when using other processors to und=
+erstand the mapping of the
+>=20
+>  .. warning::
+>=20
+> -    The logical core layout can change between different board layouts a=
+nd should be checked before selecting an application
+> coremask/corelist.
+> +    The logical core layout can change between different board layouts a=
+nd should be checked before selecting an application corelist.
+>=20
+>  Hugepage Memory Use by Applications
+>  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> diff --git a/doc/guides/linux_gsg/eal_args.include.rst b/doc/guides/linux=
+_gsg/eal_args.include.rst
+> index 6ee79877c1..b0cd757569 100644
+> --- a/doc/guides/linux_gsg/eal_args.include.rst
+> +++ b/doc/guides/linux_gsg/eal_args.include.rst
+> @@ -4,10 +4,6 @@
+>  Lcore-related options
+>  ~~~~~~~~~~~~~~~~~~~~~
+>=20
+> -*   ``-c <core mask>``
+> -
+> -    Set the hexadecimal bitmask of the cores to run on.
+> -
+>  *   ``-l/--lcores <core list>``
+>=20
+>      List of cores to run on
+> @@ -75,15 +71,10 @@ Lcore-related options
+>=20
+>      Core ID that is used as main.
+>=20
+> -*   ``-s <service core mask>``
+> -
+> -    Hexadecimal bitmask of cores to be used as service cores.
+> -
+>  *   ``-S <service core list>``
+>=20
+>      List of cores to be used as service cores.
+>=20
+> -
+>  Device-related options
+>  ~~~~~~~~~~~~~~~~~~~~~~
+>=20
+> diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/=
+deprecation.rst
+> index 36489f6e68..2ea898ff8a 100644
+> --- a/doc/guides/rel_notes/deprecation.rst
+> +++ b/doc/guides/rel_notes/deprecation.rst
+> @@ -17,6 +17,16 @@ Other API and ABI deprecation notices are to be posted=
+ below.
+>  Deprecation Notices
+>  -------------------
+>=20
+> +* EAL: The ``-c <coremask>`` commandline parameter is deprecated
+> +  and will be removed in a future release.
+> +  Use the ``-l <corelist>`` or ``--lcores=3D<corelist>`` parameters inst=
+ead
+> +  to specify the cores to be used when running a DPDK application.
+> +
+> +* EAL: The ``-s <service-coremask>`` commandline parameter is deprecated
+> +  and will be removed in a future release.
+> +  Use the ``-S <service-corelist>`` parameter instead
+> +  to specify the cores to be used for background services in DPDK.
+> +
+>  * build: The ``enable_kmods`` option is deprecated and will be removed i=
+n a future release.
+>    Setting/clearing the option has no impact on the build.
+>    Instead, kernel modules will be always built for OS's where out-of-tre=
+e kernel modules
+> diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_com=
+mon_options.c
+> index 83b6fc7e89..f0a9ddeeb7 100644
+> --- a/lib/eal/common/eal_common_options.c
+> +++ b/lib/eal/common/eal_common_options.c
+> @@ -616,6 +616,9 @@ eal_parse_service_coremask(const char *coremask)
+>  	int val;
+>  	uint32_t taken_lcore_count =3D 0;
+>=20
+> +	EAL_LOG(WARNING, "'-s <service-coremask>' is deprecated, and will be re=
+moved in a future release.");
+> +	EAL_LOG(WARNING, "\tUse '-S <service-corelist>' option instead.");
+> +
+>  	if (coremask =3D=3D NULL)
+>  		return -1;
+>  	/* Remove all blank characters ahead and after .
+> @@ -779,6 +782,9 @@ rte_eal_parse_coremask(const char *coremask, int *cor=
+es)
+>  		cores[idx] =3D -1;
+>  	idx =3D 0;
+>=20
+> +	EAL_LOG(WARNING, "'-c <coremask>' option is deprecated, and will be rem=
+oved in a future release");
+> +	EAL_LOG(WARNING, "\tUse '-l <corelist>' or '--lcores=3D<corelist>' opti=
+on instead");
+> +
+>  	/* Remove all blank characters ahead and after .
+>  	 * Remove 0x/0X if exists.
+>  	 */
+> diff --git a/lib/eal/include/rte_lcore.h b/lib/eal/include/rte_lcore.h
+> index 44959779a1..10f965b4f0 100644
+> --- a/lib/eal/include/rte_lcore.h
+> +++ b/lib/eal/include/rte_lcore.h
+> @@ -102,7 +102,6 @@ unsigned int rte_lcore_count(void);
+>   * When option -c or -l is given, the index corresponds
+>   * to the order in the list.
+>   * For example:
+> - * -c 0x30, lcore 4 has index 0, and 5 has index 1.
+>   * -l 22,18 lcore 22 has index 0, and 18 has index 1.
+>   *
+>   * @param lcore_id
+> --
 
-Signed-off-by: Yosef Raisman <yraisman@amazon.com>
-Signed-off-by: Shai Brandes <shaibran@amazon.com>
-Reviewed-by: Amit Bernstein <amitbern@amazon.com>
----
- doc/guides/nics/ena.rst                       |  9 ++++
- doc/guides/rel_notes/release_25_07.rst        |  5 ++
- drivers/net/ena/base/ena_com.c                | 34 +++++++++++++
- drivers/net/ena/base/ena_com.h                |  7 +++
- .../net/ena/base/ena_defs/ena_admin_defs.h    | 14 ++++++
- drivers/net/ena/ena_ethdev.c                  | 48 ++++++++++++++++++-
- drivers/net/ena/ena_ethdev.h                  |  1 +
- 7 files changed, 117 insertions(+), 1 deletion(-)
+Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+=20
 
-diff --git a/doc/guides/nics/ena.rst b/doc/guides/nics/ena.rst
-index a34575dc9b..a42deccd81 100644
---- a/doc/guides/nics/ena.rst
-+++ b/doc/guides/nics/ena.rst
-@@ -141,6 +141,15 @@ Runtime Configuration
-      **A non-zero value for this devarg is mandatory for control path functionality
-      when binding ports to uio_pci_generic kernel module which lacks interrupt support.**
- 
-+   * **enable_frag_bypass** (default 0)
-+
-+     Enable fragment bypass mode for egress packets. This mode bypasses the PPS
-+     limit enforced by EC2 for fragmented egress packets on every ENI. Note that
-+     enabling it might negatively impact network performance.
-+
-+     0 - Disabled (Default).
-+
-+     1 - Enabled.
- 
- ENA Configuration Parameters
- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
-index 19be7740c4..822b3d4595 100644
---- a/doc/guides/rel_notes/release_25_07.rst
-+++ b/doc/guides/rel_notes/release_25_07.rst
-@@ -72,6 +72,11 @@ New Features
-   Added a Performance Monitoring Unit (PMU) library which allows Linux applications
-   to perform self monitoring activities without depending on external utilities like perf.
- 
-+* **Updated Amazon ENA (Elastic Network Adapter) net driver.**
-+
-+  * Added support for enabling fragment bypass mode for egress packets.
-+    This mode bypasses the PPS limit enforced by EC2 for fragmented egress packets on every ENI.
-+
- * **Added Mucse rnp net driver.**
- 
-   Added a new network PMD which supports Mucse 10 Gigabit Ethernet NICs.
-diff --git a/drivers/net/ena/base/ena_com.c b/drivers/net/ena/base/ena_com.c
-index 588dc61387..1a93d22b71 100644
---- a/drivers/net/ena/base/ena_com.c
-+++ b/drivers/net/ena/base/ena_com.c
-@@ -3459,3 +3459,37 @@ int ena_com_config_dev_mode(struct ena_com_dev *ena_dev,
- 
- 	return 0;
- }
-+
-+int ena_com_set_frag_bypass(struct ena_com_dev *ena_dev, bool enable)
-+{
-+	struct ena_admin_set_feat_resp set_feat_resp;
-+	struct ena_com_admin_queue *admin_queue;
-+	struct ena_admin_set_feat_cmd cmd;
-+	int ret;
-+
-+	if (!ena_com_check_supported_feature_id(ena_dev, ENA_ADMIN_FRAG_BYPASS)) {
-+		ena_trc_dbg(ena_dev, "Feature %d isn't supported\n",
-+			    ENA_ADMIN_FRAG_BYPASS);
-+		return ENA_COM_UNSUPPORTED;
-+	}
-+
-+	memset(&cmd, 0x0, sizeof(cmd));
-+	admin_queue = &ena_dev->admin_queue;
-+
-+	cmd.aq_common_descriptor.opcode = ENA_ADMIN_SET_FEATURE;
-+	cmd.aq_common_descriptor.flags = 0;
-+	cmd.feat_common.feature_id = ENA_ADMIN_FRAG_BYPASS;
-+	cmd.feat_common.feature_version = ENA_ADMIN_FRAG_BYPASS_FEATURE_VERSION_0;
-+	cmd.u.frag_bypass.enable = (u8)enable;
-+
-+	ret = ena_com_execute_admin_command(admin_queue,
-+					    (struct ena_admin_aq_entry *)&cmd,
-+					    sizeof(cmd),
-+					    (struct ena_admin_acq_entry *)&set_feat_resp,
-+					    sizeof(set_feat_resp));
-+
-+	if (unlikely(ret))
-+		ena_trc_err(ena_dev, "Failed to enable frag bypass. error: %d\n", ret);
-+
-+	return ret;
-+}
-diff --git a/drivers/net/ena/base/ena_com.h b/drivers/net/ena/base/ena_com.h
-index b2aede1be1..1c752327dc 100644
---- a/drivers/net/ena/base/ena_com.h
-+++ b/drivers/net/ena/base/ena_com.h
-@@ -1109,6 +1109,13 @@ static inline bool ena_com_get_missing_admin_interrupt(struct ena_com_dev *ena_d
- 	return ena_dev->admin_queue.is_missing_admin_interrupt;
- }
- 
-+/* ena_com_set_frag_bypass - set fragment bypass
-+ * @ena_dev: ENA communication layer struct
-+ * @enable: true if fragment bypass is enabled, false otherwise.
-+ *
-+ * @return - 0 on success, negative value on failure.
-+ */
-+int ena_com_set_frag_bypass(struct ena_com_dev *ena_dev, bool enable);
- /* ena_com_io_sq_to_ena_dev - Extract ena_com_dev using contained field io_sq.
-  * @io_sq: IO submit queue struct
-  *
-diff --git a/drivers/net/ena/base/ena_defs/ena_admin_defs.h b/drivers/net/ena/base/ena_defs/ena_admin_defs.h
-index bdc6efadcf..707aa32f06 100644
---- a/drivers/net/ena/base/ena_defs/ena_admin_defs.h
-+++ b/drivers/net/ena/base/ena_defs/ena_admin_defs.h
-@@ -57,6 +57,7 @@ enum ena_admin_aq_feature_id {
- 	ENA_ADMIN_EXTRA_PROPERTIES_STRINGS          = 5,
- 	ENA_ADMIN_EXTRA_PROPERTIES_FLAGS            = 6,
- 	ENA_ADMIN_MAX_QUEUES_EXT                    = 7,
-+	ENA_ADMIN_FRAG_BYPASS                       = 8,
- 	ENA_ADMIN_RSS_HASH_FUNCTION                 = 10,
- 	ENA_ADMIN_STATELESS_OFFLOAD_CONFIG          = 11,
- 	ENA_ADMIN_RSS_INDIRECTION_TABLE_CONFIG      = 12,
-@@ -165,6 +166,10 @@ enum ena_admin_ena_srd_flags {
- 	ENA_ADMIN_ENA_SRD_UDP_ORDERING_BYPASS_ENABLED = BIT(2),
- };
- 
-+enum ena_admin_frag_bypass_feature_version {
-+	/* Enable only */
-+	ENA_ADMIN_FRAG_BYPASS_FEATURE_VERSION_0     = 0,
-+};
- struct ena_admin_aq_common_desc {
- 	/* 11:0 : command_id
- 	 * 15:12 : reserved12
-@@ -706,6 +711,12 @@ struct ena_admin_feature_llq_desc {
- 	struct ena_admin_accel_mode_req accel_mode;
- };
- 
-+struct ena_admin_feature_frag_bypass_desc {
-+	/* Enable frag_bypass */
-+	uint8_t enable;
-+
-+	uint8_t reserved[3];
-+};
- struct ena_admin_queue_ext_feature_fields {
- 	uint32_t max_tx_sq_num;
- 
-@@ -1180,6 +1191,9 @@ struct ena_admin_set_feat_cmd {
- 
- 		/* PHC configuration */
- 		struct ena_admin_feature_phc_desc phc;
-+
-+		/* Fragment bypass configuration */
-+		struct ena_admin_feature_frag_bypass_desc frag_bypass;
- 	} u;
- };
- 
-diff --git a/drivers/net/ena/ena_ethdev.c b/drivers/net/ena/ena_ethdev.c
-index d8ff6851d2..8ef6e55248 100644
---- a/drivers/net/ena/ena_ethdev.c
-+++ b/drivers/net/ena/ena_ethdev.c
-@@ -107,6 +107,13 @@ struct ena_stats {
-  */
- #define ENA_DEVARG_CONTROL_PATH_POLL_INTERVAL "control_path_poll_interval"
- 
-+/*
-+ * Toggles fragment bypass mode. Fragmented egress packets are rate limited by
-+ * EC2 per ENI; this devarg bypasses the PPS limit but may impact performance.
-+ * Disabled by default.
-+ */
-+#define ENA_DEVARG_ENABLE_FRAG_BYPASS "enable_frag_bypass"
-+
- /*
-  * Each rte_memzone should have unique name.
-  * To satisfy it, count number of allocation and add it to name.
-@@ -306,6 +313,9 @@ static int ena_xstats_get_by_id(struct rte_eth_dev *dev,
- static int ena_process_llq_policy_devarg(const char *key,
- 			const char *value,
- 			void *opaque);
-+static int ena_process_bool_devarg(const char *key,
-+				   const char *value,
-+				   void *opaque);
- static int ena_parse_devargs(struct ena_adapter *adapter,
- 			     struct rte_devargs *devargs);
- static void ena_copy_customer_metrics(struct ena_adapter *adapter,
-@@ -1336,6 +1346,11 @@ static int ena_start(struct rte_eth_dev *dev)
- 	if (rc)
- 		goto err_start_tx;
- 
-+	if (adapter->enable_frag_bypass) {
-+		rc = ena_com_set_frag_bypass(&adapter->ena_dev, true);
-+		if (rc)
-+			PMD_DRV_LOG_LINE(WARNING, "Failed to enable frag bypass, rc: %d", rc);
-+	}
- 	if (adapter->edev_data->dev_conf.rxmode.mq_mode & RTE_ETH_MQ_RX_RSS_FLAG) {
- 		rc = ena_rss_configure(adapter);
- 		if (rc)
-@@ -3764,6 +3779,31 @@ static int ena_process_llq_policy_devarg(const char *key, const char *value, voi
- 	PMD_INIT_LOG_LINE(INFO,
- 		"LLQ policy is %u [0 - disabled, 1 - device recommended, 2 - normal, 3 - large]",
- 		adapter->llq_header_policy);
-+
-+	return 0;
-+}
-+
-+static int ena_process_bool_devarg(const char *key, const char *value, void *opaque)
-+{
-+	struct ena_adapter *adapter = opaque;
-+	bool bool_value;
-+
-+	/* Parse the value. */
-+	if (strcmp(value, "1") == 0) {
-+		bool_value = true;
-+	} else if (strcmp(value, "0") == 0) {
-+		bool_value = false;
-+	} else {
-+		PMD_INIT_LOG_LINE(ERR,
-+			"Invalid value: '%s' for key '%s'. Accepted: '0' or '1'",
-+			value, key);
-+		return -EINVAL;
-+	}
-+
-+	/* Now, assign it to the proper adapter field. */
-+	if (strcmp(key, ENA_DEVARG_ENABLE_FRAG_BYPASS) == 0)
-+		adapter->enable_frag_bypass = bool_value;
-+
- 	return 0;
- }
- 
-@@ -3773,6 +3813,7 @@ static int ena_parse_devargs(struct ena_adapter *adapter, struct rte_devargs *de
- 		ENA_DEVARG_LLQ_POLICY,
- 		ENA_DEVARG_MISS_TXC_TO,
- 		ENA_DEVARG_CONTROL_PATH_POLL_INTERVAL,
-+		ENA_DEVARG_ENABLE_FRAG_BYPASS,
- 		NULL,
- 	};
- 	struct rte_kvargs *kvlist;
-@@ -3799,6 +3840,10 @@ static int ena_parse_devargs(struct ena_adapter *adapter, struct rte_devargs *de
- 		ena_process_uint_devarg, adapter);
- 	if (rc != 0)
- 		goto exit;
-+	rc = rte_kvargs_process(kvlist, ENA_DEVARG_ENABLE_FRAG_BYPASS,
-+		ena_process_bool_devarg, adapter);
-+	if (rc != 0)
-+		goto exit;
- 
- exit:
- 	rte_kvargs_free(kvlist);
-@@ -4020,7 +4065,8 @@ RTE_PMD_REGISTER_KMOD_DEP(net_ena, "* igb_uio | uio_pci_generic | vfio-pci");
- RTE_PMD_REGISTER_PARAM_STRING(net_ena,
- 	ENA_DEVARG_LLQ_POLICY "=<0|1|2|3> "
- 	ENA_DEVARG_MISS_TXC_TO "=<uint>"
--	ENA_DEVARG_CONTROL_PATH_POLL_INTERVAL "=<0-1000>");
-+	ENA_DEVARG_CONTROL_PATH_POLL_INTERVAL "=<0-1000>")
-+	ENA_DEVARG_ENABLE_FRAG_BYPASS "=<0|1> ");
- RTE_LOG_REGISTER_SUFFIX(ena_logtype_init, init, NOTICE);
- RTE_LOG_REGISTER_SUFFIX(ena_logtype_driver, driver, NOTICE);
- #ifdef RTE_ETHDEV_DEBUG_RX
-diff --git a/drivers/net/ena/ena_ethdev.h b/drivers/net/ena/ena_ethdev.h
-index 335028ad19..e3cb4919c5 100644
---- a/drivers/net/ena/ena_ethdev.h
-+++ b/drivers/net/ena/ena_ethdev.h
-@@ -348,6 +348,7 @@ struct ena_adapter {
- 	/* Time (in microseconds) of the control path queues monitoring interval */
- 	uint64_t control_path_poll_interval;
- 
-+	bool enable_frag_bypass;
- 	/*
- 	 * Helper variables for holding the information about the supported
- 	 * metrics.
--- 
-2.17.1
+> 2.48.1
 
