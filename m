@@ -2,136 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3CCEC7EE39
-	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 10:02:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57ED1C8302E
+	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 10:08:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E3292402A0;
-	Mon, 30 Jun 2025 12:02:35 +0200 (CEST)
-Received: from OSPPR02CU001.outbound.protection.outlook.com
- (mail-norwayeastazon11013054.outbound.protection.outlook.com [40.107.159.54])
- by mails.dpdk.org (Postfix) with ESMTP id 39E6F40264
- for <dev@dpdk.org>; Mon, 30 Jun 2025 12:02:34 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yEV2tjsO+NZmlSipvb+RaycHhAz6RUsiZBdMYfRbyooXvDinPRwbP5TL/NIhxmK4Z7PgESt/g9qvJwWkJzYS4lBI/ErnptGD4imiB6ofUCIX0Xd2g8dJfMH6kIp26zJb9hI7Qa/8PnYhVuLYukTdQlHEtXV2e+iw57GFBU8Xme+G6f0ShfacXNNb9CI0ymHu0q1deibWM7d1iFjQ5sggbgWpS2SR0hZy9dqtRxhrFryFTFm8ScjSbG/u8M3xMDh3moIdDG/wCsn0qesnpSDkcnWN0ML6BNpmHgeKu62pqssuri2uCfu88nT+ozdhj1jJAITjV8pczFeU2s+p/J/eiw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=m0h52N7h8x4neoEScoZg9bpLJTXwecKPiwSsbMMjIFw=;
- b=lqjtQSF6xzU0Mw2CDmia6xTDIduog+UP7WWj+SnkzeI43AxS4DiCtECAJxx5UCfD8sM2Qrogx180WZBEZyb5sf8XMMxIMCuzm6hg2l7PDarLE3SGoh+HeHb3YV0085WwyLMA5yk4z71u49i2xpz3eZCN6FPndBZz3/1gwNbmJRLWJS+ZSNt2iy3J3Xw7AKQGB6VtEWRpbjRWeVsR9vThq3iEka9nPvpSZp3eBF7NllCO4h1mRZcb8QKqNG6+OcouG0JqT4o0y5f4JTle85o9LznyK5JFmenQt5psriNAS6rbKZhxApMLVSvenAPky7891h8w4HYpvJDamZG4AFIonQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m0h52N7h8x4neoEScoZg9bpLJTXwecKPiwSsbMMjIFw=;
- b=TxPklzRAkHWOc8oZZcCM64rR88Yqe/mZ0EhcFidmiDMHalCa/oMa7/Hdtl87rz44NLWvEKsTdWH+EL7YnCpu8tOWHwjVWeIsDGqnfOrOqVdy+N8I80/0Y9WpdGxm61xmBj015XfUME4lgiHL2EZXflmCijeLkkRyzIsPSOgm8vgHEhUwtPaIZRARY3mYO4Fy0OUPXAmkHnFnrgdAfw9s17yZH7qG+cRRziJUZwb/7zfGu7Hb7QYh7po/+wCBGqZFsw/qoDe2Y2GVlnoZ25hClunGOFPOZSvJT7bB/ZV4P7VAcBigkpsp7eZytbTDiEBEyB8ML5+NmEPz8Igt6BY0TA==
-Received: from AS8PR04MB8198.eurprd04.prod.outlook.com (2603:10a6:20b:3b0::14)
- by DBAPR04MB7367.eurprd04.prod.outlook.com (2603:10a6:10:1aa::15)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.29; Mon, 30 Jun
- 2025 10:02:32 +0000
-Received: from AS8PR04MB8198.eurprd04.prod.outlook.com
- ([fe80::2e32:1a4a:7d29:195]) by AS8PR04MB8198.eurprd04.prod.outlook.com
- ([fe80::2e32:1a4a:7d29:195%4]) with mapi id 15.20.8880.029; Mon, 30 Jun 2025
- 10:02:32 +0000
-From: Gagandeep Singh <G.Singh@nxp.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: "dev@dpdk.org" <dev@dpdk.org>, Hemant Agrawal <hemant.agrawal@nxp.com>
-Subject: Re: [PATCH 00/11] NXP DPAA2 driver enhancements and fixes
-Thread-Topic: [PATCH 00/11] NXP DPAA2 driver enhancements and fixes
-Thread-Index: AQHb0TJsOcCMQDmbCUC/k/K7cODMFbQak0CAgAEVhvM=
-Date: Mon, 30 Jun 2025 10:02:32 +0000
-Message-ID: <AS8PR04MB81984927114BE947589A905EE146A@AS8PR04MB8198.eurprd04.prod.outlook.com>
-References: <20250530071344.2939434-1-g.singh@nxp.com>
- <20250629102535.154ea015@hermes.local>
-In-Reply-To: <20250629102535.154ea015@hermes.local>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS8PR04MB8198:EE_|DBAPR04MB7367:EE_
-x-ms-office365-filtering-correlation-id: 9a288e03-42e8-4ac9-2ea8-08ddb7bd3afe
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|19092799006|366016|376014|1800799024|38070700018|7053199007|8096899003;
-x-microsoft-antispam-message-info: =?iso-8859-1?Q?Xz441uxSzW9mHGNbDV/gS1iqTPrauqhtxdmzED5DE8c9JCPKD6XOEetqgD?=
- =?iso-8859-1?Q?g3Qrpobbbs6g1mTmcVIl8R9qZsGeWFMLauG3YPuewgJu4v0yU63gHQKzDF?=
- =?iso-8859-1?Q?oPHmcBtcLcaHpLICHkU19BmcYqxSYFBJMEui9pUCdFuUPtmwVWb5yqX7GD?=
- =?iso-8859-1?Q?dulPATor/QMNwn0osOjiaMC7EYNmgvibhkWXSYy/p3JgA/M4bMLPJFOm15?=
- =?iso-8859-1?Q?LQGh8VWbKpWBTapn2cBjuwbCWgXdBT5ybN1l/CrKplTkNIN8dFVDFSQFJY?=
- =?iso-8859-1?Q?xXGHMKQilr+hsadWOPXst6efrwoPrd9TzgyCmUkaIBHBRLaQtmc5y5qiMR?=
- =?iso-8859-1?Q?2sdNnVMdk2JHdop2I8P4g/gsAllIelJQzt++Y+bySCkHVephTbKKH8er8m?=
- =?iso-8859-1?Q?LqY48OvVy1NTn8avKylcc+rI0IBxTICyl5O10khzBfAJC+KtzIt//CUD9J?=
- =?iso-8859-1?Q?7y8yLe4NpWroLncVvregaDcpD10t7la8Ccl0wkJkusWWUP64pljFtBf1US?=
- =?iso-8859-1?Q?vh6xwuZk/321dF7x/9pA9h1raTdjtY4fmjAMUywv6oZXBizTX8ego7o5yh?=
- =?iso-8859-1?Q?KMa7nkC9jVOwUwpnBR6MXf1lAq3Q2gj5JqGCKawAbrPK7qW5AJteoAc5Zw?=
- =?iso-8859-1?Q?hVhtOBFRAWE+IBBES2CntkwrDC59iAEkXs9c2jsT7cjjlO7Jkg/dz20moR?=
- =?iso-8859-1?Q?93UzVS1fSPuaAUyYTURoz2aeoPaRCSQvlVTB9PwnJ21bCGWj34gaCfhJab?=
- =?iso-8859-1?Q?sepefRuyeadVOCMSSm0tJscNgARo3HyF5eOZPxrHQwFJCbj/u/VT4luR4U?=
- =?iso-8859-1?Q?Ne2uuiUnAqJF/B9LibeXM1HfqBdd3r3038W2mRaG8n9EIVgYPxlMTssC55?=
- =?iso-8859-1?Q?703HW67LQapQqJDon8gQq1dpe9whqzyeZ52GdJKpRvpNwAnjDtFXbsKOcT?=
- =?iso-8859-1?Q?xJwBKaEx6+FCBxg0b7OUa/T3IZQYJwi8Molp0i9606IZYSBVEj0KlfqBYj?=
- =?iso-8859-1?Q?1ChwuVbcUpHTaw07dl927+Iwdsx8CesKQSOJ6Fl9M5sbtq6G3KHTJSR8eY?=
- =?iso-8859-1?Q?SVk+X7OGYV9t2DtX70Bh6AUm/qYkp/Olhr/wXBaxfNq0WpmOJopz9GyNRd?=
- =?iso-8859-1?Q?wYlqCivV5GSgl2+6B8aB/+lOexmLdAAhuwJOL5GVHqB5+pPBZW9OLcsgin?=
- =?iso-8859-1?Q?no1ta6CFDTnoizatJjspmQKbAq5yGIKoLf5S4XZfzw+uSOeve6MJCKSq0M?=
- =?iso-8859-1?Q?2SCv9OYuMo0AroP/7jIWsupJuifYr0lUtFKoudatTSXMsIjHfUJPoskGzH?=
- =?iso-8859-1?Q?tDLG4QrYO13ow02Zug5Nqsyly0mDjtJz3kfJVD1Vq4H7IpiyNzLoj7hjpn?=
- =?iso-8859-1?Q?NcqDGWF0EhoPs2GsNtTmPzAlK21dE48afRUT4BX6bm1OUPOpGy62DJmBrT?=
- =?iso-8859-1?Q?9oJkl6qxjJczsibH1oVCKc6fxJieLbzdm+9GVP9hXxLEg0sM7NgFQQWYKx?=
- =?iso-8859-1?Q?RCQerOixb5cDTJsXU05Q/RCfr4llhIrgqkfr1H5raGNZYCjWop/kR8kxAc?=
- =?iso-8859-1?Q?lvC/Kcc=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:AS8PR04MB8198.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(19092799006)(366016)(376014)(1800799024)(38070700018)(7053199007)(8096899003);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?6lu0KZIFxpBSPvvuhw3Yfe43ESdic5Xa6YHm75k8Vez2z4P7KoWBgsjr3U?=
- =?iso-8859-1?Q?cIIKj2JqIijG7k8JfTP5TA+gsfmLAZPhlgEDlalL7N3jE0cQxwkE8O5M4H?=
- =?iso-8859-1?Q?ZBQ0vKGZv3Qe0eWZ1tgbbf88/iUIJzqyCkxJ8yl1wS6ewiXVILu3Ooxyls?=
- =?iso-8859-1?Q?q2+8fJCCqLV9eQqTX1NetFcSr44uyty8Of7EXiRIWeC+o8kMqVYDwQ9Z3L?=
- =?iso-8859-1?Q?F8BOljYRF9wvmA8VfH1sc82UTp2/CqxmmS32KpeWbgVoWWOTU3S6hLkrg7?=
- =?iso-8859-1?Q?U4CAGmwrXrJzBeeb1JNmv6GIMRTR2xeQAd7P8Ox/yKPwwh+NWRettIBgVC?=
- =?iso-8859-1?Q?YwjGaYT8UYT4ZTKGHHdJPB2Fg6yLRxlm0mAwxbQeJK725i7297CTwttthz?=
- =?iso-8859-1?Q?dVNrBHzB0H1q8Xpk+WgTiM96m51P2tUMJqa+snHanGa8ySB7BGyBio3wuD?=
- =?iso-8859-1?Q?3gDCA5/SCIuOu7dVVimShpr4lqiCos+XQcDMqWfpZEb4VHWftCayuB+YG4?=
- =?iso-8859-1?Q?qpjK2TP5+HPRtpM62VmjBGRPN1r8QPMcn355oj7UDDvW4LwhlyU7JUkiZv?=
- =?iso-8859-1?Q?l2sJhfpDjXfkNwg88J3svQ7B+CFeMNVw6yOK6NEJ0SpObkSGXpV3gTC+ZG?=
- =?iso-8859-1?Q?IrYXn67+xM8tsBxjp/1GTPL/JKv89pg0xslqTNyAMGk2d4XParX5NeIekE?=
- =?iso-8859-1?Q?dwsphxtVBEvQqijKcBgjV9kd4WZdvwF7nOAhyB6wp8YHEBgENfdXQaMtg3?=
- =?iso-8859-1?Q?q/BZzw3nCJDPKXBouepr/QO+FQG49pqg4/ak2UyOJ2TZgjU0Y/l/uMidzt?=
- =?iso-8859-1?Q?rti9svCHKHwXrpmd1jXc3+v0ToK0RIeD5X62/RgyO9T7v71rBZof9JLO8E?=
- =?iso-8859-1?Q?h73+U2Agisxqwk18+2PQL8nBVBZ2c0lmyv0mHe92bNU/SwL6fPYvsMG++O?=
- =?iso-8859-1?Q?P01ma5dUhrm+RjFUDmO78Ab8IMg6kpCaQ+mxf7wImkqKF1i0oXuNrKB+iL?=
- =?iso-8859-1?Q?YKfT6MskiKPD5w5Fs3SakwESquk75kdPm/LsnRlgigoc4WGphgftPlY0jg?=
- =?iso-8859-1?Q?x+lXkxRV1fgWE3sr+xV7PtJ4Fi2riWHc1/QLsTmfK+103XIkF6ZCEbE9mx?=
- =?iso-8859-1?Q?BCo6CB9KM0JOocd59fw7z0gGQ6apRKJFAqiAkswkEMMlUMvBq3XHMjQpRM?=
- =?iso-8859-1?Q?Y62NF7qsoUUZCTdk4SEV9YYZR75njZSsSn7oFGW1PmuZkWXJj6IYWCDZOe?=
- =?iso-8859-1?Q?5uleWmSmb3MiuHfB1Dr0g/bh/pWtoe5AtGrfKLSGjLogcOsG1rVKiW2Zi9?=
- =?iso-8859-1?Q?dFZVJkT8ENmh/oI3VgZ/QLPt1cpKj548cyIg/758drfX+4HPhnttl/5LQx?=
- =?iso-8859-1?Q?VmpmvsRwukNJpgXRzqKW4WwwX0ds31PvqrJMCGOfubBHmpkbNNRL4Wacr9?=
- =?iso-8859-1?Q?sdM2bOUj3hETDBfD6cmTclXH23OfiRNCLekM59mjaImstIw5CsuZGbn3Zu?=
- =?iso-8859-1?Q?UjiavphGrkxUznGxsXaQSZk4/mDmeuZugyMuBGaT/hERTs0sz4f9ata/u7?=
- =?iso-8859-1?Q?GAawTg6lgRFogIVavBTU4D4XN8WoYXwkjNJwC/2YOw03hSMY7kbAFpfIkc?=
- =?iso-8859-1?Q?Lyk0UEsgpBRiE=3D?=
-Content-Type: multipart/alternative;
- boundary="_000_AS8PR04MB81984927114BE947589A905EE146AAS8PR04MB8198eurp_"
+	by mails.dpdk.org (Postfix) with ESMTP id 9EC7540264;
+	Mon, 30 Jun 2025 12:08:06 +0200 (CEST)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com
+ [209.85.208.177])
+ by mails.dpdk.org (Postfix) with ESMTP id DA3694025D
+ for <dev@dpdk.org>; Mon, 30 Jun 2025 12:08:04 +0200 (CEST)
+Received: by mail-lj1-f177.google.com with SMTP id
+ 38308e7fff4ca-32aabfd3813so19685921fa.3
+ for <dev@dpdk.org>; Mon, 30 Jun 2025 03:08:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=linaro.org; s=google; t=1751278084; x=1751882884; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=jzraLlc0V1WL9wMw8+jej4JIvJsUOVlHeAZkx8c6+iQ=;
+ b=PvkHWmpSFnlucmxbCRJNXaDDXPlmisQCrYX5OppgRtVih28SR1w/GbgpyFumkvWHVf
+ 8m+GSRQFNRcGMmVUQGngWVJvZv3SJSIsZ6asqnH2HhkSVrBhhU1XgqvSg4KGdrrcZJNa
+ XvLdYFM3AJ2yKB25u6tdG7l4P6vFrPU9nkfkb3VBGU6EyRbWmVXxUxG3S4etkpNZyj9f
+ ZRevvtMwjTSikgJlwQADq2LrMoLXwHShT3baVFiGFrfPHiS9aNgFR5mzZV5au+LDuE6C
+ Q2isbHgcFpB0QoHrO6HlTggi/A5tkl1D8gcyFoNhlNHdfFaVpNJdEMgP8q0CLYX4yDUi
+ RiEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1751278084; x=1751882884;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=jzraLlc0V1WL9wMw8+jej4JIvJsUOVlHeAZkx8c6+iQ=;
+ b=aq69muyG65eFXxRlw5KjLXnUWQD/Wp8RG+CwV2MBUK58Li9C5NqCkWLC4r+ZXyxaCS
+ FeqJFZfMYEiEh9chFTqby9khN5VMJiRYShoKsNTlrcZQ0oMX/39cXSvViwI8Vhd3bLRR
+ Svwog9DBsNWQ3LFAp/dlC3eUO3x7wcT5XDCXf2sDkKExvd2i4qS6ncBBOyY4aRQURmNk
+ xbmLtPF9xzpLmcrGkCYKVyAeNB+XTv4F4TyDK81jiI9hcZWHsWb/xzg1kAUG2bhz7SHf
+ f7ImGFxPb6Gmjwnx7k6sNiLWUbHbDuEeBDBoJfk3OaT/Tdkxp3jRaTQ0g4dG1XR/Ruir
+ rEBg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVn96ZVjzq0jntjlhiNpc65A19wafshFPxfUbaiFv02/bVbqlJWRf76mQXY1VjfoSkrm/Y=@dpdk.org
+X-Gm-Message-State: AOJu0YyAc8fN5t203ZeDRy8/Lxza4nWKQeXp3V7tJQuf+/075RkvzorS
+ 0Ebf9kd65ai1e43hEkksbTMOvznkKh29mk7XyJZsOpjUonMmhm4vgTXUGcFcqTNIJ9MBN/+C+1u
+ HArnTvXV+x2KUm01MZFl67d5C+44FldOTNH5QEd6k7Q==
+X-Gm-Gg: ASbGnctgbMxlK0fyaJQdnvaX2KRYenJt1IgkN045T3sp7nuuARxtIAu67A9Bs1VudkQ
+ /B/I5ELXWABs5P7npkMTy3IwFxwm0tHgTgOd1FhItWPUKdAAIxLe/sq9B3sh4hDz+E+g8emgdG8
+ coLnM96Zd/yfCuaLuOaL3QJMh59A335YQVuQdFTLt5cw4enO7+
+X-Google-Smtp-Source: AGHT+IFCN2/H7E3Iqq8LBm1matvAIaM2Nfn/43b8E+n1ljt1IVOuDIjH8r2Q77aRkNgnhC2/uxbq9uoNiZ0+pw4UFZE=
+X-Received: by 2002:a05:651c:20db:10b0:32b:73a8:9f75 with SMTP id
+ 38308e7fff4ca-32cdc4516demr23140661fa.9.1751278084060; Mon, 30 Jun 2025
+ 03:08:04 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8198.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9a288e03-42e8-4ac9-2ea8-08ddb7bd3afe
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jun 2025 10:02:32.2488 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: m+BfdScMvCXzeG/LKqa8WZXgjebwRzKvzx7SLQvsq0kHHs2o3QT3a97u8kyMPwpM
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7367
+References: <20250620033515.86501-1-zhangfei.gao@linaro.org>
+ <CO6PR18MB4484B2A6744F73A9196EB034D87BA@CO6PR18MB4484.namprd18.prod.outlook.com>
+ <CABQgh9Gg_dxLYg4FJi_J90NJw1F3ky3JwpnHMq-hhNdNfhPR7g@mail.gmail.com>
+ <CABQgh9HRAq8ZFfacB3XZoA5QdyfOV-2NUW0Y=rpyxHuivktQEg@mail.gmail.com>
+ <CO6PR18MB44841A3176C958FCD75E3AB3D846A@CO6PR18MB4484.namprd18.prod.outlook.com>
+In-Reply-To: <CO6PR18MB44841A3176C958FCD75E3AB3D846A@CO6PR18MB4484.namprd18.prod.outlook.com>
+From: Zhangfei Gao <zhangfei.gao@linaro.org>
+Date: Mon, 30 Jun 2025 18:07:52 +0800
+X-Gm-Features: Ac12FXye0r6Ft4K3ZPc1taQ124URw8zPQLudaKgGP99twRTOjDjuEs87218ZXx4
+Message-ID: <CABQgh9HRhMK02y8eCNMhmWYq0MqUbZxNgp=bCHzUmwYU8jUjZQ@mail.gmail.com>
+Subject: Re: [EXTERNAL] [PATCH v3 0/2] uadk: realize async mode
+To: Akhil Goyal <gakhil@marvell.com>
+Cc: Fan Zhang <fanzhang.oss@gmail.com>, Ashish Gupta <ashishg@marvell.com>, 
+ "dev@dpdk.org" <dev@dpdk.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -145,133 +80,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_AS8PR04MB81984927114BE947589A905EE146AAS8PR04MB8198eurp_
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Hi, Akhil
 
-Hi,
-
-Thank you for your feedback. I have revised the series, accordingly, removi=
-ng several feature-related changes and retaining only the essential changes=
- and fixes. Our intention in submitting the full series early in the month =
-was to facilitate timely review and potential inclusion in this release. Pl=
-ease let me know if any further modifications are required.
-
-Regards,
-Gagan
-
-________________________________
-From: Stephen Hemminger <stephen@networkplumber.org>
-Sent: Sunday, June 29, 2025 10:55 PM
-To: Gagandeep Singh <G.Singh@nxp.com>
-Cc: dev@dpdk.org <dev@dpdk.org>; Hemant Agrawal <hemant.agrawal@nxp.com>
-Subject: Re: [PATCH 00/11] NXP DPAA2 driver enhancements and fixes
-
-On Fri, 30 May 2025 12:43:33 +0530
-Gagandeep Singh <g.singh@nxp.com> wrote:
-
-> This patch series introduces enhancements and fixes to the
-> NXP DPAA2 Ethernet driver.
-> It includes support for
->  - software taildrop on ordered queues.
->  - setup speed capabilities.
->  - DPAA2 resource version.
->  - MAC level statistics.
->  - improve PA-VA conversion.
->  - add buffer pool depletion state configuration.
->  - fixes for shaper rate and buffer prepration.
+On Mon, 30 Jun 2025 at 17:04, Akhil Goyal <gakhil@marvell.com> wrote:
 >
+> > > > make[2]: Entering directory '/home/gakhil/up/uadk'
+> > > > depbase=3D`echo wd_alg.lo | sed 's|[^/]*$|.deps/&|;s|\.lo$||'`;\
+> > > > /bin/bash ./libtool  --tag=3DCC   --mode=3Dcompile gcc -DHAVE_CONFI=
+G_H -I.    -
+> > Wall -Werror -fno-strict-aliasing -I./include -fPIC -fPIE -pie -fstack-=
+protector-
+> > strong -D_FORTIFY_SOURCE=3D2 -O2 -ftrapv -Wl,-z,relro,-z,now -Wl,-s  -
+> > DUADK_VERSION_NUMBER=3D"\"UADK version: 2.9.0\"" -
+> > DUADK_RELEASED_TIME=3D"\"Released June 6, 2025\""  -g -O2 -MT wd_alg.lo=
+ -
+> > MD -MP -MF $depbase.Tpo -c -o wd_alg.lo wd_alg.c &&\
+> > > > mv -f $depbase.Tpo $depbase.Plo
+> > > > libtool: compile:  gcc -DHAVE_CONFIG_H -I. -Wall -Werror -fno-stric=
+t-aliasing
+> > -I./include -fPIC -fstack-protector-strong -D_FORTIFY_SOURCE=3D2 -O2 -f=
+trapv -
+> > Wl,-z,relro,-z,now -Wl,-s "-DUADK_VERSION_NUMBER=3D\"UADK version: 2.9.=
+0\""
+> > "-DUADK_RELEASED_TIME=3D\"Released June 6, 2025\"" -g -O2 -MT wd_alg.lo=
+ -
+> > MD -MP -MF .deps/wd_alg.Tpo -c wd_alg.c  -fPIC -DPIC -o .libs/wd_alg.o
+> > > > wd_alg.c: In function =E2=80=98wd_check_ce_support=E2=80=99:
+> > > > wd_alg.c:106:44: error: =E2=80=98HWCAP_CE_SM3=E2=80=99 undeclared (=
+first use in this
+> > function)
+> > > >   106 |  if (!strcmp("sm3", alg_name) && (hwcaps & HWCAP_CE_SM3))
+> > > >       |                                            ^~~~~~~~~~~~
+> > > > wd_alg.c:106:44: note: each undeclared identifier is reported only =
+once for
+> > each function it appears in
+> > > > wd_alg.c:115:46: error: =E2=80=98HWCAP_CE_SM4=E2=80=99 undeclared (=
+first use in this
+> > function)
+> > > >   115 |  if (!strcmp("(sm4)", alg_tail) && (hwcaps & HWCAP_CE_SM4))
+> > > >       |                                              ^~~~~~~~~~~~
+> > > > wd_alg.c: In function =E2=80=98wd_check_sve_support=E2=80=99:
+> > > > wd_alg.c:128:15: error: =E2=80=98HWCAP_SVE=E2=80=99 undeclared (fir=
+st use in this function)
+> > > >   128 |  if (hwcaps & HWCAP_SVE)
+> > > >       |               ^~~~~~~~~
+> > > > make[2]: *** [Makefile:1055: wd_alg.lo] Error 1
+> >
+> > This is solved by https://github.com/Linaro/uadk/pull/679
+> > Will be merged next week.
+>
+> So are you going to update this patchset with newer version of uadk?
 
+How bout just adding bug fix patches on master branch.
+or have to ensure the dependent uadk release version build no problem
+on both x86 and Arm?
 
-At this late stage in 25.07 release, please don't mix fixes with
-new stuff. Also new features should be in release note.
+It's our mistake that we ignored x86 platform.
 
-Please resend with fixes only for 25.07
-
---_000_AS8PR04MB81984927114BE947589A905EE146AAS8PR04MB8198eurp_
-Content-Type: text/html; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
-1">
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
-</head>
-<body dir=3D"ltr">
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-Hi,</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-Thank you for your feedback. I have revised the series, accordingly, removi=
-ng several feature-related changes and retaining only the essential changes=
- and fixes. Our intention in submitting the full series early in the month =
-was to facilitate timely review
- and potential inclusion in this release. Please let me know if any further=
- modifications are required.</div>
-<div id=3D"appendonsend"></div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-Regards,</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-Gagan</div>
-<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
-: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<hr style=3D"display: inline-block; width: 98%;">
-<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
-: 12pt; color: rgb(0, 0, 0);">
-<b>From:</b>&nbsp;Stephen Hemminger &lt;stephen@networkplumber.org&gt;<br>
-<b>Sent:</b>&nbsp;Sunday, June 29, 2025 10:55 PM<br>
-<b>To:</b>&nbsp;Gagandeep Singh &lt;G.Singh@nxp.com&gt;<br>
-<b>Cc:</b>&nbsp;dev@dpdk.org &lt;dev@dpdk.org&gt;; Hemant Agrawal &lt;heman=
-t.agrawal@nxp.com&gt;<br>
-<b>Subject:</b>&nbsp;Re: [PATCH 00/11] NXP DPAA2 driver enhancements and fi=
-xes </div>
-<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
-: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-size: 11pt;">On Fri, 30 May 2025 12:43:33 +0530<br>
-Gagandeep Singh &lt;g.singh@nxp.com&gt; wrote:<br>
-<br>
-&gt; This patch series introduces enhancements and fixes to the<br>
-&gt; NXP DPAA2 Ethernet driver.<br>
-&gt; It includes support for<br>
-&gt;&nbsp; - software taildrop on ordered queues.<br>
-&gt;&nbsp; - setup speed capabilities.<br>
-&gt;&nbsp; - DPAA2 resource version.<br>
-&gt;&nbsp; - MAC level statistics.<br>
-&gt;&nbsp; - improve PA-VA conversion.<br>
-&gt;&nbsp; - add buffer pool depletion state configuration.<br>
-&gt;&nbsp; - fixes for shaper rate and buffer prepration.<br>
-&gt;<br>
-<br>
-<br>
-At this late stage in 25.07 release, please don't mix fixes with<br>
-new stuff. Also new features should be in release note.<br>
-<br>
-Please resend with fixes only for 25.07<br>
-</div>
-</body>
-</html>
-
---_000_AS8PR04MB81984927114BE947589A905EE146AAS8PR04MB8198eurp_--
+Thanks
