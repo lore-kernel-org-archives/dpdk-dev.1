@@ -2,68 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79937C83029
-	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 18:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36318C83029
+	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 18:44:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 77BE6402B1;
-	Mon, 30 Jun 2025 20:43:52 +0200 (CEST)
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com
- [209.85.222.169])
- by mails.dpdk.org (Postfix) with ESMTP id EDDCF4025D
- for <dev@dpdk.org>; Mon, 30 Jun 2025 20:43:50 +0200 (CEST)
-Received: by mail-qk1-f169.google.com with SMTP id
- af79cd13be357-7d40874b399so216964885a.2
- for <dev@dpdk.org>; Mon, 30 Jun 2025 11:43:50 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 8A698402B1;
+	Mon, 30 Jun 2025 20:44:48 +0200 (CEST)
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com
+ [209.85.219.43]) by mails.dpdk.org (Postfix) with ESMTP id E6C664025D
+ for <dev@dpdk.org>; Mon, 30 Jun 2025 20:44:47 +0200 (CEST)
+Received: by mail-qv1-f43.google.com with SMTP id
+ 6a1803df08f44-6fafd3cc8f9so40796566d6.3
+ for <dev@dpdk.org>; Mon, 30 Jun 2025 11:44:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751309030;
- x=1751913830; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751309087;
+ x=1751913887; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=HriyCuJJNqXF3cEmS4QRwuDWMdblUnFporJSX035IoM=;
- b=LLyMgBSKZF1Je8Nix9oqflb21lz3L+BJJLlQpFHqOGOkOiuc3INS85oCT2wD43QBxE
- DoYDskeuoshxWY7OxFG5WsuqVe9qSmrPNFGfzi6SAWN+Gr4oZlps7kbi5gT4TLSnDWI2
- lyWheDmkRyG+e1OEfhpKB6ZNROnErGzmZrwlCrJYZYFcde6Umw1DoZjODWkKscn09uWT
- Gta5TaFEu5l0Q9SW2R18fyg60iJYgysNKpQ7kNrZXfsfqcdtoxU2vqfcXfa1Vc+IEZpt
- YUW6HxtFZnh93hz2EEi/JraTT+gchXd5xFfJJfLL1+IHypooFE9XaWMUUsvymPRnNdRa
- ayzQ==
+ bh=gO35q+cUAtzA1GxB6M/GflckkpWeN3AKKNE2CQ/sORk=;
+ b=jcdM246xxixoitsIs0baKln2SsP06xRRaughm/pnfG1sn2RiZBwikPXUHN4RrwLQUX
+ CRTJZM5ndym3JI26011tQFJnxlR+lZcodaHfQ6pZA5cDD8HVQIRb+58CuCij9zwffamg
+ vTwtXzDXzx5YI/tZdvAfQ8Xtkz5V49wkjGwHEgpFgmoJtu0lscHK2gGwE4nYH8CRQkDZ
+ v9iiyR0F4DWS5VwSoIFL5oczPE44Jbh5xU7G3+Zp6ST/5+Z6vMOFys81Y6lNNv/1cj7Q
+ /T/bC6qp+Leet2gFMMj7AUOZCZEvptTU41nkzJw3JkQe+vUV6I4o0LqiiDaI6o0Qx1Yz
+ j+Ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1751309030; x=1751913830;
+ d=1e100.net; s=20230601; t=1751309087; x=1751913887;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=HriyCuJJNqXF3cEmS4QRwuDWMdblUnFporJSX035IoM=;
- b=P2eTMWZoUGLdaZA2vmf0kwEUKKCAsmxfx+sHDm29SK8o32tF6C13mCLUZQ2lGqSjDz
- WKlTr07s7FhNAbW476Ve57wvgE1RzF9Vr+9QsF8ZEojStrlN0AVJkGOdmZ4b/r5e44Ye
- xHaAs2f9g6vCmTIq41LocnT6VEa0fIy3eQlpZFtap/FRXq9s+hcgiM6HO+xKb3uwUHhB
- 61QEqfLTM0qyKz6CPPTC0CHGcsg+X0RdwE69UPJWp0t4fQkGm9YCfXRHJXu1DUE6RDOC
- vYPnp2U+S+6+tfxdtzFATLvHL2ZIam3GyjrWPkSCD7B1uDAYpsyuJPdrrT/ODo9AgrNB
- vKLA==
-X-Gm-Message-State: AOJu0YzRqL+2OBXUlagBGr8mCpEc+o/QKNv4S6c23RBXglO97ZR7iHNw
- /qWqguCSliGNOZAWZ34g0HDfYNESCRWkzvR31Jf7lglhF7DahLO2I9j9F0zBC1QdP14=
-X-Gm-Gg: ASbGncuJa0L2lMm+e0grRfFrlWuKXo2u4VO/c4vNHKvDRCsxvGAZkWs3TT72Y96C+he
- ZhWeseq4Qm5ECHurv4Q1daz0bi8B4C5y8+L8DsGQ0J36ty+g1dFYasb4rI3s3TYLGaWy7J7ejxo
- /djwRz9LynNN6/0kDWH66t+FWk/eDgZn17hvlhKdsHEdQafETbDlMg0MfxV/CA0erPK83U/c979
- QvlMck8aTaDYc22re+Um7CBXuspvwqFC0tRVqsZo2TVoJD2j1GHXnTkq1Xne0qcz0jB7a9Rd9P7
- QK4kaKExgkTQTLbRvTrenkJ4KfvDFJxUPg1qqpD6p2jU88sWJgFyObBgYUuO799JvCXqGTBpoUw
- U9+tvAUG+rYGNgUXXFM834yeb5bHbIgnQUYSgb8c=
-X-Google-Smtp-Source: AGHT+IFyPAIp1ZQTADax87PQjLNdWvWYjPx5A0aZ8EGJ/o7qWmXv6ZrcrrNbv/O0l/7ucmED7OP+1Q==
-X-Received: by 2002:a05:620a:1917:b0:7d4:4b09:e327 with SMTP id
- af79cd13be357-7d44b09e4c2mr1577572985a.55.1751309029973; 
- Mon, 30 Jun 2025 11:43:49 -0700 (PDT)
+ bh=gO35q+cUAtzA1GxB6M/GflckkpWeN3AKKNE2CQ/sORk=;
+ b=Rtg5QGQ/lwOq/37rmpy3VtGlJHPpVJBVEE4SDOVZx3KpNQNSAQhlrAT8ddGOGnId/9
+ kZLvdV21tZ6J4T/c28Lk7vgKFqGs2wEt1EkbuSMqdU2KPa6BPui6UFzc5xcBWgaM32hZ
+ Ii3dhj2FxIPmIQjtcpY8vvixgao4eYUL8LfnfrpFhjkegJDWD+02zT2HZyv3H32UgC5j
+ ErDErVP2ifYFoEBciuAOC194G0uTPrphvNfvp38btdo0ueZOn3JmWkNYOoBsD5axrIev
+ 89llnsyRHlnQyTtTPpX1OmNTCuB/K1dDMLIYbcfA2qaJrQH+5g4sYmUh7pxvuhsC0XrD
+ 2gRA==
+X-Gm-Message-State: AOJu0YxWzoromwR6MQFzQixqaeAJgQDxMs/mIvVtsG8E/Rnn2yjtHUpD
+ tLk7A4ljqjRUrEip6taE5uIa1lZ1onLeWtvDt1NhOfGQ9ZJS6OZKqwfXcUMUg4CuG9pr9cFQJUs
+ RuGX8
+X-Gm-Gg: ASbGnctDjphAmz9B9XGVy1X/BDNyuHjZ43hDTSwtycYoksH0Db+MZKAbm6rn5toZ4d2
+ Q90/3BoTDp3qD03GFdlMW6HarA1WGMkQWHeIq7ajg7UThsSY5k2QW7RghzJ0P/vPmYunU8EwJH/
+ EqtKKlEBzIhmy2XH5uvlVfs9JJf16rDmAjBiTye7Y+JSLv2elo80ozK05Eg7xxEzeaNChGUeh0L
+ SZHwsPenhrzAykZgMwM8e4ethODfliiB5/j2p2pfjmumWqdNrP5O2lnLgAAuZVOhKqlod4OPm5v
+ 4rtsAt9ciifjgu1bsrxAZuBn1e6kBwR1QDnGgh/ClVs62kqZIS70eOnJRG/4Hxsk44qoXD9phdz
+ KjaAK8pfu55TXPE0/KR92td1sPJNJqPFgRy7tDhk=
+X-Google-Smtp-Source: AGHT+IHbbsVN1XkK2baZBWzehrGh1BJfWiNEN9D0hrlwPV/SttHu5H6B2fKo1xAoNY4tlFDcZLno7Q==
+X-Received: by 2002:a05:6214:300c:b0:6fd:ace:4cfb with SMTP id
+ 6a1803df08f44-7000214f5fcmr299193916d6.27.1751309087256; 
+ Mon, 30 Jun 2025 11:44:47 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7d44e13d800sm453032285a.71.2025.06.30.11.43.49
+ 6a1803df08f44-6fd771dd8afsm71540656d6.54.2025.06.30.11.44.46
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 30 Jun 2025 11:43:49 -0700 (PDT)
-Date: Mon, 30 Jun 2025 11:43:47 -0700
+ Mon, 30 Jun 2025 11:44:47 -0700 (PDT)
+Date: Mon, 30 Jun 2025 11:44:44 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Shai Brandes <shaibran@amazon.com>
-Cc: <dev@dpdk.org>
-Subject: Re: [PATCH 0/7] net/ena: release 2.13.0
-Message-ID: <20250630114347.35fe0bef@hermes.local>
-In-Reply-To: <20250630111358.3476-1-shaibran@amazon.com>
-References: <20250630111358.3476-1-shaibran@amazon.com>
+To: Shivaji Kant <shivajikant@google.com>
+Cc: dev@dpdk.org, Joshua Washington <joshwash@google.com>, Thomas Monjalon
+ <thomas@monjalon.net>, Ciara Loftus <ciara.loftus@intel.com>, Maryam Tahhan
+ <mtahhan@redhat.com>
+Subject: Re: [PATCH v2] net/af_xdp: add rx/tx queue support for af_xdp
+Message-ID: <20250630114444.54a9838a@hermes.local>
+In-Reply-To: <20250630085052.585867-1-shivajikant@google.com>
+References: <20250618174103.1345466-1-shivajikant@google.com>
+ <20250630085052.585867-1-shivajikant@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -80,56 +83,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 30 Jun 2025 14:13:51 +0300
-Shai Brandes <shaibran@amazon.com> wrote:
+On Mon, 30 Jun 2025 08:50:52 +0000
+Shivaji Kant <shivajikant@google.com> wrote:
 
-> This patchset includes an upgrade of the ENA HAL,
-> introduces a new feature, and addresses three bug fixes.
+> Drivers like GVE work with rx/tx queue configuration
+> rather than combined queue. Enable AF_XDP vdev to use
+> rx/tx queue configuration instead of combined queue
+> configuration if available.
 > 
-> Thank you in advance to the net maintainers and community members
-> for your time and effort reviewing the code.
-> 
-> Best regards,
-> Shai Brandes
-> AWS Elastic Network Adapter team
+> Signed-off-by: Shivaji Kant <shivajikant@google.com>
+> Reviewed-by: Joshua Washington <joshwash@google.com>
 > 
 > ---
-> v2:
-> Removed patch "net/ena: fix virtual address calc for unaligned BARs"
-> which contained a problematic casting when compiling with 32-bit system
-> 
-> v3:
-> no change, there was some technical issue when sending the emails
-> where part of the patches apeared on different series.
-> 
-> v4:
-> Each patch in the series should compile independently.  
-> Patch 4/7 causes a compile error that was missed,  
-> as the full series passed our directed tests when applied together
-> 
-> v5:
-> Reworked the patchset so it applies cleanly on origin/main
-> due to release notes mismatch.
-> 
-> Shai Brandes (7):
->   net/ena/base: avoid recalculating desc per entry
->   net/ena/base: coding style changes
->   net/ena: separate doorbell logic for Rx and Tx
->   net/ena: support fragment bypass mode
->   net/ena: fix unhandled interrupt config failure
->   net/ena: fix aenq timeout with low poll interval
->   net/ena: upgrade driver version to 2.13.0
-> 
->  doc/guides/nics/ena.rst                       | 13 ++-
->  doc/guides/rel_notes/release_25_07.rst        |  9 ++
->  drivers/net/ena/base/ena_com.c                | 40 +++++++-
->  drivers/net/ena/base/ena_com.h                |  7 ++
->  .../net/ena/base/ena_defs/ena_admin_defs.h    | 14 +++
->  drivers/net/ena/base/ena_eth_com.c            |  6 +-
->  drivers/net/ena/base/ena_eth_com.h            | 15 ++-
->  drivers/net/ena/ena_ethdev.c                  | 98 +++++++++++++++----
->  drivers/net/ena/ena_ethdev.h                  |  4 +-
->  9 files changed, 175 insertions(+), 31 deletions(-)
-> 
+> Changes in v2:
+> - Rephrased the first sentence of the commit message for clarity.
+> - Corrected spelling error "dirvers" to "drivers" in code comment.
+> ---
+>  .mailmap                            |  1 +
+>  drivers/net/af_xdp/rte_eth_af_xdp.c | 30 ++++++++++++++++++-----------
+>  2 files changed, 20 insertions(+), 11 deletions(-)
 
-Ok in next-net branch now
+Applied to next-net
