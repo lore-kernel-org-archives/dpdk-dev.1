@@ -2,38 +2,181 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD68DC8302D
-	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 13:45:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A19C8302D
+	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 13:50:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DC508402A5;
-	Mon, 30 Jun 2025 15:45:48 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 032DD40291
- for <dev@dpdk.org>; Mon, 30 Jun 2025 15:45:46 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id E1431207A9;
- Mon, 30 Jun 2025 15:45:45 +0200 (CEST)
-Content-class: urn:content-classes:message
-Subject: RE: [PATCH] net/i40e: Fast release optimizations
-MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Date: Mon, 30 Jun 2025 15:45:43 +0200
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FD5F@smartserver.smartshare.dk>
-In-Reply-To: <cda18d9197ed4ee9bd5ed73fd02bd032@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id E3E574065B;
+	Mon, 30 Jun 2025 15:50:27 +0200 (CEST)
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com
+ [205.220.180.131])
+ by mails.dpdk.org (Postfix) with ESMTP id B7E7740291
+ for <dev@dpdk.org>; Mon, 30 Jun 2025 15:50:26 +0200 (CEST)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+ by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55U8DNFG024769;
+ Mon, 30 Jun 2025 13:50:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+ cc:content-type:date:from:in-reply-to:message-id:mime-version
+ :references:subject:to; s=qcppdkim1; bh=ACUULNobDMDKex1oU8/1j3Qe
+ 60BPuxgT3jc68OY+gcg=; b=BDnygOeygm79svB/C5ZkohQAJYx/KRVRbjTtXhpG
+ 02ZDOa5cuAKwwzAD8IrXPqC1HIA/5uVJKwgAqQyilwwiMf14QjCLU/LRNS/Mt6EC
+ P9qxhA4bCaIEE+19H9zXYzQ2eiNLyPXBIaETWxlVR5Kv0OE9KCFFV2CiVYY7Zmjp
+ VfclVlc8VUc7cfPW/+e8QzYBKnltqfu4zVWYAYGzajLq06DbQb0JUyGgCcbycSw+
+ enymw55R+CflkUTLCAK7M1PHRXUnliKEgkX67365SawiPCOa9t1ONHhjzNhx/pPI
+ lMloQLlBOtTpf5rNzYIJhMuZ/uxDtaeL6LdM+NGSWm31Dw==
+Received: from nam10-bn7-obe.outbound.protection.outlook.com
+ (mail-bn7nam10lp2045.outbound.protection.outlook.com [104.47.70.45])
+ by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j8s9cxh3-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Mon, 30 Jun 2025 13:50:19 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wM0u7ONZIlSJjmBSU3s2lmaLjqpeBojAWWZh153n+qBWpv/7/yVR3ToLNWRxIASovcMztzjSqTt92G+CbICX02f7xLk7vNRrbujLAKNcadUfK7rZZWbkfy4x+kzvPHGhqkk9nBDkdvYew5U3fN+EYVRwsGZ9D853vwQxHqiQKQG5WFGzGEUt/AGkzGFQazKEBhNVzGtETHVdQ1aObQrwxzRKFguAMqmG/r90Vjb62dya2yMCzUQcL7znqkZZBsyoxESJ40qS/3Vvx7v/MzG/1tEZKXvP/L72rkR1Pc5svWpf5xF4EBqa6NMIxXFzmAYAsH1Rmcyr0Ycf+K3bZzx3ow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ACUULNobDMDKex1oU8/1j3Qe60BPuxgT3jc68OY+gcg=;
+ b=Q3PkiqCNFt7+jkE1vS/lJnSLtcIN19VsY0mXClfuPKxtCyW09JNFutVdhrT9Axs/ibWiV2zWP+T0AIKVASHVS+oQiEW5Gi3Ve/punzC/NEjeXxg4iku3A7kHID1E5qz5/7YrX/+lT6sswHR21bGvAjtUpk12E1Znyvqkya1NcUJKqGo8cGM3NYnUN5W5LKcOpQFBRiKlwKM58wYDk6JU9cuXxb+JAlf0DC9VG9kE65iuK9UJB465eZ2VrbTOyJQOKwx25pFe3QUQKl2aJ3SCvj/riz6zEJz6KqEcYBFSU5c8a9VGwghjMWZRLx8oKo10h1wYGzKXI0Z4p21eFGpvvQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=qti.qualcomm.com; dmarc=pass action=none
+ header.from=qti.qualcomm.com; dkim=pass header.d=qti.qualcomm.com; arc=none
+Received: from IA3PR02MB10771.namprd02.prod.outlook.com
+ (2603:10b6:208:509::11) by DM8PR02MB8103.namprd02.prod.outlook.com
+ (2603:10b6:8:1c::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.16; Mon, 30 Jun
+ 2025 13:50:16 +0000
+Received: from IA3PR02MB10771.namprd02.prod.outlook.com
+ ([fe80::5100:fab6:aac9:83f5]) by IA3PR02MB10771.namprd02.prod.outlook.com
+ ([fe80::5100:fab6:aac9:83f5%3]) with mapi id 15.20.8880.026; Mon, 30 Jun 2025
+ 13:50:16 +0000
+From: Dylan Schneider <schneide@qti.qualcomm.com>
+To: Thomas Monjalon <thomas@monjalon.net>
+CC: "dev@dpdk.org" <dev@dpdk.org>, Reshma Pattan <reshma.pattan@intel.com>,
+ Stephen Hemminger <stephen@networkplumber.org>, Jerin Jacob
+ <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, Nithin
+ Dabilpuram <ndabilpuram@marvell.com>, Zhirun Yan <yanzhirun_163@163.com>
+Subject: Re: [PATCH v2] pcapng: allow any protocol link type for the interface
+ block
+Thread-Topic: [PATCH v2] pcapng: allow any protocol link type for the
+ interface block
+Thread-Index: AQHb2YQ73VfknzRgqUKIslHGkPlGlLQXYbIAgAAB7lSABHUkSQ==
+Date: Mon, 30 Jun 2025 13:50:16 +0000
+Message-ID: <IA3PR02MB107711F11A8681D42D5B911B4E946A@IA3PR02MB10771.namprd02.prod.outlook.com>
+References: <20250529171609.2448832-1-schneide@qti.qualcomm.com>
+ <20250609211937.345620-1-schneide@qti.qualcomm.com>
+ <6923574.A9s0UXYOmP@thomas>
+ <IA3PR02MB10771799502C67457C7CBE257E945A@IA3PR02MB10771.namprd02.prod.outlook.com>
+In-Reply-To: <IA3PR02MB10771799502C67457C7CBE257E945A@IA3PR02MB10771.namprd02.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH] net/i40e: Fast release optimizations
-Thread-Index: AQHb5M8cy6WBmzI3MUC2TH1cjpMU4LQbm/iwgAAfruA=
-References: <20250624061238.89259-1-mb@smartsharesystems.com>
- <cda18d9197ed4ee9bd5ed73fd02bd032@huawei.com>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
- "Bruce Richardson" <bruce.richardson@intel.com>, <dev@dpdk.org>
+msip_labels: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA3PR02MB10771:EE_|DM8PR02MB8103:EE_
+x-ms-office365-filtering-correlation-id: 6ad46187-b6c2-4f79-4129-08ddb7dd0b5e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|376014|366016|1800799024|7053199007|8096899003|38070700018; 
+x-microsoft-antispam-message-info: =?us-ascii?Q?YhU/wSgtSTo7ROJLjjPNtMZO5CbyIm4gCKIgHkooJfj1M9fAIcuT6SOR+nkn?=
+ =?us-ascii?Q?7gkl+pKffkF1X3uu8S9h2c6c/jX/JwD89CCCSJFkBbvnFt3WYC05d/33inny?=
+ =?us-ascii?Q?gg4hexcF9fcuIBCclfdkLW85Gz+70dl13ZHJlf2qRFi4ErS5NeCwW0HF89F5?=
+ =?us-ascii?Q?kItl9crIsXFx3PdKFXpSMeUxgAIsw1dUfmVRuYaLZsEWeC8sIeJXx+5rWtwg?=
+ =?us-ascii?Q?uWjtlpBubjJwICPrhQtn7Dz9kuAeW65uIf9nEOxMa2vMWygLHJ3wR7hMHrXS?=
+ =?us-ascii?Q?XqYIG8p4H5EAYWVJawrwz5RH1IGljsyJlOaHMjmdaAfFghXmeikNotLZlpGj?=
+ =?us-ascii?Q?IRxepsH/ObQDoLK4kh1hX7H5VCsO5LB5hYVbsk55rouMtMUZImavzueONX47?=
+ =?us-ascii?Q?vOkgW1OTUdNRO32E4hR7a9lMlMUnrY+yam6CS41VHXaREA+ePAA9RvVO2qua?=
+ =?us-ascii?Q?lU4jh4mIZ6b217fWbG/jC86R3y3noVQZB79+GxSgnHsQFY2Sguam6J5Gu43+?=
+ =?us-ascii?Q?mw6KAwWxv79Hoh4chvk9n4z/dyAqjIJ2TcC2aksNch2ZlaPYH2bIG0emYfZF?=
+ =?us-ascii?Q?0Iqp+4WiV6BQUrSaNDomWR9cv/PRhk222IpP0FYiIMpK32FQvinOtFaFWxYn?=
+ =?us-ascii?Q?fqszQeLKNEPJGxQUZdD6iRmCEB+TwmMJGxn2nL8hV5cHUGtreAKas/g1AmYY?=
+ =?us-ascii?Q?qsmo+ZakPh/ixk2OrbydoA2E0Wxl96UI0uTzifT0ZVTkvXkvmvIye57qyubF?=
+ =?us-ascii?Q?YzuLF4VsMe4Qi4ftU6of5VOlt44NxxKOXGdPSAN26bWZQ5bTycOzU8dwDJ9t?=
+ =?us-ascii?Q?26ivHfAMkUWZmAR+4gQA1bmr/wiW4SDuaGNVhlZeClrtGrIHWASUc0BYDTPR?=
+ =?us-ascii?Q?UpjRuIaeXXQuQPJTH5ZOrRHa3yatMA/k0WmkLZNBE58aLNoeCoXJWepjxviJ?=
+ =?us-ascii?Q?Wh7QYwOLVWW3FuaWTdZZbnU399VIh7fRXEviigWEZbTmhiklnIJvZLx3Krdw?=
+ =?us-ascii?Q?zScB+hVn1HTtaeTBOmNjuO6bz8Bz+eyruJr66oXeBYLqlAch+n6NSaaAEAvN?=
+ =?us-ascii?Q?vBH7t+/zhaeUf9RWxp8z3yIfVgnpapH0QtiOZox2UX9qMs4r+WFFwZOgQxko?=
+ =?us-ascii?Q?01tAUJRYycEFqTx/jn0I8r2++KSZ5QHDUB0j5zcJCmJxmz2yHLk/k6Y6WJUL?=
+ =?us-ascii?Q?QCDwicrA9ToK2B++XpbNa9SC5yt6KFhd0cy8RBYziusYaJq8jlKems6lMR7S?=
+ =?us-ascii?Q?GwjxqbyfjUQKmhcrc9vBqaCCvl+ry/ntU2SS0+OBqFak+qpU42AbUEe+p7yd?=
+ =?us-ascii?Q?aTaul/zErUq7WSNVJdDvXssFuISUUMqz7AKRqoAFcXOHYUw9rWnpnEkGKc8D?=
+ =?us-ascii?Q?MDgFcMspSrMw2d1STr8nNuh3SgVxtFwjMY1WgFbOWcMP7pAVr/wrIYLHdAys?=
+ =?us-ascii?Q?ZMrm/6SlGUdXfd1XRCaduN7oMbtj29pgYdgE81RLh5IVBKPQJfcX5gGBMdiV?=
+ =?us-ascii?Q?E7ZLZkIVK8uPJsc=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:IA3PR02MB10771.namprd02.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(366016)(1800799024)(7053199007)(8096899003)(38070700018);
+ DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Jbcp+wWzNS+zRN5gtQ5J84hXR2s00KQY4ZqdswsMsK4XRTg4SPXJelBJO+AH?=
+ =?us-ascii?Q?M6+Fw8BW2zMOiPmeVo9yW9bjn3plsfPm24hETlibCEaQDBM1T/IGMf9x28fF?=
+ =?us-ascii?Q?wlWibOI+/T+TQnJnLpzQg8jjskIxCifQfK17PA+20Z+UooxbQvi/Bx1Djb+H?=
+ =?us-ascii?Q?ngFzMrX5QjeXl4SY1tirf4wz2sHXl8lw4Y5x0Lu060GLB7uw3UPFTIatAIQj?=
+ =?us-ascii?Q?g2800rROBdYSDVe5hi2e2JUyM5ypSIMIcI9h/UZlhQmwRv3AomZUz3cst/SK?=
+ =?us-ascii?Q?7LNdvvnYQ1iHJ6tk3P96Uu86YZkWBLBCDVh3WbruOWDZkB9J06QuFBCq+QDs?=
+ =?us-ascii?Q?zUdXhcruYqIXfwtDnpXIN5q2KGalY3sl6Yiqqv2Qsz5wCsmFEW6UAmZUafrq?=
+ =?us-ascii?Q?So63UJkF+5nzChuUUNsQSryRX0M0+Io0CgzEZnWlwW+TnJ0/3db7xZEejDBB?=
+ =?us-ascii?Q?A1L7kpmV2j0+45chABtdwrHOzjTNnIafo2FXXKV6lE2Treq8y3mdf4x/uvsR?=
+ =?us-ascii?Q?TlS2ZPfmnU+aFFUgCMYcls22KYTuT1wg33BePsE9+DVT45ExdeL8cfnGZM1q?=
+ =?us-ascii?Q?UggPAKHREAheBCyHSWf+17Sj0jo79mgCfcQ2r7nYyXwCfGB/Ll3oon+b6bCl?=
+ =?us-ascii?Q?INj4wixaqvJ0x0+fzyBLlXarFg9OL5OPUts4f0U9ydNqfRXvorEzXSC6RZvY?=
+ =?us-ascii?Q?32pQW9YQI8YWOnuPehF3a5z5jkqYZc6mXD/SV1LIlv/BMcP0O6dEYPaZuSV1?=
+ =?us-ascii?Q?vzWRln6YYge8ApbDZthY7rHvOkZ2AbAefQSGAwCXJTeLrTA9go5hm+PW79+2?=
+ =?us-ascii?Q?OsFjAakQXOD16MsicrHRZ86StZwn9wOedbxPgXXEwt2Xy9CPPWE3ADQ6/BJh?=
+ =?us-ascii?Q?3l7Q9y1Mrc+1+FHSYjQ+p7O8deCVJUAB7az8UG/Bn6FHEpSaF2NSTJdUiY/B?=
+ =?us-ascii?Q?9ObiohIFfLsDwogr+P15SmZMxaFgyekjI9AXTvII/WMAPeoErcbwU1YSACOu?=
+ =?us-ascii?Q?u3qwpdZwTSJazhYwc3Km6KHJYxp/YtrhdNhbVlihxDt7Sjs3GozalMUQ24Dz?=
+ =?us-ascii?Q?KZ6OI9KxWKWgQAvaWUCckZcIZEyIU1OCbi4xJ5I+G30DrsAIAPx0P7k/xorb?=
+ =?us-ascii?Q?nopW29iG9wnllIS6j2cGCMVqwNs9sFdU/1JLV9KMPnxFffKAtixdisGh0gY+?=
+ =?us-ascii?Q?i7oYfFMQvem9iezJAG40r16bl4hAv8wzBciKmkj3pmeRltxRkhE4SLkYoBM9?=
+ =?us-ascii?Q?iZSy7BJdq+KVV5wsdM9aBwei8tAmBxVSammk33JlUjfLmKGXz/0bTjdkinij?=
+ =?us-ascii?Q?dYPzIAOX7Gu4K6f4XaGtDD2Syx6fZ41WvUCI2alh+bZvoZS3blWBp1leGBzR?=
+ =?us-ascii?Q?1vRqV1oyha3ZWsWD6f+lUQh3QNMFak7rrKWZQD/zoBohqjovs/hJa1mtI52m?=
+ =?us-ascii?Q?koLi1Xt4UgcbZbftWoI5zQZ5/gKK5rg7Toq02VM6iEeKgOty23l7f6o6yMFN?=
+ =?us-ascii?Q?ucujqAQFBczfdpDSSaXsjV4s2ZosRo8SdZW8DG45gbVK7EPew3Jvpc5KfdWt?=
+ =?us-ascii?Q?GOqQjc8V77jILyvywDoAdLcXyyI+H527N+kPdR//?=
+Content-Type: multipart/alternative;
+ boundary="_000_IA3PR02MB107711F11A8681D42D5B911B4E946AIA3PR02MB10771na_"
+MIME-Version: 1.0
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: AmQi0cIjGUgwpOQWw7O5/+d07NIskPfGOTdcmNkcH/J7OuFBlWE9LxUb+njSTrj5Tlyj2qGMd2ODvdlmH7I3boohOptfOgd3QeQGbrLemRi35Yri02F8RIheuaa48i1ibS+/gpYGiSndldtG3XXRQk+1zRvSwd7t7WzWQkRSdJ6oQrPcVsTFCbyDGJvuvjKrwKHtUuWReRV4GsT/8dDOfPAL4hH/N5cqkKYOWTK4V13ZTY0RfbXifGTaS0/uBDxxeBaIhj0nzI+oGzrgsG0bBLkhDobw1E48kSu6bUc6wUWDoTRqIN/bKPy2XFwrWj/OF9xuDpis+NfJGjWO7mZ8t+6bOrf2lpPh8AffsQ42hbfQ9dX/PrdULBxl+tMtiuOU33KBBZyNp/bMTA7nAILgS4juLsMkiN14gH0BQ6gcdD52ZDfRH55SNjsQyc9c32YEbQ6u5cIyuzeIM+R4oyh/xS+jJfeIOjhl0HCzr52Yaj3yiAfgQaRhHt0xpdHjErOKNOuLQXdsUtUaBf+m1wHR208PlpVk+G8ZNWfinmc2bcX3qPv2IzbALh5+S5zt1dOlvpRzPCmyRiQNyjB0xJ9GL8jcl3duEf+7tUfz0dBiFgwol/YB9xPG5nFF9e86ll58
+X-OriginatorOrg: qti.qualcomm.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA3PR02MB10771.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6ad46187-b6c2-4f79-4129-08ddb7dd0b5e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jun 2025 13:50:16.2777 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 98e9ba89-e1a1-4e38-9007-8bdabc25de1d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: MH9izVG/Stp8e3T3BuaNxZrGHLREikkvd77YhYrJFV8DNFAbei+YHcjtxfCGli32f91Bs8Vwm8iviRlDFPiqxgfWn0I+Eg5mgDTswRueBBs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR02MB8103
+X-Authority-Analysis: v=2.4 cv=H/Pbw/Yi c=1 sm=1 tr=0 ts=6862961b cx=c_pps
+ a=WCFCujto17ieNoiWBJjljg==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=bt5KbKNvAAAA:8
+ a=8rWy6zfcAAAA:8 a=QyXUC8HyAAAA:8 a=jZVsG21pAAAA:8 a=M5GUcnROAAAA:8
+ a=Byx-y9mGAAAA:8 a=Ay4m3o3bpiR_8mFBA7gA:9 a=CjuIK1q_8ugA:10
+ a=BeDfOhnE6cbHF7R9RVwA:9 a=GJH-iXveXdB0Sbsq:21 a=frz4AuCg-hUA:10
+ a=_W_S_7VecoQA:10 a=a-zEBD5cKgE7DNtTSb7C:22 a=YjdVzJdQTyZRADMV7wFX:22
+ a=3Sh2lD0sZASs_lUdrUhf:22 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-ORIG-GUID: zu0Vcq46WBYe3yO52MlwLC0OzO3HWJDj
+X-Proofpoint-GUID: zu0Vcq46WBYe3yO52MlwLC0OzO3HWJDj
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjMwMDExNCBTYWx0ZWRfX39C7MOtmif0a
+ GA5ipaAVuNWxiEaaYC55dPc0JLImovg1n3j8QSH/oQq7/ojQCDaioy/6jxTeBZ2L3Iwr48CGjlq
+ khtu42NFlw9DTZT84QGXSQOa6m4Fw+ndrdQzVCAOOSZSGjaTgRhjTXa5AC5cxS7yelIpRKp1NIs
+ LilFOiA6o2RIGWsmoxmkDhLbY5onm09BDHB1Pe6PzTWq+UfuNGQA49LlQV0XQXVqAW8Y8HzkPCa
+ /v3byyB1bUzXc6ltqhsjgG1f4MaMfD/ra51VG4ov2yS+SZa2psmYBqSB4YXt7Xmyih5D8MyaTMH
+ 83eePTwnueUnQi/+ByY0VxFGXX1C73Lrxrfa63dA3A4A5MmyPEnZoT5mdcxLqO7FDNHSvB5QMSD
+ aCa+APZRq8348WjjzhwFpaCYF1+s28oKkRcLWwFKNXpS1t3ptVR/z2u5nX3uy6WiqSh0HDWy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-30_03,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 suspectscore=0 mlxlogscore=999
+ priorityscore=1501 clxscore=1015 mlxscore=0 lowpriorityscore=0 spamscore=0
+ adultscore=0 bulkscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506300114
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -47,132 +190,215 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBLb25zdGFudGluIEFuYW55ZXYgW21haWx0bzprb25zdGFudGluLmFuYW55ZXZAaHVh
-d2VpLmNvbV0NCj4gU2VudDogTW9uZGF5LCAzMCBKdW5lIDIwMjUgMTMuNDENCj4gDQo+ID4gV2hl
-biBmYXN0IHJlbGVhc2luZyBtYnVmcywgdGhlIG1idWZzIGFyZSBub3QgYWNjZXNzZWQsIHNvIGRv
-IG5vdCBwcmVmZXRjaA0KPiA+IHRoZW0uDQo+ID4gVGhpcyBzYXZlcyBhIG1idWYgbG9hZCBvcGVy
-YXRpb24gZm9yIGVhY2ggZmFzdCByZWxlYXNlZCBUWCBtYnVmLg0KPiA+DQo+ID4gV2hlbiBmYXN0
-IHJlbGVhc2Ugb2YgbWJ1ZnMgaXMgZW5hYmxlZCBmb3IgYSBUWCBxdWV1ZSwgY2FjaGUgdGhlIG1i
-dWYNCj4gPiBtZW1wb29sIHBvaW50ZXIgaW4gdGhlIFRYIHF1ZXVlIHN0cnVjdHVyZS4NCj4gPiBU
-aGlzIHNhdmVzIG9uZSBtYnVmIGxvYWQgb3BlcmF0aW9uIGZvciBlYWNoIGJ1cnN0IG9mIGZhc3Qg
-cmVsZWFzZWQgVFgNCj4gPiBtYnVmcy4NCj4gPg0KPiA+IFRoZSB0eGVwLT5tYnVmIHBvaW50ZXIg
-aXMgbm90IHVzZWQgYWZ0ZXIgdGhlIG1idWYgaGFzIGJlZW4gZnJlZWQsIHNvIGRvDQo+ID4gbm90
-IHJlc2V0IHRoZSBwb2ludGVyLg0KPiA+IFRoaXMgc2F2ZXMgYSB0eGVwIHN0b3JlIG9wZXJhdGlv
-biBmb3IgZWFjaCBUWCBtYnVmIGZyZWVkLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogTW9ydGVu
-IEJyw7hydXAgPG1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVy
-cy9uZXQvaW50ZWwvY29tbW9uL3R4LmggICAgICAgICAgICAgICAgIHwgIDUgKysrDQo+ID4gIC4u
-Li9pNDBlL2k0MGVfcmVjeWNsZV9tYnVmc192ZWNfY29tbW9uLmMgICAgICB8ICA0ICstDQo+ID4g
-IGRyaXZlcnMvbmV0L2ludGVsL2k0MGUvaTQwZV9yeHR4LmMgICAgICAgICAgICB8IDM5ICsrKysr
-KysrKystLS0tLS0tLS0NCj4gPiAgMyBmaWxlcyBjaGFuZ2VkLCAyOCBpbnNlcnRpb25zKCspLCAy
-MCBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9pbnRlbC9j
-b21tb24vdHguaCBiL2RyaXZlcnMvbmV0L2ludGVsL2NvbW1vbi90eC5oDQo+ID4gaW5kZXggYjBh
-NjhiYWU0NC4uNTRjOWI4NDVmNyAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL25ldC9pbnRlbC9j
-b21tb24vdHguaA0KPiA+ICsrKyBiL2RyaXZlcnMvbmV0L2ludGVsL2NvbW1vbi90eC5oDQo+ID4g
-QEAgLTYyLDYgKzYyLDExIEBAIHN0cnVjdCBjaV90eF9xdWV1ZSB7DQo+ID4gIAl1aW50MTZfdCB0
-eF9uZXh0X2RkOw0KPiA+ICAJdWludDE2X3QgdHhfbmV4dF9yczsNCj4gPiAgCXVpbnQ2NF90IG9m
-ZmxvYWRzOw0KPiA+ICsJLyogTWVtcG9vbCBwb2ludGVyIGZvciBmYXN0IHJlbGVhc2Ugb2YgbWJ1
-ZnMuDQo+ID4gKwkgKiBOVUxMIGlmIGRpc2FibGVkLCBVSU5UUFRSX01BWCBpZiBlbmFibGVkIGFu
-ZCBub3QgeWV0IGtub3duLg0KPiA+ICsJICogSW5pdGlhbGl6ZWQgYXQgZmlyc3QgdXNlLg0KPiA+
-ICsJICovDQo+ID4gKwlzdHJ1Y3QgcnRlX21lbXBvb2wgKmZhc3RfZnJlZV9tcDsNCj4gPiAgCXVp
-bnQ2NF90IG1idWZfZXJyb3JzOw0KPiA+ICAJcnRlX2lvdmFfdCB0eF9yaW5nX2RtYTsgICAgICAg
-IC8qIFRYIHJpbmcgRE1BIGFkZHJlc3MgKi8NCj4gPiAgCWJvb2wgdHhfZGVmZXJyZWRfc3RhcnQ7
-IC8qIGRvbid0IHN0YXJ0IHRoaXMgcXVldWUgaW4gZGV2IHN0YXJ0ICovDQo+ID4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvbmV0L2ludGVsL2k0MGUvaTQwZV9yZWN5Y2xlX21idWZzX3ZlY19jb21tb24u
-Yw0KPiBiL2RyaXZlcnMvbmV0L2ludGVsL2k0MGUvaTQwZV9yZWN5Y2xlX21idWZzX3ZlY19jb21t
-b24uYw0KPiA+IGluZGV4IDI4NzVjNTc4YWYuLmE0NjYwNWNlZTkgMTAwNjQ0DQo+ID4gLS0tIGEv
-ZHJpdmVycy9uZXQvaW50ZWwvaTQwZS9pNDBlX3JlY3ljbGVfbWJ1ZnNfdmVjX2NvbW1vbi5jDQo+
-ID4gKysrIGIvZHJpdmVycy9uZXQvaW50ZWwvaTQwZS9pNDBlX3JlY3ljbGVfbWJ1ZnNfdmVjX2Nv
-bW1vbi5jDQo+ID4gQEAgLTEwNiw3ICsxMDYsOSBAQCBpNDBlX3JlY3ljbGVfdHhfbWJ1ZnNfcmV1
-c2VfdmVjKHZvaWQgKnR4X3F1ZXVlLA0KPiA+ICAJaWYgKHR4cS0+b2ZmbG9hZHMgJiBSVEVfRVRI
-X1RYX09GRkxPQURfTUJVRl9GQVNUX0ZSRUUpIHsNCj4gPiAgCQkvKiBBdm9pZCB0eHEgY29udGFp
-bnMgYnVmZmVycyBmcm9tIHVuZXhwZWN0ZWQgbWVtcG9vbC4gKi8NCj4gPiAgCQlpZiAodW5saWtl
-bHkocmVjeWNsZV9yeHFfaW5mby0+bXANCj4gPiAtCQkJCQkhPSB0eGVwWzBdLm1idWYtPnBvb2wp
-KQ0KPiA+ICsJCQkJIT0gKGxpa2VseSh0eHEtPmZhc3RfZnJlZV9tcCAhPSAodm9pZCAqKVVJTlRQ
-VFJfTUFYKQ0KPiA/DQo+ID4gKwkJCQl0eHEtPmZhc3RfZnJlZV9tcCA6DQo+ID4gKwkJCQkodHhx
-LT5mYXN0X2ZyZWVfbXAgPSB0eGVwWzBdLm1idWYtPnBvb2wpKSkpDQo+ID4gIAkJCXJldHVybiAw
-Ow0KPiA+DQo+ID4gIAkJLyogRGlyZWN0bHkgcHV0IG1idWZzIGZyb20gVHggdG8gUnguICovDQo+
-ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2ludGVsL2k0MGUvaTQwZV9yeHR4LmMNCj4gYi9k
-cml2ZXJzL25ldC9pbnRlbC9pNDBlL2k0MGVfcnh0eC5jDQo+ID4gaW5kZXggYzNmZjJlMDVjMy4u
-Njc5YzEzNDBiOCAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL25ldC9pbnRlbC9pNDBlL2k0MGVf
-cnh0eC5jDQo+ID4gKysrIGIvZHJpdmVycy9uZXQvaW50ZWwvaTQwZS9pNDBlX3J4dHguYw0KPiA+
-IEBAIC0xMzMyLDcgKzEzMzIsNyBAQCBzdGF0aWMgX19ydGVfYWx3YXlzX2lubGluZSBpbnQNCj4g
-PiAgaTQwZV90eF9mcmVlX2J1ZnMoc3RydWN0IGNpX3R4X3F1ZXVlICp0eHEpDQo+ID4gIHsNCj4g
-PiAgCXN0cnVjdCBjaV90eF9lbnRyeSAqdHhlcDsNCj4gPiAtCXVpbnQxNl90IHR4X3JzX3RocmVz
-aCA9IHR4cS0+dHhfcnNfdGhyZXNoOw0KPiA+ICsJY29uc3QgdWludDE2X3QgdHhfcnNfdGhyZXNo
-ID0gdHhxLT50eF9yc190aHJlc2g7DQo+ID4gIAl1aW50MTZfdCBpID0gMCwgaiA9IDA7DQo+ID4g
-IAlzdHJ1Y3QgcnRlX21idWYgKmZyZWVbUlRFX0k0MEVfVFhfTUFYX0ZSRUVfQlVGX1NaXTsNCj4g
-PiAgCWNvbnN0IHVpbnQxNl90IGsgPSBSVEVfQUxJR05fRkxPT1IodHhfcnNfdGhyZXNoLA0KPiBS
-VEVfSTQwRV9UWF9NQVhfRlJFRV9CVUZfU1opOw0KPiA+IEBAIC0xMzQ1LDQxICsxMzQ1LDQwIEBA
-IGk0MGVfdHhfZnJlZV9idWZzKHN0cnVjdCBjaV90eF9xdWV1ZSAqdHhxKQ0KPiA+DQo+ID4gIAl0
-eGVwID0gJnR4cS0+c3dfcmluZ1t0eHEtPnR4X25leHRfZGQgLSAodHhfcnNfdGhyZXNoIC0gMSld
-Ow0KPiA+DQo+ID4gLQlmb3IgKGkgPSAwOyBpIDwgdHhfcnNfdGhyZXNoOyBpKyspDQo+ID4gLQkJ
-cnRlX3ByZWZldGNoMCgodHhlcCArIGkpLT5tYnVmKTsNCj4gPiAtDQo+ID4gIAlpZiAodHhxLT5v
-ZmZsb2FkcyAmIFJURV9FVEhfVFhfT0ZGTE9BRF9NQlVGX0ZBU1RfRlJFRSkgew0KPiA+ICsJCXN0
-cnVjdCBydGVfbWVtcG9vbCAqIGNvbnN0IGZhc3RfZnJlZV9tcCA9DQo+ID4gKwkJCQlsaWtlbHko
-dHhxLT5mYXN0X2ZyZWVfbXAgIT0gKHZvaWQgKilVSU5UUFRSX01BWCkgPw0KPiA+ICsJCQkJdHhx
-LT5mYXN0X2ZyZWVfbXAgOg0KPiA+ICsJCQkJKHR4cS0+ZmFzdF9mcmVlX21wID0gdHhlcFswXS5t
-YnVmLT5wb29sKTsNCj4gPiArDQo+IA0KPiBOaXQgaWRlYS4NCj4gQWNrZWQtYnk6IEtvbnN0YW50
-aW4gQW5hbnlldiA8a29uc3RhbnRpbi5hbmFueWV2QGh1YXdlaS5jb20+DQo+IA0KPiBKdXN0IGFz
-IGEgc3VnZ2VzdGlvbiBmb3IgZnVydGhlciBpbXByb3ZlbWVudDoNCj4gY2FuIHdlIHVwZGF0ZSAo
-JiBjaGVjaykgdHhxLT5mYXN0X2ZyZWVfbXAgbm90IGF0IHR4X2ZyZWVfYnVmcygpIHRpbWUsDQo+
-IGJ1dCB3aGVuIHdlIGZpbGwgdHhlcFtdIGFuZCBmaWxsaW5nIHR4ZFtdIGJhc2VkIG9uIG1idWYg
-dmFsdWVzPw0KPiBJbiB0aGVvcnkgaXQgc2hvdWxkIGFsbG93IHRvIHJlbW92ZSB0aGUgY2hlY2sg
-YWJvdmUuDQo+IEFsc28sIGFnYWluIGluIHRoZW9yeSwgaXQgb3BlbnMgb3Bwb3J0dW5pdHkgKHdp
-dGggc29tZSBleHRyYSBlZmZvcnQpIHRvIHVzZQ0KPiBzaW1pbGFyIG9wdGltaXphdGlvbiBydGVf
-bWVtcG9vbF9wdXRfYnVsaykNCj4gZXZlbiBmb3IgY2FzZXMgd2hlbiAgUlRFX0VUSF9UWF9PRkZM
-T0FEX01CVUZfRkFTVF9GUkVFIGlzIG5vdCBzZXQuDQoNCkNoZWNraW5nIHRoZSBUWCBtYnVmcyB0
-byBkZXRlcm1pbmUgaWYgcnRlX21lbXBvb2xfcHV0X2J1bGsoKSBjYW4gYmUgdXNlZCBldmVuIHdo
-ZW4gdGhlIFJURV9FVEhfVFhfT0ZGTE9BRF9NQlVGX0ZBU1RfRlJFRSBvZmZsb2FkIGZsYWcgaXMg
-bm90IHNldC4uLg0KDQpUaGF0IHdvdWxkIHJlcXVpcmUgdGhhdCB0aGUgdHhfYnVyc3QoKSBmdW5j
-dGlvbiBjaGVja3MgYWxsIHRoZSBUWCBtYnVmcyBmb3IgdGhlIFJURV9FVEhfVFhfT0ZGTE9BRF9N
-QlVGX0ZBU1RfRlJFRSByZXF1aXJlbWVudHMgdG8gc2V0IHRoZSB0eHEtPmZhc3RfZnJlZV9tcCBw
-b2ludGVyLg0KQW5kIGlmIHRoZSByZXF1aXJlbWVudHMgYXJlIG5vdCBtZXQsIGl0IG11c3QgbmV2
-ZXIgc2V0IHRoZSB0eHEtPmZhc3RfZnJlZV9tcCBwb2ludGVyIGFnYWluLiBPdGhlcndpc2UsIHNv
-bWUgcHJldmlvdXNseSB0cmFuc21pdHRlZCBtYnVmcywgd2FpdGluZyB0byBiZSBmcmVlZCwgbWln
-aHQgbm90IG1lZXQgdGhlIFJURV9FVEhfVFhfT0ZGTE9BRF9NQlVGX0ZBU1RfRlJFRSByZXF1aXJl
-bWVudHMuDQoNClJlbHlpbmcgb24gdGhlIGV4cGxpY2l0IFJURV9FVEhfVFhfT0ZGTE9BRF9NQlVG
-X0ZBU1RfRlJFRSBvZmZsb2FkIGZsYWcgKGhlcmUgb3IgZWxzZXdoZXJlKSBvbmx5IHJlcXVpcmVz
-IG9uZSBjaGVjayAob2YgdGhlIG9mZmxvYWQgZmxhZyBhbmQvb3IgdGhlIG1lbXBvb2wgcG9pbnRl
-ciAod2hpY2hldmVyIGlzIGhvdHRlciBpbiBjYWNoZSkpIHBlciBidXJzdCBvZiBwYWNrZXRzLg0K
-DQpQUzogVGhlIGRyaXZlcnMgcmVhbGx5IHNob3VsZCBiZSB1c2luZyB0aGUgbmV3IHJ0ZV9tYnVm
-X3Jhd19mcmVlX2J1bGsoKSBpbnN0ZWFkIG9mIHJ0ZV9tZW1wb29sX3B1dF9idWxrKCksIHNvIHRo
-ZSBmcmVlZCBtYnVmcyBhcmUgc2FuaXR5IGNoZWNrZWQgaW4gUlRFX0xJQlJURV9NQlVGX0RFQlVH
-IG1vZGUuIEJ1dCBzdWNoIGNoYW5nZXMgYmVsb25nIGluIGFub3RoZXIgcGF0Y2ggc2VyaWVzLg0K
-DQo+IA0KPiANCj4gPiAgCQlpZiAoaykgew0KPiA+ICAJCQlmb3IgKGogPSAwOyBqICE9IGs7IGog
-Kz0gUlRFX0k0MEVfVFhfTUFYX0ZSRUVfQlVGX1NaKSB7DQo+ID4gLQkJCQlmb3IgKGkgPSAwOyBp
-IDwgUlRFX0k0MEVfVFhfTUFYX0ZSRUVfQlVGX1NaOyArK2ksDQo+ICsrdHhlcCkgew0KPiA+ICsJ
-CQkJZm9yIChpID0gMDsgaSA8IFJURV9JNDBFX1RYX01BWF9GUkVFX0JVRl9TWjsgKytpLA0KPiAr
-K3R4ZXApDQo+ID4gIAkJCQkJZnJlZVtpXSA9IHR4ZXAtPm1idWY7DQo+ID4gLQkJCQkJdHhlcC0+
-bWJ1ZiA9IE5VTEw7DQo+ID4gLQkJCQl9DQo+ID4gLQkJCQlydGVfbWVtcG9vbF9wdXRfYnVsayhm
-cmVlWzBdLT5wb29sLCAodm9pZCAqKilmcmVlLA0KPiA+ICsJCQkJcnRlX21lbXBvb2xfcHV0X2J1
-bGsoZmFzdF9mcmVlX21wLCAodm9pZCAqKilmcmVlLA0KPiA+ICAJCQkJCQlSVEVfSTQwRV9UWF9N
-QVhfRlJFRV9CVUZfU1opOw0KPiA+ICAJCQl9DQo+ID4gIAkJfQ0KPiA+DQo+ID4gIAkJaWYgKG0p
-IHsNCj4gPiAtCQkJZm9yIChpID0gMDsgaSA8IG07ICsraSwgKyt0eGVwKSB7DQo+ID4gKwkJCWZv
-ciAoaSA9IDA7IGkgPCBtOyArK2ksICsrdHhlcCkNCj4gPiAgCQkJCWZyZWVbaV0gPSB0eGVwLT5t
-YnVmOw0KPiA+IC0JCQkJdHhlcC0+bWJ1ZiA9IE5VTEw7DQo+ID4gLQkJCX0NCj4gPiAtCQkJcnRl
-X21lbXBvb2xfcHV0X2J1bGsoZnJlZVswXS0+cG9vbCwgKHZvaWQgKiopZnJlZSwgbSk7DQo+ID4g
-KwkJCXJ0ZV9tZW1wb29sX3B1dF9idWxrKGZhc3RfZnJlZV9tcCwgKHZvaWQgKiopZnJlZSwgbSk7
-DQo+ID4gIAkJfQ0KPiA+ICAJfSBlbHNlIHsNCj4gPiAtCQlmb3IgKGkgPSAwOyBpIDwgdHhxLT50
-eF9yc190aHJlc2g7ICsraSwgKyt0eGVwKSB7DQo+ID4gKwkJZm9yIChpID0gMDsgaSA8IHR4X3Jz
-X3RocmVzaDsgaSsrKQ0KPiA+ICsJCQlydGVfcHJlZmV0Y2gwKCh0eGVwICsgaSktPm1idWYpOw0K
-PiA+ICsNCj4gPiArCQlmb3IgKGkgPSAwOyBpIDwgdHhfcnNfdGhyZXNoOyArK2ksICsrdHhlcCkN
-Cj4gPiAgCQkJcnRlX3BrdG1idWZfZnJlZV9zZWcodHhlcC0+bWJ1Zik7DQo+ID4gLQkJCXR4ZXAt
-Pm1idWYgPSBOVUxMOw0KPiA+IC0JCX0NCj4gPiAgCX0NCj4gPg0KPiA+IC0JdHhxLT5uYl90eF9m
-cmVlID0gKHVpbnQxNl90KSh0eHEtPm5iX3R4X2ZyZWUgKyB0eHEtPnR4X3JzX3RocmVzaCk7DQo+
-ID4gLQl0eHEtPnR4X25leHRfZGQgPSAodWludDE2X3QpKHR4cS0+dHhfbmV4dF9kZCArIHR4cS0+
-dHhfcnNfdGhyZXNoKTsNCj4gPiArCXR4cS0+bmJfdHhfZnJlZSA9ICh1aW50MTZfdCkodHhxLT5u
-Yl90eF9mcmVlICsgdHhfcnNfdGhyZXNoKTsNCj4gPiArCXR4cS0+dHhfbmV4dF9kZCA9ICh1aW50
-MTZfdCkodHhxLT50eF9uZXh0X2RkICsgdHhfcnNfdGhyZXNoKTsNCj4gPiAgCWlmICh0eHEtPnR4
-X25leHRfZGQgPj0gdHhxLT5uYl90eF9kZXNjKQ0KPiA+IC0JCXR4cS0+dHhfbmV4dF9kZCA9ICh1
-aW50MTZfdCkodHhxLT50eF9yc190aHJlc2ggLSAxKTsNCj4gPiArCQl0eHEtPnR4X25leHRfZGQg
-PSAodWludDE2X3QpKHR4X3JzX3RocmVzaCAtIDEpOw0KPiA+DQo+ID4gLQlyZXR1cm4gdHhxLT50
-eF9yc190aHJlc2g7DQo+ID4gKwlyZXR1cm4gdHhfcnNfdGhyZXNoOw0KPiA+ICB9DQo+ID4NCj4g
-PiAgLyogUG9wdWxhdGUgNCBkZXNjcmlwdG9ycyB3aXRoIGRhdGEgZnJvbSA0IG1idWZzICovDQo+
-ID4gQEAgLTI1NDYsNiArMjU0NSw4IEBAIGk0MGVfZGV2X3R4X3F1ZXVlX3NldHVwKHN0cnVjdCBy
-dGVfZXRoX2RldiAqZGV2LA0KPiA+ICAJdHhxLT5yZWdfaWR4ID0gcmVnX2lkeDsNCj4gPiAgCXR4
-cS0+cG9ydF9pZCA9IGRldi0+ZGF0YS0+cG9ydF9pZDsNCj4gPiAgCXR4cS0+b2ZmbG9hZHMgPSBv
-ZmZsb2FkczsNCj4gPiArCXR4cS0+ZmFzdF9mcmVlX21wID0gb2ZmbG9hZHMgJiBSVEVfRVRIX1RY
-X09GRkxPQURfTUJVRl9GQVNUX0ZSRUUgPw0KPiA+ICsJCQkodm9pZCAqKVVJTlRQVFJfTUFYIDog
-TlVMTDsNCj4gPiAgCXR4cS0+aTQwZV92c2kgPSB2c2k7DQo+ID4gIAl0eHEtPnR4X2RlZmVycmVk
-X3N0YXJ0ID0gdHhfY29uZi0+dHhfZGVmZXJyZWRfc3RhcnQ7DQo+ID4NCj4gPiAtLQ0KPiA+IDIu
-NDMuMA0KDQo=
+--_000_IA3PR02MB107711F11A8681D42D5B911B4E946AIA3PR02MB10771na_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+Hey Thomas, just wanted to confirm,  I see the ARM build passing in CI. Is =
+there a reason it would pass there but not on your dev machine?
+
+
+________________________________
+From: Dylan Schneider <schneide@qti.qualcomm.com>
+Sent: Friday, June 27, 2025 11:46 AM
+To: Thomas Monjalon <thomas@monjalon.net>
+Cc: dev@dpdk.org <dev@dpdk.org>; Reshma Pattan <reshma.pattan@intel.com>; S=
+tephen Hemminger <stephen@networkplumber.org>; Jerin Jacob <jerinj@marvell.=
+com>; Kiran Kumar K <kirankumark@marvell.com>; Nithin Dabilpuram <ndabilpur=
+am@marvell.com>; Zhirun Yan <yanzhirun_163@163.com>
+Subject: Re: [PATCH v2] pcapng: allow any protocol link type for the interf=
+ace block
+
+
+WARNING: This email originated from outside of Qualcomm. Please be wary of =
+any links or attachments, and do not enable macros.
+
+Hey Thomas,
+Thanks for the reply.
+Can you tell me the build command you're using to produce those errors? I h=
+ave ran the builds on my test machine and cannot reproduce these. Thanks!
+Dylan
+________________________________
+From: Thomas Monjalon <thomas@monjalon.net>
+Sent: Friday, June 27, 2025 11:39 AM
+To: Dylan Schneider <schneide@qti.qualcomm.com>
+Cc: dev@dpdk.org <dev@dpdk.org>; Reshma Pattan <reshma.pattan@intel.com>; S=
+tephen Hemminger <stephen@networkplumber.org>; Jerin Jacob <jerinj@marvell.=
+com>; Kiran Kumar K <kirankumark@marvell.com>; Nithin Dabilpuram <ndabilpur=
+am@marvell.com>; Zhirun Yan <yanzhirun_163@163.com>
+Subject: Re: [PATCH v2] pcapng: allow any protocol link type for the interf=
+ace block
+
+WARNING: This email originated from outside of Qualcomm. Please be wary of =
+any links or attachments, and do not enable macros.
+
+09/06/2025 23:19, Schneide:
+> From: Dylan Schneider <schneide@qti.qualcomm.com>
+>
+> Allow the user to specify protocol link type when creating pcapng files.
+> This change is needed to specify the protocol type in the pcapng file,
+> DLT_EN10MB specifies ethernet packets only. This will allow dissectors
+> for other protocols to be used on files generated by pcapng.
+>
+> Includes a breaking change to rte_pcapng_add_interface to add link_type
+> parameter. Existing calls to the function have been updated to pass
+> DLT_EN10MB for the link type argument.
+>
+> Fixes: d1da6d0d04c7 ("pcapng: require per-interface information")
+> Signed-off-by: Dylan Schneider <schneide@qti.qualcomm.com>
+> Cc: stephen@networkplumber.org
+
+I doesn't pass compilation test on my machine:
+
+Error: cannot find librte_pcapng.so.25.1 in dpdk-build/build-arm64-generic-=
+gcc/install
+Error: cannot find librte_graph.so.25.1 in dpdk-build/build-arm64-generic-g=
+cc/install
+Error: cannot find librte_node.so.25.1 in dpdk-build/build-arm64-generic-gc=
+c/install
+Error: cannot find librte_pdump.so.25.1 in dpdk-build/build-arm64-generic-g=
+cc/install
+
+
+
+
+--_000_IA3PR02MB107711F11A8681D42D5B911B4E946AIA3PR02MB10771na_
+Content-Type: text/html; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
+>
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div class=3D"elementToProof" style=3D"text-align: left; text-indent: 0px; =
+background-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 11pt; color: rgb(0, 0, 0);">
+Hey Thomas, just wanted to confirm,&nbsp; I see the ARM build passing in CI=
+. Is there a reason it would pass there but not on your dev machine?</div>
+<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
+Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div id=3D"appendonsend"></div>
+<hr style=3D"display:inline-block;width:98%" tabindex=3D"-1">
+<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" st=
+yle=3D"font-size:11pt" color=3D"#000000"><b>From:</b> Dylan Schneider &lt;s=
+chneide@qti.qualcomm.com&gt;<br>
+<b>Sent:</b> Friday, June 27, 2025 11:46 AM<br>
+<b>To:</b> Thomas Monjalon &lt;thomas@monjalon.net&gt;<br>
+<b>Cc:</b> dev@dpdk.org &lt;dev@dpdk.org&gt;; Reshma Pattan &lt;reshma.patt=
+an@intel.com&gt;; Stephen Hemminger &lt;stephen@networkplumber.org&gt;; Jer=
+in Jacob &lt;jerinj@marvell.com&gt;; Kiran Kumar K &lt;kirankumark@marvell.=
+com&gt;; Nithin Dabilpuram &lt;ndabilpuram@marvell.com&gt;; Zhirun Yan
+ &lt;yanzhirun_163@163.com&gt;<br>
+<b>Subject:</b> Re: [PATCH v2] pcapng: allow any protocol link type for the=
+ interface block</font>
+<div>&nbsp;</div>
+</div>
+<style type=3D"text/css" style=3D"display:none">
+<!--
+p
+	{margin-top:0;
+	margin-bottom:0}
+-->
+</style>
+<div dir=3D"ltr">
+<p style=3D"text-align:center"><span style=3D"background-color:#ffff00; fon=
+t-size:14px; font-family:sans-serif; color:#000000"><strong>WARNING:</stron=
+g> This email originated from outside of Qualcomm. Please be wary of any li=
+nks or attachments, and do not enable
+ macros.</span></p>
+<div>
+<div class=3D"x_elementToProof" style=3D"font-family:Aptos,Aptos_EmbeddedFo=
+nt,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:11pt; color:=
+rgb(0,0,0)">
+Hey Thomas,</div>
+<div class=3D"x_elementToProof" style=3D"font-family:Aptos,Aptos_EmbeddedFo=
+nt,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:11pt; color:=
+rgb(0,0,0)">
+Thanks for the reply.</div>
+<div class=3D"x_elementToProof" style=3D"font-family:Aptos,Aptos_EmbeddedFo=
+nt,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:11pt; color:=
+rgb(0,0,0)">
+Can you tell me the build command you're using to produce those errors? I h=
+ave ran the builds on my test machine and cannot reproduce these. Thanks!</=
+div>
+<div class=3D"x_elementToProof" style=3D"font-family:Aptos,Aptos_EmbeddedFo=
+nt,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:11pt; color:=
+rgb(0,0,0)">
+Dylan</div>
+<div id=3D"x_appendonsend"></div>
+<hr tabindex=3D"-1" style=3D"display:inline-block; width:98%">
+<div id=3D"x_divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" =
+color=3D"#000000" style=3D"font-size:11pt"><b>From:</b> Thomas Monjalon &lt=
+;thomas@monjalon.net&gt;<br>
+<b>Sent:</b> Friday, June 27, 2025 11:39 AM<br>
+<b>To:</b> Dylan Schneider &lt;schneide@qti.qualcomm.com&gt;<br>
+<b>Cc:</b> dev@dpdk.org &lt;dev@dpdk.org&gt;; Reshma Pattan &lt;reshma.patt=
+an@intel.com&gt;; Stephen Hemminger &lt;stephen@networkplumber.org&gt;; Jer=
+in Jacob &lt;jerinj@marvell.com&gt;; Kiran Kumar K &lt;kirankumark@marvell.=
+com&gt;; Nithin Dabilpuram &lt;ndabilpuram@marvell.com&gt;; Zhirun Yan
+ &lt;yanzhirun_163@163.com&gt;<br>
+<b>Subject:</b> Re: [PATCH v2] pcapng: allow any protocol link type for the=
+ interface block</font>
+<div>&nbsp;</div>
+</div>
+<div class=3D"x_BodyFragment"><font size=3D"2"><span style=3D"font-size:11p=
+t">
+<div class=3D"x_PlainText">WARNING: This email originated from outside of Q=
+ualcomm. Please be wary of any links or attachments, and do not enable macr=
+os.<br>
+<br>
+09/06/2025 23:19, Schneide:<br>
+&gt; From: Dylan Schneider &lt;schneide@qti.qualcomm.com&gt;<br>
+&gt;<br>
+&gt; Allow the user to specify protocol link type when creating pcapng file=
+s.<br>
+&gt; This change is needed to specify the protocol type in the pcapng file,=
+<br>
+&gt; DLT_EN10MB specifies ethernet packets only. This will allow dissectors=
+<br>
+&gt; for other protocols to be used on files generated by pcapng.<br>
+&gt;<br>
+&gt; Includes a breaking change to rte_pcapng_add_interface to add link_typ=
+e<br>
+&gt; parameter. Existing calls to the function have been updated to pass<br=
+>
+&gt; DLT_EN10MB for the link type argument.<br>
+&gt;<br>
+&gt; Fixes: d1da6d0d04c7 (&quot;pcapng: require per-interface information&q=
+uot;)<br>
+&gt; Signed-off-by: Dylan Schneider &lt;schneide@qti.qualcomm.com&gt;<br>
+&gt; Cc: stephen@networkplumber.org<br>
+<br>
+I doesn't pass compilation test on my machine:<br>
+<br>
+Error: cannot find librte_pcapng.so.25.1 in dpdk-build/build-arm64-generic-=
+gcc/install<br>
+Error: cannot find librte_graph.so.25.1 in dpdk-build/build-arm64-generic-g=
+cc/install<br>
+Error: cannot find librte_node.so.25.1 in dpdk-build/build-arm64-generic-gc=
+c/install<br>
+Error: cannot find librte_pdump.so.25.1 in dpdk-build/build-arm64-generic-g=
+cc/install<br>
+<br>
+<br>
+<br>
+</div>
+</span></font></div>
+</div>
+</div>
+</body>
+</html>
+
+--_000_IA3PR02MB107711F11A8681D42D5B911B4E946AIA3PR02MB10771na_--
