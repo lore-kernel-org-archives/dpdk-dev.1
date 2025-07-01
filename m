@@ -2,41 +2,167 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D2CC8302F
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Jul 2025 09:10:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C4C9C8302F
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Jul 2025 09:15:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 69194406B7;
-	Tue,  1 Jul 2025 11:10:15 +0200 (CEST)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
- by mails.dpdk.org (Postfix) with ESMTP id A10C4400D7
- for <dev@dpdk.org>; Tue,  1 Jul 2025 11:10:08 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.163.48])
- by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4bWcZk63fyzHrDN;
- Tue,  1 Jul 2025 17:06:06 +0800 (CST)
-Received: from kwepemo500011.china.huawei.com (unknown [7.202.195.194])
- by mail.maildlp.com (Postfix) with ESMTPS id 4DE3F180064;
- Tue,  1 Jul 2025 17:10:07 +0800 (CST)
-Received: from localhost.localdomain (10.50.165.33) by
- kwepemo500011.china.huawei.com (7.202.195.194) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id 9D2C540647;
+	Tue,  1 Jul 2025 11:15:01 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+ by mails.dpdk.org (Postfix) with ESMTP id C5DC5400D7;
+ Tue,  1 Jul 2025 11:14:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1751361299; x=1782897299;
+ h=from:to:cc:subject:date:message-id:references:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=QDalnTqR4WNdUu/MMOcp0ItA4keUmY54v6EBoVcGq7E=;
+ b=S6pOJEYdwblsz7Uye2Q3xhsMzzP8hZSGtQ1VPDwzQlkczAWDuHq6y5Zy
+ dWnUkKf9ayfzEuGdagssqcEWM2NNqO98am9hwLH90DufkS4scHNQ16ryq
+ HFtp96IrbUi0+BPlc1/gP4aGoHKwTeY5AuE8IyE3vNES91tRs+D3UMqhy
+ NIGwe4hN5+LaVj9gnG7cKbG1A0plIISd1VdqQvwc0tIsqjBagwE78W7Wv
+ p8UQj++7y7Cl6o+rLga9+C4ArfCCJJW1Mtob5niT1wOrsWfnJXgYPL68e
+ QQc5SRlV8uEOYiBX/V6HKd+Cdcdj1chATWoc0oS67MP6rrIqcyxFp3ZMc Q==;
+X-CSE-ConnectionGUID: bQO0DQANRse887R33tUA2g==
+X-CSE-MsgGUID: li5n5StBTA+KUmUrMppnZQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11480"; a="53723014"
+X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; d="scan'208";a="53723014"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+ by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jul 2025 02:14:58 -0700
+X-CSE-ConnectionGUID: ehYN/A3MRXGS5VSNw4RGdw==
+X-CSE-MsgGUID: UJxgEictSyuwGhIhPO1iww==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; d="scan'208";a="184646690"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jul 2025 02:14:57 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 1 Jul 2025 17:10:06 +0800
-From: Dengdui Huang <huangdengdui@huawei.com>
-To: <dev@dpdk.org>
-CC: <stephen@networkplumber.org>, <fengchengwen@huawei.com>,
- <lihuisong@huawei.com>, <liuyonglong@huawei.com>
-Subject: [PATCH v3 6/6] net/hns3: VF support multi-TCs configure
-Date: Tue, 1 Jul 2025 17:10:04 +0800
-Message-ID: <20250701091004.531704-7-huangdengdui@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250701091004.531704-1-huangdengdui@huawei.com>
-References: <20250611081900.3658421-1-huangdengdui@huawei.com>
- <20250701091004.531704-1-huangdengdui@huawei.com>
+ 15.2.1544.25; Tue, 1 Jul 2025 02:14:56 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Tue, 1 Jul 2025 02:14:56 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (40.107.94.58) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 1 Jul 2025 02:14:56 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=G0s8T5lxo96/j2C4AcpNVOk9ZLS8OSTKC/Qek5NLasuAn4Jff0+VqhhytyBlw+kglHdBVfI1CJINXvzfVVjRHg07omKlRQ44l0MnOQmGsO4w+kGSzGajAcIaOwrSUDDXUX7IgkVaOrhIFDQSc4AKjW0I2+xvevO7YCYd4rVMcu1JC82aHHJuBjuKUWfWpsoqoymij9uV7l36RIzFVLo081I1nUboN8AkRnq0g/V+ACgC6LjCW7kQTnzGjiCMxxir8z+QY6ZtN9+jZNtEAhATeDisZ/dKtZPtN8m3hWawlAvEWrRVS2xYUqVKkjmTIDFujP2kwiyut+XK3whAlC/iPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VM/yMnq5y8KUiFM21kyBtOeHWTMfflPm4UHmtYhVU2Q=;
+ b=eka9I32JFuRYJXx6aFl/ytdpRdAw50CK7NEwAkRcMj276yhgGk5utwNoTb4oPQ5xC/46pVvUmR55ASqr8IcT7cq03+T1KvlZjdkw8W4QXM1ZW7WLdaA8xOouibfBAppjNIahJ3yH4cnpamrDkf7W14PIaKnrZueF0RYVr2juLrP/EmY9iU8lfqECrCMDsNeJGGDzSJblkbvDw3FbuUDfTs3yzh4eUpOGm0tZtC/bm55bmOmQBjwhkmcU+WKmCqR1dIdskyKoWKzqIuCdU9CGN6Z0wbiQUgB0ba973EwaCPjvYCEYQW2S85dklqrhBIAYEzaIQXkKg9WBT5ldfs7w3w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from IA3PR11MB8965.namprd11.prod.outlook.com (2603:10b6:208:582::16)
+ by SN7PR11MB8026.namprd11.prod.outlook.com (2603:10b6:806:2dd::16)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.19; Tue, 1 Jul
+ 2025 09:14:14 +0000
+Received: from IA3PR11MB8965.namprd11.prod.outlook.com
+ ([fe80::d6ad:760c:6c44:f9bd]) by IA3PR11MB8965.namprd11.prod.outlook.com
+ ([fe80::d6ad:760c:6c44:f9bd%4]) with mapi id 15.20.8835.027; Tue, 1 Jul 2025
+ 09:14:14 +0000
+From: "Wang, YuanX" <yuanx.wang@intel.com>
+To: "Richardson, Bruce" <bruce.richardson@intel.com>
+CC: "Burakov, Anatoly" <anatoly.burakov@intel.com>, "Medvedkin, Vladimir"
+ <vladimir.medvedkin@intel.com>, "dev@dpdk.org" <dev@dpdk.org>,
+ "stable@dpdk.org" <stable@dpdk.org>
+Subject: RE: [PATCH] net/ixgbe: fix sctp mask in flow director
+Thread-Topic: [PATCH] net/ixgbe: fix sctp mask in flow director
+Thread-Index: AQHb50J90ujsrrtxl0qyMyNTMz0DO7QbbzcAgAGR6UA=
+Date: Tue, 1 Jul 2025 09:14:14 +0000
+Message-ID: <IA3PR11MB8965098960F5EDA9715DEA898541A@IA3PR11MB8965.namprd11.prod.outlook.com>
+References: <20250627085953.286939-1-yuanx.wang@intel.com>
+ <aGJUmNRzQU7SARCl@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <aGJUmNRzQU7SARCl@bricha3-mobl1.ger.corp.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA3PR11MB8965:EE_|SN7PR11MB8026:EE_
+x-ms-office365-filtering-correlation-id: e8a6fa81-67e5-4d89-a8bb-08ddb87fa60b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|1800799024|366016|376014|38070700018|7053199007; 
+x-microsoft-antispam-message-info: =?us-ascii?Q?skYcbzMrOMRdVK/8w00dH2Ll44+3zEU+0y8JORlovJdOzfdo8/C7xOmQgbd8?=
+ =?us-ascii?Q?pJWHO072pEDAz0WVU6Aq20nnypKQ+5E8AU7Kkq6HloNRO54444t9X721WmuV?=
+ =?us-ascii?Q?4PrFedzsGZqBlz0JaaguBqsUq9H0/hdwVEuql8msNY/U81XR0D+hqrZNSB+K?=
+ =?us-ascii?Q?fH1pdlpo87Agn8M9/uGXRHq2LIX5wDeCKjcx9Fjd0VUtGxwlwQPDWkz92QiN?=
+ =?us-ascii?Q?Ngm7u8sVaHo2mXGk1VXNIEScGHDlmtgYZhud+HAc483VZChZemh9r47rB3KJ?=
+ =?us-ascii?Q?+LHf0fPkUiH+ExW2IZCwvHKZpmqkRzHAK1WaJATKBLP9RU61NKGawagvbaAt?=
+ =?us-ascii?Q?r3vTJm1z1Iisc7btpksBvq0Fo+PC/yh5wNF1j1AX550AErPaIV7yE0b/uvYt?=
+ =?us-ascii?Q?+TdPYIyKQ6hxNsmPB6FsBK/0+bzACI5gT4ZLBbmVpnty11OtwPp5dmXdLJgd?=
+ =?us-ascii?Q?+2ginx28Ugo5JdPSEFMyoVdh5SjlI14ArDQyU85hdvu1v0CVyd8UwVssSu8P?=
+ =?us-ascii?Q?5uN+sV0eYw+IIjXSr3jBiw9Wv0i/coHTFbu4qQkG24kCyYbvE7oT+m9I3A1M?=
+ =?us-ascii?Q?LOR9QVL7RxDf0rBuzJpgbRwpc+Ulgg0a7ueY+ID7KlzsjTLnYaIhZOeyEKQb?=
+ =?us-ascii?Q?aOHejJBsl7HpCgYrryxPXuJs/o/du/gF7FSs7yMm5+1Pf9JESpDNak4Ly2zS?=
+ =?us-ascii?Q?dYNHtHqyu41HpH8ct0wxMWfPaaTtg90Qrt/CzbZpXD7f1cyMLkq7teTnAGXa?=
+ =?us-ascii?Q?b7Y/LEGZ5as3ET6f39kFQUSFJAihmhiy+lYfkzSvcprouOrCV8KbqW53X6w0?=
+ =?us-ascii?Q?13hbkAIVZa+8Heb6IKdvCl9MvXrIcNVFJatZA/MYG1Un4dNQPORhEATSTGa9?=
+ =?us-ascii?Q?nXk9aJTTX9qqHC1jzjW9eBQW4vXGSIidsu+CqwY4jhtahFEMTQwFAPYFNmJa?=
+ =?us-ascii?Q?TpCr44s+aHeQl5o5STcZpgSQL03LaZuXn03gvtoCKwviU8CA1Zu2SGkZt9HA?=
+ =?us-ascii?Q?j5vx5rll1h7yTtkT1hb7E2YRy5Qgg9BTC/sg7NQLTdQE5AAABpBrUo4iTOap?=
+ =?us-ascii?Q?49rn3dNfDUOyFAKugwjs9+H3L7o6fIsd9NKPVkf4nLIk1kqyM0XmUOmTS3vd?=
+ =?us-ascii?Q?uYWbniaKMpjbf8TAnbb/6QT+8fykTcTrp/Fp5FTqqynqSS7SLEk3jw+JQcpR?=
+ =?us-ascii?Q?kx8zI1vvi6pu0jUvdwtvvllTZ0NESsaq7UUIQG6Zd0gfeodECQndjw06ytez?=
+ =?us-ascii?Q?2x8JErlrOmky1AVnOStSbC/ufGdqBobWUfWDZOYt2Q07WxTHNccDO6hUZPEf?=
+ =?us-ascii?Q?XM/j/ebsCnkIsRK2zB3209bGhItseyMShoSXfw99Zz4PBHvqF1KC0wPI7F7K?=
+ =?us-ascii?Q?vma57ETsSS2I+EukZ+/ov7m0OXpuj9pmAYLY+7b2A2doFEDxt31MafXQF59o?=
+ =?us-ascii?Q?4elr5EH4yy4=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:IA3PR11MB8965.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014)(38070700018)(7053199007); DIR:OUT;
+ SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?OQBmBBn4FhxPmqxNQh2GZTHru6jge4OuJPd7VnOvbfqnCOZoEUtS32HFYhFX?=
+ =?us-ascii?Q?8VKk2OtAP7TgEi8jmqQOs1Qsz6LuZ2xsCsq6ztijwC5eZCFJ3BZ/W1rxKqX3?=
+ =?us-ascii?Q?YoP/9gc7yTJiFOFFMwLc1UenmlzSaNpSrp9G4sRmXKKxckX1jgGDuo2Xxoe/?=
+ =?us-ascii?Q?BEx2E4/KwD4QQhgunZyN6i7elhR5FWuR2ls1QKM1WG5Uui8Zk0ObDSfZGoDC?=
+ =?us-ascii?Q?UBRaSyjtvfIzo70XEa9DnlprNsIrPjR9WnBE1f27nmjfJASKxGh1wtG04/Py?=
+ =?us-ascii?Q?kSYqJ8E9RI3oFK3i5QTERlHXe+sO7PqVdO87NOAixqoHcjaB5N9Zj5FMs/83?=
+ =?us-ascii?Q?d1N0f1qlPzZm3EvmrY/S+xEqjUagKFavUERrhMJ63BiHpmaXYjfjUBreOjNN?=
+ =?us-ascii?Q?NPHeEy4QnL3qZODnr8jYFanGJbIgYDQeQfS0d0TMo+38G+wY8x8LZGNuZSxL?=
+ =?us-ascii?Q?gl4880gbCMC2DHSHUIKe5ie+aybpjJ1Rx7n91lLaQ5NmZ/2OawVR4hL9KW2v?=
+ =?us-ascii?Q?fCue21+/0lkiRpgSZ4yKO05SDTuBGPBhRns1vtQ0w27+8N81PduIajWQTbzu?=
+ =?us-ascii?Q?3Nk2NFRVqIg6s+aTYgHvVlkEqHukakhYtbEhXXDuAGqrpt7f6i4/vAJxHeyq?=
+ =?us-ascii?Q?OjlIMxGxYW3b6R0EARqDDFWcs6g0J/k1D8d4ZfeTqcP08px5BofQwqHtviCa?=
+ =?us-ascii?Q?osOh1Ff2cA8SKu1Vzx2T1VD8+s7hkwaGTdKEQ2INz3j6RTK9mafI0Bu58HG+?=
+ =?us-ascii?Q?BsEVYtBdqTe4uP2Vpch1poaQfG5xQ3h54MuMbeFwWJijEBrKXaSXu9VnTkf0?=
+ =?us-ascii?Q?TAUA5hCvx+dcnexNbjiNKAePwJM2xvhkx7MjEdLZKBlAQ/MtGRxUjUepc3IL?=
+ =?us-ascii?Q?djKLqadWbykfYiGXcVDg+cO5LczKkQapk7DQIGlrQM8wZSKFzfTIPTIb3tal?=
+ =?us-ascii?Q?CLK0vq0NnOIdMuf5fjt/E4RfREtQyc+Qim89EgxCyn0/wg7V0kICFb6D7hT6?=
+ =?us-ascii?Q?ltGMcoZPNxNr1ZmHa377AS+FxSrEsFj6PwLvgpUlbEY7zMfibTDpTrrWJjG9?=
+ =?us-ascii?Q?yDmSaWWz7WEfJGgTBS9Wu+Id4ZV48YpDJIkgf6mTlelNztKwDLRMNa2zl7cf?=
+ =?us-ascii?Q?s4++4Ro+i2AA8yaufSTfJqf6ylTG+lAMdzr22C9+4WkIExoaf4hr1IqsGW0l?=
+ =?us-ascii?Q?QESF52k1fC5k/TPQcdG/yZAzBTV7XOS4pam++62eAQHWCu3BpDtBgGZxsykH?=
+ =?us-ascii?Q?kDTNhQNPA3d4/pX3zDtlPu+WVRtcI8fFiC6mCaveVmWQOvTYXY/+eU9Czmoz?=
+ =?us-ascii?Q?p7kNsXm9SvtOcVVfLtFV2YKmIIBLQadkeBddt8SmAsOzomx6eOQl1rkZMQ20?=
+ =?us-ascii?Q?ded6y+gasfl6z4txlrBLG+WchWrXaH5TXQVr8vSI083nlGy24u2O6PxV60nm?=
+ =?us-ascii?Q?RvTvhwK+6jTAHyHmSOUvOMHBQRAQ66VZWoFqPi3+G/V78gxk7oVAlQNsqIL3?=
+ =?us-ascii?Q?obxC9HebHR6urqBeqYUdntXm9G6UiqdS0g6mMWp/JUQbqg8CfFHLiEYEFFe5?=
+ =?us-ascii?Q?/9bH+iAKQIlmvzFBJHbKvPjnOjPJ5JU0b+sdi2M/?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.50.165.33]
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemo500011.china.huawei.com (7.202.195.194)
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB8965.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8a6fa81-67e5-4d89-a8bb-08ddb87fa60b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2025 09:14:14.2537 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: RDa5GIX+TPE7DtstSakGDgyc4Ax28Y3yIsPDOu1fOyJTLPcMsIDsQH+oZ9tFNeGdvpOy59qqqJM7WcOjSuY9yg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB8026
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,678 +176,95 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Chengwen Feng <fengchengwen@huawei.com>
+Hi Bruce,
 
-If VF has the multi-TCs capability, then application could configure the
-multi-TCs feature through the DCB interface. Because VF does not have
-its own ETS and PFC components, the constraints are as follows:
+This patch attempts to resolve the SCTP mismatching on 82599ES.
+A sample flow rule is as follows:=20
+flow create 0 ingress pattern eth / ipv4 dst is 245.194.135.241 src is 215.=
+201.218.98 / sctp  / end actions drop /  end
 
-1. The DCB configuration (struct rte_eth_dcb_rx_conf and
-   rte_eth_dcb_tx_conf) must be the same as that of the PF.
-2. VF does not support RTE_ETH_DCB_PFC_SUPPORT configuration.
+NIC will pass the packet to host , however we expect the packet to be dropp=
+ed.
+The reason for this is that ixgbe_parse_fdir_filter_normal() does not chang=
+e the SCTP mask, which has a default value of 0.=20
+This causes HW to ignore L4 protocol type because the L4P register is set.
+(The default value is set by the following patch, called patch_df.=20
+ https://patches.dpdk.org/project/dpdk/patch/20250418074309.705337-1-yuanx.=
+wang@intel.com/)
 
-Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
-Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
----
- drivers/net/hns3/hns3_dcb.c       | 106 ++++++++++++
- drivers/net/hns3/hns3_dcb.h       |   4 +
- drivers/net/hns3/hns3_dump.c      |   6 +-
- drivers/net/hns3/hns3_ethdev.c    |  98 +-----------
- drivers/net/hns3/hns3_ethdev_vf.c | 257 ++++++++++++++++++++++++++++--
- drivers/net/hns3/hns3_mbx.h       |  39 +++++
- 6 files changed, 402 insertions(+), 108 deletions(-)
+However, This patch seems to need to be discard due to another issue.
+This scenario is based on patch_df and create 2 rules on 82599ES.
+flow create 0 ingress pattern fuzzy thresh is 6 / ipv4 dst is 102.23.130.15=
+4 src is 70.247.152.105  / end actions queue index 6 /  end
+flow create 0 ingress pattern fuzzy thresh is 4 / ipv4 dst is 193.23.234.17=
+ src is 59.247.66.16 / udp dst is 57827 src is 23877  / end actions queue i=
+ndex 11 /  end
 
-diff --git a/drivers/net/hns3/hns3_dcb.c b/drivers/net/hns3/hns3_dcb.c
-index 9a1f4120d0..6d2945d9c5 100644
---- a/drivers/net/hns3/hns3_dcb.c
-+++ b/drivers/net/hns3/hns3_dcb.c
-@@ -1800,3 +1800,109 @@ hns3_fc_enable(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf)
- 
- 	return ret;
- }
-+
-+int
-+hns3_get_dcb_info(struct rte_eth_dev *dev, struct rte_eth_dcb_info *dcb_info)
-+{
-+	struct hns3_hw *hw = HNS3_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	enum rte_eth_rx_mq_mode mq_mode = dev->data->dev_conf.rxmode.mq_mode;
-+	struct hns3_adapter *hns = HNS3_DEV_HW_TO_ADAPTER(hw);
-+	int i;
-+
-+	if (hns->is_vf && !hns3_dev_get_support(hw, VF_MULTI_TCS))
-+		return -ENOTSUP;
-+
-+	rte_spinlock_lock(&hw->lock);
-+	if ((uint32_t)mq_mode & RTE_ETH_MQ_RX_DCB_FLAG)
-+		dcb_info->nb_tcs = hw->dcb_info.local_max_tc;
-+	else
-+		dcb_info->nb_tcs = 1;
-+
-+	for (i = 0; i < HNS3_MAX_USER_PRIO; i++)
-+		dcb_info->prio_tc[i] = hw->dcb_info.prio_tc[i];
-+	for (i = 0; i < dcb_info->nb_tcs; i++)
-+		dcb_info->tc_bws[i] = hw->dcb_info.pg_info[0].tc_dwrr[i];
-+
-+	for (i = 0; i < hw->dcb_info.num_tc; i++) {
-+		dcb_info->tc_queue.tc_rxq[0][i].base = hw->alloc_rss_size * i;
-+		dcb_info->tc_queue.tc_txq[0][i].base =
-+						hw->tc_queue[i].tqp_offset;
-+		dcb_info->tc_queue.tc_rxq[0][i].nb_queue = hw->alloc_rss_size;
-+		dcb_info->tc_queue.tc_txq[0][i].nb_queue =
-+						hw->tc_queue[i].tqp_count;
-+	}
-+	rte_spinlock_unlock(&hw->lock);
-+
-+	return 0;
-+}
-+
-+int
-+hns3_check_dev_mq_mode(struct rte_eth_dev *dev)
-+{
-+	enum rte_eth_rx_mq_mode rx_mq_mode = dev->data->dev_conf.rxmode.mq_mode;
-+	enum rte_eth_tx_mq_mode tx_mq_mode = dev->data->dev_conf.txmode.mq_mode;
-+	struct hns3_hw *hw = HNS3_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	struct hns3_adapter *hns = HNS3_DEV_HW_TO_ADAPTER(hw);
-+	struct rte_eth_dcb_rx_conf *dcb_rx_conf;
-+	struct rte_eth_dcb_tx_conf *dcb_tx_conf;
-+	uint8_t num_tc;
-+	int max_tc = 0;
-+	int i;
-+
-+	if (((uint32_t)rx_mq_mode & RTE_ETH_MQ_RX_VMDQ_FLAG) ||
-+	    (tx_mq_mode == RTE_ETH_MQ_TX_VMDQ_DCB ||
-+	     tx_mq_mode == RTE_ETH_MQ_TX_VMDQ_ONLY)) {
-+		hns3_err(hw, "VMDQ is not supported, rx_mq_mode = %d, tx_mq_mode = %d.",
-+			 rx_mq_mode, tx_mq_mode);
-+		return -EOPNOTSUPP;
-+	}
-+
-+	dcb_rx_conf = &dev->data->dev_conf.rx_adv_conf.dcb_rx_conf;
-+	dcb_tx_conf = &dev->data->dev_conf.tx_adv_conf.dcb_tx_conf;
-+	if ((uint32_t)rx_mq_mode & RTE_ETH_MQ_RX_DCB_FLAG) {
-+		if (dcb_rx_conf->nb_tcs > hw->dcb_info.tc_max) {
-+			hns3_err(hw, "nb_tcs(%u) > max_tc(%u) driver supported.",
-+				 dcb_rx_conf->nb_tcs, hw->dcb_info.tc_max);
-+			return -EINVAL;
-+		}
-+
-+		/*
-+		 * The PF driver supports only four or eight TCs. But the
-+		 * number of TCs supported by the VF driver is flexible,
-+		 * therefore, only the number of TCs in the PF is verified.
-+		 */
-+		if (!hns->is_vf && !(dcb_rx_conf->nb_tcs == HNS3_4_TCS ||
-+				     dcb_rx_conf->nb_tcs == HNS3_8_TCS)) {
-+			hns3_err(hw, "on RTE_ETH_MQ_RX_DCB_RSS mode, "
-+				 "nb_tcs(%d) != %d or %d in rx direction.",
-+				 dcb_rx_conf->nb_tcs, HNS3_4_TCS, HNS3_8_TCS);
-+			return -EINVAL;
-+		}
-+
-+		if (dcb_rx_conf->nb_tcs != dcb_tx_conf->nb_tcs) {
-+			hns3_err(hw, "num_tcs(%d) of tx is not equal to rx(%d)",
-+				 dcb_tx_conf->nb_tcs, dcb_rx_conf->nb_tcs);
-+			return -EINVAL;
-+		}
-+
-+		for (i = 0; i < HNS3_MAX_USER_PRIO; i++) {
-+			if (dcb_rx_conf->dcb_tc[i] != dcb_tx_conf->dcb_tc[i]) {
-+				hns3_err(hw, "dcb_tc[%d] = %u in rx direction, "
-+					 "is not equal to one in tx direction.",
-+					 i, dcb_rx_conf->dcb_tc[i]);
-+				return -EINVAL;
-+			}
-+			if (dcb_rx_conf->dcb_tc[i] > max_tc)
-+				max_tc = dcb_rx_conf->dcb_tc[i];
-+		}
-+
-+		num_tc = max_tc + 1;
-+		if (num_tc > dcb_rx_conf->nb_tcs) {
-+			hns3_err(hw, "max num_tc(%u) mapped > nb_tcs(%u)",
-+				 num_tc, dcb_rx_conf->nb_tcs);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	return 0;
-+}
-diff --git a/drivers/net/hns3/hns3_dcb.h b/drivers/net/hns3/hns3_dcb.h
-index d5bb5edf4d..552e9c3026 100644
---- a/drivers/net/hns3/hns3_dcb.h
-+++ b/drivers/net/hns3/hns3_dcb.h
-@@ -215,4 +215,8 @@ int hns3_update_queue_map_configure(struct hns3_adapter *hns);
- int hns3_port_shaper_update(struct hns3_hw *hw, uint32_t speed);
- uint8_t hns3_txq_mapped_tc_get(struct hns3_hw *hw, uint16_t txq_no);
- 
-+int hns3_get_dcb_info(struct rte_eth_dev *dev, struct rte_eth_dcb_info *dcb_info);
-+
-+int hns3_check_dev_mq_mode(struct rte_eth_dev *dev);
-+
- #endif /* HNS3_DCB_H */
-diff --git a/drivers/net/hns3/hns3_dump.c b/drivers/net/hns3/hns3_dump.c
-index 678279e2ac..0e978dee60 100644
---- a/drivers/net/hns3/hns3_dump.c
-+++ b/drivers/net/hns3/hns3_dump.c
-@@ -210,7 +210,7 @@ hns3_get_device_basic_info(FILE *file, struct rte_eth_dev *dev)
- 		"  - Device Base Info:\n"
- 		"\t  -- name: %s\n"
- 		"\t  -- adapter_state=%s\n"
--		"\t  -- tc_max=%u tc_num=%u\n"
-+		"\t  -- tc_max=%u tc_num=%u dwrr[%u %u %u %u]\n"
- 		"\t  -- nb_rx_queues=%u nb_tx_queues=%u\n"
- 		"\t  -- total_tqps_num=%u tqps_num=%u intr_tqps_num=%u\n"
- 		"\t  -- rss_size_max=%u alloc_rss_size=%u tx_qnum_per_tc=%u\n"
-@@ -224,6 +224,10 @@ hns3_get_device_basic_info(FILE *file, struct rte_eth_dev *dev)
- 		dev->data->name,
- 		hns3_get_adapter_state_name(hw->adapter_state),
- 		hw->dcb_info.tc_max, hw->dcb_info.num_tc,
-+		hw->dcb_info.pg_info[0].tc_dwrr[0],
-+		hw->dcb_info.pg_info[0].tc_dwrr[1],
-+		hw->dcb_info.pg_info[0].tc_dwrr[2],
-+		hw->dcb_info.pg_info[0].tc_dwrr[3],
- 		dev->data->nb_rx_queues, dev->data->nb_tx_queues,
- 		hw->total_tqps_num, hw->tqps_num, hw->intr_tqps_num,
- 		hw->rss_size_max, hw->alloc_rss_size, hw->tx_qnum_per_tc,
-diff --git a/drivers/net/hns3/hns3_ethdev.c b/drivers/net/hns3/hns3_ethdev.c
-index 5af11d9228..a809a47423 100644
---- a/drivers/net/hns3/hns3_ethdev.c
-+++ b/drivers/net/hns3/hns3_ethdev.c
-@@ -1870,71 +1870,6 @@ hns3_remove_mc_mac_addr(struct hns3_hw *hw, struct rte_ether_addr *mac_addr)
- 	return ret;
- }
- 
--static int
--hns3_check_mq_mode(struct rte_eth_dev *dev)
--{
--	enum rte_eth_rx_mq_mode rx_mq_mode = dev->data->dev_conf.rxmode.mq_mode;
--	enum rte_eth_tx_mq_mode tx_mq_mode = dev->data->dev_conf.txmode.mq_mode;
--	struct hns3_hw *hw = HNS3_DEV_PRIVATE_TO_HW(dev->data->dev_private);
--	struct rte_eth_dcb_rx_conf *dcb_rx_conf;
--	struct rte_eth_dcb_tx_conf *dcb_tx_conf;
--	uint8_t num_tc;
--	int max_tc = 0;
--	int i;
--
--	if (((uint32_t)rx_mq_mode & RTE_ETH_MQ_RX_VMDQ_FLAG) ||
--	    (tx_mq_mode == RTE_ETH_MQ_TX_VMDQ_DCB ||
--	     tx_mq_mode == RTE_ETH_MQ_TX_VMDQ_ONLY)) {
--		hns3_err(hw, "VMDQ is not supported, rx_mq_mode = %d, tx_mq_mode = %d.",
--			 rx_mq_mode, tx_mq_mode);
--		return -EOPNOTSUPP;
--	}
--
--	dcb_rx_conf = &dev->data->dev_conf.rx_adv_conf.dcb_rx_conf;
--	dcb_tx_conf = &dev->data->dev_conf.tx_adv_conf.dcb_tx_conf;
--	if ((uint32_t)rx_mq_mode & RTE_ETH_MQ_RX_DCB_FLAG) {
--		if (dcb_rx_conf->nb_tcs > hw->dcb_info.tc_max) {
--			hns3_err(hw, "nb_tcs(%u) > max_tc(%u) driver supported.",
--				 dcb_rx_conf->nb_tcs, hw->dcb_info.tc_max);
--			return -EINVAL;
--		}
--
--		if (!(dcb_rx_conf->nb_tcs == HNS3_4_TCS ||
--		      dcb_rx_conf->nb_tcs == HNS3_8_TCS)) {
--			hns3_err(hw, "on RTE_ETH_MQ_RX_DCB_RSS mode, "
--				 "nb_tcs(%d) != %d or %d in rx direction.",
--				 dcb_rx_conf->nb_tcs, HNS3_4_TCS, HNS3_8_TCS);
--			return -EINVAL;
--		}
--
--		if (dcb_rx_conf->nb_tcs != dcb_tx_conf->nb_tcs) {
--			hns3_err(hw, "num_tcs(%d) of tx is not equal to rx(%d)",
--				 dcb_tx_conf->nb_tcs, dcb_rx_conf->nb_tcs);
--			return -EINVAL;
--		}
--
--		for (i = 0; i < HNS3_MAX_USER_PRIO; i++) {
--			if (dcb_rx_conf->dcb_tc[i] != dcb_tx_conf->dcb_tc[i]) {
--				hns3_err(hw, "dcb_tc[%d] = %u in rx direction, "
--					 "is not equal to one in tx direction.",
--					 i, dcb_rx_conf->dcb_tc[i]);
--				return -EINVAL;
--			}
--			if (dcb_rx_conf->dcb_tc[i] > max_tc)
--				max_tc = dcb_rx_conf->dcb_tc[i];
--		}
--
--		num_tc = max_tc + 1;
--		if (num_tc > dcb_rx_conf->nb_tcs) {
--			hns3_err(hw, "max num_tc(%u) mapped > nb_tcs(%u)",
--				 num_tc, dcb_rx_conf->nb_tcs);
--			return -EINVAL;
--		}
--	}
--
--	return 0;
--}
--
- static int
- hns3_bind_ring_with_vector(struct hns3_hw *hw, uint16_t vector_id, bool en,
- 			   enum hns3_ring_type queue_type, uint16_t queue_id)
-@@ -2033,7 +1968,7 @@ hns3_check_dev_conf(struct rte_eth_dev *dev)
- 	struct rte_eth_conf *conf = &dev->data->dev_conf;
- 	int ret;
- 
--	ret = hns3_check_mq_mode(dev);
-+	ret = hns3_check_dev_mq_mode(dev);
- 	if (ret)
- 		return ret;
- 
-@@ -5489,37 +5424,6 @@ hns3_priority_flow_ctrl_set(struct rte_eth_dev *dev,
- 	return ret;
- }
- 
--static int
--hns3_get_dcb_info(struct rte_eth_dev *dev, struct rte_eth_dcb_info *dcb_info)
--{
--	struct hns3_hw *hw = HNS3_DEV_PRIVATE_TO_HW(dev->data->dev_private);
--	enum rte_eth_rx_mq_mode mq_mode = dev->data->dev_conf.rxmode.mq_mode;
--	int i;
--
--	rte_spinlock_lock(&hw->lock);
--	if ((uint32_t)mq_mode & RTE_ETH_MQ_RX_DCB_FLAG)
--		dcb_info->nb_tcs = hw->dcb_info.local_max_tc;
--	else
--		dcb_info->nb_tcs = 1;
--
--	for (i = 0; i < HNS3_MAX_USER_PRIO; i++)
--		dcb_info->prio_tc[i] = hw->dcb_info.prio_tc[i];
--	for (i = 0; i < dcb_info->nb_tcs; i++)
--		dcb_info->tc_bws[i] = hw->dcb_info.pg_info[0].tc_dwrr[i];
--
--	for (i = 0; i < hw->dcb_info.num_tc; i++) {
--		dcb_info->tc_queue.tc_rxq[0][i].base = hw->alloc_rss_size * i;
--		dcb_info->tc_queue.tc_txq[0][i].base =
--						hw->tc_queue[i].tqp_offset;
--		dcb_info->tc_queue.tc_rxq[0][i].nb_queue = hw->alloc_rss_size;
--		dcb_info->tc_queue.tc_txq[0][i].nb_queue =
--						hw->tc_queue[i].tqp_count;
--	}
--	rte_spinlock_unlock(&hw->lock);
--
--	return 0;
--}
--
- static int
- hns3_reinit_dev(struct hns3_adapter *hns)
- {
-diff --git a/drivers/net/hns3/hns3_ethdev_vf.c b/drivers/net/hns3/hns3_ethdev_vf.c
-index 41d8252540..f9ef3dbb06 100644
---- a/drivers/net/hns3/hns3_ethdev_vf.c
-+++ b/drivers/net/hns3/hns3_ethdev_vf.c
-@@ -379,6 +379,236 @@ hns3vf_bind_ring_with_vector(struct hns3_hw *hw, uint16_t vector_id,
- 	return ret;
- }
- 
-+static int
-+hns3vf_set_multi_tc(struct hns3_hw *hw, const struct hns3_mbx_tc_config *config)
-+{
-+	struct hns3_mbx_tc_config *payload;
-+	struct hns3_vf_to_pf_msg req;
-+	int ret;
-+
-+	hns3vf_mbx_setup(&req, HNS3_MBX_SET_TC, 0);
-+	payload = (struct hns3_mbx_tc_config *)req.data;
-+	memcpy(payload, config, sizeof(*payload));
-+	payload->prio_tc_map = rte_cpu_to_le_32(config->prio_tc_map);
-+	ret = hns3vf_mbx_send(hw, &req, true, NULL, 0);
-+	if (ret)
-+		hns3_err(hw, "failed to set multi-tc, ret = %d.", ret);
-+
-+	return ret;
-+}
-+
-+static int
-+hns3vf_unset_multi_tc(struct hns3_hw *hw)
-+{
-+	struct hns3_mbx_tc_config *paylod;
-+	struct hns3_vf_to_pf_msg req;
-+	int ret;
-+
-+	hns3vf_mbx_setup(&req, HNS3_MBX_SET_TC, 0);
-+	paylod = (struct hns3_mbx_tc_config *)req.data;
-+	paylod->tc_dwrr[0] = HNS3_ETS_DWRR_MAX;
-+	paylod->num_tc = 1;
-+	ret = hns3vf_mbx_send(hw, &req, true, NULL, 0);
-+	if (ret)
-+		hns3_err(hw, "failed to unset multi-tc, ret = %d.", ret);
-+
-+	return ret;
-+}
-+
-+static int
-+hns3vf_check_multi_tc_config(struct rte_eth_dev *dev, const struct hns3_mbx_tc_config *info)
-+{
-+	struct rte_eth_dcb_rx_conf *rx_conf = &dev->data->dev_conf.rx_adv_conf.dcb_rx_conf;
-+	struct hns3_hw *hw = HNS3_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	uint32_t prio_tc_map = info->prio_tc_map;
-+	uint8_t map;
-+	int i;
-+
-+	if (rx_conf->nb_tcs != info->num_tc) {
-+		hns3_err(hw, "num_tcs(%d) is not equal to PF config(%u)!",
-+			 rx_conf->nb_tcs, info->num_tc);
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < HNS3_MAX_USER_PRIO; i++) {
-+		map = prio_tc_map & HNS3_MBX_PRIO_MASK;
-+		prio_tc_map >>= HNS3_MBX_PRIO_SHIFT;
-+		if (rx_conf->dcb_tc[i] != map) {
-+			hns3_err(hw, "dcb_tc[%d] = %u is not equal to PF config(%u)!",
-+				 i, rx_conf->dcb_tc[i], map);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+hns3vf_get_multi_tc_info(struct hns3_hw *hw, struct hns3_mbx_tc_config *info)
-+{
-+	uint8_t resp_msg[HNS3_MBX_MAX_RESP_DATA_SIZE];
-+	struct hns3_mbx_tc_prio_map *map = (struct hns3_mbx_tc_prio_map *)resp_msg;
-+	struct hns3_mbx_tc_ets_info *ets = (struct hns3_mbx_tc_ets_info *)resp_msg;
-+	struct hns3_vf_to_pf_msg req;
-+	int i, ret;
-+
-+	memset(info, 0, sizeof(*info));
-+
-+	hns3vf_mbx_setup(&req, HNS3_MBX_GET_TC, HNS3_MBX_GET_PRIO_MAP);
-+	ret = hns3vf_mbx_send(hw, &req, true, resp_msg, sizeof(resp_msg));
-+	if (ret) {
-+		hns3_err(hw, "failed to get multi-tc prio map, ret = %d.", ret);
-+		return ret;
-+	}
-+	info->prio_tc_map = rte_le_to_cpu_32(map->prio_tc_map);
-+
-+	hns3vf_mbx_setup(&req, HNS3_MBX_GET_TC, HNS3_MBX_GET_ETS_INFO);
-+	ret = hns3vf_mbx_send(hw, &req, true, resp_msg, sizeof(resp_msg));
-+	if (ret) {
-+		hns3_err(hw, "failed to get multi-tc ETS info, ret = %d.", ret);
-+		return ret;
-+	}
-+	for (i = 0; i < HNS3_MAX_TC_NUM; i++) {
-+		if (ets->sch_mode[i] == HNS3_ETS_SCHED_MODE_INVALID)
-+			continue;
-+		info->tc_dwrr[i] = ets->sch_mode[i];
-+		info->num_tc++;
-+		if (ets->sch_mode[i] > 0)
-+			info->tc_sch_mode |= 1u << i;
-+	}
-+
-+	return 0;
-+}
-+
-+static void
-+hns3vf_update_dcb_info(struct hns3_hw *hw, const struct hns3_mbx_tc_config *info)
-+{
-+	uint32_t prio_tc_map;
-+	uint8_t map;
-+	int i;
-+
-+	hw->dcb_info.local_max_tc = hw->dcb_info.num_tc;
-+	hw->dcb_info.hw_tc_map = (1u << hw->dcb_info.num_tc) - 1u;
-+	memset(hw->dcb_info.pg_info[0].tc_dwrr, 0, sizeof(hw->dcb_info.pg_info[0].tc_dwrr));
-+
-+	if (hw->dcb_info.num_tc == 1) {
-+		memset(hw->dcb_info.prio_tc, 0, sizeof(hw->dcb_info.prio_tc));
-+		hw->dcb_info.pg_info[0].tc_dwrr[0] = HNS3_ETS_DWRR_MAX;
-+		return;
-+	}
-+
-+	if (info == NULL)
-+		return;
-+
-+	prio_tc_map = info->prio_tc_map;
-+	for (i = 0; i < HNS3_MAX_TC_NUM; i++) {
-+		map = prio_tc_map & HNS3_MBX_PRIO_MASK;
-+		prio_tc_map >>= HNS3_MBX_PRIO_SHIFT;
-+		hw->dcb_info.prio_tc[i] = map;
-+	}
-+	for (i = 0; i < hw->dcb_info.num_tc; i++)
-+		hw->dcb_info.pg_info[0].tc_dwrr[i] = info->tc_dwrr[i];
-+}
-+
-+static int
-+hns3vf_setup_dcb(struct rte_eth_dev *dev)
-+{
-+	struct hns3_hw *hw = HNS3_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	struct hns3_mbx_tc_config info;
-+	int ret;
-+
-+	if (!hns3_dev_get_support(hw, VF_MULTI_TCS)) {
-+		hns3_err(hw, "this port does not support dcb configurations.");
-+		return -ENOTSUP;
-+	}
-+
-+	if (dev->data->dev_conf.dcb_capability_en & RTE_ETH_DCB_PFC_SUPPORT) {
-+		hns3_err(hw, "VF don't support PFC!");
-+		return -ENOTSUP;
-+	}
-+
-+	ret = hns3vf_get_multi_tc_info(hw, &info);
-+	if (ret)
-+		return ret;
-+
-+	ret = hns3vf_check_multi_tc_config(dev, &info);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * If multiple-TCs have been configured, cancel the configuration
-+	 * first. Otherwise, the configuration will fail.
-+	 */
-+	if (hw->dcb_info.num_tc > 1) {
-+		ret = hns3vf_unset_multi_tc(hw);
-+		if (ret)
-+			return ret;
-+		hw->dcb_info.num_tc = 1;
-+		hns3vf_update_dcb_info(hw, NULL);
-+	}
-+
-+	ret = hns3vf_set_multi_tc(hw, &info);
-+	if (ret)
-+		return ret;
-+
-+	hw->dcb_info.num_tc = info.num_tc;
-+	hns3vf_update_dcb_info(hw, &info);
-+
-+	return hns3_queue_to_tc_mapping(hw, hw->data->nb_rx_queues, hw->data->nb_rx_queues);
-+}
-+
-+static int
-+hns3vf_unset_dcb(struct rte_eth_dev *dev)
-+{
-+	struct hns3_hw *hw = HNS3_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	int ret;
-+
-+	if (hw->dcb_info.num_tc > 1) {
-+		ret = hns3vf_unset_multi_tc(hw);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	hw->dcb_info.num_tc = 1;
-+	hns3vf_update_dcb_info(hw, NULL);
-+
-+	return hns3_queue_to_tc_mapping(hw, hw->data->nb_rx_queues, hw->data->nb_rx_queues);
-+}
-+
-+static int
-+hns3vf_config_dcb(struct rte_eth_dev *dev)
-+{
-+	struct rte_eth_conf *conf = &dev->data->dev_conf;
-+	uint32_t rx_mq_mode = conf->rxmode.mq_mode;
-+	int ret;
-+
-+	if (rx_mq_mode & RTE_ETH_MQ_RX_DCB_FLAG)
-+		ret = hns3vf_setup_dcb(dev);
-+	else
-+		ret = hns3vf_unset_dcb(dev);
-+
-+	return ret;
-+}
-+
-+static int
-+hns3vf_check_dev_conf(struct rte_eth_dev *dev)
-+{
-+	struct hns3_hw *hw = HNS3_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	struct rte_eth_conf *conf = &dev->data->dev_conf;
-+	int ret;
-+
-+	ret = hns3_check_dev_mq_mode(dev);
-+	if (ret)
-+		return ret;
-+
-+	if (conf->link_speeds & RTE_ETH_LINK_SPEED_FIXED) {
-+		hns3_err(hw, "setting link speed/duplex not supported");
-+		ret = -EINVAL;
-+	}
-+
-+	return ret;
-+}
-+
- static int
- hns3vf_dev_configure(struct rte_eth_dev *dev)
- {
-@@ -412,11 +642,13 @@ hns3vf_dev_configure(struct rte_eth_dev *dev)
- 	}
- 
- 	hw->adapter_state = HNS3_NIC_CONFIGURING;
--	if (conf->link_speeds & RTE_ETH_LINK_SPEED_FIXED) {
--		hns3_err(hw, "setting link speed/duplex not supported");
--		ret = -EINVAL;
-+	ret = hns3vf_check_dev_conf(dev);
-+	if (ret)
-+		goto cfg_err;
-+
-+	ret = hns3vf_config_dcb(dev);
-+	if (ret)
- 		goto cfg_err;
--	}
- 
- 	/* When RSS is not configured, redirect the packet queue 0 */
- 	if ((uint32_t)mq_mode & RTE_ETH_MQ_RX_RSS_FLAG) {
-@@ -1496,6 +1728,15 @@ hns3vf_init_vf(struct rte_eth_dev *eth_dev)
- 	return ret;
- }
- 
-+static void
-+hns3vf_notify_uninit(struct hns3_hw *hw)
-+{
-+	struct hns3_vf_to_pf_msg req;
-+
-+	hns3vf_mbx_setup(&req, HNS3_MBX_VF_UNINIT, 0);
-+	(void)hns3vf_mbx_send(hw, &req, false, NULL, 0);
-+}
-+
- static void
- hns3vf_uninit_vf(struct rte_eth_dev *eth_dev)
- {
-@@ -1515,6 +1756,7 @@ hns3vf_uninit_vf(struct rte_eth_dev *eth_dev)
- 	rte_intr_disable(pci_dev->intr_handle);
- 	hns3_intr_unregister(pci_dev->intr_handle, hns3vf_interrupt_handler,
- 			     eth_dev);
-+	(void)hns3vf_notify_uninit(hw);
- 	hns3_cmd_uninit(hw);
- 	hns3_cmd_destroy_queue(hw);
- 	hw->io_base = NULL;
-@@ -1652,14 +1894,8 @@ static int
- hns3vf_do_start(struct hns3_adapter *hns, bool reset_queue)
- {
- 	struct hns3_hw *hw = &hns->hw;
--	uint16_t nb_rx_q = hw->data->nb_rx_queues;
--	uint16_t nb_tx_q = hw->data->nb_tx_queues;
- 	int ret;
- 
--	ret = hns3_queue_to_tc_mapping(hw, nb_rx_q, nb_tx_q);
--	if (ret)
--		return ret;
--
- 	hns3_enable_rxd_adv_layout(hw);
- 
- 	ret = hns3_init_queues(hns, reset_queue);
-@@ -2240,6 +2476,7 @@ static const struct eth_dev_ops hns3vf_eth_dev_ops = {
- 	.vlan_filter_set    = hns3vf_vlan_filter_set,
- 	.vlan_offload_set   = hns3vf_vlan_offload_set,
- 	.get_reg            = hns3_get_regs,
-+	.get_dcb_info       = hns3_get_dcb_info,
- 	.dev_supported_ptypes_get = hns3_dev_supported_ptypes_get,
- 	.tx_done_cleanup    = hns3_tx_done_cleanup,
- 	.eth_dev_priv_dump  = hns3_eth_dev_priv_dump,
-diff --git a/drivers/net/hns3/hns3_mbx.h b/drivers/net/hns3/hns3_mbx.h
-index eec3dd2c7e..3f9007c77b 100644
---- a/drivers/net/hns3/hns3_mbx.h
-+++ b/drivers/net/hns3/hns3_mbx.h
-@@ -9,6 +9,8 @@
- 
- #include <rte_spinlock.h>
- 
-+#include "hns3_cmd.h"
-+
- enum HNS3_MBX_OPCODE {
- 	HNS3_MBX_RESET = 0x01,          /* (VF -> PF) assert reset */
- 	HNS3_MBX_ASSERTING_RESET,       /* (PF -> VF) PF is asserting reset */
-@@ -45,11 +47,13 @@ enum HNS3_MBX_OPCODE {
- 	HNS3_MBX_PUSH_VLAN_INFO = 34,   /* (PF -> VF) push port base vlan */
- 
- 	HNS3_MBX_PUSH_PROMISC_INFO = 36, /* (PF -> VF) push vf promisc info */
-+	HNS3_MBX_VF_UNINIT,              /* (VF -> PF) vf is unintializing */
- 
- 	HNS3_MBX_HANDLE_VF_TBL = 38,    /* (VF -> PF) store/clear hw cfg tbl */
- 	HNS3_MBX_GET_RING_VECTOR_MAP,   /* (VF -> PF) get ring-to-vector map */
- 
- 	HNS3_MBX_GET_TC = 47,           /* (VF -> PF) get tc info of PF configured */
-+	HNS3_MBX_SET_TC,                /* (VF -> PF) set tc */
- 
- 	HNS3_MBX_PUSH_LINK_STATUS = 201, /* (IMP -> PF) get port link status */
- };
-@@ -64,8 +68,43 @@ struct hns3_basic_info {
- 
- enum hns3_mbx_get_tc_subcode {
- 	HNS3_MBX_GET_PRIO_MAP = 0, /* query priority to tc map */
-+	HNS3_MBX_GET_ETS_INFO,     /* query ets info */
-+};
-+
-+struct hns3_mbx_tc_prio_map {
-+	/*
-+	 * Each four bits correspond to one priority's TC.
-+	 * Bit0-3 correspond to priority-0's TC, bit4-7 correspond to
-+	 * priority-1's TC, and so on.
-+	 */
-+	uint32_t prio_tc_map;
- };
- 
-+#define HNS3_ETS_SCHED_MODE_INVALID	255
-+#define HNS3_ETS_DWRR_MAX		100
-+struct hns3_mbx_tc_ets_info {
-+	uint8_t sch_mode[HNS3_MAX_TC_NUM]; /* 1~100: DWRR, 0: SP; 255-invalid */
-+};
-+
-+#define HNS3_MBX_PRIO_SHIFT	4
-+#define HNS3_MBX_PRIO_MASK	0xFu
-+struct __rte_packed_begin hns3_mbx_tc_config {
-+	/*
-+	 * Each four bits correspond to one priority's TC.
-+	 * Bit0-3 correspond to priority-0's TC, bit4-7 correspond to
-+	 * priority-1's TC, and so on.
-+	 */
-+	uint32_t prio_tc_map;
-+	uint8_t tc_dwrr[HNS3_MAX_TC_NUM];
-+	uint8_t num_tc;
-+	/*
-+	 * Each bit correspond to one TC's scheduling mode, 0 means SP
-+	 * scheduling mode, 1 means DWRR scheduling mode.
-+	 * Bit0 corresponds to TC0, bit1 corresponds to TC1, and so on.
-+	 */
-+	uint8_t tc_sch_mode;
-+} __rte_packed_end;
-+
- /* below are per-VF mac-vlan subcodes */
- enum hns3_mbx_mac_vlan_subcode {
- 	HNS3_MBX_MAC_VLAN_UC_MODIFY = 0,        /* modify UC mac addr */
--- 
-2.33.0
+The second rule creation fails (ixgbe_flow.c line 3168) because the port ma=
+sk is different from the first one. The first is 0x0 and the other is 0xfff=
+f.
+Because of this scenario, I think it would be better to retore the default =
+value of port mask to 0xffff. Therefore, we should reconsider the patch_df =
+solution.
 
+If all mask are formatted as 0xffff, raw IP packet will not match on E610, =
+I think it is not appropriate to use port masks as L4P condition. I am cons=
+idering using IXGBE_ATR_L4TYPE_MASK.
+if (info->mask.dst_port_mask =3D=3D 0 && info->mask.src_port_mask =3D=3D 0)=
+=20
+    fdirm |=3D IXGBE_FDIRM_L4P;
+
+Do you have any suggestions?
+=20
+Thanks,
+Yuan
+
+> -----Original Message-----
+> From: Richardson, Bruce <bruce.richardson@intel.com>
+> Sent: Monday, June 30, 2025 5:11 PM
+> To: Wang, YuanX <yuanx.wang@intel.com>
+> Cc: Burakov, Anatoly <anatoly.burakov@intel.com>; Medvedkin, Vladimir
+> <vladimir.medvedkin@intel.com>; dev@dpdk.org; stable@dpdk.org
+> Subject: Re: [PATCH] net/ixgbe: fix sctp mask in flow director
+>=20
+> On Fri, Jun 27, 2025 at 04:59:53PM +0800, Yuan Wang wrote:
+> > Since the default value of the port mask is set to 0, the port mask
+> > does not change in some cases when creating SCTP flow rules, which
+> > results in incorrect L4P register configuration.
+> >
+> > This patch fixes this issue by setting the mask to 0xffff in these case=
+s.
+> >
+> > Fixes: c81daae2383a (net/ixgbe: fix port mask default value in filter)
+> > Cc: stable@dpdk.org
+> >
+> > Signed-off-by: Yuan Wang <yuanx.wang@intel.com>
+> > ---
+> >  drivers/net/intel/ixgbe/ixgbe_flow.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c
+> > b/drivers/net/intel/ixgbe/ixgbe_flow.c
+> > index 6278646720..9f2e470ad9 100644
+> > --- a/drivers/net/intel/ixgbe/ixgbe_flow.c
+> > +++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
+> > @@ -2161,6 +2161,8 @@ ixgbe_parse_fdir_filter_normal(struct
+> rte_eth_dev *dev,
+> >  					item, "Not supported by fdir filter");
+> >  				return -rte_errno;
+> >  			}
+> > +			rule->mask.src_port_mask =3D 0xffff;
+> > +			rule->mask.dst_port_mask =3D 0xffff;
+> >  		}
+> >
+>=20
+> Hi,
+>=20
+> can you give a quick example of how to demonstrate the issue here, so I c=
+an
+> test the patch? Presumably without this patch some packets are incorrectl=
+y
+> classified/filtered based on the rte_flow rules?
+>=20
+> Thanks,
+> /Bruce
