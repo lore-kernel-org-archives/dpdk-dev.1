@@ -2,71 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 146D0C83038
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Jul 2025 13:44:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C99C83038
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Jul 2025 13:46:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 65A8A40658;
-	Tue,  1 Jul 2025 15:44:49 +0200 (CEST)
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com
- [209.85.222.182])
- by mails.dpdk.org (Postfix) with ESMTP id 862E040264
- for <dev@dpdk.org>; Tue,  1 Jul 2025 15:44:48 +0200 (CEST)
-Received: by mail-qk1-f182.google.com with SMTP id
- af79cd13be357-7d3cc0017fdso351891285a.3
- for <dev@dpdk.org>; Tue, 01 Jul 2025 06:44:48 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9757D402A5;
+	Tue,  1 Jul 2025 15:46:27 +0200 (CEST)
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com
+ [209.85.222.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 4D32A40264
+ for <dev@dpdk.org>; Tue,  1 Jul 2025 15:46:26 +0200 (CEST)
+Received: by mail-qk1-f171.google.com with SMTP id
+ af79cd13be357-7d20451c016so191688285a.1
+ for <dev@dpdk.org>; Tue, 01 Jul 2025 06:46:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751377488;
- x=1751982288; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751377585;
+ x=1751982385; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=CDiGkVhwuM13LMLoivufkBOfhsm7Q6+67w48zDpUEIM=;
- b=O6BeWNAZoUc4FmIG/Z5u2yBkBijNS6DH3+sAbZ2a1vOu5MF7rYBodtx9LYjeOoAEON
- KfyxdmT9iJ1EopsHSaJ+mGpn+i2yRw8wZRkZs2Yzuz3n8DHeDGWJt6X1zYdrvSk/hFbL
- xEhcohve+Bq6kap0M43akzS5n+YUqGW78rceB6KA+Gg8dYnJGRPCa7xb1VfJ6h4dHWIe
- xBWyrI0jB1bQEk6T62g62pbFQNWR1XGS6m+UF0Eh8mE7Ut3YFnViqVg0FIDkfhOLFtTE
- f0oeTrl3MZ/kOImwzy25bkQIYAwRZu9LbVG6h9Qlc5DimGU7YI2Z59GSWrbVuQBLdOwx
- n2wg==
+ bh=1hyMBl7uxurNtUc0tIU4t/8vMkayVaP5w6WhxaHP/18=;
+ b=RrunXywwWj49wHHctQ8U9pd5HjErpIq/IDs46lhaGTeUiJsk26BJZZwcikOIJ6LMVn
+ ehxcvMJzofXW5h7sRRZ/yodHOxul7WDliPTLf2vdF4v8UR20OUD2cJYyZEsz2gwMhXxU
+ 5TV56kiEJmSNHa8YzL6ha/xL6gtnd+0RXktIvz9jma3V94AMuyTrh/yCHn58+4SOgps0
+ 9rRVppu96IzZ/7FJ09a710W9XXYQdsdPGMsx9bGiag049wgWlPTJ1nOVu3A9/cX+NQHw
+ TWcbPLg1uKIozjbW00hawlx1U9rFXvzpyV+p7PfoxZYWNbpQZvkPxt2h6v3kv6c8W4p4
+ 4WDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1751377488; x=1751982288;
+ d=1e100.net; s=20230601; t=1751377585; x=1751982385;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=CDiGkVhwuM13LMLoivufkBOfhsm7Q6+67w48zDpUEIM=;
- b=hKMF8f/limx7aqt2qQEs7kFhiFIVUYV/HARkvj7+PiTFFTIUYk7kP33telXwfq+fsH
- S0HKxCPqqoi1VmiIh4xtOSlvD2MUqX5qaOJlaWrT+RnxsyVkDHkWedHkLpQl28J0ip6E
- +w76JuCSjUtk1FsugceBPsn+t9oInwYTD4QgqTLiBZc4ORuca/iiSHnKkipRVd3AcXtP
- xQrxnqDnBdDLHdLS0rlqQ7GV9YJDmZT6c+wMFtpmD1j3hoT65Jn0xvyghZoxEWVtFHAu
- XQ85Owt5HOqkDSEjRcHoRGqpNVV178uM1/ZEJthpBICxf9EZxc+j12viWhdR0Cznkk6J
- lJaQ==
-X-Gm-Message-State: AOJu0Yz/S0zeAm/WaTaGfGwxbhfB246+ER9EdGp+J189Y/qEntcdxEPr
- eidOTZ/M997z8UlpfdGPVOo7b016RNrVrF6eC3AmSBWSg/6/uDq1xnIqm9CavSN8Bbw=
-X-Gm-Gg: ASbGncs4W8IulF/BHWH/XUXhgzkqF/fI8+PpqDH/itpvumzxcHawKlYpm96S2qZdmh6
- FN+9Fcjh6TDGSD/XpZTH/rDNj/jMtbqj5ndR8EIadpsWczTrATI276KrWCzkTdRIC8Cw08MKTyD
- q6k7rlxxhfx0fsC7drfSuvQbF5mMyAY8fciO1EHOGXSR8enLT4AKusgZLkXmz4/aFWkST18NdYy
- B9KXJ1+JyYpN/F5d86QAmNfL6IB4ezj9OhsJTMBPbx/CkOWXUVeihRyskwSl9ZRSeRLJnZHiMxI
- oAI286HM+ARS83xvBccFZ9QcZx4siJ3GxKjMw/dhgg7+O8bnNQhSqPKRu+eX5yjbSDhOKTLF7v6
- OlGagkQ2PCgG2Jfrug+/n5TCdcwkV0HcmGMRd6ss=
-X-Google-Smtp-Source: AGHT+IGsLlztFpvDnOSdJ60cWQfmVLm1Yj7p2U+w6l6mPOFsDwKBi6d8rZqcJgiTxwdKVBKKmELCPg==
-X-Received: by 2002:ae9:f713:0:b0:7d3:90f2:c19f with SMTP id
- af79cd13be357-7d443994497mr1979417885a.31.1751377487650; 
- Tue, 01 Jul 2025 06:44:47 -0700 (PDT)
+ bh=1hyMBl7uxurNtUc0tIU4t/8vMkayVaP5w6WhxaHP/18=;
+ b=krvNbRkZ5ggntutCm4Qxqv/HY8LAdRPlS1M57b/fh5rv+TTPKgjkHuURw9lxSsyAu7
+ 5AS0ZOdfwwqqoRFjv5QZLHrLVkpkS/lOYU+rNMZIOc3reIM1QxCBAFM4mqfZ2LIqUwgU
+ rGIHdQ99VMKed5MagAZHDl7ewZE3r4w7JurmmPoIG3cOhxhF1jZvacEZdwZE3XUed/Qr
+ +GL/KkLhwe17a8FDkwYS/HFOBuZK09s/UNDJhhi85yBplLXPbjwnQxqJwL7+xiMm5u0M
+ 5KgOSqXRZ2QSWlLwe8pgegXKgvSdFLrNeAYwcG6iBD5LoOyQFvTE+eU/se8Q+yx9/M4p
+ elJQ==
+X-Gm-Message-State: AOJu0YwwAfW7OvNgfjd5Mtg/A7/JofNW55/0OdCtw50ytQwjkvQQfXVn
+ eJev/e8DPK/4wLr27Yzizy2FVKwrFw7DRo0Lyob9AIJK0Q2CCxczAlv8dI8q6pvIrDu/Aw+MfHb
+ ek0Rxwdo=
+X-Gm-Gg: ASbGncuAfcP+5llS1ybvFtbZ3tpNriSIZhcBSY+ohYD/+RKLJ5Jkqfuu/lwP+BhMTVd
+ 9KQN4m0Ef35S63vDHtg8xgRH467RQ26oh3Ww1kYJ5i4heUDJcirzhMiaRamNByP9ViTWq+i0NFe
+ sVzbcvkh7ebXPsBLfHz8GrtkF/wDSO7/+MCENYeChrrO/RCkTlcwJETD/JrwXaiiKiFvVSJgg/0
+ Gynj4dOYpsyZXiZeebouWqXmfQ9Zf2UjvuzBSS1LpzZNmTRzrwxmcIeXX4JZMopXUrXwZpkUm4l
+ EEZvjx9Ge034DECn9/xuw4lGus3DXm9HeX3E3bLDJGwo4wG9R0lNdbX+4joflMXBflM7d41YZkH
+ iJgPk+8FQd20A751gW2Y7uqTrpBMBG1zPJD5ORo0=
+X-Google-Smtp-Source: AGHT+IHGygF6sxNC3KxZeVThcnOubhmdLTd6fOlKT/wq22n11c817mSbWD7K1REEEPkDgGzbuS5E3g==
+X-Received: by 2002:a05:620a:2b99:b0:7d4:5802:6b52 with SMTP id
+ af79cd13be357-7d458027033mr1167521985a.33.1751377585494; 
+ Tue, 01 Jul 2025 06:46:25 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7d443204d75sm775471485a.72.2025.07.01.06.44.46
+ af79cd13be357-7d44320563asm768921185a.55.2025.07.01.06.46.24
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 01 Jul 2025 06:44:47 -0700 (PDT)
-Date: Tue, 1 Jul 2025 06:44:44 -0700
+ Tue, 01 Jul 2025 06:46:25 -0700 (PDT)
+Date: Tue, 1 Jul 2025 06:46:22 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: vanshika.shukla@nxp.com
-Cc: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>, Sachin Saxena
- <sachin.saxena@nxp.com>, Jun Yang <jun.yang@nxp.com>
-Subject: Re: [v3 01/10] bus/dpaa: avoid using same structure and variable name
-Message-ID: <20250701064444.48081c79@hermes.local>
-In-Reply-To: <20250610091411.2500413-2-vanshika.shukla@nxp.com>
-References: <20250602131526.3233959-1-vanshika.shukla@nxp.com>
- <20250610091411.2500413-1-vanshika.shukla@nxp.com>
- <20250610091411.2500413-2-vanshika.shukla@nxp.com>
+Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, Hemant Agrawal
+ <hemant.agrawal@nxp.com>, Sachin Saxena <sachin.saxena@nxp.com>, Vinod
+ Pullabhatla <vinod.pullabhatla@nxp.com>
+Subject: Re: [v5 6/9] net/dpaa: add Tx rate limiting DPAA PMD API
+Message-ID: <20250701064622.59a8c75a@hermes.local>
+In-Reply-To: <20250701113707.2793004-7-vanshika.shukla@nxp.com>
+References: <20250611071039.2939950-1-vanshika.shukla@nxp.com>
+ <20250701113707.2793004-1-vanshika.shukla@nxp.com>
+ <20250701113707.2793004-7-vanshika.shukla@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -83,17 +85,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 10 Jun 2025 14:44:02 +0530
+On Tue,  1 Jul 2025 17:07:04 +0530
 vanshika.shukla@nxp.com wrote:
 
-> From: Hemant Agrawal <hemant.agrawal@nxp.com>
-> 
-> rte_dpaa_bus was being used as structure and variable name both.
-> 
-> Signed-off-by: Jun Yang <jun.yang@nxp.com>
-> Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
-> ---
+> +/**
+> + * Set TX rate limit
+> + *
+> + * @param port_id
+> + *    The port identifier of the Ethernet device.
+> + * @param burst
+> + *    Max burst size(KBytes) of the Ethernet device.
+> + *    0 - Disable TX rate limit.
+> + * @param rate
+> + *    Max rate(Kb/sec) of the Ethernet device.
+> + *    0 - Disable TX rate limit.
+> + * @return
+> + *    0 - if successful.
+> + *    <0 - if failed, with proper error code.
+> + */
+> +int
+> +rte_pmd_dpaa_port_set_rate_limit(uint16_t port_id, uint16_t burst,
+> +				 uint32_t rate);
 
-NAK
-Since rte_bus_pci has same type and name, there is no point in
-changing the dpaa bus.
+New API's should be marked experimental
