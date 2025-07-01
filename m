@@ -2,70 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA5FC7EE30
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Jul 2025 15:13:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 445C6C83038
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Jul 2025 15:16:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 847C140276;
-	Tue,  1 Jul 2025 17:13:18 +0200 (CEST)
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com
- [209.85.210.179])
- by mails.dpdk.org (Postfix) with ESMTP id 0FD9840264
- for <dev@dpdk.org>; Tue,  1 Jul 2025 17:13:17 +0200 (CEST)
-Received: by mail-pf1-f179.google.com with SMTP id
- d2e1a72fcca58-749068b9b63so4268933b3a.0
- for <dev@dpdk.org>; Tue, 01 Jul 2025 08:13:16 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id EB97740276;
+	Tue,  1 Jul 2025 17:16:43 +0200 (CEST)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
+ [209.85.214.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 635AC40264
+ for <dev@dpdk.org>; Tue,  1 Jul 2025 17:16:42 +0200 (CEST)
+Received: by mail-pl1-f178.google.com with SMTP id
+ d9443c01a7336-236470b2dceso28199865ad.0
+ for <dev@dpdk.org>; Tue, 01 Jul 2025 08:16:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751382796;
- x=1751987596; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751383001;
+ x=1751987801; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=iFKjBpA7TGmkPZNMi6cTmaYThr9JvjOF5pWIOthXqVc=;
- b=0lb+SlNCybJEi8Hyi9P365u145E6jzoT8vlM05sW9qptFB9+CHJmHLDeMjNtORNnJK
- sG6CLJKN5U9i7hzhXzg6RJf5Kq0KAvg6y3/DqwDeyzZltxMk2h7hYVdzQi2QNzgfq1gf
- iWxnK/LD354mwb9gefXEmiLaHKmh1d9bf6XWYVav5ipudXC8EVKrWnrtYUGXwO1oJGPe
- DXlWY1COVgukLpCVHuS4qJ7Nz4/leApqXcIiMu6qrs7GcCgtXEwu/MZuECDrxvftu6kU
- oEEyL96lDFdUYBWqa9HH+j1ojy4iJ3sbNM8HcEyIAYzAtegF7Tuj2nS85chgkWWRk/AX
- A9QQ==
+ bh=GzgLMFY9q6eCOMOQSRFzyPVqoPwfVRrLyBMXkw9wjso=;
+ b=XnMYKu7xYSAKGjTW+KvwKy993HaeqOWMCZlVK5lc5cBB9apAfgqPGEumtl2bdM9PeY
+ f1FZiak+MVt/0Q+xygvUb68kIWRe7ZBeI3kHIXn9ODTNBT+3jFInlA9qrFRxg3plFPub
+ 7SKj1WlNdDfzkH+b8Uz57yTOq9xh3muJIp32K4Sp1LDSXJgY7fGZ7JlSXrd5Iy94a0s4
+ qKpOFVJIrnkWPM5XE68WAvE+loeBRGE36I8MfhUxfilOcIy60DO7Cwrfw/idc2GuGkR/
+ R7o9443ukAlEpth/XWIBIU70Wqw9qKOFg78qdVJBf9TteQ9VqTAaCQIJfsWVVejPqKT1
+ di3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1751382796; x=1751987596;
+ d=1e100.net; s=20230601; t=1751383001; x=1751987801;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=iFKjBpA7TGmkPZNMi6cTmaYThr9JvjOF5pWIOthXqVc=;
- b=MK6b/04Jrd+H/F/ggTwcOtcJz3hqXbfTZOpQh1+Z9BJJxC9j50ewCVD3dDjZ2HWgx3
- A9PmZk9wo9cSXBRglHNb8CWI6J+miaOxtOrjB9NijNkqFGg2qTDUE+e/2sj0j5kI9umV
- as5RyP5YbSBGU6mMw27TDGJZDdskjBOUt3yogDAclAZNpTbal7az+AV1J2O4Qsc4Me81
- cCq7KVJrjW1f/PdTpDG211ozjqu9Csz5O4D8Z7heLj8Hm/85yOa7V+vCi0BYUwqIH2F7
- n/rUJfs0bN/vsZaPTwF9N0mcQkx+9VRJ+SQArYv0oU5ZUVjEhJq5h2hpfQSCbUf00bFl
- Q+zw==
-X-Gm-Message-State: AOJu0Yz0Mn5c1FXdGPIY/wJgIJFSisgqR11dyaebXoqBPX/0FPUacNEc
- gmqHtsCXhh0r7QhgtgHAnSyHXm3E1Kg22CTpSLaMz5A8bVOhWVwF5qze1y7Fl+BhelqR2+0mrMq
- w4y9GodE=
-X-Gm-Gg: ASbGncutYZEOoyWfqFRYkRch7JaLBm8Oa3myaIDWDMuzQuvlAZtbjbAT6EataZcFr7K
- Ld2jMJSeNVUtK57CtgoEUJC9DWmKbcTcRcxlUw66YOjxXYBj/VUutUBQcbtsl1IJTog/QK4fxaI
- Snvnv/bRUhl4HrFVPIIuGiFE3jGQg4k48fmAn+mfa815VJ1FzzU72Ose1OnIDglD6BCM6L2XXMu
- SI7Qs8ZMU0pR8Mx5t98EJYxZPqijGCrkLhWDQITlKMfPdi7D+x+4PFKSD+tTt6Sg7kkKXhHV0AU
- IpaL6N7IkVmYYCViLxJsl0OQAzMN9ttdKam5FdVWNcKrSYHTghmekxnhAJmYP3pPSW+X19orzjs
- g1k80ivaqXm0JApmjtS/lmy7JsUyc9SOjvUwajAI=
-X-Google-Smtp-Source: AGHT+IEeja72S+1WHikNAV75WY1NwpQHYcF3LA4qOGZo4Or4PMsHE/ZIJGsSojoZESDG7/M51u+vtg==
-X-Received: by 2002:a05:6a20:1586:b0:215:e43a:29b9 with SMTP id
- adf61e73a8af0-220a16db22amr26059281637.33.1751382796011; 
- Tue, 01 Jul 2025 08:13:16 -0700 (PDT)
+ bh=GzgLMFY9q6eCOMOQSRFzyPVqoPwfVRrLyBMXkw9wjso=;
+ b=oU9NWKy37bh3UHPCVWgBP12883XwJP7wOH9ns2DFtH42jg46B/z9B3M+GpFYGOsOJ+
+ I6jLrfeREQ65ODyG1iXCd2s9b1qxIFkqmcm3TF71Tl6uKCsb35j5DrXe2gcKl3FVDbE7
+ prDo66ZXfpXG86qrdGVrv+u5mONNvxxgTmMeEbDG8Vf+P0k/eNVT58miXLmEVf2Q3hru
+ SRUiHkSi+A5hH7FuiluEN/z/2qjW5yEIhUrs6RuDGCTNr43zXhKPE2UTfR+V/RlUvRfz
+ qAfAooCmGgrIrAIztWVfyKfzP1bzkjg7vPOR1jEilvKBfybtTdWX5gOs0UeTz4aMfVFH
+ ScaA==
+X-Gm-Message-State: AOJu0YwFE/mpqqfyW/r9aF2pnxQiMPoFv2XFWGjAEbkuDDf51Szdcjra
+ f2zmHWCh0+ImDRNWkxmsF27CKZSykJxo1DvMKUL/Wz3DGBtr6ToFI6vSlVkXwhAeGP4=
+X-Gm-Gg: ASbGncvHs6xDoijwyB46JCv0kpL8ZmVoLyM6HeBPKqq8CBod/qk8g2SYTcrlpD3YjWK
+ 05bTiAIKqDT4COsqbSMY8TZ0q7PBIPre/t8J+/oc8dTR98/cIk1WhQpxvmN1KykN0Nw9S0hkJ1k
+ iP9dlNqLVc77X7zBSREExqImFUC07rk2HkNK4DvCtTc4wxAffbQB1NF1eecE4DMVlimIk6MTFaS
+ PxlgPrNDmNAHs/7F7fdSqH+eNfOfH6eECxqs8YeEqZDMwD80XuGrv6punJsyKShgylklUp9cp2P
+ 9rUSrrR1PpSBcXJmvTUAFZ2ktAr348QUHgnlLrUkUVeSY0rtcW2keR4r2B2Mn68djpTYYFudarV
+ ia6qj638ywpLMQn72ZgppgMzP8jhiDHBC/S8hcrE=
+X-Google-Smtp-Source: AGHT+IHBggs5yUZCfkyT5OO25msh5djsJdkDY1CAAwVKp6U9v61HpmElHXw6aYkoH2vylNkcBAHKIA==
+X-Received: by 2002:a17:902:f789:b0:235:f3df:bc1f with SMTP id
+ d9443c01a7336-23ac4605670mr303568715ad.36.1751383001420; 
+ Tue, 01 Jul 2025 08:16:41 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-74af540a89esm11929761b3a.17.2025.07.01.08.13.15
+ d9443c01a7336-23acb2f0b4dsm107941415ad.60.2025.07.01.08.16.40
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 01 Jul 2025 08:13:15 -0700 (PDT)
-Date: Tue, 1 Jul 2025 08:13:13 -0700
+ Tue, 01 Jul 2025 08:16:41 -0700 (PDT)
+Date: Tue, 1 Jul 2025 08:16:38 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Jiawen Wu <jiawenwu@trustnetic.com>
-Cc: dev@dpdk.org, zaiyuwang@trustnetic.com
-Subject: Re: [PATCH v3 00/17] Fixes and supports for Wangxun NICs
-Message-ID: <20250701081313.0a3a6dbe@hermes.local>
-In-Reply-To: <20250613084159.22184-1-jiawenwu@trustnetic.com>
-References: <00DEAE896AFE0D2D+20250606080117.183198-1-jiawenwu@trustnetic.com>
- <20250613084159.22184-1-jiawenwu@trustnetic.com>
+To: Dengdui Huang <huangdengdui@huawei.com>
+Cc: <dev@dpdk.org>, <lihuisong@huawei.com>, <fengchengwen@huawei.com>,
+ <liuyonglong@huawei.com>
+Subject: Re: [PATCH 0/6] net/hns3: VF support multi-TCs
+Message-ID: <20250701081638.5344a91b@hermes.local>
+In-Reply-To: <20250611081900.3658421-1-huangdengdui@huawei.com>
+References: <20250611081900.3658421-1-huangdengdui@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,58 +81,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 13 Jun 2025 16:41:42 +0800
-Jiawen Wu <jiawenwu@trustnetic.com> wrote:
+On Wed, 11 Jun 2025 16:18:54 +0800
+Dengdui Huang <huangdengdui@huawei.com> wrote:
 
-> Fix some bugs and improve flow filters.
+> This patchset adds the VF multi-TCs feature.
 > 
-> v2 -> v3:
-> - Split the patch 2/12 for various changes
+> Chengwen Feng (6):
+>   net/hns3: fix VF fail to config queue TC
+>   net/hns3: remove duplicate struct field
+>   net/hns3: refactor DCB module code
+>   net/hns3: VF support parse max TC number
+>   net/hns3: VF support discover multi-TCs capability
+>   net/hns3: VF support multi-TCs configure
 > 
-> v1 -> v2:
-> - Add new flow feature geneve and gre into txgbe.ini
-> 
-> Jiawen Wu (17):
->   net/txgbe: support flow filter for VF
->   net/txgbe: fix incorrect parsing to ntuple filter
->   net/txgbe: fix raw pattern match for FDIR rules
->   net/txgbe: fix packet type for FDIR filters
->   net/txgbe: fix to create FDIR filters for SCTP packets
->   net/txgbe: fix FDIR perfect mode for IPv6 packets
->   net/txgbe: fix to create FDIR filters for tunnel packets
->   net/txgbe: fix reserved extra FDIR headroom
->   net/txgbe: support RSS offload for SCTP port
->   net/ngbe: support RSS offload for SCTP port
->   net/txgbe: fix MAC control frame forwarding
->   net/ngbe: fix MAC control frame forwarding
->   net/txgbe: fix incorrect device statistics
->   net/ngbe: fix incorrect device statistics
->   net/txgbe: restrict VLAN strip configuration on VF
->   net/ngbe: restrict VLAN strip configuration on VF
->   net/txgbe: add missing LRO flag in mbuf when LRO enabled
-> 
->  doc/guides/nics/features/txgbe.ini  |   2 +
->  drivers/net/ngbe/base/ngbe_hw.c     |   9 +
->  drivers/net/ngbe/base/ngbe_regs.h   |   2 +
->  drivers/net/ngbe/base/ngbe_type.h   |   1 +
->  drivers/net/ngbe/ngbe_ethdev.c      |   6 +-
->  drivers/net/ngbe/ngbe_ethdev.h      |   2 +
->  drivers/net/ngbe/ngbe_ethdev_vf.c   |  24 +-
->  drivers/net/ngbe/ngbe_rxtx.c        |   8 +
->  drivers/net/txgbe/base/txgbe_hw.c   |  23 +-
->  drivers/net/txgbe/base/txgbe_hw.h   |   1 +
->  drivers/net/txgbe/base/txgbe_mbx.h  |  17 +
->  drivers/net/txgbe/base/txgbe_regs.h |   4 +
->  drivers/net/txgbe/base/txgbe_type.h |  21 +-
->  drivers/net/txgbe/base/txgbe_vf.c   |  29 +
->  drivers/net/txgbe/base/txgbe_vf.h   |   2 +
->  drivers/net/txgbe/txgbe_ethdev.c    |  18 +-
->  drivers/net/txgbe/txgbe_ethdev.h    |  16 +-
->  drivers/net/txgbe/txgbe_ethdev_vf.c | 111 +++-
->  drivers/net/txgbe/txgbe_fdir.c      |  62 +-
->  drivers/net/txgbe/txgbe_flow.c      | 857 ++++++++++++++++++++--------
->  drivers/net/txgbe/txgbe_rxtx.c      |  18 +
->  21 files changed, 945 insertions(+), 288 deletions(-)
+>  drivers/net/hns3/hns3_cmd.c       |   5 +-
+>  drivers/net/hns3/hns3_cmd.h       |  10 +
+>  drivers/net/hns3/hns3_dcb.c       | 161 ++++++++++++----
+>  drivers/net/hns3/hns3_dcb.h       |   4 +
+>  drivers/net/hns3/hns3_dump.c      |  11 +-
+>  drivers/net/hns3/hns3_ethdev.c    | 132 ++-----------
+>  drivers/net/hns3/hns3_ethdev.h    |  12 +-
+>  drivers/net/hns3/hns3_ethdev_vf.c | 297 ++++++++++++++++++++++++++++--
+>  drivers/net/hns3/hns3_mbx.h       |  50 ++++-
+>  drivers/net/hns3/hns3_rss.c       |   8 +-
+>  drivers/net/hns3/hns3_rxtx.c      |  26 ++-
+>  drivers/net/hns3/hns3_tm.c        |   6 +-
+>  12 files changed, 539 insertions(+), 183 deletions(-)
 > 
 
-Looks good, applied to next-net
+Applied v3 to next-net
