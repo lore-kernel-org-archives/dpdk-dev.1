@@ -2,72 +2,82 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 445C6C83038
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Jul 2025 15:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7489AC7EE30
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Jul 2025 15:21:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EB97740276;
-	Tue,  1 Jul 2025 17:16:43 +0200 (CEST)
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
- [209.85.214.178])
- by mails.dpdk.org (Postfix) with ESMTP id 635AC40264
- for <dev@dpdk.org>; Tue,  1 Jul 2025 17:16:42 +0200 (CEST)
-Received: by mail-pl1-f178.google.com with SMTP id
- d9443c01a7336-236470b2dceso28199865ad.0
- for <dev@dpdk.org>; Tue, 01 Jul 2025 08:16:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751383001;
- x=1751987801; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=GzgLMFY9q6eCOMOQSRFzyPVqoPwfVRrLyBMXkw9wjso=;
- b=XnMYKu7xYSAKGjTW+KvwKy993HaeqOWMCZlVK5lc5cBB9apAfgqPGEumtl2bdM9PeY
- f1FZiak+MVt/0Q+xygvUb68kIWRe7ZBeI3kHIXn9ODTNBT+3jFInlA9qrFRxg3plFPub
- 7SKj1WlNdDfzkH+b8Uz57yTOq9xh3muJIp32K4Sp1LDSXJgY7fGZ7JlSXrd5Iy94a0s4
- qKpOFVJIrnkWPM5XE68WAvE+loeBRGE36I8MfhUxfilOcIy60DO7Cwrfw/idc2GuGkR/
- R7o9443ukAlEpth/XWIBIU70Wqw9qKOFg78qdVJBf9TteQ9VqTAaCQIJfsWVVejPqKT1
- di3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1751383001; x=1751987801;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=GzgLMFY9q6eCOMOQSRFzyPVqoPwfVRrLyBMXkw9wjso=;
- b=oU9NWKy37bh3UHPCVWgBP12883XwJP7wOH9ns2DFtH42jg46B/z9B3M+GpFYGOsOJ+
- I6jLrfeREQ65ODyG1iXCd2s9b1qxIFkqmcm3TF71Tl6uKCsb35j5DrXe2gcKl3FVDbE7
- prDo66ZXfpXG86qrdGVrv+u5mONNvxxgTmMeEbDG8Vf+P0k/eNVT58miXLmEVf2Q3hru
- SRUiHkSi+A5hH7FuiluEN/z/2qjW5yEIhUrs6RuDGCTNr43zXhKPE2UTfR+V/RlUvRfz
- qAfAooCmGgrIrAIztWVfyKfzP1bzkjg7vPOR1jEilvKBfybtTdWX5gOs0UeTz4aMfVFH
- ScaA==
-X-Gm-Message-State: AOJu0YwFE/mpqqfyW/r9aF2pnxQiMPoFv2XFWGjAEbkuDDf51Szdcjra
- f2zmHWCh0+ImDRNWkxmsF27CKZSykJxo1DvMKUL/Wz3DGBtr6ToFI6vSlVkXwhAeGP4=
-X-Gm-Gg: ASbGncvHs6xDoijwyB46JCv0kpL8ZmVoLyM6HeBPKqq8CBod/qk8g2SYTcrlpD3YjWK
- 05bTiAIKqDT4COsqbSMY8TZ0q7PBIPre/t8J+/oc8dTR98/cIk1WhQpxvmN1KykN0Nw9S0hkJ1k
- iP9dlNqLVc77X7zBSREExqImFUC07rk2HkNK4DvCtTc4wxAffbQB1NF1eecE4DMVlimIk6MTFaS
- PxlgPrNDmNAHs/7F7fdSqH+eNfOfH6eECxqs8YeEqZDMwD80XuGrv6punJsyKShgylklUp9cp2P
- 9rUSrrR1PpSBcXJmvTUAFZ2ktAr348QUHgnlLrUkUVeSY0rtcW2keR4r2B2Mn68djpTYYFudarV
- ia6qj638ywpLMQn72ZgppgMzP8jhiDHBC/S8hcrE=
-X-Google-Smtp-Source: AGHT+IHBggs5yUZCfkyT5OO25msh5djsJdkDY1CAAwVKp6U9v61HpmElHXw6aYkoH2vylNkcBAHKIA==
-X-Received: by 2002:a17:902:f789:b0:235:f3df:bc1f with SMTP id
- d9443c01a7336-23ac4605670mr303568715ad.36.1751383001420; 
- Tue, 01 Jul 2025 08:16:41 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-23acb2f0b4dsm107941415ad.60.2025.07.01.08.16.40
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 01 Jul 2025 08:16:41 -0700 (PDT)
-Date: Tue, 1 Jul 2025 08:16:38 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Dengdui Huang <huangdengdui@huawei.com>
-Cc: <dev@dpdk.org>, <lihuisong@huawei.com>, <fengchengwen@huawei.com>,
- <liuyonglong@huawei.com>
-Subject: Re: [PATCH 0/6] net/hns3: VF support multi-TCs
-Message-ID: <20250701081638.5344a91b@hermes.local>
-In-Reply-To: <20250611081900.3658421-1-huangdengdui@huawei.com>
-References: <20250611081900.3658421-1-huangdengdui@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 5D9BC40276;
+	Tue,  1 Jul 2025 17:21:52 +0200 (CEST)
+Received: from fhigh-b5-smtp.messagingengine.com
+ (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+ by mails.dpdk.org (Postfix) with ESMTP id AEDFB40264
+ for <dev@dpdk.org>; Tue,  1 Jul 2025 17:21:50 +0200 (CEST)
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal
+ [10.202.2.44])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id E65DB7A010D;
+ Tue,  1 Jul 2025 11:21:49 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-04.internal (MEProxy); Tue, 01 Jul 2025 11:21:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1751383309;
+ x=1751469709; bh=YPgD++kGVsp2zCA5Gs49fh5Uoc7/9yJOvmv3Q7LidYw=; b=
+ hFiQHKhAUPyeXp4ABtBX4CTD3KhSUZKGgPd1HYmqvN4eWFwr9b3vgn2TpRQTqBJd
+ t3bs2XItUvSR4tzRXR2BuklPELQEmBeP4662cSteAr8nxmBY3UK1Gm8f507nmn34
+ iMWtSmPZQPViEc+D6zWn2qy0SDway1S4NC4vbUlSr/eCqJ8kgX8gq3MZXiZoyJjG
+ fNDwCx7oZ9kV5ucKjhh1ilzkZXYRfyq0cHAMzY5QINLNhYic0R7k1TzV4LGDSj+I
+ 2/kCl8ZTRPMWHPoPVn8vC9JXSUbvvIYDLe2oxL8UezgWzD8+PFKuWarvJOqBEwEu
+ puU08qXkxpKthB3ob6eL5Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751383309; x=
+ 1751469709; bh=YPgD++kGVsp2zCA5Gs49fh5Uoc7/9yJOvmv3Q7LidYw=; b=U
+ 0viHCXvxNsgz0U3MMXfGKnuR0JZT82M9DLeC4Lx+5apQl91IUVkg6cBZEq12fr8U
+ m2eo0DseeFelDT8Fyfaas7E7mk6RHdY8NA8o1zI0h8+oiHONrRCF6Xh9xkhwf644
+ rJhSMq1nRnlNfBYLKp0rZ5757tbyioKiaTWiYMvcfkXWRyKGbE2+yVknGam9US53
+ 9t94YlkJUIBWlzxWLAcWwOJT0dIQ4mCpZXEnHjiawvmslvajGYi1I9qnlQXgb4dW
+ yK/gULpx5blY0Oa2dnCqinYu+KJpsO5Gn5UTuds3e2SkibIFjkX5aFv1yRVPROTL
+ rEJHjIocrsKvnY/qEUHtw==
+X-ME-Sender: <xms:Df1jaHqZHXub2QWwdIUUTHbuFzAwBZsDfOG5cOZy3InXlyNZ4VMSHw>
+ <xme:Df1jaBoR7JPK8z7rUz9EhKkYWzeJbmv2RAdMkisJIo48ABh9OSsFrhIUCo8DXzZQJ
+ gu2fN9WWdGaa-XINQ>
+X-ME-Received: <xmr:Df1jaEP8OFoP_lNdVFckgFgsDLRDcSN2wHqyijeuqqfbozrjSzYBA9B7ByBlHaaZnwjPH3_F7Uah-60hM4JdfAaBNA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddugeekjecutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+ ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+ hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
+ ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
+ grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
+ gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepgedpmhho
+ uggvpehsmhhtphhouhhtpdhrtghpthhtohepsghruhgtvgdrrhhitghhrghrughsohhnse
+ hinhhtvghlrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthht
+ ohepphgshhgrghgrvhgrthhulhgrsehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohepjh
+ gvrhhinhhjsehmrghrvhgvlhhlrdgtohhm
+X-ME-Proxy: <xmx:Df1jaK4Gj4mXCl_yu8YLlLJ6tlVFrWpRIO1Mh9Lkaxjz9j3O-6SL2g>
+ <xmx:Df1jaG7wkVpkiDiBQgAXyIqcYlF3QDDHpfl5IBhlMyPwsQtNerj7Ag>
+ <xmx:Df1jaCjPdDhe2rb-Lw-kUAsaEM0zjpVf7P-0VyrJLyrILEG2_ibg7Q>
+ <xmx:Df1jaI61VxdSolCV3XOi4lqrC148XjGF_AjwryqmZnUb08R1LByRCw>
+ <xmx:Df1jaLa3qO2oAlKIEkIMX0RRbx5k2hFzlTKu66831m4xfGirXKWS296z>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 1 Jul 2025 11:21:48 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, Pavan Nikhilesh <pbhagavatula@marvell.com>,
+ Jerin Jacob <jerinj@marvell.com>
+Subject: Re: [PATCH] test/event: disable vector adapter test
+Date: Tue, 01 Jul 2025 17:21:46 +0200
+Message-ID: <3868203.CLbsiaQdQ3@thomas>
+In-Reply-To: <aGPmM4Upj39rmKvm@bricha3-mobl1.ger.corp.intel.com>
+References: <20250701131524.2493132-1-thomas@monjalon.net>
+ <aGPmM4Upj39rmKvm@bricha3-mobl1.ger.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,32 +91,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 11 Jun 2025 16:18:54 +0800
-Dengdui Huang <huangdengdui@huawei.com> wrote:
+01/07/2025 15:44, Bruce Richardson:
+> On Tue, Jul 01, 2025 at 03:15:24PM +0200, Thomas Monjalon wrote:
+> > This test triggers failures in the CI:
+> > 
+> > 	event_vector_adapter_autotest  FAIL
+> > 	3.39s   (exit status 255 or signal 127 SIGinvalid)
+> > 
+> > Disable it until we have a fix.
+> > 
+> > Bugzilla ID: 1720
+> > Fixes: 2eca0f4cd5da ("test/event: fix event vector adapter timeouts")
+> > 
+> > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+> 
+> Thanks for this. It will be good to have patchwork reports "clean" again.
 
-> This patchset adds the VF multi-TCs feature.
-> 
-> Chengwen Feng (6):
->   net/hns3: fix VF fail to config queue TC
->   net/hns3: remove duplicate struct field
->   net/hns3: refactor DCB module code
->   net/hns3: VF support parse max TC number
->   net/hns3: VF support discover multi-TCs capability
->   net/hns3: VF support multi-TCs configure
-> 
->  drivers/net/hns3/hns3_cmd.c       |   5 +-
->  drivers/net/hns3/hns3_cmd.h       |  10 +
->  drivers/net/hns3/hns3_dcb.c       | 161 ++++++++++++----
->  drivers/net/hns3/hns3_dcb.h       |   4 +
->  drivers/net/hns3/hns3_dump.c      |  11 +-
->  drivers/net/hns3/hns3_ethdev.c    | 132 ++-----------
->  drivers/net/hns3/hns3_ethdev.h    |  12 +-
->  drivers/net/hns3/hns3_ethdev_vf.c | 297 ++++++++++++++++++++++++++++--
->  drivers/net/hns3/hns3_mbx.h       |  50 ++++-
->  drivers/net/hns3/hns3_rss.c       |   8 +-
->  drivers/net/hns3/hns3_rxtx.c      |  26 ++-
->  drivers/net/hns3/hns3_tm.c        |   6 +-
->  12 files changed, 539 insertions(+), 183 deletions(-)
-> 
+Applied quickly to clean CI reports.
 
-Applied v3 to next-net
+
+
+
