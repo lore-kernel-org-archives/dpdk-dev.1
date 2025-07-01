@@ -2,75 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F57C83038
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Jul 2025 14:05:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F4168C83038
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Jul 2025 14:17:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0985B402A5;
-	Tue,  1 Jul 2025 16:05:25 +0200 (CEST)
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com
- [209.85.160.175])
- by mails.dpdk.org (Postfix) with ESMTP id 38126402A5
- for <dev@dpdk.org>; Tue,  1 Jul 2025 16:05:24 +0200 (CEST)
-Received: by mail-qt1-f175.google.com with SMTP id
- d75a77b69052e-4a7f46f9bb6so44636471cf.3
- for <dev@dpdk.org>; Tue, 01 Jul 2025 07:05:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751378723;
- x=1751983523; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=rxxEsR4cvNOi1940pi9uIfhXxmYL9Kt69ob/MkjwRUI=;
- b=LrL2n5+WL49rvgFz3MRHKNQ1zROaaDvNHZiSJGo6Y2oGWOAyEchbLVVVivWbERYSVO
- 6sjUspqhrFaPlkCguvRZPSe61Th1jLEmkN+AtnHCLYKnASEFTJnRTiPw85mgAO9hgCTB
- 65Kck15+RFRsySIQzdfzq1X09j/t3s8wMxvfoMmwrjEf/iO2cBpPxXPn8grhuK4IBYmQ
- OsAE/A1IypR+NEvVc5eL8DtpDWSacj5669pXmY05rQ/1hWIGyRuQiFBVOM9MobCSCw2R
- O6ly9hX1lAUGRu5Gq7+R9F+cBgxjLI/IzvNocqi+b2HOJA1sujei0CeE6dXEQ8i9kS+K
- pGbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1751378723; x=1751983523;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=rxxEsR4cvNOi1940pi9uIfhXxmYL9Kt69ob/MkjwRUI=;
- b=ClK3rYEs1xUVY5iCmBpAjDxvD0AdG2SWDym+ob4nk5uMi2wpAM1fk/mM92P9+UewJx
- D+ATaEiy1FN/DSJ3MmY+uzq6s5zR+VBDtaLhlMOAxLZPzlstqXX0sJiwm4VVXWHdMuAt
- 2/NJqZozGz3WLSmnMcow+ocHVX4xYXsPwhZp+qoCpKjh20vAwLATA7orR5VRydoPdLCN
- wEurDp+NmTEjzJLqgX5pkjQeS9RZC2U0Jj2vz5QWBno9Eu8v562S9NVlpeH9V9SqVEXa
- SqzyzIAAMeYM84pXG7ADGeDlKaYZ8JHN3m4IFyMjqr6Qv1r5YlzSt3E3Z8iW/xs99PvB
- 1Haw==
-X-Gm-Message-State: AOJu0YwxsNwSKEk1Iz67F3CX1rVc6sahVfDF6RQlNAhHcu3UfPO0zgM0
- BkQuXJVsaBQpA6h/JdSK3RIY5IXN8y2/E6Of+iO2SwEsAEAKL4aJZvyuUm7EEOSXBlU=
-X-Gm-Gg: ASbGncuxkJUM8UtuC5YYXkmWOPZG5Wla7OvnRjsynVYf9cE0hkayNbPbqmnKjhIKS5p
- eVUR4Pylv3pjDKGdoy/B4C9hLnv5yaQEFsn03mCiMUNZRw1M+R4rwYt9Ik6LpVnorqBbJgk0c4C
- Y9M1jwim13zt/ofTIAQIB7ZmBPf5VLwawfg1QonD/PzW4EHdPTt5uJJdz9kSDfHNkcPg4rVuAXA
- I/YbcJeQE7QCuHjixZ49OaHepiT0WPrpkHk8MuDY67ij1zxkPKUoieZsvPQSh8pIKIXHx9z4YLx
- gzz/wRiryHo77+KQh+G6rVzdxxYD/eYxWv32+mG5Y0J66h7dkvVXrR/dzb+k1xfLaJaPmnGTKsy
- FvDtNhgwnKJI827HCEGlUSsITvqBrFnZAHIJL99LxtKUXpR1hcA==
-X-Google-Smtp-Source: AGHT+IFa7cR+I4x83YoXqejbj0IQQQ4+cI28YeTo9hl85c1znZ+M8Wu3fpuylzbEtQGVNbpLGHOHeg==
-X-Received: by 2002:a05:622a:181b:b0:4a7:6215:37f5 with SMTP id
- d75a77b69052e-4a7fcb24d8dmr263522491cf.48.1751378723226; 
- Tue, 01 Jul 2025 07:05:23 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-4a7fc1586f8sm75732241cf.33.2025.07.01.07.05.22
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 01 Jul 2025 07:05:23 -0700 (PDT)
-Date: Tue, 1 Jul 2025 07:05:19 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Gagandeep Singh <g.singh@nxp.com>
-Cc: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>, Sachin Saxena
- <sachin.saxena@nxp.com>, Vanshika Shukla <vanshika.shukla@nxp.com>
-Subject: Re: [PATCH v7 3/6] bus/fslmc: add DPBP APIs for setting depletion
- thresholds
-Message-ID: <20250701070519.48e74f09@hermes.local>
-In-Reply-To: <20250701042917.3000355-4-g.singh@nxp.com>
-References: <20250630095800.2943863-1-g.singh@nxp.com>
- <20250701042917.3000355-1-g.singh@nxp.com>
- <20250701042917.3000355-4-g.singh@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 25C8A402A5;
+	Tue,  1 Jul 2025 16:17:26 +0200 (CEST)
+Received: from fhigh-b5-smtp.messagingengine.com
+ (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+ by mails.dpdk.org (Postfix) with ESMTP id DDA4540264
+ for <dev@dpdk.org>; Tue,  1 Jul 2025 16:17:24 +0200 (CEST)
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal
+ [10.202.2.47])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 12EB77A009C;
+ Tue,  1 Jul 2025 10:17:24 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-07.internal (MEProxy); Tue, 01 Jul 2025 10:17:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1751379443;
+ x=1751465843; bh=JO4cGPgPfHVYFj5IFPJVKjdqKgQyS8G3kxOAI7ZTLRw=; b=
+ WsMCxXfldx8HQ7wCYY+bOClVztIvcEXHgoAGddX/3N8O085JTdITwhOc4GUWnsIN
+ ChTCOiZZAl9LVtwr/Nies+EmEpYmWknNTwuk4Kh58U8hm8+Ym3f9hk/nZSKaNnmE
+ Dieijbcd4haO88lUSDM45kDrdv941E7hRAo9MiNeiBeTlOgaLg5xy38FmFb4SvYh
+ s+GU4ETNTQ7qFBP7l12p4GdnswIYbUfn8mWH7VjQOlImKipFcCBNTyaXFokl9iH7
+ lJH9qN0GjH1oU7veqmhIXnuGZdKIIBhhYUbUp1vLmGgY7pQOuktPrVQtng1RmeK1
+ dH7u74f39YaHo0qjJVrgOA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751379443; x=
+ 1751465843; bh=JO4cGPgPfHVYFj5IFPJVKjdqKgQyS8G3kxOAI7ZTLRw=; b=f
+ D+YtS9pfeJvI96UaLt0Wf/WeKRsf/hHHFnHxE4UFX2M7zJi0Q9ihDYd/HpQWBHc6
+ UdVx6yGs6Yg2KnWhKBYBYU2XwTxKUE+k/HkHp0pvQ9trOQL1nm/GefAGse1QMiFx
+ ltfsv+7xRx9oHiACLYvdroSbL5Jl/u0rwYfsNoKSXFrzoUiHkUuUquPko/1HvXun
+ hjOHiWHbz4j0Gl4tvURQe9nBz4RujbFiSVPhqsy3Fj+sFuTNIyFUZtnFUR/K0n+x
+ xjKvOaaL2zk5iYDPok+gw0ZO2uFGCtLlVbNxNxOgLx4MTG7G4vHWh2Y9P50jEPNC
+ sxCCbj85GXF0S+aD6RNqw==
+X-ME-Sender: <xms:8-1jaJ2bH_pSrtleOUA2A5nAtKtEEHBg1nJ_dWddvFPl6-1FqiN0eA>
+ <xme:8-1jaAFs9scOcLYlq9K_qjVGXEuIcFWfzLBSCODxRgu04NiK86UW-tJN3eb_khgAh
+ b1nWKvzK-M73puDvw>
+X-ME-Received: <xmr:8-1jaJ46Qe9353ByZydrgvODsHK31eoLeEGazb26rsTDU8XY1J1IvObzMetHdFHGMJekfPVXcqmMJXlViohdFpffZw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddugeejgecutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+ ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+ hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
+ ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
+ grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
+ gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepiedpmhho
+ uggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnughrvghmuhgvsehlihhnuhigrdhmih
+ gtrhhoshhofhhtrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghp
+ thhtohepkhhonhhsthgrnhhtihhnrdgrnhgrnhihvghvsehhuhgrfigvihdrtghomhdprh
+ gtphhtthhopegurghvihgurdhmrghrtghhrghnugesrhgvughhrghtrdgtohhmpdhrtghp
+ thhtohepsghruhgtvgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpth
+ htohephhhonhhnrghpphgrrdhnrghgrghrrghhrghllhhisegrrhhmrdgtohhm
+X-ME-Proxy: <xmx:8-1jaG1V-8tvQQcJbZ8MM4LqiHRknUs1DRnaXFxFeKAZiC2cGwCmhA>
+ <xmx:8-1jaMERgytstjwhx2XPkdyUzv4qV8S03UiI2S9kXFNevQqN4cdy7w>
+ <xmx:8-1jaH-RlIWUIJXRBHRtSbvxceqpRtX9HX7oxsIilOWHURSpqaIoZg>
+ <xmx:8-1jaJmeqxCkcpQl-jUPW5iaS6PzzDb66VuJcL5ZQ6V94sbhvWlybA>
+ <xmx:8-1jaMcBYW1zt3TgmJ6841eY2jDJvhTlmboEVRCu2YNLcV70LDsOuuYE>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 1 Jul 2025 10:17:22 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Andre Muezerie <andremue@linux.microsoft.com>
+Cc: dev@dpdk.org, Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ David Marchand <david.marchand@redhat.com>,
+ Bruce Richardson <bruce.richardson@intel.com>, honnappa.nagarahalli@arm.com
+Subject: Re: [PATCH] rcu: add deprecation notice about limit on defer queue
+ element size
+Date: Tue, 01 Jul 2025 16:17:20 +0200
+Message-ID: <4620749.daG60p0z9X@thomas>
+In-Reply-To: <1747957021-2581-1-git-send-email-andremue@linux.microsoft.com>
+References: <1747957021-2581-1-git-send-email-andremue@linux.microsoft.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,20 +94,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue,  1 Jul 2025 09:59:14 +0530
-Gagandeep Singh <g.singh@nxp.com> wrote:
+23/05/2025 01:37, Andre Muezerie:
+> The functions rte_rcu_qsbr_dq_create and rte_rcu_qsbr_dq_reclaim establish
+> no limit on the size of each element in the defer queue.
 
-> @@ -62,6 +72,8 @@ rte_dpaa2_mbuf_from_buf_addr(struct rte_mempool *mp, void *buf_addr);
->  __rte_internal
->  int rte_dpaa2_bpid_info_init(struct rte_mempool *mp);
->  
-> +int rte_dpaa2_dpbp_set_notifications(struct rte_mempool *mp, struct dpaa2_dpbp_cfg *dpbp_cfg);
-> +
+Very good, we need more unlimited API in DPDK.
 
-This patch series still needs work:
-  - new API is not exported
-  - new API is not marked external
-  - new API needs a test
+> With DPDK 25.11 a hard limit will be set (``RTE_QSBR_ESIZE_MAX``).
 
-Ideally, you would figure out how to get same functionality without adding any
-new exported API.
+I think it is a step in the wrong direction.
+I prefer having no limit.
+
+> This will allow fixed C arrays to be used in the functions' implementations,
+> avoiding VLAs and use of alloca().
+
+I don't understand this justification.
+Why trying to remove the 2 alloca() in the lib RCU?
+
+
