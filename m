@@ -2,51 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A9EEC83033
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Jul 2025 08:36:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E63EBC8302F
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Jul 2025 09:05:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 43D6240269;
-	Tue,  1 Jul 2025 10:36:25 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id 25CBB400D7;
- Tue,  1 Jul 2025 10:36:23 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.186.31])
- by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bWbs76fdwz6L4y6;
- Tue,  1 Jul 2025 16:33:31 +0800 (CST)
-Received: from frapeml100008.china.huawei.com (unknown [7.182.85.131])
- by mail.maildlp.com (Postfix) with ESMTPS id C8A3614011A;
- Tue,  1 Jul 2025 16:36:21 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml100008.china.huawei.com (7.182.85.131) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id D294940269;
+	Tue,  1 Jul 2025 11:05:58 +0200 (CEST)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+ by mails.dpdk.org (Postfix) with ESMTP id B7AC3400D7
+ for <dev@dpdk.org>; Tue,  1 Jul 2025 11:05:56 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+ by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bWcT35XpNz2Cfm8;
+ Tue,  1 Jul 2025 17:01:11 +0800 (CST)
+Received: from kwepemo500011.china.huawei.com (unknown [7.202.195.194])
+ by mail.maildlp.com (Postfix) with ESMTPS id 0029E1A0188;
+ Tue,  1 Jul 2025 17:05:12 +0800 (CST)
+Received: from [10.67.121.193] (10.67.121.193) by
+ kwepemo500011.china.huawei.com (7.202.195.194) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 1 Jul 2025 10:36:21 +0200
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Tue, 1 Jul 2025 10:36:21 +0200
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: David Marchand <david.marchand@redhat.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: "stable@dpdk.org" <stable@dpdk.org>, Yipeng Wang <yipeng1.wang@intel.com>, 
- Sameh Gobriel <sameh.gobriel@intel.com>, Bruce Richardson
- <bruce.richardson@intel.com>, Vladimir Medvedkin
- <vladimir.medvedkin@intel.com>, John McNamara <john.mcnamara@intel.com>
-Subject: RE: [PATCH v2 08/10] hash: fix unaligned access in predictable RSS
-Thread-Topic: [PATCH v2 08/10] hash: fix unaligned access in predictable RSS
-Thread-Index: AQHb5EY+uzNGJsGlUUGvOTO5dcxbU7Qc/Vpg
-Date: Tue, 1 Jul 2025 08:36:21 +0000
-Message-ID: <70c7ba78c4324495bfd317e38e926958@huawei.com>
-References: <20250619071037.37325-1-david.marchand@redhat.com>
- <20250623135242.461965-1-david.marchand@redhat.com>
- <20250623135242.461965-9-david.marchand@redhat.com>
-In-Reply-To: <20250623135242.461965-9-david.marchand@redhat.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.138.73]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ 15.2.1544.11; Tue, 1 Jul 2025 17:05:11 +0800
+Message-ID: <72d2d4b5-ccc6-4afc-9031-06e2671f6393@huawei.com>
+Date: Tue, 1 Jul 2025 17:05:11 +0800
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] net/hns3: VF support multi-TCs configure
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: <dev@dpdk.org>, <lihuisong@huawei.com>, <fengchengwen@huawei.com>,
+ <liuyonglong@huawei.com>
+References: <20250611081900.3658421-1-huangdengdui@huawei.com>
+ <20250611081900.3658421-7-huangdengdui@huawei.com>
+ <20250629104055.0b38c168@hermes.local>
+Content-Language: en-US
+From: huangdengdui <huangdengdui@huawei.com>
+In-Reply-To: <20250629104055.0b38c168@hermes.local>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.193]
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemo500011.china.huawei.com (7.202.195.194)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,46 +53,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
+On 2025/6/30 1:40, Stephen Hemminger wrote:
+> On Wed, 11 Jun 2025 16:19:00 +0800
+> Dengdui Huang <huangdengdui@huawei.com> wrote:
+> 
+>> +#pragma pack(1)
+>> +#define HNS3_MBX_PRIO_SHIFT	4
+>> +#define HNS3_MBX_PRIO_MASK	0xFu
+>> +struct hns3_mbx_tc_config {
+>> +	/*
+>> +	 * Each four bits correspond to one priority's TC.
+>> +	 * Bit0-3 correspond to priority-0's TC, bit4-7 correspond to
+>> +	 * priority-1's TC, and so on.
+>> +	 */
+>> +	uint32_t prio_tc_map;
+>> +	uint8_t tc_dwrr[HNS3_MAX_TC_NUM];
+>> +	uint8_t num_tc;
+>> +	/*
+>> +	 * Each bit correspond to one TC's scheduling mode, 0 means SP
+>> +	 * scheduling mode, 1 means DWRR scheduling mode.
+>> +	 * Bit0 corresponds to TC0, bit1 corresponds to TC1, and so on.
+>> +	 */
+>> +	uint8_t tc_sch_mode;
+>>  };
+>> +#pragma pack()
+>>  
+> 
+> DPDK has portable macros for packing __rte_packed_begin and __rte_packed_end.
+> Please change to using those macros.
+> Then rebase, retest and resubmit this patcheset
 
-> Caught by UBSan:
->=20
-> ../lib/hash/rte_thash.c:421:8: runtime error: load of misaligned address
-> 	0x0001816c2da3 for type 'uint32_t' (aka 'unsigned int'),
-> 	which requires 4 byte alignment
->=20
-> Fixes: 28ebff11c2dc ("hash: add predictable RSS")
-> Cc: stable@dpdk.org
->=20
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
-> ---
->  lib/hash/rte_thash.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/lib/hash/rte_thash.c b/lib/hash/rte_thash.c
-> index 6c662bf14f..6d4dbea6d7 100644
-> --- a/lib/hash/rte_thash.c
-> +++ b/lib/hash/rte_thash.c
-> @@ -415,10 +415,10 @@ generate_subkey(struct rte_thash_ctx *ctx, struct t=
-hash_lfsr *lfsr,
->  static inline uint32_t
->  get_subvalue(struct rte_thash_ctx *ctx, uint32_t offset)
->  {
-> -	uint32_t *tmp, val;
-> +	uint32_t tmp, val;
->=20
-> -	tmp =3D (uint32_t *)(&ctx->hash_key[offset >> 3]);
-> -	val =3D rte_be_to_cpu_32(*tmp);
-> +	memcpy(&tmp, &ctx->hash_key[offset >> 3], sizeof(tmp));
-> +	val =3D rte_be_to_cpu_32(tmp);
-
-Just wonder do you guys consider it as a real one?
-AFAIK, all architectures that we care about do support unaligned load for 3=
-2-bit integers.
-
->  	val >>=3D (TOEPLITZ_HASH_LEN - ((offset & (CHAR_BIT - 1)) +
->  		ctx->reta_sz_log));
->=20
-> --
-> 2.49.0
->=20
-
+Okay, I have modified and pushed the new version.
