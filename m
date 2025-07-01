@@ -2,76 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E270DC8302F
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Jul 2025 07:56:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 974D1C7EE30
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Jul 2025 07:57:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C0A3840269;
-	Tue,  1 Jul 2025 09:56:20 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B4C4A40269;
+	Tue,  1 Jul 2025 09:57:13 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 434F9400D7
- for <dev@dpdk.org>; Tue,  1 Jul 2025 09:56:19 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 7BE4E40269
+ for <dev@dpdk.org>; Tue,  1 Jul 2025 09:57:12 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1751356578;
+ s=mimecast20190719; t=1751356631;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=cqKVe0zEqKcAnOj2xrFrRDuPK9dNJoAXOtMjAns2dvw=;
- b=Gdc56TTtQaD5vBKXTvMKb8trexMDe3ceY9PVwwNjCnNldDLBeLOiQUGi08DuyuclisjtM+
- 1c65QeC1mbwIaPu4ZS7V7BJ6dGTJaW6/uVZ5AbYKfQ8PBIgdiMlC3JaLTyha32Mg7Ryk+Q
- 8Rhebxfxz9a8fRbexZ5RR20BJ4PHwmw=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=vUeAta2sH5kU43a+qTnbwRkbOQEYsHerBiJvofGvicA=;
+ b=S088+nSgvsbURjLvnN3D4BBK03JyKz9dthLRHBsfhFPzay5SYIocQo4zScRlQd7WauoVH5
+ qY9Jf7fykvn+3MYtZdF1Py+1sROesRvW1qOo2t566CICgQpHRxRNAusA0tzGnDolwjqGdX
+ yzQBXg0m5jeufbvy28/L3OuU0tQA2uQ=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-378-E3TOpaKWOyy8UCjTuYiFGQ-1; Tue, 01 Jul 2025 03:56:17 -0400
-X-MC-Unique: E3TOpaKWOyy8UCjTuYiFGQ-1
-X-Mimecast-MFC-AGG-ID: E3TOpaKWOyy8UCjTuYiFGQ_1751356576
-Received: by mail-lj1-f200.google.com with SMTP id
- 38308e7fff4ca-32b8579063bso19422871fa.2
- for <dev@dpdk.org>; Tue, 01 Jul 2025 00:56:17 -0700 (PDT)
+ us-mta-689-Vh9iX_5oMPmF0ZNgx7B9Yw-1; Tue, 01 Jul 2025 03:57:11 -0400
+X-MC-Unique: Vh9iX_5oMPmF0ZNgx7B9Yw-1
+X-Mimecast-MFC-AGG-ID: Vh9iX_5oMPmF0ZNgx7B9Yw_1751356629
+Received: by mail-lf1-f69.google.com with SMTP id
+ 2adb3069b0e04-553cff91724so1974088e87.2
+ for <dev@dpdk.org>; Tue, 01 Jul 2025 00:57:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1751356576; x=1751961376;
+ d=1e100.net; s=20230601; t=1751356629; x=1751961429;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=cqKVe0zEqKcAnOj2xrFrRDuPK9dNJoAXOtMjAns2dvw=;
- b=evSy9jjEs2n5y9heZnouFo7V4NSaW/CDq8ttHajIvpBJreDvI6vsZRUJN7Nf6/LlF3
- nOPGddyeE7D4kGMdZzVbIgoW+mwMr5/Ayla396pREI86BOV379efGXU13KfKYrY/R8FP
- Cok7C9JmKrkjC0VgG5scvgYsluCpGeiBqUSyK9CJNsJIADTad0SEw1i76R6aDkLdbiW9
- 9KMaxpTfow+nY3HifVuZKYdySRPpDtqy6nKA34zshQUt7EJVzHyelbl6GvBft/0jZjaG
- jeQnJoUD+TlLHAYXz5AeXMnTHEKqC1eM69W1DS/nXLEqChCBash0dxzK65/LEz2ibcwQ
- 9RVg==
-X-Gm-Message-State: AOJu0Yy2keoxxeyuLKRx3Miu52DUR04/huOwP8yrIArw9V4aakBmIfzJ
- +0jrQA340VADnxPas201wZ2Y+rrW8ihLCZROGjrBDUYoy2ccmxeFYMwTVdeTj1E2KZxbkvv7SPe
- e4SrjiEsTDrjYCdnnic4Bvw6CZohvr9o7339DV3rT02jY4/Zgl7SS6c46/ScMRkNKBGq6+mkbvH
- SYW6s/p5btzi0r5Ar6pc0=
-X-Gm-Gg: ASbGncvm6xa8FVxd1UFChKqElsv0qnwBFqwGZ9sN0AjyTcUYvF4UPzaYCuDsDuFg7+B
- DSNA4jAC87M409NDNxHNb1wpcgbSFZ2z1OfmYFqkxi+f5Gqzp408uFQ3CwFzp/w49YGY1YAaTnD
- x1OLskbg==
-X-Received: by 2002:a05:651c:325a:b0:32b:3879:ce7f with SMTP id
- 38308e7fff4ca-32cdc324937mr56275271fa.0.1751356575777; 
- Tue, 01 Jul 2025 00:56:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEmN5cwN1a1KiNAG0Q8OTCgk0iktaKB0zSYw1CTkhf8XjmeDBRSOLgJ7DsViTd0mC8eemKgwVldHRMPa4310z8=
-X-Received: by 2002:a05:651c:325a:b0:32b:3879:ce7f with SMTP id
- 38308e7fff4ca-32cdc324937mr56275161fa.0.1751356575378; Tue, 01 Jul 2025
- 00:56:15 -0700 (PDT)
+ bh=vUeAta2sH5kU43a+qTnbwRkbOQEYsHerBiJvofGvicA=;
+ b=QOygfI9lsWnYcbuNl/oHeVPGX3d8x1BT+eLl7TGJ+fYUp8rbGQPV5SW12nzCtovkOG
+ d7HLSvrimPMKk7LT8XOGTlC+8F8p008jD4VwONIYP+BYYMAwctGzTDqVlkDLhriuLTHT
+ U1PCnISw82uS+CAsqham5/7VLZCW3n+diqbTKYxx4ezJOm5qB3KR3DlF3wg4JfBulePi
+ yBu4vrrdXo5z8nthES/4SankdgtuQWhq3ocf9ouGLh6M4VK0gE4MfjhSbdWYmg06nLX+
+ T+l/FsE7Hpf73z65i+2ar3LjnbWoxlntIN90IrrFDDZwxk6FLKNcZaGEJWLDp+ZT6gJt
+ pHtA==
+X-Gm-Message-State: AOJu0YxfbaOaTtJSe6nSBBmu4ABRbA/FsQKJUpGap28o/JoU5+NshoXX
+ A+8d8URxhLPgOELDCgWLvDIZp51xh8l0zVZGUlIyw1QVd6dJbvuzDxhHHHDq8rT/SKG22Xew/Qv
+ PS+tqEBKCPXXbazAGHs+6thQEOagY+DdyC0AivsYhGtdSzzj8YctLKfceLkFBzjiWEp8IX1osE1
+ wX21S5ajeR1ZvL8fH8X4k=
+X-Gm-Gg: ASbGncviGUcPeRG6VDOlhyGJWdEBitSSZk5ci39eAFBXd86lUyrHmPKxV4KUakIikr7
+ Ue1f+5DqiXh2omHApZqvLCA1tvq3NjE81KOAnePTo2z2FHkGincyqVVo4zN2hmqTqjo3LMWROX+
+ unPcI+Zg==
+X-Received: by 2002:a05:6512:128a:b0:553:2ce7:a201 with SMTP id
+ 2adb3069b0e04-5550b8475edmr5594490e87.19.1751356629164; 
+ Tue, 01 Jul 2025 00:57:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEuoUKEJExGAIY05sRxvNhrMqafnUyNIarGqiJoIjf3xql+9f3QXpJDbUcB9e7hJOv4Iv1buuBNNMcH3i65bSk=
+X-Received: by 2002:a05:6512:128a:b0:553:2ce7:a201 with SMTP id
+ 2adb3069b0e04-5550b8475edmr5594468e87.19.1751356628600; Tue, 01 Jul 2025
+ 00:57:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <1747957021-2581-1-git-send-email-andremue@linux.microsoft.com>
-In-Reply-To: <1747957021-2581-1-git-send-email-andremue@linux.microsoft.com>
+References: <20250624134139.552315-1-bruce.richardson@intel.com>
+ <20250630153752.2361112-1-bruce.richardson@intel.com>
+In-Reply-To: <20250630153752.2361112-1-bruce.richardson@intel.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 1 Jul 2025 09:56:04 +0200
-X-Gm-Features: Ac12FXxn54_-WRt1BFhIy6Fxlj3C6GUKyJlZUHp_a8czQgFDwYc2RhT2BlkgENg
-Message-ID: <CAJFAV8xTnMtPXuG8Tu3YXLOUQPiYjtbKD4NGf1OBmLEiAKbkmg@mail.gmail.com>
-Subject: Re: [PATCH] rcu: add deprecation notice about limit on defer queue
- element size
-To: Andre Muezerie <andremue@linux.microsoft.com>
-Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, 
- Bruce Richardson <bruce.richards@intel.com>, 
- Honnappa Nagarahalli <Honnappa.Nagarahalli@arm.com>, 
+Date: Tue, 1 Jul 2025 09:56:56 +0200
+X-Gm-Features: Ac12FXwAKlouVRk1CWp2nbT5UCt3EnNjYWCmxq450i9Ne8mBKTzmlmF2P9FNHdA
+Message-ID: <CAJFAV8yixOQ-GFn9FZoheQzfwXh5c=zCms6wvRdZwHqZctTJ=w@mail.gmail.com>
+Subject: Re: [PATCH v2] eal: deprecate old coremask-based EAL parameters
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, thomas@monjalon.net, techboard@dpdk.org, 
+ Vipin Varghese <vipin.varghese@amd.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>, 
  Konstantin Ananyev <konstantin.ananyev@huawei.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: isu6Muyb8v-rnRKDPF4eGFGK45hT6Ze9p8ZM5wMzyAM_1751356576
+X-Mimecast-MFC-PROC-ID: of7iV_QGKdXcKQxI_sgX4CsKA7z_Uv5P0zxAGkDBmHY_1751356629
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -88,18 +88,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, May 23, 2025 at 1:37=E2=80=AFAM Andre Muezerie
-<andremue@linux.microsoft.com> wrote:
+On Mon, Jun 30, 2025 at 5:38=E2=80=AFPM Bruce Richardson
+<bruce.richardson@intel.com> wrote:
 >
-> The functions rte_rcu_qsbr_dq_create and rte_rcu_qsbr_dq_reclaim establis=
-h
-> no limit on the size of each element in the defer queue. With DPDK 25.11 =
-a
-> hard limit will be set (``RTE_QSBR_ESIZE_MAX``). This will allow fixed
-> C arrays to be used in the functions' implementations, avoiding VLAs and
-> use of alloca().
+> As the number of cores/cpus on platforms has increased over the years,
+> the use of coremasks rather than core-lists for identifying DPDK cores
+> has become more and more unwieldy. At this point, let's deprecate the
+> coremask-based EAL parameters for future removal, and point users to the
+> core-list based versions instead.
 >
-> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+> Depends-on: series-35540 ("use core lists not masks in documentation")
+>
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> Acked-by: Vipin Varghese <vipin.varghese@amd.com>
+> Acked-By: Anatoly Burakov <anatoly.burakov@intel.com>
+> Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 
 Acked-by: David Marchand <david.marchand@redhat.com>
 
