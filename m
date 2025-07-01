@@ -2,46 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C797C83030
-	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Jun 2025 21:24:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E1F3C8302F
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Jul 2025 01:42:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 42E8A402B1;
-	Mon, 30 Jun 2025 23:24:55 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 6A68D4025D
- for <dev@dpdk.org>; Mon, 30 Jun 2025 23:24:53 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 5BD5B46AC4; Mon, 30 Jun 2025 23:24:53 +0200 (CEST)
-From: bugzilla@dpdk.org
+	by mails.dpdk.org (Postfix) with ESMTP id 62B12402B1;
+	Tue,  1 Jul 2025 03:42:50 +0200 (CEST)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.5])
+ by mails.dpdk.org (Postfix) with ESMTP id 9FCBC40269
+ for <dev@dpdk.org>; Tue,  1 Jul 2025 03:42:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
+ MIME-Version; bh=0t1nj0jwDLIi/3Ejei6S0A9ZzAi2M/fJ0OkPxROu+/E=;
+ b=UX0XC76/ZhhDs6b/EqvQ3Q673D4yokCvh+jd+9/BI4jDKFdSJKsde9H9IeYG39
+ OqYyVqfaOu7ipWnOKf19/XapJiGvzM60uvGRF1TcKCcq59qpkb7o7uR3weY8xwSg
+ x1Mt+KsK9/rUa3qke0h56cFLgO7a09nNYbPECoYjhe1v4=
+Received: from localhost.localdomain (unknown [114.116.198.59])
+ by gzsmtp1 (Coremail) with SMTP id Ac8vCgB33pcPPWNo7UnRAA--.12717S4;
+ Tue, 01 Jul 2025 09:42:42 +0800 (CST)
+From: Feifei Wang <wff_light@vip.163.com>
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1734] Intel Ethernet drivers do not support
- rte_eth_tx_queue_count()
-Date: Mon, 30 Jun 2025 21:24:52 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
-X-Bugzilla-Version: 25.03
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: enhancement
-X-Bugzilla-Who: mb@smartsharesystems.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1734-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17513186930.F4d8BF9.3488710
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+Cc: Yi Chen <chenyi221@huawei.com>
+Subject: [V4 00/18] add hinic3 pmd driver
+Date: Tue,  1 Jul 2025 09:41:51 +0800
+Message-ID: <20250701014223.2440-1-wff_light@vip.163.com>
+X-Mailer: git-send-email 2.47.0.windows.2
+In-Reply-To: <20250418090621.9638-1-wff_light@vip.163.com>
+References: <20250418090621.9638-1-wff_light@vip.163.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-CM-TRANSID: Ac8vCgB33pcPPWNo7UnRAA--.12717S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW3JF13KF45trykur4fZFW5KFg_yoW3Xw1fpF
+ 4UC3y3Ar4DKrW7tw1kJw4xAa45X3WxG345K3W3Z3ZYvr97ZFy5A34UGFW8Ar9xtr17JF12
+ vFs0kr4qg3W5tw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UdcTQUUUUU=
+X-Originating-IP: [114.116.198.59]
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiAxd9Cmhiu4PkGwAAsu
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,163 +50,166 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+From: Yi Chen <chenyi221@huawei.com>=0D
 
---17513186930.F4d8BF9.3488710
-Date: Mon, 30 Jun 2025 23:24:53 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+The hinic3 PMD (**librte_net_hinic3**) provides poll mode driver support=0D
+for 25Gbps/100Gbps/200Gbps Huawei SPx series Network Adapters.=0D
+=0D
+V4:=0D
+- solve patch application conflict issue=0D
+=0D
+V3:=0D
+- Fix checkpatchs error issue=0D
+=0D
+v2:=0D
+- modify CI compile errors=0D
+=0D
+V1:=0D
+- modify community comments and compile issues=0D
+- remove the compilation flags in the meson build=0D
+- remove (void) cast=0D
+- remove "BLURE HERE ***" in cover letter=0D
+=0D
+RFC:=0D
+- add hinic3 pmd driver code, modify the driver code to adapt to Huawei SPx=
+ series network cards.=0D
+=0D
+Feifei Wang (2):=0D
+  net/hinic3: add dev ops=0D
+  net/hinic3: add Rx/Tx functions=0D
+=0D
+Xin Wang (7):=0D
+  net/hinic3: add basic header files=0D
+  net/hinic3: add support for cmdq mechanism=0D
+  net/hinic3: add NIC event module=0D
+  net/hinic3: add context and work queue support=0D
+  net/hinic3: add device initialization=0D
+  net/hinic3: add MML and EEPROM access feature=0D
+  net/hinic3: add RSS promiscuous ops=0D
+=0D
+Yi Chen (9):=0D
+  add some basic files to describe the hinic3 driver.=0D
+  net/hinic3: add hardware interfaces of BAR operation=0D
+  net/hinic3: add eq mechanism function code=0D
+  net/hinic3: add mgmt module function code=0D
+  net/hinic3: add module about hardware operation=0D
+  net/hinic3: add a NIC business configuration module=0D
+  net/hinic3: add a mailbox communication module=0D
+  net/hinic3: add FDIR flow control module=0D
+  drivers/net: add hinic3 PMD build and doc files=0D
+=0D
+ .mailmap                                   |    4 +-=0D
+ MAINTAINERS                                |    6 +=0D
+ doc/guides/nics/features/hinic3.ini        |   62 +=0D
+ doc/guides/nics/hinic3.rst                 |   51 +=0D
+ doc/guides/nics/index.rst                  |    1 +=0D
+ doc/guides/rel_notes/release_25_07.rst     |    4 +=0D
+ drivers/net/hinic3/base/hinic3_cmd.h       |  231 ++=0D
+ drivers/net/hinic3/base/hinic3_cmdq.c      |  978 +++++=0D
+ drivers/net/hinic3/base/hinic3_cmdq.h      |  230 ++=0D
+ drivers/net/hinic3/base/hinic3_compat.h    |  266 ++=0D
+ drivers/net/hinic3/base/hinic3_csr.h       |  108 +=0D
+ drivers/net/hinic3/base/hinic3_eqs.c       |  721 ++++=0D
+ drivers/net/hinic3/base/hinic3_eqs.h       |   98 +=0D
+ drivers/net/hinic3/base/hinic3_hw_cfg.c    |  240 ++=0D
+ drivers/net/hinic3/base/hinic3_hw_cfg.h    |  121 +=0D
+ drivers/net/hinic3/base/hinic3_hw_comm.c   |  452 +++=0D
+ drivers/net/hinic3/base/hinic3_hw_comm.h   |  366 ++=0D
+ drivers/net/hinic3/base/hinic3_hwdev.c     |  573 +++=0D
+ drivers/net/hinic3/base/hinic3_hwdev.h     |  177 +=0D
+ drivers/net/hinic3/base/hinic3_hwif.c      |  779 ++++=0D
+ drivers/net/hinic3/base/hinic3_hwif.h      |  142 +=0D
+ drivers/net/hinic3/base/hinic3_mbox.c      | 1399 +++++++=0D
+ drivers/net/hinic3/base/hinic3_mbox.h      |  199 +=0D
+ drivers/net/hinic3/base/hinic3_mgmt.c      |  392 ++=0D
+ drivers/net/hinic3/base/hinic3_mgmt.h      |  121 +=0D
+ drivers/net/hinic3/base/hinic3_nic_cfg.c   | 1828 +++++++++=0D
+ drivers/net/hinic3/base/hinic3_nic_cfg.h   | 1527 ++++++++=0D
+ drivers/net/hinic3/base/hinic3_nic_event.c |  433 +++=0D
+ drivers/net/hinic3/base/hinic3_nic_event.h |   39 +=0D
+ drivers/net/hinic3/base/hinic3_wq.c        |  148 +=0D
+ drivers/net/hinic3/base/hinic3_wq.h        |  109 +=0D
+ drivers/net/hinic3/base/meson.build        |   50 +=0D
+ drivers/net/hinic3/hinic3_ethdev.c         | 3866 ++++++++++++++++++++=0D
+ drivers/net/hinic3/hinic3_ethdev.h         |  167 +=0D
+ drivers/net/hinic3/hinic3_fdir.c           | 1394 +++++++=0D
+ drivers/net/hinic3/hinic3_fdir.h           |  398 ++=0D
+ drivers/net/hinic3/hinic3_flow.c           | 1700 +++++++++=0D
+ drivers/net/hinic3/hinic3_flow.h           |   42 +=0D
+ drivers/net/hinic3/hinic3_nic_io.c         |  828 +++++=0D
+ drivers/net/hinic3/hinic3_nic_io.h         |  169 +=0D
+ drivers/net/hinic3/hinic3_rx.c             | 1099 ++++++=0D
+ drivers/net/hinic3/hinic3_rx.h             |  356 ++=0D
+ drivers/net/hinic3/hinic3_tx.c             | 1028 ++++++=0D
+ drivers/net/hinic3/hinic3_tx.h             |  315 ++=0D
+ drivers/net/hinic3/meson.build             |   33 +=0D
+ drivers/net/hinic3/mml/hinic3_dbg.c        |  171 +=0D
+ drivers/net/hinic3/mml/hinic3_dbg.h        |  160 +=0D
+ drivers/net/hinic3/mml/hinic3_mml_cmd.c    |  375 ++=0D
+ drivers/net/hinic3/mml/hinic3_mml_cmd.h    |  131 +=0D
+ drivers/net/hinic3/mml/hinic3_mml_ioctl.c  |  215 ++=0D
+ drivers/net/hinic3/mml/hinic3_mml_lib.c    |  136 +=0D
+ drivers/net/hinic3/mml/hinic3_mml_lib.h    |  276 ++=0D
+ drivers/net/hinic3/mml/hinic3_mml_main.c   |  167 +=0D
+ drivers/net/hinic3/mml/hinic3_mml_queue.c  |  745 ++++=0D
+ drivers/net/hinic3/mml/hinic3_mml_queue.h  |  256 ++=0D
+ drivers/net/hinic3/mml/meson.build         |   45 +=0D
+ drivers/net/meson.build                    |    1 +=0D
+ 57 files changed, 25927 insertions(+), 1 deletion(-)=0D
+ create mode 100644 doc/guides/nics/features/hinic3.ini=0D
+ create mode 100644 doc/guides/nics/hinic3.rst=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_cmd.h=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_cmdq.c=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_cmdq.h=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_compat.h=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_csr.h=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_eqs.c=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_eqs.h=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_hw_cfg.c=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_hw_cfg.h=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_hw_comm.c=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_hw_comm.h=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_hwdev.c=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_hwdev.h=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_hwif.c=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_hwif.h=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_mbox.c=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_mbox.h=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_mgmt.c=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_mgmt.h=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_nic_cfg.c=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_nic_cfg.h=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_nic_event.c=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_nic_event.h=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_wq.c=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_wq.h=0D
+ create mode 100644 drivers/net/hinic3/base/meson.build=0D
+ create mode 100644 drivers/net/hinic3/hinic3_ethdev.c=0D
+ create mode 100644 drivers/net/hinic3/hinic3_ethdev.h=0D
+ create mode 100644 drivers/net/hinic3/hinic3_fdir.c=0D
+ create mode 100644 drivers/net/hinic3/hinic3_fdir.h=0D
+ create mode 100644 drivers/net/hinic3/hinic3_flow.c=0D
+ create mode 100644 drivers/net/hinic3/hinic3_flow.h=0D
+ create mode 100644 drivers/net/hinic3/hinic3_nic_io.c=0D
+ create mode 100644 drivers/net/hinic3/hinic3_nic_io.h=0D
+ create mode 100644 drivers/net/hinic3/hinic3_rx.c=0D
+ create mode 100644 drivers/net/hinic3/hinic3_rx.h=0D
+ create mode 100644 drivers/net/hinic3/hinic3_tx.c=0D
+ create mode 100644 drivers/net/hinic3/hinic3_tx.h=0D
+ create mode 100644 drivers/net/hinic3/meson.build=0D
+ create mode 100644 drivers/net/hinic3/mml/hinic3_dbg.c=0D
+ create mode 100644 drivers/net/hinic3/mml/hinic3_dbg.h=0D
+ create mode 100644 drivers/net/hinic3/mml/hinic3_mml_cmd.c=0D
+ create mode 100644 drivers/net/hinic3/mml/hinic3_mml_cmd.h=0D
+ create mode 100644 drivers/net/hinic3/mml/hinic3_mml_ioctl.c=0D
+ create mode 100644 drivers/net/hinic3/mml/hinic3_mml_lib.c=0D
+ create mode 100644 drivers/net/hinic3/mml/hinic3_mml_lib.h=0D
+ create mode 100644 drivers/net/hinic3/mml/hinic3_mml_main.c=0D
+ create mode 100644 drivers/net/hinic3/mml/hinic3_mml_queue.c=0D
+ create mode 100644 drivers/net/hinic3/mml/hinic3_mml_queue.h=0D
+ create mode 100644 drivers/net/hinic3/mml/meson.build=0D
+=0D
+-- =0D
+2.45.1.windows.1=0D
+=0D
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1734
-
-            Bug ID: 1734
-           Summary: Intel Ethernet drivers do not support
-                    rte_eth_tx_queue_count()
-           Product: DPDK
-           Version: 25.03
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: enhancement
-          Priority: Normal
-         Component: ethdev
-          Assignee: dev@dpdk.org
-          Reporter: mb@smartsharesystems.com
-  Target Milestone: ---
-
-The drivers support rte_eth_rx_queue_count(), but not rte_eth_tx_queue_coun=
-t().
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
-
---17513186930.F4d8BF9.3488710
-Date: Mon, 30 Jun 2025 23:24:53 +0200
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-<html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
-bz_new_table">
-        <tr>
-          <th>Bug ID</th>
-          <td><a class=3D"bz_bug_link=20
-          bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - Intel Ethernet drivers do not support rte_eth_tx_=
-queue_count()"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1734">1734</a>
-          </td>
-        </tr>
-
-        <tr>
-          <th>Summary</th>
-          <td>Intel Ethernet drivers do not support rte_eth_tx_queue_count()
-          </td>
-        </tr>
-
-        <tr>
-          <th>Product</th>
-          <td>DPDK
-          </td>
-        </tr>
-
-        <tr>
-          <th>Version</th>
-          <td>25.03
-          </td>
-        </tr>
-
-        <tr>
-          <th>Hardware</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>OS</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>Status</th>
-          <td>UNCONFIRMED
-          </td>
-        </tr>
-
-        <tr>
-          <th>Severity</th>
-          <td>enhancement
-          </td>
-        </tr>
-
-        <tr>
-          <th>Priority</th>
-          <td>Normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Component</th>
-          <td>ethdev
-          </td>
-        </tr>
-
-        <tr>
-          <th>Assignee</th>
-          <td>dev&#64;dpdk.org
-          </td>
-        </tr>
-
-        <tr>
-          <th>Reporter</th>
-          <td>mb&#64;smartsharesystems.com
-          </td>
-        </tr>
-
-        <tr>
-          <th>Target Milestone</th>
-          <td>---
-          </td>
-        </tr></table>
-      <p>
-        <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">The drivers support rte_eth_rx_que=
-ue_count(), but not rte_eth_tx_queue_count().
-          </pre>
-        </div>
-      </p>
-
-
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1734">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17513186930.F4d8BF9.3488710--
