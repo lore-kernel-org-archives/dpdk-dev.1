@@ -2,32 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCB8C7EE30
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Jul 2025 11:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C438C7EE30
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Jul 2025 11:37:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 76B3A40678;
-	Tue,  1 Jul 2025 13:37:15 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7DF1D4067E;
+	Tue,  1 Jul 2025 13:37:16 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 9F29D402A5
- for <dev@dpdk.org>; Tue,  1 Jul 2025 13:37:10 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 78DA2402E8
+ for <dev@dpdk.org>; Tue,  1 Jul 2025 13:37:11 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7D00F1A1FAD;
- Tue,  1 Jul 2025 13:37:10 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 537E81A1FA1;
+ Tue,  1 Jul 2025 13:37:11 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 41CDF1A1FA2;
- Tue,  1 Jul 2025 13:37:10 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 188AA1A0496;
+ Tue,  1 Jul 2025 13:37:11 +0200 (CEST)
 Received: from lsv03379.swis.in-blr01.nxp.com (lsv03379.swis.in-blr01.nxp.com
  [92.120.147.188])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 55C26180009C;
- Tue,  1 Jul 2025 19:37:09 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 296AD1800079;
+ Tue,  1 Jul 2025 19:37:10 +0800 (+08)
 From: vanshika.shukla@nxp.com
 To: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
  Sachin Saxena <sachin.saxena@nxp.com>
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [v5 3/9] bus/dpaa: optimize bman acquire/release
-Date: Tue,  1 Jul 2025 17:07:01 +0530
-Message-Id: <20250701113707.2793004-4-vanshika.shukla@nxp.com>
+Subject: [v5 5/9] mempool/dpaa: adjust pool element for LS1043A errata
+Date: Tue,  1 Jul 2025 17:07:03 +0530
+Message-Id: <20250701113707.2793004-6-vanshika.shukla@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250701113707.2793004-1-vanshika.shukla@nxp.com>
 References: <20250611071039.2939950-1-vanshika.shukla@nxp.com>
@@ -50,303 +50,253 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jun Yang <jun.yang@nxp.com>
 
-1) Reduce byte swap between big endian and little endian.
-2) Reduce ci(cache invalid) access by 128bit R/W instructions.
-These methods improve ~10% buffer acquire/release performance.
+Adjust every element of pool by populate callback.
+1) Make sure start DMA address is aligned with 16B.
+2) For buffer across 4KB boundary, make sure start DMA address is
+   aligned with 256B.
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/bus/dpaa/base/qbman/bman.c  | 147 ++++++++++++++++++++++++----
- drivers/bus/dpaa/include/fsl_bman.h |  20 +++-
- 2 files changed, 148 insertions(+), 19 deletions(-)
+ drivers/mempool/dpaa/dpaa_mempool.c | 144 +++++++++++++++++++++++++++-
+ drivers/mempool/dpaa/dpaa_mempool.h |  11 ++-
+ 2 files changed, 149 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/bus/dpaa/base/qbman/bman.c b/drivers/bus/dpaa/base/qbman/bman.c
-index 8a6290734f..037030ea19 100644
---- a/drivers/bus/dpaa/base/qbman/bman.c
-+++ b/drivers/bus/dpaa/base/qbman/bman.c
-@@ -1,18 +1,36 @@
- /* SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
+diff --git a/drivers/mempool/dpaa/dpaa_mempool.c b/drivers/mempool/dpaa/dpaa_mempool.c
+index 6c850f5cb2..2f9395b3f4 100644
+--- a/drivers/mempool/dpaa/dpaa_mempool.c
++++ b/drivers/mempool/dpaa/dpaa_mempool.c
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
   *
-  * Copyright 2008-2016 Freescale Semiconductor Inc.
-- * Copyright 2017 NXP
-+ * Copyright 2017, 2024 NXP
+- *   Copyright 2017,2019,2023 NXP
++ *   Copyright 2017,2019,2023-2025 NXP
   *
   */
-+#include <rte_memcpy.h>
-+#include <rte_branch_prediction.h>
-+#include <eal_export.h>
-+#include <stdint.h>
-+#include <limits.h>
  
- #include "bman.h"
--#include <rte_branch_prediction.h>
+@@ -29,6 +29,9 @@
+ #include <dpaa_mempool.h>
+ #include <dpaax_iova_table.h>
  
- /* Compilation constants */
- #define RCR_THRESH	2	/* reread h/w CI when running out of space */
- #define IRQNAME		"BMan portal %d"
- #define MAX_IRQNAME	16	/* big enough for "BMan portal %d" */
- 
++#define FMAN_ERRATA_BOUNDARY ((uint64_t)4096)
++#define FMAN_ERRATA_BOUNDARY_MASK (~(FMAN_ERRATA_BOUNDARY - 1))
 +
-+#define MAX_U16 UINT16_MAX
-+#define MAX_U32 UINT32_MAX
-+#ifndef BIT_SIZE
-+#define BIT_SIZE(t) (sizeof(t) * 8)
-+#endif
-+#define MAX_U48 \
-+	((((uint64_t)MAX_U16) << BIT_SIZE(uint32_t)) | MAX_U32)
-+#define HI16_OF_U48(x) \
-+	(((x) >> BIT_SIZE(rte_be32_t)) & MAX_U16)
-+#define LO32_OF_U48(x) ((x) & MAX_U32)
-+#define U48_BY_HI16_LO32(hi, lo) \
-+	(((hi) << BIT_SIZE(uint32_t)) | (lo))
+ /* List of all the memseg information locally maintained in dpaa driver. This
+  * is to optimize the PA_to_VA searches until a better mechanism (algo) is
+  * available.
+@@ -51,6 +54,7 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
+ 	struct dpaa_bp_info *bp_info;
+ 	uint8_t bpid;
+ 	int num_bufs = 0, ret = 0;
++	uint16_t elem_max_size;
+ 	struct bman_pool_params params = {
+ 		.flags = BMAN_POOL_FLAG_DYNAMIC_BPID
+ 	};
+@@ -101,9 +105,11 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
+ 		}
+ 	}
+ 
++	elem_max_size = rte_pktmbuf_data_room_size(mp);
 +
- struct bman_portal {
- 	struct bm_portal p;
- 	/* 2-element array. pools[0] is mask, pools[1] is snapshot. */
-@@ -246,7 +264,52 @@ static void update_rcr_ci(struct bman_portal *p, int avail)
- 		bm_rcr_cce_update(&p->p);
+ 	rte_dpaa_bpid_info[bpid].mp = mp;
+ 	rte_dpaa_bpid_info[bpid].bpid = bpid;
+-	rte_dpaa_bpid_info[bpid].size = mp->elt_size;
++	rte_dpaa_bpid_info[bpid].size = elem_max_size;
+ 	rte_dpaa_bpid_info[bpid].bp = bp;
+ 	rte_dpaa_bpid_info[bpid].meta_data_size =
+ 		sizeof(struct rte_mbuf) + rte_pktmbuf_priv_size(mp);
+@@ -296,6 +302,130 @@ dpaa_mbuf_get_count(const struct rte_mempool *mp)
+ 	return bman_query_free_buffers(bp_info->bp);
  }
  
--#define BMAN_BUF_MASK 0x0000fffffffffffful
-+RTE_EXPORT_INTERNAL_SYMBOL(bman_release_fast)
-+int
-+bman_release_fast(struct bman_pool *pool, const uint64_t *bufs,
-+	uint8_t num)
++static int
++dpaa_check_obj_bounds(char *obj, size_t pg_sz, size_t elt_sz)
 +{
-+	struct bman_portal *p;
-+	struct bm_rcr_entry *r;
-+	uint8_t i, avail;
-+	uint64_t bpid = pool->params.bpid;
-+	struct bm_hw_buf_desc bm_bufs[FSL_BM_BURST_MAX];
++	if (!pg_sz || elt_sz > pg_sz)
++		return true;
 +
-+#ifdef RTE_LIBRTE_DPAA_HWDEBUG
-+	if (!num || (num > FSL_BM_BURST_MAX))
-+		return -EINVAL;
-+	if (pool->params.flags & BMAN_POOL_FLAG_NO_RELEASE)
-+		return -EINVAL;
-+#endif
++	if (RTE_PTR_ALIGN(obj, pg_sz) !=
++		RTE_PTR_ALIGN(obj + elt_sz - 1, pg_sz))
++		return false;
++	return true;
++}
 +
-+	p = get_affine_portal();
-+	avail = bm_rcr_get_avail(&p->p);
-+	if (avail < 2)
-+		update_rcr_ci(p, avail);
-+	r = bm_rcr_start(&p->p);
-+	if (unlikely(!r))
-+		return -EBUSY;
++static void
++dpaa_adjust_obj_bounds(char *va, size_t *offset,
++	size_t pg_sz, size_t total, uint32_t flags)
++{
++	size_t off = *offset;
 +
-+	/*
-+	 * we can copy all but the first entry, as this can trigger badness
-+	 * with the valid-bit
-+	 */
-+	bm_bufs[0].bpid = bpid;
-+	bm_bufs[0].hi_addr = cpu_to_be16(HI16_OF_U48(bufs[0]));
-+	bm_bufs[0].lo_addr = cpu_to_be32(LO32_OF_U48(bufs[0]));
-+	for (i = 1; i < num; i++) {
-+		bm_bufs[i].hi_addr = cpu_to_be16(HI16_OF_U48(bufs[i]));
-+		bm_bufs[i].lo_addr = cpu_to_be32(LO32_OF_U48(bufs[i]));
++	if (dpaa_check_obj_bounds(va + off, pg_sz, total) == false) {
++		off += RTE_PTR_ALIGN_CEIL(va + off, pg_sz) - (va + off);
++		if (flags & RTE_MEMPOOL_POPULATE_F_ALIGN_OBJ)
++			off += total - ((((size_t)va + off - 1) % total) + 1);
 +	}
 +
-+	memcpy(r->bufs, bm_bufs, sizeof(struct bm_buffer) * num);
++	*offset = off;
++}
 +
-+	bm_rcr_pvb_commit(&p->p, BM_RCR_VERB_CMD_BPID_SINGLE |
-+		(num & BM_RCR_VERB_BUFCOUNT_MASK));
++static int
++dpaa_mbuf_ls1043a_errata_obj_adjust(uint8_t **pobj,
++	uint32_t header_size, size_t *poff, size_t data_room)
++{
++	uint8_t *obj = *pobj;
++	size_t off = *poff, buf_addr, end;
++
++	if (RTE_PKTMBUF_HEADROOM % FMAN_ERRATA_BUF_START_ALIGN) {
++		DPAA_MEMPOOL_ERR("RTE_PKTMBUF_HEADROOM(%d) NOT aligned to %d",
++			RTE_PKTMBUF_HEADROOM,
++			FMAN_ERRATA_BUF_START_ALIGN);
++		return -1;
++	}
++	if (header_size % FMAN_ERRATA_BUF_START_ALIGN) {
++		DPAA_MEMPOOL_ERR("Header size(%d) NOT aligned to %d",
++			header_size,
++			FMAN_ERRATA_BUF_START_ALIGN);
++		return -1;
++	}
++
++	/** All FMAN DMA start addresses (for example, BMAN buffer
++	 * address, FD[address] + FD[offset]) are 16B aligned.
++	 */
++	buf_addr = (size_t)obj + header_size;
++	while (!rte_is_aligned((void *)buf_addr,
++		FMAN_ERRATA_BUF_START_ALIGN)) {
++		off++;
++		obj++;
++		buf_addr = (size_t)obj + header_size;
++	}
++
++	/** Frame buffers must not span a 4KB address boundary,
++	 * unless the frame start address is 256 byte aligned.
++	 */
++	end = buf_addr + data_room;
++	if (((buf_addr + RTE_PKTMBUF_HEADROOM) &
++		FMAN_ERRATA_BOUNDARY_MASK) ==
++		(end & FMAN_ERRATA_BOUNDARY_MASK))
++		goto quit;
++
++	while (!rte_is_aligned((void *)(buf_addr + RTE_PKTMBUF_HEADROOM),
++		FMAN_ERRATA_4K_SPAN_ADDR_ALIGN)) {
++		off++;
++		obj++;
++		buf_addr = (size_t)obj + header_size;
++	}
++quit:
++	*pobj = obj;
++	*poff = off;
 +
 +	return 0;
 +}
 +
- int bman_release(struct bman_pool *pool, const struct bm_buffer *bufs, u8 num,
- 		 u32 flags __maybe_unused)
++static int
++dpaa_mbuf_op_pop_helper(struct rte_mempool *mp, uint32_t flags,
++	uint32_t max_objs, void *vaddr, rte_iova_t iova,
++	size_t len, struct dpaa_bp_info *bp_info,
++	rte_mempool_populate_obj_cb_t *obj_cb, void *obj_cb_arg)
++{
++	char *va = vaddr;
++	size_t total_elt_sz, pg_sz, off;
++	uint32_t i;
++	void *obj;
++	int ret;
++	uint16_t data_room = rte_pktmbuf_data_room_size(mp);
++
++	ret = rte_mempool_get_page_size(mp, &pg_sz);
++	if (ret < 0)
++		return ret;
++
++	total_elt_sz = mp->header_size + mp->elt_size + mp->trailer_size;
++
++	if (flags & RTE_MEMPOOL_POPULATE_F_ALIGN_OBJ)
++		off = total_elt_sz - (((uintptr_t)(va - 1) % total_elt_sz) + 1);
++	else
++		off = 0;
++	for (i = 0; i < max_objs; i++) {
++		/* avoid objects to cross page boundaries */
++		dpaa_adjust_obj_bounds(va, &off, pg_sz, total_elt_sz, flags);
++		if (off + total_elt_sz > len)
++			break;
++
++		off += mp->header_size;
++		obj = va + off;
++		if (dpaa_soc_ver() == SVR_LS1043A_FAMILY) {
++			dpaa_mbuf_ls1043a_errata_obj_adjust((uint8_t **)&obj,
++				bp_info->meta_data_size, &off, data_room);
++		}
++		obj_cb(mp, obj_cb_arg, obj,
++			(iova == RTE_BAD_IOVA) ? RTE_BAD_IOVA : (iova + off));
++		rte_mempool_ops_enqueue_bulk(mp, &obj, 1);
++		off += mp->elt_size + mp->trailer_size;
++	}
++
++	return i;
++}
++
+ static int
+ dpaa_populate(struct rte_mempool *mp, unsigned int max_objs,
+ 	      void *vaddr, rte_iova_t paddr, size_t len,
+@@ -303,9 +433,14 @@ dpaa_populate(struct rte_mempool *mp, unsigned int max_objs,
  {
-@@ -256,7 +319,7 @@ int bman_release(struct bman_pool *pool, const struct bm_buffer *bufs, u8 num,
- 	u8 avail;
+ 	struct dpaa_bp_info *bp_info;
+ 	unsigned int total_elt_sz;
++	struct dpaa_memseg *ms;
  
- #ifdef RTE_LIBRTE_DPAA_HWDEBUG
--	if (!num || (num > 8))
-+	if (!num || (num > FSL_BM_BURST_MAX))
- 		return -EINVAL;
- 	if (pool->params.flags & BMAN_POOL_FLAG_NO_RELEASE)
- 		return -EINVAL;
-@@ -276,11 +339,11 @@ int bman_release(struct bman_pool *pool, const struct bm_buffer *bufs, u8 num,
- 	 */
- 	r->bufs[0].opaque =
- 		cpu_to_be64(((u64)pool->params.bpid << 48) |
--			    (bufs[0].opaque & BMAN_BUF_MASK));
-+			    (bufs[0].opaque & MAX_U48));
- 	if (i) {
- 		for (i = 1; i < num; i++)
- 			r->bufs[i].opaque =
--				cpu_to_be64(bufs[i].opaque & BMAN_BUF_MASK);
-+				cpu_to_be64(bufs[i].opaque & MAX_U48);
+ 	if (!mp || !mp->pool_data) {
+ 		DPAA_MEMPOOL_ERR("Invalid mempool provided");
++		if (dpaa_soc_ver() == SVR_LS1043A_FAMILY) {
++			/** populate must be successful for LS1043A*/
++			return -EINVAL;
++		}
+ 		return 0;
  	}
  
- 	bm_rcr_pvb_commit(&p->p, BM_RCR_VERB_CMD_BPID_SINGLE |
-@@ -289,16 +352,70 @@ int bman_release(struct bman_pool *pool, const struct bm_buffer *bufs, u8 num,
- 	return 0;
+@@ -321,7 +456,6 @@ dpaa_populate(struct rte_mempool *mp, unsigned int max_objs,
+ 	/* Detect pool area has sufficient space for elements in this memzone */
+ 	if (len >= total_elt_sz * mp->size)
+ 		bp_info->flags |= DPAA_MPOOL_SINGLE_SEGMENT;
+-	struct dpaa_memseg *ms;
+ 
+ 	/* For each memory chunk pinned to the Mempool, a linked list of the
+ 	 * contained memsegs is created for searching when PA to VA
+@@ -347,8 +481,8 @@ dpaa_populate(struct rte_mempool *mp, unsigned int max_objs,
+ 	 */
+ 	TAILQ_INSERT_HEAD(&rte_dpaa_memsegs, ms, next);
+ 
+-	return rte_mempool_op_populate_helper(mp, 0, max_objs, vaddr, paddr,
+-					       len, obj_cb, obj_cb_arg);
++	return dpaa_mbuf_op_pop_helper(mp, 0, max_objs, vaddr, paddr,
++			len, bp_info, obj_cb, obj_cb_arg);
  }
  
-+static inline uint64_t
-+bman_extract_addr(struct bm_buffer *buf)
-+{
-+	buf->opaque = be64_to_cpu(buf->opaque);
-+
-+	return buf->addr;
-+}
-+
-+static inline uint64_t
-+bman_hw_extract_addr(struct bm_hw_buf_desc *buf)
-+{
-+	uint64_t hi, lo;
-+
-+	hi = be16_to_cpu(buf->hi_addr);
-+	lo = be32_to_cpu(buf->lo_addr);
-+	return U48_BY_HI16_LO32(hi, lo);
-+}
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(bman_acquire_fast)
-+int
-+bman_acquire_fast(struct bman_pool *pool, uint64_t *bufs, uint8_t num)
-+{
-+	struct bman_portal *p = get_affine_portal();
-+	struct bm_mc_command *mcc;
-+	struct bm_mc_result *mcr;
-+	uint8_t i, rst;
-+	struct bm_hw_buf_desc bm_bufs[FSL_BM_BURST_MAX];
-+
-+#ifdef RTE_LIBRTE_DPAA_HWDEBUG
-+	if (!num || (num > FSL_BM_BURST_MAX))
-+		return -EINVAL;
-+	if (pool->params.flags & BMAN_POOL_FLAG_ONLY_RELEASE)
-+		return -EINVAL;
-+#endif
-+
-+	mcc = bm_mc_start(&p->p);
-+	mcc->acquire.bpid = pool->params.bpid;
-+	bm_mc_commit(&p->p, BM_MCC_VERB_CMD_ACQUIRE |
-+			(num & BM_MCC_VERB_ACQUIRE_BUFCOUNT));
-+	while (!(mcr = bm_mc_result(&p->p)))
-+		;
-+	rst = mcr->verb & BM_MCR_VERB_ACQUIRE_BUFCOUNT;
-+	if (unlikely(!rst))
-+		return 0;
-+
-+	rte_memcpy(bm_bufs, mcr->acquire.bufs,
-+		sizeof(struct bm_buffer) * rst);
-+
-+	for (i = 0; i < rst; i++)
-+		bufs[i] = bman_hw_extract_addr(&bm_bufs[i]);
-+
-+	return rst;
-+}
-+
- int bman_acquire(struct bman_pool *pool, struct bm_buffer *bufs, u8 num,
- 		 u32 flags __maybe_unused)
- {
- 	struct bman_portal *p = get_affine_portal();
- 	struct bm_mc_command *mcc;
- 	struct bm_mc_result *mcr;
--	int ret, i;
-+	uint8_t rst, i;
- 
- #ifdef RTE_LIBRTE_DPAA_HWDEBUG
--	if (!num || (num > 8))
-+	if (!num || (num > FSL_BM_BURST_MAX))
- 		return -EINVAL;
- 	if (pool->params.flags & BMAN_POOL_FLAG_ONLY_RELEASE)
- 		return -EINVAL;
-@@ -310,15 +427,11 @@ int bman_acquire(struct bman_pool *pool, struct bm_buffer *bufs, u8 num,
- 			(num & BM_MCC_VERB_ACQUIRE_BUFCOUNT));
- 	while (!(mcr = bm_mc_result(&p->p)))
- 		cpu_relax();
--	ret = mcr->verb & BM_MCR_VERB_ACQUIRE_BUFCOUNT;
--	if (bufs) {
--		for (i = 0; i < num; i++)
--			bufs[i].opaque =
--				be64_to_cpu(mcr->acquire.bufs[i].opaque);
--	}
--	if (ret != num)
--		ret = -ENOMEM;
--	return ret;
-+	rst = mcr->verb & BM_MCR_VERB_ACQUIRE_BUFCOUNT;
-+	for (i = 0; i < rst; i++)
-+		bufs[i].opaque = be64_to_cpu(mcr->acquire.bufs[i].opaque);
-+
-+	return rst;
- }
- 
- int bman_query_pools(struct bm_pool_state *state)
-diff --git a/drivers/bus/dpaa/include/fsl_bman.h b/drivers/bus/dpaa/include/fsl_bman.h
-index c0760149e1..0107ced8c5 100644
---- a/drivers/bus/dpaa/include/fsl_bman.h
-+++ b/drivers/bus/dpaa/include/fsl_bman.h
-@@ -1,6 +1,7 @@
- /* SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
+ static const struct rte_mempool_ops dpaa_mpool_ops = {
+diff --git a/drivers/mempool/dpaa/dpaa_mempool.h b/drivers/mempool/dpaa/dpaa_mempool.h
+index 5ca53c7ff9..865b533b8f 100644
+--- a/drivers/mempool/dpaa/dpaa_mempool.h
++++ b/drivers/mempool/dpaa/dpaa_mempool.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
   *
-  * Copyright 2008-2012 Freescale Semiconductor, Inc.
-+ * Copyright 2024 NXP
+- *   Copyright 2017,2019 NXP
++ *   Copyright 2017,2019,2024 -2025 NXP
   *
   */
+ #ifndef __DPAA_MEMPOOL_H__
+@@ -31,6 +31,15 @@
+ /* Buffers are allocated from single mem segment i.e. phys contiguous */
+ #define DPAA_MPOOL_SINGLE_SEGMENT  0x01
  
-@@ -68,6 +69,14 @@ struct __rte_aligned(8) bm_buffer {
- 		u64 opaque;
- 	};
- };
++#define FMAN_ERRATA_4K_SPAN_ADDR_ALIGN 256
++#define FMAN_ERRATA_4K_SPAN_ADDR_MASK \
++	(FMAN_ERRATA_4K_SPAN_ADDR_ALIGN - 1)
 +
-+struct __rte_packed_begin bm_hw_buf_desc {
-+	uint8_t rsv;
-+	uint8_t bpid;
-+	rte_be16_t hi_addr; /* High 16-bits of 48-bit address */
-+	rte_be32_t lo_addr; /* Low 32-bits of 48-bit address */
-+} __rte_packed_end;
++#define FMAN_ERRATA_BUF_START_ALIGN 16
++#define FMAN_ERRATA_BUF_START_MASK (FMAN_ERRATA_BUF_START_ALIGN - 1)
++#define FMAN_ERRATA_SG_LEN_ALIGN 16
++#define FMAN_ERRATA_SG_LEN_MASK (FMAN_ERRATA_SG_LEN_ALIGN - 1)
 +
- static inline u64 bm_buffer_get64(const struct bm_buffer *buf)
- {
- 	return buf->addr;
-@@ -85,6 +94,8 @@ static inline dma_addr_t bm_buf_addr(const struct bm_buffer *buf)
- 		__buf931->lo = lower_32_bits(v); \
- 	} while (0)
- 
-+#define FSL_BM_BURST_MAX 8
-+
- /* See 1.5.3.5.4: "Release Command" */
- struct __rte_packed_begin bm_rcr_entry {
- 	union {
-@@ -93,7 +104,7 @@ struct __rte_packed_begin bm_rcr_entry {
- 			u8 bpid; /* used with BM_RCR_VERB_CMD_BPID_SINGLE */
- 			u8 __reserved1[62];
- 		};
--		struct bm_buffer bufs[8];
-+		struct bm_buffer bufs[FSL_BM_BURST_MAX];
- 	};
- } __rte_packed_end;
- #define BM_RCR_VERB_VBIT		0x80
-@@ -148,7 +159,7 @@ struct __rte_packed_begin bm_mc_result {
- 				u8 bpid;
- 				u8 __reserved2[62];
- 			};
--			struct bm_buffer bufs[8];
-+			struct bm_buffer bufs[FSL_BM_BURST_MAX];
- 		} acquire;
- 		struct bm_pool_state query;
- 	};
-@@ -297,6 +308,9 @@ const struct bman_pool_params *bman_get_params(const struct bman_pool *pool);
- __rte_internal
- int bman_release(struct bman_pool *pool, const struct bm_buffer *bufs, u8 num,
- 		 u32 flags);
-+__rte_internal
-+int bman_release_fast(struct bman_pool *pool, const uint64_t *bufs,
-+	uint8_t num);
- 
- /**
-  * bman_acquire - Acquire buffer(s) from a buffer pool
-@@ -311,6 +325,8 @@ int bman_release(struct bman_pool *pool, const struct bm_buffer *bufs, u8 num,
- __rte_internal
- int bman_acquire(struct bman_pool *pool, struct bm_buffer *bufs, u8 num,
- 		 u32 flags);
-+__rte_internal
-+int bman_acquire_fast(struct bman_pool *pool, uint64_t *bufs, uint8_t num);
- 
- /**
-  * bman_query_pools - Query all buffer pool states
+ struct dpaa_bp_info {
+ 	struct rte_mempool *mp;
+ 	struct bman_pool *bp;
 -- 
 2.25.1
 
