@@ -2,60 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 065BBC83039
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Jul 2025 08:16:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6B11C83038
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Jul 2025 08:16:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2FE4140269;
-	Tue,  1 Jul 2025 10:16:13 +0200 (CEST)
-Received: from mail.lysator.liu.se (mail.lysator.liu.se [130.236.254.3])
- by mails.dpdk.org (Postfix) with ESMTP id C1CB6400D7
- for <dev@dpdk.org>; Tue,  1 Jul 2025 10:16:11 +0200 (CEST)
-Received: from mail.lysator.liu.se (localhost [127.0.0.1])
- by mail.lysator.liu.se (Postfix) with ESMTP id 57B971DC81
- for <dev@dpdk.org>; Tue,  1 Jul 2025 10:16:11 +0200 (CEST)
-Received: by mail.lysator.liu.se (Postfix, from userid 1004)
- id 4B0881DC33; Tue,  1 Jul 2025 10:16:11 +0200 (CEST)
-Received: from [192.168.1.85] (h-62-63-215-114.A163.priv.bahnhof.se
- [62.63.215.114])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
- (No client certificate requested)
- by mail.lysator.liu.se (Postfix) with ESMTPSA id EC26E1DBBE;
- Tue,  1 Jul 2025 10:16:05 +0200 (CEST)
-Message-ID: <efd0a370-d13b-4848-870b-a49f4d6f5f55@lysator.liu.se>
-Date: Tue, 1 Jul 2025 10:16:05 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] event/dlb2: add dequeue interrupt mode support
-To: "Pathak, Pravin" <pravin.pathak@intel.com>,
- Jerin Jacob <jerinjacobk@gmail.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, "jerinj@marvell.com" <jerinj@marvell.com>, 
- "Chen, Mike Ximing" <mike.ximing.chen@intel.com>,
- "Richardson, Bruce" <bruce.richardson@intel.com>,
- "thomas@monjalon.net" <thomas@monjalon.net>,
- "Marchand, David" <david.marchand@redhat.com>,
- "nipun.gupta@amd.com" <nipun.gupta@amd.com>,
- "chenbox@nvidia.com" <chenbox@nvidia.com>,
- "Sarkar, Tirthendu" <tirthendu.sarkar@intel.com>,
- Pavan Nikhilesh <pbhagavatula@marvell.com>,
- Shijith Thotton <sthotton@marvell.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@oss.nxp.com>,
- "harry.chang@intel.com" <harry.chang@intel.com>,
- =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>
-References: <20250628045112.655999-1-pravin.pathak@intel.com>
- <CALBAE1NrMu3znG6N+iSQacxHWpoGmCe=azvTbkjEUQZGLY+DmA@mail.gmail.com>
- <bc0299d2-052d-4188-ab18-987360d65cb4@lysator.liu.se>
- <CALBAE1MUrpZqWA=E78QiWy7k=H8QrYQ-=4vme4eHqSm8avBHJg@mail.gmail.com>
- <BL1PR11MB5461AD27C632B62C4A81FC59F446A@BL1PR11MB5461.namprd11.prod.outlook.com>
- <47e87bef-a862-495c-ad96-fb82c840f443@lysator.liu.se>
- <BL1PR11MB54613D5082A1DACD884D8F3AF446A@BL1PR11MB5461.namprd11.prod.outlook.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 1F2934064F;
+	Tue,  1 Jul 2025 10:16:24 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 47EE640609
+ for <dev@dpdk.org>; Tue,  1 Jul 2025 10:16:23 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bWbSv1mc2z6L5lw;
+ Tue,  1 Jul 2025 16:15:59 +0800 (CST)
+Received: from frapeml100006.china.huawei.com (unknown [7.182.85.201])
+ by mail.maildlp.com (Postfix) with ESMTPS id 532EC1404C5;
+ Tue,  1 Jul 2025 16:16:21 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ frapeml100006.china.huawei.com (7.182.85.201) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 1 Jul 2025 10:16:21 +0200
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Tue, 1 Jul 2025 10:16:20 +0200
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>, "Bruce
+ Richardson" <bruce.richardson@intel.com>, "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: [PATCH] net/i40e: Fast release optimizations
+Thread-Topic: [PATCH] net/i40e: Fast release optimizations
+Thread-Index: AQHb5M8cy6WBmzI3MUC2TH1cjpMU4LQbm/iwgAAfruCAACXVQIAAjgtQ
+Date: Tue, 1 Jul 2025 08:16:20 +0000
+Message-ID: <bb4a70c74968437491d61714994a7006@huawei.com>
+References: <20250624061238.89259-1-mb@smartsharesystems.com>
+ <cda18d9197ed4ee9bd5ed73fd02bd032@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FD5F@smartserver.smartshare.dk>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FD60@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FD60@smartserver.smartshare.dk>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-From: =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <hofors@lysator.liu.se>
-In-Reply-To: <BL1PR11MB54613D5082A1DACD884D8F3AF446A@BL1PR11MB5461.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.138.73]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,201 +57,169 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 2025-06-30 19:34, Pathak, Pravin wrote:
-> 
-> 
->> -----Original Message-----
->> From: Mattias Rönnblom <hofors@lysator.liu.se>
->> Sent: Monday, June 30, 2025 12:51 PM
->> To: Pathak, Pravin <pravin.pathak@intel.com>; Jerin Jacob
->> <jerinjacobk@gmail.com>
->> Cc: dev@dpdk.org; jerinj@marvell.com; Chen, Mike Ximing
->> <mike.ximing.chen@intel.com>; Richardson, Bruce
->> <bruce.richardson@intel.com>; thomas@monjalon.net; Marchand, David
->> <david.marchand@redhat.com>; nipun.gupta@amd.com;
->> chenbox@nvidia.com; Sarkar, Tirthendu <tirthendu.sarkar@intel.com>; Pavan
->> Nikhilesh <pbhagavatula@marvell.com>; Shijith Thotton
->> <sthotton@marvell.com>; Hemant Agrawal <hemant.agrawal@nxp.com>;
->> Sachin Saxena <sachin.saxena@oss.nxp.com>; harry.chang@intel.com;
->> Mattias Rönnblom <mattias.ronnblom@ericsson.com>
->> Subject: Re: [PATCH v1] event/dlb2: add dequeue interrupt mode support
->>
->> On 2025-06-30 18:18, Pathak, Pravin wrote:
->>>
->>>
->>>> -----Original Message-----
->>>> From: Jerin Jacob <jerinjacobk@gmail.com>
->>>> Sent: Monday, June 30, 2025 7:44 AM
->>>> To: Mattias Rönnblom <hofors@lysator.liu.se>
->>>> Cc: Pathak, Pravin <pravin.pathak@intel.com>; dev@dpdk.org;
->>>> jerinj@marvell.com; Chen, Mike Ximing <mike.ximing.chen@intel.com>;
->>>> Richardson, Bruce <bruce.richardson@intel.com>; thomas@monjalon.net;
->>>> Marchand, David <david.marchand@redhat.com>;
->> nipun.gupta@amd.com;
->>>> chenbox@nvidia.com; Sarkar, Tirthendu <tirthendu.sarkar@intel.com>;
->>>> Pavan Nikhilesh <pbhagavatula@marvell.com>; Shijith Thotton
->>>> <sthotton@marvell.com>; Hemant Agrawal <hemant.agrawal@nxp.com>;
->>>> Sachin Saxena <sachin.saxena@oss.nxp.com>; harry.chang@intel.com;
->>>> Mattias Rönnblom <mattias.ronnblom@ericsson.com>
->>>> Subject: Re: [PATCH v1] event/dlb2: add dequeue interrupt mode
->>>> support
->>>>
->>>> On Mon, Jun 30, 2025 at 4:47 PM Mattias Rönnblom
->>>> <hofors@lysator.liu.se>
->>>> wrote:
->>>>>
->>>>> On 2025-06-30 11:19, Jerin Jacob wrote:
->>>>>> On Sat, Jun 28, 2025 at 11:17 AM Pravin Pathak
->>>> <pravin.pathak@intel.com> wrote:
->>>>>>>
->>>>>>> DLB2 port interrupt is implemented using DPDK interrupt framework.
->>>>>>> This allows eventdev dequeue API to sleep when the port queue is
->>>>>>> empty and gets wakeup when event arrives at the port. Port dequeue
->>>>>>> mode is configured using devargs argument port_dequeue_wait.
->>>>>>> Supported modes are polling and interrupt. Default mode is polling.
->>>>>>> This commit also adds code to handle device error interrupts and
->>>>>>> print alarm details.
->>>>>>>
->>>>>>> Signed-off-by: Pravin Pathak <pravin.pathak@intel.com>
->>>>>>> Signed-off-by: Tirthendu Sarkar <tirthendu.sarkar@intel.com>
->>>>>>> ---
->>>>>>>     doc/guides/eventdevs/dlb2.rst              |  20 +
->>>>>>>     drivers/event/dlb2/dlb2.c                  | 236 +++++-
->>>>>>>     drivers/event/dlb2/dlb2_iface.c            |   7 +
->>>>>>>     drivers/event/dlb2/dlb2_iface.h            |   8 +
->>>>>>>     drivers/event/dlb2/dlb2_priv.h             |  18 +
->>>>>>>     drivers/event/dlb2/dlb2_user.h             | 112 +++
->>>>>>>     drivers/event/dlb2/pf/base/dlb2_hw_types.h |  70 ++
->>>>>>>     drivers/event/dlb2/pf/base/dlb2_osdep.h    |  46 ++
->>>>>>>     drivers/event/dlb2/pf/base/dlb2_regs.h     | 149 +++-
->>>>>>>     drivers/event/dlb2/pf/base/dlb2_resource.c | 825
->>>> +++++++++++++++++++++
->>>>>>>     drivers/event/dlb2/pf/base/dlb2_resource.h |   6 +
->>>>>>>     drivers/event/dlb2/pf/dlb2_pf.c            | 223 ++++++
->>>>>>>     12 files changed, 1711 insertions(+), 9 deletions(-)
->>>>>>>
->>>>>>> diff --git a/doc/guides/eventdevs/dlb2.rst
->>>>>>> b/doc/guides/eventdevs/dlb2.rst index 8ec7168f20..a4ba857351
->>>> 100644
->>>>>>> --- a/doc/guides/eventdevs/dlb2.rst
->>>>>>> +++ b/doc/guides/eventdevs/dlb2.rst
->>>>>>> @@ -477,6 +477,26 @@ Example command to use as meson option
->> for
->>>> credit handling:
->>>>>>>
->>>>>>>            meson configure -Dc_args='-DDLB_SW_CREDITS_CHECKS=0 -
->>>> DDLB_HW_CREDITS_CHECKS=1'
->>>>>>>
->>>>>>> +Interrupt Mode Support
->>>>>>> +~~~~~~~~~~~~~~~~~~~~~~
->>>>>>> +DLB dequeue supports interrupt mode for the API
->>>> rte_event_dequeue_burst().
->>>>>>> +The default port dequeue mode is polling. Dequeue wait mode can
->>>>>>> +be configured on per eventdev port basis using devargs argument
->>>>>>> +'port_dequeue_wait'. In interrupt mode, if the port queue is
->>>>>>> +empty, the application thread will block on the interrupt until a
->>>>>>> +new event arrives. It enters blocking mode only after any
->>>>>>> +specified timeout. During the timeout, it will poll the port
->>>>>>> +queue for
->>>> events as usual. Interrupt mode uses the DPDK interrupt support
->> framework.
->>>>>>> +
->>>>>>> +    .. code-block:: console
->>>>>>> +
->>>>>>> +       --allow ea:00.0,port_dequeue_wait=all:interrupt
->>>>>>
->>>>>> Adding other eventdev PMD mainatainers.
->>>>>>
->>>>>> Looks like it can be a generic feature. i.e set this option is
->>>>>> dev_configure() If there is no objection, Please send a new patch
->>>>>> around
->>>> that.
->>>>>
->>>>> I've considered implementing this in DSW, although in a different
->>>>> manner (with eventfds and poll()).
->>>>>
->>>>> The dequeue timeout will still be honored in "interrupt mode", correct?
->>>>> It wasn't obvious from the description.
->>>>
->>>> How is it in Intel PMD?
->>>
->>> It would be best if we configure it per port using RTE_EVENT_PORT_CFG_*
->> flags. Will it be, OK?
->>> The dequeue timeout will be honored, and the decision to block or return
->> will be made after the timeout.
->>
->> That doesn't sound like the timeout is honored.
->>
->> The reason an application wants the dequeue call to complete within a certain
->> time, even though there wasn't any events, is likely because it want to go do
->> something else with that thread, after the timeout.
->>
->> Thus, you can't decide to block the thread *after* the timeout. If you block,
->> you have to do some time *before* the timeout, and wake up in time to meet
->> the deadline.
->>
->> For example, if the event device is given a 1 ms dequeue timeout by the
->> application, it could go busy-poll for 10 us, then busy-poll with a short tpause
->> for 100 us, and then put the thread to sleep blocking on some fd for the
->> remaining 890 us.
->>
->> The hardware-specific nature of the timing and exact mechanism to use
->> speaks against having this kind of configuration in the Eventdev API.
-> 
-> The mode is not for what to do during a timeout, but after a timeout.
-
-My comments were not so much concerning any DLB-specific extension, but 
-rather how this kind of function should work, if it was a part of the 
-standard API.
-
-> We can enter sleep mode immediately by setting the timeout to 0 if we need to.
-> This mode is not changing the current timeout behavior.  After the timeout,
-> it allows HW devices supporting interrupts to block on an interrupt.
-
-The current API specifies that control is returned to the application, 
-after the timeout has expired. If you change that with a PMD parameter, 
-the DLB behavior will be in violation of the API contract. Applications 
-using rte_keepalive_alive() between dequeues is one example of those 
-that will break. In fact, all applications that use more than one RTE 
-service will break.
-
-> It will wake up only after a new event arrives at the port. If the application needs control
-> back then it can use the current default non-blocking mode. A better mode to save power during timeout
-> will be to use umwait-based sleep.  Consider this as extension to current timeout behavior if device
-> supports interrupts.
-> 
-
-What about applications that both want power efficiency *and* require a 
-timeout?
-
-It makes no sense to me the change the semantics of the dequeue timeout 
-parameter from "the time until I want control back" to "the time I want 
-the event device to use polling, after which it should put the thread to 
-sleep". Those two are pretty much orthogonal.
-
-The current API doesn't specify what happens during the timeout. If you 
-by "non-blocking" mean "busy-polling", that is not an API requirement. I 
-don't see why the event device couldn't put the lcore thread to sleep 
-during a long timeout (and I also see why you may not want that to be 
-the default behavior).
-
->>
->>> If not interrupt, it can be called blocking vs polling mode.  If the port config is
->> fine, I will create a new patch with it.
->>> Also, we should have this as a capability for eventdevs.
->>>
->>>>
->>>>>
->>>>> What's being configured should just be a threshold time at which the
->>>>> event device would go from busy-polling to blocking the thread.
->>>>>
->>>>> Maybe it should be called something with "blocking" or "sleeping",
->>>>> instead of "interrupt", since interrupts are never directly involved.
->>>>
->>>> Agree. or make it a power save mode or so.
->>>>
->>>>>
->>>>> Anyway, seems like a good candidate for a generic feature to me.
->>>>>
-> 
-
+DQoNCj4gPiA+ID4gV2hlbiBmYXN0IHJlbGVhc2luZyBtYnVmcywgdGhlIG1idWZzIGFyZSBub3Qg
+YWNjZXNzZWQsIHNvIGRvIG5vdA0KPiA+IHByZWZldGNoDQo+ID4gPiA+IHRoZW0uDQo+ID4gPiA+
+IFRoaXMgc2F2ZXMgYSBtYnVmIGxvYWQgb3BlcmF0aW9uIGZvciBlYWNoIGZhc3QgcmVsZWFzZWQg
+VFggbWJ1Zi4NCj4gPiA+ID4NCj4gPiA+ID4gV2hlbiBmYXN0IHJlbGVhc2Ugb2YgbWJ1ZnMgaXMg
+ZW5hYmxlZCBmb3IgYSBUWCBxdWV1ZSwgY2FjaGUgdGhlIG1idWYNCj4gPiA+ID4gbWVtcG9vbCBw
+b2ludGVyIGluIHRoZSBUWCBxdWV1ZSBzdHJ1Y3R1cmUuDQo+ID4gPiA+IFRoaXMgc2F2ZXMgb25l
+IG1idWYgbG9hZCBvcGVyYXRpb24gZm9yIGVhY2ggYnVyc3Qgb2YgZmFzdCByZWxlYXNlZA0KPiA+
+IFRYDQo+ID4gPiA+IG1idWZzLg0KPiA+ID4gPg0KPiA+ID4gPiBUaGUgdHhlcC0+bWJ1ZiBwb2lu
+dGVyIGlzIG5vdCB1c2VkIGFmdGVyIHRoZSBtYnVmIGhhcyBiZWVuIGZyZWVkLCBzbw0KPiA+IGRv
+DQo+ID4gPiA+IG5vdCByZXNldCB0aGUgcG9pbnRlci4NCj4gPiA+ID4gVGhpcyBzYXZlcyBhIHR4
+ZXAgc3RvcmUgb3BlcmF0aW9uIGZvciBlYWNoIFRYIG1idWYgZnJlZWQuDQo+ID4gPiA+DQo+ID4g
+PiA+IFNpZ25lZC1vZmYtYnk6IE1vcnRlbiBCcsO4cnVwIDxtYkBzbWFydHNoYXJlc3lzdGVtcy5j
+b20+DQo+ID4gPiA+IC0tLQ0KPiA+ID4gPiAgZHJpdmVycy9uZXQvaW50ZWwvY29tbW9uL3R4Lmgg
+ICAgICAgICAgICAgICAgIHwgIDUgKysrDQo+ID4gPiA+ICAuLi4vaTQwZS9pNDBlX3JlY3ljbGVf
+bWJ1ZnNfdmVjX2NvbW1vbi5jICAgICAgfCAgNCArLQ0KPiA+ID4gPiAgZHJpdmVycy9uZXQvaW50
+ZWwvaTQwZS9pNDBlX3J4dHguYyAgICAgICAgICAgIHwgMzkgKysrKysrKysrKy0tLS0tLQ0KPiA+
+IC0tLQ0KPiA+ID4gPiAgMyBmaWxlcyBjaGFuZ2VkLCAyOCBpbnNlcnRpb25zKCspLCAyMCBkZWxl
+dGlvbnMoLSkNCj4gPiA+ID4NCj4gPiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2ludGVs
+L2NvbW1vbi90eC5oDQo+ID4gYi9kcml2ZXJzL25ldC9pbnRlbC9jb21tb24vdHguaA0KPiA+ID4g
+PiBpbmRleCBiMGE2OGJhZTQ0Li41NGM5Yjg0NWY3IDEwMDY0NA0KPiA+ID4gPiAtLS0gYS9kcml2
+ZXJzL25ldC9pbnRlbC9jb21tb24vdHguaA0KPiA+ID4gPiArKysgYi9kcml2ZXJzL25ldC9pbnRl
+bC9jb21tb24vdHguaA0KPiA+ID4gPiBAQCAtNjIsNiArNjIsMTEgQEAgc3RydWN0IGNpX3R4X3F1
+ZXVlIHsNCj4gPiA+ID4gIAl1aW50MTZfdCB0eF9uZXh0X2RkOw0KPiA+ID4gPiAgCXVpbnQxNl90
+IHR4X25leHRfcnM7DQo+ID4gPiA+ICAJdWludDY0X3Qgb2ZmbG9hZHM7DQo+ID4gPiA+ICsJLyog
+TWVtcG9vbCBwb2ludGVyIGZvciBmYXN0IHJlbGVhc2Ugb2YgbWJ1ZnMuDQo+ID4gPiA+ICsJICog
+TlVMTCBpZiBkaXNhYmxlZCwgVUlOVFBUUl9NQVggaWYgZW5hYmxlZCBhbmQgbm90IHlldCBrbm93
+bi4NCj4gPiA+ID4gKwkgKiBJbml0aWFsaXplZCBhdCBmaXJzdCB1c2UuDQo+ID4gPiA+ICsJICov
+DQo+ID4gPiA+ICsJc3RydWN0IHJ0ZV9tZW1wb29sICpmYXN0X2ZyZWVfbXA7DQo+ID4gPiA+ICAJ
+dWludDY0X3QgbWJ1Zl9lcnJvcnM7DQo+ID4gPiA+ICAJcnRlX2lvdmFfdCB0eF9yaW5nX2RtYTsg
+ICAgICAgIC8qIFRYIHJpbmcgRE1BIGFkZHJlc3MgKi8NCj4gPiA+ID4gIAlib29sIHR4X2RlZmVy
+cmVkX3N0YXJ0OyAvKiBkb24ndCBzdGFydCB0aGlzIHF1ZXVlIGluIGRldiBzdGFydCAqLw0KPiA+
+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvaW50ZWwvaTQwZS9pNDBlX3JlY3ljbGVfbWJ1
+ZnNfdmVjX2NvbW1vbi5jDQo+ID4gPiBiL2RyaXZlcnMvbmV0L2ludGVsL2k0MGUvaTQwZV9yZWN5
+Y2xlX21idWZzX3ZlY19jb21tb24uYw0KPiA+ID4gPiBpbmRleCAyODc1YzU3OGFmLi5hNDY2MDVj
+ZWU5IDEwMDY0NA0KPiA+ID4gPiAtLS0gYS9kcml2ZXJzL25ldC9pbnRlbC9pNDBlL2k0MGVfcmVj
+eWNsZV9tYnVmc192ZWNfY29tbW9uLmMNCj4gPiA+ID4gKysrIGIvZHJpdmVycy9uZXQvaW50ZWwv
+aTQwZS9pNDBlX3JlY3ljbGVfbWJ1ZnNfdmVjX2NvbW1vbi5jDQo+ID4gPiA+IEBAIC0xMDYsNyAr
+MTA2LDkgQEAgaTQwZV9yZWN5Y2xlX3R4X21idWZzX3JldXNlX3ZlYyh2b2lkICp0eF9xdWV1ZSwN
+Cj4gPiA+ID4gIAlpZiAodHhxLT5vZmZsb2FkcyAmIFJURV9FVEhfVFhfT0ZGTE9BRF9NQlVGX0ZB
+U1RfRlJFRSkgew0KPiA+ID4gPiAgCQkvKiBBdm9pZCB0eHEgY29udGFpbnMgYnVmZmVycyBmcm9t
+IHVuZXhwZWN0ZWQgbWVtcG9vbC4gKi8NCj4gPiA+ID4gIAkJaWYgKHVubGlrZWx5KHJlY3ljbGVf
+cnhxX2luZm8tPm1wDQo+ID4gPiA+IC0JCQkJCSE9IHR4ZXBbMF0ubWJ1Zi0+cG9vbCkpDQo+ID4g
+PiA+ICsJCQkJIT0gKGxpa2VseSh0eHEtPmZhc3RfZnJlZV9tcCAhPSAodm9pZA0KPiA+ICopVUlO
+VFBUUl9NQVgpDQo+ID4gPiA/DQo+ID4gPiA+ICsJCQkJdHhxLT5mYXN0X2ZyZWVfbXAgOg0KPiA+
+ID4gPiArCQkJCSh0eHEtPmZhc3RfZnJlZV9tcCA9IHR4ZXBbMF0ubWJ1Zi0+cG9vbCkpKSkNCj4g
+PiA+ID4gIAkJCXJldHVybiAwOw0KPiA+ID4gPg0KPiA+ID4gPiAgCQkvKiBEaXJlY3RseSBwdXQg
+bWJ1ZnMgZnJvbSBUeCB0byBSeC4gKi8NCj4gPiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0
+L2ludGVsL2k0MGUvaTQwZV9yeHR4LmMNCj4gPiA+IGIvZHJpdmVycy9uZXQvaW50ZWwvaTQwZS9p
+NDBlX3J4dHguYw0KPiA+ID4gPiBpbmRleCBjM2ZmMmUwNWMzLi42NzljMTM0MGI4IDEwMDY0NA0K
+PiA+ID4gPiAtLS0gYS9kcml2ZXJzL25ldC9pbnRlbC9pNDBlL2k0MGVfcnh0eC5jDQo+ID4gPiA+
+ICsrKyBiL2RyaXZlcnMvbmV0L2ludGVsL2k0MGUvaTQwZV9yeHR4LmMNCj4gPiA+ID4gQEAgLTEz
+MzIsNyArMTMzMiw3IEBAIHN0YXRpYyBfX3J0ZV9hbHdheXNfaW5saW5lIGludA0KPiA+ID4gPiAg
+aTQwZV90eF9mcmVlX2J1ZnMoc3RydWN0IGNpX3R4X3F1ZXVlICp0eHEpDQo+ID4gPiA+ICB7DQo+
+ID4gPiA+ICAJc3RydWN0IGNpX3R4X2VudHJ5ICp0eGVwOw0KPiA+ID4gPiAtCXVpbnQxNl90IHR4
+X3JzX3RocmVzaCA9IHR4cS0+dHhfcnNfdGhyZXNoOw0KPiA+ID4gPiArCWNvbnN0IHVpbnQxNl90
+IHR4X3JzX3RocmVzaCA9IHR4cS0+dHhfcnNfdGhyZXNoOw0KPiA+ID4gPiAgCXVpbnQxNl90IGkg
+PSAwLCBqID0gMDsNCj4gPiA+ID4gIAlzdHJ1Y3QgcnRlX21idWYgKmZyZWVbUlRFX0k0MEVfVFhf
+TUFYX0ZSRUVfQlVGX1NaXTsNCj4gPiA+ID4gIAljb25zdCB1aW50MTZfdCBrID0gUlRFX0FMSUdO
+X0ZMT09SKHR4X3JzX3RocmVzaCwNCj4gPiA+IFJURV9JNDBFX1RYX01BWF9GUkVFX0JVRl9TWik7
+DQo+ID4gPiA+IEBAIC0xMzQ1LDQxICsxMzQ1LDQwIEBAIGk0MGVfdHhfZnJlZV9idWZzKHN0cnVj
+dCBjaV90eF9xdWV1ZSAqdHhxKQ0KPiA+ID4gPg0KPiA+ID4gPiAgCXR4ZXAgPSAmdHhxLT5zd19y
+aW5nW3R4cS0+dHhfbmV4dF9kZCAtICh0eF9yc190aHJlc2ggLSAxKV07DQo+ID4gPiA+DQo+ID4g
+PiA+IC0JZm9yIChpID0gMDsgaSA8IHR4X3JzX3RocmVzaDsgaSsrKQ0KPiA+ID4gPiAtCQlydGVf
+cHJlZmV0Y2gwKCh0eGVwICsgaSktPm1idWYpOw0KPiA+ID4gPiAtDQo+ID4gPiA+ICAJaWYgKHR4
+cS0+b2ZmbG9hZHMgJiBSVEVfRVRIX1RYX09GRkxPQURfTUJVRl9GQVNUX0ZSRUUpIHsNCj4gPiA+
+ID4gKwkJc3RydWN0IHJ0ZV9tZW1wb29sICogY29uc3QgZmFzdF9mcmVlX21wID0NCj4gPiA+ID4g
+KwkJCQlsaWtlbHkodHhxLT5mYXN0X2ZyZWVfbXAgIT0gKHZvaWQNCj4gPiAqKVVJTlRQVFJfTUFY
+KSA/DQo+ID4gPiA+ICsJCQkJdHhxLT5mYXN0X2ZyZWVfbXAgOg0KPiA+ID4gPiArCQkJCSh0eHEt
+PmZhc3RfZnJlZV9tcCA9IHR4ZXBbMF0ubWJ1Zi0+cG9vbCk7DQo+ID4gPiA+ICsNCj4gDQo+IFNw
+ZWFraW5nIGFib3V0IG9wdGltaXphdGlvbnMsIHRoZXNlIG9uY2UtaW4tYS1saWZldGltZSBpbml0
+aWFsaXphdGlvbnMgb2YgdHhxLT5mYXN0X2ZyZWVfbXAgYXJlIHRoZSBwZXJmZWN0IGNhbmRpZGF0
+ZXMgZm9yIGEgbmV3DQo+IHN1cGVybGlrZWx5KCkgbWFjcm8gaW4gPHJ0ZV9icmFuY2hfcHJlZGlj
+dGlvbi5oPiwgd2hpY2ggQlRXIGlzIG5vdCBvbmx5IGFib3V0IGJyYW5jaCBwcmVkaWN0aW9uLCBi
+dXQgYWxzbyBhYm91dCBsZXR0aW5nIHRoZSBjb21waWxlcg0KPiBvcHRpbWl6ZSB0aGUgbGlrZWx5
+IGNvZGUgcGF0aCwgZS5nLiBieSBtb3ZpbmcgdW5saWtlbHkgY29kZSBhd2F5IGZyb20gaXQsIHRo
+ZXJlYnkgcmVkdWNpbmcgdGhlIGluc3RydWN0aW9uIGNhY2hlIHByZXNzdXJlOg0KPiANCj4gI2Rl
+ZmluZSBzdXBlcmxpa2VseSh4KQlfX2J1aWx0aW5fZXhwZWN0X3dpdGhfcHJvYmFiaWxpdHkoISEo
+eCksIDEsIDEuMCkNCj4gI2RlZmluZSBzdXBlcnVubGlrZWx5KHgpCV9fYnVpbHRpbl9leHBlY3Rf
+d2l0aF9wcm9iYWJpbGl0eSghISh4KSwgMCwgMS4wKQ0KPiANCj4gCWlmICh0eHEtPm9mZmxvYWRz
+ICYgUlRFX0VUSF9UWF9PRkZMT0FEX01CVUZfRkFTVF9GUkVFKSB7DQo+ICsJCXN0cnVjdCBydGVf
+bWVtcG9vbCAqIGNvbnN0IGZhc3RfZnJlZV9tcCA9DQo+ICsJCQkJc3VwZXJsaWtlbHkodHhxLT5m
+YXN0X2ZyZWVfbXAgIT0gKHZvaWQgKilVSU5UUFRSX01BWCkgPw0KPiArCQkJCXR4cS0+ZmFzdF9m
+cmVlX21wIDoNCj4gKwkJCQkodHhxLT5mYXN0X2ZyZWVfbXAgPSB0eGVwWzBdLm1idWYtPnBvb2wp
+Ow0KPiANCj4gPiA+DQo+ID4gPiBOaXQgaWRlYS4NCj4gPiA+IEFja2VkLWJ5OiBLb25zdGFudGlu
+IEFuYW55ZXYgPGtvbnN0YW50aW4uYW5hbnlldkBodWF3ZWkuY29tPg0KPiA+ID4NCj4gPiA+IEp1
+c3QgYXMgYSBzdWdnZXN0aW9uIGZvciBmdXJ0aGVyIGltcHJvdmVtZW50Og0KPiA+ID4gY2FuIHdl
+IHVwZGF0ZSAoJiBjaGVjaykgdHhxLT5mYXN0X2ZyZWVfbXAgbm90IGF0IHR4X2ZyZWVfYnVmcygp
+IHRpbWUsDQo+ID4gPiBidXQgd2hlbiB3ZSBmaWxsIHR4ZXBbXSBhbmQgZmlsbGluZyB0eGRbXSBi
+YXNlZCBvbiBtYnVmIHZhbHVlcz8NCj4gPiA+IEluIHRoZW9yeSBpdCBzaG91bGQgYWxsb3cgdG8g
+cmVtb3ZlIHRoZSBjaGVjayBhYm92ZS4NCj4gPiA+IEFsc28sIGFnYWluIGluIHRoZW9yeSwgaXQg
+b3BlbnMgb3Bwb3J0dW5pdHkgKHdpdGggc29tZSBleHRyYSBlZmZvcnQpDQo+ID4gdG8gdXNlDQo+
+ID4gPiBzaW1pbGFyIG9wdGltaXphdGlvbiBydGVfbWVtcG9vbF9wdXRfYnVsaykNCj4gPiA+IGV2
+ZW4gZm9yIGNhc2VzIHdoZW4gIFJURV9FVEhfVFhfT0ZGTE9BRF9NQlVGX0ZBU1RfRlJFRSBpcyBu
+b3Qgc2V0Lg0KPiA+DQo+ID4gQ2hlY2tpbmcgdGhlIFRYIG1idWZzIHRvIGRldGVybWluZSBpZiBy
+dGVfbWVtcG9vbF9wdXRfYnVsaygpIGNhbiBiZSB1c2VkDQo+ID4gZXZlbiB3aGVuIHRoZSBSVEVf
+RVRIX1RYX09GRkxPQURfTUJVRl9GQVNUX0ZSRUUgb2ZmbG9hZCBmbGFnIGlzIG5vdA0KPiA+IHNl
+dC4uLg0KPiA+DQo+ID4gVGhhdCB3b3VsZCByZXF1aXJlIHRoYXQgdGhlIHR4X2J1cnN0KCkgZnVu
+Y3Rpb24gY2hlY2tzIGFsbCB0aGUgVFggbWJ1ZnMNCj4gPiBmb3IgdGhlIFJURV9FVEhfVFhfT0ZG
+TE9BRF9NQlVGX0ZBU1RfRlJFRSByZXF1aXJlbWVudHMgdG8gc2V0IHRoZSB0eHEtDQo+ID4gPmZh
+c3RfZnJlZV9tcCBwb2ludGVyLg0KPiA+IEFuZCBpZiB0aGUgcmVxdWlyZW1lbnRzIGFyZSBub3Qg
+bWV0LCBpdCBtdXN0IG5ldmVyIHNldCB0aGUgdHhxLQ0KPiA+ID5mYXN0X2ZyZWVfbXAgcG9pbnRl
+ciBhZ2Fpbi4gT3RoZXJ3aXNlLCBzb21lIHByZXZpb3VzbHkgdHJhbnNtaXR0ZWQNCj4gPiBtYnVm
+cywgd2FpdGluZyB0byBiZSBmcmVlZCwgbWlnaHQgbm90IG1lZXQgdGhlDQo+ID4gUlRFX0VUSF9U
+WF9PRkZMT0FEX01CVUZfRkFTVF9GUkVFIHJlcXVpcmVtZW50cy4NCg0KSSBhbSB0YWxraW5nIGFi
+b3V0IGRpZmZlcmVudCB0aGluZzoNCkkgdGhpbmsgd2l0aCBzb21lIGV4dHJhIGVmZm9ydCBkcml2
+ZXIgY2FuIHVzZSAoaW4gc29tZSBjYXNlcykNCnJ0ZV9tYnVmX3Jhd19mcmVlX2J1bGsoKSAgZXZl
+biAgd2hlbiAgIFJURV9FVEhfVFhfT0ZGTE9BRF9NQlVGX0ZBU1RfRlJFRSANCmlzIG5vdCBzcGVj
+aWZpZWQuDQpMZXQgc2F5IHdlIGNhbiBtYWtlIHR4cS0+ZmFzdF9mcmVlX21wW10gYW4gYXJyYXkg
+d2l0aCB0aGUgc2FtZSBzaXplIGFzIHR4cS0+dHhlcFtdLg0KQXQgdHhfYnVyc3QoKSB3aGVuIGZp
+bGxpbmcgdHhlcFtdIHdlIGNhbiBkbyBwcmVfZnJlZSgpIGNoZWNrcyBmb3IgdGhhdCBtYnVmLA0K
+YW5kIGluIGNhc2Ugb2Ygc3VjY2VzcyBzdG9yZSBpdCdzIG1lbXBvb2wgcG9pbnRlciBpbiBjb3Jy
+ZXNwb25kaW5nICB0eHEtPmZhc3RfZnJlZV9tcFtdLA0Kb3RoZXJ3aXNlIHB1dCBOVUxMIHRoZXJl
+Lg0KVGhlbiBhdCB0eF9mcmVlKCkgd2UgY2FuIHNjYW4gZmFzdF9mcmVlX21wW10gYW5kIGludm9r
+ZSAgIHJhd19mcmVlKCkgZm9yIG5vbi1OVUxMIGVudHJpZXMuDQpBZ2FpbiwgZm9yIG5vdyBpdCBp
+cyBqdXN0IGFuIGlkZWEgcHJvYmFibHkgd29ydGggdG8gdGhpbmsgYWJvdXQuICANCg0KPiA+IFJl
+bHlpbmcgb24gdGhlIGV4cGxpY2l0IFJURV9FVEhfVFhfT0ZGTE9BRF9NQlVGX0ZBU1RfRlJFRSBv
+ZmZsb2FkIGZsYWcNCj4gPiAoaGVyZSBvciBlbHNld2hlcmUpIG9ubHkgcmVxdWlyZXMgb25lIGNo
+ZWNrIChvZiB0aGUgb2ZmbG9hZCBmbGFnIGFuZC9vcg0KPiA+IHRoZSBtZW1wb29sIHBvaW50ZXIg
+KHdoaWNoZXZlciBpcyBob3R0ZXIgaW4gY2FjaGUpKSBwZXIgYnVyc3Qgb2YNCj4gPiBwYWNrZXRz
+Lg0KPiA+DQo+ID4gUFM6IFRoZSBkcml2ZXJzIHJlYWxseSBzaG91bGQgYmUgdXNpbmcgdGhlIG5l
+dyBydGVfbWJ1Zl9yYXdfZnJlZV9idWxrKCkNCj4gPiBpbnN0ZWFkIG9mIHJ0ZV9tZW1wb29sX3B1
+dF9idWxrKCksIHNvIHRoZSBmcmVlZCBtYnVmcyBhcmUgc2FuaXR5IGNoZWNrZWQNCj4gPiBpbiBS
+VEVfTElCUlRFX01CVUZfREVCVUcgbW9kZS4gQnV0IHN1Y2ggY2hhbmdlcyBiZWxvbmcgaW4gYW5v
+dGhlciBwYXRjaA0KPiA+IHNlcmllcy4NCj4gPg0KPiA+ID4NCj4gPiA+DQo+ID4gPiA+ICAJCWlm
+IChrKSB7DQo+ID4gPiA+ICAJCQlmb3IgKGogPSAwOyBqICE9IGs7IGogKz0gUlRFX0k0MEVfVFhf
+TUFYX0ZSRUVfQlVGX1NaKQ0KPiA+IHsNCj4gPiA+ID4gLQkJCQlmb3IgKGkgPSAwOyBpIDwgUlRF
+X0k0MEVfVFhfTUFYX0ZSRUVfQlVGX1NaOw0KPiA+ICsraSwNCj4gPiA+ICsrdHhlcCkgew0KPiA+
+ID4gPiArCQkJCWZvciAoaSA9IDA7IGkgPCBSVEVfSTQwRV9UWF9NQVhfRlJFRV9CVUZfU1o7DQo+
+ID4gKytpLA0KPiA+ID4gKyt0eGVwKQ0KPiA+ID4gPiAgCQkJCQlmcmVlW2ldID0gdHhlcC0+bWJ1
+ZjsNCj4gPiA+ID4gLQkJCQkJdHhlcC0+bWJ1ZiA9IE5VTEw7DQo+ID4gPiA+IC0JCQkJfQ0KPiA+
+ID4gPiAtCQkJCXJ0ZV9tZW1wb29sX3B1dF9idWxrKGZyZWVbMF0tPnBvb2wsICh2b2lkDQo+ID4g
+KiopZnJlZSwNCj4gPiA+ID4gKwkJCQlydGVfbWVtcG9vbF9wdXRfYnVsayhmYXN0X2ZyZWVfbXAs
+ICh2b2lkDQo+ID4gKiopZnJlZSwNCj4gPiA+ID4gIAkJCQkJCVJURV9JNDBFX1RYX01BWF9GUkVF
+X0JVRl9TWik7DQo+ID4gPiA+ICAJCQl9DQo+ID4gPiA+ICAJCX0NCj4gPiA+ID4NCj4gPiA+ID4g
+IAkJaWYgKG0pIHsNCj4gPiA+ID4gLQkJCWZvciAoaSA9IDA7IGkgPCBtOyArK2ksICsrdHhlcCkg
+ew0KPiA+ID4gPiArCQkJZm9yIChpID0gMDsgaSA8IG07ICsraSwgKyt0eGVwKQ0KPiA+ID4gPiAg
+CQkJCWZyZWVbaV0gPSB0eGVwLT5tYnVmOw0KPiA+ID4gPiAtCQkJCXR4ZXAtPm1idWYgPSBOVUxM
+Ow0KPiA+ID4gPiAtCQkJfQ0KPiA+ID4gPiAtCQkJcnRlX21lbXBvb2xfcHV0X2J1bGsoZnJlZVsw
+XS0+cG9vbCwgKHZvaWQgKiopZnJlZSwNCj4gPiBtKTsNCj4gPiA+ID4gKwkJCXJ0ZV9tZW1wb29s
+X3B1dF9idWxrKGZhc3RfZnJlZV9tcCwgKHZvaWQgKiopZnJlZSwgbSk7DQo+ID4gPiA+ICAJCX0N
+Cj4gPiA+ID4gIAl9IGVsc2Ugew0KPiA+ID4gPiAtCQlmb3IgKGkgPSAwOyBpIDwgdHhxLT50eF9y
+c190aHJlc2g7ICsraSwgKyt0eGVwKSB7DQo+ID4gPiA+ICsJCWZvciAoaSA9IDA7IGkgPCB0eF9y
+c190aHJlc2g7IGkrKykNCj4gPiA+ID4gKwkJCXJ0ZV9wcmVmZXRjaDAoKHR4ZXAgKyBpKS0+bWJ1
+Zik7DQo+ID4gPiA+ICsNCj4gPiA+ID4gKwkJZm9yIChpID0gMDsgaSA8IHR4X3JzX3RocmVzaDsg
+KytpLCArK3R4ZXApDQo+ID4gPiA+ICAJCQlydGVfcGt0bWJ1Zl9mcmVlX3NlZyh0eGVwLT5tYnVm
+KTsNCj4gPiA+ID4gLQkJCXR4ZXAtPm1idWYgPSBOVUxMOw0KPiA+ID4gPiAtCQl9DQo+ID4gPiA+
+ICAJfQ0KPiA+ID4gPg0KPiA+ID4gPiAtCXR4cS0+bmJfdHhfZnJlZSA9ICh1aW50MTZfdCkodHhx
+LT5uYl90eF9mcmVlICsgdHhxLT50eF9yc190aHJlc2gpOw0KPiA+ID4gPiAtCXR4cS0+dHhfbmV4
+dF9kZCA9ICh1aW50MTZfdCkodHhxLT50eF9uZXh0X2RkICsgdHhxLT50eF9yc190aHJlc2gpOw0K
+PiA+ID4gPiArCXR4cS0+bmJfdHhfZnJlZSA9ICh1aW50MTZfdCkodHhxLT5uYl90eF9mcmVlICsg
+dHhfcnNfdGhyZXNoKTsNCj4gPiA+ID4gKwl0eHEtPnR4X25leHRfZGQgPSAodWludDE2X3QpKHR4
+cS0+dHhfbmV4dF9kZCArIHR4X3JzX3RocmVzaCk7DQo+ID4gPiA+ICAJaWYgKHR4cS0+dHhfbmV4
+dF9kZCA+PSB0eHEtPm5iX3R4X2Rlc2MpDQo+ID4gPiA+IC0JCXR4cS0+dHhfbmV4dF9kZCA9ICh1
+aW50MTZfdCkodHhxLT50eF9yc190aHJlc2ggLSAxKTsNCj4gPiA+ID4gKwkJdHhxLT50eF9uZXh0
+X2RkID0gKHVpbnQxNl90KSh0eF9yc190aHJlc2ggLSAxKTsNCj4gPiA+ID4NCj4gPiA+ID4gLQly
+ZXR1cm4gdHhxLT50eF9yc190aHJlc2g7DQo+ID4gPiA+ICsJcmV0dXJuIHR4X3JzX3RocmVzaDsN
+Cj4gPiA+ID4gIH0NCj4gPiA+ID4NCj4gPiA+ID4gIC8qIFBvcHVsYXRlIDQgZGVzY3JpcHRvcnMg
+d2l0aCBkYXRhIGZyb20gNCBtYnVmcyAqLw0KPiA+ID4gPiBAQCAtMjU0Niw2ICsyNTQ1LDggQEAg
+aTQwZV9kZXZfdHhfcXVldWVfc2V0dXAoc3RydWN0IHJ0ZV9ldGhfZGV2DQo+ID4gKmRldiwNCj4g
+PiA+ID4gIAl0eHEtPnJlZ19pZHggPSByZWdfaWR4Ow0KPiA+ID4gPiAgCXR4cS0+cG9ydF9pZCA9
+IGRldi0+ZGF0YS0+cG9ydF9pZDsNCj4gPiA+ID4gIAl0eHEtPm9mZmxvYWRzID0gb2ZmbG9hZHM7
+DQo+ID4gPiA+ICsJdHhxLT5mYXN0X2ZyZWVfbXAgPSBvZmZsb2FkcyAmIFJURV9FVEhfVFhfT0ZG
+TE9BRF9NQlVGX0ZBU1RfRlJFRSA/DQo+ID4gPiA+ICsJCQkodm9pZCAqKVVJTlRQVFJfTUFYIDog
+TlVMTDsNCj4gPiA+ID4gIAl0eHEtPmk0MGVfdnNpID0gdnNpOw0KPiA+ID4gPiAgCXR4cS0+dHhf
+ZGVmZXJyZWRfc3RhcnQgPSB0eF9jb25mLT50eF9kZWZlcnJlZF9zdGFydDsNCj4gPiA+ID4NCj4g
+PiA+ID4gLS0NCj4gPiA+ID4gMi40My4wDQoNCg==
