@@ -2,49 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7316BC7EE30
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Jul 2025 18:21:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0832FC7EE30
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Jul 2025 18:21:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2A45D40664;
-	Tue,  1 Jul 2025 20:20:55 +0200 (CEST)
-Received: from out203-205-221-245.mail.qq.com (out203-205-221-245.mail.qq.com
- [203.205.221.245])
- by mails.dpdk.org (Postfix) with UTF8SMTP id 37EE240276
- for <dev@dpdk.org>; Tue,  1 Jul 2025 20:20:49 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 67AC340678;
+	Tue,  1 Jul 2025 20:20:56 +0200 (CEST)
+Received: from out203-205-221-192.mail.qq.com (out203-205-221-192.mail.qq.com
+ [203.205.221.192])
+ by mails.dpdk.org (Postfix) with UTF8SMTP id 3F965402E3
+ for <dev@dpdk.org>; Tue,  1 Jul 2025 20:20:53 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
- s=s201512; t=1751394048;
- bh=Ojy0raqjqliAFZNRkOUjOTutkxrUUicY0EDA9LMCrbc=;
+ s=s201512; t=1751394051;
+ bh=PutZ37rHbszLrnLkIRnHrRkMzNC1xWzcFwrsDBdnpZU=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=vx9dH3fbhJtsDIc5mEb7CrqS4NFmXE4NkYlOQa4mKajX43jQBa3X8x21XjcoOBb8b
- uZ4CleFdhKaxbuEAWQcu78BO2etAdVW3upSc05QAaSNYxS6Es5SDS/dQuaKf1go/yT
- 2wkGnBFMEe2dzSqIiM66WYegRvFBXUtTSECoCfyo=
+ b=CKcIjTGV3OgSlixczYVqyIZYfgXhk2fsNcgVOYPn2Iq5IOpUliWoVp1uVYSjfeaZz
+ QGIi+zCkGPVOgdeJ/aQz8gcmRMDw6EXem6e9BolRN0v/knhmCEh6Q1cpaZk8NDIqSg
+ mKbWK0lRC2FVOqApFMg1n912nIYokWYpPClG8H/A=
 Received: from ar ([113.231.127.221])
- by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
- id 5288F07D; Wed, 02 Jul 2025 02:20:40 +0800
-X-QQ-mid: xmsmtpt1751394040ta95dzyhw
-Message-ID: <tencent_512AC2D478AA548B2D4487968A1FE662B109@qq.com>
-X-QQ-XMAILINFO: MwqrwaLzgdeboSpKkcOVWx0Hg9VBItzlNUAM4R3boQWqB2SCYWHMsG8RBDqyij
- fCN/KZYqgBPW+YAo/eF9cjs1CzaMxBhUFTZur+Elycd2OoJ/B7FF1AEeY8QSY2i51Dzs69p664kZ
- JugfftmoYF/FqXPEuFbVsjFaeGUvJ0bEOkyttirUiZ5MaKJGEdNqKJEJVcVH165p15ZnX2vZmjRC
- gE3HEHMm8Xqjz0lsxYlwtsmUfk3MtP64WcIGBmqeOIkeXzfbboWOJ8qwWZydUzOy/23WZsNAJS++
- x8pQr9xfMgOLZ450wzuXeb9iBTy1Txoil8xv/F6FW5j7nErpEEyHVacboJLOgQ0jQKugVjo+bEaU
- yLo3r8lrzjiaIkF88ILSHCtbToCQwx6eJz+T+BUdJi0bolYpr68T1zc0kMtXaI73dvkT5FdjmCdR
- YiaeT/mdt9YVNw0DoB5SQIRWdbBh2JuGAUq2fzjJe5GAbBupjCj6Li80d/vcd9de2fQovwk1So4Z
- vYTXke44OKBpGhreM1ptxX8gSwCThVPvshhRA/EHxen1h+7EOI1FBHeB8dYhnRHTBDll0hZQe5tE
- H/jYLGBW4c+NrfsoKqaEXwJ98bzQdo+VJkhy8o/Vih0Yjhl9SM86BVx+C17+v1L6XlufQysI1uSr
- 3c17Ec4aeIJYBGOeOHLPc+5hO/0ce3d3h88Phmtgp1Zw5O8OwV2aTfr8FZ4c106uJxWMl9AechD0
- j8ha/ocQsTK8aTYtqnIHXuJ+Bm4S8FYvqivDuX2fguZRA+ctKCUPLeXu+RgOncZjyx7yp6xMskY6
- JG8Ak/5GguiyGAvaKlvD/R6MzavtXdnWHGT+JYWM+8sNoZ3+eDtp8tTnGIT33gK3amrrJSehr51t
- buk7pciyo0i+wFP1AcyX0oHg+9ctFz/VB1qsL+TTL17g3NsSSybNocmZ+A28AAYkh5M6uHN5s2
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+ by newxmesmtplogicsvrsza28-0.qq.com (NewEsmtp) with SMTP
+ id 52C03A07; Wed, 02 Jul 2025 02:20:44 +0800
+X-QQ-mid: xmsmtpt1751394044t4up2ou13
+Message-ID: <tencent_78E26E08AE98768E000B338C8B474EB5C005@qq.com>
+X-QQ-XMAILINFO: OATpkVjS499uSbs0zRyVidrHRwUyNztKG6y5KSlW/CKuEmKMaE/pcIkOyGgFIU
+ OVg5NQpNjHHy2ZbVgpvG9brXgb9dZwG62mUnYoaYmOoBbyK7faYmIUMgA9jtT9WO5x3Xt+Vaya5F
+ vN0dySc/DWk2a9lUM32uYfT6OXWDp6NoT6TGKk5As8APhcSrZ49LCZVqvFHT0+n13xTwV6aJ0KIR
+ qJaIwbZ2CBNZQBQbW67Vfr93ZVH6qkoUWDk4UJSxpuikdOSp3lLd9L1vuvtCyS9igMMUggYfx8dd
+ wbPS3DEZIt6aoAPNPOk9BoQsP9PGILKLEy6JZ0tFE+uLdS5rGj0erGydwJiQj2Aki+8/JmTEeXZv
+ JGrwITMRqMxJLc5GDsMhHfhvjNEJFjQcGBBYWeBUMEmZP26DmqitnQ4bkmIsyRN/GgMGnDjE50Rh
+ Lo0Tay7Jf/AIMad1dPZOwmVYLl1TIfdyljlJmCcCFBxhRPVqc7shEqCaFO+rMjpbkzGZOoUU8fcy
+ eVmSPrdwEnTtUx59OB2hPj1Rtq2YdnXduHUP8yMSH6vfBHcbI0/NZBvdEXb13fiokKMfykg0pao+
+ /y8H3ne15MTjg9udOMZV5zZ29xqjtgACwe9ZBd4HPzoaHL4ES1Xqti6icnvJAwLPuNzOIu1xdJ2g
+ h1YLaN6eoiLiyDXCFs46Igmu/vqiP77SgCG/ZJmPkPSSWJxy+AhenZiFthRquoUUxX5FA4r9lLzJ
+ lMwsUI7pReDNZewn73rBz2bJTJ7ZenHFNQ0a+cWdQh9Vfd0ocKFrWWojzLB0YuqbfAT3jD9gfGCE
+ k75D2b3pcSyv8QxRbXFtmhvqVHnlqsJtKrmee0tC0X/SNndWf8GSuhYCaOR/JoRRHTZRs9vuBgVS
+ K4jIzmUPQI3/oQktx/OdReJT0MTbyBddge1fgCD7ssSCKvZfwQyzj9fV1RkXYLJ+uDguHIJTfclO
+ YM4mN7aIXeSLf91l1vEKNRohigCamUFLs0MtPU6pY=
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
 From: uk7b@foxmail.com
 To: dev@dpdk.org
 Cc: Sun Yuechi <sunyuechi@iscas.ac.cn>, Thomas Monjalon <thomas@monjalon.net>,
- Stanislaw Kardach <stanislaw.kardach@gmail.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v2 1/5] config/riscv: detect V extension
-Date: Wed,  2 Jul 2025 02:20:29 +0800
-X-OQ-MSGID: <20250701182033.642384-2-uk7b@foxmail.com>
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Stanislaw Kardach <stanislaw.kardach@gmail.com>
+Subject: [PATCH v2 3/5] lib/lpm: R-V V rte_lpm_lookupx4
+Date: Wed,  2 Jul 2025 02:20:31 +0800
+X-OQ-MSGID: <20250701182033.642384-4-uk7b@foxmail.com>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <20250701182033.642384-1-uk7b@foxmail.com>
 References: <20250701182033.642384-1-uk7b@foxmail.com>
@@ -65,88 +67,121 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Sun Yuechi <sunyuechi@iscas.ac.cn>
 
-This patch is derived from "config/riscv: detect presence of Zbc
-extension with modifications".
-
-The RISC-V C api defines architecture extension test macros
-These let us detect whether the V extension is supported on the
-compiler and -march we're building with. The C api also defines V
-intrinsics we can use rather than inline assembly on newer versions of
-GCC (14.1.0+) and Clang (18.1.0+).
-
-If the V extension and intrinsics are both present and we can detect
-the V extension at runtime, we define a flag, RTE_RISCV_FEATURE_V.
+Implement LPM lookupx4 function for RISC-V architecture using RISC-V
+Vector Extension instruction set
 
 Signed-off-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
 ---
- .mailmap                         |  1 +
- config/riscv/meson.build         | 25 +++++++++++++++++++++++++
- lib/eal/riscv/include/rte_vect.h |  4 ++++
- 3 files changed, 30 insertions(+)
+ MAINTAINERS           |  2 ++
+ lib/lpm/meson.build   |  1 +
+ lib/lpm/rte_lpm.h     |  2 ++
+ lib/lpm/rte_lpm_rvv.h | 59 +++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 64 insertions(+)
+ create mode 100644 lib/lpm/rte_lpm_rvv.h
 
-diff --git a/.mailmap b/.mailmap
-index 8483d96ec5..21f5d7fb5e 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -1513,6 +1513,7 @@ Sunil Kumar Kori <skori@marvell.com> <skori@mavell.com> <sunil.kori@nxp.com>
- Sunil Pai G <sunil.pai.g@intel.com>
- Sunil Uttarwar <sunilprakashrao.uttarwar@amd.com>
- Sun Jiajia <sunx.jiajia@intel.com>
-+Sun Yuechi <sunyuechi@iscas.ac.cn> <uk7b@foxmail.com>
- Sunyang Wu <sunyang.wu@jaguarmicro.com>
- Surabhi Boob <surabhi.boob@intel.com>
- Suyang Ju <sju@paloaltonetworks.com>
-diff --git a/config/riscv/meson.build b/config/riscv/meson.build
-index 7562c6cb99..e3694cf2e6 100644
---- a/config/riscv/meson.build
-+++ b/config/riscv/meson.build
-@@ -119,6 +119,31 @@ foreach flag: arch_config['machine_args']
-     endif
- endforeach
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0e9357f3a3..9bd97879b6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -341,6 +341,8 @@ M: Stanislaw Kardach <stanislaw.kardach@gmail.com>
+ F: config/riscv/
+ F: doc/guides/linux_gsg/cross_build_dpdk_for_riscv.rst
+ F: lib/eal/riscv/
++M: sunyuechi <sunyuechi@iscas.ac.cn>
++F: lib/**/*rvv*
  
-+# check if we can do buildtime detection of extensions supported by the target
-+riscv_extension_macros = false
-+if (cc.get_define('__riscv_arch_test', args: machine_args) == '1')
-+  message('Detected architecture extension test macros')
-+  riscv_extension_macros = true
-+else
-+  warning('RISC-V architecture extension test macros not available. Build-time detection of extensions not possible')
-+endif
+ Intel x86
+ M: Bruce Richardson <bruce.richardson@intel.com>
+diff --git a/lib/lpm/meson.build b/lib/lpm/meson.build
+index cff8fed473..c4522eaf0c 100644
+--- a/lib/lpm/meson.build
++++ b/lib/lpm/meson.build
+@@ -11,6 +11,7 @@ indirect_headers += files(
+         'rte_lpm_scalar.h',
+         'rte_lpm_sse.h',
+         'rte_lpm_sve.h',
++        'rte_lpm_rvv.h',
+ )
+ deps += ['hash']
+ deps += ['rcu']
+diff --git a/lib/lpm/rte_lpm.h b/lib/lpm/rte_lpm.h
+index 6bf8d9d883..edfe77b458 100644
+--- a/lib/lpm/rte_lpm.h
++++ b/lib/lpm/rte_lpm.h
+@@ -420,6 +420,8 @@ rte_lpm_lookupx4(const struct rte_lpm *lpm, xmm_t ip, uint32_t hop[4],
+ #include "rte_lpm_altivec.h"
+ #elif defined(RTE_ARCH_X86)
+ #include "rte_lpm_sse.h"
++#elif defined(RTE_ARCH_RISCV) && defined(RTE_RISCV_FEATURE_V)
++#include "rte_lpm_rvv.h"
+ #else
+ #include "rte_lpm_scalar.h"
+ #endif
+diff --git a/lib/lpm/rte_lpm_rvv.h b/lib/lpm/rte_lpm_rvv.h
+new file mode 100644
+index 0000000000..0d3dc91055
+--- /dev/null
++++ b/lib/lpm/rte_lpm_rvv.h
+@@ -0,0 +1,59 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (c) 2025 Institute of Software Chinese Academy of Sciences (ISCAS).
++ */
 +
-+# detect extensions
-+# Requires intrinsics available in GCC 14.1.0+ and Clang 18.1.0+
-+if (riscv_extension_macros and
-+    (cc.get_define('__riscv_vector', args: machine_args) != ''))
-+  if ((cc.get_id() == 'gcc' and cc.version().version_compare('>=14.1.0'))
-+      or (cc.get_id() == 'clang' and cc.version().version_compare('>=18.1.0')))
-+    if (cc.compiles('''#include <riscv_vector.h>
-+        int main(void) { size_t vl = __riscv_vsetvl_e32m1(1); }''', args: machine_args))
-+      message('Compiling with the V extension')
-+      machine_args += ['-DRTE_RISCV_FEATURE_V']
-+    endif
-+  else
-+    warning('Detected V extension but cannot use because intrinsics are not available (present in GCC 14.1.0+ and Clang 18.1.0+)')
-+  endif
-+endif
++#ifndef _RTE_LPM_RVV_H_
++#define _RTE_LPM_RVV_H_
 +
- # apply flags
- foreach flag: dpdk_flags
-     if flag.length() > 0
-diff --git a/lib/eal/riscv/include/rte_vect.h b/lib/eal/riscv/include/rte_vect.h
-index 6df10fa8ee..a4357e266a 100644
---- a/lib/eal/riscv/include/rte_vect.h
-+++ b/lib/eal/riscv/include/rte_vect.h
-@@ -11,6 +11,10 @@
- #include "generic/rte_vect.h"
- #include "rte_common.h"
- 
-+#ifdef RTE_RISCV_FEATURE_V
-+#include <riscv_vector.h>
++#include <rte_vect.h>
++
++#ifdef __cplusplus
++extern "C" {
 +#endif
 +
- #ifdef __cplusplus
- extern "C" {
- #endif
++#define RTE_LPM_LOOKUP_SUCCESS 0x01000000
++#define RTE_LPM_VALID_EXT_ENTRY_BITMASK 0x03000000
++
++static inline void rte_lpm_lookupx4(
++	const struct rte_lpm *lpm, xmm_t ip, uint32_t hop[4], uint32_t defv)
++{
++	size_t vl = 4;
++
++	const uint32_t *tbl24_p = (const uint32_t *)lpm->tbl24;
++	uint32_t tbl_entries[4] = {
++		tbl24_p[((uint32_t)ip[0]) >> 8],
++		tbl24_p[((uint32_t)ip[1]) >> 8],
++		tbl24_p[((uint32_t)ip[2]) >> 8],
++		tbl24_p[((uint32_t)ip[3]) >> 8],
++	};
++	vuint32m1_t vtbl_entry = __riscv_vle32_v_u32m1(tbl_entries, vl);
++
++	vbool32_t mask = __riscv_vmseq_vx_u32m1_b32(
++	    __riscv_vand_vx_u32m1(vtbl_entry, RTE_LPM_VALID_EXT_ENTRY_BITMASK, vl),
++	    RTE_LPM_VALID_EXT_ENTRY_BITMASK, vl);
++
++	vuint32m1_t vtbl8_index = __riscv_vsll_vx_u32m1(
++	    __riscv_vadd_vv_u32m1(
++		__riscv_vsll_vx_u32m1(__riscv_vand_vx_u32m1(vtbl_entry, 0x00FFFFFF, vl), 8, vl),
++		__riscv_vand_vx_u32m1(
++		    __riscv_vle32_v_u32m1((const uint32_t *)&ip, vl), 0x000000FF, vl),
++		vl),
++	    2, vl);
++
++	vtbl_entry = __riscv_vluxei32_v_u32m1_mu(
++	    mask, vtbl_entry, (const uint32_t *)(lpm->tbl8), vtbl8_index, vl);
++
++	vuint32m1_t vnext_hop = __riscv_vand_vx_u32m1(vtbl_entry, 0x00FFFFFF, vl);
++	mask = __riscv_vmseq_vx_u32m1_b32(
++	    __riscv_vand_vx_u32m1(vtbl_entry, RTE_LPM_LOOKUP_SUCCESS, vl), 0, vl);
++
++	vnext_hop = __riscv_vmerge_vxm_u32m1(vnext_hop, defv, mask, vl);
++
++	__riscv_vse32_v_u32m1(hop, vnext_hop, vl);
++}
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* _RTE_LPM_RVV_H_ */
 -- 
 2.50.0
 
