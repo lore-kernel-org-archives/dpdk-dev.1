@@ -2,63 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B4CC7EE30
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Jul 2025 14:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA5FC7EE30
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Jul 2025 15:13:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6317F402A5;
-	Tue,  1 Jul 2025 16:48:57 +0200 (CEST)
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com
- [209.85.217.41]) by mails.dpdk.org (Postfix) with ESMTP id E6CF140264
- for <dev@dpdk.org>; Tue,  1 Jul 2025 16:48:55 +0200 (CEST)
-Received: by mail-vs1-f41.google.com with SMTP id
- ada2fe7eead31-4e7eefcbf08so685245137.2
- for <dev@dpdk.org>; Tue, 01 Jul 2025 07:48:55 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 847C140276;
+	Tue,  1 Jul 2025 17:13:18 +0200 (CEST)
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com
+ [209.85.210.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 0FD9840264
+ for <dev@dpdk.org>; Tue,  1 Jul 2025 17:13:17 +0200 (CEST)
+Received: by mail-pf1-f179.google.com with SMTP id
+ d2e1a72fcca58-749068b9b63so4268933b3a.0
+ for <dev@dpdk.org>; Tue, 01 Jul 2025 08:13:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1751381335; x=1751986135; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751382796;
+ x=1751987596; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Mf1eVTOmQ3YkQh0An+DVMpwRn6Ehl/bQfORfeE20gLM=;
- b=IIBN3aZ1QVdQBhbIS1mOWf0Lj1QETWNnc1reHPfkFfWa55ptzM0+A6S45M9o5GFb5p
- B1vnMiAvYpDeoxOOU4YQ5GtSn37Rqu1HzrCA+cUbwAPKI87g0ZQDKvPnhrgC9QStPzLb
- T2MpnnUv9HM3F62rBleLaxbdfvvEN2pQQb2o+5zAQPd/qfINhi/SxF3HgVDkf4KQxwj4
- I3RbxN3u28VQq152fGoIofcbSo6Nm1NWTDQO+iSE51s8N99/3+cgRwUHMX6W0gaLr2oi
- Hfl6Nyn0qVAeSVu1n3hXgIBpKQKg52Ak28LDjEoPuhuB9df5cnJZh3COVp10riULbDnN
- uuFg==
+ bh=iFKjBpA7TGmkPZNMi6cTmaYThr9JvjOF5pWIOthXqVc=;
+ b=0lb+SlNCybJEi8Hyi9P365u145E6jzoT8vlM05sW9qptFB9+CHJmHLDeMjNtORNnJK
+ sG6CLJKN5U9i7hzhXzg6RJf5Kq0KAvg6y3/DqwDeyzZltxMk2h7hYVdzQi2QNzgfq1gf
+ iWxnK/LD354mwb9gefXEmiLaHKmh1d9bf6XWYVav5ipudXC8EVKrWnrtYUGXwO1oJGPe
+ DXlWY1COVgukLpCVHuS4qJ7Nz4/leApqXcIiMu6qrs7GcCgtXEwu/MZuECDrxvftu6kU
+ oEEyL96lDFdUYBWqa9HH+j1ojy4iJ3sbNM8HcEyIAYzAtegF7Tuj2nS85chgkWWRk/AX
+ A9QQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1751381335; x=1751986135;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ d=1e100.net; s=20230601; t=1751382796; x=1751987596;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=Mf1eVTOmQ3YkQh0An+DVMpwRn6Ehl/bQfORfeE20gLM=;
- b=V+emncP+rMBSNReNJlGkCRCnwVMyHDIlrbGrgYmxiK4mSv0XdyKMefHcQBDlPeanGt
- ridoqD4Od0d/uR9OcTTuISqdrDaUFn0+GAurHYL0wjW4FusLjJCfkf+NVARsxBEOK1+g
- sF952hNOoVOEhWvVokuKBZg6i1qrsA80vLrCGgXAAxy3tMtnni+9sXV+jueEUSBhAA30
- UEvP70sjF+Znka5DFFidDuyiYMkuF2e4YPoM5rzKqnvBPpgtrJmeu50HBq+dNEYnnoFq
- KQKvDE0TFW3LYaRXFXo0/ybpVJZWGpgZ59oHrh1Fbm1pTm9qjsBBzpGw+IyO7gt/IicF
- 3qqQ==
-X-Gm-Message-State: AOJu0YxK6dvF1SESyso99tIfSqUONBOo7Tqoy1GJJrS41lsiPuldQwd1
- QevCtkC9oVxIXizatPFssSGJYWxCpdpeS3FVYNy90RvkxfiIc9UGfoS9Q9ndUIzgFGp0V17oOOb
- Llr9pT8b9vhflCCegJwK5j4+dN2rdUog=
-X-Gm-Gg: ASbGncvZXDLLBkVXArE7x5e5GYzBx9sbjyYfy+Y5E/6JUSqjwRV614d1GjP6huCOnIE
- yLCCAn9qJoynf6j3x14EuFirAs5iCT1J7LNSSBIo0mf2xrwmgyQwjO56huflplRZeF0/sGhl2j5
- axH7U8hh6z58AifxOQKR/2QNMljxtbvdBRnmBJaIHsDA==
-X-Google-Smtp-Source: AGHT+IFnZ5TpAPoI30JtvchieWGqQ3qU6P/ObBXbt235tKmFipb/skKGQWKuuNTBX7P4HYfJg5yIO9Fl4PVlrILsdkU=
-X-Received: by 2002:a05:6102:3581:b0:4e9:9281:85ba with SMTP id
- ada2fe7eead31-4ee4f71e304mr10504055137.13.1751381335006; Tue, 01 Jul 2025
- 07:48:55 -0700 (PDT)
+ bh=iFKjBpA7TGmkPZNMi6cTmaYThr9JvjOF5pWIOthXqVc=;
+ b=MK6b/04Jrd+H/F/ggTwcOtcJz3hqXbfTZOpQh1+Z9BJJxC9j50ewCVD3dDjZ2HWgx3
+ A9PmZk9wo9cSXBRglHNb8CWI6J+miaOxtOrjB9NijNkqFGg2qTDUE+e/2sj0j5kI9umV
+ as5RyP5YbSBGU6mMw27TDGJZDdskjBOUt3yogDAclAZNpTbal7az+AV1J2O4Qsc4Me81
+ cCq7KVJrjW1f/PdTpDG211ozjqu9Csz5O4D8Z7heLj8Hm/85yOa7V+vCi0BYUwqIH2F7
+ n/rUJfs0bN/vsZaPTwF9N0mcQkx+9VRJ+SQArYv0oU5ZUVjEhJq5h2hpfQSCbUf00bFl
+ Q+zw==
+X-Gm-Message-State: AOJu0Yz0Mn5c1FXdGPIY/wJgIJFSisgqR11dyaebXoqBPX/0FPUacNEc
+ gmqHtsCXhh0r7QhgtgHAnSyHXm3E1Kg22CTpSLaMz5A8bVOhWVwF5qze1y7Fl+BhelqR2+0mrMq
+ w4y9GodE=
+X-Gm-Gg: ASbGncutYZEOoyWfqFRYkRch7JaLBm8Oa3myaIDWDMuzQuvlAZtbjbAT6EataZcFr7K
+ Ld2jMJSeNVUtK57CtgoEUJC9DWmKbcTcRcxlUw66YOjxXYBj/VUutUBQcbtsl1IJTog/QK4fxaI
+ Snvnv/bRUhl4HrFVPIIuGiFE3jGQg4k48fmAn+mfa815VJ1FzzU72Ose1OnIDglD6BCM6L2XXMu
+ SI7Qs8ZMU0pR8Mx5t98EJYxZPqijGCrkLhWDQITlKMfPdi7D+x+4PFKSD+tTt6Sg7kkKXhHV0AU
+ IpaL6N7IkVmYYCViLxJsl0OQAzMN9ttdKam5FdVWNcKrSYHTghmekxnhAJmYP3pPSW+X19orzjs
+ g1k80ivaqXm0JApmjtS/lmy7JsUyc9SOjvUwajAI=
+X-Google-Smtp-Source: AGHT+IEeja72S+1WHikNAV75WY1NwpQHYcF3LA4qOGZo4Or4PMsHE/ZIJGsSojoZESDG7/M51u+vtg==
+X-Received: by 2002:a05:6a20:1586:b0:215:e43a:29b9 with SMTP id
+ adf61e73a8af0-220a16db22amr26059281637.33.1751382796011; 
+ Tue, 01 Jul 2025 08:13:16 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d2e1a72fcca58-74af540a89esm11929761b3a.17.2025.07.01.08.13.15
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 01 Jul 2025 08:13:15 -0700 (PDT)
+Date: Tue, 1 Jul 2025 08:13:13 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Jiawen Wu <jiawenwu@trustnetic.com>
+Cc: dev@dpdk.org, zaiyuwang@trustnetic.com
+Subject: Re: [PATCH v3 00/17] Fixes and supports for Wangxun NICs
+Message-ID: <20250701081313.0a3a6dbe@hermes.local>
+In-Reply-To: <20250613084159.22184-1-jiawenwu@trustnetic.com>
+References: <00DEAE896AFE0D2D+20250606080117.183198-1-jiawenwu@trustnetic.com>
+ <20250613084159.22184-1-jiawenwu@trustnetic.com>
 MIME-Version: 1.0
-References: <20250630105025.2265901-1-bruce.richardson@intel.com>
-In-Reply-To: <20250630105025.2265901-1-bruce.richardson@intel.com>
-From: Nitin Saxena <nsaxena16@gmail.com>
-Date: Tue, 1 Jul 2025 20:18:44 +0530
-X-Gm-Features: Ac12FXyBYX5sAjB5Vg-OErh825ezSPbh63uvCvrVlSR9rtGTTfNf28MdT1GmMfk
-Message-ID: <CAG6-93xWTK=mWb2Y2jjQgJAFjAE83vMUUexmP=GX1BN4s0NvFA@mail.gmail.com>
-Subject: Re: [PATCH] node: fix C++ compatibility errors (option 2)
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -72,55 +82,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, Jun 30, 2025 at 4:27=E2=80=AFPM Bruce Richardson
-<bruce.richardson@intel.com> wrote:
->
-> C++ does not allow zero-sized unions - they end up being of size 1-byte,
-> which leads to C/C++ compatibility issues, flagged by the compiler.
->
->   lib/node/rte_node_mbuf_dynfield.h:78:2: error: union has size 0 in C,
-> size 1 in C++ [-Werror,-Wextern-c-compat]
->    78 |         union {
->                  |         ^
->                  1 error generated.
->
-> Fix the error by omitting the persistent_data field when it is
-> zero-sized, since it's unusable. Any app using the field must already
-> specify a size for the persistent data.
->
-> Fixes: 746e8736da70 ("node: add global mbuf dynfield")
->
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> ---
->  lib/node/rte_node_mbuf_dynfield.h | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/lib/node/rte_node_mbuf_dynfield.h b/lib/node/rte_node_mbuf_d=
-ynfield.h
-> index b77fdbb94f..09254c585a 100644
-> --- a/lib/node/rte_node_mbuf_dynfield.h
-> +++ b/lib/node/rte_node_mbuf_dynfield.h
-> @@ -69,6 +69,7 @@ typedef struct rte_node_mbuf_overload_fields {
->   * 2. Overloadable fields: Fields which can be repurposed by two adjacen=
-t nodes.
->   */
->  typedef struct rte_node_mbuf_dynfield {
-> +#if RTE_NODE_MBUF_PERSISTENT_FIELDS_SIZE > 0
->         /**
->          * Persistent mbuf region across nodes in graph walk
->          *
-> @@ -78,6 +79,7 @@ typedef struct rte_node_mbuf_dynfield {
->         union {
->                 uint8_t persistent_data[RTE_NODE_MBUF_PERSISTENT_FIELDS_S=
-IZE];
->         };
-> +#endif
->         /**
->          * Overloadable mbuf fields across graph walk. Fields which can c=
-hange.
->          *
-> --
-> 2.48.1
->
+On Fri, 13 Jun 2025 16:41:42 +0800
+Jiawen Wu <jiawenwu@trustnetic.com> wrote:
 
-Acked-by: Nitin Saxena <nsaxena@marvell.com>
+> Fix some bugs and improve flow filters.
+> 
+> v2 -> v3:
+> - Split the patch 2/12 for various changes
+> 
+> v1 -> v2:
+> - Add new flow feature geneve and gre into txgbe.ini
+> 
+> Jiawen Wu (17):
+>   net/txgbe: support flow filter for VF
+>   net/txgbe: fix incorrect parsing to ntuple filter
+>   net/txgbe: fix raw pattern match for FDIR rules
+>   net/txgbe: fix packet type for FDIR filters
+>   net/txgbe: fix to create FDIR filters for SCTP packets
+>   net/txgbe: fix FDIR perfect mode for IPv6 packets
+>   net/txgbe: fix to create FDIR filters for tunnel packets
+>   net/txgbe: fix reserved extra FDIR headroom
+>   net/txgbe: support RSS offload for SCTP port
+>   net/ngbe: support RSS offload for SCTP port
+>   net/txgbe: fix MAC control frame forwarding
+>   net/ngbe: fix MAC control frame forwarding
+>   net/txgbe: fix incorrect device statistics
+>   net/ngbe: fix incorrect device statistics
+>   net/txgbe: restrict VLAN strip configuration on VF
+>   net/ngbe: restrict VLAN strip configuration on VF
+>   net/txgbe: add missing LRO flag in mbuf when LRO enabled
+> 
+>  doc/guides/nics/features/txgbe.ini  |   2 +
+>  drivers/net/ngbe/base/ngbe_hw.c     |   9 +
+>  drivers/net/ngbe/base/ngbe_regs.h   |   2 +
+>  drivers/net/ngbe/base/ngbe_type.h   |   1 +
+>  drivers/net/ngbe/ngbe_ethdev.c      |   6 +-
+>  drivers/net/ngbe/ngbe_ethdev.h      |   2 +
+>  drivers/net/ngbe/ngbe_ethdev_vf.c   |  24 +-
+>  drivers/net/ngbe/ngbe_rxtx.c        |   8 +
+>  drivers/net/txgbe/base/txgbe_hw.c   |  23 +-
+>  drivers/net/txgbe/base/txgbe_hw.h   |   1 +
+>  drivers/net/txgbe/base/txgbe_mbx.h  |  17 +
+>  drivers/net/txgbe/base/txgbe_regs.h |   4 +
+>  drivers/net/txgbe/base/txgbe_type.h |  21 +-
+>  drivers/net/txgbe/base/txgbe_vf.c   |  29 +
+>  drivers/net/txgbe/base/txgbe_vf.h   |   2 +
+>  drivers/net/txgbe/txgbe_ethdev.c    |  18 +-
+>  drivers/net/txgbe/txgbe_ethdev.h    |  16 +-
+>  drivers/net/txgbe/txgbe_ethdev_vf.c | 111 +++-
+>  drivers/net/txgbe/txgbe_fdir.c      |  62 +-
+>  drivers/net/txgbe/txgbe_flow.c      | 857 ++++++++++++++++++++--------
+>  drivers/net/txgbe/txgbe_rxtx.c      |  18 +
+>  21 files changed, 945 insertions(+), 288 deletions(-)
+> 
+
+Looks good, applied to next-net
