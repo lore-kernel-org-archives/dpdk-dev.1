@@ -2,71 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85B89C83F03
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Jul 2025 18:23:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99B15C83038
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Jul 2025 18:39:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 936B040EE7;
-	Wed,  2 Jul 2025 20:23:01 +0200 (CEST)
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com
- [209.85.210.172])
- by mails.dpdk.org (Postfix) with ESMTP id D0D7D40E8A;
- Wed,  2 Jul 2025 20:22:59 +0200 (CEST)
-Received: by mail-pf1-f172.google.com with SMTP id
- d2e1a72fcca58-749248d06faso7340940b3a.2; 
- Wed, 02 Jul 2025 11:22:59 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 8D45540E25;
+	Wed,  2 Jul 2025 20:39:14 +0200 (CEST)
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com
+ [209.85.210.177])
+ by mails.dpdk.org (Postfix) with ESMTP id B53404064C;
+ Wed,  2 Jul 2025 20:39:13 +0200 (CEST)
+Received: by mail-pf1-f177.google.com with SMTP id
+ d2e1a72fcca58-7425bd5a83aso4494385b3a.0; 
+ Wed, 02 Jul 2025 11:39:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1751480579; x=1752085379; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1751481552; x=1752086352; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=IygRE7B3XzL5FGRMQd9fk2AbwQSAery88pow47GbAbo=;
- b=f/vl/jDK/JGrbCorpOsFMyVre9aEkzXZbM4G8zZHJOcJfoIYwHmS2g3VviBRmtmgeb
- PVjmTlge5S1jcFBZkcJv1YOyYDcbwFzA+O4QLbk1ntyJBP84mEKevknimdoFeg87T0rV
- THJAQ2+h9z2vg1Lu9glq23quns+VleWCrdgLwKTmm4X9je4tnFHVct2eph/e1dYOBW+O
- jTVm7RhCvJFbCM90Ee4wYjQvn66laWR0Tw2KP6zqtt0wWEKBZBzIqVTN6mtk/VOUJg+q
- t0gaRQJqoC67H20dd7RMGXlOBBPrdeHKycidqXpbaL3SW5GltsOiT9jSZF29bEXv8Hm0
- gA9g==
+ bh=Z4lJBm9Ea925L9aCAF46pUSatyDOpkSjUFIj/DaVnLM=;
+ b=POWiXaRO4NNJu64Xa3rmUKituHA3L9Aul2g6aOcFoGUD9gDqEkuONCAu8jbLuqDr4q
+ GbkwNsoq3laoNacBuVqc9F/aVCwj2HWvV1yXw6TksFk3ia5sb2LnrDxdjFFjtfjM9Wvj
+ TISqHjAmk1thMQYJSLYDa7z20/InWTh8vpQ53aTzIp1J6pGBHCS0Y9RL1UHp5OpzDOb+
+ RlKUIolCgdomWz/5pKWhocMh50aBin700QeHeA5nRVywpMEsC/9uCwdU3GhIdO0LOpBY
+ 0WTGtqegRmAQFm3m2wnXYBq0J9LgW9PFiNxKdkN9ta6sNJlwsOQUzelHlPZmqPYTCMHK
+ PrPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1751480579; x=1752085379;
+ d=1e100.net; s=20230601; t=1751481552; x=1752086352;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=IygRE7B3XzL5FGRMQd9fk2AbwQSAery88pow47GbAbo=;
- b=Dt0OwAGHGwP/w/OT2J/cpOyJKw1uk1bu/CG8bR06u5JJtoETfWUNsM4mbzpXadrCwJ
- UzWzNiB4XnE1P4aDA1jbp1bCDpoUl5RsIWpB7opTpV90mwmVHvlu4jYEKRicfMmQoR6M
- 14lVQw/GFIjvjjcY9HrRgZQzsBA6JqDH4AXqDB4Rag/H5bPU9AKXnj/tDKA9MG/8UWPV
- tARSqG3fS8kJPFD17bmAXp0po+y+PBiBcLtbTdj/9YFZ5+ypSLyPQ03INfYgWonv6hIb
- C+U/9vM5IwFfuNqNysHu1OyIhm5Ws6XC7vgna1oOLLrEdoupUh1PUeD+xFWhRC7+mQ5L
- BN2w==
+ bh=Z4lJBm9Ea925L9aCAF46pUSatyDOpkSjUFIj/DaVnLM=;
+ b=fqTxEzI9v1fVSYAdJaGCsUSQ4g2goxICP/eV+h2kvulUL7/jjnxPalIA8TGIPpdXWV
+ 55bFQXfF5J1aOAP0zvfsK0tKfRLrVMct/zV/S4w+8TWYfJlMjCht6hv5uRFAwzm7f4EW
+ oapL/Yy4dZfDqHw0l0OJyL0bbjqWqWXyX299ZUYx0QVwr451lfwBhof0773WqcofcNYT
+ a1MfHzUlgHY4fbP1u6kRPZavhiWqtgPG70RBgAXOHEq/ZII2cb5GnvOlGgxNHsBVDpRW
+ I7u44p23vWqeAaBAJm3rkhvFUN0Qo3C3P5f/OgMBnpGca9eHxp94ZXofzlsy+desecDD
+ skNQ==
 X-Forwarded-Encrypted: i=1;
- AJvYcCXb5hE35oNuaIQ90hkZJ6eubBn/kyxTY8g3mCOLmzz3eagUAKzyCCbLk/gKuF1/2R3fonYhPAA=@dpdk.org
-X-Gm-Message-State: AOJu0YxJJn2qPXDSq9cywf6ZKH6fLUXA5P9UQUPFEM+jiUe4SXg0Et/E
- 6O0PKA/u85AaYZ1/jrNB7FLWtG0KyDvMYAlchCrGMPLDEGR3UKLWLM3nYcUnla21
-X-Gm-Gg: ASbGncvqsOPJ+3ymWDC1UeVLslHkzEBNie9INdCMyG3EXMjc+kNDPnhF3q2chfTFz+N
- JrKW7fX9nr9GQc2nUah4ZNZOBaJ2Zb3GPuq/pEKLOTwqHyjR5SrFZBGwkSTF365crao5n96y88B
- Dc4NS5U3vdjsloFgqgmEW7Pfb8J40zjR4I2SmL3ziTL8PxBiL8WmphEHDjwbERY11AHUzo1AHW4
- IZNRrQB2PP/cciPjBsl+FYQBhU0pvvqqdwjT17BJtmUV5PVfjxkp+9rK4glx2WbdG/oecni0MZw
- 2XzMIT7lBK+L7AfMhtY4ZDfOkF9tmXrxty2dva9+licRlrvGSDqNu9xGU0UYK19h1WgEzcFFRE3
- Jd2a0zPyRuJmia97YsnvfEWMAnHOPIE+pJw==
-X-Google-Smtp-Source: AGHT+IG/2RNM/Y/I9YH2+buWKUlSO2KIq9Q1sViOQxDZL9Wkx7LO9ajCPdCinsEOknpdNsV8iw72CA==
-X-Received: by 2002:a05:6a00:a1f:b0:736:4644:86ee with SMTP id
- d2e1a72fcca58-74b51048d7fmr5184444b3a.14.1751480578414; 
- Wed, 02 Jul 2025 11:22:58 -0700 (PDT)
+ AJvYcCU8EhGgSh4t6rEP48N5/dI/HmrZmWEQRr/q8NrYEc6fbTJeAhHiT1z7tA4wQHph9moD0xdg1F8=@dpdk.org
+X-Gm-Message-State: AOJu0Yznky56Z7o1z4iALCOJ7IYEoVUnZskMT+9487NeNsvATSOATxAu
+ YWCRKDNti/FI8z2aNw7lJp66DPTVes80qwX2ewQaFVshpyoWghWYLVMGZJCYrOK0
+X-Gm-Gg: ASbGncsDZWnfqcrX38bhXjiiMfNXSsriLt0vBwdRI2E8lxU5+H6V2D2ZGE8VU31qxZv
+ 08PgoHJaJRyN2VVfjgfuLXYt/7sKjGblhnrpLVC1wC/MW8Wc8jGZ0IxOQUtxNJr5x1/YtGDih8D
+ SOQJ7jf0ehCknhGXtcYwqrL4XhuhH6jGRiQvclvBfjJrBb5Rr7F+me2zPEe9WvGJTQ5hTalTd6K
+ t16l1iRnouI9time61yxBDJ0m0/8A8Y/OKQKBr5WdvyAfW/F/wfnn4umwPs9gvlVmd+3JSoNhfV
+ vrGZddIQ9ulwNi9VZyC5eqDedz/G5/nwAszB+qvQp9nQHqvVW0HaEa4sGXrzKaomOZgU5NRRx4d
+ 40YGxtMqC5wJgU3zybXjnagw87+VzJBpFEA==
+X-Google-Smtp-Source: AGHT+IFh24X1kAg91VFwqQ1svJvVq/dMYDWKL/x7GLnJ1uoSdHPsK75J3266gGKXYSiY8dgWxQ69Yw==
+X-Received: by 2002:a05:6a20:7486:b0:21a:ecf5:ea71 with SMTP id
+ adf61e73a8af0-222d7df07c0mr6932781637.15.1751481552305; 
+ Wed, 02 Jul 2025 11:39:12 -0700 (PDT)
 Received: from localhost.localdomain ([2402:e280:2162:53:bd13:dda6:5d:6065])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-74af540be24sm14433428b3a.20.2025.07.02.11.22.55
+ 41be03b00d2f7-b34e300452dsm13513009a12.13.2025.07.02.11.39.09
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Wed, 02 Jul 2025 11:22:57 -0700 (PDT)
+ Wed, 02 Jul 2025 11:39:11 -0700 (PDT)
 From: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
 To: dev@dpdk.org
 Cc: amiyaranjan.mohakud@gmail.com,
 	stable@dpdk.org
 Subject: [PATCH v3] net/iavf: fix VLAN offload strip flag
-Date: Wed,  2 Jul 2025 23:52:51 +0530
-Message-Id: <20250702182251.96427-1-amiyaranjan.mohakud@gmail.com>
+Date: Thu,  3 Jul 2025 00:08:56 +0530
+Message-Id: <20250702183856.99326-1-amiyaranjan.mohakud@gmail.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250702181506.95192-1-amiyaranjan.mohakud@gmail.com>
-References: <20250702181506.95192-1-amiyaranjan.mohakud@gmail.com>
+In-Reply-To: <20250702182251.96427-1-amiyaranjan.mohakud@gmail.com>
+References: <20250702182251.96427-1-amiyaranjan.mohakud@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -98,93 +98,33 @@ v2:
 
 Signed-off-by: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
 ---
- drivers/net/intel/iavf/iavf_ethdev.c | 52 ++++++++++++++++++----------
- 1 file changed, 33 insertions(+), 19 deletions(-)
+ drivers/net/intel/iavf/iavf_ethdev.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index b3dacbef84..845d773594 100644
+index c33fdd9069..335a8126c4 100644
 --- a/drivers/net/intel/iavf/iavf_ethdev.c
 +++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -1379,14 +1379,43 @@ iavf_dev_del_mac_addr(struct rte_eth_dev *dev, uint32_t index)
- }
- 
- static int
--iavf_dev_vlan_filter_set(struct rte_eth_dev *dev, uint16_t vlan_id, int on)
-+iavf_disable_vlan_strip_ex(struct rte_eth_dev *dev, int on)
- {
-+	/* For i40e kernel drivers which supports both vlan(v1 & v2) VIRTCHNL OP,
-+	 * it will set strip on when setting filter on but dpdk side will not
-+	 * change strip flag. To be consistent with dpdk side, explicitly disable
-+	 * strip again.
-+	 *
-+	 */
+@@ -1388,6 +1388,7 @@ iavf_disable_vlan_strip_ex(struct rte_eth_dev *dev, int on)
+ 	 */
  	struct iavf_adapter *adapter =
  		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
++	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
  	struct rte_eth_conf *dev_conf = &dev->data->dev_conf;
  	int err;
  
-+	if (adapter->hw.mac.type == IAVF_MAC_XL710 ||
-+	    adapter->hw.mac.type == IAVF_MAC_VF ||
-+	    adapter->hw.mac.type == IAVF_MAC_X722_VF) {
-+		if (on && !(dev_conf->rxmode.offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP)) {
+@@ -1395,7 +1396,10 @@ iavf_disable_vlan_strip_ex(struct rte_eth_dev *dev, int on)
+ 	    adapter->hw.mac.type == IAVF_MAC_VF ||
+ 	    adapter->hw.mac.type == IAVF_MAC_X722_VF) {
+ 		if (on && !(dev_conf->rxmode.offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP)) {
+-			err = iavf_disable_vlan_strip(adapter);
 +			if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_VLAN_V2)
 +				err = iavf_config_vlan_strip_v2(adapter, false);
 +			else
 +				err = iavf_disable_vlan_strip(adapter);
-+			if (err)
-+				return -EIO;
-+		}
-+	}
-+	return 0;
-+}
-+
-+static int
-+iavf_dev_vlan_filter_set(struct rte_eth_dev *dev, uint16_t vlan_id, int on)
-+{
-+	struct iavf_adapter *adapter =
-+		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
-+	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
-+	int err;
-+
- 	if (adapter->closed)
- 		return -EIO;
- 
-@@ -1394,7 +1423,8 @@ iavf_dev_vlan_filter_set(struct rte_eth_dev *dev, uint16_t vlan_id, int on)
- 		err = iavf_add_del_vlan_v2(adapter, vlan_id, on);
- 		if (err)
- 			return -EIO;
--		return 0;
-+
-+		return iavf_disable_vlan_strip_ex(dev, on);
- 	}
- 
- 	if (!(vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_VLAN))
-@@ -1404,23 +1434,7 @@ iavf_dev_vlan_filter_set(struct rte_eth_dev *dev, uint16_t vlan_id, int on)
- 	if (err)
- 		return -EIO;
- 
--	/* For i40e kernel driver which only supports vlan(v1) VIRTCHNL OP,
--	 * it will set strip on when setting filter on but dpdk side will not
--	 * change strip flag. To be consistent with dpdk side, disable strip
--	 * again.
--	 *
--	 * For i40e kernel driver which supports vlan v2, dpdk will invoke vlan v2
--	 * related function, so it won't go through here.
--	 */
--	if (adapter->hw.mac.type == IAVF_MAC_XL710 ||
--	    adapter->hw.mac.type == IAVF_MAC_X722_VF) {
--		if (on && !(dev_conf->rxmode.offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP)) {
--			err = iavf_disable_vlan_strip(adapter);
--			if (err)
--				return -EIO;
--		}
--	}
--	return 0;
-+	return iavf_disable_vlan_strip_ex(dev, on);
- }
- 
- static void
+ 			if (err)
+ 				return -EIO;
+ 		}
 -- 
 2.39.5 (Apple Git-154)
 
