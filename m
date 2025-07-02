@@ -2,70 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 425B1C83013
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Jul 2025 12:36:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B6DC8303F
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Jul 2025 12:48:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C307840DDE;
-	Wed,  2 Jul 2025 14:36:28 +0200 (CEST)
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com
- [209.85.210.169])
- by mails.dpdk.org (Postfix) with ESMTP id DC15D402E8
- for <dev@dpdk.org>; Wed,  2 Jul 2025 14:36:26 +0200 (CEST)
-Received: by mail-pf1-f169.google.com with SMTP id
- d2e1a72fcca58-748e63d4b05so2869948b3a.2
- for <dev@dpdk.org>; Wed, 02 Jul 2025 05:36:26 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D9C24402E8;
+	Wed,  2 Jul 2025 14:48:35 +0200 (CEST)
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com
+ [209.85.160.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 200A0402A0;
+ Wed,  2 Jul 2025 14:48:34 +0200 (CEST)
+Received: by mail-qt1-f181.google.com with SMTP id
+ d75a77b69052e-4a442a3a2bfso74159011cf.1; 
+ Wed, 02 Jul 2025 05:48:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1751459786;
- x=1752064586; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=alDVY7o1kp+HQc+3EQnP9c4GU7L8oQqtkfXGNsj7IpA=;
- b=FrBH6nUU37rVrAbHi3eQPUFMvKnClLdaDiCraxRGcQa4UXzkDtrazmoE1OXV78WpeH
- ACd9S4a1Fh5PWsLcB3lp7PiC0dBzHmXj+9zIwMvj08r4syGmOjDdsBppnPzcllGIdvrr
- IhqkXSEQzie/z/gih1W4ERXaKGBBdVHoj3q8NzYSClMxEdNxOMPogDA7UC2X/hDqwh4y
- gE9Ht/NxpKrHOoSx9jFrLAoEP14Ma28WhzWUUhGisiL+661ADCGiHFC+3AFEj+8VRawY
- IHY3X03zfEcm22OwV1HHlOO8QmxBeL+yv03fLzYc7gwst9iQHr12mshpn0PfJCPTM2pG
- fy6w==
+ d=gmail.com; s=20230601; t=1751460513; x=1752065313; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=PL4ZpKQSaAriblrXZRNJaQs4V1KPDGbiOL5YYgXTAGo=;
+ b=NxNmkmGc+1fhXf2FeLqQOkxrmIR6roMM9vo93YZmG5Fg4JNJ9rniPxjY8IZG0tk8jp
+ nVLuK98EdjtDxDYy7pjLrX65dkSpZxL1/VrnM6XPxILL5rN+H04UuXRL4AYsb54XyjjJ
+ n2kMO088Ck1pA6RBKpYqhYZn6/OgnoCfeIjZXFb1z+V1UHBTIPCJAsnw01HToj45UlWV
+ Sr+epTkbueQkaKxHZJ4a/vWq1mz/Xfsh24jNpuSLNzETjh1SNF+95Cfr1CojSq55GmRb
+ Zqa6bowQDZbmuSXVYCqQO+nAP+uyejhIg9jteCNDK2K+0zgMaaLAFwJphyM5dnFtvE+L
+ ZzFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1751459786; x=1752064586;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=alDVY7o1kp+HQc+3EQnP9c4GU7L8oQqtkfXGNsj7IpA=;
- b=vYIhHYgpvXiw2LwQapAKVjqz7A8bj72W6MIhZOEj51AyNxGoGy84DCg38Ig0ORztMU
- S8chMTUENb5qGqiCCi9MxqhGFMIKH/6AloSTyiuuskELQjY+3MgSVu8uxXD2pandosvy
- 1Y8zDM0QEaqv2OQntfkryaMW7IrTGgx1xuUxn2DZLPrxWnrddeccjqk2Lc97A1MUDY/p
- bpgc6o2OwF5O41z5eHE7eHyQIF5Ztwr+lXGcR55L3WM8QRRD9M8u0uox8Kd/GZuttw7i
- kE8PsmoI6e5qvMBbIlOO72OWqgG5cxM7V8/IG2Hn7QRQNxebAK1dhbcSph0VUXdLL/BH
- +uuw==
-X-Gm-Message-State: AOJu0YxWM/UOkQzK93aQRYtOC2EX3u/G2N40dWRFaWpPHh4AX8ZqqsT6
- vmEj9Vt6s422uhrvYXf7w/d6bCkiQggUVFYkVXRoBEzJhntWLoI5XyzC+iv+TaGXZitAnrabHN/
- EqhI/
-X-Gm-Gg: ASbGncumrwsm8FDPX3j9vcdnlmj9VXQZbqJ6ChXAjyKbQ7UZ+2F+CjHNP3dDVRhrbcw
- fd/j7/nLKKf5ZL/p4x+hpDUaOr15o+8wW6Nrz5N/NNh7kiv0Y9UYsXkHojWAeVgtcOSdkdJDTst
- +A/80/OGcZpe4J9AYDOeDXR73UBAARBBml+on7P26LQcin4/hbIcIniHmymfF4Tx4CxT+pdRJMh
- 1Dd3t4nov/i/BtNpeaDTUPT++OS85pZqfpTpC/bWd7nsh/2if1PPO8JGG4LMFeElgGA9q5l8gUR
- 2BU5sZMZL4Ulj7mBEJyTGwQAa5RkxDmtH2egi/tSo4/DYAt/klOdWFrr1TRjPdWzI+2aZYiTA65
- EFentK6regshQ
-X-Google-Smtp-Source: AGHT+IEx+9TwpcfQl4nFeDWRSxZX3PM2vwhzFn3jF6n3UiGg0Ul9D84Ma5+aMvhZCSFtTo0TToN4ww==
-X-Received: by 2002:a05:6a20:430b:b0:216:1ea0:a526 with SMTP id
- adf61e73a8af0-222d7f32a61mr6100460637.40.1751459785588; 
- Wed, 02 Jul 2025 05:36:25 -0700 (PDT)
-Received: from localhost.localdomain ([64.62.143.197])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-74af557b3a2sm13980041b3a.104.2025.07.02.05.36.24
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 02 Jul 2025 05:36:25 -0700 (PDT)
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-To: dev@dpdk.org
-Cc: rasland@nvidia.com, stable@dpdk.org,
- Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Subject: [PATCH] net/mlx5: fix crash when using meter in transfer flow
-Date: Wed,  2 Jul 2025 08:36:17 -0400
-Message-ID: <20250702123617.1814996-1-14pwcse1224@uetpeshawar.edu.pk>
-X-Mailer: git-send-email 2.43.0
+ d=1e100.net; s=20230601; t=1751460513; x=1752065313;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=PL4ZpKQSaAriblrXZRNJaQs4V1KPDGbiOL5YYgXTAGo=;
+ b=XF6NFtz5gQcLYJn7R9+4C7grNiv3tV1DmnuhmRMs07T3y++9LWCdn9CpfMoNPT0GNF
+ eroo5oBLGZmE/kdSaOoS/8zRHV/nxYlfz9bWh3Gzfe9OGkVhyJhSyZ5Qw9sGonOMCR0g
+ 3X9/YeQCBO6aRrJRJFBvBHmMsqz49rn4Sv4GiyA377FfzFEkC5RkweHLvF8wX4kcT+KX
+ B85XRJTr9SLSN4m4kiXUxP+56k6AnnZ77hlG2rMryKmuTNIwZnTqDonOaR/SLgQuznAv
+ xH07JP0kIkEWp29H8nAwR5EMuHe7qMnIvVSaOTD7r7FCGVg69/AfY2NqYcR3VNzMuTTZ
+ RfFg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVH5y1ehAsu3cYvMgKkQApj+0XqgMUstMjUnFraTEZb1qVG+axxU354GCZfDQ07U0ireQ6lTZY=@dpdk.org
+X-Gm-Message-State: AOJu0YwqsE1KLtBZrfTx2mWVWmyAEhFQMSOOclYbJsH8xUugMC+0Gdf3
+ rr9fhsiGbdAunkARpG34yETaZad+18fa9hchFLksrq0OYd5YCJpgbpSsMAMUby52IweN5UY9wbc
+ 01vLy9FVK2WYkV8PM0UB39a1LurWWmBw=
+X-Gm-Gg: ASbGncu356L7kP3CsLWbnRJbtZ4mgHfzC5rqxMhLDb0CyGCorlJW3NiWxjyDUGduH3r
+ eJEuvOAKfKEK2i9Qp3Opa4S2itr80OtAIZ/pZkotc8lqEEtNKXTeS0qo9powdqaAdqw3JHJnAb4
+ h/mejVRpWkXtMrYM87fM8Z2lPRcM4ltTwLfcYf4+Dcbg==
+X-Google-Smtp-Source: AGHT+IFN8EmrZ3T/KglmmnTk3kU5pGKCFMrVr3v9exMEy0yH4XL5LDjUlasLJgECTKUb8h2kCAHUTUymL6Y95jhZdRQ=
+X-Received: by 2002:ac8:5ac2:0:b0:477:e2d:2ec7 with SMTP id
+ d75a77b69052e-4a9769e197fmr42505971cf.33.1751460513097; Wed, 02 Jul 2025
+ 05:48:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250627101853.5632-1-mabdulmajeet@marvell.com>
+In-Reply-To: <20250627101853.5632-1-mabdulmajeet@marvell.com>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Wed, 2 Jul 2025 18:18:07 +0530
+X-Gm-Features: Ac12FXz6fB7IJln3_dpnrxm8_AupsRMVgLj8JNigrzfAuWqSxwTPCFd6dln2YfI
+Message-ID: <CALBAE1OCJrkL9+WX7UnMW+4OwgUj19dMYbHXHVfzDA72BRsAhg@mail.gmail.com>
+Subject: Re: [PATCH v0 1/1] net/octeon_ep: fix increase mbox timeout
+To: Mohamed Feroz Abdul Majeeth <mabdulmajeet@marvell.com>
+Cc: dev@dpdk.org, jerinj@marvell.com, vattunuru@marvell.com, stable@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,62 +75,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When creating a flow rule with the transfer attribute and a meter action,
-the driver did not validate this combination and would crash due to
-unsupported handling.
+On Fri, Jun 27, 2025 at 3:49=E2=80=AFPM Mohamed Feroz Abdul Majeeth
+<mabdulmajeet@marvell.com> wrote:
+>
+> Extend the mailbox timeout to 2500 ms in the Octeon driver
+> to ensure firmware responses are received, preventing premature
+> timeouts in mailbox request handling. This improves reliability
+> of control network APIs, addressing issues where the previous
+> timeout was too short for consistent operation.
+>
+> Fixes: c836a7ba33ee ("net/octeon_ep: support mailbox between VF and PF")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Mohamed Feroz Abdul Majeeth <mabdulmajeet@marvell.com>
+> ---
+>  .mailmap                            | 1 +
+>  drivers/net/octeon_ep/otx_ep_mbox.h | 2 +-
+>  2 files changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/.mailmap b/.mailmap
+> index 8483d96ec5..753853b396 100644
+> --- a/.mailmap
+> +++ b/.mailmap
+> @@ -1850,3 +1850,4 @@ Ziye Yang <ziye.yang@intel.com>
+>  Zoltan Kiss <zoltan.kiss@schaman.hu> <zoltan.kiss@linaro.org>
+>  Zorik Machulsky <zorik@amazon.com>
+>  Zyta Szpak <zyta@marvell.com> <zr@semihalf.com> <zyta.szpak@semihalf.com=
+>
+> +Mohamed Feroz Abdul Majeeth <mabdulmajeet@marvell.com>
 
-This patch adds explicit validation rejecting meter action in transfer
-flows with an appropriate error message.
+I have sorted this in alphabetical order.
 
-Fixes: 46a5e6bc6a85 ("net/mlx5: prepare meter flow tables")
-Cc: stable@dpdk.org
-
-Steps to reproduce:
-1. Launch testpmd:
-   ./build/app/dpdk-testpmd -l 0,1 -a <PCI BDF> -- -i --rxq=8 --txq=8
-
-2. Inside testpmd:
-   add port meter profile trtcm_rfc2698 0 0 5 10 50 100 1
-   add port meter policy 0 0 g_actions mark id 3 / queue index 2 / end /
-      y_actions mark id 7 / queue index 3 / end r_actions drop / end
-   create port meter 0 0 0 0 yes 0xffff 0 y 0
-3. flow create 0 group 0 ingress pattern eth / ipv4 / end actions
-     jump group 1 / end
-3. Following causes a segmentation fault:
-   flow create 0 transfer ingress pattern eth / ipv4 /
-      end actions meter mtr_id 0 / end
-
-This patch ensures proper handling of the meter action with
-transfer rule to prevent this crash.
-
-Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
----
- drivers/net/mlx5/mlx5_flow.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/mlx5/mlx5_flow.c b/drivers/net/mlx5/mlx5_flow.c
-index 8db372123c..a7b793ef29 100644
---- a/drivers/net/mlx5/mlx5_flow.c
-+++ b/drivers/net/mlx5/mlx5_flow.c
-@@ -7993,7 +7993,17 @@ mlx5_flow_create(struct rte_eth_dev *dev,
- 	struct rte_flow_attr *new_attr = (void *)(uintptr_t)attr;
- 	uint32_t prio = attr->priority;
- 	uintptr_t flow_idx;
--
-+	if (attr && attr->transfer) {
-+		const struct rte_flow_action *act;
-+		for (act = actions; act && act->type != RTE_FLOW_ACTION_TYPE_END; ++act) {
-+			if (act->type == RTE_FLOW_ACTION_TYPE_METER) {
-+				rte_flow_error_set(error, ENOTSUP,
-+					RTE_FLOW_ERROR_TYPE_ACTION, act,
-+					"Meter action is not supported in transfer flows");
-+				return NULL;
-+			}
-+		}
-+	}
- 	/*
- 	 * If the device is not started yet, it is not allowed to created a
- 	 * flow from application. PMD default flows and traffic control flows
--- 
-2.43.0
-
+Applied to dpdk-next-net-mrvl/for-main. Thanks
