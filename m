@@ -2,32 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04D32C7EE30
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Jul 2025 10:11:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9772C83013
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Jul 2025 10:11:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7BD6240E30;
-	Wed,  2 Jul 2025 12:10:37 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9901140E25;
+	Wed,  2 Jul 2025 12:10:38 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id CEB7A40DCA
- for <dev@dpdk.org>; Wed,  2 Jul 2025 12:10:30 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 80CFB40DD7
+ for <dev@dpdk.org>; Wed,  2 Jul 2025 12:10:31 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B52861A103D;
- Wed,  2 Jul 2025 12:10:30 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 65D661A0974;
+ Wed,  2 Jul 2025 12:10:31 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 79F0E1A0532;
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F03BF1A234E;
  Wed,  2 Jul 2025 12:10:30 +0200 (CEST)
 Received: from lsv03379.swis.in-blr01.nxp.com (lsv03379.swis.in-blr01.nxp.com
  [92.120.147.188])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 8C7A21800097;
- Wed,  2 Jul 2025 18:10:29 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 6B2CB18000A0;
+ Wed,  2 Jul 2025 18:10:30 +0800 (+08)
 From: vanshika.shukla@nxp.com
 To: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
  Sachin Saxena <sachin.saxena@nxp.com>
-Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [v6 5/8] mempool/dpaa: adjust pool element for LS1043A errata
-Date: Wed,  2 Jul 2025 15:40:23 +0530
-Message-Id: <20250702101026.3301762-6-vanshika.shukla@nxp.com>
+Cc: Gagandeep Singh <g.singh@nxp.com>
+Subject: [v6 7/8] bus/dpaa: improve DPAA cleanup
+Date: Wed,  2 Jul 2025 15:40:25 +0530
+Message-Id: <20250702101026.3301762-8-vanshika.shukla@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250702101026.3301762-1-vanshika.shukla@nxp.com>
 References: <20250701113707.2793004-1-vanshika.shukla@nxp.com>
@@ -48,255 +48,500 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jun Yang <jun.yang@nxp.com>
+From: Gagandeep Singh <g.singh@nxp.com>
 
-Adjust every element of pool by populate callback.
-1) Make sure start DMA address is aligned with 16B.
-2) For buffer across 4KB boundary, make sure start DMA address is
-   aligned with 256B.
+This patch addresses DPAA driver issues with the introduction of
+rte_eal_cleanup, which caused driver-specific destructors to fail
+due to memory cleanup.
+To resolve this, we remove the driver destructor and relocate the
+code to the bus cleanup function.
 
-Signed-off-by: Jun Yang <jun.yang@nxp.com>
+So, this patch also implements DPAA bus cleanup.
+
+Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- drivers/mempool/dpaa/dpaa_mempool.c | 144 +++++++++++++++++++++++++++-
- drivers/mempool/dpaa/dpaa_mempool.h |  11 ++-
- 2 files changed, 149 insertions(+), 6 deletions(-)
+ drivers/bus/dpaa/base/qbman/qman_driver.c |   2 -
+ drivers/bus/dpaa/dpaa_bus.c               |  58 ++++++
+ drivers/net/dpaa/dpaa_ethdev.c            | 217 ++++++++++++++++------
+ 3 files changed, 215 insertions(+), 62 deletions(-)
 
-diff --git a/drivers/mempool/dpaa/dpaa_mempool.c b/drivers/mempool/dpaa/dpaa_mempool.c
-index 6c850f5cb2..2f9395b3f4 100644
---- a/drivers/mempool/dpaa/dpaa_mempool.c
-+++ b/drivers/mempool/dpaa/dpaa_mempool.c
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  *
-- *   Copyright 2017,2019,2023 NXP
-+ *   Copyright 2017,2019,2023-2025 NXP
-  *
-  */
+diff --git a/drivers/bus/dpaa/base/qbman/qman_driver.c b/drivers/bus/dpaa/base/qbman/qman_driver.c
+index 7a129a2d86..cdce6b777b 100644
+--- a/drivers/bus/dpaa/base/qbman/qman_driver.c
++++ b/drivers/bus/dpaa/base/qbman/qman_driver.c
+@@ -228,8 +228,6 @@ int fsl_qman_fq_portal_destroy(struct qman_portal *qp)
+ 	if (ret)
+ 		pr_err("qman_free_global_portal() (%d)\n", ret);
  
-@@ -29,6 +29,9 @@
- #include <dpaa_mempool.h>
- #include <dpaax_iova_table.h>
+-	kfree(qp);
+-
+ 	process_portal_irq_unmap(cfg->irq);
  
-+#define FMAN_ERRATA_BOUNDARY ((uint64_t)4096)
-+#define FMAN_ERRATA_BOUNDARY_MASK (~(FMAN_ERRATA_BOUNDARY - 1))
-+
- /* List of all the memseg information locally maintained in dpaa driver. This
-  * is to optimize the PA_to_VA searches until a better mechanism (algo) is
-  * available.
-@@ -51,6 +54,7 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
- 	struct dpaa_bp_info *bp_info;
- 	uint8_t bpid;
- 	int num_bufs = 0, ret = 0;
-+	uint16_t elem_max_size;
- 	struct bman_pool_params params = {
- 		.flags = BMAN_POOL_FLAG_DYNAMIC_BPID
- 	};
-@@ -101,9 +105,11 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
+ 	addr.cena = cfg->addr_virt[DPAA_PORTAL_CE];
+diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
+index d4f3dc3586..73f5861dec 100644
+--- a/drivers/bus/dpaa/dpaa_bus.c
++++ b/drivers/bus/dpaa/dpaa_bus.c
+@@ -63,6 +63,9 @@ static struct netcfg_info *dpaa_netcfg;
+ 
+ /* define a variable to hold the portal_key, once created.*/
+ static pthread_key_t dpaa_portal_key;
++/* dpaa lcore specific  portals */
++struct dpaa_portal *dpaa_portals[RTE_MAX_LCORE] = {NULL};
++static int dpaa_bus_global_init;
+ 
+ #define FSL_DPAA_BUS_NAME	dpaa_bus
+ 
+@@ -402,6 +405,7 @@ int rte_dpaa_portal_init(void *arg)
+ 
+ 		return ret;
+ 	}
++	dpaa_portals[lcore] = DPAA_PER_LCORE_PORTAL;
+ 
+ 	DPAA_BUS_LOG(DEBUG, "QMAN thread initialized");
+ 
+@@ -461,6 +465,8 @@ dpaa_portal_finish(void *arg)
+ 	rte_free(dpaa_io_portal);
+ 	dpaa_io_portal = NULL;
+ 	DPAA_PER_LCORE_PORTAL = NULL;
++	dpaa_portals[rte_lcore_id()] = NULL;
++	DPAA_BUS_DEBUG("Portal cleanup done for lcore = %d", rte_lcore_id());
+ }
+ 
+ static int
+@@ -771,6 +777,7 @@ rte_dpaa_bus_probe(void)
+ 			break;
  		}
  	}
++	dpaa_bus_global_init = 1;
  
-+	elem_max_size = rte_pktmbuf_data_room_size(mp);
-+
- 	rte_dpaa_bpid_info[bpid].mp = mp;
- 	rte_dpaa_bpid_info[bpid].bpid = bpid;
--	rte_dpaa_bpid_info[bpid].size = mp->elt_size;
-+	rte_dpaa_bpid_info[bpid].size = elem_max_size;
- 	rte_dpaa_bpid_info[bpid].bp = bp;
- 	rte_dpaa_bpid_info[bpid].meta_data_size =
- 		sizeof(struct rte_mbuf) + rte_pktmbuf_priv_size(mp);
-@@ -296,6 +302,130 @@ dpaa_mbuf_get_count(const struct rte_mempool *mp)
- 	return bman_query_free_buffers(bp_info->bp);
+ 	return 0;
+ }
+@@ -878,6 +885,56 @@ dpaa_bus_dev_iterate(const void *start, const char *str,
+ 	return NULL;
  }
  
 +static int
-+dpaa_check_obj_bounds(char *obj, size_t pg_sz, size_t elt_sz)
++dpaa_bus_cleanup(void)
 +{
-+	if (!pg_sz || elt_sz > pg_sz)
-+		return true;
++	struct rte_dpaa_device *dev, *tmp_dev;
 +
-+	if (RTE_PTR_ALIGN(obj, pg_sz) !=
-+		RTE_PTR_ALIGN(obj + elt_sz - 1, pg_sz))
-+		return false;
-+	return true;
-+}
++	BUS_INIT_FUNC_TRACE();
++	RTE_TAILQ_FOREACH_SAFE(dev, &rte_dpaa_bus.device_list, next, tmp_dev) {
++		struct rte_dpaa_driver *drv = dev->driver;
++		int ret = 0;
 +
-+static void
-+dpaa_adjust_obj_bounds(char *va, size_t *offset,
-+	size_t pg_sz, size_t total, uint32_t flags)
-+{
-+	size_t off = *offset;
-+
-+	if (dpaa_check_obj_bounds(va + off, pg_sz, total) == false) {
-+		off += RTE_PTR_ALIGN_CEIL(va + off, pg_sz) - (va + off);
-+		if (flags & RTE_MEMPOOL_POPULATE_F_ALIGN_OBJ)
-+			off += total - ((((size_t)va + off - 1) % total) + 1);
++		if (!rte_dev_is_probed(&dev->device))
++			continue;
++		if (!drv || !drv->remove)
++			continue;
++		ret = drv->remove(dev);
++		if (ret < 0) {
++			rte_errno = errno;
++			return -1;
++		}
++		dev->driver = NULL;
++		dev->device.driver = NULL;
 +	}
-+
-+	*offset = off;
-+}
-+
-+static int
-+dpaa_mbuf_ls1043a_errata_obj_adjust(uint8_t **pobj,
-+	uint32_t header_size, size_t *poff, size_t data_room)
-+{
-+	uint8_t *obj = *pobj;
-+	size_t off = *poff, buf_addr, end;
-+
-+	if (RTE_PKTMBUF_HEADROOM % FMAN_ERRATA_BUF_START_ALIGN) {
-+		DPAA_MEMPOOL_ERR("RTE_PKTMBUF_HEADROOM(%d) NOT aligned to %d",
-+			RTE_PKTMBUF_HEADROOM,
-+			FMAN_ERRATA_BUF_START_ALIGN);
-+		return -1;
-+	}
-+	if (header_size % FMAN_ERRATA_BUF_START_ALIGN) {
-+		DPAA_MEMPOOL_ERR("Header size(%d) NOT aligned to %d",
-+			header_size,
-+			FMAN_ERRATA_BUF_START_ALIGN);
-+		return -1;
-+	}
-+
-+	/** All FMAN DMA start addresses (for example, BMAN buffer
-+	 * address, FD[address] + FD[offset]) are 16B aligned.
-+	 */
-+	buf_addr = (size_t)obj + header_size;
-+	while (!rte_is_aligned((void *)buf_addr,
-+		FMAN_ERRATA_BUF_START_ALIGN)) {
-+		off++;
-+		obj++;
-+		buf_addr = (size_t)obj + header_size;
-+	}
-+
-+	/** Frame buffers must not span a 4KB address boundary,
-+	 * unless the frame start address is 256 byte aligned.
-+	 */
-+	end = buf_addr + data_room;
-+	if (((buf_addr + RTE_PKTMBUF_HEADROOM) &
-+		FMAN_ERRATA_BOUNDARY_MASK) ==
-+		(end & FMAN_ERRATA_BOUNDARY_MASK))
-+		goto quit;
-+
-+	while (!rte_is_aligned((void *)(buf_addr + RTE_PKTMBUF_HEADROOM),
-+		FMAN_ERRATA_4K_SPAN_ADDR_ALIGN)) {
-+		off++;
-+		obj++;
-+		buf_addr = (size_t)obj + header_size;
-+	}
-+quit:
-+	*pobj = obj;
-+	*poff = off;
++	dpaa_portal_finish((void *)DPAA_PER_LCORE_PORTAL);
++	dpaa_bus_global_init = 0;
++	DPAA_BUS_DEBUG("Bus cleanup done");
 +
 +	return 0;
 +}
 +
-+static int
-+dpaa_mbuf_op_pop_helper(struct rte_mempool *mp, uint32_t flags,
-+	uint32_t max_objs, void *vaddr, rte_iova_t iova,
-+	size_t len, struct dpaa_bp_info *bp_info,
-+	rte_mempool_populate_obj_cb_t *obj_cb, void *obj_cb_arg)
++/* Adding destructor for double check in case non-gracefully
++ * exit.
++ */
++RTE_FINI_PRIO(dpaa_cleanup, 102)
++dpaa_cleanup(void)
 +{
-+	char *va = vaddr;
-+	size_t total_elt_sz, pg_sz, off;
-+	uint32_t i;
-+	void *obj;
-+	int ret;
-+	uint16_t data_room = rte_pktmbuf_data_room_size(mp);
++	unsigned int lcore_id;
 +
-+	ret = rte_mempool_get_page_size(mp, &pg_sz);
-+	if (ret < 0)
-+		return ret;
++	if (!dpaa_bus_global_init)
++		return;
 +
-+	total_elt_sz = mp->header_size + mp->elt_size + mp->trailer_size;
-+
-+	if (flags & RTE_MEMPOOL_POPULATE_F_ALIGN_OBJ)
-+		off = total_elt_sz - (((uintptr_t)(va - 1) % total_elt_sz) + 1);
-+	else
-+		off = 0;
-+	for (i = 0; i < max_objs; i++) {
-+		/* avoid objects to cross page boundaries */
-+		dpaa_adjust_obj_bounds(va, &off, pg_sz, total_elt_sz, flags);
-+		if (off + total_elt_sz > len)
-+			break;
-+
-+		off += mp->header_size;
-+		obj = va + off;
-+		if (dpaa_soc_ver() == SVR_LS1043A_FAMILY) {
-+			dpaa_mbuf_ls1043a_errata_obj_adjust((uint8_t **)&obj,
-+				bp_info->meta_data_size, &off, data_room);
-+		}
-+		obj_cb(mp, obj_cb_arg, obj,
-+			(iova == RTE_BAD_IOVA) ? RTE_BAD_IOVA : (iova + off));
-+		rte_mempool_ops_enqueue_bulk(mp, &obj, 1);
-+		off += mp->elt_size + mp->trailer_size;
++	/* cleanup portals in case non-graceful exit */
++	RTE_LCORE_FOREACH_WORKER(lcore_id) {
++		/* Check for non zero id */
++		dpaa_portal_finish((void *)dpaa_portals[lcore_id]);
 +	}
-+
-+	return i;
++	dpaa_portal_finish((void *)DPAA_PER_LCORE_PORTAL);
++	dpaa_bus_global_init = 0;
++	DPAA_BUS_DEBUG("Worker thread clean up done");
 +}
 +
- static int
- dpaa_populate(struct rte_mempool *mp, unsigned int max_objs,
- 	      void *vaddr, rte_iova_t paddr, size_t len,
-@@ -303,9 +433,14 @@ dpaa_populate(struct rte_mempool *mp, unsigned int max_objs,
- {
- 	struct dpaa_bp_info *bp_info;
- 	unsigned int total_elt_sz;
-+	struct dpaa_memseg *ms;
- 
- 	if (!mp || !mp->pool_data) {
- 		DPAA_MEMPOOL_ERR("Invalid mempool provided");
-+		if (dpaa_soc_ver() == SVR_LS1043A_FAMILY) {
-+			/** populate must be successful for LS1043A*/
-+			return -EINVAL;
-+		}
- 		return 0;
+ static struct rte_dpaa_bus rte_dpaa_bus = {
+ 	.bus = {
+ 		.scan = rte_dpaa_bus_scan,
+@@ -888,6 +945,7 @@ static struct rte_dpaa_bus rte_dpaa_bus = {
+ 		.plug = dpaa_bus_plug,
+ 		.unplug = dpaa_bus_unplug,
+ 		.dev_iterate = dpaa_bus_dev_iterate,
++		.cleanup = dpaa_bus_cleanup,
+ 	},
+ 	.device_list = TAILQ_HEAD_INITIALIZER(rte_dpaa_bus.device_list),
+ 	.driver_list = TAILQ_HEAD_INITIALIZER(rte_dpaa_bus.driver_list),
+diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
+index 62cafb7073..fd400b6480 100644
+--- a/drivers/net/dpaa/dpaa_ethdev.c
++++ b/drivers/net/dpaa/dpaa_ethdev.c
+@@ -310,11 +310,12 @@ dpaa_eth_dev_configure(struct rte_eth_dev *dev)
  	}
  
-@@ -321,7 +456,6 @@ dpaa_populate(struct rte_mempool *mp, unsigned int max_objs,
- 	/* Detect pool area has sufficient space for elements in this memzone */
- 	if (len >= total_elt_sz * mp->size)
- 		bp_info->flags |= DPAA_MPOOL_SINGLE_SEGMENT;
--	struct dpaa_memseg *ms;
+ 	if (!(default_q || fmc_q)) {
+-		if (dpaa_fm_config(dev,
+-			eth_conf->rx_adv_conf.rss_conf.rss_hf)) {
++		ret = dpaa_fm_config(dev,
++			eth_conf->rx_adv_conf.rss_conf.rss_hf);
++		if (ret) {
+ 			dpaa_write_fm_config_to_file();
+-			DPAA_PMD_ERR("FM port configuration: Failed");
+-			return -1;
++			DPAA_PMD_ERR("FM port configuration: Failed(%d)", ret);
++			return ret;
+ 		}
+ 		dpaa_write_fm_config_to_file();
+ 	}
+@@ -517,6 +518,7 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
+ 	struct rte_intr_handle *intr_handle;
+ 	struct rte_eth_link *link = &dev->data->dev_link;
+ 	struct dpaa_if *dpaa_intf = dev->data->dev_private;
++	struct qman_fq *fq;
+ 	int loop;
+ 	int ret;
  
- 	/* For each memory chunk pinned to the Mempool, a linked list of the
- 	 * contained memsegs is created for searching when PA to VA
-@@ -347,8 +481,8 @@ dpaa_populate(struct rte_mempool *mp, unsigned int max_objs,
+@@ -526,14 +528,17 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
+ 		return 0;
+ 
+ 	if (!dpaa_intf) {
+-		DPAA_PMD_WARN("Already closed or not started");
+-		return -1;
++		DPAA_PMD_DEBUG("Already closed or not started");
++		return -ENOENT;
+ 	}
+ 
+ 	/* DPAA FM deconfig */
+ 	if (!(default_q || fmc_q)) {
+-		if (dpaa_fm_deconfig(dpaa_intf, dev->process_private))
+-			DPAA_PMD_WARN("DPAA FM deconfig failed");
++		ret = dpaa_fm_deconfig(dpaa_intf, dev->process_private);
++		if (ret) {
++			DPAA_PMD_WARN("%s: FM deconfig failed(%d)",
++				dev->data->name, ret);
++		}
+ 	}
+ 
+ 	dpaa_dev = container_of(rdev, struct rte_dpaa_device, device);
+@@ -541,21 +546,37 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
+ 	__fif = container_of(fif, struct __fman_if, __if);
+ 
+ 	ret = dpaa_eth_dev_stop(dev);
++	if (ret) {
++		DPAA_PMD_WARN("%s: stop device failed(%d)",
++			dev->data->name, ret);
++	}
+ 
+ 	if (fif->mac_type == fman_offline_internal ||
+ 	    fif->mac_type == fman_onic)
+ 		return 0;
+ 
+ 	/* Reset link to autoneg */
+-	if (link->link_status && !link->link_autoneg)
+-		dpaa_restart_link_autoneg(__fif->node_name);
++	if (link->link_status && !link->link_autoneg) {
++		ret = dpaa_restart_link_autoneg(__fif->node_name);
++		if (ret) {
++			DPAA_PMD_WARN("%s: restart link failed(%d)",
++				dev->data->name, ret);
++		}
++	}
+ 
+ 	if (intr_handle && rte_intr_fd_get(intr_handle) &&
+ 	    dev->data->dev_conf.intr_conf.lsc != 0) {
+-		dpaa_intr_disable(__fif->node_name);
+-		rte_intr_callback_unregister(intr_handle,
+-					     dpaa_interrupt_handler,
+-					     (void *)dev);
++		ret = dpaa_intr_disable(__fif->node_name);
++		if (ret) {
++			DPAA_PMD_WARN("%s: disable interrupt failed(%d)",
++				dev->data->name, ret);
++		}
++		ret = rte_intr_callback_unregister(intr_handle,
++			dpaa_interrupt_handler, (void *)dev);
++		if (ret) {
++			DPAA_PMD_WARN("%s: unregister interrupt failed(%d)",
++				dev->data->name, ret);
++		}
+ 	}
+ 
+ 	/* release configuration memory */
+@@ -563,33 +584,60 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
+ 
+ 	/* Release RX congestion Groups */
+ 	if (dpaa_intf->cgr_rx) {
+-		for (loop = 0; loop < dpaa_intf->nb_rx_queues; loop++)
+-			qman_delete_cgr(&dpaa_intf->cgr_rx[loop]);
++		for (loop = 0; loop < dpaa_intf->nb_rx_queues; loop++) {
++			ret = qman_delete_cgr(&dpaa_intf->cgr_rx[loop]);
++			if (ret) {
++				DPAA_PMD_WARN("%s: delete rxq%d's cgr err(%d)",
++					dev->data->name, loop, ret);
++			}
++		}
+ 		rte_free(dpaa_intf->cgr_rx);
+ 		dpaa_intf->cgr_rx = NULL;
+ 	}
+ 
+ 	/* Release TX congestion Groups */
+ 	if (dpaa_intf->cgr_tx) {
+-		for (loop = 0; loop < MAX_DPAA_CORES; loop++)
+-			qman_delete_cgr(&dpaa_intf->cgr_tx[loop]);
++		for (loop = 0; loop < MAX_DPAA_CORES; loop++) {
++			ret = qman_delete_cgr(&dpaa_intf->cgr_tx[loop]);
++			if (ret) {
++				DPAA_PMD_WARN("%s: delete txq%d's cgr err(%d)",
++					dev->data->name, loop, ret);
++			}
++		}
+ 		rte_free(dpaa_intf->cgr_tx);
+ 		dpaa_intf->cgr_tx = NULL;
+ 	}
+ 
++	/* Freeing queue specific portals */
++	for (loop = 0; loop < dpaa_intf->nb_rx_queues; loop++) {
++		if (!dpaa_intf->rx_queues)
++			break;
++
++		fq = &dpaa_intf->rx_queues[loop];
++		if (fq->qp_initialized) {
++			rte_dpaa_portal_fq_close(fq);
++			fq->qp_initialized = 0;
++		}
++	}
++
+ 	rte_free(dpaa_intf->rx_queues);
+ 	dpaa_intf->rx_queues = NULL;
+ 
+ 	rte_free(dpaa_intf->tx_queues);
+ 	dpaa_intf->tx_queues = NULL;
+ 	if (dpaa_intf->port_handle) {
+-		if (dpaa_fm_deconfig(dpaa_intf, fif))
+-			DPAA_PMD_WARN("DPAA FM "
+-				"deconfig failed");
++		ret = dpaa_fm_deconfig(dpaa_intf, fif);
++		if (ret) {
++			DPAA_PMD_WARN("%s: FM deconfig failed(%d)",
++				dev->data->name, ret);
++		}
+ 	}
+ 	if (fif->num_profiles) {
+-		if (dpaa_port_vsp_cleanup(dpaa_intf, fif))
+-			DPAA_PMD_WARN("DPAA FM vsp cleanup failed");
++		ret = dpaa_port_vsp_cleanup(dpaa_intf, fif);
++		if (ret) {
++			DPAA_PMD_WARN("%s: cleanup VSP failed(%d)",
++				dev->data->name, ret);
++		}
+ 	}
+ 
+ 	return ret;
+@@ -1462,6 +1510,8 @@ dpaa_flow_ctrl_set(struct rte_eth_dev *dev,
+ {
+ 	struct dpaa_if *dpaa_intf = dev->data->dev_private;
+ 	struct rte_eth_fc_conf *net_fc;
++	struct fman_if *fm_if = dev->process_private;
++	int ret;
+ 
+ 	PMD_INIT_FUNC_TRACE();
+ 
+@@ -1480,19 +1530,31 @@ dpaa_flow_ctrl_set(struct rte_eth_dev *dev,
+ 		return -EINVAL;
+ 	}
+ 
+-	if (fc_conf->mode == RTE_ETH_FC_NONE) {
++	if (fc_conf->mode == RTE_ETH_FC_NONE)
+ 		return 0;
+-	} else if (fc_conf->mode == RTE_ETH_FC_TX_PAUSE ||
+-		 fc_conf->mode == RTE_ETH_FC_FULL) {
+-		fman_if_set_fc_threshold(dev->process_private,
++
++	if (fc_conf->mode != RTE_ETH_FC_TX_PAUSE &&
++		fc_conf->mode != RTE_ETH_FC_FULL)
++		goto save_fc;
++
++	ret = fman_if_set_fc_threshold(fm_if,
+ 					 fc_conf->high_water,
+ 					 fc_conf->low_water,
+ 					 dpaa_intf->bp_info->bpid);
+-		if (fc_conf->pause_time)
+-			fman_if_set_fc_quanta(dev->process_private,
+-					      fc_conf->pause_time);
++	if (ret) {
++		DPAA_PMD_ERR("Set %s's fc on bpid(%d) err(%d)",
++				dev->data->name, dpaa_intf->bp_info->bpid,
++				ret);
++	}
++	if (fc_conf->pause_time) {
++		ret = fman_if_set_fc_quanta(fm_if, fc_conf->pause_time);
++		if (ret) {
++			DPAA_PMD_ERR("Set %s's fc pause time err(%d)",
++				dev->data->name, ret);
++		}
+ 	}
+ 
++save_fc:
+ 	/* Save the information in dpaa device */
+ 	net_fc->pause_time = fc_conf->pause_time;
+ 	net_fc->high_water = fc_conf->high_water;
+@@ -1619,13 +1681,15 @@ dpaa_dev_rss_hash_update(struct rte_eth_dev *dev,
+ {
+ 	struct rte_eth_dev_data *data = dev->data;
+ 	struct rte_eth_conf *eth_conf = &data->dev_conf;
++	int ret;
+ 
+ 	PMD_INIT_FUNC_TRACE();
+ 
+ 	if (!(default_q || fmc_q)) {
+-		if (dpaa_fm_config(dev, rss_conf->rss_hf)) {
+-			DPAA_PMD_ERR("FM port configuration: Failed");
+-			return -1;
++		ret = dpaa_fm_config(dev, rss_conf->rss_hf);
++		if (ret) {
++			DPAA_PMD_ERR("FM port configuration: Failed(%d)", ret);
++			return ret;
+ 		}
+ 		eth_conf->rx_adv_conf.rss_conf.rss_hf = rss_conf->rss_hf;
+ 	} else {
+@@ -2233,8 +2297,8 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
+ 	/* Each device can not have more than DPAA_MAX_NUM_PCD_QUEUES RX
+ 	 * queues.
  	 */
- 	TAILQ_INSERT_HEAD(&rte_dpaa_memsegs, ms, next);
+-	if (num_rx_fqs < 0 || num_rx_fqs > DPAA_MAX_NUM_PCD_QUEUES) {
+-		DPAA_PMD_ERR("Invalid number of RX queues");
++	if (num_rx_fqs > DPAA_MAX_NUM_PCD_QUEUES) {
++		DPAA_PMD_ERR("Invalid number of RX queues(%d)", num_rx_fqs);
+ 		return -EINVAL;
+ 	}
  
--	return rte_mempool_op_populate_helper(mp, 0, max_objs, vaddr, paddr,
--					       len, obj_cb, obj_cb_arg);
-+	return dpaa_mbuf_op_pop_helper(mp, 0, max_objs, vaddr, paddr,
-+			len, bp_info, obj_cb, obj_cb_arg);
+@@ -2494,8 +2558,8 @@ rte_dpaa_probe(struct rte_dpaa_driver *dpaa_drv,
+ 		eth_dev->dev_ops = &dpaa_devops;
+ 
+ 		ret = dpaa_dev_init_secondary(eth_dev);
+-		if (ret != 0) {
+-			DPAA_PMD_ERR("secondary dev init failed");
++		if (ret) {
++			DPAA_PMD_ERR("secondary dev init failed(%d)", ret);
+ 			return ret;
+ 		}
+ 
+@@ -2510,9 +2574,10 @@ rte_dpaa_probe(struct rte_dpaa_driver *dpaa_drv,
+ 		}
+ 
+ 		if (!(default_q || fmc_q)) {
+-			if (dpaa_fm_init()) {
+-				DPAA_PMD_ERR("FM init failed");
+-				return -1;
++			ret = dpaa_fm_init();
++			if (ret) {
++				DPAA_PMD_ERR("FM init failed(%d)", ret);
++				return ret;
+ 			}
+ 		}
+ 
+@@ -2587,39 +2652,71 @@ rte_dpaa_probe(struct rte_dpaa_driver *dpaa_drv,
+ 	return diag;
  }
  
- static const struct rte_mempool_ops dpaa_mpool_ops = {
-diff --git a/drivers/mempool/dpaa/dpaa_mempool.h b/drivers/mempool/dpaa/dpaa_mempool.h
-index 5ca53c7ff9..865b533b8f 100644
---- a/drivers/mempool/dpaa/dpaa_mempool.h
-+++ b/drivers/mempool/dpaa/dpaa_mempool.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  *
-- *   Copyright 2017,2019 NXP
-+ *   Copyright 2017,2019,2024 -2025 NXP
-  *
-  */
- #ifndef __DPAA_MEMPOOL_H__
-@@ -31,6 +31,15 @@
- /* Buffers are allocated from single mem segment i.e. phys contiguous */
- #define DPAA_MPOOL_SINGLE_SEGMENT  0x01
+-static int
+-rte_dpaa_remove(struct rte_dpaa_device *dpaa_dev)
++/* Adding destructor for double check in case non-gracefully
++ * exit.
++ */
++RTE_FINI_PRIO(dpaa_finish, 103)
++dpaa_finish(void)
+ {
+-	struct rte_eth_dev *eth_dev;
+-	int ret;
++	struct dpaa_if *dpaa_intf;
++	int loop;
++	struct qman_fq *fq;
++	uint16_t portid;
++	struct rte_eth_dev *dev;
  
-+#define FMAN_ERRATA_4K_SPAN_ADDR_ALIGN 256
-+#define FMAN_ERRATA_4K_SPAN_ADDR_MASK \
-+	(FMAN_ERRATA_4K_SPAN_ADDR_ALIGN - 1)
+ 	PMD_INIT_FUNC_TRACE();
+-
+-	eth_dev = dpaa_dev->eth_dev;
+-	dpaa_eth_dev_close(eth_dev);
+-	dpaa_valid_dev--;
+-	if (!dpaa_valid_dev)
+-		rte_mempool_free(dpaa_tx_sg_pool);
+-	ret = rte_eth_dev_release_port(eth_dev);
+-
+-	return ret;
+-}
+-
+-static void __attribute__((destructor(102))) dpaa_finish(void)
+-{
+ 	/* For secondary, primary will do all the cleanup */
+ 	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
+ 		return;
+ 
++	if (!is_global_init)
++		return;
 +
-+#define FMAN_ERRATA_BUF_START_ALIGN 16
-+#define FMAN_ERRATA_BUF_START_MASK (FMAN_ERRATA_BUF_START_ALIGN - 1)
-+#define FMAN_ERRATA_SG_LEN_ALIGN 16
-+#define FMAN_ERRATA_SG_LEN_MASK (FMAN_ERRATA_SG_LEN_ALIGN - 1)
+ 	if (!(default_q || fmc_q)) {
+-		if (is_global_init)
+ 			if (dpaa_fm_term())
+ 				DPAA_PMD_WARN("DPAA FM term failed");
+ 
+-		is_global_init = 0;
+-
+ 		DPAA_PMD_INFO("DPAA fman cleaned up");
+ 	}
 +
- struct dpaa_bp_info {
- 	struct rte_mempool *mp;
- 	struct bman_pool *bp;
++	RTE_ETH_FOREACH_DEV(portid) {
++		dev = &rte_eth_devices[portid];
++		if (strcmp(dev->device->driver->name,
++			rte_dpaa_pmd.driver.name))
++			continue;
++		dpaa_intf = dev->data->dev_private;
++		/* Freeing queue specific portals */
++		for (loop = 0; loop < dpaa_intf->nb_rx_queues; loop++) {
++			if (!dpaa_intf->rx_queues)
++				break;
++
++			fq = &dpaa_intf->rx_queues[loop];
++			if (fq->qp_initialized) {
++				rte_dpaa_portal_fq_close(fq);
++				fq->qp_initialized = 0;
++			}
++		}
++	}
++	is_global_init = 0;
++}
++
++static int
++rte_dpaa_remove(struct rte_dpaa_device *dpaa_dev)
++{
++	struct rte_eth_dev *eth_dev;
++	int ret;
++
++	PMD_INIT_FUNC_TRACE();
++
++	eth_dev = dpaa_dev->eth_dev;
++	dpaa_eth_dev_close(eth_dev);
++	ret = rte_eth_dev_release_port(eth_dev);
++	dpaa_valid_dev--;
++	if (!dpaa_valid_dev) {
++		rte_mempool_free(dpaa_tx_sg_pool);
++		dpaa_finish();
++	}
++	return ret;
+ }
+ 
+ static struct rte_dpaa_driver rte_dpaa_pmd = {
 -- 
 2.25.1
 
