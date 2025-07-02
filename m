@@ -2,25 +2,25 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41FE4C83F04
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Jul 2025 15:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81315C77B7C
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Jul 2025 15:31:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 75C87402A0;
-	Wed,  2 Jul 2025 17:09:29 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4A7BA4028E;
+	Wed,  2 Jul 2025 17:31:34 +0200 (CEST)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id EF3D940285
- for <dev@dpdk.org>; Wed,  2 Jul 2025 17:09:27 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id DF2DD40285
+ for <dev@dpdk.org>; Wed,  2 Jul 2025 17:31:32 +0200 (CEST)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7845822C7;
- Wed,  2 Jul 2025 08:09:12 -0700 (PDT)
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 489AC3024;
+ Wed,  2 Jul 2025 08:31:17 -0700 (PDT)
 Received: from [10.1.35.68] (JR4XG4HTQC-2.cambridge.arm.com [10.1.35.68])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D3C283F6A8;
- Wed,  2 Jul 2025 08:09:25 -0700 (PDT)
-Message-ID: <b3cd8792-9673-4227-9c6c-ac9b6c152efd@arm.com>
-Date: Wed, 2 Jul 2025 16:09:24 +0100
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CEE123F6A8;
+ Wed,  2 Jul 2025 08:31:30 -0700 (PDT)
+Message-ID: <f7b7e8c3-1033-4fe8-8e05-1992fc6f271b@arm.com>
+Date: Wed, 2 Jul 2025 16:31:29 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/5] dts: rework config module to support perf TGs
+Subject: Re: [PATCH v3 2/5] dts: rework traffic generator inheritance structure
 Content-Language: en-GB
 To: Patrick Robb <probb@iol.unh.edu>, Paul.Szczepanek@arm.com
 Cc: dev@dpdk.org, dmarx@iol.unh.edu, nprattedev@gmail.com,
@@ -28,8 +28,9 @@ Cc: dev@dpdk.org, dmarx@iol.unh.edu, nprattedev@gmail.com,
  Nicholas Pratte <npratte@iol.unh.edu>
 References: <20250423194011.1447679-1-npratte@iol.unh.edu>
  <20250702052154.381690-1-probb@iol.unh.edu>
+ <20250702052154.381690-2-probb@iol.unh.edu>
 From: Luca Vizzarro <Luca.Vizzarro@arm.com>
-In-Reply-To: <20250702052154.381690-1-probb@iol.unh.edu>
+In-Reply-To: <20250702052154.381690-2-probb@iol.unh.edu>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
@@ -45,36 +46,90 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Patrick and Nick,
-
-I am unsure what happened with this commit. The commit subject doesn't 
-match what's happening here. Mentions a rework of the config module, 
-which is not. Description seems ok.
-
-Another issue I see is that some changes don't make a lot logical sense 
-as they stand here. The changes in test_run.yaml, don't really belong 
-here, and could be considered breaking. I am assuming they were 
-improperly re-ordered between commits. Similarly I don't see appropriate 
-doc changes to reflect the change in the configuration examples path.
-
 On 02/07/2025 06:21, Patrick Robb wrote:
-> --- a/dts/test_run.example.yaml
-> +++ b/dts/configurations/test_run.example.yaml
-> @@ -1,8 +1,3 @@
-> -# SPDX-License-Identifier: BSD-3-Clause
-> -# Copyright 2022-2023 The DPDK contributors
-> -# Copyright 2023 Arm Limited
-> -
-> -# Define the test run environment
+> +++ b/dts/framework/testbed_model/traffic_generator/performance_traffic_generator.py
+> @@ -0,0 +1,63 @@
+> <snip>
+> +
+> +@dataclass(slots=True)
+> +class PerformanceTrafficStats(ABC):
 
-And removing this line above, would cause in sphinx to complain as the 
-example rendering relies on this line.
+Why is this inheriting ABC? I don't see why a dataclass would be 
+abstract given it's even missing abstract methods.
 
->   dpdk:
->     lcores: "" # use all available logical cores (Skips first core)
->     memory_channels: 4 # tells DPDK to use 4 memory channels
-> @@ -23,8 +18,14 @@ dpdk:
->       # in a subdirectory of DPDK tree root directory. Otherwise, will be using the `build_options`
->       # to build the DPDK from source. Either `precompiled_build_dir` or `build_options` can be
->       # defined, but not both.
+> <snip>
+> +class PerformanceTrafficGenerator(TrafficGenerator):
+> +    """An abstract base class for all performance-oriented traffic generators.
+> +
+> +    Provides an intermediary interface for performance-based traffic generator.
+> +    """
+> +
+> +    @abstractmethod
+> +    def calculate_traffic_and_stats(
+> +        self,
+> +        packet: Packet,
+> +        send_mpps: int,
+> +        duration: float,
+> +    ) -> PerformanceTrafficStats:
+> +        """Send packet traffic and acquire associated statistics.
+> +
+> +        Args:
+> +        packet: The packet to send.
+> +        send_mpps: The millions packets per second send rate.
+> +        duration: Performance test duration (in seconds).
+
+bad indentation for args.
+
+> diff --git a/dts/framework/testbed_model/traffic_generator/scapy.py b/dts/framework/testbed_model/traffic_generator/scapy.py
+> index e21ba4ed96..602b93d473 100644
+> --- a/dts/framework/testbed_model/traffic_generator/scapy.py
+> +++ b/dts/framework/testbed_model/traffic_generator/scapy.py
+> @@ -26,7 +26,7 @@
+>   from scapy.packet import Packet
+>   
+>   from framework.config.node import OS
+> -from framework.config.test_run import ScapyTrafficGeneratorConfig
+> +from framework.config.test_run import TrafficGeneratorConfig
+
+Making the Scapy class use a more generic config class looks like 
+breaking behaviour. Why is this happening?
+
+> @@ -332,6 +332,10 @@ def setup(self, topology: Topology):
+>           self._shell.send_command("from scapy.all import *")
+>           self._shell.send_command("from scapy.contrib.lldp import *")
+>   
+> +    def teardown(self):
+> +        """Overrides :meth:`.traffic_generator.TrafficGenerator.teardown`."""
+> +        pass
+
+nit: `pass` is not needed here, because the docstring already completes 
+the method as noop.
+
+> <snip>
+> diff --git a/dts/framework/testbed_model/traffic_generator/traffic_generator.py b/dts/framework/testbed_model/traffic_generator/traffic_generator.py
+> index 8f53b07daf..ea3075989d 100644
+> --- a/dts/framework/testbed_model/traffic_generator/traffic_generator.py
+> +++ b/dts/framework/testbed_model/traffic_generator/traffic_generator.py
+> @@ -10,14 +10,10 @@
+> <snip>
+>   
+>   class TrafficGenerator(ABC):
+> @@ -54,46 +50,6 @@ def setup(self, topology: Topology):
+>   
+>       def teardown(self):
+>           """Teardown the traffic generator."""
+> -        self.close()
+
+how come are we removing the default close behaviour? I don't see it 
+being replaced appropriately.
+
+> <snip>
+> -    @property
+> -    def is_capturing(self) -> bool:
+> -        """This traffic generator can't capture traffic."""
+> -        return False
+Why is the above property being removed?
+>   
+>       @abstractmethod
+>       def close(self) -> None:
 
