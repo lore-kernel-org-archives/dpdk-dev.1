@@ -2,72 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5102C77B7C
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Jul 2025 18:22:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85B89C83F03
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Jul 2025 18:23:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D000B40E96;
-	Wed,  2 Jul 2025 20:22:48 +0200 (CEST)
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com
- [209.85.219.49]) by mails.dpdk.org (Postfix) with ESMTP id 65F884028E
- for <dev@dpdk.org>; Wed,  2 Jul 2025 20:22:47 +0200 (CEST)
-Received: by mail-qv1-f49.google.com with SMTP id
- 6a1803df08f44-6fad4a1dc33so47796676d6.1
- for <dev@dpdk.org>; Wed, 02 Jul 2025 11:22:47 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 936B040EE7;
+	Wed,  2 Jul 2025 20:23:01 +0200 (CEST)
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com
+ [209.85.210.172])
+ by mails.dpdk.org (Postfix) with ESMTP id D0D7D40E8A;
+ Wed,  2 Jul 2025 20:22:59 +0200 (CEST)
+Received: by mail-pf1-f172.google.com with SMTP id
+ d2e1a72fcca58-749248d06faso7340940b3a.2; 
+ Wed, 02 Jul 2025 11:22:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751480566;
- x=1752085366; darn=dpdk.org; 
+ d=gmail.com; s=20230601; t=1751480579; x=1752085379; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=EsSbhAsuDTdqjI8mv7egnMVIZb4jjDcc41iiIHfUFgM=;
- b=iPh7qpcZY5TnTGc/Vk3zrnW9OPCcYTYO2kHUxWVlojK0R1yV/gZSCNQy10OR6HY8HN
- 1yAkcyBnZfmBPIp5Y0F9rsSpJP0uS3n6vZpQO+KK5nsSPc7NY3BDentntQ2YS4c3tSOi
- /YT9P/dFtt+zX40tJtvx78/82jV2Q7jt7+ZZJV+GeW1jVP68Pti5NBOrKQfanJ+l9to6
- XX8bMMtbICeQzy8ULq6vl/SS7nIbqypsexd71LZBToLuifLwyblx/hD9dHZWvCaXCAs6
- 1GDaEOQ5d96jRj+Zm2vuL2mL+NIEmwLoA9jnCjeI1WBwWiHO2T7heo5x9H2AqwXLoBK/
- qR6w==
+ bh=IygRE7B3XzL5FGRMQd9fk2AbwQSAery88pow47GbAbo=;
+ b=f/vl/jDK/JGrbCorpOsFMyVre9aEkzXZbM4G8zZHJOcJfoIYwHmS2g3VviBRmtmgeb
+ PVjmTlge5S1jcFBZkcJv1YOyYDcbwFzA+O4QLbk1ntyJBP84mEKevknimdoFeg87T0rV
+ THJAQ2+h9z2vg1Lu9glq23quns+VleWCrdgLwKTmm4X9je4tnFHVct2eph/e1dYOBW+O
+ jTVm7RhCvJFbCM90Ee4wYjQvn66laWR0Tw2KP6zqtt0wWEKBZBzIqVTN6mtk/VOUJg+q
+ t0gaRQJqoC67H20dd7RMGXlOBBPrdeHKycidqXpbaL3SW5GltsOiT9jSZF29bEXv8Hm0
+ gA9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1751480566; x=1752085366;
+ d=1e100.net; s=20230601; t=1751480579; x=1752085379;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=EsSbhAsuDTdqjI8mv7egnMVIZb4jjDcc41iiIHfUFgM=;
- b=CJ/04o9n+6x18tomDnDWVec8DsU7IxjcW42yFeXJ3HdMkw+77nM/V75m6zaHLtf2WV
- ZFSAsM1gVkn6tl3/wDneLrMdcKL53XcViO3qsDvUzZWeZzF1J7Sa/SlDOUPKfzyPLAXN
- JyF75zXEvSBk9oeIgX7PrV+7To0JEEB/Oc5ETyqzt/yxjTpTwCh4Izf/6ELTkTSmt+sb
- 5D6z13VsaZEOSSGihc8rDFDrTDYMQ0Be/Ju5ur4yO0ekyFJxbqJ504ac8YZnVOvvaOkb
- T6Mb+oWsBQ7BRvFQT3PFZNc8Iht/TjHhGo8cK+y0KDXx0q6Z0gZJIrLmcG5/8cGhAw+/
- 9Teg==
-X-Gm-Message-State: AOJu0YwwKk73lcMlpucmhJMw6L8l44cs3Qd1xa2fQurJqnGi/IkshTq9
- WYRbBLNAev1hZ6ZwYI5Pwwg03yqjJHopfOaDcOYBIVbUE8FB9skyLvLMpN4YWWMBDRk=
-X-Gm-Gg: ASbGncvgJZex2UJ0dcYiDspQUklmsbj2idhhVXjTe8i/WNHfR7DEV9rnoexByDdvkmq
- +/2uLciBEmw5xgrN1NiViwoShRQsCXFtbj1DtmoJCHjAnXhwd8QOoR3opYWSTpZ+LFX9Te2N20x
- XyD8hrLdFQqI8i4ccy20nlhvNvXbCT30Q0tOjx5/GxN1F7Xx7DO+02A5PXlhebQp4FcwFZGQAEb
- qKfEfTM8M5vvs95HQhbKr5WWtcY5PzUpzQLH5y4207hlLTARhQvWLgofw/BPoMx6U0CtD8QNoWy
- QTI17PcU8TeF9w07YtLGsyW27Z1hcE9D9Zr4ltw2n6jd61vH9FHLisn7oKuLmgDf2Ptuf7Pxih3
- wPcPl9MzkUEkXdjntMiwjunc2L5sIjKGBvrVTJdw=
-X-Google-Smtp-Source: AGHT+IGMIp2t3HmbJUuVJegMOArWyA76rs5GCoXUddmHKiPIiAVvjYa1WHldaldKiE8lxQRr46Rg0Q==
-X-Received: by 2002:a05:6214:5a07:b0:6ff:664f:c4ca with SMTP id
- 6a1803df08f44-702bc89da37mr4743656d6.12.1751480566511; 
- Wed, 02 Jul 2025 11:22:46 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=IygRE7B3XzL5FGRMQd9fk2AbwQSAery88pow47GbAbo=;
+ b=Dt0OwAGHGwP/w/OT2J/cpOyJKw1uk1bu/CG8bR06u5JJtoETfWUNsM4mbzpXadrCwJ
+ UzWzNiB4XnE1P4aDA1jbp1bCDpoUl5RsIWpB7opTpV90mwmVHvlu4jYEKRicfMmQoR6M
+ 14lVQw/GFIjvjjcY9HrRgZQzsBA6JqDH4AXqDB4Rag/H5bPU9AKXnj/tDKA9MG/8UWPV
+ tARSqG3fS8kJPFD17bmAXp0po+y+PBiBcLtbTdj/9YFZ5+ypSLyPQ03INfYgWonv6hIb
+ C+U/9vM5IwFfuNqNysHu1OyIhm5Ws6XC7vgna1oOLLrEdoupUh1PUeD+xFWhRC7+mQ5L
+ BN2w==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXb5hE35oNuaIQ90hkZJ6eubBn/kyxTY8g3mCOLmzz3eagUAKzyCCbLk/gKuF1/2R3fonYhPAA=@dpdk.org
+X-Gm-Message-State: AOJu0YxJJn2qPXDSq9cywf6ZKH6fLUXA5P9UQUPFEM+jiUe4SXg0Et/E
+ 6O0PKA/u85AaYZ1/jrNB7FLWtG0KyDvMYAlchCrGMPLDEGR3UKLWLM3nYcUnla21
+X-Gm-Gg: ASbGncvqsOPJ+3ymWDC1UeVLslHkzEBNie9INdCMyG3EXMjc+kNDPnhF3q2chfTFz+N
+ JrKW7fX9nr9GQc2nUah4ZNZOBaJ2Zb3GPuq/pEKLOTwqHyjR5SrFZBGwkSTF365crao5n96y88B
+ Dc4NS5U3vdjsloFgqgmEW7Pfb8J40zjR4I2SmL3ziTL8PxBiL8WmphEHDjwbERY11AHUzo1AHW4
+ IZNRrQB2PP/cciPjBsl+FYQBhU0pvvqqdwjT17BJtmUV5PVfjxkp+9rK4glx2WbdG/oecni0MZw
+ 2XzMIT7lBK+L7AfMhtY4ZDfOkF9tmXrxty2dva9+licRlrvGSDqNu9xGU0UYK19h1WgEzcFFRE3
+ Jd2a0zPyRuJmia97YsnvfEWMAnHOPIE+pJw==
+X-Google-Smtp-Source: AGHT+IG/2RNM/Y/I9YH2+buWKUlSO2KIq9Q1sViOQxDZL9Wkx7LO9ajCPdCinsEOknpdNsV8iw72CA==
+X-Received: by 2002:a05:6a00:a1f:b0:736:4644:86ee with SMTP id
+ d2e1a72fcca58-74b51048d7fmr5184444b3a.14.1751480578414; 
+ Wed, 02 Jul 2025 11:22:58 -0700 (PDT)
+Received: from localhost.localdomain ([2402:e280:2162:53:bd13:dda6:5d:6065])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-6fd772df642sm104286906d6.74.2025.07.02.11.22.45
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 02 Jul 2025 11:22:46 -0700 (PDT)
-Date: Wed, 2 Jul 2025 11:22:42 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>, Vipin
- Varghese <vipin.varghese@amd.com>
-Subject: Re: [PATCH v2] build/x86: fix support for older compilers
-Message-ID: <20250702112242.7b93d978@hermes.local>
-In-Reply-To: <20250702160138.3441279-1-bruce.richardson@intel.com>
-References: <20250702155129.3440210-1-bruce.richardson@intel.com>
- <20250702160138.3441279-1-bruce.richardson@intel.com>
+ d2e1a72fcca58-74af540be24sm14433428b3a.20.2025.07.02.11.22.55
+ (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+ Wed, 02 Jul 2025 11:22:57 -0700 (PDT)
+From: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
+To: dev@dpdk.org
+Cc: amiyaranjan.mohakud@gmail.com,
+	stable@dpdk.org
+Subject: [PATCH v3] net/iavf: fix VLAN offload strip flag
+Date: Wed,  2 Jul 2025 23:52:51 +0530
+Message-Id: <20250702182251.96427-1-amiyaranjan.mohakud@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250702181506.95192-1-amiyaranjan.mohakud@gmail.com>
+References: <20250702181506.95192-1-amiyaranjan.mohakud@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,46 +82,109 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed,  2 Jul 2025 17:00:45 +0100
-Bruce Richardson <bruce.richardson@intel.com> wrote:
+For i40e kernel drivers which support either vlan(v1) or vlan(v2)
+VIRTCHNL OP,it will set strip on when setting filter on. But dpdk
+side will not change strip flag. To be consistent with dpdk side,
+explicitly disable strip again.
 
-> Some older compilers e.g. gcc 8.5, do not support overriding
-> -march=native with another architecture, leading to build warnings such
-> as reported in Bugzilla (link below). Add a check for that case, and
-> explicitly add the avx512 flags if necessary.
-> 
-> Note: it appears that it is only the "native" flag that isn't
-> overridden, which makes the issue hard to reproduce e.g. using
-> godbolt.org, or on a modern machine. For example, testing with gcc 8.5
-> on a haswell machine, using 'native' vs explicit 'haswell':
-> 
-> gcc -march=native -march=skylake-avx512 -dM -E - < /dev/null | grep AVX512 | wc -l
-> 0
-> 
-> gcc -march=haswell -march=skylake-avx512 -dM -E - < /dev/null | grep AVX512 | wc -l
-> 5
-> 
-> Bugzilla ID: 1736
-> Fixes: e361ae3f59d3 ("build: reduce use of AVX compiler flags")
-> 
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> ---
->  config/x86/meson.build | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/config/x86/meson.build b/config/x86/meson.build
-> index e2ccfb6d12..0dcc5ddee4 100644
-> --- a/config/x86/meson.build
-> +++ b/config/x86/meson.build
-> @@ -71,8 +71,13 @@ avx512_march_flag = '-march=x86-64-v4'
->  if not cc.has_argument(avx512_march_flag)
->      avx512_march_flag = '-march=skylake-avx512'
->  endif
-> +# workaround for older compilers, e.g. gcc 8.5 on RHEL 8.
-> +# if march flag overriding doesn't work, explicitly add flags for AVX512.
-> +if cc.get_define('__AVX512F__', args: [machine_args, avx512_march_flag]) == ''
-> +    avx512_march_flag = ['-mavx512f', '-mavx512bw', '-mavx512cd', '-mavx512dq', '-mavx512vl']
-> +endif
+Bugzilla ID:1725
+Cc: stable@dpdk.org
 
-RHEL 8.5 reached end of extended support cycle (EOL).
-Why are we still supporting it?
+v3:
+- Fixed the vlan(v2) scenario by calling appropriate api
+- Addresses Bugzilla ID: 1735
+v2:
+- Fixed indentation in commit message
+
+Signed-off-by: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
+---
+ drivers/net/intel/iavf/iavf_ethdev.c | 52 ++++++++++++++++++----------
+ 1 file changed, 33 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index b3dacbef84..845d773594 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -1379,14 +1379,43 @@ iavf_dev_del_mac_addr(struct rte_eth_dev *dev, uint32_t index)
+ }
+ 
+ static int
+-iavf_dev_vlan_filter_set(struct rte_eth_dev *dev, uint16_t vlan_id, int on)
++iavf_disable_vlan_strip_ex(struct rte_eth_dev *dev, int on)
+ {
++	/* For i40e kernel drivers which supports both vlan(v1 & v2) VIRTCHNL OP,
++	 * it will set strip on when setting filter on but dpdk side will not
++	 * change strip flag. To be consistent with dpdk side, explicitly disable
++	 * strip again.
++	 *
++	 */
+ 	struct iavf_adapter *adapter =
+ 		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
+ 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
+ 	struct rte_eth_conf *dev_conf = &dev->data->dev_conf;
+ 	int err;
+ 
++	if (adapter->hw.mac.type == IAVF_MAC_XL710 ||
++	    adapter->hw.mac.type == IAVF_MAC_VF ||
++	    adapter->hw.mac.type == IAVF_MAC_X722_VF) {
++		if (on && !(dev_conf->rxmode.offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP)) {
++			if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_VLAN_V2)
++				err = iavf_config_vlan_strip_v2(adapter, false);
++			else
++				err = iavf_disable_vlan_strip(adapter);
++			if (err)
++				return -EIO;
++		}
++	}
++	return 0;
++}
++
++static int
++iavf_dev_vlan_filter_set(struct rte_eth_dev *dev, uint16_t vlan_id, int on)
++{
++	struct iavf_adapter *adapter =
++		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
++	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
++	int err;
++
+ 	if (adapter->closed)
+ 		return -EIO;
+ 
+@@ -1394,7 +1423,8 @@ iavf_dev_vlan_filter_set(struct rte_eth_dev *dev, uint16_t vlan_id, int on)
+ 		err = iavf_add_del_vlan_v2(adapter, vlan_id, on);
+ 		if (err)
+ 			return -EIO;
+-		return 0;
++
++		return iavf_disable_vlan_strip_ex(dev, on);
+ 	}
+ 
+ 	if (!(vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_VLAN))
+@@ -1404,23 +1434,7 @@ iavf_dev_vlan_filter_set(struct rte_eth_dev *dev, uint16_t vlan_id, int on)
+ 	if (err)
+ 		return -EIO;
+ 
+-	/* For i40e kernel driver which only supports vlan(v1) VIRTCHNL OP,
+-	 * it will set strip on when setting filter on but dpdk side will not
+-	 * change strip flag. To be consistent with dpdk side, disable strip
+-	 * again.
+-	 *
+-	 * For i40e kernel driver which supports vlan v2, dpdk will invoke vlan v2
+-	 * related function, so it won't go through here.
+-	 */
+-	if (adapter->hw.mac.type == IAVF_MAC_XL710 ||
+-	    adapter->hw.mac.type == IAVF_MAC_X722_VF) {
+-		if (on && !(dev_conf->rxmode.offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP)) {
+-			err = iavf_disable_vlan_strip(adapter);
+-			if (err)
+-				return -EIO;
+-		}
+-	}
+-	return 0;
++	return iavf_disable_vlan_strip_ex(dev, on);
+ }
+ 
+ static void
+-- 
+2.39.5 (Apple Git-154)
+
