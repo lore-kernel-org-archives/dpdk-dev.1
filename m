@@ -2,29 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C325CC83F04
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Jul 2025 16:43:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6645C83F04
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Jul 2025 16:43:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 076B74064C;
-	Wed,  2 Jul 2025 18:43:30 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9A9F140ED6;
+	Wed,  2 Jul 2025 18:43:31 +0200 (CEST)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 6A9EA4028E
- for <dev@dpdk.org>; Wed,  2 Jul 2025 18:43:28 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 2E8994028E
+ for <dev@dpdk.org>; Wed,  2 Jul 2025 18:43:29 +0200 (CEST)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DBC3322C7;
- Wed,  2 Jul 2025 09:43:12 -0700 (PDT)
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B227222D9;
+ Wed,  2 Jul 2025 09:43:13 -0700 (PDT)
 Received: from localhost.localdomain (JR4XG4HTQC-2.cambridge.arm.com
  [10.1.35.68])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id ED0223F66E;
- Wed,  2 Jul 2025 09:43:26 -0700 (PDT)
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DF6663F66E;
+ Wed,  2 Jul 2025 09:43:27 -0700 (PDT)
 From: Luca Vizzarro <luca.vizzarro@arm.com>
 To: dev@dpdk.org
-Cc: Luca Vizzarro <luca.vizzarro@arm.com>, Patrick Robb <probb@iol.unh.edu>,
- Paul Szczepanek <paul.szczepanek@arm.com>
-Subject: [PATCH 0/2] dts: add generic blocking app class
-Date: Wed,  2 Jul 2025 17:42:02 +0100
-Message-ID: <20250702164204.607685-1-luca.vizzarro@arm.com>
+Cc: Luca Vizzarro <luca.vizzarro@arm.com>,
+ Paul Szczepanek <paul.szczepanek@arm.com>, Patrick Robb <probb@iol.unh.edu>
+Subject: [PATCH 1/2] dts: add DPDK build app helper function
+Date: Wed,  2 Jul 2025 17:42:03 +0100
+Message-ID: <20250702164204.607685-2-luca.vizzarro@arm.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250702164204.607685-1-luca.vizzarro@arm.com>
+References: <20250702164204.607685-1-luca.vizzarro@arm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -40,26 +42,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
+Make a distinction between example apps and app/ apps by renaming the
+build app function. Moreover, provide a dedicated helper function to
+retrieve the path to a DPDK app.
 
-sending in some minor improvements that unlocks the possibility of
-running any app in the background.
+Signed-off-by: Luca Vizzarro <luca.vizzarro@arm.com>
+Reviewed-by: Paul Szczepanek <paul.szczepanek@arm.com>
+---
+ dts/framework/remote_session/dpdk.py | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Best,
-Luca
-
-Luca Vizzarro (2):
-  dts: add DPDK build app helper function
-  dts: add generic blocking app class
-
- dts/framework/remote_session/blocking_app.py | 135 +++++++++++++++++++
- dts/framework/remote_session/dpdk.py         |   8 +-
- dts/framework/remote_session/dpdk_app.py     |  80 -----------
- dts/tests/TestSuite_packet_capture.py        |  66 +++------
- 4 files changed, 160 insertions(+), 129 deletions(-)
- create mode 100644 dts/framework/remote_session/blocking_app.py
- delete mode 100644 dts/framework/remote_session/dpdk_app.py
-
+diff --git a/dts/framework/remote_session/dpdk.py b/dts/framework/remote_session/dpdk.py
+index e00c4a9bf9..ed1f808bdd 100644
+--- a/dts/framework/remote_session/dpdk.py
++++ b/dts/framework/remote_session/dpdk.py
+@@ -267,8 +267,8 @@ def _build_dpdk(self) -> None:
+             self.remote_dpdk_build_dir,
+         )
+ 
+-    def build_dpdk_app(self, app_name: str, **meson_dpdk_args: str | bool) -> PurePath:
+-        """Build one or all DPDK apps.
++    def build_dpdk_example_app(self, app_name: str, **meson_dpdk_args: str | bool) -> PurePath:
++        """Build one or all DPDK example apps.
+ 
+         Requires DPDK to be already built on the SUT node.
+ 
+@@ -298,6 +298,10 @@ def build_dpdk_app(self, app_name: str, **meson_dpdk_args: str | bool) -> PurePa
+             self.remote_dpdk_build_dir, "examples", f"dpdk-{app_name}"
+         )
+ 
++    def get_app(self, app_name: str) -> PurePath:
++        """Retrieve path for a DPDK app."""
++        return self._session.join_remote_path(self.remote_dpdk_build_dir, "app", f"dpdk-{app_name}")
++
+     @cached_property
+     def remote_dpdk_tree_path(self) -> PurePath:
+         """The remote DPDK tree path."""
 -- 
 2.43.0
 
