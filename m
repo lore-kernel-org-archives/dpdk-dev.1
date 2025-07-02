@@ -2,64 +2,61 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9170BC8303F
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Jul 2025 12:17:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63AECC8303F
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Jul 2025 12:30:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3D793402E8;
-	Wed,  2 Jul 2025 14:17:28 +0200 (CEST)
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com
- [209.85.167.181])
- by mails.dpdk.org (Postfix) with ESMTP id 4C60F402A0
- for <dev@dpdk.org>; Wed,  2 Jul 2025 14:17:26 +0200 (CEST)
-Received: by mail-oi1-f181.google.com with SMTP id
- 5614622812f47-408e0986303so2698696b6e.2
- for <dev@dpdk.org>; Wed, 02 Jul 2025 05:17:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1751458645; x=1752063445; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=cfSTCKtrpzOgdapUrpQAjUjIurI3DeUbDt7DxRjHVAg=;
- b=fZIJn6L0CcFjx0xtlaw9TYVE7Ik8/P2AMaLAsXnAtIaUDI4n+P2uNrs3lJvRIEEqQf
- xIxXbYwKHRW6zK7sciCpIFSw484FHnb49oi43PWG93yxN6mvjwiDlM2nKk9o68Ndi3jW
- rIuImls2+LpQEzwVqW3W6sxid2+VO+0SBRxo+sdhLw82OakvQjKygkGw/HhHhZWUg4oG
- omewglanqWGN0gU/E1684pW3MUFOnSXQGdp3xNB7hkehq7l+Q5/oi+L+m1iiMsJnbRRN
- Qy45531kiA+a6pLg3nVpQPeBMqKlorCFF5bLkS+Gc3v9gDF1T7IAh+M0HkFrBGqHtU3E
- pzmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1751458645; x=1752063445;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=cfSTCKtrpzOgdapUrpQAjUjIurI3DeUbDt7DxRjHVAg=;
- b=K7giPBKFoAlJxQmAL2G8Ysx5sTbWmF0ushbziyMiIoGqYV5L8iXA1RnCrX6KERDurz
- JvWzYX0W+mb/jN24upHgPxvJgno3lGkv8fLM4wfQs1IqG3DBGGVTs56GZV4W5EB8w0oZ
- 67+tv2TQTZG8RyND0GJsMLnj4KoVx91LBeyOuKdcZCzdX5JAnEHcVOWAcCYmv5Vozp78
- H+SxkdJoC69FFdRdULiBGrLBd9FsdMF4n0KPneBqdFy/vAq4P+Lgw1HkU9VQAJIlZVxi
- yptUZo5uxfSK66BPSXm0iONEhV50mKQHbeXSM9D9eGhqt9mZxz30N1GdEqmviNhS+EPB
- An8A==
-X-Gm-Message-State: AOJu0YzENlZGLwMjsvSiLZJdq7livuQGtbkdpusL7zM+hVmWRD7fNkux
- h5TbfeIn9/UNVUUZHXJj7kpy9QB8FbClorLjJFqwYU44iidy3FHk9ReEt6bTKqFmxb7nzeLDxh6
- Yxr9He2GQ6oDd+HSaoPSls0JyaY0ffa5XAVmSERE=
-X-Gm-Gg: ASbGncu4voBclX0pu6nss4/sexbanzIWPL5pZ7HPgoxCHt/u6hRQMKueMbGwByuxeqG
- ovOFL1DPL8nde7DasI+sfQkFIKOmveU14qyqyVPahGycgtl8RVI8hBS7PWuLp/Yo/shSPlasOVs
- K4uk0uG5ejusFLUUUYxp6Ab2Jm8XXunoZcA+/3yqKM2gSypYD1kWlUww==
-X-Google-Smtp-Source: AGHT+IGCKxNp83uocNo1szR1OYdva/xZ3oZuwSGVGReBggxCMq4pLMjIp26tqWLenbYuKcm0kxCHcaKQSWMyQVx67VI=
-X-Received: by 2002:a05:6808:1b25:b0:409:f8e:7282 with SMTP id
- 5614622812f47-40b887a360amr1835921b6e.5.1751458645128; Wed, 02 Jul 2025
- 05:17:25 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3ECE3402E8;
+	Wed,  2 Jul 2025 14:30:22 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 1826D402A0
+ for <dev@dpdk.org>; Wed,  2 Jul 2025 14:30:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1751459419;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=uO7VYUeoUYblrAhAUbbvk1bc1pMU+U/R/HWLoZApZ74=;
+ b=TF7qDhelQpiybdXG6s8IODCNtMJLQ0q3V0JYa6ho/n3cuqXfoWCk/bvWppYvUVToHv6H9D
+ zDfNunUjAcTae0ue56xGTodIjOMIP5sEuo6ch5bsd0RYqF6bxT9FyO+P/xu/5+C2sPQPsj
+ yVZuuy6paiqpGsVw/GIH7ByVhseoWIg=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-214-A19cQ_jzPgm5ABk74wdvdA-1; Wed,
+ 02 Jul 2025 08:30:14 -0400
+X-MC-Unique: A19cQ_jzPgm5ABk74wdvdA-1
+X-Mimecast-MFC-AGG-ID: A19cQ_jzPgm5ABk74wdvdA_1751459412
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 892281801207; Wed,  2 Jul 2025 12:30:12 +0000 (UTC)
+Received: from RHTRH0061144 (unknown [10.22.65.59])
+ by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 40F7219560AB; Wed,  2 Jul 2025 12:30:11 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: Jerin Jacob <jerinjacobk@gmail.com>
+Cc: Ori Kam <orika@nvidia.com>,  Jerin Jacob <jerinj@marvell.com>,  dev
+ <dev@dpdk.org>,  "techboard@dpdk.org" <techboard@dpdk.org>
+Subject: Re: Proposal: AI-Based Code Review for DPDK
+In-Reply-To: <CALBAE1MTeqJKGy1EzXV1oCq2SxmN-Y4fm4LwwkAwcHbDy_2w3Q@mail.gmail.com>
+ (Jerin Jacob's message of "Fri, 27 Jun 2025 13:31:03 +0530")
+References: <BY3PR18MB478574FF76D2777FFACB1B00C877A@BY3PR18MB4785.namprd18.prod.outlook.com>
+ <ccab20d4-8620-407c-b7a9-de5b81c4d6e8@nvidia.com>
+ <CALBAE1MTeqJKGy1EzXV1oCq2SxmN-Y4fm4LwwkAwcHbDy_2w3Q@mail.gmail.com>
+Date: Wed, 02 Jul 2025 08:30:09 -0400
+Message-ID: <f7th5zusrla.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 MIME-Version: 1.0
-References: <20250619115445.257679-1-hengqi.chen@gmail.com>
-In-Reply-To: <20250619115445.257679-1-hengqi.chen@gmail.com>
-From: Hengqi Chen <hengqi.chen@gmail.com>
-Date: Wed, 2 Jul 2025 20:17:14 +0800
-X-Gm-Features: Ac12FXy6lDRSgBXlefnSWZUe7aYSUwzjnlMGrTZgrCxyN00GMmRmsBzuqyO2Pjc
-Message-ID: <CAEyhmHRs6mwW-uc8XzK6HKRNn8ZnyMrpiBsQE7fdSsMuhxqrUA@mail.gmail.com>
-Subject: Re: [PATCH] net/virtio: Implement {rxq,txq}_info_get callbacks
-To: dev@dpdk.org
-Cc: Maxime Coquelin <maxime.coquelin@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: vXY_FDk1Ab_QyxlFjo_foZxF7LzECfggiLQuATZnzqo_1751459412
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -74,68 +71,120 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Maxime, Chenbo,
+Jerin Jacob <jerinjacobk@gmail.com> writes:
 
-Gentle ping on this. Does this change make sense ?
+> On Thu, Jun 19, 2025 at 7:42=E2=80=AFPM Ori Kam <orika@nvidia.com> wrote:
+>>
+>>
+>> Nice idea,
+>> Some comments:
+>>
+>>
+>> 1. The first link is broken for me.
+>
+> Yes.  https://github.com/DPDK/dpdk-ai-code-review is the proposed name
+> of the repository. It is not created yet.
 
-On Thu, Jun 19, 2025 at 7:55=E2=80=AFPM Hengqi Chen <hengqi.chen@gmail.com>=
- wrote:
+I guess we need this created by someone (but I don't know who should be
+the contact).
+
+>>
+>> 2. I like the idea that there is a separate GitHub repository. If I
+>>     understand correctly the new repository is a clone of the main one,
+>>     and only used by the bot is that correct?
 >
-> Currently, there are no ways to retrieve the queue size
-> set by vhost backend. Implement the {rxq,txq}_info_get
-> callbacks so that DPDK applications can use the queue
-> size to setup mempool properly.
+> Yes.
 >
-> Signed-off-by: Hengqi Chen <hengqi.chen@gmail.com>
-> ---
->  drivers/net/virtio/virtio_ethdev.c | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
+>>
+>> 3. I think main usage is also for the reviewer, just like in your exampl=
+e.
 >
-> diff --git a/drivers/net/virtio/virtio_ethdev.c b/drivers/net/virtio/virt=
-io_ethdev.c
-> index 2d2635b669..b61d251814 100644
-> --- a/drivers/net/virtio/virtio_ethdev.c
-> +++ b/drivers/net/virtio/virtio_ethdev.c
-> @@ -616,6 +616,28 @@ virtio_dev_priv_dump(struct rte_eth_dev *dev, FILE *=
-f)
->         return 0;
->  }
+> Yes
 >
-> +static void
-> +virtio_rxq_info_get(struct rte_eth_dev *dev, uint16_t rx_queue_id,
-> +                   struct rte_eth_rxq_info *qinfo)
-> +{
-> +       uint16_t vq_idx =3D 2 * rx_queue_id + VTNET_SQ_RQ_QUEUE_IDX;
-> +       struct virtio_hw *hw =3D dev->data->dev_private;
-> +       struct virtqueue *vq =3D hw->vqs[vq_idx];
-> +
-> +       qinfo->nb_desc =3D vq->vq_nentries;
-> +}
-> +
-> +static void
-> +virtio_txq_info_get(struct rte_eth_dev *dev, uint16_t tx_queue_id,
-> +                   struct rte_eth_txq_info *qinfo)
-> +{
-> +       uint16_t vq_idx =3D 2 * tx_queue_id + VTNET_SQ_TQ_QUEUE_IDX;
-> +       struct virtio_hw *hw =3D dev->data->dev_private;
-> +       struct virtqueue *vq =3D hw->vqs[vq_idx];
-> +
-> +       qinfo->nb_desc =3D vq->vq_nentries;
-> +}
-> +
->  /*
->   * dev_ops for virtio, bare necessities for basic operation
->   */
-> @@ -630,6 +652,8 @@ static const struct eth_dev_ops virtio_eth_dev_ops =
-=3D {
->         .allmulticast_disable    =3D virtio_dev_allmulticast_disable,
->         .mtu_set                 =3D virtio_mtu_set,
->         .dev_infos_get           =3D virtio_dev_info_get,
-> +       .rxq_info_get            =3D virtio_rxq_info_get,
-> +       .txq_info_get            =3D virtio_txq_info_get,
->         .stats_get               =3D virtio_dev_stats_get,
->         .xstats_get              =3D virtio_dev_xstats_get,
->         .xstats_get_names        =3D virtio_dev_xstats_get_names,
-> --
-> 2.43.5
+>>
+>> 4. The only thing I=E2=80=99m missing is that there is no =E2=80=9Cperso=
+nal touch=E2=80=9D
+>>     meaning that each reviewer puts emphasis on different things. It wil=
+l
+>>     be great if the AI can learn from previous reviews of the reviewer
+>>     and add review accordingly.
 >
+> Yes. However, It looks like https://docs.sourcery.ai/Code-Review/ dont
+> have that feature.
+>
+>>
+>> 5. It will also be great if the AI could target people who may be
+>>     interested in this patch.  And send them some notification or tell
+>>     the developer to add them in the to
+
+Yes, well - not everyone will be on GitHub.  But the idea / plan from my
+side was to try and get the comments associated with the specific hunks
+and reply to the patch (and all the folks CC'd) with the comments.  At
+the very least, we can send the pull request URL and reply with that.
+
+> Good input.
+>
+>
+> Adding @Aaron Conole . He has some plans to implement this workflow.
+
+Yes - the pull-request submission side is probably fairly simple to
+implement.
+
+But I need to look at monitoring the pull requests.
+
+>>
+>> Best,
+>> Ori
+>>
+>> On 13/06/2025 13:03, Jerin Jacob wrote:
+>> >
+>> > Goals
+>> > -------
+>> >
+>> > # Leverage modern AI-powered code review tools to accelerate and
+>> > supplement human review efforts.
+>> > # Prevent AI-generated comments from cluttering the mailing list
+>> > or polluting the main DPDK GitHub repository.
+>> >
+>> > Setup
+>> > -------
+>> >
+>> > # Create a dedicated repository:
+>> > Set up a new repository, for example:
+>> > https://github.com/DPDK/dpdk-ai-code-review, under the official
+>> > DPDK GitHub organization.
+>> > This ensures that AI-generated pull requests do not interfere with
+>> > the main repository (https://github.com/DPDK/dpdk).
+>> >
+>> > # Select an AI review tool:
+>> > Use a free, open-source-friendly AI code review service.
+>> > One potential candidate is Sourcery: https://sourcery.ai/pricing
+>> >
+>> > # Connect the tool:
+>> > Integrate Sourcery with the new repository via:
+>> > https://app.sourcery.ai/?product=3Dprod_opensource
+>> >
+>> > # Trigger AI reviews:
+>> > Once integrated, any pull request to this repository will
+>> > automatically trigger a code review by the AI tool.
+>> > Example of a test PR reviewed by the AI bot:
+>> > https://github.com/MarvellEmbeddedProcessors/dao/pull/2
+>> >
+>> > Workflow
+>> > -------------
+>> >
+>> > # When a patch is sent to the DPDK mailing list, a bot will
+>> > convert it into a GitHub pull request on the dpdk-ai-code-review
+>> > repository.
+>> > # The AI tool will review the pull request and leave comments
+>> > directly on the PR.
+>> > # Once the AI review is complete, the bot will close the PR and
+>> > share the PR URL:
+>> > - As a comment in Patchwork URL for the given patch
+>> > - With the patch author directly.
+>> > # The author can review the AI-generated comments by visiting the
+>> > PR URL, if they choose to do so.
+>> >
+>> >
+>>
+
