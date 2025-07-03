@@ -2,164 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B1A8C8303C
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Jul 2025 21:33:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E38C77B7C
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Jul 2025 03:40:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5605B40661;
-	Wed,  2 Jul 2025 23:33:58 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
- by mails.dpdk.org (Postfix) with ESMTP id EDD074064C
- for <dev@dpdk.org>; Wed,  2 Jul 2025 23:33:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1751492037; x=1783028037;
- h=from:to:cc:subject:date:message-id:mime-version;
- bh=bI5m/xNmCa4jRCPLurqIgtkp+Kik4W8UJiINHgErBQU=;
- b=aLF0q1v8pStFC3UIOngksOidEyDKKK/HVbOLIE9F9kRupE7MzGJ2W7az
- IgDb2r/KysyLcw6DHiZyCQLZmk0ENyuSAifEFWiecCqIaaKDc880qtZo+
- 9jQrwHFpOCt6TE+j/lZAXrmN/Lhg3MWed1yD8M5itNqBelHv3ilXzlqUL
- 8Oyzz6AHSBDohKCvVCMo3OemRewk6qVy2wOhAY32D2Wfamc4y4ZuEQMGK
- 1e9YITq4naP8ZwCtWa0RJ7ElfUWiercORCnKJEaoD7r/QFhHUOKuk7h2N
- K9vUMnXu1+QE4mCPc835qBlgxF3CJhqGkpgC/PsgMovHiem3940SNS6NB g==;
-X-CSE-ConnectionGUID: QwDH6VAwTSGT97L4QbyA0w==
-X-CSE-MsgGUID: j7f57/saQH+T35ABOmLaVA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="64049827"
-X-IronPort-AV: E=Sophos;i="6.16,282,1744095600"; d="scan'208,217";a="64049827"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
- by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Jul 2025 14:33:56 -0700
-X-CSE-ConnectionGUID: 11mm8o1bRwamUTSY1OpsMQ==
-X-CSE-MsgGUID: pG18rDrLTmq6PzYfH9Tfsw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,282,1744095600"; 
- d="scan'208,217";a="153637984"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
- by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Jul 2025 14:33:56 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 2 Jul 2025 14:33:55 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Wed, 2 Jul 2025 14:33:55 -0700
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (40.107.95.82) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 2 Jul 2025 14:33:54 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Tw882NpIZSQdU24pkKACek7eIEY43QKDY3nNX7YbfWs2ly80hwYyb0JEPhm9HPFa9qDhgLJkE5HJEbu4SxaoZX7fOOm6uXqOMCspe5t3PKXXUAiMYwWo2sqdpFhq8ke2PjpOva5Sjeyv+C2gwT/lCppxlc0UIIfoYc58gOj+ZjRRRDZxe8ZqP3FBlYC0oIjp9mYMe+TgCoQRgj6pPMEjTmtMdTodesNafksbw4Mbu9DRt70V15RolDNItnhD7SKhn7qhLnlFeoUeAMD58iBWrlpKPYw1ooamrXnu7DCbN6kQ+aY/GsCO+YPw90N8v/7i4mmvr54FN5svSrk0KRmFaA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=X2hyPrpIF6GYfgA4C0anY/gzsD1jV+7Z5N6v66W4nhc=;
- b=K/eXOov8Df7lvG+mF7NTFeX8/7ExFXMmmEqIPFNl1r4gFtwYfh0ntd62Aq73MLeNgkFpe5yJmh0t9r4q5UKTqJm127+UhxuwsVC3oZx8oFHTDUHF1nFPnlRtvIacuW5ko2nHMYOi/7R990b99Cl+GgRcr8M5tht8ta3LlmjYF4UX+tqwiWP2xyXFrwW+CMbIolZiyh4KLc3I/AMPsvq1sSpNwxjzKOgwiIbNbXgUQIhEO7sAr53F8dm5ZJiKGsv6+ULoVfVQuGVhLneBHzUqYwN8PPC9HHZ/W08M9bVuCnHziLxqodVPp13FfRbMh4X8b1Z2Sz/luabOYKLCWi84ag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from PH3PPF37F43E35D.namprd11.prod.outlook.com
- (2603:10b6:518:1::d16) by IA1PR11MB8224.namprd11.prod.outlook.com
- (2603:10b6:208:44f::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.23; Wed, 2 Jul
- 2025 21:33:50 +0000
-Received: from PH3PPF37F43E35D.namprd11.prod.outlook.com
- ([fe80::d6a7:781c:d71a:e817]) by PH3PPF37F43E35D.namprd11.prod.outlook.com
- ([fe80::d6a7:781c:d71a:e817%7]) with mapi id 15.20.8857.026; Wed, 2 Jul 2025
- 21:33:50 +0000
-From: "Mcnamara, John" <john.mcnamara@intel.com>
-To: "dev@dpdk.org" <dev@dpdk.org>
-CC: "thomas@monjalon.net" <thomas@monjalon.net>, "Marchand, David"
- <david.marchand@redhat.com>
-Subject: DPDK Release Status Meeting 2025-07-01
-Thread-Topic: DPDK Release Status Meeting 2025-07-01
-Thread-Index: AdvrmO/vShmrCmcGQ5KprbjwpT9rag==
-Date: Wed, 2 Jul 2025 21:33:50 +0000
-Message-ID: <PH3PPF37F43E35D204589A072C077808A56FC40A@PH3PPF37F43E35D.namprd11.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH3PPF37F43E35D:EE_|IA1PR11MB8224:EE_
-x-ms-office365-filtering-correlation-id: e259aa45-e4df-4a20-6e19-08ddb9b022cf
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|1800799024|366016|376014|8096899003|38070700018; 
-x-microsoft-antispam-message-info: =?us-ascii?Q?tXMj1+RoDyCNRMZySTynMxWdXR8sn68WmQHRUZcCWzL0qwePEZPnk/w+Y6t9?=
- =?us-ascii?Q?DNXkdbEQR5HPYNtYumIW6z5deMIE6cEcW/ciOSYUTJcqEyukmOVGzBluW0wj?=
- =?us-ascii?Q?UJxCGOHNJhDXr48CZnlshFox9stMQ4Jm758/h6sIH3v4dM4S2OkSbIjxOMBG?=
- =?us-ascii?Q?1clG1oPLFy64RJF6XCoGsX/dybqw6IpfjnFpqWyVq/3QGfY06RU7e0kwroTj?=
- =?us-ascii?Q?VM1KTKoka/Fq3TauvJrcxxTY5GkoHKFy9k7QfX+Z5gDBdbGSgFwLrDjT0vw1?=
- =?us-ascii?Q?CTZKg7+t8GT40qMAMzXngTJLwoLE9kpUjQt5SINXtGYiFxTlX8peE+XjHjaN?=
- =?us-ascii?Q?hbuASjQrP+I6C2OJaie6V8N6auCOuVBC/gWwuPwmFYa0Qoqw8cYsY+a3hb18?=
- =?us-ascii?Q?1us52K0kfcBhlPclTldixQVZNiwkT+SEAkfWsRnmy0q+XhE7cX7vClydJ7N3?=
- =?us-ascii?Q?GEG/2vyPwsl5J3ExonI9eywjVTKuDzu3qBE64VZ2EuMk0+zbG90ThFcBxuSO?=
- =?us-ascii?Q?ee/Mja3/Zrb7797PdH19SnsD23hbiJnsn4vAtVLRdIIEJZMvdHiOJf0EZ5XI?=
- =?us-ascii?Q?UlRpuEmUbAupsA/+zgurJ8OhNAWY7SAiPmh/ed8c4BqCE3HGdH6QAVqv4fYU?=
- =?us-ascii?Q?ZHNtv1UyCnKf8AN59hEwue3bgQaIrGNyGX8DYfwxxTTX7CPDmglpJVKA6s5O?=
- =?us-ascii?Q?0v0YG9VMiaNsLViEVwNjnqwqLetQ/IdRJLsA4TlBJm1Xcz9mAQ0YM2E71xOU?=
- =?us-ascii?Q?Ksj1IMNWQRroQGdHnNoN6bz0z/cLODGJw0ray9aqFHR5qUxpMQ6YxTWqz4TB?=
- =?us-ascii?Q?uNPn2G198lPPNwN106pLa43zIwhgX5EtNLSN5rwyQnQ3atTZNahOGjyED/jH?=
- =?us-ascii?Q?ma2/jKOP8y+GEQ0AMDA/iN8gUauumNORQeumsmyrOHasm6LDDtZNFKNc/he2?=
- =?us-ascii?Q?X8lpD0PxpOptbHO5HHsihMTG0N3tzVQnFP6KuETKjkyuC88o2ZsPo5ClHp8a?=
- =?us-ascii?Q?vSSaHAdYK3GI6CqYeYk7ocurf5B1qPE6H/uvoE2FQHrRK8Cajt3BKbNsCISt?=
- =?us-ascii?Q?Z4KaveEdHhXhNabvwv7JTPbcfj2hTXyAzrw7VbUTnB7BFLQK3egvQv+RREuH?=
- =?us-ascii?Q?sYPaUziy8CD6ed1GdgbM3l12Xh0lq+S5EehaxuWJcCovM8/hqCoycjL/7yDS?=
- =?us-ascii?Q?M6djy/NdRUsAlh2y/Pbmnsz8gQSmHrhltSnVKSJNSnsz8xfyjLu8tANHL1Gn?=
- =?us-ascii?Q?x/UVnkzJ1k4Xh3xCOl1DPEIgh2xp3OTJMWv7WqA+tpdddEBsw1duUGe1nA/i?=
- =?us-ascii?Q?CDn0zp+7bNBjLVLfVR1KDhhZSU1int5HWyO1KpkBwBARgTkLNIxgGGEPEDDx?=
- =?us-ascii?Q?MwgqH5ctrlZ9fO7fGjD3GAW+nswzCHPWAvviC7GqXepmkjRMV9JUVV9ch90F?=
- =?us-ascii?Q?J9x/4pS7tX4q4p/VkzkFA+B1gXb/Pgnb?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:PH3PPF37F43E35D.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(8096899003)(38070700018); DIR:OUT;
- SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?SbMII6tjq8SgJDRy1HJ21g/ueXyyErMxgS2/gGWTQtVCnKUVoBNUV5jYBTDp?=
- =?us-ascii?Q?XVdgRC780V38QC4KEvEyQCClxa+dyND3xDtqtC/o1jt71fLOrr0KGuWsM008?=
- =?us-ascii?Q?XbZS9xP7qT/vWmACmiFFbSGv5a/7xeE1GA9PEoS8FCXe8b+fjGvl99tYuq8C?=
- =?us-ascii?Q?C54pHSID8vQHD0k5NW5F90T4cAm9RbR3tBLnkKTbVtKuB5BxTcGSo0JdpmIK?=
- =?us-ascii?Q?A4EEm3t0fGRdTol+Ghke88ZGRoPA+ogGvKNxdRSb9HdjYii1Vm1p174TV8JS?=
- =?us-ascii?Q?9r+BlQ42YT81QZlhwDY1Gok3/IVwoqjalt7juDspFkZKxisTjHsSUTWfRj5y?=
- =?us-ascii?Q?WWmw1yx0ePwTWhKnB1DvlgARg2j5IyQ1jaE9eWPB3QQLhwPlb/l/Dx8EboJu?=
- =?us-ascii?Q?3VaYgysSgURTrnKajqhkCk7P87KgMkeSAhM46tmLGimm4gocB8+U7qvKi1NJ?=
- =?us-ascii?Q?hl2UaTtd7PK/IkP6e8aavqkT63CTT+29ervRL7/xIANDHM/TZiOutqI+oEDZ?=
- =?us-ascii?Q?NZDr+NF5ROhosOPhb5AowXZAQToVYd3roHf8+05jt7Dx52df2MjBsFTebfG+?=
- =?us-ascii?Q?kQpLRtSpCpSVddZMlfeTbKCPZ9JAQkYf8rybUcoMs7U7HtGshN8q++Ddg3AI?=
- =?us-ascii?Q?dnWS6NKt2D1VWELUvMSEjK2P0VE9xQYQymGxRMq3c0hKMYgnjUzjSkgVHGU4?=
- =?us-ascii?Q?FQT6zqeeVnb+zIFPun5uhZfYU69kLYtVwZ65EVt59E53UJLem+vWEYakXpzJ?=
- =?us-ascii?Q?bIcowBv4wjeBQJDBeauKzbIh5TFY5U48Oxrcq4FPHMl/khIFY+qd7RFzcL5j?=
- =?us-ascii?Q?BJUwzhHSveP01Ihk4r1GvY1pgXJIRoc0xBrjdNfD+KgFknZX+KQHpWgDdXEc?=
- =?us-ascii?Q?6Sg7/2yRxe99FzhpXMcW/RR7To6sL3sKDNpeT9mOpB3bwMtbdaKDfKTdYe1f?=
- =?us-ascii?Q?yPakoR0uPHfA48MxKrYrrAhu/s/VcvQdBuu5sN6e8/geOdjoVhObp6sZzk0U?=
- =?us-ascii?Q?UI7wDlnLAJDcJtrWPFNYcrYpXBRHYyFUEsNj7j4YliURaWbF1YcjTkfffIWR?=
- =?us-ascii?Q?aMAS0L/HaFT8d+bF8Rf/nrNIPM3RBkqN+E8gKbd3L3We6t7qq+GjUp8sLJlZ?=
- =?us-ascii?Q?VIfopIAlPSnoiHzfKfbBhiWRTkjfkHl/H471VaCaBm1kJT1ej9YEzVdNkXfe?=
- =?us-ascii?Q?MXYofTkFQZcObgSW1C7rkdN7SyVV3Ub0w19fW99efr2KeGzU7D6/yTwEzx9a?=
- =?us-ascii?Q?4GpGsRhsJ+VkwAjUdy26ULbORWnaNIj4Jpkoc57Xuh3xIRVF4ScSh2BwEBxq?=
- =?us-ascii?Q?iMWGtLD3HHa4X0MpKHmFrFAWW7ZhiU+PEXZzJ5rKBXhV1QpAWzaJ5o9eZ5MG?=
- =?us-ascii?Q?LjAOAdxPR1aeXtxSEBx2qvwdAIjDA1G9BP/kmX4Zep6+VK5DVLEEBEdzFQ6n?=
- =?us-ascii?Q?DiYe+HCnMs6Ryo5f397FG7+yrboisJJPSeZEd6NEi4pOKOnknBmSih2bk0NC?=
- =?us-ascii?Q?FTus4E5ybcEnBQFP2xLkDn0CgSeIAtucDgBz5ZJG9FV90+bdgybQ+ahn5NVF?=
- =?us-ascii?Q?/sjRqRhpRYs3UdzlO+G76y1m7gskkVmDOuQZSKna?=
-Content-Type: multipart/alternative;
- boundary="_000_PH3PPF37F43E35D204589A072C077808A56FC40APH3PPF37F43E35D_"
+	by mails.dpdk.org (Postfix) with ESMTP id 77AA240287;
+	Thu,  3 Jul 2025 05:40:43 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id DB51740285
+ for <dev@dpdk.org>; Thu,  3 Jul 2025 05:40:41 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id BA2A946AE0; Thu,  3 Jul 2025 05:40:41 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/testpmd Bug 1737] [dpdk-25.07] [CNV]
+ ice_dcf_checksum_offload/checksum_offload_vlan_tunnel_enable: the udp_gtpu
+ packet will affect the hardware checksum of other udp packets
+Date: Thu, 03 Jul 2025 03:40:41 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: testpmd
+X-Bugzilla-Version: 25.03
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: songx.jiale@intel.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1737-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17515140410.5ba2.913421
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH3PPF37F43E35D.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e259aa45-e4df-4a20-6e19-08ddb9b022cf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jul 2025 21:33:50.5530 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: JAsZ9pOFHjCam5cKPPxXsQOibKHATCgmRYM3aU+qyz9SlXuPX5j0zOlBzq2b95XYm8WlRmjrZVdKld0hQKFKug==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB8224
-X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -173,467 +56,617 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_PH3PPF37F43E35D204589A072C077808A56FC40APH3PPF37F43E35D_
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
 
-Release status meeting minutes 2025-07-01
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+--17515140410.5ba2.913421
+Date: Thu, 3 Jul 2025 05:40:41 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+https://bugs.dpdk.org/show_bug.cgi?id=3D1737
+
+            Bug ID: 1737
+           Summary: [dpdk-25.07] [CNV]
+                    ice_dcf_checksum_offload/checksum_offload_vlan_tunnel_
+                    enable: the udp_gtpu packet will affect the hardware
+                    checksum of other udp packets
+           Product: DPDK
+           Version: 25.03
+          Hardware: x86
+                OS: Linux
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: testpmd
+          Assignee: dev@dpdk.org
+          Reporter: songx.jiale@intel.com
+  Target Milestone: ---
+
+Environment
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+DPDK version: 5f37ee9c859f3ce08ca4364f1d8c0e70ec33ac83 version: 25.03.0-rc2
+OS: Ubuntu24.04.1 LTS (Noble Numbat)/6.8.0-41-generic
+Compiler:  gcc version 13.2.0
+Hardware platform: Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz
+NIC hardware: Intel Corporation Ethernet Controller E830-CC for QSFP
+[8086:12d2][8086:1593])
+NIC firmware:=20
+  driver: vfio-pci
+  kdriver: ice-1.17.8
+  firmware-version: 1.00 0x800161b7 1.3832.0
+  pkg: ice comms 1.3.53.0
+scapy:2.4.4
+
+Test Setup
+Steps to reproduce
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+1. reload ice
+rmmod ice && modprobe ice
+2. create 1 vf and set vf echo 1 >
+/sys/bus/pci/devices/0000\:af\:00.0/sriov_numvfs
+ip link set ens802f0np0 vf 0 trust on
+ip link set ens802f0np0 vf 0 spoofchk off
+modprobe vfio && modprobe vfio-pci
+./usertools/dpdk-devbind.py -b vfio-pci 0000:af:01.0
+3. start testpmd x86_64-native-linuxapp-gcc/app/dpdk-testpmd -l 1-2 -n 4 -a
+0000:af:01.0,cap=3Ddcf  -- -i --enable-rx-cksum
+4. set testpmd
+set verbose 1
+set fwd csum
+set promisc 0 on
+port stop all
+csum set ip hw 0
+csum set udp hw 0
+csum set tcp hw 0
+csum set sctp hw 0
+csum set outer-ip hw 0
+csum set outer-udp hw 0
+csum parse-tunnel on 0
+rx_vxlan_port add 4789 0
+port start all
+start
+
+5. tcpdump captures packets forwarded by testpmd
+tcpdump -ei enp5s0 -Q in -w 1.pcap
+
+6. scapy send packets=20
+p=3D[
+Ether(dst=3D'00:11:22:33:44:55',
+src=3D'52:00:00:00:00:00')/Dot1Q(vlan=3D100)/IPv6(src=3D'::1')/UDP(dport=3D=
+2152)/GTP_U_Header(gtp_type=3D255,
+teid=3D1193046)/IP(src=3D'10.0.0.1')/UDP(sport=3D29999,
+dport=3D30000)/Raw(load=3Db'\xce\xfd\xe9\x04\xde\xa9V<\xb6*;J\x12\xb1\xde\x=
+00\x1d`a\x03^\xc1\xb5\x07\xad\xc4\xad>\x996sXt\x82^\xe3\xbb\xf4K\x10";J^\xa=
+6T\xc2\x8b\xe8@\xfd\xee\xa8\x07\x9eC\xa8\xcb\xcb`\xafh0\xb8'),
+Ether(dst=3D'00:11:22:33:44:55',
+src=3D'52:00:00:00:00:00')/Dot1Q(vlan=3D100)/IP(src=3D'10.0.0.1')/UDP(sport=
+=3D4789,
+dport=3D4789)/VXLAN()/Ether()/IP(src=3D'10.0.0.1')/UDP(sport=3D29999,
+dport=3D30000)/Raw(load=3Db'\xce\xfd\xe9\x04\xde\xa9V<\xb6*;J\x12\xb1\xde\x=
+00\x1d`a\x03^\xc1\xb5\x07\xad\xc4\xad>\x996sXt\x82^\xe3\xbb\xf4K\x10";J^\xa=
+6T\xc2\x8b\xe8@\xfd\xee\xa8\x07\x9eC\xa8\xcb\xcb`\xafh0\xb8'),
+Ether(dst=3D'00:11:22:33:44:55',
+src=3D'52:00:00:00:00:00')/Dot1Q(vlan=3D100)/IP(src=3D'10.0.0.1')/UDP()/Raw=
+(load=3Db'\xce\xfd\xe9\x04\xde\xa9V<\xb6*;J\x12\xb1\xde\x00\x1d`a\x03^\xc1\=
+xb5\x07\xad\xc4\xad>\x996sXt\x82^\xe3\xbb\xf4K\x10";J^\xa6T\xc2\x8b\xe8@\xf=
+d\xee\xa8\x07\x9eC\xa8\xcb\xcb`\xafh0\xb8'),
+]
+sendp(p, iface=3D'enp5s0', count=3D1)
+
+7. ^C exit tcpdump and scapy or wireshark parsing data packets
+pkt=3Drdpcap('1.pcap')
+
+
+Results:=20
+=3D=3D=3D=3D=3D=3D=3D=3D
+The outer UDP checksum for p[1] and p[2] is incorrect.
+
+>>> p[0]
+<Ether  dst=3D02:00:00:00:00:00 src=3Db6:90:6c:aa:47:dc type=3Dn_802_1Q |<D=
+ot1Q=20
+prio=3D0 id=3D0 vlan=3D100 type=3DIPv6 |<IPv6  version=3D6 tc=3D0 fl=3D0 pl=
+en=3D108 nh=3DUDP
+hlim=3D64 src=3D::1 dst=3D::1 |<UDP  sport=3D2152 dport=3D2152 len=3D108 ch=
+ksum=3D0x11dd
+|<GTP_U_Header  version=3D1 PT=3D1 reserved=3D0 E=3D0 S=3D0 PN=3D0 gtp_type=
+=3Dg_pdu length=3D92
+teid=3D1193046 |<IP  version=3D4 ihl=3D5 tos=3D0x0 len=3D92 id=3D1 flags=3D=
+ frag=3D0 ttl=3D64
+proto=3Dudp chksum=3D0xf18e src=3D10.0.0.1 dst=3D127.0.0.1 |<UDP  sport=3D2=
+9999
+dport=3D30000 len=3D72 chksum=3D0x9280 |<Raw=20
+load=3D'\xce\xfd\xe9\x04\xde\xa9V<\xb6*;J\x12\xb1\xde\x00\x1d`a\x03^\xc1\xb=
+5\x07\xad\xc4\xad>\x996sXt\x82^\xe3\xbb\xf4K\x10";J^\xa6T\xc2\x8b\xe8@\xfd\=
+xee\xa8\x07\x9eC\xa8\xcb\xcb`\xafh0\xb8'
+|>>>>>>>>
+
+>>> p[1]
+<Ether  dst=3D02:00:00:00:00:00 src=3Db6:90:6c:aa:47:dc type=3Dn_802_1Q |<D=
+ot1Q=20
+prio=3D0 id=3D0 vlan=3D100 type=3DIPv4 |<IP  version=3D4 ihl=3D5 tos=3D0x0 =
+len=3D142 id=3D1
+flags=3D frag=3D0 ttl=3D64 proto=3Dudp chksum=3D0xf15c src=3D10.0.17.221 ds=
+t=3D127.0.0.1
+|<UDP  sport=3D4789 dport=3D4789 len=3D122 chksum=3D0x0 |<VXLAN=20
+flags=3DNextProtocol+Instance reserved0=3D0 NextProtocol=3DEthernet vni=3D0=
+x0
+reserved2=3D0x0 |<Ether  dst=3Dff:ff:ff:ff:ff:ff src=3D00:00:00:00:00:00 ty=
+pe=3DIPv4
+|<IP  version=3D4 ihl=3D5 tos=3D0x0 len=3D92 id=3D1 flags=3D frag=3D0 ttl=
+=3D64 proto=3Dudp
+chksum=3D0xf18e src=3D10.0.0.1 dst=3D127.0.0.1 |<UDP  sport=3D29999 dport=
+=3D30000 len=3D72
+chksum=3D0x9280 |<Raw=20
+load=3D'\xce\xfd\xe9\x04\xde\xa9V<\xb6*;J\x12\xb1\xde\x00\x1d`a\x03^\xc1\xb=
+5\x07\xad\xc4\xad>\x996sXt\x82^\xe3\xbb\xf4K\x10";J^\xa6T\xc2\x8b\xe8@\xfd\=
+xee\xa8\x07\x9eC\xa8\xcb\xcb`\xafh0\xb8'
+|>>>>>>>>>
+
+>>> p[2]
+<Ether  dst=3D02:00:00:00:00:00 src=3D02:82:14:0b:94:11 type=3Dn_802_1Q |<D=
+ot1Q=20
+prio=3D0 id=3D0 vlan=3D100 type=3DIPv4 |<IP  version=3D4 ihl=3D5 tos=3D0x0 =
+len=3D92 id=3D1 flags=3D
+frag=3D0 ttl=3D64 proto=3Dudp chksum=3D0xf18e src=3D10.0.0.1 dst=3D127.0.0.=
+1 |<UDP=20
+sport=3Ddomain dport=3Ddomain len=3D72 chksum=3D0xc5e6 |<DNS  id=3D52989 qr=
+=3D1 opcode=3D13
+aa=3D0 tc=3D0 rd=3D1 ra=3D0 z=3D0 ad=3D0 cd=3D0 rcode=3Dnot-implemented qdc=
+ount=3D57001
+ancount=3D22076 nscount=3D46634 arcount=3D15178 qd=3D'' an=3D'' ns=3D'' ar=
+=3D'' |<Raw=20
+load=3D'\x12\xb1\xde\x00\x1d`a\x03^\xc1\xb5\x07\xad\xc4\xad>\x996sXt\x82^\x=
+e3\xbb\xf4K\x10";J^\xa6T\xc2\x8b\xe8@\xfd\xee\xa8\x07\x9eC\xa8\xcb\xcb`\xaf=
+h0\xb8'
+|>>>>>>
+
+
+Expected Result:
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+p[1] outer udp checksum is 0xc5e6, p[2] outer udp checksum is 0x7c76
 
-Agenda:
-* Release Dates
-* Subtrees
-* Roadmaps
-* LTS
-* Defects
-* Opens
+>>> p[0]
+<Ether  dst=3D02:00:00:00:00:00 src=3D02:82:14:0b:94:11 type=3Dn_802_1Q |<D=
+ot1Q=20
+prio=3D0 id=3D0 vlan=3D100 type=3DIPv6 |<IPv6  version=3D6 tc=3D0 fl=3D0 pl=
+en=3D108 nh=3DUDP
+hlim=3D64 src=3D::1 dst=3D::1 |<UDP  sport=3D2152 dport=3D2152 len=3D108 ch=
+ksum=3D0x11dd
+|<GTP_U_Header  version=3D1 PT=3D1 reserved=3D0 E=3D0 S=3D0 PN=3D0 gtp_type=
+=3Dg_pdu length=3D92
+teid=3D1193046 |<IP  version=3D4 ihl=3D5 tos=3D0x0 len=3D92 id=3D1 flags=3D=
+ frag=3D0 ttl=3D64
+proto=3Dudp chksum=3D0xf18e src=3D10.0.0.1 dst=3D127.0.0.1 |<UDP  sport=3D2=
+9999
+dport=3D30000 len=3D72 chksum=3D0x9280 |<Raw=20
+load=3D'\xce\xfd\xe9\x04\xde\xa9V<\xb6*;J\x12\xb1\xde\x00\x1d`a\x03^\xc1\xb=
+5\x07\xad\xc4\xad>\x996sXt\x82^\xe3\xbb\xf4K\x10";J^\xa6T\xc2\x8b\xe8@\xfd\=
+xee\xa8\x07\x9eC\xa8\xcb\xcb`\xafh0\xb8'
+|>>>>>>>>
 
-Participants:
-* ARM
-* Debian
-* Intel
-* Marvell
-* Nvidia
-* Red Hat
+>>> p[1]
+<Ether  dst=3D02:00:00:00:00:00 src=3D02:82:14:0b:94:11 type=3Dn_802_1Q |<D=
+ot1Q=20
+prio=3D0 id=3D0 vlan=3D100 type=3DIPv4 |<IP  version=3D4 ihl=3D5 tos=3D0x0 =
+len=3D142 id=3D1
+flags=3D frag=3D0 ttl=3D64 proto=3Dudp chksum=3D0xf15c src=3D10.0.0.1 dst=
+=3D127.0.0.1 |<UDP=20
+sport=3D4789 dport=3D4789 len=3D122 chksum=3D0xc5e6 |<VXLAN=20
+flags=3DNextProtocol+Instance reserved0=3D0 NextProtocol=3DEthernet vni=3D0=
+x0
+reserved2=3D0x0 |<Ether  dst=3Dff:ff:ff:ff:ff:ff src=3D00:00:00:00:00:00 ty=
+pe=3DIPv4
+|<IP  version=3D4 ihl=3D5 tos=3D0x0 len=3D92 id=3D1 flags=3D frag=3D0 ttl=
+=3D64 proto=3Dudp
+chksum=3D0xf18e src=3D10.0.0.1 dst=3D127.0.0.1 |<UDP  sport=3D29999 dport=
+=3D30000 len=3D72
+chksum=3D0x9280 |<Raw=20
+load=3D'\xce\xfd\xe9\x04\xde\xa9V<\xb6*;J\x12\xb1\xde\x00\x1d`a\x03^\xc1\xb=
+5\x07\xad\xc4\xad>\x996sXt\x82^\xe3\xbb\xf4K\x10";J^\xa6T\xc2\x8b\xe8@\xfd\=
+xee\xa8\x07\x9eC\xa8\xcb\xcb`\xafh0\xb8'
+|>>>>>>>>>
 
-
-Release Dates
--------------
-
-The following are the proposed working dates for 25.07:
-
-- Proposal deadline (RFC/v1 patches): 20 April 2025
-- API freeze (-rc1): 4 June 2025
-- PMD features freeze (-rc2): June 29
-- Builtin applications features freeze (-rc3): targeting 7 July 2025
-- Release: 11 July 2025
-
-See https://core.dpdk.org/roadmap/
-
-
-Subtrees
---------
-
-* next-net
-  * Merged for RC2.
-  * 11 pending for RC3.
-  * Some moved to next release.
-
-* next-net-intel
-  * 1 patch for RC3.
-  * 1 additional bugfix.
-
-* next-net-broadcom
-  * No updates this week.
-
-* next-net-mlx
-  * Some merged in RC2.
-  * Just a few fixes for RC3.
-
-* next-net-mvl
-  * 1 fix patch for RC3.
-
-* next-eventdev
-  * 1 doc update patch.
-
-* next-baseband
-  * 2 patches pending, will move to next release.
-
-* next-virtio
-  * 2 patches postponed to next release.
-
-* next-crypto
-  * No updates this week.
-
-* next-dts
-  * 2 series pending review.
-
-* main
-  * RC2 released June 29th.
-  * Looking at coremask deprecation patch.
-  * Fix for headers when using C++.
-  * Patch for UBSan fixes under review.
-  * RC3 targeting 7 July 2025
+>>> p[2]
+<Ether  dst=3D02:00:00:00:00:00 src=3D02:82:14:0b:94:11 type=3Dn_802_1Q |<D=
+ot1Q=20
+prio=3D0 id=3D0 vlan=3D100 type=3DIPv4 |<IP  version=3D4 ihl=3D5 tos=3D0x0 =
+len=3D92 id=3D1 flags=3D
+frag=3D0 ttl=3D64 proto=3Dudp chksum=3D0xf18e src=3D10.0.0.1 dst=3D127.0.0.=
+1 |<UDP=20
+sport=3Ddomain dport=3Ddomain len=3D72 chksum=3D0x7c76 |<DNS  id=3D52989 qr=
+=3D1 opcode=3D13
+aa=3D0 tc=3D0 rd=3D1 ra=3D0 z=3D0 ad=3D0 cd=3D0 rcode=3Dnot-implemented qdc=
+ount=3D57001
+ancount=3D22076 nscount=3D46634 arcount=3D15178 qd=3D'' an=3D'' ns=3D'' ar=
+=3D'' |<Raw=20
+load=3D'\x12\xb1\xde\x00\x1d`a\x03^\xc1\xb5\x07\xad\xc4\xad>\x996sXt\x82^\x=
+e3\xbb\xf4K\x10";J^\xa6T\xc2\x8b\xe8@\xfd\xee\xa8\x07\x9eC\xa8\xcb\xcb`\xaf=
+h0\xb8'
+|>>>>>>
 
 
-  * DPDK Bay Area Summit - Santa Clara, CA
-    https://www.dpdk.org/event/dpdk-bay-area-summit-santa-clara-ca-septembe=
-r-17-18-2025/
+bad commit:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+commit b1f3a7a8c375fbb66be48aed078222686d16fdb5
+Author: Dengdui Huang <huangdengdui@huawei.com>
+Date:   Tue Jun 3 20:06:22 2025 +0800
 
+    net: fix GTP packet parsing
 
-Other
------
-  - None.
+    After parsing the GTP packet header, the next protocol type should
+    be converted from RTE_GTP_TYPE_IPV4/IPV6 to RTE_ETHER_TYPE_IPV4/IPV6.
+    Otherwise, the next protocol cannot be parsed.
 
-LTS
----
+    Bugzilla ID: 1672
+    Fixes: 64ed7f854cf4 ("net: add tunnel packet type parsing")
+    Cc: stable@dpdk.org
 
-Released LTS versions:
+    Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
+    Acked-by: Jie Hai <haijie1@huawei.com>
 
-* 24.11.2
-* 23.11.4
-* 22.11.8
+ lib/net/rte_net.c | 8 +++++++-
+ 1 file changed, 7 insertions, 1 deletion
 
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
 
-See https://core.dpdk.org/roadmap/#dates
-
-* 20.11.10 - Will only be updated with CVE and critical fixes.
-* 19.11.14 - Will only be updated with CVE and critical fixes.
-
-
-* Distros
-  * Debian 12 contains DPDK v22.11
-  * Ubuntu 25.04 contains DPDK v24.11
-  * Ubuntu 24.04 LTS contains DPDK v23.11
-  * RHEL 8/9 contains DPDK 23.11
-
-Defects
--------
-
-* Bugzilla links, 'Bugs',  added for hosted projects
-  * https://www.dpdk.org/hosted-projects/
-
-
-
-DPDK Release Status Meetings
-----------------------------
-
-The DPDK Release Status Meeting is intended for DPDK Committers to discuss =
-the
-status of the master tree and sub-trees, and for project managers to track
-progress or milestone dates.
-
-The meeting occurs on every Tuesday at 14:30 DST over Jitsi on https://meet=
-.jit.si/DPDK
-
-You don't need an invite to join the meeting but if you want a calendar rem=
-inder just
-send an email to "John McNamara <john.mcnamara@intel.com>" for the invite.
-
-
---_000_PH3PPF37F43E35D204589A072C077808A56FC40APH3PPF37F43E35D_
-Content-Type: text/html; charset="us-ascii"
+--17515140410.5ba2.913421
+Date: Thu, 3 Jul 2025 05:40:41 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
-osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
-xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
-//www.w3.org/TR/REC-html40">
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
->
-<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
-<style><!--
-/* Font Definitions */
-@font-face
-	{font-family:"Cambria Math";
-	panose-1:2 4 5 3 5 4 6 3 2 4;}
-@font-face
-	{font-family:Aptos;}
-@font-face
-	{font-family:Consolas;
-	panose-1:2 11 6 9 2 2 4 3 2 4;}
-/* Style Definitions */
-p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{margin:0cm;
-	font-size:11.0pt;
-	font-family:"Aptos",sans-serif;
-	mso-ligatures:standardcontextual;
-	mso-fareast-language:EN-US;}
-span.EmailStyle17
-	{mso-style-type:personal-compose;
-	font-family:Consolas;
-	color:windowtext;
-	font-weight:normal;
-	font-style:normal;
-	text-decoration:none none;}
-.MsoChpDefault
-	{mso-style-type:export-only;
-	font-size:11.0pt;
-	mso-fareast-language:EN-US;}
-@page WordSection1
-	{size:612.0pt 792.0pt;
-	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
-div.WordSection1
-	{page:WordSection1;}
---></style><!--[if gte mso 9]><xml>
-<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
-</xml><![endif]--><!--[if gte mso 9]><xml>
-<o:shapelayout v:ext=3D"edit">
-<o:idmap v:ext=3D"edit" data=3D"1" />
-</o:shapelayout></xml><![endif]-->
-</head>
-<body lang=3D"EN-IE" link=3D"#467886" vlink=3D"#96607D" style=3D"word-wrap:=
-break-word">
-<div class=3D"WordSection1">
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Release status =
-meeting minutes 2025-07-01<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Agenda:<o:p></o=
-:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Release Dates=
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Subtrees<o:p>=
-</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Roadmaps<o:p>=
-</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* LTS<o:p></o:p=
-></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Defects<o:p><=
-/o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Opens<o:p></o=
-:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Participants:<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* ARM<o:p></o:p=
-></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Debian<o:p></=
-o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Intel<o:p></o=
-:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Marvell<o:p><=
-/o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Nvidia<o:p></=
-o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Red Hat<o:p><=
-/o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Release Dates<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">-------------<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">The following a=
-re the proposed working dates for 25.07:<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Proposal dead=
-line (RFC/v1 patches): 20 April 2025<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- API freeze (-=
-rc1): 4 June 2025<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- PMD features =
-freeze (-rc2): June 29<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Builtin appli=
-cations features freeze (-rc3): targeting 7 July 2025<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">- Release: 11 J=
-uly 2025<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">See https://cor=
-e.dpdk.org/roadmap/<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Subtrees<o:p></=
-o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">--------<o:p></=
-o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-net<o:p>=
-</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Merged=
- for RC2.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * 11 pen=
-ding for RC3.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Some m=
-oved to next release.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-net-inte=
-l<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * 1 patc=
-h for RC3.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * 1 addi=
-tional bugfix.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-net-broa=
-dcom<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * No upd=
-ates this week.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-net-mlx<=
-o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Some m=
-erged in RC2.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Just a=
- few fixes for RC3.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-net-mvl<=
-o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * 1 fix =
-patch for RC3.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-eventdev=
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * 1 doc =
-update patch.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-baseband=
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * 2 patc=
-hes pending, will move to next release.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-virtio<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * 2 patc=
-hes postponed to next release.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-crypto<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * No upd=
-ates this week.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* next-dts<o:p>=
-</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * 2 seri=
-es pending review.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* main<o:p></o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * RC2 re=
-leased June 29th.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Lookin=
-g at coremask deprecation patch.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Fix fo=
-r headers when using C++.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Patch =
-for UBSan fixes under review.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * RC3 ta=
-rgeting 7 July 2025<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * DPDK B=
-ay Area Summit &#8211; Santa Clara, CA<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp;&nbsp;&nb=
-sp; https://www.dpdk.org/event/dpdk-bay-area-summit-santa-clara-ca-septembe=
-r-17-18-2025/<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Other<o:p></o:p=
-></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">-----<o:p></o:p=
-></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; - None.<=
-o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">LTS<o:p></o:p><=
-/span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">---<o:p></o:p><=
-/span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Released LTS ve=
-rsions:<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* 24.11.2<o:p><=
-/o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* 23.11.4<o:p><=
-/o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* 22.11.8<o:p><=
-/o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">See https://cor=
-e.dpdk.org/roadmap/#dates<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* 20.11.10 - Wi=
-ll only be updated with CVE and critical fixes.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* 19.11.14 - Wi=
-ll only be updated with CVE and critical fixes.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Distros<o:p><=
-/o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Debian=
- 12 contains DPDK v22.11<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Ubuntu=
- 25.04 contains DPDK v24.11<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * Ubuntu=
- 24.04 LTS contains DPDK v23.11<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * RHEL 8=
-/9 contains DPDK 23.11<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">Defects<o:p></o=
-:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">-------<o:p></o=
-:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">* Bugzilla link=
-s, 'Bugs',&nbsp; added for hosted projects<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">&nbsp; * https:=
-//www.dpdk.org/hosted-projects/<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">DPDK Release St=
-atus Meetings<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">---------------=
--------------<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">The DPDK Releas=
-e Status Meeting is intended for DPDK Committers to discuss the<o:p></o:p><=
-/span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">status of the m=
-aster tree and sub-trees, and for project managers to track<o:p></o:p></spa=
-n></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">progress or mil=
-estone dates.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">The meeting occ=
-urs on every Tuesday at 14:30 DST over Jitsi on https://meet.jit.si/DPDK<o:=
-p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">You don't need =
-an invite to join the meeting but if you want a calendar reminder just<o:p>=
-</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas">send an email t=
-o &quot;John McNamara &lt;john.mcnamara@intel.com&gt;&quot; for the invite.=
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:Consolas"><o:p>&nbsp;</o:=
-p></span></p>
-</div>
-</body>
-</html>
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - [dpdk-25.07] [CNV] ice_dcf_checksum_offload/check=
+sum_offload_vlan_tunnel_enable: the udp_gtpu packet will affect the hardwar=
+e checksum of other udp packets"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1737">1737</a>
+          </td>
+        </tr>
 
---_000_PH3PPF37F43E35D204589A072C077808A56FC40APH3PPF37F43E35D_--
+        <tr>
+          <th>Summary</th>
+          <td>[dpdk-25.07] [CNV] ice_dcf_checksum_offload/checksum_offload_=
+vlan_tunnel_enable: the udp_gtpu packet will affect the hardware checksum o=
+f other udp packets
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>25.03
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>x86
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>Linux
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>testpmd
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>songx.jiale&#64;intel.com
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">Environment
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+DPDK version: 5f37ee9c859f3ce08ca4364f1d8c0e70ec33ac83 version: 25.03.0-rc2
+OS: Ubuntu24.04.1 LTS (Noble Numbat)/6.8.0-41-generic
+Compiler:  gcc version 13.2.0
+Hardware platform: Intel(R) Xeon(R) Platinum 8380 CPU &#64; 2.30GHz
+NIC hardware: Intel Corporation Ethernet Controller E830-CC for QSFP
+[8086:12d2][8086:1593])
+NIC firmware:=20
+  driver: vfio-pci
+  kdriver: ice-1.17.8
+  firmware-version: 1.00 0x800161b7 1.3832.0
+  pkg: ice comms 1.3.53.0
+scapy:2.4.4
+
+Test Setup
+Steps to reproduce
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+1. reload ice
+rmmod ice &amp;&amp; modprobe ice
+2. create 1 vf and set vf echo 1 &gt;
+/sys/bus/pci/devices/0000\:af\:00.0/sriov_numvfs
+ip link set ens802f0np0 vf 0 trust on
+ip link set ens802f0np0 vf 0 spoofchk off
+modprobe vfio &amp;&amp; modprobe vfio-pci
+./usertools/dpdk-devbind.py -b vfio-pci 0000:af:01.0
+3. start testpmd x86_64-native-linuxapp-gcc/app/dpdk-testpmd -l 1-2 -n 4 -a
+0000:af:01.0,cap=3Ddcf  -- -i --enable-rx-cksum
+4. set testpmd
+set verbose 1
+set fwd csum
+set promisc 0 on
+port stop all
+csum set ip hw 0
+csum set udp hw 0
+csum set tcp hw 0
+csum set sctp hw 0
+csum set outer-ip hw 0
+csum set outer-udp hw 0
+csum parse-tunnel on 0
+rx_vxlan_port add 4789 0
+port start all
+start
+
+5. tcpdump captures packets forwarded by testpmd
+tcpdump -ei enp5s0 -Q in -w 1.pcap
+
+6. scapy send packets=20
+p=3D[
+Ether(dst=3D'00:11:22:33:44:55',
+src=3D'52:00:00:00:00:00')/Dot1Q(vlan=3D100)/IPv6(src=3D'::1')/UDP(dport=3D=
+2152)/GTP_U_Header(gtp_type=3D255,
+teid=3D1193046)/IP(src=3D'10.0.0.1')/UDP(sport=3D29999,
+dport=3D30000)/Raw(load=3Db'\xce\xfd\xe9\x04\xde\xa9V&lt;\xb6*;J\x12\xb1\xd=
+e\x00\x1d`a\x03^\xc1\xb5\x07\xad\xc4\xad&gt;\x996sXt\x82^\xe3\xbb\xf4K\x10&=
+quot;;J^\xa6T\xc2\x8b\xe8&#64;\xfd\xee\xa8\x07\x9eC\xa8\xcb\xcb`\xafh0\xb8'=
+),
+Ether(dst=3D'00:11:22:33:44:55',
+src=3D'52:00:00:00:00:00')/Dot1Q(vlan=3D100)/IP(src=3D'10.0.0.1')/UDP(sport=
+=3D4789,
+dport=3D4789)/VXLAN()/Ether()/IP(src=3D'10.0.0.1')/UDP(sport=3D29999,
+dport=3D30000)/Raw(load=3Db'\xce\xfd\xe9\x04\xde\xa9V&lt;\xb6*;J\x12\xb1\xd=
+e\x00\x1d`a\x03^\xc1\xb5\x07\xad\xc4\xad&gt;\x996sXt\x82^\xe3\xbb\xf4K\x10&=
+quot;;J^\xa6T\xc2\x8b\xe8&#64;\xfd\xee\xa8\x07\x9eC\xa8\xcb\xcb`\xafh0\xb8'=
+),
+Ether(dst=3D'00:11:22:33:44:55',
+src=3D'52:00:00:00:00:00')/Dot1Q(vlan=3D100)/IP(src=3D'10.0.0.1')/UDP()/Raw=
+(load=3Db'\xce\xfd\xe9\x04\xde\xa9V&lt;\xb6*;J\x12\xb1\xde\x00\x1d`a\x03^\x=
+c1\xb5\x07\xad\xc4\xad&gt;\x996sXt\x82^\xe3\xbb\xf4K\x10&quot;;J^\xa6T\xc2\=
+x8b\xe8&#64;\xfd\xee\xa8\x07\x9eC\xa8\xcb\xcb`\xafh0\xb8'),
+]
+sendp(p, iface=3D'enp5s0', count=3D1)
+
+7. ^C exit tcpdump and scapy or wireshark parsing data packets
+pkt=3Drdpcap('1.pcap')
+
+
+Results:=20
+=3D=3D=3D=3D=3D=3D=3D=3D
+The outer UDP checksum for p[1] and p[2] is incorrect.
+
+<span class=3D"quote">&gt;&gt;&gt; p[0]</span >
+&lt;Ether  dst=3D02:00:00:00:00:00 src=3Db6:90:6c:aa:47:dc type=3Dn_802_1Q =
+|&lt;Dot1Q=20
+prio=3D0 id=3D0 vlan=3D100 type=3DIPv6 |&lt;IPv6  version=3D6 tc=3D0 fl=3D0=
+ plen=3D108 nh=3DUDP
+hlim=3D64 src=3D::1 dst=3D::1 |&lt;UDP  sport=3D2152 dport=3D2152 len=3D108=
+ chksum=3D0x11dd
+|&lt;GTP_U_Header  version=3D1 PT=3D1 reserved=3D0 E=3D0 S=3D0 PN=3D0 gtp_t=
+ype=3Dg_pdu length=3D92
+teid=3D1193046 |&lt;IP  version=3D4 ihl=3D5 tos=3D0x0 len=3D92 id=3D1 flags=
+=3D frag=3D0 ttl=3D64
+proto=3Dudp chksum=3D0xf18e src=3D10.0.0.1 dst=3D127.0.0.1 |&lt;UDP  sport=
+=3D29999
+dport=3D30000 len=3D72 chksum=3D0x9280 |&lt;Raw=20
+load=3D'\xce\xfd\xe9\x04\xde\xa9V&lt;\xb6*;J\x12\xb1\xde\x00\x1d`a\x03^\xc1=
+\xb5\x07\xad\xc4\xad&gt;\x996sXt\x82^\xe3\xbb\xf4K\x10&quot;;J^\xa6T\xc2\x8=
+b\xe8&#64;\xfd\xee\xa8\x07\x9eC\xa8\xcb\xcb`\xafh0\xb8'
+|&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+
+<span class=3D"quote">&gt;&gt;&gt; p[1]</span >
+&lt;Ether  dst=3D02:00:00:00:00:00 src=3Db6:90:6c:aa:47:dc type=3Dn_802_1Q =
+|&lt;Dot1Q=20
+prio=3D0 id=3D0 vlan=3D100 type=3DIPv4 |&lt;IP  version=3D4 ihl=3D5 tos=3D0=
+x0 len=3D142 id=3D1
+flags=3D frag=3D0 ttl=3D64 proto=3Dudp chksum=3D0xf15c src=3D10.0.17.221 ds=
+t=3D127.0.0.1
+|&lt;UDP  sport=3D4789 dport=3D4789 len=3D122 chksum=3D0x0 |&lt;VXLAN=20
+flags=3DNextProtocol+Instance reserved0=3D0 NextProtocol=3DEthernet vni=3D0=
+x0
+reserved2=3D0x0 |&lt;Ether  dst=3Dff:ff:ff:ff:ff:ff src=3D00:00:00:00:00:00=
+ type=3DIPv4
+|&lt;IP  version=3D4 ihl=3D5 tos=3D0x0 len=3D92 id=3D1 flags=3D frag=3D0 tt=
+l=3D64 proto=3Dudp
+chksum=3D0xf18e src=3D10.0.0.1 dst=3D127.0.0.1 |&lt;UDP  sport=3D29999 dpor=
+t=3D30000 len=3D72
+chksum=3D0x9280 |&lt;Raw=20
+load=3D'\xce\xfd\xe9\x04\xde\xa9V&lt;\xb6*;J\x12\xb1\xde\x00\x1d`a\x03^\xc1=
+\xb5\x07\xad\xc4\xad&gt;\x996sXt\x82^\xe3\xbb\xf4K\x10&quot;;J^\xa6T\xc2\x8=
+b\xe8&#64;\xfd\xee\xa8\x07\x9eC\xa8\xcb\xcb`\xafh0\xb8'
+|&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+
+<span class=3D"quote">&gt;&gt;&gt; p[2]</span >
+&lt;Ether  dst=3D02:00:00:00:00:00 src=3D02:82:14:0b:94:11 type=3Dn_802_1Q =
+|&lt;Dot1Q=20
+prio=3D0 id=3D0 vlan=3D100 type=3DIPv4 |&lt;IP  version=3D4 ihl=3D5 tos=3D0=
+x0 len=3D92 id=3D1 flags=3D
+frag=3D0 ttl=3D64 proto=3Dudp chksum=3D0xf18e src=3D10.0.0.1 dst=3D127.0.0.=
+1 |&lt;UDP=20
+sport=3Ddomain dport=3Ddomain len=3D72 chksum=3D0xc5e6 |&lt;DNS  id=3D52989=
+ qr=3D1 opcode=3D13
+aa=3D0 tc=3D0 rd=3D1 ra=3D0 z=3D0 ad=3D0 cd=3D0 rcode=3Dnot-implemented qdc=
+ount=3D57001
+ancount=3D22076 nscount=3D46634 arcount=3D15178 qd=3D'' an=3D'' ns=3D'' ar=
+=3D'' |&lt;Raw=20
+load=3D'\x12\xb1\xde\x00\x1d`a\x03^\xc1\xb5\x07\xad\xc4\xad&gt;\x996sXt\x82=
+^\xe3\xbb\xf4K\x10&quot;;J^\xa6T\xc2\x8b\xe8&#64;\xfd\xee\xa8\x07\x9eC\xa8\=
+xcb\xcb`\xafh0\xb8'
+|&gt;&gt;&gt;&gt;&gt;&gt;
+
+
+Expected Result:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+p[1] outer udp checksum is 0xc5e6, p[2] outer udp checksum is 0x7c76
+
+<span class=3D"quote">&gt;&gt;&gt; p[0]</span >
+&lt;Ether  dst=3D02:00:00:00:00:00 src=3D02:82:14:0b:94:11 type=3Dn_802_1Q =
+|&lt;Dot1Q=20
+prio=3D0 id=3D0 vlan=3D100 type=3DIPv6 |&lt;IPv6  version=3D6 tc=3D0 fl=3D0=
+ plen=3D108 nh=3DUDP
+hlim=3D64 src=3D::1 dst=3D::1 |&lt;UDP  sport=3D2152 dport=3D2152 len=3D108=
+ chksum=3D0x11dd
+|&lt;GTP_U_Header  version=3D1 PT=3D1 reserved=3D0 E=3D0 S=3D0 PN=3D0 gtp_t=
+ype=3Dg_pdu length=3D92
+teid=3D1193046 |&lt;IP  version=3D4 ihl=3D5 tos=3D0x0 len=3D92 id=3D1 flags=
+=3D frag=3D0 ttl=3D64
+proto=3Dudp chksum=3D0xf18e src=3D10.0.0.1 dst=3D127.0.0.1 |&lt;UDP  sport=
+=3D29999
+dport=3D30000 len=3D72 chksum=3D0x9280 |&lt;Raw=20
+load=3D'\xce\xfd\xe9\x04\xde\xa9V&lt;\xb6*;J\x12\xb1\xde\x00\x1d`a\x03^\xc1=
+\xb5\x07\xad\xc4\xad&gt;\x996sXt\x82^\xe3\xbb\xf4K\x10&quot;;J^\xa6T\xc2\x8=
+b\xe8&#64;\xfd\xee\xa8\x07\x9eC\xa8\xcb\xcb`\xafh0\xb8'
+|&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+
+<span class=3D"quote">&gt;&gt;&gt; p[1]</span >
+&lt;Ether  dst=3D02:00:00:00:00:00 src=3D02:82:14:0b:94:11 type=3Dn_802_1Q =
+|&lt;Dot1Q=20
+prio=3D0 id=3D0 vlan=3D100 type=3DIPv4 |&lt;IP  version=3D4 ihl=3D5 tos=3D0=
+x0 len=3D142 id=3D1
+flags=3D frag=3D0 ttl=3D64 proto=3Dudp chksum=3D0xf15c src=3D10.0.0.1 dst=
+=3D127.0.0.1 |&lt;UDP=20
+sport=3D4789 dport=3D4789 len=3D122 chksum=3D0xc5e6 |&lt;VXLAN=20
+flags=3DNextProtocol+Instance reserved0=3D0 NextProtocol=3DEthernet vni=3D0=
+x0
+reserved2=3D0x0 |&lt;Ether  dst=3Dff:ff:ff:ff:ff:ff src=3D00:00:00:00:00:00=
+ type=3DIPv4
+|&lt;IP  version=3D4 ihl=3D5 tos=3D0x0 len=3D92 id=3D1 flags=3D frag=3D0 tt=
+l=3D64 proto=3Dudp
+chksum=3D0xf18e src=3D10.0.0.1 dst=3D127.0.0.1 |&lt;UDP  sport=3D29999 dpor=
+t=3D30000 len=3D72
+chksum=3D0x9280 |&lt;Raw=20
+load=3D'\xce\xfd\xe9\x04\xde\xa9V&lt;\xb6*;J\x12\xb1\xde\x00\x1d`a\x03^\xc1=
+\xb5\x07\xad\xc4\xad&gt;\x996sXt\x82^\xe3\xbb\xf4K\x10&quot;;J^\xa6T\xc2\x8=
+b\xe8&#64;\xfd\xee\xa8\x07\x9eC\xa8\xcb\xcb`\xafh0\xb8'
+|&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+
+<span class=3D"quote">&gt;&gt;&gt; p[2]</span >
+&lt;Ether  dst=3D02:00:00:00:00:00 src=3D02:82:14:0b:94:11 type=3Dn_802_1Q =
+|&lt;Dot1Q=20
+prio=3D0 id=3D0 vlan=3D100 type=3DIPv4 |&lt;IP  version=3D4 ihl=3D5 tos=3D0=
+x0 len=3D92 id=3D1 flags=3D
+frag=3D0 ttl=3D64 proto=3Dudp chksum=3D0xf18e src=3D10.0.0.1 dst=3D127.0.0.=
+1 |&lt;UDP=20
+sport=3Ddomain dport=3Ddomain len=3D72 chksum=3D0x7c76 |&lt;DNS  id=3D52989=
+ qr=3D1 opcode=3D13
+aa=3D0 tc=3D0 rd=3D1 ra=3D0 z=3D0 ad=3D0 cd=3D0 rcode=3Dnot-implemented qdc=
+ount=3D57001
+ancount=3D22076 nscount=3D46634 arcount=3D15178 qd=3D'' an=3D'' ns=3D'' ar=
+=3D'' |&lt;Raw=20
+load=3D'\x12\xb1\xde\x00\x1d`a\x03^\xc1\xb5\x07\xad\xc4\xad&gt;\x996sXt\x82=
+^\xe3\xbb\xf4K\x10&quot;;J^\xa6T\xc2\x8b\xe8&#64;\xfd\xee\xa8\x07\x9eC\xa8\=
+xcb\xcb`\xafh0\xb8'
+|&gt;&gt;&gt;&gt;&gt;&gt;
+
+
+bad commit:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+commit b1f3a7a8c375fbb66be48aed078222686d16fdb5
+Author: Dengdui Huang &lt;<a href=3D"mailto:huangdengdui&#64;huawei.com">hu=
+angdengdui&#64;huawei.com</a>&gt;
+Date:   Tue Jun 3 20:06:22 2025 +0800
+
+    net: fix GTP packet parsing
+
+    After parsing the GTP packet header, the next protocol type should
+    be converted from RTE_GTP_TYPE_IPV4/IPV6 to RTE_ETHER_TYPE_IPV4/IPV6.
+    Otherwise, the next protocol cannot be parsed.
+
+    Bugzilla ID: 1672
+    Fixes: 64ed7f854cf4 (&quot;net: add tunnel packet type parsing&quot;)
+    Cc: <a href=3D"mailto:stable&#64;dpdk.org">stable&#64;dpdk.org</a>
+
+    Signed-off-by: Dengdui Huang &lt;<a href=3D"mailto:huangdengdui&#64;hua=
+wei.com">huangdengdui&#64;huawei.com</a>&gt;
+    Acked-by: Jie Hai &lt;<a href=3D"mailto:haijie1&#64;huawei.com">haijie1=
+&#64;huawei.com</a>&gt;
+
+ lib/net/rte_net.c | 8 +++++++-
+ 1 file changed, 7 insertions, 1 deletion
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1737">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17515140410.5ba2.913421--
