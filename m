@@ -2,20 +2,20 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB1A5C83F03
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Jul 2025 17:15:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C90C77B7C
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Jul 2025 17:19:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 07A7140267;
-	Thu,  3 Jul 2025 19:15:06 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A4DF040267;
+	Thu,  3 Jul 2025 19:19:23 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id C26A440267
- for <dev@dpdk.org>; Thu,  3 Jul 2025 19:15:04 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id C0D2D40264
+ for <dev@dpdk.org>; Thu,  3 Jul 2025 19:19:22 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id B88E746AE7; Thu,  3 Jul 2025 19:15:04 +0200 (CEST)
+ id B791746AE8; Thu,  3 Jul 2025 19:19:22 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1745] bonding: duplicate shadow local variables
-Date: Thu, 03 Jul 2025 17:15:04 +0000
+Subject: [DPDK/ethdev Bug 1746] mlx5: lotsof shadow varable warnings
+Date: Thu, 03 Jul 2025 17:19:22 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -23,7 +23,7 @@ X-Bugzilla-Product: DPDK
 X-Bugzilla-Component: ethdev
 X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
+X-Bugzilla-Severity: minor
 X-Bugzilla-Who: stephen@networkplumber.org
 X-Bugzilla-Status: UNCONFIRMED
 X-Bugzilla-Resolution: 
@@ -34,8 +34,8 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1745-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17515629040.dc6b.1313637
+Message-ID: <bug-1746-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17515631620.faada6F2.1315469
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: https://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -55,8 +55,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17515629040.dc6b.1313637
-Date: Thu, 3 Jul 2025 19:15:04 +0200
+--17515631620.faada6F2.1315469
+Date: Thu, 3 Jul 2025 19:19:22 +0200
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -64,69 +64,125 @@ X-Bugzilla-URL: https://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1745
+https://bugs.dpdk.org/show_bug.cgi?id=3D1746
 
-            Bug ID: 1745
-           Summary: bonding: duplicate shadow local variables
+            Bug ID: 1746
+           Summary: mlx5: lotsof shadow varable warnings
            Product: DPDK
            Version: unspecified
           Hardware: All
                 OS: All
             Status: UNCONFIRMED
-          Severity: normal
+          Severity: minor
           Priority: Normal
          Component: ethdev
           Assignee: dev@dpdk.org
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-Building with -Wshadow flags several potential bugs in bonding:
+Building with -Wshadow reports several potential issues with mlx5 driver.
 
-[963/3418] Compiling C object
-drivers/libtmp_rte_net_bond.a.p/net_bonding_rte_eth_bond_pmd.c.o
-../drivers/net/bonding/rte_eth_bond_pmd.c: In function =E2=80=98member_star=
-t=E2=80=99:
-../drivers/net/bonding/rte_eth_bond_pmd.c:1910:42: warning: declaration of
-=E2=80=98internals=E2=80=99 shadows a previous local [-Wshadow]
- 1910 |                 struct bond_dev_private *internals;
-      |                                          ^~~~~~~~~
-../drivers/net/bonding/rte_eth_bond_pmd.c:1828:34: note: shadowed declarati=
-on
-is here
- 1828 |         struct bond_dev_private *internals =3D
-bonding_eth_dev->data->dev_private;
-      |                                  ^~~~~~~~~
-../drivers/net/bonding/rte_eth_bond_pmd.c: In function
-=E2=80=98bond_ethdev_allmulticast_disable=E2=80=99:
-../drivers/net/bonding/rte_eth_bond_pmd.c:2914:34: warning: declaration of
-=E2=80=98port_id=E2=80=99 shadows a previous local [-Wshadow]
- 2914 |                         uint16_t port_id =3D
-internals->members[i].port_id;
-      |                                  ^~~~~~~
-../drivers/net/bonding/rte_eth_bond_pmd.c:2903:18: note: shadowed declarati=
-on
-is here
- 2903 |         uint16_t port_id;
-      |                  ^~~~~~~
-../drivers/net/bonding/rte_eth_bond_pmd.c: In function =E2=80=98bond_ethdev=
-_configure=E2=80=99:
-../drivers/net/bonding/rte_eth_bond_pmd.c:4111:26: warning: declaration of =
-=E2=80=98i=E2=80=99
-shadows a previous local [-Wshadow]
- 4111 |                 unsigned i;
-      |                          ^
-../drivers/net/bonding/rte_eth_bond_pmd.c:3946:18: note: shadowed declarati=
-on
-is here
- 3946 |         unsigned i, j;
-      |
+[1123/3418] Compiling C object
+drivers/libtmp_rte_net_mlx5.a.p/net_mlx5_mlx5_rss.c.o
+In file included from ../drivers/net/mlx5/mlx5_rss.c:19:
+../drivers/net/mlx5/mlx5_rx.h: In function =E2=80=98mprq_buf_replace=E2=80=
+=99:
+../drivers/net/mlx5/mlx5_rx.h:448:39: warning: declaration of =E2=80=98rep=
+=E2=80=99 shadows a
+previous local [-Wshadow]
+  448 |                 struct mlx5_mprq_buf *rep;
+      |                                       ^~~
+../drivers/net/mlx5/mlx5_rx.h:424:31: note: shadowed declaration is here
+  424 |         struct mlx5_mprq_buf *rep =3D rxq->mprq_repl;
+      |                               ^~~
+[1124/3418] Compiling C object
+drivers/libtmp_rte_net_mlx5.a.p/net_mlx5_mlx5_ethdev.c.o
+In file included from ../drivers/net/mlx5/mlx5_ethdev.c:26:
+../drivers/net/mlx5/mlx5_rx.h: In function =E2=80=98mprq_buf_replace=E2=80=
+=99:
+../drivers/net/mlx5/mlx5_rx.h:448:39: warning: declaration of =E2=80=98rep=
+=E2=80=99 shadows a
+previous local [-Wshadow]
+  448 |                 struct mlx5_mprq_buf *rep;
+      |                                       ^~~
+../drivers/net/mlx5/mlx5_rx.h:424:31: note: shadowed declaration is here
+  424 |         struct mlx5_mprq_buf *rep =3D rxq->mprq_repl;
+      |                               ^~~
+In file included from ../lib/eal/include/dev_driver.h:8,
+                 from ../lib/ethdev/ethdev_driver.h:19,
+                 from ../drivers/net/mlx5/mlx5_ethdev.c:13:
+../drivers/net/mlx5/mlx5_tx.h: In function =E2=80=98mlx5_tx_burst_empw_inli=
+ne=E2=80=99:
+../lib/eal/include/rte_common.h:817:28: warning: declaration of =E2=80=98_a=
+=E2=80=99 shadows a
+previous local [-Wshadow]
+  817 |                 typeof (a) _a =3D (a); \
+      |                            ^~
+../lib/eal/include/rte_common.h:798:25: note: in definition of macro =E2=80=
+=98RTE_MIN=E2=80=99
+  798 |                 typeof (b) _b =3D (b); \
+      |                         ^
+../drivers/net/mlx5/mlx5_tx.h:2971:40: note: in expansion of macro =E2=80=
+=98RTE_MAX=E2=80=99
+ 2971 |                                        RTE_MAX(txq->inlen_empw +
+      |                                        ^~~~~~~
+../lib/eal/include/rte_common.h:797:28: note: shadowed declaration is here
+  797 |                 typeof (a) _a =3D (a); \
+      |                            ^~
+../drivers/net/mlx5/mlx5_tx.h:2970:32: note: in expansion of macro =E2=80=
+=98RTE_MIN=E2=80=99
+ 2970 |                         room =3D RTE_MIN(room,
+      |                                ^~~~~~~
+../lib/eal/include/rte_common.h:817:28: warning: declaration of =E2=80=98_a=
+=E2=80=99 shadows a
+previous local [-Wshadow]
+  817 |                 typeof (a) _a =3D (a); \
+      |                            ^~
+../lib/eal/include/rte_common.h:798:34: note: in definition of macro =E2=80=
+=98RTE_MIN=E2=80=99
+  798 |                 typeof (b) _b =3D (b); \
+      |                                  ^
+../drivers/net/mlx5/mlx5_tx.h:2971:40: note: in expansion of macro =E2=80=
+=98RTE_MAX=E2=80=99
+ 2971 |                                        RTE_MAX(txq->inlen_empw +
+      |                                        ^~~~~~~
+../lib/eal/include/rte_common.h:797:28: note: shadowed declaration is here
+  797 |                 typeof (a) _a =3D (a); \
+      |                            ^~
+../drivers/net/mlx5/mlx5_tx.h:2970:32: note: in expansion of macro =E2=80=
+=98RTE_MIN=E2=80=99
+ 2970 |                         room =3D RTE_MIN(room,
+      |                                ^~~~~~~
+../lib/eal/include/rte_common.h:818:28: warning: declaration of =E2=80=98_b=
+=E2=80=99 shadows a
+previous local [-Wshadow]
+  818 |                 typeof (b) _b =3D (b); \
+      |                            ^~
+../lib/eal/include/rte_common.h:798:34: note: in definition of macro =E2=80=
+=98RTE_MIN=E2=80=99
+  798 |                 typeof (b) _b =3D (b); \
+      |                                  ^
+../drivers/net/mlx5/mlx5_tx.h:2971:40: note: in expansion of macro =E2=80=
+=98RTE_MAX=E2=80=99
+ 2971 |                                        RTE_MAX(txq->inlen_empw +
+      |                                        ^~~~~~~
+../lib/eal/include/rte_common.h:798:28: note: shadowed declaration is here
+  798 |                 typeof (b) _b =3D (b); \
+      |                            ^~
+../drivers/net/mlx5/mlx5_tx.h:2970:32: note: in expansion of macro =E2=80=
+=98RTE_MIN=E2=80=99
+ 2970 |                         room =3D RTE_MIN(room,
+      |                                ^~~~~~~
+
+...
+Truncated because bugzilla can't take all of it.
 
 --=20
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17515629040.dc6b.1313637
-Date: Thu, 3 Jul 2025 19:15:04 +0200
+--17515631620.faada6F2.1315469
+Date: Thu, 3 Jul 2025 19:19:22 +0200
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -144,14 +200,14 @@ bz_new_table">
           <th>Bug ID</th>
           <td><a class=3D"bz_bug_link=20
           bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - bonding: duplicate shadow local variables"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1745">1745</a>
+   title=3D"UNCONFIRMED - mlx5: lotsof shadow varable warnings"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1746">1746</a>
           </td>
         </tr>
 
         <tr>
           <th>Summary</th>
-          <td>bonding: duplicate shadow local variables
+          <td>mlx5: lotsof shadow varable warnings
           </td>
         </tr>
 
@@ -187,7 +243,7 @@ bz_new_table">
 
         <tr>
           <th>Severity</th>
-          <td>normal
+          <td>minor
           </td>
         </tr>
 
@@ -222,47 +278,103 @@ bz_new_table">
         </tr></table>
       <p>
         <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">Building with -Wshadow flags sever=
-al potential bugs in bonding:
+          <pre class=3D"bz_comment_text">Building with -Wshadow reports sev=
+eral potential issues with mlx5 driver.
 
-[963/3418] Compiling C object
-drivers/libtmp_rte_net_bond.a.p/net_bonding_rte_eth_bond_pmd.c.o
-../drivers/net/bonding/rte_eth_bond_pmd.c: In function =E2=80=98member_star=
-t=E2=80=99:
-../drivers/net/bonding/rte_eth_bond_pmd.c:1910:42: warning: declaration of
-=E2=80=98internals=E2=80=99 shadows a previous local [-Wshadow]
- 1910 |                 struct bond_dev_private *internals;
-      |                                          ^~~~~~~~~
-../drivers/net/bonding/rte_eth_bond_pmd.c:1828:34: note: shadowed declarati=
-on
-is here
- 1828 |         struct bond_dev_private *internals =3D
-bonding_eth_dev-&gt;data-&gt;dev_private;
-      |                                  ^~~~~~~~~
-../drivers/net/bonding/rte_eth_bond_pmd.c: In function
-=E2=80=98bond_ethdev_allmulticast_disable=E2=80=99:
-../drivers/net/bonding/rte_eth_bond_pmd.c:2914:34: warning: declaration of
-=E2=80=98port_id=E2=80=99 shadows a previous local [-Wshadow]
- 2914 |                         uint16_t port_id =3D
-internals-&gt;members[i].port_id;
-      |                                  ^~~~~~~
-../drivers/net/bonding/rte_eth_bond_pmd.c:2903:18: note: shadowed declarati=
-on
-is here
- 2903 |         uint16_t port_id;
-      |                  ^~~~~~~
-../drivers/net/bonding/rte_eth_bond_pmd.c: In function =E2=80=98bond_ethdev=
-_configure=E2=80=99:
-../drivers/net/bonding/rte_eth_bond_pmd.c:4111:26: warning: declaration of =
-=E2=80=98i=E2=80=99
-shadows a previous local [-Wshadow]
- 4111 |                 unsigned i;
-      |                          ^
-../drivers/net/bonding/rte_eth_bond_pmd.c:3946:18: note: shadowed declarati=
-on
-is here
- 3946 |         unsigned i, j;
-      |
+[1123/3418] Compiling C object
+drivers/libtmp_rte_net_mlx5.a.p/net_mlx5_mlx5_rss.c.o
+In file included from ../drivers/net/mlx5/mlx5_rss.c:19:
+../drivers/net/mlx5/mlx5_rx.h: In function =E2=80=98mprq_buf_replace=E2=80=
+=99:
+../drivers/net/mlx5/mlx5_rx.h:448:39: warning: declaration of =E2=80=98rep=
+=E2=80=99 shadows a
+previous local [-Wshadow]
+  448 |                 struct mlx5_mprq_buf *rep;
+      |                                       ^~~
+../drivers/net/mlx5/mlx5_rx.h:424:31: note: shadowed declaration is here
+  424 |         struct mlx5_mprq_buf *rep =3D rxq-&gt;mprq_repl;
+      |                               ^~~
+[1124/3418] Compiling C object
+drivers/libtmp_rte_net_mlx5.a.p/net_mlx5_mlx5_ethdev.c.o
+In file included from ../drivers/net/mlx5/mlx5_ethdev.c:26:
+../drivers/net/mlx5/mlx5_rx.h: In function =E2=80=98mprq_buf_replace=E2=80=
+=99:
+../drivers/net/mlx5/mlx5_rx.h:448:39: warning: declaration of =E2=80=98rep=
+=E2=80=99 shadows a
+previous local [-Wshadow]
+  448 |                 struct mlx5_mprq_buf *rep;
+      |                                       ^~~
+../drivers/net/mlx5/mlx5_rx.h:424:31: note: shadowed declaration is here
+  424 |         struct mlx5_mprq_buf *rep =3D rxq-&gt;mprq_repl;
+      |                               ^~~
+In file included from ../lib/eal/include/dev_driver.h:8,
+                 from ../lib/ethdev/ethdev_driver.h:19,
+                 from ../drivers/net/mlx5/mlx5_ethdev.c:13:
+../drivers/net/mlx5/mlx5_tx.h: In function =E2=80=98mlx5_tx_burst_empw_inli=
+ne=E2=80=99:
+../lib/eal/include/rte_common.h:817:28: warning: declaration of =E2=80=98_a=
+=E2=80=99 shadows a
+previous local [-Wshadow]
+  817 |                 typeof (a) _a =3D (a); \
+      |                            ^~
+../lib/eal/include/rte_common.h:798:25: note: in definition of macro =E2=80=
+=98RTE_MIN=E2=80=99
+  798 |                 typeof (b) _b =3D (b); \
+      |                         ^
+../drivers/net/mlx5/mlx5_tx.h:2971:40: note: in expansion of macro =E2=80=
+=98RTE_MAX=E2=80=99
+ 2971 |                                        RTE_MAX(txq-&gt;inlen_empw +
+      |                                        ^~~~~~~
+../lib/eal/include/rte_common.h:797:28: note: shadowed declaration is here
+  797 |                 typeof (a) _a =3D (a); \
+      |                            ^~
+../drivers/net/mlx5/mlx5_tx.h:2970:32: note: in expansion of macro =E2=80=
+=98RTE_MIN=E2=80=99
+ 2970 |                         room =3D RTE_MIN(room,
+      |                                ^~~~~~~
+../lib/eal/include/rte_common.h:817:28: warning: declaration of =E2=80=98_a=
+=E2=80=99 shadows a
+previous local [-Wshadow]
+  817 |                 typeof (a) _a =3D (a); \
+      |                            ^~
+../lib/eal/include/rte_common.h:798:34: note: in definition of macro =E2=80=
+=98RTE_MIN=E2=80=99
+  798 |                 typeof (b) _b =3D (b); \
+      |                                  ^
+../drivers/net/mlx5/mlx5_tx.h:2971:40: note: in expansion of macro =E2=80=
+=98RTE_MAX=E2=80=99
+ 2971 |                                        RTE_MAX(txq-&gt;inlen_empw +
+      |                                        ^~~~~~~
+../lib/eal/include/rte_common.h:797:28: note: shadowed declaration is here
+  797 |                 typeof (a) _a =3D (a); \
+      |                            ^~
+../drivers/net/mlx5/mlx5_tx.h:2970:32: note: in expansion of macro =E2=80=
+=98RTE_MIN=E2=80=99
+ 2970 |                         room =3D RTE_MIN(room,
+      |                                ^~~~~~~
+../lib/eal/include/rte_common.h:818:28: warning: declaration of =E2=80=98_b=
+=E2=80=99 shadows a
+previous local [-Wshadow]
+  818 |                 typeof (b) _b =3D (b); \
+      |                            ^~
+../lib/eal/include/rte_common.h:798:34: note: in definition of macro =E2=80=
+=98RTE_MIN=E2=80=99
+  798 |                 typeof (b) _b =3D (b); \
+      |                                  ^
+../drivers/net/mlx5/mlx5_tx.h:2971:40: note: in expansion of macro =E2=80=
+=98RTE_MAX=E2=80=99
+ 2971 |                                        RTE_MAX(txq-&gt;inlen_empw +
+      |                                        ^~~~~~~
+../lib/eal/include/rte_common.h:798:28: note: shadowed declaration is here
+  798 |                 typeof (b) _b =3D (b); \
+      |                            ^~
+../drivers/net/mlx5/mlx5_tx.h:2970:32: note: in expansion of macro =E2=80=
+=98RTE_MIN=E2=80=99
+ 2970 |                         room =3D RTE_MIN(room,
+      |                                ^~~~~~~
+
+...
+Truncated because bugzilla can't take all of it.
           </pre>
         </div>
       </p>
@@ -279,7 +391,7 @@ is here
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1745">
+?id=3D1746">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -288,4 +400,4 @@ ication">
     </body>
 </html>=
 
---17515629040.dc6b.1313637--
+--17515631620.faada6F2.1315469--
