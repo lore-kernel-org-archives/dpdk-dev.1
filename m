@@ -2,28 +2,28 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A1BBC83F03
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Jul 2025 17:06:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C65CDC77B7C
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Jul 2025 17:08:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CA5D140267;
-	Thu,  3 Jul 2025 19:06:17 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2508D40267;
+	Thu,  3 Jul 2025 19:08:02 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 08EFB40264
- for <dev@dpdk.org>; Thu,  3 Jul 2025 19:06:16 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 9087240264
+ for <dev@dpdk.org>; Thu,  3 Jul 2025 19:08:00 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 0292C46AE8; Thu,  3 Jul 2025 19:06:16 +0200 (CEST)
+ id 8865D46AE8; Thu,  3 Jul 2025 19:08:00 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/core Bug 1743] malloc: duplicate shadowed variable definition
-Date: Thu, 03 Jul 2025 17:06:16 +0000
+Subject: [DPDK/other Bug 1744] bus/flsmc: duplicate variable definition
+Date: Thu, 03 Jul 2025 17:08:00 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: core
+X-Bugzilla-Component: other
 X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: minor
+X-Bugzilla-Severity: normal
 X-Bugzilla-Who: stephen@networkplumber.org
 X-Bugzilla-Status: UNCONFIRMED
 X-Bugzilla-Resolution: 
@@ -34,8 +34,8 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1743-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17515623750.dB4b56c.1309387
+Message-ID: <bug-1744-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17515624800.DDc7229c.1310792
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: https://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -55,8 +55,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17515623750.dB4b56c.1309387
-Date: Thu, 3 Jul 2025 19:06:15 +0200
+--17515624800.DDc7229c.1310792
+Date: Thu, 3 Jul 2025 19:08:00 +0200
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -64,43 +64,78 @@ X-Bugzilla-URL: https://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1743
+https://bugs.dpdk.org/show_bug.cgi?id=3D1744
 
-            Bug ID: 1743
-           Summary: malloc: duplicate shadowed variable definition
+            Bug ID: 1744
+           Summary: bus/flsmc: duplicate variable definition
            Product: DPDK
            Version: unspecified
           Hardware: All
                 OS: All
             Status: UNCONFIRMED
-          Severity: minor
+          Severity: normal
           Priority: Normal
-         Component: core
+         Component: other
           Assignee: dev@dpdk.org
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
 Building with -Wshadow reports:
 
-[51/3418] Compiling C object lib/librte_eal.a.p/eal_common_malloc_heap.c.o
-../lib/eal/common/malloc_heap.c: In function =E2=80=98malloc_heap_free=E2=
-=80=99:
-../lib/eal/common/malloc_heap.c:1047:23: warning: declaration of =E2=80=98a=
-ligned_end=E2=80=99
+In file included from ../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:27:
+../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c: In function
+=E2=80=98rte_dpaa2_create_dpci_device=E2=80=99:
+../drivers/bus/fslmc/portal/dpaa2_hw_pvt.h:207:13: warning: declaration of
+=E2=80=98ret=E2=80=99 shadows a previous local [-Wshadow]
+  207 |         int ret =3D 0, i; \
+      |             ^~~
+../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:99:23: note: in expansion of ma=
+cro
+=E2=80=98dpaa2_queue_storage_alloc=E2=80=99
+   99 |                 ret =3D dpaa2_queue_storage_alloc(rxq, 1);
+      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~
+../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:57:13: note: shadowed declarati=
+on
+is here
+   57 |         int ret, i, dpci_id =3D obj->object_id;
+      |             ^~~
+../drivers/bus/fslmc/portal/dpaa2_hw_pvt.h:207:22: warning: declaration of =
+=E2=80=98i=E2=80=99
 shadows a previous local [-Wshadow]
- 1047 |                 void *aligned_end =3D RTE_PTR_ADD(aligned_start,
-aligned_len);
-      |                       ^~~~~~~~~~~
-../lib/eal/common/malloc_heap.c:862:45: note: shadowed declaration is here
-  862 |         void *start, *aligned_start, *end, *aligned_end;
-      |                                             ^~~~~~~~~~~
+  207 |         int ret =3D 0, i; \
+      |                      ^
+../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:99:23: note: in expansion of ma=
+cro
+=E2=80=98dpaa2_queue_storage_alloc=E2=80=99
+   99 |                 ret =3D dpaa2_queue_storage_alloc(rxq, 1);
+      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~
+../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:57:18: note: shadowed declarati=
+on
+is here
+   57 |         int ret, i, dpci_id =3D obj->object_id;
+      |                  ^
+../drivers/bus/fslmc/portal/dpaa2_hw_pvt.h:226:13: warning: declaration of =
+=E2=80=98i=E2=80=99
+shadows a previous local [-Wshadow]
+  226 |         int i; \
+      |             ^
+../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:148:17: note: in expansion of m=
+acro
+=E2=80=98dpaa2_queue_storage_free=E2=80=99
+  148 |                 dpaa2_queue_storage_free(rxq, 1);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~
+../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:57:18: note: shadowed declarati=
+on
+is here
+   57 |         int ret, i, dpci_id =3D obj->object_id;
+      |                  ^
 
 --=20
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17515623750.dB4b56c.1309387
-Date: Thu, 3 Jul 2025 19:06:15 +0200
+--17515624800.DDc7229c.1310792
+Date: Thu, 3 Jul 2025 19:08:00 +0200
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -118,14 +153,14 @@ bz_new_table">
           <th>Bug ID</th>
           <td><a class=3D"bz_bug_link=20
           bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - malloc: duplicate shadowed variable definition"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1743">1743</a>
+   title=3D"UNCONFIRMED - bus/flsmc: duplicate variable definition"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1744">1744</a>
           </td>
         </tr>
 
         <tr>
           <th>Summary</th>
-          <td>malloc: duplicate shadowed variable definition
+          <td>bus/flsmc: duplicate variable definition
           </td>
         </tr>
 
@@ -161,7 +196,7 @@ bz_new_table">
 
         <tr>
           <th>Severity</th>
-          <td>minor
+          <td>normal
           </td>
         </tr>
 
@@ -173,7 +208,7 @@ bz_new_table">
 
         <tr>
           <th>Component</th>
-          <td>core
+          <td>other
           </td>
         </tr>
 
@@ -198,18 +233,53 @@ bz_new_table">
         <div class=3D"bz_comment_block">
           <pre class=3D"bz_comment_text">Building with -Wshadow reports:
 
-[51/3418] Compiling C object lib/librte_eal.a.p/eal_common_malloc_heap.c.o
-../lib/eal/common/malloc_heap.c: In function =E2=80=98malloc_heap_free=E2=
-=80=99:
-../lib/eal/common/malloc_heap.c:1047:23: warning: declaration of =E2=80=98a=
-ligned_end=E2=80=99
+In file included from ../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:27:
+../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c: In function
+=E2=80=98rte_dpaa2_create_dpci_device=E2=80=99:
+../drivers/bus/fslmc/portal/dpaa2_hw_pvt.h:207:13: warning: declaration of
+=E2=80=98ret=E2=80=99 shadows a previous local [-Wshadow]
+  207 |         int ret =3D 0, i; \
+      |             ^~~
+../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:99:23: note: in expansion of ma=
+cro
+=E2=80=98dpaa2_queue_storage_alloc=E2=80=99
+   99 |                 ret =3D dpaa2_queue_storage_alloc(rxq, 1);
+      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~
+../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:57:13: note: shadowed declarati=
+on
+is here
+   57 |         int ret, i, dpci_id =3D obj-&gt;object_id;
+      |             ^~~
+../drivers/bus/fslmc/portal/dpaa2_hw_pvt.h:207:22: warning: declaration of =
+=E2=80=98i=E2=80=99
 shadows a previous local [-Wshadow]
- 1047 |                 void *aligned_end =3D RTE_PTR_ADD(aligned_start,
-aligned_len);
-      |                       ^~~~~~~~~~~
-../lib/eal/common/malloc_heap.c:862:45: note: shadowed declaration is here
-  862 |         void *start, *aligned_start, *end, *aligned_end;
-      |                                             ^~~~~~~~~~~
+  207 |         int ret =3D 0, i; \
+      |                      ^
+../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:99:23: note: in expansion of ma=
+cro
+=E2=80=98dpaa2_queue_storage_alloc=E2=80=99
+   99 |                 ret =3D dpaa2_queue_storage_alloc(rxq, 1);
+      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~
+../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:57:18: note: shadowed declarati=
+on
+is here
+   57 |         int ret, i, dpci_id =3D obj-&gt;object_id;
+      |                  ^
+../drivers/bus/fslmc/portal/dpaa2_hw_pvt.h:226:13: warning: declaration of =
+=E2=80=98i=E2=80=99
+shadows a previous local [-Wshadow]
+  226 |         int i; \
+      |             ^
+../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:148:17: note: in expansion of m=
+acro
+=E2=80=98dpaa2_queue_storage_free=E2=80=99
+  148 |                 dpaa2_queue_storage_free(rxq, 1);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~
+../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:57:18: note: shadowed declarati=
+on
+is here
+   57 |         int ret, i, dpci_id =3D obj-&gt;object_id;
+      |                  ^
           </pre>
         </div>
       </p>
@@ -226,7 +296,7 @@ aligned_len);
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1743">
+?id=3D1744">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -235,4 +305,4 @@ ication">
     </body>
 </html>=
 
---17515623750.dB4b56c.1309387--
+--17515624800.DDc7229c.1310792--
