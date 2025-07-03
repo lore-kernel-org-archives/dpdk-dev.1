@@ -2,20 +2,20 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D5AC83F03
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Jul 2025 17:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A1BBC83F03
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Jul 2025 17:06:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 82C7540267;
-	Thu,  3 Jul 2025 19:03:17 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id CA5D140267;
+	Thu,  3 Jul 2025 19:06:17 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 97A8E40264
- for <dev@dpdk.org>; Thu,  3 Jul 2025 19:03:15 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 08EFB40264
+ for <dev@dpdk.org>; Thu,  3 Jul 2025 19:06:16 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 857D246AE7; Thu,  3 Jul 2025 19:03:15 +0200 (CEST)
+ id 0292C46AE8; Thu,  3 Jul 2025 19:06:16 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/core Bug 1742] trace: duplicate shadow of same variable
-Date: Thu, 03 Jul 2025 17:03:15 +0000
+Subject: [DPDK/core Bug 1743] malloc: duplicate shadowed variable definition
+Date: Thu, 03 Jul 2025 17:06:16 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -34,8 +34,8 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1742-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17515621950.A38C0.1307483
+Message-ID: <bug-1743-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17515623750.dB4b56c.1309387
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: https://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -55,8 +55,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17515621950.A38C0.1307483
-Date: Thu, 3 Jul 2025 19:03:15 +0200
+--17515623750.dB4b56c.1309387
+Date: Thu, 3 Jul 2025 19:06:15 +0200
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -64,10 +64,10 @@ X-Bugzilla-URL: https://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1742
+https://bugs.dpdk.org/show_bug.cgi?id=3D1743
 
-            Bug ID: 1742
-           Summary: trace: duplicate shadow of same variable
+            Bug ID: 1743
+           Summary: malloc: duplicate shadowed variable definition
            Product: DPDK
            Version: unspecified
           Hardware: All
@@ -80,89 +80,27 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D1742
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-The variable name 'trace' is used in different places and will get flagged =
-as
-warning with -Wshadow. Confusing and error prone
+Building with -Wshadow reports:
 
-[48/3418] Compiling C object lib/librte_eal.a.p/eal_common_eal_common_trace=
-.c.o
-../lib/eal/common/eal_common_trace.c: In function =E2=80=98trace_lcore_mem_=
-dump=E2=80=99:
-../lib/eal/common/eal_common_trace.c:273:23: warning: declaration of =E2=80=
-=98trace=E2=80=99
-shadows a global declaration [-Wshadow]
-  273 |         struct trace *trace =3D trace_obj_get();
-      |                       ^~~~~
-../lib/eal/common/eal_common_trace.c:27:21: note: shadowed declaration is h=
-ere
-   27 | static struct trace trace =3D { .args =3D
-STAILQ_HEAD_INITIALIZER(trace.args), };
-      |                     ^~~~~
-../lib/eal/common/eal_common_trace.c: In function =E2=80=98rte_trace_dump=
-=E2=80=99:
-../lib/eal/common/eal_common_trace.c:298:34: warning: declaration of =E2=80=
-=98tp_list=E2=80=99
-shadows a global declaration [-Wshadow]
-  298 |         struct trace_point_head *tp_list =3D trace_list_head_get();
-      |                                  ^~~~~~~
-../lib/eal/common/eal_common_trace.c:26:32: note: shadowed declaration is h=
-ere
-   26 | static struct trace_point_head tp_list =3D
-STAILQ_HEAD_INITIALIZER(tp_list);
-      |                                ^~~~~~~
-../lib/eal/common/eal_common_trace.c:299:23: warning: declaration of =E2=80=
-=98trace=E2=80=99
-shadows a global declaration [-Wshadow]
-  299 |         struct trace *trace =3D trace_obj_get();
-      |                       ^~~~~
-../lib/eal/common/eal_common_trace.c:27:21: note: shadowed declaration is h=
-ere
-   27 | static struct trace trace =3D { .args =3D
-STAILQ_HEAD_INITIALIZER(trace.args), };
-      |                     ^~~~~
-../lib/eal/common/eal_common_trace.c: In function
-=E2=80=98__rte_trace_mem_per_thread_alloc=E2=80=99:
-../lib/eal/common/eal_common_trace.c:334:23: warning: declaration of =E2=80=
-=98trace=E2=80=99
-shadows a global declaration [-Wshadow]
-  334 |         struct trace *trace =3D trace_obj_get();
-      |                       ^~~~~
-../lib/eal/common/eal_common_trace.c:27:21: note: shadowed declaration is h=
-ere
-   27 | static struct trace trace =3D { .args =3D
-STAILQ_HEAD_INITIALIZER(trace.args), };
-      |                     ^~~~~
-../lib/eal/common/eal_common_trace.c: In function =E2=80=98trace_mem_per_th=
-read_free=E2=80=99:
-../lib/eal/common/eal_common_trace.c:411:23: warning: declaration of =E2=80=
-=98trace=E2=80=99
-shadows a global declaration [-Wshadow]
-  411 |         struct trace *trace =3D trace_obj_get();
-      |                       ^~~~~
-../lib/eal/common/eal_common_trace.c:27:21: note: shadowed declaration is h=
-ere
-   27 | static struct trace trace =3D { .args =3D
-STAILQ_HEAD_INITIALIZER(trace.args), };
-      |                     ^~~~~
-../lib/eal/common/eal_common_trace.c: In function =E2=80=98trace_mem_free=
-=E2=80=99:
-../lib/eal/common/eal_common_trace.c:441:23: warning: declaration of =E2=80=
-=98trace=E2=80=99
-shadows a global declaration [-Wshadow]
-  441 |         struct trace *trace =3D trace_obj_get();
-      |                       ^~~~~
-../lib/eal/common/eal_common_trace.c:27:21: note: shadowed declaration is h=
-ere
-   27 | static struct trace trace =3D { .args =3D
-STAILQ_HEAD_INITIALIZER(trace.args), };
-      |                     ^~~~~
+[51/3418] Compiling C object lib/librte_eal.a.p/eal_common_malloc_heap.c.o
+../lib/eal/common/malloc_heap.c: In function =E2=80=98malloc_heap_free=E2=
+=80=99:
+../lib/eal/common/malloc_heap.c:1047:23: warning: declaration of =E2=80=98a=
+ligned_end=E2=80=99
+shadows a previous local [-Wshadow]
+ 1047 |                 void *aligned_end =3D RTE_PTR_ADD(aligned_start,
+aligned_len);
+      |                       ^~~~~~~~~~~
+../lib/eal/common/malloc_heap.c:862:45: note: shadowed declaration is here
+  862 |         void *start, *aligned_start, *end, *aligned_end;
+      |                                             ^~~~~~~~~~~
 
 --=20
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17515621950.A38C0.1307483
-Date: Thu, 3 Jul 2025 19:03:15 +0200
+--17515623750.dB4b56c.1309387
+Date: Thu, 3 Jul 2025 19:06:15 +0200
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -180,14 +118,14 @@ bz_new_table">
           <th>Bug ID</th>
           <td><a class=3D"bz_bug_link=20
           bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - trace: duplicate shadow of same variable"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1742">1742</a>
+   title=3D"UNCONFIRMED - malloc: duplicate shadowed variable definition"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1743">1743</a>
           </td>
         </tr>
 
         <tr>
           <th>Summary</th>
-          <td>trace: duplicate shadow of same variable
+          <td>malloc: duplicate shadowed variable definition
           </td>
         </tr>
 
@@ -258,82 +196,20 @@ bz_new_table">
         </tr></table>
       <p>
         <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">The variable name 'trace' is used =
-in different places and will get flagged as
-warning with -Wshadow. Confusing and error prone
+          <pre class=3D"bz_comment_text">Building with -Wshadow reports:
 
-[48/3418] Compiling C object lib/librte_eal.a.p/eal_common_eal_common_trace=
-.c.o
-../lib/eal/common/eal_common_trace.c: In function =E2=80=98trace_lcore_mem_=
-dump=E2=80=99:
-../lib/eal/common/eal_common_trace.c:273:23: warning: declaration of =E2=80=
-=98trace=E2=80=99
-shadows a global declaration [-Wshadow]
-  273 |         struct trace *trace =3D trace_obj_get();
-      |                       ^~~~~
-../lib/eal/common/eal_common_trace.c:27:21: note: shadowed declaration is h=
-ere
-   27 | static struct trace trace =3D { .args =3D
-STAILQ_HEAD_INITIALIZER(trace.args), };
-      |                     ^~~~~
-../lib/eal/common/eal_common_trace.c: In function =E2=80=98rte_trace_dump=
-=E2=80=99:
-../lib/eal/common/eal_common_trace.c:298:34: warning: declaration of =E2=80=
-=98tp_list=E2=80=99
-shadows a global declaration [-Wshadow]
-  298 |         struct trace_point_head *tp_list =3D trace_list_head_get();
-      |                                  ^~~~~~~
-../lib/eal/common/eal_common_trace.c:26:32: note: shadowed declaration is h=
-ere
-   26 | static struct trace_point_head tp_list =3D
-STAILQ_HEAD_INITIALIZER(tp_list);
-      |                                ^~~~~~~
-../lib/eal/common/eal_common_trace.c:299:23: warning: declaration of =E2=80=
-=98trace=E2=80=99
-shadows a global declaration [-Wshadow]
-  299 |         struct trace *trace =3D trace_obj_get();
-      |                       ^~~~~
-../lib/eal/common/eal_common_trace.c:27:21: note: shadowed declaration is h=
-ere
-   27 | static struct trace trace =3D { .args =3D
-STAILQ_HEAD_INITIALIZER(trace.args), };
-      |                     ^~~~~
-../lib/eal/common/eal_common_trace.c: In function
-=E2=80=98__rte_trace_mem_per_thread_alloc=E2=80=99:
-../lib/eal/common/eal_common_trace.c:334:23: warning: declaration of =E2=80=
-=98trace=E2=80=99
-shadows a global declaration [-Wshadow]
-  334 |         struct trace *trace =3D trace_obj_get();
-      |                       ^~~~~
-../lib/eal/common/eal_common_trace.c:27:21: note: shadowed declaration is h=
-ere
-   27 | static struct trace trace =3D { .args =3D
-STAILQ_HEAD_INITIALIZER(trace.args), };
-      |                     ^~~~~
-../lib/eal/common/eal_common_trace.c: In function =E2=80=98trace_mem_per_th=
-read_free=E2=80=99:
-../lib/eal/common/eal_common_trace.c:411:23: warning: declaration of =E2=80=
-=98trace=E2=80=99
-shadows a global declaration [-Wshadow]
-  411 |         struct trace *trace =3D trace_obj_get();
-      |                       ^~~~~
-../lib/eal/common/eal_common_trace.c:27:21: note: shadowed declaration is h=
-ere
-   27 | static struct trace trace =3D { .args =3D
-STAILQ_HEAD_INITIALIZER(trace.args), };
-      |                     ^~~~~
-../lib/eal/common/eal_common_trace.c: In function =E2=80=98trace_mem_free=
-=E2=80=99:
-../lib/eal/common/eal_common_trace.c:441:23: warning: declaration of =E2=80=
-=98trace=E2=80=99
-shadows a global declaration [-Wshadow]
-  441 |         struct trace *trace =3D trace_obj_get();
-      |                       ^~~~~
-../lib/eal/common/eal_common_trace.c:27:21: note: shadowed declaration is h=
-ere
-   27 | static struct trace trace =3D { .args =3D
-STAILQ_HEAD_INITIALIZER(trace.args), };
-      |                     ^~~~~
+[51/3418] Compiling C object lib/librte_eal.a.p/eal_common_malloc_heap.c.o
+../lib/eal/common/malloc_heap.c: In function =E2=80=98malloc_heap_free=E2=
+=80=99:
+../lib/eal/common/malloc_heap.c:1047:23: warning: declaration of =E2=80=98a=
+ligned_end=E2=80=99
+shadows a previous local [-Wshadow]
+ 1047 |                 void *aligned_end =3D RTE_PTR_ADD(aligned_start,
+aligned_len);
+      |                       ^~~~~~~~~~~
+../lib/eal/common/malloc_heap.c:862:45: note: shadowed declaration is here
+  862 |         void *start, *aligned_start, *end, *aligned_end;
+      |                                             ^~~~~~~~~~~
           </pre>
         </div>
       </p>
@@ -350,7 +226,7 @@ STAILQ_HEAD_INITIALIZER(trace.args), };
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1742">
+?id=3D1743">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -359,4 +235,4 @@ ication">
     </body>
 </html>=
 
---17515621950.A38C0.1307483--
+--17515623750.dB4b56c.1309387--
