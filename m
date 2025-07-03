@@ -2,71 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0442AC83030
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Jul 2025 10:20:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A096C83030
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Jul 2025 10:23:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D0EC940267;
-	Thu,  3 Jul 2025 12:20:54 +0200 (CEST)
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com
- [209.85.210.173])
- by mails.dpdk.org (Postfix) with ESMTP id 07B7240264;
- Thu,  3 Jul 2025 12:20:54 +0200 (CEST)
-Received: by mail-pf1-f173.google.com with SMTP id
- d2e1a72fcca58-74801bc6dc5so660441b3a.1; 
- Thu, 03 Jul 2025 03:20:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1751538053; x=1752142853; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=gO1eBxMjsAaYd/HNPNmuJaqypcG471ccO22XIvEsABk=;
- b=WRxXvivyDJDgwGC9vlcQNFBOdtiYz3RxkuLSITUIv0rejuwwrfH291AcvRL5CF7RL3
- oiqLq+RAMCIr//EfcZ2HrvjOOgOY4T6T0/r5he8013y/Ecs1MltoULSbHJWg4lsulpqh
- 8I5uiaZYGdiIfYlrfdegS0RGQWCgfDhM8vVdnqQummBGi4vh3jaR6EekZxjurhlBT6ra
- m0SUWt1do7kZqWAg+R8o3JenQ+VePEB8jeFGkhGIvAWjN8SIRYqfoyv0+BSFlBXkdBTC
- nn580C5KNlwz4ewPcHM8484AMlO9Yz3tlI/qptCSNpauzDIqLTuKxmv7EfYVsPYl2tiF
- gmSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1751538053; x=1752142853;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=gO1eBxMjsAaYd/HNPNmuJaqypcG471ccO22XIvEsABk=;
- b=Qim5TzX/4LWuoHg+jJQdM3AQCYWPzoYvIUm8gmBtmWysA7VEbEUDhB3+dUnC96pfRG
- KWJHUECqvBmsJ96NbtguggGO9gztGGBWrqDCEEoGpNVjOvxPZeomS8N9N8lSiSHqAISf
- 1TGtJtcBPcNkjeouXtG8n85Tr+1SCl6waIxViL6wc/nMTMfNKwaFWtcrYRjYyB6FUQT9
- uGHXrmI0I65/HhpuLsH31GM6jGv0eHklOhs1SHQNsZFeRw7JiRCZOve5RUEyy6PlPr2S
- iDU3dELzEVWq3IapE61UZtW3TkvgaYSIBRMhIwVpXzCVpkwybuFQgCwOF9emIMrND0Cb
- Lr7Q==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXtdfJ+QF9QppLjrYY7Yqq6ec0PP5DWRp5ll8uKw+uIyRBkqXqNKfCWIZUsJVAWouZDoDrXw84=@dpdk.org
-X-Gm-Message-State: AOJu0Ywrd6IemmywmPl249ZjM8nnY+rgFjSQRHA7YOz7U1wkc4HtaT68
- 3OM1HfB7GyoQFXGdtW4DiydjLjQCr+Tc1uQGrD8TqgTebLkByI7Hk/g5OLrtFvVA
-X-Gm-Gg: ASbGnctegWVF+Z+VBO/fOFHrJy1sMg2gmJcLWlD2tZsWIQp6TjFwPfTo5ImGumixjsJ
- YHsJIxvpjhE3yRgYkWVkzCy00rFqwxsNVr/xfZTCxHziP/SfQh+HD89FdADb0DC1tU4IoxgEIgG
- XWgo9B0hLZWTbI1zo1QnfA6DUGbhnceQs+32z+PTpNNm87cKalAv5Q1NgA4CY2K7yzcNPlQJ3On
- TvJ9g9GGMwNPQpIQM2oeNc/o0WX3Y4Ls4LZX1OIC5sZUj3eF0Y95LlboIECaGjC+Tix54htbG56
- 0LTKI27Qb2Wenl+aokT1UYBqdZVjWWWcKFG68wYBfVVPPk5RdLIUeImfWO5HlbNZ+qebm0X3S/e
- Us3ecM10i/mbmvIMzONR2
-X-Google-Smtp-Source: AGHT+IEHzBoOPb7RrkSpCi+Mwn1FWrVWLL8VVDONXeG1tABiMsE6YcBDhr/bLO2JnbeQakfvdJcnvw==
-X-Received: by 2002:a05:6a00:3902:b0:736:4d05:2e35 with SMTP id
- d2e1a72fcca58-74cd56f3efbmr2062641b3a.3.1751538052664; 
- Thu, 03 Jul 2025 03:20:52 -0700 (PDT)
-Received: from localhost.localdomain ([101.0.63.207])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-74af56ceb74sm16871959b3a.135.2025.07.03.03.20.50
- (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Thu, 03 Jul 2025 03:20:52 -0700 (PDT)
-From: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 4E87740267;
+	Thu,  3 Jul 2025 12:23:43 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+ by mails.dpdk.org (Postfix) with ESMTP id 390B640264
+ for <dev@dpdk.org>; Thu,  3 Jul 2025 12:23:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1751538222; x=1783074222;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=mmMvp+eK0YrlNP9nux2w24ZyV5DoHM0uymS4S1f99eI=;
+ b=f4YdUaFvbWeXbPjGPcJZ46SFaoeFhvqLpSqyIPYnfwy8Uypr7dfYMP0t
+ 6RJz0Ge1LRMq1hbs+1Cq2D29IBy5jMSIXsApjSTfuO7LeGLS+0ZaVim81
+ Rkl7ol/67b6tFFMudPhZ8wonawB7LpayEm/YcashJEFq0xaEWqm8GAG5I
+ cCe9g2k7xZUaAItujAcLk5tbvaJ5J26Cjd/L/6nD8UvV3b4JxkeUil6hH
+ V6QiJDngFyt5E/Ak8asxZbHYhHk7ERmrFLveZ+bfh3b5/Qy5lELRvRFG2
+ Tk80snLEwvsaIOJB276Q3W3ugjBmFH9VzlzJ20Q89JiMLqPUqm1qEJ54a g==;
+X-CSE-ConnectionGUID: bCf5l6YESJCP3Mx9zPqAAQ==
+X-CSE-MsgGUID: VSraM9qcTVCks9lYiv4twg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="53826805"
+X-IronPort-AV: E=Sophos;i="6.16,284,1744095600"; d="scan'208";a="53826805"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+ by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 03 Jul 2025 03:23:41 -0700
+X-CSE-ConnectionGUID: dSWElie4T0aITR0bRjgImg==
+X-CSE-MsgGUID: 2JAKiyIhQ56uqLLlTuTyjg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,284,1744095600"; d="scan'208";a="158891542"
+Received: from silpixa00401385.ir.intel.com ([10.237.214.33])
+ by orviesa004.jf.intel.com with ESMTP; 03 Jul 2025 03:23:39 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: amiyaranjan.mohakud@gmail.com,
-	stable@dpdk.org
-Subject: [PATCH v2] net/iavf: fix VLAN strip disabling for v2 capability
-Date: Thu,  3 Jul 2025 15:50:46 +0530
-Message-Id: <20250703102046.10576-1-amiyaranjan.mohakud@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250703084234.8037-1-amiyaranjan.mohakud@gmail.com>
-References: <20250703084234.8037-1-amiyaranjan.mohakud@gmail.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
+ Vipin Varghese <vipin.varghese@amd.com>
+Subject: [PATCH v3] build/x86: fix support for older compilers
+Date: Thu,  3 Jul 2025 11:21:24 +0100
+Message-ID: <20250703102123.3708401-2-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250702155129.3440210-1-bruce.richardson@intel.com>
+References: <20250702155129.3440210-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -82,43 +61,74 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Ensure the correct virtchnl op is called for disabling vlan stripping by
-checking if the device supports either v1 or v2 vlan capability and
-choosing the op accordingly.
+Some older compilers e.g. gcc 8.5, do not support overriding
+-march=native with another architecture, leading to build warnings such
+as reported in Bugzilla (link below). Add a check for that case, and
+explicitly add the avx512 flags if necessary.
 
-Bugzilla ID:1735
-Cc: stable@dpdk.org
-Fixes: 3bfad066f9b4 ("net/iavf: fix VLAN strip setting after enabling filter")
+Note: it appears that it is only the "native" flag that isn't
+overridden, which makes the issue hard to reproduce e.g. using
+godbolt.org, or on a modern machine. For example, testing with gcc 8.5
+on a haswell machine, using 'native' vs explicit 'haswell':
 
-Signed-off-by: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
+gcc -march=native -march=skylake-avx512 -dM -E - < /dev/null | grep AVX512 | wc -l
+0
+
+gcc -march=haswell -march=skylake-avx512 -dM -E - < /dev/null | grep AVX512 | wc -l
+5
+
+Bugzilla ID: 1736
+Fixes: e361ae3f59d3 ("build: reduce use of AVX compiler flags")
+
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/iavf/iavf_ethdev.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+V3: fix build when using meson 0.57 which doesn't flatten the sub-arrays
+V2: fix commit log
+---
+ config/x86/meson.build | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index c33fdd9069..335a8126c4 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -1388,6 +1388,7 @@ iavf_disable_vlan_strip_ex(struct rte_eth_dev *dev, int on)
- 	 */
- 	struct iavf_adapter *adapter =
- 		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
-+	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct rte_eth_conf *dev_conf = &dev->data->dev_conf;
- 	int err;
+diff --git a/config/x86/meson.build b/config/x86/meson.build
+index e2ccfb6d12..bd135eb02d 100644
+--- a/config/x86/meson.build
++++ b/config/x86/meson.build
+@@ -67,26 +67,31 @@ if is_linux or cc.get_id() == 'gcc'
+     endif
+ endif
  
-@@ -1395,7 +1396,10 @@ iavf_disable_vlan_strip_ex(struct rte_eth_dev *dev, int on)
- 	    adapter->hw.mac.type == IAVF_MAC_VF ||
- 	    adapter->hw.mac.type == IAVF_MAC_X722_VF) {
- 		if (on && !(dev_conf->rxmode.offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP)) {
--			err = iavf_disable_vlan_strip(adapter);
-+			if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_VLAN_V2)
-+				err = iavf_config_vlan_strip_v2(adapter, false);
-+			else
-+				err = iavf_disable_vlan_strip(adapter);
- 			if (err)
- 				return -EIO;
- 		}
+-avx512_march_flag = '-march=x86-64-v4'
++avx512_march_flag = ['-march=x86-64-v4']
+ if not cc.has_argument(avx512_march_flag)
+-    avx512_march_flag = '-march=skylake-avx512'
++    avx512_march_flag = ['-march=skylake-avx512']
++endif
++# workaround for older compilers, e.g. gcc 8.5 on RHEL 8.
++# if march flag overriding doesn't work, explicitly add flags for AVX512.
++if cc.get_define('__AVX512F__', args: machine_args + avx512_march_flag) == ''
++    avx512_march_flag = ['-mavx512f', '-mavx512bw', '-mavx512cd', '-mavx512dq', '-mavx512vl']
+ endif
+ cc_avx512_flags = []
+-if (binutils_ok and cc.has_argument(avx512_march_flag)
++if (binutils_ok and cc.has_multi_arguments(avx512_march_flag)
+         and '-mno-avx512f' not in get_option('c_args'))
+     # check if compiler is working with _mm512_extracti64x4_epi64
+     # Ref: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82887
+     code = '''#include <immintrin.h>
+     void test(__m512i zmm){
+         __m256i ymm = _mm512_extracti64x4_epi64(zmm, 0);}'''
+-    result = cc.compiles(code, args : [avx512_march_flag], name : 'AVX512 checking')
++    result = cc.compiles(code, args : avx512_march_flag, name : 'AVX512 checking')
+     if result == false
+         machine_args += '-mno-avx512f'
+         warning('Broken _mm512_extracti64x4_epi64, disabling AVX512 support')
+     else
+         cc_has_avx512 = true
+         if cc.get_define('__AVX512F__', args: machine_args) == ''
+-            cc_avx512_flags = [avx512_march_flag]
++            cc_avx512_flags = avx512_march_flag
+             if cc.has_argument('-Wno-overriding-option')
+                 cc_avx512_flags += '-Wno-overriding-option'
+             endif
 -- 
-2.39.5 (Apple Git-154)
+2.48.1
 
