@@ -2,39 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFAF3C83030
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Jul 2025 12:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1879CC77B7C
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Jul 2025 12:16:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B5E0040267;
-	Thu,  3 Jul 2025 14:02:45 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 103BF40264
- for <dev@dpdk.org>; Thu,  3 Jul 2025 14:02:44 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id C204920636;
- Thu,  3 Jul 2025 14:02:42 +0200 (CEST)
-Content-class: urn:content-classes:message
-Subject: RE: [PATCH] net/i40e: Fast release optimizations
+	by mails.dpdk.org (Postfix) with ESMTP id 32A9D40267;
+	Thu,  3 Jul 2025 14:16:34 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+ by mails.dpdk.org (Postfix) with ESMTP id 5471E40264
+ for <dev@dpdk.org>; Thu,  3 Jul 2025 14:16:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1751544993; x=1783080993;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=umLoJVUcGw1G9SMFmks5bP0cgxVgvirjsZ5CaV9tIaQ=;
+ b=E1W+y0qAZl/r5MAYcMhD3csMkHSHfsSbK5MSEzvWd92wN1wP0S7n14Ig
+ ArlS4F4ju8L0/A+UShSfJK+fMqc78wmPBikMsbd9JzOqLhLsLqg7a2zbL
+ iXLymsxJj6tGzM9zRdWpRfzT+1WBe1X4H3nElJ3M2dTxQl7lEk5alZAx5
+ rQlMm+OjjqSE/Rk1PtLNmyG9F8/df4m0jN4yi4h6jzwr+tbb7OBU8kBFw
+ aBxvjX/2EgfDwrva5rlIRJvsGgOavzsNXcdtltoZ/9YjLwGrdf2ahSx2T
+ 6MR+sxtmmgzQfyFbd90ytae6caxkJcc+FPcNPASX7iMngbV7HGgviAALO w==;
+X-CSE-ConnectionGUID: 8zlI1ubASL2/q6XWGc7EEQ==
+X-CSE-MsgGUID: ioJe8JnHTauQw2Up7Mt2vQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="53587352"
+X-IronPort-AV: E=Sophos;i="6.16,284,1744095600"; d="scan'208";a="53587352"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 03 Jul 2025 05:16:31 -0700
+X-CSE-ConnectionGUID: nrEqoykzQBKDucdrgQHw6Q==
+X-CSE-MsgGUID: UGhp7BkhS92p2DfHNwYAOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,284,1744095600"; d="scan'208";a="153787198"
+Received: from silpixa00401177.ir.intel.com ([10.237.213.77])
+ by orviesa006.jf.intel.com with ESMTP; 03 Jul 2025 05:16:30 -0700
+From: Ciara Loftus <ciara.loftus@intel.com>
+To: ciara.loftus@intel.com,
+	dev@dpdk.org
+Cc: bruce.richardson@intel.com
+Subject: [PATCH] net/intel: deprecate some SSE paths
+Date: Thu,  3 Jul 2025 12:16:24 +0000
+Message-Id: <20250703121624.1050845-1-ciara.loftus@intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Date: Thu, 3 Jul 2025 14:02:42 +0200
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FD85@smartserver.smartshare.dk>
-In-Reply-To: <03b6263113f642828843b60878c811e6@huawei.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH] net/i40e: Fast release optimizations
-Thread-Index: AQHb5M8cy6WBmzI3MUC2TH1cjpMU4LQbm/iwgAAfruCAACXVQIAAjgtQgACQEeCAAxIakIAAJDjw
-References: <20250624061238.89259-1-mb@smartsharesystems.com><cda18d9197ed4ee9bd5ed73fd02bd032@huawei.com><98CBD80474FA8B44BF855DF32C47DC35E9FD5F@smartserver.smartshare.dk><98CBD80474FA8B44BF855DF32C47DC35E9FD60@smartserver.smartshare.dk><bb4a70c74968437491d61714994a7006@huawei.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FD67@smartserver.smartshare.dk>
- <03b6263113f642828843b60878c811e6@huawei.com>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
- "Bruce Richardson" <bruce.richardson@intel.com>, <dev@dpdk.org>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,69 +58,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiA+ID4gSSBhbSB0YWxraW5nIGFib3V0IGRpZmZlcmVudCB0aGluZzoNCj4gPiA+IEkgdGhpbmsg
-d2l0aCBzb21lIGV4dHJhIGVmZm9ydCBkcml2ZXIgY2FuIHVzZSAoaW4gc29tZSBjYXNlcykNCj4g
-PiA+IHJ0ZV9tYnVmX3Jhd19mcmVlX2J1bGsoKSAgZXZlbiAgd2hlbg0KPiBSVEVfRVRIX1RYX09G
-RkxPQURfTUJVRl9GQVNUX0ZSRUUNCj4gPiA+IGlzIG5vdCBzcGVjaWZpZWQuDQo+ID4gPiBMZXQg
-c2F5IHdlIGNhbiBtYWtlIHR4cS0+ZmFzdF9mcmVlX21wW10gYW4gYXJyYXkgd2l0aCB0aGUgc2Ft
-ZSBzaXplDQo+IGFzIHR4cS0NCj4gPiA+ID50eGVwW10uDQo+ID4gPiBBdCB0eF9idXJzdCgpIHdo
-ZW4gZmlsbGluZyB0eGVwW10gd2UgY2FuIGRvIHByZV9mcmVlKCkgY2hlY2tzIGZvcg0KPiB0aGF0
-IG1idWYsDQo+ID4gPiBhbmQgaW4gY2FzZSBvZiBzdWNjZXNzIHN0b3JlIGl0J3MgbWVtcG9vbCBw
-b2ludGVyIGluIGNvcnJlc3BvbmRpbmcNCj4gdHhxLQ0KPiA+ID4gPmZhc3RfZnJlZV9tcFtdLA0K
-PiA+ID4gb3RoZXJ3aXNlIHB1dCBOVUxMIHRoZXJlLg0KPiA+ID4gVGhlbiBhdCB0eF9mcmVlKCkg
-d2UgY2FuIHNjYW4gZmFzdF9mcmVlX21wW10gYW5kIGludm9rZSAgIHJhd19mcmVlKCkNCj4gZm9y
-IG5vbi0NCj4gPiA+IE5VTEwgZW50cmllcy4NCj4gPiA+IEFnYWluLCBmb3Igbm93IGl0IGlzIGp1
-c3QgYW4gaWRlYSBwcm9iYWJseSB3b3J0aCB0byB0aGluayBhYm91dC4NCj4gPg0KPiA+IFllcywg
-dGhhdCBzZWVtcyBsaWtlIGFuIGV4Y2VsbGVudCBpZGVhLCBjZXJ0YWlubHkgd29ydGggY29uc2lk
-ZXJpbmchDQo+ID4NCj4gPiBBdCB0eF9mcmVlKCksIHRoZSBtYnVmcyBtaWdodCBiZSBjb2xkLCBz
-byBub3QgYWNjZXNzaW5nIHRoZW0gYXQgdGhpcw0KPiBwb2ludCBpbXByb3ZlcyBwZXJmb3JtYW5j
-ZS4gKFdoaWNoIGlzIGFsc28gdGhlIHBvaW50IG9mIG15DQo+ID4gcGF0Y2guKQ0KPiANCj4gWWVz
-Lg0KPiANCj4gPg0KPiA+IEF0IHR4X2J1cnN0KCksIHRoZSBtYnVmcyBhcmUgcmVhZCBhbnl3YXkg
-KHRoZWlyIGluZm9ybWF0aW9uIGlzIHdyaXR0ZW4NCj4gaW50byB0aGUgdHggZGVzY3JpcHRvcnMp
-LCBzbyB0aGUgbWJ1ZnMgYXJlIGhvdCBpbiB0aGUgY2FjaGUgYXQNCj4gPiB0aGlzIHBvaW50Lg0K
-PiANCj4gWWVzLg0KPiANCj4gPiBCZXN0IGNhc2Ugd2l0aCB5b3VyIHN1Z2dlc3Rpb24sIHJ0ZV9w
-a3RtYnVmX3ByZWZyZWVfc2VnKCkgZG9lc24ndA0KPiB3cml0ZSB0aGUgbWJ1Ziwgc28gdGhlIHBl
-cmZvcm1hbmNlIGNvc3Qgb2YgZG9pbmcgaXQgYXQgdHhfYnVyc3QoKQ0KPiA+IGlzIGV4dHJlbWVs
-eSBsb3cuDQo+IA0KPiBZZXMuDQo+IA0KPiA+IFdvcnN0IGNhc2Ugd2l0aCB5b3VyIHN1Z2dlc3Rp
-b24sIHJ0ZV9wa3RtYnVmX3ByZWZyZWVfc2VnKCkgZG9lcyB3cml0ZQ0KPiB0aGUgbWJ1Ziwgc28g
-dGhlIG1idWYgd3JpdGUgb3BlcmF0aW9uIHNpbXBseSBtb3ZlcyBmcm9tDQo+ID4gdHhfZnJlZSgp
-IHRvIHR4X2J1cnN0KCkuDQo+ID4gSG93ZXZlciwgaW4gdHhfYnVyc3QoKSwgdGhlIG1idWYgaXMg
-YWxyZWFkeSBob3QgaW4gdGhlIGNhY2hlLCBzbyBwZXINCj4gdHJhbnNtaXR0ZWQgbWJ1Ziwgd2Ug
-Z2V0IG9uZSBsb2FkK3N0b3JlIGF0IHR4X2J1cnN0KCkgaW5zdGVhZCBvZg0KPiA+IG9uZSBsb2Fk
-IGF0IHR4X2J1cnN0KCkgKyBvbmUgbG9hZCtzdG9yZSBhdCB0eF9mcmVlKCkuDQo+IA0KPiBJIHN1
-cHBvc2UgeW91IHBsYW4gdG8gaW52b2tlIGZ1bGwgIHJ0ZV9wa3RtYnVmX3ByZWZyZWVfc2VnKCkg
-aGVyZT8NCj4gVW5mb3J0dW5hdGVseSwgSSBkb24ndCB0aGluayBpdCBpcyBwb3NzaWJsZSAtIGZv
-ciBjYXNlcyB3aGVuIHJlZmNudCA+IDEsDQo+IHdlIG5lZWQgdG8gZGVjcmVtZW50IHJlZmNudCBv
-bmx5IHdoZW4gd2UgYXJlIHJlYWR5IHRvDQo+IHJlbGVhc2UgdGhlIG1idWYuIE90aGVyd2lzZSB3
-ZSBjYW4gZW5kIHVwIHdpdGggTklDIEhXIHJlYWRpbmcgZnJvbQ0KPiBhbHJlYWR5IHJlbGVhc2Vk
-IChhbmQgcHJvYmFibHkgcmUtdXNlZCkgbWJ1Zi4NCg0KR29vZCBjYXRjaC4NCg0KPiBXaGF0IHdl
-IHByb2JhYmx5IG5lZWQgaXMgYSBsaWdodHdlaWdodCB2ZXJzaW9uIG9mDQo+IHJ0ZV9wa3RtYnVm
-X3ByZWZyZWVfc2VnKCkgdGhhdCB3b3VsZCByZXR1cm4gbm90LU5VTEwgdmFsdWUgb25seSB3aGVu
-DQo+IHJlZmNudD09MSwgYW5kIHNlZ21lbnQgYW5kIG5vdCBpbmRpcmVjdCBtYnVmIG9yIGV4dGVy
-bmFsIG1lbW9yeQ0KPiBhdHRhY2hlZC4NCj4gU29tZXRoaW5nIGxpa2U6DQo+IA0KPiBzdGF0aWMg
-X19ydGVfYWx3YXlzX2lubGluZSBzdHJ1Y3QgcnRlX21idWYgKg0KPiBydGVfcGt0bWJ1Zl9wcmVm
-cmVlX2NoZWNrKHNjb25zdCB0cnVjdCBydGVfbWJ1ZiAqbSkNCj4gew0KPiAgICAgICAgIGlmIChy
-dGVfbWJ1Zl9yZWZjbnRfcmVhZChtKSA9PSAxICYmIFJURV9NQlVGX0RJUkVDVChtKSkNCj4gICAg
-ICAgICAgICAgIHJldHVybiBtOw0KPiAgICAgICAgcmV0dXJuIE5VTEw7DQo+IH0NCg0KWWVzLg0K
-Rm9yIHRoZSBtYnVmcyB0aGF0IGFyZSBzYWZlIHRvIHByZWZyZWUgYXQgdHhfYnVyc3QoKSwgd2Ug
-bXVzdCBjb21wbGV0ZWx5IHByZWZyZWUgdGhlbSBsaWtlIHJ0ZV9wa3RtYnVmX3ByZWZyZWVfc2Vn
-KCkgZG9lcywgaS5lLiBhbHNvIGluaXRpYWxpemUgdGhlIG0tPm5leHQgYW5kIG0tPm5iX3NlZ3Mg
-ZmllbGRzLCBzbyB3ZSBjYW4gYmxpbmRseSBmcmVlIHRoZSBtYnVmcyBkaXJlY3RseSB0byB0aGUg
-cmVsZXZhbnQgbWVtcG9vbHMgYXQgdHhfZnJlZSgpLg0KDQo+IA0KPiBTbyBhdCB3b3JzdCBjYXNl
-ICh3aGVuIHN1Y2ggY2hlY2sgd2lsbCByZXR1cm4gTlVMTCkgd2Ugc3RpbGwgbmVlZCB0byBkbw0K
-PiBsb2FkK3N0b3JlIGF0IHR4X2ZyZWUoKS4NCg0KWWVzLCBhdCB0aGUgd29yc3QgY2FzZSwgdGhl
-IGJlaGF2aW9yIG9mIHR4X2ZyZWUoKSB3aWxsIGJlIHRoZSBzYW1lIGFzIHRvZGF5Lg0KDQpQbHVz
-IHRoZSBvdmVyaGVhZCBvZiByZWFkaW5nIGFuZCBjaGVja2luZyB0aGUgZmFzdF9mcmVlX21wW10g
-YXJyYXkgYXQgdHhfZnJlZSgpLCB3aGljaCB3aWxsIGJlIGluY3VycmVkIGluIGJvdGggYmVzdCBh
-bmQgd29yc3QgY2FzZS4gV2l0aCB4ODYtNjQgYXJjaGl0ZWN0dXJlLCB0aGlzIGFycmF5IGNvdmVy
-cyA4IG1idWZzIHBlciBjYWNoZSBsaW5lLCBzbyB0aGUgcGVyLW1idWYgY29zdCBpcyByZWxhdGl2
-ZWx5IGxvdy4NCihJbiBSVEVfRVRIX1RYX09GRkxPQURfTUJVRl9GQVNUX0ZSRUUgb2ZmbG9hZCBt
-b2RlLCB0aGUgZmFzdF9mcmVlX21wW10gYXJyYXkgc2hvdWxkIG5vdCBiZSB1c2VkIGF0IGFsbCwg
-c28gdGhpcyBzbWFsbCBleHRyYSBvdmVyaGVhZCBpcyBub3QgaW5jdXJyZWQgaW4gdGhlIG9mZmxv
-YWQgbW9kZS4pDQoNCkZyb20gdGhlIGhpZ2ggbGV2ZWwgcGVyc3BlY3RpdmUsIHdlIHNob3VsZCBh
-bHNvIGNvbnNpZGVyIHRoZSByZWxldmFuY2Ugb2YgdGhpcyBvcHRpbWl6YXRpb246DQpEbyBhbnkg
-KG5vbi1leG90aWMpIGFwcGxpY2F0aW9ucyBleGlzdCB0aGF0IHRyYW5zbWl0IG1hbnkgbWJ1ZnMg
-Y29tcGxpYW50IHRvIHRoZSByZXF1aXJlbWVudHMgb2YgdGhpcyBvcHRpbWl6YXRpb24gKGFuZCB0
-aHVzIGJlbmVmaXR0aW5nIGZyb20gaXQpLCBidXQgbm90IGNvbXBsaWFudCB0byB0aGUgUlRFX0VU
-SF9UWF9PRkZMT0FEX01CVUZfRkFTVF9GUkVFIG9mZmxvYWQgcmVxdWlyZW1lbnRzIChhbmQgdGh1
-cyBiZWluZyB1bmFibGUgdG8gdXNlIHRoYXQgaW5zdGVhZCk/DQoNCg==
+The SSE rx and tx paths will be removed from the i40e, iavf and ice
+drivers in the 25.11 release. Each of these drivers have faster vector
+paths (AVX2 and AVX-512) which have feature parity with the soon to be
+removed SSE paths. In environments where AVX2 or AVX-512 are not
+supported, the scalar path will still be used, which also has feature
+parity.
+
+Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+---
+ doc/guides/rel_notes/deprecation.rst | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
+index e2d4125308..7b9b6beaa5 100644
+--- a/doc/guides/rel_notes/deprecation.rst
++++ b/doc/guides/rel_notes/deprecation.rst
+@@ -80,6 +80,11 @@ Deprecation Notices
+   and the header struct ``rte_vxlan_gpe_hdr`` with the macro ``RTE_ETHER_VXLAN_GPE_HLEN``
+   will be removed in DPDK 25.11.
+ 
++* net/intel: drivers that have an SSE vector path alongside other vector paths, namely
++  i40e, iavf and ice, will have their SSE vector paths removed in DPDK 25.11. This change
++  will not result in any feature loss, as the fallback scalar paths which have feature
++  parity with SSE will be used in the cases where the SSE paths would have been used.
++
+ * ethdev: The flow API matching pattern structures, ``struct rte_flow_item_*``,
+   should start with relevant protocol header structure from lib/net/.
+   The individual protocol header fields and the protocol header struct
+-- 
+2.34.1
+
