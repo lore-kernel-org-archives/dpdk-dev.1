@@ -2,25 +2,25 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C65CDC77B7C
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Jul 2025 17:08:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB1A5C83F03
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Jul 2025 17:15:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2508D40267;
-	Thu,  3 Jul 2025 19:08:02 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 07A7140267;
+	Thu,  3 Jul 2025 19:15:06 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 9087240264
- for <dev@dpdk.org>; Thu,  3 Jul 2025 19:08:00 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id C26A440267
+ for <dev@dpdk.org>; Thu,  3 Jul 2025 19:15:04 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 8865D46AE8; Thu,  3 Jul 2025 19:08:00 +0200 (CEST)
+ id B88E746AE7; Thu,  3 Jul 2025 19:15:04 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/other Bug 1744] bus/flsmc: duplicate variable definition
-Date: Thu, 03 Jul 2025 17:08:00 +0000
+Subject: [DPDK/ethdev Bug 1745] bonding: duplicate shadow local variables
+Date: Thu, 03 Jul 2025 17:15:04 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: other
+X-Bugzilla-Component: ethdev
 X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
@@ -34,8 +34,8 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1744-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17515624800.DDc7229c.1310792
+Message-ID: <bug-1745-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17515629040.dc6b.1313637
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: https://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -55,8 +55,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17515624800.DDc7229c.1310792
-Date: Thu, 3 Jul 2025 19:08:00 +0200
+--17515629040.dc6b.1313637
+Date: Thu, 3 Jul 2025 19:15:04 +0200
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -64,10 +64,10 @@ X-Bugzilla-URL: https://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1744
+https://bugs.dpdk.org/show_bug.cgi?id=3D1745
 
-            Bug ID: 1744
-           Summary: bus/flsmc: duplicate variable definition
+            Bug ID: 1745
+           Summary: bonding: duplicate shadow local variables
            Product: DPDK
            Version: unspecified
           Hardware: All
@@ -75,67 +75,58 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D1744
             Status: UNCONFIRMED
           Severity: normal
           Priority: Normal
-         Component: other
+         Component: ethdev
           Assignee: dev@dpdk.org
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-Building with -Wshadow reports:
+Building with -Wshadow flags several potential bugs in bonding:
 
-In file included from ../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:27:
-../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c: In function
-=E2=80=98rte_dpaa2_create_dpci_device=E2=80=99:
-../drivers/bus/fslmc/portal/dpaa2_hw_pvt.h:207:13: warning: declaration of
-=E2=80=98ret=E2=80=99 shadows a previous local [-Wshadow]
-  207 |         int ret =3D 0, i; \
-      |             ^~~
-../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:99:23: note: in expansion of ma=
-cro
-=E2=80=98dpaa2_queue_storage_alloc=E2=80=99
-   99 |                 ret =3D dpaa2_queue_storage_alloc(rxq, 1);
-      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:57:13: note: shadowed declarati=
+[963/3418] Compiling C object
+drivers/libtmp_rte_net_bond.a.p/net_bonding_rte_eth_bond_pmd.c.o
+../drivers/net/bonding/rte_eth_bond_pmd.c: In function =E2=80=98member_star=
+t=E2=80=99:
+../drivers/net/bonding/rte_eth_bond_pmd.c:1910:42: warning: declaration of
+=E2=80=98internals=E2=80=99 shadows a previous local [-Wshadow]
+ 1910 |                 struct bond_dev_private *internals;
+      |                                          ^~~~~~~~~
+../drivers/net/bonding/rte_eth_bond_pmd.c:1828:34: note: shadowed declarati=
 on
 is here
-   57 |         int ret, i, dpci_id =3D obj->object_id;
-      |             ^~~
-../drivers/bus/fslmc/portal/dpaa2_hw_pvt.h:207:22: warning: declaration of =
+ 1828 |         struct bond_dev_private *internals =3D
+bonding_eth_dev->data->dev_private;
+      |                                  ^~~~~~~~~
+../drivers/net/bonding/rte_eth_bond_pmd.c: In function
+=E2=80=98bond_ethdev_allmulticast_disable=E2=80=99:
+../drivers/net/bonding/rte_eth_bond_pmd.c:2914:34: warning: declaration of
+=E2=80=98port_id=E2=80=99 shadows a previous local [-Wshadow]
+ 2914 |                         uint16_t port_id =3D
+internals->members[i].port_id;
+      |                                  ^~~~~~~
+../drivers/net/bonding/rte_eth_bond_pmd.c:2903:18: note: shadowed declarati=
+on
+is here
+ 2903 |         uint16_t port_id;
+      |                  ^~~~~~~
+../drivers/net/bonding/rte_eth_bond_pmd.c: In function =E2=80=98bond_ethdev=
+_configure=E2=80=99:
+../drivers/net/bonding/rte_eth_bond_pmd.c:4111:26: warning: declaration of =
 =E2=80=98i=E2=80=99
 shadows a previous local [-Wshadow]
-  207 |         int ret =3D 0, i; \
-      |                      ^
-../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:99:23: note: in expansion of ma=
-cro
-=E2=80=98dpaa2_queue_storage_alloc=E2=80=99
-   99 |                 ret =3D dpaa2_queue_storage_alloc(rxq, 1);
-      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:57:18: note: shadowed declarati=
+ 4111 |                 unsigned i;
+      |                          ^
+../drivers/net/bonding/rte_eth_bond_pmd.c:3946:18: note: shadowed declarati=
 on
 is here
-   57 |         int ret, i, dpci_id =3D obj->object_id;
-      |                  ^
-../drivers/bus/fslmc/portal/dpaa2_hw_pvt.h:226:13: warning: declaration of =
-=E2=80=98i=E2=80=99
-shadows a previous local [-Wshadow]
-  226 |         int i; \
-      |             ^
-../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:148:17: note: in expansion of m=
-acro
-=E2=80=98dpaa2_queue_storage_free=E2=80=99
-  148 |                 dpaa2_queue_storage_free(rxq, 1);
-      |                 ^~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:57:18: note: shadowed declarati=
-on
-is here
-   57 |         int ret, i, dpci_id =3D obj->object_id;
-      |                  ^
+ 3946 |         unsigned i, j;
+      |
 
 --=20
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17515624800.DDc7229c.1310792
-Date: Thu, 3 Jul 2025 19:08:00 +0200
+--17515629040.dc6b.1313637
+Date: Thu, 3 Jul 2025 19:15:04 +0200
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -153,14 +144,14 @@ bz_new_table">
           <th>Bug ID</th>
           <td><a class=3D"bz_bug_link=20
           bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - bus/flsmc: duplicate variable definition"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1744">1744</a>
+   title=3D"UNCONFIRMED - bonding: duplicate shadow local variables"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1745">1745</a>
           </td>
         </tr>
 
         <tr>
           <th>Summary</th>
-          <td>bus/flsmc: duplicate variable definition
+          <td>bonding: duplicate shadow local variables
           </td>
         </tr>
 
@@ -208,7 +199,7 @@ bz_new_table">
 
         <tr>
           <th>Component</th>
-          <td>other
+          <td>ethdev
           </td>
         </tr>
 
@@ -231,55 +222,47 @@ bz_new_table">
         </tr></table>
       <p>
         <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">Building with -Wshadow reports:
+          <pre class=3D"bz_comment_text">Building with -Wshadow flags sever=
+al potential bugs in bonding:
 
-In file included from ../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:27:
-../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c: In function
-=E2=80=98rte_dpaa2_create_dpci_device=E2=80=99:
-../drivers/bus/fslmc/portal/dpaa2_hw_pvt.h:207:13: warning: declaration of
-=E2=80=98ret=E2=80=99 shadows a previous local [-Wshadow]
-  207 |         int ret =3D 0, i; \
-      |             ^~~
-../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:99:23: note: in expansion of ma=
-cro
-=E2=80=98dpaa2_queue_storage_alloc=E2=80=99
-   99 |                 ret =3D dpaa2_queue_storage_alloc(rxq, 1);
-      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:57:13: note: shadowed declarati=
+[963/3418] Compiling C object
+drivers/libtmp_rte_net_bond.a.p/net_bonding_rte_eth_bond_pmd.c.o
+../drivers/net/bonding/rte_eth_bond_pmd.c: In function =E2=80=98member_star=
+t=E2=80=99:
+../drivers/net/bonding/rte_eth_bond_pmd.c:1910:42: warning: declaration of
+=E2=80=98internals=E2=80=99 shadows a previous local [-Wshadow]
+ 1910 |                 struct bond_dev_private *internals;
+      |                                          ^~~~~~~~~
+../drivers/net/bonding/rte_eth_bond_pmd.c:1828:34: note: shadowed declarati=
 on
 is here
-   57 |         int ret, i, dpci_id =3D obj-&gt;object_id;
-      |             ^~~
-../drivers/bus/fslmc/portal/dpaa2_hw_pvt.h:207:22: warning: declaration of =
+ 1828 |         struct bond_dev_private *internals =3D
+bonding_eth_dev-&gt;data-&gt;dev_private;
+      |                                  ^~~~~~~~~
+../drivers/net/bonding/rte_eth_bond_pmd.c: In function
+=E2=80=98bond_ethdev_allmulticast_disable=E2=80=99:
+../drivers/net/bonding/rte_eth_bond_pmd.c:2914:34: warning: declaration of
+=E2=80=98port_id=E2=80=99 shadows a previous local [-Wshadow]
+ 2914 |                         uint16_t port_id =3D
+internals-&gt;members[i].port_id;
+      |                                  ^~~~~~~
+../drivers/net/bonding/rte_eth_bond_pmd.c:2903:18: note: shadowed declarati=
+on
+is here
+ 2903 |         uint16_t port_id;
+      |                  ^~~~~~~
+../drivers/net/bonding/rte_eth_bond_pmd.c: In function =E2=80=98bond_ethdev=
+_configure=E2=80=99:
+../drivers/net/bonding/rte_eth_bond_pmd.c:4111:26: warning: declaration of =
 =E2=80=98i=E2=80=99
 shadows a previous local [-Wshadow]
-  207 |         int ret =3D 0, i; \
-      |                      ^
-../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:99:23: note: in expansion of ma=
-cro
-=E2=80=98dpaa2_queue_storage_alloc=E2=80=99
-   99 |                 ret =3D dpaa2_queue_storage_alloc(rxq, 1);
-      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:57:18: note: shadowed declarati=
+ 4111 |                 unsigned i;
+      |                          ^
+../drivers/net/bonding/rte_eth_bond_pmd.c:3946:18: note: shadowed declarati=
 on
 is here
-   57 |         int ret, i, dpci_id =3D obj-&gt;object_id;
-      |                  ^
-../drivers/bus/fslmc/portal/dpaa2_hw_pvt.h:226:13: warning: declaration of =
-=E2=80=98i=E2=80=99
-shadows a previous local [-Wshadow]
-  226 |         int i; \
-      |             ^
-../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:148:17: note: in expansion of m=
-acro
-=E2=80=98dpaa2_queue_storage_free=E2=80=99
-  148 |                 dpaa2_queue_storage_free(rxq, 1);
-      |                 ^~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/bus/fslmc/portal/dpaa2_hw_dpci.c:57:18: note: shadowed declarati=
-on
-is here
-   57 |         int ret, i, dpci_id =3D obj-&gt;object_id;
-      |                  ^
+ 3946 |         unsigned i, j;
+      |
           </pre>
         </div>
       </p>
@@ -296,7 +279,7 @@ is here
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1744">
+?id=3D1745">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -305,4 +288,4 @@ ication">
     </body>
 </html>=
 
---17515624800.DDc7229c.1310792--
+--17515629040.dc6b.1313637--
