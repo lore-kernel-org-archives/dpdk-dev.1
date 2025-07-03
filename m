@@ -2,45 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C90C77B7C
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Jul 2025 17:19:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38573C83F03
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Jul 2025 17:24:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A4DF040267;
-	Thu,  3 Jul 2025 19:19:23 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id C0D2D40264
- for <dev@dpdk.org>; Thu,  3 Jul 2025 19:19:22 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id B791746AE8; Thu,  3 Jul 2025 19:19:22 +0200 (CEST)
-From: bugzilla@dpdk.org
+	by mails.dpdk.org (Postfix) with ESMTP id 36C7F40267;
+	Thu,  3 Jul 2025 19:24:13 +0200 (CEST)
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com
+ [209.85.215.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 81C6440264
+ for <dev@dpdk.org>; Thu,  3 Jul 2025 19:24:11 +0200 (CEST)
+Received: by mail-pg1-f181.google.com with SMTP id
+ 41be03b00d2f7-b271f3ae786so110953a12.3
+ for <dev@dpdk.org>; Thu, 03 Jul 2025 10:24:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751563450;
+ x=1752168250; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=Fg7BqYktK92LjVCHxSheymrh39UjuwBhVBql369KtRI=;
+ b=qF3cM3kWuirv9mb+CRA82o3IB1TFKJe0xYyP6X3IL2O+fuM3Z02NVbrKKZaDZqzWVU
+ bjIv+vPczrR5RMsl8Z9HGqMmaZT6MYdNGkl+m/Z2Df8hLTuyN73AFCJhtSvlF3mQm8I8
+ Tjyp7KKGBjM1hOp9UdzQ3dfCyZ43iGBH5h+7GdoStdOLLNqhCp7LR+HH/cD4zl8K1vVL
+ MVnLoBI7GgOyQZ2d15yR/VEmSkFJ2r3bSOxK9rwBxktPl3iAbqDtQmSn+6QaTpzBRNA0
+ WZE5doG0ANqMXS+NFvNm/OwUD76X+bfPcztTjbeADbSL7zf+H1lPOsfT4DkT3WP5LHLw
+ g/Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1751563450; x=1752168250;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=Fg7BqYktK92LjVCHxSheymrh39UjuwBhVBql369KtRI=;
+ b=RcqX27f8POJxp5uh3volSNJh+ND8r6PzQNJeRtTqrSB0b97NjpfFMH2LaZhZ7rAJoQ
+ 6YXD1yk10OUxiOJjqHgDhcSpBSWXreSOygt3bbzWieQI4eUAWxdlo9akdxsq2ly30l5q
+ I72pmqjLQmtKhgERh2TaexbElA6Y4YfAnrMlFKdoxBYxwbbCDSN06z7Cm3FUgPnPlXUG
+ snwNgzWwvBEPGJ6i3tUyLf8cr6s5AnAr76JQqfeoN+Qew0hn52jhWbhjaXXAHya64ZXZ
+ GivTDd1RPm/rjV9sfqPi2s2995rlltVmKPOu7zp5efnBmU2oxR8N4LEYIf1KAcw25gpL
+ iQ7Q==
+X-Gm-Message-State: AOJu0YynwWZKrynCcG5BLk2zyL1y8gnggzFr7cMpIwtT5mDbI9Gn1HNK
+ LZypCU6uSepFf7eYhOEaf7O9Ma6RnQf/ysnaDLN1b6/yM4Yp1oL5RDBB+PjsXMRxEfO0TIprsN5
+ 9FVi4
+X-Gm-Gg: ASbGnctf6H/Gu9mWaYj8oAabaNgs9BROK7AU9n1mAD4qgSqmQvlybCo+CU8LSBrGkLp
+ JKDgyov6zC96jCb3BM7FO/Wg04Xby31MwEREYa9kxI+kCWFvemnxkXF1b6Z+oRJ+dDpjG83bnJj
+ FeM//NhtD4qOL9TEamrRTzMSkrGTOVGc6xFokI6Ur69x8h+JPoIp8zkM7CjFW+67ijtInpTW8wV
+ pOs3dJgNDUbzzYzp4MV0rneAws30Z3xdBJ7rnBDrIAEDMu1ztnA3pKmS88Hi6IGsy2d7JoEERMW
+ tbIAF7shRaVwB8Y3NeMuyxkr4bGoNF5clMrwFkz1LLv2PqYmX1wCksiLS4vi+kvhR5QNqqqIVxv
+ QFYK3uAFUVUzkOaJNpZUvKawGfl5YxhSrNht8
+X-Google-Smtp-Source: AGHT+IFshSqesmMaIl97kqBBPJFYi9MtG+1eTEJvWm1+tdWBncAqfbWwLPm6Ppypqiw8sET3kn3cTw==
+X-Received: by 2002:a17:90b:5350:b0:312:f263:954a with SMTP id
+ 98e67ed59e1d1-31a9de8b3b6mr5069870a91.5.1751563450351; 
+ Thu, 03 Jul 2025 10:24:10 -0700 (PDT)
+Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-31a9cb7e88esm2963330a91.0.2025.07.03.10.24.09
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 03 Jul 2025 10:24:09 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1746] mlx5: lotsof shadow varable warnings
-Date: Thu, 03 Jul 2025 17:19:22 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
-X-Bugzilla-Version: unspecified
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: minor
-X-Bugzilla-Who: stephen@networkplumber.org
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1746-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17515631620.faada6F2.1315469
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH] ethdev: fix shadow variable definition
+Date: Thu,  3 Jul 2025 10:24:07 -0700
+Message-ID: <20250703172407.116249-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.47.2
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,350 +78,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+The variable 'ret' is defined twice in rte_eth_tx_queue_setup.
+Can remove one.
 
---17515631620.faada6F2.1315469
-Date: Thu, 3 Jul 2025 19:19:22 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+Fixes: 1bb4a528c41f ("ethdev: fix max Rx packet length")
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1746
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ config/meson.build      | 1 +
+ lib/ethdev/rte_ethdev.c | 1 -
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
-            Bug ID: 1746
-           Summary: mlx5: lotsof shadow varable warnings
-           Product: DPDK
-           Version: unspecified
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: minor
-          Priority: Normal
-         Component: ethdev
-          Assignee: dev@dpdk.org
-          Reporter: stephen@networkplumber.org
-  Target Milestone: ---
+diff --git a/config/meson.build b/config/meson.build
+index f31fef216c..3fc58c53b8 100644
+--- a/config/meson.build
++++ b/config/meson.build
+@@ -322,6 +322,7 @@ global_cflags = [
+         '-Wnested-externs',
+         '-Wold-style-definition',
+         '-Wpointer-arith',
++        '-Wshadow',
+         '-Wsign-compare',
+         '-Wstrict-prototypes',
+         '-Wundef',
+diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
+index dd7c00bc94..9934e48415 100644
+--- a/lib/ethdev/rte_ethdev.c
++++ b/lib/ethdev/rte_ethdev.c
+@@ -2468,7 +2468,6 @@ rte_eth_rx_queue_setup(uint16_t port_id, uint16_t rx_queue_id,
+ 	if (local_conf.offloads & RTE_ETH_RX_OFFLOAD_TCP_LRO) {
+ 		uint32_t overhead_len;
+ 		uint32_t max_rx_pktlen;
+-		int ret;
+ 
+ 		overhead_len = eth_dev_get_overhead_len(dev_info.max_rx_pktlen,
+ 				dev_info.max_mtu);
+-- 
+2.47.2
 
-Building with -Wshadow reports several potential issues with mlx5 driver.
-
-[1123/3418] Compiling C object
-drivers/libtmp_rte_net_mlx5.a.p/net_mlx5_mlx5_rss.c.o
-In file included from ../drivers/net/mlx5/mlx5_rss.c:19:
-../drivers/net/mlx5/mlx5_rx.h: In function =E2=80=98mprq_buf_replace=E2=80=
-=99:
-../drivers/net/mlx5/mlx5_rx.h:448:39: warning: declaration of =E2=80=98rep=
-=E2=80=99 shadows a
-previous local [-Wshadow]
-  448 |                 struct mlx5_mprq_buf *rep;
-      |                                       ^~~
-../drivers/net/mlx5/mlx5_rx.h:424:31: note: shadowed declaration is here
-  424 |         struct mlx5_mprq_buf *rep =3D rxq->mprq_repl;
-      |                               ^~~
-[1124/3418] Compiling C object
-drivers/libtmp_rte_net_mlx5.a.p/net_mlx5_mlx5_ethdev.c.o
-In file included from ../drivers/net/mlx5/mlx5_ethdev.c:26:
-../drivers/net/mlx5/mlx5_rx.h: In function =E2=80=98mprq_buf_replace=E2=80=
-=99:
-../drivers/net/mlx5/mlx5_rx.h:448:39: warning: declaration of =E2=80=98rep=
-=E2=80=99 shadows a
-previous local [-Wshadow]
-  448 |                 struct mlx5_mprq_buf *rep;
-      |                                       ^~~
-../drivers/net/mlx5/mlx5_rx.h:424:31: note: shadowed declaration is here
-  424 |         struct mlx5_mprq_buf *rep =3D rxq->mprq_repl;
-      |                               ^~~
-In file included from ../lib/eal/include/dev_driver.h:8,
-                 from ../lib/ethdev/ethdev_driver.h:19,
-                 from ../drivers/net/mlx5/mlx5_ethdev.c:13:
-../drivers/net/mlx5/mlx5_tx.h: In function =E2=80=98mlx5_tx_burst_empw_inli=
-ne=E2=80=99:
-../lib/eal/include/rte_common.h:817:28: warning: declaration of =E2=80=98_a=
-=E2=80=99 shadows a
-previous local [-Wshadow]
-  817 |                 typeof (a) _a =3D (a); \
-      |                            ^~
-../lib/eal/include/rte_common.h:798:25: note: in definition of macro =E2=80=
-=98RTE_MIN=E2=80=99
-  798 |                 typeof (b) _b =3D (b); \
-      |                         ^
-../drivers/net/mlx5/mlx5_tx.h:2971:40: note: in expansion of macro =E2=80=
-=98RTE_MAX=E2=80=99
- 2971 |                                        RTE_MAX(txq->inlen_empw +
-      |                                        ^~~~~~~
-../lib/eal/include/rte_common.h:797:28: note: shadowed declaration is here
-  797 |                 typeof (a) _a =3D (a); \
-      |                            ^~
-../drivers/net/mlx5/mlx5_tx.h:2970:32: note: in expansion of macro =E2=80=
-=98RTE_MIN=E2=80=99
- 2970 |                         room =3D RTE_MIN(room,
-      |                                ^~~~~~~
-../lib/eal/include/rte_common.h:817:28: warning: declaration of =E2=80=98_a=
-=E2=80=99 shadows a
-previous local [-Wshadow]
-  817 |                 typeof (a) _a =3D (a); \
-      |                            ^~
-../lib/eal/include/rte_common.h:798:34: note: in definition of macro =E2=80=
-=98RTE_MIN=E2=80=99
-  798 |                 typeof (b) _b =3D (b); \
-      |                                  ^
-../drivers/net/mlx5/mlx5_tx.h:2971:40: note: in expansion of macro =E2=80=
-=98RTE_MAX=E2=80=99
- 2971 |                                        RTE_MAX(txq->inlen_empw +
-      |                                        ^~~~~~~
-../lib/eal/include/rte_common.h:797:28: note: shadowed declaration is here
-  797 |                 typeof (a) _a =3D (a); \
-      |                            ^~
-../drivers/net/mlx5/mlx5_tx.h:2970:32: note: in expansion of macro =E2=80=
-=98RTE_MIN=E2=80=99
- 2970 |                         room =3D RTE_MIN(room,
-      |                                ^~~~~~~
-../lib/eal/include/rte_common.h:818:28: warning: declaration of =E2=80=98_b=
-=E2=80=99 shadows a
-previous local [-Wshadow]
-  818 |                 typeof (b) _b =3D (b); \
-      |                            ^~
-../lib/eal/include/rte_common.h:798:34: note: in definition of macro =E2=80=
-=98RTE_MIN=E2=80=99
-  798 |                 typeof (b) _b =3D (b); \
-      |                                  ^
-../drivers/net/mlx5/mlx5_tx.h:2971:40: note: in expansion of macro =E2=80=
-=98RTE_MAX=E2=80=99
- 2971 |                                        RTE_MAX(txq->inlen_empw +
-      |                                        ^~~~~~~
-../lib/eal/include/rte_common.h:798:28: note: shadowed declaration is here
-  798 |                 typeof (b) _b =3D (b); \
-      |                            ^~
-../drivers/net/mlx5/mlx5_tx.h:2970:32: note: in expansion of macro =E2=80=
-=98RTE_MIN=E2=80=99
- 2970 |                         room =3D RTE_MIN(room,
-      |                                ^~~~~~~
-
-...
-Truncated because bugzilla can't take all of it.
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
-
---17515631620.faada6F2.1315469
-Date: Thu, 3 Jul 2025 19:19:22 +0200
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-<html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
-bz_new_table">
-        <tr>
-          <th>Bug ID</th>
-          <td><a class=3D"bz_bug_link=20
-          bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - mlx5: lotsof shadow varable warnings"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1746">1746</a>
-          </td>
-        </tr>
-
-        <tr>
-          <th>Summary</th>
-          <td>mlx5: lotsof shadow varable warnings
-          </td>
-        </tr>
-
-        <tr>
-          <th>Product</th>
-          <td>DPDK
-          </td>
-        </tr>
-
-        <tr>
-          <th>Version</th>
-          <td>unspecified
-          </td>
-        </tr>
-
-        <tr>
-          <th>Hardware</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>OS</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>Status</th>
-          <td>UNCONFIRMED
-          </td>
-        </tr>
-
-        <tr>
-          <th>Severity</th>
-          <td>minor
-          </td>
-        </tr>
-
-        <tr>
-          <th>Priority</th>
-          <td>Normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Component</th>
-          <td>ethdev
-          </td>
-        </tr>
-
-        <tr>
-          <th>Assignee</th>
-          <td>dev&#64;dpdk.org
-          </td>
-        </tr>
-
-        <tr>
-          <th>Reporter</th>
-          <td>stephen&#64;networkplumber.org
-          </td>
-        </tr>
-
-        <tr>
-          <th>Target Milestone</th>
-          <td>---
-          </td>
-        </tr></table>
-      <p>
-        <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">Building with -Wshadow reports sev=
-eral potential issues with mlx5 driver.
-
-[1123/3418] Compiling C object
-drivers/libtmp_rte_net_mlx5.a.p/net_mlx5_mlx5_rss.c.o
-In file included from ../drivers/net/mlx5/mlx5_rss.c:19:
-../drivers/net/mlx5/mlx5_rx.h: In function =E2=80=98mprq_buf_replace=E2=80=
-=99:
-../drivers/net/mlx5/mlx5_rx.h:448:39: warning: declaration of =E2=80=98rep=
-=E2=80=99 shadows a
-previous local [-Wshadow]
-  448 |                 struct mlx5_mprq_buf *rep;
-      |                                       ^~~
-../drivers/net/mlx5/mlx5_rx.h:424:31: note: shadowed declaration is here
-  424 |         struct mlx5_mprq_buf *rep =3D rxq-&gt;mprq_repl;
-      |                               ^~~
-[1124/3418] Compiling C object
-drivers/libtmp_rte_net_mlx5.a.p/net_mlx5_mlx5_ethdev.c.o
-In file included from ../drivers/net/mlx5/mlx5_ethdev.c:26:
-../drivers/net/mlx5/mlx5_rx.h: In function =E2=80=98mprq_buf_replace=E2=80=
-=99:
-../drivers/net/mlx5/mlx5_rx.h:448:39: warning: declaration of =E2=80=98rep=
-=E2=80=99 shadows a
-previous local [-Wshadow]
-  448 |                 struct mlx5_mprq_buf *rep;
-      |                                       ^~~
-../drivers/net/mlx5/mlx5_rx.h:424:31: note: shadowed declaration is here
-  424 |         struct mlx5_mprq_buf *rep =3D rxq-&gt;mprq_repl;
-      |                               ^~~
-In file included from ../lib/eal/include/dev_driver.h:8,
-                 from ../lib/ethdev/ethdev_driver.h:19,
-                 from ../drivers/net/mlx5/mlx5_ethdev.c:13:
-../drivers/net/mlx5/mlx5_tx.h: In function =E2=80=98mlx5_tx_burst_empw_inli=
-ne=E2=80=99:
-../lib/eal/include/rte_common.h:817:28: warning: declaration of =E2=80=98_a=
-=E2=80=99 shadows a
-previous local [-Wshadow]
-  817 |                 typeof (a) _a =3D (a); \
-      |                            ^~
-../lib/eal/include/rte_common.h:798:25: note: in definition of macro =E2=80=
-=98RTE_MIN=E2=80=99
-  798 |                 typeof (b) _b =3D (b); \
-      |                         ^
-../drivers/net/mlx5/mlx5_tx.h:2971:40: note: in expansion of macro =E2=80=
-=98RTE_MAX=E2=80=99
- 2971 |                                        RTE_MAX(txq-&gt;inlen_empw +
-      |                                        ^~~~~~~
-../lib/eal/include/rte_common.h:797:28: note: shadowed declaration is here
-  797 |                 typeof (a) _a =3D (a); \
-      |                            ^~
-../drivers/net/mlx5/mlx5_tx.h:2970:32: note: in expansion of macro =E2=80=
-=98RTE_MIN=E2=80=99
- 2970 |                         room =3D RTE_MIN(room,
-      |                                ^~~~~~~
-../lib/eal/include/rte_common.h:817:28: warning: declaration of =E2=80=98_a=
-=E2=80=99 shadows a
-previous local [-Wshadow]
-  817 |                 typeof (a) _a =3D (a); \
-      |                            ^~
-../lib/eal/include/rte_common.h:798:34: note: in definition of macro =E2=80=
-=98RTE_MIN=E2=80=99
-  798 |                 typeof (b) _b =3D (b); \
-      |                                  ^
-../drivers/net/mlx5/mlx5_tx.h:2971:40: note: in expansion of macro =E2=80=
-=98RTE_MAX=E2=80=99
- 2971 |                                        RTE_MAX(txq-&gt;inlen_empw +
-      |                                        ^~~~~~~
-../lib/eal/include/rte_common.h:797:28: note: shadowed declaration is here
-  797 |                 typeof (a) _a =3D (a); \
-      |                            ^~
-../drivers/net/mlx5/mlx5_tx.h:2970:32: note: in expansion of macro =E2=80=
-=98RTE_MIN=E2=80=99
- 2970 |                         room =3D RTE_MIN(room,
-      |                                ^~~~~~~
-../lib/eal/include/rte_common.h:818:28: warning: declaration of =E2=80=98_b=
-=E2=80=99 shadows a
-previous local [-Wshadow]
-  818 |                 typeof (b) _b =3D (b); \
-      |                            ^~
-../lib/eal/include/rte_common.h:798:34: note: in definition of macro =E2=80=
-=98RTE_MIN=E2=80=99
-  798 |                 typeof (b) _b =3D (b); \
-      |                                  ^
-../drivers/net/mlx5/mlx5_tx.h:2971:40: note: in expansion of macro =E2=80=
-=98RTE_MAX=E2=80=99
- 2971 |                                        RTE_MAX(txq-&gt;inlen_empw +
-      |                                        ^~~~~~~
-../lib/eal/include/rte_common.h:798:28: note: shadowed declaration is here
-  798 |                 typeof (b) _b =3D (b); \
-      |                            ^~
-../drivers/net/mlx5/mlx5_tx.h:2970:32: note: in expansion of macro =E2=80=
-=98RTE_MIN=E2=80=99
- 2970 |                         room =3D RTE_MIN(room,
-      |                                ^~~~~~~
-
-...
-Truncated because bugzilla can't take all of it.
-          </pre>
-        </div>
-      </p>
-
-
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1746">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17515631620.faada6F2.1315469--
