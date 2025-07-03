@@ -2,28 +2,28 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55102C77B7C
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Jul 2025 16:56:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D5AC83F03
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Jul 2025 17:03:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7C03540267;
-	Thu,  3 Jul 2025 18:56:54 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 82C7540267;
+	Thu,  3 Jul 2025 19:03:17 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 2CBEA40267
- for <dev@dpdk.org>; Thu,  3 Jul 2025 18:56:53 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 97A8E40264
+ for <dev@dpdk.org>; Thu,  3 Jul 2025 19:03:15 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 26DD546AE8; Thu,  3 Jul 2025 18:56:53 +0200 (CEST)
+ id 857D246AE7; Thu,  3 Jul 2025 19:03:15 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1741] net/intel: duplicate identical branches
-Date: Thu, 03 Jul 2025 16:56:53 +0000
+Subject: [DPDK/core Bug 1742] trace: duplicate shadow of same variable
+Date: Thu, 03 Jul 2025 17:03:15 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
+X-Bugzilla-Component: core
 X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
+X-Bugzilla-Severity: minor
 X-Bugzilla-Who: stephen@networkplumber.org
 X-Bugzilla-Status: UNCONFIRMED
 X-Bugzilla-Resolution: 
@@ -34,8 +34,8 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1741-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17515618130.4b8A.1303391
+Message-ID: <bug-1742-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17515621950.A38C0.1307483
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: https://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -55,8 +55,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17515618130.4b8A.1303391
-Date: Thu, 3 Jul 2025 18:56:52 +0200
+--17515621950.A38C0.1307483
+Date: Thu, 3 Jul 2025 19:03:15 +0200
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -64,196 +64,105 @@ X-Bugzilla-URL: https://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1741
+https://bugs.dpdk.org/show_bug.cgi?id=3D1742
 
-            Bug ID: 1741
-           Summary: net/intel: duplicate identical branches
+            Bug ID: 1742
+           Summary: trace: duplicate shadow of same variable
            Product: DPDK
            Version: unspecified
           Hardware: All
                 OS: All
             Status: UNCONFIRMED
-          Severity: normal
+          Severity: minor
           Priority: Normal
-         Component: ethdev
+         Component: core
           Assignee: dev@dpdk.org
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-Enabling warning for duplicate branches finds several bits of suspect code:
+The variable name 'trace' is used in different places and will get flagged =
+as
+warning with -Wshadow. Confusing and error prone
 
-[556/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_i40e_tm.c.o
-In file included from ../drivers/net/intel/i40e/i40e_tm.c:8:
-../drivers/net/intel/i40e/i40e_ethdev.h: In function =E2=80=98i40e_calc_itr=
-_interval=E2=80=99:
-../drivers/net/intel/i40e/i40e_ethdev.h:1514:20: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1514 |                 if (is_pf)
-      |                    ^
-[557/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_base_i40e_diag.c.o
-[558/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_i40e_vf_representor.c.o
-In file included from ../drivers/net/intel/i40e/i40e_vf_representor.c:13:
-../drivers/net/intel/i40e/i40e_ethdev.h: In function =E2=80=98i40e_calc_itr=
-_interval=E2=80=99:
-../drivers/net/intel/i40e/i40e_ethdev.h:1514:20: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1514 |                 if (is_pf)
-      |                    ^
-[559/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_i40e_recycle_mbufs_vec_commo=
-n.c.o
-In file included from
-../drivers/net/intel/i40e/i40e_recycle_mbufs_vec_common.c:10:
-../drivers/net/intel/i40e/i40e_ethdev.h: In function =E2=80=98i40e_calc_itr=
-_interval=E2=80=99:
-../drivers/net/intel/i40e/i40e_ethdev.h:1514:20: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1514 |                 if (is_pf)
-      |=20=20=20=20
-
-[558/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_i40e_vf_representor.c.o
-In file included from ../drivers/net/intel/i40e/i40e_vf_representor.c:13:
-../drivers/net/intel/i40e/i40e_ethdev.h: In function =E2=80=98i40e_calc_itr=
-_interval=E2=80=99:
-../drivers/net/intel/i40e/i40e_ethdev.h:1514:20: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1514 |                 if (is_pf)
-      |                    ^
-[559/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_i40e_recycle_mbufs_vec_commo=
-n.c.o
-In file included from
-../drivers/net/intel/i40e/i40e_recycle_mbufs_vec_common.c:10:
-../drivers/net/intel/i40e/i40e_ethdev.h: In function =E2=80=98i40e_calc_itr=
-_interval=E2=80=99:
-../drivers/net/intel/i40e/i40e_ethdev.h:1514:20: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1514 |                 if (is_pf)
-      |                    ^
-[560/3631] Compiling C object
-drivers/libtmp_rte_net_dpaa2.a.p/net_dpaa2_dpaa2_ethdev.c.o
-[561/3631] Compiling C object
-drivers/libtmp_rte_net_iavf.a.p/net_intel_iavf_iavf_base_symbols.c.o
-[562/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_base_i40e_dcb.c.o
-[563/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_i40e_hash.c.o
-In file included from ../drivers/net/intel/i40e/i40e_hash.c:16:
-../drivers/net/intel/i40e/i40e_ethdev.h: In function =E2=80=98i40e_calc_itr=
-_interval=E2=80=99:
-../drivers/net/intel/i40e/i40e_ethdev.h:1514:20: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1514 |                 if (is_pf)
-      |                    ^
-[564/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_i40e_pf.c.o
-In file included from ../drivers/net/intel/i40e/i40e_pf.c:25:
-../drivers/net/intel/i40e/i40e_ethdev.h: In function =E2=80=98i40e_calc_itr=
-_interval=E2=80=99:
-../drivers/net/intel/i40e/i40e_ethdev.h:1514:20: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1514 |                 if (is_pf)
-      |                    ^
-[565/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_base_i40e_hmc.c.o
-[566/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_i40e_fdir.c.o
-In file included from ../drivers/net/intel/i40e/i40e_fdir.c:30:
-../drivers/net/intel/i40e/i40e_ethdev.h: In function =E2=80=98i40e_calc_itr=
-_interval=E2=80=99:
-../drivers/net/intel/i40e/i40e_ethdev.h:1514:20: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1514 |                 if (is_pf)
-      |                    ^
-[567/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_base_i40e_adminq.c.o
-[568/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_base_i40e_lan_hmc.c.o
-[569/3631] Compiling C object
-drivers/libtmp_rte_net_iavf.a.p/net_intel_iavf_base_iavf_impl.c.o
-[570/3631] Compiling C object
-drivers/libtmp_rte_net_iavf.a.p/net_intel_iavf_base_iavf_common.c.o
-[571/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_i40e_flow.c.o
-In file included from ../drivers/net/intel/i40e/i40e_flow.c:25:
-../drivers/net/intel/i40e/i40e_ethdev.h: In function =E2=80=98i40e_calc_itr=
-_interval=E2=80=99:
-../drivers/net/intel/i40e/i40e_ethdev.h:1514:20: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1514 |                 if (is_pf)
-      |                    ^
-[572/3631] Compiling C object
-drivers/libtmp_rte_net_iavf.a.p/net_intel_iavf_base_iavf_adminq.c.o
-[573/3631] Compiling C object
-drivers/libtmp_rte_net_dpaa.a.p/net_dpaa_dpaa_rxtx.c.o
-[574/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_rte_pmd_i40e.c.o
-In file included from ../drivers/net/intel/i40e/rte_pmd_i40e.c:12:
-../drivers/net/intel/i40e/i40e_ethdev.h: In function =E2=80=98i40e_calc_itr=
-_interval=E2=80=99:
-../drivers/net/intel/i40e/i40e_ethdev.h:1514:20: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1514 |                 if (is_pf)
-      |                    ^
-[575/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_base_i40e_nvm.c.o
-[576/3631] Compiling C object
-drivers/libtmp_rte_net_iavf.a.p/net_intel_iavf_iavf_tm.c.o
-[577/3631] Compiling C object
-drivers/libtmp_rte_net_dpaa2.a.p/net_dpaa2_dpaa2_flow.c.o
-[578/3631] Compiling C object
-drivers/libtmp_rte_net_iavf.a.p/net_intel_iavf_iavf_generic_flow.c.o
-[579/3631] Compiling C object
-drivers/libtmp_rte_net_iavf.a.p/net_intel_iavf_iavf_fdir.c.o
-[580/3631] Compiling C object
-drivers/libtmp_rte_net_iavf.a.p/net_intel_iavf_iavf_ipsec_crypto.c.o
-[581/3631] Compiling C object
-drivers/libtmp_rte_net_iavf.a.p/net_intel_iavf_iavf_hash.c.o
-[582/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_i40e_rxtx_vec_sse.c.o
-In file included from ../drivers/net/intel/i40e/i40e_rxtx_vec_sse.c:11:
-../drivers/net/intel/i40e/i40e_ethdev.h: In function =E2=80=98i40e_calc_itr=
-_interval=E2=80=99:
-../drivers/net/intel/i40e/i40e_ethdev.h:1514:20: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1514 |                 if (is_pf)
-      |                    ^
-[583/3631] Compiling C object
-drivers/libtmp_rte_net_iavf.a.p/net_intel_iavf_iavf_fsub.c.o
-[584/3631] Compiling C object
-drivers/libtmp_rte_net_idpf.a.p/net_intel_idpf_idpf_common_device.c.o
-[585/3631] Compiling C object
-drivers/libtmp_rte_net_idpf.a.p/net_intel_idpf_base_idpf_controlq_setup.c.o
-[586/3631] Compiling C object
-drivers/libtmp_rte_net_dpaa2.a.p/net_dpaa2_dpaa2_rxtx.c.o
-[587/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_base_i40e_common.c.o
-../drivers/net/intel/i40e/base/i40e_common.c: In function
-=E2=80=98i40e_lpi_stat_update=E2=80=99:
-../drivers/net/intel/i40e/base/i40e_common.c:7342:56: warning: this conditi=
-on
-has identical branches [-Wduplicated-branches]
- 7342 |                         (u32)(tx_counter - *tx_offset) :
-      |                                                        ^
-../drivers/net/intel/i40e/base/i40e_common.c:7345:56: warning: this conditi=
-on
-has identical branches [-Wduplicated-branches]
- 7345 |                         (u32)(rx_counter - *rx_offset) :
-      |                                                        ^
-[588/3631] Compiling C object
-drivers/libtmp_rte_net_idpf.a.p/net_intel_idpf_base_idpf_controlq.c.o
-                ^
+[48/3418] Compiling C object lib/librte_eal.a.p/eal_common_eal_common_trace=
+.c.o
+../lib/eal/common/eal_common_trace.c: In function =E2=80=98trace_lcore_mem_=
+dump=E2=80=99:
+../lib/eal/common/eal_common_trace.c:273:23: warning: declaration of =E2=80=
+=98trace=E2=80=99
+shadows a global declaration [-Wshadow]
+  273 |         struct trace *trace =3D trace_obj_get();
+      |                       ^~~~~
+../lib/eal/common/eal_common_trace.c:27:21: note: shadowed declaration is h=
+ere
+   27 | static struct trace trace =3D { .args =3D
+STAILQ_HEAD_INITIALIZER(trace.args), };
+      |                     ^~~~~
+../lib/eal/common/eal_common_trace.c: In function =E2=80=98rte_trace_dump=
+=E2=80=99:
+../lib/eal/common/eal_common_trace.c:298:34: warning: declaration of =E2=80=
+=98tp_list=E2=80=99
+shadows a global declaration [-Wshadow]
+  298 |         struct trace_point_head *tp_list =3D trace_list_head_get();
+      |                                  ^~~~~~~
+../lib/eal/common/eal_common_trace.c:26:32: note: shadowed declaration is h=
+ere
+   26 | static struct trace_point_head tp_list =3D
+STAILQ_HEAD_INITIALIZER(tp_list);
+      |                                ^~~~~~~
+../lib/eal/common/eal_common_trace.c:299:23: warning: declaration of =E2=80=
+=98trace=E2=80=99
+shadows a global declaration [-Wshadow]
+  299 |         struct trace *trace =3D trace_obj_get();
+      |                       ^~~~~
+../lib/eal/common/eal_common_trace.c:27:21: note: shadowed declaration is h=
+ere
+   27 | static struct trace trace =3D { .args =3D
+STAILQ_HEAD_INITIALIZER(trace.args), };
+      |                     ^~~~~
+../lib/eal/common/eal_common_trace.c: In function
+=E2=80=98__rte_trace_mem_per_thread_alloc=E2=80=99:
+../lib/eal/common/eal_common_trace.c:334:23: warning: declaration of =E2=80=
+=98trace=E2=80=99
+shadows a global declaration [-Wshadow]
+  334 |         struct trace *trace =3D trace_obj_get();
+      |                       ^~~~~
+../lib/eal/common/eal_common_trace.c:27:21: note: shadowed declaration is h=
+ere
+   27 | static struct trace trace =3D { .args =3D
+STAILQ_HEAD_INITIALIZER(trace.args), };
+      |                     ^~~~~
+../lib/eal/common/eal_common_trace.c: In function =E2=80=98trace_mem_per_th=
+read_free=E2=80=99:
+../lib/eal/common/eal_common_trace.c:411:23: warning: declaration of =E2=80=
+=98trace=E2=80=99
+shadows a global declaration [-Wshadow]
+  411 |         struct trace *trace =3D trace_obj_get();
+      |                       ^~~~~
+../lib/eal/common/eal_common_trace.c:27:21: note: shadowed declaration is h=
+ere
+   27 | static struct trace trace =3D { .args =3D
+STAILQ_HEAD_INITIALIZER(trace.args), };
+      |                     ^~~~~
+../lib/eal/common/eal_common_trace.c: In function =E2=80=98trace_mem_free=
+=E2=80=99:
+../lib/eal/common/eal_common_trace.c:441:23: warning: declaration of =E2=80=
+=98trace=E2=80=99
+shadows a global declaration [-Wshadow]
+  441 |         struct trace *trace =3D trace_obj_get();
+      |                       ^~~~~
+../lib/eal/common/eal_common_trace.c:27:21: note: shadowed declaration is h=
+ere
+   27 | static struct trace trace =3D { .args =3D
+STAILQ_HEAD_INITIALIZER(trace.args), };
+      |                     ^~~~~
 
 --=20
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17515618130.4b8A.1303391
-Date: Thu, 3 Jul 2025 18:56:53 +0200
+--17515621950.A38C0.1307483
+Date: Thu, 3 Jul 2025 19:03:15 +0200
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -271,14 +180,14 @@ bz_new_table">
           <th>Bug ID</th>
           <td><a class=3D"bz_bug_link=20
           bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - net/intel: duplicate identical branches"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1741">1741</a>
+   title=3D"UNCONFIRMED - trace: duplicate shadow of same variable"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1742">1742</a>
           </td>
         </tr>
 
         <tr>
           <th>Summary</th>
-          <td>net/intel: duplicate identical branches
+          <td>trace: duplicate shadow of same variable
           </td>
         </tr>
 
@@ -314,7 +223,7 @@ bz_new_table">
 
         <tr>
           <th>Severity</th>
-          <td>normal
+          <td>minor
           </td>
         </tr>
 
@@ -326,7 +235,7 @@ bz_new_table">
 
         <tr>
           <th>Component</th>
-          <td>ethdev
+          <td>core
           </td>
         </tr>
 
@@ -349,174 +258,82 @@ bz_new_table">
         </tr></table>
       <p>
         <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">Enabling warning for duplicate bra=
-nches finds several bits of suspect code:
+          <pre class=3D"bz_comment_text">The variable name 'trace' is used =
+in different places and will get flagged as
+warning with -Wshadow. Confusing and error prone
 
-[556/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_i40e_tm.c.o
-In file included from ../drivers/net/intel/i40e/i40e_tm.c:8:
-../drivers/net/intel/i40e/i40e_ethdev.h: In function =E2=80=98i40e_calc_itr=
-_interval=E2=80=99:
-../drivers/net/intel/i40e/i40e_ethdev.h:1514:20: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1514 |                 if (is_pf)
-      |                    ^
-[557/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_base_i40e_diag.c.o
-[558/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_i40e_vf_representor.c.o
-In file included from ../drivers/net/intel/i40e/i40e_vf_representor.c:13:
-../drivers/net/intel/i40e/i40e_ethdev.h: In function =E2=80=98i40e_calc_itr=
-_interval=E2=80=99:
-../drivers/net/intel/i40e/i40e_ethdev.h:1514:20: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1514 |                 if (is_pf)
-      |                    ^
-[559/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_i40e_recycle_mbufs_vec_commo=
-n.c.o
-In file included from
-../drivers/net/intel/i40e/i40e_recycle_mbufs_vec_common.c:10:
-../drivers/net/intel/i40e/i40e_ethdev.h: In function =E2=80=98i40e_calc_itr=
-_interval=E2=80=99:
-../drivers/net/intel/i40e/i40e_ethdev.h:1514:20: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1514 |                 if (is_pf)
-      |=20=20=20=20
-
-[558/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_i40e_vf_representor.c.o
-In file included from ../drivers/net/intel/i40e/i40e_vf_representor.c:13:
-../drivers/net/intel/i40e/i40e_ethdev.h: In function =E2=80=98i40e_calc_itr=
-_interval=E2=80=99:
-../drivers/net/intel/i40e/i40e_ethdev.h:1514:20: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1514 |                 if (is_pf)
-      |                    ^
-[559/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_i40e_recycle_mbufs_vec_commo=
-n.c.o
-In file included from
-../drivers/net/intel/i40e/i40e_recycle_mbufs_vec_common.c:10:
-../drivers/net/intel/i40e/i40e_ethdev.h: In function =E2=80=98i40e_calc_itr=
-_interval=E2=80=99:
-../drivers/net/intel/i40e/i40e_ethdev.h:1514:20: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1514 |                 if (is_pf)
-      |                    ^
-[560/3631] Compiling C object
-drivers/libtmp_rte_net_dpaa2.a.p/net_dpaa2_dpaa2_ethdev.c.o
-[561/3631] Compiling C object
-drivers/libtmp_rte_net_iavf.a.p/net_intel_iavf_iavf_base_symbols.c.o
-[562/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_base_i40e_dcb.c.o
-[563/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_i40e_hash.c.o
-In file included from ../drivers/net/intel/i40e/i40e_hash.c:16:
-../drivers/net/intel/i40e/i40e_ethdev.h: In function =E2=80=98i40e_calc_itr=
-_interval=E2=80=99:
-../drivers/net/intel/i40e/i40e_ethdev.h:1514:20: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1514 |                 if (is_pf)
-      |                    ^
-[564/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_i40e_pf.c.o
-In file included from ../drivers/net/intel/i40e/i40e_pf.c:25:
-../drivers/net/intel/i40e/i40e_ethdev.h: In function =E2=80=98i40e_calc_itr=
-_interval=E2=80=99:
-../drivers/net/intel/i40e/i40e_ethdev.h:1514:20: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1514 |                 if (is_pf)
-      |                    ^
-[565/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_base_i40e_hmc.c.o
-[566/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_i40e_fdir.c.o
-In file included from ../drivers/net/intel/i40e/i40e_fdir.c:30:
-../drivers/net/intel/i40e/i40e_ethdev.h: In function =E2=80=98i40e_calc_itr=
-_interval=E2=80=99:
-../drivers/net/intel/i40e/i40e_ethdev.h:1514:20: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1514 |                 if (is_pf)
-      |                    ^
-[567/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_base_i40e_adminq.c.o
-[568/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_base_i40e_lan_hmc.c.o
-[569/3631] Compiling C object
-drivers/libtmp_rte_net_iavf.a.p/net_intel_iavf_base_iavf_impl.c.o
-[570/3631] Compiling C object
-drivers/libtmp_rte_net_iavf.a.p/net_intel_iavf_base_iavf_common.c.o
-[571/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_i40e_flow.c.o
-In file included from ../drivers/net/intel/i40e/i40e_flow.c:25:
-../drivers/net/intel/i40e/i40e_ethdev.h: In function =E2=80=98i40e_calc_itr=
-_interval=E2=80=99:
-../drivers/net/intel/i40e/i40e_ethdev.h:1514:20: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1514 |                 if (is_pf)
-      |                    ^
-[572/3631] Compiling C object
-drivers/libtmp_rte_net_iavf.a.p/net_intel_iavf_base_iavf_adminq.c.o
-[573/3631] Compiling C object
-drivers/libtmp_rte_net_dpaa.a.p/net_dpaa_dpaa_rxtx.c.o
-[574/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_rte_pmd_i40e.c.o
-In file included from ../drivers/net/intel/i40e/rte_pmd_i40e.c:12:
-../drivers/net/intel/i40e/i40e_ethdev.h: In function =E2=80=98i40e_calc_itr=
-_interval=E2=80=99:
-../drivers/net/intel/i40e/i40e_ethdev.h:1514:20: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1514 |                 if (is_pf)
-      |                    ^
-[575/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_base_i40e_nvm.c.o
-[576/3631] Compiling C object
-drivers/libtmp_rte_net_iavf.a.p/net_intel_iavf_iavf_tm.c.o
-[577/3631] Compiling C object
-drivers/libtmp_rte_net_dpaa2.a.p/net_dpaa2_dpaa2_flow.c.o
-[578/3631] Compiling C object
-drivers/libtmp_rte_net_iavf.a.p/net_intel_iavf_iavf_generic_flow.c.o
-[579/3631] Compiling C object
-drivers/libtmp_rte_net_iavf.a.p/net_intel_iavf_iavf_fdir.c.o
-[580/3631] Compiling C object
-drivers/libtmp_rte_net_iavf.a.p/net_intel_iavf_iavf_ipsec_crypto.c.o
-[581/3631] Compiling C object
-drivers/libtmp_rte_net_iavf.a.p/net_intel_iavf_iavf_hash.c.o
-[582/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_i40e_rxtx_vec_sse.c.o
-In file included from ../drivers/net/intel/i40e/i40e_rxtx_vec_sse.c:11:
-../drivers/net/intel/i40e/i40e_ethdev.h: In function =E2=80=98i40e_calc_itr=
-_interval=E2=80=99:
-../drivers/net/intel/i40e/i40e_ethdev.h:1514:20: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1514 |                 if (is_pf)
-      |                    ^
-[583/3631] Compiling C object
-drivers/libtmp_rte_net_iavf.a.p/net_intel_iavf_iavf_fsub.c.o
-[584/3631] Compiling C object
-drivers/libtmp_rte_net_idpf.a.p/net_intel_idpf_idpf_common_device.c.o
-[585/3631] Compiling C object
-drivers/libtmp_rte_net_idpf.a.p/net_intel_idpf_base_idpf_controlq_setup.c.o
-[586/3631] Compiling C object
-drivers/libtmp_rte_net_dpaa2.a.p/net_dpaa2_dpaa2_rxtx.c.o
-[587/3631] Compiling C object
-drivers/libtmp_rte_net_i40e.a.p/net_intel_i40e_base_i40e_common.c.o
-../drivers/net/intel/i40e/base/i40e_common.c: In function
-=E2=80=98i40e_lpi_stat_update=E2=80=99:
-../drivers/net/intel/i40e/base/i40e_common.c:7342:56: warning: this conditi=
-on
-has identical branches [-Wduplicated-branches]
- 7342 |                         (u32)(tx_counter - *tx_offset) :
-      |                                                        ^
-../drivers/net/intel/i40e/base/i40e_common.c:7345:56: warning: this conditi=
-on
-has identical branches [-Wduplicated-branches]
- 7345 |                         (u32)(rx_counter - *rx_offset) :
-      |                                                        ^
-[588/3631] Compiling C object
-drivers/libtmp_rte_net_idpf.a.p/net_intel_idpf_base_idpf_controlq.c.o
-                ^
+[48/3418] Compiling C object lib/librte_eal.a.p/eal_common_eal_common_trace=
+.c.o
+../lib/eal/common/eal_common_trace.c: In function =E2=80=98trace_lcore_mem_=
+dump=E2=80=99:
+../lib/eal/common/eal_common_trace.c:273:23: warning: declaration of =E2=80=
+=98trace=E2=80=99
+shadows a global declaration [-Wshadow]
+  273 |         struct trace *trace =3D trace_obj_get();
+      |                       ^~~~~
+../lib/eal/common/eal_common_trace.c:27:21: note: shadowed declaration is h=
+ere
+   27 | static struct trace trace =3D { .args =3D
+STAILQ_HEAD_INITIALIZER(trace.args), };
+      |                     ^~~~~
+../lib/eal/common/eal_common_trace.c: In function =E2=80=98rte_trace_dump=
+=E2=80=99:
+../lib/eal/common/eal_common_trace.c:298:34: warning: declaration of =E2=80=
+=98tp_list=E2=80=99
+shadows a global declaration [-Wshadow]
+  298 |         struct trace_point_head *tp_list =3D trace_list_head_get();
+      |                                  ^~~~~~~
+../lib/eal/common/eal_common_trace.c:26:32: note: shadowed declaration is h=
+ere
+   26 | static struct trace_point_head tp_list =3D
+STAILQ_HEAD_INITIALIZER(tp_list);
+      |                                ^~~~~~~
+../lib/eal/common/eal_common_trace.c:299:23: warning: declaration of =E2=80=
+=98trace=E2=80=99
+shadows a global declaration [-Wshadow]
+  299 |         struct trace *trace =3D trace_obj_get();
+      |                       ^~~~~
+../lib/eal/common/eal_common_trace.c:27:21: note: shadowed declaration is h=
+ere
+   27 | static struct trace trace =3D { .args =3D
+STAILQ_HEAD_INITIALIZER(trace.args), };
+      |                     ^~~~~
+../lib/eal/common/eal_common_trace.c: In function
+=E2=80=98__rte_trace_mem_per_thread_alloc=E2=80=99:
+../lib/eal/common/eal_common_trace.c:334:23: warning: declaration of =E2=80=
+=98trace=E2=80=99
+shadows a global declaration [-Wshadow]
+  334 |         struct trace *trace =3D trace_obj_get();
+      |                       ^~~~~
+../lib/eal/common/eal_common_trace.c:27:21: note: shadowed declaration is h=
+ere
+   27 | static struct trace trace =3D { .args =3D
+STAILQ_HEAD_INITIALIZER(trace.args), };
+      |                     ^~~~~
+../lib/eal/common/eal_common_trace.c: In function =E2=80=98trace_mem_per_th=
+read_free=E2=80=99:
+../lib/eal/common/eal_common_trace.c:411:23: warning: declaration of =E2=80=
+=98trace=E2=80=99
+shadows a global declaration [-Wshadow]
+  411 |         struct trace *trace =3D trace_obj_get();
+      |                       ^~~~~
+../lib/eal/common/eal_common_trace.c:27:21: note: shadowed declaration is h=
+ere
+   27 | static struct trace trace =3D { .args =3D
+STAILQ_HEAD_INITIALIZER(trace.args), };
+      |                     ^~~~~
+../lib/eal/common/eal_common_trace.c: In function =E2=80=98trace_mem_free=
+=E2=80=99:
+../lib/eal/common/eal_common_trace.c:441:23: warning: declaration of =E2=80=
+=98trace=E2=80=99
+shadows a global declaration [-Wshadow]
+  441 |         struct trace *trace =3D trace_obj_get();
+      |                       ^~~~~
+../lib/eal/common/eal_common_trace.c:27:21: note: shadowed declaration is h=
+ere
+   27 | static struct trace trace =3D { .args =3D
+STAILQ_HEAD_INITIALIZER(trace.args), };
+      |                     ^~~~~
           </pre>
         </div>
       </p>
@@ -533,7 +350,7 @@ drivers/libtmp_rte_net_idpf.a.p/net_intel_idpf_base_idpf_controlq.c.o
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1741">
+?id=3D1742">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -542,4 +359,4 @@ ication">
     </body>
 </html>=
 
---17515618130.4b8A.1303391--
+--17515621950.A38C0.1307483--
