@@ -2,80 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38998C77B7C
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Jul 2025 08:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2CA4C83030
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Jul 2025 08:42:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 47584402A0;
-	Thu,  3 Jul 2025 10:42:43 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id DD4FB40285
- for <dev@dpdk.org>; Thu,  3 Jul 2025 10:42:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1751532161;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=vc5dTvKlTbYl/J6XUneOFjaYmVVGUAX9floNyc8vnJ4=;
- b=ajfSoOqq5TV9jC6U5IQLZtPhtLM6E+N+YB8a4PU4z/w+XdB+d7RtK2OoAiDtOobFS1uMSI
- wjgZWb68PxHVNMM/FGAH5cgitZE+AnczjTJkDyupWdI5VQ8tg3xZ+6Cp9nrv1BxArdnLgV
- iXZlEfuUYvK/ocy5AWStJCoeQ73DjqY=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-10-34-eOso_OnGbI8PZT90M7g-1; Thu, 03 Jul 2025 04:42:40 -0400
-X-MC-Unique: 34-eOso_OnGbI8PZT90M7g-1
-X-Mimecast-MFC-AGG-ID: 34-eOso_OnGbI8PZT90M7g_1751532159
-Received: by mail-lf1-f70.google.com with SMTP id
- 2adb3069b0e04-550d7bd9a7fso3687667e87.2
- for <dev@dpdk.org>; Thu, 03 Jul 2025 01:42:39 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 93B7A402E2;
+	Thu,  3 Jul 2025 10:42:44 +0200 (CEST)
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com
+ [209.85.210.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 20B7940285;
+ Thu,  3 Jul 2025 10:42:43 +0200 (CEST)
+Received: by mail-pf1-f174.google.com with SMTP id
+ d2e1a72fcca58-7494999de5cso5720933b3a.3; 
+ Thu, 03 Jul 2025 01:42:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1751532162; x=1752136962; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=IqyH2tGzrRK/IQLR4o6pDqfx0sSTBi8tsH33HsiA/jg=;
+ b=bes0e9x9vBcUAt/cjJG5rkuCDCYTCtATdcb4rc9ghd+QnIBY5No1iSSQgpn9/gr5G+
+ j+lKWhQyszaFzwCO92Ewg8TGB3fU/wBUzf46qzy+BQV9vQShGHUO1Z+PNVshkUbUQxyy
+ IJvXR5lBmt8uGB0/njjU7vDfGU97IIK8ttsgOy7n+jIPGl3vKUVaZb8t090NYkbsKzeo
+ yJjHuQqjAUtjMdqovfZ+jVvb6KzZj46lBsp//8fBZNBIbCDEiaGhAjF2G/+dimtIAohQ
+ FPFUbOvo9DkOaXTGC/i9y2fPmOA2gEu9MV8Dh609ZPxx5OX7GFzejpd4UQhC8noSpJS4
+ e4kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1751532158; x=1752136958;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=vc5dTvKlTbYl/J6XUneOFjaYmVVGUAX9floNyc8vnJ4=;
- b=eI3OJYhf930EvYjMnPFoStQSOp8oq76nEak62T10oHuwGyDR9vpIfNyfPaQ519lNos
- EGZvhKU8/Oee++SkITsU4jByhV6pyYLWf7hm3Pt6BLjqB6UQd05HxV++CLQC6OidBNvV
- jOlm2/JjYLF+YSTLmyRAQRgT/0+7/PqUNQoM0IcZ4vVRCzmPMXFw70AY+deixr+DNed9
- tLm0N5m3Rx0fwOpC1wG1F+JXTJnjMcwqVUQE9I2bFv8Et783VjSomV7eVNS+BuFTkTAp
- N+jWzEe0iqySP3poccaS57DDcjMG3z8cARatpCcX8xnpDGdFZU7UNkXdP+HqS93N2tYP
- AbRw==
-X-Gm-Message-State: AOJu0Yw9Ta5C3E7WY2yzCkvEsK1sYlacF6sqgCYSRVXu1Tj1xFvq3wZb
- lSy3TulFhJAVcBpfMhBLAXH8Tg+1ILzR4pvJRlZC1BhZk7h93y8nnfKIRx2uXyl8Lmm0H6Q9Nhc
- 0aPeiHiblbEs1YBUPGGzY68IrRDdH+7/p0uIOV1d3R5C22Au5jaE+dIba562yHe4ucoKkJI092s
- xJlIA6mzaikkd1tAN8W9E=
-X-Gm-Gg: ASbGncvysMyRtdqKwRfMpM99G1frXB580mLiWVRuCNmIP2P1QiV1xbK6o9VAsab+4XE
- Ht8l6a0MWHWz7Z5yAjMMET9DL2d/mLMj17DPGkfR9zNqyIPEzOD2GwIaRPolCLUxOPxq9AWoLKh
- cdDEJ4dg==
-X-Received: by 2002:a05:6512:138d:b0:553:ccef:e303 with SMTP id
- 2adb3069b0e04-556282fcb62mr2486959e87.22.1751532158412; 
- Thu, 03 Jul 2025 01:42:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGhlMCc172mgOAckWtn2gaMG27GlgO8DWEweManPnCCJgIcIHySdoNbo2eyTmCQ36d3Oa054YLLUH5HaGRpuSY=
-X-Received: by 2002:a05:6512:138d:b0:553:ccef:e303 with SMTP id
- 2adb3069b0e04-556282fcb62mr2486946e87.22.1751532157938; Thu, 03 Jul 2025
- 01:42:37 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1751532162; x=1752136962;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=IqyH2tGzrRK/IQLR4o6pDqfx0sSTBi8tsH33HsiA/jg=;
+ b=c2uMe37qUiu79N5dUZ+bfJ3it2lKaE7CbNRQaIM9xrVrNooohg7JFhYkuEYU2vN5jK
+ o7wJgTTJAM5atIo4qqRPZFqHTMU4il8uq9WgK1mDd781yjSt9tpBUsYFVDkZ5xlp16Cu
+ wW2K1AhUYd/AO2gtllGVDTC1/D/ZuIMGV6jkO7AbUAjCCwrlwCQqehL2xWA+iaq0M4Al
+ f0tGCYFiQ7cWPissBUqZC0iI4zS/OzNivYkw5vl8G+8NcqatDFowHU/WmJQ1loHI3Emx
+ q4HhEPvGs23TGHohnpQbNCZxgtiApeNU9mX1Za6pYZPPw5DQSwbjZoI44o1QROcVgkaC
+ A0Iw==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVOzglu206G4zWG2sgWI38KtiGFI8zdnVhJyHJx98I6Ai58MhttV0hx6oNsK8gkWYxq+fDrMb4=@dpdk.org
+X-Gm-Message-State: AOJu0Yws6qHPQzNaogmEGx8yTAtC3eTe47T9Ci5cXeR5FP0wpCNDcah7
+ hfIZljsyFE0uQu2FfTyp6am61lTuLsF7vPGf8kfeCccOfm+gYgoGyh4wY1LVv4uM
+X-Gm-Gg: ASbGncueLZkEv+0uZb7loc+yJt/c8stOPUcK2aZTURIo4fmVyQIF3F27JQcN2yX/Xkw
+ QcZ9v/CNSAQEyv0z7Yq0+HSIRwLb/CAGPe+ONGlOkEp4wKW+rxjWgZSgJIhiYlK90qZHX3SHGFv
+ TqX96RQkFbomTDvOJXAQAYurTrWlbw5iiumnGgJYrS/mB0wdScfvuD5mYCQVNzr3GTeHh2uX+PR
+ sDH4Oxxqp87FN+0y5rm2UMOs6bXqTpFoZZsRJDZdTAFpyuV9ccZRJqKNvmIUeaCDrIEsQyflcZq
+ BYWpWv9pX8f0q9Ow4YNTas1ANsU73Az57yDI7eu/NPDS1d3UlaK+E1FTf6Gkn3dv9/XbbifyftR
+ s5MGhmczCRKRFWav3WW1J
+X-Google-Smtp-Source: AGHT+IElvWKXCwhdZQCm5cDclNi4wOsXmZzjKGx/LXgR3T1l3+iRNxOfrbka8I9ginkuFDqBxDxSWQ==
+X-Received: by 2002:a05:6a00:2d91:b0:742:aecc:c47c with SMTP id
+ d2e1a72fcca58-74b50e8daeemr7839951b3a.7.1751532161756; 
+ Thu, 03 Jul 2025 01:42:41 -0700 (PDT)
+Received: from localhost.localdomain ([101.0.63.207])
+ by smtp.gmail.com with ESMTPSA id
+ d2e1a72fcca58-74af55c7546sm16284346b3a.111.2025.07.03.01.42.39
+ (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+ Thu, 03 Jul 2025 01:42:41 -0700 (PDT)
+From: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
+To: dev@dpdk.org
+Cc: amiyaranjan.mohakud@gmail.com,
+	stable@dpdk.org
+Subject: [PATCH v1] net/iavf: fix VLAN strip disabling for v2 capability
+Date: Thu,  3 Jul 2025 14:12:34 +0530
+Message-Id: <20250703084234.8037-1-amiyaranjan.mohakud@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 MIME-Version: 1.0
-References: <20250624134139.552315-1-bruce.richardson@intel.com>
- <20250630153752.2361112-1-bruce.richardson@intel.com>
- <CAJFAV8yixOQ-GFn9FZoheQzfwXh5c=zCms6wvRdZwHqZctTJ=w@mail.gmail.com>
-In-Reply-To: <CAJFAV8yixOQ-GFn9FZoheQzfwXh5c=zCms6wvRdZwHqZctTJ=w@mail.gmail.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 3 Jul 2025 10:42:25 +0200
-X-Gm-Features: Ac12FXzXwRA2aOt3O-eOnrygrxXeDMIWKi7hNPvKGtJRAJCjGCA2BXxfNWRbROs
-Message-ID: <CAJFAV8x_X2FKYBuRhpPCbhghh=9V2sXk7QwcLmnRcM=GMMmVzg@mail.gmail.com>
-Subject: Re: [PATCH v2] eal: deprecate old coremask-based EAL parameters
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, thomas@monjalon.net, techboard@dpdk.org, 
- Vipin Varghese <vipin.varghese@amd.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>, 
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: s5-yEli66TGL1b1syl6Ly7zbKK361KzhWJjnYWepcrY_1751532159
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,55 +79,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Jul 1, 2025 at 9:56=E2=80=AFAM David Marchand <david.marchand@redha=
-t.com> wrote:
->
-> On Mon, Jun 30, 2025 at 5:38=E2=80=AFPM Bruce Richardson
-> <bruce.richardson@intel.com> wrote:
-> >
-> > As the number of cores/cpus on platforms has increased over the years,
-> > the use of coremasks rather than core-lists for identifying DPDK cores
-> > has become more and more unwieldy. At this point, let's deprecate the
-> > coremask-based EAL parameters for future removal, and point users to th=
-e
-> > core-list based versions instead.
-> >
-> > Depends-on: series-35540 ("use core lists not masks in documentation")
-> >
-> > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> > Acked-by: Vipin Varghese <vipin.varghese@amd.com>
-> > Acked-By: Anatoly Burakov <anatoly.burakov@intel.com>
-> > Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
->
-> Acked-by: David Marchand <david.marchand@redhat.com>
+Ensure the correct virtchnl op is called for disabling vlan stripping by checking
+if the device supports either v1 or v2 vlan capability and choosing the op
+accordingly.
 
-I realised the test-null.sh script needs tweaking.
-I'll squash this:
+Bugzilla ID:1735
+Fixes: 3bfad066f9b4 ("net/iavf: fix VLAN strip setting after enabling filter")
+Cc: stable@dpdk.org
 
-diff --git a/devtools/test-null.sh b/devtools/test-null.sh
-index 6cd34f64f1..e3ac168ce3 100755
---- a/devtools/test-null.sh
-+++ b/devtools/test-null.sh
-@@ -7,7 +7,7 @@
+Signed-off-by: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
+---
+ drivers/net/intel/iavf/iavf_ethdev.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
- build=3D${1:-build} # first argument can be the build directory
- testpmd=3D$1 # or first argument can be the testpmd path
--coremask=3D${2:-3} # default using cores 0 and 1
-+corelist=3D${2:-0-1} # default using cores 0 and 1
- eal_options=3D$3
- testpmd_options=3D$4
-
-@@ -28,6 +28,6 @@ fi
-
- (sleep 1 && echo stop) |
- # testpmd only needs 20M, make it x2 (default number of cores) for NUMA sy=
-stems
--$testpmd -c $coremask --no-huge -m 40 \
-+$testpmd -l $corelist --no-huge -m 40 \
-        $libs -a 0:0.0 --vdev net_null1 --vdev net_null2 $eal_options -- \
-        --no-mlockall --total-num-mbufs=3D2048 $testpmd_options -ia
-
-
---=20
-David Marchand
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index c33fdd9069..335a8126c4 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -1388,6 +1388,7 @@ iavf_disable_vlan_strip_ex(struct rte_eth_dev *dev, int on)
+ 	 */
+ 	struct iavf_adapter *adapter =
+ 		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
++	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
+ 	struct rte_eth_conf *dev_conf = &dev->data->dev_conf;
+ 	int err;
+ 
+@@ -1395,7 +1396,10 @@ iavf_disable_vlan_strip_ex(struct rte_eth_dev *dev, int on)
+ 	    adapter->hw.mac.type == IAVF_MAC_VF ||
+ 	    adapter->hw.mac.type == IAVF_MAC_X722_VF) {
+ 		if (on && !(dev_conf->rxmode.offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP)) {
+-			err = iavf_disable_vlan_strip(adapter);
++			if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_VLAN_V2)
++				err = iavf_config_vlan_strip_v2(adapter, false);
++			else
++				err = iavf_disable_vlan_strip(adapter);
+ 			if (err)
+ 				return -EIO;
+ 		}
+-- 
+2.39.5 (Apple Git-154)
 
