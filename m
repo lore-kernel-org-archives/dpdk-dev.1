@@ -2,30 +2,29 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46AE2C77B7C
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Jul 2025 16:49:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48212C83F03
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Jul 2025 16:51:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6175740267;
-	Thu,  3 Jul 2025 18:49:10 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 83A4640267;
+	Thu,  3 Jul 2025 18:51:14 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 5B75140264
- for <dev@dpdk.org>; Thu,  3 Jul 2025 18:49:08 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 1DF6C40264
+ for <dev@dpdk.org>; Thu,  3 Jul 2025 18:51:13 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 4FF0E46AE7; Thu,  3 Jul 2025 18:49:08 +0200 (CEST)
+ id 1811146AE8; Thu,  3 Jul 2025 18:51:13 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/core Bug 1738] bus/pci: Secondary process initialization kills
- non-DPDK network interfaces
-Date: Thu, 03 Jul 2025 16:49:08 +0000
+Subject: [DPDK/ethdev Bug 1739] net/cnxk: identincal code in branches
+Date: Thu, 03 Jul 2025 16:51:13 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: core
-X-Bugzilla-Version: 25.03
+X-Bugzilla-Component: ethdev
+X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: major
-X-Bugzilla-Who: yonig@radcom.com
+X-Bugzilla-Severity: minor
+X-Bugzilla-Who: stephen@networkplumber.org
 X-Bugzilla-Status: UNCONFIRMED
 X-Bugzilla-Resolution: 
 X-Bugzilla-Priority: Normal
@@ -35,8 +34,8 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1738-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17515613480.035a.1300103
+Message-ID: <bug-1739-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17515614720.0EfcF.1301070
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: https://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -56,8 +55,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17515613480.035a.1300103
-Date: Thu, 3 Jul 2025 18:49:08 +0200
+--17515614720.0EfcF.1301070
+Date: Thu, 3 Jul 2025 18:51:12 +0200
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -65,67 +64,97 @@ X-Bugzilla-URL: https://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1738
+https://bugs.dpdk.org/show_bug.cgi?id=3D1739
 
-            Bug ID: 1738
-           Summary: bus/pci: Secondary process initialization kills
-                    non-DPDK network interfaces
+            Bug ID: 1739
+           Summary: net/cnxk: identincal code in branches
            Product: DPDK
-           Version: 25.03
-          Hardware: x86
-                OS: Linux
+           Version: unspecified
+          Hardware: All
+                OS: All
             Status: UNCONFIRMED
-          Severity: major
+          Severity: minor
           Priority: Normal
-         Component: core
+         Component: ethdev
           Assignee: dev@dpdk.org
-          Reporter: yonig@radcom.com
+          Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-On a system with one virtio interface bound to vfio-pci and additional virt=
-io
-interfaces bound to the kernel driver: Starting a secondary DPDK process (w=
-ith
-a -a flag specifying the pci address bound to vfio) causes all the kernel
-network interfaces to stop working, requiring a reboot.
+Enabling compiler flag to detect identical branches in conditional finds:
 
-This behavior is reproduced on a specific environment consisting of several
-VMs, but we have been unable to reproduce it on other environments, which a=
-lso
-use virtio and the same kernel version.
-
-Steps to Reproduce:
-./dpdk-testpmd -l 4,5 -n 4 -a 0000:00:04.0 --proc-type=3Dprimary -- -i
-./dpdk-testpmd -l 6,7 -n 4 -a 0000:00:04.0 --proc-type=3Dsecondary -- -i
-
-This happens on all dpdk versions starting at 24.3.
-
-I have narrowed the cause down to the following two commits:
-4b741542ecde  - bus/pci: avoid depending on private kernel value
-647a0a6ecb04  - bus/pci: fix VFIO region info in secondary process
-
-Without these commits there is no issue. With only 4b741542ecde, there is an
-error in the secondary process initialization (virtio_pci_init(): failed to
-remap pci device). With both commits, the network dies during secondary pro=
-cess
-initialization.
-
-The kernel log contains lines such as:
-kernel: NETDEV WATCHDOG: ens3 (virtio_net): transmit queue 0 timed out
-...
-kernel: virtio_net virtio0 ens3: TX timeout on queue: 0, sq: output.0, vq: =
-0x1,
-name: output.0, 5286000 usecs ago
+[228/3418] Compiling C object
+drivers/libtmp_rte_common_cnxk.a.p/common_cnxk_roc_cpt.c.o
+../drivers/common/cnxk/roc_cpt.c: In function =E2=80=98cpt_get_blkaddr=E2=
+=80=99:
+../drivers/common/cnxk/roc_cpt.c:677:12: warning: this condition has identi=
+cal
+branches [-Wduplicated-branches]
+  677 |         if (dev_is_vf(dev))
+      |            ^
 
 
-Kernel version: kernel 5.14.0-362.8.1.el9_3.x86_64
+uint64_t
+cpt_get_blkaddr(struct dev *dev)
+{
+        uint64_t reg;
+        uint64_t off;
+
+        /* Reading the discovery register to know which CPT is the LF
+         * attached to. Assume CPT LF's of only one block are attached
+         * to a pffunc.
+         */
+        if (dev_is_vf(dev))
+                off =3D RVU_VF_BLOCK_ADDRX_DISC(RVU_BLOCK_ADDR_CPT1);
+        else
+                off =3D RVU_PF_BLOCK_ADDRX_DISC(RVU_BLOCK_ADDR_CPT1);
+
+And many more.
+
+
+[243/3418] Compiling C object
+drivers/libtmp_rte_common_cnxk.a.p/common_cnxk_roc_nix_inl_dev.c.o
+../drivers/common/cnxk/roc_nix_inl_dev.c: In function =E2=80=98nix_inl_nix_=
+setup=E2=80=99:
+../drivers/common/cnxk/roc_nix_inl_dev.c:833:17: warning: this condition has
+identical branches [-Wduplicated-branches]
+  833 |         else if (roc_model_is_cn10k())
+      |                 ^
+[246/3418] Compiling C object
+drivers/libtmp_rte_common_cnxk.a.p/common_cnxk_roc_nix_inl.c.o
+../drivers/common/cnxk/roc_nix_inl.c: In function
+=E2=80=98nix_inl_inb_ipsec_sa_tbl_setup=E2=80=99:
+../drivers/common/cnxk/roc_nix_inl.c:426:17: warning: this condition has
+identical branches [-Wduplicated-branches]
+  426 |         else if (roc_model_is_cn10k())
+      |                 ^
+../drivers/common/cnxk/roc_nix_inl.c: In function =E2=80=98nix_inl_eng_caps=
+_get=E2=80=99:
+../drivers/common/cnxk/roc_nix_inl.c:1215:12: warning: this condition has
+identical branches [-Wduplicated-branches]
+ 1215 |         if (roc_model_is_cn9k() || roc_model_is_cn10k())
+      |            ^
+../drivers/common/cnxk/roc_nix_inl.c: In function =E2=80=98roc_nix_inl_outb=
+_init=E2=80=99:
+../drivers/common/cnxk/roc_nix_inl.c:1616:17: warning: this condition has
+identical branches [-Wduplicated-branches]
+ 1616 |         else if (roc_model_is_cn10k())
+      |                 ^
+[260/3418] Compiling C object
+drivers/libtmp_rte_common_cnxk.a.p/common_cnxk_roc_nix_queue.c.o
+../drivers/common/cnxk/roc_nix_queue.c: In function =E2=80=98roc_nix_cq_ini=
+t=E2=80=99:
+../drivers/common/cnxk/roc_nix_queue.c:1290:90: warning: this condition has
+identical branches [-Wduplicated-branches]
+ 1290 |                         cq_ctx->lbp_frac =3D force_tail_drop ?
+NIX_CQ_LBP_THRESH_FRAC_REF1 :
+      |
 
 --=20
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17515613480.035a.1300103
-Date: Thu, 3 Jul 2025 18:49:08 +0200
+--17515614720.0EfcF.1301070
+Date: Thu, 3 Jul 2025 18:51:12 +0200
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -143,16 +172,14 @@ bz_new_table">
           <th>Bug ID</th>
           <td><a class=3D"bz_bug_link=20
           bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - bus/pci: Secondary process initialization kills n=
-on-DPDK network interfaces"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1738">1738</a>
+   title=3D"UNCONFIRMED - net/cnxk: identincal code in branches"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1739">1739</a>
           </td>
         </tr>
 
         <tr>
           <th>Summary</th>
-          <td>bus/pci: Secondary process initialization kills non-DPDK netw=
-ork interfaces
+          <td>net/cnxk: identincal code in branches
           </td>
         </tr>
 
@@ -164,19 +191,19 @@ ork interfaces
 
         <tr>
           <th>Version</th>
-          <td>25.03
+          <td>unspecified
           </td>
         </tr>
 
         <tr>
           <th>Hardware</th>
-          <td>x86
+          <td>All
           </td>
         </tr>
 
         <tr>
           <th>OS</th>
-          <td>Linux
+          <td>All
           </td>
         </tr>
 
@@ -188,7 +215,7 @@ ork interfaces
 
         <tr>
           <th>Severity</th>
-          <td>major
+          <td>minor
           </td>
         </tr>
 
@@ -200,7 +227,7 @@ ork interfaces
 
         <tr>
           <th>Component</th>
-          <td>core
+          <td>ethdev
           </td>
         </tr>
 
@@ -212,7 +239,7 @@ ork interfaces
 
         <tr>
           <th>Reporter</th>
-          <td>yonig&#64;radcom.com
+          <td>stephen&#64;networkplumber.org
           </td>
         </tr>
 
@@ -223,43 +250,75 @@ ork interfaces
         </tr></table>
       <p>
         <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">On a system with one virtio interf=
-ace bound to vfio-pci and additional virtio
-interfaces bound to the kernel driver: Starting a secondary DPDK process (w=
-ith
-a -a flag specifying the pci address bound to vfio) causes all the kernel
-network interfaces to stop working, requiring a reboot.
+          <pre class=3D"bz_comment_text">Enabling compiler flag to detect i=
+dentical branches in conditional finds:
 
-This behavior is reproduced on a specific environment consisting of several
-VMs, but we have been unable to reproduce it on other environments, which a=
-lso
-use virtio and the same kernel version.
-
-Steps to Reproduce:
-./dpdk-testpmd -l 4,5 -n 4 -a 0000:00:04.0 --proc-type=3Dprimary -- -i
-./dpdk-testpmd -l 6,7 -n 4 -a 0000:00:04.0 --proc-type=3Dsecondary -- -i
-
-This happens on all dpdk versions starting at 24.3.
-
-I have narrowed the cause down to the following two commits:
-4b741542ecde  - bus/pci: avoid depending on private kernel value
-647a0a6ecb04  - bus/pci: fix VFIO region info in secondary process
-
-Without these commits there is no issue. With only 4b741542ecde, there is an
-error in the secondary process initialization (virtio_pci_init(): failed to
-remap pci device). With both commits, the network dies during secondary pro=
-cess
-initialization.
-
-The kernel log contains lines such as:
-kernel: NETDEV WATCHDOG: ens3 (virtio_net): transmit queue 0 timed out
-...
-kernel: virtio_net virtio0 ens3: TX timeout on queue: 0, sq: output.0, vq: =
-0x1,
-name: output.0, 5286000 usecs ago
+[228/3418] Compiling C object
+drivers/libtmp_rte_common_cnxk.a.p/common_cnxk_roc_cpt.c.o
+../drivers/common/cnxk/roc_cpt.c: In function =E2=80=98cpt_get_blkaddr=E2=
+=80=99:
+../drivers/common/cnxk/roc_cpt.c:677:12: warning: this condition has identi=
+cal
+branches [-Wduplicated-branches]
+  677 |         if (dev_is_vf(dev))
+      |            ^
 
 
-Kernel version: kernel 5.14.0-362.8.1.el9_3.x86_64
+uint64_t
+cpt_get_blkaddr(struct dev *dev)
+{
+        uint64_t reg;
+        uint64_t off;
+
+        /* Reading the discovery register to know which CPT is the LF
+         * attached to. Assume CPT LF's of only one block are attached
+         * to a pffunc.
+         */
+        if (dev_is_vf(dev))
+                off =3D RVU_VF_BLOCK_ADDRX_DISC(RVU_BLOCK_ADDR_CPT1);
+        else
+                off =3D RVU_PF_BLOCK_ADDRX_DISC(RVU_BLOCK_ADDR_CPT1);
+
+And many more.
+
+
+[243/3418] Compiling C object
+drivers/libtmp_rte_common_cnxk.a.p/common_cnxk_roc_nix_inl_dev.c.o
+../drivers/common/cnxk/roc_nix_inl_dev.c: In function =E2=80=98nix_inl_nix_=
+setup=E2=80=99:
+../drivers/common/cnxk/roc_nix_inl_dev.c:833:17: warning: this condition has
+identical branches [-Wduplicated-branches]
+  833 |         else if (roc_model_is_cn10k())
+      |                 ^
+[246/3418] Compiling C object
+drivers/libtmp_rte_common_cnxk.a.p/common_cnxk_roc_nix_inl.c.o
+../drivers/common/cnxk/roc_nix_inl.c: In function
+=E2=80=98nix_inl_inb_ipsec_sa_tbl_setup=E2=80=99:
+../drivers/common/cnxk/roc_nix_inl.c:426:17: warning: this condition has
+identical branches [-Wduplicated-branches]
+  426 |         else if (roc_model_is_cn10k())
+      |                 ^
+../drivers/common/cnxk/roc_nix_inl.c: In function =E2=80=98nix_inl_eng_caps=
+_get=E2=80=99:
+../drivers/common/cnxk/roc_nix_inl.c:1215:12: warning: this condition has
+identical branches [-Wduplicated-branches]
+ 1215 |         if (roc_model_is_cn9k() || roc_model_is_cn10k())
+      |            ^
+../drivers/common/cnxk/roc_nix_inl.c: In function =E2=80=98roc_nix_inl_outb=
+_init=E2=80=99:
+../drivers/common/cnxk/roc_nix_inl.c:1616:17: warning: this condition has
+identical branches [-Wduplicated-branches]
+ 1616 |         else if (roc_model_is_cn10k())
+      |                 ^
+[260/3418] Compiling C object
+drivers/libtmp_rte_common_cnxk.a.p/common_cnxk_roc_nix_queue.c.o
+../drivers/common/cnxk/roc_nix_queue.c: In function =E2=80=98roc_nix_cq_ini=
+t=E2=80=99:
+../drivers/common/cnxk/roc_nix_queue.c:1290:90: warning: this condition has
+identical branches [-Wduplicated-branches]
+ 1290 |                         cq_ctx-&gt;lbp_frac =3D force_tail_drop ?
+NIX_CQ_LBP_THRESH_FRAC_REF1 :
+      |
           </pre>
         </div>
       </p>
@@ -276,7 +335,7 @@ Kernel version: kernel 5.14.0-362.8.1.el9_3.x86_64
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1738">
+?id=3D1739">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -285,4 +344,4 @@ ication">
     </body>
 </html>=
 
---17515613480.035a.1300103--
+--17515614720.0EfcF.1301070--
