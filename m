@@ -2,79 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE4FC83F03
-	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Jul 2025 13:50:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE12FC8303D
+	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Jul 2025 14:06:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7A16940298;
-	Fri,  4 Jul 2025 15:50:46 +0200 (CEST)
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com
- [205.220.177.32])
- by mails.dpdk.org (Postfix) with ESMTP id 8341440267
- for <dev@dpdk.org>; Fri,  4 Jul 2025 15:50:44 +0200 (CEST)
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
- by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5649YskX000349;
- Fri, 4 Jul 2025 13:50:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
- :content-transfer-encoding:date:from:message-id:mime-version
- :subject:to; s=corp-2025-04-25; bh=HFTYg66v5LWaXvsa5CTWxba2zssWh
- Zfw9kwk4pWYj44=; b=A8UlpD9SyIOMzA6w+PA/HjZvkxMVRiE6iU2MdNoDF9eeE
- yb+aiouxhsJyijM1gaF7IjLiQFOJHWvwYLQdj4O4czPQ71elUUWefBzUakvWK7wK
- ZkZR0IvyYOtl8wpFhmUqlslAWNiiDclTwWxaNu1sLpeeKaq+kezhdCLIr4aNJU8t
- aEfH4OzbSZerH4RD0Phuqn401R05oH/nP93cYV5f3zvvdtBn/FhhKLD2lCGptcA3
- /K8jhtdG/RQ0J7AhyRFzJCTt8Tt0sz0jWwhPKSBDfpnzyF6hknxEasmVp9XURRvM
- WLIz4eWVPSuRcos8I7yt42rCuNVEelPpg+S95rUwQ==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com
- (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
- by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47j80wasnf-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
- Fri, 04 Jul 2025 13:50:42 +0000 (GMT)
-Received: from pps.filterd
- (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
- by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2)
- with ESMTP id 564CY46V018761; Fri, 4 Jul 2025 13:50:41 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
- by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id
- 47j6uduadb-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
- Fri, 04 Jul 2025 13:50:41 +0000
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com
- (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
- by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 564DoetY024637;
- Fri, 4 Jul 2025 13:50:40 GMT
-Received: from dhcp-10-48-118-103.wifi.oracle.com
- (dhcp-10-48-118-103.wifi.oracle.com [10.48.118.103])
- by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id
- 47j6uduaav-1; Fri, 04 Jul 2025 13:50:40 +0000
-From: madhuker.mythri@oracle.com
-To: chas3@att.com
-Cc: dev@dpdk.org, Madhuker Mythri <madhuker.mythri@oracle.com>,
- tomaszx.kulasek@intel.com
-Subject: [PATCH] net/bonding: avoid RSS reta update in flow-isolation mode
-Date: Fri,  4 Jul 2025 19:20:31 +0530
-Message-Id: <20250704135031.5306-1-madhuker.mythri@oracle.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	by mails.dpdk.org (Postfix) with ESMTP id EABF040298;
+	Fri,  4 Jul 2025 16:06:01 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+ by mails.dpdk.org (Postfix) with ESMTP id 02A1B40267
+ for <dev@dpdk.org>; Fri,  4 Jul 2025 16:05:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1751637960; x=1783173960;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=NikOTRpBT24Bto1wnELH6bNSBznJKvkO3kK9z3lXR9w=;
+ b=cqt/XqypU481YXEDhoktFgMT2bIeQOIMAM0kdYJEtp+eZKIjcEhZG8bN
+ cbwRZ9LwBCiptqx6DOzAtX0v9tk+JEEbHKeghcLiOlRBNSuaqGhUTfzOJ
+ 0ndGQ4XI9DOsCCcDVdPuF+5JUFA0d0Y0kaoozEezujCVZ0lROZ/0FWTRi
+ JdZSM7G5FKlhPZJgwOt0wFGJ8t4a1Nxj7taRWVARKUS2wPW7cHY1sHUe3
+ Qr+Ni+Q9sT+rtgRYteGkoynA+i0aU8mqEqwxGvus3DVtRTLg3ePD0rvq8
+ n5OP2ZPCLV78XRCjdWuAqTtP8aK+C8Rkb0lMC0RXiuD9eZTRKiaTvABeh w==;
+X-CSE-ConnectionGUID: e26PiASET3CGybgBG3hv6w==
+X-CSE-MsgGUID: GFuboXaVSZGGH6iEPtsATg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11484"; a="53693994"
+X-IronPort-AV: E=Sophos;i="6.16,287,1744095600"; d="scan'208";a="53693994"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+ by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 04 Jul 2025 07:05:59 -0700
+X-CSE-ConnectionGUID: TeKuVBLfQtmDdOaqyQKoAA==
+X-CSE-MsgGUID: jyezSEU3RyaRHqGo561jfQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,287,1744095600"; d="scan'208";a="155012893"
+Received: from silpixa00401385.ir.intel.com ([10.237.214.33])
+ by fmviesa009.fm.intel.com with ESMTP; 04 Jul 2025 07:05:58 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH] app/testpmd: allow multiple cmdline-file parameters
+Date: Fri,  4 Jul 2025 15:05:51 +0100
+Message-ID: <20250704140551.4151993-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.48.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-04_05,2025-07-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0
- spamscore=0
- mlxlogscore=941 malwarescore=0 mlxscore=0 adultscore=0 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2505160000 definitions=main-2507040105
-X-Proofpoint-GUID: bV70gRkG-Ncc7plm4zMWJk3mZVt2RnSm
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA0MDEwNSBTYWx0ZWRfX5RMMfk6i2hls
- jeYTWeq7Q+QrntkffwtAYxUfPkhoy3mbqMR9MNy2jVfq+pgZywjVv+xmZGIKzDvm0p1Wju2yYGv
- 2s0q1MsBu8RpYYhhxHQ8IkmkiHwjomLkkvXqFGwen81Gbed3NYfU4ocau7awRjTXQ/fFGlrjv1I
- bpo4FFk03akeslwxi0mYtXksZKxusF5OB/K1z78sT4uYiS5JUYH3QWvClGm/6Rn6485zzHkL+ZI
- scSVBm8fyJh28IbRK5ZC5c4ID86rQmUUz75Vns//ncArbuMHPHcWIy+lSFYODFcUKLYrC0xO/57
- h+M1lRFjzcEotElSE7mLK+Ct9Afh/e5s8pCmXDqXvRPPKb+Xh/1iJ0Ydb2OBNc8Gc+aGTs+uiPA
- mr+v3tP0je/NilFzeSrWG9mAR6eAvM83x4+LatCgrpTYoF3R7CrKHtY1vsoOaf+1tV1v3u1c
-X-Authority-Analysis: v=2.4 cv=D6hHKuRj c=1 sm=1 tr=0 ts=6867dc32 cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=Wb1JkmetP80A:10 a=yPCof4ZbAAAA:8 a=QyXUC8HyAAAA:8 a=Mr-DseXuYG0Gcgx6uQYA:9
-X-Proofpoint-ORIG-GUID: bV70gRkG-Ncc7plm4zMWJk3mZVt2RnSm
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,50 +57,165 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Madhuker Mythri <madhuker.mythri@oracle.com>
+While testpmd allows a set of pre-prepared commands to be passed into it
+at startup via the "cmdline-file" (and cmdline-file-noecho) parameters,
+this is currently limited to a single file. By extending this support
+to allow the parameter to be passed multiple (up to 16) times, we enable
+users to have a library of pre-canned cmdline files and pass multiple of
+these in to the same run, e.g. have one cmdline file per NIC feature and
+enable multiple features by passing in multiple filenames.
 
-In bonding PMD, member_start() function checks whether RSS(mq_mode) is
-enabled and then calling the RSS rte_eth_dev_rss_reta_update() API, which
-is returning error in-case of device configured in flow isolation-mode.
-When the device configured with flow isolation mode RSS reta update is not
-required and the API was not supported. For example in-case of mlx5 PMD,
-RSS reta update API was not supported, when the device is configured in
-flow isolation-mode.
-
-So, added check to verify if the device is configured in flow-isolation
-mode, then do not call the rte_eth_dev_rss_reta_update() API.
-
-Fixes: 734ce47f71e0 ("bonding: support RSS dynamic configuration")
-Cc: tomaszx.kulasek@intel.com
-
-Signed-off-by: Madhuker Mythri <madhuker.mythri@oracle.com>
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/bonding/rte_eth_bond_pmd.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ app/test-pmd/cmdline.c    | 11 ++++++++---
+ app/test-pmd/parameters.c | 15 +++++++++++----
+ app/test-pmd/testpmd.c    | 12 +++++++++---
+ app/test-pmd/testpmd.h    |  8 ++++++--
+ 4 files changed, 34 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/bonding/rte_eth_bond_pmd.c b/drivers/net/bonding/rte_eth_bond_pmd.c
-index 83339bae3d..4906701a95 100644
---- a/drivers/net/bonding/rte_eth_bond_pmd.c
-+++ b/drivers/net/bonding/rte_eth_bond_pmd.c
-@@ -1904,12 +1904,13 @@ member_start(struct rte_eth_dev *bonding_eth_dev,
+diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
+index 7b4e27eddf..ad4094fa29 100644
+--- a/app/test-pmd/cmdline.c
++++ b/app/test-pmd/cmdline.c
+@@ -11646,7 +11646,9 @@ cmd_load_from_file_parsed(
+ {
+ 	struct cmd_cmdfile_result *res = parsed_result;
+ 
+-	cmdline_read_from_file(res->filename);
++	if (cmdline_read_from_file(res->filename) != 0) {
++		fprintf(stderr, "Failed to load commands from file: %s\n", res->filename);
++	}
+ }
+ 
+ static cmdline_parse_inst_t cmd_load_from_file = {
+@@ -14151,11 +14153,12 @@ init_cmdline(void)
+ }
+ 
+ /* read cmdline commands from file */
+-void
++int
+ cmdline_read_from_file(const char *filename)
+ {
+ 	struct cmdline *cl;
+ 	int fd = -1;
++	int ret = 0;
+ 
+ 	/* cmdline_file_new does not produce any output
+ 	 * so when echoing is requested we open filename directly
+@@ -14168,7 +14171,7 @@ cmdline_read_from_file(const char *filename)
+ 		if (fd < 0) {
+ 			fprintf(stderr, "Failed to open file %s: %s\n",
+ 				filename, strerror(errno));
+-			return;
++			return -1;
  		}
+ 
+ 		cl = cmdline_new(main_ctx, "testpmd> ", fd, STDOUT_FILENO);
+@@ -14177,6 +14180,7 @@ cmdline_read_from_file(const char *filename)
+ 		fprintf(stderr,
+ 			"Failed to create file based cmdline context: %s\n",
+ 			filename);
++		ret = -1;
+ 		goto end;
  	}
  
--	/* If RSS is enabled for bonding, synchronize RETA */
--	if (bonding_eth_dev->data->dev_conf.rxmode.mq_mode & RTE_ETH_MQ_RX_RSS) {
-+	/*
-+	 * If flow-isolation is not enabled, then check whether RSS is enabled for
-+	 * bonding, synchronize RETA
-+	 */
-+	if (internals->flow_isolated_valid == 0 &&
-+		(bonding_eth_dev->data->dev_conf.rxmode.mq_mode & RTE_ETH_MQ_RX_RSS)) {
- 		int i;
--		struct bond_dev_private *internals;
--
--		internals = bonding_eth_dev->data->dev_private;
+@@ -14190,6 +14194,7 @@ cmdline_read_from_file(const char *filename)
+ end:
+ 	if (fd >= 0)
+ 		close(fd);
++	return ret;
+ }
  
- 		for (i = 0; i < internals->member_count; i++) {
- 			if (internals->members[i].port_id == member_port_id) {
+ void
+diff --git a/app/test-pmd/parameters.c b/app/test-pmd/parameters.c
+index 1132972913..64c16b4f36 100644
+--- a/app/test-pmd/parameters.c
++++ b/app/test-pmd/parameters.c
+@@ -963,10 +963,17 @@ launch_args_parse(int argc, char** argv)
+ 			echo_cmdline_file = true;
+ 			/* fall-through */
+ 		case TESTPMD_OPT_CMDLINE_FILE_NOECHO_NUM:
+-			printf("CLI commands to be read from %s\n",
+-				optarg);
+-			strlcpy(cmdline_filename, optarg,
+-				sizeof(cmdline_filename));
++			if (cmdline_file_count >= RTE_DIM(cmdline_filenames)) {
++				fprintf(stderr, "Too many cmdline files specified (maximum %zu)\n",
++					RTE_DIM(cmdline_filenames));
++				exit(EXIT_FAILURE);
++			}
++			printf("CLI commands to be read from %s\n", optarg);
++			strlcpy(cmdline_filenames[cmdline_file_count], optarg,
++				sizeof(cmdline_filenames[cmdline_file_count]));
++			cmdline_file_count++;
++			/* reset flag for next time */
++			echo_cmdline_file = false;
+ 			break;
+ 		case TESTPMD_OPT_TX_FIRST_NUM:
+ 			printf("Ports to start sending a burst of "
+diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
+index bb88555328..3f82c1018d 100644
+--- a/app/test-pmd/testpmd.c
++++ b/app/test-pmd/testpmd.c
+@@ -105,7 +105,8 @@ int testpmd_logtype; /**< Log type for testpmd logs */
+ uint8_t interactive = 0;
+ uint8_t auto_start = 0;
+ uint8_t tx_first;
+-char cmdline_filename[PATH_MAX] = {0};
++char cmdline_filenames[MAX_CMDLINE_FILENAMES][PATH_MAX] = {0};
++unsigned int cmdline_file_count;
+ bool echo_cmdline_file;
+ 
+ /*
+@@ -4508,8 +4509,13 @@ main(int argc, char** argv)
+ 		rte_exit(EXIT_FAILURE,
+ 			"Could not initialise cmdline context.\n");
+ 
+-	if (strlen(cmdline_filename) != 0)
+-		cmdline_read_from_file(cmdline_filename);
++	for (unsigned int i = 0; i < cmdline_file_count; i++) {
++		if (cmdline_read_from_file(cmdline_filenames[i]) != 0) {
++			fprintf(stderr, "Failed to process cmdline file: %s\n",
++					cmdline_filenames[i]);
++			break;
++		}
++	}
+ 
+ 	if (interactive == 1) {
+ 		if (auto_start) {
+diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h
+index e629edaa02..9525a04626 100644
+--- a/app/test-pmd/testpmd.h
++++ b/app/test-pmd/testpmd.h
+@@ -36,6 +36,9 @@
+ extern uint8_t cl_quit;
+ extern volatile uint8_t f_quit;
+ 
++/* Max number of cmdline files we can take on testpmd cmdline */
++#define MAX_CMDLINE_FILENAMES 16
++
+ /*
+  * It is used to allocate the memory for hash key.
+  * The hash key size is NIC dependent.
+@@ -509,7 +512,8 @@ extern int testpmd_logtype; /**< Log type for testpmd logs */
+ extern uint8_t  interactive;
+ extern uint8_t  auto_start;
+ extern uint8_t  tx_first;
+-extern char cmdline_filename[PATH_MAX]; /**< offline commands file */
++extern char cmdline_filenames[MAX_CMDLINE_FILENAMES][PATH_MAX]; /**< offline commands files */
++extern unsigned int cmdline_file_count; /**< number of cmdline files */
+ extern bool echo_cmdline_file;  /** unset if cmdline-file-noecho is used */
+ extern uint8_t  numa_support; /**< set by "--numa" parameter */
+ extern uint16_t port_topology; /**< set by "--port-topology" parameter */
+@@ -928,7 +932,7 @@ unsigned int parse_hdrs_list(const char *str, const char *item_name,
+ 			unsigned int *parsed_items);
+ void launch_args_parse(int argc, char** argv);
+ void cmd_reconfig_device_queue(portid_t id, uint8_t dev, uint8_t queue);
+-void cmdline_read_from_file(const char *filename);
++int cmdline_read_from_file(const char *filename);
+ int init_cmdline(void);
+ void prompt(void);
+ void prompt_exit(void);
 -- 
-2.39.5 (Apple Git-154)
+2.48.1
 
