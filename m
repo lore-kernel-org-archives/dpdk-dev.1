@@ -2,105 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97A4DC8303D
-	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Jul 2025 11:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B7A6C8303D
+	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Jul 2025 13:22:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BD2D14028B;
-	Fri,  4 Jul 2025 13:57:13 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 8441340267
- for <dev@dpdk.org>; Fri,  4 Jul 2025 13:57:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1751630232;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=BHuxrxelnJQwdfMulalg7hHsQQqYNf2hTtYli/HbeGo=;
- b=Lgote/oogTXJRZHs2AQVyh12POJCTmkCV96waV2pRrpQ5a2E9lG0iwM9/4vAzTtZIntO8C
- D7dOiuyNhk9HT42E+YeYQDqU671EIr080kwW3Zb1Qa1p0YXQOZfvrFXgBBLLnm8awxiEcr
- buA+xAdTcSEZOonIQ64dXUImeRUFseM=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-512-j2jYXpJcPQevP9VfK6bBZQ-1; Fri,
- 04 Jul 2025 07:57:09 -0400
-X-MC-Unique: j2jYXpJcPQevP9VfK6bBZQ-1
-X-Mimecast-MFC-AGG-ID: j2jYXpJcPQevP9VfK6bBZQ_1751630228
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 3BA0618002ED; Fri,  4 Jul 2025 11:57:07 +0000 (UTC)
-Received: from [10.44.22.8] (unknown [10.44.22.8])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 3D611180035C; Fri,  4 Jul 2025 11:57:03 +0000 (UTC)
-Message-ID: <7be991f8-a7d7-48c7-af5b-dad4aaacb486@redhat.com>
-Date: Fri, 4 Jul 2025 13:57:00 +0200
+	by mails.dpdk.org (Postfix) with ESMTP id 1406E402CE;
+	Fri,  4 Jul 2025 15:22:30 +0200 (CEST)
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com
+ [205.220.165.32])
+ by mails.dpdk.org (Postfix) with ESMTP id EB26240267
+ for <dev@dpdk.org>; Fri,  4 Jul 2025 15:22:28 +0200 (CEST)
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+ by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5649YvW5018041;
+ Fri, 4 Jul 2025 13:22:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+ :content-transfer-encoding:date:from:message-id:mime-version
+ :subject:to; s=corp-2025-04-25; bh=6dCIxXd+oJ7wXJGa76JQ5ReCRgvcK
+ Gh3HRIZ9yR68HQ=; b=Lus1dxsNiUoeTP4g6Z4Gc4QLgBrikWrawqOkIbAMdVI1a
+ liKeUAnxf38M9mtI9Om5A39WDY0AD2xxpg132xUHNWXoHqSLWnLHzadExBPtAUFI
+ MHO6iMcMxEU5p8X0Rx9ewD6VusE6a4oY/BhadcnyZ2AQlwurv8zwMdAGpCVMmP4T
+ Femsjf8JOtkb/BF8vNAUqs5eFz7Ux/ZlNnzjw/qcRlrPcJ8f9ag/Hj+6D9EE4y+y
+ UWOgEtbpqJemt2PbZfbjEw+54OnrgX3ytiVnLGqgq5izOJJqWMDYXN8/ReZ2lwCD
+ K2Qoz9KOEClXgb/8HhaAomQK50cczFif0opxN8qJQ==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com
+ (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+ by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47j704jvx8-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+ Fri, 04 Jul 2025 13:22:25 +0000 (GMT)
+Received: from pps.filterd
+ (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+ by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2)
+ with ESMTP id 564CBfs0032568; Fri, 4 Jul 2025 13:22:24 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+ by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id
+ 47j6un3y33-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+ Fri, 04 Jul 2025 13:22:24 +0000
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com
+ (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+ by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 564DMOGs005506;
+ Fri, 4 Jul 2025 13:22:24 GMT
+Received: from dhcp-10-48-115-21.wifi.oracle.com
+ (dhcp-10-48-115-21.wifi.oracle.com [10.48.115.21])
+ by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id
+ 47j6un3xy9-1; Fri, 04 Jul 2025 13:22:23 +0000
+From: madhuker.mythri@oracle.com
+To: chas3@att.com
+Cc: dev@dpdk.org, Madhuker Mythri <madhuker.mythri@oracle.com>,
+ tomaszx.kulasek@intel.com
+Subject: [PATCH] net/bonding: avoid RSS reta update in flow-isolation mode
+Date: Fri,  4 Jul 2025 18:52:07 +0530
+Message-Id: <20250704132207.5021-1-madhuker.mythri@oracle.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/virtio: Fix check of threshold for Tx freeing
-To: "Jiang, YuX" <yux.jiang@intel.com>, Hengqi Chen <hengqi.chen@gmail.com>,
- "dev@dpdk.org" <dev@dpdk.org>, Thomas Monjalon <thomas@monjalon.net>,
- David Marchand <david.marchand@redhat.com>
-Cc: Baoyuan Li <updoing@sina.com>, Chenbo Xia <chenbox@nvidia.com>
-References: <20250609072347.1748785-1-hengqi.chen@gmail.com>
- <IA0PR11MB8336E80904EA2B2AC1041C45FE42A@IA0PR11MB8336.namprd11.prod.outlook.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <IA0PR11MB8336E80904EA2B2AC1041C45FE42A@IA0PR11MB8336.namprd11.prod.outlook.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: TltqGuA0HJ9MQbflIb01E-k3FsfGNGA6cwaUzJi9yX0_1751630228
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-04_05,2025-07-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=941
+ adultscore=0
+ bulkscore=0 malwarescore=0 spamscore=0 phishscore=0 suspectscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2505160000 definitions=main-2507040101
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA0MDEwMiBTYWx0ZWRfX1DcvX2ZwyBjq
+ i4VA+8dsYIcE/SYQdr3tO6YBPf7LKKNBPzG0CJ2s9phtDZx9XB3Jdh/4xn14bXZDHl6LjYvTYhn
+ VvxkNVzBxEuvBnzf+gJk7geF4W/q7GqYvUNDnb4Dd0dCrrsM5O7Lo3BbVem8R31JrgDpI6Dy4Um
+ hDIJDrvejATwXdHJ7IaXjv8HtHXV8z+Bi03yoUCiLckaw80f1wVXXQ71qYesuOsMwKzlH9aHSU3
+ DUBc48gIHSY1SCi+Q1TRGp8EexYcv00Qz0I4llysCsFWB+W7V9blAwQgKca/Lv4K22rwoYl2usH
+ tLbiMyEy84aDyjQ2ubZvoruVe9gp4HoSbZVYvivAywXTVcHPSCT6/WPNS8K+ywVytLXjBlpzbFU
+ /ZHg14bZn6xczmNcqs++KIyTeaSL2ls6S68jhuN9WBKjJW0u0lciq8qu5mLOG7R8mj2Xv8bY
+X-Authority-Analysis: v=2.4 cv=LcU86ifi c=1 sm=1 tr=0 ts=6867d592 b=1 cx=c_pps
+ a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+ a=Wb1JkmetP80A:10 a=yPCof4ZbAAAA:8 a=QyXUC8HyAAAA:8 a=Mr-DseXuYG0Gcgx6uQYA:9
+ cc=ntf awl=host:12057
+X-Proofpoint-GUID: -pf6lQRYc4jt3UunNYw3Qe6CkSRRJI27
+X-Proofpoint-ORIG-GUID: -pf6lQRYc4jt3UunNYw3Qe6CkSRRJI27
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -114,79 +89,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Yu, Hengqi,
+From: Madhuker Mythri <madhuker.mythri@oracle.com>
 
-First, thanks Yu for testing and reporting the performance degradation,
-this is much appreciated!
+In bonding PMD, member_start() function checks whether RSS(mq_mode) is
+enabled and then calling the RSS rte_eth_dev_rss_reta_update() API, which
+is returning error in-case of device configured in flow isolation-mode.
+When the device configured with flow isolation mode RSS reta update is not
+required and the API was not supported. For example in-case of mlx5 PMD,
+RSS reta update API was not supported, when the device is configured in
+flow isolation-mode.
 
-On 7/4/25 1:29 PM, Jiang, YuX wrote:
-> Hi Hengqi,
-> 
-> Can you help to check the ticket: https://bugs.dpdk.org/show_bug.cgi?id=1747? The perf drop is caused by your patch. Thanks so much.
+So, added check to verify if the device is configured in flow-isolation
+mode, then do not call the rte_eth_dev_rss_reta_update() API.
 
-The options I see are:
-1. Revert the patch for v25.07, fix it and resubmit for v25.11.
-2. Fix it on time for v25.07-rc3
-3. Keep the patch in v25.07 and try to fix it in v25.11.
+Fixes: 734ce47f71e0 ("bonding: support RSS dynamic configuration")
+Cc: tomaszx.kulasek@intel.com
 
-As I will be OoO starting this evening, I would be in favor of option 1.
-What do you think?
+Signed-off-by: Madhuker Mythri <madhuker.mythri@oracle.com>
+---
+ drivers/net/bonding/rte_eth_bond_pmd.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-Thanks,
-Maxime
-
-> Best regards,
-> Yu Jiang
-> 
->> -----Original Message-----
->> From: Hengqi Chen <hengqi.chen@gmail.com>
->> Sent: Monday, June 9, 2025 3:24 PM
->> To: dev@dpdk.org
->> Cc: Hengqi Chen <hengqi.chen@gmail.com>; Baoyuan Li
->> <updoing@sina.com>; Maxime Coquelin <maxime.coquelin@redhat.com>;
->> Chenbo Xia <chenbox@nvidia.com>
->> Subject: [PATCH] net/virtio: Fix check of threshold for Tx freeing
->>
->> Like most dirvers, make the fast path of virtio_xmit_cleanup() behave as
->> described by the comments of rte_eth_txconf::tx_free_thresh ([0]):
->>      Start freeing Tx buffers if there are
->>      less free descriptors than this value.
->>
->> The rationale behind this change is that:
->>    * vq->vq_nentries is set during device probe with the queue size specified
->>      by vhost backend, this value does not reflect the real nb_tx_desc
->>    * the real available tx desc is set to vq->vq_free_cnt via the nb_tx_desc
->>      param of rte_eth_tx_queue_setup() API
->>    * so `nb_used > vq->vq_nentries - vq->vq_free_thresh` could never be true
->>      if say nb_tx_desc=2048, vq->vq_nentries=4096, vq->vq_free_thresh=32,
->>      see bug report 1716 ([1]) for details.
->>
->> Bugzilla ID: 1716
->>
->>    [0]: https://github.com/DPDK/dpdk/commit/72514b5d5543
->>    [1]: https://bugs.dpdk.org/show_bug.cgi?id=1716
->>
->> Signed-off-by: Baoyuan Li <updoing@sina.com>
->> Signed-off-by: Hengqi Chen <hengqi.chen@gmail.com>
->> ---
->>   drivers/net/virtio/virtio_rxtx.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/virtio/virtio_rxtx.c b/drivers/net/virtio/virtio_rxtx.c
->> index edecd2011f..ab97f03d7d 100644
->> --- a/drivers/net/virtio/virtio_rxtx.c
->> +++ b/drivers/net/virtio/virtio_rxtx.c
->> @@ -1873,7 +1873,7 @@ virtio_xmit_pkts(void *tx_queue, struct rte_mbuf
->> **tx_pkts, uint16_t nb_pkts)
->>
->>   	nb_used = virtqueue_nused(vq);
->>
->> -	if (likely(nb_used > vq->vq_nentries - vq->vq_free_thresh))
->> +	if (likely(vq->vq_free_cnt < vq->vq_free_thresh))
->>   		virtio_xmit_cleanup(vq, nb_used);
->>
->>   	for (nb_tx = 0; nb_tx < nb_pkts; nb_tx++) {
->> --
->> 2.43.5
-> 
+diff --git a/drivers/net/bonding/rte_eth_bond_pmd.c b/drivers/net/bonding/rte_eth_bond_pmd.c
+index 83339bae3d..bcbb7cae7b 100644
+--- a/drivers/net/bonding/rte_eth_bond_pmd.c
++++ b/drivers/net/bonding/rte_eth_bond_pmd.c
+@@ -1904,12 +1904,13 @@ member_start(struct rte_eth_dev *bonding_eth_dev,
+ 		}
+ 	}
+ 
+-	/* If RSS is enabled for bonding, synchronize RETA */
+-	if (bonding_eth_dev->data->dev_conf.rxmode.mq_mode & RTE_ETH_MQ_RX_RSS) {
++	/* 
++	 * If flow-isolation is not enabled, then check whether RSS is enabled for
++	 * bonding, synchronize RETA
++	 */
++	if (internals->flow_isolated_valid == 0 &&
++		(bonding_eth_dev->data->dev_conf.rxmode.mq_mode & RTE_ETH_MQ_RX_RSS)) {
+ 		int i;
+-		struct bond_dev_private *internals;
+-
+-		internals = bonding_eth_dev->data->dev_private;
+ 
+ 		for (i = 0; i < internals->member_count; i++) {
+ 			if (internals->members[i].port_id == member_port_id) {
+-- 
+2.39.5 (Apple Git-154)
 
