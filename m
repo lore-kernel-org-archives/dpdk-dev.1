@@ -2,49 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46C45C83030
-	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Jul 2025 02:54:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 345CDC8303D
+	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Jul 2025 03:10:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 215B94028B;
-	Fri,  4 Jul 2025 04:54:25 +0200 (CEST)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
- by mails.dpdk.org (Postfix) with ESMTP id 8638A4027D
- for <dev@dpdk.org>; Fri,  4 Jul 2025 04:54:23 +0200 (CEST)
-Received: from mail.cstnet.cn (unknown [60.29.3.194])
- by APP-05 (Coremail) with SMTP id zQCowADnfF1WQmdop6HMAA--.53070S2;
- Fri, 04 Jul 2025 10:54:14 +0800 (CST)
-From: Jie Liu <liujie5@linkdatatechnology.com>
-To: stephen@networkplumber.org
-Cc: dev@dpdk.org,
-	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v2 01/14] net/sxe: add base driver directory and doc Adding a
- minimum maintainable directory structure for the network driver and request
- maintenance of the sxe driver.
-Date: Thu,  3 Jul 2025 22:53:48 -0400
-Message-ID: <20250704025401.301617-1-liujie5@linkdatatechnology.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250425023652.37368-1-liujie5@linkdatatechnology.com>
-References: <20250425023652.37368-1-liujie5@linkdatatechnology.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 40B6A4028B;
+	Fri,  4 Jul 2025 05:10:02 +0200 (CEST)
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com
+ [209.85.216.49]) by mails.dpdk.org (Postfix) with ESMTP id 37F2E4027D
+ for <dev@dpdk.org>; Fri,  4 Jul 2025 05:10:01 +0200 (CEST)
+Received: by mail-pj1-f49.google.com with SMTP id
+ 98e67ed59e1d1-315c1b0623cso725569a91.1
+ for <dev@dpdk.org>; Thu, 03 Jul 2025 20:10:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1751598600; x=1752203400; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=hBKPtYZwE4ukb4lNeNXqsi/TM6Pw9XuKsE6rFusBgL0=;
+ b=UJJRzkzQiDnb+2UCDj565lM/zgV6yimsWkIo3wfqwVIOqrNiFPhNv5mMDWT7M+nHZJ
+ emwUPYLe5VodcSotvzh6Pzkm6DXxedRphwmpHXBs6rEIK0ZF8GeEUByf3zwWWrs4zSWu
+ tZYElfWd/twOBuUy9NcVVvVHLqXmu8Ep0zDMs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1751598600; x=1752203400;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=hBKPtYZwE4ukb4lNeNXqsi/TM6Pw9XuKsE6rFusBgL0=;
+ b=pgtnKHXKhGqDgvPOAdAdqEAijysSc1SjVuaEX48QE1thmMs8BiX9xMhReWLjgF98N3
+ ZLeETH0XrWVmcRlI6YjaFFWfgRUS8NBXH6PLfCNfutfAmxnUR3yBpxeAOuRpxJDDkqO5
+ Xi4UKjUaF5q1C63OIufUyiagPISI2aKtoOSGTpThF8Qn0XxKmrk26xABsoqnVCEer5xu
+ fO0cPTerxrmLMkSeEaS9zUJpjEOjgm377H28prkSdwIsRaIJERYrHdZ5lZgy4EIViad6
+ v0S93OGg2YG1jWmBDcD+ksfdrFM8G3QM/kxKodnQ8fzm1ZvLw8j3v8TsyQ+7NMQfgZkR
+ ffJQ==
+X-Gm-Message-State: AOJu0Yx5SQYDjYdsCE6YcR2RTcxJVI+Abi/4/dr/EK9G9XAm3QCaS+EI
+ PVz5tC5mBXhcAYazPQfJ2Bq9vubZLeK/dDmaTV0MdBrtMkFZ8I4rtpHr3Upv4C8lM7/9CeeDYtn
+ n8qFvmhVr7bSKBp8Muk5XljwPgH0u61bItB2yEmkCIfKE1CdRhywk
+X-Gm-Gg: ASbGncs4wI7ViQB4Ku+q+jjzLxk7L1ineclQ/24la12glWY3idj7DNkH1p5bZJNuNP7
+ GS5KTnsQ8kiDooFeS9vndbKIp/QIqGagKwlCKz+vbQktfTGwYY2maaJs062ugkhtDKp7a3o92oj
+ PVzf7oYZKE1AX7Htw1kWMrY5ea6CkKDNuUpkPXHBLlsJvNqGoc935Ax+xd10M=
+X-Google-Smtp-Source: AGHT+IHwdG0v9GHwQ+ZNUmMWe7DTk/OSPpw7Zh60PqVKcCXFglthZTrOnBfYouIY6UJeTydeAQupVDUvvcyalCATrKQ=
+X-Received: by 2002:a17:90b:3dce:b0:312:e731:5a66 with SMTP id
+ 98e67ed59e1d1-31aadcef372mr735380a91.3.1751598600222; Thu, 03 Jul 2025
+ 20:10:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowADnfF1WQmdop6HMAA--.53070S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3XryrurW3tw1Dur4kXFyxXwb_yoWxKr4xpa
- 18CFWSkr1fJa17X3Zxt3WUGF1rAa1vya4UCw1xK34YqF98Cry8Xw45tFyFy3srXryjv340
- vF1avry7uF1rZaUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUka14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
- rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
- 1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
- 6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
- 4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
- I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
- 4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4vE14v_Gr1l
- 42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJV
- WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAK
- I48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r
- 4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY
- 6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUdnYwUUUUU=
-X-Originating-IP: [60.29.3.194]
-X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
+References: <20250702164204.607685-1-luca.vizzarro@arm.com>
+ <20250702164204.607685-2-luca.vizzarro@arm.com>
+In-Reply-To: <20250702164204.607685-2-luca.vizzarro@arm.com>
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Thu, 3 Jul 2025 23:04:23 -0400
+X-Gm-Features: Ac12FXw8QdXtieme3C5PLnSNm7NAGf4Mfj_KfowJpUQKE8Kd2gimzjKzDXOPOB8
+Message-ID: <CAJvnSUDcQb1wyFpoYvyw5YP7bXd5+Pybw3HuOHypJPcuFnc8Pg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dts: add DPDK build app helper function
+To: Luca Vizzarro <luca.vizzarro@arm.com>
+Cc: dev@dpdk.org, Paul Szczepanek <paul.szczepanek@arm.com>
+Content-Type: multipart/alternative; boundary="0000000000005b0f6e063911d4f2"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,288 +68,140 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
----
- MAINTAINERS                         |  6 +++
- doc/guides/nics/features/sxe.ini    | 80 +++++++++++++++++++++++++++++
- doc/guides/nics/features/sxe_vf.ini | 39 ++++++++++++++
- doc/guides/nics/index.rst           |  1 +
- doc/guides/nics/sxe.rst             | 71 +++++++++++++++++++++++++
- drivers/net/sxe/meson.build         |  9 ++++
- drivers/net/sxe/pf/sxe_ethdev.c     |  3 ++
- drivers/net/sxe/pf/sxe_ethdev.h     |  3 ++
- 8 files changed, 212 insertions(+)
- create mode 100644 doc/guides/nics/features/sxe.ini
- create mode 100644 doc/guides/nics/features/sxe_vf.ini
- create mode 100644 doc/guides/nics/sxe.rst
- create mode 100644 drivers/net/sxe/meson.build
- create mode 100644 drivers/net/sxe/pf/sxe_ethdev.c
- create mode 100644 drivers/net/sxe/pf/sxe_ethdev.h
+--0000000000005b0f6e063911d4f2
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 82f6e2f917..f92f4fea81 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2055,3 +2055,9 @@ F: examples/vmdq/
- F: doc/guides/sample_app_ug/vmdq_forwarding.rst
- F: examples/vmdq_dcb/
- F: doc/guides/sample_app_ug/vmdq_dcb_forwarding.rst
-+
-+Linkdata sxe
-+M: Jie Li <lijie@linkdatatechnology.com>
-+F: drivers/net/sxe/
-+F: doc/guides/nics/sxe.rst
-+F: doc/guides/nics/features/sxe*.ini
-diff --git a/doc/guides/nics/features/sxe.ini b/doc/guides/nics/features/sxe.ini
-new file mode 100644
-index 0000000000..773edd884c
---- /dev/null
-+++ b/doc/guides/nics/features/sxe.ini
-@@ -0,0 +1,80 @@
-+;
-+; Supported features of the 'sxe' network poll mode driver.
-+;
-+; Refer to default.ini for the full list of available PMD features.
-+;
-+[Features]
-+Speed capabilities   = Y
-+Link speed configuration = Y
-+Link status          = Y
-+Link status event    = Y
-+Rx interrupt         = Y
-+Queue start/stop     = Y
-+Power mgmt address monitor = Y
-+MTU update           = Y
-+Scattered Rx         = Y
-+LRO                  = Y
-+TSO                  = Y
-+Promiscuous mode     = Y
-+Allmulticast mode    = Y
-+Unicast MAC filter   = Y
-+Multicast MAC filter = Y
-+RSS hash             = Y
-+RSS key update       = Y
-+RSS reta update      = Y
-+VMDq                 = Y
-+SR-IOV               = Y
-+DCB                  = Y
-+VLAN filter          = Y
-+Flow control         = Y
-+Rate limitation      = Y
-+Traffic manager      = Y
-+Inline crypto        = Y
-+CRC offload          = P
-+VLAN offload         = P
-+QinQ offload         = P
-+L3 checksum offload  = P
-+L4 checksum offload  = P
-+MACsec offload       = P
-+Inner L3 checksum    = P
-+Inner L4 checksum    = P
-+Packet type parsing  = Y
-+Timesync             = Y
-+Rx descriptor status = Y
-+Tx descriptor status = Y
-+Basic stats          = Y
-+Extended stats       = Y
-+Stats per queue      = Y
-+FW version           = Y
-+EEPROM dump          = Y
-+Module EEPROM dump   = Y
-+Registers dump       = Y
-+Multiprocess aware   = Y
-+FreeBSD              = Y
-+Linux                = Y
-+ARMv8                = Y
-+x86-32               = Y
-+x86-64               = Y
-+
-+[rte_flow items]
-+eth                  = P
-+e_tag                = Y
-+fuzzy                = Y
-+ipv4                 = Y
-+ipv6                 = Y
-+nvgre                = Y
-+raw                  = Y
-+sctp                 = Y
-+tcp                  = Y
-+udp                  = Y
-+vlan                 = P
-+vxlan                = Y
-+
-+[rte_flow actions]
-+drop                 = Y
-+mark                 = Y
-+pf                   = Y
-+queue                = Y
-+rss                  = Y
-+security             = Y
-+vf                   = Y
-diff --git a/doc/guides/nics/features/sxe_vf.ini b/doc/guides/nics/features/sxe_vf.ini
-new file mode 100644
-index 0000000000..49eaeaaaae
---- /dev/null
-+++ b/doc/guides/nics/features/sxe_vf.ini
-@@ -0,0 +1,39 @@
-+;
-+; Supported features of the 'sxe_vf' network poll mode driver.
-+;
-+; Refer to default.ini for the full list of available PMD features.
-+;
-+[Features]
-+Link status          = Y
-+Rx interrupt         = Y
-+Power mgmt address monitor = Y
-+MTU update           = Y
-+Scattered Rx         = Y
-+LRO                  = Y
-+TSO                  = Y
-+Promiscuous mode     = Y
-+Allmulticast mode    = Y
-+Unicast MAC filter   = Y
-+RSS hash             = Y
-+RSS key update       = Y
-+RSS reta update      = Y
-+VLAN filter          = Y
-+Inline crypto        = Y
-+CRC offload          = P
-+VLAN offload         = P
-+QinQ offload         = P
-+L3 checksum offload  = P
-+L4 checksum offload  = P
-+Inner L3 checksum    = P
-+Inner L4 checksum    = P
-+Packet type parsing  = Y
-+Rx descriptor status = Y
-+Tx descriptor status = Y
-+Basic stats          = Y
-+Extended stats       = Y
-+Registers dump       = Y
-+FreeBSD              = Y
-+Linux                = Y
-+ARMv8                = Y
-+x86-32               = Y
-+x86-64               = Y
-diff --git a/doc/guides/nics/index.rst b/doc/guides/nics/index.rst
-index 10a2eca3b0..67e6374c69 100644
---- a/doc/guides/nics/index.rst
-+++ b/doc/guides/nics/index.rst
-@@ -72,3 +72,4 @@ Network Interface Controller Drivers
-     vmxnet3
-     xsc
-     zxdh
-+    sxe
-diff --git a/doc/guides/nics/sxe.rst b/doc/guides/nics/sxe.rst
-new file mode 100644
-index 0000000000..d86d15bec8
---- /dev/null
-+++ b/doc/guides/nics/sxe.rst
-@@ -0,0 +1,71 @@
-+..  SPDX-License-Identifier: BSD-3-Clause
-+    Copyright (C), 2022, Linkdata Technology Co., Ltd.
-+
-+SXE Poll Mode Driver
-+======================
-+
-+The SXE PMD (librte_pmd_sxe) provides poll mode driver support
-+for Linkdata 1160-2X 10GE Ethernet Adapter.
-+
-+Features
-+--------
-+- PXE boot
-+- PTP(Precision Time Protocol)
-+- VMDq(Virtual Machine Device Queues)
-+- SR-IOV,max 2PF,63VF per PF
-+- 128 L2 Ethernet MAC Address Filters (unicast and multicast)
-+- 64 L2 VLAN filters
-+- pldm over mctp over smbus
-+- 802.1q VLAN
-+- Low Latency Interrupts
-+- LRO
-+- Promiscuous mode
-+- Multicast mode
-+- Multiple queues for TX and RX
-+- Receiver Side Scaling (RSS)
-+- MAC/VLAN filtering
-+- Packet type information
-+- Checksum offload
-+- VLAN/QinQ stripping and inserting
-+- TSO offload
-+- Port hardware statistics
-+- Link state information
-+- Link flow control
-+- Interrupt mode for RX
-+- Scattered and gather for TX and RX
-+- DCB
-+- IEEE 1588
-+- FW version
-+- Generic flow API
-+
-+Configuration
-+-------------
-+
-+Dynamic Logging Parameters
-+~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+One may leverage EAL option "--log-level" to change default levels
-+for the log types supported by the driver. The option is used with
-+an argument typically consisting of two parts separated by a colon.
-+
-+SXE PMD provides the following log types available for control:
-+
-+- ``pmd.net.sxe.drv`` (default level is **DEBUG**)
-+
-+  Affects driver-wide messages unrelated to any particular devices.
-+
-+- ``pmd.net.sxe.init`` (default level is **DEBUG**)
-+
-+  Extra logging of the messages during PMD initialization.
-+
-+- ``pmd.net.sxe.rx`` (default level is **DEBUG**)
-+
-+  Affects rx-wide messages.
-+- ``pmd.net.sxe.tx`` (default level is **DEBUG**)
-+
-+  Affects tx-wide messages.
-+
-+------------------------------
-+
-+Refer to the document :ref:`compiling and testing a PMD for a NIC <pmd_build_and_test>`
-+for details.
-diff --git a/drivers/net/sxe/meson.build b/drivers/net/sxe/meson.build
-new file mode 100644
-index 0000000000..dad9ee44a0
---- /dev/null
-+++ b/drivers/net/sxe/meson.build
-@@ -0,0 +1,9 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright (C), 2020, Wuxi Stars Micro System Technologies Co., Ltd.
-+
-+deps += ['hash']
-+sources = files(
-+        'pf/sxe_ethdev.c',
-+)
-+
-+includes += include_directories('pf')
-diff --git a/drivers/net/sxe/pf/sxe_ethdev.c b/drivers/net/sxe/pf/sxe_ethdev.c
-new file mode 100644
-index 0000000000..e31a23deeb
---- /dev/null
-+++ b/drivers/net/sxe/pf/sxe_ethdev.c
-@@ -0,0 +1,3 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2015-2024
-+ */
-diff --git a/drivers/net/sxe/pf/sxe_ethdev.h b/drivers/net/sxe/pf/sxe_ethdev.h
-new file mode 100644
-index 0000000000..e31a23deeb
---- /dev/null
-+++ b/drivers/net/sxe/pf/sxe_ethdev.h
-@@ -0,0 +1,3 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2015-2024
-+ */
--- 
-2.18.4
+On Wed, Jul 2, 2025 at 12:43=E2=80=AFPM Luca Vizzarro <luca.vizzarro@arm.co=
+m> wrote:
 
+> Make a distinction between example apps and app/ apps by renaming the
+> build app function. Moreover, provide a dedicated helper function to
+> retrieve the path to a DPDK app.
+>
+> Signed-off-by: Luca Vizzarro <luca.vizzarro@arm.com>
+> Reviewed-by: Paul Szczepanek <paul.szczepanek@arm.com>
+> ---
+>  dts/framework/remote_session/dpdk.py | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/dts/framework/remote_session/dpdk.py
+> b/dts/framework/remote_session/dpdk.py
+> index e00c4a9bf9..ed1f808bdd 100644
+> --- a/dts/framework/remote_session/dpdk.py
+> +++ b/dts/framework/remote_session/dpdk.py
+> @@ -267,8 +267,8 @@ def _build_dpdk(self) -> None:
+>              self.remote_dpdk_build_dir,
+>          )
+>
+> -    def build_dpdk_app(self, app_name: str, **meson_dpdk_args: str |
+> bool) -> PurePath:
+> -        """Build one or all DPDK apps.
+> +    def build_dpdk_example_app(self, app_name: str, **meson_dpdk_args:
+> str | bool) -> PurePath:
+> +        """Build one or all DPDK example apps.
+>
+>
+We have previously been encouraged to avoid using sample apps unless
+absolutely necessary, so it probably doesn't make sense for us to add this
+in until we have a specific reason and justification for supporting example
+apps (and this may never happen).
+
+
+>          Requires DPDK to be already built on the SUT node.
+>
+> @@ -298,6 +298,10 @@ def build_dpdk_app(self, app_name: str,
+> **meson_dpdk_args: str | bool) -> PurePa
+>              self.remote_dpdk_build_dir, "examples", f"dpdk-{app_name}"
+>          )
+>
+> +    def get_app(self, app_name: str) -> PurePath:
+> +        """Retrieve path for a DPDK app."""
+> +        return self._session.join_remote_path(self.remote_dpdk_build_dir=
+,
+> "app", f"dpdk-{app_name}")
+> +
+>      @cached_property
+>      def remote_dpdk_tree_path(self) -> PurePath:
+>          """The remote DPDK tree path."""
+> --
+> 2.43.0
+>
+>
+Otherwise this looks fine for dumpcap and the others /app apps - thanks.
+
+Reviewed-by: Patrick Robb <probb@iol.unh.edu>
+
+--0000000000005b0f6e063911d4f2
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, Jul 2, =
+2025 at 12:43=E2=80=AFPM Luca Vizzarro &lt;<a href=3D"mailto:luca.vizzarro@=
+arm.com">luca.vizzarro@arm.com</a>&gt; wrote:<br></div><blockquote class=3D=
+"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(2=
+04,204,204);padding-left:1ex">Make a distinction between example apps and a=
+pp/ apps by renaming the<br>
+build app function. Moreover, provide a dedicated helper function to<br>
+retrieve the path to a DPDK app.<br>
+<br>
+Signed-off-by: Luca Vizzarro &lt;<a href=3D"mailto:luca.vizzarro@arm.com" t=
+arget=3D"_blank">luca.vizzarro@arm.com</a>&gt;<br>
+Reviewed-by: Paul Szczepanek &lt;<a href=3D"mailto:paul.szczepanek@arm.com"=
+ target=3D"_blank">paul.szczepanek@arm.com</a>&gt;<br>
+---<br>
+=C2=A0dts/framework/remote_session/dpdk.py | 8 ++++++--<br>
+=C2=A01 file changed, 6 insertions(+), 2 deletions(-)<br>
+<br>
+diff --git a/dts/framework/remote_session/dpdk.py b/dts/framework/remote_se=
+ssion/dpdk.py<br>
+index e00c4a9bf9..ed1f808bdd 100644<br>
+--- a/dts/framework/remote_session/dpdk.py<br>
++++ b/dts/framework/remote_session/dpdk.py<br>
+@@ -267,8 +267,8 @@ def _build_dpdk(self) -&gt; None:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0self.remote_dpdk_build_dir,=
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0)<br>
+<br>
+-=C2=A0 =C2=A0 def build_dpdk_app(self, app_name: str, **meson_dpdk_args: s=
+tr | bool) -&gt; PurePath:<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Build one or all DPDK apps.<=
+br>
++=C2=A0 =C2=A0 def build_dpdk_example_app(self, app_name: str, **meson_dpdk=
+_args: str | bool) -&gt; PurePath:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Build one or all DPDK exampl=
+e apps.<br>
+<br></blockquote><div><br></div><div>We have previously been encouraged to =
+avoid using sample apps unless absolutely necessary, so it probably doesn&#=
+39;t make sense for us to add this in until we have a specific reason and j=
+ustification for supporting example apps (and this may never happen).</div>=
+<div>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px =
+0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0Requires DPDK to be already built on the =
+SUT node.<br>
+<br>
+@@ -298,6 +298,10 @@ def build_dpdk_app(self, app_name: str, **meson_dpdk_a=
+rgs: str | bool) -&gt; PurePa<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0self.remote_dpdk_build_dir,=
+ &quot;examples&quot;, f&quot;dpdk-{app_name}&quot;<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0)<br>
+<br>
++=C2=A0 =C2=A0 def get_app(self, app_name: str) -&gt; PurePath:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Retrieve path for a DPDK app=
+.&quot;&quot;&quot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 return self._session.join_remote_path(self.rem=
+ote_dpdk_build_dir, &quot;app&quot;, f&quot;dpdk-{app_name}&quot;)<br>
++<br>
+=C2=A0 =C2=A0 =C2=A0@cached_property<br>
+=C2=A0 =C2=A0 =C2=A0def remote_dpdk_tree_path(self) -&gt; PurePath:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;The remote DPDK tree pa=
+th.&quot;&quot;&quot;<br>
+-- <br>
+2.43.0<br>
+<br></blockquote><div><br></div><div>Otherwise this looks fine for dumpcap =
+and the others /app apps - thanks.=C2=A0</div><div><br></div><div>Reviewed-=
+by: Patrick Robb &lt;<a href=3D"mailto:probb@iol.unh.edu">probb@iol.unh.edu=
+</a>&gt;</div><div>=C2=A0</div></div></div>
+
+--0000000000005b0f6e063911d4f2--
