@@ -2,49 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36205C83030
-	for <dpdk-dev@archiver.kernel.org>; Sat,  5 Jul 2025 18:42:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 405E4C8303C
+	for <dpdk-dev@archiver.kernel.org>; Sat,  5 Jul 2025 18:48:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 01BB24028B;
-	Sat,  5 Jul 2025 20:42:16 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
- by mails.dpdk.org (Postfix) with ESMTP id D27684025F
- for <dev@dpdk.org>; Sat,  5 Jul 2025 20:42:13 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 22C0C4028B;
+	Sat,  5 Jul 2025 20:47:59 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+ by mails.dpdk.org (Postfix) with ESMTP id 4B5B04025F
+ for <dev@dpdk.org>; Sat,  5 Jul 2025 20:47:56 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1751740934; x=1783276934;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=bIkyGcv9BcQbqxkYIIrtjEmfm7jJMyJ+kntY4MY4i1M=;
- b=FO4Qrzs5u/qyHcT+l6XZ/yUyTDNtbqldruxGVAOHjYh0JXbdzEgyJgzy
- bLSS/+rYlMk1EdIJmpwGTbdR7y8QXTeALgq1cf5BGAWv08Lz79fN90LWu
- Wur5D1wYyAO1+SyXZahLatvE2uc+19JK89WYJiiq/nKcXjqWgyjuOFfS0
- HhuW9WDWDJS/w/w0iAhDNhGdTrcr6tSXLjkVxh45TI+CX0324NStsLHoe
- nDQAGCdY80m5/Rkfq3Dt+0xUnakItIqoRwsQfkUYa91Y4gMWzO/o/OFN2
- HUkSVGwlw+srJ8vjbZKPQUtcqmJdf9PHFPjLGxIUrt+S4JMwUpRLiRH1W g==;
-X-CSE-ConnectionGUID: 9WH4dbV4R52dfpFTaX33Fg==
-X-CSE-MsgGUID: DpDWBARvRgCBSMEZw1rpnw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11485"; a="76567129"
-X-IronPort-AV: E=Sophos;i="6.16,290,1744095600"; d="scan'208";a="76567129"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
- by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 05 Jul 2025 11:42:13 -0700
-X-CSE-ConnectionGUID: V+5H26LlR/WP1JqxyLjpyw==
-X-CSE-MsgGUID: hPy1QjZxQ1Cpg4JJBUcKOw==
+ t=1751741277; x=1783277277;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=1HGQKi++RNuxua6r+FxP3SsRMQIq+MpuIz6Km2gOBXc=;
+ b=YCkQ5EEPV76Lq3PntsCENfXal1zWNsPac7W2tPHKQ4yNi+SA2UxWMe+q
+ 7LkBJHpx6bt+DTudST7ZLNK6dmRvtHiuAtl6GYseSBizd3efKvLFXqkic
+ 1cXk8obCGOxtQRlBMp4DITx4H7Db7LbC4W/27KJRm+e5xHmyX3UGWXMfC
+ hBH55CLth433IvP2JcQgbSpTqx270UbyWxHU7NwgdwRhkcvGiymkeqnjk
+ Rb0qD0H54TLj4GBh1rwBbxSCp0hQBVKTw1iTBin+p4j1yoMD66hJWD5vz
+ 16+L2uBXDTSdq7Mjz8SRLe2c85G7LcmrJlqSy1ZYDyqwAPCvJc6XiSKqI A==;
+X-CSE-ConnectionGUID: bZsKLtPoT86rGxhxJC25vg==
+X-CSE-MsgGUID: jAND9OWiQ+6ODIPLMHJwPw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11485"; a="64266390"
+X-IronPort-AV: E=Sophos;i="6.16,290,1744095600"; d="scan'208";a="64266390"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+ by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 05 Jul 2025 11:47:55 -0700
+X-CSE-ConnectionGUID: HaUI8skzQoiNHwhrExpvOQ==
+X-CSE-MsgGUID: B3z5CMhITDmlTalZQPd1MA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,290,1744095600"; d="scan'208";a="154603355"
+X-IronPort-AV: E=Sophos;i="6.16,290,1744095600"; d="scan'208";a="155614401"
 Received: from txanpdk02.an.intel.com ([10.123.117.76])
- by orviesa009.jf.intel.com with ESMTP; 05 Jul 2025 11:42:12 -0700
+ by fmviesa010.fm.intel.com with ESMTP; 05 Jul 2025 11:47:54 -0700
 From: Pravin Pathak <pravin.pathak@intel.com>
 To: dev@dpdk.org
 Cc: jerinj@marvell.com, mike.ximing.chen@intel.com, bruce.richardson@intel.com,
  thomas@monjalon.net, david.marchand@redhat.com, nipun.gupta@amd.com,
  chenbox@nvidia.com, tirthendu.sarkar@intel.com,
  Pravin Pathak <pravin.pathak@intel.com>
-Subject: [PATCH v1] event/dlb2: add support for stop and restart dlb device
-Date: Sat,  5 Jul 2025 13:42:09 -0500
-Message-Id: <20250705184209.924922-1-pravin.pathak@intel.com>
+Subject: [PATCH v2] event/dlb2: add support for stop and restart dlb device
+Date: Sat,  5 Jul 2025 13:47:52 -0500
+Message-Id: <20250705184752.925174-1-pravin.pathak@intel.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250705184209.924922-1-pravin.pathak@intel.com>
+References: <20250705184209.924922-1-pravin.pathak@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -317,7 +319,7 @@ index 4410da8db0..7d63056e6d 100644
   * DLB2_DOMAIN_CMD_MAP_QID: Map a load-balanced queue to a load-balanced port.
   * Input parameters:
 diff --git a/drivers/event/dlb2/pf/base/dlb2_resource.c b/drivers/event/dlb2/pf/base/dlb2_resource.c
-index 98f2f5ef92..87a15416bb 100644
+index 98f2f5ef92..70c02ab417 100644
 --- a/drivers/event/dlb2/pf/base/dlb2_resource.c
 +++ b/drivers/event/dlb2/pf/base/dlb2_resource.c
 @@ -6102,12 +6102,14 @@ int dlb2_hw_pending_port_unmaps(struct dlb2_hw *hw,
@@ -498,7 +500,7 @@ index 98f2f5ef92..87a15416bb 100644
 + * @vdev_id: If vdev_req is true, this contains the vdev's ID.
 + *
 + * This function stops a scheduling domain, which allows applications to send
-+ * traffic through it. Once a domain is stoped, its resources can no longer be
++ * traffic through it. Once a domain is stopped, its resources can no longer be
 + * configured (besides QID remapping and port enable/disable).
 + *
 + * A vdev can be either an SR-IOV virtual function or a Scalable IOV virtual
@@ -509,7 +511,7 @@ index 98f2f5ef92..87a15416bb 100644
 + * assigned a detailed error code from enum dlb2_error.
 + *
 + * Errors:
-+ * EINVAL - the domain is not configured, or the domain is already stoped.
++ * EINVAL - the domain is not configured, or the domain is already stopped.
 + */
 +int
 +dlb2_hw_stop_domain(struct dlb2_hw *hw,
