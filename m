@@ -2,46 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4284C8303C
-	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Jul 2025 11:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0243FC8303C
+	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Jul 2025 11:18:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 56C6440430;
-	Mon,  7 Jul 2025 13:18:07 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 614C940649;
+	Mon,  7 Jul 2025 13:18:12 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id 837C940430
- for <dev@dpdk.org>; Mon,  7 Jul 2025 13:18:05 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id B2AF740647
+ for <dev@dpdk.org>; Mon,  7 Jul 2025 13:18:10 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1751887086; x=1783423086;
+ t=1751887091; x=1783423091;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=KnoHfM4O+5dX05BrCpckZONRkgPwEoBo+BSGcKxWrUA=;
- b=hz6RscWb0iuWaqBZfoO+kyLsvTn2RzCSsU96FbNsfVAWoqT/WIxy6E4F
- Is7wWGy3rXKLnI2RPUJUAh8xpeSWcnG9fmP6XA6JMpuGH6MOPP/gnFPn/
- PkX9/ujHmdsGXgYTUML/KAAvaz3z3Y5fB/AN1GEadPyVez2m9vDioT3nJ
- NM/uVKzpRW0oBfOxepnjrNKlFnheWNyz1JCjTszv0h8UbZ/U0mG2/jyBi
- T0NhPCn3HlWY7exvRrQGgD6Nd1/nUF3bpwA89knNAmaMqCteADIzB9lcl
- EjQu4Spw8nSB/QZXZsFAB3tGsI0LCCA1WWygZhKeOi2u996/Haupcui54 w==;
-X-CSE-ConnectionGUID: RurJnqICTou1NusqjTwiVQ==
-X-CSE-MsgGUID: 65ZPnEWYSe2lAs+O43hM5w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11486"; a="54228334"
-X-IronPort-AV: E=Sophos;i="6.16,294,1744095600"; d="scan'208";a="54228334"
+ bh=7dX/lrM4iZiLFNJCB5EcTz8XyNiR8qfLQlLlnrJnzj8=;
+ b=cYVHxrnQSAGROOGHUNDDR2I90Qr03qoz0Csn2gYa5TCSF37eCus4XS0c
+ cEluX6j3l0ksvBgu+JCeXKldMjxWD+RTVsYKvzI8LaCpFj9K84DiOqccN
+ jP0moYQ/d3PIsBpAgvmYEGEmtKogcCaZXSiMHpiOqGSEezCTa+CYLogcF
+ Kg4AgZYy3lcIDtnqytfXJowma01nzpJ1PICSKBCLvbTZqbZQLJlSCrju2
+ +EgTaYOCOjs7X+fw3goCGEtFMkFQs5Acbw6a4ahG7bCihE88BZpoGhFwi
+ H+5Ee2+URFx4AoX+43iAqKzqI7D0WfYpA6yfV5d1aWVJ8+EVjP4YkutcV w==;
+X-CSE-ConnectionGUID: R/b0BTt6TlGINUH/IZO4Hg==
+X-CSE-MsgGUID: UPuh6w8gQ3KfGbglvtDGaw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11486"; a="54228342"
+X-IronPort-AV: E=Sophos;i="6.16,294,1744095600"; d="scan'208";a="54228342"
 Received: from orviesa008.jf.intel.com ([10.64.159.148])
  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Jul 2025 04:18:06 -0700
-X-CSE-ConnectionGUID: 8tUCIxYESgSp6yhR1tOVYA==
-X-CSE-MsgGUID: o4mqjcxWTt+ZPmYrqXHlBw==
+ 07 Jul 2025 04:18:11 -0700
+X-CSE-ConnectionGUID: qAB3tSyAR+qHdUPWEy5vkA==
+X-CSE-MsgGUID: ythn+3UHTzehpQHy/sRwSQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,294,1744095600"; d="scan'208";a="155670922"
+X-IronPort-AV: E=Sophos;i="6.16,294,1744095600"; d="scan'208";a="155670942"
 Received: from silpixa00401385.ir.intel.com ([10.237.214.33])
- by orviesa008.jf.intel.com with ESMTP; 07 Jul 2025 04:18:05 -0700
+ by orviesa008.jf.intel.com with ESMTP; 07 Jul 2025 04:18:10 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v3 1/3] app/testpmd: explicitly set command echoing on file
- load
-Date: Mon,  7 Jul 2025 12:17:49 +0100
-Message-ID: <20250707111751.183469-2-bruce.richardson@intel.com>
+Subject: [PATCH v3 2/3] app/testpmd: allow multiple commandline file parameters
+Date: Mon,  7 Jul 2025 12:17:50 +0100
+Message-ID: <20250707111751.183469-3-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250707111751.183469-1-bruce.richardson@intel.com>
 References: <20250704140551.4151993-1-bruce.richardson@intel.com>
@@ -61,171 +60,150 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The echoing of commands contained in a file loaded via the "load"
-command on testpmd CLI is governed by whether or not a cmdline-file or
-cmdline-file-noecho had been passed to testpmd on the commandline.
-
-Remove the use of a global setting for this, and explicitly add a
-"load_echo" command to match the "load" command.
+While testpmd allows a set of pre-prepared commands to be passed into it
+at startup via the "cmdline-file" (and cmdline-file-noecho) parameters,
+this is currently limited to a single file. By extending this support
+to allow the parameter to be passed multiple (up to 16) times, we enable
+users to have a library of pre-canned cmdline files and pass multiple of
+these in to the same run, e.g. have one cmdline file per NIC feature and
+enable multiple features by passing in multiple filenames.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- app/test-pmd/cmdline.c                      | 51 +++++++++++++++++++--
- app/test-pmd/testpmd.c                      |  2 +-
- app/test-pmd/testpmd.h                      |  2 +-
- doc/guides/testpmd_app_ug/testpmd_funcs.rst |  2 +-
- 4 files changed, 49 insertions(+), 8 deletions(-)
+ app/test-pmd/parameters.c                   | 17 +++++++++++------
+ app/test-pmd/testpmd.c                      | 13 +++++++++----
+ app/test-pmd/testpmd.h                      | 13 +++++++++++--
+ doc/guides/testpmd_app_ug/run_app.rst       |  3 ++-
+ doc/guides/testpmd_app_ug/testpmd_funcs.rst |  6 +++---
+ 5 files changed, 36 insertions(+), 16 deletions(-)
 
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index 7b4e27eddf..5433678b5e 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -11646,7 +11646,9 @@ cmd_load_from_file_parsed(
- {
- 	struct cmd_cmdfile_result *res = parsed_result;
- 
--	cmdline_read_from_file(res->filename);
-+	if (cmdline_read_from_file(res->filename, false) != 0) {
-+		fprintf(stderr, "Failed to load commands from file: %s\n", res->filename);
-+	}
- }
- 
- static cmdline_parse_inst_t cmd_load_from_file = {
-@@ -11660,6 +11662,41 @@ static cmdline_parse_inst_t cmd_load_from_file = {
- 	},
- };
- 
-+/* command to load a file with echoing commands */
-+struct cmd_load_echo_result {
-+	cmdline_fixed_string_t load_echo;
-+	cmdline_fixed_string_t filename;
-+};
-+
-+/* CLI fields for file load with echo command */
-+static cmdline_parse_token_string_t cmd_load_echo =
-+	TOKEN_STRING_INITIALIZER(struct cmd_load_echo_result, load_echo, "load_echo");
-+static cmdline_parse_token_string_t cmd_load_echo_filename =
-+	TOKEN_STRING_INITIALIZER(struct cmd_load_echo_result, filename, NULL);
-+
-+static void
-+cmd_load_echo_file_parsed(
-+	void *parsed_result,
-+	__rte_unused struct cmdline *cl,
-+	__rte_unused void *data)
-+{
-+	struct cmd_load_echo_result *res = parsed_result;
-+
-+	if (cmdline_read_from_file(res->filename, true) != 0)
-+		fprintf(stderr, "Failed to load commands from file: %s\n", res->filename);
-+}
-+
-+static cmdline_parse_inst_t cmd_load_echo_file = {
-+	.f = cmd_load_echo_file_parsed,
-+	.data = NULL,
-+	.help_str = "load_echo <filename>",
-+	.tokens = {
-+		(void *)&cmd_load_echo,
-+		(void *)&cmd_load_echo_filename,
-+		NULL,
-+	},
-+};
-+
- /* Get Rx offloads capabilities */
- struct cmd_rx_offload_get_capa_result {
- 	cmdline_fixed_string_t show;
-@@ -13865,6 +13902,7 @@ static cmdline_parse_ctx_t builtin_ctx[] = {
- 	&cmd_help_long,
- 	&cmd_quit,
- 	&cmd_load_from_file,
-+	&cmd_load_echo_file,
- 	&cmd_showport,
- 	&cmd_showqueue,
- 	&cmd_showeeprom,
-@@ -14151,24 +14189,25 @@ init_cmdline(void)
- }
- 
- /* read cmdline commands from file */
--void
--cmdline_read_from_file(const char *filename)
-+int
-+cmdline_read_from_file(const char *filename, bool echo)
- {
- 	struct cmdline *cl;
- 	int fd = -1;
-+	int ret = 0;
- 
- 	/* cmdline_file_new does not produce any output
- 	 * so when echoing is requested we open filename directly
- 	 * and then pass that to cmdline_new with stdout as the output path.
- 	 */
--	if (!echo_cmdline_file) {
-+	if (!echo) {
- 		cl = cmdline_file_new(main_ctx, "testpmd> ", filename);
- 	} else {
- 		fd = open(filename, O_RDONLY);
- 		if (fd < 0) {
- 			fprintf(stderr, "Failed to open file %s: %s\n",
- 				filename, strerror(errno));
--			return;
-+			return -1;
- 		}
- 
- 		cl = cmdline_new(main_ctx, "testpmd> ", fd, STDOUT_FILENO);
-@@ -14177,6 +14216,7 @@ cmdline_read_from_file(const char *filename)
- 		fprintf(stderr,
- 			"Failed to create file based cmdline context: %s\n",
- 			filename);
-+		ret = -1;
- 		goto end;
- 	}
- 
-@@ -14190,6 +14230,7 @@ cmdline_read_from_file(const char *filename)
- end:
- 	if (fd >= 0)
- 		close(fd);
-+	return ret;
- }
- 
- void
+diff --git a/app/test-pmd/parameters.c b/app/test-pmd/parameters.c
+index 1132972913..ce2ba1c826 100644
+--- a/app/test-pmd/parameters.c
++++ b/app/test-pmd/parameters.c
+@@ -960,13 +960,18 @@ launch_args_parse(int argc, char** argv)
+ 			exit(EXIT_SUCCESS);
+ 			break;
+ 		case TESTPMD_OPT_CMDLINE_FILE_NUM:
+-			echo_cmdline_file = true;
+-			/* fall-through */
+ 		case TESTPMD_OPT_CMDLINE_FILE_NOECHO_NUM:
+-			printf("CLI commands to be read from %s\n",
+-				optarg);
+-			strlcpy(cmdline_filename, optarg,
+-				sizeof(cmdline_filename));
++			if (cmdline_file_count >= RTE_DIM(cmdline_files)) {
++				fprintf(stderr, "Too many cmdline files specified (maximum %zu)\n",
++					RTE_DIM(cmdline_files));
++				exit(EXIT_FAILURE);
++			}
++			printf("CLI commands to be read from %s\n", optarg);
++			strlcpy(cmdline_files[cmdline_file_count].filename, optarg,
++				sizeof(cmdline_files[cmdline_file_count].filename));
++			cmdline_files[cmdline_file_count].echo =
++				(opt == TESTPMD_OPT_CMDLINE_FILE_NUM);
++			cmdline_file_count++;
+ 			break;
+ 		case TESTPMD_OPT_TX_FIRST_NUM:
+ 			printf("Ports to start sending a burst of "
 diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
-index bb88555328..b498e6d9fe 100644
+index b498e6d9fe..505e0283fa 100644
 --- a/app/test-pmd/testpmd.c
 +++ b/app/test-pmd/testpmd.c
-@@ -4509,7 +4509,7 @@ main(int argc, char** argv)
+@@ -105,8 +105,8 @@ int testpmd_logtype; /**< Log type for testpmd logs */
+ uint8_t interactive = 0;
+ uint8_t auto_start = 0;
+ uint8_t tx_first;
+-char cmdline_filename[PATH_MAX] = {0};
+-bool echo_cmdline_file;
++struct cmdline_file_info cmdline_files[MAX_CMDLINE_FILENAMES] = {0};
++unsigned int cmdline_file_count;
+ 
+ /*
+  * NUMA support configuration.
+@@ -4508,8 +4508,13 @@ main(int argc, char** argv)
+ 		rte_exit(EXIT_FAILURE,
  			"Could not initialise cmdline context.\n");
  
- 	if (strlen(cmdline_filename) != 0)
--		cmdline_read_from_file(cmdline_filename);
-+		cmdline_read_from_file(cmdline_filename, echo_cmdline_file);
+-	if (strlen(cmdline_filename) != 0)
+-		cmdline_read_from_file(cmdline_filename, echo_cmdline_file);
++	for (unsigned int i = 0; i < cmdline_file_count; i++) {
++		if (cmdline_read_from_file(cmdline_files[i].filename, cmdline_files[i].echo) != 0) {
++			fprintf(stderr, "Failed to process cmdline file: %s\n",
++					cmdline_files[i].filename);
++			break;
++		}
++	}
  
  	if (interactive == 1) {
  		if (auto_start) {
 diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h
-index e629edaa02..1d34f40deb 100644
+index 1d34f40deb..6ee229cb5c 100644
 --- a/app/test-pmd/testpmd.h
 +++ b/app/test-pmd/testpmd.h
-@@ -928,7 +928,7 @@ unsigned int parse_hdrs_list(const char *str, const char *item_name,
- 			unsigned int *parsed_items);
- void launch_args_parse(int argc, char** argv);
- void cmd_reconfig_device_queue(portid_t id, uint8_t dev, uint8_t queue);
--void cmdline_read_from_file(const char *filename);
-+int cmdline_read_from_file(const char *filename, bool echo);
- int init_cmdline(void);
- void prompt(void);
- void prompt_exit(void);
+@@ -36,6 +36,15 @@
+ extern uint8_t cl_quit;
+ extern volatile uint8_t f_quit;
+ 
++/* Max number of cmdline files we can take on testpmd cmdline */
++#define MAX_CMDLINE_FILENAMES 16
++
++/* Structure to track cmdline files and their echo settings */
++struct cmdline_file_info {
++	char filename[PATH_MAX];  /**< Path to the cmdline file */
++	bool echo;                /**< Whether to echo commands from this file */
++};
++
+ /*
+  * It is used to allocate the memory for hash key.
+  * The hash key size is NIC dependent.
+@@ -509,8 +518,8 @@ extern int testpmd_logtype; /**< Log type for testpmd logs */
+ extern uint8_t  interactive;
+ extern uint8_t  auto_start;
+ extern uint8_t  tx_first;
+-extern char cmdline_filename[PATH_MAX]; /**< offline commands file */
+-extern bool echo_cmdline_file;  /** unset if cmdline-file-noecho is used */
++extern struct cmdline_file_info cmdline_files[MAX_CMDLINE_FILENAMES]; /**< offline commands files */
++extern unsigned int cmdline_file_count; /**< number of cmdline files */
+ extern uint8_t  numa_support; /**< set by "--numa" parameter */
+ extern uint16_t port_topology; /**< set by "--port-topology" parameter */
+ extern uint8_t no_flush_rx; /**<set by "--no-flush-rx" parameter */
+diff --git a/doc/guides/testpmd_app_ug/run_app.rst b/doc/guides/testpmd_app_ug/run_app.rst
+index 330c37f2d9..680ecefac2 100644
+--- a/doc/guides/testpmd_app_ug/run_app.rst
++++ b/doc/guides/testpmd_app_ug/run_app.rst
+@@ -41,8 +41,9 @@ The command line options are:
+ 
+ *   ``--cmdline-file=filename, --cmdline-file-noecho=filename``
+ 
+-    Read and execute commands from a file.
++    At startup, read and execute commands from a file.
+     The file should contain the same commands that can be entered interactively.
++    This option can be specified multiple times to process several files in sequence.
+     When using ``cmdline-file``, each command is printed as it is executed.
+     When using ``cmdline-file-noecho``, the commands are executed silently.
+ 
 diff --git a/doc/guides/testpmd_app_ug/testpmd_funcs.rst b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-index 6ad83ae50d..e12585f025 100644
+index e12585f025..b8a401fa6f 100644
 --- a/doc/guides/testpmd_app_ug/testpmd_funcs.rst
 +++ b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-@@ -95,7 +95,7 @@ practical or possible testpmd supports alternative methods for executing command
+@@ -67,13 +67,13 @@ Command File Functions
+ To facilitate loading large number of commands or to avoid cutting and pasting where not
+ practical or possible testpmd supports alternative methods for executing commands.
  
- 
- * At run-time additional commands can be loaded in bulk by invoking the ``load FILENAME``
--  command.
-+  or ``load_echo FILENAME`` command.
+-* If started with the ``--cmdline-file=FILENAME`` command line argument testpmd
+-  will execute all CLI commands contained within the file immediately before
++* If started with the ``--cmdline-file=FILENAME`` or ``--cmdline-file-noecho=FILENAME`` command line argument,
++  testpmd will execute all CLI commands contained within the file immediately before
+   starting packet forwarding or entering interactive mode.
  
  .. code-block:: console
  
+-   ./dpdk-testpmd -n4 -r2 ... -- -i --cmdline-file=/home/ubuntu/flow-create-commands.txt
++   ./dpdk-testpmd ... -- -i --cmdline-file-noecho=/home/ubuntu/flow-create-commands.txt
+    Interactive-mode selected
+    CLI commands to be read from /home/ubuntu/flow-create-commands.txt
+    Configuring Port 0 (socket 0)
 -- 
 2.48.1
 
