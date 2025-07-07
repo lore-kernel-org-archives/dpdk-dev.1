@@ -2,40 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73BE6C83F07
-	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Jul 2025 12:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D0A7C83F07
+	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Jul 2025 12:47:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9348940287;
-	Mon,  7 Jul 2025 14:10:35 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id EF89540287;
+	Mon,  7 Jul 2025 14:47:21 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 941DF4025D
- for <dev@dpdk.org>; Mon,  7 Jul 2025 14:10:34 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id AC0BB4025D
+ for <dev@dpdk.org>; Mon,  7 Jul 2025 14:47:20 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 37260208ED;
- Mon,  7 Jul 2025 14:10:34 +0200 (CEST)
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 5994A208ED;
+ Mon,  7 Jul 2025 14:47:20 +0200 (CEST)
 Content-class: urn:content-classes:message
-Subject: RE: [RFC PATCH 0/5] Introduce mempool object new debug capabilities
 MIME-Version: 1.0
 Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH v2] mbuf: add new ptype for slow protocols
 X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Mon, 7 Jul 2025 14:10:31 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FD92@smartserver.smartshare.dk>
-In-Reply-To: <SA1PR12MB949141C3D0F5E987AB39CCC3BF4FA@SA1PR12MB9491.namprd12.prod.outlook.com>
+Date: Mon, 7 Jul 2025 14:47:17 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FD94@smartserver.smartshare.dk>
+In-Reply-To: <20250707075100.15034-1-kuka@cesnet.cz>
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-Thread-Topic: [RFC PATCH 0/5] Introduce mempool object new debug capabilities
-Thread-Index: AQHb3pBoqDa0br/ndkmHbwmOnhxgILQF6fWAgCBXjaCAAF6TEA==
-References: <20250616072910.113042-1-shperetz@nvidia.com>
- <20250616083009.4a2d69f2@hermes.local>
- <SA1PR12MB949141C3D0F5E987AB39CCC3BF4FA@SA1PR12MB9491.namprd12.prod.outlook.com>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Shani Peretz" <shperetz@nvidia.com>,
- "Stephen Hemminger" <stephen@networkplumber.org>
-Cc: <dev@dpdk.org>
+Thread-Topic: [PATCH v2] mbuf: add new ptype for slow protocols
+Thread-Index: AdvvE+mZMXoA9vxsTmmFoHsa6ymedQAJz/cA
+References: <20250704084502.237979-1-kuka@cesnet.cz>
+ <20250707075100.15034-1-kuka@cesnet.cz>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Mario Kuka" <kuka@cesnet.cz>,
+	<dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,57 +47,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBTaGFuaSBQZXJldHogW21haWx0bzpzaHBlcmV0ekBudmlkaWEuY29tXQ0KPiBTZW50
-OiBNb25kYXksIDcgSnVseSAyMDI1IDA3LjQ1DQo+IA0KPiA+IEZyb206IFN0ZXBoZW4gSGVtbWlu
-Z2VyIDxzdGVwaGVuQG5ldHdvcmtwbHVtYmVyLm9yZz4NCj4gPiBTZW50OiBNb25kYXksIDE2IEp1
-bmUgMjAyNSAxODozMA0KPiA+DQo+ID4gT24gTW9uLCAxNiBKdW4gMjAyNSAxMDoyOTowNSArMDMw
-MA0KPiA+IFNoYW5pIFBlcmV0eiA8c2hwZXJldHpAbnZpZGlhLmNvbT4gd3JvdGU6DQo+ID4NCj4g
-PiA+IFRoaXMgZmVhdHVyZSBpcyBkZXNpZ25lZCB0byBtb25pdG9yIHRoZSBsaWZlY3ljbGUgb2Yg
-bWVtcG9vbCBvYmplY3RzDQo+ID4gPiBhcyB0aGV5IG1vdmUgYmV0d2VlbiB0aGUgYXBwbGljYXRp
-b24gYW5kIHRoZSBQTUQuDQo+ID4gPg0KPiA+ID4gSXQgd2lsbCBhbGxvdyB1cyB0byB0cmFjayB0
-aGUgb3BlcmF0aW9ucyBhbmQgdHJhbnNpdGlvbnMgb2YgZWFjaA0KPiA+ID4gbWVtcG9vbCBvYmpl
-Y3QgdGhyb3VnaG91dCB0aGUgc3lzdGVtLCBoZWxwaW5nIGluIGRlYnVnZ2luZyBhbmQNCj4gPiB1
-bmRlcnN0YW5kaW5nIG9iamVjdHMgZmxvdy4NCj4gPiA+DQo+ID4gPiBUaGUgaW1wbGVtZW50YXRp
-b24gaW5jbHVkZSBzZXZlcmFsIGtleSBjb21wb25lbnRzOg0KPiA+ID4gMS4gQWRkZWQgYSBiaXRt
-YXAgdG8gbWVtcG9vbCdzIGhlYWRlciAocnRlX21lbXBvb2xfb2JqaGRyKQ0KPiA+ID4gICAgdGhh
-dCByZXByZXNlbnQgdGhlIG9wZXJhdGlvbnMgaGlzdG9yeS4NCj4gPiA+IDIuIEFkZGVkIGZ1bmN0
-aW9ucyB0aGF0IGFsbG93IG1hcmtpbmcgb3BlcmF0aW9ucyBvbiBhbg0KPiA+ID4gICAgbWVtcG9v
-bCBvYmplY3RzLg0KPiA+ID4gMy4gRHVtcHMgdGhlIGhpc3RvcnkgdG8gYSBmaWxlIG9yIHRoZSBj
-b25zb2xlDQo+ID4gPiAgICAocnRlX21lbXBvb2xfb2JqZWN0c19kdW1wKS4NCj4gPiA+IDQuIEFk
-ZGVkIHB5dGhvbiBzY3JpcHQgdGhhdCBjYW4gcGFyc2UsIGFuYWx5emUgdGhlIGRhdGEgYW5kDQo+
-ID4gPiAgICBwcmVzZW50IGl0IGluIGFuIGh1bWFuIHJlYWRhYmxlIGZvcm1hdC4NCj4gPiA+IDUu
-IEFkZGVkIGNvbXBpbGF0aW9uIGZsYWcgdG8gZW5hYmxlIHRoZSBmZWF0dXJlLg0KPiA+ID4NCj4g
-Pg0KPiA+IENvdWxkIHRoaXMgbm90IGFscmVhZHkgYmUgZG9uZSB3aXRoIHRyYWNpbmcgaW5mcmFz
-dHJ1Y3R1cmU/DQo+IA0KPiBIZXksDQo+IFdlIGRpZCBjb25zaWRlciB0cmFjaW5nIGJ1dDoNCj4g
-CS0gSXQgaGFzIGxpbWl0ZWQgY2FwYWNpdHksIHdoaWNoIHdpbGwgcmVzdWx0IGluIG9sZGVyIG1i
-dWZzIGJlaW5nDQo+IGxvc3QgaW4gdGhlIHRyYWNpbmcgb3V0cHV0IHdoaWxlIHRoZXkgYXJlIHN0
-aWxsIGluIHVzZQ0KPiAJLSBTb21lIG9wZXJhdGlvbnMgbWF5IGJlIGxvc3QsIGFuZCB3ZSBtaWdo
-dCBub3QgY2FwdHVyZSB0aGUNCj4gY29tcGxldGUgcGljdHVyZSBkdWUgdG8gdHJhY2UgbWlzc2Vz
-IGNhdXNlZCBieSB0aGUgcGVyZm9ybWFuY2Ugb3ZlcmhlYWQNCj4gb2YgdHJhY2tpbmcgb24gdGhl
-IGRhdGFwYXRoIGFzIGZhciBhcyBJIHVuZGVyc3RhbmQNCj4gV0RZVD8NCg0KVGhpcyBsb29rcyBs
-aWtlIGFuIGFsdGVybmF0aXZlIHRyYWNlIGluZnJhc3RydWN0dXJlLCBqdXN0IGZvciBtZW1wb29s
-IG9iamVjdHMuDQpCdXQgdGhlIGxpc3Qgb2Ygb3BlcmF0aW9ucyBpcyBsaW1pdGVkIHRvIGJhc2lj
-IG9wZXJhdGlvbnMgb24gbWJ1ZiBtZW1wb29sIG9iamVjdHMuDQpJdCBsYWNrcyBzdXBwb3J0IGZv
-ciBvdGhlciBvcGVyYXRpb25zIG9uIG1idWZzLCBlLmcuIElQIGZyYWdtZW50YXRpb24vZGVmcmFn
-bWVudGF0aW9uIGxpYnJhcnkgb3BlcmF0aW9ucywgYXBwbGljYXRpb24gc3BlY2lmaWMgb3BlcmF0
-aW9ucywgYW5kIHRyYW5zaXRpb25zIGJldHdlZW4gdGhlIG1lbXBvb2wgY2FjaGUgYW5kIHRoZSBt
-ZW1wb29sIGJhY2tpbmcgc3RvcmUuDQpJdCBhbHNvIGxhY2tzIHN1cHBvcnQgZm9yIG9wZXJhdGlv
-bnMgb24gb3RoZXIgbWVtcG9vbCBvYmplY3RzIHRoYW4gbWJ1ZnMuDQoNCllvdSBtaWdodCBiZXR0
-ZXIgb2ZmIHVzaW5nIHRoZSB0cmFjZSBpbmZyYXN0cnVjdHVyZSwgb3Igc29tZXRoaW5nIHNpbWls
-YXIuDQpVc2luZyB0aGUgdHJhY2UgaW5mcmFzdHJ1Y3R1cmUgYWxsb3dzIHlvdSB0byByZWNvcmQg
-bW9yZSBkZXRhaWxlZCBpbmZvcm1hdGlvbiBhbG9uZyB3aXRoIHRoZSB0cmFuc2l0aW9ucyBvZiAi
-b3duZXJzIiBvZiBlYWNoIG1idWYuDQoNCkknbSBub3Qgb3Bwb3NpbmcgdGhpcyBSRkMsIGJ1dCBJ
-IHRoaW5rIGl0IGlzIHZlcnkgbGltaXRlZCwgYW5kIG5vdCBzdWZmaWNpZW50bHkgZXhwYW5kYWJs
-ZS4NCg0KSSBnZXQgdGhlIHBvaW50IHRoYXQgdHJhY2UgY2FuIGNhdXNlIG9sZCBldmVudHMgb24g
-YWN0aXZlIG1idWZzIHRvIGJlIGxvc3QsIGFuZCB0aGUgY29uY2VwdCBvZiBhIHRyYWNlIGJ1ZmZl
-ciBwZXIgbWVtcG9vbCBvYmplY3QgaXMgYSBnb29kIHNvbHV0aW9uIHRvIHRoYXQuDQpCdXQgSSB0
-aGluayB5b3UgbmVlZCB0byBiZSBhYmxlIHRvIHN0b3JlIG11Y2ggbW9yZSBpbmZvcm1hdGlvbiB3
-aXRoIGVhY2ggdHJhbnNpdGlvbjsgYXQgbGVhc3QgYSB0aW1lc3RhbXAuIEFuZCBpZiB5b3UgZG8g
-dGhhdCwgeW91IG5lZWQgbXVjaCBtb3JlIHRoYW4gNCBiaXRzIHBlciBldmVudC4NCg0KQWx0ZXJu
-YXRpdmVseSwgaWYgeW91IGRvIHByb2NlZWQgd2l0aCB0aGUgUkZDIGluIHRoZSBjdXJyZW50IGZv
-cm0sIEkgaGF2ZSB0d28ga2V5IHN1Z2dlc3Rpb25zOg0KMS4gTWFrZSBpdCBwb3NzaWJsZSB0byBy
-ZWdpc3RlciBvcGVyYXRpb25zIGF0IHJ1bnRpbWUuIChMb29rIGF0IGR5bmFtaWMgbWJ1ZiBmaWVs
-ZHMgZm9yIGluc3BpcmF0aW9uLikNCjIuIFVzZSA4IGJpdHMgZm9yIHRoZSBvcGVyYXRpb24sIGlu
-c3RlYWQgb2YgNC4NCkFuZCBpZiB5b3UgbmVlZCBhIGxvbmdlciB0cmFjZSBoaXN0b3J5LCB5b3Ug
-Y2FuIHVzZSB0aGUgcnRlX2JpdHNldCBsaWJyYXJ5IGluc3RlYWQgb2YgYSBzaW5nbGUgdWludDY0
-X3QuDQoNCg==
+> From: Mario Kuka [mailto:kuka@cesnet.cz]
+> Sent: Monday, 7 July 2025 09.51
+>=20
+> Introduce a new ptype for identifying slow protocol packets.
+>=20
+> Signed-off-by: Mario Kuka <kuka@cesnet.cz>
+
+>   * <'ether type'=3D[0x8847|0x8848]>
+>   */
+>  #define RTE_PTYPE_L2_ETHER_MPLS             0x0000000a
+> +/**
+> + * Ethernet packet type for Slow Protocols.
+> + *
+> + * Packet format:
+> + * <'destination mac'=3D01-80-C2-00-00-02, 'ether type'=3D0x8809>
+> + */
+> +#define RTE_PTYPE_L2_ETHER_SLOW             0x0000000b
+
+I'm not sure that we want to register individual packet types for Layer =
+2 control protocol type packets, where the packet rate is very low.
+
+Consider the endless list of vendor proprietary Layer 2 control =
+protocols, such as Cicso Link Layer Protocols, Realtek Layer 2 =
+Protocols, MikroTik RoMON, etc. The list would explode if we started =
+adding these.
+
+IMO, only data carrying packet types (IPv4, IPv6, PPPoE, etc.) should be =
+registered as individual packet types. The rest should be sorted =
+manually by the application.
+
