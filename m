@@ -2,59 +2,61 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E27FC71130
-	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Jul 2025 23:18:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1BA2C71130
+	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Jul 2025 23:18:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 21065406B7;
-	Tue,  8 Jul 2025 01:18:24 +0200 (CEST)
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com
- [209.85.216.73]) by mails.dpdk.org (Postfix) with ESMTP id A62E740678
- for <dev@dpdk.org>; Tue,  8 Jul 2025 01:18:20 +0200 (CEST)
-Received: by mail-pj1-f73.google.com with SMTP id
- 98e67ed59e1d1-313d6d671ffso3484447a91.2
- for <dev@dpdk.org>; Mon, 07 Jul 2025 16:18:20 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 73D7640A4B;
+	Tue,  8 Jul 2025 01:18:25 +0200 (CEST)
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com
+ [209.85.210.201])
+ by mails.dpdk.org (Postfix) with ESMTP id 621F040676
+ for <dev@dpdk.org>; Tue,  8 Jul 2025 01:18:22 +0200 (CEST)
+Received: by mail-pf1-f201.google.com with SMTP id
+ d2e1a72fcca58-74ae13e99d6so3505071b3a.0
+ for <dev@dpdk.org>; Mon, 07 Jul 2025 16:18:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20230601; t=1751930300; x=1752535100; darn=dpdk.org;
+ d=google.com; s=20230601; t=1751930301; x=1752535101; darn=dpdk.org;
  h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
  :date:from:to:cc:subject:date:message-id:reply-to;
- bh=uuw3330JdjhnZboSCTPHt6EtIIwq7fHxssD//vz/R6A=;
- b=BH0aCSlc0whnvhafVOkIu9V5SjXi8LM0Ppz1eHbldY8liGbZW3cD6o7lKcfJ547g1E
- w9M6icQL8FXY1VTBe042oJCXLBoxLQkA7ER/PTPTXnCy28LkrUjnO3K04PMQPdZzygDz
- jInNbJKIkMDB80XM6FgSJH4kbBnIYDsmCxQItFY/T5b73I0NF8gH/GWEtp3m7NDSguqT
- xK7o1Bzbq0COI4oNe+phT/iHr+Qvil59O/NuBm74LT66pe+eUtpg8bzCRgZO0RBzlRpT
- I7/VSH2qxRuhpgDGV67rjprl75bnc0+7mMBmRxhv6G1uLHOx1vUJx8EgyvWg7tO+ApdL
- rDQA==
+ bh=e64lAeGT3uM87THVFZWIidSMHzBj+qR1mgUou9WhE0Q=;
+ b=SWBH/5Dr25teOjob5uDf6ZFR4KiGRCm2o4W0W4oVp9g+6WTsFcUjxkx7XX/Qorzxag
+ hIC5ShccCuuuxRftJXxvi5fbYSpqd4UTuhDERjCRBwSsmTGdf/FdGaLT7tr4yyw5uiTB
+ KtKmoCPlOJr1hAR5qSvBM1Glwc6ti+XEIQ/TtHWC8cIXDGlZ3xndg67TVnDEr7gtqOmN
+ 521EWSMZlRQFnkJEbeweC/GqKEVjsV34fGu6ItxptFQLOZmu00kIWr8Tj0m0YfOUyNAS
+ 3zh3Su6ItZoLcqTlp4zu8bZ0ANBI9sk2RgzURJLN5CP7QWJvYb/Ahx2VXzFTHbPGPAkD
+ TmQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1751930300; x=1752535100;
+ d=1e100.net; s=20230601; t=1751930301; x=1752535101;
  h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
  :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=uuw3330JdjhnZboSCTPHt6EtIIwq7fHxssD//vz/R6A=;
- b=ejKLGa0nnz38/t7vINc+5CL4HLw5AhQW10zhSriDLzB+UccjIzLeENOjxCKipjR2hW
- /Qs81nBX6Nf1YG6lx2CGFuHQGyJfM3jKYv6cgLQLX3YC2iy+f+pPk7EZSyQz+DKLCydr
- JvYVebNK3PictphU4/YzyovbJmkqF28I5fiqocwul/tIxTL2KY/zWrhrpcwY4b7CG7HB
- u6HO6qwG9pgkZDqWeIPns8/C1ezwoE/caY+JCy8baivkSsuacRJfQkF8RczUdmrH5ZX/
- e0mDJDxX9EsIqfzJlp5b2zBsf8Muj/NwpP9V00TmzW51hTFtyA7r6ZR4ZW3l2yee30jl
- 7ikg==
-X-Gm-Message-State: AOJu0YxW8XIVH3BZ4USrYY1alGnjHLd5IgNz2Nb5ETibehDkGjtrHquL
- 84CUiEiKxli3XMHzltgjnbUBuP5pOJMOF3cHQn99LG3yk/qzZ80vYu1oTkEq26x/JtgPM8HsElN
- OWRLdIOAZFW1wLw==
-X-Google-Smtp-Source: AGHT+IGabgtG7UTOrZqbh9Aaejglg3KOIAHPGMzT2ae4sbNOr6hZQXXyc7Kh2M0a3m+UuW7wSkQm1ae2bkgDeg==
-X-Received: from pjbqo5.prod.google.com ([2002:a17:90b:3dc5:b0:312:f650:c7aa])
+ bh=e64lAeGT3uM87THVFZWIidSMHzBj+qR1mgUou9WhE0Q=;
+ b=m1+xRlqUjt1Rfpv9ETW9KgXm0lYAvn6+YbtfLAs1el/CzbafbgdV+Gont3u4xQjJhh
+ prtYqCZs1LEADa2ehuP2cPIHJpts9hzpw2Ru0ZmA9u8Kvjvm0Yy2PojrWRchauTZDtJT
+ 0Z5uzmQC7mthCf1wKSmK3H3Lzyla0zQHlSAmto1ATZ5dwNrfDPcoVWHbJeh0mIpxHikT
+ pjgrnBlKoGS6NQKqktzFJjMo84O/Hbir8cwe5HI5QJXVcMiUu5IqDtrqeUwSTfpiKSC0
+ H2rafO8dSKVW7Ot1FXmRet4RTF+9ko1nDRXc8euurD1Leojr09L4f7yCJJItNogZ1Unf
+ NbMA==
+X-Gm-Message-State: AOJu0YzAXhcHV33u/wItvVyZbly+D7WVsnOTckMc+KhfQH/AZ4q+GeAc
+ EECAg7IQdPnZoMJarEzx+1RIWD2USxcrqoMK/zLGk17IBkvEa9ceaQItF9zlGnfwyM7ngxwXnk/
+ iy7Ja+T2B3iNSfQ==
+X-Google-Smtp-Source: AGHT+IGDHnSzmfuqfPGxDpPFvyQq6g8iiMskWjJbifV0i5I4sHXHk1HvP/9PY1OrmfJ2KsUJ1VZ9nKVvo1yjug==
+X-Received: from pgbcw11.prod.google.com
+ ([2002:a05:6a02:428b:b0:b32:1431:4415])
  (user=joshwash job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90a:b388:b0:312:e90b:419e with SMTP id
- 98e67ed59e1d1-31c21cfc274mr1317253a91.12.1751930299912; 
- Mon, 07 Jul 2025 16:18:19 -0700 (PDT)
-Date: Mon,  7 Jul 2025 16:18:08 -0700
+ 2002:a05:6a21:99a5:b0:21f:53e4:1919 with SMTP id
+ adf61e73a8af0-22b6640dd03mr787199637.3.1751930301578; 
+ Mon, 07 Jul 2025 16:18:21 -0700 (PDT)
+Date: Mon,  7 Jul 2025 16:18:09 -0700
 In-Reply-To: <20250707231812.1937260-1-joshwash@google.com>
 Mime-Version: 1.0
 References: <20250707231812.1937260-1-joshwash@google.com>
 X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250707231812.1937260-5-joshwash@google.com>
-Subject: [PATCH 4/7] net/gve: validate Tx packet before sending
+Message-ID: <20250707231812.1937260-6-joshwash@google.com>
+Subject: [PATCH 5/7] net/gve: add DQO Tx descriptor limit
 From: Joshua Washington <joshwash@google.com>
 To: Jeroen de Borst <jeroendb@google.com>,
  Joshua Washington <joshwash@google.com>, 
- Rushil Gupta <rushilg@google.com>, Junfeng Guo <junfengg@nvidia.com>
+ Junfeng Guo <junfengg@nvidia.com>, Rushil Gupta <rushilg@google.com>
 Cc: dev@dpdk.org, junfeng.guo@intel.com, stable@dpdk.org, 
  Ankit Garg <nktgrg@google.com>
 Content-Type: text/plain; charset="UTF-8"
@@ -71,11 +73,9 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The hardware assumes that a mismatch between the reported packet length
-and the total amount of data in the descriptors is caused by a malicious
-driver, leading the hardware to disable transmission altogether. To
-avoid such a scenario, use rte_mbuf_check to validate that the mbuf is
-correctly formed before processing.
+The hardware supports at most 10 data descriptors per MTU-sized segment.
+GVE_TX_MAX_DATA_DESCS was defined in the initial implmenentation, but
+the descriptor limit was never actually enforced.
 
 Fixes: 4022f9999f56 ("net/gve: support basic Tx data path for DQO")
 Cc: junfeng.guo@intel.com
@@ -84,42 +84,52 @@ Cc: stable@dpdk.org
 Signed-off-by: Joshua Washington <joshwash@google.com>
 Reviewed-by: Ankit Garg <nktgrg@google.com>
 ---
- drivers/net/gve/gve_tx_dqo.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/net/gve/gve_ethdev.c | 1 +
+ drivers/net/gve/gve_ethdev.h | 1 +
+ drivers/net/gve/gve_tx_dqo.c | 6 ++++++
+ 3 files changed, 8 insertions(+)
 
+diff --git a/drivers/net/gve/gve_ethdev.c b/drivers/net/gve/gve_ethdev.c
+index bdb7f1d075..81325ba98c 100644
+--- a/drivers/net/gve/gve_ethdev.c
++++ b/drivers/net/gve/gve_ethdev.c
+@@ -603,6 +603,7 @@ gve_dev_info_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
+ 		.nb_max = priv->max_tx_desc_cnt,
+ 		.nb_min = priv->min_tx_desc_cnt,
+ 		.nb_align = 1,
++		.nb_mtu_seg_max = GVE_TX_MAX_DATA_DESCS,
+ 	};
+ 
+ 	dev_info->flow_type_rss_offloads = GVE_RTE_RSS_OFFLOAD_ALL;
+diff --git a/drivers/net/gve/gve_ethdev.h b/drivers/net/gve/gve_ethdev.h
+index 35cb9062b1..195dadc4d4 100644
+--- a/drivers/net/gve/gve_ethdev.h
++++ b/drivers/net/gve/gve_ethdev.h
+@@ -102,6 +102,7 @@ struct gve_tx_stats {
+ 	uint64_t packets;
+ 	uint64_t bytes;
+ 	uint64_t errors;
++	uint64_t too_many_descs;
+ };
+ 
+ struct gve_rx_stats {
 diff --git a/drivers/net/gve/gve_tx_dqo.c b/drivers/net/gve/gve_tx_dqo.c
-index b2e5aae634..7e03e75b20 100644
+index 7e03e75b20..27f98cdeb3 100644
 --- a/drivers/net/gve/gve_tx_dqo.c
 +++ b/drivers/net/gve/gve_tx_dqo.c
-@@ -113,13 +113,14 @@ gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 	struct rte_mbuf **sw_ring;
- 	struct rte_mbuf *tx_pkt;
- 	uint16_t mask, sw_mask;
-+	uint16_t first_sw_id;
-+	const char *reason;
- 	uint16_t nb_tx = 0;
- 	uint64_t ol_flags;
- 	uint16_t nb_descs;
- 	uint16_t tx_id;
- 	uint16_t sw_id;
- 	uint64_t bytes;
--	uint16_t first_sw_id;
- 	uint8_t tso;
- 	uint8_t csum;
+@@ -165,6 +165,12 @@ gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 				break;
+ 		}
  
-@@ -139,6 +140,12 @@ gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 			gve_tx_clean_descs_dqo(txq, DQO_TX_MULTIPLIER *
- 					       txq->rs_thresh);
- 
-+
-+		if (rte_mbuf_check(tx_pkt, true, &reason)) {
-+			PMD_DRV_LOG(DEBUG, "Invalid mbuf: %s", reason);
++		/* Drop packet if it doesn't adhere to hardware limits. */
++		if (!tso && nb_descs > GVE_TX_MAX_DATA_DESCS) {
++			txq->stats.too_many_descs++;
 +			break;
 +		}
 +
- 		ol_flags = tx_pkt->ol_flags;
- 		first_sw_id = sw_id;
- 
+ 		if (tso) {
+ 			txd = &txr[tx_id];
+ 			gve_tx_fill_seg_desc_dqo(txd, tx_pkt);
 -- 
 2.50.0.727.gbf7dc18ff4-goog
 
