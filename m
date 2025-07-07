@@ -2,71 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDC7CC8303C
-	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Jul 2025 14:57:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B31C83F07
+	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Jul 2025 14:58:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A58CB40287;
-	Mon,  7 Jul 2025 16:57:36 +0200 (CEST)
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com
- [209.85.160.180])
- by mails.dpdk.org (Postfix) with ESMTP id D59AC4025D
- for <dev@dpdk.org>; Mon,  7 Jul 2025 16:57:34 +0200 (CEST)
-Received: by mail-qt1-f180.google.com with SMTP id
- d75a77b69052e-4a7a8c2b7b9so47946371cf.1
- for <dev@dpdk.org>; Mon, 07 Jul 2025 07:57:34 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B267A40287;
+	Mon,  7 Jul 2025 16:58:44 +0200 (CEST)
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com
+ [209.85.160.174])
+ by mails.dpdk.org (Postfix) with ESMTP id D36334025D
+ for <dev@dpdk.org>; Mon,  7 Jul 2025 16:58:42 +0200 (CEST)
+Received: by mail-qt1-f174.google.com with SMTP id
+ d75a77b69052e-4a752944794so36086481cf.3
+ for <dev@dpdk.org>; Mon, 07 Jul 2025 07:58:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751900254;
- x=1752505054; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1751900322;
+ x=1752505122; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=0AUypNZ0FB/93pcCqhdFkS8wFcgnhWUu8VEOqbyb36E=;
- b=CparyzLiTBPxIa/KgxdyK2VOJr9ArmBGcoegeZ2IarUfP8CPkdUbjq3zcJ/lCgOGzx
- nnVG6e/yujxgyeXjc6UiivGLQOIm2TfGIwoq5hLzndSSOq5qxmmUOwkD5SaZVZ7jcX/p
- dwMox7aQLdm2Nsw0EomSGM8LLqZy/rPVpL627tt2fL6GbHXIade6cKdURBkkt8OEFK/l
- Sej6sMB5LYlHBDEwU3SOHJFXGbN/e81YXYlPC5iUTCOgp6DswDY5jA5knBpleR/D8qHF
- yCdVsXIm0Fzq/++135ZYswEcgu2dL8ruolCWCpDgx6IuV/qZusXeREp2w4q+7ZcDJvjE
- m0/Q==
+ bh=HHh+m+GLUE4NEFT/89Z3Ixm6MlfihoiOZrnp0K7WgKE=;
+ b=JMv8JM9sqGBez4X45ASppvcDqx60A0bG0sdmookgZcXi18k7Hg9D6tGB3AFioAHKxB
+ YTN8AVWe8Ky5se5GNvvdVIXyBr2JUQaLN+CH4NsFazYizlw+ktvMQtAPV2BL7lqk1JGF
+ oZB8moAy3eQw3YkoCO32TIXRntWLLJgEHpheaCwZAvkQ0NPT/Q7Iyf41QssSUwsIdaWb
+ +FJhQNYYS81LInnb9Qp9rpBEdnxfAaaofSgZ/YEFcnj+QtMIFncvOMmqoZsRkbhr6gbK
+ HsqxjGy+0JLGmh6q1IT/5Y7edie0KZ7sEgb+OXAv/1mmQxzfRHAb9Z155Z1cdPR9jdos
+ g/Dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1751900254; x=1752505054;
+ d=1e100.net; s=20230601; t=1751900322; x=1752505122;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=0AUypNZ0FB/93pcCqhdFkS8wFcgnhWUu8VEOqbyb36E=;
- b=IJyPfB/9X3uF6gJxQ48bvvHxfcTxaJJjiO/sE9f9r/XHLZEjX7sz3xq/cXPT7QtK4W
- xjHe8i6Zz+VZ3NML8/Tyk7lh5ZOAhDgAdTZ5HZvN8Ob/VlMU+wxxSz8YqF29BVwM38Uh
- jdX2K6qMWDu99GmgU5pL1GaBSi4vs4tkisS2WCMLHapFyhMQO6qE6TUarzClD1do2u0I
- 196otuytm39Djo5Nnf/BhvpirxeeO0Qt6rirSlzzWwBNIzzWIBFfOeUDf7g0KvIbttIi
- l3g91pqyDwzC4aKPSPXDG8VJNobUa+YgDWjYX3lhdi8nryyYVuQtdmeUU4YZ6CZ5vfVV
- ZGqw==
-X-Gm-Message-State: AOJu0YxZqq93QT0M34/g4jW8gN1n5BNWHfvQmFJO+J+i2u8inVhaCZi1
- QDXazmTpQi71txHMrKQ41NJSbiVgXLk2J3nIxtC7f8GTAJYcPMDEoX0iBHgsgaoUIg5TcP+tv1e
- CnRAg
-X-Gm-Gg: ASbGncvkLEh3o0Hwr8XmGNuQEpHySYx1aAndJK+GdUdNPOJTPY6uDI3GerRYW1nytXB
- pJCavfMhnO9WnKrvCOh6zR/9yBwZWsFCr51JtMRvtRxeOTMqhYW2G5f8ZmxvxJsDEst0DOWtJ/w
- xi9dYqUsRDznQZrRU4id1w38DmhcSYYtNeio3JBlj3aD6i4W+zL4kzJr1MLKfys+enauFbh6pSf
- ofRcz35mF8i3VCxiWvJdJWNOPqi7nHj816q8jZOmUF7pQ9JxbGqoowrTALVWUGzd2n3uZcwprXf
- +46CzbfKnUA6jFB2NsdVtpbT5zKkOxpArFz/z+we+w/mvU8uip27l9Uto//9C4edbgT4QcPb45v
- F3c518KWhvliJ6iql3NjMiL+9nZ7aWBgV8apRGRw=
-X-Google-Smtp-Source: AGHT+IF4JyLL589qE3tXnafyTmtsxxRIDMmrqWelSLFDfpQNxfDjksWJBEWgYdP7Imosb4CXBOZzBg==
-X-Received: by 2002:a05:622a:148e:b0:4a7:24b5:71ad with SMTP id
- d75a77b69052e-4a9987cfeadmr173355091cf.35.1751900253972; 
- Mon, 07 Jul 2025 07:57:33 -0700 (PDT)
+ bh=HHh+m+GLUE4NEFT/89Z3Ixm6MlfihoiOZrnp0K7WgKE=;
+ b=dq7u4ROE1E5IwjRR61FNpFdmDzzfzvEVTDs/V8AHEGUfwx9grzpgZbVc3JvhFQoOhV
+ mxl67dmqDlT0MNDCQUqu2Sv32iUxANOd9S0++Y+nW+XNXG+TycNcMmWEnIw601gyVjTu
+ AiEJ4jE98bZwrqk60U3yjR48hNRXgQQZnot8BkzQYCTvleXIuxnArqfm6irk1+qQaitv
+ iNozum7ukHihT/NCFaz8mhXy7JcSha8nzscXj2xnpUsD5d29tcCvnViXuPMYtIB3o/2V
+ 4oQs5paFkKUtRLinczyVYcztbJJz5Lt1nTmqus5Q36Xtbtx/ewiznic81Abn/E0MrzWK
+ Z4sA==
+X-Gm-Message-State: AOJu0YyR/JxIfs43ObKiCvgWpNbJRgceHjIAGETPW/EuqYgWouFzuRrH
+ BrkJKW9K2WXiLHGuh3wHoqAUgDdzJUZ7FIOlO7YAotVF4iTQIKew4wx7mQK7eIeDTVlAjCndMrC
+ YXhuu
+X-Gm-Gg: ASbGnct5y1IX5eG5jbvbaFM+ZUwEV/MwWCbdDUydHF2rMeKSybE8rQ52ae75LPm83M7
+ i0MuD4UV4ckSy+2ux6Cm7Aq2vyMl8BTvOnbULcMdBXNjF2H+4LvQg2PpH7ZJhGjURr2NGipe315
+ K9hWB8mhKhOUawAOiyp+Awm8G6GsjWJoEK93sYZejiLJUlKsCpfv55vUWJHrEKa0n89xfSfYkoy
+ M1xX2OZIOhVnBqyHvOjYmc4U1v1T2NaZYdylCsX7RX0a+UB3ksWb50glk+PHlhNaHAkgMj0y2mH
+ TL0J4SS+lZ5s6WsGrwYRfcMZYT48OY1ByHY05pKJJtWsB+2P7atISeco7Cr4kS3AQ8Xa5pcl5he
+ zpL2KUuNyOPgp3XJpFqONXrHhRcFg+xwiZjcbkxU=
+X-Google-Smtp-Source: AGHT+IGR16nUp+xMlmgchDxE9Tjv/cV2RP5JbSJq90EChIvrfC9DQXk69flw1e3wKMvUg0iX8jt5cw==
+X-Received: by 2002:a05:6214:21eb:b0:6fd:75ef:3dc3 with SMTP id
+ 6a1803df08f44-702d171dc97mr151045426d6.28.1751900321958; 
+ Mon, 07 Jul 2025 07:58:41 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-4a9949fafb9sm64994541cf.29.2025.07.07.07.57.33
+ 6a1803df08f44-702c4d50e50sm59697276d6.56.2025.07.07.07.58.41
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 07 Jul 2025 07:57:33 -0700 (PDT)
-Date: Mon, 7 Jul 2025 07:57:31 -0700
+ Mon, 07 Jul 2025 07:58:41 -0700 (PDT)
+Date: Mon, 7 Jul 2025 07:58:39 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Jie Liu <liujie5@linkdatatechnology.com>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v3 02/14] net/sxe: add ethdev probe and remove
-Message-ID: <20250707075731.389844e7@hermes.local>
-In-Reply-To: <20250707115819.12826-2-liujie5@linkdatatechnology.com>
+Subject: Re: [PATCH v3 01/14] net/sxe: add base driver directory and doc
+Message-ID: <20250707075839.5b1736db@hermes.local>
+In-Reply-To: <20250707115819.12826-1-liujie5@linkdatatechnology.com>
 References: <20250704025401.301617-1-liujie5@linkdatatechnology.com>
  <20250707115819.12826-1-liujie5@linkdatatechnology.com>
- <20250707115819.12826-2-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -83,79 +82,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+On Mon,  7 Jul 2025 07:58:06 -0400
+Jie Liu <liujie5@linkdatatechnology.com> wrote:
 
-> diff --git a/drivers/net/sxe/Makefile b/drivers/net/sxe/Makefile
-> new file mode 100644
-> index 0000000000..f75fd35e32
-> --- /dev/null
-> +++ b/drivers/net/sxe/Makefile
-> @@ -0,0 +1,66 @@
-> +# SPDX-License-Identifier: BSD-3-Clause
-> +# Copyright(c) 2010-2016 Intel Corporation
-> +
-> +include $(RTE_SDK)/mk/rte.vars.mk
-> +
-> +#
-> +# library name
-> +#
-> +LIB = librte_pmd_sxe.a
-> +
-> +CFLAGS += -DSXE_DPDK
-> +CFLAGS += -DSXE_HOST_DRIVER
-> +CFLAGS += -O3
-> +CFLAGS += $(WERROR_FLAGS)
-> +
-> +EXPORT_MAP := rte_pmd_sxe_version.map
-> +
-> +
-> +ifeq ($(CONFIG_RTE_TOOLCHAIN_ICC),y)
-> +#
-> +# CFLAGS for icc
-> +#
-> +CFLAGS_BASE_DRIVER  = -diag-disable 174 -diag-disable 593 -diag-disable 869
-> +CFLAGS_BASE_DRIVER += -diag-disable 981 -diag-disable 2259
-> +
-> +else ifeq ($(CONFIG_RTE_TOOLCHAIN_CLANG),y)
-> +#
-> +# CFLAGS for clang
-> +#
-> +CFLAGS_BASE_DRIVER = -Wno-unused-parameter -Wno-unused-value
-> +CFLAGS_BASE_DRIVER += -Wno-strict-aliasing -Wno-format-extra-args
-> +
-> +else
-> +#
-> +# CFLAGS for gcc
-> +#
-> +CFLAGS_BASE_DRIVER = -Wno-unused-parameter -Wno-unused-value
-> +CFLAGS_BASE_DRIVER += -Wno-strict-aliasing -Wno-format-extra-args
-> +CFLAGS_BASE_DRIVER += -Wmissing-prototypes
-> +
-> +endif
-> +LDLIBS += -lrte_eal -lrte_mbuf -lrte_mempool -lrte_ring
-> +LDLIBS += -lrte_ethdev -lrte_net -lrte_kvargs -lrte_hash
-> +LDLIBS += -lrte_bus_pci
-> +LDLIBS += -lpthread
-> +
-> +#
-> +# Add extra flags for base driver files (also known as shared code)
-> +# to disable warnings in them
-> +#
-> +
-> +$(shell cp $(SRCDIR)/pf/* $(SRCDIR))
-> +$(shell cp $(SRCDIR)/base/* $(SRCDIR))
-> +$(shell cp $(SRCDIR)/include/*.h $(SRCDIR))
-> +$(shell cp $(SRCDIR)/include/sxe/*.h $(SRCDIR))
-> +$(warning "file copy done")
-> +
-> +SRCS-$(CONFIG_RTE_LIBRTE_SXE_PMD) += sxe_common.c
-> +SRCS-$(CONFIG_RTE_LIBRTE_SXE_PMD) += sxe_hw.c
-> +
-> +SRCS-$(CONFIG_RTE_LIBRTE_SXE_PMD) += sxe_ethdev.c
-> +SRCS-$(CONFIG_RTE_LIBRTE_SXE_PMD) += sxe_irq.c
-> +SRCS-$(CONFIG_RTE_LIBRTE_SXE_PMD) += sxe_main.c
-> +SRCS-$(CONFIG_RTE_LIBRTE_SXE_PMD) += sxe_pmd_hdc.c
-> +
-> +include $(RTE_SDK)/mk/rte.lib.mk
+> diff --git a/doc/guides/nics/index.rst b/doc/guides/nics/index.rst
+> index 10a2eca3b0..67e6374c69 100644
+> --- a/doc/guides/nics/index.rst
+> +++ b/doc/guides/nics/index.rst
+> @@ -72,3 +72,4 @@ Network Interface Controller Drivers
+>      vmxnet3
+>      xsc
+>      zxdh
+> +    sxe
 
-DPDK uses meson not make.
-The ICC compiler is deprecated and removed.
+Please insert driver in alphabetical order position, not at end.
