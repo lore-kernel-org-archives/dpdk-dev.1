@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B16C2C83F0A
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Jul 2025 17:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2082EC83F0A
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Jul 2025 17:21:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 081C640DD0;
-	Tue,  8 Jul 2025 19:20:58 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 72FEF40DDB;
+	Tue,  8 Jul 2025 19:21:00 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id DD2B140DD2
- for <dev@dpdk.org>; Tue,  8 Jul 2025 19:20:55 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id CA5B640DD2
+ for <dev@dpdk.org>; Tue,  8 Jul 2025 19:20:58 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1751995256; x=1783531256;
+ t=1751995259; x=1783531259;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=uclyISsocxYHH22E7Q2iOcbX0Nqwm53yL/EAu5UmlPY=;
- b=destbB99YpiYjSwolDKmXq8SxUM8LWlZm5YBHwdHDO6KT1lwlmJBiFiD
- NN5c2dScWh8toKw1PKsRVNLhDZbUczzbXvsLUO9sZpXgOpsHNgm0e6wlV
- UuZi7cQtDCB7OZm1W9ulVTRXtQgbop6lxUJu8syXUsMg7W+oSdMc6dJeT
- zcpIsmOQZz+IQjvbl47JKaMXgnKz3xX3qc1Po6rL+miSFCe6atYX22m1m
- 584LJ9W2WlrMdujTWieuzTrw15qWwaPoRzFM0mweoiwPeXBxt2m9bY+Bm
- j8QCK/LWof3FQg5Pnc9s79bOEdPOysz7un6r0MP4CzsfCOfiw0F2ZvdSH g==;
-X-CSE-ConnectionGUID: Dxmu7eGMQwGFzCRwk5L92A==
-X-CSE-MsgGUID: ULGd1Xm/RtK7BIjsFORcLw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="57913125"
-X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; d="scan'208";a="57913125"
+ bh=4srmMe6fobqoKWLsFxENS/gD6EziuWw5Deows/RtpSI=;
+ b=R0f2IDeVIYbl3Pw6XMIbSjBnc/2TVvyixln5lHvd9IOLiWNMX443NO0Q
+ MA7a0yw9QPkmVJRQAwpeY27AvRpAwoJpgoMuTtwAiWDsrqaYCkqFF2pqk
+ U9m+Vx+FFoPsTik06sg4CqX4VA4pxtvOfXjXSB68M2bsVeGqvCx+QuYt+
+ V1qNUjb9x18z9pLVtvB2hF/ene1IV11n95Pv/UINMFF2Lf1NeA12UropV
+ kas07Bz8uz0CvKCiFjLDgOEpzH+bPHW7i7wwX2ZL+CJAWZFPmMqSwSKPS
+ cdPpkpEFPDvyyc7ILPeSpy1p/iD80dWZrki5ECMp76P+1V4b6ohQWSc2p g==;
+X-CSE-ConnectionGUID: BTBVf8OKTDKitoT4a4sl9g==
+X-CSE-MsgGUID: nBCsWcLYQHS6v1eoIx1nZw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="57913136"
+X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; d="scan'208";a="57913136"
 Received: from orviesa005.jf.intel.com ([10.64.159.145])
  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Jul 2025 10:20:56 -0700
-X-CSE-ConnectionGUID: BE6SeAOqTlOZOhjrPoJBbw==
-X-CSE-MsgGUID: PXM+//LGRMezeaTtxrwtHA==
+ 08 Jul 2025 10:20:59 -0700
+X-CSE-ConnectionGUID: Z5uwyE5hQQapv54rP3JQTA==
+X-CSE-MsgGUID: JB46kbouR4GU/URMQA+9ug==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; d="scan'208";a="161200628"
+X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; d="scan'208";a="161200638"
 Received: from silpixa00401874.ir.intel.com (HELO
  silpixa00401874.ger.corp.intel.com) ([10.55.129.54])
- by orviesa005.jf.intel.com with ESMTP; 08 Jul 2025 10:20:54 -0700
+ by orviesa005.jf.intel.com with ESMTP; 08 Jul 2025 10:20:57 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [RFC PATCH v2 3/5] eal: gather EAL args before processing
-Date: Tue,  8 Jul 2025 17:20:37 +0000
-Message-ID: <20250708172039.183989-4-bruce.richardson@intel.com>
+Subject: [RFC PATCH v2 4/5] eal: combine parameter validation checks
+Date: Tue,  8 Jul 2025 17:20:38 +0000
+Message-ID: <20250708172039.183989-5-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250708172039.183989-1-bruce.richardson@intel.com>
 References: <20250520164025.2055721-1-bruce.richardson@intel.com>
@@ -61,1883 +61,594 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DPDK traditionally has iterated through all args and processed them as
-they appear in the commandline. The arg processing logic can be
-simplified if instead we initially gather all arguments into a structure
-which is then processed with the arguments dealt with in a fixed/known
-order.
+Remove the separate function to check combinations of cmdline
+parameters. Instead, just do those checks when parsing the parameters
+since we have all info about what parameters are provided at that point.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/eal/common/eal_common_options.c | 877 ++++++++++++++--------------
- lib/eal/common/eal_options.h        |  10 +-
- lib/eal/common/eal_private.h        |  11 +
- lib/eal/freebsd/eal.c               | 164 +-----
- lib/eal/linux/eal.c                 | 379 +-----------
- lib/eal/windows/eal.c               | 113 +---
- 6 files changed, 482 insertions(+), 1072 deletions(-)
+ lib/eal/common/eal_common_memory.c  |   3 +-
+ lib/eal/common/eal_common_options.c | 260 +++++++++++-----------------
+ lib/eal/common/eal_options.h        | 107 ------------
+ lib/eal/linux/eal.c                 |   5 +-
+ lib/eal/linux/eal_memory.c          |   2 +-
+ 5 files changed, 105 insertions(+), 272 deletions(-)
 
+diff --git a/lib/eal/common/eal_common_memory.c b/lib/eal/common/eal_common_memory.c
+index 38ccc734e8..c62edf5e55 100644
+--- a/lib/eal/common/eal_common_memory.c
++++ b/lib/eal/common/eal_common_memory.c
+@@ -258,8 +258,7 @@ eal_memseg_list_alloc(struct rte_memseg_list *msl, int reserve_flags)
+ 		 * including common code, so don't duplicate the message.
+ 		 */
+ 		if (rte_errno == EADDRNOTAVAIL)
+-			EAL_LOG(ERR, "Cannot reserve %llu bytes at [%p] - "
+-				"please use '--" OPT_BASE_VIRTADDR "' option",
++			EAL_LOG(ERR, "Cannot reserve %llu bytes at [%p] - please use '--base-virtaddr' option",
+ 				(unsigned long long)mem_sz, msl->base_va);
+ #endif
+ 		return -1;
 diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
-index 7558206f93..2a1a7c744f 100644
+index 2a1a7c744f..87ab5a4f13 100644
 --- a/lib/eal/common/eal_common_options.c
 +++ b/lib/eal/common/eal_common_options.c
-@@ -46,8 +46,7 @@
- #endif
- 
- #define BITS_PER_HEX 4
--#define LCORE_OPT_LST 1
--#define LCORE_OPT_MSK 2
-+#define SOCKET_MEM_STRLEN (RTE_MAX_NUMA_NODES * 10)
- 
- struct arg_list_elem {
- 	TAILQ_ENTRY(arg_list_elem) next;
-@@ -239,80 +238,31 @@ struct rte_argparse eal_argparse  = {
- 	}
- };
- 
--const char
--eal_short_options[] =
--	"a:" /* allow */
--	"b:" /* block */
--	"c:" /* coremask */
--	"s:" /* service coremask */
--	"d:" /* driver */
--	"h"  /* help */
--	"l:" /* corelist */
--	"S:" /* service corelist */
--	"m:" /* memory size */
--	"n:" /* memory channels */
--	"r:" /* memory ranks */
--	"v"  /* version */
--	;
--
--const struct option
--eal_long_options[] = {
--	{OPT_BASE_VIRTADDR,     1, NULL, OPT_BASE_VIRTADDR_NUM    },
--	{OPT_COREMASK,          1, NULL, OPT_COREMASK_NUM        },
--	{OPT_CREATE_UIO_DEV,    0, NULL, OPT_CREATE_UIO_DEV_NUM   },
--	{OPT_DRIVER_PATH,       1, NULL, OPT_DRIVER_PATH_NUM     },
--	{OPT_FILE_PREFIX,       1, NULL, OPT_FILE_PREFIX_NUM      },
--	{OPT_HELP,              0, NULL, OPT_HELP_NUM             },
--	{OPT_HUGE_DIR,          1, NULL, OPT_HUGE_DIR_NUM         },
--	{OPT_HUGE_UNLINK,       2, NULL, OPT_HUGE_UNLINK_NUM      },
--	{OPT_IOVA_MODE,	        1, NULL, OPT_IOVA_MODE_NUM        },
--	{OPT_LCORES,            1, NULL, OPT_LCORES_NUM           },
--	{OPT_LOG_COLOR,		2, NULL, OPT_LOG_COLOR_NUM	  },
--	{OPT_LOG_LEVEL,         1, NULL, OPT_LOG_LEVEL_NUM        },
--	{OPT_LOG_TIMESTAMP,     2, NULL, OPT_LOG_TIMESTAMP_NUM    },
--	{OPT_MEMORY_CHANNELS,   1, NULL, OPT_MEMORY_CHANNELS_NUM },
--	{OPT_MEMORY_RANKS,      1, NULL, OPT_MEMORY_RANKS_NUM    },
--	{OPT_MEMORY_SIZE,       1, NULL, OPT_MEMORY_SIZE_NUM     },
--	{OPT_SERVICE_CORELIST,  1, NULL, OPT_SERVICE_CORELIST_NUM },
--	{OPT_SERVICE_COREMASK,  1, NULL, OPT_SERVICE_COREMASK_NUM },
--	{OPT_TRACE,             1, NULL, OPT_TRACE_NUM            },
--	{OPT_TRACE_DIR,         1, NULL, OPT_TRACE_DIR_NUM        },
--	{OPT_TRACE_BUF_SIZE,    1, NULL, OPT_TRACE_BUF_SIZE_NUM   },
--	{OPT_TRACE_MODE,        1, NULL, OPT_TRACE_MODE_NUM       },
--	{OPT_MAIN_LCORE,        1, NULL, OPT_MAIN_LCORE_NUM       },
--	{OPT_MBUF_POOL_OPS_NAME, 1, NULL, OPT_MBUF_POOL_OPS_NAME_NUM},
--	{OPT_NO_HPET,           0, NULL, OPT_NO_HPET_NUM          },
--	{OPT_NO_HUGE,           0, NULL, OPT_NO_HUGE_NUM          },
--	{OPT_NO_PCI,            0, NULL, OPT_NO_PCI_NUM           },
--	{OPT_NO_SHCONF,         0, NULL, OPT_NO_SHCONF_NUM        },
--	{OPT_IN_MEMORY,         0, NULL, OPT_IN_MEMORY_NUM        },
--	{OPT_DEV_BLOCK,         1, NULL, OPT_DEV_BLOCK_NUM        },
--	{OPT_DEV_ALLOW,		1, NULL, OPT_DEV_ALLOW_NUM	  },
--	{OPT_PROC_TYPE,         1, NULL, OPT_PROC_TYPE_NUM        },
--	/* socket-mem/socket-limit are kept for backwards compatibility */
--	{OPT_SOCKET_MEM,        1, NULL, OPT_NUMA_MEM_NUM         },
--	{OPT_SOCKET_LIMIT,      1, NULL, OPT_NUMA_LIMIT_NUM       },
--	{OPT_NUMA_MEM,          1, NULL, OPT_NUMA_MEM_NUM         },
--	{OPT_NUMA_LIMIT,        1, NULL, OPT_NUMA_LIMIT_NUM       },
--#ifndef RTE_EXEC_ENV_WINDOWS
--	{OPT_SYSLOG,            2, NULL, OPT_SYSLOG_NUM           },
--#endif
--	{OPT_VDEV,              1, NULL, OPT_VDEV_NUM             },
--	{OPT_VFIO_INTR,         1, NULL, OPT_VFIO_INTR_NUM        },
--	{OPT_VFIO_VF_TOKEN,     1, NULL, OPT_VFIO_VF_TOKEN_NUM    },
--	{OPT_VMWARE_TSC_MAP,    0, NULL, OPT_VMWARE_TSC_MAP_NUM   },
--	{OPT_LEGACY_MEM,        0, NULL, OPT_LEGACY_MEM_NUM       },
--	{OPT_SINGLE_FILE_SEGMENTS, 0, NULL, OPT_SINGLE_FILE_SEGMENTS_NUM},
--	{OPT_MATCH_ALLOCATIONS, 0, NULL, OPT_MATCH_ALLOCATIONS_NUM},
--	{OPT_TELEMETRY,         0, NULL, OPT_TELEMETRY_NUM        },
--	{OPT_NO_TELEMETRY,      0, NULL, OPT_NO_TELEMETRY_NUM     },
--	{OPT_FORCE_MAX_SIMD_BITWIDTH, 1, NULL, OPT_FORCE_MAX_SIMD_BITWIDTH_NUM},
--	{OPT_HUGE_WORKER_STACK, 2, NULL, OPT_HUGE_WORKER_STACK_NUM     },
--	{OPT_VERSION,           0, NULL, OPT_VERSION_NUM         },
--
--
--	{0,                     0, NULL, 0                        }
--};
-+/* function to call into argparse library to parse the passed argc/argv parameters
-+ * to the eal_init_args structure.
-+ */
-+int
-+eal_collate_args(int argc, char **argv)
-+{
-+	if (argc < 1 || argv == NULL)
-+		return -EINVAL;
-+
-+	/* initialize the list of arguments */
-+	memset(&args, 0, sizeof(args));
-+	TAILQ_INIT(&args.allow);
-+	TAILQ_INIT(&args.block);
-+	TAILQ_INIT(&args.driver_path);
-+	TAILQ_INIT(&args.vdev);
-+
-+	/* parse the arguments */
-+	eal_argparse.prog_name = argv[0];
-+	int retval = rte_argparse_parse(&eal_argparse, argc, argv);
-+	if (retval < 0)
-+		return retval;
-+
-+	argv[retval - 1] = argv[0];
-+	return retval - 1;
-+}
- 
- TAILQ_HEAD(shared_driver_list, shared_driver);
- 
-@@ -354,7 +304,6 @@ static struct device_option_list devopt_list =
+@@ -303,7 +303,6 @@ struct device_option {
+ static struct device_option_list devopt_list =
  TAILQ_HEAD_INITIALIZER(devopt_list);
  
- static int main_lcore_parsed;
--static int mem_parsed;
+-static int main_lcore_parsed;
  static int core_parsed;
  
  /* Allow the application to print its usage message too if set */
-@@ -381,7 +330,12 @@ rte_set_application_usage_hook(rte_usage_hook_t usage_func)
- 	return old_func;
- }
+@@ -801,15 +800,6 @@ eal_parse_service_coremask(const char *coremask)
+ 		for (j = 0; j < BITS_PER_HEX && idx < RTE_MAX_LCORE;
+ 				j++, idx++) {
+ 			if ((1 << j) & val) {
+-				/* handle main lcore already parsed */
+-				uint32_t lcore = idx;
+-				if (main_lcore_parsed &&
+-						cfg->main_lcore == lcore) {
+-					EAL_LOG(ERR,
+-						"lcore %u is main lcore, cannot use as service core",
+-						idx);
+-					return -1;
+-				}
  
--#ifndef RTE_EXEC_ENV_WINDOWS
-+#ifdef RTE_EXEC_ENV_WINDOWS
-+
-+int
-+eal_save_args(__rte_unused int argc, __rte_unused char **argv) { return 0; }
-+
-+#else /* RTE_EXEC_ENV_WINDOWS */
- static char **eal_args;
- static char **eal_app_args;
+ 				if (eal_cpu_detected(idx) == 0) {
+ 					EAL_LOG(ERR,
+@@ -1032,15 +1022,6 @@ eal_parse_service_corelist(const char *corelist)
+ 				min = idx;
+ 			for (idx = min; idx <= max; idx++) {
+ 				if (cfg->lcore_role[idx] != ROLE_SERVICE) {
+-					/* handle main lcore already parsed */
+-					uint32_t lcore = idx;
+-					if (cfg->main_lcore == lcore &&
+-							main_lcore_parsed) {
+-						EAL_LOG(ERR,
+-							"Error: lcore %u is main lcore, cannot use as service core",
+-							idx);
+-						return -1;
+-					}
+ 					if (cfg->lcore_role[idx] == ROLE_RTE)
+ 						taken_lcore_count++;
  
-@@ -469,7 +423,7 @@ eal_save_args(int argc, char **argv)
- 	eal_args = NULL;
- 	return -1;
- }
--#endif
-+#endif /* !RTE_EXEC_ENV_WINDOWS */
+@@ -1080,12 +1061,15 @@ eal_parse_main_lcore(const char *arg)
+ 		return -1;
+ 	if (cfg->main_lcore >= RTE_MAX_LCORE)
+ 		return -1;
+-	main_lcore_parsed = 1;
  
- static int
- eal_option_device_add(enum rte_devtype type, const char *optarg)
-@@ -892,17 +846,6 @@ eal_parse_service_coremask(const char *coremask)
- 	return 0;
- }
+ 	/* ensure main core is not used as service core */
+ 	if (lcore_config[cfg->main_lcore].core_role == ROLE_SERVICE) {
+-		EAL_LOG(ERR,
+-			"Error: Main lcore is used as a service core");
++		EAL_LOG(ERR, "Error: Main lcore is used as a service core");
++		return -1;
++	}
++	/* check that we have the core recorded in the core list */
++	if (cfg->lcore_role[cfg->main_lcore] != ROLE_RTE) {
++		EAL_LOG(ERR, "Error: Main lcore is not enabled for DPDK");
+ 		return -1;
+ 	}
  
--static int
--eal_service_cores_parsed(void)
--{
--	int idx;
--	for (idx = 0; idx < RTE_MAX_LCORE; idx++) {
--		if (lcore_config[idx].core_role == ROLE_SERVICE)
--			return 1;
+@@ -1380,11 +1364,11 @@ eal_log_usage(void)
+ 	rte_log_list_types(stdout, "\t");
+ 	printf("\n");
+ 	printf("Syntax using globbing pattern:     ");
+-	printf("--"OPT_LOG_LEVEL" pattern:level\n");
++	printf("--log-level pattern:level\n");
+ 	printf("Syntax using regular expression:   ");
+-	printf("--"OPT_LOG_LEVEL" regexp,level\n");
++	printf("--log-level regexp,level\n");
+ 	printf("Syntax for the global level:       ");
+-	printf("--"OPT_LOG_LEVEL" level\n");
++	printf("--log-level level\n");
+ 	printf("Logs are emitted if allowed by both global and specific levels.\n");
+ 	printf("\n");
+ 	printf("Log level can be a number or the first letters of its name:\n");
+@@ -1664,7 +1648,7 @@ eal_parse_huge_unlink(const char *arg, struct hugepage_file_discipline *out)
+ 		return 0;
+ 	}
+ 	if (strcmp(arg, HUGE_UNLINK_NEVER) == 0) {
+-		EAL_LOG(WARNING, "Using --"OPT_HUGE_UNLINK"="
++		EAL_LOG(WARNING, "Using --huge-unlink="
+ 			HUGE_UNLINK_NEVER" may create data leaks.");
+ 		out->unlink_existing = false;
+ 		return 0;
+@@ -1843,6 +1827,7 @@ int
+ eal_parse_args(void)
+ {
+ 	struct internal_config *int_cfg = eal_get_internal_configuration();
++	struct rte_config *rte_cfg = rte_eal_get_configuration();
+ 	struct arg_list_elem *arg;
+ 
+ 	/* check for conflicting options */
+@@ -1871,16 +1856,59 @@ eal_parse_args(void)
+ 		EAL_LOG(ERR, "Options -m and --socket-mem can't be used at the same time");
+ 		return -1;
+ 	}
++	/* can't use both no-huge and socket-mem */
++	if (args.no_huge && args.socket_mem) {
++		EAL_LOG(ERR, "Options --no-huge and --socket-mem can't be used at the same time");
++		return -1;
++	}
++	/* can't use no-huge and huge-worker-stack */
++	if (args.huge_worker_stack != NULL && args.no_huge) {
++		EAL_LOG(ERR, "Options --no-huge and --huge-worker-stack can't be used at the same time");
++		return -1;
++	}
++	/* can't use socket-limit and legacy-mem */
++	if (args.socket_limit != NULL && args.legacy_mem) {
++		EAL_LOG(ERR, "Options --socket-limit and --legacy-mem can't be used at the same time");
++		return -1;
++	}
++	/* can't use legacy-mem and in-memory */
++	if (args.legacy_mem && args.in_memory) {
++		EAL_LOG(ERR, "Options --legacy-mem and --in-memory can't be used at the same time");
++		return -1;
++	}
++	/* can't use legacy-mem and match-allocations */
++	if (args.legacy_mem && args.match_allocations) {
++		EAL_LOG(ERR, "Options --legacy-mem and --match-allocations can't be used at the same time");
++		return -1;
++	}
++	/* can't use no-huge and match-allocations */
++	if (args.no_huge && args.match_allocations) {
++		EAL_LOG(ERR, "Options --no-huge and --match-allocations can't be used at the same time");
++		return -1;
++	}
++	/* can't use no-huge and huge-unlink */
++	if (args.no_huge && args.huge_unlink) {
++		EAL_LOG(ERR, "Options --no-huge and --huge-unlink can't be used at the same time");
++		return -1;
++	}
++	/* can't use single-file-segments and huge-unlink */
++	if (args.single_file_segments && args.huge_unlink) {
++		EAL_LOG(ERR, "Options --single-file-segments and --huge-unlink can't be used at the same time");
++		return -1;
++	}
++	/* can't use in-memory and huge-unlink */
++	if (args.in_memory && args.huge_unlink) {
++		EAL_LOG(ERR, "Options --in-memory and --huge-unlink can't be used at the same time");
++		return -1;
++	}
+ 
+-	/* parse options */
+ 	/* print version before anything else */
+-	if (args.version) {
+-		/* since message is explicitly requested by user, we write message
+-		 * at highest log level so it can always be seen even if info or
+-		 * warning messages are disabled
+-		 */
++	/* since message is explicitly requested by user, we write message
++	 * at highest log level so it can always be seen even if info or
++	 * warning messages are disabled
++	 */
++	if (args.version)
+ 		EAL_LOG(CRIT, "RTE Version: '%s'", rte_version());
 -	}
--	return 0;
--}
--
- static int
- update_lcore_config(int *cores)
- {
-@@ -1729,361 +1672,486 @@ eal_parse_huge_unlink(const char *arg, struct hugepage_file_discipline *out)
- 	return -1;
- }
  
--bool
--eal_option_is_log(int opt)
-+/* Parse all arguments looking for log related ones */
-+int
-+eal_parse_log_options(void)
- {
--	switch (opt) {
--	case OPT_LOG_COLOR_NUM:
--	case OPT_LOG_LEVEL_NUM:
--	case OPT_LOG_TIMESTAMP_NUM:
--	case OPT_SYSLOG_NUM:
--		return true;
--	default:
--		return false;
-+	if (args.log_level != NULL) {
-+		if (eal_parse_log_level(args.log_level) < 0) {
-+			EAL_LOG(ERR, "invalid log-level parameter");
-+			return -1;
-+		}
-+	}
-+	if (args.log_color != NULL) {
-+		/* if value is 1, no argument specified, so pass NULL */
-+		if (args.log_color == (void *)1)
-+			args.log_color = NULL;
-+		if (eal_log_color(args.log_color) < 0) {
-+			EAL_LOG(ERR, "invalid log-color parameter");
-+			return -1;
-+		}
-+	}
-+	if (args.log_timestamp != NULL) {
-+		/* similarly log_timestamp may be 1 */
-+		if (args.log_timestamp == (void *)1)
-+			args.log_timestamp = NULL;
-+		if (eal_log_timestamp(args.log_timestamp) < 0) {
-+			EAL_LOG(ERR, "invalid log-timestamp parameter");
-+			return -1;
-+		}
-+	}
-+	if (args.syslog != NULL) {
-+#ifdef RTE_EXEC_ENV_WINDOWS
-+		EAL_LOG(WARNING, "syslog is not supported on Windows, ignoring parameter");
-+#else
-+		/* also syslog parameter may be 1 */
-+		if (args.syslog == (void *)1)
-+			args.syslog = NULL;
-+		if (eal_log_syslog(args.syslog) < 0) {
-+			EAL_LOG(ERR, "invalid syslog parameter");
-+			return -1;
-+		}
-+#endif
- 	}
-+	return 0;
- }
- 
--/* Parse all arguments looking for log related ones */
--int
--eal_parse_log_options(int argc, char * const argv[])
-+static int
-+eal_parse_socket_arg(char *strval, volatile uint64_t *socket_arg)
- {
--	struct internal_config *internal_conf = eal_get_internal_configuration();
--	int option_index, opt;
--	const int old_optind = optind;
--	const int old_optopt = optopt;
--	const int old_opterr = opterr;
--	char *old_optarg = optarg;
--#ifdef RTE_EXEC_ENV_FREEBSD
--	const int old_optreset = optreset;
--	optreset = 1;
--#endif
-+	char *arg[RTE_MAX_NUMA_NODES];
-+	char *end;
-+	int arg_num, i, len;
- 
--	optind = 1;
--	opterr = 0;
-+	len = strnlen(strval, SOCKET_MEM_STRLEN);
-+	if (len == SOCKET_MEM_STRLEN) {
-+		EAL_LOG(ERR, "--socket-mem is too long");
-+		return -1;
-+	}
- 
--	while ((opt = getopt_long(argc, argv, eal_short_options,
--				  eal_long_options, &option_index)) != EOF) {
-+	/* all other error cases will be caught later */
-+	if (!isdigit(strval[len-1]))
-+		return -1;
- 
--		if (!eal_option_is_log(opt))
--			continue;
-+	/* split the optarg into separate socket values */
-+	arg_num = rte_strsplit(strval, len,
-+			arg, RTE_MAX_NUMA_NODES, ',');
- 
--		if (eal_parse_common_option(opt, optarg, internal_conf) < 0)
-+	/* if split failed, or 0 arguments */
-+	if (arg_num <= 0)
-+		return -1;
-+
-+	/* parse each defined socket option */
-+	errno = 0;
-+	for (i = 0; i < arg_num; i++) {
-+		uint64_t val;
-+		end = NULL;
-+		val = strtoull(arg[i], &end, 10);
-+
-+		/* check for invalid input */
-+		if ((errno != 0)  ||
-+				(arg[i][0] == '\0') || (end == NULL) || (*end != '\0'))
+ 	/* parse the process type */
+ 	if (args.proc_type != NULL) {
+@@ -1906,7 +1934,7 @@ eal_parse_args(void)
+ 		if (eal_plugin_add(arg->arg) < 0)
  			return -1;
-+		val <<= 20;
-+		socket_arg[i] = val;
- 	}
  
--	/* restore getopt lib */
--	optind = old_optind;
--	optopt = old_optopt;
--	optarg = old_optarg;
--	opterr = old_opterr;
--#ifdef RTE_EXEC_ENV_FREEBSD
--	optreset = old_optreset;
-+	return 0;
-+}
-+
-+static int
-+eal_parse_vfio_intr(const char *mode)
-+{
-+	struct internal_config *internal_conf =
-+		eal_get_internal_configuration();
-+	static struct {
-+		const char *name;
-+		enum rte_intr_mode value;
-+	} map[] = {
-+		{ "legacy", RTE_INTR_MODE_LEGACY },
-+		{ "msi", RTE_INTR_MODE_MSI },
-+		{ "msix", RTE_INTR_MODE_MSIX },
-+	};
-+
-+	for (size_t i = 0; i < RTE_DIM(map); i++) {
-+		if (!strcmp(mode, map[i].name)) {
-+			internal_conf->vfio_intr_mode = map[i].value;
-+			return 0;
-+		}
-+	}
-+	return -1;
-+}
-+
-+static int
-+eal_parse_vfio_vf_token(const char *vf_token)
-+{
-+	struct internal_config *cfg = eal_get_internal_configuration();
-+	rte_uuid_t uuid;
-+
-+	if (!rte_uuid_parse(vf_token, uuid)) {
-+		rte_uuid_copy(cfg->vfio_vf_token, uuid);
-+		return 0;
-+	}
-+
-+	return -1;
-+}
-+
-+static int
-+eal_parse_huge_worker_stack(const char *arg)
-+{
-+#ifdef RTE_EXEC_ENV_WINDOWS
-+	EAL_LOG(WARNING, "Cannot set worker stack size on Windows, parameter ignored");
-+	RTE_SET_USED(arg);
-+#else
-+	struct internal_config *cfg = eal_get_internal_configuration();
-+
-+	if (arg == NULL || arg[0] == '\0') {
-+		pthread_attr_t attr;
-+		int ret;
-+
-+		if (pthread_attr_init(&attr) != 0) {
-+			EAL_LOG(ERR, "Could not retrieve default stack size");
-+			return -1;
-+		}
-+		ret = pthread_attr_getstacksize(&attr, &cfg->huge_worker_stack_size);
-+		pthread_attr_destroy(&attr);
-+		if (ret != 0) {
-+			EAL_LOG(ERR, "Could not retrieve default stack size");
-+			return -1;
-+		}
-+	} else {
-+		unsigned long stack_size;
-+		char *end;
-+
-+		errno = 0;
-+		stack_size = strtoul(arg, &end, 10);
-+		if (errno || end == NULL || stack_size == 0 ||
-+				stack_size >= (size_t)-1 / 1024)
-+			return -1;
-+
-+		cfg->huge_worker_stack_size = stack_size * 1024;
-+	}
-+
-+	EAL_LOG(DEBUG, "Each worker thread will use %zu kB of DPDK memory as stack",
-+		cfg->huge_worker_stack_size / 1024);
- #endif
- 	return 0;
- }
- 
-+/* Parse the arguments given in the command line of the application */
- int
--eal_parse_common_option(int opt, const char *optarg,
--			struct internal_config *conf)
-+eal_parse_args(void)
- {
--	static int b_used;
--	static int a_used;
--
--	switch (opt) {
--	case 'b':
--		if (a_used)
--			goto ba_conflict;
--		if (eal_option_device_add(RTE_DEVTYPE_BLOCKED, optarg) < 0)
-+	struct internal_config *int_cfg = eal_get_internal_configuration();
-+	struct arg_list_elem *arg;
-+
-+	/* check for conflicting options */
-+	/* both -a and -b cannot be used together (one list must be empty at least) */
-+	if (!TAILQ_EMPTY(&args.allow) && !TAILQ_EMPTY(&args.block)) {
-+		EAL_LOG(ERR, "Options allow (-a) and block (-b) can't be used at the same time");
-+		return -1;
-+	}
-+	/* both -l and -c cannot be used at the same time */
-+	if (args.coremask != NULL && args.lcores != NULL) {
-+		EAL_LOG(ERR, "Options coremask (-c) and core list (-l) can't be used at the same time");
-+		return -1;
-+	}
-+	/* both -s and -S cannot be used at the same time */
-+	if (args.service_coremask != NULL && args.service_corelist != NULL) {
-+		EAL_LOG(ERR, "Options service coremask (-s) and service core list (-S) can't be used at the same time");
-+		return -1;
-+	}
-+	/* can't have both telemetry and no-telemetry */
-+	if (args.no_telemetry && args.telemetry) {
-+		EAL_LOG(ERR, "Options telemetry and no-telemetry can't be used at the same time");
-+		return -1;
-+	}
-+	/* can't have both -m and --socket-mem */
-+	if (args.memory_size != NULL && args.socket_mem != NULL) {
-+		EAL_LOG(ERR, "Options -m and --socket-mem can't be used at the same time");
-+		return -1;
-+	}
-+
-+	/* parse options */
-+	/* print version before anything else */
-+	if (args.version) {
-+		/* since message is explicitly requested by user, we write message
-+		 * at highest log level so it can always be seen even if info or
-+		 * warning messages are disabled
-+		 */
-+		EAL_LOG(CRIT, "RTE Version: '%s'", rte_version());
-+	}
-+
-+	/* parse the process type */
-+	if (args.proc_type != NULL) {
-+		int_cfg->process_type = eal_parse_proc_type(args.proc_type);
-+		if (int_cfg->process_type == RTE_PROC_INVALID) {
-+			EAL_LOG(ERR, "invalid process type: %s", args.proc_type);
- 			return -1;
--		b_used = 1;
--		break;
-+		}
-+	}
- 
--	case 'a':
--		if (b_used)
--			goto ba_conflict;
--		if (eal_option_device_add(RTE_DEVTYPE_ALLOWED, optarg) < 0)
-+	/* device -a/-b/-vdev options*/
-+	TAILQ_FOREACH(arg, &args.allow, next)
-+		if (eal_option_device_add(RTE_DEVTYPE_ALLOWED, arg->arg) < 0)
- 			return -1;
--		a_used = 1;
--		break;
--	/* coremask */
--	case 'c': {
-+	TAILQ_FOREACH(arg, &args.block, next)
-+		if (eal_option_device_add(RTE_DEVTYPE_BLOCKED, arg->arg) < 0)
-+			return -1;
-+	TAILQ_FOREACH(arg, &args.vdev, next)
-+		if (eal_option_device_add(RTE_DEVTYPE_VIRTUAL, arg->arg) < 0)
-+			return -1;
-+	/* driver loading options */
-+	TAILQ_FOREACH(arg, &args.driver_path, next)
-+		if (eal_plugin_add(arg->arg) < 0)
-+			return -1;
-+
-+	/* parse the coremask /core-list */
-+	if (args.coremask != NULL) {
+-	/* parse the coremask /core-list */
++	/* parse the core list arguments */
+ 	if (args.coremask != NULL) {
  		int lcore_indexes[RTE_MAX_LCORE];
  
--		if (eal_service_cores_parsed())
--			EAL_LOG(WARNING,
--				"Service cores parsed before dataplane cores. Please ensure -c is before -s or -S");
--		if (rte_eal_parse_coremask(optarg, lcore_indexes) < 0) {
-+		if (rte_eal_parse_coremask(args.coremask, lcore_indexes) < 0) {
- 			EAL_LOG(ERR, "invalid coremask syntax");
- 			return -1;
+@@ -1930,13 +1958,6 @@ eal_parse_args(void)
  		}
- 		if (update_lcore_config(lcore_indexes) < 0) {
- 			char *available = available_cores();
- 
--			EAL_LOG(ERR,
--				"invalid coremask, please check specified cores are part of %s",
--				available);
-+			EAL_LOG(ERR, "invalid coremask '%s', please check specified cores are part of %s",
-+					args.coremask, available);
- 			free(available);
- 			return -1;
- 		}
--
--		if (core_parsed) {
--			if (core_parsed == LCORE_OPT_MSK)
--				EAL_LOG(ERR, "Option '-c' passed multiple times to EAL");
--			else
--				EAL_LOG(ERR, "Option -c is ignored, because option -l/--lcores used");
-+		core_parsed = 1;
-+	} else if (args.lcores != NULL) {
-+		if (eal_parse_lcores(args.lcores) < 0) {
-+			EAL_LOG(ERR, "invalid lcore list: '%s'", args.lcores);
- 			return -1;
- 		}
--
--		core_parsed = LCORE_OPT_MSK;
--		break;
-+		core_parsed = 1;
+ 		core_parsed = 1;
  	}
--	/* corelist */
--	case 'l': {
--		if (eal_service_cores_parsed())
--			EAL_LOG(WARNING,
--				"Service cores parsed before dataplane cores. Please ensure -l is before -s or -S");
+-	if (args.main_lcore != NULL) {
+-		if (eal_parse_main_lcore(args.main_lcore) < 0) {
+-			EAL_LOG(ERR, "invalid main-lcore parameter");
+-			return -1;
+-		}
+-	}
 -
--		if (eal_parse_lcores(optarg) < 0) {
--			EAL_LOG(ERR, "invalid parameter for -l/--" OPT_LCORES);
+ 	/* service core options */
+ 	if (args.service_coremask != NULL) {
+ 		if (eal_parse_service_coremask(args.service_coremask) < 0) {
+@@ -1951,6 +1972,17 @@ eal_parse_args(void)
+ 			return -1;
+ 		}
+ 	}
 +	if (args.main_lcore != NULL) {
-+		if (eal_parse_main_lcore(args.main_lcore) < 0) {
-+			EAL_LOG(ERR, "invalid main-lcore parameter");
- 			return -1;
- 		}
-+	}
- 
--		if (core_parsed) {
--			if (core_parsed == LCORE_OPT_LST)
--				EAL_LOG(ERR, "Core list option passed multiple times to EAL");
--			else
--				EAL_LOG(ERR, "Option '-l/--lcores' is ignored, because coremask option used");
-+	/* service core options */
-+	if (args.service_coremask != NULL) {
-+		if (eal_parse_service_coremask(args.service_coremask) < 0) {
-+			EAL_LOG(ERR, "invalid service coremask: '%s'",
-+					args.service_coremask);
- 			return -1;
- 		}
-+	} else if (args.service_corelist != NULL) {
-+		if (eal_parse_service_corelist(args.service_corelist) < 0) {
-+			EAL_LOG(ERR, "invalid service core list: '%s'",
-+					args.service_corelist);
++		if (eal_parse_main_lcore(args.main_lcore) < 0)
++			return -1;
++	} else {
++		/* default main lcore is the first one */
++		rte_cfg->main_lcore = rte_get_next_lcore(-1, 0, 0);
++		if (rte_cfg->main_lcore >= RTE_MAX_LCORE) {
++			EAL_LOG(ERR, "Main lcore is not enabled for DPDK");
 +			return -1;
 +		}
 +	}
  
--		core_parsed = LCORE_OPT_LST;
--		break;
-+	/* memory options */
-+	if (args.memory_size != NULL) {
-+		int_cfg->memory = atoi(args.memory_size);
-+		int_cfg->memory *= 1024ULL;
-+		int_cfg->memory *= 1024ULL;
+ 	/* memory options */
+ 	if (args.memory_size != NULL) {
+@@ -1972,14 +2004,6 @@ eal_parse_args(void)
+ 			return -1;
+ 		}
  	}
--	/* service coremask */
--	case 's':
--		if (eal_parse_service_coremask(optarg) < 0) {
--			EAL_LOG(ERR, "invalid service coremask");
-+	if (args.memory_channels != NULL) {
-+		int_cfg->force_nchannel = atoi(args.memory_channels);
-+		if (int_cfg->force_nchannel == 0) {
-+			EAL_LOG(ERR, "invalid memory channel parameter");
+-	if (args.huge_unlink != NULL) {
+-		if (args.huge_unlink == (void *)1)
+-			args.huge_unlink = NULL;
+-		if (eal_parse_huge_unlink(args.huge_unlink, &int_cfg->hugepage_file) < 0) {
+-			EAL_LOG(ERR, "invalid huge-unlink parameter");
+-			return -1;
+-		}
+-	}
+ 	if (args.no_huge) {
+ 		int_cfg->no_hugetlbfs = 1;
+ 		/* no-huge is legacy mem */
+@@ -1991,11 +2015,18 @@ eal_parse_args(void)
+ 		int_cfg->no_shconf = 1;
+ 		int_cfg->hugepage_file.unlink_before_mapping = true;
+ 	}
+-	if (args.legacy_mem)
++	if (args.legacy_mem) {
+ 		int_cfg->legacy_mem = 1;
++		if (args.memory_size == NULL && args.socket_mem == NULL)
++			EAL_LOG(NOTICE, "Static memory layout is selected, amount of reserved memory can be adjusted with -m or --socket-mem");
++	}
+ 	if (args.single_file_segments)
+ 		int_cfg->single_file_segments = 1;
+ 	if (args.huge_dir != NULL) {
++		if (strlen(args.huge_dir) < 1) {
++			EAL_LOG(ERR, "Invalid hugepage dir parameter");
++			return -1;
++		}
+ 		free(int_cfg->hugepage_dir);  /* free old hugepage dir */
+ 		int_cfg->hugepage_dir = strdup(args.huge_dir);
+ 		if (int_cfg->hugepage_dir == NULL) {
+@@ -2004,6 +2035,14 @@ eal_parse_args(void)
+ 		}
+ 	}
+ 	if (args.file_prefix != NULL) {
++		if (strlen(args.file_prefix) < 1) {
++			EAL_LOG(ERR, "Invalid file prefix parameter");
++			return -1;
++		}
++		if (strchr(args.file_prefix, '%') != NULL) {
++			EAL_LOG(ERR, "Invalid char, '%%', in file_prefix parameter");
++			return -1;
++		}
+ 		free(int_cfg->hugefile_prefix);  /* free old file prefix */
+ 		int_cfg->hugefile_prefix = strdup(args.file_prefix);
+ 		if (int_cfg->hugefile_prefix == NULL) {
+@@ -2011,6 +2050,14 @@ eal_parse_args(void)
  			return -1;
  		}
--		break;
--	/* service corelist */
--	case 'S':
--		if (eal_parse_service_corelist(optarg) < 0) {
--			EAL_LOG(ERR, "invalid service core list");
-+	}
-+	if (args.memory_ranks != NULL) {
-+		int_cfg->force_nrank = atoi(args.memory_ranks);
-+		if (int_cfg->force_nrank == 0 || int_cfg->force_nrank > 16) {
-+			EAL_LOG(ERR, "invalid memory rank parameter");
- 			return -1;
- 		}
--		break;
--	/* size of memory */
--	case 'm':
--		conf->memory = atoi(optarg);
--		conf->memory *= 1024ULL;
--		conf->memory *= 1024ULL;
--		mem_parsed = 1;
--		break;
--	/* force number of channels */
--	case 'n':
--		conf->force_nchannel = atoi(optarg);
--		if (conf->force_nchannel == 0) {
--			EAL_LOG(ERR, "invalid channel number");
-+	}
+ 	}
 +	if (args.huge_unlink != NULL) {
 +		if (args.huge_unlink == (void *)1)
 +			args.huge_unlink = NULL;
 +		if (eal_parse_huge_unlink(args.huge_unlink, &int_cfg->hugepage_file) < 0) {
 +			EAL_LOG(ERR, "invalid huge-unlink parameter");
- 			return -1;
- 		}
--		break;
--	/* force number of ranks */
--	case 'r':
--		conf->force_nrank = atoi(optarg);
--		if (conf->force_nrank == 0 ||
--		    conf->force_nrank > 16) {
--			EAL_LOG(ERR, "invalid rank number");
-+	}
-+	if (args.no_huge) {
-+		int_cfg->no_hugetlbfs = 1;
-+		/* no-huge is legacy mem */
-+		int_cfg->legacy_mem = 1;
-+	}
-+	if (args.in_memory) {
-+		int_cfg->in_memory = 1;
-+		/* in-memory is a superset of noshconf and huge-unlink */
-+		int_cfg->no_shconf = 1;
-+		int_cfg->hugepage_file.unlink_before_mapping = true;
-+	}
-+	if (args.legacy_mem)
-+		int_cfg->legacy_mem = 1;
-+	if (args.single_file_segments)
-+		int_cfg->single_file_segments = 1;
-+	if (args.huge_dir != NULL) {
-+		free(int_cfg->hugepage_dir);  /* free old hugepage dir */
-+		int_cfg->hugepage_dir = strdup(args.huge_dir);
-+		if (int_cfg->hugepage_dir == NULL) {
-+			EAL_LOG(ERR, "failed to allocate memory for hugepage dir parameter");
- 			return -1;
- 		}
--		break;
--	/* force loading of external driver */
--	case 'd':
--		if (eal_plugin_add(optarg) == -1)
-+	}
-+	if (args.file_prefix != NULL) {
-+		free(int_cfg->hugefile_prefix);  /* free old file prefix */
-+		int_cfg->hugefile_prefix = strdup(args.file_prefix);
-+		if (int_cfg->hugefile_prefix == NULL) {
-+			EAL_LOG(ERR, "failed to allocate memory for file prefix parameter");
- 			return -1;
--		break;
--	case 'v':
--		/* since message is explicitly requested by user, we
--		 * write message at highest log level so it can always
--		 * be seen
--		 * even if info or warning messages are disabled */
--		EAL_LOG(CRIT, "RTE Version: '%s'", rte_version());
--		break;
--
--	/* long options */
--	case OPT_HUGE_UNLINK_NUM:
--		if (eal_parse_huge_unlink(optarg, &conf->hugepage_file) < 0) {
--			EAL_LOG(ERR, "invalid --"OPT_HUGE_UNLINK" option");
++			return -1;
 +		}
 +	}
-+	if (args.socket_mem != NULL) {
-+		if (eal_parse_socket_arg(args.socket_mem, int_cfg->numa_mem) < 0) {
-+			EAL_LOG(ERR, "invalid socket-mem parameter: '%s'", args.socket_mem);
+ 	if (args.socket_mem != NULL) {
+ 		if (eal_parse_socket_arg(args.socket_mem, int_cfg->numa_mem) < 0) {
+ 			EAL_LOG(ERR, "invalid socket-mem parameter: '%s'", args.socket_mem);
+@@ -2128,6 +2175,10 @@ eal_parse_args(void)
+ 			EAL_LOG(ERR, "failed to allocate memory for mbuf pool ops name parameter");
  			return -1;
  		}
--		break;
--
--	case OPT_NO_HUGE_NUM:
--		conf->no_hugetlbfs = 1;
--		/* no-huge is legacy mem */
--		conf->legacy_mem = 1;
--		break;
--
--	case OPT_NO_PCI_NUM:
--		conf->no_pci = 1;
--		break;
--
--	case OPT_NO_HPET_NUM:
--		conf->no_hpet = 1;
--		break;
--
--	case OPT_VMWARE_TSC_MAP_NUM:
--		conf->vmware_tsc_map = 1;
--		break;
--
--	case OPT_NO_SHCONF_NUM:
--		conf->no_shconf = 1;
--		break;
--
--	case OPT_IN_MEMORY_NUM:
--		conf->in_memory = 1;
--		/* in-memory is a superset of noshconf and huge-unlink */
--		conf->no_shconf = 1;
--		conf->hugepage_file.unlink_before_mapping = true;
--		break;
--
--	case OPT_PROC_TYPE_NUM:
--		conf->process_type = eal_parse_proc_type(optarg);
--		break;
--
--	case OPT_MAIN_LCORE_NUM:
--		if (eal_parse_main_lcore(optarg) < 0) {
--			EAL_LOG(ERR, "invalid parameter for --"
--					OPT_MAIN_LCORE);
-+		int_cfg->force_numa = 1;
-+	}
-+	if (args.socket_limit != NULL) {
-+		if (eal_parse_socket_arg(args.socket_limit, int_cfg->numa_limit) < 0) {
-+			EAL_LOG(ERR, "invalid socket limit parameter: '%s'", args.socket_limit);
- 			return -1;
- 		}
--		break;
-+		int_cfg->force_numa_limits = 1;
-+	}
- 
--	case OPT_VDEV_NUM:
--		if (eal_option_device_add(RTE_DEVTYPE_VIRTUAL,
--				optarg) < 0) {
-+	/* tracing settings, not supported on windows */
-+#ifdef RTE_EXEC_ENV_WINDOWS
-+	if (args.trace != NULL ||
-+			args.trace_dir != NULL ||
-+			args.trace_bufsz != NULL ||
-+			args.trace_mode != NULL)
-+		EAL_LOG(WARNING, "Tracing is not supported on Windows, ignoring tracing parameters");
-+#else
-+	if (args.trace != NULL) {
-+		if (eal_trace_args_save(args.trace) < 0) {
-+			EAL_LOG(ERR, "invalid trace parameter, '%s'", args.trace);
- 			return -1;
- 		}
--		break;
--
--#ifndef RTE_EXEC_ENV_WINDOWS
--	case OPT_SYSLOG_NUM:
--		if (eal_log_syslog(optarg) < 0) {
--			EAL_LOG(ERR, "invalid parameters for --"
--					OPT_SYSLOG);
-+	}
-+	if (args.trace_dir != NULL) {
-+		if (eal_trace_dir_args_save(args.trace_dir) < 0) {
-+			EAL_LOG(ERR, "invalid trace directory, '%s'", args.trace_dir);
- 			return -1;
- 		}
--		break;
--#endif
--
--	case OPT_LOG_LEVEL_NUM:
--		if (eal_parse_log_level(optarg) < 0) {
--			EAL_LOG(ERR,
--				"invalid parameters for --"
--				OPT_LOG_LEVEL);
-+	}
-+	if (args.trace_bufsz != NULL) {
-+		if (eal_trace_bufsz_args_save(args.trace_bufsz) < 0) {
-+			EAL_LOG(ERR, "invalid trace buffer size, '%s'", args.trace_bufsz);
- 			return -1;
- 		}
--		break;
--
--	case OPT_LOG_TIMESTAMP_NUM:
--		if (eal_log_timestamp(optarg) < 0) {
--			EAL_LOG(ERR, "invalid parameters for --"
--				OPT_LOG_TIMESTAMP);
-+	}
-+	if (args.trace_mode != NULL) {
-+		if (eal_trace_mode_args_save(args.trace_mode) < 0) {
-+			EAL_LOG(ERR, "invalid trace mode, '%s'", args.trace_mode);
- 			return -1;
- 		}
--		break;
-+	}
-+#endif
- 
--	case OPT_LOG_COLOR_NUM:
--		if (eal_log_color(optarg) < 0) {
--			EAL_LOG(ERR, "invalid parameters for --"
--				OPT_LOG_COLOR);
-+	/* simple flag settings
-+	 * Only set these to 1, as we don't want to set them to 0 in case
-+	 * other options above have already set them.
-+	 */
-+	if (args.no_pci)
-+		int_cfg->no_pci = 1;
-+	if (args.no_hpet)
-+		int_cfg->no_hpet = 1;
-+	if (args.vmware_tsc_map)
-+		int_cfg->vmware_tsc_map = 1;
-+	if (args.no_shconf)
-+		int_cfg->no_shconf = 1;
-+	if (args.no_telemetry)
-+		int_cfg->no_telemetry = 1;
-+	if (args.match_allocations)
-+		int_cfg->match_allocations = 1;
-+	if (args.create_uio_dev)
-+		int_cfg->create_uio_dev = 1;
-+
-+
-+	/* other misc settings */
-+	if (args.iova_mode != NULL) {
-+		if (eal_parse_iova_mode(args.iova_mode) < 0) {
-+			EAL_LOG(ERR, "invalid iova mode parameter '%s'", args.iova_mode);
- 			return -1;
- 		}
--		break;
--
--#ifndef RTE_EXEC_ENV_WINDOWS
--	case OPT_TRACE_NUM: {
--		if (eal_trace_args_save(optarg) < 0) {
--			EAL_LOG(ERR, "invalid parameters for --"
--				OPT_TRACE);
-+	};
-+	if (args.base_virtaddr != NULL) {
-+		if (eal_parse_base_virtaddr(args.base_virtaddr) < 0) {
-+			EAL_LOG(ERR, "invalid base virtaddr '%s'", args.base_virtaddr);
- 			return -1;
- 		}
--		break;
- 	}
--
--	case OPT_TRACE_DIR_NUM: {
--		if (eal_trace_dir_args_save(optarg) < 0) {
--			EAL_LOG(ERR, "invalid parameters for --"
--				OPT_TRACE_DIR);
-+	if (args.force_max_simd_bitwidth != NULL) {
-+		if (eal_parse_simd_bitwidth(args.force_max_simd_bitwidth) < 0) {
-+			EAL_LOG(ERR, "invalid SIMD bitwidth parameter '%s'",
-+					args.force_max_simd_bitwidth);
- 			return -1;
- 		}
--		break;
- 	}
--
--	case OPT_TRACE_BUF_SIZE_NUM: {
--		if (eal_trace_bufsz_args_save(optarg) < 0) {
--			EAL_LOG(ERR, "invalid parameters for --"
--				OPT_TRACE_BUF_SIZE);
-+	if (args.vfio_intr != NULL) {
-+		if (eal_parse_vfio_intr(args.vfio_intr) < 0) {
-+			EAL_LOG(ERR, "invalid vfio interrupt parameter: '%s'", args.vfio_intr);
- 			return -1;
- 		}
--		break;
- 	}
--
--	case OPT_TRACE_MODE_NUM: {
--		if (eal_trace_mode_args_save(optarg) < 0) {
--			EAL_LOG(ERR, "invalid parameters for --"
--				OPT_TRACE_MODE);
-+	if (args.vfio_vf_token != NULL) {
-+		if (eal_parse_vfio_vf_token(args.vfio_vf_token) < 0) {
-+			EAL_LOG(ERR, "invalid vfio vf token parameter: '%s'", args.vfio_vf_token);
- 			return -1;
- 		}
--		break;
- 	}
--#endif /* !RTE_EXEC_ENV_WINDOWS */
- 
--	case OPT_LEGACY_MEM_NUM:
--		conf->legacy_mem = 1;
--		break;
--	case OPT_SINGLE_FILE_SEGMENTS_NUM:
--		conf->single_file_segments = 1;
--		break;
--	case OPT_IOVA_MODE_NUM:
--		if (eal_parse_iova_mode(optarg) < 0) {
--			EAL_LOG(ERR, "invalid parameters for --"
--				OPT_IOVA_MODE);
-+	if (args.huge_worker_stack != NULL) {
-+		if (args.huge_worker_stack == (void *)1)
-+			args.huge_worker_stack = NULL;
-+		if (eal_parse_huge_worker_stack(args.huge_worker_stack) < 0) {
-+			EAL_LOG(ERR, "invalid huge worker stack parameter");
- 			return -1;
- 		}
--		break;
--	case OPT_BASE_VIRTADDR_NUM:
--		if (eal_parse_base_virtaddr(optarg) < 0) {
--			EAL_LOG(ERR, "invalid parameter for --"
--					OPT_BASE_VIRTADDR);
-+	}
-+	if (args.mbuf_pool_ops_name != NULL) {
-+		free(int_cfg->user_mbuf_pool_ops_name); /* free old ops name */
-+		int_cfg->user_mbuf_pool_ops_name = strdup(args.mbuf_pool_ops_name);
-+		if (int_cfg->user_mbuf_pool_ops_name == NULL) {
-+			EAL_LOG(ERR, "failed to allocate memory for mbuf pool ops name parameter");
- 			return -1;
- 		}
--		break;
--	case OPT_TELEMETRY_NUM:
--		break;
--	case OPT_NO_TELEMETRY_NUM:
--		conf->no_telemetry = 1;
--		break;
--	case OPT_FORCE_MAX_SIMD_BITWIDTH_NUM:
--		if (eal_parse_simd_bitwidth(optarg) < 0) {
--			EAL_LOG(ERR, "invalid parameter for --"
--					OPT_FORCE_MAX_SIMD_BITWIDTH);
-+	}
-+
-+#ifndef RTE_EXEC_ENV_WINDOWS
-+	/* create runtime data directory. In no_shconf mode, skip any errors */
-+	if (eal_create_runtime_dir() < 0) {
-+		if (int_cfg->no_shconf == 0) {
-+			EAL_LOG(ERR, "Cannot create runtime directory");
- 			return -1;
- 		}
--		break;
-+		EAL_LOG(WARNING, "No DPDK runtime directory created");
-+	}
-+#endif
- 
--	/* don't know what to do, leave this to caller */
--	default:
--		return 1;
-+	if (eal_adjust_config(int_cfg) != 0) {
-+		EAL_LOG(ERR, "Invalid configuration");
-+		return -1;
-+	}
- 
-+	if (eal_check_common_options(int_cfg) != 0) {
-+		EAL_LOG(ERR, "Checking common options failed");
-+		return -1;
++		if (strlen(int_cfg->user_mbuf_pool_ops_name) < 1) {
++			EAL_LOG(ERR, "Invalid mbuf pool ops name parameter");
++			return -1;
++		}
  	}
  
- 	return 0;
--
--ba_conflict:
--	EAL_LOG(ERR,
--		"Options allow (-a) and block (-b) can't be used at the same time");
--	return -1;
- }
- 
- static void
-@@ -2216,13 +2284,8 @@ eal_check_common_options(struct internal_config *internal_cfg)
- 			"option");
+ #ifndef RTE_EXEC_ENV_WINDOWS
+@@ -2146,11 +2197,6 @@ eal_parse_args(void)
  		return -1;
  	}
--	if (mem_parsed && internal_cfg->force_numa == 1) {
--		EAL_LOG(ERR, "Options -m and --"OPT_NUMA_MEM" cannot "
--			"be specified at the same time");
+ 
+-	if (eal_check_common_options(int_cfg) != 0) {
+-		EAL_LOG(ERR, "Checking common options failed");
 -		return -1;
 -	}
- 	if (internal_cfg->no_hugetlbfs && internal_cfg->force_numa == 1) {
--		EAL_LOG(ERR, "Option --"OPT_NUMA_MEM" cannot "
-+		EAL_LOG(ERR, "Option --"OPT_SOCKET_MEM" cannot "
- 			"be specified together with --"OPT_NO_HUGE);
- 		return -1;
- 	}
-@@ -2308,97 +2371,3 @@ rte_vect_set_max_simd_bitwidth(uint16_t bitwidth)
- 	internal_conf->max_simd_bitwidth.bitwidth = bitwidth;
+-
  	return 0;
  }
+ 
+@@ -2230,14 +2276,6 @@ eal_adjust_config(struct internal_config *internal_cfg)
+ 	if (internal_conf->process_type == RTE_PROC_AUTO)
+ 		internal_conf->process_type = eal_proc_type_detect();
+ 
+-	/* default main lcore is the first one */
+-	if (!main_lcore_parsed) {
+-		cfg->main_lcore = rte_get_next_lcore(-1, 0, 0);
+-		if (cfg->main_lcore >= RTE_MAX_LCORE)
+-			return -1;
+-		lcore_config[cfg->main_lcore].core_role = ROLE_RTE;
+-	}
 -
--void
--eal_common_usage(void)
+ 	compute_ctrl_threads_cpuset(internal_cfg);
+ 
+ 	/* if no memory amounts were requested, this will result in 0 and
+@@ -2248,102 +2286,6 @@ eal_adjust_config(struct internal_config *internal_cfg)
+ 	return 0;
+ }
+ 
+-int
+-eal_check_common_options(struct internal_config *internal_cfg)
 -{
--	printf("[options]\n\n"
--	       "EAL common options:\n"
--	       "  -c COREMASK         Hexadecimal bitmask of cores to run on\n"
--	       "  -l, --"OPT_LCORES" CORELIST\n"
--	       "                      List of cores to run on\n"
--	       "                      The basic argument format is <c1>[-c2][,c3[-c4],...]\n"
--	       "                      where c1, c2, etc are core indexes between 0 and %d\n"
--	       "                      Can also be used to map lcore set to physical CPU set\n"
--	       "                      The argument format is\n"
--	       "                            '<lcores[@cpus]>[<,lcores[@cpus]>...]'\n"
--	       "                      lcores and cpus list are grouped by '(' and ')'\n"
--	       "                      Within the group, '-' is used for range separator,\n"
--	       "                      ',' is used for single number separator.\n"
--	       "                      '( )' can be omitted for single element group,\n"
--	       "                      '@' can be omitted if cpus and lcores have the same value\n"
--	       "  -s SERVICE COREMASK Hexadecimal bitmask of cores to be used as service cores\n"
--	       "  --"OPT_MAIN_LCORE" ID     Core ID that is used as main\n"
--	       "  --"OPT_MBUF_POOL_OPS_NAME" Pool ops name for mbuf to use\n"
--	       "  -n CHANNELS         Number of memory channels\n"
--	       "  -m MB               Memory to allocate (see also --"OPT_NUMA_MEM")\n"
--	       "  -r RANKS            Force number of memory ranks (don't detect)\n"
--	       "  -b, --block         Add a device to the blocked list.\n"
--	       "                      Prevent EAL from using this device. The argument\n"
--	       "                      format for PCI devices is <domain:bus:devid.func>.\n"
--	       "  -a, --allow         Add a device to the allow list.\n"
--	       "                      Only use the specified devices. The argument format\n"
--	       "                      for PCI devices is <[domain:]bus:devid.func>.\n"
--	       "                      This option can be present several times.\n"
--	       "                      [NOTE: " OPT_DEV_ALLOW " cannot be used with "OPT_DEV_BLOCK" option]\n"
--	       "  --"OPT_VDEV"              Add a virtual device.\n"
--	       "                      The argument format is <driver><id>[,key=val,...]\n"
--	       "                      (ex: --vdev=net_pcap0,iface=eth2).\n"
--	       "  --"OPT_IOVA_MODE"   Set IOVA mode. 'pa' for IOVA_PA\n"
--	       "                      'va' for IOVA_VA\n"
--	       "  -d LIB.so|DIR       Add a driver or driver directory\n"
--	       "                      (can be used multiple times)\n"
--	       "  --"OPT_VMWARE_TSC_MAP"    Use VMware TSC map instead of native RDTSC\n"
--	       "  --"OPT_PROC_TYPE"         Type of this process (primary|secondary|auto)\n"
--#ifndef RTE_EXEC_ENV_WINDOWS
--	       "  --"OPT_SYSLOG"[=<facility>] Enable use of syslog (and optionally set facility)\n"
--#endif
--	       "  --"OPT_LOG_LEVEL"=<level> Set global log level\n"
--	       "  --"OPT_LOG_LEVEL"=<type-match>:<level>\n"
--	       "                      Set specific log level\n"
--	       "  --"OPT_LOG_LEVEL"=help    Show log types and levels\n"
--	       "  --"OPT_LOG_TIMESTAMP"[=<format>]  Timestamp log output\n"
--	       "  --"OPT_LOG_COLOR"[=<when>] Colorize log messages\n"
--#ifndef RTE_EXEC_ENV_WINDOWS
--	       "  --"OPT_TRACE"=<regex-match>\n"
--	       "                      Enable trace based on regular expression trace name.\n"
--	       "                      By default, the trace is disabled.\n"
--	       "		      User must specify this option to enable trace.\n"
--	       "  --"OPT_TRACE_DIR"=<directory path>\n"
--	       "                      Specify trace directory for trace output.\n"
--	       "                      By default, trace output will created at\n"
--	       "                      $HOME directory and parameter must be\n"
--	       "                      specified once only.\n"
--	       "  --"OPT_TRACE_BUF_SIZE"=<int>\n"
--	       "                      Specify maximum size of allocated memory\n"
--	       "                      for trace output for each thread. Valid\n"
--	       "                      unit can be either 'B|K|M' for 'Bytes',\n"
--	       "                      'KBytes' and 'MBytes' respectively.\n"
--	       "                      Default is 1MB and parameter must be\n"
--	       "                      specified once only.\n"
--	       "  --"OPT_TRACE_MODE"=<o[verwrite] | d[iscard]>\n"
--	       "                      Specify the mode of update of trace\n"
--	       "                      output file. Either update on a file can\n"
--	       "                      be wrapped or discarded when file size\n"
--	       "                      reaches its maximum limit.\n"
--	       "                      Default mode is 'overwrite' and parameter\n"
--	       "                      must be specified once only.\n"
--#endif /* !RTE_EXEC_ENV_WINDOWS */
--	       "  -v                  Display version information on startup\n"
--	       "  -h, --"OPT_HELP"          This help\n"
--	       "  --"OPT_IN_MEMORY"   Operate entirely in memory. This will\n"
--	       "                      disable secondary process support\n"
--	       "  --"OPT_BASE_VIRTADDR"     Base virtual address\n"
--	       "  --"OPT_TELEMETRY"   Enable telemetry support (on by default)\n"
--	       "  --"OPT_NO_TELEMETRY"   Disable telemetry support\n"
--	       "  --"OPT_FORCE_MAX_SIMD_BITWIDTH" Force the max SIMD bitwidth\n"
--	       "\nEAL options for DEBUG use only:\n"
--	       "  --"OPT_HUGE_UNLINK"[=existing|always|never]\n"
--	       "                      When to unlink files in hugetlbfs\n"
--	       "                      ('existing' by default, no value means 'always')\n"
--	       "  --"OPT_NO_HUGE"           Use malloc instead of hugetlbfs\n"
--	       "  --"OPT_NO_PCI"            Disable PCI\n"
--	       "  --"OPT_NO_HPET"           Disable HPET\n"
--	       "  --"OPT_NO_SHCONF"         No shared config (mmap'd files)\n"
--	       "\n", RTE_MAX_LCORE);
+-	struct rte_config *cfg = rte_eal_get_configuration();
+-	const struct internal_config *internal_conf =
+-		eal_get_internal_configuration();
+-
+-	if (cfg->lcore_role[cfg->main_lcore] != ROLE_RTE) {
+-		EAL_LOG(ERR, "Main lcore is not enabled for DPDK");
+-		return -1;
+-	}
+-
+-	if (internal_cfg->process_type == RTE_PROC_INVALID) {
+-		EAL_LOG(ERR, "Invalid process type specified");
+-		return -1;
+-	}
+-	if (internal_cfg->hugefile_prefix != NULL &&
+-			strlen(internal_cfg->hugefile_prefix) < 1) {
+-		EAL_LOG(ERR, "Invalid length of --" OPT_FILE_PREFIX " option");
+-		return -1;
+-	}
+-	if (internal_cfg->hugepage_dir != NULL &&
+-			strlen(internal_cfg->hugepage_dir) < 1) {
+-		EAL_LOG(ERR, "Invalid length of --" OPT_HUGE_DIR" option");
+-		return -1;
+-	}
+-	if (internal_cfg->user_mbuf_pool_ops_name != NULL &&
+-			strlen(internal_cfg->user_mbuf_pool_ops_name) < 1) {
+-		EAL_LOG(ERR, "Invalid length of --" OPT_MBUF_POOL_OPS_NAME" option");
+-		return -1;
+-	}
+-	if (strchr(eal_get_hugefile_prefix(), '%') != NULL) {
+-		EAL_LOG(ERR, "Invalid char, '%%', in --"OPT_FILE_PREFIX" "
+-			"option");
+-		return -1;
+-	}
+-	if (internal_cfg->no_hugetlbfs && internal_cfg->force_numa == 1) {
+-		EAL_LOG(ERR, "Option --"OPT_SOCKET_MEM" cannot "
+-			"be specified together with --"OPT_NO_HUGE);
+-		return -1;
+-	}
+-	if (internal_cfg->no_hugetlbfs &&
+-			internal_cfg->hugepage_file.unlink_before_mapping &&
+-			!internal_cfg->in_memory) {
+-		EAL_LOG(ERR, "Option --"OPT_HUGE_UNLINK" cannot "
+-			"be specified together with --"OPT_NO_HUGE);
+-		return -1;
+-	}
+-	if (internal_cfg->no_hugetlbfs &&
+-			internal_cfg->huge_worker_stack_size != 0) {
+-		EAL_LOG(ERR, "Option --"OPT_HUGE_WORKER_STACK" cannot "
+-			"be specified together with --"OPT_NO_HUGE);
+-		return -1;
+-	}
+-	if (internal_conf->force_numa_limits && internal_conf->legacy_mem) {
+-		EAL_LOG(ERR, "Option --"OPT_NUMA_LIMIT
+-			" is only supported in non-legacy memory mode");
+-	}
+-	if (internal_cfg->single_file_segments &&
+-			internal_cfg->hugepage_file.unlink_before_mapping &&
+-			!internal_cfg->in_memory) {
+-		EAL_LOG(ERR, "Option --"OPT_SINGLE_FILE_SEGMENTS" is "
+-			"not compatible with --"OPT_HUGE_UNLINK);
+-		return -1;
+-	}
+-	if (!internal_cfg->hugepage_file.unlink_existing &&
+-			internal_cfg->in_memory) {
+-		EAL_LOG(ERR, "Option --"OPT_IN_MEMORY" is not compatible "
+-			"with --"OPT_HUGE_UNLINK"="HUGE_UNLINK_NEVER);
+-		return -1;
+-	}
+-	if (internal_cfg->legacy_mem &&
+-			internal_cfg->in_memory) {
+-		EAL_LOG(ERR, "Option --"OPT_LEGACY_MEM" is not compatible "
+-				"with --"OPT_IN_MEMORY);
+-		return -1;
+-	}
+-	if (internal_cfg->legacy_mem && internal_cfg->match_allocations) {
+-		EAL_LOG(ERR, "Option --"OPT_LEGACY_MEM" is not compatible "
+-				"with --"OPT_MATCH_ALLOCATIONS);
+-		return -1;
+-	}
+-	if (internal_cfg->no_hugetlbfs && internal_cfg->match_allocations) {
+-		EAL_LOG(ERR, "Option --"OPT_NO_HUGE" is not compatible "
+-				"with --"OPT_MATCH_ALLOCATIONS);
+-		return -1;
+-	}
+-	if (internal_cfg->legacy_mem && internal_cfg->memory == 0) {
+-		EAL_LOG(NOTICE, "Static memory layout is selected, "
+-			"amount of reserved memory can be adjusted with "
+-			"-m or --"OPT_NUMA_MEM);
+-	}
+-
+-	return 0;
 -}
+-
+ RTE_EXPORT_SYMBOL(rte_vect_get_max_simd_bitwidth)
+ uint16_t
+ rte_vect_get_max_simd_bitwidth(void)
 diff --git a/lib/eal/common/eal_options.h b/lib/eal/common/eal_options.h
-index 6ef45559f0..c4d2cc84dc 100644
+index c4d2cc84dc..e7431bb797 100644
 --- a/lib/eal/common/eal_options.h
 +++ b/lib/eal/common/eal_options.h
-@@ -115,18 +115,12 @@ enum {
- 	OPT_LONG_MAX_NUM
- };
+@@ -9,118 +9,11 @@
  
--extern const char eal_short_options[];
--extern const struct option eal_long_options[];
+ struct rte_tel_data;
+ 
+-enum {
+-	/* long options mapped to a short option */
+-#define OPT_HELP              "help"
+-	OPT_HELP_NUM            = 'h',
+-#define OPT_DEV_ALLOW	      "allow"
+-	OPT_DEV_ALLOW_NUM       = 'a',
+-#define OPT_DEV_BLOCK         "block"
+-	OPT_DEV_BLOCK_NUM      = 'b',
+-#define OPT_COREMASK          "coremask"
+-	OPT_COREMASK_NUM       = 'c',
+-#define OPT_DRIVER_PATH       "driver-path"
+-	OPT_DRIVER_PATH_NUM    = 'd',
+-#define OPT_LCORES            "lcores"
+-	OPT_LCORES_NUM         = 'l',
+-#define OPT_MEMORY_SIZE       "memory-size"
+-	OPT_MEMORY_SIZE_NUM    = 'm',
+-#define OPT_MEMORY_CHANNELS   "memory-channels"
+-	OPT_MEMORY_CHANNELS_NUM = 'n',
+-#define OPT_MEMORY_RANKS     "memory-ranks"
+-	OPT_MEMORY_RANKS_NUM   = 'r',
+-#define OPT_SERVICE_COREMASK  "service-coremask"
+-	OPT_SERVICE_COREMASK_NUM = 's',
+-#define OPT_SERVICE_CORELIST  "service-corelist"
+-	OPT_SERVICE_CORELIST_NUM = 'S',
+-#define OPT_VERSION           "version"
+-	OPT_VERSION_NUM        = 'v',
 -
--bool eal_option_is_log(int opt);
--int eal_parse_log_options(int argc, char * const argv[]);
--int eal_parse_common_option(int opt, const char *argv,
--			    struct internal_config *conf);
-+int eal_parse_log_options(void);
-+int eal_parse_args(void);
+-	/* first long only option value must be >= 256, so that we won't
+-	 * conflict with short options */
+-	OPT_LONG_MIN_NUM = 256,
+-#define OPT_BASE_VIRTADDR     "base-virtaddr"
+-	OPT_BASE_VIRTADDR_NUM,
+-#define OPT_CREATE_UIO_DEV    "create-uio-dev"
+-	OPT_CREATE_UIO_DEV_NUM,
+-#define OPT_FILE_PREFIX       "file-prefix"
+-	OPT_FILE_PREFIX_NUM,
+-#define OPT_HUGE_DIR          "huge-dir"
+-	OPT_HUGE_DIR_NUM,
+-#define OPT_HUGE_UNLINK       "huge-unlink"
+-	OPT_HUGE_UNLINK_NUM,
+-#define OPT_LOG_COLOR	      "log-color"
+-	OPT_LOG_COLOR_NUM,
+-#define OPT_LOG_LEVEL         "log-level"
+-	OPT_LOG_LEVEL_NUM,
+-#define OPT_LOG_TIMESTAMP     "log-timestamp"
+-	OPT_LOG_TIMESTAMP_NUM,
+-#define OPT_TRACE             "trace"
+-	OPT_TRACE_NUM,
+-#define OPT_TRACE_DIR         "trace-dir"
+-	OPT_TRACE_DIR_NUM,
+-#define OPT_TRACE_BUF_SIZE    "trace-bufsz"
+-	OPT_TRACE_BUF_SIZE_NUM,
+-#define OPT_TRACE_MODE        "trace-mode"
+-	OPT_TRACE_MODE_NUM,
+-#define OPT_MAIN_LCORE        "main-lcore"
+-	OPT_MAIN_LCORE_NUM,
+-#define OPT_MBUF_POOL_OPS_NAME "mbuf-pool-ops-name"
+-	OPT_MBUF_POOL_OPS_NAME_NUM,
+-#define OPT_PROC_TYPE         "proc-type"
+-	OPT_PROC_TYPE_NUM,
+-#define OPT_NO_HPET           "no-hpet"
+-	OPT_NO_HPET_NUM,
+-#define OPT_NO_HUGE           "no-huge"
+-	OPT_NO_HUGE_NUM,
+-#define OPT_NO_PCI            "no-pci"
+-	OPT_NO_PCI_NUM,
+-#define OPT_NO_SHCONF         "no-shconf"
+-	OPT_NO_SHCONF_NUM,
+-#define OPT_IN_MEMORY         "in-memory"
+-	OPT_IN_MEMORY_NUM,
+-#define OPT_SOCKET_MEM        "socket-mem"
+-#define OPT_NUMA_MEM          "numa-mem"
+-	OPT_NUMA_MEM_NUM,
+-#define OPT_SOCKET_LIMIT      "socket-limit"
+-#define OPT_NUMA_LIMIT        "numa-limit"
+-	OPT_NUMA_LIMIT_NUM,
+-#define OPT_SYSLOG            "syslog"
+-	OPT_SYSLOG_NUM,
+-#define OPT_VDEV              "vdev"
+-	OPT_VDEV_NUM,
+-#define OPT_VFIO_INTR         "vfio-intr"
+-	OPT_VFIO_INTR_NUM,
+-#define OPT_VFIO_VF_TOKEN     "vfio-vf-token"
+-	OPT_VFIO_VF_TOKEN_NUM,
+-#define OPT_VMWARE_TSC_MAP    "vmware-tsc-map"
+-	OPT_VMWARE_TSC_MAP_NUM,
+-#define OPT_LEGACY_MEM    "legacy-mem"
+-	OPT_LEGACY_MEM_NUM,
+-#define OPT_SINGLE_FILE_SEGMENTS    "single-file-segments"
+-	OPT_SINGLE_FILE_SEGMENTS_NUM,
+-#define OPT_IOVA_MODE          "iova-mode"
+-	OPT_IOVA_MODE_NUM,
+-#define OPT_MATCH_ALLOCATIONS  "match-allocations"
+-	OPT_MATCH_ALLOCATIONS_NUM,
+-#define OPT_TELEMETRY         "telemetry"
+-	OPT_TELEMETRY_NUM,
+-#define OPT_NO_TELEMETRY      "no-telemetry"
+-	OPT_NO_TELEMETRY_NUM,
+-#define OPT_FORCE_MAX_SIMD_BITWIDTH  "force-max-simd-bitwidth"
+-	OPT_FORCE_MAX_SIMD_BITWIDTH_NUM,
+-#define OPT_HUGE_WORKER_STACK  "huge-worker-stack"
+-	OPT_HUGE_WORKER_STACK_NUM,
+-
+-	OPT_LONG_MAX_NUM
+-};
+-
+ int eal_parse_log_options(void);
+ int eal_parse_args(void);
  int eal_option_device_parse(void);
  int eal_adjust_config(struct internal_config *internal_cfg);
  int eal_cleanup_config(struct internal_config *internal_cfg);
- int eal_check_common_options(struct internal_config *internal_cfg);
--void eal_common_usage(void);
+-int eal_check_common_options(struct internal_config *internal_cfg);
  enum rte_proc_type_t eal_proc_type_detect(void);
  int eal_plugins_init(void);
  int eal_save_args(int argc, char **argv);
-diff --git a/lib/eal/common/eal_private.h b/lib/eal/common/eal_private.h
-index 5846917cc5..ab8b37b956 100644
---- a/lib/eal/common/eal_private.h
-+++ b/lib/eal/common/eal_private.h
-@@ -72,6 +72,17 @@ struct rte_config {
-  */
- struct rte_config *rte_eal_get_configuration(void);
- 
-+/**
-+ * Put the argument list into a structure.
-+ *
-+ * This allows the arguments to then be processed out-of-order.
-+ *
-+ * @return
-+ *  - 0 on success
-+ * - Negative on error
-+ */
-+int eal_collate_args(int argc, char **argv);
-+
- /**
-  * Initialize the memzone subsystem (private to eal).
-  *
-diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
-index c1ab8d86d2..ee8bf92bff 100644
---- a/lib/eal/freebsd/eal.c
-+++ b/lib/eal/freebsd/eal.c
-@@ -160,7 +160,7 @@ rte_eal_config_create(void)
- 			cfg_len_aligned, PROT_READ | PROT_WRITE,
- 			MAP_SHARED | MAP_FIXED, mem_cfg_fd, 0);
- 	if (mapped_mem_cfg_addr == MAP_FAILED) {
--		EAL_LOG(ERR, "Cannot remap memory for rte_config");
-+		EAL_LOG(ERR, "Cannot remap memory for rte_config: %s", strerror(errno));
- 		munmap(rte_mem_cfg_addr, cfg_len);
- 		close(mem_cfg_fd);
- 		mem_cfg_fd = -1;
-@@ -245,11 +245,8 @@ rte_eal_config_reattach(void)
- 
+diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
+index f59cb43b0e..7b1d2794ec 100644
+--- a/lib/eal/linux/eal.c
++++ b/lib/eal/linux/eal.c
+@@ -329,9 +329,8 @@ rte_eal_config_reattach(void)
  	if (mem_config == MAP_FAILED || mem_config != rte_mem_cfg_addr) {
  		if (mem_config != MAP_FAILED) {
--			/* errno is stale, don't use */
+ 			/* errno is stale, don't use */
 -			EAL_LOG(ERR, "Cannot mmap memory for rte_config at [%p], got [%p]"
--					  " - please use '--" OPT_BASE_VIRTADDR
--					  "' option",
--				rte_mem_cfg_addr, mem_config);
+-				" - please use '--" OPT_BASE_VIRTADDR
+-				"' option", rte_mem_cfg_addr, mem_config);
 +			EAL_LOG(ERR, "Cannot mmap memory for rte_config at [%p], got [%p] - please use '--base-virtaddr' option",
-+					rte_mem_cfg_addr, mem_config);
++				 rte_mem_cfg_addr, mem_config);
  			munmap(mem_config, sizeof(struct rte_mem_config));
  			return -1;
  		}
-@@ -332,21 +329,6 @@ rte_config_init(void)
- 	return 0;
- }
- 
--/* display usage */
--static void
--eal_usage(const char *prgname)
--{
--	rte_usage_hook_t hook = eal_get_application_usage_hook();
--
--	printf("\nUsage: %s ", prgname);
--	eal_common_usage();
--	/* Allow the application to print its usage message too if hook is set */
--	if (hook) {
--		printf("===== Application Usage =====\n\n");
--		(hook)(prgname);
--	}
--}
--
- static inline size_t
- eal_get_hugepage_mem_size(void)
- {
-@@ -367,123 +349,6 @@ eal_get_hugepage_mem_size(void)
- 	return (size < SIZE_MAX) ? (size_t)(size) : SIZE_MAX;
- }
- 
--/* Parse the argument given in the command line of the application */
--static int
--eal_parse_args(int argc, char **argv)
--{
--	int opt, ret;
--	char **argvopt;
--	int option_index;
--	char *prgname = argv[0];
--	const int old_optind = optind;
--	const int old_optopt = optopt;
--	const int old_optreset = optreset;
--	char * const old_optarg = optarg;
--	struct internal_config *internal_conf =
--		eal_get_internal_configuration();
--
--	argvopt = argv;
--	optind = 1;
--	optreset = 1;
--
--	while ((opt = getopt_long(argc, argvopt, eal_short_options,
--				  eal_long_options, &option_index)) != EOF) {
--
--		/* getopt didn't recognise the option */
--		if (opt == '?') {
--			eal_usage(prgname);
--			ret = -1;
--			goto out;
--		}
--
--		/* eal_parse_log_options() already handled this option */
--		if (eal_option_is_log(opt))
--			continue;
--
--		ret = eal_parse_common_option(opt, optarg, internal_conf);
--		/* common parser is not happy */
--		if (ret < 0) {
--			eal_usage(prgname);
--			ret = -1;
--			goto out;
--		}
--		/* common parser handled this option */
--		if (ret == 0)
--			continue;
--
--		switch (opt) {
--		case OPT_MBUF_POOL_OPS_NAME_NUM:
--		{
--			char *ops_name = strdup(optarg);
--			if (ops_name == NULL)
--				EAL_LOG(ERR, "Could not store mbuf pool ops name");
--			else {
--				/* free old ops name */
--				free(internal_conf->user_mbuf_pool_ops_name);
--
--				internal_conf->user_mbuf_pool_ops_name =
--						ops_name;
--			}
--			break;
--		}
--		case OPT_HELP_NUM:
--			eal_usage(prgname);
--			exit(EXIT_SUCCESS);
--		default:
--			if (opt < OPT_LONG_MIN_NUM && isprint(opt)) {
--				EAL_LOG(ERR, "Option %c is not supported "
--					"on FreeBSD", opt);
--			} else if (opt >= OPT_LONG_MIN_NUM &&
--				   opt < OPT_LONG_MAX_NUM) {
--				EAL_LOG(ERR, "Option %s is not supported "
--					"on FreeBSD",
--					eal_long_options[option_index].name);
--			} else {
--				EAL_LOG(ERR, "Option %d is not supported "
--					"on FreeBSD", opt);
--			}
--			eal_usage(prgname);
--			ret = -1;
--			goto out;
--		}
--	}
--
--	/* create runtime data directory. In no_shconf mode, skip any errors */
--	if (eal_create_runtime_dir() < 0) {
--		if (internal_conf->no_shconf == 0) {
--			EAL_LOG(ERR, "Cannot create runtime directory");
--			ret = -1;
--			goto out;
--		} else
--			EAL_LOG(WARNING, "No DPDK runtime directory created");
--	}
--
--	if (eal_adjust_config(internal_conf) != 0) {
--		ret = -1;
--		goto out;
--	}
--
--	/* sanity checks */
--	if (eal_check_common_options(internal_conf) != 0) {
--		eal_usage(prgname);
--		ret = -1;
--		goto out;
--	}
--
--	if (optind >= 0)
--		argv[optind-1] = prgname;
--	ret = optind-1;
--
--out:
--	/* restore getopt lib */
--	optind = old_optind;
--	optopt = old_optopt;
--	optreset = old_optreset;
--	optarg = old_optarg;
--
--	return ret;
--}
--
- static int
- check_socket(const struct rte_memseg_list *msl, void *arg)
- {
-@@ -553,8 +418,18 @@ rte_eal_init(int argc, char **argv)
- 	bool has_phys_addr;
- 	enum rte_iova_mode iova_mode;
- 
-+	/* Save and collate args at the top */
-+	eal_save_args(argc, argv);
-+
-+	fctret = eal_collate_args(argc, argv);
-+	if (fctret < 0) {
-+		rte_eal_init_alert("invalid command-line arguments.");
-+		rte_errno = EINVAL;
-+		return -1;
-+	}
-+
- 	/* setup log as early as possible */
--	if (eal_parse_log_options(argc, argv) < 0) {
-+	if (eal_parse_log_options() < 0) {
- 		rte_eal_init_alert("invalid log arguments.");
- 		rte_errno = EINVAL;
- 		return -1;
-@@ -585,18 +460,14 @@ rte_eal_init(int argc, char **argv)
- 
- 	eal_reset_internal_config(internal_conf);
- 
--	/* clone argv to report out later in telemetry */
--	eal_save_args(argc, argv);
--
- 	if (rte_eal_cpu_init() < 0) {
- 		rte_eal_init_alert("Cannot detect lcores.");
- 		rte_errno = ENOTSUP;
- 		return -1;
+diff --git a/lib/eal/linux/eal_memory.c b/lib/eal/linux/eal_memory.c
+index e433c1afee..a366083822 100644
+--- a/lib/eal/linux/eal_memory.c
++++ b/lib/eal/linux/eal_memory.c
+@@ -1967,7 +1967,7 @@ rte_eal_memseg_init(void)
+ 	if (!internal_conf->legacy_mem && rte_socket_count() > 1) {
+ 		EAL_LOG(WARNING, "DPDK is running on a NUMA system, but is compiled without NUMA support.");
+ 		EAL_LOG(WARNING, "This will have adverse consequences for performance and usability.");
+-		EAL_LOG(WARNING, "Please use --"OPT_LEGACY_MEM" option, or recompile with NUMA support.");
++		EAL_LOG(WARNING, "Please use --legacy-mem option, or recompile with NUMA support.");
  	}
+ #endif
  
--	fctret = eal_parse_args(argc, argv);
--	if (fctret < 0) {
--		rte_eal_init_alert("Invalid 'command line' arguments.");
-+	if (eal_parse_args() < 0) {
-+		rte_eal_init_alert("Error parsing command-line arguments.");
- 		rte_errno = EINVAL;
- 		rte_atomic_store_explicit(&run_once, 0, rte_memory_order_relaxed);
- 		return -1;
-@@ -605,8 +476,7 @@ rte_eal_init(int argc, char **argv)
- 	/* FreeBSD always uses legacy memory model */
- 	internal_conf->legacy_mem = true;
- 	if (internal_conf->in_memory) {
--		EAL_LOG(WARNING, "Warning: ignoring unsupported flag, '%s'",
--			OPT_IN_MEMORY);
-+		EAL_LOG(WARNING, "Warning: ignoring unsupported flag, '--in-memory'");
- 		internal_conf->in_memory = false;
- 	}
- 
-diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
-index 52efb8626b..f59cb43b0e 100644
---- a/lib/eal/linux/eal.c
-+++ b/lib/eal/linux/eal.c
-@@ -59,9 +59,6 @@
- #include "log_internal.h"
- 
- #define MEMSIZE_IF_NO_HUGE_PAGE (64ULL * 1024ULL * 1024ULL)
--
--#define SOCKET_MEM_STRLEN (RTE_MAX_NUMA_NODES * 10)
--
- #define KERNEL_IOMMU_GROUPS_PATH "/sys/kernel/iommu_groups"
- 
- /* define fd variable here, because file needs to be kept open for the
-@@ -438,362 +435,6 @@ eal_hugedirs_unlock(void)
- 	}
- }
- 
--/* display usage */
--static void
--eal_usage(const char *prgname)
--{
--	rte_usage_hook_t hook = eal_get_application_usage_hook();
--
--	printf("\nUsage: %s ", prgname);
--	eal_common_usage();
--	printf("EAL Linux options:\n"
--	       "  --"OPT_NUMA_MEM"        Memory to allocate on NUMA nodes (comma separated values)\n"
--	       "  --"OPT_NUMA_LIMIT"      Limit memory allocation on NUMA nodes (comma separated values)\n"
--	       "  --"OPT_HUGE_DIR"          Directory where hugetlbfs is mounted\n"
--	       "  --"OPT_FILE_PREFIX"       Prefix for hugepage filenames\n"
--	       "  --"OPT_CREATE_UIO_DEV"    Create /dev/uioX (usually done by hotplug)\n"
--	       "  --"OPT_VFIO_INTR"         Interrupt mode for VFIO (legacy|msi|msix)\n"
--	       "  --"OPT_VFIO_VF_TOKEN"     VF token (UUID) shared between SR-IOV PF and VFs\n"
--	       "  --"OPT_LEGACY_MEM"        Legacy memory mode (no dynamic allocation, contiguous segments)\n"
--	       "  --"OPT_SINGLE_FILE_SEGMENTS" Put all hugepage memory in single files\n"
--	       "  --"OPT_MATCH_ALLOCATIONS" Free hugepages exactly as allocated\n"
--	       "  --"OPT_HUGE_WORKER_STACK"[=size]\n"
--	       "                      Allocate worker thread stacks from hugepage memory.\n"
--	       "                      Size is in units of kbytes and defaults to system\n"
--	       "                      thread stack size if not specified.\n"
--	       "\n");
--	/* Allow the application to print its usage message too if hook is set */
--	if (hook) {
--		printf("===== Application Usage =====\n\n");
--		(hook)(prgname);
--	}
--}
--
--static int
--eal_parse_socket_arg(char *strval, volatile uint64_t *socket_arg)
--{
--	char * arg[RTE_MAX_NUMA_NODES];
--	char *end;
--	int arg_num, i, len;
--
--	len = strnlen(strval, SOCKET_MEM_STRLEN);
--	if (len == SOCKET_MEM_STRLEN) {
--		EAL_LOG(ERR, "--socket-mem is too long");
--		return -1;
--	}
--
--	/* all other error cases will be caught later */
--	if (!isdigit(strval[len-1]))
--		return -1;
--
--	/* split the optarg into separate socket values */
--	arg_num = rte_strsplit(strval, len,
--			arg, RTE_MAX_NUMA_NODES, ',');
--
--	/* if split failed, or 0 arguments */
--	if (arg_num <= 0)
--		return -1;
--
--	/* parse each defined socket option */
--	errno = 0;
--	for (i = 0; i < arg_num; i++) {
--		uint64_t val;
--		end = NULL;
--		val = strtoull(arg[i], &end, 10);
--
--		/* check for invalid input */
--		if ((errno != 0)  ||
--				(arg[i][0] == '\0') || (end == NULL) || (*end != '\0'))
--			return -1;
--		val <<= 20;
--		socket_arg[i] = val;
--	}
--
--	return 0;
--}
--
--static int
--eal_parse_vfio_intr(const char *mode)
--{
--	struct internal_config *internal_conf =
--		eal_get_internal_configuration();
--	unsigned i;
--	static struct {
--		const char *name;
--		enum rte_intr_mode value;
--	} map[] = {
--		{ "legacy", RTE_INTR_MODE_LEGACY },
--		{ "msi", RTE_INTR_MODE_MSI },
--		{ "msix", RTE_INTR_MODE_MSIX },
--	};
--
--	for (i = 0; i < RTE_DIM(map); i++) {
--		if (!strcmp(mode, map[i].name)) {
--			internal_conf->vfio_intr_mode = map[i].value;
--			return 0;
--		}
--	}
--	return -1;
--}
--
--static int
--eal_parse_vfio_vf_token(const char *vf_token)
--{
--	struct internal_config *cfg = eal_get_internal_configuration();
--	rte_uuid_t uuid;
--
--	if (!rte_uuid_parse(vf_token, uuid)) {
--		rte_uuid_copy(cfg->vfio_vf_token, uuid);
--		return 0;
--	}
--
--	return -1;
--}
--
--static int
--eal_parse_huge_worker_stack(const char *arg)
--{
--	struct internal_config *cfg = eal_get_internal_configuration();
--
--	if (arg == NULL || arg[0] == '\0') {
--		pthread_attr_t attr;
--		int ret;
--
--		if (pthread_attr_init(&attr) != 0) {
--			EAL_LOG(ERR, "Could not retrieve default stack size");
--			return -1;
--		}
--		ret = pthread_attr_getstacksize(&attr, &cfg->huge_worker_stack_size);
--		pthread_attr_destroy(&attr);
--		if (ret != 0) {
--			EAL_LOG(ERR, "Could not retrieve default stack size");
--			return -1;
--		}
--	} else {
--		unsigned long stack_size;
--		char *end;
--
--		errno = 0;
--		stack_size = strtoul(arg, &end, 10);
--		if (errno || end == NULL || stack_size == 0 ||
--				stack_size >= (size_t)-1 / 1024)
--			return -1;
--
--		cfg->huge_worker_stack_size = stack_size * 1024;
--	}
--
--	EAL_LOG(DEBUG, "Each worker thread will use %zu kB of DPDK memory as stack",
--		cfg->huge_worker_stack_size / 1024);
--	return 0;
--}
--
--/* Parse the argument given in the command line of the application */
--static int
--eal_parse_args(int argc, char **argv)
--{
--	int opt, ret;
--	char **argvopt;
--	int option_index;
--	char *prgname = argv[0];
--	const int old_optind = optind;
--	const int old_optopt = optopt;
--	char * const old_optarg = optarg;
--	struct internal_config *internal_conf =
--		eal_get_internal_configuration();
--
--	argvopt = argv;
--	optind = 1;
--
--	while ((opt = getopt_long(argc, argvopt, eal_short_options,
--				  eal_long_options, &option_index)) != EOF) {
--
--		/* getopt didn't recognise the option */
--		if (opt == '?') {
--			eal_usage(prgname);
--			ret = -1;
--			goto out;
--		}
--
--		/* eal_parse_log_options() already handled this option */
--		if (eal_option_is_log(opt))
--			continue;
--
--		ret = eal_parse_common_option(opt, optarg, internal_conf);
--		/* common parser is not happy */
--		if (ret < 0) {
--			eal_usage(prgname);
--			ret = -1;
--			goto out;
--		}
--		/* common parser handled this option */
--		if (ret == 0)
--			continue;
--
--		switch (opt) {
--		case OPT_HELP_NUM:
--			eal_usage(prgname);
--			exit(EXIT_SUCCESS);
--
--		case OPT_HUGE_DIR_NUM:
--		{
--			char *hdir = strdup(optarg);
--			if (hdir == NULL)
--				EAL_LOG(ERR, "Could not store hugepage directory");
--			else {
--				/* free old hugepage dir */
--				free(internal_conf->hugepage_dir);
--				internal_conf->hugepage_dir = hdir;
--			}
--			break;
--		}
--		case OPT_FILE_PREFIX_NUM:
--		{
--			char *prefix = strdup(optarg);
--			if (prefix == NULL)
--				EAL_LOG(ERR, "Could not store file prefix");
--			else {
--				/* free old prefix */
--				free(internal_conf->hugefile_prefix);
--				internal_conf->hugefile_prefix = prefix;
--			}
--			break;
--		}
--		case OPT_NUMA_MEM_NUM:
--			if (eal_parse_socket_arg(optarg,
--					internal_conf->numa_mem) < 0) {
--				EAL_LOG(ERR, "invalid parameters for --"
--						OPT_NUMA_MEM
--						" (aka --"
--						OPT_SOCKET_MEM
--						")");
--				eal_usage(prgname);
--				ret = -1;
--				goto out;
--			}
--			internal_conf->force_numa = 1;
--			break;
--
--		case OPT_NUMA_LIMIT_NUM:
--			if (eal_parse_socket_arg(optarg,
--					internal_conf->numa_limit) < 0) {
--				EAL_LOG(ERR, "invalid parameters for --"
--						OPT_NUMA_LIMIT
--						" (aka --"
--						OPT_SOCKET_LIMIT
--						")");
--				eal_usage(prgname);
--				ret = -1;
--				goto out;
--			}
--			internal_conf->force_numa_limits = 1;
--			break;
--
--		case OPT_VFIO_INTR_NUM:
--			if (eal_parse_vfio_intr(optarg) < 0) {
--				EAL_LOG(ERR, "invalid parameters for --"
--						OPT_VFIO_INTR);
--				eal_usage(prgname);
--				ret = -1;
--				goto out;
--			}
--			break;
--
--		case OPT_VFIO_VF_TOKEN_NUM:
--			if (eal_parse_vfio_vf_token(optarg) < 0) {
--				EAL_LOG(ERR, "invalid parameters for --"
--						OPT_VFIO_VF_TOKEN);
--				eal_usage(prgname);
--				ret = -1;
--				goto out;
--			}
--			break;
--
--		case OPT_CREATE_UIO_DEV_NUM:
--			internal_conf->create_uio_dev = 1;
--			break;
--
--		case OPT_MBUF_POOL_OPS_NAME_NUM:
--		{
--			char *ops_name = strdup(optarg);
--			if (ops_name == NULL)
--				EAL_LOG(ERR, "Could not store mbuf pool ops name");
--			else {
--				/* free old ops name */
--				free(internal_conf->user_mbuf_pool_ops_name);
--
--				internal_conf->user_mbuf_pool_ops_name =
--						ops_name;
--			}
--			break;
--		}
--		case OPT_MATCH_ALLOCATIONS_NUM:
--			internal_conf->match_allocations = 1;
--			break;
--
--		case OPT_HUGE_WORKER_STACK_NUM:
--			if (eal_parse_huge_worker_stack(optarg) < 0) {
--				EAL_LOG(ERR, "invalid parameter for --"
--					OPT_HUGE_WORKER_STACK);
--				eal_usage(prgname);
--				ret = -1;
--				goto out;
--			}
--			break;
--
--		default:
--			if (opt < OPT_LONG_MIN_NUM && isprint(opt)) {
--				EAL_LOG(ERR, "Option %c is not supported "
--					"on Linux", opt);
--			} else if (opt >= OPT_LONG_MIN_NUM &&
--				   opt < OPT_LONG_MAX_NUM) {
--				EAL_LOG(ERR, "Option %s is not supported "
--					"on Linux",
--					eal_long_options[option_index].name);
--			} else {
--				EAL_LOG(ERR, "Option %d is not supported "
--					"on Linux", opt);
--			}
--			eal_usage(prgname);
--			ret = -1;
--			goto out;
--		}
--	}
--
--	/* create runtime data directory. In no_shconf mode, skip any errors */
--	if (eal_create_runtime_dir() < 0) {
--		if (internal_conf->no_shconf == 0) {
--			EAL_LOG(ERR, "Cannot create runtime directory");
--			ret = -1;
--			goto out;
--		} else
--			EAL_LOG(WARNING, "No DPDK runtime directory created");
--	}
--
--	if (eal_adjust_config(internal_conf) != 0) {
--		ret = -1;
--		goto out;
--	}
--
--	/* sanity checks */
--	if (eal_check_common_options(internal_conf) != 0) {
--		eal_usage(prgname);
--		ret = -1;
--		goto out;
--	}
--
--	if (optind >= 0)
--		argv[optind-1] = prgname;
--	ret = optind-1;
--
--out:
--	/* restore getopt lib */
--	optind = old_optind;
--	optopt = old_optopt;
--	optarg = old_optarg;
--
--	return ret;
--}
--
- static int
- check_socket(const struct rte_memseg_list *msl, void *arg)
- {
-@@ -938,8 +579,18 @@ rte_eal_init(int argc, char **argv)
- 	struct internal_config *internal_conf =
- 		eal_get_internal_configuration();
- 
-+	/* clone argv to report out later in telemetry */
-+	eal_save_args(argc, argv);
-+
-+	fctret = eal_collate_args(argc, argv);
-+	if (fctret < 0) {
-+		rte_eal_init_alert("Invalid command line arguments.");
-+		rte_errno = EINVAL;
-+		return -1;
-+	}
-+
- 	/* setup log as early as possible */
--	if (eal_parse_log_options(argc, argv) < 0) {
-+	if (eal_parse_log_options() < 0) {
- 		rte_eal_init_alert("invalid log arguments.");
- 		rte_errno = EINVAL;
- 		return -1;
-@@ -970,18 +621,14 @@ rte_eal_init(int argc, char **argv)
- 
- 	eal_reset_internal_config(internal_conf);
- 
--	/* clone argv to report out later in telemetry */
--	eal_save_args(argc, argv);
--
- 	if (rte_eal_cpu_init() < 0) {
- 		rte_eal_init_alert("Cannot detect lcores.");
- 		rte_errno = ENOTSUP;
- 		return -1;
- 	}
- 
--	fctret = eal_parse_args(argc, argv);
--	if (fctret < 0) {
--		rte_eal_init_alert("Invalid 'command line' arguments.");
-+	if (eal_parse_args() < 0) {
-+		rte_eal_init_alert("Invalid command line arguments.");
- 		rte_errno = EINVAL;
- 		rte_atomic_store_explicit(&run_once, 0, rte_memory_order_relaxed);
- 		return -1;
-diff --git a/lib/eal/windows/eal.c b/lib/eal/windows/eal.c
-index 4f0a164d9b..14547d5ac9 100644
---- a/lib/eal/windows/eal.c
-+++ b/lib/eal/windows/eal.c
-@@ -82,99 +82,6 @@ rte_mp_disable(void)
- 	return true;
- }
- 
--/* display usage */
--static void
--eal_usage(const char *prgname)
--{
--	rte_usage_hook_t hook = eal_get_application_usage_hook();
--
--	printf("\nUsage: %s ", prgname);
--	eal_common_usage();
--	/* Allow the application to print its usage message too
--	 * if hook is set
--	 */
--	if (hook) {
--		printf("===== Application Usage =====\n\n");
--		(hook)(prgname);
--	}
--}
--
--/* Parse the argument given in the command line of the application */
--static int
--eal_parse_args(int argc, char **argv)
--{
--	int opt, ret;
--	char **argvopt;
--	int option_index;
--	char *prgname = argv[0];
--	struct internal_config *internal_conf =
--		eal_get_internal_configuration();
--
--	argvopt = argv;
--
--	while ((opt = getopt_long(argc, argvopt, eal_short_options,
--		eal_long_options, &option_index)) != EOF) {
--
--		int ret;
--
--		/* getopt is not happy, stop right now */
--		if (opt == '?') {
--			eal_usage(prgname);
--			return -1;
--		}
--
--		/* eal_parse_log_options() already handled this option */
--		if (eal_option_is_log(opt))
--			continue;
--
--		ret = eal_parse_common_option(opt, optarg, internal_conf);
--		/* common parser is not happy */
--		if (ret < 0) {
--			eal_usage(prgname);
--			return -1;
--		}
--		/* common parser handled this option */
--		if (ret == 0)
--			continue;
--
--		switch (opt) {
--		case OPT_HELP_NUM:
--			eal_usage(prgname);
--			exit(EXIT_SUCCESS);
--		default:
--			if (opt < OPT_LONG_MIN_NUM && isprint(opt)) {
--				EAL_LOG(ERR, "Option %c is not supported "
--					"on Windows", opt);
--			} else if (opt >= OPT_LONG_MIN_NUM &&
--				opt < OPT_LONG_MAX_NUM) {
--				EAL_LOG(ERR, "Option %s is not supported "
--					"on Windows",
--					eal_long_options[option_index].name);
--			} else {
--				EAL_LOG(ERR, "Option %d is not supported "
--					"on Windows", opt);
--			}
--			eal_usage(prgname);
--			return -1;
--		}
--	}
--
--	if (eal_adjust_config(internal_conf) != 0)
--		return -1;
--
--	/* sanity checks */
--	if (eal_check_common_options(internal_conf) != 0) {
--		eal_usage(prgname);
--		return -1;
--	}
--
--	if (optind >= 0)
--		argv[optind - 1] = prgname;
--	ret = optind - 1;
--	optind = 0; /* reset getopt lib */
--	return ret;
--}
--
- static int
- sync_func(void *arg __rte_unused)
- {
-@@ -260,8 +167,18 @@ rte_eal_init(int argc, char **argv)
- 	char cpuset[RTE_CPU_AFFINITY_STR_LEN];
- 	char thread_name[RTE_THREAD_NAME_SIZE];
- 
-+	/* clone argv to report out later in telemetry */
-+	eal_save_args(argc, argv);
-+
-+	fctret = eal_collate_args(argc, argv);
-+	if (fctret < 0) {
-+		rte_eal_init_alert("Invalid command line arguments.");
-+		rte_errno = EINVAL;
-+		return -1;
-+	}
-+
- 	/* setup log as early as possible */
--	if (eal_parse_log_options(argc, argv) < 0) {
-+	if (eal_parse_log_options() < 0) {
- 		rte_eal_init_alert("invalid log arguments.");
- 		rte_errno = EINVAL;
- 		return -1;
-@@ -288,9 +205,11 @@ rte_eal_init(int argc, char **argv)
- 		return -1;
- 	}
- 
--	fctret = eal_parse_args(argc, argv);
--	if (fctret < 0)
--		exit(1);
-+	if (eal_parse_args() < 0) {
-+		rte_eal_init_alert("Invalid command line arguments.");
-+		rte_errno = EINVAL;
-+		return -1;
-+	}
- 
- 	if (eal_option_device_parse()) {
- 		rte_errno = ENODEV;
 -- 
 2.48.1
 
