@@ -2,159 +2,97 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D01C83F09
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Jul 2025 19:44:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1794DC8303C
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Jul 2025 21:03:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0DE0640649;
-	Tue,  8 Jul 2025 21:44:17 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 1961140292
- for <dev@dpdk.org>; Tue,  8 Jul 2025 21:44:15 +0200 (CEST)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 568EMr3j030735;
- Tue, 8 Jul 2025 12:44:15 -0700
-Received: from nam02-sn1-obe.outbound.protection.outlook.com
- (mail-sn1nam02on2135.outbound.protection.outlook.com [40.107.96.135])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 47s51t0qy1-1
+	by mails.dpdk.org (Postfix) with ESMTP id C12A740649;
+	Tue,  8 Jul 2025 23:03:00 +0200 (CEST)
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com
+ [205.220.168.131])
+ by mails.dpdk.org (Postfix) with ESMTP id C301D40292
+ for <dev@dpdk.org>; Tue,  8 Jul 2025 23:02:58 +0200 (CEST)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+ by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 568ITYK6030383;
+ Tue, 8 Jul 2025 21:02:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+ cc:content-transfer-encoding:date:from:in-reply-to:message-id
+ :mime-version:references:subject:to; s=qcppdkim1; bh=FbbKXRs2PWr
+ PcsARfFfJ5mxPwPrLpoqxGcBtowrdqOM=; b=Q3rvlL50GqbtlW3qNsQVl2XIZ3/
+ tr9HWI+FhXdsk1BhOvxEm/D0f8A91t7fy0Si0vcJpGvr19+I9TOff4Zz45YdDSg7
+ RVw8GFpJEf4Z17PSXUBTNabf5Ffh8MQ2hg4rcDr8TxcpPoMFVAk5ZEovJNQ+llE6
+ tcN7RDxbxb2O68MGQeIAef+UpyxZrPhQRaJRHgnYsqFoUr3k8dRrvZUAZHnGxzvf
+ EPhqfm9Fx+yrebVaLy/rpEpLd7s6wllqRRchN8rXCq6Pb1wkPHvxeXJtvpFriiag
+ TLvmXUZnZ3fVAldHjNDOvaJg9Ll1gTBiPOGusBfiPrkCi70IpbMifzW86yw==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com
+ [199.106.103.254])
+ by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47r9b0ye2r-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Tue, 08 Jul 2025 12:44:14 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UIEgDkswFiQnOt/LjCqZFn6bLQJJ4Hm5++QBEd8nCGtxtuzP7XdyQ4/4MATHFV+6ytPT15rPakab+ba4r9wI9zJtIFfzXIyEQMyDUW20pFOjrTBqsY6rfjdozfAAFHzhFwuhXBUpG1HnxAsEIhn81Wb6LA6u8U+rQomB1Ljg5Fz1W2v2iIikOAnFgN4gnXHtTGVDf14iDqFV1eLtCgf+IIYY/y+OLes0pOZYUJt2RWPgh/xcSTi2gSOk2nFBVd3mWMii4BEjfOwgQKir9uYvXLMAr2tOdE9syfP4yt0SuIhplm0u/eLDZIB2OYlR+IeLhQZfFqvj0oS2sua1O80Juw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tomFQttrmaA3+uCcbCmn5Dr+hDIO36YB9xG5ngDeblo=;
- b=NtoVEa3Bogw37o9NZDgkaTTajK6PghHBcqG8YB13v9LPK16UD4IYyoFDsaqNei0r310v2LZvlN9oNWFaSPwImIQvLhfTHSMO/TIdp5wGXF9Hx5C0+kz1H7XTBdin/Hzb25ncmB7ISVkcyU80I06nNex8prmwCumLFGNtUNwYLynquy7eVrz8+2aPkvrJ684vX5qlHh4sJ/KUvPPsJ3rAJn0CVyboTR1483XAVumiCAbCsvTtSgvjD0vCtU/hMxK0qQn99rP6qXhSJLt33jIIpCTlii619HldNXbsFP6gpQvWpmN92u0pUyN/fMeSDGtASEHwWZ9SRVxS70MMDhAajA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tomFQttrmaA3+uCcbCmn5Dr+hDIO36YB9xG5ngDeblo=;
- b=Cd+0KakcYSIp+9sCCvmifwd7F+KWG6zT8du6tbvLjz8Cpy080dbxvtVJaDjYDkbA/0S60itF0BLKeqwZx2JJ9K9EdurvgSmFzOJxIA5IsaBSpAvIFWwm/37VJUHNlF+5Qe9YZQM7ypcMkQdo85t5zpQDQa8DbHOK3mQNPe7mS94=
-Received: from CO6PR18MB4484.namprd18.prod.outlook.com (2603:10b6:5:359::9) by
- BL1PR18MB4120.namprd18.prod.outlook.com (2603:10b6:208:30a::9) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8901.27; Tue, 8 Jul 2025 19:44:11 +0000
-Received: from CO6PR18MB4484.namprd18.prod.outlook.com
- ([fe80::3c98:dd36:4897:a51d]) by CO6PR18MB4484.namprd18.prod.outlook.com
- ([fe80::3c98:dd36:4897:a51d%7]) with mapi id 15.20.8901.024; Tue, 8 Jul 2025
- 19:44:11 +0000
-From: Akhil Goyal <gakhil@marvell.com>
-To: "Rajesh Mudimadugula [C]" <rmudimadugul@marvell.com>, "dev@dpdk.org"
- <dev@dpdk.org>
-CC: "jianjay.zhou@huawei.com" <jianjay.zhou@huawei.com>, "Rajesh Mudimadugula
- [C]" <rmudimadugul@marvell.com>
-Subject: RE: [PATCH] crypto/virtio: fix virtio desc flags virtq info
-Thread-Topic: [PATCH] crypto/virtio: fix virtio desc flags virtq info
-Thread-Index: AQHb5ntT7tRuBnQ+tU6kyfzi++857LQotDzQ
-Date: Tue, 8 Jul 2025 19:44:11 +0000
-Message-ID: <CO6PR18MB448422F77F6E9DF1FA2F7D9FD84EA@CO6PR18MB4484.namprd18.prod.outlook.com>
-References: <20250626091842.159016-1-rmudimadugul@marvell.com>
-In-Reply-To: <20250626091842.159016-1-rmudimadugul@marvell.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CO6PR18MB4484:EE_|BL1PR18MB4120:EE_
-x-ms-office365-filtering-correlation-id: 66fd510b-cab5-4877-1410-08ddbe57cfb3
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|1800799024|366016|376014|7053199007|38070700018; 
-x-microsoft-antispam-message-info: =?us-ascii?Q?9CXGfs1XYMr4UJZuppuFu7NOaKpnRdTLOE9kj3eHle8dVFhxAerI4caPOpoy?=
- =?us-ascii?Q?+DL3Gii/DQfegzsbgwsLlu77VrAk1OvAG1kViCqjMo/sv3AOxpPFdrcp0Bny?=
- =?us-ascii?Q?XB1tFnIU72Cm4fcioidYHuJ2g39oJZJuEDepWRT6P+G959DW4gN8GSXjAJv3?=
- =?us-ascii?Q?h210kHlifxQBRJm4lobKUbtirTPzCpdI39/v1Yri6c9i9bk3LP74p3AYjMXX?=
- =?us-ascii?Q?WrfrdVM9JUzF3D6SHb5SZR7CfXjt56EQ9vtedLe3IySEIGCLPPwO1v9FYf3j?=
- =?us-ascii?Q?5agDl5CUe2Zs6S5zAUdLCJWce/u7hxbDScC6VEpl7pOg1yUucIcIe+8M/dNY?=
- =?us-ascii?Q?L/3ScX7M06PNnhTPcyCpZeSyHDkkgh2yUJpj/XIcuBErDt6YvZjL9PdPm6X9?=
- =?us-ascii?Q?hmuAizaOzKXCSOA51iWtZBOdr3n/lO+Sw4SXfZ2qZFM2cBozWo8Ugoth7391?=
- =?us-ascii?Q?hhZ2p5W20p/u0pIZRfuMeWwHUaj+K9UXAylWLMFTjBnwlU+YqR5UhnF1afgT?=
- =?us-ascii?Q?B1i+KEfgxEwRPn4KNedHCHn1FK/Tt1uRWhUVoWfuhwveUxydeFMUL9XIkkdK?=
- =?us-ascii?Q?GAnOBgJ0h73X4vieQshfWYAh2WVLu+PuUC0R2rJAg0AYftvt6VF7Vzz7+O6Z?=
- =?us-ascii?Q?7Pp4DpW8jCF5rqM6WTN+PTTjgCHCsM8DYkXyTLy6OlxW0iX6AuqByYzm2bLE?=
- =?us-ascii?Q?Ddwc1vUfbHUS8ElMQ7cKtMhnY7EDLnztuQVeOV5RnlRfOrqdyIF55jqpNhqV?=
- =?us-ascii?Q?QK2ghnjPiw2y6rmPWKHDHtzxWUZsQuCtBczRE7YgDeUsW+9DEv1criHRqplM?=
- =?us-ascii?Q?I/qvXfNBsW1mc++XDdk66hjZwV8VGWjGLM1hX1ivE7xo0+rWlMLcSSUypBef?=
- =?us-ascii?Q?U5/mA81+zmMJra1zRkP9w/1SDnSpfrYyOHZgARpDfcykQonOHhlRKI3xx5p6?=
- =?us-ascii?Q?5a+UxNme/rMp2pTuPk/wLDwciyASH+/mZ89uzxaJHBJz/cG7f2VLPw7v6jDL?=
- =?us-ascii?Q?AJdtjiSarrz+Db3C8TOy+6qYKUCryXcl1DC6KIJmnL707vB4Gcy25l6cjpnp?=
- =?us-ascii?Q?1EmAezBYVDJ8U38eumzBjmZpvm2+ptT3mvsTSYw01ju0F6ICnPZK0X4k46IF?=
- =?us-ascii?Q?A3rTFYH/oG8XBSvJAHDsF91FNYAV2HU5EfjLQmd8pVfItVcArfBqdX8w82FE?=
- =?us-ascii?Q?gXr5fKAcOahlvjcp2C+MVmZ4X4+xMWI3bFZhkiWeROAt3cVbcMsbA0UWWe0D?=
- =?us-ascii?Q?BVSHq6WZZhZIIDtTbC0XqKlLNoRiqNfnP/qh9friOf7p3l6uduvGxFU/1bYR?=
- =?us-ascii?Q?BesIWdSr35RvOJ2N/ApA5RWaSMPK0NsQHWMQ2pS7XTaSH2T6BGGiXHF6ZncE?=
- =?us-ascii?Q?KvkpFa5/sl88exT5RZqt6e3IR6ZlGSkCNFLM3gIm010Afsf/Ci8QBLQ4ktHv?=
- =?us-ascii?Q?G5JIkbPEsVbPaEKoSoF8D76BhmNv9fjlqUuZdBOIrE9VY80nMFstMg=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CO6PR18MB4484.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(7053199007)(38070700018); DIR:OUT;
- SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Zp4q76KHujBFJOFrhbJiZTnFDQ8YAlunXCnabXA47IvgokCKqnZjP+A5v8qN?=
- =?us-ascii?Q?1d1jCnwdk59BikDGLLybM6NRTC/fNCfjwUSvfaGmRGd858to5GLPRYg9R251?=
- =?us-ascii?Q?3y3uSr/BRPlyqDK7RXzrhKAwSiHXqh+nQoO6ogQO9FSfm6tJDfMAyYat5WPX?=
- =?us-ascii?Q?5GZ1qgzV57D8n3PichUMBS2rQ5+/77eLe0Cxbm9HAVKzvZAXutXbpCE2xIvY?=
- =?us-ascii?Q?2LYNVpeaEFlt3LC0JQX73qY3KfNKqZWW+00xUuAyNrW4C5tWH6T3RZ8UbMqO?=
- =?us-ascii?Q?s7sQppCBI1gxiicUNQ4obcjo8QDDpRcl39UItd4CGP99rAtRBWrTxNIzMCqB?=
- =?us-ascii?Q?IkmElmyB9t2HtKBtfUNelgYs4XRFx2QByGxiYhAIR3OLJs86l5bphMTqv1kz?=
- =?us-ascii?Q?+Gow5DvS/QGRdabb2bFIZcWdLc6PdT2gxlalZOZTzTk+qyx9gpTTGDsFxKsF?=
- =?us-ascii?Q?zuFfZEVftU/YhtRZdVjUw/0iQMastV6IeDYTYI6sRagP6J1cWmNalOb30+Js?=
- =?us-ascii?Q?XCUlpRnqZFH4ldrmuhrbGILGA0SOR4GoN6w5EZrBdCVCM5+weGqTO2GBiiGC?=
- =?us-ascii?Q?/WQ2sOodwFzcgm+SqMHDoN7T4ZHbCbNQ59czuiX+nSmSRpsDOzgi0tcBsPGM?=
- =?us-ascii?Q?sZQKzzJR71pltzzRW3GdTT5OabATUfOZLYJNFtNy7FPd8A2x8zdYowIhn8Cb?=
- =?us-ascii?Q?M2BCxBs4EFfR5FGx1yRUQUMluwHeByugcUd0IL17OkHHvl5rit/qDbuO+6zd?=
- =?us-ascii?Q?rikxKhLjD0X9XEOn+ZzKQlwrnCS9IxjGeYA/gfCTmG8MziwyEhupiCFuImQd?=
- =?us-ascii?Q?IlWH3FJahU9px0rr9yPWBzy3jVtLFujncW7+PklWAaf30v+x6nFoGlHe+Kb8?=
- =?us-ascii?Q?LYvEvB1HBbRuNuv9JYziFEder7z/b/d0RtZwQ2van8MBib76v1W4qpYu7xrr?=
- =?us-ascii?Q?jEoidTO/Im48VJ0bydhHelJZr3/w+SabCV38rv+moyseYKEtGIgWFgwGndxk?=
- =?us-ascii?Q?SYLgZNBGQLyD4Eyp88iZpxV+SKORiLDqeKfLywqoHBvHkMBMJV0lnI4tWh8Q?=
- =?us-ascii?Q?zofp/OKH0FinMTZEu0eHIUtb+3f3muD2ODKGDLZpRECU+mUSTsn1wN+jm1yI?=
- =?us-ascii?Q?wK/aUDYyjJ3/EwqSDrMandTWHznc+C+3YooU3Zq9kF3vqFUQbDxgYQMKF7q8?=
- =?us-ascii?Q?/yg5KRZHf04uPS9OUTE72/QBwBjyjSIvZJ7G8vy8+bRs0DNc+ZgO+oqh8RxU?=
- =?us-ascii?Q?Ot/hPHVzEQWvSYF1fk6dqlo3yuzNqkhG4mMaH8sAysUv0Cer2n1tRaUCq4Rz?=
- =?us-ascii?Q?O+/+Fm9qRJj3DWwqrY5MZ7tApGGb+1kV8OXg1m3uKESKIBLtwNTVNSYLPWV0?=
- =?us-ascii?Q?msolHmyUMAW/ub1BiR/n603p5OqiiOEFV5OCLWvf1K/ezkpmdVa7N2fQBdmG?=
- =?us-ascii?Q?2ijhfXp7KDNFSAsAj1mKvY3k8kaAk1AyISOZm6mcXmHo04zce+WdlgSytVO1?=
- =?us-ascii?Q?pDCrVt2LyV3TKaMRpBD+p11q7Sp4+O84wYMuMq5GkCa/6YcSpFC0AKWf+YEt?=
- =?us-ascii?Q?zEcsUO3CSdHAhAB9vXGDn4yQQyTip442vpOiKuKa?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ Tue, 08 Jul 2025 21:02:50 +0000 (GMT)
+Received: from pps.filterd (NASANPPMTA01.qualcomm.com [127.0.0.1])
+ by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 568L2nWr001696; 
+ Tue, 8 Jul 2025 21:02:49 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+ by NASANPPMTA01.qualcomm.com (PPS) with ESMTPS id 47rqtj93kw-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Tue, 08 Jul 2025 21:02:49 +0000
+Received: from NASANPPMTA01.qualcomm.com (NASANPPMTA01.qualcomm.com
+ [127.0.0.1])
+ by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 568L2mcx001688;
+ Tue, 8 Jul 2025 21:02:49 GMT
+Received: from tbs-5gnr-mt-32 (tbs-5gnr-mt-32.qualcomm.com [10.239.80.185])
+ by NASANPPMTA01.qualcomm.com (PPS) with ESMTPS id 568L2mi9001680
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Tue, 08 Jul 2025 21:02:48 +0000
+Received: by tbs-5gnr-mt-32 (Postfix, from userid 2342227)
+ id 54A71400A4; Tue,  8 Jul 2025 15:02:48 -0600 (MDT)
+From: Schneide <schneide@qti.qualcomm.com>
+To: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
+ Reshma Pattan <reshma.pattan@intel.com>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Zhirun Yan <yanzhirun_163@163.com>
+Cc: Dylan Schneider <schneide@qti.qualcomm.com>
+Subject: [PATCH v3] pcapng: allow any protocol link type for the interface
+ block
+Date: Tue,  8 Jul 2025 15:02:45 -0600
+Message-Id: <20250708210245.3967578-1-schneide@qti.qualcomm.com>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20250609211937.345620-1-schneide@qti.qualcomm.com>
+References: <20250609211937.345620-1-schneide@qti.qualcomm.com>
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR18MB4484.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66fd510b-cab5-4877-1410-08ddbe57cfb3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2025 19:44:11.2086 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: TMEt49nQfj96NhZaE9oKOkFiP9rEfCESY2Y/uXh/WqU6qd8+mfL8AzY5GNuJ4ZTNhnZWhW19hExqipfvY9DREw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR18MB4120
-X-Authority-Analysis: v=2.4 cv=IIUCChvG c=1 sm=1 tr=0 ts=686d750e cx=c_pps
- a=eKE+ZKqSmEoANtKPiYI0Tw==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Wb1JkmetP80A:10 a=-AAbraWEqlQA:10 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8
- a=i0EeH86SAAAA:8 a=qmR9txZxlrTYmiLs0o4A:9 a=CjuIK1q_8ugA:10
- a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
-X-Proofpoint-ORIG-GUID: NGhc2MiwF3Gsuc-n4C7C5LPmHZr86peS
-X-Proofpoint-GUID: NGhc2MiwF3Gsuc-n4C7C5LPmHZr86peS
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDE2NiBTYWx0ZWRfX294mY+JJvr9Z
- /iTpR478oaSadhqMGuDkIBFZTbshB5BAd8CcugYR6XiYwbm2o8cboD+U35ek98w+ODP92nvResT
- YuGy/bxXbkc4W7lLoZuOC2jc/lx2Nhc+39+quoAZuLaA+1sX6vYhnLc5aYtf0aNVHBFg1FMzRPd
- Ik6FHhnKS7iHgMTrgdDeg0Wgo59vVuPvLk7cRdYbTREdvrcXkMo0dpOb+d6OJM5zJz96mn+XMX5
- 2YSUJ/zY9Smz5HTflBDmfJ+aKObXvPsFJAHoB7oN3PLltq0ejKKVLyK5DMAk40Ft9MZwTr8YPCh
- 5FOLMqVPXi5lctlyE2O/ubXCl3jr9w5lcBUwjk8/9opQBt6kOAVrf0A9PX5nea4aU7k0JBxvM1G
- Y8SijL9iHyAQ0/RLUAiNqEtg50dG8p9aKsk6B7+95aD+dHRqlXxFMfQ/bdAljyDAq/FHvf98
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800
+ signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800
+ signatures=585085
+X-Authority-Analysis: v=2.4 cv=dYuA3WXe c=1 sm=1 tr=0 ts=686d877a cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=jZVsG21pAAAA:8 a=QyXUC8HyAAAA:8
+ a=20KFwNOVAAAA:8 a=pGLkceISAAAA:8 a=GRf2JX_IAAAA:8 a=VYDjIKVHAAAA:8
+ a=_gsV02HDAAAA:8 a=eh1Yez-EAAAA:8 a=t_NVbEpo0bFBxwTkvzcA:9
+ a=3Sh2lD0sZASs_lUdrUhf:22 a=uRw8vnb707Rr89TYUhP5:22 a=-sS9_DeNG7cEylvMdImQ:22
+ a=GzKgaEE0kT068tgm3IUS:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDE3OSBTYWx0ZWRfX9zc1xF3a8/gJ
+ fgOXQZ+96BbwSsDqJkzNUXQqU0E4UA6e8k4BsAMfajtaFdyi2GEfSB0LL58aG8EHuPmB+/CBHhz
+ FfASgs3GIWftSD+7Z4VrmnwWnCrGGV0x+QeC1lhu+9a/X4RK0UJdhtqp6Rpv1hKt4h5jZZgW8hx
+ VjQYLSAeEQ3ZAgenid41oFYVJw6hWiMUQfIMXER3QxAhSSIHlJUqWzqIC0EdkYRHgxxVUywbmh/
+ k4wxxRrHnyvUChvQHHyYTXaxyjJRq9WsUpFuucyIjb8iDRDYHtHv01nSFlb+q9f8uUaHr3sp+DL
+ G5WyFfLaPCuFEolRj26XlIIMkEunKJZErE5avz44na7Y35Kv3F6RRjZT8UipItfgcpB34PYkLIS
+ tlzqf3mWHAKzRt+yZMmaFuQU9d41dm6TLVQ7ej3IIPynFVh0Nj7vTmJzOM4Q8d5U5J1dE0mr
+X-Proofpoint-GUID: ajFl6gdnOtP8hXltf9r6-3lDbEmNljFn
+X-Proofpoint-ORIG-GUID: ajFl6gdnOtP8hXltf9r6-3lDbEmNljFn
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-08_05,2025-07-08_01,2025-03-28_01
+ definitions=2025-07-08_06,2025-07-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 suspectscore=0 clxscore=1015 impostorscore=0 lowpriorityscore=0
+ priorityscore=1501 spamscore=0 adultscore=0 mlxlogscore=999 malwarescore=0
+ mlxscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507080179
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -168,23 +106,243 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+From: Dylan Schneider <schneide@qti.qualcomm.com>
 
+Allow the user to specify protocol link type when creating pcapng files.
+This change is needed to specify the protocol type in the pcapng file,
+DLT_EN10MB specifies ethernet packets only. This will allow dissectors
+for other protocols to be used on files generated by pcapng.
 
-> -----Original Message-----
-> From: Rajesh Mudimadugula <rmudimadugul@marvell.com>
-> Sent: Thursday, June 26, 2025 2:49 PM
-> To: dev@dpdk.org
-> Cc: jianjay.zhou@huawei.com; Akhil Goyal <gakhil@marvell.com>; Rajesh
-> Mudimadugula [C] <rmudimadugul@marvell.com>
-> Subject: [PATCH] crypto/virtio: fix virtio desc flags virtq info
->=20
-> This patch corrects virtio descriptor flags and updates
-> virtqueue metadata.
->=20
-> Fixes: 796429e72a6d ("crypto/virtio: add packed ring support")
->=20
-> Signed-off-by: Rajesh Mudimadugula <rmudimadugul@marvell.com>
-> ---
-Acked-by: Akhil Goyal <gakhil@marvell.com>
-Applied to dpdk-next-crypto
-Thanks.
+Includes a breaking change to rte_pcapng_add_interface to add link_type
+parameter. Existing calls to the function have been updated to pass
+DLT_EN10MB for the link type argument.
+
+Fixes: d1da6d0d04c7 ("pcapng: require per-interface information")
+Signed-off-by: Dylan Schneider <schneide@qti.qualcomm.com>
+Cc: stephen@networkplumber.org
+---
+ .mailmap                               |  1 +
+ app/dumpcap/main.c                     |  4 +--
+ app/test/test_pcapng.c                 |  8 +++---
+ doc/guides/rel_notes/release_25_07.rst |  4 +++
+ lib/graph/graph_pcap.c                 |  2 +-
+ lib/pcapng/meson.build                 |  2 ++
+ lib/pcapng/rte_pcapng.c                | 22 +++++++++++-----
+ lib/pcapng/rte_pcapng.h                | 35 +++++++++++++++++++++++++-
+ 8 files changed, 64 insertions(+), 14 deletions(-)
+
+diff --git a/.mailmap b/.mailmap
+index 37655f4a57..ee0743fdd8 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -393,6 +393,7 @@ Dukai Yuan <dukaix.yuan@intel.com>
+ Dumitru Ceara <dceara@redhat.com> <dumitru.ceara@gmail.com>
+ Duncan Bellamy <dunk@denkimushi.com>
+ Dustin Lundquist <dustin@null-ptr.net>
++Dylan Schneider <schneide@qti.qualcomm.com>
+ Dzmitry Sautsa <dzmitryx.sautsa@intel.com>
+ Ed Czeck <ed.czeck@atomicrules.com>
+ Eduard Serra <eserra@vmware.com>
+diff --git a/app/dumpcap/main.c b/app/dumpcap/main.c
+index 3d3c0dbc66..e0e2b26269 100644
+--- a/app/dumpcap/main.c
++++ b/app/dumpcap/main.c
+@@ -800,8 +800,8 @@ static dumpcap_out_t create_output(void)
+ 		free(os);
+ 
+ 		TAILQ_FOREACH(intf, &interfaces, next) {
+-			if (rte_pcapng_add_interface(ret.pcapng, intf->port, intf->ifname,
+-						     intf->ifdescr, intf->opts.filter) < 0)
++			if (rte_pcapng_add_interface(ret.pcapng, intf->port, DLT_EN10MB,
++				intf->ifname, intf->ifdescr, intf->opts.filter) < 0)
+ 				rte_exit(EXIT_FAILURE, "rte_pcapng_add_interface %u failed\n",
+ 					intf->port);
+ 		}
+diff --git a/app/test/test_pcapng.c b/app/test/test_pcapng.c
+index 8f2cff36c3..bcf99724fa 100644
+--- a/app/test/test_pcapng.c
++++ b/app/test/test_pcapng.c
+@@ -345,7 +345,7 @@ test_add_interface(void)
+ 	}
+ 
+ 	/* Add interface to the file */
+-	ret = rte_pcapng_add_interface(pcapng, port_id,
++	ret = rte_pcapng_add_interface(pcapng, port_id, DLT_EN10MB,
+ 				       NULL, NULL, NULL);
+ 	if (ret < 0) {
+ 		fprintf(stderr, "can not add port %u\n", port_id);
+@@ -353,7 +353,7 @@ test_add_interface(void)
+ 	}
+ 
+ 	/* Add interface with ifname and ifdescr */
+-	ret = rte_pcapng_add_interface(pcapng, port_id,
++	ret = rte_pcapng_add_interface(pcapng, port_id, DLT_EN10MB,
+ 				       "myeth", "Some long description", NULL);
+ 	if (ret < 0) {
+ 		fprintf(stderr, "can not add port %u with ifname\n", port_id);
+@@ -361,7 +361,7 @@ test_add_interface(void)
+ 	}
+ 
+ 	/* Add interface with filter */
+-	ret = rte_pcapng_add_interface(pcapng, port_id,
++	ret = rte_pcapng_add_interface(pcapng, port_id, DLT_EN10MB,
+ 				       NULL, NULL, "tcp port 8080");
+ 	if (ret < 0) {
+ 		fprintf(stderr, "can not add port %u with filter\n", port_id);
+@@ -406,7 +406,7 @@ test_write_packets(void)
+ 	}
+ 
+ 	/* Add interface to the file */
+-	ret = rte_pcapng_add_interface(pcapng, port_id,
++	ret = rte_pcapng_add_interface(pcapng, port_id, DLT_EN10MB,
+ 				       NULL, NULL, NULL);
+ 	if (ret < 0) {
+ 		fprintf(stderr, "can not add port %u\n", port_id);
+diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
+index 6f49bf8f90..5dc19c2b8c 100644
+--- a/doc/guides/rel_notes/release_25_07.rst
++++ b/doc/guides/rel_notes/release_25_07.rst
+@@ -215,6 +215,10 @@ API Changes
+ * argparse: The ``rte_argparse_arg`` structure used for defining arguments has been updated.
+   See ABI changes in the next section for details.
+ 
++* pcapng: Changed the API for adding interfaces to include a link type argument.
++  The link type was previously hardcoded to the ethernet link type in the API.
++  This argument is added to ``rte_pcapng_add_interface``.
++  These functions are versioned to retain binary compatibility until the next LTS release.
+ 
+ ABI Changes
+ -----------
+diff --git a/lib/graph/graph_pcap.c b/lib/graph/graph_pcap.c
+index 89525f1220..08dcda0d28 100644
+--- a/lib/graph/graph_pcap.c
++++ b/lib/graph/graph_pcap.c
+@@ -117,7 +117,7 @@ graph_pcap_file_open(const char *filename)
+ 
+ 	/* Add the configured interfaces as possible capture ports */
+ 	RTE_ETH_FOREACH_DEV(portid) {
+-		ret = rte_pcapng_add_interface(pcapng_fd, portid,
++		ret = rte_pcapng_add_interface(pcapng_fd, portid, DLT_EN10MB,
+ 					       NULL, NULL, NULL);
+ 		if (ret < 0) {
+ 			graph_err("Graph rte_pcapng_add_interface port %u failed: %d",
+diff --git a/lib/pcapng/meson.build b/lib/pcapng/meson.build
+index 4549925d41..3aa7ba5155 100644
+--- a/lib/pcapng/meson.build
++++ b/lib/pcapng/meson.build
+@@ -5,3 +5,5 @@ sources = files('rte_pcapng.c')
+ headers = files('rte_pcapng.h')
+ 
+ deps += ['ethdev']
++
++use_function_versioning = true
+diff --git a/lib/pcapng/rte_pcapng.c b/lib/pcapng/rte_pcapng.c
+index 2a07b4c1f5..22a9917173 100644
+--- a/lib/pcapng/rte_pcapng.c
++++ b/lib/pcapng/rte_pcapng.c
+@@ -200,11 +200,10 @@ pcapng_section_block(rte_pcapng_t *self,
+ }
+ 
+ /* Write an interface block for a DPDK port */
+-RTE_EXPORT_SYMBOL(rte_pcapng_add_interface)
+-int
+-rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port,
+-			 const char *ifname, const char *ifdescr,
+-			 const char *filter)
++RTE_DEFAULT_SYMBOL(26, int, rte_pcapng_add_interface,
++			(rte_pcapng_t *self, uint16_t port, uint16_t link_type,
++			const char *ifname, const char *ifdescr,
++			const char *filter))
+ {
+ 	struct pcapng_interface_block *hdr;
+ 	struct rte_eth_dev_info dev_info;
+@@ -274,7 +273,7 @@ rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port,
+ 	hdr = (struct pcapng_interface_block *)buf;
+ 	*hdr = (struct pcapng_interface_block) {
+ 		.block_type = PCAPNG_INTERFACE_BLOCK,
+-		.link_type = 1,		/* DLT_EN10MB - Ethernet */
++		.link_type = link_type,
+ 		.block_length = len,
+ 	};
+ 
+@@ -319,6 +318,17 @@ rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port,
+ 	return write(self->outfd, buf, len);
+ }
+ 
++RTE_VERSION_SYMBOL(25, int, rte_pcapng_add_interface,
++			(rte_pcapng_t *self, uint16_t port,
++			const char *ifname, const char *ifdescr,
++			const char *filter))
++{
++	/* Call the new version with a default link_type (Ethernet) */
++	return rte_pcapng_add_interface(self, port, DLT_EN10MB,
++					ifname, ifdescr, filter);
++}
++
++
+ /*
+  * Write an Interface statistics block at the end of capture.
+  */
+diff --git a/lib/pcapng/rte_pcapng.h b/lib/pcapng/rte_pcapng.h
+index 48f2b57564..382268ea4a 100644
+--- a/lib/pcapng/rte_pcapng.h
++++ b/lib/pcapng/rte_pcapng.h
+@@ -28,6 +28,37 @@
+ extern "C" {
+ #endif
+ 
++/* pcap link types */
++#define DLT_NULL	0	/* BSD loopback encapsulation */
++#define DLT_EN10MB	1	/* Ethernet (10Mb) */
++#define DLT_EN3MB	2	/* Experimental Ethernet (3Mb) */
++#define DLT_AX25	3	/* Amateur Radio AX.25 */
++#define DLT_PRONET	4	/* Proteon ProNET Token Ring */
++#define DLT_CHAOS	5	/* Chaos */
++#define DLT_IEEE802	6	/* 802.5 Token Ring */
++#define DLT_ARCNET	7	/* ARCNET, with BSD-style header */
++#define DLT_SLIP	8	/* Serial Line IP */
++#define DLT_PPP		9	/* Point-to-point Protocol */
++#define DLT_FDDI	10	/* FDDI */
++
++/* User-defined link types */
++#define DLT_USER0		147
++#define DLT_USER1		148
++#define DLT_USER2		149
++#define DLT_USER3		150
++#define DLT_USER4		151
++#define DLT_USER5		152
++#define DLT_USER6		153
++#define DLT_USER7		154
++#define DLT_USER8		155
++#define DLT_USER9		156
++#define DLT_USER10		157
++#define DLT_USER11		158
++#define DLT_USER12		159
++#define DLT_USER13		160
++#define DLT_USER14		161
++#define DLT_USER15		162
++
+ /* Opaque handle used for functions in this library. */
+ typedef struct rte_pcapng rte_pcapng_t;
+ 
+@@ -71,6 +102,8 @@ rte_pcapng_close(rte_pcapng_t *self);
+  *  The handle to the packet capture file
+  * @param port
+  *  The Ethernet port to report stats on.
++ * @param link_type
++ *  The link type (e.g., DLT_EN10MB).
+  * @param ifname (optional)
+  *  Interface name to record in the file.
+  *  If not specified, name will be constructed from port
+@@ -84,7 +117,7 @@ rte_pcapng_close(rte_pcapng_t *self);
+  * must be added.
+  */
+ int
+-rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port,
++rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port, uint16_t link_type,
+ 			 const char *ifname, const char *ifdescr,
+ 			 const char *filter);
+ 
+-- 
+2.27.0
+
