@@ -2,79 +2,163 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF128C83F09
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Jul 2025 12:46:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE6CC8303C
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Jul 2025 12:48:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E91A440677;
-	Tue,  8 Jul 2025 14:46:22 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id B3015402A0
- for <dev@dpdk.org>; Tue,  8 Jul 2025 14:46:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1751978780;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=t+ZR7SxzoprrnsmTYpgy6Tk80AgazfXSeirOl8VqV1k=;
- b=CN/qyyEZx5LaFoyKd06cwEbMxR+hF3g1be1YjNPn1lMiPIedKp9WObQBNQIzAxHjA4P9oS
- PYKrqkZ6Hu730XWvzXXu878FaExf0WvzogFZY0w9MSmjV5y+Y+TiYHQVI/OrMOk3ZkZT7/
- PFcXezOzKHEGcIr2rRGUnwsT7fJGOkA=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-73-1JJrxe8fPmS2svmjCi_uSg-1; Tue, 08 Jul 2025 08:46:19 -0400
-X-MC-Unique: 1JJrxe8fPmS2svmjCi_uSg-1
-X-Mimecast-MFC-AGG-ID: 1JJrxe8fPmS2svmjCi_uSg_1751978777
-Received: by mail-lf1-f69.google.com with SMTP id
- 2adb3069b0e04-5562a916832so2619991e87.1
- for <dev@dpdk.org>; Tue, 08 Jul 2025 05:46:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1751978777; x=1752583577;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=t+ZR7SxzoprrnsmTYpgy6Tk80AgazfXSeirOl8VqV1k=;
- b=Wg1J2le5Ab0+ohtreSac1EB4BoBV8oAd3QhdbC3Zr1WIujoI+Wtq98ZM8MpCb4K9gg
- twxGLJfsrBmUxvqMYmBQG2ITam/dgZ/hUWU8l5nxDEIKu5qRBDrFSbg6WKtuGq2e5UGN
- 9NtAIYOHGGEEvrcINul7pMlIjD9Saa7pjJoF7vF7nzt0AojkU4YM6JqwyxHrzcqhddzn
- ezG3VGNHKQjk3I+uYsxj7203zJWpVbpg94nHHJJaujRR2xiMFcCFLME4WtsjXoyMrl0L
- Czm4a62G4FCCvn6wduk2RTRDpPLLZ8W+XcWnwcSgf467G4eXf3FcOQxAEo6v2+sLzKY3
- ZcsA==
-X-Gm-Message-State: AOJu0Yz0o/l5Jz94OHLgg2een5g9L3303E/SlU0KObqQlVxZVHrNXF3t
- r+WzAQpUSHMOO/XlY8GYfLPEBRdv+gMTm2xxTHYXETw679lSVZ85S2kIU+DFoxohHe5iCQK8g4L
- 2D1keDh2SaJbVAxoAmCXemPtuTMeisAf3j6+yIeNVKPLj1yuZXoBhIQAQt/P07zMS2ntmnQxvgp
- uK56XBBaSbfz3bjMErDSU3F2Kjneo=
-X-Gm-Gg: ASbGncsAOm5uN6teD0fTqDnQxF3bmO4Qj7XdaBjsix+XoH9zVB7oQ99zBuECkDItKp5
- e7AVvKaiPbM0WaFagATUSg7R948u+pOngMhDXgAU3JKh/ErsoGNQCWTQvJPA0XLN4ERNGAhs8a0
- TuR/A2KA==
-X-Received: by 2002:a05:6512:a84:b0:553:a2c0:da70 with SMTP id
- 2adb3069b0e04-557aa2934a4mr5359936e87.26.1751978777352; 
- Tue, 08 Jul 2025 05:46:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHEpGW8g1yVCPwOpzgawTfCgO0HcsJxa15UqWEt++4HnkM3lzDDAEgJ/ixh6rt52jMyl9t1D59yqNkcbqZJoiM=
-X-Received: by 2002:a05:6512:a84:b0:553:a2c0:da70 with SMTP id
- 2adb3069b0e04-557aa2934a4mr5359923e87.26.1751978776699; Tue, 08 Jul 2025
- 05:46:16 -0700 (PDT)
-MIME-Version: 1.0
+	by mails.dpdk.org (Postfix) with ESMTP id 0FF5540677;
+	Tue,  8 Jul 2025 14:48:07 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+ by mails.dpdk.org (Postfix) with ESMTP id BF558402A0
+ for <dev@dpdk.org>; Tue,  8 Jul 2025 14:48:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1751978885; x=1783514885;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=58GjfCeRNAtNTuDn0nwhkRsv/m68i28G1jVLLuiSCFE=;
+ b=IK4eX0SiwxOsUS2z2AaEICjrTa68mCwCXbrJFMGJzArX0arFjilSKvoU
+ l38Uyls1GFcC7NkOEp779BGXvavWn060+UuV391/Y8qUixahuG6RRxmn3
+ ORBQFPu0ewqFJmqooBEzhmXg1uB088TpK8Ft3miPwlWem5IE6fAm76pIr
+ 6rAlvAMqcnGTX3iojUBWGGgRpgQ1/A3ayceqfHOLGsH4B6e46DOr4TNFI
+ SxS7D13FP39bhAGInyGZYLdfV+GWKnXddWvCp9CHePJla2Yyki5MEFglm
+ fVQR3IcGdmFQdggdtFKBrOTvqS+vEfBrzZWcgFWHRw84B9SLoEwXCtodF g==;
+X-CSE-ConnectionGUID: 3iuxru2mQEebfRQB2lZbmg==
+X-CSE-MsgGUID: drj/EW7LSnGQWP7UQQGf6w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="54310993"
+X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; d="scan'208";a="54310993"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 08 Jul 2025 05:48:03 -0700
+X-CSE-ConnectionGUID: 66CN51QoTACTqARXuEsGvA==
+X-CSE-MsgGUID: yJbb/Mr+QYmVWvQ/98fxEw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; d="scan'208";a="154900712"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 08 Jul 2025 05:48:03 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 8 Jul 2025 05:48:02 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Tue, 8 Jul 2025 05:48:02 -0700
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (40.107.212.40)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 8 Jul 2025 05:48:02 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AzjdTh8ifp1ud73Bq/nXPhO3jXJV2OULdv0cOhXwpA+N4Wfjo+fesS8bA7L3A+o+xb0WcsEfRGQ8MEKVYsaUaFjcp6M6DhskK4oyfF3TmxbRTdHBogSieI2fn49edzyjIbKMxWMiUSB6C1ItjXgjyUco06Kw3PNVwIYa1Yv138TuBAVB4OlBHoM1zl+6gXoK+NsiJ8Uo/Y8GB1VYdh6xvD0JV+Al+7PprZyS5MPm4x3YsW0/32xIqpYA9Ot8mKsO8cmmDYPldRRl6ODhZcvM9joeRXBpdMgUHBFeUUPlLuDFSy86K24+XBKEHAWCCY7qp5bJT1fp4Nm+CZ73etRaXQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CwLiEG73skHHyJ9f7ln2eJJm9wI5y9xM03UHe5n38Aw=;
+ b=Li1K3Nv6lJwvHMdl0vpl7KSkV9AVWjxYeWjc74hjJIrTJOHen9Xq3R+C+iCDxNXXaVEprGjOmURGOq4LXhw8DU14PB7N9l4BsLAhC0gL6l0B5SzCI5lQnkVSSAd56KPu7Rz5t4wI2/oMdYboxRdqjZoqB4bvYZmpkMQ5XWINTLCFJReZyHgmdiNBW+XSTj8b1v75sPXQYCb/SnxsrkU5fLFmofhoHjsnrautcmpGo6kTIXul762jmeupEhEMbSItmsoz4e34g3fID5YiXPfwqvAtx6hudnZ40eGIAqcxefZAk8E3LvTNLdw3LtcHQcezBtkj3EQx7JGXX8AQxVu+yA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by PH8PR11MB6682.namprd11.prod.outlook.com (2603:10b6:510:1c5::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Tue, 8 Jul
+ 2025 12:47:46 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.8901.024; Tue, 8 Jul 2025
+ 12:47:45 +0000
+Date: Tue, 8 Jul 2025 13:47:41 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: David Marchand <david.marchand@redhat.com>
+CC: <dev@dpdk.org>
+Subject: Re: [PATCH v3 16/18] test/power: fix tests without power drivers
+Message-ID: <aG0TbXztzouaF0MO@bricha3-mobl1.ger.corp.intel.com>
 References: <20250619071037.37325-1-david.marchand@redhat.com>
  <20250708122823.3406288-1-david.marchand@redhat.com>
- <20250708122823.3406288-13-david.marchand@redhat.com>
- <aG0SmKmMAnW3hrfE@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <aG0SmKmMAnW3hrfE@bricha3-mobl1.ger.corp.intel.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 8 Jul 2025 14:46:04 +0200
-X-Gm-Features: Ac12FXxhgfyMHxLX6h9EhX5MOoN7WM37W1vXd6qfIXsJbSETzaPS6Dt6IqBSz8I
-Message-ID: <CAJFAV8wj=EmaJnOVj4n8eVUR+BOAYhu38cJDu29Um4TkxFS9Tg@mail.gmail.com>
-Subject: Re: [PATCH v3 12/18] malloc: fix mp message alignment
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Anatoly Burakov <anatoly.burakov@intel.com>, 
- Tyler Retzlaff <roretzla@linux.microsoft.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: lSeEKY-Ay9ZCbAVG4F4tlE07mtEwcWNxRAPhYG9zqSo_1751978777
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+ <20250708122823.3406288-17-david.marchand@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250708122823.3406288-17-david.marchand@redhat.com>
+X-ClientProxiedBy: DU2PR04CA0334.eurprd04.prod.outlook.com
+ (2603:10a6:10:2b4::24) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|PH8PR11MB6682:EE_
+X-MS-Office365-Filtering-Correlation-Id: 78ec8e46-2c90-45ac-5a9f-08ddbe1da32b
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ZZeeJ8XSAP63CTXtEJ/LDrXIg8UaOAiMlfNFir3OjSki8dmSPySiN0j2G2uE?=
+ =?us-ascii?Q?qEMMvKl1qv3Qrj3y3vq0UNuw9woYnyRYrNznTF3NxsXSO3555kXgpZW0wEa8?=
+ =?us-ascii?Q?+mTV4A7SWrLpOkF1am3bV4BXP5ys0E2BzFyJodsiOcsK+M9BrvUH4B26oWhM?=
+ =?us-ascii?Q?k4l0LQ44jmpiF5CcHt4IQ/rp3sty6Ebo0GzGMS0aWA0cldVXwKS+NBmP9Rhj?=
+ =?us-ascii?Q?qQntTSlj+xlR16kBSp2w2L/CXADusj6eUq+UdI+58NC8YD/bVI8BnSeXrY8T?=
+ =?us-ascii?Q?52kBFLi/W0N9Al5SJzDSqyvzhBQ9eCJfiTafOVHNoRuxn+hGMnZI95UCIPh/?=
+ =?us-ascii?Q?0ftOnjcrH73yUP1tUZx9iyNhtlugDxjUU2cDny/ydnXNGx5QwlxPFF7A2ZDw?=
+ =?us-ascii?Q?WJHD1wpPxMXdw+FQRnMLSyfZnyLpAVC8jH0pRcyPCGts3we1BedyO9Et1jVd?=
+ =?us-ascii?Q?HwHUOkDHRPjl+e7vNkfNlZOeYKXcJqCbf7fOiAhUlwv/xJX/dEI4L6v3uny5?=
+ =?us-ascii?Q?BbYuFgtPOywpCKvj2m8YWCbVJeXN35Y2OQr2332b6vOcZsGrY88KqRTSefLd?=
+ =?us-ascii?Q?qG70yb+iulgHb3L8poGNYuqvlnEzZ1qSagLOIV0krn/37QGXOpwJ84etT8eF?=
+ =?us-ascii?Q?MiCVWwUYkaSN8ITmB0NycuUuqyJWP63fZOe/zaMQqemujyMZSlCN8JSXFpUv?=
+ =?us-ascii?Q?Ha26/GQJ35DVhH+UYeqQD20CY6AsCIXwQwVmcbsBBs/wXy0wMmp2rY0gY+Ey?=
+ =?us-ascii?Q?XiU8grayLIWggaarA8LRvyZGJmRTRdOIsPHGbASRclX38cuPYf5k3106IeSo?=
+ =?us-ascii?Q?C1/+7yRiY0YdQMynoQjBi6g1X2Ap755F4fLETaB8RRAX/L8Rb7I3D1Bj1koe?=
+ =?us-ascii?Q?sdW4mAWTiiQ+7+5fZE8BC7emAOTfvJJ4S8XYl5j69SEiKLys69vDLcaBVw4l?=
+ =?us-ascii?Q?sM18yMbDHuLaB2G+t2+wQvoqBtmW2/eVKHBckBsqS9jlIY/KMy8tE7S+Cz9F?=
+ =?us-ascii?Q?4//GBhIg2YzqZQNMW8tItrO1x2fxDCxM6QfVma3IHPKnt+qFhsGGfHF/M6BH?=
+ =?us-ascii?Q?8rMAnlujPk5SBi2iqN8/8X6aXrjmzjuqdnmFWoK1n9vgCV3Nlpunv+Xv146Y?=
+ =?us-ascii?Q?WXZoppRmrB1uIprshacI6N8qxzOmDmBAKIX6+pbOLT3fcwNPdjW0zaOY+rCf?=
+ =?us-ascii?Q?mSz1qAdoULolkeGZwMzvN4BaHXKh+o+E5rmx5pUB+smVOjcJIjpcM94uAPSQ?=
+ =?us-ascii?Q?Koy35ELzB3VhaiTlHdvnqR65XeXNSqqOHuSiRtYIxh6qIOvK23oRB8yLFT8z?=
+ =?us-ascii?Q?8sAwj1rKtt1LrYoShKatLUWCGAx9Go11t5xAd4yczkTR6LycEi9x/OVMWFIH?=
+ =?us-ascii?Q?WcSketGKX+7/AibZhRskzLDYuLHubvCjwL1tsq4jV2PUGVjY6cxCb6+avG5f?=
+ =?us-ascii?Q?KWkpmCfkP1E=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014)(7053199007); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?FrkfCDGQ2mQYwOilWEk6pvLxA2iV8TyILJQ44/gOvYDx64bkN+kv4DYzTW1R?=
+ =?us-ascii?Q?QNYnF5hbD3+CC131XSiRt6/Q2wtQuX4iwNjnpZYceA4CnHKXa55zZI7S0ETq?=
+ =?us-ascii?Q?aBVvn4uHKzKxuwc1YXuIy4/8hHqGhgrZHIFvboj38NCJbv8n5EX5jGxI4DLy?=
+ =?us-ascii?Q?Lhbuzl3vLer3AWQs64vKL9SbmceMr1/sZdaJnHqXjxhkZMDzzVD1gEDiapsb?=
+ =?us-ascii?Q?peH7ngqPUD0OoBCOSVTHmuV6ievpZx7RyL1EnJAfuZbX0oWTISQn64tljRkD?=
+ =?us-ascii?Q?i/uGighwu3NxdkA9n2R65l6+tOZArDx5ljsjz8O6AJAg03ZRErk4pVF4IVze?=
+ =?us-ascii?Q?TTmxB/4ebZBRAbJAeW9MLs3OSsJ2sJbCUcShQEHN4j370hH1Q+1MO3pxj2af?=
+ =?us-ascii?Q?K026Yk1CPDwA8RjiRGbvjmJp7AvIad4JXi4WTZQ6CN28YB7sRVw+DaX4LbBK?=
+ =?us-ascii?Q?8JpUzAQMunCwTa26wpZzFtejPc/IQT8dCuEyTpglSGkeysCjYnlvK8feBrDV?=
+ =?us-ascii?Q?VWvwtJylF7Ha/KaBXjFFHY9cDmqCMOCMvlAgqZZWPKuwb5JOtTx3N4+B1b6B?=
+ =?us-ascii?Q?RI+Xko1DOqLjYEP1ivYjUS5ILa9Pi2DaPVcLBs8DFfDGmURrR4kMRg3RPqCR?=
+ =?us-ascii?Q?NfEa9o5g+D8Kao1v+eYlLwbsCVBnhSZOCFxrl4GqIUnV0HLZUe9l7Na/U695?=
+ =?us-ascii?Q?lyXfYoBXBQY7MOCZ0ZoliZdDUdLuh2FteKZ4CwNB0zlcqCJoyQkLVwjOUIJj?=
+ =?us-ascii?Q?AQjjl7ajPShmb84/PKrEMmioXkP0DWKyst33IHsR5kIgfpVyMpylnVqHrqod?=
+ =?us-ascii?Q?4R7zeIZCxaQroP/xqfb2zRWldnC5cwOcdYccRwsXXWF3eL88+KcOvXIsrDVC?=
+ =?us-ascii?Q?wYgOlCegrzYTTn043kpXSNDUYkcr7lD0J6l2cQFag8hFXaaZH+o45LahQod/?=
+ =?us-ascii?Q?ba4/GwOubhktmD8D52mo51SmFVnejXiyhKVuHdJ6ITLLepebwr1uQd0eYYW3?=
+ =?us-ascii?Q?Ewx+ussX4xSvX3GWMaZ/DlzW9AzN5R0TkCZGcCwLxsu2LNJdhj3Uc9tma2aR?=
+ =?us-ascii?Q?DizvB4ozwBw709+LaP9ty9MJ/T0ivmmfNSf51VNNaKLlH1A59z2GP3szjNT8?=
+ =?us-ascii?Q?u5GbzotCnOvMSPaPKVIlBlUChq5ZfWoOJlY7XtfsXpk9nzT+GJfOc19XsfzM?=
+ =?us-ascii?Q?EfvU9hKwcpiUuDdGzY4NhHbwJY3PUmUIXzrLzFyP0BKvCf/QzG394cli/a+M?=
+ =?us-ascii?Q?C3+gCIAbk7wmmNjtkgbXnJuppglyl1Bm9zua8vz61yaUOhB3Xjozayl1xj+U?=
+ =?us-ascii?Q?5EVbqXnfaWM95Pca8oRZDcwEQiNS16jqFnWBpwPmV7w1WnG4BnRpH/FHdOs+?=
+ =?us-ascii?Q?H8/0T09sqbZTFmiRfbIZROmvFwiWI02/+xv6Vj0/f/zgXJNuZz/DPHDzKRab?=
+ =?us-ascii?Q?Ck7qvPiyyW4n2SetnlhwdaBwLgLRXBM/kwS0jmSBcNvbWGKYExpyzVv/S9i3?=
+ =?us-ascii?Q?ajrb/ZjOiTX0sWQYG7u9qVQZEbC7aQ6FDKzjBFcApeoxTwPLQZMfn9zNfnP7?=
+ =?us-ascii?Q?lzovTgm/GM29EmTas/DeK2eaZ7w9baNN3DHFzj0Bio/OCH4h/sRtH+G2EfQT?=
+ =?us-ascii?Q?oQ=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 78ec8e46-2c90-45ac-5a9f-08ddbe1da32b
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 12:47:45.9512 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: etPEz1EZ/AwzYjNGYQaf+wC0DPuyHOSQpQcTzGjNXRiTplYGqnmGYnwSyt4cK0QAhXwvfAoWyCXTj4mPOtlkYxDX6Poi8W5UR/+txhniS2Y=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6682
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,98 +172,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Jul 8, 2025 at 2:44=E2=80=AFPM Bruce Richardson
-<bruce.richardson@intel.com> wrote:
->
-> On Tue, Jul 08, 2025 at 02:28:16PM +0200, David Marchand wrote:
-> > Content (param[]) of received multiprocess messages are aligned with
-> > a 4 bytes constraint.
-> >
-> > Before patch:
-> > struct mp_msg_internal {
-> >  int type;                                                     /*   0  =
-   4 */
-> >  struct rte_mp_msg {
-> >   char name[64];                                               /*   4  =
-  64 */
-> >   /* --- cacheline 1 boundary (64 bytes) was 4 bytes ago --- */
-> >   int len_param;                                               /*  68  =
-   4 */
-> >   int num_fds;                                                 /*  72  =
-   4 */
-> >   /* typedef uint8_t -> __uint8_t */ unsigned char param[256]; /*  76  =
- 256 */
-> >   /* --- cacheline 5 boundary (320 bytes) was 12 bytes ago --- */
-> >   int fds[253];                                                /* 332  =
-1012 */
-> >  } msg;                                                        /*   4  =
-1340 */
-> >
-> >  /* size: 1344, cachelines: 21, members: 2 */
-> > };
-> >
-> > This results in many unaligned accesses for multiprocess malloc request=
-s.
-> >
-> > Examples:
-> > ../lib/eal/common/malloc_mp.c:308:32: runtime error:
-> >       member access within misaligned address 0x7f7b35df4684 for type
-> >       'const struct malloc_mp_req', which requires 8 byte alignment
-> >
-> > ../lib/eal/common/malloc_mp.c:158:9: runtime error:
-> >       member access within misaligned address 0x7f36a535bb5c for type
-> >       'const struct malloc_mp_req', which requires 8 byte alignment
-> >
-> > ../lib/eal/common/malloc_mp.c:171:8: runtime error:
-> >       member access within misaligned address 0x7f4ba65f296c for type
-> >       'struct malloc_mp_req', which requires 8 byte alignment
-> >
-> > Signed-off-by: David Marchand <david.marchand@redhat.com>
-> > ---
-> >  lib/eal/common/eal_common_proc.c |  2 +-
-> >  lib/eal/common/malloc_mp.c       | 18 +++++++++---------
-> >  2 files changed, 10 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/lib/eal/common/eal_common_proc.c b/lib/eal/common/eal_comm=
-on_proc.c
-> > index 0dea787e38..3846c7178d 100644
-> > --- a/lib/eal/common/eal_common_proc.c
-> > +++ b/lib/eal/common/eal_common_proc.c
-> > @@ -62,7 +62,7 @@ enum mp_type {
-> >
-> >  struct mp_msg_internal {
-> >       int type;
-> > -     struct rte_mp_msg msg;
-> > +     alignas(8) struct rte_mp_msg msg;
-> >  };
-> >
-> >  struct async_request_param {
-> > diff --git a/lib/eal/common/malloc_mp.c b/lib/eal/common/malloc_mp.c
-> > index 9765277f5d..000c7f6b47 100644
-> > --- a/lib/eal/common/malloc_mp.c
-> > +++ b/lib/eal/common/malloc_mp.c
-> > @@ -148,7 +148,7 @@ get_unique_id(void)
-> >  static int
-> >  handle_sync(const struct rte_mp_msg *msg, const void *peer)
-> >  {
-> > -     struct rte_mp_msg reply;
-> > +     alignas(8) struct rte_mp_msg reply;
-> >       const struct malloc_mp_req *req =3D
-> >                       (const struct malloc_mp_req *)msg->param;
->
-> This patch seems to have a lot of these definitions with alignas added to
-> them. Would it be simpler just to put the alignas inside the rte_mp_msg
-> definition?
->
-> More specifically, if its the "uint8_t param" element that needs alignmen=
-t,
-> how about changing that specific field to make it aligned?
+On Tue, Jul 08, 2025 at 02:28:20PM +0200, David Marchand wrote:
+> In the absence of drivers, skip tests instead of failing.
+> 
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> ---
+>  app/test/meson.build | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/app/test/meson.build b/app/test/meson.build
+> index 7d38f51918..79d635b42b 100644
+> --- a/app/test/meson.build
+> +++ b/app/test/meson.build
+> @@ -145,10 +145,12 @@ source_file_deps = {
+>      'test_pmd_ring.c': ['net_ring', 'ethdev', 'bus_vdev'],
+>      'test_pmd_ring_perf.c': ['ethdev', 'net_ring', 'bus_vdev'],
+>      'test_pmu.c': ['pmu'],
+> -    'test_power.c': ['power'],
+> -    'test_power_cpufreq.c': ['power'],
+> -    'test_power_intel_uncore.c': ['power'],
+> -    'test_power_kvm_vm.c': ['power'],
+> +    'test_power.c': ['power', 'power_acpi', 'power_kvm_vm', 'power_intel_pstate',
+> +        'power_amd_pstate', 'power_cppc'],
 
-We could probably enhance this, but I expect this breaks ABI.
+Is this better done at build time or at runtime? Unfortunately we don't
+have support for "or" operations on dependencies, so if even one driver is
+missing the whole test file will not be built. I would think it better to
+look for the drivers at runtime and return TEST_SKIPPED if not present.
+WDYT?
 
-This could be done during 25.11.
-
-
---=20
-David Marchand
-
+> +    'test_power_cpufreq.c': ['power', 'power_acpi', 'power_intel_pstate', 'power_amd_pstate',
+> +        'power_cppc'],
+> +    'test_power_intel_uncore.c': ['power', 'power_intel_uncore'],
+> +    'test_power_kvm_vm.c': ['power', 'power_kvm_vm'],
+>      'test_prefetch.c': [],
+>      'test_ptr_compress.c': ['ptr_compress'],
+>      'test_rand_perf.c': [],
+> -- 
+> 2.50.0
+> 
