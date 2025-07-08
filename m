@@ -2,56 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC942C8303C
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Jul 2025 12:28:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7964C8303C
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Jul 2025 12:29:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BEDB14069F;
-	Tue,  8 Jul 2025 14:28:58 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 200C2406BC;
+	Tue,  8 Jul 2025 14:29:10 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id DB17E4069F
- for <dev@dpdk.org>; Tue,  8 Jul 2025 14:28:57 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 77CCF40697
+ for <dev@dpdk.org>; Tue,  8 Jul 2025 14:29:08 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1751977737;
+ s=mimecast20190719; t=1751977748;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=tmgV9SKsz+4rSjlCAN/dyhUOvszljr/hC46c+ZdbN2I=;
- b=Z+EMAkrDgowdp37rvnIQCzbbPhePYoD0E4fcxQlNVsHf61SEqg2ae/bC1qA4CpehrApWsf
- g7HVnNz3q1YZ5QSzJWphrkY15yJt14UmrVtZJM1BidX/uzxBSqSxwN6E5NJk2KCitvWx6z
- sJO+Kxt9i2Ywp/Qr1OoS5YiAlVW/OsQ=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ bh=RLpuj0AaAln7rLzlFQnJwQb3M9b42Nhi3sqznNgWzwo=;
+ b=GZqqfd0p+lr9ZJpVRN6UjH20sQvgbFd2HK6IKrB3B9e6cJbMUlwj8zKQMkUm53sSlg8S2P
+ JWw4Nch938AtXXj/ipdiQN8lXVGkd0IGGiO3hJcLdWDf0a+jVUPLx5iXrq29taDc3hp423
+ fjiT9Z+mT9sEmQaV1DL2E4lGgfWirbQ=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-226-7aCvJIhPPHOBVTUeqqr5wQ-1; Tue,
- 08 Jul 2025 08:28:56 -0400
-X-MC-Unique: 7aCvJIhPPHOBVTUeqqr5wQ-1
-X-Mimecast-MFC-AGG-ID: 7aCvJIhPPHOBVTUeqqr5wQ_1751977735
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-172-wbpqoWXPOx2OooBE-UIkDA-1; Tue,
+ 08 Jul 2025 08:29:04 -0400
+X-MC-Unique: wbpqoWXPOx2OooBE-UIkDA-1
+X-Mimecast-MFC-AGG-ID: wbpqoWXPOx2OooBE-UIkDA_1751977743
 Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 523E31800368; Tue,  8 Jul 2025 12:28:55 +0000 (UTC)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 342921800268; Tue,  8 Jul 2025 12:29:03 +0000 (UTC)
 Received: from dmarchan.lan (unknown [10.44.33.95])
  by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id B95B61956087; Tue,  8 Jul 2025 12:28:53 +0000 (UTC)
+ id C06471956087; Tue,  8 Jul 2025 12:28:59 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Cc: Aaron Conole <aconole@redhat.com>,
- Michael Santana <maicolgabriel@hotmail.com>
-Subject: [PATCH v3 01/18] ci: save ccache on failure
-Date: Tue,  8 Jul 2025 14:28:05 +0200
-Message-ID: <20250708122823.3406288-2-david.marchand@redhat.com>
+Cc: stable@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
+ Marat Khalili <marat.khalili@huawei.com>,
+ Thomas Monjalon <thomas@monjalon.net>
+Subject: [PATCH v3 02/18] test/telemetry: fix test calling all commands
+Date: Tue,  8 Jul 2025 14:28:06 +0200
+Message-ID: <20250708122823.3406288-3-david.marchand@redhat.com>
 In-Reply-To: <20250708122823.3406288-1-david.marchand@redhat.com>
 References: <20250619071037.37325-1-david.marchand@redhat.com>
  <20250708122823.3406288-1-david.marchand@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: ZFa3U2VfQ3nc3pSGB2fBMQ8-4twaMyrvNzG8obiMG7k_1751977735
+X-Mimecast-MFC-PROC-ID: zsXZ_MtRfd3O2lZXLIufcECMp4wjUpgH5yt9yaBpsKg_1751977743
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -68,32 +69,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When troubleshooting unit test failures and repeating jobs in GHA,
-the absence of ccache makes the whole process way slower.
+This test was doing nothing as it could not find the telemetry client
+script following the test suite rework.
+
+Caught while looking at UNH unit test logs:
+
+/root/workspace/Generic-Unit-Test-DPDK/dpdk/app/test/suites/test_telemetry.sh:
+18: /root/workspace/Generic-Unit-Test-DPDK/dpdk/app/usertools/dpdk-telemetry.py:
+not found
+
+Fixes: 9da71dc4f96e ("test: add test case for scripted telemetry commands")
+Cc: stable@dpdk.org
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
-Acked-by: Aaron Conole <aconole@redhat.com>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+Reviewed-by: Marat Khalili <marat.khalili@huawei.com>
 ---
- .github/workflows/build.yml | 6 ++++++
- 1 file changed, 6 insertions(+)
+ .mailmap                          | 1 +
+ app/test/suites/test_telemetry.sh | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
-index e5f17ef6ac..6c4bc664d0 100644
---- a/.github/workflows/build.yml
-+++ b/.github/workflows/build.yml
-@@ -164,6 +164,12 @@ jobs:
-         chmod o-w $HOME
-     - name: Build and test
-       run: .ci/linux-build.sh
-+    - name: Save ccache on failure
-+      if: failure()
-+      uses: actions/cache/save@v4
-+      with:
-+        path: ~/.ccache
-+        key: ${{ steps.get_ref_keys.outputs.ccache }}-${{ github.ref }}
-     - name: Upload logs on failure
-       if: failure()
-       uses: actions/upload-artifact@v4
+diff --git a/.mailmap b/.mailmap
+index 1ea4f9446d..84a83369e0 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -936,6 +936,7 @@ Manish Chopra <manishc@marvell.com>
+ Manish Kurup <manish.kurup@broadcom.com>
+ Manish Tomar <manish.tomar@nxp.com>
+ Mao Jiang <maox.jiang@intel.com>
++Marat Khalili <marat.khalili@huawei.com>
+ Marcel Apfelbaum <marcel@redhat.com>
+ Marcel Cornu <marcel.d.cornu@intel.com>
+ Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+diff --git a/app/test/suites/test_telemetry.sh b/app/test/suites/test_telemetry.sh
+index ca6abe266e..20806b43e4 100755
+--- a/app/test/suites/test_telemetry.sh
++++ b/app/test/suites/test_telemetry.sh
+@@ -7,7 +7,7 @@ which jq || {
+     exit 77
+ }
+ 
+-rootdir=$(readlink -f $(dirname $(readlink -f $0))/../..)
++rootdir=$(readlink -f $(dirname $(readlink -f $0))/../../..)
+ tmpoutput=$(mktemp -t dpdk.test_telemetry.XXXXXX)
+ trap "cat $tmpoutput; rm -f $tmpoutput" EXIT
+ 
 -- 
 2.50.0
 
