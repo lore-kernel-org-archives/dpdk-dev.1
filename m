@@ -2,57 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3308AC83F0A
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Jul 2025 14:23:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52154C83F09
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Jul 2025 15:07:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 521CD402A0;
-	Tue,  8 Jul 2025 16:23:19 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 13DB24025E
- for <dev@dpdk.org>; Tue,  8 Jul 2025 16:23:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1751984597;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=RT7K19Jp+UcCXuhtdBzmPfJv88i1rNGDFroTcvv8UKo=;
- b=ElLERWufecb1K5gVFmApbQ2fQoAk1ERGPbsKwOcIaqsrMUE57Yw/eaNNMUFKQSdlV2q018
- OgdwHYlJcPOyrVECj7jAWEV9DleFsAhtMQFJ9F1NzhMakXBGQE1CWxhGcKwXVKtDz4s0IW
- OfnkVrsfie8scq+5DC+OvEIn7UVOL9U=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-168-ewzQuXpIO62z9o8jIWgaiw-1; Tue,
- 08 Jul 2025 10:23:16 -0400
-X-MC-Unique: ewzQuXpIO62z9o8jIWgaiw-1
-X-Mimecast-MFC-AGG-ID: ewzQuXpIO62z9o8jIWgaiw_1751984594
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 6396C1956086; Tue,  8 Jul 2025 14:23:14 +0000 (UTC)
-Received: from dmarchan.lan (unknown [10.44.33.95])
- by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 4283C19560AB; Tue,  8 Jul 2025 14:23:09 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
-To: dev@dpdk.org
-Cc: thomas@monjalon.net, stable@dpdk.org,
- Maxime Coquelin <maxime.coquelin@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>, Hengqi Chen <hengqi.chen@gmail.com>,
- Baoyuan Li <updoing@sina.com>
-Subject: [PATCH] net/virtio: revert Tx free threshold fix
-Date: Tue,  8 Jul 2025 16:23:04 +0200
-Message-ID: <20250708142305.3636707-1-david.marchand@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 2F47D40292;
+	Tue,  8 Jul 2025 17:07:09 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 6B94C4025E
+ for <dev@dpdk.org>; Tue,  8 Jul 2025 17:07:08 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 16255208F0;
+ Tue,  8 Jul 2025 17:07:08 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: h5pfKCZzK2seFUaW670wtQTQu64lDlC0SjFEkQiCiLM_1751984594
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+Subject: RE: [PATCH] net: support VLAN stacking packet type parsing
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Tue, 8 Jul 2025 17:07:05 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FDA6@smartserver.smartshare.dk>
+In-Reply-To: <aGzv-gld5GAFO2N0@bricha3-mobl1.ger.corp.intel.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH] net: support VLAN stacking packet type parsing
+Thread-Index: Advv8YABNc8lDMqgRZq3MA7Zti+EpgAEsaEg
+References: <20250703093027.1259459-1-huangdengdui@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FD8D@smartserver.smartshare.dk>
+ <aGe7uxORe1V817a2@bricha3-mobl1.ger.corp.intel.com>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FD98@smartserver.smartshare.dk>
+ <CANDrEH=NEpj8X-8e6JXGVAMGXuykp1bgOMKyLFm1TPBEovdx-Q@mail.gmail.com>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FD99@smartserver.smartshare.dk>
+ <aGzv-gld5GAFO2N0@bricha3-mobl1.ger.corp.intel.com>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>
+Cc: "Vladimir Medvedkin" <medvedkinv@gmail.com>,
+ "Dengdui Huang" <huangdengdui@huawei.com>, <dev@dpdk.org>,
+ <stephen@networkplumber.org>, <jasvinder.singh@intel.com>,
+ <thomas@monjalon.net>, <aman.deep.singh@intel.com>, <lihuisong@huawei.com>,
+ <fengchengwen@huawei.com>, <liuyonglong@huawei.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -66,36 +56,102 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This fix introduced a performance regression.
-
-The problem is under investigation, but we are too close to the release
-(and the virtio/vhost maintainer is not available) to get a fix before
-the v25.07 release.
-
-Revert this change for now, we can revisit during v25.11.
-
-Bugzilla ID: 1747
-Fixes: 3e3c7f3fa5ac ("net/virtio: fix check of threshold for Tx freeing")
-Cc: stable@dpdk.org
-
-Signed-off-by: David Marchand <david.marchand@redhat.com>
----
- drivers/net/virtio/virtio_rxtx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/virtio/virtio_rxtx.c b/drivers/net/virtio/virtio_rxtx.c
-index ab97f03d7d..edecd2011f 100644
---- a/drivers/net/virtio/virtio_rxtx.c
-+++ b/drivers/net/virtio/virtio_rxtx.c
-@@ -1873,7 +1873,7 @@ virtio_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 
- 	nb_used = virtqueue_nused(vq);
- 
--	if (likely(vq->vq_free_cnt < vq->vq_free_thresh))
-+	if (likely(nb_used > vq->vq_nentries - vq->vq_free_thresh))
- 		virtio_xmit_cleanup(vq, nb_used);
- 
- 	for (nb_tx = 0; nb_tx < nb_pkts; nb_tx++) {
--- 
-2.50.0
-
+PiBGcm9tOiBCcnVjZSBSaWNoYXJkc29uIFttYWlsdG86YnJ1Y2UucmljaGFyZHNvbkBpbnRlbC5j
+b21dDQo+IFNlbnQ6IFR1ZXNkYXksIDggSnVseSAyMDI1IDEyLjE2DQo+IA0KPiBPbiBUdWUsIEp1
+bCAwOCwgMjAyNSBhdCAxMjowMDo0MkFNICswMjAwLCBNb3J0ZW4gQnLDuHJ1cCB3cm90ZToNCj4g
+PiAgICBGcm9tOiBWbGFkaW1pciBNZWR2ZWRraW4gW21haWx0bzptZWR2ZWRraW52QGdtYWlsLmNv
+bV0NCj4gPiAgICBTZW50OiBNb25kYXksIDcgSnVseSAyMDI1IDIyLjEwDQo+ID4NCj4gPg0KPiA+
+ICAgIEhpIE1vcnRlbiwgYWxsLA0KPiA+DQo+ID4NCj4gPg0KPiA+ICAgINC/0L0sIDcg0LjRjtC7
+LiAyMDI14oCv0LMuINCyIDE5OjA5LCBNb3J0ZW4gQnLDuHJ1cA0KPiA+ICAgIDxbMV1tYkBzbWFy
+dHNoYXJlc3lzdGVtcy5jb20+Og0KPiA+DQo+ID4gICAgICA+IEZyb206IEJydWNlIFJpY2hhcmRz
+b24gW21haWx0bzpbMl1icnVjZS5yaWNoYXJkc29uQGludGVsLmNvbV0NCj4gPiAgICAgID4gU2Vu
+dDogRnJpZGF5LCA0IEp1bHkgMjAyNSAxMy4zMg0KPiA+ICAgICAgPiBIaSBhbGwsDQo+ID4gICAg
+ICA+DQo+ID4gICAgICA+IHRoaXMgZW1haWwgZGlzY3Vzc2lvbiBjb21lcyBhdCBhIGJpdCBvZiBh
+IGZvcnR1bmF0ZSB0aW1lIGZvcg0KPiBtZSwNCj4gPiAgICAgIGFzIEknbQ0KPiA+ICAgICAgPiBj
+dXJyZW50bHkgbG9va2luZyBhdCBvdXIgdmxhbiB0YWcvcWlucSBzdHJpcHBpbmcgYmVoYXZpb3Vy
+IGluDQo+IG91cg0KPiA+ICAgICAgSW50ZWwNCj4gPiAgICAgID4gTklDDQo+ID4gICAgICA+IGRy
+aXZlcnMsIGFuZCB0aGVyZSBpcyBzb21lIGRpc2N1c3Npb24gaW50ZXJuYWxseSBhcyB0byB3aGF0
+IG91cg0KPiA+ICAgICAgZHJpdmVyDQo+ID4gICAgICA+IGJlaGF2aW91ciBzaG91bGQgYmUgY29t
+cGFyZWQgdG8gd2hhdCBpdCBoYXMgaGlzdG9yaWNhbGx5IGJlZW4uDQo+IDotKQ0KPiA+ICAgICAg
+Pg0KPiA+ICAgICAgPiBUaGUgZG9jdW1lbnRhdGlvbiAtIGJvdGggaW4gdGhlIE5JQyBndWlkZSBb
+MV0gYW5kIHRoZSB0ZXN0cG1kDQo+ID4gICAgICBndWlkZSBbMl0NCj4gPiAgICAgID4gLQ0KPiA+
+ICAgICAgPiBpcyByYXRoZXIgc2hvcnQgb24gZGV0YWlsIGFzIHRvIHdoYXQgZXhhY3RseSB0aGUg
+YmVoYXZpb3VyDQo+IHNob3VsZA0KPiA+ICAgICAgYmUNCj4gPiAgICAgID4gd2hlbg0KPiA+ICAg
+ICAgPiB2bGFuIHN0cmlwIG9yIHFpbnEgc3RyaXAgaXMgaW1wbGVtZW50ZWQuIFRoZXJlZm9yZSwg
+SSdkIGhvcGUNCj4gdGhhdA0KPiA+ICAgICAgdGhvc2UNCj4gPiAgICAgID4gbW9yZSBmYW1pbGlh
+ciB3aXRoIG5ldHdvcmtpbmcgdGhhbiBtZSB3b3VsZCBiZSBhYmxlIHRvIGhlbHANCj4gPiAgICAg
+IGNsYXJpZnkNCj4gPiAgICAgID4gdGhpbmdzDQo+ID4gICAgICA+IHNvIHdlIGNhbiBkb2N1bWVu
+dCB0aGUgY29ycmVjdCBiZWhhdmlvdXIgcHJlY2lzZWx5IC0gYW5kDQo+IGhvcGVmdWxseQ0KPiA+
+ICAgICAgdGVzdA0KPiA+ICAgICAgPiBvdXINCj4gPiAgICAgID4gZHJpdmVycyBhZ2FpbnN0IGl0
+IGluIGZ1dHVyZSENCj4gPiAgICAgID4NCj4gDQo+IDxzbmlwcGluZyBmdWxsIGRpc2N1c3Npb24g
+Zm9yIGJyZXZpdHk+DQo+IA0KPiBTbyBmcm9tIHRoZSBkaXNjdXNzaW9uLCB3b3VsZCB0aGUgZm9s
+bG93aW5nIGJlIGEgZ29vZCBzZXQgb2YgZ3VpZGVsaW5lcw0KPiB0bw0KPiBkb2N1bWVudCBmb3Ig
+Y29ycmVjdCBkcml2ZXIgYmVoYXZpb3VyOg0KPiANCj4gKiBWTEFOLXN0cmlwIGFsd2F5cyBzdHJp
+cHMgb25lIFZMQU4gdGFnIGlmIGF2YWlsYWJsZS4gSWYgbXVsdGlwbGUgVkxBTg0KPiB0YWdzDQo+
+ICAgYXJlIHByZXNlbnQsIGl0IHN0cmlwcyB0aGUgb3V0ZXIuDQoNClllcy4NCg0KPiAqIFFpblEg
+c3RyaXAsIHN0cmlwcyB0d28gVkxBTiB0YWdzIGlmIHByZXNlbnQuIElmIG9ubHkgb25lIHRhZyBp
+cw0KPiBwcmVzZW50IGl0DQo+ICAgYmVoYXZlcyBhcyBWTEFOLXN0cmlwLg0KDQpZZXMuDQoNCj4g
+KiBTcGVjaWZ5aW5nIGJvdGggVkxBTi1zdHJpcCBhbmQgUWluUSBzdHJpcCBpcyB0aGUgc2FtZSBh
+cyBRaW5RIHN0cmlwDQo+IGFsb25lICg/PykNCg0KWWVzLg0KDQpPbmUgbW9yZSB0aG91Z2h0IGFi
+b3V0IHRoaXM6DQpXaXRoIFFpblEgc3RyaXBwaW5nIGVuYWJsZWQsIGFuIG1idWYgZm9yIGEgc2lu
+Z2xlIFZMQU4gdGFnZ2VkIHBhY2tldCB3aWxsIGhhdmUgdGhlIFJYX1ZMQU4gYW5kIFJYX1ZMQU5f
+U1RSSVBQRUQgZmxhZ3Mgc2V0Lg0KU28sIGNvbnNpZGVyaW5nIHRoaXMgb3V0cHV0LCBpdCB3b3Vs
+ZCBiZSByZWFzb25hYmxlIHJlcXVpcmluZyB0aGF0IFZMQU4gc3RyaXBwaW5nIGlzIGFsc28gZW5h
+YmxlZCB3aGVuIFFpblEgc3RyaXBwaW5nIGlzIGVuYWJsZWQuDQoNCk9uIHRoZSBvdGhlciBoYW5k
+LCB0aGF0IG1pZ2h0IGJlIGEgbmV3IHJlcXVpcmVtZW50IGZvciBhcHBsaWNhdGlvbnMuDQpTbyBi
+YWNrd2FyZHMgY29tcGF0aWJpbGl0eSBzcGVha3MgZm9yIG1ha2luZyB0aGUgVkxBTiBzdHJpcHBp
+bmcgY29uZmlndXJhdGlvbiAiZG9uJ3QgY2FyZSIgd2hlbiB0aGUgUWluUSBzdHJpcHBpbmcgY29u
+ZmlndXJhdGlvbiBpcyBlbmFibGVkLg0KDQo+IA0KPiBNYnVmIHJlcG9ydGluZyBiZWhhdmlvdXI6
+DQo+IA0KPiBJbnB1dCBUcmFmZmljCQlWTEFOLXN0cmlwIG9uCQlRaW5RIHN0cmlwIG9uDQo+IC0t
+LS0tLS0tLS0tLS0tCQktLS0tLS0tLS0tLS0tCQktLS0tLS0tLS0tLS0tDQo+IFNpbmdsZSBWTEFO
+IHBrdHMJCVRhZyBpbiBtYnVmLT52bGFuX3RjaQlUYWcgaW4gbWJ1Zi0+dmxhbl90Y2kNCj4gDQo+
+IERvdWJsZSBWTEFOIHBrdHMJCU91dGVyIHRhZyBpbiB2bGFuX3RjaQlPdXRlciB0YWcgaW4gdmxh
+bl90Y2lfb3V0ZXINCj4gCQkJCQkJCQlJbm5lciB0YWcgaW4gdmxhbl90Y2kNCj4gDQo+IA0KPiBE
+b2VzIHRoZSBhYm92ZSBzZWVtIHJlYXNvbmFibGUgYW5kIGNvcnJlY3Q/DQoNClllcy4NCg0KQlRX
+OiBJIHRoaW5rIHRoYXQgaGF2aW5nIGRvdWJsZSB0YWdnZWQgcGFja2V0cyBvbiBhIGxpbmsgY29u
+ZmlndXJlZCBmb3Igc2luZ2xlIFZMQU4gc3RyaXBwaW5nIGlzIHdlaXJkLg0KQnV0IGRlc2NyaWJp
+bmcgdGhlIGV4cGVjdGVkIGJlaGF2aW9yIGlzIGdvb2QhDQoNCj4gDQo+IE15IG9uZSAobWlub3Ip
+Y29uY2VybiB3b3VsZCBiZSB0aGUgaGFuZGxpbmcgYW5kIHBsYWNlbWVudCBvZiB0aGUgc2luZ2xl
+DQo+IHRhZw0KPiBpbiB0aGUgUWluUSBjYXNlLiBEZXBlbmRpbmcgb24gaG93IHRoZSBoYXJkd2Fy
+ZSB0cmVhdHMgYSBzaW5nbGUgdGFnIGluDQo+IHRoYXQNCj4gbW9kZSwgdGhlIGRhdGEgcGF0aCBt
+YXkgaGF2ZSB0byBwYXkgYSBwZW5hbHR5IGlmIHRoZSBIVyB0YWtlcyBhIHNpbmdsZQ0KPiBWTEFO
+DQo+IGFuZCBwbGFjZXMgaXQgaW4gdGhlICJvdXRlciIgcG9zaXRpb24gaW4gdGhlIGRlc2NyaXB0
+b3IsIHNpbmNlIGl0IG5lZWRzDQo+IHRvDQo+IGdvIGluIHRoZSAiaW5uZXIiIHBvc2l0aW9uIGlu
+IHRoZSBtYnVmLCBuZWNlc3NpdGF0aW5nIHNvbWUgY29uZGl0aW9uYWwNCj4gbG9naWMuICBBRkFJ
+SyAoc3ViamVjdCB0byBtZSBhY3R1YWxseSB0ZXN0aW5nIGZvciBjb25maXJtYXRpb24pLCB0aGlz
+DQo+IHdpbGwNCj4gYmUgdGhlIGNhc2UgZm9yIG91ciBJbnRlbCBkcml2ZXJzLg0KDQpJZiB0aGF0
+IGlzIHRoZSBjYXNlLCB0aGVuIG1heWJlIHNvbWVvbmUgYWxyZWFkeSB0aG91Z2h0IGFib3V0IHRo
+aXMgd2hlbiBkZXNpZ25pbmcgdGhlIE5JQyBIVywgYW5kIGNhbWUgdG8gYSBkaWZmZXJlbnQgY29u
+Y2x1c2lvbiB0aGFuIEkgZGlkLg0KDQpJbnNwaXJlZCBieSBWbGFkaW1pcidzIGNvbW1lbnRzIGFi
+b3V0IFFpblEgcGFja2V0cyB3aXRoIGFuIFMtVEFHIChTdWJzY3JpYmVyIHRhZykgYW5kIG5vIEMt
+VEFHIChDdXN0b21lciB0YWcpLCBtYXliZSB3ZSBzaG91bGQgY29uc2lkZXIgdGhlIGFsdGVybmF0
+aXZlOg0KV2hlbiBjb25maWd1cmVkIGZvciBRaW5RIHN0cmlwcGluZywgdGhlIGZpcnN0IHRhZyBp
+cyBhbHdheXMgY29uc2lkZXJlZCB0aGUgUy1UQUcsIGFuZCB0aHVzIGFsd2F5cyBnb2VzIHRvIHRo
+ZSB2bGFuX3RjaV9vdXRlciwgYW5kIHRoZSBzZWNvbmQgKGlubmVyKSB0YWcgaXMgb3B0aW9uYWws
+IGFuZCBnb2VzIHRvIHRoZSB2bGFuX3RjaSBpZiBwcmVzZW50Lg0KDQo8ZmVhdHVyZSBjcmVlcD4N
+CldoZW4gY29uZmlndXJlZCBmb3IgUWluUSBzdHJpcHBpbmcsIHdlIGNvdWxkIGNvbnRyb2wgdGhl
+IHNpbmdsZSBWTEFOIHRhZyBwbGFjZW1lbnQgdGhyb3VnaCB0aGUgVkxBTiBzdHJpcHBpbmcgY29u
+ZmlndXJhdGlvbjoNCldpdGggVkxBTiBzdHJpcHBpbmcgYWxzbyBlbmFibGVkLCB0aGUgbGluayBp
+cyBjb25zaWRlcmVkIGEgInN1cGVyIGh5YnJpZCIsIGFuZCB0aGUgVkxBTiBJRCBvZiBzaW5nbGUg
+VkxBTiB0YWdnZWQgcGFja2V0cyBnb2VzIGludG8gdmxhbl90Y2kgKGJlaW5nIGEgbm9ybWFsIFZM
+QU4gdGFnZ2VkIHBhY2tldCkuDQpXaXRoIFZMQU4gc3RyaXBwaW5nIGRpc2FibGVkLCB0aGUgbGlu
+ayBpcyBjb25zaWRlcmVkIGEgcHVyZSBRaW5RIHRydW5rLCBhbmQgdGhlIFZMQU4gSUQgb2Ygc2lu
+Z2xlIFZMQU4gdGFnZ2VkIHBhY2tldHMgZ29lcyBpbnRvIHZsYW5fdGNpX291dGVyIChiZWluZyB0
+aGUgUy1UQUcgb2YgYSBRaW5RIHBhY2tldCB3aXRoIG5vIEMtVEFHKS4NCjwvZmVhdHVyZSBjcmVl
+cD4NCg0KQnV0IGFnYWluLCB0aGlzIG9ubHkgd29ya3Mgd2hlbiBWTEFOL1FpblEgc3RyaXBwaW5n
+IGlzIGVuYWJsZWQuIEludG8gd2hpY2ggZmllbGRzIHRoZSB2YXJpb3VzIFZMQU4gdGFncyBhcmUg
+d3JpdHRlbiB3aGVuIFZMQU4vUWluUSBzdHJpcHBpbmcgaXMgZGlzYWJsZWQgd2lsbCBiZSBmaXhl
+ZC9oYXJkY29kZWQuDQpJJ20gbm90IGV2ZW4gc3VyZSB0aGUgdmxhbl90Y2kgYW5kIHZsYW5fdGNp
+X291dGVyIGZpZWxkcyBhcmUgZmlsbGVkIHdoZW4gc3RyaXBwaW5nIGlzIGRpc2FibGVkLiBCdXQg
+dGhlcmUgYXJlIHNlcGFyYXRlIG1idWYgZmxhZ3MgZm9yIFZMQU4gcHJlc2VuY2UgYW5kIFZMQU4g
+c3RyaXBwZWQgKGFuZCBRaW5RIHByZXNlbmNlIGFuZCBRaW5RIHN0cmlwcGVkKSwgc28gaXQgY291
+bGQgYmUgc3VwcG9ydGVkLg0KDQpGdXJ0aGVybW9yZSwgaW4gZmF2b3Igb2YgbXkgb3JpZ2luYWwg
+c3VnZ2VzdGlvbiwgY29uc2lkZXIgVFg6DQpUWCBvZiBhbiBtYnVmIHdpdGggYSBzaW5nbGUgVkxB
+TiB0YWcgZG9lc24ndCBrbm93IGFib3V0IFFpblEgd2l0aCBubyBDLVRBRywgYW5kIHRodXMgbG9v
+a3MgYXQgdmxhbl90Y2kgd2hlbiB0cmFuc21pdHRpbmcgc3VjaCBwYWNrZXRzLg0KSWYgd2UgbGlr
+ZSBzeW1tZXRyeSwgUlggc2hvdWxkIGJlaGF2ZSBzaW1pbGFybHkuDQoNCkknbSBsZWFuaW5nIHRv
+d2FyZHMgbXkgb3JpZ2luYWwgc3VnZ2VzdGlvbiwgYnV0IEkgZG9uJ3QgaGF2ZSBhIHN0cm9uZyBv
+cGluaW9uIGFib3V0IHRoaXMuDQpUaGVyZSBhcmUgZ29vZCBhcmd1bWVudHMgZm9yIGJvdGggc29s
+dXRpb25zLCBlaXRoZXIgdmxhbl90Y2kgb3Igdmxhbl90Y2lfb3V0ZXIgZm9yIHNpbmdsZSBWTEFO
+IHRhZ2dlZCBwYWNrZXRzIHJlY2VpdmVkIG9uIGEgbGluayBjb25maWd1cmVkIGZvciBRaW5RLg0K
+DQo=
