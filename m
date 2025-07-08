@@ -2,76 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA5CC8303C
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Jul 2025 21:56:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5EBC83F09
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Jul 2025 22:50:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4A67A40649;
-	Tue,  8 Jul 2025 23:56:49 +0200 (CEST)
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com
- [209.85.222.178])
- by mails.dpdk.org (Postfix) with ESMTP id 8D38640292
- for <dev@dpdk.org>; Tue,  8 Jul 2025 23:56:47 +0200 (CEST)
-Received: by mail-qk1-f178.google.com with SMTP id
- af79cd13be357-7d9eac11358so156623885a.3
- for <dev@dpdk.org>; Tue, 08 Jul 2025 14:56:47 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 237C940649;
+	Wed,  9 Jul 2025 00:50:29 +0200 (CEST)
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com
+ [209.85.216.50]) by mails.dpdk.org (Postfix) with ESMTP id 7554C4013F
+ for <dev@dpdk.org>; Wed,  9 Jul 2025 00:50:27 +0200 (CEST)
+Received: by mail-pj1-f50.google.com with SMTP id
+ 98e67ed59e1d1-312e747d2d8so345151a91.0
+ for <dev@dpdk.org>; Tue, 08 Jul 2025 15:50:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752011807;
- x=1752616607; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=yM9oTmQbAgF1FTeCiIN0tu4ZU/gLvWWM1ZbMPhw66WA=;
- b=QEeXMlgkJkrZo5EkZvrnFMVlkYzFS+oFCZUEYEuR0uRwaHaZ7WiGtip0PwGefNap6t
- JgWTiXtaewFCnVU/do4OEcPYBksMjy29vNcn6pH+cAtsOsEHsS6uCHHCid49HwHsuNV5
- 5R4qbuatx93MuiYsrrqEkChgAgCjQKEsMpDlcRJsRmMmvrMFUokHLC4wwQDWTghGNaWe
- +un+X8HTBGxMIUR9aFzXZy36QdUfRlIM9WkJE7+fQW0H19FuePQAYgGKPvzwuW7ZZFb1
- +ST+RWqatNUR5sWHMhRm1gjU8E7I8L7R+IiGfPe2s7HSbdf/fAsK0T0vpa+emBUKsMFX
- TQcw==
+ d=iol.unh.edu; s=unh-iol; t=1752015026; x=1752619826; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+ :date:message-id:reply-to;
+ bh=aiwRyyQhodMQJ3aYFumtm0yEEd1AcKGLrRCmiMALlE0=;
+ b=Mea2a6DkolYLpX/CDTuevbNjEEXM8tJm9J04JxOABBQvZuWGhyiDf6AWnXNBYNB2Po
+ XEhPcsSbqhLXFg24rAcDRe+QscbRI5iytFI+6NSr/GTj8nhdPSxah7NQ26AD8KveX5UH
+ a5a1u3ht8JqtH0p6kLxdZomvs8Lp731ZBwJRo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752011807; x=1752616607;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=yM9oTmQbAgF1FTeCiIN0tu4ZU/gLvWWM1ZbMPhw66WA=;
- b=kzW1KXC95EvTwhPWbbEs72leomK+pjSKzxED5NuEEHhEH9qOk82H73lZrUWLQaSsTG
- rUTPEUBiZ1lUcG79UiaChQTftCrF1yuQHjfE8Xtet7i64JcOMOZPARZ2I3oFGXnQNc3f
- H+sXksyy7VW/9y1+4nHNTjwTv7z3HJIHzKwolQvaF+1wP++hj+9tJGQt2Ta78/4uVnvz
- kimVstvqcg2elZpYmpdaRNHdaMI9JKNkonptaHxfy2VWvrhnt5Enwj2HwoMCDMfhLCz0
- w7bbK26wVjSGUs+fmoPMOoWlh3iUc0lHA2BudfjpGXO/GRV33YqEXREr3uqDZ4LLGOJY
- I/rw==
-X-Gm-Message-State: AOJu0YxXrthVGxXVoFp/AvfwYN8Tj6+45QGsd41gTTmMyt3t8gjeTwV3
- J6Bdwow+lGCEqkzKPzrNddRxgLJTYkONbNNM9990EBJvmxFTWYPIjg4rEMR/tzC0G7k=
-X-Gm-Gg: ASbGncucu5y4k0p8zBlemwPnfavF8fACwypvdC71UGTq4W+DwgJyPJ/SHPZ952BEdi6
- WyhJksiilf7Nl2NjO79QCPh1BghG6RTlrGXxgsQk6fzMbIDEi6dEVezR7F0Plbg3fbty80YV8hE
- hubqcaA4Fdumjd+NV03AGmheX70855QoYD5QnKjAWBniUUoDKkpKSjDqX9CUwR2+O6Tt0tZGTzT
- eKEx8Q6c+IFQc9IFPqWq7jUHR+Kii0FYiYEGrMZHLHLdl/ZErJdV3aMY8GwJYCJSRAyisH6wTjt
- aZJMFtSwDcKHWZziClOCZ/rNcgyncVEEkzrjTaspDIpQCcG7w1nFBFj+vGlWpoSGXD7hGOqFPxN
- xTg0myg9Cgbw2yzKiuo33iltH1/96ea8rUrzqkAw=
-X-Google-Smtp-Source: AGHT+IF3EnJmKJrInMxKNSRGey2Py3NayMH1gFF2BXnBDjTNprfcREiuUMWtkbd+PHuZgYcSV/kqng==
-X-Received: by 2002:a05:620a:c55:b0:7d5:dc35:281 with SMTP id
- af79cd13be357-7db7d78da9amr33568985a.38.1752011806672; 
- Tue, 08 Jul 2025 14:56:46 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7d5dbdbbbb0sm843409285a.40.2025.07.08.14.56.45
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 08 Jul 2025 14:56:46 -0700 (PDT)
-Date: Tue, 8 Jul 2025 14:56:43 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Schneide <schneide@qti.qualcomm.com>
-Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, Reshma Pattan
- <reshma.pattan@intel.com>, Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K
- <kirankumark@marvell.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Zhirun Yan <yanzhirun_163@163.com>
-Subject: Re: [PATCH v3] pcapng: allow any protocol link type for the
- interface block
-Message-ID: <20250708145643.738b62e2@hermes.local>
-In-Reply-To: <20250708210245.3967578-1-schneide@qti.qualcomm.com>
-References: <20250609211937.345620-1-schneide@qti.qualcomm.com>
- <20250708210245.3967578-1-schneide@qti.qualcomm.com>
+ d=1e100.net; s=20230601; t=1752015026; x=1752619826;
+ h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=aiwRyyQhodMQJ3aYFumtm0yEEd1AcKGLrRCmiMALlE0=;
+ b=ecpzoByiimNaXEHpsjQwH41Y4w39OcznQbNlaOpeDdNepYfdZ8oO5RHZTA0AurUa8j
+ JB/rm7uPE8ViUpRON8wXQYFT07w8nl35NSzL/JbmZ6OegzYKsF9IiC1g4vEhDaGuvO4O
+ aJP9p8IQVnwra5Ml3mSnqbCeFlLmk2f8fCQ1YX+nmm+3csYu/uzcr90LjYnMbyGCicp/
+ 503/KZ5rz4wACyFDvHEoP3mjCLjf78B+xRyQVLhAoAE+Mz0BFkroXBgs/kJnq7noscgf
+ 2yHSwo5vMcHO5nm1cPJKFDOREVldZLpcLOlJ3FdOx8RTPhsqo26qVrbPJFFxbR101T5V
+ 4LYA==
+X-Gm-Message-State: AOJu0YznpKKBiw//1F4GV9WUxDX8NW7WzPL6Em6s0OQg5eI6D923Pt8R
+ lpo4epLLJAa/HTrA428vAZgmYT5KZZJj6Ih378gDdmXfG+iQH6H0bxWpcbAhhz6QtN6zYWx7AAL
+ ZNU0HuT5LGRyj9GP0yDMNmCa3eCIvvNW8otvP/ZKgNDVdinQ8E0RztAQ=
+X-Gm-Gg: ASbGncs0FdIzqwGHuwL+nXOWIO40aXhwECzcrbvqrcCv9bDGCphBvDycSaBi8fsa3lS
+ PCspRRrbE9NUjI1XsZMazDjQX/9HptlucF44+r9fvRLkQG5ytCCwvleSliU5ITQkJSIk2X1+N68
+ NTRqKwOAj2BrC6lkqwTOpRRc3Lo1uOAP/oooOWODV5FUc9MzHMuBc0oq3aMg==
+X-Google-Smtp-Source: AGHT+IEqqXY182VWgd/xYo+YrsJ082SZbFuJoLfeO25uSEjawOGAL9GspQGAGInLtrInp/dmuET8s6kEZz6QqQydhVI=
+X-Received: by 2002:a17:90b:134e:b0:2ff:4a8d:74f9 with SMTP id
+ 98e67ed59e1d1-31c306dc3d4mr153428a91.10.1752015026365; Tue, 08 Jul 2025
+ 15:50:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Tue, 8 Jul 2025 18:44:43 -0400
+X-Gm-Features: Ac12FXwYy7py6N7VvXFF5dkXEuuPZkicQkZIVNOr8-AoXv2XEUXFCpQUmhBI6N4
+Message-ID: <CAJvnSUAr78vbPCDnF_xav7Own8d_zgm5cK0ZuWU4+5yzLDCbcw@mail.gmail.com>
+Subject: Community CI Meeting Minutes - June 25, 2025
+To: ci@dpdk.org
+Cc: dev <dev@dpdk.org>
+Content-Type: multipart/alternative; boundary="00000000000049c1d3063972c99e"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,27 +64,181 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue,  8 Jul 2025 15:02:45 -0600
-Schneide <schneide@qti.qualcomm.com> wrote:
+--00000000000049c1d3063972c99e
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> From: Dylan Schneider <schneide@qti.qualcomm.com>
-> 
-> Allow the user to specify protocol link type when creating pcapng files.
-> This change is needed to specify the protocol type in the pcapng file,
-> DLT_EN10MB specifies ethernet packets only. This will allow dissectors
-> for other protocols to be used on files generated by pcapng.
-> 
-> Includes a breaking change to rte_pcapng_add_interface to add link_type
-> parameter. Existing calls to the function have been updated to pass
-> DLT_EN10MB for the link type argument.
-> 
-> Fixes: d1da6d0d04c7 ("pcapng: require per-interface information")
-> Signed-off-by: Dylan Schneider <schneide@qti.qualcomm.com>
-> Cc: stephen@networkplumber.org
-> ---
->  .mailmap                               |  1 +
->  app/dumpcap/main.c                     |  4 +--
->  app/test/test_pcapng.c                 |  8 +++---
->  doc/guides/rel_notes/release_25_07.rst |  4 +++
+#####################################################################
+June 25, 2025
+Attendees
+1. Patrick Robb
+2. Manit Mahajan
+3. Dean Marx
 
-Sorry too late for inclusion 25.07 release which is in last serious bugs only stage.
+#####################################################################
+Minutes
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+General Announcements
+* Expected RC schedule:
+   * RC2 - June 27
+   * RC3 - July 2
+* Results from the =E2=80=9Cwhen to meet=E2=80=9D survey:
+https://www.when2meet.com/?30965992-3ijyI
+   * Basically, options going forward are Tuesdays from 12:00 UTC to 14:00
+UTC, Wednesdays from 13:00 UTC to 14:00 UTC, and Thursdays from 12:00 UTC
+to 13:00 UTC.
+* DPDK-CI Test Recheck script has been updated to capture the =E2=80=9Creba=
+se=E2=80=9D flag
+for rebasing onto specific branches by developer request:
+   *
+https://patchwork.dpdk.org/project/ci/patch/20250611205849.72165-1-probb@io=
+l.unh.edu/
+   * https://core.dpdk.org/testing/#requesting-a-patch-retest
+* CFP for the Santa Clara Summit is closed
+   * The testing group does not have any talks submitted for this
+conference, but Patrick will probably go to attend
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+CI Status
+
+---------------------------------------------------------------------
+AWS Lab
+* Test recheck support plans:
+* David noticed some failures due to timeout on the telemetry test, other
+CIs run with -t 3 (30s timeout, instead of 10):
+* Review on apply failure on .rst files discussion from the previous meetin=
+g
+UNH-IOL Community Lab
+* Apply patchset process: Skipping making a tarball if the patch is a docs
+patch only.
+   * Labeling as =E2=80=9Cnot applicable=E2=80=9D on the lab dashboard
+* Windows Builds:
+   * Clang build is not picking up the devx lib file - Patrick needs to
+check if this behavior is new.
+   * WARN/FAIL email reporting error for Windows builds has been resolved.
+
+---------------------------------------------------------------------
+Intel Lab
+* None
+
+---------------------------------------------------------------------
+Github Actions Robot
+* None
+
+---------------------------------------------------------------------
+Loongson Lab
+* Patchseries recheck support: Min Zhou has tested out the new version of
+the get_reruns.py script, and has indicated he will use it to support the
+rebase argument.
+   * When this happens we need to update the DPDK website testing page to
+update the supported labs list
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+DTS Improvements & Test Development
+* README and dts.rst updates are merged.
+* Virtual Function testing:
+   * Packet forwarding from DTS created VFs is working (on Intel)
+   * Dean is refactoring the existing testsuites to ensure that they will
+work for both PFs and VFs
+* Performance testing and nic_single_core_perf:
+   * Removing the usage of Invoke Promise from the V2.
+      * This time, we start the trex server process and collect PID, then
+loop on trying to connect to the trex server process with STLClient, then
+kill the trex PID at the end
+   * Resolving a few other small issues
+   * Some minor config updates are needed
+      * For instance, we don=E2=80=99t need to be including an app path for=
+ func
+TGs, only perf TGs
+* Rte_flow testing:
+   * Same status as before - appears to be running fine but requires
+additional review.
+      * Tested on Mellanox and Intel
+* Remaining func testsuites:
+   * Qinq: Needs a review
+   * Ethertype: Needs a review but probably moving to 25.11
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Any other business
+* Next Meeting Jul 9, 2025
+
+--00000000000049c1d3063972c99e
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">##########################################################=
+###########<br>June 25, 2025<br>Attendees<br>1. Patrick Robb<br>2. Manit Ma=
+hajan<br>3. Dean Marx<br><br>##############################################=
+#######################<br>Minutes<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D<br>General Announcements<br>* Expected RC schedule=
+:<br>=C2=A0 =C2=A0* RC2 - June 27<br>=C2=A0 =C2=A0* RC3 - July 2<br>* Resul=
+ts from the =E2=80=9Cwhen to meet=E2=80=9D survey: <a href=3D"https://www.w=
+hen2meet.com/?30965992-3ijyI">https://www.when2meet.com/?30965992-3ijyI</a>=
+<br>=C2=A0 =C2=A0* Basically, options going forward are Tuesdays from 12:00=
+ UTC to 14:00 UTC, Wednesdays from 13:00 UTC to 14:00 UTC, and Thursdays fr=
+om 12:00 UTC to 13:00 UTC.<br>* DPDK-CI Test Recheck script has been update=
+d to capture the =E2=80=9Crebase=E2=80=9D flag for rebasing onto specific b=
+ranches by developer request:<br>=C2=A0 =C2=A0* <a href=3D"https://patchwor=
+k.dpdk.org/project/ci/patch/20250611205849.72165-1-probb@iol.unh.edu/">http=
+s://patchwork.dpdk.org/project/ci/patch/20250611205849.72165-1-probb@iol.un=
+h.edu/</a><br>=C2=A0 =C2=A0* <a href=3D"https://core.dpdk.org/testing/#requ=
+esting-a-patch-retest">https://core.dpdk.org/testing/#requesting-a-patch-re=
+test</a><br>* CFP for the Santa Clara Summit is closed<br>=C2=A0 =C2=A0* Th=
+e testing group does not have any talks submitted for this conference, but =
+Patrick will probably go to attend<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D<br>CI Status<br><br>------------------------------=
+---------------------------------------<br>AWS Lab<br>* Test recheck suppor=
+t plans:<br>* David noticed some failures due to timeout on the telemetry t=
+est, other CIs run with -t 3 (30s timeout, instead of 10):<br>* Review on a=
+pply failure on .rst files discussion from the previous meeting<br>UNH-IOL =
+Community Lab<br>* Apply patchset process: Skipping making a tarball if the=
+ patch is a docs patch only.<br>=C2=A0 =C2=A0* Labeling as =E2=80=9Cnot app=
+licable=E2=80=9D on the lab dashboard<br>* Windows Builds:<br>=C2=A0 =C2=A0=
+* Clang build is not picking up the devx lib file - Patrick needs to check =
+if this behavior is new.<br>=C2=A0 =C2=A0* WARN/FAIL email reporting error =
+for Windows builds has been resolved.<br><br>------------------------------=
+---------------------------------------<br>Intel Lab<br>* None<br><br>-----=
+----------------------------------------------------------------<br>Github =
+Actions Robot<br>* None<br><br>--------------------------------------------=
+-------------------------<br>Loongson Lab<br>* Patchseries recheck support:=
+ Min Zhou has tested out the new version of the get_reruns.py script, and h=
+as indicated he will use it to support the rebase argument.<br>=C2=A0 =C2=
+=A0* When this happens we need to update the DPDK website testing page to u=
+pdate the supported labs list<br>=C2=A0 =C2=A0<br>=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>DTS Improvements &amp; Test Developmen=
+t<br>* README and dts.rst updates are merged.<br>* Virtual Function testing=
+:<br>=C2=A0 =C2=A0* Packet forwarding from DTS created VFs is working (on I=
+ntel)<br>=C2=A0 =C2=A0* Dean is refactoring the existing testsuites to ensu=
+re that they will work for both PFs and VFs<br>* Performance testing and ni=
+c_single_core_perf:<br>=C2=A0 =C2=A0* Removing the usage of Invoke Promise =
+from the V2.<br>=C2=A0 =C2=A0 =C2=A0 * This time, we start the trex server =
+process and collect PID, then loop on trying to connect to the trex server =
+process with STLClient, then kill the trex PID at the end<br>=C2=A0 =C2=A0*=
+ Resolving a few other small issues<br>=C2=A0 =C2=A0* Some minor config upd=
+ates are needed<br>=C2=A0 =C2=A0 =C2=A0 * For instance, we don=E2=80=99t ne=
+ed to be including an app path for func TGs, only perf TGs<br>* Rte_flow te=
+sting:<br>=C2=A0 =C2=A0* Same status as before - appears to be running fine=
+ but requires additional review.<br>=C2=A0 =C2=A0 =C2=A0 * Tested on Mellan=
+ox and Intel<br>* Remaining func testsuites:<br>=C2=A0 =C2=A0* Qinq: Needs =
+a review<br>=C2=A0 =C2=A0* Ethertype: Needs a review but probably moving to=
+ 25.11<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br=
+>Any other business<br>* Next Meeting Jul 9, 2025</div>
+
+--00000000000049c1d3063972c99e--
