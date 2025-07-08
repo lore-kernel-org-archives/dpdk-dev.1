@@ -2,57 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 044C1C8303C
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Jul 2025 12:30:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1606CC8303C
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Jul 2025 12:30:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6578740A4B;
-	Tue,  8 Jul 2025 14:30:38 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6E92F4069F;
+	Tue,  8 Jul 2025 14:30:51 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 550644028C
- for <dev@dpdk.org>; Tue,  8 Jul 2025 14:30:37 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 77E414068A
+ for <dev@dpdk.org>; Tue,  8 Jul 2025 14:30:50 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1751977836;
+ s=mimecast20190719; t=1751977850;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=xS9b/aHVC4oMd8pWs0BvxI6xXbdEM6KnJr9bRA692FM=;
- b=gVJIWNwqnBzKVfsnBR8WsKu9HrUaMYnHlU7Gm8aYFIkZfGH71YCicI856tML9d+niMCeud
- /4TgqtaJJ89BzjPPN8HXV4eGrrsQCrTAU8SnU2oy9dC5nJuwCjo1/brMIO4eJ0oTepFDsB
- G0JTre5IpZFI4Lu3Hk+lywTDYLbuNgs=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ bh=L5PV9ih9Ge25xWsFte9R85e0Viwc40pO1Qo8DCLa1K8=;
+ b=LfMi8vozHyUSvcHMRXiNhjVwoBvlPVWMHXHgdQielTuZrDeCGFkZiKW1H77n5fyrevvaw6
+ hDy90jwd36MyrtXdu2OszQzAZVT3GzS0jnnJUqdSgfrWl4ZULEvlJe9Wrqi3gERhL9i4gu
+ JAOonAiuvueqOsxi/YNzyMWMluJ/wr0=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-613-g81AL9-uM9ypf4OY_Bt1lA-1; Tue,
- 08 Jul 2025 08:30:35 -0400
-X-MC-Unique: g81AL9-uM9ypf4OY_Bt1lA-1
-X-Mimecast-MFC-AGG-ID: g81AL9-uM9ypf4OY_Bt1lA_1751977834
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-437-_3r38XhmM9u_vU6qBL-w4w-1; Tue,
+ 08 Jul 2025 08:30:48 -0400
+X-MC-Unique: _3r38XhmM9u_vU6qBL-w4w-1
+X-Mimecast-MFC-AGG-ID: _3r38XhmM9u_vU6qBL-w4w_1751977847
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 57E89180047F; Tue,  8 Jul 2025 12:30:34 +0000 (UTC)
+ by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 91534190FBC2; Tue,  8 Jul 2025 12:30:47 +0000 (UTC)
 Received: from dmarchan.lan (unknown [10.44.33.95])
- by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 58AFD195609D; Tue,  8 Jul 2025 12:30:27 +0000 (UTC)
+ by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 0F5D419560AD; Tue,  8 Jul 2025 12:30:40 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Cc: stable@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
- Gage Eads <gage.eads@intel.com>, Olivier Matz <olivier.matz@6wind.com>,
- Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>
-Subject: [PATCH v3 09/18] stack: fix unaligned accesses on 128-bit
-Date: Tue,  8 Jul 2025 14:28:13 +0200
-Message-ID: <20250708122823.3406288-10-david.marchand@redhat.com>
+Cc: Aaron Conole <aconole@redhat.com>,
+ Michael Santana <maicolgabriel@hotmail.com>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Thomas Monjalon <thomas@monjalon.net>
+Subject: [PATCH v3 10/18] build: support Undefined Behavior Sanitizer
+Date: Tue,  8 Jul 2025 14:28:14 +0200
+Message-ID: <20250708122823.3406288-11-david.marchand@redhat.com>
 In-Reply-To: <20250708122823.3406288-1-david.marchand@redhat.com>
 References: <20250619071037.37325-1-david.marchand@redhat.com>
  <20250708122823.3406288-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 8HCj2m6yZpUov5Qw2x9jY3Tf4E1ZYTd1yDTl1dOVvgg_1751977834
+X-Mimecast-MFC-PROC-ID: qHhrfYyq53yHKPqTuTdKVhPzNc5cnbWjOdPeKi7ZI58_1751977847
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -69,125 +70,196 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Caught by UBSan:
+Enable UBSan in GHA.
+There are still a lot of issues so only run unit tests for a "mini"
+target.
 
-../lib/eal/x86/include/rte_atomic_64.h:206:21: runtime error:
-	member access within misaligned address 0x7ffd9c67f228 for
-	type 'const rte_int128_t', which requires 16 byte alignment
-	0x7ffd9c67f228: note: pointer points here
- 00 00 00 00  c0 5d 3e 00 01 00 00 00  01 00 00 00 00 00 00 00
-              ^
- 00 00 00 00 00 00 00 00  00 00 00 00
-SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior
-	../lib/eal/x86/include/rte_atomic_64.h:206:21 in
-	../lib/eal/x86/include/rte_atomic_64.h:206:21: runtime error:
-	member access within misaligned address 0x7ffd9c67f228 for type
-	'const union rte_int128_t::(anonymous at
-	../lib/eal/include/generic/rte_atomic.h:1102:2)', which requires
-	16 byte alignment
-0x7ffd9c67f228: note: pointer points here
- 00 00 00 00  c0 5d 3e 00 01 00 00 00  01 00 00 00 00 00 00 00
-              ^
- 00 00 00 00 00 00 00 00  00 00 00 00
-SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior
-	../lib/eal/x86/include/rte_atomic_64.h:206:21 in
-	../lib/eal/x86/include/rte_atomic_64.h:206:16: runtime error:
-	load of misaligned address 0x7ffd9c67f228 for type
-	'const uint64_t' (aka 'const unsigned long'), which requires
-	16 byte alignment
-0x7ffd9c67f228: note: pointer points here
- 00 00 00 00  c0 5d 3e 00 01 00 00 00  01 00 00 00 00 00 00 00
-              ^
- 00 00 00 00 00 00 00 00  00 00 00 00
-SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior
-	../lib/eal/x86/include/rte_atomic_64.h:206:21 in
-
-Fixes: 3340202f5954 ("stack: add lock-free implementation")
-Cc: stable@dpdk.org
+Building with debugoptimized forces -O2 and consumes too much memory
+with UBSan, prefer plain build (iow -O0) even though this hides a number
+of build issues.
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/stack/rte_stack_lf_c11.h     | 8 ++++----
- lib/stack/rte_stack_lf_generic.h | 8 ++++----
- 2 files changed, 8 insertions(+), 8 deletions(-)
+Changes since v2:
+- left the mini configuration alone and instead filtered
+  enabled component when running unit tests with UBSan,
 
-diff --git a/lib/stack/rte_stack_lf_c11.h b/lib/stack/rte_stack_lf_c11.h
-index b97e02d6a1..f674731235 100644
---- a/lib/stack/rte_stack_lf_c11.h
-+++ b/lib/stack/rte_stack_lf_c11.h
-@@ -63,13 +63,13 @@ __rte_stack_lf_push_elems(struct rte_stack_lf_list *list,
- 			  struct rte_stack_lf_elem *last,
- 			  unsigned int num)
- {
--	struct rte_stack_lf_head old_head;
-+	alignas(16) struct rte_stack_lf_head old_head;
- 	int success;
+---
+ .ci/linux-build.sh          | 38 +++++++++++++++++++++++++++++++++++--
+ .github/workflows/build.yml |  5 +++++
+ app/test/suites/meson.build |  3 +--
+ config/meson.build          | 18 +++++++++++++++++-
+ devtools/words-case.txt     |  1 +
+ 5 files changed, 60 insertions(+), 5 deletions(-)
+
+diff --git a/.ci/linux-build.sh b/.ci/linux-build.sh
+index e9272d3931..a24820c65b 100755
+--- a/.ci/linux-build.sh
++++ b/.ci/linux-build.sh
+@@ -44,6 +44,13 @@ catch_coredump() {
+     return 1
+ }
  
- 	old_head = list->head;
++catch_ubsan() {
++    [ "$UBSAN" = "true" ] || return 0
++    grep -q UndefinedBehaviorSanitizer $2 2>/dev/null || return 0
++    grep -E "($1|UndefinedBehaviorSanitizer)" $2
++    return 1
++}
++
+ check_traces() {
+     which babeltrace >/dev/null || return 0
+     for file in $(sudo find $HOME -name metadata); do
+@@ -100,7 +107,6 @@ fi
  
- 	do {
--		struct rte_stack_lf_head new_head;
-+		alignas(16) struct rte_stack_lf_head new_head;
+ OPTS="$OPTS -Dplatform=generic"
+ OPTS="$OPTS -Ddefault_library=$DEF_LIB"
+-OPTS="$OPTS -Dbuildtype=$buildtype"
+ if [ "$STDATOMIC" = "true" ]; then
+ 	OPTS="$OPTS -Denable_stdatomic=true"
+ else
+@@ -117,13 +123,39 @@ else
+ fi
+ OPTS="$OPTS -Dlibdir=lib"
  
- 		/* Swing the top pointer to the first element in the list and
- 		 * make the last element point to the old top.
-@@ -102,7 +102,7 @@ __rte_stack_lf_pop_elems(struct rte_stack_lf_list *list,
- 			 void **obj_table,
- 			 struct rte_stack_lf_elem **last)
- {
--	struct rte_stack_lf_head old_head;
-+	alignas(16) struct rte_stack_lf_head old_head;
- 	uint64_t len;
- 	int success = 0;
++buildtype=debugoptimized
++sanitizer=
+ if [ "$ASAN" = "true" ]; then
+-    OPTS="$OPTS -Db_sanitize=address"
++    sanitizer=${sanitizer:+$sanitizer,}address
++fi
++
++if [ "$UBSAN" = "true" ]; then
++    sanitizer=${sanitizer:+$sanitizer,}undefined
++    if [ "$RUN_TESTS" = "true" ]; then
++        # UBSan takes too much memory with -O2
++        buildtype=plain
++        # Only enable test binaries
++        OPTS="$OPTS -Denable_apps=test,test-pmd"
++        # Restrict drivers to a minimum set for now
++        OPTS="$OPTS -Denable_drivers=net/null"
++        # There are still known issues in various libraries, disable them for now
++        OPTS="$OPTS -Ddisable_libs=*"
++        # No examples are run
++        OPTS="$OPTS -Dexamples="
++        # The UBSan target takes a good amount of time and headers coverage is done in other
++        # targets already.
++        OPTS="$OPTS -Dcheck_includes=false"
++    fi
++fi
++
++if [ -n "$sanitizer" ]; then
++    OPTS="$OPTS -Db_sanitize=$sanitizer"
+     if [ "${CC%%clang}" != "$CC" ]; then
+         OPTS="$OPTS -Db_lundef=false"
+     fi
+ fi
  
-@@ -129,7 +129,7 @@ __rte_stack_lf_pop_elems(struct rte_stack_lf_list *list,
++OPTS="$OPTS -Dbuildtype=$buildtype"
+ OPTS="$OPTS -Dwerror=true"
  
- 	/* Pop num elements */
- 	do {
--		struct rte_stack_lf_head new_head;
-+		alignas(16) struct rte_stack_lf_head new_head;
- 		struct rte_stack_lf_elem *tmp;
- 		unsigned int i;
+ if [ -d build ]; then
+@@ -141,6 +173,7 @@ if [ -z "$cross_file" ]; then
+     configure_coredump
+     devtools/test-null.sh || failed="true"
+     catch_coredump
++    catch_ubsan DPDK:fast-tests build/meson-logs/testlog.txt
+     check_traces
+     [ "$failed" != "true" ]
+ fi
+@@ -182,6 +215,7 @@ if [ "$RUN_TESTS" = "true" ]; then
+     configure_coredump
+     sudo meson test -C build --suite fast-tests -t 3 || failed="true"
+     catch_coredump
++    catch_ubsan DPDK:fast-tests build/meson-logs/testlog.txt
+     check_traces
+     [ "$failed" != "true" ]
+ fi
+diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
+index 6c4bc664d0..0c8ca23bbb 100644
+--- a/.github/workflows/build.yml
++++ b/.github/workflows/build.yml
+@@ -54,6 +54,7 @@ jobs:
+       RISCV64: ${{ matrix.config.cross == 'riscv64' }}
+       RUN_TESTS: ${{ contains(matrix.config.checks, 'tests') }}
+       STDATOMIC: ${{ contains(matrix.config.checks, 'stdatomic') }}
++      UBSAN: ${{ contains(matrix.config.checks, 'ubsan') }}
  
-diff --git a/lib/stack/rte_stack_lf_generic.h b/lib/stack/rte_stack_lf_generic.h
-index cc69e4d168..32f56dffdd 100644
---- a/lib/stack/rte_stack_lf_generic.h
-+++ b/lib/stack/rte_stack_lf_generic.h
-@@ -36,13 +36,13 @@ __rte_stack_lf_push_elems(struct rte_stack_lf_list *list,
- 			  struct rte_stack_lf_elem *last,
- 			  unsigned int num)
- {
--	struct rte_stack_lf_head old_head;
-+	alignas(16) struct rte_stack_lf_head old_head;
- 	int success;
+     strategy:
+       fail-fast: false
+@@ -62,6 +63,10 @@ jobs:
+           - os: ubuntu-22.04
+             compiler: gcc
+             mini: mini
++          - os: ubuntu-22.04
++            compiler: clang
++            library: shared
++            checks: tests+ubsan
+           - os: ubuntu-22.04
+             compiler: gcc
+             checks: stdatomic
+diff --git a/app/test/suites/meson.build b/app/test/suites/meson.build
+index e482373330..0cba63ee12 100644
+--- a/app/test/suites/meson.build
++++ b/app/test/suites/meson.build
+@@ -72,8 +72,7 @@ foreach suite:test_suites
+             elif not has_hugepage
+                 continue  #skip this tests
+             endif
+-            if not asan and (get_option('b_sanitize') == 'address'
+-                    or get_option('b_sanitize') == 'address,undefined')
++            if not asan and get_option('b_sanitize').contains('address')
+                 continue  # skip this test
+             endif
  
- 	old_head = list->head;
+diff --git a/config/meson.build b/config/meson.build
+index f31fef216c..b8a8511a7f 100644
+--- a/config/meson.build
++++ b/config/meson.build
+@@ -499,7 +499,7 @@ if get_option('b_lto')
+     endif
+ endif
  
- 	do {
--		struct rte_stack_lf_head new_head;
-+		alignas(16) struct rte_stack_lf_head new_head;
+-if get_option('b_sanitize') == 'address' or get_option('b_sanitize') == 'address,undefined'
++if get_option('b_sanitize').contains('address')
+     if is_windows
+         error('ASan is not supported on windows')
+     endif
+@@ -519,6 +519,22 @@ if get_option('b_sanitize') == 'address' or get_option('b_sanitize') == 'address
+     endif
+ endif
  
- 		/* An acquire fence (or stronger) is needed for weak memory
- 		 * models to establish a synchronized-with relationship between
-@@ -77,7 +77,7 @@ __rte_stack_lf_pop_elems(struct rte_stack_lf_list *list,
- 			 void **obj_table,
- 			 struct rte_stack_lf_elem **last)
- {
--	struct rte_stack_lf_head old_head;
-+	alignas(16) struct rte_stack_lf_head old_head;
- 	int success = 0;
- 
- 	/* Reserve num elements, if available */
-@@ -99,7 +99,7 @@ __rte_stack_lf_pop_elems(struct rte_stack_lf_list *list,
- 
- 	/* Pop num elements */
- 	do {
--		struct rte_stack_lf_head new_head;
-+		alignas(16) struct rte_stack_lf_head new_head;
- 		struct rte_stack_lf_elem *tmp;
- 		unsigned int i;
- 
++if get_option('b_sanitize').contains('undefined')
++    if is_windows
++        error('UBSan is not supported on windows')
++    endif
++
++    if cc.get_id() == 'gcc'
++        ubsan_dep = cc.find_library('ubsan', required: true)
++        if (not cc.links('int main(int argc, char *argv[]) { return 0; }',
++                dependencies: ubsan_dep))
++            error('broken dependency, "libubsan"')
++        endif
++        add_project_link_arguments('-lubsan', language: 'c')
++        dpdk_extra_ldflags += '-lubsan'
++    endif
++endif
++
+ if get_option('default_library') == 'both'
+     error( '''
+  Unsupported value "both" for "default_library" option.
+diff --git a/devtools/words-case.txt b/devtools/words-case.txt
+index bc35c160ba..d315fde8fe 100644
+--- a/devtools/words-case.txt
++++ b/devtools/words-case.txt
+@@ -105,6 +105,7 @@ TSO
+ TTL
+ Tx
+ uAPI
++UBSan
+ UDM
+ UDP
+ ULP
 -- 
 2.50.0
 
