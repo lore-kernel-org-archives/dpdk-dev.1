@@ -2,56 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 318B5C83F09
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Jul 2025 23:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC3DCC83F09
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Jul 2025 23:03:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BD24340E0A;
-	Wed,  9 Jul 2025 01:01:57 +0200 (CEST)
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
- [209.85.214.171])
- by mails.dpdk.org (Postfix) with ESMTP id B80D6402A0
- for <dev@dpdk.org>; Wed,  9 Jul 2025 01:01:56 +0200 (CEST)
-Received: by mail-pl1-f171.google.com with SMTP id
- d9443c01a7336-234f17910d8so45323865ad.3
- for <dev@dpdk.org>; Tue, 08 Jul 2025 16:01:56 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id DDC5D40E12;
+	Wed,  9 Jul 2025 01:03:34 +0200 (CEST)
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com
+ [209.85.215.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 630CF40BA0
+ for <dev@dpdk.org>; Wed,  9 Jul 2025 01:03:33 +0200 (CEST)
+Received: by mail-pg1-f171.google.com with SMTP id
+ 41be03b00d2f7-b34a6d0c9a3so4994316a12.3
+ for <dev@dpdk.org>; Tue, 08 Jul 2025 16:03:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1752015715; x=1752620515; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
- :date:message-id:reply-to;
- bh=zfNYviAjP6+8Iy4wii61nypy/GlZMmHHI0URpdYPXBI=;
- b=cw9Of6u8coR69A2et8lDlbbDZt/0IWBBJ0WFsRhWRRXg/G0+vBNx4rGP+sIP9eJy/V
- ImgSorFVNESS3Oif8g9cPOO6v57NXU4qcjhpXnOgZq3tpqPULyDFHTbZ6f4d1Ikr2Mx6
- nRdLnpPP8vRb2UemvDJSRbwUG8wg0BE2sHoBY=
+ d=iol.unh.edu; s=unh-iol; t=1752015812; x=1752620612; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=PKnY13UQ2l+eOE1833TlkVoknJ0UUC5AbRLhonTgrPo=;
+ b=bgo9UzIQJKViYQFNKok+auh010gznoBZcI25z159d2IQvwTEhogU9jKVA3XunYOgFC
+ QpCOUllWE3ehmMkAFAGWwG+ePTzhaWRp+M/wicGOfCtDHuqE+6wnFt0HcTu5vzHTk8O2
+ XAz7Dw0D3rdekQxEu9eSmh43ZU92zNAioxU4o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752015715; x=1752620515;
- h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=zfNYviAjP6+8Iy4wii61nypy/GlZMmHHI0URpdYPXBI=;
- b=i1fT0J67BYrN72GBDjpiMck4x3/LRrHqmPIO3uxX+ddGkiMRficmhhoHr/Djd83PvK
- 0Bsc8XnHLhBSKKp3A9RZH9fJbIinozjvrsuYZCy2ain2TXXaZ+bYNHFcyZH4iFY9zAbq
- VJ9N9sFCNnE+ILVWWnQTDjGfAflxUpiBRlelqkUn7DiMTdNSjNN4bKDwjZp/puGrRJJn
- d+YurYV+VkpefYlen/YOfGrPn44VWfDFICQmE8v3UrcEoSu4c4gFMF/nQgqcREQMis73
- +GnOVYzP2VwN9LDCsQVa+EoPBzplGG7z0Txn8EmVs1tCDvpXV4d9DkmgYywu5yVTr1Km
- rCMg==
-X-Gm-Message-State: AOJu0Yz0CtZ2rgXdNXvHfa3NOorv3satgFk8UleSPZKic2O9D15WXtaO
- w09/C4aTeWw1CzKXpAWJoXwxoj9mbGHser0P2DGS11dYITlTbyMrXiagwYPjMjf7/hduUrmKJaC
- S0g/3DAzPZnyXKRvJDvVAzAXdii5Q12pHAacePrryXLlCEdsobR5eIjs=
-X-Gm-Gg: ASbGncsH2sjoAOBA+J2X45XP4y44nAE01ruEZEvuxZTrFVpJMqwiKrMBem3ddxn9B7C
- 0VHrBElcEqIyQn9A0+ucSGeUVn6PdykCkjQSu13+eqsqEYWR8PRL4Gf27B0ODoYJop0SitFi7bu
- ezx9qZAOvShnthBncfHPqGkWLm7oOjx1tpFZDs3NqgmzN61UqIfwFq9lWnUw==
-X-Google-Smtp-Source: AGHT+IEixo6ndIogy2FMdQHEnVaMKYpiBc/W929bWWLfxrkfI6m7sN3d49OTDuepJwuuzDPVAmlEtKhyQpDSvn06wD8=
-X-Received: by 2002:a17:902:e5c5:b0:234:ef42:5d75 with SMTP id
- d9443c01a7336-23ddb1b9f71mr3307025ad.20.1752015715180; Tue, 08 Jul 2025
- 16:01:55 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1752015812; x=1752620612;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=PKnY13UQ2l+eOE1833TlkVoknJ0UUC5AbRLhonTgrPo=;
+ b=f6/01JF7YdiLBd9TOVcRcqMkpv3JuckCvU5t7FCHb+f4stmRl+WKEn3iNe+aEP0eIr
+ xhyJ27863cLNzz+ayQRIl4j0zbswnRKLIGEjgUir8XIGJd/9koB6bILXbnBXTEbYmKEj
+ wRCZWoBOTmbQ5/OcDIiKiX7pqF6zZV5W1WiupdrkU4GLCPv3dQsZ1xx2i5TI/jnbcclW
+ 6cQt7mGkgc3Ak5kZZTwxmpE5ptsAGwRwUmR/8/3+RopO2i2XhZLgtGbPok4JqwwAS+iG
+ P36AKJdzpZIuhY41bMM0+p+qP9a+qM9R/xWUIhtwL0NQG+gieKSGFTdDF3XP8XwTcuH4
+ 3p/A==
+X-Gm-Message-State: AOJu0YyyEGHoECkZ0OOPh8WUy5IJPOWSYA5Sstd4x0z0WxE/YXu8llIK
+ GpSDysoeJBkaT6GF89HEgaFN/9Z9MO8+4tdbGN+I86Bm/Ez6+c2wKNgFGBro5Je2/QaxNADyZxi
+ tgksvDzvyON56gdH9Ni/VTsp3s+skO4TMDLg9zPayQMgUh74EdqKA
+X-Gm-Gg: ASbGncsX7xTge6q7ZOrf8J9RLoJfzW93ohBJqjOPJpbEjcPlg9LfTPw2wlnMyQf8k5T
+ GOgGfM2t8OFeikqI/LErSHoCrMgg1eXYygUtZP91TdCgP9OkPKPYBtSrDd7FGYLmSVpUc1ih4ND
+ QCidGYX0B+OVAia2YYohnT7H/8BBMuahU0IPaNI1x2Lk8yrPl8NWtl72nGhQ==
+X-Google-Smtp-Source: AGHT+IGPLBFhgu73o13M9LxQ+Tk1MP7m3gcgHL7wlj1EiHK4lQtYnTcnwB8gYZD/Z7ZQzHaqRPoRViAYOQ8p9NXms3E=
+X-Received: by 2002:a17:90b:35c7:b0:311:f99e:7f4b with SMTP id
+ 98e67ed59e1d1-31c2fdc600fmr521894a91.28.1752015812079; Tue, 08 Jul 2025
+ 16:03:32 -0700 (PDT)
 MIME-Version: 1.0
+References: <CAJvnSUCDkunBMDbh+VH2Nzzf-R-h6-PNG-xAJY_zQfRNmhTF7w@mail.gmail.com>
+In-Reply-To: <CAJvnSUCDkunBMDbh+VH2Nzzf-R-h6-PNG-xAJY_zQfRNmhTF7w@mail.gmail.com>
 From: Patrick Robb <probb@iol.unh.edu>
-Date: Tue, 8 Jul 2025 18:56:12 -0400
-X-Gm-Features: Ac12FXz7vpPZA-FTbMg_gLfmIHS5G8CZ1I79uvLCM6jJc09RYiytr0QjXC1cCiY
-Message-ID: <CAJvnSUCDkunBMDbh+VH2Nzzf-R-h6-PNG-xAJY_zQfRNmhTF7w@mail.gmail.com>
-Subject: DTS WG Meeting Minutes - July 3, 2025
+Date: Tue, 8 Jul 2025 18:57:49 -0400
+X-Gm-Features: Ac12FXzKqhDC6OewYoza8Yk1QPDIP4L4OxQs86IwhjfcG9ZNFykwZZBV1h0wKL0
+Message-ID: <CAJvnSUBiROu1_iOCb_hPKGF+ggOkRLgeQ0=95oVCmE3ir5DCpw@mail.gmail.com>
+Subject: Re: DTS WG Meeting Minutes - July 3, 2025
 To: dev <dev@dpdk.org>
 Cc: "ci@dpdk.org" <ci@dpdk.org>
-Content-Type: multipart/alternative; boundary="000000000000583845063972f254"
+Content-Type: multipart/alternative; boundary="0000000000001ec7a1063972f886"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -65,98 +68,135 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000583845063972f254
+--0000000000001ec7a1063972f886
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-#####################################################################
-July 3, 2025
-Attendees
-* Patrick Robb
-* Manit Mahajan
-* Dean Marx
+On Tue, Jul 8, 2025 at 6:56=E2=80=AFPM Patrick Robb <probb@iol.unh.edu> wro=
+te:
 
-#####################################################################
-Minutes
+> #####################################################################
+> July 3, 2025
+> Attendees
+> * Patrick Robb
+> * Manit Mahajan
+> * Dean Marx
+>
+> #####################################################################
+> Minutes
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> General Discussion
+> * NA
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> Patch discussions
+> * Merged since last meeting:
+>    * doc: elaborate on per test suite configuration dts docs
+>    * Devbind initialization bug
+> https://patchwork.dpdk.org/project/dpdk/patch/20250616183859.646384-1-dma=
+rx@iol.unh.edu/
+>    * Fix deterministic doc
+> https://patchwork.dpdk.org/project/dpdk/patch/20250611140530.51551-1-cfam=
+ullaconrad@suse.com/
+>    * L4 port # packet matching
+>    * Packet capture testsuite:
+> https://patchwork.dpdk.org/project/dpdk/patch/20250506132933.1580584-4-lu=
+ca.vizzarro@arm.com/
+> * Current development:
+>    * Single_core_forwarding perf test:
+>       * Patrick submitting a new version today
+>
 
-=====================================================================
-General Discussion
-* NA
+Although the single core forwarding test is running, there are some updates
+required for the patch which were too significant to fit into this release,
+so it has been pushed to the next DPDK release.
 
-=====================================================================
-Patch discussions
-* Merged since last meeting:
-   * doc: elaborate on per test suite configuration dts docs
-   * Devbind initialization bug
-https://patchwork.dpdk.org/project/dpdk/patch/20250616183859.646384-1-dmarx@iol.unh.edu/
-   * Fix deterministic doc
-https://patchwork.dpdk.org/project/dpdk/patch/20250611140530.51551-1-cfamullaconrad@suse.com/
-   * L4 port # packet matching
-   * Packet capture testsuite:
-https://patchwork.dpdk.org/project/dpdk/patch/20250506132933.1580584-4-luca.vizzarro@arm.com/
-* Current development:
-   * Single_core_forwarding perf test:
-      * Patrick submitting a new version today
-   * VF support and testsuite
-      * Dean submitted new version - this one has VF creation logic moved
-to topology.py and properly resets sut ingress port and sut egress port to
-the VFs
-         * Only supports 1 VF per PF. This allows us to validate most of
-the VF capabilities we are interested in testing, but may limit us on
-testing certain workloads
-      *
-https://patchwork.dpdk.org/project/dpdk/patch/20250617201358.708638-1-dmarx@iol.unh.edu/
 
-=====================================================================
-Bugzilla discussions
-* None
+>    * VF support and testsuite
+>       * Dean submitted new version - this one has VF creation logic moved
+> to topology.py and properly resets sut ingress port and sut egress port t=
+o
+> the VFs
+>          * Only supports 1 VF per PF. This allows us to validate most of
+> the VF capabilities we are interested in testing, but may limit us on
+> testing certain workloads
+>       *
+> https://patchwork.dpdk.org/project/dpdk/patch/20250617201358.708638-1-dma=
+rx@iol.unh.edu/
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> Bugzilla discussions
+> * None
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> Any other business
+> * Next meeting is Jul 17, 2025
+>
 
-=====================================================================
-Any other business
-* Next meeting is Jul 17, 2025
-
---000000000000583845063972f254
+--0000000000001ec7a1063972f886
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"ltr">##########################################################=
-###########<br>July 3, 2025<br>Attendees<br>* Patrick Robb<br>* Manit Mahaj=
-an<br>* Dean Marx<br><br>##################################################=
-###################<br>Minutes<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, Jul 8, =
+2025 at 6:56=E2=80=AFPM Patrick Robb &lt;<a href=3D"mailto:probb@iol.unh.ed=
+u">probb@iol.unh.edu</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quo=
+te" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204=
+);padding-left:1ex"><div dir=3D"ltr">######################################=
+###############################<br>July 3, 2025<br>Attendees<br>* Patrick R=
+obb<br>* Manit Mahajan<br>* Dean Marx<br><br>##############################=
+#######################################<br>Minutes<br><br>=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D<br>General Discussion<br>* NA<br><br>=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>General Discussion<br>* NA<br=
+><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>Patch di=
+scussions<br>* Merged since last meeting:<br>=C2=A0 =C2=A0* doc: elaborate =
+on per test suite configuration dts docs <br>=C2=A0 =C2=A0* Devbind initial=
+ization bug <a href=3D"https://patchwork.dpdk.org/project/dpdk/patch/202506=
+16183859.646384-1-dmarx@iol.unh.edu/" target=3D"_blank">https://patchwork.d=
+pdk.org/project/dpdk/patch/20250616183859.646384-1-dmarx@iol.unh.edu/</a><b=
+r>=C2=A0 =C2=A0* Fix deterministic doc <a href=3D"https://patchwork.dpdk.or=
+g/project/dpdk/patch/20250611140530.51551-1-cfamullaconrad@suse.com/" targe=
+t=3D"_blank">https://patchwork.dpdk.org/project/dpdk/patch/20250611140530.5=
+1551-1-cfamullaconrad@suse.com/</a><br>=C2=A0 =C2=A0* L4 port # packet matc=
+hing<br>=C2=A0 =C2=A0* Packet capture testsuite: <a href=3D"https://patchwo=
+rk.dpdk.org/project/dpdk/patch/20250506132933.1580584-4-luca.vizzarro@arm.c=
+om/" target=3D"_blank">https://patchwork.dpdk.org/project/dpdk/patch/202505=
+06132933.1580584-4-luca.vizzarro@arm.com/</a><br>* Current development:<br>=
+=C2=A0 =C2=A0* Single_core_forwarding perf test:<br>=C2=A0 =C2=A0 =C2=A0 * =
+Patrick submitting a new version today<br></div></blockquote><div><br></div=
+><div>Although the single core forwarding test is running, there are some u=
+pdates required for the patch which were too significant to fit into this r=
+elease, so it has been pushed to the next DPDK release.</div><div>=C2=A0</d=
+iv><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;bord=
+er-left:1px solid rgb(204,204,204);padding-left:1ex"><div dir=3D"ltr">=C2=
+=A0 =C2=A0* VF support and testsuite<br>=C2=A0 =C2=A0 =C2=A0 * Dean submitt=
+ed new version - this one has VF creation logic moved to topology.py and pr=
+operly resets sut ingress port and sut egress port to the VFs<br>=C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0* Only supports 1 VF per PF. This allows us to vali=
+date most of the VF capabilities we are interested in testing, but may limi=
+t us on testing certain workloads <br>=C2=A0 =C2=A0 =C2=A0 * <a href=3D"htt=
+ps://patchwork.dpdk.org/project/dpdk/patch/20250617201358.708638-1-dmarx@io=
+l.unh.edu/" target=3D"_blank">https://patchwork.dpdk.org/project/dpdk/patch=
+/20250617201358.708638-1-dmarx@iol.unh.edu/</a><br><br>=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>Patch discussions<br>* Merged=
- since last meeting:<br>=C2=A0 =C2=A0* doc: elaborate on per test suite con=
-figuration dts docs <br>=C2=A0 =C2=A0* Devbind initialization bug <a href=
-=3D"https://patchwork.dpdk.org/project/dpdk/patch/20250616183859.646384-1-d=
-marx@iol.unh.edu/">https://patchwork.dpdk.org/project/dpdk/patch/2025061618=
-3859.646384-1-dmarx@iol.unh.edu/</a><br>=C2=A0 =C2=A0* Fix deterministic do=
-c <a href=3D"https://patchwork.dpdk.org/project/dpdk/patch/20250611140530.5=
-1551-1-cfamullaconrad@suse.com/">https://patchwork.dpdk.org/project/dpdk/pa=
-tch/20250611140530.51551-1-cfamullaconrad@suse.com/</a><br>=C2=A0 =C2=A0* L=
-4 port # packet matching<br>=C2=A0 =C2=A0* Packet capture testsuite: <a hre=
-f=3D"https://patchwork.dpdk.org/project/dpdk/patch/20250506132933.1580584-4=
--luca.vizzarro@arm.com/">https://patchwork.dpdk.org/project/dpdk/patch/2025=
-0506132933.1580584-4-luca.vizzarro@arm.com/</a><br>* Current development:<b=
-r>=C2=A0 =C2=A0* Single_core_forwarding perf test:<br>=C2=A0 =C2=A0 =C2=A0 =
-* Patrick submitting a new version today<br>=C2=A0 =C2=A0* VF support and t=
-estsuite<br>=C2=A0 =C2=A0 =C2=A0 * Dean submitted new version - this one ha=
-s VF creation logic moved to topology.py and properly resets sut ingress po=
-rt and sut egress port to the VFs<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* On=
-ly supports 1 VF per PF. This allows us to validate most of the VF capabili=
-ties we are interested in testing, but may limit us on testing certain work=
-loads <br>=C2=A0 =C2=A0 =C2=A0 * <a href=3D"https://patchwork.dpdk.org/proj=
-ect/dpdk/patch/20250617201358.708638-1-dmarx@iol.unh.edu/">https://patchwor=
-k.dpdk.org/project/dpdk/patch/20250617201358.708638-1-dmarx@iol.unh.edu/</a=
-><br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>Bugzilla discussions<br>* None<b=
+r><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>Bugzi=
-lla discussions<br>* None<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D<br>Any other business<br>* Next meeting is Jul 17, 2025<br>=
-</div>
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>Any othe=
+r business<br>* Next meeting is Jul 17, 2025<br></div>
+</blockquote></div></div>
 
---000000000000583845063972f254--
+--0000000000001ec7a1063972f886--
