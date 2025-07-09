@@ -2,68 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC4FC83F09
-	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Jul 2025 08:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B2E3C83F03
+	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Jul 2025 08:23:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9E8C04021E;
-	Wed,  9 Jul 2025 10:23:38 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 48D774013F;
- Wed,  9 Jul 2025 10:23:36 +0200 (CEST)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 568NSt7F028540;
- Wed, 9 Jul 2025 01:23:35 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=S7tgjMJb7s1YjpIkW8AQiWF
- E43htIJULL31XwBxhnsA=; b=YzbjInSqlgU84m1/kKYUC1rTRIQ0DrCsirUooOf
- P/FGuSDLzR9gvxRA+OMdKNJeTn1CwaegOt+kdaNY/gyFZD0Ug2LPegUchYdagYJM
- Lum8yZcaMmRs7CVYrzReTYPbpGMatQxI0h91uBJJBg/aDWADbtmEOHBA3RwTFos8
- TkuFJf4lVPKWsj1nSeK+KNQ0xw3kggwwmlcndCzOkb00WeD1VQ6b6Bm5ojgi1wd6
- RVIvWo2TCdt5XfTTFPbFWB78hqQGnxV9Biy9Qcb5qdXSLF6KKH/8tY5r5FKbgZIX
- nJt56lNh7LM1zApTNiXC7we+vOIiCeDVQEnCVbODWqMPttw==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 47sd1p8t6u-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Wed, 09 Jul 2025 01:23:35 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id E01CD40430;
+	Wed,  9 Jul 2025 10:23:39 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56])
+ by mails.dpdk.org (Postfix) with ESMTP id D7EE7402CB;
+ Wed,  9 Jul 2025 10:23:38 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bcWF56pBrz6GCBc;
+ Wed,  9 Jul 2025 16:22:49 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+ by mail.maildlp.com (Postfix) with ESMTPS id E2F591402E9;
+ Wed,  9 Jul 2025 16:23:37 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ frapeml500008.china.huawei.com (7.182.85.71) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 9 Jul 2025 01:23:34 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 9 Jul 2025 01:23:34 -0700
-Received: from cavium-optiplex-3070-BM15.. (unknown [10.28.34.39])
- by maili.marvell.com (Postfix) with ESMTP id 248305B692D;
- Wed,  9 Jul 2025 01:23:31 -0700 (PDT)
-From: Volodymyr Fialko <vfialko@marvell.com>
-To: <dev@dpdk.org>, Radu Nicolau <radu.nicolau@intel.com>, Akhil Goyal
- <gakhil@marvell.com>, Volodymyr Fialko <vfialko@marvell.com>
-CC: <jerinj@marvell.com>, <masakazu.asama@gmail.com>, <stable@dpdk.org>
-Subject: [PATCH] examples/ipsec-secgw: fix number of queue pairs
-Date: Wed, 9 Jul 2025 10:23:25 +0200
-Message-ID: <20250709082325.771994-1-vfialko@marvell.com>
-X-Mailer: git-send-email 2.34.1
+ 15.1.2507.39; Wed, 9 Jul 2025 10:23:37 +0200
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Wed, 9 Jul 2025 10:23:37 +0200
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: David Marchand <david.marchand@redhat.com>, "dev@dpdk.org" <dev@dpdk.org>
+CC: "stable@dpdk.org" <stable@dpdk.org>, Bruce Richardson
+ <bruce.richardson@intel.com>, Gage Eads <gage.eads@intel.com>, Olivier Matz
+ <olivier.matz@6wind.com>, Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>
+Subject: RE: [PATCH v3 09/18] stack: fix unaligned accesses on 128-bit
+Thread-Topic: [PATCH v3 09/18] stack: fix unaligned accesses on 128-bit
+Thread-Index: AQHb8AQpgIVIb3+fAUOdgY2fPV/nYbQpdONg
+Date: Wed, 9 Jul 2025 08:23:37 +0000
+Message-ID: <6329433c869243cbb7cb700abab420fe@huawei.com>
+References: <20250619071037.37325-1-david.marchand@redhat.com>
+ <20250708122823.3406288-1-david.marchand@redhat.com>
+ <20250708122823.3406288-10-david.marchand@redhat.com>
+In-Reply-To: <20250708122823.3406288-10-david.marchand@redhat.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.195.34.14]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: SOWDo_oh0MiZum9X8CY2tRsa07HziVy0
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA5MDA3NCBTYWx0ZWRfX9KJOREmnOuZj
- CzNCJ0ZiiKs0BhjGp3MKCyFWDvVTXHrH3QJn8v0bcVvnWIg2AUIy6zLYvIfWDe6eu3wN1h9v0zA
- bjJ9herzUl1LsHnXn9k9vSn8heaoFcdby2CkqkC/g3+jofkfDJWHfv5zKdhGzxE+WvoJe20K5wV
- gzZbKu8jfsqnKKJtyS7PA1a5nNphmvi5x9LA/Ktyh9mtZ2vXoQkgV76LIKefy8/7SNNVNSxCrmN
- EnDUQaCkoUBD+aLWZyj6ojnSOB0wS5srcA8SZDM97oAMRlo5DQeF5imZrGboQ7ry/66byT6136h
- Ok/8ZsDkfSmx1SAdZYet3OOyS6EEHb8BwD/FDP735UJenCVi8Vdu5+pAzcc2UAj15MxZHKEKkWa
- /3Pt7sxtdzZm2/EESuxKm/YjN7qUwdD21+yH5KSpv5pWWJtlZOoUq21hnnyarz3lmBymlfVD
-X-Proofpoint-ORIG-GUID: SOWDo_oh0MiZum9X8CY2tRsa07HziVy0
-X-Authority-Analysis: v=2.4 cv=GIIIEvNK c=1 sm=1 tr=0 ts=686e2707 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=Wb1JkmetP80A:10 a=8rWy6zfcAAAA:8 a=M5GUcnROAAAA:8 a=16kEbQeT43XQvZWu4UUA:9
- a=YjdVzJdQTyZRADMV7wFX:22 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-09_02,2025-07-08_01,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -77,40 +59,149 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Fix a mismatch between the signature of the cryptodevs_init() function
-and the arguments passed to it during the call. This caused incorrect
-initialization of queue pairs in ipsec-secgw example.
 
-Fixes: 253265f8fb97 ("examples/ipsec-secgw: reduce queues for event lookaside")
-Cc: stable@dpdk.org
 
-Signed-off-by: Volodymyr Fialko <vfialko@marvell.com>
----
- examples/ipsec-secgw/ipsec-secgw.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+> -----Original Message-----
+> From: David Marchand <david.marchand@redhat.com>
+> Sent: Tuesday, July 8, 2025 1:28 PM
+> To: dev@dpdk.org
+> Cc: stable@dpdk.org; Bruce Richardson <bruce.richardson@intel.com>; Gage =
+Eads <gage.eads@intel.com>; Olivier Matz
+> <olivier.matz@6wind.com>; Honnappa Nagarahalli <honnappa.nagarahalli@arm.=
+com>
+> Subject: [PATCH v3 09/18] stack: fix unaligned accesses on 128-bit
+>=20
+> Caught by UBSan:
+>=20
+> ../lib/eal/x86/include/rte_atomic_64.h:206:21: runtime error:
+> 	member access within misaligned address 0x7ffd9c67f228 for
+> 	type 'const rte_int128_t', which requires 16 byte alignment
+> 	0x7ffd9c67f228: note: pointer points here
+>  00 00 00 00  c0 5d 3e 00 01 00 00 00  01 00 00 00 00 00 00 00
+>               ^
+>  00 00 00 00 00 00 00 00  00 00 00 00
+> SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior
+> 	../lib/eal/x86/include/rte_atomic_64.h:206:21 in
+> 	../lib/eal/x86/include/rte_atomic_64.h:206:21: runtime error:
+> 	member access within misaligned address 0x7ffd9c67f228 for type
+> 	'const union rte_int128_t::(anonymous at
+> 	../lib/eal/include/generic/rte_atomic.h:1102:2)', which requires
+> 	16 byte alignment
+> 0x7ffd9c67f228: note: pointer points here
+>  00 00 00 00  c0 5d 3e 00 01 00 00 00  01 00 00 00 00 00 00 00
+>               ^
+>  00 00 00 00 00 00 00 00  00 00 00 00
+> SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior
+> 	../lib/eal/x86/include/rte_atomic_64.h:206:21 in
+> 	../lib/eal/x86/include/rte_atomic_64.h:206:16: runtime error:
+> 	load of misaligned address 0x7ffd9c67f228 for type
+> 	'const uint64_t' (aka 'const unsigned long'), which requires
+> 	16 byte alignment
+> 0x7ffd9c67f228: note: pointer points here
+>  00 00 00 00  c0 5d 3e 00 01 00 00 00  01 00 00 00 00 00 00 00
+>               ^
+>  00 00 00 00 00 00 00 00  00 00 00 00
+> SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior
+> 	../lib/eal/x86/include/rte_atomic_64.h:206:21 in
+>=20
+> Fixes: 3340202f5954 ("stack: add lock-free implementation")
+> Cc: stable@dpdk.org
+>=20
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+> ---
+>  lib/stack/rte_stack_lf_c11.h     | 8 ++++----
+>  lib/stack/rte_stack_lf_generic.h | 8 ++++----
+>  2 files changed, 8 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/lib/stack/rte_stack_lf_c11.h b/lib/stack/rte_stack_lf_c11.h
+> index b97e02d6a1..f674731235 100644
+> --- a/lib/stack/rte_stack_lf_c11.h
+> +++ b/lib/stack/rte_stack_lf_c11.h
+> @@ -63,13 +63,13 @@ __rte_stack_lf_push_elems(struct rte_stack_lf_list *l=
+ist,
+>  			  struct rte_stack_lf_elem *last,
+>  			  unsigned int num)
+>  {
+> -	struct rte_stack_lf_head old_head;
+> +	alignas(16) struct rte_stack_lf_head old_head;
+>  	int success;
+>=20
+>  	old_head =3D list->head;
+>=20
+>  	do {
+> -		struct rte_stack_lf_head new_head;
+> +		alignas(16) struct rte_stack_lf_head new_head;
+>=20
+>  		/* Swing the top pointer to the first element in the list and
+>  		 * make the last element point to the old top.
+> @@ -102,7 +102,7 @@ __rte_stack_lf_pop_elems(struct rte_stack_lf_list *li=
+st,
+>  			 void **obj_table,
+>  			 struct rte_stack_lf_elem **last)
+>  {
+> -	struct rte_stack_lf_head old_head;
+> +	alignas(16) struct rte_stack_lf_head old_head;
+>  	uint64_t len;
+>  	int success =3D 0;
+>=20
+> @@ -129,7 +129,7 @@ __rte_stack_lf_pop_elems(struct rte_stack_lf_list *li=
+st,
+>=20
+>  	/* Pop num elements */
+>  	do {
+> -		struct rte_stack_lf_head new_head;
+> +		alignas(16) struct rte_stack_lf_head new_head;
+>  		struct rte_stack_lf_elem *tmp;
+>  		unsigned int i;
+>=20
+> diff --git a/lib/stack/rte_stack_lf_generic.h b/lib/stack/rte_stack_lf_ge=
+neric.h
+> index cc69e4d168..32f56dffdd 100644
+> --- a/lib/stack/rte_stack_lf_generic.h
+> +++ b/lib/stack/rte_stack_lf_generic.h
+> @@ -36,13 +36,13 @@ __rte_stack_lf_push_elems(struct rte_stack_lf_list *l=
+ist,
+>  			  struct rte_stack_lf_elem *last,
+>  			  unsigned int num)
+>  {
+> -	struct rte_stack_lf_head old_head;
+> +	alignas(16) struct rte_stack_lf_head old_head;
+>  	int success;
+>=20
+>  	old_head =3D list->head;
+>=20
+>  	do {
+> -		struct rte_stack_lf_head new_head;
+> +		alignas(16) struct rte_stack_lf_head new_head;
+>=20
+>  		/* An acquire fence (or stronger) is needed for weak memory
+>  		 * models to establish a synchronized-with relationship between
+> @@ -77,7 +77,7 @@ __rte_stack_lf_pop_elems(struct rte_stack_lf_list *list=
+,
+>  			 void **obj_table,
+>  			 struct rte_stack_lf_elem **last)
+>  {
+> -	struct rte_stack_lf_head old_head;
+> +	alignas(16) struct rte_stack_lf_head old_head;
+>  	int success =3D 0;
+>=20
+>  	/* Reserve num elements, if available */
+> @@ -99,7 +99,7 @@ __rte_stack_lf_pop_elems(struct rte_stack_lf_list *list=
+,
+>=20
+>  	/* Pop num elements */
+>  	do {
+> -		struct rte_stack_lf_head new_head;
+> +		alignas(16) struct rte_stack_lf_head new_head;
+>  		struct rte_stack_lf_elem *tmp;
+>  		unsigned int i;
+>=20
+> --
 
-diff --git a/examples/ipsec-secgw/ipsec-secgw.c b/examples/ipsec-secgw/ipsec-secgw.c
-index 063cc8768e..fe489f9a56 100644
---- a/examples/ipsec-secgw/ipsec-secgw.c
-+++ b/examples/ipsec-secgw/ipsec-secgw.c
-@@ -2994,16 +2994,7 @@ main(int32_t argc, char **argv)
- 
- 	sess_sz = max_session_size();
- 
--	/*
--	 * In event mode request minimum number of crypto queues
--	 * to be reserved equal to number of ports.
--	 */
--	if (eh_conf->mode == EH_PKT_TRANSFER_MODE_EVENT)
--		nb_crypto_qp = rte_eth_dev_count_avail();
--	else
--		nb_crypto_qp = 0;
--
--	nb_crypto_qp = cryptodevs_init(nb_crypto_qp);
-+	nb_crypto_qp = cryptodevs_init(eh_conf->mode);
- 
- 	if (nb_bufs_in_pool == 0) {
- 		RTE_ETH_FOREACH_DEV(portid) {
--- 
-2.34.1
+Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+=20
+
+
+> 2.50.0
 
