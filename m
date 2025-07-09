@@ -2,72 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E1F0C83F03
-	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Jul 2025 16:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5F67C83F0A
+	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Jul 2025 16:13:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5515F40B94;
-	Wed,  9 Jul 2025 18:13:44 +0200 (CEST)
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com
- [209.85.215.169])
- by mails.dpdk.org (Postfix) with ESMTP id 19F284028C
- for <dev@dpdk.org>; Wed,  9 Jul 2025 18:13:43 +0200 (CEST)
-Received: by mail-pg1-f169.google.com with SMTP id
- 41be03b00d2f7-b3bad2f99f5so144077a12.1
- for <dev@dpdk.org>; Wed, 09 Jul 2025 09:13:43 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7702240BA0;
+	Wed,  9 Jul 2025 18:13:46 +0200 (CEST)
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
+ [209.85.214.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 0CFCA40B97
+ for <dev@dpdk.org>; Wed,  9 Jul 2025 18:13:45 +0200 (CEST)
+Received: by mail-pl1-f171.google.com with SMTP id
+ d9443c01a7336-234b9dfb842so948175ad.1
+ for <dev@dpdk.org>; Wed, 09 Jul 2025 09:13:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752077622;
- x=1752682422; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752077624;
+ x=1752682424; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=g9BSpAQasDg3xbgEXgO0rnBAk3tww6kZc1j/376j0l4=;
- b=Aj8FXQwAvbdn7aZ9oE/dbD6vAebaBXTNM/QtNhOHgF2+qLanltX5UOSaY/744DuXq4
- T4xyCzdjAwe1m9PKPa9vH+XFnff0/TI3wogHD3AULtDKozP4yABvUYpMHm5tVYFRlLK1
- hcrUJE6NGFmGScC97g6NNu0m00vAE65SukSPku9X2GVGfqV4uavapmYrbAoYryfIarN0
- Z0NPkeZvZaFY9YjxbkQ4Op7EB8B0v3FA/WfBaYqSkVy5G4Ey4w2kRgN52Dnfmqlwaf+M
- n6HBmsNHXCk5eFLHldU1WHSMPqU1ukJ/cZKvTdwyzsYVTDCGRIHDolOkT/N1JmE/0hyZ
- V/3w==
+ bh=MNzu1pJWkSCFan0flWb6VGpEVfCRS5polmvJhigREVI=;
+ b=tNLgMbnnIOQt/zygnmcqhh/CyZdpqILguhJq3vE3xC9sDeBunhkhFc8T/8a5Am3tfp
+ d+7e0BEGGfCiafy/NNsEuG1QIhC+UanNxtXIrZx5rlTgkW+zoqB7Skt3ht0laUlDfRsV
+ DdrLmIDw56ziiITEJjfwxAF9hv8w0o70JTVUbh5FNEOOiMCIoh86PbvApQ//dH1LekQ2
+ J23uiaat1+jS0mxFFbTwiVUruuYUeRW//Z54sbUPGib/WeAdjiwapFHHkWwgRy86/Co8
+ XpAz+pzmwyx7/9svUQVpzc7EruJO+3nLZGTDNzjbonr2xUlZv7UU4aWp5+xG958k20L6
+ 1lLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752077622; x=1752682422;
+ d=1e100.net; s=20230601; t=1752077624; x=1752682424;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=g9BSpAQasDg3xbgEXgO0rnBAk3tww6kZc1j/376j0l4=;
- b=VA0n+4Qi/Lx+3PyNs2OAI4wOuqhwtm0FJsrIoWnmVZlU0HuasnIxvA5p/QI0r3RMsW
- nLvuSwslVagFo1S3SqxdPmXqNTDs80/mBuK8CaIsiuDIlr42R9uZrRFH0SzO2uwl+LLy
- c8cPU2qy1SdBj9ItGovaUaq44tJvQ5gX57ZnfNz09aEStqMSKy0gmFjFtG4mwp2/l3FF
- VkQmRu5icvXVb9m20mXrM0/LcEm584DOr94vrfwUDJKeKv1DjRQcFSCEnAPOh70Tpw5L
- cxvHMMp3bb9tw20rtqXmi4HECETzqY474rSa+QNVRgg8CsTc2V58iuNZ7SxX4wblzUGE
- fSeA==
-X-Gm-Message-State: AOJu0YzBEit5hRdqw/s+1MBM30N6ABcZVR8KxQ3oEJAiP0PogRE6poi9
- sKf4rMg3E06PiYlevIrYqRwnRelYUq1/wlMXQLEFOY1rfoget11IvFfKHexpejiXTpjEIUEZS88
- fNa85
-X-Gm-Gg: ASbGncv1LHAGIqBHb0xQVQyiVzH7NLKYRiHeiZei51IRHeRxjEdrd6dJ/fQBRw18ooB
- UJ+7IxIcbWgu8bgyivlr8oDNYFxM+GzJs0TCTeWI+Z0iGaXx8DDO+Kzhek4m8qNMUglYFqrwTzQ
- Mqw1dIoyAvIJqzAeq/DL+aRKAg6eL34tWLi0a7w7i/jr4iprgaOPMxCXOWMeZ0kXXpeoBW57NGE
- 2GCxsvt+C56dySFLeMwur4KtIAKzR0S9mHI3m9FM3OWt+5tQHXpZKoLloG0E6DksTFn/4EVinhb
- m9xV+tY57x+IFNMazOqSLxXzHfxJJX+BW6StpbCxJvCEk7XAaBUi+WUKZSP6X55BNfp6WSidg1X
- tBf+XuE80/KYqFpSjTDiV1toXPmyfZIvcEMRfK8A=
-X-Google-Smtp-Source: AGHT+IEriurZt72NsvgjKt5cMmYKk6PoR+NVjwiXwycLbk8LeQDmFW1yseen1xhJIWWqn0sSNJaVOQ==
-X-Received: by 2002:a17:902:d4c3:b0:234:1e11:95a3 with SMTP id
- d9443c01a7336-23de2fc72f0mr605745ad.13.1752077621992; 
- Wed, 09 Jul 2025 09:13:41 -0700 (PDT)
+ bh=MNzu1pJWkSCFan0flWb6VGpEVfCRS5polmvJhigREVI=;
+ b=gUAQtYIUeIz0wutuDJJOWIGHy0JfUmuERpS1WrscAFosvuBtrpBYO2rh1tW0CsmQYA
+ f13IItoZxLKYGcXDK5DMjEKF6JiKxuL2h7TsqL41CSY1oZejmPbdGZTCu9ZdaOJDvFhH
+ kb3OFtM+ZPTw8Rt900Y/WLmPV4V1FUrBcAbpS8VZOKZlSkVYA/aL5B2FwU75IcGDLTLZ
+ gbo6lvd7vPdszRvZAWcGYnNHIrUyVl006lVdattZxuWn8G6nM4AD+2FgSN4BwHQ2R0tw
+ 0mp4l1oAJDN9D/hsEAGt5l5+UIt2mzQmRE3UvLtrCwNbhYVb3ueoQkEax+/vcVvlpQp6
+ igvg==
+X-Gm-Message-State: AOJu0YzAry+u255XB1TJJg8wbzGtVJ3MCmVOLpR0hSQ3oEFU44PTVKfw
+ szCc3pc5zZHkWZIjK+OZEj8trs8G3DwfA6v5HyOI7On0byM/uZTPZRnstsWFVU/ildbTQUC3qho
+ eBNOx
+X-Gm-Gg: ASbGncs9LmjnWZxEkwG9+C86aXJctL3ZpPj71VXV+CVt+Jr+kb7+K1BpESGohf3FyJG
+ wRQ7T/I/np7bY/iuzT+djD6yx7GPXp4iq7UZvU4urzifnfH5NKWG1IhCenYAidLd2usUnOKkuC9
+ lzl/cbWHIrdypxFbXGuCU7jzoc21xdzqDamY5YLI6cMknVJTw7o0X8XfeAUHY1sAur6ZJxN9zVu
+ Pb2grBhV2MQHr0bYvPKlJ9s/5dIPLD5pS2FAetiPIhMzj9ShhyY6r0sO0Ilxe6jhKLjDNY/lyzp
+ tfaVDMB7o8ZVaLV2jfaIbDmrudNNCQ7Z6ZIjDhL3ZFSUkaWmqsOO21crNd/A42PiCxSoRRiJxLz
+ DaVcBy94Nf5ejlElSiWQIuuSjkshXxoSpZTpljXU=
+X-Google-Smtp-Source: AGHT+IHAjQaHgEphqUVl/bV1NGELrqEfRJncsqtyb+4xKoWXQ/vTLNCrjw9170dggfyjbAo84oRgQQ==
+X-Received: by 2002:a17:902:c402:b0:236:6f5f:cab4 with SMTP id
+ d9443c01a7336-23ddb1974a6mr56446935ad.5.1752077624135; 
+ Wed, 09 Jul 2025 09:13:44 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-23c8457b2d9sm139625285ad.161.2025.07.09.09.13.41
+ d9443c01a7336-23c8457b2d9sm139625285ad.161.2025.07.09.09.13.43
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 09 Jul 2025 09:13:41 -0700 (PDT)
-Date: Wed, 9 Jul 2025 09:09:30 -0700
+ Wed, 09 Jul 2025 09:13:43 -0700 (PDT)
+Date: Wed, 9 Jul 2025 09:07:13 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Jie Liu <liujie5@linkdatatechnology.com>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v4 04/14] net/sxe: add link, flow ctrl, mac ops, mtu ops
- function
-Message-ID: <20250709090930.10bb8130@hermes.local>
-In-Reply-To: <20250709084315.9940-4-liujie5@linkdatatechnology.com>
+Subject: Re: [PATCH v4 03/14] net/sxe: add tx rx setup and data path
+Message-ID: <20250709090713.1596efa9@hermes.local>
+In-Reply-To: <20250709084315.9940-3-liujie5@linkdatatechnology.com>
 References: <20250707115819.12826-14-liujie5@linkdatatechnology.com>
  <20250709084315.9940-1-liujie5@linkdatatechnology.com>
- <20250709084315.9940-4-liujie5@linkdatatechnology.com>
+ <20250709084315.9940-3-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,23 +83,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed,  9 Jul 2025 04:43:04 -0400
+On Wed,  9 Jul 2025 04:43:03 -0400
 Jie Liu <liujie5@linkdatatechnology.com> wrote:
 
-> +	RTE_ATOMIC(bool)link_thread_running;
-> +	RTE_ATOMIC(bool)is_stopping;
+> diff --git a/drivers/net/sxe/version.map b/drivers/net/sxe/version.map
+> new file mode 100644
+> index 0000000000..d010a9b738
+> --- /dev/null
+> +++ b/drivers/net/sxe/version.map
+> @@ -0,0 +1,5 @@
+> +EXPERIMENTAL {
+> +        global:
+> +        rte_pmd_sxe_tx_loopback_set;
+> +        local: *;
+> +};
+> -- 
 
-Despite what checkpatch says, need space here:
-	RTE_ATOMIC(bool) is_stopping;
+DPDK has changed to not use version map. See new RTE_EXPORT_SYMBOL macros.
 
-> +	rte_thread_t link_thread_tid;
-> +	rte_atomic32_t link_thread_running;
-
-Don't use old rte atomics, instead use RTE_ATOMIC() consistently
-
-> +	rte_atomic32_t is_stopping;
-> +	pthread_t link_thread_tid;
-
-Two struct elements with same name, how does that work?
-
-> +	bool is_stopped;
+But drivers should not have their own API's if a similar API exists already.
