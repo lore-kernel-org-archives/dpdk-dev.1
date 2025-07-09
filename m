@@ -2,55 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78FA8C83F03
-	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Jul 2025 12:40:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB140C83F09
+	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Jul 2025 12:49:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7235640662;
-	Wed,  9 Jul 2025 14:40:44 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 188AB402A9
- for <dev@dpdk.org>; Wed,  9 Jul 2025 14:40:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1752064842;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=tL13yQ+mU23zbJ0Y+HDo7BeilYLbq24TATJdA1d8ngg=;
- b=N2mchVvbmDF/OvB5M7uJ3l+i94aSmBzqJARwwUHkbR0/pvNmkoim+NjVEzDhkZms1bR249
- z27yL0BCoiFPq4q9FJKTfBx+tpW1ArpBnBCKa+J0xWlK750BYEkLsLs52Dx1wda2aLjTau
- pyMjnec1dVepAYZnSZhBU5gUJgd9fAw=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-611-iXX0v_wiO3mrKUbtNuERbg-1; Wed,
- 09 Jul 2025 08:40:39 -0400
-X-MC-Unique: iXX0v_wiO3mrKUbtNuERbg-1
-X-Mimecast-MFC-AGG-ID: iXX0v_wiO3mrKUbtNuERbg_1752064838
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 31C921955EC7; Wed,  9 Jul 2025 12:40:38 +0000 (UTC)
-Received: from dmarchan.lan (unknown [10.44.33.95])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 43D8118003FC; Wed,  9 Jul 2025 12:40:35 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
-To: dev@dpdk.org
-Cc: thomas@monjalon.net,
-	techboard@dpdk.org
-Subject: [PATCH] doc: announce changes in structure alignments for UBSan
-Date: Wed,  9 Jul 2025 14:40:22 +0200
-Message-ID: <20250709124022.4105481-1-david.marchand@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id A3D69402DA;
+	Wed,  9 Jul 2025 14:49:24 +0200 (CEST)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com
+ [209.85.167.48]) by mails.dpdk.org (Postfix) with ESMTP id 51253402A9
+ for <dev@dpdk.org>; Wed,  9 Jul 2025 14:49:23 +0200 (CEST)
+Received: by mail-lf1-f48.google.com with SMTP id
+ 2adb3069b0e04-558fa0b2cc8so695105e87.1
+ for <dev@dpdk.org>; Wed, 09 Jul 2025 05:49:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=linaro.org; s=google; t=1752065363; x=1752670163; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=mzB4f9ByHzMhng8SqWeCsXXaRdBTxObNafpHsZkZNKo=;
+ b=YMhIlScs3CUwA7PwWkE5b8IZb0ia6FHc/CeaIKxnPmqMhu0pqINzAtJIl/u+n/bSeC
+ uRYS36m/7aTvaDKuBB7lBz2D7Nwcb1wbye0FGaWJqm7Rt4CtD72B4jDqdDnm1IXWzz0p
+ lPn0AOCrfg6rzFMcRRdjJ6TRZqXHzTr/DrWnp8RYaVZ9LvWlBdLwbu2rlT1gtX9tvNpw
+ DNWe0a/a02ZxWLf80/Y7qVBMfjdqy6yRjHROKGkbMvq7rFqI0FaAjOg5zPTYWa5PJSPg
+ eKZ5vZN+YwxMJIhINkdhuAaPoXIzX2obeVgCJ0lSDtpNu+KuJnsUJw5A1Kz2e8+YEnDW
+ 77Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1752065363; x=1752670163;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=mzB4f9ByHzMhng8SqWeCsXXaRdBTxObNafpHsZkZNKo=;
+ b=l+BRA+Ltg9C7rhncfrqTY/m0de/xGvwEpE9/hqpoWlUooQ817S+iwdmcLJbI3h2qXs
+ dtGp5LSt66Qe3pLa5+QuHJylIo/vKe/flNESHs0CdREx4ksi/8PSiuDRGBZ9zocE1QgB
+ esUA3ZcM7wesA5BDUHgiyrrqFgrZFOldzaQ9n2/WHFnsT066mGpbQWOsxCcx3/Ni8qBa
+ awKu7KoxblgUOkRfX4IYzrqLvaDQ/6wSzKifw8oHozB6vAEhHc0SF1C4ArK20ULO8Q3c
+ h1DgpE0Ph819D2jtciEcOuQLselcJxXpizB6iTVqP6kod0L2DhJ8lM82ueDPWySW3L6W
+ e9RA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUIzdIEVbdjFugbECTmNzI1nIw8FjgppKr7wEMh1IPPpzL/QRvSPA1O65pjYM7MP/Zcdh8=@dpdk.org
+X-Gm-Message-State: AOJu0Ywv2nOef+IiJqC0hMM1jK8vICUWhJvBuNEcZviJRuvgiZQFjID8
+ P34fhD/9sIzsCrIL7I2kee7uv8ozylzpG5vGLRKnlXGwbf6kgVcm92AcLVhCQaeJBdXgWrnJIjS
+ vlBU1lxlE4U/92utOGY5OoNWhCmihJVEyyA4VuVd3AA==
+X-Gm-Gg: ASbGncvZfs90WWPWs13BwzoLFWWZjU1D7JNFkhiTs5oEpY4iPN1BuBLXcFANADXqptn
+ RirzfgQw5L+7ZCtOSuLVYrfye3TyxULfjRrWXbQfaJkHfgeppnA8tHCEL8iQ45o7HJuazl6PnVF
+ dlohXiKdYO+MlPbxL+BkVH1i0tY3CHdtfHYfxML5wYF+c8JnWT
+X-Google-Smtp-Source: AGHT+IGFalE9NlpU4Y2hOTpe3gL45UREr+s+SeaSVQ3puI+4BWbK/t7JoGOEypavnYWlI48Eaoi9JeKlNj01VTyFzwM=
+X-Received: by 2002:a05:6512:401d:b0:553:3492:b708 with SMTP id
+ 2adb3069b0e04-558fa9108c7mr883278e87.49.1752065362529; Wed, 09 Jul 2025
+ 05:49:22 -0700 (PDT)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: IccUNyUdrTlhwSJPIj13yBEK5SJfh6Z-ZDFyjpvzXD8_1752064838
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+References: <20250709064701.100676-1-zhangfei.gao@linaro.org>
+ <20250709064701.100676-2-zhangfei.gao@linaro.org>
+ <CO6PR18MB4484DBFF1F7E17C3B3187F35D849A@CO6PR18MB4484.namprd18.prod.outlook.com>
+ <CABQgh9H7+WTpMbU_xQXKAzrNV4yucxe=rswdpXEapY4bsnfXLQ@mail.gmail.com>
+ <CO6PR18MB44843776C190BA6E914BF5C8D849A@CO6PR18MB4484.namprd18.prod.outlook.com>
+ <CABQgh9E3aGaFCtUGvLH0R1qf3yuM6VWvxQ7KDG+n+D=H+iPrBA@mail.gmail.com>
+ <CO6PR18MB44843A3421C48F6DC67D4A09D849A@CO6PR18MB4484.namprd18.prod.outlook.com>
+In-Reply-To: <CO6PR18MB44843A3421C48F6DC67D4A09D849A@CO6PR18MB4484.namprd18.prod.outlook.com>
+From: Zhangfei Gao <zhangfei.gao@linaro.org>
+Date: Wed, 9 Jul 2025 20:49:10 +0800
+X-Gm-Features: Ac12FXwv_WBVoTUsU3ZSsa8EhQoYxc-8X947r--xxBfiRpOioJG_oKVlmFo-jZo
+Message-ID: <CABQgh9GY8kOjtGw8OvB38Y89M3hZt035GLwqa=zpn90NbpuiGQ@mail.gmail.com>
+Subject: Re: [EXTERNAL] [PATCH v5 1/2] compress/uadk: use async mode to
+ replace sync mode
+To: Akhil Goyal <gakhil@marvell.com>
+Cc: Fan Zhang <fanzhang.oss@gmail.com>, Ashish Gupta <ashishg@marvell.com>, 
+ "dev@dpdk.org" <dev@dpdk.org>
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -64,37 +80,147 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-As part of the effort to limit undefined behaviors in DPDK code, some
-structure alignments revealed not to be accurate enough.
-At the moment two structures have been identified but others may be
-found while running more parts of DPDK with UBSan.
+On Wed, 9 Jul 2025 at 18:44, Akhil Goyal <gakhil@marvell.com> wrote:
+>
+> > On Wed, 9 Jul 2025 at 18:03, Akhil Goyal <gakhil@marvell.com> wrote:
+> > >
+> > > > On Wed, 9 Jul 2025 at 15:19, Akhil Goyal <gakhil@marvell.com> wrote:
+> > > > >
+> > > > > > To get better performance, using async mode to replace sync mode
+> > > > > >
+> > > > > > Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
+> > > > > > ---
+> > > > > >  doc/guides/compressdevs/uadk.rst              | 15 +++
+> > > > > >  drivers/compress/uadk/meson.build             |  4 +-
+> > > > > >  drivers/compress/uadk/uadk_compress_pmd.c     | 94 ++++++++++++++--
+> > ---
+> > > > > >  .../compress/uadk/uadk_compress_pmd_private.h |  2 +-
+> > > > > >  4 files changed, 86 insertions(+), 29 deletions(-)
+> > > > > >
+> > > > > > diff --git a/doc/guides/compressdevs/uadk.rst
+> > > > > > b/doc/guides/compressdevs/uadk.rst
+> > > > > > index a29043e0c0..8812fd180a 100644
+> > > > > > --- a/doc/guides/compressdevs/uadk.rst
+> > > > > > +++ b/doc/guides/compressdevs/uadk.rst
+> > > > > > @@ -96,3 +96,18 @@ Test steps
+> > > > > >       sudo dpdk-test --vdev=compress_uadk
+> > > > > >       RTE>>compressdev_autotest
+> > > > > >       RTE>>quit
+> > > > > > +
+> > > > > > +
+> > > > > > +As a reference, the following table shows a mapping between the past
+> > DPDK
+> > > > > > versions
+> > > > > > +and the UADK library version supported by them:
+> > > > > > +
+> > > > > > +.. _table_uadk_compress_pmd_versions:
+> > > > > > +
+> > > > > > +.. table:: DPDK and external UADK library version compatibility
+> > > > > > +
+> > > > > > +   ==============  ============================
+> > > > > > +   DPDK version    UADK library version
+> > > > > > +   ==============  ============================
+> > > > > > +   24.07 - 25.03   2.4  - 2.8
+> > > > > > +   25.07+          2.9.1
+> > > > > > +   ==============  ============================
+> > > > > > diff --git a/drivers/compress/uadk/meson.build
+> > > > > > b/drivers/compress/uadk/meson.build
+> > > > > > index 34113cd08c..32cadd02ea 100644
+> > > > > > --- a/drivers/compress/uadk/meson.build
+> > > > > > +++ b/drivers/compress/uadk/meson.build
+> > > > > > @@ -13,7 +13,7 @@ sources = files(
+> > > > > >  )
+> > > > > >
+> > > > > >  deps += 'bus_vdev'
+> > > > > > -dep = dependency('libwd_comp', required: false, method: 'pkg-config')
+> > > > > > +dep = dependency('libwd_comp', version: '>=2.9.1', required: false,
+> > method:
+> > > > > > 'pkg-config')
+> > > > > >  if not dep.found()
+> > > > > >      build = false
+> > > > > >      reason = 'missing dependency, "libwd_comp"'
+> > > > > > @@ -21,7 +21,7 @@ else
+> > > > > >      ext_deps += dep
+> > > > > >  endif
+> > > > > >
+> > > > > > -dep = dependency('libwd', required: false, method: 'pkg-config')
+> > > > > > +dep = dependency('libwd', version: '>=2.9.1', required: false, method:
+> > 'pkg-
+> > > > > > config')
+> > > > > >  if not dep.found()
+> > > > > >      build = false
+> > > > > >      reason = 'missing dependency, "libwd"'
+> > > > >
+> > > > > I am seeing this now
+> > > > > Dependency libwd_comp found: NO. Found 2.9 but need: '>=2.9.1'
+> > > >
+> > > > Hi, Akhil
+> > > >
+> > > > The master has merged a release patch 80adefa this afternoon
+> > > > https://urldefense.proofpoint.com/v2/url?u=https-
+> > > <https://urldefense.proofpoint.com/v2/url?u=https-  >> >
+> > 3A__github.com_Linaro_uadk_commits_master_&d=DwIBaQ&c=nKjWec2b6R0m
+> > > >
+> > OyPaz7xtfQ&r=DnL7Si2wl_PRwpZ9TWey3eu68gBzn7DkPwuqhd6WNyo&m=zu_lC
+> > > >
+> > 2WIV6KqBhSa15SOw4sYvI6W3SromCy_Z_A19mliFmfbx6fQsi8SVmdY7OVv&s=oYs
+> > > > SVDbopcr5aRNW6_Z36Jup6ccbKTve3V1Gp6jUtPo&e=
+> > > > And the https://urldefense.proofpoint.com/v2/url?u=https-
+> > > <https://urldefense.proofpoint.com/v2/url?u=https-  >> >
+> > 3A__github.com_Linaro_uadk_tree_v2.9.1&d=DwIBaQ&c=nKjWec2b6R0mOyPaz
+> > > >
+> > 7xtfQ&r=DnL7Si2wl_PRwpZ9TWey3eu68gBzn7DkPwuqhd6WNyo&m=zu_lC2WIV
+> > > >
+> > 6KqBhSa15SOw4sYvI6W3SromCy_Z_A19mliFmfbx6fQsi8SVmdY7OVv&s=Yt0A8F8
+> > > > o96plEAsy4VfmELvDkjGPwh3YkcpcXzWtbaY&e= has updated to the
+> > > > release 2.9.1
+> > > >
+> > > > Would you mind re-check.
+> > > >
+> > > Still getting this
+> > >
+> > > Dependency libwd_comp found: YES 2.9.1 (cached)
+> > > Dependency libwd found: NO found 2.9 but need: '>=2.9.1' (cached)
+> >
+> > it may be because we ret-tag v2.9.1 to the 80adefa, removing the old
+> > tag may be required.
+> >
+> > git tag -d v2.9.1
+> > Deleted tag 'v2.9.1' (was 999f79b)
+> >
+> > git fetch origin
+> > From https://urldefense.proofpoint.com/v2/url?u=https-
+> > 3A__github.com_Linaro_uadk&d=DwIBaQ&c=nKjWec2b6R0mOyPaz7xtfQ&r=DnL
+> > 7Si2wl_PRwpZ9TWey3eu68gBzn7DkPwuqhd6WNyo&m=Gx53tufwHvZ7dBhZujOj
+> > Uv-FiwfOMDX5eblHHsIcKFCK0srJJA1IbPqi-
+> > NvC0hDP&s=MWvXtIabRZ2W7MokxZ9dFzMcgW1ZJvn8HnqBRpoqkfY&e=
+> >  * [new tag]         v2.9.1     -> v2.9.1
+> >
+> >
+> > git fetch origin
+> > git checkout -b 2.9.1 v2.9.1
+> > git log --oneline
+> > 80adefa Merge pull request #681 from gaozhangfei/rel-2.9.1
+> > 0f75d0f uadk: release 2.9.1
+> > 51915ff Merge pull request #680 from gaozhangfei/check_x86
+> > 34df8cf uadk: check whether host cpu is aarch64
+> > d593554 uadk: fix the compilation error on x86
+> >
+> > sudo rm /usr/local/lib/libwd*
+> >
+> > ./cleanup.sh;
+> > ./autogen.sh;
+> > ./configure
+> > make -j128
+> > sudo make install
+> >
+> >  ls .libs/
+>
+> Clean build worked.
+> Thanks.
+> Series Applied to dpdk-next-crypto
+>
 
-Though the calling code can explicitly request alignment,
-we would prefer to put the alignment constraints as part of the
-structure definition itself.
+Great, thanks for all the help.
 
-Such changes are ABI breakages.
-
-Signed-off-by: David Marchand <david.marchand@redhat.com>
----
- doc/guides/rel_notes/deprecation.rst | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
-index e2d4125308..4ae561d670 100644
---- a/doc/guides/rel_notes/deprecation.rst
-+++ b/doc/guides/rel_notes/deprecation.rst
-@@ -57,6 +57,10 @@ Deprecation Notices
-   ``__atomic_thread_fence`` must be used for patches that need to be merged in
-   20.08 onwards. This change will not introduce any performance degradation.
- 
-+* lib: multiple issues relating to unaligned accesses have been detected using the UBSan checker.
-+  As part of resolving those issues, alignment in some structures will be updated in 25.11,
-+  namely (but not exhaustively): ``struct rte_stack_lf_head`` and ``struct rte_mp_msg``.
-+
- * lib: will fix extending some enum/define breaking the ABI. There are multiple
-   samples in DPDK that enum/define terminated with a ``.*MAX.*`` value which is
-   used by iterators, and arrays holding these values are sized with this
--- 
-2.50.0
-
+Thanks
