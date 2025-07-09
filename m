@@ -2,39 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45490C83F09
-	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Jul 2025 12:58:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A5D0C83F03
+	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Jul 2025 13:06:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8FED9402DA;
-	Wed,  9 Jul 2025 14:58:30 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 9D99F402A9;
- Wed,  9 Jul 2025 14:58:29 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 66D25204A9;
- Wed,  9 Jul 2025 14:58:29 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 6C954402DA;
+	Wed,  9 Jul 2025 15:06:34 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 11452402A9
+ for <dev@dpdk.org>; Wed,  9 Jul 2025 15:06:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1752066393; x=1783602393;
+ h=from:to:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=MwWwkc+StcpVgK6lfT8yFCrUVm8AwvYEdSxN/FzzIzc=;
+ b=Gp2cOzWDAZIR+QpjuKxUTGnC2Jl7XVebj8ljF6+aKIu9xOnd4hZgdETJ
+ LRx1e6EwviyxBxm+BfGdm4ByT7vy4gLqgDcN5U0IA3ecayI8qL0/eRPAG
+ 7sNS8sNxCfPdujovjW4uNjedSHqRWoh5ulD7vKD/d/RVJ2G+TYyShXMBR
+ OzydcsBaHblxc2oJmwIo4uAE/bAcA+JWONTpR5Ml9g7V5Q93WegQd2sAq
+ D7RUTKAt16jmjDq9gCLHbnlMWwZDKnTN7s9mb/dWPpIfcOo6fbma2IXw+
+ kXgJYJWYyI/EngabrvV5xMoAt0FwNzj1sYbSGI0RSD4M0S8oTgKZBj4gy A==;
+X-CSE-ConnectionGUID: GBEJRyGQRFeiblSwQimJCw==
+X-CSE-MsgGUID: Aw66irzpRN2nXFphjQ6Ykw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="58090762"
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; d="scan'208";a="58090762"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+ by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Jul 2025 06:06:32 -0700
+X-CSE-ConnectionGUID: kZrLM27UTtW1RRxG7Djpmg==
+X-CSE-MsgGUID: 1aerrzSWTbWw8qhLocD0JQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; d="scan'208";a="179456230"
+Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
+ by fmviesa002.fm.intel.com with ESMTP; 09 Jul 2025 06:06:31 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v1 1/1] net/iavf: fix order of inclusion in vector code
+Date: Wed,  9 Jul 2025 14:06:29 +0100
+Message-ID: <552f8241f4f65fce0c8b43797612a97dec5d9ebc.1752066381.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.47.1
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Subject: RE: [PATCH] doc: announce changes in structure alignments for UBSan
-Content-Transfer-Encoding: quoted-printable
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Wed, 9 Jul 2025 14:58:27 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FDA9@smartserver.smartshare.dk>
-In-Reply-To: <20250709124022.4105481-1-david.marchand@redhat.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH] doc: announce changes in structure alignments for UBSan
-Thread-Index: AdvwzrBgDJZ/uSIkRk2QRded6vkRvQAAlaig
-References: <20250709124022.4105481-1-david.marchand@redhat.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "David Marchand" <david.marchand@redhat.com>,
-	<dev@dpdk.org>
-Cc: <thomas@monjalon.net>,
-	<techboard@dpdk.org>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,56 +57,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: David Marchand [mailto:david.marchand@redhat.com]
-> Sent: Wednesday, 9 July 2025 14.40
->=20
-> As part of the effort to limit undefined behaviors in DPDK code, some
-> structure alignments revealed not to be accurate enough.
-> At the moment two structures have been identified but others may be
-> found while running more parts of DPDK with UBSan.
->=20
-> Though the calling code can explicitly request alignment,
-> we would prefer to put the alignment constraints as part of the
-> structure definition itself.
->=20
-> Such changes are ABI breakages.
->=20
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
-> ---
->  doc/guides/rel_notes/deprecation.rst | 4 ++++
->  1 file changed, 4 insertions(+)
->=20
-> diff --git a/doc/guides/rel_notes/deprecation.rst
-> b/doc/guides/rel_notes/deprecation.rst
-> index e2d4125308..4ae561d670 100644
-> --- a/doc/guides/rel_notes/deprecation.rst
-> +++ b/doc/guides/rel_notes/deprecation.rst
-> @@ -57,6 +57,10 @@ Deprecation Notices
->    ``__atomic_thread_fence`` must be used for patches that need to be
-> merged in
->    20.08 onwards. This change will not introduce any performance
-> degradation.
->=20
-> +* lib: multiple issues relating to unaligned accesses have been
-> detected using the UBSan checker.
-> +  As part of resolving those issues, alignment in some structures =
-will
-> be updated in 25.11,
-> +  namely (but not exhaustively): ``struct rte_stack_lf_head`` and
-> ``struct rte_mp_msg``.
-> +
->  * lib: will fix extending some enum/define breaking the ABI. There =
-are
-> multiple
->    samples in DPDK that enum/define terminated with a ``.*MAX.*`` =
-value
-> which is
->    used by iterators, and arrays holding these values are sized with
-> this
-> --
-> 2.50.0
+IAVF driver does not support 16-byte descriptors (because there is no PF
+that can support a VF using 16-byte descriptor), but if IAVF is built with
+a flag that enables 16-byte descriptors, this flag is then propagated
+through the inclusion chain in certain cases, because IAVF includes common
+vector code before IAVF-specific common code (which in turn includes
+`iavf_rxtx.h` which disables 16-byte descriptor support).
 
-Yes, please.
+Fix the inclusion order to include IAVF-specific vector header first, which
+will fix the compilation error due to correctly disabling 16-byte Rx
+descriptor support.
 
-Acked-by: Morten Br=F8rup <mb@smartsharesystems.com>
+Bugzilla ID: 1749
+
+Fixes: 11276ec5e042 ("net/iavf: use common Rx rearm")
+
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+---
+ drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c   | 2 +-
+ drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
+index 73a6ae5c41..9344dcc725 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
++++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
+@@ -2,8 +2,8 @@
+  * Copyright(c) 2019 Intel Corporation
+  */
+ 
+-#include "../common/rx_vec_x86.h"
+ #include "iavf_rxtx_vec_common.h"
++#include "../common/rx_vec_x86.h"
+ 
+ #include <rte_vect.h>
+ 
+diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
+index 9a029ecbe0..b29e3ac0f1 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
++++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
+@@ -2,8 +2,8 @@
+  * Copyright(c) 2020 Intel Corporation
+  */
+ 
+-#include "../common/rx_vec_x86.h"
+ #include "iavf_rxtx_vec_common.h"
++#include "../common/rx_vec_x86.h"
+ 
+ #include <rte_vect.h>
+ 
+-- 
+2.47.1
 
