@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84524C83F0A
-	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Jul 2025 17:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB790C83F0A
+	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Jul 2025 17:37:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C325240E2C;
-	Wed,  9 Jul 2025 19:36:27 +0200 (CEST)
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com
- [209.85.214.177])
- by mails.dpdk.org (Postfix) with ESMTP id 7416340E09
- for <dev@dpdk.org>; Wed,  9 Jul 2025 19:36:23 +0200 (CEST)
-Received: by mail-pl1-f177.google.com with SMTP id
- d9443c01a7336-23c8f179e1bso2353555ad.1
- for <dev@dpdk.org>; Wed, 09 Jul 2025 10:36:23 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D67E340E36;
+	Wed,  9 Jul 2025 19:36:28 +0200 (CEST)
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
+ [209.85.214.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 4D5C240E13
+ for <dev@dpdk.org>; Wed,  9 Jul 2025 19:36:24 +0200 (CEST)
+Received: by mail-pl1-f171.google.com with SMTP id
+ d9443c01a7336-235ef62066eso2603685ad.3
+ for <dev@dpdk.org>; Wed, 09 Jul 2025 10:36:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752082582;
- x=1752687382; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752082583;
+ x=1752687383; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=9/RQJUCWAWOmFgBocfh6R0dp7bChsllmJyikY1zuGmM=;
- b=2WW+vTIOeQR8MZbXGiGTiYG46xmZEh8nCAVEdGZw62OzFtlrmOzZFAFWTeitF+in/2
- FvctbyYxPeMEU/Ah/T1jLPvHIyW4L855QtXTtMqqiOuOL2yomD5MP06TtWaXPTk5fMkW
- Z1BUVlcwaoWX+7Khd784fF3HWEX28U5zfPpS1n1Va1OGsu3mfz6UQyjWeFicvQOIP9Et
- /Hf4Le41XEghROi4PxkIXGIiRZu5JsQU7MZDXAjbMeXVGUvcLegXrtEQOAx0AeiO/amp
- EWIns3sYAnq4fb9ll6jxeBKXbJchE3g7ZFVJlCFkh7UstL4uP9JbUmoB+Njgj3ViCBW1
- Rvig==
+ bh=ujmoBIc8HeKmV/kAHKAPbRTOrB9s2qc707RM70h1g7U=;
+ b=z1pWCEEGbe0j18IqU7moxgkdoyELRWinxvEFwdmk6tUh3Haxxdf7zCjVQxc/Xio4u5
+ 8eGhgZvCD1B4sYmchNpVATvAcDiEs1uefc9IfdcFBGF21XzooTZZHykB6VXBv9QcHySq
+ w69HHp76DVY68XZJwoeWri+rrMAE5ftFSETv6amiWzS8WZaxQDI8w70SaWYRllgyK3lJ
+ 5bxJAa1ykg0NNNRGhD6Os2PCgRr8RV/vxc/3M/KCS9UEoXFz60sLhXhPBMxenWW4TrHe
+ tgESYEshgZQeg3hk9s6lOT2sr/lAkwqLTy35EpGZEnPjRmxVS68ELfd9/JNieq/PnP3m
+ Cd2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752082582; x=1752687382;
+ d=1e100.net; s=20230601; t=1752082583; x=1752687383;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=9/RQJUCWAWOmFgBocfh6R0dp7bChsllmJyikY1zuGmM=;
- b=LidSAqNtYbE5WnXyCd3y9IbZRRz3KUKwbxPwXuhLEAM82RkZNzblc5lLp/Z5jaDFq0
- vxdybCDsHOAWE2tn6KGXMeUdgPSi+Et1y1g7e4XREP0LA6mtfgQb9gbnFbwsc2LRapgY
- APOlCIF0JozmYlZ5LTi3DhtpYqZdHVKf7cFuFB23pcD7MFYzDQTFxg+vWegDkoWZhKt/
- NwEZqwwXz6/eLa7lJIPmu9vRgNXYZWu6chTbQHhddePGYre/NGsianAm7Qd6aq2d/Ekg
- wKQsLX33veGaII/TqcFPatRzLe+hDCTIou6qou8rBFG5RJAmtVNY6QbG3uMGP6i1nmT6
- 1Y4Q==
-X-Gm-Message-State: AOJu0Ywq7nP/sN57iROzwcCSorIcVE5kcQXh0eBWEsLeep4L9jnXjve9
- zTQ3gz8W8gqOMkP9mZSjD46bux018sDVAOHmCnIi4GE3RHS0WrmITTFyLHbidLswtGf2OWfoeLu
- 0Gtah
-X-Gm-Gg: ASbGnctU5dYnYAgRaMYqbvdh5YWfy0P+pQIzbP4VEFi7hUk4dBlvGEAul2ooOjx5vKh
- aFCaeVNfa6GXCB79QA/yvmNW1pg5LmuANSZgJHbBXKhF3kS0bavCcwYtyZroSjwc5to71NV+DP5
- WrWJWcVQxt+3uG6U7bfFYV27Z/BZyKdMI6VGLVBqB9hxt4P9bzpMrh5xO00uHyBTthDBcOORfyk
- CfzNml0PM3lIunZV0yp9hSvjY0z1pxpU//6bpkHO5w6qqMkxXnf3tPtxj9oM5YKwSUnkSZYIAPL
- kU500v4b0gYyxgGu7oMnUvnmGTFVpiPYfC+CWAZeW1wGxJnE6ChvmTVqr7P1s3/1KiZXiPhK/qE
- XFh4rQ+MsYKZtAVhJfuW5tnmNVv4coxJm+hCR
-X-Google-Smtp-Source: AGHT+IHpJz8P7/IKueI5iL9i5pXZfBmsbOend2IlutpayL1EnOR7e2YXigWcolvdIEBntrajlpvkzA==
-X-Received: by 2002:a17:902:ef0b:b0:235:cb94:1399 with SMTP id
- d9443c01a7336-23ddb1dc490mr63113405ad.6.1752082582594; 
- Wed, 09 Jul 2025 10:36:22 -0700 (PDT)
+ bh=ujmoBIc8HeKmV/kAHKAPbRTOrB9s2qc707RM70h1g7U=;
+ b=EySj7r4x3AcGHsNETt1vxeRlw4LvCJqhEX+z1ERGWRBK/v4FHsFFlhtt7J2E8aqDf0
+ McfKOE+FhQqkJP0+MSw/TEDCAW7lS1tDod1VTxcU+RFzgQWMEp8tiJLVfNPsohd2vgke
+ Vbkw5/0PXgcUnJ/oG+sivJiNf9AZ8NQcfWqhfknhGM+J8290s0iSyQYSNDJI9MIMbVDo
+ HxFIbu5SOsupGUy4gJEGut45phCYfWMbh8/VhIx1J29bLg2/HPcUGSDDfKCP1qNFhwOJ
+ njx0HvTQygJ08jT9rEtDIM+WC+Y9b4U9436tGIoeh5wn2pRUUYon3UmAZOH6LU7ROJxH
+ Axew==
+X-Gm-Message-State: AOJu0YxdmZGsSvW+W+ac2KgJcOChiaLEZ4Jd7fMeU4X3+qxM1E3S+s2R
+ 3a7Ql7V7itJ+02+Zr8GX4rcc6fiAUIPAjMNgqlSjwVvbtYKJpe3w3kYpqoxWfEUmUi6DPD+dYKF
+ 9uzAJ
+X-Gm-Gg: ASbGnctkPGivM1R7BPhZGDZGmXwREwYOYvHP+Vc1MtFjbnuiSKcq/d5GKEAzXSMBPiZ
+ Z53jQhP3gyYX7rlsn+g2DkadavNILEBABIXeeOqdklFPFl+NddZ9LMcX7I1m+uHgB7hLOMCjL2F
+ bL8C5XWffk27vyItNaCbrkjfxT3dPBEN5/htJNcMDYuxcgBq8FcwKMEDTOOiNt1ylB69ILD9zov
+ 4ETImZPcPl/DfgzG0BJoN9MwOd6lzPcsVt0xcj144vHM2HhqznBt6WnH2h+W2g+uzigFYDJiO4l
+ gx37KhoejWS20ZDE50HAnTGOCBBQFVkYNHsJiSO2+oXU1yvmpfT7Ba3tuR5b1Xb2iks4bCFNTOX
+ UEhP/XEWdVsaUsCSGzK+m1nNm26s3syNqpsz5
+X-Google-Smtp-Source: AGHT+IGGFrnhdNcN6JeLL7tuWqPVlQlvc1vztAwXfvaD8SxEVVR8VburxN7187K9F+dr/NxG8ZQDcA==
+X-Received: by 2002:a17:902:ef0a:b0:234:c549:da14 with SMTP id
+ d9443c01a7336-23ddb2f2cbbmr51656225ad.29.1752082583438; 
+ Wed, 09 Jul 2025 10:36:23 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-23c845b7467sm138525475ad.230.2025.07.09.10.36.21
+ d9443c01a7336-23c845b7467sm138525475ad.230.2025.07.09.10.36.22
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 09 Jul 2025 10:36:22 -0700 (PDT)
+ Wed, 09 Jul 2025 10:36:23 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Reshma Pattan <reshma.pattan@intel.com>
-Subject: [RFC v2 08/12] pcapng: make queue optional
-Date: Wed,  9 Jul 2025 10:33:34 -0700
-Message-ID: <20250709173611.6390-9-stephen@networkplumber.org>
+ Thomas Monjalon <thomas@monjalon.net>, Ferruh Yigit <ferruh.yigit@amd.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: [RFC v2 09/12] test: add tests for ethdev mirror
+Date: Wed,  9 Jul 2025 10:33:35 -0700
+Message-ID: <20250709173611.6390-10-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250709173611.6390-1-stephen@networkplumber.org>
 References: <0250411234927.114568-1-stephen@networkplumber.org>
@@ -83,55 +84,318 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The queue field is optional in pcapng received packet.
-Use UINT16_MAX as flag value.
+Simple API and packet mirroring standalone tests.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/pcapng/rte_pcapng.c | 7 ++++---
- lib/pcapng/rte_pcapng.h | 4 ++--
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ app/test/meson.build          |   1 +
+ app/test/test_ethdev_mirror.c | 285 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 286 insertions(+)
+ create mode 100644 app/test/test_ethdev_mirror.c
 
-diff --git a/lib/pcapng/rte_pcapng.c b/lib/pcapng/rte_pcapng.c
-index 6db5d4da50..c27cb9b48e 100644
---- a/lib/pcapng/rte_pcapng.c
-+++ b/lib/pcapng/rte_pcapng.c
-@@ -500,8 +500,8 @@ rte_pcapng_insert(struct rte_mbuf *m, uint32_t queue,
- 
- 	uint16_t optlen = pcapng_optlen(sizeof(flags));
- 
--	/* make queue optional? */
--	optlen += pcapng_optlen(sizeof(queue));
-+	if (queue != UINT16_MAX)
-+		optlen += pcapng_optlen(sizeof(queue));
- 
- 	/* does packet have valid RSS hash to include */
- 	bool rss_hash = (direction == RTE_PCAPNG_DIRECTION_IN &&
-@@ -531,7 +531,8 @@ rte_pcapng_insert(struct rte_mbuf *m, uint32_t queue,
- 	}
- 
- 	opt = pcapng_add_option(opt, PCAPNG_EPB_FLAGS, &flags, sizeof(flags));
--	opt = pcapng_add_option(opt, PCAPNG_EPB_QUEUE, &queue, sizeof(queue));
-+	if (queue != UINT16_MAX)
-+		opt = pcapng_add_option(opt, PCAPNG_EPB_QUEUE, &queue, sizeof(queue));
- 
- 	if (rss_hash) {
- 		uint8_t hash_opt[5];
-diff --git a/lib/pcapng/rte_pcapng.h b/lib/pcapng/rte_pcapng.h
-index 4914ac9622..48aaab365c 100644
---- a/lib/pcapng/rte_pcapng.h
-+++ b/lib/pcapng/rte_pcapng.h
-@@ -135,8 +135,8 @@ rte_pcapng_copy(uint16_t port_id, uint32_t queue,
-  * @param m
-  *   The mbuf to modify.
-  * @param queue
-- *   The queue on the Ethernet port where packet was received
-- *   or is going to be transmitted.
-+ *   The queue on the Ethernet port where packet was received or is going to be transmitted.
-+ *   Optional: use UINT16_MAX if not specified.
-  * @param direction
-  *   The direction of the packer: receive, transmit or unknown.
-  * @param orig_len
+diff --git a/app/test/meson.build b/app/test/meson.build
+index 7d38f51918..07bc00148d 100644
+--- a/app/test/meson.build
++++ b/app/test/meson.build
+@@ -73,6 +73,7 @@ source_file_deps = {
+     'test_errno.c': [],
+     'test_ethdev_api.c': ['ethdev'],
+     'test_ethdev_link.c': ['ethdev'],
++    'test_ethdev_mirror.c': ['net_ring', 'ethdev', 'bus_vdev'],
+     'test_event_crypto_adapter.c': ['cryptodev', 'eventdev', 'bus_vdev'],
+     'test_event_dma_adapter.c': ['dmadev', 'eventdev', 'bus_vdev'],
+     'test_event_eth_rx_adapter.c': ['ethdev', 'eventdev', 'bus_vdev'],
+diff --git a/app/test/test_ethdev_mirror.c b/app/test/test_ethdev_mirror.c
+new file mode 100644
+index 0000000000..b5b89e977f
+--- /dev/null
++++ b/app/test/test_ethdev_mirror.c
+@@ -0,0 +1,285 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2025 Stephen Hemminger <stephen@networkplumber.org>
++ */
++#include "test.h"
++
++#include <stdio.h>
++
++#include <rte_eth_ring.h>
++#include <rte_ethdev.h>
++#include <rte_bus_vdev.h>
++
++#define SOCKET0 0
++#define RING_SIZE 256
++#define BURST_SZ 64
++#define NB_MBUF 512
++
++static struct rte_mempool *mirror_pool;
++static const uint32_t pkt_len = 200;
++
++static struct rte_ring *rxtx_ring;
++static const char ring_dev[] = "net_ring0";
++static uint16_t ring_port;
++static const char null_dev[] = "net_null0";
++static uint16_t null_port;
++
++static int
++configure_port(uint16_t port, const char *name)
++{
++	struct rte_eth_conf eth_conf = { 0 };
++
++	if (rte_eth_dev_configure(port, 1, 1, &eth_conf) < 0) {
++		fprintf(stderr, "Configure failed for port %u: %s\n", port, name);
++		return -1;
++	}
++
++	/* only single queue */
++	if (rte_eth_tx_queue_setup(port, 0, RING_SIZE, SOCKET0, NULL) < 0) {
++		fprintf(stderr, "TX queue setup failed port %u: %s\n", port, name);
++		return -1;
++	}
++
++	if (rte_eth_rx_queue_setup(port, 0, RING_SIZE, SOCKET0, NULL, mirror_pool) < 0) {
++		fprintf(stderr, "RX queue setup failed port %u: %s\n", port, name);
++		return -1;
++	}
++
++	if (rte_eth_dev_start(port) < 0) {
++		fprintf(stderr, "Error starting port %u:%s\n", port, name);
++		return -1;
++	}
++
++	return 0;
++}
++
++static void
++test_cleanup(void)
++{
++	rte_ring_free(rxtx_ring);
++
++	rte_vdev_uninit("net_ring");
++	rte_vdev_uninit("net_null");
++
++	rte_mempool_free(mirror_pool);
++}
++
++/* Make two virtual devices ring and null */
++static int
++test_setup(void)
++{
++	char null_name[] = "net_null0";
++	int ret;
++
++	/* ring must support multiple enqueue for mirror to work */
++	rxtx_ring = rte_ring_create("R0", RING_SIZE, SOCKET0, RING_F_MP_RTS_ENQ | RING_F_SC_DEQ);
++	if (rxtx_ring == NULL) {
++		fprintf(stderr, "rte_ring_create R0 failed\n");
++		goto fail;
++	}
++	ret = rte_eth_from_rings(ring_dev, &rxtx_ring, 1, &rxtx_ring, 1, SOCKET0);
++	if (ret < 0) {
++		fprintf(stderr, "rte_eth_from_rings failed\n");
++		goto fail;
++	}
++	ring_port = ret;
++
++	/* Make a dummy null device to snoop on */
++	if (rte_vdev_init(null_dev, NULL) != 0) {
++		fprintf(stderr, "Failed to create vdev '%s'\n", null_dev);
++		goto fail;
++	}
++	if (rte_eth_dev_get_port_by_name(null_dev, &null_port) != 0) {
++		fprintf(stderr, "cannot find added vdev %s\n", null_name);
++		goto fail;
++	}
++
++	mirror_pool = rte_pktmbuf_pool_create("mirror_pool", NB_MBUF, 32,
++					      0, RTE_MBUF_DEFAULT_BUF_SIZE, rte_socket_id());
++	if (mirror_pool == NULL) {
++		fprintf(stderr, "rte_pktmbuf_pool_create failed\n");
++		goto fail;
++	}
++
++	ret = configure_port(ring_port, ring_dev);
++	if (ret < 0)
++		goto fail;
++
++	ret = configure_port(null_port, null_dev);
++	if (ret < 0)
++		goto fail;
++
++	return 0;
++fail:
++	test_cleanup();
++	return -1;
++}
++
++/* Make sure mirror API checks args */
++static int32_t
++ethdev_mirror_api(void)
++{
++	struct rte_eth_mirror_conf conf = {
++		.mp = mirror_pool,
++		.direction = RTE_ETH_MIRROR_DIRECTION_EGRESS,
++	};
++	uint16_t invalid_port = RTE_MAX_ETHPORTS;
++	int ret;
++
++	conf.target = null_port;
++	ret = rte_eth_add_mirror(invalid_port, &conf);
++	TEST_ASSERT(ret != 0, "Created mirror from invalid port");
++
++	conf.target = invalid_port;
++	ret = rte_eth_add_mirror(null_port, &conf);
++	TEST_ASSERT(ret != 0, "Created mirror to invalid port");
++
++	conf.direction = 0;
++	conf.target = ring_port;
++	ret = rte_eth_add_mirror(null_port, &conf);
++	TEST_ASSERT(ret != 0, "Created mirror with invalid direction");
++
++	conf.direction = RTE_ETH_MIRROR_DIRECTION_INGRESS;
++	conf.target = ring_port;
++	ret = rte_eth_add_mirror(ring_port, &conf);
++	TEST_ASSERT(ret != 0, "Created mirror to self");
++
++	conf.target = null_port;
++	ret = rte_eth_add_mirror(ring_port, &conf);
++	TEST_ASSERT(ret == 0, "Could not create mirror from ring to null");
++
++	ret = rte_eth_add_mirror(ring_port, &conf);
++	TEST_ASSERT(ret != 0, "Able to create duplicate mirror");
++
++	ret = rte_eth_remove_mirror(ring_port, null_port);
++	TEST_ASSERT(ret == 0, "Unable to delete mirror");
++
++	ret = rte_eth_remove_mirror(ring_port, null_port);
++	TEST_ASSERT(ret != 0, "Able to delete port without mirror");
++
++	return 0;
++}
++
++static int
++init_mbuf(struct rte_mbuf *m, uint16_t id)
++{
++	struct {
++		struct rte_ether_hdr eth;
++		struct rte_ipv4_hdr ip;
++		struct rte_udp_hdr udp;
++	} hdrs = {
++		.eth = {
++			.dst_addr.addr_bytes = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },
++			.ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4),
++		},
++		.ip = {
++			.version_ihl = RTE_IPV4_VHL_DEF,
++			.time_to_live = 1,
++			.next_proto_id = IPPROTO_UDP,
++			.src_addr = rte_cpu_to_be_32(RTE_IPV4_LOOPBACK),
++			.dst_addr = rte_cpu_to_be_32(RTE_IPV4_BROADCAST),
++		},
++		.udp = {
++			.dst_port = rte_cpu_to_be_16(9), /* Discard port */
++		},
++	};
++
++	rte_eth_random_addr(hdrs.eth.src_addr.addr_bytes);
++	uint16_t plen = pkt_len - sizeof(struct rte_ether_hdr);
++
++	hdrs.ip.packet_id = rte_cpu_to_be_16(id);
++	hdrs.ip.total_length = rte_cpu_to_be_16(plen);
++	hdrs.ip.hdr_checksum = rte_ipv4_cksum(&hdrs.ip);
++
++	plen -= sizeof(struct rte_ipv4_hdr);
++	hdrs.udp.src_port = rte_rand();
++	hdrs.udp.dgram_len = rte_cpu_to_be_16(plen);
++
++	void *data = rte_pktmbuf_append(m, pkt_len);
++	TEST_ASSERT(data != NULL, "could not add header");
++
++	memcpy(data, &hdrs, sizeof(hdrs));
++	return 0;
++}
++
++static int
++init_burst(struct rte_mbuf *pkts[], unsigned int n)
++{
++	for (unsigned int i = 0; i < n; i++) {
++		if (init_mbuf(pkts[i], i) < 0)
++			return -1;
++	}
++	return 0;
++}
++
++static int
++validate_burst(struct rte_mbuf *pkts[], unsigned int n)
++{
++	for (unsigned int i = 0; i < n; i++) {
++		struct rte_mbuf *m = pkts[i];
++
++		rte_mbuf_sanity_check(m, 1);
++		TEST_ASSERT(m->pkt_len != pkt_len,
++			    "mirror packet not right len");
++
++		const struct rte_ether_hdr *eh
++			= rte_pktmbuf_mtod(m, struct rte_ether_hdr *);
++		TEST_ASSERT(rte_is_broadcast_ether_addr(&eh->dst_addr),
++			    "mirrored packet is not broadcast");
++
++	}
++	return 0;
++}
++
++static int32_t
++ethdev_mirror_packets(void)
++{
++	struct rte_eth_mirror_conf conf = {
++		.mp = mirror_pool,
++		.target = ring_port,
++		.direction = RTE_ETH_MIRROR_DIRECTION_EGRESS,
++	};
++	struct rte_mbuf *tx_pkts[BURST_SZ], *rx_pkts[BURST_SZ];
++	uint16_t nb_tx, nb_rx;
++	int ret;
++
++	ret = rte_pktmbuf_alloc_bulk(mirror_pool, tx_pkts, BURST_SZ);
++	TEST_ASSERT(ret == 0, "Could not allocate mbufs");
++
++	ret = init_burst(tx_pkts, BURST_SZ);
++	TEST_ASSERT(ret == 0, "Init mbufs failed");
++
++	ret = rte_eth_add_mirror(null_port, &conf);
++	TEST_ASSERT(ret == 0, "Could not create mirror from ring to null");
++
++	nb_tx = rte_eth_tx_burst(null_port, 0, tx_pkts, BURST_SZ);
++	TEST_ASSERT(nb_tx == BURST_SZ, "Only sent %u burst to null (vs %u)",
++		    nb_tx, BURST_SZ);
++
++	nb_rx = rte_eth_rx_burst(ring_port, 0, rx_pkts, BURST_SZ);
++	TEST_ASSERT(nb_rx == BURST_SZ, "Only received %u of %u packets",
++		    nb_rx, BURST_SZ);
++
++	validate_burst(rx_pkts, nb_rx);
++	rte_pktmbuf_free_bulk(rx_pkts, nb_rx);
++
++	return 0;
++}
++
++static struct unit_test_suite ethdev_mirror_suite = {
++	.suite_name = "port mirroring",
++	.setup = test_setup,
++	.teardown = test_cleanup,
++	.unit_test_cases = {
++		TEST_CASE(ethdev_mirror_api),
++		TEST_CASE(ethdev_mirror_packets),
++		TEST_CASES_END()
++	}
++};
++
++static int
++test_ethdev_mirror(void)
++{
++	return unit_test_suite_runner(&ethdev_mirror_suite);
++}
++
++REGISTER_FAST_TEST(ethdev_mirror, true, true, test_ethdev_mirror);
 -- 
 2.47.2
 
