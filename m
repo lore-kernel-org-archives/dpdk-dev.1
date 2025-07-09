@@ -2,38 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82962C83F03
-	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Jul 2025 08:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3CDC83F03
+	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Jul 2025 08:44:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5E79E4068A;
-	Wed,  9 Jul 2025 10:43:41 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 641D24067C;
+	Wed,  9 Jul 2025 10:43:44 +0200 (CEST)
 Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
- by mails.dpdk.org (Postfix) with ESMTP id ED1714067B
- for <dev@dpdk.org>; Wed,  9 Jul 2025 10:43:38 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 8B1D8406A2
+ for <dev@dpdk.org>; Wed,  9 Jul 2025 10:43:42 +0200 (CEST)
 Received: from mail.cstnet.cn (unknown [60.29.3.194])
- by APP-05 (Coremail) with SMTP id zQCowADnPl+lK25oVRxmAg--.757S8;
- Wed, 09 Jul 2025 16:43:36 +0800 (CST)
+ by APP-05 (Coremail) with SMTP id zQCowADnPl+lK25oVRxmAg--.757S10;
+ Wed, 09 Jul 2025 16:43:40 +0800 (CST)
 From: Jie Liu <liujie5@linkdatatechnology.com>
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v4 07/14] net/sxe: support rss offload
-Date: Wed,  9 Jul 2025 04:43:07 -0400
-Message-ID: <20250709084315.9940-7-liujie5@linkdatatechnology.com>
+Subject: [PATCH v4 09/14] net/sxe: support ptp
+Date: Wed,  9 Jul 2025 04:43:09 -0400
+Message-ID: <20250709084315.9940-9-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250709084315.9940-1-liujie5@linkdatatechnology.com>
 References: <20250707115819.12826-14-liujie5@linkdatatechnology.com>
  <20250709084315.9940-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowADnPl+lK25oVRxmAg--.757S8
-X-Coremail-Antispam: 1UD129KBjvJXoWfGFyfGw47AFyUury7CrWruFg_yoWkCr17pF
- WkG3W8trWftFySgw15Aa1UuF13Wr1vka1UKayfJ34fAa1UJF4xJryYya47Kw15t3sxXr1k
- JFWSqa45GF1v9F7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: zQCowADnPl+lK25oVRxmAg--.757S10
+X-Coremail-Antispam: 1UD129KBjvJXoW3XFyDZF45Kr1kZrWrWrWruFg_yoWfWr4UpF
+ Z5Ca4ayrWIqFsFga4fCF4Dury5KFsYqr9FgF9aywsxZryxCrW8Wryv9r1Utrn5G34kJw13
+ AwnYqanxWr1rXF7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUBm14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
  rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
- kIc2x26xkF7I0E14v26r4j6ryUM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
- z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr
+ kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
+ z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr
  1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r4U
  JwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
  IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
@@ -42,7 +42,7 @@ X-Coremail-Antispam: 1UD129KBjvJXoWfGFyfGw47AFyUury7CrWruFg_yoWkCr17pF
  GwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAKI4
  8JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4U
  MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I
- 8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUUiiSDUUUU
+ 8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUeeHqDUUUU
 X-Originating-IP: [60.29.3.194]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -58,431 +58,304 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Support rss offload.
+Add ptp module.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe/base/sxe_offload_common.c |  11 +-
- drivers/net/sxe/pf/sxe.h                  |   2 +
- drivers/net/sxe/pf/sxe_offload.c          | 300 +++++++++++++++++++++-
- drivers/net/sxe/pf/sxe_offload.h          |  33 +++
- 4 files changed, 340 insertions(+), 6 deletions(-)
+ drivers/net/sxe/meson.build  |   1 +
+ drivers/net/sxe/pf/sxe.h     |   9 ++
+ drivers/net/sxe/pf/sxe_ptp.c | 209 +++++++++++++++++++++++++++++++++++
+ drivers/net/sxe/pf/sxe_ptp.h |  26 +++++
+ 4 files changed, 245 insertions(+)
+ create mode 100644 drivers/net/sxe/pf/sxe_ptp.c
+ create mode 100644 drivers/net/sxe/pf/sxe_ptp.h
 
-diff --git a/drivers/net/sxe/base/sxe_offload_common.c b/drivers/net/sxe/base/sxe_offload_common.c
-index cc35c16ddf..f87cce67a5 100644
---- a/drivers/net/sxe/base/sxe_offload_common.c
-+++ b/drivers/net/sxe/base/sxe_offload_common.c
-@@ -24,15 +24,16 @@ u64 __sxe_rx_port_offload_capa_get(struct rte_eth_dev *dev)
- 	u64 rx_offload_capa;
- 
- 	rx_offload_capa = RTE_ETH_RX_OFFLOAD_IPV4_CKSUM  |
--		   RTE_ETH_RX_OFFLOAD_UDP_CKSUM   |
--		   RTE_ETH_RX_OFFLOAD_TCP_CKSUM   |
--		   RTE_ETH_RX_OFFLOAD_KEEP_CRC	|
-+			RTE_ETH_RX_OFFLOAD_UDP_CKSUM   |
-+			RTE_ETH_RX_OFFLOAD_TCP_CKSUM   |
-+			RTE_ETH_RX_OFFLOAD_KEEP_CRC	|
- #ifdef DEV_RX_JUMBO_FRAME
--		   DEV_RX_OFFLOAD_JUMBO_FRAME |
-+			DEV_RX_OFFLOAD_JUMBO_FRAME |
- #endif
- 			RTE_ETH_RX_OFFLOAD_VLAN_FILTER |
- 			RTE_ETH_RX_OFFLOAD_VLAN_EXTEND |
--		   RTE_ETH_RX_OFFLOAD_SCATTER;
-+			RTE_ETH_RX_OFFLOAD_SCATTER |
-+			RTE_ETH_RX_OFFLOAD_RSS_HASH;
- 
- 	if (!RTE_ETH_DEV_SRIOV(dev).active)
- 		rx_offload_capa |= RTE_ETH_RX_OFFLOAD_TCP_LRO;
+diff --git a/drivers/net/sxe/meson.build b/drivers/net/sxe/meson.build
+index 2f528efe19..5bd44f3f65 100644
+--- a/drivers/net/sxe/meson.build
++++ b/drivers/net/sxe/meson.build
+@@ -19,6 +19,7 @@ sources = files(
+ 	'pf/sxe_tx.c',
+         'pf/sxe_pmd_hdc.c',
+         'pf/sxe_phy.c',
++        'pf/sxe_ptp.c',
+         'pf/sxe_dcb.c',
+         'base/sxe_queue_common.c',
+ 	'base/sxe_rx_common.c',
 diff --git a/drivers/net/sxe/pf/sxe.h b/drivers/net/sxe/pf/sxe.h
-index 6458372ce4..c183674fcd 100644
+index 30efe4ee66..8699e1a82f 100644
 --- a/drivers/net/sxe/pf/sxe.h
 +++ b/drivers/net/sxe/pf/sxe.h
-@@ -57,6 +57,8 @@ struct sxe_adapter {
+@@ -41,6 +41,14 @@ struct sxe_vlan_context;
+ #define rte_sxe_prefetch(p)   do {} while (0)
+ #endif
  
- 	u32 mtu;
- 
-+	bool rss_reta_updated;
-+
- 	RTE_ATOMIC(bool)link_thread_running;
- 	RTE_ATOMIC(bool)is_stopping;
- 	rte_thread_t link_thread_tid;
-diff --git a/drivers/net/sxe/pf/sxe_offload.c b/drivers/net/sxe/pf/sxe_offload.c
-index 7049efe606..4b49cba707 100644
---- a/drivers/net/sxe/pf/sxe_offload.c
-+++ b/drivers/net/sxe/pf/sxe_offload.c
-@@ -1,7 +1,6 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-  */
--#include "sxe_dpdk_version.h"
- #include <ethdev_driver.h>
- 
- #include "sxe.h"
-@@ -11,11 +10,26 @@
- #include "sxe_queue_common.h"
- #include "sxe_offload_common.h"
- 
-+static u8 rss_sxe_key[40] = {
-+	0x6D, 0x5A, 0x56, 0xDA, 0x25, 0x5B, 0x0E, 0xC2,
-+	0x41, 0x67, 0x25, 0x3D, 0x43, 0xA3, 0x8F, 0xB0,
-+	0xD0, 0xCA, 0x2B, 0xCB, 0xAE, 0x7B, 0x30, 0xB4,
-+	0x77, 0xCB, 0x2D, 0xA3, 0x80, 0x30, 0xF2, 0x0C,
-+	0x6A, 0x42, 0xB7, 0x3B, 0xBE, 0xAC, 0x01, 0xFA,
++struct sxe_ptp_context {
++	struct rte_timecounter	  systime_tc;
++	struct rte_timecounter	  rx_tstamp_tc;
++	struct rte_timecounter	  tx_tstamp_tc;
++	u32 tx_hwtstamp_sec;
++	u32 tx_hwtstamp_nsec;
 +};
 +
- #define SXE_4_BIT_WIDTH  (CHAR_BIT / 2)
- #define SXE_4_BIT_MASK   RTE_LEN2MASK(SXE_4_BIT_WIDTH, u8)
- #define SXE_8_BIT_WIDTH  CHAR_BIT
- #define SXE_8_BIT_MASK   UINT8_MAX
+ struct sxe_adapter {
+ 	struct sxe_hw hw;
  
-+#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_FILTER_CTRL
-+u8 *sxe_rss_hash_key_get(void)
+@@ -51,6 +59,7 @@ struct sxe_adapter {
+ #ifdef RTE_ADAPTER_HAVE_FNAV_CONF
+ 	struct rte_eth_fdir_conf fnav_conf;
+ #endif
++	struct sxe_ptp_context ptp_ctxt;
+ 	struct sxe_phy_context phy_ctxt;
+ 	struct sxe_dcb_context dcb_ctxt;
+ 
+diff --git a/drivers/net/sxe/pf/sxe_ptp.c b/drivers/net/sxe/pf/sxe_ptp.c
+new file mode 100644
+index 0000000000..4116dbb37e
+--- /dev/null
++++ b/drivers/net/sxe/pf/sxe_ptp.c
+@@ -0,0 +1,209 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++
++#include "sxe.h"
++#include "sxe_logs.h"
++#include "sxe_hw.h"
++#include "sxe_ptp.h"
++
++#define SXE_CYCLECOUNTER_MASK   0xffffffffffffffffULL
++
++static void sxe_timecounters_start(struct rte_eth_dev *dev)
 +{
-+	return rss_sxe_key;
++	struct sxe_adapter *adapter = dev->data->dev_private;
++
++	u32 shift = 0;
++
++	memset(&adapter->ptp_ctxt.systime_tc, 0, sizeof(struct rte_timecounter));
++	memset(&adapter->ptp_ctxt.rx_tstamp_tc, 0, sizeof(struct rte_timecounter));
++	memset(&adapter->ptp_ctxt.tx_tstamp_tc, 0, sizeof(struct rte_timecounter));
++
++	adapter->ptp_ctxt.systime_tc.cc_mask = SXE_CYCLECOUNTER_MASK;
++	adapter->ptp_ctxt.systime_tc.cc_shift = shift;
++	adapter->ptp_ctxt.systime_tc.nsec_mask = (1ULL << shift) - 1;
++
++	adapter->ptp_ctxt.rx_tstamp_tc.cc_mask = SXE_CYCLECOUNTER_MASK;
++	adapter->ptp_ctxt.rx_tstamp_tc.cc_shift = shift;
++	adapter->ptp_ctxt.rx_tstamp_tc.nsec_mask = (1ULL << shift) - 1;
++
++	adapter->ptp_ctxt.tx_tstamp_tc.cc_mask = SXE_CYCLECOUNTER_MASK;
++	adapter->ptp_ctxt.tx_tstamp_tc.cc_shift = shift;
++	adapter->ptp_ctxt.tx_tstamp_tc.nsec_mask = (1ULL << shift) - 1;
++
++	adapter->ptp_ctxt.tx_hwtstamp_nsec = 0;
++	adapter->ptp_ctxt.tx_hwtstamp_sec = 0;
 +}
-+#endif
 +
- u64 sxe_rx_queue_offload_capa_get(struct rte_eth_dev *dev)
- {
- 	return __sxe_rx_queue_offload_capa_get(dev);
-@@ -37,3 +51,287 @@ u64 sxe_tx_port_offload_capa_get(struct rte_eth_dev *dev)
- {
- 	return __sxe_tx_port_offload_capa_get(dev);
- }
-+
-+void sxe_rss_disable(struct rte_eth_dev *dev)
++s32 sxe_timesync_enable(struct rte_eth_dev *dev)
 +{
 +	struct sxe_adapter *adapter = dev->data->dev_private;
 +	struct sxe_hw *hw = &adapter->hw;
++	u32 tses = SXE_TSES_TXES_V2_ALL | SXE_TSES_RXES_V2_ALL;
 +
-+	PMD_INIT_FUNC_TRACE();
++	struct timespec ts;
 +
-+	sxe_hw_rss_cap_switch(hw, false);
-+}
++	memset(&ts, 0, sizeof(struct timespec));
 +
-+void sxe_rss_hash_set(struct sxe_hw *hw,
-+				struct rte_eth_rss_conf *rss_conf)
-+{
-+	u8  *hash_key;
-+	u32 rss_key[SXE_MAX_RSS_KEY_ENTRIES];
-+	u16 i;
-+	u64 rss_hf;
-+	u32 rss_field = 0;
++	clock_gettime(CLOCK_REALTIME, &ts);
 +
-+	PMD_INIT_FUNC_TRACE();
-+
-+	hash_key = rss_conf->rss_key;
-+	if (hash_key != NULL) {
-+		for (i = 0; i < SXE_MAX_RSS_KEY_ENTRIES; i++) {
-+			rss_key[i]  = hash_key[(i * 4)];
-+			rss_key[i] |= hash_key[(i * 4) + 1] << 8;
-+			rss_key[i] |= hash_key[(i * 4) + 2] << 16;
-+			rss_key[i] |= hash_key[(i * 4) + 3] << 24;
-+		}
-+		sxe_hw_rss_key_set_all(hw, rss_key);
-+	}
-+
-+	rss_hf = rss_conf->rss_hf;
-+	if (rss_hf & RTE_ETH_RSS_IPV4)
-+		rss_field |= SXE_MRQC_RSS_FIELD_IPV4;
-+
-+	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV4_TCP)
-+		rss_field |= SXE_MRQC_RSS_FIELD_IPV4_TCP;
-+
-+	if (rss_hf & RTE_ETH_RSS_IPV6)
-+		rss_field |= SXE_MRQC_RSS_FIELD_IPV6;
-+
-+	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_TCP)
-+		rss_field |= SXE_MRQC_RSS_FIELD_IPV6_TCP;
-+
-+	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV4_UDP)
-+		rss_field |= SXE_MRQC_RSS_FIELD_IPV4_UDP;
-+
-+	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_UDP)
-+		rss_field |= SXE_MRQC_RSS_FIELD_IPV6_UDP;
-+
-+	sxe_hw_rss_field_set(hw, rss_field);
-+
-+	sxe_hw_rss_cap_switch(hw, true);
-+}
-+
-+void sxe_rss_configure(struct rte_eth_dev *dev)
-+{
-+	struct rte_eth_rss_conf *rss_conf;
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+	u16 i;
-+	u16 j;
-+	u8  rss_indir_tbl[SXE_MAX_RETA_ENTRIES];
-+
-+	PMD_INIT_FUNC_TRACE();
-+
-+	if (!adapter->rss_reta_updated) {
-+		for (i = 0, j = 0; i < SXE_MAX_RETA_ENTRIES; i++, j++) {
-+			if (j == dev->data->nb_rx_queues)
-+				j = 0;
-+
-+			rss_indir_tbl[i] = j;
-+		}
-+
-+		sxe_hw_rss_redir_tbl_set_all(hw, rss_indir_tbl);
-+	}
-+
-+	rss_conf = &dev->data->dev_conf.rx_adv_conf.rss_conf;
-+	if ((rss_conf->rss_hf & SXE_RSS_OFFLOAD_ALL) == 0) {
-+		PMD_LOG_INFO(INIT, "user rss config match hw supports is 0");
-+		sxe_rss_disable(dev);
-+		return;
-+	}
-+
-+	if (rss_conf->rss_key == NULL)
-+		rss_conf->rss_key = rss_sxe_key;
-+
-+	sxe_rss_hash_set(hw, rss_conf);
-+}
-+
-+s32 sxe_rss_reta_update(struct rte_eth_dev *dev,
-+			struct rte_eth_rss_reta_entry64 *reta_conf,
-+			u16 reta_size)
-+{
-+	u16 i;
-+	u8 j, mask;
-+	u32 reta, r;
-+	u16 idx, shift;
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct rte_eth_dev_data *dev_data = dev->data;
-+	struct sxe_hw *hw = &adapter->hw;
-+	s32 ret = 0;
-+
-+	PMD_INIT_FUNC_TRACE();
-+
-+	if (!dev_data->dev_started) {
-+		PMD_LOG_ERR(DRV,
-+			"port %d must be started before rss reta update",
-+			 dev_data->port_id);
-+		ret = -EIO;
-+		goto l_end;
-+	}
-+
-+	if (reta_size != RTE_ETH_RSS_RETA_SIZE_128) {
-+		PMD_LOG_ERR(DRV, "The size of hash lookup table configured "
-+			"(%d) doesn't match the number hardware can supported "
-+			"(%d)", reta_size, RTE_ETH_RSS_RETA_SIZE_128);
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	for (i = 0; i < reta_size; i += SXE_4_BIT_WIDTH) {
-+		idx = i / RTE_ETH_RETA_GROUP_SIZE;
-+		shift = i % RTE_ETH_RETA_GROUP_SIZE;
-+		mask = (u8)((reta_conf[idx].mask >> shift) &
-+						SXE_4_BIT_MASK);
-+		if (!mask)
-+			continue;
-+
-+		if (mask == SXE_4_BIT_MASK)
-+			r = 0;
-+		else
-+			r = sxe_hw_rss_redir_tbl_get_by_idx(hw, i);
-+
-+		for (j = 0, reta = 0; j < SXE_4_BIT_WIDTH; j++) {
-+			if (mask & (0x1 << j)) {
-+				reta |= reta_conf[idx].reta[shift + j] <<
-+						(CHAR_BIT * j);
-+			} else {
-+				reta |= r & (SXE_8_BIT_MASK <<
-+					(CHAR_BIT * j));
-+			}
-+		}
-+
-+		sxe_hw_rss_redir_tbl_set_by_idx(hw, i, reta);
-+	}
-+	adapter->rss_reta_updated = true;
-+
-+l_end:
-+	return ret;
-+}
-+
-+s32 sxe_rss_reta_query(struct rte_eth_dev *dev,
-+			 struct rte_eth_rss_reta_entry64 *reta_conf,
-+			 u16 reta_size)
-+{
-+	u16 i;
-+	u8 j, mask;
-+	u32 reta;
-+	u16 idx, shift;
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+	s32 ret = 0;
-+
-+	PMD_INIT_FUNC_TRACE();
-+	if (reta_size != RTE_ETH_RSS_RETA_SIZE_128) {
-+		PMD_LOG_ERR(DRV, "the size of hash lookup table configured "
-+			"(%d) doesn't match the number hardware can supported "
-+			"(%d)", reta_size, RTE_ETH_RSS_RETA_SIZE_128);
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	for (i = 0; i < reta_size; i += SXE_4_BIT_WIDTH) {
-+		idx = i / RTE_ETH_RETA_GROUP_SIZE;
-+		shift = i % RTE_ETH_RETA_GROUP_SIZE;
-+		mask = (u8)((reta_conf[idx].mask >> shift) &
-+						SXE_4_BIT_MASK);
-+		if (!mask)
-+			continue;
-+
-+		reta = sxe_hw_rss_redir_tbl_get_by_idx(hw, i);
-+		for (j = 0; j < SXE_4_BIT_WIDTH; j++) {
-+			if (mask & (0x1 << j)) {
-+				reta_conf[idx].reta[shift + j] =
-+					((reta >> (CHAR_BIT * j)) &
-+						SXE_8_BIT_MASK);
-+			}
-+		}
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+s32 sxe_rss_hash_update(struct rte_eth_dev *dev,
-+			struct rte_eth_rss_conf *rss_conf)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+	u64 rss_hf;
-+	s32 ret = 0;
-+
-+	rss_hf = (rss_conf->rss_hf & SXE_RSS_OFFLOAD_ALL);
-+
-+	if (!sxe_hw_is_rss_enabled(hw)) {
-+		if (rss_hf != 0) {
-+			PMD_LOG_ERR(DRV, "rss not init but want set");
-+			ret = -EINVAL;
-+			goto l_end;
-+		}
-+
-+		goto l_end;
-+	}
-+
-+	if (rss_hf == 0) {
-+		PMD_LOG_ERR(DRV, "rss init but want disable it");
-+		ret = -EINVAL;
-+		goto l_end;
-+	}
-+
-+	sxe_rss_hash_set(hw, rss_conf);
-+
-+l_end:
-+	return ret;
-+}
-+
-+s32 sxe_rss_hash_conf_get(struct rte_eth_dev *dev,
-+				struct rte_eth_rss_conf *rss_conf)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+	u8 *hash_key;
-+	u32 rss_field;
-+	u32 rss_key;
-+	u64 rss_hf;
-+	u16 i;
-+
-+	hash_key = rss_conf->rss_key;
-+	if (hash_key != NULL) {
-+		for (i = 0; i < SXE_MAX_RSS_KEY_ENTRIES; i++) {
-+			rss_key = sxe_hw_rss_key_get_by_idx(hw, i);
-+			hash_key[(i * 4)] = rss_key & 0x000000FF;
-+			hash_key[(i * 4) + 1] = (rss_key >> 8) & 0x000000FF;
-+			hash_key[(i * 4) + 2] = (rss_key >> 16) & 0x000000FF;
-+			hash_key[(i * 4) + 3] = (rss_key >> 24) & 0x000000FF;
-+		}
-+	}
++	sxe_hw_ptp_init(hw);
 +
 +
-+	if (!sxe_hw_is_rss_enabled(hw)) {
-+		rss_conf->rss_hf = 0;
-+		PMD_LOG_INFO(DRV, "rss not enabled, return 0");
-+		goto l_end;
-+	}
++	sxe_hw_ptp_timestamp_mode_set(hw, true, 0, tses);
 +
-+	rss_hf = 0;
-+	rss_field = sxe_hw_rss_field_get(hw);
-+	if (rss_field & SXE_MRQC_RSS_FIELD_IPV4)
-+		rss_hf |= RTE_ETH_RSS_IPV4;
++	sxe_hw_ptp_timestamp_enable(hw);
 +
-+	if (rss_field & SXE_MRQC_RSS_FIELD_IPV4_TCP)
-+		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV4_TCP;
++	sxe_hw_ptp_rx_timestamp_clear(hw);
 +
-+	if (rss_field & SXE_MRQC_RSS_FIELD_IPV4_UDP)
-+		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV4_UDP;
++	sxe_hw_ptp_systime_init(hw);
 +
-+	if (rss_field & SXE_MRQC_RSS_FIELD_IPV6)
-+		rss_hf |= RTE_ETH_RSS_IPV6;
++	sxe_timecounters_start(dev);
 +
-+	if (rss_field & SXE_MRQC_RSS_FIELD_IPV6_TCP)
-+		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV6_TCP;
 +
-+	if (rss_field & SXE_MRQC_RSS_FIELD_IPV6_UDP)
-+		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV6_UDP;
++	sxe_timesync_write_time(dev, &ts);
 +
-+	PMD_LOG_DEBUG(DRV, "got rss hash func=0x%" SXE_PRIX64, rss_hf);
-+	rss_conf->rss_hf = rss_hf;
-+
-+l_end:
 +	return 0;
 +}
-diff --git a/drivers/net/sxe/pf/sxe_offload.h b/drivers/net/sxe/pf/sxe_offload.h
-index a70d6bf94b..458b6464c5 100644
---- a/drivers/net/sxe/pf/sxe_offload.h
-+++ b/drivers/net/sxe/pf/sxe_offload.h
-@@ -7,6 +7,21 @@
- 
- #include "sxe_hw.h"
- 
-+#define SXE_RSS_OFFLOAD_ALL ( \
-+		RTE_ETH_RSS_IPV4 | \
-+		RTE_ETH_RSS_NONFRAG_IPV4_TCP | \
-+		RTE_ETH_RSS_NONFRAG_IPV4_UDP | \
-+		RTE_ETH_RSS_IPV6 | \
-+		RTE_ETH_RSS_NONFRAG_IPV6_TCP | \
-+		RTE_ETH_RSS_NONFRAG_IPV6_UDP)
 +
-+#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_FILTER_CTRL
-+u8 *sxe_rss_hash_key_get(void);
++s32 sxe_timesync_disable(struct rte_eth_dev *dev)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++
++	sxe_hw_ptp_timestamp_disable(hw);
++
++	sxe_hw_ptp_timestamp_mode_set(hw, false, 0, 0);
++
++	sxe_hw_ptp_time_inc_stop(hw);
++
++	return 0;
++}
++
++s32 sxe_timesync_read_rx_timestamp(struct rte_eth_dev *dev,
++				 struct timespec *timestamp,
++				 u32 flags __rte_unused)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u64 ns;
++	s32 ret = 0;
++	bool is_valid;
++	u64 rx_tstamp_cycles;
++
++	is_valid = sxe_hw_ptp_is_rx_timestamp_valid(hw);
++	if (!is_valid) {
++		PMD_LOG_ERR(DRV, "no valid ptp timestamp in rx register");
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	rx_tstamp_cycles = sxe_hw_ptp_rx_timestamp_get(hw);
++	ns = rte_timecounter_update(&adapter->ptp_ctxt.rx_tstamp_tc, rx_tstamp_cycles);
++	PMD_LOG_DEBUG(DRV, "got rx_tstamp_cycles = %" SXE_PRIU64 "ns=%" SXE_PRIU64,
++			rx_tstamp_cycles, ns);
++	*timestamp = rte_ns_to_timespec(ns);
++
++l_end:
++	return ret;
++}
++
++static u64 sxe_timesync_tx_tstamp_cycles_get(struct sxe_adapter *adapter)
++{
++	return SXE_TIME_TO_NS(adapter->ptp_ctxt.tx_hwtstamp_nsec,
++				adapter->ptp_ctxt.tx_hwtstamp_sec);
++}
++
++s32 sxe_timesync_read_tx_timestamp(struct rte_eth_dev *dev,
++				 struct timespec *timestamp)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u64 ns;
++	s32 ret = 0;
++	u64 tx_tstamp_cycles;
++	u32 ts_sec;
++	u32 ts_ns;
++	u32 last_sec;
++	u32 last_ns;
++	bool tx_tstamp_valid = true;
++	u8 i;
++
++	sxe_hw_ptp_tx_timestamp_get(hw, &ts_sec, &ts_ns);
++	if (ts_ns  != adapter->ptp_ctxt.tx_hwtstamp_nsec ||
++		ts_sec != adapter->ptp_ctxt.tx_hwtstamp_sec) {
++		for (i = 0; i < SXE_TXTS_POLL_CHECK; i++)
++			sxe_hw_ptp_tx_timestamp_get(hw, &last_sec, &last_ns);
++
++		for (; i < SXE_TXTS_POLL; i++) {
++			sxe_hw_ptp_tx_timestamp_get(hw, &ts_sec, &ts_ns);
++			if (last_ns != ts_ns || last_sec != ts_sec) {
++				tx_tstamp_valid = false;
++				break;
++			}
++		}
++	}
++
++	if (!tx_tstamp_valid || (ts_ns == adapter->ptp_ctxt.tx_hwtstamp_nsec &&
++			ts_sec == adapter->ptp_ctxt.tx_hwtstamp_sec)) {
++		PMD_LOG_DEBUG(DRV, "no valid ptp timestamp in tx register");
++		ret = -EINVAL;
++		goto l_end;
++	} else {
++		adapter->ptp_ctxt.tx_hwtstamp_nsec = ts_ns;
++		adapter->ptp_ctxt.tx_hwtstamp_sec  = ts_sec;
++		tx_tstamp_cycles =
++			sxe_timesync_tx_tstamp_cycles_get(adapter);
++		ns = rte_timecounter_update(&adapter->ptp_ctxt.tx_tstamp_tc,
++						tx_tstamp_cycles);
++		PMD_LOG_DEBUG(DRV, "got tx_tstamp_cycles = %"
++			SXE_PRIU64 "ns=%" SXE_PRIU64, tx_tstamp_cycles, ns);
++		*timestamp = rte_ns_to_timespec(ns);
++	}
++
++l_end:
++	return ret;
++}
++
++s32 sxe_timesync_adjust_time(struct rte_eth_dev *dev, s64 delta)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++
++	PMD_LOG_DEBUG(DRV, "got delta = %" SXE_PRID64, delta);
++
++	adapter->ptp_ctxt.systime_tc.nsec += delta;
++	adapter->ptp_ctxt.rx_tstamp_tc.nsec += delta;
++	adapter->ptp_ctxt.tx_tstamp_tc.nsec += delta;
++
++	return 0;
++}
++
++s32 sxe_timesync_read_time(struct rte_eth_dev *dev, struct timespec *ts)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u64 ns, systime_cycles;
++
++	systime_cycles = sxe_hw_ptp_systime_get(hw);
++	ns = rte_timecounter_update(&adapter->ptp_ctxt.systime_tc, systime_cycles);
++	PMD_LOG_DEBUG(DRV, "got systime_cycles = %" SXE_PRIU64 "ns=%" SXE_PRIU64,
++			systime_cycles, ns);
++	*ts = rte_ns_to_timespec(ns);
++
++	return 0;
++}
++
++s32 sxe_timesync_write_time(struct rte_eth_dev *dev,
++					const struct timespec *ts)
++{
++	u64 ns;
++	struct sxe_adapter *adapter = dev->data->dev_private;
++
++	ns = rte_timespec_to_ns(ts);
++	PMD_LOG_DEBUG(DRV, "set systime ns = %" SXE_PRIU64, ns);
++	adapter->ptp_ctxt.systime_tc.nsec = ns;
++	adapter->ptp_ctxt.rx_tstamp_tc.nsec = ns;
++	adapter->ptp_ctxt.tx_tstamp_tc.nsec = ns;
++
++	return 0;
++}
+diff --git a/drivers/net/sxe/pf/sxe_ptp.h b/drivers/net/sxe/pf/sxe_ptp.h
+new file mode 100644
+index 0000000000..14971b2d50
+--- /dev/null
++++ b/drivers/net/sxe/pf/sxe_ptp.h
+@@ -0,0 +1,26 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++
++#ifndef __SXE_PTP_H__
++#define __SXE_PTP_H__
++
++s32 sxe_timesync_enable(struct rte_eth_dev *dev);
++
++s32 sxe_timesync_disable(struct rte_eth_dev *dev);
++
++s32 sxe_timesync_read_rx_timestamp(struct rte_eth_dev *dev,
++				 struct timespec *timestamp,
++				 u32 flags __rte_unused);
++
++s32 sxe_timesync_read_tx_timestamp(struct rte_eth_dev *dev,
++				 struct timespec *timestamp);
++
++s32 sxe_timesync_adjust_time(struct rte_eth_dev *dev, s64 delta);
++
++s32 sxe_timesync_read_time(struct rte_eth_dev *dev, struct timespec *ts);
++
++s32 sxe_timesync_write_time(struct rte_eth_dev *dev,
++					const struct timespec *ts);
++
 +#endif
-+
-+void sxe_rss_hash_set(struct sxe_hw *hw,
-+				struct rte_eth_rss_conf *rss_conf);
-+
- u64 sxe_rx_queue_offload_capa_get(struct rte_eth_dev *dev);
- 
- u64 sxe_rx_port_offload_capa_get(struct rte_eth_dev *dev);
-@@ -15,4 +30,22 @@ u64 sxe_tx_queue_offload_capa_get(struct rte_eth_dev *dev);
- 
- u64 sxe_tx_port_offload_capa_get(struct rte_eth_dev *dev);
- 
-+void sxe_rss_disable(struct rte_eth_dev *dev);
-+
-+void sxe_rss_configure(struct rte_eth_dev *dev);
-+
-+s32 sxe_rss_reta_update(struct rte_eth_dev *dev,
-+			struct rte_eth_rss_reta_entry64 *reta_conf,
-+			u16 reta_size);
-+
-+s32 sxe_rss_reta_query(struct rte_eth_dev *dev,
-+			 struct rte_eth_rss_reta_entry64 *reta_conf,
-+			 u16 reta_size);
-+
-+s32 sxe_rss_hash_update(struct rte_eth_dev *dev,
-+			struct rte_eth_rss_conf *rss_conf);
-+
-+s32 sxe_rss_hash_conf_get(struct rte_eth_dev *dev,
-+				struct rte_eth_rss_conf *rss_conf);
-+
- #endif
 -- 
 2.18.4
 
