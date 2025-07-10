@@ -2,46 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE8CCC83F17
-	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Jul 2025 15:38:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0698BC83F1B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Jul 2025 15:41:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7647A40E39;
-	Thu, 10 Jul 2025 17:38:24 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 42CE74028B;
+	Thu, 10 Jul 2025 17:41:35 +0200 (CEST)
 Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
- by mails.dpdk.org (Postfix) with ESMTP id E99E440E20;
- Thu, 10 Jul 2025 17:38:22 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 610B1400D6;
+ Thu, 10 Jul 2025 17:41:33 +0200 (CEST)
 Received: by mxct.zte.com.cn (FangMail, from userid 0)
- id 4bdJs42Bdfz5B19m; Thu, 10 Jul 2025 23:38:16 +0800 (CST)
+ id 4bdJwm1JbYz5B1Jw; Thu, 10 Jul 2025 23:41:28 +0800 (CST)
 Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by mxct.zte.com.cn (FangMail) with ESMTPS id 4bdBnd0V0dz4xh2k;
- Thu, 10 Jul 2025 19:04:53 +0800 (CST)
-Received: from szxlzmapp04.zte.com.cn ([10.5.231.166])
- by mse-fl2.zte.com.cn with SMTP id 56AB4BLc061582;
- Thu, 10 Jul 2025 19:04:11 +0800 (+08)
+ by mxct.zte.com.cn (FangMail) with ESMTPS id 4bdCJ71868z4yBmm;
+ Thu, 10 Jul 2025 19:27:51 +0800 (CST)
+Received: from szxl2zmapp06.zte.com.cn ([10.1.32.108])
+ by mse-fl2.zte.com.cn with SMTP id 56ABQqCM078654;
+ Thu, 10 Jul 2025 19:26:52 +0800 (+08)
  (envelope-from wang.junlong1@zte.com.cn)
 Received: from localhost.localdomain (unknown [192.168.6.15])
- by smtp (Zmail) with SMTP; Thu, 10 Jul 2025 19:04:14 +0800
-X-Zmail-TransId: 3e81686f9e2e001-1b832
+ by smtp (Zmail) with SMTP; Thu, 10 Jul 2025 19:26:54 +0800
+X-Zmail-TransId: 3e81686fa37a001-1bcd1
 X-Zmail-RealSender: wang.junlong1@zte.com.cn
 From: Junlong Wang <wang.junlong1@zte.com.cn>
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org, Junlong Wang <wang.junlong1@zte.com.cn>, stable@dpdk.org
 Subject: [PATCH v2 1/6] net/zxdh: fix meson.build issues in compilation
-Date: Thu, 10 Jul 2025 18:56:38 +0800
-Message-ID: <20250710105643.516329-2-wang.junlong1@zte.com.cn>
+Date: Thu, 10 Jul 2025 19:19:25 +0800
+Message-ID: <20250710111926.517171-1-wang.junlong1@zte.com.cn>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250710105643.516329-1-wang.junlong1@zte.com.cn>
+In-Reply-To: <20250707055621.357606-1-wang.junlong1@zte.com.cn>
 References: <20250707055621.357606-1-wang.junlong1@zte.com.cn>
- <20250710105643.516329-1-wang.junlong1@zte.com.cn>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: multipart/mixed;
 	boundary="=====_001_next====="
-X-MAIL: mse-fl2.zte.com.cn 56AB4BLc061582
+X-MAIL: mse-fl2.zte.com.cn 56ABQqCM078654
 X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 686FDE63.600/4bdBnd0V0dz4xh2k
+X-Fangmail-MID-QID: 686FDF25.602/4bdCJ71868z4yBmm
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
