@@ -2,61 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6869EC83F1A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Jul 2025 12:19:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1DC6C8303C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Jul 2025 12:25:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3A7BC40156;
-	Fri, 11 Jul 2025 14:19:17 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id EEB2F4064C;
+	Fri, 11 Jul 2025 14:25:36 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 73A53400D6
- for <dev@dpdk.org>; Fri, 11 Jul 2025 14:19:15 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5596D400D6
+ for <dev@dpdk.org>; Fri, 11 Jul 2025 14:25:35 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1752236354;
+ s=mimecast20190719; t=1752236734;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=GmxCraTVnOw4EnY0HaRodkoP5FK08MyeFi2wObDQQdo=;
- b=achdjkA19aKtmJ1/QgFQZ0c6oJHkI61iGTM0CdThl1WeBwW9aiCDG8GIdof2ChRlZf6zz9
- X2QgzFoXe3uV+Y6jxohq/eCu0MVBB7PRjVzgGKNXmcu78uIrYjnHTc17xKkcGTRD4qAtg0
- 16wRwfrPDpIAsZMBeEs/Nj98uA3jwhY=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ bh=q5NWjlVgwGD/hsqkKO7DtDIYT5XXHwuipUj/Uqpk0Yw=;
+ b=FbXeNq+f024klspeaQgubNnvPOU9aBNzn11UeecX5QOyuTPOEFC4/zt1hJtUdZ6oMRc0Y4
+ R6VZ15F9EsaNp+x21kwukKtV0nJ+NbLAV2xXcCFWmQXefbMEtRZzXQzsPf1ET1szEqsU4F
+ 2EbjHStGa4FodH62zZb3PLgZ8Iqy7u8=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-659-8_uGMtO7PzOJvd778xNrCg-1; Fri,
- 11 Jul 2025 08:19:13 -0400
-X-MC-Unique: 8_uGMtO7PzOJvd778xNrCg-1
-X-Mimecast-MFC-AGG-ID: 8_uGMtO7PzOJvd778xNrCg_1752236352
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-55--MNS7WWpPJ6tfHVBUttiwg-1; Fri,
+ 11 Jul 2025 08:25:29 -0400
+X-MC-Unique: -MNS7WWpPJ6tfHVBUttiwg-1
+X-Mimecast-MFC-AGG-ID: -MNS7WWpPJ6tfHVBUttiwg_1752236728
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 891E4180029E; Fri, 11 Jul 2025 12:19:12 +0000 (UTC)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 87D7218002E4; Fri, 11 Jul 2025 12:25:27 +0000 (UTC)
 Received: from RHTRH0061144 (unknown [10.22.88.100])
- by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 180AD19560A3; Fri, 11 Jul 2025 12:19:10 +0000 (UTC)
+ by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id C740C195607A; Fri, 11 Jul 2025 12:25:24 +0000 (UTC)
 From: Aaron Conole <aconole@redhat.com>
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org,  Michael Santana <maicolgabriel@hotmail.com>,  Bruce
- Richardson <bruce.richardson@intel.com>,  Thomas Monjalon
- <thomas@monjalon.net>
-Subject: Re: [PATCH v3 10/18] build: support Undefined Behavior Sanitizer
-In-Reply-To: <20250708122823.3406288-11-david.marchand@redhat.com> (David
- Marchand's message of "Tue, 8 Jul 2025 14:28:14 +0200")
-References: <20250619071037.37325-1-david.marchand@redhat.com>
- <20250708122823.3406288-1-david.marchand@redhat.com>
- <20250708122823.3406288-11-david.marchand@redhat.com>
-Date: Fri, 11 Jul 2025 08:19:09 -0400
-Message-ID: <f7tzfdaor7m.fsf@redhat.com>
+To: Adam Hassick <ahassick@iol.unh.edu>
+Cc: Patrick Robb <probb@iol.unh.edu>,  ci@dpdk.org,  dev <dev@dpdk.org>,
+ Ali Alnubani <alialnu@nvidia.com>,  "Brandes, Shai"
+ <shaibran@amazon.com>,  zhoumin <zhoumin@loongson.cn>,  "Puttaswamy,
+ Rajesh T" <rajesh.t.puttaswamy@intel.com>
+Subject: Re: Polling for patchseries in DPDK - the /series/ and /events/
+ endpoints
+In-Reply-To: <CAC-YWqh58peBbfAMV0TZ+i=dfsApCXKGgMfOV3LbvX-H4gtS-w@mail.gmail.com>
+ (Adam Hassick's message of "Thu, 10 Jul 2025 16:11:41 -0400")
+References: <CAJvnSUDfGsKk0c7Mk9jsRMxh4wO6M32quitrnkDPWHHiTZEiCA@mail.gmail.com>
+ <f7tzffp7rqw.fsf@redhat.com>
+ <CAJvnSUBh+8--cnqXDtLChD+iK8s98g+t=Hi4x-HEa8iH6fpUiw@mail.gmail.com>
+ <CAJvnSUDvPZJvqsiy2J4a-b2i0f-BukJiZt61s6PR55vDh99YzQ@mail.gmail.com>
+ <CAC-YWqh58peBbfAMV0TZ+i=dfsApCXKGgMfOV3LbvX-H4gtS-w@mail.gmail.com>
+Date: Fri, 11 Jul 2025 08:25:22 -0400
+Message-ID: <f7tikjyoqx9.fsf@redhat.com>
 User-Agent: Gnus/5.13 (Gnus v5.13)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: SDZddYphQfO8s_iMLX40ikWEwA_8F_S-lYOO-R6LUg8_1752236352
+X-Mimecast-MFC-PROC-ID: DeT1-npl6vam7jdMEQPaIbO3l9h59Ss9wQJKw95Ea4A_1752236728
 X-Mimecast-Originator: redhat.com
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -70,203 +76,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-David Marchand <david.marchand@redhat.com> writes:
+Adam Hassick <ahassick@iol.unh.edu> writes:
 
-> Enable UBSan in GHA.
-> There are still a lot of issues so only run unit tests for a "mini"
-> target.
+> Hi All,
 >
-> Building with debugoptimized forces -O2 and consumes too much memory
-> with UBSan, prefer plain build (iow -O0) even though this hides a number
-> of build issues.
-
-It's probably okay for many of the issues because we have other builds
-in github that should enable the code path analysis.  Maybe someday in
-the future we can get this with UBSan as well.
-
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
-> ---
-
-Acked-by: Aaron Conole <aconole@redhat.com>
-
-> Changes since v2:
-> - left the mini configuration alone and instead filtered
->   enabled component when running unit tests with UBSan,
+> It appears that there already is a filter for projects for events, but
+> the filter is configured to be hidden from the HTML view for some
+> reason. We don't need to make any code changes to enable this feature.
+> See here: https://github.com/getpatchwork/patchwork/blob/stable/3.2/patch=
+work/api/filters.py#L239
 >
-> ---
->  .ci/linux-build.sh          | 38 +++++++++++++++++++++++++++++++++++--
->  .github/workflows/build.yml |  5 +++++
->  app/test/suites/meson.build |  3 +--
->  config/meson.build          | 18 +++++++++++++++++-
->  devtools/words-case.txt     |  1 +
->  5 files changed, 60 insertions(+), 5 deletions(-)
+> If you visit the following URL:
+> https://patchwork.dpdk.org/api/events/?category=3Dseries-created&project=
+=3DCI
+> You can filter for series created events by project. This query
+> filters for series created events for the CI repo's project.
+
+Thanks Adam - I was using the html view to discover the REST details
+rather than looking at the filter setup.
+
+> Adam
 >
-> diff --git a/.ci/linux-build.sh b/.ci/linux-build.sh
-> index e9272d3931..a24820c65b 100755
-> --- a/.ci/linux-build.sh
-> +++ b/.ci/linux-build.sh
-> @@ -44,6 +44,13 @@ catch_coredump() {
->      return 1
->  }
->  
-> +catch_ubsan() {
-> +    [ "$UBSAN" = "true" ] || return 0
-> +    grep -q UndefinedBehaviorSanitizer $2 2>/dev/null || return 0
-> +    grep -E "($1|UndefinedBehaviorSanitizer)" $2
-> +    return 1
-> +}
-> +
->  check_traces() {
->      which babeltrace >/dev/null || return 0
->      for file in $(sudo find $HOME -name metadata); do
-> @@ -100,7 +107,6 @@ fi
->  
->  OPTS="$OPTS -Dplatform=generic"
->  OPTS="$OPTS -Ddefault_library=$DEF_LIB"
-> -OPTS="$OPTS -Dbuildtype=$buildtype"
->  if [ "$STDATOMIC" = "true" ]; then
->  	OPTS="$OPTS -Denable_stdatomic=true"
->  else
-> @@ -117,13 +123,39 @@ else
->  fi
->  OPTS="$OPTS -Dlibdir=lib"
->  
-> +buildtype=debugoptimized
-> +sanitizer=
->  if [ "$ASAN" = "true" ]; then
-> -    OPTS="$OPTS -Db_sanitize=address"
-> +    sanitizer=${sanitizer:+$sanitizer,}address
-> +fi
-> +
-> +if [ "$UBSAN" = "true" ]; then
-> +    sanitizer=${sanitizer:+$sanitizer,}undefined
-> +    if [ "$RUN_TESTS" = "true" ]; then
-> +        # UBSan takes too much memory with -O2
-> +        buildtype=plain
-> +        # Only enable test binaries
-> +        OPTS="$OPTS -Denable_apps=test,test-pmd"
-> +        # Restrict drivers to a minimum set for now
-> +        OPTS="$OPTS -Denable_drivers=net/null"
-> +        # There are still known issues in various libraries, disable them for now
-> +        OPTS="$OPTS -Ddisable_libs=*"
-> +        # No examples are run
-> +        OPTS="$OPTS -Dexamples="
-> +        # The UBSan target takes a good amount of time and headers coverage is done in other
-> +        # targets already.
-> +        OPTS="$OPTS -Dcheck_includes=false"
-> +    fi
-> +fi
-> +
-> +if [ -n "$sanitizer" ]; then
-> +    OPTS="$OPTS -Db_sanitize=$sanitizer"
->      if [ "${CC%%clang}" != "$CC" ]; then
->          OPTS="$OPTS -Db_lundef=false"
->      fi
->  fi
->  
-> +OPTS="$OPTS -Dbuildtype=$buildtype"
->  OPTS="$OPTS -Dwerror=true"
->  
->  if [ -d build ]; then
-> @@ -141,6 +173,7 @@ if [ -z "$cross_file" ]; then
->      configure_coredump
->      devtools/test-null.sh || failed="true"
->      catch_coredump
-> +    catch_ubsan DPDK:fast-tests build/meson-logs/testlog.txt
->      check_traces
->      [ "$failed" != "true" ]
->  fi
-> @@ -182,6 +215,7 @@ if [ "$RUN_TESTS" = "true" ]; then
->      configure_coredump
->      sudo meson test -C build --suite fast-tests -t 3 || failed="true"
->      catch_coredump
-> +    catch_ubsan DPDK:fast-tests build/meson-logs/testlog.txt
->      check_traces
->      [ "$failed" != "true" ]
->  fi
-> diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
-> index 6c4bc664d0..0c8ca23bbb 100644
-> --- a/.github/workflows/build.yml
-> +++ b/.github/workflows/build.yml
-> @@ -54,6 +54,7 @@ jobs:
->        RISCV64: ${{ matrix.config.cross == 'riscv64' }}
->        RUN_TESTS: ${{ contains(matrix.config.checks, 'tests') }}
->        STDATOMIC: ${{ contains(matrix.config.checks, 'stdatomic') }}
-> +      UBSAN: ${{ contains(matrix.config.checks, 'ubsan') }}
->  
->      strategy:
->        fail-fast: false
-> @@ -62,6 +63,10 @@ jobs:
->            - os: ubuntu-22.04
->              compiler: gcc
->              mini: mini
-> +          - os: ubuntu-22.04
-> +            compiler: clang
-> +            library: shared
-> +            checks: tests+ubsan
->            - os: ubuntu-22.04
->              compiler: gcc
->              checks: stdatomic
-> diff --git a/app/test/suites/meson.build b/app/test/suites/meson.build
-> index e482373330..0cba63ee12 100644
-> --- a/app/test/suites/meson.build
-> +++ b/app/test/suites/meson.build
-> @@ -72,8 +72,7 @@ foreach suite:test_suites
->              elif not has_hugepage
->                  continue  #skip this tests
->              endif
-> -            if not asan and (get_option('b_sanitize') == 'address'
-> -                    or get_option('b_sanitize') == 'address,undefined')
-> +            if not asan and get_option('b_sanitize').contains('address')
->                  continue  # skip this test
->              endif
->  
-> diff --git a/config/meson.build b/config/meson.build
-> index f31fef216c..b8a8511a7f 100644
-> --- a/config/meson.build
-> +++ b/config/meson.build
-> @@ -499,7 +499,7 @@ if get_option('b_lto')
->      endif
->  endif
->  
-> -if get_option('b_sanitize') == 'address' or get_option('b_sanitize') == 'address,undefined'
-> +if get_option('b_sanitize').contains('address')
->      if is_windows
->          error('ASan is not supported on windows')
->      endif
-> @@ -519,6 +519,22 @@ if get_option('b_sanitize') == 'address' or get_option('b_sanitize') == 'address
->      endif
->  endif
->  
-> +if get_option('b_sanitize').contains('undefined')
-> +    if is_windows
-> +        error('UBSan is not supported on windows')
-> +    endif
-> +
-> +    if cc.get_id() == 'gcc'
-> +        ubsan_dep = cc.find_library('ubsan', required: true)
-> +        if (not cc.links('int main(int argc, char *argv[]) { return 0; }',
-> +                dependencies: ubsan_dep))
-> +            error('broken dependency, "libubsan"')
-> +        endif
-> +        add_project_link_arguments('-lubsan', language: 'c')
-> +        dpdk_extra_ldflags += '-lubsan'
-> +    endif
-> +endif
-> +
->  if get_option('default_library') == 'both'
->      error( '''
->   Unsupported value "both" for "default_library" option.
-> diff --git a/devtools/words-case.txt b/devtools/words-case.txt
-> index bc35c160ba..d315fde8fe 100644
-> --- a/devtools/words-case.txt
-> +++ b/devtools/words-case.txt
-> @@ -105,6 +105,7 @@ TSO
->  TTL
->  Tx
->  uAPI
-> +UBSan
->  UDM
->  UDP
->  ULP
+> On Fri, May 30, 2025 at 12:07=E2=80=AFPM Patrick Robb <probb@iol.unh.edu>=
+ wrote:
+>>
+>> I went looking through recent series on patchwork and I think this
+>> is a good example of the timestamp condition:
+>> https://patchwork.dpdk.org/api/series/35145/. Looks like the
+>> original commits were made on April 18, then the newest version was
+>> submitted on May 5 but the series record retains the 4/18 date.
+>>
+>> And I see that there is no project filter provided by the /events/ endpo=
+int. https://patchwork.dpdk.org/api/events/
+>>
+>> Adam, would you agree the project filter for API requests is pretty low =
+hanging fruit? Seems like a common sense improvement to me.
+>>
+>> On Tue, May 6, 2025 at 3:08=E2=80=AFPM Patrick Robb <probb@iol.unh.edu> =
+wrote:
+>>>
+>>> Thanks for the clarification regarding the datetimes. Yes let's clear u=
+p any remaining questions offline at Prague. :)
 
