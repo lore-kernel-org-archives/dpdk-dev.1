@@ -2,52 +2,61 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EFC2C8303C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Jul 2025 09:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6869EC83F1A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Jul 2025 12:19:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1380E40156;
-	Fri, 11 Jul 2025 11:09:34 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id 82B8B400D6;
- Fri, 11 Jul 2025 11:09:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1752224973; x=1783760973;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=vPe5eHSLEG0BFhNpUepxuVNc4Q0m+TwLDpj9OXaJzpg=;
- b=Pn+52IDSTdlL4JPH5N0Z4fRX0uTbvjEnQAXjsLx2oF31Kf8cNo1YAnGg
- stW19+wBDWvvQdWP46Ur1g1BJb6f1n4gHD8sn7DHDhqTfZgaJuC5ePuDD
- XoGU9jm9hj8QUtXAlMp55XahMmHu+1pO+sRRr63BNfCBfv6gjBxktkqxT
- 8PH0D49s0RKDJ3SF8jnIyJOMso1K1MLdJGQ3YIOywRmn8rqagsqeyIq2H
- lFwQIjFs8mMg38P76VB5iYd2JGUrtlgo7M/Z+E57XUB7nMCmSlqIfBSgZ
- XVaTFxdSVSO5S+RReFx8unYXuSsmE/fN6+/e0heEXU+CusXvsAMEaCnjc A==;
-X-CSE-ConnectionGUID: 7C6fGIzXRDiyDuQfm8xbRg==
-X-CSE-MsgGUID: fGGSuFOSTSynt1HHtZOMvg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="72100818"
-X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; d="scan'208";a="72100818"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
- by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Jul 2025 02:09:27 -0700
-X-CSE-ConnectionGUID: KHNKqFfhQJq6jcs/BonhOg==
-X-CSE-MsgGUID: Fj+SR3GnS/OHnd6Yq7b7Gw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; d="scan'208";a="187325754"
-Received: from unknown (HELO localhost.localdomain) ([10.239.252.210])
- by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Jul 2025 02:09:24 -0700
-From: Yuan Wang <yuanx.wang@intel.com>
-To: anatoly.burakov@intel.com,
-	vladimir.medvedkin@intel.com
-Cc: dev@dpdk.org,
-	Yuan Wang <yuanx.wang@intel.com>,
-	stable@dpdk.org
-Subject: [PATCH] net/ixgbe: fix L4 protocol mask condition
-Date: Fri, 11 Jul 2025 17:04:03 +0800
-Message-ID: <20250711090403.204852-1-yuanx.wang@intel.com>
-X-Mailer: git-send-email 2.47.1
+	by mails.dpdk.org (Postfix) with ESMTP id 3A7BC40156;
+	Fri, 11 Jul 2025 14:19:17 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 73A53400D6
+ for <dev@dpdk.org>; Fri, 11 Jul 2025 14:19:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1752236354;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=GmxCraTVnOw4EnY0HaRodkoP5FK08MyeFi2wObDQQdo=;
+ b=achdjkA19aKtmJ1/QgFQZ0c6oJHkI61iGTM0CdThl1WeBwW9aiCDG8GIdof2ChRlZf6zz9
+ X2QgzFoXe3uV+Y6jxohq/eCu0MVBB7PRjVzgGKNXmcu78uIrYjnHTc17xKkcGTRD4qAtg0
+ 16wRwfrPDpIAsZMBeEs/Nj98uA3jwhY=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-659-8_uGMtO7PzOJvd778xNrCg-1; Fri,
+ 11 Jul 2025 08:19:13 -0400
+X-MC-Unique: 8_uGMtO7PzOJvd778xNrCg-1
+X-Mimecast-MFC-AGG-ID: 8_uGMtO7PzOJvd778xNrCg_1752236352
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 891E4180029E; Fri, 11 Jul 2025 12:19:12 +0000 (UTC)
+Received: from RHTRH0061144 (unknown [10.22.88.100])
+ by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 180AD19560A3; Fri, 11 Jul 2025 12:19:10 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org,  Michael Santana <maicolgabriel@hotmail.com>,  Bruce
+ Richardson <bruce.richardson@intel.com>,  Thomas Monjalon
+ <thomas@monjalon.net>
+Subject: Re: [PATCH v3 10/18] build: support Undefined Behavior Sanitizer
+In-Reply-To: <20250708122823.3406288-11-david.marchand@redhat.com> (David
+ Marchand's message of "Tue, 8 Jul 2025 14:28:14 +0200")
+References: <20250619071037.37325-1-david.marchand@redhat.com>
+ <20250708122823.3406288-1-david.marchand@redhat.com>
+ <20250708122823.3406288-11-david.marchand@redhat.com>
+Date: Fri, 11 Jul 2025 08:19:09 -0400
+Message-ID: <f7tzfdaor7m.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: SDZddYphQfO8s_iMLX40ikWEwA_8F_S-lYOO-R6LUg8_1752236352
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,109 +70,203 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, we initialize the rule mask to all 1 and mask L4 protocol
-if port mask is 0. However, this causes some hardware programming issues.
+David Marchand <david.marchand@redhat.com> writes:
 
-1. raw IPv4 rule incorrectly sets the L4P bit to 0 because it doesn't
-   change port mask.
-2. on 82599, SCTP rule incorrectly programe the TCP/UDP/SCTP mask
-   register to 0 because it doesn't change the mask either.
-3. SCTP rule on 82599 incorrectly configure the L4P bit to 1
-   if rule mask is initialized to 0.
+> Enable UBSan in GHA.
+> There are still a lot of issues so only run unit tests for a "mini"
+> target.
+>
+> Building with debugoptimized forces -O2 and consumes too much memory
+> with UBSan, prefer plain build (iow -O0) even though this hides a number
+> of build issues.
 
-This patch fixes these issues by changing mask default to 0
-and using the flow type as the L4P setting condition.
+It's probably okay for many of the issues because we have other builds
+in github that should enable the code path analysis.  Maybe someday in
+the future we can get this with UBSan as well.
 
-Fixes: 11777435c727 ("net/ixgbe: parse flow director filter")
-Cc: stable@dpdk.org
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> ---
 
-Signed-off-by: Yuan Wang <yuanx.wang@intel.com>
----
- drivers/net/intel/ixgbe/ixgbe_ethdev.c | 1 +
- drivers/net/intel/ixgbe/ixgbe_ethdev.h | 1 +
- drivers/net/intel/ixgbe/ixgbe_fdir.c   | 3 ++-
- drivers/net/intel/ixgbe/ixgbe_flow.c   | 9 ++++-----
- 4 files changed, 8 insertions(+), 6 deletions(-)
+Acked-by: Aaron Conole <aconole@redhat.com>
 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-index 4f0343245e..88c3cb2534 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-@@ -1470,6 +1470,7 @@ static int ixgbe_fdir_filter_init(struct rte_eth_dev *eth_dev)
- 		return -ENOMEM;
- 	}
- 	fdir_info->mask_added = FALSE;
-+	fdir_info->flow_type = 0;
- 
- 	return 0;
- }
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.h b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-index 86da9fc89b..13b77cec58 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-+++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-@@ -212,6 +212,7 @@ struct ixgbe_hw_fdir_info {
- 	struct ixgbe_fdir_filter **hash_map;
- 	struct rte_hash *hash_handle; /* cuckoo hash handler */
- 	bool mask_added; /* If already got mask from consistent filter */
-+	enum ixgbe_atr_flow_type flow_type;
- };
- 
- struct ixgbe_rte_flow_rss_conf {
-diff --git a/drivers/net/intel/ixgbe/ixgbe_fdir.c b/drivers/net/intel/ixgbe/ixgbe_fdir.c
-index b6351bc2cf..a686bd4ca5 100644
---- a/drivers/net/intel/ixgbe/ixgbe_fdir.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_fdir.c
-@@ -273,7 +273,7 @@ fdir_set_input_mask_82599(struct rte_eth_dev *dev)
- 	 * a VLAN of 0 is unspecified, so mask that out as well.  L4type
- 	 * cannot be masked out in this implementation.
- 	 */
--	if (info->mask.dst_port_mask == 0 && info->mask.src_port_mask == 0)
-+	if ((info->flow_type & IXGBE_ATR_L4TYPE_MASK) == 0)
- 		/* use the L4 protocol mask for raw IPv4/IPv6 traffic */
- 		fdirm |= IXGBE_FDIRM_L4P;
- 
-@@ -1271,6 +1271,7 @@ ixgbe_fdir_flush(struct rte_eth_dev *dev)
- 	info->f_remove = 0;
- 	info->add = 0;
- 	info->remove = 0;
-+	info->flow_type = 0;
- 
- 	return ret;
- }
-diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
-index 6278646720..c0374be977 100644
---- a/drivers/net/intel/ixgbe/ixgbe_flow.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
-@@ -1641,11 +1641,6 @@ ixgbe_parse_fdir_filter_normal(struct rte_eth_dev *dev,
- 	 * value. So, we need not do anything for the not provided fields later.
- 	 */
- 	memset(rule, 0, sizeof(struct ixgbe_fdir_rule));
--	memset(&rule->mask, 0xFF, sizeof(struct ixgbe_hw_fdir_mask));
--	rule->mask.vlan_tci_mask = 0;
--	rule->mask.flex_bytes_mask = 0;
--	rule->mask.dst_port_mask = 0;
--	rule->mask.src_port_mask = 0;
- 
- 	/**
- 	 * The first not void item should be
-@@ -2759,6 +2754,8 @@ ixgbe_parse_fdir_filter(struct rte_eth_dev *dev,
- {
- 	int ret;
- 	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	struct ixgbe_hw_fdir_info *fdir_info =
-+			IXGBE_DEV_PRIVATE_TO_FDIR_INFO(dev->data->dev_private);
- 	struct rte_eth_fdir_conf *fdir_conf = IXGBE_DEV_FDIR_CONF(dev);
- 	fdir_conf->drop_queue = IXGBE_FDIR_DROP_QUEUE;
- 
-@@ -2804,6 +2801,8 @@ ixgbe_parse_fdir_filter(struct rte_eth_dev *dev,
- 	if (rule->queue >= dev->data->nb_rx_queues)
- 		return -ENOTSUP;
- 
-+	fdir_info->flow_type = rule->ixgbe_fdir.formatted.flow_type;
-+
- 	return ret;
- }
- 
--- 
-2.24.0
+> Changes since v2:
+> - left the mini configuration alone and instead filtered
+>   enabled component when running unit tests with UBSan,
+>
+> ---
+>  .ci/linux-build.sh          | 38 +++++++++++++++++++++++++++++++++++--
+>  .github/workflows/build.yml |  5 +++++
+>  app/test/suites/meson.build |  3 +--
+>  config/meson.build          | 18 +++++++++++++++++-
+>  devtools/words-case.txt     |  1 +
+>  5 files changed, 60 insertions(+), 5 deletions(-)
+>
+> diff --git a/.ci/linux-build.sh b/.ci/linux-build.sh
+> index e9272d3931..a24820c65b 100755
+> --- a/.ci/linux-build.sh
+> +++ b/.ci/linux-build.sh
+> @@ -44,6 +44,13 @@ catch_coredump() {
+>      return 1
+>  }
+>  
+> +catch_ubsan() {
+> +    [ "$UBSAN" = "true" ] || return 0
+> +    grep -q UndefinedBehaviorSanitizer $2 2>/dev/null || return 0
+> +    grep -E "($1|UndefinedBehaviorSanitizer)" $2
+> +    return 1
+> +}
+> +
+>  check_traces() {
+>      which babeltrace >/dev/null || return 0
+>      for file in $(sudo find $HOME -name metadata); do
+> @@ -100,7 +107,6 @@ fi
+>  
+>  OPTS="$OPTS -Dplatform=generic"
+>  OPTS="$OPTS -Ddefault_library=$DEF_LIB"
+> -OPTS="$OPTS -Dbuildtype=$buildtype"
+>  if [ "$STDATOMIC" = "true" ]; then
+>  	OPTS="$OPTS -Denable_stdatomic=true"
+>  else
+> @@ -117,13 +123,39 @@ else
+>  fi
+>  OPTS="$OPTS -Dlibdir=lib"
+>  
+> +buildtype=debugoptimized
+> +sanitizer=
+>  if [ "$ASAN" = "true" ]; then
+> -    OPTS="$OPTS -Db_sanitize=address"
+> +    sanitizer=${sanitizer:+$sanitizer,}address
+> +fi
+> +
+> +if [ "$UBSAN" = "true" ]; then
+> +    sanitizer=${sanitizer:+$sanitizer,}undefined
+> +    if [ "$RUN_TESTS" = "true" ]; then
+> +        # UBSan takes too much memory with -O2
+> +        buildtype=plain
+> +        # Only enable test binaries
+> +        OPTS="$OPTS -Denable_apps=test,test-pmd"
+> +        # Restrict drivers to a minimum set for now
+> +        OPTS="$OPTS -Denable_drivers=net/null"
+> +        # There are still known issues in various libraries, disable them for now
+> +        OPTS="$OPTS -Ddisable_libs=*"
+> +        # No examples are run
+> +        OPTS="$OPTS -Dexamples="
+> +        # The UBSan target takes a good amount of time and headers coverage is done in other
+> +        # targets already.
+> +        OPTS="$OPTS -Dcheck_includes=false"
+> +    fi
+> +fi
+> +
+> +if [ -n "$sanitizer" ]; then
+> +    OPTS="$OPTS -Db_sanitize=$sanitizer"
+>      if [ "${CC%%clang}" != "$CC" ]; then
+>          OPTS="$OPTS -Db_lundef=false"
+>      fi
+>  fi
+>  
+> +OPTS="$OPTS -Dbuildtype=$buildtype"
+>  OPTS="$OPTS -Dwerror=true"
+>  
+>  if [ -d build ]; then
+> @@ -141,6 +173,7 @@ if [ -z "$cross_file" ]; then
+>      configure_coredump
+>      devtools/test-null.sh || failed="true"
+>      catch_coredump
+> +    catch_ubsan DPDK:fast-tests build/meson-logs/testlog.txt
+>      check_traces
+>      [ "$failed" != "true" ]
+>  fi
+> @@ -182,6 +215,7 @@ if [ "$RUN_TESTS" = "true" ]; then
+>      configure_coredump
+>      sudo meson test -C build --suite fast-tests -t 3 || failed="true"
+>      catch_coredump
+> +    catch_ubsan DPDK:fast-tests build/meson-logs/testlog.txt
+>      check_traces
+>      [ "$failed" != "true" ]
+>  fi
+> diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
+> index 6c4bc664d0..0c8ca23bbb 100644
+> --- a/.github/workflows/build.yml
+> +++ b/.github/workflows/build.yml
+> @@ -54,6 +54,7 @@ jobs:
+>        RISCV64: ${{ matrix.config.cross == 'riscv64' }}
+>        RUN_TESTS: ${{ contains(matrix.config.checks, 'tests') }}
+>        STDATOMIC: ${{ contains(matrix.config.checks, 'stdatomic') }}
+> +      UBSAN: ${{ contains(matrix.config.checks, 'ubsan') }}
+>  
+>      strategy:
+>        fail-fast: false
+> @@ -62,6 +63,10 @@ jobs:
+>            - os: ubuntu-22.04
+>              compiler: gcc
+>              mini: mini
+> +          - os: ubuntu-22.04
+> +            compiler: clang
+> +            library: shared
+> +            checks: tests+ubsan
+>            - os: ubuntu-22.04
+>              compiler: gcc
+>              checks: stdatomic
+> diff --git a/app/test/suites/meson.build b/app/test/suites/meson.build
+> index e482373330..0cba63ee12 100644
+> --- a/app/test/suites/meson.build
+> +++ b/app/test/suites/meson.build
+> @@ -72,8 +72,7 @@ foreach suite:test_suites
+>              elif not has_hugepage
+>                  continue  #skip this tests
+>              endif
+> -            if not asan and (get_option('b_sanitize') == 'address'
+> -                    or get_option('b_sanitize') == 'address,undefined')
+> +            if not asan and get_option('b_sanitize').contains('address')
+>                  continue  # skip this test
+>              endif
+>  
+> diff --git a/config/meson.build b/config/meson.build
+> index f31fef216c..b8a8511a7f 100644
+> --- a/config/meson.build
+> +++ b/config/meson.build
+> @@ -499,7 +499,7 @@ if get_option('b_lto')
+>      endif
+>  endif
+>  
+> -if get_option('b_sanitize') == 'address' or get_option('b_sanitize') == 'address,undefined'
+> +if get_option('b_sanitize').contains('address')
+>      if is_windows
+>          error('ASan is not supported on windows')
+>      endif
+> @@ -519,6 +519,22 @@ if get_option('b_sanitize') == 'address' or get_option('b_sanitize') == 'address
+>      endif
+>  endif
+>  
+> +if get_option('b_sanitize').contains('undefined')
+> +    if is_windows
+> +        error('UBSan is not supported on windows')
+> +    endif
+> +
+> +    if cc.get_id() == 'gcc'
+> +        ubsan_dep = cc.find_library('ubsan', required: true)
+> +        if (not cc.links('int main(int argc, char *argv[]) { return 0; }',
+> +                dependencies: ubsan_dep))
+> +            error('broken dependency, "libubsan"')
+> +        endif
+> +        add_project_link_arguments('-lubsan', language: 'c')
+> +        dpdk_extra_ldflags += '-lubsan'
+> +    endif
+> +endif
+> +
+>  if get_option('default_library') == 'both'
+>      error( '''
+>   Unsupported value "both" for "default_library" option.
+> diff --git a/devtools/words-case.txt b/devtools/words-case.txt
+> index bc35c160ba..d315fde8fe 100644
+> --- a/devtools/words-case.txt
+> +++ b/devtools/words-case.txt
+> @@ -105,6 +105,7 @@ TSO
+>  TTL
+>  Tx
+>  uAPI
+> +UBSan
+>  UDM
+>  UDP
+>  ULP
 
