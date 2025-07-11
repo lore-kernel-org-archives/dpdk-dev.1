@@ -2,75 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70FB1C83F1B
-	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Jul 2025 14:43:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B66E9C83F1A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Jul 2025 14:44:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 484854025D;
-	Fri, 11 Jul 2025 16:43:42 +0200 (CEST)
-Received: from fhigh-a8-smtp.messagingengine.com
- (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
- by mails.dpdk.org (Postfix) with ESMTP id B924D400D6
- for <dev@dpdk.org>; Fri, 11 Jul 2025 16:43:40 +0200 (CEST)
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal
- [10.202.2.44])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 1E2511400248;
- Fri, 11 Jul 2025 10:43:40 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-04.internal (MEProxy); Fri, 11 Jul 2025 10:43:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:date:date:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to; s=fm2; t=1752245020; x=1752331420; bh=4wYAB7Typo5UA1qM0uY8F
- s+JhC69yu1FkKeo56GG8Ho=; b=fVH9IF7x2OEIHx0q2cfjExxOzBAJAYLv0ZqES
- eYShURRChW8MrTtaY/CEAVmDJyEsxUdnfs1igfpLya3wQQcr8hXeS4oU+G9irBqu
- B2j6GwQcTppbMCrBku/R668lJtirmwkr43tIuVQfhTeSzXwz+kRPNokK4PQ4tULw
- 5+5AEaoPIJBIYtcWuq2Ui55jxrQRpuRaGOKwnwbgIsOBhO55BT/CVGhvOgvBUgbv
- juBgRLhK+1wzUV8fnpV022PuyI+S5SHOZErgqGQO/4mZdAmaSJ4wg+6AgPs3Ej+H
- M56HwqjVTjgCJ3Axqkz2OjWTLcLLXpGr9wQj6QyXvtqGNbxLw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
- 1752245020; x=1752331420; bh=4wYAB7Typo5UA1qM0uY8Fs+JhC69yu1FkKe
- o56GG8Ho=; b=h2Vk/EhtoYlL+fOD/fcsC7S3vfsO06gPeze0ucr/YWAYydFZVsX
- pMFb6bM8/kLazLmkDT4qEaK7q18sX5aO6b304pCArLwYsXC8Y/SD27wldS8fDCrT
- +yHl4iQKDBYQfBe3n7ktugDo9+51OLQAbwaq80qeim7sPx9A05cJ9og61ReMTcjB
- eyKyM6KfOVL6h6juh22Q9DIRnjDhfHSdqGOMYIoj2/HKFvn74jCr4yTnyCJsWEv9
- LT5uSk+4tXOKlFhvmtybBcqNg7TOzljK1rwb1vSZ4dQ69YkYCjk0oNn8eLL90eZV
- 9e8XkRgeKxDXX3ZWd64cY1+5wNRJvuGBlxQ==
-X-ME-Sender: <xms:GyNxaMULwSLQl9qFtBQ_fbe24dqiMcwK7r5BMOsVMb6xip8Y1z-XFA>
- <xme:GyNxaKOz9cfPbmEwFFGeKY_AY5WOcAFMXjy1GIeLKhSlvx1oCY86f482t9vrJxa7T
- VtUPFZClcnVcm04vA>
-X-ME-Received: <xmr:GyNxaAbmF4mkA1mR2t8BlZPz7eGgg3dvxtDpPD4xr1EGdGSGijbUCfJte0XEn5LjVXErP_ytwhcbwZSjI5fd0NQZN9d_m1E>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegfeehkecutefuodetggdotefrod
- ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
- ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
- hrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefvhhhomhgrshcuofho
- nhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrth
- htvghrnhepvdetgfffvdeuueegfeehkeetfeelhffhtdejfeetjeettdetgfdthedvteet
- heeunecuffhomhgrihhnpeguphgukhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
- curfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvght
- pdhnsggprhgtphhtthhopeefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeguvg
- hvseguphgukhdrohhrghdprhgtphhtthhopehfvghrrhhuhhdrhihighhithesrghmugdr
- tghomhdprhgtphhtthhopegrnhgurhgvfidrrhihsggthhgvnhhkohesohhkthgvthhlrg
- gsshdrrhhu
-X-ME-Proxy: <xmx:GyNxaOpc3E0QCBg_kfmIFEDOVY_T-Gf-2xbbAX-KAczD0nVFaDv4TA>
- <xmx:GyNxaEZP0J5C74XODfHPIiXWJAr6YeNcgzhR-z_hGKFS-ZA9V4FOhg>
- <xmx:GyNxaGQg1PhQrsnu5nG7J4BHUCtc1JECjyTqS1YPWTqkCtOo81hmzA>
- <xmx:GyNxaL4jLSZ6WEGOkUFBI18EiHbwxeNtQ6zJCsX1fK9sH3hXgtx6mg>
- <xmx:HCNxaP7PqiVsXTCz1CpgslKZDAyAXpNMTE6ivQBwDZ7FROEeH-A0LLDa>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 11 Jul 2025 10:43:38 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
+	by mails.dpdk.org (Postfix) with ESMTP id AFB82406B6;
+	Fri, 11 Jul 2025 16:43:59 +0200 (CEST)
+Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
+ by mails.dpdk.org (Postfix) with ESMTP id 93A28406B7
+ for <dev@dpdk.org>; Fri, 11 Jul 2025 16:43:58 +0200 (CEST)
+Received: from localhost.localdomain (unknown [78.109.70.90])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by agw.arknetworks.am (Postfix) with ESMTPSA id 9FE14E09F9;
+ Fri, 11 Jul 2025 18:43:57 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 9FE14E09F9
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
+ s=default; t=1752245038;
+ bh=GmVSWldra4QPGRsD/IDGM8lRo/CtUU7+pUSoANl5y10=;
+ h=From:To:Cc:Subject:Date:From;
+ b=QdYTLJIG80xIWCNzcXm7W8aq0EcyMFBSV2FK/3p+LJaRYdZLwLuP+XbXF61k0MoPp
+ mkRHMTcDT/hRnpKiZUv8+SY0cthBALLmluIOVyrt0AFhI0IPDYwtBBtgekuypV2psH
+ vUxnAatuDJqHlVMB2ZegDrdPc+8smfkPaQsBsmvIKCcD4LC/QqMxJytsrn3JVH4vKH
+ m7s8Tkp+hTXvjGJ6s6sAxb1LJo+dWAvSomGoxc+szGPCQZFTMBM/SbMsVurkBtCqyw
+ S0YZV7VtKAHKZN21Wr+hEaMmfQFf+3jJGxfFQTJqFrJ48cg5aq8kLVR090QOeWiXM9
+ GvpB0WOEXXK1g==
+From: Ivan Malov <ivan.malov@arknetworks.am>
 To: dev@dpdk.org
-Cc: Ferruh Yigit <ferruh.yigit@amd.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: [PATCH] maintainers: update for ethdev library
-Date: Fri, 11 Jul 2025 16:43:25 +0200
-Message-ID: <20250711144326.1288907-1-thomas@monjalon.net>
-X-Mailer: git-send-email 2.47.1
+Cc: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ Andy Moreton <andy.moreton@amd.com>,
+ Pieter Jansen Van Vuuren <pieter.jansen-van-vuuren@amd.com>,
+ Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>
+Subject: [PATCH 0/3] common/sfc_efx/base: fix compiler warnings in X4 netport
+ API
+Date: Fri, 11 Jul 2025 18:43:46 +0400
+Message-Id: <20250711144349.9236-1-ivan.malov@arknetworks.am>
+X-Mailer: git-send-email 2.39.5
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -86,25 +53,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Ferruh Yigit has no time this year for ethdev maintenance.
+The 25.07 release has got support for AMD Solarflare X45xx adapters [1].
+This series is a follow-up to [1] to fix compiler warnings in the base
+driver that are seen in Windows driver build, also based on this driver.
 
-Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
----
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
+[1] https://patches.dpdk.org/project/dpdk/list/?series=35095
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0e9357f3a3..b96496adb7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -435,7 +435,6 @@ F: app/test/test_mbuf.c
- 
- Ethernet API
- M: Thomas Monjalon <thomas@monjalon.net>
--M: Ferruh Yigit <ferruh.yigit@amd.com>
- M: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
- T: git://dpdk.org/next/dpdk-next-net
- F: lib/ethdev/
+Ivan Malov (3):
+  common/sfc_efx/base: fix compiler warnings in statistic code
+  common/sfc_efx/base: fix compiler warnings in PHY link setup
+  common/sfc_efx/base: fix compiler warning in PHY link getter
+
+ drivers/common/sfc_efx/base/efx_np.c       | 7 ++-----
+ drivers/common/sfc_efx/base/medford4_phy.c | 1 -
+ 2 files changed, 2 insertions(+), 6 deletions(-)
+
 -- 
-2.47.1
+2.39.5
 
