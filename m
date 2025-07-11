@@ -2,47 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A02C8303C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Jul 2025 05:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EFC2C8303C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Jul 2025 09:09:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2069F402A9;
-	Fri, 11 Jul 2025 07:33:11 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 170D940156
- for <dev@dpdk.org>; Fri, 11 Jul 2025 07:33:09 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 04B8946B42; Fri, 11 Jul 2025 07:33:08 +0200 (CEST)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/examples Bug 1751] [dpdk24.07]
- multiprocess_symmetric_mp_packet: exiting the symmetric_mp example results in
- a core dump
-Date: Fri, 11 Jul 2025 05:33:08 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: examples
-X-Bugzilla-Version: 25.03
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: songx.jiale@intel.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1751-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17522119880.fab0.442705
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id 1380E40156;
+	Fri, 11 Jul 2025 11:09:34 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+ by mails.dpdk.org (Postfix) with ESMTP id 82B8B400D6;
+ Fri, 11 Jul 2025 11:09:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1752224973; x=1783760973;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=vPe5eHSLEG0BFhNpUepxuVNc4Q0m+TwLDpj9OXaJzpg=;
+ b=Pn+52IDSTdlL4JPH5N0Z4fRX0uTbvjEnQAXjsLx2oF31Kf8cNo1YAnGg
+ stW19+wBDWvvQdWP46Ur1g1BJb6f1n4gHD8sn7DHDhqTfZgaJuC5ePuDD
+ XoGU9jm9hj8QUtXAlMp55XahMmHu+1pO+sRRr63BNfCBfv6gjBxktkqxT
+ 8PH0D49s0RKDJ3SF8jnIyJOMso1K1MLdJGQ3YIOywRmn8rqagsqeyIq2H
+ lFwQIjFs8mMg38P76VB5iYd2JGUrtlgo7M/Z+E57XUB7nMCmSlqIfBSgZ
+ XVaTFxdSVSO5S+RReFx8unYXuSsmE/fN6+/e0heEXU+CusXvsAMEaCnjc A==;
+X-CSE-ConnectionGUID: 7C6fGIzXRDiyDuQfm8xbRg==
+X-CSE-MsgGUID: fGGSuFOSTSynt1HHtZOMvg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11490"; a="72100818"
+X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; d="scan'208";a="72100818"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+ by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Jul 2025 02:09:27 -0700
+X-CSE-ConnectionGUID: KHNKqFfhQJq6jcs/BonhOg==
+X-CSE-MsgGUID: Fj+SR3GnS/OHnd6Yq7b7Gw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,303,1744095600"; d="scan'208";a="187325754"
+Received: from unknown (HELO localhost.localdomain) ([10.239.252.210])
+ by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Jul 2025 02:09:24 -0700
+From: Yuan Wang <yuanx.wang@intel.com>
+To: anatoly.burakov@intel.com,
+	vladimir.medvedkin@intel.com
+Cc: dev@dpdk.org,
+	Yuan Wang <yuanx.wang@intel.com>,
+	stable@dpdk.org
+Subject: [PATCH] net/ixgbe: fix L4 protocol mask condition
+Date: Fri, 11 Jul 2025 17:04:03 +0800
+Message-ID: <20250711090403.204852-1-yuanx.wang@intel.com>
+X-Mailer: git-send-email 2.47.1
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,363 +61,109 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+Currently, we initialize the rule mask to all 1 and mask L4 protocol
+if port mask is 0. However, this causes some hardware programming issues.
 
---17522119880.fab0.442705
-Date: Fri, 11 Jul 2025 07:33:08 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+1. raw IPv4 rule incorrectly sets the L4P bit to 0 because it doesn't
+   change port mask.
+2. on 82599, SCTP rule incorrectly programe the TCP/UDP/SCTP mask
+   register to 0 because it doesn't change the mask either.
+3. SCTP rule on 82599 incorrectly configure the L4P bit to 1
+   if rule mask is initialized to 0.
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1751
+This patch fixes these issues by changing mask default to 0
+and using the flow type as the L4P setting condition.
 
-            Bug ID: 1751
-           Summary: [dpdk24.07] multiprocess_symmetric_mp_packet: exiting
-                    the symmetric_mp example results in a core dump
-           Product: DPDK
-           Version: 25.03
-          Hardware: x86
-                OS: Linux
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: examples
-          Assignee: dev@dpdk.org
-          Reporter: songx.jiale@intel.com
-  Target Milestone: ---
+Fixes: 11777435c727 ("net/ixgbe: parse flow director filter")
+Cc: stable@dpdk.org
 
-Environment
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-DPDK version: 9fe9c0b231c8da5435bfccb1963121b4277f961c version: dpdk25.07-r=
-c3
-OS: Ubuntu 24.04.2 LTS/6.8.0-60-generic
-Compiler:  gcc version 13.3.0
-Hardware platform: Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz
-NIC hardware: Intel Corporation 82599ES 10-Gigabit SFI/SFP+ Network Connect=
-ion
-[8086:10fb] (rev 01)
-NIC firmware:=20
-  driver: vfio-pci
-  kdriver: ixgbe-6.1.5
-  firmware-version: 0x000161bf
+Signed-off-by: Yuan Wang <yuanx.wang@intel.com>
+---
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c | 1 +
+ drivers/net/intel/ixgbe/ixgbe_ethdev.h | 1 +
+ drivers/net/intel/ixgbe/ixgbe_fdir.c   | 3 ++-
+ drivers/net/intel/ixgbe/ixgbe_flow.c   | 9 ++++-----
+ 4 files changed, 8 insertions(+), 6 deletions(-)
 
-Test Setup
-Steps to reproduce
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-1. compile dpdk
-rm -rf x86_64-native-linuxapp-gcc
-CC=3Dgcc meson -Denable_kmods=3DFalse -Dlibdir=3Dlib
--Dexamples=3D'multi_process/symmetric_mp' --default-library=3Dstatic
-x86_64-native-linuxapp-gcc
-ninja -C x86_64-native-linuxapp-gcc
+diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+index 4f0343245e..88c3cb2534 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
++++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+@@ -1470,6 +1470,7 @@ static int ixgbe_fdir_filter_init(struct rte_eth_dev *eth_dev)
+ 		return -ENOMEM;
+ 	}
+ 	fdir_info->mask_added = FALSE;
++	fdir_info->flow_type = 0;
+ 
+ 	return 0;
+ }
+diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.h b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
+index 86da9fc89b..13b77cec58 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_ethdev.h
++++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
+@@ -212,6 +212,7 @@ struct ixgbe_hw_fdir_info {
+ 	struct ixgbe_fdir_filter **hash_map;
+ 	struct rte_hash *hash_handle; /* cuckoo hash handler */
+ 	bool mask_added; /* If already got mask from consistent filter */
++	enum ixgbe_atr_flow_type flow_type;
+ };
+ 
+ struct ixgbe_rte_flow_rss_conf {
+diff --git a/drivers/net/intel/ixgbe/ixgbe_fdir.c b/drivers/net/intel/ixgbe/ixgbe_fdir.c
+index b6351bc2cf..a686bd4ca5 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_fdir.c
++++ b/drivers/net/intel/ixgbe/ixgbe_fdir.c
+@@ -273,7 +273,7 @@ fdir_set_input_mask_82599(struct rte_eth_dev *dev)
+ 	 * a VLAN of 0 is unspecified, so mask that out as well.  L4type
+ 	 * cannot be masked out in this implementation.
+ 	 */
+-	if (info->mask.dst_port_mask == 0 && info->mask.src_port_mask == 0)
++	if ((info->flow_type & IXGBE_ATR_L4TYPE_MASK) == 0)
+ 		/* use the L4 protocol mask for raw IPv4/IPv6 traffic */
+ 		fdirm |= IXGBE_FDIRM_L4P;
+ 
+@@ -1271,6 +1271,7 @@ ixgbe_fdir_flush(struct rte_eth_dev *dev)
+ 	info->f_remove = 0;
+ 	info->add = 0;
+ 	info->remove = 0;
++	info->flow_type = 0;
+ 
+ 	return ret;
+ }
+diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
+index 6278646720..c0374be977 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_flow.c
++++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
+@@ -1641,11 +1641,6 @@ ixgbe_parse_fdir_filter_normal(struct rte_eth_dev *dev,
+ 	 * value. So, we need not do anything for the not provided fields later.
+ 	 */
+ 	memset(rule, 0, sizeof(struct ixgbe_fdir_rule));
+-	memset(&rule->mask, 0xFF, sizeof(struct ixgbe_hw_fdir_mask));
+-	rule->mask.vlan_tci_mask = 0;
+-	rule->mask.flex_bytes_mask = 0;
+-	rule->mask.dst_port_mask = 0;
+-	rule->mask.src_port_mask = 0;
+ 
+ 	/**
+ 	 * The first not void item should be
+@@ -2759,6 +2754,8 @@ ixgbe_parse_fdir_filter(struct rte_eth_dev *dev,
+ {
+ 	int ret;
+ 	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
++	struct ixgbe_hw_fdir_info *fdir_info =
++			IXGBE_DEV_PRIVATE_TO_FDIR_INFO(dev->data->dev_private);
+ 	struct rte_eth_fdir_conf *fdir_conf = IXGBE_DEV_FDIR_CONF(dev);
+ 	fdir_conf->drop_queue = IXGBE_FDIR_DROP_QUEUE;
+ 
+@@ -2804,6 +2801,8 @@ ixgbe_parse_fdir_filter(struct rte_eth_dev *dev,
+ 	if (rule->queue >= dev->data->nb_rx_queues)
+ 		return -ENOTSUP;
+ 
++	fdir_info->flow_type = rule->ixgbe_fdir.formatted.flow_type;
++
+ 	return ret;
+ }
+ 
+-- 
+2.24.0
 
-2. bind port to vfio-pci
-./usertools/dpdk-devbind.py -b vfio-pci 0000:b1:00.0 0000:b1:00.1
-
-3. start testpmd
-the first process=EF=BC=9A
-x86_64-native-linuxapp-gcc/examples/dpdk-symmetric_mp -l 1 -n 4 -a 0000:b1:=
-00.0
--a 0000:b1:00.1  --file-prefix=3Ddpdk_3722445_20250711093937     --proc-typ=
-e=3Dauto
--- -p 0x3 --num-procs=3D2 --proc-id=3D0
-
-the secondary process=EF=BC=9A
-x86_64-native-linuxapp-gcc/examples/dpdk-symmetric_mp -l 2 -n 4 -a 0000:b1:=
-00.0
--a 0000:b1:00.1  --file-prefix=3Ddpdk_3722445_20250711093937     --proc-typ=
-e=3Dauto
--- -p 0x3 --num-procs=3D2 --proc-id=3D1
-
-4. exit the first process
-^C
-
-
-Results:=20
-=3D=3D=3D=3D=3D=3D=3D=3D
-^C
-the first process=EF=BC=9A Exiting on signal 2Port 0: RX - 0, TX - 1, Drop =
-- 0
-Port 1: RX - 1, TX - 0, Drop - 0
-APP: Close ports.
-EAL: Error - exiting with code: 1
-Error closing ports
-EAL: failed to send to
-(/var/run/dpdk/dpdk_3722445_20250711093937/mp_socket_794973_148a6526e3624d)=
- due
-to Bad file descriptor
-EAL: Fail to send request
-/var/run/dpdk/dpdk_3722445_20250711093937/mp_socket_794973_148a6526e3624d:m=
-p_malloc_sync
-EAL: Could not send sync request to secondary process=20
-
-the secondary process=EF=BC=9A
-EAL: Detected CPU lcores: 80
-EAL: Detected NUMA nodes: 2
-EAL: Auto-detected process type: SECONDARY
-EAL: Detected static linkage of DPDK
-EAL: Multi-process socket
-/var/run/dpdk/dpdk_3722445_20250711093937/mp_socket_794279_148a2f16b62b59
-EAL: Selected IOVA mode 'VA'
-EAL: VFIO support initialized
-EAL: Using IOMMU type 1 (Type 1)
-APP: Finished Process Init.
-Lcore 2 using ports 0 1
-lcore 2 using queue 1 of each port
-Segmentation fault (core dumped)
-
-Expected Result:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-exit the symmetric_mp example normally.
-
-bad commit:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-commit 4382d58097b41d1e1229ce5fc2943994bf44bd83
-Author: Maayan Kashani <mkashani@nvidia.com>
-Date:   Tue Jul 8 10:09:54 2025 +0300
-
-    examples/multi_process: fix ports cleanup on exit
-
-    Device was started but not stopped on exit signal.
-    Added port stop and close on exit.
-
-    Fixes: af75078fece3 ("first public release")
-    Cc: stable@dpdk.org
-
-    Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
-    Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
-
---17522119880.fab0.442705
-Date: Fri, 11 Jul 2025 07:33:08 +0200
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-<html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
-bz_new_table">
-        <tr>
-          <th>Bug ID</th>
-          <td><a class=3D"bz_bug_link=20
-          bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - [dpdk24.07] multiprocess_symmetric_mp_packet: exi=
-ting the symmetric_mp example results in a core dump"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1751">1751</a>
-          </td>
-        </tr>
-
-        <tr>
-          <th>Summary</th>
-          <td>[dpdk24.07] multiprocess_symmetric_mp_packet: exiting the sym=
-metric_mp example results in a core dump
-          </td>
-        </tr>
-
-        <tr>
-          <th>Product</th>
-          <td>DPDK
-          </td>
-        </tr>
-
-        <tr>
-          <th>Version</th>
-          <td>25.03
-          </td>
-        </tr>
-
-        <tr>
-          <th>Hardware</th>
-          <td>x86
-          </td>
-        </tr>
-
-        <tr>
-          <th>OS</th>
-          <td>Linux
-          </td>
-        </tr>
-
-        <tr>
-          <th>Status</th>
-          <td>UNCONFIRMED
-          </td>
-        </tr>
-
-        <tr>
-          <th>Severity</th>
-          <td>normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Priority</th>
-          <td>Normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Component</th>
-          <td>examples
-          </td>
-        </tr>
-
-        <tr>
-          <th>Assignee</th>
-          <td>dev&#64;dpdk.org
-          </td>
-        </tr>
-
-        <tr>
-          <th>Reporter</th>
-          <td>songx.jiale&#64;intel.com
-          </td>
-        </tr>
-
-        <tr>
-          <th>Target Milestone</th>
-          <td>---
-          </td>
-        </tr></table>
-      <p>
-        <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">Environment
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-DPDK version: 9fe9c0b231c8da5435bfccb1963121b4277f961c version: dpdk25.07-r=
-c3
-OS: Ubuntu 24.04.2 LTS/6.8.0-60-generic
-Compiler:  gcc version 13.3.0
-Hardware platform: Intel(R) Xeon(R) Platinum 8380 CPU &#64; 2.30GHz
-NIC hardware: Intel Corporation 82599ES 10-Gigabit SFI/SFP+ Network Connect=
-ion
-[8086:10fb] (rev 01)
-NIC firmware:=20
-  driver: vfio-pci
-  kdriver: ixgbe-6.1.5
-  firmware-version: 0x000161bf
-
-Test Setup
-Steps to reproduce
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-1. compile dpdk
-rm -rf x86_64-native-linuxapp-gcc
-CC=3Dgcc meson -Denable_kmods=3DFalse -Dlibdir=3Dlib
--Dexamples=3D'multi_process/symmetric_mp' --default-library=3Dstatic
-x86_64-native-linuxapp-gcc
-ninja -C x86_64-native-linuxapp-gcc
-
-2. bind port to vfio-pci
-./usertools/dpdk-devbind.py -b vfio-pci 0000:b1:00.0 0000:b1:00.1
-
-3. start testpmd
-the first process=EF=BC=9A
-x86_64-native-linuxapp-gcc/examples/dpdk-symmetric_mp -l 1 -n 4 -a 0000:b1:=
-00.0
--a 0000:b1:00.1  --file-prefix=3Ddpdk_3722445_20250711093937     --proc-typ=
-e=3Dauto
--- -p 0x3 --num-procs=3D2 --proc-id=3D0
-
-the secondary process=EF=BC=9A
-x86_64-native-linuxapp-gcc/examples/dpdk-symmetric_mp -l 2 -n 4 -a 0000:b1:=
-00.0
--a 0000:b1:00.1  --file-prefix=3Ddpdk_3722445_20250711093937     --proc-typ=
-e=3Dauto
--- -p 0x3 --num-procs=3D2 --proc-id=3D1
-
-4. exit the first process
-^C
-
-
-Results:=20
-=3D=3D=3D=3D=3D=3D=3D=3D
-^C
-the first process=EF=BC=9A Exiting on signal 2Port 0: RX - 0, TX - 1, Drop =
-- 0
-Port 1: RX - 1, TX - 0, Drop - 0
-APP: Close ports.
-EAL: Error - exiting with code: 1
-Error closing ports
-EAL: failed to send to
-(/var/run/dpdk/dpdk_3722445_20250711093937/mp_socket_794973_148a6526e3624d)=
- due
-to Bad file descriptor
-EAL: Fail to send request
-/var/run/dpdk/dpdk_3722445_20250711093937/mp_socket_794973_148a6526e3624d:m=
-p_malloc_sync
-EAL: Could not send sync request to secondary process=20
-
-the secondary process=EF=BC=9A
-EAL: Detected CPU lcores: 80
-EAL: Detected NUMA nodes: 2
-EAL: Auto-detected process type: SECONDARY
-EAL: Detected static linkage of DPDK
-EAL: Multi-process socket
-/var/run/dpdk/dpdk_3722445_20250711093937/mp_socket_794279_148a2f16b62b59
-EAL: Selected IOVA mode 'VA'
-EAL: VFIO support initialized
-EAL: Using IOMMU type 1 (Type 1)
-APP: Finished Process Init.
-Lcore 2 using ports 0 1
-lcore 2 using queue 1 of each port
-Segmentation fault (core dumped)
-
-Expected Result:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-exit the symmetric_mp example normally.
-
-bad commit:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-commit 4382d58097b41d1e1229ce5fc2943994bf44bd83
-Author: Maayan Kashani &lt;<a href=3D"mailto:mkashani&#64;nvidia.com">mkash=
-ani&#64;nvidia.com</a>&gt;
-Date:   Tue Jul 8 10:09:54 2025 +0300
-
-    examples/multi_process: fix ports cleanup on exit
-
-    Device was started but not stopped on exit signal.
-    Added port stop and close on exit.
-
-    Fixes: af75078fece3 (&quot;first public release&quot;)
-    Cc: <a href=3D"mailto:stable&#64;dpdk.org">stable&#64;dpdk.org</a>
-
-    Signed-off-by: Maayan Kashani &lt;<a href=3D"mailto:mkashani&#64;nvidia=
-.com">mkashani&#64;nvidia.com</a>&gt;
-    Acked-by: Anatoly Burakov &lt;<a href=3D"mailto:anatoly.burakov&#64;int=
-el.com">anatoly.burakov&#64;intel.com</a>&gt;
-          </pre>
-        </div>
-      </p>
-
-
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1751">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17522119880.fab0.442705--
