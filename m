@@ -2,74 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5671C83F1A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Jul 2025 22:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A02C8303C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Jul 2025 05:33:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EBCBE4027C;
-	Fri, 11 Jul 2025 00:48:14 +0200 (CEST)
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com
- [209.85.222.182])
- by mails.dpdk.org (Postfix) with ESMTP id 167D44026A
- for <dev@dpdk.org>; Fri, 11 Jul 2025 00:48:13 +0200 (CEST)
-Received: by mail-qk1-f182.google.com with SMTP id
- af79cd13be357-7de159778d4so21015885a.1
- for <dev@dpdk.org>; Thu, 10 Jul 2025 15:48:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752187693;
- x=1752792493; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=Vpi8qtxqbi8Rze08uNY4BAUb2c5XRcukuliKMmFtASI=;
- b=U8xmEwSzbhSXlC/NMc3eyMmh4s74pp6Hc+PK1rbcL16Vd8KeLMkJvV0UL6/0LX1tqh
- qLaXloIzpBiDiJEb2I7ERlCVu5jsSCGvspcsD2pITLD5uHPIM0u2srUQodebwp6v9scC
- vm5aTvVBkaaBDTrmXBl0JoeJBF9qwcrngilFtpnF/qIrHZ/55ar/0c0gv9YPd64s3pW/
- DeRIKdTV8h3B4Mk6XS1GLpDUtF/wiaJlavOAS5c4t0DRNmBJUQi7rQS3wZ9OQIrSyDUt
- 0TduAD3hseSD4H/aMMlI0T5hICuKCx7SHQvN70Hww0TPaN4k5kWLajcj8fLrPCh1owvh
- HTFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752187693; x=1752792493;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=Vpi8qtxqbi8Rze08uNY4BAUb2c5XRcukuliKMmFtASI=;
- b=YtYadiqSv/Hb3x2yb16WhQdEQeEXUElq5oPeXmsoQlKzeTFeKUpFpQWyX/VfyKfWh+
- xhwILckb5/ENm5ja7+2FUykzvCssRF8aU8WHIQ2sTtjr/jbJ5t2R5pirtxaMRR1WP9ZF
- fRvriIDRpRCKlIrURtTT0etxsdFpX/y+j14wZiV4MNKZwWk5sP1mTG8D1eV2tSnYDFEA
- HbrM8pQjRMBRGSvhkqYagxu3VxOzto3UXBXgf4taifj3dY9R7hfdP92smFEpH9dmlvxu
- FYLAHlpZz9kPKxUw01ftmVJ3XYT65yu6L3h8AAHHjeZZ4kEONKjU2jc91A6OcBEGC4o8
- n4Eg==
-X-Gm-Message-State: AOJu0YzLey9ZZPrrhWRzMbTccZ5d/6D6ZV36tv2XgRo3dvfaUxZePROf
- AGTajaYR19TJ4TI5UhthXKdPKeatuwzanH43yUI+DVLSTutv2NKxiduGnkEsdtukauA=
-X-Gm-Gg: ASbGncsra4jgLUPnUQ0X0CxaJh4irp81FBCVR/kttIAUYgvnmXuXQQibvGk7MofLAtC
- P/sIhedQ4weWs81ZN38JipA/Bc6jCI5KVzLRd61ZDXZ0QzuC866YT8TETrzbbHzIOz8l5X77rWP
- lKNbIo64SXvvZ0XsVDZ+tVMyWAVpoMzVyl23TyJXmRGS0LY6EndUeoSoUmDP+WwiBsaMJ53Orli
- HxhNt4Oog7LlxqaNKMklFretq+d/veAi1Jigi1KsVog2vMZJEkpTh262UAvcnfw344iIyGl78Qh
- +0EhSj1m3w+UW8Hg+DurVLsNiAaOadLoDHoK7WhTVe3VmExv/2vOAf40nWQBpDF4DWvbTrajzcy
- ox3lwGp2D95P/kYG3X1biX0x+aUtV6ID18Fh+Nbw=
-X-Google-Smtp-Source: AGHT+IFjP6a1yHH/EV8j3dHT3sgj7YvOr0RA4WFnVX6oHi/4+N6PWf3DtOnFNosHxYv2jiSZ+kEr3w==
-X-Received: by 2002:a05:620a:370b:b0:7db:3ce5:d599 with SMTP id
- af79cd13be357-7de049db23bmr143015385a.11.1752187693233; 
- Thu, 10 Jul 2025 15:48:13 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7de54718fb9sm15957685a.21.2025.07.10.15.48.12
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 10 Jul 2025 15:48:13 -0700 (PDT)
-Date: Thu, 10 Jul 2025 15:48:09 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: vanshika.shukla@nxp.com
-Cc: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>, Sachin Saxena
- <sachin.saxena@nxp.com>, Gagandeep Singh <g.singh@nxp.com>
-Subject: Re: [v8 7/8] bus/dpaa: improve DPAA cleanup
-Message-ID: <20250710154809.1bb1a5db@hermes.local>
-In-Reply-To: <20250703053743.3710482-8-vanshika.shukla@nxp.com>
-References: <20250703052558.3700573-1-vanshika.shukla@nxp.com>
- <20250703053743.3710482-1-vanshika.shukla@nxp.com>
- <20250703053743.3710482-8-vanshika.shukla@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+	by mails.dpdk.org (Postfix) with ESMTP id 2069F402A9;
+	Fri, 11 Jul 2025 07:33:11 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 170D940156
+ for <dev@dpdk.org>; Fri, 11 Jul 2025 07:33:09 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 04B8946B42; Fri, 11 Jul 2025 07:33:08 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/examples Bug 1751] [dpdk24.07]
+ multiprocess_symmetric_mp_packet: exiting the symmetric_mp example results in
+ a core dump
+Date: Fri, 11 Jul 2025 05:33:08 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: examples
+X-Bugzilla-Version: 25.03
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: songx.jiale@intel.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1751-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17522119880.fab0.442705
 Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,20 +56,363 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu,  3 Jul 2025 11:07:42 +0530
-vanshika.shukla@nxp.com wrote:
 
-> From: Gagandeep Singh <g.singh@nxp.com>
-> 
-> This patch addresses DPAA driver issues with the introduction of
-> rte_eal_cleanup, which caused driver-specific destructors to fail
-> due to memory cleanup.
-> To resolve this, we remove the driver destructor and relocate the
-> code to the bus cleanup function.
-> 
-> So, this patch also implements DPAA bus cleanup.
-> 
-> Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
+--17522119880.fab0.442705
+Date: Fri, 11 Jul 2025 07:33:08 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-This looks like a bug fix (not a simple improvement).
-Could you provide a Fixes: tag so that it can goto related stable trees.
+https://bugs.dpdk.org/show_bug.cgi?id=3D1751
+
+            Bug ID: 1751
+           Summary: [dpdk24.07] multiprocess_symmetric_mp_packet: exiting
+                    the symmetric_mp example results in a core dump
+           Product: DPDK
+           Version: 25.03
+          Hardware: x86
+                OS: Linux
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: examples
+          Assignee: dev@dpdk.org
+          Reporter: songx.jiale@intel.com
+  Target Milestone: ---
+
+Environment
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+DPDK version: 9fe9c0b231c8da5435bfccb1963121b4277f961c version: dpdk25.07-r=
+c3
+OS: Ubuntu 24.04.2 LTS/6.8.0-60-generic
+Compiler:  gcc version 13.3.0
+Hardware platform: Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz
+NIC hardware: Intel Corporation 82599ES 10-Gigabit SFI/SFP+ Network Connect=
+ion
+[8086:10fb] (rev 01)
+NIC firmware:=20
+  driver: vfio-pci
+  kdriver: ixgbe-6.1.5
+  firmware-version: 0x000161bf
+
+Test Setup
+Steps to reproduce
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+1. compile dpdk
+rm -rf x86_64-native-linuxapp-gcc
+CC=3Dgcc meson -Denable_kmods=3DFalse -Dlibdir=3Dlib
+-Dexamples=3D'multi_process/symmetric_mp' --default-library=3Dstatic
+x86_64-native-linuxapp-gcc
+ninja -C x86_64-native-linuxapp-gcc
+
+2. bind port to vfio-pci
+./usertools/dpdk-devbind.py -b vfio-pci 0000:b1:00.0 0000:b1:00.1
+
+3. start testpmd
+the first process=EF=BC=9A
+x86_64-native-linuxapp-gcc/examples/dpdk-symmetric_mp -l 1 -n 4 -a 0000:b1:=
+00.0
+-a 0000:b1:00.1  --file-prefix=3Ddpdk_3722445_20250711093937     --proc-typ=
+e=3Dauto
+-- -p 0x3 --num-procs=3D2 --proc-id=3D0
+
+the secondary process=EF=BC=9A
+x86_64-native-linuxapp-gcc/examples/dpdk-symmetric_mp -l 2 -n 4 -a 0000:b1:=
+00.0
+-a 0000:b1:00.1  --file-prefix=3Ddpdk_3722445_20250711093937     --proc-typ=
+e=3Dauto
+-- -p 0x3 --num-procs=3D2 --proc-id=3D1
+
+4. exit the first process
+^C
+
+
+Results:=20
+=3D=3D=3D=3D=3D=3D=3D=3D
+^C
+the first process=EF=BC=9A Exiting on signal 2Port 0: RX - 0, TX - 1, Drop =
+- 0
+Port 1: RX - 1, TX - 0, Drop - 0
+APP: Close ports.
+EAL: Error - exiting with code: 1
+Error closing ports
+EAL: failed to send to
+(/var/run/dpdk/dpdk_3722445_20250711093937/mp_socket_794973_148a6526e3624d)=
+ due
+to Bad file descriptor
+EAL: Fail to send request
+/var/run/dpdk/dpdk_3722445_20250711093937/mp_socket_794973_148a6526e3624d:m=
+p_malloc_sync
+EAL: Could not send sync request to secondary process=20
+
+the secondary process=EF=BC=9A
+EAL: Detected CPU lcores: 80
+EAL: Detected NUMA nodes: 2
+EAL: Auto-detected process type: SECONDARY
+EAL: Detected static linkage of DPDK
+EAL: Multi-process socket
+/var/run/dpdk/dpdk_3722445_20250711093937/mp_socket_794279_148a2f16b62b59
+EAL: Selected IOVA mode 'VA'
+EAL: VFIO support initialized
+EAL: Using IOMMU type 1 (Type 1)
+APP: Finished Process Init.
+Lcore 2 using ports 0 1
+lcore 2 using queue 1 of each port
+Segmentation fault (core dumped)
+
+Expected Result:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+exit the symmetric_mp example normally.
+
+bad commit:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+commit 4382d58097b41d1e1229ce5fc2943994bf44bd83
+Author: Maayan Kashani <mkashani@nvidia.com>
+Date:   Tue Jul 8 10:09:54 2025 +0300
+
+    examples/multi_process: fix ports cleanup on exit
+
+    Device was started but not stopped on exit signal.
+    Added port stop and close on exit.
+
+    Fixes: af75078fece3 ("first public release")
+    Cc: stable@dpdk.org
+
+    Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
+    Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17522119880.fab0.442705
+Date: Fri, 11 Jul 2025 07:33:08 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - [dpdk24.07] multiprocess_symmetric_mp_packet: exi=
+ting the symmetric_mp example results in a core dump"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1751">1751</a>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Summary</th>
+          <td>[dpdk24.07] multiprocess_symmetric_mp_packet: exiting the sym=
+metric_mp example results in a core dump
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>25.03
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>x86
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>Linux
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>examples
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>songx.jiale&#64;intel.com
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">Environment
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+DPDK version: 9fe9c0b231c8da5435bfccb1963121b4277f961c version: dpdk25.07-r=
+c3
+OS: Ubuntu 24.04.2 LTS/6.8.0-60-generic
+Compiler:  gcc version 13.3.0
+Hardware platform: Intel(R) Xeon(R) Platinum 8380 CPU &#64; 2.30GHz
+NIC hardware: Intel Corporation 82599ES 10-Gigabit SFI/SFP+ Network Connect=
+ion
+[8086:10fb] (rev 01)
+NIC firmware:=20
+  driver: vfio-pci
+  kdriver: ixgbe-6.1.5
+  firmware-version: 0x000161bf
+
+Test Setup
+Steps to reproduce
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+1. compile dpdk
+rm -rf x86_64-native-linuxapp-gcc
+CC=3Dgcc meson -Denable_kmods=3DFalse -Dlibdir=3Dlib
+-Dexamples=3D'multi_process/symmetric_mp' --default-library=3Dstatic
+x86_64-native-linuxapp-gcc
+ninja -C x86_64-native-linuxapp-gcc
+
+2. bind port to vfio-pci
+./usertools/dpdk-devbind.py -b vfio-pci 0000:b1:00.0 0000:b1:00.1
+
+3. start testpmd
+the first process=EF=BC=9A
+x86_64-native-linuxapp-gcc/examples/dpdk-symmetric_mp -l 1 -n 4 -a 0000:b1:=
+00.0
+-a 0000:b1:00.1  --file-prefix=3Ddpdk_3722445_20250711093937     --proc-typ=
+e=3Dauto
+-- -p 0x3 --num-procs=3D2 --proc-id=3D0
+
+the secondary process=EF=BC=9A
+x86_64-native-linuxapp-gcc/examples/dpdk-symmetric_mp -l 2 -n 4 -a 0000:b1:=
+00.0
+-a 0000:b1:00.1  --file-prefix=3Ddpdk_3722445_20250711093937     --proc-typ=
+e=3Dauto
+-- -p 0x3 --num-procs=3D2 --proc-id=3D1
+
+4. exit the first process
+^C
+
+
+Results:=20
+=3D=3D=3D=3D=3D=3D=3D=3D
+^C
+the first process=EF=BC=9A Exiting on signal 2Port 0: RX - 0, TX - 1, Drop =
+- 0
+Port 1: RX - 1, TX - 0, Drop - 0
+APP: Close ports.
+EAL: Error - exiting with code: 1
+Error closing ports
+EAL: failed to send to
+(/var/run/dpdk/dpdk_3722445_20250711093937/mp_socket_794973_148a6526e3624d)=
+ due
+to Bad file descriptor
+EAL: Fail to send request
+/var/run/dpdk/dpdk_3722445_20250711093937/mp_socket_794973_148a6526e3624d:m=
+p_malloc_sync
+EAL: Could not send sync request to secondary process=20
+
+the secondary process=EF=BC=9A
+EAL: Detected CPU lcores: 80
+EAL: Detected NUMA nodes: 2
+EAL: Auto-detected process type: SECONDARY
+EAL: Detected static linkage of DPDK
+EAL: Multi-process socket
+/var/run/dpdk/dpdk_3722445_20250711093937/mp_socket_794279_148a2f16b62b59
+EAL: Selected IOVA mode 'VA'
+EAL: VFIO support initialized
+EAL: Using IOMMU type 1 (Type 1)
+APP: Finished Process Init.
+Lcore 2 using ports 0 1
+lcore 2 using queue 1 of each port
+Segmentation fault (core dumped)
+
+Expected Result:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+exit the symmetric_mp example normally.
+
+bad commit:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+commit 4382d58097b41d1e1229ce5fc2943994bf44bd83
+Author: Maayan Kashani &lt;<a href=3D"mailto:mkashani&#64;nvidia.com">mkash=
+ani&#64;nvidia.com</a>&gt;
+Date:   Tue Jul 8 10:09:54 2025 +0300
+
+    examples/multi_process: fix ports cleanup on exit
+
+    Device was started but not stopped on exit signal.
+    Added port stop and close on exit.
+
+    Fixes: af75078fece3 (&quot;first public release&quot;)
+    Cc: <a href=3D"mailto:stable&#64;dpdk.org">stable&#64;dpdk.org</a>
+
+    Signed-off-by: Maayan Kashani &lt;<a href=3D"mailto:mkashani&#64;nvidia=
+.com">mkashani&#64;nvidia.com</a>&gt;
+    Acked-by: Anatoly Burakov &lt;<a href=3D"mailto:anatoly.burakov&#64;int=
+el.com">anatoly.burakov&#64;intel.com</a>&gt;
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1751">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17522119880.fab0.442705--
