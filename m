@@ -2,87 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFDB1C83F1A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Jul 2025 12:38:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5076CC8303C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Jul 2025 12:44:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0C658402A9;
-	Fri, 11 Jul 2025 14:38:27 +0200 (CEST)
-Received: from fout-a6-smtp.messagingengine.com
- (fout-a6-smtp.messagingengine.com [103.168.172.149])
- by mails.dpdk.org (Postfix) with ESMTP id F34E2400D6
- for <dev@dpdk.org>; Fri, 11 Jul 2025 14:38:25 +0200 (CEST)
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal
- [10.202.2.45])
- by mailfout.phl.internal (Postfix) with ESMTP id 79494EC0479;
- Fri, 11 Jul 2025 08:38:25 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-05.internal (MEProxy); Fri, 11 Jul 2025 08:38:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1752237505;
- x=1752323905; bh=LcsglB6LlQvQ0VSvp/ZKV3Z+BP93WijVDNHV3Od2QjA=; b=
- skt7MCkj0aBs/T4g112dnYsRhOD9DXerWy3BuKCDGUkVbHsrsXG1aS3r74jeeA/x
- dYWjFbG5HshFG25Pa7nvNkl85SsXiffGErUeurJMYLyHN3+J1sx43/vAxoxj9IT+
- d2Xvnqb827S1I4khBCdYtUnG5OUOf0ZLWXIVWLb6Gjv5LSD4BDr256wIMnYJI5Hq
- qIDQZRdhaczMGc8l6qyuvVSZ8+ypfZ42Xs5pTjmW69aoKfYLe0DNZGqOsOx/VWX8
- 30ztjdVdpkkvzlAXrLnAHD5r3U/lRuwHWFTQbE+/WmpzvGJLcsnP1EOhbSfIwFy4
- VbZZwvd3daMD2Fil4ATYrQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752237505; x=
- 1752323905; bh=LcsglB6LlQvQ0VSvp/ZKV3Z+BP93WijVDNHV3Od2QjA=; b=h
- 265rEYohuDoR4Z+pPg3VN3GsXArH5Ya+aStzYAnhfuICmlTeuIfxFrCCu3mPyHqq
- Je5CBOYtenoGAoIExwcnLDR8GgUiWv0npPV6jDx+g9NcZ8OgWI5BUP8BFd8GMOSi
- ST/ErYlkUxRwwUZnH/BAHCgYTc1DBbKJK4BxaRjY0YwQMUeBL50CW+kAd0RjIXdk
- 1wMRFRyl1ddMma6PdbDr1pSsnOi7SJud/uaaCzZhacJ7nTBPFlqmT2/fZk+3DLOb
- 1cq9J4hl6LE1dn/NTY7uc6p7Gl3ndeElNmWcw5KbJ5bz4S283HaN6l2atLVeL1Y/
- pkn1OqTpga17eH/ts6YPg==
-X-ME-Sender: <xms:wAVxaBYL5QOOOYGTPOmt2l7C24GtgSabfnyEgQjd9iCcqwzbaMrkNQ>
- <xme:wAVxaA3XhgXXr7DOoOYC75fiqR0UMkRcnCB1yLlYVU1zyAb9nGnqw6UQSmY75bW09
- kETL6iko2W8GhqT2Q>
-X-ME-Received: <xmr:wAVxaEauiOnJkL2CXZT26ZIHL8CZBzIj91hPeG-p529IE8_AsHNbWHf3epkZItB0yItQS0U-89UUzhtZ9AzTT0172w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegfeefgecutefuodetggdotefrod
- ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
- ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
- hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
- ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
- grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
- gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
- epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepiedpmhho
- uggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnughrvghmuhgvsehlihhnuhigrdhmih
- gtrhhoshhofhhtrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghp
- thhtohepkhhonhhsthgrnhhtihhnrdgrnhgrnhihvghvsehhuhgrfigvihdrtghomhdprh
- gtphhtthhopegurghvihgurdhmrghrtghhrghnugesrhgvughhrghtrdgtohhmpdhrtghp
- thhtohepsghruhgtvgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpth
- htohephhhonhhnrghpphgrrdhnrghgrghrrghhrghllhhisegrrhhmrdgtohhm
-X-ME-Proxy: <xmx:wAVxaALnwv410HmHaIKHaEmImyxLyJBr5jjJA4K-CdAlmDF1spvzmg>
- <xmx:wAVxaLFGkNWs-HIOLKSvcGWOauKTzzgXF5TZ9AZY3mpwH-rZlPKQtA>
- <xmx:wAVxaPuVJUXO-cV1KaFFXEt7WIqdiJpiGFJrl6-ZwxzVUfjZ2j4olA>
- <xmx:wAVxaCti8iGptBWHD9hIY0k8EYItfLsyhsGP-ByCctwMDcS2xdZ7Wg>
- <xmx:wQVxaKYLdTlR8C3SIhVXQZlfGNL5BTVqu-LS7t83WpnHlnz9KY6gw4mf>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 11 Jul 2025 08:38:23 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Andre Muezerie <andremue@linux.microsoft.com>
-Cc: dev@dpdk.org, Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- David Marchand <david.marchand@redhat.com>,
- Bruce Richardson <bruce.richardson@intel.com>, honnappa.nagarahalli@arm.com
-Subject: Re: [PATCH] rcu: add deprecation notice about limit on defer queue
- element size
-Date: Fri, 11 Jul 2025 14:38:22 +0200
-Message-ID: <5695570.h0BymrIErR@thomas>
-In-Reply-To: <20250710143747.GA24344@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1747957021-2581-1-git-send-email-andremue@linux.microsoft.com>
- <4620749.daG60p0z9X@thomas>
- <20250710143747.GA24344@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+	by mails.dpdk.org (Postfix) with ESMTP id 8C69840673;
+	Fri, 11 Jul 2025 14:44:11 +0200 (CEST)
+Received: from mail.lysator.liu.se (mail.lysator.liu.se [130.236.254.3])
+ by mails.dpdk.org (Postfix) with ESMTP id 3D254400D6
+ for <dev@dpdk.org>; Fri, 11 Jul 2025 14:44:10 +0200 (CEST)
+Received: from mail.lysator.liu.se (localhost [127.0.0.1])
+ by mail.lysator.liu.se (Postfix) with ESMTP id AC9BF8026
+ for <dev@dpdk.org>; Fri, 11 Jul 2025 14:44:09 +0200 (CEST)
+Received: by mail.lysator.liu.se (Postfix, from userid 1004)
+ id 84BA18024; Fri, 11 Jul 2025 14:44:09 +0200 (CEST)
+Received: from [192.168.1.85] (h-62-63-215-114.A163.priv.bahnhof.se
+ [62.63.215.114])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+ (No client certificate requested)
+ by mail.lysator.liu.se (Postfix) with ESMTPSA id CA3AE8023;
+ Fri, 11 Jul 2025 14:44:07 +0200 (CEST)
+Message-ID: <1dd2aaf4-9bc7-43fb-8261-0c4c9387ad07@lysator.liu.se>
+Date: Fri, 11 Jul 2025 14:44:07 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] event/eth_tx: prefetch mbuf headers
+To: Stephen Hemminger <stephen@networkplumber.org>,
+ =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>
+Cc: dev@dpdk.org, Naga Harish K S V <s.v.naga.harish.k@intel.com>,
+ Jerin Jacob <jerinj@marvell.com>,
+ Peter Nilsson <peter.j.nilsson@ericsson.com>
+References: <20250328054339.489914-1-mattias.ronnblom@ericsson.com>
+ <20250710083747.6f613e7f@hermes.local>
+Content-Language: en-US
+From: =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <hofors@lysator.liu.se>
+In-Reply-To: <20250710083747.6f613e7f@hermes.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -96,31 +53,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-10/07/2025 16:37, Andre Muezerie:
-> On Tue, Jul 01, 2025 at 04:17:20PM +0200, Thomas Monjalon wrote:
-> > 23/05/2025 01:37, Andre Muezerie:
-> > > The functions rte_rcu_qsbr_dq_create and rte_rcu_qsbr_dq_reclaim establish
-> > > no limit on the size of each element in the defer queue.
-> > 
-> > Very good, we need more unlimited API in DPDK.
-> > 
-> > > With DPDK 25.11 a hard limit will be set (``RTE_QSBR_ESIZE_MAX``).
-> > 
-> > I think it is a step in the wrong direction.
-> > I prefer having no limit.
-> > 
-> > > This will allow fixed C arrays to be used in the functions' implementations,
-> > > avoiding VLAs and use of alloca().
-> > 
-> > I don't understand this justification.
-> > Why trying to remove the 2 alloca() in the lib RCU?
-> > 
+On 2025-07-10 17:37, Stephen Hemminger wrote:
+> On Fri, 28 Mar 2025 06:43:39 +0100
+> Mattias Rönnblom <mattias.ronnblom@ericsson.com> wrote:
 > 
-> Only because other developer expressed concerns that using alloca() allows
-> ill-intended callers to cause a stack overflow.
-> I personally also prefer to have no hardcoded limits.
+>> Prefetch mbuf headers, resulting in ~10% throughput improvement when
+>> the Ethernet RX and TX Adapters are hosted on the same core (likely
+>> ~2x in case a dedicated TX core is used).
+>>
+>> Signed-off-by: Mattias Rönnblom <mattias.ronnblom@ericsson.com>
+>> Tested-by: Peter Nilsson <peter.j.nilsson@ericsson.com>
+> 
+> Prefetching all the mbufs can be counter productive on a big burst.
+> 
 
-Yes I vote for keeping alloca().
+For the non-vector case, the burst is no larger than 32. From what's 
+available in terms of public information, the number of load queue 
+entries is 72 on Skylake. What it is on newer micro architecture 
+generations, I don't know. So 32 is a lot of prefetches, but at least 
+likely smaller than the load queue.
 
+> VPP does something similar but more unrolled.
+> See https://fd.io/docs/vpp/v2101/gettingstarted/developers/vnet.html#single-dual-loops
 
+This pattern makes sense, if the do_something_to() function has 
+non-trivial latency.
+
+If it doesn't, which I suspect is the case in the TX adapter case, you 
+will issue 4 prefetches, of which some or even all aren't resolved 
+before the core need to data. Repeat.
+
+Also - and I'm guessing now - the do_something_to() equivalent in the TX 
+adapter case is likely not allocating a lot of load buffer entries, so 
+little risk of the prefetches being discarded.
+
+That said, I'm sure you can tweak non-vector TXA prefetching to further 
+improve performance. For example, it may be little point in prefetching 
+the first few mbuf headers, since you will need that data very soon indeed.
+
+I no longer have the setup to further refine this patch. I suggest we 
+live with only ~20% performance gain at this point.
+
+For the vector case, I agree this loop may result in too many prefetches.
+
+I can remove prefetching from the vector case, to maintain legacy 
+performance. I could also cap the number of prefetches (e.g., to 32).
 
