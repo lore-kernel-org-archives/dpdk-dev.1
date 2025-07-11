@@ -2,60 +2,64 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48385C83F1A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Jul 2025 17:56:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A9BC83F1B
+	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Jul 2025 21:28:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 465724021E;
-	Fri, 11 Jul 2025 19:56:30 +0200 (CEST)
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com
- [209.85.216.45]) by mails.dpdk.org (Postfix) with ESMTP id C8A6A4013F
- for <dev@dpdk.org>; Fri, 11 Jul 2025 19:56:28 +0200 (CEST)
-Received: by mail-pj1-f45.google.com with SMTP id
- 98e67ed59e1d1-311da0bef4aso2442829a91.3
- for <dev@dpdk.org>; Fri, 11 Jul 2025 10:56:28 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7033F40156;
+	Fri, 11 Jul 2025 23:28:48 +0200 (CEST)
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com
+ [209.85.215.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 9F65D4013F
+ for <dev@dpdk.org>; Fri, 11 Jul 2025 23:28:46 +0200 (CEST)
+Received: by mail-pg1-f180.google.com with SMTP id
+ 41be03b00d2f7-b3507b63c6fso2866611a12.2
+ for <dev@dpdk.org>; Fri, 11 Jul 2025 14:28:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1752256588; x=1752861388; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
- :date:message-id:reply-to;
- bh=gsyMcG/XVxMtYRl3zDpHI4jhjXtJ9II42KeJTpnc/5s=;
- b=WlZddKQ5YaMRKDNTMvR7xXUeA9nrPCVkoYETqaGHynQoHnlleie0hNFUgbNpnuabQZ
- BwOywpHfq5z+cgcXZ/5rXTJO20n01LjrUmU8evuz7vvGwXrCWdAoZZkif4mJ/426FKjG
- SMvaHC1IhKtz1H+DzLm0+G5nbmUDf7cDNxb5k=
+ d=iol.unh.edu; s=unh-iol; t=1752269326; x=1752874126; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=WsDgwqysNik2FsF1TQz4kSzR2uBCzI5RNmIW4kxuurM=;
+ b=fL2IkL2HrfzdANzRNt5ZopEilqplYtviDajzm1tasHAGaipi9NPKlgItbHoQoCBSrV
+ OdAV6Y07s6l1X/qu5pvZ9SOPc7sr+MZEsHAJQ41XqKpaTkhLWYk+rzDNwPxhGfRqQze5
+ WvmWGZBkc52/S9rNAN2mYa4qYII++zSQ++7/s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752256588; x=1752861388;
- h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=gsyMcG/XVxMtYRl3zDpHI4jhjXtJ9II42KeJTpnc/5s=;
- b=OmBkwqBNMReOYun2DnmgFBHVQzOAsETw1pIM6MXYsse01ayr4xAn4RSvHiutJip7f0
- o9n+Lht+j2xbAwITieXcTa2E4S2jwRFpPGowBHL0x9RCzkAmXU7dGqkR+dYn4cMraOG8
- 7pkdmTmdu2+IR62fLPYJZtVCyOWS+/Vt4kepTutxS5gGT87byZph3VpKFWQnIoAcwfhV
- jPXXZ9aUfzos7fMK1+ErxvBzZ3MQ3TeoK2TQaPEN5umpnUSIdS0fqNDyM0yHcMyBSj0/
- VCSPlxrUUCVgbFpIUtAcBFtn4kbNyJQ4jEdzP9YxcjbXT78ebyUx9OsDeCv8itdtOyfW
- eYEw==
-X-Gm-Message-State: AOJu0Yxgyjp4+9GILmFfonZMYsLWe0cEAg07WSBuLZ0dhJ1h0uUFDXjY
- ZQC85/wG0BWBS2CDj2dMVN8SmhVTdzS4BOv4+Pb8q4Qy8hVrF3u2G07oZsfazp6BkcLkU60ZiWf
- TgGYP2+wkcI77YcNtZaYtZj9fYn05Dmnae8Rc30yX8w==
-X-Gm-Gg: ASbGncucBH8lVJ7IvAe2EENkN5liedut9izPIQIxoyL+ZZV8QWnlVXXSSpiQycJBbow
- DmbeQLDjXA07pLcen2cfmNo6oV8uYgX5zK9GGaiMXYsrPTNJWvmctwfeAJBbklR7jffLrT4YkQr
- 1f8O42SXYcMIWkUUtltAOFks3KlVLaCH/lRNjUBKNo5ScQqGmeq2U880AXaRg9CmVcw8dlBxN2l
- Up18Whzp5QDhLm7hqcuvWTib+TGgeGo0Cv3vBam
-X-Google-Smtp-Source: AGHT+IGZjkRHuM13LLU92Ni6PX3iWaqFZ79oCeo8QmjeewlzHULv2nlVbHvCRb4QfM7Z05k3LtJ8fSQDUyALcE6ElFc=
-X-Received: by 2002:a17:90a:e18e:b0:31c:38f8:7efb with SMTP id
- 98e67ed59e1d1-31c4f573322mr6319276a91.18.1752256586760; Fri, 11 Jul 2025
- 10:56:26 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1752269326; x=1752874126;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=WsDgwqysNik2FsF1TQz4kSzR2uBCzI5RNmIW4kxuurM=;
+ b=PFwQQ1hhvMSZqOCyyhSMQyiEtgeuRgYwpmLzJIj/YtYEGIDpVPEuD1g8cFh8imQJAK
+ 5g4gotYWb/aWrh0JnnLikeOX2Av/lmNNpNE1w3EHyL2y2Ccn4HXljAcbnYq2s6kUIhM9
+ xfyOccNGKQNZwKaHODZke3JWK7hsYj23Dj7t8Lnx8iEGcJPo7yanwM2tz5CxTVowQfQt
+ 8OKtEolCoQjXvhYorsujVk20iaz0XkqfdGkkhvkwLMNNkqc1ZC0T3hPxqFUWNiHhV+SD
+ ak/8Fy3OBRlbhZ8BKTz+fK5NmRn3kW5DzF99xvUdJhfq/MoyD3r4LsjexSxs6nnZpsW8
+ 2E/g==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUwEE9BCjri3AxbhBRPwJ4yZPSO23qTP12cm55H7V1FVzqWK4jXk4AmT57W4ZfSraaT6U8=@dpdk.org
+X-Gm-Message-State: AOJu0YwpNATSJceFc7gMGbvDAmF+Rk27a+3fPrdRzACBeLifhIzmbP4I
+ mmh1ZD18pYdB25mPQylVi7zuf25WDOcIBu/RxtSgL4nDO6Xs9FmCNKew8Nyh4dvxXqa30j2WT+T
+ arb+gC2FZ4SavOLcuSP5OqWOk85xY43HKg8Nq3FnFAA==
+X-Gm-Gg: ASbGncuaXgYTZKJIn+KseB8thvgXZC3RLesTJE5ZoB837qO7kqCIU40TDcTuJGSE0Iy
+ H4j2o2Bi1HFmyucH3wXa5GhL2huPP/wCnowuIE2rttkpPMxKiVTV5+WRnT1anPt2M/vv2dfpx5Q
+ IEA/GK6/fRZ9Dz5/UaayEYqAQ3lby52j7dE0ZLSgLnwAhfQfqGEy9vkCxos/PTQW2TTztw2ZsUW
+ gLD+O5m4D3Du9JL978WGMgFTrqORRMORLoeCjJO
+X-Google-Smtp-Source: AGHT+IGk9RtEvJtd5CdqrpuMY+s5DhXWLNhW8lTpRGUrQg3JtT2prAqgKRGRD3gAVpkmoA3aaee+CldCz0f8pZh4szY=
+X-Received: by 2002:a17:90a:d610:b0:313:28f1:fc33 with SMTP id
+ 98e67ed59e1d1-31c4f4ca85emr6222195a91.10.1752269325548; Fri, 11 Jul 2025
+ 14:28:45 -0700 (PDT)
 MIME-Version: 1.0
+References: <20250603172827.458725-1-dmarx@iol.unh.edu>
+ <20250711172534.540416-1-dmarx@iol.unh.edu>
+In-Reply-To: <20250711172534.540416-1-dmarx@iol.unh.edu>
 From: Patrick Robb <probb@iol.unh.edu>
-Date: Fri, 11 Jul 2025 13:50:41 -0400
-X-Gm-Features: Ac12FXyjRngfRcBnLXEKVutTtxzdlQggL5DumDcTqoBPThxHGFxN_qZdcdaXeMs
-Message-ID: <CAJvnSUAQ3JQh_Zc-aOy5dgbGhYpbPXrsO4OYTYsag0iHH0Wqow@mail.gmail.com>
-Subject: Community CI Meeting Minutes - July 9, 2025
-To: ci@dpdk.org
-Cc: dev <dev@dpdk.org>, Aaron Conole <aconole@redhat.com>,
- Dean Marx <dmarx@iol.unh.edu>, 
- Adam Hassick <ahassick@iol.unh.edu>, "Brandes, Shai" <shaibran@amazon.com>, 
- zhoumin <zhoumin@loongson.cn>, 
- "Puttaswamy, Rajesh T" <rajesh.t.puttaswamy@intel.com>
-Content-Type: multipart/alternative; boundary="00000000000068d93a0639ab07c2"
+Date: Fri, 11 Jul 2025 17:22:59 -0400
+X-Gm-Features: Ac12FXzu4d6pbud7q1X3pJxLK_qR9OlEk4fhEnQwJhWYSlYOZxw3dSIZZIgxvDI
+Message-ID: <CAJvnSUC_R_Yeoqis1cLaQJbwxyuTANYrNVpe9F=3dt29d+Wi-Q@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] dts: rewrite README
+To: Dean Marx <dmarx@iol.unh.edu>
+Cc: luca.vizzarro@arm.com, yoan.picchi@foss.arm.com, 
+ Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com, dev@dpdk.org
+Content-Type: multipart/alternative; boundary="000000000000b359930639adfe2d"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,321 +73,458 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---00000000000068d93a0639ab07c2
+--000000000000b359930639adfe2d
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-#####################################################################
-July 9, 2025
-Attendees
-1. Patrick Robb
-2. Manit Mahajan
-3. Dean Marx
-4. Luca Vizzarro
-5. Shai Brandes
-6. Aaron Conole
+On Fri, Jul 11, 2025 at 1:25=E2=80=AFPM Dean Marx <dmarx@iol.unh.edu> wrote=
+:
 
-#####################################################################
-Minutes
+> Remove unnecessary information from README.md,
+>
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-General Announcements
-* Expected remaining RC schedule:
-   * RC3 - July 9-10 (today/tomorrow)
-   * DTS HEAD has been run with the check scripts, done a docs build, and
-run some PF and VF tests (all working)
-* Tech board will have a discussion this morning about =E2=80=9CVLAN tag an=
-d QinQ
-stripping in DPDK.=E2=80=9D
-   * The behavior is not clearly defined, and should be standardized.
-* Results from the =E2=80=9Cwhen to meet=E2=80=9D survey:
-https://www.when2meet.com/?30965992-3ijyI
-   * Basically, options going forward are Tuesdays from 12:00 UTC to 14:00
-UTC, Wednesdays from 13:00 UTC to 14:00 UTC, and Thursdays from 12:00 UTC
-to 13:00 UTC.
-   * Next meeting will be at 12:00 UTC on Thursday the 24th
-* DPDK-CI Test Recheck script has been updated to capture the =E2=80=9Creba=
-se=E2=80=9D flag
-for rebasing onto specific branches by developer request:
-   *
-https://patchwork.dpdk.org/project/ci/patch/20250611205849.72165-1-probb@io=
-l.unh.edu/
-   * https://core.dpdk.org/testing/#requesting-a-patch-retest
-* /events/ PW rework
-   * Agree: support project filtering for /events/
-   * Adam Hassick and Aaron to work on this.
-      * Aaron will come up to UNH in a few weeks to attack this, and ensure
-it works for multiple projects he is involved with
+I would call the dropped information "extraneous".
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-CI Status
 
----------------------------------------------------------------------
-AWS Lab
-* Test recheck support plans:
-   * This has been implemented, and should be live now.
-   * We will need to update the DPDK website to indicate the support is now
-live
-   * If no rebase flag is included, they re-test the original artifact.
-   * Some other labs report new results with the retest count, and Amazon
-will aim to do the same
-      * The value is that it=E2=80=99s not obvious from the UI whether the =
-recheck
-has happened/is complete.
-* AWS infra failures:
-   * Apply failures are sending a generic fail, and also running unit tests
-and reporting the unit test logs
-      * Correct behavior is to stop testing when the apply failure happens,
-and send an =E2=80=9Capply failure=E2=80=9D report to test-report mailing l=
-ist
-      * Status: Solved
-   * David noticed some failures due to timeout on the telemetry test,
-other CIs extend the timeout with the -t arg:
-      * Status: Using -t 60 now
-* Review on apply failure on .rst files discussion from the previous meetin=
-g
-   * They are skipping the release notes in each patch.
+> and add new sections to clarify the purpose/use
+> of DTS along with clear setup instructions.
+>
 
----------------------------------------------------------------------
-UNH-IOL Community Lab
-* Apply patchset process: Skipping making a tarball if the patch is a docs
-patch only.
-   * Labeling as =E2=80=9Cnot applicable=E2=80=9D on the lab dashboard
-   * There were some patches with code in them which were marked as =E2=80=
-=9CDOCS
-ONLY=E2=80=9D by create_series_artifact.py. We have overridden this by putt=
-ing in
-testing for these series, and we are debugging the script.
-* Windows Builds:
-   * Status: MSVC drivers enable had a compile failure due to MLX5.
-      * This is because the drivers enable series has a series dependency
-which has not yet been merged.
-* Arm Grace E810:
-   * There were some failures for the E810 NIC for an ICE PMD patch because
-it updated the 16byte ICE PMD descriptors flag for Meson, so it was no
-longer getting used by our testing and consequently MPPS was reduced about
-6%.
-   * There were some unrelated infra fails for this system yesterday. We
-resolved the issue and put in retets. PW is =E2=80=9Call green.=E2=80=9D
-* Patchwork polling:
-   * Manit is working on refactoring our patchwork polling series.
-* DTS:
-   * Some new testsuites have been merged, and will be pulled into mainline
-for RC3 imminently. We need to add these new testsuites to DTS configs at
-the lab.
-* Our CI server fell over last Thursday, which caused us to have to rerun
-testing all Thursday patchseries on Thursday evening. We were caught up by
-Friday evening.
+Maybe say that the goal of the commit is refactoring the README to be a
+document which contains only a high level description of the relevant
+concepts in DTS and a simple getting started guide.
 
----------------------------------------------------------------------
-Intel Lab
-* Did not get any responses from the Intel lab maintainer to the =E2=80=9Cs=
-chedule
-a meeting=E2=80=9D poll.
 
----------------------------------------------------------------------
-Github Actions Robot
-* AI initiative (patch review bot):
-   * Based on sourcery.ai
-   * Aaron has investigated the GH rest api about Pull Requests, comments,
-etc. And he thinks it will be possible to pull the comments for a hunk
-which has been added, and send emails to the mailing list (or at least to
-the offer) with review comments. These emails can include links to the
-github comments.
-      * Will require setting up an alternative mirror repo and giving the
-robot extra permissions on this repo
-   * Status: In progress, but may require more feedback from Jerin, David,
-etc.
+>
+> +
+> +1. 2 links topology: Represents a topology in which the TG node and SUT
+> node both have two network interfaces
+> +which form the TG <-> SUT connection. An example of this would be a dual
+> interface NIC which is the
+> +TG node connected to a dual interface NIC which is the SUT node.
+> Interface 0 on TG <-> interface 0
+> +on SUT, interface 1 on TG <-> interface 1 on SUT.
+> +2. 1 links topology: Works, but may result in skips for testsuites which
+> are explicitly decorated with a
 
----------------------------------------------------------------------
-Loongson Lab
-* Patchseries recheck support: Min Zhou has tested out the new version of
-the get_reruns.py script, and has indicated he will use it to support the
-rebase argument.
-   * When this happens we need to update the DPDK website testing page to
-update the supported labs list
-   * Patrick Robb can submit the website update.
++2 link requirement. Represents a topology in which the TG node and SUT
+> node are both located on one
+> +network interface. An example of this would be a dual interface NIC with
+> a connection between
+> +its own ports.
+>
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-DTS Improvements & Test Development
-* Merged since the previous meeting:
-   * Virtual Function testing:
-      * Packet forwarding from DTS created VFs is working (on mellanox and
-broadcom, still figuring out if our Intel NICs are misconfigured for
-promisc mode).
-      * Important decisions to clarify:
-         * The way that it works is that it sets 1 (and only 1) VF per PF,
-and re-sets SUT ingress, SUT egress to the new virtual functions.
-         * It runs the exact same tests as the PFs
-         * Some testsuites are decorated with a specific PF_Required,
-capability, meaning those are forced to skip.
-   * Rte_flow testing:
-      * There are some cases where Flow validate says =E2=80=9Ccan create t=
-his flow
-rule=E2=80=9D and then flow create says =E2=80=9CI cannot create this=E2=80=
-=9D for various PMDs.
-Dean is going to document these on Bugzilla and CC Flow and PMD
-maintainers. This is pretty low hanging fruit.
-      * There are some other failures on some devices which are more
-involved, and will be documented separately.
-   * Add generic blocking app class (now superclass of DPDK blocking app
-class)
-   * Rework test results series
-      * It provides the =E2=80=9CReason=E2=80=9D for the failure inline alo=
-ngside the
-result in the results.json and result_summary.txt
-   * These should all get pulled from next-dts to mainline imminently.
-* Moved to the next release:
-   * Single_core_forwarding test and TREX support:
-      * This is running fine but the review of the v3 suggested changes
-which were too significant to resolve at the end of this development cycle.
-   * Qinq Testsuite
-   * File manager / abstraction moved to the next release
-      * Most straightforward solution (lazy approach) is using sftp
-* DTS Roadmap:
-   * Work on the roadmap at the DTS call next Thursday.
+1 links -> 1 link
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Any other business
-* Next Meeting Jul 24, 2025
+And the phrasing seems slightly off. Can you reword the 1 link topology to:
 
---00000000000068d93a0639ab07c2
+"Represents a topology in which the TG node and SUT node are connected over
+a single networking link. An example of this would be two single interface
+NICs directly connected to each other."
+
+or similar to this phrasing.
+
+And, maybe make this an unordered list? the "1. 2" and "2. 1" thing looks a
+touch weird. Not a big deal but probably worth doing:
+https://docs.github.com/en/get-started/writing-on-github/getting-started-wi=
+th-writing-and-formatting-on-github/basic-writing-and-formatting-syntax#lis=
+ts
+
+Also, I never did get a response from you about whether it would be good to
+include some ascii art to depict these topologies :)
+
+You don't have to be a fan, but it would be good to get your opinion. If
+you think it's a good idea, can you add a bugzilla ticket so we can do this
+during 25.11? If you're opposed I'm okay with it - ultimately the wording
+should make the valid topologies clear enough to people. It's not something
+we can add during RC4 in any case.
+
+
+2 link topology:
+
+
++------------------------------+
++------------------------------+
+|                              |                 |
+         |
+|                              | --------------- |
+         |
+|                              |                 |
+         |
+|  Tester (Traffic Generator)  |                 |     System Under
+Test        |
+|                              |                 |
+         |
+|                              | --------------- |
+         |
+|                              |                 |
+         |
++------------------------------+
++------------------------------+
+
+
+
+
+1 link topology:
+
+
++------------------------------+
++------------------------------+
+|                              |                 |
+         |
+|                              | --------------- |
+         |
+|                              |                 |
+         |
+|  Tester (Traffic Generator)  |                 |     System Under
+Test        |
+|                              |                 |
+         |
+|                              |                 |
+         |
+|                              |                 |
+         |
+
++------------------------------+
++------------------------------+
+
+
+
+2 link topology on a single host:
+
+
+                       -----------------------------------
+                      |                                   |
+                      |     -------------------------     |
+                      |    |                        |     |
+                      |    |                        |     |
+                      |    |                        |     |
+                      |    |                        |     |
+                      |    |                        |     |
+                      |    |                        |     |
+                      |    |                        |     |
+                      |    |                        |     |
+                +--------------------------------------------------+
+                |                                                  |
+                |                                                  |
+                |                                                  |
+                |                                                  |
+                |          Combined Tester & SUT system            |
+                |                                                  |
+                |                                                  |
+                               -
+                |                                                  |
+                |                                                  |
+                +--------------------------------------------------+
+
+
+
+
+
+> +
+> +# Simple Linux Setup
+> +
+> +1. On your TG and SUT nodes, add a dedicated user. In this example I wil=
+l
+> name the user "dts."
+>
+
+"add a dedicated user for DTS"
+
+
+> +2. Grant passwordless sudo to the dts user, like so:
+> +    2a: enter 'visudo' in your terminal
+> +    2b: In the visudo text editor, add:
+> +        dts   ALL=3D(ALL:ALL) NOPASSWD:ALL
+> +3. DTS uses ssh key auth to control the nodes. Copy your ssh keys to the
+> TG and SUT:
+> +    ssh-copy-id dts@{your host}.
+> +
+> +For additional detail, please refer to
+> [dts.rst](../doc/guides/tools/dts.rst)
+> +
+> +# DTS Configuration
+> +
+> +DTS requires two yaml files to be filled out with information about your
+> environment,
+> +test_run.yaml and nodes.yaml, which follow the format illustrated in the
+> example files.
+> +
+> +1. Download Docker on the SUT, and Scapy on the TG.
+>
+
+It's semantics but let's say Install instead of download.
+
+
+> -### Visual Studio Code
+> +Usage of VScode devcontainers is NOT required for developing on DTS and
+> running DTS,
+> +but provide some small quality of life improvements for the developer. I=
+f
+> you
+> +want to develop from a devcontainer, see the instructions below:
+>
+>  VSCode has first-class support for developing with containers.
+>  You may need to run the non-Docker setup commands in the integrated
+> terminal.
+> @@ -76,6 +75,6 @@ will mount the SSH keys of the user currently running
+> VSCode into the container
+>  The `source` on this line can be altered to mount any SSH keys
+>  on the local machine into the container at the correct location.
+>
+> -### Other
+> +## Other
+
+
+> -Searching for '$IDE dev containers' will probably lead you in the right
+> direction.
+> +Searching for '$IDE dev containers' will probably lead you in the right
+> direction.
+>
+
+I would just drop this whole "Other" section with the comment about
+searching for dev containers - it's not needed.
+
+> \ No newline at end of file
+> --
+> 2.49.0
+>
+>
+
+--000000000000b359930639adfe2d
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"ltr">##########################################################=
-###########<br>July 9, 2025<br>Attendees<br>1. Patrick Robb<br>2. Manit Mah=
-ajan<br>3. Dean Marx<br>4. Luca Vizzarro<br>5. Shai Brandes<br>6. Aaron Con=
-ole<br><br>################################################################=
-#####<br>Minutes<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D<br>General Announcements<br>* Expected remaining RC schedule:<br>=C2=
-=A0 =C2=A0* RC3 - July 9-10 (today/tomorrow)<br>=C2=A0 =C2=A0* DTS HEAD has=
- been run with the check scripts, done a docs build, and run some PF and VF=
- tests (all working)<br>* Tech board will have a discussion this morning ab=
-out =E2=80=9CVLAN tag and QinQ stripping in DPDK.=E2=80=9D<br>=C2=A0 =C2=A0=
-* The behavior is not clearly defined, and should be standardized.<br>* Res=
-ults from the =E2=80=9Cwhen to meet=E2=80=9D survey: <a href=3D"https://www=
-.when2meet.com/?30965992-3ijyI">https://www.when2meet.com/?30965992-3ijyI</=
-a><br>=C2=A0 =C2=A0* Basically, options going forward are Tuesdays from 12:=
-00 UTC to 14:00 UTC, Wednesdays from 13:00 UTC to 14:00 UTC, and Thursdays =
-from 12:00 UTC to 13:00 UTC.<br>=C2=A0 =C2=A0* Next meeting will be at 12:0=
-0 UTC on Thursday the 24th<br>* DPDK-CI Test Recheck script has been update=
-d to capture the =E2=80=9Crebase=E2=80=9D flag for rebasing onto specific b=
-ranches by developer request:<br>=C2=A0 =C2=A0* <a href=3D"https://patchwor=
-k.dpdk.org/project/ci/patch/20250611205849.72165-1-probb@iol.unh.edu/">http=
-s://patchwork.dpdk.org/project/ci/patch/20250611205849.72165-1-probb@iol.un=
-h.edu/</a><br>=C2=A0 =C2=A0* <a href=3D"https://core.dpdk.org/testing/#requ=
-esting-a-patch-retest">https://core.dpdk.org/testing/#requesting-a-patch-re=
-test</a><br>* /events/ PW rework<br>=C2=A0 =C2=A0* Agree: support project f=
-iltering for /events/<br>=C2=A0 =C2=A0* Adam Hassick and Aaron to work on t=
-his.<br>=C2=A0 =C2=A0 =C2=A0 * Aaron will come up to UNH in a few weeks to =
-attack this, and ensure it works for multiple projects he is involved with<=
-div><br></div><div>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D<br>CI Status</div><div><br></div><div>---------------------------------=
-------------------------------------<br>AWS Lab<br>* Test recheck support p=
-lans:<br>=C2=A0 =C2=A0* This has been implemented, and should be live now.<=
-br>=C2=A0 =C2=A0* We will need to update the DPDK website to indicate the s=
-upport is now live<br>=C2=A0 =C2=A0* If no rebase flag is included, they re=
--test the original artifact.<br>=C2=A0 =C2=A0* Some other labs report new r=
-esults with the retest count, and Amazon will aim to do the same=C2=A0<br>=
-=C2=A0 =C2=A0 =C2=A0 * The value is that it=E2=80=99s not obvious from the =
-UI whether the recheck has happened/is complete.<br>* AWS infra failures:<b=
-r>=C2=A0 =C2=A0* Apply failures are sending a generic fail, and also runnin=
-g unit tests and reporting the unit test logs<br>=C2=A0 =C2=A0 =C2=A0 * Cor=
-rect behavior is to stop testing when the apply failure happens, and send a=
-n =E2=80=9Capply failure=E2=80=9D report to test-report mailing list<br>=C2=
-=A0 =C2=A0 =C2=A0 * Status: Solved<br>=C2=A0 =C2=A0* David noticed some fai=
-lures due to timeout on the telemetry test, other CIs extend the timeout wi=
-th the -t arg:<br>=C2=A0 =C2=A0 =C2=A0 * Status: Using -t 60 now<br>* Revie=
-w on apply failure on .rst files discussion from the previous meeting<br>=
-=C2=A0 =C2=A0* They are skipping the release notes in each patch.<br><br>--=
--------------------------------------------------------------------<br>UNH-=
-IOL Community Lab<br>* Apply patchset process: Skipping making a tarball if=
- the patch is a docs patch only.<br>=C2=A0 =C2=A0* Labeling as =E2=80=9Cnot=
- applicable=E2=80=9D on the lab dashboard<br>=C2=A0 =C2=A0* There were some=
- patches with code in them which were marked as =E2=80=9CDOCS ONLY=E2=80=9D=
- by create_series_artifact.py. We have overridden this by putting in testin=
-g for these series, and we are debugging the script.<br>* Windows Builds:<b=
-r>=C2=A0 =C2=A0* Status: MSVC drivers enable had a compile failure due to M=
-LX5. <br>=C2=A0 =C2=A0 =C2=A0 * This is because the drivers enable series h=
-as a series dependency which has not yet been merged.<br>* Arm Grace E810:<=
-br>=C2=A0 =C2=A0* There were some failures for the E810 NIC for an ICE PMD =
-patch because it updated the 16byte ICE PMD descriptors flag for Meson, so =
-it was no longer getting used by our testing and consequently MPPS was redu=
-ced about 6%.<br>=C2=A0 =C2=A0* There were some unrelated infra fails for t=
-his system yesterday. We resolved the issue and put in retets. PW is =E2=80=
-=9Call green.=E2=80=9D<br>* Patchwork polling:<br>=C2=A0 =C2=A0* Manit is w=
-orking on refactoring our patchwork polling series.<br>* DTS:<br>=C2=A0 =C2=
-=A0* Some new testsuites have been merged, and will be pulled into mainline=
- for RC3 imminently. We need to add these new testsuites to DTS configs at =
-the lab.<br>* Our CI server fell over last Thursday, which caused us to hav=
-e to rerun testing all Thursday patchseries on Thursday evening. We were ca=
-ught up by Friday evening.<br><br>-----------------------------------------=
-----------------------------<br>Intel Lab<br>* Did not get any responses fr=
-om the Intel lab maintainer to the =E2=80=9Cschedule a meeting=E2=80=9D pol=
-l.<br><br>-----------------------------------------------------------------=
-----<br>Github Actions Robot<br>* AI initiative (patch review bot): <br>=C2=
-=A0 =C2=A0* Based on <a href=3D"http://sourcery.ai">sourcery.ai</a><br>=C2=
-=A0 =C2=A0* Aaron has investigated the GH rest api about Pull Requests, com=
-ments, etc. And he thinks it will be possible to pull the comments for a hu=
-nk which has been added, and send emails to the mailing list (or at least t=
-o the offer) with review comments. These emails can include links to the gi=
-thub comments.<br>=C2=A0 =C2=A0 =C2=A0 * Will require setting up an alterna=
-tive mirror repo and giving the robot extra permissions on this repo<br>=C2=
-=A0 =C2=A0* Status: In progress, but may require more feedback from Jerin, =
-David, etc.<br><br>--------------------------------------------------------=
--------------<br>Loongson Lab<br>* Patchseries recheck support: Min Zhou ha=
-s tested out the new version of the get_reruns.py script, and has indicated=
- he will use it to support the rebase argument.<br>=C2=A0 =C2=A0* When this=
- happens we need to update the DPDK website testing page to update the supp=
-orted labs list<br>=C2=A0 =C2=A0* Patrick Robb can submit the website updat=
-e.<br>=C2=A0 =C2=A0<br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D<br>DTS Improvements &amp; Test Development<br>* Merged since the pre=
-vious meeting:<br>=C2=A0 =C2=A0* Virtual Function testing:<br>=C2=A0 =C2=A0=
- =C2=A0 * Packet forwarding from DTS created VFs is working (on mellanox an=
-d broadcom, still figuring out if our Intel NICs are misconfigured for prom=
-isc mode).<br>=C2=A0 =C2=A0 =C2=A0 * Important decisions to clarify:<br>=C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* The way that it works is that it sets 1 (a=
-nd only 1) VF per PF, and re-sets SUT ingress, SUT egress to the new virtua=
-l functions.<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* It runs the exact same =
-tests as the PFs<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* Some testsuites are=
- decorated with a specific PF_Required, capability, meaning those are force=
-d to skip.<br>=C2=A0 =C2=A0* Rte_flow testing:<br>=C2=A0 =C2=A0 =C2=A0 * Th=
-ere are some cases where Flow validate says =E2=80=9Ccan create this flow r=
-ule=E2=80=9D and then flow create says =E2=80=9CI cannot create this=E2=80=
-=9D for various PMDs. Dean is going to document these on Bugzilla and CC Fl=
-ow and PMD maintainers. This is pretty low hanging fruit.<br>=C2=A0 =C2=A0 =
-=C2=A0 * There are some other failures on some devices which are more invol=
-ved, and will be documented separately.<br>=C2=A0 =C2=A0* Add generic block=
-ing app class (now superclass of DPDK blocking app class)<br>=C2=A0 =C2=A0*=
- Rework test results series<br>=C2=A0 =C2=A0 =C2=A0 * It provides the =E2=
-=80=9CReason=E2=80=9D for the failure inline alongside the result in the re=
-sults.json and result_summary.txt<br>=C2=A0 =C2=A0* These should all get pu=
-lled from next-dts to mainline imminently.<br>* Moved to the next release:<=
-br>=C2=A0 =C2=A0* Single_core_forwarding test and TREX support:<br>=C2=A0 =
-=C2=A0 =C2=A0 * This is running fine but the review of the v3 suggested cha=
-nges which were too significant to resolve at the end of this development c=
-ycle.<br>=C2=A0 =C2=A0* Qinq Testsuite<br>=C2=A0 =C2=A0* File manager / abs=
-traction moved to the next release<br>=C2=A0 =C2=A0 =C2=A0 * Most straightf=
-orward solution (lazy approach) is using sftp<br>* DTS Roadmap:<br>=C2=A0 =
-=C2=A0* Work on the roadmap at the DTS call next Thursday.<br><br>=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>Any other business<br>*=
- Next Meeting Jul 24, 2025<br><br><br><br></div></div>
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><div dir=3D"ltr"><div dir=3D"lt=
+r"><br></div><br><div class=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail=
+_attr">On Fri, Jul 11, 2025 at 1:25=E2=80=AFPM Dean Marx &lt;<a href=3D"mai=
+lto:dmarx@iol.unh.edu" target=3D"_blank">dmarx@iol.unh.edu</a>&gt; wrote:<b=
+r></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex=
+;border-left:1px solid rgb(204,204,204);padding-left:1ex">Remove unnecessar=
+y information from README.md,<br></blockquote><div><br></div><div>I would c=
+all the dropped information &quot;extraneous&quot;.</div><div>=C2=A0</div><=
+blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-l=
+eft:1px solid rgb(204,204,204);padding-left:1ex">
+and add new sections to clarify the purpose/use<br>
+of DTS along with clear setup instructions.<br></blockquote><div><br></div>=
+<div>Maybe say that the goal of the commit is refactoring the README to be =
+a document which contains only a high level description of the=C2=A0relevan=
+t concepts in DTS and a simple getting started guide.</div><div>=C2=A0</div=
+><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border=
+-left:1px solid rgb(204,204,204);padding-left:1ex"><br>
++<br>
++1. 2 links topology: Represents a topology in which the TG node and SUT no=
+de both have two network interfaces<br>
++which form the TG &lt;-&gt; SUT connection. An example of this would be a =
+dual interface NIC which is the<br>
++TG node connected to a dual interface NIC which is the SUT node. Interface=
+ 0 on TG &lt;-&gt; interface 0<br>
++on SUT, interface 1 on TG &lt;-&gt; interface 1 on SUT.<br>
++2. 1 links topology: Works, but may result in skips for testsuites which a=
+re explicitly decorated with a</blockquote><blockquote class=3D"gmail_quote=
+" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);=
+padding-left:1ex">
++2 link requirement. Represents a topology in which the TG node and SUT nod=
+e are both located on one<br>
++network interface. An example of this would be a dual interface NIC with a=
+ connection between<br>
++its own ports.<br></blockquote><div><br></div><div>1 links -&gt; 1 link</d=
+iv><div><br></div><div><div>And the phrasing seems slightly off. Can you re=
+word the 1 link topology to:<br><br>&quot;Represents a topology in which th=
+e TG node and SUT node are connected over a single networking link. An exam=
+ple of this would be two single interface NICs directly connected to each o=
+ther.&quot;</div><div><br></div><div>or similar to this phrasing.</div><div=
+><br></div><div>And, maybe make this an unordered list? the &quot;1. 2&quot=
+; and &quot;2. 1&quot; thing looks a touch weird. Not a big deal but probab=
+ly worth doing:=C2=A0<a href=3D"https://docs.github.com/en/get-started/writ=
+ing-on-github/getting-started-with-writing-and-formatting-on-github/basic-w=
+riting-and-formatting-syntax#lists">https://docs.github.com/en/get-started/=
+writing-on-github/getting-started-with-writing-and-formatting-on-github/bas=
+ic-writing-and-formatting-syntax#lists</a></div></div><div><br></div><div>A=
+lso, I never did get a response from you about whether it would be good to =
+include some ascii art to depict these topologies :)</div><div><br></div><d=
+iv>You don&#39;t have to be a fan, but it would be good to get your opinion=
+. If you think it&#39;s a good idea, can you add a bugzilla ticket so we ca=
+n do this during 25.11? If you&#39;re opposed I&#39;m okay with it - ultima=
+tely the wording should make the valid topologies clear enough to people. I=
+t&#39;s not something we can add during RC4 in any case.</div><div><br></di=
+v><div><br></div><div>2 link topology:</div><div><div><pre style=3D"margin-=
+top:0px;margin-bottom:0px;padding:0px;overflow:hidden;line-height:1.2em;col=
+or:rgb(0,0,0)"><br class=3D"gmail-Apple-interchange-newline">+-------------=
+-----------------+                 +------------------------------+        =
+             =20
+|                              |                 |                         =
+     |                     =20
+|                              | --------------- |                         =
+     |                     =20
+|                              |                 |                         =
+     |                     =20
+|  Tester (Traffic Generator)  |                 |     System Under Test   =
+     |                     =20
+|                              |                 |                         =
+     |                     =20
+|                              | --------------- |                         =
+     |                     =20
+|                              |                 |                         =
+     |                     =20
++------------------------------+                 +-------------------------=
+-----+             </pre><pre style=3D"margin-top:0px;margin-bottom:0px;pad=
+ding:0px;overflow:hidden;line-height:1.2em;color:rgb(0,0,0)"><br></pre><pre=
+ style=3D"margin-top:0px;margin-bottom:0px;padding:0px;overflow:hidden;line=
+-height:1.2em;color:rgb(0,0,0)"><br></pre><pre style=3D"margin-top:0px;marg=
+in-bottom:0px;padding:0px;overflow:hidden;line-height:1.2em;color:rgb(0,0,0=
+)">   </pre><pre style=3D"margin-top:0px;margin-bottom:0px;padding:0px;over=
+flow:hidden;line-height:1.2em;color:rgb(0,0,0)"><br></pre><pre style=3D"mar=
+gin-top:0px;margin-bottom:0px;padding:0px;overflow:hidden;line-height:1.2em=
+;color:rgb(0,0,0)">1 link topology: </pre><pre style=3D"margin-top:0px;marg=
+in-bottom:0px;padding:0px;overflow:hidden;line-height:1.2em;color:rgb(0,0,0=
+)"><br></pre><pre style=3D"margin-top:0px;margin-bottom:0px;padding:0px;ove=
+rflow:hidden;line-height:1.2em;color:rgb(0,0,0)">+-------------------------=
+-----+                 +------------------------------+                    =
+ =20
+|                              |                 |                         =
+     |                     =20
+|                              | --------------- |                         =
+     |                     =20
+|                              |                 |                         =
+     |                     =20
+|  Tester (Traffic Generator)  |                 |     System Under Test   =
+     |                     =20
+|                              |                 |                         =
+     |                     =20
+|                              |                 |                         =
+     |                     =20
+|                              |                 |                         =
+     |                     =20
+</pre><pre style=3D"margin-top:0px;margin-bottom:0px;padding:0px;overflow:h=
+idden;line-height:1.2em;color:rgb(0,0,0)">+-----------------------------<sp=
+an style=3D"font-family:Arial,Helvetica,sans-serif">-+                     =
+              </span>+-----------------------------<span style=3D"font-fami=
+ly:Arial,Helvetica,sans-serif">-+</span> <span style=3D"font-family:Arial,H=
+elvetica,sans-serif">      </span></pre><pre style=3D"margin-top:0px;margin=
+-bottom:0px;padding:0px;overflow:hidden;line-height:1.2em;color:rgb(0,0,0)"=
+>                                                                          =
+                            =20
+                                                                           =
+                           =20
+<br></pre><pre style=3D"margin-top:0px;margin-bottom:0px;padding:0px;overfl=
+ow:hidden;line-height:1.2em;color:rgb(0,0,0)">2 link topology on a single h=
+ost:                                                                       =
+                               =20
+                                                                           =
+                           =20
+                                                                           =
+                           =20
+                       -----------------------------------                 =
+                           =20
+                      |                                   |                =
+                           =20
+                      |     -------------------------     |                =
+                           =20
+                      |    |                        |     |                =
+                           =20
+                      |    |                        |     |                =
+                           =20
+                      |    |                        |     |                =
+                           =20
+                      |    |                        |     |                =
+                           =20
+                      |    |                        |     |                =
+                           =20
+                      |    |                        |     |                =
+                           =20
+                      |    |                        |     |                =
+                           =20
+                      |    |                        |     |                =
+                           =20
+                +--------------------------------------------------+       =
+                           =20
+                |                                                  |       =
+                           =20
+                |                                                  |       =
+                           =20
+                |                                                  |       =
+                           =20
+                |                                                  |       =
+                           =20
+                |          Combined Tester &amp; SUT system            |   =
+                               =20
+                |                                                  |       =
+                           =20
+                |                                                  |       =
+                           -
+                |                                                  |       =
+                           =20
+                |                                                  |       =
+                           =20
+                +--------------------------------------------------+  </pre=
+></div><div><br></div></div><div><br></div><div>=C2=A0</div><blockquote cla=
+ss=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid =
+rgb(204,204,204);padding-left:1ex">
++<br>
++# Simple Linux Setup<br>
++<br>
++1. On your TG and SUT nodes, add a dedicated user. In this example I will =
+name the user &quot;dts.&quot;<br></blockquote><div><br></div><div>&quot;ad=
+d a dedicated user for DTS&quot;</div><div>=C2=A0</div><blockquote class=3D=
+"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(2=
+04,204,204);padding-left:1ex">
++2. Grant passwordless sudo to the dts user, like so:<br>
++=C2=A0 =C2=A0 2a: enter &#39;visudo&#39; in your terminal<br>
++=C2=A0 =C2=A0 2b: In the visudo text editor, add:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 dts=C2=A0 =C2=A0ALL=3D(ALL:ALL) NOPASSWD:ALL<b=
+r>
++3. DTS uses ssh key auth to control the nodes. Copy your ssh keys to the T=
+G and SUT:<br>
++=C2=A0 =C2=A0 ssh-copy-id dts@{your host}.<br>
++<br>
++For additional detail, please refer to [dts.rst](../doc/guides/tools/dts.r=
+st)<br>
++<br>
++# DTS Configuration<br>
++<br>
++DTS requires two yaml files to be filled out with information about your e=
+nvironment,<br>
++test_run.yaml and nodes.yaml, which follow the format illustrated in the e=
+xample files.<br>
++<br>
++1. Download Docker on the SUT, and Scapy on the TG.<br></blockquote><div><=
+br></div><div>It&#39;s semantics but let&#39;s say Install instead of downl=
+oad.</div><div>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margi=
+n:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex=
+">
+-### Visual Studio Code<br>
++Usage of VScode devcontainers is NOT required for developing on DTS and ru=
+nning DTS,<br>
++but provide some small quality of life improvements for the developer. If =
+you<br>
++want to develop from a devcontainer, see the instructions below:<br>
+<br>
+=C2=A0VSCode has first-class support for developing with containers.<br>
+=C2=A0You may need to run the non-Docker setup commands in the integrated t=
+erminal.<br>
+@@ -76,6 +75,6 @@ will mount the SSH keys of the user currently running VSC=
+ode into the container<br>
+=C2=A0The `source` on this line can be altered to mount any SSH keys<br>
+=C2=A0on the local machine into the container at the correct location.<br>
+<br>
+-### Other<br>
++## Other</blockquote><blockquote class=3D"gmail_quote" style=3D"margin:0px=
+ 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
+<br>
+-Searching for &#39;$IDE dev containers&#39; will probably lead you in the =
+right direction.<br>
++Searching for &#39;$IDE dev containers&#39; will probably lead you in the =
+right direction.<br></blockquote><div><br></div><div>I would just drop this=
+ whole &quot;Other&quot; section with the comment about searching for dev c=
+ontainers - it&#39;s not needed.=C2=A0</div><blockquote class=3D"gmail_quot=
+e" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204)=
+;padding-left:1ex">
+\ No newline at end of file<br>
+-- <br>
+2.49.0<br>
+<br>
+</blockquote></div></div>
+</div>
 
---00000000000068d93a0639ab07c2--
+--000000000000b359930639adfe2d--
