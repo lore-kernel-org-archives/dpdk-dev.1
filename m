@@ -2,44 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5076CC8303C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Jul 2025 12:44:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70FB1C83F1B
+	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Jul 2025 14:43:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8C69840673;
-	Fri, 11 Jul 2025 14:44:11 +0200 (CEST)
-Received: from mail.lysator.liu.se (mail.lysator.liu.se [130.236.254.3])
- by mails.dpdk.org (Postfix) with ESMTP id 3D254400D6
- for <dev@dpdk.org>; Fri, 11 Jul 2025 14:44:10 +0200 (CEST)
-Received: from mail.lysator.liu.se (localhost [127.0.0.1])
- by mail.lysator.liu.se (Postfix) with ESMTP id AC9BF8026
- for <dev@dpdk.org>; Fri, 11 Jul 2025 14:44:09 +0200 (CEST)
-Received: by mail.lysator.liu.se (Postfix, from userid 1004)
- id 84BA18024; Fri, 11 Jul 2025 14:44:09 +0200 (CEST)
-Received: from [192.168.1.85] (h-62-63-215-114.A163.priv.bahnhof.se
- [62.63.215.114])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
- (No client certificate requested)
- by mail.lysator.liu.se (Postfix) with ESMTPSA id CA3AE8023;
- Fri, 11 Jul 2025 14:44:07 +0200 (CEST)
-Message-ID: <1dd2aaf4-9bc7-43fb-8261-0c4c9387ad07@lysator.liu.se>
-Date: Fri, 11 Jul 2025 14:44:07 +0200
+	by mails.dpdk.org (Postfix) with ESMTP id 484854025D;
+	Fri, 11 Jul 2025 16:43:42 +0200 (CEST)
+Received: from fhigh-a8-smtp.messagingengine.com
+ (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+ by mails.dpdk.org (Postfix) with ESMTP id B924D400D6
+ for <dev@dpdk.org>; Fri, 11 Jul 2025 16:43:40 +0200 (CEST)
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal
+ [10.202.2.44])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 1E2511400248;
+ Fri, 11 Jul 2025 10:43:40 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-04.internal (MEProxy); Fri, 11 Jul 2025 10:43:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:date:date:from:from
+ :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+ :to; s=fm2; t=1752245020; x=1752331420; bh=4wYAB7Typo5UA1qM0uY8F
+ s+JhC69yu1FkKeo56GG8Ho=; b=fVH9IF7x2OEIHx0q2cfjExxOzBAJAYLv0ZqES
+ eYShURRChW8MrTtaY/CEAVmDJyEsxUdnfs1igfpLya3wQQcr8hXeS4oU+G9irBqu
+ B2j6GwQcTppbMCrBku/R668lJtirmwkr43tIuVQfhTeSzXwz+kRPNokK4PQ4tULw
+ 5+5AEaoPIJBIYtcWuq2Ui55jxrQRpuRaGOKwnwbgIsOBhO55BT/CVGhvOgvBUgbv
+ juBgRLhK+1wzUV8fnpV022PuyI+S5SHOZErgqGQO/4mZdAmaSJ4wg+6AgPs3Ej+H
+ M56HwqjVTjgCJ3Axqkz2OjWTLcLLXpGr9wQj6QyXvtqGNbxLw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:date:date:feedback-id:feedback-id:from:from
+ :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+ :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+ 1752245020; x=1752331420; bh=4wYAB7Typo5UA1qM0uY8Fs+JhC69yu1FkKe
+ o56GG8Ho=; b=h2Vk/EhtoYlL+fOD/fcsC7S3vfsO06gPeze0ucr/YWAYydFZVsX
+ pMFb6bM8/kLazLmkDT4qEaK7q18sX5aO6b304pCArLwYsXC8Y/SD27wldS8fDCrT
+ +yHl4iQKDBYQfBe3n7ktugDo9+51OLQAbwaq80qeim7sPx9A05cJ9og61ReMTcjB
+ eyKyM6KfOVL6h6juh22Q9DIRnjDhfHSdqGOMYIoj2/HKFvn74jCr4yTnyCJsWEv9
+ LT5uSk+4tXOKlFhvmtybBcqNg7TOzljK1rwb1vSZ4dQ69YkYCjk0oNn8eLL90eZV
+ 9e8XkRgeKxDXX3ZWd64cY1+5wNRJvuGBlxQ==
+X-ME-Sender: <xms:GyNxaMULwSLQl9qFtBQ_fbe24dqiMcwK7r5BMOsVMb6xip8Y1z-XFA>
+ <xme:GyNxaKOz9cfPbmEwFFGeKY_AY5WOcAFMXjy1GIeLKhSlvx1oCY86f482t9vrJxa7T
+ VtUPFZClcnVcm04vA>
+X-ME-Received: <xmr:GyNxaAbmF4mkA1mR2t8BlZPz7eGgg3dvxtDpPD4xr1EGdGSGijbUCfJte0XEn5LjVXErP_ytwhcbwZSjI5fd0NQZN9d_m1E>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdegfeehkecutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+ ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+ hrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefvhhhomhgrshcuofho
+ nhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrth
+ htvghrnhepvdetgfffvdeuueegfeehkeetfeelhffhtdejfeetjeettdetgfdthedvteet
+ heeunecuffhomhgrihhnpeguphgukhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
+ curfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvght
+ pdhnsggprhgtphhtthhopeefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeguvg
+ hvseguphgukhdrohhrghdprhgtphhtthhopehfvghrrhhuhhdrhihighhithesrghmugdr
+ tghomhdprhgtphhtthhopegrnhgurhgvfidrrhihsggthhgvnhhkohesohhkthgvthhlrg
+ gsshdrrhhu
+X-ME-Proxy: <xmx:GyNxaOpc3E0QCBg_kfmIFEDOVY_T-Gf-2xbbAX-KAczD0nVFaDv4TA>
+ <xmx:GyNxaEZP0J5C74XODfHPIiXWJAr6YeNcgzhR-z_hGKFS-ZA9V4FOhg>
+ <xmx:GyNxaGQg1PhQrsnu5nG7J4BHUCtc1JECjyTqS1YPWTqkCtOo81hmzA>
+ <xmx:GyNxaL4jLSZ6WEGOkUFBI18EiHbwxeNtQ6zJCsX1fK9sH3hXgtx6mg>
+ <xmx:HCNxaP7PqiVsXTCz1CpgslKZDAyAXpNMTE6ivQBwDZ7FROEeH-A0LLDa>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 11 Jul 2025 10:43:38 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: dev@dpdk.org
+Cc: Ferruh Yigit <ferruh.yigit@amd.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: [PATCH] maintainers: update for ethdev library
+Date: Fri, 11 Jul 2025 16:43:25 +0200
+Message-ID: <20250711144326.1288907-1-thomas@monjalon.net>
+X-Mailer: git-send-email 2.47.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] event/eth_tx: prefetch mbuf headers
-To: Stephen Hemminger <stephen@networkplumber.org>,
- =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>
-Cc: dev@dpdk.org, Naga Harish K S V <s.v.naga.harish.k@intel.com>,
- Jerin Jacob <jerinj@marvell.com>,
- Peter Nilsson <peter.j.nilsson@ericsson.com>
-References: <20250328054339.489914-1-mattias.ronnblom@ericsson.com>
- <20250710083747.6f613e7f@hermes.local>
-Content-Language: en-US
-From: =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <hofors@lysator.liu.se>
-In-Reply-To: <20250710083747.6f613e7f@hermes.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,49 +86,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 2025-07-10 17:37, Stephen Hemminger wrote:
-> On Fri, 28 Mar 2025 06:43:39 +0100
-> Mattias Rönnblom <mattias.ronnblom@ericsson.com> wrote:
-> 
->> Prefetch mbuf headers, resulting in ~10% throughput improvement when
->> the Ethernet RX and TX Adapters are hosted on the same core (likely
->> ~2x in case a dedicated TX core is used).
->>
->> Signed-off-by: Mattias Rönnblom <mattias.ronnblom@ericsson.com>
->> Tested-by: Peter Nilsson <peter.j.nilsson@ericsson.com>
-> 
-> Prefetching all the mbufs can be counter productive on a big burst.
-> 
+Ferruh Yigit has no time this year for ethdev maintenance.
 
-For the non-vector case, the burst is no larger than 32. From what's 
-available in terms of public information, the number of load queue 
-entries is 72 on Skylake. What it is on newer micro architecture 
-generations, I don't know. So 32 is a lot of prefetches, but at least 
-likely smaller than the load queue.
+Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+---
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
 
-> VPP does something similar but more unrolled.
-> See https://fd.io/docs/vpp/v2101/gettingstarted/developers/vnet.html#single-dual-loops
-
-This pattern makes sense, if the do_something_to() function has 
-non-trivial latency.
-
-If it doesn't, which I suspect is the case in the TX adapter case, you 
-will issue 4 prefetches, of which some or even all aren't resolved 
-before the core need to data. Repeat.
-
-Also - and I'm guessing now - the do_something_to() equivalent in the TX 
-adapter case is likely not allocating a lot of load buffer entries, so 
-little risk of the prefetches being discarded.
-
-That said, I'm sure you can tweak non-vector TXA prefetching to further 
-improve performance. For example, it may be little point in prefetching 
-the first few mbuf headers, since you will need that data very soon indeed.
-
-I no longer have the setup to further refine this patch. I suggest we 
-live with only ~20% performance gain at this point.
-
-For the vector case, I agree this loop may result in too many prefetches.
-
-I can remove prefetching from the vector case, to maintain legacy 
-performance. I could also cap the number of prefetches (e.g., to 32).
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0e9357f3a3..b96496adb7 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -435,7 +435,6 @@ F: app/test/test_mbuf.c
+ 
+ Ethernet API
+ M: Thomas Monjalon <thomas@monjalon.net>
+-M: Ferruh Yigit <ferruh.yigit@amd.com>
+ M: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+ T: git://dpdk.org/next/dpdk-next-net
+ F: lib/ethdev/
+-- 
+2.47.1
 
