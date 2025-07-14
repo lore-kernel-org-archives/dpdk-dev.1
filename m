@@ -2,180 +2,164 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E1A6C83F27
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Jul 2025 10:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C6D7C83F21
+	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Jul 2025 10:32:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4E8024021F;
-	Mon, 14 Jul 2025 12:18:10 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id D2661400D5
- for <dev@dpdk.org>; Mon, 14 Jul 2025 12:18:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1752488288; x=1784024288;
- h=message-id:date:subject:to:references:cc:from:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=0qP5Y+YBbJw/Gt5xoyeV61J9TGfKz0oiC5eHA+E66l8=;
- b=TKjhQwJyhTJGBMpIhtu1RPT3KsGrx8Prxs+As1OT8awkmlkFfpSSHvmx
- n+6soIi0sdwfOIoii2u1XnYpy5vk+ZEmoLKuuPsXKuwguDbHMJ+2Fk0Sv
- 5pk6tTmwUR3ofOJdVqkVBv1L+JJFYrgJn7V49FDy/CgJes8Tfy6Kcq9hc
- o0Rz4PPePCPIW/CmrNpzya+W3JyJoqQfvHp0+F30f9myXbzboRqbuCAgP
- GTmcPp7ox+gFRQp7La/VzuhvsEMO+fqMpaOiypqSSuVVgLenHIyJ49K50
- O0e8oTCjsFXFLpWvYdIJUnJARolfY1zJx1NA0OkT1TUmbLaZZBupMbqcO A==;
-X-CSE-ConnectionGUID: ehSHr6TFTPSFo4Mi1t9V7w==
-X-CSE-MsgGUID: rSjcv3OySfigVQRIv0fkTg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="42310546"
-X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; d="scan'208";a="42310546"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
- by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Jul 2025 03:18:07 -0700
-X-CSE-ConnectionGUID: vpr7ZgV3SkywEoslAFmDlg==
-X-CSE-MsgGUID: KjkbZdJZQpO0NxEyOmfESw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,310,1744095600"; d="scan'208";a="156996515"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Jul 2025 03:18:07 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 14 Jul 2025 03:18:06 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Mon, 14 Jul 2025 03:18:06 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.53)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 14 Jul 2025 03:18:05 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 94CFC4021F;
+	Mon, 14 Jul 2025 12:32:15 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 136F4400D5
+ for <dev@dpdk.org>; Mon, 14 Jul 2025 12:32:12 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56E63lOF001605;
+ Mon, 14 Jul 2025 03:32:11 -0700
+Received: from nam02-dm3-obe.outbound.protection.outlook.com
+ (mail-dm3nam02on2117.outbound.protection.outlook.com [40.107.95.117])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 47vv90rf2s-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Mon, 14 Jul 2025 03:32:11 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MyMCjzXJ0N1gKwGbhQXRERkJPmqumnTs3Xx0jSHS10oSbSVHKufAntnW1VTRrirzj+GliyR4UvScaGsEkYGCKgVspt613KEV2Fioi/Elj0+ZoQUkmhIxHsrwO/xN9QCUPhJLQypXJklo5wwSErCUXmSbeP9yndktbLVUAB84USwdYFi10aZ5OnduJeNFFHQOmcgmeFaB9i3XCGhGMTVLQg64fS4yX9CYX0vbWJlvKrsJfRFSB2K+sBc7Movum2UA8gjbftS3PB4TWZpwByeWLLqCGd2KiMxmjEbKTmkbWMpbLWGfkXUe5mkHWElEuUhTD90nM8NmoD+7UlUcRIIzVw==
+ b=os2JkBMAq1sgR1W7J0WF8WnwXeQZT4P0In0TCe49XcX6dRgdjZqtQnSMbRFG6qv/5Ji7FTV35buuGHfIXktVGDsTza9ockBKgdiVh+q382PQsqBXQbxKmrVLOwmteTupZzfcPjYCVmw6lfN5/3U99ZMF4mKkJCGvzWBeXTYwJGIwe8soscwoHxwLIcumhhIug4wCSUl6w3alFWjQAyuNBThpU8cWnEoTBw8T/OJaNngU1Hre4s/zXfvh669MS2RUjlbRW/CCTCWh9MGrpHMpkAP7fqyVVGnJy2qUcyivg2Lfzst6bZ05OeMz41iJ9YlrM4AIRaXIpwnVYI53a6OEmQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=J5XbH/17rsuE2/DWfBQFVpM96k1YCD/MlL0dT6Gdo0g=;
- b=P+fqH/7h6kQpLEO31ldUSkBrphYEmlXw88LB46zBU2wzjsRjbPV6ITqmjLMhSpdD1YAJtZN4g2Kz40fF2A2l5isC07Km92ngd9CyAhAyxYFG3nDWCjvMo1x44eZ2GfB7VuKmlj+ycuNezOjHyaYdlbsD17jUyKqAWgqhL9pJiJjW/nfrHzEnJJMXx25Pkl+uKcvK1/BflDGUvBQtQFKW2tfn77lfHqyLiPFZp96BeDr8YJEdUTx5Y9XWzRhrnpOqhzxdMfFjWGxLgqad3YbGx0F/RMC7zoNd980QB6UHWm2+enovRen+sJzwaqp0xFbGGSNRAVvo/7zK+9ncK4IGGQ==
+ bh=+U/c88GxIFdu6HvjQvXWFuOj4EROFbuD/c5xkaDr6cc=;
+ b=qWdXqYslprOc4kW0J+zCPKAuHscDX07ww9AxD9PdDtfT2NhpcnNTYadIG2m/MogMFsiMdVVKAOuzmhi3ADhS81x6z+Tt1soF83+JQovc1Gkj+ElB26MUAloZnJLNUxeRyblg4nAafmYHmgJHHlhtZwfyX829tyQU2yxF50Ddn9l5xk/3zCdlkRN961TIcrb2hRRxlK+N53CRvxDzkkozWzIYeg9VvSF5ZwaD2rL6FPLKNHb8bOYXgaqV1CFb7Kiqyat3vGbagzhKb4dPlbZszXWIL2ItaxA8AFlJv4NGo0Y8WOYNJ4xQusAotVei8x8fjP5vw4LpLlgr4bQS5g4lyQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from IA4PR11MB9204.namprd11.prod.outlook.com (2603:10b6:208:56d::16)
- by LV4PR11MB9514.namprd11.prod.outlook.com (2603:10b6:408:2e0::10)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Mon, 14 Jul
- 2025 10:17:23 +0000
-Received: from IA4PR11MB9204.namprd11.prod.outlook.com
- ([fe80::509:acc9:5dba:5963]) by IA4PR11MB9204.namprd11.prod.outlook.com
- ([fe80::509:acc9:5dba:5963%4]) with mapi id 15.20.8880.026; Mon, 14 Jul 2025
- 10:17:23 +0000
-Message-ID: <8d868117-56e0-4acd-991c-504a5dc451d5@intel.com>
-Date: Mon, 14 Jul 2025 11:17:21 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v0 1/1] doc: announce inter-device DMA capability support
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+U/c88GxIFdu6HvjQvXWFuOj4EROFbuD/c5xkaDr6cc=;
+ b=r+YXsL+p+969J0Y05bgO+Bes0oNDtingp/t9d9EbEZr2ZTwtYpyw0Yil3qqlg8rfaBfzbhUXwQNio+6/jizf48iDqs9yNqYJDhSG0WZID30xRkjdS65+0Gf/cXJaZePaOkdZ4DiJUeiRGZEGVRYf/D4wrk8/qgxvSlCZLjg7iWg=
+Received: from SJ4PPFEA6F74CA2.namprd18.prod.outlook.com
+ (2603:10b6:a0f:fc02::f4b) by MW3PR18MB3514.namprd18.prod.outlook.com
+ (2603:10b6:303:2d::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.29; Mon, 14 Jul
+ 2025 10:32:07 +0000
+Received: from SJ4PPFEA6F74CA2.namprd18.prod.outlook.com
+ ([fe80::afda:792f:469b:631a]) by SJ4PPFEA6F74CA2.namprd18.prod.outlook.com
+ ([fe80::afda:792f:469b:631a%7]) with mapi id 15.20.8901.024; Mon, 14 Jul 2025
+ 10:32:07 +0000
+From: Vamsi Krishna Attunuru <vattunuru@marvell.com>
+To: "dev@dpdk.org" <dev@dpdk.org>, "fengchengwen@huawei.com"
+ <fengchengwen@huawei.com>
+CC: Jerin Jacob <jerinj@marvell.com>, "thomas@monjalon.net"
+ <thomas@monjalon.net>
+Subject: RE: [PATCH v0 1/1] doc: announce inter-device DMA capability support
  in dmadev
-To: <dev@dpdk.org>
+Thread-Topic: [PATCH v0 1/1] doc: announce inter-device DMA capability support
+ in dmadev
+Thread-Index: AQHb8XfRKNMasGVa5k2gdx02sHfpIbQtB0KAgARnEJA=
+Date: Mon, 14 Jul 2025 10:32:07 +0000
+Message-ID: <SJ4PPFEA6F74CA25D96514419D5C2FABB58A654A@SJ4PPFEA6F74CA2.namprd18.prod.outlook.com>
 References: <20250710085101.1678775-1-vattunuru@marvell.com>
+ <SJ4PPFEA6F74CA26994FC5A642907B4680AA64BA@SJ4PPFEA6F74CA2.namprd18.prod.outlook.com>
+In-Reply-To: <SJ4PPFEA6F74CA26994FC5A642907B4680AA64BA@SJ4PPFEA6F74CA2.namprd18.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-CC: Bruce Richardson <bruce.richardson@intel.com>
-From: "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>
-In-Reply-To: <20250710085101.1678775-1-vattunuru@marvell.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DU2PR04CA0350.eurprd04.prod.outlook.com
- (2603:10a6:10:2b4::22) To IA4PR11MB9204.namprd11.prod.outlook.com
- (2603:10b6:208:56d::16)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ4PPFEA6F74CA2:EE_|MW3PR18MB3514:EE_
+x-ms-office365-filtering-correlation-id: f9887c2d-d3fc-419a-98b8-08ddc2c1aea1
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|1800799024|376014|366016|7053199007|38070700018; 
+x-microsoft-antispam-message-info: =?us-ascii?Q?bK8zDJ7JEG+RNN3gTQygAlnQ/RffOGnpBQoXXKFe8Y34Wr1mbm9ihfdd8Do3?=
+ =?us-ascii?Q?orjvl9ly8SrGA49qfypkkEIen+SWEVL5ojLciSdwi+y0p75rlA16XtxmtQWl?=
+ =?us-ascii?Q?WXJXdqCgshLT+g3bEjpFmRe36jtcTlxAJeG+gw13pvB1CWxR9pMSFcbiNigE?=
+ =?us-ascii?Q?cRBkP+qRUpci5tybxxBb048hmsIrU3HkrKmVm+e14IARTwqQ8JL0g5vSL9lW?=
+ =?us-ascii?Q?AFQIqlThWl/5LlwhDH8xlN8u9Zw//K8YGWiEcdxbYycMTOnGtaunP863BkPA?=
+ =?us-ascii?Q?h9f4lGwxQKRETr2i9+E3yrGv/F/yD2YwaX0eLHitJZpmQxESoh5TeEv5hgKQ?=
+ =?us-ascii?Q?Wit8r3d3M0+erXyY2095txCYTaya5awoJsBtHD6S/qZPBhqa9n0954XjwCxL?=
+ =?us-ascii?Q?uN13S9jqRQYO1uCS78Yrbujc9rwJUOuDmgt2+YeS4vUFME7LELFcBZXfcTVx?=
+ =?us-ascii?Q?AMB93m/FjWzfY8vN4lEUtyPKSnCZfuY1UVt7Y6mm7lcC8nNMg/224sUP9I1p?=
+ =?us-ascii?Q?42d4daun9Tsf84JFTesTFrg1Ll4rLzcbAJLOb0MHqIpJ19HHhBhTzgp0My7x?=
+ =?us-ascii?Q?sLnX2g7qurG/+iS2gZ6L3uz+ORWeryrCGZ/qAL2agIgtjjyBppXCAdA9f7qc?=
+ =?us-ascii?Q?DPGd283A36DeFb2n1e8ZGRBeQRgmlTmkmzYuwFiRjgTmF399sQxpb74Fefhk?=
+ =?us-ascii?Q?xK/EFwBpb40oqV61R/N+OVsag8axezMH1to9jGcL5LOtapKuPn96zSDAm9wL?=
+ =?us-ascii?Q?ti8SL1ilwPoJMSxXwKFjX50o1LQ6RGc+2QStIFHf9vygWVGJEu0eDR5Gk4Z4?=
+ =?us-ascii?Q?m+NKDCu9x4ArOXQGJFjOFDEO+YlrpOL19jIo45vwxxgZ4tsPJII3PRiN30Ks?=
+ =?us-ascii?Q?wqpWZ7Q1TuCtnmwj/OWz495AIuDrGmkOIcu4HihoDQ4fGtfN1mV6KiY56X+e?=
+ =?us-ascii?Q?MregiGGzTxM2uYJ6NmKg4BKF9aF9Z30rFko1IHEnV+ZCOlf4PWWdfSvcFOvk?=
+ =?us-ascii?Q?WFPxk0B8M+HYNDuhFvdlNlMkrEFlkdjKr/cXER7Ouwv5Dr0s0SXuF/CRcSP4?=
+ =?us-ascii?Q?bccOmmkipC61xPayfhz8Booq6m1cDa7XkHdYMOgNzQPRgrAVueN96j17sYqt?=
+ =?us-ascii?Q?UDDrIlmbXRJD35mtcZnENoi+jQ2XhJd+owH/suduUN8GWOYKAXSQuJeNijOq?=
+ =?us-ascii?Q?LbVQyHgOnfdhb7fvq/fRG8r/b/v9Db417H7DTaCKbsVmkgloxzJwDRWU9rth?=
+ =?us-ascii?Q?DNPou23Qu7K7FjeGBZcvWhdaxLM9dYTRyfAvrKfyGTjakFTWrxDz3BBGy5pW?=
+ =?us-ascii?Q?5J/QyZmIMoHbRa1czfqoOckcjWoEXUW1OkFaohB3gfHDlcsU+4Cydnio0/Sl?=
+ =?us-ascii?Q?9LnwV/A1xH0g4t4nocOLSoc0tqFrWU1fFMCl4/iollIvTBfH8+NkwMh8x3mZ?=
+ =?us-ascii?Q?hDQ7QvgjGgA7aMC9xlyIJAX8SlFq1LZ2khvSdP5SYSs1o/WZudMhGQ=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SJ4PPFEA6F74CA2.namprd18.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016)(7053199007)(38070700018); DIR:OUT;
+ SFP:1102; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?0ETTDc/Tfi7noEl2ILELxfW4NvWZL+Vc8NV4KNkw7a1LLhcvg7APhsqXEVVw?=
+ =?us-ascii?Q?bRMpdKVwvesnEg0oVGf/0TqZYRm5fdU3SArmBtoD8iTjMuWIjtgngrxb/bE/?=
+ =?us-ascii?Q?TjcffG1v0FiGdZXP/fa4n9hyZuicCwKEVXt4wNY8dg6AOiBJy2WCqA17uwr0?=
+ =?us-ascii?Q?JX12uBBCQs7FeOAPTIhcmQC599HIPj46sO0s+OWTqrW86a7g7G6/jtamFpSn?=
+ =?us-ascii?Q?Bd6gnuY+FfqvoFQevE1DYdgJEXDZk1JfiFjobtWqCo1cZSXfrYJt9hd4TGdK?=
+ =?us-ascii?Q?/pa9wya2LUACqJr0StYuDqektKSCfG4pSk9O6FY4TQ8BwMbP3bvt9rdQ8nqP?=
+ =?us-ascii?Q?PqAYRz6A3LBSC4T/ZrDO/95Ep/a6Zh3qLfQJcdzLui7Ir8TC0Ut+711MrwRn?=
+ =?us-ascii?Q?8ONiaDnwqSTEFlDVBBn4SUTJlcaYgf+S2HMKqJCOhXM/oXW/NtgIR9/iqFTp?=
+ =?us-ascii?Q?NqI58U4h16B6Agh8rVQWmfNKLJZDrK3J6zQ4sYxDr+4E7laatoJXouT616In?=
+ =?us-ascii?Q?pOM8R6hXUoX2IGCTjDOQCUWmSgCTy/DyEl3L0eq1KGpuKwNhKUc0JbwK51Ru?=
+ =?us-ascii?Q?qPQ0iYl5vb3kbhb7rqt9lnea4lk9lu7t5kGGZoDrvjSfEgj+oZhavDdvWvgg?=
+ =?us-ascii?Q?i/JQDv283g2P832PnFSyaq+S1iz0jtYgDHafCFVuEHtbTHRHkBljbT8pZcbn?=
+ =?us-ascii?Q?aDH8/nNPxeYHxlsPm3nBOVnV4/3duPCfSijCVzwn2IFE/250s4HLsWzaBGvA?=
+ =?us-ascii?Q?N9TK39hxQJxucOWkokDNfuJ8z+mWhstz0SRbCjAHwpRu2THnO4Q+Lq4E5ui4?=
+ =?us-ascii?Q?5jFntDkKMYDlwMQ6SS/txz+3HumkYJe145tiQzWHUeFdCoFyeRLZYFmUePi3?=
+ =?us-ascii?Q?X9O+ghQURP4G4qysw+m4OVbPOI01Uwjc/gjNHBjRbn3VVYygaT+9eWC1J8sJ?=
+ =?us-ascii?Q?gmLmPbZMSPu7YxggaEvNdD2OkNoX/oZVKmWFJGVLmqH3phvcP0+X6G8aNgwj?=
+ =?us-ascii?Q?bV2bbXvy2kWVP246TpiQvNoner0n+hbIKindlPp81PBWiZhuQcGhvl/ez61G?=
+ =?us-ascii?Q?xsguzxB/imp6KfYa0Pd6qHAFk5jiDrpE2bIBVNl3wAtLHkhWUusGwLrLjuf7?=
+ =?us-ascii?Q?JGjSF4rova3H9Us1ETdAP65UgilZXdLtgGChMx6DW0h9HwJl6CTfij63BmSz?=
+ =?us-ascii?Q?hf8LPFPocIZ1RPiYJ3tI93GWchhky7R6iu4e2AxEQqOvHV9PZS94vn/ju72j?=
+ =?us-ascii?Q?5fVY5XmiaFRrg0cNvNycO9mYegBVTI9Kcpll7q/1SByhT19KGMKIfATbLQzj?=
+ =?us-ascii?Q?5HmSZH07rGlMOdgVhOHx6I1S3upp/xnZle2h8mWkeGwoRTAhTCfQpapbNQRk?=
+ =?us-ascii?Q?gR8iYqDcBykqyVQh5/Nu6DbYQy0fTIQJRyWwphq4ys1E1g6/ZX62qKCPGYOc?=
+ =?us-ascii?Q?BwkhDbjfo/59fSFToNkczm5n3k5Wsz8cjB+7FGUU4O0DHcfi5NssrM14Qmvq?=
+ =?us-ascii?Q?0Vy+FBAU7c3BMeMjoWS8Fgs10xLE5QDMObtchqFUpyY4pb3vKcfgbkLXo8iF?=
+ =?us-ascii?Q?IyPj+oHtq79QrHYFjEjUYxvJboxTg43mkhzufT34?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA4PR11MB9204:EE_|LV4PR11MB9514:EE_
-X-MS-Office365-Filtering-Correlation-Id: 539442d1-2b38-40bd-00d3-08ddc2bfa017
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?bmpwclVJc1VEako0SkRVL24rTnQrd05uT29vemFKcEVKQlRXNkZ0bUc1d2k3?=
- =?utf-8?B?cnpoVFVzWU5HbVV6dHQxakFqWi90eklxZCs5S3VDVGlCbW9pWUdDZTZIWlFD?=
- =?utf-8?B?Nnp5ZnByRTYyTUhiaVl6NllvRm1mbkpDUmdEZ3BBQ2g0NktzOTczdXY2cFh6?=
- =?utf-8?B?eTJhbDJ2UmdiM2pKVm5hckVYREw2N1BRUFVEb3AybERGRXNrWlRxRXU5MmJ3?=
- =?utf-8?B?a2o4S0xMOGxrd3E4amtGdG9RaU1BTmg0aFhoSFNSRnhmMGo1TnBoUXYrUkVO?=
- =?utf-8?B?c1BuWWU0VzBJOFd1dTErS3ZMZE1JVlFkNjhiV1FUSk5YQklzdjQ0YWUydHFV?=
- =?utf-8?B?OFFrQVhTazRmYjdOSnFWTUlTOVNNNi9VN0JjMTB6NkhJdkFna2R4QnZFWEdQ?=
- =?utf-8?B?b2RtdTZNRXcxR2tMM1o5VythOWNadlNERkl6TTYzK3NkOGR3L045b1JrU0No?=
- =?utf-8?B?Zmg4L1g2RDFLcE5ZWGJMYzZpNGRSTWU3R29XeHc0eTRWTStMNkJObmpabTY1?=
- =?utf-8?B?MWhRdkZodDdlVnUwUGpPalVjb2hvY1FJUmtpbTR2dTcvdnJaZit0RHlEa2Ez?=
- =?utf-8?B?SmMvMlcxU0VOTUUwamtaZnQ3Tjk5TXo4MlZucTlWTFBKcWpsT1ltbjVScVdi?=
- =?utf-8?B?VG04UUhXeWVQOHcrNmc5aTVOVmpMaVZudUE2WVRwT3NKMXZBSXRJaWlWNmU4?=
- =?utf-8?B?QnVxOVR2V3lYd3Z1SlJVcWJtVWt1M2tqM1RxMSs3SmFYdmNuVkdKL2dqNlNk?=
- =?utf-8?B?WWlPdjhaMXhHaFdUVjJsMzNqaThaYWpsaXd0RXdyMlpVNDJXU3l4VS9Oc0ov?=
- =?utf-8?B?UWNFRE5MMWE4bU90bS93eERVd3kzbEJvVVFpbnZHTXR6N2toVUw3VkI4OGNa?=
- =?utf-8?B?eldJYkp6ZkE3TE44citubFpwK01jRDVudGJ6dHNwZGYwdmY2S2U0YXFRaUc4?=
- =?utf-8?B?YkpBK3ZYZWZ4NWZSYzIreW5la2RmaXU0Y1drREJGR2lNSDRiSFNmd3J5K3dH?=
- =?utf-8?B?MVR6M1VOM201REpiOVY4ckwzMFFaNkhCME1iSjV4UTdJOGJyZFpmUy8xNjhJ?=
- =?utf-8?B?cnBPZ0gvUU9ZSWlLU2dRemQ3aHV6ZzFJQkFkZCtJWUNJN002T2xxamxxdXRZ?=
- =?utf-8?B?TlNIcTcxL2VKYTJ1dkR3SEhTazMvOEo0a2Y0dGYrckk2bnlndktOeXdxcGw0?=
- =?utf-8?B?NlBNL0RUK3RLNFdDRjNTckdUc1ZDWVp3RUlKemt4amtTNmN0NW95enhHaGZO?=
- =?utf-8?B?N0s0emRYYlVtMCtYSVNnSmdMTDNRZlRqSjdDN2x4bTNQYUlENDkwVkJVQmJI?=
- =?utf-8?B?cTdNK2JCd0NsWkRLaDlZaDBaL0F5U09uMFFNNzE2ZkIzc1hMd2lzN3JYREdF?=
- =?utf-8?B?WjJ0T3NjNEtxdThncW5IU09KVHplbFIwaGFjVCt5bTVqZHRMQ3hqTXZNWFV0?=
- =?utf-8?B?ZDZLMDk2T0cwcU9Fa01kQjhRZERGOFREZnNyUWU1dExxT1NJYi9sUlpZeEl2?=
- =?utf-8?B?WTk5RnpiekpqRmxOL2RmSVFXTjRUT1M0Y1NkZmFOenplWFZPOHJWWW81ZUxy?=
- =?utf-8?B?T3lOcVRwa1dlelN6WkdCU3V5c3RtVzlLa1M3bXJ6VjRSUjlMVXFCS3RVeUNP?=
- =?utf-8?B?Ny84Z0c2S2xTMkFVT3ZVVW9UU09kdXgwVHdVc0p5dkNqaUNPSEk1RzRESXl5?=
- =?utf-8?B?Mk91Y2owTmZNZ1Bycnc3VVlLZTRhdGZEbGluNzFJK1NzTGdFY3RjSzNDWGhw?=
- =?utf-8?B?UFh3VmhpQkFpWjFJUWUwYXlJV2sxVFdzRWhjZUpKRUJvNStvS08yWk1SQk9T?=
- =?utf-8?B?ckRFdFNoeEtZZnBUTW5BZ0llc2w4RXZ0WWJOVlRXbnNVMzR0OUpjMDhiT1Fk?=
- =?utf-8?B?NzRSOG1ObUF2MmhjSm1VY0VnNVlYQTdJNzZodENCTjJSSkMzTjc1NTgyQ3l5?=
- =?utf-8?Q?STQAA8uC/ZA=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:IA4PR11MB9204.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Y09YR2xGZWZGMlcxMHdjTTZmUjZseEpUMy93RGlUSmtIMVE1aFJvc1dOUVdx?=
- =?utf-8?B?L2RJcXpUckVNdDY3VCtnaEo2QVJ1b1gxeHdpZ2hNMkdyZ1p5eGE4ajlLbUpR?=
- =?utf-8?B?eHdMcE9reE1NaUtoREJuS3VzbVR0KzFqOFZVUDI2Yk9TU1RONHpzd2xnbVBC?=
- =?utf-8?B?clkyNWN4SXVMK09yOUZIT1Zpd2cyRVFlRW14dGhONmJUaE00ZEpIY0g4aHEx?=
- =?utf-8?B?L3pCRDFOR0hUSFFoRllYODRocTNTd3FUbHkreFowT3NYRUt3MFNXem5IK0h3?=
- =?utf-8?B?b1h0SjFSMUhXNjhhQmQ1VVUzblNUZGk5cTdjcDNySXdIT3orNkI3cU0zeDlT?=
- =?utf-8?B?RS9CeTVibHRBM1dYcnYySWdNN2xBMHM1eitUNmJnbFlWYXE3S3ZibXJYYWZJ?=
- =?utf-8?B?eTJOaEJqcW4wU0x6MitaWGNIc2pTaG1vSFBRd2Z4R21jUWNXRWRTRVFUcDJs?=
- =?utf-8?B?cm0xTFpTaWdZY0lFaXRJWHg0UTNLREhMdXJLS1hiUWRPOVYxU0todXdHWEZR?=
- =?utf-8?B?QmVpZjh0VG95U29EVXJIQ3ZJa0MwNUFXc09jdUV5RFhkN29iWjliek9nTUdV?=
- =?utf-8?B?NUxtSEJLQng5ZFVWU0ZTMVpLVlFIcUVDTFVtSjBNUUF1VnJhblR6WnNIM3Az?=
- =?utf-8?B?VHkxU3krdm9hcWVzUFlsMjMyZldnbndRa0ErbHc4UnErYVZnM1VUT3RGR3Uy?=
- =?utf-8?B?a0VlVkNzVTNxYTFVZTFLb2w2aEY1R2k2YVlPTklyMjdzb0R0c05iSDlaaitm?=
- =?utf-8?B?ZnJJM1JEV2V3ei9FTFJnUHUrYllseGVxaGh3NmFJelNPK3ZaN3g3cFcrM3Jr?=
- =?utf-8?B?eHJEY1pHRi93c1ZQaW1GNXpQY1hydmQ5SlJRTVRyWEphRHNQS0tRWUdhRDE5?=
- =?utf-8?B?TGVkUmQrWTNoREF3SDhSdzJGT1hzWGtJT0FYbEw4NG1xSTNXbTN2ckJqV3du?=
- =?utf-8?B?NXFXMGxOMFg5Sm9UWUY2VVdWRk52VTV2OXl6amE1MFNCY0o1NitnSFk1aVJD?=
- =?utf-8?B?Zk95U1NMOGJsWlhralg0Mm1CVUVsK0xmZkltR2V2Wm5MWVlyTmRGODFUaHIr?=
- =?utf-8?B?S0RyV1VTNWR2bTNWQmRSclg5bHRxWWdKVzgxZmhuSGE4blg3OXB6enF4ZDVI?=
- =?utf-8?B?OU9NTjB1TWJmUWR6MktwTnRVTkdNbFB3Uk8xT1M2V0FNMlFPaWJ2YjVIMzE0?=
- =?utf-8?B?Rm5kK0ZwbmxUMVpIMUl5dGdiYjZseW42TGNXNmkyMGk0ZWdkZHp5ODYxN3Iz?=
- =?utf-8?B?MHJRTjhyMWtmMG9KODB0RHgyaE12N1VZaklZRTFBK3lzZHhGSmVDcDVaME52?=
- =?utf-8?B?RnNHajJZaW1FV3Nvc1lIZXlZWXNFYWJQT0R4VmVQSDFQNUpKZGU1bXZGTG1W?=
- =?utf-8?B?QW56VVNtKzlGdDFOaHRGSXBLSW5YUEo0bk02OUVITzl1cXlFczBSSUJKZktU?=
- =?utf-8?B?SnhHejJkVmpnRTBkZHd3WG45NWdETUlHL3dYL0RYZWtXdXpsMklNclZWbHdZ?=
- =?utf-8?B?UE1mTUtxajFBSVJvYy9QTzJ2dG8xdW9KZmg1d1IwcE14SURaR3pvbTlxc2c1?=
- =?utf-8?B?MGJRM1M2NjBqYkdJSmR6VFNSTG56NVdrTGxIdlVTYVpPZ2tzL0owUkcrTG9q?=
- =?utf-8?B?Nmx3TDY1dnFWbVAvZHNZU21OUjR3bitoSjVpbUlad2R0bitzd2JqWTVUdWIy?=
- =?utf-8?B?OXNVY1A4RzhBUERTdHdMTE9FYzgyeC9rbTdDV3BOa0VBbk9rSXdEMTMwUzIz?=
- =?utf-8?B?M2tXbW0weC9MbkdqMmVhcGpua1pjYVBpeitWcGs4eHBGc0N6ckkwdjAxbS9q?=
- =?utf-8?B?T0IrRE9BUVQ0dmgyRkd2QWJWTDNCU3U4Ymx6QklXZkFFZThQWmRGNWZhT1BH?=
- =?utf-8?B?TklaQ0RxNnFKOW00VzVHcXVMR2RGKzJHcmFpL0hOZE9jQ3U0ZDdRb2hZTUhV?=
- =?utf-8?B?SDByOTJqRTFNQnR2dDM1Y1Y0YUttTUlqRGxnNC9hZTFDQ1ozSTUwcDdnb2Nh?=
- =?utf-8?B?aEhGdVJOaHFOTFRKK0tXTytQOExPY1hZTUl5dUFrQ2ptNmtkdEVoRDZOVjRI?=
- =?utf-8?B?NjZVYmlrV0YwU1FwLzVCNkdkZEtGMzhCMjFqSGNMSWszcHpFaWo0bWovc1k3?=
- =?utf-8?B?WURaUEgybXBFWDNRTE56V3Npam1iN3pZVnBGN01LaHhlNXpVUkV1T3M3b0xj?=
- =?utf-8?B?blE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 539442d1-2b38-40bd-00d3-08ddc2bfa017
-X-MS-Exchange-CrossTenant-AuthSource: IA4PR11MB9204.namprd11.prod.outlook.com
+X-OriginatorOrg: marvell.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2025 10:17:23.8746 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2DPQQjnHdVM3pqbj5jP93+vPVFlbObNUepnY1Sw/6yRHQB8aJVgNyuKhOSZXKM2j5Aj9cSFDkBMTPVGMDZF4JjzRZ5mmURZAqzXJAVs+cP4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV4PR11MB9514
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-AuthSource: SJ4PPFEA6F74CA2.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f9887c2d-d3fc-419a-98b8-08ddc2c1aea1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jul 2025 10:32:07.0716 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: wGZLXY2XrSsGnabWxy+YK0ciFWLfT1WgYvhPpMXZMSyVVFiH6wiPVyjWyEkU5NRz9rWn4xLZX4btCwrOn7l0EA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR18MB3514
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzE0MDA2MSBTYWx0ZWRfX7cjR2G0ISvcj
+ vaE0LfOwA8NudANv0uKU3mXpkO6FogcOq5IR/yUDuCcpnUlpMFWIrb2qc4SboJ1q/04zyoSqEIU
+ sKfWGIiYdxb1+3ZSYsGqXBcpZbP1wSt1TMcZ7IYgRQQFJgh/B07JpbAU9T5ArfbvsaBAhjM0iuh
+ d4jFqA2kfH42FZorkl4yNOKKdeN3ZHVCGIN//W9n8yOO5uNOaapnC8ve0gu04MSyvzpsjpaZ6Qf
+ zhrA6cFXwRQj8zTCLBbWjhgo+rR5g6h2ARBupRBN9PLw+O43tXEfQlsc6F0fBXhnwgd535tz8Vt
+ /qbuMhDTFj2PCS5/VDm8gcmiXA8rLKOs+0p/Z8WgwU6JV/La/Ox5W+Vemc10aCuUMPH7FQlvC5l
+ eN6sCU1opt62XLvfQxfcPmBDa+7wm30XFsXEptWsmlmseULkoPJABz6FL7ZKAKOkvGlhiR/q
+X-Authority-Analysis: v=2.4 cv=P6M6hjAu c=1 sm=1 tr=0 ts=6874dcab cx=c_pps
+ a=UN2V1A1b7VmuLnaSqJaWyw==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=Wb1JkmetP80A:10 a=-AAbraWEqlQA:10 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8
+ a=i0EeH86SAAAA:8 a=QyXUC8HyAAAA:8 a=n02bokGJAAAA:8 a=bt5KbKNvAAAA:8
+ a=XPMsIyPJAxqLADsJhmgA:9 a=CjuIK1q_8ugA:10 a=OBjm3rFKGHvpk9ecZwUJ:22
+ a=YjdVzJdQTyZRADMV7wFX:22
+ a=rszdq1ld3peujIA30KyE:22 a=a-zEBD5cKgE7DNtTSb7C:22
+X-Proofpoint-GUID: ELWtwPyCVX5Mv7Je16Yaa5yNr3ZteOGp
+X-Proofpoint-ORIG-GUID: ELWtwPyCVX5Mv7Je16Yaa5yNr3ZteOGp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-14_01,2025-07-14_01,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -189,44 +173,78 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Vamsi,
+Hi Feng,
 
-Could you please tell us more about usecases for this feature?
+Kindly review below.
 
-Thanks!
+Regards
+Vamsi
 
-On 7/10/2025 9:51 AM, Vamsi Krishna wrote:
-> From: Vamsi Attunuru <vattunuru@marvell.com>
+>-----Original Message-----
+>From: Vamsi Krishna Attunuru <vattunuru@marvell.com>
+>Sent: Friday, July 11, 2025 8:35 PM
+>To: Vamsi Krishna Attunuru <vattunuru@marvell.com>; dev@dpdk.org;
+>fengchengwen@huawei.com; Pavan Nikhilesh Bhagavatula
+><pbhagavatula@marvell.com>; kevin.laatz@intel.com;
+>bruce.richardson@intel.com; mb@smartsharesystems.com
+>Cc: Jerin Jacob <jerinj@marvell.com>; thomas@monjalon.net
+>Subject: RE: [PATCH v0 1/1] doc: announce inter-device DMA capability
+>support in dmadev
 >
-> Modern DMA hardware supports data transfer between multiple
-> DMA devices, enabling data communication across isolated domains or
-> containers. To facilitate this, the ``dmadev`` library requires changes
-> to allow devices to register with or unregisters from DMA groups for
-> inter-device communication. This feature is planned for inclusion
-> in DPDK 25.11.
+>Hi,
 >
-> Signed-off-by: Vamsi Attunuru <vattunuru@marvell.com>
-> ---
->   doc/guides/rel_notes/deprecation.rst | 7 +++++++
->   1 file changed, 7 insertions(+)
+>Gentle ping for reviews.
 >
-> diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
-> index e2d4125308..46836244dd 100644
-> --- a/doc/guides/rel_notes/deprecation.rst
-> +++ b/doc/guides/rel_notes/deprecation.rst
-> @@ -152,3 +152,10 @@ Deprecation Notices
->   * bus/vmbus: Starting DPDK 25.11, all the vmbus API defined in
->     ``drivers/bus/vmbus/rte_bus_vmbus.h`` will become internal to DPDK.
->     Those API functions are used internally by DPDK core and netvsc PMD.
-> +
-> +* dmadev: a new capability flag ``RTE_DMA_CAPA_INTER_DEV`` will be added
-> +  to advertise DMA device's inter-device DMA copy capability. To enable
-> +  this functionality, a few dmadev APIs will be added to configure the DMA
-> +  access groups, facilitating coordinated data communication between devices.
-> +  A new ``dev_idx`` field will be added to the ``struct rte_dma_vchan_conf``
-> +  structure to configure a vchan for data transfers between any two DMA devices.
-
--- 
-Regards,
-Vladimir
+>>-----Original Message-----
+>>From: Vamsi Krishna <vattunuru@marvell.com>
+>>Sent: Thursday, July 10, 2025 2:21 PM
+>>To: dev@dpdk.org; fengchengwen@huawei.com; Pavan Nikhilesh
+>Bhagavatula
+>><pbhagavatula@marvell.com>; kevin.laatz@intel.com;
+>>bruce.richardson@intel.com; mb@smartsharesystems.com
+>>Cc: Jerin Jacob <jerinj@marvell.com>; thomas@monjalon.net; Vamsi
+>>Krishna Attunuru <vattunuru@marvell.com>
+>>Subject: [PATCH v0 1/1] doc: announce inter-device DMA capability
+>>support in dmadev
+>>
+>>From: Vamsi Attunuru <vattunuru@marvell.com>
+>>
+>>Modern DMA hardware supports data transfer between multiple DMA
+>>devices, enabling data communication across isolated domains or container=
+s.
+>>To facilitate this, the ``dmadev`` library requires changes to allow
+>>devices to register with or unregisters from DMA groups for inter-device
+>communication.
+>>This feature is planned for inclusion in DPDK 25.11.
+>>
+>>Signed-off-by: Vamsi Attunuru <vattunuru@marvell.com>
+>>---
+>> doc/guides/rel_notes/deprecation.rst | 7 +++++++
+>> 1 file changed, 7 insertions(+)
+>>
+>>diff --git a/doc/guides/rel_notes/deprecation.rst
+>>b/doc/guides/rel_notes/deprecation.rst
+>>index e2d4125308..46836244dd 100644
+>>--- a/doc/guides/rel_notes/deprecation.rst
+>>+++ b/doc/guides/rel_notes/deprecation.rst
+>>@@ -152,3 +152,10 @@ Deprecation Notices
+>> * bus/vmbus: Starting DPDK 25.11, all the vmbus API defined in
+>>   ``drivers/bus/vmbus/rte_bus_vmbus.h`` will become internal to DPDK.
+>>   Those API functions are used internally by DPDK core and netvsc PMD.
+>>+
+>>+* dmadev: a new capability flag ``RTE_DMA_CAPA_INTER_DEV`` will be
+>>+added
+>>+  to advertise DMA device's inter-device DMA copy capability. To
+>>+enable
+>>+  this functionality, a few dmadev APIs will be added to configure the
+>>+DMA
+>>+  access groups, facilitating coordinated data communication between
+>>devices.
+>>+  A new ``dev_idx`` field will be added to the ``struct
+>>+rte_dma_vchan_conf``
+>>+  structure to configure a vchan for data transfers between any two
+>>+DMA
+>>devices.
+>>--
+>>2.34.1
 
