@@ -2,62 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69DB6C83F17
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Jul 2025 20:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1929C83F1A
+	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Jul 2025 20:41:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8EC23402EA;
-	Mon, 14 Jul 2025 22:09:24 +0200 (CEST)
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com
- [209.85.128.177])
- by mails.dpdk.org (Postfix) with ESMTP id E67444028C
- for <dev@dpdk.org>; Mon, 14 Jul 2025 22:09:22 +0200 (CEST)
-Received: by mail-yw1-f177.google.com with SMTP id
- 00721157ae682-717a2ef8943so47027747b3.1
- for <dev@dpdk.org>; Mon, 14 Jul 2025 13:09:22 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7F44F4021E;
+	Mon, 14 Jul 2025 22:41:06 +0200 (CEST)
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com
+ [209.85.222.176])
+ by mails.dpdk.org (Postfix) with ESMTP id E7AE64013F
+ for <dev@dpdk.org>; Mon, 14 Jul 2025 22:41:04 +0200 (CEST)
+Received: by mail-qk1-f176.google.com with SMTP id
+ af79cd13be357-7d3f192a64eso469036285a.2
+ for <dev@dpdk.org>; Mon, 14 Jul 2025 13:41:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1752523762; x=1753128562; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752525664;
+ x=1753130464; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=EvrPCs3TgX7Y2Wbcc/rvWvVECNcEC/1vWKicwHeQQq8=;
- b=L75SMGY7p/sQWlvL5rpI2rKcsuKF/kDEOWM8bIfHJv5lbZQrQCdMEyY66ph68OoZfy
- 0VROsS8SqpyTX8HolBFFbWG5xEK9VnY0B3DesEexLtQGAIQHRhjdkFC0+WiPjoe9ka5N
- 8B8HQ6BnDdZPfutp6ZMLqZ53pqi84APN6YZRQ=
+ bh=MvHw61IBgMiSymwkNe8Rfj1DyCT5FlxNcGOYNdu7BWo=;
+ b=PgJYVL70WlocHsm2KH7cQRCW9FrIkmnql2TYf3BKqiHtdx89+wJTWio7u+gUFu6buJ
+ pSJ04QWFIOx0y4rTbG9AvkxpEMe+B1udMOllPCjhdpwfTT5VvO6itRAPKGRsLmXgALKS
+ 3iUKQ4WgS+NpsN2IQVlMWm1tpkBv6vMWy7zdD3i4x4vaEzgxsYGOS2Ssoh72W3oTWSq3
+ TwP5h3+nmWk/D8uPxw9cOXCxxt9D6vNXn5GGs1rSYkA5tAHwlgSKCc4R2AHMLhh6wBR/
+ uGE8Ve4jJfWsn6OwMpG3tPwiGjxMT3WvkHh3DyveouGo9mHKXtYEDEXzR1so+lEDoo3D
+ rdmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752523762; x=1753128562;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ d=1e100.net; s=20230601; t=1752525664; x=1753130464;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=EvrPCs3TgX7Y2Wbcc/rvWvVECNcEC/1vWKicwHeQQq8=;
- b=jIGLSFPrL9BHuGxkvMTsKQPdXF8bTYwedh9A3IiY+lKQEXB1brtkVSfgkh98OlYQl+
- VPbgmdiJDDRcPtD/BqJgUh9G+YTI0e+FmrvNc/hDW/CirUjoEkl0oIrkL2U2PAmVDedz
- 1HL1Nyu98gDB23R0paK0e5VvocwpNF+519uLJfFs5IjudfJzJzNXc5eyp1yreuYvDVyk
- s0eUqKwPXYsZNJntIzIHJHbPfcIjWVaCqotwPS6Wk4jMH2Tb1ED9GZ0mYjzR7AAHm1NJ
- UdO1LQ8d78eyN5akvoC7vaz1YMG7R5AMj/qrvu7S3w7HHVOQ2TYZbg9VDANQo2qgtpXW
- 0CKg==
-X-Gm-Message-State: AOJu0Yym7A1xcDhNTiQeb1ciJlTBNVhwXggh8pP7yFCrgRlt+h3tLuag
- KOcumUEI/g43x1Cm1TkwXIJWUUgCZpVfMnvo8nYORLL8oEX3KgvQKLBc+h4bRegSZ3QtLnyGDJJ
- SrYwdHu1NwQqYbQOsnmOz0GLtgmqwf+6gik7Bcwhb0g==
-X-Gm-Gg: ASbGncudOT9yywZ3xq4LII/y20iY5WgAsrC+jcQuEMM1LP3bSW4FzZN26WfkdLuxDLH
- vNZj26nGDYmwg3NVuGYaz1n0p3qRyHNpJAFYqV4KMGl1qZY6NW7roAUaPzw428MWbne74KF9rwC
- ufvCzf1kCoF2A/d/diLRC2TAOcmY1iPrNb8Tr5USeHqOM2HFBRw48+2NcfAzIIQwnqO7ciBwEAE
- nH5vV+Rh0YeAqkQG7pEuhE=
-X-Google-Smtp-Source: AGHT+IFq6/0XRiSqQGxm7ziiaZzswd4gsjexeN96qQRBYxRT109wusOL6QJwFktsVSuhi4Y0hIhl6T+cWV94ogy5HoQ=
-X-Received: by 2002:a05:690c:6a0d:b0:70c:bd93:4519 with SMTP id
- 00721157ae682-71824c16422mr3898287b3.21.1752523761833; Mon, 14 Jul 2025
- 13:09:21 -0700 (PDT)
+ bh=MvHw61IBgMiSymwkNe8Rfj1DyCT5FlxNcGOYNdu7BWo=;
+ b=EVxYwQENIfysGFFXPJOzUHlFmJAiznEuNu3AKZ5DXskonPo/Oh2VQE8DZK5+P+/o3w
+ t4CwTXwa7yQi53IaXmt1S+5ekJIqaVdhDxozoxxhEDpenbmirwHkIEbwz39KTA5Fqukx
+ sFWNyABtdx6DIo7oVzjaljlfgLIlc0eOpGMc0nk2yqRjXNtZhoX4VtIaII5f2Sf9cax6
+ ZC/kFphJ1VfquPC5naPuSLsutcBWPdBLkEijRZtQZ+PNUl6GB0GuEw5UqjukBkqaA5Nc
+ lpcv5pZsb3TOV41TFxUcOVe9gggusYOkZJ9+99GuilY4aAvz5Q0Q+UPUf2KPuzTyeCAe
+ Mfow==
+X-Gm-Message-State: AOJu0YyjceFBzQnHnk6mV42dO15W2KvgPfKLrZt2E83f5N2t0fKfmvUb
+ 6eiB1xCiEapwRa4Ya8tXpQWhLDuwntp2FsPlAk4As6TBAICEiCCmmtn0yTkKMzUECM0=
+X-Gm-Gg: ASbGncuPLFTdrBDXMWFqU9ivWFMWoes6jrCrLQefXkL4yBJX9vzsaL3fqmc6Ry1GWRY
+ ntY3fpyaJCNV4ozUbcjj9+aBAqs6sjfygPZSmHZ6w9I/QZWfqySAY0A9iBX0nwVza1s1vngPVNc
+ 1/XBa50XVewLYQxwkF3TtNZ1QmnPd1r/+XEa9r/Wh6Jwkm3m7LDU4yKWBm2qM0UouGfqCxKrSVb
+ 0wVk2uz9gWSuOwzO5YMJyxoA9C+tplf3jsuvXt39pzmOtf8wNIZSoo1AdzjsEaglYaZk2a45/Ri
+ 4etIk6Lwzsv8fxAH0fJWa6mdKhrOlQTm2k8PggfMZPWsVkOQNzSsIyGGrQTUxXeoNgjFGh2XMwg
+ 4FGFa5E9z4YolWmfSk5VOhYh//QQTWPqCVMBQlFkXs5UV+hdye2KXQjiVlxkCXFYRyPAwyQs76d
+ Q=
+X-Google-Smtp-Source: AGHT+IGzZj8XX15LAKVjxWCPNk8nHjt7JtCkvypr1As3heMjaWLXuK3yZPB0FRKRYV4w9vnabaVFKA==
+X-Received: by 2002:a05:620a:d48:b0:7e0:6aa7:386 with SMTP id
+ af79cd13be357-7e06ab649b8mr1178685885a.19.1752525663944; 
+ Mon, 14 Jul 2025 13:41:03 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ af79cd13be357-7dcde32bfefsm550491385a.53.2025.07.14.13.41.03
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 14 Jul 2025 13:41:03 -0700 (PDT)
+Date: Mon, 14 Jul 2025 13:41:00 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Pravin Pathak <pravin.pathak@intel.com>
+Cc: dev@dpdk.org, jerinj@marvell.com, bruce.richardson@intel.com
+Subject: Re: [PATCH v1] mailmap: add new email to DPDK
+Message-ID: <20250714134100.7c1cdef3@hermes.local>
+In-Reply-To: <20250714191141.1243467-1-pravin.pathak@intel.com>
+References: <20250714191141.1243467-1-pravin.pathak@intel.com>
 MIME-Version: 1.0
-References: <20250714133014.44597-1-bruce.richardson@intel.com>
-In-Reply-To: <20250714133014.44597-1-bruce.richardson@intel.com>
-From: Dean Marx <dmarx@iol.unh.edu>
-Date: Mon, 14 Jul 2025 16:09:11 -0400
-X-Gm-Features: Ac12FXxB8Ce3u4gj68PKTCyi8v3aAFKI4G8ISL2S9skuaHChOafToC9TyU_WuD8
-Message-ID: <CABD7UXPVg56UwvmtOsssBwV2HzmgV4ZJZCb=FrnVQKkggtD2+Q@mail.gmail.com>
-Subject: Re: [RFC PATCH] doc: clarify VLAN and QinQ stripping behaviour
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, techboard@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -71,36 +81,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, Jul 14, 2025 at 9:30=E2=80=AFAM Bruce Richardson
-<bruce.richardson@intel.com> wrote:
->
-> The behaviour of VLAN tag stripping Rx offloads is unclear in DPDK, and
-> not very well documented. Even the documentation that does exist appears
-> contradictory.
->
-> For example, the doxygen docs for the mbuf flag
-> RTE_MBUF_F_RX_QINQ_STRIPPED says:
->
->   "If RTE_MBUF_F_RX_QINQ_STRIPPED is set and RTE_MBUF_F_RX_VLAN_STRIPPED
->   is unset, only the outer VLAN is removed from packet data,..."
->
-> but the docs for RTE_MBUF_F_RX_QINQ says:
->
->   "If the flag RTE_MBUF_F_RX_QINQ_STRIPPED is also present, both VLANs
->   headers have been stripped from mbuf data, ..."
->
-> Without a good definition of what the correct behaviour is, it's not
-> possible to assess and ensure conformance across drivers. Update the
-> documentation for NIC features, ethdev and mbuf library to all report
-> the same information: that VLAN strip feature is stripping one flag, and
-> QinQ strip feature is removing two.
+On Mon, 14 Jul 2025 14:11:41 -0500
+Pravin Pathak <pravin.pathak@intel.com> wrote:
 
-I'm working on testing QinQ/VLAN stripping features across PMDs, and
-so far I've found that our Intel devices are capable of QinQ
-stripping, while our Mellanox/Broadcom devices are not. When QinQ
-stripping is enabled on an Intel PMD, the test packet is received with
-its outer VLAN layer stripped, but the inner VLAN layer remains
-intact. Thus, the doxygen example is more accurate for what is
-currently supported. I'm also running some tests on VLAN stripping
-behavior, I'll update this thread with the results once these are
-finished.
+> Adding new mail for DPDK contribution
+> 
+> Signed-off-by: Pravin Pathak <pravin.pathak@intel.com>
+> ---
+>  .mailmap | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/.mailmap b/.mailmap
+> index c7d55c7386..c81e745ce7 100644
+> --- a/.mailmap
+> +++ b/.mailmap
+> @@ -1240,6 +1240,7 @@ Prateek Agarwal <prateekag@cse.iitb.ac.in>
+>  Prathisna Padmasanan <prathisna.padmasanan@intel.com>
+>  Praveen Kaligineedi <pkaligineedi@google.com>
+>  Praveen Shetty <praveen.shetty@intel.com>
+> +Pravin Pathak <pravin.pathak.dev@gmail.com>
+>  Pravin Pathak <pravin.pathak@intel.com>
+>  Prince Takkar <ptakkar@marvell.com>
+>  Priyalee Kushwaha <priyalee.kushwaha@intel.com>
+
+No, that is not how this file works.
+Add additional email to existing entry, not a new line.
