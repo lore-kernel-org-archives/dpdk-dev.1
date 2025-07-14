@@ -2,68 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E584AC83F1A
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Jul 2025 17:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D64D1C83F1A
+	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Jul 2025 17:14:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D17444026B;
-	Mon, 14 Jul 2025 19:13:51 +0200 (CEST)
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com
- [209.85.166.179])
- by mails.dpdk.org (Postfix) with ESMTP id 8331E4021F
- for <dev@dpdk.org>; Mon, 14 Jul 2025 19:13:50 +0200 (CEST)
-Received: by mail-il1-f179.google.com with SMTP id
- e9e14a558f8ab-3df2d8cb8d2so16409275ab.2
- for <dev@dpdk.org>; Mon, 14 Jul 2025 10:13:50 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 49B6D40608;
+	Mon, 14 Jul 2025 19:13:54 +0200 (CEST)
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com
+ [209.85.166.44]) by mails.dpdk.org (Postfix) with ESMTP id EA8AD402E3
+ for <dev@dpdk.org>; Mon, 14 Jul 2025 19:13:51 +0200 (CEST)
+Received: by mail-io1-f44.google.com with SMTP id
+ ca18e2360f4ac-8760d31bd35so171514339f.2
+ for <dev@dpdk.org>; Mon, 14 Jul 2025 10:13:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1752513229; x=1753118029; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1752513231; x=1753118031; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=FMBF9et479OhtNLTftcxEND/6QAV2ayM7K/dkrPNxCQ=;
- b=bpgLwk7D8ho6RbzpaPU3WKYVfvJZQsoS1/EwgYBjwx48a7sqEW41lO/eiPjsr29KxT
- U/9OKFCT6JLB6CA1Y8PkjuLpXglqT1EAE+mIBDDiIZyv8L1loiwfmQyLwzMVIXppNbZN
- kO4Ma/oMcWIkRFzkOHwFdFi3riUnkTbLWP3QQ=
+ bh=4z7tPNBKn3upeSldUstppYeOsVSyiSV88DGQ6JVspXQ=;
+ b=dQWmxGp+uAtoj2K3Eg0JyLJfpLWxPqtbWrUIawqxCeMKb8ThDeYEcq22aqWRExQr8r
+ 1baFyK1EjAMzOObVMVcFAnGTpWPufLcq6CFjiP/K3JKAjMK3vGphYJDZEjqB8i4yFiHA
+ j98VrIjhX1HHq17gZt320D16pBmF4mKKyii6s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752513229; x=1753118029;
+ d=1e100.net; s=20230601; t=1752513231; x=1753118031;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=FMBF9et479OhtNLTftcxEND/6QAV2ayM7K/dkrPNxCQ=;
- b=r3dzZbf7JnGvPhpxaze3dTTD51r2oOkt7BiFBzlm4ocNTzvDeKqZySsof7RY0cKdj+
- ktOIMjdV1BXDt6rFmaSDovDyVMHiljHgomnd8Es6NVyMb3n07YumGlpxY7cusG7d+3/A
- i8pK9YHUWyR1k/7CycYaLHUGXE08k64ho3qQQJbqpTvDYtx4/ES7xont/eyOPWSWBfom
- ZBzgx8VolYedrbj4vV0iXQYVNp5SJgRN3pv95FbXc8eAq0FtMol+WZfNeJPPekpYxFsh
- r0vuEvm0dMvE4UxfrU6ilGwF9JfPORE7oDH63Br0hNa1hb2eMdaMPwbOABmY0x9W+2Cj
- gVcg==
-X-Gm-Message-State: AOJu0YwkRJeXvlMXDErLDZA1AOVQWcavr8YChzc3FvYfYvxk2onLqJSZ
- U8g2Rtr5U/qt/iURvPDBjVddiwa4/FlKPc+GV6+KCmZe+eX9zZQ9t72LzzfbQ57rTYBLYp20dQq
- FOiFc
-X-Gm-Gg: ASbGncu3fOS79I3iTdxHx2Hh+jm0zoVkYGhuzW2kzG0U+kKVTzFxWtR2RGyHhqGtEkS
- 9foLBzEqULXdkz5IzOXM9rRpR54fNbDMwWNNuKHIru+ZCvIxxJFUR6MwGo8SQlmpKeHwRpUVr1f
- MR/lf8n0gXQEBmmAQz2gW8uiEta5UVxF2ahaEYTMrqQmGCJSSZfVcLehUSlZ9hOca1K1u+KOH65
- ZJYsQpwxOHzG49/lrfb6lcjZ5zHLN4nO0MaCB9uccLPhvQ3EuOt8VUDF39EnSSXNfHY2eKTqUua
- x1Kkt9y0JBtAq6T8SecrUYI6s4sQ7eUrBbh/SbGbkM82hmhv1gYJ0w1J4XIK9ztKgaKMcVhPOYe
- 3G7V5H4LQ
-X-Google-Smtp-Source: AGHT+IFtDEVm2eeNEfc5eEQHKSGe29V9VAOSf4g77vLcHIkPD8iur69qsh8CPtRjED7uJmRaTZxi/Q==
-X-Received: by 2002:a05:6e02:1d9a:b0:3dd:cc4f:d85a with SMTP id
- e9e14a558f8ab-3e253286980mr138548045ab.6.1752513229404; 
- Mon, 14 Jul 2025 10:13:49 -0700 (PDT)
+ bh=4z7tPNBKn3upeSldUstppYeOsVSyiSV88DGQ6JVspXQ=;
+ b=EhcHdO3e9PYQjARtZlxKyzX4cBFn7r3nd05LJzH9KBHyA+xkwXJTMn0Els1siYf9Gq
+ /RKXnRNjSWRSGOhuheIx3d4xFS/yMu5tl5c6KaH4XCPdwObPcL6TE2XgjMXlYkel9b2t
+ FFZ2xqhbsnGvJPdgpj5kju3VY1FaY4c363i3LA6gDmyMhVeK0RnBauIXG1BdlQ6FfhWx
+ T60mhyHWVem1YzhusCGum3XWExvQ3Ib/wpmyyKpPakxE/6+CWrP8g6zXMs7mCyreIbp3
+ l+y1ri8CkuIyIy6EPezN0ctURP2DNINUABPZoNCtshukSiyVpxPneuOQZqyNDHPCxONk
+ B4RQ==
+X-Gm-Message-State: AOJu0YxMhxt5sWRfluGLpi9mWwg6j80myMwcj2T0OxgVWwvh3XXW3nI8
+ LMPpab8xDE2brgbAhIbrTfOoifP3Haoz87wMzPe7wXzxd/j9I0iTM33nEUuIh4XTJdI=
+X-Gm-Gg: ASbGncvqiYiPjJKdLAHrXI7llPEEfwyJkOscIjCK5ToO7zv/BcCddCllPnU3mxQpYBm
+ 5vu5ZfyAF+YIO9aPwA7nTSTal+H3eliyzvNP+lsAvfq4EX9iBHAQRqLTMJuU2UXxNga8O7IuN49
+ V9f9qSV0V53EEhaI1HFIV5Qw+HT2uLIt31LMWQ4dlGaY1k7lFci0zjcImpslmX/9mlm7q2N+QHt
+ xyYeFNCJlu6XMvpTL++I1+wABEZ2hI+vfrZPcbTTi58bRKIPS6FZKHQFzlCgQgJnTgAJ4rE25EJ
+ zVrmazkEkhjAXIVnIr3chYuA/jvrbh/UN0plJOilAXvuvY6wkOPRdscBr6HA09Z6j0aTavaRyPF
+ PxLu/YA2t
+X-Google-Smtp-Source: AGHT+IFVHL+zy2Oz0YJm3mXY09G6IlFMMlrJncLNCnnnIQ0pDjo4oOplkrzimtgSUftnuq4nyO+Syw==
+X-Received: by 2002:a05:6602:3f8d:b0:876:19b9:1aaa with SMTP id
+ ca18e2360f4ac-87977fcfe5cmr1375351139f.9.1752513231082; 
+ Mon, 14 Jul 2025 10:13:51 -0700 (PDT)
 Received: from fedora.unh.edu ([2606:4100:3880:1257::100a])
  by smtp.gmail.com with ESMTPSA id
- 8926c6da1cb9f-50556b14167sm2111784173.131.2025.07.14.10.13.48
+ 8926c6da1cb9f-50556b14167sm2111784173.131.2025.07.14.10.13.50
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 14 Jul 2025 10:13:48 -0700 (PDT)
+ Mon, 14 Jul 2025 10:13:50 -0700 (PDT)
 From: Dean Marx <dmarx@iol.unh.edu>
 To: probb@iol.unh.edu, luca.vizzarro@arm.com, yoan.picchi@foss.arm.com,
  Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com
 Cc: dev@dpdk.org,
 	Dean Marx <dmarx@iol.unh.edu>
-Subject: [PATCH v4 1/3] dts: rewrite README
-Date: Mon, 14 Jul 2025 13:13:42 -0400
-Message-ID: <20250714171346.564267-1-dmarx@iol.unh.edu>
+Subject: [PATCH v4 2/3] doc: rephrase terminology in dts.rst
+Date: Mon, 14 Jul 2025 13:13:43 -0400
+Message-ID: <20250714171346.564267-2-dmarx@iol.unh.edu>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250711172534.540416-1-dmarx@iol.unh.edu>
+In-Reply-To: <20250714171346.564267-1-dmarx@iol.unh.edu>
 References: <20250711172534.540416-1-dmarx@iol.unh.edu>
+ <20250714171346.564267-1-dmarx@iol.unh.edu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -79,151 +78,89 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Refactor README to contain only a high level description
-of relevant DTS concepts and a simple getting started guide.
+Rephrase some of the DTS tool/term definitions to be more concise.
+These sections were unnecessarily verbose and can be conveyed
+in a clearer way.
 
 Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
 Reviewed-by: Patrick Robb <probb@iol.unh.edu>
-Reviewed-by: Paul Szczepanek <paul.szczepanek@arm.com>
 ---
- dts/README.md | 115 ++++++++++++++++++++++++--------------------------
- 1 file changed, 55 insertions(+), 60 deletions(-)
+ doc/guides/tools/dts.rst | 37 ++++++++++++-------------------------
+ 1 file changed, 12 insertions(+), 25 deletions(-)
 
-diff --git a/dts/README.md b/dts/README.md
-index 2b3a7f89c5..20b09a4b7e 100644
---- a/dts/README.md
-+++ b/dts/README.md
-@@ -1,67 +1,66 @@
--# DTS Environment
--
--The execution and development environments for DTS are the same,
--a [Docker](https://docs.docker.com/) container defined by our [Dockerfile](./Dockerfile).
--Using a container for the development environment helps with a few things.
--
--1. It helps enforce the boundary between the DTS environment and the TG/SUT,
--   something which caused issues in the past.
--2. It makes creating containers to run DTS inside automated tooling much easier, since
--   they can be based off of a known-working environment that will be updated as DTS is.
--3. It abstracts DTS from the server it is running on. This means that the bare-metal OS
--   can be whatever corporate policy or your personal preferences dictate,
--   and DTS does not have to try to support all distros that are supported by DPDK CI.
--4. It makes automated testing for DTS easier,
--   since new dependencies can be sent in with the patches.
--5. It fixes the issue of undocumented dependencies,
--   where some test suites require Python libraries that are not installed.
--6. Allows everyone to use the same Python version easily,
--   even if they are using a distribution or Windows with out-of-date packages.
--7. Allows you to run the tester on Windows while developing via Docker for Windows.
--
--## Tips for setting up a development environment
--
--### Getting a docker shell
--
--These commands will give you a bash shell inside the container
--with all the Python dependencies installed.
--This will place you inside a Python virtual environment.
--DTS is mounted via a volume, which is essentially a symlink from the host to the container.
--This enables you to edit and run inside the container
--and then delete the container when you are done, keeping your work.
--It is also strongly recommended that you mount your SSH keys into the container
--to allow you to connect to hosts without specifying a password.
--
--#### Start docker container with SSH keys
-+# Description
-+
-+DTS is a testing framework and set of testsuites for end to end testing of DPDK and DPDK
-+enabled hardware. Unlike DPDK's dpdk-test application, which is used for running unit tests,
-+DTS is intended to be used to evaluate real DPDK workloads run over supported hardware. For instance,
-+DTS will control a traffic generator node which will send packets to a system under test node which
-+is running a DPDK application, and evaluate the resulting DPDK application behavior.
-+
-+# Supported Test Node Topologies
-+
-+DTS is a python application which will control a traffic generator node (TG) and system
-+under test node (SUT). The nodes represent a DPDK device (usually a NIC) located on a
-+host. The devices/NICs can be located on two separate servers, or on the same server. If you use
-+the same server for both NICs, install them on separate NUMA domains if possible (this is ideal
-+for performance testing.)
-+
-+- 2 links topology: Represents a topology in which the TG node and SUT node both have two network interfaces
-+which form the TG <-> SUT connection. An example of this would be a dual interface NIC which is the
-+TG node connected to a dual interface NIC which is the SUT node. Interface 0 on TG <-> interface 0
-+on SUT, interface 1 on TG <-> interface 1 on SUT.
-+- 1 link topology: Works, but may result in skips for testsuites which are explicitly decorated with a
-+2 link requirement. Represents a topology in which the TG node and SUT node are connected over
-+a single networking link. An example of this would be two single interface
-+NICs directly connected to each other.
-+
-+# Simple Linux Setup
-+
-+1. On your TG and SUT nodes, add a dedicated user. In this example I will add a dedicated user for DTS.
-+2. Grant passwordless sudo to the dts user, like so:
-+    2a: enter 'visudo' in your terminal
-+    2b: In the visudo text editor, add:
-+        dts   ALL=(ALL:ALL) NOPASSWD:ALL
-+3. DTS uses ssh key auth to control the nodes. Copy your ssh keys to the TG and SUT:
-+    ssh-copy-id dts@{your host}.
-+
-+For additional detail, please refer to [dts.rst](../doc/guides/tools/dts.rst)
-+
-+# DTS Configuration
-+
-+DTS requires two yaml files to be filled out with information about your environment,
-+test_run.yaml and nodes.yaml, which follow the format illustrated in the example files.
-+
-+1. Install Docker on the SUT, and Scapy on the TG.
-+2. Create and fill out a test_run.yaml and nodes.yaml file within your dts
-+    directory, based on the structure from the example config files.
-+3. Run the bash terminal commands below in order to run the DTS container
-+    and start the DTS execution.
+diff --git a/doc/guides/tools/dts.rst b/doc/guides/tools/dts.rst
+index 016dc5e374..8ba855c6fc 100644
+--- a/doc/guides/tools/dts.rst
++++ b/doc/guides/tools/dts.rst
+@@ -1,6 +1,7 @@
+ ..  SPDX-License-Identifier: BSD-3-Clause
+     Copyright(c) 2022-2023 PANTHEON.tech s.r.o.
+     Copyright(c) 2024 Arm Limited
++    Copyright(c) 2025 University of New Hampshire
  
- ```shell
- docker build --target dev -t dpdk-dts .
--docker run -v $(pwd)/..:/dpdk -v /home/dtsuser/.ssh:/root/.ssh:ro -it dpdk-dts bash
-+docker run -v $(pwd)/..:/dpdk -v /home/{name of dts user}/.ssh:/root/.ssh:ro -it dpdk-dts bash
- $ poetry install
--$ poetry shell
-+$ poetry run ./main.py
- ```
+ DPDK Test Suite
+ ===============
+@@ -20,31 +21,22 @@ DTS runtime environment
  
--#### Start docker container without SSH keys
-+These commands will give you a bash shell inside a docker container
-+with all DTS Python dependencies installed.
+ DTS runtime environment node
+   A node where at least one DTS runtime environment is present.
+-  This is the node where we run DTS and from which DTS connects to other nodes.
++  This is the node where we run DTS and from which DTS connects to other
++  nodes.
  
--```shell
--docker build --target dev -t dpdk-dts .
--docker run -v $(pwd)/..:/dpdk -it dpdk-dts bash
--$ poetry install
--$ poetry shell
--```
--
--### Vim/Emacs
--
--Any editor in the Ubuntu repos should be easy to use,
--with Vim and Emacs already installed.
--You can add your normal config files as a volume,
--enabling you to use your preferred settings.
--
--```shell
--docker run -v ${HOME}/.vimrc:/root/.vimrc -v $(pwd)/..:/dpdk -it dpdk-dts bash
--```
-+## Visual Studio Code
+ System under test
+-  An SUT is the combination of DPDK and the hardware we're testing
+-  in conjunction with DPDK (NICs, crypto and other devices).
++  The system which runs a DPDK application on relevant
++  hardware (NIC, accelerator cards, etc) and from which the DPDK behavior is
++  observed for tests.
  
--### Visual Studio Code
-+Usage of VScode devcontainers is NOT required for developing on DTS and running DTS,
-+but provide some small quality of life improvements for the developer. If you
-+want to develop from a devcontainer, see the instructions below:
+ System under test node
+   A node where at least one SUT is present.
  
- VSCode has first-class support for developing with containers.
- You may need to run the non-Docker setup commands in the integrated terminal.
-@@ -75,7 +74,3 @@ Additionally, there is a line in `.devcontainer/devcontainer.json` that, when in
- will mount the SSH keys of the user currently running VSCode into the container for you.
- The `source` on this line can be altered to mount any SSH keys
- on the local machine into the container at the correct location.
+ Traffic generator
+-  A TG is either software or hardware capable of sending packets.
++  Node that sends traffic to the SUT, which can be hardware or software-based.
+ 
+ Traffic generator node
+   A node where at least one TG is present.
+-  In case of hardware traffic generators, the TG and the node are literally the same.
 -
--### Other
 -
--Searching for '$IDE dev containers' will probably lead you in the right direction.
+-In most cases, interchangeably referring to a runtime environment, SUT, TG or the node
+-they're running on (e.g. using SUT and SUT node interchangeably) doesn't cause confusion.
+-There could theoretically be more than of these running on the same node and in that case
+-it's useful to have stricter definitions.
+-An example would be two different traffic generators (such as Trex and Scapy)
+-running on the same node.
+-A different example would be a node containing both a DTS runtime environment
+-and a traffic generator, in which case it's both a DTS runtime environment node and a TG node.
+ 
+ 
+ DTS Environment
+@@ -481,17 +473,12 @@ DTS Developer Tools
+ 
+ There are two tools used in DTS to help with code checking, style and formatting:
+ 
+-* `ruff <https://astral.sh/ruff/>`_
+-
+-  An extremely fast all-in-one linting and formatting solution,
+-  which covers most if not all the major rules such as:
+-  pylama, flake8, pylint etc.
+-  Its built-in formatter is also Black-compatible
+-  and is able to sort imports automatically like isort would.
+-
+-* `mypy <https://github.com/python/mypy>`_
++ruff:
++  - Linter and formatter (replaces flake8, pylint, isort, etc.)
++  - Compatible with Black
+ 
+-  Enables static typing for Python, exploiting the type hints in the source code.
++mypy:
++  - Performs static type checking
+ 
+ These two tools are all used in ``devtools/dts-check-format.sh``,
+ the DTS code check and format script.
 -- 
 2.49.0
 
