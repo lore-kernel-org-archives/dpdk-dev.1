@@ -2,49 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFCF0C83F21
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Jul 2025 12:54:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13BF6C83F21
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Jul 2025 13:32:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 204A3402E2;
-	Tue, 15 Jul 2025 14:54:07 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id 266FD4021E
- for <dev@dpdk.org>; Tue, 15 Jul 2025 14:54:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1752584045; x=1784120045;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=Srrt8I8bK+v0NPjR/gDsfB70DVnNcvqzUu7Hx9GNV4Q=;
- b=AGX6X+ssuEz/4203iHGcvl773j7bMEDvRJbfx3XQb+V0//o4c0nj8P8n
- 2QZ3z1a5LxPwh2Ne+G8Jbce5hq0voeO7Fs/5rYF6ipRxT69dotuDf4IPj
- WjRRuLeK7VdQuusFEJv5Mx/4lclEsnb1ftQACdpPt97aBvpZfofFuoY8u
- 2zQ+qYnSehFPx/Tt8efTZ4Fsjbcw/9KUy08xZfB9hjaCTUNAQcJQOrTPh
- 66GFsqeG+pVEZRW+A5qyS7Veqb8y8LM/KeYjBUhcyJ/I3fYYiLyXXDoqe
- WYJxttLBPRpB9IgZ+97nKAO24XnNoSBeagu6YaeeLIgxDVw35NUjWBKUz w==;
-X-CSE-ConnectionGUID: tH5Olm2GTcKWnttJORG7zw==
-X-CSE-MsgGUID: Qmz8KXCzQ2aiij/DuAzgdg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="58609490"
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; d="scan'208";a="58609490"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
- by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 15 Jul 2025 05:53:43 -0700
-X-CSE-ConnectionGUID: gksHPXh5QuGh1aNMWwd38A==
-X-CSE-MsgGUID: b1a5dKbeRDK44iqlKuqkjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; d="scan'208";a="161530785"
-Received: from silpixa00401874.ir.intel.com (HELO
- silpixa00401874.ger.corp.intel.com) ([10.55.129.54])
- by fmviesa005.fm.intel.com with ESMTP; 15 Jul 2025 05:53:42 -0700
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH] app/testpmd: add flag to enable RSS for single-queue
-Date: Tue, 15 Jul 2025 12:53:30 +0000
-Message-ID: <20250715125330.2127309-1-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.48.1
+	by mails.dpdk.org (Postfix) with ESMTP id CAE054028C;
+	Tue, 15 Jul 2025 15:32:58 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56])
+ by mails.dpdk.org (Postfix) with ESMTP id 9FC674021E;
+ Tue, 15 Jul 2025 15:32:57 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bhKpr5X2Wz6L5Gb;
+ Tue, 15 Jul 2025 21:31:48 +0800 (CST)
+Received: from frapeml100006.china.huawei.com (unknown [7.182.85.201])
+ by mail.maildlp.com (Postfix) with ESMTPS id 8C153140144;
+ Tue, 15 Jul 2025 21:32:56 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ frapeml100006.china.huawei.com (7.182.85.201) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 15 Jul 2025 15:32:56 +0200
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Tue, 15 Jul 2025 15:32:56 +0200
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: David Marchand <david.marchand@redhat.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, "stable@dpdk.org" <stable@dpdk.org>,
+ "Yipeng Wang" <yipeng1.wang@intel.com>, Sameh Gobriel
+ <sameh.gobriel@intel.com>, "Bruce Richardson" <bruce.richardson@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>, John McNamara
+ <john.mcnamara@intel.com>
+Subject: RE: [PATCH v2 08/10] hash: fix unaligned access in predictable RSS
+Thread-Topic: [PATCH v2 08/10] hash: fix unaligned access in predictable RSS
+Thread-Index: AQHb5EY+uzNGJsGlUUGvOTO5dcxbU7Qc/VpggArNbICAAMumoIAKfsYAgAA7qQA=
+Date: Tue, 15 Jul 2025 13:32:56 +0000
+Message-ID: <c7850966167843bdb9fdb2b3ff2c335c@huawei.com>
+References: <20250619071037.37325-1-david.marchand@redhat.com>
+ <20250623135242.461965-1-david.marchand@redhat.com>
+ <20250623135242.461965-9-david.marchand@redhat.com>
+ <70c7ba78c4324495bfd317e38e926958@huawei.com>
+ <CAJFAV8zAz27vKfA_zry8h6oJYA-kKTpOyzTpt-_PCMTvKmL_WA@mail.gmail.com>
+ <ab72d9487cfa40ce94e27f6f067278c6@huawei.com>
+ <CAJFAV8xGBHUHD7MEymHJ4yovZUwiTGeZAoGPrZEJNtCvJ=h=Sg@mail.gmail.com>
+In-Reply-To: <CAJFAV8xGBHUHD7MEymHJ4yovZUwiTGeZAoGPrZEJNtCvJ=h=Sg@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.138.73]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,97 +65,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-For testing purposes it can be desirable to enable RSS even when only a
-single queue per port is in use. Add an "enable-rss" flag to testpmd to
-match the existing "disable-rss" flag.
-
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
- app/test-pmd/parameters.c | 13 +++++++++++++
- app/test-pmd/testpmd.c    |  3 ++-
- app/test-pmd/testpmd.h    |  1 +
- 3 files changed, 16 insertions(+), 1 deletion(-)
-
-diff --git a/app/test-pmd/parameters.c b/app/test-pmd/parameters.c
-index 1132972913..80c6ecae54 100644
---- a/app/test-pmd/parameters.c
-+++ b/app/test-pmd/parameters.c
-@@ -121,6 +121,8 @@ enum {
- 	TESTPMD_OPT_ENABLE_DROP_EN_NUM,
- #define TESTPMD_OPT_DISABLE_RSS "disable-rss"
- 	TESTPMD_OPT_DISABLE_RSS_NUM,
-+#define TESTPMD_OPT_ENABLE_RSS "enable-rss"
-+	TESTPMD_OPT_ENABLE_RSS_NUM,
- #define TESTPMD_OPT_PORT_TOPOLOGY "port-topology"
- 	TESTPMD_OPT_PORT_TOPOLOGY_NUM,
- #define TESTPMD_OPT_FORWARD_MODE "forward-mode"
-@@ -310,6 +312,7 @@ static const struct option long_options[] = {
- 	NO_ARG(TESTPMD_OPT_ENABLE_HW_QINQ_STRIP),
- 	NO_ARG(TESTPMD_OPT_ENABLE_DROP_EN),
- 	NO_ARG(TESTPMD_OPT_DISABLE_RSS),
-+	NO_ARG(TESTPMD_OPT_ENABLE_RSS),
- 	REQUIRED_ARG(TESTPMD_OPT_PORT_TOPOLOGY),
- 	REQUIRED_ARG(TESTPMD_OPT_FORWARD_MODE),
- 	NO_ARG(TESTPMD_OPT_RSS_IP),
-@@ -454,6 +457,7 @@ usage(char* progname)
- 	printf("  --enable-hw-qinq-strip: enable hardware qinq strip.\n");
- 	printf("  --enable-drop-en: enable per queue packet drop.\n");
- 	printf("  --disable-rss: disable rss.\n");
-+	printf("  --enable-rss: Force rss even for single-queue operation.\n");
- 	printf("  --port-topology=<paired|chained|loop>: set port topology (paired "
- 	       "is default).\n");
- 	printf("  --forward-mode=N: set forwarding mode (N: %s).\n",
-@@ -1244,8 +1248,17 @@ launch_args_parse(int argc, char** argv)
- 			rx_drop_en = 1;
- 			break;
- 		case TESTPMD_OPT_DISABLE_RSS_NUM:
-+			if (force_rss)
-+				rte_exit(EXIT_FAILURE, "Invalid option combination, %s and %s\n",
-+						TESTPMD_OPT_DISABLE_RSS, TESTPMD_OPT_ENABLE_RSS);
- 			rss_hf = 0;
- 			break;
-+		case TESTPMD_OPT_ENABLE_RSS_NUM:
-+			if (rss_hf == 0)
-+				rte_exit(EXIT_FAILURE, "Invalid option combination, %s and %s\n",
-+						TESTPMD_OPT_DISABLE_RSS, TESTPMD_OPT_ENABLE_RSS);
-+			force_rss = true;
-+			break;
- 		case TESTPMD_OPT_PORT_TOPOLOGY_NUM:
- 			if (!strcmp(optarg, "paired"))
- 				port_topology = PORT_TOPOLOGY_PAIRED;
-diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
-index bb88555328..8bb4b1c762 100644
---- a/app/test-pmd/testpmd.c
-+++ b/app/test-pmd/testpmd.c
-@@ -382,6 +382,7 @@ uint64_t noisy_lkup_num_reads_writes;
-  * Receive Side Scaling (RSS) configuration.
-  */
- uint64_t rss_hf = RTE_ETH_RSS_IP; /* RSS IP by default. */
-+bool force_rss;                   /* false == for single queue don't force rss */
- 
- /*
-  * Port topology configuration
-@@ -4007,7 +4008,7 @@ init_port_config(void)
- 		if (ret != 0)
- 			return;
- 
--		if (nb_rxq > 1) {
-+		if (nb_rxq > 1 || force_rss) {
- 			port->dev_conf.rx_adv_conf.rss_conf.rss_key = NULL;
- 			port->dev_conf.rx_adv_conf.rss_conf.rss_hf =
- 				rss_hf & port->dev_info.flow_type_rss_offloads;
-diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h
-index e629edaa02..96ac88a29c 100644
---- a/app/test-pmd/testpmd.h
-+++ b/app/test-pmd/testpmd.h
-@@ -576,6 +576,7 @@ extern struct rte_eth_rxmode rx_mode;
- extern struct rte_eth_txmode tx_mode;
- 
- extern uint64_t rss_hf;
-+extern bool force_rss;
- 
- extern queueid_t nb_hairpinq;
- extern queueid_t nb_rxq;
--- 
-2.48.1
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogRGF2aWQgTWFyY2hhbmQg
+PGRhdmlkLm1hcmNoYW5kQHJlZGhhdC5jb20+DQo+IFNlbnQ6IFR1ZXNkYXksIEp1bHkgMTUsIDIw
+MjUgMTI6NTcgUE0NCj4gVG86IEtvbnN0YW50aW4gQW5hbnlldiA8a29uc3RhbnRpbi5hbmFueWV2
+QGh1YXdlaS5jb20+DQo+IENjOiBkZXZAZHBkay5vcmc7IHN0YWJsZUBkcGRrLm9yZzsgWWlwZW5n
+IFdhbmcgPHlpcGVuZzEud2FuZ0BpbnRlbC5jb20+OyBTYW1laCBHb2JyaWVsIDxzYW1laC5nb2Jy
+aWVsQGludGVsLmNvbT47IEJydWNlDQo+IFJpY2hhcmRzb24gPGJydWNlLnJpY2hhcmRzb25AaW50
+ZWwuY29tPjsgVmxhZGltaXIgTWVkdmVka2luIDx2bGFkaW1pci5tZWR2ZWRraW5AaW50ZWwuY29t
+PjsgSm9obiBNY05hbWFyYQ0KPiA8am9obi5tY25hbWFyYUBpbnRlbC5jb20+DQo+IFN1YmplY3Q6
+IFJlOiBbUEFUQ0ggdjIgMDgvMTBdIGhhc2g6IGZpeCB1bmFsaWduZWQgYWNjZXNzIGluIHByZWRp
+Y3RhYmxlIFJTUw0KPiANCj4gT24gVHVlLCBKdWwgOCwgMjAyNSBhdCA3OjU44oCvUE0gS29uc3Rh
+bnRpbiBBbmFueWV2DQo+IDxrb25zdGFudGluLmFuYW55ZXZAaHVhd2VpLmNvbT4gd3JvdGU6DQo+
+ID4gPiA+IEp1c3Qgd29uZGVyIGRvIHlvdSBndXlzIGNvbnNpZGVyIGl0IGFzIGEgcmVhbCBvbmU/
+DQo+ID4gPiA+IEFGQUlLLCBhbGwgYXJjaGl0ZWN0dXJlcyB0aGF0IHdlIGNhcmUgYWJvdXQgZG8g
+c3VwcG9ydCB1bmFsaWduZWQgbG9hZCBmb3IgMzItYml0IGludGVnZXJzLg0KPiA+ID4NCj4gPiA+
+IFdlbGwgdGhpcyBpcyB1bmRlZmluZWQgYmVoYXZpb3IsIHJlZ2FyZGxlc3Mgb2Ygd2hhdCB0aGUg
+YXJjaGl0ZWN0dXJlIHN1cHBvcnQuDQo+ID4gPiBBbmQgdGhlIGNvbXBpbGVyIG1heSBlbmQgdXAg
+Z2VuZXJhdGluZyB3cm9uZyBjb2RlLg0KPiA+DQo+ID4gUHJvYmFibHksIHRob3VnaCBBRkFJSywg
+d2UgZG8gaGF2ZSBhIGxvdCBvZiBjb2RlIHRoYXQgbG9hZCAzMi1iaXQgdmFsdWVzIGZyb20gcG9z
+c2libHkNCj4gPiBub24tYWxpZ25lZCBhZGRyZXNzZXMgKG5lYXJseSBhbGwgcGFja2V0IHBhcnNp
+bmcgZG9lcyB0aGF0KS4NCj4gPiBJIHdvbmRlciB3aHkgaXQgb25seSBjb21wbGFpbmVkIG9ubHkg
+YWJvdXQgdGhhdCBvbmU/DQo+IA0KPiBQcm9iYWJseSBiZWNhdXNlIHVuaXQgdGVzdHMgY292ZXJh
+Z2UgaXMgKHRvbykgc21hbGwuDQo+IA0KPiANCj4gPiBCVFcsIHdvdWxkIG91ciAndW5hbGlnbmVk
+X3VpbnQzMl90JyB0eXBlIGhlbHAgaGVyZT8NCj4gDQo+IFNpbmNlIG1vc3QgRFBESyBjb2RlIHJl
+bHkgb24gYWxpZ25lZCB0eXBlcywgdXNpbmcgYW4gdW5hbGlnbmVkIHR5cGUNCj4gY2FuIHdvcmsg
+aWYgd2UgaGF2ZSBhIGZ1bmN0aW9uIHRoYXQgc2VydmVzIGFzIGEgY29udmVyc2lvbiBmcm9tDQo+
+IHVuYWxpZ25lZCB0byBhbGlnbmVkIHR5cGVzLg0KPiBJbiB0aGlzIGNvZGUsIHNpbmNlIHRoZSBu
+ZXh0IG9wZXJhdGlvbiBpcyBhIGJ5dGUgc3dhcCBvcGVyYXRpb24gb24NCj4gMzJiaXRzLCBJIGRv
+bid0IHRoaW5rIHdlIGhhdmUgbWFueSBvcHRpb24gYnV0IHRvIG1lbWNweSgpLg0KDQpbXSBGb3Ig
+Y2xhcml0eSwgSSBhbSB0YWxraW5nIGFib3V0IHNvbWV0aGluZyBsaWtlIHRoYXQ6DQpodHRwczov
+L2dvZGJvbHQub3JnL3ovdnY2cXpQTVR6DQogDQoNCg==
