@@ -2,64 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C83C83F17
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Jul 2025 21:21:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC15C83F27
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Jul 2025 21:57:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BA1A6402D4;
-	Tue, 15 Jul 2025 23:21:28 +0200 (CEST)
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com
- [209.85.215.172])
- by mails.dpdk.org (Postfix) with ESMTP id 292DD4026D
- for <dev@dpdk.org>; Tue, 15 Jul 2025 23:21:27 +0200 (CEST)
-Received: by mail-pg1-f172.google.com with SMTP id
- 41be03b00d2f7-b2c4e46a89fso5073184a12.2
- for <dev@dpdk.org>; Tue, 15 Jul 2025 14:21:27 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C3F014021E;
+	Tue, 15 Jul 2025 23:57:22 +0200 (CEST)
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
+ [209.85.214.182])
+ by mails.dpdk.org (Postfix) with ESMTP id B337E4013F
+ for <dev@dpdk.org>; Tue, 15 Jul 2025 23:57:21 +0200 (CEST)
+Received: by mail-pl1-f182.google.com with SMTP id
+ d9443c01a7336-23dc5bcf49eso73377785ad.2
+ for <dev@dpdk.org>; Tue, 15 Jul 2025 14:57:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1752614486; x=1753219286; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=VnvqXV118VRwNSBAeGITZSnN+E6AY/4vDRxMhfPsquk=;
- b=MZrNJ1pmUVN4t4Og0aNAnBypRkVMJpnHh3P75KUpMX1MsRFIFHdydJxIbiHs/jnx5z
- 3/kdW8qgq/48my7NkolC1dsy5BHVGzmm38XfDcs1gSi51JD0hHWIvbJNTFrVwKF7WCzV
- BaFIcmbeyfehnYdidho19bOHRkLXS1QcFRuZo=
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752616640;
+ x=1753221440; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=KoBvYwIRpE32Fw8FcbPbyto/X3axUCRn8FrgZBTiAs4=;
+ b=ujsDlbRRoTMoAp8lGZGI0Vt8s1w6MsT9HcYcCnMIOwEGvsqt/goVPTc4OXvzSt53F0
+ 6K/ogbEE9vZSg3fIPajuzHDb4y/3wmFU7fQB8YPUaaWQ/yNS2CJYD9s/zSzNiuTNcz+h
+ AHzsEmOhZsTFeIRYGL6WlSFD61Lznju0rg1MQbgqIBR02tzkl5UiG88JCrTJn+5E8mNq
+ 5gEVw4CJs1ECbOIcjf8eE7detw/V3/Q7xk6HENwt9lnJm9HV0FioTz9URAwpHCqMUz/S
+ ATtpZVZB8siWQ4FK1wIQUs10sH6uXIZhIed98wg9eXkMnRk6k0nl0bApkEi+Xa73TPgK
+ XVpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752614486; x=1753219286;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=VnvqXV118VRwNSBAeGITZSnN+E6AY/4vDRxMhfPsquk=;
- b=irlTMBz9VP8K5e3p4WQupNXfww5eN69cBqY2u0ohcUErcogInTEtfN8q+010bk9ysW
- i9WTNaR3hVufNy0Y1mnIEBH/LkX+rcTPr18Wxkc0aqJpDLBxMBNjVes5oy0OLxIETz3N
- esiI5vd2I68VPemNEHcQjVir4bsonmJ/BiZBOaGnkBEESnUsogJKZRNNZzr0qNuu7P/V
- X4YYt0yFebDtKy4RAMq2+9R0pi2qjQ0jN1hvYwP7AYhj4V1L2pY7ykZ0U9899mBw4Bzx
- 8HwH0LzuSGuufOp1P+Ze/XKOr7UDwrhoeCDDf2l+MZ7ytVZsqax/1w3rc791Raibn4K6
- AFHg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXrWlPTFFD0dcwYC2hag5m8FFMzgkCpbZSJG9WAb0UHQ39V764zcdAUW1JK9//Cwwp91Lk=@dpdk.org
-X-Gm-Message-State: AOJu0YwmXTs+d9SQZGHSXLsYpWaHGagP57CJ3K5I4ghn3ryvRz8lgeIs
- PJZuMygsbixhQntVSN5z5ax9QyvruKQpJ2bVcjdYIxv6DopTakm6Zp8JsuYc4QHC85mO/OLa6pD
- o+0C9VYZ8q4LSLZUW9kBSMxCkukCqBWMrL6EaosAZZw==
-X-Gm-Gg: ASbGncuSDmgWl3BJ6mr1wrbYz0ZuztBM08Lu7rbIpyCOJ+m9VteNT2MZcHFt5ahkn6J
- 5rHMDQAAARrpTSnr5aJnJNzN0BMWkqSH9lIJ//hAAQThLxeFEbnkkHYJGgunprUzvwNr0X2wM4+
- 9jmgSksrcPKj1urzYfhQteOFF1FErgbAnkInGD3MWJKf4nxdacxX53Ir5vgIczBScBR7g63yfyC
- J7Pb25WsJY76lwG1e0B
-X-Google-Smtp-Source: AGHT+IGmAoKyBr2ilmX6SerQoqskxMQvN7y0nVQg84encsilCFmnasG6wy90eV1DMG3csVpP7cNJkeu+urKQLjbo1s8=
-X-Received: by 2002:a17:90b:582f:b0:311:ff02:3fcb with SMTP id
- 98e67ed59e1d1-31c9f447d33mr199384a91.28.1752614485752; Tue, 15 Jul 2025
- 14:21:25 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1752616640; x=1753221440;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=KoBvYwIRpE32Fw8FcbPbyto/X3axUCRn8FrgZBTiAs4=;
+ b=JwNT6SNSQ9i5GXVoazyVD2+saIq04o3rdOb8XHbQSJ+2Gvm8dB2dz1i5+FksG13huY
+ eURXOkanhnkMk0nbLBmJLn0SWlfvcR78lD1BANNQ3YjjdJ/kE/pQnuxjMn+ijaseLJTM
+ DG5ZftmP4aOPHGn6l0nN+zRyI27FSIs37xXlYO8r+qszvJtBoVvwIR9mzXYsNwacwoJw
+ lbPJQX4oDzhO82rZU/y6jKj3G3jwrN1Lt1lZM3PEA0RRul/bsg8kxz3qKAfzbbKvkOWV
+ mQg3Jr0UVQdpK0OsmZXPV37yL7cYyyrK5iCkt9a0KaPMuG663xMMp84dfXMqcDFJ8Z/X
+ QRlw==
+X-Gm-Message-State: AOJu0YxG45qurg55fiPH9DSWoQwtpdDUOnF4h7FaYPTJ1qwu4fLRldsI
+ eGUBofrOJmosU8/qSXzEdPavtuRjui+j2SynlAAIo3xRsdqEOsVLReABoO/FYrp2/t59PPk7bix
+ pGA9O
+X-Gm-Gg: ASbGncssm8nK0BsLGJT0aLWEBifniIZfBIHr+ulOYPip1B4YtILp0OtP1cIRex3tpb9
+ QiPcr7NrCZ02eRJlXlgz9QAcBjTnwlBhEUIBDQjahGsdNssXTVMm7anf5+7xn3d/wjM7J/IqsOb
+ h3ogs25ksZ5TwaCtPwTje0PbLY5RWVSh7GwIhkWejpsPKEVKRBTvKS2Y2IaaYxL2OeAm3W3OHWp
+ zop8CrgldQmGdoMq5xmRVblEVhWQPg+CNLZFhjcWkQe0Kx19LIjFoaVd5T3aVg0u3gECCyEEzrm
+ 6WQS+S48qGdS+pAkhKM0Ur0qMPG3NvlImWtn0fzEZicN3+vVmCdp4OpWv3zlY5tEJ3CKKApK9p6
+ ASvlUrhueX/zNWqI5QjP3F6/GPvjUFJm7z2iOxiqSJI6z3AbPpqDQKB42IkeitOANpftho9QL+K
+ deNA9BE3Y=
+X-Google-Smtp-Source: AGHT+IGen+pG7nguoRVfjS5ScR/6NQ9kQ6kbstgEulv0iZuxy43zmYmm8ioOD+6wuqLAc3zPBgrftg==
+X-Received: by 2002:a17:902:d503:b0:234:ba37:87b6 with SMTP id
+ d9443c01a7336-23e24ed7341mr8837905ad.17.1752616640527; 
+ Tue, 15 Jul 2025 14:57:20 -0700 (PDT)
+Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-23de43228a6sm111538185ad.91.2025.07.15.14.57.19
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 15 Jul 2025 14:57:20 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v3 0/2] cpu0 and memory channels doc update
+Date: Tue, 15 Jul 2025 14:56:27 -0700
+Message-ID: <20250715215718.7388-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20240718184326.21375-1-stephen@networkplumber.org>
+References: <20240718184326.21375-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-References: <20250714133014.44597-1-bruce.richardson@intel.com>
- <CABD7UXPVg56UwvmtOsssBwV2HzmgV4ZJZCb=FrnVQKkggtD2+Q@mail.gmail.com>
- <aHYHj9vtdXm8MgY_@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <aHYHj9vtdXm8MgY_@bricha3-mobl1.ger.corp.intel.com>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Tue, 15 Jul 2025 17:15:34 -0400
-X-Gm-Features: Ac12FXyDGQy15RhnndDroC2Z1VYNDwjlXQC2mh0yNBJlDn2RzayOuxUsC7XSy5o
-Message-ID: <CAJvnSUBSZo8OAZ+_xjFm3=5FG2EBJ2UiF6KfkPb_iNz2_1aoyg@mail.gmail.com>
-Subject: Re: [RFC PATCH] doc: clarify VLAN and QinQ stripping behaviour
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: Dean Marx <dmarx@iol.unh.edu>, dev@dpdk.org, techboard@dpdk.org
-Content-Type: multipart/alternative; boundary="000000000000da18080639fe5b0a"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -73,110 +82,80 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000da18080639fe5b0a
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+This is revised version of earlier patches to address
+some guidance about CPU and memory channels in the documentation.
 
-On Tue, Jul 15, 2025 at 3:47=E2=80=AFAM Bruce Richardson <bruce.richardson@=
-intel.com>
-wrote:
+Stephen Hemminger (2):
+  doc: add note about CPU 0
+  doc: remove use of '-n 4' option in documentation examples
 
->
->
-> Thanks. Let me know how the testing otherwise goes. If only Intel NICs ar=
-e
-> supporting QinQ, then it can't be that widely used a feature yet, so we m=
-ay
-> be able to tweak things a bit if it diverges from what is expected.
->
+ doc/guides/contributing/documentation.rst     |  2 +-
+ doc/guides/cryptodevs/aesni_gcm.rst           |  2 +-
+ doc/guides/cryptodevs/aesni_mb.rst            |  2 +-
+ doc/guides/cryptodevs/ccp.rst                 |  4 ++--
+ doc/guides/cryptodevs/kasumi.rst              |  2 +-
+ doc/guides/cryptodevs/null.rst                |  2 +-
+ doc/guides/cryptodevs/openssl.rst             |  2 +-
+ doc/guides/cryptodevs/snow3g.rst              |  2 +-
+ doc/guides/cryptodevs/zuc.rst                 |  2 +-
+ doc/guides/howto/lm_bond_virtio_sriov.rst     |  2 +-
+ doc/guides/howto/lm_virtio_vhost_user.rst     |  2 +-
+ doc/guides/howto/packet_capture_framework.rst |  2 +-
+ doc/guides/howto/pvp_reference_benchmark.rst  |  4 ++--
+ doc/guides/howto/vfd.rst                      |  4 ++--
+ .../virtio_user_for_container_networking.rst  |  4 ++--
+ doc/guides/linux_gsg/build_sample_apps.rst    |  5 ++---
+ doc/guides/linux_gsg/enable_func.rst          |  5 +++++
+ doc/guides/linux_gsg/linux_drivers.rst        |  4 ++--
+ doc/guides/nics/build_and_test.rst            |  2 +-
+ doc/guides/nics/cpfl.rst                      |  2 +-
+ doc/guides/nics/cxgbe.rst                     |  2 +-
+ doc/guides/nics/fail_safe.rst                 |  8 ++++----
+ doc/guides/nics/hns3.rst                      |  4 ++--
+ doc/guides/nics/i40e.rst                      |  6 +++---
+ doc/guides/nics/ice.rst                       |  6 +++---
+ doc/guides/nics/intel_vf.rst                  |  2 +-
+ doc/guides/nics/ipn3ke.rst                    |  4 ++--
+ doc/guides/nics/mlx4.rst                      |  2 +-
+ doc/guides/nics/mlx5.rst                      |  2 +-
+ doc/guides/nics/null.rst                      |  6 +++---
+ doc/guides/nics/pcap_ring.rst                 | 18 ++++++++---------
+ doc/guides/nics/qede.rst                      |  2 +-
+ doc/guides/nics/softnic.rst                   |  2 +-
+ doc/guides/nics/thunderx.rst                  |  2 +-
+ doc/guides/nics/vhost.rst                     |  2 +-
+ doc/guides/nics/virtio.rst                    |  2 +-
+ .../link_bonding_poll_mode_drv_lib.rst        | 10 +++++-----
+ doc/guides/prog_guide/mempool_lib.rst         |  3 ---
+ doc/guides/prog_guide/overview.rst            | 11 +++++-----
+ doc/guides/sample_app_ug/cmd_line.rst         |  2 +-
+ doc/guides/sample_app_ug/dist_app.rst         |  2 +-
+ doc/guides/sample_app_ug/hello_world.rst      |  2 +-
+ doc/guides/sample_app_ug/ipsec_secgw.rst      |  4 ++--
+ doc/guides/sample_app_ug/ipv4_multicast.rst   |  4 +---
+ doc/guides/sample_app_ug/keep_alive.rst       |  2 +-
+ doc/guides/sample_app_ug/l2_forward_cat.rst   |  4 ++--
+ doc/guides/sample_app_ug/l2_forward_event.rst |  8 ++++----
+ .../sample_app_ug/l2_forward_job_stats.rst    |  2 +-
+ .../sample_app_ug/l2_forward_real_virtual.rst |  4 ++--
+ doc/guides/sample_app_ug/l3_forward.rst       |  8 ++++----
+ doc/guides/sample_app_ug/l3_forward_graph.rst |  6 +++---
+ doc/guides/sample_app_ug/link_status_intr.rst |  4 ++--
+ doc/guides/sample_app_ug/multi_process.rst    | 20 +++++++++----------
+ doc/guides/sample_app_ug/ptpclient.rst        |  2 +-
+ doc/guides/sample_app_ug/qos_scheduler.rst    |  4 ++--
+ doc/guides/sample_app_ug/rxtx_callbacks.rst   |  2 +-
+ doc/guides/sample_app_ug/skeleton.rst         |  2 +-
+ doc/guides/sample_app_ug/timer.rst            |  2 +-
+ doc/guides/sample_app_ug/vdpa.rst             |  2 +-
+ doc/guides/sample_app_ug/vhost.rst            |  2 +-
+ .../sample_app_ug/vm_power_management.rst     | 12 +++++------
+ .../sample_app_ug/vmdq_dcb_forwarding.rst     |  2 +-
+ doc/guides/sample_app_ug/vmdq_forwarding.rst  |  2 +-
+ doc/guides/testpmd_app_ug/run_app.rst         |  2 +-
+ doc/guides/tools/flow-perf.rst                |  2 +-
+ 65 files changed, 129 insertions(+), 129 deletions(-)
 
-Yeah, there seems to be fairly broad support for VLAN strip, but much less
-for QinQ strip. So, we can verify "correct" VLAN stripping behavior given
-the various packet profiles we discussed previously like double vlan,
-vlan + qinq, single qinq etc.
+-- 
+2.47.2
 
-For QinQ strip like Dean said, most PMDs dont support this currently, with
-Intel PMDs being an exception among the NICs we have at UNH. We took a look
-at the DPDK networking drivers support table which reflects this (see the
-QinQ offload row). https://doc.dpdk.org/guides/nics/overview.html
-
-So, it looks like there are a few (ZTE DXDH is an example) that are also
-supporting QinQ Offload, but not many right now.
-
-
-
-> I also wonder if the definition of expected behaviour is preventing other
-> NICs from implementing the feature?
->
-> Can you also check with VLAN stripping enabled? My biggest issue with the
-> behaviour description of QinQ strip only removing outer tag is that it
-> implies for QinQ traffoc that VLAN strip alone should strip inner tag
-> without
-> removing outer.
-
-
-Sure, we can check this case. across the NICs at UNH. I have a sync
-wth Dean tomorrow morning for this, at the end of which we'll share back to
-you what we have.
-
-
-> That doesn't make sense to me - and I'm not sure if NIC
-> hardware supports such features of removing inner headers while leaving
-> outer.
->
-> /Bruce
->
-
---000000000000da18080639fe5b0a
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
-mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, Jul 15,=
- 2025 at 3:47=E2=80=AFAM Bruce Richardson &lt;<a href=3D"mailto:bruce.richa=
-rdson@intel.com">bruce.richardson@intel.com</a>&gt; wrote:<br></div><blockq=
-uote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1p=
-x solid rgb(204,204,204);padding-left:1ex"><br>
-<br>
-Thanks. Let me know how the testing otherwise goes. If only Intel NICs are<=
-br>
-supporting QinQ, then it can&#39;t be that widely used a feature yet, so we=
- may<br>
-be able to tweak things a bit if it diverges from what is expected.<br></bl=
-ockquote><div><br></div><div>Yeah, there seems to be fairly broad support f=
-or VLAN strip, but much less for QinQ strip. So, we can verify &quot;correc=
-t&quot; VLAN stripping behavior given the various packet profiles we discus=
-sed previously like double vlan, vlan=C2=A0+ qinq, single qinq etc.</div><d=
-iv><br></div><div>For QinQ strip like Dean said, most PMDs dont support thi=
-s currently, with Intel PMDs being an exception among the=C2=A0NICs we=C2=
-=A0have at UNH. We took a look at the DPDK networking drivers support table=
- which reflects this (see the QinQ offload row).=C2=A0<a href=3D"https://do=
-c.dpdk.org/guides/nics/overview.html">https://doc.dpdk.org/guides/nics/over=
-view.html</a></div><div><br></div><div>So, it looks like there are a few (Z=
-TE DXDH is an example) that are also supporting QinQ Offload, but not many =
-right now.</div><div><br></div><div><br></div><blockquote class=3D"gmail_qu=
-ote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,20=
-4);padding-left:1ex">
-<br>
-I also wonder if the definition of expected behaviour is preventing other<b=
-r>
-NICs from implementing the feature?<br>
-<br>
-Can you also check with VLAN stripping enabled? My biggest issue with the<b=
-r>
-behaviour description of QinQ strip only removing outer tag is that it<br>
-implies for QinQ traffoc that VLAN strip alone should strip inner tag witho=
-ut<br>
-removing outer. </blockquote><div><br></div><div>Sure, we can check this ca=
-se. across the NICs at UNH. I have a sync wth=C2=A0Dean tomorrow morning fo=
-r this, at the end of which we&#39;ll share back to you what we have.</div>=
-<div>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px =
-0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">That doe=
-sn&#39;t make sense to me - and I&#39;m not sure if NIC<br>
-hardware supports such features of removing inner headers while leaving<br>
-outer.<br>
-<br>
-/Bruce<br>
-</blockquote></div></div>
-
---000000000000da18080639fe5b0a--
