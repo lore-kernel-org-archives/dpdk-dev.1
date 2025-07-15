@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC18C83F22
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Jul 2025 16:17:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 522EDC83F22
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Jul 2025 16:17:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 44B1140658;
-	Tue, 15 Jul 2025 18:17:09 +0200 (CEST)
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com
- [209.85.219.44]) by mails.dpdk.org (Postfix) with ESMTP id 496B640651
- for <dev@dpdk.org>; Tue, 15 Jul 2025 18:17:08 +0200 (CEST)
-Received: by mail-qv1-f44.google.com with SMTP id
- 6a1803df08f44-704cb8b1314so14595396d6.3
- for <dev@dpdk.org>; Tue, 15 Jul 2025 09:17:08 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 313C340647;
+	Tue, 15 Jul 2025 18:17:11 +0200 (CEST)
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com
+ [209.85.219.45]) by mails.dpdk.org (Postfix) with ESMTP id 95BF54064C
+ for <dev@dpdk.org>; Tue, 15 Jul 2025 18:17:09 +0200 (CEST)
+Received: by mail-qv1-f45.google.com with SMTP id
+ 6a1803df08f44-6fa980d05a8so42463876d6.2
+ for <dev@dpdk.org>; Tue, 15 Jul 2025 09:17:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752596227;
- x=1753201027; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752596229;
+ x=1753201029; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Nd5IbD1gfu3uxsi19HXLY82ZUVsISET2Jssfh5uVVjo=;
- b=S+KPLKHa7aMA8Np3fgEddfZlaT8jaU5b0aVIO/f8+nAZwjaHePLdEz2cYZNZuHKnKT
- Ys+eIyPmqpX9WUY+fKXElRC+Trox6k6dCySQlgrbIypLPMkTi5kybEX2BH52NxD2ko8G
- GLmGFeEPPHPqToBN1HU+0LPrNYhMTIVToEpL6jWMuPLxRzOyR5TJRsTzN2XyWCxKuB02
- edClb4t0BQL1W6aaM0D310OROafcBTObVU41aKyg1zcRabwsLDE12PiCNJLJSaxrY7+F
- KSYAE2qBEdrD0etT89sqRsPSaIjbGQ2J2ssL48zRVFia1p9DMbNIeKWIzyFjPc0EwsTX
- vtRQ==
+ bh=MSh6kbv+hR1zb7kg6e6a3Btjfbls58Zvj3ges5YQbBI=;
+ b=YesOY5Yl7S31WUJJg3D9f2jVxWnp2nfvNfxPmvq1o5dcr/uFpqNIIJ32hewBQWK8/9
+ Oz2nlH8+VuRdHNWsvWFFhvTNxjbLx3eBmNEIOJVYz6aBrxe16ve2+FdsNy5KUOil/Y9Y
+ 8fkKZT04ZEaFcKoB/4zc5X/grHEz26445202IHnnb86AplskQEmgdj4w9uRdfxfdMHfq
+ OckuiX4uC+AsVqdiWK9WE+6JnIbr2snqoAeHYclxOFJVzPxWzrk7mNCaI+cGQFCv/hTP
+ z7kFHB+DPKo9rj/FvD1KsNOBZwr3sSGn5AEjajdHIe88o0BPy9QTYXjxLQNdW5u+uPV6
+ PaBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752596227; x=1753201027;
+ d=1e100.net; s=20230601; t=1752596229; x=1753201029;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=Nd5IbD1gfu3uxsi19HXLY82ZUVsISET2Jssfh5uVVjo=;
- b=OgBKIVm/PxaN+6cdIhJUBm56+7LMfWX9wEQDQvU3ySM+L+fXL3exrhcOwWw/ZCZJyO
- EbcCy5X/gImktCx0RAirsqEZTmfp5Hqr4F8M3xaQjho2T9+xPM8F6pguYXbr1rEUuPjw
- KC8DEjYfQKH0dZccvwGrhL5iljZrIQ19KRqpudflfdnC/UldfcHiuBuZCvH+q+CvNFaq
- Oc+QinnmhzsO2gRoG7A8skoe7kmO8CEuAmocH4gcQI6BpxMk5pKStTMObgNpKGkJiZwH
- ck0pYnuvUipm6EofB2iIkLtT1dbYPKa9bk1wrrxzHbBXtddwuxMgAjE4ksYXAkgeHEAQ
- yJMA==
-X-Gm-Message-State: AOJu0YyQQ/B5Qq4QVKWKI7DyP34VnJRFjzlYx1umVGLy+irLePD5qvy3
- wSqLshlXvQybnIYpilEHLWDYNYhGFvbupC4VsvxJhm6Er1TdUy7otvx6Ey9L4JxAjtlTUQUvcCp
- jliDt
-X-Gm-Gg: ASbGnctOuLaKdBrjPh9hfj5m/dXtpRjgWmVJpoGjY6QcTL06IWg9Jhc+EXqVoKKDCIv
- oXWw2j8E4UCjx77/LzkJ5dr1RMIp7WCSRbiDryEoAVhJIgwp+p+olTUG8TyYSM7FNUGbFk98DMr
- MaT+0H8mMqnPuQuEkHhQMJ15n7TBU/WyArcSbK5Nquj4rOQsE44JHsoD0mjMsoBm5U3Zie6C91j
- PTpWTgzeeu5kTJkdb9O6RIQbB1/j3onBh0h1OrEQqDu/EJVxbJDf0qwjWNr9PgJ8nzLNyyYDmTi
- kjo2cXnbPHcu29p5IvH4Nj9IzhdNO1XA+lD/2P1dAzivGbjQC4sxmC+HfzgAWbGbv5AKVhwhITZ
- 0BuD+ziIWNLNv+V4se/qM/QH/rKgwgUGUUHLTo68IEzzsQscLE2DL1BYZEKqUz27PMTO6kJFB
-X-Google-Smtp-Source: AGHT+IGbzxb4TrQSS/HVOdQ7CjqHhu1ZbSy7ixmiY7q+5OgzxWI78k1Ot8rvifER6zCXQgwn6XDaKw==
-X-Received: by 2002:a05:6214:2247:b0:702:d655:f4e9 with SMTP id
- 6a1803df08f44-704f483ef46mr1384586d6.18.1752596227316; 
- Tue, 15 Jul 2025 09:17:07 -0700 (PDT)
+ bh=MSh6kbv+hR1zb7kg6e6a3Btjfbls58Zvj3ges5YQbBI=;
+ b=O4+Z1tbJdnP5IUFddalsR9Agd8W1gmiJXthOm6BO94/zv0zeWzkRvsK1wqGjhfcAEN
+ Kby1JXnR1RKM8Ic44QQEn2GYYoGU2MjToQwPoHktUvMKmGgeMUwTdMOJojxrQpDHH7pJ
+ ++y2b761PtOy0ok9Gh900B4/Zd93cQxia8dfIesKrwzxrk5JKrpTk+XvVhGPsrkV5P5J
+ fVL3UC44fA6cLgUybAqR9cZ/P5A2ltq3BbQLqHImzK0+S5pePHS6vqE5HFgKhtGVYOIL
+ Sp+BXwzphiGttFDDythf7I47Oy/P+U6lWNZh2RnZ1LIiW3nCiIqJvyVqdqxJROcAUrkd
+ /e5Q==
+X-Gm-Message-State: AOJu0YzaHeWQaXh3rw56HlfzvxRNrwYtxCmiTeZqhLFJaxYa/OAF7LNZ
+ m5aDwAJpaj/lqdhgUKVf1ijIuKLFwjEK56YXZ4Xh7HKfMCr1fQFNSHNSkNBCRq27Qg+JTpWuOLy
+ ck9Wk
+X-Gm-Gg: ASbGncvzBNAG2PP/gOlKDNqG2FO5XatZBXeFDe8CJqal6IYazZCJ2+m8i4KvrVYjRrc
+ rhQ0ujrPMcj3mp1gvvzcrKyufhGBSKI9fc4faWlymf7a0/N+c2Zh/YQH6DsvondlfRqFQoNluaN
+ NonATXQKnIwV16PrhL1PJTxd6dGs7akigpcJc6eFen+3ZD3N6LI5wB/hSwt1KepAHgyVBkjLqf9
+ d9Fzupto5WvC7c+cH9KV6lGpYRVsmYHw9NJBe+wOZItJNJmk8uP52J241np48oUjTRs+TlFiTWj
+ f8KLeeZ3OC6Vhgg2+kvW6noaFMfmdr7eBeVPCbgzvVzedDxt3kIieYEAk8VB6G3K0scQZSHPSG7
+ 1Bor5IhQprxX3yLOyXi3AfE+GAHK5uaF6k0drOV9MdtT7VcWcpy9mWtjDfSCLLvoO85/VadlA
+X-Google-Smtp-Source: AGHT+IEpX1L00BJZzmiha8QzwWQKj/mjWd38DzKIABejvOkwNsVlP1+cZY06lcj9SmCNbGEaJPnB+Q==
+X-Received: by 2002:a05:6214:2e41:b0:704:8315:4cfa with SMTP id
+ 6a1803df08f44-704f48419dbmr1278816d6.16.1752596228632; 
+ Tue, 15 Jul 2025 09:17:08 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-704979a8857sm59985106d6.9.2025.07.15.09.17.06
+ 6a1803df08f44-704979a8857sm59985106d6.9.2025.07.15.09.17.07
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 15 Jul 2025 09:17:07 -0700 (PDT)
+ Tue, 15 Jul 2025 09:17:08 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Thomas Monjalon <thomas@monjalon.net>, Ferruh Yigit <ferruh.yigit@amd.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: [PATCH v4 02/13] ethdev: make sure all necessary headers included
-Date: Tue, 15 Jul 2025 09:15:40 -0700
-Message-ID: <20250715161700.103209-3-stephen@networkplumber.org>
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH v4 03/13] test: add test for hotplug and secondary process
+ operations
+Date: Tue, 15 Jul 2025 09:15:41 -0700
+Message-ID: <20250715161700.103209-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250715161700.103209-1-stephen@networkplumber.org>
 References: <20250411234927.114568-1-stephen@networkplumber.org>
@@ -83,37 +83,95 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Best not to depend on other EAL headers to include stuff.
-Some of the later changes had build failures on some platforms.
+Use null device to exercise ethdev start/stop in secondary process.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/ethdev/ethdev_private.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ app/test/test_mp_secondary.c | 51 +++++++++++++++++++++++++++++++++---
+ 1 file changed, 48 insertions(+), 3 deletions(-)
 
-diff --git a/lib/ethdev/ethdev_private.c b/lib/ethdev/ethdev_private.c
-index 184cf33f99..fffffe2625 100644
---- a/lib/ethdev/ethdev_private.c
-+++ b/lib/ethdev/ethdev_private.c
-@@ -3,9 +3,18 @@
-  */
+diff --git a/app/test/test_mp_secondary.c b/app/test/test_mp_secondary.c
+index f3694530a8..09611cc5c2 100644
+--- a/app/test/test_mp_secondary.c
++++ b/app/test/test_mp_secondary.c
+@@ -15,6 +15,9 @@
+ #include <string.h>
+ #include <unistd.h>
  
- #include <assert.h>
-+#include <errno.h>
-+#include <inttypes.h>
-+#include <stdbool.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <time.h>
++#include <rte_ethdev.h>
++#include <rte_bus_vdev.h>
++
+ #ifdef RTE_EXEC_ENV_WINDOWS
+ int
+ test_mp_secondary(void)
+@@ -204,6 +207,44 @@ run_object_creation_tests(void)
+ 	return 0;
+ }
  
- #include <eal_export.h>
- #include <rte_debug.h>
-+#include <rte_eal.h>
-+#include <rte_lcore.h>
-+#include <rte_stdatomic.h>
++static int
++run_ethdev_tests(void)
++{
++	char vdev_name[] = "net_null";
++	struct rte_eth_conf dev_conf = { 0 };
++	uint16_t port;
++	int ret;
++
++	printf("### Testing hotplug and ethdev start/stop\n");
++
++	/* use hotplug to make a null vdev */
++	ret = rte_eal_hotplug_add("vdev", vdev_name, "");
++	TEST_ASSERT(ret == 0, "Hotplug add of '%s' failed", vdev_name);
++
++	printf("# Checked hotlug_add OK\n");
++
++	ret = rte_eth_dev_get_port_by_name(vdev_name, &port);
++	TEST_ASSERT(ret == 0, "Lookup vdev '%s' failed", vdev_name);
++
++	ret = rte_eth_dev_configure(port, 1, 1, &dev_conf);
++	TEST_ASSERT(ret == 0, "Configure port %u failed", port);
++
++	ret = rte_eth_dev_start(port);
++	TEST_ASSERT(ret == 0, "Start port %u failed", port);
++
++	printf("# Checked rte_eth_dev_start\n");
++
++	ret = rte_eth_dev_stop(port);
++	TEST_ASSERT(ret == 0, "Stop port %u failed", port);
++
++	printf("# Checked rte_eth_dev_stop\n");
++
++	rte_eal_hotplug_remove("vdev", vdev_name);
++
++	printf("# Checked hotlug_remove OK\n");
++	return 0;
++}
++
+ /* if called in a primary process, just spawns off a secondary process to
+  * run validation tests - which brings us right back here again...
+  * if called in a secondary process, this runs a series of API tests to check
+@@ -212,15 +253,19 @@ run_object_creation_tests(void)
+ int
+ test_mp_secondary(void)
+ {
+-	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
++	int ret;
++
++	if (rte_eal_process_type() == RTE_PROC_PRIMARY)
+ 		return run_secondary_instances();
+-	}
  
- #include "rte_ethdev.h"
- #include "rte_ethdev_trace_fp.h"
+ 	printf("IN SECONDARY PROCESS\n");
++	ret = run_ethdev_tests();
++	if (ret != 0)
++		return ret;
+ 
+ 	return run_object_creation_tests();
+ }
+ 
+ #endif /* !RTE_EXEC_ENV_WINDOWS */
+ 
+-REGISTER_FAST_TEST(multiprocess_autotest, false, false, test_mp_secondary);
++REGISTER_FAST_TEST(multiprocess_autotest, true, true, test_mp_secondary);
 -- 
 2.47.2
 
