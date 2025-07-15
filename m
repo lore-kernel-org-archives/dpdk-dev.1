@@ -2,168 +2,125 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9178DC83F22
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Jul 2025 16:20:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85E0BC83F17
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Jul 2025 17:40:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D7CFA40647;
-	Tue, 15 Jul 2025 18:20:53 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id 878754028C;
- Tue, 15 Jul 2025 18:20:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1752596453; x=1784132453;
- h=date:from:to:cc:subject:message-id:references:
- content-transfer-encoding:in-reply-to:mime-version;
- bh=+9zsI6epwlQBHnHxTKyUzfQh6kvouTT75qihkL0QGQE=;
- b=Ou20scwEI1edbI9V8s0eOAqkyRmB5cjFIqMp2Z7zhxNLonj05+QZi/QC
- KIpjYt+4GBFrFYPlJuDgTdo3kXe2ycIKHpL7Ec114RMCG+lzdyX9v5N7t
- 3LhMlcG96A0QQtiqOnjjnEKwu5cS8gpSASkCNT944tYZLgjm52jrYHams
- ZsbNyL6kCalO3eGpfyY+LE1g7hCyPiVgpmmVnNh/mmQY9nN+X/uYkGkDo
- kClj2slcR3z5KfJkfdCXSoWeudeAGxx5+TclFC+zQ+t74vTTkf8uuMON4
- CM1tQGEiDiyCjtjDYgFg43EyOeLDSW+iOsUzYjvpR5z7IXNSxFVBOIjSF w==;
-X-CSE-ConnectionGUID: 3PRfeyZQRdSyxRJwVuySDA==
-X-CSE-MsgGUID: xSk5CMSPSq+3PNPc9mp1rA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="54800308"
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; d="scan'208";a="54800308"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
- by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 15 Jul 2025 09:20:52 -0700
-X-CSE-ConnectionGUID: wO0o8un9SeCI5CFVwKfzEw==
-X-CSE-MsgGUID: AkYYXHQFRY2EZUMZ+/tnoQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; d="scan'208";a="161289222"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
- by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 15 Jul 2025 09:20:51 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Tue, 15 Jul 2025 09:20:50 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Tue, 15 Jul 2025 09:20:50 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (40.107.236.55)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Tue, 15 Jul 2025 09:20:49 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id BDCEC402E2;
+	Tue, 15 Jul 2025 19:40:14 +0200 (CEST)
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com
+ (mail-dm6nam12on2086.outbound.protection.outlook.com [40.107.243.86])
+ by mails.dpdk.org (Postfix) with ESMTP id 6F3654028C;
+ Tue, 15 Jul 2025 19:40:13 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=T6F5oA4s0eU/aA6ERkJ7lB3MrUmalox9YkqAoG6jCZa5Y6dImNiym/0zbpk1uSw+pyzHJv7/N6ClFvG2idaoYiw/TmK13EBNt6FlztIcJMNLG8aGO5Ie2NDRo6C8pgp4WrwytBT1Lisu4RHzevpw7+thipA29QSp/1Tguq8wt6TxCFSrGZxHrHD708OIVZDhnnrRCuWbYvsSZw4qRCAmUK1g+P9/3l3iKCSKfbKkd4TcSftgG1xt2H3DHTHcILlL/vzU/1xyYDzzvd9IMMY927Xci76MVBbKH9T7E7tTlGpe6VbEuqU4aVtZCf9tfF1l9CxFnMCg561ktBzAy0AkMQ==
+ b=vNkKn/oHwBSzhCsni0zfS/da37UERSNjuQVTNSMvprQEv/XerdoYt0+aNsoZiQ4m2nG48xFcc+PcXV3RYk6K0a2AsV/xHSOzKsI4xoGUz3m17jTY1spZ+L5OnSG49KssoMFCNxBNQMK9zXzrp/91RCBG3ujIvq4Xcl4CSVAPJqaf7BgQv5oF8GxtWLZZ8vh8q0t2+q+b65GCnFTCuNslJAENZibvkWSG6VkPmZli1bCqijWg0DaEWDf+kTBTXVcduftMjWiNhR8mHl+sTO8XEOZ/5dOEziWQVtI1Hyi4ZcjO/F4LlbgXnQjdghHyfiPRHoCY/oyTYyZO+Q0kqLMZNA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EneBu+DKXgYbPUB6Ulu2XhUi/hGkoUOgioSEwe/Lq/0=;
- b=BpwOhaeIiW0rcGKXbLrFZj+X5y+f73ZfoXbXCfdoPVRs918RpKgLdfQP0tsvbPyIJmMzE7atMOikzWXpJyYJG/MGC5yD8WOmkVLaOMV33vG7GEty0sCogf3aPkz8jVNiuDSWs87pWFGo/fyfoppjqXKMOh8TthVFOK+tCEBGk5Wt4hMvrwnGRJwqFvjjSUY0WcmlL17MI/zi6auiw8Z0+324Lt5rq9WCgWzBPZPPrm7Es+OP8Wz1Et1shT+eeNJfBKPZ9LJuvi4LgSyj08ekS9P/Uh6cQ3mxnpJm2h/p1rjXQSQOb0sdQeXaM1PinihtN0rN7P17M1IJaAPpKrxwHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by PH8PR11MB7144.namprd11.prod.outlook.com (2603:10b6:510:22c::12) with
+ bh=YCNBT4wg4QPrqIQq3cIkoMGUz/y2wR7VHl3xtKnhpP0=;
+ b=bts0hpmElr4P5HC5KFPdzc3VA0qOJIKNtzD3oE59wSbRj8BdxLmzBsy/7eYLwIewmI4UBEEkkc23lzHKZWucRco1dJeKY/GDrNKF164ge3IOv+rW1oAcR3KTOJT4e8WM79atSkF0pUVTT2baETb7l6fPCvItwn3gn/FRdm9Y2UwP2Imx6Nxdv3jX2Ijon/vYTHdzd2F/gavV14p5mCZhvExHbr6W0M9s5f6cg5iOSBm3YCNwGeC9PX6dX+AQLksVAk09pS9Gm8fFkzHRVZfaq+zFijPs/FNkjOe9743PwmFi9XotpVjj6D2EEgKsumZ/t+9+TrsP3sVdO+wcknEfBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=uetpeshawar.edu.pk
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YCNBT4wg4QPrqIQq3cIkoMGUz/y2wR7VHl3xtKnhpP0=;
+ b=oFdT18qjMXES05DPXo0QoLr64HYN10yFzTOHXLuA52BBhiyo0symUE6rU6sJVUkOPcebJ+X/aeGQobJn0VvNBIMJ+R7fZ2UvG7BlFP+FRu4CxURlZFXIpSEqivRGiGXU/YYnMpe6VarWkg5vWmnxmY+T10/574kTU2rO/rZqEmWR6+wTZrPKxfUv7pg+lOSyKcwejtdBaxSfTDKjeYBbn+isfe+es/+nntRAeAAJlj6J5TQM5wUr3ikdvepXjBPF5xqQzh6/dCcyuB7tBrMLlMe1WdQ+ughoP98izzs4/IEL7Ry2ox2HaQ2VeeKGIhkeTV97d1D6w4PvrNS/sPk3Gw==
+Received: from DM6PR02CA0162.namprd02.prod.outlook.com (2603:10b6:5:332::29)
+ by PH7PR12MB5781.namprd12.prod.outlook.com (2603:10b6:510:1d0::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.31; Tue, 15 Jul
- 2025 16:20:33 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.8922.023; Tue, 15 Jul 2025
- 16:20:33 +0000
-Date: Tue, 15 Jul 2025 17:20:21 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Morten =?iso-8859-1?Q?Br=F8rup?= <mb@smartsharesystems.com>
-CC: <dev@dpdk.org>, Dengdui Huang <huangdengdui@huawei.com>, "Vladimir
- Medvedkin" <medvedkinv@gmail.com>, <techboard@dpdk.org>, Patrick Robb
- <probb@iol.unh.edu>, Dean Marx <dmarx@iol.unh.edu>
-Subject: Re: [RFC PATCH] doc: clarify VLAN and QinQ stripping behaviour
-Message-ID: <aHZ_xZtcrv446hZ7@bricha3-mobl1.ger.corp.intel.com>
-References: <20250714133014.44597-1-bruce.richardson@intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FDB4@smartserver.smartshare.dk>
- <aHU1EJNHLjmynoUs@bricha3-mobl1.ger.corp.intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FDB5@smartserver.smartshare.dk>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FDB5@smartserver.smartshare.dk>
-X-ClientProxiedBy: DUZP191CA0022.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:10:4f9::26) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.35; Tue, 15 Jul
+ 2025 17:40:11 +0000
+Received: from CH3PEPF00000012.namprd21.prod.outlook.com
+ (2603:10b6:5:332:cafe::e0) by DM6PR02CA0162.outlook.office365.com
+ (2603:10b6:5:332::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.17 via Frontend Transport; Tue,
+ 15 Jul 2025 17:40:10 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CH3PEPF00000012.mail.protection.outlook.com (10.167.244.117) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8964.1 via Frontend Transport; Tue, 15 Jul 2025 17:40:10 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 15 Jul
+ 2025 10:39:57 -0700
+Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 15 Jul
+ 2025 10:39:56 -0700
+Date: Tue, 15 Jul 2025 19:39:53 +0200
+From: Dariusz Sosnowski <dsosnowski@nvidia.com>
+To: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+CC: <dev@dpdk.org>, <rasland@nvidia.com>, <stable@dpdk.org>, "Viacheslav
+ Ovsiienko" <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
+ <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
+ <matan@nvidia.com>
+Subject: Re: [PATCH] net/mlx5: fix crash when using meter in transfer flow
+Message-ID: <20250715173953.22wmyand7eltmevp@ds-vm-debian.local>
+References: <20250702123617.1814996-1-14pwcse1224@uetpeshawar.edu.pk>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250702123617.1814996-1-14pwcse1224@uetpeshawar.edu.pk>
+X-Originating-IP: [10.126.231.35]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|PH8PR11MB7144:EE_
-X-MS-Office365-Filtering-Correlation-Id: 021a42c2-d711-4f0a-1f7d-08ddc3bb85e1
+X-MS-TrafficTypeDiagnostic: CH3PEPF00000012:EE_|PH7PR12MB5781:EE_
+X-MS-Office365-Filtering-Correlation-Id: 35c0583a-3f8e-4844-f7e3-08ddc3c6a569
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?lIMg4i67Tp2pXTgquJrRs6YpxOom8OpxXKBYRQJMvH6v0bOfTdyOlcKFJk?=
- =?iso-8859-1?Q?AknFrGd/TKjGSeGu6WlPqAQ7PXDFzBruQQW0+qxHrBYXEq4FDLbbALlJNJ?=
- =?iso-8859-1?Q?IZu/AMWobtyXi+q0ySH4xTx2oIMpZJbhsbe7KOdhHnAeRmMQhVf+qw80D4?=
- =?iso-8859-1?Q?v9w17Gj+cHiuFwc/rE7TdxmLhWITmPqopNZVC10d8DeH6NtGYiQexjDLd/?=
- =?iso-8859-1?Q?KKacpxQ8BWjB4Amc4J2RHCkYnvJMB/RWrG03cdaT7KlCqbV0/slz5C5lfM?=
- =?iso-8859-1?Q?KKqGV5gfG0e+vvUFxLWQl8yvQzcBg/Qvmm+yrjaQqSRcA8exUr7t3scgI+?=
- =?iso-8859-1?Q?66wkjVzzZ+jqWw4i9zuOGQPGY0USkGkGCOGddai9Wc8wRAZ1boJ50dNKB7?=
- =?iso-8859-1?Q?ilRVLTTEp0bhnHuQJoTubnXcnAtKnrUYMyaM/PvL+akITV0Nx827vui+AM?=
- =?iso-8859-1?Q?otsnv5c64/+QUovnq8ivZR6lvQ8SW72NvLHuxUPqDYun+AqyCadZY1auV4?=
- =?iso-8859-1?Q?xBC9ZhaRVzpcAXuhOVIl29nHgmeCgqqivqHEwkHlf7CLuCS6lrngkNvEfz?=
- =?iso-8859-1?Q?eGtNT9AjEkvaaT7MbOOH8CDxN40mR50RdLKyjWuQBpq5mYUM+yOKoPjKy7?=
- =?iso-8859-1?Q?z439k0PyTmMkVNl3h/v0lliJYpWi58lOrg28bKhxo6QMvvsZqf3bNwTzvo?=
- =?iso-8859-1?Q?/Eb9HVfu68twCQ9eGnnuNS741Ly/ZhPk8pxfI7j0MbIHe0eVdw4Rsu5z3S?=
- =?iso-8859-1?Q?lGG1/CjfBjiRECqlMuDkMIssyK51DIMmFB54mA2uZ2pVd92vZ/T5Y10ufZ?=
- =?iso-8859-1?Q?is+vvEXmix5tqBy3Y7Hu6kek/HvZ3eBy8tGs0JqkbKfdmOCsSD8azjrvt4?=
- =?iso-8859-1?Q?LZPtaXRzw5FmJAwU9J06OUZ2BApte76NjtR0wwq2yBSprOMAGO7Ddup0JS?=
- =?iso-8859-1?Q?EjOi/7Lk4GgjmXzC6twHhooyGqhO2+ipuDV5tdXBvo+YS613MOuRn2uvtn?=
- =?iso-8859-1?Q?EVFFXK//v94XQpfSPOiSkDABfkXqQs6rcS5beOjGZt9cpOnk0hsCX9/+aJ?=
- =?iso-8859-1?Q?HMv/KXxEJQoeo5K0rIq14U9Q7hvgTDlUcvXbvxVMr/D9UCxxlVCDLzD3bV?=
- =?iso-8859-1?Q?L0CHCTIu9GQ0zX4iUM2RiUU1Hd5hEx/NXkrS6fpoqWV3mLVKQKGnHeoYad?=
- =?iso-8859-1?Q?pnGxkJ1tJ6iCcFukn5G9lbTCg1xvsdc1fU1Pjp3fLv5Kp3fMXoOEQ+Fmjs?=
- =?iso-8859-1?Q?s7NtCgwErsnDnwXgzWrHGi5SxwhzkER7vfz8V6TibgvLD23SGouRPEWZSa?=
- =?iso-8859-1?Q?yD72XEEYX/n1uN0PjcV1PdHa4ByJpBqOtyYizE9Z0eQMXoVce/9VNVTeRw?=
- =?iso-8859-1?Q?S66X0KsQFTCEagR5FQQSSVwi8DgLQoSRSNEncXdT03V4nrOVqrOQh0OLoe?=
- =?iso-8859-1?Q?njeeWtI6XZkocEAk9yyWA6ag1h2QLJyn4jXE2rakyORA2OunQX3vyII9HO?=
- =?iso-8859-1?Q?c=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?q5xwqgh9MlpI0CQwPBLw3dW9MQhhZqOIWYwFGznFuuMJ4Xlynn2aPIyilO?=
- =?iso-8859-1?Q?+mZ2qqj3J4IwSdKLgfgBUldwCsgtpKNhk1ARBm51C/7M2BcOYpa01uR5UH?=
- =?iso-8859-1?Q?R4zty2MwPJGvHsSuJ9fstvg/LeYYdbmbTcQV0s5MRRZ617rHpaKlb8sopE?=
- =?iso-8859-1?Q?31TyBo861rg5OtuvMJfhiU8jowCOT0+d0ofIUqTLBtsHmx6ohYrj8SiuLk?=
- =?iso-8859-1?Q?3s1KN+9LUKp2vs1YjPdDHf+/waXRPw14+cH6EfVNhMvuxsGr8i43z//6lh?=
- =?iso-8859-1?Q?mB3vIuUb40RhQ+YYip6BhZaYmLwA5aTOtMKau8WQUyYX8YfYT8hQdKW/N/?=
- =?iso-8859-1?Q?YOxhlNs0EpI8viZCRsv58RM/VWQApR09fL/6+HxmeSV/upr1iVUxzgWrYx?=
- =?iso-8859-1?Q?UnAvbe7B6KjjDFY6PfLVc8dPAZVaPa6mnn1zNJay+9sKGiIRnfASDn6Nl0?=
- =?iso-8859-1?Q?IpQHLH4KQZZrOE2hvaybhRwxXnT9OQlSCwfyOdFt/jRIfo6WaDeQJ3Sl38?=
- =?iso-8859-1?Q?KL0FfAGV9uf5laGD1QBrzD9IVQdQrFOTJ6V/s+XcygQTlbK1fdIFN8TNOc?=
- =?iso-8859-1?Q?tiYlOdoDPpd1oA50VSklF4DGz3BE49zsijMWGHoSoMycxNde63eQMSHg0T?=
- =?iso-8859-1?Q?f1SBOgS/1J8ee1XXizxbQ9n4dBoebgGwzf6op53X53fzuUkzAnGlWWLVLv?=
- =?iso-8859-1?Q?4MiuJ77kUeXZBiI174Mait2jrzu3AqUdgqis1VKUU0uuNdqXWmG20z5jMk?=
- =?iso-8859-1?Q?cjMZ37SpJRVxeGrJvl84uh0Q9kMDgOpAdVgdeShg2x852aOc/ep0Jnujsi?=
- =?iso-8859-1?Q?kaVwJ6LnJEDrXnRkiP6du4DRlfxHS7/yBshs7bEQPm5gbky/2QoNMx8NvH?=
- =?iso-8859-1?Q?6bsf9giTWdIudSOpa4+Fi9czLP/DaDXeBfPRI3UVYKwRbVvT0tUWzt6UBO?=
- =?iso-8859-1?Q?dGGnFRte+1BvzAfaI2IcSDD3/rpxozEdOs0BRcRnchhqazsPw1mIXJUxCg?=
- =?iso-8859-1?Q?Lr1Zug2xqHa33MKBlmhILyDU5v+aUGVlB3qW60msqzPLeV3LxwUOT0BfcQ?=
- =?iso-8859-1?Q?K7j6N0pqwsZFi2FVYcTp2Lv43fg82VOqC/47A3NAWndwZrxZIMTUSTzgJy?=
- =?iso-8859-1?Q?P76AZ69hur0HLaCBlimqx5IPFSTUH3sLRmIFqOW5Slcrkcf3GWpcazQ5Ge?=
- =?iso-8859-1?Q?qX8maAQfyffR0JdAFJRAY9PheTKryzhS3YbayeWJrqYEM1MY0oL812Rltx?=
- =?iso-8859-1?Q?yHrketw9KUyAivo8bZxwMgbgk+6SLTrxBvaYb7ry9CTzeXGEQuz+mNJgBx?=
- =?iso-8859-1?Q?5mueWCRUkGh1FLlEX1GwDlsvMpiSX4kTcyGpEQInBY+zeLHdWv24hb7hW8?=
- =?iso-8859-1?Q?H5Z7dHdbxyjg8VVws/9lQ3oq8UJfovdUCPSQWDgIhZr2aM5MmLo96Ma8ad?=
- =?iso-8859-1?Q?eSSmRAknvSMZPDVsJRaCUzZp2c/5lMXPqYXRQ0AUZxbnMCe2RelxfvFHHy?=
- =?iso-8859-1?Q?JrrMgF27nUBFE25fMlXy7x0TBIdcqYTUWRte1+/4h/8wXErszKSj31WC22?=
- =?iso-8859-1?Q?M+CRGFTZaewmNhDFE/ZyWyHqrINeDOfIA4xIXX1zp4iqRp08yKW36Jgult?=
- =?iso-8859-1?Q?4aRbiSPRwOFTvwNhfpxxL2smJyQS2D2BNLL0FdBVhmwb3C3/nDPeX1Tg?=
- =?iso-8859-1?Q?=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 021a42c2-d711-4f0a-1f7d-08ddc3bb85e1
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 16:20:33.7859 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2IO1nGrAQUjdsPgJEB1xSDeG6YMrTFpN97WxN3Eiby0ErUZSFxbYpAaUrraz2x9HPZVFatRL9LcgnHzBUwHplgG+kP3gOwOs7fdboCtz+x4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB7144
-X-OriginatorOrg: intel.com
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|82310400026|36860700013|376014|1800799024|7053199007; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?eLQh53dcSP2NxYR5HMVGTzVanqmJwQMoOdTCd3PDt1jYdulxx5luXkQU5cPl?=
+ =?us-ascii?Q?pk+PyS0PafKvTsywMkxyAbnY9Mv0+hijL/9iTBhiQhtucAA/Y1tOawf5mlSD?=
+ =?us-ascii?Q?vNiArNMzEUOVjOeia16KK/WMXbntIyitnaKRuRKUcvz6isyOSyTcEcx7+ql+?=
+ =?us-ascii?Q?H/cQtpMADK2ziQR3AjvxeTS6OmxQsPdKVUpWtZOv/HxQkjPFGIKelyq5I4XD?=
+ =?us-ascii?Q?rSYTLg4VTrlNoE4sYL62f+EAsFI5wivBdafHUw6lQW6/vy1vitmPjsSOycmE?=
+ =?us-ascii?Q?wf04yUtxIdX8LUrzsoAPTdu59b8Yr+7ITHSCK0XXG8LBVmpIq0MX8w/0RNw0?=
+ =?us-ascii?Q?Q0XSRMe8eUe4gHgqozY4dv5tFjaOAmZaF5AmWYs1eNWHRAYpzYxn+Zrxfbk0?=
+ =?us-ascii?Q?XB5V6j8IE0QWFOcfFDEFmAW9DTbv4pnttpOJChR0LPQE+2I5lms+Gv62hSG/?=
+ =?us-ascii?Q?nNnJYk/NMbxGWq20NUDA1t77Nx4AOf5Cst2M+i15s6e33T/ZRdsjzkprVY4U?=
+ =?us-ascii?Q?bejSgMUOqx1GfjHkUlaLm5nYVQi20lnX+E49+zWs8wceeElhbi9hCWsOzJJ4?=
+ =?us-ascii?Q?SIzQS5bscdRPpVTNqviyoMkkAhDUyahh8uA8p9fPGx4vqwrcd9Us7IF1gihJ?=
+ =?us-ascii?Q?Ed4T6/FOTnd15w/dJ9DXYJyXtMx4x1kReLJTPfrblLDZ7iKwCCPV+oOfdLTI?=
+ =?us-ascii?Q?fgUSJy0vM07LcLEhPy+BedGFSdm/QnoZeV0Cpcl0pSkgdQP6WmZNiddr55nc?=
+ =?us-ascii?Q?OmQ+MF/zsCdWUIM/e1szsh/YDUU29Q34ZrMH2OnKVyWFgfra+l/qiNGtFJ9y?=
+ =?us-ascii?Q?HcOq86QE+LYygq5RC1ShlFXlLG4qVp307BXWlK2CcvT4i0CkB7V5HZnCG/mA?=
+ =?us-ascii?Q?w3+FWrK3Jz2i8qFfaHEVZ2RI8/vLHHnfVeKTndhu0FVWbpJ659ahK89Ay6aq?=
+ =?us-ascii?Q?hiOlHl2P0x6Bm5MzOgyiYVYDhCaK78Iv0vrVjunYnwMpv+H+R3vzHWzEDu03?=
+ =?us-ascii?Q?VYPpa6VMagm6j6+rujd22tKMD/4yh3zU0kXfaDWg1pa+q6VTBu1Pu8xPjDfK?=
+ =?us-ascii?Q?LsDzW91T2Zi6NbIvv5R5xMlYvogXmvxZOKQ9X17+dxWebizl+M4IsLNRI5xi?=
+ =?us-ascii?Q?s+PhQ3i7ewXJqpjsus/BKqDnZ7VW54o374AgHqDVKb7i1JYLuuiEO0Itx2YW?=
+ =?us-ascii?Q?+I9YZkD5EzyasSQIncsm/260GMoDMrnsX4N2hMCt/iJyYVd7/pK+d7kuRidO?=
+ =?us-ascii?Q?vWAbYVQBHadCgzZhtzNJWhMngvXk3c9oDg+lUg/diMJp3n4vCaC4lSvHX7RN?=
+ =?us-ascii?Q?FcbXMC+skJD2k6pDvoYl8y9Fa78fsD/xMqa/nmaHrzrsIXAiIU4qm/lVFOLg?=
+ =?us-ascii?Q?DuyhdpJcgA8iC7VbKhAwdul1keIy3t9jfsMciIr9RIfB9wCvENbGukTxHNLR?=
+ =?us-ascii?Q?JM5BZAB6FE7VXAKrPDYky2MNpDmx/l1w+yCz1fxFzOp0DBxdeib43CEIBieV?=
+ =?us-ascii?Q?xxf66iyKHWasHAo=3D?=
+X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024)(7053199007);
+ DIR:OUT; SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 17:40:10.0196 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 35c0583a-3f8e-4844-f7e3-08ddc3c6a569
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CH3PEPF00000012.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5781
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -177,12 +134,87 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Jul 15, 2025 at 05:04:42PM +0200, Morten Brørup wrote:
-> FYI:
-> Last time I looked, it seemed like the VLAN/QINQ "tag present" mbuf RX flags were only set along with the RX _STRIPPED flags, i.e. not set when stripping was not enabled.
-> Although setting the "tag present" flags (and the vlan_tci/vlan_tci_outer fields) without stripping would be nice to have, I think we should initially focus on stripping behavior.
-> 
-Yep. Again, it may be that HW doesn't support reporting a tag unless it is
-stripped. :-(
++ mlx5 maintainers
 
-/Bruce
+Thank you for the patch.
+
+On Wed, Jul 02, 2025 at 08:36:17AM -0400, Khadem Ullah wrote:
+> When creating a flow rule with the transfer attribute and a meter action,
+> the driver did not validate this combination and would crash due to
+> unsupported handling.
+> 
+> This patch adds explicit validation rejecting meter action in transfer
+> flows with an appropriate error message.
+> 
+> Fixes: 46a5e6bc6a85 ("net/mlx5: prepare meter flow tables")
+> Cc: stable@dpdk.org
+> 
+> Steps to reproduce:
+> 1. Launch testpmd:
+>    ./build/app/dpdk-testpmd -l 0,1 -a <PCI BDF> -- -i --rxq=8 --txq=8
+> 
+> 2. Inside testpmd:
+>    add port meter profile trtcm_rfc2698 0 0 5 10 50 100 1
+>    add port meter policy 0 0 g_actions mark id 3 / queue index 2 / end /
+>       y_actions mark id 7 / queue index 3 / end r_actions drop / end
+>    create port meter 0 0 0 0 yes 0xffff 0 y 0
+> 3. flow create 0 group 0 ingress pattern eth / ipv4 / end actions
+>      jump group 1 / end
+> 3. Following causes a segmentation fault:
+>    flow create 0 transfer ingress pattern eth / ipv4 /
+>       end actions meter mtr_id 0 / end
+
+I tried these steps on v25.07-rc3 and the segfault does not reproduce for me.
+rte_flow_create() correctly returns ENOTSUP for that case.
+
+Similar case was segfaulting recently,
+but it was fixed by this commit: https://github.com/DPDK/dpdk/commit/c30b356a4d48542fe99c47aa470afc8cd1ced9f5
+This specific fix is available from v25.03 and is included in v24.11.2
+
+On other LTSes - v22.11.8 and v23.11.4 - segfault does not reproduce
+for me as well. Either ENOTSUP or validation error is reported.
+
+Which DPDK version are you using?
+
+I see that the flow rule is created with transfer attribute.
+Are you using a setup with switchdev enabled?
+(https://docs.kernel.org/networking/device_drivers/ethernet/mellanox/mlx5/switchdev.html)
+
+> 
+> This patch ensures proper handling of the meter action with
+> transfer rule to prevent this crash.
+> 
+> Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+> ---
+>  drivers/net/mlx5/mlx5_flow.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/mlx5/mlx5_flow.c b/drivers/net/mlx5/mlx5_flow.c
+> index 8db372123c..a7b793ef29 100644
+> --- a/drivers/net/mlx5/mlx5_flow.c
+> +++ b/drivers/net/mlx5/mlx5_flow.c
+> @@ -7993,7 +7993,17 @@ mlx5_flow_create(struct rte_eth_dev *dev,
+>  	struct rte_flow_attr *new_attr = (void *)(uintptr_t)attr;
+>  	uint32_t prio = attr->priority;
+>  	uintptr_t flow_idx;
+> -
+> +	if (attr && attr->transfer) {
+> +		const struct rte_flow_action *act;
+> +		for (act = actions; act && act->type != RTE_FLOW_ACTION_TYPE_END; ++act) {
+> +			if (act->type == RTE_FLOW_ACTION_TYPE_METER) {
+> +				rte_flow_error_set(error, ENOTSUP,
+> +					RTE_FLOW_ERROR_TYPE_ACTION, act,
+> +					"Meter action is not supported in transfer flows");
+> +				return NULL;
+> +			}
+> +		}
+> +	}
+>  	/*
+>  	 * If the device is not started yet, it is not allowed to created a
+>  	 * flow from application. PMD default flows and traffic control flows
+> -- 
+> 2.43.0
+> 
+
+Best regards,
+Dariusz Sosnowski
