@@ -2,75 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DFE5C83F17
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Jul 2025 16:17:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC18C83F22
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Jul 2025 16:17:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 51DD440654;
-	Tue, 15 Jul 2025 18:17:08 +0200 (CEST)
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com
- [209.85.219.54]) by mails.dpdk.org (Postfix) with ESMTP id 0009F4060B
- for <dev@dpdk.org>; Tue, 15 Jul 2025 18:17:06 +0200 (CEST)
-Received: by mail-qv1-f54.google.com with SMTP id
- 6a1803df08f44-6facf4d8ea8so43662706d6.0
- for <dev@dpdk.org>; Tue, 15 Jul 2025 09:17:06 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 44B1140658;
+	Tue, 15 Jul 2025 18:17:09 +0200 (CEST)
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com
+ [209.85.219.44]) by mails.dpdk.org (Postfix) with ESMTP id 496B640651
+ for <dev@dpdk.org>; Tue, 15 Jul 2025 18:17:08 +0200 (CEST)
+Received: by mail-qv1-f44.google.com with SMTP id
+ 6a1803df08f44-704cb8b1314so14595396d6.3
+ for <dev@dpdk.org>; Tue, 15 Jul 2025 09:17:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752596226;
- x=1753201026; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752596227;
+ x=1753201027; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=cwal5wMF6fzRUOulrCFKxPXLZIUCadXAAYsGPKswqww=;
- b=oIcMIyqGCiqyuGieWzlmOWZZlmtJnOlNMPmqAC3aRG5Rg2Ikii4eF7SdozQzdv2Pc2
- quGLCs3lAu9N0azOVGdENNXBiburX2cfuzVf13b7g3M9FiJG53e/XmFp6USY6BM1/R+R
- hmgoPZyL+1fFD6fp0Gd5zc7Oc3+G3rtwkf67ylzzgf0y4sYSBFwn/SQO191Ezd9LJXFF
- Am7Nxa0qJPS3+jyixFQ7zQH9ugfyuviYHV5qktWpNbd6QFHNwJi3fuyZCg8tjv2K4yYR
- 6zwPsj4nQ8YNwuzyGBa7cEtk2bNa5rU4Q8zEXyJlgdr3NGjB30IMoPKmgHvg2A3bEuye
- sLbg==
+ bh=Nd5IbD1gfu3uxsi19HXLY82ZUVsISET2Jssfh5uVVjo=;
+ b=S+KPLKHa7aMA8Np3fgEddfZlaT8jaU5b0aVIO/f8+nAZwjaHePLdEz2cYZNZuHKnKT
+ Ys+eIyPmqpX9WUY+fKXElRC+Trox6k6dCySQlgrbIypLPMkTi5kybEX2BH52NxD2ko8G
+ GLmGFeEPPHPqToBN1HU+0LPrNYhMTIVToEpL6jWMuPLxRzOyR5TJRsTzN2XyWCxKuB02
+ edClb4t0BQL1W6aaM0D310OROafcBTObVU41aKyg1zcRabwsLDE12PiCNJLJSaxrY7+F
+ KSYAE2qBEdrD0etT89sqRsPSaIjbGQ2J2ssL48zRVFia1p9DMbNIeKWIzyFjPc0EwsTX
+ vtRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752596226; x=1753201026;
+ d=1e100.net; s=20230601; t=1752596227; x=1753201027;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=cwal5wMF6fzRUOulrCFKxPXLZIUCadXAAYsGPKswqww=;
- b=YmqPU8W0RBPBb48RykR4X7HQbhsOFluzMtvXbSto4GMX+SQWF3a71ZrKIEJBF1bBim
- wrEVhkIl/5szgzBGAPX9GtmgwNG13zTQBEsPtyn3PS+NrQ84zLMx763ljGrrFkTy6h7E
- 3R0wa8IjunzuiGqKVN7KuFdimxtBxoBGKWMbzdF0VGekvBS3AFULod5zY1sN8M6i1h49
- gARkSQaw/8KZtKRGyBsjGAHQ+EplfkoeJUgR2ED1YTBwWy1mrZoFpzK9I6u4Vk5/kSwd
- 5xv9THe7JMHJ6mxPGX2kZntgH4SUGvuaysw/Vw60y4SEcR7+UiFjTUXHmw8i5ORBPAvS
- y5lw==
-X-Gm-Message-State: AOJu0YyqIqvlmwlhnf8YaYsyBnmek/SRnww3pHOJv/ayxtPfepIF8sMR
- PBIRizYbrKlpaG6RCwvT6MSnrmRO50ZYalBCxKBjSjoz2YzZLHuwtu8rbvCICBQHtkRZfKCLG0a
- T2Wlg
-X-Gm-Gg: ASbGncspR0XgaMpnKWkhdC6v3QzQig1yDXYYQJZJaDRfY8LAb7GDuQkC77n9L9qk/uo
- 0crhm0uMOSHnyVhAEsiN2kGWvbpd/MPrT6J2MTro/6VYfTBGWcYyfbsvp4Ek7N60W1tWT1SFaj8
- EiayKNUhxniNQG7ea/I10XoYDZN3wC8GAwEqCfs4E7dBQdHsFUihduzZP+9jWY3gbiD+Skmf9nI
- itPKLNzWHFSgZTB68PbyQGTJMQDDh+GK7zbQC+/LCHzlFbHyJk7NwGgSkaZEBhvDXvbautvdfRP
- mGihXvgU1bZm0mskvDkY7HaXQE2cIQY8NzYEt2Uveb1G10KOoXyDSaNxBhsCizE8I3eM1VNkDwo
- MednomhCHQ581+fItFfE0K3LHCJogg823HY1t1ANhyLHWNDq21jIraKuMsiqsJSNQChwtvsct
-X-Google-Smtp-Source: AGHT+IEWLVi+qJPzNQEzRYOkVuID++AjRrwNmR0KTZTZ/8+Kd7S9Wb4TdupPCWOU2dI7u021QdV3Wg==
-X-Received: by 2002:a05:6214:5f03:b0:704:a16c:f3e5 with SMTP id
- 6a1803df08f44-704f4ae0ea4mr805896d6.34.1752596225944; 
- Tue, 15 Jul 2025 09:17:05 -0700 (PDT)
+ bh=Nd5IbD1gfu3uxsi19HXLY82ZUVsISET2Jssfh5uVVjo=;
+ b=OgBKIVm/PxaN+6cdIhJUBm56+7LMfWX9wEQDQvU3ySM+L+fXL3exrhcOwWw/ZCZJyO
+ EbcCy5X/gImktCx0RAirsqEZTmfp5Hqr4F8M3xaQjho2T9+xPM8F6pguYXbr1rEUuPjw
+ KC8DEjYfQKH0dZccvwGrhL5iljZrIQ19KRqpudflfdnC/UldfcHiuBuZCvH+q+CvNFaq
+ Oc+QinnmhzsO2gRoG7A8skoe7kmO8CEuAmocH4gcQI6BpxMk5pKStTMObgNpKGkJiZwH
+ ck0pYnuvUipm6EofB2iIkLtT1dbYPKa9bk1wrrxzHbBXtddwuxMgAjE4ksYXAkgeHEAQ
+ yJMA==
+X-Gm-Message-State: AOJu0YyQQ/B5Qq4QVKWKI7DyP34VnJRFjzlYx1umVGLy+irLePD5qvy3
+ wSqLshlXvQybnIYpilEHLWDYNYhGFvbupC4VsvxJhm6Er1TdUy7otvx6Ey9L4JxAjtlTUQUvcCp
+ jliDt
+X-Gm-Gg: ASbGnctOuLaKdBrjPh9hfj5m/dXtpRjgWmVJpoGjY6QcTL06IWg9Jhc+EXqVoKKDCIv
+ oXWw2j8E4UCjx77/LzkJ5dr1RMIp7WCSRbiDryEoAVhJIgwp+p+olTUG8TyYSM7FNUGbFk98DMr
+ MaT+0H8mMqnPuQuEkHhQMJ15n7TBU/WyArcSbK5Nquj4rOQsE44JHsoD0mjMsoBm5U3Zie6C91j
+ PTpWTgzeeu5kTJkdb9O6RIQbB1/j3onBh0h1OrEQqDu/EJVxbJDf0qwjWNr9PgJ8nzLNyyYDmTi
+ kjo2cXnbPHcu29p5IvH4Nj9IzhdNO1XA+lD/2P1dAzivGbjQC4sxmC+HfzgAWbGbv5AKVhwhITZ
+ 0BuD+ziIWNLNv+V4se/qM/QH/rKgwgUGUUHLTo68IEzzsQscLE2DL1BYZEKqUz27PMTO6kJFB
+X-Google-Smtp-Source: AGHT+IGbzxb4TrQSS/HVOdQ7CjqHhu1ZbSy7ixmiY7q+5OgzxWI78k1Ot8rvifER6zCXQgwn6XDaKw==
+X-Received: by 2002:a05:6214:2247:b0:702:d655:f4e9 with SMTP id
+ 6a1803df08f44-704f483ef46mr1384586d6.18.1752596227316; 
+ Tue, 15 Jul 2025 09:17:07 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-704979a8857sm59985106d6.9.2025.07.15.09.17.04
+ 6a1803df08f44-704979a8857sm59985106d6.9.2025.07.15.09.17.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 15 Jul 2025 09:17:05 -0700 (PDT)
+ Tue, 15 Jul 2025 09:17:07 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Thomas Monjalon <thomas@monjalon.net>, Ferruh Yigit <ferruh.yigit@amd.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v4 01/13] ethdev: allow start/stop from secondary process
-Date: Tue, 15 Jul 2025 09:15:39 -0700
-Message-ID: <20250715161700.103209-2-stephen@networkplumber.org>
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: [PATCH v4 02/13] ethdev: make sure all necessary headers included
+Date: Tue, 15 Jul 2025 09:15:40 -0700
+Message-ID: <20250715161700.103209-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250715161700.103209-1-stephen@networkplumber.org>
 References: <20250411234927.114568-1-stephen@networkplumber.org>
  <20250715161700.103209-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -85,314 +83,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Before this patch if secondary process called start/stop
-it would only impact the secondary process, the ethdev on the
-primary process was not started.
-
-With this patch, when start/stop is called from secondary,
-it calls the primary and does the operation there. The design
-is generic, and we can later add queue and other operations
-as needed.
-
-Bugzilla ID: 73
+Best not to depend on other EAL headers to include stuff.
+Some of the later changes had build failures on some platforms.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/ethdev/ethdev_driver.c  | 11 ++++-
- lib/ethdev/ethdev_private.c | 93 +++++++++++++++++++++++++++++++++++++
- lib/ethdev/ethdev_private.h | 26 +++++++++++
- lib/ethdev/rte_ethdev.c     | 84 +++++++++++++++++++--------------
- 4 files changed, 177 insertions(+), 37 deletions(-)
+ lib/ethdev/ethdev_private.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/lib/ethdev/ethdev_driver.c b/lib/ethdev/ethdev_driver.c
-index ec0c1e1176..66ba7dafc9 100644
---- a/lib/ethdev/ethdev_driver.c
-+++ b/lib/ethdev/ethdev_driver.c
-@@ -114,6 +114,14 @@ rte_eth_dev_allocate(const char *name)
- 		goto unlock;
- 	}
- 
-+	if (eth_dev_shared_data->allocated_ports == 0 &&
-+	    rte_mp_action_register(ETHDEV_MP, ethdev_server) &&
-+	    rte_errno != ENOTSUP) {
-+		RTE_ETHDEV_LOG_LINE(ERR,
-+			 "Could not start %s service", ETHDEV_MP);
-+		goto unlock;
-+	}
-+
- 	eth_dev = eth_dev_get(port_id);
- 	eth_dev->flow_fp_ops = &rte_flow_fp_default_ops;
- 	strlcpy(eth_dev->data->name, name, sizeof(eth_dev->data->name));
-@@ -282,7 +290,8 @@ rte_eth_dev_release_port(struct rte_eth_dev *eth_dev)
- 		memset(eth_dev->data, 0, sizeof(struct rte_eth_dev_data));
- 		eth_dev->data = NULL;
- 
--		eth_dev_shared_data->allocated_ports--;
-+		if (--eth_dev_shared_data->allocated_ports == 0)
-+			rte_mp_action_unregister(ETHDEV_MP);
- 		eth_dev_shared_data_release();
- 	}
- 
 diff --git a/lib/ethdev/ethdev_private.c b/lib/ethdev/ethdev_private.c
-index 285d377d91..184cf33f99 100644
+index 184cf33f99..fffffe2625 100644
 --- a/lib/ethdev/ethdev_private.c
 +++ b/lib/ethdev/ethdev_private.c
-@@ -2,6 +2,8 @@
-  * Copyright(c) 2018 Gaëtan Rivet
+@@ -3,9 +3,18 @@
   */
  
-+#include <assert.h>
-+
+ #include <assert.h>
++#include <errno.h>
++#include <inttypes.h>
++#include <stdbool.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <time.h>
+ 
  #include <eal_export.h>
  #include <rte_debug.h>
++#include <rte_eal.h>
++#include <rte_lcore.h>
++#include <rte_stdatomic.h>
  
-@@ -477,3 +479,94 @@ eth_dev_tx_queue_config(struct rte_eth_dev *dev, uint16_t nb_queues)
- 	dev->data->nb_tx_queues = nb_queues;
- 	return 0;
- }
-+
-+static int
-+ethdev_handle_request(const struct ethdev_mp_request *req)
-+{
-+	switch (req->operation) {
-+	case ETH_REQ_START:
-+		return rte_eth_dev_start(req->port_id);
-+
-+	case ETH_REQ_STOP:
-+		return rte_eth_dev_stop(req->port_id);
-+
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static_assert(sizeof(struct ethdev_mp_request) <= RTE_MP_MAX_PARAM_LEN,
-+	"ethdev MP request bigger than available param space");
-+
-+static_assert(sizeof(struct ethdev_mp_response) <= RTE_MP_MAX_PARAM_LEN,
-+	"ethdev MP response bigger than available param space");
-+
-+int
-+ethdev_server(const struct rte_mp_msg *mp_msg, const void *peer)
-+{
-+	const struct ethdev_mp_request *req
-+		= (const struct ethdev_mp_request *)mp_msg->param;
-+
-+	struct rte_mp_msg mp_resp = {
-+		.name = ETHDEV_MP,
-+	};
-+	struct ethdev_mp_response *resp;
-+
-+	resp = (struct ethdev_mp_response *)mp_resp.param;
-+	mp_resp.len_param = sizeof(*resp);
-+	resp->res_op = req->operation;
-+
-+	/* recv client requests */
-+	if (mp_msg->len_param != sizeof(*req))
-+		resp->err_value = -EINVAL;
-+	else
-+		resp->err_value = ethdev_handle_request(req);
-+
-+	return rte_mp_reply(&mp_resp, peer);
-+}
-+
-+int
-+ethdev_request(uint16_t port_id, enum ethdev_mp_operation operation,
-+	       const void *buf, size_t buf_len)
-+{
-+	struct rte_mp_msg mp_req = { };
-+	struct rte_mp_reply mp_reply;
-+	struct ethdev_mp_request *req;
-+	struct timespec ts = {.tv_sec = 5, .tv_nsec = 0};
-+	int ret;
-+
-+	if (sizeof(*req) + buf_len > RTE_MP_MAX_PARAM_LEN) {
-+		RTE_ETHDEV_LOG_LINE(ERR,
-+				    "request %u port %u invalid len %zu",
-+				    operation, port_id, buf_len);
-+		return -EINVAL;
-+	}
-+
-+	strlcpy(mp_req.name, ETHDEV_MP, RTE_MP_MAX_NAME_LEN);
-+	mp_req.len_param = sizeof(*req) + buf_len;
-+
-+	req = (struct ethdev_mp_request *)mp_req.param;
-+	req->operation = operation;
-+	req->port_id = port_id;
-+
-+	if (buf_len > 0)
-+		memcpy(req->config, buf, buf_len);
-+
-+	ret = rte_mp_request_sync(&mp_req, &mp_reply, &ts);
-+	if (ret == 0) {
-+		const struct rte_mp_msg *mp_rep = &mp_reply.msgs[0];
-+		const struct ethdev_mp_response *resp
-+			= (const struct ethdev_mp_response *)mp_rep->param;
-+
-+		if (resp->err_value == 0)
-+			ret = 0;
-+		else
-+			rte_errno = -resp->err_value;
-+		free(mp_reply.msgs);
-+	}
-+
-+	if (ret < 0)
-+		RTE_ETHDEV_LOG_LINE(ERR,
-+		       "port %up ethdev op %u failed", port_id, operation);
-+	return ret;
-+}
-diff --git a/lib/ethdev/ethdev_private.h b/lib/ethdev/ethdev_private.h
-index b07b1b4c42..f58f161871 100644
---- a/lib/ethdev/ethdev_private.h
-+++ b/lib/ethdev/ethdev_private.h
-@@ -79,4 +79,30 @@ void eth_dev_txq_release(struct rte_eth_dev *dev, uint16_t qid);
- int eth_dev_rx_queue_config(struct rte_eth_dev *dev, uint16_t nb_queues);
- int eth_dev_tx_queue_config(struct rte_eth_dev *dev, uint16_t nb_queues);
- 
-+/* Used to allow start/stop from secondary */
-+#define ETHDEV_MP	"mp_ethdev"
-+
-+enum ethdev_mp_operation {
-+	ETH_REQ_START,
-+	ETH_REQ_STOP,
-+};
-+
-+struct ethdev_mp_request {
-+	uint16_t operation;
-+	uint16_t port_id;
-+	uint32_t reserved;
-+
-+	uint8_t config[]; /* operation specific */
-+};
-+
-+struct ethdev_mp_response {
-+	uint16_t res_op;
-+	uint16_t port_id;
-+	int32_t err_value;
-+};
-+
-+int ethdev_server(const struct rte_mp_msg *mp_msg, const void *peer);
-+int ethdev_request(uint16_t port_id, enum ethdev_mp_operation op,
-+		   const void *buf, size_t buf_len);
-+
- #endif /* _ETH_PRIVATE_H_ */
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index dd7c00bc94..41363af2c3 100644
---- a/lib/ethdev/rte_ethdev.c
-+++ b/lib/ethdev/rte_ethdev.c
-@@ -1800,54 +1800,61 @@ rte_eth_dev_start(uint16_t port_id)
- 
- 	if (dev->data->dev_configured == 0) {
- 		RTE_ETHDEV_LOG_LINE(INFO,
--			"Device with port_id=%"PRIu16" is not configured.",
--			port_id);
-+				    "Device with port_id=%"PRIu16" is not configured.",
-+				    port_id);
- 		return -EINVAL;
- 	}
- 
- 	if (dev->data->dev_started != 0) {
- 		RTE_ETHDEV_LOG_LINE(INFO,
--			"Device with port_id=%"PRIu16" already started",
--			port_id);
-+				    "Device with port_id=%"PRIu16" already started",
-+				    port_id);
- 		return 0;
- 	}
- 
--	ret = rte_eth_dev_info_get(port_id, &dev_info);
--	if (ret != 0)
--		return ret;
-+	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
-+		ret = rte_eth_dev_info_get(port_id, &dev_info);
-+		if (ret != 0)
-+			return ret;
- 
--	restore_flags = rte_eth_get_restore_flags(dev, RTE_ETH_START);
-+		restore_flags = rte_eth_get_restore_flags(dev, RTE_ETH_START);
- 
--	/* Lets restore MAC now if device does not support live change */
--	if ((*dev_info.dev_flags & RTE_ETH_DEV_NOLIVE_MAC_ADDR) &&
--	    (restore_flags & RTE_ETH_RESTORE_MAC_ADDR))
--		eth_dev_mac_restore(dev, &dev_info);
-+		/* Restore MAC now if device does not support live change */
-+		if ((*dev_info.dev_flags & RTE_ETH_DEV_NOLIVE_MAC_ADDR) &&
-+		    (restore_flags & RTE_ETH_RESTORE_MAC_ADDR))
-+			eth_dev_mac_restore(dev, &dev_info);
- 
--	diag = dev->dev_ops->dev_start(dev);
--	if (diag == 0)
--		dev->data->dev_started = 1;
--	else
--		return eth_err(port_id, diag);
-+		diag = dev->dev_ops->dev_start(dev);
-+		if (diag == 0)
-+			dev->data->dev_started = 1;
-+		else
-+			return eth_err(port_id, diag);
- 
--	ret = eth_dev_config_restore(dev, &dev_info, restore_flags, port_id);
--	if (ret != 0) {
--		RTE_ETHDEV_LOG_LINE(ERR,
--			"Error during restoring configuration for device (port %u): %s",
--			port_id, rte_strerror(-ret));
--		ret_stop = rte_eth_dev_stop(port_id);
--		if (ret_stop != 0) {
-+		ret = eth_dev_config_restore(dev, &dev_info, restore_flags, port_id);
-+		if (ret != 0) {
- 			RTE_ETHDEV_LOG_LINE(ERR,
--				"Failed to stop device (port %u): %s",
--				port_id, rte_strerror(-ret_stop));
--		}
-+				"Error during restoring configuration for device (port %u): %s",
-+				 port_id, rte_strerror(-ret));
-+			ret_stop = rte_eth_dev_stop(port_id);
-+			if (ret_stop != 0) {
-+				RTE_ETHDEV_LOG_LINE(ERR,
-+					"Failed to stop device (port %u): %s",
-+					 port_id, rte_strerror(-ret_stop));
-+			}
- 
--		return ret;
--	}
-+			return ret;
-+		}
- 
--	if (dev->data->dev_conf.intr_conf.lsc == 0) {
--		if (dev->dev_ops->link_update == NULL)
--			return -ENOTSUP;
--		dev->dev_ops->link_update(dev, 0);
-+		if (dev->data->dev_conf.intr_conf.lsc == 0) {
-+			if (dev->dev_ops->link_update == NULL)
-+				return -ENOTSUP;
-+			dev->dev_ops->link_update(dev, 0);
-+		}
-+	} else {
-+		/* in secondary, proxy to primary */
-+		ret = ethdev_request(port_id, ETH_REQ_START, NULL, 0);
-+		if (ret != 0)
-+			return ret;
- 	}
- 
- 	/* expose selection of PMD fast-path functions */
-@@ -1880,9 +1887,14 @@ rte_eth_dev_stop(uint16_t port_id)
- 	/* point fast-path functions to dummy ones */
- 	eth_dev_fp_ops_reset(rte_eth_fp_ops + port_id);
- 
--	ret = dev->dev_ops->dev_stop(dev);
--	if (ret == 0)
--		dev->data->dev_started = 0;
-+	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
-+		ret = dev->dev_ops->dev_stop(dev);
-+		if (ret == 0)
-+			dev->data->dev_started = 0;
-+	} else {
-+		ret = ethdev_request(port_id, ETH_REQ_STOP, NULL, 0);
-+	}
-+
- 	rte_ethdev_trace_stop(port_id, ret);
- 
- 	return ret;
+ #include "rte_ethdev.h"
+ #include "rte_ethdev_trace_fp.h"
 -- 
 2.47.2
 
