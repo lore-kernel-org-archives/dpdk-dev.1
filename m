@@ -2,46 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 361DFC83F22
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Jul 2025 15:12:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F0F5C83F17
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Jul 2025 15:14:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 50342402EE;
-	Tue, 15 Jul 2025 17:12:31 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 725D9402DC;
+	Tue, 15 Jul 2025 17:14:34 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 21414402E3
- for <dev@dpdk.org>; Tue, 15 Jul 2025 17:12:30 +0200 (CEST)
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 7F6254028C
+ for <dev@dpdk.org>; Tue, 15 Jul 2025 17:14:33 +0200 (CEST)
 Received: from mail.maildlp.com (unknown [172.18.186.231])
- by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bhN1M73rDz6L5Qt;
- Tue, 15 Jul 2025 23:11:03 +0800 (CST)
-Received: from frapeml100005.china.huawei.com (unknown [7.182.85.132])
- by mail.maildlp.com (Postfix) with ESMTPS id 04B1914038F;
- Tue, 15 Jul 2025 23:12:12 +0800 (CST)
+ by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bhN444R5tz6L5GF;
+ Tue, 15 Jul 2025 23:13:24 +0800 (CST)
+Received: from frapeml500006.china.huawei.com (unknown [7.182.85.219])
+ by mail.maildlp.com (Postfix) with ESMTPS id 9D4F114038F;
+ Tue, 15 Jul 2025 23:14:32 +0800 (CST)
 Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml100005.china.huawei.com (7.182.85.132) with Microsoft SMTP Server
+ frapeml500006.china.huawei.com (7.182.85.219) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 15 Jul 2025 17:12:11 +0200
+ 15.1.2507.39; Tue, 15 Jul 2025 17:14:32 +0200
 Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
  frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Tue, 15 Jul 2025 17:12:11 +0200
+ Tue, 15 Jul 2025 17:14:32 +0200
 From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>, "Bruce
- Richardson" <bruce.richardson@intel.com>, Thomas Monjalon
- <thomas@monjalon.net>
-CC: "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH] doc: announce mbuf fast free configuration requirements
-Thread-Topic: [PATCH] doc: announce mbuf fast free configuration requirements
-Thread-Index: AQHb9AF4UULdn7QJREGq/trONM1rSbQzTW7g
-Date: Tue, 15 Jul 2025 15:12:11 +0000
-Message-ID: <50e97877dbc7422fbe6ba8e86e9ce2ae@huawei.com>
-References: <20250713142127.349940-1-mb@smartsharesystems.com>
-In-Reply-To: <20250713142127.349940-1-mb@smartsharesystems.com>
+To: Ciara Loftus <ciara.loftus@intel.com>, "dev@dpdk.org" <dev@dpdk.org>
+CC: "bruce.richardson@intel.com" <bruce.richardson@intel.com>
+Subject: RE: [PATCH v2] net/intel: deprecate some SSE paths
+Thread-Topic: [PATCH v2] net/intel: deprecate some SSE paths
+Thread-Index: AQHb7Cf8Yj1nJ5GeMkikBTB7pX2bx7QzXd7w
+Date: Tue, 15 Jul 2025 15:14:32 +0000
+Message-ID: <1e42646f1362423981eef0ae0efb34b9@huawei.com>
+References: <20250703121624.1050845-1-ciara.loftus@intel.com>
+ <20250703143119.1140097-1-ciara.loftus@intel.com>
+In-Reply-To: <20250703143119.1140097-1-ciara.loftus@intel.com>
 Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [10.206.138.73]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -56,27 +55,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQo+IEZvciBUWCBtYnVmIGZhc3QgcmVsZWFzZSBvZmZsb2FkLCB0aGUgbWJ1ZiBtZW1wb29sIHBv
-aW50ZXIgd2lsbCBiZSBhZGRlZA0KPiB0byB0aGUgZXRoZGV2IHR4IHF1ZXVlIGNvbmZpZ3VyYXRp
-b24gc3RydWN0dXJlLCBzbyB0aGUgZXRoZGV2IFRYIGJ1cnN0DQo+IG9wZXJhdGlvbiBkb2Vzbid0
-IG5lZWQgdG8gZmV0Y2ggaXQgZnJvbSB0aGUgZmlyc3QgbWJ1ZiBvZiBlYWNoIGJ1cnN0IGJlaW5n
-DQo+IGZhc3QgZnJlZSdkIHRvIHRoZSBtZW1wb29sLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogTW9y
-dGVuIEJyw7hydXAgPG1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNvbT4NCj4gLS0tDQo+ICBkb2MvZ3Vp
-ZGVzL3JlbF9ub3Rlcy9kZXByZWNhdGlvbi5yc3QgfCA2ICsrKysrKw0KPiAgMSBmaWxlIGNoYW5n
-ZWQsIDYgaW5zZXJ0aW9ucygrKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RvYy9ndWlkZXMvcmVsX25v
-dGVzL2RlcHJlY2F0aW9uLnJzdCBiL2RvYy9ndWlkZXMvcmVsX25vdGVzL2RlcHJlY2F0aW9uLnJz
-dA0KPiBpbmRleCBlMmQ0MTI1MzA4Li5hN2I0NTA1YTI0IDEwMDY0NA0KPiAtLS0gYS9kb2MvZ3Vp
-ZGVzL3JlbF9ub3Rlcy9kZXByZWNhdGlvbi5yc3QNCj4gKysrIGIvZG9jL2d1aWRlcy9yZWxfbm90
-ZXMvZGVwcmVjYXRpb24ucnN0DQo+IEBAIC0xNTIsMyArMTUyLDkgQEAgRGVwcmVjYXRpb24gTm90
-aWNlcw0KPiAgKiBidXMvdm1idXM6IFN0YXJ0aW5nIERQREsgMjUuMTEsIGFsbCB0aGUgdm1idXMg
-QVBJIGRlZmluZWQgaW4NCj4gICAgYGBkcml2ZXJzL2J1cy92bWJ1cy9ydGVfYnVzX3ZtYnVzLmhg
-YCB3aWxsIGJlY29tZSBpbnRlcm5hbCB0byBEUERLLg0KPiAgICBUaG9zZSBBUEkgZnVuY3Rpb25z
-IGFyZSB1c2VkIGludGVybmFsbHkgYnkgRFBESyBjb3JlIGFuZCBuZXR2c2MgUE1ELg0KPiArDQo+
-ICsqIGV0aGRldjogQ29uZmlndXJpbmcgYSB0cmFuc21pdCBxdWV1ZSBmb3IgZmFzdCBtYnVmIHJl
-bGVhc2Ugd2lsbA0KPiArICByZXF1aXJlIHNwZWNpZnlpbmcgd2hpY2ggbWVtcG9vbCB0byBmcmVl
-IHRoZSBtYnVmcyB0by4NCj4gKyAgRm9yIHRoaXMsIGEgbmV3IGZpZWxkIGBgc3RydWN0IHJ0ZV9t
-ZW1wb29sICptcF9mYXN0X2ZyZWVgYCB3aWxsIGJlDQo+ICsgIGFkZGVkIHRvIGBgc3RydWN0IHJ0
-ZV9ldGhfdHhjb25mYGAsIGFuZCBtdXN0IGJlIHNldCB3aGVuIHRoZQ0KPiArICBgYFJURV9FVEhf
-VFhfT0ZGTE9BRF9NQlVGX0ZBU1RfRlJFRWBgIG9mZmxvYWQgZmxhZyBpcyBzZXQuDQo+IC0tDQoN
-CkFja2VkLWJ5OiBLb25zdGFudGluIEFuYW55ZXYgPGtvbnN0YW50aW4uYW5hbnlldkBodWF3ZWku
-Y29tPg0KIA0KDQo+IDIuNDMuMA0KPiANCg0K
+
+
+> The SSE rx and tx paths will be removed from the i40e, iavf and ice
+> drivers in the 25.11 release. Each of these drivers have faster vector
+> paths (AVX2 and AVX-512) which have feature parity with the soon to be
+> removed SSE paths. In environments where AVX2 or AVX-512 are not
+> supported, the scalar path will still be used, which also has feature
+> parity.
+>=20
+> Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+> ---
+>  doc/guides/rel_notes/deprecation.rst | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>=20
+> diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/=
+deprecation.rst
+> index e2d4125308..0d020c9c1f 100644
+> --- a/doc/guides/rel_notes/deprecation.rst
+> +++ b/doc/guides/rel_notes/deprecation.rst
+> @@ -80,6 +80,13 @@ Deprecation Notices
+>    and the header struct ``rte_vxlan_gpe_hdr`` with the macro ``RTE_ETHER=
+_VXLAN_GPE_HLEN``
+>    will be removed in DPDK 25.11.
+>=20
+> +* net/intel: drivers that have an SSE vector path alongside other vector=
+ paths,
+> +  namely i40e, iavf and ice, will have their SSE vector paths removed in=
+ DPDK 25.11.
+> +  Modern x86 systems all support AVX2, if not AVX-512, so the SSE path i=
+s no longer
+> +  widely used. This change will not result in any feature loss, as the f=
+allback
+> +  scalar paths which have feature parity with SSE will be used in the ca=
+ses where
+> +  the SSE paths would have been used.
+> +
+>  * ethdev: The flow API matching pattern structures, ``struct rte_flow_it=
+em_*``,
+>    should start with relevant protocol header structure from lib/net/.
+>    The individual protocol header fields and the protocol header struct
+> --
+
+Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>=20
+
+> 2.34.1
+
