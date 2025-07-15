@@ -2,125 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED36C83F17
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Jul 2025 12:53:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFCF0C83F21
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Jul 2025 12:54:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 86A0F4028C;
-	Tue, 15 Jul 2025 14:53:19 +0200 (CEST)
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com
- (mail-co1nam11on2078.outbound.protection.outlook.com [40.107.220.78])
- by mails.dpdk.org (Postfix) with ESMTP id 9792A4021E;
- Tue, 15 Jul 2025 14:53:18 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SAWulziJEJfRy8LyQNuVjOnRQcnqXPjAaLeSZIqhcbdKLpJg2UEPNWZ2N3ZXHbMj6GVRqqwlSiQ35QFn+OOlfDcKS9iIKYlBz7qQdeyixQ1Lx7hl9QAzkOO+vGI9I1BZD5ySYZakyJhHFXbJVkcM705XSBfiMtVLoKGbd3xJMRxyVsKi6WPSS03MuMhVaXuYr4hboP4HoLw1OhBrT4J0rrJYeoipxhHTy2YuBF6aTzdfmPQlSEkHByGIG4UnZk+zcF5dszMPojyWfWzcl0MuRVs3VyFOektmP4r6rBY7ZDm1HFQujnTCYh/ExVlcqkwoO2UR/59IOB2vtGkhgfmqVQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Uj2/8itsfCpv7im8E8OQKx9C4ANEWQ9GGAvWfM8uV9s=;
- b=kg28O1l29UwUToKDl7XdQg4SBAPYYtXG5KUlsNr0ba+VgWwu/a5IHsXBlpmT/16LUEbFV5HrYHesLTwrH9bZm+igl51Rae9KmXMOjvf+zXWRNJJx821GX93XfKv3W/vCT4fELkrBouXJbq2et6J8BDmX8S6IBQZBDOessPvbLjK0mzuWnnb884N7n2o0HIxKxUE9Mtr4tG0GWI6yQf62p+4plPd5fRhEIfmF2Fyzd3YdjQNz/aQkHeFEwtq6IRtk/XWrMLGTKEqsuQZbWIQtdE+ykJooTBj/nL/DWVQXQRjce+gtNJKIjWhy16FFup67tZPa4AqpFCPs8t8xZuiKZg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=uetpeshawar.edu.pk
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Uj2/8itsfCpv7im8E8OQKx9C4ANEWQ9GGAvWfM8uV9s=;
- b=hgPDMBp5ka56OnWXj04hXbAeG7jntIMJUF3/DvlSPLr/oS9VVEpxnjLPv9qI1HDzM+KZlsJNXqrFCsTwUujU4bBJZK7f/eSdhxW2/AcoHaidQHzG5P+Kg8OyB0bNl+EoNB8a9zMkojOLtsf+7Znf1lIiwa6cg8escMb7Ww5R1r2Fz/IBYEWzK5cipkSwiX05uSk6SwJhfc2gnuywYMXe6En+GEF2C1nXXURef4XvCWkkOAeSacxNP2gOkWsthPsequYFyLcITEpSYGRW0dH9q1zjQlgBwHyLTKmxLYgibNphP1iXI7M0A6x5duBccuOUVAJpEr3ssPTSlfNksdxg4A==
-Received: from BLAPR03CA0158.namprd03.prod.outlook.com (2603:10b6:208:32f::24)
- by CY3PR12MB9654.namprd12.prod.outlook.com (2603:10b6:930:ff::13)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Tue, 15 Jul
- 2025 12:53:15 +0000
-Received: from BN3PEPF0000B06D.namprd21.prod.outlook.com
- (2603:10b6:208:32f:cafe::28) by BLAPR03CA0158.outlook.office365.com
- (2603:10b6:208:32f::24) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.19 via Frontend Transport; Tue,
- 15 Jul 2025 12:53:15 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN3PEPF0000B06D.mail.protection.outlook.com (10.167.243.72) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8964.1 via Frontend Transport; Tue, 15 Jul 2025 12:53:14 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 15 Jul
- 2025 05:52:54 -0700
-Received: from localhost (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 15 Jul
- 2025 05:52:53 -0700
-Date: Tue, 15 Jul 2025 14:52:49 +0200
-From: Dariusz Sosnowski <dsosnowski@nvidia.com>
-To: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-CC: <dev@dpdk.org>, <rasland@nvidia.com>, <stable@dpdk.org>, Khadem Ullah
- <khadem@dreambigsemi.com>, Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
- <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
-Subject: Re: [PATCH] doc/mlx5: document firmware requirement for flex item
-Message-ID: <20250715125249.hwrzd4aasfjhhyxa@ds-vm-debian.local>
-References: <20250708114921.1031027-1-khadem@dreambigsemi.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 204A3402E2;
+	Tue, 15 Jul 2025 14:54:07 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+ by mails.dpdk.org (Postfix) with ESMTP id 266FD4021E
+ for <dev@dpdk.org>; Tue, 15 Jul 2025 14:54:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1752584045; x=1784120045;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=Srrt8I8bK+v0NPjR/gDsfB70DVnNcvqzUu7Hx9GNV4Q=;
+ b=AGX6X+ssuEz/4203iHGcvl773j7bMEDvRJbfx3XQb+V0//o4c0nj8P8n
+ 2QZ3z1a5LxPwh2Ne+G8Jbce5hq0voeO7Fs/5rYF6ipRxT69dotuDf4IPj
+ WjRRuLeK7VdQuusFEJv5Mx/4lclEsnb1ftQACdpPt97aBvpZfofFuoY8u
+ 2zQ+qYnSehFPx/Tt8efTZ4Fsjbcw/9KUy08xZfB9hjaCTUNAQcJQOrTPh
+ 66GFsqeG+pVEZRW+A5qyS7Veqb8y8LM/KeYjBUhcyJ/I3fYYiLyXXDoqe
+ WYJxttLBPRpB9IgZ+97nKAO24XnNoSBeagu6YaeeLIgxDVw35NUjWBKUz w==;
+X-CSE-ConnectionGUID: tH5Olm2GTcKWnttJORG7zw==
+X-CSE-MsgGUID: Qmz8KXCzQ2aiij/DuAzgdg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="58609490"
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; d="scan'208";a="58609490"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+ by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 15 Jul 2025 05:53:43 -0700
+X-CSE-ConnectionGUID: gksHPXh5QuGh1aNMWwd38A==
+X-CSE-MsgGUID: b1a5dKbeRDK44iqlKuqkjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; d="scan'208";a="161530785"
+Received: from silpixa00401874.ir.intel.com (HELO
+ silpixa00401874.ger.corp.intel.com) ([10.55.129.54])
+ by fmviesa005.fm.intel.com with ESMTP; 15 Jul 2025 05:53:42 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH] app/testpmd: add flag to enable RSS for single-queue
+Date: Tue, 15 Jul 2025 12:53:30 +0000
+Message-ID: <20250715125330.2127309-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.48.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250708114921.1031027-1-khadem@dreambigsemi.com>
-X-Originating-IP: [10.126.230.35]
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B06D:EE_|CY3PR12MB9654:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7ca02bc8-5af1-4d88-ca28-08ddc39e9061
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|1800799024|376014|36860700013|7053199007; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?9CMOO78FNukmKC6RJR1z5vS7+vEd2i59/JESYcnB0JQF+b9TBDA3h6TUDdtS?=
- =?us-ascii?Q?mQxn7WOkEWI736MI0XJNRKN8eDNLQFVTfk75NFK+qKVayZYS8CMYXp1axXgh?=
- =?us-ascii?Q?RftpNrx1AwPMhZan5wYNOG6vd3UysOc/S4ZDx+0y3gttUtIIj45C6nzAdQqp?=
- =?us-ascii?Q?mrThDPxUafA7XQmMfb/rWHZXcctqI0VIdp/veLExMR72Nlr+jfKqfLHRzY98?=
- =?us-ascii?Q?shyRhgVlkk2aQ44Pv8o2/kAjyLTlUUgd7TQDzYx+//JiERq6n0+KARtHMS7S?=
- =?us-ascii?Q?jxcqxEQb5WmiB8ifgXS9HnAxnrBodzqGZmnMLbcwGZcF/2BrCKN8SlAtx9qU?=
- =?us-ascii?Q?rvsh8FiwwalbNI2bA+/aLKZmB+4m6X8GmF+2eryBdm9OZpCEVoxlTRt39RAW?=
- =?us-ascii?Q?rEYIIF2AzWrd74PtW+p7XbIKLIvA28PeGMbkI1dfMSAwlT3KXlXg7xcQUCma?=
- =?us-ascii?Q?MKBQNOz6D8MhTwoO8LbBFNk/HrnJ+SNeugmspc0PLp5OwKngu7bQ0/IJtIvP?=
- =?us-ascii?Q?leZllYEh0Go+IJLVsql1bYF8MJtoS2NwBK1poutrTvG9QqGjyw8gGmnTigtH?=
- =?us-ascii?Q?Cm/6ere9u4Hd4rTZnTALc8+bcMQgG7xBS5EGvc/m7TFPouKj6P3+QNa5zJ4G?=
- =?us-ascii?Q?90InidH7Xch5hGXdtwD72m2r998C+QE62eeTKnagndgFB2uSZ51x+wZL/3Jt?=
- =?us-ascii?Q?N/QwBz+ZZYAy0vAQqW/3cZ98XbpOnSGKjNfaQS0wSYtxmQUVWKmEtc73yhgL?=
- =?us-ascii?Q?UqGwgwCa1ynm0REad+mo1S4n8V/kY6wruXjnuD3Jq9ghSGfvMHiuHn0F3b5X?=
- =?us-ascii?Q?bDYnpwF8qbDukJHSWqvFyryH0GW0NC8AaLKE3wwvG4XbeAMqg8+QMUcgFd/F?=
- =?us-ascii?Q?5Tl1iZFv8nijx66ZOqo5f8PmRI31xTl6F6Y3P+rBkhS0lvfvkeNWTt9Y//a7?=
- =?us-ascii?Q?wCZqm0EQQTSoDrcY+IBhq3Y8b4xOC8UHp8fsOeTfaVRZ+8bhIPiyQzc6Jmqf?=
- =?us-ascii?Q?gU8PLO4302ieQtqXnSFCp6XvgDOsCEjYlwLZWkmVz4ilkX+e2gw4+0+uCWaA?=
- =?us-ascii?Q?CY3bEz1444Ia8wV/piTvPXcDHUQlswC4g0enoyEmH/ICLQF/L+O+Q5SvekhX?=
- =?us-ascii?Q?hY4QX8VQbG+HsTM/CBDdlUJbZn+bCGoV0SQu+mnR0XebqxybOds3wcLLhjri?=
- =?us-ascii?Q?1HeA/5RLUpd1KZ3KbCXa0WvwHK6jg1wvGyDgrv/agMmNJP0Fez3pnRg85XIU?=
- =?us-ascii?Q?77KnAtLs+7NED7geAAhOsYSSBL0QFq+toak39wWdXOXAHoqqBgo/1glgEmQC?=
- =?us-ascii?Q?dFfsis/QzsSM99EnmVuc4EJPhDBMs+PFB3Zb8hWAjBHUnGQZJ6xfp+qcRkWB?=
- =?us-ascii?Q?uWMkKWiqycKASkyGCl04gSZv3PHHaZyKBl7T+iGyDlrOv4sUgnlBiA+3RUZW?=
- =?us-ascii?Q?5iCG2VVVWAMDczDhmZyFpAxDQleFwkiJDCbjMQlhMUgQOkaRVK1GHDz07kB9?=
- =?us-ascii?Q?3w4VorKL471/6/Y=3D?=
-X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013)(7053199007);
- DIR:OUT; SFP:1101; 
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 12:53:14.9129 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7ca02bc8-5af1-4d88-ca28-08ddc39e9061
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN3PEPF0000B06D.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY3PR12MB9654
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -134,52 +58,97 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-+ mlx5 maintainers
+For testing purposes it can be desirable to enable RSS even when only a
+single queue per port is in use. Add an "enable-rss" flag to testpmd to
+match the existing "disable-rss" flag.
 
-On Tue, Jul 08, 2025 at 07:49:21AM -0400, Khadem Ullah wrote:
-> Some BlueField firmware versions (e.g. 24.30.1004) do not support flex item
-> definitions using FIELD_MODE_FIXED with size set to 0, such as in 'next_header'.
-> Attempting to use this configuration may result in the following error:
-> 
->   'unsupported header length field mode (FIXED)'
-> 
-> This is resolved starting from firmware version 24.38.1002.
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ app/test-pmd/parameters.c | 13 +++++++++++++
+ app/test-pmd/testpmd.c    |  3 ++-
+ app/test-pmd/testpmd.h    |  1 +
+ 3 files changed, 16 insertions(+), 1 deletion(-)
 
-Could you please share the DPDK version you used and
-a code sample with flex item configuration?
+diff --git a/app/test-pmd/parameters.c b/app/test-pmd/parameters.c
+index 1132972913..80c6ecae54 100644
+--- a/app/test-pmd/parameters.c
++++ b/app/test-pmd/parameters.c
+@@ -121,6 +121,8 @@ enum {
+ 	TESTPMD_OPT_ENABLE_DROP_EN_NUM,
+ #define TESTPMD_OPT_DISABLE_RSS "disable-rss"
+ 	TESTPMD_OPT_DISABLE_RSS_NUM,
++#define TESTPMD_OPT_ENABLE_RSS "enable-rss"
++	TESTPMD_OPT_ENABLE_RSS_NUM,
+ #define TESTPMD_OPT_PORT_TOPOLOGY "port-topology"
+ 	TESTPMD_OPT_PORT_TOPOLOGY_NUM,
+ #define TESTPMD_OPT_FORWARD_MODE "forward-mode"
+@@ -310,6 +312,7 @@ static const struct option long_options[] = {
+ 	NO_ARG(TESTPMD_OPT_ENABLE_HW_QINQ_STRIP),
+ 	NO_ARG(TESTPMD_OPT_ENABLE_DROP_EN),
+ 	NO_ARG(TESTPMD_OPT_DISABLE_RSS),
++	NO_ARG(TESTPMD_OPT_ENABLE_RSS),
+ 	REQUIRED_ARG(TESTPMD_OPT_PORT_TOPOLOGY),
+ 	REQUIRED_ARG(TESTPMD_OPT_FORWARD_MODE),
+ 	NO_ARG(TESTPMD_OPT_RSS_IP),
+@@ -454,6 +457,7 @@ usage(char* progname)
+ 	printf("  --enable-hw-qinq-strip: enable hardware qinq strip.\n");
+ 	printf("  --enable-drop-en: enable per queue packet drop.\n");
+ 	printf("  --disable-rss: disable rss.\n");
++	printf("  --enable-rss: Force rss even for single-queue operation.\n");
+ 	printf("  --port-topology=<paired|chained|loop>: set port topology (paired "
+ 	       "is default).\n");
+ 	printf("  --forward-mode=N: set forwarding mode (N: %s).\n",
+@@ -1244,8 +1248,17 @@ launch_args_parse(int argc, char** argv)
+ 			rx_drop_en = 1;
+ 			break;
+ 		case TESTPMD_OPT_DISABLE_RSS_NUM:
++			if (force_rss)
++				rte_exit(EXIT_FAILURE, "Invalid option combination, %s and %s\n",
++						TESTPMD_OPT_DISABLE_RSS, TESTPMD_OPT_ENABLE_RSS);
+ 			rss_hf = 0;
+ 			break;
++		case TESTPMD_OPT_ENABLE_RSS_NUM:
++			if (rss_hf == 0)
++				rte_exit(EXIT_FAILURE, "Invalid option combination, %s and %s\n",
++						TESTPMD_OPT_DISABLE_RSS, TESTPMD_OPT_ENABLE_RSS);
++			force_rss = true;
++			break;
+ 		case TESTPMD_OPT_PORT_TOPOLOGY_NUM:
+ 			if (!strcmp(optarg, "paired"))
+ 				port_topology = PORT_TOPOLOGY_PAIRED;
+diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
+index bb88555328..8bb4b1c762 100644
+--- a/app/test-pmd/testpmd.c
++++ b/app/test-pmd/testpmd.c
+@@ -382,6 +382,7 @@ uint64_t noisy_lkup_num_reads_writes;
+  * Receive Side Scaling (RSS) configuration.
+  */
+ uint64_t rss_hf = RTE_ETH_RSS_IP; /* RSS IP by default. */
++bool force_rss;                   /* false == for single queue don't force rss */
+ 
+ /*
+  * Port topology configuration
+@@ -4007,7 +4008,7 @@ init_port_config(void)
+ 		if (ret != 0)
+ 			return;
+ 
+-		if (nb_rxq > 1) {
++		if (nb_rxq > 1 || force_rss) {
+ 			port->dev_conf.rx_adv_conf.rss_conf.rss_key = NULL;
+ 			port->dev_conf.rx_adv_conf.rss_conf.rss_hf =
+ 				rss_hf & port->dev_info.flow_type_rss_offloads;
+diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h
+index e629edaa02..96ac88a29c 100644
+--- a/app/test-pmd/testpmd.h
++++ b/app/test-pmd/testpmd.h
+@@ -576,6 +576,7 @@ extern struct rte_eth_rxmode rx_mode;
+ extern struct rte_eth_txmode tx_mode;
+ 
+ extern uint64_t rss_hf;
++extern bool force_rss;
+ 
+ extern queueid_t nb_hairpinq;
+ extern queueid_t nb_rxq;
+-- 
+2.48.1
 
-I checked internally and I see no change which would trigger
-a change in behavior regarding 'unsupported header length field mode (FIXED)' error message.
-
-> 
-> The patch adds a note to the mlx5 guide explaining the firmware requirement
-> for such flex item configurations.
-> 
-> Fixes: 16508bfd0816 ('net/mlx5: doc: add flex item specifications in mlx5 guide')
-> Cc: stable@dpdk.org
-> Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-> ---
->  doc/guides/nics/mlx5.rst | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/doc/guides/nics/mlx5.rst b/doc/guides/nics/mlx5.rst
-> index c3a350d24e..1b0e3efc41 100644
-> --- a/doc/guides/nics/mlx5.rst
-> +++ b/doc/guides/nics/mlx5.rst
-> @@ -476,6 +476,10 @@ Limitations
->    - In flex item configuration, ``next_header.field_base`` value
->      must be byte aligned (multiple of 8).
->    - Modify field with flex item, the offset must be byte aligned (multiple of 8).
-> +    .. note::
-> +     Some firmware versions (e.g. 24.30.1004) do not support
-> +     ``next_header`` with ``field_mode = FIELD_MODE_FIXED`` and zero size.
-> +     A newer firmware (e.g. >= 24.38.1002) is required to support this configuration.
->  
->  - Match on random value:
->  
-> -- 
-> 2.43.0
-> 
-
-Best regards,
-Dariusz Sosnowski
