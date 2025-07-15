@@ -2,21 +2,21 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 139CBC83F17
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Jul 2025 02:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4BFBC83F17
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Jul 2025 03:05:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C34B34021E;
-	Tue, 15 Jul 2025 04:35:10 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6A24F4021E;
+	Tue, 15 Jul 2025 05:05:20 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 79D6E4013F
- for <dev@dpdk.org>; Tue, 15 Jul 2025 04:35:09 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 815894013F
+ for <dev@dpdk.org>; Tue, 15 Jul 2025 05:05:18 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 4D4EF46B78; Tue, 15 Jul 2025 04:35:09 +0200 (CEST)
+ id 5CBE046B78; Tue, 15 Jul 2025 05:05:18 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/testpmd Bug 1753]
- [dpdk-25.07-rc3]nvgre/test_nvgre_ipv4_checksum_offload: checksum fail
-Date: Tue, 15 Jul 2025 02:35:08 +0000
+Subject: [DPDK/testpmd Bug 1754] [dpdk-25.07-rc3]tso/test_tso_tunneling:
+ Nvgre RX or TX packet number not correct
+Date: Tue, 15 Jul 2025 03:05:18 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -35,8 +35,8 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1753-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17525469090.7de1bB.3166157
+Message-ID: <bug-1754-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17525487180.A37EE70.3184190
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: https://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -56,8 +56,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17525469090.7de1bB.3166157
-Date: Tue, 15 Jul 2025 04:35:08 +0200
+--17525487180.A37EE70.3184190
+Date: Tue, 15 Jul 2025 05:05:18 +0200
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -65,11 +65,11 @@ X-Bugzilla-URL: https://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1753
+https://bugs.dpdk.org/show_bug.cgi?id=3D1754
 
-            Bug ID: 1753
-           Summary: [dpdk-25.07-rc3]nvgre/test_nvgre_ipv4_checksum_offload
-                    : checksum fail
+            Bug ID: 1754
+           Summary: [dpdk-25.07-rc3]tso/test_tso_tunneling: Nvgre RX or TX
+                    packet number not correct
            Product: DPDK
            Version: 25.03
           Hardware: All
@@ -99,75 +99,84 @@ NIC firmware:=20
 Test Setup
 Steps to reproduce
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-1.dut start testpmd
+1. dut start testpmd
 usertools/dpdk-devbind.py --force --bind=3Dvfio-pci 0000:31:00.0 0000:31:00=
 .1
-x86_64-native-linuxapp-gcc/app/dpdk-testpmd  -l 1-5 -n 4 -a 0000:31:00.0 -a
-0000:31:00.1  --file-prefix=3Ddpdk_187982_20250711151456=20=20=20=20
---force-max-simd-bitwidth=3D64   -- -i --disable-rss --rxq=3D4 --txq=3D4 --=
-nb-cores=3D4
---portmask=3D0x3 --enable-rx-cksum
+x86_64-native-linuxapp-gcc/app/dpdk-testpmd  -l 1-2 -n 4 -a 0000:31:00.0 -a
+0000:31:00.1  --file-prefix=3Ddpdk_268618_20250714132702=20=20=20=20
+--force-max-simd-bitwidth=3D64   -- -i --rxd=3D512 --txd=3D512 --burst=3D32
+--rxfreet=3D64 --mbcache=3D128 --portmask=3D0x3 --max-pkt-len=3D9000 --txpt=
+=3D36 --txht=3D0
+--txwt=3D0 --txfreet=3D32 --txrst=3D32
 
-testpmd> vlan set filter off 0
 testpmd> set verbose 1
-testpmd> set fwd csum
 testpmd> port stop all
+testpmd> csum set ip hw 0
+testpmd> csum set udp hw 0
+testpmd> csum set tcp hw 0
+testpmd> csum set sctp hw 0
+testpmd> csum set outer-ip hw 0
+testpmd> csum parse-tunnel on 0
 testpmd> csum set ip hw 1
 testpmd> csum set udp hw 1
 testpmd> csum set tcp hw 1
 testpmd> csum set sctp hw 1
 testpmd> csum set outer-ip hw 1
 testpmd> csum parse-tunnel on 1
+testpmd> tunnel_tso set 800 1
+testpmd> rx_vxlan_port add 4789 0
+testpmd> set fwd csum
 testpmd> port start all
+testpmd> set promisc all off
 testpmd> start
 
-2. start tester scapy_0 to save the capture packet
+2. start tester tcpdump to save the capture packet
+tcpdump -w /tmp/tcpdump_ens9f1.pcap -i ens9f1 2>tcpdump_ens9f1.out &=20
+
+3. start tester scapy send pkt
 scapy
->>> p=3Dsniff(iface=3D"ens9f1",filter=3D"ether[12:2]!=3D0x88cc",timeout=3D1=
-0)
+>>>
+>>> sendp([Ether(dst=3D"3c:fd:fe:c0:e1:d8",src=3D"52:00:00:00:00:00")/IP(sr=
+c=3D"192.168.1.1",dst=3D"192.168.1.2",proto=3D47)/GRE(key_present=3D1,proto=
+=3D0x6558,key=3D0x00001000)/Ether(dst=3D"3c:fd:fe:c0:e1:d8",src=3D"52:00:00=
+:00:00:00")/IP(src=3D"192.168.1.1",dst=3D"192.168.1.2")/TCP(sport=3D1021,dp=
+ort=3D1021)/("X"*128)],
+>>> iface=3D"ens9f0")
 
-3. start tester scapy_1 send pkt with error ip.checksum 0x1234
-scapy
->>> p =3D Ether(dst=3D'3c:fd:fe:c0:e1:d8', src=3D'00:00:10:00:00:00')/IP(fr=
-ag=3D0,
->>> src=3D'192.168.1.1', dst=3D'192.168.1.2')/GRE(key_present=3D1,
->>> key=3D0x100)/Ether(dst=3D'90:e2:ba:4a:34:89', src=3D'90:e2:ba:4a:34:88',
->>> type=3D0x0800)/IP(frag=3D0, chksum=3D0x1234, src=3D'192.168.2.1',
->>> dst=3D'192.168.2.2')/UDP(sport=3D1021,
->>> dport=3D1021)/Raw(load=3Db'XXXXXXXXXXXXXXXXXX')
->>> sendp(p, iface=3D"ens9f0")
+4. kill tester tcpdump
+killall tcpdump
 
-4. save the capture packet into pcap format in tester scapy_0
->>> wrpcap("/root/capture.pcap", p)
-
-5. check ip.checksum in tester
-tshark -r /root/capture.pcap -T fields -e ip.checksum
+5. tester check packet number
+tcpdump  -vv -r /tmp/tcpdump_ens9f1.pcap 2>/dev/null | grep "seq"  | grep
+"length"
 
 Results:=20
 =3D=3D=3D=3D=3D=3D=3D=3D
-0x1234 is in output.
+length 10708
 
 Expected Result:
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-0xf56a is in output.
+length 128
 
 bad commit:
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-commit a738c43ffaee9ba5d8eccb0e881e7c816d3c6415
+commit: a5854045c38865c44459446565dc749aa29dffba
+
 Author: Dengdui Huang <huangdengdui@huawei.com>
-Date:   Mon Jun 16 16:27:02 2025 +0800
+Date:   Mon Jun 16 16:27:01 2025 +0800
 
 
 
-    app/testpmd: fix tunnel inner info
+    net: add tunnel length in UDP tunnel parsing
 
-    The l2_len field of tunnel packets already includes the tunnel_len fiel=
-d.
-    Additionally, the current offset used for the internal Ethernet header =
-is
-    incorrect. This patch fixes these issues.
+    Currently, the tunnel length info is not available when
+    get the tunnel packet type with UDP port. This patch
+    adds the parsing of the tunnel length info.
 
-    Fixes: 76730c7b9b5a ("app/testpmd: use packet type parsing API")
+    Additionally, adding comments for the inner_l2_len field
+    and the tunnel_len field would help in understanding their.
+
+    Fixes: 64ed7f854cf4 ("net: add tunnel packet type parsing")
     Cc: stable@dpdk.org
 
     Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
@@ -176,8 +185,8 @@ is
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17525469090.7de1bB.3166157
-Date: Tue, 15 Jul 2025 04:35:09 +0200
+--17525487180.A37EE70.3184190
+Date: Tue, 15 Jul 2025 05:05:18 +0200
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -195,16 +204,16 @@ bz_new_table">
           <th>Bug ID</th>
           <td><a class=3D"bz_bug_link=20
           bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - [dpdk-25.07-rc3]nvgre/test_nvgre_ipv4_checksum_of=
-fload: checksum fail"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1753">1753</a>
+   title=3D"UNCONFIRMED - [dpdk-25.07-rc3]tso/test_tso_tunneling: Nvgre RX =
+or TX packet number not correct"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1754">1754</a>
           </td>
         </tr>
 
         <tr>
           <th>Summary</th>
-          <td>[dpdk-25.07-rc3]nvgre/test_nvgre_ipv4_checksum_offload: check=
-sum fail
+          <td>[dpdk-25.07-rc3]tso/test_tso_tunneling: Nvgre RX or TX packet=
+ number not correct
           </td>
         </tr>
 
@@ -292,80 +301,88 @@ NIC firmware:=20
 Test Setup
 Steps to reproduce
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-1.dut start testpmd
+1. dut start testpmd
 usertools/dpdk-devbind.py --force --bind=3Dvfio-pci 0000:31:00.0 0000:31:00=
 .1
-x86_64-native-linuxapp-gcc/app/dpdk-testpmd  -l 1-5 -n 4 -a 0000:31:00.0 -a
-0000:31:00.1  --file-prefix=3Ddpdk_187982_20250711151456=20=20=20=20
---force-max-simd-bitwidth=3D64   -- -i --disable-rss --rxq=3D4 --txq=3D4 --=
-nb-cores=3D4
---portmask=3D0x3 --enable-rx-cksum
+x86_64-native-linuxapp-gcc/app/dpdk-testpmd  -l 1-2 -n 4 -a 0000:31:00.0 -a
+0000:31:00.1  --file-prefix=3Ddpdk_268618_20250714132702=20=20=20=20
+--force-max-simd-bitwidth=3D64   -- -i --rxd=3D512 --txd=3D512 --burst=3D32
+--rxfreet=3D64 --mbcache=3D128 --portmask=3D0x3 --max-pkt-len=3D9000 --txpt=
+=3D36 --txht=3D0
+--txwt=3D0 --txfreet=3D32 --txrst=3D32
 
-testpmd&gt; vlan set filter off 0
 testpmd&gt; set verbose 1
-testpmd&gt; set fwd csum
 testpmd&gt; port stop all
+testpmd&gt; csum set ip hw 0
+testpmd&gt; csum set udp hw 0
+testpmd&gt; csum set tcp hw 0
+testpmd&gt; csum set sctp hw 0
+testpmd&gt; csum set outer-ip hw 0
+testpmd&gt; csum parse-tunnel on 0
 testpmd&gt; csum set ip hw 1
 testpmd&gt; csum set udp hw 1
 testpmd&gt; csum set tcp hw 1
 testpmd&gt; csum set sctp hw 1
 testpmd&gt; csum set outer-ip hw 1
 testpmd&gt; csum parse-tunnel on 1
+testpmd&gt; tunnel_tso set 800 1
+testpmd&gt; rx_vxlan_port add 4789 0
+testpmd&gt; set fwd csum
 testpmd&gt; port start all
+testpmd&gt; set promisc all off
 testpmd&gt; start
 
-2. start tester scapy_0 to save the capture packet
+2. start tester tcpdump to save the capture packet
+tcpdump -w /tmp/tcpdump_ens9f1.pcap -i ens9f1 2&gt;tcpdump_ens9f1.out &amp;=
+=20
+
+3. start tester scapy send pkt
 scapy
-<span class=3D"quote">&gt;&gt;&gt; p=3Dsniff(iface=3D&quot;ens9f1&quot;,fil=
-ter=3D&quot;ether[12:2]!=3D0x88cc&quot;,timeout=3D10)</span >
+<span class=3D"quote">&gt;&gt;&gt;
+&gt;&gt;&gt; sendp([Ether(dst=3D&quot;3c:fd:fe:c0:e1:d8&quot;,src=3D&quot;5=
+2:00:00:00:00:00&quot;)/IP(src=3D&quot;192.168.1.1&quot;,dst=3D&quot;192.16=
+8.1.2&quot;,proto=3D47)/GRE(key_present=3D1,proto=3D0x6558,key=3D0x00001000=
+)/Ether(dst=3D&quot;3c:fd:fe:c0:e1:d8&quot;,src=3D&quot;52:00:00:00:00:00&q=
+uot;)/IP(src=3D&quot;192.168.1.1&quot;,dst=3D&quot;192.168.1.2&quot;)/TCP(s=
+port=3D1021,dport=3D1021)/(&quot;X&quot;*128)],
+&gt;&gt;&gt; iface=3D&quot;ens9f0&quot;)</span >
 
-3. start tester scapy_1 send pkt with error ip.checksum 0x1234
-scapy
-<span class=3D"quote">&gt;&gt;&gt; p =3D Ether(dst=3D'3c:fd:fe:c0:e1:d8', s=
-rc=3D'00:00:10:00:00:00')/IP(frag=3D0,
-&gt;&gt;&gt; src=3D'192.168.1.1', dst=3D'192.168.1.2')/GRE(key_present=3D1,
-&gt;&gt;&gt; key=3D0x100)/Ether(dst=3D'90:e2:ba:4a:34:89', src=3D'90:e2:ba:=
-4a:34:88',
-&gt;&gt;&gt; type=3D0x0800)/IP(frag=3D0, chksum=3D0x1234, src=3D'192.168.2.=
-1',
-&gt;&gt;&gt; dst=3D'192.168.2.2')/UDP(sport=3D1021,
-&gt;&gt;&gt; dport=3D1021)/Raw(load=3Db'XXXXXXXXXXXXXXXXXX')
-&gt;&gt;&gt; sendp(p, iface=3D&quot;ens9f0&quot;)</span >
+4. kill tester tcpdump
+killall tcpdump
 
-4. save the capture packet into pcap format in tester scapy_0
-<span class=3D"quote">&gt;&gt;&gt; wrpcap(&quot;/root/capture.pcap&quot;, p=
-)</span >
-
-5. check ip.checksum in tester
-tshark -r /root/capture.pcap -T fields -e ip.checksum
+5. tester check packet number
+tcpdump  -vv -r /tmp/tcpdump_ens9f1.pcap 2&gt;/dev/null | grep &quot;seq&qu=
+ot;  | grep
+&quot;length&quot;
 
 Results:=20
 =3D=3D=3D=3D=3D=3D=3D=3D
-0x1234 is in output.
+length 10708
 
 Expected Result:
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-0xf56a is in output.
+length 128
 
 bad commit:
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-commit a738c43ffaee9ba5d8eccb0e881e7c816d3c6415
+commit: a5854045c38865c44459446565dc749aa29dffba
+
 Author: Dengdui Huang &lt;<a href=3D"mailto:huangdengdui&#64;huawei.com">hu=
 angdengdui&#64;huawei.com</a>&gt;
-Date:   Mon Jun 16 16:27:02 2025 +0800
+Date:   Mon Jun 16 16:27:01 2025 +0800
 
 
 
-    app/testpmd: fix tunnel inner info
+    net: add tunnel length in UDP tunnel parsing
 
-    The l2_len field of tunnel packets already includes the tunnel_len fiel=
-d.
-    Additionally, the current offset used for the internal Ethernet header =
-is
-    incorrect. This patch fixes these issues.
+    Currently, the tunnel length info is not available when
+    get the tunnel packet type with UDP port. This patch
+    adds the parsing of the tunnel length info.
 
-    Fixes: 76730c7b9b5a (&quot;app/testpmd: use packet type parsing API&quo=
-t;)
+    Additionally, adding comments for the inner_l2_len field
+    and the tunnel_len field would help in understanding their.
+
+    Fixes: 64ed7f854cf4 (&quot;net: add tunnel packet type parsing&quot;)
     Cc: <a href=3D"mailto:stable&#64;dpdk.org">stable&#64;dpdk.org</a>
 
     Signed-off-by: Dengdui Huang &lt;<a href=3D"mailto:huangdengdui&#64;hua=
@@ -386,7 +403,7 @@ wei.com">huangdengdui&#64;huawei.com</a>&gt;
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1753">
+?id=3D1754">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -395,4 +412,4 @@ ication">
     </body>
 </html>=
 
---17525469090.7de1bB.3166157--
+--17525487180.A37EE70.3184190--
