@@ -2,51 +2,195 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C05C83F1D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Jul 2025 06:32:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CECDBC83F17
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Jul 2025 06:57:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5627D4021E;
-	Tue, 15 Jul 2025 08:32:50 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id 684D74013F
- for <dev@dpdk.org>; Tue, 15 Jul 2025 08:32:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1752561168; x=1784097168;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=t5ZuaF7o8hqgNyc+VkLWQGFImngKU1ENZqOfVQWZb9w=;
- b=ksvql/jZdlNcCO6uMoRfGqYZeLN2vKxgRhmodJdDyZaP7WT9WwBv1P7X
- BN8HWCzOIcssORTAcdmWV6Elzan3JKIzHOkOpnkdAtktSOIaXeHuKysjb
- Ojey0F0mY7gH9bn8U5I4jP8M7dOeKouGjGkDIYGraO3bWBWublaOW5Kb7
- I9qm2pXdis439mPz88Is2Ny0P2sShQx50s9IhxfJX0STyzQXr695OUONZ
- ZHYN846MrBEm84gQxvgBkiHqYVri7Qz6VFzrI3rcDhE/qs4dc05awfbqY
- tI1DTcere6sFBhuqsvHr7wvdzdKU7kCfNCYFZEIwcqMgBclJXEgpCfjE+ g==;
-X-CSE-ConnectionGUID: 7Vr/l1hzQKybg1VVoAW2Vg==
-X-CSE-MsgGUID: vOZ4GanoTTySd35wXgSKeQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11491"; a="57379314"
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; d="scan'208";a="57379314"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
- by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Jul 2025 23:32:47 -0700
-X-CSE-ConnectionGUID: Fbpyl9okQuGv4sXKcrKmZw==
-X-CSE-MsgGUID: dBzFIO+HSWehaIsT5a8d2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,313,1744095600"; d="scan'208";a="156784506"
-Received: from unknown (HELO localhost.localdomain) ([10.239.252.217])
- by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Jul 2025 23:32:46 -0700
-From: Yu Jiang <yux.jiang@intel.com>
-To: bruce.richardson@intel.com,
-	john.mcnamara@intel.com,
-	dev@dpdk.org
-Cc: Yu Jiang <yux.jiang@intel.com>
-Subject: [PATCH V1] doc: add tested Intel platforms with Intel NICs
-Date: Tue, 15 Jul 2025 13:57:48 +0800
-Message-Id: <20250715055748.1006691-1-yux.jiang@intel.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
+	by mails.dpdk.org (Postfix) with ESMTP id CFE46402D8;
+	Tue, 15 Jul 2025 08:57:48 +0200 (CEST)
+Received: from DB3PR0202CU003.outbound.protection.outlook.com
+ (mail-northeuropeazon11010065.outbound.protection.outlook.com [52.101.84.65])
+ by mails.dpdk.org (Postfix) with ESMTP id B3CF54013F
+ for <dev@dpdk.org>; Tue, 15 Jul 2025 08:57:47 +0200 (CEST)
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=p1XAJKzXvYjONfxm67b2EgYlLUKPwJuhTC74rcisSExOvQeyf5DyOxSczQQCGPE0DSxnm1PQyTIfWZL0Etnquy/Kd7MlO21jTB+9kmet5YSasshvkbNlxzdO409Yz6iAT0iu5g4kd25tzriHldSghlXpbKv5P+HVKIzJc9gtX76yY4QOW9m6Pq3KY5VShoKzmFMgGtb8eWkH3kZNsIRhNfP4l2nY2cTxlGO8D85zuKed/NdZJFUm9U31JnwgLZeVUzt6eCzlbLyyVsx8r1I4LKpmGDfI99DwRTuW3etOvj0r0BeLwEUfMPgsp08I/Ys+ob4Kc5jJ6MkVaSPpuZNdHQ==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bH6wJonKouPBCMDGG6U7H5Rhl5fZDw7C2lXiVACjky0=;
+ b=M3Tmgb38uTgI8LnLTTUYECddnRqvI825Ke34y7XHSfS1Y1TTsTiPQiT1hBJC9j6gQaAynh4LICTdcF7MyTqntzjdoB2nF5GzityEe5NYRAXaFnwOhSKkNL56bdYGpretOv4R0jVcPHmYIlauClxmJNUdWw4IL5XnX3v6vh8/IMzBy4n12JUmI/lHjPKl2CkiaJFq/MVsy5zZ76k9NDWvZjC+FW08VmlmAN19E9qoD19fb3fwr9FKXOMiuMrhqGSJxn2OaH3HnJ2xFablWYI1qhiZ4EdY5/f4icVGNzSVgx7nLdI3X/E7gVXKj9QoIX1UmvDrtI3VqjwdfwfUGDFxQg==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=dpdk.org smtp.mailfrom=arm.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
+ (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bH6wJonKouPBCMDGG6U7H5Rhl5fZDw7C2lXiVACjky0=;
+ b=gRThQczuZME7Gs30cD75wGq0p3eTrhyQJ+fCNEgok/sZnXbQOCKBVgtM0O9OTegBPnky40NXBOaELI9ZkiBZydKIHQgcO407ZTrK+PHaS2ShR1FVqjzjd7nxBiqq/7AcZ7w7dt3UIDjB/Y0+bDDR2nM6gdEmJ8/K8JvqvW+Q5Zw=
+Received: from AS4P190CA0001.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:5de::7)
+ by AS8PR08MB5928.eurprd08.prod.outlook.com (2603:10a6:20b:29b::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Tue, 15 Jul
+ 2025 06:57:44 +0000
+Received: from AM1PEPF000252DA.eurprd07.prod.outlook.com
+ (2603:10a6:20b:5de:cafe::f) by AS4P190CA0001.outlook.office365.com
+ (2603:10a6:20b:5de::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.17 via Frontend Transport; Tue,
+ 15 Jul 2025 06:57:44 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ AM1PEPF000252DA.mail.protection.outlook.com (10.167.16.52) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.22
+ via Frontend Transport; Tue, 15 Jul 2025 06:57:43 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vpCPrXUJnwkbaEgBXI7jVSUSsaFJftt63aeRBqOpxLsQ1mwRlOwGK1sFIaNtgiL1gR1yINxUTaHH7KpdaamYObOsQ4NKXtzpZ6TIqzPtM0dfLFqpHaKNH85OTMy3Xi8tJIufGuF5fKyTPQN1UoCEHIENJDDMnS9jLPlUyzSRDDMIT9z5ZuMfa/QAGWIGeE1MRcEzkf3ybW4I7+9qFO2k9++BTfUZ5Vd+vZAVJ7lAspefNLZBjq6RBnKtJDTDyA/FY6983rFouNQmYV4i6J+qjdftP2zjYdXSvi8TGI43YMY5vXD/+XSQ8s7n1Lcprv7Q66NJAfAgZd2+IRcijHqqOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bH6wJonKouPBCMDGG6U7H5Rhl5fZDw7C2lXiVACjky0=;
+ b=OVDWamRdtLDgpy42eaH95VgX5COagupCfWZfs/r7e7lZISaUtcuV8conOBCoeEkKsMACoa9rSfIFJX3fgppheT/g08OubVGmxWKr7eUth9lqReVg3omTwEY24lkvATOrJgl00R4BR7/GBJrKRvCLeDbcd99sKRAfeo/7oPFj3ZW8l0aihk6/KxG5oa1ExzTcAuh/L0LpYiAa8PfTtuCUQCjWua7vrfbIXqnyL4LmRmlLViIsXnF8YWD/iD3PhBFaI+LkC1v5iJGrvH6ScMjegr9/IiVwQZQWQ7tHbJ73/6jr3zScvaJ4zCnUc2KYa5Mbzkv7Zo5MPPHz+pHsXnkBoA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bH6wJonKouPBCMDGG6U7H5Rhl5fZDw7C2lXiVACjky0=;
+ b=gRThQczuZME7Gs30cD75wGq0p3eTrhyQJ+fCNEgok/sZnXbQOCKBVgtM0O9OTegBPnky40NXBOaELI9ZkiBZydKIHQgcO407ZTrK+PHaS2ShR1FVqjzjd7nxBiqq/7AcZ7w7dt3UIDjB/Y0+bDDR2nM6gdEmJ8/K8JvqvW+Q5Zw=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from DB4PR08MB8151.eurprd08.prod.outlook.com (2603:10a6:10:381::16)
+ by DBAPR08MB5847.eurprd08.prod.outlook.com (2603:10a6:10:1a0::22)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.32; Tue, 15 Jul
+ 2025 06:57:11 +0000
+Received: from DB4PR08MB8151.eurprd08.prod.outlook.com
+ ([fe80::2dd2:fd4d:8ff5:3733]) by DB4PR08MB8151.eurprd08.prod.outlook.com
+ ([fe80::2dd2:fd4d:8ff5:3733%2]) with mapi id 15.20.8922.028; Tue, 15 Jul 2025
+ 06:57:11 +0000
+Message-ID: <543e940a-6990-4cdb-a5eb-e036485a16e6@arm.com>
+Date: Tue, 15 Jul 2025 07:57:10 +0100
+User-Agent: Mozilla Thunderbird
+Cc: nd@arm.com
+Content-Language: en-US
+From: Paul Szczepanek <paul.szczepanek@arm.com>
+Subject: [RFC] Proposal for stable developer-friendly DTS API
+To: "dev@dpdk.org" <dev@dpdk.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO4P265CA0257.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:37c::19) To DB4PR08MB8151.eurprd08.prod.outlook.com
+ (2603:10a6:10:381::16)
+MIME-Version: 1.0
+X-MS-TrafficTypeDiagnostic: DB4PR08MB8151:EE_|DBAPR08MB5847:EE_|AM1PEPF000252DA:EE_|AS8PR08MB5928:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7e064d57-17e0-45b4-a9e2-08ddc36ce609
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted: BCL:0;
+ ARA:13230040|1800799024|376014|366016|3613699012; 
+X-Microsoft-Antispam-Message-Info-Original: =?utf-8?B?b2crYUg3VGdDRDhPSXZPS0oydVErUEh3eCtGTG81U3V5WkFSR003NUh6VVBx?=
+ =?utf-8?B?b1VBYngwWGozYVJpa2xlcmNIdU5XcEZBM09QUHorZnZaRTNnY3ArakNJSk1v?=
+ =?utf-8?B?b0I5c01vU1ZFWG5oTzhpbGNPQnZxWlJocjlPTTVoT3h6V29zM1ZYQ2dHK0N0?=
+ =?utf-8?B?bXc5S0FEbFZZakF3YWVBUjBlcTR6d0NDVmZsM2ZsVTZENGNnV3RqdlIwUGlW?=
+ =?utf-8?B?OHpJRHVqUzBPZjRZSlVobS9xVm1pTUlHUE5tNENnaWg3RVFYS0xEOVg3WHlS?=
+ =?utf-8?B?d0hSdkM0YUkyN1pZaTdITTF1UE1yZlBLUTljaXIzMDh2emJvRVJsRHdLUmlI?=
+ =?utf-8?B?dlJDbjZwYjFyTXh5c1pJcCt3cHBjVS9MVWVVdHlZR05sMXFZakdxbFBPQXNr?=
+ =?utf-8?B?NWpNSFVOZnpXeUVvOXNNSkU5c3hWajJNYnorUWhvelU1OFp1REpJTE9JVE02?=
+ =?utf-8?B?QS9vNFpySUpTL0pCTVVSYnBsTWgzVWloeGsyZUlUS3dWeTZZMUZrZjNEWTI4?=
+ =?utf-8?B?bGJodmljYUdncktjbmtZYURVSFFHY045UnF0dWprSTlwRmxXZGwyNGFUN0VT?=
+ =?utf-8?B?ZkJTa2Q1UHVsOU00a1cwWEhYOGRrSXhYdFg4UktPMUp3akxvUVY2SU9ubVR5?=
+ =?utf-8?B?THFIa2Fubm1kV2pQZGdBOG4reEtqUnpTR283MGEyQitudHVsQjNwWURIRVFs?=
+ =?utf-8?B?ckFiTW5pRWJpdnExY0NYM1VETkd1Zk13VVR3eTFRY2Y0T0VkWkxPMmRsZEZq?=
+ =?utf-8?B?MGFQczY5WjVwajBqN3hDOE1KTDdhNUpxcEhwYkZlQ0hib1l2YnRYaVZ2a0xr?=
+ =?utf-8?B?YUNCU1FKRXZXMTYrT0VlcUtRbk13Z1plMENMazZRTGtyaDV5dnB2NFREQzVD?=
+ =?utf-8?B?cFpqN2lTelBVZlRabXVpWmFBTjZBTHkxdFlRdGttblZJdlFra1VleWtua3pD?=
+ =?utf-8?B?dVlXZ0M4Vnorbi9YMUNpdDhNMnBKOVJXeHBZbVk4U1UwVWU2VjJjZkdLZjFE?=
+ =?utf-8?B?ZDlQVlhmR3VsdVdMM2FTbkl4MTIzaDJwS0tyVW15RVdGaHhJemVkaUlBUFJw?=
+ =?utf-8?B?dU9uQ2VNRHhWT1VlVW9rd3ppRUVQMkdjMGl3cDJnNUdkYkVEaVVKTkNBL3V2?=
+ =?utf-8?B?TTJQaTdSSThBVWlkejljb2ZLb1k0RnRhSlBuLzhDNGJsa0lNVDk4cWx0MzVl?=
+ =?utf-8?B?UGUxSDc1TEZ4WWlGZXcwd1BwejRCSytSYk1HUUxLRnJOY0g1S1cvZFdQNkZv?=
+ =?utf-8?B?OFovbkxKR29ET0x4TTNrQnVjWkV2Q1RsMTIwQUdXTDVqRU53eGE1akFZS1pm?=
+ =?utf-8?B?SFpuaTFoUVc0eVAvU1hDb2FmYXNnZU44b1AwZ0x0Z1ArcHFSTnhSMEVKUGRr?=
+ =?utf-8?B?YkcwUnVJVDM1eGg1RVZDTU1ld3hSSFRCYlRObi80RytlTzNidENDV1RFRDVj?=
+ =?utf-8?B?TWVyblhFMngwYTdpeXUvLzA1NjJGclhrTUVyb1pmNG5Fd21sWDRVZEtsbU9h?=
+ =?utf-8?B?WXFvVStUUEZYaldycGtjWEJEa1gzU3M3b3ZWbE1aZWkwVjQ2NVlYTEJ0emJj?=
+ =?utf-8?B?ZG9sb2dLM2l4RWxsZU9FTXU5ZnVxQS9obHpKbjhIZGlzR1g3ejJTSEZVeENX?=
+ =?utf-8?B?S2tQRHNraFZ5QTlpY2FMVnhsOGpPb3VHakpxZmZkOFBBTUtxeGlVU29LUS9h?=
+ =?utf-8?B?MUFwbGtncm01cFRNZHlDYysyejdyODlLdG5uVkFoVlVTcCtpWnRIRG9JUHho?=
+ =?utf-8?B?TlRkMnd1cFJ3alNDOURIejQ1dU4xT01qTk1LV29vZ0NrMm9kK0h1TTRnZGlz?=
+ =?utf-8?B?RTdXQldUUGR1d0srU05iK2FVWjhuT1F1bnF3dzZ4TmZuc2o0OFVNUENQRkFJ?=
+ =?utf-8?B?VlVIcm44RUp3RUQwdzA5dHFtSjNWNGxoTzJCcFE0NDJKNGErS3dKQytjOGRI?=
+ =?utf-8?B?Y01Nd3VKOUNIUU4vS295VEdTUG1Laldad0FmaTFDNUs2NlFFVmxBc21SSisx?=
+ =?utf-8?B?V3BucHFZS29RPT0=?=
+X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255; CTRY:; LANG:en;
+ SCL:1; SRV:; IPV:NLI; SFV:NSPM; H:DB4PR08MB8151.eurprd08.prod.outlook.com;
+ PTR:; CAT:NONE; SFS:(13230040)(1800799024)(376014)(366016)(3613699012);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR08MB5847
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: AM1PEPF000252DA.eurprd07.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs: 828b4924-fd16-4bee-2e8f-08ddc36cd28b
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|35042699022|82310400026|14060799003|376014|1800799024|36860700013|3613699012;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?Tmh5UUp6a0FHd1NEZjM2WHdORi9uK3M2V1NwcUdiWXFSd29BS3ZyUFlnVXAw?=
+ =?utf-8?B?UE5vSXJMVkdRVmJFMnNneXhuUG5zbE5CQTVDZjNoY3VUdVNHWGJFbU0vMmVM?=
+ =?utf-8?B?citMMTdFaVBaRUZDeUlQam5QbGl1cW16N25SYUVwcVlJM0hTbzQvQ3Btbnkv?=
+ =?utf-8?B?QmhLNDd4QStGRVZqL2VROHJsTnllSWZIQkJmWmhPWUFPakhvN29Nc3UwWDRx?=
+ =?utf-8?B?Tmh3U2tRZGM3blFuTUZkbm1OQVQwMVpDN0JFN0JOcU4wcXo5WGJBRXlBRWRi?=
+ =?utf-8?B?eGRrQUM1UWF2Uy9meFBTWUI3Wm9ud3BtdjhFdmR1OW1kS01VV1ZPZ0duZjJt?=
+ =?utf-8?B?ZzFVWDJCaUtlUGZHRld2emg2ejA0d1ZQWDVtWGc2T3RCdkkyRXNpRDJpMzNo?=
+ =?utf-8?B?MlNMUEhoVklmTmxaYmdjL2FoNjVFRjVtbjJkSWkvQ2Uxa1N0WkVBZ21EZ0px?=
+ =?utf-8?B?RW5iSVR0S1VZeW5heTJOYUZreFZIeG50RUFjaWoxZ0Z1VzEyZXl0THd0UjZX?=
+ =?utf-8?B?bVJ6K0c1NThld1FnRHVhbHBmQUoyWUdqME1ueVljcFdMWHVheGFTUmUyNVNk?=
+ =?utf-8?B?N01hbjNySTJDK0tDR3prNlE3TmhJN2ptYzdsNUQ1TjM1SW9YQjlZU0k3QWVR?=
+ =?utf-8?B?S3ErZnJ1OHNLUjczeExwTkRTQUlQMDZaTElZT0JwdzZJbGJTWDFCalljVk9D?=
+ =?utf-8?B?SDd6WHV0UndOQmFaSk1GUFYzZDBkRHRBdCtUWVIzOHlvdkYwZ3dHUi9KNlpu?=
+ =?utf-8?B?RitJRGtGVlFBamJ3elRwMUxWaWJMeXVJOURmbGxiNHNCa2RRdjVRM0lUV0hu?=
+ =?utf-8?B?MEJLQ0h6WDMzRFp6d3BleS9RdmhyQ1NhakVITUkxT01IUitaQTJhSmZqSk90?=
+ =?utf-8?B?dUhNTVowb3BxV3BpT3hUWHVnbHdnOUZVYTZiamVXcHhUai9pSjIvQ2U5QWM0?=
+ =?utf-8?B?Sk4wZ0Q3YU95UTE3VFNibU5WNWkwSWd2N1RxcndQRFVjMEhxVkVHUWVLbUtF?=
+ =?utf-8?B?RmJGelVyM083TEdza3BpTmFKTE5LSzVQN3lmUVJaeFVlaHpOWElqTUVCc2dx?=
+ =?utf-8?B?UG43eXMzSTBFODI4bXQzMzByY0VJV1dpZXZ4ZStpSndDN0hEVnhGNVhWQUhr?=
+ =?utf-8?B?RXhpU3Vvb3haL3MvN28yQXY1VENqZXZJVGdUV3dTMFljMkxpRzg2SG55WWQ0?=
+ =?utf-8?B?WCtDQkVDaXpZbytDd1FoQ3NEMzBJODdWeityMTFpNmRVSDlxdTNNbmtGTUJR?=
+ =?utf-8?B?VUxnZ1BGR1NzdytsY0xLcHZjbUJ3ZDZoK0cwZXhOWHJ2NHMzNDZqWUh4WHdI?=
+ =?utf-8?B?SU5uUytnaEZxZFNUdnhzWGEyNG1QbG5YYzBKSVdHUWlqSkdnY1VrVCtoTk1M?=
+ =?utf-8?B?dlEwY01jTXFlTWdBbDYzYUxlU2xZa0pCTkh6R3M4QTh0dHFjRHliY0ZXVWV3?=
+ =?utf-8?B?N2t2cWp5R3M1b0o4cGo3aGZFWTY5N0xmWVdEVHpsQ3RBWThOZnNTRit6N3Ri?=
+ =?utf-8?B?b1hoazd4NnA5WWhRMi9UZi9TSFl0UnJrc09ERVR0MFh2aW1WUHhIbDlCWUcr?=
+ =?utf-8?B?L20rcEJ1UFZGbGJrSVl2RjZ2U2dlNTNnUjFZTGJrdHc3ajlOeExqU3p3V2Jx?=
+ =?utf-8?B?OHhwYWp6cGNBbUIyMVhWa3p1T0tmV0FreFV6Ym1tYnhTejZWSFg2OS8zSTR5?=
+ =?utf-8?B?dmV1VGZmZVBJaVlEYkI2T0FyS3FZeUZKU25oZXlUN2M2dzZJRGpBMVRLVm9W?=
+ =?utf-8?B?K1lnYzhhTlV5bjZBTEVnbmdxek4xRFlKWGtLMWxRbHRHUS9qMUdZRVZodlpJ?=
+ =?utf-8?B?SmZEenJpMDEwZjJDY1I0MmYzTkd0UnhST29RV1Q3ZXAzZzVmTzNwMWlucGpJ?=
+ =?utf-8?B?V2R3YXJodldEYTRFMk5RUFE0a25GVUFpZElJT3NJT3F5MjYwcGlBMHlXdE5w?=
+ =?utf-8?B?UUlCVVRXTklRdSs4VzgyT1VacWVPYnM0MVozY3E4LzNzNkNUV1orcG83am1h?=
+ =?utf-8?B?NmprNitRWll2YXNqZFJJQXorS1o2VGZoYlR4R0hyZ2d6aisrcGErYUZFaEVt?=
+ =?utf-8?B?RWh5c2gra0s3OGw1cGZjbjBJTFQ0SXQxdFd0RzNwQUk1aGFpV2lTcE1KWXlk?=
+ =?utf-8?Q?Q2nw=3D?=
+X-Forefront-Antispam-Report: CIP:4.158.2.129; CTRY:GB; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:outbound-uk1.az.dlp.m.darktrace.com;
+ PTR:InfoDomainNonexistent; CAT:NONE;
+ SFS:(13230040)(35042699022)(82310400026)(14060799003)(376014)(1800799024)(36860700013)(3613699012);
+ DIR:OUT; SFP:1101; 
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2025 06:57:43.9448 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7e064d57-17e0-45b4-a9e2-08ddc36ce609
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d; Ip=[4.158.2.129];
+ Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource: AM1PEPF000252DA.eurprd07.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB5928
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,185 +204,81 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add tested Intel platforms with Intel NICs to v25.07 release note.
+Hi all,
 
-Signed-off-by: Yu Jiang <yux.jiang@intel.com>
----
- doc/guides/rel_notes/release_25_07.rst | 164 +++++++++++++++++++++++++
- 1 file changed, 164 insertions(+)
+Now that we've written a significant number of tests and developed a
+consistent usage pattern, I think it's a good time to take the next step
+toward project maturity: establishing a stable, well-defined API that
+developers can rely on across releases.
 
-diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/release_25_07.rst
-index 0b8300a718..44c33b179b 100644
---- a/doc/guides/rel_notes/release_25_07.rst
-+++ b/doc/guides/rel_notes/release_25_07.rst
-@@ -318,3 +318,167 @@ Tested Platforms
-    This section is a comment. Do not overwrite or remove it.
-    Also, make sure to start the actual text at the margin.
-    =======================================================
-+
-+* Intel\ |reg| platforms with Intel\ |reg| NICs combinations
-+
-+  * CPU
-+
-+    * Intel\ |reg| Atom\ |trade| x7835RE
-+    * Intel\ |reg| Xeon\ |reg| 6767P
-+    * Intel\ |reg| Xeon\ |reg| CPU E5-2699 v4 @ 2.20GHz
-+    * Intel\ |reg| Xeon\ |reg| CPU Max 9480  CPU @ 1.9GHz
-+    * Intel\ |reg| Xeon\ |reg| Gold 6139 CPU @ 2.30GHz
-+    * Intel\ |reg| Xeon\ |reg| Gold 6140M CPU @ 2.30GHz
-+    * Intel\ |reg| Xeon\ |reg| Gold 6252N CPU @ 2.30GHz
-+    * Intel\ |reg| Xeon\ |reg| Gold 6348 CPU @ 2.60GHz
-+    * Intel\ |reg| Xeon\ |reg| Platinum 8180 CPU @ 2.50GHz
-+    * Intel\ |reg| Xeon\ |reg| Platinum 8280M CPU @ 2.70GHz
-+    * Intel\ |reg| Xeon\ |reg| Platinum 8358 CPU @ 2.60GHz
-+    * Intel\ |reg| Xeon\ |reg| Platinum 8380 CPU @ 2.30GHz
-+    * Intel\ |reg| Xeon\ |reg| Platinum 8468H
-+    * Intel\ |reg| Xeon\ |reg| Platinum 8490H
-+
-+  * OS:
-+
-+    * Fedora 42
-+    * FreeBSD 14.2
-+    * Microsoft Azure Linux 3.0
-+    * OpenAnolis OS 8.10
-+    * openEuler 24.03 (LTS-SP1)
-+    * Red Hat Enterprise Linux Server release 9.6
-+    * Ubuntu 24.04.2 LTS
-+
-+  * NICs:
-+
-+    * Intel\ |reg| Ethernet Controller E810-C for SFP (4x25G)
-+
-+      * Firmware version: 4.80 0x80020601 1.3805.0
-+      * Device id (pf/vf): 8086:1593 / 8086:1889
-+      * Driver version(out-tree): 2.2.8 (ice)
-+      * Driver version(in-tree): 6.8.0-60-generic (Ubuntu24.04.2 LTS) /
-+        5.14.0-570.12.1.el9_6.x86_64 (RHEL9.6) (ice)
-+      * OS Default DDP: 1.3.43.0
-+      * COMMS DDP: 1.3.55.0
-+      * Wireless Edge DDP: 1.3.23.0
-+
-+    * Intel\ |reg| Ethernet Controller E810-C for QSFP (2x100G)
-+
-+      * Firmware version: 4.80 0x80020543 1.3805.0
-+      * Device id (pf/vf): 8086:1592 / 8086:1889
-+      * Driver version(out-tree): 2.2.8 (ice)
-+      * Driver version(in-tree): 6.6.12.1-1.azl3+ice+ (Microsoft Azure Linux 3.0) (ice)
-+      * OS Default DDP: 1.3.43.0
-+      * COMMS DDP: 1.3.55.0
-+      * Wireless Edge DDP: 1.3.23.0
-+
-+    * Intel\ |reg| Ethernet Controller E810-XXV for SFP (2x25G)
-+
-+      * Firmware version: 4.80 0x80020544 1.3805.0
-+      * Device id (pf/vf): 8086:159b / 8086:1889
-+      * Driver version: 2.2.8 (ice)
-+      * OS Default DDP: 1.3.43.0
-+      * COMMS DDP: 1.3.55.0
-+
-+    * Intel\ |reg| Ethernet Controller E830-CC for SFP
-+
-+      * Firmware version: 1.00 0x800161b9 1.3832.0
-+      * Device id (pf/vf): 8086:12d3 / 8086:1889
-+      * Driver version: 2.2.8 (ice)
-+      * OS Default DDP: 1.3.43.0
-+      * COMMS DDP: 1.3.55.0
-+      * Wireless Edge DDP: 1.3.23.0
-+
-+    * Intel\ |reg| Ethernet Controller E830-CC for QSFP
-+
-+      * Firmware version: 1.00 0x800161b7 1.3832.0
-+      * Device id (pf/vf): 8086:12d2 / 8086:1889
-+      * Driver version: 2.2.8 (ice)
-+      * OS Default DDP: 1.3.43.0
-+      * COMMS DDP: 1.3.55.0
-+      * Wireless Edge DDP: 1.3.23.0
-+
-+    * Intel\ |reg| Ethernet Connection E825-C for QSFP
-+
-+      * Firmware version: 3.94 0x8000766d 1.3825.0
-+      * Device id (pf/vf): 8086:579d / 8086:1889
-+      * Driver version: 2.2.8 (ice)
-+      * OS Default DDP: 1.3.43.0
-+      * COMMS DDP: 1.3.55.0
-+      * Wireless Edge DDP: 1.3.23.0
-+
-+    * Intel\ |reg| 82599ES 10 Gigabit Ethernet Controller
-+
-+      * Firmware version: 0x000161bf
-+      * Device id (pf/vf): 8086:10fb / 8086:10ed
-+      * Driver version(out-tree): 6.1.5 (ixgbe)
-+      * Driver version(in-tree): 6.8.0-60-generic (Ubuntu24.04.2 LTS) (ixgbe)
-+
-+    * Intel\ |reg| Ethernet Network Adapter E610-XT2
-+
-+      * Firmware version: 1.00 0x800066ae 0.0.0
-+      * Device id (pf/vf): 8086:57b0 / 8086:57ad
-+      * Driver version(out-tree): 6.1.5 (ixgbe)
-+
-+    * Intel\ |reg| Ethernet Network Adapter E610-XT4
-+
-+      * Firmware version: 1.00 0x80004ef2 0.0.0
-+      * Device id (pf/vf): 8086:57b0 / 8086:57ad
-+      * Driver version(out-tree): 6.1.5 (ixgbe)
-+
-+    * Intel\ |reg| Ethernet Converged Network Adapter X710-DA4 (4x10G)
-+
-+      * Firmware version: 9.54 0x8000fb3f 1.3800.0
-+      * Device id (pf/vf): 8086:1572 / 8086:154c
-+      * Driver version(out-tree): 2.28.7 (i40e)
-+
-+    * Intel\ |reg| Corporation Ethernet Connection X722 for 10GbE SFP+ (2x10G)
-+
-+      * Firmware version: 6.50 0x800043a1 1.3597.0
-+      * Device id (pf/vf): 8086:37d0 / 8086:37cd
-+      * Driver version(out-tree): 2.28.7 (i40e)
-+      * Driver version(in-tree): 5.14.0-570.12.1.el9_6.x86_64 (RHEL9.6) (i40e)
-+
-+    * Intel\ |reg| Ethernet Converged Network Adapter XXV710-DA2 (2x25G)
-+
-+      * Firmware version:  9.54 0x8000fb47 1.3800.0
-+      * Device id (pf/vf): 8086:158b / 8086:154c
-+      * Driver version(out-tree): 2.28.7 (i40e)
-+      * Driver version(in-tree): 6.8.0-63-generic (Ubuntu24.04.2 LTS) /
-+        5.14.0-570.12.1.el9_6.x86_64 (RHEL9.6) (i40e)
-+
-+    * Intel\ |reg| Ethernet Converged Network Adapter XL710-QDA2 (2X40G)
-+
-+      * Firmware version(PF): 9.54 0x8000fb7f 1.3800.0
-+      * Device id (pf/vf): 8086:1583 / 8086:154c
-+      * Driver version(out-tree): 2.28.7 (i40e)
-+
-+    * Intel\ |reg| Ethernet Controller I225-LM
-+
-+      * Firmware version: 1.3, 0x800000c9
-+      * Device id (pf): 8086:15f2
-+      * Driver version(in-tree): 6.8.0-60-generic (Ubuntu24.04.2 LTS) (igc)
-+
-+    * Intel\ |reg| Ethernet Controller I225-IT
-+
-+      * Firmware version: 1094:878d
-+      * Device id (pf): 8086:0d9f
-+      * Driver version(in-tree): 6.12-intel (Ubuntu 24.04.2 LTS) (igc)
-+
-+    * Intel\ |reg| Ethernet Controller I226-LM
-+
-+      * Firmware version: 2.14, 0x8000028c
-+      * Device id (pf): 8086:125b
-+      * Driver version(in-tree): 6.8.0-60-generic (Ubuntu24.04.2 LTS) (igc)
-+
-+    * Intel\ |reg| Corporation Ethernet Server Adapter I350-T4
-+
-+      * Firmware version: 1.63, 0x8000116b
-+      * Device id (pf/vf): 8086:1521 /8086:1520
-+      * Driver version: 6.12-intel (Ubuntu 24.04.2 LTS) (igb)
-+
-+    * Intel\ |reg| Infrastructure Processing Unit (Intel\ |reg| IPU) E2100
-+
-+      * Firmware version: ci-ts.release.2.0.0.11126
-+      * Device id (idpf/cpfl): 8086:1452/8086:1453
-+      * Driver version: 0.0.772 (idpf)
-+
--- 
-2.17.1
+We got some comments from the devs present at the last DPDK summit and
+they are valuable guidance on what direction you'd like the framework to
+go and we're taking them onboard to shape our roadmap. Very much related
+to that we'd appreciate any comments on what you'd like to see in the API.
 
+API proposal goal
+
+Split framework internals from functions intended for use by test writers.
+
+This API would offer:
+- Discoverability of available functionality
+- Clear boundaries between public/test-facing APIs and internal
+framework logic
+- A stable interface for writing and maintaining tests
+- A DPDK-style release cadence and compatibility guarantee (i.e., write
+once, run future-proof)
+
+With this split, DTS becomes effectively self-documenting — users can
+explore and use only what’s in the api.
+
+Technical Summary
+
+Introduce a dedicated api/ directory that contains a small, focused set
+of modules exposing all the functionality needed to write tests.
+
+All test execution logic and framework internals will remain private and
+continue to live in framework/, where we can iterate freely without
+breaking user tests.
+
+The new api/ modules will be stateless, accessing test context via
+get_ctx().
+
+Users will import only what they need:
+
+> from api import dts, tg, sut
+
+and use it as module functions
+
+> tg.send_packet(...)
+> dts.verify(...)
+> testpmd = sut.testpmd_create(...)
+
+Because the modules are stateless and the context is already managed by
+the runner, the changes to the existing framework will be minimal.
+
+Initially, we’ll have three modules in api/: dts, tg, and sut. This can
+grow as needed.
+
+The goal of this approach is to provide a clean, intuitive developer
+experience when doing API calls, with logical namespacing and good IDE
+support for discoverability and usability.
+
+Next Steps
+
+Feedback is very welcome — feel free to reply here or on our slack
+channel #dts-dev. If you would like to join an upcoming DTS meeting on
+Thursday to discuss this live send us and email (or ask on slack) to get
+an invite.
+
+After initial discussions I will send a small RFC patch with framework
+changes only allowing further comments.
+
+I will follow up with a V1 patch introducing the new API and updating
+all existing tests to use it.
+
+Thanks for reading! I'm excited about getting DTS in more hands and hope
+this will make it even easier for contributors and users to write
+robust, maintainable tests.
+
+Kindest regards,
+Paul
