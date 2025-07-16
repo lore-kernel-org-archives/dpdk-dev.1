@@ -2,102 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10038C83F17
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Jul 2025 23:19:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FAAC83F1B
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Jul 2025 04:14:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9F3DF4021E;
-	Wed, 16 Jul 2025 01:19:55 +0200 (CEST)
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
- [209.85.214.176])
- by mails.dpdk.org (Postfix) with ESMTP id B05484013F
- for <dev@dpdk.org>; Wed, 16 Jul 2025 01:19:54 +0200 (CEST)
-Received: by mail-pl1-f176.google.com with SMTP id
- d9443c01a7336-236377f00a1so56902625ad.3
- for <dev@dpdk.org>; Tue, 15 Jul 2025 16:19:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752621594;
- x=1753226394; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=aqrnLfzzWYSNu2/rsQbsNPXxCXMYLiqMCXi9ICgo3OA=;
- b=amDC0r//Ern3J1BxLvBfs3qqA8h3yd3uUV+4OuL2q6n3OjnCQKVRON6sL0KvFWIeiN
- zdolO/y0RW5j744545pWvEMmJr6Xv+VaAz67qk4/8PignzjmmVrxC6nXWR83Qfx9FeE7
- vUn4RSMTf2n93837BUQaMouSxYeJb/OjG3KhD271Hc0hDIDCf/g32uxX8xe8HGh591nj
- pExDxXuHNMXnEbsJNl2ZRlOFwZ9gyEjqqKaz98uF8iTUqUTeLcIQ2qYQyhw/+YV/p6A4
- sc25Iu5vj6+g+TR/lTINtdiiDtW4Fc+NLgMnhmMWfKhmY9mLNjOiqAZCqRHpYmSLRryQ
- whMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752621594; x=1753226394;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=aqrnLfzzWYSNu2/rsQbsNPXxCXMYLiqMCXi9ICgo3OA=;
- b=YeMVog0l0cXhowK9Hak1ekF8ZVeKYBhOI6QuzF0ie4rYub3ZVwhdUS9A5gjWlsZgCh
- FLUdhpYv7WWAzbDH2BVkBSibW1HNqsj7t5ufbkGzFBS83ZRHPvdTnVv0ysuH8yK/H/lR
- xe1Tk6LZerbdRl91yyFZKM51Wrv+3uAXor0TcvcBZWYTEpcD5szIzJaAcHBRmg+NcQTG
- YjU+kCfYjHgsCzOMuhBfhtBaUTrK1iQqYHN09Ij/qkZZhwSDy8DWBgCNO+5qKVyOX6ph
- d8Nvm3r+P0VzFwu19z4WbuXuqB0fpoO8ilcAwASHw4zAYo4q5ZP1HkarV6nhNYpPJqpq
- T4sw==
-X-Gm-Message-State: AOJu0Yy5nhrgxxE2UdOh+oV4WbyfB5lxj4nyIKV3ieZi+BEyYLSHQh0Z
- x3HdJcCFUN8NUWR/uLdWZrTtkFZ5KRdlNUHh6q7q3Tb+0YlJTl8XHRC3qCsl/JP1cZYQOs9QUD/
- cLiJvfNU=
-X-Gm-Gg: ASbGncuKdZNA6RW9OHbONGSGlivl0YuSQL+TVtClD0WgPP+OsZljuzbfF//KxZHIiYw
- II10/d6c0sBg8YFpM6YBVhVtFXgEo5iQ9YbDhfsqwHHJEC5X565kUfYq3nvvJ7ZQq7n4g84qPZw
- kwZXcrl0YTUEtpw+a0iEU90dXW0ljUgMUDA3mimtY8mXW2DTTBuuVhJVEKWK9MlRWxOogVRj3Mr
- enozuaDICzqwnCPh/CrrgDOIIn2zAYRlGt93fXmReWpWoPxr+u+fg8p+T1QSe+cczwpGJ3Wch7O
- LVQ3pH5MCd1duQ1MjDWg2rsfO9SEl2E5wArx3+RKyqqyvA/yZTdvjt6LjG0KjtWekbHEt7rsg3Z
- jTK/usbvSERih98mmJtVi/snqnuctV4+8IH3xuRHxWBipcB5hNsmppMDRt6GqF0qhCA99f2ZNsd
- k=
-X-Google-Smtp-Source: AGHT+IFY6J6LnO1H7VJz1SmYkuTbXSGSfv7gZgZ1Eccp/HH2y88IUXTy7qwOP4lTsy6Ncdj7nZ+GDA==
-X-Received: by 2002:a17:903:1b04:b0:234:a063:e2b5 with SMTP id
- d9443c01a7336-23e24f4aabemr10532515ad.30.1752621593603; 
- Tue, 15 Jul 2025 16:19:53 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-23de428b06bsm112819545ad.41.2025.07.15.16.19.52
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 15 Jul 2025 16:19:53 -0700 (PDT)
-Date: Tue, 15 Jul 2025 16:19:50 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>, Jack Bond-Preston
- <jack.bond-preston@foss.arm.com>, Kai Ji <kai.ji@intel.com>, Pablo de Lara
- <pablo.de.lara.guarch@intel.com>, Sunil Uttarwar
- <sunilprakashrao.uttarwar@amd.com>, Praveen Shetty
- <praveen.shetty@intel.com>, Potnuri Bharat Teja <bharat@chelsio.com>,
- Gaetan Rivet <grive@u256.net>, Dengdui Huang <huangdengdui@huawei.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>, Vladimir Medvedkin
- <vladimir.medvedkin@intel.com>, Rosen Xu <rosen.xu@altera.com>, Matan Azrad
- <matan@nvidia.com>, Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Dariusz
- Sosnowski <dsosnowski@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
- <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Devendra Singh
- Rawat <dsinghrawat@marvell.com>, Alok Prasad <palok@marvell.com>, Cristian
- Dumitrescu <cristian.dumitrescu@intel.com>, Jerin Jacob
- <jerinj@marvell.com>, Maciej Czekaj <mczekaj@marvell.com>, Maxime Coquelin
- <maxime.coquelin@redhat.com>, Chenbo Xia <chenbox@nvidia.com>, Chas
- Williams <chas3@att.com>, "Min Hu (Connor)" <humin29@huawei.com>, Andrew
- Rybchenko <andrew.rybchenko@oktetlabs.ru>, Morten =?UTF-8?B?QnLDuHJ1cA==?=
- <mb@smartsharesystems.com>, David Hunt <david.hunt@intel.com>, Radu Nicolau
- <radu.nicolau@intel.com>, Akhil Goyal <gakhil@marvell.com>, Tomasz Kantecki
- <tomasz.kantecki@intel.com>, Sunil Kumar Kori <skori@marvell.com>, Pavan
- Nikhilesh <pbhagavatula@marvell.com>, Kiran Kumar K
- <kirankumark@marvell.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Zhirun Yan <yanzhirun_163@163.com>, John McNamara
- <john.mcnamara@intel.com>, Erik Gabriel Carrillo
- <erik.g.carrillo@intel.com>, Sivaprasad Tummala
- <sivaprasad.tummala@amd.com>, Aman Singh <aman.deep.singh@intel.com>, Wisam
- Jaddo <wisamm@nvidia.com>
-Subject: Re: [PATCH v3 2/2] doc: remove use of '-n 4' option in
- documentation examples
-Message-ID: <20250715161950.2aa8c6d0@hermes.local>
-In-Reply-To: <20250715215718.7388-3-stephen@networkplumber.org>
-References: <20240718184326.21375-1-stephen@networkplumber.org>
- <20250715215718.7388-1-stephen@networkplumber.org>
- <20250715215718.7388-3-stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id DAAE5402D3;
+	Wed, 16 Jul 2025 06:14:04 +0200 (CEST)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+ by mails.dpdk.org (Postfix) with ESMTP id 7E91A4013F
+ for <dev@dpdk.org>; Wed, 16 Jul 2025 06:14:03 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+ by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bhjKY4GMfz13Mdl;
+ Wed, 16 Jul 2025 12:11:13 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id 3249F180482;
+ Wed, 16 Jul 2025 12:14:01 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 16 Jul 2025 12:14:00 +0800
+Message-ID: <2243786a-eb7c-4807-b507-199936764e54@huawei.com>
+Date: Wed, 16 Jul 2025 12:14:00 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [EXTERNAL] Re: [PATCH v0 1/1] doc: announce inter-device DMA
+ capability support in dmadev
+To: Vamsi Krishna Attunuru <vattunuru@marvell.com>, "dev@dpdk.org"
+ <dev@dpdk.org>, Pavan Nikhilesh Bhagavatula <pbhagavatula@marvell.com>,
+ "kevin.laatz@intel.com" <kevin.laatz@intel.com>, "bruce.richardson@intel.com"
+ <bruce.richardson@intel.com>, "mb@smartsharesystems.com"
+ <mb@smartsharesystems.com>, Vladimir Medvedkin
+ <vladimir.medvedkin@intel.com>, Anatoly Burakov <anatoly.burakov@intel.com>
+CC: Jerin Jacob <jerinj@marvell.com>, "thomas@monjalon.net"
+ <thomas@monjalon.net>
+References: <20250710085101.1678775-1-vattunuru@marvell.com>
+ <01a66ad9-a763-457a-b0b2-c6aae1948f84@huawei.com>
+ <SJ4PPFEA6F74CA24501C3384EF778E0B3F6A657A@SJ4PPFEA6F74CA2.namprd18.prod.outlook.com>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <SJ4PPFEA6F74CA24501C3384EF778E0B3F6A657A@SJ4PPFEA6F74CA2.namprd18.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.121.161]
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -111,22 +58,172 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 15 Jul 2025 14:56:29 -0700
-Stephen Hemminger <stephen@networkplumber.org> wrote:
+Hi Vamsi,
 
-> Many places in the documentation are using -n 4 to set
-> the number of memory channels. This is no longer required
-> and is unneccessary in most cases.
+Thanks for the explanation.
+
+Let me tell you what I understand:
+1\ Two dmadev (must belong to the same DMA controller?) each passthrough to diffent domain (VM or container)
+2\ The kernel DMA controller driver could config access groups --- there is a secure mechanism (like Intel IDPTE)
+   and the two dmadev could communicate if the kernel DMA controller driver has put them in the same access groups.
+3\ Application setup access group and get handle (maybe the new 'dev_idx' which you announce in this commit),
+   and then setup one vchan which config the handle.
+   and later launch copy request based on this vchan.
+4\ The driver will pass the request to dmadev-1 hardware, and dmadev-1 hardware will do some verification,
+   and maybe use dmadev-2 stream ID for read/write operations?
+
+A few question about this:
+1\ What the prototype of 'dev_idx', is it uint16_t?
+2\ How to implement read/write between two dmadev ?  use two different dev_idx? the first for read and the second for write?
+
+
+I also re-read the patchset "[PATCH v1 0/3] Add support for inter-domain DMA operations", it introduce:
+1\ One 'int controller-id' in the rte_dma_info. which maybe used in vendor-specific secure mechanism.
+2\ Two new OP_flag and two new datapath API.
+The reason why this patch didn't continue (I guess) is whether setup one new vchan. Yes, vchan was designed
+to represents different transfer contexts. But each vchan has its own enqueue/dequeue/ring, it more act like
+one logic dmadev, some of the hardware can fit this model well, some may not (like Intel in this case).
+
+
+So how about the following scheme:
+1\ Add inter-domain capability bits, for example: RTE_DMA_CAPA_INTER_PROCESS_DOMAIN, RTE_DMA_CAPA_INTER_OS_DOMAIN
+2\ Add one domain_controller_id in the rte_dma_info which maybe used in vendor-specific secure mechanism.
+3\ Add four OP_FLAGs: RTE_DMA_OP_FLAG_SRC_INTER_PROCESS_DOMAIN_HANDLE, RTE_DMA_OP_FLAG_DST_INTER_PROCESS_DOMAIN_HANDLE
+                      RTE_DMA_OP_FLAG_SRC_INTER_OS_DOMAIN_HANDLE, RTE_DMA_OP_FLAG_DST_INTER_OS_DOMAIN_HANDLE
+4\ Reserved 32bit from flag parameter (which all enqueue API both supports) as the src and dst handle.
+   or only reserved 16bit from flag parameter if we restrict don't support 3rd transfer.
+
+Thanks
+
+On 2025/7/15 13:35, Vamsi Krishna Attunuru wrote:
+> Hi Feng,
 > 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
-> Acked-by: Jack Bond-Preston <jack.bond-preston@foss.arm.com>
-> ---
-
-There still is wide variety of usage across examples an many likely
-require user to think "where is that binary?". It should be standardized
-in the documentation.
-
-Also, checkpatch complained about the docker example, but it
-was always that way.
+> Thanks for depicting the feature use case.
+> 
+> From the application’s perspective, inter VM/process communication is required to exchange the src & dst buffer details, however the specifics of this communication mechanism are outside the scope in this context. Regarding the address translations, these buffer addresses can be either IOVA as PA or IOVA as VA. The DMA hardware must use the appropriate IOMMU stream IDs when initiating the DMA transfers. For example, in the use case shown in the diagram, dmadev-1 and dmadev-2 would join an access group managed by the kernel DMA controller driver. This controller driver will configure the access group on the DMA hardware, enabling the hardware to select the correct stream IDs for read/write operations. New rte_dma APIs could be introduced to join or leave the access group or to query the access group details. Additionally, a secure token mechanism (similar to vfio-pci token) can be implemented to validate any dmadev attempting to join the access group.
+> 
+> Regards.
+> 
+> From: fengchengwen <fengchengwen@huawei.com>
+> Sent: Tuesday, July 15, 2025 6:29 AM
+> To: Vamsi Krishna Attunuru <vattunuru@marvell.com>; dev@dpdk.org; Pavan Nikhilesh Bhagavatula <pbhagavatula@marvell.com>; kevin.laatz@intel.com; bruce.richardson@intel.com; mb@smartsharesystems.com
+> Cc: Jerin Jacob <jerinj@marvell.com>; thomas@monjalon.net
+> Subject: [EXTERNAL] Re: [PATCH v0 1/1] doc: announce inter-device DMA capability support in dmadev
+> 
+> Hi Vamsi, From the commit log, I guess this commit mainly want to meet following case: --------------- ---------------- | Container | | VirtMachine | | | | | | dmadev-1 | | dmadev2 | --------------- ---------------- | | ------------------------------
+> ZjQcmQRYFpfptBannerStart
+> Prioritize security for external emails:
+> Confirm sender and content safety before clicking links or opening attachments
+>     Report Suspicious  <https://us-phishalarm-ewt.proofpoint.com/EWT/v1/CRVmXkqW!tg3ZldV0Yr_wdSwWmT2aDdKMi-4rn2z58vFaxwfOeocS1P19w1BeRdyGs5sjnhV2rU_6m8MOWj4KFbuXKkKJIvcqwWD2WEwJW_0$>   ‌
+> ZjQcmQRYFpfptBannerEnd
+> 
+> Hi Vamsi,
+> 
+> 
+> 
+> From the commit log, I guess this commit mainly want to meet following case:
+> 
+> 
+> 
+>      ---------------             ----------------
+> 
+>      |  Container  |             |  VirtMachine |
+> 
+>      |             |             |              |
+> 
+>      |  dmadev-1   |             |   dmadev2    |
+> 
+>      ---------------             ----------------
+> 
+>            |                            |
+> 
+>            ------------------------------
+> 
+> 
+> 
+> App run in the container could launch DMA transfer from local buffer to the VirtMachine by config
+> 
+> dmadev-1/2 (the dmadev-1/2 are passthrough to diffent OS domain).
+> 
+> 
+> 
+> Could you explain how to use it from application perspective (for example address translation) and
+> 
+> application & hardware restrictions?
+> 
+> 
+> 
+> 
+> 
+> BTW: In this case, there are two OS domain communication, and I remember there are also inter-process
+> 
+> DMA RFC, so maybe we could design more generic solution if you provide more info.
+> 
+> 
+> 
+> Thanks
+> 
+> 
+> 
+> On 2025/7/10 16:51, Vamsi Krishna wrote:
+> 
+>> From: Vamsi Attunuru <vattunuru@marvell.com<mailto:vattunuru@marvell.com>>
+> 
+>>
+> 
+>> Modern DMA hardware supports data transfer between multiple
+> 
+>> DMA devices, enabling data communication across isolated domains or
+> 
+>> containers. To facilitate this, the ``dmadev`` library requires changes
+> 
+>> to allow devices to register with or unregisters from DMA groups for
+> 
+>> inter-device communication. This feature is planned for inclusion
+> 
+>> in DPDK 25.11.
+> 
+>>
+> 
+>> Signed-off-by: Vamsi Attunuru <vattunuru@marvell.com<mailto:vattunuru@marvell.com>>
+> 
+>> ---
+> 
+>>  doc/guides/rel_notes/deprecation.rst | 7 +++++++
+> 
+>>  1 file changed, 7 insertions(+)
+> 
+>>
+> 
+>> diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
+> 
+>> index e2d4125308..46836244dd 100644
+> 
+>> --- a/doc/guides/rel_notes/deprecation.rst
+> 
+>> +++ b/doc/guides/rel_notes/deprecation.rst
+> 
+>> @@ -152,3 +152,10 @@ Deprecation Notices
+> 
+>>  * bus/vmbus: Starting DPDK 25.11, all the vmbus API defined in
+> 
+>>    ``drivers/bus/vmbus/rte_bus_vmbus.h`` will become internal to DPDK.
+> 
+>>    Those API functions are used internally by DPDK core and netvsc PMD.
+> 
+>> +
+> 
+>> +* dmadev: a new capability flag ``RTE_DMA_CAPA_INTER_DEV`` will be added
+> 
+>> +  to advertise DMA device's inter-device DMA copy capability. To enable
+> 
+>> +  this functionality, a few dmadev APIs will be added to configure the DMA
+> 
+>> +  access groups, facilitating coordinated data communication between devices.
+> 
+>> +  A new ``dev_idx`` field will be added to the ``struct rte_dma_vchan_conf``
+> 
+>> +  structure to configure a vchan for data transfers between any two DMA devices.
+> 
+> 
 
