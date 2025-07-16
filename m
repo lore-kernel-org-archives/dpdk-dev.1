@@ -2,56 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0932EC83F22
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Jul 2025 13:05:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F0CC83F22
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Jul 2025 13:05:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6297040A6F;
-	Wed, 16 Jul 2025 15:04:05 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3746140676;
+	Wed, 16 Jul 2025 15:04:18 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 3A4D740A82
- for <dev@dpdk.org>; Wed, 16 Jul 2025 15:04:04 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 3F58C40676
+ for <dev@dpdk.org>; Wed, 16 Jul 2025 15:04:16 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1752671043;
+ s=mimecast20190719; t=1752671055;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=tdQ3WYSTQYPC6JhLyZFU/1ajHFozU3ndLd4Gyj5iTpg=;
- b=dt8dcECqhLVcYMR8XfqHptoOqALaiawkc1qhAk9gpHe5Rd7ps2KmttTLgRSLNB7GGxqErz
- Lt769dX8Ee1fz/0+FVjJg2j9rrsY8lT8g7J3wBynprvf06fp1BIOOCpLmc6KO1+2/JBMvr
- a2S4sC8ZVOvz7bmBjyGjM0OrUwwaq1E=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ bh=siUdQF4AGH90dkgLqGOrsj3twhdj9vohTk5vMrpBmTc=;
+ b=Mgx+qrlejL7dy0+zrEZ60SbWEnv2TKQQBYHdS/0I9aZdhW2sPsvTVX0lJ9at9fhlK1Wr+P
+ rp2toAyJQjRWxcJ8Lk59Vy3ERiAsjYDL3d8p5Ao0ZABilP6VnWO6HVqWi5zVeo31mOgOWk
+ HexRIth5SD1+f+60rWKchyqK9ZwA2RA=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-134-xbGfiTlZM5ix1foJawIgzA-1; Wed,
- 16 Jul 2025 09:04:02 -0400
-X-MC-Unique: xbGfiTlZM5ix1foJawIgzA-1
-X-Mimecast-MFC-AGG-ID: xbGfiTlZM5ix1foJawIgzA_1752671041
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-67-G2klkB4VNpGybR4DtpEkFQ-1; Wed,
+ 16 Jul 2025 09:04:14 -0400
+X-MC-Unique: G2klkB4VNpGybR4DtpEkFQ-1
+X-Mimecast-MFC-AGG-ID: G2klkB4VNpGybR4DtpEkFQ_1752671053
 Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 86B8D19560BF; Wed, 16 Jul 2025 13:04:01 +0000 (UTC)
+ by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 9D7501956086; Wed, 16 Jul 2025 13:04:13 +0000 (UTC)
 Received: from dmarchan.lan (unknown [10.45.225.235])
  by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id EE5A51954213; Wed, 16 Jul 2025 13:03:59 +0000 (UTC)
+ id 00AAE1954213; Wed, 16 Jul 2025 13:04:11 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Cc: Cristian Dumitrescu <cristian.dumitrescu@intel.com>,
- Allain Legacy <allain.legacy@windriver.com>
-Subject: [PATCH v4 20/22] cfgfile: fix section count with no name
-Date: Wed, 16 Jul 2025 15:02:07 +0200
-Message-ID: <20250716130212.1736407-21-david.marchand@redhat.com>
+Cc: Aaron Conole <aconole@redhat.com>,
+ Michael Santana <maicolgabriel@hotmail.com>
+Subject: [PATCH v4 22/22] ci: extend coverage with UBSan
+Date: Wed, 16 Jul 2025 15:02:09 +0200
+Message-ID: <20250716130212.1736407-23-david.marchand@redhat.com>
 In-Reply-To: <20250716130212.1736407-1-david.marchand@redhat.com>
 References: <20250619071037.37325-1-david.marchand@redhat.com>
  <20250716130212.1736407-1-david.marchand@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: mMju0pKdKpvLoUu90jAiYN4OLxPeTUFbte4LYQoKrME_1752671041
+X-Mimecast-MFC-PROC-ID: Od4zwdX9nMGl6kUvoHCCxLzeHAnXzx7xku07pnBTdSw_1752671053
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -68,45 +68,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Passing a NULL to strncmp is incorrect.
-
- + ------------------------------------------------------- +
- + Test Suite : Test Cfgfile Unit Test Suite
- + ------------------------------------------------------- +
-../lib/cfgfile/rte_cfgfile.c:475:7: runtime error: null pointer passed as
-	argument 2, which is declared to never be null
-
-On the other hand, it seems the intent was to count all sections, so
-skip the whole loop and section name comparisons.
-
-Fixes: c54e7234bc9e ("test/cfgfile: add basic unit tests")
+Enable more libraries, but exclude the ones with currently failing
+unit tests.
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- lib/cfgfile/rte_cfgfile.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Changes since v3:
+- re-enabled cfgfile, fib, lpm and rib,
 
-diff --git a/lib/cfgfile/rte_cfgfile.c b/lib/cfgfile/rte_cfgfile.c
-index 8bbdcf146e..9723ec756f 100644
---- a/lib/cfgfile/rte_cfgfile.c
-+++ b/lib/cfgfile/rte_cfgfile.c
-@@ -477,10 +477,14 @@ int rte_cfgfile_close(struct rte_cfgfile *cfg)
- RTE_EXPORT_SYMBOL(rte_cfgfile_num_sections)
- int
- rte_cfgfile_num_sections(struct rte_cfgfile *cfg, const char *sectionname,
--size_t length)
-+	size_t length)
- {
--	int i;
- 	int num_sections = 0;
-+	int i;
-+
-+	if (sectionname == NULL)
-+		return cfg->num_sections;
-+
- 	for (i = 0; i < cfg->num_sections; i++) {
- 		if (strncmp(cfg->sections[i].name, sectionname, length) == 0)
- 			num_sections++;
+---
+ .ci/linux-build.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/.ci/linux-build.sh b/.ci/linux-build.sh
+index c7f3179598..ceead259f3 100755
+--- a/.ci/linux-build.sh
++++ b/.ci/linux-build.sh
+@@ -144,7 +144,7 @@ if [ "$UBSAN" = "true" ]; then
+         # Restrict drivers to a minimum set for now
+         OPTS="$OPTS -Denable_drivers=net/null"
+         # There are still known issues in various libraries, disable them for now
+-        OPTS="$OPTS -Ddisable_libs=*"
++        OPTS="$OPTS -Ddisable_libs=acl,bpf,distributor,member,ptr_compress,table"
+         # No examples are run
+         OPTS="$OPTS -Dexamples="
+         # The UBSan target takes a good amount of time and headers coverage is done in other
 -- 
 2.50.0
 
