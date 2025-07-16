@@ -2,72 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54025C83F1B
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Jul 2025 07:50:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F75C83F2D
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Jul 2025 08:25:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 699494021E;
-	Wed, 16 Jul 2025 09:50:31 +0200 (CEST)
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
- [209.85.214.181])
- by mails.dpdk.org (Postfix) with ESMTP id B72FA4013F
- for <dev@dpdk.org>; Wed, 16 Jul 2025 09:50:29 +0200 (CEST)
-Received: by mail-pl1-f181.google.com with SMTP id
- d9443c01a7336-23649faf69fso51453725ad.0
- for <dev@dpdk.org>; Wed, 16 Jul 2025 00:50:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1752652229;
- x=1753257029; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=VGPTlYAr4OrMW03FAay0EhwbZBJQ7d+rXSVeTpNymAs=;
- b=ycoDOEnYJMjcNk5p4m+JSnIkbGbXQnwyPW/SqfBjmA248YxGW+8PSuD2pTP8zdNc05
- 8tJej9CrnrIWBlKsce+7D/ihtufD8L70cVdiAdLn/jm8tjjoPnl36Y/8IlwxfPqzOCse
- 0y4lwRnRf3QMawUOXAQMW8Pf9JgqhicavMlFLuipUe54Phba+AjwUS4AML/7nPd7CUEs
- g26LyI2QQbUCeoIzSARgTEMqrcW9z4A+uLlwQCuOZnwJ4b2Y+O6MDylvlDzhiNkvYAs+
- mG5dxX6CWFnkblkfZfVq2LnuStZnok5ZE3TcrLDQBpMOjnppN2ckcwy6YRZQpMCroVNk
- sBFw==
+	by mails.dpdk.org (Postfix) with ESMTP id 579EC4021E;
+	Wed, 16 Jul 2025 10:25:55 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id DBCBE4013F
+ for <dev@dpdk.org>; Wed, 16 Jul 2025 10:25:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1752654353;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=+DAv7Cwa2M5K4W7g85onwsd+ksTkHxVsqh+94X0pknw=;
+ b=Rhn3ayVoCXkl5jxEEJ581koeVJ/MNC+QVVI1YOIqIVf/5XrlhiABZCUgELomrbTIGjhLmV
+ ThvY75RaSx8v64WMBNXr39yyMspCvpwyAG1J/C19n3YEqEZQ6jMTRk7nwUtj5gg2qB50Yq
+ vvVDPzHl+uW/ZtbXpA2s0yphWs8RFB0=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-587-TxWHReB2NHGpxMjHFOreeQ-1; Wed, 16 Jul 2025 04:25:51 -0400
+X-MC-Unique: TxWHReB2NHGpxMjHFOreeQ-1
+X-Mimecast-MFC-AGG-ID: TxWHReB2NHGpxMjHFOreeQ_1752654350
+Received: by mail-lj1-f197.google.com with SMTP id
+ 38308e7fff4ca-32b3700af0fso29415501fa.2
+ for <dev@dpdk.org>; Wed, 16 Jul 2025 01:25:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752652229; x=1753257029;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ d=1e100.net; s=20230601; t=1752654349; x=1753259149;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=VGPTlYAr4OrMW03FAay0EhwbZBJQ7d+rXSVeTpNymAs=;
- b=BLgUybVNqmHJxitXrDI6pExn4CWoYX6K+eqWGQxOIHW9N1fFEjXNojsv58UnBf705U
- 6RJfmw8GVnZ14caGQL/w6pRc/tBFuxC24pqDa2FPPzY2P2VsP8YDejUIee9YbN5WTUZ6
- DPVAvLszVUrTKpF8TpFx+ENKKk/NvQY6qqwVKrf6O4c/n7xr4do7HqgnZShb8Qvv7Cd8
- PsY4TatH0f6HXVWpXAvStm9yJzBXLq6TCJ3MnBWTDeXclbygttykAn5XemvYPLJrAop3
- zcIogPgFG8r5MBbC1ovVPHlSblwtNxFBsqENg1VgPef0hids2fc6qTbvuv1YcEN5OekB
- TGHQ==
-X-Gm-Message-State: AOJu0YyMQN+JlDnhEG+aI4LBN4xsK2yddgr2Kq5YeFdozITy13xYxIVv
- Qzniyi1lUn4DohwgbKRtQitMK6svNKeu1qlcaUul9Ic8NyrGoVXGXx0xk5HU4GTDLsg=
-X-Gm-Gg: ASbGnctsCEmUVjWRvKLtWuwJZJh9fAUXB76L8vstaAvK1e7tNiLd/5hY0UBYvafui85
- hcASdS0cAwobd1fJEOc5ntXvVmy8+L4q4re2usiXbF+stPdDmKInSA9GmF9XYxMCiWs06u6IcxV
- 3YFRamM90CuvyYJjsmkbglx/9r2ZpY4A1X2PhJkqQq8vq1qMDZjAOcm3xubqw+uCtBtWe/k45kZ
- wo1fdhjK1CFU0FYiasu4mmR7DtJ0MbmJ/ex0NDb8ERsXWaT25XpurfKvVjKOJURpDyDWe2GTOwI
- NT/ZcDDj66fKnOFi+U6paIM+d/LgBTkarw3tSuO123cglYJbG40rv8ZDsoMvu8jZ/K5ZK3Aff6C
- CUHPU+yJOR5OMHBLjxP5+cne4GszAULrBuY5MqgPSfBiK0gZg
-X-Google-Smtp-Source: AGHT+IFBCtqYlP/1dsKFbZ55XThxxvTBx6Wl4gNpONs58o5y7ymXZp/tC4CtD3v+m45b7G23WvqhqQ==
-X-Received: by 2002:a17:902:ccce:b0:235:f143:9b07 with SMTP id
- d9443c01a7336-23e25684c62mr29018115ad.5.1752652228789; 
- Wed, 16 Jul 2025 00:50:28 -0700 (PDT)
-Received: from localhost.localdomain ([64.62.143.197])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-23de4322af6sm120618755ad.90.2025.07.16.00.50.27
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 16 Jul 2025 00:50:28 -0700 (PDT)
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-To: dsosnowski@nvidia.com
-Cc: dev@dpdk.org, rasland@nvidia.com, stable@dpdk.org, viacheslavo@nvidia.com,
- bingz@nvidia.com, orika@nvidia.com, suanmingm@nvidia.com, matan@nvidia.com
-Subject: Re: [PATCH] doc/mlx5: document firmware requirement for flex item
-Date: Wed, 16 Jul 2025 03:49:40 -0400
-Message-ID: <20250716075013.3539970-1-14pwcse1224@uetpeshawar.edu.pk>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250715125249.hwrzd4aasfjhhyxa@ds-vm-debian.local>
-References: <20250715125249.hwrzd4aasfjhhyxa@ds-vm-debian.local>
+ bh=+DAv7Cwa2M5K4W7g85onwsd+ksTkHxVsqh+94X0pknw=;
+ b=Cih5CwbvQ30Y3sgfyerwR4jQJKbjMKFq4aYiVuhVj2nGB63RAP6QHBU9dhTYcThiCH
+ rDQtEBpY6VD7yxTP1ZMYqy5ObOll4YmILUDLUPxU/pnXLKp0S4XwDaKrj0mAghRggPvq
+ Iad6xwkEenO9zmxYNXT/qaP/+uuJlt9hDq2mZBkKS7YS/B2rXh/ZoeT0JLtsDM1+7xcM
+ dE9FVlBcUprnGP+JAuvLzVoHgZeipWrhUiTtkP4qfyc5sO4nrQ24ArUXv50g5q01bt1B
+ KB8QVyrLgl66S7Al3NmS+3kkQQoQvbWcVBTPwBw8frDVKzaw2U8l/vk0W982RQbcUC3o
+ hPSw==
+X-Gm-Message-State: AOJu0YxZh0baUB2luZ7AMU/B7YTzxpwT80WVJnOjeNfk6+D5PDOCYVMI
+ c4tFjvu4+5ay51rxgrsi6ZQDLOtN106e4Pdbgi9+aOdTPLZirDT6OwJNmqiRPgTZOINHyfLVwQT
+ T6lhXZDSHbHoDA2hN2SJJFjUDMN47Ed87Vg2ZUOQCLgwhpXaKr3fNMMWvqjONNKmttQam3tB3Fe
+ gSwh9yfSjHPU+Jg61Ez+I=
+X-Gm-Gg: ASbGncufGpbqrJ0ZBVhOr7oQ4qNS3X/iTJE1oJ5ZgURNpZAGp62OI67M3+u4xuMbhJY
+ HbMJjGfMPOmS6PKnUVWs80FulEF0bGgk5cpKbkuHaqy5vlWOH+VsD5aejRbmrV6x9dgJIAtGnhG
+ 6erJ+cu2HAi4ZVX1Oh3WlqsLA=
+X-Received: by 2002:a2e:8a8d:0:b0:32b:3c94:992d with SMTP id
+ 38308e7fff4ca-3308f5e6936mr4543691fa.28.1752654349517; 
+ Wed, 16 Jul 2025 01:25:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFxoeLzdhYuVdYEpmf7iam8rpXWYB4dGpbZJyEnRuXLztF2mjSprPXbuHLPUlorvMNqcL/cD2nyBq4EV2tfydk=
+X-Received: by 2002:a2e:8a8d:0:b0:32b:3c94:992d with SMTP id
+ 38308e7fff4ca-3308f5e6936mr4543531fa.28.1752654348965; Wed, 16 Jul 2025
+ 01:25:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250619071037.37325-1-david.marchand@redhat.com>
+ <20250623135242.461965-1-david.marchand@redhat.com>
+ <20250623135242.461965-8-david.marchand@redhat.com>
+ <609759a6e0cf4187a34d1a12bf9bcd59@huawei.com>
+In-Reply-To: <609759a6e0cf4187a34d1a12bf9bcd59@huawei.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Wed, 16 Jul 2025 10:25:37 +0200
+X-Gm-Features: Ac12FXy64bQ0joyk_L8LX7NOGsPuBlFJYVsxQqaSIORgGAQywDH1vrn4ltYh4_E
+Message-ID: <CAJFAV8x5w-tosdN4_SPR7JSLyejeuxVki-iGZCK3e8Cc60JPVw@mail.gmail.com>
+Subject: Re: [PATCH v2 07/10] tailq: fix cast macro for null pointer
+To: Marat Khalili <marat.khalili@huawei.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>, "stable@dpdk.org" <stable@dpdk.org>, 
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>, 
+ Neil Horman <nhorman@tuxdriver.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: ToFjcNY5K-H6-mrmHsLJVk-c7SzF3BEtDlO_7Fr5JfU_1752654350
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,46 +90,68 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Dariusz,
+On Mon, Jun 30, 2025 at 6:06=E2=80=AFPM Marat Khalili <marat.khalili@huawei=
+.com> wrote:
+>
+> > -----Original Message-----
+> > From: David Marchand <david.marchand@redhat.com>
+> > Sent: Monday 23 June 2025 14:53
+> > To: dev@dpdk.org
+> > Cc: stable@dpdk.org; Bruce Richardson <bruce.richardson@intel.com>; Tyl=
+er
+> > Retzlaff <roretzla@linux.microsoft.com>; Neil Horman
+> > <nhorman@tuxdriver.com>
+> > Subject: [PATCH v2 07/10] tailq: fix cast macro for null pointer
+> >
+> > Doing arithmetics with the NULL pointer is undefined.
+> >
+> > Caught by UBSan:
+> >
+> > ../app/test/test_tailq.c:111:9: runtime error:
+> >       member access within null pointer of type 'struct rte_tailq_head'
+> >
+> > Fixes: f6b4f6c9c123 ("tailq: use a single cast macro")
+> > Cc: stable@dpdk.org
+> >
+> > Signed-off-by: David Marchand <david.marchand@redhat.com>
+> > Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+> > ---
+> >  lib/eal/include/rte_tailq.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/lib/eal/include/rte_tailq.h b/lib/eal/include/rte_tailq.h
+> > index 89f7ef2134..c23df77d96 100644
+> > --- a/lib/eal/include/rte_tailq.h
+> > +++ b/lib/eal/include/rte_tailq.h
+> > @@ -54,7 +54,7 @@ struct rte_tailq_elem {
+> >   * Return the first tailq entry cast to the right struct.
+> >   */
+> >  #define RTE_TAILQ_CAST(tailq_entry, struct_name) \
+> > -     (struct struct_name *)&(tailq_entry)->tailq_head
+> > +     (tailq_entry =3D=3D NULL ? NULL : (struct struct_name *)&(tailq_e=
+ntry)-
+> > >tailq_head)
+> >
+> >  /**
+> >   * Utility macro to make looking up a tailqueue for a particular struc=
+t easier.
+>
+> First tailq_entry is missing parentheses. Also, it is worrying that we no=
+w use macro argument twice. E.g. RTE_TAILQ_LOOKUP may become twice slower a=
+s a result.
+>
+> Could we perhaps simplify the macro to `(struct struct_name *)(tailq_entr=
+y)`. I tried to find or understand the reasons behind the original construc=
+tion, but could not.
 
-Thanks for the follow-up.
+Thanks for the comment, it made me relookup at this code.
 
-I was using DPDK v23.11 with the following flex item configuration:
+I realise this macro should be called with a correct object in the first pl=
+ace.
+Instead the lookup macro itself is the part that is undefined behavior
+(wrt comment in case of an error).
 
-{
-  "next_header": { "field_mode": "FIELD_MODE_FIXED", "field_size": 0, "field_base": 0 },
-  "next_protocol": { "field_mode": "FIELD_MODE_FIXED", "field_size": 8, "field_base": 72 },
-  "sample_data": [
-    { "field_mode": "FIELD_MODE_FIXED", "field_size": 32, "field_base": 0 },
-    { "field_mode": "FIELD_MODE_FIXED", "field_size": 32, "field_base": 32 },
-    { "field_mode": "FIELD_MODE_FIXED", "field_size": 32, "field_base": 64 },
-    { "field_mode": "FIELD_MODE_FIXED", "field_size": 32, "field_base": 96 }
-  ],
-  "input_link": [
-    { "item": "eth type is 0x08802" }
-  ],
-  "output_link": [
-    { "item": "udp", "next": 17 },
-    { "item": "tcp", "next": 6 }
-  ]
-}
 
-With firmware version 24.30.1004 (MT_0000000704), the following error was produced:
-
-  port-0: flex item #3 creation failed: unsupported header length field mode (FIXED)
-
-After upgrading to firmware version 24.38.1002, the same configuration succeeded.
-
-Example flow after upgrade:
-
-  testpmd> flow flex_item pattern 2 spec 45000000000000000000000001020304 mask FF0000000000000000000000FFFFFFFF
-  created pattern #2
-
-  testpmd> flow create 0 ingress pattern eth / ipv4 / udp / flex item is 3 pattern is 2 / end actions mark id 1 / queue index 0 / end
-  Flow rule #0 created
-
-It appears this issue was resolved at the firmware level.
-
-Best regards,  
-Khadem Ullah
+--=20
+David Marchand
 
