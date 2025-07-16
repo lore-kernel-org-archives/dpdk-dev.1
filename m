@@ -2,60 +2,61 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89334C83F1B
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Jul 2025 13:02:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32824C83F22
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Jul 2025 13:03:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 154924064F;
-	Wed, 16 Jul 2025 15:02:44 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 36DE840668;
+	Wed, 16 Jul 2025 15:02:47 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 5C72A4064F
- for <dev@dpdk.org>; Wed, 16 Jul 2025 15:02:42 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 1131F40663
+ for <dev@dpdk.org>; Wed, 16 Jul 2025 15:02:45 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1752670961;
+ s=mimecast20190719; t=1752670965;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=AS3qLt/1kAGHiJ4lpmxBuKNjsb7wMZOZW6QZ+CSumwg=;
- b=jLe1DEzkdVqEv6ZyRtrFJAacn73Q0FCQCOcEdVH9cUSVbMEX75nwfTyE/A4hZMzEi59xDU
- J6Z5YHUxJTiomeVtnsQ4k28SziD3u1dsY7fHQycFEChxvnB1qjt0O3BTd4VA6xFaIbbUa0
- xsbAeaXlj/JZXAFTVNImN2I3Q7HObsM=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ bh=z3ECJDbBg5Lv2qt2175ae6nqJ9Ft8DqAUhMZxGM9z9o=;
+ b=KhFt+7D5haxbcVqFsUxc2jfRlpHG7GrYhonTqmPUVCrXdZLbi+BWOwGNflxuFPOxxDq9eU
+ b9ozlG/9LtMag+7bHR/VtFSNfcLOO0maMmYwB2zBvA5RcKWvcFpmAGS+uRTcoQoeRTsnIS
+ 8dhqBmkVNjqFMcSZ0EObe4ifWLKW+OA=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-270-IJBVuSwdMTy86M6oiDNX3g-1; Wed,
- 16 Jul 2025 09:02:36 -0400
-X-MC-Unique: IJBVuSwdMTy86M6oiDNX3g-1
-X-Mimecast-MFC-AGG-ID: IJBVuSwdMTy86M6oiDNX3g_1752670955
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-657-a2MlzzO2OnG5LwSZ6oowIg-1; Wed,
+ 16 Jul 2025 09:02:42 -0400
+X-MC-Unique: a2MlzzO2OnG5LwSZ6oowIg-1
+X-Mimecast-MFC-AGG-ID: a2MlzzO2OnG5LwSZ6oowIg_1752670961
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id E027B19560B3; Wed, 16 Jul 2025 13:02:34 +0000 (UTC)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 345F618001DD; Wed, 16 Jul 2025 13:02:41 +0000 (UTC)
 Received: from dmarchan.lan (unknown [10.45.225.235])
- by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 8A764300019F; Wed, 16 Jul 2025 13:02:32 +0000 (UTC)
+ by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 05B121954213; Wed, 16 Jul 2025 13:02:37 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Cc: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Marat Khalili <marat.khalili@huawei.com>,
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH v4 03/22] test/mempool: fix test without stack driver
-Date: Wed, 16 Jul 2025 15:01:50 +0200
-Message-ID: <20250716130212.1736407-4-david.marchand@redhat.com>
+Cc: stable@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>,
+ Maxime Coquelin <maxime.coquelin@redhat.com>,
+ Timothy Redaelli <tredaelli@redhat.com>
+Subject: [PATCH v4 04/22] eal: fix plugin dir walk
+Date: Wed, 16 Jul 2025 15:01:51 +0200
+Message-ID: <20250716130212.1736407-5-david.marchand@redhat.com>
 In-Reply-To: <20250716130212.1736407-1-david.marchand@redhat.com>
 References: <20250619071037.37325-1-david.marchand@redhat.com>
  <20250716130212.1736407-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: fkkvIalZsX-GW_XtSDTds5OZa_ih1y_jdrTvnWIIxXQ_1752670955
+X-Mimecast-MFC-PROC-ID: 0oV0YBpehyk1RMHXYBwu110kLHa6YoZZspPxJdawvPk_1752670961
 X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,129 +70,92 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In a minimal build, the mempool/stack driver is disabled.
-Separate the code specific to this external driver and rename unrelated
-variables.
+For '.' and '..' directories (or any short file name),
+a out of bound issue occurs.
+
+Caught by UBSan:
+
+EAL: Detected shared linkage of DPDK
+../lib/eal/common/eal_common_options.c:420:15: runtime error: index -2
+	out of bounds for type 'char[256]'
+    #0 0x7f867eedf206 in eal_plugindir_init
+	eal_common_options.c
+    #1 0x7f867eede58a in eal_plugins_init
+	(build/lib/librte_eal.so.25+0xde58a)
+	(BuildId: e7e4a1935e4bacb51c82ab1a84098a27decf3b4c)
+    #2 0x7f867efb8587 in rte_eal_init
+	(build/lib/librte_eal.so.25+0x1b8587)
+	(BuildId: e7e4a1935e4bacb51c82ab1a84098a27decf3b4c)
+    #3 0x55b62360861e in main
+	(/home/runner/work/dpdk/dpdk/build/app/dpdk-testpmd+0x9e061e)
+	(BuildId: d821ec918612c83fad8b5ccb6cc518e66bee48cd)
+    #4 0x7f8667429d8f in __libc_start_call_main
+	csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #5 0x7f8667429e3f in __libc_start_main
+	csu/../csu/libc-start.c:392:3
+    #6 0x55b622d9d444 in _start
+	(/home/runner/work/dpdk/dpdk/build/app/dpdk-testpmd+0x175444)
+	(BuildId: d821ec918612c83fad8b5ccb6cc518e66bee48cd)
+SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior
+	../lib/eal/common/eal_common_options.c:420:15 in
+	../lib/eal/common/eal_common_options.c:421:15:
+	runtime error: index 18446744073709551609 out of bounds
+	for type 'char[256]'
+
+Fixes: c57f6e5c604a ("eal: fix plugin loading")
+Cc: stable@dpdk.org
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
-Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Reviewed-by: Marat Khalili <marat.khalili@huawei.com>
-Acked-by: Morten Brørup <mb@smartsharesystems.com>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- app/test/test_mempool.c | 32 ++++++++++++++++++++------------
- 1 file changed, 20 insertions(+), 12 deletions(-)
+Changes since v2:
+- removed check on null termination of dirent,
 
-diff --git a/app/test/test_mempool.c b/app/test/test_mempool.c
-index 61385e096e..63356998fd 100644
---- a/app/test/test_mempool.c
-+++ b/app/test/test_mempool.c
-@@ -847,9 +847,11 @@ test_mempool(void)
- 	size_t alignment = 0;
- 	struct rte_mempool *mp_cache = NULL;
- 	struct rte_mempool *mp_nocache = NULL;
--	struct rte_mempool *mp_stack_anon = NULL;
--	struct rte_mempool *mp_stack_mempool_iter = NULL;
-+	struct rte_mempool *mp_anon = NULL;
-+	struct rte_mempool *mp_mempool_iter = NULL;
-+#ifdef RTE_MEMPOOL_STACK
- 	struct rte_mempool *mp_stack = NULL;
-+#endif
- 	struct rte_mempool *default_pool = NULL;
- 	struct rte_mempool *mp_alignment = NULL;
- 	struct mp_data cb_arg = {
-@@ -884,28 +886,28 @@ test_mempool(void)
- 	}
+---
+ lib/eal/common/eal_common_options.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
+
+diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
+index f0a9ddeeb7..e6eb04a138 100644
+--- a/lib/eal/common/eal_common_options.c
++++ b/lib/eal/common/eal_common_options.c
+@@ -399,12 +399,21 @@ eal_plugins_init(void)
+ }
+ #else
  
- 	/* create an empty mempool  */
--	mp_stack_anon = rte_mempool_create_empty("test_stack_anon",
-+	mp_anon = rte_mempool_create_empty("test_anon",
- 		MEMPOOL_SIZE,
- 		MEMPOOL_ELT_SIZE,
- 		RTE_MEMPOOL_CACHE_MAX_SIZE, 0,
- 		SOCKET_ID_ANY, 0);
++static bool
++ends_with(const char *str, const char *tail)
++{
++	size_t tail_len = strlen(tail);
++	size_t str_len = strlen(str);
++
++	return str_len >= tail_len && strcmp(&str[str_len - tail_len], tail) == 0;
++}
++
+ static int
+ eal_plugindir_init(const char *path)
+ {
+-	DIR *d = NULL;
+ 	struct dirent *dent = NULL;
+ 	char sopath[PATH_MAX];
++	DIR *d = NULL;
  
--	if (mp_stack_anon == NULL)
-+	if (mp_anon == NULL)
- 		GOTO_ERR(ret, err);
+ 	if (path == NULL || *path == '\0')
+ 		return 0;
+@@ -418,12 +427,8 @@ eal_plugindir_init(const char *path)
  
- 	/* populate an empty mempool */
--	ret = rte_mempool_populate_anon(mp_stack_anon);
-+	ret = rte_mempool_populate_anon(mp_anon);
- 	printf("%s ret = %d\n", __func__, ret);
- 	if (ret < 0)
- 		GOTO_ERR(ret, err);
+ 	while ((dent = readdir(d)) != NULL) {
+ 		struct stat sb;
+-		int nlen = strnlen(dent->d_name, sizeof(dent->d_name));
  
- 	/* Try to populate when already populated */
--	ret = rte_mempool_populate_anon(mp_stack_anon);
-+	ret = rte_mempool_populate_anon(mp_anon);
- 	if (ret != 0)
- 		GOTO_ERR(ret, err);
+-		/* check if name ends in .so or .so.ABI_VERSION */
+-		if (strcmp(&dent->d_name[nlen - 3], ".so") != 0 &&
+-		    strcmp(&dent->d_name[nlen - 4 - strlen(ABI_VERSION)],
+-			   ".so."ABI_VERSION) != 0)
++		if (!ends_with(dent->d_name, ".so") && !ends_with(dent->d_name, ".so."ABI_VERSION))
+ 			continue;
  
- 	/* create a mempool  */
--	mp_stack_mempool_iter = rte_mempool_create("test_iter_obj",
-+	mp_mempool_iter = rte_mempool_create("test_iter_obj",
- 		MEMPOOL_SIZE,
- 		MEMPOOL_ELT_SIZE,
- 		RTE_MEMPOOL_CACHE_MAX_SIZE, 0,
-@@ -913,20 +915,21 @@ test_mempool(void)
- 		my_obj_init, NULL,
- 		SOCKET_ID_ANY, 0);
- 
--	if (mp_stack_mempool_iter == NULL)
-+	if (mp_mempool_iter == NULL)
- 		GOTO_ERR(ret, err);
- 
- 	/* test to initialize mempool objects and memory */
--	nb_objs = rte_mempool_obj_iter(mp_stack_mempool_iter, my_obj_init,
-+	nb_objs = rte_mempool_obj_iter(mp_mempool_iter, my_obj_init,
- 			NULL);
- 	if (nb_objs == 0)
- 		GOTO_ERR(ret, err);
- 
--	nb_mem_chunks = rte_mempool_mem_iter(mp_stack_mempool_iter,
-+	nb_mem_chunks = rte_mempool_mem_iter(mp_mempool_iter,
- 			test_mp_mem_init, &cb_arg);
- 	if (nb_mem_chunks == 0 || cb_arg.ret < 0)
- 		GOTO_ERR(ret, err);
- 
-+#ifdef RTE_MEMPOOL_STACK
- 	/* create a mempool with an external handler */
- 	mp_stack = rte_mempool_create_empty("test_stack",
- 		MEMPOOL_SIZE,
-@@ -947,6 +950,7 @@ test_mempool(void)
- 		GOTO_ERR(ret, err);
- 	}
- 	rte_mempool_obj_iter(mp_stack, my_obj_init, NULL);
-+#endif /* RTE_MEMPOOL_STACK */
- 
- 	/* Create a mempool based on Default handler */
- 	printf("Testing %s mempool handler\n", default_pool_ops);
-@@ -1077,9 +1081,11 @@ test_mempool(void)
- 	if (test_mempool_same_name_twice_creation() < 0)
- 		GOTO_ERR(ret, err);
- 
-+#ifdef RTE_MEMPOOL_STACK
- 	/* test the stack handler */
- 	if (test_mempool_basic(mp_stack, 1) < 0)
- 		GOTO_ERR(ret, err);
-+#endif
- 
- 	if (test_mempool_basic(default_pool, 1) < 0)
- 		GOTO_ERR(ret, err);
-@@ -1105,9 +1111,11 @@ test_mempool(void)
- err:
- 	rte_mempool_free(mp_nocache);
- 	rte_mempool_free(mp_cache);
--	rte_mempool_free(mp_stack_anon);
--	rte_mempool_free(mp_stack_mempool_iter);
-+	rte_mempool_free(mp_anon);
-+	rte_mempool_free(mp_mempool_iter);
-+#ifdef RTE_MEMPOOL_STACK
- 	rte_mempool_free(mp_stack);
-+#endif
- 	rte_mempool_free(default_pool);
- 	rte_mempool_free(mp_alignment);
- 
+ 		snprintf(sopath, sizeof(sopath), "%s/%s", path, dent->d_name);
 -- 
 2.50.0
 
