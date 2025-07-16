@@ -2,49 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F8CBC83F22
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Jul 2025 17:39:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F76AC83F22
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Jul 2025 18:25:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 37CBA4013F;
-	Wed, 16 Jul 2025 19:39:32 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id 8BCD2400D6;
- Wed, 16 Jul 2025 19:39:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1752687571; x=1784223571;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=TsxKc9yiqpSYiUpKyv76ilWpWwZEn/ci6/c7EznCNmw=;
- b=EATPJwzYlk9C2+jywVUxYApymoqMlU9aS+57kHxg1i9T+gRO1qJRvnUt
- GRMIyCyma+4x+BPcmUGxspsGP4yGOXPOHZCMO9PLy28bRj83zHa8P/4P/
- rMejHfgvPjQORxejkN2fhtBIQWgXdwxoq2MrNgc6VfIyZtgjX4UTzEBBJ
- B1Vq7sR6n+OCBBTHf9+85cFoCHPvDINzpN/0KHgy9h3u5UdZVRvc1DLeY
- AIE1rOs82LYawH98zJ0Mx3Yk2ccDoXUx1fQW0qzKbFWlKw84xWlzA7hhr
- qZ00Be7tD/cd3xjBiKN6iDo8bdo4C//SbtvdtnbceBC+OWtLiMT9gHiF+ w==;
-X-CSE-ConnectionGUID: 6RmFEbHmTeSmdQ51VpmEtQ==
-X-CSE-MsgGUID: ms0CVSF6RsmsMht0FdWGxw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="58755084"
-X-IronPort-AV: E=Sophos;i="6.16,316,1744095600"; d="scan'208";a="58755084"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
- by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Jul 2025 10:39:28 -0700
-X-CSE-ConnectionGUID: goiCdQ35TP+HQb6lSMJqUQ==
-X-CSE-MsgGUID: OJEj/s8gQYeitNxWHoIkBQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,316,1744095600"; d="scan'208";a="161863875"
-Received: from silpixa00401385.ir.intel.com ([10.237.214.33])
- by fmviesa005.fm.intel.com with ESMTP; 16 Jul 2025 10:39:27 -0700
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
-	stable@dpdk.org
-Subject: [PATCH] net/ice: fix assumption about tag placement order
-Date: Wed, 16 Jul 2025 18:39:22 +0100
-Message-ID: <20250716173922.688476-1-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.48.1
+	by mails.dpdk.org (Postfix) with ESMTP id 22F6C4013F;
+	Wed, 16 Jul 2025 20:25:43 +0200 (CEST)
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
+ [209.85.214.176])
+ by mails.dpdk.org (Postfix) with ESMTP id 08291400D6
+ for <dev@dpdk.org>; Wed, 16 Jul 2025 20:25:41 +0200 (CEST)
+Received: by mail-pl1-f176.google.com with SMTP id
+ d9443c01a7336-23649faf69fso1449405ad.0
+ for <dev@dpdk.org>; Wed, 16 Jul 2025 11:25:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1752690341; x=1753295141; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=xnAJgVwiakVr2C5mMDhoZMzmmYJoiom3zUFlhEYBbI4=;
+ b=avXv+pGc9+KC9gVVYLeBXNk29x/N8ByaeJM4qCpg2btWHvFzGnmmPeusCmTxZj3ZRP
+ JPOjwn17GuTBWX6yfhVq5L+Qg/DEdeuKj6lbchS1Shqq3RISfXrrlRwVJzWT5S+wIbHB
+ j+OwgL7GxkCQKjjx/Pw7oarvCe2v574AGZ4T8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1752690341; x=1753295141;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=xnAJgVwiakVr2C5mMDhoZMzmmYJoiom3zUFlhEYBbI4=;
+ b=BbMnGzfcV8r1uqiubB5JAx8E3Mew5MFSty3evGXa6+F8nvdd84+tCZJ+wQuRC9ggkd
+ 9PSDUW2sUfEPCrwqa/pgeoO5xbBtwpVOqtm6wFTNPLnjVzYdgyqKEVu2oxvNh8MwphgY
+ SKjbFmmXBSqK8iDWK4OgtpIAvia/16C2+5D5KHWMjLYnas4G3IOzw6g1Z/Z2pbHoXysM
+ alyfc3VzWFFbtw+gkHsf5a5Kgmqj4TsbzoUhOF5fSEYCspSryr1XdnERzZsmzFasIiRu
+ iexdpiIHZQOirvWmN29ImuA8w9oaaPOeeMX0nHF5hGXyaPvKxnEhBJJEWKLCT5rVgX99
+ F96A==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXk4JaHuXngLd2SzJmBUZcdPrqRvUpAfAq6gFMXM1XJbxAk2r2Rfcpdg5vgVJRFVtS22+8=@dpdk.org
+X-Gm-Message-State: AOJu0YxB4Id1HLiKghK4LFRDP/3IMK+r0SazdBLgeVMY9F/8AzENe5Cg
+ Q1nKEQ0A7ry64Mxid0nQAcMMNxsuR2G5ptFnGPgVMwCpvdBI9Gu9pDP4cZOqAicmODVBp8cwtEe
+ tHb+7YE/3jClgkY67j2mUOGFIzw9yPJ0v2E2SgbrsMQ==
+X-Gm-Gg: ASbGnctWQQpKmulB5YdL2rDw7IpkZCt4A5TW26hkD3ci5g8MG7CmEDeaLQIQ5F8sTxN
+ vz1HY3evqBgNmVpanNI5rQcqzFhlaaYEbHIJPkfLHHPyjRlwC+C2xmXol2qGYc9/N/lFWv0hsIa
+ WRz9uYR71GDu2HwM9RCU4bBICUZdCMs8wpqdKjvVtnjlpjCJOttN5flAkpTHbJg4LqrXXVAk1Xz
+ JThMe2fQw==
+X-Google-Smtp-Source: AGHT+IFV610PxcltMLxzy+/TMm6BjHpNT1hnpb93K6AX18TQE/NVoDP5xM+0Wf2DSq4UCU7SbTw1nvZPOJ185Ji7uDU=
+X-Received: by 2002:a17:903:1c6:b0:235:779:edfa with SMTP id
+ d9443c01a7336-23e2572fe66mr56565595ad.32.1752690341071; Wed, 16 Jul 2025
+ 11:25:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250714171346.564267-1-dmarx@iol.unh.edu>
+ <20250716135708.49233-1-dmarx@iol.unh.edu>
+ <20250716135708.49233-3-dmarx@iol.unh.edu>
+In-Reply-To: <20250716135708.49233-3-dmarx@iol.unh.edu>
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Wed, 16 Jul 2025 14:19:49 -0400
+X-Gm-Features: Ac12FXxxIiMCwoU9ypAkfXTJ1mp1hu6gzzjcMWqOPVliNIlHwQ5p9WclRr3J3w8
+Message-ID: <CAJvnSUCw3XKmd0jOUYJ5f+VVaG5ngJbpsWAJ7RPyonoJKgF75Q@mail.gmail.com>
+Subject: Re: [PATCH v5 3/3] doc: revise coding guidelines section
+To: Dean Marx <dmarx@iol.unh.edu>
+Cc: luca.vizzarro@arm.com, yoan.picchi@foss.arm.com, 
+ Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com, dev@dpdk.org
+Content-Type: multipart/alternative; boundary="0000000000002e67aa063a100593"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,43 +74,134 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The specific placement of outer/inner VLAN tags in E810 and related NICs
-is configurable. Therefore, remove the assumption that if the L2Tag2
-field is filled in, that the L2Tag1 must also be. Instead, check the
-existing mbuf VLAN flags, and move tags and set flags as appropriate.
-This fixes an issue where, with QinQ packets with different Tag ethtypes
-(0x88a8 vs 0x8100), we get an mbuf reporting two valid tags, but only
-having had one tag stripped.
+--0000000000002e67aa063a100593
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: e0dcf94a0d7f ("net/ice: support VLAN ops")
-Cc: stable@dpdk.org
+On Wed, Jul 16, 2025 at 9:57=E2=80=AFAM Dean Marx <dmarx@iol.unh.edu> wrote=
+:
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
- drivers/net/intel/ice/ice_rxtx.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+>
+> +
+> +* Document ``__init__()`` separately from the class docstring.
+> +* If an abstract method simply implements a superclass definition withou=
+t
+> changes, refer to that superclass in the docstring.
+> +* Document instance variables in the class docstring under an
+> ``Attributes:`` section.
+> +* For ``@dataclass`` classes, document instance-level attributes in
+> ``Attributes:``, as they are generated from the class fields.
+> +* Document class variables and Pydantic fields using ``#:``,
+> +   placed above the type-annotated line. Descriptions may be omitted if
+> the meaning is clear.
+> +* Apply ``#:`` to ``Enum`` and ``TypedDict`` fields as well, so that
+> autogenerated documentation includes their values.
+> +* When referring to a parameter in a docstring, omit articles and enclos=
+e
+> the parameter in single backticks (e.g., `` `param` ``),
+>
 
-diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
-index da508592aa..f965aab6ee 100644
---- a/drivers/net/intel/ice/ice_rxtx.c
-+++ b/drivers/net/intel/ice/ice_rxtx.c
-@@ -1835,9 +1835,13 @@ ice_rxd_to_vlan_tci(struct rte_mbuf *mb, volatile union ci_rx_flex_desc *rxdp)
- #ifndef RTE_NET_INTEL_USE_16BYTE_DESC
- 	if (rte_le_to_cpu_16(rxdp->wb.status_error1) &
- 	    (1 << ICE_RX_FLEX_DESC_STATUS1_L2TAG2P_S)) {
--		mb->ol_flags |= RTE_MBUF_F_RX_QINQ_STRIPPED | RTE_MBUF_F_RX_QINQ |
--				RTE_MBUF_F_RX_VLAN_STRIPPED | RTE_MBUF_F_RX_VLAN;
--		mb->vlan_tci_outer = mb->vlan_tci;
-+		if ((mb->ol_flags & RTE_MBUF_F_RX_VLAN_STRIPPED) == 0) {
-+			mb->ol_flags |= RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED;
-+		} else {
-+			/* if two tags, move Tag1 to outer tag field */
-+			mb->ol_flags |= RTE_MBUF_F_RX_QINQ_STRIPPED | RTE_MBUF_F_RX_QINQ;
-+			mb->vlan_tci_outer = mb->vlan_tci;
-+		}
- 		mb->vlan_tci = rte_le_to_cpu_16(rxdp->wb.l2tag2_2nd);
- 		PMD_RX_LOG(DEBUG, "Descriptor l2tag2_1: %u, l2tag2_2: %u",
- 			   rte_le_to_cpu_16(rxdp->wb.l2tag2_1st),
--- 
-2.48.1
+There is actually a docs build failure on GHA from this line:
+https://mails.dpdk.org/archives/test-report/2025-July/894788.html
 
+One option would be to escape the backticks like \`. But, it's even better
+to just drop the inline single and double backtick examples given that you
+have an example block below which shows both. So, keep the bulleted
+descriptions, but remove the examples in parenthesis.
+
+
+
+> +   consistent with the `Python documentation style <
+> https://docs.python.org/3/index.html>`_.
+> +* Use double backticks (````value````) for literal values.
+> +
+> +Example::
+> +
+> +   def foo(greet: bool) -> None:
+> +       """Demonstrates single and double backticks.
+> +
+> +       `greet` controls whether ``Hello World`` is printed.
+> +
+> +       Args:
+> +           greet: Whether to print the ``Hello World`` message.
+> +       """
+> +       if greet:
+> +           print("Hello World")
+> +
+> +The maximum line length for docstrings must match that of the code.
+>
+>
+>  How To Write a Test Suite
+>  -------------------------
+>
+>
+>
+>
+
+--0000000000002e67aa063a100593
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, Jul 16,=
+ 2025 at 9:57=E2=80=AFAM Dean Marx &lt;<a href=3D"mailto:dmarx@iol.unh.edu"=
+>dmarx@iol.unh.edu</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote=
+" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);=
+padding-left:1ex"><br>
++<br>
++* Document ``__init__()`` separately from the class docstring.<br>
++* If an abstract method simply implements a superclass definition without =
+changes, refer to that superclass in the docstring.<br>
++* Document instance variables in the class docstring under an ``Attributes=
+:`` section.<br>
++* For ``@dataclass`` classes, document instance-level attributes in ``Attr=
+ibutes:``, as they are generated from the class fields.<br>
++* Document class variables and Pydantic fields using ``#:``,<br>
++=C2=A0 =C2=A0placed above the type-annotated line. Descriptions may be omi=
+tted if the meaning is clear.<br>
++* Apply ``#:`` to ``Enum`` and ``TypedDict`` fields as well, so that autog=
+enerated documentation includes their values.<br>
++* When referring to a parameter in a docstring, omit articles and enclose =
+the parameter in single backticks (e.g., `` `param` ``),<br></blockquote><d=
+iv><br></div><div>There is actually a docs build failure on GHA from this l=
+ine:=C2=A0<a href=3D"https://mails.dpdk.org/archives/test-report/2025-July/=
+894788.html">https://mails.dpdk.org/archives/test-report/2025-July/894788.h=
+tml</a></div><div><br></div><div>One option would be to escape the backtick=
+s like \`. But, it&#39;s even better to just drop the inline single and dou=
+ble backtick examples given that you have an example block below which show=
+s both. So, keep the bulleted descriptions, but remove the examples in pare=
+nthesis.</div><div><br></div><div>=C2=A0</div><blockquote class=3D"gmail_qu=
+ote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,20=
+4);padding-left:1ex">
++=C2=A0 =C2=A0consistent with the `Python documentation style &lt;<a href=
+=3D"https://docs.python.org/3/index.html" rel=3D"noreferrer" target=3D"_bla=
+nk">https://docs.python.org/3/index.html</a>&gt;`_.<br>
++* Use double backticks (````value````) for literal values.<br>
++<br>
++Example::<br>
++<br>
++=C2=A0 =C2=A0def foo(greet: bool) -&gt; None:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;Demonstrates single and doubl=
+e backticks.<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0`greet` controls whether ``Hello World`` is pri=
+nted.<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0Args:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0greet: Whether to print the ``Hel=
+lo World`` message.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0if greet:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0print(&quot;Hello World&quot;)<br=
+>
++<br>
++The maximum line length for docstrings must match that of the code.<br>
+<br>
+<br>
+=C2=A0How To Write a Test Suite<br>
+=C2=A0-------------------------<br>
+<br><br>
+<br>
+</blockquote></div></div>
+
+--0000000000002e67aa063a100593--
