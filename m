@@ -2,58 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32824C83F22
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Jul 2025 13:03:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C926AC83F22
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Jul 2025 13:03:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 36DE840668;
-	Wed, 16 Jul 2025 15:02:47 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 656DC40665;
+	Wed, 16 Jul 2025 15:02:53 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 1131F40663
- for <dev@dpdk.org>; Wed, 16 Jul 2025 15:02:45 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 4529E40665
+ for <dev@dpdk.org>; Wed, 16 Jul 2025 15:02:51 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1752670965;
+ s=mimecast20190719; t=1752670970;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=z3ECJDbBg5Lv2qt2175ae6nqJ9Ft8DqAUhMZxGM9z9o=;
- b=KhFt+7D5haxbcVqFsUxc2jfRlpHG7GrYhonTqmPUVCrXdZLbi+BWOwGNflxuFPOxxDq9eU
- b9ozlG/9LtMag+7bHR/VtFSNfcLOO0maMmYwB2zBvA5RcKWvcFpmAGS+uRTcoQoeRTsnIS
- 8dhqBmkVNjqFMcSZ0EObe4ifWLKW+OA=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ bh=t2gNZi/RGYzdvkmfXEcdV6WNIbKD6ik/zfXRDVESoqM=;
+ b=Nd4Fmo8gVS24rUb1hNFCJjoVv5Nq/AQUwsFXQJltRFSYng6vExOzXtUrP7NcDoK7Ood25V
+ AG7MecO94HaT4vNV76sYQCE6GSVY+mAGKD31/pWnEzpYnBlflGsbEMXwuourTKQMhCNg+u
+ SDAQdFV7RFh5G5NI6JwTrYyrxpcT+Ok=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-657-a2MlzzO2OnG5LwSZ6oowIg-1; Wed,
- 16 Jul 2025 09:02:42 -0400
-X-MC-Unique: a2MlzzO2OnG5LwSZ6oowIg-1
-X-Mimecast-MFC-AGG-ID: a2MlzzO2OnG5LwSZ6oowIg_1752670961
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-266-TSa1NudCMICj57DW9knNng-1; Wed,
+ 16 Jul 2025 09:02:47 -0400
+X-MC-Unique: TSa1NudCMICj57DW9knNng-1
+X-Mimecast-MFC-AGG-ID: TSa1NudCMICj57DW9knNng_1752670966
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 345F618001DD; Wed, 16 Jul 2025 13:02:41 +0000 (UTC)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 16F2118002A4; Wed, 16 Jul 2025 13:02:46 +0000 (UTC)
 Received: from dmarchan.lan (unknown [10.45.225.235])
- by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 05B121954213; Wed, 16 Jul 2025 13:02:37 +0000 (UTC)
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 5CF5D18004AD; Wed, 16 Jul 2025 13:02:44 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
 Cc: stable@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>,
- Maxime Coquelin <maxime.coquelin@redhat.com>,
- Timothy Redaelli <tredaelli@redhat.com>
-Subject: [PATCH v4 04/22] eal: fix plugin dir walk
-Date: Wed, 16 Jul 2025 15:01:51 +0200
-Message-ID: <20250716130212.1736407-5-david.marchand@redhat.com>
+ Marat Khalili <marat.khalili@huawei.com>
+Subject: [PATCH v4 05/22] cmdline: fix port list parsing
+Date: Wed, 16 Jul 2025 15:01:52 +0200
+Message-ID: <20250716130212.1736407-6-david.marchand@redhat.com>
 In-Reply-To: <20250716130212.1736407-1-david.marchand@redhat.com>
 References: <20250619071037.37325-1-david.marchand@redhat.com>
  <20250716130212.1736407-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 0oV0YBpehyk1RMHXYBwu110kLHa6YoZZspPxJdawvPk_1752670961
+X-Mimecast-MFC-PROC-ID: DFa3ewWPnjL-WYLS6pfENovTeQX6cb3FXU75dAe7P8o_1752670966
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -70,92 +68,60 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-For '.' and '..' directories (or any short file name),
-a out of bound issue occurs.
+Doing arithmetic with the NULL pointer is undefined.
 
 Caught by UBSan:
 
-EAL: Detected shared linkage of DPDK
-../lib/eal/common/eal_common_options.c:420:15: runtime error: index -2
-	out of bounds for type 'char[256]'
-    #0 0x7f867eedf206 in eal_plugindir_init
-	eal_common_options.c
-    #1 0x7f867eede58a in eal_plugins_init
-	(build/lib/librte_eal.so.25+0xde58a)
-	(BuildId: e7e4a1935e4bacb51c82ab1a84098a27decf3b4c)
-    #2 0x7f867efb8587 in rte_eal_init
-	(build/lib/librte_eal.so.25+0x1b8587)
-	(BuildId: e7e4a1935e4bacb51c82ab1a84098a27decf3b4c)
-    #3 0x55b62360861e in main
-	(/home/runner/work/dpdk/dpdk/build/app/dpdk-testpmd+0x9e061e)
-	(BuildId: d821ec918612c83fad8b5ccb6cc518e66bee48cd)
-    #4 0x7f8667429d8f in __libc_start_call_main
-	csu/../sysdeps/nptl/libc_start_call_main.h:58:16
-    #5 0x7f8667429e3f in __libc_start_main
-	csu/../csu/libc-start.c:392:3
-    #6 0x55b622d9d444 in _start
-	(/home/runner/work/dpdk/dpdk/build/app/dpdk-testpmd+0x175444)
-	(BuildId: d821ec918612c83fad8b5ccb6cc518e66bee48cd)
+../lib/cmdline/cmdline_parse_portlist.c:40:19: runtime error:
+	applying non-zero offset 1 to null pointer
 SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior
-	../lib/eal/common/eal_common_options.c:420:15 in
-	../lib/eal/common/eal_common_options.c:421:15:
-	runtime error: index 18446744073709551609 out of bounds
-	for type 'char[256]'
+	../lib/cmdline/cmdline_parse_portlist.c:40:19 in
 
-Fixes: c57f6e5c604a ("eal: fix plugin loading")
+Fixes: af75078fece3 ("first public release")
 Cc: stable@dpdk.org
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+Acked-by: Marat Khalili <marat.khalili@huawei.com>
 ---
-Changes since v2:
-- removed check on null termination of dirent,
+Changes since v1:
+- moved some variable as suggested by Bruce,
 
 ---
- lib/eal/common/eal_common_options.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ lib/cmdline/cmdline_parse_portlist.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
-index f0a9ddeeb7..e6eb04a138 100644
---- a/lib/eal/common/eal_common_options.c
-+++ b/lib/eal/common/eal_common_options.c
-@@ -399,12 +399,21 @@ eal_plugins_init(void)
- }
- #else
- 
-+static bool
-+ends_with(const char *str, const char *tail)
-+{
-+	size_t tail_len = strlen(tail);
-+	size_t str_len = strlen(str);
-+
-+	return str_len >= tail_len && strcmp(&str[str_len - tail_len], tail) == 0;
-+}
-+
+diff --git a/lib/cmdline/cmdline_parse_portlist.c b/lib/cmdline/cmdline_parse_portlist.c
+index ef6ce223b5..549f6d9671 100644
+--- a/lib/cmdline/cmdline_parse_portlist.c
++++ b/lib/cmdline/cmdline_parse_portlist.c
+@@ -33,15 +33,12 @@ parse_set_list(cmdline_portlist_t *pl, size_t low, size_t high)
  static int
- eal_plugindir_init(const char *path)
+ parse_ports(cmdline_portlist_t *pl, const char *str)
  {
--	DIR *d = NULL;
- 	struct dirent *dent = NULL;
- 	char sopath[PATH_MAX];
-+	DIR *d = NULL;
++	const char *first = str;
+ 	size_t ps, pe;
+-	const char *first, *last;
+ 	char *end;
  
- 	if (path == NULL || *path == '\0')
- 		return 0;
-@@ -418,12 +427,8 @@ eal_plugindir_init(const char *path)
+-	for (first = str, last = first;
+-	    first != NULL && last != NULL;
+-	    first = last + 1) {
+-
+-		last = strchr(first, ',');
++	while (first != NULL) {
++		const char *last = strchr(first, ',');
  
- 	while ((dent = readdir(d)) != NULL) {
- 		struct stat sb;
--		int nlen = strnlen(dent->d_name, sizeof(dent->d_name));
+ 		errno = 0;
+ 		ps = strtoul(first, &end, 10);
+@@ -65,6 +62,7 @@ parse_ports(cmdline_portlist_t *pl, const char *str)
+ 			return -1;
  
--		/* check if name ends in .so or .so.ABI_VERSION */
--		if (strcmp(&dent->d_name[nlen - 3], ".so") != 0 &&
--		    strcmp(&dent->d_name[nlen - 4 - strlen(ABI_VERSION)],
--			   ".so."ABI_VERSION) != 0)
-+		if (!ends_with(dent->d_name, ".so") && !ends_with(dent->d_name, ".so."ABI_VERSION))
- 			continue;
+ 		parse_set_list(pl, ps, pe);
++		first = (last == NULL ? NULL : last + 1);
+ 	}
  
- 		snprintf(sopath, sizeof(sopath), "%s/%s", path, dent->d_name);
+ 	return 0;
 -- 
 2.50.0
 
