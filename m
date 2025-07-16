@@ -2,56 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8933BC83F22
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Jul 2025 13:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24C58C83F1B
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Jul 2025 13:04:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CC83A40669;
-	Wed, 16 Jul 2025 15:03:28 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 652874066D;
+	Wed, 16 Jul 2025 15:03:38 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 3F7FE40696
- for <dev@dpdk.org>; Wed, 16 Jul 2025 15:03:27 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id AD20840653
+ for <dev@dpdk.org>; Wed, 16 Jul 2025 15:03:36 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1752671006;
+ s=mimecast20190719; t=1752671016;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=RWa5QvjEjQB/8SJ4tlztd88lQ0om3aZtShHUmWnXB/c=;
- b=Q8iwlRU4dlD9CVqNYGE7KLSqBtRT6WFzM/MHuhduJa3w03vneKiHP6NkB71ufPFIRkltrL
- A5f1oBPZ/k/cqLlNvhjHM4lGgMCdcXGgR9+p/HPm5Cj4tztPk+/vWIpCebj0zgl1y8qeNR
- m7lfqIO+Tihbgdm5n+9M4mLm7BLZlEg=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ bh=69Cl5rH1nJhTguHVgodvWy1LNsMZCt5T/T/J6ytWcGo=;
+ b=Z9GrGk1F7Gnr4cPpUmuRJRyEDMDhcmTmF/EojO+mC4nRSahYl9GB+SrfwthUam6xaOyxCo
+ QYGAXY4F2ismLvOf6gvz/VhFjoXh/AKraFCfBnqzbkqgTVEAlOj61TMZtDNK1A946uDwgX
+ mbIUujSoKU2qL8AxogDstRWTOzE72do=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-461-MJNLSoPOMJKDp7Yd5Su8-g-1; Wed,
- 16 Jul 2025 09:03:23 -0400
-X-MC-Unique: MJNLSoPOMJKDp7Yd5Su8-g-1
-X-Mimecast-MFC-AGG-ID: MJNLSoPOMJKDp7Yd5Su8-g_1752671002
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-654-SKsvHgSCPvWvKkYRPMXq3w-1; Wed,
+ 16 Jul 2025 09:03:30 -0400
+X-MC-Unique: SKsvHgSCPvWvKkYRPMXq3w-1
+X-Mimecast-MFC-AGG-ID: SKsvHgSCPvWvKkYRPMXq3w_1752671008
 Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 8D29B1800C36; Wed, 16 Jul 2025 13:03:22 +0000 (UTC)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id C69FD1955F41; Wed, 16 Jul 2025 13:03:28 +0000 (UTC)
 Received: from dmarchan.lan (unknown [10.45.225.235])
  by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id EC813195E772; Wed, 16 Jul 2025 13:03:20 +0000 (UTC)
+ id 91C00195E773; Wed, 16 Jul 2025 13:03:25 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Cc: Thomas Monjalon <thomas@monjalon.net>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>
-Subject: [PATCH v4 12/22] ipc: fix mp message alignment for malloc
-Date: Wed, 16 Jul 2025 15:01:59 +0200
-Message-ID: <20250716130212.1736407-13-david.marchand@redhat.com>
+Cc: Marat Khalili <marat.khalili@huawei.com>, stable@dpdk.org,
+ Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Zhirun Yan <yanzhirun_163@163.com>,
+ Pavan Nikhilesh <pbhagavatula@marvell.com>, Robin Jarry <rjarry@redhat.com>
+Subject: [PATCH v4 13/22] graph: fix stats query with no node xstats
+Date: Wed, 16 Jul 2025 15:02:00 +0200
+Message-ID: <20250716130212.1736407-14-david.marchand@redhat.com>
 In-Reply-To: <20250716130212.1736407-1-david.marchand@redhat.com>
 References: <20250619071037.37325-1-david.marchand@redhat.com>
  <20250716130212.1736407-1-david.marchand@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: y__gyGqEvameTYE2lpoPtDtXXoIH76E0iUWsMrVzfk8_1752671002
+X-Mimecast-MFC-PROC-ID: 4CllEvNZpgnu6b8_fk1lGMSNZhZ0PwyQgetmtII_sYM_1752671008
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -68,88 +71,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Content (param[]) of received multiprocess messages are aligned with
-a 4 bytes constraint.
+From: Marat Khalili <marat.khalili@huawei.com>
 
-Before patch:
-struct mp_msg_internal {
- int type;                                                     /*   0     4 */
- struct rte_mp_msg {
-  char name[64];                                               /*   4    64 */
-  /* --- cacheline 1 boundary (64 bytes) was 4 bytes ago --- */
-  int len_param;                                               /*  68     4 */
-  int num_fds;                                                 /*  72     4 */
-  /* typedef uint8_t -> __uint8_t */ unsigned char param[256]; /*  76   256 */
-  /* --- cacheline 5 boundary (320 bytes) was 12 bytes ago --- */
-  int fds[253];                                                /* 332  1012 */
- } msg;                                                        /*   4  1340 */
+This was flagged by undefined behaviour sanitizer: memset should not be
+called with NULL first argument. (memset requires first argument to be
+pointer to a memory object, so passing NULL may result in an undefined
+behaviour including among other things optimizer potentially removing
+code paths depending on stat->xstat_count being NULL.)
 
- /* size: 1344, cachelines: 21, members: 2 */
-};
+Sanitizer message:
 
-This results in many unaligned accesses for multiprocess malloc requests.
+    lib/graph/graph_stats.c:473:2: runtime error: null pointer passed as
+    argument 1, which is declared to never be null
 
-Examples:
-../lib/eal/common/malloc_mp.c:308:32: runtime error:
-	member access within misaligned address 0x7f7b35df4684 for type
-	'const struct malloc_mp_req', which requires 8 byte alignment
+Add a check that stat->xstat_cntrs is not zero before the call, since
+stat->xstat_count can only be NULL when stat->xstat_cntrs is zero.
 
-../lib/eal/common/malloc_mp.c:158:9: runtime error:
-	member access within misaligned address 0x7f36a535bb5c for type
-	'const struct malloc_mp_req', which requires 8 byte alignment
+Fixes: 070db97e017b ("graph: support node xstats")
+Cc: stable@dpdk.org
 
-../lib/eal/common/malloc_mp.c:171:8: runtime error:
-	member access within misaligned address 0x7f4ba65f296c for type
-	'struct malloc_mp_req', which requires 8 byte alignment
-
-Align param[] to 64 bits to avoid unaligned accesses on structures
-passed through this array in mp messages.
-
-This change breaks ABI, put a suppression rule for now (this will be
-removed when merging the series in v25.11).
-
-Signed-off-by: David Marchand <david.marchand@redhat.com>
+Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
 ---
-Changes since v3:
-- changed rte_mp_msg struct alignment,
+ lib/graph/graph_stats.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
----
- devtools/libabigail.abignore | 4 ++++
- lib/eal/include/rte_eal.h    | 3 ++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/devtools/libabigail.abignore b/devtools/libabigail.abignore
-index c65bea2b51..ceb2d24a1f 100644
---- a/devtools/libabigail.abignore
-+++ b/devtools/libabigail.abignore
-@@ -55,3 +55,7 @@
- [suppress_type]
- 	name = rte_stack_lf_list
- 	has_size_change = yes
-+
-+[suppress_type]
-+	name = rte_mp_msg
-+	has_size_change = yes
-diff --git a/lib/eal/include/rte_eal.h b/lib/eal/include/rte_eal.h
-index c826e143f1..08977c61d3 100644
---- a/lib/eal/include/rte_eal.h
-+++ b/lib/eal/include/rte_eal.h
-@@ -11,6 +11,7 @@
-  * EAL Configuration API
-  */
+diff --git a/lib/graph/graph_stats.c b/lib/graph/graph_stats.c
+index eac73cbf71..583ad8dbd5 100644
+--- a/lib/graph/graph_stats.c
++++ b/lib/graph/graph_stats.c
+@@ -470,7 +470,8 @@ cluster_node_arregate_stats(struct cluster_node *cluster, bool dispatch)
+ 	uint64_t *xstat;
+ 	uint8_t i;
  
-+#include <stdalign.h>
- #include <stdint.h>
- #include <time.h>
- 
-@@ -162,7 +163,7 @@ struct rte_mp_msg {
- 	char name[RTE_MP_MAX_NAME_LEN];
- 	int len_param;
- 	int num_fds;
--	uint8_t param[RTE_MP_MAX_PARAM_LEN];
-+	alignas(8) uint8_t param[RTE_MP_MAX_PARAM_LEN];
- 	int fds[RTE_MP_MAX_FD_NUM];
- };
+-	memset(stat->xstat_count, 0, sizeof(uint64_t) * stat->xstat_cntrs);
++	if (stat->xstat_cntrs != 0)
++		memset(stat->xstat_count, 0, sizeof(uint64_t) * stat->xstat_cntrs);
+ 	for (count = 0; count < cluster->nb_nodes; count++) {
+ 		node = cluster->nodes[count];
  
 -- 
 2.50.0
