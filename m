@@ -2,66 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E418C83F22
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Jul 2025 13:05:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F6A5C83F22
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Jul 2025 13:50:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3250640B91;
-	Wed, 16 Jul 2025 15:04:19 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 8F7D3406B7
- for <dev@dpdk.org>; Wed, 16 Jul 2025 15:04:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1752671056;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=YS8HiwYCgPn0+3ybr77CgbMga0xQMTSohF18Noiv+Oo=;
- b=Xjv8KRL22ZGKKIbg5rimTgq/UJGFkUGGY/hvS5n4OzpSA9R+oi/fW0+mYjiu+8OazHK4//
- OrLd2paxbglfnhLMVj04TENCQmqyYAj477ZaDfLQx/uDZ29jOIvA7FP30+y3M6E9l6Pguq
- tnOZG9t7uh9F7w8bdHQuk8tLH7NzJbA=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-593-t1DlsZQJMhOu_U3JztJ8Fg-1; Wed,
- 16 Jul 2025 09:04:10 -0400
-X-MC-Unique: t1DlsZQJMhOu_U3JztJ8Fg-1
-X-Mimecast-MFC-AGG-ID: t1DlsZQJMhOu_U3JztJ8Fg_1752671049
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id D949A1800281; Wed, 16 Jul 2025 13:04:08 +0000 (UTC)
-Received: from dmarchan.lan (unknown [10.45.225.235])
- by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id A24C830001A2; Wed, 16 Jul 2025 13:04:04 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id BCC4B402DC;
+	Wed, 16 Jul 2025 15:50:14 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 36F3F40144
+ for <dev@dpdk.org>; Wed, 16 Jul 2025 15:50:13 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 1059046B90; Wed, 16 Jul 2025 15:50:13 +0200 (CEST)
+From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Cc: Anatoly Burakov <anatoly.burakov@intel.com>,
- Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Yipeng Wang <yipeng1.wang@intel.com>,
- Sameh Gobriel <sameh.gobriel@intel.com>
-Subject: [PATCH v4 21/22] test/func_reentrancy: fix EAL init call
-Date: Wed, 16 Jul 2025 15:02:08 +0200
-Message-ID: <20250716130212.1736407-22-david.marchand@redhat.com>
-In-Reply-To: <20250716130212.1736407-1-david.marchand@redhat.com>
-References: <20250619071037.37325-1-david.marchand@redhat.com>
- <20250716130212.1736407-1-david.marchand@redhat.com>
+Subject: [DPDK/meson Bug 1670] DPDK fails to compile using gcc version 8.5.0
+Date: Wed, 16 Jul 2025 13:50:12 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: changed
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: meson
+X-Bugzilla-Version: 25.03
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: critical
+X-Bugzilla-Who: subhim@nvidia.com
+X-Bugzilla-Status: RESOLVED
+X-Bugzilla-Resolution: WONTFIX
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_status resolution
+Message-ID: <bug-1670-3-9EBqfqEgww@https.bugs.dpdk.org/>
+In-Reply-To: <bug-1670-3@https.bugs.dpdk.org/>
+References: <bug-1670-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17526738122.B0c541a.4147933
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: -ho7U-qGII4B3Mz4bEUFsTTF_lzhZR1_wEIO6twCLr4_1752671049
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -75,37 +54,120 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-../lib/eal/common/eal_common_options.c:1638:16: runtime error:
-	null pointer passed as argument 2, which is declared to never be null
 
-Signed-off-by: David Marchand <david.marchand@redhat.com>
----
- app/test/test_func_reentrancy.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+--17526738122.B0c541a.4147933
+Date: Wed, 16 Jul 2025 15:50:12 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-diff --git a/app/test/test_func_reentrancy.c b/app/test/test_func_reentrancy.c
-index 34d685d493..f4c6cbc548 100644
---- a/app/test/test_func_reentrancy.c
-+++ b/app/test/test_func_reentrancy.c
-@@ -66,15 +66,16 @@ static RTE_ATOMIC(uint32_t) synchro;
-  * rte_eal_init only init once
-  */
- static int
--test_eal_init_once(__rte_unused void *arg)
-+test_eal_init_once(void *arg)
- {
- 	unsigned lcore_self =  rte_lcore_id();
-+	char *argv[] = { arg, NULL };
- 
- 	WAIT_SYNCHRO_FOR_WORKERS();
- 
- 	/* silent the check in the caller */
- 	rte_atomic_store_explicit(&obj_count, 1, rte_memory_order_relaxed);
--	if (rte_eal_init(0, NULL) != -1)
-+	if (rte_eal_init(RTE_DIM(argv) - 1, argv) != -1)
- 		return -1;
- 
- 	return 0;
--- 
-2.50.0
+https://bugs.dpdk.org/show_bug.cgi?id=3D1670
 
+Subhi Masri (subhim@nvidia.com) changed:
+
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|UNCONFIRMED                 |RESOLVED
+         Resolution|---                         |WONTFIX
+
+--- Comment #8 from Subhi Masri (subhim@nvidia.com) ---
+Suggested solution works ; update toolchain to gcc11
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17526738122.B0c541a.4147933
+Date: Wed, 16 Jul 2025 15:50:12 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><span class=3D"vcard"><a class=3D"email" href=3D"mailto:subhim&#6=
+4;nvidia.com" title=3D"Subhi Masri (subhim&#64;nvidia.com)"> <span class=3D=
+"fn">Subhi Masri</span></a>
+</span> changed
+          <a class=3D"bz_bug_link=20
+          bz_status_RESOLVED  bz_closed"
+   title=3D"RESOLVED WONTFIX - DPDK fails to compile using gcc version 8.5.=
+0"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1670">bug 1670</a>
+          <br>
+             <table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=
+=3D"bz_diff_table">
+          <tr>
+            <th>What</th>
+            <th>Removed</th>
+            <th>Added</th>
+          </tr>
+
+         <tr>
+           <td style=3D"text-align:right;">Status</td>
+           <td>UNCONFIRMED
+           </td>
+           <td>RESOLVED
+           </td>
+         </tr>
+
+         <tr>
+           <td style=3D"text-align:right;">Resolution</td>
+           <td>---
+           </td>
+           <td>WONTFIX
+           </td>
+         </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+            <b class=3D"bz_comment_head"><a class=3D"bz_bug_link=20
+          bz_status_RESOLVED  bz_closed"
+   title=3D"RESOLVED WONTFIX - DPDK fails to compile using gcc version 8.5.=
+0"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1670#c8">Comment # 8</a>
+              on <a class=3D"bz_bug_link=20
+          bz_status_RESOLVED  bz_closed"
+   title=3D"RESOLVED WONTFIX - DPDK fails to compile using gcc version 8.5.=
+0"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1670">bug 1670</a>
+              from <span class=3D"vcard"><a class=3D"email" href=3D"mailto:=
+subhim&#64;nvidia.com" title=3D"Subhi Masri (subhim&#64;nvidia.com)"> <span=
+ class=3D"fn">Subhi Masri</span></a>
+</span>
+            </b>
+          <pre class=3D"bz_comment_text">Suggested solution works ; update =
+toolchain to gcc11
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1670#c8">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17526738122.B0c541a.4147933--
