@@ -2,67 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B80C83F1B
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Jul 2025 20:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1741C83F1B
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Jul 2025 20:36:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 46044402F1;
-	Wed, 16 Jul 2025 22:36:02 +0200 (CEST)
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com
- [209.85.219.47]) by mails.dpdk.org (Postfix) with ESMTP id CE4AF402DF
- for <dev@dpdk.org>; Wed, 16 Jul 2025 22:36:00 +0200 (CEST)
-Received: by mail-qv1-f47.google.com with SMTP id
- 6a1803df08f44-6fad79433bbso2968186d6.0
- for <dev@dpdk.org>; Wed, 16 Jul 2025 13:36:00 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3F1B7402DF;
+	Wed, 16 Jul 2025 22:36:44 +0200 (CEST)
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com
+ [209.85.219.43]) by mails.dpdk.org (Postfix) with ESMTP id 979A2400D6
+ for <dev@dpdk.org>; Wed, 16 Jul 2025 22:36:42 +0200 (CEST)
+Received: by mail-qv1-f43.google.com with SMTP id
+ 6a1803df08f44-6fadb9a0325so3162246d6.2
+ for <dev@dpdk.org>; Wed, 16 Jul 2025 13:36:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752698160;
- x=1753302960; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752698202;
+ x=1753303002; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=cf3igkpZwz6wMg0Ptk91uDU5AMse1CTIWH+DyeUAMDY=;
- b=HsNVS6t8lIJ6BlNxqF7Oxlczf82RTMYthNQRSpKG5jOWPqLYG+vvTK5ALgrhAqyOH5
- dVob81pFkm8mkSy1E66wmzMvlNQXGlVzDBtPbQO0FWcJaptGC5MiL653/V9lGhY5hLeb
- nv0mQa+aXx2tChZURqCWExHSM7GRH0nBlIKCPy9so1Uq1FenR1dXL0Hd3qajPK2yVuW7
- EmUxGN/8XWP3wXHp4fUnlGko5HAvepqz4XmZSRwjq6bIkLnBQoceX4ODZg8gVU+50EDE
- 9XeOMWkhrmyyWSlP9Ft7ztdJDr7tcPHEBWPH1LQ0JCqp5zhbdH7BEuSgVt1FWG5HYuYp
- ya5A==
+ bh=ko3wWLHyFY5V/9bHpzti+JBJ65MUPOBcUgICjksd3sY=;
+ b=g5/kxPv81zReq4dKl50fW2EGVnYBQHeHPX7Xa9VVtCfSKPmQKpLznqBqZunf4IEbGK
+ rUHXWKI0MxXNigDPXLd20R27nO7uku/fi47qr66+mjHo39nsnkrhd5zPnuVA4/DtWAFB
+ 3/Jz2lY0uj35xu7NJ8N+uhUuorxl7iYllG5GlZzLRp0JD0m7kugTTy1xQ1iA3MWuTugJ
+ kk2e2WWAhXcJtXSsECXf+kKGCsfmJTlP4Y6VpKglCuQNhNBvT9y+tWPj0SdbE1K5KxyL
+ BoQvoUxQkUgMj3BrIYJjnHAgb+JcYvnqoqPqm0+VzEVmxJzqaIq5PCrzBAqQR91KRrS8
+ KB7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752698160; x=1753302960;
+ d=1e100.net; s=20230601; t=1752698202; x=1753303002;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=cf3igkpZwz6wMg0Ptk91uDU5AMse1CTIWH+DyeUAMDY=;
- b=xPnavYEYq7f/t0w4Mcif8NOP/M87ZIDag1YUuzOErUPTPslPEdrNpJwo/Ljo9HGfen
- NVCLZySz10OCEpNaacGTOJz8dffdH74eiuyOAwFTn6bVS0Wv5fFNrUCdI6EfBwNyFLBg
- gh6DXpjdo1IAoDtx47sYqP/v24oDuZBbQA5j8NVla3QbpMPTPl6Zu3hPFzPyhtMuCpl3
- d1MgRW2wuUyYkE1bZYNDkj2FE8l66QZfjHZ0PKAuTzpKz1P+ldicLu9Vnap9vCQAOv6i
- 3+Mfmt2/cYb9lsYlvN8iXey00G6VmVfer53Otxtxk/bkuy200FAtYkFy/Uvw/Aam9+rC
- 9Okw==
-X-Gm-Message-State: AOJu0Yx8oxXW9w0Z4H0rlevEEg3bLgo5q78gCNxOa8YNC508liTa3ivB
- sfu1/7NAtx7T0v8r6lw10/1DcDphBPSTYSoSuPF8f9jf0Dw+Zbjp1RyMTvdjp/k7lR89bOV1OZl
- iRQ2o
-X-Gm-Gg: ASbGncvnADXVy7hHV8LbrEwZQsWzmPnPce9Pd/0VPEDQdBwTC3BQx4rKsxR7esdocCr
- GMVNWY7tWcFxMk/OwiDyM+wnwknfp+I8R8QepaCCfNA2FcrE0dIjMe2IzMsw82sr6ahq0bxteiD
- lFTE6x0X6e5krbczm/rIDeOLQ9dcQHqan/jevTuGuXfXM2J2EtNrs8CVQMrswtibPjfWT26OWuE
- 4kTIkE4jDaPjoCGazUrpbWxtD6gOF3htYLblMMDP/9mCr7kStUkmlixfATmLbmIoBXKkwHq15zZ
- foDWhQpIU3S0ZPGXMIq3EX72osWG9vuo3SrMy/kgF6q6V+BPsqP9XJ6C7X8y4dTeJXYIsf83j80
- KBoq11za4fkkA0EoEPTGvZqwITqqWVJ2pPFwMxLwkKG5+g+aqa1WJNsS48SF1HMRJICGVgSLb2k
- A=
-X-Google-Smtp-Source: AGHT+IG7mqkQOPFZBEaOPTCvyiBoWsLnt3YhyovPMz3z4T/2+TrZOyBkKEGrJ4PEs+SZhCF+0NB+ug==
-X-Received: by 2002:ad4:5f8d:0:b0:702:d822:f9f6 with SMTP id
- 6a1803df08f44-704f6b34b8dmr68633016d6.37.1752698160042; 
- Wed, 16 Jul 2025 13:36:00 -0700 (PDT)
+ bh=ko3wWLHyFY5V/9bHpzti+JBJ65MUPOBcUgICjksd3sY=;
+ b=dSaQ/NsAKQPVLSfsqcyUbjZF+m6X6wdH3RLJhj81KPZBeiqxzIRNHfe0CWigKie2ft
+ 0gNOmcWgsySLaMN5kyFa+8iEq3x5ZybdTcPRnzZEF9Esp7evWJnCf+wTPsup607LLnvs
+ G0/Fw5jnwF2hpt60bLF1eXrENS113gp6INwqTiA27dM/D/whBrOcpICn2SQ+TE3i5Mxf
+ usOZ59IoKOWxan+xPVJq8S92OIl43kWr084u04WHhrUNQfdrg1V1mhKo6ZYRr94JlgB6
+ 6lVNBh0Q+Wa1jXXI+BwqFx7xjqheapoUGqpTSRDyRt1LjoFNRoPYIzqZ6B/PNjG9xold
+ 04Bw==
+X-Gm-Message-State: AOJu0YxQlRBulCruTs9whWi6zuXdwu/FZvIhBj93A9qzFHBC3mrkP/PQ
+ vCNzq05SWR3ronFo6MmCae5Jxa+kQjZocwqkHm5zx/kZOik0jd/jFhGExWroCeCx2t4=
+X-Gm-Gg: ASbGncso+TmJOnwFwxtRMD2GgpfaF2nPMtFlyOv/qkCclLOWuhoH81lJGK4vlD/wnVH
+ ed1QlrWFryQBvkz5/IFrSqRepUwtKy44BzLL3OZzlS/3Sk2p9WGWpeEP4emNofuHzIpF14TXz0F
+ giQmKkydX0BJ26YY6NPS2MAA1T/vKslTKwkbc+f4KXo4oGwBDpD0BwfvpK+5W0UDEU7ZkRFIZel
+ MMtna+bJTVX24Q21qUDK8vX+fPwim5BE58TcZQUafV/rBdLZ1h+voUoPoCXTm552YENWkx/QgSj
+ HtzVtFvHXOJj5ncYujyhdnhc0RzeRmQ/ZGDrMlGwSweMOErMvsw62oxSlEa0wN9+3ZzTH9Axmtx
+ flNuL8xCkBisyaDn9fhu6ZTweGitqho4FFP7U6SRjct9bzfv9X5Yio0dWMv3oBHzgWoJP3FbAnS
+ w=
+X-Google-Smtp-Source: AGHT+IE41cADTZ2cYuGOorygwRIBEDr7J12Rm6Qew5A53hUG9924jU/MRfBtBwhwzCzWIIFU1QNxLQ==
+X-Received: by 2002:a05:6214:5f0b:b0:700:bae3:e1a5 with SMTP id
+ 6a1803df08f44-704f6a4b45amr64274656d6.19.1752698201733; 
+ Wed, 16 Jul 2025 13:36:41 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-4ab6de94c3esm35476961cf.36.2025.07.16.13.35.59
+ 6a1803df08f44-70497d71419sm74783026d6.86.2025.07.16.13.36.41
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 16 Jul 2025 13:35:59 -0700 (PDT)
-Date: Wed, 16 Jul 2025 13:35:57 -0700
+ Wed, 16 Jul 2025 13:36:41 -0700 (PDT)
+Date: Wed, 16 Jul 2025 13:36:38 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Jie Liu <liujie5@linkdatatechnology.com>
 Cc: dev@dpdk.org
 Subject: Re: [PATCH v9 02/14] net/sxe: add ethdev probe and remove
-Message-ID: <20250716133557.061b8a09@hermes.local>
+Message-ID: <20250716133638.0247bdea@hermes.local>
 In-Reply-To: <20250716082930.83026-2-liujie5@linkdatatechnology.com>
 References: <20250715034152.7020-14-liujie5@linkdatatechnology.com>
  <20250716082930.83026-1-liujie5@linkdatatechnology.com>
@@ -87,8 +86,10 @@ On Wed, 16 Jul 2025 04:29:18 -0400
 Jie Liu <liujie5@linkdatatechnology.com> wrote:
 
 > +
-> +#define  false 0
-> +#define  true  1
+> +#ifndef fallthrough
+> +# define fallthrough do {} while (0)
+> +#endif
 > +
 
-Bad idea, conflicts with stdbool.h
+That isn't going to solve compiler warnings.
+You need to use better mechanism.
