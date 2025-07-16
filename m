@@ -2,70 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63FDEC83F34
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Jul 2025 20:16:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A026CC83F1B
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Jul 2025 20:16:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 68BA94013F;
-	Wed, 16 Jul 2025 22:16:17 +0200 (CEST)
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com
- [209.85.210.172])
- by mails.dpdk.org (Postfix) with ESMTP id 17F2A400D6
- for <dev@dpdk.org>; Wed, 16 Jul 2025 22:16:15 +0200 (CEST)
-Received: by mail-pf1-f172.google.com with SMTP id
- d2e1a72fcca58-74ce477af25so225901b3a.3
- for <dev@dpdk.org>; Wed, 16 Jul 2025 13:16:15 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7AD33402F1;
+	Wed, 16 Jul 2025 22:16:19 +0200 (CEST)
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com
+ [209.85.210.177])
+ by mails.dpdk.org (Postfix) with ESMTP id 06010402DF
+ for <dev@dpdk.org>; Wed, 16 Jul 2025 22:16:19 +0200 (CEST)
+Received: by mail-pf1-f177.google.com with SMTP id
+ d2e1a72fcca58-748e63d4b05so227123b3a.2
+ for <dev@dpdk.org>; Wed, 16 Jul 2025 13:16:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752696975;
- x=1753301775; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752696978;
+ x=1753301778; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=uSkqF+S1V6KLWQowRnvpjxnuhvryfLkC4W/OaLjHcXA=;
- b=sBuKsnbOm33Hh7xN50/eJ/vcyxZ1hZAabIMZiWonOLqjxuFqXE/hxXMiA/hxh+rSa6
- myWB0n2W5dieD6vB4JvjCGfNIAARWt2nCHAX95UlZzRZ7eO001TG/SYE2NYO7LmnHz1Q
- 5HuPPPoTvez5s0gsK4gB+98F4ZwyGCxhDYntl9KNftvOWDZgCM76rEzl0UALVCZaJz3k
- JIZL5D4rbMf/t6Dvfkn2tAA6hDBn9dMtPhp3bFmjq1JDk+6spvefhgxpHkk4VEIGeuzz
- Eil4ZELhM0CnwJfMYYmjPAMPhoP3EFBNiPEAMX+nq46J0S5xd1HYTKC2hwUOflfXg/9n
- KCMA==
+ bh=4kztxEfmydskJVlTHAU+JIpM6yZf77p1/J50ZiWS0jw=;
+ b=EwrpF9KvXrApS6uA3xckCCjVvI6UnAL2mHQEc12/vss0TM2ggaXGsZKglsBreOeMXN
+ D0HwGIJUiu3wMAPan5XLO96Vg+vcXasdr0AoNGMhetQbj1xDDPuXRL6D/PqfoM8cAIdf
+ isY9nhXCeEVkgmL0Uxg6YbZZ4F7l/EbcSyvSFzbrPrp55BtHtrpXkDuzeFTPMFHvgdro
+ rX/xS3smADe9PVy8M+xycs4JapHTBiVCsIByeC+sNVKrxMv28dhNSfbomVfhvQMlfS9o
+ fpgLtUqPod/n6sPht3hM9lYUn4zlwxnu4tKNutb3XYiGrIza8x4lh2wDJVZb8MuR9Itn
+ eowQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752696975; x=1753301775;
+ d=1e100.net; s=20230601; t=1752696978; x=1753301778;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=uSkqF+S1V6KLWQowRnvpjxnuhvryfLkC4W/OaLjHcXA=;
- b=ot86c4i8QYc5rGSDdLSA7NofSCgWuNi2MGTBBXvIgWOfJ99or+/w2HZTxFwxrW+awb
- ys/Y4Ul1WB2XCksX2JKVCOEMsPBxRnj0oByxPvgEbp9yoDCSva1CB+AMLh3/caQI4Vbe
- +Bl2ki+FuQLCkHKf/Mh8fgsVLPKKuwr1dY24M6ZEQj8vG4YBM7khv3eztWTo5vzjSQwa
- FA0/v5wCQcFhhcYi6fmQdB5EmuTvB/k+W5KS7/JbceQCEtvcbxbkdSxFC5yvoA4xwbyQ
- aIHKzAzZ7Y6Po7qB28xerqlmix+2X08OFtWD26q5hxq84QWgogVYBO3F/2s64wiww6l4
- iRrQ==
-X-Gm-Message-State: AOJu0Yxie6DnjcfRXAfhwoRW5AKivc4wvxkck5vJdesIvidqUVEyC+Yr
- JybRjDW/FvLxdCHyY4Iktc2a40izuwE5AmkDiT5BSNzy7iMm+yiVwdp0W666hxE/Yrs=
-X-Gm-Gg: ASbGnctRxRBDCtAq/vZviLVUNObNtKLlNNKrtbAJzndIhZQBCrbmYIdkhzs1PPf9yLH
- Ka6JdOzJMxrTiNVtKvdLanI9nKx3Bp44jOfMwERFwridb+cSqWMsvfBL8ZtiLEbc59M299STWEX
- naOM5jLFJD/93pk1mMkrKm5CX1gExRdE9b+76II/QrYSxu8T/wyvC589f/CZWPJvEE0VQL2v87a
- NuLIlY+jlSxaUu7DjV2qlrqQjUjhT/muSw3pJ9u3B3CvKZT2fgVKe16q3sUPHGTTmU0C1KHqAkw
- UZU24BuPlH5UCatV/uRLIWr5LQuH4hWs6rWWI8XzsDS8TBn/bU9DJGqS+NVpTx9gt+seRgNcVAr
- npIDyj6WGpkg1Xhok/C5/UqrPBma5Khvqs7tpbSxLDO3QSt5oAdWT9kehxjIGTQ9iYXYhwiPUf1
- w=
-X-Google-Smtp-Source: AGHT+IGYLZSJdJXiei/KnCyC1whvcaamb9jihRbXZ7XEDTrQ2pZaZp8szUhwpukTy4h/u8TUyth5Sw==
-X-Received: by 2002:a05:6a20:3948:b0:234:dd8d:cc7f with SMTP id
- adf61e73a8af0-238124571d9mr6668178637.22.1752696975084; 
- Wed, 16 Jul 2025 13:16:15 -0700 (PDT)
+ bh=4kztxEfmydskJVlTHAU+JIpM6yZf77p1/J50ZiWS0jw=;
+ b=C45qYux6nTjrTwwGmrBUFPoIgJnrP6m8t4I2qQLrAdPW+DpgawiByl1KXP5g5x/pQd
+ luclPy2awQs+chSCvgPK0MkMSbt93jeNasGy9/mqwSTyYV2tCC6Bt6lnWYJbnDAqFJJu
+ HqCJ9wxeH6G7PaDyGtTtX+Oxzhmr2UlnPj1kJXXScQVonZkeY1+F62anHyjJwebC9ql1
+ 0hQ9PXP6FqKdv2QU3Ic/FoJOcL6QD5OJWvCPN5fX5/VHdMI2g8XIve8R53t4z34pYQMi
+ xG8BlmLedSBIjwh1Q781V8v4jQcDd3czwysXwPJYPGfVg0QCwmwK3FzNAKaS+aYKKfGb
+ 9Djg==
+X-Gm-Message-State: AOJu0YxiXWdsxQrhs6O1zXqQmVKtpmpyde43wEv6g/mg28W1uVIOWV54
+ /fREPI2tzQSDudKgFojIm3AB4p9zEpiuf7IZfDPOB5RfS5H48k45bma4FBmD4nGoN7HiRg4nGbq
+ a5iv/
+X-Gm-Gg: ASbGnctVzNjq4AD0Fh8fsGYNuIuHmlapM0zRkSdOXd1q5b0PZj85YnpQbprH86Wx1GN
+ 0AWz5swa51YZT8gBpndz8yTnV5HFRUB2RlnVCdMIOoqRUshk0qKa8QJo9RektCJwv0lLjeWwilI
+ VtThIWhTevsNIY/dm/nr1VZO3mTZVZ7pBnTuq6j2OXFuSxVA1vRQr9ccJnte5ZZO7B63s7h6cis
+ UhHYo4x6O+7BVr+PP7wcqY1JLObpKmq5TVgSvvdrgQsniDE2TvkVfcWPnvnsdHZyd8utXMQVHTE
+ ZBaUN1Bz82iqMidFpLS/byK1OpPb6pxZdNY0lmgl0XRi0ZMngPilwj/eMwsn0vvAfRlgNc/fSdz
+ /WEoSZVtfqvqn43wbRFqfdjiOnOLvcU4d8DSAEKQaoSbLAVm+WtR1tSTbGzsRGAh+4Bm6gEl+jP
+ QMYQCX5o3xwA==
+X-Google-Smtp-Source: AGHT+IHnJ0pFvUrMkvj7jn67OmSaptJVyTVAaog/Jc5Lv89RQdFBki6oCva4dCfnNKoDWn5FrImy3Q==
+X-Received: by 2002:a05:6a00:2189:b0:748:68dd:eb8c with SMTP id
+ d2e1a72fcca58-7572487561emr5087893b3a.23.1752696978033; 
+ Wed, 16 Jul 2025 13:16:18 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-b3bbe579b0esm14231805a12.22.2025.07.16.13.16.14
+ 41be03b00d2f7-b3bbe579b0esm14231805a12.22.2025.07.16.13.16.17
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 16 Jul 2025 13:16:14 -0700 (PDT)
-Date: Wed, 16 Jul 2025 10:46:00 -0700
+ Wed, 16 Jul 2025 13:16:17 -0700 (PDT)
+Date: Wed, 16 Jul 2025 10:49:42 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Jie Liu <liujie5@linkdatatechnology.com>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v9 01/14] net/sxe: add base driver directory and doc
-Message-ID: <20250716104600.4b65ae36@hermes.local>
-In-Reply-To: <20250716082930.83026-1-liujie5@linkdatatechnology.com>
+Subject: Re: [PATCH v9 03/14] net/sxe: add tx rx setup and data path
+Message-ID: <20250716104942.7285b856@hermes.local>
+In-Reply-To: <20250716082930.83026-3-liujie5@linkdatatechnology.com>
 References: <20250715034152.7020-14-liujie5@linkdatatechnology.com>
  <20250716082930.83026-1-liujie5@linkdatatechnology.com>
+ <20250716082930.83026-3-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,38 +84,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 16 Jul 2025 04:29:17 -0400
+On Wed, 16 Jul 2025 04:29:19 -0400
 Jie Liu <liujie5@linkdatatechnology.com> wrote:
 
-> Adding a minimum maintainable directory structure for the
-> network driver and request maintenance of the sxe driver.
+> Add setup, initialization, and logic for tx and rx queues.
 > 
 > Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 > ---
 
-Some complaints from check-git-log.sh not all have to be fixed though.
+Buried in checkpatch warnings are some spelling errors here:
 
- $ ./devtools/check-git-log.sh 
-Wrong headline format:
-	net/sxe: add link, flow ctrl, mac ops, mtu ops function
-	net/sxe: add Solve compilation problems.
-Wrong headline prefix:
-	net/sxe: add tx rx setup and data path
-Wrong headline case:
-			"net/sxe: add dcb function": dcb --> DCB
-Wrong headline case:
-			"net/sxe: add link, flow ctrl, mac ops, mtu ops function": mac --> MAC
-Wrong headline case:
-			"net/sxe: add link, flow ctrl, mac ops, mtu ops function": mtu --> MTU
-Wrong headline case:
-			"net/sxe: support rss offload": rss --> RSS
-Wrong headline case:
-			"net/sxe: add tx rx setup and data path": rx --> Rx
-Wrong headline case:
-			"net/sxe: add tx rx setup and data path": tx --> Tx
-Wrong headline case:
-			"net/sxe: support vlan filter": vlan --> VLAN
-Contributor name/email mismatch with .mailmap: 
-	Jie Liu <liujie5@linkdatatechnology.com> is not the primary email address
 
-Invalid patch(es) found - checked 14 patches
+WARNING:TYPO_SPELLING: 'unsupport' may be misspelled - perhaps 'unsupported'?
+#5037: FILE: drivers/net/sxe/pf/sxe_rx.c:1451:
++		PMD_LOG_ERR(INIT, "unsupport sriov");
+ 		                   ^^^^^^^^^
+
+WARNING:TYPO_SPELLING: 'signle' may be misspelled - perhaps 'single'?
+#5323: FILE: drivers/net/sxe/pf/sxe_tx.c:40:
++	/* Offload off and signle simple tx code path < 32 use simple tx code path */
+ 	                   ^^^^^^
+
+WARNING:TYPO_SPELLING: 'Signle' may be misspelled - perhaps 'Single'?
+#5634: FILE: drivers/net/sxe/pf/sxe_tx.c:351:
++		/* Signle transmit */
+ 		   ^^^^^^
+
+WARNING:TYPO_SPELLING: 'enought' may be misspelled - perhaps 'enough'?
+#6069: FILE: drivers/net/sxe/pf/sxe_tx.c:786:
++		/* Clean up enought desc */
+ 		            ^^^^^^^
+
