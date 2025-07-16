@@ -2,50 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F321DC83F27
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Jul 2025 08:31:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D751CC83F1B
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Jul 2025 08:42:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C106D40A73;
-	Wed, 16 Jul 2025 10:30:02 +0200 (CEST)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
- by mails.dpdk.org (Postfix) with ESMTP id 72EDB4067D
- for <dev@dpdk.org>; Wed, 16 Jul 2025 10:29:57 +0200 (CEST)
-Received: from mail.cstnet.cn (unknown [60.29.3.194])
- by APP-01 (Coremail) with SMTP id qwCowACHs6ftYndo4EaBBA--.9864S15;
- Wed, 16 Jul 2025 16:29:54 +0800 (CST)
-From: Jie Liu <liujie5@linkdatatechnology.com>
-To: stephen@networkplumber.org
-Cc: dev@dpdk.org,
-	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v9 14/14] net/sxe: add Solve compilation problems.
-Date: Wed, 16 Jul 2025 04:29:30 -0400
-Message-ID: <20250716082930.83026-14-liujie5@linkdatatechnology.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250716082930.83026-1-liujie5@linkdatatechnology.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 11A404021E;
+	Wed, 16 Jul 2025 10:42:23 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id B6B1C4013F
+ for <dev@dpdk.org>; Wed, 16 Jul 2025 10:42:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1752655341;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=6M1tj/USdU64J0DRTlsN9jIhXaHRSCd7Oqx3VH1MQm4=;
+ b=awPruDQ2VaDRLPg5Epc4AaZGFg1Fh9RueOphL9PQmLkBr56Dbg4rnjIsPdyW8Z1kEywg1O
+ aVtTRi2G4TIY25OmZ9i6BEC2DVwvB6sWTDH18NEVh3f0BamXKXaxMUVKZ15Drcfa9RrPRS
+ vtDmbFwN9u4AqOB1MzqEOlZ1IlZECZ4=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-203-0M2enHjbMtyep40iL68--A-1; Wed, 16 Jul 2025 04:42:19 -0400
+X-MC-Unique: 0M2enHjbMtyep40iL68--A-1
+X-Mimecast-MFC-AGG-ID: 0M2enHjbMtyep40iL68--A_1752655338
+Received: by mail-lf1-f72.google.com with SMTP id
+ 2adb3069b0e04-553af0e0247so379395e87.0
+ for <dev@dpdk.org>; Wed, 16 Jul 2025 01:42:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1752655337; x=1753260137;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=6M1tj/USdU64J0DRTlsN9jIhXaHRSCd7Oqx3VH1MQm4=;
+ b=ZWgn72ojv9iHIj6Yay7sXPAyMEpoR9AhNIGpllgMWSK98ZCMDjGdw6MV8NnFkEwHo6
+ xLTOtTd7MN/Lxs7jpDFzUAVC7cx4P3mUoDucYKP0WRfoof84im5uSv3+fzu2bENTFoZ3
+ TKzGeDTwq7kmL+KwpgfXOX/SqksuBUNua/CSbro1jJe2FvRwi2LWecGvT3USnoUHDBT8
+ /KEZd6tbvBavunxYNPqV8cFp3epbMVc+9hlbKzQlhYyMU1GiyMtcVJ/CUOcmnnSavuMB
+ OSLrMsC99Z64vaij/d2KizPS3w6T+WWX+a9bBx2m7JpSa6sDzY6LsicACARm/9k6k4hG
+ /M2A==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVVjEtAz8V16jFeFqdveGOVpyM3VwO5kUzBjjPG4m6GNoskBDWpvhaQjWkI5tuY+lAdwb8=@dpdk.org
+X-Gm-Message-State: AOJu0YzXkWOttA0fVy+rx4bCjcHRX0n9bBMdin4CMDMaxyqAhYVIV3TN
+ UqzXI6EoybEaWWhkVfBeGaVRfAbbL03U01D1Q40iUK73BYW0LSbPIGIYXXM3Q5j1yeQfrIGIAjV
+ nAA9ESGErwu/tIQr7hxOtyR43GCyb3HTmQWDCMOuFoqEqMaQNKgj0GPdWdCeowF8GioWzu6XwGk
+ q8jAhwHJxaxa+v6VeFAAo=
+X-Gm-Gg: ASbGncurwyN2YjvWV6n+5yeB+mNounTUKr8sRgrnWOz7xv4CFlET2G8rJfDabWon7OU
+ Zxn/EIkHB5s4uYoPhIjXd4h+3J6FgzGSO9ESw0Pi96diDsacvt1hxIBxb4Axtx034DeUU6xW/nS
+ XBNMGA6QvDblrufhQgXiz49cg=
+X-Received: by 2002:a05:6512:2390:b0:552:20e1:5b97 with SMTP id
+ 2adb3069b0e04-55a238808ecmr744055e87.18.1752655337516; 
+ Wed, 16 Jul 2025 01:42:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEdNNBa7wjDd4i2gZ427ISZuRpLh3Br8mTPwCWKvbHbK5WkC6Xu6R4vn6JTxHt742h8Np4bgOLGk/eQZz+wO5g=
+X-Received: by 2002:a05:6512:2390:b0:552:20e1:5b97 with SMTP id
+ 2adb3069b0e04-55a238808ecmr744040e87.18.1752655336884; Wed, 16 Jul 2025
+ 01:42:16 -0700 (PDT)
+MIME-Version: 1.0
 References: <20250715034152.7020-14-liujie5@linkdatatechnology.com>
  <20250716082930.83026-1-liujie5@linkdatatechnology.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: qwCowACHs6ftYndo4EaBBA--.9864S15
-X-Coremail-Antispam: 1UD129KBjvAXoWDGw1rurWDtFyDJF18Wr4rXwb_yoWrAr18Jo
- WxKF43AFy5Zr1xJ39FgF1kWFW7Wr9FgrW5Jw45ZFZ09Fy3Cr15Ar1Fq343JFnrXw1FyF1U
- Aa1xZF1Yvr47WFW8n29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UjIYCTnIWjp_UUUOf7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20EY4v20xva
- j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s0DM28Irc
- Ia0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l
- 84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r
- 4UJwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j
- 6F4UJwAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4
- CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvj
- eVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I
- 1lc7CjxVAaw2AFwI0_JF0_Jw1lc2xSY4AK67AK6r43MxAIw28IcxkI7VAKI48JMxC20s02
- 6xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_Jr
- I_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v2
- 6F1j6w1UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcVCF04k26cxKx2IYs7
- xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_
- Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUceOJUUUUU=
-X-Originating-IP: [60.29.3.194]
-X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
+In-Reply-To: <20250716082930.83026-1-liujie5@linkdatatechnology.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Wed, 16 Jul 2025 10:42:05 +0200
+X-Gm-Features: Ac12FXz_igHk1NyMyWpYZW5vIGfHjXIZ7vWXyr5pmvBv013Ran5qa17pp6SIdX0
+Message-ID: <CAJFAV8w+43hFaBJW8ejeF8C7gnXfJUoY5R-i6xUpvzD5cCCufg@mail.gmail.com>
+Subject: Re: [PATCH v9 01/14] net/sxe: add base driver directory and doc
+To: Jie Liu <liujie5@linkdatatechnology.com>
+Cc: stephen@networkplumber.org, dev@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: jtUbU8GrgzVCvfrM_ieiacyH423eT7kRgS9IjW6D8MI_1752655338
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,1263 +87,69 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add Fix compiling issues.
+Hello,
 
-Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
----
- drivers/net/sxe/base/sxe_common.c          |  2 +-
- drivers/net/sxe/base/sxe_compat_platform.h |  2 -
- drivers/net/sxe/base/sxe_compat_version.h  |  1 -
- drivers/net/sxe/base/sxe_hw.c              | 21 ++++--
- drivers/net/sxe/base/sxe_offload_common.c  |  1 -
- drivers/net/sxe/base/sxe_queue_common.c    |  3 +-
- drivers/net/sxe/base/sxe_rx_common.c       | 10 +--
- drivers/net/sxe/base/sxe_rx_common.h       |  2 -
- drivers/net/sxe/base/sxe_tx_common.c       |  1 -
- drivers/net/sxe/base/sxevf_hw.c            |  1 -
- drivers/net/sxe/include/sxe/sxe_cli.h      |  6 +-
- drivers/net/sxe/include/sxe/sxe_msg.h      |  4 +-
- drivers/net/sxe/meson.build                | 76 ++++++++++++----------
- drivers/net/sxe/meson.build.rej            |  8 ---
- drivers/net/sxe/pf/sxe.h                   | 13 ++--
- drivers/net/sxe/pf/sxe_dcb.c               |  8 +--
- drivers/net/sxe/pf/sxe_ethdev.c            |  5 +-
- drivers/net/sxe/pf/sxe_filter.c            |  1 -
- drivers/net/sxe/pf/sxe_filter.h            |  1 -
- drivers/net/sxe/pf/sxe_irq.h               |  2 -
- drivers/net/sxe/pf/sxe_main.c              | 15 -----
- drivers/net/sxe/pf/sxe_offload.c           |  1 -
- drivers/net/sxe/pf/sxe_phy.c               |  4 +-
- drivers/net/sxe/pf/sxe_pmd_hdc.c           |  1 -
- drivers/net/sxe/pf/sxe_queue.c             |  2 -
- drivers/net/sxe/pf/sxe_queue.h             |  2 -
- drivers/net/sxe/pf/sxe_rx.c                |  2 -
- drivers/net/sxe/pf/sxe_stats.c             | 25 +++++--
- drivers/net/sxe/pf/sxe_stats.h             |  8 +--
- drivers/net/sxe/pf/sxe_tx.c                | 23 +------
- drivers/net/sxe/pf/sxe_vec_common.h        |  8 ++-
- drivers/net/sxe/pf/sxe_vec_neon.c          |  2 -
- drivers/net/sxe/pf/sxe_vec_sse.c           |  1 -
- drivers/net/sxe/pf/sxe_vf.c                |  4 +-
- drivers/net/sxe/pf/sxe_vf.h                |  1 -
- drivers/net/sxe/sxe_drv_type.h             |  4 --
- drivers/net/sxe/sxe_testpmd.c              |  4 +-
- drivers/net/sxe/vf/sxevf_ethdev.c          |  6 +-
- drivers/net/sxe/vf/sxevf_filter.h          |  4 +-
- drivers/net/sxe/vf/sxevf_irq.c             |  2 -
- drivers/net/sxe/vf/sxevf_irq.h             |  1 -
- drivers/net/sxe/vf/sxevf_main.c            |  1 -
- drivers/net/sxe/vf/sxevf_msg.c             |  2 +-
- drivers/net/sxe/vf/sxevf_offload.c         |  1 -
- drivers/net/sxe/vf/sxevf_queue.c           |  2 -
- drivers/net/sxe/vf/sxevf_queue.h           |  1 -
- drivers/net/sxe/vf/sxevf_rx.c              |  1 -
- drivers/net/sxe/vf/sxevf_stats.c           |  4 +-
- 48 files changed, 124 insertions(+), 176 deletions(-)
- delete mode 100644 drivers/net/sxe/meson.build.rej
+On Wed, Jul 16, 2025 at 10:29=E2=80=AFAM Jie Liu <liujie5@linkdatatechnolog=
+y.com> wrote:
+>
+> Adding a minimum maintainable directory structure for the
+> network driver and request maintenance of the sxe driver.
+>
+> Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 
-diff --git a/drivers/net/sxe/base/sxe_common.c b/drivers/net/sxe/base/sxe_common.c
-index 8b3fb13e73..cf6b656680 100644
---- a/drivers/net/sxe/base/sxe_common.c
-+++ b/drivers/net/sxe/base/sxe_common.c
-@@ -44,7 +44,7 @@ u64 sxe_time_get_real_ms(void)
- 
- u64 sxe_trace_id_gen(void)
- {
--	u64 tid	   = getpid() + (pthread_self() << 20);
-+	u64 tid	   = (u64)getpid() + ((u64)pthread_self() << 20);
- 	u64 index	 = 0;
- 	u64 timestamp = sxe_time_get_real_ms();
- 
-diff --git a/drivers/net/sxe/base/sxe_compat_platform.h b/drivers/net/sxe/base/sxe_compat_platform.h
-index eca944da37..ae975d7be7 100644
---- a/drivers/net/sxe/base/sxe_compat_platform.h
-+++ b/drivers/net/sxe/base/sxe_compat_platform.h
-@@ -29,8 +29,6 @@
- #define __iomem
- #define __force
- 
--#define min(a, b)	RTE_MIN(a, b)
--
- #ifndef fallthrough
- # define fallthrough do {} while (0)
- #endif
-diff --git a/drivers/net/sxe/base/sxe_compat_version.h b/drivers/net/sxe/base/sxe_compat_version.h
-index 5b8577067d..f3c6893ad9 100644
---- a/drivers/net/sxe/base/sxe_compat_version.h
-+++ b/drivers/net/sxe/base/sxe_compat_version.h
-@@ -6,7 +6,6 @@
- #define __SXE_COMPAT_VERSION_H__
- 
- #include <stdbool.h>
--#include "sxe_dpdk_version.h"
- 
- struct rte_eth_dev;
- enum rte_eth_event_type;
-diff --git a/drivers/net/sxe/base/sxe_hw.c b/drivers/net/sxe/base/sxe_hw.c
-index 4fe8f84f6b..0034e64151 100644
---- a/drivers/net/sxe/base/sxe_hw.c
-+++ b/drivers/net/sxe/base/sxe_hw.c
-@@ -3,6 +3,7 @@
-  */
- #ifdef SXE_PHY_CONFIGURE
- #include <linux/mdio.h>
-+#include <rte_compat.h>
- #endif
- #include <rte_byteorder.h>
- #if defined(__KERNEL__) || defined(SXE_KERNEL_TEST)
-@@ -1893,7 +1894,7 @@ static void sxe_hw_rx_pkt_buf_size_configure(struct sxe_hw *hw,
- 		for (i = 0; i < (num_pb / 2); i++)
- 			SXE_REG_WRITE(hw, SXE_RXPBSIZE(i), rx_buf_size);
- 
--		fallthrough;
-+		/* fallthrough */
- 	case (PBA_STRATEGY_EQUAL):
- 		rx_buf_size = (total_buf_size / (num_pb - i))
- 				<< SXE_RX_PKT_BUF_SIZE_SHIFT;
-@@ -2231,7 +2232,7 @@ static s32 sxe_hw_fnav_vm_pool_mask_get(struct sxe_hw *hw,
- 	switch (vm_pool & SXE_SAMPLE_VM_POOL_MASK) {
- 	case 0x0:
- 		*fnavm |= SXE_FNAVM_POOL;
--		fallthrough;
-+		/* fallthrough */
- 	case 0x7F:
- 		break;
- 	default:
-@@ -2279,13 +2280,13 @@ static s32 sxe_hw_fnav_vlan_mask_get(struct sxe_hw *hw,
- 	switch (ntohs(vlan_id) & SXE_SAMPLE_VLAN_MASK) {
- 	case 0x0000:
- 		*fnavm |= SXE_FNAVM_VLANID;
--		fallthrough;
-+		/* fallthrough */
- 	case 0x0FFF:
- 		*fnavm |= SXE_FNAVM_VLANP;
- 		break;
- 	case 0xE000:
- 		*fnavm |= SXE_FNAVM_VLANID;
--		fallthrough;
-+		/* fallthrough */
- 	case 0xEFFF:
- 		break;
- 	default:
-@@ -2305,7 +2306,7 @@ static s32 sxe_hw_fnav_flex_bytes_mask_get(struct sxe_hw *hw,
- 	switch ((__force u16)flex_bytes & SXE_SAMPLE_FLEX_BYTES_MASK) {
- 	case 0x0000:
- 		*fnavm |= SXE_FNAVM_FLEX;
--		fallthrough;
-+		/* fallthrough */
- 	case 0xFFFF:
- 		break;
- 	default:
-@@ -4963,7 +4964,14 @@ bool sxe_hw_is_rss_enabled(struct sxe_hw *hw)
- {
- 	bool rss_enable = false;
- 	u32 mrqc = SXE_REG_READ(hw, SXE_MRQC);
--	if (mrqc & SXE_MRQC_RSSEN)
-+
-+
-+	u32 mrqe_val = mrqc & SXE_MRQC_MRQE_MASK;
-+	if (mrqe_val == SXE_MRQC_RSSEN ||
-+		mrqe_val == SXE_MRQC_RTRSS8TCEN ||
-+		mrqe_val == SXE_MRQC_RTRSS4TCEN ||
-+		mrqe_val == SXE_MRQC_VMDQRSS32EN ||
-+		mrqe_val == SXE_MRQC_VMDQRSS64EN)
- 		rss_enable = true;
- 
- 	return rss_enable;
-@@ -5497,7 +5505,6 @@ void sxe_hw_rss_cap_switch(struct sxe_hw *hw, bool is_on)
- {
- 	u32 mrqc = SXE_REG_READ(hw, SXE_MRQC);
- 	u32 mrqe_val;
--
- 	mrqe_val = mrqc & SXE_MRQC_MRQE_MASK;
- 	if (is_on) {
- 		mrqe_val = SXE_MRQC_RSSEN;
-diff --git a/drivers/net/sxe/base/sxe_offload_common.c b/drivers/net/sxe/base/sxe_offload_common.c
-index f87cce67a5..7ecb31f466 100644
---- a/drivers/net/sxe/base/sxe_offload_common.c
-+++ b/drivers/net/sxe/base/sxe_offload_common.c
-@@ -1,7 +1,6 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-  */
--#include "sxe_dpdk_version.h"
- #include <ethdev_driver.h>
- 
- #include "sxe_types.h"
-diff --git a/drivers/net/sxe/base/sxe_queue_common.c b/drivers/net/sxe/base/sxe_queue_common.c
-index 914718769f..e31ebd005a 100644
---- a/drivers/net/sxe/base/sxe_queue_common.c
-+++ b/drivers/net/sxe/base/sxe_queue_common.c
-@@ -4,7 +4,6 @@
- 
- #include <rte_ethdev.h>
- #include <rte_malloc.h>
--#include "sxe_dpdk_version.h"
- #include "sxe_compat_version.h"
- #include <ethdev_driver.h>
- #include <bus_pci_driver.h>
-@@ -294,6 +293,7 @@ void __sxe_recycle_rxq_info_get(struct rte_eth_dev *dev, u16 queue_id,
- 	q_info->mp = rxq->mb_pool;
- 	q_info->mbuf_ring_size = rxq->ring_depth;
- 	q_info->receive_tail = &rxq->processing_idx;
-+
- #if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
- 	if (adapter->rx_vec_allowed) {
- #if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM)
-@@ -308,6 +308,7 @@ void __sxe_recycle_rxq_info_get(struct rte_eth_dev *dev, u16 queue_id,
- 	q_info->refill_requirement = rxq->batch_alloc_size;
- 	q_info->refill_head = &rxq->batch_alloc_trigger;
- #endif
-+
- 	return;
- }
- 
-diff --git a/drivers/net/sxe/base/sxe_rx_common.c b/drivers/net/sxe/base/sxe_rx_common.c
-index e3fee580df..5e46ff76f3 100644
---- a/drivers/net/sxe/base/sxe_rx_common.c
-+++ b/drivers/net/sxe/base/sxe_rx_common.c
-@@ -5,7 +5,6 @@
- #include <rte_memory.h>
- #include <rte_memzone.h>
- #include <rte_mbuf.h>
--#include "sxe_dpdk_version.h"
- #include <ethdev_driver.h>
- #include <rte_prefetch.h>
- #include <rte_malloc.h>
-@@ -80,8 +79,6 @@ void __rte_cold __sxe_rx_function_set(struct rte_eth_dev *dev,
- 	u16  i, is_using_sse;
- 
- 	if (sxe_rx_vec_condition_check(dev) ||
--		!rx_batch_alloc_allowed ||
--		rte_vect_get_max_simd_bitwidth() < RTE_VECT_SIMD_128
- 		!rx_batch_alloc_allowed
- 		) {
- 		PMD_LOG_DEBUG(INIT, "Port[%d] doesn't meet Vector Rx "
-@@ -111,6 +108,7 @@ void __rte_cold __sxe_rx_function_set(struct rte_eth_dev *dev,
- 
- #if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM)
- 			dev->recycle_rx_descriptors_refill = sxe_recycle_rx_descriptors_refill_vec;
-+
- #endif
- 			dev->rx_pkt_burst = sxe_scattered_pkts_vec_recv;
- 
-@@ -138,12 +136,13 @@ void __rte_cold __sxe_rx_function_set(struct rte_eth_dev *dev,
- 			dev->rx_pkt_burst = sxe_single_alloc_lro_pkts_recv;
- 		}
- 	}
--#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
-+	#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
- 	else if (*rx_vec_allowed) {
- 		PMD_LOG_DEBUG(INIT, "Vector rx enabled, please make sure RX "
- 					"burst size no less than %d (port=%d).",
- 				 SXE_DESCS_PER_LOOP,
- 				 dev->data->port_id);
-+
- #if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM)
- 		dev->recycle_rx_descriptors_refill = sxe_recycle_rx_descriptors_refill_vec;
- 
-@@ -166,6 +165,7 @@ void __rte_cold __sxe_rx_function_set(struct rte_eth_dev *dev,
- 
- 		dev->rx_pkt_burst = sxe_pkts_recv;
- 	}
-+
- #if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
- 	is_using_sse =
- 		(dev->rx_pkt_burst == sxe_scattered_pkts_vec_recv ||
-@@ -177,6 +177,7 @@ void __rte_cold __sxe_rx_function_set(struct rte_eth_dev *dev,
- 		rxq->is_using_sse = is_using_sse;
- 	}
- #endif
-+
- }
- 
- s32 __sxe_rx_descriptor_status(void *rx_queue, u16 offset)
-@@ -340,6 +341,7 @@ const u32 *__sxe_dev_supported_ptypes_get(struct rte_eth_dev *dev, size_t *no_of
- 		ptypes = ptypes_arr;
- 		goto l_end;
- 	}
-+
- #if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
- #if defined(RTE_ARCH_X86)
- 	if (dev->rx_pkt_burst == sxe_pkts_vec_recv ||
-diff --git a/drivers/net/sxe/base/sxe_rx_common.h b/drivers/net/sxe/base/sxe_rx_common.h
-index f9afb517d9..d1bf172c89 100644
---- a/drivers/net/sxe/base/sxe_rx_common.h
-+++ b/drivers/net/sxe/base/sxe_rx_common.h
-@@ -5,8 +5,6 @@
- #ifndef __SXE_RX_COMMON_H__
- #define __SXE_RX_COMMON_H__
- 
--#include "sxe_dpdk_version.h"
--
- void __rte_cold __sxe_rx_function_set(struct rte_eth_dev *dev,
- 	bool rx_batch_alloc_allowed, bool *rx_vec_allowed);
- 
-diff --git a/drivers/net/sxe/base/sxe_tx_common.c b/drivers/net/sxe/base/sxe_tx_common.c
-index e4cf514547..5f8a951bbd 100644
---- a/drivers/net/sxe/base/sxe_tx_common.c
-+++ b/drivers/net/sxe/base/sxe_tx_common.c
-@@ -1,7 +1,6 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-  */
--#include "sxe_dpdk_version.h"
- #include <ethdev_driver.h>
- #include <ethdev_pci.h>
- #include <rte_net.h>
-diff --git a/drivers/net/sxe/base/sxevf_hw.c b/drivers/net/sxe/base/sxevf_hw.c
-index 7425bafedb..914860e912 100644
---- a/drivers/net/sxe/base/sxevf_hw.c
-+++ b/drivers/net/sxe/base/sxevf_hw.c
-@@ -15,7 +15,6 @@
- #else
- #include "sxe_errno.h"
- #include "sxe_logs.h"
--#include "sxe_dpdk_version.h"
- #include "sxe_compat_version.h"
- #include "sxevf.h"
- #include "sxevf_hw.h"
-diff --git a/drivers/net/sxe/include/sxe/sxe_cli.h b/drivers/net/sxe/include/sxe/sxe_cli.h
-index 623347dab2..c65d1d1973 100644
---- a/drivers/net/sxe/include/sxe/sxe_cli.h
-+++ b/drivers/net/sxe/include/sxe/sxe_cli.h
-@@ -9,7 +9,7 @@
- #include "sxe_drv_type.h"
- #endif
- 
--#define SXE_VERSION_LEN				  (32)
-+#define SXE_CODE_VERION_LEN				  (32)
- #define SXE_MAC_NUM					 (128)
- #define SXE_PORT_TRANSCEIVER_LEN		(32)
- #define SXE_PORT_VENDOR_LEN			 (32)
-@@ -47,8 +47,8 @@ typedef enum port_link_speed {
- } port_link_speed_e;
- 
- typedef struct sys_soc_info {
--	S8	 fw_ver[SXE_VERSION_LEN];
--	S8	 opt_ver[SXE_VERSION_LEN];
-+	S8	 fw_ver[SXE_CODE_VERION_LEN];
-+	S8	 opt_ver[SXE_CODE_VERION_LEN];
- 	U8	 soc_status;
- 	U8	 pad[3];
- 	S32	soc_temp;
-diff --git a/drivers/net/sxe/include/sxe/sxe_msg.h b/drivers/net/sxe/include/sxe/sxe_msg.h
-index 460258c907..19d03d25b2 100644
---- a/drivers/net/sxe/include/sxe/sxe_msg.h
-+++ b/drivers/net/sxe/include/sxe/sxe_msg.h
-@@ -119,7 +119,7 @@ typedef struct sxe_sfp_rate_able {
- 
- 
- typedef struct sxe_spp_tx_able {
--	BOOL is_disable;
-+	bool is_disable;
- } sxe_spp_tx_able_s;
- 
- 
-@@ -129,7 +129,7 @@ typedef struct sxe_default_mac_addr_resp {
- 
- 
- typedef struct sxe_mng_rst {
--	BOOL enable;
-+	bool enable;
- } sxe_mng_rst_s;
- 
- #endif
-diff --git a/drivers/net/sxe/meson.build b/drivers/net/sxe/meson.build
-index a3b874b7e2..700f331ac5 100644
---- a/drivers/net/sxe/meson.build
-+++ b/drivers/net/sxe/meson.build
-@@ -1,5 +1,11 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright (C), 2022, Linkdata Technology Co., Ltd.
-+if not is_linux or not (dpdk_conf.has('RTE_ARCH_X86_64') or dpdk_conf.has('RTE_ARCH_ARM64'))
-+    build = false
-+    reason = 'only supported on x86_64 or arm64 Linux'
-+    subdir_done()
-+endif
-+
- cflags += ['-DSXE_DPDK']
- cflags += ['-DSXE_HOST_DRIVER']
- cflags += ['-DSXE_DPDK_L4_FEATURES']
-@@ -11,50 +17,50 @@ cflags += ['-DSXE_DPDK_SIMD']
- 
- deps += ['hash']
- sources = files(
--    'pf/sxe_main.c',
--	'pf/sxe_filter.c',
--    'pf/sxe_flow_ctrl.c',
--    'pf/sxe_irq.c',
--    'pf/sxe_ethdev.c',
--	'pf/sxe_offload.c',
--	'pf/sxe_queue.c',
--	'pf/sxe_rx.c',
--	'pf/sxe_tx.c',
--	'pf/sxe_stats.c',
--	'pf/sxe_pmd_hdc.c',
--    'pf/sxe_phy.c',
--    'pf/sxe_ptp.c',
--    'pf/sxe_vf.c',
--    'pf/sxe_dcb.c',
--    'vf/sxevf_main.c',
--	'vf/sxevf_filter.c',
--	'vf/sxevf_irq.c',
--	'vf/sxevf_msg.c',
--	'vf/sxevf_ethdev.c',
--	'vf/sxevf_stats.c',
--	'vf/sxevf_rx.c',
--	'vf/sxevf_tx.c',
--	'vf/sxevf_queue.c',
--	'vf/sxevf_offload.c',
--    'base/sxe_queue_common.c',
--	'base/sxe_rx_common.c',
--	'base/sxe_tx_common.c',
--	'base/sxe_offload_common.c',
--    'base/sxe_common.c',
--    'base/sxe_hw.c',
--    'base/sxevf_hw.c',
-+        'pf/sxe_main.c',
-+        'pf/sxe_filter.c',
-+        'pf/sxe_flow_ctrl.c',
-+        'pf/sxe_irq.c',
-+        'pf/sxe_ethdev.c',
-+        'pf/sxe_offload.c',
-+        'pf/sxe_queue.c',
-+        'pf/sxe_rx.c',
-+        'pf/sxe_tx.c',
-+        'pf/sxe_stats.c',
-+        'pf/sxe_pmd_hdc.c',
-+        'pf/sxe_phy.c',
-+        'pf/sxe_ptp.c',
-+        'pf/sxe_vf.c',
-+        'pf/sxe_dcb.c',
-+        'vf/sxevf_main.c',
-+        'vf/sxevf_filter.c',
-+        'vf/sxevf_irq.c',
-+        'vf/sxevf_msg.c',
-+        'vf/sxevf_ethdev.c',
-+        'vf/sxevf_stats.c',
-+        'vf/sxevf_rx.c',
-+        'vf/sxevf_tx.c',
-+        'vf/sxevf_queue.c',
-+        'vf/sxevf_offload.c',
-+        'base/sxe_queue_common.c',
-+        'base/sxe_rx_common.c',
-+        'base/sxe_tx_common.c',
-+        'base/sxe_offload_common.c',
-+        'base/sxe_common.c',
-+        'base/sxe_hw.c',
-+        'base/sxevf_hw.c',
- )
- 
- testpmd_sources = files('sxe_testpmd.c')
- 
- if arch_subdir == 'x86'
--	sources += files('pf/sxe_vec_sse.c')
-+    sources += files('pf/sxe_vec_sse.c')
- elif arch_subdir == 'arm'
--	sources += files('pf/sxe_vec_neon.c')
-+    sources += files('pf/sxe_vec_neon.c')
- endif
- 
- includes += include_directories('base')
- includes += include_directories('pf')
- includes += include_directories('vf')
- includes += include_directories('include/sxe/')
--includes += include_directories('include/')
-\ No newline at end of file
-+includes += include_directories('include/')
-diff --git a/drivers/net/sxe/meson.build.rej b/drivers/net/sxe/meson.build.rej
-deleted file mode 100644
-index 33c394b21f..0000000000
---- a/drivers/net/sxe/meson.build.rej
-+++ /dev/null
-@@ -1,8 +0,0 @@
--diff a/drivers/net/sxe/meson.build b/drivers/net/sxe/meson.build	(rejected hunks)
--@@ -19,4 +27,4 @@ sources = files(
-- includes += include_directories('base')
-- includes += include_directories('pf')
-- includes += include_directories('include/sxe/')
---includes += include_directories('include/')
--\ No newline at end of file
--+includes += include_directories('include/')
-diff --git a/drivers/net/sxe/pf/sxe.h b/drivers/net/sxe/pf/sxe.h
-index 212929cf04..73c9ad55a1 100644
---- a/drivers/net/sxe/pf/sxe.h
-+++ b/drivers/net/sxe/pf/sxe.h
-@@ -6,14 +6,14 @@
- 
- #include <rte_pci.h>
- #include <rte_time.h>
--#include "sxe_filter.h"
- #include <stdbool.h>
- #include "sxe_types.h"
--#include "sxe_stats.h"
-+#include "sxe_filter.h"
- #include "sxe_irq.h"
-+#include "sxe_stats.h"
-+#include "sxe_phy.h"
- #include "sxe_vf.h"
- #include "sxe_dcb.h"
--#include "sxe_phy.h"
- #include "sxe_hw.h"
- 
- struct sxe_hw;
-@@ -25,6 +25,8 @@ struct sxe_vlan_context;
- #define PCI_VENDOR_ID_STARS	  0x1FF2
- #define SXE_DEV_ID_ASIC		  0x10a1
- 
-+#define MAC_FMT "%02x:%02x:%02x:%02x:%02x:%02x"
-+
- #ifdef RTE_PMD_PACKET_PREFETCH
- #define rte_packet_prefetch(p)  rte_prefetch1(p)
- #else
-@@ -73,13 +75,12 @@ struct sxe_adapter {
- 	s8 name[PCI_PRI_STR_SIZE + 1];
- 
- 	u32 mtu;
-+
- 	bool rss_reta_updated;
-+
- 	RTE_ATOMIC(bool) link_thread_running;
- 	RTE_ATOMIC(bool) is_stopping;
- 	rte_thread_t link_thread_tid;
--	rte_atomic32_t link_thread_running;
--	rte_atomic32_t is_stopping;
--	pthread_t link_thread_tid;
- 	bool is_stopped;
- };
- 
-diff --git a/drivers/net/sxe/pf/sxe_dcb.c b/drivers/net/sxe/pf/sxe_dcb.c
-index 7decd70e07..51e4533f47 100644
---- a/drivers/net/sxe/pf/sxe_dcb.c
-+++ b/drivers/net/sxe/pf/sxe_dcb.c
-@@ -11,6 +11,7 @@
- #include "sxe_ethdev.h"
- #include "sxe_compat_version.h"
- #include "rte_pmd_sxe.h"
-+#include <eal_export.h>
- 
- #define DCB_RX_CONFIG  1
- #define DCB_TX_CONFIG  1
-@@ -493,7 +494,7 @@ static s32 sxe_dcb_cee_tc_credits_calculate(struct sxe_hw *hw,
- 
- 		tc_info->link_percent = (u8)link_percentage;
- 
--		credit_refill = min(link_percentage * total_credit,
-+		credit_refill = RTE_MIN(link_percentage * total_credit,
- 					(u32)MAX_CREDIT_REFILL);
- 
- 		if (credit_refill < min_credit)
-@@ -584,7 +585,7 @@ static void sxe_dcb_cee_pfc_parse(struct sxe_dcb_config *cfg,
- static s32 sxe_dcb_tc_stats_configure(struct sxe_hw *hw,
- 					struct sxe_dcb_config *dcb_config)
- {
--	s32 ret;
-+	s32 ret = 0;
- 	u8 tc_count = 8;
- 	bool vmdq_active = false;
- 
-@@ -862,8 +863,7 @@ void sxe_dcb_configure(struct rte_eth_dev *dev)
- }
- 
- RTE_EXPORT_SYMBOL(rte_pmd_sxe_tc_bw_set)
--s32
--rte_pmd_sxe_tc_bw_set(u8 port,
-+s32 rte_pmd_sxe_tc_bw_set(u8 port,
- 				u8 tc_num, u8 *bw_weight)
- {
- 	struct sxe_adapter *adapter;
-diff --git a/drivers/net/sxe/pf/sxe_ethdev.c b/drivers/net/sxe/pf/sxe_ethdev.c
-index 0a5b04493d..fd39c4acff 100644
---- a/drivers/net/sxe/pf/sxe_ethdev.c
-+++ b/drivers/net/sxe/pf/sxe_ethdev.c
-@@ -8,7 +8,7 @@
- #include <rte_ethdev.h>
- #include <rte_pmd_sxe.h>
- #include <rte_alarm.h>
--
-+#include <eal_export.h>
- #include "sxe_types.h"
- #include "sxe_logs.h"
- #include "sxe_compat_platform.h"
-@@ -923,8 +923,7 @@ static s32 sxe_dev_reset(struct rte_eth_dev *eth_dev)
- }
- 
- RTE_EXPORT_SYMBOL(rte_pmd_sxe_tx_loopback_set)
--s32
--rte_pmd_sxe_tx_loopback_set(u16 port, u8 on)
-+s32 rte_pmd_sxe_tx_loopback_set(u16 port, u8 on)
- {
- 	struct rte_eth_dev *dev;
- 	struct sxe_adapter *adapter;
-diff --git a/drivers/net/sxe/pf/sxe_filter.c b/drivers/net/sxe/pf/sxe_filter.c
-index 55c534d692..8d09d8596f 100644
---- a/drivers/net/sxe/pf/sxe_filter.c
-+++ b/drivers/net/sxe/pf/sxe_filter.c
-@@ -1,7 +1,6 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-  */
--#include "sxe_dpdk_version.h"
- #include <ethdev_driver.h>
- #include <bus_pci_driver.h>
- #include <rte_malloc.h>
-diff --git a/drivers/net/sxe/pf/sxe_filter.h b/drivers/net/sxe/pf/sxe_filter.h
-index de6170a3f4..7b9026fcfb 100644
---- a/drivers/net/sxe/pf/sxe_filter.h
-+++ b/drivers/net/sxe/pf/sxe_filter.h
-@@ -6,7 +6,6 @@
- #define __SXE_FILTER_H__
- 
- #include <rte_ether.h>
--#include "sxe_dpdk_version.h"
- #include <ethdev_driver.h>
- #include "sxe_types.h"
- #include "sxe_hw.h"
-diff --git a/drivers/net/sxe/pf/sxe_irq.h b/drivers/net/sxe/pf/sxe_irq.h
-index b2c5692932..eba70f5361 100644
---- a/drivers/net/sxe/pf/sxe_irq.h
-+++ b/drivers/net/sxe/pf/sxe_irq.h
-@@ -4,8 +4,6 @@
- 
- #ifndef __SXE_IRQ_H__
- #define __SXE_IRQ_H__
--
--#include "sxe_dpdk_version.h"
- #include <ethdev_driver.h>
- 
- #include "sxe_compat_platform.h"
-diff --git a/drivers/net/sxe/pf/sxe_main.c b/drivers/net/sxe/pf/sxe_main.c
-index 49f9dd2f27..6c0891dbde 100644
---- a/drivers/net/sxe/pf/sxe_main.c
-+++ b/drivers/net/sxe/pf/sxe_main.c
-@@ -8,7 +8,6 @@
- #include <rte_pci.h>
- 
- #include "sxe_version.h"
--#include "sxe_dpdk_version.h"
- #include <bus_pci_driver.h>
- #include <ethdev_driver.h>
- #include <ethdev_pci.h>
-@@ -245,24 +244,10 @@ RTE_LOG_REGISTER_SUFFIX(sxe_log_rx, pmd.net.sxe.rx, DEBUG);
- RTE_LOG_REGISTER_SUFFIX(sxe_log_tx, pmd.net.sxe.tx, DEBUG);
- RTE_LOG_REGISTER_SUFFIX(sxe_log_hw, pmd.net.sxe.tx_hw, DEBUG);
- #else
--#ifdef DPDK_19_11_6
--s32 sxe_log_init;
--s32 sxe_log_drv;
--RTE_INIT(sxe_init_log)
--{
--	sxe_log_init = rte_log_register("pmd.net.sxe.init");
--	if (sxe_log_init >= 0)
--		rte_log_set_level(sxe_log_init, RTE_LOG_NOTICE);
- 
--	sxe_log_drv = rte_log_register("pmd.net.sxe.drv");
--	if (sxe_log_drv >= 0)
--		rte_log_set_level(sxe_log_drv, RTE_LOG_NOTICE);
--}
--#else
- RTE_LOG_REGISTER_SUFFIX(sxe_log_init, pmd.net.sxe.init, NOTICE);
- RTE_LOG_REGISTER_SUFFIX(sxe_log_drv, pmd.net.sxe.drv, NOTICE);
- #endif
--#endif
- 
- int sxe_eth_dev_callback_process(struct rte_eth_dev *dev,
- 	enum rte_eth_event_type event, void *ret_param)
-diff --git a/drivers/net/sxe/pf/sxe_offload.c b/drivers/net/sxe/pf/sxe_offload.c
-index 4b49cba707..d34cf7ecc8 100644
---- a/drivers/net/sxe/pf/sxe_offload.c
-+++ b/drivers/net/sxe/pf/sxe_offload.c
-@@ -2,7 +2,6 @@
-  * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-  */
- #include <ethdev_driver.h>
--
- #include "sxe.h"
- #include "sxe_offload.h"
- #include "sxe_logs.h"
-diff --git a/drivers/net/sxe/pf/sxe_phy.c b/drivers/net/sxe/pf/sxe_phy.c
-index 787b16fb47..afc885545e 100644
---- a/drivers/net/sxe/pf/sxe_phy.c
-+++ b/drivers/net/sxe/pf/sxe_phy.c
-@@ -1,7 +1,6 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-  */
--#include "sxe_dpdk_version.h"
- #include <ethdev_driver.h>
- #include <dev_driver.h>
- #include <rte_cycles.h>
-@@ -69,7 +68,8 @@ void sxe_wait_setup_link_complete(struct rte_eth_dev *dev,
- 	struct sxe_adapter *adapter = dev->data->dev_private;
- 	uint32_t timeout = timeout_ms ? timeout_ms : SXE_WARNING_TIMEOUT;
- 
--	while (rte_atomic_load_explicit(&adapter->link_thread_running, rte_memory_order_seq_cst)) {
-+	while (rte_atomic_load_explicit(&adapter->link_thread_running,
-+		rte_memory_order_seq_cst)) {
- 		rte_delay_us_sleep(1000);
- 		timeout--;
- 
-diff --git a/drivers/net/sxe/pf/sxe_pmd_hdc.c b/drivers/net/sxe/pf/sxe_pmd_hdc.c
-index 21f751ed26..61dcb6a6c1 100644
---- a/drivers/net/sxe/pf/sxe_pmd_hdc.c
-+++ b/drivers/net/sxe/pf/sxe_pmd_hdc.c
-@@ -3,7 +3,6 @@
-  */
- 
- #include <rte_malloc.h>
--#include "sxe_dpdk_version.h"
- #include <ethdev_driver.h>
- #include "sxe_compat_version.h"
- #include <semaphore.h>
-diff --git a/drivers/net/sxe/pf/sxe_queue.c b/drivers/net/sxe/pf/sxe_queue.c
-index 9411da8ff8..75287defda 100644
---- a/drivers/net/sxe/pf/sxe_queue.c
-+++ b/drivers/net/sxe/pf/sxe_queue.c
-@@ -1,11 +1,9 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-  */
--#include "sxe_dpdk_version.h"
- #include <ethdev_driver.h>
- #include <dev_driver.h>
- #include "sxe_ethdev.h"
--
- #include "rte_malloc.h"
- #include "sxe.h"
- #include "sxe_hw.h"
-diff --git a/drivers/net/sxe/pf/sxe_queue.h b/drivers/net/sxe/pf/sxe_queue.h
-index e67baf6135..027aea0755 100644
---- a/drivers/net/sxe/pf/sxe_queue.h
-+++ b/drivers/net/sxe/pf/sxe_queue.h
-@@ -3,8 +3,6 @@
-  */
- #ifndef __SXE_QUEUE_H__
- #define __SXE_QUEUE_H__
--
--#include "sxe_dpdk_version.h"
- #include "sxe_queue_common.h"
- 
- #define SXE_TXRX_RING_NUM_MAX	 64
-diff --git a/drivers/net/sxe/pf/sxe_rx.c b/drivers/net/sxe/pf/sxe_rx.c
-index 65cfcca4c9..9a7a5e71ad 100644
---- a/drivers/net/sxe/pf/sxe_rx.c
-+++ b/drivers/net/sxe/pf/sxe_rx.c
-@@ -1,7 +1,6 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-  */
--
- #include <rte_memory.h>
- #include <rte_memzone.h>
- #include <rte_mbuf.h>
-@@ -113,7 +112,6 @@
- 
- 
- const alignas(RTE_CACHE_LINE_SIZE) u32 sxe_ptype_table[SXE_PACKET_TYPE_MAX] = {
--
- 	[SXE_PACKET_TYPE_ETHER] = RTE_PTYPE_L2_ETHER,
- 	[SXE_PACKET_TYPE_IPV4] = RTE_PTYPE_L2_ETHER |
- 		RTE_PTYPE_L3_IPV4,
-diff --git a/drivers/net/sxe/pf/sxe_stats.c b/drivers/net/sxe/pf/sxe_stats.c
-index af3c0bf84c..34470eae64 100644
---- a/drivers/net/sxe/pf/sxe_stats.c
-+++ b/drivers/net/sxe/pf/sxe_stats.c
-@@ -1,7 +1,6 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-  */
--#include "sxe_dpdk_version.h"
- #include "sxe_stats.h"
- #include "sxe.h"
- #include "sxe_logs.h"
-@@ -221,7 +220,7 @@ s32 sxe_xstats_get(struct rte_eth_dev *eth_dev,
- 	cnt = SXE_XSTAT_CNT;
- 	PMD_LOG_INFO(DRV, "xstat size:%u. hw xstat field cnt: %" SXE_PRIU64
- 			"fc xstat field cnt: %" SXE_PRIU64, cnt,
--			SXE_XSTAT_MAC_CNT, SXE_XSTAT_FC_CNT);
-+			(u64)SXE_XSTAT_MAC_CNT, (u64)SXE_XSTAT_FC_CNT);
- 
- 	if (usr_cnt < cnt) {
- 		ret = cnt;
-@@ -333,7 +332,7 @@ s32 sxe_xstats_names_get(__rte_unused struct rte_eth_dev *dev,
- 	if (usr_cnt < SXE_XSTAT_CNT) {
- 		ret = -SXE_ERR_PARAM;
- 		PMD_LOG_ERR(DRV, "max: %" SXE_PRIU64 " usr_cnt:%u invalid.(err:%d)",
--				SXE_XSTAT_CNT, usr_cnt, ret);
-+				(u64)SXE_XSTAT_CNT, usr_cnt, ret);
- 		goto l_out;
- 	}
- 
-@@ -432,7 +431,11 @@ s32 sxe_xstats_get_by_id(struct rte_eth_dev *eth_dev,
- 	s32 ret;
- 	u32 size = SXE_XSTAT_CNT;
- 	u32 i;
--	u64 value_all[size];
-+	u64 *value_all = (u64 *)malloc(size * sizeof(u64));
-+	if (value_all == NULL) {
-+		perror("value_all malloc failed");
-+		return -ENOMEM;
-+	}
- 
- 	if (ids == NULL) {
- 		ret = sxe_all_xstats_value_get(eth_dev, values, usr_cnt);
-@@ -459,6 +462,9 @@ s32 sxe_xstats_get_by_id(struct rte_eth_dev *eth_dev,
- 	ret = usr_cnt;
- 
- l_out:
-+	if (value_all != NULL)
-+		free(value_all);
-+
- 	return ret;
- }
- 
-@@ -470,7 +476,12 @@ s32 sxe_xstats_names_get_by_id(struct rte_eth_dev *eth_dev,
- 	s32 ret;
- 	u32 i;
- 	u32 size = SXE_XSTAT_CNT;
--	struct rte_eth_xstat_name xstat_names_all[size];
-+	struct rte_eth_xstat_name *xstat_names_all =
-+	(struct rte_eth_xstat_name *)malloc(size * sizeof(struct rte_eth_xstat_name));
-+	if (xstat_names_all == NULL) {
-+		perror("xstat_names_all malloc failed");
-+		return -ENOMEM;
-+	}
- 
- 	if (ids == NULL) {
- 		ret = sxe_xstats_names_get(eth_dev, xstats_names, usr_cnt);
-@@ -490,6 +501,9 @@ s32 sxe_xstats_names_get_by_id(struct rte_eth_dev *eth_dev,
- 	ret = usr_cnt;
- 
- l_out:
-+	if (xstat_names_all != NULL)
-+		free(xstat_names_all);
-+
- 	return ret;
- }
- 
-@@ -573,4 +587,3 @@ void sxe_queue_stats_map_reset(struct rte_eth_dev *eth_dev)
- 		sxe_hw_rxq_stat_map_set(hw, reg_idx, 0);
- 	}
- }
--
-diff --git a/drivers/net/sxe/pf/sxe_stats.h b/drivers/net/sxe/pf/sxe_stats.h
-index 78a13e7a0b..320a82a130 100644
---- a/drivers/net/sxe/pf/sxe_stats.h
-+++ b/drivers/net/sxe/pf/sxe_stats.h
-@@ -7,8 +7,6 @@
- 
- #include <rte_ethdev.h>
- #include <rte_ethdev_core.h>
--
--#include "sxe_dpdk_version.h"
- #include "sxe_hw.h"
- 
- #define SXE_STATS_FIELD_NAME_SIZE  50
-@@ -49,11 +47,11 @@ s32 sxe_xstats_names_get(__rte_unused struct rte_eth_dev *dev,
- 	struct rte_eth_xstat_name *xstats_names, __rte_unused unsigned int size);
- 
- s32 sxe_xstats_get_by_id(struct rte_eth_dev *eth_dev,
--					const ulong *ids,
--					ulong *values, u32 usr_cnt);
-+					const u64 *ids,
-+					u64 *values, u32 usr_cnt);
- 
- s32 sxe_xstats_names_get_by_id(struct rte_eth_dev *eth_dev,
--	const ulong *ids,
-+	const u64 *ids,
- 	struct rte_eth_xstat_name *xstats_names,
- 	u32 usr_cnt);
- 
-diff --git a/drivers/net/sxe/pf/sxe_tx.c b/drivers/net/sxe/pf/sxe_tx.c
-index b50052e0db..46e65ebcf7 100644
---- a/drivers/net/sxe/pf/sxe_tx.c
-+++ b/drivers/net/sxe/pf/sxe_tx.c
-@@ -1,18 +1,8 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-  */
--#include "sxe_dpdk_version.h"
--#if defined DPDK_20_11_5 || defined DPDK_19_11_6
--#include <rte_ethdev_driver.h>
--#include <rte_ethdev_pci.h>
--#elif defined DPDK_21_11_5
--#include <ethdev_driver.h>
--#include <rte_dev.h>
--#else
- #include <ethdev_driver.h>
- #include <dev_driver.h>
--#endif
--
- #include <rte_net.h>
- 
- #include "sxe.h"
-@@ -43,17 +33,10 @@ void __rte_cold sxe_tx_function_set(struct rte_eth_dev *dev,
- 		dev->tx_pkt_prepare = NULL;
- #if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
- 		if (txq->rs_thresh <= RTE_SXE_MAX_TX_FREE_BUF_SZ &&
--#ifndef DPDK_19_11_6
--			rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128 &&
--#endif
- 			(rte_eal_process_type() != RTE_PROC_PRIMARY ||
- 			sxe_txq_vec_setup(txq) == 0)) {
--#if defined DPDK_23_11_3 || defined DPDK_24_11_1
--#ifndef DPDK_23_7
- #if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM)
- 			dev->recycle_tx_mbufs_reuse = sxe_recycle_tx_mbufs_reuse_vec;
--#endif
--#endif
- #endif
- 			dev->tx_pkt_burst   = sxe_pkts_vector_xmit;
- 			PMD_LOG_INFO(INIT, "using vector tx code path");
-@@ -72,7 +55,7 @@ void __rte_cold sxe_tx_function_set(struct rte_eth_dev *dev,
- 
- 		PMD_LOG_INFO(INIT, "using full-featured tx code path");
- 		PMD_LOG_INFO(INIT, " - offloads = 0x%" SXE_PRIX64,
--					(unsigned long)txq->offloads);
-+							txq->offloads);
- 		PMD_LOG_INFO(INIT, " - tx_rs_thresh = %d "
- 				   "[RTE_PMD_SXE_MAX_TX_BURST=%d]",
- 				txq->rs_thresh,
-@@ -370,8 +353,6 @@ u16 sxe_pkts_simple_xmit(void *tx_queue, struct rte_mbuf **tx_pkts, u16 pkts_num
- }
- 
- #if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
--#if defined DPDK_23_11_3 || defined DPDK_24_11_1
--#ifndef DPDK_23_7
- #if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM)
- u16 sxe_recycle_tx_mbufs_reuse_vec(void *tx_queue,
- 	struct rte_eth_recycle_rxq_info *recycle_rxq_info)
-@@ -438,8 +419,6 @@ u16 sxe_recycle_tx_mbufs_reuse_vec(void *tx_queue,
- 	return nb_recycle_mbufs;
- }
- #endif
--#endif
--#endif
- 
- u16 sxe_pkts_vector_xmit(void *tx_queue, struct rte_mbuf **tx_pkts,
- 			   u16 pkts_num)
-diff --git a/drivers/net/sxe/pf/sxe_vec_common.h b/drivers/net/sxe/pf/sxe_vec_common.h
-index 85605507f5..90ace4c324 100644
---- a/drivers/net/sxe/pf/sxe_vec_common.h
-+++ b/drivers/net/sxe/pf/sxe_vec_common.h
-@@ -11,6 +11,7 @@
- #include <dev_driver.h>
- #include <rte_malloc.h>
- #include "sxe.h"
-+#include "sxe_queue.h"
- #include "sxe_rx.h"
- 
- #define RTE_SXE_MAX_TX_FREE_BUF_SZ	64
-@@ -77,7 +78,11 @@ static inline u16
- sxe_packets_reassemble(sxe_rx_queue_s *rxq, struct rte_mbuf **rx_bufs,
- 			u16 bufs_num, u8 *split_flags)
- {
--	struct rte_mbuf *pkts[bufs_num];
-+	struct rte_mbuf **pkts = (struct rte_mbuf **)malloc(bufs_num * sizeof(struct rte_mbuf *));
-+	if (pkts == NULL) {
-+		perror("pkts malloc failed");
-+		exit(EXIT_FAILURE);
-+	}
- 	struct rte_mbuf *start = rxq->pkt_first_seg;
- 	struct rte_mbuf *end = rxq->pkt_last_seg;
- 	u32 pkt_idx, buf_idx;
-@@ -129,6 +134,7 @@ sxe_packets_reassemble(sxe_rx_queue_s *rxq, struct rte_mbuf **rx_bufs,
- 	rxq->pkt_last_seg = end;
- 	memcpy(rx_bufs, pkts, pkt_idx * (sizeof(*pkts)));
- 
-+	free(pkts);
- 	return pkt_idx;
- }
- 
-diff --git a/drivers/net/sxe/pf/sxe_vec_neon.c b/drivers/net/sxe/pf/sxe_vec_neon.c
-index 9012750c98..30d878ea39 100644
---- a/drivers/net/sxe/pf/sxe_vec_neon.c
-+++ b/drivers/net/sxe/pf/sxe_vec_neon.c
-@@ -1,10 +1,8 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-  */
--
- #if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
- #include <stdint.h>
--#include "sxe_dpdk_version.h"
- #include <ethdev_driver.h>
- #include <rte_malloc.h>
- 
-diff --git a/drivers/net/sxe/pf/sxe_vec_sse.c b/drivers/net/sxe/pf/sxe_vec_sse.c
-index 8786af75f8..d54542f4a8 100644
---- a/drivers/net/sxe/pf/sxe_vec_sse.c
-+++ b/drivers/net/sxe/pf/sxe_vec_sse.c
-@@ -4,7 +4,6 @@
- 
- #if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
- #include <stdint.h>
--#include "sxe_dpdk_version.h"
- #include <ethdev_driver.h>
- #include <rte_malloc.h>
- #include <rte_vect.h>
-diff --git a/drivers/net/sxe/pf/sxe_vf.c b/drivers/net/sxe/pf/sxe_vf.c
-index d75ec913f3..7a5fe3379f 100644
---- a/drivers/net/sxe/pf/sxe_vf.c
-+++ b/drivers/net/sxe/pf/sxe_vf.c
-@@ -6,11 +6,9 @@
- #include <rte_ethdev.h>
- #include <rte_ether.h>
- #include <rte_memcpy.h>
--#include "sxe_dpdk_version.h"
- #include <ethdev_driver.h>
- #include <ethdev_pci.h>
- #include <bus_pci_driver.h>
--
- #include "sxe_logs.h"
- #include "sxe_vf.h"
- #include "sxe_hw.h"
-@@ -732,7 +730,7 @@ static s32 sxe_vf_mc_addr_sync(struct rte_eth_dev *dev,
- 	struct sxe_hw *hw = &adapter->hw;
- 	struct sxe_vf_info *vf_info = &adapter->vt_ctxt.vf_info[vf];
- 	struct sxe_mc_sync_msg *mc_msg = (struct sxe_mc_sync_msg *)msgbuf;
--	u8 mc_cnt = min(mc_msg->mc_cnt, SXE_VF_MC_ENTRY_NUM_MAX);
-+	u8 mc_cnt = RTE_MIN(mc_msg->mc_cnt, SXE_VF_MC_ENTRY_NUM_MAX);
- 	u32 mta_idx;
- 	u32 mta_shift;
- 	u32 vm_l2_filter = sxe_hw_pool_rx_mode_get(hw, vf);
-diff --git a/drivers/net/sxe/pf/sxe_vf.h b/drivers/net/sxe/pf/sxe_vf.h
-index 05b91540cc..112d98df39 100644
---- a/drivers/net/sxe/pf/sxe_vf.h
-+++ b/drivers/net/sxe/pf/sxe_vf.h
-@@ -5,7 +5,6 @@
- #ifndef __SXE_VF_H__
- #define __SXE_VF_H__
- 
--#include "sxe_dpdk_version.h"
- #include <rte_ethdev.h>
- #include <bus_pci_driver.h>
- 
-diff --git a/drivers/net/sxe/sxe_drv_type.h b/drivers/net/sxe/sxe_drv_type.h
-index 1ccf0b3f87..027c0571a4 100644
---- a/drivers/net/sxe/sxe_drv_type.h
-+++ b/drivers/net/sxe/sxe_drv_type.h
-@@ -6,14 +6,10 @@
- #define __SXE_DRV_TYPEDEF_H__
- 
- #include "sxe_types.h"
--#ifndef bool
--#define bool _Bool
--#endif
- 
- typedef u8 U8;
- typedef u16 U16;
- typedef u32 U32;
- typedef u64 U64;
--typedef bool BOOL;
- 
- #endif
-diff --git a/drivers/net/sxe/sxe_testpmd.c b/drivers/net/sxe/sxe_testpmd.c
-index b533ae939b..6deb502124 100644
---- a/drivers/net/sxe/sxe_testpmd.c
-+++ b/drivers/net/sxe/sxe_testpmd.c
-@@ -2,9 +2,9 @@
-  * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-  */
- #include <ethdev_driver.h>
--#include "sxe_ethdev.h"
-+#include "sxe_drv_type.h"
- #include "rte_pmd_sxe.h"
--
-+#include "sxe_ethdev.h"
- #include <cmdline_parse_etheraddr.h>
- #include <cmdline_parse_num.h>
- #include <cmdline_parse_string.h>
-diff --git a/drivers/net/sxe/vf/sxevf_ethdev.c b/drivers/net/sxe/vf/sxevf_ethdev.c
-index 1466465fe1..9bcdd11c6f 100644
---- a/drivers/net/sxe/vf/sxevf_ethdev.c
-+++ b/drivers/net/sxe/vf/sxevf_ethdev.c
-@@ -11,7 +11,7 @@
+- Such a big series deserves a cover letter, with annotations/tracking
+of the changes across the revisions.
+
+
+- I did not look in detail but I noticed a .map file.
+Driver specific API should be avoided as much as possible.
+
+But if it is really necessary, please look at the recent changes wrt
+symbol exports since .map are not used anymore.
+Example of a conversion:
+$ git diff v25.03 -- drivers/baseband/acc/
+diff --git a/drivers/baseband/acc/rte_acc100_pmd.c
+b/drivers/baseband/acc/rte_acc100_pmd.c
+index d33e42c807..b7f02f56e1 100644
+--- a/drivers/baseband/acc/rte_acc100_pmd.c
++++ b/drivers/baseband/acc/rte_acc100_pmd.c
+@@ -4,6 +4,7 @@
+
  #include <unistd.h>
- #include <stdarg.h>
- #include <inttypes.h>
--#include "sxe_dpdk_version.h"
-+
- #include <ethdev_driver.h>
- #include <ethdev_pci.h>
- #include <bus_pci_driver.h>
-@@ -252,6 +252,7 @@ static void sxevf_txrx_start(struct rte_eth_dev *eth_dev)
- 		txq = eth_dev->data->tx_queues[i];
- 		sxevf_tx_ring_switch(hw, txq->reg_idx, true);
- 		eth_dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
-+
- 	}
- 
- 	for (i = 0; i < eth_dev->data->nb_rx_queues; i++) {
-@@ -332,7 +333,6 @@ static s32 sxevf_dev_stop(struct rte_eth_dev *dev)
- 	sxevf_irq_free(dev);
- 
- l_out:
--
- 	return 0;
- }
- 
-@@ -362,7 +362,6 @@ static s32 sxevf_dev_close(struct rte_eth_dev *dev)
- 	sxevf_irq_unregister(dev);
- 
- l_out:
--
- 	return ret;
- }
- 
-@@ -470,7 +469,6 @@ static s32 sxevf_mtu_set(struct rte_eth_dev *dev, u16 mtu)
- 		goto l_out;
- 	}
- 
--	dev->data->dev_conf.rxmode.max_rx_pkt_len = max_frame;
- 	LOG_INFO_BDF("change max frame size to %u success.", max_frame);
- 
- l_out:
-diff --git a/drivers/net/sxe/vf/sxevf_filter.h b/drivers/net/sxe/vf/sxevf_filter.h
-index d468be12cc..6fa51e3af1 100644
---- a/drivers/net/sxe/vf/sxevf_filter.h
-+++ b/drivers/net/sxe/vf/sxevf_filter.h
-@@ -6,9 +6,7 @@
- #define __SXEVF_FILTER_H__
- 
- #include <rte_ether.h>
--#include "sxe_dpdk_version.h"
- #include <ethdev_driver.h>
--#endif
- 
- #define SXEVF_MTA_ENTRY_NUM_MAX		128
- #define SXEVF_UTA_HASH_BIT_MAX		 4096
-@@ -68,3 +66,5 @@ s32 sxevf_mac_addr_add(struct rte_eth_dev *dev,
- s32 sxevf_set_mc_addr_list(struct rte_eth_dev *dev,
- 			  struct rte_ether_addr *mc_addr_list,
- 			  u32 nb_mc_addr);
-+
-+#endif
-diff --git a/drivers/net/sxe/vf/sxevf_irq.c b/drivers/net/sxe/vf/sxevf_irq.c
-index bf768a67f6..3263f56313 100644
---- a/drivers/net/sxe/vf/sxevf_irq.c
-+++ b/drivers/net/sxe/vf/sxevf_irq.c
-@@ -9,10 +9,8 @@
- #include <rte_alarm.h>
- #include <rte_interrupts.h>
- #include <rte_malloc.h>
--#include "sxe_dpdk_version.h"
- #include <bus_pci_driver.h>
- #include <eal_interrupts.h>
--
- #include "sxevf.h"
- #include "sxe_logs.h"
- #include "sxe_errno.h"
-diff --git a/drivers/net/sxe/vf/sxevf_irq.h b/drivers/net/sxe/vf/sxevf_irq.h
-index def1167af7..2f9860ba15 100644
---- a/drivers/net/sxe/vf/sxevf_irq.h
-+++ b/drivers/net/sxe/vf/sxevf_irq.h
-@@ -5,7 +5,6 @@
- #ifndef __SXEVF_IRQ_H__
- #define __SXEVF_IRQ_H__
- 
--#include "sxe_dpdk_version.h"
- #include <ethdev_driver.h>
- #include "sxe_compat_platform.h"
- 
-diff --git a/drivers/net/sxe/vf/sxevf_main.c b/drivers/net/sxe/vf/sxevf_main.c
-index d418705cf8..b1924c1475 100644
---- a/drivers/net/sxe/vf/sxevf_main.c
-+++ b/drivers/net/sxe/vf/sxevf_main.c
-@@ -12,7 +12,6 @@
- #include <rte_dev.h>
- 
- #include "sxe_version.h"
--#include "sxe_dpdk_version.h"
- #include <ethdev_driver.h>
- #include <ethdev_pci.h>
- #include <bus_pci_driver.h>
-diff --git a/drivers/net/sxe/vf/sxevf_msg.c b/drivers/net/sxe/vf/sxevf_msg.c
-index faf6787e74..37d3f2c5dc 100644
---- a/drivers/net/sxe/vf/sxevf_msg.c
-+++ b/drivers/net/sxe/vf/sxevf_msg.c
-@@ -101,7 +101,7 @@ static s32 sxevf_mailbox_lock(struct sxevf_hw *hw)
- 		mailbox |= SXE_VFMAILBOX_VFU;
- 		sxevf_mailbox_write(hw, mailbox);
- 
--		if (sxevf_mbx_reg_read(hw) && SXE_VFMAILBOX_VFU) {
-+		if (sxevf_mbx_reg_read(hw) & SXE_VFMAILBOX_VFU) {
- 			ret = 0;
- 			break;
- 		}
-diff --git a/drivers/net/sxe/vf/sxevf_offload.c b/drivers/net/sxe/vf/sxevf_offload.c
-index 4b0eacf7f0..b39245aa11 100644
---- a/drivers/net/sxe/vf/sxevf_offload.c
-+++ b/drivers/net/sxe/vf/sxevf_offload.c
-@@ -1,7 +1,6 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-  */
--#include "sxe_dpdk_version.h"
- #include <ethdev_driver.h>
- 
- #include "sxe_types.h"
-diff --git a/drivers/net/sxe/vf/sxevf_queue.c b/drivers/net/sxe/vf/sxevf_queue.c
-index 4461d13369..69ef1f6676 100644
---- a/drivers/net/sxe/vf/sxevf_queue.c
-+++ b/drivers/net/sxe/vf/sxevf_queue.c
-@@ -7,8 +7,6 @@
- #include <rte_byteorder.h>
- #include <rte_mbuf_core.h>
- #include <rte_ethdev.h>
--
--#include "sxe_dpdk_version.h"
- #include "sxevf_rx.h"
- #include "sxevf_tx.h"
- #include "sxe_logs.h"
-diff --git a/drivers/net/sxe/vf/sxevf_queue.h b/drivers/net/sxe/vf/sxevf_queue.h
-index 9407e941fb..01e2ec216c 100644
---- a/drivers/net/sxe/vf/sxevf_queue.h
-+++ b/drivers/net/sxe/vf/sxevf_queue.h
-@@ -5,7 +5,6 @@
- #ifndef __SXEVF_QUEUEU_H__
- #define __SXEVF_QUEUEU_H__
- 
--#include "sxe_dpdk_version.h"
- #include "sxe_types.h"
- #include "sxe_queue_common.h"
- 
-diff --git a/drivers/net/sxe/vf/sxevf_rx.c b/drivers/net/sxe/vf/sxevf_rx.c
-index aee63d025d..81aab3f315 100644
---- a/drivers/net/sxe/vf/sxevf_rx.c
-+++ b/drivers/net/sxe/vf/sxevf_rx.c
-@@ -5,7 +5,6 @@
- #if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SRIOV
- 
+
++#include <eal_export.h>
  #include <rte_common.h>
--#include "sxe_dpdk_version.h"
- #include <ethdev_driver.h>
- 
- #include "sxe_logs.h"
-diff --git a/drivers/net/sxe/vf/sxevf_stats.c b/drivers/net/sxe/vf/sxevf_stats.c
-index 21407dac42..30ce9753dd 100644
---- a/drivers/net/sxe/vf/sxevf_stats.c
-+++ b/drivers/net/sxe/vf/sxevf_stats.c
-@@ -97,7 +97,7 @@ s32 sxevf_xstats_get(struct rte_eth_dev *eth_dev,
- 	cnt = SXE_HW_XSTATS_CNT;
- 	PMD_LOG_INFO(DRV, "xstat size:%u. hw xstat field cnt:%" SXE_PRIU64,
- 			cnt,
--			SXE_HW_XSTATS_CNT);
-+			(u64)SXE_HW_XSTATS_CNT);
- 
- 	if (usr_cnt < cnt) {
- 		ret = cnt;
-@@ -118,7 +118,7 @@ s32 sxevf_xstats_get(struct rte_eth_dev *eth_dev,
- 	cnt = 0;
- 	for (i = 0; i < SXE_HW_XSTATS_CNT; i++) {
- 		sxevf_hw_xstat_offset_get(i, &offset);
--		xstats[cnt].value = *(ulong *)(((s8 *)(&stats_info->hw_stats)) + offset);
-+		xstats[cnt].value = *(u_long *)(((s8 *)(&stats_info->hw_stats)) + offset);
- 		xstats[cnt].id = cnt;
- 		cnt++;
- 	}
--- 
-2.18.4
+ #include <rte_log.h>
+ #include <dev_driver.h>
+@@ -4635,6 +4636,7 @@ acc100_configure(const char *dev_name, struct
+rte_acc_conf *conf)
+        return 0;
+ }
+
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_acc_configure, 22.11)
+ int
+ rte_acc_configure(const char *dev_name, struct rte_acc_conf *conf)
+ {
+diff --git a/drivers/baseband/acc/version.map b/drivers/baseband/acc/versio=
+n.map
+deleted file mode 100644
+index 3f427caf67..0000000000
+--- a/drivers/baseband/acc/version.map
++++ /dev/null
+@@ -1,10 +0,0 @@
+-DPDK_25 {
+-       local: *;
+-};
+-
+-EXPERIMENTAL {
+-       global:
+-
+-       # added in 22.11
+-       rte_acc_configure;
+-};
+
+
+
+--=20
+David Marchand
 
