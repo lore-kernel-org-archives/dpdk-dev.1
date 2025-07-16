@@ -2,79 +2,90 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF8D8C83F14
-	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Jul 2025 21:26:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73B82C83F1B
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Jul 2025 15:56:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B120F40E39;
-	Wed,  9 Jul 2025 23:26:43 +0200 (CEST)
-Received: from mails.dpdk.org (localhost [127.0.0.1])
- by mails.dpdk.org (Postfix) with ESMTP id 2236B40654;
- Wed,  9 Jul 2025 23:26:42 +0200 (CEST)
-Received: from fhigh-a7-smtp.messagingengine.com
- (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
- by mails.dpdk.org (Postfix) with ESMTP id D25E84029E
- for <announce@dpdk.org>; Wed,  9 Jul 2025 23:26:40 +0200 (CEST)
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal
- [10.202.2.42])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 550E4140031B;
- Wed,  9 Jul 2025 17:26:40 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-02.internal (MEProxy); Wed, 09 Jul 2025 17:26:40 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 4D6A14013F;
+	Wed, 16 Jul 2025 17:56:09 +0200 (CEST)
+Received: from fhigh-b1-smtp.messagingengine.com
+ (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+ by mails.dpdk.org (Postfix) with ESMTP id 3BAFB400D6
+ for <dev@dpdk.org>; Wed, 16 Jul 2025 17:56:08 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal
+ [10.202.2.41])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 72F5A7A00AF;
+ Wed, 16 Jul 2025 11:56:07 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-01.internal (MEProxy); Wed, 16 Jul 2025 11:56:07 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:content-transfer-encoding:content-type:content-type:date:date
- :from:from:in-reply-to:message-id:mime-version:reply-to:subject
- :subject:to:to; s=fm2; t=1752096400; x=1752182800; bh=w5kTtaFEwB
- 50y7TckAojbFR2ysYL/Zr8ikpLO57cc+8=; b=Emm2EV2h+rSNWyJ7nL+tj10n6S
- aNffARu8U9UiRVoSdm7dAFKxShrCmk7sqirwra4j4Pi/F8l6zyftkQu+wdqWIqk2
- 4eP86/y8UrPzFQFtj7QGJWngeH1p0Lc6MjkOFjo3rddgXJGTGXbuqX54NnR6kDXl
- 54IPtsW08lFWMvwFAy0+aBsWJ0EvbE9mTbGHEs3z3OdMcOVYD3JxsnuZNtgxZWDA
- 24JvyZYHsUAZqPUJeLbvWzAJu1pCIyL5w2YDbw5VSuDNRszczUWpW4/8Q9f8Sy8K
- Bhr57w2+sllR/+/Dusc3TBO/qqX/BEq20HxyhOPfXqR2MEE9E1ZTSO6bHesA==
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1752681367;
+ x=1752767767; bh=YbRG9Jv8t7IrzZh+bUb0HJr0Asa2bdMkTiaS6+G7zJo=; b=
+ L7imDY93O4btEfE8p71UErpLKcfRZabXM2l9lskrEEmFUYDcLpFMxyEotRmRd7HJ
+ TnPq50pU54/GXPQfu/f+3f21L7svHiz8d9whKAwcwLm+InTXf7kZlILXguPNp6sf
+ LDsQs0tCbgNcqqNmS8fL/JHg0073LVWAaBr4B4QoDJWVLL/pejUd2lKVWBYV1eOJ
+ TehvYagts/9+QDGf6kEkIZ75uhnHDLu2hQyA1FmpaYePOadrUJnSjLO63FT/0MXG
+ cxcb7pqppGh9vR0G670p2qteAA7CjGvgB5DQpunlBMIWHMQxEp8z8cXx5pTMokAn
+ Gx19GRPyW0fkij5jJy5ZaA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:content-transfer-encoding:content-type
- :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
- 1752096400; x=1752182800; bh=w5kTtaFEwB50y7TckAojbFR2ysYL/Zr8ikp
- LO57cc+8=; b=S3CYZeMfIhHoU5+QNRBq/ePV8jjO0ly42rNMGyvhmssbx7vdIJc
- FqqaRxCUWMO5WJDw8C5jIWWlvaGhdxRUi5lT5StF8AMP73R74EiczYDzKTZwr4T6
- aKDwx/0wUfGb/+Rr31vefgPWLyzpUrAxtZBQOKEXC9OITUyfAEMykCDkKk8G3a1x
- 0/4KjRAOXyo8dFalqtcGa2/SzLHLvPvugIeAaekGhFgLpk4Lg9IujKYl39OxIKZD
- Q/eLw99BjtxazvTYjvvaCYtJVrUe/DM93DPpp2Trl/PlJAdpqHCIlWUM9HMdSQ4H
- eOzR86dJXXp4uwKJfKHmKnaUlKQPFtSsP2A==
-X-ME-Sender: <xms:kN5uaBmL50vZydru_RkmXg-McNney_12vJBXy1oGSwqf0kqSeYwWzw>
- <xme:kN5uaIF8S0pWkyiAqZdplXxrJVzOZvidnWORxwyfxEsr5yEo3Zr0X2i1hw4mdoWGQ
- I34FCJ5U-zRLeDFkg>
-X-ME-Received: <xmr:kN5uaIT9i7-CEpXKgz4ywSug88_0Fz0Stpd9LSDja9DZgeUUYxfBFaWStAmJnK8i3JfwVizgAtH5oeegHnPZCDu9Tg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefkeeifecutefuodetggdotefrod
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752681367; x=
+ 1752767767; bh=YbRG9Jv8t7IrzZh+bUb0HJr0Asa2bdMkTiaS6+G7zJo=; b=H
+ 80UTjdMQz3ig5H/GsY0OFLM3741BsgqZ8I2QyKRzX1wVxRET7Bb8MsspaJjqGkHv
+ KgXDUOzGrC/D4CPG387UDNF2NosGspMgSwVi0NVuxQGaPAsVwntRLn9nwuSqWfRz
+ kQEhhIGfIczxRM98aJe1EwdXkiMGnDtAXV+IWGyKx/nIxxnA60J6KlN3YtjZWAOn
+ AAkum/ECKj0wmdjNDbLYFn/o4shjBygyPHfE5tfNlG898GVyFVvyhjyEtIb2Ja+X
+ 4vuz5CJKRe9hC5a9m8ONatQ87fod4KQjbo1/mxQWM5uJP+pZF8d+7fy+le/zVSuP
+ 5QPexRsxX/M9APNFMbQWA==
+X-ME-Sender: <xms:l8t3aINCsLzH-7UWJV0q51miFIACZoUxxpUdKaecuyfLPoqGjgqn2A>
+ <xme:l8t3aGlfbBEOL9FYTPN637xdAbz1qAippS1dbqnidbaPybrdi6lQyWaXU7-H6qBzc
+ Dx6VDg_zjI_fnl19Q>
+X-ME-Received: <xmr:l8t3aM7wEVrbLxxC72e_CFyDfvhg_Z1Lr_3N9O8bqXKuyBBP1l-gZxYTZ0mniXnRkd5p8wVs2_kzE4FZMl3y-Yz4tA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehkedufecutefuodetggdotefrod
  ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
- ihhlohhuthemuceftddtnecunecujfgurhephffvufffkfgggfgtsehtufertddttdejne
- cuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgr
- lhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepueeguefhteduvddtjeevjeehgfegje
- egieeileevveegieffvdehheejveevkeefnecuffhomhgrihhnpeguphgukhdrohhrghen
- ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomh
- grshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedupdhmohguvgepshhm
- thhpohhuthdprhgtphhtthhopegrnhhnohhunhgtvgesughpughkrdhorhhg
-X-ME-Proxy: <xmx:kN5uaHz0Mf4AanUPAm09q81pzsEzj4iXXzg_swoKoLDAhjl8oTlVmg>
- <xmx:kN5uaPMBsm_gfNxaQD6WeEP6opSldEmZH6RwZEttIbCB9fwFgWFF5Q>
- <xmx:kN5uaOMbtKOEZ5-YDuLoY-kMOinOjfOSiSniYoNF3ZOCnmPisHyRUg>
- <xmx:kN5uaJS-rNUuHQk5Z_o5ozoSB5wDdhudi-zJ0obXST-XXJE_kZo9dg>
- <xmx:kN5uaIH6AxlofwsXNhxT73_XhF5e_cwjXbQl0dffcbZtZObRU6hA7xup>
+ ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+ hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
+ ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
+ grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
+ gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepkedpmhho
+ uggvpehsmhhtphhouhhtpdhrtghpthhtohepsghruhgtvgdrrhhitghhrghrughsohhnse
+ hinhhtvghlrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthht
+ ohepmhgrthgrnhesnhhvihguihgrrdgtohhmpdhrtghpthhtohepvhhirggthhgvshhlrg
+ hvohesnhhvihguihgrrdgtohhmpdhrtghpthhtohepughsohhsnhhofihskhhisehnvhhi
+ ughirgdrtghomhdprhgtphhtthhopegsihhnghiisehnvhhiughirgdrtghomhdprhgtph
+ htthhopehorhhikhgrsehnvhhiughirgdrtghomhdprhgtphhtthhopehsuhgrnhhmihhn
+ ghhmsehnvhhiughirgdrtghomh
+X-ME-Proxy: <xmx:l8t3aK1Zca31K5coPG-HMsyWODpWkzGsY81ENWYOYStp9QVQhU08Sg>
+ <xmx:l8t3aHG6OdY34Tk1HwxyylSrrhSbjqRW9d-OTjE1ossvAMFyMUIdIQ>
+ <xmx:l8t3aJh2gBq5hWBg9gGfRoUFRQZTgOmbTqFGRyFLqBZfKWQ8lrnzNA>
+ <xmx:l8t3aKAMF7hL8nGI8gmLaDmLhWwVh6QtHejcb71dv0wO02FNLwSpjg>
+ <xmx:l8t3aIeRhTqnuGfun21mi4-yQERY-bjbLxYbR0dLzeofDNhhG4b4irMi>
 Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA for
- <announce@dpdk.org>; Wed, 9 Jul 2025 17:26:39 -0400 (EDT)
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 16 Jul 2025 11:56:05 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: announce@dpdk.org
-Subject: DPDK release candidate 25.07-rc3
-Date: Wed, 09 Jul 2025 23:26:38 +0200
-Message-ID: <9991491.lyo4hBLbkK@thomas>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, Matan Azrad <matan@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Dariusz Sosnowski <dsosnowski@nvidia.com>, Bing Zhao <bingz@nvidia.com>,
+ Ori Kam <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>
+Subject: Re: [PATCH] doc: remove Mellanox acquisition explanation
+Date: Wed, 16 Jul 2025 17:56:04 +0200
+Message-ID: <4667722.LvFx2qVVIh@thomas>
+In-Reply-To: <aHeA3jXjcq80QERe@bricha3-mobl1.ger.corp.intel.com>
+References: <20250716101516.224980-1-thomas@monjalon.net>
+ <aHeA3jXjcq80QERe@bricha3-mobl1.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
-X-BeenThere: announce@dpdk.org
+X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
-X-BeenThere: dev@dpdk.org
 List-Id: DPDK patches and discussions <dev.dpdk.org>
 List-Unsubscribe: <https://mails.dpdk.org/options/dev>,
  <mailto:dev-request@dpdk.org?subject=unsubscribe>
@@ -85,21 +96,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-A new DPDK release candidate is ready for testing:
-	https://git.dpdk.org/dpdk/tag/?id=v25.07-rc3
+16/07/2025 12:37, Bruce Richardson:
+> On Wed, Jul 16, 2025 at 12:15:16PM +0200, Thomas Monjalon wrote:
+> > Time has passed since Mellanox acquisition by NVIDIA.
+> > No need to explain this anymore.
+> > 
+> > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+> > ---
+> 
+> I wonder if we should include in DPDK a "future_cleanups" doc which
+> describes cleanups that can or should be done at specific points. For
+> example, after a specific release or date, or after we drop support for a
+> compiler or kernel version. After we add a workaround for a particular
+> tooling issue (or other change), it would be nice to have somewhere to
+> record when exactly the workaround can be removed and how/why to do so.
 
-There are 86 new patches in this snapshot.
+It looks very programmatic :)
+Yes why not.
 
-Release notes:
-	https://doc.dpdk.org/guides/rel_notes/release_25_07.html
-
-Please test and report new issues on https://bugs.dpdk.org
-
-Only documentation changes are expected at this stage.
-
-If no major blocker is discovered,
-this release cycle may be closed during the next week.
-
-Thank you everyone
+In this case, there was no clear deadline.
 
 
