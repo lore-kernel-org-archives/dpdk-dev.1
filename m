@@ -2,47 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79430C83F1A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Jul 2025 06:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85EC6C83F1A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Jul 2025 06:54:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5EAD54014F;
-	Thu, 17 Jul 2025 08:53:53 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 99B3E400EF
- for <dev@dpdk.org>; Thu, 17 Jul 2025 08:53:52 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 77E5C46B9B; Thu, 17 Jul 2025 08:53:52 +0200 (CEST)
-From: bugzilla@dpdk.org
+	by mails.dpdk.org (Postfix) with ESMTP id 95D974014F;
+	Thu, 17 Jul 2025 08:54:51 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+ by mails.dpdk.org (Postfix) with ESMTP id 1BF4B400EF
+ for <dev@dpdk.org>; Thu, 17 Jul 2025 08:54:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1752735290; x=1784271290;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=1gNQQtTV6+ZvVykg7ECI+jg6zA9/nJ24LMAS46DURU0=;
+ b=gT1KkeokohQL3EqkMZOd0k8AURftzqCjooCZYV+9mVOvrFQoITnq4Mx+
+ auEqUofobkCerp2vYHWUGkvuK6Q8cvQ5rBg0zviEQxS1iQ/z9d3rxzyOA
+ 01VE03njttLCA2bJ7w1faBXeDUxM+1ah2gnxzzjLveAVwJoBEbqKeG9SC
+ Ne4eBDn/udF6HT+5551vBSi27AAglAjzHbXO72xfBIKBfsbYt1T6sX7nh
+ 4KZYCufHZ9eQmpzGurdxmJl/cEwfzq7zQS9fUZV4i3xqkkiDl4DhQC7Bp
+ 3zUPZchF/4CUn5jOOHydbnzI5acMvExv3vI/dkKRL4J0iLVvIN32FVeFI Q==;
+X-CSE-ConnectionGUID: +i7W9Z18RPOob5ziN2B+pg==
+X-CSE-MsgGUID: Aee95BTvT96RtK3k7jgiqQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11493"; a="54970986"
+X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; d="scan'208";a="54970986"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+ by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Jul 2025 23:54:49 -0700
+X-CSE-ConnectionGUID: uzUmDdPVSAmWcUdm2pRotQ==
+X-CSE-MsgGUID: mRyqx8u/S2ehNw1qL+Sfyw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,318,1744095600"; d="scan'208";a="194848776"
+Received: from unknown (HELO localhost.localdomain) ([10.239.252.12])
+ by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Jul 2025 23:54:47 -0700
+From: hailinx <hailinx.xu@intel.com>
 To: dev@dpdk.org
-Subject: [DPDK/vhost/virtio Bug 1676] [dpdk-25.03]
- virtio_ipsec_cryptodev_func/test_aesni_mb_aes_cbc_sha1_hmac: Failed to start
- qemu after launch dpdk-vhost_crypto sample
-Date: Thu, 17 Jul 2025 06:53:51 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: changed
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: vhost/virtio
-X-Bugzilla-Version: 25.03
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: yux.jiang@intel.com
-X-Bugzilla-Status: RESOLVED
-X-Bugzilla-Resolution: INVALID
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_status resolution
-Message-ID: <bug-1676-3-Gne2vy4JN1@https.bugs.dpdk.org/>
-In-Reply-To: <bug-1676-3@https.bugs.dpdk.org/>
-References: <bug-1676-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17527352321.F41719859.415176
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+Cc: bruce.richardson@intel.com, rajesh.t.puttaswamy@intel.com,
+ john.mcnamara@intel.com, hailinx <hailinx.xu@intel.com>
+Subject: [PATCH v1] net/ice: updated latest recommended matching list
+Date: Thu, 17 Jul 2025 14:16:02 +0800
+Message-Id: <20250717061604.3288049-1-hailinx.xu@intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,122 +59,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+Signed-off-by: hailinx <hailinx.xu@intel.com>
+---
+ doc/guides/nics/ice.rst | 2 ++
+ 1 file changed, 2 insertions(+)
 
---17527352321.F41719859.415176
-Date: Thu, 17 Jul 2025 08:53:52 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+diff --git a/doc/guides/nics/ice.rst b/doc/guides/nics/ice.rst
+index c6531d5684..90dc3220c7 100644
+--- a/doc/guides/nics/ice.rst
++++ b/doc/guides/nics/ice.rst
+@@ -85,6 +85,8 @@ are listed in the Tested Platforms section of the Release Notes for each release
+    +-----------+---------------+-----------------+-----------+--------------+-----------+
+    |    25.03  |     1.16.3    |      1.3.39     |  1.3.53   |    1.3.14    |    4.7    |
+    +-----------+---------------+-----------------+-----------+--------------+-----------+
++   |    25.07  |     2.2.8     |      1.3.43     |  1.3.55   |    1.3.23    |    4.8    |
++   +-----------+---------------+-----------------+-----------+--------------+-----------+
+ 
+ Dynamic Device Personalization (DDP) package loading
+ ----------------------------------------------------
+-- 
+2.25.1
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1676
-
-jiang,yu (yux.jiang@intel.com) changed:
-
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Status|UNCONFIRMED                 |RESOLVED
-         Resolution|---                         |INVALID
-
---- Comment #3 from jiang,yu (yux.jiang@intel.com) ---
-Can not reproduce by manual test.
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
-
---17527352321.F41719859.415176
-Date: Thu, 17 Jul 2025 08:53:52 +0200
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-<html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><span class=3D"vcard"><a class=3D"email" href=3D"mailto:yux.jiang=
-&#64;intel.com" title=3D"jiang,yu (yux.jiang&#64;intel.com)"> <span class=
-=3D"fn">jiang,yu</span></a>
-</span> changed
-          <a class=3D"bz_bug_link=20
-          bz_status_RESOLVED  bz_closed"
-   title=3D"RESOLVED INVALID - [dpdk-25.03] virtio_ipsec_cryptodev_func/tes=
-t_aesni_mb_aes_cbc_sha1_hmac: Failed to start qemu after launch dpdk-vhost_=
-crypto sample"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1676">bug 1676</a>
-          <br>
-             <table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=
-=3D"bz_diff_table">
-          <tr>
-            <th>What</th>
-            <th>Removed</th>
-            <th>Added</th>
-          </tr>
-
-         <tr>
-           <td style=3D"text-align:right;">Status</td>
-           <td>UNCONFIRMED
-           </td>
-           <td>RESOLVED
-           </td>
-         </tr>
-
-         <tr>
-           <td style=3D"text-align:right;">Resolution</td>
-           <td>---
-           </td>
-           <td>INVALID
-           </td>
-         </tr></table>
-      <p>
-        <div class=3D"bz_comment_block">
-            <b class=3D"bz_comment_head"><a class=3D"bz_bug_link=20
-          bz_status_RESOLVED  bz_closed"
-   title=3D"RESOLVED INVALID - [dpdk-25.03] virtio_ipsec_cryptodev_func/tes=
-t_aesni_mb_aes_cbc_sha1_hmac: Failed to start qemu after launch dpdk-vhost_=
-crypto sample"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1676#c3">Comment # 3</a>
-              on <a class=3D"bz_bug_link=20
-          bz_status_RESOLVED  bz_closed"
-   title=3D"RESOLVED INVALID - [dpdk-25.03] virtio_ipsec_cryptodev_func/tes=
-t_aesni_mb_aes_cbc_sha1_hmac: Failed to start qemu after launch dpdk-vhost_=
-crypto sample"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1676">bug 1676</a>
-              from <span class=3D"vcard"><a class=3D"email" href=3D"mailto:=
-yux.jiang&#64;intel.com" title=3D"jiang,yu (yux.jiang&#64;intel.com)"> <spa=
-n class=3D"fn">jiang,yu</span></a>
-</span>
-            </b>
-          <pre class=3D"bz_comment_text">Can not reproduce by manual test.
-          </pre>
-        </div>
-      </p>
-
-
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1676#c3">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17527352321.F41719859.415176--
