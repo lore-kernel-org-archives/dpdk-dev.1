@@ -2,29 +2,29 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7418C83F38
-	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Jul 2025 13:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 099B3C83F22
+	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Jul 2025 13:54:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 12A114013F;
-	Thu, 17 Jul 2025 15:52:09 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1F1884013F;
+	Thu, 17 Jul 2025 15:54:46 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 6E30F400EF
- for <dev@dpdk.org>; Thu, 17 Jul 2025 15:52:08 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 05410400EF
+ for <dev@dpdk.org>; Thu, 17 Jul 2025 15:54:45 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 672CB46B9E; Thu, 17 Jul 2025 15:52:08 +0200 (CEST)
+ id F139F46B9E; Thu, 17 Jul 2025 15:54:44 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/DTS Bug 1413] Build initial list of device capabilities
- required by testsuites we are trying to write this year
-Date: Thu, 17 Jul 2025 13:52:08 +0000
+Subject: [DPDK/DTS Bug 1540] update pw_maintainers_cli.py to apply some
+ series to next-dts
+Date: Thu, 17 Jul 2025 13:54:45 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: changed
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
 X-Bugzilla-Component: DTS
-X-Bugzilla-Version: 24.07
+X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: minor
+X-Bugzilla-Severity: normal
 X-Bugzilla-Who: probb@iol.unh.edu
 X-Bugzilla-Status: RESOLVED
 X-Bugzilla-Resolution: FIXED
@@ -33,10 +33,10 @@ X-Bugzilla-Assigned-To: dev@dpdk.org
 X-Bugzilla-Target-Milestone: ---
 X-Bugzilla-Flags: 
 X-Bugzilla-Changed-Fields: bug_status resolution
-Message-ID: <bug-1413-3-BToxHu8tU1@https.bugs.dpdk.org/>
-In-Reply-To: <bug-1413-3@https.bugs.dpdk.org/>
-References: <bug-1413-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17527603280.09cC08e5d.583892
+Message-ID: <bug-1540-3-s5DnhjKDqx@https.bugs.dpdk.org/>
+In-Reply-To: <bug-1540-3@https.bugs.dpdk.org/>
+References: <bug-1540-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17527604840.8fDACe.584623
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: https://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -56,8 +56,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17527603280.09cC08e5d.583892
-Date: Thu, 17 Jul 2025 15:52:08 +0200
+--17527604840.8fDACe.584623
+Date: Thu, 17 Jul 2025 15:54:44 +0200
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -65,7 +65,7 @@ X-Bugzilla-URL: https://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1413
+https://bugs.dpdk.org/show_bug.cgi?id=3D1540
 
 Patrick Robb (probb@iol.unh.edu) changed:
 
@@ -81,8 +81,8 @@ Done.
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17527603280.09cC08e5d.583892
-Date: Thu, 17 Jul 2025 15:52:08 +0200
+--17527604840.8fDACe.584623
+Date: Thu, 17 Jul 2025 15:54:44 +0200
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -100,9 +100,9 @@ X-Auto-Response-Suppress: All
 </span> changed
           <a class=3D"bz_bug_link=20
           bz_status_RESOLVED  bz_closed"
-   title=3D"RESOLVED FIXED - Build initial list of device capabilities requ=
-ired by testsuites we are trying to write this year"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1413">bug 1413</a>
+   title=3D"RESOLVED FIXED - update pw_maintainers_cli.py to apply some ser=
+ies to next-dts"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1540">bug 1540</a>
           <br>
              <table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=
 =3D"bz_diff_table">
@@ -131,14 +131,14 @@ ired by testsuites we are trying to write this year"
         <div class=3D"bz_comment_block">
             <b class=3D"bz_comment_head"><a class=3D"bz_bug_link=20
           bz_status_RESOLVED  bz_closed"
-   title=3D"RESOLVED FIXED - Build initial list of device capabilities requ=
-ired by testsuites we are trying to write this year"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1413#c1">Comment # 1</a>
+   title=3D"RESOLVED FIXED - update pw_maintainers_cli.py to apply some ser=
+ies to next-dts"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1540#c1">Comment # 1</a>
               on <a class=3D"bz_bug_link=20
           bz_status_RESOLVED  bz_closed"
-   title=3D"RESOLVED FIXED - Build initial list of device capabilities requ=
-ired by testsuites we are trying to write this year"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1413">bug 1413</a>
+   title=3D"RESOLVED FIXED - update pw_maintainers_cli.py to apply some ser=
+ies to next-dts"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1540">bug 1540</a>
               from <span class=3D"vcard"><a class=3D"email" href=3D"mailto:=
 probb&#64;iol.unh.edu" title=3D"Patrick Robb (probb&#64;iol.unh.edu)"> <spa=
 n class=3D"fn">Patrick Robb</span></a>
@@ -161,7 +161,7 @@ n class=3D"fn">Patrick Robb</span></a>
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1413#c1">
+?id=3D1540#c1">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -170,4 +170,4 @@ ication">
     </body>
 </html>=
 
---17527603280.09cC08e5d.583892--
+--17527604840.8fDACe.584623--
