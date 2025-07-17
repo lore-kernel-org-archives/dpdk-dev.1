@@ -2,49 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CFCFC83F34
-	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Jul 2025 19:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E385C83F34
+	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Jul 2025 19:51:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0A6D5402EE;
-	Thu, 17 Jul 2025 21:50:46 +0200 (CEST)
-Received: from fout-b6-smtp.messagingengine.com
- (fout-b6-smtp.messagingengine.com [202.12.124.149])
- by mails.dpdk.org (Postfix) with ESMTP id DABD640283;
- Thu, 17 Jul 2025 21:50:43 +0200 (CEST)
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal
- [10.202.2.46])
- by mailfout.stl.internal (Postfix) with ESMTP id 4E8161D000E2;
- Thu, 17 Jul 2025 15:50:43 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-06.internal (MEProxy); Thu, 17 Jul 2025 15:50:43 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 9ADCA4064F;
+	Thu, 17 Jul 2025 21:51:13 +0200 (CEST)
+Received: from fhigh-b3-smtp.messagingengine.com
+ (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+ by mails.dpdk.org (Postfix) with ESMTP id A1D4F40283
+ for <dev@dpdk.org>; Thu, 17 Jul 2025 21:51:12 +0200 (CEST)
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal
+ [10.202.2.42])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id C69AC7A00A5;
+ Thu, 17 Jul 2025 15:51:11 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-02.internal (MEProxy); Thu, 17 Jul 2025 15:51:12 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1752781843;
- x=1752868243; bh=CjbXpgGCG+YqJhM/d8c8HBpUiDrfG1kCvRa8Vp/kuvw=; b=
- z+PVFvXeGTq9+FPSQKnIWku1H/dTr8V+qzpQYLQJXUw1tcekiHjOiRHeBC/f4cLf
- WBR17GIxrhGnnbADPSVOh685clU8H6+gwhZ7iXkxwo4Q5+wfOr2WrVhF665a4RZq
- Ik4XxQtax7ZNZNKdjAZdSmmjiL8v/GGSkmJ5zY63AmqVujzvRZd+kYTTfc+sBsC0
- fihXnnlCEpsd/MMXGzhlcIPnFA3Ro5a/SbDDuFU5QPh1yJ0f8gpB9Yh0f45Jmy1k
- co5IjM2VMZPjlIqCbHvfkxCcUtLXjh7taqYhZahHFQTu1AoBYvcVE9FMPpXTHoUm
- elatfuFAN6YBJ1MRaOWaCQ==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1752781871;
+ x=1752868271; bh=JlDJK1nQvhPbpMpdAwAdWHhyZ+91Ume3uFFiqB7JDwk=; b=
+ ZxdnZsNrgQlMZHIfL0Hw07cR0qY2kCob0SXJPXwa0A9umPDCP5azx81og9KbRruf
+ Byyndjezq29rwtPQD9eL1lRgPZlt0NR/B0F/rNHBHddzNWWX0jGw3r7ZuDBooeiP
+ 11Z12N778UXI9xy/oirNX1iwsGYOh4bxw/olKuhBjbn/beIML7Fg7GwvWGI+Daz7
+ Z8fKtgIi/NnkhiGrIpEDQh8Goj+L55ho2WmQGhLea8M9IEE8+Mzf1lJaBciix2k8
+ cR2kZ4CrbWdScpnuO2JHDd5p/QoToUwu02qowwQCrg6PSlgQlft45IinQfsPUBcc
+ XdNhWvh53d7+HRFG+P4Eow==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752781843; x=
- 1752868243; bh=CjbXpgGCG+YqJhM/d8c8HBpUiDrfG1kCvRa8Vp/kuvw=; b=j
- bYGaEhb+IRAy1OL4YqOX7iggh9jXe9GyiBFd5IW/Ddsk2R+iqwNC8n15WeiORAnd
- o6GjMyBbU8vZN0KeFTcfrSgLfPXC8GywxANZZEdp44+JrcuVs2F6mJwNn7FARKN+
- evF0ENk2r02BY5hqdWJrW9Yx6CyGCmm9u0YGTOmZQoWcaHkfkFb3/9LBI/eGi0+d
- BA/xZKPl/myiERiHmiLCal+2b6Ja4MdBv6d1l5pQSs6JjfsE5SbSltin3K703+n2
- FN1ZxknQpzPpMUe2HpCqeOHIOA4+QaRoAshX73tFAEBQ/A29qAwwWF1XBSH9Aeu4
- Ybz4n4uCdQN821vz5W8wA==
-X-ME-Sender: <xms:ElR5aAHp0jH9kH8RRleI-uecib7fXEliXpxKL5kM3YjEz2HnMFqGpA>
- <xme:ElR5aOsu--bWDlN_saAN2i9u-xku3lRbFoax3ojW4bVnzPBkEqTeEo8ovQNDOqQm9
- 191u47tWBnPDR9DxA>
-X-ME-Received: <xmr:ElR5aKUC6yqHL2ndItM2mbYpyKzsDkhQNC_YNNAYopsR865Nw9P9fmqpE8oyjuxWBIUvFw28wfuAg4s18LwY3dN1BA>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752781871; x=
+ 1752868271; bh=JlDJK1nQvhPbpMpdAwAdWHhyZ+91Ume3uFFiqB7JDwk=; b=Z
+ adYMQ/3y3XH+adqZfiV/pCUeV9KedApnOEjFb1jtO8Io1DUvOKN5Vqo3dornizoA
+ gAL+xjIUx8GvbSrvRENRv937BT9sa6lWZWWfzP4kswSTwwTs60a7jF21S1XRi2Xs
+ s/JuRJOY6Ho8gZU9ezaB7r9oAbwUOBq5KmnhwT0+M6NYERGV+KvElhoi7v3dX/SE
+ kBqoBYrTGLFGBuBWDB6WNn9KCMCXGhgbQbt5gJI/8v/WG4XTGl/iWIPlmTtYi3ZU
+ LRZrDOAhg1oZSx39pSwsKNQGpD58yRHgOxdqOIrdF7GFY71bsZWGjPzobxYrnhYQ
+ YubrT4IHxdBmJfxhAQLUQ==
+X-ME-Sender: <xms:L1R5aDBPYZ6ygKr1OCvSPsE5qryNO6T7BCwVGlaRBNTsaNhmjJIDrQ>
+ <xme:L1R5aA5O3IpPz6QYwzEnLifYTx6zxOJ4w0X0aU7hg_5DQsujdWR8tho9q6lwADm2H
+ DM5FMKdS4W_8ulX-A>
+X-ME-Received: <xmr:L1R5aELUoyVYnJV4A-nDzQCtIhZvp3uq-oppBlBlXjEP2yNUuvHs9VCgm30GVUnkx0L_AU3jUCIMzyTbF5JwkR0-HQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeiudegjecutefuodetggdotefrod
  ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
  ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
@@ -52,29 +52,32 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeiudegjecutefuodetgg
  ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
  grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
  gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
- epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohephedpmhho
- uggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhkrghshhgrnhhisehnvhhiughirgdrtg
- homhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhopehsthgrsghl
- vgesughpughkrdhorhhgpdhrtghpthhtohepshhonhhggidrjhhirghlvgesihhnthgvlh
- drtghomhdprhgtphhtthhopegrnhgrthholhihrdgsuhhrrghkohhvsehinhhtvghlrdgt
- ohhm
-X-ME-Proxy: <xmx:ElR5aCHxnpProQ8fnM8iwjPFEVxO1XL0l1YCrbA1LXCYdFUarjs2Jw>
- <xmx:E1R5aE17XRWg0iU-Q96WwtAgJ-etKq77QKGkJECchamZx_Zrlbo1zA>
- <xmx:E1R5aMNqprt86vI0O0USmYoEkdaHauIlCYCRlDnfaiHKa0CBJxuK3g>
- <xmx:E1R5aL4Ah_N60lyYlvtbuS3mprua3x24E9aCmf0X3ov4mb9YDQ7oTA>
- <xmx:E1R5aCOoCnhHL-CXvBkXs4PZFYiZq52BJqrGIm-JuoziibhgapAx0Xv1>
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepjedpmhho
+ uggvpehsmhhtphhouhhtpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpth
+ htohepmhgrthgrnhesnhhvihguihgrrdgtohhmpdhrtghpthhtohepvhhirggthhgvshhl
+ rghvohesnhhvihguihgrrdgtohhmpdhrtghpthhtohepughsohhsnhhofihskhhisehnvh
+ hiughirgdrtghomhdprhgtphhtthhopegsihhnghiisehnvhhiughirgdrtghomhdprhgt
+ phhtthhopehorhhikhgrsehnvhhiughirgdrtghomhdprhgtphhtthhopehsuhgrnhhmih
+ hnghhmsehnvhhiughirgdrtghomh
+X-ME-Proxy: <xmx:L1R5aBuIkAt4CimSBlJmfUAHn0cFF7eYEE4itCq4K3hLbpSiF0Zazw>
+ <xmx:L1R5aLKjZTiu7fDtyfrLf6nTTw8e1fAqeX4FJYn9kdGbcu0mt4vc_g>
+ <xmx:L1R5aC9zJeCzKaRRb3Uics8MCyUyanRRW3uw38_Ea59kO-3y-ukw5Q>
+ <xmx:L1R5aMykD1kkNV8wYUikx0iq7RFU30fANnpbwkKVSvo4s9EUyL-ZKg>
+ <xmx:L1R5aA6RVVvOeXU6ziOszOJVKI-5LK8WBD591cUPrywzn-DXuO2khpJl>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 17 Jul 2025 15:50:42 -0400 (EDT)
+ 17 Jul 2025 15:51:10 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Maayan Kashani <mkashani@nvidia.com>
-Cc: dev@dpdk.org, stable@dpdk.org, Song Jiale <songx.jiale@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: Re: [PATCH] examples/multi_process: revert ports cleanup on exit
-Date: Thu, 17 Jul 2025 21:50:40 +0200
-Message-ID: <3002544.e9J7NaK4W3@thomas>
-In-Reply-To: <20250715121111.156639-1-thomas@monjalon.net>
-References: <20250715121111.156639-1-thomas@monjalon.net>
+To: dev@dpdk.org
+Cc: Matan Azrad <matan@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Dariusz Sosnowski <dsosnowski@nvidia.com>, Bing Zhao <bingz@nvidia.com>,
+ Ori Kam <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>
+Subject: Re: [PATCH] doc: remove Mellanox acquisition explanation
+Date: Thu, 17 Jul 2025 21:51:09 +0200
+Message-ID: <3370600.44csPzL39Z@thomas>
+In-Reply-To: <20250716101516.224980-1-thomas@monjalon.net>
+References: <20250716101516.224980-1-thomas@monjalon.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -91,24 +94,10 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-15/07/2025 14:11, Thomas Monjalon:
-> When closing the primary process, an error occurs when closing ports:
+16/07/2025 12:15, Thomas Monjalon:
+> Time has passed since Mellanox acquisition by NVIDIA.
+> No need to explain this anymore.
 > 
-> Error closing ports
-> EAL: failed to send to (/var/run/dpdk/dpdk_X/mp_socket_Y) due to Bad file descriptor
-> EAL: Fail to send request /var/run/dpdk/dpdk_X/mp_socket_Y:mp_malloc_sync
-> EAL: Could not send sync request to secondary process
-> 
-> And the secondary process crashes.
-> 
-> It may show several problems to fix in the next release.
-> Revert the fix causing these issues for 25.07 release.
-> 
-> Bugzilla ID: 1751
-> Fixes: 4382d58097b4 ("examples/multi_process: fix ports cleanup on exit")
-> Cc: stable@dpdk.org
-> 
-> Reported-by: Song Jiale <songx.jiale@intel.com>
 > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
 
 Applied
