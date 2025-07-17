@@ -2,72 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C0CCC83F1A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Jul 2025 16:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3855C83F1A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Jul 2025 16:52:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 68EF14013F;
-	Thu, 17 Jul 2025 18:50:22 +0200 (CEST)
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com
- [209.85.210.181])
- by mails.dpdk.org (Postfix) with ESMTP id 35D7D400EF
- for <dev@dpdk.org>; Thu, 17 Jul 2025 18:50:21 +0200 (CEST)
-Received: by mail-pf1-f181.google.com with SMTP id
- d2e1a72fcca58-748feca4a61so795967b3a.3
- for <dev@dpdk.org>; Thu, 17 Jul 2025 09:50:21 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B591C402D3;
+	Thu, 17 Jul 2025 18:52:53 +0200 (CEST)
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com
+ [209.85.160.170])
+ by mails.dpdk.org (Postfix) with ESMTP id C6C124013F
+ for <dev@dpdk.org>; Thu, 17 Jul 2025 18:52:52 +0200 (CEST)
+Received: by mail-qt1-f170.google.com with SMTP id
+ d75a77b69052e-4ab554fd8fbso19661891cf.1
+ for <dev@dpdk.org>; Thu, 17 Jul 2025 09:52:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752771020;
- x=1753375820; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752771172;
+ x=1753375972; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=oQbmnR/WLlvpiSVZETd1muuqEHDA7uzGdbTt8msPMc0=;
- b=EbDrn6HKAAiIt8mPIhgTQdTcvaCfUpBPZzyL8VGWxtFziEhZ1EjgOEKyGgIKlPVhzm
- GZvqrM2cojZPdV/lBkW4i1w5jK2/SeF70CPCRM2SEDsrYlnD69NdlJLXkdErfkHBFIaz
- drpPTaP45TSBAyB3qvnRDgY8cp+I423okEHyi9A1zX/EePE76ZL3jlucXR5DIjOmch4g
- KGYzHhuTxnquh+4VY47IiILJmOvEYosWMbIclSRM/vxmQZAlfV9dpYHVjB4SwubCdjIJ
- rjzQohIplw8ukTZUu65CsW5R8ewXBbLAweuIdBbLQDCAf394ZnIHEVIgnIsxTg4gHdID
- aGZw==
+ bh=06ij7yPK3gKfNF2yE+sikQmc+d/VSreFzojeRDUi2fM=;
+ b=W9343KtNSAviOj60NiF7Aqo+OJgm5odLQeRKHw7kcdRlAx79pCaw5LeIBBf/ZtSZH4
+ m0p/6b8w7A0iF/xz7iRrU8rWH1ChehX9i6AbjDt69Pr4ONlX0jKxSkQQm8SXxTCAp9co
+ b67f6yS6VxBVfioG+029lQQwFRQFN+fxHG9MEpUV+4b9SubZ7i+686ZmtGXVYgZ/VRGp
+ moUl+mqZKyMgHXzrTVjKe8RchjnGo55GiTkv1nG1W+3uoK3lzuuoFwWk1PH02Ps2ZzUc
+ X24VDtDrg31CVjLZkDKnTHmD4tSKdOhlM5A3X27ihQTcc+7svnMn9MlZSsqjAnUeANME
+ l4Fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752771020; x=1753375820;
+ d=1e100.net; s=20230601; t=1752771172; x=1753375972;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=oQbmnR/WLlvpiSVZETd1muuqEHDA7uzGdbTt8msPMc0=;
- b=KF6B1Blj7+e9nlsvHj7RjqQAqQ8qjBIT5lgP2i1j1WNARhYikS/YEOda3r3goTWXvw
- H7auH4x0XQpkfJ8kPgf4R8DGt4v8Z9BQRX3Y0iV6i+BMMfrQ0AA8TXc1lUMzw6NJFKHH
- CiPYnraKSSsQpSKgZiwbRuq2UkgOH+6IXb3EGYwSaxIE11e7N7ru7oMew+B19DIwUqVQ
- 77auvIq432vmVer3Yl2TTXcq339S2aO3awWpk5J1XwM+A0bWMAorUb9ROCdje2/ZVcOH
- rFqRcEBkP+KiiwcbB255BIJqx/H04VevE7mHDm8CamgP4JTyKiVOl8rxw3+lVcF9U7IZ
- /uTw==
-X-Gm-Message-State: AOJu0YzbL1EOrgYmkvpIT0KGJAu4gSYl4lPpxkCwzSEPanvzivoLOVwm
- 2m/a29QVVz0eYszaLbqOux6Wq2mvbYPBcmiAgkOdUfOxNDuav5HEOjbozzMrZcikjJTEe7aiAAq
- gkB89
-X-Gm-Gg: ASbGncufJwl1DDz5J2bhYSzr0K0wjNejhTZuvXBXW6fDgFB+/TtiVGDeLiZJeaImZru
- lAVrfFlSHo8I05dvjct+SUTUHwpwaxlHH5Baq8awObJXkUd1XuVe/FfgSBd9sriG6IglTdgRa13
- ZOsyiY0RRn24t6xGgBij3rH+jSMq62fOBypFc2oIufw2HlYUof3cBIsPYBqDYOVuV7aHV8jdZE7
- DJ16zymVSydzeUjO1aDklb892UIbTb6D0AHo+b6JIaw2FYljtgmJSdywP1mvCx1URGixOf5bkyj
- fTkyrHKJ76Jcd6NyJ9FCV6/l7nlYnFW7MOVCGEvyKY5tFZbzSgfmFyfb7DmG6Da8sKN8Mcdaw1x
- cO+X6aeASvwdVzduQJIz5enRxKuK5QsODvx5r90BlwCYe/GLM/S8h8PJ7dNrOpCcjzTe1x95RRi
- 0=
-X-Google-Smtp-Source: AGHT+IG1mSKPAVyGsS7SZf3Z3G6eDaJgGTMJ80L1u4dWPyPeTF87XFA/FT6J30Dv3vf2vq/zpoNSTg==
-X-Received: by 2002:a05:6300:8a03:b0:238:3f54:78ef with SMTP id
- adf61e73a8af0-2383f548d6bmr7514287637.45.1752771020274; 
- Thu, 17 Jul 2025 09:50:20 -0700 (PDT)
+ bh=06ij7yPK3gKfNF2yE+sikQmc+d/VSreFzojeRDUi2fM=;
+ b=XRfryPbVLJXfxWyxlN5nFv9rLwEUxImAiCNY2+MLiBpwBcB5peovxYuGjGP/EZlGZq
+ alRsU2u1D5gbQJBgR2eu7VxEfbf8xH9NKrdaRwMSu3LXlKyFBG2uVzmzvd/aJ1IEnKEA
+ uaT8aOFYvqLH+XA6DMqSoIC0tmw9BABlVS+4GNvddLL+X8k110mXIOEkuIpaPtlg1e9o
+ ybUdns9UxX3q1A0ylov43pv/f2Xef3xlFGNdU+DDmZsSOuiKoE4E1/p+yowQlN+qjAgu
+ s14PJQ31VMm4TVF4ptZTZs0RPDFjg+gIoj6mThDNRT3NEpU9fYgBIEgsfZgfhAhyz2aX
+ yKYw==
+X-Gm-Message-State: AOJu0YxlnF2W2ImCxGdBLS3W/9aZ2EfAzZVSpLOXxiNdZYJkTH0fcdPX
+ RpyeB8SJtUj82+ikSAkW4jgNRo+vOvDwWgMXCCmYRHiPMHn2nzHkAhvAKIffEJ5uWYGXgBTOJEi
+ jwfCZ
+X-Gm-Gg: ASbGncv22zawp9Xf0bfHNAA7ekO1CtEvv+CcBtW+sOHX9OE56Zb0cKpf+EwulVZhLpL
+ 8clKg6lex4RZHcg8rvp4zCv8GLf1z47nkVgoEdpqJsaNQIWtf/6wU1QA9FHy1z7zzRG9al6/Ffk
+ VDF+Yx9pDCzHadlRnzFmwsencMSMLDYHBY0xCpT48mJWBewyrvVxyM98BUbJHaRki9598oHYN00
+ LYOKgnXmWU8mE7tTRklXldvgg044kSBvkAsoTPi+R4zpA8dV9KOfR3OH7TZzFIMuZB3qHpIAK+B
+ LAMiyyudp0+FWv2jhI+wUfoi3ZFH6WfkEIZEFDX67I1jaSUswKYFa4V0sWmK1zmFbkNAIt92Qvb
+ bPMr3KB4WtFBWL/e+jXuEVpPEBDlTJfxkH0NvN56pfjY6wlC/Ohqg2GjNIz++fu4ti8ANn7DSLe
+ E=
+X-Google-Smtp-Source: AGHT+IGcn6RY5iw+HocEnCr1/sluncdutLzhM+p/3QvYfTW5vEmrEpGNfJ5o16x7YCtBm8Lp7jK4Iw==
+X-Received: by 2002:a05:622a:a14:b0:4a9:7366:40dd with SMTP id
+ d75a77b69052e-4aba263f133mr68094941cf.19.1752771171929; 
+ Thu, 17 Jul 2025 09:52:51 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-b3bbe6c77basm15988579a12.40.2025.07.17.09.50.19
+ d75a77b69052e-4ab6d02cb7bsm48466511cf.66.2025.07.17.09.52.51
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 17 Jul 2025 09:50:20 -0700 (PDT)
-Date: Thu, 17 Jul 2025 09:50:18 -0700
+ Thu, 17 Jul 2025 09:52:51 -0700 (PDT)
+Date: Thu, 17 Jul 2025 09:52:49 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Jie Liu <liujie5@linkdatatechnology.com>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v9 02/14] net/sxe: add ethdev probe and remove
-Message-ID: <20250717095018.1c4da740@hermes.local>
-In-Reply-To: <20250716082930.83026-2-liujie5@linkdatatechnology.com>
+Subject: Re: [PATCH v9 06/14] net/sxe: add filter function
+Message-ID: <20250717095249.6348a1ef@hermes.local>
+In-Reply-To: <20250716082930.83026-6-liujie5@linkdatatechnology.com>
 References: <20250715034152.7020-14-liujie5@linkdatatechnology.com>
  <20250716082930.83026-1-liujie5@linkdatatechnology.com>
- <20250716082930.83026-2-liujie5@linkdatatechnology.com>
+ <20250716082930.83026-6-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,66 +84,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 16 Jul 2025 04:29:18 -0400
+On Wed, 16 Jul 2025 04:29:22 -0400
 Jie Liu <liujie5@linkdatatechnology.com> wrote:
 
-> +static s32 sxe_hdc_cmd_process(struct sxe_hw *hw, u64 trace_id,
-> +				struct sxe_hdc_trans_info *trans_info)
+>  
+> +static u8 sxe_sw_uc_entry_add(struct rte_eth_dev *eth_dev, u8 index,
+> +	u8 *mac_addr)
 > +{
-> +	s32 ret;
-> +	u8 retry_idx;
-> +	struct sxe_adapter *adapter = hw->adapter;
-> +	sigset_t old_mask, new_mask;
-> +	sigemptyset(&new_mask);
-> +	sigaddset(&new_mask, SIGINT);
-> +	sigaddset(&new_mask, SIGTERM);
-> +	ret = pthread_sigmask(SIG_BLOCK, &new_mask, &old_mask);
-> +	if (ret) {
-> +		LOG_ERROR_BDF("hdc set signal mask failed, ret=%d", ret);
-> +		goto l_ret;
-> +	}
+> +	u8 i, pool;
+> +	struct sxe_adapter *adapter = eth_dev->data->dev_private;
+> +	struct sxe_uc_addr_table *uc_table = adapter->mac_filter_ctxt.uc_addr_table;
 > +
-> +	LOG_DEBUG_BDF("hw[%p] cmd trace=0x%" SXE_PRIX64 "", hw, trace_id);
-> +
-> +	ret = sem_wait(sxe_hdc_sema_get());
-> +	if (ret) {
-> +		LOG_WARN_BDF("hw[%p] hdc concurrency full", hw);
-> +		goto l_ret;
-> +	}
-> +
-> +	for (retry_idx = 0; retry_idx < 250; retry_idx++) {
-> +		ret = sxe_hdc_packet_trans(hw, trace_id, trans_info);
-> +		if (ret == SXE_SUCCESS) {
-> +			goto l_up;
-> +		} else if (ret == -SXE_HDC_RETRY_ERR) {
-> +			rte_delay_ms(10);
-> +			continue;
-> +		} else {
-> +			LOG_ERROR_BDF("sxe hdc packet trace_id=0x%" SXE_PRIX64
-> +					" trans error, ret=%d", trace_id, ret);
-> +			ret = -EFAULT;
-> +			goto l_up;
+> +	pool = sxe_vf_num_get(eth_dev);
+> +	for (i = 0; i < SXE_UC_ENTRY_NUM_MAX; i++) {
+> +		if (!uc_table[i].used) {
+> +			uc_table[i].pool_idx = pool;
+> +			uc_table[i].used = true;
+> +			uc_table[i].rar_idx = i;
+> +			uc_table[i].original_index = index;
+> +			uc_table[i].type = SXE_PF;
+> +			rte_memcpy(uc_table[i].addr, mac_addr, SXE_MAC_ADDR_LEN);
+> +			break;
 > +		}
 > +	}
 > +
-> +l_up:
-> +	LOG_DEBUG_BDF("hw[%p] cmd trace=0x%" SXE_PRIX64 "", hw, trace_id);
-> +	sem_post(sxe_hdc_sema_get());
-> +l_ret:
-> +	ret = pthread_sigmask(SIG_SETMASK, &old_mask, NULL);
-> +	if (ret)
-> +		LOG_ERROR_BDF("hdc restore old signal mask failed, ret=%d", ret);
-> +
-> +	if (ret == -SXE_HDC_RETRY_ERR)
-> +		ret = -EFAULT;
-> +
-> +	return ret;
-> +}
-> +
 
-This whole method using Unix semaphores and signals is non-portable and likely
-to break some 3rd party application. The driver should not be doing this.
-Not accepting driver with this logic.
+Please do not use rte_memcpy here, instead use memcpy which has compiler
+can check better.
 
-If you must have another thread to do setup, the use DPDK EAL control
-thread and block on an eventfd or pipe.
+Same in pf logic.
