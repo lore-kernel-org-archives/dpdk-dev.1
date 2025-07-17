@@ -2,70 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2087AC83F34
-	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Jul 2025 20:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0701C83F34
+	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Jul 2025 21:03:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4F23B402EE;
-	Thu, 17 Jul 2025 22:57:25 +0200 (CEST)
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com
- [209.85.222.182])
- by mails.dpdk.org (Postfix) with ESMTP id 8F4F94014F
- for <dev@dpdk.org>; Thu, 17 Jul 2025 22:57:22 +0200 (CEST)
-Received: by mail-qk1-f182.google.com with SMTP id
- af79cd13be357-7e169ac6009so143606185a.0
- for <dev@dpdk.org>; Thu, 17 Jul 2025 13:57:22 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 49D71402B3;
+	Thu, 17 Jul 2025 23:03:27 +0200 (CEST)
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com
+ [209.85.219.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 5CC164014F
+ for <dev@dpdk.org>; Thu, 17 Jul 2025 23:03:25 +0200 (CEST)
+Received: by mail-yb1-f170.google.com with SMTP id
+ 3f1490d57ef6-e8c475ecd5bso1214853276.1
+ for <dev@dpdk.org>; Thu, 17 Jul 2025 14:03:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1752785842; x=1753390642; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=EqFhb132N6TNzrPMTR6qj0rI/F/MS/eBsHJX8kGgpqQ=;
- b=LCIG0NZl5IR7vg7cMKKhM3SVk81TESGQRm7Fa5r0Wig5qgvDM2dW2P5HAcExMVedLh
- lQVpuwqAHUjoFqp8UrMQ/ICcUcuF1AZFg0loT2qwGuMa2muM1xfhNbcILVcL6EvNlPJv
- Rxt9XeJWlvCssXJegUaO1/QZULorRO4ToYD9E=
+ d=iol.unh.edu; s=unh-iol; t=1752786205; x=1753391005; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=5KqQ4QfTrO+GqDRV4r0N0Ny1OmTbZxIWzP/CF7d5MbQ=;
+ b=Fc0eMM47jHiwybD880LiJnkhVHFLRIvpaaWcydyoewqz7C3RoDmhgubvoVlOJRgSMN
+ WNZxH7e0Htk/6Fdv2RsLO+h4A1gBw61m1csxbk5uySATgUbJBzNC2IufQKgrqgTOaCW/
+ d3yFZcPIYAJr0OisfyImuXupwoAUXXqMQGG+M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752785842; x=1753390642;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=EqFhb132N6TNzrPMTR6qj0rI/F/MS/eBsHJX8kGgpqQ=;
- b=PAiOrfRoi6tbFm2d3YdxYTjlYNEyPHPOiRwOan5qPg4bkkwVt03f52FheJvLOjDMsk
- cz/l8WXNZFbggNqMBH8hJMy1ieXMoP81k1U2kfTnHERqpFytotHWAM3ICo4Ofo7pa9pm
- n+SyKg9TAg9IaDAaJrmb++8vEtnFnDGr7bBL+wBgs7ElzFGmzXtmOhG7RxrPszyB1oKH
- S7hx/IojC5jW9vY3nuMC2j27lWpx3+0OShslZRMaj1xMH6tY15sqJ6veemtOF30anyBw
- gHMc9uFqRZ+7vOtjph0Bm8uQ7p0TqxMYM0ALyDFEmXdNOrfjnUwd8FrkEi9R4ULaTthP
- Uosg==
-X-Gm-Message-State: AOJu0YwfSSWaFMElR9te13+Hu6msN1f7VApoDjBsJj8M/jm5mTFUEV3C
- 5KkiN2Xsa3qN5jCKJlgTxvpGV+k5RAmIgByA+GIz0QuCxflt0I8cSESmZ9IyWKKwbJE=
-X-Gm-Gg: ASbGncvNSiiXCZg5JUPT37isTUYzzXWSVRHDSmLUuPc9H2ivDQM6ijckQiFMAJiwime
- 12ac1pM+GYwR+yxnCyDimUajABL0d1/ONmjvvHj3BfWqoBhe3T+75ARNsY4zAz/n4QplkILnxms
- h61VISOWKUIYSYeMNf20o0e5FBDegS4H85b5u19MEZspUIfQDq5GlajtoqE1IU0vNfxttaitVvt
- vJs/gVk/jaFs2U+2JwYqCa5z+dLubJogmz1bCXrASoCQjT/YFO5IYnOzSAeIes7y/vI61mnrx9T
- G5kDW0XMt8BfiRak+t+5mIPumB5oQ1krVF1eWDtW2K4Rnk2WhYqR/bXt76SEmJ/xknP3zBeXh+S
- Nhp7cgJL2RE2PP4bV1KQkssFIp6JT4MDVSCyFdabdhfLVpE2EWZiG
-X-Google-Smtp-Source: AGHT+IHyn27xEyWGdLYaCwY+qdubxpdYQ20pzxZTf0fYWsTDkO23ghzI5IfP4EsjFbi5xpS+k2o+Ug==
-X-Received: by 2002:a05:620a:4726:b0:7e3:2c33:6d9f with SMTP id
- af79cd13be357-7e3435eafdfmr1118773985a.31.1752785841782; 
- Thu, 17 Jul 2025 13:57:21 -0700 (PDT)
-Received: from fedora.iol.unh.edu ([132.177.125.198])
- by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7e356b28a7esm11370285a.19.2025.07.17.13.57.21
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 17 Jul 2025 13:57:21 -0700 (PDT)
-From: Dean Marx <dmarx@iol.unh.edu>
-To: probb@iol.unh.edu, luca.vizzarro@arm.com, yoan.picchi@foss.arm.com,
- Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com
-Cc: dev@dpdk.org,
-	Dean Marx <dmarx@iol.unh.edu>
-Subject: [PATCH v1 2/2] dts: add qinq test suite
-Date: Thu, 17 Jul 2025 16:57:18 -0400
-Message-ID: <20250717205718.108826-2-dmarx@iol.unh.edu>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250717205718.108826-1-dmarx@iol.unh.edu>
-References: <20250605184143.498892-2-dmarx@iol.unh.edu>
- <20250717205718.108826-1-dmarx@iol.unh.edu>
+ d=1e100.net; s=20230601; t=1752786205; x=1753391005;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=5KqQ4QfTrO+GqDRV4r0N0Ny1OmTbZxIWzP/CF7d5MbQ=;
+ b=Ms0fMLjYY8O8B9t2DJyNY5ZdJ/75OVgb/X+Oi9e/0hnmPVoeaLOAd1+O9DLldWagUc
+ 5WfdkrQkqBWyJs9tuusKxAdLvo50ee6hnAI9TEsHLQxM1E6UXsLE2LnQR2zCK/lxj3UY
+ 8B9arMycgskRuIhAgVIqnNydx7DplpIDx2nESuFfS6ePKuj+zAAu5KJoLX3daKDETHsk
+ xCh74VfIXQLEutwDE1unejcao9RUl9YHtJIB8YElfYxS4SnJALJS3rm4JJtitz71eHW7
+ dUz3aViwesC/nf/nJvBArsBjxhSgbyCJjPT06Pk6tKGOUiOvuINmKkPOkaJAjuvQcaY6
+ I1Wg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXLVeeOKWmLnGsu9lCnBIHKSLmPm4Ze8pwiEdbjSX7aAZnC7Tl7jvABm4YUbSVgFRjMpgI=@dpdk.org
+X-Gm-Message-State: AOJu0YyRf6cxmGrjhJx4IjswTmKUgflgQuZnTZfa3kj2J5h85BU3NRRy
+ XgmDSl9rt77+mMDXYId18xZSpeguqw8M8bz173Wt/WEZIP8wf3Pkjkf7Z/b8JG8zjIMQ9mjCdGi
+ p1DmQq+UyH+evf79wUj9MALx/m3UkcgF5VNb9JaAb6g==
+X-Gm-Gg: ASbGncsuDohef0AUFSVerIYT8Afr2Vv0NVXh7ixblwYtbycy9Sf4rWZPSzYTuRfw0nU
+ VA+wDG5IsvkhagPBY/IIsZkxv3HtaaGdjicrncasMkaWIR9SIecrePUopfpAG7Pq6k8Drm4KXpM
+ xclaxY7758CRD1tRWnIZ7OpP7MGkdIgTdc4B6YLn86GgfKJqc3VmIYK14LQBZttK65MRI5tNPMh
+ rvZwX9n9g==
+X-Google-Smtp-Source: AGHT+IE+tHtN2SW0gIDxK0BxKZ4R1lOjbvoJ6+mzVSebQP/HXD0RXG73JAb8RmKskgQQRKnvtBs1E6WYJ+ZNox5JBr4=
+X-Received: by 2002:a05:690c:3692:b0:719:4cff:16db with SMTP id
+ 00721157ae682-7194cff3ac6mr18942127b3.25.1752786204389; Thu, 17 Jul 2025
+ 14:03:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250714133014.44597-1-bruce.richardson@intel.com>
+ <CABD7UXPVg56UwvmtOsssBwV2HzmgV4ZJZCb=FrnVQKkggtD2+Q@mail.gmail.com>
+ <aHd6x3kT053EvX2g@bricha3-mobl1.ger.corp.intel.com>
+ <CABD7UXPtChUUOdz3gfiyKqY4Rn2_0F8Ck4O6ypq9woATD7hfCw@mail.gmail.com>
+ <aHgBs5DGU48mTnwz@bricha3-mobl1.ger.corp.intel.com>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FDB8@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FDB8@smartserver.smartshare.dk>
+From: Dean Marx <dmarx@iol.unh.edu>
+Date: Thu, 17 Jul 2025 17:03:13 -0400
+X-Gm-Features: Ac12FXwBqYdpyuHu9sdVDOR7IOT1ODZCbKhKj4RuWQz2aTpdgz_724xXfdKv0v8
+Message-ID: <CABD7UXPccao=o1O=SessoAdEKUyA-dXP6HG5mnkpFSVNL_3dxw@mail.gmail.com>
+Subject: Re: [RFC PATCH] doc: clarify VLAN and QinQ stripping behaviour
+To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>, dev@dpdk.org, 
+ Dengdui Huang <huangdengdui@huawei.com>,
+ Vladimir Medvedkin <medvedkinv@gmail.com>, techboard@dpdk.org, 
+ Patrick Robb <probb@iol.unh.edu>, fengchengwen <fengchengwen@huawei.com>,
+ stephen@networkplumber.org, 
+ jasvinder.singh@intel.com, thomas@monjalon.net, aman.deep.singh@intel.com, 
+ lihuisong@huawei.com, liuyonglong@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,350 +82,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add QinQ test suite, which verifies PMD behavior when
-sending QinQ (IEEE 802.1ad) packets.
+I've created a v1 of a QinQ test suite around the set of test cases
+discussed earlier (which is not set in stone, and I expect it to
+change significantly across many future versions.) The PASS/FAIL
+values can be mostly disregarded in the context of this conversation,
+but I've added logging to explain which packets are sent, and what
+happened upon reception, which I hope will be more informative. After
+running on mlx5/i40e drivers, I got the following results:
 
-Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
----
- dts/tests/TestSuite_qinq.py | 329 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 329 insertions(+)
- create mode 100644 dts/tests/TestSuite_qinq.py
+test_vlan_strip: QinQ strip OFF and VLAN strip ON
+test_qinq_strip: QinQ strip ON and VLAN strip ON
 
-diff --git a/dts/tests/TestSuite_qinq.py b/dts/tests/TestSuite_qinq.py
-new file mode 100644
-index 0000000000..7412e9bf04
---- /dev/null
-+++ b/dts/tests/TestSuite_qinq.py
-@@ -0,0 +1,329 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2025 University of New Hampshire
-+
-+"""QinQ (802.1ad) Test Suite.
-+
-+This test suite verifies the correctness and capability of DPDK Poll Mode Drivers (PMDs)
-+in handling QinQ-tagged Ethernet frames, which contain a pair of stacked VLAN headers
-+(outer S-VLAN and inner C-VLAN). These tests ensure that both software and hardware offloads
-+related to QinQ behave as expected across different NIC vendors and PMD implementations.
-+
-+"""
-+
-+from scapy.layers.inet import IP, UDP
-+from scapy.layers.l2 import Dot1AD, Dot1Q, Ether
-+from scapy.packet import Packet
-+
-+from framework.remote_session.testpmd_shell import TestPmdShell
-+from framework.test_suite import TestSuite, func_test
-+from framework.testbed_model.capability import NicCapability, requires
-+
-+
-+class TestQinq(TestSuite):
-+    """QinQ test suite.
-+
-+    This suite consists of 4 test cases:
-+    1. QinQ Filter: Enable VLAN filter and verify packets with mismatched VLAN IDs are dropped,
-+        and packets with matching VLAN IDs are received.
-+    2. QinQ Forwarding: Send a QinQ packet and verify the received packet contains
-+        both QinQ/VLAN layers.
-+    3. Mismatched TPID: Send a Qinq packet with an invalid TPID (not 0x8100/0x88a8) and verify the
-+        mismatched VLAN layer is interpreted as part of the Ethertype (expected DPDK behavior.)
-+    4. VLAN Strip: Enable VLAN stripping and verify sent packets are received with the
-+        expected VLAN/QinQ layers.
-+    5. QinQ Strip: Enable VLAN/QinQ stripping and verify sent packets are received with the
-+        expected VLAN/QinQ layers.
-+    """
-+
-+    def send_packet_and_verify(
-+        self, packet: Packet, testpmd: TestPmdShell, should_receive: bool
-+    ) -> None:
-+        """Send packet and verify reception.
-+
-+        Args:
-+            packet: The packet to send to testpmd.
-+            testpmd: The testpmd session to send commands to.
-+            should_receive: If :data:`True`, verifies packet was received.
-+        """
-+        testpmd.start()
-+        received = self.send_packet_and_capture(packet=packet)
-+        if should_receive:
-+            self.verify(received != [], "Packet was dropped when it should have been received.")
-+        else:
-+            self.verify(received == [], "Packet was received when it should have been dropped.")
-+
-+    @requires(NicCapability.RX_OFFLOAD_VLAN_EXTEND)
-+    @func_test
-+    def test_qinq_filter(self) -> None:
-+        """QinQ Rx filter test case.
-+
-+        Steps:
-+            Launch testpmd with mac forwarding mode.
-+            Enable VLAN filter/extend modes on port 0.
-+            Add VLAN tag 100 to the filter on port 0.
-+            Send test packet and capture verbose output.
-+
-+        Verify:
-+            Packet with matching VLAN ID is received.
-+            Packet with mismatched VLAN ID is dropped.
-+        """
-+        packets = [
-+            Ether(dst="00:11:22:33:44:55", src="66:77:88:99:aa:bb")
-+            / Dot1Q(vlan=100)
-+            / Dot1Q(vlan=200)
-+            / IP(dst="192.0.2.1", src="198.51.100.1")
-+            / UDP(dport=1234, sport=5678),
-+            Ether(dst="00:11:22:33:44:55", src="66:77:88:99:aa:bb")
-+            / Dot1Q(vlan=101)
-+            / Dot1Q(vlan=200)
-+            / IP(dst="192.0.2.1", src="198.51.100.1")
-+            / UDP(dport=1234, sport=5678),
-+        ]
-+        with TestPmdShell() as testpmd:
-+            testpmd.stop_all_ports()
-+            testpmd.set_vlan_filter(0, True)
-+            testpmd.set_vlan_extend(0, True)
-+            testpmd.start_all_ports()
-+            testpmd.rx_vlan(100, 0, True)
-+            self.send_packet_and_verify(packets[0], testpmd, should_receive=True)
-+            self.send_packet_and_verify(packets[1], testpmd, should_receive=False)
-+
-+    @func_test
-+    def test_qinq_forwarding(self) -> None:
-+        """QinQ Rx filter test case.
-+
-+        Steps:
-+            Launch testpmd with mac forwarding mode.
-+            Disable VLAN filter mode on port 0.
-+            Send test packet and capture verbose output.
-+
-+        Verify:
-+            Check that the received packet has two separate VLAN layers in proper QinQ fashion.
-+            Check that the received packet outer and inner VLAN layer has the appropriate ID.
-+        """
-+        test_packet = (
-+            Ether(dst="ff:ff:ff:ff:ff:ff")
-+            / Dot1AD(vlan=100)
-+            / Dot1Q(vlan=200)
-+            / IP(dst="1.2.3.4")
-+            / UDP(dport=1234, sport=4321)
-+        )
-+        with TestPmdShell() as testpmd:
-+            testpmd.stop_all_ports()
-+            testpmd.set_vlan_filter(0, False)
-+            testpmd.start_all_ports()
-+            testpmd.start()
-+            received_packet = self.send_packet_and_capture(test_packet)
-+
-+            self.verify(
-+                received_packet != [], "Packet was dropped when it should have been received."
-+            )
-+
-+            for packet in received_packet:
-+                vlan_tags = packet.getlayer(Dot1AD), packet.getlayer(Dot1Q)
-+                self.verify(len(vlan_tags) == 2, f"Expected 2 VLAN tags, found {len(vlan_tags)}")
-+
-+                if packet.haslayer(Dot1Q):
-+                    outer_vlan_id = packet[Dot1Q].vlan
-+                    self.verify(
-+                        outer_vlan_id == 100,
-+                        f"Outer VLAN ID was {outer_vlan_id} when it should have been 100.",
-+                    )
-+                else:
-+                    self.verify(False, "VLAN layer not found in received packet.")
-+
-+                if packet[Dot1Q].haslayer(Dot1Q):
-+                    inner_vlan_id = packet[Dot1Q].payload[Dot1Q].vlan
-+                    self.verify(
-+                        inner_vlan_id == 200,
-+                        f"Inner VLAN ID was {inner_vlan_id} when it should have been 200",
-+                    )
-+
-+    @func_test
-+    def test_mismatched_tpid(self) -> None:
-+        """Test behavior when outer VLAN tag has a non-standard TPID (not 0x8100 or 0x88a8).
-+
-+        Steps:
-+            Launch testpmd in mac forward mode.
-+            Set verbose level to 1.
-+            Disable VLAN filtering on port 0.
-+            Send and capture test packet.
-+
-+        Verify:
-+            Only 1 VLAN tag is in received packet.
-+            Inner VLAN ID matches the original packet.
-+        """
-+        with TestPmdShell() as testpmd:
-+            testpmd.set_verbose(level=1)
-+            testpmd.stop_all_ports()
-+            testpmd.set_vlan_filter(0, False)
-+            testpmd.start_all_ports()
-+            testpmd.start()
-+
-+            mismatched_packet = (
-+                Ether(dst="ff:ff:ff:ff:ff:ff")
-+                / Dot1Q(vlan=100, type=0x1234)
-+                / Dot1Q(vlan=200)
-+                / IP(dst="1.2.3.4")
-+                / UDP(dport=1234, sport=4321)
-+            )
-+
-+            received_packet = self.send_packet_and_capture(mismatched_packet)
-+
-+            self.verify(
-+                received_packet != [], "Packet was dropped when it should have been received."
-+            )
-+
-+            for packet in received_packet:
-+                vlan_tags = [layer for layer in packet.layers() if layer == Dot1Q]
-+                self.verify(
-+                    len(vlan_tags) == 1,
-+                    f"Expected 1 VLAN tag due to mismatched TPID, found {len(vlan_tags)}",
-+                )
-+
-+                vlan_id = packet[Dot1Q].vlan
-+                self.verify(vlan_id == 200, f"Expected inner VLAN ID 200, got {vlan_id}")
-+
-+    def strip_verify(
-+        self, packet: Packet, expected_num_tags: int, context: str, check_id: bool = False
-+    ) -> None:
-+        """Helper method for verifying packet stripping functionality."""
-+        if expected_num_tags == 0:
-+            has_vlan = bool(packet.haslayer(Dot1Q))
-+            if not has_vlan:
-+                self.verify(True, "Packet contained VLAN layer")
-+            else:
-+                vlan_layer = packet.getlayer(Dot1Q)
-+                self.verify(
-+                    vlan_layer is not None
-+                    and vlan_layer.type != 0x8100
-+                    and vlan_layer.type != 0x88A8,
-+                    f"""VLAN tags found in packet when should have been stripped: {packet.summary()}
-+                    sent packet: {context}""",
-+                )
-+        if expected_num_tags == 1:
-+
-+            def count_vlan_tags(packet: Packet) -> int:
-+                """Method for counting the number of VLAN layers in a packet."""
-+                count = 0
-+                layer = packet.getlayer(Dot1Q)
-+                while layer:
-+                    if layer.type == 0x8100:
-+                        count += 1
-+                    layer = layer.payload.getlayer(Dot1Q)
-+                return count
-+
-+            tag_count = count_vlan_tags(packet)
-+            self.verify(
-+                tag_count == 1,
-+                f"""Expected one 0x8100 VLAN tag but found {tag_count}: {packet.summary()}
-+                sent packet: {context}""",
-+            )
-+            first_dot1q = packet.getlayer(Dot1Q)
-+            self.verify(
-+                first_dot1q is not None and first_dot1q.type == 0x8100,
-+                f"""VLAN tag 0x8100 not found in packet: {packet.summary()}
-+                sent packet: {context}""",
-+            )
-+            if check_id:
-+                self.verify(
-+                    packet[Dot1Q].vlan == 200,
-+                    f"""VLAN ID 200 not found in received packet: {packet.summary()}
-+                    sent packet: {context}""",
-+                )
-+
-+    @requires(NicCapability.RX_OFFLOAD_VLAN_STRIP)
-+    @func_test
-+    def test_vlan_strip(self) -> None:
-+        """Test combinations of VLAN/QinQ strip settings with various QinQ packets.
-+
-+        Steps:
-+            Launch testpmd with VLAN strip enabled.
-+            Send four VLAN/QinQ related test packets.
-+
-+        Verify:
-+            Check received packets have the expected VLAN/QinQ layers/tags.
-+        """
-+        test_packets = [
-+            Ether() / Dot1Q(type=0x8100) / IP() / UDP(dport=1234, sport=4321),
-+            Ether()
-+            / Dot1Q(vlan=100, type=0x8100)
-+            / Dot1Q(vlan=200, type=0x8100)
-+            / IP()
-+            / UDP(dport=1234, sport=4321),
-+            Ether() / Dot1Q(type=0x88A8) / IP() / UDP(dport=1234, sport=4321),
-+            Ether() / Dot1Q(type=0x88A8) / Dot1Q(type=0x8100) / IP() / UDP(dport=1234, sport=4321),
-+        ]
-+        with TestPmdShell() as testpmd:
-+            testpmd.stop_all_ports()
-+            testpmd.set_vlan_strip(0, True)
-+            testpmd.start_all_ports()
-+            testpmd.start()
-+
-+            rec1 = self.send_packet_and_capture(test_packets[0])
-+            rec2 = self.send_packet_and_capture(test_packets[1])
-+            rec3 = self.send_packet_and_capture(test_packets[2])
-+            rec4 = self.send_packet_and_capture(test_packets[3])
-+
-+            testpmd.stop()
-+
-+            try:
-+                context = "Single VLAN"
-+                self.strip_verify(rec1[0], 0, context)
-+                context = "Stacked VLAN"
-+                self.strip_verify(rec2[0], 1, context, check_id=True)
-+                context = "Single S-VLAN"
-+                self.strip_verify(rec3[0], 0, context)
-+                context = "QinQ"
-+                self.strip_verify(rec4[0], 1, context)
-+            except IndexError:
-+                self.verify(
-+                    False, f"{context} packet was dropped when it should have been received."
-+                )
-+
-+    @requires(NicCapability.RX_OFFLOAD_QINQ_STRIP)
-+    @func_test
-+    def test_qinq_strip(self) -> None:
-+        """Test combinations of VLAN/QinQ strip settings with various QinQ packets.
-+
-+        Steps:
-+            Launch testpmd with QinQ and VLAN strip enabled.
-+            Send four VLAN/QinQ related test packets.
-+
-+        Verify:
-+            Check received packets have the expected VLAN/QinQ layers/tags.
-+        """
-+        test_packets = [
-+            Ether() / Dot1Q(type=0x8100) / IP() / UDP(dport=1234, sport=4321),
-+            Ether()
-+            / Dot1Q(vlan=100, type=0x8100)
-+            / Dot1Q(vlan=200, type=0x8100)
-+            / IP()
-+            / UDP(dport=1234, sport=4321),
-+            Ether() / Dot1Q(type=0x88A8) / IP() / UDP(dport=1234, sport=4321),
-+            Ether() / Dot1Q(type=0x88A8) / Dot1Q(type=0x8100) / IP() / UDP(dport=1234, sport=4321),
-+        ]
-+        with TestPmdShell() as testpmd:
-+            testpmd.stop_all_ports()
-+            testpmd.set_qinq_strip(0, True)
-+            testpmd.start_all_ports()
-+            testpmd.start()
-+
-+            rec1 = self.send_packet_and_capture(test_packets[0])
-+            rec2 = self.send_packet_and_capture(test_packets[1])
-+            rec3 = self.send_packet_and_capture(test_packets[2])
-+            rec4 = self.send_packet_and_capture(test_packets[3])
-+
-+            testpmd.stop()
-+
-+            try:
-+                context = "Single VLAN"
-+                self.strip_verify(rec1[0], 0, context)
-+                context = "Stacked VLAN"
-+                self.strip_verify(rec2[0], 1, context, check_id=True)
-+                context = "Single S-VLAN"
-+                self.strip_verify(rec3[0], 0, context)
-+                context = "QinQ"
-+                self.strip_verify(rec4[0], 0, context)
-+            except IndexError:
-+                self.log(f"{context} packet was dropped when it should have been received.")
--- 
-2.50.1
+i40e:
+    test_qinq_strip (sent packet: Single VLAN): FAIL
+      reason: VLAN tags found in packet when should have been
+stripped: Ether / Dot1Q / 802.1q (0x1c) vlan 1280 / LLC / Raw /
+Padding
+    test_qinq_strip (sent packet: Stacked VLAN): FAIL
+      reason: Expected one VLAN tag but found 2: Ether / Dot1Q / Dot1Q
+/ 802.1q (0x1c) vlan 1280 / LLC / Raw / Padding
+    test_qinq_strip (sent packet: Single S-VLAN): FAIL
+      reason: VLAN tags found in packet when should have been
+stripped: Ether / Dot1Q / 802.1q (??) vlan ?? / LLC / Raw / Padding
+    test_qinq_strip (sent packet: QinQ): FAIL
+      reason: VLAN tags found in packet when should have been
+stripped: Ether / Dot1Q / Dot1AD / 802.1q (0x1c) vlan 1280 / LLC / Raw
+/ Padding
+    test_vlan_strip (sent packet: Single VLAN): PASS
+      reason: VLAN tag stripped from packet
+    test_vlan_strip (sent packet: Stacked VLAN): PASS
+      reason: Received packet had outer VLAN stripped, with inner VLAN intact
+    test_vlan_strip (sent packet: Single S-VLAN): PASS
+      reason: S-VLAN tag stripped from packet
+    test_vlan_strip (sent packet: QinQ): FAIL
+      reason: Neither tag stripped
 
+mlx5_core:
+    test_qinq_strip: SKIP
+      reason: Required capability
+'{NicCapability.RX_OFFLOAD_QINQ_STRIP}' not found.
+    test_vlan_strip (sent packet: Single VLAN): PASS
+      reason: VLAN tags found in packet when should have been
+stripped: Ether / 802.1q 24:8a:07:aa:83:ee > 0c:42:a1:54:25:86 (0x1c)
+vlan 1280 / LLC / Raw / Padding
+    test_vlan_strip (sent packet: Stacked VLAN): PASS
+    test_vlan_strip (sent packet: Single S-VLAN): PASS
+      reason: S-VLAN tag stripped from packet
+    test_vlan_strip (sent packet: QinQ): FAIL
+      reason: VLAN tag 0x8100 not found in packet: Ether / Dot1Q /
+802.1q (??) vlan ?? / LLC / Raw / Padding
+
+Hopefully this can give a clearer picture of the current QinQ/VLAN
+strip behavior. If anyone wants to take a look at the suite I'll link
+it here:
+
+https://patchwork.dpdk.org/project/dpdk/patch/20250717205718.108826-2-dmarx@iol.unh.edu/
