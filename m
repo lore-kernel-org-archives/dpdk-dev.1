@@ -2,50 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6012DC83F1A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Jul 2025 13:06:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D32B0C83F22
+	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Jul 2025 13:50:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9AA9F402DC;
-	Thu, 17 Jul 2025 15:06:40 +0200 (CEST)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
- by mails.dpdk.org (Postfix) with ESMTP id 228AC402D3
- for <dev@dpdk.org>; Thu, 17 Jul 2025 15:06:38 +0200 (CEST)
-Received: from loongson.cn (unknown [10.2.10.34])
- by gateway (Coremail) with SMTP id _____8CxPuNe9XhoCiQsAQ--.55966S3;
- Thu, 17 Jul 2025 21:06:38 +0800 (CST)
-Received: from [10.2.10.34] (unknown [10.2.10.34])
- by front1 (Coremail) with SMTP id qMiowJBxZORd9XhoKv0aAA--.13375S3;
- Thu, 17 Jul 2025 21:06:37 +0800 (CST)
-Subject: Re: [PATCH] doc: remove Mellanox acquisition explanation
+	by mails.dpdk.org (Postfix) with ESMTP id BCD214013F;
+	Thu, 17 Jul 2025 15:50:18 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 771C0400EF
+ for <dev@dpdk.org>; Thu, 17 Jul 2025 15:50:17 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 6ED2E46B9E; Thu, 17 Jul 2025 15:50:17 +0200 (CEST)
+From: bugzilla@dpdk.org
 To: dev@dpdk.org
-References: <20250716101516.224980-1-thomas@monjalon.net>
-From: zhoumin <zhoumin@loongson.cn>
-Message-ID: <8d24bff0-cdec-c883-4b91-8eee61d62178@loongson.cn>
-Date: Thu, 17 Jul 2025 21:06:37 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
-MIME-Version: 1.0
-In-Reply-To: <20250716101516.224980-1-thomas@monjalon.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Subject: [DPDK/DTS Bug 1373] Make docstrings less verbose, or reduce repeats
+Date: Thu, 17 Jul 2025 13:50:17 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: changed
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: DTS
+X-Bugzilla-Version: unspecified
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: probb@iol.unh.edu
+X-Bugzilla-Status: RESOLVED
+X-Bugzilla-Resolution: FIXED
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_status resolution
+Message-ID: <bug-1373-3-xMBZ1J7HXb@https.bugs.dpdk.org/>
+In-Reply-To: <bug-1373-3@https.bugs.dpdk.org/>
+References: <bug-1373-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17527602170.9B7af587E.583348
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-CM-TRANSID: qMiowJBxZORd9XhoKv0aAA--.13375S3
-X-CM-SenderInfo: 52kr3ztlq6z05rqj20fqof0/1tbiAQEGAWh4kJ8J8AABsg
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
- ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
- BjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
- xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
- j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxV
- AFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAF
- wI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
- Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE
- 14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
- AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
- rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUJVWUXw
- CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x02
- 67AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
- 0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1wL
- 05UUUUU==
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,5 +54,119 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Recheck-request: rebase=main, loongarch-unit-testing
 
+--17527602170.9B7af587E.583348
+Date: Thu, 17 Jul 2025 15:50:17 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+https://bugs.dpdk.org/show_bug.cgi?id=3D1373
+
+Patrick Robb (probb@iol.unh.edu) changed:
+
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|UNCONFIRMED                 |RESOLVED
+         Resolution|---                         |FIXED
+
+--- Comment #1 from Patrick Robb (probb@iol.unh.edu) ---
+Done.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17527602170.9B7af587E.583348
+Date: Thu, 17 Jul 2025 15:50:17 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><span class=3D"vcard"><a class=3D"email" href=3D"mailto:probb&#64=
+;iol.unh.edu" title=3D"Patrick Robb (probb&#64;iol.unh.edu)"> <span class=
+=3D"fn">Patrick Robb</span></a>
+</span> changed
+          <a class=3D"bz_bug_link=20
+          bz_status_RESOLVED  bz_closed"
+   title=3D"RESOLVED FIXED - Make docstrings less verbose, or reduce repeat=
+s"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1373">bug 1373</a>
+          <br>
+             <table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=
+=3D"bz_diff_table">
+          <tr>
+            <th>What</th>
+            <th>Removed</th>
+            <th>Added</th>
+          </tr>
+
+         <tr>
+           <td style=3D"text-align:right;">Status</td>
+           <td>UNCONFIRMED
+           </td>
+           <td>RESOLVED
+           </td>
+         </tr>
+
+         <tr>
+           <td style=3D"text-align:right;">Resolution</td>
+           <td>---
+           </td>
+           <td>FIXED
+           </td>
+         </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+            <b class=3D"bz_comment_head"><a class=3D"bz_bug_link=20
+          bz_status_RESOLVED  bz_closed"
+   title=3D"RESOLVED FIXED - Make docstrings less verbose, or reduce repeat=
+s"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1373#c1">Comment # 1</a>
+              on <a class=3D"bz_bug_link=20
+          bz_status_RESOLVED  bz_closed"
+   title=3D"RESOLVED FIXED - Make docstrings less verbose, or reduce repeat=
+s"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1373">bug 1373</a>
+              from <span class=3D"vcard"><a class=3D"email" href=3D"mailto:=
+probb&#64;iol.unh.edu" title=3D"Patrick Robb (probb&#64;iol.unh.edu)"> <spa=
+n class=3D"fn">Patrick Robb</span></a>
+</span>
+            </b>
+          <pre class=3D"bz_comment_text">Done.
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1373#c1">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17527602170.9B7af587E.583348--
