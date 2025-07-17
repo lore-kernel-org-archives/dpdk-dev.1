@@ -2,44 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72AC5C83F34
-	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Jul 2025 07:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C18C83F1B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Jul 2025 08:19:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 861DA4014F;
-	Thu, 17 Jul 2025 09:32:01 +0200 (CEST)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
- by mails.dpdk.org (Postfix) with ESMTP id 8A1C3400EF
- for <dev@dpdk.org>; Thu, 17 Jul 2025 09:32:00 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.88.234])
- by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bjPhK0yzvz2FbNs;
- Thu, 17 Jul 2025 15:29:53 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 26FAD140123;
- Thu, 17 Jul 2025 15:31:58 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 17 Jul 2025 15:31:57 +0800
-Message-ID: <372e1430-a0a9-4d36-b90c-38be3955932b@huawei.com>
-Date: Thu, 17 Jul 2025 15:31:57 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id 0B81C4021F;
+	Thu, 17 Jul 2025 10:19:43 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 563ED400EF
+ for <dev@dpdk.org>; Thu, 17 Jul 2025 10:19:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1752740380;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=5BJXjiOFJocpNVsi4NcabPetvR7k8KLxrPw/JEkgZPk=;
+ b=a+J+ntFlSlLuBnuIE0RPTB8r0jk9KsTKv7mNOzGNz/iR6Ew50maJTJY0XGGPt6/ReEIIRh
+ ED6KlAelFKbZEn40HM+7Na3pdHyrdpk0rqavrQ43yZEFe+1OWUpCprUteQkmHXG4wY98si
+ lt+hL0mh7ZFz3+wFSDYszLqqGMffmnU=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-111-a-IVzuXDP7-EPIIgLBunhw-1; Thu, 17 Jul 2025 04:19:39 -0400
+X-MC-Unique: a-IVzuXDP7-EPIIgLBunhw-1
+X-Mimecast-MFC-AGG-ID: a-IVzuXDP7-EPIIgLBunhw_1752740378
+Received: by mail-lf1-f72.google.com with SMTP id
+ 2adb3069b0e04-553ab0afaa4so382117e87.3
+ for <dev@dpdk.org>; Thu, 17 Jul 2025 01:19:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1752740377; x=1753345177;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=5BJXjiOFJocpNVsi4NcabPetvR7k8KLxrPw/JEkgZPk=;
+ b=vr+HbN3Xbpckaq/XudvmgB33QQOX7xfARZiF5ZyvH+NRUGMsZMNEVKQFGGdUrBOOZL
+ rJvDwcbJn09d2AS2WXwsmyGVNx4nHid2XrFjJdqK8txGxk+Nli9XB0fXJRBkLyEdIMZ7
+ 9m5fzIyC2Gv1ejQHi+SFrmkA7dI/xWWw62MCLtUDJre1XrXWua6FJee/weuer7DiSgj0
+ M6OYWTcnIKU15z91nToX2U34rvY3vzMVNMYWtERWaOTTA+ThmEOH6i1RIP3l2WQK40SK
+ DsVszDrCKDLVNQU2BTev1Q2JkUN0I17ur1yGZLWHdU1oGtjYbW2DpAjKKEEa0HQuZrid
+ hXyQ==
+X-Gm-Message-State: AOJu0YwiLid4mt9qu2ZpvKvtjhY3G2pacQGwChdyG+X7mh6d5cToJoaP
+ tqdpsrgvivYMKybENEYF0o73nx4xo44puW9r8oJdTIFNDDeFQ6IJl8yVeR3vGI7a+Oitg6r3RXy
+ wYwmB4A6WbYO6m1NWzcs78FLf5Nog2N92SJ/4dU4RlDrTCwY1iOgh6ZtlZGEIWtrfV4N16k1ePF
+ y9ZcvWT4v6MmiU8FeY4wo=
+X-Gm-Gg: ASbGncsoXcgbBymkZKdCQ/t/NaEd8jYQiNe2aElPVSStbEoyannFtFwU/yp2wjJrNCt
+ zZYlzNWoFkSnH+Od6V7KyoaZMwb2IzNOSPqx0U+mploJqgD86MRsWPePYNYpOUhKB4YvkGMp30/
+ SVIZf0rZTP4AAdK8Qqw1oePd0=
+X-Received: by 2002:a05:6512:3985:b0:553:a60d:6898 with SMTP id
+ 2adb3069b0e04-55a23f8020bmr1617303e87.45.1752740377557; 
+ Thu, 17 Jul 2025 01:19:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHYq1Sj5UC5JU/NHMzZY7w0Yn234tNZ1GWdPO5MyxgZoBnNWHGosW/TDTDm5SWn/TGj6FzM1RMz0j5XJLxTkUI=
+X-Received: by 2002:a05:6512:3985:b0:553:a60d:6898 with SMTP id
+ 2adb3069b0e04-55a23f8020bmr1617298e87.45.1752740377047; Thu, 17 Jul 2025
+ 01:19:37 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: support VLAN stacking packet type parsing
-To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, Dengdui Huang
- <huangdengdui@huawei.com>, <dev@dpdk.org>
-CC: <stephen@networkplumber.org>, <jasvinder.singh@intel.com>,
- <thomas@monjalon.net>, <aman.deep.singh@intel.com>, <lihuisong@huawei.com>,
- <liuyonglong@huawei.com>
-References: <20250703093027.1259459-1-huangdengdui@huawei.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FD8D@smartserver.smartshare.dk>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FD8D@smartserver.smartshare.dk>
+References: <20250716173922.688476-1-bruce.richardson@intel.com>
+In-Reply-To: <20250716173922.688476-1-bruce.richardson@intel.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Thu, 17 Jul 2025 10:19:24 +0200
+X-Gm-Features: Ac12FXziyULeTKdvH6qwRP1OqfxGQlKMEwqycPkwmBlesfuiGE1Qn_hY-y-nJ0M
+Message-ID: <CAJFAV8waeOp1euderd+t2VTfTfree-rratig_qq+eCGnJgTq5w@mail.gmail.com>
+Subject: Re: [PATCH] net/ice: fix assumption about tag placement order
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, stable@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 2EV3ox_f3mS2xufcLtHGYB9fLkfM7ZLjlxGIoJ-hhXw_1752740378
+X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,123 +84,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 2025/7/4 18:18, Morten Brørup wrote:
->> From: Dengdui Huang [mailto:huangdengdui@huawei.com]
->> Sent: Thursday, 3 July 2025 11.30
->>
->> The current rte_net_get_ptype() only supports parsing packets with
->> one 0x8100 VLAN tag or two 0x88a8 VLAN tags. This patch extends it
->> to support parsing packets with two 0x8100 VLAN tags.
->>
->> Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
->> ---
->>  lib/net/rte_net.c | 34 ++++++++++++++++++++++------------
->>  lib/net/rte_net.h |  2 ++
->>  2 files changed, 24 insertions(+), 12 deletions(-)
->>
->> diff --git a/lib/net/rte_net.c b/lib/net/rte_net.c
->> index 44fb6c0f51..fa8d023ca7 100644
->> --- a/lib/net/rte_net.c
->> +++ b/lib/net/rte_net.c
->> @@ -352,14 +352,19 @@ uint32_t rte_net_get_ptype(const struct rte_mbuf
->> *m,
->>  	if (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN)) {
->>  		const struct rte_vlan_hdr *vh;
->>  		struct rte_vlan_hdr vh_copy;
->> +		uint8_t vlan_num = 1;
->>
->>  		pkt_type = RTE_PTYPE_L2_ETHER_VLAN;
->> -		vh = rte_pktmbuf_read(m, off, sizeof(*vh), &vh_copy);
->> -		if (unlikely(vh == NULL))
->> -			return pkt_type;
->> -		off += sizeof(*vh);
->> -		hdr_lens->l2_len += sizeof(*vh);
->> -		proto = vh->eth_proto;
->> +		while (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN) &&
->> +		       vlan_num <= MAX_VLAN_STACKING_TAGS) {
->> +			vh = rte_pktmbuf_read(m, off, sizeof(*vh), &vh_copy);
->> +			if (unlikely(vh == NULL))
->> +				return pkt_type;
->> +			off += sizeof(*vh);
->> +			hdr_lens->l2_len += sizeof(*vh);
->> +			proto = vh->eth_proto;
->> +			vlan_num++;
->> +		}
-> 
-> It's not that simple.
-> 
-> VLAN tags are not like MPLS labels.
-> With the MPLS packet type, we expect a stack of labels.
-> But with VLAN tagged packets, we expect exactly one VLAN tag at each outer/inner layer of headers. (Or no VLAN tag at the inner layer.)
-> 
-> This function already supports packets with 2 VLAN tags:
-> A stack of 2 VLAN tags is currently detected as 1 outer VLAN tag, adjusting hdr_lens->l2_len accordingly, and 1 inner VLAN tag, adjusting hdr_lens->inner_l2_len accordingly.
-> This behavior should not be changed.
+On Wed, Jul 16, 2025 at 7:39=E2=80=AFPM Bruce Richardson
+<bruce.richardson@intel.com> wrote:
+>
+> The specific placement of outer/inner VLAN tags in E810 and related NICs
+> is configurable. Therefore, remove the assumption that if the L2Tag2
+> field is filled in, that the L2Tag1 must also be. Instead, check the
+> existing mbuf VLAN flags, and move tags and set flags as appropriate.
+> This fixes an issue where, with QinQ packets with different Tag ethtypes
+> (0x88a8 vs 0x8100), we get an mbuf reporting two valid tags, but only
+> having had one tag stripped.
+>
+> Fixes: e0dcf94a0d7f ("net/ice: support VLAN ops")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 
-I notice current the hdr_lens->inner_l2_len was added one comment: /* Outer_L4_len + ... + inner L2_len for tunneling pkt. */
-It means the inner_l2_len was used in tunneling packet.
+The ice code seems copy/pasted from i40e.
+So I guess i40e is affected as well.
 
-But one IPv4 packet carry two 8100 VLANs, it will parsed with hdr_lens->inner_l2_len was set by rte_net_get_ptype, it is unreasonable I think.
 
-I notice Linux kernel vlan_get_protocol() [1], it will parse max 8 vlan (whether the TPID is 8100 or 88A8, [2])
-
-I think we should parse like Linux kernel. If worried about breaking the ABI/API, consider adding a new function.
-
-[1] https://elixir.bootlin.com/linux/v6.15.6/source/include/linux/if_vlan.h#L645
-[2] https://elixir.bootlin.com/linux/v6.15.6/source/include/linux/if_vlan.h#L310
-
-> 
-> I don't have a firm idea about how to better represent packets with a stack of 3+ VLAN tags than what we do today, so suggestions are welcome.
-> 
-> Which use case is this patch addressing?
-> Maybe information about the use case could guide us in some direction.
-> 
->>  	} else if (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_QINQ)) {
->>  		const struct rte_vlan_hdr *vh;
->>  		struct rte_vlan_hdr vh_copy;
->> @@ -504,15 +509,20 @@ uint32_t rte_net_get_ptype(const struct rte_mbuf
->> *m,
->>  	if (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN)) {
->>  		const struct rte_vlan_hdr *vh;
->>  		struct rte_vlan_hdr vh_copy;
->> +		uint8_t vlan_num = 1;
->>
->>  		pkt_type &= ~RTE_PTYPE_INNER_L2_MASK;
->>  		pkt_type |= RTE_PTYPE_INNER_L2_ETHER_VLAN;
->> -		vh = rte_pktmbuf_read(m, off, sizeof(*vh), &vh_copy);
->> -		if (unlikely(vh == NULL))
->> -			return pkt_type;
->> -		off += sizeof(*vh);
->> -		hdr_lens->inner_l2_len += sizeof(*vh);
->> -		proto = vh->eth_proto;
->> +		while (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN) &&
->> +		       vlan_num <= MAX_VLAN_STACKING_TAGS) {
->> +			vh = rte_pktmbuf_read(m, off, sizeof(*vh), &vh_copy);
->> +			if (unlikely(vh == NULL))
->> +				return pkt_type;
->> +			off += sizeof(*vh);
->> +			hdr_lens->inner_l2_len += sizeof(*vh);
->> +			proto = vh->eth_proto;
->> +			vlan_num++;
->> +		}
->>  	} else if (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_QINQ)) {
->>  		const struct rte_vlan_hdr *vh;
->>  		struct rte_vlan_hdr vh_copy;
->> diff --git a/lib/net/rte_net.h b/lib/net/rte_net.h
->> index 65d724b84b..fdd55d57c8 100644
->> --- a/lib/net/rte_net.h
->> +++ b/lib/net/rte_net.h
->> @@ -13,6 +13,8 @@
->>  extern "C" {
->>  #endif
->>
->> +#define MAX_VLAN_STACKING_TAGS	2
->> +
->>  /**
->>   * Structure containing header lengths associated to a packet, filled
->>   * by rte_net_get_ptype().
->> --
->> 2.33.0
-> 
-> 
+--=20
+David Marchand
 
