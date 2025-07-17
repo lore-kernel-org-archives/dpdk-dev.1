@@ -2,74 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DAB8C83F1A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Jul 2025 18:17:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE998C83F1A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Jul 2025 19:48:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A4AB540616;
-	Thu, 17 Jul 2025 20:17:20 +0200 (CEST)
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
- [209.85.214.178])
- by mails.dpdk.org (Postfix) with ESMTP id 3A2DC4060F
- for <dev@dpdk.org>; Thu, 17 Jul 2025 20:17:19 +0200 (CEST)
-Received: by mail-pl1-f178.google.com with SMTP id
- d9443c01a7336-236192f8770so9953365ad.0
- for <dev@dpdk.org>; Thu, 17 Jul 2025 11:17:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752776238;
- x=1753381038; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=muGHwiSVOaZVQ8X9PWJJSdDqlrerL1OJM76s1SnQ1Yo=;
- b=gQWJ69oYqgX111qB71sseBRiY3/d4uL8VY48N0IyMES4UbBPuHsrn7OQo6UzFivZnd
- lK7rR2zesYzfrPkTUQPHYl5vJnzxBfSOYNcNgajmhaRd9XIJjgJfdI3kcixwjGePp9Dh
- Kk66qcM/VkAEBUrR7uffG/ITpVb80hfTf59+QUcH481pCmMnRxa1Kc638usuQcbM9gtd
- gshdruvMLdbtMdwktxRzHJwilYvjr6lELn8+kg9LWHO658bkmnztwpWHg2uKB7D/26VJ
- epR+ImgBDkkiVt2mr9n61YZmbWd+k8+lq+d8rGMS+5hQZlnDNBXUCgACuJrTsDWao9MQ
- Lf7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752776238; x=1753381038;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=muGHwiSVOaZVQ8X9PWJJSdDqlrerL1OJM76s1SnQ1Yo=;
- b=Z8FG86WGxRBult4FXQIBKJsRMmTI8FyryD9u3FIoG5cSJbJbuJAvuHFcmYatGuQEyH
- B2OULsIoG9DxldiIQUs/B3U3TVUIkhUYSRQKKMLR96U40/A0ga4IQ34pEYs9tfS+Ysb4
- 6PjbHQOJ7ICIFHiSLKUYJE8eYoUigP4lh7p8qrAV+8a965Mdpds9AbonCn1SnTYQvi6M
- A/wbtAkFyBQppKM6mm445yxbzZhLucAdGY1JN0F9/S9fEpJjDlj3MFIOBRYhhVuLqkHa
- i+RzEd9jzatXoZUJlv9AHsRGbcujEiHSnOOPwADVPCQUoLmKywk/RNYVTKWbiGY+/OT0
- J7rw==
-X-Gm-Message-State: AOJu0Yzf9tER93LSTyqdKr9yTuQ6cye33JyotIbEqFz3SnIcl8izixpT
- +ok8Y2WFEZLXVDkGyLP1LHOTVsNBxf4qKjthPrVwQp3fqKGeQNNsxseZon6CZCb3cwU=
-X-Gm-Gg: ASbGncsi5QQ94FLC6k/tZxik6ycYqnoqjD7LfjGNPbXmiTKC6TTOWH9ntnomnvsmnI+
- Xx1K/EnNqOVzV69C1bzHUijEXOKeNWUbOwm6ortCGy6ojtxLFNwiyebMfmsmokFhqYZCZZowAGu
- RCqOQKVsJ1dbuiv/2dq7yW47Smw+/bMUaXXTBWOR1H/bZWVLAujCMgLMPzWuQRwL3NOiIqo5JAW
- UJUKLbao7q2N0jk4WszRDQ3A/FSYBUAGLE7faq+FmcqZ6LskvwXKWiKvQ1VK2q6GYGxngdDa3XI
- meznqA/uaFAx3zuGzQoKGDj3VGBfNwt26f+ujYTHa2qRHEMaeJmqJhnY4oWstXf5tnbL2LsD0BK
- 7h1F7rW2g5UqHwowOqdvV2mZljAQgzdZqDAGAnt0DEh2fyHiEqXgSaYiQJYbG/sOxOfLylKIQaO
- U=
-X-Google-Smtp-Source: AGHT+IF2yZYWzjP/TLuFt9qNkN4/WiFdGSCav6ab2b2xycOuOhv2nLeQ3P7/2/QqEXlpTi9UvXKn1A==
-X-Received: by 2002:a17:902:c948:b0:234:1e11:95a3 with SMTP id
- d9443c01a7336-23e38f7f8efmr10886275ad.13.1752776238355; 
- Thu, 17 Jul 2025 11:17:18 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-23de432278csm149855645ad.121.2025.07.17.11.17.17
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 17 Jul 2025 11:17:18 -0700 (PDT)
-Date: Thu, 17 Jul 2025 11:09:49 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Jie Liu <liujie5@linkdatatechnology.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v5 03/14] net/sxe: add tx rx setup and data path
-Message-ID: <20250717110949.7fae4912@hermes.local>
-In-Reply-To: <20250710012021.7698-3-liujie5@linkdatatechnology.com>
-References: <20250707115819.12826-14-liujie5@linkdatatechnology.com>
- <20250710012021.7698-1-liujie5@linkdatatechnology.com>
- <20250710012021.7698-3-liujie5@linkdatatechnology.com>
+	by mails.dpdk.org (Postfix) with ESMTP id A2E74402AE;
+	Thu, 17 Jul 2025 21:48:30 +0200 (CEST)
+Received: from fout-b6-smtp.messagingengine.com
+ (fout-b6-smtp.messagingengine.com [202.12.124.149])
+ by mails.dpdk.org (Postfix) with ESMTP id EC32F40283
+ for <dev@dpdk.org>; Thu, 17 Jul 2025 21:48:28 +0200 (CEST)
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal
+ [10.202.2.43])
+ by mailfout.stl.internal (Postfix) with ESMTP id 973821D000F4;
+ Thu, 17 Jul 2025 15:48:27 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-03.internal (MEProxy); Thu, 17 Jul 2025 15:48:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:content-transfer-encoding:content-type:content-type:date:date
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1752781707;
+ x=1752868107; bh=uzUcoCMrhfjWRDh9ar4Yw53sqyPhqD31UD8Uede47fE=; b=
+ C3O50tqDx93Dl0nSJ4KK+cJlsyPmbD1Ie8Ja0dOrwdA2Ua8j1blHSvMHBBm1JFiT
+ xFHkNrX2/r9W4yUsv7L1pufxBxsPNzxNj2dlJSEpGeY7kG1zbljH+lpGyKW0KUM1
+ Bf5YaodGJsBNVth7Dx4T1DZcP4ohK7CDsEQCSdvpd5jiCkn4FOAbTOqVQDDxKeoj
+ Msz4doq8q/uc+uizm/Q8kqAl9goBXMaWDO/4S8snXWLSmNqzVu/pgVDXYcGzqrNP
+ CdNFPF7VcCqHouU4KSFlnMHXNtFr7Ohxx9hw51LjQx1N6Damru/nbCu8YoLBBPbW
+ aCDVJG/NRg3kUmhl7vYauQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:content-transfer-encoding:content-type
+ :content-type:date:date:feedback-id:feedback-id:from:from
+ :in-reply-to:in-reply-to:message-id:mime-version:references
+ :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+ :x-me-sender:x-sasl-enc; s=fm2; t=1752781707; x=1752868107; bh=u
+ zUcoCMrhfjWRDh9ar4Yw53sqyPhqD31UD8Uede47fE=; b=CckhkIBfjXXLxmJyw
+ cJ8Iq2urXspiqY2/DKd0bEhOOlBuTG3SWnVQX4RSbRmSYds6siYFFz6x0ruSvNJ2
+ jro7jh8oxlJVTdle/hQW/TjOqMjQE6DHuGNNr3j2RVe8TpYMr59C6tXecLGSKyQO
+ VVFgclquYiLvM7kreDYzA3BqKCtPQBw+D9JqiDIORvax+WwgQMNFOOoIYLJ82yiH
+ xrbJyU8qVeZ6tNAzVRTIcSeS+PdNdvO8DSJgIsosTRIHIki9E9orwEv9kx873XyF
+ 5XQt618UJBLIwR2+8KTBZogAUU/6NbyniOiePR3LUNrff6V5ghPJNzZikRkJrSLg
+ Xd4eg==
+X-ME-Sender: <xms:i1N5aGY8ztRTpowsfYqmshR_1bNoCYwIPj2iXKY7Bs66p6PAQzegxA>
+ <xme:i1N5aEoozBCUm8Hr6k1JK_ownsxjILCSYeu4yb0IbUnChnQnz4mGy36F3ed8suO5c
+ -prfEmFcTmBSd082Q>
+X-ME-Received: <xmr:i1N5aBm494kX8yslXWBKQ0SQwPk8AQqtNHQN5PTb85116Unx1afWdb7w5kTq0yK0sMa672tn_FdAahegDfvb3L1z4g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeiudegiecutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+ ihhlohhuthemuceftddtnecunecujfgurhephffvufffkfgjfhgggfgtsehtufertddttd
+ ejnecuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehmohhn
+ jhgrlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepledvhefhudduudefhfffhfetfe
+ fgjeethefhteefudekvdefgfeludegtedvtdegnecuvehluhhsthgvrhfuihiivgeptden
+ ucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgvth
+ dpnhgspghrtghpthhtohepuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggv
+ vhesughpughkrdhorhhg
+X-ME-Proxy: <xmx:i1N5aO1DDi_s7BSkhUTCahzL9SZV4GY4IAenqMco5HLhAdBmQkEPyQ>
+ <xmx:i1N5aBBbC2fg-gyw_mOFtTN3aiz_I9pTFjV6_CYLoR0w-p4iU_F6Bg>
+ <xmx:i1N5aDwbi4efeffmTIHSZy-AKTcSyL9hKh-Jhuom8-3Ygi4yQWxuvQ>
+ <xmx:i1N5aHltrZUUb1wFJF22NpcC2XZOMzywgkps0GkXDb_0EQIEJ9ApBg>
+ <xmx:i1N5aIoqG7jUt4-ptZaJglj9NjCg3v878_Hoh5Ecixk5o4jCGH9v6JPL>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA for <dev@dpdk.org>; 
+ Thu, 17 Jul 2025 15:48:26 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: dev@dpdk.org
+Subject: Re: [PATCH] doc: make table headers more visible in guides
+Date: Thu, 17 Jul 2025 21:48:24 +0200
+Message-ID: <5000016.GXAFRqVoOG@thomas>
+In-Reply-To: <20250716101455.224877-1-thomas@monjalon.net>
+References: <20250716101455.224877-1-thomas@monjalon.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,12 +85,13 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed,  9 Jul 2025 21:20:10 -0400
-Jie Liu <liujie5@linkdatatechnology.com> wrote:
+16/07/2025 12:14, Thomas Monjalon:
+> Set a background color to table header
+> so that it is visually easier to read.
+> 
+> Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
 
-> +	} else if (rx_batch_alloc_allowed) {
-> +		PMD_LOG_DEBUG(INIT, "Rx Burst Bulk Alloc Preconditions are "
-> +					"satisfied. Rx Burst Bulk Alloc function "
+Applied
 
-Log messages should not cross source lines, it makes it harder to find them in the source.
-Also, the messages in this code should be written more succinctly. Especially for normal cases.
+
+
