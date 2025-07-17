@@ -2,75 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 087C2C83F34
-	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Jul 2025 16:58:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59BD7C83F1A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Jul 2025 17:46:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 49EDA4013F;
-	Thu, 17 Jul 2025 18:58:41 +0200 (CEST)
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com
- [209.85.160.177])
- by mails.dpdk.org (Postfix) with ESMTP id 21576400EF
- for <dev@dpdk.org>; Thu, 17 Jul 2025 18:58:40 +0200 (CEST)
-Received: by mail-qt1-f177.google.com with SMTP id
- d75a77b69052e-4ab8e2c85d7so16244891cf.2
- for <dev@dpdk.org>; Thu, 17 Jul 2025 09:58:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752771519;
- x=1753376319; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=9nXzsfYSY4BhyiyNKwpr/KIhjNzDnJ9o0N1AfCN4OLg=;
- b=jpCs1NpHY+9a3EQrqzlIe94kjTdcqsIXwDEHi7HiTpiOHWHvBbA8Yq/v8V46B4NoaQ
- PRGHaOzlTQj/Wh4EE3s17439cYzy17klzIOPZb2Vv9jiJTSLg4x0Uoq+4AiW+qAJ8rFn
- sMw4r4AE8B8h1K2EXbzkJMORkOecdpxUATu955IDiP/NsorseOk18CXSOQ3XBVGRH5mC
- o8s0uWFmJ9feQ/D6E26oJFfD7yrJ76t9+HPV2eNXZfTLKHy7qUTX/aNU4wfRSe6x77p6
- rSlOEQ1QqyFu4d3cInyq8rwtXdCLev0ns92U52MO1QpXnELcAflnmf5YrixLlmG6v5Ow
- sQTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752771519; x=1753376319;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=9nXzsfYSY4BhyiyNKwpr/KIhjNzDnJ9o0N1AfCN4OLg=;
- b=U6y4YV0zBuqbCQr4CZa8uJ5Wi7jkN77JWyEIV87HfIVg4vq+s6oLlq0lMi5ezPz+FO
- ZUPlFCbLlBSD2PlhnzJS4zhT7EslNtRK9gLSD5lCjW170krdhJ5bQ+IiPKzARqvUIeEc
- dnyAkvZjmvR3u8z9ovkTbG18XGUvERHwu27CbPDG7N+AnJfbnjzmRZHnmVKiI4cPKiKE
- AfCv4JOjpOH+a3gzEhBIhmqTILdy8WyyRCGLldpAkkTNr9ZXq6dIKqluQEf8wLl5ofuY
- PQdQN8nRJk5cLieQCVeZGF2v9RV4aP03gqHnf/FT7KRtbE3moih0YWXNFuIG2Wi2PusZ
- 61wg==
-X-Gm-Message-State: AOJu0Yybb/hk6dsp6kApwopu4pCQDH8pVcXgmJOdz2gSnHizfsslysNO
- LwaVjiM2POOP1UMndfUgW5GB/tdpwGDg4P34PAdFF8jUT3a90AM3YziJVNBdToGz4ejIVtQlki3
- KAD8v
-X-Gm-Gg: ASbGncsjzOz8hYEoYMCrGNpEeIAPgwXf0zMbKofJflfljX6cQRZjoTwUQfhvyDcttdQ
- LffucioTP1wchybX+d1JRl7Ao9RdhWae0Iz6arCdWR5imfXygkretyLPlT5uWi6+5gqxjmovFNY
- CsdWNX9PsXKB6BdXEUyjZvPZSktG/PlWICiaK37PCQWXxJiFLjrP2tLzIvrSVWr1sZE2iOuDzX1
- a3SgE66BJHhVgFo6DJ8Ie7m5r3nUcfzKTWsulwlBLf7ijEOGZQjnrWwbZCI7LgNedDEgv+xkOs6
- R4gy2W8sSCCvd1XzFz2k+h+W9+mDUAGA07mbNiX4G7lvd6tza+14GADDiNI2cGKwxuaqMXoMSwy
- A4KCmFWiNZhGUfGGS/Mp4VGcJY+bHGOvmufPBPF5K1erFBycIKnbUJ4hkYWt4OwkyHPhMjVZyOm
- g=
-X-Google-Smtp-Source: AGHT+IE5JPWFMj4ROfwdX+n6wHXcl6nBafkHAfzdcNxhJjFPU3PzA5JRE2Dsi2scBJBsZLt0UQENTg==
-X-Received: by 2002:a05:6214:76e:b0:704:9526:6e54 with SMTP id
- 6a1803df08f44-704f6ac7f6emr104412246d6.3.1752771519356; 
- Thu, 17 Jul 2025 09:58:39 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-704979e2324sm86040206d6.39.2025.07.17.09.58.38
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 17 Jul 2025 09:58:39 -0700 (PDT)
-Date: Thu, 17 Jul 2025 09:58:36 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Gagandeep Singh <G.Singh@nxp.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, Hemant Agrawal <hemant.agrawal@nxp.com>
-Subject: Re: [PATCH 00/11] NXP DPAA2 driver enhancements and fixes
-Message-ID: <20250717095836.503111f9@hermes.local>
-In-Reply-To: <AS8PR04MB81984927114BE947589A905EE146A@AS8PR04MB8198.eurprd04.prod.outlook.com>
-References: <20250530071344.2939434-1-g.singh@nxp.com>
- <20250629102535.154ea015@hermes.local>
- <AS8PR04MB81984927114BE947589A905EE146A@AS8PR04MB8198.eurprd04.prod.outlook.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 6632D4013F;
+	Thu, 17 Jul 2025 19:45:59 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 2598E400EF;
+ Thu, 17 Jul 2025 19:45:57 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id BB47620653;
+ Thu, 17 Jul 2025 19:45:56 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain;
+	charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
+Subject: RE: [RFC PATCH] doc: clarify VLAN and QinQ stripping behaviour
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Thu, 17 Jul 2025 19:45:55 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FDB8@smartserver.smartshare.dk>
+In-Reply-To: <aHgBs5DGU48mTnwz@bricha3-mobl1.ger.corp.intel.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [RFC PATCH] doc: clarify VLAN and QinQ stripping behaviour
+Thread-Index: Adv2inD1w4FEbAbPR2CZWrEhTRJ/5gAsg5ig
+References: <20250714133014.44597-1-bruce.richardson@intel.com>
+ <CABD7UXPVg56UwvmtOsssBwV2HzmgV4ZJZCb=FrnVQKkggtD2+Q@mail.gmail.com>
+ <aHd6x3kT053EvX2g@bricha3-mobl1.ger.corp.intel.com>
+ <CABD7UXPtChUUOdz3gfiyKqY4Rn2_0F8Ck4O6ypq9woATD7hfCw@mail.gmail.com>
+ <aHgBs5DGU48mTnwz@bricha3-mobl1.ger.corp.intel.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>,
+ "Dean Marx" <dmarx@iol.unh.edu>
+Cc: <dev@dpdk.org>, "Dengdui Huang" <huangdengdui@huawei.com>,
+ "Vladimir Medvedkin" <medvedkinv@gmail.com>, <techboard@dpdk.org>,
+ "Patrick Robb" <probb@iol.unh.edu>,
+ "fengchengwen" <fengchengwen@huawei.com>, <stephen@networkplumber.org>,
+ <jasvinder.singh@intel.com>, <thomas@monjalon.net>,
+ <aman.deep.singh@intel.com>, <lihuisong@huawei.com>,
+ <liuyonglong@huawei.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,157 +57,116 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Too late for 25.07 now. But will put in next-net for 25.11
+> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> Sent: Wednesday, 16 July 2025 21.47
+>=20
+> On Wed, Jul 16, 2025 at 03:24:55PM -0400, Dean Marx wrote:
+> > I've created a list of test cases which I'm planning on implementing
+> > in future QinQ testing. After talking with Bruce about some Intel =
+test
+> > results earlier, I've got a solid idea of what the expected =
+behaviors
+> > are in five of these, but I'm unsure about the other three. If =
+anyone
+> > is able to provide some insight as to what they believe these =
+expected
+> > behaviors should be, please let me know as it would be immensely
+> > helpful. Thanks!
+> >
+> > Vlan Strip ON and QinQ Strip OFF:
+> > 1. Single VLAN:
+> >     Expected result: VLAN Stripped
+> > 2. Double VLAN:
+> >     Expected result: Should strip outer VLAN
+> > 3. Single 0x88a8 tag only:
+> >     Expected result: 0x88a8 tag stripped
+> > 4. Single VLAN + 1 0x88a8 tag:
+> >     Expected result: 0x88a8 tag stripped, inner VLAN untouched
+>=20
+> Technically, the result goes for the test case of "0x88a8 tag +
+> Single VLAN", since the 88a8 tag is first. :-)
 
-I notice if shadow declaration warning is enabled, lots of
-warning occur.
+Agree.
 
+> The "Single VLAN + 0x88a8 Tag" would be a 5th test case if you
+> want to try it. Expected result should be again that outer tag is
+> stripped.
 
-In file included from ../drivers/net/dpaa2/dpaa2_ethdev.c:26:
-../drivers/net/dpaa2/dpaa2_ethdev.c: In function =E2=80=98dpaa2_alloc_rx_tx=
-_queues=E2=80=99:
-../drivers/bus/fslmc/portal/dpaa2_hw_pvt.h:207:13: warning: declaration of =
-=E2=80=98ret=E2=80=99 shadows a previous local [-Wshadow]
-  207 |         int ret =3D 0, i; \
-      |             ^~~
-../drivers/net/dpaa2/dpaa2_ethdev.c:393:23: note: in expansion of macro =E2=
-=80=98dpaa2_queue_storage_alloc=E2=80=99
-  393 |                 ret =3D dpaa2_queue_storage_alloc(dpaa2_q,
-      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/net/dpaa2/dpaa2_ethdev.c:372:16: note: shadowed declaration is h=
-ere
-  372 |         int i, ret =3D 0;
-      |                ^~~
-../drivers/bus/fslmc/portal/dpaa2_hw_pvt.h:207:22: warning: declaration of =
-=E2=80=98i=E2=80=99 shadows a previous local [-Wshadow]
-  207 |         int ret =3D 0, i; \
-      |                      ^
-../drivers/net/dpaa2/dpaa2_ethdev.c:393:23: note: in expansion of macro =E2=
-=80=98dpaa2_queue_storage_alloc=E2=80=99
-  393 |                 ret =3D dpaa2_queue_storage_alloc(dpaa2_q,
-      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/net/dpaa2/dpaa2_ethdev.c:372:13: note: shadowed declaration is h=
-ere
-  372 |         int i, ret =3D 0;
-      |             ^
-../drivers/bus/fslmc/portal/dpaa2_hw_pvt.h:207:13: warning: declaration of =
-=E2=80=98ret=E2=80=99 shadows a previous local [-Wshadow]
-  207 |         int ret =3D 0, i; \
-      |             ^~~
-../drivers/net/dpaa2/dpaa2_ethdev.c:408:23: note: in expansion of macro =E2=
-=80=98dpaa2_queue_storage_alloc=E2=80=99
-  408 |                 ret =3D dpaa2_queue_storage_alloc(dpaa2_q,
-      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/net/dpaa2/dpaa2_ethdev.c:372:16: note: shadowed declaration is h=
-ere
-  372 |         int i, ret =3D 0;
-      |                ^~~
-../drivers/bus/fslmc/portal/dpaa2_hw_pvt.h:207:22: warning: declaration of =
-=E2=80=98i=E2=80=99 shadows a previous local [-Wshadow]
-  207 |         int ret =3D 0, i; \
-      |                      ^
-../drivers/net/dpaa2/dpaa2_ethdev.c:408:23: note: in expansion of macro =E2=
-=80=98dpaa2_queue_storage_alloc=E2=80=99
-  408 |                 ret =3D dpaa2_queue_storage_alloc(dpaa2_q,
-      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/net/dpaa2/dpaa2_ethdev.c:372:13: note: shadowed declaration is h=
-ere
-  372 |         int i, ret =3D 0;
-      |             ^
-../drivers/bus/fslmc/portal/dpaa2_hw_pvt.h:207:13: warning: declaration of =
-=E2=80=98ret=E2=80=99 shadows a previous local [-Wshadow]
-  207 |         int ret =3D 0, i; \
-      |             ^~~
-../drivers/net/dpaa2/dpaa2_ethdev.c:435:31: note: in expansion of macro =E2=
-=80=98dpaa2_queue_storage_alloc=E2=80=99
-  435 |                         ret =3D dpaa2_queue_storage_alloc(dpaa2_q,
-      |                               ^~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/net/dpaa2/dpaa2_ethdev.c:372:16: note: shadowed declaration is h=
-ere
-  372 |         int i, ret =3D 0;
-      |                ^~~
-../drivers/bus/fslmc/portal/dpaa2_hw_pvt.h:207:22: warning: declaration of =
-=E2=80=98i=E2=80=99 shadows a previous local [-Wshadow]
-  207 |         int ret =3D 0, i; \
-      |                      ^
-../drivers/net/dpaa2/dpaa2_ethdev.c:435:31: note: in expansion of macro =E2=
-=80=98dpaa2_queue_storage_alloc=E2=80=99
-  435 |                         ret =3D dpaa2_queue_storage_alloc(dpaa2_q,
-      |                               ^~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/net/dpaa2/dpaa2_ethdev.c:372:13: note: shadowed declaration is h=
-ere
-  372 |         int i, ret =3D 0;
-      |             ^
-../drivers/bus/fslmc/portal/dpaa2_hw_pvt.h:226:13: warning: declaration of =
-=E2=80=98i=E2=80=99 shadows a previous local [-Wshadow]
-  226 |         int i; \
-      |             ^
-../drivers/net/dpaa2/dpaa2_ethdev.c:455:17: note: in expansion of macro =E2=
-=80=98dpaa2_queue_storage_free=E2=80=99
-  455 |                 dpaa2_queue_storage_free(dpaa2_q, RTE_MAX_LCORE);
-      |                 ^~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/net/dpaa2/dpaa2_ethdev.c:372:13: note: shadowed declaration is h=
-ere
-  372 |         int i, ret =3D 0;
-      |             ^
-../drivers/bus/fslmc/portal/dpaa2_hw_pvt.h:226:13: warning: declaration of =
-=E2=80=98i=E2=80=99 shadows a previous local [-Wshadow]
-  226 |         int i; \
-      |             ^
-../drivers/net/dpaa2/dpaa2_ethdev.c:472:17: note: in expansion of macro =E2=
-=80=98dpaa2_queue_storage_free=E2=80=99
-  472 |                 dpaa2_queue_storage_free(dpaa2_q, RTE_MAX_LCORE);
-      |                 ^~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/net/dpaa2/dpaa2_ethdev.c:372:13: note: shadowed declaration is h=
-ere
-  372 |         int i, ret =3D 0;
-      |             ^
-../drivers/bus/fslmc/portal/dpaa2_hw_pvt.h:226:13: warning: declaration of =
-=E2=80=98i=E2=80=99 shadows a previous local [-Wshadow]
-  226 |         int i; \
-      |             ^
-../drivers/net/dpaa2/dpaa2_ethdev.c:478:17: note: in expansion of macro =E2=
-=80=98dpaa2_queue_storage_free=E2=80=99
-  478 |                 dpaa2_queue_storage_free(dpaa2_q, RTE_MAX_LCORE);
-      |                 ^~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/net/dpaa2/dpaa2_ethdev.c:372:13: note: shadowed declaration is h=
-ere
-  372 |         int i, ret =3D 0;
-      |             ^
-../drivers/net/dpaa2/dpaa2_ethdev.c: In function =E2=80=98dpaa2_free_rx_tx_=
-queues=E2=80=99:
-../drivers/bus/fslmc/portal/dpaa2_hw_pvt.h:226:13: warning: declaration of =
-=E2=80=98i=E2=80=99 shadows a previous local [-Wshadow]
-  226 |         int i; \
-      |             ^
-../drivers/net/dpaa2/dpaa2_ethdev.c:499:25: note: in expansion of macro =E2=
-=80=98dpaa2_queue_storage_free=E2=80=99
-  499 |                         dpaa2_queue_storage_free(dpaa2_q,
-      |                         ^~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/net/dpaa2/dpaa2_ethdev.c:490:13: note: shadowed declaration is h=
-ere
-  490 |         int i;
-      |             ^
-../drivers/bus/fslmc/portal/dpaa2_hw_pvt.h:226:13: warning: declaration of =
-=E2=80=98i=E2=80=99 shadows a previous local [-Wshadow]
-  226 |         int i; \
-      |             ^
-../drivers/net/dpaa2/dpaa2_ethdev.c:511:33: note: in expansion of macro =E2=
-=80=98dpaa2_queue_storage_free=E2=80=99
-  511 |                                 dpaa2_queue_storage_free(dpaa2_q,
-      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/net/dpaa2/dpaa2_ethdev.c:490:13: note: shadowed declaration is h=
-ere
-  490 |         int i;
-      |             ^
-[50/168] Compiling C object drivers/li...net_dpaa2.a.p/net_dpaa2_dpaa2_rxtx=
-.c.o
-../drivers/net/dpaa2/dpaa2_rxtx.c: In function =E2=80=98dpaa2_dev_tx=E2=80=
-=99:
-../drivers/net/dpaa2/dpaa2_rxtx.c:1393:37: warning: declaration of =E2=80=
-=98ret=E2=80=99 shadows a previous local [-Wshadow]
- 1393 |                                 int ret =3D rte_vlan_insert(bufs);
-      |                                     ^~~
-../drivers/net/dpaa2/dpaa2_rxtx.c:1250:17: note: shadowed declaration is he=
-re
- 1250 |         int32_t ret;
+NB: The 5th case would be an extremely weird packet, either due to a bug =
+swapping the two tags, or it could be a packet in a VLAN tunnel carrying =
+a QinQ packet with no S-TAG. In the latter case, triple-tagged packets =
+(VLAN + S-TAG (0x88a8) + C-TAG (VLAN)) could occur on such a VLAN tunnel =
+too.
+
+Assuming we treat EtherType 0x8100 and 0x88a8 as being the same on RX, =
+then yes to the above.
+
+However, if we treat them differently, the results would be:
+
+QinQ Strip OFF, Vlan Strip ON:
+1. Single VLAN:
+    Expected result: VLAN Stripped
+2. Double VLAN:
+    Expected result: Should strip outer VLAN
+3. Single 0x88a8 tag only (S-TAG, no C-TAG):
+    Expected result: Nothing stripped
+4 (corrected). Outer 0x88a8 tag + inner VLAN (S-TAG + C-TAG):
+    Expected result: 0x88a8 tag untouched! inner VLAN untouched or =
+stripped?
+5. Outer VLAN + inner 0x88a8 tag (weird packet):
+    Expected result: Outer VLAN stripped, inner 0x88a8 tag untouched
+
+>=20
+> As for the expected results you quote, those may or may not be =
+expected
+> depending on whether hardware supports multiple VLAN tag eth-types or
+> configurable VLAN tag eth-types. From my testing, in at least some of
+> our
+> NICs by default, they ONLY strip VLAN tags if they have a 0x8100 tag.
+> However, I would be surprised if that is not configurable.
+>=20
+> >
+> > Vlan Strip ON and QinQ Strip ON:
+> > 1. Single VLAN:
+> >     Expected result: VLAN stripped
+> > 2. Double VLAN:
+> >     Expected result: Unknown (Outer VLAN stripped?)
+> > 3. Single 0x88a8 tag only:
+> >     Expected result: Unknown (0x88a8 tag stripped?)
+> > 4. Single VLAN + 1 0x88a8 tag:
+> >     Expected result: Unknown (0x88a8 tag stripped and VLAN tag
+> stripped?)
+>=20
+> Again, the expected result would likely depend on what are configured
+> ethtypes for recognised VLANs.
+
+If we are considering application breakage as a decision parameter for =
+this doc update, it would be better to log the results of the various =
+test cases with the various NICs, to compare their behaviors, rather =
+than pass/fail some "expected result".
+
+>=20
+> /Bruce
+
+I think we need to discuss VLAN/QinQ stripping in a broader context.
+
+QinQ and VLAN stripping/insertion is very simple to implement in =
+software, so the value of this feature itself (in an isolated context) =
+is relatively low.
+
+Hardware based QinQ and VLAN stripping/insertion has higher value when =
+combined with other hardware offloads, such as GRO/TSO and IP =
+defragmentation/fragmentation.
+
+E.g. for GRO, the NIC might only be able to merge a bunch of received =
+QinQ tagged TCP packets into one larger TCP packet if the NIC hardware =
+has the ability to parse (and possibly strip) the QinQ tags.
+
+Similarly, for TSO, the NIC must add the correct tag(s) to all the =
+smaller TCP packets it transmits when splitting a large TCP packet. (And =
+"correct" includes the EtherType of those tags. Inserting a VLAN tag =
+instead of an S-TAG (0x88a8) and no C-TAG (VLAN) is not correct.)
+
+The same goes for IP fragmentation/defragmentation. I don't know how =
+well the IP fragmentation library supports VLAN/QinQ tagged packets.
+
