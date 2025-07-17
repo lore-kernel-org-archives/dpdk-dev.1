@@ -2,51 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB8AC83F1B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Jul 2025 01:40:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79430C83F1A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Jul 2025 06:53:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 12E994014F;
-	Thu, 17 Jul 2025 03:40:12 +0200 (CEST)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
- by mails.dpdk.org (Postfix) with ESMTP id 5BC9A400EF
- for <dev@dpdk.org>; Thu, 17 Jul 2025 03:40:10 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.163.174])
- by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bjFsW2fmLz13Mrl;
- Thu, 17 Jul 2025 09:37:19 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 20C101402C4;
- Thu, 17 Jul 2025 09:40:08 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 17 Jul 2025 09:40:07 +0800
-Message-ID: <f97b576f-a67f-4752-9576-7ece752d8a56@huawei.com>
-Date: Thu, 17 Jul 2025 09:40:07 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id 5EAD54014F;
+	Thu, 17 Jul 2025 08:53:53 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 99B3E400EF
+ for <dev@dpdk.org>; Thu, 17 Jul 2025 08:53:52 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 77E5C46B9B; Thu, 17 Jul 2025 08:53:52 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/vhost/virtio Bug 1676] [dpdk-25.03]
+ virtio_ipsec_cryptodev_func/test_aesni_mb_aes_cbc_sha1_hmac: Failed to start
+ qemu after launch dpdk-vhost_crypto sample
+Date: Thu, 17 Jul 2025 06:53:51 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: changed
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: vhost/virtio
+X-Bugzilla-Version: 25.03
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: yux.jiang@intel.com
+X-Bugzilla-Status: RESOLVED
+X-Bugzilla-Resolution: INVALID
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_status resolution
+Message-ID: <bug-1676-3-Gne2vy4JN1@https.bugs.dpdk.org/>
+In-Reply-To: <bug-1676-3@https.bugs.dpdk.org/>
+References: <bug-1676-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17527352321.F41719859.415176
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [EXTERNAL] Re: [PATCH v0 1/1] doc: announce inter-device DMA
- capability support in dmadev
-To: Vamsi Krishna Attunuru <vattunuru@marvell.com>, "dev@dpdk.org"
- <dev@dpdk.org>, Pavan Nikhilesh Bhagavatula <pbhagavatula@marvell.com>,
- "kevin.laatz@intel.com" <kevin.laatz@intel.com>, "bruce.richardson@intel.com"
- <bruce.richardson@intel.com>, "mb@smartsharesystems.com"
- <mb@smartsharesystems.com>, Vladimir Medvedkin
- <vladimir.medvedkin@intel.com>, Anatoly Burakov <anatoly.burakov@intel.com>
-CC: Jerin Jacob <jerinj@marvell.com>, "thomas@monjalon.net"
- <thomas@monjalon.net>
-References: <20250710085101.1678775-1-vattunuru@marvell.com>
- <01a66ad9-a763-457a-b0b2-c6aae1948f84@huawei.com>
- <SJ4PPFEA6F74CA24501C3384EF778E0B3F6A657A@SJ4PPFEA6F74CA2.namprd18.prod.outlook.com>
- <2243786a-eb7c-4807-b507-199936764e54@huawei.com>
- <SJ4PPFEA6F74CA2EBA656AF4C3C4CF8790DA656A@SJ4PPFEA6F74CA2.namprd18.prod.outlook.com>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <SJ4PPFEA6F74CA2EBA656AF4C3C4CF8790DA656A@SJ4PPFEA6F74CA2.namprd18.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,243 +56,122 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 2025/7/16 18:59, Vamsi Krishna Attunuru wrote:
-> 
->>
->> Thanks for the explanation.
->>
->> Let me tell you what I understand:
->> 1\ Two dmadev (must belong to the same DMA controller?) each passthrough
->> to diffent domain (VM or container) 2\ The kernel DMA controller driver could
->> config access groups --- there is a secure mechanism (like Intel IDPTE)
->>   and the two dmadev could communicate if the kernel DMA controller driver
->> has put them in the same access groups.
->> 3\ Application setup access group and get handle (maybe the new 'dev_idx'
->> which you announce in this commit),
->>   and then setup one vchan which config the handle.
->>   and later launch copy request based on this vchan.
->> 4\ The driver will pass the request to dmadev-1 hardware, and dmadev-1
->> hardware will do some verification,
->>   and maybe use dmadev-2 stream ID for read/write operations?
->>
->> A few question about this:
->> 1\ What the prototype of 'dev_idx', is it uint16_t?
-> Yes, it can be uint16_t and use two different dev_idx (src_dev_idx & dest_dev_idx)
-> for read & write.
-> 
->> 2\ How to implement read/write between two dmadev ?  use two different
->> dev_idx? the first for read and the second for write?
-> Yes, two different dev_idx will be used.
-> 
->>
->>
->> I also re-read the patchset "[PATCH v1 0/3] Add support for inter-domain
->> DMA operations", it introduce:
->> 1\ One 'int controller-id' in the rte_dma_info. which maybe used in vendor-
->> specific secure mechanism.
->> 2\ Two new OP_flag and two new datapath API.
->> The reason why this patch didn't continue (I guess) is whether setup one new
->> vchan. Yes, vchan was designed to represents different transfer contexts. But
->> each vchan has its own enqueue/dequeue/ring, it more act like one logic
->> dmadev, some of the hardware can fit this model well, some may not (like
->> Intel in this case).
->>
->>
->> So how about the following scheme:
->> 1\ Add inter-domain capability bits, for example:
->> RTE_DMA_CAPA_INTER_PROCESS_DOMAIN,
->> RTE_DMA_CAPA_INTER_OS_DOMAIN 2\ Add one domain_controller_id in
->> the rte_dma_info which maybe used in vendor-specific secure mechanism.
->> 3\ Add four OP_FLAGs:
->> RTE_DMA_OP_FLAG_SRC_INTER_PROCESS_DOMAIN_HANDLE,
->> RTE_DMA_OP_FLAG_DST_INTER_PROCESS_DOMAIN_HANDLE
->>                      RTE_DMA_OP_FLAG_SRC_INTER_OS_DOMAIN_HANDLE,
->> RTE_DMA_OP_FLAG_DST_INTER_OS_DOMAIN_HANDLE
->> 4\ Reserved 32bit from flag parameter (which all enqueue API both supports)
->> as the src and dst handle.
->>   or only reserved 16bit from flag parameter if we restrict don't support 3rd
->> transfer.
-> 
-> Yes, the above approach seems acceptable to me. I believe src & dst handles require
-> 16-bit values. Reserving 32-bits from flag parameter would leave 32 flags available,
-> which should be fine.
 
-Great
-tip: there are still 24bit flag reserved after apply this scheme.
+--17527352321.F41719859.415176
+Date: Thu, 17 Jul 2025 08:53:52 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-Would like more comments.
+https://bugs.dpdk.org/show_bug.cgi?id=3D1676
 
-> 
->>
->> Thanks
->>
->> On 2025/7/15 13:35, Vamsi Krishna Attunuru wrote:
->>> Hi Feng,
->>>
->>> Thanks for depicting the feature use case.
->>>
->>> From the application’s perspective, inter VM/process communication is
->> required to exchange the src & dst buffer details, however the specifics of this
->> communication mechanism are outside the scope in this context. Regarding
->> the address translations, these buffer addresses can be either IOVA as PA or
->> IOVA as VA. The DMA hardware must use the appropriate IOMMU stream IDs
->> when initiating the DMA transfers. For example, in the use case shown in the
->> diagram, dmadev-1 and dmadev-2 would join an access group managed by
->> the kernel DMA controller driver. This controller driver will configure the
->> access group on the DMA hardware, enabling the hardware to select the
->> correct stream IDs for read/write operations. New rte_dma APIs could be
->> introduced to join or leave the access group or to query the access group
->> details. Additionally, a secure token mechanism (similar to vfio-pci token) can
->> be implemented to validate any dmadev attempting to join the access group.
->>>
->>> Regards.
->>>
->>> From: fengchengwen <fengchengwen@huawei.com>
->>> Sent: Tuesday, July 15, 2025 6:29 AM
->>> To: Vamsi Krishna Attunuru <vattunuru@marvell.com>; dev@dpdk.org;
->>> Pavan Nikhilesh Bhagavatula <pbhagavatula@marvell.com>;
->>> kevin.laatz@intel.com; bruce.richardson@intel.com;
->>> mb@smartsharesystems.com
->>> Cc: Jerin Jacob <jerinj@marvell.com>; thomas@monjalon.net
->>> Subject: [EXTERNAL] Re: [PATCH v0 1/1] doc: announce inter-device DMA
->>> capability support in dmadev
->>>
->>> Hi Vamsi, From the commit log, I guess this commit mainly want to meet
->>> following case: --------------- ---------------- | Container | |
->>> VirtMachine | | | | | | dmadev-1 | | dmadev2 | --------------- ---------------- |
->> | ------------------------------ ZjQcmQRYFpfptBannerStart Prioritize security for
->> external emails:
->>> Confirm sender and content safety before clicking links or opening
->> attachments
->>>     Report Suspicious  <https://us-phishalarm-
->> ewt.proofpoint.com/EWT/v1/CRVmXkqW!tg3ZldV0Yr_wdSwWmT2aDdKMi-
->> 4rn2z58vFaxwfOeocS1P19w1BeRdyGs5sjnhV2rU_6m8MOWj4KFbuXKkKJIvcq
->> wWD2WEwJW_0$ > 
->>> ZjQcmQRYFpfptBannerEnd
->>>
->>> Hi Vamsi,
->>>
->>>
->>>
->>> From the commit log, I guess this commit mainly want to meet following
->> case:
->>>
->>>
->>>
->>>      ---------------             ----------------
->>>
->>>      |  Container  |             |  VirtMachine |
->>>
->>>      |             |             |              |
->>>
->>>      |  dmadev-1   |             |   dmadev2    |
->>>
->>>      ---------------             ----------------
->>>
->>>            |                            |
->>>
->>>            ------------------------------
->>>
->>>
->>>
->>> App run in the container could launch DMA transfer from local buffer
->>> to the VirtMachine by config
->>>
->>> dmadev-1/2 (the dmadev-1/2 are passthrough to diffent OS domain).
->>>
->>>
->>>
->>> Could you explain how to use it from application perspective (for
->>> example address translation) and
->>>
->>> application & hardware restrictions?
->>>
->>>
->>>
->>>
->>>
->>> BTW: In this case, there are two OS domain communication, and I
->>> remember there are also inter-process
->>>
->>> DMA RFC, so maybe we could design more generic solution if you provide
->> more info.
->>>
->>>
->>>
->>> Thanks
->>>
->>>
->>>
->>> On 2025/7/10 16:51, Vamsi Krishna wrote:
->>>
->>>> From: Vamsi Attunuru
->>>> <vattunuru@marvell.com<mailto:vattunuru@marvell.com>>
->>>
->>>>
->>>
->>>> Modern DMA hardware supports data transfer between multiple
->>>
->>>> DMA devices, enabling data communication across isolated domains or
->>>
->>>> containers. To facilitate this, the ``dmadev`` library requires
->>>> changes
->>>
->>>> to allow devices to register with or unregisters from DMA groups for
->>>
->>>> inter-device communication. This feature is planned for inclusion
->>>
->>>> in DPDK 25.11.
->>>
->>>>
->>>
->>>> Signed-off-by: Vamsi Attunuru
->>>> <vattunuru@marvell.com<mailto:vattunuru@marvell.com>>
->>>
->>>> ---
->>>
->>>>  doc/guides/rel_notes/deprecation.rst | 7 +++++++
->>>
->>>>  1 file changed, 7 insertions(+)
->>>
->>>>
->>>
->>>> diff --git a/doc/guides/rel_notes/deprecation.rst
->>>> b/doc/guides/rel_notes/deprecation.rst
->>>
->>>> index e2d4125308..46836244dd 100644
->>>
->>>> --- a/doc/guides/rel_notes/deprecation.rst
->>>
->>>> +++ b/doc/guides/rel_notes/deprecation.rst
->>>
->>>> @@ -152,3 +152,10 @@ Deprecation Notices
->>>
->>>>  * bus/vmbus: Starting DPDK 25.11, all the vmbus API defined in
->>>
->>>>    ``drivers/bus/vmbus/rte_bus_vmbus.h`` will become internal to DPDK.
->>>
->>>>    Those API functions are used internally by DPDK core and netvsc PMD.
->>>
->>>> +
->>>
->>>> +* dmadev: a new capability flag ``RTE_DMA_CAPA_INTER_DEV`` will be
->>>> +added
->>>
->>>> +  to advertise DMA device's inter-device DMA copy capability. To
->>>> + enable
->>>
->>>> +  this functionality, a few dmadev APIs will be added to configure
->>>> + the DMA
->>>
->>>> +  access groups, facilitating coordinated data communication between
->> devices.
->>>
->>>> +  A new ``dev_idx`` field will be added to the ``struct
->>>> + rte_dma_vchan_conf``
->>>
->>>> +  structure to configure a vchan for data transfers between any two DMA
->> devices.
->>>
->>>
-> 
+jiang,yu (yux.jiang@intel.com) changed:
 
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|UNCONFIRMED                 |RESOLVED
+         Resolution|---                         |INVALID
+
+--- Comment #3 from jiang,yu (yux.jiang@intel.com) ---
+Can not reproduce by manual test.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17527352321.F41719859.415176
+Date: Thu, 17 Jul 2025 08:53:52 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><span class=3D"vcard"><a class=3D"email" href=3D"mailto:yux.jiang=
+&#64;intel.com" title=3D"jiang,yu (yux.jiang&#64;intel.com)"> <span class=
+=3D"fn">jiang,yu</span></a>
+</span> changed
+          <a class=3D"bz_bug_link=20
+          bz_status_RESOLVED  bz_closed"
+   title=3D"RESOLVED INVALID - [dpdk-25.03] virtio_ipsec_cryptodev_func/tes=
+t_aesni_mb_aes_cbc_sha1_hmac: Failed to start qemu after launch dpdk-vhost_=
+crypto sample"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1676">bug 1676</a>
+          <br>
+             <table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=
+=3D"bz_diff_table">
+          <tr>
+            <th>What</th>
+            <th>Removed</th>
+            <th>Added</th>
+          </tr>
+
+         <tr>
+           <td style=3D"text-align:right;">Status</td>
+           <td>UNCONFIRMED
+           </td>
+           <td>RESOLVED
+           </td>
+         </tr>
+
+         <tr>
+           <td style=3D"text-align:right;">Resolution</td>
+           <td>---
+           </td>
+           <td>INVALID
+           </td>
+         </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+            <b class=3D"bz_comment_head"><a class=3D"bz_bug_link=20
+          bz_status_RESOLVED  bz_closed"
+   title=3D"RESOLVED INVALID - [dpdk-25.03] virtio_ipsec_cryptodev_func/tes=
+t_aesni_mb_aes_cbc_sha1_hmac: Failed to start qemu after launch dpdk-vhost_=
+crypto sample"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1676#c3">Comment # 3</a>
+              on <a class=3D"bz_bug_link=20
+          bz_status_RESOLVED  bz_closed"
+   title=3D"RESOLVED INVALID - [dpdk-25.03] virtio_ipsec_cryptodev_func/tes=
+t_aesni_mb_aes_cbc_sha1_hmac: Failed to start qemu after launch dpdk-vhost_=
+crypto sample"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1676">bug 1676</a>
+              from <span class=3D"vcard"><a class=3D"email" href=3D"mailto:=
+yux.jiang&#64;intel.com" title=3D"jiang,yu (yux.jiang&#64;intel.com)"> <spa=
+n class=3D"fn">jiang,yu</span></a>
+</span>
+            </b>
+          <pre class=3D"bz_comment_text">Can not reproduce by manual test.
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1676#c3">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17527352321.F41719859.415176--
