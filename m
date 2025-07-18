@@ -2,131 +2,164 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42FDFC83F1A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Jul 2025 16:05:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C15FC83F17
+	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Jul 2025 16:14:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 70CE640B9B;
-	Fri, 18 Jul 2025 18:05:53 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 14222402DB
- for <dev@dpdk.org>; Fri, 18 Jul 2025 18:05:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1752854751;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=L2hIR4/BXwAVAG/9qRs6WfCPs4LkvV/L4THION09wps=;
- b=ExIcgPr4tejSE+jx71PGw0ls3fb5zLSBL6ECfzmlxfABdA4TgeLVSbZeW4jQwoURaQD/Oi
- MrbykgMOaLjiRblWm56ngGucvteo10W60KEJIVFlQavsu4joeDFYqYQAN/M1YRccSXVMTH
- 5CnBYI7rQUSw09G+Sl8U5q/o4YiXWf8=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-27-la4ri8XWM52EkspKzhC7zQ-1; Fri, 18 Jul 2025 12:05:50 -0400
-X-MC-Unique: la4ri8XWM52EkspKzhC7zQ-1
-X-Mimecast-MFC-AGG-ID: la4ri8XWM52EkspKzhC7zQ_1752854749
-Received: by mail-wm1-f72.google.com with SMTP id
- 5b1f17b1804b1-45624f0be48so12550045e9.3
- for <dev@dpdk.org>; Fri, 18 Jul 2025 09:05:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752854749; x=1753459549;
- h=content-transfer-encoding:in-reply-to:autocrypt:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=L2hIR4/BXwAVAG/9qRs6WfCPs4LkvV/L4THION09wps=;
- b=kVD1cbtcq144cxiNZoTrFHC6FENYWxUt99JxPmkuymDQeMeoWNPdwro2lXkJu5/y5n
- YRtEQRJg4qwT+JT/zM2xZABr03MoQAfHR4c1lSfnWoDy7izvxswT3dgQCcXX8rnRZpQK
- 7tDCJbiltuGm1Ys581Bvq/b4uPk1cMsb9/i+jUyeT/vtbXQ2G2S2BEYvbofe096rUVj3
- WqTq/dC4UhzBvo8VUx8ewCq6/B8SBsxrFZPXGY3BeFAkHksO3zDJOFI9QhvMUefc5tNu
- hhdmNE7Kc4sEIoJOh64I+Ry0L+0WYO7TQC4l8tKFq2ydnphraKS11Z8VME+Cq6DpFOVD
- 9wtw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXD2y+sHQL/uQj6to7tPdGAxFevYqs1q921ntQ5Y/Am9xVlMTyfc3qy0nCTRkihNku8pac=@dpdk.org
-X-Gm-Message-State: AOJu0YzDUPvw6dxk+yobjbDUNw96m5Tdwxj6nTjhhoLk94nuOlM/FdO4
- 5Bk+miZbb0LYTIU5A1C2poBVM+HjnP75zphyKPwfJ5taH2IVoWLjkKdWpBHRPvj/zi0sRJ4SVp5
- NtyYsE8uMmQYf7Vve3a/XmXk8a41mdxiea45XXl1AjAer
-X-Gm-Gg: ASbGncucLYD4XZEWG3TlEL1KrNAfHEVb4DHluVMjjg/XFlCFGD+3GDNJzPifGknjobC
- BrskDv5aHrNIY44GTUzpYA4EXFv8m0myH4ihuWSyhuWhVhx45xmKe9lGBMB7IatW2NS1j/m/2oW
- OHmK8ZGGuPwr6JmJqYXOL04vfr6DMP9+DxBK8Vb0myfkpwt+u2RiHUkCPgijVVXiTUg9S/ifoXf
- tYcvpaNFY4TQMldbRXwOuFkQ/GjZ8CiOzoVK7joIYTMUMN/HSL1Aegv0raF9gHNzk3w//zKk/s2
- XYpaVW0VdF1jEuSrQS1oVXE4nkZy6SwiTjSlfCFI/w==
-X-Received: by 2002:a05:600c:c08b:b0:456:24aa:958e with SMTP id
- 5b1f17b1804b1-4562e3d4f52mr97519185e9.0.1752854748415; 
- Fri, 18 Jul 2025 09:05:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFRwEZMpu0XptkKSjsEtUVdYlmHHvXd/fthDgC2kSLahr97nz1lfFs+OglBjFsSe1xxZYNOOA==
-X-Received: by 2002:a05:600c:c08b:b0:456:24aa:958e with SMTP id
- 5b1f17b1804b1-4562e3d4f52mr97518545e9.0.1752854747683; 
- Fri, 18 Jul 2025 09:05:47 -0700 (PDT)
-Received: from [192.168.0.56] ([78.16.130.126])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4562e89c313sm85429445e9.28.2025.07.18.09.05.46
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Fri, 18 Jul 2025 09:05:46 -0700 (PDT)
-Message-ID: <86757a63-6464-4b7b-bd0b-fdd816b40aaa@redhat.com>
-Date: Fri, 18 Jul 2025 17:05:45 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+	by mails.dpdk.org (Postfix) with ESMTP id 9B7B640DCA;
+	Fri, 18 Jul 2025 18:14:10 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+ by mails.dpdk.org (Postfix) with ESMTP id 38455402DB
+ for <dev@dpdk.org>; Fri, 18 Jul 2025 18:14:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1752855248; x=1784391248;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=RV5G7iZWDdns6kO5FWawcmV14EC7nA2XLKNY/5cp8RI=;
+ b=C08ofz3PrRboLtVp5NJ3+xUKe6TbCeW+6J39YzyIXGrnjcyT0KZyU7B1
+ AxoGNGGZCrQXi9OVRfMuJVky1XljsN9W1pNi3GfCAe91PL+ab8wYNI0bJ
+ AC21N1uW5ETdm6s58hQw18FyAYQyvQAJYfBgL1kCrKF/Uz4qYi/2ZCnzM
+ Fbok9W7XONUm4qlzPlczif15c75r5jxNBw8sHnWzGatlWtXeC+IsoNTmU
+ LdlKp8wncVJGudbRu+PXI6iw0HzPhtRRlxqcxrCRnMIhXii1vXfR7dYsO
+ a3p2ktO5dQ+/IeUspdHqwb8bIIuTgZK78ZOFtQW9zK3pyQESsmBRx+xoj g==;
+X-CSE-ConnectionGUID: YXQQFijESdSbvCp4IuFFag==
+X-CSE-MsgGUID: Xj+J1GiZQt6jk+9+U8qC7A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11496"; a="54364127"
+X-IronPort-AV: E=Sophos;i="6.16,322,1744095600"; d="scan'208";a="54364127"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+ by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 18 Jul 2025 09:14:07 -0700
+X-CSE-ConnectionGUID: AG6ft5wMS3e08A1PtDd3bQ==
+X-CSE-MsgGUID: xZHRM0jXTkecPblp4hRy4A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,322,1744095600"; d="scan'208";a="163722790"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 18 Jul 2025 09:14:05 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Fri, 18 Jul 2025 09:14:04 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Fri, 18 Jul 2025 09:14:04 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.68)
+ by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Fri, 18 Jul 2025 09:14:04 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=am28m80+RjybnTmIAqVz/8paYppBicC055aDrBWM+BbAicyVclrK3AmpUTbQFic6rQ9L+IkstH6tBq3yp4f1ajkHc0SFNhnmdy2vEY5IRFqrOUAZRFesXu5Ix6kmY3XJpeqyzRiGt0sPJ+P3ntiolIIBUeOZ/9BBoK96B2UbfSobQqDj0wNQJbItDgWy2Czx1efIblO/2nnv7SrnV/voPX5yCb1SOMj1YCG3yTxpBlSd0r7nOG/j3H1yNE6y/k5paC+RvwyEXLJ91ZmhMcjpOtok4cg9VFMx9IFZh0wRdUAHVnl4bzFvAepqxbbJr2iyE35VmtOY315oqoSRKR5D0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pMVQ309SRl04xHnEkrFTotDITtJw2RpTug6um0Ph6U8=;
+ b=rEhYRb/QsvjFbK9zmfnfmbjw7UwIWVCiknseYQJUDTulbIrQV3AAKMn2qz89DkKRZXrXd9V5usS8SdDOsdVff4KKK8N9ic4AwFlAmovLA7liBwkJK9eHo8azxY7FR/0Db3iDC8bWEmcrUQUerZ4W6onK+RsOKI2JFqXVuGqzsHyRUaHlv6c5HXRwOagI/wbl3p3oRO3DZwEj0NSJheRnVcH3qhRFeRgn3YDk1yPNPgKE2GVy9r3cZQSrc3SwdfIN1MpMLEfn87lFfRg1c3NgyCLkL2m78ZEIHXg4tRnHQPi716BLhHoL8TpTL5E76nkcubjBZpHECD453rkM6IOnMw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by SA1PR11MB6990.namprd11.prod.outlook.com (2603:10b6:806:2b9::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.35; Fri, 18 Jul
+ 2025 16:14:02 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.8922.037; Fri, 18 Jul 2025
+ 16:14:02 +0000
+Date: Fri, 18 Jul 2025 17:13:57 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Kevin Traynor <ktraynor@redhat.com>
+CC: Ciara Loftus <ciara.loftus@intel.com>, <dev@dpdk.org>
 Subject: Re: [PATCH v2] net/intel: deprecate some SSE paths
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: Ciara Loftus <ciara.loftus@intel.com>, dev@dpdk.org
+Message-ID: <aHpyxTGvwgF90U7g@bricha3-mobl1.ger.corp.intel.com>
 References: <20250703121624.1050845-1-ciara.loftus@intel.com>
  <20250703143119.1140097-1-ciara.loftus@intel.com>
  <0c964d09-7b83-4367-b6cf-6cc05bd64967@redhat.com>
  <aHpl6L51T1in1wPW@bricha3-mobl1.ger.corp.intel.com>
-From: Kevin Traynor <ktraynor@redhat.com>
-Autocrypt: addr=ktraynor@redhat.com; keydata=
- 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
-In-Reply-To: <aHpl6L51T1in1wPW@bricha3-mobl1.ger.corp.intel.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: XSp53NpG7Hzctkx1p4u6BginTl77x0ztDTO-ZwIuyyc_1752854749
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <86757a63-6464-4b7b-bd0b-fdd816b40aaa@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <86757a63-6464-4b7b-bd0b-fdd816b40aaa@redhat.com>
+X-ClientProxiedBy: LO4P123CA0231.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1a6::20) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SA1PR11MB6990:EE_
+X-MS-Office365-Filtering-Correlation-Id: 31c87852-d207-41bd-dfcb-08ddc6161c5c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?PPP9pOtapKbhtos6EN8ZR4ML5zUd6bYhWB1pJ3vC9wL9EsA4VhzuEKDG/8fE?=
+ =?us-ascii?Q?Akztfexyj7SoLYD01BcC8FAzN5ZfRVVn//IPcUlE6wSk7lzs5eEipSGauL1s?=
+ =?us-ascii?Q?oSWqR43Wp74NMS9bMjIhzXzcnC3gqtPoiO7qFeDY/OCZFnLJMou8R3nE4/5w?=
+ =?us-ascii?Q?6NxU1ksOQ8sEhO6qelTvTcvVcU5G3NzmP0i/3FCWBF+7ftckuMZAX/OP0QLR?=
+ =?us-ascii?Q?QIXPxUhcnGNTIDeJrDtH8JnJOi9HSZCqXWuf5RrP+thowS/bJ/0b7+pVCSbt?=
+ =?us-ascii?Q?WjJ259zGrWv+j7z26U2SCOvv48UVQYBioKBA7CZmkESLBvT5vSMxc/neoQeB?=
+ =?us-ascii?Q?GlzxdI5zPODXtDGInVibnUBWwC1YhOZpstDzbvm1vDBl2VneWGMu5X8pkW6n?=
+ =?us-ascii?Q?k8wzWysxZiqIv864LiL1EYWi52fncLkYa2TmrfR8krrj4aQLDJsIxe2ZcNWc?=
+ =?us-ascii?Q?Z3+CbGk/ruI+VbgJRrrCpMuU4LMG7OOl+D3j+i28kat+wPh9hiXm3W+8SyTJ?=
+ =?us-ascii?Q?yNEXh9wCUqMowINdzuBldspn+oTSRAKJe2MVWIGi/CmhSpcRprkK+9yfG2hJ?=
+ =?us-ascii?Q?vken0RkFDoRbn2zxWOOAPe5AzpmXWogwT/mrdNGNer3ljHdLl7JuPtedIn6o?=
+ =?us-ascii?Q?91YVLTXgVx8CDX/eLMelk5anBSJgoz0phdu7TlvS27J0YMu0EbRnTdAfcrms?=
+ =?us-ascii?Q?nTTOcJ75Xhxl649nTMzw72iLqgdOD8TXTOwGsKXuK+AVwrnP+rgfDyq/KXdJ?=
+ =?us-ascii?Q?hNKAW7qgIncqJEDJJzxLueVSRSBeBSNY1vcSmyx6WIOXt4/3xWbcwgaWmWuf?=
+ =?us-ascii?Q?9/GdejpvJXzxEbH2eleNtRMHW+7mhbith7Z+IiS4pvWLMGro7IPi3WBda8Sx?=
+ =?us-ascii?Q?Grb4AitQUg6ujaAgdgCuP69qxqDRn++UNqjYE57kWLr2OpgAYA3s+DpKXzb7?=
+ =?us-ascii?Q?glEuVTEobFOz+2/949YOq/AYB4ipW685IS3+ldaT6r4YSohJczqJ1PzejIek?=
+ =?us-ascii?Q?8nNwlFXUBAR/22ygGV1tvx303N7EPDHUyp91/VOv2jGBbhsAtmJv6UMwlQ3t?=
+ =?us-ascii?Q?KWmKVbVwo2oOLiERVsWmC5I1ZSalVYlC4GWo1jI/rzKvHVpcVmQxlA0gJ8Jz?=
+ =?us-ascii?Q?63Sdbo8AOOLsUJ9v+HPUnnRqLjjs9dWQVyjN1opJ+pdwxnkrVn2Ct3zKRPgy?=
+ =?us-ascii?Q?cNVEWFFAw1lMz2QubXyhr4tbupxIb53fHLP2Sn4zgJYXjwJrd9T5isdNXuzR?=
+ =?us-ascii?Q?b7inyPklL/EYA1VV44qoE6xMJDwSObX85fRXisvF3pRYkdz6sWyvznXyZU3B?=
+ =?us-ascii?Q?gVMIYqBrJ5cD+GHj/cF/w1KmwF6x3/GKXxc0XbuCt3tKLh3F8+4pq4+i6xHp?=
+ =?us-ascii?Q?RwUc4WTeFmOM9EB5BL/Q97GNyOnDfZQirZba6/lBKMT2lgXDTRYBMp2X/PjX?=
+ =?us-ascii?Q?5suTGMumH6M=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?FnCuHIF/Q5Toust0Rzza4U7xBA8JdPBo7jeBBwXxUxieKruV2QnghH+t4VTi?=
+ =?us-ascii?Q?OVUJIp2ljFt70g3KmIlsbhrTVY1fR0WKbEM7qzfIBvuZt+BbKnbxBEcEhSYs?=
+ =?us-ascii?Q?mIpsij4FkmgLjS9i+QyvLIGwZ9AB3xsVy/Y5F3w4gNq/hVm/dkW85ebsttgE?=
+ =?us-ascii?Q?AAIlDXGsf2i8pmp2pJsH1cQOQMFfa3qbKnsbCMXQ6EtGsV6kpdk6OnNVWoF+?=
+ =?us-ascii?Q?oKTk9VbNbw0fPtzPuoPDECjhK+v4Cte0A2NGLfrFYMqzvRCHyIy2wNNE+Iha?=
+ =?us-ascii?Q?Rwcrkeu1uOjiiI6j1bLHlvbx59GzErPFelvZQzn59rvXhuTcaDVj+RwE+0DU?=
+ =?us-ascii?Q?u9JyZcQrJMJYvNA2GTEIltY9rOo1b3NX4zSOas0f3mGNouE03u7jgo4faml+?=
+ =?us-ascii?Q?MMkk8PN8gdBNHCVtInaMesP7gFSqKhP3InKDwUOfooy7o8UGiEagaq6VmtQK?=
+ =?us-ascii?Q?g80N1GpXSQUf/NxxUTBkVMUqUYJU3OHV0WcLdgkcPDZycgryU5Y/LypUVKrZ?=
+ =?us-ascii?Q?LvnNinGegd9K1cBjyNnlT2zrTb//L+GXhSEg/reF/DqnkIFFp3z0ZVYGvbhw?=
+ =?us-ascii?Q?ME38+/8b971bZjc+6cXItirKB6A7HBGW9TOOKjAn0uuKf+mU1Rx4Jvl8EDSk?=
+ =?us-ascii?Q?k8DRQ9ewRlNHdPAWprMz50qKToQH2i2bbeznXeTQHVBcttmkuQDchK+pGvVS?=
+ =?us-ascii?Q?q46Vb4brsZ3Hn8RthL70zhnOhB/lbpkuq1zpKSdAvAI7Du2WkZJG0j+zLe9Z?=
+ =?us-ascii?Q?qwFydQGuVI2xYAPZi5jZvmT/GfH8nMDAhTJkzMeTQjjtRVhci2ot0oQUVcFi?=
+ =?us-ascii?Q?ljvSZJ5lG2FTYnK6t3Q2fgKZFkICaGM6zdSJG8PeQo/kCpFxg3EGMhsEBmPe?=
+ =?us-ascii?Q?49IIwD9e8ct3h+CJ1M1mFhoFGiZ50MLT2hqCRUEHVHfXb8YRVvmdPxvasxrr?=
+ =?us-ascii?Q?GlLjuIvitZB7IDFprgV8qTq4RLPMbo5O2wxAqsDywDuJkxJCi5cZsLDMK7Xq?=
+ =?us-ascii?Q?nLoLmhH9Wlv+qESOfs9PZkkU7k2lkkuZf+BNb4lNPtVULvJH24kenlaWacrt?=
+ =?us-ascii?Q?fRSdYljKxujZAI6JNETD9QgjNEzoW96Q+GDmCRrJmJzh2AQ34yBycOrv4RNA?=
+ =?us-ascii?Q?vehanKpMlKGgHnCPax6fb7eI49zWF00RsOZtuSVu90MyoyERk10jK+be6M+G?=
+ =?us-ascii?Q?RvnsFTPQWh+OHjGa044ZFAEzl1VWiDFOHfZDZz9d/x/zMP0P35yE9eX+OWP7?=
+ =?us-ascii?Q?4d2D9TTHydkuj4QFQElkjO6HhCaV9Vqn6tw57/0uHjA/e6NvIsPd8vZzziQG?=
+ =?us-ascii?Q?XqExLIjk6tL2tav8KvXco4+1clQJ2Rt82H2teL3Zkyx1/rtBa5TnH/dpSbY5?=
+ =?us-ascii?Q?iT1R9xHFmOiJmx8/EzdqqIBK90aYiT1ksGYsJdyjVxw4YLeh9tTz53gXDNdX?=
+ =?us-ascii?Q?ZvrRv+NSiGOnzMZN6MZqLdcKPLbBhtU9UxIlzekad+YOqzroriBYFne4xf/T?=
+ =?us-ascii?Q?sNTWiWuEFCFYdgFaqH4e3NhJdytlE2Ga8kbXVBTlMOl0EHLth2YPfcd0ku5Q?=
+ =?us-ascii?Q?HHlUjREJ1w70fXReTwGAyLgs+fKXbF12jg2XqlGceAGcOuKDQY8rnr8aLIyC?=
+ =?us-ascii?Q?TA=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31c87852-d207-41bd-dfcb-08ddc6161c5c
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2025 16:14:02.5388 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /vMoLu5+3nConWKwZMSN8u5fW6X62OZOh5yFRlOkf1sazxpVYmjNcduab0/gRM/x+jmkh9EV6lw6tPmNgTv+UXfZdks346JT/inzm/SdN1E=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6990
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -140,61 +173,63 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 18/07/2025 16:19, Bruce Richardson wrote:
-> On Fri, Jul 18, 2025 at 04:03:17PM +0100, Kevin Traynor wrote:
->> On 03/07/2025 15:31, Ciara Loftus wrote:
->>> The SSE rx and tx paths will be removed from the i40e, iavf and ice
->>> drivers in the 25.11 release. Each of these drivers have faster vector
->>> paths (AVX2 and AVX-512) which have feature parity with the soon to be
->>> removed SSE paths. In environments where AVX2 or AVX-512 are not
->>> supported, the scalar path will still be used, which also has feature
->>> parity.
->>>
->>> Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
->>> ---
->>>  doc/guides/rel_notes/deprecation.rst | 7 +++++++
->>>  1 file changed, 7 insertions(+)
->>>
->>> diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
->>> index e2d4125308..0d020c9c1f 100644
->>> --- a/doc/guides/rel_notes/deprecation.rst
->>> +++ b/doc/guides/rel_notes/deprecation.rst
->>> @@ -80,6 +80,13 @@ Deprecation Notices
->>>    and the header struct ``rte_vxlan_gpe_hdr`` with the macro ``RTE_ETHER_VXLAN_GPE_HLEN``
->>>    will be removed in DPDK 25.11.
->>>  
->>> +* net/intel: drivers that have an SSE vector path alongside other vector paths,
->>> +  namely i40e, iavf and ice, will have their SSE vector paths removed in DPDK 25.11.
->>> +  Modern x86 systems all support AVX2, if not AVX-512, so the SSE path is no longer
->>> +  widely used. This change will not result in any feature loss, as the fallback
->>> +  scalar paths which have feature parity with SSE will be used in the cases where
->>> +  the SSE paths would have been used.
->>> +
->>>  * ethdev: The flow API matching pattern structures, ``struct rte_flow_item_*``,
->>>    should start with relevant protocol header structure from lib/net/.
->>>    The individual protocol header fields and the protocol header struct
->>
->> I'm not aware of anyone using hardware that old and relying on SSE, but
->> it seems a bit short notice for a patch to remove hardware support.
->>
->> Would it hurt much to give it a longer deprecation so anyone who needs
->> to prepare by upgrade, or taking 25.11 with support etc. can do that ?
->>
-> Do we think that will make a difference? After all, dropping the SSE path
-> won't break DPDK on older hardware, it will only run a bit slower using the
-> scalar path. Beyond that, it would only affect deployments with new/latest
-> DPDK on old hardware - obviously old hardware running older DPDK would be
-> unaffected.
+On Fri, Jul 18, 2025 at 05:05:45PM +0100, Kevin Traynor wrote:
+> On 18/07/2025 16:19, Bruce Richardson wrote:
+> > On Fri, Jul 18, 2025 at 04:03:17PM +0100, Kevin Traynor wrote:
+> >> On 03/07/2025 15:31, Ciara Loftus wrote:
+> >>> The SSE rx and tx paths will be removed from the i40e, iavf and ice
+> >>> drivers in the 25.11 release. Each of these drivers have faster
+> >>> vector paths (AVX2 and AVX-512) which have feature parity with the
+> >>> soon to be removed SSE paths. In environments where AVX2 or AVX-512
+> >>> are not supported, the scalar path will still be used, which also has
+> >>> feature parity.
+> >>>
+> >>> Signed-off-by: Ciara Loftus <ciara.loftus@intel.com> ---
+> >>> doc/guides/rel_notes/deprecation.rst | 7 +++++++ 1 file changed, 7
+> >>> insertions(+)
+> >>>
+> >>> diff --git a/doc/guides/rel_notes/deprecation.rst
+> >>> b/doc/guides/rel_notes/deprecation.rst index e2d4125308..0d020c9c1f
+> >>> 100644 --- a/doc/guides/rel_notes/deprecation.rst +++
+> >>> b/doc/guides/rel_notes/deprecation.rst @@ -80,6 +80,13 @@ Deprecation
+> >>> Notices and the header struct ``rte_vxlan_gpe_hdr`` with the macro
+> >>> ``RTE_ETHER_VXLAN_GPE_HLEN`` will be removed in DPDK 25.11.
+> >>>  
+> >>> +* net/intel: drivers that have an SSE vector path alongside other
+> >>> vector paths, +  namely i40e, iavf and ice, will have their SSE
+> >>> vector paths removed in DPDK 25.11.  +  Modern x86 systems all
+> >>> support AVX2, if not AVX-512, so the SSE path is no longer +  widely
+> >>> used. This change will not result in any feature loss, as the
+> >>> fallback +  scalar paths which have feature parity with SSE will be
+> >>> used in the cases where +  the SSE paths would have been used.  + *
+> >>> ethdev: The flow API matching pattern structures, ``struct
+> >>> rte_flow_item_*``, should start with relevant protocol header
+> >>> structure from lib/net/.  The individual protocol header fields and
+> >>> the protocol header struct
+> >>
+> >> I'm not aware of anyone using hardware that old and relying on SSE,
+> >> but it seems a bit short notice for a patch to remove hardware
+> >> support.
+> >>
+> >> Would it hurt much to give it a longer deprecation so anyone who needs
+> >> to prepare by upgrade, or taking 25.11 with support etc. can do that ?
+> >>
+> > Do we think that will make a difference? After all, dropping the SSE
+> > path won't break DPDK on older hardware, it will only run a bit slower
+> > using the scalar path. Beyond that, it would only affect deployments
+> > with new/latest DPDK on old hardware - obviously old hardware running
+> > older DPDK would be unaffected.
+> > 
 > 
-
-Don't disagree, and it does seem a bit of mismatch using old hw and new
-DPDK, but I needed to spend a bit of time to try and check if this would
-impact wrt systems used, compile options, product upgrade paths etc. so
-others might be in same boat.
-
-Alternatively, could put the deprecation now and revisit if anyone
-complains before 25.11.
-
-> /Bruce
+> Don't disagree, and it does seem a bit of mismatch using old hw and new
+> DPDK, but I needed to spend a bit of time to try and check if this would
+> impact wrt systems used, compile options, product upgrade paths etc. so
+> others might be in same boat.
 > 
+> Alternatively, could put the deprecation now and revisit if anyone
+> complains before 25.11.
+> 
+Sure. Let's deprecate now and if there are any objections or we decide to
+postpone the removal in 25.11 that is fine.
 
+/Bruce
