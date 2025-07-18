@@ -2,125 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78D79C83F1A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Jul 2025 11:52:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CC73C83F1A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Jul 2025 11:59:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 923244014F;
-	Fri, 18 Jul 2025 13:52:33 +0200 (CEST)
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com
- (mail-mw2nam10on2053.outbound.protection.outlook.com [40.107.94.53])
- by mails.dpdk.org (Postfix) with ESMTP id B1A104013F
- for <dev@dpdk.org>; Fri, 18 Jul 2025 13:52:31 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wvLB8YLn3ge2A5vES56E7UVprEsVeQWqIpNUNDRj7oOToKaL0KWmYIKqtr/yt+Ip1vW2ilAOz7V3aomV8He+CImuHNgeKozn1Gm8PB76e8k0kRKXoF6ztvC45W4ICzzc3OOUjBdgFUJVMRxTvGbPLy/pfYTYHg7Uzb3Xwu43BHTVwQfeyz6H7ItGa5aUYxmbdm8VYqOpPnIfwoZvE9gKmln+KBGuv6DbvL5ZwZLQO/B2l0ZbnfXfgnexeNS6JUqSp17Tvcxz/+8FSIKwHuAr3A8SzH0wbozg5ADTXFC4mCOtwY7+hJ60pLBObmONVqs/essh9kBN+tApxzbM0qMkCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TVfOzIVjkHdeJjXoJRCcZnPriZjHywjNaV7wrtqI414=;
- b=CqqpCFuMn5qin9Lw83ldbHO4HDesH+iLLHM8Pry59e/eh81YqLLs3rbBcTHs7P45mjbA7lajXBJNDf9FgaOpG/97B01qVCXdTGiWaWuhPzFnJnWKdHNvRtZ9XnFG3MfUwp8BxvfM2SwCe4LcBh7ScBaMberNtPlks0U7ReSTSkVF7wJOXwdq1pKpRgfwzfcWM21MM+HMVZjJWtXxtLamC2+PlbOs2pQrSnkpoVER6YagHMJUh9ea9Q0EwMTmen9txT6W52oIiGTi5UYEZUMHWPPj0/Cv/u6WtdktzbjJVfEUlDlfv4jx95kMQp8lCXY82E+JebA04ElZtpxOvcTdrw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TVfOzIVjkHdeJjXoJRCcZnPriZjHywjNaV7wrtqI414=;
- b=TDm0aX0xXjQTXhks1g6rfg76MOYZ0jc0x9bO98NbDjfln+7cdB4NYzrAaRr39yOsAHaawCTepZzDh9vaAncgTMLMpYFWcV07MQa6PBLIWgBSCAwN6CgyyFBppVIS0uVAP8FNu9KaY4fFNMER3vWLAVWUV+bQXTKtJjFeMIJp95MtbZeZcj2BRQD4Lcu7yrkeLyWLHFqGRkP8u/4ZVdGFiCAHzsmvBuoz6vu7c4uOXUJSTiHWfMzzSOW76Vzj5DjUzHxl9d8vDSmF5GPf4+1Dp2OhZq9zF1+TlMUKPTksYD4mMdgA5+nt4WIv8wqH+Xj5J3RBRRVlxxorH0KZj6UDRw==
-Received: from SJ0P220CA0011.NAMP220.PROD.OUTLOOK.COM (2603:10b6:a03:41b::31)
- by DS0PR12MB7850.namprd12.prod.outlook.com (2603:10b6:8:146::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.24; Fri, 18 Jul
- 2025 11:52:28 +0000
-Received: from SJ5PEPF00000203.namprd05.prod.outlook.com
- (2603:10b6:a03:41b:cafe::ff) by SJ0P220CA0011.outlook.office365.com
- (2603:10b6:a03:41b::31) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.23 via Frontend Transport; Fri,
- 18 Jul 2025 11:52:27 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SJ5PEPF00000203.mail.protection.outlook.com (10.167.244.36) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8943.21 via Frontend Transport; Fri, 18 Jul 2025 11:52:27 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 18 Jul
- 2025 04:52:18 -0700
-Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 18 Jul
- 2025 04:52:15 -0700
-From: Dariusz Sosnowski <dsosnowski@nvidia.com>
-To: Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao
- <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
- <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
-CC: <dev@dpdk.org>, Thomas Monjalon <thomas@monjalon.net>, Raslan Darawsheh
- <rasland@nvidia.com>
-Subject: [PATCH] net/mlx5: document IP fragment matching limitations
-Date: Fri, 18 Jul 2025 13:51:56 +0200
-Message-ID: <20250718115156.1220403-1-dsosnowski@nvidia.com>
-X-Mailer: git-send-email 2.39.5
+	by mails.dpdk.org (Postfix) with ESMTP id 4CC2C4014F;
+	Fri, 18 Jul 2025 13:59:08 +0200 (CEST)
+Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
+ by mails.dpdk.org (Postfix) with ESMTP id 0DA324013F;
+ Fri, 18 Jul 2025 13:59:07 +0200 (CEST)
+Received: from debian (unknown [78.109.68.216])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by agw.arknetworks.am (Postfix) with ESMTPSA id 58ACCE062E;
+ Fri, 18 Jul 2025 15:59:06 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 58ACCE062E
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
+ s=default; t=1752839946;
+ bh=xeoJee6rErUCG5gz1/qQdHurioJMJDE8rjgyX96tTJQ=;
+ h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+ b=4BoOI5FbnvC1whsmyGiVjEqNgAJZBfflP/P8ooE3nV0BOgIAqE6ZNvZ47HPxJbBz0
+ 1M5Odluo1P24E+ZIMUCcPKEW0ECrL9Pr1vE+rru4hB/2caBBWoz1OTM1e07kDCJcwj
+ UbXf3CkfuNjUy4cMJpEK9+Yzq0OwByhhiF5O2IfPAbNoozKP0uKvxbNQWgCWevTUBu
+ DsX95T3xrWQINCGgwjBqqXlyxoidP1ipt2IXohC0snV6YuOst+fMtHp14RK2RYFKGY
+ XXv/Q0cnR1P0+0FD+oSTyu3GQuIcU0yIZXDvvj3ArzLURV9r6/tpUcsc//bnipFmKo
+ qhsQChi8rgFIQ==
+Date: Fri, 18 Jul 2025 15:58:58 +0400 (+04)
+From: Ivan Malov <ivan.malov@arknetworks.am>
+To: "Gokul K R (MS/ETA7-ETAS)" <KR.Gokul@in.bosch.com>
+cc: "users@dpdk.org" <users@dpdk.org>, "dev@dpdk.org" <dev@dpdk.org>
+Subject: =?UTF-8?Q?Re=3A_Issue_with_DPDK-Burst_Replay_=E2=80=93_No_F?=
+ =?UTF-8?Q?rame_Transmission_Observed_Despite_Successful_Replay?=
+In-Reply-To: <PAVPR10MB73554B90C65B0D9A83AD8582A450A@PAVPR10MB7355.EURPRD10.PROD.OUTLOOK.COM>
+Message-ID: <5a8c61fe-9c47-d74c-7e0c-3f8dd47b3926@arknetworks.am>
+References: <PAVPR10MB73554B90C65B0D9A83AD8582A450A@PAVPR10MB7355.EURPRD10.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.126.230.35]
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF00000203:EE_|DS0PR12MB7850:EE_
-X-MS-Office365-Filtering-Correlation-Id: f604b83f-aac3-4c46-4660-08ddc5f191b3
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|1800799024|82310400026|36860700013; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?fYDk/0vxNNZfL4E+OO4KUOF41ADj/kDi1OuRxXe+8CNgulz6tR++62BGiWqo?=
- =?us-ascii?Q?Du5Sbe5z1c60eaLosqSFkGRZwTQtAnr+NrlVjPYWtno0WwF1Ubk9bEKihak1?=
- =?us-ascii?Q?mChuTWw06cN1eIYS+L3VkWIEAgxLMh1z4WM2CcUoKMuE5EoGicNyuS5cySrL?=
- =?us-ascii?Q?cEWALScwXCRnEnFBYvHM/bCqIVCvv4m9hO3FCvDE3vUAYPMDrqRX1XDojY8J?=
- =?us-ascii?Q?I+PFEwiG6e9i2kFSY+K4tgbO65kjGMpuwiW8fb3r54OhI2eSltHtpagDehe5?=
- =?us-ascii?Q?JNLltHisz4+/FW3eKyiUKnwqiAFLygNM4mLx8/TxaRWPY9aDNC2xyKuRWXa6?=
- =?us-ascii?Q?oYGJ9r3davmwyQ5QqQh455M0gPefBVLVtVzPPnBR3m0mrlrtQh9gIy83d27n?=
- =?us-ascii?Q?uoPRBc12+fwow9iTJAYtTXvXGC1Cpotg3WCkCGK9sJ3Jl01VTFl5g9tkYAoy?=
- =?us-ascii?Q?oCRYvb8dOG5k0gwWQgpxMsqt5N4tNlq1EKxVYP33LiAjyoST+9YqWWOCukuH?=
- =?us-ascii?Q?F5dod2m0Dx6qasp4fk8gzp7HUzzoQhM/IUfMds8ITdG3i+VZfyEBXPnadxzO?=
- =?us-ascii?Q?U2Lx880F/e/AJVfolVXO6gCfZRHLVr/FxdrxkEwhrYxSZXVfLGGKnPnsXQE1?=
- =?us-ascii?Q?uJG5OHdJaTtiNAm3Guux2pDFN2FluJdDraV2qVsazcJJr1i7qMlX0RSYZcdw?=
- =?us-ascii?Q?PWvutLiCbozaQLWo82sF8f/EC/hxdfcGgepOeuzKKpqb2pLXCn78g7HQUtZr?=
- =?us-ascii?Q?XjMbVRl6yIKanclX0BSwkLF8Ttqd6+Bl07Op5HL+L5RnV0HFdshpQlWOEud8?=
- =?us-ascii?Q?gADE9nKna3xfhoFpZxNVah+MPYKwe48jmjEYYMNvwAAZZnZI+/KMN5GcdVb8?=
- =?us-ascii?Q?Zx37dKrgHz2MoJhDqSzummH1EsQstEIkYSNaIg0d1uXyWjA/qhdCbuf2MlWL?=
- =?us-ascii?Q?zbyhBtRP5suexObJqpwN/plGPIYXG9/aCcYzKKQS9pzBR3f3r7I+pkaV/8KH?=
- =?us-ascii?Q?LjCvErhDqu/owoGUdhjIVZx+RC6SJmflqvF2lDLnK/lohldRTK3PS6VS8q84?=
- =?us-ascii?Q?JqjeaToK5OHqLMXhvQ9nDXyqPjit407mixXDtPHFwRU4HIQmXca9Rrt68utf?=
- =?us-ascii?Q?GCSQgsqMMaSM0u7A8HEnC3ZyrAve3mNUN37fq07I2746CGCPMHTjnH1Ql0KV?=
- =?us-ascii?Q?/YbtN3tj9725xl7duR/oovz/jngOWT+u2fHVN4t2/nxnIS5wi5IlQssKW7P+?=
- =?us-ascii?Q?NQiLI+0k9+TkUmvwRjlvanMMFgR0qiva6rIWJUDD40hHtI39tWRn9PWSIEub?=
- =?us-ascii?Q?tLmg1QLDdDrNN1xSigLfVNychHtrSuV1VDnVyIGsRe9ApI7gCQqlafKwC3fK?=
- =?us-ascii?Q?oCzKDGOWrx9t9OjG+xuMecQANGs0PZEtgIL7zmPnHrhXGdxMVuf0sEOgZbid?=
- =?us-ascii?Q?/P3a45pPhB4ATanwOZB5Tyh3BdYv4R9zXtKr+fznCsQszybXUafeHb+oXDBL?=
- =?us-ascii?Q?P/SdxJmvoAESjcsUC05/1/HpzP3WJ09xjAuG?=
-X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013); DIR:OUT;
- SFP:1101; 
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2025 11:52:27.8273 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f604b83f-aac3-4c46-4660-08ddc5f191b3
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: SJ5PEPF00000203.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7850
+Content-Type: multipart/mixed; boundary="8323328-1796948410-1752839946=:6915"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -134,41 +51,138 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-NVIDIA NICs do not support matching on packet headers appearing
-after IP header if the received packet is an IP fragment.
-This patch updates the relevant documentation.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Bugzilla ID: 1417
+--8323328-1796948410-1752839946=:6915
+Content-Type: text/plain; charset=Windows-1252; format=flowed
+Content-Transfer-Encoding: 8BIT
 
-Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
----
-Depends-on: series-35735 ("rework mlx5 guide")
+Hi,
 
-FYI - I added Bugzilla ticket ID just for reference.
-Patch does not resolve the issue, just adds missing documentation
-for existing limitation.
+(please see below)
 
- doc/guides/nics/mlx5.rst | 7 +++++++
- 1 file changed, 7 insertions(+)
+On Fri, 18 Jul 2025, Gokul K R (MS/ETA7-ETAS) wrote:
 
-diff --git a/doc/guides/nics/mlx5.rst b/doc/guides/nics/mlx5.rst
-index f29408eace..f58fea106a 100644
---- a/doc/guides/nics/mlx5.rst
-+++ b/doc/guides/nics/mlx5.rst
-@@ -3305,6 +3305,13 @@ Limitations
+> 
+> Hi Team,
+> 
+> I’m currently working with the dpdk-burst-replay tool and encountered an issue during execution. Below are the details:
+> 
+> 
+> __________________________________________________________________________________________________________________________________________________________________________________________
+> 
+> 
+> Observation:
+> During replay, we received the following informational message:
+> 
+> port 0 is not on the good numa id (-1)
 
- #. IP-in-IP is not supported with :ref:`HW steering <mlx5_hws>`.
+Which API was used to check this? Was API [1] used? If not, what does it show
+in the absence of 'numactl' command?
 
-+#. Matching on packet headers appearing after an IP header is not supported
-+   if that packet is an IP fragment:
-+
-+   - For example: If a flow rule with pattern matching on L4 header contents is created,
-+     and the first IP fragment is received,
-+     then this IP fragment will miss on that flow rule.
-+
+[1] https://doc.dpdk.org/api-25.03/rte__ethdev_8h.html#ad032e25f712e6ffeb0c19eab1ec1fd2e
 
- .. _mlx5_nat64:
+> 
+> As per the DPDK mailing list discussions, this warning is typically benign—often seen on NICs like Intel I225/I210, which do not report NUMA affinity. Hence, we proceeded with execution.
+> 
+> 
+> __________________________________________________________________________________________________________________________________________________________________________________________
+> 
+> 
+> Command Used:
+> 
+> sudo numactl --cpunodebind=0 --membind=0 ./src/dpdk-replay Original_MAC.pcap 0000:01:00.1
+> 
+> Execution Output:
+> 
+> preloading Original_MAC.pcap file (of size: 143959 bytes)
+> 
+> file read at 100.00%
+> 
+> read 675 pkts (for a total of 143959 bytes). max packet length = 1518 bytes.
+> 
+> -> Needed MBUF size: 1648
+> 
+> -> Needed number of MBUFs: 675
+> 
+> -> Needed Memory = 1.061 MB
+> 
+> -> Needed Hugepages of 1 GB = 1
+> 
+> -> Needed CPUs: 1
+> 
+> -> Create mempool of 675 mbufs of 1648 octets.
+> 
+> -> Will cache 675 pkts on 1 caches.
 
---
-2.39.5
+What does this 'cache' stand for? Does it refer to the mempool per-lcore cache?
+If so, please note that, according to API [2] documentation, cache size "must be
+lower or equal to RTE_MEMPOOL_CACHE_MAX_SIZE and n / 1.5", where 'n' stands for
+the number of mbufs. Also, documentation says it is advised to choose cache_size
+to have "n modulo cache_size == 0". Does your code meet these requirements?
 
+By the looks of it, it doesn't (cache_size = n = 675). Consider to double-check.
+
+[2] https://doc.dpdk.org/api-25.03/rte__mempool_8h.html#a0b64d611bc140a4d2a0c94911580efd5
+
+> 
+> 
+> __________________________________________________________________________________________________________________________________________________________________________________________
+> 
+> 
+> Issue:
+> Despite successful parsing of the pcap file and proper initialization, no frames were transmitted or received on either the sender or receiver sides.
+
+Is this observation based solely on watching APIs [3] and [4] return 0 all the
+time? If yes, one can consider to introduce invocations of APIs [5], [6] and [7]
+in order to periodically poll and print statistics (may be with 1-second delay),
+which may, for example, shed light on mbuf allocation errors (extended stats).
+
+Do statistics display any interesting figures to be discussed?
+
+[3] https://doc.dpdk.org/api-25.03/rte__ethdev_8h.html#a3e7d76a451b46348686ea97d6367f102
+[4] https://doc.dpdk.org/api-25.03/rte__ethdev_8h.html#a83e56cabbd31637efd648e3fc010392b
+
+[5] https://doc.dpdk.org/api-25.03/rte__ethdev_8h.html#adec226574c53ae413252c9b15f6f4bab
+[6] https://doc.dpdk.org/api-25.03/rte__ethdev_8h.html#a418ad970673eb171673185e36044fd79
+[7] https://doc.dpdk.org/api-25.03/rte__ethdev_8h.html#a300d75b583c1f5acfe5b162a5d8c0ac1
+
+> 
+> 
+> __________________________________________________________________________________________________________________________________________________________________________________________
+> 
+> 
+> Environment Details:
+>
+>  *  NIC used: Intel I225/I210
+>  *  Hugepages configured: 1 GB
+>  *  NUMA binding: --cpunodebind=0 --membind=0
+>  *  OS: [Your Linux distribution, e.g., Ubuntu 20.04]
+>  *  DPDK version: [Mention if known]
+> 
+> __________________________________________________________________________________________________________________________________________________________________________________________
+> 
+> 
+> Could you please advise if any additional setup, configuration, or known limitations may be impacting the packet transmission?
+
+This may be a wild suggestion from my side, but it pays to check whether link
+status is "up" upon port start on both ends. One can use API [8] to do that.
+
+[8] https://doc.dpdk.org/api-25.03/rte__ethdev_8h.html#ac05878578e4fd9ef3551d2c1c175ebe7
+
+Thank you.
+
+
+> 
+> Thank you in advance for your support!
+> 
+> 
+> Best regards,
+> Gokul K R
+> 
+>  
+> 
+> 
+>
+--8323328-1796948410-1752839946=:6915--
