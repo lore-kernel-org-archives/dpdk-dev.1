@@ -2,78 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88DEBC83F1A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Jul 2025 12:13:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5714C83F1A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Jul 2025 12:14:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A8B524014F;
-	Fri, 18 Jul 2025 14:13:17 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id A43624013F
- for <dev@dpdk.org>; Fri, 18 Jul 2025 14:13:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1752840795;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=OGg7wm3exFwYCbjmkcZYoL9fKfxqtPFHs2ZeYMfId/c=;
- b=Dn5ICeuImNVtbSsweaNAaK0P9Ffu/PBuidybAQB6PvETkiD3GoXIcIqgBjuFxTGAp+oG3L
- QeRtCSvU2r55Z8VQ8iCplDYRymFSTqtPy3KYvBJq2Fut6q3NGbxDXeu2oYnnReBV4t7OjZ
- BzPdEOFFYdMejXaCfHlj8JvdQG6YvOE=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-522-Mhh4B_l-OPyNH3-FWXRk9w-1; Fri, 18 Jul 2025 08:13:13 -0400
-X-MC-Unique: Mhh4B_l-OPyNH3-FWXRk9w-1
-X-Mimecast-MFC-AGG-ID: Mhh4B_l-OPyNH3-FWXRk9w_1752840792
-Received: by mail-lf1-f70.google.com with SMTP id
- 2adb3069b0e04-555024588e2so1323502e87.0
- for <dev@dpdk.org>; Fri, 18 Jul 2025 05:13:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752840792; x=1753445592;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=OGg7wm3exFwYCbjmkcZYoL9fKfxqtPFHs2ZeYMfId/c=;
- b=G6pxQFdZ2aqMo13sqK34Tg4hH/XhNq/iXiPRl9h95NE8Pet4NAsS9LUPAjbr8mSs1N
- KIML0cefKQkGCqiivcz+Hj0CrGHne3II3ZjPmwi7X86as5xhCR0uvdURGo1v49/+Yzfv
- c4NDhee9sI34JnF3wX5qZa4hDy6gCPMR7feCKNEz0rcziMXlg/UBTunxuYwR/goUlaj5
- NhqpZ/BGmR5HDlhBDngkEJrCNXchjV69QTGfcQyrf4nA/33JF2tdAd6IZyz9YOXxHrY+
- TwNhPng6+kLzYUkVqvjs/rLCrIeYlIWeO8zJJymOsdrFFnj2Xe8WhRK6p25R9ejAN4WX
- I+bg==
-X-Gm-Message-State: AOJu0YzvKO+hCJX03k+kP8lVkq7Rw+qMvOX7/nEASG6dd1KHVUNV6N1L
- UFmeCDbGYx+wutqO/D3FuDujtLvHSx+YoD+AU9H93Tm3QTDBzVdHXOuseSd8YDLF/b8tK2954Bg
- 4JyizRKKOO4iEgxWuV39YfktAF7hZ9QAiBNYOm/Rlpy1fSIIw6r8rUErhZr+rH2RgX5YHAs8WEL
- Z+eIMzfJtZhbh7agzQFls=
-X-Gm-Gg: ASbGncuXEezXBO/znoGoQqKNxoe1EgOju+8EmVwYNxcSEKb2ig4YIMTxOSr7GcU6GMf
- oV5T8esrGqZ93CmIt4NIyvt04e1h185vya18bG8MNLqzReonmHKM0blvDiL1X9gGvfO0BPCHMY2
- B1OghXbfYFJ2K/IfPVyT43EBk=
-X-Received: by 2002:a05:6512:31cb:b0:553:2c93:6140 with SMTP id
- 2adb3069b0e04-55a2330114dmr3621078e87.9.1752840792167; 
- Fri, 18 Jul 2025 05:13:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG06C6krY9qgl/S0I2atNU6m5T6Nt1EuyC+sNb8EXJvYtV6czT/VNb738byV61gobDSprGAzYzENGDwg2OzR1o=
-X-Received: by 2002:a05:6512:31cb:b0:553:2c93:6140 with SMTP id
- 2adb3069b0e04-55a2330114dmr3621066e87.9.1752840791670; Fri, 18 Jul 2025
- 05:13:11 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C9DCA4014F;
+	Fri, 18 Jul 2025 14:14:26 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+ by mails.dpdk.org (Postfix) with ESMTP id 7A5EF4013F
+ for <dev@dpdk.org>; Fri, 18 Jul 2025 14:14:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1752840864; x=1784376864;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=VtTe2GH0dvp14LOx1pry2o/OwnAgLgsfaBgq7HE0gJk=;
+ b=L3T/csHsAX2onLsaVMBEpT2RxK7CSQRdX1xj4AUS+2iTiPOHQQdaakN2
+ hvEsUtUS5F89H76TzuixIfwlOQeqU5puMsBJtiAxdLYwIg5GDL9kJoreR
+ 5iiRHTbOYld3D8DnLSLPzLYhVkxXc9rh5/Rh5EUI/xK47c4xg87YgAr+O
+ 5W9exr/FipUvdD2mk40w4wOSTsKxdkN/Mzu2q+qATdfxlwwX+t2lkAItO
+ WqapNjGAqe88zTZoAwijNrIzTcvOn49zOJNrVJmv63Y5ArpFQJFWmWp9u
+ VJj0wEKAW4T4sKyd84LRHygruaC3HSs7hFRP3R0qlbxaZ2J/cOi+t7EAq w==;
+X-CSE-ConnectionGUID: 0VExSJNlT1Kj7e4cXTNEUA==
+X-CSE-MsgGUID: lp9LZ5BCR4GBftEaRdWfJA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11496"; a="72585197"
+X-IronPort-AV: E=Sophos;i="6.16,321,1744095600"; d="scan'208";a="72585197"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+ by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 18 Jul 2025 05:14:09 -0700
+X-CSE-ConnectionGUID: MKKYhlbFTGuDcthmdHyFOQ==
+X-CSE-MsgGUID: WqESpuCESJWNOMOPupuyqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,321,1744095600"; d="scan'208";a="157714806"
+Received: from silpixa00401385.ir.intel.com ([10.237.214.33])
+ by fmviesa007.fm.intel.com with ESMTP; 18 Jul 2025 05:14:08 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH] build: remove obsolete compiler checks
+Date: Fri, 18 Jul 2025 13:14:02 +0100
+Message-ID: <20250718121402.856265-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.48.1
 MIME-Version: 1.0
-References: <20250717061604.3288049-1-hailinx.xu@intel.com>
- <20250717061604.3288049-3-hailinx.xu@intel.com>
-In-Reply-To: <20250717061604.3288049-3-hailinx.xu@intel.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 18 Jul 2025 14:13:00 +0200
-X-Gm-Features: Ac12FXxrAlCTHvMYQNpWXKHsZkiZsr3Zp6xI8fX38FbdCnOYyRIzlSRMD2ZkKHA
-Message-ID: <CAJFAV8wW8r5tqBPKrGUrutv+s8x6uyS1L-oCxQ-vEfkawFaB1Q@mail.gmail.com>
-Subject: Re: [PATCH v1] net/ixgbe: add nic and updated recommended matching
- list
-To: hailinx <hailinx.xu@intel.com>
-Cc: dev@dpdk.org, bruce.richardson@intel.com, rajesh.t.puttaswamy@intel.com, 
- john.mcnamara@intel.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: YywL8jHhYs7STvGAejmRNu5eO2fvlhj3MV7_HurYVBQ_1752840792
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,45 +57,234 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Jul 17, 2025 at 8:55=E2=80=AFAM hailinx <hailinx.xu@intel.com> wrot=
-e:
->
-> Signed-off-by: hailinx <hailinx.xu@intel.com>
-> ---
->  doc/guides/nics/ixgbe.rst | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
->
-> diff --git a/doc/guides/nics/ixgbe.rst b/doc/guides/nics/ixgbe.rst
-> index a03ec7a7e8..6380e18feb 100644
-> --- a/doc/guides/nics/ixgbe.rst
-> +++ b/doc/guides/nics/ixgbe.rst
-> @@ -36,6 +36,8 @@ Supported Chipsets and NICs
->  - Intel Ethernet Converged Network Adapter X540-T2
->  - Intel Ethernet Converged Network Adapter X550-T1
->  - Intel Ethernet Converged Network Adapter X550-T2
-> +- Intel Ethernet Network Adapter E610-XT2
-> +- Intel Ethernet Network Adapter E610-XT4
->
->  Vector PMD for IXGBE
->  --------------------
-> @@ -93,6 +95,25 @@ Windows Prerequisites and Pre-conditions
->  - Loading of private Dynamic Device Personalization (DDP) package
->    is not supported on Windows.
->
-> +Kernel driver and Firmware Matching List
-> +----------------------------------------
-> +
-> +It is highly recommended to upgrade the ixgbe kernel driver and firmware
-> +to avoid the compatibility issues with ixgbe PMD.
+DPDK now recommends compiler versions GCC 8+, and Clang 7+, so remove
+checks and workarounds for versions old than these.
 
-We never recommended such things so far for ixgbe.
-I think this is a wrong thing to advertise.
-The same applies to other Intel nics, btw.
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ config/meson.build                  |  5 ----
+ drivers/event/meson.build           |  5 +---
+ drivers/meson.build                 |  2 +-
+ drivers/net/virtio/meson.build      |  2 +-
+ lib/eal/arm/include/rte_memcpy_64.h |  8 -------
+ lib/eal/arm/include/rte_vect.h      | 37 ++---------------------------
+ lib/eal/ppc/include/rte_altivec.h   |  1 -
+ lib/meson.build                     |  2 +-
+ lib/vhost/meson.build               |  4 ++--
+ lib/vhost/vhost.c                   | 16 -------------
+ 10 files changed, 8 insertions(+), 74 deletions(-)
 
-You may insist that you validated with such a setup, but most users
-rely on in-tree drivers.
-
-
---=20
-David Marchand
+diff --git a/config/meson.build b/config/meson.build
+index f31fef216c..c7a780dcc8 100644
+--- a/config/meson.build
++++ b/config/meson.build
+@@ -492,11 +492,6 @@ if get_option('b_lto')
+     else
+         error('compiler does not support fat LTO objects - please turn LTO off')
+     endif
+-    # workaround for gcc bug 81440
+-    if cc.get_id() == 'gcc' and cc.version().version_compare('<8.0')
+-        add_project_arguments('-Wno-lto-type-mismatch', language: 'c')
+-        add_project_link_arguments('-Wno-lto-type-mismatch', language: 'c')
+-    endif
+ endif
+ 
+ if get_option('b_sanitize') == 'address' or get_option('b_sanitize') == 'address,undefined'
+diff --git a/drivers/event/meson.build b/drivers/event/meson.build
+index d6706b57f7..b0bc3f40f1 100644
+--- a/drivers/event/meson.build
++++ b/drivers/event/meson.build
+@@ -14,9 +14,6 @@ drivers = [
+         'opdl',
+         'skeleton',
+         'sw',
++        'octeontx',
+ ]
+-if not (toolchain == 'gcc' and cc.version().version_compare('<4.8.6') and
+-        dpdk_conf.has('RTE_ARCH_ARM64'))
+-    drivers += 'octeontx'
+-endif
+ std_deps = ['eventdev', 'kvargs']
+diff --git a/drivers/meson.build b/drivers/meson.build
+index b62880db02..2760f4d593 100644
+--- a/drivers/meson.build
++++ b/drivers/meson.build
+@@ -237,7 +237,7 @@ foreach subpath:subdirs
+         enabled_drivers += name
+         lib_name = '_'.join(['rte', class, name])
+         cflags += '-DRTE_LOG_DEFAULT_LOGTYPE=' + '.'.join([log_prefix, name])
+-        if annotate_locks and cc.get_id() == 'clang' and cc.version().version_compare('>=3.5.0')
++        if annotate_locks and cc.get_id() == 'clang'
+             cflags += '-DRTE_ANNOTATE_LOCKS'
+             cflags += '-Wthread-safety'
+         endif
+diff --git a/drivers/net/virtio/meson.build b/drivers/net/virtio/meson.build
+index d3caa3a3b4..a9ff87e863 100644
+--- a/drivers/net/virtio/meson.build
++++ b/drivers/net/virtio/meson.build
+@@ -31,7 +31,7 @@ if arch_subdir == 'x86'
+         sources_avx512 += files('virtio_rxtx_packed.c')
+         if (toolchain == 'gcc' and cc.version().version_compare('>=8.3.0'))
+             cflags += '-DVIRTIO_GCC_UNROLL_PRAGMA'
+-        elif (toolchain == 'clang' and cc.version().version_compare('>=3.7.0'))
++        elif (toolchain == 'clang')
+             cflags += '-DVIRTIO_CLANG_UNROLL_PRAGMA'
+         endif
+     endif
+diff --git a/lib/eal/arm/include/rte_memcpy_64.h b/lib/eal/arm/include/rte_memcpy_64.h
+index 90039039be..57fe24eb10 100644
+--- a/lib/eal/arm/include/rte_memcpy_64.h
++++ b/lib/eal/arm/include/rte_memcpy_64.h
+@@ -89,14 +89,6 @@ n <= (size_t)RTE_ARM64_MEMCPY_UNALIGNED_THRESHOLD)
+  **************************************/
+ 
+ 
+-#if RTE_CC_IS_GNU && !defined RTE_ARM64_MEMCPY_SKIP_GCC_VER_CHECK
+-#if (GCC_VERSION < 50400)
+-#warning "The GCC version is quite old, which may result in sub-optimal \
+-performance of the compiled code. It is suggested that at least GCC 5.4.0 \
+-be used."
+-#endif
+-#endif
+-
+ static __rte_always_inline
+ void rte_mov16(uint8_t *dst, const uint8_t *src)
+ {
+diff --git a/lib/eal/arm/include/rte_vect.h b/lib/eal/arm/include/rte_vect.h
+index c97d299a3e..149458288e 100644
+--- a/lib/eal/arm/include/rte_vect.h
++++ b/lib/eal/arm/include/rte_vect.h
+@@ -67,11 +67,8 @@ vaddvq_u16(uint16x8_t a)
+ 
+ #endif
+ 
+-#if (defined(RTE_ARCH_ARM) && defined(RTE_ARCH_32)) || \
+-(defined(RTE_ARCH_ARM64) && RTE_CC_IS_GNU && (GCC_VERSION < 70000))
+-/* NEON intrinsic vcopyq_laneq_u32() is not supported in ARMv7-A(AArch32)
+- * On AArch64, this intrinsic is supported since GCC version 7.
+- */
++#if defined(RTE_ARCH_ARM) && defined(RTE_ARCH_32)
++/* NEON intrinsic vcopyq_laneq_u32() is not supported in ARMv7-A(AArch32) */
+ static inline uint32x4_t
+ vcopyq_laneq_u32(uint32x4_t a, const int lane_a,
+ 		 uint32x4_t b, const int lane_b)
+@@ -80,36 +77,6 @@ vcopyq_laneq_u32(uint32x4_t a, const int lane_a,
+ }
+ #endif
+ 
+-#if defined(RTE_ARCH_ARM64)
+-#if RTE_CC_IS_GNU && (GCC_VERSION < 70000)
+-
+-/* NEON intrinsic vreinterpretq_u64_p128() is supported since GCC version 7 */
+-static inline uint64x2_t
+-vreinterpretq_u64_p128(poly128_t x)
+-{
+-	return (uint64x2_t)x;
+-}
+-
+-/* NEON intrinsic vreinterpretq_p64_u64() is supported since GCC version 7 */
+-static inline poly64x2_t
+-vreinterpretq_p64_u64(uint64x2_t x)
+-{
+-	return (poly64x2_t)x;
+-}
+-
+-/* NEON intrinsic vgetq_lane_p64() is supported since GCC version 7 */
+-static inline poly64_t
+-vgetq_lane_p64(poly64x2_t x, const int lane)
+-{
+-	RTE_ASSERT(lane >= 0 && lane <= 1);
+-
+-	poly64_t *p = (poly64_t *)&x;
+-
+-	return p[lane];
+-}
+-#endif
+-#endif
+-
+ /*
+  * If (0 <= index <= 15), then call the ASIMD ext instruction on the
+  * 128 bit regs v0 and v1 with the appropriate index.
+diff --git a/lib/eal/ppc/include/rte_altivec.h b/lib/eal/ppc/include/rte_altivec.h
+index 7c088d2d16..bc8548f11e 100644
+--- a/lib/eal/ppc/include/rte_altivec.h
++++ b/lib/eal/ppc/include/rte_altivec.h
+@@ -6,7 +6,6 @@
+ #ifndef _RTE_ALTIVEC_H_
+ #define _RTE_ALTIVEC_H_
+ 
+-/* To include altivec.h, GCC version must be >= 4.8 */
+ #include <altivec.h>
+ 
+ /*
+diff --git a/lib/meson.build b/lib/meson.build
+index 0d56b2083b..a67efaf718 100644
+--- a/lib/meson.build
++++ b/lib/meson.build
+@@ -244,7 +244,7 @@ foreach l:libraries
+         cflags += '-DRTE_USE_FUNCTION_VERSIONING'
+     endif
+     cflags += '-DRTE_LOG_DEFAULT_LOGTYPE=lib.' + l
+-    if annotate_locks and cc.get_id() == 'clang' and cc.version().version_compare('>=3.5.0')
++    if annotate_locks and cc.get_id() == 'clang'
+         cflags += '-DRTE_ANNOTATE_LOCKS'
+         cflags += '-Wthread-safety'
+     endif
+diff --git a/lib/vhost/meson.build b/lib/vhost/meson.build
+index 9c6325aa0e..a74d0cff7c 100644
+--- a/lib/vhost/meson.build
++++ b/lib/vhost/meson.build
+@@ -8,9 +8,9 @@ endif
+ if has_libnuma
+     dpdk_conf.set10('RTE_LIBRTE_VHOST_NUMA', true)
+ endif
+-if (toolchain == 'gcc' and cc.version().version_compare('>=8.3.0'))
++if (toolchain == 'gcc')
+     cflags += '-DVHOST_GCC_UNROLL_PRAGMA'
+-elif (toolchain == 'clang' and cc.version().version_compare('>=3.7.0'))
++elif (toolchain == 'clang')
+     cflags += '-DVHOST_CLANG_UNROLL_PRAGMA'
+ endif
+ dpdk_conf.set('RTE_LIBRTE_VHOST_POSTCOPY', cc.has_header('linux/userfaultfd.h'))
+diff --git a/lib/vhost/vhost.c b/lib/vhost/vhost.c
+index a2e3e2635d..416f082dca 100644
+--- a/lib/vhost/vhost.c
++++ b/lib/vhost/vhost.c
+@@ -128,16 +128,8 @@ __vhost_iova_to_vva(struct virtio_net *dev, struct vhost_virtqueue *vq,
+ static __rte_always_inline void
+ vhost_set_bit(unsigned int nr, volatile uint8_t *addr)
+ {
+-#if defined(RTE_TOOLCHAIN_GCC) && (GCC_VERSION < 70100)
+-	/*
+-	 * __sync_ built-ins are deprecated, but rte_atomic_ ones
+-	 * are sub-optimized in older GCC versions.
+-	 */
+-	__sync_fetch_and_or_1(addr, (1U << nr));
+-#else
+ 	rte_atomic_fetch_or_explicit((volatile uint8_t __rte_atomic *)addr, (1U << nr),
+ 		rte_memory_order_relaxed);
+-#endif
+ }
+ 
+ static __rte_always_inline void
+@@ -207,17 +199,9 @@ __vhost_log_cache_sync(struct virtio_net *dev, struct vhost_virtqueue *vq)
+ 	for (i = 0; i < vq->log_cache_nb_elem; i++) {
+ 		struct log_cache_entry *elem = vq->log_cache + i;
+ 
+-#if defined(RTE_TOOLCHAIN_GCC) && (GCC_VERSION < 70100)
+-		/*
+-		 * '__sync' builtins are deprecated, but 'rte_atomic' ones
+-		 * are sub-optimized in older GCC versions.
+-		 */
+-		__sync_fetch_and_or(log_base + elem->offset, elem->val);
+-#else
+ 		rte_atomic_fetch_or_explicit(
+ 			(unsigned long __rte_atomic *)(log_base + elem->offset),
+ 			elem->val, rte_memory_order_relaxed);
+-#endif
+ 	}
+ 
+ 	rte_atomic_thread_fence(rte_memory_order_release);
+-- 
+2.48.1
 
