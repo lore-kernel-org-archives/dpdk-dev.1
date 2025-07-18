@@ -2,59 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF03C83F17
-	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Jul 2025 16:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B65C83F17
+	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Jul 2025 16:32:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9959D40DCA;
-	Fri, 18 Jul 2025 18:24:52 +0200 (CEST)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com
- [209.85.208.171])
- by mails.dpdk.org (Postfix) with ESMTP id 3579540B9B
- for <dev@dpdk.org>; Fri, 18 Jul 2025 18:24:51 +0200 (CEST)
-Received: by mail-lj1-f171.google.com with SMTP id
- 38308e7fff4ca-32cd499007aso16852061fa.0
- for <dev@dpdk.org>; Fri, 18 Jul 2025 09:24:51 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E05E940DCA;
+	Fri, 18 Jul 2025 18:32:42 +0200 (CEST)
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com
+ [209.85.222.173])
+ by mails.dpdk.org (Postfix) with ESMTP id ACECE40B9B
+ for <dev@dpdk.org>; Fri, 18 Jul 2025 18:32:41 +0200 (CEST)
+Received: by mail-qk1-f173.google.com with SMTP id
+ af79cd13be357-7e34399cdb2so236659285a.3
+ for <dev@dpdk.org>; Fri, 18 Jul 2025 09:32:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1752855890; x=1753460690; darn=dpdk.org;
- h=to:subject:message-id:date:from:in-reply-to:references:mime-version
- :from:to:cc:subject:date:message-id:reply-to;
- bh=K1pjwnvbB5W3Xv8BXsycFYlXM051Eh0GA1pie75SywA=;
- b=DLHfajspu2RSM3/4Uly/saJ+nxmRgvqkVKrF9VYUCqlLilBRgN9LiVjXlJvvmAazcT
- XelYkYNzNdDddDWJUEVVgjOkFU8YzgMUk8KjAr+6+bSTJFZATrMcVRXa7RUtEncDkjPe
- N1hVvpTcQKBcMZ6JkFa+FbULRu5NIeIyNIC7w=
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752856361;
+ x=1753461161; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=NCLabieqDJTE+HXMULP3TgJjigEC8EUFyYOx12vEu/w=;
+ b=1nMVIwqMEWSE+u5rEEArV/Nrbys/ngBdk7fwiPQqB4z+5eVgZ+7EMMI1ybpTU6n6Iy
+ odd8p4IZ8sGg90wsl2zAoGrXh7qQymPRKLalcQRiSQbmGsQnP2ao0QWl7HlxjCwYeqNr
+ vCph9IHV5TFKLT1MYdcOqxeLRK77tjgJuu55rg0cz8aRffHcCGSae68o5yNJK8E7b8KZ
+ vVK9Jj5ccmXakd6C+5T5SS4dbofhxKaBY1Q9LN9YvUtc6mq4+2TIOdKpfkX0GY+MZeXM
+ +ntn4f25WSx8b8MdP43Bbo1Uez4mmeQQlFOhIwBsulqE0HxRCJC6BQOrHPQE6DMzPNDY
+ zn0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752855890; x=1753460690;
- h=to:subject:message-id:date:from:in-reply-to:references:mime-version
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=K1pjwnvbB5W3Xv8BXsycFYlXM051Eh0GA1pie75SywA=;
- b=QXaX5UHEryVr1X0ioC9bnA1cpXp6O+noQDi0HOlFN1AfqMrZ20Qp7DSs+GDTyl6Hze
- Et/uj5Ans8Ny2/lKbrVCz9PGRiEqr8+fU7QwuShTnljUOeHWgJOsg5TviAM9gKZQDXcE
- O2AJe0hNowFoQujlEWN4ACCXs5/KGbHuX4kiGc7zPGqaNpd0X/fhatd0dEV2bZGWO6/v
- oNaVwnXfaY5QdvFxgHAxzCYrH43pkqKSoJI4Ay8i6dK7h6QqTuyvLYuvWoRE5CHitq89
- 1Pl7BMGHj4iEpyzvxNpB+nVddCNpnALjvKYFvxwdab8RX+SdM7qyj2BmJpbcbutzfL0A
- QbBQ==
-X-Gm-Message-State: AOJu0YyREJva45vK0HnrAWwt3J83Z7ipsCb3Zvibz/RxElJv4toKlY6d
- oUjA6rhYwv5l+YzKiO8ge++b8I98639A8NOonFGzjwTb7brKVuIT1PKwFCGxxTHscNyxgjIcEtn
- D2YBi9hzfxfJDV4zpkDMCKzwiOYNO/BiB+hIXlkhrJl5iOlAPCZCSiA==
-X-Gm-Gg: ASbGncsdkxtDY9UBj4Y3Od5ofv4UE52DxpI8rNqFkhhleD4O5sHaSWljTbp0R39SHQx
- LixS3Y7ir2WkVJ+d8KUqUrvq3nbXkb6Sa8Pkx2r6waM3y6HXXTt+VQWesdZcK7WG4Y9/gDJwNs2
- HygKJ83GoqJAVTnKx8fUTW6CuptXnDJziG+7s+zwmWrPjAjZYTOUYt7MBgl4oQqbDFfsZMk+hMn
- AW6OFPB
-X-Google-Smtp-Source: AGHT+IEM1vn5//GbRQ+RlIst+wZmt7ISRaSLPpTIWxebkt31zDehGe+XuBTF4ZGk42vO2uKXwYi9NVR/B+4dKL/qjHU=
-X-Received: by 2002:a05:651c:4181:b0:32c:a006:2a1d with SMTP id
- 38308e7fff4ca-3308e1ce1bbmr28442841fa.4.1752855889504; Fri, 18 Jul 2025
- 09:24:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <20250709212905.126851-1-ronak.doshi@broadcom.com>
-In-Reply-To: <20250709212905.126851-1-ronak.doshi@broadcom.com>
-From: Ronak Doshi <ronak.doshi@broadcom.com>
-Date: Fri, 18 Jul 2025 09:24:31 -0700
-X-Gm-Features: Ac12FXzuYQF9lbJWl6KiOSYczZr3vtu4fSfQ_bifDbgLpwabUlHAxyWD5jF8MBI
-Message-ID: <CAP1Q3XTfVo5hBPcYZayqWQ81aO=c7MehcVoM1xYzgfJrBJzq2w@mail.gmail.com>
-Subject: Re: [PATCH net] net/vmxnet3: fix mapping of mempools to queues
+ d=1e100.net; s=20230601; t=1752856361; x=1753461161;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=NCLabieqDJTE+HXMULP3TgJjigEC8EUFyYOx12vEu/w=;
+ b=Wue4j2ko9pkd4LlKQ+3Wwm+O2dWw5E1DYSVVtuEkFdGAuu1DNf4ZFr4UNzC8DNYUYz
+ zSsWUz7xvpIgZrqo9RWYsQkt+GZt/urBL+RTriqpmSpewPgL1HUXnmL1qjZxMe3vBgwV
+ IyU6uTIFSpBKp/6S04139oKN7DChOlv/mTOr3n1ojpy35jv/DKi0THIuunzyJhzoBL7p
+ xFMiEBngZlTrbYYLbisjlMEfV+LQ7xITjDmYltL4EHT7xEqZyYE3bjuaBxziIZNXUI7B
+ OOsDyuaiQWTiU5Eafr46YY4o7gxl5vy59oGibXZeV994OTnxnlyRSWKTlqlRukms2w/I
+ kqOg==
+X-Gm-Message-State: AOJu0Yx0xdqoSYkoA7rOAXGiBJD8qGN7RU2WNpcYatDPT/JQDuIgLL4G
+ N5ARJSBMkeWSqDotqwD+zB3KHoyqlWvctpd5ZFnEnxDlQav9/tjQ2ZV+1GW9hUHLHtjN2lZeqBP
+ uvjuK
+X-Gm-Gg: ASbGncsZHY94mwXN6ReaxajEqrNh2TWC2/InPCEOhgqnSZQ7hjn5+3NSJf9B/D/Yhos
+ he5PyAWuAvE4p9dGFJecmAujnMOh7fRs3aZwZ5iNbUJcUjfq1JVuP1n+I5U64LbBApdYTueOsyS
+ hpsSnMeh6PpGcyI3m+VYtwLqMaeRhzOxktb+cjCzHFCeTAMEYT5Zo17Xs739w8pOJRzUOiPV2oK
+ vUt/3X6X7iw9hFnQEqZRSzgV1qv3S577fDFz/3m0ljkUrXUChxWDatTRmf51Ago8Bgpj8d9LSG2
+ DNI5PkqvqUo8e6DQ5lLNLujsueRdqg2h8JaQyEu84W68GgvMn8cpPusfSVqXSkEX6RXUE7e1T3R
+ mO7kKqDHnF9ITCE5himaN3Igo4rhflwV4JA5YoWh0q3pUf+6FimVUpbLpd16+tKK+GArNSkdE
+X-Google-Smtp-Source: AGHT+IG+sRRtwg/bzT+OVoefhpz8+a0WR/+GvdGxkEgtA5SjXzbqCHGMJugg7kP8xoKRJ9M8BfeErQ==
+X-Received: by 2002:a05:620a:470a:b0:7e3:4283:e9fe with SMTP id
+ af79cd13be357-7e342b8a298mr1347438385a.50.1752856360625; 
+ Fri, 18 Jul 2025 09:32:40 -0700 (PDT)
+Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ af79cd13be357-7e356cc1aa8sm103392685a.111.2025.07.18.09.32.39
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 18 Jul 2025 09:32:39 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature";
- micalg=sha-256; boundary="000000000000ad3a77063a3690fb"
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v5 00/13] Packet capture using port mirroring
+Date: Fri, 18 Jul 2025 09:28:17 -0700
+Message-ID: <20250718163236.9870-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250411234927.114568-1-stephen@networkplumber.org>
+References: <20250411234927.114568-1-stephen@networkplumber.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -68,132 +81,106 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000ad3a77063a3690fb
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+This is a rework of how packet capture is done in DPDK.
+The existing mechanism using callbacks has a number of problems:
+  - can't work when packets are sent and received in secondary process
+    because callbacks only function in the primary process
+  - requires "opt-in" from application
 
-On Wed, Jul 9, 2025 at 2:47=E2=80=AFPM Ronak Doshi <ronak.doshi@broadcom.co=
-m> wrote:
->
-> Index bitmask variable used was uint8_t, too small for bitmask with
-> 9 or more queues. This patch changes it to uint16_t for now, to be
-> same as in the Vmxnet3_MemoryRegion structure. This way txQueues
-> can be lesser than rxQueues and have correct mapping of memory regions.
->
-> Also, the patch fixes memory region check as 16 queues are allowed on
-> both RX and TX.
->
-> Fixes: 6a113992060e ("net/vmxnet3: add cmd to register memory region")
-> Cc: stable@dpdk.org
-> Signed-off-by: Ronak Doshi <ronak.doshi@broadcom.com>
-> Acked-by: Jochen Behrens <jochen.behrens@broadcom.com>
-> ---
+The new mechanism builds on the concept of port mirroring used
+in Linux/FreeBSD and also router vendors (SPAN ports).
+See: https://en.wikipedia.org/wiki/Port_mirroring for a general description.
 
-Hello, Can we get a review on this patch?
+The implementation uses two new ethdev API's:
+one to add a port mirror, and one to remove it.
 
-Thanks,
-Ronak
+The internals of dumpcap are redone but the program command syntax is
+unchanged (no doc change needed). Using the new mirror mechanism, the
+dumpcap program creates a port using ring PMD and then directs a port
+mirror to that new ring PMD instance.  Then the packets are extracted
+from the ring.  If capturing on multiple devices, they all get
+mirrored to the same ring PMD.
 
---000000000000ad3a77063a3690fb
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+The dumpcap program needs to be able to start the ring PMD it created
+but the existing ethdev API is broken when used from secondary process.
+One of the patches fixes that, it was also reported previously in Bugzilla.
 
-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
-EFpmxF3Rbc3gEgIcYiyGcyQoDOx5qoyhCDJDMos7kJc5sKcmBxmD93r4vMUtJzAYKbw3V9i1+1bl
-lU/0K+6NNVxX2NU3cAsWlrr1Z9FVCgVD2Gm+oTVKKP9PQiyTCKV/ia4jllLAe5D9qx48/l/Ud3or
-C9S060BkjtpoTwUlvEvqW7cYpiQHZ5h6Sn8kfDhhrvjlnhlTWFOaYFeTgXONpRmP9fzrWGCp65Um
-HNA22CDDA8JphKLM4yZvV/f0YIhuQFq5MlUCAwEAAaOCAdwwggHYMA4GA1UdDwEB/wQEAwIFoDAM
-BgNVHRMBAf8EAjAAMIGTBggrBgEFBQcBAQSBhjCBgzBGBggrBgEFBQcwAoY6aHR0cDovL3NlY3Vy
-ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyNnNtaW1lY2EyMDIzLmNydDA5BggrBgEFBQcw
-AYYtaHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyNnNtaW1lY2EyMDIzMGUGA1UdIARe
-MFwwCQYHZ4EMAQUDAzALBgkrBgEEAaAyASgwQgYKKwYBBAGgMgoDAjA0MDIGCCsGAQUFBwIBFiZo
-dHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzBBBgNVHR8EOjA4MDagNKAyhjBo
-dHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjZzbWltZWNhMjAyMy5jcmwwIwYDVR0RBBww
-GoEYcm9uYWsuZG9zaGlAYnJvYWRjb20uY29tMBMGA1UdJQQMMAoGCCsGAQUFBwMEMB8GA1UdIwQY
-MBaAFAApNp5ceroPry1QLdugI4UYsKCSMB0GA1UdDgQWBBS/+YQAXlGnSY3OTXZjaWa0ffwL0jAN
-BgkqhkiG9w0BAQsFAAOCAgEACNahijglDMUpQxxcZSN28atG9fHRNjXoYsFmQ4eeq+iHAAnrBr+S
-lJ3jFCMTulB2hl2y8JilwFq1OvME984wBHpl8GazNOQUyIrqqVP+3uikZoamMq0zTrxP/JjBWjT6
-P/wQ2ZjCtXqooVZGW/PfNw8Rixa92nsMpGPrqmlFp7icvIfKqwDcDeFfb/8qGlozS5c49hTFMBAo
-zrwMLg73Yd+OGfH5k9vitxsyxvb1CbIgIRFsJTSG9nYH9PGyDPOKIiq/JFX9Ve7c98Mu7iOS+lYT
-w7xhFUofzTiXoELyZZ+jCUCdKaAmhVux05XaxUqFAYIfSgrEuO1/wwT4NGF5LD88AUxyvlAMJtUP
-q+am3jh5Kqi3ZJ0S4+z9htCfU7IHfMxPnrgfKfrRNpHjHaCy5k2tojE9yT/RxPNTpZXrT0DKa+BE
-as+PYqVbMlvaYivqIJoSZUZdp73yg7rJIrIXsifxWtsqFvMoc6TZCXmBeG1VOMuP7cXd/iXMmi44
-ZDaQJjvEk4ezmFzcPZIE8/wbix3HYa74UV4JQ54GJ9cs6AOkIkPqN20zfEEcBmrRlRzF0pzeufjF
-noRv/QScVrdKXl2dBdaRTImZVWwTPxszU3xDr7WvHeXQhGSwICMc6V0cgVLxH+31O+aw/FeL1b9h
-emZAui9pdgbotf7AX8L+Nr8xggJXMIICUwIBATBiMFIxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBH
-bG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBSNiBTTUlNRSBDQSAyMDIz
-AgwB0kttp9h82mCA8UMwDQYJYIZIAWUDBAIBBQCggccwLwYJKoZIhvcNAQkEMSIEIE76alG2RIWe
-jyjg2Hvv4nFss1Ay3XA1rmuV8P9PSf4tMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZI
-hvcNAQkFMQ8XDTI1MDcxODE2MjQ1MFowXAYJKoZIhvcNAQkPMU8wTTALBglghkgBZQMEASowCwYJ
-YIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQcwCwYJYIZIAWUD
-BAIBMA0GCSqGSIb3DQEBAQUABIIBAClLvY7TyA80k4ni5HP5meyS8fSXZd00LvO1p05ilLj6mHZY
-spi3KFww06BjSivdIUkGMHfffyu97KDQs1gJ7QA17AO8uBg520eDrBXoTyiyqWw7tNe9ryMkliSs
-Fxl+AEp4wbk9INZZva/5NfEDxAwouzDjV7A1kSGMsMt3b5rdkBqt3r/vgbvRCwyfBEiipt8/5JNK
-H8/5h79Gx4qocQb8N6TVhrOaAB8Fa+TrLmctAtai5ARoJZ9GkkXPgSCj0ujKbQbsvdZg6oJZMmgo
-KWIcDNpvKW4dhFyFHnUjfB+4gnOJQ8Xm8NpedzZPyyJfluFLuaXappbYyBYVj7yHtTI=
---000000000000ad3a77063a3690fb--
+The mirror API has a restriction that the port being mirrored to must allow
+lock free transmit. This is because both Rx and Tx as well as multiple
+queues need to go over the same transmit queue. Although it might be possible
+to have some complex mapping between multiple ports/queues being mirrored
+to multiple transmit queues, that gets to be a lot of overhead in API's
+and implementation. Fixing the ring and null PMD to allow lockless
+transmit is good enough.
+
+Added tests for the mirror features.
+The performance has not been measured but the overhead of checking for
+mirror port is no more that the overhead of looking at the callback list.
+
+TODO items:
+  - need release notes for new features (will wait till 25.11)
+  - more through testing on real hardware
+
+v5 - fix build warnings when experimental not enabled.
+
+Stephen Hemminger (13):
+  ethdev: allow start/stop from secondary process
+  ethdev: make sure all necessary headers included
+  test: add test for hotplug and secondary process operations
+  net/ring: allow lockfree transmit if ring supports it
+  net/ring: add new devarg to create vdev from existing ring
+  mbuf: add dynamic flag for use by port mirroring
+  ethdev: add port mirroring feature
+  pcapng: split packet copy from header insertion
+  pcapng: make queue optional
+  test: add tests for ethdev mirror
+  app/testpmd: support for port mirroring
+  app/dumpcap: use port mirror instead of pdump
+  pdump: mark API and application as deprecated
+
+ app/dumpcap/main.c                            | 443 +++++++++++++++---
+ app/dumpcap/meson.build                       |   2 +-
+ app/pdump/main.c                              |   3 +
+ app/pdump/meson.build                         |   1 +
+ app/test-pmd/cmdline.c                        |   1 +
+ app/test-pmd/cmdline_mirror.c                 | 129 +++++
+ app/test-pmd/cmdline_mirror.h                 |  12 +
+ app/test-pmd/meson.build                      |   2 +
+ app/test/meson.build                          |   7 +-
+ app/test/test_ethdev_mirror.c                 | 286 +++++++++++
+ app/test/test_mp_secondary.c                  |  51 +-
+ config/rte_config.h                           |   1 +
+ doc/guides/howto/packet_capture_framework.rst |  15 +-
+ doc/guides/nics/bnxt.rst                      |   2 +-
+ doc/guides/prog_guide/ethdev/index.rst        |   1 +
+ doc/guides/prog_guide/pdump_lib.rst           |   4 +
+ doc/guides/rel_notes/deprecation.rst          |   3 +
+ doc/guides/testpmd_app_ug/testpmd_funcs.rst   |  15 +
+ doc/guides/tools/pdump.rst                    |   2 +
+ drivers/net/ring/rte_eth_ring.c               |  47 ++
+ lib/ethdev/ethdev_driver.c                    |  11 +-
+ lib/ethdev/ethdev_driver.h                    |   6 +
+ lib/ethdev/ethdev_private.c                   | 142 ++++++
+ lib/ethdev/ethdev_private.h                   |  29 ++
+ lib/ethdev/ethdev_trace.h                     |  17 +
+ lib/ethdev/ethdev_trace_points.c              |   6 +
+ lib/ethdev/meson.build                        |   1 +
+ lib/ethdev/rte_ethdev.c                       | 101 ++--
+ lib/ethdev/rte_ethdev.h                       |  23 +-
+ lib/ethdev/rte_ethdev_core.h                  |  12 +-
+ lib/ethdev/rte_mirror.c                       | 359 ++++++++++++++
+ lib/ethdev/rte_mirror.h                       |  99 ++++
+ lib/mbuf/rte_mbuf_dyn.h                       |   9 +
+ lib/pcapng/rte_pcapng.c                       | 179 +++----
+ lib/pcapng/rte_pcapng.h                       |  27 +-
+ lib/pdump/rte_pdump.h                         |  12 +-
+ 36 files changed, 1843 insertions(+), 217 deletions(-)
+ create mode 100644 app/test-pmd/cmdline_mirror.c
+ create mode 100644 app/test-pmd/cmdline_mirror.h
+ create mode 100644 app/test/test_ethdev_mirror.c
+ create mode 100644 lib/ethdev/rte_mirror.c
+ create mode 100644 lib/ethdev/rte_mirror.h
+
+-- 
+2.47.2
+
