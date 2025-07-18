@@ -2,21 +2,20 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6A26C83F17
-	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Jul 2025 21:04:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA1EAC83F34
+	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Jul 2025 21:07:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 834E540B8F;
-	Fri, 18 Jul 2025 23:04:06 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D78D140B8F;
+	Fri, 18 Jul 2025 23:07:41 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id E2D2940611
- for <dev@dpdk.org>; Fri, 18 Jul 2025 23:04:04 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id D99F040611
+ for <dev@dpdk.org>; Fri, 18 Jul 2025 23:07:40 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id CE9B246BB0; Fri, 18 Jul 2025 23:04:04 +0200 (CEST)
+ id CF71146BB0; Fri, 18 Jul 2025 23:07:40 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/DTS Bug 1756] Document setup process for dual port NIC
- loopback topology
-Date: Fri, 18 Jul 2025 21:04:04 +0000
+Subject: [DPDK/DTS Bug 1757] Remove optional poetry docs build workflow
+Date: Fri, 18 Jul 2025 21:07:40 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -35,8 +34,8 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter cc
  target_milestone
-Message-ID: <bug-1756-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17528726440.6D7a44.1333874
+Message-ID: <bug-1757-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17528728600.60c8BBCFB.1334852
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: https://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -56,8 +55,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17528726440.6D7a44.1333874
-Date: Fri, 18 Jul 2025 23:04:04 +0200
+--17528728600.60c8BBCFB.1334852
+Date: Fri, 18 Jul 2025 23:07:40 +0200
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -65,11 +64,10 @@ X-Bugzilla-URL: https://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1756
+https://bugs.dpdk.org/show_bug.cgi?id=3D1757
 
-            Bug ID: 1756
-           Summary: Document setup process for dual port NIC loopback
-                    topology
+            Bug ID: 1757
+           Summary: Remove optional poetry docs build workflow
            Product: DPDK
            Version: 25.03
           Hardware: All
@@ -83,19 +81,29 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D1756
                 CC: juraj.linkes@pantheon.tech, probb@iol.unh.edu
   Target Milestone: ---
 
-The current dts.rst file explains single link and 2 link topologies. Howeve=
-r,
-it would be a benefit if we added a sentence or two explaining that the sin=
-gle
-link topology tests can also be run with a single dual port NIC with ports 0
-and 1 directly connected, and explain how this is done.
+Currently there are two docs workflows available for DTS - the "normal" DPDK
+build workflow like:
+
+meson setup my-build
+ninja -C my-build doc
+
+And this is totally satisfactory for our purposes.
+
+There is also an alternate docs build process through poetry which is expla=
+ined
+in dts.rst. But, the build result "improvements" for using this are minor a=
+nd
+the downsides associated with promoting this workflow (instead of just
+directing people to the standard docs build process) are significant. So, l=
+et's
+remove this poetry dts docs build explanation from dts.rst.
 
 --=20
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17528726440.6D7a44.1333874
-Date: Fri, 18 Jul 2025 23:04:04 +0200
+--17528728600.60c8BBCFB.1334852
+Date: Fri, 18 Jul 2025 23:07:40 +0200
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -113,15 +121,14 @@ bz_new_table">
           <th>Bug ID</th>
           <td><a class=3D"bz_bug_link=20
           bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - Document setup process for dual port NIC loopback=
- topology"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1756">1756</a>
+   title=3D"UNCONFIRMED - Remove optional poetry docs build workflow"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1757">1757</a>
           </td>
         </tr>
 
         <tr>
           <th>Summary</th>
-          <td>Document setup process for dual port NIC loopback topology
+          <td>Remove optional poetry docs build workflow
           </td>
         </tr>
 
@@ -198,12 +205,23 @@ bz_new_table">
         </tr></table>
       <p>
         <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">The current dts.rst file explains =
-single link and 2 link topologies. However,
-it would be a benefit if we added a sentence or two explaining that the sin=
-gle
-link topology tests can also be run with a single dual port NIC with ports 0
-and 1 directly connected, and explain how this is done.
+          <pre class=3D"bz_comment_text">Currently there are two docs workf=
+lows available for DTS - the &quot;normal&quot; DPDK
+build workflow like:
+
+meson setup my-build
+ninja -C my-build doc
+
+And this is totally satisfactory for our purposes.
+
+There is also an alternate docs build process through poetry which is expla=
+ined
+in dts.rst. But, the build result &quot;improvements&quot; for using this a=
+re minor and
+the downsides associated with promoting this workflow (instead of just
+directing people to the standard docs build process) are significant. So, l=
+et's
+remove this poetry dts docs build explanation from dts.rst.
           </pre>
         </div>
       </p>
@@ -220,7 +238,7 @@ and 1 directly connected, and explain how this is done.
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1756">
+?id=3D1757">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -229,4 +247,4 @@ ication">
     </body>
 </html>=
 
---17528726440.6D7a44.1333874--
+--17528728600.60c8BBCFB.1334852--
