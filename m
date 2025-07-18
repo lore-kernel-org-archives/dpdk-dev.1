@@ -2,71 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 514A4C83F17
-	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Jul 2025 16:34:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0CC0C83F17
+	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Jul 2025 16:37:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3071040E6E;
-	Fri, 18 Jul 2025 18:33:14 +0200 (CEST)
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com
- [209.85.222.169])
- by mails.dpdk.org (Postfix) with ESMTP id E8F7040DDD
- for <dev@dpdk.org>; Fri, 18 Jul 2025 18:33:11 +0200 (CEST)
-Received: by mail-qk1-f169.google.com with SMTP id
- af79cd13be357-7e3142e58cfso137912685a.0
- for <dev@dpdk.org>; Fri, 18 Jul 2025 09:33:11 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B955A40DDD;
+	Fri, 18 Jul 2025 18:37:52 +0200 (CEST)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com
+ [209.85.214.172])
+ by mails.dpdk.org (Postfix) with ESMTP id E117540DCA
+ for <dev@dpdk.org>; Fri, 18 Jul 2025 18:37:51 +0200 (CEST)
+Received: by mail-pl1-f172.google.com with SMTP id
+ d9443c01a7336-234b440afa7so22801185ad.0
+ for <dev@dpdk.org>; Fri, 18 Jul 2025 09:37:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752856391;
- x=1753461191; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752856671;
+ x=1753461471; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=67fQo6IRGWu8lQDcU8ImCeOQ7W4hcLF2eSZscUYnb2c=;
- b=FQTrS3gWRuc/6WwOH8Xf73k0UQ2ApbmfYWXDX28LspUkcmt2DY6C0rT0ibRBvpOOSz
- NQos77GxCahfFditv1LfJPVl2jjHlas9/9IQsjV3uJQWZ71vVPCtbqlmcpv4mYPJtTOA
- mNqUBVLrYk1vI0XwsbOqD6SwCCUMrF3Ldctt6oHTwM52KyQKunTq2EHU8rrQz+FGrZq1
- bQSUAu46yvqv2XaYEu9iLBruPXZRQYSgIguGikRZJMO7FtDPtj/tu2mcycu0wPoeB6yQ
- nMnWMILI+INPqH692Qh9zYpxokScswVoKbOAMyc25GC3+IwsZA9mK65hsRDTTgUivX3L
- qJPA==
+ bh=MSh6kbv+hR1zb7kg6e6a3Btjfbls58Zvj3ges5YQbBI=;
+ b=EKqqCIlAPLiPkZnWSwG0ThtZY5Yr0VBwSsDPZImE38C346Fz9lJ5e9Y6kp3t4TdHy4
+ 3xdVTnxgZHgUyrmGgV1EpJa/7kFJAWtF6Qsa6QEYkI908lBt8dSx8dqbFnc9I5Yl93RW
+ FD7YvsMHIpFaYtLRZ1DgnIZTzVpSTtLdflD0ijfgTT7kuiIZCq+dS4Ca/z+c4KfrwBIq
+ H/8r+ySMiO51BBUIXjCtbrAIpYmpy0gUnAd1YklAr4JZBTe2CnbolzMfS+PvqG51OZfa
+ rnM0mBP6Alfz0hTRIBQWq7E78hl35yv+UIh7gl1zvgrGk9DPNUvqEsEUe9v591KCEWk3
+ QNcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752856391; x=1753461191;
+ d=1e100.net; s=20230601; t=1752856671; x=1753461471;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=67fQo6IRGWu8lQDcU8ImCeOQ7W4hcLF2eSZscUYnb2c=;
- b=Bp/4kNvVRJaaL/HwZbr134Mjn6xN8bBPZL9TCo5C6yuPz5WNPRtDaooLN6XYNqknAK
- 0VwaBWjtPtyjqUUV53KR8Wydwjd/rv/UBBQdls3Vki7SvpupsdsKVlUy4UxSKtL66w65
- WS7m+kf0wSgCzY8XxaF7Kc5QLKeeF0PyNlh8RfGq0c9L3PpBC7RDpJyDi2RhRs2p16Ii
- urRq5+YwRa4HdqQZ69yHiKP+2SjzctlciO2CwWh2kbi3eJykuVYa1bn2kP6xkuKvwr+/
- EEO8Z8nBuodD/W6e/2zAoYtiDuTtbVxHGZLAe6eVjAu/kcNfb8S/y0A2Oy+aBWKyCAqA
- DygQ==
-X-Gm-Message-State: AOJu0Yx7wRxtGba7a2UNuAO/VA+LoTlJlIoAtLzSOBPKpQof+VLkWbNY
- cXTmwoWLpjfnSUHXJlJGM1jbtJzW2eh9OfpshD/uwHqrYVKEuYLZejm0Wds09jZV0DRVWgTaood
- yiseh
-X-Gm-Gg: ASbGnctnPz8UZcqPu8oqSE3oWixl8wcGak4FcFK+ZqnvpuWcpXbe8t91SD2rrrfGeR+
- pZCShCIA+sUZLlq0KTsz9n3LgwU2OadWCH4DnfT6+bZOXyuIqtGYy7koprIGIB7xyEem+YK8dsg
- QniSnSw3Z/fsapdvqjLpsiwsweJimza/PjVyDaMzmdoPpLZr6pRkW6U59qsOf7mivQFql2bGk98
- fTR04OWAif2dR7GTi5yAomLTvHn3wFOwAR4h/geza2IXWmvyapaNzIcl4QYH35TWIh/D9qGwnpi
- 47ZahvdyepZN7kkc6yfRDiqupipUN2GE5RU+n77+yb3JBef56tmiu0bYQ21QQQPW45Qx7+k97pM
- qZ9s44ScWI9yM8q1aGMXb5yOm7TFa73wLDkJBbOYBDg32IVuwYN11HpT/Zm7ovWJX4piv15Z8
-X-Google-Smtp-Source: AGHT+IEtJAF0fmGAr9/caLhtdYTcStUCYXJUuHx/uwVu8a+oxbvddxrtPN8gtTGqRA0h0DvWV7YYZw==
-X-Received: by 2002:a05:620a:1706:b0:7e3:363f:2c19 with SMTP id
- af79cd13be357-7e3436351a9mr1397950285a.50.1752856390945; 
- Fri, 18 Jul 2025 09:33:10 -0700 (PDT)
+ bh=MSh6kbv+hR1zb7kg6e6a3Btjfbls58Zvj3ges5YQbBI=;
+ b=ocdgdmLgWk9OhFNofhYewXhP7F97LUSfy1F8doKgiqtW4Gjno2RtADffmXNjrh6MwW
+ Rfo0lrv2IrEOw+8qbm0brGCFRHjjj1dZrE49oRN2hsYnsNPUsukJ2IXtKSwmaEmTvJ+0
+ YLsj1/LKqhcbKUBOQ0TeKHufKBxIMoaPub2kS1Ipn5VMpE+9ABxVG3v1ApO2xVbdp1Nv
+ A0ZAK4VHNr/Fr37AwbWqYzd4kqIftVPNARpLpHbhi+XJAMn3xBYEtUNP1rZQ2NhkGF0p
+ jP3p/Rz7tlu8Rsj+AaKk0imHsAMMbBxS4PsIfLDdXAgAI2OOZeD6MSt4ProTixBAmzt7
+ dhwg==
+X-Gm-Message-State: AOJu0YwrPsm4jn8CG6nkafhKRx/zS4XoeVZnpw3N6o9I91VEKzQIN/Th
+ bw8nCghmOvjIvZWg+pezoc6zkSatlgPG2k/kC6fGnWKRJXucgzYZI5kjmVIagUAYX/xn6f0cslP
+ Cga7L
+X-Gm-Gg: ASbGncuk2ksvpqoQT9Ij+mUEQwiuvTisj654UPt0k4NyNU0nT3dhr7uQA9vXuwhruc5
+ n3AQxGE53u0AnGHgZtxYH15t+gehdkdzkBauemuCCT6MhQtggmuMJIUOQ8RuBYUh4MAquIDU5fC
+ gcY2g55Z8yA/c/dqUFnygF/7aUodNLob1ZnE4qfjKL97dE0HNuosPydZECJ0pY9tShlxJ74ZVZ9
+ pT+T3ruWwldngF6N0Nk1/THIu/tPVhxlM115wWDXbpLlywuFXBkxQZwH4z7MIeYOjrmlrG/dpbb
+ 1PKRKMBqaYl3vEaTHHM01GyIlI67R+eYWQNGjMGQEeOJfjQMTBwMvX+oG3+9piw0aRusx4ShzvR
+ SYKyfQxFlVE9zj61D1ziRMKvgbPJudVKtOobvlxy+VdYLD8Ubkdrq8bztt/E918dzs2z9VJcC
+X-Google-Smtp-Source: AGHT+IE53T7mEZZJYnlSc+Oorc0RUPsbFI72Q5RbF1nU6vpesLJqa4wOx7nk1KevTynJO4iqDXc13w==
+X-Received: by 2002:a05:620a:1727:b0:7d3:90b3:28f with SMTP id
+ af79cd13be357-7e34d8bfd35mr1240518785a.5.1752856367764; 
+ Fri, 18 Jul 2025 09:32:47 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7e356cc1aa8sm103392685a.111.2025.07.18.09.33.09
+ af79cd13be357-7e356cc1aa8sm103392685a.111.2025.07.18.09.32.46
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 18 Jul 2025 09:33:10 -0700 (PDT)
+ Fri, 18 Jul 2025 09:32:47 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Reshma Pattan <reshma.pattan@intel.com>,
- Aman Singh <aman.deep.singh@intel.com>,
- Ajit Khaparde <ajit.khaparde@broadcom.com>,
- Somnath Kotur <somnath.kotur@broadcom.com>
-Subject: [PATCH v5 13/13] pdump: mark API and application as deprecated
-Date: Fri, 18 Jul 2025 09:28:30 -0700
-Message-ID: <20250718163236.9870-14-stephen@networkplumber.org>
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH v5 03/13] test: add test for hotplug and secondary process
+ operations
+Date: Fri, 18 Jul 2025 09:28:20 -0700
+Message-ID: <20250718163236.9870-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250718163236.9870-1-stephen@networkplumber.org>
 References: <20250411234927.114568-1-stephen@networkplumber.org>
@@ -86,263 +84,95 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When the pdump application is run print a warning.
-Add release note about deprecation and mark the API's
-as deprecated.
+Use null device to exercise ethdev start/stop in secondary process.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/pdump/main.c                              |  3 +++
- app/pdump/meson.build                         |  1 +
- app/test-pmd/meson.build                      |  1 +
- app/test/meson.build                          |  6 +++++-
- doc/guides/howto/packet_capture_framework.rst | 15 +++++++++------
- doc/guides/nics/bnxt.rst                      |  2 +-
- doc/guides/prog_guide/ethdev/index.rst        |  1 +
- doc/guides/prog_guide/pdump_lib.rst           |  4 ++++
- doc/guides/rel_notes/deprecation.rst          |  3 +++
- doc/guides/tools/pdump.rst                    |  2 ++
- lib/pdump/rte_pdump.h                         | 12 +++++++++---
- 11 files changed, 39 insertions(+), 11 deletions(-)
+ app/test/test_mp_secondary.c | 51 +++++++++++++++++++++++++++++++++---
+ 1 file changed, 48 insertions(+), 3 deletions(-)
 
-diff --git a/app/pdump/main.c b/app/pdump/main.c
-index fa85859703..a4e0f4e5ae 100644
---- a/app/pdump/main.c
-+++ b/app/pdump/main.c
-@@ -986,6 +986,9 @@ main(int argc, char **argv)
- 	char mp_flag[] = "--proc-type=secondary";
- 	char *argp[argc + 2];
+diff --git a/app/test/test_mp_secondary.c b/app/test/test_mp_secondary.c
+index f3694530a8..09611cc5c2 100644
+--- a/app/test/test_mp_secondary.c
++++ b/app/test/test_mp_secondary.c
+@@ -15,6 +15,9 @@
+ #include <string.h>
+ #include <unistd.h>
  
++#include <rte_ethdev.h>
++#include <rte_bus_vdev.h>
 +
-+	fprintf(stderr, "%s: is deprecated use dpdk-dumpcap instead\n", argv[0]);
-+
- 	/* catch ctrl-c so we can cleanup on exit */
- 	sigemptyset(&action.sa_mask);
- 	sigaction(SIGTERM, &action, NULL);
-diff --git a/app/pdump/meson.build b/app/pdump/meson.build
-index a4c7dd44e7..1fe034fcb8 100644
---- a/app/pdump/meson.build
-+++ b/app/pdump/meson.build
-@@ -11,3 +11,4 @@ sources = files('main.c')
- deps += ['ethdev', 'kvargs', 'pdump']
- 
- cflags += no_wvla_cflag
-+cflags += '-Wno-deprecated-declarations'
-diff --git a/app/test-pmd/meson.build b/app/test-pmd/meson.build
-index e67665028f..3ab8280ce7 100644
---- a/app/test-pmd/meson.build
-+++ b/app/test-pmd/meson.build
-@@ -60,6 +60,7 @@ if dpdk_conf.has('RTE_LIB_METRICS')
- endif
- if dpdk_conf.has('RTE_LIB_PDUMP')
-     deps += 'pdump'
-+    cflags += '-Wno-deprecated-declarations'
- endif
- if dpdk_conf.has('RTE_NET_BNXT')
-     deps += 'net_bnxt'
-diff --git a/app/test/meson.build b/app/test/meson.build
-index 07bc00148d..45ece2179c 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -138,7 +138,6 @@ source_file_deps = {
-     'test_net_ip6.c': ['net'],
-     'test_pcapng.c': ['ethdev', 'net', 'pcapng', 'bus_vdev'],
-     'test_pdcp.c': ['eventdev', 'pdcp', 'net', 'timer', 'security'],
--    'test_pdump.c': ['pdump'] + sample_packet_forward_deps,
-     'test_per_lcore.c': [],
-     'test_pflock.c': [],
-     'test_pie.c': ['sched'],
-@@ -217,6 +216,11 @@ source_file_ext_deps = {
-     'test_pcapng.c': ['pcap'],
+ #ifdef RTE_EXEC_ENV_WINDOWS
+ int
+ test_mp_secondary(void)
+@@ -204,6 +207,44 @@ run_object_creation_tests(void)
+ 	return 0;
  }
  
-+if dpdk_conf.has('RTE_LIB_PDUMP')
-+    source_file_deps += { 'test_pdump.c': ['pdump'] + sample_packet_forward_deps, }
-+    cflags += '-Wno-deprecated-declarations'
-+endif
++static int
++run_ethdev_tests(void)
++{
++	char vdev_name[] = "net_null";
++	struct rte_eth_conf dev_conf = { 0 };
++	uint16_t port;
++	int ret;
 +
- def_lib = get_option('default_library')
- foreach f, f_deps : source_file_deps
-     has_deps = true
-diff --git a/doc/guides/howto/packet_capture_framework.rst b/doc/guides/howto/packet_capture_framework.rst
-index 8e64e7a83e..84cc1b28ac 100644
---- a/doc/guides/howto/packet_capture_framework.rst
-+++ b/doc/guides/howto/packet_capture_framework.rst
-@@ -10,11 +10,11 @@ for users of DPDK who want to know more about the Packet Capture feature and
- for those who want to monitor traffic on DPDK-controlled devices.
- 
- The DPDK packet capture framework was introduced in DPDK v16.07
--and enhanced in 21.11.
-+and enhanced in 21.11, and deprecated in 25.11. It is superseded
-+by the new port mirroring facility of ethdev.
++	printf("### Testing hotplug and ethdev start/stop\n");
 +
- The DPDK packet capture framework consists of the libraries
--for collecting packets ``librte_pdump``
--and writing packets to a file ``librte_pcapng``.
--There are two sample applications: ``dpdk-dumpcap`` and older ``dpdk-pdump``.
-+for collecting packets ``librte_pdump`` and an application ``dpdk-pdump``.
- 
- Introduction
- ------------
-@@ -49,10 +49,13 @@ and then to the Pcapng file.
- 
- Some things to note:
- 
--* All tools using ``librte_pdump`` can only be used in conjunction with a primary
-+* The ``dpdk-dumpcap`` tool used the ethdev port mirror functionality
-+  to transparently mirror packets to an internal ring device.
++	/* use hotplug to make a null vdev */
++	ret = rte_eal_hotplug_add("vdev", vdev_name, "");
++	TEST_ASSERT(ret == 0, "Hotplug add of '%s' failed", vdev_name);
 +
-+* Older tools using ``librte_pdump`` can only be used in conjunction with a primary
-   application which has the packet capture framework initialized already. In
-   dpdk, only ``testpmd`` is modified to initialize packet capture framework,
--  other applications remain untouched. So, if the ``dpdk-dumpcap`` tool has to
-+  other applications remain untouched. So, if the ``dpdk-pdump`` tool has to
-   be used with any application other than the testpmd, the user needs to
-   explicitly modify that application to call the packet capture framework
-   initialization code. Refer to the ``app/test-pmd/testpmd.c`` code and look
-diff --git a/doc/guides/nics/bnxt.rst b/doc/guides/nics/bnxt.rst
-index 370931fbb0..9534214286 100644
---- a/doc/guides/nics/bnxt.rst
-+++ b/doc/guides/nics/bnxt.rst
-@@ -723,7 +723,7 @@ Note that the applications cannot update the firmware using BNXT PMD.
- Multiple Processes
- ~~~~~~~~~~~~~~~~~~
- 
--When two or more DPDK applications (e.g., testpmd and dpdk-pdump) share a single
-+When two or more DPDK applications (e.g., testpmd and dpdk-dumpcap) share a single
- instance of DPDK, the BNXT PMD supports a single primary application and one or
- more secondary applications. Note that the DPDK-layer (not the PMD) ensures
- there is only one primary application.
-diff --git a/doc/guides/prog_guide/ethdev/index.rst b/doc/guides/prog_guide/ethdev/index.rst
-index 392ced0a2e..49c41b5c94 100644
---- a/doc/guides/prog_guide/ethdev/index.rst
-+++ b/doc/guides/prog_guide/ethdev/index.rst
-@@ -10,6 +10,7 @@ Ethernet Device Library
-     ethdev
-     switch_representation
-     flow_offload
-+    port_mirroring
-     traffic_metering_and_policing
-     traffic_management
-     qos_framework
-diff --git a/doc/guides/prog_guide/pdump_lib.rst b/doc/guides/prog_guide/pdump_lib.rst
-index 07b9f39d09..44fbc58c22 100644
---- a/doc/guides/prog_guide/pdump_lib.rst
-+++ b/doc/guides/prog_guide/pdump_lib.rst
-@@ -9,6 +9,10 @@ The library does the complete copy of the Rx and Tx mbufs to a new mempool and
- hence it slows down the performance of the applications, so it is recommended
- to use this library for debugging purposes.
- 
-+This library is now deprecated becuase it depends on rx and tx callbacks
-+which will not work if rx or tx is done by secondary process. Use the
-+Port Mirroring functionality of ethdev instead.
++	printf("# Checked hotlug_add OK\n");
 +
- The library uses a generic multi process channel to facilitate communication
- between primary and secondary process for enabling/disabling packet capture on
- ports.
-diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
-index e2d4125308..03a6b2712e 100644
---- a/doc/guides/rel_notes/deprecation.rst
-+++ b/doc/guides/rel_notes/deprecation.rst
-@@ -152,3 +152,6 @@ Deprecation Notices
- * bus/vmbus: Starting DPDK 25.11, all the vmbus API defined in
-   ``drivers/bus/vmbus/rte_bus_vmbus.h`` will become internal to DPDK.
-   Those API functions are used internally by DPDK core and netvsc PMD.
++	ret = rte_eth_dev_get_port_by_name(vdev_name, &port);
++	TEST_ASSERT(ret == 0, "Lookup vdev '%s' failed", vdev_name);
 +
-+* pdump: The pdump API and application have been deprecated and will
-+  be removed in a later release.
-diff --git a/doc/guides/tools/pdump.rst b/doc/guides/tools/pdump.rst
-index 6f9bd77ab1..ffb8bde192 100644
---- a/doc/guides/tools/pdump.rst
-+++ b/doc/guides/tools/pdump.rst
-@@ -10,6 +10,8 @@ The ``dpdk-pdump`` tool is a Data Plane Development Kit (DPDK) tool that runs as
- a DPDK secondary process and is capable of enabling packet capture on dpdk ports.
- 
-    .. Note::
-+      * The ``dpdk-pdump`` is deprecated, use ``dpdk-dumpcap`` instead.
++	ret = rte_eth_dev_configure(port, 1, 1, &dev_conf);
++	TEST_ASSERT(ret == 0, "Configure port %u failed", port);
 +
-       * The ``dpdk-pdump`` tool can only be used in conjunction with a primary
-         application which has the packet capture framework initialized already.
-         In dpdk, only the ``testpmd`` is modified to initialize packet capture
-diff --git a/lib/pdump/rte_pdump.h b/lib/pdump/rte_pdump.h
-index 1e32d46097..bfea7c560d 100644
---- a/lib/pdump/rte_pdump.h
-+++ b/lib/pdump/rte_pdump.h
-@@ -39,6 +39,7 @@ enum {
-  * @return
-  *    0 on success, -1 on error
-  */
-+__rte_deprecated
++	ret = rte_eth_dev_start(port);
++	TEST_ASSERT(ret == 0, "Start port %u failed", port);
++
++	printf("# Checked rte_eth_dev_start\n");
++
++	ret = rte_eth_dev_stop(port);
++	TEST_ASSERT(ret == 0, "Stop port %u failed", port);
++
++	printf("# Checked rte_eth_dev_stop\n");
++
++	rte_eal_hotplug_remove("vdev", vdev_name);
++
++	printf("# Checked hotlug_remove OK\n");
++	return 0;
++}
++
+ /* if called in a primary process, just spawns off a secondary process to
+  * run validation tests - which brings us right back here again...
+  * if called in a secondary process, this runs a series of API tests to check
+@@ -212,15 +253,19 @@ run_object_creation_tests(void)
  int
- rte_pdump_init(void);
+ test_mp_secondary(void)
+ {
+-	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
++	int ret;
++
++	if (rte_eal_process_type() == RTE_PROC_PRIMARY)
+ 		return run_secondary_instances();
+-	}
  
-@@ -50,6 +51,7 @@ rte_pdump_init(void);
-  * @return
-  *    0 on success, -1 on error
-  */
-+__rte_deprecated
- int
- rte_pdump_uninit(void);
+ 	printf("IN SECONDARY PROCESS\n");
++	ret = run_ethdev_tests();
++	if (ret != 0)
++		return ret;
  
-@@ -75,7 +77,7 @@ rte_pdump_uninit(void);
-  * @return
-  *    0 on success, -1 on error, rte_errno is set accordingly.
-  */
--
-+__rte_deprecated
- int
- rte_pdump_enable(uint16_t port, uint16_t queue, uint32_t flags,
- 		struct rte_ring *ring,
-@@ -106,6 +108,7 @@ rte_pdump_enable(uint16_t port, uint16_t queue, uint32_t flags,
-  * @return
-  *    0 on success, -1 on error, rte_errno is set accordingly.
-  */
-+__rte_deprecated
- int
- rte_pdump_enable_bpf(uint16_t port_id, uint16_t queue,
- 		     uint32_t flags, uint32_t snaplen,
-@@ -129,7 +132,7 @@ rte_pdump_enable_bpf(uint16_t port_id, uint16_t queue,
-  * @return
-  *    0 on success, -1 on error, rte_errno is set accordingly.
-  */
--
-+__rte_deprecated
- int
- rte_pdump_disable(uint16_t port, uint16_t queue, uint32_t flags);
+ 	return run_object_creation_tests();
+ }
  
-@@ -156,7 +159,7 @@ rte_pdump_disable(uint16_t port, uint16_t queue, uint32_t flags);
-  * @return
-  *    0 on success, -1 on error, rte_errno is set accordingly.
-  */
--
-+__rte_deprecated
- int
- rte_pdump_enable_by_deviceid(char *device_id, uint16_t queue,
- 				uint32_t flags,
-@@ -189,6 +192,7 @@ rte_pdump_enable_by_deviceid(char *device_id, uint16_t queue,
-  * @return
-  *    0 on success, -1 on error, rte_errno is set accordingly.
-  */
-+__rte_deprecated
- int
- rte_pdump_enable_bpf_by_deviceid(const char *device_id, uint16_t queue,
- 				 uint32_t flags, uint32_t snaplen,
-@@ -215,6 +219,7 @@ rte_pdump_enable_bpf_by_deviceid(const char *device_id, uint16_t queue,
-  * @return
-  *    0 on success, -1 on error, rte_errno is set accordingly.
-  */
-+__rte_deprecated
- int
- rte_pdump_disable_by_deviceid(char *device_id, uint16_t queue,
- 				uint32_t flags);
-@@ -243,6 +248,7 @@ struct rte_pdump_stats {
-  * @return
-  *   Zero if successful. -1 on error and rte_errno is set.
-  */
-+__rte_deprecated
- int
- rte_pdump_stats(uint16_t port_id, struct rte_pdump_stats *stats);
+ #endif /* !RTE_EXEC_ENV_WINDOWS */
  
+-REGISTER_FAST_TEST(multiprocess_autotest, false, false, test_mp_secondary);
++REGISTER_FAST_TEST(multiprocess_autotest, true, true, test_mp_secondary);
 -- 
 2.47.2
 
