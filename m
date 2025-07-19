@@ -2,73 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26FEAC83F34
-	for <dpdk-dev@archiver.kernel.org>; Sat, 19 Jul 2025 15:00:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09B6BC83F27
+	for <dpdk-dev@archiver.kernel.org>; Sat, 19 Jul 2025 15:32:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 20ED3402AE;
-	Sat, 19 Jul 2025 17:00:22 +0200 (CEST)
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com
- [209.85.222.174])
- by mails.dpdk.org (Postfix) with ESMTP id 12C46402B5
- for <dev@dpdk.org>; Sat, 19 Jul 2025 06:22:03 +0200 (CEST)
-Received: by mail-qk1-f174.google.com with SMTP id
- af79cd13be357-7dfff5327fbso366585885a.1
- for <dev@dpdk.org>; Fri, 18 Jul 2025 21:22:02 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 516604026F;
+	Sat, 19 Jul 2025 17:32:45 +0200 (CEST)
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com
+ [209.85.210.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 381A0400D7;
+ Sat, 19 Jul 2025 17:32:44 +0200 (CEST)
+Received: by mail-pf1-f180.google.com with SMTP id
+ d2e1a72fcca58-748d982e97cso2713171b3a.1; 
+ Sat, 19 Jul 2025 08:32:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1752898922; x=1753503722; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1752939163; x=1753543963; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=MO8Ovs5+YjakMDVolgvlDCfnIJHocIWRr9Sz4th0d24=;
- b=DRdW7ne757t474tc80JB5lmzZgHNi9FqH9qlsHiXl8aOYg9Ozn6NFjw1C5lKZdW3pI
- zc/mMOUWodP1PGTPnqYm7pPx6D7Yvt441vhGj+/bCQiAfcpbggnRXgUkuMdCZLgddx2Q
- CT2l8H+10qiCGRAV0XeSxRQoorZ6jkvKE7W0vHTWHyPBhCDvcNOqdFb7Ma+A7E/qc51l
- Yf+ZffXsK5Ahuwu5yfbMkOjhxvStelT+Zi3z7XFrnX26Myk4vqnsRizD2eVfBw051Nxx
- GF2U3Z/wmFubxKLLQW7iD0HgrTwsLy/CD+rJ/PRE43lg37sM0v8aFbBqy4OqVjvXySJY
- HQiQ==
+ bh=PuxZADO9iRVmai/wZUK395HxPqllRV8REm/Y57NAjBs=;
+ b=kmnwId1FJE3ceMUUHF85JZxAlVXKB7FsCB3V7N0UwJkQUBns8QpcyYzNKjWpOj+4NY
+ Tmfcagfb+2Z/UHiPpV1pDUS0bXQ80EQJHgW4zdWXSaK/JvSDg9/7dGGb3e2nxeUriVA7
+ en0iKH8bWv5jMbKuxuatYkzRa9nsu0TcHSHIAugYrz1ZfHRA4FJBrwHdeB81nJsio8t4
+ /HI+bpU4cE/8I6SvcPqrOATuTyUPUjO9gu5bm2+FbqzvRfMTnjNTKe0RbCyV4d0SinNW
+ 3OtjEjR0eRC8QJ6gHLSUEzBcgZdUbMR5NapRnng9ybcmZ9RoDzRmhzPVGM83FS+igWKu
+ s17w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752898922; x=1753503722;
+ d=1e100.net; s=20230601; t=1752939163; x=1753543963;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=MO8Ovs5+YjakMDVolgvlDCfnIJHocIWRr9Sz4th0d24=;
- b=BjUGTB5+/xwiBRR5a06WF+ehdXw/PhuwT0jCd2YRRjRwGYOAA3KzT8hJoOS0DJwCZ3
- aWVVynIBbwT2F6I5lSo1IZzxi4fNQ65R2ebvQIFEW5Q1HMDEaZ5og2J+27uv3+HtZNdi
- EuYQ6C3pCOBZs8GKoeh6nkqNIW2crvd2RuBmdU4IRRoO/SVHi4RbF55/TSN9h8yZsvOk
- rVkE2LDNFdo6sKrchqdKxfYnNgLJg4eraEdt8DVwkT3ckt62nzvBNi5iRGgD6KiBjedO
- Nt17ce1VfOitM+69FRM9UdpH18pkusz0cBSbgCW/SA2YgFhPivgxxiHkbxMyrSXu7eGb
- Jimw==
-X-Gm-Message-State: AOJu0YxNn6uZ2gI/+iN3LIZnVbLaTnojzLqQ6ElE3KyJthQ4tvHyHcpf
- U7RcozeyTaoLwWxGBfZpJa2IIUNkvEmVA/vVdlWR14KZRprC8yY/7OOvZg6Nng==
-X-Gm-Gg: ASbGncs6c8VTWmKlOCFjf7k3RmPFBCUTP0TIPfd/3juYQ0e1pcslSt+jmAOh28fn5IN
- AletIXzBmUhnUd9XUykaDJjZT28VXpCu6fEYyj9JzWqM64Jz9CVwPYIPtn+VZ/CSh40XzJSLjB1
- H6A3sqCM4Waeqpx4Tyf2zBpY8h1nqJqo8hVM2gox5i/Lo5m4mwRkHEezce1L36q6E2mXaSaKCxU
- 133de0frnTLGXmrP9ApL9nIusvFffXMimRw7vJWdq160ed6pWxX7BxGIIFJdb3yZGpznapAiEya
- GTJuT8VVquuZDh++sTWnKC8UeKMwarKDVyIxldO91mC+FtfJnOsebFKHe5MPJTwnWCBVstUWPwk
- n0pWZHOACWSCh2otujFULiYJJvs/4SSiIeuPGoZTICtOJzYa8E+mNFOJ72yYD5K+3Bku7fQ==
-X-Google-Smtp-Source: AGHT+IFVU8Deb+d0lFAcNbrsXW0UmOkMTaSuluPu8hqkNfluK6PYpL5K0T5duLbO9bm8etCFcGGdBg==
-X-Received: by 2002:a05:620a:6582:b0:7e3:4525:4e07 with SMTP id
- af79cd13be357-7e3452556b3mr1389569185a.58.1752898921774; 
- Fri, 18 Jul 2025 21:22:01 -0700 (PDT)
-Received: from pravin-HP-Z840.. (ool-944c2daf.dyn.optonline.net.
- [148.76.45.175]) by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7e356b2a976sm162576285a.13.2025.07.18.21.22.01
+ bh=PuxZADO9iRVmai/wZUK395HxPqllRV8REm/Y57NAjBs=;
+ b=w/gJNcncCj8I18+YEBIFijkdkdyo9DNeZamEqW7xoVpFnj6U7J6lDbhy6xkJPZKpcR
+ x3HRpySCSurhSoax6NfoQutmJtZQJlCAjfHygOpbvEC4miqzKFYLUZLUFpDY9m6ObtPH
+ Wg5/Mlia+yETKkFugWUzgG1848InvJWc0UUEls1bwCVy1gHMIttofuKNUW712K8xK5GJ
+ WN9is7/NdBDTdiuo/3koMqvlSOdoVRluFcb9EsnJzjo4s9jI6LfVjWEEQeu6UDsmTmNT
+ AWefhHipDbjK9wpviJ01hRi2+9D9N+dIjHhUxEKgvqhSYjejcWpyPkddQaGsXqHrj64N
+ /uDQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXqGq9LNyXOYq87xDlgydiopY2jQnlwVdn5PtTWr0ygFL7TbE8VF7E2HsoH8/btgPyetOIV7/E=@dpdk.org
+X-Gm-Message-State: AOJu0YzEGYInpvblygmvZHL9xjLzsAeh/XnMTGOAW0vs7KlondAiXK9V
+ CR9Hj4Jh+NRk4lzStABPu9xbWXmbs11Dhqq9z0iFRTxhPJLj+0EqhWehzUpTCQ==
+X-Gm-Gg: ASbGncsDRSMB/H0tCgyYxt3FYTx8kAzQFAPQApqmLzllA/5ixemQLACGxOaZwuWHoxV
+ bj6g73vmOvhtVcfPG1KoYdH9tiUOWXrKzaNznKYpaYp5flT2+IOU1wj4g/17rMYe0gUbD61JSfi
+ SPOiMHj9Y5AKCpHc2QYaWhAlnIdQoH1mvYZsW+zIZOTKNPyv16ua3HFpVXn48iPRCdHC3R7IA5z
+ MxLbYGwU8osQqfW1P6pnsfx/4Rw5R7/+kBbuyPrJKrJ/nSldfwUM4h6yQfNI7gOIpn9iXEJroLQ
+ 6ZZSdhUIAX6/0MrZblKKIJr5ILYVHuF+lUhqboGZUmhuhwYZXBuEZQKQkWgEHtjZO27YwSRa9AN
+ s2NmtPDnyJ5q/4ix8+y8RK6LTH4QSnJq6eGnwqjFowLRkro7Hv3t3
+X-Google-Smtp-Source: AGHT+IEZAB1QUZeMTZbXGP3J/4faKlMVzV4XnFizktmZxH86Tvu5usNwz2ytwK3mm1HhHYBk7ssvqQ==
+X-Received: by 2002:a05:6a00:2e92:b0:748:ef3d:3247 with SMTP id
+ d2e1a72fcca58-75724876e61mr19862228b3a.20.1752939162789; 
+ Sat, 19 Jul 2025 08:32:42 -0700 (PDT)
+Received: from localhost.localdomain ([122.235.156.36])
+ by smtp.gmail.com with ESMTPSA id
+ d2e1a72fcca58-759c89d06a8sm3038727b3a.45.2025.07.19.08.32.41
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 18 Jul 2025 21:22:01 -0700 (PDT)
-From: Pravin Pathak <pravinpathakdev@gmail.com>
-X-Google-Original-From: Pravin Pathak <pravin.pathak.dev@gmail.com>
+ Sat, 19 Jul 2025 08:32:42 -0700 (PDT)
+From: Yang Ming <mosesyyoung@gmail.com>
 To: dev@dpdk.org
-Cc: jerinj@marvell.com, bruce.richardson@intel.com, thomas@monjalon.net,
- Pravin Pathak <pravin.pathak.dev@gmail.com>
-Subject: [PATCH v2] mailmap: add new email to DPDK
-Date: Sat, 19 Jul 2025 00:21:58 -0400
-Message-ID: <20250719042158.39269-1-pravin.pathak.dev@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250714191141.1243467-1-pravin.pathak@intel.com>
-References: <20250714191141.1243467-1-pravin.pathak@intel.com>
+Cc: kevin.laatz@intel.com,
+	stable@dpdk.org
+Subject: [PATCH v3 1/2] eal: prevent socket closure before MP sync
+Date: Sat, 19 Jul 2025 23:32:25 +0800
+Message-ID: <20250719153227.1980-1-mosesyyoung@gmail.com>
+X-Mailer: git-send-email 2.49.0.windows.1
+In-Reply-To: <20250407052532.1913-1-ming.1.yang@nokia-sbell.com>
+References: <20250407052532.1913-1-ming.1.yang@nokia-sbell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Mailman-Approved-At: Sat, 19 Jul 2025 17:00:19 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,26 +82,76 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Adding new mail for DPDK contribution
+The secordary process should not close socket file for MP
+channel before performing MP request synchronization.
+This prevents error logs when the secondary process exits
+without any operation on the crypto device while the primary
+process starts the device.
 
-Signed-off-by: Pravin Pathak <pravin.pathak.dev@gmail.com>
+Case situation:
+eal_bus_cleanup has been added in rte_eal_cleanup. But for the
+secondary process, rte_eal_cleanup firstly performs
+rte_mp_channel_cleanup, which closes socket file for the MP
+channel, making mp_fd invalid. Subsequently, eal_bus_cleanup
+triggers vdev_cleanup, which calls mp_request_sync to send a
+message via the MP channel. Since mp_fd is invalid, error logs
+occur.
+
+Error logs occur as below when the secordary process exit:
+EAL: failed to send to (/tmp/dpdk/l2hicu/mp_socket) due to Bad
+file descriptor
+EAL: Fail to send request /tmp/dpdk/l2hicu/mp_socket:
+ipsec_mb_mp_msg
+USER1: Create MR request to primary process failed.
+
+Function call trace:
+1. rte_eal_cleanup->rte_mp_channel_cleanup->close_socket_fd
+2. rte_eal_cleanup->eal_bus_cleanup->vdev_cleanup->
+rte_vdev_driver->ipsec_mb_remove->ipsec_mb_qp_release->
+ipsec_mb_secondary_qp_op->rte_mp_request_sync->mp_request_sync->
+send_msg->sendmsg(mp_fd, &msgh, 0);
+
+Fixes: 1cab1a40ea9b ("bus: cleanup devices on shutdown")
+Cc: kevin.laatz@intel.com
+Cc: stable@dpdk.org
+
+Signed-off-by: Yang Ming <mosesyyoung@gmail.com>
 ---
- .mailmap | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/eal/freebsd/eal.c | 2 +-
+ lib/eal/linux/eal.c   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/.mailmap b/.mailmap
-index c7d55c7386..1c5c367f6c 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -1240,7 +1240,7 @@ Prateek Agarwal <prateekag@cse.iitb.ac.in>
- Prathisna Padmasanan <prathisna.padmasanan@intel.com>
- Praveen Kaligineedi <pkaligineedi@google.com>
- Praveen Shetty <praveen.shetty@intel.com>
--Pravin Pathak <pravin.pathak@intel.com>
-+Pravin Pathak <pravin.pathak.dev@gmail.com>
- Prince Takkar <ptakkar@marvell.com>
- Priyalee Kushwaha <priyalee.kushwaha@intel.com>
- Priyanka Jain <priyanka.jain@nxp.com>
+diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
+index c1ab8d86d2..f161ba0bac 100644
+--- a/lib/eal/freebsd/eal.c
++++ b/lib/eal/freebsd/eal.c
+@@ -905,8 +905,8 @@ rte_eal_cleanup(void)
+ 	struct internal_config *internal_conf =
+ 		eal_get_internal_configuration();
+ 	rte_service_finalize();
+-	rte_mp_channel_cleanup();
+ 	eal_bus_cleanup();
++	rte_mp_channel_cleanup();
+ 	rte_eal_alarm_cleanup();
+ 	rte_trace_save();
+ 	eal_trace_fini();
+diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
+index 52efb8626b..d44950d563 100644
+--- a/lib/eal/linux/eal.c
++++ b/lib/eal/linux/eal.c
+@@ -1330,11 +1330,11 @@ rte_eal_cleanup(void)
+ 		rte_memseg_walk(mark_freeable, NULL);
+ 
+ 	rte_service_finalize();
++	eal_bus_cleanup();
+ #ifdef VFIO_PRESENT
+ 	vfio_mp_sync_cleanup();
+ #endif
+ 	rte_mp_channel_cleanup();
+-	eal_bus_cleanup();
+ 	rte_eal_alarm_cleanup();
+ 	rte_trace_save();
+ 	eal_trace_fini();
 -- 
-2.43.0
+2.49.0.windows.1
 
