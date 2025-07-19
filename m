@@ -2,38 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2EEAC83F34
-	for <dpdk-dev@archiver.kernel.org>; Sat, 19 Jul 2025 10:23:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B31C83F27
+	for <dpdk-dev@archiver.kernel.org>; Sat, 19 Jul 2025 14:14:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 914FF40E48;
-	Sat, 19 Jul 2025 12:23:33 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5032C40E48;
+	Sat, 19 Jul 2025 16:14:47 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 131FB400D7
- for <dev@dpdk.org>; Sat, 19 Jul 2025 12:23:33 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id B597B400D7
+ for <dev@dpdk.org>; Sat, 19 Jul 2025 16:14:46 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id C1918205ED;
- Sat, 19 Jul 2025 12:23:32 +0200 (CEST)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Sat, 19 Jul 2025 12:23:32 +0200
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
- Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH] mbuf: de-inline sanity checking a reinitialized mbuf
-Date: Sat, 19 Jul 2025 10:23:15 +0000
-Message-ID: <20250719102315.435921-1-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 75EAA205ED;
+ Sat, 19 Jul 2025 16:14:45 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 19 Jul 2025 10:23:32.0343 (UTC)
- FILETIME=[2D6D0070:01DBF897]
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH] mbuf: de-inline sanity checking a reinitialized mbuf
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Sat, 19 Jul 2025 16:14:42 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FDB9@smartserver.smartshare.dk>
+In-Reply-To: <20250719102315.435921-1-mb@smartsharesystems.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH] mbuf: de-inline sanity checking a reinitialized mbuf
+Thread-Index: Adv4ly2vBg/xiToaRbmyVPbUNXOKCQAHbUeQ
+References: <20250719102315.435921-1-mb@smartsharesystems.com>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: <dev@dpdk.org>, "Thomas Monjalon" <thomas@monjalon.net>,
+ "Stephen Hemminger" <stephen@networkplumber.org>,
+ "Bruce Richardson" <bruce.richardson@intel.com>,
+ "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
+ "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -47,299 +49,209 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Sanity checking a reinitialized mbuf (a.k.a. raw mbuf) has been refactored
-to follow the same design pattern as sanity checking a normal mbuf, and
-now depends on RTE_LIBRTE_MBUF_DEBUG instead of RTE_ENABLE_ASSERT.
-
-The details of the changes are as follows:
-
-Non-inlined functions rte_mbuf_raw_sanity_check() and rte_mbuf_raw_check()
-have been added.
-They do for a reinitialized mbuf what rte_mbuf_sanity_check() and
-rte_mbuf_check() do for a normal mbuf.
-They basically check the same conditions as __rte_mbuf_raw_sanity_check()
-previously did, but use "if (!condition) rte_panic(message)" instead of
-RTE_ASSSERT(), so they don't depend on RTE_ENABLE_ASSERT.
-
-The inline function __rte_mbuf_raw_sanity_check() has been replaced
-by the new macro __rte_mbuf_raw_sanity_check_mp(), which either calls
-rte_mbuf_raw_sanity_check() or does nothing, depending on
-RTE_LIBRTE_MBUF_DEBUG, just like the __rte_mbuf_sanity_check() macro does
-for a normal mbuf.
-
-Note that the new macro __rte_mbuf_raw_sanity_check_mp() takes an optional
-mempool parameter to verify that the mbuf belongs to the expected mbuf
-pool.
-This addition is mainly relevant for sanity checking reinitialized mbufs
-freed directly into a given mempool by a PMD when using
-RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE.
-
-The macro __rte_mbuf_raw_sanity_check() has been kept for backwards API
-compatibility.
-It simply calls __rte_mbuf_raw_sanity_check_mp() without specifying a
-mempool.
-
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
----
- lib/mbuf/rte_mbuf.c |  61 ++++++++++++++++++++++++++
- lib/mbuf/rte_mbuf.h | 104 ++++++++++++++++++++++++++++----------------
- 2 files changed, 127 insertions(+), 38 deletions(-)
-
-diff --git a/lib/mbuf/rte_mbuf.c b/lib/mbuf/rte_mbuf.c
-index 9e7731a8a2..ff4db73b50 100644
---- a/lib/mbuf/rte_mbuf.c
-+++ b/lib/mbuf/rte_mbuf.c
-@@ -373,6 +373,67 @@ rte_pktmbuf_pool_create_extbuf(const char *name, unsigned int n,
- 	return mp;
- }
- 
-+/* do some sanity checks on a reinitialized mbuf: panic if it fails */
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_mbuf_raw_sanity_check, 25.11)
-+void
-+rte_mbuf_raw_sanity_check(const struct rte_mbuf *m, const struct rte_mempool *mp)
-+{
-+	const char *reason;
-+
-+	if (rte_mbuf_raw_check(m, mp, &reason))
-+		rte_panic("%s\n", reason);
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_mbuf_raw_check, 25.11)
-+int rte_mbuf_raw_check(const struct rte_mbuf *m, const struct rte_mempool *mp,
-+		   const char **reason)
-+{
-+	/* check sanity */
-+	if (rte_mbuf_check(m, 0, reason) == -1)
-+		return -1;
-+
-+	/* check initialized */
-+	if (rte_mbuf_refcnt_read(m) != 1) {
-+		*reason = "uninitialized ref cnt";
-+		return -1;
-+	}
-+	if (m->next != NULL) {
-+		*reason = "uninitialized next ptr";
-+		return -1;
-+	}
-+	if (m->nb_segs != 1) {
-+		*reason = "uninitialized nb_segs";
-+		return -1;
-+	}
-+	if (RTE_MBUF_CLONED(m)) {
-+		*reason = "cloned";
-+		return -1;
-+	}
-+	if (RTE_MBUF_HAS_EXTBUF(m)) {
-+		if (!RTE_MBUF_HAS_PINNED_EXTBUF(m)) {
-+			*reason = "external buffer not pinned";
-+			return -1;
-+		}
-+
-+		uint16_t cnt = rte_mbuf_ext_refcnt_read(m->shinfo);
-+		if ((cnt == 0) || (cnt == UINT16_MAX)) {
-+			*reason = "pinned external buffer bad ref cnt";
-+			return -1;
-+		}
-+		if (cnt != 1) {
-+			*reason = "pinned external buffer uninitialized ref cnt";
-+			return -1;
-+		}
-+	}
-+
-+	if (mp != NULL && m->pool != mp) {
-+		*reason = "wrong mbuf pool";
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
- /* do some sanity checks on a mbuf: panic if it fails */
- RTE_EXPORT_SYMBOL(rte_mbuf_sanity_check)
- void
-diff --git a/lib/mbuf/rte_mbuf.h b/lib/mbuf/rte_mbuf.h
-index 06ab7502a5..2621cc385c 100644
---- a/lib/mbuf/rte_mbuf.h
-+++ b/lib/mbuf/rte_mbuf.h
-@@ -339,11 +339,17 @@ rte_pktmbuf_priv_flags(struct rte_mempool *mp)
- 
- #ifdef RTE_LIBRTE_MBUF_DEBUG
- 
-+/**  check reinitialized mbuf type in debug mode */
-+#define __rte_mbuf_raw_sanity_check_mp(m, mp) rte_mbuf_raw_sanity_check(m, mp)
-+
- /**  check mbuf type in debug mode */
- #define __rte_mbuf_sanity_check(m, is_h) rte_mbuf_sanity_check(m, is_h)
- 
- #else /*  RTE_LIBRTE_MBUF_DEBUG */
- 
-+/**  check reinitialized mbuf type in debug mode */
-+#define __rte_mbuf_raw_sanity_check_mp(m, mp) do { } while (0)
-+
- /**  check mbuf type in debug mode */
- #define __rte_mbuf_sanity_check(m, is_h) do { } while (0)
- 
-@@ -513,6 +519,54 @@ rte_mbuf_ext_refcnt_update(struct rte_mbuf_ext_shared_info *shinfo,
- } while (0)
- 
- 
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: This API may change, or be removed, without prior notice.
-+ *
-+ * Sanity checks on a reinitialized mbuf.
-+ *
-+ * Check the consistency of the given reinitialized mbuf.
-+ * The function will cause a panic if corruption is detected.
-+ *
-+ * Check that the mbuf is properly reinitialized (refcnt=1, next=NULL,
-+ * nb_segs=1), as done by rte_pktmbuf_prefree_seg().
-+ *
-+ * @param m
-+ *   The mbuf to be checked.
-+ * @param mp
-+ *   The mempool to which the mbuf belongs.
-+ *   NULL if unknown, not to be checked.
-+ */
-+__rte_experimental
-+void
-+rte_mbuf_raw_sanity_check(const struct rte_mbuf *m, const struct rte_mempool *mp);
-+
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: This API may change, or be removed, without prior notice.
-+ *
-+ * Sanity checks on a reinitialized mbuf.
-+ *
-+ * Almost like rte_mbuf_raw_sanity_check(), but this function gives the reason
-+ * if corruption is detected rather than panic.
-+ *
-+ * @param m
-+ *   The mbuf to be checked.
-+ * @param mp
-+ *   The mempool to which the mbuf belongs.
-+ *   NULL if unknown, not to be checked.
-+ * @param reason
-+ *   A reference to a string pointer where to store the reason why a mbuf is
-+ *   considered invalid.
-+ * @return
-+ *   - 0 if no issue has been found, reason is left untouched.
-+ *   - -1 if a problem is detected, reason then points to a string describing
-+ *     the reason why the mbuf is deemed invalid.
-+ */
-+__rte_experimental
-+int rte_mbuf_raw_check(const struct rte_mbuf *m, const struct rte_mempool *mp,
-+		   const char **reason);
-+
- /**
-  * Sanity checks on an mbuf.
-  *
-@@ -550,33 +604,11 @@ rte_mbuf_sanity_check(const struct rte_mbuf *m, int is_header);
- int rte_mbuf_check(const struct rte_mbuf *m, int is_header,
- 		   const char **reason);
- 
--/**
-- * Sanity checks on a reinitialized mbuf in debug mode.
-- *
-- * Check the consistency of the given reinitialized mbuf.
-- * The function will cause a panic if corruption is detected.
-- *
-- * Check that the mbuf is properly reinitialized (refcnt=1, next=NULL,
-- * nb_segs=1), as done by rte_pktmbuf_prefree_seg().
-- *
-- * @param m
-- *   The mbuf to be checked.
-- */
--static __rte_always_inline void
--__rte_mbuf_raw_sanity_check(__rte_unused const struct rte_mbuf *m)
--{
--	RTE_ASSERT(rte_mbuf_refcnt_read(m) == 1);
--	RTE_ASSERT(m->next == NULL);
--	RTE_ASSERT(m->nb_segs == 1);
--	RTE_ASSERT(!RTE_MBUF_CLONED(m));
--	RTE_ASSERT(!RTE_MBUF_HAS_EXTBUF(m) ||
--			(RTE_MBUF_HAS_PINNED_EXTBUF(m) &&
--			rte_mbuf_ext_refcnt_read(m->shinfo) == 1));
--	__rte_mbuf_sanity_check(m, 0);
--}
-+/** For backwards compatibility. */
-+#define __rte_mbuf_raw_sanity_check(m) __rte_mbuf_raw_sanity_check_mp(m, NULL)
- 
- /** For backwards compatibility. */
--#define MBUF_RAW_ALLOC_CHECK(m) __rte_mbuf_raw_sanity_check(m)
-+#define MBUF_RAW_ALLOC_CHECK(m) __rte_mbuf_raw_sanity_check_mp(m, NULL)
- 
- /**
-  * Allocate an uninitialized mbuf from mempool *mp*.
-@@ -606,7 +638,7 @@ static inline struct rte_mbuf *rte_mbuf_raw_alloc(struct rte_mempool *mp)
- 
- 	if (rte_mempool_get(mp, &ret.ptr) < 0)
- 		return NULL;
--	__rte_mbuf_raw_sanity_check(ret.m);
-+	__rte_mbuf_raw_sanity_check_mp(ret.m, mp);
- 	return ret.m;
- }
- 
-@@ -644,7 +676,7 @@ rte_mbuf_raw_alloc_bulk(struct rte_mempool *mp, struct rte_mbuf **mbufs, unsigne
- 	int rc = rte_mempool_get_bulk(mp, (void **)mbufs, count);
- 	if (likely(rc == 0))
- 		for (unsigned int idx = 0; idx < count; idx++)
--			__rte_mbuf_raw_sanity_check(mbufs[idx]);
-+			__rte_mbuf_raw_sanity_check_mp(mbufs[idx], mp);
- 	return rc;
- }
- 
-@@ -665,7 +697,7 @@ rte_mbuf_raw_alloc_bulk(struct rte_mempool *mp, struct rte_mbuf **mbufs, unsigne
- static __rte_always_inline void
- rte_mbuf_raw_free(struct rte_mbuf *m)
- {
--	__rte_mbuf_raw_sanity_check(m);
-+	__rte_mbuf_raw_sanity_check_mp(m, NULL);
- 	rte_mempool_put(m->pool, m);
- }
- 
-@@ -696,12 +728,8 @@ __rte_experimental
- static __rte_always_inline void
- rte_mbuf_raw_free_bulk(struct rte_mempool *mp, struct rte_mbuf **mbufs, unsigned int count)
- {
--	for (unsigned int idx = 0; idx < count; idx++) {
--		const struct rte_mbuf *m = mbufs[idx];
--		RTE_ASSERT(m != NULL);
--		RTE_ASSERT(m->pool == mp);
--		__rte_mbuf_raw_sanity_check(m);
--	}
-+	for (unsigned int idx = 0; idx < count; idx++)
-+		__rte_mbuf_raw_sanity_check_mp(mbufs[idx], mp);
- 
- 	rte_mempool_put_bulk(mp, (void **)mbufs, count);
- }
-@@ -1021,22 +1049,22 @@ static inline int rte_pktmbuf_alloc_bulk(struct rte_mempool *pool,
- 	switch (count % 4) {
- 	case 0:
- 		while (idx != count) {
--			__rte_mbuf_raw_sanity_check(mbufs[idx]);
-+			__rte_mbuf_raw_sanity_check_mp(mbufs[idx], pool);
- 			rte_pktmbuf_reset(mbufs[idx]);
- 			idx++;
- 			/* fall-through */
- 	case 3:
--			__rte_mbuf_raw_sanity_check(mbufs[idx]);
-+			__rte_mbuf_raw_sanity_check_mp(mbufs[idx], pool);
- 			rte_pktmbuf_reset(mbufs[idx]);
- 			idx++;
- 			/* fall-through */
- 	case 2:
--			__rte_mbuf_raw_sanity_check(mbufs[idx]);
-+			__rte_mbuf_raw_sanity_check_mp(mbufs[idx], pool);
- 			rte_pktmbuf_reset(mbufs[idx]);
- 			idx++;
- 			/* fall-through */
- 	case 1:
--			__rte_mbuf_raw_sanity_check(mbufs[idx]);
-+			__rte_mbuf_raw_sanity_check_mp(mbufs[idx], pool);
- 			rte_pktmbuf_reset(mbufs[idx]);
- 			idx++;
- 			/* fall-through */
--- 
-2.43.0
-
+PiBGcm9tOiBNb3J0ZW4gQnLDuHJ1cCBbbWFpbHRvOm1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNvbV0N
+Cj4gU2VudDogU2F0dXJkYXksIDE5IEp1bHkgMjAyNSAxMi4yMw0KPiANCj4gU2FuaXR5IGNoZWNr
+aW5nIGEgcmVpbml0aWFsaXplZCBtYnVmIChhLmsuYS4gcmF3IG1idWYpIGhhcyBiZWVuDQo+IHJl
+ZmFjdG9yZWQNCj4gdG8gZm9sbG93IHRoZSBzYW1lIGRlc2lnbiBwYXR0ZXJuIGFzIHNhbml0eSBj
+aGVja2luZyBhIG5vcm1hbCBtYnVmLCBhbmQNCj4gbm93IGRlcGVuZHMgb24gUlRFX0xJQlJURV9N
+QlVGX0RFQlVHIGluc3RlYWQgb2YgUlRFX0VOQUJMRV9BU1NFUlQuDQo+IA0KPiBUaGUgZGV0YWls
+cyBvZiB0aGUgY2hhbmdlcyBhcmUgYXMgZm9sbG93czoNCj4gDQo+IE5vbi1pbmxpbmVkIGZ1bmN0
+aW9ucyBydGVfbWJ1Zl9yYXdfc2FuaXR5X2NoZWNrKCkgYW5kDQo+IHJ0ZV9tYnVmX3Jhd19jaGVj
+aygpDQo+IGhhdmUgYmVlbiBhZGRlZC4NCj4gVGhleSBkbyBmb3IgYSByZWluaXRpYWxpemVkIG1i
+dWYgd2hhdCBydGVfbWJ1Zl9zYW5pdHlfY2hlY2soKSBhbmQNCj4gcnRlX21idWZfY2hlY2soKSBk
+byBmb3IgYSBub3JtYWwgbWJ1Zi4NCj4gVGhleSBiYXNpY2FsbHkgY2hlY2sgdGhlIHNhbWUgY29u
+ZGl0aW9ucyBhcw0KPiBfX3J0ZV9tYnVmX3Jhd19zYW5pdHlfY2hlY2soKQ0KPiBwcmV2aW91c2x5
+IGRpZCwgYnV0IHVzZSAiaWYgKCFjb25kaXRpb24pIHJ0ZV9wYW5pYyhtZXNzYWdlKSIgaW5zdGVh
+ZCBvZg0KPiBSVEVfQVNTU0VSVCgpLCBzbyB0aGV5IGRvbid0IGRlcGVuZCBvbiBSVEVfRU5BQkxF
+X0FTU0VSVC4NCj4gDQo+IFRoZSBpbmxpbmUgZnVuY3Rpb24gX19ydGVfbWJ1Zl9yYXdfc2FuaXR5
+X2NoZWNrKCkgaGFzIGJlZW4gcmVwbGFjZWQNCj4gYnkgdGhlIG5ldyBtYWNybyBfX3J0ZV9tYnVm
+X3Jhd19zYW5pdHlfY2hlY2tfbXAoKSwgd2hpY2ggZWl0aGVyIGNhbGxzDQo+IHJ0ZV9tYnVmX3Jh
+d19zYW5pdHlfY2hlY2soKSBvciBkb2VzIG5vdGhpbmcsIGRlcGVuZGluZyBvbg0KPiBSVEVfTElC
+UlRFX01CVUZfREVCVUcsIGp1c3QgbGlrZSB0aGUgX19ydGVfbWJ1Zl9zYW5pdHlfY2hlY2soKSBt
+YWNybw0KPiBkb2VzDQo+IGZvciBhIG5vcm1hbCBtYnVmLg0KPiANCj4gTm90ZSB0aGF0IHRoZSBu
+ZXcgbWFjcm8gX19ydGVfbWJ1Zl9yYXdfc2FuaXR5X2NoZWNrX21wKCkgdGFrZXMgYW4NCj4gb3B0
+aW9uYWwNCj4gbWVtcG9vbCBwYXJhbWV0ZXIgdG8gdmVyaWZ5IHRoYXQgdGhlIG1idWYgYmVsb25n
+cyB0byB0aGUgZXhwZWN0ZWQgbWJ1Zg0KPiBwb29sLg0KPiBUaGlzIGFkZGl0aW9uIGlzIG1haW5s
+eSByZWxldmFudCBmb3Igc2FuaXR5IGNoZWNraW5nIHJlaW5pdGlhbGl6ZWQgbWJ1ZnMNCj4gZnJl
+ZWQgZGlyZWN0bHkgaW50byBhIGdpdmVuIG1lbXBvb2wgYnkgYSBQTUQgd2hlbiB1c2luZw0KPiBS
+VEVfRVRIX1RYX09GRkxPQURfTUJVRl9GQVNUX0ZSRUUuDQo+IA0KPiBUaGUgbWFjcm8gX19ydGVf
+bWJ1Zl9yYXdfc2FuaXR5X2NoZWNrKCkgaGFzIGJlZW4ga2VwdCBmb3IgYmFja3dhcmRzIEFQSQ0K
+PiBjb21wYXRpYmlsaXR5Lg0KPiBJdCBzaW1wbHkgY2FsbHMgX19ydGVfbWJ1Zl9yYXdfc2FuaXR5
+X2NoZWNrX21wKCkgd2l0aG91dCBzcGVjaWZ5aW5nIGENCj4gbWVtcG9vbC4NCj4gDQo+IFNpZ25l
+ZC1vZmYtYnk6IE1vcnRlbiBCcsO4cnVwIDxtYkBzbWFydHNoYXJlc3lzdGVtcy5jb20+DQoNCkJ1
+aWxkaW5nIHRoaXMgd2l0aCBSVEVfTElCUlRFX01CVUZfREVCVUcgMSBpbiBydGVfY29uZmlnLmgg
+c3Bld3Mgb3V0IHdhcm5pbmdzIGxpa2U6DQoNCi4uL2xpYi9tYnVmL3J0ZV9tYnVmLmg6IEluIGZ1
+bmN0aW9uIOKAmHJ0ZV9tYnVmX3Jhd19mcmVl4oCZOg0KLi4vbGliL21idWYvcnRlX21idWYuaDo3
+MDA6OTogd2FybmluZzog4oCYcnRlX21idWZfcmF3X3Nhbml0eV9jaGVja+KAmSBpcyBkZXByZWNh
+dGVkOiBTeW1ib2wgaXMgbm90IHlldCBwYXJ0IG9mIHN0YWJsZSBBQkkgWy1XZGVwcmVjYXRlZC1k
+ZWNsYXJhdGlvbnNdDQogIDcwMCB8ICAgICAgICAgX19ydGVfbWJ1Zl9yYXdfc2FuaXR5X2NoZWNr
+X21wKG0sIE5VTEwpOw0KICAgICAgfCAgICAgICAgIF5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+
+fn5+fg0KLi4vbGliL21idWYvcnRlX21idWYuaDo1NDI6MTogbm90ZTogZGVjbGFyZWQgaGVyZQ0K
+ICA1NDIgfCBydGVfbWJ1Zl9yYXdfc2FuaXR5X2NoZWNrKGNvbnN0IHN0cnVjdCBydGVfbWJ1ZiAq
+bSwgY29uc3Qgc3RydWN0IHJ0ZV9tZW1wb29sICptcCk7DQogICAgICB8IF5+fn5+fn5+fn5+fn5+
+fn5+fn5+fn5+fn4NCg0KRXhwb3J0aW5nIHRoZSBuZXcgQVBJcyBhcyBub24tZXhwZXJpbWVudGFs
+IChpLmUuIHVzaW5nIFJURV9FWFBPUlRfU1lNQk9MKCkgaW5zdGVhZCBvZiBSVEVfRVhQT1JUX0VY
+UEVSSU1FTlRBTF9TWU1CT0woKSBpbiB0aGUgQyBmaWxlLCBhbmQgb21pdHRpbmcgX19ydGVfZXhw
+ZXJpbWVudGFsIGluIHRoZSBoZWFkZXIgZmlsZSwgYXMgc2hvd24gYmVsb3cpIHdvcmtzLCBidXQg
+aXMgdGhhdCBhY2NlcHRhYmxlPw0KDQpPciBpcyB0aGVyZSBhIGJldHRlciB3YXkgb2YgYXZvaWRp
+bmcgdGhlc2Ugd2FybmluZ3M/DQoNCj4gLS0tDQo+ICBsaWIvbWJ1Zi9ydGVfbWJ1Zi5jIHwgIDYx
+ICsrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ICBsaWIvbWJ1Zi9ydGVfbWJ1Zi5oIHwgMTA0
+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0tDQo+ICAyIGZpbGVz
+IGNoYW5nZWQsIDEyNyBpbnNlcnRpb25zKCspLCAzOCBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYg
+LS1naXQgYS9saWIvbWJ1Zi9ydGVfbWJ1Zi5jIGIvbGliL21idWYvcnRlX21idWYuYw0KPiBpbmRl
+eCA5ZTc3MzFhOGEyLi5mZjRkYjczYjUwIDEwMDY0NA0KPiAtLS0gYS9saWIvbWJ1Zi9ydGVfbWJ1
+Zi5jDQo+ICsrKyBiL2xpYi9tYnVmL3J0ZV9tYnVmLmMNCj4gQEAgLTM3Myw2ICszNzMsNjcgQEAg
+cnRlX3BrdG1idWZfcG9vbF9jcmVhdGVfZXh0YnVmKGNvbnN0IGNoYXIgKm5hbWUsDQo+IHVuc2ln
+bmVkIGludCBuLA0KPiAgCXJldHVybiBtcDsNCj4gIH0NCj4gDQo+ICsvKiBkbyBzb21lIHNhbml0
+eSBjaGVja3Mgb24gYSByZWluaXRpYWxpemVkIG1idWY6IHBhbmljIGlmIGl0IGZhaWxzICovDQo+
+ICtSVEVfRVhQT1JUX0VYUEVSSU1FTlRBTF9TWU1CT0wocnRlX21idWZfcmF3X3Nhbml0eV9jaGVj
+aywgMjUuMTEpDQoNCisvLyBSVEVfRVhQT1JUX0VYUEVSSU1FTlRBTF9TWU1CT0wocnRlX21idWZf
+cmF3X3Nhbml0eV9jaGVjaywgMjUuMTEpDQorUlRFX0VYUE9SVF9TWU1CT0wocnRlX21idWZfcmF3
+X3Nhbml0eV9jaGVjaykNCg0KPiArdm9pZA0KPiArcnRlX21idWZfcmF3X3Nhbml0eV9jaGVjayhj
+b25zdCBzdHJ1Y3QgcnRlX21idWYgKm0sIGNvbnN0IHN0cnVjdA0KPiBydGVfbWVtcG9vbCAqbXAp
+DQo+ICt7DQo+ICsJY29uc3QgY2hhciAqcmVhc29uOw0KPiArDQo+ICsJaWYgKHJ0ZV9tYnVmX3Jh
+d19jaGVjayhtLCBtcCwgJnJlYXNvbikpDQo+ICsJCXJ0ZV9wYW5pYygiJXNcbiIsIHJlYXNvbik7
+DQo+ICt9DQo+ICsNCj4gK1JURV9FWFBPUlRfRVhQRVJJTUVOVEFMX1NZTUJPTChydGVfbWJ1Zl9y
+YXdfY2hlY2ssIDI1LjExKQ0KDQorLy8gUlRFX0VYUE9SVF9FWFBFUklNRU5UQUxfU1lNQk9MKHJ0
+ZV9tYnVmX3Jhd19jaGVjaywgMjUuMTEpDQorUlRFX0VYUE9SVF9TWU1CT0wocnRlX21idWZfcmF3
+X2NoZWNrKQ0KDQo+ICtpbnQgcnRlX21idWZfcmF3X2NoZWNrKGNvbnN0IHN0cnVjdCBydGVfbWJ1
+ZiAqbSwgY29uc3Qgc3RydWN0DQo+IHJ0ZV9tZW1wb29sICptcCwNCj4gKwkJICAgY29uc3QgY2hh
+ciAqKnJlYXNvbikNCj4gK3sNCj4gKwkvKiBjaGVjayBzYW5pdHkgKi8NCj4gKwlpZiAocnRlX21i
+dWZfY2hlY2sobSwgMCwgcmVhc29uKSA9PSAtMSkNCj4gKwkJcmV0dXJuIC0xOw0KPiArDQo+ICsJ
+LyogY2hlY2sgaW5pdGlhbGl6ZWQgKi8NCj4gKwlpZiAocnRlX21idWZfcmVmY250X3JlYWQobSkg
+IT0gMSkgew0KPiArCQkqcmVhc29uID0gInVuaW5pdGlhbGl6ZWQgcmVmIGNudCI7DQo+ICsJCXJl
+dHVybiAtMTsNCj4gKwl9DQo+ICsJaWYgKG0tPm5leHQgIT0gTlVMTCkgew0KPiArCQkqcmVhc29u
+ID0gInVuaW5pdGlhbGl6ZWQgbmV4dCBwdHIiOw0KPiArCQlyZXR1cm4gLTE7DQo+ICsJfQ0KPiAr
+CWlmIChtLT5uYl9zZWdzICE9IDEpIHsNCj4gKwkJKnJlYXNvbiA9ICJ1bmluaXRpYWxpemVkIG5i
+X3NlZ3MiOw0KPiArCQlyZXR1cm4gLTE7DQo+ICsJfQ0KPiArCWlmIChSVEVfTUJVRl9DTE9ORUQo
+bSkpIHsNCj4gKwkJKnJlYXNvbiA9ICJjbG9uZWQiOw0KPiArCQlyZXR1cm4gLTE7DQo+ICsJfQ0K
+PiArCWlmIChSVEVfTUJVRl9IQVNfRVhUQlVGKG0pKSB7DQo+ICsJCWlmICghUlRFX01CVUZfSEFT
+X1BJTk5FRF9FWFRCVUYobSkpIHsNCj4gKwkJCSpyZWFzb24gPSAiZXh0ZXJuYWwgYnVmZmVyIG5v
+dCBwaW5uZWQiOw0KPiArCQkJcmV0dXJuIC0xOw0KPiArCQl9DQo+ICsNCj4gKwkJdWludDE2X3Qg
+Y250ID0gcnRlX21idWZfZXh0X3JlZmNudF9yZWFkKG0tPnNoaW5mbyk7DQo+ICsJCWlmICgoY250
+ID09IDApIHx8IChjbnQgPT0gVUlOVDE2X01BWCkpIHsNCj4gKwkJCSpyZWFzb24gPSAicGlubmVk
+IGV4dGVybmFsIGJ1ZmZlciBiYWQgcmVmIGNudCI7DQo+ICsJCQlyZXR1cm4gLTE7DQo+ICsJCX0N
+Cj4gKwkJaWYgKGNudCAhPSAxKSB7DQo+ICsJCQkqcmVhc29uID0gInBpbm5lZCBleHRlcm5hbCBi
+dWZmZXIgdW5pbml0aWFsaXplZCByZWYNCj4gY250IjsNCj4gKwkJCXJldHVybiAtMTsNCj4gKwkJ
+fQ0KPiArCX0NCj4gKw0KPiArCWlmIChtcCAhPSBOVUxMICYmIG0tPnBvb2wgIT0gbXApIHsNCj4g
+KwkJKnJlYXNvbiA9ICJ3cm9uZyBtYnVmIHBvb2wiOw0KPiArCQlyZXR1cm4gLTE7DQo+ICsJfQ0K
+PiArDQo+ICsJcmV0dXJuIDA7DQo+ICt9DQo+ICsNCj4gIC8qIGRvIHNvbWUgc2FuaXR5IGNoZWNr
+cyBvbiBhIG1idWY6IHBhbmljIGlmIGl0IGZhaWxzICovDQo+ICBSVEVfRVhQT1JUX1NZTUJPTChy
+dGVfbWJ1Zl9zYW5pdHlfY2hlY2spDQo+ICB2b2lkDQo+IGRpZmYgLS1naXQgYS9saWIvbWJ1Zi9y
+dGVfbWJ1Zi5oIGIvbGliL21idWYvcnRlX21idWYuaA0KPiBpbmRleCAwNmFiNzUwMmE1Li4yNjIx
+Y2MzODVjIDEwMDY0NA0KPiAtLS0gYS9saWIvbWJ1Zi9ydGVfbWJ1Zi5oDQo+ICsrKyBiL2xpYi9t
+YnVmL3J0ZV9tYnVmLmgNCj4gQEAgLTMzOSwxMSArMzM5LDE3IEBAIHJ0ZV9wa3RtYnVmX3ByaXZf
+ZmxhZ3Moc3RydWN0IHJ0ZV9tZW1wb29sICptcCkNCj4gDQo+ICAjaWZkZWYgUlRFX0xJQlJURV9N
+QlVGX0RFQlVHDQo+IA0KPiArLyoqICBjaGVjayByZWluaXRpYWxpemVkIG1idWYgdHlwZSBpbiBk
+ZWJ1ZyBtb2RlICovDQo+ICsjZGVmaW5lIF9fcnRlX21idWZfcmF3X3Nhbml0eV9jaGVja19tcCht
+LCBtcCkNCj4gcnRlX21idWZfcmF3X3Nhbml0eV9jaGVjayhtLCBtcCkNCj4gKw0KPiAgLyoqICBj
+aGVjayBtYnVmIHR5cGUgaW4gZGVidWcgbW9kZSAqLw0KPiAgI2RlZmluZSBfX3J0ZV9tYnVmX3Nh
+bml0eV9jaGVjayhtLCBpc19oKSBydGVfbWJ1Zl9zYW5pdHlfY2hlY2sobSwgaXNfaCkNCj4gDQo+
+ICAjZWxzZSAvKiAgUlRFX0xJQlJURV9NQlVGX0RFQlVHICovDQo+IA0KPiArLyoqICBjaGVjayBy
+ZWluaXRpYWxpemVkIG1idWYgdHlwZSBpbiBkZWJ1ZyBtb2RlICovDQo+ICsjZGVmaW5lIF9fcnRl
+X21idWZfcmF3X3Nhbml0eV9jaGVja19tcChtLCBtcCkgZG8geyB9IHdoaWxlICgwKQ0KPiArDQo+
+ICAvKiogIGNoZWNrIG1idWYgdHlwZSBpbiBkZWJ1ZyBtb2RlICovDQo+ICAjZGVmaW5lIF9fcnRl
+X21idWZfc2FuaXR5X2NoZWNrKG0sIGlzX2gpIGRvIHsgfSB3aGlsZSAoMCkNCj4gDQo+IEBAIC01
+MTMsNiArNTE5LDU0IEBAIHJ0ZV9tYnVmX2V4dF9yZWZjbnRfdXBkYXRlKHN0cnVjdA0KPiBydGVf
+bWJ1Zl9leHRfc2hhcmVkX2luZm8gKnNoaW5mbywNCj4gIH0gd2hpbGUgKDApDQo+IA0KPiANCj4g
+Ky8qKg0KPiArICogQHdhcm5pbmcNCj4gKyAqIEBiIEVYUEVSSU1FTlRBTDogVGhpcyBBUEkgbWF5
+IGNoYW5nZSwgb3IgYmUgcmVtb3ZlZCwgd2l0aG91dCBwcmlvcg0KPiBub3RpY2UuDQo+ICsgKg0K
+PiArICogU2FuaXR5IGNoZWNrcyBvbiBhIHJlaW5pdGlhbGl6ZWQgbWJ1Zi4NCj4gKyAqDQo+ICsg
+KiBDaGVjayB0aGUgY29uc2lzdGVuY3kgb2YgdGhlIGdpdmVuIHJlaW5pdGlhbGl6ZWQgbWJ1Zi4N
+Cj4gKyAqIFRoZSBmdW5jdGlvbiB3aWxsIGNhdXNlIGEgcGFuaWMgaWYgY29ycnVwdGlvbiBpcyBk
+ZXRlY3RlZC4NCj4gKyAqDQo+ICsgKiBDaGVjayB0aGF0IHRoZSBtYnVmIGlzIHByb3Blcmx5IHJl
+aW5pdGlhbGl6ZWQgKHJlZmNudD0xLCBuZXh0PU5VTEwsDQo+ICsgKiBuYl9zZWdzPTEpLCBhcyBk
+b25lIGJ5IHJ0ZV9wa3RtYnVmX3ByZWZyZWVfc2VnKCkuDQo+ICsgKg0KPiArICogQHBhcmFtIG0N
+Cj4gKyAqICAgVGhlIG1idWYgdG8gYmUgY2hlY2tlZC4NCj4gKyAqIEBwYXJhbSBtcA0KPiArICog
+ICBUaGUgbWVtcG9vbCB0byB3aGljaCB0aGUgbWJ1ZiBiZWxvbmdzLg0KPiArICogICBOVUxMIGlm
+IHVua25vd24sIG5vdCB0byBiZSBjaGVja2VkLg0KPiArICovDQo+ICtfX3J0ZV9leHBlcmltZW50
+YWwNCg0KKy8vIF9fcnRlX2V4cGVyaW1lbnRhbA0KDQo+ICt2b2lkDQo+ICtydGVfbWJ1Zl9yYXdf
+c2FuaXR5X2NoZWNrKGNvbnN0IHN0cnVjdCBydGVfbWJ1ZiAqbSwgY29uc3Qgc3RydWN0DQo+IHJ0
+ZV9tZW1wb29sICptcCk7DQo+ICsNCj4gKy8qKg0KPiArICogQHdhcm5pbmcNCj4gKyAqIEBiIEVY
+UEVSSU1FTlRBTDogVGhpcyBBUEkgbWF5IGNoYW5nZSwgb3IgYmUgcmVtb3ZlZCwgd2l0aG91dCBw
+cmlvcg0KPiBub3RpY2UuDQo+ICsgKg0KPiArICogU2FuaXR5IGNoZWNrcyBvbiBhIHJlaW5pdGlh
+bGl6ZWQgbWJ1Zi4NCj4gKyAqDQo+ICsgKiBBbG1vc3QgbGlrZSBydGVfbWJ1Zl9yYXdfc2FuaXR5
+X2NoZWNrKCksIGJ1dCB0aGlzIGZ1bmN0aW9uIGdpdmVzIHRoZQ0KPiByZWFzb24NCj4gKyAqIGlm
+IGNvcnJ1cHRpb24gaXMgZGV0ZWN0ZWQgcmF0aGVyIHRoYW4gcGFuaWMuDQo+ICsgKg0KPiArICog
+QHBhcmFtIG0NCj4gKyAqICAgVGhlIG1idWYgdG8gYmUgY2hlY2tlZC4NCj4gKyAqIEBwYXJhbSBt
+cA0KPiArICogICBUaGUgbWVtcG9vbCB0byB3aGljaCB0aGUgbWJ1ZiBiZWxvbmdzLg0KPiArICog
+ICBOVUxMIGlmIHVua25vd24sIG5vdCB0byBiZSBjaGVja2VkLg0KPiArICogQHBhcmFtIHJlYXNv
+bg0KPiArICogICBBIHJlZmVyZW5jZSB0byBhIHN0cmluZyBwb2ludGVyIHdoZXJlIHRvIHN0b3Jl
+IHRoZSByZWFzb24gd2h5IGENCj4gbWJ1ZiBpcw0KPiArICogICBjb25zaWRlcmVkIGludmFsaWQu
+DQo+ICsgKiBAcmV0dXJuDQo+ICsgKiAgIC0gMCBpZiBubyBpc3N1ZSBoYXMgYmVlbiBmb3VuZCwg
+cmVhc29uIGlzIGxlZnQgdW50b3VjaGVkLg0KPiArICogICAtIC0xIGlmIGEgcHJvYmxlbSBpcyBk
+ZXRlY3RlZCwgcmVhc29uIHRoZW4gcG9pbnRzIHRvIGEgc3RyaW5nDQo+IGRlc2NyaWJpbmcNCj4g
+KyAqICAgICB0aGUgcmVhc29uIHdoeSB0aGUgbWJ1ZiBpcyBkZWVtZWQgaW52YWxpZC4NCj4gKyAq
+Lw0KPiArX19ydGVfZXhwZXJpbWVudGFsDQoNCisvLyBfX3J0ZV9leHBlcmltZW50YWwNCg0KPiAr
+aW50IHJ0ZV9tYnVmX3Jhd19jaGVjayhjb25zdCBzdHJ1Y3QgcnRlX21idWYgKm0sIGNvbnN0IHN0
+cnVjdA0KPiBydGVfbWVtcG9vbCAqbXAsDQo+ICsJCSAgIGNvbnN0IGNoYXIgKipyZWFzb24pOw0K
+PiArDQo+ICAvKioNCj4gICAqIFNhbml0eSBjaGVja3Mgb24gYW4gbWJ1Zi4NCj4gICAqDQo+IEBA
+IC01NTAsMzMgKzYwNCwxMSBAQCBydGVfbWJ1Zl9zYW5pdHlfY2hlY2soY29uc3Qgc3RydWN0IHJ0
+ZV9tYnVmICptLA0KPiBpbnQgaXNfaGVhZGVyKTsNCj4gIGludCBydGVfbWJ1Zl9jaGVjayhjb25z
+dCBzdHJ1Y3QgcnRlX21idWYgKm0sIGludCBpc19oZWFkZXIsDQo+ICAJCSAgIGNvbnN0IGNoYXIg
+KipyZWFzb24pOw0KPiANCj4gLS8qKg0KPiAtICogU2FuaXR5IGNoZWNrcyBvbiBhIHJlaW5pdGlh
+bGl6ZWQgbWJ1ZiBpbiBkZWJ1ZyBtb2RlLg0KPiAtICoNCj4gLSAqIENoZWNrIHRoZSBjb25zaXN0
+ZW5jeSBvZiB0aGUgZ2l2ZW4gcmVpbml0aWFsaXplZCBtYnVmLg0KPiAtICogVGhlIGZ1bmN0aW9u
+IHdpbGwgY2F1c2UgYSBwYW5pYyBpZiBjb3JydXB0aW9uIGlzIGRldGVjdGVkLg0KPiAtICoNCj4g
+LSAqIENoZWNrIHRoYXQgdGhlIG1idWYgaXMgcHJvcGVybHkgcmVpbml0aWFsaXplZCAocmVmY250
+PTEsIG5leHQ9TlVMTCwNCj4gLSAqIG5iX3NlZ3M9MSksIGFzIGRvbmUgYnkgcnRlX3BrdG1idWZf
+cHJlZnJlZV9zZWcoKS4NCj4gLSAqDQo+IC0gKiBAcGFyYW0gbQ0KPiAtICogICBUaGUgbWJ1ZiB0
+byBiZSBjaGVja2VkLg0KPiAtICovDQo+IC1zdGF0aWMgX19ydGVfYWx3YXlzX2lubGluZSB2b2lk
+DQo+IC1fX3J0ZV9tYnVmX3Jhd19zYW5pdHlfY2hlY2soX19ydGVfdW51c2VkIGNvbnN0IHN0cnVj
+dCBydGVfbWJ1ZiAqbSkNCj4gLXsNCj4gLQlSVEVfQVNTRVJUKHJ0ZV9tYnVmX3JlZmNudF9yZWFk
+KG0pID09IDEpOw0KPiAtCVJURV9BU1NFUlQobS0+bmV4dCA9PSBOVUxMKTsNCj4gLQlSVEVfQVNT
+RVJUKG0tPm5iX3NlZ3MgPT0gMSk7DQo+IC0JUlRFX0FTU0VSVCghUlRFX01CVUZfQ0xPTkVEKG0p
+KTsNCj4gLQlSVEVfQVNTRVJUKCFSVEVfTUJVRl9IQVNfRVhUQlVGKG0pIHx8DQo+IC0JCQkoUlRF
+X01CVUZfSEFTX1BJTk5FRF9FWFRCVUYobSkgJiYNCj4gLQkJCXJ0ZV9tYnVmX2V4dF9yZWZjbnRf
+cmVhZChtLT5zaGluZm8pID09IDEpKTsNCj4gLQlfX3J0ZV9tYnVmX3Nhbml0eV9jaGVjayhtLCAw
+KTsNCj4gLX0NCj4gKy8qKiBGb3IgYmFja3dhcmRzIGNvbXBhdGliaWxpdHkuICovDQo+ICsjZGVm
+aW5lIF9fcnRlX21idWZfcmF3X3Nhbml0eV9jaGVjayhtKQ0KPiBfX3J0ZV9tYnVmX3Jhd19zYW5p
+dHlfY2hlY2tfbXAobSwgTlVMTCkNCj4gDQo+ICAvKiogRm9yIGJhY2t3YXJkcyBjb21wYXRpYmls
+aXR5LiAqLw0KPiAtI2RlZmluZSBNQlVGX1JBV19BTExPQ19DSEVDSyhtKSBfX3J0ZV9tYnVmX3Jh
+d19zYW5pdHlfY2hlY2sobSkNCj4gKyNkZWZpbmUgTUJVRl9SQVdfQUxMT0NfQ0hFQ0sobSkgX19y
+dGVfbWJ1Zl9yYXdfc2FuaXR5X2NoZWNrX21wKG0sIE5VTEwpDQo+IA0KPiAgLyoqDQo+ICAgKiBB
+bGxvY2F0ZSBhbiB1bmluaXRpYWxpemVkIG1idWYgZnJvbSBtZW1wb29sICptcCouDQo+IEBAIC02
+MDYsNyArNjM4LDcgQEAgc3RhdGljIGlubGluZSBzdHJ1Y3QgcnRlX21idWYNCj4gKnJ0ZV9tYnVm
+X3Jhd19hbGxvYyhzdHJ1Y3QgcnRlX21lbXBvb2wgKm1wKQ0KPiANCj4gIAlpZiAocnRlX21lbXBv
+b2xfZ2V0KG1wLCAmcmV0LnB0cikgPCAwKQ0KPiAgCQlyZXR1cm4gTlVMTDsNCj4gLQlfX3J0ZV9t
+YnVmX3Jhd19zYW5pdHlfY2hlY2socmV0Lm0pOw0KPiArCV9fcnRlX21idWZfcmF3X3Nhbml0eV9j
+aGVja19tcChyZXQubSwgbXApOw0KPiAgCXJldHVybiByZXQubTsNCj4gIH0NCj4gDQo+IEBAIC02
+NDQsNyArNjc2LDcgQEAgcnRlX21idWZfcmF3X2FsbG9jX2J1bGsoc3RydWN0IHJ0ZV9tZW1wb29s
+ICptcCwNCj4gc3RydWN0IHJ0ZV9tYnVmICoqbWJ1ZnMsIHVuc2lnbmUNCj4gIAlpbnQgcmMgPSBy
+dGVfbWVtcG9vbF9nZXRfYnVsayhtcCwgKHZvaWQgKiopbWJ1ZnMsIGNvdW50KTsNCj4gIAlpZiAo
+bGlrZWx5KHJjID09IDApKQ0KPiAgCQlmb3IgKHVuc2lnbmVkIGludCBpZHggPSAwOyBpZHggPCBj
+b3VudDsgaWR4KyspDQo+IC0JCQlfX3J0ZV9tYnVmX3Jhd19zYW5pdHlfY2hlY2sobWJ1ZnNbaWR4
+XSk7DQo+ICsJCQlfX3J0ZV9tYnVmX3Jhd19zYW5pdHlfY2hlY2tfbXAobWJ1ZnNbaWR4XSwgbXAp
+Ow0KPiAgCXJldHVybiByYzsNCj4gIH0NCj4gDQo+IEBAIC02NjUsNyArNjk3LDcgQEAgcnRlX21i
+dWZfcmF3X2FsbG9jX2J1bGsoc3RydWN0IHJ0ZV9tZW1wb29sICptcCwNCj4gc3RydWN0IHJ0ZV9t
+YnVmICoqbWJ1ZnMsIHVuc2lnbmUNCj4gIHN0YXRpYyBfX3J0ZV9hbHdheXNfaW5saW5lIHZvaWQN
+Cj4gIHJ0ZV9tYnVmX3Jhd19mcmVlKHN0cnVjdCBydGVfbWJ1ZiAqbSkNCj4gIHsNCj4gLQlfX3J0
+ZV9tYnVmX3Jhd19zYW5pdHlfY2hlY2sobSk7DQo+ICsJX19ydGVfbWJ1Zl9yYXdfc2FuaXR5X2No
+ZWNrX21wKG0sIE5VTEwpOw0KPiAgCXJ0ZV9tZW1wb29sX3B1dChtLT5wb29sLCBtKTsNCj4gIH0N
+Cj4gDQo+IEBAIC02OTYsMTIgKzcyOCw4IEBAIF9fcnRlX2V4cGVyaW1lbnRhbA0KPiAgc3RhdGlj
+IF9fcnRlX2Fsd2F5c19pbmxpbmUgdm9pZA0KPiAgcnRlX21idWZfcmF3X2ZyZWVfYnVsayhzdHJ1
+Y3QgcnRlX21lbXBvb2wgKm1wLCBzdHJ1Y3QgcnRlX21idWYgKiptYnVmcywNCj4gdW5zaWduZWQg
+aW50IGNvdW50KQ0KPiAgew0KPiAtCWZvciAodW5zaWduZWQgaW50IGlkeCA9IDA7IGlkeCA8IGNv
+dW50OyBpZHgrKykgew0KPiAtCQljb25zdCBzdHJ1Y3QgcnRlX21idWYgKm0gPSBtYnVmc1tpZHhd
+Ow0KPiAtCQlSVEVfQVNTRVJUKG0gIT0gTlVMTCk7DQo+IC0JCVJURV9BU1NFUlQobS0+cG9vbCA9
+PSBtcCk7DQo+IC0JCV9fcnRlX21idWZfcmF3X3Nhbml0eV9jaGVjayhtKTsNCj4gLQl9DQo+ICsJ
+Zm9yICh1bnNpZ25lZCBpbnQgaWR4ID0gMDsgaWR4IDwgY291bnQ7IGlkeCsrKQ0KPiArCQlfX3J0
+ZV9tYnVmX3Jhd19zYW5pdHlfY2hlY2tfbXAobWJ1ZnNbaWR4XSwgbXApOw0KPiANCj4gIAlydGVf
+bWVtcG9vbF9wdXRfYnVsayhtcCwgKHZvaWQgKiopbWJ1ZnMsIGNvdW50KTsNCj4gIH0NCj4gQEAg
+LTEwMjEsMjIgKzEwNDksMjIgQEAgc3RhdGljIGlubGluZSBpbnQgcnRlX3BrdG1idWZfYWxsb2Nf
+YnVsayhzdHJ1Y3QNCj4gcnRlX21lbXBvb2wgKnBvb2wsDQo+ICAJc3dpdGNoIChjb3VudCAlIDQp
+IHsNCj4gIAljYXNlIDA6DQo+ICAJCXdoaWxlIChpZHggIT0gY291bnQpIHsNCj4gLQkJCV9fcnRl
+X21idWZfcmF3X3Nhbml0eV9jaGVjayhtYnVmc1tpZHhdKTsNCj4gKwkJCV9fcnRlX21idWZfcmF3
+X3Nhbml0eV9jaGVja19tcChtYnVmc1tpZHhdLCBwb29sKTsNCj4gIAkJCXJ0ZV9wa3RtYnVmX3Jl
+c2V0KG1idWZzW2lkeF0pOw0KPiAgCQkJaWR4Kys7DQo+ICAJCQkvKiBmYWxsLXRocm91Z2ggKi8N
+Cj4gIAljYXNlIDM6DQo+IC0JCQlfX3J0ZV9tYnVmX3Jhd19zYW5pdHlfY2hlY2sobWJ1ZnNbaWR4
+XSk7DQo+ICsJCQlfX3J0ZV9tYnVmX3Jhd19zYW5pdHlfY2hlY2tfbXAobWJ1ZnNbaWR4XSwgcG9v
+bCk7DQo+ICAJCQlydGVfcGt0bWJ1Zl9yZXNldChtYnVmc1tpZHhdKTsNCj4gIAkJCWlkeCsrOw0K
+PiAgCQkJLyogZmFsbC10aHJvdWdoICovDQo+ICAJY2FzZSAyOg0KPiAtCQkJX19ydGVfbWJ1Zl9y
+YXdfc2FuaXR5X2NoZWNrKG1idWZzW2lkeF0pOw0KPiArCQkJX19ydGVfbWJ1Zl9yYXdfc2FuaXR5
+X2NoZWNrX21wKG1idWZzW2lkeF0sIHBvb2wpOw0KPiAgCQkJcnRlX3BrdG1idWZfcmVzZXQobWJ1
+ZnNbaWR4XSk7DQo+ICAJCQlpZHgrKzsNCj4gIAkJCS8qIGZhbGwtdGhyb3VnaCAqLw0KPiAgCWNh
+c2UgMToNCj4gLQkJCV9fcnRlX21idWZfcmF3X3Nhbml0eV9jaGVjayhtYnVmc1tpZHhdKTsNCj4g
+KwkJCV9fcnRlX21idWZfcmF3X3Nhbml0eV9jaGVja19tcChtYnVmc1tpZHhdLCBwb29sKTsNCj4g
+IAkJCXJ0ZV9wa3RtYnVmX3Jlc2V0KG1idWZzW2lkeF0pOw0KPiAgCQkJaWR4Kys7DQo+ICAJCQkv
+KiBmYWxsLXRocm91Z2ggKi8NCj4gLS0NCj4gMi40My4wDQoNCg==
