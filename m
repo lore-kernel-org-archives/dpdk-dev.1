@@ -2,47 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B49FC83F1A
-	for <dpdk-dev@archiver.kernel.org>; Sun, 20 Jul 2025 08:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 477A8C83F1A
+	for <dpdk-dev@archiver.kernel.org>; Sun, 20 Jul 2025 08:46:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2F4784021E;
-	Sun, 20 Jul 2025 10:00:51 +0200 (CEST)
-Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id DE0D6400D7
- for <dev@dpdk.org>; Sun, 20 Jul 2025 10:00:48 +0200 (CEST)
-Received: from debian (unknown [78.109.66.203])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id 1321EE0B6A;
- Sun, 20 Jul 2025 12:00:46 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 1321EE0B6A
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1752998447;
- bh=PMmR3UyUMW5DAA5QEEn8Dv0vesEjeK0v0DNDrXw6ILo=;
- h=Date:From:To:cc:Subject:In-Reply-To:References:From;
- b=fNVLo19EbnJW6pk8ZDc454n7thLu/PhNSTVV7QTtxDAWJD1WNmQEWmVANKR3dqQKt
- 4k4HrqF3yN1e3zbAQ9QlXgKTL5bupO8SppZ+1BCHVJYyUjFaPdfEaVdX8jk2gvlfqu
- FJrjNlaiBSZZDGaYBGWxbV8SLxW8Atn/eW27FtOu3Y/G7Ljdl/04d1xaaLzg4F0H21
- 8xa4ndkwC67OoDuVwewN44jAuUN7gDGtLX6mCleCdFGmFDBLnk52Bl2LVjpI9GezFB
- vj/61P9IL04rD6nZH8Oa6Wsx/3qzTNBNJnhpcpeAtVAiHjZWF0vo48TpKKXtutpJFI
- xgWz/dOwv1Cug==
-Date: Sun, 20 Jul 2025 12:00:38 +0400 (+04)
-From: Ivan Malov <ivan.malov@arknetworks.am>
-To: Dean Marx <dmarx@iol.unh.edu>
-cc: Thomas Wilks <thomas.wilks@arm.com>, dev@dpdk.org, 
- Paul Szczepanek <paul.szczepanek@arm.com>, 
- Luca Vizzarro <luca.vizzarro@arm.com>, Patrick Robb <probb@iol.unh.edu>, 
- Alex Chapman <alex.chapman@arm.com>
-Subject: Re: [RFC PATCH v3 2/2] dts: add PMD RSS testsuite
-In-Reply-To: <CABD7UXPyhmLKn-v7-8Wp=7fu3cgZSbVhgUzN=xeRNBKZjhh4rA@mail.gmail.com>
-Message-ID: <d9e565c4-a5e2-10d7-cbda-067a8dd3a531@arknetworks.am>
-References: <20250225153345.331216-1-thomas.wilks@arm.com>
- <20250718150404.200096-1-thomas.wilks@arm.com>
- <20250718150404.200096-3-thomas.wilks@arm.com>
- <CABD7UXPyhmLKn-v7-8Wp=7fu3cgZSbVhgUzN=xeRNBKZjhh4rA@mail.gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0BD8C4014F;
+	Sun, 20 Jul 2025 10:46:47 +0200 (CEST)
+Received: from fhigh-b8-smtp.messagingengine.com
+ (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+ by mails.dpdk.org (Postfix) with ESMTP id 26A7F400D7
+ for <dev@dpdk.org>; Sun, 20 Jul 2025 10:46:43 +0200 (CEST)
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal
+ [10.202.2.44])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 585B17A0136;
+ Sun, 20 Jul 2025 04:46:42 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-04.internal (MEProxy); Sun, 20 Jul 2025 04:46:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1753001202;
+ x=1753087602; bh=/H0GZrDdbrXEQ8tswnu/R7UE4aAdzExiPOimLZZEuxk=; b=
+ xxFd+XIdnHU1GS/KBHFJSav6xH6bH879wuHzAkeYwjStselCTpiIPFUmJBP2qKOY
+ Jch1/2MLcpoiQFC1x13G5ijd01jn8ln04O/moWJoWn8c4j43GDiAzv/hV7J3Ghi6
+ 39V5NYnM/TQhWO8UNlebIEiHVKVfsAGdmSCg7OhKXl9C5S4Jqlc5KxMzYisbQbP3
+ MagVyg6UGWnbg/9iGcz5q7S1shlbRhs1BjuK0jNsoxsnPRvz1G6qVqkUM9bCq71f
+ E61Oq351miq19LF8GvGXfRtHcUMXRlufIycdDE0usUrCyaIxzyIQF4Q7VAmGE5sd
+ Q49mwZZIzkL/l4AYKMA4eQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1753001202; x=
+ 1753087602; bh=/H0GZrDdbrXEQ8tswnu/R7UE4aAdzExiPOimLZZEuxk=; b=c
+ lOvRrOWYYZCp+oayN7kreY6gV4Lo1zwCuOcNNFAe9tzvXhWcMfL8Z3S2zB7FyfpE
+ vIh/8B8RWZ6fcNVnmPDjaCfWzUNUPRlDww0v5QgrfBJNymLupchuvWs6Qg7xl8PL
+ gw+JuHM/E672h0wpfokNU8c+5mleMBzqFDHhPyXSyj05uu3K/eU8yC43wrAY2TW6
+ qoFLsK2W9RDxzYBT9m2LbC+49b4+ppqVHqTfgd2k9qpnxfObDIADGgYiMqqzYUFz
+ 8hs2CSS56GEZvv1+W0VVlG+8Hn8zwm0D7m9BwPi9ug+vvoDSDRRthTQb8qO5hWU3
+ 7p7EY7Vv57JkIJ2ESoLCg==
+X-ME-Sender: <xms:8ax8aGD4Mvh99FCvvhA-nXF7t09nf8LeduPz-_d00-gHhAINa9h4lg>
+ <xme:8ax8aLYKLR8q8CM90rSIjcQS3sNwxPNuWY_YlPRubMPgjd4h8Ht1oEfHTSRjFch4l
+ j-RZBUNP1RkFwtH0g>
+X-ME-Received: <xmr:8ax8aBbUw9Tdw9FKxB64ngvrzuFDZPCwjn9z_D1lE7BGfopfqWRwhGM0DZD9rNraYpCOqz1lU2YzQSCiLtksxt5O_g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeikeejhecutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+ ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkjghfggfgtgesthfuredttd
+ dtjeenucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhho
+ nhhjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeehieekleekueejkeegfeeige
+ fhhffhfffhleekjeetiefflefgieeigfehvddvjeenucffohhmrghinhepghhithdqshgt
+ mhdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeegpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehprhgrvhhinhdrphgrthhhrghkrdguvg
+ hvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghp
+ thhtohepjhgvrhhinhhjsehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohepsghruhgtvg
+ drrhhitghhrghrughsohhnsehinhhtvghlrdgtohhm
+X-ME-Proxy: <xmx:8ax8aC8fH476s5e4fG76rMRUAPZNngEhKlDg0-Xo82NH7uHsCpanpg>
+ <xmx:8ax8aAiPuNMM44EG8GfMBz5itnUWICV8dXJMQ2V6DOeVVE1XmqroBg>
+ <xmx:8ax8aCdMt26rKcXCtJyNCsJrAAUTX2ollrZv9g2trPgaUH_vQGaBFQ>
+ <xmx:8ax8aHrEACdMoyiAuRSylSCEFfxYYe5qW8vvdDuDuvt3GVToLsXhMQ>
+ <xmx:8qx8aKojzegpus5zhB9KOSuQqTe5IlmU2TLF3uQuo9JiSjNEbEh6QH8f>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 20 Jul 2025 04:46:41 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Pravin Pathak <pravin.pathak.dev@gmail.com>
+Cc: dev@dpdk.org, jerinj@marvell.com, bruce.richardson@intel.com
+Subject: Re: [PATCH v2] mailmap: add new email to DPDK
+Date: Sun, 20 Jul 2025 10:46:38 +0200
+Message-ID: <3295268.5fSG56mABF@thomas>
+In-Reply-To: <20250719042158.39269-1-pravin.pathak.dev@gmail.com>
+References: <20250714191141.1243467-1-pravin.pathak@intel.com>
+ <20250719042158.39269-1-pravin.pathak.dev@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1522909303-1752998447=:9884"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,78 +90,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+19/07/2025 06:21, Pravin Pathak:
+> Adding new mail for DPDK contribution
+> 
+> Signed-off-by: Pravin Pathak <pravin.pathak.dev@gmail.com>
+> ---
+>  .mailmap | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/.mailmap b/.mailmap
+> index c7d55c7386..1c5c367f6c 100644
+> --- a/.mailmap
+> +++ b/.mailmap
+> @@ -1240,7 +1240,7 @@ Prateek Agarwal <prateekag@cse.iitb.ac.in>
+>  Prathisna Padmasanan <prathisna.padmasanan@intel.com>
+>  Praveen Kaligineedi <pkaligineedi@google.com>
+>  Praveen Shetty <praveen.shetty@intel.com>
+> -Pravin Pathak <pravin.pathak@intel.com>
+> +Pravin Pathak <pravin.pathak.dev@gmail.com>
 
---8323328-1522909303-1752998447=:9884
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8BIT
+You must not remove your previous email.
+You must have your main one and old one on the same line.
 
-Hi Dean,
+Please check the doc:
+	https://git-scm.com/docs/gitmailmap
 
-On Fri, 18 Jul 2025, Dean Marx wrote:
 
-> On Fri, Jul 18, 2025 at 11:05 AM Thomas Wilks <thomas.wilks@arm.com> wrote:
->>
->> Port over the rss_key_update, pmd_rss_reta and pmd_rss_hash
->> test suites from old DTS into one file including all of the
->> helper functions that are required by all of the test suites
->> to work.
->>
->> The rss_key_update test cases verify that setting a new hash
->> key when Receive Side Scaling (RSS) will result in a change
->> in the packets destination queue. These test cases also
->> verifies that the reported key size of the NIC is correct.
->>
->> The pmd_rss_reta test cases verify that Redirection Tables (RETAs)
->> of different sizes function correctly in RSS. These test cases
->> also verify that the reported reta size of the NIC is correct.
->>
->> The pmd_rss_hash test cases verify that the 4 supported types of
->> hashing algorithm used in RSS function correctly and that the nic
->> supports them. The four hashing algorithms being DEFAULT, TOEPLITZ,
->> SYMMETRIC_TOEPLITZ and SIMPLE_XOR. These test cases also verify
->> that the supported hashing algorithms reported by the NIC are correct.
->>
->> Signed-off-by: Alex Chapman <alex.chapman@arm.com>
->> Signed-off-by: Thomas Wilks <thomas.wilks@arm.com>
->
-> It was brought up at the DTS meeting yesterday that this suite is
-> reliable on Intel NICs, but unreliable on Mellanox (CX6), which I can
-> confirm after running on a CX5 and Intel XL710 and seeing the same
-> behavior.
-
-As I tried to explain earlier, this might be due to the 'queue' array of the
-action 'rss' logically comprising a separate 'reta' for the packets intercepted
-by the flow. The test should not check such packets against the global 'reta'.
-
-As to why the test passes for the latter NIC, please take a look at [1]. In that
-specific case, the code that is meant to parse the 'queue' array of action 'rss'
-might be called only when there are no match items in the flow pattern or when
-the first pattern item is VLAN. If this is indeed the case, then the use of
-action 'rss' overrides only the hash types for packets intercepted by the flow,
-but not the 'reta' to be used, so they still land the global 'reta'.
-
-Also, in 'setup_rss_environment', it might be more robust to first configure the
-port's global 'reta' and then insert the flow (if any), to rule out the flow
-possibly overriding the global 'reta', which, in theory, shall not happen.
-
-With this in mind, the test could possibly be reworked to act as follows:
-
-1) set up and memorise the port's global 'reta';
-2) create a flow rule (say, match UDP DST "A") with 'rss', memorise its 'reta';
-4) send a packet that matches the flow (say, with UDP DST "A");
-5) receive the packet and check the queue against the flow's own 'reta';
-    on queue mismatch, check against the global 'reta' and log the artifact;
-6) send a packet that does not match the flow (say, with UDP DST "B");
-7) receive the packet and check the queue against the global 'reta'.
-
-[1] https://github.com/DPDK/dpdk/blob/f6e3473724e7ce31103fa0ecad62b282ec8e7090/drivers/net/intel/i40e/i40e_hash.c#L1176
-
-Thank you.
-
->
-> Reviewed-by: Dean Marx <dmarx@iol.unh.edu>
-> Tested-by: Dean Marx <dmarx@iol.unh.edu>
->
---8323328-1522909303-1752998447=:9884--
