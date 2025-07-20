@@ -2,81 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 477A8C83F1A
-	for <dpdk-dev@archiver.kernel.org>; Sun, 20 Jul 2025 08:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BF21C83F1A
+	for <dpdk-dev@archiver.kernel.org>; Sun, 20 Jul 2025 08:57:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0BD8C4014F;
-	Sun, 20 Jul 2025 10:46:47 +0200 (CEST)
-Received: from fhigh-b8-smtp.messagingengine.com
- (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
- by mails.dpdk.org (Postfix) with ESMTP id 26A7F400D7
- for <dev@dpdk.org>; Sun, 20 Jul 2025 10:46:43 +0200 (CEST)
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal
- [10.202.2.44])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 585B17A0136;
- Sun, 20 Jul 2025 04:46:42 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-04.internal (MEProxy); Sun, 20 Jul 2025 04:46:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1753001202;
- x=1753087602; bh=/H0GZrDdbrXEQ8tswnu/R7UE4aAdzExiPOimLZZEuxk=; b=
- xxFd+XIdnHU1GS/KBHFJSav6xH6bH879wuHzAkeYwjStselCTpiIPFUmJBP2qKOY
- Jch1/2MLcpoiQFC1x13G5ijd01jn8ln04O/moWJoWn8c4j43GDiAzv/hV7J3Ghi6
- 39V5NYnM/TQhWO8UNlebIEiHVKVfsAGdmSCg7OhKXl9C5S4Jqlc5KxMzYisbQbP3
- MagVyg6UGWnbg/9iGcz5q7S1shlbRhs1BjuK0jNsoxsnPRvz1G6qVqkUM9bCq71f
- E61Oq351miq19LF8GvGXfRtHcUMXRlufIycdDE0usUrCyaIxzyIQF4Q7VAmGE5sd
- Q49mwZZIzkL/l4AYKMA4eQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1753001202; x=
- 1753087602; bh=/H0GZrDdbrXEQ8tswnu/R7UE4aAdzExiPOimLZZEuxk=; b=c
- lOvRrOWYYZCp+oayN7kreY6gV4Lo1zwCuOcNNFAe9tzvXhWcMfL8Z3S2zB7FyfpE
- vIh/8B8RWZ6fcNVnmPDjaCfWzUNUPRlDww0v5QgrfBJNymLupchuvWs6Qg7xl8PL
- gw+JuHM/E672h0wpfokNU8c+5mleMBzqFDHhPyXSyj05uu3K/eU8yC43wrAY2TW6
- qoFLsK2W9RDxzYBT9m2LbC+49b4+ppqVHqTfgd2k9qpnxfObDIADGgYiMqqzYUFz
- 8hs2CSS56GEZvv1+W0VVlG+8Hn8zwm0D7m9BwPi9ug+vvoDSDRRthTQb8qO5hWU3
- 7p7EY7Vv57JkIJ2ESoLCg==
-X-ME-Sender: <xms:8ax8aGD4Mvh99FCvvhA-nXF7t09nf8LeduPz-_d00-gHhAINa9h4lg>
- <xme:8ax8aLYKLR8q8CM90rSIjcQS3sNwxPNuWY_YlPRubMPgjd4h8Ht1oEfHTSRjFch4l
- j-RZBUNP1RkFwtH0g>
-X-ME-Received: <xmr:8ax8aBbUw9Tdw9FKxB64ngvrzuFDZPCwjn9z_D1lE7BGfopfqWRwhGM0DZD9rNraYpCOqz1lU2YzQSCiLtksxt5O_g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeikeejhecutefuodetggdotefrod
- ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
- ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkjghfggfgtgesthfuredttd
- dtjeenucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhho
- nhhjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeehieekleekueejkeegfeeige
- fhhffhfffhleekjeetiefflefgieeigfehvddvjeenucffohhmrghinhepghhithdqshgt
- mhdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeegpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehprhgrvhhinhdrphgrthhhrghkrdguvg
- hvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghp
- thhtohepjhgvrhhinhhjsehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohepsghruhgtvg
- drrhhitghhrghrughsohhnsehinhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:8ax8aC8fH476s5e4fG76rMRUAPZNngEhKlDg0-Xo82NH7uHsCpanpg>
- <xmx:8ax8aAiPuNMM44EG8GfMBz5itnUWICV8dXJMQ2V6DOeVVE1XmqroBg>
- <xmx:8ax8aCdMt26rKcXCtJyNCsJrAAUTX2ollrZv9g2trPgaUH_vQGaBFQ>
- <xmx:8ax8aHrEACdMoyiAuRSylSCEFfxYYe5qW8vvdDuDuvt3GVToLsXhMQ>
- <xmx:8qx8aKojzegpus5zhB9KOSuQqTe5IlmU2TLF3uQuo9JiSjNEbEh6QH8f>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 20 Jul 2025 04:46:41 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Pravin Pathak <pravin.pathak.dev@gmail.com>
-Cc: dev@dpdk.org, jerinj@marvell.com, bruce.richardson@intel.com
-Subject: Re: [PATCH v2] mailmap: add new email to DPDK
-Date: Sun, 20 Jul 2025 10:46:38 +0200
-Message-ID: <3295268.5fSG56mABF@thomas>
-In-Reply-To: <20250719042158.39269-1-pravin.pathak.dev@gmail.com>
-References: <20250714191141.1243467-1-pravin.pathak@intel.com>
- <20250719042158.39269-1-pravin.pathak.dev@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 46C354014F;
+	Sun, 20 Jul 2025 10:57:09 +0200 (CEST)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
+ [209.85.214.178])
+ by mails.dpdk.org (Postfix) with ESMTP id E797C400D7
+ for <dev@dpdk.org>; Sun, 20 Jul 2025 10:57:06 +0200 (CEST)
+Received: by mail-pl1-f178.google.com with SMTP id
+ d9443c01a7336-235a3dd4f0dso20448515ad.0
+ for <dev@dpdk.org>; Sun, 20 Jul 2025 01:57:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1753001826; x=1753606626; darn=dpdk.org;
+ h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+ :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=DPTqC2VHHPSn2KJIeZQ7HTuMvYlXjR8Xl2Lnbro+SPI=;
+ b=IbFY4GCWkIV1YC+UV49ZssEV4DRmNpXjk0qAPEr+gl/ckasjMJNtkHollKtYnRBRRG
+ BZNrnT0lpbD8AmDHHZhdl2b4HR3hmCdqUL6ikk+oAKKaMAV6fjdiiUuMTYu2mi2jrvrA
+ 1O0xhK+YAXRuho8C9UtjbmDVemqFk/vlxKq2nK/PTcomo+qTu1/KU4BKT68J21qGm1Fq
+ gTisNiJDGBKgXsqwgJqdZdRtUzRS7/KtH/hqMWVcG4aBfLfyMCSRC4sKhUhNWQqYb853
+ J1xkLxWMZKap7HheCNcmcNJsMPLDyL/gAZ/sLXjS3+vg7t34pGo3xJkku+pYUnbYzMKp
+ eDpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1753001826; x=1753606626;
+ h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+ :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+ :cc:subject:date:message-id:reply-to;
+ bh=DPTqC2VHHPSn2KJIeZQ7HTuMvYlXjR8Xl2Lnbro+SPI=;
+ b=q/MlmIsOKmeYQRwD0f5WUdw7uvvi4+poqxu5/yxu60bVGXY3uYi7iEh/Je1Zh5Ksyk
+ tN1XeKa0mCF05nsJQpLIlSX2O6FGSYdXCcufL3HI4Sp7fVO5VpqnCMtjGLX4sjU1IKBk
+ 9IbMOffMiBB9s7o5CfVF5G8ydxDKpADr1T9VqJXFfsJ09vY7dEinRAsIu6x9YOvx2Wb9
+ 7uGPhTh6apKScy/ELGmYgglHjsZEbgqTuabmh5z9M7MkStXu17DXfo8Q4lV1z2LSKpwa
+ E+HOGpYuBce/aFowGZ6UH0Kzp6LkXBHYJzntmOXYT06/2WCyc9PYht5ohT2E1x8lWNqg
+ qI5A==
+X-Gm-Message-State: AOJu0YzwJSo6+uEbnRFYIlY0hCVTB+WcgPwJ/tVFEz9ZHsr795ZXU9uh
+ VfNC/y0mKXn4kirIhxC2ZY/DWkLbAs1iGm/rVa4oMx+raUB0D4kTEtpJ
+X-Gm-Gg: ASbGncvbRgOqXOm2b64ZxEd/65Reefhh83v3ky6V2wNMsMqN8XgYq3nmhpW67LNOqQr
+ InXY9Ae5HLg15VzHMEJcwWfmShbYKU7/nI5JwH/XQ62hUozzP/EcR/FdVPApmhpZEWaYRGgtrPc
+ qvCcQi5rzX6X9HSR7mE0f3lJ70iVhdd900tKk6EpqoeF+aI0cdpvlbvvNwMOueX+zc8D/MKfyuQ
+ Jvphwyi/K2E/1ik3a1cBBmwiaDb0GRBSrOhZaZ+moz6orftF05xlKTYbLBypwsTZTCCRzKGH0do
+ tE0Sjcoxm60rEKHY3ZsPjfOzmbtohAlUEFvPgepymfMEqL8Dstqyi9upzMmV5pC9JO1Hz9P+TDY
+ 4bTYIC3tcaUrec8Dwf0GJ9AnZkAKBZRQpjfd6C1h0wLR7
+X-Google-Smtp-Source: AGHT+IG+PupO54rmP6SNie6Oq+d/sK/3eZUPISI6xNu9RFDLeU6zN8iPzZPDdvv7DsXSob/Pyuv3Rw==
+X-Received: by 2002:a17:903:2ad0:b0:23c:8f13:1381 with SMTP id
+ d9443c01a7336-23e24eddbf8mr211769395ad.19.1753001825670; 
+ Sun, 20 Jul 2025 01:57:05 -0700 (PDT)
+Received: from [192.168.31.141] ([60.176.146.11])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-23e3b6efac9sm38769325ad.215.2025.07.20.01.57.02
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Sun, 20 Jul 2025 01:57:05 -0700 (PDT)
+Message-ID: <856a0191-a3b9-4a06-a6c2-22f1f5958dd4@gmail.com>
+Date: Sun, 20 Jul 2025 16:57:01 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] net/mlx5: enhance log file path
+To: Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Yang Ming <ming.1.yang@nokia-sbell.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>, Bing Zhao <bingz@nvidia.com>,
+ "stephen@networkplumber.org" <stephen@networkplumber.org>,
+ "julien.meunier@nokia.com" <julien.meunier@nokia.com>,
+ Maayan Kashani <mkashani@nvidia.com>
+References: <20241213092444.2987-1-ming.1.yang@nokia-sbell.com>
+ <20250321132750.4237-1-ming.1.yang@nokia-sbell.com>
+ <20250321132750.4237-2-ming.1.yang@nokia-sbell.com>
+ <59bb400d-5e49-4ecb-941e-2513894d6930@nokia-sbell.com>
+ <0a6576b7-5981-4a7d-b33f-aae011b86a00@gmail.com>
+ <PH7PR12MB701812C6D5EBD32CCB17D1D0B26CA@PH7PR12MB7018.namprd12.prod.outlook.com>
+ <20250626130637.c4a5jtfoglb3ssha@ds-vm-debian.local>
+From: Moses Young <mosesyyoung@gmail.com>
+In-Reply-To: <20250626130637.c4a5jtfoglb3ssha@ds-vm-debian.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -90,29 +90,12 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-19/07/2025 06:21, Pravin Pathak:
-> Adding new mail for DPDK contribution
-> 
-> Signed-off-by: Pravin Pathak <pravin.pathak.dev@gmail.com>
-> ---
->  .mailmap | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/.mailmap b/.mailmap
-> index c7d55c7386..1c5c367f6c 100644
-> --- a/.mailmap
-> +++ b/.mailmap
-> @@ -1240,7 +1240,7 @@ Prateek Agarwal <prateekag@cse.iitb.ac.in>
->  Prathisna Padmasanan <prathisna.padmasanan@intel.com>
->  Praveen Kaligineedi <pkaligineedi@google.com>
->  Praveen Shetty <praveen.shetty@intel.com>
-> -Pravin Pathak <pravin.pathak@intel.com>
-> +Pravin Pathak <pravin.pathak.dev@gmail.com>
+Hi Dariusz,
 
-You must not remove your previous email.
-You must have your main one and old one on the same line.
+Thanks for your comment. I will try to fix this issue in next version.
 
-Please check the doc:
-	https://git-scm.com/docs/gitmailmap
+Brs,
+
+Yang Ming
 
 
