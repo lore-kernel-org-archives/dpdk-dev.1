@@ -2,61 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB36AC83F22
-	for <dpdk-dev@archiver.kernel.org>; Sun, 20 Jul 2025 20:30:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E92C83F22
+	for <dpdk-dev@archiver.kernel.org>; Sun, 20 Jul 2025 20:44:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 97BD3402D7;
-	Sun, 20 Jul 2025 22:30:43 +0200 (CEST)
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com
- [209.85.216.52])
- by mails.dpdk.org (Postfix) with ESMTP id 63E3340265;
- Sun, 20 Jul 2025 22:30:40 +0200 (CEST)
-Received: by mail-pj1-f52.google.com with SMTP id
- 98e67ed59e1d1-31329098ae8so3122528a91.1; 
- Sun, 20 Jul 2025 13:30:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1753043439; x=1753648239; darn=dpdk.org;
- h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
- :date:message-id:reply-to;
- bh=ohu2tZPFuiqSvnY6mI1kqw6Xab5k9DrNLf7gAqo2Sqc=;
- b=JsZLnOYrfOXYtOgam5JWQeWS4bKkyHD/IbovpdBZIG49E6eLn4QUe6GOR7MBJ2MrZ8
- KP90a9px3g/rgXqQQ+0rddV7qWym6J0jrQitnFuS2W38XgKnCT/iMqdykzoR9j9723is
- y0HtTqO0KquJ4jDK5/yApboCQwsMsmVrQKXh0ouPO+exn8DyVNVUuYOQCFvZrORjj5Zh
- i5SHIEuMagN4atcQ4j8EAWZ/gnH6nKuhdonqKjwzNUa6QL0VcLPRlHGnxK0ES0WQJW2b
- bIJCnKbdq0KDVTtJ3SZf47LwlAPKYKMKyWt0keMwhwxDSzlCYsuQpIC4/OOQyvA85RQZ
- 0U1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753043439; x=1753648239;
- h=to:subject:message-id:date:from:mime-version:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=ohu2tZPFuiqSvnY6mI1kqw6Xab5k9DrNLf7gAqo2Sqc=;
- b=Sw6bDYyXc3Rb0vSxI6qtKuJlLvjkXtekDc5NlThxXcp8ZeH3YGWmOG3J5sE/aL6HUL
- wAWzyX2njsgqEBwYeDqEL2/G7NEhuo4KI9JOXTidZH+43jZ5EpPL4/uDrkwgeW+VGjUb
- XCGxq+gpfOkjMwu66GDrheT+CFxHEgzH9ZAMP0Xxkxz92ioJVVuD/fX/JqhGwZmD7XCT
- MMPiGMaB7jQz7TX67R0W1T286PO3QOF/OfNB5fUM3rsRJxl04AtxM8hSNBClmnDAG9Mj
- 0pBicYaAkQSMA8d8N4dwH3ldlwW6u4icLG125TzD92wNe1pPDzlg6+5CEXm7MMWplFqa
- jhGQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWBo7CZGtk+bp9UPpjNxhGIetauKnPBW9nvJEfs/fRyrLFcmi1nsuN6HYbjhnEIRIR8i/0=@dpdk.org
-X-Gm-Message-State: AOJu0YwrNoSEtDTQ+xYpTxDkEVQkSJ/SRe8oXmD64oQ91cp765MEglBb
- tZvNNWIm7QXWDqijjrw75qMTC/uMf6b86FFezeqv+Hkuodjplz1kzwjl7NBiJ5fiu2KN4Rt7Hk/
- s8PqsNX3+3MIQM9qQt5T9rNMVUudcLnFaWjSJ
-X-Gm-Gg: ASbGncsMNze2rdGYjCfOANU0yxf8a8ODopqtOINJLmmEDrP3RcpiWuTleKKDiNyY9JO
- 6e/fccAPdotqY75N6Ldd+xmGkLDrOb8w9fUhkpinHC7RDQ2UtyFdMmVJmD+JDWu6iPCU7nQ67Yx
- FaZENlg0aN7ltJH2+0IO1G0Hr5g8aL+9/+ZOdd51pcu/1lV3A44GMHzvGxAECr7UlSRcOiMSYG/
- dXr/0Em
-X-Google-Smtp-Source: AGHT+IETqcOkhYoP7rKCKHJHgsNLokoq/UZNjEHn95Kx7tHgZwoWtV0r98h1IC9SLwDcjBJa5sC8/G31kS3m2YnQpHw=
-X-Received: by 2002:a17:90b:586e:b0:313:17d0:b066 with SMTP id
- 98e67ed59e1d1-31cc03dc2f1mr15463843a91.7.1753043439000; Sun, 20 Jul 2025
- 13:30:39 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3138A402D6;
+	Sun, 20 Jul 2025 22:44:31 +0200 (CEST)
+Received: from fout-a8-smtp.messagingengine.com
+ (fout-a8-smtp.messagingengine.com [103.168.172.151])
+ by mails.dpdk.org (Postfix) with ESMTP id C41B84026D;
+ Sun, 20 Jul 2025 22:44:28 +0200 (CEST)
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal
+ [10.202.2.52])
+ by mailfout.phl.internal (Postfix) with ESMTP id 606D2EC010B;
+ Sun, 20 Jul 2025 16:44:28 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-12.internal (MEProxy); Sun, 20 Jul 2025 16:44:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1753044268;
+ x=1753130668; bh=Gcb7RrkgPZXRL3wzY6mJbwu4YYmRFL1kxjSKsYCX/fk=; b=
+ Cvw2anjnVrgd1k+KMYXvp53TvfOhdx/eWa8Grl9kcnSHtmN1/tHKf+WxVRsS+4lp
+ IM1AQEiCZOJartAInfxzyFf3EsIFcL0jIkykfuaMhawozYK1kT+sDso1nTEnvVVQ
+ FjUNhr7QnQANhUbnFTBDGdJA6W4K5W20HK39kEss2TAGtWmSgIVKKPRjdWxOcrc4
+ NS+4yzHuSydtySOjpYKfmoAvpc5Bru/YGNfA7vBMXGwqHai9PviOuDuY+pZVavJs
+ HP93ud4Y+KVE/pV7p+mrfX72U+vN8+3neJSbEvGqbBPQqU6o8ZMeoigcjOc5lYhS
+ cWbSJRQahY8uArnvU4kDmw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1753044268; x=
+ 1753130668; bh=Gcb7RrkgPZXRL3wzY6mJbwu4YYmRFL1kxjSKsYCX/fk=; b=b
+ eEEySnUnydQsXihLkbn3xks4+a7USbo/o+QGGvH83RG05sBLxmFw7QMbbAyTIJd+
+ 6+P8y38JDbYtk/fQztjEYTzfbkhmFEwaY+1Y1l1VFg40PeRq0n79IrhoGxEAOLGk
+ wQcBiwiLzAXahMF93conU9WvYoIUF13pDaWU1ElDS3vn6C7eAchWC980bM+3S+fb
+ wrQTd6OYIsN4HdACLX3TriUKv8LbxbZhzEfjVsOka08MhAQwfTFiAcTMafSJyPVQ
+ cVjPaSVOk4O9DzXuI2Wo0kztQqBORk2wsbz8hXSIuskC1XjDK04zc118djXg1qMG
+ TYlmVgKyas5UBR91vsYTQ==
+X-ME-Sender: <xms:LFV9aJxsIR-yYQSnBXBIsY7BbEY1bIi6A1ft7GI0TpPCMJwlr5gKIA>
+ <xme:LFV9aC4ZNIwy84xH_r07ExKgZKgj6BJYedsJ_dSJQncCU0_eqA-XiGOETpvyWmFH7
+ -epZO5G8RgvUc-UXA>
+X-ME-Received: <xmr:LFV9aDUECE2zvwaeE2bQygxkFOlvRYOnSiE6a3J4iwcBiUDmQChlf88GK6H7M4R5_H-R5Np7_vIETg3Xp-6TlWC6Dg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejtddulecutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+ ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+ hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
+ ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
+ grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
+ gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepfedpmhho
+ uggvpehsmhhtphhouhhtpdhrtghpthhtoheprggtohhnohhlvgesrhgvughhrghtrdgtoh
+ hmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohepthgvtghhsgho
+ rghrugesughpughkrdhorhhg
+X-ME-Proxy: <xmx:LFV9aO1wiwvElPzN9JuH1LR3aWkR1afTUSKRX0GvjchXmZqjmeEzlQ>
+ <xmx:LFV9aI2GGrua0xZtzBHlD8FJewaTBJDeeKU7tXMn47EQC2C8fXHAbg>
+ <xmx:LFV9aJ9zizl6ww1n28BT_YyrSeT2htQSp3RIZlhTM7RvqLUkhoZeug>
+ <xmx:LFV9aN2VZk3lFVqWHS6I4Iv4tOUOL6dSYAviB-IDYns2YY9cYaVCWA>
+ <xmx:LFV9aFfetdsyOnSlZkDanWW8JcQrKYWTp4n_ZCFtkes-n6-Qc5ywCYAE>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 20 Jul 2025 16:44:27 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Aaron Conole <aconole@redhat.com>
+Cc: dev@dpdk.org, techboard@dpdk.org
+Subject: Re: [PATCH] doc: Document frequency and volume limits on patches.
+Date: Sun, 20 Jul 2025 22:44:25 +0200
+Message-ID: <1978264.taCxCBeP46@thomas>
+In-Reply-To: <20250417181211.727663-1-aconole@redhat.com>
+References: <20250417181211.727663-1-aconole@redhat.com>
 MIME-Version: 1.0
-From: Isaac Boukris <iboukris@gmail.com>
-Date: Sun, 20 Jul 2025 23:30:28 +0300
-X-Gm-Features: Ac12FXzL8wFng1Fx8Pf5yeMOld69WWXr0mDIKoQHCm-wpQ1MpqkrQGs4Ew7W3_A
-Message-ID: <CAC-fF8TLJnunZgYgpv-XBeH0ydN9hK5k5g_PZae6gA16rQ2ZSA@mail.gmail.com>
-Subject: dpIP: a POC port of lwIP TCP/IP stack targeting DPDK
-To: users@dpdk.org, dev@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -70,22 +88,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi,
+17/04/2025 20:12, Aaron Conole:
+> The DPDK project has two constrained resources - reviewers and
+> public CI infrastructure.  These are shared among the entire
+> project, and there are true costs associated with using these
+> resources.  Thus, there are two motivations behind this change:
+>   - Encourage developers to spend more time ensuring their
+>     changes are in a state that things have gone through some
+>     basic testing
+>   - Encourage people to give reviews by guaranteeing that the
+>     time between series is long enough that comments will be
+>     valid.
+> 
+> We want to document the guidelines for submitting to the list
+> to encourage more time for reviews, and also encourage
+> developers to spend a bit more time to put their submissions
+> in a 'default accept' condition.
+> 
+> Signed-off-by: Aaron Conole <aconole@redhat.com>
 
-Sorry for cross-posting, no intention of starting a long discussion,
-just wanted to share this in hope for interest and collaboration.
+Fixed links and applied, thanks.
 
-I've been working recently, as a fun project, to port the low-level
-lwIP code to DPDK. The idea being to start with a minimal yet widely
-used stack, and gradually improve it by reworking the code and the
-API.
 
-It has now reached a POC level with a couple of working examples and
-tests. That said there is still a lot of work to be done, such as
-cleanup, API rework, porting more protocols and unit-tests, etc.
-
-If anyone is interested in cooperating on this, plz take a look:
-
-https://github.com/iboukris/dpip
-
-Cheers
