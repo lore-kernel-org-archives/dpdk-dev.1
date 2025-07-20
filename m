@@ -2,82 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE74C83F1A
-	for <dpdk-dev@archiver.kernel.org>; Sun, 20 Jul 2025 21:28:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 809B7C83F22
+	for <dpdk-dev@archiver.kernel.org>; Sun, 20 Jul 2025 21:43:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 12B06402D6;
-	Sun, 20 Jul 2025 23:27:59 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id BAFC1402D6;
+	Sun, 20 Jul 2025 23:43:29 +0200 (CEST)
 Received: from fout-a1-smtp.messagingengine.com
  (fout-a1-smtp.messagingengine.com [103.168.172.144])
- by mails.dpdk.org (Postfix) with ESMTP id 87E6B4026D
- for <dev@dpdk.org>; Sun, 20 Jul 2025 23:27:54 +0200 (CEST)
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal
- [10.202.2.46])
- by mailfout.phl.internal (Postfix) with ESMTP id D9191EC0202;
- Sun, 20 Jul 2025 17:27:53 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-06.internal (MEProxy); Sun, 20 Jul 2025 17:27:53 -0400
+ by mails.dpdk.org (Postfix) with ESMTP id 68C414026D
+ for <dev@dpdk.org>; Sun, 20 Jul 2025 23:43:28 +0200 (CEST)
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal
+ [10.202.2.52])
+ by mailfout.phl.internal (Postfix) with ESMTP id F1BD4EC01F0;
+ Sun, 20 Jul 2025 17:43:27 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-12.internal (MEProxy); Sun, 20 Jul 2025 17:43:27 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1753046873;
- x=1753133273; bh=foMDLLr8M1x1vKtcEkNcIalHsnBngFZc/Txluhspwio=; b=
- zBSyyl3wdeFTmQ/X1cymg+tWpIIHCFs8vwjlVl9YYLx8TOFvGKBlva3GTV/ElU+S
- BsA1EqjHi1YmIF5XYExtHWkxSZUotjiFr0f3rZfzmmIGNVGMTaC0UT8jkxat9gDI
- S70t+KQLH0s2ILYZYOJwPLPRg6xQk0dm8/XSwxicEKgErwMdhwTVbm3jj+b7eZSB
- mnU3Gz4hmoCskquxThssuj63kSvSPo43JROEhcS8+pfhlEr/1/2iU9lYUHSigYo+
- lTVi7XmJh7fqHxRZ55Yd15vgrej62bapIymsM6fPhFBRgy53FNtuCuCOf5ybU2mD
- okKrLhWP0MLMZNAlpmJ/5Q==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1753047807;
+ x=1753134207; bh=RBf5SwewT5nasQwHilO7Kbyn8pLh6AhT94sGwXCtI5w=; b=
+ UigiX8qxPhUgBjb7VVa58AIAhlSoWXXAuBHzalZP8AJvWQnZ5rMgvd8pOgyxelr4
+ bmDEDYvKyFJfFkRFfvoumlp4KTmDkfY9oqkprAWCvbsa7TWEuLGAOyp0Ih3Q3f0G
+ CEu3WgnSzPcz57weJBeUGw+M0ypBW0D3VJmyO1Gp1S2tX236lAs801uec5qjvxWs
+ OO0qfF1jZR/5RvUfu8d9RnC4UxLa7UiqpoePX77+3PQ9dUqJ+9lyBKJctZYNSs4B
+ +a7FBcDc30xvzybGxJnB92cBWDB8aUpnOKSVP/tMikY4QYTfw6TaNVrZvHCrLCko
+ ZeN85hj9Y5lyYrhVNE4qjQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1753046873; x=
- 1753133273; bh=foMDLLr8M1x1vKtcEkNcIalHsnBngFZc/Txluhspwio=; b=H
- NkutdWVxX3Ft0Vq2UmgOvqQA5PZ7nv1IKH8TaHZOKdHgwkP1FLmM8gF/f6QphM5v
- 2QFyQ63xT1TLTR+GV9K2AJ1yYZNJ6ELPhrYWnm8LZi43BSBA2BMCTbffhlGl82E5
- lU1n0dgJv+eS/5bU7CRLJ3gYQilyx6ZRqyrjw7OPm+w0z6wYjHXVhI60+L8KfSVH
- vkSkOg2JyXNjJ5skdSYm6rAnF3IEVfRyJiJKRxzAnn3vWGgjimz5IXV2m4Z0Q28d
- Wc5UIoThHhj7As1YH4gjFCVkHGMRX1eOnYKpdCo4YoebsnPrmtYZUzMFWGSXujEc
- K7/eYPJ/AScMidZUaGlZg==
-X-ME-Sender: <xms:WV99aCkBuiWHgUu4MT1p9_MsPHL_zqNrXkrXXcUxVyIBQCvTVe3dSQ>
- <xme:WV99aGwSlmC24KrwWGBpem0wJBWT-BuuXrsTebqldhqgkNhbSiNJEspjMRK6iNQ7r
- UUzNRIhRlqkg0XF_w>
-X-ME-Received: <xmr:WV99aMT96wyuzOTokP5DoDwIf3Rhp-gmm-SfHLhz85knuZkYoQ5Y4yjRSAgaf0sKq5dUtq-hvUER_ukkIn0jNSo4Sw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejtddvkecutefuodetggdotefrod
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1753047807; x=
+ 1753134207; bh=RBf5SwewT5nasQwHilO7Kbyn8pLh6AhT94sGwXCtI5w=; b=P
+ Q4eeTuWSNNOAPosLtWz/lfyYQoW1dq8jCic769mYGBlhGSwDADK1Xt3SrcH1YS7j
+ pyGhV8cAPG0bzxnBmK98G5fEbzhhDIZ+N7q0P8uGIXuwEbIwjznqaYFZKB0eTJ1X
+ M4lWM2NB3xu8VIHPZbZDd9xx6EwQHIkdNTBonkREk6JVEdqSO5heyQGyNV3G8wnq
+ /0qxL3kPTIvNypx8D0jZ4hQkgOH/8CZsWagzWYuyM4KNCksxHDASdJr9PEgQjB9l
+ 685H5qFblv18o0AMz1SRJViZJk0eDHvgMOslw8dwDpDJNbu7MY4ElUXTuSU/ibCS
+ jZQWAk4Miqe8nx/kDfrgw==
+X-ME-Sender: <xms:_2J9aLzIEib_uMbBoRh1RegTy_okNxwmHyqzaqrsmI6fUYiQQCKgvQ>
+ <xme:_2J9aO-YTp8NoiaO9_InxlzlJ6RoynOwu-vG44x2VET4T65SYRKAiFttiJ_B2Hztz
+ wgN6WTyKyjAaON6HQ>
+X-ME-Received: <xmr:_2J9aBzZpuBgFx7BSF020kNP6jnRJLcS9UT6e6J8UFb_DgZB2RD5kQiP64AgrETFafhXtomXMgC9L9lYVep70q9kHQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejtdefudcutefuodetggdotefrod
  ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
  ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
  hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
  ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
  grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
  gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
- epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepkedpmhho
- uggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnughrvghmuhgvsehlihhnuhigrdhmih
- gtrhhoshhofhhtrdgtohhmpdhrtghpthhtohepsghinhhgiiesnhhvihguihgrrdgtohhm
- pdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohepughsohhsnhhofi
- hskhhisehnvhhiughirgdrtghomhdprhgtphhtthhopehmrghtrghnsehnvhhiughirgdr
- tghomhdprhgtphhtthhopehorhhikhgrsehnvhhiughirgdrtghomhdprhgtphhtthhope
- hsuhgrnhhmihhnghhmsehnvhhiughirgdrtghomhdprhgtphhtthhopehvihgrtghhvghs
- lhgrvhhosehnvhhiughirgdrtghomh
-X-ME-Proxy: <xmx:WV99aO-yZ5eeElZkM21gdWe5YKI2PZclKwU38aTACGXIFMDa0-OZdw>
- <xmx:WV99aKvn9biWBmbGthjKfZwYdWXXVmMaJIV5-6-Jlh_KqIAIv5K01g>
- <xmx:WV99aGOWPg2xJtZc4jz4M4I84wgN9ZdyANzfjP-NdHy1zh8Bz7WYrQ>
- <xmx:WV99aHjauo65lEBMgNjuyniCZHt2Y2uiYkOB6Sgnhog44KUa1fQldw>
- <xmx:WV99aMIr_RfISSL06Qh4DNdo91MZ_ovlrkqngZv9vP583f3GxNqlFMDQ>
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepuddtpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhgurhgvmhhuvgeslhhinhhugidrmh
+ hitghrohhsohhfthdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgt
+ phhtthhopegsihhnghiisehnvhhiughirgdrtghomhdprhgtphhtthhopehmrghtrghnse
+ hnvhhiughirgdrtghomhdprhgtphhtthhopehorhhikhgrsehnvhhiughirgdrtghomhdp
+ rhgtphhtthhopehsuhgrnhhmihhnghhmsehnvhhiughirgdrtghomhdprhgtphhtthhope
+ hvihgrtghhvghslhgrvhhosehnvhhiughirgdrtghomhdprhgtphhtthhopehmkhgrshhh
+ rghnihesnhhvihguihgrrdgtohhmpdhrtghpthhtohepughsohhsnhhofihskhhisehnvh
+ hiughirgdrtghomh
+X-ME-Proxy: <xmx:_2J9aOpwB1g3B5WLIgN6oXquyadFR-QoE9MFK0c4kTqf9qAwqE-8ew>
+ <xmx:_2J9aCrHVwcgKDy2kdU5dBiXdNpEJBX4Ize5re4t4KM6-2DJig0ePA>
+ <xmx:_2J9aODxx5d0BALynbaERpoVNZy_ka0n9fEE3C_wvBldWWxpH5AZXg>
+ <xmx:_2J9aAtNY0DFHcDpyqoANj-Z7ymziff4QbtuQblqiPRnVLCoPYJ81A>
+ <xmx:_2J9aAS-sk5eTdoJOtDRtb4twQshCzd8BILoDcnpJDfP2p26MsaHjCxv>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 20 Jul 2025 17:27:52 -0400 (EDT)
+ 20 Jul 2025 17:43:26 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: Andre Muezerie <andremue@linux.microsoft.com>
-Cc: bingz@nvidia.com, dev@dpdk.org, dsosnowski@nvidia.com, matan@nvidia.com,
- orika@nvidia.com, suanmingm@nvidia.com, viacheslavo@nvidia.com
-Subject: Re: [PATCH v2] doc: update parameters to use for mlx5 on Windows
-Date: Sun, 20 Jul 2025 23:27:50 +0200
-Message-ID: <116876127.nniJfEyVGO@thomas>
-In-Reply-To: <1752588889-27133-1-git-send-email-andremue@linux.microsoft.com>
-References: <1746458561-13525-1-git-send-email-andremue@linux.microsoft.com>
- <1752588889-27133-1-git-send-email-andremue@linux.microsoft.com>
+Cc: dev@dpdk.org, bingz@nvidia.com, matan@nvidia.com, orika@nvidia.com,
+ suanmingm@nvidia.com, viacheslavo@nvidia.com, mkashani@nvidia.com,
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ David Marchand <david.marchand@redhat.com>
+Subject: Re: [PATCH v3] net/mlx5: remove use of sizeof(rte_v128u32_t)
+Date: Sun, 20 Jul 2025 23:43:25 +0200
+Message-ID: <2444510.NG923GbCHz@thomas>
+In-Reply-To: <20250709072609.an5o3r423bqqapmj@ds-vm-debian.local>
+References: <1746457823-11135-1-git-send-email-andremue@linux.microsoft.com>
+ <1751987516-30482-1-git-send-email-andremue@linux.microsoft.com>
+ <20250709072609.an5o3r423bqqapmj@ds-vm-debian.local>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -94,15 +98,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-15/07/2025 16:14, Andre Muezerie:
-> The linker parameters to use with MSVC and Clang differ.
-> Showing explicitly what to use with each in the documentation.
+09/07/2025 09:26, Dariusz Sosnowski:
+> Thank you for addressing the comments.
 > 
-> Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-
-Acked-by: Patrick Robb <probb@iol.unh.edu>
-Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+> On Tue, Jul 08, 2025 at 08:11:56AM -0700, Andre Muezerie wrote:
+> > When compiling with MSVC the error below is hit:
+> > 
+> > drivers\net\mlx5\mlx5_tx.h(1148): error C2065: 'rte_v128u32_t':
+> >     undeclared identifier
+> > 
+> > The reference to rte_v128u32_t (in code and in names) can be removed,
+> > because the code which relies on MLX5_ESEG_MIN_INLINE_SIZE does not
+> > really use rte_v128u32_t type. The relevant code e.g.,
+> > in mlx5_tx_eseg_dmin(), always copies first 2 bytes of the packet
+> > (through uint16_t pointer, these would be first 2 bytes of destination
+> > MAC address) and then does one of the two:
+> > 
+> > 1. Copies following 16 bytes using rte_mov16().
+> >    (Corresponds to first static_assert for MLX5_ESEG_MIN_INLINE_SIZE).
+> > 2. If there is a VLAN defined in mbuf, then:
+> >    - the rest of destination MAC address is copied,
+> >    - source MAC address is copied,
+> >    - VLAN is inserted,
+> >    - 2 bytes appearing after VLAN header are copied.
+> >    (Corresponds to 2nd static_assert for MLX5_ESEG_MIN_INLINE_SIZE).
+> > 
+> > The amount of data copied is inferred from HW arch and packet descriptor
+> > layout, not rte_v128u32_t.
+> > 
+> > Since rte_mov16() is used in real code and rte_v128u32_t is only used to
+> > carry over the length of the copy, this patch replaces instances of
+> > sizeof(rte_v128u32_t) with a macro named MLX5_SIZE_MOV16 to better
+> > reflect the real usage in mlx5 PMD.
+> > 
+> > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+> 
+> Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
 
 Applied, thanks.
+
+Looks like the generic vector types rte_v*_t are useless,
+and not compatible with MSVC.
+We may think whether we really want to keep them.
 
 
