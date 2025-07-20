@@ -2,78 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74A60C83F1A
-	for <dpdk-dev@archiver.kernel.org>; Sun, 20 Jul 2025 19:54:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 450B2C83F22
+	for <dpdk-dev@archiver.kernel.org>; Sun, 20 Jul 2025 20:12:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 43C2D4026D;
-	Sun, 20 Jul 2025 21:54:29 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5802E4026D;
+	Sun, 20 Jul 2025 22:12:14 +0200 (CEST)
 Received: from fout-a8-smtp.messagingengine.com
  (fout-a8-smtp.messagingengine.com [103.168.172.151])
- by mails.dpdk.org (Postfix) with ESMTP id B1D3640265
- for <dev@dpdk.org>; Sun, 20 Jul 2025 21:54:27 +0200 (CEST)
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal
- [10.202.2.46])
- by mailfout.phl.internal (Postfix) with ESMTP id 1062CEC00AE;
- Sun, 20 Jul 2025 15:54:27 -0400 (EDT)
+ by mails.dpdk.org (Postfix) with ESMTP id 46C7F40265
+ for <dev@dpdk.org>; Sun, 20 Jul 2025 22:12:12 +0200 (CEST)
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal
+ [10.202.2.52])
+ by mailfout.phl.internal (Postfix) with ESMTP id B75FCEC00D3;
+ Sun, 20 Jul 2025 16:12:11 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-06.internal (MEProxy); Sun, 20 Jul 2025 15:54:27 -0400
+ by phl-compute-12.internal (MEProxy); Sun, 20 Jul 2025 16:12:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1753041267;
- x=1753127667; bh=xCqXI3/14dR2weQFWSN3IL6kBf7UDuz/Zo0N/9stxPc=; b=
- GF6eq5CX3wZzxo67hPtDhD9MEJ04Ne8MTiOFdlqN6YMt1mqRt1nmr1A/ScIPv7/b
- qt3BTXk5+f59IzvxREdqEHghAdXrAlNGnDte2Z8x0YLdYRtR+s644BxuXv2kR4BQ
- rPX/xDTR0rtdzJHklYpAX7gSXzFEMCEVwigDxUOlmcz+0aQb1nw0byEtC8SG5jM1
- Pr0Lfcxjwjzalw2IWLNJsLv+SB2PxwLts47wusJt7PtHamjkn+d8QX/uc698D8SQ
- Fx1ChaurMFsDc0HmdJiDHrDWTJO6XI6YMJhAWFdJIW+hETEr9A0WIznhGFbuxMOq
- fYnfw9JAOK1MOim68HMAWQ==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1753042331;
+ x=1753128731; bh=Krryf3wzZ4Rm7nl3tPLy8EVtZy8BJG0QJFmWJTHtvFc=; b=
+ krbggyOf0ueQla8hPRf41o01/757keuJWtj8F2KCwfmhfyWPyPPbt2xIv8T+bg//
+ 5ZvjDVaVy67T4Jl75gaauVVa1AdI6aakxEAnACL6iuh8UhIFz39hJ9RtvpBqaWW/
+ E/K1G/xaxYuoLFjKfCXIIkhGqVlPbLMjmLy6KLMD/Ju0l+7nLjnRYauA/xqv33hD
+ utXMhnp8N1SuRbLfC43Y8xLiJQcc3AK19JjAY1vmEdS77nIdmdhrrteFgjubTDNa
+ Ctx4do7FC35JzV4q6dLnoNZujPqQb1UR6mGm7EB53wnJuFQpzCBCLZ2ydDLyrefi
+ NjR8/XNZyRG+SiyzzeVxBA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1753041267; x=
- 1753127667; bh=xCqXI3/14dR2weQFWSN3IL6kBf7UDuz/Zo0N/9stxPc=; b=I
- dyAprPWV2F8Q8aueDLS3Y5LNo+ZsWeBpAhkArA26dmkQoi0WjN9YXONgiZdf4mNN
- lbgCT3pG6ltyRUzzby0Vm0QJozVqrkxMDXWs5TF4WnCXPqXZwwTYgMfkM8fc38g+
- YztYILc27OdmFELIKzJP+kW2WgHt0heD/MNqJf0jjj1zogmapIfqTr9Vd2Tki2hN
- v9YKnGWEgz9H4w7FAjbI2eoWfeX2c2xf72h1WiVY/ekx17k7g9olbMJRcCjYfvsa
- symGyViK9UsX4juqcpdHXFtVU9YstOO/EQO9TqBHm28pNhygaW7f4oS5FmOBh0hh
- qhjDGzM112Y/BqiMhWG4g==
-X-ME-Sender: <xms:ckl9aDK_wsR5DMSHlEObWcDru7n-EFFbVdWVmmjbtlwuwrBVpo7LJA>
- <xme:ckl9aMhnteSuew_SvFU2cX-xNQFwXJX8PdV3drGnqx08Cl6hwthlH4Jc3QLBtGzj1
- nmcL_Km-_RrhMNBcg>
-X-ME-Received: <xmr:ckl9aL7GB5RfU3LCCk_NrTuFcK3y1XRD1dXG3-511NmtE4eOG3B0HU6Ve5ULv6hp74ajPZdFbItrwxJVdB-RNU-gXQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejtddtlecutefuodetggdotefrod
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1753042331; x=
+ 1753128731; bh=Krryf3wzZ4Rm7nl3tPLy8EVtZy8BJG0QJFmWJTHtvFc=; b=c
+ +K2yjXZ0HuJlQWQRrikrE5cg++TVq56+jBUSJbpcTOTsj/UFo9CdhahlLdNX3bIo
+ F7JHikmgSOgmxFMYWWNwkx/zquTlARa0U7TvTBgCC6Dg3cBbO/y1+QB9EKK7gf8B
+ 5MyYOesQoURddvz70Q9m1lEl/Ng8nGSVZEQls4LI+Abf9nsvZOOp3sNL0+bg4AE5
+ W9CXTE30vfaR/FPN4w36P+g4di9gDAPfZM9MqgmyhNXckBrZenUjMkCRJxKgRoc8
+ dmyTgbAOFrxfp3x07UEhF86xr5fY4yCA+DzPbZ1Q8elB8zHuoVkDRgFDbWdQU9NS
+ z/QdHFRMKkdpiJDkkDd5Q==
+X-ME-Sender: <xms:m019aGsgjUlPetOTvjFigqEERJ_SciR9iN7y5NQNRI35bMj-oIGO1A>
+ <xme:m019aAv52dcceWD8xRKAvmuCJ_zT3ktpCkwBS6rmwq0V0tkqI37da6MVqfh2c25DP
+ bOjEhwy_AQa3kN7Bg>
+X-ME-Received: <xmr:m019aDeLRrYfJx54FVloaV6r2ZEVtSc4N5XaZ8SNYiVNpMCB_x0n1GFUI0ACDH4FOgmzrl8OZCOPHpLPOd8br0HT_A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejtddufecutefuodetggdotefrod
  ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
  ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
  hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
  ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
  grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
  gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
- epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohephedpmhho
- uggvpehsmhhtphhouhhtpdhrtghpthhtohepfigrthhhshgrlhgrrdhvihhthhgrnhgrgh
- gvsegrrhhmrdgtohhmpdhrtghpthhtohepughhrhhuvhdrthhrihhprghthhhisegrrhhm
- rdgtohhmpdhrtghpthhtohepughouhhgrdhfohhsthgvrhesrghrmhdrtghomhdprhgtph
- htthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhopehnugesrghrmhdrtghomh
-X-ME-Proxy: <xmx:ckl9aMblGKLA7jRISpYEa95e1Sv3KtriWCaxrEdQXDzEjY-Tmg2kYg>
- <xmx:ckl9aI7jMm9sUc3PQBaN7ePgzKj_UsU38_4cOAYiDvaNeOfL-sHUYg>
- <xmx:ckl9aHA0GjFukk3gs_Ye-yu0R0diltnJVud8j5CyXc1yPWbHW65byg>
- <xmx:ckl9aGdNge5S61zfHDZyu-JL75R4tD8spvcrqx6BZ-A2XYF5lNTb4Q>
- <xmx:c0l9aB26sWweWGrORf9-AY5Se3oOcxU2DTGNydNIYNcuUyBK5Qng5bcl>
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepvddpmhho
+ uggvpehsmhhtphhouhhtpdhrtghpthhtohepsghruhgtvgdrrhhitghhrghrughsohhnse
+ hinhhtvghlrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhg
+X-ME-Proxy: <xmx:m019aJamGTrSo6ySFmXcBN_EuG_KTLC_YbuOB06qa9F7lxLuaDgM0A>
+ <xmx:m019aOX6uJa0Pcb7WFiUGA-eebGnq2XNI6HdZPMQooSQv0YqXsI4jQ>
+ <xmx:m019aDgPDylYHxZL5wsdmDYGd99wGgUacQIk8sFpnxgYqZyYuZUmhg>
+ <xmx:m019aEW2TTi0muWJhZkm6X0PJlpfdCd9S4BJNsb8Dlc871pHuPNwgQ>
+ <xmx:m019aJO0eZoW_pwG0uFFBLwL8YCdT6WfBjqR7H3eIyer0nV6V1_BPh67>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 20 Jul 2025 15:54:25 -0400 (EDT)
+ 20 Jul 2025 16:12:10 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Wathsala Vithanage <wathsala.vithanage@arm.com>,
- Dhruv Tripathi <dhruv.tripathi@arm.com>, Doug Foster <doug.foster@arm.com>
-Cc: dev@dpdk.org, nd@arm.com
-Subject: Re: [PATCH] doc/linux_gsg: add build instructions for new Arm SoCs
-Date: Sun, 20 Jul 2025 21:54:23 +0200
-Message-ID: <4444415.ejJDZkT8p0@thomas>
-In-Reply-To: <20250516185307.1494231-1-doug.foster@arm.com>
-References: <20250516185307.1494231-1-doug.foster@arm.com>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH] doc/contributing: remove obsolete advice in coding std
+Date: Sun, 20 Jul 2025 22:12:09 +0200
+Message-ID: <3704737.R56niFO833@thomas>
+In-Reply-To: <20250327162839.2472573-1-bruce.richardson@intel.com>
+References: <20250327162839.2472573-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -90,15 +87,13 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-16/05/2025 20:53, Doug Foster:
-> Add explanation of recent build configuration changes for Arm SoCs and
-> instructions for adding a build configuration for a new Arm SoC.
+27/03/2025 17:28, Bruce Richardson:
+> Remove obsolete, and generally not followed, advice in the coding
+> standards doc, around local variables.
 > 
-> Signed-off-by: Doug Foster <doug.foster@arm.com>
-> Reviewed-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
-> Reviewed-by: Dhruv Tripathi <dhruv.tripathi@arm.com>
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 
-Reworded a little to make simpler and avoid the word "recent" in a permanent guide.
 Applied, thanks.
+
 
 
