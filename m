@@ -2,86 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C452C83F1A
-	for <dpdk-dev@archiver.kernel.org>; Sun, 20 Jul 2025 22:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3AB3C83F1A
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Jul 2025 02:12:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 87CFF40281;
-	Mon, 21 Jul 2025 00:17:20 +0200 (CEST)
-Received: from fout-a1-smtp.messagingengine.com
- (fout-a1-smtp.messagingengine.com [103.168.172.144])
- by mails.dpdk.org (Postfix) with ESMTP id C54C14026D;
- Mon, 21 Jul 2025 00:17:18 +0200 (CEST)
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal
- [10.202.2.49])
- by mailfout.phl.internal (Postfix) with ESMTP id 6B7FAEC0013;
- Sun, 20 Jul 2025 18:17:18 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-09.internal (MEProxy); Sun, 20 Jul 2025 18:17:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1753049838;
- x=1753136238; bh=T1o5mcJO+8CMum5Q0BBGPs3y3u7l7GG0smLlTr2TTG4=; b=
- GigIemdOXXZ2jAAk7L9HOslWhrMNPoWmHvEl4y5Rdu/1kq4sLqR48+giglr7A8pn
- KwCNnql9ABs277GWe3+Fo+a/uuYmn2gt0DlYJ/9uqmrd4J1qXE5GLFJpZGf7/NkX
- NnqQ+hGCahPsYxVRwZUaqrE8Wngx8BBpnq97N8LC/VNyLDYxrVvjmvQFKPQaOlG/
- mCXje5IP84ivQNHpXJMtLcsEcvoCBsVYbZjV0A8x49qV+KQR3j5jxXWCFPCJRdip
- wo3X1Ie0kWVaL63VWiv3ajRijJSEzO2S38KYqzfhfYuOd1gQ5UAfdcndDxKj8rEn
- PfiIPSiZjuJfPi+wKma/Hw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1753049838; x=
- 1753136238; bh=T1o5mcJO+8CMum5Q0BBGPs3y3u7l7GG0smLlTr2TTG4=; b=C
- GZxkBQ65rHfrAN8z1wkYiCT84S86WazCBFglbHkRkEkc5oPCvW9csdgYF54gjQMZ
- DXKAtNkrxJQvoA1c6KdlO7UCKMohnaBDE8Yac/bVt0dWqEUw/s+bYs15v/aCx10y
- 7S1wyC2iQTnp2oPl1EO+i4Zqyf7Ox5uHnWtuFfCAQKfUkAfSXH2xC/tq7fn/oQ1u
- GVx2nEN2ZhMDZWORKECFrJjSpamGWFsCB9jQoUs7oy2KuR5+nB836/vqEPH7iQSN
- /qRLjGb/qZoQqG9Xyy752Xe/caU/1SbQmmJ3+6POVUVLiRdsvBZYTVGqkiGR/1Bv
- e+UAFx2XPu+gl2F6IfG2Q==
-X-ME-Sender: <xms:7mp9aN0Gvu6qKsWpZi9xXyF862uRzBXW7ko1yy0BLfehzKvXHwNkcw>
- <xme:7mp9aMjUkqNf4sFZhDjhK6FmKtmGlEcVtqLonwEpo3fF5vf4rq0IkY3RVbh0FPzSr
- EgHiTjCIw9CN7ONuw>
-X-ME-Received: <xmr:7mp9aOW4_QzMz-2Z-noYBxsZhWpF_9doqTR9fIyBevXoPOULGAheq3yrZSwONkyPr2gL_U3qqj0uZ6sgniRt8drJag>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejtdefkecutefuodetggdotefrod
- ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
- ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
- hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
- ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
- grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
- gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
- epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepiedpmhho
- uggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhhiugdrmhgrrhgthhgrnhgusehrvg
- guhhgrthdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthho
- pehsthgrsghlvgesughpughkrdhorhhgpdhrtghpthhtoheprhhorhgvthiilhgrsehlih
- hnuhigrdhmihgtrhhoshhofhhtrdgtohhmpdhrtghpthhtohephhgrrhhrhidrvhgrnhdr
- hhgrrghrvghnsehinhhtvghlrdgtohhmpdhrtghpthhtohepsghruhgtvgdrrhhitghhrg
- hrughsohhnsehinhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:7mp9aLVGt-ulV1WDQcWVc3w5tSyBX8QqxR_wIYKN69GncPV-r_43LA>
- <xmx:7mp9aOjXm7qvVUOguPjbuBoNqPZeBD39ScO0dJ39xfhKhqmwdQT_8g>
- <xmx:7mp9aGbUPcBsIHsi234HG-a4XLK0uBDoR7dq0B9oaOxsZ7PR1592mg>
- <xmx:7mp9aLoX_afirasLDYEfdPoIFH-JKue67f4m-HKRaOWMiIzA21sR9g>
- <xmx:7mp9aCD5B8wke2AoE1AywG6S3VNx0pG7jZ5dQngJLSanaTW8bDFeUTVt>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 20 Jul 2025 18:17:17 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, stable@dpdk.org,
- Tyler Retzlaff <roretzla@linux.microsoft.com>,
- Harry van Haaren <harry.van.haaren@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: Re: [PATCH] eal: add description of service corelist in usage
-Date: Mon, 21 Jul 2025 00:17:15 +0200
-Message-ID: <2870796.BEx9A2HvPv@thomas>
-In-Reply-To: <aHjHpmnnifLtCXta@bricha3-mobl1.ger.corp.intel.com>
-References: <20250717094232.2184783-1-david.marchand@redhat.com>
- <aHjHpmnnifLtCXta@bricha3-mobl1.ger.corp.intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 8945B40281;
+	Mon, 21 Jul 2025 04:12:01 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 979F74026D
+ for <dev@dpdk.org>; Mon, 21 Jul 2025 04:11:59 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 721D746BD3; Mon, 21 Jul 2025 04:11:59 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/examples Bug 1751] [dpdk-25.07]
+ multiprocess_symmetric_mp_packet: exiting the symmetric_mp example results in
+ a core dump
+Date: Mon, 21 Jul 2025 02:11:58 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: changed
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: examples
+X-Bugzilla-Version: 25.03
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: songx.jiale@intel.com
+X-Bugzilla-Status: RESOLVED
+X-Bugzilla-Resolution: FIXED
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_status resolution
+Message-ID: <bug-1751-3-QkwdXrP2q6@https.bugs.dpdk.org/>
+In-Reply-To: <bug-1751-3@https.bugs.dpdk.org/>
+References: <bug-1751-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17530639190.b062F4Ee.2611136
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,16 +56,133 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-17/07/2025 11:51, Bruce Richardson:
-> On Thu, Jul 17, 2025 at 11:42:32AM +0200, David Marchand wrote:
-> > The -S option is not described in EAL usage().
-> > 
-> > Fixes: 7dbd7a6413ef ("service: add -S corelist option")
-> > Cc: stable@dpdk.org
-> > 
-> > Signed-off-by: David Marchand <david.marchand@redhat.com>
-> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-Applied, thanks.
+--17530639190.b062F4Ee.2611136
+Date: Mon, 21 Jul 2025 04:11:59 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+https://bugs.dpdk.org/show_bug.cgi?id=3D1751
+
+Jiale Song (songx.jiale@intel.com) changed:
+
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|UNCONFIRMED                 |RESOLVED
+         Resolution|---                         |FIXED
+
+--- Comment #1 from Jiale Song (songx.jiale@intel.com) ---
+Offending commit has been reverted in main tree for 25.07 release.
+
+fix patch:
+http://patchwork.dpdk.org/project/dpdk/patch/20250715121111.156639-1-thomas=
+@monjalon.net/
+
+the patch merged into dpdk main branch.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17530639190.b062F4Ee.2611136
+Date: Mon, 21 Jul 2025 04:11:59 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><span class=3D"vcard"><a class=3D"email" href=3D"mailto:songx.jia=
+le&#64;intel.com" title=3D"Jiale Song (songx.jiale&#64;intel.com)"> <span c=
+lass=3D"fn">Jiale Song</span></a>
+</span> changed
+          <a class=3D"bz_bug_link=20
+          bz_status_RESOLVED  bz_closed"
+   title=3D"RESOLVED FIXED - [dpdk-25.07] multiprocess_symmetric_mp_packet:=
+ exiting the symmetric_mp example results in a core dump"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1751">bug 1751</a>
+          <br>
+             <table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=
+=3D"bz_diff_table">
+          <tr>
+            <th>What</th>
+            <th>Removed</th>
+            <th>Added</th>
+          </tr>
+
+         <tr>
+           <td style=3D"text-align:right;">Status</td>
+           <td>UNCONFIRMED
+           </td>
+           <td>RESOLVED
+           </td>
+         </tr>
+
+         <tr>
+           <td style=3D"text-align:right;">Resolution</td>
+           <td>---
+           </td>
+           <td>FIXED
+           </td>
+         </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+            <b class=3D"bz_comment_head"><a class=3D"bz_bug_link=20
+          bz_status_RESOLVED  bz_closed"
+   title=3D"RESOLVED FIXED - [dpdk-25.07] multiprocess_symmetric_mp_packet:=
+ exiting the symmetric_mp example results in a core dump"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1751#c1">Comment # 1</a>
+              on <a class=3D"bz_bug_link=20
+          bz_status_RESOLVED  bz_closed"
+   title=3D"RESOLVED FIXED - [dpdk-25.07] multiprocess_symmetric_mp_packet:=
+ exiting the symmetric_mp example results in a core dump"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1751">bug 1751</a>
+              from <span class=3D"vcard"><a class=3D"email" href=3D"mailto:=
+songx.jiale&#64;intel.com" title=3D"Jiale Song (songx.jiale&#64;intel.com)"=
+> <span class=3D"fn">Jiale Song</span></a>
+</span>
+            </b>
+          <pre class=3D"bz_comment_text">Offending commit has been reverted=
+ in main tree for 25.07 release.
+
+fix patch:
+<a href=3D"http://patchwork.dpdk.org/project/dpdk/patch/20250715121111.1566=
+39-1-thomas&#64;monjalon.net/">http://patchwork.dpdk.org/project/dpdk/patch=
+/20250715121111.156639-1-thomas&#64;monjalon.net/</a>
+
+the patch merged into dpdk main branch.
+          </pre>
+        </div>
+      </p>
 
 
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1751#c1">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17530639190.b062F4Ee.2611136--
