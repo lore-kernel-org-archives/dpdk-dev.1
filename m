@@ -2,72 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D940C83F25
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Jul 2025 15:32:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38A13C83F1A
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Jul 2025 15:34:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4F437402E2;
-	Mon, 21 Jul 2025 17:32:42 +0200 (CEST)
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com
- [209.85.160.180])
- by mails.dpdk.org (Postfix) with ESMTP id 42D6740297
- for <dev@dpdk.org>; Mon, 21 Jul 2025 17:32:41 +0200 (CEST)
-Received: by mail-qt1-f180.google.com with SMTP id
- d75a77b69052e-4ab3fb340e7so84244611cf.1
- for <dev@dpdk.org>; Mon, 21 Jul 2025 08:32:41 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 72C65402DC;
+	Mon, 21 Jul 2025 17:34:29 +0200 (CEST)
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com
+ [209.85.222.177])
+ by mails.dpdk.org (Postfix) with ESMTP id 8B50A40297
+ for <dev@dpdk.org>; Mon, 21 Jul 2025 17:34:27 +0200 (CEST)
+Received: by mail-qk1-f177.google.com with SMTP id
+ af79cd13be357-7e32c95775aso453733585a.3
+ for <dev@dpdk.org>; Mon, 21 Jul 2025 08:34:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1753111960;
- x=1753716760; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1753112067;
+ x=1753716867; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=L/tReUMTLWadhEIZ8kZR45UGtJcbi3FgvBSFG9dH7xI=;
- b=wnuF+N9YnRBN5cRbIxPiN1ZjFKSe+MvtZB0XNTzq8rk7ngvd2caW58a9oq+qCGq0si
- 8teQCwVZB+XqofaJEhW4ttdE7EuBlWIGGLksCzsTX2+v2/QBl2t9hcVZHFQS0uxfgBvE
- 9LOuvOXemhQZCqtAkCztp9jejMod7P0FpLr9smpp/iEESB9SKur0aIE8ZMaklGVAuZnt
- KwAH5J3b9JPn4AMx4UHNofhUuWSuaZCeZxFFJxEOrJeeh23eAx/Lr0AeQyigiElNXOJ/
- mp3XxrCv/fprU+dN79q9yhsclQfhGG/uDR54kOBgB/xq05Z9ru9x45pDZ0WcyBQ+ilLM
- gkaw==
+ bh=NIktGylL5It/UmwAnVsdx9VAoE0A5OQkzfQ5+2202Ug=;
+ b=Cj6kSuyx8U4L6Prez9LMR9BPFmJwXSMdVoUb7vtZA4jTdkHMpyj07BxiRDGNkjRaQg
+ rOi9PdqS+FzcvpVEmyEWnT6eqlyu6N1FbV+w3Q7Xq3bHUcmTLfTVOB2Umjvhbl3kT5jp
+ yT+MVQif9173hXGYodVkk0Nk/dVU4LdY1EdbNtHRED/PVPLUvSHKuxZ4nwV34MlOTS+y
+ 2KA2uNU3sPo8q8AxJGhRNBZxgzEXDOwaz8fnjDJAg8rx5mJc9IHSx+OMwBfmpQXcaxR8
+ RAr1TC/tMOjlNwcKF1tBSwAbqZOU/4ldIA5DygrEnj/+GyXyvgCy51Cy/q+mp3cB3YMI
+ nwkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753111960; x=1753716760;
+ d=1e100.net; s=20230601; t=1753112067; x=1753716867;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=L/tReUMTLWadhEIZ8kZR45UGtJcbi3FgvBSFG9dH7xI=;
- b=mJhbg2RmjUirCAoH84whURQCwUFvFkZeKlyWvABrXeCmQKqMKW69uhmXfGHYPuA/ih
- ah33BeQZuFqcLTRhR4rM2Y2L+36yM2fTlL7qvrJd/8R7+5QLZGU40KflMVhAaLIkgIlM
- 2rpfMyuosEMebFIsC5baPgDz2ogRpxafyMAZpNyPmkYkaFe4Eqt9YmXipIZug2UVWZVC
- p9FRsPi8XiA3DG1ogS8hu2AQw+ZEF/D/ljhDDhHRugFntVdR0V2YhTsMt8RrKzWNIqPM
- yvB3TrFvS1cAu3dQvWWThSWv4MOx5XmpfQsCviKhkCIZVr+epps4jfmDrKzcDxjuVaYg
- tVjg==
-X-Gm-Message-State: AOJu0Ywwc1oEjlsBa3VSc8AIeLbJZh7VKzxP62OY1B01d4Hy3/W+ITNp
- GTZl3+p58x290n0uASNVWJg657BEov7QtgfUlCNTOIp0MavNO3B6LIreAr7KNCYmGMnZFVrRNjo
- HWYmx
-X-Gm-Gg: ASbGnctmrKHWGQg/n/AN3VLi6rVVVouauaSswo/Q03ZHoMBH+faGGiVAFECzHe7J49K
- q10shYX8pu+8ny+bHlSwko3cEmQ1ujvdKCXgIVBLo/lDZXhcPedC6kxuhLKiru7g5y0/bPWstXR
- Jexzb12u6f7rbymZ2oMz07cvdY1cPeLG6mMCdu++h/Q0DMR+ojnacpkDVrTnkXlKkF/M7ma2Ix8
- zTq79ONK18ggEQQ1ktaBjRiB4HscmGVwDEuZWRA7sR4p1y/mGo4jsad5MFxa05sWlcKCUY7T6Wv
- +YPrMrCqL7exbUEi5W/Tal6Jow7BpfL509Sj5RuONKREYkyF2dllQAWexmezObNFgTskR67YM3c
- 2TSVCY3EDt0jAjVsFQgFgO3SmeNBCnFQe6intrZVh0ehCQ9GAbe5ilahLrJHMOg+34LhLcRlq/7
- 0=
-X-Google-Smtp-Source: AGHT+IEbzmwmGSFzUXWtx1beK36K1kfQ7+ZySQicjXVpLsyG/E0vpjcBwlZP3xFRS0F7TantewWwAg==
-X-Received: by 2002:a05:6214:2421:b0:701:945:68a0 with SMTP id
- 6a1803df08f44-7051a11473amr225658806d6.26.1753111960316; 
- Mon, 21 Jul 2025 08:32:40 -0700 (PDT)
+ bh=NIktGylL5It/UmwAnVsdx9VAoE0A5OQkzfQ5+2202Ug=;
+ b=PdjpR8ibrpxDG0pFypfkM+fGm+rI19mhHbZxdkPmIbHWPVbX3VtC/kwv0O7H9h0D4r
+ vHEJ3goH460cIhUunZYxAMoHuz/r/iikUqVFD46ACKvvcagybcOT545AACWTiRS+2MWn
+ 6h3R65obO3HUCiValS62Pk45kc29cWZXhh11fElkyxeM19PEOBw2fJ3kXmWh90bUkoZq
+ F6Ow7YB5p4nr1RSHzeQEy5bTjwqw/hwb95ymS+JWltqUA35QiNrVco2NXxTugc2+5lgV
+ X5q4evGO3OvdqTqCobmgW3qZZJSibjVyHmWFy5G+q+KO+96Zf3bGQ9mmf38CLgVhTl4C
+ EdUA==
+X-Gm-Message-State: AOJu0YymzfXXBdctCdLzELSKH4qKA37NONRNdOXCwrJ5LkDEapWGcKH3
+ QgSC6u7bfOf3Ief5kK/87MQDs+xXs3GNLgNSZw2xj9y/Ha+2PspoOk+SX5roGmx1RoaF+8EZ7zW
+ e7NpQ
+X-Gm-Gg: ASbGncvZ72U2E1EXYLhtm0bJt5k7BhGRjxGgNvzfo+bebPng7wpIfA/Kdtev5Us1u4O
+ vRnoqxbEuBUew+VkGHOZ+4tfMCC7h198PS7+Tf+5OuWnI2SHtzyOnJ1KJnSQacauO5RVjWyjZCg
+ YE1QhFPrlJpwz04zwRh4iDpJfIRx2beeT1cIZ/52kwoGiDWlG8zQkJ/1iJNi1L0Eng1zXihHaXG
+ wh7Wwyhph4Lpk05IukyITvJp+ZmBc+xKyeMlBGBvD0K4fJPXG23CZV11yaAFNWJIw4z731KSAWa
+ CPjsPEN8iFm9+p3t6wF0Torm+bb9EQfYNvVoxwXRZTY6b18vP/dspcQ29FQXbv68G/aiN7A0aha
+ KEX0NbyT8n257sbL2mX+HC8ok68VQPbT/j+6gXdOLNxRD991sCUY3ps5/HgzOuMSZLqv1zz5hpV
+ F7kaZb/ivAtg==
+X-Google-Smtp-Source: AGHT+IFYdvPnxLOqZe2Hyf0JN16lk/sHHYiqGDw3YGGYLH8LDTORYKScBn1yNr+Izlb4PFj7HO7Xag==
+X-Received: by 2002:a05:620a:1b9b:b0:7e0:cb93:6fb1 with SMTP id
+ af79cd13be357-7e3433511a5mr3083818985a.9.1753112066856; 
+ Mon, 21 Jul 2025 08:34:26 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-7051b8e0512sm40674876d6.28.2025.07.21.08.32.39
+ 6a1803df08f44-7051ba6b728sm40918196d6.69.2025.07.21.08.34.26
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 21 Jul 2025 08:32:40 -0700 (PDT)
-Date: Mon, 21 Jul 2025 08:32:37 -0700
+ Mon, 21 Jul 2025 08:34:26 -0700 (PDT)
+Date: Mon, 21 Jul 2025 08:34:24 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Jie Liu <liujie5@linkdatatechnology.com>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v10 10/14] net/sxe: add xstats function
-Message-ID: <20250721083237.1031fbda@hermes.local>
-In-Reply-To: <20250719090537.699357-10-liujie5@linkdatatechnology.com>
+Subject: Re: [PATCH v10 13/14] net/sxe: add virtual function
+Message-ID: <20250721083424.716a8ff8@hermes.local>
+In-Reply-To: <20250719090537.699357-13-liujie5@linkdatatechnology.com>
 References: <20250716082930.83026-14-liujie5@linkdatatechnology.com>
  <20250719090537.699357-1-liujie5@linkdatatechnology.com>
- <20250719090537.699357-10-liujie5@linkdatatechnology.com>
+ <20250719090537.699357-13-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,33 +84,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, 19 Jul 2025 17:05:33 +0800
+On Sat, 19 Jul 2025 17:05:36 +0800
 Jie Liu <liujie5@linkdatatechnology.com> wrote:
 
-> +s32 sxe_eth_stats_get(struct rte_eth_dev *eth_dev,
-> +				struct rte_eth_stats *stats)
-> +{
-> +	struct sxe_adapter *adapter = eth_dev->data->dev_private;
-> +	struct sxe_stats_info *stats_info = &adapter->stats_info;
-> +	struct sxe_hw *hw = &adapter->hw;
-> +	u32 i;
-> +	u64 rx_packets = 0;
-> +	u64 rx_bytes = 0;
-> +	s32 ret = 0;
-> +
-> +	sxe_hw_stats_get(hw, &stats_info->hw_stats);
-> +
-> +	if (stats == NULL) {
-> +		ret = -EINVAL;
-> +		PMD_LOG_ERR(DRV, "input param stats is null.");
-> +		goto l_out;
-> +	}
+> diff --git a/drivers/net/sxe/base/sxevf_hw.c b/drivers/net/sxe/base/sxevf_hw.c
+> new file mode 100644
+> index 0000000000..7425bafedb
+> --- /dev/null
+> +++ b/drivers/net/sxe/base/sxevf_hw.c
+> @@ -0,0 +1,951 @@
+> +/* SPDX-License-Identifier: BSD-3-Clause
+> + * Copyright (C), 2022, Linkdata Technology Co., Ltd.
+> + */
+> +#if defined(__KERNEL__) || defined(SXE_KERNEL_TEST)
+> +#include <linux/etherdevice.h>
 > +
 
-This check is bad in two ways:
-  1. You already derefenced the pointer stats in previous line.
-     Coverity and other static tools will report this as an error.
-  2. The only thing that should call sxe_eth_stats_get is from rte_Eth_stats_get
-     which already checks for NULL.
-
-      
+It is preferred that for base code you use a tool like unifdef
+to remove any direct kernel parts. Seeing the stuff used by Linux
+kernel driver can confuse readers and simple searches for code.
+Plus AI tools really know nothing about code and what an ifdef is!
