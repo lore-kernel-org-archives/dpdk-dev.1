@@ -2,34 +2,88 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FBE2C83F25
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Jul 2025 18:31:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 387BAC83F25
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Jul 2025 19:56:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 912554026C;
-	Mon, 21 Jul 2025 20:31:40 +0200 (CEST)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id B38284021E
- for <dev@dpdk.org>; Mon, 21 Jul 2025 20:31:39 +0200 (CEST)
-Received: by linux.microsoft.com (Postfix, from userid 1213)
- id D7940211764D; Mon, 21 Jul 2025 11:31:38 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D7940211764D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1753122698;
- bh=WOahqrG6+0LCmf0eRTWoMYKMG4Jfgq2ep5LzqxTryik=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=IvTcsIaM2zr52gGAJbxALpIwfpSK4OhR0pGTApdasbBLAA8DoLyBX5nT+1nWnvxnX
- yRs7Y8p2JT/yulH+cno09ZcIIG1nPVgyS1q+h6okrw6Ny28Rt1YovIBTGP9NX5Wek5
- iXrBS53tLmXeVYPSaYEqFDuwqwkNdXFNIljXBH8o=
-From: Andre Muezerie <andremue@linux.microsoft.com>
-To: andremue@linux.microsoft.com
-Cc: dev@dpdk.org, dmitry.kozliuk@gmail.com, nicolas.chautru@intel.com,
- roretzla@linux.microsoft.com
-Subject: [PATCH v3] test_bbdev: enable to be compiled on Windows
-Date: Mon, 21 Jul 2025 11:31:11 -0700
-Message-Id: <1753122671-2645-1-git-send-email-andremue@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1749741884-13081-1-git-send-email-andremue@linux.microsoft.com>
-References: <1749741884-13081-1-git-send-email-andremue@linux.microsoft.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 055EC4026C;
+	Mon, 21 Jul 2025 21:56:27 +0200 (CEST)
+Received: from fout-a6-smtp.messagingengine.com
+ (fout-a6-smtp.messagingengine.com [103.168.172.149])
+ by mails.dpdk.org (Postfix) with ESMTP id 598D84021E
+ for <dev@dpdk.org>; Mon, 21 Jul 2025 21:56:25 +0200 (CEST)
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal
+ [10.202.2.50])
+ by mailfout.phl.internal (Postfix) with ESMTP id B5095EC026F;
+ Mon, 21 Jul 2025 15:56:24 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-10.internal (MEProxy); Mon, 21 Jul 2025 15:56:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1753127784;
+ x=1753214184; bh=I6nr+TjeqYbaIntCCuuJQQI+yXTadMHtPyHpJ4qrqzI=; b=
+ bWD7POoAJhbCyZuXsol/xJ2es4cXSAFHgGQM0YTNxe+iJ6wEx2XLrtpFjzYbYFPc
+ JQT4GnKRaDXloQoLDTPw+i9LMTbwcp/X22vyYmJo9h8Cy6Xh+jMGSmNCFXZ9PGZR
+ 2V6KcL58J2fXwdFHWoGvhro2t0RSmmD11h4qXUHtv92sbpsAxMcw0UZJFZ0VO/pN
+ fTo+xJcB34V3oH1gl6kl92mjH/f/xn9kMTfccM/trL00SoDo1RV6oFv+Ls01gJZU
+ 43CMc9t21j8QgUAoHka9t4K/Q7S8DW1g9FDJ5UiPyujWECcD11p9KTUPXw1ClR0+
+ ltdKpgVjYPDlcimWyRQhFA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1753127784; x=
+ 1753214184; bh=I6nr+TjeqYbaIntCCuuJQQI+yXTadMHtPyHpJ4qrqzI=; b=Q
+ FvfIosvZ3KCJcfGGbFe6dPk5sM+BMXMAlix2oRKH+SJc6DxNAcIKATTngC3HbCND
+ KZigx8aB6lKoVrrYTG7I1NPp+sD5Fb2TjoTE5oV1/b/6d/NSKWP1e/4flj8MuFcq
+ M17py3HiVTKjacQkDLgclWUm161br23tzZxpC0WaZETJVYAv86zKJchSLvW6d48u
+ 5E/mTKvGklSJyu/baPbeAq7nCbS3Fwgyia7gF60jg4sRiPECMcJqWLbZ93uftcMp
+ jnC5m9FixEH6NtIvYs9mXg/8i0v8BG4gzJE1GVDaBi2ocR7KB+h7MAzN+aB/q/Pw
+ jHuxyY6La4Lz4zJi8RYsQ==
+X-ME-Sender: <xms:aJt-aIbdl0nqMPGzwrTFJZXClDbfkTg1sKKAIgOU-vQtA22h6BbUWQ>
+ <xme:aJt-aKIG-7R16Wn9vhtshu6-xkMqCahfsKylSovzkDR3kkFoYCczDfwldEhBr4WCP
+ oNk1PUEKlY-3X1XTw>
+X-ME-Received: <xmr:aJt-aEs_42KiQcDCfi4krBWE6lWQr4Z3Z9mCWnuZekey12QUjHX6lBUM4wRkey0h1xWRwNlSwSDy5uGOMOcCe8trAQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejvdelkecutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+ ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+ hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
+ ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
+ grthhtvghrnhepkeefheeftdegtdejheeuuedtgfelfeeiveekieekleekffelgfdtveei
+ heehffdunecuffhomhgrihhnpeguphgukhdrohhrghenucevlhhushhtvghrufhiiigvpe
+ dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhn
+ vghtpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
+ gushhoshhnohifshhkihesnhhvihguihgrrdgtohhmpdhrtghpthhtohepvhhirggthhgv
+ shhlrghvohesnhhvihguihgrrdgtohhmpdhrtghpthhtohepsghinhhgiiesnhhvihguih
+ grrdgtohhmpdhrtghpthhtohepohhrihhkrgesnhhvihguihgrrdgtohhmpdhrtghpthht
+ ohepshhurghnmhhinhhgmhesnhhvihguihgrrdgtohhmpdhrtghpthhtohepmhgrthgrnh
+ esnhhvihguihgrrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghp
+ thhtoheprhgrshhlrghnugesnhhvihguihgrrdgtohhmpdhrtghpthhtohepuggrvhhiug
+ drmhgrrhgthhgrnhgusehrvgguhhgrthdrtghomh
+X-ME-Proxy: <xmx:aJt-aOUp4S86yYY0d8MJAU_AqRFu4_XT5R3q0TIHT6rg0_TvRtKanA>
+ <xmx:aJt-aPhJK_H5WSUi-Aqmrmdh_j7m02cLGsZkz9RhOKvHzROTHGsnlA>
+ <xmx:aJt-aGp-A1abI3gRRrhVaw_KnZdDD0u8dplosvkORpWSt47O6Fj8OQ>
+ <xmx:aJt-aFHFaUpSBZQIsJ4jQZxVXnihL0T3LDiQGqbmRomni7L7RNvMSw>
+ <xmx:aJt-aKeAmmwwwIqHx6hx0o6ZzuilJg4rkR57ZV3rSktS73ut8gQqJHvt>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 21 Jul 2025 15:56:23 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Dariusz Sosnowski <dsosnowski@nvidia.com>
+Cc: Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
+ dev@dpdk.org, Raslan Darawsheh <rasland@nvidia.com>,
+ David Marchand <david.marchand@redhat.com>
+Subject: Re: [PATCH] net/mlx5: deprecate representor matching devarg
+Date: Mon, 21 Jul 2025 21:56:21 +0200
+Message-ID: <15520741.JCcGWNJJiE@thomas>
+In-Reply-To: <20250716093846.1117794-1-dsosnowski@nvidia.com>
+References: <20250716093846.1117794-1-dsosnowski@nvidia.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -43,477 +97,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch fixes a few issues which were preventing this test from
-getting compiled on Windows:
+16/07/2025 11:38, Dariusz Sosnowski:
+> Mark repr_matching_en device argument exposed by mlx5 PMD
+> as deprecated and schedule its removal in 25.11 release.
+> 
+> Functionality exposed by this device argument does not fit
+> current E-Switch representor model exposed by DPDK.
+> A new unified representor model, described in
+> https://fast.dpdk.org/events/slides/DPDK-2024-07-unified_representor.pdf
+> should be developed.
+> 
+> Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
 
-1) VLAs were removed: Variable Length Arrays are not supported by MSVC.
-Where possible constant C arrays were used. Where that approach was not
-possible alloca() was called instead.
+The impact is very limited.
+There is no API/ABI breakage.
+The devarg is probably not used a lot.
+To be on a completely safe side, the devarg could continue to be accepted
+if a user set it at its default value.
+Still, announcing this is a good idea in case someone uses this.
 
-2) rte_os_shim is included because this test relies on getline()
-function, which is not provided by Windows APIs.
+Applied, thanks.
 
-Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
-Acked-by: Nic Chautru <nicolas.chautru@intel.com>
----
- app/test-bbdev/main.c                 |   1 +
- app/test-bbdev/meson.build            |   6 --
- app/test-bbdev/test_bbdev.c           |   8 +-
- app/test-bbdev/test_bbdev_perf.c      | 126 ++++++++++++++------------
- app/test-bbdev/test_bbdev_vector.c    |   1 +
- lib/eal/windows/include/rte_os_shim.h |   1 +
- 6 files changed, 76 insertions(+), 67 deletions(-)
-
-diff --git a/app/test-bbdev/main.c b/app/test-bbdev/main.c
-index 8f6852e2ef..aee8dbb0fa 100644
---- a/app/test-bbdev/main.c
-+++ b/app/test-bbdev/main.c
-@@ -14,6 +14,7 @@
- #include <rte_string_fns.h>
- #include <rte_cycles.h>
- #include <rte_lcore.h>
-+#include <rte_os_shim.h>
- 
- #include "main.h"
- 
-diff --git a/app/test-bbdev/meson.build b/app/test-bbdev/meson.build
-index 85b060edec..f85a20c5b0 100644
---- a/app/test-bbdev/meson.build
-+++ b/app/test-bbdev/meson.build
-@@ -1,12 +1,6 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright(c) 2018 Intel Corporation
- 
--if is_windows
--    build = false
--    reason = 'not supported on Windows'
--    subdir_done()
--endif
--
- sources = files(
-         'main.c',
-         'test_bbdev.c',
-diff --git a/app/test-bbdev/test_bbdev.c b/app/test-bbdev/test_bbdev.c
-index 0bbce6ca92..2422312f6b 100644
---- a/app/test-bbdev/test_bbdev.c
-+++ b/app/test-bbdev/test_bbdev.c
-@@ -548,9 +548,9 @@ test_bbdev_op_pool(void)
- static int
- test_bbdev_op_type(void)
- {
-+#define OPS_COUNT 32
- 	struct rte_mempool *mp_dec;
- 
--	const unsigned int OPS_COUNT = 32;
- 	struct rte_bbdev_dec_op *dec_ops_arr[OPS_COUNT];
- 	struct rte_bbdev_enc_op *enc_ops_arr[OPS_COUNT];
- 
-@@ -576,14 +576,15 @@ test_bbdev_op_type(void)
- 	rte_mempool_free(mp_dec);
- 
- 	return TEST_SUCCESS;
-+#undef OPS_COUNT
- }
- 
- static int
- test_bbdev_op_pool_size(void)
- {
-+#define OPS_COUNT 128
- 	struct rte_mempool *mp_none;
- 
--	const unsigned int OPS_COUNT = 128;
- 	struct rte_bbdev_enc_op *ops_enc_arr[OPS_COUNT];
- 	struct rte_bbdev_enc_op *ops_ext_arr[OPS_COUNT];
- 	struct rte_bbdev_enc_op *ops_ext2_arr[OPS_COUNT];
-@@ -627,6 +628,7 @@ test_bbdev_op_pool_size(void)
- 	rte_mempool_free(mp_none);
- 
- 	return TEST_SUCCESS;
-+#undef OPS_COUNT
- }
- 
- static int
-@@ -815,7 +817,7 @@ test_bbdev_driver_init(void)
- 
- 	TEST_ASSERT(dev1->data->dev_id < RTE_BBDEV_MAX_DEVS,
- 			"Failed test rte_bbdev_allocate: "
--			"invalid dev_id %" PRIu8 ", max number of devices %d ",
-+			"invalid dev_id %" PRIu16 ", max number of devices %d ",
- 			dev1->data->dev_id, RTE_BBDEV_MAX_DEVS);
- 
- 	TEST_ASSERT(dev1->state == RTE_BBDEV_INITIALIZED,
-diff --git a/app/test-bbdev/test_bbdev_perf.c b/app/test-bbdev/test_bbdev_perf.c
-index 6ee1ca34b2..27b0a6f523 100644
---- a/app/test-bbdev/test_bbdev_perf.c
-+++ b/app/test-bbdev/test_bbdev_perf.c
-@@ -1570,12 +1570,13 @@ maxstar(double A, double B)
- static void
- gen_qm8_llr(int8_t *llrs, uint32_t i, double N0, double llr_max)
- {
--	int qm = 8;
--	int qam = 256;
-+#define QM 8
-+#define QAM 256
-+
- 	int m, k;
--	double I, Q, p0, p1, llr_, b[qm], log_syml_prob[qam];
-+	double I, Q, p0, p1, llr_, b[QM], log_syml_prob[QAM];
- 	/* 5.1.4 of TS38.211 */
--	const double symbols_I[256] = {
-+	const double symbols_I[QAM] = {
- 			5, 5, 7, 7, 5, 5, 7, 7, 3, 3, 1, 1, 3, 3, 1, 1, 5,
- 			5, 7, 7, 5, 5, 7, 7, 3, 3, 1, 1, 3, 3, 1, 1, 11,
- 			11, 9, 9, 11, 11, 9, 9, 13, 13, 15, 15, 13, 13,
-@@ -1596,7 +1597,7 @@ gen_qm8_llr(int8_t *llrs, uint32_t i, double N0, double llr_max)
- 			-9, -9, -11, -11, -9, -9, -13, -13, -15, -15, -13,
- 			-13, -15, -15, -11, -11, -9, -9, -11, -11, -9, -9,
- 			-13, -13, -15, -15, -13, -13, -15, -15};
--	const double symbols_Q[256] = {
-+	const double symbols_Q[QAM] = {
- 			5, 7, 5, 7, 3, 1, 3, 1, 5, 7, 5, 7, 3, 1, 3, 1, 11,
- 			9, 11, 9, 13, 15, 13, 15, 11, 9, 11, 9, 13, 15, 13,
- 			15, 5, 7, 5, 7, 3, 1, 3, 1, 5, 7, 5, 7, 3, 1, 3, 1,
-@@ -1619,8 +1620,8 @@ gen_qm8_llr(int8_t *llrs, uint32_t i, double N0, double llr_max)
- 			-13, -15, -11, -9, -11, -9, -13, -15, -13, -15};
- 	/* Average constellation point energy */
- 	N0 *= 170.0;
--	for (k = 0; k < qm; k++)
--		b[k] = llrs[qm * i + k] < 0 ? 1.0 : 0.0;
-+	for (k = 0; k < QM; k++)
-+		b[k] = llrs[QM * i + k] < 0 ? 1.0 : 0.0;
- 	/* 5.1.4 of TS38.211 */
- 	I = (1 - 2 * b[0]) * (8 - (1 - 2 * b[2]) *
- 			(4 - (1 - 2 * b[4]) * (2 - (1 - 2 * b[6]))));
-@@ -1633,16 +1634,16 @@ gen_qm8_llr(int8_t *llrs, uint32_t i, double N0, double llr_max)
- 	 * Calculate the log of the probability that each of
- 	 * the constellation points was transmitted
- 	 */
--	for (m = 0; m < qam; m++)
-+	for (m = 0; m < QAM; m++)
- 		log_syml_prob[m] = -(pow(I - symbols_I[m], 2.0)
- 				+ pow(Q - symbols_Q[m], 2.0)) / N0;
- 	/* Calculate an LLR for each of the k_64QAM bits in the set */
--	for (k = 0; k < qm; k++) {
-+	for (k = 0; k < QM; k++) {
- 		p0 = -999999;
- 		p1 = -999999;
- 		/* For each constellation point */
--		for (m = 0; m < qam; m++) {
--			if ((m >> (qm - k - 1)) & 1)
-+		for (m = 0; m < QAM; m++) {
-+			if ((m >> (QM - k - 1)) & 1)
- 				p1 = maxstar(p1, log_syml_prob[m]);
- 			else
- 				p0 = maxstar(p0, log_syml_prob[m]);
-@@ -1655,8 +1656,10 @@ gen_qm8_llr(int8_t *llrs, uint32_t i, double N0, double llr_max)
- 			llr_ = llr_max;
- 		if (llr_ < -llr_max)
- 			llr_ = -llr_max;
--		llrs[qm * i + k] = (int8_t) llr_;
-+		llrs[QM * i + k] = (int8_t) llr_;
- 	}
-+#undef QM
-+#undef QAM
- }
- 
- 
-@@ -1667,18 +1670,19 @@ gen_qm8_llr(int8_t *llrs, uint32_t i, double N0, double llr_max)
- static void
- gen_qm6_llr(int8_t *llrs, uint32_t i, double N0, double llr_max)
- {
--	int qm = 6;
--	int qam = 64;
-+#define QM 6
-+#define QAM 64
-+
- 	int m, k;
--	double I, Q, p0, p1, llr_, b[qm], log_syml_prob[qam];
-+	double I, Q, p0, p1, llr_, b[QM], log_syml_prob[QAM];
- 	/* 5.1.4 of TS38.211 */
--	const double symbols_I[64] = {
-+	const double symbols_I[QAM] = {
- 			3, 3, 1, 1, 3, 3, 1, 1, 5, 5, 7, 7, 5, 5, 7, 7,
- 			3, 3, 1, 1, 3, 3, 1, 1, 5, 5, 7, 7, 5, 5, 7, 7,
- 			-3, -3, -1, -1, -3, -3, -1, -1, -5, -5, -7, -7,
- 			-5, -5, -7, -7, -3, -3, -1, -1, -3, -3, -1, -1,
- 			-5, -5, -7, -7, -5, -5, -7, -7};
--	const double symbols_Q[64] = {
-+	const double symbols_Q[QAM] = {
- 			3, 1, 3, 1, 5, 7, 5, 7, 3, 1, 3, 1, 5, 7, 5, 7,
- 			-3, -1, -3, -1, -5, -7, -5, -7, -3, -1, -3, -1,
- 			-5, -7, -5, -7, 3, 1, 3, 1, 5, 7, 5, 7, 3, 1, 3, 1,
-@@ -1686,8 +1690,8 @@ gen_qm6_llr(int8_t *llrs, uint32_t i, double N0, double llr_max)
- 			-3, -1, -3, -1, -5, -7, -5, -7};
- 	/* Average constellation point energy */
- 	N0 *= 42.0;
--	for (k = 0; k < qm; k++)
--		b[k] = llrs[qm * i + k] < 0 ? 1.0 : 0.0;
-+	for (k = 0; k < QM; k++)
-+		b[k] = llrs[QM * i + k] < 0 ? 1.0 : 0.0;
- 	/* 5.1.4 of TS38.211 */
- 	I = (1 - 2 * b[0])*(4 - (1 - 2 * b[2]) * (2 - (1 - 2 * b[4])));
- 	Q = (1 - 2 * b[1])*(4 - (1 - 2 * b[3]) * (2 - (1 - 2 * b[5])));
-@@ -1698,16 +1702,16 @@ gen_qm6_llr(int8_t *llrs, uint32_t i, double N0, double llr_max)
- 	 * Calculate the log of the probability that each of
- 	 * the constellation points was transmitted
- 	 */
--	for (m = 0; m < qam; m++)
-+	for (m = 0; m < QAM; m++)
- 		log_syml_prob[m] = -(pow(I - symbols_I[m], 2.0)
- 				+ pow(Q - symbols_Q[m], 2.0)) / N0;
- 	/* Calculate an LLR for each of the k_64QAM bits in the set */
--	for (k = 0; k < qm; k++) {
-+	for (k = 0; k < QM; k++) {
- 		p0 = -999999;
- 		p1 = -999999;
- 		/* For each constellation point */
--		for (m = 0; m < qam; m++) {
--			if ((m >> (qm - k - 1)) & 1)
-+		for (m = 0; m < QAM; m++) {
-+			if ((m >> (QM - k - 1)) & 1)
- 				p1 = maxstar(p1, log_syml_prob[m]);
- 			else
- 				p0 = maxstar(p0, log_syml_prob[m]);
-@@ -1720,8 +1724,10 @@ gen_qm6_llr(int8_t *llrs, uint32_t i, double N0, double llr_max)
- 			llr_ = llr_max;
- 		if (llr_ < -llr_max)
- 			llr_ = -llr_max;
--		llrs[qm * i + k] = (int8_t) llr_;
-+		llrs[QM * i + k] = (int8_t) llr_;
- 	}
-+#undef QM
-+#undef QAM
- }
- 
- /*
-@@ -1731,19 +1737,20 @@ gen_qm6_llr(int8_t *llrs, uint32_t i, double N0, double llr_max)
- static void
- gen_qm4_llr(int8_t *llrs, uint32_t i, double N0, double llr_max)
- {
--	int qm = 4;
--	int qam = 16;
-+#define QM 4
-+#define QAM 16
-+
- 	int m, k;
--	double I, Q, p0, p1, llr_, b[qm], log_syml_prob[qam];
-+	double I, Q, p0, p1, llr_, b[QM], log_syml_prob[QAM];
- 	/* 5.1.4 of TS38.211 */
--	const double symbols_I[16] = {1, 1, 3, 3, 1, 1, 3, 3,
-+	const double symbols_I[QAM] = {1, 1, 3, 3, 1, 1, 3, 3,
- 			-1, -1, -3, -3, -1, -1, -3, -3};
--	const double symbols_Q[16] = {1, 3, 1, 3, -1, -3, -1, -3,
-+	const double symbols_Q[QAM] = {1, 3, 1, 3, -1, -3, -1, -3,
- 			1, 3, 1, 3, -1, -3, -1, -3};
- 	/* Average constellation point energy */
- 	N0 *= 10.0;
--	for (k = 0; k < qm; k++)
--		b[k] = llrs[qm * i + k] < 0 ? 1.0 : 0.0;
-+	for (k = 0; k < QM; k++)
-+		b[k] = llrs[QM * i + k] < 0 ? 1.0 : 0.0;
- 	/* 5.1.4 of TS38.211 */
- 	I = (1 - 2 * b[0]) * (2 - (1 - 2 * b[2]));
- 	Q = (1 - 2 * b[1]) * (2 - (1 - 2 * b[3]));
-@@ -1754,16 +1761,16 @@ gen_qm4_llr(int8_t *llrs, uint32_t i, double N0, double llr_max)
- 	 * Calculate the log of the probability that each of
- 	 * the constellation points was transmitted
- 	 */
--	for (m = 0; m < qam; m++)
-+	for (m = 0; m < QAM; m++)
- 		log_syml_prob[m] = -(pow(I - symbols_I[m], 2.0)
- 				+ pow(Q - symbols_Q[m], 2.0)) / N0;
- 	/* Calculate an LLR for each of the k_64QAM bits in the set */
--	for (k = 0; k < qm; k++) {
-+	for (k = 0; k < QM; k++) {
- 		p0 = -999999;
- 		p1 = -999999;
- 		/* For each constellation point */
--		for (m = 0; m < qam; m++) {
--			if ((m >> (qm - k - 1)) & 1)
-+		for (m = 0; m < QAM; m++) {
-+			if ((m >> (QM - k - 1)) & 1)
- 				p1 = maxstar(p1, log_syml_prob[m]);
- 			else
- 				p0 = maxstar(p0, log_syml_prob[m]);
-@@ -1776,8 +1783,10 @@ gen_qm4_llr(int8_t *llrs, uint32_t i, double N0, double llr_max)
- 			llr_ = llr_max;
- 		if (llr_ < -llr_max)
- 			llr_ = -llr_max;
--		llrs[qm * i + k] = (int8_t) llr_;
-+		llrs[QM * i + k] = (int8_t) llr_;
- 	}
-+#undef QM
-+#undef QAM
- }
- 
- static void
-@@ -3441,7 +3450,7 @@ throughput_intr_lcore_ldpc_dec(void *arg)
- 	const uint16_t queue_id = tp->queue_id;
- 	const uint16_t burst_sz = tp->op_params->burst_sz;
- 	const uint16_t num_to_process = tp->op_params->num_to_process;
--	struct rte_bbdev_dec_op *ops[num_to_process];
-+	struct rte_bbdev_dec_op **ops = alloca(sizeof(struct rte_bbdev_dec_op *) * num_to_process);
- 	struct test_buffers *bufs = NULL;
- 	struct rte_bbdev_info info;
- 	int ret, i, j;
-@@ -3550,7 +3559,7 @@ throughput_intr_lcore_dec(void *arg)
- 	const uint16_t queue_id = tp->queue_id;
- 	const uint16_t burst_sz = tp->op_params->burst_sz;
- 	const uint16_t num_to_process = tp->op_params->num_to_process;
--	struct rte_bbdev_dec_op *ops[num_to_process];
-+	struct rte_bbdev_dec_op **ops = alloca(sizeof(struct rte_bbdev_dec_op *) * num_to_process);
- 	struct test_buffers *bufs = NULL;
- 	struct rte_bbdev_info info;
- 	struct rte_bbdev_dec_op *ref_op = tp->op_params->ref_dec_op;
-@@ -3648,7 +3657,7 @@ throughput_intr_lcore_enc(void *arg)
- 	const uint16_t queue_id = tp->queue_id;
- 	const uint16_t burst_sz = tp->op_params->burst_sz;
- 	const uint16_t num_to_process = tp->op_params->num_to_process;
--	struct rte_bbdev_enc_op *ops[num_to_process];
-+	struct rte_bbdev_enc_op **ops = alloca(sizeof(struct rte_bbdev_enc_op *) * num_to_process);
- 	struct test_buffers *bufs = NULL;
- 	struct rte_bbdev_info info;
- 	int ret, i, j;
-@@ -3742,7 +3751,7 @@ throughput_intr_lcore_ldpc_enc(void *arg)
- 	const uint16_t queue_id = tp->queue_id;
- 	const uint16_t burst_sz = tp->op_params->burst_sz;
- 	const uint16_t num_to_process = tp->op_params->num_to_process;
--	struct rte_bbdev_enc_op *ops[num_to_process];
-+	struct rte_bbdev_enc_op **ops = alloca(sizeof(struct rte_bbdev_enc_op *) * num_to_process);
- 	struct test_buffers *bufs = NULL;
- 	struct rte_bbdev_info info;
- 	int ret, i, j;
-@@ -3838,7 +3847,7 @@ throughput_intr_lcore_fft(void *arg)
- 	const uint16_t queue_id = tp->queue_id;
- 	const uint16_t burst_sz = tp->op_params->burst_sz;
- 	const uint16_t num_to_process = tp->op_params->num_to_process;
--	struct rte_bbdev_fft_op *ops[num_to_process];
-+	struct rte_bbdev_fft_op **ops = alloca(sizeof(struct rte_bbdev_fft_op *) * num_to_process);
- 	struct test_buffers *bufs = NULL;
- 	struct rte_bbdev_info info;
- 	int ret, i, j;
-@@ -3932,7 +3941,8 @@ throughput_intr_lcore_mldts(void *arg)
- 	const uint16_t queue_id = tp->queue_id;
- 	const uint16_t burst_sz = tp->op_params->burst_sz;
- 	const uint16_t num_to_process = tp->op_params->num_to_process;
--	struct rte_bbdev_mldts_op *ops[num_to_process];
-+	struct rte_bbdev_mldts_op **ops =
-+			alloca(sizeof(struct rte_bbdev_mldts_op *) * num_to_process);
- 	struct test_buffers *bufs = NULL;
- 	struct rte_bbdev_info info;
- 	int ret, i, j;
-@@ -4022,8 +4032,8 @@ throughput_pmd_lcore_dec(void *arg)
- 	const uint16_t queue_id = tp->queue_id;
- 	const uint16_t burst_sz = tp->op_params->burst_sz;
- 	const uint16_t num_ops = tp->op_params->num_to_process;
--	struct rte_bbdev_dec_op *ops_enq[num_ops];
--	struct rte_bbdev_dec_op *ops_deq[num_ops];
-+	struct rte_bbdev_dec_op **ops_enq = alloca(sizeof(struct rte_bbdev_dec_op *) * num_ops);
-+	struct rte_bbdev_dec_op **ops_deq = alloca(sizeof(struct rte_bbdev_dec_op *) * num_ops);
- 	struct rte_bbdev_dec_op *ref_op = tp->op_params->ref_dec_op;
- 	struct test_buffers *bufs = NULL;
- 	int i, j, ret;
-@@ -4135,8 +4145,8 @@ bler_pmd_lcore_ldpc_dec(void *arg)
- 	const uint16_t queue_id = tp->queue_id;
- 	const uint16_t burst_sz = tp->op_params->burst_sz;
- 	const uint16_t num_ops = tp->op_params->num_to_process;
--	struct rte_bbdev_dec_op *ops_enq[num_ops];
--	struct rte_bbdev_dec_op *ops_deq[num_ops];
-+	struct rte_bbdev_dec_op **ops_enq = alloca(sizeof(struct rte_bbdev_dec_op *) * num_ops);
-+	struct rte_bbdev_dec_op **ops_deq = alloca(sizeof(struct rte_bbdev_dec_op *) * num_ops);
- 	struct rte_bbdev_dec_op *ref_op = tp->op_params->ref_dec_op;
- 	struct test_buffers *bufs = NULL;
- 	int i, j, ret;
-@@ -4278,8 +4288,8 @@ bler_pmd_lcore_turbo_dec(void *arg)
- 	const uint16_t queue_id = tp->queue_id;
- 	const uint16_t burst_sz = tp->op_params->burst_sz;
- 	const uint16_t num_ops = tp->op_params->num_to_process;
--	struct rte_bbdev_dec_op *ops_enq[num_ops];
--	struct rte_bbdev_dec_op *ops_deq[num_ops];
-+	struct rte_bbdev_dec_op **ops_enq = alloca(sizeof(struct rte_bbdev_dec_op *) * num_ops);
-+	struct rte_bbdev_dec_op **ops_deq = alloca(sizeof(struct rte_bbdev_dec_op *) * num_ops);
- 	struct rte_bbdev_dec_op *ref_op = tp->op_params->ref_dec_op;
- 	struct test_buffers *bufs = NULL;
- 	int i, j, ret;
-@@ -4397,8 +4407,8 @@ throughput_pmd_lcore_ldpc_dec(void *arg)
- 	const uint16_t queue_id = tp->queue_id;
- 	const uint16_t burst_sz = tp->op_params->burst_sz;
- 	const uint16_t num_ops = tp->op_params->num_to_process;
--	struct rte_bbdev_dec_op *ops_enq[num_ops];
--	struct rte_bbdev_dec_op *ops_deq[num_ops];
-+	struct rte_bbdev_dec_op **ops_enq = alloca(sizeof(struct rte_bbdev_dec_op *) * num_ops);
-+	struct rte_bbdev_dec_op **ops_deq = alloca(sizeof(struct rte_bbdev_dec_op *) * num_ops);
- 	struct rte_bbdev_dec_op *ref_op = tp->op_params->ref_dec_op;
- 	struct test_buffers *bufs = NULL;
- 	int i, j, ret;
-@@ -4535,8 +4545,8 @@ throughput_pmd_lcore_enc(void *arg)
- 	const uint16_t queue_id = tp->queue_id;
- 	const uint16_t burst_sz = tp->op_params->burst_sz;
- 	const uint16_t num_ops = tp->op_params->num_to_process;
--	struct rte_bbdev_enc_op *ops_enq[num_ops];
--	struct rte_bbdev_enc_op *ops_deq[num_ops];
-+	struct rte_bbdev_enc_op **ops_enq = alloca(sizeof(struct rte_bbdev_enc_op *) * num_ops);
-+	struct rte_bbdev_enc_op **ops_deq = alloca(sizeof(struct rte_bbdev_enc_op *) * num_ops);
- 	struct rte_bbdev_enc_op *ref_op = tp->op_params->ref_enc_op;
- 	struct test_buffers *bufs = NULL;
- 	int i, j, ret;
-@@ -4637,8 +4647,8 @@ throughput_pmd_lcore_ldpc_enc(void *arg)
- 	const uint16_t queue_id = tp->queue_id;
- 	const uint16_t burst_sz = tp->op_params->burst_sz;
- 	const uint16_t num_ops = tp->op_params->num_to_process;
--	struct rte_bbdev_enc_op *ops_enq[num_ops];
--	struct rte_bbdev_enc_op *ops_deq[num_ops];
-+	struct rte_bbdev_enc_op **ops_enq = alloca(sizeof(struct rte_bbdev_enc_op *) * num_ops);
-+	struct rte_bbdev_enc_op **ops_deq = alloca(sizeof(struct rte_bbdev_enc_op *) * num_ops);
- 	struct rte_bbdev_enc_op *ref_op = tp->op_params->ref_enc_op;
- 	struct test_buffers *bufs = NULL;
- 	int i, j, ret;
-@@ -4739,8 +4749,8 @@ throughput_pmd_lcore_fft(void *arg)
- 	const uint16_t queue_id = tp->queue_id;
- 	const uint16_t burst_sz = tp->op_params->burst_sz;
- 	const uint16_t num_ops = tp->op_params->num_to_process;
--	struct rte_bbdev_fft_op *ops_enq[num_ops];
--	struct rte_bbdev_fft_op *ops_deq[num_ops];
-+	struct rte_bbdev_fft_op **ops_enq = alloca(sizeof(struct rte_bbdev_fft_op *) * num_ops);
-+	struct rte_bbdev_fft_op **ops_deq = alloca(sizeof(struct rte_bbdev_fft_op *) * num_ops);
- 	struct rte_bbdev_fft_op *ref_op = tp->op_params->ref_fft_op;
- 	struct test_buffers *bufs = NULL;
- 	int i, j, ret;
-@@ -4839,8 +4849,8 @@ throughput_pmd_lcore_mldts(void *arg)
- 	const uint16_t queue_id = tp->queue_id;
- 	const uint16_t burst_sz = tp->op_params->burst_sz;
- 	const uint16_t num_ops = tp->op_params->num_to_process;
--	struct rte_bbdev_mldts_op *ops_enq[num_ops];
--	struct rte_bbdev_mldts_op *ops_deq[num_ops];
-+	struct rte_bbdev_mldts_op **ops_enq = alloca(sizeof(struct rte_bbdev_mldts_op *) * num_ops);
-+	struct rte_bbdev_mldts_op **ops_deq = alloca(sizeof(struct rte_bbdev_mldts_op *) * num_ops);
- 	struct rte_bbdev_mldts_op *ref_op = tp->op_params->ref_mldts_op;
- 	struct test_buffers *bufs = NULL;
- 	int i, j, ret;
-diff --git a/app/test-bbdev/test_bbdev_vector.c b/app/test-bbdev/test_bbdev_vector.c
-index 8b32850982..f3def6aaaf 100644
---- a/app/test-bbdev/test_bbdev_vector.c
-+++ b/app/test-bbdev/test_bbdev_vector.c
-@@ -10,6 +10,7 @@
- #include <stdlib.h>
- #include <stdbool.h>
- #include <rte_malloc.h>
-+#include <rte_os_shim.h>
- 
- #include "test_bbdev_vector.h"
- 
-diff --git a/lib/eal/windows/include/rte_os_shim.h b/lib/eal/windows/include/rte_os_shim.h
-index 0e74eb19c7..f16b2230c8 100644
---- a/lib/eal/windows/include/rte_os_shim.h
-+++ b/lib/eal/windows/include/rte_os_shim.h
-@@ -7,6 +7,7 @@
- 
- #include <rte_os.h>
- #include <rte_windows.h>
-+#include <getline.h>
- 
- /**
-  * @file
--- 
-2.50.1.vfs.0.0
 
