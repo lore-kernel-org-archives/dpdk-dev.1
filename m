@@ -2,75 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F445C83F25
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Jul 2025 13:08:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40A2FC83F25
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Jul 2025 13:09:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C88294021E;
-	Mon, 21 Jul 2025 15:08:02 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7DA6540662;
+	Mon, 21 Jul 2025 15:09:46 +0200 (CEST)
 Received: from fout-a2-smtp.messagingengine.com
  (fout-a2-smtp.messagingengine.com [103.168.172.145])
- by mails.dpdk.org (Postfix) with ESMTP id C8FB44014F
- for <dev@dpdk.org>; Mon, 21 Jul 2025 15:08:00 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 140064014F;
+ Mon, 21 Jul 2025 15:09:44 +0200 (CEST)
 Received: from phl-compute-06.internal (phl-compute-06.phl.internal
  [10.202.2.46])
- by mailfout.phl.internal (Postfix) with ESMTP id 568B8EC022D;
- Mon, 21 Jul 2025 09:08:00 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-06.internal (MEProxy); Mon, 21 Jul 2025 09:08:00 -0400
+ by mailfout.phl.internal (Postfix) with ESMTP id 9A7C2EC0229;
+ Mon, 21 Jul 2025 09:09:43 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-06.internal (MEProxy); Mon, 21 Jul 2025 09:09:43 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1753103280;
- x=1753189680; bh=wsV+P4spLWAS1RXJll9UBCVs2zprXFlNimlYULNq0So=; b=
- wGlpFPp6IJuELVmolwqkjzHRPFQnM8KHJ7hgijZ8J2EO6JDq77onAGXUdq03Octu
- v2zs49+H6rlNKrbRokwnNyQEaGCgfM20adjK+Y00wedVC2HOXzcvtB2xnahpAMR5
- rOWqL2h2pAJAhqt+d5N0pfTzKdQ6RF75BhSBb5sJdW+QAVweIeui2icSE1H7ukyY
- YrIKIi2QFhtPhp4kol8OsmQN1H0tqTT521hHvnsTZWWHCtLtLJ9JPHU/rRv72tVs
- nEHIsTFOdf6QAxf6eWldUHrpJjPQo6QYTyqALwuyl8dF866LWGFjwgEXt1gi5ONL
- h6UAND6eVeKb3C/k/Y/BvA==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1753103383;
+ x=1753189783; bh=/ZxNzaTohGdVchdsostYGh/FWMj/zh1FJW2V/KivAvY=; b=
+ ryIMeZzTTUQ9sqKqmLbQ+sEaHeDRZJwRbHKEVfylVCMvo2eIICT590Ov8DSzc9DM
+ wjKjWn5bN3VhzuHT5jj8Al7Uz4k1yFgjxzvqK7i283g4jvlSt/ThggrjFBCkKPf9
+ mpRBnJh5TS04czQq/eefgP9mXGKHA43q9FVOj5M4mPXn7I7aTPomhHv7k+ulBLJc
+ N6GnYd6RtcZAAZ9voWGECnKs73rHBVssMeDCKQzIu/tmsiSiQJYc/8hvD55aynC9
+ j91v01K80RbkMjBYAtjLtGQu5/QOL6BPLK/PZarE6REiKVTHq2BTBCtdCiwokU/I
+ dNnEnCrmI/wiFyfNO7ZJbQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1753103280; x=
- 1753189680; bh=wsV+P4spLWAS1RXJll9UBCVs2zprXFlNimlYULNq0So=; b=E
- brI97xirKW1YZ4GanqUT5DbLzvKgiHYclVBqiPRF4uzuK3LrZE+PKxcliiDooxrY
- KD0mqlyPuz49uE8AvLQ+Sqh+x0SquRGWjfESiCXuKMl+bKLzfNAY0cJ0tIHSvt+N
- DqZWqTm+HjZHia+WnTWsgmrvknjYZYaOO1kN6jXBzXf6OTuKmqVzZ9tLF22zuHxR
- c00sCUnHvCFsOxhgsDhUcN2pGSZk55rpBQpmChwTQnWWgHS5stw95+DCSYTxjRcd
- fk2iyX4ALDOMqC/Sq7OjFFpYiHLSbQAprE0MZEPyHxSmf8Xkxp6Qkv3goSWH/P4A
- tcNa8ARqyRLPXhvjFwq8w==
-X-ME-Sender: <xms:sDt-aCCHMVdITF-8xZrE94RlQfr2jSw1ypfSlEgAaabhICSAa3Y3Ww>
- <xme:sDt-aBxS_P9l90BFWkVeL6dMsbMXB3FDCPfUFxbvpp3iE2UzJpCcDd7TYR3bQtcDj
- EDDTHRYdko7i-MPqg>
-X-ME-Received: <xmr:sDt-aHS9l4I1o3a4ZUht8Z1KXihYFcY197LaoLAhU8HhoXtNmzibYrQ9NGjL1JM7z5VMbu9IPTwHcq8tIgEq1w5uSw>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1753103383; x=
+ 1753189783; bh=/ZxNzaTohGdVchdsostYGh/FWMj/zh1FJW2V/KivAvY=; b=J
+ cp79RXbPBQU8PEgOdEmav1C6Fi1UdwOcZEDdsQVxxticcL0HLBiwMPBBwf+Fejrz
+ NjcyDtTJMPT44mpZfAFjwaEineY4G7azpzXOEHpV3JhmvI/aeRJykkBOAa4eN4bO
+ gKmEDB2XeHXK5TZxwY1OCwy8M6e5E/8pjzPiQeLNlOz0pbYYqGd+YMMLZ7ZKRIwY
+ dUEdUz/PZvDMXXxNB/QTk07Q4LYOWE4LNetZxNYk4p3EbVtRKzukcD83MTWEXRgd
+ ja+5iHV0p8W7YfK0MeLFqS8S5ImPlPBIw9QevoNAYUbrrucxSmCsyLk5XMthNf4A
+ +OR8P30P+PJsqnk+HnPXw==
+X-ME-Sender: <xms:Fzx-aEZXbKik_yRaVUbxk8QIIOjOps_KuV89sarM7dya3H2ILoXBzA>
+ <xme:Fzx-aEwg_bxPvib-cRJWKkMZ75-Q8mvy6PcR9Nq44y4MeO9OqkzNCW8KkUIFtJSvi
+ 9hp46SSfvkIfjiTtA>
+X-ME-Received: <xmr:Fzx-aPLuB6x38l9_XDkN_Dc2N8O26BaCIuJIUVJ_eHLxJv_tgfAaFfKX9KIV0MZP30PRLL6L2f6SrWAQ1NSozgIiCA>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejvdduiecutefuodetggdotefrod
  ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
  ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
  hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
  ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
  grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
- gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
- epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepvddpmhho
- uggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhhiugdrmhgrrhgthhgrnhgusehrvg
- guhhgrthdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
-X-ME-Proxy: <xmx:sDt-aI_YCmKfCZxMj0bDgNZ6Jj8CSkwQwMlUPhXJMagI3zaZv-IvMQ>
- <xmx:sDt-aOr33ErRidT-AWFSgsOykyUCxEKpNgXHbUEQFI256DAueSLtwg>
- <xmx:sDt-aFlIUMiCpaCDPIL2ZMiWDGaL9buFb2niAcjJ8EVNPFV8fxBovw>
- <xmx:sDt-aFKv0uj_HHKFRXxVNPFhj3zgnNz7nNjKcv-a_-Jq3ZK1P8eUmQ>
- <xmx:sDt-aOvdTw4t_iZdnwEHbkwUBosgTvIkfMKI0z7tFgzqozZFAhwf9jiK>
+ gfefkeejnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomh
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohephedpmhho
+ uggvpehsmhhtphhouhhtpdhrtghpthhtohepshhunhihrghnghdrfihusehjrghguhgrrh
+ hmihgtrhhordgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthht
+ ohepfhgvrhhruhhhrdihihhgihhtsegrmhgurdgtohhmpdhrtghpthhtoheprghnughrvg
+ ifrdhrhigstghhvghnkhhosehokhhtvghtlhgrsghsrdhruhdprhgtphhtthhopehsthgr
+ sghlvgesughpughkrdhorhhg
+X-ME-Proxy: <xmx:Fzx-aOq7OCbmrqFs5v8sRo8ckc2aOu8gfGcl5W2lCh2zbc1oraCJuw>
+ <xmx:Fzx-aOJoVeyCDsJf0egfZExk-PTmA-gg8_mprU3-6HHLR74d-nucPw>
+ <xmx:Fzx-aDRxBj6G4sKuf4PXyBfVf7BEb-8OFWmoTJycFhb-0vpqy8lKiQ>
+ <xmx:Fzx-aNtEX6qPWAlgSWybGC61piWv-NyOxEgiC68ud4vEqY_vQRCP7g>
+ <xmx:Fzx-aG_vdJX5QznJqN_JoX-GiNnaY-aSTXqiPwUpGmkyvAjNRCpy7Fqs>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 21 Jul 2025 09:07:59 -0400 (EDT)
+ 21 Jul 2025 09:09:42 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH] mailmap: fix entries with many aliases
-Date: Mon, 21 Jul 2025 15:07:58 +0200
-Message-ID: <4644175.8F6SAcFxjW@thomas>
-In-Reply-To: <20250716144203.1994070-1-david.marchand@redhat.com>
-References: <20250716144203.1994070-1-david.marchand@redhat.com>
+To: Sunyang Wu <sunyang.wu@jaguarmicro.com>
+Cc: dev@dpdk.org, ferruh.yigit@amd.com, andrew.rybchenko@oktetlabs.ru,
+ stable@dpdk.org
+Subject: Re: [PATCH v2] ethdev: Align enable logic handling with disable
+ functions
+Date: Mon, 21 Jul 2025 15:09:40 +0200
+Message-ID: <2703418.7s5MMGUR32@thomas>
+In-Reply-To: <20250721130545.38200-1-sunyang.wu@jaguarmicro.com>
+References: <20250721130545.38200-1-sunyang.wu@jaguarmicro.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -87,22 +92,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-16/07/2025 16:41, David Marchand:
-> According to gitmailmap manual, a line is composed of a contact
-> information followed by commit information.
+21/07/2025 15:05, Sunyang Wu:
+> This patch modifies the handling logic of the "enable" related
+> operations. The key intention is to align it with the processing
+> approach of the "disable" functions.
+> Previously, there was an inconsistency in how failure scenarios were
+> dealt with between the "enable" and "disable" logic. Now, after
+> adjustment, their behaviors in exceptional cases are made more uniform.
+> Importantly, this change does not introduce any alteration to the actual
+> runtime behavior of the functions; it only serves to enhance code
+> consistency and maintainability, making the overall logic easier to
+> understand and maintain in the long run.
+> In this way, we ensure the codebase follows a more cohesive pattern,
+> reducing potential confusion during future development and maintenance
+> efforts that could stem from logical disparities.
 > 
-> Which translates to the following formats:
-> Proper Name <commit@email.xx>
-> <proper@email.xx> <commit@email.xx>
-> Proper Name <proper@email.xx> <commit@email.xx>
-> Proper Name <proper@email.xx> Commit Name <commit@email.xx>
-> 
-> Some lines had multiple commit infos which were not parsed correctly by
-> tools. Fix this by duplicating lines as necessary.
-> 
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> Cc: stable@dpdk.org
 
-Applied, thanks.
+No need this Cc, as it is an improvement, no need to backport.
 
 
 
