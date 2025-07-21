@@ -2,71 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03534C87FC5
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Jul 2025 07:39:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBC43C87FC5
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Jul 2025 08:41:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3F7D6402DA;
-	Mon, 21 Jul 2025 09:39:09 +0200 (CEST)
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com
- [209.85.210.181])
- by mails.dpdk.org (Postfix) with ESMTP id 2263540281
- for <dev@dpdk.org>; Mon, 21 Jul 2025 09:39:07 +0200 (CEST)
-Received: by mail-pf1-f181.google.com with SMTP id
- d2e1a72fcca58-749248d06faso3362784b3a.2
- for <dev@dpdk.org>; Mon, 21 Jul 2025 00:39:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1753083546;
- x=1753688346; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=LwnkSV9SG4X8aL4cCaNNDVn4J/db+CGR4ovtCls+A/o=;
- b=tqQbvpAAMtfu/jyY41yBYUwnBn/DCLtrQMV0u/GBHO8t9Pdmk+7ElinCxNnK4uUmBL
- Mn4oxA/aufVpMwn9A3ExO3j9231bv+BsCfAuGJNhZnwOWendEzlKVOO/5ZQGQqMxjw6J
- q+XV5oaDkMqVD9/rJVSK42KRohosYMxw9kRVDfXlh8axvxQ03qq0kGnwey3xjxc5usSf
- vOkkKIF6Q5NSAOSOcJUbTYjE/8V7yLmNv/3SoRrN3ctLWea3UdNVsbZI+T4Beg7SdNAm
- gTbywiVHC22JrOKbHnmm16FZCRFv0z7akrgTgd8ZGSkpRMjaKWMloXjIz4Jc0yu+cTWy
- Uf/g==
+	by mails.dpdk.org (Postfix) with ESMTP id B19EA4021E;
+	Mon, 21 Jul 2025 10:41:50 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id ABD9D4014F
+ for <dev@dpdk.org>; Mon, 21 Jul 2025 10:41:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1753087309;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=KEc3zrU3Wr7eUVj8PWmohkt9pN8YTnvmH5N4nQev254=;
+ b=NQAYJb54lwyZ/rG3dyDRBQmYoaJ4aZJ5TjGkKZtvZajSONDc0IkD667PjXaBroWsTICxYx
+ /CBMkUiDyslt2gpQR82WRpJfjV1jvNxLTKPbR/7VlpfZOn86rPVxYWTpk/GgDZqHiwaZaN
+ RADCwPFVLWhfReURDMBfD5P0Rh4hoog=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-297-2VHVxSXfMEOtp4-UGBDecA-1; Mon, 21 Jul 2025 04:41:47 -0400
+X-MC-Unique: 2VHVxSXfMEOtp4-UGBDecA-1
+X-Mimecast-MFC-AGG-ID: 2VHVxSXfMEOtp4-UGBDecA_1753087306
+Received: by mail-lj1-f197.google.com with SMTP id
+ 38308e7fff4ca-32b4a06b780so17332921fa.0
+ for <dev@dpdk.org>; Mon, 21 Jul 2025 01:41:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753083546; x=1753688346;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=LwnkSV9SG4X8aL4cCaNNDVn4J/db+CGR4ovtCls+A/o=;
- b=INzdAR+81ydeq4yg+ZbGhZWHHQpE8wrO3KD3/D1H5LOPAxhRXpFcUKQ5c1i25tRAo0
- uVfJkbcUKhFFtd340lZqmPBV7mH2zjSLw9dz5+pstOXmM3uclx9WX92qkxnYERANtTQW
- CIAAgFhrgt8v5j/tzXc5FgwKAag+Yti/Ir9NewjUFTHfnYBr9BB9VWqnT+msFVJqtkjd
- KiGL+0Up4Agg/+NZbO4g12Y9/YZj+FtjzDxf7H+kbtfdSP9lnC+JMpu5TkiRIDGdnNna
- d2j0Eb9vpshYfk4GwHthETToMSHDx9Awsu31cY+lU/Ovn817aEQtxCpsWfaz/QaoYQD8
- NBVQ==
-X-Gm-Message-State: AOJu0Yw8JEGA/cMEdlnYl3aUzcIXGKqWIp7LuM9bhY1MKRM2a3608ee9
- KO1lvg+MzF3IeBWs3gtMaChlXe2L/LA9baPYsoRFsn1AoK88/Pr2dTliK4yglCqGM1V3KSxqh7G
- r+7BU
-X-Gm-Gg: ASbGncsoMi2xv1cEn6cvfznlZgppvmPnmh6kUzh0Sngfoe2TwtEn2anZi6HUAnwCWdZ
- LH+Q02tM92B6uCYgNTnQeRwtcWhsX9d+XsZc6dm67c9i537JaHTGwNfQRdTg37X2lxJH79gJLVx
- jj7pSw9XEDdq3u2h8N6UeGhwwjb4UufKhauQL/GRebkVAWVNYeUGQEfHXvcmTW6Z81/2ALY1yDG
- NuFSAbPU6ey2YukdlwJdDuFFcXCjsM8AipHQEOkbk+pJy4XCJyhPTqaXUFqizqm5NvsASFmUusx
- iMwKH1ZzUGsp+7bQstU+G4xvt7+dksyFXKCNsgsqVgEa8GcNdBUjRWrx2LDXbV5BG5zkW2FHkmV
- gTVtnbogS3DrU9RePptB7LHdVXMo0h2Z94zLYcDzKUs8pQ1si
-X-Google-Smtp-Source: AGHT+IECsJS0U/lhxFno+YaJk4qiq3LExfJYs7RCfmKwcXbLAmGk3Rcg+cmChmBG6jBye8ZSExdycw==
-X-Received: by 2002:a05:6a00:2293:b0:748:e585:3c42 with SMTP id
- d2e1a72fcca58-7584a957f1amr18888263b3a.15.1753083545944; 
- Mon, 21 Jul 2025 00:39:05 -0700 (PDT)
-Received: from localhost.localdomain ([64.62.143.197])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-759c89d693asm5235559b3a.63.2025.07.21.00.39.05
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 21 Jul 2025 00:39:05 -0700 (PDT)
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-To: dev@dpdk.org
-Cc: rasland@nvidia.com, stable@dpdk.org,
- Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Subject: [PATCH] net/mlx5: fix crash when secondary queries dev info after
- primary exits
-Date: Mon, 21 Jul 2025 03:38:51 -0400
-Message-ID: <20250721073851.963141-1-14pwcse1224@uetpeshawar.edu.pk>
-X-Mailer: git-send-email 2.43.0
+ d=1e100.net; s=20230601; t=1753087306; x=1753692106;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=KEc3zrU3Wr7eUVj8PWmohkt9pN8YTnvmH5N4nQev254=;
+ b=wo46zH75JJQ9ZlggzXyXdtacddTDDcfg+iHjCyMEiJkbtWnchR3EcjOC5GqGdsmsu/
+ E0+zqfLXoWegL7F8nwFXS63sxB2Y/CvqDRuj5HcSikfnk9fTyaLwB0DQjhUFY+QTxTxt
+ Cc02p+724tEGyBCjXw/n024L6SNDoxNlpYq35agczV03sWw1Ig5W00bJWCldJjfLhtWq
+ HNn4DwNM6jOU4tAHBiSQqchCPTwWtNOUi+OEp7v0sqTtnb242fuXM72BWeQDlauZ4aIt
+ heIy//QalEQfTpv5pUhkwN4VnMMMvNUB411/zYpzk9K6RdgVu3k0/fPkGrAiU0OexuSH
+ SBuQ==
+X-Gm-Message-State: AOJu0YwBPcRgg5qXf3AvrA2w8cRFZV66KST4ypTeR0C8KJ8uCgU6O6XC
+ Fn2tcsCtL96fZ5XtDanmW4Y1j0kR2MLYRm6LhX0O6LT/nNbknJeh2JU8+bVdGxOZgTDNQijaMvy
+ uWHMIWGh2EWntT0Qf/Riq2R/4TWs1dmYIrHQT07gOdbmRA9/ICWBCpOT9NApNIrxOPrvg87rFYc
+ frlLcaoaYHWC6+026JB1w=
+X-Gm-Gg: ASbGncvaZS8pcW1f12yuWW2FJCz3WBj5g/q1xjOe+hMF6yOXE7hnc+Omhf+A2W0qIUP
+ CMIixeUUgS84QUcrvG+/bAQ2OJr3eHGvC0hX7c6DgQfpcAOZoZHgkiYmSluJyKnl7yafGoRQDvb
+ 18D4X1UoGtrckExokkZcRlNmo=
+X-Received: by 2002:a05:651c:4181:b0:32c:a006:2a1d with SMTP id
+ 38308e7fff4ca-3308e1ce1bbmr44730571fa.4.1753087306105; 
+ Mon, 21 Jul 2025 01:41:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGSZjLCv0GX0TBUUW4cuyeQkDPTtU1KLrCTAsTv3+h9tH0Dnsm7Wx/bzX8aYxBRdF9WEXW1zwMWOUAL0lyiqRI=
+X-Received: by 2002:a05:651c:4181:b0:32c:a006:2a1d with SMTP id
+ 38308e7fff4ca-3308e1ce1bbmr44730501fa.4.1753087305569; Mon, 21 Jul 2025
+ 01:41:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250520164025.2055721-1-bruce.richardson@intel.com>
+ <20250718143356.1578988-1-bruce.richardson@intel.com>
+ <20250718143356.1578988-6-bruce.richardson@intel.com>
+In-Reply-To: <20250718143356.1578988-6-bruce.richardson@intel.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Mon, 21 Jul 2025 10:41:33 +0200
+X-Gm-Features: Ac12FXzp94rrdGnzU3qABJ5kfhrYUYwkGFe1vh8tqj6kPZDJTEbtF9CQFCy1Jck
+Message-ID: <CAJFAV8y5_O3T6hLbZov0LqhXyAu2s_n0P3C3Y+WSGVUjd8gbtg@mail.gmail.com>
+Subject: Re: [PATCH v3 5/9] eal: define the EAL parameters in argparse format
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, Tyler Retzlaff <roretzla@linux.microsoft.com>, 
+ Thomas Monjalon <thomas@monjalon.net>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: yeWoPvp6pMfdzPQUxddzKihA_41-Blj_2esPPo5r9-Y_1753087306
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,39 +87,129 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When the primary process exits, the shared mlx5 state becomes
-unavailable to secondary processes. If a secondary process attempts
-to query device information (e.g., via testpmd), a NULL dereference
-may occur due to missing shared data.
+On Fri, Jul 18, 2025 at 4:34=E2=80=AFPM Bruce Richardson
+<bruce.richardson@intel.com> wrote:
+> +struct eal_init_args {
+> +       /* define a struct member for each EAL option, member name is the=
+ same as option name.
+> +        * Parameters that take an argument e.g. -l, are char *,
+> +        * parameters that take no options e.g. --no-huge, are bool.
+> +        * parameters that can be given multiple times e.g. -a, are arg_l=
+ists,
+> +        * parameters that are optional e.g. --huge-unlink,
+> +        *   are char * but are set to (void *)1 if the parameter is not =
+given.
+> +        * NOTE: List is to be kept alphabetically by option name
+> +        */
 
-This patch adds a check for shared context availability and fails
-gracefully while preventing a crash.
+We will have to be careful to keep this struct below, in sync with the
+options list.
+Could we construct (at build time) this structure via the options list?
 
-Fixes: e60fbd5b24fc ("mlx5: add device configure/start/stop")
-Cc: stable@dpdk.org
+The rules above would be enforced at the same time.
 
-Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
----
- drivers/net/mlx5/mlx5_ethdev.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+(macros + #ifdef for Linux/FreeBSD may be an issue for MSVC though...)
 
-diff --git a/drivers/net/mlx5/mlx5_ethdev.c b/drivers/net/mlx5/mlx5_ethdev.c
-index 68d1c1bfa7..1848f6536a 100644
---- a/drivers/net/mlx5/mlx5_ethdev.c
-+++ b/drivers/net/mlx5/mlx5_ethdev.c
-@@ -368,6 +368,12 @@ mlx5_dev_infos_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *info)
- 	 * Since we need one CQ per QP, the limit is the minimum number
- 	 * between the two values.
- 	 */
-+	if (priv == NULL || priv->sh == NULL) {
-+		DRV_LOG(ERR,
-+		"mlx5 shared data unavailable (primary process likely exited)");
-+		rte_errno = ENODEV;
-+		return -rte_errno;
-+	}
- 	max = RTE_MIN(priv->sh->dev_cap.max_cq, priv->sh->dev_cap.max_qp);
- 	/* max_rx_queues is uint16_t. */
- 	max = RTE_MIN(max, (unsigned int)UINT16_MAX);
--- 
-2.43.0
+> +       struct arg_list allow;
+> +       char *base_virtaddr;
+> +       struct arg_list block;
+> +       char *coremask;
+> +       bool create_uio_dev;
+> +       struct arg_list driver_path;
+> +       char *file_prefix;
+> +       char *force_max_simd_bitwidth;
+> +       char *huge_dir;
+> +       char *huge_unlink;   /* parameter optional */
+> +       char *huge_worker_stack;  /* parameter optional */
+> +       bool in_memory;
+> +       char *iova_mode;
+> +       char *lcores;
+> +       bool legacy_mem;
+> +       char *log_color;   /* parameter optional */
+> +       char *log_level;
+> +       char *log_timestamp;  /* parameter optional */
+> +       char *main_lcore;
+> +       bool match_allocations;
+> +       char *mbuf_pool_ops_name;
+> +       char *memory_channels;
+> +       char *memory_ranks;
+> +       char *memory_size;
+> +       bool no_hpet;
+> +       bool no_huge;
+> +       bool no_pci;
+> +       bool no_shconf;
+> +       bool no_telemetry;
+> +       char *numa_mem;
+> +       char *numa_limit;
+> +       char *proc_type;
+> +       char *service_coremask;
+> +       char *service_corelist;
+> +       bool single_file_segments;
+> +       char *syslog;   /* parameter optional */
+> +       bool telemetry;
+> +       char *trace;
+> +       char *trace_bufsz;
+> +       char *trace_dir;
+> +       char *trace_mode;
+> +       struct arg_list vdev;
+> +       bool version;
+> +       char *vfio_intr;
+> +       char *vfio_vf_token;
+> +       bool vmware_tsc_map;
+> +};
+> +struct eal_init_args args;
+> +
+
+[snip]
+
+> +
+> +struct rte_argparse eal_argparse  =3D {
+> +       .prog_name =3D "",
+> +       .usage =3D "<DPDK EAL options>",
+> +       .epilog =3D "For more information on EAL options, see the DPDK do=
+cumentation at: \n"
+> +                       "\thttps://doc.dpdk.org/guides/" RTE_EXEC_ENV_NAM=
+E "_gsg/",
+
+Options don't change that often, but I would prefer we point at the
+right release doc, rather than origin/main.
+
+diff --git a/config/meson.build b/config/meson.build
+index 40f33816aa..c3c054bae9 100644
+--- a/config/meson.build
++++ b/config/meson.build
+@@ -70,6 +70,7 @@ abi_version =3D run_command(find_program('cat',
+'more'), abi_version_file,
+ so_version =3D abi_version.split('.')[0]
+
+ # extract all version information into the build configuration
++dpdk_conf.set('RTE_VER_MAJOR', major_version)
+ dpdk_conf.set('RTE_VER_YEAR', pver.get(0).to_int())
+ dpdk_conf.set('RTE_VER_MONTH', pver.get(1).to_int())
+ if pver.get(2).contains('-rc')
+diff --git a/lib/eal/common/eal_common_options.c
+b/lib/eal/common/eal_common_options.c
+index 787f759196..e11d76589f 100644
+--- a/lib/eal/common/eal_common_options.c
++++ b/lib/eal/common/eal_common_options.c
+@@ -196,7 +196,11 @@ struct rte_argparse eal_argparse  =3D {
+        .prog_name =3D "",
+        .usage =3D "<DPDK EAL options>",
+        .epilog =3D "For more information on EAL options, see the DPDK
+documentation at: \n"
++#ifdef RTE_VER_RELEASE =3D=3D 99
++
+"\thttps://doc.dpdk.org/guides-"RTE_STR(RTE_VER_MAJOR)"/"
+RTE_EXEC_ENV_NAME "_gsg/",
++#else
+                        "\thttps://doc.dpdk.org/guides/"
+RTE_EXEC_ENV_NAME "_gsg/",
++#endif
+        .exit_on_error =3D true,
+        .callback =3D arg_list_callback,
+        .print_help =3D eal_usage,
+
+
+--=20
+David Marchand
 
