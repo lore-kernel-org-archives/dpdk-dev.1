@@ -2,85 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 387BAC83F25
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Jul 2025 19:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 742ACC83F25
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Jul 2025 20:06:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 055EC4026C;
-	Mon, 21 Jul 2025 21:56:27 +0200 (CEST)
-Received: from fout-a6-smtp.messagingengine.com
- (fout-a6-smtp.messagingengine.com [103.168.172.149])
- by mails.dpdk.org (Postfix) with ESMTP id 598D84021E
- for <dev@dpdk.org>; Mon, 21 Jul 2025 21:56:25 +0200 (CEST)
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal
- [10.202.2.50])
- by mailfout.phl.internal (Postfix) with ESMTP id B5095EC026F;
- Mon, 21 Jul 2025 15:56:24 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-10.internal (MEProxy); Mon, 21 Jul 2025 15:56:24 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 233F84026C;
+	Mon, 21 Jul 2025 22:06:51 +0200 (CEST)
+Received: from fhigh-a7-smtp.messagingengine.com
+ (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+ by mails.dpdk.org (Postfix) with ESMTP id EB5294021E
+ for <dev@dpdk.org>; Mon, 21 Jul 2025 22:06:49 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal
+ [10.202.2.41])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 4EDFD14001D6;
+ Mon, 21 Jul 2025 16:06:49 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-01.internal (MEProxy); Mon, 21 Jul 2025 16:06:49 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1753127784;
- x=1753214184; bh=I6nr+TjeqYbaIntCCuuJQQI+yXTadMHtPyHpJ4qrqzI=; b=
- bWD7POoAJhbCyZuXsol/xJ2es4cXSAFHgGQM0YTNxe+iJ6wEx2XLrtpFjzYbYFPc
- JQT4GnKRaDXloQoLDTPw+i9LMTbwcp/X22vyYmJo9h8Cy6Xh+jMGSmNCFXZ9PGZR
- 2V6KcL58J2fXwdFHWoGvhro2t0RSmmD11h4qXUHtv92sbpsAxMcw0UZJFZ0VO/pN
- fTo+xJcB34V3oH1gl6kl92mjH/f/xn9kMTfccM/trL00SoDo1RV6oFv+Ls01gJZU
- 43CMc9t21j8QgUAoHka9t4K/Q7S8DW1g9FDJ5UiPyujWECcD11p9KTUPXw1ClR0+
- ltdKpgVjYPDlcimWyRQhFA==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1753128409;
+ x=1753214809; bh=AGbRUP4QtnVq9jsg7hlaqceU4k3t8eOGq7HiFudj+YI=; b=
+ xbKDvgyaW9tyzqqCWr/5QLTdklqd+yJ+C5XCJdFy0Msc+k6zay+3KgEe/fd0vG/A
+ 3F3hHkEGy4c7kNZgMxSpGNENByXDgvZ2E2Za+8CZtLotwkvuJzbh2YTipx+lnhem
+ SdsuMpL5Ws/ZY57GqZ9nn0C6kvtVRYX5K/Hbqj0NSS7Th5++ZsEqVO4nNAP4gphY
+ fw904tZ5ztp3R5H7MTInuhawjzLLBZNZjwkfAvPmHTKrtfAWJGs+1FcO7OV4XtY0
+ CMGHnrvb7QPzyyfnvCaA/LDtDsz+3FqEyQZNvrXv+Fa4naxtxUuSR6TBqf9WE53q
+ RbowxJjSRomtP9X8VMqU8g==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1753127784; x=
- 1753214184; bh=I6nr+TjeqYbaIntCCuuJQQI+yXTadMHtPyHpJ4qrqzI=; b=Q
- FvfIosvZ3KCJcfGGbFe6dPk5sM+BMXMAlix2oRKH+SJc6DxNAcIKATTngC3HbCND
- KZigx8aB6lKoVrrYTG7I1NPp+sD5Fb2TjoTE5oV1/b/6d/NSKWP1e/4flj8MuFcq
- M17py3HiVTKjacQkDLgclWUm161br23tzZxpC0WaZETJVYAv86zKJchSLvW6d48u
- 5E/mTKvGklSJyu/baPbeAq7nCbS3Fwgyia7gF60jg4sRiPECMcJqWLbZ93uftcMp
- jnC5m9FixEH6NtIvYs9mXg/8i0v8BG4gzJE1GVDaBi2ocR7KB+h7MAzN+aB/q/Pw
- jHuxyY6La4Lz4zJi8RYsQ==
-X-ME-Sender: <xms:aJt-aIbdl0nqMPGzwrTFJZXClDbfkTg1sKKAIgOU-vQtA22h6BbUWQ>
- <xme:aJt-aKIG-7R16Wn9vhtshu6-xkMqCahfsKylSovzkDR3kkFoYCczDfwldEhBr4WCP
- oNk1PUEKlY-3X1XTw>
-X-ME-Received: <xmr:aJt-aEs_42KiQcDCfi4krBWE6lWQr4Z3Z9mCWnuZekey12QUjHX6lBUM4wRkey0h1xWRwNlSwSDy5uGOMOcCe8trAQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejvdelkecutefuodetggdotefrod
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1753128409; x=
+ 1753214809; bh=AGbRUP4QtnVq9jsg7hlaqceU4k3t8eOGq7HiFudj+YI=; b=X
+ bcDrV9WvS/Qm7WnZTOODiA1Qw1LnBSkJ1XvObsRV9Xq1H4TCWyRz/YZBNjylL19k
+ iFyGAElJc0g2BMWMbTTL/MbLwWmz65eWaSrB4xgKom/yTUFQvhlo3GmfV9zFV8Wc
+ 1TmtqJTZ90KBq4Os+jq2hKF3qjtvVvizwwsYrc2G7s3b8ZbnkqF103I/avc5jjC8
+ IjuudKg7ltEE3oczNPIoGJsmpNxRVpiP9UgPH1yJ3vMzQ4DQu/GOJaNaB8jmsUtN
+ bb0zb0PMp2H5WlBvEURD068kaLmEXHHdcIjcgsJSypx+nltdwteBy6596gWdbRuz
+ +tN/S6vukGBEs7aODv7Zg==
+X-ME-Sender: <xms:2J1-aEvTqnee19KOBBHlcAatH-mUUZhR2J_NbmXlAA-Gq98eq6CHHg>
+ <xme:2J1-aLELShxi3As6n4Z_XRbc0CGAWwj0ThOlU1kdJVMFbqCdr0-stmQ4XcrGB4NzD
+ vVF6c6UDIhXuBBVhw>
+X-ME-Received: <xmr:2J1-aPz3BYlYfoDnVgecg6PXm4_JrznKwEjJfMvb9AfK2gcu2cjjGocgHwzsiOuCLQ-XH5hiOJcUE-H2kbI6xKN1fQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejvdellecutefuodetggdotefrod
  ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
  ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
  hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
  ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
- grthhtvghrnhepkeefheeftdegtdejheeuuedtgfelfeeiveekieekleekffelgfdtveei
- heehffdunecuffhomhgrihhnpeguphgukhdrohhrghenucevlhhushhtvghrufhiiigvpe
- dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhn
- vghtpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
- gushhoshhnohifshhkihesnhhvihguihgrrdgtohhmpdhrtghpthhtohepvhhirggthhgv
- shhlrghvohesnhhvihguihgrrdgtohhmpdhrtghpthhtohepsghinhhgiiesnhhvihguih
- grrdgtohhmpdhrtghpthhtohepohhrihhkrgesnhhvihguihgrrdgtohhmpdhrtghpthht
- ohepshhurghnmhhinhhgmhesnhhvihguihgrrdgtohhmpdhrtghpthhtohepmhgrthgrnh
- esnhhvihguihgrrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghp
- thhtoheprhgrshhlrghnugesnhhvihguihgrrdgtohhmpdhrtghpthhtohepuggrvhhiug
- drmhgrrhgthhgrnhgusehrvgguhhgrthdrtghomh
-X-ME-Proxy: <xmx:aJt-aOUp4S86yYY0d8MJAU_AqRFu4_XT5R3q0TIHT6rg0_TvRtKanA>
- <xmx:aJt-aPhJK_H5WSUi-Aqmrmdh_j7m02cLGsZkz9RhOKvHzROTHGsnlA>
- <xmx:aJt-aGp-A1abI3gRRrhVaw_KnZdDD0u8dplosvkORpWSt47O6Fj8OQ>
- <xmx:aJt-aFHFaUpSBZQIsJ4jQZxVXnihL0T3LDiQGqbmRomni7L7RNvMSw>
- <xmx:aJt-aKeAmmwwwIqHx6hx0o6ZzuilJg4rkR57ZV3rSktS73ut8gQqJHvt>
+ grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
+ gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepfedpmhho
+ uggvpehsmhhtphhouhhtpdhrtghpthhtoheptghirghrrgdrlhhofhhtuhhssehinhhtvg
+ hlrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohepsghr
+ uhgtvgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtohhm
+X-ME-Proxy: <xmx:2J1-aKgGJQ3m6qLAaRpROjPGe96aYdA_ig617kzd9ZFDufOmD1_bwg>
+ <xmx:2J1-aCxJaZjDeI_QOpq3yFwfb1NkDjY8N0pQV6EnSJPPO7HHaNxWcw>
+ <xmx:2J1-aFIrg4NsxWTiExWfdWuGmsZ_WbRpNs7FmgrKXCbYxLNAG0iY_A>
+ <xmx:2J1-aBSf7u3Wz2B682Ouuac3v6CT6NrrbADB3t6r-Lwxbd4eaXw4HQ>
+ <xmx:2Z1-aD9rdPWKrh6lSh8pXqih2IIj57fqg6yXuAwLsVRDmYowEzstM0MR>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 21 Jul 2025 15:56:23 -0400 (EDT)
+ 21 Jul 2025 16:06:48 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Dariusz Sosnowski <dsosnowski@nvidia.com>
-Cc: Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
- dev@dpdk.org, Raslan Darawsheh <rasland@nvidia.com>,
- David Marchand <david.marchand@redhat.com>
-Subject: Re: [PATCH] net/mlx5: deprecate representor matching devarg
-Date: Mon, 21 Jul 2025 21:56:21 +0200
-Message-ID: <15520741.JCcGWNJJiE@thomas>
-In-Reply-To: <20250716093846.1117794-1-dsosnowski@nvidia.com>
-References: <20250716093846.1117794-1-dsosnowski@nvidia.com>
+To: Ciara Loftus <ciara.loftus@intel.com>
+Cc: dev@dpdk.org, bruce.richardson@intel.com
+Subject: Re: [PATCH v2] net/intel: deprecate some SSE paths
+Date: Mon, 21 Jul 2025 22:06:46 +0200
+Message-ID: <1791599.yIU609i1g2@thomas>
+In-Reply-To: <20250703143119.1140097-1-ciara.loftus@intel.com>
+References: <20250703121624.1050845-1-ciara.loftus@intel.com>
+ <20250703143119.1140097-1-ciara.loftus@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -97,24 +89,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-16/07/2025 11:38, Dariusz Sosnowski:
-> Mark repr_matching_en device argument exposed by mlx5 PMD
-> as deprecated and schedule its removal in 25.11 release.
+03/07/2025 16:31, Ciara Loftus:
+> The SSE rx and tx paths will be removed from the i40e, iavf and ice
+> drivers in the 25.11 release. Each of these drivers have faster vector
+> paths (AVX2 and AVX-512) which have feature parity with the soon to be
+> removed SSE paths. In environments where AVX2 or AVX-512 are not
+> supported, the scalar path will still be used, which also has feature
+> parity.
 > 
-> Functionality exposed by this device argument does not fit
-> current E-Switch representor model exposed by DPDK.
-> A new unified representor model, described in
-> https://fast.dpdk.org/events/slides/DPDK-2024-07-unified_representor.pdf
-> should be developed.
-> 
-> Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
-
-The impact is very limited.
-There is no API/ABI breakage.
-The devarg is probably not used a lot.
-To be on a completely safe side, the devarg could continue to be accepted
-if a user set it at its default value.
-Still, announcing this is a good idea in case someone uses this.
+> Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Acked-by: Kevin Traynor <ktraynor@redhat.com>
 
 Applied, thanks.
 
