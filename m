@@ -2,81 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA6FC83F1A
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Jul 2025 16:25:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EC18C83F25
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Jul 2025 17:16:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8D31E40648;
-	Mon, 21 Jul 2025 18:25:42 +0200 (CEST)
-Received: from fout-a4-smtp.messagingengine.com
- (fout-a4-smtp.messagingengine.com [103.168.172.147])
- by mails.dpdk.org (Postfix) with ESMTP id 34B81402DC
- for <dev@dpdk.org>; Mon, 21 Jul 2025 18:25:41 +0200 (CEST)
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal
- [10.202.2.52])
- by mailfout.phl.internal (Postfix) with ESMTP id A8674EC0245;
- Mon, 21 Jul 2025 12:25:40 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-12.internal (MEProxy); Mon, 21 Jul 2025 12:25:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1753115140;
- x=1753201540; bh=O9FFrJgbutMe1LLasc0Tw2JTdzGJpJ0KKeNtGMihNZg=; b=
- KB5y4KD2rKz0/MAlSZ9ij701oqWhGok8g/9BEhFyD+hoZgfr8JZv2bvETjtBHoqC
- p12PB/3Gf4rDMR2LjUlCV/4w+B6JhHPj/OVjnwF7FA+DObvaigP6mi0b9YW+XK2Z
- H2w0qbsXkknKvQO/GFfdq0/4g90gzYcJCpornjbRmIpJ2aZsPvE0yEx26TIAJDKw
- g/5JIl3dV8zZ1U1+bCFX1iDRCKuOwMqFTqp7/RTC95WZpUcA4pBSzFW5kevuIgkt
- SIdv0030/2O+RY/+ZijVpbgT+yoHGcvFLSfv/wXVjZC1yDv9RZoiYfKNiLaD1lMM
- FKHQXZa67aEfKoIsJ4mCkg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1753115140; x=
- 1753201540; bh=O9FFrJgbutMe1LLasc0Tw2JTdzGJpJ0KKeNtGMihNZg=; b=A
- zlvcwgsmCtCekcij569nn2vTvwMZMMoLykvV76OI8V10f0y/HqMjgDTjkMr0PBcu
- 346DEdFpkJzCZ6D9bwfEkyrzJz7fCpgAS7b9MniDS1EiUnRNZKgx7Li7IIcxmUaB
- Vh/pGWueXpnuTxUnk3jGBW/T8sjuL3s/73IyLPBXtOf/6F1Qni9odb1UuY0aLOFf
- 316Q5CoYjsIhIkYXu2Z5QolyVSlZ4OHpHyrqLHdfRQZ6w0w7HEi63O81zhzja/WT
- wq44+LFOiHJhDc33Hd7q0jHR9wFX2+Ity4DauO6zEr+CSQ4Ob7HkK23ZeI/jtPxy
- D6s+VK2B6BFfcdITgivfA==
-X-ME-Sender: <xms:BGp-aFeE5i_gxleQlp4xTv2hbvgNwdgkKl3fo1FxNjxw4GZSMnitCQ>
- <xme:BGp-aOGME2AllMx734CrdBbjUCZBDxUKECtoH_6MOCFjvLbBkimG4byRYsGVFIwTb
- 5L57weDSojMvD87RA>
-X-ME-Received: <xmr:BGp-aGXif9nGllIGUTSwDbe8UxSHUpTj2IM1BE4YX-dTXGDQImP5AWyh_n-R8KzWmcSxAMWy4rTinWGB1DJrsBkdBg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejvdehhecutefuodetggdotefrod
- ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
- ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkjghfggfgtgesthfuredttd
- dtjeenucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhho
- nhhjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeejudevheeiveduuddtveffgf
- dtgeekueevjeffjeegtdeggeekgfdvuefgfeekjeenucevlhhushhtvghrufhiiigvpedt
- necurfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvg
- htpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehp
- rhgrvhhinhdrphgrthhhrghkrdguvghvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepug
- gvvhesughpughkrdhorhhgpdhrtghpthhtohepjhgvrhhinhhjsehmrghrvhgvlhhlrdgt
- ohhmpdhrtghpthhtohepsghruhgtvgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtoh
- hm
-X-ME-Proxy: <xmx:BGp-aNIw4DkT2IgQ50bIpZgr4QfW-jkDo7Vle_oeKVAPX-tUn0G6Vg>
- <xmx:BGp-aG-DCQffsJwtMcNJUyc7X-nwaDyfEvgbJfUAGb6Z_oscFSv4gA>
- <xmx:BGp-aALmt6Qo8k31jEST35Wn-V18TeKJhrfIDbPuchkOUNAfS6QeXA>
- <xmx:BGp-aLkIYW_m4PUVL20l_hlJn_91mi_VHlEK4AGGDr9wMiyX6XVwsw>
- <xmx:BGp-aLGcSS6K3iL_EmRQXarACu5kv0W3vJOKX3n5KpmQ9woOfar4thrT>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 21 Jul 2025 12:25:39 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Pravin Pathak <pravin.pathak.dev@gmail.com>
-Cc: dev@dpdk.org, jerinj@marvell.com, bruce.richardson@intel.com
-Subject: Re: [PATCH v3] mailmap: add new email to DPDK
-Date: Mon, 21 Jul 2025 18:25:37 +0200
-Message-ID: <2047215.8hb0ThOEGa@thomas>
-In-Reply-To: <20250719151750.48539-1-pravin.pathak.dev@gmail.com>
-References: <20250714191141.1243467-1-pravin.pathak@intel.com>
- <20250719151750.48539-1-pravin.pathak.dev@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 7FD9F4026C;
+	Mon, 21 Jul 2025 19:16:12 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 5C22A4021E
+ for <dev@dpdk.org>; Mon, 21 Jul 2025 19:16:10 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 4CC9F46BDA; Mon, 21 Jul 2025 19:16:10 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/DTS Bug 1759] make single link the default topology in DTS
+Date: Mon, 21 Jul 2025 17:16:10 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: DTS
+X-Bugzilla-Version: 25.03
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: minor
+X-Bugzilla-Who: probb@iol.unh.edu
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter cc
+ target_milestone
+Message-ID: <bug-1759-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17531181700.e569f.2968091
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -90,14 +54,194 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-19/07/2025 17:17, Pravin Pathak:
-> Adding new mail for DPDK contribution
-> 
-> Signed-off-by: Pravin Pathak <pravin.pathak.dev@gmail.com>
-> ---
-> -Pravin Pathak <pravin.pathak@intel.com>
-> +Pravin Pathak <pravin.pathak.dev@gmail.com> <pravin.pathak@intel.com>
 
-Applied, thanks.
+--17531181700.e569f.2968091
+Date: Mon, 21 Jul 2025 19:16:10 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+https://bugs.dpdk.org/show_bug.cgi?id=3D1759
+
+            Bug ID: 1759
+           Summary: make single link the default topology in DTS
+           Product: DPDK
+           Version: 25.03
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: minor
+          Priority: Normal
+         Component: DTS
+          Assignee: dev@dpdk.org
+          Reporter: probb@iol.unh.edu
+                CC: juraj.linkes@pantheon.tech, probb@iol.unh.edu
+  Target Milestone: ---
+
+Currently, if the testsuite writer omits a @requires{some topology} from th=
+eir
+testsuites or testcases, the framework enforces a default behavior of requi=
+res
+2 links. Most testcases do/will only require 1 link, so it is more reasonab=
+le
+to make this the default behavior.
+
+Another solution would be to force all testsuites/testcases without a topol=
+ogy
+decorator to SKIP, but I want to reduce barriers to getting a testsuite onl=
+ine
+quickly, not add more barriers, so I don't really want to do that.
+
+Assigning to Dean, who came up with this suggestion.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17531181700.e569f.2968091
+Date: Mon, 21 Jul 2025 19:16:10 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - make single link the default topology in DTS"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1759">1759</a>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Summary</th>
+          <td>make single link the default topology in DTS
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>25.03
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>minor
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>DTS
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>probb&#64;iol.unh.edu
+          </td>
+        </tr>
+
+        <tr>
+          <th>CC</th>
+          <td>juraj.linkes&#64;pantheon.tech, probb&#64;iol.unh.edu
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">Currently, if the testsuite writer=
+ omits a &#64;requires{some topology} from their
+testsuites or testcases, the framework enforces a default behavior of requi=
+res
+2 links. Most testcases do/will only require 1 link, so it is more reasonab=
+le
+to make this the default behavior.
+
+Another solution would be to force all testsuites/testcases without a topol=
+ogy
+decorator to SKIP, but I want to reduce barriers to getting a testsuite onl=
+ine
+quickly, not add more barriers, so I don't really want to do that.
+
+Assigning to Dean, who came up with this suggestion.
+          </pre>
+        </div>
+      </p>
 
 
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1759">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17531181700.e569f.2968091--
