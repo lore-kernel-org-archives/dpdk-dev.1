@@ -2,50 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43980C83F27
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 12:01:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69FE8C83F27
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 12:01:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 714A740665;
-	Tue, 22 Jul 2025 14:01:02 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 49B6D40647;
+	Tue, 22 Jul 2025 14:01:05 +0200 (CEST)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 585374066E
- for <dev@dpdk.org>; Tue, 22 Jul 2025 14:01:00 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 58B3B4066F
+ for <dev@dpdk.org>; Tue, 22 Jul 2025 14:01:03 +0200 (CEST)
 Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56M72623010873;
- Tue, 22 Jul 2025 05:00:59 -0700
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56LNTdr8007862;
+ Tue, 22 Jul 2025 05:01:02 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=R
- BZumREjB4faLj9tdL2gzX47x6SBDNuN30mUT2QKibU=; b=epCWYwNJNq+QaWMUA
- 64v5UyObP8glTcJ5/bl44fHeaqxJRUCJ21pMIK2YFlNKHgfGAEfUTLJv/ILYiph7
- esr/RW5ceKPb/6PHb2B9PTXfJd5WNqLhkSEiR9uJfEpdaUqMoXbEMTlIqfR3JOCp
- pIV8XEHBVBbf1zGUBMZoWa39/QO+xZ0wEGYO4V9wWKzOK9nBDyF0Zob/I8HBctgJ
- AE4LZBs2rBmUUxFXx6w91AlnwVfI7XQN3cKmqUhOGNfZbY0+PgFkXJ7OhjI7SVxM
- a4jwFhmOvrH4XHEKJMtKIwxJLxdAAzYjOBi62WYQJHmpDvc6h1Olrmm+wDQtBRh9
- Go7UQ==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=a
+ SvuN3kLrzYKdEIqtxCYsnikgBpAcke/wrd8BTU+DLA=; b=ggtMh5e/goffivgOs
+ EqqrKZj44TJ73HFnXDhApKK5zPlCpO4odmq29T2KyN1IT3rGipSM4au3XcMP1mYc
+ 4kNeRSyUZx+8mLP4iVZPJIVs7sccURI222R4rUpJMwP3itvNuiTzT9dlQJH/XsWl
+ IBv4zQ/6Yxf/pFd8oIrjsXN+Bv+4zL7s/68lNig84LyzhvgfbCTut3g23XsDb38M
+ EUU+j+5z29QGT5QQ9cz2VEB7nmwp3ZbouJ+TIhDS7iM+3yuZlfm15M/3xFLkjLT5
+ 8G/vYs0EZWwvd7eodngglSxZPuvTPoWbEMBr6qERsHrBhdDCybYs9Ncp9ce/WGDm
+ wjnMg==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 481y91sbdn-1
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 481y91sbdt-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Tue, 22 Jul 2025 05:00:59 -0700 (PDT)
+ Tue, 22 Jul 2025 05:01:02 -0700 (PDT)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 22 Jul 2025 05:00:58 -0700
+ 15.2.1544.4; Tue, 22 Jul 2025 05:01:01 -0700
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 22 Jul 2025 05:00:58 -0700
+ Transport; Tue, 22 Jul 2025 05:01:01 -0700
 Received: from cavium-optiplex-3070-BM15.. (unknown [10.28.34.39])
- by maili.marvell.com (Postfix) with ESMTP id 9EE2D3F706C;
- Tue, 22 Jul 2025 05:00:55 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 7BEBD3F7045;
+ Tue, 22 Jul 2025 05:00:58 -0700 (PDT)
 From: Tomasz Duszynski <tduszynski@marvell.com>
 To: <tduszynski@marvell.com>
 CC: <bruce.richardson@intel.com>, <david.marchand@redhat.com>, <dev@dpdk.org>, 
  <jerinj@marvell.com>, <mb@smartsharesystems.com>, <thomas@monjalon.net>
-Subject: [PATCH v8 4/8] lib/pmu: do not try enabling perf counter access on
- arm64
-Date: Tue, 22 Jul 2025 14:00:37 +0200
-Message-ID: <20250722120041.2718227-5-tduszynski@marvell.com>
+Subject: [PATCH v8 5/8] lib/pmu: use build system defined RTE_LIB_PMU macro
+Date: Tue, 22 Jul 2025 14:00:38 +0200
+Message-ID: <20250722120041.2718227-6-tduszynski@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250722120041.2718227-1-tduszynski@marvell.com>
 References: <20250627154107.3405768-1-tduszynski@marvell.com>
@@ -53,18 +52,18 @@ References: <20250627154107.3405768-1-tduszynski@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDA5OCBTYWx0ZWRfX3s6v/b5l7oo3
- V+fzm656Finkw2ri49Kazyt/j2tdofUjHxZzOkNm2bmx3iyOs5lm8PpRhwmBe27378Sn1pcefWT
- lsiLGrjoRpQj6C3ChshlOIxUS30JOZULhdL5xKD6G2QHJx4ckw9+vEh9e2CfBNz/nGUnda7Dkgj
- 2obHS4COxMWI+D164vNImvh2sGDyRTyhYD5ZEZHo95QVLfPQhbC43MuHwvkM3I6zrmWElOT2zom
- 6XLUqLTrqkbMXhvy7F4nWp/Wht0i9b9OVdsmRPC35j+vpt8/dnwbmI6bsFGw/RHf3v3ocN+Z8xD
- QPjhXD1b9RtBp0Qz9cE6QLXqJmhdy/wO1OTg0KbsJwsHfbrNnhA1VSr7Z4S4kfjhuADvQ4FAvd9
- OFCdtHgIhCuxAgZLhAPeyjhpZh0/0OLTZdS/XVCf23r8v5wgumEVCMedp41p3N8oeN/cPY4M
-X-Proofpoint-ORIG-GUID: jwMwCrDJR-iZZBzXLeKqg9qP3Tt61gQE
-X-Proofpoint-GUID: jwMwCrDJR-iZZBzXLeKqg9qP3Tt61gQE
-X-Authority-Analysis: v=2.4 cv=RfGQC0tv c=1 sm=1 tr=0 ts=687f7d7b cx=c_pps
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDA5OCBTYWx0ZWRfX6b6V0E9dYT97
+ U8wjQbnBxyqXKbASC8+9REbMz3ZSiLjfmyBP+gzgCagD016fajVrai2OyR8cgaQ6ai0OvrcjfSN
+ G9v72m8u8qyzTOd16Ke3MwTAEiRd/kFF9FM6gJzCvjkt31LS8aiMzve1F/1CihPY0ju3dPbhN3m
+ LAK8hYdpvJz5V3LxOgwBuDzJaYAwfWPY5aIx2GqI65iswBYzlwN78bGzKPtZywpRWNN3ooJ4EuJ
+ OFvKnm0KceLPt/SR1tY652ct3HK86wTYmEH5kgdh7TPdcjuLis7qE+KPawaXGM9ar4VD8GR7E9R
+ dsm64yO1moO9xe1dAdAYeTmQ9OBps/Bm+8a/io5cQlSXlorte9D5upp36ToP1m9guX8XdDr0jqK
+ PDzAOTMQlOiT3sKVhpWWfzu/10tPdNxqm+ESNbAeYg0/v2Pg17p6S3O8w1owC2SxyiCUbqpc
+X-Proofpoint-ORIG-GUID: ibCkwB3Aq8W02n7PWtqvRYUrKBvtNu6S
+X-Proofpoint-GUID: ibCkwB3Aq8W02n7PWtqvRYUrKBvtNu6S
+X-Authority-Analysis: v=2.4 cv=RfGQC0tv c=1 sm=1 tr=0 ts=687f7d7e cx=c_pps
  a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=Wb1JkmetP80A:10 a=M5GUcnROAAAA:8 a=Oq_oc4OIQJrBT0az780A:9
+ a=Wb1JkmetP80A:10 a=M5GUcnROAAAA:8 a=esutNisFxaaDPwP1l9cA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
@@ -82,123 +81,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-/proc/sys/kernel/perf_user_access attribute allow user process to access
-perf counters. Though in order to change it binary requires elevated
-capabilities or must be run as root. If that's not the case counter
-access remains disabled. Hence to avoid confusion log message that
-that warns user about that.
+RTE_LIB_PMU is defined by build system automatically if DPDK is build
+for Linux. Otherwise it's missing.
+
+That said all cases where conditional compilation is required
+can be handled without introducing other macros.
 
 Signed-off-by: Tomasz Duszynski <tduszynski@marvell.com>
 ---
- lib/pmu/pmu.c         |  4 ----
- lib/pmu/pmu_arm64.c   | 39 +++++++--------------------------------
- lib/pmu/pmu_private.h |  8 ++++++++
- 3 files changed, 15 insertions(+), 36 deletions(-)
+ lib/pmu/rte_pmu.h | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/lib/pmu/pmu.c b/lib/pmu/pmu.c
-index 0709f5e58c..3cae29891c 100644
---- a/lib/pmu/pmu.c
-+++ b/lib/pmu/pmu.c
-@@ -25,10 +25,6 @@
- #define FIELD_PREP(m, v) (((uint64_t)(v) << (rte_ffs64(m) - 1)) & (m))
+diff --git a/lib/pmu/rte_pmu.h b/lib/pmu/rte_pmu.h
+index 84a5d522d1..e997f62334 100644
+--- a/lib/pmu/rte_pmu.h
++++ b/lib/pmu/rte_pmu.h
+@@ -33,13 +33,10 @@
+ #include <rte_compat.h>
+ #include <rte_lcore.h>
  
- RTE_LOG_REGISTER_DEFAULT(rte_pmu_logtype, INFO)
--#define RTE_LOGTYPE_PMU rte_pmu_logtype
--
--#define PMU_LOG(level, ...) \
--	RTE_LOG_LINE(level, PMU, ## __VA_ARGS__)
+-#define RTE_PMU_SUPPORTED
+ #if defined(RTE_ARCH_ARM64)
+ #include "rte_pmu_pmc_arm64.h"
+ #elif defined(RTE_ARCH_X86_64)
+ #include "rte_pmu_pmc_x86_64.h"
+-#else
+-#undef RTE_PMU_SUPPORTED
+ #endif
  
- /* A structure describing an event */
- struct rte_pmu_event {
-diff --git a/lib/pmu/pmu_arm64.c b/lib/pmu/pmu_arm64.c
-index 3f4f5fa297..2c40b5f702 100644
---- a/lib/pmu/pmu_arm64.c
-+++ b/lib/pmu/pmu_arm64.c
-@@ -14,8 +14,6 @@
- 
- #define PERF_USER_ACCESS_PATH "/proc/sys/kernel/perf_user_access"
- 
--static int restore_uaccess;
--
- static int
- read_attr_int(const char *path, int *val)
- {
-@@ -39,49 +37,26 @@ read_attr_int(const char *path, int *val)
- 	return 0;
- }
- 
--static int
--write_attr_int(const char *path, int val)
--{
--	char buf[BUFSIZ];
--	int num, ret, fd;
--
--	fd = open(path, O_WRONLY);
--	if (fd == -1)
--		return -errno;
--
--	num = snprintf(buf, sizeof(buf), "%d", val);
--	ret = write(fd, buf, num);
--	if (ret == -1) {
--		close(fd);
--
--		return -errno;
--	}
--
--	close(fd);
--
--	return 0;
--}
--
- static int
- pmu_arm64_init(void)
- {
--	int ret;
-+	int uaccess, ret;
- 
--	ret = read_attr_int(PERF_USER_ACCESS_PATH, &restore_uaccess);
-+	ret = read_attr_int(PERF_USER_ACCESS_PATH, &uaccess);
- 	if (ret)
- 		return ret;
- 
--	/* user access already enabled */
--	if (restore_uaccess == 1)
--		return 0;
-+	if (uaccess != 1)
-+		PMU_LOG(WARNING, "access to perf counters disabled, "
-+			"run 'echo 1 > %s' to enable",
-+			PERF_USER_ACCESS_PATH);
- 
--	return write_attr_int(PERF_USER_ACCESS_PATH, 1);
-+	return ret;
- }
- 
- static void
- pmu_arm64_fini(void)
- {
--	write_attr_int(PERF_USER_ACCESS_PATH, restore_uaccess);
- }
- 
- static void
-diff --git a/lib/pmu/pmu_private.h b/lib/pmu/pmu_private.h
-index d74f7f4092..82118df8b3 100644
---- a/lib/pmu/pmu_private.h
-+++ b/lib/pmu/pmu_private.h
-@@ -5,6 +5,14 @@
- #ifndef PMU_PRIVATE_H
- #define PMU_PRIVATE_H
- 
-+#include <rte_log.h>
-+
-+extern int rte_pmu_logtype;
-+#define RTE_LOGTYPE_PMU rte_pmu_logtype
-+
-+#define PMU_LOG(level, ...) \
-+	RTE_LOG_LINE(level, PMU, ## __VA_ARGS__)
-+
- /**
-  * Structure describing architecture specific PMU operations.
-  */
+ #ifdef __cplusplus
 -- 
 2.34.1
 
