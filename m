@@ -2,45 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8709C83F27
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 15:20:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F896C83F27
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 15:42:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CBC4F40269;
-	Tue, 22 Jul 2025 17:20:08 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id CC76F4003C
- for <dev@dpdk.org>; Tue, 22 Jul 2025 17:20:06 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id B8C8246BE9; Tue, 22 Jul 2025 17:20:06 +0200 (CEST)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/core Bug 1760] Failed to send message on primary process exit
-Date: Tue, 22 Jul 2025 15:20:06 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: core
-X-Bugzilla-Version: 25.07
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: stephen@networkplumber.org
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1760-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17531976060.FbdD7B.3369805
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id B82BC402E1;
+	Tue, 22 Jul 2025 17:42:32 +0200 (CEST)
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com
+ [209.85.219.43]) by mails.dpdk.org (Postfix) with ESMTP id CACA440269
+ for <dev@dpdk.org>; Tue, 22 Jul 2025 17:42:30 +0200 (CEST)
+Received: by mail-qv1-f43.google.com with SMTP id
+ 6a1803df08f44-704cb8b1314so33935986d6.3
+ for <dev@dpdk.org>; Tue, 22 Jul 2025 08:42:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1753198950;
+ x=1753803750; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=nkjasW7kt7TvHWCljXwnYbll163oaa4RNUJklwUeq5k=;
+ b=urZKqdls8MbcgddmBf+SNrktl6Ql84zrphWSwhHPv3E+aWsJJT1EYivPYrjW45USgl
+ /ecboYAt/gwDKdcPcpw6qstsvNW/HzmcX9XJFURzfHLD0eWE82yPoRJRV0R/dJhTg0zZ
+ KhxI7wbrX/SduPmAoqv2nlPx8yXufdFWXKH664bZM0kpyZemWMg81MXX4NfwojQJG11n
+ NslbTaTR4bplE2ArywVzv6yR/I5KvUnb0utGt6uKcgbnlOCMr9IK8OdwXD4C+ry2ceBE
+ hLTcW2f6Y01belp57AKzLYDElOzDSiXQKDBeVulVzBt4ptwSVaYNzw3STnustIsN65y2
+ eUqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1753198950; x=1753803750;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=nkjasW7kt7TvHWCljXwnYbll163oaa4RNUJklwUeq5k=;
+ b=VhIAxjT/n4zIgmUxvLEzSeV5K574yKJMy6h7swueclTChQ8a4GSnO01R403NsMV7ML
+ emRczq/CBSukNmfVtxg7rL2d6cb9Kwb34ue3xUII/YURYfXQqEEMsMXLcsux+1Jb+8gm
+ R8sOx/v7CY3IJnKDN2fehVwaN/9J7utQl4qc2lMxMDg9usLTD4sbyNLCxnPcNrhSu1BE
+ 1uqZvmtPS4dAhhY25ezq9Ri9OPM9VnWS22U3KzlkDrO8/EisOLLCo6Wf2u7HpzSaOTNA
+ Ym21RS2u6KZd5hmgKnGeyXGWFFQZNK06E2NofuETc5dROMfm4Haz2PQ+5vUwYrAwfnFe
+ SKHQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVQSqpyPQu3k/yh+Kqo/qv3FI5AgdREY22WNWheZ+LB5J8wwi2WEFv1+IgQwPdhWIKybmY=@dpdk.org
+X-Gm-Message-State: AOJu0YyyfpEeHcYciIvDMDyUSRrzVz70z2NghPOLVHQQho3Pxtsae4Sx
+ o1xTVxyaaixl6goan+74mCpBeuzDxjceZ3RdM+xXqVr5tHZbDO5cvH9FFRu3sXBVyzQ=
+X-Gm-Gg: ASbGncu+Q9xn0bvubPFY88uVpCDAV+wZi7k6KPkVuwrrFrVNEiOZmR6uqZ+/M6vPPNQ
+ GMzvmHaZnSA5xPnQC/OWV4l/H/HN7jt9JxkqN+hHu3dA0M0ObgBQw7ajJW4mz3h//rOu8/pFYus
+ YN7VFqIhnt2v2AFD6aMMCxtLlRpyv9ffolDmV9ERclu08y1aoudiFOgx/Aa7JyGjxpWbc4DZCls
+ VfDKDiavpZI+okrw0Ppioc5KCHDoaTpvzxfXdFrMNgZuNU8pypaJwYMvM4sFcJFhTcTJLLAHhex
+ DxaSJoe45kYJActuRqEKnNybe/YPvhMyJo43bBc3VbVghJu7ebp8iVmNSDCyIvAL9IziCrolThA
+ qGAkjvUfqvjVFiGS7IGEU5u69UgY2oZbdAh+pWX3QCLEFQSSxRHNcVVGABXHUYIH5r+qJxhkhXY
+ w=
+X-Google-Smtp-Source: AGHT+IEIM3YWgAKqDI9Aqv+IUmXbj7qor2AbpRZSgKLys97O0u4tZZWFwNaMZllew8jlWSApIR/cEw==
+X-Received: by 2002:a05:6214:2e8a:b0:704:f94e:b5da with SMTP id
+ 6a1803df08f44-704f94eb9b7mr264942636d6.50.1753198950095; 
+ Tue, 22 Jul 2025 08:42:30 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-7051ba8ea91sm53523306d6.80.2025.07.22.08.42.29
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 22 Jul 2025 08:42:29 -0700 (PDT)
+Date: Tue, 22 Jul 2025 08:42:25 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+Cc: Thomas Monjalon <thomas@monjalon.net>, Ferruh Yigit
+ <ferruh.yigit@amd.com>, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ dev@dpdk.org, dpdk stable <stable@dpdk.org>
+Subject: Re: [PATCH] lib/ethdev: fix segfault in secondary process by
+ validating dev_private pointer
+Message-ID: <20250722084225.7a40e2bc@hermes.local>
+In-Reply-To: <CA++2-x7VPCtojdJ7+DXdK=ohAJtLu_3U8KPxHS9CNAqzMd1hoA@mail.gmail.com>
+References: <20250722115439.1353573-1-14pwcse1224@uetpeshawar.edu.pk>
+ <20250722063924.2f87f3f7@hermes.local>
+ <CA++2-x7VPCtojdJ7+DXdK=ohAJtLu_3U8KPxHS9CNAqzMd1hoA@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,214 +87,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+On Tue, 22 Jul 2025 19:30:41 +0500
+Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk> wrote:
 
---17531976060.FbdD7B.3369805
-Date: Tue, 22 Jul 2025 17:20:06 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+> Hi Stephen,
+> Can we add only the check that fixes the segfault, or do you mean that it
+> should be fixed at the PMD level?
+> 
+> Best regards,
+> Khadem
+> 
+> On Tue, Jul 22, 2025, 18:39 Stephen Hemminger <stephen@networkplumber.org>
+> wrote:
+> 
+> > On Tue, 22 Jul 2025 07:54:39 -0400
+> > Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk> wrote:
+> >  
+> > > +     if (rte_eal_process_type() == RTE_PROC_SECONDARY &&
+> > > +             (dev == NULL || dev->data == NULL ||
+> > > +             dev->data->dev_private == NULL ||  
+> >
+> > dev can't be NULL and checking it here will cause a Coverity warning.
+> >
+> > There are many other ethdev calls that will fail if primary dies.
+> > stats, xstats, rx/tx burst, ...
+> >
+> > I don't think it is good idea to add checks here.
+> >  
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1760
-
-            Bug ID: 1760
-           Summary: Failed to send message on primary process exit
-           Product: DPDK
-           Version: 25.07
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: core
-          Assignee: dev@dpdk.org
-          Reporter: stephen@networkplumber.org
-  Target Milestone: ---
-
-When a secondary process detects primary process has exited and calls
-eal_cleanup a warning message is generated.
-
-Primary: testpmd
-# dpdk-testpmd  -l 0-3  --vdev=3Dnet_tap0 -- -i
-
-testpmd> start
-...
-testpmd> quit
-
-
-Secondary: dumpcap
-# dpdk-dumpcap
-File: /tmp/dpdk-dumpcap_0_net_tap0_20250722081556.pcapng
-Capturing on 'net_tap0'
-Packets captured: 34 Primary process is no longer active, exiting...
-EAL: failed to send to (/var/run/dpdk/rte/mp_socket) due to No such file or
-directory
-EAL: Fail to send request /var/run/dpdk/rte/mp_socket:mp_pdump
-PDUMP: pdump_prepare_client_request(): client request for pdump enable/disa=
-ble
-failed
-EAL: failed to send to (/var/run/dpdk/rte/mp_socket) due to No such file or
-directory
-EAL: Cannot send message to primary
-
-Dumpcap is doing the right thing and detecing, the problem is internal to E=
-AL.
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
-
---17531976060.FbdD7B.3369805
-Date: Tue, 22 Jul 2025 17:20:06 +0200
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-<html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
-bz_new_table">
-        <tr>
-          <th>Bug ID</th>
-          <td><a class=3D"bz_bug_link=20
-          bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - Failed to send message on primary process exit"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1760">1760</a>
-          </td>
-        </tr>
-
-        <tr>
-          <th>Summary</th>
-          <td>Failed to send message on primary process exit
-          </td>
-        </tr>
-
-        <tr>
-          <th>Product</th>
-          <td>DPDK
-          </td>
-        </tr>
-
-        <tr>
-          <th>Version</th>
-          <td>25.07
-          </td>
-        </tr>
-
-        <tr>
-          <th>Hardware</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>OS</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>Status</th>
-          <td>UNCONFIRMED
-          </td>
-        </tr>
-
-        <tr>
-          <th>Severity</th>
-          <td>normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Priority</th>
-          <td>Normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Component</th>
-          <td>core
-          </td>
-        </tr>
-
-        <tr>
-          <th>Assignee</th>
-          <td>dev&#64;dpdk.org
-          </td>
-        </tr>
-
-        <tr>
-          <th>Reporter</th>
-          <td>stephen&#64;networkplumber.org
-          </td>
-        </tr>
-
-        <tr>
-          <th>Target Milestone</th>
-          <td>---
-          </td>
-        </tr></table>
-      <p>
-        <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">When a secondary process detects p=
-rimary process has exited and calls
-eal_cleanup a warning message is generated.
-
-Primary: testpmd
-# dpdk-testpmd  -l 0-3  --vdev=3Dnet_tap0 -- -i
-
-testpmd&gt; start
-...
-testpmd&gt; quit
-
-
-Secondary: dumpcap
-# dpdk-dumpcap
-File: /tmp/dpdk-dumpcap_0_net_tap0_20250722081556.pcapng
-Capturing on 'net_tap0'
-Packets captured: 34 Primary process is no longer active, exiting...
-EAL: failed to send to (/var/run/dpdk/rte/mp_socket) due to No such file or
-directory
-EAL: Fail to send request /var/run/dpdk/rte/mp_socket:mp_pdump
-PDUMP: pdump_prepare_client_request(): client request for pdump enable/disa=
-ble
-failed
-EAL: failed to send to (/var/run/dpdk/rte/mp_socket) due to No such file or
-directory
-EAL: Cannot send message to primary
-
-Dumpcap is doing the right thing and detecing, the problem is internal to E=
-AL.
-          </pre>
-        </div>
-      </p>
-
-
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1760">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17531976060.FbdD7B.3369805--
+It needs to be fixed at the documentation level.
+Make sure and document what applications need to do. Rather than adding
+more checks in ethdev.
