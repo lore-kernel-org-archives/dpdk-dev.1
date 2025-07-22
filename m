@@ -2,55 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C802FC83F1A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 17:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 612B5C83F27
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 18:22:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E550540283;
-	Tue, 22 Jul 2025 19:53:23 +0200 (CEST)
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com
- [209.85.219.54]) by mails.dpdk.org (Postfix) with ESMTP id 5E5F44003C
- for <dev@dpdk.org>; Tue, 22 Jul 2025 19:53:22 +0200 (CEST)
-Received: by mail-qv1-f54.google.com with SMTP id
- 6a1803df08f44-704cb8b1314so35080866d6.3
- for <dev@dpdk.org>; Tue, 22 Jul 2025 10:53:22 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B26AE402DE;
+	Tue, 22 Jul 2025 20:21:59 +0200 (CEST)
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com
+ [209.85.222.175])
+ by mails.dpdk.org (Postfix) with ESMTP id BF44540283
+ for <dev@dpdk.org>; Tue, 22 Jul 2025 20:21:58 +0200 (CEST)
+Received: by mail-qk1-f175.google.com with SMTP id
+ af79cd13be357-7e62773cab8so56844585a.1
+ for <dev@dpdk.org>; Tue, 22 Jul 2025 11:21:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1753206802;
- x=1753811602; darn=dpdk.org; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=EJ/iVj0+/agpv8Ut9qV+p/ajQfDHUCI3RQPVXm8/yI4=;
- b=iUyQxsP0zEGR52GagwH6MgH6gf+QSIAtMTdxTAJMURG6QhVRTb/Bh7st6tlNUBrlc6
- Qr9f94DX1IQHYvLRwa4b7k1A1+CNMAweV/uQ6ZarxSOmqDRKIsq/K0vWUPjUgZgKHa3M
- Gdy9AiSiXwejt8ud2NgF3jVIHaP0/HKdPNQOGdNrpZE9LRVizW3khv8JYsiEtWVlAFIb
- cxih06v110UN6hWlZvB9PjMSy/AKJEuOo2K5GUKLR6ONOIGPDXw+OxOqp8u+Rj5Ia+iN
- zD9tg3AmtInYnd1MJt5p3ePy5wuTQ8ieWoAiIco23vB6NORmg+oGpGK6OmaucAd1ZElQ
- M2hw==
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1753208518;
+ x=1753813318; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=J63SIc6kqwpOo8KLLzTVpSU7qFqpgSOiZzY9sFziJc4=;
+ b=HuUduTABBvj7yaogGyGhC8UyNFkBCkhA+BroI5/fACWxcIJtgSeGCxQig5V5UA2/Mp
+ Pe6xeo1WBUnlcM4ZppXgi+x773vxd/gxlDNfVuuxRgX+WtS3+AlpTj60xKW95/4waTuV
+ 7ozRj7QPazslaMMcOu412GC4IsqEQEgkpgBnqv71nQnZAES/a8yoCGoCCdSfnwhl2FB3
+ JakfaDIPmbpTO4jjYUnj6y5VRyhXVbhF0iWzPAibQ12yQTZ6Hm2DGadxd7U46EqA3QOv
+ d0z5dh3blr3GjRWpdSoCc1GpApgbtkBFCFpaAZoGZH0m2J9W/X4VGjmfR9tACqnYGCwe
+ 1Ajw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753206802; x=1753811602;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=EJ/iVj0+/agpv8Ut9qV+p/ajQfDHUCI3RQPVXm8/yI4=;
- b=IOvPYE4yWdk/Ys9MK69SpnCCEgMGQYzXTSGRiUz6CXy/Y1K97yRm/uByGiIqNm4CXM
- F/hZGVH6/WrTqLhkmAuINd11ulxotxpMCj/xqzaLu8FVLgosyCZ5nEPv9yUNSAKCeAbS
- nUK+r5qGWF5RFtgrl2sqJXQ1BJE/Gs+6uQ8w1YW+kHkXuPqqN6rVCxf4Gl6h4/RCp66Q
- EMtpOaHZ2wDtUggl8kTk9FDo/tXF46cMhGceVr8m0gOmBuDoXZf6TVasPDN/rf7dueH+
- rZYZ7dw4ME811DNsGtd4zO3NxJvteXzuLBRe6+KiHYIY+v9cSKIf4RzjI1K4l8iOJAib
- xlyw==
+ d=1e100.net; s=20230601; t=1753208518; x=1753813318;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=J63SIc6kqwpOo8KLLzTVpSU7qFqpgSOiZzY9sFziJc4=;
+ b=WHgnx7enkPVQjiUKMoe+WMVYrwCZlj5LTeRRZ4voibffOCNaRiKZ9PN/u/vCzjvaRn
+ ut+9oEkoyyx+arjcveA8skt/NvHu/DxAnB9IfPLHqwmS9Jp1KQejyVw//W+Mnwrv5wY4
+ VDxdWjGSFpTfy7NEfJagOAvfCFwgd+0yuIgMvzJ40178Krw/Jt2b2w8v6sk/roMLW0WX
+ tjWRb70NfKOA/OqIypdcaqASApbbuier1yq/Fmaf7UuvU0pM0zpZs4M6lwoPUxO+i5CE
+ 1hYXGD0oSSlwKyXPeLLp7ko75fLNWQMC6JQPyhPPYaVXYImeq2g2QUnxzp/2MLWVJdQJ
+ 4lAQ==
 X-Forwarded-Encrypted: i=1;
- AJvYcCVr18CJU3tjrVa4Lkmby69fFA8MBMGeXTJ2GOrrWn57e4P3Xbv+xwBA8i9JUXLHkb61ydk=@dpdk.org
-X-Gm-Message-State: AOJu0Yzh0Gl19PaK6UBVmWpBwYSH6CXkvBIHooFqcS89yZiDEsQQEsI0
- IguUA/8w7l2bAQgBMutDZ3J96cEQfsa8wOt0gHqjhFZbQ+UoFiNvXSOYr0/jdhyA458Thabsc2F
- w8YAI4HwV/SmJD6pV1k/UMqWZlB0b4fUammeuLRHnOg==
-X-Gm-Gg: ASbGncs547WgRjd7iAN1p0jPrL7jSUsvaBjZBvF0ibePaJSXQJEQfoPFsKve5icoUOb
- xE7+/vCpvh9fOLkbP4KNMV9vGbUBgVhp3DGWOmMacoxZGVHMv1CP/UaCEEu66BucEmPMA/6YbXp
- R+9ww7NYJpeRoTV30wVNOT1IGzd7tuxsNQn8F2jcGfhzMw2I8H+9obzpLDzNS0rTJBGj6LrKykJ
- ziESeI6sC1xtukbHFkUoPbgvM2BEbB7Nf1cvvF0gg==
-X-Google-Smtp-Source: AGHT+IEboEbvkQ2uVY3IJu6Lf812u5MMkAmzbR+rPQX2OiFLzQ88EJLvZSa51xglrSwEcect9Bt3Sa628VvoHZ8jacQ=
-X-Received: by 2002:a05:6214:248a:b0:706:ffcd:505f with SMTP id
- 6a1803df08f44-7070023f4acmr1427906d6.0.1753206801551; Tue, 22 Jul 2025
- 10:53:21 -0700 (PDT)
-MIME-Version: 1.0
+ AJvYcCVsPPfS/KMDQEJNG5NCWyWWL3Lk/vNP/sFnfWiEbRZTFOxs/+wNfg1TMFLmqIym57nA678=@dpdk.org
+X-Gm-Message-State: AOJu0YxKfk+0AcKjWqvin2zFWgzagNAluEm+K2Hck6oeeMoJzvf84SuY
+ +0PEfqamfsEZWYswEqQMZhuW2KPbTyNX+7e3+VumZrk5D1vloCm3QFnQG/j6100HJjY=
+X-Gm-Gg: ASbGncsLDCs8l1N2gOqEHY3cJx83yxQqiCVLDGQtc1poXTtDKDCU+nyyFVkgymWasKG
+ EWuy7zqUTwC6bhXVAj3U/EOfUeHuEeQ/AWLZt1IjCg5Gh8OYdJhbBVHV1FZ1pcvhwEDDsCyeGK0
+ 8bhBiLs5RDp/yDQQ1ymiwUwN4KhFkKIXaSHH/Y+paVesmShMSPLXktFYyWGDEc6sH4gUymOgxtt
+ vzTdlh4XLz4m7JtsdUDzaTm3KdBFVeV9OqDIf4HXd8lzXCmi8c3Mr8N3ZA6qbuyqHdvglvo6hLr
+ Vlrbwys6g/dj24e82w3Dfk3AsgDIKXEhMEFEkF2CgY3L0Hxj3AU1Bgy/edZJPh6MRYH1sKAxia3
+ m7VQlMWvhOPmCbKboioXL0LJH/irdhbs9ZsFTLuqrd9WSF1Z0lugYbiCSCBvl3iWWvOhqM3dIFh
+ s=
+X-Google-Smtp-Source: AGHT+IEUOMz2foHMNMG++/i+UyBquz9CBdu4+GWWtyUcNCYBy5eMYLDgsQYcV+DUtuft3bIDs2rvBg==
+X-Received: by 2002:a05:620a:aa1b:b0:7dd:f63c:b195 with SMTP id
+ af79cd13be357-7e62a1a43e2mr38399285a.32.1753208517812; 
+ Tue, 22 Jul 2025 11:21:57 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ af79cd13be357-7e356a0732dsm568022585a.0.2025.07.22.11.21.56
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 22 Jul 2025 11:21:57 -0700 (PDT)
+Date: Tue, 22 Jul 2025 11:21:54 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+Cc: Bruce Richardson <bruce.richardson@intel.com>, Thomas Monjalon
+ <thomas@monjalon.net>, Ferruh Yigit <ferruh.yigit@amd.com>, Andrew
+ Rybchenko <andrew.rybchenko@oktetlabs.ru>, dev@dpdk.org, dpdk stable
+ <stable@dpdk.org>
+Subject: Re: [PATCH] lib/ethdev: fix segfault in secondary process by
+ validating dev_private pointer
+Message-ID: <20250722112154.78349c82@hermes.local>
+In-Reply-To: <CA++2-x69b=_+7wYaK57fv8j0F4VOsSVJ-S-yyi76Lgoy=E-dpg@mail.gmail.com>
 References: <20250722115439.1353573-1-14pwcse1224@uetpeshawar.edu.pk>
  <20250722063924.2f87f3f7@hermes.local>
  <CA++2-x7VPCtojdJ7+DXdK=ohAJtLu_3U8KPxHS9CNAqzMd1hoA@mail.gmail.com>
@@ -59,20 +78,10 @@ References: <20250722115439.1353573-1-14pwcse1224@uetpeshawar.edu.pk>
  <aH-4xyH45rElgVb0@bricha3-mobl1.ger.corp.intel.com>
  <CA++2-x4+3QE+EOCdUcX8go27Z0tqrb4Br1MADQEiu=q3GgRpPA@mail.gmail.com>
  <20250722103824.7c9db0a0@hermes.local>
-In-Reply-To: <20250722103824.7c9db0a0@hermes.local>
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Date: Tue, 22 Jul 2025 22:53:08 +0500
-X-Gm-Features: Ac12FXyPX0a32Am_-ztIqBfxBzEu49MxOEWK7i6Xb-3f73E-Pvy_qreP26rZfLA
-Message-ID: <CA++2-x69b=_+7wYaK57fv8j0F4VOsSVJ-S-yyi76Lgoy=E-dpg@mail.gmail.com>
-Subject: Re: [PATCH] lib/ethdev: fix segfault in secondary process by
- validating dev_private pointer
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Thomas Monjalon <thomas@monjalon.net>, 
- Ferruh Yigit <ferruh.yigit@amd.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, dev@dpdk.org, 
- dpdk stable <stable@dpdk.org>
-Content-Type: multipart/alternative; boundary="0000000000009fe94c063a88449a"
+ <CA++2-x69b=_+7wYaK57fv8j0F4VOsSVJ-S-yyi76Lgoy=E-dpg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,57 +95,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000009fe94c063a88449a
-Content-Type: text/plain; charset="UTF-8"
+On Tue, 22 Jul 2025 22:53:08 +0500
+Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk> wrote:
 
-Right, but performance and reliability are both important. While DPDK
-rightly prioritizes performance, some level of reliability should still be
-ensured, especially to catch known issues that could lead to instability.
+> Right, but performance and reliability are both important. While DPDK
+> rightly prioritizes performance, some level of reliability should still be
+> ensured, especially to catch known issues that could lead to instability.
+> 
+> On Tue, Jul 22, 2025, 22:38 Stephen Hemminger <stephen@networkplumber.org>
+> wrote:
+> 
+> > On Tue, 22 Jul 2025 22:04:32 +0500
+> > Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk> wrote:
+> >  
+> > > Agree, but I think it's also a good practice to guard against known cases
+> > > that are prone to crashes.  
+> >
+> >
+> > Right but DPDK chooses performance over API safety.
+> > For example rx/tx burst doesn't check args.
+> >
+> > The point is that as a library, if application is doing something wrong
+> > returning error doesn't always help.
+> >  
 
-On Tue, Jul 22, 2025, 22:38 Stephen Hemminger <stephen@networkplumber.org>
-wrote:
+The problem is that all those values dev->data and private are shared
+between processes without any locking. If the API's are going to MP safe
+then they would require locking. The DPDK has made an explicit decision
+to not use locking in ethdev control or data path.
 
-> On Tue, 22 Jul 2025 22:04:32 +0500
-> Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk> wrote:
->
-> > Agree, but I think it's also a good practice to guard against known cases
-> > that are prone to crashes.
->
->
-> Right but DPDK chooses performance over API safety.
-> For example rx/tx burst doesn't check args.
->
-> The point is that as a library, if application is doing something wrong
-> returning error doesn't always help.
->
-
---0000000000009fe94c063a88449a
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"auto">Right, but performance and reliability are both important=
-. While DPDK rightly prioritizes performance, some level of reliability sho=
-uld still be ensured, especially to catch known issues that could lead to i=
-nstability.</div><br><div class=3D"gmail_quote gmail_quote_container"><div =
-dir=3D"ltr" class=3D"gmail_attr">On Tue, Jul 22, 2025, 22:38 Stephen Hemmin=
-ger &lt;<a href=3D"mailto:stephen@networkplumber.org">stephen@networkplumbe=
-r.org</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"ma=
-rgin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">On Tue, 22 Jul=
- 2025 22:04:32 +0500<br>
-Khadem Ullah &lt;<a href=3D"mailto:14pwcse1224@uetpeshawar.edu.pk" target=
-=3D"_blank" rel=3D"noreferrer">14pwcse1224@uetpeshawar.edu.pk</a>&gt; wrote=
-:<br>
-<br>
-&gt; Agree, but I think it&#39;s also a good practice to guard against know=
-n cases<br>
-&gt; that are prone to crashes.<br>
-<br>
-<br>
-Right but DPDK chooses performance over API safety.<br>
-For example rx/tx burst doesn&#39;t check args.<br>
-<br>
-The point is that as a library, if application is doing something wrong<br>
-returning error doesn&#39;t always help.<br>
-</blockquote></div>
-
---0000000000009fe94c063a88449a--
+You can get away with checking for dev->data being NULL on x86 where
+there is data consistency. But on weakly ordered platforms that is not going
+to work.
