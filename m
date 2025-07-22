@@ -2,52 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 513DBC83F27
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 14:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA2A8C83F1A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 14:08:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E5E9840A7D;
-	Tue, 22 Jul 2025 16:04:40 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
- by mails.dpdk.org (Postfix) with ESMTP id 9D55B4066C
- for <dev@dpdk.org>; Tue, 22 Jul 2025 16:04:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1753193076; x=1784729076;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=S5eNVcFSZDCLGOXNK1eJ+ncP5crbPeX8N33QfhjguA4=;
- b=D3iUaspD7GyMwKaOlWjC2oZB5t1omEnsdusbPFuJrBA0TdBvzQz9mqAh
- uKmiXomD6ZNyybZtLbiu2Lskz/dDJfRj0n3xvoupqxXKXyv9m52k7jcFk
- uIDvcHpqi2F8lJf1RetNvpvcmHYHNQz1494FITnWVP8AHcf3KOOBYuydz
- a+LfJ1s+L6RON31LtgYYkffC8w+skWUWckXhk2tFLlp85jwr+2DXrbYhS
- gkS6+8ye5vo2S27T+jEzaTQKwZY5sPgo7o2gMgYTe6gHI1um9WOnCPVFW
- f0DbKTvHgjZZM8FlfvilYG4DflqKsxnhfen8vE/0sZ7odzxrLnIrdF+hC g==;
-X-CSE-ConnectionGUID: +2tBLf10Q8GhmPQOwx0I7Q==
-X-CSE-MsgGUID: bee775QKQlWofhZSJ/i2vw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11500"; a="59242008"
-X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; d="scan'208";a="59242008"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
- by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 22 Jul 2025 07:04:12 -0700
-X-CSE-ConnectionGUID: 44DVdS3wTpGDa4HtADHoaA==
-X-CSE-MsgGUID: V9HIpcXmRXWh2MUjG3flzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; d="scan'208";a="190104476"
-Received: from silpixa00401385.ir.intel.com ([10.237.214.33])
- by fmviesa001.fm.intel.com with ESMTP; 22 Jul 2025 07:04:10 -0700
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: david.marchand@redhat.com, Bruce Richardson <bruce.richardson@intel.com>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>
-Subject: [PATCH v6 9/9] eal: simplify handling of conflicting cmdline options
-Date: Tue, 22 Jul 2025 15:03:14 +0100
-Message-ID: <20250722140316.3568603-10-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250722140316.3568603-1-bruce.richardson@intel.com>
-References: <20250520164025.2055721-1-bruce.richardson@intel.com>
- <20250722140316.3568603-1-bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 3D42640668;
+	Tue, 22 Jul 2025 16:08:20 +0200 (CEST)
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com
+ [209.85.160.175])
+ by mails.dpdk.org (Postfix) with ESMTP id E18D340668
+ for <dev@dpdk.org>; Tue, 22 Jul 2025 16:08:18 +0200 (CEST)
+Received: by mail-qt1-f175.google.com with SMTP id
+ d75a77b69052e-4ab9ba884c6so69237151cf.0
+ for <dev@dpdk.org>; Tue, 22 Jul 2025 07:08:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1753193298;
+ x=1753798098; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=+LTIByl0UjqQH/xIqvh8xz7gayCe6GP/2DHCpWnd1L4=;
+ b=rwdHlNpOLNuaFKKC7E8D0dnqZPLp8+hcK0jA8eHE1u8BQXeM/7X0ZIOL80hvfayELM
+ MaIN+snBRp4qhOlIzsrYsfaF5DUxEyF4iq43NEK/JNOdd2JoaTGV4wTo9QmQt+H1rucC
+ yHSc8v/5I+Ct4nWsW6/H6qnK7rJpw8mXX4euCNpfCSygS7Q7jq77/YQTfMdYV3rt8c0x
+ zA4rWwbxozrtFV5ExrHYbfvyY7883jPiwb7XaODUJD3pexXGZJ+s4ZNKxhYkETU6fvOe
+ OyGjb6/ongIFSq2hevnMZMab+R5YwSIdjfAEmVSQvFlA+frtMlfXXC1xMM4itg3i0dcw
+ Z3TA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1753193298; x=1753798098;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=+LTIByl0UjqQH/xIqvh8xz7gayCe6GP/2DHCpWnd1L4=;
+ b=bu1x4U0x/RMs1EozxtTh6fn4oy/9NsGKskyqPSVlE8fp2gndl8pGl9IwIuIXAki5H/
+ gwZhgmowIDCiuicy062kH+o4MFTFRdWGmH90PfUXGVBHSTtVx5LEcrgWbdSCzLvExQbe
+ WOwFhPuamQLp5G6pB2fCruFZot5FFgi6He0SNie1mQRAxUF1a7vVUqonvmYO/yLbGvcG
+ mXn4J9hXTisyjGhfcHd8fYSqHde4A4WAxnyQG6Byc0yTgql/H+acBEQJJmLEs2j+6OwJ
+ LadNYvqYX1h8UeExFeIDWNmLUsbzjgtuMfhM9XPxCSxP4ok0jsztRd0lHNx+woIL1tKK
+ yTvg==
+X-Gm-Message-State: AOJu0YyHJXJmtZpi6Gr/Kgx1eEA4s1G5XSTfbEIPiS38zMIEkhtD/LzL
+ mYLP/CXBy4uHzuE5vjaoXYbhxNnhCLN3JV3+YW/YTeqSrRHiEyOfGSfqoTa5j6T9Fwg=
+X-Gm-Gg: ASbGncuQVCiGAPQVentF4fS9SmerCR41uU9KVCCQKoytGwOeIB6u2pOpbKmuvUKuUky
+ k6RHAO2RXawhyMqkcJ8l/tZlhzX17HBKLJEJ8XvNSVGdOmqZ/H/ZAl8mNtn5haOh2C4PLa4kivD
+ x6ulgcyndQYRUIm2EifIwRyLTxowZ6kCESj6c/k5A55SXlRAL3+J+NJKLJsYZoN8vvZomE3LfcO
+ bLq5/N0qTphQ7iyXDEj8dlUuKJ4xVIqD2dAuq5lD+2pf+GYXrYKMfjAhwZl5677+x2pp4TQUFGX
+ /pTWzpTy7mhRS4bTMiydu+vb9NjAtWCT/Ob2Afw0Z459NRTUG486hRg6I0BSNwfr6+KAGEbIJ/+
+ JF3ZRlwIDReuechsyE7Qkb2LVG0vpd1zck702D0pvPC75pUMDHAiOAWeZMvBwIa5fq+og5LYZXp
+ ZbE4NCUX9fzA==
+X-Google-Smtp-Source: AGHT+IFIUmoCc88gpHJDzpqmUE5Ke25yRc8ToTUjawiJjT9bgWmzdwomE0O8lj0GAhDqLYetDsYcog==
+X-Received: by 2002:a05:622a:20a:b0:4ab:40d6:ba26 with SMTP id
+ d75a77b69052e-4ae5c3e4cc1mr39658011cf.24.1753193298150; 
+ Tue, 22 Jul 2025 07:08:18 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d75a77b69052e-4abb4aebcf8sm54625291cf.40.2025.07.22.07.08.17
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 22 Jul 2025 07:08:17 -0700 (PDT)
+Date: Tue, 22 Jul 2025 07:08:15 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH] app/testpmd: add flag to enable RSS for single-queue
+Message-ID: <20250722070815.620df80d@hermes.local>
+In-Reply-To: <20250715125330.2127309-1-bruce.richardson@intel.com>
+References: <20250715125330.2127309-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,160 +81,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use a utility function and macro to simplify the code for checking for
-conflicting cmdline options. The checking can also be done at the
-initial argument collating stage, shortening the argument
-processing function which is very much on the long side.
+On Tue, 15 Jul 2025 12:53:30 +0000
+Bruce Richardson <bruce.richardson@intel.com> wrote:
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
- lib/eal/common/eal_common_options.c | 119 +++++++++++-----------------
- 1 file changed, 47 insertions(+), 72 deletions(-)
+> For testing purposes it can be desirable to enable RSS even when only a
+> single queue per port is in use. Add an "enable-rss" flag to testpmd to
+> match the existing "disable-rss" flag.
+> 
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> ---
 
-diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
-index 486e2ad854..c568e59ef3 100644
---- a/lib/eal/common/eal_common_options.c
-+++ b/lib/eal/common/eal_common_options.c
-@@ -178,6 +178,29 @@ struct rte_argparse eal_argparse  = {
- 	}
- };
- 
-+static inline bool
-+conflicting_options(uintptr_t opt1, uintptr_t opt2, const char *opt1_name, const char *opt2_name)
-+{
-+	char name1[64];  /* should be the max length of any argument */
-+	char name2[64];
-+
-+	strlcpy(name1, opt1_name, sizeof(name1));
-+	strlcpy(name2, opt2_name, sizeof(name2));
-+	for (int i = 0; name1[i] != '\0'; i++)
-+		if (name1[i] == '_')
-+			name1[i] = '-';
-+	for (int i = 0; name2[i] != '\0'; i++)
-+		if (name2[i] == '_')
-+			name2[i] = '-';
-+	if (opt1 && opt2) {
-+		EAL_LOG(ERR, "Options '%s' and '%s' can't be used at the same time", name1, name2);
-+		return true;
-+	}
-+	return false;  /* no conflicts */
-+}
-+#define CONFLICTING_OPTIONS(args, opt1, opt2) \
-+	conflicting_options((uintptr_t)(args.opt1), (uintptr_t)(args.opt2), #opt1, #opt2)
-+
- /* function to call into argparse library to parse the passed argc/argv parameters
-  * to the eal_init_args structure.
-  */
-@@ -200,6 +223,30 @@ eal_collate_args(int argc, char **argv)
- 	if (retval < 0)
- 		return retval;
- 
-+	/* check for conflicting options */
-+	/* both -a and -b cannot be used together (one list must be empty at least) */
-+	if (!TAILQ_EMPTY(&args.allow) && !TAILQ_EMPTY(&args.block)) {
-+		EAL_LOG(ERR, "Options allow (-a) and block (-b) can't be used at the same time");
-+		return -1;
-+	}
-+
-+	/* for non-list args, we can just check for zero/null values using macro */
-+	if (CONFLICTING_OPTIONS(args, coremask, lcores) ||
-+			CONFLICTING_OPTIONS(args, service_coremask, service_corelist) ||
-+			CONFLICTING_OPTIONS(args, no_telemetry, telemetry) ||
-+			CONFLICTING_OPTIONS(args, memory_size, numa_mem) ||
-+			CONFLICTING_OPTIONS(args, no_huge, numa_mem) ||
-+			CONFLICTING_OPTIONS(args, no_huge, huge_worker_stack) ||
-+			CONFLICTING_OPTIONS(args, numa_limit, legacy_mem) ||
-+			CONFLICTING_OPTIONS(args, legacy_mem, in_memory) ||
-+			CONFLICTING_OPTIONS(args, legacy_mem, match_allocations) ||
-+			CONFLICTING_OPTIONS(args, no_huge, match_allocations) ||
-+			CONFLICTING_OPTIONS(args, no_huge, huge_unlink) ||
-+			CONFLICTING_OPTIONS(args, single_file_segments, huge_unlink) ||
-+			CONFLICTING_OPTIONS(args, no_huge, single_file_segments) ||
-+			CONFLICTING_OPTIONS(args, in_memory, huge_unlink))
-+		return -1;
-+
- 	argv[retval - 1] = argv[0];
- 	return retval - 1;
- }
-@@ -1780,78 +1827,6 @@ eal_parse_args(void)
- 	struct rte_config *rte_cfg = rte_eal_get_configuration();
- 	struct arg_list_elem *arg;
- 
--	/* check for conflicting options */
--	/* both -a and -b cannot be used together (one list must be empty at least) */
--	if (!TAILQ_EMPTY(&args.allow) && !TAILQ_EMPTY(&args.block)) {
--		EAL_LOG(ERR, "Options allow (-a) and block (-b) can't be used at the same time");
--		return -1;
--	}
--	/* both -l and -c cannot be used at the same time */
--	if (args.coremask != NULL && args.lcores != NULL) {
--		EAL_LOG(ERR, "Options coremask (-c) and core list (-l) can't be used at the same time");
--		return -1;
--	}
--	/* both -s and -S cannot be used at the same time */
--	if (args.service_coremask != NULL && args.service_corelist != NULL) {
--		EAL_LOG(ERR, "Options service coremask (-s) and service core list (-S) can't be used at the same time");
--		return -1;
--	}
--	/* can't have both telemetry and no-telemetry */
--	if (args.no_telemetry && args.telemetry) {
--		EAL_LOG(ERR, "Options telemetry and no-telemetry can't be used at the same time");
--		return -1;
--	}
--	/* can't have both -m and --socket-mem */
--	if (args.memory_size != NULL && args.numa_mem != NULL) {
--		EAL_LOG(ERR, "Options -m and --numa-mem can't be used at the same time");
--		return -1;
--	}
--	/* can't use both no-huge and socket-mem */
--	if (args.no_huge && args.numa_mem) {
--		EAL_LOG(ERR, "Options --no-huge and --numa-mem can't be used at the same time");
--		return -1;
--	}
--	/* can't use no-huge and huge-worker-stack */
--	if (args.huge_worker_stack != NULL && args.no_huge) {
--		EAL_LOG(ERR, "Options --no-huge and --huge-worker-stack can't be used at the same time");
--		return -1;
--	}
--	/* can't use socket-limit and legacy-mem */
--	if (args.numa_limit != NULL && args.legacy_mem) {
--		EAL_LOG(ERR, "Options --numa-limit and --legacy-mem can't be used at the same time");
--		return -1;
--	}
--	/* can't use legacy-mem and in-memory */
--	if (args.legacy_mem && args.in_memory) {
--		EAL_LOG(ERR, "Options --legacy-mem and --in-memory can't be used at the same time");
--		return -1;
--	}
--	/* can't use legacy-mem and match-allocations */
--	if (args.legacy_mem && args.match_allocations) {
--		EAL_LOG(ERR, "Options --legacy-mem and --match-allocations can't be used at the same time");
--		return -1;
--	}
--	/* can't use no-huge and match-allocations */
--	if (args.no_huge && args.match_allocations) {
--		EAL_LOG(ERR, "Options --no-huge and --match-allocations can't be used at the same time");
--		return -1;
--	}
--	/* can't use no-huge and huge-unlink */
--	if (args.no_huge && args.huge_unlink) {
--		EAL_LOG(ERR, "Options --no-huge and --huge-unlink can't be used at the same time");
--		return -1;
--	}
--	/* can't use single-file-segments and huge-unlink */
--	if (args.single_file_segments && args.huge_unlink) {
--		EAL_LOG(ERR, "Options --single-file-segments and --huge-unlink can't be used at the same time");
--		return -1;
--	}
--	/* can't use in-memory and huge-unlink */
--	if (args.in_memory && args.huge_unlink) {
--		EAL_LOG(ERR, "Options --in-memory and --huge-unlink can't be used at the same time");
--		return -1;
--	}
--
- 	/* print version before anything else */
- 	/* since message is explicitly requested by user, we write message
- 	 * at highest log level so it can always be seen even if info or
--- 
-2.48.1
+Not sure about this.
+It makes no sense to have RSS enabled with single queue.
+Maybe you want the hash but no steering?
 
+But the DPDK RSS flag doesn't require driver to produce HASH.
+
+I would even argue that ethdev layer should warn application
+trying to do single queue and RSS.
