@@ -2,71 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24976C83F27
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 03:57:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B7EC83F27
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 04:04:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5B1F24064E;
-	Tue, 22 Jul 2025 05:57:01 +0200 (CEST)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com
- [209.85.216.46]) by mails.dpdk.org (Postfix) with ESMTP id 2E6A9402CA
- for <dev@dpdk.org>; Tue, 22 Jul 2025 05:57:00 +0200 (CEST)
-Received: by mail-pj1-f46.google.com with SMTP id
- 98e67ed59e1d1-31393526d0dso3490699a91.0
- for <dev@dpdk.org>; Mon, 21 Jul 2025 20:57:00 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0513B402CC;
+	Tue, 22 Jul 2025 06:04:47 +0200 (CEST)
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com
+ [209.85.160.179])
+ by mails.dpdk.org (Postfix) with ESMTP id DB9D2402CA
+ for <dev@dpdk.org>; Tue, 22 Jul 2025 06:04:45 +0200 (CEST)
+Received: by mail-qt1-f179.google.com with SMTP id
+ d75a77b69052e-4ab61ecc1e8so37993811cf.1
+ for <dev@dpdk.org>; Mon, 21 Jul 2025 21:04:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1753156619;
- x=1753761419; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1753157085;
+ x=1753761885; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=HGcwHRpjK20yD6VUnrBnvIeRa7AZvsPGWIF8WUOFl2Y=;
- b=QaH2QV4pk4nyFXv2EaGmgBh9O3Pzdx1jxn2km0Q+c79AQ+Tz94BpWWqlqlz+sYZdpO
- yNoLgiFE+gQIudj+HLu+5W15gXkZ4PHKDhlUao+xxGC8pPISCuTJNMfI2ljDPk6E8h42
- KNgKvcV2dpXYIcRI+ieekCiqcjt9WUHc/bvKssMhwLSZKbaNbS1LqA5TFeazjwXQ205o
- YuyZceTedC5xCHmqz9ITPKsQRo18aHzPS7MNLVBYbRpKV3uVdL6g6thnIDQrXS6s/wXf
- qWcZ6lI3SZ7S7ylImi05SP9JOl0QPZjFlO3SnnsbQxW4XoaJc0vHF3aYlH/+6jOlDb34
- 4oIA==
+ bh=XpHvxqlX7OcnxJPCs0nCNowC+j6KarE8ktvVLZ7bWvM=;
+ b=V8WavRbnyGLvRT1DpmDC3DgKjgO4jlCiMfnrjHm+A9OQf5H58M5PVxU42Q9ie50ev9
+ GbdBaChsreSdNgt1s9QietmqI63CU+j8CZG8Nb3Us35uO1JWUkIMwPKKNM+BNd0wB1Bt
+ yL2ThvIMb5siJ4R14d1Ssi5DMHwIU96up6ZlKS2i7XAp5lgBZHOrMNXC7Gxbfs6ZX7mP
+ t3Xwxn+jjJ+GC9bFZXE9/faSAiYtYO0gfBVH/uTvxvV3VAsEO7bXj6q9ikM+Q+s20yTc
+ vEr9KNsvD6oVQSx5yY/aWWO9bZ8gE6jGL/1UcB7/S30UsrJlHAuYmYpmNrpR+35mr0AM
+ 8nFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753156619; x=1753761419;
+ d=1e100.net; s=20230601; t=1753157085; x=1753761885;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=HGcwHRpjK20yD6VUnrBnvIeRa7AZvsPGWIF8WUOFl2Y=;
- b=I6+hrfNWPBCghpNMFCR/wldDTPC0xiR57UeKWqBDGFQkHqeCqg1b8r0sUKnQJAumkw
- EKm4vF1HAfqSuE3l8v6DViRDzgvos2lPeKArPltNbxXt3Hmckzg9HPzDa/SD6iBL/nKS
- iXRNLYe3mv2VxS08FHae9aJRj0uK7D7TObh/nSzGqZv61LV8qCfZ+bEVNmwl1rDsqCXg
- th1DTAtYN1RILhZ7uXB9zvsLH4J2Mq0FhXxyAWXLp3B1OxDxVBFkh3VWOlkJsBQyjMNA
- UzmRgrlea9IE5DXe/sEibf2IGU25FKfudLBra3JkpHam85ByBjFx4JWktpce8Vx8CLU2
- XLGQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCW/kLEdIBoKvlldxTm3qpNoXmn/73qNOLmflZsOn4Wl1iZeJUsoECoVDOVCbX+o9DswHWA=@dpdk.org
-X-Gm-Message-State: AOJu0YyFmlEalm4VPuFEJYchtITYzxQDq2dthFvrK9JWxcsQlSYTERwg
- BFwuVt1ps9h1ccJfIvi1ICzK6DucPInPltlmB77OlVd2jX8n9/Pot1DbPXnp8cMEIZA=
-X-Gm-Gg: ASbGncuuzqH3qr/402y7dUELpp9GI4CD21TkCdHcfwzZWsjS9nf36mBjF2JysnzMxsW
- cD+GmKzDXlhZaf/D87o3SrDiwQlS8yULEEmdO74dhuix4+dvcHxTTSnJZmYkfM4BqeUw4QJi7MD
- cvPXHSTwKcJP0iUXk3CYgFDgo1nO4hGflp3/Q83+xnbQDPnBEHTVUR0GWAfnYzkAlt9XyI75tZK
- /th8W0mmSOzfLSudhpC0d+YdbQ4rA+vHemJKFcOQDnMpsQjsBrMSfcVo/zI/Z42/9BTiqzdFaBt
- xZfbmqmS0RoSjCjct/HUQS29frd0a/AvYERzzyagLb4TdxXEeM5XW+vIMrgZjNNLLRZFMgO/PsA
- BCbwkZ/AvA5S/W7oW6z47oZE/DcT9a/JdPvnmAj/lzu+KRCHgUaP7TV+gWag90bK6mQprZ6yOtj
- 8=
-X-Google-Smtp-Source: AGHT+IFbOwOMx1FOvjr6cJRIW9jYZU6QWn/l1BWCNW5vX/c2R0S0gRojzVzBbd5cK+b4dZr5JPTdOA==
-X-Received: by 2002:a17:90b:5281:b0:313:28e7:af14 with SMTP id
- 98e67ed59e1d1-31cc25c8270mr19273610a91.19.1753156619221; 
- Mon, 21 Jul 2025 20:56:59 -0700 (PDT)
+ bh=XpHvxqlX7OcnxJPCs0nCNowC+j6KarE8ktvVLZ7bWvM=;
+ b=qjHbfJcB1qPsfK4qJZkwOfaQMQ0txbJY8BmQUUyVPKbCU/KfDf43rDIYnNWycPLfIR
+ 5wWXxdQeW3gxBXTV2FR9vzYnT1z1y0/s5+0FMlI/ZrkBXm0EKXKFrGwdq8qXIaBYG7Vy
+ pnSWH/oljli48h2aouPBFx0JuniDh55jNYaFb78rPgRt79dZ2UcKvyF4fMfQ3KERTX27
+ FVoE2iRO1neEVd9w+JZ7K+f3k88HAWyzRhwlbz85wBdch9Y1TIfXQaxSNeav3ptgdqyv
+ 1J1rEXaelOmYrYP0Ov93YbSu97zn+rWoxSNQjZhPRMUwGdBpxs4A8X9Ub2mxxdAiqKoK
+ kSzQ==
+X-Gm-Message-State: AOJu0YylyQrHc1MzhVI6Op8UwhnjOj7qKufQpDFXJ/SLIlECI26aO95S
+ HiU/jDm+0uORn4ViXFYge0dm5lzE5Fwx3W4pMWi5H9BZbtOTJ60RK3JxqzRd/8Mv4a8=
+X-Gm-Gg: ASbGncu9UDoN+Q16L7Y1dUZK0/Sqq5ewuTrvj5vZL22mvZlBw7YK28kxI+bQascXrTP
+ TpcMBHvska9cFSiYg58UtaJDO8rrvDlfxA1GrdONXXxt+xDPhW3XDvCJARsE0/VIBKqhZ3mVnci
+ 9n1EvTd+t8e1QhpR+KUbnkWX06wR/fSBtmEYPu+9O3cV4PWCca8QIXjcunpMO7Ywb23lVfHUYLC
+ 413NGS+3VolXGRjc48mRHfTSV8kXeybYdbj6rvaKKhTLzdf7Xg9q4Dmieao3aXnm1LJAVvmM895
+ 2WFKiWB0I2Ccl1FPiAii8PQLDsT2qrvC6j78spof9r680wtUJ0dtviZjohB4ouFQtQPvlMXN6vz
+ hevKdUMJgXJ8eTTSTgIQqTnOl7yXXXwGmBKiR9AcwCrR2oM6wzIdHA2dadQJba0I6oBVQaUx3Si
+ 0=
+X-Google-Smtp-Source: AGHT+IEJc/NkV+rfXETtW8Xj2i547PuBpXVwVfU5/SAxlsBgqeJtJbilADFZ+MmUG9sa5gj/Mt+W5A==
+X-Received: by 2002:a05:622a:13d2:b0:4a7:2f49:37d6 with SMTP id
+ d75a77b69052e-4ab93c509a8mr315033671cf.5.1753157085153; 
+ Mon, 21 Jul 2025 21:04:45 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-b3f2fe8ea7bsm6119132a12.21.2025.07.21.20.56.58
+ d75a77b69052e-4abb4b46b27sm50478321cf.64.2025.07.21.21.04.44
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 21 Jul 2025 20:56:59 -0700 (PDT)
-Date: Mon, 21 Jul 2025 20:56:57 -0700
+ Mon, 21 Jul 2025 21:04:45 -0700 (PDT)
+Date: Mon, 21 Jul 2025 21:00:18 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Dariusz Sosnowski <dsosnowski@nvidia.com>
-Cc: Aman Singh <aman.deep.singh@intel.com>, <dev@dpdk.org>, Viacheslav
- Ovsiienko <viacheslavo@nvidia.com>
-Subject: Re: [PATCH] app/testpmd: report minimum and maximum MTU
-Message-ID: <20250721205657.4956306d@hermes.local>
-In-Reply-To: <20250716102847.1118815-1-dsosnowski@nvidia.com>
-References: <20250716102847.1118815-1-dsosnowski@nvidia.com>
+To: Shani Peretz <shperetz@nvidia.com>
+Cc: <dev@dpdk.org>, <thomas@monjalon.net>, Aman Singh
+ <aman.deep.singh@intel.com>, Yuying Zhang <yuying.zhang@intel.com>
+Subject: Re: [PATCH v9 1/1] app/testpmd: canonicalize short PCI name format
+Message-ID: <20250721210018.3687d8ba@hermes.local>
+In-Reply-To: <20250713063417.10998-2-shperetz@nvidia.com>
+References: <20250708083740.128610-2-shperetz@nvidia.com>
+ <20250713063417.10998-1-shperetz@nvidia.com>
+ <20250713063417.10998-2-shperetz@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -83,14 +84,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 16 Jul 2025 12:28:46 +0200
-Dariusz Sosnowski <dsosnowski@nvidia.com> wrote:
+On Sun, 13 Jul 2025 09:34:17 +0300
+Shani Peretz <shperetz@nvidia.com> wrote:
 
-> Add reporting of minimum and maximum allowed MTU on a given port
-> to "show port info <id>" command.
+> when providing short format PCI device names in devargs
+> (e.g. "08:00:0") it is converted and stored as long format.
+> however when attach_port is called from testpmd, the user might
+> provide a short format, which will be passed to find_device with
+> a comparison function that simply compare strings, which will
+> cause find_device not to find any device.
 > 
-> Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
-> Acked-by: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
+> This fix canonicalize the user provided string before it is being
+> passed to find_device.
+> 
+> Signed-off-by: Shani Peretz <shperetz@nvidia.com>
 > ---
 
 Queued to next-net for 25.11
