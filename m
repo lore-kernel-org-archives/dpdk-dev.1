@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4931AC83F27
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 17:37:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A4CAC83F27
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 17:37:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A57E240A67;
-	Tue, 22 Jul 2025 19:36:14 +0200 (CEST)
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com
- [209.85.222.176])
- by mails.dpdk.org (Postfix) with ESMTP id D1A3840A7D
- for <dev@dpdk.org>; Tue, 22 Jul 2025 19:36:11 +0200 (CEST)
-Received: by mail-qk1-f176.google.com with SMTP id
- af79cd13be357-7e344e0212eso12178385a.0
- for <dev@dpdk.org>; Tue, 22 Jul 2025 10:36:11 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B81B840DCB;
+	Tue, 22 Jul 2025 19:36:15 +0200 (CEST)
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com
+ [209.85.222.177])
+ by mails.dpdk.org (Postfix) with ESMTP id 69FAF40B92
+ for <dev@dpdk.org>; Tue, 22 Jul 2025 19:36:13 +0200 (CEST)
+Received: by mail-qk1-f177.google.com with SMTP id
+ af79cd13be357-7e32c95778aso302471785a.3
+ for <dev@dpdk.org>; Tue, 22 Jul 2025 10:36:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1753205771;
- x=1753810571; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1753205773;
+ x=1753810573; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=0zIbdjbIsBTJGrUPuCW20jRSg85NEdhyJwxltX+PYxI=;
- b=3UyZarUwnoqIsSlUBG16wpAhAgvAKDyI04WflVhV9nmuF6vNCtb3B9nE4iUmwf+7Op
- NIyZeJdODIWHwvHK+VeEfvFqRp4BJ6fouzDgNU1Nkz/TcjLNzdXpKaZSas00wYcnGxQ1
- oHpfrb4LxbE7Re5cF9p3FNViFUbqc0HfKzBh5Xl52Ctub0BouWE9ciujewdFfJg9McJV
- q9Lk8bedc9qtfzQRRB+ouunyzuxVqVgVwbRH5FHrcsU/s1H/sck0dTKJ1/4eFe1HTrEt
- AlFtZDMI2wEpvPWbF6E5nSFSxJ6M/8pfL9SFpCCj9Su5XZrrIS98DfIQ+kO0ZztJu+cL
- +57Q==
+ bh=3wffg00fevPCUtHY2Q03rnAMAO1/tffyAOk1Fl6lpVw=;
+ b=Ouat+GFi8sNIbw5B/AVvKWtYTpJQH7yn0JPruL+qHcLx6xa88kEO5lwfadcdNtPgOr
+ A7iUVRKpDmurYF3nXJ2S5GGeSCXcv15KfAhraWqDuMP2WwttKbjVDEoeOeZ3CxUwE3bv
+ 2UozZjqTzDwdD6GqZBARPrJS9pqXD3GtDVtfzQJEw5zI2DlXQtwKQrt60ysI3MFKgIWT
+ WuPhofAcVRcET1BM5gPwQVN1i/hkF5Cve5eUNWRJyF7ODFIOAXSghzna4YCQWza23veB
+ ewLoKA9mwQ/RRTP2lmXHrCkD9SA5IYCZ33j/Wwj73k/M3AzPI8tNdqIcn6q3Se7zDQAx
+ 3mqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753205771; x=1753810571;
+ d=1e100.net; s=20230601; t=1753205773; x=1753810573;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=0zIbdjbIsBTJGrUPuCW20jRSg85NEdhyJwxltX+PYxI=;
- b=lpah1IxRzvK/aioFwbMsw7JEa8Kd70KsSU1YEZaIwYV6r7zdj0DdXOBbMKmy0M0XGJ
- piVK88gUSc1QG/zjAFw35BXN3r2OAuTMzZhvpIH528QCbeYCr3o0Xk/TczPIlL0EPEdQ
- qdkCWNAyvWROErZCHAPaGi/UZApC4tCLlrfqU+Ru4EX4bbZBEQFPFXCU9qJQtVOw5VpL
- lEtrQwsljyFdOQGrdpWJHHgCMKNcZ0uLIEr5v1qM4MMVtwkJvTYQpa8vPxRFH+PNE8E9
- +eAHoxzi3fzOaCp/FPN2xlihyKXhN3xTDeLOD+4TpSKfdSpC4nV3RfUHIOcmQSnFT55a
- BWxA==
-X-Gm-Message-State: AOJu0YyWe3JivwrZLISz3PdSP2/0E+/a/W8mtHFE7kysKOsxWe3ghFyB
- 7VPNn4F95hoabyU8lzUvP2L4ApTj0dKL+SkdygyTrBwFSjNdjoDnZwSPlQ080keQvc1MO1IFnEP
- BBXgX
-X-Gm-Gg: ASbGncuV0q4DbO11YDjxgR+erTuvoXTBdgb54Tm5XOygJvLtF/PhCj1cuQrsz6t5sE5
- 963KAwObWc1Oa8eYmH4BdulYaXprI+ep5uzmCox89WdfCy50x5I3FuALW3VCza5Nv5AvC0kJzrc
- /Xg8vWGIyD1yY0eKoERVenQpIG7TmpdcO/nTI4D+b3OBXGmHDYmGzm0NkUkCxJJI8843BXlgW8z
- Nm8yZxZpuGyKECZhFPBx5AJq6mjwf8WeqYbDHBxcDFBMWbM2XZ6LXs/fC1daIF0311kWwRr7yHS
- 54MIxL0733LKEcsklrSG/YRGDxoVrbws9QPSgdzY2tPCcOc9I1nH3Ysyscj3ltYjnrF9KpdkA0b
- 10Q9Wr31Zsle15i0viEFZuIjJcQ4f3ZVU4SK5U7XizEUYGn6ygzDAH1P1BjOmiLCYmZMlPgCb
-X-Google-Smtp-Source: AGHT+IEjbCBQCp/HTKshFiK/Z3Jqq49llv1ErUIYDlUPuXFMOtAQQuDrzSzgoODkD3o1uSWIHzOMWQ==
-X-Received: by 2002:a05:620a:6404:b0:7d9:bde3:79a1 with SMTP id
- af79cd13be357-7e6211edc06mr543270985a.4.1753205770947; 
- Tue, 22 Jul 2025 10:36:10 -0700 (PDT)
+ bh=3wffg00fevPCUtHY2Q03rnAMAO1/tffyAOk1Fl6lpVw=;
+ b=CviAUK1x6Ng4rlRmp6MxMAcYQyHJ33pcu81xc0UNV45i19AYEWIU92xSAwD0/yG2sK
+ in/QjLpA720DR5DGy8R7sEpx1QFxmHcwuHUkjpb5P2ZJ5VP9pUba9Rf/hia1BHdzJ2Nr
+ vWeNSkBNOnxvrY1bgTbYKaazP4RJQi4eDc+NSlnSO9bqktBNjhV5lXXsdMCboYRp0VS0
+ gmV0IKJTaTOLsy9/Lr74AYWSeAWIEHBtci1ficmdfuQobw8D3q3MY0gwKvjW9ju2yJHB
+ YKaYJhbPSStgcHD33ZFmvrOqvxtcQsqWN5zV/PxnmuswOug6Iuuw/twMCQc2P/u6P3mK
+ mlvg==
+X-Gm-Message-State: AOJu0YwR48lCKnDfY95ykfrnes3DYFl3Khr2rS6qvCI/8iasRg8ghuSm
+ bsftXRB9bw2Aojf93zA03uE8d5rDhjwTZavxWd7gIsSF69/HDbpUz8Q76L5Ph8eESzIf2U5NS7C
+ 1nr0S
+X-Gm-Gg: ASbGnctvIDKxnvZm8RyycH4hdglCOMGXtAs+3okEeHFgM+YiwQXUSecZaXBX2AOwEAO
+ cp11xYMa+xY8wfBIymIiFmMsFew60941AhtfU5xexyq4QjojLCOMfxUY7CvuXbFuUzPXMP/azRx
+ xcK5oNN3CNb+rtDLUj9NAS656dbcGfTI5G/+UOODGNMIUX1ZjrVZC3G61cREh8CXGmXrSPvJIu+
+ Dy68gMLcKMsg3Z1hRREIOuUMeRZLfQjD0FRhKSNE5BkhuLxGUrLF5WTnfYh5xCjdToWGsGqybbQ
+ TAURxjT69Vi+i2iZtCj2EGyQsjR3QrkMNpqsgQ5bMhXSuVfsNh/rnnm4H/OtkCEUNfbuWA2cecj
+ iyLvcArj5gFqURNuAcQQPhWFRi0LyPcuW6484lgV1a4oz2My07gAM/+GFuJ+0cMoxVrh5xRazu8
+ I48v9m8Uo=
+X-Google-Smtp-Source: AGHT+IGVi+4SZ6NPOSWFCxYWCF8HR/g2yyKPhEEsDdtyi/IgPFmgelQy6B8xqlLGqCAuHl9eLb9oPQ==
+X-Received: by 2002:a05:620a:4311:b0:7e3:63f8:6f56 with SMTP id
+ af79cd13be357-7e62a159f0fmr17441085a.35.1753205772353; 
+ Tue, 22 Jul 2025 10:36:12 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7e356b282aasm552155885a.14.2025.07.22.10.36.09
+ af79cd13be357-7e356b282aasm552155885a.14.2025.07.22.10.36.11
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 22 Jul 2025 10:36:10 -0700 (PDT)
+ Tue, 22 Jul 2025 10:36:11 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Aman Singh <aman.deep.singh@intel.com>
-Subject: [PATCH v6 11/13] app/testpmd: support for port mirroring
-Date: Tue, 22 Jul 2025 10:34:42 -0700
-Message-ID: <20250722173552.184141-12-stephen@networkplumber.org>
+ Reshma Pattan <reshma.pattan@intel.com>
+Subject: [PATCH v6 12/13] app/dumpcap: use port mirror instead of pdump
+Date: Tue, 22 Jul 2025 10:34:43 -0700
+Message-ID: <20250722173552.184141-13-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250722173552.184141-1-stephen@networkplumber.org>
 References: <20250411234927.114568-1-stephen@networkplumber.org>
@@ -83,222 +84,751 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add new commands to enable testing of port mirror functionality.
+Use the new port mirror API instead of pdump.
+
+Since filtering is now done in dumpcap process (not primary).
+For portability use PCAP to do packet filtering.
+This removes dependency on DPDK implementation of BPF.
+Filtering will be slower (no JIT) but is portable to Windows.
+Can revisit later when BPF support is updated.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/test-pmd/cmdline.c                      |   1 +
- app/test-pmd/cmdline_mirror.c               | 129 ++++++++++++++++++++
- app/test-pmd/cmdline_mirror.h               |  12 ++
- app/test-pmd/meson.build                    |   1 +
- doc/guides/testpmd_app_ug/testpmd_funcs.rst |  15 +++
- 5 files changed, 158 insertions(+)
- create mode 100644 app/test-pmd/cmdline_mirror.c
- create mode 100644 app/test-pmd/cmdline_mirror.h
+ app/dumpcap/main.c      | 468 ++++++++++++++++++++++++++++++++--------
+ app/dumpcap/meson.build |   8 +-
+ 2 files changed, 378 insertions(+), 98 deletions(-)
 
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index 7b4e27eddf..bc4b8b3b72 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -66,6 +66,7 @@
- #include "testpmd.h"
- #include "cmdline_cman.h"
- #include "cmdline_mtr.h"
-+#include "cmdline_mirror.h"
- #include "cmdline_tm.h"
- #include "bpf_cmd.h"
+diff --git a/app/dumpcap/main.c b/app/dumpcap/main.c
+index 3d3c0dbc66..9934504f8a 100644
+--- a/app/dumpcap/main.c
++++ b/app/dumpcap/main.c
+@@ -25,7 +25,6 @@
  
-diff --git a/app/test-pmd/cmdline_mirror.c b/app/test-pmd/cmdline_mirror.c
-new file mode 100644
-index 0000000000..2c645ffafe
---- /dev/null
-+++ b/app/test-pmd/cmdline_mirror.c
-@@ -0,0 +1,129 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2025 Stephen Hemminger <stephen@networkplumber.org>
+ #include <rte_alarm.h>
+ #include <rte_bitops.h>
+-#include <rte_bpf.h>
+ #include <rte_config.h>
+ #include <rte_debug.h>
+ #include <rte_eal.h>
+@@ -36,8 +35,6 @@
+ #include <rte_mbuf.h>
+ #include <rte_mempool.h>
+ #include <rte_pcapng.h>
+-#include <rte_pdump.h>
+-#include <rte_ring.h>
+ #include <rte_string_fns.h>
+ #include <rte_thread.h>
+ #include <rte_time.h>
+@@ -93,15 +90,26 @@ struct interface {
+ 	TAILQ_ENTRY(interface) next;
+ 	uint16_t port;
+ 	struct capture_options opts;
+-	struct rte_bpf_prm *bpf_prm;
+ 	char name[RTE_ETH_NAME_MAX_LEN];
++	struct bpf_insn *bpf;
+ 
++	struct rte_eth_stats start_stats;
+ 	const char *ifname;
+ 	const char *ifdescr;
+ };
+ 
++static int timestamp_dynfield = -1;
++static uint64_t timestamp_dynflag;
++static int mirror_origin_dynfield = -1;
++static uint64_t mirror_origin_dynflag;
++static uint64_t mirror_ingress_dynflag;
++static uint64_t mirror_egress_dynflag;
++
++static bool filtering;
++
+ TAILQ_HEAD(interface_list, interface);
+ static struct interface_list interfaces = TAILQ_HEAD_INITIALIZER(interfaces);
++static struct interface *port2intf[RTE_MAX_ETHPORTS];
+ 
+ /* Can do either pcap or pcapng format output */
+ typedef union {
+@@ -239,14 +247,16 @@ static void find_interfaces(void)
+ 
+ 	TAILQ_FOREACH(intf, &interfaces, next) {
+ 		/* if name is valid then just record port */
+-		if (rte_eth_dev_get_port_by_name(intf->name, &intf->port) == 0)
+-			continue;
++		if (rte_eth_dev_get_port_by_name(intf->name, &intf->port) != 0) {
++			/* maybe got passed port number string as name */
++			intf->port = get_uint(intf->name, "port_number", UINT16_MAX);
++			if (rte_eth_dev_get_name_by_port(intf->port, intf->name) < 0)
++				rte_exit(EXIT_FAILURE, "Invalid port number %u\n",
++					 intf->port);
++		}
+ 
+-		/* maybe got passed port number string as name */
+-		intf->port = get_uint(intf->name, "port_number", UINT16_MAX);
+-		if (rte_eth_dev_get_name_by_port(intf->port, intf->name) < 0)
+-			rte_exit(EXIT_FAILURE, "Invalid port number %u\n",
+-				 intf->port);
++		if (rte_eth_stats_get(intf->port, &intf->start_stats) < 0)
++			rte_exit(EXIT_FAILURE, "Could not read stats for port %u\n", intf->port);
+ 	}
+ }
+ 
+@@ -266,6 +276,10 @@ static void set_default_interface(void)
+ 
+ 		intf = add_interface(name);
+ 		intf->port = p;
++
++		if (rte_eth_stats_get(intf->port, &intf->start_stats) < 0)
++			rte_exit(EXIT_FAILURE,
++				 "Could not read stats for port %u\n", intf->port);
+ 		return;
+ 	}
+ 	rte_exit(EXIT_FAILURE, "No usable interfaces found\n");
+@@ -291,44 +305,40 @@ static void compile_filters(void)
+ 	struct interface *intf;
+ 
+ 	TAILQ_FOREACH(intf, &interfaces, next) {
+-		struct rte_bpf_prm *bpf_prm;
+ 		struct bpf_program bf;
+ 		pcap_t *pcap;
+ 
++		/* cache for filter packets */
++		port2intf[intf->port] = intf;
++
++		if (intf->opts.filter == NULL) {
++			intf->bpf = NULL;
++			continue;
++		}
++
+ 		pcap = pcap_open_dead(DLT_EN10MB, intf->opts.snap_len);
+ 		if (!pcap)
+ 			rte_exit(EXIT_FAILURE, "can not open pcap\n");
+ 
+-		if (pcap_compile(pcap, &bf, intf->opts.filter,
+-				 1, PCAP_NETMASK_UNKNOWN) != 0) {
++		if (pcap_compile(pcap, &bf, intf->opts.filter, 1, PCAP_NETMASK_UNKNOWN) != 0) {
+ 			fprintf(stderr,
+ 				"Invalid capture filter \"%s\": for interface '%s'\n",
+ 				intf->opts.filter, intf->name);
+-			rte_exit(EXIT_FAILURE, "\n%s\n",
+-				 pcap_geterr(pcap));
++			rte_exit(EXIT_FAILURE, "\n%s\n", pcap_geterr(pcap));
+ 		}
+ 
+-		bpf_prm = rte_bpf_convert(&bf);
+-		if (bpf_prm == NULL)
+-			rte_exit(EXIT_FAILURE,
+-				 "BPF convert interface '%s'\n%s(%d)\n",
+-				 intf->name,
+-				 rte_strerror(rte_errno), rte_errno);
+-
+ 		if (dump_bpf) {
+ 			printf("cBPF program (%u insns)\n", bf.bf_len);
+ 			bpf_dump(&bf, 1);
+-			printf("\neBPF program (%u insns)\n",
+-			       bpf_prm->nb_ins);
+-			rte_bpf_dump(stdout, bpf_prm->ins, bpf_prm->nb_ins);
+ 			exit(0);
+ 		}
+ 
+-		intf->bpf_prm = bpf_prm;
++		intf->bpf = malloc(bf.bf_len * sizeof(struct bpf_insn));
++		if (!intf->bpf)
++			rte_exit(EXIT_FAILURE, "can not allocate memory for bpf\n");
+ 
+-		/* Don't care about original program any more */
+-		pcap_freecode(&bf);
+-		pcap_close(pcap);
++		memcpy(intf->bpf, bf.bf_insns, bf.bf_len * sizeof(struct bpf_insn));
++		filtering = true;
+ 	}
+ }
+ 
+@@ -518,13 +528,12 @@ static void statistics_loop(void)
+ }
+ 
+ static void
+-cleanup_pdump_resources(void)
++disable_mirror_ports(uint16_t mirror_port)
+ {
+ 	struct interface *intf;
+ 
+ 	TAILQ_FOREACH(intf, &interfaces, next) {
+-		rte_pdump_disable(intf->port,
+-				  RTE_PDUMP_ALL_QUEUES, RTE_PDUMP_FLAG_RXTX);
++		rte_eth_remove_mirror(intf->port, mirror_port);
+ 		if (intf->opts.promisc_mode)
+ 			rte_eth_promiscuous_disable(intf->port);
+ 	}
+@@ -541,7 +550,7 @@ monitor_primary(void *arg __rte_unused)
+ 		rte_eal_alarm_set(MONITOR_INTERVAL, monitor_primary, NULL);
+ 	} else {
+ 		fprintf(stderr,
+-			"Primary process is no longer active, exiting...\n");
++			"\nPrimary process is no longer active, exiting...\n");
+ 		rte_atomic_store_explicit(&quit_signal, true, rte_memory_order_relaxed);
+ 	}
+ }
+@@ -552,7 +561,6 @@ enable_primary_monitor(void)
+ {
+ 	int ret;
+ 
+-	/* Once primary exits, so will pdump. */
+ 	ret = rte_eal_alarm_set(MONITOR_INTERVAL, monitor_primary, NULL);
+ 	if (ret < 0)
+ 		fprintf(stderr, "Fail to enable monitor:%d\n", ret);
+@@ -571,23 +579,24 @@ disable_primary_monitor(void)
+ static void
+ report_packet_stats(dumpcap_out_t out)
+ {
+-	struct rte_pdump_stats pdump_stats;
+ 	struct interface *intf;
+-	uint64_t ifrecv, ifdrop;
+-	double percent;
+ 
+ 	fputc('\n', stderr);
++
+ 	TAILQ_FOREACH(intf, &interfaces, next) {
+-		if (rte_pdump_stats(intf->port, &pdump_stats) < 0)
++		uint64_t ifrecv, ifdrop;
++		struct rte_eth_stats stats;
++		double percent;
++
++		if (rte_eth_stats_get(intf->port, &stats) < 0)
+ 			continue;
+ 
+-		/* do what Wiretap does */
+-		ifrecv = pdump_stats.accepted + pdump_stats.filtered;
+-		ifdrop = pdump_stats.nombuf + pdump_stats.ringfull;
++		ifrecv = stats.ipackets - intf->start_stats.ipackets;
++		ifdrop = (stats.rx_nombuf - intf->start_stats.rx_nombuf)
++			+ (stats.imissed - intf->start_stats.imissed);
+ 
+ 		if (use_pcapng)
+-			rte_pcapng_write_stats(out.pcapng, intf->port,
+-					       ifrecv, ifdrop, NULL);
++			rte_pcapng_write_stats(out.pcapng, intf->port, ifrecv, ifdrop, NULL);
+ 
+ 		if (ifrecv == 0)
+ 			percent = 0;
+@@ -668,12 +677,21 @@ static void dpdk_init(void)
+ 		rte_exit(EXIT_FAILURE, "Can not restore original CPU affinity\n");
+ }
+ 
+-/* Create packet ring shared between callbacks and process */
+-static struct rte_ring *create_ring(void)
++/* Create ring port to redirect packet to.
++ * This could be much simpler if the ring PMD API (rte_eth_from_rings)
++ * worked from a secondary process, but it doesn't.
 + */
-+
-+#include <stdlib.h>
-+
-+#include <cmdline_parse.h>
-+#include <cmdline_parse_num.h>
-+#include <cmdline_parse_string.h>
-+
-+#include <rte_ethdev.h>
-+
-+#include "testpmd.h"
-+#include "cmdline_mirror.h"
-+
-+/* *** Create MIRROR port Object *** */
-+struct cmd_create_port_mirror_result {
-+	cmdline_fixed_string_t create;
-+	cmdline_fixed_string_t port;
-+	cmdline_fixed_string_t mirror;
-+	uint16_t port_id;
-+	cmdline_fixed_string_t destination;
-+	uint16_t target_id;
-+};
-+
-+static cmdline_parse_token_string_t cmd_create_port_mirror_create =
-+	TOKEN_STRING_INITIALIZER(struct cmd_create_port_mirror_result, create, "create");
-+static cmdline_parse_token_string_t cmd_create_port_mirror_port =
-+	TOKEN_STRING_INITIALIZER(struct cmd_create_port_mirror_result, port, "port");
-+static cmdline_parse_token_string_t cmd_create_port_mirror_mirror =
-+	TOKEN_STRING_INITIALIZER(struct cmd_create_port_mirror_result, mirror, "mirror");
-+static cmdline_parse_token_string_t cmd_create_port_mirror_destination =
-+	TOKEN_STRING_INITIALIZER(struct cmd_create_port_mirror_result, destination, "destination");
-+static cmdline_parse_token_num_t cmd_create_port_mirror_port_id =
-+	TOKEN_NUM_INITIALIZER(struct cmd_create_port_mirror_result, port_id, RTE_UINT16);
-+static cmdline_parse_token_num_t cmd_create_port_mirror_target_id =
-+	TOKEN_NUM_INITIALIZER(struct cmd_create_port_mirror_result, target_id, RTE_UINT16);
-+
-+static void cmd_create_port_mirror_parsed(void *parsed_result,
-+	__rte_unused struct cmdline *cl,
-+	__rte_unused void *data)
-+{
-+	const struct cmd_create_port_mirror_result *res = parsed_result;
-+	/* TODO these should be set by command */
-+	struct rte_eth_mirror_conf mirror_conf = {
-+		.direction = RTE_ETH_MIRROR_DIRECTION_INGRESS | RTE_ETH_MIRROR_DIRECTION_EGRESS
-+	};
++static struct rte_ring *
++create_ring_dev(char *vdev_name, uint16_t *mirror_port)
+ {
+-	struct rte_ring *ring;
++	struct rte_eth_dev_owner owner = { 0 };
++	struct rte_eth_conf dev_conf = { 0 };
++	struct rte_ring *ring = NULL;
+ 	char ring_name[RTE_RING_NAMESIZE];
++	char vdev_args[128];
+ 	size_t size, log2;
++	uint16_t port;
 +	int ret;
+ 
+ 	/* Find next power of 2 >= size. */
+ 	size = ring_size;
+@@ -686,17 +704,59 @@ static struct rte_ring *create_ring(void)
+ 		ring_size = size;
+ 	}
+ 
+-	/* Want one ring per invocation of program */
+-	snprintf(ring_name, sizeof(ring_name),
+-		 "dumpcap-%d", getpid());
++	/* Use owner as unique Id for ring and to isolate */
++	ret = rte_eth_dev_owner_new(&owner.id);
++	if (ret < 0)
++		rte_exit(EXIT_FAILURE, "rte_eth_dev_owner_new failed: %s\n",
++			 strerror(-ret));
+ 
+-	ring = rte_ring_create(ring_name, ring_size,
+-			       rte_socket_id(), 0);
++	/* Give the vdev a unique name */
++	snprintf(ring_name, sizeof(ring_name), "dumpcap%"PRIu64, owner.id);
++	ring = rte_ring_create(ring_name, ring_size, rte_socket_id(),
++			       RING_F_MP_RTS_ENQ | RING_F_SC_DEQ);
+ 	if (ring == NULL)
+ 		rte_exit(EXIT_FAILURE, "Could not create ring :%s\n",
+ 			 rte_strerror(rte_errno));
+ 
++	strlcpy(owner.name, ring_name, sizeof(owner.name));
 +
-+	if (port_id_is_invalid(res->port_id, ENABLED_WARN))
-+		return;
++	snprintf(vdev_name, RTE_DEV_NAME_MAX_LEN, "net_ring-dumpcap%"PRIu64, owner.id);
++	snprintf(vdev_args, sizeof(vdev_args), "ring=%s", ring_name);
 +
-+	if (port_id_is_invalid(res->target_id, ENABLED_WARN))
-+		return;
++	if (rte_eal_hotplug_add("vdev", vdev_name, vdev_args) < 0)
++		rte_exit(EXIT_FAILURE,
++			 "rte_eal_hotplug_add of %s failed:%s\n",
++			 vdev_name, rte_strerror(rte_errno));
 +
-+	mirror_conf.target = res->target_id;
++	ret = rte_eth_dev_get_port_by_name(vdev_name, &port);
++	if (ret != 0) {
++		fprintf(stderr, "Could not port for %s: %s\n",
++			vdev_name, strerror(-ret));
++		goto unplug;
++	}
 +
-+	ret = rte_eth_add_mirror(res->port_id,  &mirror_conf);
-+	if (ret != 0)
-+		fprintf(stderr, "%s\n", rte_strerror(-ret));
++	ret = rte_eth_dev_owner_set(port, &owner);
++	if (ret != 0) {
++		fprintf(stderr, "Could not set owner for port for %u: %s\n",
++			port, strerror(-ret));
++		goto unplug;
++	}
++
++	ret = rte_eth_dev_configure(port, 1, 1, &dev_conf);
++	if (ret < 0) {
++		fprintf(stderr, "Could not configure port %u: %s\n",
++			port, strerror(-ret));
++		goto unplug;
++	}
++
++	*mirror_port = port;
+ 	return ring;
++
++unplug:
++	rte_eal_hotplug_remove("vdev", vdev_name);
++	rte_ring_free(ring);
++	rte_eal_cleanup();
++	exit(EXIT_FAILURE);
+ }
+ 
+ static struct rte_mempool *create_mempool(void)
+@@ -796,7 +856,7 @@ static dumpcap_out_t create_output(void)
+ 					   version(), capture_comment);
+ 		if (ret.pcapng == NULL)
+ 			rte_exit(EXIT_FAILURE, "pcapng_fdopen failed: %s\n",
+-				 strerror(rte_errno));
++				 rte_strerror(rte_errno));
+ 		free(os);
+ 
+ 		TAILQ_FOREACH(intf, &interfaces, next) {
+@@ -823,37 +883,32 @@ static dumpcap_out_t create_output(void)
+ 	return ret;
+ }
+ 
+-static void enable_pdump(struct rte_ring *r, struct rte_mempool *mp)
++static int enable_mirror(uint16_t mirror_port, struct rte_mempool *mpool)
+ {
+ 	struct interface *intf;
+ 	unsigned int count = 0;
+-	uint32_t flags;
+ 	int ret;
+ 
+-	flags = RTE_PDUMP_FLAG_RXTX;
+-	if (use_pcapng)
+-		flags |= RTE_PDUMP_FLAG_PCAPNG;
++	ret = rte_eth_dev_start(mirror_port);
++	if (ret < 0)
++		rte_exit(EXIT_FAILURE, "Could not start mirror port %u: %s\n",
++			 mirror_port, strerror(-ret));
+ 
+ 	TAILQ_FOREACH(intf, &interfaces, next) {
+-		ret = rte_pdump_enable_bpf(intf->port, RTE_PDUMP_ALL_QUEUES,
+-					   flags, intf->opts.snap_len,
+-					   r, mp, intf->bpf_prm);
++		struct rte_eth_mirror_conf conf = {
++			.mp = mpool,
++			.target = mirror_port,
++			.snaplen = intf->opts.snap_len,
++			.flags = RTE_ETH_MIRROR_ORIGIN_FLAG | RTE_ETH_MIRROR_TIMESTAMP_FLAG,
++			.direction = RTE_ETH_MIRROR_DIRECTION_INGRESS |
++				     RTE_ETH_MIRROR_DIRECTION_EGRESS,
++		};
++
++		ret = rte_eth_add_mirror(intf->port, &conf);
+ 		if (ret < 0) {
+-			const struct interface *intf2;
+-
+-			/* unwind any previous enables */
+-			TAILQ_FOREACH(intf2, &interfaces, next) {
+-				if (intf == intf2)
+-					break;
+-				rte_pdump_disable(intf2->port,
+-						  RTE_PDUMP_ALL_QUEUES, RTE_PDUMP_FLAG_RXTX);
+-				if (intf2->opts.promisc_mode)
+-					rte_eth_promiscuous_disable(intf2->port);
+-			}
+-			rte_exit(EXIT_FAILURE,
+-				"Packet dump enable on %u:%s failed %s\n",
+-				intf->port, intf->name,
+-				rte_strerror(rte_errno));
++			fprintf(stderr, "Port mirror on %u:%s failed %s\n",
++				intf->port, intf->name, strerror(-ret));
++			return -1;
+ 		}
+ 
+ 		if (intf->opts.promisc_mode) {
+@@ -868,6 +923,60 @@ static void enable_pdump(struct rte_ring *r, struct rte_mempool *mp)
+ 		}
+ 		++count;
+ 	}
++	return count;
 +}
 +
-+cmdline_parse_inst_t cmd_create_port_mirror = {
-+	.f = cmd_create_port_mirror_parsed,
-+	.data = NULL,
-+	.help_str = "create port mirror <port_id> destination <port_id>",
-+	.tokens = {
-+		(void *)&cmd_create_port_mirror_create,
-+		(void *)&cmd_create_port_mirror_port,
-+		(void *)&cmd_create_port_mirror_mirror,
-+		(void *)&cmd_create_port_mirror_port_id,
-+		(void *)&cmd_create_port_mirror_destination,
-+		(void *)&cmd_create_port_mirror_target_id,
-+		NULL
-+	},
-+};
-+
-+/* *** Delete Port Mirror Object *** */
-+struct cmd_delete_port_mirror_result {
-+	cmdline_fixed_string_t delete;
-+	cmdline_fixed_string_t port;
-+	cmdline_fixed_string_t mirror;
-+	uint16_t port_id;
-+	cmdline_fixed_string_t destination;
-+	uint16_t target_id;
-+};
-+
-+static void cmd_delete_port_mirror_parsed(void *parsed_result,
-+	__rte_unused struct cmdline *cl,
-+	__rte_unused void *data)
++static int setup_mbuf(void)
 +{
-+	const struct cmd_delete_port_mirror_result *res = parsed_result;
-+	int ret;
++	int offset;
 +
-+	if (port_id_is_invalid(res->port_id, ENABLED_WARN))
-+		return;
++	offset = rte_mbuf_dynfield_lookup(RTE_MBUF_DYNFIELD_TIMESTAMP_NAME, NULL);
++	if (offset < 0) {
++		fprintf(stderr, "Could not find timestamp dynamic field\n");
++		return -1;
++	}
++	timestamp_dynfield = offset;
 +
-+	ret = rte_eth_remove_mirror(res->port_id, res->target_id);
-+	if (ret != 0)
-+		fprintf(stderr, "%s\n", rte_strerror(-ret));
++	offset = rte_mbuf_dynflag_lookup(RTE_MBUF_DYNFLAG_TX_TIMESTAMP_NAME, NULL);
++	if (offset < 0) {
++		fprintf(stderr, "Could not find timestamp flag\n");
++		return -1;
++	}
++	timestamp_dynflag = RTE_BIT64(offset);
++
++	offset = rte_mbuf_dynfield_lookup(RTE_MBUF_DYNFIELD_MIRROR_ORIGIN, NULL);
++	if (offset < 0) {
++		fprintf(stderr, "Could not find mirror origin dynamic field\n");
++		return -1;
++	}
++	mirror_origin_dynfield = offset;
++
++	offset = rte_mbuf_dynflag_lookup(RTE_MBUF_DYNFLAG_MIRROR_ORIGIN, NULL);
++	if (offset < 0) {
++		fprintf(stderr, "Could not find mirror origin dynamic flag\n");
++		return -1;
++	}
++	mirror_origin_dynflag = RTE_BIT64(offset);
++
++	offset = rte_mbuf_dynflag_lookup(RTE_MBUF_DYNFLAG_MIRROR_INGRESS, NULL);
++	if (offset < 0) {
++		fprintf(stderr, "Could not find mirror ingress flag\n");
++		return -1;
++	}
++	mirror_ingress_dynflag = RTE_BIT64(offset);
++
++	offset = rte_mbuf_dynflag_lookup(RTE_MBUF_DYNFLAG_MIRROR_EGRESS, NULL);
++	if (offset < 0) {
++		fprintf(stderr, "Could not find mirror egress flag\n");
++		return -1;
++	}
++	mirror_egress_dynflag = RTE_BIT64(offset);
++	return 0;
 +}
 +
-+static cmdline_parse_token_string_t cmd_delete_port_mirror_delete =
-+	TOKEN_STRING_INITIALIZER(struct cmd_delete_port_mirror_result, delete, "delete");
-+static cmdline_parse_token_string_t cmd_delete_port_mirror_port =
-+	TOKEN_STRING_INITIALIZER(struct cmd_delete_port_mirror_result, port, "port");
-+static cmdline_parse_token_string_t cmd_delete_port_mirror_mirror =
-+	TOKEN_STRING_INITIALIZER(struct cmd_delete_port_mirror_result, mirror, "mirror");
-+static cmdline_parse_token_num_t cmd_delete_port_mirror_port_id =
-+	TOKEN_NUM_INITIALIZER(struct cmd_delete_port_mirror_result, port_id, RTE_UINT16);
-+static cmdline_parse_token_string_t cmd_delete_port_mirror_destination =
-+	TOKEN_STRING_INITIALIZER(struct cmd_create_port_mirror_result, destination, "destination");
-+static cmdline_parse_token_num_t cmd_delete_port_mirror_target_id =
-+	TOKEN_NUM_INITIALIZER(struct cmd_delete_port_mirror_result, target_id, RTE_UINT16);
++static void show_capturing(unsigned int count)
++{
++	struct interface *intf;
+ 
+ 	fputs("Capturing on ", stdout);
+ 	TAILQ_FOREACH(intf, &interfaces, next) {
+@@ -898,6 +1007,47 @@ static void show_count(uint64_t count)
+ 	bt = fprintf(stderr, "%"PRIu64" ", count);
+ }
+ 
++static ssize_t
++pcapng_write_packets(rte_pcapng_t *pcapng, struct rte_mbuf *pkts[], uint16_t n)
++{
++	struct rte_mbuf *towrite[BURST_SIZE];
++	unsigned int count = 0;
 +
-+cmdline_parse_inst_t cmd_delete_port_mirror = {
-+	.f = cmd_delete_port_mirror_parsed,
-+	.data = NULL,
-+	.help_str = "delete port mirror <port_id> destination <port_id>",
-+	.tokens = {
-+		(void *)&cmd_delete_port_mirror_delete,
-+		(void *)&cmd_delete_port_mirror_port,
-+		(void *)&cmd_delete_port_mirror_mirror,
-+		(void *)&cmd_delete_port_mirror_port_id,
-+		(void *)&cmd_delete_port_mirror_destination,
-+		(void *)&cmd_delete_port_mirror_target_id,
-+		NULL
-+	},
-+};
-diff --git a/app/test-pmd/cmdline_mirror.h b/app/test-pmd/cmdline_mirror.h
-new file mode 100644
-index 0000000000..23ebe1ed75
---- /dev/null
-+++ b/app/test-pmd/cmdline_mirror.h
-@@ -0,0 +1,12 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2025 Stephen Hemminger <stephen@networkplumber.org>
++	for (unsigned int i = 0; i < n; i++) {
++		struct rte_mbuf *m = pkts[i];
++		enum rte_pcapng_direction direction = RTE_PCAPNG_DIRECTION_UNKNOWN;
++
++		/* If no origin flag then why did we get this? */
++		if (unlikely(!(m->ol_flags & mirror_origin_dynflag))) {
++			fprintf(stderr, "Missing origin info in packet\n");
++			return -1;
++		}
++
++		const struct rte_mbuf_origin *origin
++			= RTE_MBUF_DYNFIELD(m, mirror_origin_dynfield, rte_mbuf_origin_t *);
++
++		if (m->ol_flags & mirror_ingress_dynflag)
++			direction = RTE_PCAPNG_DIRECTION_IN;
++		else if (m->ol_flags & mirror_egress_dynflag)
++			direction = RTE_PCAPNG_DIRECTION_OUT;
++
++		uint64_t timestamp;
++		if (m->ol_flags & timestamp_dynflag)
++			timestamp = *RTE_MBUF_DYNFIELD(m, timestamp_dynfield,
++						       rte_mbuf_timestamp_t *);
++		else
++			timestamp = rte_get_tsc_cycles();
++
++		if (rte_pcapng_insert(m, origin->queue_id, direction, origin->original_len,
++				      timestamp, NULL) < 0)
++			continue;  /* skip no headroom? */
++
++		towrite[count++] = m;
++	}
++
++	return rte_pcapng_write_packets(pcapng, towrite, count);
++}
++
+ /* Write multiple packets in older pcap format */
+ static ssize_t
+ pcap_write_packets(pcap_dumper_t *dumper,
+@@ -930,16 +1080,129 @@ pcap_write_packets(pcap_dumper_t *dumper,
+ 	return total;
+ }
+ 
++/* Do packet filter on incoming packets.
++ * Some issues to note here:
++ *  - would be better to do before putting into ring
++ *    but that causes ethdev to have dependency on BPF.
++ *  - the filter is per-interface and there maybe more than one interface
++ *    combined into the ring. That means filter is executed once
++ *    per packet (not as burst).
 + */
++static unsigned int
++filter_packets(struct rte_mbuf *pkts[], unsigned int n)
++{
++	unsigned int matches = 0;
++	unsigned int results[BURST_SIZE] = { 0 };
 +
-+#ifndef _CMDLINE_MIRROR_H_
-+#define _CMDLINE_MIRROR_H_
++	for (unsigned int i = 0; i < n; i++) {
++		struct rte_mbuf *m = pkts[i];
 +
-+/* Port MIRROR commands */
-+extern cmdline_parse_inst_t cmd_create_port_mirror;
-+extern cmdline_parse_inst_t cmd_disable_port_mirror;
++		/* all packets should have origin info, if not just skip */
++		if (unlikely(!(m->ol_flags & mirror_origin_dynflag)))
++			continue;
 +
-+#endif /* _CMDLINE_MIRROR_H_ */
-diff --git a/app/test-pmd/meson.build b/app/test-pmd/meson.build
-index 000548c261..e67665028f 100644
---- a/app/test-pmd/meson.build
-+++ b/app/test-pmd/meson.build
-@@ -8,6 +8,7 @@ sources = files(
-         'cmdline.c',
-         'cmdline_cman.c',
-         'cmdline_flow.c',
-+        'cmdline_mirror.c',
-         'cmdline_mtr.c',
-         'cmdline_tm.c',
-         'cmd_flex_item.c',
-diff --git a/doc/guides/testpmd_app_ug/testpmd_funcs.rst b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-index 6ad83ae50d..603468a70d 100644
---- a/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-+++ b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-@@ -2570,6 +2570,21 @@ where:
- * ``clear``: Flag that indicates whether the statistics counters should
-   be cleared (i.e. set to zero) immediately after they have been read or not.
++		const struct rte_mbuf_origin *origin
++			= RTE_MBUF_DYNFIELD(m, mirror_origin_dynfield, rte_mbuf_origin_t *);
++		uint16_t port_id = origin->port_id;
++
++		if (unlikely(port_id >= RTE_MAX_ETHPORTS))
++			continue;
++
++		const struct interface *intf = port2intf[port_id];
++		if (intf == NULL || intf->bpf == NULL)
++			continue;
++
++		results[i] = bpf_filter(intf->bpf, rte_pktmbuf_mtod(m, u_char *),
++					origin->original_len, m->data_len);
++		if (results[i] != 0)
++			++matches;
++	}
++
++	if (matches == n)
++		return n;	/* no packets skipped */
++
++	/* need to shuffle out the skipped packets */
++	unsigned int count = 0;
++	struct rte_mbuf *towrite[BURST_SIZE];
++	for (unsigned int i = 0; i < n; i++) {
++		if (results[i])
++			towrite[count++] = pkts[i];
++		else
++			rte_pktmbuf_free(pkts[i]);
++	}
++	memcpy(pkts, towrite, count * sizeof(struct rte_mbuf *));
++	return count;
++}
++
++/* Make sure configuration of mbuf pool has enough headroom for both vlans */
++static_assert(RTE_PKTMBUF_HEADROOM > 2 * sizeof(struct rte_vlan_hdr),
++	"not enough mbuf headroom for vlan insertion");
++
++/*
++ * More general version of rte_vlan_insert()
++ * Note: mbufs are allocated by rte_eth_mirror_burst() from the
++ * pool that was passed when setting up mirror.
++ */
++static void
++vlan_insert(struct rte_mbuf *m, uint16_t ether_type, uint16_t tci)
++{
++	struct rte_ether_hdr *nh, tmph;
++	const struct rte_ether_hdr *oh;
++	struct rte_vlan_hdr *vh;
++
++	RTE_ASSERT(!RTE_MBUF_DIRECT(m));
++	RTE_ASSERT(rte_mbuf_refcnt_read(m) == 1);
++
++	oh = rte_pktmbuf_read(m, 0, sizeof(*oh), &tmph);
++	RTE_ASSERT(oh != NULL);
++
++	/* overlay new header */
++	nh = (struct rte_ether_hdr *)
++		rte_pktmbuf_prepend(m, sizeof(struct rte_vlan_hdr));
++
++	RTE_ASSERT(nh != NULL);
++
++	memmove(nh, oh, 2 * RTE_ETHER_ADDR_LEN);
++	nh->ether_type = rte_cpu_to_be_16(ether_type);
++
++	vh = (struct rte_vlan_hdr *) (nh + 1);
++	vh->vlan_tci = rte_cpu_to_be_16(tci);
++}
++
++/* Filtering and pcap file format require that VLAN not be offloaded */
++static void
++remove_vlan_offload(struct rte_mbuf *pkts[], unsigned int n)
++{
++	unsigned int i;
++
++	for (i = 0; i < n; i++) {
++		struct rte_mbuf *m = pkts[i];
++
++		if (m->ol_flags & mirror_ingress_dynflag) {
++			if (m->ol_flags & RTE_MBUF_F_RX_VLAN_STRIPPED)
++				vlan_insert(m, RTE_ETHER_TYPE_VLAN, m->vlan_tci);
++			if (m->ol_flags & RTE_MBUF_F_RX_QINQ_STRIPPED)
++				vlan_insert(m, RTE_ETHER_TYPE_QINQ, m->vlan_tci_outer);
++		}
++		if (m->ol_flags & mirror_egress_dynflag) {
++			if (m->ol_flags & RTE_MBUF_F_TX_VLAN)
++				vlan_insert(m, RTE_ETHER_TYPE_VLAN, m->vlan_tci);
++			if (m->ol_flags & RTE_MBUF_F_TX_QINQ)
++				vlan_insert(m, RTE_ETHER_TYPE_QINQ, m->vlan_tci_outer);
++
++		}
++	}
++}
++
+ /* Process all packets in ring and dump to capture file */
+-static int process_ring(dumpcap_out_t out, struct rte_ring *r)
++static int process_ring(dumpcap_out_t out, struct rte_ring *ring)
+ {
+ 	struct rte_mbuf *pkts[BURST_SIZE];
+-	unsigned int avail, n;
++	unsigned int n, avail;
+ 	static unsigned int empty_count;
+ 	ssize_t written;
  
-+create mirror
-+-------------
-+
-+Create a new MIRROR port for an ethernet device::
-+
-+   testpmd> create port mirror (port_id) destination (port_id)
-+
-+delete mirror
-+-------------
-+
-+Delete an existing MIRROR port on ethernet device::
-+
-+   testpmd> delete port mirror (port_id)
-+
-+
- Traffic Management
- ------------------
+-	n = rte_ring_sc_dequeue_burst(r, (void **) pkts, BURST_SIZE,
+-				      &avail);
++	n = rte_ring_sc_dequeue_burst(ring, (void **)pkts, BURST_SIZE, &avail);
+ 	if (n == 0) {
+ 		/* don't consume endless amounts of cpu if idle */
+ 		if (empty_count < SLEEP_THRESHOLD)
+@@ -948,11 +1211,18 @@ static int process_ring(dumpcap_out_t out, struct rte_ring *r)
+ 			usleep(10);
+ 		return 0;
+ 	}
+-
+ 	empty_count = (avail == 0);
  
++	remove_vlan_offload(pkts, n);
++
++	if (filtering) {
++		n = filter_packets(pkts, n);
++		if (n == 0)
++			return 0;
++	}
++
+ 	if (use_pcapng)
+-		written = rte_pcapng_write_packets(out.pcapng, pkts, n);
++		written = pcapng_write_packets(out.pcapng, pkts, n);
+ 	else
+ 		written = pcap_write_packets(out.dumper, pkts, n);
+ 
+@@ -971,15 +1241,18 @@ static int process_ring(dumpcap_out_t out, struct rte_ring *r)
+ 
+ int main(int argc, char **argv)
+ {
+-	struct rte_ring *r;
+ 	struct rte_mempool *mp;
+ 	struct sigaction action = {
+ 		.sa_flags = SA_RESTART,
+ 		.sa_handler = signal_handler,
+ 	};
+ 	struct sigaction origaction;
++	struct rte_ring *ring = NULL;
++	char vdev_name[RTE_DEV_NAME_MAX_LEN];
++	uint16_t mirror_port = UINT16_MAX;
+ 	dumpcap_out_t out;
+ 	char *p;
++	int ret;
+ 
+ 	p = strrchr(argv[0], '/');
+ 	if (p == NULL)
+@@ -1018,12 +1291,21 @@ int main(int argc, char **argv)
+ 		exit(0);
+ 	}
+ 
+-	r = create_ring();
+ 	mp = create_mempool();
++	ring = create_ring_dev(vdev_name, &mirror_port);
+ 	out = create_output();
+ 
++	ret = enable_mirror(mirror_port, mp);
++	if (ret < 0)
++		goto cleanup;
++
++	ret = setup_mbuf();
++	if (ret < 0)
++		goto cleanup;
++
++	show_capturing(ret);
++
+ 	start_time = time(NULL);
+-	enable_pdump(r, mp);
+ 
+ 	if (!quiet) {
+ 		fprintf(stderr, "Packets captured: ");
+@@ -1031,7 +1313,7 @@ int main(int argc, char **argv)
+ 	}
+ 
+ 	while (!rte_atomic_load_explicit(&quit_signal, rte_memory_order_relaxed)) {
+-		if (process_ring(out, r) < 0) {
++		if (process_ring(out, ring) < 0) {
+ 			fprintf(stderr, "pcapng file write failed; %s\n",
+ 				strerror(errno));
+ 			break;
+@@ -1048,20 +1330,24 @@ int main(int argc, char **argv)
+ 			break;
+ 	}
+ 
+-	disable_primary_monitor();
+-
+ 	if (rte_eal_primary_proc_alive(NULL))
+ 		report_packet_stats(out);
+ 
++cleanup:
++	disable_primary_monitor();
++
+ 	if (use_pcapng)
+ 		rte_pcapng_close(out.pcapng);
+ 	else
+ 		pcap_dump_close(out.dumper);
+ 
+-	cleanup_pdump_resources();
++	if (rte_eal_primary_proc_alive(NULL)) {
++		disable_mirror_ports(mirror_port);
+ 
+-	rte_ring_free(r);
+-	rte_mempool_free(mp);
++		rte_eal_hotplug_remove("vdev", vdev_name);
++		rte_ring_free(ring);
++		rte_mempool_free(mp);
++	}
+ 
+ 	return rte_eal_cleanup() ? EXIT_FAILURE : 0;
+ }
+diff --git a/app/dumpcap/meson.build b/app/dumpcap/meson.build
+index 69c016c780..3b50077756 100644
+--- a/app/dumpcap/meson.build
++++ b/app/dumpcap/meson.build
+@@ -6,12 +6,6 @@ if not dpdk_conf.has('RTE_HAS_LIBPCAP')
+     reason = 'missing dependency, "libpcap"'
+ endif
+ 
+-if is_windows
+-    build = false
+-    reason = 'not supported on Windows'
+-    subdir_done()
+-endif
+-
+ ext_deps += pcap_dep
+ sources = files('main.c')
+-deps += ['ethdev', 'pdump', 'pcapng', 'bpf']
++deps += ['net_ring', 'ethdev', 'pcapng' ]
 -- 
 2.47.2
 
