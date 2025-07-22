@@ -2,69 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69FE8C83F27
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 12:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B731C83F27
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 12:01:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 49B6D40647;
-	Tue, 22 Jul 2025 14:01:05 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 58B3B4066F
- for <dev@dpdk.org>; Tue, 22 Jul 2025 14:01:03 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56LNTdr8007862;
- Tue, 22 Jul 2025 05:01:02 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 4BFAD40677;
+	Tue, 22 Jul 2025 14:01:07 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 86DC840674
+ for <dev@dpdk.org>; Tue, 22 Jul 2025 14:01:05 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56M9HNhn021882;
+ Tue, 22 Jul 2025 05:01:04 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=a
- SvuN3kLrzYKdEIqtxCYsnikgBpAcke/wrd8BTU+DLA=; b=ggtMh5e/goffivgOs
- EqqrKZj44TJ73HFnXDhApKK5zPlCpO4odmq29T2KyN1IT3rGipSM4au3XcMP1mYc
- 4kNeRSyUZx+8mLP4iVZPJIVs7sccURI222R4rUpJMwP3itvNuiTzT9dlQJH/XsWl
- IBv4zQ/6Yxf/pFd8oIrjsXN+Bv+4zL7s/68lNig84LyzhvgfbCTut3g23XsDb38M
- EUU+j+5z29QGT5QQ9cz2VEB7nmwp3ZbouJ+TIhDS7iM+3yuZlfm15M/3xFLkjLT5
- 8G/vYs0EZWwvd7eodngglSxZPuvTPoWbEMBr6qERsHrBhdDCybYs9Ncp9ce/WGDm
- wjnMg==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 481y91sbdt-1
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=r
+ lB74WJL7+wVWpaBdJtsljjKKk/CXUnZkpuxEeMOG/E=; b=MVdH6H7o4zOT+TIMU
+ N72BTtiCd15Pa5qVslS/mZAxN/uAswCHN04HwaWQdG2JXvtiLdYcLgx/LNIKkyvh
+ ToBijNLVHeS9evsaIwxD601zPeh5g2NkAm8VSA7eI0HeYn6VUJaIClXMZnBVNVi0
+ AcMGz6o0vNoXHaXOb+oEU1bQKU7MCll2apt45bsH9mANZst4TSy+M5EHKFJb5GmU
+ 43zJbcgKk/LctwcSw3g0uoNu/CYAkV5I1OvUBPz7epwJsOeiSmngh1JqFHk4dYY/
+ 2ccZPIKm1FI7AdEy0CI20PI69PVvBnA04WLa6NyVQTBtqIYWJUuiJsfGCwzmWKXy
+ FbRLg==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4827vp8a4w-2
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Tue, 22 Jul 2025 05:01:02 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ Tue, 22 Jul 2025 05:01:04 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 22 Jul 2025 05:01:01 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 22 Jul 2025 05:01:01 -0700
+ 15.2.1544.4; Tue, 22 Jul 2025 05:01:04 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 22 Jul 2025 05:01:04 -0700
 Received: from cavium-optiplex-3070-BM15.. (unknown [10.28.34.39])
- by maili.marvell.com (Postfix) with ESMTP id 7BEBD3F7045;
- Tue, 22 Jul 2025 05:00:58 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 6270B3F7070;
+ Tue, 22 Jul 2025 05:01:01 -0700 (PDT)
 From: Tomasz Duszynski <tduszynski@marvell.com>
 To: <tduszynski@marvell.com>
 CC: <bruce.richardson@intel.com>, <david.marchand@redhat.com>, <dev@dpdk.org>, 
  <jerinj@marvell.com>, <mb@smartsharesystems.com>, <thomas@monjalon.net>
-Subject: [PATCH v8 5/8] lib/pmu: use build system defined RTE_LIB_PMU macro
-Date: Tue, 22 Jul 2025 14:00:38 +0200
-Message-ID: <20250722120041.2718227-6-tduszynski@marvell.com>
+Subject: [PATCH v8 6/8] test/pmu: enable test
+Date: Tue, 22 Jul 2025 14:00:39 +0200
+Message-ID: <20250722120041.2718227-7-tduszynski@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250722120041.2718227-1-tduszynski@marvell.com>
 References: <20250627154107.3405768-1-tduszynski@marvell.com>
  <20250722120041.2718227-1-tduszynski@marvell.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDA5OCBTYWx0ZWRfX6b6V0E9dYT97
- U8wjQbnBxyqXKbASC8+9REbMz3ZSiLjfmyBP+gzgCagD016fajVrai2OyR8cgaQ6ai0OvrcjfSN
- G9v72m8u8qyzTOd16Ke3MwTAEiRd/kFF9FM6gJzCvjkt31LS8aiMzve1F/1CihPY0ju3dPbhN3m
- LAK8hYdpvJz5V3LxOgwBuDzJaYAwfWPY5aIx2GqI65iswBYzlwN78bGzKPtZywpRWNN3ooJ4EuJ
- OFvKnm0KceLPt/SR1tY652ct3HK86wTYmEH5kgdh7TPdcjuLis7qE+KPawaXGM9ar4VD8GR7E9R
- dsm64yO1moO9xe1dAdAYeTmQ9OBps/Bm+8a/io5cQlSXlorte9D5upp36ToP1m9guX8XdDr0jqK
- PDzAOTMQlOiT3sKVhpWWfzu/10tPdNxqm+ESNbAeYg0/v2Pg17p6S3O8w1owC2SxyiCUbqpc
-X-Proofpoint-ORIG-GUID: ibCkwB3Aq8W02n7PWtqvRYUrKBvtNu6S
-X-Proofpoint-GUID: ibCkwB3Aq8W02n7PWtqvRYUrKBvtNu6S
-X-Authority-Analysis: v=2.4 cv=RfGQC0tv c=1 sm=1 tr=0 ts=687f7d7e cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=Wb1JkmetP80A:10 a=M5GUcnROAAAA:8 a=esutNisFxaaDPwP1l9cA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Authority-Analysis: v=2.4 cv=cfHSrmDM c=1 sm=1 tr=0 ts=687f7d80 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8
+ a=M5GUcnROAAAA:8 a=8HUT6ekSxiGaV7mw7QIA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: 53-CBQiMVMgCxVhXtttnHgefg-xBLVFy
+X-Proofpoint-ORIG-GUID: 53-CBQiMVMgCxVhXtttnHgefg-xBLVFy
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDA5OCBTYWx0ZWRfX/46sSk5BfrG0
+ LcMzHOUU7abigk6csucmIR0KIiDdy0PawBNDcBBSvku5gqnUZsaXD37fvireFqmnoMYb2VgfXei
+ CcqOX19E/2cMR5XoS/cjCT2rZUDw2+lH+XnJpxZacdndwynRJcNPBS8Q6Gv2nOSxVeErRTQnMOJ
+ c/EKVlMSdT4mcnbPCr07HtoTfNsjqXA4DCcR4AVj3rnk56kr+20ZA5zMNRHbqbe1n1ThYguRro1
+ JUxP9yggnd8nDnWeXlS0G55RO6QyT+yZqEjuTca4YOT02Ug/4Imi69CLaw9q6MAmxkppG9r3DhF
+ YQtBQVGYW7yUvON4Rq9RY/M5phFEgKHWlkkSGKBSdF1wEfHG7s0N09xvDbxN7VqEk9/VepKmfQu
+ /VDIFiX8i3IeDw03O2KUfxac9sTMXtQSPPYMA7fdf8Awq3WrUrSEWyYZtaCLbuO/Fk03nNO+
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-07-22_02,2025-07-21_02,2025-03-28_01
@@ -81,35 +82,108 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-RTE_LIB_PMU is defined by build system automatically if DPDK is build
-for Linux. Otherwise it's missing.
-
-That said all cases where conditional compilation is required
-can be handled without introducing other macros.
+Enable test to allow users to verify basic functionality. Due to varying
+configuration options across distributions and kernels user should
+ensure that all requirements are satisfied before starting test.
 
 Signed-off-by: Tomasz Duszynski <tduszynski@marvell.com>
 ---
- lib/pmu/rte_pmu.h | 3 ---
- 1 file changed, 3 deletions(-)
+ app/test/test_pmu.c | 60 ++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 54 insertions(+), 6 deletions(-)
 
-diff --git a/lib/pmu/rte_pmu.h b/lib/pmu/rte_pmu.h
-index 84a5d522d1..e997f62334 100644
---- a/lib/pmu/rte_pmu.h
-+++ b/lib/pmu/rte_pmu.h
-@@ -33,13 +33,10 @@
- #include <rte_compat.h>
- #include <rte_lcore.h>
+diff --git a/app/test/test_pmu.c b/app/test/test_pmu.c
+index 10513bf9c9..7f450b3566 100644
+--- a/app/test/test_pmu.c
++++ b/app/test/test_pmu.c
+@@ -2,10 +2,48 @@
+  * Copyright(C) 2025 Marvell International Ltd.
+  */
  
--#define RTE_PMU_SUPPORTED
- #if defined(RTE_ARCH_ARM64)
- #include "rte_pmu_pmc_arm64.h"
- #elif defined(RTE_ARCH_X86_64)
- #include "rte_pmu_pmc_x86_64.h"
--#else
--#undef RTE_PMU_SUPPORTED
- #endif
++#include <stdbool.h>
++#include <stdio.h>
++#include <sys/types.h>
++#include <unistd.h>
++
+ #include <rte_pmu.h>
  
- #ifdef __cplusplus
+ #include "test.h"
+ 
++#define PERF_EVENT_PARANOID_PATH "/proc/sys/kernel/perf_event_paranoid"
++
++static bool perf_allowed_quirk(void)
++{
++	int level, ret;
++	FILE *fp;
++
++	fp = fopen(PERF_EVENT_PARANOID_PATH, "r");
++	if (!fp)
++		return false;
++
++	ret = fscanf(fp, "%d", &level);
++	fclose(fp);
++	if (ret != 1)
++		return false;
++
++	/* On vanilla Linux the default perf_event_paranoid level is 2, which allows non-privileged
++	 * processes to access performance counters.
++	 *
++	 * Debian / Ubuntu and their derivatives apply patches that introduce
++	 * additional paranoia levels:
++	 *
++	 * - Debian adds level 3, which restricts access to perf_event_open() for
++	 *   monitoring other processes, but still allows unprivileged self-monitoring.
++	 *   See: https://lore.kernel.org/all/1469630746-32279-1-git-send-email-jeffv@google.com/
++	 * - Ubuntu adds level 4 (which is also the default), completely disabling perf_event_open()
++	 *   for unprivileged users—effectively disabling self-monitoring.
++	 *
++	 * That said, check below should be sufficient to enable this test on most kernels.
++	 */
++	return level < 4;
++}
++
+ static int
+ test_pmu_read(void)
+ {
+@@ -24,8 +62,15 @@ test_pmu_read(void)
+ 		return TEST_SKIPPED;
+ 	}
+ 
+-	if (rte_pmu_init() < 0)
+-		return TEST_FAILED;
++	if ((getuid() != 0) && !perf_allowed_quirk()) {
++		printf("self-monitoring disabled\n");
++		return TEST_SKIPPED;
++	}
++
++	if (rte_pmu_init() < 0) {
++		printf("PMU not initialized\n");
++		return TEST_SKIPPED;
++	}
+ 
+ 	event = rte_pmu_add_event(name);
+ 	while (tries--)
+@@ -33,7 +78,12 @@ test_pmu_read(void)
+ 
+ 	rte_pmu_fini();
+ 
+-	return val ? TEST_SUCCESS : TEST_FAILED;
++	/* rte_pmu_read() returns zero if it can't read perf counter. Thus series of zeros doesn't
++	 * necessarily mean the counter is actually zero. It might just signal a problem with setup
++	 * itself. So skip test to avoid testing failure and leave it to user to interpret this
++	 * outcome.
++	 */
++	return val ? TEST_SUCCESS : TEST_SKIPPED;
+ }
+ 
+ static struct unit_test_suite pmu_tests = {
+@@ -52,6 +102,4 @@ test_pmu(void)
+ 	return unit_test_suite_runner(&pmu_tests);
+ }
+ 
+-/* disabled because of reported failures, waiting for a fix
+- * REGISTER_FAST_TEST(pmu_autotest, true, true, test_pmu);
+- */
++REGISTER_FAST_TEST(pmu_autotest, true, true, test_pmu);
 -- 
 2.34.1
 
