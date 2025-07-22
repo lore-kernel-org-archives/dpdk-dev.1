@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F076BC83F1A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 11:54:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13989C83F1A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 12:00:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3477D402D8;
-	Tue, 22 Jul 2025 13:54:51 +0200 (CEST)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
- [209.85.214.182])
- by mails.dpdk.org (Postfix) with ESMTP id 84EAF40283
- for <dev@dpdk.org>; Tue, 22 Jul 2025 13:54:50 +0200 (CEST)
-Received: by mail-pl1-f182.google.com with SMTP id
- d9443c01a7336-234f17910d8so47635735ad.3
- for <dev@dpdk.org>; Tue, 22 Jul 2025 04:54:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1753185289;
- x=1753790089; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=OFlkxXxEvhMxJ6O5O6X2a0Pmpnvx9QADNavd4cExEls=;
- b=eEWIzuBsZzWgohqpMJ2NjCYMOv6J28pCLeq3a34iGhK+hwlRsNhZ2zz8yoCbYLud9t
- yJvu4QI0MinjKp/3UhyRuWVyPN5TwBzgC55SI2AZyazFPtUkpOzpDCleWSNckfVJ700P
- caEnQu5uv8+NMwd/ZM4x64pDfdWfA1hKEzpYZ9EgJTdA8k9OASMc126aIbgy4825ngbX
- 9BD6hnR+TwiXE4DBYt553/h6gG/V5nZSq5Wg6mRPthj8bUE5XL6HZDDssO6PFohOw5I4
- FUO0A76fDc0BMrYaJs8OJl7GbuAyRzOyKJWT53zImr9o86i3Rgl6xPYfj28VhMketgrQ
- Y8gQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753185289; x=1753790089;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=OFlkxXxEvhMxJ6O5O6X2a0Pmpnvx9QADNavd4cExEls=;
- b=klS0PlxS/GVF6u+PN1UYkaecvr4EeLATdI/LmbfUaDmApWP2w7q2VCPQiP4eXE6FCX
- Die7Tokj5hKpx34tCbiqC603sKG3txiUzXpkwy4Gv66m1WWYxiMYyatbM7r1/fAN9lfP
- 6OgktBl4roBw48OHSPwn4SHFK7buvXghOaNC4kbfpNAI379uSejR0U+Gw2f/KYOVsN/y
- bb0b1KlUheDG+7xXWhDl6/uiHG5QgAiOBN+KEEWtTuV5Yfj30zh3giZmiU1Km/JWWJuZ
- XTxjRTE11tDgVaFGpY8No27N3H+sXl3WPO/LCtOJ1MLiJRhgKPm7x/oFJzUWjrFfhbaf
- 2H4w==
-X-Gm-Message-State: AOJu0YzAHaaPxwFogJslKBTooOjQdazLIeNwjfLFeRP/1cLUq/6+ofRi
- MxloJfzFRQ3eSeVlbNBpV0Bq+cOS1t0UynwanSevBTw8eNbudiU6Jz1bI6WmxMwMmSI=
-X-Gm-Gg: ASbGncubwfQRZN/YVjCCC4U/b652IkdSSKKp75lIVMSd62sLPkLH0lWI7d6H6RTOM0p
- Z0X7oGAMTHox/Vk4ZD4wy4/64anrKoogHsyNquyMcc2f/ZJzk8NWBaJZr+DmhL62nBqojHZscpp
- xPXmHN5e8XqXVpIgLsXRIPMw/6VdoTQz9/1pbuBzel4Bahtrmsbsg+d8Dnobsnfq10PyUb5G9w1
- h/mRWFbXIiOzrDgVj6QIMWivE22ySD9kSD14pqiSYxTSl/HVy9nCogaruKDYO9TxyKcP40CY9Mg
- TIwlqkJiq/MWiC0zB/7NMBQYv5ULfdRvdWF5Kktn3NBh52RXi/v0e6AllmuvfP2PGnDdOm0ZyuX
- g8xsR67VBjr3JaJq8A3ISDT/5EUXy9qzwInqZOnrMWMqzL/uj
-X-Google-Smtp-Source: AGHT+IFZr14/TFWLiQMtMRd2J0z9GeWlD2uUHFIPGPEnbGmtBZohAwGC/NSE+qBvMa+V2PPjkFm0Gw==
-X-Received: by 2002:a17:902:f906:b0:234:d1f2:da31 with SMTP id
- d9443c01a7336-23e3b766079mr175530855ad.2.1753185289504; 
- Tue, 22 Jul 2025 04:54:49 -0700 (PDT)
-Received: from localhost.localdomain ([64.62.143.197])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-23e3b6b5631sm74684865ad.124.2025.07.22.04.54.48
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 22 Jul 2025 04:54:49 -0700 (PDT)
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-To: thomas@monjalon.net, ferruh.yigit@amd.com, andrew.rybchenko@oktetlabs.ru
-Cc: dev@dpdk.org, stable@dpdk.org,
- Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Subject: [PATCH] lib/ethdev: fix segfault in secondary process by validating
- dev_private pointer
-Date: Tue, 22 Jul 2025 07:54:39 -0400
-Message-ID: <20250722115439.1353573-1-14pwcse1224@uetpeshawar.edu.pk>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id E060940283;
+	Tue, 22 Jul 2025 14:00:49 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id A4A5E40265
+ for <dev@dpdk.org>; Tue, 22 Jul 2025 14:00:48 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MBhGt7006817;
+ Tue, 22 Jul 2025 05:00:47 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=y
+ rzdtGw/INutPvRf2Rs4VUsGLgWuuFrZVCfzs6YTPbQ=; b=I70xImOn7b2O74P3E
+ roIm9TBqg0glVSIWDIMQjC+DWsST0mE9z41anafnTka7fQMz6Qy30CbYD8nO/kJr
+ Dje4ycziCspzijsannZw1R+CSnUXfk1uKPCe81yvU0a+uXlyZdlRkQPwSbO/vZWs
+ qAaaHp2jEnCQueuvmkeTyAPXWVuf6wp6/UaRfgjjN+cQoOfK4QzN3qnZGX0C6okf
+ 4f9reruAyxWXWoSWvYxrLlcvAlAVI+xvJj/nnrGLxOfAHKYobw1ZLRNaQaoY/wKB
+ ALQagi+XG9P50T294SuZO1tvq07CsvFoDQMNNnqdNsCHiJE02Tsx95jo9cuPfJyy
+ 0d76A==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 482a0600tw-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Tue, 22 Jul 2025 05:00:47 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 22 Jul 2025 05:00:46 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 22 Jul 2025 05:00:46 -0700
+Received: from cavium-optiplex-3070-BM15.. (unknown [10.28.34.39])
+ by maili.marvell.com (Postfix) with ESMTP id 120E63F7045;
+ Tue, 22 Jul 2025 05:00:43 -0700 (PDT)
+From: Tomasz Duszynski <tduszynski@marvell.com>
+To: <tduszynski@marvell.com>
+CC: <bruce.richardson@intel.com>, <david.marchand@redhat.com>, <dev@dpdk.org>, 
+ <jerinj@marvell.com>, <mb@smartsharesystems.com>, <thomas@monjalon.net>
+Subject: [PATCH v8 0/8] lib/pmu: cleanups and trace integration
+Date: Tue, 22 Jul 2025 14:00:33 +0200
+Message-ID: <20250722120041.2718227-1-tduszynski@marvell.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250627154107.3405768-1-tduszynski@marvell.com>
+References: <20250627154107.3405768-1-tduszynski@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=M6lNKzws c=1 sm=1 tr=0 ts=687f7d6f cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=Wb1JkmetP80A:10 a=iR-xy-VhiHNNf1baXf0A:9
+X-Proofpoint-GUID: _V_x_FlI8am_l1xMiqSvB7trB3OiFLWP
+X-Proofpoint-ORIG-GUID: _V_x_FlI8am_l1xMiqSvB7trB3OiFLWP
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDA5OCBTYWx0ZWRfX9j5fj8qfs+Wg
+ +5e8sKNIvngdwVy57T2Yy4VQKzm9lXv/C6RRh2EcKTU5+8FSi7zcP/NpzJ7QTO7ytN1bKNwiPKI
+ Pga7JYG3sVo8PHb3X39wKW2n1WiEcXGfwZMmE+VDWn4Lwt5UinoZlRUS57T9ZKK9AcnGmXZWrG0
+ wSoeo/BtmDCiDC3IXImMFfijwPqDV3Je08LbLMpHJPpM1zJgkXKA9K1ccI5fWehBRxd/Y67AdlC
+ zFN7U+0I7J83+fkzac3nyTsbMu4YYt+HTucPyMH5Kl2Kem7WHc8N6PjY8eclgkMBzhmqZ8oWZQ/
+ HThvbkUvL0ZssvWgziR++lSYsW+fH4OvD6lW6H+W+RBWHvQuk/Ikhweaz/FxXYwDyBcy2pnI4nD
+ oTol+XwG6fEwL1RzKJBkwaMot2ADwOu87N9nZCb99Rp7IG8ENpLIvTz90cvJ5OPIXT9qG6Sj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-22_02,2025-07-21_02,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,41 +79,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In secondary processes, accessing 'dev->data->dev_private' directly can
-cause a segmentation fault if the primary process has exited or the
-shared memory is unavailable.
+This series does some cleanup and refactoring around the rc1 code like: trimming unused headers,
+switching to callbacks for per-arch handling, and adding trace support. It also re-enables existing
+base test to help catch reported issues on some architectures.
 
-This patch adds a check for dev/data/dev_private and uses
-rte_mem_virt2phy to ensure the pointer is still valid.
+v8:
+- export __rte_pmu_trace_read from library itself to avoid build issues
+  with msvc linker
+v7:
+- change test return value
+v6:
+- add more logs to functional test
+- skip test in case of setup failure, user must make sure
+  system is properly configured to get valid results
+v5:
+- add missing patch that quiesces chincs check
+v4:
+- change fast test so that it won't fail on misconfigured system
+- fix compilation on windows
+v3:
+- do not export __rte_pmu_trace_read because that breaks compilation
+  on windows - script generating map files does not handle conditional
+  compilation
+- skip testing if paranoia is at wrong level
+v2:
+- explicitly check against NULL
+- make pmu lib optional by checking if dpdk config has RTE_LIB_PMU
 
-Fixes: bdad90d12ec8 ('ethdev: change device info get callback to return int')
-Cc: stable@dpdk.org
+Tomasz Duszynski (8):
+  lib/pmu: quiesce rte_pmu_read deprecation warning in chkincs
+  lib/pmu: export only necessary arch headers
+  lib/pmu: reimplement per-arch ops as callbacks
+  lib/pmu: do not try enabling perf counter access on arm64
+  lib/pmu: use build system defined RTE_LIB_PMU macro
+  test/pmu: enable test
+  trace: add PMU
+  lib/pmu: fix out-of-bound access
 
-Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
----
- lib/ethdev/rte_ethdev.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ MAINTAINERS                                |  1 +
+ app/test/test_pmu.c                        | 60 ++++++++++++--
+ app/test/test_trace_perf.c                 | 10 +++
+ doc/guides/prog_guide/profile_app.rst      |  5 ++
+ doc/guides/prog_guide/trace_lib.rst        | 31 ++++++++
+ doc/guides/rel_notes/release_25_07.rst     |  2 +
+ lib/eal/common/eal_common_trace.c          |  5 +-
+ lib/eal/common/eal_common_trace_pmu.c      | 38 +++++++++
+ lib/eal/common/eal_common_trace_points.c   |  5 ++
+ lib/eal/common/eal_trace.h                 |  4 +
+ lib/eal/common/meson.build                 |  1 +
+ lib/eal/include/rte_eal_trace.h            | 16 ++++
+ lib/eal/include/rte_trace_point.h          |  7 ++
+ lib/eal/include/rte_trace_point_register.h |  2 +
+ lib/eal/meson.build                        |  3 +
+ lib/meson.build                            |  2 +-
+ lib/pmu/meson.build                        | 10 +--
+ lib/pmu/pmu.c                              | 92 ++++++++++++++++------
+ lib/pmu/pmu_arm64.c                        | 59 +++++---------
+ lib/pmu/pmu_private.h                      | 51 ++++++++++--
+ lib/pmu/rte_pmu.h                          | 49 +++++++++++-
+ 21 files changed, 370 insertions(+), 83 deletions(-)
+ create mode 100644 lib/eal/common/eal_common_trace_pmu.c
 
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index dd7c00bc94..03ef446a96 100644
---- a/lib/ethdev/rte_ethdev.c
-+++ b/lib/ethdev/rte_ethdev.c
-@@ -4079,6 +4079,15 @@ rte_eth_dev_info_get(uint16_t port_id, struct rte_eth_dev_info *dev_info)
- 
- 	if (dev->dev_ops->dev_infos_get == NULL)
- 		return -ENOTSUP;
-+	if (rte_eal_process_type() == RTE_PROC_SECONDARY &&
-+		(dev == NULL || dev->data == NULL ||
-+		dev->data->dev_private == NULL ||
-+		rte_mem_virt2phy(dev->data->dev_private) == RTE_BAD_PHYS_ADDR)) {
-+			RTE_ETHDEV_LOG_LINE(ERR,
-+			"Secondary: dev_private not accessible (primary exited?)");
-+			rte_errno = ENODEV;
-+			return -rte_errno;
-+	}
- 	diag = dev->dev_ops->dev_infos_get(dev, dev_info);
- 	if (diag != 0) {
- 		/* Cleanup already filled in device information */
--- 
-2.43.0
+--
+2.34.1
 
