@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7698C83F27
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 17:36:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21A6DC83F27
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 17:37:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 322FC40B8F;
-	Tue, 22 Jul 2025 19:36:10 +0200 (CEST)
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com
- [209.85.222.177])
- by mails.dpdk.org (Postfix) with ESMTP id E4DE940A70
- for <dev@dpdk.org>; Tue, 22 Jul 2025 19:36:07 +0200 (CEST)
-Received: by mail-qk1-f177.google.com with SMTP id
- af79cd13be357-7e278d8345aso560251385a.0
- for <dev@dpdk.org>; Tue, 22 Jul 2025 10:36:07 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 20FDC40B91;
+	Tue, 22 Jul 2025 19:36:12 +0200 (CEST)
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com
+ [209.85.222.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 2FC2140A7A
+ for <dev@dpdk.org>; Tue, 22 Jul 2025 19:36:09 +0200 (CEST)
+Received: by mail-qk1-f174.google.com with SMTP id
+ af79cd13be357-7e32c95775aso587824885a.3
+ for <dev@dpdk.org>; Tue, 22 Jul 2025 10:36:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1753205767;
- x=1753810567; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1753205768;
+ x=1753810568; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=CEuPJly845h3GwOzkyx/hdtbI77aynIptOJU4pCB4vs=;
- b=g86bpfHDl3V2HtwQ1/WG9i7uE0XEK+T8wjHxpRpWdSsaH+hXhZfDnNDwIbuf3dDhfj
- aaun7ASQjAk5u40b3UBLOyrYL92oIXTq1PXOEq0YhPXNrdJKSpwElJK0SciMHui3Vv3+
- A7KE45Ev6GrBlUHlTzUs7dl/20S9gPt7TyUaDmbCTHsiltv9yAhrPvvVUQCraCbxxajF
- 8Nm0IAz8Fw6YY66lzSsfz1Sv4XKjJOqmN/pYo6xfanPqEJa0M7KwXIeEfEWrJnVYRwMC
- vxqdbaAVCe0K0XscsT2SJLpGnxDydFPoGIAeV3P/lqIYlP4LZ7lJbk+khbPRJ3NI5aJZ
- ZX2Q==
+ bh=9/RQJUCWAWOmFgBocfh6R0dp7bChsllmJyikY1zuGmM=;
+ b=jzxT0+MQJNKq0wEE4JYbpDAj0U4hMTudFXs5T/Kzd1/UQMzGYhM1Thxsljvg5FavHm
+ V6L80EKUJrkcgmCch+H47sK3JgArazP78jRKVz/vhUBxv4HxsD2YLDNQr1t1fZxMdWWW
+ VLxNqlPIkoXzGfPDVciz0xFYcvI2r5Mt5Hjo8LSRLeuqqGriwTUu2/QTvpqYxCWH+xX+
+ +dVkxiiLg+lDJhhszR5v8QDFPS8AT93ttx2kuDEUMiu3MMWRj6f1mhQ9CyOQF4F68c/y
+ kjU/OiAYAqdB8dRSOc1t2rEkJb6rNjWYgkw8wIR32sjCgBS2zIHPHkbeb9Qskv+qeEH3
+ 6fCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753205767; x=1753810567;
+ d=1e100.net; s=20230601; t=1753205768; x=1753810568;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=CEuPJly845h3GwOzkyx/hdtbI77aynIptOJU4pCB4vs=;
- b=ns7Nb4W4oCOsIaK9/59ZW4Mn0dN9IELAlCQgL3CTN8vNHlVB2VZ/Dt7H3aJVxJtpwW
- eWd67ZSieM8fKrfsbnggGEQPqVIHZjmzPSWNHe476bRorrFeCRY3XuE1MojGm+jtXtWz
- jOIYiFjlAtRjzao5gp5gSKAhWIzLWRIG8UQMkFgjqFEpWhEDedWcHXI+JBUTjZRRJRLe
- bqZPrE4CAvszq7cVYRllA3QOdpeUEh3LYL21n1Ibc8G5l14GV4bkzFUYNcBxKIgmpMD/
- 9H8XDxekjv1v9HXM3Y2moJp/1ZJRJa37w60CiOFF3szhse+VLyuGP2UNYrGyClrW/Ic4
- fqkg==
-X-Gm-Message-State: AOJu0Yx+05egHTTaSkr2CFvfVyehy1Ay2qEKsQOeNeeH0LiD7JkCd2fd
- w1ErMDkIOEeG1qnKBB4GLW3E7HxKtHMTbDcXJ1hLoEoVG0E25/Cq3Ami7YPKEPOi3G/YLeSKVa0
- pBD0X
-X-Gm-Gg: ASbGncv4fdmNKjTY+8wZWBYOxvFP3/qrcueAtM7wRbZ912mB+7GTrADYG6R8xpJVyjb
- 1xiEcCss+0PPaCQUXtypaQB0jYeWq5IdQ1lg9zXNlCy0UzqGqoObQ7zS+6gC7y5Ghho2CeR9oOi
- 8GhAmIOC5ul3yLrnx3AqHt5IG1M+eWH6V+j0oYYewJfI66ewqJBErIhoemwkmGps2Jj2jzfoEeF
- iz+E6OY2fEZ2lzgEN4fE0YIpmsAKfyB61jRcMGftrSoD9m0zoAwWLJ6m0ZqRivabbE9K32yHeyD
- KeFFPdWsTYGH9vSGmvSJKnCpW/2+uGG4lsyCzKDUUSFJYVRepTQNHmCcGhouX2GZKgmiWgJqJwX
- W8v9FBIUeMVuJpue8xK4gHkK0P8DJzKtTjovcoECu5p9G1JT83ptOAiaIeLFG8z/L/yVaNAMM
-X-Google-Smtp-Source: AGHT+IHgc7lh/8lwWIbWbz6czVshg+YUmFe7aDi7bQTy0YlEjyqsyfJWwCgTW+4ygjwNOGIgjuDrJA==
-X-Received: by 2002:a05:620a:b0d:b0:7e3:60d7:65cc with SMTP id
- af79cd13be357-7e62a1a4c89mr10137385a.58.1753205767104; 
- Tue, 22 Jul 2025 10:36:07 -0700 (PDT)
+ bh=9/RQJUCWAWOmFgBocfh6R0dp7bChsllmJyikY1zuGmM=;
+ b=BKDJ8tHgrf3B8aiccoV6jtASwtttrA8DgYFQp639+smXs63NBnUT0HqIckBztxDVSv
+ 4538zjrpAwon27X1zI7WrXvPbdJ5VPupxyTMPDWgUa9AVg+0UZaP6Us+NWcpKyjF2ipA
+ AKBJ5Fepftl7gkDuv774NWC6jWhVlR1x5gOJxRjiAzPqvnmXqfK65wm39og8ydnXnNiX
+ le+8CX4S6i4+xSEW3BeCxeSyV2TC1F9TbPiYTf77JYKei59PGvrLULwFIev2vSGCQH8n
+ OaI2plGT9ksbMNVo7NNcoiwsjO8Pj51qgbNO7Im7sQ391nX8NIMwxzA81bbLgeOnCXdQ
+ zZoA==
+X-Gm-Message-State: AOJu0Yw2c2ACRmsnRfAwyrFSrQOyKNM6oppgouwiQwgqrVl3KCseh62y
+ o4iZWraLvJPuuxDv9oeFPKkrV1ZNz+ZS8LtNV1DnIPjeBifju06kOGhUIG6AbqicayMHweGFOWk
+ My3wr
+X-Gm-Gg: ASbGnctocF02KHFHCxvZQSImWWgWhlzw+0mJDr1Z2kImsqszwwf3yxg6lexnYSy+z29
+ BctnJZJiAaAOYRF/hp36BRP6YTnMqtGcBHPX7+ZNnYXJCwxWDe93B4IHLD1ZJCiurb+Cmh9Vyzf
+ wiAWEXFBHSTEszxcl/Oc/HowE7J+SRKyMkg/eXXdW9McTrIchoRFPZ6KxAqYkUlAdwm41HSWXpJ
+ 8OF6DlYPrZjhfSLWpVL/tgzLHO/Hyyh3FGcvruKDJww7OL/GtG0bf9lyR1ywQAyJNuO4hgv3cJI
+ LQECdEW8YleRjxyH7qY8bwYm4CfPHAzFbr3CV55f+/M1u4GaeKyGVcODCFLULZuyRTP11S3xpZK
+ xnay6U6IZbH1RfmaStAfcvyg3Zci7aY6DJegXUoTMLRX10TEnTy8eLSPP0z6hbqnFS1bfXsH6
+X-Google-Smtp-Source: AGHT+IHoH9TMmQPNNp+V/TYErC+9MPc+mutzQZHDWxEqv7SNzmORevaeUkx6gU+6WE8UGD3ioHjRAg==
+X-Received: by 2002:a05:620a:1a82:b0:7e6:2435:b6bc with SMTP id
+ af79cd13be357-7e62a17c789mr11365085a.29.1753205768301; 
+ Tue, 22 Jul 2025 10:36:08 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7e356b282aasm552155885a.14.2025.07.22.10.36.06
+ af79cd13be357-7e356b282aasm552155885a.14.2025.07.22.10.36.07
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 22 Jul 2025 10:36:06 -0700 (PDT)
+ Tue, 22 Jul 2025 10:36:07 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Reshma Pattan <reshma.pattan@intel.com>
-Subject: [PATCH v6 08/13] pcapng: split packet copy from header insertion
-Date: Tue, 22 Jul 2025 10:34:39 -0700
-Message-ID: <20250722173552.184141-9-stephen@networkplumber.org>
+Subject: [PATCH v6 09/13] pcapng: make queue optional
+Date: Tue, 22 Jul 2025 10:34:40 -0700
+Message-ID: <20250722173552.184141-10-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250722173552.184141-1-stephen@networkplumber.org>
 References: <20250411234927.114568-1-stephen@networkplumber.org>
@@ -83,317 +83,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In new model, the packet was already copied, only need
-to wrap it in pcapng format.
+The queue field is optional in pcapng received packet.
+Use UINT16_MAX as flag value.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/pcapng/rte_pcapng.c | 178 +++++++++++++++++++++-------------------
- lib/pcapng/rte_pcapng.h |  27 +++++-
- 2 files changed, 120 insertions(+), 85 deletions(-)
+ lib/pcapng/rte_pcapng.c | 7 ++++---
+ lib/pcapng/rte_pcapng.h | 4 ++--
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/lib/pcapng/rte_pcapng.c b/lib/pcapng/rte_pcapng.c
-index 2a07b4c1f5..6db5d4da50 100644
+index 6db5d4da50..c27cb9b48e 100644
 --- a/lib/pcapng/rte_pcapng.c
 +++ b/lib/pcapng/rte_pcapng.c
-@@ -1,3 +1,4 @@
-+
- /* SPDX-License-Identifier: BSD-3-Clause
-  * Copyright(c) 2019 Microsoft Corporation
-  */
-@@ -432,8 +433,24 @@ pcapng_vlan_insert(struct rte_mbuf *m, uint16_t ether_type, uint16_t tci)
- 	return 0;
- }
+@@ -500,8 +500,8 @@ rte_pcapng_insert(struct rte_mbuf *m, uint32_t queue,
  
-+/* pad the packet to 32 bit boundary */
-+static inline int
-+pcapng_mbuf_pad32(struct rte_mbuf *m)
-+{
-+	uint32_t pkt_len = rte_pktmbuf_pkt_len(m);
-+	uint32_t padding = RTE_ALIGN(pkt_len, sizeof(uint32_t)) - pkt_len;
-+
-+	if (padding > 0) {
-+		void *tail = rte_pktmbuf_append(m, padding);
-+		if (tail == NULL)
-+			return -1;
-+		memset(tail, 0, padding);
-+	}
-+	return 0;
-+}
-+
- /*
-- *   The mbufs created use the Pcapng standard enhanced packet  block.
-+ *  The mbufs created use the Pcapng standard enhanced packet block.
-  *
-  *                         1                   2                   3
-  *     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-@@ -468,71 +485,28 @@ pcapng_vlan_insert(struct rte_mbuf *m, uint16_t ether_type, uint16_t tci)
-  *    |                      Block Total Length                       |
-  *    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-  */
--
--/* Make a copy of original mbuf with pcapng header and options */
--RTE_EXPORT_SYMBOL(rte_pcapng_copy)
--struct rte_mbuf *
--rte_pcapng_copy(uint16_t port_id, uint32_t queue,
--		const struct rte_mbuf *md,
--		struct rte_mempool *mp,
--		uint32_t length,
--		enum rte_pcapng_direction direction,
--		const char *comment)
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pcapng_insert, 25.07)
-+int
-+rte_pcapng_insert(struct rte_mbuf *m, uint32_t queue,
-+		  enum rte_pcapng_direction direction, uint32_t orig_len,
-+		  uint64_t timestamp, const char *comment)
- {
- 	struct pcapng_enhance_packet_block *epb;
--	uint32_t orig_len, pkt_len, padding, flags;
--	struct pcapng_option *opt;
--	uint64_t timestamp;
--	uint16_t optlen;
--	struct rte_mbuf *mc;
--	bool rss_hash;
--
--#ifdef RTE_LIBRTE_ETHDEV_DEBUG
--	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, NULL);
--#endif
--	orig_len = rte_pktmbuf_pkt_len(md);
-+	uint32_t pkt_len = rte_pktmbuf_pkt_len(m);
-+	uint32_t flags;
+ 	uint16_t optlen = pcapng_optlen(sizeof(flags));
  
--	/* Take snapshot of the data */
--	mc = rte_pktmbuf_copy(md, mp, 0, length);
--	if (unlikely(mc == NULL))
--		return NULL;
--
--	/* Expand any offloaded VLAN information */
--	if ((direction == RTE_PCAPNG_DIRECTION_IN &&
--	     (md->ol_flags & RTE_MBUF_F_RX_VLAN_STRIPPED)) ||
--	    (direction == RTE_PCAPNG_DIRECTION_OUT &&
--	     (md->ol_flags & RTE_MBUF_F_TX_VLAN))) {
--		if (pcapng_vlan_insert(mc, RTE_ETHER_TYPE_VLAN,
--				       md->vlan_tci) != 0)
--			goto fail;
--	}
-+	if (unlikely(pcapng_mbuf_pad32(m) < 0))
-+		return -1;
- 
--	if ((direction == RTE_PCAPNG_DIRECTION_IN &&
--	     (md->ol_flags & RTE_MBUF_F_RX_QINQ_STRIPPED)) ||
--	    (direction == RTE_PCAPNG_DIRECTION_OUT &&
--	     (md->ol_flags & RTE_MBUF_F_TX_QINQ))) {
--		if (pcapng_vlan_insert(mc, RTE_ETHER_TYPE_QINQ,
--				       md->vlan_tci_outer) != 0)
--			goto fail;
--	}
-+	uint16_t optlen = pcapng_optlen(sizeof(flags));
- 
--	/* record HASH on incoming packets */
--	rss_hash = (direction == RTE_PCAPNG_DIRECTION_IN &&
--		    (md->ol_flags & RTE_MBUF_F_RX_RSS_HASH));
-+	/* make queue optional? */
-+	optlen += pcapng_optlen(sizeof(queue));
- 
--	/* pad the packet to 32 bit boundary */
--	pkt_len = rte_pktmbuf_pkt_len(mc);
--	padding = RTE_ALIGN(pkt_len, sizeof(uint32_t)) - pkt_len;
--	if (padding > 0) {
--		void *tail = rte_pktmbuf_append(mc, padding);
-+	/* does packet have valid RSS hash to include */
-+	bool rss_hash = (direction == RTE_PCAPNG_DIRECTION_IN &&
-+			 (m->ol_flags & RTE_MBUF_F_RX_RSS_HASH));
- 
--		if (tail == NULL)
--			goto fail;
--		memset(tail, 0, padding);
--	}
--
--	optlen = pcapng_optlen(sizeof(flags));
+-	/* make queue optional? */
 -	optlen += pcapng_optlen(sizeof(queue));
- 	if (rss_hash)
- 		optlen += pcapng_optlen(sizeof(uint8_t) + sizeof(uint32_t));
++	if (queue != UINT16_MAX)
++		optlen += pcapng_optlen(sizeof(queue));
  
-@@ -540,10 +514,10 @@ rte_pcapng_copy(uint16_t port_id, uint32_t queue,
- 		optlen += pcapng_optlen(strlen(comment));
- 
- 	/* reserve trailing options and block length */
--	opt = (struct pcapng_option *)
--		rte_pktmbuf_append(mc, optlen + sizeof(uint32_t));
-+	struct pcapng_option *opt = (struct pcapng_option *)
-+		rte_pktmbuf_append(m, optlen + sizeof(uint32_t));
- 	if (unlikely(opt == NULL))
--		goto fail;
-+		return -1;
- 
- 	switch (direction) {
- 	case RTE_PCAPNG_DIRECTION_IN:
-@@ -556,24 +530,20 @@ rte_pcapng_copy(uint16_t port_id, uint32_t queue,
- 		flags = 0;
+ 	/* does packet have valid RSS hash to include */
+ 	bool rss_hash = (direction == RTE_PCAPNG_DIRECTION_IN &&
+@@ -531,7 +531,8 @@ rte_pcapng_insert(struct rte_mbuf *m, uint32_t queue,
  	}
  
--	opt = pcapng_add_option(opt, PCAPNG_EPB_FLAGS,
--				&flags, sizeof(flags));
--
--	opt = pcapng_add_option(opt, PCAPNG_EPB_QUEUE,
--				&queue, sizeof(queue));
-+	opt = pcapng_add_option(opt, PCAPNG_EPB_FLAGS, &flags, sizeof(flags));
-+	opt = pcapng_add_option(opt, PCAPNG_EPB_QUEUE, &queue, sizeof(queue));
+ 	opt = pcapng_add_option(opt, PCAPNG_EPB_FLAGS, &flags, sizeof(flags));
+-	opt = pcapng_add_option(opt, PCAPNG_EPB_QUEUE, &queue, sizeof(queue));
++	if (queue != UINT16_MAX)
++		opt = pcapng_add_option(opt, PCAPNG_EPB_QUEUE, &queue, sizeof(queue));
  
  	if (rss_hash) {
  		uint8_t hash_opt[5];
- 
--		/* The algorithm could be something else if
--		 * using rte_flow_action_rss; but the current API does not
--		 * have a way for ethdev to report  this on a per-packet basis.
-+		/* The algorithm could be something else but the current API does not
-+		 * have a way for to record this on a per-packet basis
-+		 * and the PCAPNG hash types don't match the DPDK types.
- 		 */
- 		hash_opt[0] = PCAPNG_HASH_TOEPLITZ;
- 
--		memcpy(&hash_opt[1], &md->hash.rss, sizeof(uint32_t));
--		opt = pcapng_add_option(opt, PCAPNG_EPB_HASH,
--					&hash_opt, sizeof(hash_opt));
-+		memcpy(&hash_opt[1], &m->hash.rss, sizeof(uint32_t));
-+		opt = pcapng_add_option(opt, PCAPNG_EPB_HASH, &hash_opt, sizeof(hash_opt));
- 	}
- 
- 	if (comment)
-@@ -583,19 +553,14 @@ rte_pcapng_copy(uint16_t port_id, uint32_t queue,
- 	/* Note: END_OPT necessary here. Wireshark doesn't do it. */
- 
- 	/* Add PCAPNG packet header */
--	epb = (struct pcapng_enhance_packet_block *)
--		rte_pktmbuf_prepend(mc, sizeof(*epb));
-+	epb = (struct pcapng_enhance_packet_block *) rte_pktmbuf_prepend(m, sizeof(*epb));
- 	if (unlikely(epb == NULL))
--		goto fail;
-+		return -1;
- 
- 	epb->block_type = PCAPNG_ENHANCED_PACKET_BLOCK;
--	epb->block_length = rte_pktmbuf_pkt_len(mc);
--
--	/* Interface index is filled in later during write */
--	mc->port = port_id;
-+	epb->block_length = rte_pktmbuf_pkt_len(m);
- 
--	/* Put timestamp in cycles here - adjust in packet write */
--	timestamp = rte_get_tsc_cycles();
-+	/* Put timestamp in cycles here - adjusted in packet write */
- 	epb->timestamp_hi = timestamp >> 32;
- 	epb->timestamp_lo = (uint32_t)timestamp;
- 	epb->capture_length = pkt_len;
-@@ -603,9 +568,56 @@ rte_pcapng_copy(uint16_t port_id, uint32_t queue,
- 
- 	/* set trailer of block length */
- 	*(uint32_t *)opt = epb->block_length;
-+	return 0;
-+}
-+
-+/* Make a copy of original mbuf with pcapng header and options */
-+RTE_EXPORT_SYMBOL(rte_pcapng_copy)
-+struct rte_mbuf *
-+rte_pcapng_copy(uint16_t port_id, uint32_t queue,
-+		const struct rte_mbuf *md,
-+		struct rte_mempool *mp,
-+		uint32_t length,
-+		enum rte_pcapng_direction direction,
-+		const char *comment)
-+{
-+	uint32_t orig_len = rte_pktmbuf_pkt_len(md);
-+	struct rte_mbuf *mc;
- 
--	return mc;
-+#ifdef RTE_LIBRTE_ETHDEV_DEBUG
-+	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, NULL);
-+#endif
-+
-+	/* Take snapshot of the data */
-+	mc = rte_pktmbuf_copy(md, mp, 0, length);
-+	if (unlikely(mc == NULL))
-+		return NULL;
-+
-+	/* Expand any offloaded VLAN information */
-+	if ((direction == RTE_PCAPNG_DIRECTION_IN &&
-+	     (md->ol_flags & RTE_MBUF_F_RX_VLAN_STRIPPED)) ||
-+	    (direction == RTE_PCAPNG_DIRECTION_OUT &&
-+	     (md->ol_flags & RTE_MBUF_F_TX_VLAN))) {
-+		if (pcapng_vlan_insert(mc, RTE_ETHER_TYPE_VLAN,
-+				       md->vlan_tci) != 0)
-+			goto fail;
-+	}
-+
-+	if ((direction == RTE_PCAPNG_DIRECTION_IN &&
-+	     (md->ol_flags & RTE_MBUF_F_RX_QINQ_STRIPPED)) ||
-+	    (direction == RTE_PCAPNG_DIRECTION_OUT &&
-+	     (md->ol_flags & RTE_MBUF_F_TX_QINQ))) {
-+		if (pcapng_vlan_insert(mc, RTE_ETHER_TYPE_QINQ,
-+				       md->vlan_tci_outer) != 0)
-+			goto fail;
-+	}
-+
-+	/* Interface index is filled in later during write */
-+	mc->port = port_id;
- 
-+	if (likely(rte_pcapng_insert(mc, queue, direction, orig_len,
-+				     rte_get_tsc_cycles(), comment) == 0))
-+		return mc;
- fail:
- 	rte_pktmbuf_free(mc);
- 	return NULL;
 diff --git a/lib/pcapng/rte_pcapng.h b/lib/pcapng/rte_pcapng.h
-index 48f2b57564..4914ac9622 100644
+index 4914ac9622..48aaab365c 100644
 --- a/lib/pcapng/rte_pcapng.h
 +++ b/lib/pcapng/rte_pcapng.h
-@@ -99,7 +99,7 @@ enum rte_pcapng_direction {
- };
- 
- /**
-- * Format an mbuf for writing to file.
-+ * Make a copy of mbuf for writing to file.
-  *
-  * @param port_id
-  *   The Ethernet port on which packet was received
-@@ -117,7 +117,7 @@ enum rte_pcapng_direction {
+@@ -135,8 +135,8 @@ rte_pcapng_copy(uint16_t port_id, uint32_t queue,
+  * @param m
+  *   The mbuf to modify.
+  * @param queue
+- *   The queue on the Ethernet port where packet was received
+- *   or is going to be transmitted.
++ *   The queue on the Ethernet port where packet was received or is going to be transmitted.
++ *   Optional: use UINT16_MAX if not specified.
   * @param direction
   *   The direction of the packer: receive, transmit or unknown.
-  * @param comment
-- *   Packet comment.
-+ *   Packet comment (optional).
-  *
-  * @return
-  *   - The pointer to the new mbuf formatted for pcapng_write
-@@ -129,6 +129,29 @@ rte_pcapng_copy(uint16_t port_id, uint32_t queue,
- 		uint32_t length,
- 		enum rte_pcapng_direction direction, const char *comment);
- 
-+/**
-+ * Format an mbuf for writing to file.
-+ *
-+ * @param m
-+ *   The mbuf to modify.
-+ * @param queue
-+ *   The queue on the Ethernet port where packet was received
-+ *   or is going to be transmitted.
-+ * @param direction
-+ *   The direction of the packer: receive, transmit or unknown.
-+ * @param orig_len
-+ *   The length of the original packet which maybe less than actual
-+ *   packet if only a snapshot was captured.
-+ * @param timestamp
-+ *   The timestamp for packet in TSC cycles.
-+ * @param comment
-+ *   Packet comment (optional).
-+ */
-+__rte_experimental
-+int
-+rte_pcapng_insert(struct rte_mbuf *m, uint32_t queue,
-+		  enum rte_pcapng_direction direction, uint32_t orig_len,
-+		  uint64_t timestamp, const char *comment);
- 
- /**
-  * Determine optimum mbuf data size.
+  * @param orig_len
 -- 
 2.47.2
 
