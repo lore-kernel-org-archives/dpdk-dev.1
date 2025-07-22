@@ -2,73 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E7B6C87FC5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 08:49:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E94CC83F27
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 09:34:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 44B54402A5;
-	Tue, 22 Jul 2025 10:49:23 +0200 (CEST)
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com
- [209.85.210.177])
- by mails.dpdk.org (Postfix) with ESMTP id 9F3EC40265
- for <dev@dpdk.org>; Tue, 22 Jul 2025 10:49:21 +0200 (CEST)
-Received: by mail-pf1-f177.google.com with SMTP id
- d2e1a72fcca58-75ce8f8a3a1so1117567b3a.3
- for <dev@dpdk.org>; Tue, 22 Jul 2025 01:49:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1753174161;
- x=1753778961; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=Z/bgWgJ56GG6Tca1mIkuntPAWn1q/LcgtDqcphuWWOg=;
- b=LoCAWyENYYE1x+3nzYIee35k7rMy2xaQIqY8N83wJuxKTPzW23u2YjVm4FgAt8mGTz
- I403BzJ9T1H8/GQsPhxbnURIPN9KeLJx25gi7E9Fpl03dykP6RwZVMfJVCBDCMClPAJu
- jcE7EUQl5GzYRAeyf+zk+33fQCou+zLDh7xMc53FYHJGOGICTC8LCRTB4dNZz+eWxxUR
- DmLOA1Lv/woBeH0+r8amxgeIP3Pw/qYXQMj6+slwdtqK7G7qZiGIJOlngFn6FnoZsm30
- zSHpPqjGwyeCjnI7bjXd4aXqTIyDNHs0HaxSLWs6UynGrATgwbQqIKyaP9jHI9MVWJ8y
- dfEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753174161; x=1753778961;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=Z/bgWgJ56GG6Tca1mIkuntPAWn1q/LcgtDqcphuWWOg=;
- b=JHh8XILHqcEpVz5dUU64xNps5HH03647YDMSavyMwgb4mEcemNZKiZw6mv8Ol9WjCO
- /pF2ud332tSrbhM3jJsfrL/bM7fVQ0MheGPy4h1JWcCYy7QSFTHxNX855QZj3yzrL6b8
- 5YM75WL7LDVmv0b0knfdR4bDzXtIHkDyE2UWTK0aGGBV0PLLw/ZW1JLphn7zPEYCp6d1
- +yM2ADcYTZuIQWNr6G3KsjxIWh/zPwR1TAB6pLtDyq4dXjFmlO2oX2UgFl27NQLJng1A
- WG8vmcF9/aMcjtix3rcRUw3VeYW6nu1X7S8vFnNZgSGD7F2pOfIqLZWln+i7Ji9N3GEH
- 9uZA==
-X-Gm-Message-State: AOJu0YxilxB2wuHR9enGUqrzRG8J/22kHD+c6/acvL1rmmL3fuDaYKF8
- urNEAZd3EcmhFnYblUeIOJkLBoDNaVmGbTxdqJqoc/ViDrssGyc/HIVrui1Ax6iZjJrAJyBWLZj
- KvnmmXYYoXA==
-X-Gm-Gg: ASbGncvXUfTkiVOhlKXRU+gSaMAYxeKJNdhfuqisW454oLOQwhwybakOoseILZxgEiN
- DKAeOdtMdaoGNaP+mhfWG6sqzDr15uzzjJ1WvIP+Im0S3bkqRQF4IiM824GD9B2LorgjXlYQf1n
- HjZYoK8fX6op10EUhT7eUO0i/WXWZ0V+JfOdXVziKq+dQkit5WW8W/mO6ngL8NXEggVRVUcZH0I
- GjT8el8oe94Tm21XGf7S5+E76hR/M81Vqk6iQtfgLCgobXWwEcy+lC8ApBjp/aRlsDLwZJXFw5x
- 6vGc7BPoQ7mzarRP1l5S4yBI2hDYwMn4Ymx1YMnvHvf1kH7eL2/NmfStA/JqnouQO0kVVIbbkCY
- jPymwqT8zpxbyUdA9PVm6pwggBX/vXCpdJCSEd4q0mZlvS6No
-X-Google-Smtp-Source: AGHT+IHqJn/m0fa/cSq4rYvD9rwwKA8XdIzRT7dvZ2hRfejOfNOVAWG+Erwnr3/tnOzbVRWap+ycLg==
-X-Received: by 2002:a05:6a00:2e91:b0:758:b81:603a with SMTP id
- d2e1a72fcca58-759ab63965bmr21830050b3a.2.1753174160605; 
- Tue, 22 Jul 2025 01:49:20 -0700 (PDT)
-Received: from localhost.localdomain ([64.62.143.197])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-759cb154745sm7247059b3a.91.2025.07.22.01.49.19
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 22 Jul 2025 01:49:20 -0700 (PDT)
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-To: dsosnowski@nvidia.com
-Cc: dev@dpdk.org, rasland@nvidia.com, stable@dpdk.org, viacheslavo@nvidia.com,
- bingz@nvidia.com, orika@nvidia.com, suanmingm@nvidia.com, matan@nvidia.com
-Subject: Re: [PATCH] doc/mlx5: document firmware requirement for flex item
-Date: Tue, 22 Jul 2025 04:48:27 -0400
-Message-ID: <20250722084827.1309401-1-14pwcse1224@uetpeshawar.edu.pk>
+	by mails.dpdk.org (Postfix) with ESMTP id 82AC940283;
+	Tue, 22 Jul 2025 11:34:40 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id A1C3940265
+ for <dev@dpdk.org>; Tue, 22 Jul 2025 11:34:38 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 57D2B20446;
+ Tue, 22 Jul 2025 11:34:38 +0200 (CEST)
+Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
+ smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
+ Tue, 22 Jul 2025 11:34:38 +0200
+From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+To: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ Ivan Malov <ivan.malov@arknetworks.am>
+Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+Subject: [PATCH v3] mbuf: de-inline sanity checking a reinitialized mbuf
+Date: Tue, 22 Jul 2025 09:34:31 +0000
+Message-ID: <20250722093431.555214-1-mb@smartsharesystems.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250721132120.x5knqldvshgfwjl6@ds-vm-debian.local>
-References: <20250721132120.x5knqldvshgfwjl6@ds-vm-debian.local>
+In-Reply-To: <20250719102315.435921-1-mb@smartsharesystems.com>
+References: <20250719102315.435921-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 22 Jul 2025 09:34:38.0031 (UTC)
+ FILETIME=[D7ADC5F0:01DBFAEB]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,15 +50,303 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi,
+Sanity checking a reinitialized mbuf (a.k.a. raw mbuf) has been refactored
+to follow the same design pattern as sanity checking a normal mbuf, and
+now depends on RTE_LIBRTE_MBUF_DEBUG instead of RTE_ENABLE_ASSERT.
 
-Thank you for the clarification.
+The details of the changes are as follows:
 
-I was using this flex item configuration to offload a custom header to the NIC and apply match/action rules.
+Non-inlined functions rte_mbuf_raw_sanity_check() and rte_mbuf_raw_check()
+have been added.
+They do for a reinitialized mbuf what rte_mbuf_sanity_check() and
+rte_mbuf_check() do for a normal mbuf.
+They basically check the same conditions as __rte_mbuf_raw_sanity_check()
+previously did, but use "if (!condition) rte_panic(message)" instead of
+RTE_ASSERT(), so they don't depend on RTE_ENABLE_ASSERT.
 
-Looking forward to the PMD fix and the improved documentation.
-Thanks again for investigating and clarifying the firmware requirements.
+The inline function __rte_mbuf_raw_sanity_check() has been replaced
+by the new macro __rte_mbuf_raw_sanity_check_mp(), which either calls
+rte_mbuf_raw_sanity_check() or does nothing, depending on
+RTE_LIBRTE_MBUF_DEBUG, just like the __rte_mbuf_sanity_check() macro does
+for a normal mbuf.
 
-Best regards,
-Khadem Ullah
+Note that the new macro __rte_mbuf_raw_sanity_check_mp() takes an optional
+mempool parameter to verify that the mbuf belongs to the expected mbuf
+pool.
+This addition is mainly relevant for sanity checking reinitialized mbufs
+freed directly into a given mempool by a PMD when using
+RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE.
+
+The macro __rte_mbuf_raw_sanity_check() has been kept for backwards API
+compatibility.
+It simply calls __rte_mbuf_raw_sanity_check_mp() without specifying a
+mempool.
+
+Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
+---
+v3:
+* Removed experimental status for the new functions.
+  Experimental is optional for new symbols, to allow for future API
+  changes. But this has been around for a long time. (Stephen Hemminger)
+* Consequentially, the added build check for ALLOW_EXPERIMENTAL_API with
+  RTE_LIBRTE_MBUF_DEBUG is no longer needed, and was removed.
+v2:
+* Added explicit build check for ALLOW_EXPERIMENTAL_API being enabled when
+  RTE_LIBRTE_MBUF_DEBUG is enabled, with descriptive error message if not
+  so. (Ivan Malov)
+* Fixed typo in patch description.
+---
+ lib/mbuf/rte_mbuf.c | 61 ++++++++++++++++++++++++++++
+ lib/mbuf/rte_mbuf.h | 96 +++++++++++++++++++++++++++------------------
+ 2 files changed, 119 insertions(+), 38 deletions(-)
+
+diff --git a/lib/mbuf/rte_mbuf.c b/lib/mbuf/rte_mbuf.c
+index 9e7731a8a2..af39c13cf7 100644
+--- a/lib/mbuf/rte_mbuf.c
++++ b/lib/mbuf/rte_mbuf.c
+@@ -373,6 +373,67 @@ rte_pktmbuf_pool_create_extbuf(const char *name, unsigned int n,
+ 	return mp;
+ }
+ 
++/* do some sanity checks on a reinitialized mbuf: panic if it fails */
++RTE_EXPORT_SYMBOL(rte_mbuf_raw_sanity_check)
++void
++rte_mbuf_raw_sanity_check(const struct rte_mbuf *m, const struct rte_mempool *mp)
++{
++	const char *reason;
++
++	if (rte_mbuf_raw_check(m, mp, &reason))
++		rte_panic("%s\n", reason);
++}
++
++RTE_EXPORT_SYMBOL(rte_mbuf_raw_check)
++int rte_mbuf_raw_check(const struct rte_mbuf *m, const struct rte_mempool *mp,
++		   const char **reason)
++{
++	/* check sanity */
++	if (rte_mbuf_check(m, 0, reason) == -1)
++		return -1;
++
++	/* check initialized */
++	if (rte_mbuf_refcnt_read(m) != 1) {
++		*reason = "uninitialized ref cnt";
++		return -1;
++	}
++	if (m->next != NULL) {
++		*reason = "uninitialized next ptr";
++		return -1;
++	}
++	if (m->nb_segs != 1) {
++		*reason = "uninitialized nb_segs";
++		return -1;
++	}
++	if (RTE_MBUF_CLONED(m)) {
++		*reason = "cloned";
++		return -1;
++	}
++	if (RTE_MBUF_HAS_EXTBUF(m)) {
++		if (!RTE_MBUF_HAS_PINNED_EXTBUF(m)) {
++			*reason = "external buffer not pinned";
++			return -1;
++		}
++
++		uint16_t cnt = rte_mbuf_ext_refcnt_read(m->shinfo);
++		if ((cnt == 0) || (cnt == UINT16_MAX)) {
++			*reason = "pinned external buffer bad ref cnt";
++			return -1;
++		}
++		if (cnt != 1) {
++			*reason = "pinned external buffer uninitialized ref cnt";
++			return -1;
++		}
++	}
++
++	if (mp != NULL && m->pool != mp) {
++		*reason = "wrong mbuf pool";
++		return -1;
++	}
++
++	return 0;
++}
++
+ /* do some sanity checks on a mbuf: panic if it fails */
+ RTE_EXPORT_SYMBOL(rte_mbuf_sanity_check)
+ void
+diff --git a/lib/mbuf/rte_mbuf.h b/lib/mbuf/rte_mbuf.h
+index 06ab7502a5..552cda1ae5 100644
+--- a/lib/mbuf/rte_mbuf.h
++++ b/lib/mbuf/rte_mbuf.h
+@@ -339,11 +339,17 @@ rte_pktmbuf_priv_flags(struct rte_mempool *mp)
+ 
+ #ifdef RTE_LIBRTE_MBUF_DEBUG
+ 
++/**  check reinitialized mbuf type in debug mode */
++#define __rte_mbuf_raw_sanity_check_mp(m, mp) rte_mbuf_raw_sanity_check(m, mp)
++
+ /**  check mbuf type in debug mode */
+ #define __rte_mbuf_sanity_check(m, is_h) rte_mbuf_sanity_check(m, is_h)
+ 
+ #else /*  RTE_LIBRTE_MBUF_DEBUG */
+ 
++/**  check reinitialized mbuf type in debug mode */
++#define __rte_mbuf_raw_sanity_check_mp(m, mp) do { } while (0)
++
+ /**  check mbuf type in debug mode */
+ #define __rte_mbuf_sanity_check(m, is_h) do { } while (0)
+ 
+@@ -513,6 +519,46 @@ rte_mbuf_ext_refcnt_update(struct rte_mbuf_ext_shared_info *shinfo,
+ } while (0)
+ 
+ 
++/**
++ * Sanity checks on a reinitialized mbuf.
++ *
++ * Check the consistency of the given reinitialized mbuf.
++ * The function will cause a panic if corruption is detected.
++ *
++ * Check that the mbuf is properly reinitialized (refcnt=1, next=NULL,
++ * nb_segs=1), as done by rte_pktmbuf_prefree_seg().
++ *
++ * @param m
++ *   The mbuf to be checked.
++ * @param mp
++ *   The mempool to which the mbuf belongs.
++ *   NULL if unknown, not to be checked.
++ */
++void
++rte_mbuf_raw_sanity_check(const struct rte_mbuf *m, const struct rte_mempool *mp);
++
++/**
++ * Sanity checks on a reinitialized mbuf.
++ *
++ * Almost like rte_mbuf_raw_sanity_check(), but this function gives the reason
++ * if corruption is detected rather than panic.
++ *
++ * @param m
++ *   The mbuf to be checked.
++ * @param mp
++ *   The mempool to which the mbuf belongs.
++ *   NULL if unknown, not to be checked.
++ * @param reason
++ *   A reference to a string pointer where to store the reason why a mbuf is
++ *   considered invalid.
++ * @return
++ *   - 0 if no issue has been found, reason is left untouched.
++ *   - -1 if a problem is detected, reason then points to a string describing
++ *     the reason why the mbuf is deemed invalid.
++ */
++int rte_mbuf_raw_check(const struct rte_mbuf *m, const struct rte_mempool *mp,
++		   const char **reason);
++
+ /**
+  * Sanity checks on an mbuf.
+  *
+@@ -550,33 +596,11 @@ rte_mbuf_sanity_check(const struct rte_mbuf *m, int is_header);
+ int rte_mbuf_check(const struct rte_mbuf *m, int is_header,
+ 		   const char **reason);
+ 
+-/**
+- * Sanity checks on a reinitialized mbuf in debug mode.
+- *
+- * Check the consistency of the given reinitialized mbuf.
+- * The function will cause a panic if corruption is detected.
+- *
+- * Check that the mbuf is properly reinitialized (refcnt=1, next=NULL,
+- * nb_segs=1), as done by rte_pktmbuf_prefree_seg().
+- *
+- * @param m
+- *   The mbuf to be checked.
+- */
+-static __rte_always_inline void
+-__rte_mbuf_raw_sanity_check(__rte_unused const struct rte_mbuf *m)
+-{
+-	RTE_ASSERT(rte_mbuf_refcnt_read(m) == 1);
+-	RTE_ASSERT(m->next == NULL);
+-	RTE_ASSERT(m->nb_segs == 1);
+-	RTE_ASSERT(!RTE_MBUF_CLONED(m));
+-	RTE_ASSERT(!RTE_MBUF_HAS_EXTBUF(m) ||
+-			(RTE_MBUF_HAS_PINNED_EXTBUF(m) &&
+-			rte_mbuf_ext_refcnt_read(m->shinfo) == 1));
+-	__rte_mbuf_sanity_check(m, 0);
+-}
++/** For backwards compatibility. */
++#define __rte_mbuf_raw_sanity_check(m) __rte_mbuf_raw_sanity_check_mp(m, NULL)
+ 
+ /** For backwards compatibility. */
+-#define MBUF_RAW_ALLOC_CHECK(m) __rte_mbuf_raw_sanity_check(m)
++#define MBUF_RAW_ALLOC_CHECK(m) __rte_mbuf_raw_sanity_check_mp(m, NULL)
+ 
+ /**
+  * Allocate an uninitialized mbuf from mempool *mp*.
+@@ -606,7 +630,7 @@ static inline struct rte_mbuf *rte_mbuf_raw_alloc(struct rte_mempool *mp)
+ 
+ 	if (rte_mempool_get(mp, &ret.ptr) < 0)
+ 		return NULL;
+-	__rte_mbuf_raw_sanity_check(ret.m);
++	__rte_mbuf_raw_sanity_check_mp(ret.m, mp);
+ 	return ret.m;
+ }
+ 
+@@ -644,7 +668,7 @@ rte_mbuf_raw_alloc_bulk(struct rte_mempool *mp, struct rte_mbuf **mbufs, unsigne
+ 	int rc = rte_mempool_get_bulk(mp, (void **)mbufs, count);
+ 	if (likely(rc == 0))
+ 		for (unsigned int idx = 0; idx < count; idx++)
+-			__rte_mbuf_raw_sanity_check(mbufs[idx]);
++			__rte_mbuf_raw_sanity_check_mp(mbufs[idx], mp);
+ 	return rc;
+ }
+ 
+@@ -665,7 +689,7 @@ rte_mbuf_raw_alloc_bulk(struct rte_mempool *mp, struct rte_mbuf **mbufs, unsigne
+ static __rte_always_inline void
+ rte_mbuf_raw_free(struct rte_mbuf *m)
+ {
+-	__rte_mbuf_raw_sanity_check(m);
++	__rte_mbuf_raw_sanity_check_mp(m, NULL);
+ 	rte_mempool_put(m->pool, m);
+ }
+ 
+@@ -696,12 +720,8 @@ __rte_experimental
+ static __rte_always_inline void
+ rte_mbuf_raw_free_bulk(struct rte_mempool *mp, struct rte_mbuf **mbufs, unsigned int count)
+ {
+-	for (unsigned int idx = 0; idx < count; idx++) {
+-		const struct rte_mbuf *m = mbufs[idx];
+-		RTE_ASSERT(m != NULL);
+-		RTE_ASSERT(m->pool == mp);
+-		__rte_mbuf_raw_sanity_check(m);
+-	}
++	for (unsigned int idx = 0; idx < count; idx++)
++		__rte_mbuf_raw_sanity_check_mp(mbufs[idx], mp);
+ 
+ 	rte_mempool_put_bulk(mp, (void **)mbufs, count);
+ }
+@@ -1021,22 +1041,22 @@ static inline int rte_pktmbuf_alloc_bulk(struct rte_mempool *pool,
+ 	switch (count % 4) {
+ 	case 0:
+ 		while (idx != count) {
+-			__rte_mbuf_raw_sanity_check(mbufs[idx]);
++			__rte_mbuf_raw_sanity_check_mp(mbufs[idx], pool);
+ 			rte_pktmbuf_reset(mbufs[idx]);
+ 			idx++;
+ 			/* fall-through */
+ 	case 3:
+-			__rte_mbuf_raw_sanity_check(mbufs[idx]);
++			__rte_mbuf_raw_sanity_check_mp(mbufs[idx], pool);
+ 			rte_pktmbuf_reset(mbufs[idx]);
+ 			idx++;
+ 			/* fall-through */
+ 	case 2:
+-			__rte_mbuf_raw_sanity_check(mbufs[idx]);
++			__rte_mbuf_raw_sanity_check_mp(mbufs[idx], pool);
+ 			rte_pktmbuf_reset(mbufs[idx]);
+ 			idx++;
+ 			/* fall-through */
+ 	case 1:
+-			__rte_mbuf_raw_sanity_check(mbufs[idx]);
++			__rte_mbuf_raw_sanity_check_mp(mbufs[idx], pool);
+ 			rte_pktmbuf_reset(mbufs[idx]);
+ 			idx++;
+ 			/* fall-through */
+-- 
+2.43.0
 
