@@ -2,40 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB06C83F27
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 10:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B215C83F27
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 10:15:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AFD1340283;
-	Tue, 22 Jul 2025 12:11:02 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id F10BD40283;
+	Tue, 22 Jul 2025 12:15:19 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id F222940265
- for <dev@dpdk.org>; Tue, 22 Jul 2025 12:11:00 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id E0A7C40265;
+ Tue, 22 Jul 2025 12:15:18 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id B7FE220446;
- Tue, 22 Jul 2025 12:10:59 +0200 (CEST)
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id AF44F20446;
+ Tue, 22 Jul 2025 12:15:18 +0200 (CEST)
 Content-class: urn:content-classes:message
 MIME-Version: 1.0
 Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v7 7/8] trace: add PMU
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH v2] ethdev: Align enable logic handling with disable
+ functions
 X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Tue, 22 Jul 2025 12:10:55 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FDBD@smartserver.smartshare.dk>
-In-Reply-To: <1859501.3VsfAaAtOV@thomas>
+Date: Tue, 22 Jul 2025 12:15:16 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FDBE@smartserver.smartshare.dk>
+In-Reply-To: <20250721130545.38200-1-sunyang.wu@jaguarmicro.com>
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v7 7/8] trace: add PMU
-Thread-Index: Adv6LKEnzygVMc+JQZqSsJ4rU8IhMwAwMTCQ
-References: <CAJFAV8zDBgpEyg_GL-Pzh-5n5kGjYE6g2JedgZeoTgGiDN97OQ@mail.gmail.com>
- <20250721102457.2399936-1-tduszynski@marvell.com> <1859501.3VsfAaAtOV@thomas>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Thomas Monjalon" <thomas@monjalon.net>,
- "Tomasz Duszynski" <tduszynski@marvell.com>,
- "Jerin Jacob" <jerinj@marvell.com>
-Cc: <david.marchand@redhat.com>, <bruce.richardson@intel.com>, <dev@dpdk.org>
+Thread-Topic: [PATCH v2] ethdev: Align enable logic handling with disable
+ functions
+Thread-Index: Adv6QD1bMSwgAHtJTHGonSqa8nXdyQAsS9xw
+References: <20250721130545.38200-1-sunyang.wu@jaguarmicro.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Sunyang Wu" <sunyang.wu@jaguarmicro.com>,
+	<dev@dpdk.org>
+Cc: <thomas@monjalon.net>, <ferruh.yigit@amd.com>,
+ <andrew.rybchenko@oktetlabs.ru>, <stable@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,59 +50,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBUaG9tYXMgTW9uamFsb24gW21haWx0bzp0aG9tYXNAbW9uamFsb24ubmV0XQ0KPiBT
-ZW50OiBNb25kYXksIDIxIEp1bHkgMjAyNSAxMi40Ng0KPiANCj4gMjEvMDcvMjAyNSAxMjoyNCwg
-VG9tYXN6IER1c3p5bnNraToNCj4gPiA+IE9uIEZyaSwgSnVuIDI3LCAyMDI1IGF0IDU6NDHigK9Q
-TSBUb21hc3ogRHVzenluc2tpDQo+IDx0ZHVzenluc2tpQG1hcnZlbGwuY29tPiB3cm90ZToNCj4g
-PiA+ID4NCj4gPiA+ID4gSW4gb3JkZXIgdG8gcHJvZmlsZSBhcHAsIG9uZSBuZWVkcyB0byBzdG9y
-ZSBzaWduaWZpY2FudCBhbW91bnQgb2YNCj4gc2FtcGxlcw0KPiA+ID4gPiBzb21ld2hlcmUgZm9y
-IGFuIGFuYWx5c2lzIGxhdGVyIG9uLg0KPiA+ID4gPiBTaW5jZSB0cmFjZSBsaWJyYXJ5IHN1cHBv
-cnRzIHN0b3JpbmcgZGF0YSBpbiBhIENURiBmb3JtYXQsDQo+ID4gPiA+IGxldHMgdGFrZSBhZHZh
-bnRhZ2Ugb2YgdGhhdCBhbmQgYWRkIGEgZGVkaWNhdGVkIFBNVSB0cmFjZXBvaW50Lg0KPiA+ID4g
-Pg0KPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBUb21hc3ogRHVzenluc2tpIDx0ZHVzenluc2tpQG1h
-cnZlbGwuY29tPg0KPiBbLi4uXQ0KPiA+ID4gPiAtLS0gYS9saWIvZWFsL2NvbW1vbi9lYWxfY29t
-bW9uX3RyYWNlX3BvaW50cy5jDQo+ID4gPiA+ICsrKyBiL2xpYi9lYWwvY29tbW9uL2VhbF9jb21t
-b25fdHJhY2VfcG9pbnRzLmMNCj4gPiA+ID4gQEAgLTExOSwzICsxMTksMjMgQEANCj4gUlRFX1RS
-QUNFX1BPSU5UX1JFR0lTVEVSKHJ0ZV9lYWxfdHJhY2VfaW50cl9lbmFibGUsDQo+ID4gPiA+ICAg
-ICAgICAgbGliLmVhbC5pbnRyLmVuYWJsZSkNCj4gPiA+ID4gIFJURV9UUkFDRV9QT0lOVF9SRUdJ
-U1RFUihydGVfZWFsX3RyYWNlX2ludHJfZGlzYWJsZSwNCj4gPiA+ID4gICAgICAgICBsaWIuZWFs
-LmludHIuZGlzYWJsZSkNCj4gPiA+ID4gKw0KPiA+ID4gPiArI2lmZGVmIFJURV9MSUJfUE1VDQo+
-ID4gPiA+ICtSVEVfRVhQT1JUX0VYUEVSSU1FTlRBTF9TWU1CT0woX19ydGVfcG11X3RyYWNlX3Jl
-YWQsIDI1LjA3KQ0KPiA+ID4gPiArUlRFX1RSQUNFX1BPSU5UX1JFR0lTVEVSKHJ0ZV9wbXVfdHJh
-Y2VfcmVhZCwNCj4gPiA+ID4gKyAgICAgICBsaWIucG11LnJlYWQpDQo+ID4gPiA+ICsjZW5kaWYN
-Cj4gPiA+ID4gKyNpZmRlZiBSVEVfRVhFQ19FTlZfSVNfV0lORE9XUw0KPiA+ID4gPiArLyogZ2Vu
-LXZlcnNpb24tbWFwLnB5IHNjcmlwdCBnZW5lcmF0ZXMgZXhwb3J0IHN5bWJvbCBtYXBzIGJ5DQo+
-IHNjYW5uaW5nIHNvdXJjZSBmaWxlcyB3aXRob3V0DQo+ID4gPiA+ICsgKiBldmFsdWF0aW5nIGNv
-bmRpdGlvbmFsIGNvbXBpbGF0aW9uLiBIZW5jZSBfX3J0ZV9wbXVfdHJhY2VfcmVhZA0KPiB3aWxs
-IGJlIGluY2x1ZGVkIHRoZSB2ZXJzaW9uIG1hcA0KPiA+ID4gPiArICogZXZlbiBpZiBsaWJyYXJ5
-IGlzIG5vdCBjb21waWxlZC4NCj4gPiA+ID4gKyAqDQo+ID4gPiA+ICsgKiBPbiBXaW5kb3dzIGlm
-IG1zdmMgbGlua2VyIGlzIHVzZWQgdGhpcyBsZWFkcyB0byBhIGhhcmQgbGluaw0KPiBlcnJvcg0K
-PiA+ID4gPiArICogKExOSzIwMDE6IHVucmVzb2x2ZWQgZXh0ZXJuYWwgc3ltYm9sKSBiZWNhdXNl
-IG1zdmMgcmVxdWlyZXMNCj4gYWxsIHN5bWJvbHMgbGlzdGVkIGluIHRoZSAuZGVmIGZpbGUNCj4g
-PiA+ID4gKyAqIHRvIGJlIHByZXNlbnQgaW4gdGhlIG9iamVjdCBmaWxlcy4NCj4gPiA+ID4gKyAq
-DQo+ID4gPiA+ICsgKiBPdGhlciBsaW5rZXJzLCBlLmc6IGdudSBsZCBvciBtaW5ndyBsZCwgYXJl
-IG1vcmUgZm9yZ2l2aW5nLg0KPiBUaGV5IHNpbGVudGx5IGlnbm9yZSBzeW1ib2xzIGxpc3RlZA0K
-PiA+ID4gPiArICogaW4gdGhlIG1hcCBmaWxlIGlmIHRob3NlIHN5bWJvbHMgYXJlIG5vdCBwcmVz
-ZW50IGluIHRoZQ0KPiBiaW5hcnkuDQo+ID4gPiA+ICsgKi8NCj4gPiA+ID4gK3J0ZV90cmFjZV9w
-b2ludF90IF9fcnRlX3BtdV90cmFjZV9yZWFkOw0KPiA+ID4gPiArI2VuZGlmDQo+ID4gPg0KPiA+
-ID4gRnJvbSBhIHF1aWNrIGxvb2ssIGNvdWxkIHlvdSBleHBvcnQgdGhpcyBzeW1ib2wgZnJvbSB0
-aGUgUE1VIGxpYnJhcnkNCj4gaXRzZWxmPw0KPiA+DQo+ID4gR290IGNhdWdodCB1cCwgYnV0IGhl
-cmUgaXMgbXkgdGFrZS4gSXQgd291bGQgbGlrZWx5IG1ha2UgdHJhY2UgYQ0KPiBkZXBlbmRlbmN5
-LCBidXQgSSBiZWxpZXZlIHRoZQ0KPiA+IGRlcGVuZGVuY3kgc2hvdWxkIGJlIHJldmVyc2VkLiBB
-bHNvIGZyb20gbXkgcGVyc3BlY3RpdmUgdGhpcw0KPiBzdWdnZXN0aW9uIGZlZWxzIG1vcmUgbGlr
-ZSBhDQo+ID4gcmVmYWN0b3JpbmcuDQo+ID4NCj4gPiBTbyB1bmxlc3MgSSd2ZSBtaXN1bmRlcnN0
-b29kIHlvdXIgcG9pbnQsIEknZCByYXRlciBrZWVwIHRoZSBjdXJyZW50DQo+IHNvbHV0aW9uIGFz
-IGlzLg0KPiANCj4gSSB0aGluayB5b3UgZ290IGl0IHJpZ2h0OiBhIHJlZmFjdG9yaW5nIGxvb2tz
-IGJlbmVmaWNpYWwuDQo+IFBsZWFzZSB0aGluayBhYm91dCBpdC4NCj4gDQoNCkl0J3MgYSBsb25n
-IHRlcm0gZ29hbCAod2lzaGZ1bCB0aGlua2luZz8pIHRvIG1vdmUgVHJhY2Ugb3V0IG9mIHRoZSBF
-QUwsIGFuZCBpbnRvIGEgc2VwYXJhdGUgbGlicmFyeS4NCkNvbnNpZGVyaW5nIHRoaXMgbG9uZyB0
-ZXJtIGdvYWwsIHJlZmFjdG9yaW5nIFBNVSB0byBtYWtlIGl0IGRlcGVuZCBvbiBUcmFjZSB3b3Vs
-ZCBiZSBhIHN0ZXAgaW4gdGhlIHdyb25nIGRpcmVjdGlvbi4NCg0KSG93ZXZlciwgaWYgd2UgZGlz
-cmVnYXJkIHRoaXMgbG9uZyB0ZXJtIGdvYWwsIGFuZCBkbyBjb25zaWRlciBUcmFjZSBhIGNvcmUg
-cGFydCBvZiB0aGUgRUFMLCByZWZhY3RvcmluZyBQTVUgdG8gZGVwZW5kIG9uIFRyYWNlIHNlZW1z
-IGNsZWFuZXIgdG8gbWUgdG9vLg0KDQpJJ20gaW4gZmF2b3Igb2Ygbm90IGFkZGluZyBtb3JlIG9i
-c3RhY2xlcyB0byBtb3ZpbmcgVHJhY2Ugb3V0IG9mIHRoZSBFQUwsIGkuZS4gZG9uJ3QgcmVmYWN0
-b3IgUE1VIHRvIGRlcGVuZCBvbiBUcmFjZS4NCkFsc28sIEkgdGVuZCB0byBhZ3JlZSB3aXRoIFRv
-bWFzeiBhYm91dCBQTVUgYmVpbmcgbG93ZXIgbGV2ZWwgdGhhbiBUcmFjZSwgc28gUE1VIGRlcGVu
-ZGluZyBvbiBUcmFjZSBzZWVtcyB3cm9uZy4gTm8gc3Ryb25nIG9waW5pb24gb24gdGhpcyBsYXN0
-IHBvaW50LCB0aG91Z2guDQoNCkBKZXJpbiwgd2hhdCBkbyB5b3UgdGhpbms/DQoNCg==
+> From: Sunyang Wu [mailto:sunyang.wu@jaguarmicro.com]
+> Sent: Monday, 21 July 2025 15.06
+>=20
+> This patch modifies the handling logic of the "enable" related
+> operations. The key intention is to align it with the processing
+> approach of the "disable" functions.
+> Previously, there was an inconsistency in how failure scenarios were
+> dealt with between the "enable" and "disable" logic. Now, after
+> adjustment, their behaviors in exceptional cases are made more =
+uniform.
+> Importantly, this change does not introduce any alteration to the =
+actual
+> runtime behavior of the functions; it only serves to enhance code
+> consistency and maintainability, making the overall logic easier to
+> understand and maintain in the long run.
+> In this way, we ensure the codebase follows a more cohesive pattern,
+> reducing potential confusion during future development and maintenance
+> efforts that could stem from logical disparities.
+>=20
+> Cc: stable@dpdk.org
+>=20
+> Signed-off-by: Sunyang Wu <sunyang.wu@jaguarmicro.com>
+> ---
+>  lib/ethdev/rte_ethdev.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
+> index dd7c00bc94..41f96071e2 100644
+> --- a/lib/ethdev/rte_ethdev.c
+> +++ b/lib/ethdev/rte_ethdev.c
+> @@ -3018,7 +3018,8 @@ rte_eth_promiscuous_enable(uint16_t port_id)
+>  		return -ENOTSUP;
+>=20
+>  	diag =3D dev->dev_ops->promiscuous_enable(dev);
+> -	dev->data->promiscuous =3D (diag =3D=3D 0) ? 1 : 0;
+> +	if (diag =3D=3D 0)
+> +		dev->data->promiscuous =3D 1;
+>=20
+>  	diag =3D eth_err(port_id, diag);
+>=20
+> @@ -3086,7 +3087,8 @@ rte_eth_allmulticast_enable(uint16_t port_id)
+>  	if (dev->dev_ops->allmulticast_enable =3D=3D NULL)
+>  		return -ENOTSUP;
+>  	diag =3D dev->dev_ops->allmulticast_enable(dev);
+> -	dev->data->all_multicast =3D (diag =3D=3D 0) ? 1 : 0;
+> +	if (diag =3D=3D 0)
+> +		dev->data->all_multicast =3D 1;
+>=20
+>  	diag =3D eth_err(port_id, diag);
+>=20
+> --
+> 2.19.0.rc0.windows.1
+
+Acked-by: Morten Br=F8rup <mb@smartsharesystems.com>
+
