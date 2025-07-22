@@ -2,70 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1237C83F1A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 15:53:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A1ACC83F1A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 16:01:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B5B4B40269;
-	Tue, 22 Jul 2025 17:53:24 +0200 (CEST)
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com
- [209.85.210.170])
- by mails.dpdk.org (Postfix) with ESMTP id 21CA24003C
- for <dev@dpdk.org>; Tue, 22 Jul 2025 17:53:23 +0200 (CEST)
-Received: by mail-pf1-f170.google.com with SMTP id
- d2e1a72fcca58-75ab31c426dso3096450b3a.3
- for <dev@dpdk.org>; Tue, 22 Jul 2025 08:53:22 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id DBF9F402D8;
+	Tue, 22 Jul 2025 18:01:57 +0200 (CEST)
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com
+ [209.85.219.52]) by mails.dpdk.org (Postfix) with ESMTP id 987024003C
+ for <dev@dpdk.org>; Tue, 22 Jul 2025 18:01:56 +0200 (CEST)
+Received: by mail-qv1-f52.google.com with SMTP id
+ 6a1803df08f44-6fae04a3795so47772736d6.3
+ for <dev@dpdk.org>; Tue, 22 Jul 2025 09:01:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1753199602;
- x=1753804402; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=Hi7hPGk9UQ3817C+h7ZljZAN9awp/CinM9kIJJnm0YQ=;
- b=mSPOmikrMztnKE8sOENoKTwl+tX72G/jr6hYiENSlEvvRw2SD4Ew2OB4qSFD3C1U6I
- u5eY5PAdvN9+989e8w4PD81Jr++0x0ZJJs4kQhFlcd/rUmLXBiWl8oa2RwvQM6KPhI+T
- xQ05n42eMDg8ZyT7u2SdZpo5Sp3Bh8F5eja8s/CFPvBn0YbIOw3FNL+0iiSFu9w++FU7
- jqeOd2HI+SW2SlPiSyuSZ6sPOsYKrxmCysd9J/1fFVxUFyZy81vHImZOp6HNoNqRehT5
- KL/eiDVhypHi6vzk4+z2XhUSjVzde4b2ZdUNOrcjW302IlKNug47XpAUqHPIylEUzAj4
- 9c6Q==
+ d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1753200116;
+ x=1753804916; darn=dpdk.org; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=wORt9mImnXn/wMv5HXX5lrWHxoz1xX8Qt477OBtTa2g=;
+ b=qztuXg5BSPcMIvCUfv6m/rpUdgVxlUihIWCGphMwnYeHqS3kJSK98txC/mlJx9TthF
+ 5Kr2v3tYc/7WEGI5e34DZWi87EpxcbTK7fq+Ahi4Iu+UWHFT4sZsXAxxZcvGW1KuE+p8
+ KOoZZAj9Q3zOVKE45mzPSDQKOcP1JTCEMr7NocxM7M170N51pJHOJxpZGNvhQd5ojfHx
+ WWLZeEuuHvcpjkVbNhFeL4Hxcw83ATBqPPRjtl5BLHYPLMouRG/6S/UwYbWGtUTZ14yV
+ 7rwleSY1KU1Xka9SNagOpXtsR/P/H1I6J5uw5nfX7xWDa2+tIHvTacpszw7ooanwxEpn
+ 3Krw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753199602; x=1753804402;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ d=1e100.net; s=20230601; t=1753200116; x=1753804916;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=Hi7hPGk9UQ3817C+h7ZljZAN9awp/CinM9kIJJnm0YQ=;
- b=npeZVc6eT8rEn+Hc9K+MarVdIWppkTVC93037Cje0GMceb5iqJu+AY1zqAu9O/60dH
- 1hkuKooPcK+ax1C79aEUd/Sm2t6OZ8ln0d7EL/pE3fK+zQmNEFGtiCn3z1LqCL3LCGIu
- gDJ3wWlLRm7NmQ6wrxyFlMeA9bkiV5WhQcoUwO3XANd/xgzJ6VOb8TtmtFZwyYm0qopw
- JCNxm+pcQS+CVWnLoYgjP4Qeo3wP+yW060+cNVx7026EVbMnjw7Nes947GgjkdBz+4wi
- fVEEHxjOBVu5esojRAtnoeb5g3HP3pcsIRxfxupbZCCN5jzqFHicAIdTBqhIorJcuyS8
- nEig==
-X-Gm-Message-State: AOJu0YxYZAyEQqpPrpWx1D9T6wOtVLfgyVltkJDTje2A0uFjz+K6FUbV
- zk6ndfpXjXkchaD4bufXte2NP9se6FGWh2IlLAY9WrhPOAjYoMtj2gl/N8mDbPHhqk34rwXAmhF
- Bqhab
-X-Gm-Gg: ASbGnctHvJI8MpZQeB2LdhPfJSQ8U40GDA6GK7CiNBAQpXvcB5v3mKCAf9HJ5m7Uo12
- s/ueBPnnIzDis2839W81rlwcbcity+oPc7QS96oyph4hKF5x1c9GbrWPO92FrNczWvpFHe7g1oi
- RZCd767zWis881jvVvlkJay5ewxMK/lOJYeL83HSlRdaUsDU0n6tiDQJMMNyd9cwpmI73mX/pxj
- t2OSpy0G2f4MLTzJJ80DNi/LtEqCXuGU3xDHnWm6l1uK9mM+m0AL/N+5IfMMuKfHDRDq8jUdSq2
- LwhH+p271Wc9FRUdyplDcQh1dEypskAxIvhnHWHHppBx/QS82Rx7mrMXrj6J8dKJhPQ+XcnLSUa
- v+xOjxg8srwfEdMGV/HFmQVD6iLP7QsYK7kkdaK4xLPtUPfDovd5nQmLYgBm28CJdYrv3ppIwZc
- B2lecQDIU=
-X-Google-Smtp-Source: AGHT+IFeF9md/DXC1X8oh4XfZJ/I/dRhEHVGUVlQC+rNPAHDlZtP4AuzqNOQGvzaHUXi7u0UNvlR+Q==
-X-Received: by 2002:a05:6a00:1407:b0:748:2ff7:5e22 with SMTP id
- d2e1a72fcca58-7572316d8bemr31383747b3a.10.1753199601904; 
- Tue, 22 Jul 2025 08:53:21 -0700 (PDT)
-Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-759cbc67a87sm8010662b3a.145.2025.07.22.08.53.21
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 22 Jul 2025 08:53:21 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH] dumpcap: fix warnings when primary exits
-Date: Tue, 22 Jul 2025 08:53:19 -0700
-Message-ID: <20250722155319.168601-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.47.2
+ bh=wORt9mImnXn/wMv5HXX5lrWHxoz1xX8Qt477OBtTa2g=;
+ b=nU9hSaGwGU5XWfTeTO1XnuC+vBTCWTDXucXXd1GpL/u4mkjz7hshYDh9axyEpfYzeb
+ SwR3ZMO4toXb+gDN1pW5iPKyIGepo2HXPjigc/cQYz6z2G/hUthHpxRxIXcE5jbzXuL/
+ GZZCa4FgY4GPSjI8583yH/ZVFlvrZ2QPDsMrIrUqhz1NUQrUGn8riHeBincRynCw3wIF
+ nrkNsyauk7vE86ArE6zjHKtD5HO9Qj+lfP215VQLlOyL9ptLJBxP65myvywuszksTipl
+ 3sgp03u69EgEITzUXZix5lNymh8K1HB2F4WrxRSPAf1bQ6FKcr6pXhdqNBXTUuM66RlE
+ +XNw==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWhnOjZ/VjR3H0IRjMMsbVBLkF/m3F/jgrUjZYbXQPMMUnIjN+UnUU8qzCs+b7NyUDGSlc=@dpdk.org
+X-Gm-Message-State: AOJu0YyqgVs9VUxZuqqbh5BGc7jZR6mBsMFgZhTiB5emsX6SFedj3v0y
+ wwNjFc2Rahkp1mPy2u/UJDKdKFgWoY271Clz591FC+2m2OO6wxSV7oA1NII4sXG/+ANqf4I1dOR
+ Cqvm97cb7Ystn9uSb2J7Hpmrnst3GDcy8HrkaSuLoy71tQWWV1s2oypYcHw==
+X-Gm-Gg: ASbGncsZl+la056lBq0d2bAJSKZ8UTbM9Amp2yDbgs0RF1gygsdX6Neu7efuomK0oxK
+ OeNU8i93aeu6qmU665jsTsKrSwqip6QcCbcWOfnUIcMZrJc1Lg8tSXUkAY8C3mFl5aa+FTj7+xs
+ XE7gKiyxFWPulkfSstlc3y1hcy3oyA20XjmAcsr5yaQMzvlu1+siV4EMrPQMNAzU5kn3DaWnjeC
+ HMYJm1gL3Y8jA80TkNx5auRin82pOdQJymRhLxBjw==
+X-Google-Smtp-Source: AGHT+IGYBL8rlo8opIjsWVn2vYAiVEZH/xL3Yaam4u60i/QDAQ83xSZBni+DeLyxplUPzPP09s6dcuer0nmhzMQIF+Y=
+X-Received: by 2002:a05:6214:5788:b0:6fb:25f:ac8c with SMTP id
+ 6a1803df08f44-704f4ab51famr389761616d6.31.1753200115680; Tue, 22 Jul 2025
+ 09:01:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250722115439.1353573-1-14pwcse1224@uetpeshawar.edu.pk>
+ <20250722063924.2f87f3f7@hermes.local>
+ <CA++2-x7VPCtojdJ7+DXdK=ohAJtLu_3U8KPxHS9CNAqzMd1hoA@mail.gmail.com>
+ <20250722084225.7a40e2bc@hermes.local>
+In-Reply-To: <20250722084225.7a40e2bc@hermes.local>
+From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+Date: Tue, 22 Jul 2025 21:01:42 +0500
+X-Gm-Features: Ac12FXxzG7qugzFE7IIUOFB3eIwY4a8sF3iXMjVQAY3isUs49HdWdmQwf-cKDNI
+Message-ID: <CA++2-x6bMRbxne_JdtSkCjVmAPMsY4762xzDbqPhqq8K8695EQ@mail.gmail.com>
+Subject: Re: [PATCH] lib/ethdev: fix segfault in secondary process by
+ validating dev_private pointer
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: Thomas Monjalon <thomas@monjalon.net>, Ferruh Yigit <ferruh.yigit@amd.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, dev@dpdk.org,
+ dpdk stable <stable@dpdk.org>
+Content-Type: multipart/alternative; boundary="0000000000001d9ab1063a86b624"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,46 +80,117 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-If primary process exits, there is no point in calling
-pdump to release resources.
+--0000000000001d9ab1063a86b624
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Bugzilla ID: 1760
-Fixes: cbb44143be74 ("app/dumpcap: add new packet capture application")
+Thanks for the follow up.
+Understood. That makes sense. However, I=E2=80=99d like to highlight that
+applications should ideally be robust and interactive enough to handle all
+edge cases where a segfault or unexpected error might occur. While clear
+documentation is certainly important, relying solely on it may not be
+sufficient. In my view, potential segfaults should be handled explicitly in
+code to ensure stability and to prevent silent failures, especially in
+production environments.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- app/dumpcap/main.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/app/dumpcap/main.c b/app/dumpcap/main.c
-index 3d3c0dbc66..df649722ec 100644
---- a/app/dumpcap/main.c
-+++ b/app/dumpcap/main.c
-@@ -541,7 +541,7 @@ monitor_primary(void *arg __rte_unused)
- 		rte_eal_alarm_set(MONITOR_INTERVAL, monitor_primary, NULL);
- 	} else {
- 		fprintf(stderr,
--			"Primary process is no longer active, exiting...\n");
-+			"\nPrimary process is no longer active, exiting...\n");
- 		rte_atomic_store_explicit(&quit_signal, true, rte_memory_order_relaxed);
- 	}
- }
-@@ -1058,10 +1058,11 @@ int main(int argc, char **argv)
- 	else
- 		pcap_dump_close(out.dumper);
- 
--	cleanup_pdump_resources();
--
--	rte_ring_free(r);
--	rte_mempool_free(mp);
-+	if (rte_eal_primary_proc_alive(NULL)) {
-+	    cleanup_pdump_resources();
-+	    rte_ring_free(r);
-+	    rte_mempool_free(mp);
-+	}
- 
- 	return rte_eal_cleanup() ? EXIT_FAILURE : 0;
- }
--- 
-2.47.2
+On Tue, Jul 22, 2025, 20:42 Stephen Hemminger <stephen@networkplumber.org>
+wrote:
 
+> On Tue, 22 Jul 2025 19:30:41 +0500
+> Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk> wrote:
+>
+> > Hi Stephen,
+> > Can we add only the check that fixes the segfault, or do you mean that =
+it
+> > should be fixed at the PMD level?
+> >
+> > Best regards,
+> > Khadem
+> >
+> > On Tue, Jul 22, 2025, 18:39 Stephen Hemminger <
+> stephen@networkplumber.org>
+> > wrote:
+> >
+> > > On Tue, 22 Jul 2025 07:54:39 -0400
+> > > Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk> wrote:
+> > >
+> > > > +     if (rte_eal_process_type() =3D=3D RTE_PROC_SECONDARY &&
+> > > > +             (dev =3D=3D NULL || dev->data =3D=3D NULL ||
+> > > > +             dev->data->dev_private =3D=3D NULL ||
+> > >
+> > > dev can't be NULL and checking it here will cause a Coverity warning.
+> > >
+> > > There are many other ethdev calls that will fail if primary dies.
+> > > stats, xstats, rx/tx burst, ...
+> > >
+> > > I don't think it is good idea to add checks here.
+> > >
+>
+> It needs to be fixed at the documentation level.
+> Make sure and document what applications need to do. Rather than adding
+> more checks in ethdev.
+>
+
+--0000000000001d9ab1063a86b624
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"auto">Thanks for the follow up.=C2=A0<div dir=3D"auto">Understo=
+od. That makes sense. However, I=E2=80=99d like to highlight that applicati=
+ons should ideally be robust and interactive enough to handle all edge case=
+s where a segfault or unexpected error might occur. While clear documentati=
+on is certainly important, relying solely on it may not be sufficient. In m=
+y view, potential segfaults should be handled explicitly in code to ensure =
+stability and to prevent silent failures, especially in production environm=
+ents.</div><div dir=3D"auto"><br></div></div><br><div class=3D"gmail_quote =
+gmail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, Jul 22=
+, 2025, 20:42 Stephen Hemminger &lt;<a href=3D"mailto:stephen@networkplumbe=
+r.org">stephen@networkplumber.org</a>&gt; wrote:<br></div><blockquote class=
+=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padd=
+ing-left:1ex">On Tue, 22 Jul 2025 19:30:41 +0500<br>
+Khadem Ullah &lt;<a href=3D"mailto:14pwcse1224@uetpeshawar.edu.pk" target=
+=3D"_blank" rel=3D"noreferrer">14pwcse1224@uetpeshawar.edu.pk</a>&gt; wrote=
+:<br>
+<br>
+&gt; Hi Stephen,<br>
+&gt; Can we add only the check that fixes the segfault, or do you mean that=
+ it<br>
+&gt; should be fixed at the PMD level?<br>
+&gt; <br>
+&gt; Best regards,<br>
+&gt; Khadem<br>
+&gt; <br>
+&gt; On Tue, Jul 22, 2025, 18:39 Stephen Hemminger &lt;<a href=3D"mailto:st=
+ephen@networkplumber.org" target=3D"_blank" rel=3D"noreferrer">stephen@netw=
+orkplumber.org</a>&gt;<br>
+&gt; wrote:<br>
+&gt; <br>
+&gt; &gt; On Tue, 22 Jul 2025 07:54:39 -0400<br>
+&gt; &gt; Khadem Ullah &lt;<a href=3D"mailto:14pwcse1224@uetpeshawar.edu.pk=
+" target=3D"_blank" rel=3D"noreferrer">14pwcse1224@uetpeshawar.edu.pk</a>&g=
+t; wrote:<br>
+&gt; &gt;=C2=A0 <br>
+&gt; &gt; &gt; +=C2=A0 =C2=A0 =C2=A0if (rte_eal_process_type() =3D=3D RTE_P=
+ROC_SECONDARY &amp;&amp;<br>
+&gt; &gt; &gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0(dev =3D=3D=
+ NULL || dev-&gt;data =3D=3D NULL ||<br>
+&gt; &gt; &gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0dev-&gt;dat=
+a-&gt;dev_private =3D=3D NULL ||=C2=A0 <br>
+&gt; &gt;<br>
+&gt; &gt; dev can&#39;t be NULL and checking it here will cause a Coverity =
+warning.<br>
+&gt; &gt;<br>
+&gt; &gt; There are many other ethdev calls that will fail if primary dies.=
+<br>
+&gt; &gt; stats, xstats, rx/tx burst, ...<br>
+&gt; &gt;<br>
+&gt; &gt; I don&#39;t think it is good idea to add checks here.<br>
+&gt; &gt;=C2=A0 <br>
+<br>
+It needs to be fixed at the documentation level.<br>
+Make sure and document what applications need to do. Rather than adding<br>
+more checks in ethdev.<br>
+</blockquote></div>
+
+--0000000000001d9ab1063a86b624--
