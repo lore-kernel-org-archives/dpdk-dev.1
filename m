@@ -2,72 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 662C0C83F27
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 12:01:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E808C83F27
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 12:14:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7C95B40685;
-	Tue, 22 Jul 2025 14:01:12 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 746004067D
- for <dev@dpdk.org>; Tue, 22 Jul 2025 14:01:11 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56M72629010873;
- Tue, 22 Jul 2025 05:01:10 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=J
- 0OKrcg7d1Ljahf089tMgNuat3ruvBtaiRh7alnR/Xs=; b=NA+HoFFtzc/x39e+j
- jEvZZdL/3X3WlTDBgpZgTdjeOkebGGu4UDPrb2LC2H78p69VLrfzRO9DggW9PWr0
- I18A0Hu0cCNioDTDz7gce/ZQWq6cbuLoJkKYyA5J4QrbHrg1nloKe7+CjBb3OxgM
- jMSr0IcPM5TVIy87rUj1VznHWOfzceTUs0qMkFpCgmNP5izLZO986ekySnPQ6eeW
- 33XqIMvLTPZs8/IfdkmHmGaekDtFUMfsKXifg7EIScZFBAeT1WXKqsfyn3/3VqmD
- i7SH57Q0bNCqiwdKgmS/FQoMiEFSuOoj7NqicVlaHDAA5gvwrUJKJ8KSskOvsEAe
- 7M8eg==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 481y91sbev-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Tue, 22 Jul 2025 05:01:10 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 22 Jul 2025 05:01:09 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 22 Jul 2025 05:01:09 -0700
-Received: from cavium-optiplex-3070-BM15.. (unknown [10.28.34.39])
- by maili.marvell.com (Postfix) with ESMTP id 1F8B43F7045;
- Tue, 22 Jul 2025 05:01:06 -0700 (PDT)
-From: Tomasz Duszynski <tduszynski@marvell.com>
-To: <tduszynski@marvell.com>
-CC: <bruce.richardson@intel.com>, <david.marchand@redhat.com>, <dev@dpdk.org>, 
- <jerinj@marvell.com>, <mb@smartsharesystems.com>, <thomas@monjalon.net>
-Subject: [PATCH v8 8/8] lib/pmu: fix out-of-bound access
-Date: Tue, 22 Jul 2025 14:00:41 +0200
-Message-ID: <20250722120041.2718227-9-tduszynski@marvell.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250722120041.2718227-1-tduszynski@marvell.com>
-References: <20250627154107.3405768-1-tduszynski@marvell.com>
- <20250722120041.2718227-1-tduszynski@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 5C6FA40283;
+	Tue, 22 Jul 2025 14:14:29 +0200 (CEST)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
+ [209.85.214.174])
+ by mails.dpdk.org (Postfix) with ESMTP id AC5A040265
+ for <dev@dpdk.org>; Tue, 22 Jul 2025 14:14:27 +0200 (CEST)
+Received: by mail-pl1-f174.google.com with SMTP id
+ d9443c01a7336-23694cec0feso50699715ad.2
+ for <dev@dpdk.org>; Tue, 22 Jul 2025 05:14:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1753186467;
+ x=1753791267; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=2ZPDCD75v8lA1R3U+m4mWKsFegwnaaMZoRvM53N1FIU=;
+ b=WqCns3W7B9ii/oKsrIB/Ut5GfFWkPy395nACV7vWx658LmhYz/+VbdqLYy2qJqh8DL
+ froO3kK5+1ZdNVY9EIaeFvO1OfnGsik9gHMrrCOpteiAT9V8jnhIJp2UMd+y0HeEWQEB
+ 8d+gkphj8LUNcDEKXJvSHwky9cxzdW5yaP3KUnrZxYa2h3tviQjow6Cih3MxqlqmVTCd
+ kH0gKjC0WjxKcX4XaufFm2gw+tdsy+gs4Mdx8HvjxpDNYnAHdvdMnMvWQm2bNBJK7iS1
+ Yz0b2KPw2yAOnLhJ7t2e1rcDMqH9i/KB3h5okPqmD6o29+PJJEuqj6IO7Kw/YodCjjHg
+ F3vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1753186467; x=1753791267;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=2ZPDCD75v8lA1R3U+m4mWKsFegwnaaMZoRvM53N1FIU=;
+ b=vqTaN2LXYRyEeNzeUVJ2cWeDQ142JlwWT9+LhtWcCjkXRb8RjZ48EqEFa12tsPSUJL
+ DsZe7E+VWBoPh3yJlva0UQIaAxAaQVZJgj+02dzpRocak2Q7H6sKi3wMGOtCYMmpNTx9
+ B+1lG5jIMio23ywpHOKg37WL4ssVB5sDcQ+yZBaXq9l5UYG5rDrDePLepbbQqctEZ/Zw
+ 0VutpOpAALwQcUHU4ymTP2nd0A97rAn2gtLVb9ll/xngAfrh5fCUPrYfr+KyY7H3z4BX
+ s2KeWVfWlMQzOWUMcbN+RFBI+um9Trcqo7SDVwS2aJCi+JvHOCTqifVIqOi1F+3Iw3tp
+ Md9Q==
+X-Gm-Message-State: AOJu0YwkGU4jZlEvvzu/LD/gC8QhETqh/MirK/M4f/dPvHJjAx/90iat
+ Fra5uv2tIpmUyyBOixPye56R/9i94rbs2Ce3vMSicoiQuh/GUNBUZm5Xeb4jvyqLu+4=
+X-Gm-Gg: ASbGncuZLg5cyzzBLYo3VLtcLmA69HR8j4O/YZ+pHWxaU3VQaWh9C4jY28fNTkoluVp
+ ZLgWpPsHChbaKblC1fd3wXwtYPJTwqCDdhsb2cX088JzwmhssvtQwMfZuL9a2B++QWR3y3nL4LJ
+ eMIVpLc4hnQXD0P955wxGn8NBoKx40hTwW1Gb2PpM3GlFdvjoAfjGiQI+aK+eZ6KMcwSqGsLtkG
+ ncNPekHCiUqm8QRmY5AONRTwhhC0h3AiKq/Pv6ivu/P+25yihvsxC3/V/2p/BMQ/kDiq1eAEpKY
+ eOxyI8254brGWs/qXaL/X+bV2qKWaB/g0c5Yp8zU+FDHDDQ06LoA2liI/f0YlKxhgb/kMhUTqPs
+ dC+NUJO2ymxrdnlg31Ti/DJOExAJYg9hvsmlCEtE98IOFY50B
+X-Google-Smtp-Source: AGHT+IFRmzdAMOq7dYhBrj9CLMfZRdqGvnnhUA9UuafjitJNKYHQz8y/qQF8GL1ZElyw/MxGhuthzQ==
+X-Received: by 2002:a17:903:183:b0:23d:fda6:1aa6 with SMTP id
+ d9443c01a7336-23e24f59be1mr334114045ad.41.1753186466743; 
+ Tue, 22 Jul 2025 05:14:26 -0700 (PDT)
+Received: from localhost.localdomain ([64.62.143.197])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-23e3b5e3cb7sm75557175ad.17.2025.07.22.05.14.25
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 22 Jul 2025 05:14:26 -0700 (PDT)
+From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+To: thomas@monjalon.net, andrew.rybchenko@oktetlabs.ru, ferruh.yigit@amd.com,
+ dsosnowski@nvidia.com
+Cc: dev@dpdk.org, rasland@nvidia.com, stable@dpdk.org, viacheslavo@nvidia.com,
+ orika@nvidia.com, suanmingm@nvidia.com, matan@nvidia.com
+Subject: Re: [PATCH] ethdev: add dev_private check for secondary process
+Date: Tue, 22 Jul 2025 08:14:15 -0400
+Message-ID: <20250722121415.1357967-1-14pwcse1224@uetpeshawar.edu.pk>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250721140127.r6orvsqsox7ytlhb@ds-vm-debian.local>
+References: <20250721140127.r6orvsqsox7ytlhb@ds-vm-debian.local>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDA5OCBTYWx0ZWRfXzVgBifJlX9hr
- N1WXGtUCo6LPLZoMhmFbTuwI8j45/BOMQgH4F3d06kelbE7bA2xSnhUO7FS5JKQTU8/aaXvPmJ5
- VYiNDX2nYDf1HB+8w+NsIEJoZ5KLJ+aGtwgs2J3pV9xw5oycxNgedASp+dzbedLrX7zfCOPWcAB
- pMAr9GF966dokcwpWiv90svEjcTIOaXRnZ6+TcU8KppJ4NMy9m/ZIpad82tPvUNbw4Dq8s4hOZN
- fwczkRNuU/0KgX+BVWp5TaJ6NKabm3rPH4f2lA4o+bigJmTNJ2wI3iMTxJzjmraFUcnHQJP8nC7
- dYwsCYclfbxevnE4M7RLNVdlj1mpNu4lKbF3XkTwxoVovQrBF4/m+ARl8aaI9hODN38sulR0R2I
- nElBJ6QmoygXbUXABcvnbqrYpwa/mDDb89H+z4rVB9zoqn8BYQDzQSdz5zI0pXVVaD5dWQkp
-X-Proofpoint-ORIG-GUID: 2VUm2MEx9SJdziI-H6ZfKHWSNBgyyAE_
-X-Proofpoint-GUID: 2VUm2MEx9SJdziI-H6ZfKHWSNBgyyAE_
-X-Authority-Analysis: v=2.4 cv=RfGQC0tv c=1 sm=1 tr=0 ts=687f7d86 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=Wb1JkmetP80A:10 a=M5GUcnROAAAA:8 a=rsDlWQ7q-kAZFu0dnB0A:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-22_02,2025-07-21_02,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,51 +83,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Make sure that out-of-bound access does not happen by saving one byte in
-buffer for NUL terminator.
+Yes, I think this can be addressed at both the PMD and ethdev layers.  
+To centralize the logic and avoid duplication across drivers, I’ve also submitted 
+a patch at the ethdev layer that checks for `dev_private` accessibility 
+in the secondary process context.
 
-Fixes: a8926a65ad1d ("pmu: support Arm")
-Fixes: 960c43184c4d ("pmu: introduce library for reading PMU events")
-Cc: tduszynski@marvell.com
+Please see the updated patch here:  
+https://patches.dpdk.org/project/dpdk/patch/20250722115439.1353573-1-14pwcse1224@uetpeshawar.edu.pk/
 
-Signed-off-by: Tomasz Duszynski <tduszynski@marvell.com>
----
- lib/pmu/pmu.c       | 2 +-
- lib/pmu/pmu_arm64.c | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+Looking forward to your feedback.
 
-diff --git a/lib/pmu/pmu.c b/lib/pmu/pmu.c
-index 742829cf9d..8960faa7d0 100644
---- a/lib/pmu/pmu.c
-+++ b/lib/pmu/pmu.c
-@@ -126,7 +126,7 @@ get_event_config(const char *name, uint64_t config[3])
- 	if (fp == NULL)
- 		return -errno;
- 
--	ret = fread(buf, 1, sizeof(buf), fp);
-+	ret = fread(buf, 1, sizeof(buf) - 1, fp);
- 	if (ret == 0) {
- 		fclose(fp);
- 
-diff --git a/lib/pmu/pmu_arm64.c b/lib/pmu/pmu_arm64.c
-index 2c40b5f702..f3a817b42f 100644
---- a/lib/pmu/pmu_arm64.c
-+++ b/lib/pmu/pmu_arm64.c
-@@ -24,12 +24,13 @@ read_attr_int(const char *path, int *val)
- 	if (fd == -1)
- 		return -errno;
- 
--	ret = read(fd, buf, sizeof(buf));
-+	ret = read(fd, buf, sizeof(buf) - 1);
- 	if (ret == -1) {
- 		close(fd);
- 
- 		return -errno;
- 	}
-+	buf[ret] = '\0';
- 
- 	*val = strtol(buf, NULL, 10);
- 	close(fd);
--- 
-2.34.1
-
+Best Regards, 
+Khadem Ullah
