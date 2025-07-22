@@ -2,70 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C51FC83F27
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 03:56:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24976C83F27
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 03:57:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2C33F402CC;
-	Tue, 22 Jul 2025 05:56:30 +0200 (CEST)
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com
- [209.85.215.176])
- by mails.dpdk.org (Postfix) with ESMTP id 9670F402CA
- for <dev@dpdk.org>; Tue, 22 Jul 2025 05:56:29 +0200 (CEST)
-Received: by mail-pg1-f176.google.com with SMTP id
- 41be03b00d2f7-b321bd36a41so4067478a12.2
- for <dev@dpdk.org>; Mon, 21 Jul 2025 20:56:29 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5B1F24064E;
+	Tue, 22 Jul 2025 05:57:01 +0200 (CEST)
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com
+ [209.85.216.46]) by mails.dpdk.org (Postfix) with ESMTP id 2E6A9402CA
+ for <dev@dpdk.org>; Tue, 22 Jul 2025 05:57:00 +0200 (CEST)
+Received: by mail-pj1-f46.google.com with SMTP id
+ 98e67ed59e1d1-31393526d0dso3490699a91.0
+ for <dev@dpdk.org>; Mon, 21 Jul 2025 20:57:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1753156589;
- x=1753761389; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1753156619;
+ x=1753761419; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=oZCusr9viLVhaMLChO4vj6cewnPVylOB+zEtny4dFOQ=;
- b=d7O3sDPeGx5GZL8HSIAXLsuPLe6JYs24zsiIfelD7NTS3kypc+nGT1ETNtbrLVsJHG
- n1SzJpbVscmWssbyxWVlQRqvxgb8vdwUPOHhiVSVCv4Hv0TtTBwA+l3Ucdsj9MkUJHP9
- jb0hRKgN3Qggzxv4VEutntFDITKBfQ9gdJHLVe37qiujqC1znJ3oRiI/q7kOgwwK94iL
- aTsaWpnfMgO4p9STyfklwsX+yiBCpVKmBc2cb4CtmW6YD99Dez/Q0IbPkE+bZcFx57Oo
- ivy8VTqQXErDkpJ+KMhhjOeOYwH3/rP+xv9VUXK1n5K+/pGuy5q54WyrEic+dSHSe8FQ
- k4PA==
+ bh=HGcwHRpjK20yD6VUnrBnvIeRa7AZvsPGWIF8WUOFl2Y=;
+ b=QaH2QV4pk4nyFXv2EaGmgBh9O3Pzdx1jxn2km0Q+c79AQ+Tz94BpWWqlqlz+sYZdpO
+ yNoLgiFE+gQIudj+HLu+5W15gXkZ4PHKDhlUao+xxGC8pPISCuTJNMfI2ljDPk6E8h42
+ KNgKvcV2dpXYIcRI+ieekCiqcjt9WUHc/bvKssMhwLSZKbaNbS1LqA5TFeazjwXQ205o
+ YuyZceTedC5xCHmqz9ITPKsQRo18aHzPS7MNLVBYbRpKV3uVdL6g6thnIDQrXS6s/wXf
+ qWcZ6lI3SZ7S7ylImi05SP9JOl0QPZjFlO3SnnsbQxW4XoaJc0vHF3aYlH/+6jOlDb34
+ 4oIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753156589; x=1753761389;
+ d=1e100.net; s=20230601; t=1753156619; x=1753761419;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=oZCusr9viLVhaMLChO4vj6cewnPVylOB+zEtny4dFOQ=;
- b=I+gmTCBTIKK4nG4YdgjrDNehz4SU9lVS7UWtMtJZM4zhFePVO78hYLgJenzbVl2+Pz
- pH/MoOUrXdug6GebxxXU4aPULac5XQEH5f6TgSCuJC3RdBy/0xC2IgsMjqNsDYtH1jOi
- WLInWuArvgzltVSnkxjgD5AqSwZdE0vv2wI1BU/HnD5vQ1nSzBm4YGjnv2+cItKE8j2s
- SXWCDmibQ0wIIpGaWmjIZR7zJ2reDoN54m1M3W8BxyVsHj/y31Tp0OEhbQm7x+u2wWJC
- acUO1uEUhaFvUukt4+Vo/mhUEx6KmBm1RDBUFwEGCGYUpkEBGDXxOPbrbC2VOpMiIVmp
- Vlyg==
-X-Gm-Message-State: AOJu0YwwJOIXwDo9Ldb+q0CIpaHMwbnAhnfRcr01cj8+qAr3lXKHIGG9
- NwT8G/NndI5u6SfVnrNRQJPrFVt2BPxUsNEu5akWzTUKeoqz3ngEyo8E+mu6QfCg+rY=
-X-Gm-Gg: ASbGncuFx6acfz1o9zHh9hZ9DLDwdbEOCBqDtEzV/MT6piFV8th99x7VL1O4qOiRdWJ
- g8YVzvcmuda4BIleWu448QJ3cKpD0QfhKD2wQ5yDYtsZPOeHYunCzTwqZ0TOwOPP5jFr0Gw2wdc
- mgI1ExL8YeweaM/qdklufIaQRR2c92mbN/4+B6bvKPMPuznYA0GGfVcxutKSCg99TaV1FFvi1my
- LTzLjcEvvmtfKCSuKY5+o9sxQoA57o0xhG3AdDusmaJjpyapd6ccYtvkgbHpqnJWft1kl8VNKqG
- UlO2PJe4LGfwCuPXaqAPYOs6MjpVW8cpV+fhYreo2s5ILwlXXC1RPebk4CvUBXmcpNqOdkyYysU
- GXcCgK3D6rTTTN4sz4KC3BjTs17m2IwF5fggv5Pc0t0OZQAnDaADI1EXhcQnK9oyLjkx6KRMldf
- g=
-X-Google-Smtp-Source: AGHT+IHfeWbxDK0KuxneW8AHNstfbu3nF5BW8XeKK3EbvTMsLCF0Vn1jKPO8ZMKMBi9UfkXWYHBKzA==
-X-Received: by 2002:a17:902:da4b:b0:234:d399:f948 with SMTP id
- d9443c01a7336-23e2572fe5bmr243964085ad.33.1753156588592; 
- Mon, 21 Jul 2025 20:56:28 -0700 (PDT)
+ bh=HGcwHRpjK20yD6VUnrBnvIeRa7AZvsPGWIF8WUOFl2Y=;
+ b=I6+hrfNWPBCghpNMFCR/wldDTPC0xiR57UeKWqBDGFQkHqeCqg1b8r0sUKnQJAumkw
+ EKm4vF1HAfqSuE3l8v6DViRDzgvos2lPeKArPltNbxXt3Hmckzg9HPzDa/SD6iBL/nKS
+ iXRNLYe3mv2VxS08FHae9aJRj0uK7D7TObh/nSzGqZv61LV8qCfZ+bEVNmwl1rDsqCXg
+ th1DTAtYN1RILhZ7uXB9zvsLH4J2Mq0FhXxyAWXLp3B1OxDxVBFkh3VWOlkJsBQyjMNA
+ UzmRgrlea9IE5DXe/sEibf2IGU25FKfudLBra3JkpHam85ByBjFx4JWktpce8Vx8CLU2
+ XLGQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCW/kLEdIBoKvlldxTm3qpNoXmn/73qNOLmflZsOn4Wl1iZeJUsoECoVDOVCbX+o9DswHWA=@dpdk.org
+X-Gm-Message-State: AOJu0YyFmlEalm4VPuFEJYchtITYzxQDq2dthFvrK9JWxcsQlSYTERwg
+ BFwuVt1ps9h1ccJfIvi1ICzK6DucPInPltlmB77OlVd2jX8n9/Pot1DbPXnp8cMEIZA=
+X-Gm-Gg: ASbGncuuzqH3qr/402y7dUELpp9GI4CD21TkCdHcfwzZWsjS9nf36mBjF2JysnzMxsW
+ cD+GmKzDXlhZaf/D87o3SrDiwQlS8yULEEmdO74dhuix4+dvcHxTTSnJZmYkfM4BqeUw4QJi7MD
+ cvPXHSTwKcJP0iUXk3CYgFDgo1nO4hGflp3/Q83+xnbQDPnBEHTVUR0GWAfnYzkAlt9XyI75tZK
+ /th8W0mmSOzfLSudhpC0d+YdbQ4rA+vHemJKFcOQDnMpsQjsBrMSfcVo/zI/Z42/9BTiqzdFaBt
+ xZfbmqmS0RoSjCjct/HUQS29frd0a/AvYERzzyagLb4TdxXEeM5XW+vIMrgZjNNLLRZFMgO/PsA
+ BCbwkZ/AvA5S/W7oW6z47oZE/DcT9a/JdPvnmAj/lzu+KRCHgUaP7TV+gWag90bK6mQprZ6yOtj
+ 8=
+X-Google-Smtp-Source: AGHT+IFbOwOMx1FOvjr6cJRIW9jYZU6QWn/l1BWCNW5vX/c2R0S0gRojzVzBbd5cK+b4dZr5JPTdOA==
+X-Received: by 2002:a17:90b:5281:b0:313:28e7:af14 with SMTP id
+ 98e67ed59e1d1-31cc25c8270mr19273610a91.19.1753156619221; 
+ Mon, 21 Jul 2025 20:56:59 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-23e3b5e2d86sm67075365ad.3.2025.07.21.20.56.28
+ 41be03b00d2f7-b3f2fe8ea7bsm6119132a12.21.2025.07.21.20.56.58
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 21 Jul 2025 20:56:28 -0700 (PDT)
-Date: Mon, 21 Jul 2025 20:56:26 -0700
+ Mon, 21 Jul 2025 20:56:59 -0700 (PDT)
+Date: Mon, 21 Jul 2025 20:56:57 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Dengdui Huang <huangdengdui@huawei.com>
-Cc: <dev@dpdk.org>, <aman.deep.singh@intel.com>, <lihuisong@huawei.com>,
- <fengchengwen@huawei.com>, <liuyonglong@huawei.com>
-Subject: Re: [PATCH] app/testpmd: fix set cores list string size
-Message-ID: <20250721205626.2a919132@hermes.local>
-In-Reply-To: <20250708125159.2457578-1-huangdengdui@huawei.com>
-References: <20250708125159.2457578-1-huangdengdui@huawei.com>
+To: Dariusz Sosnowski <dsosnowski@nvidia.com>
+Cc: Aman Singh <aman.deep.singh@intel.com>, <dev@dpdk.org>, Viacheslav
+ Ovsiienko <viacheslavo@nvidia.com>
+Subject: Re: [PATCH] app/testpmd: report minimum and maximum MTU
+Message-ID: <20250721205657.4956306d@hermes.local>
+In-Reply-To: <20250716102847.1118815-1-dsosnowski@nvidia.com>
+References: <20250716102847.1118815-1-dsosnowski@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,16 +83,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 8 Jul 2025 20:51:59 +0800
-Dengdui Huang <huangdengdui@huawei.com> wrote:
+On Wed, 16 Jul 2025 12:28:46 +0200
+Dariusz Sosnowski <dsosnowski@nvidia.com> wrote:
 
-> The cmdline_fixed_string_t has a length of only 128, which will
-> become insufficient when there are many cores, so it should be
-> replaced with a cmdline_multi_string_t of larger capacity.
+> Add reporting of minimum and maximum allowed MTU on a given port
+> to "show port info <id>" command.
 > 
-> Fixes: af75078fece3 ("first public release")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
+> Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+> Acked-by: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
+> ---
 
 Queued to next-net for 25.11
