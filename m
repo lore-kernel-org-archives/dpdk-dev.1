@@ -2,47 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE7BC83F27
-	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 14:05:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 513DBC83F27
+	for <dpdk-dev@archiver.kernel.org>; Tue, 22 Jul 2025 14:05:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C3D8240A6B;
-	Tue, 22 Jul 2025 16:04:39 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E5E9840A7D;
+	Tue, 22 Jul 2025 16:04:40 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
- by mails.dpdk.org (Postfix) with ESMTP id A0F224068A
- for <dev@dpdk.org>; Tue, 22 Jul 2025 16:04:34 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 9D55B4066C
+ for <dev@dpdk.org>; Tue, 22 Jul 2025 16:04:35 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1753193075; x=1784729075;
+ t=1753193076; x=1784729076;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=SPggl80n5phtQFD1LfDEhSTrRr+y7oU3PVf56GXDMtE=;
- b=AsjfMYBxosCc+Zc2HaU9k5j4x4Sn8gRz1t1/pschIucRU5t+MHxitvQq
- hMn0QPJY8iuaIJH5xU8DLcT5CI0j+s8Tv6tcN94Lpwk2qDkwJUZy4TWVm
- JsDLnJOoqqbeP6FpQCTa+K0CobiFla+JWojb4bGKA2hS+e9YNvD2HjCjB
- BWhmJT01ZoRwv98PoWhrTsiwsXch7X8BRRGzDpF+IFNKC7AaN2GcrcoJN
- D7kl+etxftvHIGFFge5G15RAZNyOdTPXb9pr1KLYrLtBNCfoeCFPKzYaD
- NTGkAxe6s4lbZOORyFNyfOArrV1Gxvtlidn2ILiWKNgLGcOKcyif9jHcS w==;
-X-CSE-ConnectionGUID: wiTNuD5VQY+2f2LeSm7AEQ==
-X-CSE-MsgGUID: JH4yVpKzSxKkFOQ+wyt5vA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11500"; a="59241990"
-X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; d="scan'208";a="59241990"
+ bh=S5eNVcFSZDCLGOXNK1eJ+ncP5crbPeX8N33QfhjguA4=;
+ b=D3iUaspD7GyMwKaOlWjC2oZB5t1omEnsdusbPFuJrBA0TdBvzQz9mqAh
+ uKmiXomD6ZNyybZtLbiu2Lskz/dDJfRj0n3xvoupqxXKXyv9m52k7jcFk
+ uIDvcHpqi2F8lJf1RetNvpvcmHYHNQz1494FITnWVP8AHcf3KOOBYuydz
+ a+LfJ1s+L6RON31LtgYYkffC8w+skWUWckXhk2tFLlp85jwr+2DXrbYhS
+ gkS6+8ye5vo2S27T+jEzaTQKwZY5sPgo7o2gMgYTe6gHI1um9WOnCPVFW
+ f0DbKTvHgjZZM8FlfvilYG4DflqKsxnhfen8vE/0sZ7odzxrLnIrdF+hC g==;
+X-CSE-ConnectionGUID: +2tBLf10Q8GhmPQOwx0I7Q==
+X-CSE-MsgGUID: bee775QKQlWofhZSJ/i2vw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11500"; a="59242008"
+X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; d="scan'208";a="59242008"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 22 Jul 2025 07:04:08 -0700
-X-CSE-ConnectionGUID: j/Gcm1rRTe+I79p4tNKMEA==
-X-CSE-MsgGUID: D+3HBa8PS7CbL7Kf0+FPBA==
+ 22 Jul 2025 07:04:12 -0700
+X-CSE-ConnectionGUID: 44DVdS3wTpGDa4HtADHoaA==
+X-CSE-MsgGUID: V9HIpcXmRXWh2MUjG3flzw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; d="scan'208";a="190104453"
+X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; d="scan'208";a="190104476"
 Received: from silpixa00401385.ir.intel.com ([10.237.214.33])
- by fmviesa001.fm.intel.com with ESMTP; 22 Jul 2025 07:04:06 -0700
+ by fmviesa001.fm.intel.com with ESMTP; 22 Jul 2025 07:04:10 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: david.marchand@redhat.com, Bruce Richardson <bruce.richardson@intel.com>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>,
- Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
-Subject: [PATCH v6 7/9] eal: ensure proper cleanup on EAL init failure
-Date: Tue, 22 Jul 2025 15:03:12 +0100
-Message-ID: <20250722140316.3568603-8-bruce.richardson@intel.com>
+ Tyler Retzlaff <roretzla@linux.microsoft.com>
+Subject: [PATCH v6 9/9] eal: simplify handling of conflicting cmdline options
+Date: Tue, 22 Jul 2025 15:03:14 +0100
+Message-ID: <20250722140316.3568603-10-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250722140316.3568603-1-bruce.richardson@intel.com>
 References: <20250520164025.2055721-1-bruce.richardson@intel.com>
@@ -62,862 +61,160 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When rte_eal_init fails part way through, any saved EAL arguments need
-to be freed, and the run_once flag needs to be set back to zero again.
-The former task was never done on failure, and the latter was only done
-on some occasions. Rework the error handling to always go to an err_out
-label where cleanup is done.
-
-To prevent memory leaks from the saved arguments when eal_init is called
-twice, the check for multiple calls must be done first before the
-argument saving and parsing is done.
-
-This patch modifies all three eal.c files. Windows doesn't actually need
-changes, since there are no args saved, and no run_once sentinel value,
-but updating it keeps it consistent with FreeBSD and Linux versions.
+Use a utility function and macro to simplify the code for checking for
+conflicting cmdline options. The checking can also be done at the
+initial argument collating stage, shortening the argument
+processing function which is very much on the long side.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
-NOTE: this patch can probably be squashed in with the changes in the
-previous one, but for easier review I've kept it separate for now.
----
- lib/eal/common/eal_common_options.c | 37 ++++++++----
- lib/eal/common/eal_options.h        |  1 +
- lib/eal/freebsd/eal.c               | 83 +++++++++++++-------------
- lib/eal/linux/eal.c                 | 90 ++++++++++++++---------------
- lib/eal/windows/eal.c               | 47 ++++++++-------
- 5 files changed, 137 insertions(+), 121 deletions(-)
+ lib/eal/common/eal_common_options.c | 119 +++++++++++-----------------
+ 1 file changed, 47 insertions(+), 72 deletions(-)
 
 diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
-index aea2c813ed..9c27d44a96 100644
+index 486e2ad854..c568e59ef3 100644
 --- a/lib/eal/common/eal_common_options.c
 +++ b/lib/eal/common/eal_common_options.c
-@@ -271,6 +271,8 @@ rte_set_application_usage_hook(rte_usage_hook_t usage_func)
+@@ -178,6 +178,29 @@ struct rte_argparse eal_argparse  = {
+ 	}
+ };
  
- int
- eal_save_args(__rte_unused int argc, __rte_unused char **argv) { return 0; }
-+void
-+eal_clean_saved_args(void) { /* no-op */ }
- 
- #else /* RTE_EXEC_ENV_WINDOWS */
- static char **eal_args;
-@@ -302,6 +304,28 @@ handle_eal_info_request(const char *cmd, const char *params __rte_unused,
- 	return used;
- }
- 
-+void
-+eal_clean_saved_args(void)
++static inline bool
++conflicting_options(uintptr_t opt1, uintptr_t opt2, const char *opt1_name, const char *opt2_name)
 +{
-+	int i;
++	char name1[64];  /* should be the max length of any argument */
++	char name2[64];
 +
-+	if (eal_args == NULL)
-+		return;
-+
-+	if (eal_app_args != NULL) {
-+		i = 0;
-+		while (eal_app_args[i] != NULL)
-+			free(eal_app_args[i++]);
-+		free(eal_app_args);
-+		eal_app_args = NULL;
++	strlcpy(name1, opt1_name, sizeof(name1));
++	strlcpy(name2, opt2_name, sizeof(name2));
++	for (int i = 0; name1[i] != '\0'; i++)
++		if (name1[i] == '_')
++			name1[i] = '-';
++	for (int i = 0; name2[i] != '\0'; i++)
++		if (name2[i] == '_')
++			name2[i] = '-';
++	if (opt1 && opt2) {
++		EAL_LOG(ERR, "Options '%s' and '%s' can't be used at the same time", name1, name2);
++		return true;
 +	}
-+	i = 0;
-+	while (eal_args[i] != NULL)
-+		free(eal_args[i++]);
-+	free(eal_args);
-+	eal_args = NULL;
++	return false;  /* no conflicts */
 +}
++#define CONFLICTING_OPTIONS(args, opt1, opt2) \
++	conflicting_options((uintptr_t)(args.opt1), (uintptr_t)(args.opt2), #opt1, #opt2)
 +
- int
- eal_save_args(int argc, char **argv)
- {
-@@ -346,18 +370,7 @@ eal_save_args(int argc, char **argv)
- 	return 0;
+ /* function to call into argparse library to parse the passed argc/argv parameters
+  * to the eal_init_args structure.
+  */
+@@ -200,6 +223,30 @@ eal_collate_args(int argc, char **argv)
+ 	if (retval < 0)
+ 		return retval;
  
- error:
--	if (eal_app_args != NULL) {
--		i = 0;
--		while (eal_app_args[i] != NULL)
--			free(eal_app_args[i++]);
--		free(eal_app_args);
--		eal_app_args = NULL;
--	}
--	i = 0;
--	while (eal_args[i] != NULL)
--		free(eal_args[i++]);
--	free(eal_args);
--	eal_args = NULL;
-+	eal_clean_saved_args();
- 	return -1;
- }
- #endif /* !RTE_EXEC_ENV_WINDOWS */
-diff --git a/lib/eal/common/eal_options.h b/lib/eal/common/eal_options.h
-index c4d2cc84dc..fd28111e73 100644
---- a/lib/eal/common/eal_options.h
-+++ b/lib/eal/common/eal_options.h
-@@ -124,6 +124,7 @@ int eal_check_common_options(struct internal_config *internal_cfg);
- enum rte_proc_type_t eal_proc_type_detect(void);
- int eal_plugins_init(void);
- int eal_save_args(int argc, char **argv);
-+void eal_clean_saved_args(void);
- int handle_eal_info_request(const char *cmd, const char *params __rte_unused,
- 		struct rte_tel_data *d);
- 
-diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
-index ee8bf92bff..2882d218f6 100644
---- a/lib/eal/freebsd/eal.c
-+++ b/lib/eal/freebsd/eal.c
-@@ -418,6 +418,14 @@ rte_eal_init(int argc, char **argv)
- 	bool has_phys_addr;
- 	enum rte_iova_mode iova_mode;
- 
-+	/* first check if we have been run before */
-+	if (!rte_atomic_compare_exchange_strong_explicit(&run_once, &has_run, 1,
-+					rte_memory_order_relaxed, rte_memory_order_relaxed)) {
-+		rte_eal_init_alert("already called initialization.");
-+		rte_errno = EALREADY;
++	/* check for conflicting options */
++	/* both -a and -b cannot be used together (one list must be empty at least) */
++	if (!TAILQ_EMPTY(&args.allow) && !TAILQ_EMPTY(&args.block)) {
++		EAL_LOG(ERR, "Options allow (-a) and block (-b) can't be used at the same time");
 +		return -1;
 +	}
 +
- 	/* Save and collate args at the top */
- 	eal_save_args(argc, argv);
- 
-@@ -425,14 +433,14 @@ rte_eal_init(int argc, char **argv)
- 	if (fctret < 0) {
- 		rte_eal_init_alert("invalid command-line arguments.");
- 		rte_errno = EINVAL;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	/* setup log as early as possible */
- 	if (eal_parse_log_options() < 0) {
- 		rte_eal_init_alert("invalid log arguments.");
- 		rte_errno = EINVAL;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	eal_log_init(getprogname());
-@@ -441,21 +449,14 @@ rte_eal_init(int argc, char **argv)
- 	if (!rte_cpu_is_supported()) {
- 		rte_eal_init_alert("unsupported cpu type.");
- 		rte_errno = ENOTSUP;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	/* verify if DPDK supported on architecture MMU */
- 	if (!eal_mmu_supported()) {
- 		rte_eal_init_alert("unsupported MMU type.");
- 		rte_errno = ENOTSUP;
--		return -1;
--	}
--
--	if (!rte_atomic_compare_exchange_strong_explicit(&run_once, &has_run, 1,
--					rte_memory_order_relaxed, rte_memory_order_relaxed)) {
--		rte_eal_init_alert("already called initialization.");
--		rte_errno = EALREADY;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	eal_reset_internal_config(internal_conf);
-@@ -463,14 +464,13 @@ rte_eal_init(int argc, char **argv)
- 	if (rte_eal_cpu_init() < 0) {
- 		rte_eal_init_alert("Cannot detect lcores.");
- 		rte_errno = ENOTSUP;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (eal_parse_args() < 0) {
- 		rte_eal_init_alert("Error parsing command-line arguments.");
- 		rte_errno = EINVAL;
--		rte_atomic_store_explicit(&run_once, 0, rte_memory_order_relaxed);
--		return -1;
-+		goto err_out;
- 	}
- 
- 	/* FreeBSD always uses legacy memory model */
-@@ -483,37 +483,34 @@ rte_eal_init(int argc, char **argv)
- 	if (eal_plugins_init() < 0) {
- 		rte_eal_init_alert("Cannot init plugins");
- 		rte_errno = EINVAL;
--		rte_atomic_store_explicit(&run_once, 0, rte_memory_order_relaxed);
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (eal_trace_init() < 0) {
- 		rte_eal_init_alert("Cannot init trace");
- 		rte_errno = EFAULT;
--		rte_atomic_store_explicit(&run_once, 0, rte_memory_order_relaxed);
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (eal_option_device_parse()) {
- 		rte_errno = ENODEV;
--		rte_atomic_store_explicit(&run_once, 0, rte_memory_order_relaxed);
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (rte_config_init() < 0) {
- 		rte_eal_init_alert("Cannot init config");
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (rte_eal_intr_init() < 0) {
- 		rte_eal_init_alert("Cannot init interrupt-handling thread");
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (rte_eal_alarm_init() < 0) {
- 		rte_eal_init_alert("Cannot init alarm");
- 		/* rte_eal_alarm_init sets rte_errno on failure. */
--		return -1;
-+		goto err_out;
- 	}
- 
- 	/* Put mp channel init before bus scan so that we can init the vdev
-@@ -523,15 +520,14 @@ rte_eal_init(int argc, char **argv)
- 		rte_eal_init_alert("failed to init mp channel");
- 		if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
- 			rte_errno = EFAULT;
--			return -1;
-+			goto err_out;
- 		}
- 	}
- 
- 	if (rte_bus_scan()) {
- 		rte_eal_init_alert("Cannot scan the buses for devices");
- 		rte_errno = ENODEV;
--		rte_atomic_store_explicit(&run_once, 0, rte_memory_order_relaxed);
--		return -1;
-+		goto err_out;
- 	}
- 
- 	/*
-@@ -562,13 +558,13 @@ rte_eal_init(int argc, char **argv)
- 	if (iova_mode == RTE_IOVA_PA && !has_phys_addr) {
- 		rte_eal_init_alert("Cannot use IOVA as 'PA' since physical addresses are not available");
- 		rte_errno = EINVAL;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (iova_mode == RTE_IOVA_PA && !RTE_IOVA_IN_MBUF) {
- 		rte_eal_init_alert("Cannot use IOVA as 'PA' as it is disabled during build");
- 		rte_errno = EINVAL;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	rte_eal_get_configuration()->iova_mode = iova_mode;
-@@ -583,8 +579,7 @@ rte_eal_init(int argc, char **argv)
- 		if (ret < 0) {
- 			rte_eal_init_alert("Cannot get hugepage information.");
- 			rte_errno = EACCES;
--			rte_atomic_store_explicit(&run_once, 0, rte_memory_order_relaxed);
--			return -1;
-+			goto err_out;
- 		}
- 	}
- 
-@@ -613,7 +608,7 @@ rte_eal_init(int argc, char **argv)
- 	if (rte_eal_memzone_init() < 0) {
- 		rte_eal_init_alert("Cannot init memzone");
- 		rte_errno = ENODEV;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	rte_mcfg_mem_read_lock();
-@@ -622,14 +617,14 @@ rte_eal_init(int argc, char **argv)
- 		rte_mcfg_mem_read_unlock();
- 		rte_eal_init_alert("Cannot init memory");
- 		rte_errno = ENOMEM;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (rte_eal_malloc_heap_init() < 0) {
- 		rte_mcfg_mem_read_unlock();
- 		rte_eal_init_alert("Cannot init malloc heap");
- 		rte_errno = ENODEV;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	rte_mcfg_mem_read_unlock();
-@@ -637,19 +632,19 @@ rte_eal_init(int argc, char **argv)
- 	if (rte_eal_malloc_heap_populate() < 0) {
- 		rte_eal_init_alert("Cannot init malloc heap");
- 		rte_errno = ENODEV;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (rte_eal_tailqs_init() < 0) {
- 		rte_eal_init_alert("Cannot init tail queues for objects");
- 		rte_errno = EFAULT;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (rte_eal_timer_init() < 0) {
- 		rte_eal_init_alert("Cannot init HPET or TSC timers");
- 		rte_errno = ENOTSUP;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	eal_rand_init();
-@@ -660,7 +655,7 @@ rte_eal_init(int argc, char **argv)
- 			&lcore_config[config->main_lcore].cpuset) != 0) {
- 		rte_eal_init_alert("Cannot set affinity");
- 		rte_errno = EINVAL;
--		return -1;
-+		goto err_out;
- 	}
- 	__rte_thread_init(config->main_lcore,
- 		&lcore_config[config->main_lcore].cpuset);
-@@ -713,14 +708,14 @@ rte_eal_init(int argc, char **argv)
- 	if (ret) {
- 		rte_eal_init_alert("rte_service_init() failed");
- 		rte_errno = -ret;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	/* Probe all the buses and devices/drivers on them */
- 	if (rte_bus_probe()) {
- 		rte_eal_init_alert("Cannot probe devices");
- 		rte_errno = ENOTSUP;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	/* initialize default service/lcore mappings and start running. Ignore
-@@ -729,7 +724,7 @@ rte_eal_init(int argc, char **argv)
- 	ret = rte_service_start_with_defaults();
- 	if (ret < 0 && ret != -ENOTSUP) {
- 		rte_errno = -ret;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	/*
-@@ -744,18 +739,22 @@ rte_eal_init(int argc, char **argv)
- 	 */
- 	if (!internal_conf->no_shconf && eal_clean_runtime_dir() < 0) {
- 		rte_eal_init_alert("Cannot clear runtime directory");
--		return -1;
-+		goto err_out;
- 	}
- 	if (rte_eal_process_type() == RTE_PROC_PRIMARY && !internal_conf->no_telemetry) {
- 		if (rte_telemetry_init(rte_eal_get_runtime_dir(),
- 				rte_version(),
- 				&internal_conf->ctrl_cpuset) != 0)
--			return -1;
-+			goto err_out;
- 	}
- 
- 	eal_mcfg_complete();
- 
- 	return fctret;
-+err_out:
-+	rte_atomic_store_explicit(&run_once, 0, rte_memory_order_relaxed);
-+	eal_clean_saved_args();
-+	return -1;
- }
- 
- RTE_EXPORT_SYMBOL(rte_eal_cleanup)
-diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
-index f59cb43b0e..210d461497 100644
---- a/lib/eal/linux/eal.c
-+++ b/lib/eal/linux/eal.c
-@@ -579,6 +579,14 @@ rte_eal_init(int argc, char **argv)
- 	struct internal_config *internal_conf =
- 		eal_get_internal_configuration();
- 
-+	/* first check if we have been run before */
-+	if (!rte_atomic_compare_exchange_strong_explicit(&run_once, &has_run, 1,
-+					rte_memory_order_relaxed, rte_memory_order_relaxed)) {
-+		rte_eal_init_alert("already called initialization.");
-+		rte_errno = EALREADY;
++	/* for non-list args, we can just check for zero/null values using macro */
++	if (CONFLICTING_OPTIONS(args, coremask, lcores) ||
++			CONFLICTING_OPTIONS(args, service_coremask, service_corelist) ||
++			CONFLICTING_OPTIONS(args, no_telemetry, telemetry) ||
++			CONFLICTING_OPTIONS(args, memory_size, numa_mem) ||
++			CONFLICTING_OPTIONS(args, no_huge, numa_mem) ||
++			CONFLICTING_OPTIONS(args, no_huge, huge_worker_stack) ||
++			CONFLICTING_OPTIONS(args, numa_limit, legacy_mem) ||
++			CONFLICTING_OPTIONS(args, legacy_mem, in_memory) ||
++			CONFLICTING_OPTIONS(args, legacy_mem, match_allocations) ||
++			CONFLICTING_OPTIONS(args, no_huge, match_allocations) ||
++			CONFLICTING_OPTIONS(args, no_huge, huge_unlink) ||
++			CONFLICTING_OPTIONS(args, single_file_segments, huge_unlink) ||
++			CONFLICTING_OPTIONS(args, no_huge, single_file_segments) ||
++			CONFLICTING_OPTIONS(args, in_memory, huge_unlink))
 +		return -1;
-+	}
 +
- 	/* clone argv to report out later in telemetry */
- 	eal_save_args(argc, argv);
+ 	argv[retval - 1] = argv[0];
+ 	return retval - 1;
+ }
+@@ -1780,78 +1827,6 @@ eal_parse_args(void)
+ 	struct rte_config *rte_cfg = rte_eal_get_configuration();
+ 	struct arg_list_elem *arg;
  
-@@ -586,14 +594,14 @@ rte_eal_init(int argc, char **argv)
- 	if (fctret < 0) {
- 		rte_eal_init_alert("Invalid command line arguments.");
- 		rte_errno = EINVAL;
+-	/* check for conflicting options */
+-	/* both -a and -b cannot be used together (one list must be empty at least) */
+-	if (!TAILQ_EMPTY(&args.allow) && !TAILQ_EMPTY(&args.block)) {
+-		EAL_LOG(ERR, "Options allow (-a) and block (-b) can't be used at the same time");
 -		return -1;
-+		goto err_out;
- 	}
- 
- 	/* setup log as early as possible */
- 	if (eal_parse_log_options() < 0) {
- 		rte_eal_init_alert("invalid log arguments.");
- 		rte_errno = EINVAL;
+-	}
+-	/* both -l and -c cannot be used at the same time */
+-	if (args.coremask != NULL && args.lcores != NULL) {
+-		EAL_LOG(ERR, "Options coremask (-c) and core list (-l) can't be used at the same time");
 -		return -1;
-+		goto err_out;
- 	}
- 
- 	eal_log_init(program_invocation_short_name);
-@@ -602,21 +610,14 @@ rte_eal_init(int argc, char **argv)
- 	if (!rte_cpu_is_supported()) {
- 		rte_eal_init_alert("unsupported cpu type.");
- 		rte_errno = ENOTSUP;
+-	}
+-	/* both -s and -S cannot be used at the same time */
+-	if (args.service_coremask != NULL && args.service_corelist != NULL) {
+-		EAL_LOG(ERR, "Options service coremask (-s) and service core list (-S) can't be used at the same time");
 -		return -1;
-+		goto err_out;
- 	}
- 
- 	/* verify if DPDK supported on architecture MMU */
- 	if (!eal_mmu_supported()) {
- 		rte_eal_init_alert("unsupported MMU type.");
- 		rte_errno = ENOTSUP;
+-	}
+-	/* can't have both telemetry and no-telemetry */
+-	if (args.no_telemetry && args.telemetry) {
+-		EAL_LOG(ERR, "Options telemetry and no-telemetry can't be used at the same time");
+-		return -1;
+-	}
+-	/* can't have both -m and --socket-mem */
+-	if (args.memory_size != NULL && args.numa_mem != NULL) {
+-		EAL_LOG(ERR, "Options -m and --numa-mem can't be used at the same time");
+-		return -1;
+-	}
+-	/* can't use both no-huge and socket-mem */
+-	if (args.no_huge && args.numa_mem) {
+-		EAL_LOG(ERR, "Options --no-huge and --numa-mem can't be used at the same time");
+-		return -1;
+-	}
+-	/* can't use no-huge and huge-worker-stack */
+-	if (args.huge_worker_stack != NULL && args.no_huge) {
+-		EAL_LOG(ERR, "Options --no-huge and --huge-worker-stack can't be used at the same time");
+-		return -1;
+-	}
+-	/* can't use socket-limit and legacy-mem */
+-	if (args.numa_limit != NULL && args.legacy_mem) {
+-		EAL_LOG(ERR, "Options --numa-limit and --legacy-mem can't be used at the same time");
+-		return -1;
+-	}
+-	/* can't use legacy-mem and in-memory */
+-	if (args.legacy_mem && args.in_memory) {
+-		EAL_LOG(ERR, "Options --legacy-mem and --in-memory can't be used at the same time");
+-		return -1;
+-	}
+-	/* can't use legacy-mem and match-allocations */
+-	if (args.legacy_mem && args.match_allocations) {
+-		EAL_LOG(ERR, "Options --legacy-mem and --match-allocations can't be used at the same time");
+-		return -1;
+-	}
+-	/* can't use no-huge and match-allocations */
+-	if (args.no_huge && args.match_allocations) {
+-		EAL_LOG(ERR, "Options --no-huge and --match-allocations can't be used at the same time");
+-		return -1;
+-	}
+-	/* can't use no-huge and huge-unlink */
+-	if (args.no_huge && args.huge_unlink) {
+-		EAL_LOG(ERR, "Options --no-huge and --huge-unlink can't be used at the same time");
+-		return -1;
+-	}
+-	/* can't use single-file-segments and huge-unlink */
+-	if (args.single_file_segments && args.huge_unlink) {
+-		EAL_LOG(ERR, "Options --single-file-segments and --huge-unlink can't be used at the same time");
+-		return -1;
+-	}
+-	/* can't use in-memory and huge-unlink */
+-	if (args.in_memory && args.huge_unlink) {
+-		EAL_LOG(ERR, "Options --in-memory and --huge-unlink can't be used at the same time");
 -		return -1;
 -	}
 -
--	if (!rte_atomic_compare_exchange_strong_explicit(&run_once, &has_run, 1,
--					rte_memory_order_relaxed, rte_memory_order_relaxed)) {
--		rte_eal_init_alert("already called initialization.");
--		rte_errno = EALREADY;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	eal_reset_internal_config(internal_conf);
-@@ -624,49 +625,46 @@ rte_eal_init(int argc, char **argv)
- 	if (rte_eal_cpu_init() < 0) {
- 		rte_eal_init_alert("Cannot detect lcores.");
- 		rte_errno = ENOTSUP;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (eal_parse_args() < 0) {
--		rte_eal_init_alert("Invalid command line arguments.");
-+		rte_eal_init_alert("Error parsing command line arguments.");
- 		rte_errno = EINVAL;
--		rte_atomic_store_explicit(&run_once, 0, rte_memory_order_relaxed);
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (eal_plugins_init() < 0) {
- 		rte_eal_init_alert("Cannot init plugins");
- 		rte_errno = EINVAL;
--		rte_atomic_store_explicit(&run_once, 0, rte_memory_order_relaxed);
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (eal_trace_init() < 0) {
- 		rte_eal_init_alert("Cannot init trace");
- 		rte_errno = EFAULT;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (eal_option_device_parse()) {
- 		rte_errno = ENODEV;
--		rte_atomic_store_explicit(&run_once, 0, rte_memory_order_relaxed);
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (rte_config_init() < 0) {
- 		rte_eal_init_alert("Cannot init config");
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (rte_eal_intr_init() < 0) {
- 		rte_eal_init_alert("Cannot init interrupt-handling thread");
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (rte_eal_alarm_init() < 0) {
- 		rte_eal_init_alert("Cannot init alarm");
- 		/* rte_eal_alarm_init sets rte_errno on failure. */
--		return -1;
-+		goto err_out;
- 	}
- 
- 	/* Put mp channel init before bus scan so that we can init the vdev
-@@ -676,15 +674,14 @@ rte_eal_init(int argc, char **argv)
- 		rte_eal_init_alert("failed to init mp channel");
- 		if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
- 			rte_errno = EFAULT;
--			return -1;
-+			goto err_out;
- 		}
- 	}
- 
- 	if (rte_bus_scan()) {
- 		rte_eal_init_alert("Cannot scan the buses for devices");
- 		rte_errno = ENODEV;
--		rte_atomic_store_explicit(&run_once, 0, rte_memory_order_relaxed);
--		return -1;
-+		goto err_out;
- 	}
- 
- 	phys_addrs = rte_eal_using_phys_addrs() != 0;
-@@ -727,13 +724,13 @@ rte_eal_init(int argc, char **argv)
- 	if (rte_eal_iova_mode() == RTE_IOVA_PA && !phys_addrs) {
- 		rte_eal_init_alert("Cannot use IOVA as 'PA' since physical addresses are not available");
- 		rte_errno = EINVAL;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (rte_eal_iova_mode() == RTE_IOVA_PA && !RTE_IOVA_IN_MBUF) {
- 		rte_eal_init_alert("Cannot use IOVA as 'PA' as it is disabled during build");
- 		rte_errno = EINVAL;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	EAL_LOG(INFO, "Selected IOVA mode '%s'",
-@@ -747,8 +744,7 @@ rte_eal_init(int argc, char **argv)
- 		if (ret < 0) {
- 			rte_eal_init_alert("Cannot get hugepage information.");
- 			rte_errno = EACCES;
--			rte_atomic_store_explicit(&run_once, 0, rte_memory_order_relaxed);
--			return -1;
-+			goto err_out;
- 		}
- 	}
- 
-@@ -772,8 +768,7 @@ rte_eal_init(int argc, char **argv)
- 	if (rte_vfio_enable("vfio")) {
- 		rte_eal_init_alert("Cannot init VFIO");
- 		rte_errno = EAGAIN;
--		rte_atomic_store_explicit(&run_once, 0, rte_memory_order_relaxed);
--		return -1;
-+		goto err_out;
- 	}
- #endif
- 	/* in secondary processes, memory init may allocate additional fbarrays
-@@ -783,7 +778,7 @@ rte_eal_init(int argc, char **argv)
- 	if (rte_eal_memzone_init() < 0) {
- 		rte_eal_init_alert("Cannot init memzone");
- 		rte_errno = ENODEV;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	rte_mcfg_mem_read_lock();
-@@ -792,7 +787,7 @@ rte_eal_init(int argc, char **argv)
- 		rte_mcfg_mem_read_unlock();
- 		rte_eal_init_alert("Cannot init memory");
- 		rte_errno = ENOMEM;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	/* the directories are locked during eal_hugepage_info_init */
-@@ -802,7 +797,7 @@ rte_eal_init(int argc, char **argv)
- 		rte_mcfg_mem_read_unlock();
- 		rte_eal_init_alert("Cannot init malloc heap");
- 		rte_errno = ENODEV;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	rte_mcfg_mem_read_unlock();
-@@ -810,25 +805,25 @@ rte_eal_init(int argc, char **argv)
- 	if (rte_eal_malloc_heap_populate() < 0) {
- 		rte_eal_init_alert("Cannot init malloc heap");
- 		rte_errno = ENODEV;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	/* register multi-process action callbacks for hotplug after memory init */
- 	if (eal_mp_dev_hotplug_init() < 0) {
- 		rte_eal_init_alert("failed to register mp callback for hotplug");
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (rte_eal_tailqs_init() < 0) {
- 		rte_eal_init_alert("Cannot init tail queues for objects");
- 		rte_errno = EFAULT;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (rte_eal_timer_init() < 0) {
- 		rte_eal_init_alert("Cannot init HPET or TSC timers");
- 		rte_errno = ENOTSUP;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	eal_rand_init();
-@@ -839,7 +834,7 @@ rte_eal_init(int argc, char **argv)
- 			&lcore_config[config->main_lcore].cpuset) != 0) {
- 		rte_eal_init_alert("Cannot set affinity");
- 		rte_errno = EINVAL;
--		return -1;
-+		goto err_out;
- 	}
- 	__rte_thread_init(config->main_lcore,
- 		&lcore_config[config->main_lcore].cpuset);
-@@ -890,14 +885,14 @@ rte_eal_init(int argc, char **argv)
- 	if (ret) {
- 		rte_eal_init_alert("rte_service_init() failed");
- 		rte_errno = -ret;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	/* Probe all the buses and devices/drivers on them */
- 	if (rte_bus_probe()) {
- 		rte_eal_init_alert("Cannot probe devices");
- 		rte_errno = ENOTSUP;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	/* initialize default service/lcore mappings and start running. Ignore
-@@ -906,7 +901,7 @@ rte_eal_init(int argc, char **argv)
- 	ret = rte_service_start_with_defaults();
- 	if (ret < 0 && ret != -ENOTSUP) {
- 		rte_errno = -ret;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	/*
-@@ -921,18 +916,23 @@ rte_eal_init(int argc, char **argv)
- 	 */
- 	if (!internal_conf->no_shconf && eal_clean_runtime_dir() < 0) {
- 		rte_eal_init_alert("Cannot clear runtime directory");
--		return -1;
-+		goto err_out;
- 	}
- 	if (rte_eal_process_type() == RTE_PROC_PRIMARY && !internal_conf->no_telemetry) {
- 		if (rte_telemetry_init(rte_eal_get_runtime_dir(),
- 				rte_version(),
- 				&internal_conf->ctrl_cpuset) != 0)
--			return -1;
-+			goto err_out;
- 	}
- 
- 	eal_mcfg_complete();
- 
- 	return fctret;
-+
-+err_out:
-+	rte_atomic_store_explicit(&run_once, 0, rte_memory_order_relaxed);
-+	eal_clean_saved_args();
-+	return -1;
- }
- 
- static int
-diff --git a/lib/eal/windows/eal.c b/lib/eal/windows/eal.c
-index 14547d5ac9..cd9a72a0fc 100644
---- a/lib/eal/windows/eal.c
-+++ b/lib/eal/windows/eal.c
-@@ -174,14 +174,14 @@ rte_eal_init(int argc, char **argv)
- 	if (fctret < 0) {
- 		rte_eal_init_alert("Invalid command line arguments.");
- 		rte_errno = EINVAL;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	/* setup log as early as possible */
- 	if (eal_parse_log_options() < 0) {
- 		rte_eal_init_alert("invalid log arguments.");
- 		rte_errno = EINVAL;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	eal_log_init(NULL);
-@@ -189,31 +189,31 @@ rte_eal_init(int argc, char **argv)
- 	if (eal_create_cpu_map() < 0) {
- 		rte_eal_init_alert("Cannot discover CPU and NUMA.");
- 		/* rte_errno is set */
--		return -1;
-+		goto err_out;
- 	}
- 
- 	/* verify if DPDK supported on architecture MMU */
- 	if (!eal_mmu_supported()) {
- 		rte_eal_init_alert("Unsupported MMU type.");
- 		rte_errno = ENOTSUP;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (rte_eal_cpu_init() < 0) {
- 		rte_eal_init_alert("Cannot detect lcores.");
- 		rte_errno = ENOTSUP;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (eal_parse_args() < 0) {
- 		rte_eal_init_alert("Invalid command line arguments.");
- 		rte_errno = EINVAL;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (eal_option_device_parse()) {
- 		rte_errno = ENODEV;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	/* Prevent creation of shared memory files. */
-@@ -227,7 +227,7 @@ rte_eal_init(int argc, char **argv)
- 	if (!internal_conf->no_hugetlbfs && (eal_hugepage_info_init() < 0)) {
- 		rte_eal_init_alert("Cannot get hugepage information");
- 		rte_errno = EACCES;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (internal_conf->memory == 0 && !internal_conf->force_numa) {
-@@ -237,26 +237,26 @@ rte_eal_init(int argc, char **argv)
- 
- 	if (rte_eal_intr_init() < 0) {
- 		rte_eal_init_alert("Cannot init interrupt-handling thread");
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (rte_eal_timer_init() < 0) {
- 		rte_eal_init_alert("Cannot init TSC timer");
- 		rte_errno = EFAULT;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	bscan = rte_bus_scan();
- 	if (bscan < 0) {
- 		rte_eal_init_alert("Cannot scan the buses");
- 		rte_errno = ENODEV;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (eal_mem_win32api_init() < 0) {
- 		rte_eal_init_alert("Cannot access Win32 memory management");
- 		rte_errno = ENOTSUP;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	has_phys_addr = true;
-@@ -289,13 +289,13 @@ rte_eal_init(int argc, char **argv)
- 	if (iova_mode == RTE_IOVA_PA && !has_phys_addr) {
- 		rte_eal_init_alert("Cannot use IOVA as 'PA' since physical addresses are not available");
- 		rte_errno = EINVAL;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (iova_mode == RTE_IOVA_PA && !RTE_IOVA_IN_MBUF) {
- 		rte_eal_init_alert("Cannot use IOVA as 'PA' as it is disabled during build");
- 		rte_errno = EINVAL;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	EAL_LOG(DEBUG, "Selected IOVA mode '%s'",
-@@ -305,7 +305,7 @@ rte_eal_init(int argc, char **argv)
- 	if (rte_eal_memzone_init() < 0) {
- 		rte_eal_init_alert("Cannot init memzone");
- 		rte_errno = ENODEV;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	rte_mcfg_mem_read_lock();
-@@ -314,14 +314,14 @@ rte_eal_init(int argc, char **argv)
- 		rte_mcfg_mem_read_unlock();
- 		rte_eal_init_alert("Cannot init memory");
- 		rte_errno = ENOMEM;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (rte_eal_malloc_heap_init() < 0) {
- 		rte_mcfg_mem_read_unlock();
- 		rte_eal_init_alert("Cannot init malloc heap");
- 		rte_errno = ENODEV;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	rte_mcfg_mem_read_unlock();
-@@ -329,13 +329,13 @@ rte_eal_init(int argc, char **argv)
- 	if (rte_eal_malloc_heap_populate() < 0) {
- 		rte_eal_init_alert("Cannot init malloc heap");
- 		rte_errno = ENODEV;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (rte_eal_tailqs_init() < 0) {
- 		rte_eal_init_alert("Cannot init tail queues for objects");
- 		rte_errno = EFAULT;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	eal_rand_init();
-@@ -344,7 +344,7 @@ rte_eal_init(int argc, char **argv)
- 			&lcore_config[config->main_lcore].cpuset) != 0) {
- 		rte_eal_init_alert("Cannot set affinity");
- 		rte_errno = EINVAL;
--		return -1;
-+		goto err_out;
- 	}
- 	__rte_thread_init(config->main_lcore,
- 		&lcore_config[config->main_lcore].cpuset);
-@@ -390,13 +390,13 @@ rte_eal_init(int argc, char **argv)
- 	if (ret) {
- 		rte_eal_init_alert("rte_service_init() failed");
- 		rte_errno = -ret;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	if (rte_bus_probe()) {
- 		rte_eal_init_alert("Cannot probe devices");
- 		rte_errno = ENOTSUP;
--		return -1;
-+		goto err_out;
- 	}
- 
- 	/*
-@@ -409,6 +409,9 @@ rte_eal_init(int argc, char **argv)
- 	eal_mcfg_complete();
- 
- 	return fctret;
-+err_out:
-+	eal_clean_saved_args();
-+	return -1;
- }
- 
- /* Don't use MinGW asprintf() to have identical code with all toolchains. */
+ 	/* print version before anything else */
+ 	/* since message is explicitly requested by user, we write message
+ 	 * at highest log level so it can always be seen even if info or
 -- 
 2.48.1
 
