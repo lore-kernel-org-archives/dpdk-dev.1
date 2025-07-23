@@ -2,74 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5F5AC83F25
-	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 04:50:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B125C83F25
+	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 05:58:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DB9F340649;
-	Wed, 23 Jul 2025 06:50:41 +0200 (CEST)
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
- [209.85.214.169])
- by mails.dpdk.org (Postfix) with ESMTP id ADA61402CA
- for <dev@dpdk.org>; Wed, 23 Jul 2025 06:50:40 +0200 (CEST)
-Received: by mail-pl1-f169.google.com with SMTP id
- d9443c01a7336-23649faf69fso50967615ad.0
- for <dev@dpdk.org>; Tue, 22 Jul 2025 21:50:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1753246240;
- x=1753851040; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=wWf0k2rOjwRN9rM06Zq0TfeEO/EBv9g7SCSh658YOys=;
- b=AcV7qsm2V6OucM4OssEbS1NrGPvO7ZLJl57GWX4iyJp3qj/HvfzqeS7SLZw7xqy+XP
- VFCDb8//79lxUHU6AxNkSL89Zkh65zD2BmiIG9B38fd5AaBMljJyPH48J255wSH3nt1C
- cHLGx3Nv1w6IXgydn3SJOmpK5yR15ms19Nfr70NkVBPuf6PGN7Gmn8AoAPfflB7khyiT
- Mp5fUKjvvgserq69qqpHiEv/15DYx4gy5IdIf1+ZllDFfp72Dym6A9av9QBt5tciMKBW
- Tu4JnJ+M3GUWz1XYhA7Z2wOrpktm+g47P8DIKKYCmJG9Q51gQCrEFbJgEAyOVpCHZjkn
- +LJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753246240; x=1753851040;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=wWf0k2rOjwRN9rM06Zq0TfeEO/EBv9g7SCSh658YOys=;
- b=gN0ZlqABfsptlYA1XYEqJNVVaD504i6Ou3r4cdSHlxnHa4I1JaLdCK4J7QAVburb+l
- ztgVdkZyfFVh/bYFzE4VkrMCqCi/adNpU3ETLhfbmVSBrKkIM1S2GUh6e5VFmn/Oy06l
- IFeme/zIE84ClTQD9GOG8I8wuWY09aVbhWeiXHO9sZJwggbd+1zoqD+J48D4OHHrlUkg
- XSnlYCPG9tCfJS1Vz0GwwJWf4CjFGchzTK716giytDqfTuJmp9RwFrgYSqIaDfs8ngPb
- u4q7j4XKWkHrFQScat4kyF6T1+qzokqpACAsBVOi9u2/klQQPx74drygV1ObF4G8Ddnb
- oZEg==
-X-Gm-Message-State: AOJu0YzZlPLPteePTYA4Mh13n39AK0cJnrm8m7WDPA5IaHxyjpUBxzOj
- sa/mrQ6LyxOXFir8WBigZ+1fBRAQA8JRDr9pHoeKijvNf1/xzllfvzfKhzuJuLOr0lo=
-X-Gm-Gg: ASbGncvJ/lHJ4T5B5b5tY7dMWiC7jd1Cq6j828vk52SvKsBXr164MMQuZXHjbrYKSef
- 1oVhKO/hv+xrPUXEpyQKIWa1a7+ssIY88D2/qvNQcA0aTlTiBLifNqxmork0ZpnXs5pj2RkV4wg
- 5O+8oyC/t0JDBN1y0AMTdDmV8KaBKod1Uo8c9r5CySUbj4XryV2rw3W34JIoNjDdz1rGzDNJAo9
- xkS1YVFO9S+iyDy4AEe5hKcyUzQH/06e7P4aGZaIgWXbqx1RLdL/IoW7gTk1xCrX7LWcqS55kZx
- eNXEmXZ4bsQMDVNHXCXtcdV9b4flkAj1g+9KTbSZwpVuCAlIphfO4ZrB9esSWoZ37K6JsxAn/1l
- gYwLzNwbWvYNYsh5gVTINLdMtxVI+DIvIlT17qcvcs0JrxBs5rLqFz7sVZco=
-X-Google-Smtp-Source: AGHT+IEKBrF2SOsK2V1Fo4NRVUppA5woYw0FY7tCdphRlc7ip+fqRBqbUsSUR8VWpU99iKHHdQ48kw==
-X-Received: by 2002:a17:903:2984:b0:235:779:edfa with SMTP id
- d9443c01a7336-23f981aedabmr23671275ad.32.1753246239734; 
- Tue, 22 Jul 2025 21:50:39 -0700 (PDT)
-Received: from localhost.localdomain ([64.62.143.197])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-23e3b611ff5sm87425175ad.75.2025.07.22.21.50.38
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 22 Jul 2025 21:50:39 -0700 (PDT)
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-To: stephen@networkplumber.org, thomas@monjalon.net, ferruh.yigit@amd.com,
- andrew.rybchenko@oktetlabs.ru
-Cc: dev@dpdk.org, stable@dpdk.org,
- Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Subject: [PATCH v2] lib/ethdev: fix segfault in secondary process by
- validating dev_private pointer
-Date: Wed, 23 Jul 2025 00:50:22 -0400
-Message-ID: <20250723045022.1580829-1-14pwcse1224@uetpeshawar.edu.pk>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250722115439.1353573-1-14pwcse1224@uetpeshawar.edu.pk>
-References: <20250722115439.1353573-1-14pwcse1224@uetpeshawar.edu.pk>
+	by mails.dpdk.org (Postfix) with ESMTP id C15AE4067D;
+	Wed, 23 Jul 2025 07:58:22 +0200 (CEST)
+Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
+ by mails.dpdk.org (Postfix) with ESMTP id 05477402CA;
+ Wed, 23 Jul 2025 07:58:19 +0200 (CEST)
+Received: from debian (unknown [78.109.70.60])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by agw.arknetworks.am (Postfix) with ESMTPSA id 4C19AE0568;
+ Wed, 23 Jul 2025 09:58:19 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 4C19AE0568
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
+ s=default; t=1753250299;
+ bh=R36TJEh0XFi6nUA7M1cogLA9HvycTd69qzbILpFZpRQ=;
+ h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+ b=qDPA/JV4D7/1o1ZbOw8iebd99tSWxpdz1rvma6XuxTenmpY3nj5lDBFK7GkJiOADc
+ gi9SYCOc9dGuad9i0j5bEchNk0YdyFMOWHpKRHnFwsbwUNXDb1fglMeOWmmeF2IXKg
+ aY/np2+FKEnzuhM8qYo/K2HPaq6kToo9hu+ZY+GiPZOZnVXcFGiVwjr10mq58fqvWC
+ i++qv+vw/TKVTh8da9PgXp7e3WjCMsg5qoDtsTFAJq6jb+agRWA4i5HumN/EMGtFTK
+ FyUpupv45BmndBl30x89Gjhv2HJySDAqexWH8a2HDHLD+BZwANoy3FHal2pUM/7OZf
+ FWho10mBTcfeg==
+Date: Wed, 23 Jul 2025 09:58:18 +0400 (+04)
+From: Ivan Malov <ivan.malov@arknetworks.am>
+To: "Gokul K R (MS/ETA7-ETAS)" <KR.Gokul@in.bosch.com>
+cc: "users@dpdk.org" <users@dpdk.org>, "dev@dpdk.org" <dev@dpdk.org>, 
+ "Nivethitha N Shanmugasundaram (ETAS-ICA/XPC-Fe6)"
+ <NShanmugasundaram.Nivethitha@etas.com>
+Subject: =?UTF-8?Q?RE=3A_Issue_with_DPDK-Burst_Replay_=E2=80=93_No_F?=
+ =?UTF-8?Q?rame_Transmission_Observed_Despite_Successful_Replay?=
+In-Reply-To: <PAVPR10MB7355DA0FC9C2847774A0096AA45FA@PAVPR10MB7355.EURPRD10.PROD.OUTLOOK.COM>
+Message-ID: <63d4634b-d09a-13bd-86c0-593147e8e874@arknetworks.am>
+References: <PAVPR10MB73554B90C65B0D9A83AD8582A450A@PAVPR10MB7355.EURPRD10.PROD.OUTLOOK.COM>
+ <5a8c61fe-9c47-d74c-7e0c-3f8dd47b3926@arknetworks.am>
+ <PAVPR10MB7355DA0FC9C2847774A0096AA45FA@PAVPR10MB7355.EURPRD10.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323328-1663521967-1753250300=:15553"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,40 +55,193 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In secondary processes, directly accessing 'dev->data->dev_private' can
-cause a segmentation fault if the primary process has exited or if the
-shared memory is no longer accessible.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-This patch adds a safety check using rte_mem_virt2phy(), with an
-unlikely() branch hint to minimize performance impact in the fast path.
-This ensures 'dev_private' is still valid before accessing it.
+--8323328-1663521967-1753250300=:15553
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8BIT
 
-Fixes: bdad90d12ec8 ("ethdev: change device info get callback to return int")
-Cc: stable@dpdk.org
+Hi,
 
-Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
----
- lib/ethdev/rte_ethdev.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+On Wed, 23 Jul 2025, Gokul K R (MS/ETA7-ETAS) wrote:
 
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index dd7c00bc94..ef5dc55f2e 100644
---- a/lib/ethdev/rte_ethdev.c
-+++ b/lib/ethdev/rte_ethdev.c
-@@ -4079,6 +4079,13 @@ rte_eth_dev_info_get(uint16_t port_id, struct rte_eth_dev_info *dev_info)
- 
- 	if (dev->dev_ops->dev_infos_get == NULL)
- 		return -ENOTSUP;
-+	if (rte_eal_process_type() == RTE_PROC_SECONDARY &&
-+		unlikely(rte_mem_virt2phy(dev->data->dev_private) == RTE_BAD_PHYS_ADDR)) {
-+			RTE_ETHDEV_LOG_LINE(ERR,
-+			"Secondary: dev_private not accessible (primary exited?)");
-+			rte_errno = ENODEV;
-+			return -rte_errno;
-+	}
- 	diag = dev->dev_ops->dev_infos_get(dev, dev_info);
- 	if (diag != 0) {
- 		/* Cleanup already filled in device information */
--- 
-2.43.0
+> Hi Ivan Malov 😊
+>
+> Use Case:
+> I'm currently using the DPDK-Burst-Replay tool to replay captured PCAP files at specific data rates (e.g., 150–200 Mbps).
+>
+> Response to your feedback:
+> Point 1: "Port 0 is not on the good NUMA ID (-1)"
+> I’m aware that this message is printed due to the NUMA ID being returned as -1.
+> I've just started diving into the source code and found that the call to rte_eth_dev_socket_id() returns -1, which typically indicates an error.
 
+No, -1 typically translates to 'SOCKET_ID_ANY'. In order to rule out 'EINVAL'
+in 'rte_errno', one should attempt to invoke 'rte_eth_dev_socket_id' within the
+loop of 'RTE_ETH_FOREACH_DEV' (see examples in DPDK) and print the socket ID.
+
+> However, the current implementation does not output the rte_errno, which could help identify the root cause. I'm working on modifying the code to print the error code for better debugging.
+>
+> Point 2: "NIC Link is UP"
+> Yes, on the NIC side, the link is up. I'm also able to transmit packets successfully using the testpmd application.
+>
+> Question:
+> Could you please confirm if the current version of the DPDK-Burst-Replay tool supports replaying Ethernet frames larger than 64 bytes (e.g., up to 1500 bytes)? Or has the tool been enhanced to support this use case?
+
+The tool seems like an external application. Try to look for any mentions of
+API 'rte_eth_dev_set_mtu' or just the term 'mtu' in that source code. If there
+are no such mentions, then default MTU applies, which depends on the driver.
+
+Have you tried querying statistics to find the cause of the drops?
+
+Thank you.
+
+>
+> Thanks for your time and support!
+>
+> Best regards,
+> Gokul K.R
+>
+>
+>
+>
+>
+> -----Original Message-----
+> From: Ivan Malov <ivan.malov@arknetworks.am>
+> Sent: Friday, July 18, 2025 5:29 PM
+> To: Gokul K R (MS/ETA7-ETAS) <KR.Gokul@in.bosch.com>
+> Cc: users@dpdk.org; dev@dpdk.org
+> Subject: Re: Issue with DPDK-Burst Replay – No Frame Transmission Observed Despite Successful Replay
+>
+> Hi,
+>
+> (please see below)
+>
+> On Fri, 18 Jul 2025, Gokul K R (MS/ETA7-ETAS) wrote:
+>
+>>
+>> Hi Team,
+>>
+>> I’m currently working with the dpdk-burst-replay tool and encountered an issue during execution. Below are the details:
+>>
+>>
+>> ______________________________________________________________________
+>> ______________________________________________________________________
+>> ______________________________________________
+>>
+>>
+>> Observation:
+>> During replay, we received the following informational message:
+>>
+>> port 0 is not on the good numa id (-1)
+>
+> Which API was used to check this? Was API [1] used? If not, what does it show in the absence of 'numactl' command?
+>
+> [1] https://doc.dpdk.org/api-25.03/rte__ethdev_8h.html#ad032e25f712e6ffeb0c19eab1ec1fd2e
+>
+>>
+>> As per the DPDK mailing list discussions, this warning is typically benign—often seen on NICs like Intel I225/I210, which do not report NUMA affinity. Hence, we proceeded with execution.
+>>
+>>
+>> ______________________________________________________________________
+>> ______________________________________________________________________
+>> ______________________________________________
+>>
+>>
+>> Command Used:
+>>
+>> sudo numactl --cpunodebind=0 --membind=0 ./src/dpdk-replay
+>> Original_MAC.pcap 0000:01:00.1
+>>
+>> Execution Output:
+>>
+>> preloading Original_MAC.pcap file (of size: 143959 bytes)
+>>
+>> file read at 100.00%
+>>
+>> read 675 pkts (for a total of 143959 bytes). max packet length = 1518 bytes.
+>>
+>> -> Needed MBUF size: 1648
+>>
+>> -> Needed number of MBUFs: 675
+>>
+>> -> Needed Memory = 1.061 MB
+>>
+>> -> Needed Hugepages of 1 GB = 1
+>>
+>> -> Needed CPUs: 1
+>>
+>> -> Create mempool of 675 mbufs of 1648 octets.
+>>
+>> -> Will cache 675 pkts on 1 caches.
+>
+> What does this 'cache' stand for? Does it refer to the mempool per-lcore cache?
+> If so, please note that, according to API [2] documentation, cache size "must be lower or equal to RTE_MEMPOOL_CACHE_MAX_SIZE and n / 1.5", where 'n' stands for the number of mbufs. Also, documentation says it is advised to choose cache_size to have "n modulo cache_size == 0". Does your code meet these requirements?
+>
+> By the looks of it, it doesn't (cache_size = n = 675). Consider to double-check.
+>
+> [2] https://doc.dpdk.org/api-25.03/rte__mempool_8h.html#a0b64d611bc140a4d2a0c94911580efd5
+>
+>>
+>>
+>> ______________________________________________________________________
+>> ______________________________________________________________________
+>> ______________________________________________
+>>
+>>
+>> Issue:
+>> Despite successful parsing of the pcap file and proper initialization, no frames were transmitted or received on either the sender or receiver sides.
+>
+> Is this observation based solely on watching APIs [3] and [4] return 0 all the time? If yes, one can consider to introduce invocations of APIs [5], [6] and [7] in order to periodically poll and print statistics (may be with 1-second delay), which may, for example, shed light on mbuf allocation errors (extended stats).
+>
+> Do statistics display any interesting figures to be discussed?
+>
+> [3] https://doc.dpdk.org/api-25.03/rte__ethdev_8h.html#a3e7d76a451b46348686ea97d6367f102
+> [4] https://doc.dpdk.org/api-25.03/rte__ethdev_8h.html#a83e56cabbd31637efd648e3fc010392b
+>
+> [5] https://doc.dpdk.org/api-25.03/rte__ethdev_8h.html#adec226574c53ae413252c9b15f6f4bab
+> [6] https://doc.dpdk.org/api-25.03/rte__ethdev_8h.html#a418ad970673eb171673185e36044fd79
+> [7] https://doc.dpdk.org/api-25.03/rte__ethdev_8h.html#a300d75b583c1f5acfe5b162a5d8c0ac1
+>
+>>
+>>
+>> ______________________________________________________________________
+>> ______________________________________________________________________
+>> ______________________________________________
+>>
+>>
+>> Environment Details:
+>>
+>>  *  NIC used: Intel I225/I210
+>>  *  Hugepages configured: 1 GB
+>>  *  NUMA binding: --cpunodebind=0 --membind=0
+>>  *  OS: [Your Linux distribution, e.g., Ubuntu 20.04]
+>>  *  DPDK version: [Mention if known]
+>>
+>> ______________________________________________________________________
+>> ______________________________________________________________________
+>> ______________________________________________
+>>
+>>
+>> Could you please advise if any additional setup, configuration, or known limitations may be impacting the packet transmission?
+>
+> This may be a wild suggestion from my side, but it pays to check whether link status is "up" upon port start on both ends. One can use API [8] to do that.
+>
+> [8] https://doc.dpdk.org/api-25.03/rte__ethdev_8h.html#ac05878578e4fd9ef3551d2c1c175ebe7
+>
+> Thank you.
+>
+>
+>>
+>> Thank you in advance for your support!
+>>
+>>
+>> Best regards,
+>> Gokul K R
+>>
+>>
+>>
+>>
+>>
+>
+--8323328-1663521967-1753250300=:15553--
