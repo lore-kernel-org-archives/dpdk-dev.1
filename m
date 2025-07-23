@@ -2,181 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3153DC83F17
-	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 15:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76A62C83F17
+	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 16:08:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 486D640DF6;
-	Wed, 23 Jul 2025 17:51:59 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id 6444840267
- for <dev@dpdk.org>; Wed, 23 Jul 2025 17:51:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1753285917; x=1784821917;
- h=message-id:date:subject:to:references:from:in-reply-to:
- content-transfer-encoding:mime-version;
- bh=WEX0ksKWd1AFfj7bFWdsYUALMlBJ5WnyulqHRv4bYQc=;
- b=m8MSU1xQj6+5BcJ7txNQcfK3FC2rHwl4mKBv+XKAgRkoAqGO5eaVfEr0
- HME+Fh1RbEjiC8YemH3rMJu5SyWpE3eHqzfsPr4mcBB/vsUxhYdx9OEms
- HRq+WyurcEtshp6G7SzsMakSRkb0imBEmRnCxP1BAXcEqnWFbXKnh0ons
- kxnzGCFcZeAyfh0xEb9cNgxbVIH8PiZDET8hGHHb/7Fx0UdXTILR9KQ3d
- t+I0tIFoWsSIdjVQB7x7FZ4JxyYvwoJ2tKF0/ZL2wgZXFjbsGEAmJWmgJ
- lJ6ZRs/r2jvxsCa3GPf5YE3GIFtaO2pccxT8YtW+8NnbeatpCLkN5/AsB g==;
-X-CSE-ConnectionGUID: s1qhA8NFQYa9x8TGYl6dHg==
-X-CSE-MsgGUID: 1ohjmmlnSuaPFavpjzfZ4w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="73031028"
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; d="scan'208";a="73031028"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
- by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Jul 2025 08:51:46 -0700
-X-CSE-ConnectionGUID: OuXlFecETVOrn71pcSwewQ==
-X-CSE-MsgGUID: lNPIRpThREGtuXLMuN4hVA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; d="scan'208";a="159889772"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Jul 2025 08:51:45 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Wed, 23 Jul 2025 08:51:44 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Wed, 23 Jul 2025 08:51:44 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (40.107.220.85)
- by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 23 Jul 2025 08:51:44 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jAKJVCK9R3GBfYy/AdUnVjwkUcTtde71H5+Bnw+Nn1opApGhYZC17eq/PvgJ1PuMS888P+Qh1XUX0G1fHqLf+MLdrUDWH7ZycfKp+sdGZBMw4CZB1GB/wAHjHsHe9HVbtmbYMaw3mCXOCxC2V0dj/yAzUKQqnrstER3Q7kp1ZU7eGgT7iMYphdmLYsV56IaMCUJMU0GWJkc0CUJcq9tolqb3UpRpq14/XYKkSuU6XmtEAmevuYFuiRqoex/uiJU4EhEmMAV8I1u5AyW19WHTkqRx2y9v4iwgYnpypYyIIkG1TeLfUkdYh7VZeVp97ZSHSbL/Xj5Ukisp+TuPQlLAIA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gbmz9zwv/Tf9yS+XsnylDJzxd0nG6cq7xsyfVZLLJto=;
- b=UJ43VJ+0mmh/0tYezJMwNmpbwDplD05J1nIa2c+0q48EoqjI5CQbCzhQDCKJ2TS8CbIN7/zwsmTJ0TYrrdEkdH+tgX9sAfsmDIrfTCjkq3gn5fjHuXKDVRtpGDZTLC/tGLHGSDzqIi57MJcOOwnJy5ywgvxROt0YMhRPsnlp9Q/dbizjqDk/1yAa54q/4TlZwICScCQGEMqgwBUQdjEY7698Xd59G4aX7eSygVJiMloDSJKs0WgCmDRr0WCx4lWOU3ufHAulySIPj74mn5xMFURWi22Zk7/PTAJu77gy6OIdGH9BYUIj81/HF0aCQ0m7A5oznnnxmWgg5d4MyhY3vQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from IA4PR11MB9204.namprd11.prod.outlook.com (2603:10b6:208:56d::16)
- by MW4PR11MB6812.namprd11.prod.outlook.com (2603:10b6:303:1ee::7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.21; Wed, 23 Jul
- 2025 15:51:41 +0000
-Received: from IA4PR11MB9204.namprd11.prod.outlook.com
- ([fe80::509:acc9:5dba:5963]) by IA4PR11MB9204.namprd11.prod.outlook.com
- ([fe80::509:acc9:5dba:5963%4]) with mapi id 15.20.8964.019; Wed, 23 Jul 2025
- 15:51:41 +0000
-Message-ID: <32ba7225-12fc-4554-ad05-d2ee19295adf@intel.com>
-Date: Wed, 23 Jul 2025 16:51:38 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 19/22] rib6: fix some highest bits handling
-To: David Marchand <david.marchand@redhat.com>, <dev@dpdk.org>
-References: <20250619071037.37325-1-david.marchand@redhat.com>
- <20250723133157.159825-1-david.marchand@redhat.com>
- <20250723133157.159825-20-david.marchand@redhat.com>
-Content-Language: en-US
-From: "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>
-In-Reply-To: <20250723133157.159825-20-david.marchand@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P123CA0085.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:138::18) To IA4PR11MB9204.namprd11.prod.outlook.com
- (2603:10b6:208:56d::16)
+	by mails.dpdk.org (Postfix) with ESMTP id B5E4240DF8;
+	Wed, 23 Jul 2025 18:08:38 +0200 (CEST)
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com
+ [209.85.128.53])
+ by mails.dpdk.org (Postfix) with ESMTP id 5CFBD40DF8;
+ Wed, 23 Jul 2025 18:08:37 +0200 (CEST)
+Received: by mail-wm1-f53.google.com with SMTP id
+ 5b1f17b1804b1-454f428038eso59842975e9.2; 
+ Wed, 23 Jul 2025 09:08:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1753286917; x=1753891717; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=NsK0TPIwnlDbTJCey5aiPYLvUm2Nadtd8NyXB0I7ECM=;
+ b=cbdccH+nR4Y2hueX2C6XtDXARGnz7BI6CzrWcotSQ5659ubebPcoIntAy3X/sV0fpM
+ k2tgGLXIx2aU44MkqDaYcq2iIurTaSUTg5TbhTwHRfDDv+5GRfwOuQBazEg0908POHmB
+ w78qtYnqimX4QYEQuCCH8ZiN0sr5I36GqvkgaCEnxvdMpEd9jp0aBEJ1VF/xATnR+t0k
+ 3RXsFX4bg5eXN96aFrBg8RNse9WzPLG7ZaiI1vfMHtyseqwZKbvOuvj3WxWBH3R52xZ7
+ K1qpwcvCrJc4XZvfM3upeM8ZTahBHpXNscXFyntZ1zhjCAtgpE3JtyGfz6XgIPWgUnML
+ Cp+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1753286917; x=1753891717;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=NsK0TPIwnlDbTJCey5aiPYLvUm2Nadtd8NyXB0I7ECM=;
+ b=ZwwY8FjacMSM8LPlKny7pleZH0MewwN2iHEA94H1diLiLQBbDut95x5wdu1ggIo9XL
+ aoZAGQX5hhi2vp8GdP4rnzwB+I78PRBeXxEl+Uu5vpPmO9qgEKO7G3VCRVPr2cVjma/Y
+ NkaFni3rZtRVUMPZN+ZOLskW9+kBtCzPMgUCnY9N1xh3qNSPkhmBPlFYClH8j8lQWYfz
+ vvE4yHRM33st1cEULshGlvr7NFqPIqGNmrQ8GZkNiaXWMnjR36X50Gcv7sLtMlVk+Tfl
+ /kyrT6SazBqq3cteKlO2Hc6zhIjyCwri+wL1FJym26GS2jM9WDGJH2cEzuCEBMUszZ58
+ dAlA==
+X-Gm-Message-State: AOJu0Yyg4j1VKc3ATLl70ei0YHraXGTJLSaGHOwTTfS6YA/sVqdZ+vkn
+ tpslw3SS9XMno/LYlEdnNPaMdenjA6UYV9jZe0Oer/IEnMCbkJviuqczUIXCHQ==
+X-Gm-Gg: ASbGncsCIxgN3DRpXfr9LOnMdeco/k5qHuAH8lzkvNTDHfQcjkikKf90UZKeUquDiCm
+ 9c8IKAY00G8JJSsuOTFQy9PL3pSyVW+mzSzBZKaGGqRmIR0R2oeNiV0uC3AQxyL1GtZGNFMegpm
+ AYg5G2cDWtGbZO6iM/74lOcNctv0r6BlciJ/0aM8VfvdtLvO4uyrH6oGl/HTNC2sLuJxtY4VqjR
+ xKKgVo35wzYOIGwZbZU/g5aBTprIDvflBJYl8Efs964CIfUrHOKp/4En2UlMiKn8y35vC2kYG+j
+ Qd49O1yoFx0NEs+DN1zrZTx/VVLt31MskuVanWV2ovTn0PlaVJOLH1yNbqxP3ffJL+jpwAP5UIy
+ 3vEM9vJMqt82dhh5m6R/fc4VOO7Lb
+X-Google-Smtp-Source: AGHT+IHvkUVgfNzuz621BrealrWpVs7GfQEiCQ6wBgYq0M4/eEyY8Pz60qtZ4wsQ2Y/1S10CAJYniA==
+X-Received: by 2002:a05:600c:4f0e:b0:456:11cb:b9c7 with SMTP id
+ 5b1f17b1804b1-45868d2a954mr31604045e9.25.1753286916426; 
+ Wed, 23 Jul 2025 09:08:36 -0700 (PDT)
+Received: from localhost ([2a01:4b00:d036:ae00:4ff9:8e9a:ab16:c98e])
+ by smtp.gmail.com with UTF8SMTPSA id
+ 5b1f17b1804b1-45868ef50d8sm28684215e9.0.2025.07.23.09.08.35
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 23 Jul 2025 09:08:35 -0700 (PDT)
+From: luca.boccassi@gmail.com
+To: stable@dpdk.org
+Cc: dev@dpdk.org, Abhishek Marathe <Abhishek.Marathe@microsoft.com>,
+ Ali Alnubani <alialnu@nvidia.com>,
+ David Christensen <drc@linux.vnet.ibm.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>, Ian Stokes <ian.stokes@intel.com>,
+ Jerin Jacob <jerinj@marvell.com>, John McNamara <john.mcnamara@intel.com>,
+ Ju-Hyoung Lee <juhlee@microsoft.com>, Kevin Traynor <ktraynor@redhat.com>,
+ Luca Boccassi <bluca@debian.org>, Pei Zhang <pezhang@redhat.com>,
+ Raslan Darawsheh <rasland@nvidia.com>,
+ Thomas Monjalon <thomas@monjalon.net>, Yanghang Liu <yanghliu@redhat.com>
+Subject: 22.11.9 patches review and test
+Date: Wed, 23 Jul 2025 17:08:16 +0100
+Message-ID: <20250723160822.1686060-1-luca.boccassi@gmail.com>
+X-Mailer: git-send-email 2.47.2
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA4PR11MB9204:EE_|MW4PR11MB6812:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4f67c386-4ec7-4e17-2a4e-08ddca00d12a
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?OUFYbTBlRTlZNm41ZVJMZHpXendMZGE3cm1RSDVxZTUrOFFBbUNtUVNSbUFC?=
- =?utf-8?B?TGxCY2lGbjRhZHY1K0taV2hjM1ByTno3dEdmUnZjbE05SVBQRHplejFLVHQ3?=
- =?utf-8?B?WFdtaWFXZUhEekpkVjJCMEMvbXg0dkRJVnhmRGJlNVhiaE84dWF6Zm0xVEdm?=
- =?utf-8?B?QXJyczJkRm1qUjM1Y3JCNnNpQUZKUXJJM2ZOZEZ6NGcwemRBWU5EbXNrTXRs?=
- =?utf-8?B?UGQrbGZzdUIrOTU5aWQ5anBoT0Z4eEhSK0syb3pHWmRsUk5IUFVYb0lrVVVF?=
- =?utf-8?B?SHJKSWI3dHE3bk9xZXd6cWhTWmtDMWw5RGxRVkZrUGprOXM5UVRTK0R2bzdL?=
- =?utf-8?B?TnczUmc0Q2RxM09ETGRmN0t1NkhReW5YenFWOVZDVUxtV3VvWjB3em84SFc0?=
- =?utf-8?B?dTFuRy8vR05EaklVVnVpYytpN1RPeVhidVRrSkVvN1JsL1BEazMvTzZwb3g0?=
- =?utf-8?B?NWxoYnMxSVl4aDAyQ2xvaEdlODV6UEE1R0ZxU2tNRXBhT0ZVcHd0eVBZTUxw?=
- =?utf-8?B?RlltMG9xa1hUL2tJT0JzMVlnbVRxWjE0L1VuNjdwOVhJMVA1MUhjbk8rSDda?=
- =?utf-8?B?L2I4aFluODFFWVk2ZW9wN3N5MUpORUtJWnVuNHlYL3VkZjlzQUVWb3hoclB4?=
- =?utf-8?B?NVkwWk1DUFQ2US9hcjNReWlJeUtUYkNCVko3c2hia2dSbG1aUnYweDFkSHZp?=
- =?utf-8?B?dHZkMXlYWi9jaDdNMWZZdTB0VDlXTG0vbDZzSWJZQ0tnSElpbDBNRCtEOHRu?=
- =?utf-8?B?KzBxYjlzbC9ZV1ZVN2xIVi9zQUJ5U1pxNnZsTmJkeEdkeVBEeXF2U0dBcnpT?=
- =?utf-8?B?d2VTT1o0UlFubHdrTGdSRjV0bUVnWlBwVFI5cnF2eDNTQUtIUXhCMENyb1R2?=
- =?utf-8?B?WXdSNjYyWnFDM3lrS2dMcEhsVk51ZkY0ZlBqWmVFVW10Ym5kQXlFY2t3S0tZ?=
- =?utf-8?B?MWtLUVoxTWhuZmhYUjkwV0dKSUI0S2tOMXU0VGQwU1RlUjRIT0pwVEE5aVNu?=
- =?utf-8?B?MG1DNmpNUEl1T0l2OFVqTUJSUFNRMnh4b1NSSEFRQjd4dU15L1g5SnJKOUpC?=
- =?utf-8?B?ay9CR1ZJT1FwV3pReUpTTitTQXZiaXBPY3I4OVJHU3kxL1JVVUprMFZvb3hY?=
- =?utf-8?B?UlA1L05WVnhuZzFrSitMU1JpR3RLSUdvSUliNFdmYzFzM2JUYjRLZW5yT0Nv?=
- =?utf-8?B?ZlNaUWFkM2U2YmhSVHQ0Uy9ibG56V0lYU0FGTjhuTVY0blhYWXRBSThDOGVJ?=
- =?utf-8?B?MytJcExiSS85UFAzMVV4Wkt4N1l2bkxadk5OTFpsM3kxYXA4eXlrSWpkTDgr?=
- =?utf-8?B?aEp2TTRWdU5OS2VMdGlrZGtLN3lQMFpmdjdxY0pNU2lKTHlpdlBGdEErMGFh?=
- =?utf-8?B?dTc2MTBRRUxpbVpVVHJhdVl1T2J5N1lhN2pOc2dmL0tDcGxXRmVWak5YZzlW?=
- =?utf-8?B?NjdQcnVTT0tHc01nanZvMjVaWnhBbWRQNUZpREZ2MnpsaTgweGJaWlZYZm1y?=
- =?utf-8?B?NSt2T1d4bER4NnMvU2tMMS9lVG5yY3lmWjIvOEpBN2FlbGNlVjk5RGJRZmRn?=
- =?utf-8?B?WEo3WUNKS1NMRjUwTEY4K09xMHlZd0VKaDhDc1VmMkxkOEZsYzBHNUcwTmVw?=
- =?utf-8?B?REl2Y0YzdXNIaTFYUXRwbk5DM0QrU1lpRjdvNFE5S2hLUUllL1R6eW5VMGN6?=
- =?utf-8?B?TndiQktGREZBUkdqTkN3K1Z3cTJseUIyclY4VGhiUVBRVTNJbVM2aHhKc09u?=
- =?utf-8?B?THVFMzV6V2hVYlgyVi9rY3laekdoSm1iK1BpOTFEQ0d0WVV1L2d2ZkV2bW8x?=
- =?utf-8?B?bEMrQ1ZHeGFKTm8wRUFRUzVTS2ZyMDBkd2xhdXRhOGtqSGdjOEdwSkxaVlRM?=
- =?utf-8?B?SStsMm9SRm4rYXkxQ3M3OXd0TDI0YitMYVN4Q1RCU0xIQU1BZVN0N1NnTjVZ?=
- =?utf-8?Q?YMRUaUCPtbw=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:IA4PR11MB9204.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(1800799024)(7053199007); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WjlwN2ZDbXUwZ2V6MW9uWUt2dGhtZUtuNE5ZeWpEaXVQcUY3WU5ESFdYSnVy?=
- =?utf-8?B?cHZTK1dhY3FkNkN2Y04xdjFJR0RNOW1sTHVUUmlpU0wvem03cUlodTRrZmtn?=
- =?utf-8?B?Wkp0YWFyNTZqSmNicjdPdWZxK21DREF4MzRnbzBRT0UvcTlvWTVnUDY2NERp?=
- =?utf-8?B?OHZxNDhuRDFrZDVYaUZzZEd1THVGVUFBeWxFUHF1SVBUTmtYUEtack1ybjVR?=
- =?utf-8?B?ZDlNbWVra2trRDBrSzByUU9DWjk1U1ZINWF2S0N2UXA0Tjc2WTVhckMxaGVM?=
- =?utf-8?B?OFI4a3VYQ2ticWN1UkZadzdIRHZIUkpZdUFucnVyb3c5d21qT255YXEzUDh0?=
- =?utf-8?B?c002eC9xblpqbDliMkowQXpoUG9kQjUxOEMyRWNSeFNjZ1hwU3JNeG5rNHpZ?=
- =?utf-8?B?Q3gvQnZJampiR0s0bmFIOGQ3dkFkUTVocUVodlBBd00xd1h4QlN5dVY2SGpP?=
- =?utf-8?B?aStOOC81Wk1SWnl3THVNb0lGajY5QThYM1dHcTkwQVBjRzlYTlZyWWRqc1ln?=
- =?utf-8?B?OHdxYkVabVNjTWgzeDUzMkVPVmRCZllwMEF5WFExa290cG9pdEJOY0laMlhJ?=
- =?utf-8?B?d0piV2xpY0lLTzFlSTg4N0NHSHF3QTROQnNDNThtbHBXZXdtUDVaK2gvT0Zq?=
- =?utf-8?B?Vk9KL3BFMjFxZ0FwUm9Sc1JBOVNjSHd2b21IbDd6ejVteGxvK1NpSDZGd2Ny?=
- =?utf-8?B?NUNvU3h4T1lnZFNYUVlyL1A2RGJqREhaTkFjbWh6cjh4eFdzN0o0aEl0a0xQ?=
- =?utf-8?B?WklaUDdDaWdRc3ozRFpBMVJUTTVPZW9hZFYwZHNoM1czTGZDU2ZzeWNHaW1s?=
- =?utf-8?B?NGt4aXo4eERGUlZHYzNIWWNPVDYxUkRWelBCZ1ROTzBBUktXWkZycStXUGlu?=
- =?utf-8?B?L1VkT1ozNmJwWXpIYWFSbXYxRXJDUWdqMUV2MzBBZFBsN2dSaDRVMEJSQWNs?=
- =?utf-8?B?eVlYRGM1UUY5TlpMMTNla2R1MFhoUGlvRHJNdUlueW9hL2tDT2g1MzlhWlRS?=
- =?utf-8?B?MjRJeXJEaWNranpYSXExUlRwWU1xTjFuNUxPZ2N3bytkaXZaSXNMSGNiTjVK?=
- =?utf-8?B?enlmVlZHVVdFOHRBVWhwalVLLzRpVFl2YnVWQU0rMExqODhERGh2b2wrUzFw?=
- =?utf-8?B?UXJNRXlYSlhZUldXL2VtOFJYMHdxS1lIaWwzZGFWeng0VHBrVGhOYzZMM2tO?=
- =?utf-8?B?QWs0VkdhbGcyRkFvdy9seEQ0dDV0d1NyMDYzdFdONmg5R05oYXUwS1BLRXRG?=
- =?utf-8?B?UytURFhER3kzL21yYXZEcGlzUmZVUzZXMzY1VTFPTzlJNDVNMzZQakxRWmRZ?=
- =?utf-8?B?b3Y1ZUpybmszS1VZbElVS0ZYTnFCNVhTSzlnblFYaW5vRWVWWEFJQVp2dVh0?=
- =?utf-8?B?bnRONTBJOFVPWU1SbjFLT3VtNm1JOUxFeDA2T1BLbURsaXprY0VYVmJiWHB4?=
- =?utf-8?B?RVNmZVdLRFBDdDlKa0JxSnJhTjc1aUhnR1BTY0hEUHI4anNQc0NUVlYyMTlS?=
- =?utf-8?B?VEFOMFhoY3BNWStVeFNjOG1ZM3lscndCOFdqT1hUUER3dExlNTFrYVJiR1N0?=
- =?utf-8?B?Uk1Fc29BSkV3RHNKUkU1WVZ5QkJOYU15S2RaY0d0ellwZkFlT0h3WExLM1Zj?=
- =?utf-8?B?Smhud0hjMG9EL2VEVkhRTDBXNHRaZnJDejhVdmkzMGc1U1JwY3BNMEVXVkRl?=
- =?utf-8?B?a2RBVnVQSFVWZXZ0L2NFK2dQeGZpZHhVdEQ1a3pWMS83aE11Y1VlN0k2V0R4?=
- =?utf-8?B?aU9yeWg2MEYraUdTRzFOSG5pUUtWR3p4Wk5sQUU3Y2wrUXNBQmVyU0FDUDdH?=
- =?utf-8?B?QmR2cGsxMnRRUEpiaFBSbVkrN0s1SG42MnNiSDZCbDV4aVRiNm0zUmpPbmRs?=
- =?utf-8?B?K2pvekIvb1pEbWRsdEZ5Y1d5aWpCWWRzQXR3U09YQlQxNGpjb01ZMlRLSDFI?=
- =?utf-8?B?RjdBMG5uWU04ZVpiekJJMTBOdEZSYk1PV1pMWVN4d000bjVSZ1I0dUQzMVZR?=
- =?utf-8?B?dThPdDRleWN4SWExODIraFBNUVI5Rk1WRGZyQnUxZGRTNjFpUkpYTmUyZVhG?=
- =?utf-8?B?ck1qRDNpR3hYMzE5cHdnM0xaZU9wckliSzFyNzZYS1JGV0VnWms5QUwzL0pN?=
- =?utf-8?B?cTdCdGlrQW9rd0lHMmlxV0hkaUpYZkNPVER4eXIrTnBxV3ROU0Y4LzN6ZzBK?=
- =?utf-8?B?ZFE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f67c386-4ec7-4e17-2a4e-08ddca00d12a
-X-MS-Exchange-CrossTenant-AuthSource: IA4PR11MB9204.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2025 15:51:41.6959 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7N9EkCA3caA6miZ6w61vegnfFdoFNtykYcE5D2zfYdfXJcw99ZCo6BKrD6ANap7/SzhYtAVIzyvwlZcMdZTvsAqxj4fWmddkxsC3mYt+an4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB6812
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -190,34 +85,253 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Acked-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Hi all,
 
-On 7/23/2025 2:31 PM, David Marchand wrote:
-> Without an explicit type, ip_xor gets promoted to a int.
->
-> ../lib/rib/rte_rib6.c:348:26: runtime error:
-> 	left shift of 130 by 24 places cannot be represented in type 'int'
->
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
-> ---
->   lib/rib/rte_rib6.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/lib/rib/rte_rib6.c b/lib/rib/rte_rib6.c
-> index ded5fd044f..ec8ff68e87 100644
-> --- a/lib/rib/rte_rib6.c
-> +++ b/lib/rib/rte_rib6.c
-> @@ -352,7 +352,7 @@ rte_rib6_insert(struct rte_rib6 *rib,
->   		if (ip_xor == 0)
->   			d += 8;
->   		else {
-> -			d += rte_clz32(ip_xor << 24);
-> +			d += rte_clz32((uint32_t)ip_xor << 24);
->   			break;
->   		}
->   	}
+Here is a list of patches targeted for stable release 22.11.9.
 
--- 
-Regards,
-Vladimir
+The planned date for the final release is by the 25th of August 2025.
 
+Please help with testing and validation of your use cases and report
+any issues/results with reply-all to this mail. For the final release
+the fixes and reported validations will be added to the release notes.
+
+A release candidate tarball can be found at:
+
+    https://dpdk.org/browse/dpdk-stable/tag/?id=v22.11.9-rc1
+
+These patches are located at branch 22.11 of dpdk-stable repo:
+    https://dpdk.org/browse/dpdk-stable/
+
+Thanks.
+
+Luca Boccassi
+
+---
+Amiya Ranjan Mohakud (2):
+      net/iavf: fix VLAN strip setting after enabling filter
+      net/iavf: fix VLAN strip disabling for ADQ v2 capability
+
+Anatoly Burakov (1):
+      net/ixgbe: fix indentation
+
+Ariel Otilibili (2):
+      net/af_xdp: fix use after free in zero-copy Tx
+      pcapng: fix null dereference in close
+
+Arkadiusz Kusztal (2):
+      crypto/qat: fix out-of-place header bytes in AEAD raw API
+      crypto/qat: fix out-of-place chain/cipher/auth headers
+
+Bing Zhao (2):
+      net/mlx5: fix WQE size calculation for Tx queue
+      examples/ntb: check more heap allocations
+
+Bruce Richardson (7):
+      net/fm10k/base: fix compilation warnings
+      net/ixgbe/base: correct definition of endianness macro
+      net/ixgbe/base: fix compilation warnings
+      net/i40e/base: fix unused value warnings
+      net/i40e/base: fix compiler warnings
+      test/malloc: improve resiliency
+      power/intel_uncore: fix crash closing uninitialized driver
+
+Chaoyong He (1):
+      app/testpmd: fix RSS hash key update
+
+Chengwen Feng (3):
+      app/testpmd: relax number of TCs in DCB command
+      bus: cleanup device lists
+      net/hns3: fix queue TC configuration on VF
+
+Dariusz Sosnowski (5):
+      net/mlx5: fix header modify action on group 0
+      net/mlx5: validate GTP PSC QFI width
+      net/mlx5: fix counter service cleanup on init failure
+      net/mlx5: fix VLAN stripping on hairpin queue
+      net/mlx5: fix masked indirect age action validation
+
+David Marchand (5):
+      ci: bump tested distributions in GHA
+      acl: fix build with GCC 15 on aarch64
+      eal: warn if no lcore is available
+      doc: remove reference to deprecated --use-device option
+      eal: add description of service corelist in usage
+
+Dengdui Huang (12):
+      net/hns3: fix integer overflow in interrupt unmap
+      net/hns3: fix memory leak on failure
+      net/hns3: fix extra wait for link up
+      net/hns3: fix memory leak for indirect flow action
+      net/hns3: fix interrupt rollback
+      net/hns3: fix divide by zero
+      net/hns3: fix resources release on reset
+      net/hns3: fix CRC data segment
+      mem: fix lockup on address space shortage
+      net/hns3: check requirement for hardware GRO
+      net/hns3: allow Tx vector when fast free not enabled
+      net/hns3: allow Rx vector mode with VLAN filter
+
+Dhanya Pillai (1):
+      net/i40e: fix RSS on plain IPv4
+
+Doug Foster (1):
+      config/arm: add grace build config
+
+Eugenio Pérez (1):
+      vhost: search virtqueues driver data in read-only area
+
+Gagandeep Singh (2):
+      common/dpaax: fix PDCP key command race condition
+      common/dpaax: fix PDCP AES only 12-bit SN
+
+Gavin Li (1):
+      net/mlx5: align PF and VF/SF MAC address handling
+
+Gowrishankar Muthukrishnan (2):
+      crypto/openssl: include private exponent in RSA session
+      test/crypto: fix RSA decrypt validation
+
+Gregory Etelson (3):
+      net/mlx5: remove unsupported flow meter action in HWS
+      common/mlx5: fix extraction of auxiliary device name
+      bus/auxiliary: fix crash in cleanup
+
+Hengqi Chen (1):
+      net/virtio: fix check of threshold for Tx freeing
+
+Jake Freeland (1):
+      bus/pci/bsd: fix device existence check
+
+Jiawen Wu (13):
+      net/txgbe: fix ntuple filter parsing
+      net/txgbe: fix raw pattern match for FDIR rule
+      net/txgbe: fix packet type for FDIR filter
+      net/txgbe: fix to create FDIR filter for SCTP packet
+      net/txgbe: fix FDIR perfect mode for IPv6
+      net/txgbe: fix reserved extra FDIR headroom
+      net/txgbe: fix MAC control frame forwarding
+      net/ngbe: fix MAC control frame forwarding
+      net/txgbe: fix device statistics
+      net/ngbe: fix device statistics
+      net/txgbe: restrict VLAN strip configuration on VF
+      net/txgbe: add LRO flag in mbuf when enabled
+      net/txgbe: fix to create FDIR filter for tunnel packet
+
+Kaiwen Deng (2):
+      net/e1000: fix xstats name
+      net/e1000: fix igb Tx queue offloads capability
+
+Khadem Ullah (1):
+      net/mlx5: fix crash on age query with indirect conntrack
+
+Krzysztof Galazka (1):
+      net/i40e/base: remove unused variables
+
+Long Li (5):
+      bus/vmbus: align ring buffer data to page boundary
+      bus/vmbus: use Hyper-V page size
+      net/netvsc: use Hyper-V page size
+      net/netvsc: add stats counters from VF
+      net/mana: check vendor ID when probing RDMA device
+
+Luca Boccassi (1):
+      Revert "net/virtio: fix check of threshold for Tx freeing"
+
+Lukasz Krakowiak (2):
+      net/ice/base: fix integer overflow
+      net/ice/base: fix typo in device ID description
+
+Maayan Kashani (2):
+      ethdev: fix error struct in flow configure
+      examples/multi_process: fix ports cleanup on exit
+
+Madhuker Mythri (1):
+      net/bonding: avoid RSS RETA update in flow isolation mode
+
+Maxime Coquelin (1):
+      net/mlx5: avoid setting kernel MTU if not needed
+
+Mingjin Ye (1):
+      net/ice: fix querying RSS hash for DCF
+
+Morten Brørup (1):
+      eal/unix: fix log message for madvise failure
+
+Nithin Dabilpuram (1):
+      common/cnxk: fix CQ tail drop
+
+Nithinsen Kaithakadan (3):
+      common/cnxk: fix qsize in CPT iq enable
+      test/crypto: fix auth and cipher case IV length
+      test/crypto: set to null after freeing operation
+
+Oleksandr Nahnybida (1):
+      trace: fix overflow in per-lcore trace buffer
+
+Pavan Nikhilesh (1):
+      eal: fix return value of lcore role
+
+Pravin Pathak (4):
+      event/dlb2: fix dequeue with CQ depth <= 16
+      event/dlb2: fix validaton of LDB port COS ID arguments
+      event/dlb2: fix num single link ports for DLB2.5
+      app/eventdev: fix number of releases sent during cleanup
+
+Radu Nicolau (3):
+      crypto/virtio: add request check on request side
+      crypto/virtio: fix driver cleanup
+      crypto/qat: fix out-of-place chain/cipher/auth headers
+
+Rahul Bhansali (3):
+      net/cnxk: fix descriptor count update on reconfig
+      common/cnxk: fix null pointer checks
+      net/cnxk: fix lock for security session ops
+
+Rajesh Mudimadugula (2):
+      vhost/crypto: fix cipher data length
+      crypto/virtio: fix cipher data source length
+
+Rakesh Kudurumalla (2):
+      examples/ipsec-secgw: fix crash with IPv6
+      examples/ipsec-secgw: fix crash in event vector mode
+
+Rui Ferreira (2):
+      eal/linux: unregister alarm callback before free
+      eal/freebsd: unregister alarm callback before free
+
+Satheesh Paul (1):
+      common/cnxk: fix E-tag pattern parsing
+
+Shani Peretz (1):
+      app/crypto-perf: fix AAD offset alignment
+
+Stephen Hemminger (3):
+      net/qede: fix use after free
+      bus/fslmc: fix use after free
+      net/null: fix packet copy
+
+Sunyang Wu (1):
+      ethdev: keep promiscuous/allmulti value before disabling
+
+Thomas Monjalon (1):
+      examples/multi_process: revert ports cleanup on exit
+
+Tirthendu Sarkar (1):
+      event/dlb2: fix default credits based on HW version
+
+Viacheslav Ovsiienko (2):
+      net/mlx5: fix maximal queue size query
+      net/mlx5: fix hypervisor detection in VLAN workaround
+
+Volodymyr Fialko (1):
+      examples/ipsec-secgw: fix number of queue pairs
+
+Yan Lu (1):
+      net/tap: fix qdisc add failure handling
+
+Yang Ming (1):
+      eal/linux: improve ASLR check
+
+Yuan Wang (2):
+      net/e1000: fix EEPROM dump
+      net/ixgbe: fix port mask default value in filter
