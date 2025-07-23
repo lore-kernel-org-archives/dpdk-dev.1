@@ -2,46 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EB7BC83F1A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 16:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77ED8C83F1A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 16:22:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 31C214275D;
-	Wed, 23 Jul 2025 18:21:19 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6386741149;
+	Wed, 23 Jul 2025 18:21:20 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id 99DE641611
- for <dev@dpdk.org>; Wed, 23 Jul 2025 18:21:15 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5EB2B41104
+ for <dev@dpdk.org>; Wed, 23 Jul 2025 18:21:17 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1753287676; x=1784823676;
+ t=1753287678; x=1784823678;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=DOCKMCHz8NRVVI3vRoZKf8Ls5dELRhIaRqIw1SEv4fM=;
- b=LNGjxDt6D3CKamb5id9oHR4wZrwFe1colkOyijClOG8dvroRFTMQojRL
- Bb4gr4YVeW1in7WlLKGHt4mHs8m5IFdT1o6H8qM5Nkp0HMOLe9S4UTnP9
- ZBnmOK98HuuIB/roAmUQqfwdNVkKV7LPwlnwAoiuMnpRIT+zYnSFHSPx3
- IsAhzamJNO4AM+g6gMkLKxFtmlEuD3Uzd2Lp49X9YQAP8sIF3xWN4Gevt
- +cD9uU3pZnYMQTfguHlUFjChP+qDET5uwI2p/0MRLP2a59mOucb6C3e0W
- dvWUJk1zhJZbtLBonmidgbEEcR/WXUiHVhdxBm9S9gFtCDu/4Qa7TOWSo A==;
-X-CSE-ConnectionGUID: QyyGQNUIQg+gzyb6jJy0PA==
-X-CSE-MsgGUID: dzuYIeubSXSuOXOc+DFDOw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="43198015"
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; d="scan'208";a="43198015"
+ bh=pwmmD3QAHQdMOcjxxMG9Eqq35GNAY/FDXCqmYzCrqYY=;
+ b=cjE+c0eEHHItk+9xiOkgUGEJ+cMLMXD1kVAW7YCGp4SHmkpgrEDyV0ov
+ 2kXb/sIqbpvmUv2pUbtbGF7kAI4oy040+grzMCMVr/am1sI8dqLL+J7Yg
+ hnf9fGlpWhGsqCVYdS3o4ebt94nBYmx088ZyDmpR6t4uTVB57/rEg1l2T
+ uzcrgumEXm8huUXlr8snt1km//IeIgeK5e5JYbKX/eO9bYCTczm/lQU3c
+ lrydM3MHaAbv1kRbME7Tx7d4stmm7cD1xn+Wsm2BInS5aJ0rZiM3TcjQa
+ Dp5SXm+3vnICVSA4XO5Ip5tdB2sv2uNewwAwpU2bnN+9+3aHHQEwkQkfM Q==;
+X-CSE-ConnectionGUID: 1vkyAQ23RLWxP2ZK9vL1Fg==
+X-CSE-MsgGUID: zZS8+8nNRNOHsC/4WIyf7A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="43198021"
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; d="scan'208";a="43198021"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Jul 2025 09:21:15 -0700
-X-CSE-ConnectionGUID: xLlgUh0YRO6/Jk/Hpdwtbg==
-X-CSE-MsgGUID: pe5AgjB/TdiZMckVDiTZ5g==
+ 23 Jul 2025 09:21:17 -0700
+X-CSE-ConnectionGUID: A6tyiCvvQM24mWF/eLypwQ==
+X-CSE-MsgGUID: m0xpp4J/RCO7wr7GGlzuXA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; d="scan'208";a="160148941"
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; d="scan'208";a="160148944"
 Received: from silpixa00401385.ir.intel.com ([10.237.214.33])
- by fmviesa008.fm.intel.com with ESMTP; 23 Jul 2025 09:21:14 -0700
+ by fmviesa008.fm.intel.com with ESMTP; 23 Jul 2025 09:21:16 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: david.marchand@redhat.com, Bruce Richardson <bruce.richardson@intel.com>,
- Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH v7 11/13] argparse: add support for parsing core lists
-Date: Wed, 23 Jul 2025 17:20:09 +0100
-Message-ID: <20250723162013.2392-12-bruce.richardson@intel.com>
+ Tyler Retzlaff <roretzla@linux.microsoft.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH v7 12/13] eal: simplify running CPUs with ids above max lcores
+Date: Wed, 23 Jul 2025 17:20:10 +0100
+Message-ID: <20250723162013.2392-13-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250723162013.2392-1-bruce.richardson@intel.com>
 References: <20250520164025.2055721-1-bruce.richardson@intel.com>
@@ -61,397 +62,249 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Core lists are widely used in DPDK, so add support for parsing them.
+To simplify use on systems with large numbers of cores, where it becomes
+more awkward to use CPU cores numbered above 128, we add to EAL the "-L"
+or "--lcores-remapped" option, which simply takes a list of cores to run
+on, and maps them to lcore ids starting at a defined base (0 by
+default).
+
+To enable secondary process use of this, we also add in an extra flag
+--lcoreid-base, which changes the starting lcore id from 0. This flag is
+mandatory in secondary processes, to ensure that we don't have lcore ids
+that overlap between primary and secondary.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- app/test/test_argparse.c               | 188 +++++++++++++++++++++++++
- doc/guides/prog_guide/argparse_lib.rst |  32 +++++
- lib/argparse/rte_argparse.c            |  63 +++++++++
- lib/argparse/rte_argparse.h            |   2 +
- 4 files changed, 285 insertions(+)
+ doc/guides/linux_gsg/eal_args.include.rst | 46 ++++++++++++-
+ doc/guides/rel_notes/release_25_11.rst    |  9 +++
+ lib/eal/common/eal_common_options.c       | 79 +++++++++++++++++++++--
+ lib/eal/common/eal_option_list.h          |  2 +
+ 4 files changed, 130 insertions(+), 6 deletions(-)
 
-diff --git a/app/test/test_argparse.c b/app/test/test_argparse.c
-index 0a229752fa..c829ea75e4 100644
---- a/app/test/test_argparse.c
-+++ b/app/test/test_argparse.c
-@@ -6,6 +6,7 @@
- #include <string.h>
+diff --git a/doc/guides/linux_gsg/eal_args.include.rst b/doc/guides/linux_gsg/eal_args.include.rst
+index 0b17879d42..d45d79b827 100644
+--- a/doc/guides/linux_gsg/eal_args.include.rst
++++ b/doc/guides/linux_gsg/eal_args.include.rst
+@@ -4,6 +4,28 @@
+ Lcore-related options
+ ~~~~~~~~~~~~~~~~~~~~~
  
- #include <rte_argparse.h>
-+#include <rte_os.h>
++*   ``-L, --lcores-remapped <core list>``
++
++    List of physical CPU cores to use,
++    with each core assigned a sequential logical core (lcore) ID starting from 0.
++    This is a simplified alternative to ``--lcores``, described below,
++    for cases where you want to use specific physical cores,
++    (some or all of which have physical ids greater than RTE_MAX_LCORE)
++    but don't need complex logical-to-physical core mappings.
++
++    The argument format is a standard core list: ``<c1>[-c2][,c3[-c4],...]``
++    where ``c1``, ``c2``, etc are physical core indexes.
++
++    Examples:
++
++    ``--lcores-remapped=3-5``
++      Use physical cores 3, 4, and 5 as logical cores 0, 1, and 2 respectively.
++      This is equivalent to ``--lcores=0@3,1@4,2@5``.
++
++    ``--lcores-remapped=150,152,154``
++      Use physical cores 150, 152, and 154 as logical cores 0, 1, and 2 respectively.
++      This is equivalent to ``--lcores=0@150,1@152,2@154``.
++
+ *   ``-l, --lcores <core list>``
  
- #include "test.h"
+     List of cores to run on
+@@ -64,9 +86,31 @@ Lcore-related options
  
-@@ -500,6 +501,40 @@ test_argparse_opt_autosave_parse_int_of_optional_val(void)
- 	return 0;
+ .. note::
+ 
+-    At a given instance only one core option ``--lcores``, ``-l`` or ``-c`` can
++    At a given instance only one core option ``--lcores`` / ``-l``, or ``--lcores-remapped`` / ``-L`` can
+     be used.
+ 
++*   ``--lcoreid-base <base ID>``
++
++    Adjust the base logical core ID for ``--lcores-remapped`` (default: 0).
++    When used with ``--lcores-remapped``,
++    logical core numbering starts from this value instead of 0.
++    This is particularly useful for secondary processes in a multi-process setup,
++    as lcore_ids must all be unique across all processes.
++
++    Example:
++
++    ``--lcores-remapped=3-5 --lcoreid-base=10``
++      Use physical cores 3, 4, and 5 as logical cores 10, 11, and 12 respectively.
++      This is equivalent to ``--lcores=10@3,11@4,12@5``.
++
++.. note::
++
++    The ``--lcores-remapped`` option is ignored if used with ``--lcores``, ``-l`` option.
++
++.. note::
++
++    For secondary processes, ``--lcoreid-base`` *must* be specified when using ``--lcores-remapped``.
++
+ *   ``--main-lcore <core ID>``
+ 
+     Core ID that is used as main.
+diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
+index 75bbd0e821..39fc800f6e 100644
+--- a/doc/guides/rel_notes/release_25_11.rst
++++ b/doc/guides/rel_notes/release_25_11.rst
+@@ -55,6 +55,15 @@ New Features
+      Also, make sure to start the actual text at the margin.
+      =======================================================
+ 
++* **Added EAL lcores-remapped(-L) argument to simplify running on higher-numbered cores.**
++
++  Added new EAL command line arguments ``-L, --lcores-remapped`` and ``--lcoreid-base``
++  that provide a simplified way to specify which physical CPU cores to use.
++  The ``--lcores-remapped`` argument allows specifying a list of physical cores on which the EAL threads are to be spawned,
++  with each thread being assigned an lcore id in sequence.
++  The lcore numbering starts at 0 by default, though this can be overridden using ``--lcoreid-base``.
++  See :doc:`../linux_gsg/eal_args.include` for more details.
++
+ * **Allow overriding the automatic usage/help generation in argparse library.**
+ 
+   The argparse library now supports overriding the automatic help text generation,
+diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
+index c568e59ef3..af2bd33fd4 100644
+--- a/lib/eal/common/eal_common_options.c
++++ b/lib/eal/common/eal_common_options.c
+@@ -232,6 +232,8 @@ eal_collate_args(int argc, char **argv)
+ 
+ 	/* for non-list args, we can just check for zero/null values using macro */
+ 	if (CONFLICTING_OPTIONS(args, coremask, lcores) ||
++			CONFLICTING_OPTIONS(args, coremask, lcores_remapped) ||
++			CONFLICTING_OPTIONS(args, lcores, lcores_remapped) ||
+ 			CONFLICTING_OPTIONS(args, service_coremask, service_corelist) ||
+ 			CONFLICTING_OPTIONS(args, no_telemetry, telemetry) ||
+ 			CONFLICTING_OPTIONS(args, memory_size, numa_mem) ||
+@@ -1351,6 +1353,67 @@ eal_parse_lcores(const char *lcores)
+ 	return ret;
  }
  
 +static int
-+test_argparse_opt_parse_corelist_of_required_val(void)
++eal_parse_lcores_remapped(const char *corelist, const char *base_str)
 +{
-+	struct rte_argparse *obj;
-+	rte_cpuset_t val_cpuset;
-+	char *argv[3];
-+	int ret;
++	struct rte_config *cfg = rte_eal_get_configuration();
++	rte_cpuset_t phys_cores;
 +
-+	/* test with long option and single core - this is known to work */
-+	obj = test_argparse_init_obj();
-+	obj->args[0].name_long = "--corelist";
-+	obj->args[0].name_short = "-c";
-+	obj->args[0].val_saver = (void *)&val_cpuset;
-+	obj->args[0].val_set = NULL;
-+	obj->args[0].value_required = RTE_ARGPARSE_VALUE_REQUIRED;
-+	obj->args[0].value_type = RTE_ARGPARSE_VALUE_TYPE_CORELIST;
-+	obj->args[1].name_long = NULL;
-+	argv[0] = test_strdup(obj->prog_name);
-+	argv[1] = test_strdup("--corelist");
-+	argv[2] = test_strdup("1,3-5");
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse(obj, 3, argv);
-+	TEST_ASSERT(ret == 3, "Argparse parse expect success!");
-+	TEST_ASSERT(!CPU_ISSET(0, &val_cpuset), "Core 0 should not be set in corelist!");
-+	TEST_ASSERT(CPU_ISSET(1, &val_cpuset), "Core 1 should be set in corelist!");
-+	TEST_ASSERT(!CPU_ISSET(2, &val_cpuset), "Core 2 should not be set in corelist!");
-+	TEST_ASSERT(CPU_ISSET(3, &val_cpuset), "Core 3 should be set in corelist!");
-+	TEST_ASSERT(CPU_ISSET(4, &val_cpuset), "Core 4 should be set in corelist!");
-+	TEST_ASSERT(CPU_ISSET(5, &val_cpuset), "Core 5 should be set in corelist!");
-+	TEST_ASSERT(!CPU_ISSET(6, &val_cpuset), "Core 6 should not be set in corelist!");
-+
-+	return 0;
-+}
-+
- static int
- opt_callback_parse_int_of_no_val(uint32_t index, const char *value, void *opaque)
- {
-@@ -782,6 +817,152 @@ test_argparse_pos_callback_parse_int(void)
- 	return 0;
- }
- 
-+static int
-+test_argparse_parse_type_corelist(void)
-+{
-+	char *corelist_valid_single = test_strdup("5");
-+	char *corelist_valid_multiple = test_strdup("0,1,5");
-+	char *corelist_valid_range = test_strdup("1-5");
-+	char *corelist_valid_mixed = test_strdup("0,1,5-10,12-16,18,20");
-+	char *corelist_valid_reverse_range = test_strdup("10-5");
-+	char *corelist_valid_initial_spaces = test_strdup("   1,2,5-7");
-+	char *corelist_valid_empty = test_strdup("");
-+	char *corelist_invalid_spaces = test_strdup(" 1 , 2 , 5-7 ");
-+	char *corelist_invalid_letters = test_strdup("1,a,3");
-+	char *corelist_invalid_range_incomplete = test_strdup("1-");
-+	char *corelist_invalid_range_double_dash = test_strdup("1--5");
-+	char *corelist_invalid_special_chars = test_strdup("1,2@3");
-+	char *corelist_invalid_comma_only = test_strdup(",");
-+	char *corelist_invalid_out_of_range = test_strdup("70000");
-+	rte_cpuset_t val_cpuset;
-+	int ret;
-+
-+	/* test valid single core */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_single,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (single core) failed!");
-+	TEST_ASSERT(CPU_ISSET(5, &val_cpuset), "Core 5 should be set in corelist!");
-+	TEST_ASSERT(!CPU_ISSET(0, &val_cpuset), "Core 0 should not be set in corelist!");
-+	TEST_ASSERT(!CPU_ISSET(1, &val_cpuset), "Core 1 should not be set in corelist!");
-+
-+	/* test valid multiple cores */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_multiple,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (multiple cores) failed!");
-+	TEST_ASSERT(CPU_ISSET(0, &val_cpuset), "Core 0 should be set in corelist!");
-+	TEST_ASSERT(CPU_ISSET(1, &val_cpuset), "Core 1 should be set in corelist!");
-+	TEST_ASSERT(CPU_ISSET(5, &val_cpuset), "Core 5 should be set in corelist!");
-+	TEST_ASSERT(!CPU_ISSET(2, &val_cpuset), "Core 2 should not be set in corelist!");
-+	TEST_ASSERT(!CPU_ISSET(3, &val_cpuset), "Core 3 should not be set in corelist!");
-+
-+	/* test valid range */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_range,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (range) failed!");
-+	for (int i = 1; i <= 5; i++)
-+		TEST_ASSERT(CPU_ISSET(i, &val_cpuset), "Core %d should be set in range 1-5!", i);
-+	TEST_ASSERT(!CPU_ISSET(0, &val_cpuset), "Core 0 should not be set in range 1-5!");
-+	TEST_ASSERT(!CPU_ISSET(6, &val_cpuset), "Core 6 should not be set in range 1-5!");
-+
-+	/* test valid mixed corelist */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_mixed,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (mixed) failed!");
-+	TEST_ASSERT(CPU_ISSET(0, &val_cpuset), "Core 0 should be set in mixed corelist!");
-+	TEST_ASSERT(CPU_ISSET(1, &val_cpuset), "Core 1 should be set in mixed corelist!");
-+	for (int i = 5; i <= 10; i++)
-+		TEST_ASSERT(CPU_ISSET(i, &val_cpuset), "Core %d should be set in range 5-10!", i);
-+	for (int i = 12; i <= 16; i++)
-+		TEST_ASSERT(CPU_ISSET(i, &val_cpuset), "Core %d should be set in range 12-16!", i);
-+
-+	TEST_ASSERT(CPU_ISSET(18, &val_cpuset), "Core 18 should be set in mixed corelist!");
-+	TEST_ASSERT(CPU_ISSET(20, &val_cpuset), "Core 20 should be set in mixed corelist!");
-+	TEST_ASSERT(!CPU_ISSET(2, &val_cpuset), "Core 2 should not be set in mixed corelist!");
-+	TEST_ASSERT(!CPU_ISSET(11, &val_cpuset), "Core 11 should not be set in mixed corelist!");
-+	TEST_ASSERT(!CPU_ISSET(17, &val_cpuset), "Core 17 should not be set in mixed corelist!");
-+	TEST_ASSERT(!CPU_ISSET(19, &val_cpuset), "Core 19 should not be set in mixed corelist!");
-+
-+	/* test valid reverse range (10-5 should be interpreted as 5-10) */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_reverse_range,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (reverse range) failed!");
-+	for (int i = 5; i <= 10; i++)
-+		TEST_ASSERT(CPU_ISSET(i, &val_cpuset),
-+				"Core %d should be set in reverse range 10-5!", i);
-+	TEST_ASSERT(!CPU_ISSET(4, &val_cpuset), "Core 4 should not be set in reverse range 10-5!");
-+	TEST_ASSERT(!CPU_ISSET(11, &val_cpuset), "Core 11 should not be set in reverse range 10-5!");
-+
-+	/* test valid corelist with initial spaces only */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_initial_spaces,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (with initial spaces) failed!");
-+	TEST_ASSERT(CPU_ISSET(1, &val_cpuset), "Core 1 should be set in initial spaced corelist!");
-+	TEST_ASSERT(CPU_ISSET(2, &val_cpuset), "Core 2 should be set in initial spaced corelist!");
-+	for (int i = 5; i <= 7; i++)
-+		TEST_ASSERT(CPU_ISSET(i, &val_cpuset),
-+				"Core %d should be set in initial spaced range 5-7!", i);
-+
-+	/* test valid empty corelist */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_empty,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (empty) failed!");
-+	/* Verify that no cores are set in empty corelist */
-+	for (int i = 0; i < CPU_SETSIZE; i++)
-+		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset),
-+				"Core %d should not be set in empty corelist!", i);
-+
-+	/* test invalid corelist with spaces */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_spaces,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (with spaces) should have failed!");
-+
-+	/* test invalid corelist with letters */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_letters,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (with letters) should have failed!");
-+
-+	/* test invalid corelist with incomplete range */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_range_incomplete,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (incomplete range) should have failed!");
-+
-+	/* test invalid corelist with double dash */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_range_double_dash,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (double dash) should have failed!");
-+
-+	/* test invalid corelist with special characters */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_special_chars,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (special chars) should have failed!");
-+
-+	/* test invalid comma-only corelist */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_comma_only,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (comma only) should have failed!");
-+
-+	/* test invalid out-of-range corelist */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_out_of_range,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (out of range) should have failed!");
-+
-+	return 0;
-+}
-+
- static int
- test_argparse_parse_type(void)
- {
-@@ -880,6 +1061,12 @@ test_argparse_parse_type(void)
- 	ret = rte_argparse_parse_type(bool_numeric_invalid, RTE_ARGPARSE_VALUE_TYPE_BOOL,
- 			&val_bool);
- 	TEST_ASSERT(ret != 0, "Argparse parse type for bool (numeric invalid) passed unexpectedly!");
-+
-+	/* test for corelist parsing */
-+	ret = test_argparse_parse_type_corelist();
-+	if (ret != 0)
-+		return ret;
-+
- 	return 0;
- }
- 
-@@ -900,6 +1087,7 @@ static struct unit_test_suite argparse_test_suite = {
- 		TEST_CASE(test_argparse_opt_autosave_parse_int_of_no_val),
- 		TEST_CASE(test_argparse_opt_autosave_parse_int_of_required_val),
- 		TEST_CASE(test_argparse_opt_autosave_parse_int_of_optional_val),
-+		TEST_CASE(test_argparse_opt_parse_corelist_of_required_val),
- 		TEST_CASE(test_argparse_opt_callback_parse_int_of_no_val),
- 		TEST_CASE(test_argparse_opt_callback_parse_int_of_required_val),
- 		TEST_CASE(test_argparse_opt_callback_parse_int_of_optional_val),
-diff --git a/doc/guides/prog_guide/argparse_lib.rst b/doc/guides/prog_guide/argparse_lib.rst
-index 7868af5672..7882d910ab 100644
---- a/doc/guides/prog_guide/argparse_lib.rst
-+++ b/doc/guides/prog_guide/argparse_lib.rst
-@@ -229,6 +229,38 @@ Boolean arguments are parsed using ``RTE_ARGPARSE_VALUE_TYPE_BOOL`` and accept t
-       },
-    };
- 
-+Corelist Type
-+^^^^^^^^^^^^^
-+
-+The argparse library supports automatic parsing of CPU core lists using the
-+``RTE_ARGPARSE_VALUE_TYPE_CORELIST`` value type. This feature allows users to
-+specify CPU cores in a flexible format similar to other DPDK applications.
-+
-+.. code-block:: C
-+
-+   #include <rte_os.h>  /* for CPU set operations */
-+
-+   static rte_cpuset_t cores;
-+
-+   static struct rte_argparse obj = {
-+      .args = {
-+         { "--cores", "-c", "CPU cores to use", &cores, NULL, RTE_ARGPARSE_VALUE_REQUIRED, RTE_ARGPARSE_VALUE_TYPE_CORELIST },
-+         ARGPARSE_ARG_END(),
-+      },
-+   };
-+
-+The corelist parsing supports the following input formats:
-+
-+- **Single core**: ``--cores 5`` (sets core 5)
-+- **Multiple cores**: ``--cores 1,2,5`` (sets cores 1, 2, and 5)
-+- **Core ranges**: ``--cores 1-5`` (sets cores 1, 2, 3, 4, and 5)
-+- **Mixed format**: ``--cores 0,2-4,7`` (sets cores 0, 2, 3, 4, and 7)
-+- **Reverse ranges**: ``--cores 5-1`` (equivalent to 1-5, sets cores 1, 2, 3, 4, and 5)
-+- **Empty corelist**: ``--cores ""`` (sets no cores)
-+
-+The parsed result is stored in an ``rte_cpuset_t`` structure that can be used
-+with standard CPU set operations:
-+
- Parsing by callback way
- ~~~~~~~~~~~~~~~~~~~~~~~
- 
-diff --git a/lib/argparse/rte_argparse.c b/lib/argparse/rte_argparse.c
-index e7b9bf573d..5ec31abfff 100644
---- a/lib/argparse/rte_argparse.c
-+++ b/lib/argparse/rte_argparse.c
-@@ -5,9 +5,11 @@
- #include <errno.h>
- #include <stdlib.h>
- #include <string.h>
-+#include <ctype.h>
- 
- #include <eal_export.h>
- #include <rte_log.h>
-+#include <rte_os.h>
- 
- #include "rte_argparse.h"
- 
-@@ -53,6 +55,7 @@ is_valid_value_type_field(const struct rte_argparse_arg *arg)
- 	case RTE_ARGPARSE_VALUE_TYPE_U64:
- 	case RTE_ARGPARSE_VALUE_TYPE_STR:
- 	case RTE_ARGPARSE_VALUE_TYPE_BOOL:
-+	case RTE_ARGPARSE_VALUE_TYPE_CORELIST:
- 		return true;
- 	/* omit default case so compiler warns on any missing enum values */
- 	}
-@@ -554,6 +557,64 @@ parse_arg_bool(const struct rte_argparse_arg *arg, const char *value)
- 	return 0;
- }
- 
-+static int
-+parse_arg_corelist(const struct rte_argparse_arg *arg, const char *value)
-+{
-+	rte_cpuset_t *cpuset = arg->val_saver;
-+	const char *last = value;
-+	int min = -1;
-+
-+	if (value == NULL) {
-+		*cpuset = *(rte_cpuset_t *)arg->val_set;
-+		return 0;
++	/* Reset lcore config */
++	for (int i = 0; i < RTE_MAX_LCORE; i++) {
++		cfg->lcore_role[i] = ROLE_OFF;
++		lcore_config[i].core_index = -1;
++		CPU_ZERO(&lcore_config[i].cpuset);
 +	}
 +
-+	CPU_ZERO(cpuset);
-+	while (*last != '\0') {
++	/* Parse the physical core list using rte_argparse_parse_type */
++	if (rte_argparse_parse_type(corelist, RTE_ARGPARSE_VALUE_TYPE_CORELIST, &phys_cores) < 0) {
++		EAL_LOG(ERR, "Invalid lcores-remapped format: '%s'", corelist);
++		return -1;
++	}
++	if (CPU_COUNT(&phys_cores) == 0) {
++		EAL_LOG(ERR, "No valid cores specified in lcores-remapped: '%s'", corelist);
++		return -1;
++	}
++
++	if (check_cpuset(&phys_cores) < 0)
++		return -1;
++
++	/* Parse base lcore ID if provided */
++	unsigned int base_lcore = 0;
++	if (base_str != NULL) {
 +		char *end;
-+		int64_t idx;
-+		int32_t max;
-+
-+		while (isblank(*value))
-+			value++;
-+
-+		if (!isdigit(*value))
-+			return -1;
-+
 +		errno = 0;
-+		idx = strtol(value, &end, 10);
-+		last = end;
-+		if (errno || idx > UINT16_MAX)
-+			return -1;
-+
-+		if (*end == '-') {
-+			min = idx; /* start of range, move to next loop stage */
-+		} else if (*end == ',' || *end == '\0') {
-+			/* single value followed by comma or end (min is set only by '-') */
-+			if (min == -1) {
-+				min = max = idx;
-+			} else if (min > idx) {
-+				/* we have range from high to low */
-+				max = min;
-+				min = idx;
-+			} else {
-+				/* range from low to high */
-+				max = idx;
-+			}
-+
-+			for (; min <= max; min++)
-+				CPU_SET(min, cpuset);
-+
-+			min = -1; /* no longer in a range */
-+		} else {
-+			/* end is an unexpected character, return error */
++		base_lcore = strtoul(base_str, &end, 10);
++		if (errno || end == NULL || *end != '\0' || base_lcore >= RTE_MAX_LCORE) {
++			EAL_LOG(ERR, "Invalid lcoreid-base: '%s'", base_str);
 +			return -1;
 +		}
-+		value = last + 1;
 +	}
++
++	/* Map logical cores starting from base_lcore to physical cores */
++	unsigned int count = 0;
++	for (int i = 0; i < CPU_SETSIZE && count < RTE_MAX_LCORE; i++) {
++		if (CPU_ISSET(i, &phys_cores)) {
++			const unsigned int lcore_id = base_lcore + count;
++			if (lcore_id >= RTE_MAX_LCORE) {
++				EAL_LOG(ERR, "Logical lcore %u exceeds RTE_MAX_LCORE (%d)",
++						lcore_id, RTE_MAX_LCORE);
++				return -1;
++			}
++
++			/* Set up the lcore configuration */
++			cfg->lcore_role[lcore_id] = ROLE_RTE;
++			lcore_config[lcore_id].core_index = count;
++			CPU_SET(i, &lcore_config[lcore_id].cpuset);
++			count++;
++		}
++	}
++
++	cfg->lcore_count = count;
 +	return 0;
 +}
 +
- static int
- parse_arg_autosave(const struct rte_argparse_arg *arg, const char *value)
+ static void
+ eal_log_usage(void)
  {
-@@ -575,6 +636,8 @@ parse_arg_autosave(const struct rte_argparse_arg *arg, const char *value)
- 		return parse_arg_str(arg, value);
- 	case RTE_ARGPARSE_VALUE_TYPE_BOOL:
- 		return parse_arg_bool(arg, value);
-+	case RTE_ARGPARSE_VALUE_TYPE_CORELIST:
-+		return parse_arg_corelist(arg, value);
- 	/* omit default case so compiler warns on missing enum values */
+@@ -1842,6 +1905,8 @@ eal_parse_args(void)
+ 			EAL_LOG(ERR, "invalid process type: %s", args.proc_type);
+ 			return -1;
+ 		}
++		if (int_cfg->process_type == RTE_PROC_AUTO)
++			int_cfg->process_type = eal_proc_type_detect();
  	}
- 	return -EINVAL;
-diff --git a/lib/argparse/rte_argparse.h b/lib/argparse/rte_argparse.h
-index 63b49ba220..991f084927 100644
---- a/lib/argparse/rte_argparse.h
-+++ b/lib/argparse/rte_argparse.h
-@@ -69,6 +69,8 @@ enum rte_argparse_value_type {
- 	RTE_ARGPARSE_VALUE_TYPE_STR,
- 	/** The argument's value is boolean flag type. */
- 	RTE_ARGPARSE_VALUE_TYPE_BOOL,
-+	/** The argument's value is a corelist */
-+	RTE_ARGPARSE_VALUE_TYPE_CORELIST,
- };
  
- /** Additional flags which may be specified for each argument */
+ 	/* device -a/-b/-vdev options*/
+@@ -1882,6 +1947,15 @@ eal_parse_args(void)
+ 			return -1;
+ 		}
+ 		core_parsed = 1;
++	} else if (args.lcores_remapped != NULL) {
++		if (int_cfg->process_type == RTE_PROC_SECONDARY && args.lcoreid_base == NULL) {
++			EAL_LOG(ERR, "Must use --lcoreid-base with --lcores-remapped when running secondary processes");
++			return -1;
++		}
++		/* Parse the remapped cores list */
++		if (eal_parse_lcores_remapped(args.lcores_remapped, args.lcoreid_base) < 0)
++			return -1;
++		core_parsed = 1;
+ 	}
+ 	/* service core options */
+ 	if (args.service_coremask != NULL) {
+@@ -2187,8 +2261,6 @@ eal_adjust_config(struct internal_config *internal_cfg)
+ {
+ 	int i;
+ 	struct rte_config *cfg = rte_eal_get_configuration();
+-	struct internal_config *internal_conf =
+-		eal_get_internal_configuration();
+ 
+ 	if (!core_parsed)
+ 		eal_auto_detect_cores(cfg);
+@@ -2198,9 +2270,6 @@ eal_adjust_config(struct internal_config *internal_cfg)
+ 		return -1;
+ 	}
+ 
+-	if (internal_conf->process_type == RTE_PROC_AUTO)
+-		internal_conf->process_type = eal_proc_type_detect();
+-
+ 	compute_ctrl_threads_cpuset(internal_cfg);
+ 
+ 	/* if no memory amounts were requested, this will result in 0 and
+diff --git a/lib/eal/common/eal_option_list.h b/lib/eal/common/eal_option_list.h
+index dd148b7fed..976df16347 100644
+--- a/lib/eal/common/eal_option_list.h
++++ b/lib/eal/common/eal_option_list.h
+@@ -42,6 +42,8 @@ OPT_STR_ARG("--huge-unlink", NULL, "Unlink hugetlbfs files on exit (existing|alw
+ BOOL_ARG("--in-memory", NULL, "DPDK should not create shared mmap files in filesystem  (disables secondary process support)", in_memory)
+ STR_ARG("--iova-mode", NULL, "IOVA mapping mode, physical (pa)/virtual (va)", iova_mode)
+ STR_ARG("--lcores", "-l", "List of CPU cores to use", lcores)
++STR_ARG("--lcores-remapped", "-L", "List of cores to use, assigning each a sequential lcore ID (start 0 by default)", lcores_remapped)
++STR_ARG("--lcoreid-base", NULL, "Number remapped lcores from <N>, rather than 0 (e.g. for secondary processes)", lcoreid_base)
+ BOOL_ARG("--legacy-mem", NULL, "Enable legacy memory behavior", legacy_mem)
+ OPT_STR_ARG("--log-color", NULL, "Enable/disable color in log output", log_color)
+ STR_ARG("--log-level", NULL, "Log level for loggers; use log-level=help for list of log types and levels", log_level)
 -- 
 2.48.1
 
