@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85CAAC83F1A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 16:21:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEFCEC83F17
+	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 16:21:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BBF20410E4;
-	Wed, 23 Jul 2025 18:21:06 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C410E410ED;
+	Wed, 23 Jul 2025 18:21:07 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id 55DE440144
- for <dev@dpdk.org>; Wed, 23 Jul 2025 18:21:03 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id CD5C740DF8
+ for <dev@dpdk.org>; Wed, 23 Jul 2025 18:21:04 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1753287664; x=1784823664;
+ t=1753287665; x=1784823665;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=/HxFwF/qylJHh4tzWWnQPCN1LnPc60FCI4AnzzXb1Lw=;
- b=ceGv8kdT2q7eGghjg+4uVc3XwQh/jVqdKfUB2pIxK1DqdHIuAMyAGd50
- wSn50cBMGP9XOoX4iFiwU40jKOvl8BVH1Co0FAUeLfEGAbtEyUg4w2rmi
- VQ12dgGf2FwDfoUg3Nrp7DLQlT6gElEsls9n7huuiLcNRfWfYK+D8le9f
- yFz7fNGeazIO9LfK00zhBSLe4fvsehtfq/7d7Fz1x+h1H8tX2VQm+LZ0b
- U9PQtwK9tqbRWvLiFQbur95ZgEi5CHEkuWP21FrxDSYyQtAo9qPvRLgRk
- MsoQ7jF2wA5KSA2KKVQxwlYNHdu+AyZWSbCkA/DBagGWRrPoqdQfktGAg w==;
-X-CSE-ConnectionGUID: dalMIjlIRX2jQH4lc2TZdw==
-X-CSE-MsgGUID: tS3rhtwIRreF8LBxHBr5vA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="43197977"
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; d="scan'208";a="43197977"
+ bh=soyt7NdE8agqpvYcfCeG5DgT8k2Qs3F2uAattaMgb28=;
+ b=lVIWV8xVCx6/H/LkaDvg3XRGKwUSOU7kCDCB1g019NV6s/fQTrfyTMMk
+ /cawksF6+ep4dths+DiG3p/beAMLy9StJzEfVC5aChw+289SipXeT4wZx
+ rMnZoTotpolkXpYcjm+VuwbGHG+NOcWZyYnlLqa7DW8N3B5RmcW5QtRjE
+ eNDfHxysMz20GHq7XcxwkMUNu4OaRpFHIbJOkzCaunSWyXaT9OcPR0vOV
+ 3QYDth4my4dYqceo0vgehCjyuVxEQZYnvaMgh98cHMrjgb0fmsADgsSL9
+ uZ+boxkMhTWyVG+DCsrJ236jt1xofebRBbpPyVEIakAe0KW3ko9NXDOoC w==;
+X-CSE-ConnectionGUID: NR1P2dLjQDCR2GvE9SreAA==
+X-CSE-MsgGUID: ScliEhCuT++TzRUVhc+i2Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="43197981"
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; d="scan'208";a="43197981"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Jul 2025 09:21:03 -0700
-X-CSE-ConnectionGUID: LYhcELDWRneFmvo2RC9r5w==
-X-CSE-MsgGUID: PWQILlivTDaDfe8r3vSiHg==
+ 23 Jul 2025 09:21:05 -0700
+X-CSE-ConnectionGUID: 5/iiw7HATAufH2vxIAbTQw==
+X-CSE-MsgGUID: WrV9sjf2T92ITzy2sZr0ng==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; d="scan'208";a="160148914"
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; d="scan'208";a="160148917"
 Received: from silpixa00401385.ir.intel.com ([10.237.214.33])
- by fmviesa008.fm.intel.com with ESMTP; 23 Jul 2025 09:21:02 -0700
+ by fmviesa008.fm.intel.com with ESMTP; 23 Jul 2025 09:21:03 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: david.marchand@redhat.com, Bruce Richardson <bruce.richardson@intel.com>,
- Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH v7 04/13] argparse: add documentation on supported value types
-Date: Wed, 23 Jul 2025 17:20:02 +0100
-Message-ID: <20250723162013.2392-5-bruce.richardson@intel.com>
+ Tyler Retzlaff <roretzla@linux.microsoft.com>
+Subject: [PATCH v7 05/13] eal: add long options for each short option
+Date: Wed, 23 Jul 2025 17:20:03 +0100
+Message-ID: <20250723162013.2392-6-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250723162013.2392-1-bruce.richardson@intel.com>
 References: <20250520164025.2055721-1-bruce.richardson@intel.com>
@@ -61,106 +61,153 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The different value types supported by the argparse library are not
-discussed in the documentation, so add some reference material about
-them.
+To simplify future rework of the EAL arg handling, add a long-option
+equivalent for each short option that doesn't already have one.
+
+When updating the docs with the new long options, standardize the format
+of options which have both short and long variants, and drop the
+deprecated service-coremask option from the docs, rather than adding its
+new long option.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- doc/guides/prog_guide/argparse_lib.rst | 73 +++++++++++++++++++++++++-
- 1 file changed, 71 insertions(+), 2 deletions(-)
+ doc/guides/linux_gsg/eal_args.include.rst | 20 ++++++++------------
+ lib/eal/common/eal_common_options.c       |  9 +++++++++
+ lib/eal/common/eal_options.h              | 16 ++++++++++++++++
+ 3 files changed, 33 insertions(+), 12 deletions(-)
 
-diff --git a/doc/guides/prog_guide/argparse_lib.rst b/doc/guides/prog_guide/argparse_lib.rst
-index b309260d20..7868af5672 100644
---- a/doc/guides/prog_guide/argparse_lib.rst
-+++ b/doc/guides/prog_guide/argparse_lib.rst
-@@ -160,6 +160,75 @@ both use this way, the parsing is as follows:
- - For argument ``ooo``, it is positional argument,
-   the ``ooo_val`` will be set to user input's value.
+diff --git a/doc/guides/linux_gsg/eal_args.include.rst b/doc/guides/linux_gsg/eal_args.include.rst
+index 9ced54af40..0b17879d42 100644
+--- a/doc/guides/linux_gsg/eal_args.include.rst
++++ b/doc/guides/linux_gsg/eal_args.include.rst
+@@ -4,7 +4,7 @@
+ Lcore-related options
+ ~~~~~~~~~~~~~~~~~~~~~
  
-+Supported Value Types
-+~~~~~~~~~~~~~~~~~~~~~
-+
-+The argparse library supports automatic parsing of several data types when using
-+the autosave method. The parsed values are automatically converted from string
-+input to the appropriate data type and stored in the ``val_saver`` field.
-+
-+Integer Types
-+^^^^^^^^^^^^^
-+
-+The library supports parsing various integer types:
-+
-+- ``RTE_ARGPARSE_VALUE_TYPE_INT`` - signed integer
-+- ``RTE_ARGPARSE_VALUE_TYPE_U8`` - unsigned 8-bit integer
-+- ``RTE_ARGPARSE_VALUE_TYPE_U16`` - unsigned 16-bit integer
-+- ``RTE_ARGPARSE_VALUE_TYPE_U32`` - unsigned 32-bit integer
-+- ``RTE_ARGPARSE_VALUE_TYPE_U64`` - unsigned 64-bit integer
-+
-+.. code-block:: C
-+
-+   static int my_int;
-+   static uint16_t my_port;
-+   static uint32_t my_count;
-+
-+   static struct rte_argparse obj = {
-+      .args = {
-+         { "--number", "-n", "Integer value", &my_int, NULL, RTE_ARGPARSE_VALUE_REQUIRED, RTE_ARGPARSE_VALUE_TYPE_INT },
-+         { "--port", "-p", "Port number", &my_port, NULL, RTE_ARGPARSE_VALUE_REQUIRED, RTE_ARGPARSE_VALUE_TYPE_U16 },
-+         { "--count", "-c", "Count value", &my_count, (void *)1000, RTE_ARGPARSE_VALUE_OPTIONAL, RTE_ARGPARSE_VALUE_TYPE_U32 },
-+         ARGPARSE_ARG_END(),
-+      },
-+   };
-+
-+String Type
-+^^^^^^^^^^^
-+
-+String arguments are parsed using ``RTE_ARGPARSE_VALUE_TYPE_STR``.
-+When using this type, the input value is saved to the provided pointer without any parsing or validation.
-+
-+.. code-block:: C
-+
-+   static const char *my_string;
-+
-+   static struct rte_argparse obj = {
-+      .args = {
-+         { "--name", "-n", "Name string", &my_string, NULL, RTE_ARGPARSE_VALUE_REQUIRED, RTE_ARGPARSE_VALUE_TYPE_STR },
-+         ARGPARSE_ARG_END(),
-+      },
-+   };
-+
-+Boolean Type
-+^^^^^^^^^^^^
-+
-+Boolean arguments are parsed using ``RTE_ARGPARSE_VALUE_TYPE_BOOL`` and accept the following input formats:
-+
-+- ``true``, ``false`` (case-sensitive)
-+- ``1``, ``0`` (numeric format)
-+
-+.. code-block:: C
-+
-+   static bool my_flag;
-+
-+   static struct rte_argparse obj = {
-+      .args = {
-+         { "--enable", "-e", "Enable feature", &my_flag, NULL, RTE_ARGPARSE_VALUE_REQUIRED, RTE_ARGPARSE_VALUE_TYPE_BOOL },
-+         ARGPARSE_ARG_END(),
-+      },
-+   };
-+
- Parsing by callback way
- ~~~~~~~~~~~~~~~~~~~~~~~
+-*   ``-l/--lcores <core list>``
++*   ``-l, --lcores <core list>``
  
-@@ -167,8 +236,8 @@ It could also choose to use callback to parse,
- just define a unique index for the argument
- and make the ``val_save`` field to be NULL also zero value-type.
+     List of cores to run on
  
--In the above example, the arguments ``--ddd``/``--eee``/``--fff`` and ``ppp``
--both use this way.
-+In the example at the top of this section,
-+the arguments ``--ddd``/``--eee``/``--fff`` and ``ppp`` all use this way.
+@@ -71,11 +71,7 @@ Lcore-related options
  
- Multiple times argument
- ~~~~~~~~~~~~~~~~~~~~~~~
+     Core ID that is used as main.
+ 
+-*   ``-s <service core mask>``
+-
+-    Hexadecimal bitmask of cores to be used as service cores.
+-
+-*   ``-S <service core list>``
++*   ``-S, --service-corelist <service core list>``
+ 
+     List of cores to be used as service cores.
+ 
+@@ -108,7 +104,7 @@ Device-related options
+ 
+        --vdev 'net_pcap0,rx_pcap=input.pcap,tx_pcap=output.pcap'
+ 
+-*   ``-d <path to shared object or directory>``
++*   ``-d, --driver-path <path to shared object or directory>``
+ 
+     Load external drivers. An argument can be a single shared object file, or a
+     directory containing multiple driver shared objects. Multiple -d options are
+@@ -134,15 +130,15 @@ Multiprocessing-related options
+ Memory-related options
+ ~~~~~~~~~~~~~~~~~~~~~~
+ 
+-*   ``-n <number of channels>``
++*   ``-n, --memory-channels <number of channels>``
+ 
+     Set the number of memory channels to use.
+ 
+-*   ``-r <number of ranks>``
++*   ``-r, --memory-ranks <number of ranks>``
+ 
+     Set the number of memory ranks (auto-detected by default).
+ 
+-*   ``-m <megabytes>``
++*   ``-m, --memory-size <megabytes>``
+ 
+     Amount of memory to preallocate at startup.
+ 
+@@ -236,11 +232,11 @@ Debugging options
+ Other options
+ ~~~~~~~~~~~~~
+ 
+-*   ``-h``, ``--help``
++*   ``-h, --help``
+ 
+     Display help message listing all EAL parameters.
+ 
+-*   ``-v``
++*   ``-v, --version``
+ 
+     Display the version information on startup.
+ 
+diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
+index 3169dd069f..226acea467 100644
+--- a/lib/eal/common/eal_common_options.c
++++ b/lib/eal/common/eal_common_options.c
+@@ -66,7 +66,9 @@ eal_short_options[] =
+ const struct option
+ eal_long_options[] = {
+ 	{OPT_BASE_VIRTADDR,     1, NULL, OPT_BASE_VIRTADDR_NUM    },
++	{OPT_COREMASK,          1, NULL, OPT_COREMASK_NUM        },
+ 	{OPT_CREATE_UIO_DEV,    0, NULL, OPT_CREATE_UIO_DEV_NUM   },
++	{OPT_DRIVER_PATH,       1, NULL, OPT_DRIVER_PATH_NUM     },
+ 	{OPT_FILE_PREFIX,       1, NULL, OPT_FILE_PREFIX_NUM      },
+ 	{OPT_HELP,              0, NULL, OPT_HELP_NUM             },
+ 	{OPT_HUGE_DIR,          1, NULL, OPT_HUGE_DIR_NUM         },
+@@ -76,6 +78,11 @@ eal_long_options[] = {
+ 	{OPT_LOG_COLOR,		2, NULL, OPT_LOG_COLOR_NUM	  },
+ 	{OPT_LOG_LEVEL,         1, NULL, OPT_LOG_LEVEL_NUM        },
+ 	{OPT_LOG_TIMESTAMP,     2, NULL, OPT_LOG_TIMESTAMP_NUM    },
++	{OPT_MEMORY_CHANNELS,   1, NULL, OPT_MEMORY_CHANNELS_NUM },
++	{OPT_MEMORY_RANKS,      1, NULL, OPT_MEMORY_RANKS_NUM    },
++	{OPT_MEMORY_SIZE,       1, NULL, OPT_MEMORY_SIZE_NUM     },
++	{OPT_SERVICE_CORELIST,  1, NULL, OPT_SERVICE_CORELIST_NUM },
++	{OPT_SERVICE_COREMASK,  1, NULL, OPT_SERVICE_COREMASK_NUM },
+ 	{OPT_TRACE,             1, NULL, OPT_TRACE_NUM            },
+ 	{OPT_TRACE_DIR,         1, NULL, OPT_TRACE_DIR_NUM        },
+ 	{OPT_TRACE_BUF_SIZE,    1, NULL, OPT_TRACE_BUF_SIZE_NUM   },
+@@ -109,6 +116,8 @@ eal_long_options[] = {
+ 	{OPT_NO_TELEMETRY,      0, NULL, OPT_NO_TELEMETRY_NUM     },
+ 	{OPT_FORCE_MAX_SIMD_BITWIDTH, 1, NULL, OPT_FORCE_MAX_SIMD_BITWIDTH_NUM},
+ 	{OPT_HUGE_WORKER_STACK, 2, NULL, OPT_HUGE_WORKER_STACK_NUM     },
++	{OPT_VERSION,           0, NULL, OPT_VERSION_NUM         },
++
+ 
+ 	{0,                     0, NULL, 0                        }
+ };
+diff --git a/lib/eal/common/eal_options.h b/lib/eal/common/eal_options.h
+index 7a56aa3810..6ef45559f0 100644
+--- a/lib/eal/common/eal_options.h
++++ b/lib/eal/common/eal_options.h
+@@ -17,8 +17,24 @@ enum {
+ 	OPT_DEV_ALLOW_NUM       = 'a',
+ #define OPT_DEV_BLOCK         "block"
+ 	OPT_DEV_BLOCK_NUM      = 'b',
++#define OPT_COREMASK          "coremask"
++	OPT_COREMASK_NUM       = 'c',
++#define OPT_DRIVER_PATH       "driver-path"
++	OPT_DRIVER_PATH_NUM    = 'd',
+ #define OPT_LCORES            "lcores"
+ 	OPT_LCORES_NUM         = 'l',
++#define OPT_MEMORY_SIZE       "memory-size"
++	OPT_MEMORY_SIZE_NUM    = 'm',
++#define OPT_MEMORY_CHANNELS   "memory-channels"
++	OPT_MEMORY_CHANNELS_NUM = 'n',
++#define OPT_MEMORY_RANKS     "memory-ranks"
++	OPT_MEMORY_RANKS_NUM   = 'r',
++#define OPT_SERVICE_COREMASK  "service-coremask"
++	OPT_SERVICE_COREMASK_NUM = 's',
++#define OPT_SERVICE_CORELIST  "service-corelist"
++	OPT_SERVICE_CORELIST_NUM = 'S',
++#define OPT_VERSION           "version"
++	OPT_VERSION_NUM        = 'v',
+ 
+ 	/* first long only option value must be >= 256, so that we won't
+ 	 * conflict with short options */
 -- 
 2.48.1
 
