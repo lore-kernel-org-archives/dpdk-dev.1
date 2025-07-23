@@ -2,58 +2,61 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E42DCC83F1A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 13:32:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 775B9C83F17
+	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 13:32:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 406DF40B9C;
-	Wed, 23 Jul 2025 15:32:35 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 81F5540E09;
+	Wed, 23 Jul 2025 15:32:39 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id CBDD440B98
- for <dev@dpdk.org>; Wed, 23 Jul 2025 15:32:33 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 863D240B98
+ for <dev@dpdk.org>; Wed, 23 Jul 2025 15:32:37 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1753277553;
+ s=mimecast20190719; t=1753277557;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:mime-version:mime-version:content-type:content-type:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=qH2rIijgrLbO1iOo3mG28bwBU+hxOB3vs6buc7xVXOk=;
- b=ekC6un6dhhy1ipm7YMqP+s/ibLV5vCkqJDnkas8N99uQnS9AP1NHsCx+9s0rg1ZPS9WElb
- xHd5cZEyUD8ylFq8ci9e6d1LaGwZE1fTAHgz7yBAoyHGHrtAGu/pkzWKp6OaML5c7vD1Ng
- YM2PmN56XhplffgVi8hD3LBZzIUcorM=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ bh=G+vLQlE1eQ1D0MoQNt4IVVqw1Xy5yVQmNfxEqf9VN3M=;
+ b=FbS0pZHzKUiTjFJYw0sU0SVPcyfkJ9EOY8UEaJ+QWHq3b5VgHleawLRP5Gs9P+3KGLPHHB
+ acHt3QI0ffw5dOG+IbO9GA4/H3r+Qoz+tiDWZHezlPsk1NxlP08tK/212vLmA25ba40tCz
+ BFO3GoPfUx+RE7+zTQdf0ilL4/FpGsA=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-601-SzmgQQ1IOIOpAl5W39KRqw-1; Wed,
- 23 Jul 2025 09:32:31 -0400
-X-MC-Unique: SzmgQQ1IOIOpAl5W39KRqw-1
-X-Mimecast-MFC-AGG-ID: SzmgQQ1IOIOpAl5W39KRqw_1753277551
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-648-IEzHb0AYPuOwPL7FmQ9JyQ-1; Wed,
+ 23 Jul 2025 09:32:32 -0400
+X-MC-Unique: IEzHb0AYPuOwPL7FmQ9JyQ-1
+X-Mimecast-MFC-AGG-ID: IEzHb0AYPuOwPL7FmQ9JyQ_1753277550
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id A2297184B36C
- for <dev@dpdk.org>; Wed, 23 Jul 2025 13:32:08 +0000 (UTC)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 9FF9819560A3; Wed, 23 Jul 2025 13:32:30 +0000 (UTC)
 Received: from dmarchan.lan (unknown [10.44.33.51])
- by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id C25661955F4A
- for <dev@dpdk.org>; Wed, 23 Jul 2025 13:32:07 +0000 (UTC)
+ by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 4439019560A0; Wed, 23 Jul 2025 13:32:26 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Subject: [PATCH v5 00/22] Run with UBSan in GHA
-Date: Wed, 23 Jul 2025 15:31:33 +0200
-Message-ID: <20250723133157.159825-1-david.marchand@redhat.com>
-In-Reply-To: <20250619071037.37325-1-david.marchand@redhat.com>
+Cc: stable@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>,
+ Timothy Redaelli <tredaelli@redhat.com>,
+ Maxime Coquelin <maxime.coquelin@redhat.com>
+Subject: [PATCH v5 04/22] eal: fix plugin dir walk
+Date: Wed, 23 Jul 2025 15:31:37 +0200
+Message-ID: <20250723133157.159825-5-david.marchand@redhat.com>
+In-Reply-To: <20250723133157.159825-1-david.marchand@redhat.com>
 References: <20250619071037.37325-1-david.marchand@redhat.com>
+ <20250723133157.159825-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: jU-_rCehZ6PPkQCQbVZZoMfsODqEvIR9Oc60uep_-e4_1753277551
+X-Mimecast-MFC-PROC-ID: SjOIVbiC98-ozozXiw2hzG5dOY7WEekOjJHjZQ0u-vk_1753277550
 X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -67,82 +70,92 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series fixes a number of issues reported by UBSan and adds a simple
-job in GHA to avoid introducing undefined behavior in the core
-components.
-There is way more work/fixes to do if we want to run with a full set of
-components, but baby steps first.
+For '.' and '..' directories (or any short file name),
+a out of bound issue occurs.
 
+Caught by UBSan:
 
--- 
-David Marchand
+EAL: Detected shared linkage of DPDK
+../lib/eal/common/eal_common_options.c:420:15: runtime error: index -2
+	out of bounds for type 'char[256]'
+    #0 0x7f867eedf206 in eal_plugindir_init
+	eal_common_options.c
+    #1 0x7f867eede58a in eal_plugins_init
+	(build/lib/librte_eal.so.25+0xde58a)
+	(BuildId: e7e4a1935e4bacb51c82ab1a84098a27decf3b4c)
+    #2 0x7f867efb8587 in rte_eal_init
+	(build/lib/librte_eal.so.25+0x1b8587)
+	(BuildId: e7e4a1935e4bacb51c82ab1a84098a27decf3b4c)
+    #3 0x55b62360861e in main
+	(/home/runner/work/dpdk/dpdk/build/app/dpdk-testpmd+0x9e061e)
+	(BuildId: d821ec918612c83fad8b5ccb6cc518e66bee48cd)
+    #4 0x7f8667429d8f in __libc_start_call_main
+	csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #5 0x7f8667429e3f in __libc_start_main
+	csu/../csu/libc-start.c:392:3
+    #6 0x55b622d9d444 in _start
+	(/home/runner/work/dpdk/dpdk/build/app/dpdk-testpmd+0x175444)
+	(BuildId: d821ec918612c83fad8b5ccb6cc518e66bee48cd)
+SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior
+	../lib/eal/common/eal_common_options.c:420:15 in
+	../lib/eal/common/eal_common_options.c:421:15:
+	runtime error: index 18446744073709551609 out of bounds
+	for type 'char[256]'
 
-Changes since v4:
-- rebased on v25.11-rc0,
+Fixes: c57f6e5c604a ("eal: fix plugin loading")
+Cc: stable@dpdk.org
 
-Changes since v3:
-- modified fix on tailq,
-- updated hash fix using unaligned_uint32_t type,
-- updated rte_mp_msg and rte_stack_lf_head structs alignement,
-- fixed more libraries/unit tests,
-
+Signed-off-by: David Marchand <david.marchand@redhat.com>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+---
 Changes since v2:
-- simplified plugin fix,
-- enabled more coverage,
+- removed check on null termination of dirent,
 
-Changes since v1:
-- small updates on patches 5 and 6,
+---
+ lib/eal/common/eal_common_options.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
-David Marchand (21):
-  ci: save ccache on failure
-  test/telemetry: fix test calling all commands
-  test/mempool: fix test without stack driver
-  eal: fix plugin dir walk
-  cmdline: fix port list parsing
-  cmdline: fix highest bit port list parsing
-  tailq: fix lookup macro
-  hash: fix unaligned access in predictable RSS
-  stack: fix unaligned accesses on 128-bit
-  build: support Undefined Behavior Sanitizer
-  test/telemetry: catch errors in subshell
-  ipc: fix mp message alignment for malloc
-  graph: fix unaligned access in stats
-  eventdev: fix listing timer adapters with telemetry
-  test/power: fix tests without power drivers
-  test/raw: fix test without skeleton driver
-  net: fix IPv4 macro with highest bit
-  rib6: fix some highest bits handling
-  cfgfile: fix section count with no name
-  test/func_reentrancy: fix EAL init call
-  ci: extend coverage with UBSan
-
-Marat Khalili (1):
-  graph: fix stats query with no node xstats
-
- .ci/linux-build.sh                     |  38 ++++++++-
- .github/workflows/build.yml            |  11 +++
- .mailmap                               |   1 +
- app/test/meson.build                   |  12 +--
- app/test/suites/meson.build            |   3 +-
- app/test/suites/test_telemetry.sh      |   6 +-
- app/test/test_func_reentrancy.c        |   5 +-
- app/test/test_mempool.c                |  32 +++++---
- config/meson.build                     |  18 ++++-
- devtools/words-case.txt                |   1 +
- doc/guides/rel_notes/release_25_11.rst |   5 ++
- lib/cfgfile/rte_cfgfile.c              |   8 +-
- lib/cmdline/cmdline_parse_portlist.c   |  15 ++--
- lib/eal/common/eal_common_options.c    |  17 ++--
- lib/eal/include/rte_eal.h              |   3 +-
- lib/eal/include/rte_tailq.h            |   9 ++-
- lib/eventdev/rte_event_timer_adapter.c |   4 +-
- lib/graph/graph_stats.c                | 105 ++++++++++++++-----------
- lib/hash/rte_thash.c                   |   6 +-
- lib/net/rte_ip4.h                      |   6 +-
- lib/rib/rte_rib6.c                     |   2 +-
- lib/stack/rte_stack.h                  |   4 +-
- 22 files changed, 208 insertions(+), 103 deletions(-)
-
+diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
+index 3169dd069f..2f91b96190 100644
+--- a/lib/eal/common/eal_common_options.c
++++ b/lib/eal/common/eal_common_options.c
+@@ -399,12 +399,21 @@ eal_plugins_init(void)
+ }
+ #else
+ 
++static bool
++ends_with(const char *str, const char *tail)
++{
++	size_t tail_len = strlen(tail);
++	size_t str_len = strlen(str);
++
++	return str_len >= tail_len && strcmp(&str[str_len - tail_len], tail) == 0;
++}
++
+ static int
+ eal_plugindir_init(const char *path)
+ {
+-	DIR *d = NULL;
+ 	struct dirent *dent = NULL;
+ 	char sopath[PATH_MAX];
++	DIR *d = NULL;
+ 
+ 	if (path == NULL || *path == '\0')
+ 		return 0;
+@@ -418,12 +427,8 @@ eal_plugindir_init(const char *path)
+ 
+ 	while ((dent = readdir(d)) != NULL) {
+ 		struct stat sb;
+-		int nlen = strnlen(dent->d_name, sizeof(dent->d_name));
+ 
+-		/* check if name ends in .so or .so.ABI_VERSION */
+-		if (strcmp(&dent->d_name[nlen - 3], ".so") != 0 &&
+-		    strcmp(&dent->d_name[nlen - 4 - strlen(ABI_VERSION)],
+-			   ".so."ABI_VERSION) != 0)
++		if (!ends_with(dent->d_name, ".so") && !ends_with(dent->d_name, ".so."ABI_VERSION))
+ 			continue;
+ 
+ 		snprintf(sopath, sizeof(sopath), "%s/%s", path, dent->d_name);
 -- 
 2.50.0
 
