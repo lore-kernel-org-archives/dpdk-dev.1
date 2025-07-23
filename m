@@ -2,77 +2,162 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3826C83F1A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 11:29:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF083C83F1A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 12:15:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 200EA402CC;
-	Wed, 23 Jul 2025 13:29:18 +0200 (CEST)
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com
- [209.85.219.51]) by mails.dpdk.org (Postfix) with ESMTP id 1658E40264
- for <dev@dpdk.org>; Wed, 23 Jul 2025 13:29:16 +0200 (CEST)
-Received: by mail-qv1-f51.google.com with SMTP id
- 6a1803df08f44-6fabe9446a0so55595066d6.2
- for <dev@dpdk.org>; Wed, 23 Jul 2025 04:29:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1753270155;
- x=1753874955; darn=dpdk.org; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=3nHtkL0L0iUZLJOvj1/O+XXPPlPshsp9c7Svd+AV0vA=;
- b=gzCywG5ORK03RXVLDDSxkADeLMLCnlj5u0/ygg90T90eMH+VkSCmZVeEM+HnNNAgHZ
- 4hH5OZdrUCt9rbWFirKY139x1LWEu22GmwYykJRxJMQIYGhpFrz+dXukcHXU7AkpVI45
- SbjMB1BbTQrZmhQvd5ur6l3cbIf6rfS6CxPxEgiWjQ4DwdCUW2PDzuo9u2jYpo4xfOLN
- S9C7hUw9QaDCgy9hpc0H7HZt3dwb4YCZeR5V4xulx3V1jF1mWE+j/FTqr7QqonKfeIRq
- JYB9+ZfIaZgm4YYl2ygmOL5HHNpM5BbYRDbHa1It1IteqgarLi+LE+6Cijqh9fRK6f6i
- TD1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753270155; x=1753874955;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=3nHtkL0L0iUZLJOvj1/O+XXPPlPshsp9c7Svd+AV0vA=;
- b=PcgyS+g3ByZB4OdpYunp7fHWa6iAauWa+kvrsQwaulhtfn7WhLjFXxZ/nlT6rAgP6B
- drIj6yewB5K5DYh6+hjP6La1/zRmH4CipK0NUhWVw6sK67aKTRfpO3ASQN2gw/kgQHDF
- S/Bbz1okCJOrDs9SVGYz71nxxnAe6DBVUFhpo8XRUgaSraQzrJzkh2hnnSyLE2zcuHkr
- wacbg/4gKAkqPAnCvPzyzuetWdfs4hthiCV0wUkIY+yQemUmdqBZJCuiWtXZYxFHuahY
- ynIO62MvzsUEtBzVndXtAcjzeMAIP8ltyqffn6NAN1rjq5wJP6otfltEFYAs6sb0n+PZ
- 6NUw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWtLYdrsWs2OiFFpaeUguYTJExqwuPR6dDORNK1Dxw12OH/5N9nZM/X8Tuy6b5u9DyMYnA=@dpdk.org
-X-Gm-Message-State: AOJu0YyXh+8zbN6fmGyCEnKnmb/r79CtuWMmY6fdzOdJC1mimCgnkH8c
- 11kqe4lTk0Ue6Z5LGcWKjp65vCn2a6mrvpxaSPg2V7c0cXGyrcSN9vr7eLvKOIMvpB3dnPo1Sii
- pKgdGDAxQ/6p/LQTfN/vhDjVShC+F8aJT3r5rolAVVA==
-X-Gm-Gg: ASbGnctZWLsBMg/VVFqpRyBtDqWfCa88uqYJ/02NexS1o1+OHnqrf3TI03OARK1gTCh
- ErO3hkrgJeIWxGUzlubazbCdqK1r5nwc3LigepXA+IiAarJYTmW1kVyxu3hK4OHwr/9D1gtJe5k
- HyuDGVZ4/gnVKUzwqBFnlirLIO6ESlzHbMCRWIxwoJKEUFd4Iy0iuVhKDRE9J0Xd5Acz3lt4jJj
- aL5zVEMCA==
-X-Google-Smtp-Source: AGHT+IHH3prw9wrcgMeLzTDgojADpoxf9g0petfy+gK0ZVlJHHIfIu0bewsPpFOtDm1V97JbHXsWC5xcT/H+GMGc364=
-X-Received: by 2002:a05:6214:1316:b0:6f5:3cae:920f with SMTP id
- 6a1803df08f44-707006f70cfmr33935006d6.27.1753270155151; Wed, 23 Jul 2025
- 04:29:15 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id A2ABE402CC;
+	Wed, 23 Jul 2025 14:15:49 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+ by mails.dpdk.org (Postfix) with ESMTP id 0A06940264
+ for <dev@dpdk.org>; Wed, 23 Jul 2025 14:15:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1753272947; x=1784808947;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=YlzA8bbiVlQHjKyc3o/w6xMvTNqzulw9KxwMc2taB70=;
+ b=I10AdF0aik1W6xSeuuzK+Sl3KjjbIb876QgQrp6+37EmqC1UYBOcSXBH
+ xXEH7kOBOpmx8Pz36Nl1IpKsu7adMC8BOiIkzMz6H3H8qIlpOOH6jYlAc
+ vekJQG2hluPwuRvx9z8KvZqGq5eY2yUhKrL7nZgX1mUFWvny97zCo0YX9
+ Mpjay8z25c0RHdUxjEpTm1cuw+qKFA+tuXw9Rr6Vu839T8MLor57QVO9+
+ riYvlcyithU9xweBEvA2QaXlWM6rA2g2YmeWwE07Ilg8xSifzFf6pFSaB
+ Yywx8+HCfarLOUpri7muYLfv2nkakXXQJTvAtMbm4V43Vxz0JHwXUAngO Q==;
+X-CSE-ConnectionGUID: sIUMrbSjQn6k8sotK9dGBA==
+X-CSE-MsgGUID: VShoPLS7SEOpUu4MXu+jkA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="66118827"
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; d="scan'208";a="66118827"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+ by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 23 Jul 2025 05:15:43 -0700
+X-CSE-ConnectionGUID: fhHoeeNnRQOqe/eRPwiD5g==
+X-CSE-MsgGUID: Dos+v7fqQG+JEaGhJUcOIg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; d="scan'208";a="159875883"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 23 Jul 2025 05:15:43 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Wed, 23 Jul 2025 05:15:42 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Wed, 23 Jul 2025 05:15:42 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (40.107.94.51) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Wed, 23 Jul 2025 05:15:41 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NjosO7CV68eXc4ZVPPQqodsRhXiXcgL1CAXouxPdYII1kkH0JN5nnAtI6vU2L5vfalKCVj/iCrcO/slfPD+RkbkVbp/0tYzmHYL3qK6PHI5k/0tDOhWAkWemZK0YjZ9a99GRsCB3sNAShhno6Ra0TQoRcyjnlaHCooh+yMrruCKAWfg0uClt9kEOxsxfloybqErpaNQJ+1eonw4bcqCVDTfut3E7LYa90Gvz13TgsFQGEOeSwTXiaSkuU1Iq9sUiyhGvvwMpm0XlQvEoTx1BLv99jWq+Bzki1kbTNsX7TPilpR78whkT3TfaYThoo7u1cUPT5nsTOWSydVdbOX1Qmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5YydNL8jEMQyUAMZwlm3rGgxeIx/NaQjpYgUMB+kaDw=;
+ b=sD1cywn/1W2hLawOH9j59/cf6NLDvSjAHTc6j6cQpZBfzFuYg22XDVBP0BgcYeZ91NREemnNIYLgipi7IK7r6LS1TKFPOo37Dt9d94EfMl3oT4Y98jJGT1nSvHoIb6RldEF4EnNmJbPiSGtCGM45Mh04bxuy/+E5PIUufCXosQiqcsBnWWmGAG5WRk8PRc3pUvuvkMlECwrs4JeK8kAR0v6YmqPN+UHAevkT2zjLDNuZULX1NpMSp7mXT2OQ1XLbk33dUt8lYYevs3Y22AvHjslULvqDEVp4dqLt19SKqr1J0vdPoHFBEW9OFTNh6t8dySy3MfVJy2LAdz+uhoR/jQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by DM4PR11MB8130.namprd11.prod.outlook.com (2603:10b6:8:181::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Wed, 23 Jul
+ 2025 12:14:58 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.8943.029; Wed, 23 Jul 2025
+ 12:14:58 +0000
+Date: Wed, 23 Jul 2025 13:14:53 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: David Marchand <david.marchand@redhat.com>
+CC: <dev@dpdk.org>, <thomas@monjalon.net>
+Subject: Re: [PATCH 2/2] net: remove v25 ABI compatibility
+Message-ID: <aIDSPdozAm7JUAnd@bricha3-mobl1.ger.corp.intel.com>
+References: <20250722132441.3700305-1-david.marchand@redhat.com>
+ <20250722132441.3700305-2-david.marchand@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250722132441.3700305-2-david.marchand@redhat.com>
+X-ClientProxiedBy: DU2PR04CA0259.eurprd04.prod.outlook.com
+ (2603:10a6:10:28e::24) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-References: <20250721073851.963141-1-14pwcse1224@uetpeshawar.edu.pk>
- <20250721105819.2ci66fl7bzikwb22@ds-vm-debian.local>
- <b0c702cc-1213-d773-0ee0-804542a07e28@arknetworks.am>
- <3358342.oiGErgHkdL@thomas>
- <CA++2-x6o1QXgO=RiWk8vFcCRfs3ZCWc5G-yoebxCzPVzAZY9Gg@mail.gmail.com>
-In-Reply-To: <CA++2-x6o1QXgO=RiWk8vFcCRfs3ZCWc5G-yoebxCzPVzAZY9Gg@mail.gmail.com>
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Date: Wed, 23 Jul 2025 16:29:03 +0500
-X-Gm-Features: Ac12FXwQ1OXC3Pfw_ZnLX1wTz_It9sZ8EIXKsICupNzidDG1wCbUKCN0vDLOvLo
-Message-ID: <CA++2-x5vmjQzUrSj_ihC5wQvicC=o8xJZSzazVGuGuRV=LG4Fg@mail.gmail.com>
-Subject: Re: [PATCH] net/mlx5: fix crash when secondary queries dev info after
- primary exits
-To: Thomas Monjalon <thomas@monjalon.net>
-Cc: Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Ivan Malov <ivan.malov@arknetworks.am>, 
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, dev@dpdk.org,
- rasland@nvidia.com, 
- dpdk stable <stable@dpdk.org>, Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Bing Zhao <bingz@nvidia.com>, 
- Ori Kam <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>,
- Matan Azrad <matan@nvidia.com>
-Content-Type: multipart/alternative; boundary="000000000000cb273f063a970495"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DM4PR11MB8130:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3b540d55-d466-4c42-07a9-08ddc9e28a8a
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?RbViQwnRv0Bcvs8BzdepF/M+/TBUInICWqdSUXghZ7o+kQ0wzomEyJRDmJwo?=
+ =?us-ascii?Q?wUJMVphFi0Et7aRz02INU7ic2P18hLkivYDkoK5bKWWMN4hQjG06bKJA2/yO?=
+ =?us-ascii?Q?T5GtcAy79NbjXXNT3LGUKcklLkfK9ijjtI4CiRbMXSyvzE8nKgaDiwiYJyCH?=
+ =?us-ascii?Q?kHcVmuIn/RDOwm9TQY41AweQ9rxDkO7fQUzJD2pqCyevVVOApphGIy21v67c?=
+ =?us-ascii?Q?//BsHwFP2YGgiN24bq8j98NbgESmg2PJFIQcwBANMfJ0lTCzZ/CErwGBgkeX?=
+ =?us-ascii?Q?k4xqgDnpInW2oxMElPsRcruGy5wSY2fYhdfBV2RuvchNkrtDfHyp8yqrMwMv?=
+ =?us-ascii?Q?QTyhHIwV8jzUrSDCoi+TvyfXrKROAt8ngrcQSiVEM6DM+zGXX71NobPU4b88?=
+ =?us-ascii?Q?/vWvZrOjrRuhcJ9t90n+FoDX74MXL/MX+e2vtxsrTFVrD/UIMwNaryV3YHri?=
+ =?us-ascii?Q?0bEQatR57yRCOX5Imv8JTbsuioGNSpTBqhG9RXSbmZDOwKMjjVvGtOXF5K80?=
+ =?us-ascii?Q?JJLrwGbemSZw41uA0kBdHQxtginaC3+6Rxp75bpnLcUammbE395r317Di6Tk?=
+ =?us-ascii?Q?BiRAaq8IgdvAmLYJ+9Ws7fL+TOH8i9MbsckrLIlcUQpMAQTpdmxpV4xhB66K?=
+ =?us-ascii?Q?iNJhV+zRFW16QPeewhLfFtZ/LTEQcl7M7PLLsFWRHDn5C98jpzSeNpLH6UF9?=
+ =?us-ascii?Q?M0QxW0qGTUsF7kwXC1e+70hvNRgvIgA4b7Gv13fMjImWx6mJrC0tymQNjfoR?=
+ =?us-ascii?Q?2dR8hD5sjGl3zdbrUVrmWsd7q3Ly1k8C2CH5/APl8tlD0iCbOHlm7UIlDT/r?=
+ =?us-ascii?Q?Fgsc5xE2D7+tJQKBcosNkWtWI0H0hN3RCJooz0yVQeo3uRK92lolVqyWAfUs?=
+ =?us-ascii?Q?B7xdJHfESsdD0wxqwGCJLqE9jqB9YlkQlouEINh6EJ6nrYVKsHe+eZZtQQwm?=
+ =?us-ascii?Q?7YwmUwcbYHWUWzIl2SyTVeW3Reu6SsVGD1JhsBqDhY+9m5b5A5KDDCGGXJAW?=
+ =?us-ascii?Q?lk+A9ZXi1YWT8YS5anz9kjSAlagLt0ZlSFlNFWsv/eH0UNrNn8RyBFCsMCzJ?=
+ =?us-ascii?Q?3vTs29+WovN/Oqz3obXYVu0M6dEh7jqrvHs1daARqd99d06cTmfPjnvMQvj9?=
+ =?us-ascii?Q?lIeL20BlcRIgDUWUlOKkE7bsLdodiZuj/My06masrCmTpUNngp+e9BPpkvjG?=
+ =?us-ascii?Q?4vI63ceZIC7mxQJTD4KpjwhMpa0QimoQR0wePrzisHWP6qhBNa93HOu7bilW?=
+ =?us-ascii?Q?0LpJETwU0iDr8HZYhE3muZG9SlK3HgakMJ4Mvs/XmxwgO2HSNVUZiZdybOmT?=
+ =?us-ascii?Q?kechgz2gVZaZlNS7QmZMT9Cu0eRZLspk+11/ZZwK+TwM9vP8c970csv04G7K?=
+ =?us-ascii?Q?kz6DjOILDcKrjySXNli5XF+H4PSMautNbZ9PHUyaTUkqWcfaF0OVXq39vjtJ?=
+ =?us-ascii?Q?cbCIuZtHkJ4=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014)(7053199007); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?0WucKiIrqyPEpKjcbXsZzjDJxmODZHP2HAKtRBGO3Tg6Wh/loDZyZko+xBtT?=
+ =?us-ascii?Q?g108Eb/+ppu6F5SorLvWqZSdZdB9t4amzaVoAz25gkW/oWxyrO75MOLFe7ED?=
+ =?us-ascii?Q?7wiD6k2WJEUdld4Y5ZIiMgWBR8MbLHzZSXLPoSuB15JL2Gxjvm24aqp9lXdz?=
+ =?us-ascii?Q?W4orpiVCEm4vGR0G7wVxRCibY3nEi44GleZiK+SLnfvysk+JiQDR/aOzA6eQ?=
+ =?us-ascii?Q?Va7ma5uaAe1dqsP25MXfXRY0KyPsKS7ZYbFY0EEue8Th2M63e6HC0KN98pU5?=
+ =?us-ascii?Q?5fjSJUE3eXsLeu8ORswOEuhGO+zLu9zLaOXfgVpfPGFsUIrFAONgmLx0OMn8?=
+ =?us-ascii?Q?VNREKN4Q8HgLdtdnbqIQayW1vzcqHDklNLTh5d6CmcKlt4TRoj1d+UjgL4m5?=
+ =?us-ascii?Q?gwHZpfrG+/lH9g/kyz2aA0cTPZ/sH2gPtIdFolWN9ataGy1xqTv7gDwPPpwu?=
+ =?us-ascii?Q?wy8LxO5clBZznpnhuUyRpkQiPy4N0yG/hO5Pp3tSLWweeo70EgVaS/IJOqPJ?=
+ =?us-ascii?Q?Vq5QFkZCvZbHQpy4dTa5aciEwm0iwjMjOYwERzChaQGc7YlK8d+1RFwItRPn?=
+ =?us-ascii?Q?MhlU6GHDYPlbsDoJOSKO1ITluKm1WoWs9Ew1K6TGe96HpdKcHEbuz8mLdlN0?=
+ =?us-ascii?Q?u+QU3lY9zz7ge9vwECCBtpovfjFB/lfgNKgXbbactURLk/xwGjtNVXLtti7y?=
+ =?us-ascii?Q?n/TAmODd/AS4YsebVvxJGxmbXogGbX7PnD5i742A3rh8Afoth4b9xa/4h5Z1?=
+ =?us-ascii?Q?9IxywJMFlBgZzHc/id120ubQHHkd8DPvV5PSOXgsE7kcFstV8Dynpwq15GOG?=
+ =?us-ascii?Q?aSmsn5gFqxAt/Freyczlaw5BjRzAY7GHH6vUAXOKtsLZcnQVxXyqEg0AKIy9?=
+ =?us-ascii?Q?5VbAWDtg/DlbkomT8pVTgW6B/6XcW8VaGhFWDk4VCk12QWWU+RXo1boHP3YA?=
+ =?us-ascii?Q?wBQIvbW415hA3w/hhlGUabzrxGRCPrWwvcNdSXpS9zGrvMtVSkUB00ehuN49?=
+ =?us-ascii?Q?JRVgl50Jhce8FM7wOw+NkcYCZdY/xa/IxvUeHn27NhgsSpHSlHt/jnOK98uS?=
+ =?us-ascii?Q?rqQAn3aSN2BejeHlhopgrd4soM6SlSqYaNlNkO4dj8VyC4tvVyxuyqYjeWsG?=
+ =?us-ascii?Q?s+sMXQ8rFxhy4fPcb4h/tlPjaugtno0mKuJmC/+r/CtCtNVRVgfkwzFkkOPd?=
+ =?us-ascii?Q?oriSz45xQ7RJGaV1iPvQPVSrogVvkluifOm6CMwVU0Sgxm1X803YHOUDF9sA?=
+ =?us-ascii?Q?z35FxDSRh+Dcz1xRD3AVmCe/SmWYr1bD6ixmFX+CS6lDSzlksfmKEWW4uQht?=
+ =?us-ascii?Q?fa8/YA3sKDy/gnwcxAXifLn/vsestEe6LHGz9M5ZJ88llPa25oLIhYqNkRx5?=
+ =?us-ascii?Q?8ODGHWDqB/btNe2XTdSnkC9yC06cPXDvKP8IEu5/G1B8rq8X5uEGK/LUPuys?=
+ =?us-ascii?Q?Vmq6ou4nrL0us7nbrIJ3yl2VqKIK2+I2JpuUJbPQfFeMUcJbqx0CGCbglaAN?=
+ =?us-ascii?Q?aaw+Gnhn0044Yr0BfjM2TUwbLmjqTpGEhCq3oeo2ScvZYbPZQaJOc+dl7b8r?=
+ =?us-ascii?Q?wa474YjmxCX5SMlbBf9zG8jrzHuASSgY1CDV5a2qIv7ZY0q3etMjJ4E+SDD3?=
+ =?us-ascii?Q?oQ=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3b540d55-d466-4c42-07a9-08ddc9e28a8a
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2025 12:14:58.1800 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: V+Ukbj8gL9Ga9tpWzQT3BDRzYHHFZxQpMZT+nTmXrr5NqZj11CLl3ehL2U+gzueC/aMYrDDLZPugBng5zXILSS5AteeFmXC87sKe1o0nc10=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB8130
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,285 +171,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000cb273f063a970495
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jul 22, 2025 at 03:24:41PM +0200, David Marchand wrote:
+> Now that the ABI has been bumped to 26, we can drop compatibility
+> symbols for the CRC API.
+> 
+> The logtype is not used anymore and can be removed.
+> 
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> ---
 
-This patch is a logical continuation of the commit:
+Not an expert in this area, but code changes look ok to me.
 
-```
-commit 30410493759f ("drivers/net: check process type in close operation")
-```
-
-In that change, @Thomas Monjalon <thomas@monjalon.net>  introduced a
-mechanism to prevent secondary processes from incorrectly releasing shared
-resources during device close operations. That patch enforced process-type
-checks in PMD close functions, ensuring only primary processes could manage
-shared resources.
-
-Furthermore, secondary application not only breaking on device closing,
-it's also getting segfault when we do "show device info all" from secondary
-after primary closes:
-
-testpmd> show device info all
-
-********************* Infos for device 0000:03:00.0 *********************
-Bus name: pci
-Bus information: vendor_id=3D15b3, device_id=3D101d
-Driver name: mlx5_pci
-Devargs:
-Connect to socket: 0
-
-Segmentation fault (core dumped)
-
-This patch prevents these crashes and it seems that these fixes should be
-in PMD along with the ethdev layer.
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
 
-On Wed, Jul 23, 2025 at 12:30=E2=80=AFAM Khadem Ullah <
-14pwcse1224@uetpeshawar.edu.pk> wrote:
-
-> I think at least this should be followed either in PMD or in ethdev layer
-> to avoid this specific crashes.
->
-> On Mon, Jul 21, 2025, 17:00 Thomas Monjalon <thomas@monjalon.net> wrote:
->
->> 21/07/2025 13:46, Ivan Malov:
->> > On Mon, 21 Jul 2025, Dariusz Sosnowski wrote:
->> >
->> > > + mlx5 maintainers
->> > >
->> > > Thank you for the patch.
->> > >
->> > > Could you please include other PMD maintainers (or other maintainers=
-,
->> depending on changed code)
->> > > in the future patches?
->> > > There is a script which automatically adds maintainers while sending
->> a patch.
->> > > It is described in:
->> https://doc.dpdk.org/guides/contributing/patches.html#sending-patches
->> > >
->> > > On Mon, Jul 21, 2025 at 03:38:51AM -0400, Khadem Ullah wrote:
->> > >> When the primary process exits, the shared mlx5 state becomes
->> > >> unavailable to secondary processes. If a secondary process attempts
->> > >> to query device information (e.g., via testpmd), a NULL dereference
->> > >> may occur due to missing shared data.
->> > >>
->> > >> This patch adds a check for shared context availability and fails
->> > >> gracefully while preventing a crash.
->> > >>
->> > >> Fixes: e60fbd5b24fc ("mlx5: add device configure/start/stop")
->> > >> Cc: stable@dpdk.org
->> > >>
->> > >> Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
->> > >> ---
->> > >>  drivers/net/mlx5/mlx5_ethdev.c | 6 ++++++
->> > >>  1 file changed, 6 insertions(+)
->> > >>
->> > >> diff --git a/drivers/net/mlx5/mlx5_ethdev.c
->> b/drivers/net/mlx5/mlx5_ethdev.c
->> > >> index 68d1c1bfa7..1848f6536a 100644
->> > >> --- a/drivers/net/mlx5/mlx5_ethdev.c
->> > >> +++ b/drivers/net/mlx5/mlx5_ethdev.c
->> > >> @@ -368,6 +368,12 @@ mlx5_dev_infos_get(struct rte_eth_dev *dev,
->> struct rte_eth_dev_info *info)
->> > >>     * Since we need one CQ per QP, the limit is the minimum number
->> > >>     * between the two values.
->> > >>     */
->> > >> +  if (priv =3D=3D NULL || priv->sh =3D=3D NULL) {
->> > >> +          DRV_LOG(ERR,
->> > >> +          "mlx5 shared data unavailable (primary process likely
->> exited)");
->> > >> +          rte_errno =3D ENODEV;
->> > >> +          return -rte_errno;
->> > >> +  }
->> > >
->> > > I don't think it's an issue on PMD level, but rather on
->> > > ethdev/multi-process handling level.
->> >
->> > I may be very wrong here, but can't the PMD use its internal 'shared'
->> state to
->> > somehow memorise the fact that a secondary process has attached, in
->> order to not
->> > let the primary process close in the first place (before the secondary
->> process
->> > detaches)? Or is this going to violate some established convention?
->>
->> It looks to be a good idea.
->>
->> > > When primary process closes the port, ethdev library zeroes and free=
-s
->> > > device data shared between processes.
->> > > ethdev port data (rte_eth_dev) on secondary is not updated so it now
->> points to
->> > > invalid data. rte_eth_dev_info_get() is not the only API call
->> affected.
->> > >
->> > > If the primary process closes the port before exiting
->> > > (like testpmd does) and it exits before the secondary,
->> > > the any driver call seems invalid because of that use-after-free
->> behavior.
->> > >
->> > > @Thomas, @Andrew - Do you happen to know if doing anything on ethdev
->> ports
->> > > in secondary process after primary has gracefully exited is supporte=
-d?
->>
->> No there is no statement about whether it is supported or not.
->> I think we should at least return an error instead of crashing.
->>
->>
->>
-
---=20
-Engr. Khadem Ullah,
-Software Engineer,
-Dreambig Semiconductor Inc
-https://dreambigsemi.com/
-
---000000000000cb273f063a970495
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">This patch is a logical continuation of the commit:<br><br=
->```<br>commit 30410493759f (&quot;drivers/net: check process type in close=
- operation&quot;)<br>```<br><br>In that change,=C2=A0<a class=3D"gmail_plus=
-reply" id=3D"plusReplyChip-1" href=3D"mailto:thomas@monjalon.net" tabindex=
-=3D"-1">@Thomas Monjalon</a>=C2=A0 introduced a mechanism to prevent second=
-ary processes from incorrectly releasing shared resources during device clo=
-se operations. That patch enforced process-type checks in PMD close functio=
-ns, ensuring only primary processes could manage shared resources.<br><br>F=
-urthermore, secondary application not only breaking on device closing, it&#=
-39;s also getting segfault when we do &quot;show device info all&quot; from=
- secondary after primary closes: <br><br>testpmd&gt; show device info all <=
-br><br>********************* Infos for device 0000:03:00.0 ****************=
-*****<br>Bus name: pci<br>Bus information: vendor_id=3D15b3, device_id=3D10=
-1d<br>Driver name: mlx5_pci<br>Devargs: <br>Connect to socket: 0<br><br>Seg=
-mentation fault (core dumped)<br><br>This patch prevents these crashes and =
-it seems that these fixes should be in PMD along with the ethdev layer. =C2=
-=A0<br><br></div><br><div class=3D"gmail_quote gmail_quote_container"><div =
-dir=3D"ltr" class=3D"gmail_attr">On Wed, Jul 23, 2025 at 12:30=E2=80=AFAM K=
-hadem Ullah &lt;<a href=3D"mailto:14pwcse1224@uetpeshawar.edu.pk">14pwcse12=
-24@uetpeshawar.edu.pk</a>&gt; wrote:<br></div><blockquote class=3D"gmail_qu=
-ote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,20=
-4);padding-left:1ex"><div dir=3D"auto">I think at least this should be foll=
-owed either in PMD or in ethdev layer to avoid this specific crashes.=C2=A0=
-</div><br><div class=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail_attr">=
-On Mon, Jul 21, 2025, 17:00 Thomas Monjalon &lt;<a href=3D"mailto:thomas@mo=
-njalon.net" target=3D"_blank">thomas@monjalon.net</a>&gt; wrote:<br></div><=
-blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-l=
-eft:1px solid rgb(204,204,204);padding-left:1ex">21/07/2025 13:46, Ivan Mal=
-ov:<br>
-&gt; On Mon, 21 Jul 2025, Dariusz Sosnowski wrote:<br>
-&gt; <br>
-&gt; &gt; + mlx5 maintainers<br>
-&gt; &gt;<br>
-&gt; &gt; Thank you for the patch.<br>
-&gt; &gt;<br>
-&gt; &gt; Could you please include other PMD maintainers (or other maintain=
-ers, depending on changed code)<br>
-&gt; &gt; in the future patches?<br>
-&gt; &gt; There is a script which automatically adds maintainers while send=
-ing a patch.<br>
-&gt; &gt; It is described in: <a href=3D"https://doc.dpdk.org/guides/contri=
-buting/patches.html#sending-patches" rel=3D"noreferrer noreferrer" target=
-=3D"_blank">https://doc.dpdk.org/guides/contributing/patches.html#sending-p=
-atches</a><br>
-&gt; &gt;<br>
-&gt; &gt; On Mon, Jul 21, 2025 at 03:38:51AM -0400, Khadem Ullah wrote:<br>
-&gt; &gt;&gt; When the primary process exits, the shared mlx5 state becomes=
-<br>
-&gt; &gt;&gt; unavailable to secondary processes. If a secondary process at=
-tempts<br>
-&gt; &gt;&gt; to query device information (e.g., via testpmd), a NULL deref=
-erence<br>
-&gt; &gt;&gt; may occur due to missing shared data.<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; This patch adds a check for shared context availability and f=
-ails<br>
-&gt; &gt;&gt; gracefully while preventing a crash.<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; Fixes: e60fbd5b24fc (&quot;mlx5: add device configure/start/s=
-top&quot;)<br>
-&gt; &gt;&gt; Cc: <a href=3D"mailto:stable@dpdk.org" rel=3D"noreferrer" tar=
-get=3D"_blank">stable@dpdk.org</a><br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; Signed-off-by: Khadem Ullah &lt;<a href=3D"mailto:14pwcse1224=
-@uetpeshawar.edu.pk" rel=3D"noreferrer" target=3D"_blank">14pwcse1224@uetpe=
-shawar.edu.pk</a>&gt;<br>
-&gt; &gt;&gt; ---<br>
-&gt; &gt;&gt;=C2=A0 drivers/net/mlx5/mlx5_ethdev.c | 6 ++++++<br>
-&gt; &gt;&gt;=C2=A0 1 file changed, 6 insertions(+)<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; diff --git a/drivers/net/mlx5/mlx5_ethdev.c b/drivers/net/mlx=
-5/mlx5_ethdev.c<br>
-&gt; &gt;&gt; index 68d1c1bfa7..1848f6536a 100644<br>
-&gt; &gt;&gt; --- a/drivers/net/mlx5/mlx5_ethdev.c<br>
-&gt; &gt;&gt; +++ b/drivers/net/mlx5/mlx5_ethdev.c<br>
-&gt; &gt;&gt; @@ -368,6 +368,12 @@ mlx5_dev_infos_get(struct rte_eth_dev *d=
-ev, struct rte_eth_dev_info *info)<br>
-&gt; &gt;&gt;=C2=A0 =C2=A0 =C2=A0* Since we need one CQ per QP, the limit i=
-s the minimum number<br>
-&gt; &gt;&gt;=C2=A0 =C2=A0 =C2=A0* between the two values.<br>
-&gt; &gt;&gt;=C2=A0 =C2=A0 =C2=A0*/<br>
-&gt; &gt;&gt; +=C2=A0 if (priv =3D=3D NULL || priv-&gt;sh =3D=3D NULL) {<br=
->
-&gt; &gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 DRV_LOG(ERR,<br>
-&gt; &gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;mlx5 shared data un=
-available (primary process likely exited)&quot;);<br>
-&gt; &gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 rte_errno =3D ENODEV;<br>
-&gt; &gt;&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return -rte_errno;<br>
-&gt; &gt;&gt; +=C2=A0 }<br>
-&gt; &gt;<br>
-&gt; &gt; I don&#39;t think it&#39;s an issue on PMD level, but rather on<b=
-r>
-&gt; &gt; ethdev/multi-process handling level.<br>
-&gt; <br>
-&gt; I may be very wrong here, but can&#39;t the PMD use its internal &#39;=
-shared&#39; state to<br>
-&gt; somehow memorise the fact that a secondary process has attached, in or=
-der to not<br>
-&gt; let the primary process close in the first place (before the secondary=
- process<br>
-&gt; detaches)? Or is this going to violate some established convention?<br=
->
-<br>
-It looks to be a good idea.<br>
-<br>
-&gt; &gt; When primary process closes the port, ethdev library zeroes and f=
-rees<br>
-&gt; &gt; device data shared between processes.<br>
-&gt; &gt; ethdev port data (rte_eth_dev) on secondary is not updated so it =
-now points to<br>
-&gt; &gt; invalid data. rte_eth_dev_info_get() is not the only API call aff=
-ected.<br>
-&gt; &gt;<br>
-&gt; &gt; If the primary process closes the port before exiting<br>
-&gt; &gt; (like testpmd does) and it exits before the secondary,<br>
-&gt; &gt; the any driver call seems invalid because of that use-after-free =
-behavior.<br>
-&gt; &gt;<br>
-&gt; &gt; @Thomas, @Andrew - Do you happen to know if doing anything on eth=
-dev ports<br>
-&gt; &gt; in secondary process after primary has gracefully exited is suppo=
-rted?<br>
-<br>
-No there is no statement about whether it is supported or not.<br>
-I think we should at least return an error instead of crashing.<br>
-<br>
-<br>
-</blockquote></div>
-</blockquote></div><div><br clear=3D"all"></div><br><span class=3D"gmail_si=
-gnature_prefix">-- </span><br><div dir=3D"ltr" class=3D"gmail_signature"><d=
-iv dir=3D"ltr"><div><div dir=3D"ltr"><div style=3D"font-family:Calibri,Aria=
-l,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)"><span style=3D"colo=
-r:rgb(12,100,192)">Engr. Khadem Ullah, </span><br></div><div style=3D"font-=
-family:Calibri,Arial,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">=
-<span style=3D"color:rgb(12,100,192)">Software Engineer, </span><br></div><=
-span style=3D"color:rgb(12,100,192)">Dreambig Semiconductor Inc <br></span>=
-</div><div dir=3D"ltr"><span style=3D"color:rgb(12,100,192)"><a href=3D"htt=
-ps://dreambigsemi.com/" target=3D"_blank">https://dreambigsemi.com/</a><br>=
-</span></div></div></div></div>
-
---000000000000cb273f063a970495--
