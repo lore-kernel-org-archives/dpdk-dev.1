@@ -2,47 +2,125 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C865C83F17
-	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 06:12:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42CD5C83F17
+	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 06:50:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4509F40649;
-	Wed, 23 Jul 2025 08:12:55 +0200 (CEST)
-Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id 3FB04402CA;
- Wed, 23 Jul 2025 08:12:54 +0200 (CEST)
-Received: from debian (unknown [78.109.70.60])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id BE568E0568;
- Wed, 23 Jul 2025 10:12:52 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am BE568E0568
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1753251173;
- bh=J1zZRZfGnS3zkKQlTR32PPMNUNSHI0+T8baDYatFkaQ=;
- h=Date:From:To:cc:Subject:In-Reply-To:References:From;
- b=T1B3w2cp6j7ZHf9Ydpauy4KiVJiCnBUuBw55YSE1rW6iSZe3i4Q9C2Ep9OQo6xz28
- 5iE2CYyAMWUt2aSY0eiMASREyURqj3XonM6K5JSgR7vWsHhuSO4GR/9gGoQ2ARX9F5
- qQYB2jJkzDoS8n6oB4PW612JKsiYm1sGBgqTvgQC6aDur2mLUuYT7mnSZEsAO7xfTb
- lY5KokZQqS/64ub4DbpEbvYX7WaooWa1f4r/bhqVHXZGmrnVsq1utf+9R7UYd2CkMM
- QirIxE8lUggdj+f26FVdSGqHR7pfoUd8c/TItwfGU2XQu7WlkrpJrbMkWyvrqJvVwv
- ufavPh5mrHa6w==
-Date: Wed, 23 Jul 2025 10:12:51 +0400 (+04)
-From: Ivan Malov <ivan.malov@arknetworks.am>
-To: "Gokul K R (MS/ETA7-ETAS)" <KR.Gokul@in.bosch.com>
-cc: "users@dpdk.org" <users@dpdk.org>, "dev@dpdk.org" <dev@dpdk.org>, 
- "Nivethitha N Shanmugasundaram (ETAS-ICA/XPC-Fe6)"
- <NShanmugasundaram.Nivethitha@etas.com>
-Subject: =?UTF-8?Q?RE=3A_Issue_with_DPDK-Burst_Replay_=E2=80=93_No_F?=
- =?UTF-8?Q?rame_Transmission_Observed_Despite_Successful_Replay?=
-In-Reply-To: <63d4634b-d09a-13bd-86c0-593147e8e874@arknetworks.am>
-Message-ID: <ae786850-6920-c96b-4fd0-89200b78003a@arknetworks.am>
-References: <PAVPR10MB73554B90C65B0D9A83AD8582A450A@PAVPR10MB7355.EURPRD10.PROD.OUTLOOK.COM>
- <5a8c61fe-9c47-d74c-7e0c-3f8dd47b3926@arknetworks.am>
- <PAVPR10MB7355DA0FC9C2847774A0096AA45FA@PAVPR10MB7355.EURPRD10.PROD.OUTLOOK.COM>
- <63d4634b-d09a-13bd-86c0-593147e8e874@arknetworks.am>
+	by mails.dpdk.org (Postfix) with ESMTP id 5EBAB402DF;
+	Wed, 23 Jul 2025 08:50:14 +0200 (CEST)
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com
+ (mail-dm6nam10on2073.outbound.protection.outlook.com [40.107.93.73])
+ by mails.dpdk.org (Postfix) with ESMTP id 03636402CA
+ for <dev@dpdk.org>; Wed, 23 Jul 2025 08:50:12 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JafGKg6qoPsfznluFWhMeW4hO/Zb4SfwMZP78Z763Mpyt0gtGZgZs5uIDuVUB8sePoWqIbELdcVaXc79t6dTHnFU2RoKNouflO9utoJUjOaduVek5tDN96N0PWrTw8+S/Wlh84vBJE8q9XcpQcJ9RsB+gq9UbPHijSzlCYX/19WBmye2LJPeLq2GajIuUjk7QpIw3okCD+4sm+LsJCSUMxnaaUez6cITmXMg5Gl108U2RyLxY3C7+MPq4bRLmLxz/8MRG35s/z6lVQuD8NnO3llzDml2Xfcjevkd5xajThzT8n63N3TrKATVNJE5ZMc79Gvy1Dn+l1JpJgx3rLY+EA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=x8i4F77lZtLrMdgW3Ojxsh7sE/UZ1MG4Pkuz/byTQWo=;
+ b=E8Bos5/uaxEvhJwIlhz8sMVkDkLd8wItY4+AWlGaItsOtwcMEnb/C4AD7TbH+niqXTZ/mv/H358/pU7KZZ5kAFE8psB9icIqQiNHFqT0h1Elgp+PWmcAHSC7U835ZWyx09cbORhN6sk7HwcFy9C3dkzj43UgY8Fd28g2da/zL2ISrZd5XfzLkpZyCq641OmGRbCaE4eZNnsqOp9nafrObXx8ljoPHDffX3Ol8+TqQTYNm5/7o6TI+VtA7ZTEgPNiwfcdu+qypo413huSDjwanOnE3zE9eQ3eErKVGD5QDJAtorw/kGk24DOeTM6P1Izz2odlhrD+sQ7R75KaYsAaaQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=monjalon.net smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x8i4F77lZtLrMdgW3Ojxsh7sE/UZ1MG4Pkuz/byTQWo=;
+ b=YfotyM7jkW3JUsQJ5zOp2VHomX1NjCVc0UnDGU0K3AP+WUPpmNdqAPhnbHTSVwPG0M30xFukFMfF4HN8CRySe3DghFo6BRsOhZOteynwh23FpzyhovWWJsHSMKGoeeuJZtWzrnt+3PQpRJSKm1ggvkcC5F/+t0JXbHXnVPyNq3CIMh4tYMz5nQIxtRFWN4+LxY9m+mpwFo3WOUblZ6+vKLi4LJxh3O9hr9wAriVrdWPGv2bvU3Rf10T1cY0b0SiEq+gseyNPffZ6Ihfd77nnSLFvS/B3cedT/uj4bVProKbg7qAIizhlS4V8aA6g75oSjD3PlmCvtHonvWBsUihKGg==
+Received: from BYAPR07CA0070.namprd07.prod.outlook.com (2603:10b6:a03:60::47)
+ by SJ0PR12MB5676.namprd12.prod.outlook.com (2603:10b6:a03:42e::8)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Wed, 23 Jul
+ 2025 06:50:09 +0000
+Received: from SJ5PEPF000001E9.namprd05.prod.outlook.com
+ (2603:10b6:a03:60:cafe::ce) by BYAPR07CA0070.outlook.office365.com
+ (2603:10b6:a03:60::47) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.21 via Frontend Transport; Wed,
+ 23 Jul 2025 06:50:09 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ5PEPF000001E9.mail.protection.outlook.com (10.167.242.197) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8964.20 via Frontend Transport; Wed, 23 Jul 2025 06:50:08 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 22 Jul
+ 2025 23:49:47 -0700
+Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 22 Jul
+ 2025 23:49:43 -0700
+From: Rongwei Liu <rongweil@nvidia.com>
+To: <matan@nvidia.com>, <viacheslavo@nvidia.com>, <orika@nvidia.com>,
+ <thomas@monjalon.net>, Dariusz Sosnowski <dsosnowski@nvidia.com>, Bing Zhao
+ <bingz@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Shani Peretz
+ <shperetz@nvidia.com>
+CC: <dev@dpdk.org>, <rasland@nvidia.com>
+Subject: [PATCH] net/mlx5: fix ipool memory leak
+Date: Wed, 23 Jul 2025 09:49:22 +0300
+Message-ID: <20250723064923.1805575-1-rongweil@nvidia.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1768446527-1753251173=:16441"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.230.35]
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001E9:EE_|SJ0PR12MB5676:EE_
+X-MS-Office365-Filtering-Correlation-Id: e78543b0-277f-4e54-9174-08ddc9b52a1e
+X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|82310400026|36860700013|1800799024; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?nL47WViQSVTbZagVybIHsOF3lY1tTe4NT2Er0shtqxB7tUUff2mCLCKESh5j?=
+ =?us-ascii?Q?v7ZFu0rOQ7KAfeS0neZpvImkx+Ii6e3cHE9jDxhPzqW3XvHJGvx4B1KxyYw5?=
+ =?us-ascii?Q?72UgLh5G/gWcr2NQIiC14/N+zWwHs56yRe+z+1P779bKOSggkMZ/IAcLZ1+V?=
+ =?us-ascii?Q?ZFbfuyznhXfqng+cNDhmmA3/3uJ/IfrR13K0AwEpnAqYkJ+HMI/Z034jZIK7?=
+ =?us-ascii?Q?rpVdZqekxinJnzE0MQamGmfM8v1YY6CmvFnLk5Zqea+o9ZGtzoLbC9vsOvE6?=
+ =?us-ascii?Q?6vJ1uMum340lg7bhV7Vkzn52iVBlrgyyl8z11QjoOvzT7zc72TjGgBN2edxE?=
+ =?us-ascii?Q?tFPTeRgVYAbj3SW1MebXCNRVGD7XBPG/exKGBqDpgenC6S4oVeUhQp5c/+2p?=
+ =?us-ascii?Q?o7M9zMRwJVx7Jf6ux5sgl09SNCsfim1RlV6UXkjgh6btrlzPHoZE8E+oUXk2?=
+ =?us-ascii?Q?tUsBCMmgheWIrT+MH/jo4kxuCYhoVOE2rd8M78JRWsTY7Fnq+a467B+jExfN?=
+ =?us-ascii?Q?DVXPDmlQ28UdEmCjGJdPgmIOlQxjluPsXfB+J+HWxjZQukr7XYJl/07UjrQ0?=
+ =?us-ascii?Q?EseACFZ6BJGdp3LYRV1q8+po2X9KCgKx68g3NzIEhRH008LrLYcHnqP5pIa8?=
+ =?us-ascii?Q?3Juh1Fc6GAYeh0h5gfGwWQFJauCYQGuCoi3hgP5NxQnjBvsw8k8t7nRKa68z?=
+ =?us-ascii?Q?d/1OlRWdT4nUgcIkk++sjzdj+1VGJR3viCWthk/vS8vK0+FX2mawXeZ5aYox?=
+ =?us-ascii?Q?ZFIb/zvTcQz+5SdX6jkDRvGUhOEEt7PMBb2Ar+EneHYl9jp92l4rpjQ20SO+?=
+ =?us-ascii?Q?vQiTHiPeXaLVEYZZr9CsiLckXHV5kwitJ651PT+Lrxg6qhlAfn7WTReh1G38?=
+ =?us-ascii?Q?EpStV8yl2SKTQGOfDAgF79M5MN6XPmiFPShBPPDTku25VWCOJHt2Tejtd+0N?=
+ =?us-ascii?Q?n4ZWDgyOJnBth8uM2oDE6YHI7+ELNaSuYTcuWPRl4YYoh0ZXrGlSH0MSmdtG?=
+ =?us-ascii?Q?DhOEu2q4iDiXvY7oBy+duvkofRd3gKs/tWf2idFQD0CRvvF8pJ1OkijBk5xG?=
+ =?us-ascii?Q?zBOqfXcj+s3kmZEE9V/9r8SOMwyrsbshMToatH14QjqEx8fImkgly+JbV0jh?=
+ =?us-ascii?Q?sBUsy4MxZVJBlDifvW7GHUHWroZTMukqzVcJWKAdL0Plop7WdAntrp8bpOi0?=
+ =?us-ascii?Q?kXaAJpxZWbcBVtZcMalaEXlOYf3HiRvz7XdLRmDac7dxaWwQy6vxtU/Ct8OG?=
+ =?us-ascii?Q?TmtYcFrH0X9iHXSw2h+LWkmjJ/b8S7jpGgKtLMVtxcO3hyNWkerACF2YVowB?=
+ =?us-ascii?Q?S9EkefWXQpxPHx1bublbDKdwgFvJ7tyaVeffPp1XIhdf4LNELA+jZ8oJWfDD?=
+ =?us-ascii?Q?NAVE2obgDAlHi6DgiPfIe1uNoZZGOUUHJ8evowvrLxTR5aWjel96khauxI5V?=
+ =?us-ascii?Q?XXunvGOKl0yHbyU7kMl3rMbJQZtLkJMr+PwMeouG7Uy2lYEWRhHAJx1ViJqS?=
+ =?us-ascii?Q?1/6Mxq9MT6DVTm0ZchhIlLJyQIj5Wocts2Ss?=
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2025 06:50:08.8054 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e78543b0-277f-4e54-9174-08ddc9b52a1e
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: SJ5PEPF000001E9.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB5676
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,243 +134,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+When ipool debug is enabled, there is internal memory
+to maintain the ipool cache allocation. Need to free it
+when destroying the ipool.
 
---8323328-1768446527-1753251173=:16441
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8BIT
+Fixes: 3a2bda363 ("net/mlx5: add ipool debug checks")
+Cc: shperetz@nvidia.com
+Signed-off-by: Rongwei Liu <rongweil@nvidia.com>
+Acked-by: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
+---
+ drivers/net/mlx5/mlx5_utils.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-On Wed, 23 Jul 2025, Ivan Malov wrote:
+diff --git a/drivers/net/mlx5/mlx5_utils.c b/drivers/net/mlx5/mlx5_utils.c
+index ac218868e6..58249b596f 100644
+--- a/drivers/net/mlx5/mlx5_utils.c
++++ b/drivers/net/mlx5/mlx5_utils.c
+@@ -871,6 +871,10 @@ mlx5_ipool_destroy(struct mlx5_indexed_pool *pool)
+ 		pool->cfg.free(trunks);
+ 	if (gc)
+ 		pool->cfg.free(gc);
++#ifdef POOL_DEBUG
++	if (pool->cache_validator.bmp_mem)
++		pool->cfg.free(pool->cache_validator.bmp_mem);
++#endif
+ 	mlx5_ipool_unlock(pool);
+ 	mlx5_free(pool);
+ 	return 0;
+-- 
+2.27.0
 
-> Hi,
->
-> On Wed, 23 Jul 2025, Gokul K R (MS/ETA7-ETAS) wrote:
->
->> Hi Ivan Malov 😊
->> 
->> Use Case:
->> I'm currently using the DPDK-Burst-Replay tool to replay captured PCAP 
->> files at specific data rates (e.g., 150–200 Mbps).
->> 
->> Response to your feedback:
->> Point 1: "Port 0 is not on the good NUMA ID (-1)"
->> I’m aware that this message is printed due to the NUMA ID being returned as 
->> -1.
->> I've just started diving into the source code and found that the call to 
->> rte_eth_dev_socket_id() returns -1, which typically indicates an error.
->
-> No, -1 typically translates to 'SOCKET_ID_ANY'. In order to rule out 'EINVAL'
-> in 'rte_errno', one should attempt to invoke 'rte_eth_dev_socket_id' within 
-> the
-> loop of 'RTE_ETH_FOREACH_DEV' (see examples in DPDK) and print the socket ID.
->
->> However, the current implementation does not output the rte_errno, which 
->> could help identify the root cause. I'm working on modifying the code to 
->> print the error code for better debugging.
->> 
->> Point 2: "NIC Link is UP"
->> Yes, on the NIC side, the link is up. I'm also able to transmit packets 
->> successfully using the testpmd application.
->> 
->> Question:
->> Could you please confirm if the current version of the DPDK-Burst-Replay 
->> tool supports replaying Ethernet frames larger than 64 bytes (e.g., up to 
->> 1500 bytes)? Or has the tool been enhanced to support this use case?
->
-> The tool seems like an external application. Try to look for any mentions of
-> API 'rte_eth_dev_set_mtu' or just the term 'mtu' in that source code. If 
-> there
-> are no such mentions, then default MTU applies, which depends on the driver.
->
-> Have you tried querying statistics to find the cause of the drops?
-
-Also, given the fact that the application replays some pcap traffic, have you
-made sure the receiver (where you seek to watch the replayed traffic arrive) has
-got 'promiscuous' mode [1] enabled? IIRC, 'test-pmd' enables it by default.
-
-[1] https://doc.dpdk.org/api-25.07/rte__ethdev_8h.html#a5dd1dedaa45f05c72bcc35495e441e91
-
-Thank you.
-
->
-> Thank you.
->
->> 
->> Thanks for your time and support!
->> 
->> Best regards,
->> Gokul K.R
->> 
->> 
->> 
->> 
->> 
->> -----Original Message-----
->> From: Ivan Malov <ivan.malov@arknetworks.am>
->> Sent: Friday, July 18, 2025 5:29 PM
->> To: Gokul K R (MS/ETA7-ETAS) <KR.Gokul@in.bosch.com>
->> Cc: users@dpdk.org; dev@dpdk.org
->> Subject: Re: Issue with DPDK-Burst Replay – No Frame Transmission Observed 
->> Despite Successful Replay
->> 
->> Hi,
->> 
->> (please see below)
->> 
->> On Fri, 18 Jul 2025, Gokul K R (MS/ETA7-ETAS) wrote:
->> 
->>> 
->>> Hi Team,
->>> 
->>> I’m currently working with the dpdk-burst-replay tool and encountered an 
->>> issue during execution. Below are the details:
->>> 
->>> 
->>> ______________________________________________________________________
->>> ______________________________________________________________________
->>> ______________________________________________
->>> 
->>> 
->>> Observation:
->>> During replay, we received the following informational message:
->>> 
->>> port 0 is not on the good numa id (-1)
->> 
->> Which API was used to check this? Was API [1] used? If not, what does it 
->> show in the absence of 'numactl' command?
->> 
->> [1] 
->> https://doc.dpdk.org/api-25.03/rte__ethdev_8h.html#ad032e25f712e6ffeb0c19eab1ec1fd2e
->> 
->>> 
->>> As per the DPDK mailing list discussions, this warning is typically 
->>> benign—often seen on NICs like Intel I225/I210, which do not report NUMA 
->>> affinity. Hence, we proceeded with execution.
->>> 
->>> 
->>> ______________________________________________________________________
->>> ______________________________________________________________________
->>> ______________________________________________
->>> 
->>> 
->>> Command Used:
->>> 
->>> sudo numactl --cpunodebind=0 --membind=0 ./src/dpdk-replay
->>> Original_MAC.pcap 0000:01:00.1
->>> 
->>> Execution Output:
->>> 
->>> preloading Original_MAC.pcap file (of size: 143959 bytes)
->>> 
->>> file read at 100.00%
->>> 
->>> read 675 pkts (for a total of 143959 bytes). max packet length = 1518 
->>> bytes.
->>> 
->>> -> Needed MBUF size: 1648
->>> 
->>> -> Needed number of MBUFs: 675
->>> 
->>> -> Needed Memory = 1.061 MB
->>> 
->>> -> Needed Hugepages of 1 GB = 1
->>> 
->>> -> Needed CPUs: 1
->>> 
->>> -> Create mempool of 675 mbufs of 1648 octets.
->>> 
->>> -> Will cache 675 pkts on 1 caches.
->> 
->> What does this 'cache' stand for? Does it refer to the mempool per-lcore 
->> cache?
->> If so, please note that, according to API [2] documentation, cache size 
->> "must be lower or equal to RTE_MEMPOOL_CACHE_MAX_SIZE and n / 1.5", where 
->> 'n' stands for the number of mbufs. Also, documentation says it is advised 
->> to choose cache_size to have "n modulo cache_size == 0". Does your code 
->> meet these requirements?
->> 
->> By the looks of it, it doesn't (cache_size = n = 675). Consider to 
->> double-check.
->> 
->> [2] 
->> https://doc.dpdk.org/api-25.03/rte__mempool_8h.html#a0b64d611bc140a4d2a0c94911580efd5
->> 
->>> 
->>> 
->>> ______________________________________________________________________
->>> ______________________________________________________________________
->>> ______________________________________________
->>> 
->>> 
->>> Issue:
->>> Despite successful parsing of the pcap file and proper initialization, no 
->>> frames were transmitted or received on either the sender or receiver 
->>> sides.
->> 
->> Is this observation based solely on watching APIs [3] and [4] return 0 all 
->> the time? If yes, one can consider to introduce invocations of APIs [5], 
->> [6] and [7] in order to periodically poll and print statistics (may be with 
->> 1-second delay), which may, for example, shed light on mbuf allocation 
->> errors (extended stats).
->> 
->> Do statistics display any interesting figures to be discussed?
->> 
->> [3] 
->> https://doc.dpdk.org/api-25.03/rte__ethdev_8h.html#a3e7d76a451b46348686ea97d6367f102
->> [4] 
->> https://doc.dpdk.org/api-25.03/rte__ethdev_8h.html#a83e56cabbd31637efd648e3fc010392b
->> 
->> [5] 
->> https://doc.dpdk.org/api-25.03/rte__ethdev_8h.html#adec226574c53ae413252c9b15f6f4bab
->> [6] 
->> https://doc.dpdk.org/api-25.03/rte__ethdev_8h.html#a418ad970673eb171673185e36044fd79
->> [7] 
->> https://doc.dpdk.org/api-25.03/rte__ethdev_8h.html#a300d75b583c1f5acfe5b162a5d8c0ac1
->> 
->>> 
->>> 
->>> ______________________________________________________________________
->>> ______________________________________________________________________
->>> ______________________________________________
->>> 
->>> 
->>> Environment Details:
->>>
->>>  *  NIC used: Intel I225/I210
->>>  *  Hugepages configured: 1 GB
->>>  *  NUMA binding: --cpunodebind=0 --membind=0
->>>  *  OS: [Your Linux distribution, e.g., Ubuntu 20.04]
->>>  *  DPDK version: [Mention if known]
->>> 
->>> ______________________________________________________________________
->>> ______________________________________________________________________
->>> ______________________________________________
->>> 
->>> 
->>> Could you please advise if any additional setup, configuration, or known 
->>> limitations may be impacting the packet transmission?
->> 
->> This may be a wild suggestion from my side, but it pays to check whether 
->> link status is "up" upon port start on both ends. One can use API [8] to do 
->> that.
->> 
->> [8] 
->> https://doc.dpdk.org/api-25.03/rte__ethdev_8h.html#ac05878578e4fd9ef3551d2c1c175ebe7
->> 
->> Thank you.
->> 
->> 
->>> 
->>> Thank you in advance for your support!
->>> 
->>> 
->>> Best regards,
->>> Gokul K R
->>> 
->>> 
->>> 
->>> 
->>> 
->
---8323328-1768446527-1753251173=:16441--
