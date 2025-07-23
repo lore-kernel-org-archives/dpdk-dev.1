@@ -2,78 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C26AC83F17
-	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 14:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE7F9C83F1A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 14:24:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A7D3F40E26;
-	Wed, 23 Jul 2025 16:22:21 +0200 (CEST)
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com
- [209.85.222.179])
- by mails.dpdk.org (Postfix) with ESMTP id 2B32E40B9B
- for <dev@dpdk.org>; Wed, 23 Jul 2025 16:22:20 +0200 (CEST)
-Received: by mail-qk1-f179.google.com with SMTP id
- af79cd13be357-7df981428abso1027270985a.1
- for <dev@dpdk.org>; Wed, 23 Jul 2025 07:22:20 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3DE0940E15;
+	Wed, 23 Jul 2025 16:24:50 +0200 (CEST)
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com
+ [209.85.222.173])
+ by mails.dpdk.org (Postfix) with ESMTP id AF5F040B9B
+ for <dev@dpdk.org>; Wed, 23 Jul 2025 16:24:48 +0200 (CEST)
+Received: by mail-qk1-f173.google.com with SMTP id
+ af79cd13be357-7e29d5f7672so597866685a.3
+ for <dev@dpdk.org>; Wed, 23 Jul 2025 07:24:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1753280539;
- x=1753885339; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1753280688;
+ x=1753885488; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=sMIY+v12LWv+uNEv8Ae1KGBiALOAH7r5nEeDZUKiDak=;
- b=IGUnMkecrUOgmF5NDj1FEP7LoPY7shrFdQwwhg3n6S9QvFMFGr5a6/p7Kss7Hgb+ND
- 5K/2R1t/XkgwjgKNN1HRsG7MFJJ5Q6ici/0//siJHzGaw6TQSXqBnQKwvmKKI/5KD3Sf
- 9FvmD9DcbirijPxQeSHSAbnm8p7t444C0IJF9X+jwk4DCeA2K2vETOuGVXGib490jRNW
- iHY3Hw+zR9TVAGVJ+aIMxbFZJgOvk0i3XcXoLcksau3ssZ2Zt9TONa+sEiJlgou2aGB6
- H8X8ltufxBGHXAd/KUUwctJ6JIonCHvEEr5a8N4XKzkZKP87gW3eqnah3WWjR63WQ6Lr
- 9Ayw==
+ bh=5UjRRk2TDttO76Anxt1TDITp88f0VAV/uw2yAbcNS9M=;
+ b=NSJ0tsO+ruZMYblRGKJ1IGnSUrGkc2qi7r5P3pPi+koq516Ki5WZrQyxqBlRarPECg
+ Ms0DM03knlLlperNnJR80XeF5Lm6aOk0KdESWoL3Ty7s94ToQb+dle1n9oWaMRQHWlUx
+ SQ/dMLi2W8wYj+P9cuKAfJl1Wv9s9cpVYP+1pMaWWwcvDMrkv0KaYodNc3ivw1qAvbCk
+ qL3cUN5K92j9d9za9mfs+av28w/NSpHhJyEDFTSdKdSrJD+oBAE2lMGlms7kKnR5xWVj
+ 9O5fxaEy8cWJcQDsaF0GdOEBhJZ6kRhb0W4+0qm5Y8onm2GaYkJhj9u7g+gRLeGt0Bn5
+ NrtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753280539; x=1753885339;
+ d=1e100.net; s=20230601; t=1753280688; x=1753885488;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=sMIY+v12LWv+uNEv8Ae1KGBiALOAH7r5nEeDZUKiDak=;
- b=jV/c7KoM7xHIMxTqrfGJY1nt62g5Xtvi1Qgvtuh1s0gsla8sQlNfxl35bTZobEo+dg
- Ot/uv5VKXHz7vJZGhOJO2Al+kNT4EYWSULtpLi+dfABKuDfgVG3AWKmZBAxMqEzDz3ML
- OkjL0HruBa2YuxSlRhXBE7dPYWUu3nxf/sYJ5Ge4PUwxuJM3VAVG5R0oEMtl7y/ax/4g
- s41mw3EOemNFbeDBxhvK0voAgcaG3QaqFLnndgR0R0sm9nTRqRB7/VU6Xsi4xoCxVcHe
- BIUqizlODJVjoom1mR9HJNm+2Niw0dx7J1J9DDjwF18/ad0Yi6cLZx3okYAHQl8cDmgS
- Mpsg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCV/ztqbxHlhh2nwHHuSBEjhAubTC0itwPEDGevgqCPw7OIBHvvnkKwGeeyKFTczLvo1uwo=@dpdk.org
-X-Gm-Message-State: AOJu0Yz2rvc9qG28auiVP57mjwskz0fx48sGoC/7RRPfHszS0+ff1H2R
- qoSs0YhHV39iyPEwY9T35Bs7+ZzsK+hAVPb7nTSoBAZurFkWGAkRBDsayEl9qSuVAJ0=
-X-Gm-Gg: ASbGncvwY8lmPwe9+cXPkE9V+7cPacZftjkpKAG223F4+rQetOOGZ4ythLpL1Cv3fBD
- GKmgHRXb1zEY3Fz4CIGThkH2wqZgVYOIpZGRAm8SI7HwfQWeG4XtWzauHF4brej8jS44P5MOUiY
- JKiVCgaZChjcP0w0EDLQdE7zLX3r5AT9wGkvP2XqNqshezQ8bZTNrSxQv75wJMDM9BMG7bH3bqN
- 2DbBvL8Dat904v0NbYklPle80g1+a041AFXPUxXGpBHhTG/r0NuQFzemg5+w0pYjULdc6Hb3eyX
- 6KuykzuQBUsz2luW/Hm0RYG/o5jQ+mH0fZGaQaDAyRav3P8FBT6TJ8T6L8+n0AFs6/fIBpO8pqF
- QLusYQnZfHqGJl5+CWj2fGjTCPzNrLT3zysKJXTlDKbo4aSHGoVODr3zjCWpdnf/jv60X+ELb0X
- x8w7l4RSS74A==
-X-Google-Smtp-Source: AGHT+IGwbFQrzUtPsl8FNfwbUuEbdQoypGkMSPpi8n+/oq0jm8m6JI5mLeTRQC0oKUyY0t02ao7cDA==
-X-Received: by 2002:a05:620a:720a:b0:7e2:3a27:a10b with SMTP id
- af79cd13be357-7e62a18980dmr303927985a.51.1753280539437; 
- Wed, 23 Jul 2025 07:22:19 -0700 (PDT)
+ bh=5UjRRk2TDttO76Anxt1TDITp88f0VAV/uw2yAbcNS9M=;
+ b=njin1wGE9eFCSaFJ9flgfviHwgfNP/rd/nVzm1ed8ZpoCjrTJrIGcEc/Cg9G4gsWBm
+ UGvgUIrYw1mGefDdCH8RQgFXAj8l/3TP30egIGWLtrDv0rvhq7PhpUkw5SFcujvZzkh+
+ NL+kxAk9f6QBo+ztMMu30OlrQZKw8YtQVncV6DDkBM1h0e3VZB6Wmk9wjVvzG66uK9Wo
+ H+vrOF8+DME1QJ7jNcXY3I/8TBK0p2NcLfKwzGOcaMwSKXOYx9qu7bXF5K5CVL8LqUNK
+ IEKHdhjAEHriDJQyZxKH/UyRE5xm/ZOrZXckwv4j90gS8rg0fINDFkYh7gpXNHXcXuDM
+ O0sA==
+X-Gm-Message-State: AOJu0YwKJt0T9Ty8Bo2BxYSO1axlrmFIZzvgRYgjSkFDdEcv33YIuhss
+ se5aTq1LuLK91y95dRaLXEhYbllHkGYQeyjEUud2XCVRZc/N29ZO8gDRftEqjotUOS4=
+X-Gm-Gg: ASbGncvIt2/BLpAoSMdlvUPg8JW85colpWtMFYymHa3+23vvnKJ8zLZBuyragE5kwLq
+ GCuBjb9OEiDrUGkIUco68/HMg2jFVLfAbvyY2CcsvU/sPczP52UeDpWvXumupihua9vn393WQGU
+ 25cjIOv6zNT9x0LyYsPgBjhNQAUZ6m+fKJwwYbeaxkQsINWWISP7hpG/F4uHK3bluEqjbsN2Deg
+ c+UUCtydSuFV2XTrR1UtTCZrjLmfk5iLuPyOARzesUXqSMe7p4lSAKeYgwCw/+HK76r3CInFnnG
+ w4tfDspvFt4M+tvp2aEj3DUSeyZv02t7LDJXSYqGp2wfiZGTGKps3tU60kzVSJtVFrHn//GI0bS
+ nFtadVfB6R+FFf9ggEdloEJhXAhTwM33jVyU9MkceKR2bisgdgUfJcYC0pAm43yItyN70S60Anf
+ pexsSX1xgdcw==
+X-Google-Smtp-Source: AGHT+IG+gDWq03RDs89/v2Os7HqBoz3yCejgmFs4DHqc5zcr1EkvXQ9H+Vg2mIYPtnEq5hD59M3iEg==
+X-Received: by 2002:a05:620a:1790:b0:7e6:2f6a:5bae with SMTP id
+ af79cd13be357-7e62f6a5d16mr113758685a.62.1753280685498; 
+ Wed, 23 Jul 2025 07:24:45 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7e356c61497sm661459985a.80.2025.07.23.07.22.18
+ af79cd13be357-7e356c3eb74sm652657485a.62.2025.07.23.07.24.44
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 23 Jul 2025 07:22:19 -0700 (PDT)
-Date: Wed, 23 Jul 2025 07:22:16 -0700
+ Wed, 23 Jul 2025 07:24:45 -0700 (PDT)
+Date: Wed, 23 Jul 2025 07:24:42 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Cc: Ivan Malov <ivan.malov@arknetworks.am>, Thomas Monjalon
- <thomas@monjalon.net>, Ferruh Yigit <ferruh.yigit@amd.com>, Andrew
- Rybchenko <andrew.rybchenko@oktetlabs.ru>, dev@dpdk.org, dpdk stable
- <stable@dpdk.org>
-Subject: Re: [PATCH] [PATCH v3] lib/ethdev: fix segfault in secondary
- process by validating dev_private pointer
-Message-ID: <20250723072216.5a34b44a@hermes.local>
-In-Reply-To: <CA++2-x6bEQ+rjaddbyQLVTZTpy_4kUn12jmpXew9T=b0BjqSdA@mail.gmail.com>
-References: <20250723045022.1580829-1-14pwcse1224@uetpeshawar.edu.pk>
- <20250723131049.1703172-1-14pwcse1224@uetpeshawar.edu.pk>
- <0792a0e5-dbbf-f3bc-527b-2fe7d33e8822@arknetworks.am>
- <CA++2-x6bEQ+rjaddbyQLVTZTpy_4kUn12jmpXew9T=b0BjqSdA@mail.gmail.com>
+To: Ashok Kaladi <ashok.k.kaladi@intel.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH] net/tap: fix BPF build failure in cross-compilation
+ environment
+Message-ID: <20250723072442.62ba35ff@hermes.local>
+In-Reply-To: <20250723125702.3787183-1-ashok.k.kaladi@intel.com>
+References: <20250723125702.3787183-1-ashok.k.kaladi@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -90,104 +82,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 23 Jul 2025 18:34:04 +0500
-Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk> wrote:
+On Wed, 23 Jul 2025 07:57:02 -0500
+Ashok Kaladi <ashok.k.kaladi@intel.com> wrote:
 
-> Hi Ivan, agree. I think we can atleast currently guard all the known
-> crashes.
+> During cross-compilation, BPF build incorrectly includes header files
+> from the host system instead of the target sysroot. This leads to
+> build failures due to incompatible headers or unavailability of header
+> files in the host.
 > 
-> Sure, I will check the macro and get back to you.
+> Fix by using the Meson sysroot property to correctly locate and include
+> BPF-related headers from the cross-compilation environment.
 > 
-> Thank you!
+> Fixes: d8d065045c4a ("net/tap: rewrite RSS BPF program")
+> Cc: stephen@networkplumber.org
 > 
-> On Wed, Jul 23, 2025, 18:19 Ivan Malov <ivan.malov@arknetworks.am> wrote:
+> Signed-off-by: Ashok Kaladi <ashok.k.kaladi@intel.com>
+> ---
+>  drivers/net/tap/bpf/meson.build | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
 > 
-> > Hi Khadem,
-> >
-> > On Wed, 23 Jul 2025, Khadem Ullah wrote:
-> >  
-> > > In secondary processes, directly accessing 'dev->data->dev_private' can
-> > > cause a segmentation fault if the primary process has exited or if the
-> > > shared memory is no longer accessible.
-> > >
-> > > Secondary application not only breaking on device closing,
-> > > but also getting segfault when we do "show device info all" from  
-> > secondary  
-> > > after primary closes.
-> > >
-> > > This patch adds safety checks while using rte_mem_virt2phy(), with an
-> > > unlikely() branch hint to minimize performance impact in the fast path.
-> > > This ensures 'dev_private' is still valid before accessing it.
-> > >
-> > > Fixes: bdad90d12ec8 ("ethdev: change device info get callback to return  
-> > int")  
-> > > Cc: stable@dpdk.org
-> > >
-> > > Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-> > > ---
-> > > lib/ethdev/rte_ethdev.c | 15 ++++++++++++++-
-> > > 1 file changed, 14 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-> > > index dd7c00bc94..343e156a4f 100644
-> > > --- a/lib/ethdev/rte_ethdev.c
-> > > +++ b/lib/ethdev/rte_ethdev.c
-> > > @@ -4079,6 +4079,13 @@ rte_eth_dev_info_get(uint16_t port_id, struct  
-> > rte_eth_dev_info *dev_info)  
-> > >
-> > >       if (dev->dev_ops->dev_infos_get == NULL)
-> > >               return -ENOTSUP;
-> > > +     if (rte_eal_process_type() == RTE_PROC_SECONDARY &&
-> > > +             unlikely(rte_mem_virt2phy(dev->data->dev_private) ==  
-> > RTE_BAD_PHYS_ADDR)) {  
-> > > +                     RTE_ETHDEV_LOG_LINE(ERR,
-> > > +                     "Secondary: dev_private not accessible (primary  
-> > exited?)");  
-> > > +                     rte_errno = ENODEV;
-> > > +                     return -rte_errno;
-> > > +     }
-> > >       diag = dev->dev_ops->dev_infos_get(dev, dev_info);
-> > >       if (diag != 0) {
-> > >               /* Cleanup already filled in device information */
-> > > @@ -4307,7 +4314,13 @@ rte_eth_macaddr_get(uint16_t port_id, struct  
-> > rte_ether_addr *mac_addr)  
-> > >                       port_id);
-> > >               return -EINVAL;
-> > >       }
-> > > -
-> > > +     if (rte_eal_process_type() == RTE_PROC_SECONDARY &&
-> > > +             (dev->data->mac_addrs == NULL)) {
-> > > +                     RTE_ETHDEV_LOG_LINE(ERR,
-> > > +                     "Secondary: dev_private not accessible (primary  
-> > exited?)");  
-> > > +                     rte_errno = ENODEV;
-> > > +                     return -rte_errno;
-> > > +     }
-> > >       rte_ether_addr_copy(&dev->data->mac_addrs[0], mac_addr);
-> > >
-> > >       rte_eth_trace_macaddr_get(port_id, mac_addr);  
-> >
-> > I see one more API has been augmented with the check. But community
-> > members may
-> > still argue this is not robust, as many other APIs will also fail. So,
-> > even if
-> > the task was to augment as many APIs as possible with the check, then the
-> > check
-> > would still be required to be factorised/generalised somehow. What do you
-> > think?
-> >
-> > Please also note that there are already macro invocations in many of these
-> > APIs,
-> > for example, RTE_ETH_VALID_PORTID_OR_ERR_RET. Could be convenient.
-> >
-> > Thank you.
-> >  
-> > > --
-> > > 2.43.0
-> > >
-> > >  
-> >  
+> diff --git a/drivers/net/tap/bpf/meson.build b/drivers/net/tap/bpf/meson.build
+> index 35d7438c74..1b87d5018e 100644
+> --- a/drivers/net/tap/bpf/meson.build
+> +++ b/drivers/net/tap/bpf/meson.build
+> @@ -39,13 +39,14 @@ endif
+>  
+>  enable_tap_rss = true
+>  
+> -libbpf_include_dir = libbpf.get_variable(pkgconfig : 'includedir')
+> +# Determine sysroot if cross-compiling and the property exists in the
+> +# init files. Note that this environment variable will have to be passed
+> +# in as a property during meson setup.
+> +sysroot = meson.get_external_property('sysroot', '')
+> +libbpf_include_dir = sysroot + libbpf.get_variable(pkgconfig : 'includedir')
+>  
+> -# The include files <linux/bpf.h> and others include <asm/types.h>
+> -# but <asm/types.h> is not defined for multi-lib environment target.
+> -# Workaround by using include directoriy from the host build environment.
+>  machine_name = run_command('uname', '-m', check: true).stdout().strip()
+> -march_include_dir = '/usr/include/' + machine_name + '-linux-gnu'
+> +march_include_dir = sysroot + '/usr/include/' + machine_name + '-linux-gnu'
 
-No top posting.
-
-How are you monitoring the primary? Lets fix that
+Keep the comment about why uname -m is used.
