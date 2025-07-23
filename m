@@ -2,66 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 776CFC83F17
-	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 12:19:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96A1BC83F1A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 12:30:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 71F6740A89;
-	Wed, 23 Jul 2025 14:19:42 +0200 (CEST)
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com
- [209.85.219.51]) by mails.dpdk.org (Postfix) with ESMTP id 8CFA040264
- for <dev@dpdk.org>; Wed, 23 Jul 2025 14:19:41 +0200 (CEST)
-Received: by mail-qv1-f51.google.com with SMTP id
- 6a1803df08f44-6fada2dd785so67692996d6.2
- for <dev@dpdk.org>; Wed, 23 Jul 2025 05:19:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1753273181;
- x=1753877981; darn=dpdk.org; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=FxZF51/YpELT6mthkP9CoKvjjb7MOGZvZSCMnzgee2Q=;
- b=t/iEZLNGOizI4MPF4Ij904SNybMSsXlJkfG8mTVuQzESwH54pY9pJEYz14390yKlZU
- e+xFZofXmIgXgrbZp3FeD5n3mIamAoU5vq8G5YbE4BrwUpEQ+oWsW5UJHKc/X4D6TE9J
- fdzRjLx7FJYa1rgcnBGKnKqTYqeDY+VWzGqketCdgLl7iY9dHPJRRrDNppNIUr/xBrBZ
- oFaLx+66vYe6fs8e3OmmMnAlcb+tTfiiXqYDu321YwOhaTbN0hYTGJtwuaUgut4/cLXF
- hPFlbT7eVZ0NpPCnNiZC7htPmxhtIXYg+HdVhzZLvYjUX7M4ZyICCCmRUPCnSCPY8rV8
- zvUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753273181; x=1753877981;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=FxZF51/YpELT6mthkP9CoKvjjb7MOGZvZSCMnzgee2Q=;
- b=flkG3kJ+N8GBFxKRw8H6tB6yEHU34xWRU5AG7ysFScv614S0+TY68w3XOpbKs1lDdu
- hw0Tl+Wn7PVJ/oRaTR9GUVjD10ElQSDnT5gK90XRENi8ND42wJls2vwjfMoyLnlc9gO5
- iDqlihFsNQB+qS5vQbMpJuH/uneX6Q5PlH0xcB0QE4/PkKLc9PS1p9nPeRxo7O/DOUdq
- 7LnoWhxu89ZC/E7fMkbqpgzRCMPFbYRvjuw1JDCaqA4PCZWOHlIL9Ri8GOkYEBEG8Cxd
- A1l+0trRyI4v9N+zOv0L7LR2mJ3SkCynWv85kseOAQajEVbw5/hxKi5PKEIyfVhHcOiD
- C/kg==
-X-Gm-Message-State: AOJu0YyIDDm13ebrczYjIoDyzeJbtZP7oiVGB5KEXF11IfnNopUVGBli
- 0gFURiR/oBEfCF3iBoK35alYxar99iJKaCHJAx09uR1mnLX3ezRjsxpwAaPd4cQSOpB3Qw+I6y4
- oO/5qPJy+nEDtyFJ+ndbY5LQ7mskS1bIFJdA8IBcBhQ==
-X-Gm-Gg: ASbGncsFLUzp/HcJjBoIMP3XGSLkvJ/w7xw+a4+p/uecL3EIrXNuiXLndzkPmgp1/hH
- zhd3cOlwoGHCWcKLZn2UzNFbF1BZURlwgR7iuZj0VFgqzMO2vACMUUdj6yBAEDPnDtzexzDGumw
- HwHT6ep1Dc8HLiUZvSn5r5RiUyRXTh9e/zS4ug3zwI6NTtAo8fJCCuYOdhbrohN+0XYvJs6FxxM
- tl1bTIHyQ==
-X-Google-Smtp-Source: AGHT+IG7jz+WHqCBaeslFVuO7QRYbQVoJ3TbDh9tlufyxxCVV6tqcFEmYkefrqwZE6xmd+OYNXPZQrtCIZ3FciaRLdI=
-X-Received: by 2002:a05:6214:500d:b0:6fb:4e82:6e8 with SMTP id
- 6a1803df08f44-7070051b347mr33495346d6.14.1753273180788; Wed, 23 Jul 2025
- 05:19:40 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 727A540A89;
+	Wed, 23 Jul 2025 14:30:23 +0200 (CEST)
+Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
+ by mails.dpdk.org (Postfix) with ESMTP id 38E4440653
+ for <dev@dpdk.org>; Wed, 23 Jul 2025 14:30:22 +0200 (CEST)
+Received: from debian (unknown [78.109.70.60])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by agw.arknetworks.am (Postfix) with ESMTPSA id A8D6AE0568;
+ Wed, 23 Jul 2025 16:30:20 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am A8D6AE0568
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
+ s=default; t=1753273821;
+ bh=lKuYG0jElAKEHivDAMWIr8VakbG1Uz35XeP8gi5bFDo=;
+ h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+ b=L/207tfaZh2QYbXayq7TPhb9rPw0v9hDqX4mq1b4WQ7jQTlpvi0yrICba8PpTu/YZ
+ 012ZdXEKcDALQdSj9r60iTpqKEc4HaWkpPW7shdcYQK4Lo5htvFpzKvJX+2WkSE67f
+ rM++6ZGNUi81Cj7IgoE5qHBSMTDBuWiKCf5sRTUVEvvM1d2jiTmm0TpF15sbO2VMwg
+ SSjgKe+sy3VYm4vHJP74so/gv35xzi2hg2iWWuHjTNad+KFZoyVzQOMGMRkv/TrybI
+ Qh24LMURfT0b0PZhN8sHYumXbeTu/Vssz0bJ5wOBVNi3CrA9gNUupb2T1/eafa2zzq
+ 2ePXjL+3NO/eQ==
+Date: Wed, 23 Jul 2025 16:30:19 +0400 (+04)
+From: Ivan Malov <ivan.malov@arknetworks.am>
+To: Shivaji Kant <shivajikant@google.com>
+cc: Ciara Loftus <ciara.loftus@intel.com>, Maryam Tahhan <mtahhan@redhat.com>, 
+ dev@dpdk.org, Joshua Washington <joshwash@google.com>
+Subject: Re: [PATCH] net/af_xdp: enable AF_XDP program attachment mode
+In-Reply-To: <20250723074249.3264675-1-shivajikant@google.com>
+Message-ID: <d21fa0bc-6593-30f7-4219-ab80e7390ef7@arknetworks.am>
+References: <20250723074249.3264675-1-shivajikant@google.com>
 MIME-Version: 1.0
-References: <20250722115439.1353573-1-14pwcse1224@uetpeshawar.edu.pk>
- <20250723045022.1580829-1-14pwcse1224@uetpeshawar.edu.pk>
-In-Reply-To: <20250723045022.1580829-1-14pwcse1224@uetpeshawar.edu.pk>
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Date: Wed, 23 Jul 2025 17:19:29 +0500
-X-Gm-Features: Ac12FXzbnDQF2DmtYc27CMpOl1KWs-KBadPL5cCY-goWoOKmcswNHB5xV79TKFg
-Message-ID: <CA++2-x7U1D8pB1dzuyoeQ4WQKcCpv32HVji23Ev=cdM=G9MROA@mail.gmail.com>
-Subject: Re: [PATCH v2] lib/ethdev: fix segfault in secondary process by
- validating dev_private pointer
-To: stephen@networkplumber.org, thomas@monjalon.net, ferruh.yigit@amd.com, 
- andrew.rybchenko@oktetlabs.ru
-Cc: dev@dpdk.org, stable@dpdk.org
-Content-Type: multipart/alternative; boundary="00000000000022b5d2063a97b91f"
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -75,166 +51,187 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---00000000000022b5d2063a97b91f
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hi Shivaji,
 
-Secondary application not only breaking on device closing,
-it's also getting segfault when we do "show device info all" from secondary
-after primary closes:
+(please see below)
 
-testpmd> show device info all
+On Wed, 23 Jul 2025, Shivaji Kant wrote:
 
-********************* Infos for device 0000:03:00.0 *********************
-Bus name: pci
-Bus information: vendor_id=3D15b3, device_id=3D101d
-Driver name: mlx5_pci
-Devargs:
-Connect to socket: 0
-
-Segmentation fault (core dumped)
-
-This patch prevents these crashes and it seems that these fixes should
-be in PMD along with the ethdev layer. Some more checks will be added
-in the next version to prevent "show device info all" crash.
-
-
-
-On Wed, Jul 23, 2025 at 9:50=E2=80=AFAM Khadem Ullah <14pwcse1224@uetpeshaw=
-ar.edu.pk>
-wrote:
-
-> In secondary processes, directly accessing 'dev->data->dev_private' can
-> cause a segmentation fault if the primary process has exited or if the
-> shared memory is no longer accessible.
+> Currently, the AF_XDP PMD attaches its XDP program using a fixed
+> set of flags,defaulting to `XDP_FLAGS_UPDATE_IF_NOEXIST`. This lacks
+> flexibility for users who might need to explicitly control the XDP
+> mode based on their specific hardware capabilities or performance
+> requirements.
 >
-> This patch adds a safety check using rte_mem_virt2phy(), with an
-> unlikely() branch hint to minimize performance impact in the fast path.
-> This ensures 'dev_private' is still valid before accessing it.
+> This patch introduces a new vdev argument, `mode`, for the `net_af_xdp`
+> PMD. This argument allows users to explicitly specify the desired
+> XDP program attachment mode:
+> `drv` (XDP_FLAGS_DRV_MODE),
+> `skb` (XDP_FLAGS_SKB_MODE),
+> `hw` (XDP_FLAGS_HW_MODE).
+> (If needed more can be added)
 >
-> Fixes: bdad90d12ec8 ("ethdev: change device info get callback to return
-> int")
-> Cc: stable@dpdk.org
+> This change provides greater control and flexibility for users to
+> fine-tune AF_XDP behavior, enabling them to leverage native driver
+> or hardware offload capabilities when available, or fall back to
+> generic SKB mode for broader compatibility.
 >
-> Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+> Signed-off-by: Shivaji Kant <shivajikant@google.com>
 > ---
->  lib/ethdev/rte_ethdev.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+> drivers/net/af_xdp/rte_eth_af_xdp.c | 61 +++++++++++++++++++++++++----
+> 1 file changed, 54 insertions(+), 7 deletions(-)
 >
-> diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-> index dd7c00bc94..ef5dc55f2e 100644
-> --- a/lib/ethdev/rte_ethdev.c
-> +++ b/lib/ethdev/rte_ethdev.c
-> @@ -4079,6 +4079,13 @@ rte_eth_dev_info_get(uint16_t port_id, struct
-> rte_eth_dev_info *dev_info)
+> diff --git a/drivers/net/af_xdp/rte_eth_af_xdp.c b/drivers/net/af_xdp/rte_eth_af_xdp.c
+> index 5f65850a27..e39f2b4935 100644
+> --- a/drivers/net/af_xdp/rte_eth_af_xdp.c
+> +++ b/drivers/net/af_xdp/rte_eth_af_xdp.c
+> @@ -104,6 +104,8 @@ RTE_LOG_REGISTER_DEFAULT(af_xdp_logtype, NOTICE);
 >
->         if (dev->dev_ops->dev_infos_get =3D=3D NULL)
->                 return -ENOTSUP;
-> +       if (rte_eal_process_type() =3D=3D RTE_PROC_SECONDARY &&
-> +               unlikely(rte_mem_virt2phy(dev->data->dev_private) =3D=3D
-> RTE_BAD_PHYS_ADDR)) {
-> +                       RTE_ETHDEV_LOG_LINE(ERR,
-> +                       "Secondary: dev_private not accessible (primary
-> exited?)");
-> +                       rte_errno =3D ENODEV;
-> +                       return -rte_errno;
-> +       }
->         diag =3D dev->dev_ops->dev_infos_get(dev, dev_info);
->         if (diag !=3D 0) {
->                 /* Cleanup already filled in device information */
-> --
-> 2.43.0
+> static int afxdp_dev_count;
 >
->
+> +static __u32 mode_flag = XDP_FLAGS_UPDATE_IF_NOEXIST;
 
---=20
-Engr. Khadem Ullah,
-Software Engineer,
-Dreambig Semiconductor Inc
-https://dreambigsemi.com/
+If one seeks to add a per-device argument, then why is this static/driver-wide?
+This belongs in 'struct pmd_internals'.
 
---00000000000022b5d2063a97b91f
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Thank you.
 
-<div dir=3D"ltr"><pre class=3D"gmail-content">Secondary application not onl=
-y breaking on device closing,<br>it&#39;s also getting segfault when we do =
-&quot;show device info all&quot; from secondary<br>after primary closes:<br=
-><br>testpmd&gt; show device info all<br><br>********************* Infos fo=
-r device 0000:03:00.0 *********************<br>Bus name: pci<br>Bus informa=
-tion: vendor_id=3D15b3, device_id=3D101d<br>Driver name: mlx5_pci<br>Devarg=
-s:<br>Connect to socket: 0<br><br>Segmentation fault (core dumped)<br><br>T=
-his patch prevents these crashes and it seems that these fixes should be in=
- PMD along with the ethdev layer. Some more checks will be added in the nex=
-t version to prevent &quot;show device info all&quot; crash.</pre><br></div=
-><br><div class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" clas=
-s=3D"gmail_attr">On Wed, Jul 23, 2025 at 9:50=E2=80=AFAM Khadem Ullah &lt;<=
-a href=3D"mailto:14pwcse1224@uetpeshawar.edu.pk">14pwcse1224@uetpeshawar.ed=
-u.pk</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"mar=
-gin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1=
-ex">In secondary processes, directly accessing &#39;dev-&gt;data-&gt;dev_pr=
-ivate&#39; can<br>
-cause a segmentation fault if the primary process has exited or if the<br>
-shared memory is no longer accessible.<br>
-<br>
-This patch adds a safety check using rte_mem_virt2phy(), with an<br>
-unlikely() branch hint to minimize performance impact in the fast path.<br>
-This ensures &#39;dev_private&#39; is still valid before accessing it.<br>
-<br>
-Fixes: bdad90d12ec8 (&quot;ethdev: change device info get callback to retur=
-n int&quot;)<br>
-Cc: <a href=3D"mailto:stable@dpdk.org" target=3D"_blank">stable@dpdk.org</a=
-><br>
-<br>
-Signed-off-by: Khadem Ullah &lt;<a href=3D"mailto:14pwcse1224@uetpeshawar.e=
-du.pk" target=3D"_blank">14pwcse1224@uetpeshawar.edu.pk</a>&gt;<br>
----<br>
-=C2=A0lib/ethdev/rte_ethdev.c | 7 +++++++<br>
-=C2=A01 file changed, 7 insertions(+)<br>
-<br>
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c<br>
-index dd7c00bc94..ef5dc55f2e 100644<br>
---- a/lib/ethdev/rte_ethdev.c<br>
-+++ b/lib/ethdev/rte_ethdev.c<br>
-@@ -4079,6 +4079,13 @@ rte_eth_dev_info_get(uint16_t port_id, struct rte_et=
-h_dev_info *dev_info)<br>
-<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (dev-&gt;dev_ops-&gt;dev_infos_get =3D=3D NU=
-LL)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return -ENOTSUP;<br=
+> +
+> /* Message header to synchronize fds via IPC */
+> struct ipc_hdr {
+> 	char port_name[RTE_DEV_NAME_MAX_LEN];
+> @@ -198,6 +200,26 @@ struct pmd_process_private {
+> #define ETH_AF_XDP_USE_CNI_ARG			"use_cni"
+> #define ETH_AF_XDP_USE_PINNED_MAP_ARG	"use_pinned_map"
+> #define ETH_AF_XDP_DP_PATH_ARG			"dp_path"
+> +#define ETH_AF_XDP_MODE_ARG				"mode"
+> +
+> +/* Define different modes for af_xdp prog to attach */
+> +#define ETH_AF_XDP_DRV_MODE_ARG			"drv"
+> +#define ETH_AF_XDP_SKB_MODE_ARG			"skb"
+> +#define ETH_AF_XDP_HW_MODE_ARG			"hw"
+> +#define ETH_AF_XDP_NUM_MODE_ARG			3
+> +
+> +static const char * const mode_arguments[] = {
+> +	ETH_AF_XDP_DRV_MODE_ARG,
+> +	ETH_AF_XDP_SKB_MODE_ARG,
+> +	ETH_AF_XDP_HW_MODE_ARG,
+> +	NULL
+> +};
+> +
+> +static const unsigned int mode_flags[] = {
+> +	XDP_FLAGS_DRV_MODE,
+> +	XDP_FLAGS_SKB_MODE,
+> +	XDP_FLAGS_HW_MODE
+> +};
 >
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0if (rte_eal_process_type() =3D=3D RTE_PROC_SECO=
-NDARY &amp;&amp;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0unlikely(rte_mem_vi=
-rt2phy(dev-&gt;data-&gt;dev_private) =3D=3D RTE_BAD_PHYS_ADDR)) {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0RTE_ETHDEV_LOG_LINE(ERR,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0&quot;Secondary: dev_private not accessible (primary exited?)&quo=
-t;);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0rte_errno =3D ENODEV;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0return -rte_errno;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 diag =3D dev-&gt;dev_ops-&gt;dev_infos_get(dev,=
- dev_info);<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (diag !=3D 0) {<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* Cleanup already =
-filled in device information */<br>
--- <br>
-2.43.0<br>
-<br>
-</blockquote></div><div><br clear=3D"all"></div><br><span class=3D"gmail_si=
-gnature_prefix">-- </span><br><div dir=3D"ltr" class=3D"gmail_signature"><d=
-iv dir=3D"ltr"><div><div dir=3D"ltr"><div style=3D"font-family:Calibri,Aria=
-l,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)"><span style=3D"colo=
-r:rgb(12,100,192)">Engr. Khadem Ullah, </span><br></div><div style=3D"font-=
-family:Calibri,Arial,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">=
-<span style=3D"color:rgb(12,100,192)">Software Engineer, </span><br></div><=
-span style=3D"color:rgb(12,100,192)">Dreambig Semiconductor Inc <br></span>=
-</div><div dir=3D"ltr"><span style=3D"color:rgb(12,100,192)"><a href=3D"htt=
-ps://dreambigsemi.com/" target=3D"_blank">https://dreambigsemi.com/</a><br>=
-</span></div></div></div></div>
-
---00000000000022b5d2063a97b91f--
+> static const char * const valid_arguments[] = {
+> 	ETH_AF_XDP_IFACE_ARG,
+> @@ -210,6 +232,7 @@ static const char * const valid_arguments[] = {
+> 	ETH_AF_XDP_USE_CNI_ARG,
+> 	ETH_AF_XDP_USE_PINNED_MAP_ARG,
+> 	ETH_AF_XDP_DP_PATH_ARG,
+> +	ETH_AF_XDP_MODE_ARG,
+> 	NULL
+> };
+>
+> @@ -950,14 +973,14 @@ remove_xdp_program(struct pmd_internals *internals)
+> 	uint32_t curr_prog_id = 0;
+> 	int ret;
+>
+> -	ret = bpf_xdp_query_id(internals->if_index, XDP_FLAGS_UPDATE_IF_NOEXIST,
+> +	ret = bpf_xdp_query_id(internals->if_index, mode_flag,
+> 			       &curr_prog_id);
+> 	if (ret != 0) {
+> 		AF_XDP_LOG_LINE(ERR, "bpf_xdp_query_id failed");
+> 		return ret;
+> 	}
+>
+> -	ret = bpf_xdp_detach(internals->if_index, XDP_FLAGS_UPDATE_IF_NOEXIST,
+> +	ret = bpf_xdp_detach(internals->if_index, mode_flag,
+> 			     NULL);
+> 	if (ret != 0)
+> 		AF_XDP_LOG_LINE(ERR, "bpf_xdp_detach failed");
+> @@ -978,14 +1001,14 @@ remove_xdp_program(struct pmd_internals *internals)
+> 	int ret;
+>
+> 	ret = bpf_get_link_xdp_id(internals->if_index, &curr_prog_id,
+> -				  XDP_FLAGS_UPDATE_IF_NOEXIST);
+> +				  mode_flag);
+> 	if (ret != 0) {
+> 		AF_XDP_LOG_LINE(ERR, "bpf_get_link_xdp_id failed");
+> 		return ret;
+> 	}
+>
+> 	ret = bpf_set_link_xdp_fd(internals->if_index, -1,
+> -				  XDP_FLAGS_UPDATE_IF_NOEXIST);
+> +				  mode_flag);
+> 	if (ret != 0)
+> 		AF_XDP_LOG_LINE(ERR, "bpf_set_link_xdp_fd failed");
+> 	return ret;
+> @@ -1328,7 +1351,7 @@ load_custom_xdp_prog(const char *prog_path, int if_index, struct bpf_map **map)
+>
+> 	/* Link the program with the given network device */
+> 	ret = link_xdp_prog_with_dev(if_index, prog_fd,
+> -					XDP_FLAGS_UPDATE_IF_NOEXIST);
+> +					mode_flag);
+> 	if (ret) {
+> 		AF_XDP_LOG_LINE(ERR, "Failed to set prog fd %d on interface",
+> 				prog_fd);
+> @@ -1679,7 +1702,7 @@ xsk_configure(struct pmd_internals *internals, struct pkt_rx_queue *rxq,
+> 	cfg.rx_size = ring_size;
+> 	cfg.tx_size = ring_size;
+> 	cfg.libbpf_flags = 0;
+> -	cfg.xdp_flags = XDP_FLAGS_UPDATE_IF_NOEXIST;
+> +	cfg.xdp_flags = mode_flag;
+> 	cfg.bind_flags = 0;
+>
+> 	/* Force AF_XDP socket into copy mode when users want it */
+> @@ -2017,6 +2040,25 @@ parse_name_arg(const char *key __rte_unused,
+> 	return 0;
+> }
+>
+> +/** parse name argument */
+> +static int
+> +parse_mode_arg(const char *key __rte_unused,
+> +	       const char *value, void *extra_args)
+> +{
+> +	unsigned int *mode = extra_args;
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < ETH_AF_XDP_NUM_MODE_ARG; i++) {
+> +		if (strcmp(value, mode_arguments[i]) == 0) {
+> +			*mode |= mode_flags[i];
+> +			return 0;
+> +		}
+> +	}
+> +
+> +	AF_XDP_LOG_LINE(ERR, "Invalid af_xdp mode, choose correct mode to attach af_xdp program.");
+> +	return -EINVAL;
+> +}
+> +
+> /** parse xdp prog argument */
+> static int
+> parse_prog_arg(const char *key __rte_unused,
+> @@ -2147,6 +2189,10 @@ parse_parameters(struct rte_kvargs *kvlist, char *if_name, int *start_queue,
+>
+> 	ret = rte_kvargs_process(kvlist, ETH_AF_XDP_DP_PATH_ARG,
+> 				 &parse_prog_arg, dp_path);
+> +
+> +	ret = rte_kvargs_process(kvlist, ETH_AF_XDP_MODE_ARG,
+> +				 &parse_mode_arg, &mode_flag);
+> +
+> 	if (ret < 0)
+> 		goto free_kvlist;
+>
+> @@ -2587,4 +2633,5 @@ RTE_PMD_REGISTER_PARAM_STRING(net_af_xdp,
+> 			      "force_copy=<int> "
+> 			      "use_cni=<int> "
+> 			      "use_pinned_map=<int> "
+> -			      "dp_path=<string> ");
+> +			      "dp_path=<string> "
+> +			      "mode=<string> ");
+> -- 
+> 2.50.0.727.gbf7dc18ff4-goog
+>
+>
