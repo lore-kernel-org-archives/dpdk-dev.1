@@ -2,52 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 860AEC83F1A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 16:22:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3842EC83F1A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 16:50:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DD1C942793;
-	Wed, 23 Jul 2025 18:21:21 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id C292242707
- for <dev@dpdk.org>; Wed, 23 Jul 2025 18:21:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1753287679; x=1784823679;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=MLgpTJTxLrm3c3FxCQMbpd8CWTdMgFBs3QDUhHCuLYE=;
- b=klwaMN/g+5ZWmaGl6xy5gM5s6ca/gEFaol65EVJ6nanRK+q5icbOuQUt
- 31XLZHwBdUNIt1sFdntZNAzPc5jKnKQ2/xeZBFvly5zNF3e4lerVwstm0
- 7+5i78wQtIsO/QhdSwbz8yzCyLdaNkfTpsyDmLP1WTTPbjFyIIvCbXkIR
- 6DxC5sU+zExSCNrqb1jkrDRy2aNuTeajXfndNbrVECJU8LyPazcIVQfxQ
- 9EhwWp9NSVE7hIUzdnEjkfkdOh3JL15FGs3qp5WzyTy6GBDQ8Ksl0KZqd
- wLM3o7xmVcSeo4w3wd2EVKz0P0elK8J9ZrtIh2X2Vt8NfzZRJfPEVX2x5 g==;
-X-CSE-ConnectionGUID: 6EjkyxOmRsSDAVsOlYtcUw==
-X-CSE-MsgGUID: fZ5BeU/6QI+NU/PYdoIFPA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="43198025"
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; d="scan'208";a="43198025"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
- by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Jul 2025 09:21:18 -0700
-X-CSE-ConnectionGUID: vEvUOuzNQvGoNfsMLWBd8A==
-X-CSE-MsgGUID: 6VQCX4PxQRWilwehwf5yRQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; d="scan'208";a="160148949"
-Received: from silpixa00401385.ir.intel.com ([10.237.214.33])
- by fmviesa008.fm.intel.com with ESMTP; 23 Jul 2025 09:21:17 -0700
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: david.marchand@redhat.com, Bruce Richardson <bruce.richardson@intel.com>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>
-Subject: [PATCH v7 13/13] eal: add warnings about ignored options
-Date: Wed, 23 Jul 2025 17:20:11 +0100
-Message-ID: <20250723162013.2392-14-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250723162013.2392-1-bruce.richardson@intel.com>
-References: <20250520164025.2055721-1-bruce.richardson@intel.com>
- <20250723162013.2392-1-bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 6C451402D4;
+	Wed, 23 Jul 2025 18:50:27 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 50E9B40267
+ for <dev@dpdk.org>; Wed, 23 Jul 2025 18:50:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1753289425;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=9qjkJEn6Y/YRQn3KqwyxrRlmjrIEDs594ZxxcM9o42c=;
+ b=UUwIvZS8FKtOsblEcJleLh/b7qvdHEO8bXdaDnYjqnx196OugzPkbEo59QUs2qMXod5B4H
+ DRJLBwWnvm+rlqKQx3JBR0XmVOGmwLpN9Rh2j4SRXZ67K+vu9Z6S/3SbJ5f3aBPO+61BKy
+ ZOdx0HTsfGO6bCF4aSH19LZl4qhdQC8=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-548-UWrmyTKbPaK6gwwwnaf9lw-1; Wed,
+ 23 Jul 2025 12:50:24 -0400
+X-MC-Unique: UWrmyTKbPaK6gwwwnaf9lw-1
+X-Mimecast-MFC-AGG-ID: UWrmyTKbPaK6gwwwnaf9lw_1753289423
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 7479A180028C; Wed, 23 Jul 2025 16:50:23 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.45.224.165])
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 0181B180049D; Wed, 23 Jul 2025 16:50:20 +0000 (UTC)
+From: Christophe Fontaine <cfontain@redhat.com>
+To: Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Zhirun Yan <yanzhirun_163@163.com>
+Cc: dev@dpdk.org,
+	Christophe Fontaine <cfontain@redhat.com>
+Subject: [PATCH 0/2] graph: dispatch mode improvements
+Date: Wed, 23 Jul 2025 18:49:59 +0200
+Message-ID: <20250723165001.11162-1-cfontain@redhat.com>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: Iqohz-cgaPMX0nGFK1qLl7ughjaZy3fJx43bseSSx_A_1753289423
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,84 +66,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The lcoreid-base option only applies when used with the lcores-remapped
-option, so print a warning when it's used with an lcores or coremask
-flag, or when no core specification is given at all.
+Small series to improve dispatch mode for lib/graph.
+In order to run an instance of the graph in a control thread (slow path
+defined as nodes) in addition to the datapath thread, we need:
+  - the ability to run graph_walk on an non-eal thread
+  - a signaling mechanism to wake up the control thread
 
-To do this, we add some generic infrastructure to allow us to warn about
-options which are ignored when either used together or not used
-together.
+Christophe
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
- lib/eal/common/eal_common_options.c | 47 +++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+Christophe Fontaine (2):
+  graph: allow non EAL Thread for pipeline mode
+  graph: add callback in dispatch mode
 
-diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
-index af2bd33fd4..5992f4e43b 100644
---- a/lib/eal/common/eal_common_options.c
-+++ b/lib/eal/common/eal_common_options.c
-@@ -201,6 +201,47 @@ conflicting_options(uintptr_t opt1, uintptr_t opt2, const char *opt1_name, const
- #define CONFLICTING_OPTIONS(args, opt1, opt2) \
- 	conflicting_options((uintptr_t)(args.opt1), (uintptr_t)(args.opt2), #opt1, #opt2)
- 
-+enum when_ignored {
-+	OPT_IGNORED_WITH,
-+	OPT_IGNORED_WITHOUT,
-+};
-+static inline bool  /* return bool so we can track what warnings are printed */
-+ignored_option(uintptr_t ignored, uintptr_t opt2, const char *ignored_name, const char *opt2_name,
-+		enum when_ignored when)
-+{
-+	char name1[64];  /* should be the max length of any argument */
-+	char name2[64];
-+
-+	if (!ignored)
-+		return false;
-+
-+	strlcpy(name1, ignored_name, sizeof(name1));
-+	strlcpy(name2, opt2_name, sizeof(name2));
-+	for (int i = 0; name1[i] != '\0'; i++)
-+		if (name1[i] == '_')
-+			name1[i] = '-';
-+	for (int i = 0; name2[i] != '\0'; i++)
-+		if (name2[i] == '_')
-+			name2[i] = '-';
-+
-+	if (when == OPT_IGNORED_WITH && opt2) {
-+		EAL_LOG(WARNING, "Option '%s' ignored when used with option '%s'", name1, name2);
-+		return true;
-+	} else if (when == OPT_IGNORED_WITHOUT && !opt2) {
-+		EAL_LOG(WARNING, "Option '%s' ignored without option '%s'", name1, name2);
-+		return true;
-+	}
-+	return false;
-+}
-+/* prints a warning when option "ignored" is used *with* option "opt2" */
-+#define IGNORE_OPTION_WITH(args, ignored, opt2) \
-+	ignored_option((uintptr_t)(args.ignored), (uintptr_t)(args.opt2), #ignored, #opt2, \
-+			OPT_IGNORED_WITH)
-+/* prints a warning when option "ignored" is used *without* option "opt2" */
-+#define IGNORE_OPTION_WITHOUT(args, ignored, opt2) \
-+	ignored_option((uintptr_t)(args.ignored), (uintptr_t)(args.opt2), #ignored, #opt2, \
-+			OPT_IGNORED_WITHOUT)
-+
- /* function to call into argparse library to parse the passed argc/argv parameters
-  * to the eal_init_args structure.
-  */
-@@ -249,6 +290,12 @@ eal_collate_args(int argc, char **argv)
- 			CONFLICTING_OPTIONS(args, in_memory, huge_unlink))
- 		return -1;
- 
-+	/* warn about some ignored options */
-+	if (!IGNORE_OPTION_WITH(args, lcoreid_base, lcores) &&
-+			!IGNORE_OPTION_WITH(args, lcoreid_base, coremask))
-+		/* only warn about not having --lcores-remapped if we didn't already warn */
-+		IGNORE_OPTION_WITHOUT(args, lcoreid_base, lcores_remapped);
-+
- 	argv[retval - 1] = argv[0];
- 	return retval - 1;
- }
+ lib/graph/graph.c                          | 23 +++++++++++++++-------
+ lib/graph/rte_graph.h                      | 14 +++++++++++++
+ lib/graph/rte_graph_model_mcore_dispatch.c |  2 ++
+ lib/graph/rte_graph_worker_common.h        |  2 ++
+ 4 files changed, 34 insertions(+), 7 deletions(-)
+
 -- 
-2.48.1
+2.43.5
 
