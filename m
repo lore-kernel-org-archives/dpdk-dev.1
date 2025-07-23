@@ -2,162 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF083C83F1A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 12:15:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 776CFC83F17
+	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 12:19:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A2ABE402CC;
-	Wed, 23 Jul 2025 14:15:49 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
- by mails.dpdk.org (Postfix) with ESMTP id 0A06940264
- for <dev@dpdk.org>; Wed, 23 Jul 2025 14:15:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1753272947; x=1784808947;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=YlzA8bbiVlQHjKyc3o/w6xMvTNqzulw9KxwMc2taB70=;
- b=I10AdF0aik1W6xSeuuzK+Sl3KjjbIb876QgQrp6+37EmqC1UYBOcSXBH
- xXEH7kOBOpmx8Pz36Nl1IpKsu7adMC8BOiIkzMz6H3H8qIlpOOH6jYlAc
- vekJQG2hluPwuRvx9z8KvZqGq5eY2yUhKrL7nZgX1mUFWvny97zCo0YX9
- Mpjay8z25c0RHdUxjEpTm1cuw+qKFA+tuXw9Rr6Vu839T8MLor57QVO9+
- riYvlcyithU9xweBEvA2QaXlWM6rA2g2YmeWwE07Ilg8xSifzFf6pFSaB
- Yywx8+HCfarLOUpri7muYLfv2nkakXXQJTvAtMbm4V43Vxz0JHwXUAngO Q==;
-X-CSE-ConnectionGUID: sIUMrbSjQn6k8sotK9dGBA==
-X-CSE-MsgGUID: VShoPLS7SEOpUu4MXu+jkA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="66118827"
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; d="scan'208";a="66118827"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
- by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Jul 2025 05:15:43 -0700
-X-CSE-ConnectionGUID: fhHoeeNnRQOqe/eRPwiD5g==
-X-CSE-MsgGUID: Dos+v7fqQG+JEaGhJUcOIg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; d="scan'208";a="159875883"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
- by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Jul 2025 05:15:43 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Wed, 23 Jul 2025 05:15:42 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Wed, 23 Jul 2025 05:15:42 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (40.107.94.51) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Wed, 23 Jul 2025 05:15:41 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NjosO7CV68eXc4ZVPPQqodsRhXiXcgL1CAXouxPdYII1kkH0JN5nnAtI6vU2L5vfalKCVj/iCrcO/slfPD+RkbkVbp/0tYzmHYL3qK6PHI5k/0tDOhWAkWemZK0YjZ9a99GRsCB3sNAShhno6Ra0TQoRcyjnlaHCooh+yMrruCKAWfg0uClt9kEOxsxfloybqErpaNQJ+1eonw4bcqCVDTfut3E7LYa90Gvz13TgsFQGEOeSwTXiaSkuU1Iq9sUiyhGvvwMpm0XlQvEoTx1BLv99jWq+Bzki1kbTNsX7TPilpR78whkT3TfaYThoo7u1cUPT5nsTOWSydVdbOX1Qmg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5YydNL8jEMQyUAMZwlm3rGgxeIx/NaQjpYgUMB+kaDw=;
- b=sD1cywn/1W2hLawOH9j59/cf6NLDvSjAHTc6j6cQpZBfzFuYg22XDVBP0BgcYeZ91NREemnNIYLgipi7IK7r6LS1TKFPOo37Dt9d94EfMl3oT4Y98jJGT1nSvHoIb6RldEF4EnNmJbPiSGtCGM45Mh04bxuy/+E5PIUufCXosQiqcsBnWWmGAG5WRk8PRc3pUvuvkMlECwrs4JeK8kAR0v6YmqPN+UHAevkT2zjLDNuZULX1NpMSp7mXT2OQ1XLbk33dUt8lYYevs3Y22AvHjslULvqDEVp4dqLt19SKqr1J0vdPoHFBEW9OFTNh6t8dySy3MfVJy2LAdz+uhoR/jQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by DM4PR11MB8130.namprd11.prod.outlook.com (2603:10b6:8:181::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Wed, 23 Jul
- 2025 12:14:58 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.8943.029; Wed, 23 Jul 2025
- 12:14:58 +0000
-Date: Wed, 23 Jul 2025 13:14:53 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: David Marchand <david.marchand@redhat.com>
-CC: <dev@dpdk.org>, <thomas@monjalon.net>
-Subject: Re: [PATCH 2/2] net: remove v25 ABI compatibility
-Message-ID: <aIDSPdozAm7JUAnd@bricha3-mobl1.ger.corp.intel.com>
-References: <20250722132441.3700305-1-david.marchand@redhat.com>
- <20250722132441.3700305-2-david.marchand@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250722132441.3700305-2-david.marchand@redhat.com>
-X-ClientProxiedBy: DU2PR04CA0259.eurprd04.prod.outlook.com
- (2603:10a6:10:28e::24) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id 71F6740A89;
+	Wed, 23 Jul 2025 14:19:42 +0200 (CEST)
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com
+ [209.85.219.51]) by mails.dpdk.org (Postfix) with ESMTP id 8CFA040264
+ for <dev@dpdk.org>; Wed, 23 Jul 2025 14:19:41 +0200 (CEST)
+Received: by mail-qv1-f51.google.com with SMTP id
+ 6a1803df08f44-6fada2dd785so67692996d6.2
+ for <dev@dpdk.org>; Wed, 23 Jul 2025 05:19:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1753273181;
+ x=1753877981; darn=dpdk.org; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=FxZF51/YpELT6mthkP9CoKvjjb7MOGZvZSCMnzgee2Q=;
+ b=t/iEZLNGOizI4MPF4Ij904SNybMSsXlJkfG8mTVuQzESwH54pY9pJEYz14390yKlZU
+ e+xFZofXmIgXgrbZp3FeD5n3mIamAoU5vq8G5YbE4BrwUpEQ+oWsW5UJHKc/X4D6TE9J
+ fdzRjLx7FJYa1rgcnBGKnKqTYqeDY+VWzGqketCdgLl7iY9dHPJRRrDNppNIUr/xBrBZ
+ oFaLx+66vYe6fs8e3OmmMnAlcb+tTfiiXqYDu321YwOhaTbN0hYTGJtwuaUgut4/cLXF
+ hPFlbT7eVZ0NpPCnNiZC7htPmxhtIXYg+HdVhzZLvYjUX7M4ZyICCCmRUPCnSCPY8rV8
+ zvUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1753273181; x=1753877981;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=FxZF51/YpELT6mthkP9CoKvjjb7MOGZvZSCMnzgee2Q=;
+ b=flkG3kJ+N8GBFxKRw8H6tB6yEHU34xWRU5AG7ysFScv614S0+TY68w3XOpbKs1lDdu
+ hw0Tl+Wn7PVJ/oRaTR9GUVjD10ElQSDnT5gK90XRENi8ND42wJls2vwjfMoyLnlc9gO5
+ iDqlihFsNQB+qS5vQbMpJuH/uneX6Q5PlH0xcB0QE4/PkKLc9PS1p9nPeRxo7O/DOUdq
+ 7LnoWhxu89ZC/E7fMkbqpgzRCMPFbYRvjuw1JDCaqA4PCZWOHlIL9Ri8GOkYEBEG8Cxd
+ A1l+0trRyI4v9N+zOv0L7LR2mJ3SkCynWv85kseOAQajEVbw5/hxKi5PKEIyfVhHcOiD
+ C/kg==
+X-Gm-Message-State: AOJu0YyIDDm13ebrczYjIoDyzeJbtZP7oiVGB5KEXF11IfnNopUVGBli
+ 0gFURiR/oBEfCF3iBoK35alYxar99iJKaCHJAx09uR1mnLX3ezRjsxpwAaPd4cQSOpB3Qw+I6y4
+ oO/5qPJy+nEDtyFJ+ndbY5LQ7mskS1bIFJdA8IBcBhQ==
+X-Gm-Gg: ASbGncsFLUzp/HcJjBoIMP3XGSLkvJ/w7xw+a4+p/uecL3EIrXNuiXLndzkPmgp1/hH
+ zhd3cOlwoGHCWcKLZn2UzNFbF1BZURlwgR7iuZj0VFgqzMO2vACMUUdj6yBAEDPnDtzexzDGumw
+ HwHT6ep1Dc8HLiUZvSn5r5RiUyRXTh9e/zS4ug3zwI6NTtAo8fJCCuYOdhbrohN+0XYvJs6FxxM
+ tl1bTIHyQ==
+X-Google-Smtp-Source: AGHT+IG7jz+WHqCBaeslFVuO7QRYbQVoJ3TbDh9tlufyxxCVV6tqcFEmYkefrqwZE6xmd+OYNXPZQrtCIZ3FciaRLdI=
+X-Received: by 2002:a05:6214:500d:b0:6fb:4e82:6e8 with SMTP id
+ 6a1803df08f44-7070051b347mr33495346d6.14.1753273180788; Wed, 23 Jul 2025
+ 05:19:40 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DM4PR11MB8130:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3b540d55-d466-4c42-07a9-08ddc9e28a8a
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?RbViQwnRv0Bcvs8BzdepF/M+/TBUInICWqdSUXghZ7o+kQ0wzomEyJRDmJwo?=
- =?us-ascii?Q?wUJMVphFi0Et7aRz02INU7ic2P18hLkivYDkoK5bKWWMN4hQjG06bKJA2/yO?=
- =?us-ascii?Q?T5GtcAy79NbjXXNT3LGUKcklLkfK9ijjtI4CiRbMXSyvzE8nKgaDiwiYJyCH?=
- =?us-ascii?Q?kHcVmuIn/RDOwm9TQY41AweQ9rxDkO7fQUzJD2pqCyevVVOApphGIy21v67c?=
- =?us-ascii?Q?//BsHwFP2YGgiN24bq8j98NbgESmg2PJFIQcwBANMfJ0lTCzZ/CErwGBgkeX?=
- =?us-ascii?Q?k4xqgDnpInW2oxMElPsRcruGy5wSY2fYhdfBV2RuvchNkrtDfHyp8yqrMwMv?=
- =?us-ascii?Q?QTyhHIwV8jzUrSDCoi+TvyfXrKROAt8ngrcQSiVEM6DM+zGXX71NobPU4b88?=
- =?us-ascii?Q?/vWvZrOjrRuhcJ9t90n+FoDX74MXL/MX+e2vtxsrTFVrD/UIMwNaryV3YHri?=
- =?us-ascii?Q?0bEQatR57yRCOX5Imv8JTbsuioGNSpTBqhG9RXSbmZDOwKMjjVvGtOXF5K80?=
- =?us-ascii?Q?JJLrwGbemSZw41uA0kBdHQxtginaC3+6Rxp75bpnLcUammbE395r317Di6Tk?=
- =?us-ascii?Q?BiRAaq8IgdvAmLYJ+9Ws7fL+TOH8i9MbsckrLIlcUQpMAQTpdmxpV4xhB66K?=
- =?us-ascii?Q?iNJhV+zRFW16QPeewhLfFtZ/LTEQcl7M7PLLsFWRHDn5C98jpzSeNpLH6UF9?=
- =?us-ascii?Q?M0QxW0qGTUsF7kwXC1e+70hvNRgvIgA4b7Gv13fMjImWx6mJrC0tymQNjfoR?=
- =?us-ascii?Q?2dR8hD5sjGl3zdbrUVrmWsd7q3Ly1k8C2CH5/APl8tlD0iCbOHlm7UIlDT/r?=
- =?us-ascii?Q?Fgsc5xE2D7+tJQKBcosNkWtWI0H0hN3RCJooz0yVQeo3uRK92lolVqyWAfUs?=
- =?us-ascii?Q?B7xdJHfESsdD0wxqwGCJLqE9jqB9YlkQlouEINh6EJ6nrYVKsHe+eZZtQQwm?=
- =?us-ascii?Q?7YwmUwcbYHWUWzIl2SyTVeW3Reu6SsVGD1JhsBqDhY+9m5b5A5KDDCGGXJAW?=
- =?us-ascii?Q?lk+A9ZXi1YWT8YS5anz9kjSAlagLt0ZlSFlNFWsv/eH0UNrNn8RyBFCsMCzJ?=
- =?us-ascii?Q?3vTs29+WovN/Oqz3obXYVu0M6dEh7jqrvHs1daARqd99d06cTmfPjnvMQvj9?=
- =?us-ascii?Q?lIeL20BlcRIgDUWUlOKkE7bsLdodiZuj/My06masrCmTpUNngp+e9BPpkvjG?=
- =?us-ascii?Q?4vI63ceZIC7mxQJTD4KpjwhMpa0QimoQR0wePrzisHWP6qhBNa93HOu7bilW?=
- =?us-ascii?Q?0LpJETwU0iDr8HZYhE3muZG9SlK3HgakMJ4Mvs/XmxwgO2HSNVUZiZdybOmT?=
- =?us-ascii?Q?kechgz2gVZaZlNS7QmZMT9Cu0eRZLspk+11/ZZwK+TwM9vP8c970csv04G7K?=
- =?us-ascii?Q?kz6DjOILDcKrjySXNli5XF+H4PSMautNbZ9PHUyaTUkqWcfaF0OVXq39vjtJ?=
- =?us-ascii?Q?cbCIuZtHkJ4=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(7053199007); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?0WucKiIrqyPEpKjcbXsZzjDJxmODZHP2HAKtRBGO3Tg6Wh/loDZyZko+xBtT?=
- =?us-ascii?Q?g108Eb/+ppu6F5SorLvWqZSdZdB9t4amzaVoAz25gkW/oWxyrO75MOLFe7ED?=
- =?us-ascii?Q?7wiD6k2WJEUdld4Y5ZIiMgWBR8MbLHzZSXLPoSuB15JL2Gxjvm24aqp9lXdz?=
- =?us-ascii?Q?W4orpiVCEm4vGR0G7wVxRCibY3nEi44GleZiK+SLnfvysk+JiQDR/aOzA6eQ?=
- =?us-ascii?Q?Va7ma5uaAe1dqsP25MXfXRY0KyPsKS7ZYbFY0EEue8Th2M63e6HC0KN98pU5?=
- =?us-ascii?Q?5fjSJUE3eXsLeu8ORswOEuhGO+zLu9zLaOXfgVpfPGFsUIrFAONgmLx0OMn8?=
- =?us-ascii?Q?VNREKN4Q8HgLdtdnbqIQayW1vzcqHDklNLTh5d6CmcKlt4TRoj1d+UjgL4m5?=
- =?us-ascii?Q?gwHZpfrG+/lH9g/kyz2aA0cTPZ/sH2gPtIdFolWN9ataGy1xqTv7gDwPPpwu?=
- =?us-ascii?Q?wy8LxO5clBZznpnhuUyRpkQiPy4N0yG/hO5Pp3tSLWweeo70EgVaS/IJOqPJ?=
- =?us-ascii?Q?Vq5QFkZCvZbHQpy4dTa5aciEwm0iwjMjOYwERzChaQGc7YlK8d+1RFwItRPn?=
- =?us-ascii?Q?MhlU6GHDYPlbsDoJOSKO1ITluKm1WoWs9Ew1K6TGe96HpdKcHEbuz8mLdlN0?=
- =?us-ascii?Q?u+QU3lY9zz7ge9vwECCBtpovfjFB/lfgNKgXbbactURLk/xwGjtNVXLtti7y?=
- =?us-ascii?Q?n/TAmODd/AS4YsebVvxJGxmbXogGbX7PnD5i742A3rh8Afoth4b9xa/4h5Z1?=
- =?us-ascii?Q?9IxywJMFlBgZzHc/id120ubQHHkd8DPvV5PSOXgsE7kcFstV8Dynpwq15GOG?=
- =?us-ascii?Q?aSmsn5gFqxAt/Freyczlaw5BjRzAY7GHH6vUAXOKtsLZcnQVxXyqEg0AKIy9?=
- =?us-ascii?Q?5VbAWDtg/DlbkomT8pVTgW6B/6XcW8VaGhFWDk4VCk12QWWU+RXo1boHP3YA?=
- =?us-ascii?Q?wBQIvbW415hA3w/hhlGUabzrxGRCPrWwvcNdSXpS9zGrvMtVSkUB00ehuN49?=
- =?us-ascii?Q?JRVgl50Jhce8FM7wOw+NkcYCZdY/xa/IxvUeHn27NhgsSpHSlHt/jnOK98uS?=
- =?us-ascii?Q?rqQAn3aSN2BejeHlhopgrd4soM6SlSqYaNlNkO4dj8VyC4tvVyxuyqYjeWsG?=
- =?us-ascii?Q?s+sMXQ8rFxhy4fPcb4h/tlPjaugtno0mKuJmC/+r/CtCtNVRVgfkwzFkkOPd?=
- =?us-ascii?Q?oriSz45xQ7RJGaV1iPvQPVSrogVvkluifOm6CMwVU0Sgxm1X803YHOUDF9sA?=
- =?us-ascii?Q?z35FxDSRh+Dcz1xRD3AVmCe/SmWYr1bD6ixmFX+CS6lDSzlksfmKEWW4uQht?=
- =?us-ascii?Q?fa8/YA3sKDy/gnwcxAXifLn/vsestEe6LHGz9M5ZJ88llPa25oLIhYqNkRx5?=
- =?us-ascii?Q?8ODGHWDqB/btNe2XTdSnkC9yC06cPXDvKP8IEu5/G1B8rq8X5uEGK/LUPuys?=
- =?us-ascii?Q?Vmq6ou4nrL0us7nbrIJ3yl2VqKIK2+I2JpuUJbPQfFeMUcJbqx0CGCbglaAN?=
- =?us-ascii?Q?aaw+Gnhn0044Yr0BfjM2TUwbLmjqTpGEhCq3oeo2ScvZYbPZQaJOc+dl7b8r?=
- =?us-ascii?Q?wa474YjmxCX5SMlbBf9zG8jrzHuASSgY1CDV5a2qIv7ZY0q3etMjJ4E+SDD3?=
- =?us-ascii?Q?oQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3b540d55-d466-4c42-07a9-08ddc9e28a8a
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2025 12:14:58.1800 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: V+Ukbj8gL9Ga9tpWzQT3BDRzYHHFZxQpMZT+nTmXrr5NqZj11CLl3ehL2U+gzueC/aMYrDDLZPugBng5zXILSS5AteeFmXC87sKe1o0nc10=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB8130
-X-OriginatorOrg: intel.com
+References: <20250722115439.1353573-1-14pwcse1224@uetpeshawar.edu.pk>
+ <20250723045022.1580829-1-14pwcse1224@uetpeshawar.edu.pk>
+In-Reply-To: <20250723045022.1580829-1-14pwcse1224@uetpeshawar.edu.pk>
+From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+Date: Wed, 23 Jul 2025 17:19:29 +0500
+X-Gm-Features: Ac12FXzbnDQF2DmtYc27CMpOl1KWs-KBadPL5cCY-goWoOKmcswNHB5xV79TKFg
+Message-ID: <CA++2-x7U1D8pB1dzuyoeQ4WQKcCpv32HVji23Ev=cdM=G9MROA@mail.gmail.com>
+Subject: Re: [PATCH v2] lib/ethdev: fix segfault in secondary process by
+ validating dev_private pointer
+To: stephen@networkplumber.org, thomas@monjalon.net, ferruh.yigit@amd.com, 
+ andrew.rybchenko@oktetlabs.ru
+Cc: dev@dpdk.org, stable@dpdk.org
+Content-Type: multipart/alternative; boundary="00000000000022b5d2063a97b91f"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -171,17 +75,166 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Jul 22, 2025 at 03:24:41PM +0200, David Marchand wrote:
-> Now that the ABI has been bumped to 26, we can drop compatibility
-> symbols for the CRC API.
-> 
-> The logtype is not used anymore and can be removed.
-> 
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
+--00000000000022b5d2063a97b91f
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Secondary application not only breaking on device closing,
+it's also getting segfault when we do "show device info all" from secondary
+after primary closes:
+
+testpmd> show device info all
+
+********************* Infos for device 0000:03:00.0 *********************
+Bus name: pci
+Bus information: vendor_id=3D15b3, device_id=3D101d
+Driver name: mlx5_pci
+Devargs:
+Connect to socket: 0
+
+Segmentation fault (core dumped)
+
+This patch prevents these crashes and it seems that these fixes should
+be in PMD along with the ethdev layer. Some more checks will be added
+in the next version to prevent "show device info all" crash.
+
+
+
+On Wed, Jul 23, 2025 at 9:50=E2=80=AFAM Khadem Ullah <14pwcse1224@uetpeshaw=
+ar.edu.pk>
+wrote:
+
+> In secondary processes, directly accessing 'dev->data->dev_private' can
+> cause a segmentation fault if the primary process has exited or if the
+> shared memory is no longer accessible.
+>
+> This patch adds a safety check using rte_mem_virt2phy(), with an
+> unlikely() branch hint to minimize performance impact in the fast path.
+> This ensures 'dev_private' is still valid before accessing it.
+>
+> Fixes: bdad90d12ec8 ("ethdev: change device info get callback to return
+> int")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
 > ---
+>  lib/ethdev/rte_ethdev.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
+> index dd7c00bc94..ef5dc55f2e 100644
+> --- a/lib/ethdev/rte_ethdev.c
+> +++ b/lib/ethdev/rte_ethdev.c
+> @@ -4079,6 +4079,13 @@ rte_eth_dev_info_get(uint16_t port_id, struct
+> rte_eth_dev_info *dev_info)
+>
+>         if (dev->dev_ops->dev_infos_get =3D=3D NULL)
+>                 return -ENOTSUP;
+> +       if (rte_eal_process_type() =3D=3D RTE_PROC_SECONDARY &&
+> +               unlikely(rte_mem_virt2phy(dev->data->dev_private) =3D=3D
+> RTE_BAD_PHYS_ADDR)) {
+> +                       RTE_ETHDEV_LOG_LINE(ERR,
+> +                       "Secondary: dev_private not accessible (primary
+> exited?)");
+> +                       rte_errno =3D ENODEV;
+> +                       return -rte_errno;
+> +       }
+>         diag =3D dev->dev_ops->dev_infos_get(dev, dev_info);
+>         if (diag !=3D 0) {
+>                 /* Cleanup already filled in device information */
+> --
+> 2.43.0
+>
+>
 
-Not an expert in this area, but code changes look ok to me.
+--=20
+Engr. Khadem Ullah,
+Software Engineer,
+Dreambig Semiconductor Inc
+https://dreambigsemi.com/
 
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+--00000000000022b5d2063a97b91f
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+<div dir=3D"ltr"><pre class=3D"gmail-content">Secondary application not onl=
+y breaking on device closing,<br>it&#39;s also getting segfault when we do =
+&quot;show device info all&quot; from secondary<br>after primary closes:<br=
+><br>testpmd&gt; show device info all<br><br>********************* Infos fo=
+r device 0000:03:00.0 *********************<br>Bus name: pci<br>Bus informa=
+tion: vendor_id=3D15b3, device_id=3D101d<br>Driver name: mlx5_pci<br>Devarg=
+s:<br>Connect to socket: 0<br><br>Segmentation fault (core dumped)<br><br>T=
+his patch prevents these crashes and it seems that these fixes should be in=
+ PMD along with the ethdev layer. Some more checks will be added in the nex=
+t version to prevent &quot;show device info all&quot; crash.</pre><br></div=
+><br><div class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" clas=
+s=3D"gmail_attr">On Wed, Jul 23, 2025 at 9:50=E2=80=AFAM Khadem Ullah &lt;<=
+a href=3D"mailto:14pwcse1224@uetpeshawar.edu.pk">14pwcse1224@uetpeshawar.ed=
+u.pk</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"mar=
+gin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1=
+ex">In secondary processes, directly accessing &#39;dev-&gt;data-&gt;dev_pr=
+ivate&#39; can<br>
+cause a segmentation fault if the primary process has exited or if the<br>
+shared memory is no longer accessible.<br>
+<br>
+This patch adds a safety check using rte_mem_virt2phy(), with an<br>
+unlikely() branch hint to minimize performance impact in the fast path.<br>
+This ensures &#39;dev_private&#39; is still valid before accessing it.<br>
+<br>
+Fixes: bdad90d12ec8 (&quot;ethdev: change device info get callback to retur=
+n int&quot;)<br>
+Cc: <a href=3D"mailto:stable@dpdk.org" target=3D"_blank">stable@dpdk.org</a=
+><br>
+<br>
+Signed-off-by: Khadem Ullah &lt;<a href=3D"mailto:14pwcse1224@uetpeshawar.e=
+du.pk" target=3D"_blank">14pwcse1224@uetpeshawar.edu.pk</a>&gt;<br>
+---<br>
+=C2=A0lib/ethdev/rte_ethdev.c | 7 +++++++<br>
+=C2=A01 file changed, 7 insertions(+)<br>
+<br>
+diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c<br>
+index dd7c00bc94..ef5dc55f2e 100644<br>
+--- a/lib/ethdev/rte_ethdev.c<br>
++++ b/lib/ethdev/rte_ethdev.c<br>
+@@ -4079,6 +4079,13 @@ rte_eth_dev_info_get(uint16_t port_id, struct rte_et=
+h_dev_info *dev_info)<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (dev-&gt;dev_ops-&gt;dev_infos_get =3D=3D NU=
+LL)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return -ENOTSUP;<br=
+>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0if (rte_eal_process_type() =3D=3D RTE_PROC_SECO=
+NDARY &amp;&amp;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0unlikely(rte_mem_vi=
+rt2phy(dev-&gt;data-&gt;dev_private) =3D=3D RTE_BAD_PHYS_ADDR)) {<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0RTE_ETHDEV_LOG_LINE(ERR,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0&quot;Secondary: dev_private not accessible (primary exited?)&quo=
+t;);<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0rte_errno =3D ENODEV;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0return -rte_errno;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 diag =3D dev-&gt;dev_ops-&gt;dev_infos_get(dev,=
+ dev_info);<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (diag !=3D 0) {<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* Cleanup already =
+filled in device information */<br>
+-- <br>
+2.43.0<br>
+<br>
+</blockquote></div><div><br clear=3D"all"></div><br><span class=3D"gmail_si=
+gnature_prefix">-- </span><br><div dir=3D"ltr" class=3D"gmail_signature"><d=
+iv dir=3D"ltr"><div><div dir=3D"ltr"><div style=3D"font-family:Calibri,Aria=
+l,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)"><span style=3D"colo=
+r:rgb(12,100,192)">Engr. Khadem Ullah, </span><br></div><div style=3D"font-=
+family:Calibri,Arial,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">=
+<span style=3D"color:rgb(12,100,192)">Software Engineer, </span><br></div><=
+span style=3D"color:rgb(12,100,192)">Dreambig Semiconductor Inc <br></span>=
+</div><div dir=3D"ltr"><span style=3D"color:rgb(12,100,192)"><a href=3D"htt=
+ps://dreambigsemi.com/" target=3D"_blank">https://dreambigsemi.com/</a><br>=
+</span></div></div></div></div>
 
+--00000000000022b5d2063a97b91f--
