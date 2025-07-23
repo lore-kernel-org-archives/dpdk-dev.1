@@ -2,74 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13868C83F17
-	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 13:11:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 905ECC83F1A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 13:13:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 10A4840BA0;
-	Wed, 23 Jul 2025 15:11:10 +0200 (CEST)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
- [209.85.214.182])
- by mails.dpdk.org (Postfix) with ESMTP id BC77940B99
- for <dev@dpdk.org>; Wed, 23 Jul 2025 15:11:07 +0200 (CEST)
-Received: by mail-pl1-f182.google.com with SMTP id
- d9443c01a7336-2349f096605so76141005ad.3
- for <dev@dpdk.org>; Wed, 23 Jul 2025 06:11:07 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4CC2C40BA0;
+	Wed, 23 Jul 2025 15:13:19 +0200 (CEST)
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com
+ [209.85.219.46]) by mails.dpdk.org (Postfix) with ESMTP id 5C87D40B98
+ for <dev@dpdk.org>; Wed, 23 Jul 2025 15:13:17 +0200 (CEST)
+Received: by mail-qv1-f46.google.com with SMTP id
+ 6a1803df08f44-6fd0a91ae98so33531126d6.1
+ for <dev@dpdk.org>; Wed, 23 Jul 2025 06:13:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1753276267;
- x=1753881067; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=e1Fn+BpV/lBpkBNymNKkD0FjlFvW9o40VVxaZUaxgWQ=;
- b=oO0l0k69lR2tGB34dPkHWvbpVaCeC1ss0Ky8ze4lLs6+yQl2ksIQjhatGFQ8lLyuAW
- 6+6z3tdz4OhQAevSTo/keDJoTMNBJO7m+TyhSHcXeNFtYU9X+CLrIQ8rkyqAgd4Sm+qW
- fMvS5IsOJGNF9NlBErJ8tbhuegiDt//va41cUiivMh1CsW7azmjpn2bK6lxy+YVBP/rA
- mfBVNNJD9XDtbEZv/svP8CC2CakHtJTiOhvpiWFYyvRXKjcKeqWzDO9VkoUSJqwLPaVO
- f79EHTJqZVkjbDiux/Z6jZI+PtKe8nRBOD+/JJnsvg07biRSi89gy1HDekomASnSniKd
- 97GQ==
+ d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1753276397;
+ x=1753881197; darn=dpdk.org; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=18XoZ7PpOPaAR7h3oRJMlBCParVic3MYuafB/ogHp6s=;
+ b=bLgRmDvRZ/CkQ6rTgxMJZdT5QONZC7xQ1CHtlAlmVhutlIwX3llEapZ68ZUkUhlgSz
+ s5jSb6Q4miEpjLu4VPpstJ7NKhD++BUqwyMjgOaWpQqSppWOc1aHReyJQeyH1Bb4+vth
+ VdZnEBM3OtwZGMy0S2qjXpl99PKzoAzJ8D1oEc3Zgn/Wi+znonbq4OmEKsVRPn/DGnm/
+ wArHBlHF5kVUbc37JKZTzRX7CS/zhAtLPLEqoCrq9BylxwpBGHWm5yzw+zjUFLrpbWJ2
+ kueuJEv5lZGoQ/kvnG8iYqdFLWVlSeI0gnInNqhhL1kqMnyqZofz5frByM8/xcASAdm3
+ WwTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753276267; x=1753881067;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=e1Fn+BpV/lBpkBNymNKkD0FjlFvW9o40VVxaZUaxgWQ=;
- b=iqPwkyf+fKY9YZSEK0+LtpvXyZptJ04hGiEnINdbVXHid+pXGIp7bcV5cj7npk3y6l
- DsHRAnptVP9aNo7ip8tXzzL3K4IAcULQPsz6R9lYdGT8k15yksq9+aafthVslgRuPrWp
- DZ55y2SNqIf5m/CuA6IzVhYIgX/gY1LgcesanBFnymkzTBMtLGSc7k1ouTUbp4O2SWPe
- dLDBl/084lrfLhLDQIZ9M074QStnFH+VvTDKKXzxJn0LXzvvZUtyW4wQav5S5bZYcypU
- NPp70mmQq/vKYsv8fkJElHnszm001EhmjzJwpqT4fioIoPqIpNWBRpDAag6eAZEO+2Ca
- oMPQ==
-X-Gm-Message-State: AOJu0YyZ2d3xCNrt05LMeBzs1T/b28SLe29TE2vt0WMf0p8xYyUDiJsL
- aigIUlPNeJG2VJUQu8zNbjJ4PlFyYQcLj3Hoy3kyfRErn9KNB+pHT1CVUkSC/eoE9bQ=
-X-Gm-Gg: ASbGncsx8CmRt5vNAEe6i7ikVQWPSsLbN0gNZ0Y8e1mM5p2ESi5/iqXn+6EAW7Yfc4a
- RTfuk521LcPjlmZJkSttQxotAnb7QhTKPM9qi1tNYiZl+1HTAgDB/xYbiQDkYC/FETtl5ycSzS7
- yefjNbcFHnWbxJIsaSrcXX3V0hMZkIb+m3tOIUuIvy5fiwwS+fCg2S+xgo2Pl7I1/QhktFruDZO
- h4jn0e5ZLrKxV3k3oCP7UaJi5R2pLF8gUShAPfYpl2MyS6EIUo0IinTgBhaOxCQRVHHA/JcuSwK
- 2lN3d70hKzkIsArFsW1Qb0ir5Qe6s/n5YtSqE50JlwQQDaj78zamqrv/SsCH0CBhuraWqEqoCu1
- VMtRYyPbY84/8XXN3xtvwDsWS3O1eub8MxWtf5vtAQ8Fp4jDC
-X-Google-Smtp-Source: AGHT+IEz92xfZNQNAbfsfwzYYsaT1RswUvqn7AyrIowSs5s1GhzUtFN5AGNsj5pNlnpWpqDasjCdqw==
-X-Received: by 2002:a17:902:d603:b0:23f:904b:a748 with SMTP id
- d9443c01a7336-23f9813e760mr40286575ad.20.1753276266840; 
- Wed, 23 Jul 2025 06:11:06 -0700 (PDT)
-Received: from localhost.localdomain ([64.62.143.197])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-23e3b6d23cfsm96232615ad.135.2025.07.23.06.11.05
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 23 Jul 2025 06:11:05 -0700 (PDT)
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-To: stephen@networkplumber.org, thomas@monjalon.net, ferruh.yigit@amd.com,
- andrew.rybchenko@oktetlabs.ru
-Cc: dev@dpdk.org, stable@dpdk.org,
- Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Subject: [PATCH] [PATCH v3] lib/ethdev: fix segfault in secondary process by
- validating dev_private pointer
-Date: Wed, 23 Jul 2025 09:10:49 -0400
-Message-ID: <20250723131049.1703172-1-14pwcse1224@uetpeshawar.edu.pk>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250723045022.1580829-1-14pwcse1224@uetpeshawar.edu.pk>
-References: <20250723045022.1580829-1-14pwcse1224@uetpeshawar.edu.pk>
+ d=1e100.net; s=20230601; t=1753276397; x=1753881197;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=18XoZ7PpOPaAR7h3oRJMlBCParVic3MYuafB/ogHp6s=;
+ b=V+wE1kN2hjGFyQEazrNEUDeABZOU0Otl8N/o1p/TxfMpTBLscqVQkdlOLZUuyhWaYq
+ 719vlJBPuVnCDgNR0MdGxfSQVZjIOycK1T+vFr9G4tFpgQahNpc485xQ+DjKVZlAe7SG
+ l35v7SECWhWjGv+DToGBZCQnTkd+xFVJk+Ha585k/dYHiCb5BrxlWWDSLVvypPrwvzBD
+ JRTZU2iX8VXwkvnwRZqYLqrj8twXaSzo1OaDJw8Wy2zr42WbD9GIGkDXuzs/Muyq0XLO
+ H12+j2T0BdhMDpCCVBXUUjxDD4+rlgWJMokfd4wLvRookp05sRmsn3lrySPk5Xd0xCCT
+ mG0w==
+X-Gm-Message-State: AOJu0YxfJSb0zzTCZi7mzymNPlgLGqD6RQLxEVarNrK4PXoGd93rQPwQ
+ 3ckkFdd0XSEWBPt06hptZrD06BlYO8n70e5+Ywrhc8KdkIlG6qvhNa28NT32JX2ETNP76lYdOZc
+ g3L0cBX5OGO8GPzcmaAEVLOMOlJWFUBFAuxhoODJ2+g==
+X-Gm-Gg: ASbGncs5Q+8z44MGLptpUtzSb4qegc5yJC4HW37lLQ/+PX23sCqSiOfUGNKNF4DhWft
+ pMO3gZ7zD7LjM5mkFEfHwfn6uiHCCgpfOUsSyCn2J+ey11FJpR56OzKaZIfTNSICiRb/cu7ZL1p
+ K8l2ZEnhD5sSYRQIhw/rKjVU/oRBFKpV0onxscdpWzz4JsUZOShucaww2ooq6OtKGfx1IcoZkVq
+ 7yW+IIbeg==
+X-Google-Smtp-Source: AGHT+IGp94aCLlEXFD7RzFpmE9Wlfzti+L+liKdomjUn2Y6DtkVhuGdgB5zQjh4Y2uwzSNELvLC68VkjJTVAyGi0Vug=
+X-Received: by 2002:a05:6214:2aab:b0:706:aae8:ad48 with SMTP id
+ 6a1803df08f44-7070069b97amr43045506d6.35.1753276396563; Wed, 23 Jul 2025
+ 06:13:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250722115439.1353573-1-14pwcse1224@uetpeshawar.edu.pk>
+ <20250723045022.1580829-1-14pwcse1224@uetpeshawar.edu.pk>
+ <CA++2-x7U1D8pB1dzuyoeQ4WQKcCpv32HVji23Ev=cdM=G9MROA@mail.gmail.com>
+In-Reply-To: <CA++2-x7U1D8pB1dzuyoeQ4WQKcCpv32HVji23Ev=cdM=G9MROA@mail.gmail.com>
+From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+Date: Wed, 23 Jul 2025 18:13:04 +0500
+X-Gm-Features: Ac12FXxwsyBD2bedYTjw6u699lzrD8Lzxm88_8M9AIHOKBuaKdtcKetW-m9VYog
+Message-ID: <CA++2-x4qtuSz1HCA5BF6gybpaUhAivmeCCj3B_eURZJL5pLh-Q@mail.gmail.com>
+Subject: Re: [PATCH v2] lib/ethdev: fix segfault in secondary process by
+ validating dev_private pointer
+To: stephen@networkplumber.org, thomas@monjalon.net, ferruh.yigit@amd.com, 
+ andrew.rybchenko@oktetlabs.ru
+Cc: dev@dpdk.org, stable@dpdk.org
+Content-Type: multipart/alternative; boundary="000000000000cfb6b6063a987827"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,59 +76,196 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In secondary processes, directly accessing 'dev->data->dev_private' can
-cause a segmentation fault if the primary process has exited or if the
-shared memory is no longer accessible.
+--000000000000cfb6b6063a987827
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Secondary application not only breaking on device closing,
-but also getting segfault when we do "show device info all" from secondary
-after primary closes.
+Please check v3 of this patch.
 
-This patch adds safety checks while using rte_mem_virt2phy(), with an
-unlikely() branch hint to minimize performance impact in the fast path.
-This ensures 'dev_private' is still valid before accessing it.
+On Wed, Jul 23, 2025 at 5:19=E2=80=AFPM Khadem Ullah <14pwcse1224@uetpeshaw=
+ar.edu.pk>
+wrote:
 
-Fixes: bdad90d12ec8 ("ethdev: change device info get callback to return int")
-Cc: stable@dpdk.org
+> Secondary application not only breaking on device closing,
+> it's also getting segfault when we do "show device info all" from seconda=
+ry
+> after primary closes:
+>
+> testpmd> show device info all
+>
+> ********************* Infos for device 0000:03:00.0 *********************
+> Bus name: pci
+> Bus information: vendor_id=3D15b3, device_id=3D101d
+> Driver name: mlx5_pci
+> Devargs:
+> Connect to socket: 0
+>
+> Segmentation fault (core dumped)
+>
+> This patch prevents these crashes and it seems that these fixes should be=
+ in PMD along with the ethdev layer. Some more checks will be added in the =
+next version to prevent "show device info all" crash.
+>
+>
+>
+> On Wed, Jul 23, 2025 at 9:50=E2=80=AFAM Khadem Ullah <
+> 14pwcse1224@uetpeshawar.edu.pk> wrote:
+>
+>> In secondary processes, directly accessing 'dev->data->dev_private' can
+>> cause a segmentation fault if the primary process has exited or if the
+>> shared memory is no longer accessible.
+>>
+>> This patch adds a safety check using rte_mem_virt2phy(), with an
+>> unlikely() branch hint to minimize performance impact in the fast path.
+>> This ensures 'dev_private' is still valid before accessing it.
+>>
+>> Fixes: bdad90d12ec8 ("ethdev: change device info get callback to return
+>> int")
+>> Cc: stable@dpdk.org
+>>
+>> Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+>> ---
+>>  lib/ethdev/rte_ethdev.c | 7 +++++++
+>>  1 file changed, 7 insertions(+)
+>>
+>> diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
+>> index dd7c00bc94..ef5dc55f2e 100644
+>> --- a/lib/ethdev/rte_ethdev.c
+>> +++ b/lib/ethdev/rte_ethdev.c
+>> @@ -4079,6 +4079,13 @@ rte_eth_dev_info_get(uint16_t port_id, struct
+>> rte_eth_dev_info *dev_info)
+>>
+>>         if (dev->dev_ops->dev_infos_get =3D=3D NULL)
+>>                 return -ENOTSUP;
+>> +       if (rte_eal_process_type() =3D=3D RTE_PROC_SECONDARY &&
+>> +               unlikely(rte_mem_virt2phy(dev->data->dev_private) =3D=3D
+>> RTE_BAD_PHYS_ADDR)) {
+>> +                       RTE_ETHDEV_LOG_LINE(ERR,
+>> +                       "Secondary: dev_private not accessible (primary
+>> exited?)");
+>> +                       rte_errno =3D ENODEV;
+>> +                       return -rte_errno;
+>> +       }
+>>         diag =3D dev->dev_ops->dev_infos_get(dev, dev_info);
+>>         if (diag !=3D 0) {
+>>                 /* Cleanup already filled in device information */
+>> --
+>> 2.43.0
+>>
+>>
+>
+> --
+> Engr. Khadem Ullah,
+> Software Engineer,
+> Dreambig Semiconductor Inc
+> https://dreambigsemi.com/
+>
 
-Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
----
- lib/ethdev/rte_ethdev.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index dd7c00bc94..343e156a4f 100644
---- a/lib/ethdev/rte_ethdev.c
-+++ b/lib/ethdev/rte_ethdev.c
-@@ -4079,6 +4079,13 @@ rte_eth_dev_info_get(uint16_t port_id, struct rte_eth_dev_info *dev_info)
- 
- 	if (dev->dev_ops->dev_infos_get == NULL)
- 		return -ENOTSUP;
-+	if (rte_eal_process_type() == RTE_PROC_SECONDARY &&
-+		unlikely(rte_mem_virt2phy(dev->data->dev_private) == RTE_BAD_PHYS_ADDR)) {
-+			RTE_ETHDEV_LOG_LINE(ERR,
-+			"Secondary: dev_private not accessible (primary exited?)");
-+			rte_errno = ENODEV;
-+			return -rte_errno;
-+	}
- 	diag = dev->dev_ops->dev_infos_get(dev, dev_info);
- 	if (diag != 0) {
- 		/* Cleanup already filled in device information */
-@@ -4307,7 +4314,13 @@ rte_eth_macaddr_get(uint16_t port_id, struct rte_ether_addr *mac_addr)
- 			port_id);
- 		return -EINVAL;
- 	}
--
-+	if (rte_eal_process_type() == RTE_PROC_SECONDARY &&
-+		(dev->data->mac_addrs == NULL)) {
-+			RTE_ETHDEV_LOG_LINE(ERR,
-+			"Secondary: dev_private not accessible (primary exited?)");
-+			rte_errno = ENODEV;
-+			return -rte_errno;
-+	}
- 	rte_ether_addr_copy(&dev->data->mac_addrs[0], mac_addr);
- 
- 	rte_eth_trace_macaddr_get(port_id, mac_addr);
--- 
-2.43.0
+--=20
+Engr. Khadem Ullah,
+Software Engineer,
+Dreambig Semiconductor Inc
+https://dreambigsemi.com/
 
+--000000000000cfb6b6063a987827
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Please check v3 of this patch.</div><br><div class=3D"gmai=
+l_quote gmail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Wed=
+, Jul 23, 2025 at 5:19=E2=80=AFPM Khadem Ullah &lt;<a href=3D"mailto:14pwcs=
+e1224@uetpeshawar.edu.pk">14pwcse1224@uetpeshawar.edu.pk</a>&gt; wrote:<br>=
+</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;b=
+order-left:1px solid rgb(204,204,204);padding-left:1ex"><div dir=3D"ltr"><p=
+re>Secondary application not only breaking on device closing,<br>it&#39;s a=
+lso getting segfault when we do &quot;show device info all&quot; from secon=
+dary<br>after primary closes:<br><br>testpmd&gt; show device info all<br><b=
+r>********************* Infos for device 0000:03:00.0 *********************=
+<br>Bus name: pci<br>Bus information: vendor_id=3D15b3, device_id=3D101d<br=
+>Driver name: mlx5_pci<br>Devargs:<br>Connect to socket: 0<br><br>Segmentat=
+ion fault (core dumped)<br><br>This patch prevents these crashes and it see=
+ms that these fixes should be in PMD along with the ethdev layer. Some more=
+ checks will be added in the next version to prevent &quot;show device info=
+ all&quot; crash.</pre><br></div><br><div class=3D"gmail_quote"><div dir=3D=
+"ltr" class=3D"gmail_attr">On Wed, Jul 23, 2025 at 9:50=E2=80=AFAM Khadem U=
+llah &lt;<a href=3D"mailto:14pwcse1224@uetpeshawar.edu.pk" target=3D"_blank=
+">14pwcse1224@uetpeshawar.edu.pk</a>&gt; wrote:<br></div><blockquote class=
+=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rg=
+b(204,204,204);padding-left:1ex">In secondary processes, directly accessing=
+ &#39;dev-&gt;data-&gt;dev_private&#39; can<br>
+cause a segmentation fault if the primary process has exited or if the<br>
+shared memory is no longer accessible.<br>
+<br>
+This patch adds a safety check using rte_mem_virt2phy(), with an<br>
+unlikely() branch hint to minimize performance impact in the fast path.<br>
+This ensures &#39;dev_private&#39; is still valid before accessing it.<br>
+<br>
+Fixes: bdad90d12ec8 (&quot;ethdev: change device info get callback to retur=
+n int&quot;)<br>
+Cc: <a href=3D"mailto:stable@dpdk.org" target=3D"_blank">stable@dpdk.org</a=
+><br>
+<br>
+Signed-off-by: Khadem Ullah &lt;<a href=3D"mailto:14pwcse1224@uetpeshawar.e=
+du.pk" target=3D"_blank">14pwcse1224@uetpeshawar.edu.pk</a>&gt;<br>
+---<br>
+=C2=A0lib/ethdev/rte_ethdev.c | 7 +++++++<br>
+=C2=A01 file changed, 7 insertions(+)<br>
+<br>
+diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c<br>
+index dd7c00bc94..ef5dc55f2e 100644<br>
+--- a/lib/ethdev/rte_ethdev.c<br>
++++ b/lib/ethdev/rte_ethdev.c<br>
+@@ -4079,6 +4079,13 @@ rte_eth_dev_info_get(uint16_t port_id, struct rte_et=
+h_dev_info *dev_info)<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (dev-&gt;dev_ops-&gt;dev_infos_get =3D=3D NU=
+LL)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return -ENOTSUP;<br=
+>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0if (rte_eal_process_type() =3D=3D RTE_PROC_SECO=
+NDARY &amp;&amp;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0unlikely(rte_mem_vi=
+rt2phy(dev-&gt;data-&gt;dev_private) =3D=3D RTE_BAD_PHYS_ADDR)) {<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0RTE_ETHDEV_LOG_LINE(ERR,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0&quot;Secondary: dev_private not accessible (primary exited?)&quo=
+t;);<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0rte_errno =3D ENODEV;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0return -rte_errno;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 diag =3D dev-&gt;dev_ops-&gt;dev_infos_get(dev,=
+ dev_info);<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (diag !=3D 0) {<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* Cleanup already =
+filled in device information */<br>
+-- <br>
+2.43.0<br>
+<br>
+</blockquote></div><div><br clear=3D"all"></div><br><span class=3D"gmail_si=
+gnature_prefix">-- </span><br><div dir=3D"ltr" class=3D"gmail_signature"><d=
+iv dir=3D"ltr"><div><div dir=3D"ltr"><div style=3D"font-family:Calibri,Aria=
+l,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)"><span style=3D"colo=
+r:rgb(12,100,192)">Engr. Khadem Ullah, </span><br></div><div style=3D"font-=
+family:Calibri,Arial,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">=
+<span style=3D"color:rgb(12,100,192)">Software Engineer, </span><br></div><=
+span style=3D"color:rgb(12,100,192)">Dreambig Semiconductor Inc <br></span>=
+</div><div dir=3D"ltr"><span style=3D"color:rgb(12,100,192)"><a href=3D"htt=
+ps://dreambigsemi.com/" target=3D"_blank">https://dreambigsemi.com/</a><br>=
+</span></div></div></div></div>
+</blockquote></div><div><br clear=3D"all"></div><br><span class=3D"gmail_si=
+gnature_prefix">-- </span><br><div dir=3D"ltr" class=3D"gmail_signature"><d=
+iv dir=3D"ltr"><div><div dir=3D"ltr"><div style=3D"font-family:Calibri,Aria=
+l,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)"><span style=3D"colo=
+r:rgb(12,100,192)">Engr. Khadem Ullah, </span><br></div><div style=3D"font-=
+family:Calibri,Arial,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">=
+<span style=3D"color:rgb(12,100,192)">Software Engineer, </span><br></div><=
+span style=3D"color:rgb(12,100,192)">Dreambig Semiconductor Inc <br></span>=
+</div><div dir=3D"ltr"><span style=3D"color:rgb(12,100,192)"><a href=3D"htt=
+ps://dreambigsemi.com/" target=3D"_blank">https://dreambigsemi.com/</a><br>=
+</span></div></div></div></div>
+
+--000000000000cfb6b6063a987827--
