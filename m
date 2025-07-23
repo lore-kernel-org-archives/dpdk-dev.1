@@ -2,77 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C15ECC83F1A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 13:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 048F9C83F1A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 23 Jul 2025 13:31:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 13CD440DCE;
-	Wed, 23 Jul 2025 15:27:49 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id B52E340B98
- for <dev@dpdk.org>; Wed, 23 Jul 2025 15:27:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1753277267;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=YMFOU02aRRJToAlKHa7Uua/We6n830IzfbHm+BFkm7E=;
- b=hT/PVx36AFwXn0U1LWArSQnYkUUzb+GxbpDcsiWq5IrIOg/S5in9aUaAcB3tBHoxHu8v/M
- KqRGe3XhSoHpmynrR+RXoJ1UyL2kcVw+RXvwx7sXRcUKN1NnaJRwWUa08turMSwzrXSoH4
- Pjo4r8bhI/QvueiMwjKPGtcbCWlXkG8=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-675-fsqpXVjeOwyxciwkdg40kA-1; Wed, 23 Jul 2025 09:27:46 -0400
-X-MC-Unique: fsqpXVjeOwyxciwkdg40kA-1
-X-Mimecast-MFC-AGG-ID: fsqpXVjeOwyxciwkdg40kA_1753277265
-Received: by mail-lf1-f70.google.com with SMTP id
- 2adb3069b0e04-553b94b73d6so4671674e87.2
- for <dev@dpdk.org>; Wed, 23 Jul 2025 06:27:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753277264; x=1753882064;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=YMFOU02aRRJToAlKHa7Uua/We6n830IzfbHm+BFkm7E=;
- b=PrwCvOZYFVHB/zHjpPukqXm+FsoW938qkt9TVYVWEI/pW12m0BnOrY7RW4Y1iOAz48
- nY6iCfWETdjT21QEMI6nBnVRpumYTv1sXBvhV8Vj4Wfa6ypeBX/ZHAkQAFeV5Bb8Posf
- 09r4+1EQFrurNGX+7TEysNLss8y0jyoLbH1isEgkSa5WZ1QzJYLEI+sIECJ+EnmExcnk
- BRaZpHW9Ia0i0lLzdrFyz46Zjl/PT7lQLduO1hLPKlwpHjHV/YBZV5z0PJzBZ5Z3CoVW
- 7Fx33COZIT63GeuxwrBWEWT8vYlAMWxQWnIjzfoVMOFnlw4uQ29RIiKZKiBpIWZwrUk/
- rGCA==
-X-Gm-Message-State: AOJu0Yz3tRpz7XAmj63fXT0+UDhU5O0fC4fsysE4QvYz+D5CxMGUpW4R
- OaiFY0SWZA7zCvaF/KpFWx/4Zzc35Oo4s7o/XF9v+j0T+mGXpZMjZatCOKu4BNJvyFOiJ6+Cswd
- 8zTQ8KAHr3onuzGSknJwwquPg76MO+DR8sV6ucD3svPFvOkFz0LmyYtKQAPLgiDE5fTjwsi2he7
- WGTG0+X1iWXuN6RF4jqe8=
-X-Gm-Gg: ASbGncvFqoYetYufsaW9Ix8cxiJERMX8rONtkwktqcxqbD1qIXQYO7/YM49NUJ03FVU
- 4bclA85iNP4vBXw4K2BdoYxmfUBdO2pE4TIhjd83iO0UrpdjfZszAI+VZ2cvKAPq5lfWTjQRB1Z
- Hi6HV3ySWRpPYCIfGZmOjtvY8=
-X-Received: by 2002:ac2:5394:0:b0:553:ca33:46f with SMTP id
- 2adb3069b0e04-55a513e8100mr758106e87.29.1753277264395; 
- Wed, 23 Jul 2025 06:27:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFubbeQfGEU+swoNRs/JWR3ggZYMAFE8qfw0ycw3mRcTVLg4GT5eOsEF4WUAR96qP/elQQqCSi41VqZHXeXJUo=
-X-Received: by 2002:ac2:5394:0:b0:553:ca33:46f with SMTP id
- 2adb3069b0e04-55a513e8100mr758096e87.29.1753277263857; Wed, 23 Jul 2025
- 06:27:43 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 25C2840B9C;
+	Wed, 23 Jul 2025 15:31:36 +0200 (CEST)
+Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
+ by mails.dpdk.org (Postfix) with ESMTP id 0D33340B98;
+ Wed, 23 Jul 2025 15:31:35 +0200 (CEST)
+Received: from debian (unknown [78.109.70.60])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by agw.arknetworks.am (Postfix) with ESMTPSA id E78A2E0568;
+ Wed, 23 Jul 2025 17:31:33 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am E78A2E0568
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
+ s=default; t=1753277494;
+ bh=v3muQDJellV2P5/onfm0d8R0FAvGxeviGiZ+9npvikE=;
+ h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+ b=BkfdOaI62nD4ZU8cEKc1Q8QXQxkANU5lp9+li7Yc9uw1E9DCwQc+J6gRdCPUSDLJP
+ 6QrxpO4A44pWOzR7XjJ16kwjZ0RDbiHaiT6eF33dpTlNYkRHyKcM2vRICWfW3UXcJy
+ 7GXfovGWurU7+IjoLpeUrOqOXEvnVjIznDJx/JC1oPvXXfd+ZHLztvXyB6YzUGwi+r
+ YB414GKiMQM6aC08fwoOTailQNTxh3vK/WiRu+jV96boLvI4sduCw1JVieLYsy9QuV
+ oH65dY1NthSwx6R7hCio5qXM/KJ/58TGCQxoquliba/AGuusOzNbdhCU48iGX70etM
+ RZriCuuMicL+A==
+Date: Wed, 23 Jul 2025 17:31:32 +0400 (+04)
+From: Ivan Malov <ivan.malov@arknetworks.am>
+To: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+cc: Stephen Hemminger <stephen@networkplumber.org>, 
+ Thomas Monjalon <thomas@monjalon.net>, Ferruh Yigit <ferruh.yigit@amd.com>, 
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, dev@dpdk.org, 
+ dpdk stable <stable@dpdk.org>
+Subject: Re: [PATCH v2] lib/ethdev: fix segfault in secondary process by
+ validating dev_private pointer
+In-Reply-To: <CA++2-x5vbQKk4PJRL8D5QD3iNM5jBh7fwd=qk+2gRvwsd59_3A@mail.gmail.com>
+Message-ID: <f15505eb-057c-f08f-5ae2-3be3c18d1252@arknetworks.am>
+References: <20250722115439.1353573-1-14pwcse1224@uetpeshawar.edu.pk>
+ <20250723045022.1580829-1-14pwcse1224@uetpeshawar.edu.pk>
+ <CA++2-x7U1D8pB1dzuyoeQ4WQKcCpv32HVji23Ev=cdM=G9MROA@mail.gmail.com>
+ <CA++2-x4qtuSz1HCA5BF6gybpaUhAivmeCCj3B_eURZJL5pLh-Q@mail.gmail.com>
+ <dbf3b51a-7bd8-2f48-a038-5e7b92994e07@arknetworks.am>
+ <CA++2-x5vbQKk4PJRL8D5QD3iNM5jBh7fwd=qk+2gRvwsd59_3A@mail.gmail.com>
 MIME-Version: 1.0
-References: <20250722132441.3700305-1-david.marchand@redhat.com>
- <aIDDpWm_M6m2SCIp@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <aIDDpWm_M6m2SCIp@bricha3-mobl1.ger.corp.intel.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 23 Jul 2025 15:27:31 +0200
-X-Gm-Features: Ac12FXw0e7xF1gDtSaACPuAx8kKdmmhCpS-qUmjQvqI1f5NyPuVXjKN6gqKOd8M
-Message-ID: <CAJFAV8ykvyJ97iM1VO-Vs6X=ayphx+nHqc3A-1My871dpug92A@mail.gmail.com>
-Subject: Re: [PATCH 1/2] version: 25.11.0-rc0
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, thomas@monjalon.net, 
- Bruce Richardson <bruce.richardson@intel.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: _c-MBF8ODJOUvHxEW7hMaRejkGTp7j-yPDQueHCVEn4_1753277265
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="8323328-983534878-1753277495=:19156"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,36 +59,111 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Jul 23, 2025 at 1:27=E2=80=AFPM Bruce Richardson
-<bruce.richardson@intel.com> wrote:
-> On Tue, Jul 22, 2025 at 03:24:40PM +0200, David Marchand wrote:
-> > Start a new release cycle with empty release notes.
-> >
-> > The ABI version becomes 26.0.
-> > The ABI exceptions are dropped and CI ABI checks are disabled because
-> > compatibility is not preserved.
-> >
-> > Signed-off-by: David Marchand <david.marchand@redhat.com>
-> > ---
-> >  .github/workflows/build.yml            |   4 +-
-> >  ABI_VERSION                            |   2 +-
-> >  VERSION                                |   2 +-
-> >  devtools/libabigail.abignore           |  14 ---
-> >  doc/guides/rel_notes/index.rst         |   1 +
-> >  doc/guides/rel_notes/release_25_11.rst | 136 +++++++++++++++++++++++++
-> >  6 files changed, 141 insertions(+), 18 deletions(-)
-> >  create mode 100644 doc/guides/rel_notes/release_25_11.rst
-> >
-> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323328-983534878-1753277495=:19156
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8BIT
+
+On Wed, 23 Jul 2025, Khadem Ullah wrote:
+
+> Thanks, no. Can, I ?
+
+Typically, the patch author (as indicated in their respective e-mail address)
+can sign up for patchwork account, sign in and mark any of their own patches as
+superseded, in order to help the delegated reviewers tell new from outdated.
+
+Thank you.
+
+> 
+> On Wed, Jul 23, 2025, 18:24 Ivan Malov <ivan.malov@arknetworks.am> wrote:
+>       Hi Khadem,
 >
-> Thanks for this, this opens up the release notes for 25.11, unblocking us
-> from sending patches referencing it!
-
-Thanks for the review.
-
-Series applied, here we go!
-
-
---=20
-David Marchand
-
+>       On Wed, 23 Jul 2025, Khadem Ullah wrote:
+>
+>       > Please check v3 of this patch.
+>
+>       Checked. In the meantime, you're not overlooking to mark previous versions [1]
+>       with status 'SUPERSEDED' in DPDK Patchwork, are you?
+>
+>       [1] https://patches.dpdk.org/project/dpdk/patch/20250723045022.1580829-1-14pwcse1224@uetpeshawar.edu.pk/
+>
+>       >
+>       > On Wed, Jul 23, 2025 at 5:19 PM Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk> wrote:
+>       >
+>       > Secondary application not only breaking on device closing,
+>       > it's also getting segfault when we do "show device info all" from secondary
+>       > after primary closes:
+>       > testpmd> show device info all
+>       > ********************* Infos for device 0000:03:00.0 *********************
+>       > Bus name: pci
+>       > Bus information: vendor_id=15b3, device_id=101d
+>       > Driver name: mlx5_pci
+>       > Devargs:
+>       > Connect to socket: 0
+>       > Segmentation fault (core dumped)
+>       > This patch prevents these crashes and it seems that these fixes should be in PMD along with the ethdev layer. Some more checks will be added in the next version to prevent
+>       "show device i
+>       > nfo all" crash.
+>       >
+>       >
+>       > On Wed, Jul 23, 2025 at 9:50 AM Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk> wrote:
+>       >       In secondary processes, directly accessing 'dev->data->dev_private' can
+>       >       cause a segmentation fault if the primary process has exited or if the
+>       >       shared memory is no longer accessible.
+>       >
+>       >       This patch adds a safety check using rte_mem_virt2phy(), with an
+>       >       unlikely() branch hint to minimize performance impact in the fast path.
+>       >       This ensures 'dev_private' is still valid before accessing it.
+>       >
+>       >       Fixes: bdad90d12ec8 ("ethdev: change device info get callback to return int")
+>       >       Cc: stable@dpdk.org
+>       >
+>       >       Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+>       >       ---
+>       >        lib/ethdev/rte_ethdev.c | 7 +++++++
+>       >        1 file changed, 7 insertions(+)
+>       >
+>       >       diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
+>       >       index dd7c00bc94..ef5dc55f2e 100644
+>       >       --- a/lib/ethdev/rte_ethdev.c
+>       >       +++ b/lib/ethdev/rte_ethdev.c
+>       >       @@ -4079,6 +4079,13 @@ rte_eth_dev_info_get(uint16_t port_id, struct rte_eth_dev_info *dev_info)
+>       >
+>       >               if (dev->dev_ops->dev_infos_get == NULL)
+>       >                       return -ENOTSUP;
+>       >       +       if (rte_eal_process_type() == RTE_PROC_SECONDARY &&
+>       >       +               unlikely(rte_mem_virt2phy(dev->data->dev_private) == RTE_BAD_PHYS_ADDR)) {
+>       >       +                       RTE_ETHDEV_LOG_LINE(ERR,
+>       >       +                       "Secondary: dev_private not accessible (primary exited?)");
+>       >       +                       rte_errno = ENODEV;
+>       >       +                       return -rte_errno;
+>       >       +       }
+>       >               diag = dev->dev_ops->dev_infos_get(dev, dev_info);
+>       >               if (diag != 0) {
+>       >                       /* Cleanup already filled in device information */
+>       >       --
+>       >       2.43.0
+>       >
+>       >
+>       >
+>       > --
+>       > Engr. Khadem Ullah,
+>       > Software Engineer,
+>       > Dreambig Semiconductor Inc
+>       > https://dreambigsemi.com/
+>       >
+>       >
+>       >
+>       > --
+>       > Engr. Khadem Ullah,
+>       > Software Engineer,
+>       > Dreambig Semiconductor Inc
+>       > https://dreambigsemi.com/
+>       >
+>       >
+> 
+> 
+>
+--8323328-983534878-1753277495=:19156--
