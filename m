@@ -2,43 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FAE9C87FCA
-	for <dpdk-dev@archiver.kernel.org>; Fri, 25 Jul 2025 06:46:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F06EC87FCD
+	for <dpdk-dev@archiver.kernel.org>; Fri, 25 Jul 2025 08:47:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 428BB402E6;
-	Fri, 25 Jul 2025 08:46:11 +0200 (CEST)
-Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id 6C7BB4025A;
- Fri, 25 Jul 2025 08:46:09 +0200 (CEST)
-Received: from debian (unknown [78.109.76.61])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id 8F366E0568;
- Fri, 25 Jul 2025 10:46:08 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 8F366E0568
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1753425969;
- bh=V9vPCj9xu0+q7XyATMErJsBtuCzyC3xXP5rgAWBAX0M=;
- h=Date:From:To:cc:Subject:In-Reply-To:References:From;
- b=pSzYW2AT3EXMtWRS4Lv3yhDfiBD16UugeGkIKR9XV5v8TEL5Fv1wJpPWK3t0qUhWc
- 2HtoDIj70MmDSCFHA3ESvoA7G11W20qNZ0fmP7vVX3VC97UDZHBitgqe+GZVjkHh1V
- MsURHBXbwEnznvdpeC0b3nNaGVqn7IYTaVFGlgmxTASHpwZjE4TURHazZo6mZbgdJz
- Y3MnjrjGOZG5Vu1o4gj7kOkCkBp6qE7ILfHSnR9YukAVwtZCmiX6UN5AN7L7QNqnm0
- C8kHi2WyGH65gK/wssjVux4PCOYx1pthAEKUGQnOVDLU6sig5oF1H52UMocNHKjkk3
- bK1Y7uRfmcKew==
-Date: Fri, 25 Jul 2025 10:46:06 +0400 (+04)
-From: Ivan Malov <ivan.malov@arknetworks.am>
-To: "Gokul K R (MS/ETA7-ETAS)" <KR.Gokul@in.bosch.com>
-cc: "users@dpdk.org" <users@dpdk.org>, "dev@dpdk.org" <dev@dpdk.org>, 
+	by mails.dpdk.org (Postfix) with ESMTP id 6689A4025A;
+	Fri, 25 Jul 2025 10:47:53 +0200 (CEST)
+Received: from DB3PR0202CU003.outbound.protection.outlook.com
+ (mail-northeuropeazon11010009.outbound.protection.outlook.com [52.101.84.9])
+ by mails.dpdk.org (Postfix) with ESMTP id F2D8340262;
+ Thu, 24 Jul 2025 17:49:10 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jG0iZO+Z/gxjn1KuNM6c+iJmny9Ua17KpgvrwLbJ//t2bKTGEs3JmWhPYa2OK7OQvSqOEgekD4MzgFTPD6/HAAt46kGSuqrxUlxMpGaPoco2J2feYdRPAQRYVHDnJJ6gA8WTpb9HA3Rtr8JIuGwLVmmuWFRCQwnFntItXqMEg8MuXFYnxw+mPsdCkRacnojZfbYGdMaha+4YnJ6XXtSr8EWKWLo7qOWNjKs+hPh7MdQZdc2c7ZD7slpSW5O3PEBlawktucYJMIsnQVw3AFLczykqzK7UQ/GQkvONvIOrb7v2Q9HLoGsuClvI6VHv0MddXsrbbV0w56hQxHz/rPdo9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IS6OB2oDfNzuozTEHMlZfCIlQPh5TX9uctF0KjAveuY=;
+ b=hjLjUJPfzsF3Ub4E2VJ9GcZxs3EIwb80LsFDRr7ktyLiZ3Wh48HWEkyIL8KqJoaj1lGzivdwuMQhNMzxs1oc8UTjGSNzcJFeJOb0cosRX7MKjwdpDEIAmTk+ey0vtOX1iibRaaWrgh7F1Y5PmprYpwiZfP8V95/obNB+yphnnv7mp/6nUYnfNxKi6ubn2k29cedtJTbAmZJzCjWkzkY/+kvCiz42A6g8CY3Sg8XB8kaEnBimbfskv4aOwI5Aj2zSDDOlyh+E0L8nUCv3U3FXInYDPqVfLPFsoOtxCxwQMiMSv/a8H6CGKMGxAmhjdDLhyCSUeY2G9gjbcF4nRNgmnw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=in.bosch.com; dmarc=pass action=none header.from=in.bosch.com;
+ dkim=pass header.d=in.bosch.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=in.bosch.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IS6OB2oDfNzuozTEHMlZfCIlQPh5TX9uctF0KjAveuY=;
+ b=KY3CzsBhUmi9Hek40hLs47w3ArDmNu0sj5Wg4LiS/6Ak33Ge2Dl80SCwwTJBon7fBd+IbBUYb0WFhpkh+K7YJgzCqAoGKMZAvxZJfPsgR2M7rFnIHGLPfXCbmxenMGXJvFkg3rLJeBdk6yg7jmwIA+Wh0fD/yOwpN7jBm7f75QaUdF2JUbXRTO/d3E2rRVGOxl6cy6qJMmgEASnQ8tewb1ZA1gMqHEK6E/2HH3DAKGfquZ/pPYiUMOX5Un/6v9Z0phnbZ37V1Gwgr7N12/RPmCreqFjqzpivO5QOJWPsWwQ1nJNYrQs0926anN/bF5MClioUk00WNo/JKDhef9u9/g==
+Received: from PAVPR10MB7355.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:31e::12)
+ by AS4PR10MB6256.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:58f::14)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.22; Thu, 24 Jul
+ 2025 15:49:09 +0000
+Received: from PAVPR10MB7355.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::3ff1:7b6d:5fb7:13da]) by PAVPR10MB7355.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::3ff1:7b6d:5fb7:13da%6]) with mapi id 15.20.8943.029; Thu, 24 Jul 2025
+ 15:49:09 +0000
+From: "Gokul K R (MS/ETA7-ETAS)" <KR.Gokul@in.bosch.com>
+To: Ivan Malov <ivan.malov@arknetworks.am>
+CC: "users@dpdk.org" <users@dpdk.org>, "dev@dpdk.org" <dev@dpdk.org>,
  "Nivethitha N Shanmugasundaram (ETAS-ICA/XPC-Fe6)"
- <NShanmugasundaram.Nivethitha@etas.com>, 
- "Aloysius Nishanth Britto (MS/ETA7-ETAS)"
- <Britto.AloysiusNishanth@in.bosch.com>
-Subject: =?UTF-8?Q?RE=3A_Issue_with_DPDK-Burst_Replay_=E2=80=93_No_F?=
- =?UTF-8?Q?rame_Transmission_Observed_Despite_Successful_Replay?=
-In-Reply-To: <PAVPR10MB73554E72245AA0D44E9822D7A459A@PAVPR10MB7355.EURPRD10.PROD.OUTLOOK.COM>
-Message-ID: <a4bbdaac-640e-cf9a-cfdf-28e0e5443a97@arknetworks.am>
+ <NShanmugasundaram.Nivethitha@etas.com>, "Aloysius Nishanth Britto
+ (MS/ETA7-ETAS)" <Britto.AloysiusNishanth@in.bosch.com>
+Subject: =?utf-8?B?UkU6IElzc3VlIHdpdGggRFBESy1CdXJzdCBSZXBsYXkg4oCTIE5vIEZyYW1l?=
+ =?utf-8?B?IFRyYW5zbWlzc2lvbiBPYnNlcnZlZCBEZXNwaXRlIFN1Y2Nlc3NmdWwgUmVw?=
+ =?utf-8?Q?lay?=
+Thread-Topic: =?utf-8?B?SXNzdWUgd2l0aCBEUERLLUJ1cnN0IFJlcGxheSDigJMgTm8gRnJhbWUgVHJh?=
+ =?utf-8?Q?nsmission_Observed_Despite_Successful_Replay?=
+Thread-Index: Adv2L7p3bdoMR1ufSN+JWPZiXr2rmwBq51MAAO0NYPAAAc8IAAAAghaAADmeH1AAAXoigAALLUIQ
+Date: Thu, 24 Jul 2025 15:49:09 +0000
+Message-ID: <PAVPR10MB73559ECA8CBD947C9A80D111A45EA@PAVPR10MB7355.EURPRD10.PROD.OUTLOOK.COM>
 References: <PAVPR10MB73554B90C65B0D9A83AD8582A450A@PAVPR10MB7355.EURPRD10.PROD.OUTLOOK.COM>
  <5a8c61fe-9c47-d74c-7e0c-3f8dd47b3926@arknetworks.am>
  <PAVPR10MB7355DA0FC9C2847774A0096AA45FA@PAVPR10MB7355.EURPRD10.PROD.OUTLOOK.COM>
@@ -46,11 +56,106 @@ References: <PAVPR10MB73554B90C65B0D9A83AD8582A450A@PAVPR10MB7355.EURPRD10.PROD.
  <ae786850-6920-c96b-4fd0-89200b78003a@arknetworks.am>
  <PAVPR10MB7355B7E86E0F65E0F77579DEA45EA@PAVPR10MB7355.EURPRD10.PROD.OUTLOOK.COM>
  <945b5f86-c309-ca09-3764-ad6cd1e0ffa8@arknetworks.am>
- <PAVPR10MB73559ECA8CBD947C9A80D111A45EA@PAVPR10MB7355.EURPRD10.PROD.OUTLOOK.COM>
- <ac43a41e-299c-d8ab-3198-116e7d5a128c@arknetworks.am>
- <PAVPR10MB73554E72245AA0D44E9822D7A459A@PAVPR10MB7355.EURPRD10.PROD.OUTLOOK.COM>
+In-Reply-To: <945b5f86-c309-ca09-3764-ad6cd1e0ffa8@arknetworks.am>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=in.bosch.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAVPR10MB7355:EE_|AS4PR10MB6256:EE_
+x-ms-office365-filtering-correlation-id: e30ac68a-dcc0-49c9-24c8-08ddcac9a119
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?YTlrQjA5djQrby83V3I3a2FLQ2YyaDU1THdNQjZvVlBrTnpibS9hRUxOVUp6?=
+ =?utf-8?B?WHJTMFR3RVdiOTB5SHpPUTlETnE2dy9QSFc5eSs5VlRNTkkrdzVTbThvMXVh?=
+ =?utf-8?B?NGVYbFlpZkd2QVd0Q0VoWHo3T2JJbTM5eVMzaVN0MnJiazE0ZlpzRmR5OHRZ?=
+ =?utf-8?B?VGtXRm1nSkVKMUgzcitNVGlUR1FtYU5EQ3VCZ2xKaEZxVDlRSXJRUUJDSTZC?=
+ =?utf-8?B?NWg2OFdzR1AvR040NVAvWWdXdTZUS1ZpbUp2OTh4NXVBZ0wvUjYvY1VkZ2ZV?=
+ =?utf-8?B?ZXlUS2dpc3NIY2F3SWV6NEhmUzNJRlVCOVJWV1R4dzhqWGgxaW1HekYzUDlR?=
+ =?utf-8?B?OVdSS0QrRUxnNmM5Nm1VOWlEZXJKb3QzS2lEZ1AzeEhjd1d5VEJYb1N1NU4z?=
+ =?utf-8?B?N0ZMUSs1QldXcmJ3bWZWT2IzOGFScGo5dlF3SmRmTGZsNFV0YTl6SVNTNXNV?=
+ =?utf-8?B?OHZUSEJoREh6TXpqajY5eWlnL0JtTDJNNlpHaHZCaURSSmRpNzRFWEhGRUpU?=
+ =?utf-8?B?ek9BZVArWTlzMEduOVp0anorNjB4czZGTDMzZURCTW8vS0dscnIyUE13Nld0?=
+ =?utf-8?B?QmpnSWRIWE5CNzBLcWR2SCsvaWprYm41cHBlaGxmN3RYM3lrR1BiZjJRdE1x?=
+ =?utf-8?B?STRBM1NKVGk3cHpvS01POW8vUmpGSDF5dXRuOUNpNk9pOTJ6YU85ZGpEdWZH?=
+ =?utf-8?B?bnI4K0d2RHNDd0FSdUw0UGc4WW9ydWplU3hPTVZkU3E0K1RwMmJLbUFBZXRm?=
+ =?utf-8?B?UG5FeWxINU8zaEJ1UDRmWDcrcVdLOWpNbmgvYlNzTytvZy9iRVRmb0lPUm9j?=
+ =?utf-8?B?ME05TDh3c0xvYllhU2VZUE1iMmJqYjk0ZkVuQ0NmeFhWNmVGY00rVFA5VWlJ?=
+ =?utf-8?B?Unl5R0tuYUFEeWF0OHdQUEN4QzVtZS83YWFSK2d2SUNOS1hYc212RGl1MXU3?=
+ =?utf-8?B?T1pSTlg2dDV1NDI0N2MrU0pPRXlaQlFhY2tGNnhrdHh5aVhnTmllak8wRjNi?=
+ =?utf-8?B?dnRDQkVqWjd4Ty83MFdibllNVjhqemdkUGNCMWwySXVFcVIxLzAvWGhRdDZu?=
+ =?utf-8?B?MHFzcXU1SHZja3Y4MmpNeHY0aXZDUytZUmZWdmltZnBYT0NoUUt2UTlZN0JK?=
+ =?utf-8?B?WlVtYUFseWhvZU5zQzB2S0tkdDBwdjZ2UjhBdWJLZjRmWEszajlPUG53a1JW?=
+ =?utf-8?B?Q29KMVFoRENBUGk4bkRhTzRMcHoxNW1tK2tiMkUyVU1PUDVQQVJEdTVRMHkr?=
+ =?utf-8?B?dU1pdytINkZXTHkxL0lTNTZyQ2x3QUFyUkZuSC9VeE0rcE45Q2NvTk1uSkts?=
+ =?utf-8?B?NzN1dnhFaFVPU1QySXF5ZDFQZjBzTi90Q01zMnphTGlJdUtJbnppMnZtQjBM?=
+ =?utf-8?B?bVNWMVU1ZE5ZTjhPaVJ3YmhwbXpzTTJvYTJ2d0FIdTlzd2toeFhhWTVuMFRl?=
+ =?utf-8?B?ekFFak10WHB3emNmUWFlRWtFUitHeWR2NnN3M0c0bVJ4RzFFMkhCK1JGNFhK?=
+ =?utf-8?B?aWNoRGQzd0Zia3VTSVNhNkFsNXN1cEpiOE10dkxIbFdPMnpuL0JDalpzKzVZ?=
+ =?utf-8?B?Z25pUGFiVzhGNnc4ejZKOHZuRTJvUUMyTWttMUVYaGxXVUVhNnFVY0tWblNU?=
+ =?utf-8?B?b09vclh2bHpJOWc3YzVybFRTRVlhc2RCejk2c0lYTnAraEN6Q3VLaUlOZzRi?=
+ =?utf-8?B?NFJudEVaTEk0c1ByTGZyQWNTMzA3czR1R1o0c2lDbUhTcTBKS3pCckZxMG1W?=
+ =?utf-8?B?UElZMDV3SXlpWHlTR3AyQjNuVG52QnZiWXlxNzNvUmpMTjlxVG9sRzJqRHg5?=
+ =?utf-8?B?WnZxWFFvRStSdjJJUHJOZm1mcUdHN2U0a2NXbGxlYXoydEpoQ0RBWVhVTUJi?=
+ =?utf-8?B?OTNOU3Y2T2N2Qm9VNWZWUDdYdkdnVDB6WnplUjNYUlhrVEFNSUtpOGkyamRy?=
+ =?utf-8?Q?51opQVAU2Co=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:PAVPR10MB7355.EURPRD10.PROD.OUTLOOK.COM; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(376014)(1800799024)(38070700018); DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?WjJ1VmZ2R1hPZnE3N29BMWkwelVLMmdML01VYjVCeFhiYnkvd2UydjRRbFAz?=
+ =?utf-8?B?QXU0dTNLM3JKcHVCa21pRWdWZmVWcTc4M2VpTExmbWRUWWJCdXV3cTlTU2hu?=
+ =?utf-8?B?Sk9PaWI4ZUxEaDFXZGZjSmRVQVY2Qm9wK3BzUi8rS0dMR1RyL1RFOXE3blNj?=
+ =?utf-8?B?YlBldHlFQ0p3UTdSV0Fja2NlUkROM0N2ajRpaVVKVWZiQ3ovSy9Bb3g0aGNz?=
+ =?utf-8?B?Z3FWM20wWndUK2dXQ01yOXJ2NXBMNGJYc21ENWoxMW12UzVUcURvSThTMzRh?=
+ =?utf-8?B?bXlJV2l3YTBJRGFaZTRHTXMwNXlwTFBHVG8vNTBORFlxRTQzVjBYMVZKRjlx?=
+ =?utf-8?B?SUp2UjNRdy95NzRZNWlCSDVUWlRxUExJby9hNko3QWtpdEM5NWtPenU0V2Zw?=
+ =?utf-8?B?YUR2dkU4ZWdTcG8zc0FmM3J4d3ZQMHc2TTc2dGdOZnczNTBVd21LbTduSHdL?=
+ =?utf-8?B?UElLTEN3VGtVZndUdkZXR0xFTEJMSkhnb1puWFgzZHhFa29Ea1dIMlhnMFRl?=
+ =?utf-8?B?N2RYbjVmNTQwZklRWmZnRXhmeXB2SENDaUJURHZRbWh1MWN3TzZXZURUTGJV?=
+ =?utf-8?B?TG9nQ3YwdVZGeXV1Nng5V0F6UVpDa3VZU24rT2p6b3lWWXFQck1MSkc4aktk?=
+ =?utf-8?B?VCsrOVdDdVpEaUluQVg5T0xGaENZT3NUTW9GSzZ5Nyt0a3ZsdHZiK0dNdXJ1?=
+ =?utf-8?B?eDRGeEJLelNhWWUrMnRnTlFqLzBzRXdreU44WloxeCtpNlFWSU5VdGlBUDNR?=
+ =?utf-8?B?cUZmcUJwVE4wZms4QTBKd2NsSmRmVzZUcVJqaU4zZ1h0OXB2a2tJRnM5VWJ0?=
+ =?utf-8?B?WDJtbm5ia3FBUTNTQk1PQThXWTE4ampIQmxYUXBLTmREMzk0dFNsVWk1QSty?=
+ =?utf-8?B?OURmUndSQWlqL3VidlI2eWlWRGZGUDBjSmFtbjdsbzAxM0tOQXV3NjhPWGdr?=
+ =?utf-8?B?YXZCeldOa1QzQWxKSUIwS2FmeTlrQ0lKemtRazNJYVptUFdZbFp2ZGQyNVVu?=
+ =?utf-8?B?YjJOWVNZcm1pbldnTHE3SE0zb2p4bW1Ed0R3YXhNYVNDNW1PSWdDaVAzajNW?=
+ =?utf-8?B?L0cxSVRBL2d6ZkZraTNzbXRxbzhkSkFlTkppZnBjK25lbjRRMFJOTWNGZFdt?=
+ =?utf-8?B?S3NUZk4yRzdSMy9uYmd2RmhMcVdHVDAzOWJKYVVPdzk0blZqNnp2MW1wZk8z?=
+ =?utf-8?B?ZDh3alJydWpDYkRneFRLbEQrM0pkVndrMENmNDBxa29DN0xqeVFHMDlwMWJV?=
+ =?utf-8?B?eFZGeGxCQXFxakZnb1NsNng2dGRXMDlsa09GVFpPVW43b0lKQUxLV2FQS2NX?=
+ =?utf-8?B?eDY1dXVnVFBCOWRoeGRHNkxnNUh4bFB2U3Zab0tySGY5ZTBrUkhWY1FHS1BF?=
+ =?utf-8?B?QlhuNmtwc2NlVzk1bkczeU9KTytzeEIzUnMzQUVkcG8yMkJWR0lXRFFibnR1?=
+ =?utf-8?B?NGxKVDVXUmd1K1BoNHhyNHpFdzVES2o1eldtbjBjMHhVY1NzUktQUzFJN2hn?=
+ =?utf-8?B?bm1jYUZVUnk5aUsyMHlwbkJwTHo3TS9pUXFUSFd5bG1UbXpVMWZlbEI1M2E2?=
+ =?utf-8?B?bWZmdFgwOHdJa0w4Z1V5Rm9leGdEc3NiSll5azhBT2VRQWlMZEU2TlZmZ3lE?=
+ =?utf-8?B?dmtZSmlPZ3JWSmR2dzFBOTNwVWJ1bW1xUXY0OWRIdUltVUdRaUFqUGxVVm8y?=
+ =?utf-8?B?TEJtRVNwWmFxQ2tTbnZjL1BhelFjTDZrbm1hL1JxeHFvaWg2eWhrbFFWRHp6?=
+ =?utf-8?B?SmR1Ykg0Y3RzVllsNFFaNmJxdkJEMCtqdS9SZUErWVAvNkl0MzVXanlDK3Ex?=
+ =?utf-8?B?Z0crdDd2cjB2R1ZOd3lNVFpEZFIxU3F2RWdFTlBxTTN2eng0Wk1xTE8wbW5O?=
+ =?utf-8?B?Q3ZpNEt3QVV0STh4bmp5S3EyRFg4V0p0OU1Wd3Jzc3ZycnkyNWlqc1Z5RURX?=
+ =?utf-8?B?UHBPNVNhUUhxeDRaQTYvaEV1TnVRaWx0V2l2OU1tVlNqMm9GRGpWU20vdU5u?=
+ =?utf-8?B?UjYva28vNWd2bWVya0hUSHJGSWVsSVJHL3p2Y0NzSlpRZkRrNGNMOSs2YW5M?=
+ =?utf-8?B?Z21wTlZwTUpKSm9XbjU5MWx1NlhDNGUxdUkwS0RTWll0cC8xd0xXcWRhQi9t?=
+ =?utf-8?Q?pX8A=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-978156084-1753425968=:9407"
+X-OriginatorOrg: in.bosch.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAVPR10MB7355.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: e30ac68a-dcc0-49c9-24c8-08ddcac9a119
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2025 15:49:09.5979 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: aW4qVmCojkrQ43GM5kaDeczNG6cS3W9Doe4t28bYWWrhqDYC4EzUGVauzTbEICZfV3ikjsCiGitPwzx1dgzNFQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR10MB6256
+X-Mailman-Approved-At: Fri, 25 Jul 2025 10:47:52 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -64,586 +169,296 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323328-978156084-1753425968=:9407
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-
-Hi,
-
-On Fri, 25 Jul 2025, Gokul K R (MS/ETA7-ETAS) wrote:
-
-> Hi Ivan,
-> Yes, I rechecked.
-> The PCAP file has the correct source and destination MAC addresses, and promiscuous mode is enabled on receiver NIC.
->
-> Question 1:
-> Is there a recommended way to verify whether packets are actually being transmitted from the DPDK-bound NIC?
-
-1) One can take notes on what 'rte_eth_tx_burst' returns (in the sender code).
-    If non-zero, then it likely submits the packets for transmission to the HW.
-2) STATISTICS -- both on sender (APIs [1], [2]. [3]) and at the receiver. If the
-    receiver is a Linux interface (not DPDK), then 'sudo ethtool -S <ifname>'.
-
-Provided that 'rte_eth_tx_burst' does not return zero, are the drops reflected
-in ethdev statistics? Are the drops reflected in statistics at the receiver?
-
-[1] https://doc.dpdk.org/api-25.07/rte__ethdev_8h.html#adec226574c53ae413252c9b15f6f4bab
-[2] https://doc.dpdk.org/api-25.07/rte__ethdev_8h.html#a418ad970673eb171673185e36044fd79
-[3] https://doc.dpdk.org/api-25.07/rte__ethdev_8h.html#a300d75b583c1f5acfe5b162a5d8c0ac1
-
-Thank you.
-
->
-> Mit freundlichen Grüßen / Best regards
->
-> K R Gokul
->
->
-> -----Original Message-----
-> From: Ivan Malov <ivan.malov@arknetworks.am>
-> Sent: Thursday, July 24, 2025 10:06 PM
-> To: Gokul K R (MS/ETA7-ETAS) <KR.Gokul@in.bosch.com>
-> Cc: users@dpdk.org; dev@dpdk.org; Nivethitha N Shanmugasundaram (ETAS-ICA/XPC-Fe6) <NShanmugasundaram.Nivethitha@etas.com>; Aloysius Nishanth Britto (MS/ETA7-ETAS) <Britto.AloysiusNishanth@in.bosch.com>
-> Subject: RE: Issue with DPDK-Burst Replay – No Frame Transmission Observed Despite Successful Replay
->
-> On Thu, 24 Jul 2025, Gokul K R (MS/ETA7-ETAS) wrote:
->
->> Hi,
->>
->> In the meantime, I was able to successfully replay my PCAP file using the dpdk-burst-replay tool from your repository (https://github.com/FraudBuster/dpdk-burst-replay). Below is the output from the tool:
->>
->> sudo ./src/dpdk-replay wendutput.pcap 0000:01:00.0 preloading
->> wendutput.pcap file (of size: 5900 bytes) file read at 100.00% read
->> 100 pkts (for a total of 5900 bytes). max packet length = 43 bytes.
->> -> Needed MBUF size: 174
->> -> Needed number of MBUFS: 100
->> -> Needed Memory = 16.992 Mo
->> -> Needed Hugepages of 1 Go = 1
->> -> Needed CPUs: 1
->> -> Create mempool of 100 mbufs of 174 octs.
->> -> Will cache 100 pkts on 1 caches.
->> file read at 100.00%
->> -> NIC port 0 ready.
->>
->> RESULTS :
->> [thread 00]: 1.703287 Gbit/s, 3874767.513949 pps on 0.000026 sec (0 pkts dropped)
->> TOTAL        : 1.703 Gbit/s. 3874767.514 pps.
->> Total dropped: 0/100 packets (0.000000%) Cannot close started device
->> (port 0) I have a question:
->>
->> #1: The tool shows that packets are transmitted, but they are not received on the other end. The same setup works fine with the testpmd application. Since the transmit-side NIC is bound to DPDK, I cannot use tools like Wireshark or tcpdump to verify transmission. Is there any recommended way to confirm whether packets are actually being sent from the DPDK-bound NIC?
->
-> Once again, are you sure destination MAC addresses in the replayed packets match that of the receiver NIC? Have you enabled promiscuous mode on the receiver?
->
-> Thank you.
->
->>
->> In parallel, as per your suggestion, I’m also exploring the DPDK PCAP PMD to replay my PCAP file.
->>
->>
->> Mit freundlichen Grüßen / Best regards
->>
->> K R Gokul
->>
->> Compact Devices, ESxx, Product and System Acceptance Tests
->> (MS/ETA7-ETAS) Robert Bosch GmbH | Postfach 10 60 50 | 70049 Stuttgart
->> | GERMANY | http://www.bosch.com/ Mobile +91-9003755978 |
->> KR.Gokul@in.bosch.com
->>
->> Registered Office: Stuttgart, Registration Court: Amtsgericht
->> Stuttgart, HRB 14000; Chairman of the Supervisory Board: Prof. Dr.
->> Stefan Asenkerschbaumer; Managing Directors: Dr. Stefan Hartung, Dr.
->> Christian Fischer, Dr. Markus Forschner, Stefan Grosch, Dr. Markus
->> Heyn, Dr. Frank Meyer, Katja von Raven, Dr. Tanja Rückert
->>
->> -----Original Message-----
->> From: Ivan Malov <ivan.malov@arknetworks.am>
->> Sent: Thursday, July 24, 2025 3:55 PM
->> To: Gokul K R (MS/ETA7-ETAS) <KR.Gokul@in.bosch.com>
->> Cc: users@dpdk.org; dev@dpdk.org; Nivethitha N Shanmugasundaram
->> (ETAS-ICA/XPC-Fe6) <NShanmugasundaram.Nivethitha@etas.com>; Aloysius
->> Nishanth Britto (MS/ETA7-ETAS) <Britto.AloysiusNishanth@in.bosch.com>
->> Subject: RE: Issue with DPDK-Burst Replay – No Frame Transmission
->> Observed Despite Successful Replay
->>
->> Hi,
->>
->> On Thu, 24 Jul 2025, Gokul K R (MS/ETA7-ETAS) wrote:
->>
->>> Hi Ivan,
->>>
->>> I hope you're doing well.
->>>
->>> Point #1:
->>> Since the DPDK-Burst Replay tool is not an official part of the DPDK project and is community-developed, could you please let us know whom we should contact for support or further information regarding this tool?
->>
->> For the very same reason (not an in-house tool), I have no way of knowing.
->> Perhaps take a look at repository owner's profile on GitHub or something.
->>
->>>
->>> Point #2:
->>> We have identified an issue while using dpdk-burst replay tool.
->>> During EAL mempool initialization, “--pci-whitelist” parameter is given as an argument for “rte_eal_init” function. However, when rte_eal_init is executed with these arguments, it fails with the following error:
->>>
->>> ./dpdk-replay: unrecognized option ‘--pci-whitelist’
->>> Invalid command line argument
->>>
->>> We couldn’t find any official documentation on the --pci-whitelist parameter. Could you help clarify its purpose and whether this argument is essential for the tool to operate correctly?
->>
->> 1) In 2020, commit db27370b5720 ("eal: replace blacklist/whitelist options")
->>    renamed this argument. Now it is '-a' ('--allow') and '-b' ('--block') [1].
->> 2) The argument is application-agnostic and is designed to give a finer control
->>    on which devices get picked by DPDK during EAL initialisation.
->> 3) Whether the argument is needed for the use of this particular application
->>    is not apparent to me. One should refer to the application's documentation.
->>
->>>
->>> Point #3:
->>> Could you also suggest any official DPDK tool that supports replaying PCAP files? This would help us explore alternatives that are actively maintained by the DPDK community.
->>
->> Please take a look at DPDK pcap PMD [2]. It may meet your needs.
->>
->> [1]
->> https://doc/.
->> dpdk.org%2Fguides-25.07%2Flinux_gsg%2Flinux_eal_parameters.html%23devi
->> ce-related-options&data=05%7C02%7CKR.Gokul%40in.bosch.com%7C57cfefaffe
->> 594a1f684f08ddcad02240%7C0ae51e1907c84e4bbb6d648ee58410f4%7C0%7C0%7C63
->> 8889717468467726%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiO
->> iIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C
->> %7C%7C&sdata=%2BDcatRiQWskP%2Bfw2vXBcjlgxEorKY3mFKJUBH%2Fwees8%3D&rese
->> rved=0 [2]
->> https://doc/.
->> dpdk.org%2Fguides-25.07%2Fnics%2Fpcap_ring.html&data=05%7C02%7CKR.Goku
->> l%40in.bosch.com%7C57cfefaffe594a1f684f08ddcad02240%7C0ae51e1907c84e4b
->> bb6d648ee58410f4%7C0%7C0%7C638889717468477644%7CUnknown%7CTWFpbGZsb3d8
->> eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTW
->> FpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=DgWTrx5oQEaOq94tKZALlh2vzaJz
->> H67dhzf9l80v4Hs%3D&reserved=0
->>
->> Thank you.
->>
->>>
->>> Looking forward to your inputs.
->>>
->>> Best regards,
->>> Gokul K R
->>> -----Original Message-----
->>> From: Ivan Malov <ivan.malov@arknetworks.am>
->>> Sent: Wednesday, July 23, 2025 11:43 AM
->>> To: Gokul K R (MS/ETA7-ETAS) <KR.Gokul@in.bosch.com>
->>> Cc: users@dpdk.org; dev@dpdk.org; Nivethitha N Shanmugasundaram
->>> (ETAS-ICA/XPC-Fe6) <NShanmugasundaram.Nivethitha@etas.com>
->>> Subject: RE: Issue with DPDK-Burst Replay – No Frame Transmission
->>> Observed Despite Successful Replay
->>>
->>> On Wed, 23 Jul 2025, Ivan Malov wrote:
->>>
->>>> Hi,
->>>>
->>>> On Wed, 23 Jul 2025, Gokul K R (MS/ETA7-ETAS) wrote:
->>>>
->>>>> Hi Ivan Malov 😊
->>>>>
->>>>> Use Case:
->>>>> I'm currently using the DPDK-Burst-Replay tool to replay captured
->>>>> PCAP files at specific data rates (e.g., 150–200 Mbps).
->>>>>
->>>>> Response to your feedback:
->>>>> Point 1: "Port 0 is not on the good NUMA ID (-1)"
->>>>> I’m aware that this message is printed due to the NUMA ID being
->>>>> returned as -1.
->>>>> I've just started diving into the source code and found that the
->>>>> call to
->>>>> rte_eth_dev_socket_id() returns -1, which typically indicates an error.
->>>>
->>>> No, -1 typically translates to 'SOCKET_ID_ANY'. In order to rule out 'EINVAL'
->>>> in 'rte_errno', one should attempt to invoke 'rte_eth_dev_socket_id'
->>>> within the loop of 'RTE_ETH_FOREACH_DEV' (see examples in DPDK) and
->>>> print the socket ID.
->>>>
->>>>> However, the current implementation does not output the rte_errno,
->>>>> which could help identify the root cause. I'm working on modifying
->>>>> the code to print the error code for better debugging.
->>>>>
->>>>> Point 2: "NIC Link is UP"
->>>>> Yes, on the NIC side, the link is up. I'm also able to transmit
->>>>> packets successfully using the testpmd application.
->>>>>
->>>>> Question:
->>>>> Could you please confirm if the current version of the
->>>>> DPDK-Burst-Replay tool supports replaying Ethernet frames larger
->>>>> than
->>>>> 64 bytes (e.g., up to
->>>>> 1500 bytes)? Or has the tool been enhanced to support this use case?
->>>>
->>>> The tool seems like an external application. Try to look for any
->>>> mentions of API 'rte_eth_dev_set_mtu' or just the term 'mtu' in that
->>>> source code. If there are no such mentions, then default MTU
->>>> applies, which depends on the driver.
->>>>
->>>> Have you tried querying statistics to find the cause of the drops?
->>>
->>> Also, given the fact that the application replays some pcap traffic, have you made sure the receiver (where you seek to watch the replayed traffic arrive) has got 'promiscuous' mode [1] enabled? IIRC, 'test-pmd' enables it by default.
->>>
->>> [1]
->>> https://doc/.
->>> dpdk.org%2Fapi-25.07%2Frte__ethdev_8h.html%23a5dd1dedaa45f05c72bcc354
->>> 9
->>> 5e441e91&data=05%7C02%7CKR.Gokul%40in.bosch.com%7Cb670bffe53b8485c75a
->>> 9
->>> 08ddca9c56bf%7C0ae51e1907c84e4bbb6d648ee58410f4%7C0%7C0%7C63888949504
->>> 0
->>> 750455%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMD
->>> A
->>> wMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sd
->>> a
->>> ta=7xqux5VPYgMerNkhy7YOCzj371irrkhEFFrkHTuK1pg%3D&reserved=0
->>>
->>> Thank you.
->>>
->>>>
->>>> Thank you.
->>>>
->>>>>
->>>>> Thanks for your time and support!
->>>>>
->>>>> Best regards,
->>>>> Gokul K.R
->>>>>
->>>>>
->>>>>
->>>>>
->>>>>
->>>>> -----Original Message-----
->>>>> From: Ivan Malov <ivan.malov@arknetworks.am>
->>>>> Sent: Friday, July 18, 2025 5:29 PM
->>>>> To: Gokul K R (MS/ETA7-ETAS) <KR.Gokul@in.bosch.com>
->>>>> Cc: users@dpdk.org; dev@dpdk.org
->>>>> Subject: Re: Issue with DPDK-Burst Replay – No Frame Transmission
->>>>> Observed Despite Successful Replay
->>>>>
->>>>> Hi,
->>>>>
->>>>> (please see below)
->>>>>
->>>>> On Fri, 18 Jul 2025, Gokul K R (MS/ETA7-ETAS) wrote:
->>>>>
->>>>>>
->>>>>> Hi Team,
->>>>>>
->>>>>> I’m currently working with the dpdk-burst-replay tool and
->>>>>> encountered an issue during execution. Below are the details:
->>>>>>
->>>>>>
->>>>>> __________________________________________________________________
->>>>>> _
->>>>>> _
->>>>>> __
->>>>>> __________________________________________________________________
->>>>>> _ _ __ ______________________________________________
->>>>>>
->>>>>>
->>>>>> Observation:
->>>>>> During replay, we received the following informational message:
->>>>>>
->>>>>> port 0 is not on the good numa id (-1)
->>>>>
->>>>> Which API was used to check this? Was API [1] used? If not, what
->>>>> does it show in the absence of 'numactl' command?
->>>>>
->>>>> [1]
->>>>> https://doc/
->>>>> .dpdk.org%2Fapi-25.03%2Frte__ethdev_8h.html%23ad032e25f712e6ffeb0c1
->>>>> 9
->>>>> e
->>>>> ab1ec1fd2e&data=05%7C02%7CKR.Gokul%40in.bosch.com%7C53a20884cad14b9
->>>>> 4
->>>>> 7
->>>>> a0008ddc9aff5bf%7C0ae51e1907c84e4bbb6d648ee58410f4%7C0%7C0%7C638888
->>>>> 4
->>>>> 7
->>>>> 9792834143%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIw
->>>>> L
->>>>> j
->>>>> AuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7
->>>>> C
->>>>> %
->>>>> 7C&sdata=XxPfmsX4WsR83ifUfkkup2jIOw4PU%2FX%2BdefEqVfazj4%3D&reserve
->>>>> d
->>>>> =
->>>>> 0
->>>>>
->>>>>>
->>>>>> As per the DPDK mailing list discussions, this warning is
->>>>>> typically benign—often seen on NICs like Intel I225/I210, which do
->>>>>> not report NUMA affinity. Hence, we proceeded with execution.
->>>>>>
->>>>>>
->>>>>> __________________________________________________________________
->>>>>> _
->>>>>> _
->>>>>> __
->>>>>> __________________________________________________________________
->>>>>> _ _ __ ______________________________________________
->>>>>>
->>>>>>
->>>>>> Command Used:
->>>>>>
->>>>>> sudo numactl --cpunodebind=0 --membind=0 ./src/dpdk-replay
->>>>>> Original_MAC.pcap 0000:01:00.1
->>>>>>
->>>>>> Execution Output:
->>>>>>
->>>>>> preloading Original_MAC.pcap file (of size: 143959 bytes)
->>>>>>
->>>>>> file read at 100.00%
->>>>>>
->>>>>> read 675 pkts (for a total of 143959 bytes). max packet length =
->>>>>> 1518 bytes.
->>>>>>
->>>>>> -> Needed MBUF size: 1648
->>>>>>
->>>>>> -> Needed number of MBUFs: 675
->>>>>>
->>>>>> -> Needed Memory = 1.061 MB
->>>>>>
->>>>>> -> Needed Hugepages of 1 GB = 1
->>>>>>
->>>>>> -> Needed CPUs: 1
->>>>>>
->>>>>> -> Create mempool of 675 mbufs of 1648 octets.
->>>>>>
->>>>>> -> Will cache 675 pkts on 1 caches.
->>>>>
->>>>> What does this 'cache' stand for? Does it refer to the mempool
->>>>> per-lcore cache?
->>>>> If so, please note that, according to API [2] documentation, cache
->>>>> size "must be lower or equal to RTE_MEMPOOL_CACHE_MAX_SIZE and n /
->>>>> 1.5", where 'n' stands for the number of mbufs. Also, documentation
->>>>> says it is advised to choose cache_size to have "n modulo
->>>>> cache_size == 0". Does your code meet these requirements?
->>>>>
->>>>> By the looks of it, it doesn't (cache_size = n = 675). Consider to
->>>>> double-check.
->>>>>
->>>>> [2]
->>>>> https://doc/
->>>>> .dpdk.org%2Fapi-25.03%2Frte__mempool_8h.html%23a0b64d611bc140a4d2a0
->>>>> c
->>>>> 9
->>>>> 4911580efd5&data=05%7C02%7CKR.Gokul%40in.bosch.com%7C53a20884cad14b
->>>>> 9
->>>>> 4
->>>>> 7a0008ddc9aff5bf%7C0ae51e1907c84e4bbb6d648ee58410f4%7C0%7C0%7C63888
->>>>> 8
->>>>> 4
->>>>> 79792843977%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiI
->>>>> w
->>>>> L
->>>>> jAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%
->>>>> 7
->>>>> C
->>>>> %7C&sdata=VLPTrAXqY2FNmhA6mwLFEZgc6f4LFc7oa%2BUb8DrmtWs%3D&reserved
->>>>> =
->>>>> 0
->>>>>
->>>>>>
->>>>>>
->>>>>> __________________________________________________________________
->>>>>> _
->>>>>> _
->>>>>> __
->>>>>> __________________________________________________________________
->>>>>> _ _ __ ______________________________________________
->>>>>>
->>>>>>
->>>>>> Issue:
->>>>>> Despite successful parsing of the pcap file and proper
->>>>>> initialization, no frames were transmitted or received on either
->>>>>> the sender or receiver sides.
->>>>>
->>>>> Is this observation based solely on watching APIs [3] and [4]
->>>>> return
->>>>> 0 all the time? If yes, one can consider to introduce invocations
->>>>> of APIs [5], [6] and [7] in order to periodically poll and print
->>>>> statistics (may be with 1-second delay), which may, for example,
->>>>> shed light on mbuf allocation errors (extended stats).
->>>>>
->>>>> Do statistics display any interesting figures to be discussed?
->>>>>
->>>>> [3]
->>>>> https://doc/
->>>>> .dpdk.org%2Fapi-25.03%2Frte__ethdev_8h.html%23a3e7d76a451b46348686e
->>>>> a
->>>>> 9
->>>>> 7d6367f102&data=05%7C02%7CKR.Gokul%40in.bosch.com%7C53a20884cad14b9
->>>>> 4
->>>>> 7
->>>>> a0008ddc9aff5bf%7C0ae51e1907c84e4bbb6d648ee58410f4%7C0%7C0%7C638888
->>>>> 4
->>>>> 7
->>>>> 9792853601%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIw
->>>>> L
->>>>> j
->>>>> AuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7
->>>>> C
->>>>> %
->>>>> 7C&sdata=56BbJeMo6BtewrRGcnIIWBx4gxbvQKl7iATnoUpcTMc%3D&reserved=0
->>>>> [4]
->>>>> https://doc/
->>>>> .dpdk.org%2Fapi-25.03%2Frte__ethdev_8h.html%23a83e56cabbd31637efd64
->>>>> 8
->>>>> e
->>>>> 3fc010392b&data=05%7C02%7CKR.Gokul%40in.bosch.com%7C53a20884cad14b9
->>>>> 4
->>>>> 7
->>>>> a0008ddc9aff5bf%7C0ae51e1907c84e4bbb6d648ee58410f4%7C0%7C0%7C638888
->>>>> 4
->>>>> 7
->>>>> 9792862833%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIw
->>>>> L
->>>>> j
->>>>> AuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7
->>>>> C
->>>>> %
->>>>> 7C&sdata=bDP8uNF03zuftWy%2BRbXKg1sYwv8DruMG53ntffCy%2BOk%3D&reserve
->>>>> d
->>>>> =
->>>>> 0
->>>>>
->>>>> [5]
->>>>> https://doc/
->>>>> .dpdk.org%2Fapi-25.03%2Frte__ethdev_8h.html%23adec226574c53ae413252
->>>>> c
->>>>> 9
->>>>> b15f6f4bab&data=05%7C02%7CKR.Gokul%40in.bosch.com%7C53a20884cad14b9
->>>>> 4
->>>>> 7
->>>>> a0008ddc9aff5bf%7C0ae51e1907c84e4bbb6d648ee58410f4%7C0%7C0%7C638888
->>>>> 4
->>>>> 7
->>>>> 9792872496%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIw
->>>>> L
->>>>> j
->>>>> AuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7
->>>>> C
->>>>> %
->>>>> 7C&sdata=dJ3yB2MTz28n2mQ5ogbYilcj4sr7K2JD723k5zWvlyU%3D&reserved=0
->>>>> [6]
->>>>> https://doc/
->>>>> .dpdk.org%2Fapi-25.03%2Frte__ethdev_8h.html%23a418ad970673eb1716731
->>>>> 8
->>>>> 5
->>>>> e36044fd79&data=05%7C02%7CKR.Gokul%40in.bosch.com%7C53a20884cad14b9
->>>>> 4
->>>>> 7
->>>>> a0008ddc9aff5bf%7C0ae51e1907c84e4bbb6d648ee58410f4%7C0%7C0%7C638888
->>>>> 4
->>>>> 7
->>>>> 9792882662%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIw
->>>>> L
->>>>> j
->>>>> AuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7
->>>>> C
->>>>> %
->>>>> 7C&sdata=aFt%2Fn%2B4FqX6cJDxWVRyWlZrAlVPXOqE6jV7Uymq7WQw%3D&reserve
->>>>> d
->>>>> =
->>>>> 0
->>>>> [7]
->>>>> https://doc/
->>>>> .dpdk.org%2Fapi-25.03%2Frte__ethdev_8h.html%23a300d75b583c1f5acfe5b
->>>>> 1
->>>>> 6
->>>>> 2a5d8c0ac1&data=05%7C02%7CKR.Gokul%40in.bosch.com%7C53a20884cad14b9
->>>>> 4
->>>>> 7
->>>>> a0008ddc9aff5bf%7C0ae51e1907c84e4bbb6d648ee58410f4%7C0%7C0%7C638888
->>>>> 4
->>>>> 7
->>>>> 9792892124%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIw
->>>>> L
->>>>> j
->>>>> AuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7
->>>>> C
->>>>> %
->>>>> 7C&sdata=TlmU3IaIKCzOEvsmFn8if%2BftgQq7ZJCuzcs6x%2B8jaAY%3D&reserve
->>>>> d
->>>>> =
->>>>> 0
->>>>>
->>>>>>
->>>>>>
->>>>>> __________________________________________________________________
->>>>>> _
->>>>>> _
->>>>>> __
->>>>>> __________________________________________________________________
->>>>>> _ _ __ ______________________________________________
->>>>>>
->>>>>>
->>>>>> Environment Details:
->>>>>>
->>>>>>  *  NIC used: Intel I225/I210
->>>>>>  *  Hugepages configured: 1 GB
->>>>>>  *  NUMA binding: --cpunodebind=0 --membind=0
->>>>>>  *  OS: [Your Linux distribution, e.g., Ubuntu 20.04]
->>>>>>  *  DPDK version: [Mention if known]
->>>>>>
->>>>>> __________________________________________________________________
->>>>>> _
->>>>>> _
->>>>>> __
->>>>>> __________________________________________________________________
->>>>>> _ _ __ ______________________________________________
->>>>>>
->>>>>>
->>>>>> Could you please advise if any additional setup, configuration, or
->>>>>> known limitations may be impacting the packet transmission?
->>>>>
->>>>> This may be a wild suggestion from my side, but it pays to check
->>>>> whether link status is "up" upon port start on both ends. One can
->>>>> use API [8] to do that.
->>>>>
->>>>> [8]
->>>>> https://doc/
->>>>> .dpdk.org%2Fapi-25.03%2Frte__ethdev_8h.html%23ac05878578e4fd9ef3551
->>>>> d
->>>>> 2
->>>>> c1c175ebe7&data=05%7C02%7CKR.Gokul%40in.bosch.com%7C53a20884cad14b9
->>>>> 4
->>>>> 7
->>>>> a0008ddc9aff5bf%7C0ae51e1907c84e4bbb6d648ee58410f4%7C0%7C0%7C638888
->>>>> 4
->>>>> 7
->>>>> 9792901138%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIw
->>>>> L
->>>>> j
->>>>> AuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7
->>>>> C
->>>>> %
->>>>> 7C&sdata=kLtuxeh0nYIV7UnU5WGLykXqngpIXzqHNsMlRG%2F89e0%3D&reserved=
->>>>> 0
->>>>>
->>>>> Thank you.
->>>>>
->>>>>
->>>>>>
->>>>>> Thank you in advance for your support!
->>>>>>
->>>>>>
->>>>>> Best regards,
->>>>>> Gokul K R
->>>>>>
->>>>>>
->>>>>>
->>>>>>
->>>>>>
->>>>
->>>
->>
->
---8323328-978156084-1753425968=:9407--
+SGksDQoNCkluIHRoZSBtZWFudGltZSwgSSB3YXMgYWJsZSB0byBzdWNjZXNzZnVsbHkgcmVwbGF5
+IG15IFBDQVAgZmlsZSB1c2luZyB0aGUgZHBkay1idXJzdC1yZXBsYXkgdG9vbCBmcm9tIHlvdXIg
+cmVwb3NpdG9yeSAoaHR0cHM6Ly9naXRodWIuY29tL0ZyYXVkQnVzdGVyL2RwZGstYnVyc3QtcmVw
+bGF5KS4gQmVsb3cgaXMgdGhlIG91dHB1dCBmcm9tIHRoZSB0b29sOg0KDQpzdWRvIC4vc3JjL2Rw
+ZGstcmVwbGF5IHdlbmR1dHB1dC5wY2FwIDAwMDA6MDE6MDAuMA0KcHJlbG9hZGluZyB3ZW5kdXRw
+dXQucGNhcCBmaWxlIChvZiBzaXplOiA1OTAwIGJ5dGVzKQ0KZmlsZSByZWFkIGF0IDEwMC4wMCUN
+CnJlYWQgMTAwIHBrdHMgKGZvciBhIHRvdGFsIG9mIDU5MDAgYnl0ZXMpLiBtYXggcGFja2V0IGxl
+bmd0aCA9IDQzIGJ5dGVzLg0KLT4gTmVlZGVkIE1CVUYgc2l6ZTogMTc0DQotPiBOZWVkZWQgbnVt
+YmVyIG9mIE1CVUZTOiAxMDANCi0+IE5lZWRlZCBNZW1vcnkgPSAxNi45OTIgTW8NCi0+IE5lZWRl
+ZCBIdWdlcGFnZXMgb2YgMSBHbyA9IDENCi0+IE5lZWRlZCBDUFVzOiAxDQotPiBDcmVhdGUgbWVt
+cG9vbCBvZiAxMDAgbWJ1ZnMgb2YgMTc0IG9jdHMuDQotPiBXaWxsIGNhY2hlIDEwMCBwa3RzIG9u
+IDEgY2FjaGVzLg0KZmlsZSByZWFkIGF0IDEwMC4wMCUNCi0+IE5JQyBwb3J0IDAgcmVhZHkuDQoN
+ClJFU1VMVFMgOg0KW3RocmVhZCAwMF06IDEuNzAzMjg3IEdiaXQvcywgMzg3NDc2Ny41MTM5NDkg
+cHBzIG9uIDAuMDAwMDI2IHNlYyAoMCBwa3RzIGRyb3BwZWQpDQpUT1RBTCAgICAgICAgOiAxLjcw
+MyBHYml0L3MuIDM4NzQ3NjcuNTE0IHBwcy4NClRvdGFsIGRyb3BwZWQ6IDAvMTAwIHBhY2tldHMg
+KDAuMDAwMDAwJSkNCkNhbm5vdCBjbG9zZSBzdGFydGVkIGRldmljZSAocG9ydCAwKQ0KSSBoYXZl
+IGEgcXVlc3Rpb246DQoNCiMxOiBUaGUgdG9vbCBzaG93cyB0aGF0IHBhY2tldHMgYXJlIHRyYW5z
+bWl0dGVkLCBidXQgdGhleSBhcmUgbm90IHJlY2VpdmVkIG9uIHRoZSBvdGhlciBlbmQuIFRoZSBz
+YW1lIHNldHVwIHdvcmtzIGZpbmUgd2l0aCB0aGUgdGVzdHBtZCBhcHBsaWNhdGlvbi4gU2luY2Ug
+dGhlIHRyYW5zbWl0LXNpZGUgTklDIGlzIGJvdW5kIHRvIERQREssIEkgY2Fubm90IHVzZSB0b29s
+cyBsaWtlIFdpcmVzaGFyayBvciB0Y3BkdW1wIHRvIHZlcmlmeSB0cmFuc21pc3Npb24uIElzIHRo
+ZXJlIGFueSByZWNvbW1lbmRlZCB3YXkgdG8gY29uZmlybSB3aGV0aGVyIHBhY2tldHMgYXJlIGFj
+dHVhbGx5IGJlaW5nIHNlbnQgZnJvbSB0aGUgRFBESy1ib3VuZCBOSUM/DQoNCkluIHBhcmFsbGVs
+LCBhcyBwZXIgeW91ciBzdWdnZXN0aW9uLCBJ4oCZbSBhbHNvIGV4cGxvcmluZyB0aGUgRFBESyBQ
+Q0FQIFBNRCB0byByZXBsYXkgbXkgUENBUCBmaWxlLg0KDQoNCk1pdCBmcmV1bmRsaWNoZW4gR3LD
+vMOfZW4gLyBCZXN0IHJlZ2FyZHMNCg0KSyBSIEdva3VsDQoNCkNvbXBhY3QgRGV2aWNlcywgRVN4
+eCwgUHJvZHVjdCBhbmQgU3lzdGVtIEFjY2VwdGFuY2UgVGVzdHMgKE1TL0VUQTctRVRBUykNClJv
+YmVydCBCb3NjaCBHbWJIIHwgUG9zdGZhY2ggMTAgNjAgNTAgfCA3MDA0OSBTdHV0dGdhcnQgfCBH
+RVJNQU5ZIHwgaHR0cDovL3d3dy5ib3NjaC5jb20vDQpNb2JpbGUgKzkxLTkwMDM3NTU5NzggfCBL
+Ui5Hb2t1bEBpbi5ib3NjaC5jb20NCg0KUmVnaXN0ZXJlZCBPZmZpY2U6IFN0dXR0Z2FydCwgUmVn
+aXN0cmF0aW9uIENvdXJ0OiBBbXRzZ2VyaWNodCBTdHV0dGdhcnQsIEhSQiAxNDAwMDsNCkNoYWly
+bWFuIG9mIHRoZSBTdXBlcnZpc29yeSBCb2FyZDogUHJvZi4gRHIuIFN0ZWZhbiBBc2Vua2Vyc2No
+YmF1bWVyOw0KTWFuYWdpbmcgRGlyZWN0b3JzOiBEci4gU3RlZmFuIEhhcnR1bmcsIERyLiBDaHJp
+c3RpYW4gRmlzY2hlciwgRHIuIE1hcmt1cyBGb3JzY2huZXIsDQpTdGVmYW4gR3Jvc2NoLCBEci4g
+TWFya3VzIEhleW4sIERyLiBGcmFuayBNZXllciwgS2F0amEgdm9uIFJhdmVuLCBEci4gVGFuamEg
+UsO8Y2tlcnQNCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206IEl2YW4gTWFsb3Yg
+PGl2YW4ubWFsb3ZAYXJrbmV0d29ya3MuYW0+DQpTZW50OiBUaHVyc2RheSwgSnVseSAyNCwgMjAy
+NSAzOjU1IFBNDQpUbzogR29rdWwgSyBSIChNUy9FVEE3LUVUQVMpIDxLUi5Hb2t1bEBpbi5ib3Nj
+aC5jb20+DQpDYzogdXNlcnNAZHBkay5vcmc7IGRldkBkcGRrLm9yZzsgTml2ZXRoaXRoYSBOIFNo
+YW5tdWdhc3VuZGFyYW0gKEVUQVMtSUNBL1hQQy1GZTYpIDxOU2hhbm11Z2FzdW5kYXJhbS5OaXZl
+dGhpdGhhQGV0YXMuY29tPjsgQWxveXNpdXMgTmlzaGFudGggQnJpdHRvIChNUy9FVEE3LUVUQVMp
+IDxCcml0dG8uQWxveXNpdXNOaXNoYW50aEBpbi5ib3NjaC5jb20+DQpTdWJqZWN0OiBSRTogSXNz
+dWUgd2l0aCBEUERLLUJ1cnN0IFJlcGxheSDigJMgTm8gRnJhbWUgVHJhbnNtaXNzaW9uIE9ic2Vy
+dmVkIERlc3BpdGUgU3VjY2Vzc2Z1bCBSZXBsYXkNCg0KSGksDQoNCk9uIFRodSwgMjQgSnVsIDIw
+MjUsIEdva3VsIEsgUiAoTVMvRVRBNy1FVEFTKSB3cm90ZToNCg0KPiBIaSBJdmFuLA0KPg0KPiBJ
+IGhvcGUgeW91J3JlIGRvaW5nIHdlbGwuDQo+DQo+IFBvaW50ICMxOg0KPiBTaW5jZSB0aGUgRFBE
+Sy1CdXJzdCBSZXBsYXkgdG9vbCBpcyBub3QgYW4gb2ZmaWNpYWwgcGFydCBvZiB0aGUgRFBESyBw
+cm9qZWN0IGFuZCBpcyBjb21tdW5pdHktZGV2ZWxvcGVkLCBjb3VsZCB5b3UgcGxlYXNlIGxldCB1
+cyBrbm93IHdob20gd2Ugc2hvdWxkIGNvbnRhY3QgZm9yIHN1cHBvcnQgb3IgZnVydGhlciBpbmZv
+cm1hdGlvbiByZWdhcmRpbmcgdGhpcyB0b29sPw0KDQpGb3IgdGhlIHZlcnkgc2FtZSByZWFzb24g
+KG5vdCBhbiBpbi1ob3VzZSB0b29sKSwgSSBoYXZlIG5vIHdheSBvZiBrbm93aW5nLg0KUGVyaGFw
+cyB0YWtlIGEgbG9vayBhdCByZXBvc2l0b3J5IG93bmVyJ3MgcHJvZmlsZSBvbiBHaXRIdWIgb3Ig
+c29tZXRoaW5nLg0KDQo+DQo+IFBvaW50ICMyOg0KPiBXZSBoYXZlIGlkZW50aWZpZWQgYW4gaXNz
+dWUgd2hpbGUgdXNpbmcgZHBkay1idXJzdCByZXBsYXkgdG9vbC4NCj4gRHVyaW5nIEVBTCBtZW1w
+b29sIGluaXRpYWxpemF0aW9uLCDigJwtLXBjaS13aGl0ZWxpc3TigJ0gcGFyYW1ldGVyIGlzIGdp
+dmVuIGFzIGFuIGFyZ3VtZW50IGZvciDigJxydGVfZWFsX2luaXTigJ0gZnVuY3Rpb24uIEhvd2V2
+ZXIsIHdoZW4gcnRlX2VhbF9pbml0IGlzIGV4ZWN1dGVkIHdpdGggdGhlc2UgYXJndW1lbnRzLCBp
+dCBmYWlscyB3aXRoIHRoZSBmb2xsb3dpbmcgZXJyb3I6DQo+DQo+IC4vZHBkay1yZXBsYXk6IHVu
+cmVjb2duaXplZCBvcHRpb24g4oCYLS1wY2ktd2hpdGVsaXN04oCZDQo+IEludmFsaWQgY29tbWFu
+ZCBsaW5lIGFyZ3VtZW50DQo+DQo+IFdlIGNvdWxkbuKAmXQgZmluZCBhbnkgb2ZmaWNpYWwgZG9j
+dW1lbnRhdGlvbiBvbiB0aGUgLS1wY2ktd2hpdGVsaXN0IHBhcmFtZXRlci4gQ291bGQgeW91IGhl
+bHAgY2xhcmlmeSBpdHMgcHVycG9zZSBhbmQgd2hldGhlciB0aGlzIGFyZ3VtZW50IGlzIGVzc2Vu
+dGlhbCBmb3IgdGhlIHRvb2wgdG8gb3BlcmF0ZSBjb3JyZWN0bHk/DQoNCjEpIEluIDIwMjAsIGNv
+bW1pdCBkYjI3MzcwYjU3MjAgKCJlYWw6IHJlcGxhY2UgYmxhY2tsaXN0L3doaXRlbGlzdCBvcHRp
+b25zIikNCiAgICByZW5hbWVkIHRoaXMgYXJndW1lbnQuIE5vdyBpdCBpcyAnLWEnICgnLS1hbGxv
+dycpIGFuZCAnLWInICgnLS1ibG9jaycpIFsxXS4NCjIpIFRoZSBhcmd1bWVudCBpcyBhcHBsaWNh
+dGlvbi1hZ25vc3RpYyBhbmQgaXMgZGVzaWduZWQgdG8gZ2l2ZSBhIGZpbmVyIGNvbnRyb2wNCiAg
+ICBvbiB3aGljaCBkZXZpY2VzIGdldCBwaWNrZWQgYnkgRFBESyBkdXJpbmcgRUFMIGluaXRpYWxp
+c2F0aW9uLg0KMykgV2hldGhlciB0aGUgYXJndW1lbnQgaXMgbmVlZGVkIGZvciB0aGUgdXNlIG9m
+IHRoaXMgcGFydGljdWxhciBhcHBsaWNhdGlvbg0KICAgIGlzIG5vdCBhcHBhcmVudCB0byBtZS4g
+T25lIHNob3VsZCByZWZlciB0byB0aGUgYXBwbGljYXRpb24ncyBkb2N1bWVudGF0aW9uLg0KDQo+
+DQo+IFBvaW50ICMzOg0KPiBDb3VsZCB5b3UgYWxzbyBzdWdnZXN0IGFueSBvZmZpY2lhbCBEUERL
+IHRvb2wgdGhhdCBzdXBwb3J0cyByZXBsYXlpbmcgUENBUCBmaWxlcz8gVGhpcyB3b3VsZCBoZWxw
+IHVzIGV4cGxvcmUgYWx0ZXJuYXRpdmVzIHRoYXQgYXJlIGFjdGl2ZWx5IG1haW50YWluZWQgYnkg
+dGhlIERQREsgY29tbXVuaXR5Lg0KDQpQbGVhc2UgdGFrZSBhIGxvb2sgYXQgRFBESyBwY2FwIFBN
+RCBbMl0uIEl0IG1heSBtZWV0IHlvdXIgbmVlZHMuDQoNClsxXSBodHRwczovL2RvYy5kcGRrLm9y
+Zy9ndWlkZXMtMjUuMDcvbGludXhfZ3NnL2xpbnV4X2VhbF9wYXJhbWV0ZXJzLmh0bWwjZGV2aWNl
+LXJlbGF0ZWQtb3B0aW9ucw0KWzJdIGh0dHBzOi8vZG9jLmRwZGsub3JnL2d1aWRlcy0yNS4wNy9u
+aWNzL3BjYXBfcmluZy5odG1sDQoNClRoYW5rIHlvdS4NCg0KPg0KPiBMb29raW5nIGZvcndhcmQg
+dG8geW91ciBpbnB1dHMuDQo+DQo+IEJlc3QgcmVnYXJkcywNCj4gR29rdWwgSyBSDQo+IC0tLS0t
+T3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEl2YW4gTWFsb3YgPGl2YW4ubWFsb3ZAYXJr
+bmV0d29ya3MuYW0+DQo+IFNlbnQ6IFdlZG5lc2RheSwgSnVseSAyMywgMjAyNSAxMTo0MyBBTQ0K
+PiBUbzogR29rdWwgSyBSIChNUy9FVEE3LUVUQVMpIDxLUi5Hb2t1bEBpbi5ib3NjaC5jb20+DQo+
+IENjOiB1c2Vyc0BkcGRrLm9yZzsgZGV2QGRwZGsub3JnOyBOaXZldGhpdGhhIE4gU2hhbm11Z2Fz
+dW5kYXJhbQ0KPiAoRVRBUy1JQ0EvWFBDLUZlNikgPE5TaGFubXVnYXN1bmRhcmFtLk5pdmV0aGl0
+aGFAZXRhcy5jb20+DQo+IFN1YmplY3Q6IFJFOiBJc3N1ZSB3aXRoIERQREstQnVyc3QgUmVwbGF5
+IOKAkyBObyBGcmFtZSBUcmFuc21pc3Npb24NCj4gT2JzZXJ2ZWQgRGVzcGl0ZSBTdWNjZXNzZnVs
+IFJlcGxheQ0KPg0KPiBPbiBXZWQsIDIzIEp1bCAyMDI1LCBJdmFuIE1hbG92IHdyb3RlOg0KPg0K
+Pj4gSGksDQo+Pg0KPj4gT24gV2VkLCAyMyBKdWwgMjAyNSwgR29rdWwgSyBSIChNUy9FVEE3LUVU
+QVMpIHdyb3RlOg0KPj4NCj4+PiBIaSBJdmFuIE1hbG92IPCfmIoNCj4+Pg0KPj4+IFVzZSBDYXNl
+Og0KPj4+IEknbSBjdXJyZW50bHkgdXNpbmcgdGhlIERQREstQnVyc3QtUmVwbGF5IHRvb2wgdG8g
+cmVwbGF5IGNhcHR1cmVkDQo+Pj4gUENBUCBmaWxlcyBhdCBzcGVjaWZpYyBkYXRhIHJhdGVzIChl
+LmcuLCAxNTDigJMyMDAgTWJwcykuDQo+Pj4NCj4+PiBSZXNwb25zZSB0byB5b3VyIGZlZWRiYWNr
+Og0KPj4+IFBvaW50IDE6ICJQb3J0IDAgaXMgbm90IG9uIHRoZSBnb29kIE5VTUEgSUQgKC0xKSIN
+Cj4+PiBJ4oCZbSBhd2FyZSB0aGF0IHRoaXMgbWVzc2FnZSBpcyBwcmludGVkIGR1ZSB0byB0aGUg
+TlVNQSBJRCBiZWluZw0KPj4+IHJldHVybmVkIGFzIC0xLg0KPj4+IEkndmUganVzdCBzdGFydGVk
+IGRpdmluZyBpbnRvIHRoZSBzb3VyY2UgY29kZSBhbmQgZm91bmQgdGhhdCB0aGUNCj4+PiBjYWxs
+IHRvDQo+Pj4gcnRlX2V0aF9kZXZfc29ja2V0X2lkKCkgcmV0dXJucyAtMSwgd2hpY2ggdHlwaWNh
+bGx5IGluZGljYXRlcyBhbiBlcnJvci4NCj4+DQo+PiBObywgLTEgdHlwaWNhbGx5IHRyYW5zbGF0
+ZXMgdG8gJ1NPQ0tFVF9JRF9BTlknLiBJbiBvcmRlciB0byBydWxlIG91dCAnRUlOVkFMJw0KPj4g
+aW4gJ3J0ZV9lcnJubycsIG9uZSBzaG91bGQgYXR0ZW1wdCB0byBpbnZva2UgJ3J0ZV9ldGhfZGV2
+X3NvY2tldF9pZCcNCj4+IHdpdGhpbiB0aGUgbG9vcCBvZiAnUlRFX0VUSF9GT1JFQUNIX0RFVicg
+KHNlZSBleGFtcGxlcyBpbiBEUERLKSBhbmQNCj4+IHByaW50IHRoZSBzb2NrZXQgSUQuDQo+Pg0K
+Pj4+IEhvd2V2ZXIsIHRoZSBjdXJyZW50IGltcGxlbWVudGF0aW9uIGRvZXMgbm90IG91dHB1dCB0
+aGUgcnRlX2Vycm5vLA0KPj4+IHdoaWNoIGNvdWxkIGhlbHAgaWRlbnRpZnkgdGhlIHJvb3QgY2F1
+c2UuIEknbSB3b3JraW5nIG9uIG1vZGlmeWluZw0KPj4+IHRoZSBjb2RlIHRvIHByaW50IHRoZSBl
+cnJvciBjb2RlIGZvciBiZXR0ZXIgZGVidWdnaW5nLg0KPj4+DQo+Pj4gUG9pbnQgMjogIk5JQyBM
+aW5rIGlzIFVQIg0KPj4+IFllcywgb24gdGhlIE5JQyBzaWRlLCB0aGUgbGluayBpcyB1cC4gSSdt
+IGFsc28gYWJsZSB0byB0cmFuc21pdA0KPj4+IHBhY2tldHMgc3VjY2Vzc2Z1bGx5IHVzaW5nIHRo
+ZSB0ZXN0cG1kIGFwcGxpY2F0aW9uLg0KPj4+DQo+Pj4gUXVlc3Rpb246DQo+Pj4gQ291bGQgeW91
+IHBsZWFzZSBjb25maXJtIGlmIHRoZSBjdXJyZW50IHZlcnNpb24gb2YgdGhlDQo+Pj4gRFBESy1C
+dXJzdC1SZXBsYXkgdG9vbCBzdXBwb3J0cyByZXBsYXlpbmcgRXRoZXJuZXQgZnJhbWVzIGxhcmdl
+cg0KPj4+IHRoYW4NCj4+PiA2NCBieXRlcyAoZS5nLiwgdXAgdG8NCj4+PiAxNTAwIGJ5dGVzKT8g
+T3IgaGFzIHRoZSB0b29sIGJlZW4gZW5oYW5jZWQgdG8gc3VwcG9ydCB0aGlzIHVzZSBjYXNlPw0K
+Pj4NCj4+IFRoZSB0b29sIHNlZW1zIGxpa2UgYW4gZXh0ZXJuYWwgYXBwbGljYXRpb24uIFRyeSB0
+byBsb29rIGZvciBhbnkNCj4+IG1lbnRpb25zIG9mIEFQSSAncnRlX2V0aF9kZXZfc2V0X210dScg
+b3IganVzdCB0aGUgdGVybSAnbXR1JyBpbiB0aGF0DQo+PiBzb3VyY2UgY29kZS4gSWYgdGhlcmUg
+YXJlIG5vIHN1Y2ggbWVudGlvbnMsIHRoZW4gZGVmYXVsdCBNVFUgYXBwbGllcywNCj4+IHdoaWNo
+IGRlcGVuZHMgb24gdGhlIGRyaXZlci4NCj4+DQo+PiBIYXZlIHlvdSB0cmllZCBxdWVyeWluZyBz
+dGF0aXN0aWNzIHRvIGZpbmQgdGhlIGNhdXNlIG9mIHRoZSBkcm9wcz8NCj4NCj4gQWxzbywgZ2l2
+ZW4gdGhlIGZhY3QgdGhhdCB0aGUgYXBwbGljYXRpb24gcmVwbGF5cyBzb21lIHBjYXAgdHJhZmZp
+YywgaGF2ZSB5b3UgbWFkZSBzdXJlIHRoZSByZWNlaXZlciAod2hlcmUgeW91IHNlZWsgdG8gd2F0
+Y2ggdGhlIHJlcGxheWVkIHRyYWZmaWMgYXJyaXZlKSBoYXMgZ290ICdwcm9taXNjdW91cycgbW9k
+ZSBbMV0gZW5hYmxlZD8gSUlSQywgJ3Rlc3QtcG1kJyBlbmFibGVzIGl0IGJ5IGRlZmF1bHQuDQo+
+DQo+IFsxXQ0KPiBodHRwczovL2RvYy8uDQo+IGRwZGsub3JnJTJGYXBpLTI1LjA3JTJGcnRlX19l
+dGhkZXZfOGguaHRtbCUyM2E1ZGQxZGVkYWE0NWYwNWM3MmJjYzM1NDkNCj4gNWU0NDFlOTEmZGF0
+YT0wNSU3QzAyJTdDS1IuR29rdWwlNDBpbi5ib3NjaC5jb20lN0NiNjcwYmZmZTUzYjg0ODVjNzVh
+OQ0KPiAwOGRkY2E5YzU2YmYlN0MwYWU1MWUxOTA3Yzg0ZTRiYmI2ZDY0OGVlNTg0MTBmNCU3QzAl
+N0MwJTdDNjM4ODg5NDk1MDQwDQo+IDc1MDQ1NSU3Q1Vua25vd24lN0NUV0ZwYkdac2IzZDhleUpG
+YlhCMGVVMWhjR2tpT25SeWRXVXNJbFlpT2lJd0xqQXVNREENCj4gd01DSXNJbEFpT2lKWGFXNHpN
+aUlzSWtGT0lqb2lUV0ZwYkNJc0lsZFVJam95ZlElM0QlM0QlN0MwJTdDJTdDJTdDJnNkYQ0KPiB0
+YT03eHF1eDVWUFlnTWVyTmtoeTdZT0N6ajM3MWlycmtoRUZGcmtIVHVLMXBnJTNEJnJlc2VydmVk
+PTANCj4NCj4gVGhhbmsgeW91Lg0KPg0KPj4NCj4+IFRoYW5rIHlvdS4NCj4+DQo+Pj4NCj4+PiBU
+aGFua3MgZm9yIHlvdXIgdGltZSBhbmQgc3VwcG9ydCENCj4+Pg0KPj4+IEJlc3QgcmVnYXJkcywN
+Cj4+PiBHb2t1bCBLLlINCj4+Pg0KPj4+DQo+Pj4NCj4+Pg0KPj4+DQo+Pj4gLS0tLS1PcmlnaW5h
+bCBNZXNzYWdlLS0tLS0NCj4+PiBGcm9tOiBJdmFuIE1hbG92IDxpdmFuLm1hbG92QGFya25ldHdv
+cmtzLmFtPg0KPj4+IFNlbnQ6IEZyaWRheSwgSnVseSAxOCwgMjAyNSA1OjI5IFBNDQo+Pj4gVG86
+IEdva3VsIEsgUiAoTVMvRVRBNy1FVEFTKSA8S1IuR29rdWxAaW4uYm9zY2guY29tPg0KPj4+IENj
+OiB1c2Vyc0BkcGRrLm9yZzsgZGV2QGRwZGsub3JnDQo+Pj4gU3ViamVjdDogUmU6IElzc3VlIHdp
+dGggRFBESy1CdXJzdCBSZXBsYXkg4oCTIE5vIEZyYW1lIFRyYW5zbWlzc2lvbg0KPj4+IE9ic2Vy
+dmVkIERlc3BpdGUgU3VjY2Vzc2Z1bCBSZXBsYXkNCj4+Pg0KPj4+IEhpLA0KPj4+DQo+Pj4gKHBs
+ZWFzZSBzZWUgYmVsb3cpDQo+Pj4NCj4+PiBPbiBGcmksIDE4IEp1bCAyMDI1LCBHb2t1bCBLIFIg
+KE1TL0VUQTctRVRBUykgd3JvdGU6DQo+Pj4NCj4+Pj4NCj4+Pj4gSGkgVGVhbSwNCj4+Pj4NCj4+
+Pj4gSeKAmW0gY3VycmVudGx5IHdvcmtpbmcgd2l0aCB0aGUgZHBkay1idXJzdC1yZXBsYXkgdG9v
+bCBhbmQNCj4+Pj4gZW5jb3VudGVyZWQgYW4gaXNzdWUgZHVyaW5nIGV4ZWN1dGlvbi4gQmVsb3cg
+YXJlIHRoZSBkZXRhaWxzOg0KPj4+Pg0KPj4+Pg0KPj4+PiBfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQo+Pj4+IF8NCj4+
+Pj4gX18NCj4+Pj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXw0KPj4+PiBfIF9fIF9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18NCj4+Pj4NCj4+Pj4NCj4+Pj4gT2JzZXJ2YXRpb246DQo+
+Pj4+IER1cmluZyByZXBsYXksIHdlIHJlY2VpdmVkIHRoZSBmb2xsb3dpbmcgaW5mb3JtYXRpb25h
+bCBtZXNzYWdlOg0KPj4+Pg0KPj4+PiBwb3J0IDAgaXMgbm90IG9uIHRoZSBnb29kIG51bWEgaWQg
+KC0xKQ0KPj4+DQo+Pj4gV2hpY2ggQVBJIHdhcyB1c2VkIHRvIGNoZWNrIHRoaXM/IFdhcyBBUEkg
+WzFdIHVzZWQ/IElmIG5vdCwgd2hhdA0KPj4+IGRvZXMgaXQgc2hvdyBpbiB0aGUgYWJzZW5jZSBv
+ZiAnbnVtYWN0bCcgY29tbWFuZD8NCj4+Pg0KPj4+IFsxXQ0KPj4+IGh0dHBzOi8vZG9jLw0KPj4+
+IC5kcGRrLm9yZyUyRmFwaS0yNS4wMyUyRnJ0ZV9fZXRoZGV2XzhoLmh0bWwlMjNhZDAzMmUyNWY3
+MTJlNmZmZWIwYzE5DQo+Pj4gZQ0KPj4+IGFiMWVjMWZkMmUmZGF0YT0wNSU3QzAyJTdDS1IuR29r
+dWwlNDBpbi5ib3NjaC5jb20lN0M1M2EyMDg4NGNhZDE0Yjk0DQo+Pj4gNw0KPj4+IGEwMDA4ZGRj
+OWFmZjViZiU3QzBhZTUxZTE5MDdjODRlNGJiYjZkNjQ4ZWU1ODQxMGY0JTdDMCU3QzAlN0M2Mzg4
+ODg0DQo+Pj4gNw0KPj4+IDk3OTI4MzQxNDMlN0NVbmtub3duJTdDVFdGcGJHWnNiM2Q4ZXlKRmJY
+QjBlVTFoY0draU9uUnlkV1VzSWxZaU9pSXdMDQo+Pj4gag0KPj4+IEF1TURBd01DSXNJbEFpT2lK
+WGFXNHpNaUlzSWtGT0lqb2lUV0ZwYkNJc0lsZFVJam95ZlElM0QlM0QlN0MwJTdDJTdDDQo+Pj4g
+JQ0KPj4+IDdDJnNkYXRhPVh4UGZtc1g0V3NSODNpZlVma2t1cDJqSU93NFBVJTJGWCUyQmRlZkVx
+VmZhemo0JTNEJnJlc2VydmVkDQo+Pj4gPQ0KPj4+IDANCj4+Pg0KPj4+Pg0KPj4+PiBBcyBwZXIg
+dGhlIERQREsgbWFpbGluZyBsaXN0IGRpc2N1c3Npb25zLCB0aGlzIHdhcm5pbmcgaXMgdHlwaWNh
+bGx5DQo+Pj4+IGJlbmlnbuKAlG9mdGVuIHNlZW4gb24gTklDcyBsaWtlIEludGVsIEkyMjUvSTIx
+MCwgd2hpY2ggZG8gbm90IHJlcG9ydA0KPj4+PiBOVU1BIGFmZmluaXR5LiBIZW5jZSwgd2UgcHJv
+Y2VlZGVkIHdpdGggZXhlY3V0aW9uLg0KPj4+Pg0KPj4+Pg0KPj4+PiBfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQo+Pj4+
+IF8NCj4+Pj4gX18NCj4+Pj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXw0KPj4+PiBfIF9fIF9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCj4+Pj4NCj4+Pj4NCj4+Pj4gQ29tbWFuZCBV
+c2VkOg0KPj4+Pg0KPj4+PiBzdWRvIG51bWFjdGwgLS1jcHVub2RlYmluZD0wIC0tbWVtYmluZD0w
+IC4vc3JjL2RwZGstcmVwbGF5DQo+Pj4+IE9yaWdpbmFsX01BQy5wY2FwIDAwMDA6MDE6MDAuMQ0K
+Pj4+Pg0KPj4+PiBFeGVjdXRpb24gT3V0cHV0Og0KPj4+Pg0KPj4+PiBwcmVsb2FkaW5nIE9yaWdp
+bmFsX01BQy5wY2FwIGZpbGUgKG9mIHNpemU6IDE0Mzk1OSBieXRlcykNCj4+Pj4NCj4+Pj4gZmls
+ZSByZWFkIGF0IDEwMC4wMCUNCj4+Pj4NCj4+Pj4gcmVhZCA2NzUgcGt0cyAoZm9yIGEgdG90YWwg
+b2YgMTQzOTU5IGJ5dGVzKS4gbWF4IHBhY2tldCBsZW5ndGggPQ0KPj4+PiAxNTE4IGJ5dGVzLg0K
+Pj4+Pg0KPj4+PiAtPiBOZWVkZWQgTUJVRiBzaXplOiAxNjQ4DQo+Pj4+DQo+Pj4+IC0+IE5lZWRl
+ZCBudW1iZXIgb2YgTUJVRnM6IDY3NQ0KPj4+Pg0KPj4+PiAtPiBOZWVkZWQgTWVtb3J5ID0gMS4w
+NjEgTUINCj4+Pj4NCj4+Pj4gLT4gTmVlZGVkIEh1Z2VwYWdlcyBvZiAxIEdCID0gMQ0KPj4+Pg0K
+Pj4+PiAtPiBOZWVkZWQgQ1BVczogMQ0KPj4+Pg0KPj4+PiAtPiBDcmVhdGUgbWVtcG9vbCBvZiA2
+NzUgbWJ1ZnMgb2YgMTY0OCBvY3RldHMuDQo+Pj4+DQo+Pj4+IC0+IFdpbGwgY2FjaGUgNjc1IHBr
+dHMgb24gMSBjYWNoZXMuDQo+Pj4NCj4+PiBXaGF0IGRvZXMgdGhpcyAnY2FjaGUnIHN0YW5kIGZv
+cj8gRG9lcyBpdCByZWZlciB0byB0aGUgbWVtcG9vbA0KPj4+IHBlci1sY29yZSBjYWNoZT8NCj4+
+PiBJZiBzbywgcGxlYXNlIG5vdGUgdGhhdCwgYWNjb3JkaW5nIHRvIEFQSSBbMl0gZG9jdW1lbnRh
+dGlvbiwgY2FjaGUNCj4+PiBzaXplICJtdXN0IGJlIGxvd2VyIG9yIGVxdWFsIHRvIFJURV9NRU1Q
+T09MX0NBQ0hFX01BWF9TSVpFIGFuZCBuIC8NCj4+PiAxLjUiLCB3aGVyZSAnbicgc3RhbmRzIGZv
+ciB0aGUgbnVtYmVyIG9mIG1idWZzLiBBbHNvLCBkb2N1bWVudGF0aW9uDQo+Pj4gc2F5cyBpdCBp
+cyBhZHZpc2VkIHRvIGNob29zZSBjYWNoZV9zaXplIHRvIGhhdmUgIm4gbW9kdWxvIGNhY2hlX3Np
+emUNCj4+PiA9PSAwIi4gRG9lcyB5b3VyIGNvZGUgbWVldCB0aGVzZSByZXF1aXJlbWVudHM/DQo+
+Pj4NCj4+PiBCeSB0aGUgbG9va3Mgb2YgaXQsIGl0IGRvZXNuJ3QgKGNhY2hlX3NpemUgPSBuID0g
+Njc1KS4gQ29uc2lkZXIgdG8NCj4+PiBkb3VibGUtY2hlY2suDQo+Pj4NCj4+PiBbMl0NCj4+PiBo
+dHRwczovL2RvYy8NCj4+PiAuZHBkay5vcmclMkZhcGktMjUuMDMlMkZydGVfX21lbXBvb2xfOGgu
+aHRtbCUyM2EwYjY0ZDYxMWJjMTQwYTRkMmEwYw0KPj4+IDkNCj4+PiA0OTExNTgwZWZkNSZkYXRh
+PTA1JTdDMDIlN0NLUi5Hb2t1bCU0MGluLmJvc2NoLmNvbSU3QzUzYTIwODg0Y2FkMTRiOQ0KPj4+
+IDQNCj4+PiA3YTAwMDhkZGM5YWZmNWJmJTdDMGFlNTFlMTkwN2M4NGU0YmJiNmQ2NDhlZTU4NDEw
+ZjQlN0MwJTdDMCU3QzYzODg4OA0KPj4+IDQNCj4+PiA3OTc5Mjg0Mzk3NyU3Q1Vua25vd24lN0NU
+V0ZwYkdac2IzZDhleUpGYlhCMGVVMWhjR2tpT25SeWRXVXNJbFlpT2lJdw0KPj4+IEwNCj4+PiBq
+QXVNREF3TUNJc0lsQWlPaUpYYVc0ek1pSXNJa0ZPSWpvaVRXRnBiQ0lzSWxkVUlqb3lmUSUzRCUz
+RCU3QzAlN0MlNw0KPj4+IEMNCj4+PiAlN0Mmc2RhdGE9VkxQVHJBWHFZMkZObWhBNm13TEZFWmdj
+NmY0TEZjN29hJTJCVWI4RHJtdFdzJTNEJnJlc2VydmVkPQ0KPj4+IDANCj4+Pg0KPj4+Pg0KPj4+
+Pg0KPj4+PiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fDQo+Pj4+IF8NCj4+Pj4gX18NCj4+Pj4gX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXw0KPj4+
+PiBfIF9fIF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCj4+
+Pj4NCj4+Pj4NCj4+Pj4gSXNzdWU6DQo+Pj4+IERlc3BpdGUgc3VjY2Vzc2Z1bCBwYXJzaW5nIG9m
+IHRoZSBwY2FwIGZpbGUgYW5kIHByb3Blcg0KPj4+PiBpbml0aWFsaXphdGlvbiwgbm8gZnJhbWVz
+IHdlcmUgdHJhbnNtaXR0ZWQgb3IgcmVjZWl2ZWQgb24gZWl0aGVyDQo+Pj4+IHRoZSBzZW5kZXIg
+b3IgcmVjZWl2ZXIgc2lkZXMuDQo+Pj4NCj4+PiBJcyB0aGlzIG9ic2VydmF0aW9uIGJhc2VkIHNv
+bGVseSBvbiB3YXRjaGluZyBBUElzIFszXSBhbmQgWzRdIHJldHVybg0KPj4+IDAgYWxsIHRoZSB0
+aW1lPyBJZiB5ZXMsIG9uZSBjYW4gY29uc2lkZXIgdG8gaW50cm9kdWNlIGludm9jYXRpb25zIG9m
+DQo+Pj4gQVBJcyBbNV0sIFs2XSBhbmQgWzddIGluIG9yZGVyIHRvIHBlcmlvZGljYWxseSBwb2xs
+IGFuZCBwcmludA0KPj4+IHN0YXRpc3RpY3MgKG1heSBiZSB3aXRoIDEtc2Vjb25kIGRlbGF5KSwg
+d2hpY2ggbWF5LCBmb3IgZXhhbXBsZSwNCj4+PiBzaGVkIGxpZ2h0IG9uIG1idWYgYWxsb2NhdGlv
+biBlcnJvcnMgKGV4dGVuZGVkIHN0YXRzKS4NCj4+Pg0KPj4+IERvIHN0YXRpc3RpY3MgZGlzcGxh
+eSBhbnkgaW50ZXJlc3RpbmcgZmlndXJlcyB0byBiZSBkaXNjdXNzZWQ/DQo+Pj4NCj4+PiBbM10N
+Cj4+PiBodHRwczovL2RvYy8NCj4+PiAuZHBkay5vcmclMkZhcGktMjUuMDMlMkZydGVfX2V0aGRl
+dl84aC5odG1sJTIzYTNlN2Q3NmE0NTFiNDYzNDg2ODZlYQ0KPj4+IDkNCj4+PiA3ZDYzNjdmMTAy
+JmRhdGE9MDUlN0MwMiU3Q0tSLkdva3VsJTQwaW4uYm9zY2guY29tJTdDNTNhMjA4ODRjYWQxNGI5
+NA0KPj4+IDcNCj4+PiBhMDAwOGRkYzlhZmY1YmYlN0MwYWU1MWUxOTA3Yzg0ZTRiYmI2ZDY0OGVl
+NTg0MTBmNCU3QzAlN0MwJTdDNjM4ODg4NA0KPj4+IDcNCj4+PiA5NzkyODUzNjAxJTdDVW5rbm93
+biU3Q1RXRnBiR1pzYjNkOGV5SkZiWEIwZVUxaGNHa2lPblJ5ZFdVc0lsWWlPaUl3TA0KPj4+IGoN
+Cj4+PiBBdU1EQXdNQ0lzSWxBaU9pSlhhVzR6TWlJc0lrRk9Jam9pVFdGcGJDSXNJbGRVSWpveWZR
+JTNEJTNEJTdDMCU3QyU3Qw0KPj4+ICUNCj4+PiA3QyZzZGF0YT01NkJiSmVNbzZCdGV3clJHY25J
+SVdCeDRneGJ2UUtsN2lBVG5vVXBjVE1jJTNEJnJlc2VydmVkPTANCj4+PiBbNF0NCj4+PiBodHRw
+czovL2RvYy8NCj4+PiAuZHBkay5vcmclMkZhcGktMjUuMDMlMkZydGVfX2V0aGRldl84aC5odG1s
+JTIzYTgzZTU2Y2FiYmQzMTYzN2VmZDY0OA0KPj4+IGUNCj4+PiAzZmMwMTAzOTJiJmRhdGE9MDUl
+N0MwMiU3Q0tSLkdva3VsJTQwaW4uYm9zY2guY29tJTdDNTNhMjA4ODRjYWQxNGI5NA0KPj4+IDcN
+Cj4+PiBhMDAwOGRkYzlhZmY1YmYlN0MwYWU1MWUxOTA3Yzg0ZTRiYmI2ZDY0OGVlNTg0MTBmNCU3
+QzAlN0MwJTdDNjM4ODg4NA0KPj4+IDcNCj4+PiA5NzkyODYyODMzJTdDVW5rbm93biU3Q1RXRnBi
+R1pzYjNkOGV5SkZiWEIwZVUxaGNHa2lPblJ5ZFdVc0lsWWlPaUl3TA0KPj4+IGoNCj4+PiBBdU1E
+QXdNQ0lzSWxBaU9pSlhhVzR6TWlJc0lrRk9Jam9pVFdGcGJDSXNJbGRVSWpveWZRJTNEJTNEJTdD
+MCU3QyU3Qw0KPj4+ICUNCj4+PiA3QyZzZGF0YT1iRFA4dU5GMDN6dWZ0V3klMkJSYlhLZzFzWXd2
+OERydU1HNTNudGZmQ3klMkJPayUzRCZyZXNlcnZlZA0KPj4+ID0NCj4+PiAwDQo+Pj4NCj4+PiBb
+NV0NCj4+PiBodHRwczovL2RvYy8NCj4+PiAuZHBkay5vcmclMkZhcGktMjUuMDMlMkZydGVfX2V0
+aGRldl84aC5odG1sJTIzYWRlYzIyNjU3NGM1M2FlNDEzMjUyYw0KPj4+IDkNCj4+PiBiMTVmNmY0
+YmFiJmRhdGE9MDUlN0MwMiU3Q0tSLkdva3VsJTQwaW4uYm9zY2guY29tJTdDNTNhMjA4ODRjYWQx
+NGI5NA0KPj4+IDcNCj4+PiBhMDAwOGRkYzlhZmY1YmYlN0MwYWU1MWUxOTA3Yzg0ZTRiYmI2ZDY0
+OGVlNTg0MTBmNCU3QzAlN0MwJTdDNjM4ODg4NA0KPj4+IDcNCj4+PiA5NzkyODcyNDk2JTdDVW5r
+bm93biU3Q1RXRnBiR1pzYjNkOGV5SkZiWEIwZVUxaGNHa2lPblJ5ZFdVc0lsWWlPaUl3TA0KPj4+
+IGoNCj4+PiBBdU1EQXdNQ0lzSWxBaU9pSlhhVzR6TWlJc0lrRk9Jam9pVFdGcGJDSXNJbGRVSWpv
+eWZRJTNEJTNEJTdDMCU3QyU3Qw0KPj4+ICUNCj4+PiA3QyZzZGF0YT1kSjN5QjJNVHoyOG4ybVE1
+b2diWWlsY2o0c3I3SzJKRDcyM2s1eld2bHlVJTNEJnJlc2VydmVkPTANCj4+PiBbNl0NCj4+PiBo
+dHRwczovL2RvYy8NCj4+PiAuZHBkay5vcmclMkZhcGktMjUuMDMlMkZydGVfX2V0aGRldl84aC5o
+dG1sJTIzYTQxOGFkOTcwNjczZWIxNzE2NzMxOA0KPj4+IDUNCj4+PiBlMzYwNDRmZDc5JmRhdGE9
+MDUlN0MwMiU3Q0tSLkdva3VsJTQwaW4uYm9zY2guY29tJTdDNTNhMjA4ODRjYWQxNGI5NA0KPj4+
+IDcNCj4+PiBhMDAwOGRkYzlhZmY1YmYlN0MwYWU1MWUxOTA3Yzg0ZTRiYmI2ZDY0OGVlNTg0MTBm
+NCU3QzAlN0MwJTdDNjM4ODg4NA0KPj4+IDcNCj4+PiA5NzkyODgyNjYyJTdDVW5rbm93biU3Q1RX
+RnBiR1pzYjNkOGV5SkZiWEIwZVUxaGNHa2lPblJ5ZFdVc0lsWWlPaUl3TA0KPj4+IGoNCj4+PiBB
+dU1EQXdNQ0lzSWxBaU9pSlhhVzR6TWlJc0lrRk9Jam9pVFdGcGJDSXNJbGRVSWpveWZRJTNEJTNE
+JTdDMCU3QyU3Qw0KPj4+ICUNCj4+PiA3QyZzZGF0YT1hRnQlMkZuJTJCNEZxWDZjSkR4V1ZSeVds
+WnJBbFZQWE9xRTZqVjdVeW1xN1dRdyUzRCZyZXNlcnZlZA0KPj4+ID0NCj4+PiAwDQo+Pj4gWzdd
+DQo+Pj4gaHR0cHM6Ly9kb2MvDQo+Pj4gLmRwZGsub3JnJTJGYXBpLTI1LjAzJTJGcnRlX19ldGhk
+ZXZfOGguaHRtbCUyM2EzMDBkNzViNTgzYzFmNWFjZmU1YjENCj4+PiA2DQo+Pj4gMmE1ZDhjMGFj
+MSZkYXRhPTA1JTdDMDIlN0NLUi5Hb2t1bCU0MGluLmJvc2NoLmNvbSU3QzUzYTIwODg0Y2FkMTRi
+OTQNCj4+PiA3DQo+Pj4gYTAwMDhkZGM5YWZmNWJmJTdDMGFlNTFlMTkwN2M4NGU0YmJiNmQ2NDhl
+ZTU4NDEwZjQlN0MwJTdDMCU3QzYzODg4ODQNCj4+PiA3DQo+Pj4gOTc5Mjg5MjEyNCU3Q1Vua25v
+d24lN0NUV0ZwYkdac2IzZDhleUpGYlhCMGVVMWhjR2tpT25SeWRXVXNJbFlpT2lJd0wNCj4+PiBq
+DQo+Pj4gQXVNREF3TUNJc0lsQWlPaUpYYVc0ek1pSXNJa0ZPSWpvaVRXRnBiQ0lzSWxkVUlqb3lm
+USUzRCUzRCU3QzAlN0MlN0MNCj4+PiAlDQo+Pj4gN0Mmc2RhdGE9VGxtVTNJYUlLQ3pPRXZzbUZu
+OGlmJTJCZnRnUXE3WkpDdXpjczZ4JTJCOGphQVklM0QmcmVzZXJ2ZWQNCj4+PiA9DQo+Pj4gMA0K
+Pj4+DQo+Pj4+DQo+Pj4+DQo+Pj4+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCj4+Pj4gXw0KPj4+PiBfXw0KPj4+PiBf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fDQo+Pj4+IF8gX18gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXw0KPj4+Pg0KPj4+Pg0KPj4+PiBFbnZpcm9ubWVudCBEZXRhaWxzOg0KPj4+Pg0K
+Pj4+PiAgKiAgTklDIHVzZWQ6IEludGVsIEkyMjUvSTIxMA0KPj4+PiAgKiAgSHVnZXBhZ2VzIGNv
+bmZpZ3VyZWQ6IDEgR0INCj4+Pj4gICogIE5VTUEgYmluZGluZzogLS1jcHVub2RlYmluZD0wIC0t
+bWVtYmluZD0wDQo+Pj4+ICAqICBPUzogW1lvdXIgTGludXggZGlzdHJpYnV0aW9uLCBlLmcuLCBV
+YnVudHUgMjAuMDRdDQo+Pj4+ICAqICBEUERLIHZlcnNpb246IFtNZW50aW9uIGlmIGtub3duXQ0K
+Pj4+Pg0KPj4+PiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fDQo+Pj4+IF8NCj4+Pj4gX18NCj4+Pj4gX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXw0K
+Pj4+PiBfIF9fIF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18N
+Cj4+Pj4NCj4+Pj4NCj4+Pj4gQ291bGQgeW91IHBsZWFzZSBhZHZpc2UgaWYgYW55IGFkZGl0aW9u
+YWwgc2V0dXAsIGNvbmZpZ3VyYXRpb24sIG9yDQo+Pj4+IGtub3duIGxpbWl0YXRpb25zIG1heSBi
+ZSBpbXBhY3RpbmcgdGhlIHBhY2tldCB0cmFuc21pc3Npb24/DQo+Pj4NCj4+PiBUaGlzIG1heSBi
+ZSBhIHdpbGQgc3VnZ2VzdGlvbiBmcm9tIG15IHNpZGUsIGJ1dCBpdCBwYXlzIHRvIGNoZWNrDQo+
+Pj4gd2hldGhlciBsaW5rIHN0YXR1cyBpcyAidXAiIHVwb24gcG9ydCBzdGFydCBvbiBib3RoIGVu
+ZHMuIE9uZSBjYW4NCj4+PiB1c2UgQVBJIFs4XSB0byBkbyB0aGF0Lg0KPj4+DQo+Pj4gWzhdDQo+
+Pj4gaHR0cHM6Ly9kb2MvDQo+Pj4gLmRwZGsub3JnJTJGYXBpLTI1LjAzJTJGcnRlX19ldGhkZXZf
+OGguaHRtbCUyM2FjMDU4Nzg1NzhlNGZkOWVmMzU1MWQNCj4+PiAyDQo+Pj4gYzFjMTc1ZWJlNyZk
+YXRhPTA1JTdDMDIlN0NLUi5Hb2t1bCU0MGluLmJvc2NoLmNvbSU3QzUzYTIwODg0Y2FkMTRiOTQN
+Cj4+PiA3DQo+Pj4gYTAwMDhkZGM5YWZmNWJmJTdDMGFlNTFlMTkwN2M4NGU0YmJiNmQ2NDhlZTU4
+NDEwZjQlN0MwJTdDMCU3QzYzODg4ODQNCj4+PiA3DQo+Pj4gOTc5MjkwMTEzOCU3Q1Vua25vd24l
+N0NUV0ZwYkdac2IzZDhleUpGYlhCMGVVMWhjR2tpT25SeWRXVXNJbFlpT2lJd0wNCj4+PiBqDQo+
+Pj4gQXVNREF3TUNJc0lsQWlPaUpYYVc0ek1pSXNJa0ZPSWpvaVRXRnBiQ0lzSWxkVUlqb3lmUSUz
+RCUzRCU3QzAlN0MlN0MNCj4+PiAlDQo+Pj4gN0Mmc2RhdGE9a0x0dXhlaDBuWUlWN1VuVTVXR0x5
+a1hxbmdwSVh6cUhOc01sUkclMkY4OWUwJTNEJnJlc2VydmVkPTANCj4+Pg0KPj4+IFRoYW5rIHlv
+dS4NCj4+Pg0KPj4+DQo+Pj4+DQo+Pj4+IFRoYW5rIHlvdSBpbiBhZHZhbmNlIGZvciB5b3VyIHN1
+cHBvcnQhDQo+Pj4+DQo+Pj4+DQo+Pj4+IEJlc3QgcmVnYXJkcywNCj4+Pj4gR29rdWwgSyBSDQo+
+Pj4+DQo+Pj4+DQo+Pj4+DQo+Pj4+DQo+Pj4+DQo+Pg0KPg0K
