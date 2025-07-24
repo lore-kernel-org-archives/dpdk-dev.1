@@ -2,41 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54C98C83F26
-	for <dpdk-dev@archiver.kernel.org>; Thu, 24 Jul 2025 11:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6856EC83F1A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 24 Jul 2025 11:50:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1A0C140285;
-	Thu, 24 Jul 2025 13:25:57 +0200 (CEST)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
- by mails.dpdk.org (Postfix) with ESMTP id 00FEB40262
- for <dev@dpdk.org>; Thu, 24 Jul 2025 13:25:54 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.88.234])
- by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4bnpcY0TY1z27hFx;
- Thu, 24 Jul 2025 19:26:53 +0800 (CST)
-Received: from kwepemo500011.china.huawei.com (unknown [7.202.195.194])
- by mail.maildlp.com (Postfix) with ESMTPS id 9A885140295;
- Thu, 24 Jul 2025 19:25:52 +0800 (CST)
-Received: from localhost.localdomain (10.50.165.33) by
- kwepemo500011.china.huawei.com (7.202.195.194) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id 1FBD840285;
+	Thu, 24 Jul 2025 13:50:10 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id B2B1D40262
+ for <dev@dpdk.org>; Thu, 24 Jul 2025 13:50:08 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bnq5W3wyvz6L5HJ;
+ Thu, 24 Jul 2025 19:48:31 +0800 (CST)
+Received: from frapeml500002.china.huawei.com (unknown [7.182.85.205])
+ by mail.maildlp.com (Postfix) with ESMTPS id A833B1400C8;
+ Thu, 24 Jul 2025 19:50:07 +0800 (CST)
+Received: from frapeml500002.china.huawei.com (7.182.85.205) by
+ frapeml500002.china.huawei.com (7.182.85.205) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 24 Jul 2025 19:25:52 +0800
-From: Dengdui Huang <huangdengdui@huawei.com>
-To: <dev@dpdk.org>
-CC: <stephen@networkplumber.org>, <mb@smartsharesystems.com>,
- <david.marchand@redhat.com>, <roretzla@linux.microsoft.com>,
- <lihuisong@huawei.com>, <fengchengwen@huawei.com>, <liuyonglong@huawei.com>
-Subject: [PATCH v4] eal: fix uncheck lcore ID and lcore role
-Date: Thu, 24 Jul 2025 19:25:51 +0800
-Message-ID: <20250724112551.2502389-1-huangdengdui@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250321040316.104126-1-huangdengdui@huawei.com>
-References: <20250321040316.104126-1-huangdengdui@huawei.com>
+ 15.1.2507.39; Thu, 24 Jul 2025 13:50:07 +0200
+Received: from frapeml500002.china.huawei.com ([7.182.85.205]) by
+ frapeml500002.china.huawei.com ([7.182.85.205]) with mapi id 15.01.2507.039;
+ Thu, 24 Jul 2025 13:50:07 +0200
+From: Marat Khalili <marat.khalili@huawei.com>
+To: David Marchand <david.marchand@redhat.com>, "dev@dpdk.org" <dev@dpdk.org>
+CC: Bruce Richardson <bruce.richardson@intel.com>
+Subject: RE: [PATCH v5 11/22] test/telemetry: catch errors in subshell
+Thread-Topic: [PATCH v5 11/22] test/telemetry: catch errors in subshell
+Thread-Index: AQHb+9aGTJtc8JqF+UmOqzVGPeGedrRBKRSQ
+Date: Thu, 24 Jul 2025 11:50:07 +0000
+Message-ID: <f20d8904fd014846b6096551b445be40@huawei.com>
+References: <20250619071037.37325-1-david.marchand@redhat.com>
+ <20250723133157.159825-1-david.marchand@redhat.com>
+ <20250723133157.159825-12-david.marchand@redhat.com>
+In-Reply-To: <20250723133157.159825-12-david.marchand@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.137.70]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.50.165.33]
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemo500011.china.huawei.com (7.202.195.194)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,62 +56,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The worker_id may come from user input. So it is necessary to verify it.
+> -----Original Message-----
+> From: David Marchand <david.marchand@redhat.com>
+> Sent: Wednesday 23 July 2025 14:32
+> To: dev@dpdk.org
+> Cc: Bruce Richardson <bruce.richardson@intel.com>
+> Subject: [PATCH v5 11/22] test/telemetry: catch errors in subshell
+>=20
+> This script relies on subshell and pipes to prepare a list of commands
+> to pass to the telemetry script.
+>=20
+> However, errors are not propagated to the parent process and the test
+> may still pass when an error occurs.
+> There is no POSIX option to cleanly catch all errors, so rely on bash
+> options (as some CI envs run with bash).
+>=20
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> ---
+>  app/test/suites/test_telemetry.sh | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/app/test/suites/test_telemetry.sh
+> b/app/test/suites/test_telemetry.sh
+> index 20806b43e4..3c5b629b63 100755
+> --- a/app/test/suites/test_telemetry.sh
+> +++ b/app/test/suites/test_telemetry.sh
+> @@ -15,7 +15,7 @@ call_all_telemetry() {
+>      telemetry_script=3D$rootdir/usertools/dpdk-telemetry.py
+>      echo >$tmpoutput
+>      echo "Telemetry commands log:" >>$tmpoutput
+> -    for cmd in $(echo / | $telemetry_script | jq -r '.["/"][]')
+> +    echo / | $telemetry_script | jq -r '.["/"][]' | while read cmd
+>      do
+>          for input in $cmd $cmd,0 $cmd,z
+>          do
+> @@ -25,4 +25,6 @@ call_all_telemetry() {
+>      done
+>  }
+>=20
+> +! set -o | grep -q errtrace || set -o errtrace
+> +! set -o | grep -q pipefail || set -o pipefail
+>  (sleep 1 && call_all_telemetry && echo quit) | $@
+> --
+> 2.50.0
 
-In addition, only the lcore whose role is ROLE_RTE or ROLE_SERVICE can be
-launched. This patch adds the lcore role check.
-
-Fixes: a95d70547c57 ("eal: factorize lcore main loop")
-Cc: stable@dpdk.org
-
-Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
----
- lib/eal/common/eal_common_launch.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/lib/eal/common/eal_common_launch.c b/lib/eal/common/eal_common_launch.c
-index a7deac6ecd..09366ea404 100644
---- a/lib/eal/common/eal_common_launch.c
-+++ b/lib/eal/common/eal_common_launch.c
-@@ -20,6 +20,9 @@ RTE_EXPORT_SYMBOL(rte_eal_wait_lcore)
- int
- rte_eal_wait_lcore(unsigned worker_id)
- {
-+	if (unlikely(worker_id >= RTE_MAX_LCORE))
-+		return -EINVAL;
-+
- 	while (rte_atomic_load_explicit(&lcore_config[worker_id].state,
- 			rte_memory_order_acquire) != WAIT)
- 		rte_pause();
-@@ -37,6 +40,18 @@ int
- rte_eal_remote_launch(lcore_function_t *f, void *arg, unsigned int worker_id)
- {
- 	int rc = -EBUSY;
-+	uint8_t role;
-+
-+	if (unlikely(worker_id >= RTE_MAX_LCORE)) {
-+		rc = -EINVAL;
-+		goto finish;
-+	}
-+
-+	role = lcore_config[worker_id].core_role;
-+	if (role != ROLE_RTE && role != ROLE_SERVICE) {
-+		rc = -EINVAL;
-+		goto finish;
-+	}
- 
- 	/* Check if the worker is in 'WAIT' state. Use acquire order
- 	 * since 'state' variable is used as the guard variable.
-@@ -98,6 +113,9 @@ RTE_EXPORT_SYMBOL(rte_eal_get_lcore_state)
- enum rte_lcore_state_t
- rte_eal_get_lcore_state(unsigned lcore_id)
- {
-+	if (unlikely(lcore_id >= RTE_MAX_LCORE))
-+		return -EINVAL;
-+
- 	return lcore_config[lcore_id].state;
- }
- 
--- 
-2.33.0
-
+Acked-by: Marat Khalili <marat.khalili@huawei.com>
