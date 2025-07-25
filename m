@@ -2,43 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4504EC87FCA
-	for <dpdk-dev@archiver.kernel.org>; Fri, 25 Jul 2025 15:26:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6416EC87FCE
+	for <dpdk-dev@archiver.kernel.org>; Fri, 25 Jul 2025 16:07:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4EDA7402A8;
-	Fri, 25 Jul 2025 17:26:43 +0200 (CEST)
-Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id 84B4540144
- for <dev@dpdk.org>; Fri, 25 Jul 2025 17:26:41 +0200 (CEST)
-Received: from debian (unknown [78.109.66.179])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id 1E8B4E03AE;
- Fri, 25 Jul 2025 19:26:40 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 1E8B4E03AE
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1753457200;
- bh=LTjb0l3/yrk6o3HA7Dmqcs3uWITcRLkJvFik7tufJyQ=;
- h=Date:From:To:cc:Subject:In-Reply-To:References:From;
- b=7g5jEt+MZIDWwKwzWzTtnG+wdm+oLvssMH/erdRQTiM1gElxvEFBm7KMcl5i6oAM5
- ZS5h3SSvL26drDRxwSPXg3BjSGiv8EbZTjufd1MobDo6e60z8EH1rqs9pH+4uhqOaE
- d4oitIyOt/pfrJb2mXQCD3tEK7MKigUCSQdJU6XXFny91DOnzybRJ838NnKKFMShL0
- kxih05cyw/zirlGSJ5vPByiNWaZVT8CMcMOd7JS71GYy9cWo54Tvy8lqu7Qrfyrikr
- cIyTBLGuEF/ZJser9HacFVaK1wDaxprc1IZlMwTgPUz2LMxlkBjvoB4wuzMG0ON/hA
- aPZe1elag3uKw==
-Date: Fri, 25 Jul 2025 19:26:31 +0400 (+04)
-From: Ivan Malov <ivan.malov@arknetworks.am>
-To: Jie Liu <liujie5@linkdatatechnology.com>
-cc: stephen@networkplumber.org, dev@dpdk.org
-Subject: Re: [PATCH v11 07/13] net/sxe: support rss offload
-In-Reply-To: <20250725104855.73326-7-liujie5@linkdatatechnology.com>
-Message-ID: <f6ac4e9d-617f-8968-6332-52f435bdc2ea@arknetworks.am>
-References: <20250719090537.699357-14-liujie5@linkdatatechnology.com>
- <20250725104855.73326-1-liujie5@linkdatatechnology.com>
- <20250725104855.73326-7-liujie5@linkdatatechnology.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 86F7540144;
+	Fri, 25 Jul 2025 18:07:41 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 70162400D5
+ for <dev@dpdk.org>; Fri, 25 Jul 2025 18:07:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1753459659; x=1784995659;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=3EntRU2Xdh0yFbZrPFUEfD/tGM68nWd1keyf6OVc37A=;
+ b=KUZoWaUGfFuBWpMqXl4xZuz7sOEtPVpdqcYwT0xejM5kXAVPjMnBPPIF
+ DCAceSscm4oSFFVJY/k9x215UmTxhVBWR+0/fApujM6DJp/HlIDH2eKbz
+ +xi5pcalL9ahtjIGxoC2wOVt28Q8gZUtEPsPVc6Gg2fZBcTavm/zpElgW
+ pPoFG3xBkRN5Qsw+J+Q7MREOuTmYh+II4ySbli1SnA72CgpBonOg/gHux
+ fX5Jh0PEaGSThNJXEy3lp93PyBiUaWRGqKnhvH5mUkWVzA5ydgIsymusS
+ ROiR9wr/sZwEQKQclO9JW3S8OfmgmUopfEI85SpP+KU6jyVPJkWlUOWBl w==;
+X-CSE-ConnectionGUID: MREW71a1Tzuu6MPMNWtC3w==
+X-CSE-MsgGUID: CnnFe/uZQc2WILNsaNXrkA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11503"; a="55677405"
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; d="scan'208";a="55677405"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 25 Jul 2025 09:07:38 -0700
+X-CSE-ConnectionGUID: LfvZdT+bS/eeYUrmmHytAA==
+X-CSE-MsgGUID: QDUamoHrSfOCiy4oJexvtg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; d="scan'208";a="160173266"
+Received: from silpixa00401385.ir.intel.com ([10.237.214.33])
+ by orviesa006.jf.intel.com with ESMTP; 25 Jul 2025 09:07:37 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: david.marchand@redhat.com,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v2] build: remove obsolete compiler checks
+Date: Fri, 25 Jul 2025 17:06:28 +0100
+Message-ID: <20250725160730.18354-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250718121402.856265-1-bruce.richardson@intel.com>
+References: <20250718121402.856265-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,452 +60,254 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi,
+DPDK now recommends compiler versions GCC 8+, and Clang 7+, so remove
+checks and workarounds for versions old than these.
 
-(please see below)
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+V2: Fix feedback from V1.
+* remove obsolete comment from arm/meson.build
+* sort octeontx alphabetically in driver list
+---
+ config/arm/meson.build              |  1 -
+ config/meson.build                  |  5 ----
+ drivers/event/meson.build           |  5 +---
+ drivers/meson.build                 |  2 +-
+ drivers/net/virtio/meson.build      |  2 +-
+ lib/eal/arm/include/rte_memcpy_64.h |  8 -------
+ lib/eal/arm/include/rte_vect.h      | 37 ++---------------------------
+ lib/eal/ppc/include/rte_altivec.h   |  1 -
+ lib/meson.build                     |  2 +-
+ lib/vhost/meson.build               |  4 ++--
+ lib/vhost/vhost.c                   | 16 -------------
+ 11 files changed, 8 insertions(+), 75 deletions(-)
 
-On Fri, 25 Jul 2025, Jie Liu wrote:
+diff --git a/config/arm/meson.build b/config/arm/meson.build
+index 35b7553e74..c0dc42e7d1 100644
+--- a/config/arm/meson.build
++++ b/config/arm/meson.build
+@@ -13,7 +13,6 @@ flags_common = [
+         #    ['RTE_ARM64_MEMCPY_UNALIGNED_THRESHOLD', 512],
+         # Leave below RTE_ARM64_MEMCPY_xxx options commented out,
+         # unless there are strong reasons.
+-        #    ['RTE_ARM64_MEMCPY_SKIP_GCC_VER_CHECK', false],
+         #    ['RTE_ARM64_MEMCPY_ALIGN_MASK', 0xF],
+         #    ['RTE_ARM64_MEMCPY_STRICT_ALIGN', false],
 
-> Support rss offload.
->
-> Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
-> ---
-> drivers/net/sxe/base/sxe_offload_common.c |  11 +-
-> drivers/net/sxe/pf/sxe_offload.c          | 299 ++++++++++++++++++++++
-> drivers/net/sxe/pf/sxe_offload.h          |  33 +++
-> 3 files changed, 338 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/net/sxe/base/sxe_offload_common.c b/drivers/net/sxe/base/sxe_offload_common.c
-> index 9c4ffd3b86..780681a994 100644
-> --- a/drivers/net/sxe/base/sxe_offload_common.c
-> +++ b/drivers/net/sxe/base/sxe_offload_common.c
-> @@ -22,15 +22,16 @@ u64 __sxe_rx_port_offload_capa_get(struct rte_eth_dev *dev)
-> 	u64 rx_offload_capa;
->
-> 	rx_offload_capa = RTE_ETH_RX_OFFLOAD_IPV4_CKSUM  |
-> -		   RTE_ETH_RX_OFFLOAD_UDP_CKSUM   |
-> -		   RTE_ETH_RX_OFFLOAD_TCP_CKSUM   |
-> -		   RTE_ETH_RX_OFFLOAD_KEEP_CRC	|
+diff --git a/config/meson.build b/config/meson.build
+index f31fef216c..c7a780dcc8 100644
+--- a/config/meson.build
++++ b/config/meson.build
+@@ -492,11 +492,6 @@ if get_option('b_lto')
+     else
+         error('compiler does not support fat LTO objects - please turn LTO off')
+     endif
+-    # workaround for gcc bug 81440
+-    if cc.get_id() == 'gcc' and cc.version().version_compare('<8.0')
+-        add_project_arguments('-Wno-lto-type-mismatch', language: 'c')
+-        add_project_link_arguments('-Wno-lto-type-mismatch', language: 'c')
+-    endif
+ endif
 
-Why not fix the indentation in one of the original/previous patch, to avoid
-these changes?
+ if get_option('b_sanitize') == 'address' or get_option('b_sanitize') == 'address,undefined'
+diff --git a/drivers/event/meson.build b/drivers/event/meson.build
+index d6706b57f7..ddaa0300ac 100644
+--- a/drivers/event/meson.build
++++ b/drivers/event/meson.build
+@@ -11,12 +11,9 @@ drivers = [
+         'dpaa',
+         'dpaa2',
+         'dsw',
++        'octeontx',
+         'opdl',
+         'skeleton',
+         'sw',
+ ]
+-if not (toolchain == 'gcc' and cc.version().version_compare('<4.8.6') and
+-        dpdk_conf.has('RTE_ARCH_ARM64'))
+-    drivers += 'octeontx'
+-endif
+ std_deps = ['eventdev', 'kvargs']
+diff --git a/drivers/meson.build b/drivers/meson.build
+index b62880db02..2760f4d593 100644
+--- a/drivers/meson.build
++++ b/drivers/meson.build
+@@ -237,7 +237,7 @@ foreach subpath:subdirs
+         enabled_drivers += name
+         lib_name = '_'.join(['rte', class, name])
+         cflags += '-DRTE_LOG_DEFAULT_LOGTYPE=' + '.'.join([log_prefix, name])
+-        if annotate_locks and cc.get_id() == 'clang' and cc.version().version_compare('>=3.5.0')
++        if annotate_locks and cc.get_id() == 'clang'
+             cflags += '-DRTE_ANNOTATE_LOCKS'
+             cflags += '-Wthread-safety'
+         endif
+diff --git a/drivers/net/virtio/meson.build b/drivers/net/virtio/meson.build
+index d3caa3a3b4..a9ff87e863 100644
+--- a/drivers/net/virtio/meson.build
++++ b/drivers/net/virtio/meson.build
+@@ -31,7 +31,7 @@ if arch_subdir == 'x86'
+         sources_avx512 += files('virtio_rxtx_packed.c')
+         if (toolchain == 'gcc' and cc.version().version_compare('>=8.3.0'))
+             cflags += '-DVIRTIO_GCC_UNROLL_PRAGMA'
+-        elif (toolchain == 'clang' and cc.version().version_compare('>=3.7.0'))
++        elif (toolchain == 'clang')
+             cflags += '-DVIRTIO_CLANG_UNROLL_PRAGMA'
+         endif
+     endif
+diff --git a/lib/eal/arm/include/rte_memcpy_64.h b/lib/eal/arm/include/rte_memcpy_64.h
+index 90039039be..57fe24eb10 100644
+--- a/lib/eal/arm/include/rte_memcpy_64.h
++++ b/lib/eal/arm/include/rte_memcpy_64.h
+@@ -89,14 +89,6 @@ n <= (size_t)RTE_ARM64_MEMCPY_UNALIGNED_THRESHOLD)
+  **************************************/
 
-> +			RTE_ETH_RX_OFFLOAD_UDP_CKSUM   |
-> +			RTE_ETH_RX_OFFLOAD_TCP_CKSUM   |
-> +			RTE_ETH_RX_OFFLOAD_KEEP_CRC	|
-> #ifdef DEV_RX_JUMBO_FRAME
-> -		   DEV_RX_OFFLOAD_JUMBO_FRAME |
-> +			DEV_RX_OFFLOAD_JUMBO_FRAME |
-> #endif
-> 			RTE_ETH_RX_OFFLOAD_VLAN_FILTER |
-> 			RTE_ETH_RX_OFFLOAD_VLAN_EXTEND |
-> -		   RTE_ETH_RX_OFFLOAD_SCATTER;
-> +			RTE_ETH_RX_OFFLOAD_SCATTER |
-> +			RTE_ETH_RX_OFFLOAD_RSS_HASH;
->
-> 	if (!RTE_ETH_DEV_SRIOV(dev).active)
-> 		rx_offload_capa |= RTE_ETH_RX_OFFLOAD_TCP_LRO;
-> diff --git a/drivers/net/sxe/pf/sxe_offload.c b/drivers/net/sxe/pf/sxe_offload.c
-> index 0fa3f4822a..d34cf7ecc8 100644
-> --- a/drivers/net/sxe/pf/sxe_offload.c
-> +++ b/drivers/net/sxe/pf/sxe_offload.c
-> @@ -9,11 +9,26 @@
-> #include "sxe_queue_common.h"
-> #include "sxe_offload_common.h"
->
-> +static u8 rss_sxe_key[40] = {
 
-Const?
+-#if RTE_CC_IS_GNU && !defined RTE_ARM64_MEMCPY_SKIP_GCC_VER_CHECK
+-#if (GCC_VERSION < 50400)
+-#warning "The GCC version is quite old, which may result in sub-optimal \
+-performance of the compiled code. It is suggested that at least GCC 5.4.0 \
+-be used."
+-#endif
+-#endif
+-
+ static __rte_always_inline
+ void rte_mov16(uint8_t *dst, const uint8_t *src)
+ {
+diff --git a/lib/eal/arm/include/rte_vect.h b/lib/eal/arm/include/rte_vect.h
+index c97d299a3e..149458288e 100644
+--- a/lib/eal/arm/include/rte_vect.h
++++ b/lib/eal/arm/include/rte_vect.h
+@@ -67,11 +67,8 @@ vaddvq_u16(uint16x8_t a)
 
-> +	0x6D, 0x5A, 0x56, 0xDA, 0x25, 0x5B, 0x0E, 0xC2,
-> +	0x41, 0x67, 0x25, 0x3D, 0x43, 0xA3, 0x8F, 0xB0,
-> +	0xD0, 0xCA, 0x2B, 0xCB, 0xAE, 0x7B, 0x30, 0xB4,
-> +	0x77, 0xCB, 0x2D, 0xA3, 0x80, 0x30, 0xF2, 0x0C,
-> +	0x6A, 0x42, 0xB7, 0x3B, 0xBE, 0xAC, 0x01, 0xFA,
-> +};
-> +
-> #define SXE_4_BIT_WIDTH  (CHAR_BIT / 2)
-> #define SXE_4_BIT_MASK   RTE_LEN2MASK(SXE_4_BIT_WIDTH, u8)
-> #define SXE_8_BIT_WIDTH  CHAR_BIT
-> #define SXE_8_BIT_MASK   UINT8_MAX
->
-> +#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_FILTER_CTRL
-> +u8 *sxe_rss_hash_key_get(void)
+ #endif
 
-Is this unused in the driver?
+-#if (defined(RTE_ARCH_ARM) && defined(RTE_ARCH_32)) || \
+-(defined(RTE_ARCH_ARM64) && RTE_CC_IS_GNU && (GCC_VERSION < 70000))
+-/* NEON intrinsic vcopyq_laneq_u32() is not supported in ARMv7-A(AArch32)
+- * On AArch64, this intrinsic is supported since GCC version 7.
+- */
++#if defined(RTE_ARCH_ARM) && defined(RTE_ARCH_32)
++/* NEON intrinsic vcopyq_laneq_u32() is not supported in ARMv7-A(AArch32) */
+ static inline uint32x4_t
+ vcopyq_laneq_u32(uint32x4_t a, const int lane_a,
+ 		 uint32x4_t b, const int lane_b)
+@@ -80,36 +77,6 @@ vcopyq_laneq_u32(uint32x4_t a, const int lane_a,
+ }
+ #endif
 
-> +{
-> +	return rss_sxe_key;
-> +}
-> +#endif
-> +
-> u64 sxe_rx_queue_offload_capa_get(struct rte_eth_dev *dev)
-> {
-> 	return __sxe_rx_queue_offload_capa_get(dev);
-> @@ -35,3 +50,287 @@ u64 sxe_tx_port_offload_capa_get(struct rte_eth_dev *dev)
-> {
-> 	return __sxe_tx_port_offload_capa_get(dev);
-> }
-> +
-> +void sxe_rss_disable(struct rte_eth_dev *dev)
-> +{
-> +	struct sxe_adapter *adapter = dev->data->dev_private;
-> +	struct sxe_hw *hw = &adapter->hw;
-> +
-> +	PMD_INIT_FUNC_TRACE();
-> +
-> +	sxe_hw_rss_cap_switch(hw, false);
-> +}
-> +
-> +void sxe_rss_hash_set(struct sxe_hw *hw,
-> +				struct rte_eth_rss_conf *rss_conf)
-> +{
-> +	u8  *hash_key;
-> +	u32 rss_key[SXE_MAX_RSS_KEY_ENTRIES];
-> +	u16 i;
-> +	u64 rss_hf;
-> +	u32 rss_field = 0;
-> +
-> +	PMD_INIT_FUNC_TRACE();
-> +
-> +	hash_key = rss_conf->rss_key;
-> +	if (hash_key != NULL) {
-> +		for (i = 0; i < SXE_MAX_RSS_KEY_ENTRIES; i++) {
-> +			rss_key[i]  = hash_key[(i * 4)];
-> +			rss_key[i] |= hash_key[(i * 4) + 1] << 8;
-> +			rss_key[i] |= hash_key[(i * 4) + 2] << 16;
-> +			rss_key[i] |= hash_key[(i * 4) + 3] << 24;
+-#if defined(RTE_ARCH_ARM64)
+-#if RTE_CC_IS_GNU && (GCC_VERSION < 70000)
+-
+-/* NEON intrinsic vreinterpretq_u64_p128() is supported since GCC version 7 */
+-static inline uint64x2_t
+-vreinterpretq_u64_p128(poly128_t x)
+-{
+-	return (uint64x2_t)x;
+-}
+-
+-/* NEON intrinsic vreinterpretq_p64_u64() is supported since GCC version 7 */
+-static inline poly64x2_t
+-vreinterpretq_p64_u64(uint64x2_t x)
+-{
+-	return (poly64x2_t)x;
+-}
+-
+-/* NEON intrinsic vgetq_lane_p64() is supported since GCC version 7 */
+-static inline poly64_t
+-vgetq_lane_p64(poly64x2_t x, const int lane)
+-{
+-	RTE_ASSERT(lane >= 0 && lane <= 1);
+-
+-	poly64_t *p = (poly64_t *)&x;
+-
+-	return p[lane];
+-}
+-#endif
+-#endif
+-
+ /*
+  * If (0 <= index <= 15), then call the ASIMD ext instruction on the
+  * 128 bit regs v0 and v1 with the appropriate index.
+diff --git a/lib/eal/ppc/include/rte_altivec.h b/lib/eal/ppc/include/rte_altivec.h
+index 7c088d2d16..bc8548f11e 100644
+--- a/lib/eal/ppc/include/rte_altivec.h
++++ b/lib/eal/ppc/include/rte_altivec.h
+@@ -6,7 +6,6 @@
+ #ifndef _RTE_ALTIVEC_H_
+ #define _RTE_ALTIVEC_H_
 
-The code does not seem to check 'rss_conf->rss_key_len' to guarantee it is at
-least 'SXE_MAX_RSS_KEY_ENTRIES * 4', to avoid reading past the buffer.
+-/* To include altivec.h, GCC version must be >= 4.8 */
+ #include <altivec.h>
 
-> +		}
-> +		sxe_hw_rss_key_set_all(hw, rss_key);
-> +	}
-> +
-> +	rss_hf = rss_conf->rss_hf;
-> +	if (rss_hf & RTE_ETH_RSS_IPV4)
-> +		rss_field |= SXE_MRQC_RSS_FIELD_IPV4;
-> +
-> +	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV4_TCP)
-> +		rss_field |= SXE_MRQC_RSS_FIELD_IPV4_TCP;
-> +
-> +	if (rss_hf & RTE_ETH_RSS_IPV6)
-> +		rss_field |= SXE_MRQC_RSS_FIELD_IPV6;
-> +
-> +	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_TCP)
-> +		rss_field |= SXE_MRQC_RSS_FIELD_IPV6_TCP;
-> +
-> +	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV4_UDP)
-> +		rss_field |= SXE_MRQC_RSS_FIELD_IPV4_UDP;
-> +
-> +	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_UDP)
-> +		rss_field |= SXE_MRQC_RSS_FIELD_IPV6_UDP;
-> +
-> +	sxe_hw_rss_field_set(hw, rss_field);
-> +
-> +	sxe_hw_rss_cap_switch(hw, true);
-> +}
-> +
-> +void sxe_rss_configure(struct rte_eth_dev *dev)
-> +{
-> +	struct rte_eth_rss_conf *rss_conf;
-> +	struct sxe_adapter *adapter = dev->data->dev_private;
-> +	struct sxe_hw *hw = &adapter->hw;
-> +	u16 i;
-> +	u16 j;
-> +	u8  rss_indir_tbl[SXE_MAX_RETA_ENTRIES];
-> +
-> +	PMD_INIT_FUNC_TRACE();
-> +
-> +	if (!adapter->rss_reta_updated) {
-> +		for (i = 0, j = 0; i < SXE_MAX_RETA_ENTRIES; i++, j++) {
-> +			if (j == dev->data->nb_rx_queues)
-> +				j = 0;
-> +
-> +			rss_indir_tbl[i] = j;
-> +		}
+ /*
+diff --git a/lib/meson.build b/lib/meson.build
+index 0d56b2083b..a67efaf718 100644
+--- a/lib/meson.build
++++ b/lib/meson.build
+@@ -244,7 +244,7 @@ foreach l:libraries
+         cflags += '-DRTE_USE_FUNCTION_VERSIONING'
+     endif
+     cflags += '-DRTE_LOG_DEFAULT_LOGTYPE=lib.' + l
+-    if annotate_locks and cc.get_id() == 'clang' and cc.version().version_compare('>=3.5.0')
++    if annotate_locks and cc.get_id() == 'clang'
+         cflags += '-DRTE_ANNOTATE_LOCKS'
+         cflags += '-Wthread-safety'
+     endif
+diff --git a/lib/vhost/meson.build b/lib/vhost/meson.build
+index 9c6325aa0e..a74d0cff7c 100644
+--- a/lib/vhost/meson.build
++++ b/lib/vhost/meson.build
+@@ -8,9 +8,9 @@ endif
+ if has_libnuma
+     dpdk_conf.set10('RTE_LIBRTE_VHOST_NUMA', true)
+ endif
+-if (toolchain == 'gcc' and cc.version().version_compare('>=8.3.0'))
++if (toolchain == 'gcc')
+     cflags += '-DVHOST_GCC_UNROLL_PRAGMA'
+-elif (toolchain == 'clang' and cc.version().version_compare('>=3.7.0'))
++elif (toolchain == 'clang')
+     cflags += '-DVHOST_CLANG_UNROLL_PRAGMA'
+ endif
+ dpdk_conf.set('RTE_LIBRTE_VHOST_POSTCOPY', cc.has_header('linux/userfaultfd.h'))
+diff --git a/lib/vhost/vhost.c b/lib/vhost/vhost.c
+index a2e3e2635d..416f082dca 100644
+--- a/lib/vhost/vhost.c
++++ b/lib/vhost/vhost.c
+@@ -128,16 +128,8 @@ __vhost_iova_to_vva(struct virtio_net *dev, struct vhost_virtqueue *vq,
+ static __rte_always_inline void
+ vhost_set_bit(unsigned int nr, volatile uint8_t *addr)
+ {
+-#if defined(RTE_TOOLCHAIN_GCC) && (GCC_VERSION < 70100)
+-	/*
+-	 * __sync_ built-ins are deprecated, but rte_atomic_ ones
+-	 * are sub-optimized in older GCC versions.
+-	 */
+-	__sync_fetch_and_or_1(addr, (1U << nr));
+-#else
+ 	rte_atomic_fetch_or_explicit((volatile uint8_t __rte_atomic *)addr, (1U << nr),
+ 		rte_memory_order_relaxed);
+-#endif
+ }
 
-Why not just
-     for (i = 0; i < SXE_MAX_RETA_ENTRIES; ++i)
-         rss_indir_tbl[i] = i % dev->data->nb_rx_queues;
+ static __rte_always_inline void
+@@ -207,17 +199,9 @@ __vhost_log_cache_sync(struct virtio_net *dev, struct vhost_virtqueue *vq)
+ 	for (i = 0; i < vq->log_cache_nb_elem; i++) {
+ 		struct log_cache_entry *elem = vq->log_cache + i;
 
-> +
-> +		sxe_hw_rss_redir_tbl_set_all(hw, rss_indir_tbl);
-> +	}
-> +
-> +	rss_conf = &dev->data->dev_conf.rx_adv_conf.rss_conf;
-> +	if ((rss_conf->rss_hf & SXE_RSS_OFFLOAD_ALL) == 0) {
-> +		PMD_LOG_INFO(INIT, "user rss config match hw supports is 0");
+-#if defined(RTE_TOOLCHAIN_GCC) && (GCC_VERSION < 70100)
+-		/*
+-		 * '__sync' builtins are deprecated, but 'rte_atomic' ones
+-		 * are sub-optimized in older GCC versions.
+-		 */
+-		__sync_fetch_and_or(log_base + elem->offset, elem->val);
+-#else
+ 		rte_atomic_fetch_or_explicit(
+ 			(unsigned long __rte_atomic *)(log_base + elem->offset),
+ 			elem->val, rte_memory_order_relaxed);
+-#endif
+ 	}
 
-The info message is a little confusing.
+ 	rte_atomic_thread_fence(rte_memory_order_release);
+--
+2.48.1
 
-> +		sxe_rss_disable(dev);
-> +		return;
-> +	}
-> +
-> +	if (rss_conf->rss_key == NULL)
-> +		rss_conf->rss_key = rss_sxe_key;
-
-Perhaps also set 'rss_conf->rss_key_len'?
-
-> +
-> +	sxe_rss_hash_set(hw, rss_conf);
-> +}
-> +
-> +s32 sxe_rss_reta_update(struct rte_eth_dev *dev,
-> +			struct rte_eth_rss_reta_entry64 *reta_conf,
-> +			u16 reta_size)
-> +{
-> +	u16 i;
-> +	u8 j, mask;
-> +	u32 reta, r;
-> +	u16 idx, shift;
-> +	struct sxe_adapter *adapter = dev->data->dev_private;
-> +	struct rte_eth_dev_data *dev_data = dev->data;
-> +	struct sxe_hw *hw = &adapter->hw;
-> +	s32 ret = 0;
-> +
-> +	PMD_INIT_FUNC_TRACE();
-> +
-> +	if (!dev_data->dev_started) {
-> +		PMD_LOG_ERR(DRV,
-> +			"port %d must be started before rss reta update",
-> +			 dev_data->port_id);
-
-Why not memorise the table to be applied later on port start? Why deny it?
-
-> +		ret = -EIO;
-> +		goto l_end;
-> +	}
-> +
-> +	if (reta_size != RTE_ETH_RSS_RETA_SIZE_128) {
-> +		PMD_LOG_ERR(DRV, "The size of hash lookup table configured "
-> +			"(%d) doesn't match the number hardware can supported "
-> +			"(%d)", reta_size, RTE_ETH_RSS_RETA_SIZE_128);
-> +		ret = -EINVAL;
-> +		goto l_end;
-> +	}
-> +
-> +	for (i = 0; i < reta_size; i += SXE_4_BIT_WIDTH) {
-> +		idx = i / RTE_ETH_RETA_GROUP_SIZE;
-> +		shift = i % RTE_ETH_RETA_GROUP_SIZE;
-> +		mask = (u8)((reta_conf[idx].mask >> shift) &
-> +						SXE_4_BIT_MASK);
-> +		if (!mask)
-> +			continue;
-> +
-> +		if (mask == SXE_4_BIT_MASK)
-> +			r = 0;
-> +		else
-> +			r = sxe_hw_rss_redir_tbl_get_by_idx(hw, i);
-> +
-> +		for (j = 0, reta = 0; j < SXE_4_BIT_WIDTH; j++) {
-> +			if (mask & (0x1 << j)) {
-> +				reta |= reta_conf[idx].reta[shift + j] <<
-> +						(CHAR_BIT * j);
-> +			} else {
-> +				reta |= r & (SXE_8_BIT_MASK <<
-> +					(CHAR_BIT * j));
-> +			}
-> +		}
-> +
-> +		sxe_hw_rss_redir_tbl_set_by_idx(hw, i, reta);
-> +	}
-> +	adapter->rss_reta_updated = true;
-> +
-> +l_end:
-> +	return ret;
-> +}
-> +
-> +s32 sxe_rss_reta_query(struct rte_eth_dev *dev,
-> +			 struct rte_eth_rss_reta_entry64 *reta_conf,
-> +			 u16 reta_size)
-> +{
-> +	u16 i;
-> +	u8 j, mask;
-> +	u32 reta;
-> +	u16 idx, shift;
-> +	struct sxe_adapter *adapter = dev->data->dev_private;
-> +	struct sxe_hw *hw = &adapter->hw;
-> +	s32 ret = 0;
-> +
-> +	PMD_INIT_FUNC_TRACE();
-> +	if (reta_size != RTE_ETH_RSS_RETA_SIZE_128) {
-> +		PMD_LOG_ERR(DRV, "the size of hash lookup table configured "
-> +			"(%d) doesn't match the number hardware can supported "
-> +			"(%d)", reta_size, RTE_ETH_RSS_RETA_SIZE_128);
-> +		ret = -EINVAL;
-> +		goto l_end;
-> +	}
-> +
-> +	for (i = 0; i < reta_size; i += SXE_4_BIT_WIDTH) {
-> +		idx = i / RTE_ETH_RETA_GROUP_SIZE;
-> +		shift = i % RTE_ETH_RETA_GROUP_SIZE;
-> +		mask = (u8)((reta_conf[idx].mask >> shift) &
-> +						SXE_4_BIT_MASK);
-> +		if (!mask)
-> +			continue;
-> +
-> +		reta = sxe_hw_rss_redir_tbl_get_by_idx(hw, i);
-> +		for (j = 0; j < SXE_4_BIT_WIDTH; j++) {
-> +			if (mask & (0x1 << j)) {
-> +				reta_conf[idx].reta[shift + j] =
-> +					((reta >> (CHAR_BIT * j)) &
-> +						SXE_8_BIT_MASK);
-> +			}
-> +		}
-> +	}
-> +
-> +l_end:
-> +	return ret;
-> +}
-> +
-> +s32 sxe_rss_hash_update(struct rte_eth_dev *dev,
-> +			struct rte_eth_rss_conf *rss_conf)
-> +{
-> +	struct sxe_adapter *adapter = dev->data->dev_private;
-> +	struct sxe_hw *hw = &adapter->hw;
-> +	u64 rss_hf;
-> +	s32 ret = 0;
-> +
-> +	rss_hf = (rss_conf->rss_hf & SXE_RSS_OFFLOAD_ALL);
-
-Shan't one throw an error on '(rss_conf->rss_hf & ~SXE_RSS_OFFLOAD_ALL) != 0'?
-
-> +
-> +	if (!sxe_hw_is_rss_enabled(hw)) {
-> +		if (rss_hf != 0) {
-> +			PMD_LOG_ERR(DRV, "rss not init but want set");
-> +			ret = -EINVAL;
-> +			goto l_end;
-> +		}
-> +
-> +		goto l_end;
-> +	}
-> +
-> +	if (rss_hf == 0) {
-> +		PMD_LOG_ERR(DRV, "rss init but want disable it");
-> +		ret = -EINVAL;
-> +		goto l_end;
-> +	}
-> +
-> +	sxe_rss_hash_set(hw, rss_conf);
-> +
-> +l_end:
-> +	return ret;
-> +}
-> +
-> +s32 sxe_rss_hash_conf_get(struct rte_eth_dev *dev,
-> +				struct rte_eth_rss_conf *rss_conf)
-> +{
-> +	struct sxe_adapter *adapter = dev->data->dev_private;
-> +	struct sxe_hw *hw = &adapter->hw;
-> +	u8 *hash_key;
-> +	u32 rss_field;
-> +	u32 rss_key;
-> +	u64 rss_hf;
-> +	u16 i;
-> +
-> +	hash_key = rss_conf->rss_key;
-
-No check of 'rss_conf->rss_key_len'?
-
-Thank you.
-
-> +	if (hash_key != NULL) {
-> +		for (i = 0; i < SXE_MAX_RSS_KEY_ENTRIES; i++) {
-> +			rss_key = sxe_hw_rss_key_get_by_idx(hw, i);
-> +			hash_key[(i * 4)] = rss_key & 0x000000FF;
-> +			hash_key[(i * 4) + 1] = (rss_key >> 8) & 0x000000FF;
-> +			hash_key[(i * 4) + 2] = (rss_key >> 16) & 0x000000FF;
-> +			hash_key[(i * 4) + 3] = (rss_key >> 24) & 0x000000FF;
-> +		}
-> +	}
-> +
-> +
-> +	if (!sxe_hw_is_rss_enabled(hw)) {
-> +		rss_conf->rss_hf = 0;
-> +		PMD_LOG_INFO(DRV, "rss not enabled, return 0");
-> +		goto l_end;
-> +	}
-> +
-> +	rss_hf = 0;
-> +	rss_field = sxe_hw_rss_field_get(hw);
-> +	if (rss_field & SXE_MRQC_RSS_FIELD_IPV4)
-> +		rss_hf |= RTE_ETH_RSS_IPV4;
-> +
-> +	if (rss_field & SXE_MRQC_RSS_FIELD_IPV4_TCP)
-> +		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV4_TCP;
-> +
-> +	if (rss_field & SXE_MRQC_RSS_FIELD_IPV4_UDP)
-> +		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV4_UDP;
-> +
-> +	if (rss_field & SXE_MRQC_RSS_FIELD_IPV6)
-> +		rss_hf |= RTE_ETH_RSS_IPV6;
-> +
-> +	if (rss_field & SXE_MRQC_RSS_FIELD_IPV6_TCP)
-> +		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV6_TCP;
-> +
-> +	if (rss_field & SXE_MRQC_RSS_FIELD_IPV6_UDP)
-> +		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV6_UDP;
-> +
-> +	PMD_LOG_DEBUG(DRV, "got rss hash func=0x%" SXE_PRIX64, rss_hf);
-> +	rss_conf->rss_hf = rss_hf;
-> +
-> +l_end:
-> +	return 0;
-> +}
-> diff --git a/drivers/net/sxe/pf/sxe_offload.h b/drivers/net/sxe/pf/sxe_offload.h
-> index a70d6bf94b..458b6464c5 100644
-> --- a/drivers/net/sxe/pf/sxe_offload.h
-> +++ b/drivers/net/sxe/pf/sxe_offload.h
-> @@ -7,6 +7,21 @@
->
-> #include "sxe_hw.h"
->
-> +#define SXE_RSS_OFFLOAD_ALL ( \
-> +		RTE_ETH_RSS_IPV4 | \
-> +		RTE_ETH_RSS_NONFRAG_IPV4_TCP | \
-> +		RTE_ETH_RSS_NONFRAG_IPV4_UDP | \
-> +		RTE_ETH_RSS_IPV6 | \
-> +		RTE_ETH_RSS_NONFRAG_IPV6_TCP | \
-> +		RTE_ETH_RSS_NONFRAG_IPV6_UDP)
-> +
-> +#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_FILTER_CTRL
-> +u8 *sxe_rss_hash_key_get(void);
-> +#endif
-> +
-> +void sxe_rss_hash_set(struct sxe_hw *hw,
-> +				struct rte_eth_rss_conf *rss_conf);
-> +
-> u64 sxe_rx_queue_offload_capa_get(struct rte_eth_dev *dev);
->
-> u64 sxe_rx_port_offload_capa_get(struct rte_eth_dev *dev);
-> @@ -15,4 +30,22 @@ u64 sxe_tx_queue_offload_capa_get(struct rte_eth_dev *dev);
->
-> u64 sxe_tx_port_offload_capa_get(struct rte_eth_dev *dev);
->
-> +void sxe_rss_disable(struct rte_eth_dev *dev);
-> +
-> +void sxe_rss_configure(struct rte_eth_dev *dev);
-> +
-> +s32 sxe_rss_reta_update(struct rte_eth_dev *dev,
-> +			struct rte_eth_rss_reta_entry64 *reta_conf,
-> +			u16 reta_size);
-> +
-> +s32 sxe_rss_reta_query(struct rte_eth_dev *dev,
-> +			 struct rte_eth_rss_reta_entry64 *reta_conf,
-> +			 u16 reta_size);
-> +
-> +s32 sxe_rss_hash_update(struct rte_eth_dev *dev,
-> +			struct rte_eth_rss_conf *rss_conf);
-> +
-> +s32 sxe_rss_hash_conf_get(struct rte_eth_dev *dev,
-> +				struct rte_eth_rss_conf *rss_conf);
-> +
-> #endif
-> -- 
-> 2.18.2
->
->
