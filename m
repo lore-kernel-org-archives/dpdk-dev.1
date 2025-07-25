@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6141FC87FCA
-	for <dpdk-dev@archiver.kernel.org>; Fri, 25 Jul 2025 12:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 519CAC87FCA
+	for <dpdk-dev@archiver.kernel.org>; Fri, 25 Jul 2025 12:51:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2927440669;
-	Fri, 25 Jul 2025 14:50:18 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 95DE94067D;
+	Fri, 25 Jul 2025 14:50:19 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id C928B40659
- for <dev@dpdk.org>; Fri, 25 Jul 2025 14:50:14 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id A5F0D40663
+ for <dev@dpdk.org>; Fri, 25 Jul 2025 14:50:15 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1753447815; x=1784983815;
+ t=1753447816; x=1784983816;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=puj1jTmK6W3+RRh2Bm14zd4iuxw5tpDrF49HHhDld/c=;
- b=CaYmtgVYbnemGQwKJu0u7fKnTWfOjEiu3wisPE+xScDeYfioWwcYxV16
- 0WYCKJXS0IeCaKrC/caj+iEfBhkSoAF+BW1XJVAy+zuFbBff8EQBk1Fmo
- Y54hML9b92CsW+/LRv3NEHz0YPhYE11peuNT9yfFH9dRCRZTBuPiAvi4g
- yelDHQ8CeG801YttWBG4FnHHx62fSBqa/ucFYU8UfY5PBxeZafPN+0ReK
- zidtS4qf/JOvC51+jtDZn2Azo3SjHCGmLbAOAMOESZ46zV83ibKKNIBM3
- Y2xX3BryoWD0thST2wNUlqJj1wqQsA8O1fZY2K3NcbXpw+H8czvzcwWhG A==;
-X-CSE-ConnectionGUID: glRiAwnqTJivuBnauMzFIQ==
-X-CSE-MsgGUID: sEhE1yLQQT62FaT97kM2FQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11503"; a="66480155"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; d="scan'208";a="66480155"
+ bh=vPigurZ/rGhUTPF7ZX62NsAkPtL+tHGCephtn/pa2T8=;
+ b=XDrcdpyWIpK45Yb0b/xAisV/BATbrSs4c7oT3Obub2YFBB80lMfLz4VW
+ 1Tq42X2Ic2yHiYQ3oZKkq8aqUZErrgsG5SFqtumCnyqmTsSJuw7C3gwku
+ KkVvJZLKabBRYPhsTHkpmMQmRW1KvEoFciqWX2U95prKZXE2TLOkhtVQh
+ nMD5wm7mbk0OPy7YwglvSUdoRfWN072hRDW8WrxnirmNCaGZ7VLoYrby+
+ 4f8xjQxLm0odtOpklNMVUoVEhpojL5KtXNlyw+n3c2yzrz8po6jDrcnR5
+ S1htp5l31pdMvBXv+8fkiGzmvhMsbvSoi2rCWLAsPT0kBA8Qr7kYa3Eoy Q==;
+X-CSE-ConnectionGUID: bNeKOiDwR3eHP1ZLfPF2Sg==
+X-CSE-MsgGUID: RfSK/SSkSFKhyjamQCZXXg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11503"; a="66480156"
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; d="scan'208";a="66480156"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 Jul 2025 05:50:14 -0700
-X-CSE-ConnectionGUID: lsYAd3YsRJyVCB2JYZC5Rw==
-X-CSE-MsgGUID: j4rbqAHdSzmpDGlTKNvroA==
+ 25 Jul 2025 05:50:15 -0700
+X-CSE-ConnectionGUID: /Ux0VeIdQCKvuupCaDIb+g==
+X-CSE-MsgGUID: 5lZdndEGSaugIcH57V8pUg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; d="scan'208";a="161152314"
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; d="scan'208";a="161152318"
 Received: from silpixa00401177.ir.intel.com ([10.237.213.77])
- by orviesa007.jf.intel.com with ESMTP; 25 Jul 2025 05:50:13 -0700
+ by orviesa007.jf.intel.com with ESMTP; 25 Jul 2025 05:50:14 -0700
 From: Ciara Loftus <ciara.loftus@intel.com>
 To: dev@dpdk.org
 Cc: Ciara Loftus <ciara.loftus@intel.com>
-Subject: [RFC PATCH 08/14] net/i40e: use the new common vector capability
- function
-Date: Fri, 25 Jul 2025 12:49:13 +0000
-Message-Id: <20250725124919.3564890-9-ciara.loftus@intel.com>
+Subject: [RFC PATCH 09/14] net/iavf: remove redundant field from iavf adapter
+ struct
+Date: Fri, 25 Jul 2025 12:49:14 +0000
+Message-Id: <20250725124919.3564890-10-ciara.loftus@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250725124919.3564890-1-ciara.loftus@intel.com>
 References: <20250725124919.3564890-1-ciara.loftus@intel.com>
@@ -60,196 +60,59 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use the new function for determining the maximum simd bitwidth in
-the i40e driver.
+The variable rx_vec_allowed was only used in one function, so
+it's not necessary to have it part of the iavf_adapater structure.
 
 Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
 ---
- drivers/net/intel/i40e/i40e_ethdev.h       |  5 +-
- drivers/net/intel/i40e/i40e_rxtx.c         | 57 ++++------------------
- drivers/net/intel/i40e/i40e_rxtx.h         |  1 +
- drivers/net/intel/i40e/i40e_rxtx_vec_sse.c |  6 +++
- 4 files changed, 18 insertions(+), 51 deletions(-)
+ drivers/net/intel/iavf/iavf.h        | 1 -
+ drivers/net/intel/iavf/iavf_ethdev.c | 1 -
+ drivers/net/intel/iavf/iavf_rxtx.c   | 6 ++----
+ 3 files changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/intel/i40e/i40e_ethdev.h b/drivers/net/intel/i40e/i40e_ethdev.h
-index 308039c363..0a4376bc52 100644
---- a/drivers/net/intel/i40e/i40e_ethdev.h
-+++ b/drivers/net/intel/i40e/i40e_ethdev.h
-@@ -15,6 +15,7 @@
- #include <rte_flow_driver.h>
- #include <rte_tm_driver.h>
- #include "rte_pmd_i40e.h"
-+#include <rte_vect.h>
+diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
+index dacfb92d5f..69f9abbef3 100644
+--- a/drivers/net/intel/iavf/iavf.h
++++ b/drivers/net/intel/iavf/iavf.h
+@@ -375,7 +375,6 @@ struct iavf_adapter {
  
- #include "base/i40e_register.h"
- #include "base/i40e_type.h"
-@@ -1279,9 +1280,7 @@ struct i40e_adapter {
- 	/* For RSS reta table update */
- 	uint8_t rss_reta_updated;
- 
--	/* used only on x86, zero on other architectures */
--	bool tx_use_avx2;
--	bool tx_use_avx512;
-+	enum rte_vect_max_simd tx_simd_width;
- };
- 
- /**
-diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
-index bcf5af50e6..c0e217cd73 100644
---- a/drivers/net/intel/i40e/i40e_rxtx.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx.c
-@@ -3284,32 +3284,6 @@ i40e_recycle_rxq_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
- 	}
- }
- 
--#ifdef RTE_ARCH_X86
--static inline bool
--get_avx_supported(bool request_avx512)
--{
--	if (request_avx512) {
--		if (rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_512 &&
--		rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512F) == 1 &&
--		rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512BW) == 1)
--#ifdef CC_AVX512_SUPPORT
--			return true;
--#else
--		PMD_DRV_LOG(NOTICE,
--			"AVX512 is not supported in build env");
--		return false;
--#endif
--	} else {
--		if (rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_256 &&
--				rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX2) == 1 &&
--				rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512F) == 1)
--			return true;
--	}
--
--	return false;
--}
--#endif /* RTE_ARCH_X86 */
--
- static const struct {
- 	eth_rx_burst_t pkt_burst;
- 	const char *info;
-@@ -3351,7 +3325,7 @@ i40e_set_rx_function(struct rte_eth_dev *dev)
- 	 * conditions to be met and Rx Bulk Allocation should be allowed.
+ 	bool rx_bulk_alloc_allowed;
+ 	/* For vector PMD */
+-	bool rx_vec_allowed;
+ 	bool tx_vec_allowed;
+ 	alignas(RTE_CACHE_LINE_MIN_SIZE) uint32_t ptype_tbl[IAVF_MAX_PKT_TYPE];
+ 	bool stopped;
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index 335a8126c4..33b00e8ae4 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -668,7 +668,6 @@ iavf_dev_configure(struct rte_eth_dev *dev)
+ 	/* Initialize to TRUE. If any of Rx queues doesn't meet the
+ 	 * vector Rx/Tx preconditions, it will be reset.
  	 */
- #ifdef RTE_ARCH_X86
--	bool rx_use_avx512 = false, rx_use_avx2 = false;
-+	enum rte_vect_max_simd rx_simd_width = i40e_get_max_simd_bitwidth();
- #endif
- 	if (i40e_rx_vec_dev_conf_condition_check(dev) || !ad->rx_bulk_alloc_allowed) {
- 		PMD_INIT_LOG(DEBUG, "Port[%d] doesn't meet"
-@@ -3370,35 +3344,29 @@ i40e_set_rx_function(struct rte_eth_dev *dev)
- 				break;
- 			}
- 		}
--#ifdef RTE_ARCH_X86
--		rx_use_avx512 = get_avx_supported(1);
--
--		if (!rx_use_avx512)
--			rx_use_avx2 = get_avx_supported(0);
--#endif
+-	ad->rx_vec_allowed = true;
+ 	ad->tx_vec_allowed = true;
+ 
+ 	if (dev->data->dev_conf.rxmode.mq_mode & RTE_ETH_MQ_RX_RSS_FLAG)
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
+index e36a07d5ac..367dde89ca 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.c
++++ b/drivers/net/intel/iavf/iavf_rxtx.c
+@@ -725,12 +725,10 @@ iavf_dev_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 		ad->rx_bulk_alloc_allowed = false;
  	}
  
- 	if (ad->rx_vec_allowed && rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128) {
- #ifdef RTE_ARCH_X86
- 		if (dev->data->scattered_rx) {
--			if (rx_use_avx512) {
-+			if (rx_simd_width == RTE_VECT_SIMD_512) {
- #ifdef CC_AVX512_SUPPORT
- 				ad->rx_func_type = I40E_RX_AVX512_SCATTERED;
- #endif
- 			} else {
--				ad->rx_func_type = rx_use_avx2 ?
-+				ad->rx_func_type = (rx_simd_width == RTE_VECT_SIMD_256) ?
- 					I40E_RX_AVX2_SCATTERED :
- 					I40E_RX_SCATTERED;
- 				dev->recycle_rx_descriptors_refill =
- 					i40e_recycle_rx_descriptors_refill_vec;
- 			}
- 		} else {
--			if (rx_use_avx512) {
-+			if (rx_simd_width == RTE_VECT_SIMD_512) {
- #ifdef CC_AVX512_SUPPORT
- 				ad->rx_func_type = I40E_RX_AVX512;
- #endif
- 			} else {
--				ad->rx_func_type = rx_use_avx2 ?
-+				ad->rx_func_type = (rx_simd_width == RTE_VECT_SIMD_256) ?
- 					I40E_RX_AVX2 :
- 					I40E_RX_SSE;
- 				dev->recycle_rx_descriptors_refill =
-@@ -3509,8 +3477,7 @@ i40e_set_tx_function(struct rte_eth_dev *dev)
- 
- 	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
- #ifdef RTE_ARCH_X86
--		ad->tx_use_avx2 = false;
--		ad->tx_use_avx512 = false;
-+		ad->tx_simd_width = i40e_get_max_simd_bitwidth();
- #endif
- 		if (ad->tx_vec_allowed) {
- 			for (i = 0; i < dev->data->nb_tx_queues; i++) {
-@@ -3522,12 +3489,6 @@ i40e_set_tx_function(struct rte_eth_dev *dev)
- 					break;
- 				}
- 			}
--#ifdef RTE_ARCH_X86
--			ad->tx_use_avx512 = get_avx_supported(1);
+-	if (!ci_rxq_vec_capable(rxq->nb_rx_desc, rxq->rx_free_thresh, rxq->offloads))
+-		ad->rx_vec_allowed = false;
 -
--			if (!ad->tx_use_avx512)
--				ad->tx_use_avx2 = get_avx_supported(0);
--#endif
- 		}
+ #if defined RTE_ARCH_X86 || defined RTE_ARCH_ARM
+ 	/* check vector conflict */
+-	if (ad->rx_vec_allowed && iavf_rxq_vec_setup(rxq)) {
++	if (ci_rxq_vec_capable(rxq->nb_rx_desc, rxq->rx_free_thresh, rxq->offloads) &&
++			iavf_rxq_vec_setup(rxq)) {
+ 		PMD_DRV_LOG(ERR, "Failed vector rx setup.");
+ 		return -EINVAL;
  	}
- 
-@@ -3537,7 +3498,7 @@ i40e_set_tx_function(struct rte_eth_dev *dev)
- 	if (ad->tx_simple_allowed) {
- 		if (ad->tx_vec_allowed) {
- #ifdef RTE_ARCH_X86
--			if (ad->tx_use_avx512) {
-+			if (ad->tx_simd_width == RTE_VECT_SIMD_512) {
- #ifdef CC_AVX512_SUPPORT
- 				PMD_DRV_LOG(NOTICE, "Using AVX512 Vector Tx (port %d).",
- 					    dev->data->port_id);
-@@ -3545,9 +3506,9 @@ i40e_set_tx_function(struct rte_eth_dev *dev)
- #endif
- 			} else {
- 				PMD_INIT_LOG(DEBUG, "Using %sVector Tx (port %d).",
--					     ad->tx_use_avx2 ? "avx2 " : "",
-+					     ad->tx_simd_width == RTE_VECT_SIMD_256 ? "avx2 " : "",
- 					     dev->data->port_id);
--				dev->tx_pkt_burst = ad->tx_use_avx2 ?
-+				dev->tx_pkt_burst = ad->tx_simd_width == RTE_VECT_SIMD_256 ?
- 						    i40e_xmit_pkts_vec_avx2 :
- 						    i40e_xmit_pkts_vec;
- 				dev->recycle_tx_mbufs_reuse = i40e_recycle_tx_mbufs_reuse_vec;
-diff --git a/drivers/net/intel/i40e/i40e_rxtx.h b/drivers/net/intel/i40e/i40e_rxtx.h
-index 984532c507..b867e18daf 100644
---- a/drivers/net/intel/i40e/i40e_rxtx.h
-+++ b/drivers/net/intel/i40e/i40e_rxtx.h
-@@ -167,6 +167,7 @@ uint16_t i40e_recv_scattered_pkts_vec_avx512(void *rx_queue,
- uint16_t i40e_xmit_pkts_vec_avx512(void *tx_queue,
- 				   struct rte_mbuf **tx_pkts,
- 				   uint16_t nb_pkts);
-+enum rte_vect_max_simd i40e_get_max_simd_bitwidth(void);
- 
- /* For each value it means, datasheet of hardware can tell more details
-  *
-diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_sse.c b/drivers/net/intel/i40e/i40e_rxtx_vec_sse.c
-index 15cf07e548..c035408dcc 100644
---- a/drivers/net/intel/i40e/i40e_rxtx_vec_sse.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx_vec_sse.c
-@@ -715,3 +715,9 @@ i40e_rx_vec_dev_conf_condition_check(struct rte_eth_dev *dev)
- {
- 	return i40e_rx_vec_dev_conf_condition_check_default(dev);
- }
-+
-+enum rte_vect_max_simd
-+i40e_get_max_simd_bitwidth(void)
-+{
-+	return ci_get_x86_max_simd_bitwidth();
-+}
 -- 
 2.34.1
 
