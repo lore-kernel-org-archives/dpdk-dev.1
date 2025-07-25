@@ -2,51 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6416EC87FCE
-	for <dpdk-dev@archiver.kernel.org>; Fri, 25 Jul 2025 16:07:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91809C87FCE
+	for <dpdk-dev@archiver.kernel.org>; Fri, 25 Jul 2025 16:51:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 86F7540144;
-	Fri, 25 Jul 2025 18:07:41 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTP id 70162400D5
- for <dev@dpdk.org>; Fri, 25 Jul 2025 18:07:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1753459659; x=1784995659;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=3EntRU2Xdh0yFbZrPFUEfD/tGM68nWd1keyf6OVc37A=;
- b=KUZoWaUGfFuBWpMqXl4xZuz7sOEtPVpdqcYwT0xejM5kXAVPjMnBPPIF
- DCAceSscm4oSFFVJY/k9x215UmTxhVBWR+0/fApujM6DJp/HlIDH2eKbz
- +xi5pcalL9ahtjIGxoC2wOVt28Q8gZUtEPsPVc6Gg2fZBcTavm/zpElgW
- pPoFG3xBkRN5Qsw+J+Q7MREOuTmYh+II4ySbli1SnA72CgpBonOg/gHux
- fX5Jh0PEaGSThNJXEy3lp93PyBiUaWRGqKnhvH5mUkWVzA5ydgIsymusS
- ROiR9wr/sZwEQKQclO9JW3S8OfmgmUopfEI85SpP+KU6jyVPJkWlUOWBl w==;
-X-CSE-ConnectionGUID: MREW71a1Tzuu6MPMNWtC3w==
-X-CSE-MsgGUID: CnnFe/uZQc2WILNsaNXrkA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11503"; a="55677405"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; d="scan'208";a="55677405"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
- by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 Jul 2025 09:07:38 -0700
-X-CSE-ConnectionGUID: LfvZdT+bS/eeYUrmmHytAA==
-X-CSE-MsgGUID: QDUamoHrSfOCiy4oJexvtg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; d="scan'208";a="160173266"
-Received: from silpixa00401385.ir.intel.com ([10.237.214.33])
- by orviesa006.jf.intel.com with ESMTP; 25 Jul 2025 09:07:37 -0700
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: david.marchand@redhat.com,
-	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v2] build: remove obsolete compiler checks
-Date: Fri, 25 Jul 2025 17:06:28 +0100
-Message-ID: <20250725160730.18354-1-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250718121402.856265-1-bruce.richardson@intel.com>
-References: <20250718121402.856265-1-bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 386EA40144;
+	Fri, 25 Jul 2025 18:51:22 +0200 (CEST)
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com
+ [209.85.216.42]) by mails.dpdk.org (Postfix) with ESMTP id D04C9400D5
+ for <dev@dpdk.org>; Fri, 25 Jul 2025 18:51:20 +0200 (CEST)
+Received: by mail-pj1-f42.google.com with SMTP id
+ 98e67ed59e1d1-311e46d38ddso2101129a91.0
+ for <dev@dpdk.org>; Fri, 25 Jul 2025 09:51:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1753462280; x=1754067080; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+ :date:message-id:reply-to;
+ bh=xmFSS7UOWMYbyauv6ozkhXf7F6eVs5uRpWozTn4hoeg=;
+ b=RsD8vdK01K6O/PVtrf1UcUcZDw/esJvCbcvhoYAehgfizKuB+OeZz+0kxK/YY3VS8g
+ 3AUxCof0bbw+FCOTo+iIM3fUW1mG4oTYxeswXCTKDfPotc/RUYnbGi7dmHXM6bfoQiAC
+ tdLMZDBpaA6HJdhAA3qh90+1/uZR2LaCNxoXg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1753462280; x=1754067080;
+ h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=xmFSS7UOWMYbyauv6ozkhXf7F6eVs5uRpWozTn4hoeg=;
+ b=AABQx9j4y1OWUE0rBHOdsjhO8TYWMDvx/evCgueASJoTlfPxH4NrNLsyFWW7b0JXR9
+ TU5FSqGRAkhW9FNNZQrVCnMgRHF8u0PAMdahV8iJJlMqJz+wVP9nt2dymbkBV35oIl9m
+ G3qOrJ2/4i4BW/OmhpHdB7ebXLMZtaNnVZmZs82IBSvHNXiFGKhljhS6TcHOHONW8JZ0
+ T9xCC8E3p5YuPvjSdc6EeI7/UBc9NCQiQbV/gFCc24Nx/LjMvoo0OXg7SpYre03mpRkD
+ gMYRn0rsq8PHtTUPkV2WBKZPwtpgRS2VZ7FVPqyyan2UoB8p+WAamomGDj+2GPpCyqHu
+ 044Q==
+X-Gm-Message-State: AOJu0YydvRw+e4ieYwSr8ghwByc9sc2JjegXCRJIzBdzUWXfZxkfV7fC
+ E3e6JYgh5U/uQnOAhUvsVz2DWiFfvPomeT0PKyidbWCsEsoaeUk8tSbFrdDC1L4LF9kCFpxEPNY
+ i68sncUK8409B74Fc8kRhsNthsawdcIF633ECPeuncA==
+X-Gm-Gg: ASbGnctgK0+oHiXWdw9sjdR+oCF75Ge6vHll+K1fiavQ9OvckSypf2DeQZgWfh21gOl
+ dakexQ64pm7+HHZmF+GvLVXhZCr3BT7rPBwMFWrx3s0eW1fzOCVy2w047yWysV9/H+wfBLM5QEH
+ aRdSbqz2ue64i9xK/A6aJYItYxhJ9+GEjlPn81kBRldrGo6aYRYvF30FlH+nXQlJ86IOxakCTU+
+ 9s0s+cMOWnupbW9Y1ciTg==
+X-Google-Smtp-Source: AGHT+IGOT8Clo421vmyGRSWNnhUREDYpmfoZh45Q87lGalyH11WQX59+LxBUiwU0J6GVrcesNOrsJrDpn/8huqihro0=
+X-Received: by 2002:a17:90b:5252:b0:311:c93b:3ca2 with SMTP id
+ 98e67ed59e1d1-31e77a18d76mr3791755a91.6.1753462279782; Fri, 25 Jul 2025
+ 09:51:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Fri, 25 Jul 2025 12:45:17 -0400
+X-Gm-Features: Ac12FXzDz5rDg1yNw7Aae8nGdLdA5JNlbllvMSzOmzKjMA152zufkxRD-l6IG8U
+Message-ID: <CAJvnSUC4+CO1M6MEnQyY264nvBPobG6pc_FG0rhmEFJWs1QZ-A@mail.gmail.com>
+Subject: Scheduled DPDK Community Lab downtime this weekend
+To: ci@dpdk.org
+Cc: dev <dev@dpdk.org>
+Content-Type: multipart/alternative; boundary="000000000000505ba3063ac3c0b2"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,254 +65,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DPDK now recommends compiler versions GCC 8+, and Clang 7+, so remove
-checks and workarounds for versions old than these.
+--000000000000505ba3063ac3c0b2
+Content-Type: text/plain; charset="UTF-8"
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
-V2: Fix feedback from V1.
-* remove obsolete comment from arm/meson.build
-* sort octeontx alphabetically in driver list
----
- config/arm/meson.build              |  1 -
- config/meson.build                  |  5 ----
- drivers/event/meson.build           |  5 +---
- drivers/meson.build                 |  2 +-
- drivers/net/virtio/meson.build      |  2 +-
- lib/eal/arm/include/rte_memcpy_64.h |  8 -------
- lib/eal/arm/include/rte_vect.h      | 37 ++---------------------------
- lib/eal/ppc/include/rte_altivec.h   |  1 -
- lib/meson.build                     |  2 +-
- lib/vhost/meson.build               |  4 ++--
- lib/vhost/vhost.c                   | 16 -------------
- 11 files changed, 8 insertions(+), 75 deletions(-)
+Hello,
 
-diff --git a/config/arm/meson.build b/config/arm/meson.build
-index 35b7553e74..c0dc42e7d1 100644
---- a/config/arm/meson.build
-+++ b/config/arm/meson.build
-@@ -13,7 +13,6 @@ flags_common = [
-         #    ['RTE_ARM64_MEMCPY_UNALIGNED_THRESHOLD', 512],
-         # Leave below RTE_ARM64_MEMCPY_xxx options commented out,
-         # unless there are strong reasons.
--        #    ['RTE_ARM64_MEMCPY_SKIP_GCC_VER_CHECK', false],
-         #    ['RTE_ARM64_MEMCPY_ALIGN_MASK', 0xF],
-         #    ['RTE_ARM64_MEMCPY_STRICT_ALIGN', false],
+I will be taking the DPDK Community Lab offline at 5pm EST today for system
+updates and backups on the Community Lab's Jenkins server. I expect to be
+able to bring the Community Lab back online at midday Saturday. If that
+schedule changes, I will provide updates on the Slack infra-issues channel.
+Thanks.
 
-diff --git a/config/meson.build b/config/meson.build
-index f31fef216c..c7a780dcc8 100644
---- a/config/meson.build
-+++ b/config/meson.build
-@@ -492,11 +492,6 @@ if get_option('b_lto')
-     else
-         error('compiler does not support fat LTO objects - please turn LTO off')
-     endif
--    # workaround for gcc bug 81440
--    if cc.get_id() == 'gcc' and cc.version().version_compare('<8.0')
--        add_project_arguments('-Wno-lto-type-mismatch', language: 'c')
--        add_project_link_arguments('-Wno-lto-type-mismatch', language: 'c')
--    endif
- endif
+-Community Lab Team
 
- if get_option('b_sanitize') == 'address' or get_option('b_sanitize') == 'address,undefined'
-diff --git a/drivers/event/meson.build b/drivers/event/meson.build
-index d6706b57f7..ddaa0300ac 100644
---- a/drivers/event/meson.build
-+++ b/drivers/event/meson.build
-@@ -11,12 +11,9 @@ drivers = [
-         'dpaa',
-         'dpaa2',
-         'dsw',
-+        'octeontx',
-         'opdl',
-         'skeleton',
-         'sw',
- ]
--if not (toolchain == 'gcc' and cc.version().version_compare('<4.8.6') and
--        dpdk_conf.has('RTE_ARCH_ARM64'))
--    drivers += 'octeontx'
--endif
- std_deps = ['eventdev', 'kvargs']
-diff --git a/drivers/meson.build b/drivers/meson.build
-index b62880db02..2760f4d593 100644
---- a/drivers/meson.build
-+++ b/drivers/meson.build
-@@ -237,7 +237,7 @@ foreach subpath:subdirs
-         enabled_drivers += name
-         lib_name = '_'.join(['rte', class, name])
-         cflags += '-DRTE_LOG_DEFAULT_LOGTYPE=' + '.'.join([log_prefix, name])
--        if annotate_locks and cc.get_id() == 'clang' and cc.version().version_compare('>=3.5.0')
-+        if annotate_locks and cc.get_id() == 'clang'
-             cflags += '-DRTE_ANNOTATE_LOCKS'
-             cflags += '-Wthread-safety'
-         endif
-diff --git a/drivers/net/virtio/meson.build b/drivers/net/virtio/meson.build
-index d3caa3a3b4..a9ff87e863 100644
---- a/drivers/net/virtio/meson.build
-+++ b/drivers/net/virtio/meson.build
-@@ -31,7 +31,7 @@ if arch_subdir == 'x86'
-         sources_avx512 += files('virtio_rxtx_packed.c')
-         if (toolchain == 'gcc' and cc.version().version_compare('>=8.3.0'))
-             cflags += '-DVIRTIO_GCC_UNROLL_PRAGMA'
--        elif (toolchain == 'clang' and cc.version().version_compare('>=3.7.0'))
-+        elif (toolchain == 'clang')
-             cflags += '-DVIRTIO_CLANG_UNROLL_PRAGMA'
-         endif
-     endif
-diff --git a/lib/eal/arm/include/rte_memcpy_64.h b/lib/eal/arm/include/rte_memcpy_64.h
-index 90039039be..57fe24eb10 100644
---- a/lib/eal/arm/include/rte_memcpy_64.h
-+++ b/lib/eal/arm/include/rte_memcpy_64.h
-@@ -89,14 +89,6 @@ n <= (size_t)RTE_ARM64_MEMCPY_UNALIGNED_THRESHOLD)
-  **************************************/
+--000000000000505ba3063ac3c0b2
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+<div dir=3D"ltr"><div>Hello,</div><div><br></div><div>I will be taking the =
+DPDK Community Lab offline at 5pm EST today for system updates and backups =
+on the Community Lab&#39;s Jenkins server. I expect to be able to bring the=
+ Community Lab back online at midday Saturday. If that schedule changes, I =
+will provide updates on the Slack infra-issues channel. Thanks.</div><div><=
+br></div><div>-Community Lab Team</div></div>
 
--#if RTE_CC_IS_GNU && !defined RTE_ARM64_MEMCPY_SKIP_GCC_VER_CHECK
--#if (GCC_VERSION < 50400)
--#warning "The GCC version is quite old, which may result in sub-optimal \
--performance of the compiled code. It is suggested that at least GCC 5.4.0 \
--be used."
--#endif
--#endif
--
- static __rte_always_inline
- void rte_mov16(uint8_t *dst, const uint8_t *src)
- {
-diff --git a/lib/eal/arm/include/rte_vect.h b/lib/eal/arm/include/rte_vect.h
-index c97d299a3e..149458288e 100644
---- a/lib/eal/arm/include/rte_vect.h
-+++ b/lib/eal/arm/include/rte_vect.h
-@@ -67,11 +67,8 @@ vaddvq_u16(uint16x8_t a)
-
- #endif
-
--#if (defined(RTE_ARCH_ARM) && defined(RTE_ARCH_32)) || \
--(defined(RTE_ARCH_ARM64) && RTE_CC_IS_GNU && (GCC_VERSION < 70000))
--/* NEON intrinsic vcopyq_laneq_u32() is not supported in ARMv7-A(AArch32)
-- * On AArch64, this intrinsic is supported since GCC version 7.
-- */
-+#if defined(RTE_ARCH_ARM) && defined(RTE_ARCH_32)
-+/* NEON intrinsic vcopyq_laneq_u32() is not supported in ARMv7-A(AArch32) */
- static inline uint32x4_t
- vcopyq_laneq_u32(uint32x4_t a, const int lane_a,
- 		 uint32x4_t b, const int lane_b)
-@@ -80,36 +77,6 @@ vcopyq_laneq_u32(uint32x4_t a, const int lane_a,
- }
- #endif
-
--#if defined(RTE_ARCH_ARM64)
--#if RTE_CC_IS_GNU && (GCC_VERSION < 70000)
--
--/* NEON intrinsic vreinterpretq_u64_p128() is supported since GCC version 7 */
--static inline uint64x2_t
--vreinterpretq_u64_p128(poly128_t x)
--{
--	return (uint64x2_t)x;
--}
--
--/* NEON intrinsic vreinterpretq_p64_u64() is supported since GCC version 7 */
--static inline poly64x2_t
--vreinterpretq_p64_u64(uint64x2_t x)
--{
--	return (poly64x2_t)x;
--}
--
--/* NEON intrinsic vgetq_lane_p64() is supported since GCC version 7 */
--static inline poly64_t
--vgetq_lane_p64(poly64x2_t x, const int lane)
--{
--	RTE_ASSERT(lane >= 0 && lane <= 1);
--
--	poly64_t *p = (poly64_t *)&x;
--
--	return p[lane];
--}
--#endif
--#endif
--
- /*
-  * If (0 <= index <= 15), then call the ASIMD ext instruction on the
-  * 128 bit regs v0 and v1 with the appropriate index.
-diff --git a/lib/eal/ppc/include/rte_altivec.h b/lib/eal/ppc/include/rte_altivec.h
-index 7c088d2d16..bc8548f11e 100644
---- a/lib/eal/ppc/include/rte_altivec.h
-+++ b/lib/eal/ppc/include/rte_altivec.h
-@@ -6,7 +6,6 @@
- #ifndef _RTE_ALTIVEC_H_
- #define _RTE_ALTIVEC_H_
-
--/* To include altivec.h, GCC version must be >= 4.8 */
- #include <altivec.h>
-
- /*
-diff --git a/lib/meson.build b/lib/meson.build
-index 0d56b2083b..a67efaf718 100644
---- a/lib/meson.build
-+++ b/lib/meson.build
-@@ -244,7 +244,7 @@ foreach l:libraries
-         cflags += '-DRTE_USE_FUNCTION_VERSIONING'
-     endif
-     cflags += '-DRTE_LOG_DEFAULT_LOGTYPE=lib.' + l
--    if annotate_locks and cc.get_id() == 'clang' and cc.version().version_compare('>=3.5.0')
-+    if annotate_locks and cc.get_id() == 'clang'
-         cflags += '-DRTE_ANNOTATE_LOCKS'
-         cflags += '-Wthread-safety'
-     endif
-diff --git a/lib/vhost/meson.build b/lib/vhost/meson.build
-index 9c6325aa0e..a74d0cff7c 100644
---- a/lib/vhost/meson.build
-+++ b/lib/vhost/meson.build
-@@ -8,9 +8,9 @@ endif
- if has_libnuma
-     dpdk_conf.set10('RTE_LIBRTE_VHOST_NUMA', true)
- endif
--if (toolchain == 'gcc' and cc.version().version_compare('>=8.3.0'))
-+if (toolchain == 'gcc')
-     cflags += '-DVHOST_GCC_UNROLL_PRAGMA'
--elif (toolchain == 'clang' and cc.version().version_compare('>=3.7.0'))
-+elif (toolchain == 'clang')
-     cflags += '-DVHOST_CLANG_UNROLL_PRAGMA'
- endif
- dpdk_conf.set('RTE_LIBRTE_VHOST_POSTCOPY', cc.has_header('linux/userfaultfd.h'))
-diff --git a/lib/vhost/vhost.c b/lib/vhost/vhost.c
-index a2e3e2635d..416f082dca 100644
---- a/lib/vhost/vhost.c
-+++ b/lib/vhost/vhost.c
-@@ -128,16 +128,8 @@ __vhost_iova_to_vva(struct virtio_net *dev, struct vhost_virtqueue *vq,
- static __rte_always_inline void
- vhost_set_bit(unsigned int nr, volatile uint8_t *addr)
- {
--#if defined(RTE_TOOLCHAIN_GCC) && (GCC_VERSION < 70100)
--	/*
--	 * __sync_ built-ins are deprecated, but rte_atomic_ ones
--	 * are sub-optimized in older GCC versions.
--	 */
--	__sync_fetch_and_or_1(addr, (1U << nr));
--#else
- 	rte_atomic_fetch_or_explicit((volatile uint8_t __rte_atomic *)addr, (1U << nr),
- 		rte_memory_order_relaxed);
--#endif
- }
-
- static __rte_always_inline void
-@@ -207,17 +199,9 @@ __vhost_log_cache_sync(struct virtio_net *dev, struct vhost_virtqueue *vq)
- 	for (i = 0; i < vq->log_cache_nb_elem; i++) {
- 		struct log_cache_entry *elem = vq->log_cache + i;
-
--#if defined(RTE_TOOLCHAIN_GCC) && (GCC_VERSION < 70100)
--		/*
--		 * '__sync' builtins are deprecated, but 'rte_atomic' ones
--		 * are sub-optimized in older GCC versions.
--		 */
--		__sync_fetch_and_or(log_base + elem->offset, elem->val);
--#else
- 		rte_atomic_fetch_or_explicit(
- 			(unsigned long __rte_atomic *)(log_base + elem->offset),
- 			elem->val, rte_memory_order_relaxed);
--#endif
- 	}
-
- 	rte_atomic_thread_fence(rte_memory_order_release);
---
-2.48.1
-
+--000000000000505ba3063ac3c0b2--
