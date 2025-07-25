@@ -2,49 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5382BC87FCE
-	for <dpdk-dev@archiver.kernel.org>; Fri, 25 Jul 2025 12:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 584B9C87FCE
+	for <dpdk-dev@archiver.kernel.org>; Fri, 25 Jul 2025 12:55:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C1C60406BC;
-	Fri, 25 Jul 2025 14:50:24 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id CDEDD40693
- for <dev@dpdk.org>; Fri, 25 Jul 2025 14:50:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1753447821; x=1784983821;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=5yd7paFjs6zFQCpYgvPj/IzLFNB+K5Hbj81+kCJEZyo=;
- b=JHK7UikuvvLRgpMJEbR7TdnMEajRUZpt9jgyGew4BT8ydKYn66R2fzqh
- GCb/OW1LHVzlbq9jsbJ7TiDm9UBwZf91hGFpP49aiQAjgwNyAI4ij3vd/
- tGsJC+guqwv0vd7fn4BXYpd8Tx84zJYI5a1OxoBr8Vk9R538lOPuNxSn2
- /BvhN77t5V7JDAnqwo1ROee7QZA9xZ9iPat4ZK06PqYmiokjHEctq5PF+
- csg8N8vurXTDbAzzB8icH4hDH8HTrEpPGLEQlsgZdX9kKL21XedmSfftf
- bvrWWK5kGl1rkv0Z2KBsT3nAvRv76h8C+yGmNopS8E/+6my0dYuSNGLwb w==;
-X-CSE-ConnectionGUID: USiIdtuZQEiKikrNtH9S2w==
-X-CSE-MsgGUID: lOFwBCqYSc+ZZyLvxJ4fTA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11503"; a="66480164"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; d="scan'208";a="66480164"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
- by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 Jul 2025 05:50:20 -0700
-X-CSE-ConnectionGUID: Mh6SVLIQR6298kq95s74Nw==
-X-CSE-MsgGUID: KJIQXfCXSlypDDQGowLkXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; d="scan'208";a="161152357"
-Received: from silpixa00401177.ir.intel.com ([10.237.213.77])
- by orviesa007.jf.intel.com with ESMTP; 25 Jul 2025 05:50:19 -0700
-From: Ciara Loftus <ciara.loftus@intel.com>
-To: dev@dpdk.org
-Cc: Ciara Loftus <ciara.loftus@intel.com>
-Subject: [RFC PATCH 14/14] net/i40e: use the common Rx path selection
- infrastructure
-Date: Fri, 25 Jul 2025 12:49:19 +0000
-Message-Id: <20250725124919.3564890-15-ciara.loftus@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250725124919.3564890-1-ciara.loftus@intel.com>
-References: <20250725124919.3564890-1-ciara.loftus@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id C6279402F0;
+	Fri, 25 Jul 2025 14:55:41 +0200 (CEST)
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
+ [209.85.214.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 6E2284025A
+ for <dev@dpdk.org>; Fri, 25 Jul 2025 14:55:40 +0200 (CEST)
+Received: by mail-pl1-f170.google.com with SMTP id
+ d9443c01a7336-23c8f179e1bso24067895ad.1
+ for <dev@dpdk.org>; Fri, 25 Jul 2025 05:55:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1753448139;
+ x=1754052939; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=6pPxKaBDqAP3QahJb5MsRlvGdSd85f5P3UVuLDjBnMo=;
+ b=PeiXiw8x9flLIBKZqEoWQEcSct0+bcBgqyfm2noWYpdLqLhWB6PnCzraKLIwyHqDsx
+ arGAJr6vVcqAbEbSJkzvSS7E8Ab6kOKTunM/IRXnK9+y9EsFsL5bo0Vd9jvKOQcHHKB8
+ YkTMGzUJ0pDIag60Il+RIiu1wxeEUkJ83tR337sEFbQXourrBz62abk0I7cVt/5yPeyO
+ eCq2oJM0nE3n3bMAPmvgUz6u9d36phoeuHCntr0p8x9dusNCw9st0/ARVohJraLMiv9j
+ La2AheLbWcHLyb6tpiECGcIYmTG3ictTHJfw42YdP5vNhWk5JwbHyuaJGqB+k1Gru1qm
+ rBvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1753448139; x=1754052939;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=6pPxKaBDqAP3QahJb5MsRlvGdSd85f5P3UVuLDjBnMo=;
+ b=md5U/r1Q+i7kfMNVUHu0o3IyHQ2dVkQkA6ktCNNr2igAYaNewzcJc3bscqdEtU4Avk
+ f3uiRK20KxeeDjhKAZOI7sKwhK8dgTieKmVdIn4OLSVb0jKYSCnLsG5ETWZ9svH1voLF
+ MavOX4rm73Pa5vVuCHLrESAv2ra8zQ+AMlzMCm3NNos4PfZgPT0vh18WRlm6ehJt+wPd
+ C4oX1JxYQirKU1EmOw/AAhRDKkzdhOE5iXmpBtVBE/NaGksxlw3tHqzDrb8JpEZvHLmG
+ aOjKwS4pxJWaFOJu0nwB9FA935cMpZUxYFW31ED+VKee3uc1JAplCCxqS4+L4zADHBFJ
+ vEkw==
+X-Gm-Message-State: AOJu0YzqL4Gerwn6jtXC7IkW/V9hgdkaCrktVSK5y/IMiRNKWQEY4+Po
+ KFVH7pxGzP+APdkSF1xYp0ZSS9mCdM2fmkrtwndA5MsUkulIJQ0vDixW7NehVannuHk=
+X-Gm-Gg: ASbGncvrAedUSOBWDDk5T9Fwep0JFipyi3IuSEEm5s59ARD1C6b4ZaObUeoqd0VseHS
+ YdWxkga0v/p763/uBJT3aEWQ18pPbvVOrOwD7j0ZxTbFZZW2vKmjMVmStoBqSX3UEGI2jpp2b/4
+ GUF+PQ9OQ+V/fuoA+3aGupdopZ6ZnIR58l8F9TfUt+TELNcw3ouqhuUdB0fbmggCd2qbU3ljDMT
+ u8ls2qMx9MHozVHCSa9id+fcWXxTDrSAJAVwWtxgWqjJxvkSDtNKd5/GzqdwHyNAs1JnO5pTQ2p
+ +a5y6emWAaNx/GEl7MmPSuoKozyfB3d8faRNGSCwGPedYUxYNef9h0OYr69sAJTERjiIxlO0ID1
+ HFBX2eU+umFw1Di+zg4e+YsSiJzZHTnURDnyn36CmTU8lBrSP
+X-Google-Smtp-Source: AGHT+IED3kIwy5imDgwiipTo1eADMcF4dz3if/RrnmPtpmjcppmM9tQv7fh+V2dNUu3pJ1BML9skpQ==
+X-Received: by 2002:a17:902:e84d:b0:235:1966:93a9 with SMTP id
+ d9443c01a7336-23fb309bc81mr30555025ad.3.1753448139345; 
+ Fri, 25 Jul 2025 05:55:39 -0700 (PDT)
+Received: from localhost.localdomain ([64.62.143.197])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-23fa49167ffsm36626845ad.204.2025.07.25.05.55.38
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 25 Jul 2025 05:55:38 -0700 (PDT)
+From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+To: stephen@networkplumber.org, thomas@monjalon.net, ferruh.yigit@amd.com,
+ andrew.rybchenko@oktetlabs.ru
+Cc: dev@dpdk.org, stable@dpdk.org,
+ Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+Subject: [PATCH] [PATCH v4] lib/ethdev: fix segfault in secondary process by
+ validating dev_private pointer
+Date: Fri, 25 Jul 2025 08:55:26 -0400
+Message-ID: <20250725125526.2340233-1-14pwcse1224@uetpeshawar.edu.pk>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250723131049.1703172-1-14pwcse1224@uetpeshawar.edu.pk>
+References: <20250723131049.1703172-1-14pwcse1224@uetpeshawar.edu.pk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -60,301 +83,166 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Replace the existing complicated logic with the use of the common function.
+In secondary processes, directly accessing 'dev->data->dev_private' can
+cause a segmentation fault if the primary process has exited or if the
+shared memory is no longer accessible.
 
-Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+The secondary process not only crashes on device close but also segfaults
+when executing commands like "show device info all" after the primary has
+exited.
+
+This patch adds a mechanism in testpmd to monitor the primary process from the
+secondary using `rte_eal_primary_proc_alive()`, and introduces safety
+checks before dereferencing 'dev_private'. The `rte_mem_virt2phy()` call
+is also guarded to avoid access to invalid memory regions, with
+`unlikely()` hints to minimize impact in the fast path.
+
+Fixes: bdad90d12ec8 ("ethdev: change device info get callback to return int")
+Cc: stable@dpdk.org
+
+Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
 ---
- drivers/net/intel/i40e/i40e_rxtx.c            | 145 +++++++++---------
- drivers/net/intel/i40e/i40e_rxtx.h            |  15 ++
- .../net/intel/i40e/i40e_rxtx_vec_altivec.c    |   6 +
- drivers/net/intel/i40e/i40e_rxtx_vec_common.h |   9 +-
- drivers/net/intel/i40e/i40e_rxtx_vec_neon.c   |   6 +
- 5 files changed, 98 insertions(+), 83 deletions(-)
+ app/test-pmd/testpmd.c  | 56 ++++++++++++++++++++++++++++++++++++++---
+ lib/ethdev/rte_ethdev.c | 15 ++++++++++-
+ 2 files changed, 66 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
-index c0e217cd73..5adb134667 100644
---- a/drivers/net/intel/i40e/i40e_rxtx.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx.c
-@@ -3284,29 +3284,43 @@ i40e_recycle_rxq_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
- 	}
+diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
+index bb88555328..25e55de281 100644
+--- a/app/test-pmd/testpmd.c
++++ b/app/test-pmd/testpmd.c
+@@ -101,13 +101,17 @@
+ uint16_t verbose_level = 0; /**< Silent by default. */
+ int testpmd_logtype; /**< Log type for testpmd logs */
+ 
++static volatile uint8_t quit_signal;
++
++/* Maximum delay for exiting after primary process. */
++#define MONITOR_INTERVAL (500 * 1000)
++
+ /* use main core for command line ? */
+ uint8_t interactive = 0;
+ uint8_t auto_start = 0;
+ uint8_t tx_first;
+ char cmdline_filename[PATH_MAX] = {0};
+ bool echo_cmdline_file;
+-
+ /*
+  * NUMA support configuration.
+  * When set, the NUMA support attempts to dispatch the allocation of the
+@@ -2281,7 +2285,7 @@ run_pkt_fwd_on_lcore(struct fwd_lcore *fc, packet_fwd_t pkt_fwd)
+ 			fc->total_cycles += tsc - prev_tsc;
+ 			prev_tsc = tsc;
+ 		}
+-	} while (! fc->stopped);
++	} while (!fc->stopped && !quit_signal);
  }
  
--static const struct {
--	eth_rx_burst_t pkt_burst;
--	const char *info;
--} i40e_rx_burst_infos[] = {
--	[I40E_RX_SCATTERED] = { i40e_recv_scattered_pkts, "Scalar Scattered" },
--	[I40E_RX_BULK_ALLOC] = { i40e_recv_pkts_bulk_alloc, "Scalar Bulk Alloc" },
--	[I40E_RX_DEFAULT] = { i40e_recv_pkts, "Scalar" },
-+static const struct ci_rx_burst_info i40e_rx_burst_infos[] = {
-+	[I40E_RX_SCATTERED] = { i40e_recv_scattered_pkts, "Scalar Scattered",
-+		{I40E_RX_SCALAR_OFFLOADS, RTE_VECT_SIMD_DISABLED, CI_RX_BURST_FEATURE_SCATTERED}},
-+	[I40E_RX_BULK_ALLOC] = { i40e_recv_pkts_bulk_alloc, "Scalar Bulk Alloc",
-+		{I40E_RX_SCALAR_OFFLOADS, RTE_VECT_SIMD_DISABLED, CI_RX_BURST_FEATURE_BULK_ALLOC}},
-+	[I40E_RX_DEFAULT] = { i40e_recv_pkts, "Scalar",
-+		{I40E_RX_SCALAR_OFFLOADS, RTE_VECT_SIMD_DISABLED, CI_RX_BURST_NO_FEATURES}},
- #ifdef RTE_ARCH_X86
- #ifdef CC_AVX512_SUPPORT
--	[I40E_RX_AVX512_SCATTERED] = {
--		i40e_recv_scattered_pkts_vec_avx512, "Vector AVX512 Scattered" },
--	[I40E_RX_AVX512] = { i40e_recv_pkts_vec_avx512, "Vector AVX512" },
-+	[I40E_RX_AVX512_SCATTERED] = { i40e_recv_scattered_pkts_vec_avx512,
-+		"Vector AVX512 Scattered", {I40E_RX_VECTOR_OFFLOADS, RTE_VECT_SIMD_512,
-+			CI_RX_BURST_FEATURE_SCATTERED | CI_RX_BURST_FEATURE_BULK_ALLOC}},
-+	[I40E_RX_AVX512] = { i40e_recv_pkts_vec_avx512, "Vector AVX512",
-+		{I40E_RX_VECTOR_OFFLOADS, RTE_VECT_SIMD_512, CI_RX_BURST_FEATURE_BULK_ALLOC}},
- #endif
--	[I40E_RX_AVX2_SCATTERED] = { i40e_recv_scattered_pkts_vec_avx2, "Vector AVX2 Scattered" },
--	[I40E_RX_AVX2] = { i40e_recv_pkts_vec_avx2, "Vector AVX2" },
--	[I40E_RX_SSE_SCATTERED] = { i40e_recv_scattered_pkts_vec, "Vector SSE Scattered" },
--	[I40E_RX_SSE] = { i40e_recv_pkts_vec, "Vector SSE" },
--#elif defined(RTE_ARCH_ARM64)
--	[I40E_RX_NEON_SCATTERED] = { i40e_recv_scattered_pkts_vec, "Vector Neon Scattered" },
--	[I40E_RX_NEON] = { i40e_recv_pkts_vec, "Vector Neon" },
-+	[I40E_RX_AVX2_SCATTERED] = { i40e_recv_scattered_pkts_vec_avx2, "Vector AVX2 Scattered",
-+		{I40E_RX_VECTOR_OFFLOADS, RTE_VECT_SIMD_256,
-+			CI_RX_BURST_FEATURE_SCATTERED | CI_RX_BURST_FEATURE_BULK_ALLOC}},
-+	[I40E_RX_AVX2] = { i40e_recv_pkts_vec_avx2, "Vector AVX2",
-+		{I40E_RX_VECTOR_OFFLOADS, RTE_VECT_SIMD_256, CI_RX_BURST_FEATURE_BULK_ALLOC}},
-+	[I40E_RX_SSE_SCATTERED] = { i40e_recv_scattered_pkts_vec, "Vector SSE Scattered",
-+		{I40E_RX_VECTOR_OFFLOADS, RTE_VECT_SIMD_128,
-+			CI_RX_BURST_FEATURE_SCATTERED | CI_RX_BURST_FEATURE_BULK_ALLOC}},
-+	[I40E_RX_SSE] = { i40e_recv_pkts_vec, "Vector SSE",
-+		{I40E_RX_VECTOR_OFFLOADS, RTE_VECT_SIMD_128, CI_RX_BURST_FEATURE_BULK_ALLOC}},
-+#elif defined(RTE_ARCH_ARM64) /* TODO: update offloads for NEON and Altivec */
-+	[I40E_RX_NEON_SCATTERED] = { i40e_recv_scattered_pkts_vec, "Vector Neon Scattered",
-+		{I40E_RX_SCALAR_OFFLOADS, RTE_VECT_SIMD_128,
-+			CI_RX_BURST_FEATURE_SCATTERED | CI_RX_BURST_FEATURE_BULK_ALLOC}},
-+	[I40E_RX_NEON] = { i40e_recv_pkts_vec, "Vector Neon",
-+		{I40E_RX_SCALAR_OFFLOADS, RTE_VECT_SIMD_128, CI_RX_BURST_FEATURE_BULK_ALLOC}},
- #elif defined(RTE_ARCH_PPC_64)
--	[I40E_RX_ALTIVEC_SCATTERED] = { i40e_recv_scattered_pkts_vec, "Vector AltiVec Scattered" },
--	[I40E_RX_ALTIVEC] = { i40e_recv_pkts_vec, "Vector AltiVec" },
-+	[I40E_RX_ALTIVEC_SCATTERED] = { i40e_recv_scattered_pkts_vec, "Vector AltiVec Scattered",
-+		{I40E_RX_SCALAR_OFFLOADS, RTE_VECT_SIMD_128,
-+			CI_RX_BURST_FEATURE_SCATTERED | CI_RX_BURST_FEATURE_BULK_ALLOC}},
-+	[I40E_RX_ALTIVEC] = { i40e_recv_pkts_vec, "Vector AltiVec",
-+		{I40E_RX_SCALAR_OFFLOADS, RTE_VECT_SIMD_128, CI_RX_BURST_FEATURE_BULK_ALLOC}},
- #endif
- };
- 
-@@ -3315,7 +3329,13 @@ i40e_set_rx_function(struct rte_eth_dev *dev)
+ static int
+@@ -4329,9 +4333,51 @@ static void
+ signal_handler(int signum __rte_unused)
  {
- 	struct i40e_adapter *ad =
- 		I40E_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
-+	struct ci_rx_burst_features req_features = {
-+		.rx_offloads = dev->data->dev_conf.rxmode.offloads,
-+		.simd_width = RTE_VECT_SIMD_DISABLED,
-+		.other_features_mask = CI_RX_BURST_NO_FEATURES
-+	};
- 	uint16_t vector_rx, i;
-+	enum rte_vect_max_simd rx_simd_width = i40e_get_max_simd_bitwidth();
- 
- 	/* The primary process selects the rx path for all processes. */
- 	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-@@ -3324,76 +3344,51 @@ i40e_set_rx_function(struct rte_eth_dev *dev)
- 	/* In order to allow Vector Rx there are a few configuration
- 	 * conditions to be met and Rx Bulk Allocation should be allowed.
- 	 */
--#ifdef RTE_ARCH_X86
--	enum rte_vect_max_simd rx_simd_width = i40e_get_max_simd_bitwidth();
--#endif
-+
- 	if (i40e_rx_vec_dev_conf_condition_check(dev) || !ad->rx_bulk_alloc_allowed) {
- 		PMD_INIT_LOG(DEBUG, "Port[%d] doesn't meet"
- 				" Vector Rx preconditions",
- 				dev->data->port_id);
- 
--		ad->rx_vec_allowed = false;
-+		rx_simd_width = RTE_VECT_SIMD_DISABLED;
- 	}
--	if (ad->rx_vec_allowed) {
-+	if (rx_simd_width != RTE_VECT_SIMD_DISABLED) {
- 		for (i = 0; i < dev->data->nb_rx_queues; i++) {
- 			struct ci_rx_queue *rxq =
- 				dev->data->rx_queues[i];
- 
- 			if (rxq && i40e_rxq_vec_setup(rxq)) {
--				ad->rx_vec_allowed = false;
-+				rx_simd_width = RTE_VECT_SIMD_DISABLED;
- 				break;
- 			}
- 		}
- 	}
- 
--	if (ad->rx_vec_allowed && rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128) {
--#ifdef RTE_ARCH_X86
--		if (dev->data->scattered_rx) {
--			if (rx_simd_width == RTE_VECT_SIMD_512) {
--#ifdef CC_AVX512_SUPPORT
--				ad->rx_func_type = I40E_RX_AVX512_SCATTERED;
--#endif
--			} else {
--				ad->rx_func_type = (rx_simd_width == RTE_VECT_SIMD_256) ?
--					I40E_RX_AVX2_SCATTERED :
--					I40E_RX_SCATTERED;
--				dev->recycle_rx_descriptors_refill =
--					i40e_recycle_rx_descriptors_refill_vec;
--			}
--		} else {
--			if (rx_simd_width == RTE_VECT_SIMD_512) {
--#ifdef CC_AVX512_SUPPORT
--				ad->rx_func_type = I40E_RX_AVX512;
--#endif
--			} else {
--				ad->rx_func_type = (rx_simd_width == RTE_VECT_SIMD_256) ?
--					I40E_RX_AVX2 :
--					I40E_RX_SSE;
--				dev->recycle_rx_descriptors_refill =
--					i40e_recycle_rx_descriptors_refill_vec;
--			}
--		}
--#elif defined(RTE_ARCH_ARM64)
-+	req_features.simd_width = rx_simd_width;
-+	if (dev->data->scattered_rx)
-+		req_features.other_features_mask |= CI_RX_BURST_FEATURE_SCATTERED;
-+	if (ad->rx_bulk_alloc_allowed)
-+		req_features.other_features_mask |= CI_RX_BURST_FEATURE_BULK_ALLOC;
-+
-+	ad->rx_func_type = ci_rx_burst_mode_select(&i40e_rx_burst_infos[0],
-+						req_features,
-+						RTE_DIM(i40e_rx_burst_infos),
-+						I40E_RX_DEFAULT);
-+	if (i40e_rx_burst_infos[ad->rx_func_type].features.simd_width >= RTE_VECT_SIMD_128)
-+		/* Vector function selected. Prepare the rxq accordingly. */
-+		for (i = 0; i < dev->data->nb_rx_queues; i++)
-+			if (dev->data->rx_queues[i])
-+				i40e_rxq_vec_setup(dev->data->rx_queues[i]);
-+
-+	if (i40e_rx_burst_infos[ad->rx_func_type].features.simd_width >= RTE_VECT_SIMD_128 &&
-+			i40e_rx_burst_infos[ad->rx_func_type].features.simd_width <
-+				RTE_VECT_SIMD_512)
- 		dev->recycle_rx_descriptors_refill = i40e_recycle_rx_descriptors_refill_vec;
--		if (dev->data->scattered_rx)
--			ad->rx_func_type = I40E_RX_NEON_SCATTERED;
--		else
--			ad->rx_func_type = I40E_RX_NEON;
--#elif defined(RTE_ARCH_PPC_64)
--		dev->recycle_rx_descriptors_refill = i40e_recycle_rx_descriptors_refill_vec;
--		if (dev->data->scattered_rx)
--			ad->rx_func_type = I40E_RX_ALTIVEC_SCATTERED;
--		else
--			ad->rx_func_type = I40E_RX_ALTIVEC;
--#endif /* RTE_ARCH_X86 */
--	} else if (!dev->data->scattered_rx && ad->rx_bulk_alloc_allowed) {
--		dev->rx_pkt_burst = i40e_recv_pkts_bulk_alloc;
--	} else {
--		/* Simple Rx Path. */
--		dev->rx_pkt_burst = dev->data->scattered_rx ?
--					i40e_recv_scattered_pkts :
--					i40e_recv_pkts;
--	}
-+
-+out:
-+	dev->rx_pkt_burst = i40e_rx_burst_infos[ad->rx_func_type].pkt_burst;
-+	PMD_DRV_LOG(NOTICE, "Using %s (port %d).",
-+			i40e_rx_burst_infos[ad->rx_func_type].info, dev->data->port_id);
- 
- 	/* Propagate information about RX function choice through all queues. */
- 	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
-@@ -3415,10 +3410,8 @@ i40e_set_rx_function(struct rte_eth_dev *dev)
- 		}
- 	}
- 
--out:
--	dev->rx_pkt_burst = i40e_rx_burst_infos[ad->rx_func_type].pkt_burst;
--	PMD_DRV_LOG(NOTICE, "Using %s Rx burst function (port %d).",
--		i40e_rx_burst_infos[ad->rx_func_type].info, dev->data->port_id);
-+	ad->rx_vec_allowed = i40e_rx_burst_infos[ad->rx_func_type].features.simd_width >=
-+				RTE_VECT_SIMD_128;
+ 	f_quit = 1;
++	quit_signal = 1;
+ 	prompt_exit();
  }
  
++
++/* Alarm signal handler, used to check that primary process */
++static void
++monitor_primary(void *arg __rte_unused)
++{
++	if (rte_atomic_load_explicit(&quit_signal, rte_memory_order_relaxed))
++		return;
++
++	if (rte_eal_primary_proc_alive(NULL)) {
++		rte_eal_alarm_set(MONITOR_INTERVAL, monitor_primary, NULL);
++	} else {
++		fprintf(stderr,
++			"Primary process is no longer active, exiting...\n");
++		quit_signal = 1;
++		f_quit = 1;
++		prompt_exit();
++	}
++}
++
++/* Setup handler to check when primary exits. */
++static void
++enable_primary_monitor(void)
++{
++	int ret;
++
++	/* Once primary exits, so will pdump. */
++	ret = rte_eal_alarm_set(MONITOR_INTERVAL, monitor_primary, NULL);
++	if (ret < 0)
++		fprintf(stderr, "Fail to enable monitor:%d\n", ret);
++}
++
++static void
++disable_primary_monitor(void)
++{
++	int ret;
++
++	ret = rte_eal_alarm_cancel(monitor_primary, NULL);
++	if (ret < 0)
++		fprintf(stderr, "Fail to disable monitor:%d\n", ret);
++}
++
  int
-diff --git a/drivers/net/intel/i40e/i40e_rxtx.h b/drivers/net/intel/i40e/i40e_rxtx.h
-index b867e18daf..5d5d4e08b0 100644
---- a/drivers/net/intel/i40e/i40e_rxtx.h
-+++ b/drivers/net/intel/i40e/i40e_rxtx.h
-@@ -67,6 +67,21 @@ enum i40e_header_split_mode {
- 			       I40E_HEADER_SPLIT_UDP_TCP | \
- 			       I40E_HEADER_SPLIT_SCTP)
- 
-+#define I40E_RX_SCALAR_OFFLOADS (			\
-+		RTE_ETH_RX_OFFLOAD_VLAN_STRIP |		\
-+		RTE_ETH_RX_OFFLOAD_QINQ_STRIP |		\
-+		RTE_ETH_RX_OFFLOAD_IPV4_CKSUM |		\
-+		RTE_ETH_RX_OFFLOAD_UDP_CKSUM |		\
-+		RTE_ETH_RX_OFFLOAD_TCP_CKSUM |		\
-+		RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM |	\
-+		RTE_ETH_RX_OFFLOAD_KEEP_CRC |		\
-+		RTE_ETH_RX_OFFLOAD_SCATTER |		\
-+		RTE_ETH_RX_OFFLOAD_VLAN_EXTEND |	\
-+		RTE_ETH_RX_OFFLOAD_VLAN_FILTER |	\
-+		RTE_ETH_RX_OFFLOAD_RSS_HASH)
-+
-+#define I40E_RX_VECTOR_OFFLOADS I40E_RX_SCALAR_OFFLOADS
-+
- /** Offload features */
- union i40e_tx_offload {
- 	uint64_t data;
-diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c b/drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c
-index 8a4a1a77bf..87a57e7520 100644
---- a/drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c
-@@ -558,3 +558,9 @@ i40e_rx_vec_dev_conf_condition_check(struct rte_eth_dev *dev)
+ main(int argc, char** argv)
  {
- 	return i40e_rx_vec_dev_conf_condition_check_default(dev);
- }
-+
-+enum rte_vect_max_simd
-+i40e_get_max_simd_bitwidth(void)
-+{
-+	return rte_vect_get_max_simd_bitwidth();
-+}
-diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_common.h b/drivers/net/intel/i40e/i40e_rxtx_vec_common.h
-index d19b9e4bf4..e118df9ce0 100644
---- a/drivers/net/intel/i40e/i40e_rxtx_vec_common.h
-+++ b/drivers/net/intel/i40e/i40e_rxtx_vec_common.h
-@@ -54,8 +54,6 @@ static inline int
- i40e_rx_vec_dev_conf_condition_check_default(struct rte_eth_dev *dev)
- {
- #ifndef RTE_LIBRTE_IEEE1588
--	struct i40e_adapter *ad =
--		I40E_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
- 	struct rte_eth_rxmode *rxmode = &dev->data->dev_conf.rxmode;
+@@ -4362,7 +4408,8 @@ main(int argc, char** argv)
+ 	if (diag < 0)
+ 		rte_exit(EXIT_FAILURE, "Cannot init EAL: %s\n",
+ 			 rte_strerror(rte_errno));
+-
++	if (rte_eal_process_type() == RTE_PROC_SECONDARY)
++		enable_primary_monitor();
+ 	/* allocate port structures, and init them */
+ 	init_port();
  
- 	/* no QinQ support */
-@@ -66,15 +64,12 @@ i40e_rx_vec_dev_conf_condition_check_default(struct rte_eth_dev *dev)
- 	 * Vector mode is allowed only when number of Rx queue
- 	 * descriptor is power of 2.
- 	 */
--	ad->rx_vec_allowed = true;
- 	for (uint16_t i = 0; i < dev->data->nb_rx_queues; i++) {
- 		struct ci_rx_queue *rxq = dev->data->rx_queues[i];
- 		if (!rxq)
- 			continue;
--		if (!ci_rxq_vec_capable(rxq->nb_rx_desc, rxq->rx_free_thresh, rxq->offloads)) {
--			ad->rx_vec_allowed = false;
--			break;
--		}
-+		if (!ci_rxq_vec_capable(rxq->nb_rx_desc, rxq->rx_free_thresh, rxq->offloads))
-+			return -1;
+@@ -4571,7 +4618,8 @@ main(int argc, char** argv)
+ 	if (ret != 0)
+ 		rte_exit(EXIT_FAILURE, "Cannot unregister for ethdev events");
+ 
+-
++	if (rte_eal_process_type() == RTE_PROC_SECONDARY)
++		disable_primary_monitor();
+ 	ret = rte_eal_cleanup();
+ 	if (ret != 0)
+ 		rte_exit(EXIT_FAILURE,
+diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
+index dd7c00bc94..343e156a4f 100644
+--- a/lib/ethdev/rte_ethdev.c
++++ b/lib/ethdev/rte_ethdev.c
+@@ -4079,6 +4079,13 @@ rte_eth_dev_info_get(uint16_t port_id, struct rte_eth_dev_info *dev_info)
+ 
+ 	if (dev->dev_ops->dev_infos_get == NULL)
+ 		return -ENOTSUP;
++	if (rte_eal_process_type() == RTE_PROC_SECONDARY &&
++		unlikely(rte_mem_virt2phy(dev->data->dev_private) == RTE_BAD_PHYS_ADDR)) {
++			RTE_ETHDEV_LOG_LINE(ERR,
++			"Secondary: dev_private not accessible (primary exited?)");
++			rte_errno = ENODEV;
++			return -rte_errno;
++	}
+ 	diag = dev->dev_ops->dev_infos_get(dev, dev_info);
+ 	if (diag != 0) {
+ 		/* Cleanup already filled in device information */
+@@ -4307,7 +4314,13 @@ rte_eth_macaddr_get(uint16_t port_id, struct rte_ether_addr *mac_addr)
+ 			port_id);
+ 		return -EINVAL;
  	}
+-
++	if (rte_eal_process_type() == RTE_PROC_SECONDARY &&
++		(dev->data->mac_addrs == NULL)) {
++			RTE_ETHDEV_LOG_LINE(ERR,
++			"Secondary: dev_private not accessible (primary exited?)");
++			rte_errno = ENODEV;
++			return -rte_errno;
++	}
+ 	rte_ether_addr_copy(&dev->data->mac_addrs[0], mac_addr);
  
- 	return 0;
-diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c b/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c
-index 64ffb2f6df..c9098e4c1a 100644
---- a/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c
-@@ -708,3 +708,9 @@ i40e_rx_vec_dev_conf_condition_check(struct rte_eth_dev *dev)
- {
- 	return i40e_rx_vec_dev_conf_condition_check_default(dev);
- }
-+
-+enum rte_vect_max_simd
-+i40e_get_max_simd_bitwidth(void)
-+{
-+	return rte_vect_get_max_simd_bitwidth();
-+}
+ 	rte_eth_trace_macaddr_get(port_id, mac_addr);
 -- 
-2.34.1
+2.43.0
 
