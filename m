@@ -2,160 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60CAFC87FCA
-	for <dpdk-dev@archiver.kernel.org>; Fri, 25 Jul 2025 15:22:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4504EC87FCA
+	for <dpdk-dev@archiver.kernel.org>; Fri, 25 Jul 2025 15:26:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A77854064E;
-	Fri, 25 Jul 2025 17:22:47 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id 57408402A8
- for <dev@dpdk.org>; Fri, 25 Jul 2025 17:22:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1753456966; x=1784992966;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=N5Eu9CELjvO5/+W+qW2m3BgzabRf0ivC3djUXi0+pZk=;
- b=hACCUfaLN7fAKnzLwVURSHiw3gxKE/7ankm7YDqtVwwcRqLvsZNGlZoJ
- 7thchWDjrbeIJ0U/98o09QBMr5RNbcRJZW7a2sgPDfzqvuPm+Lso76zGv
- F5pxKbebmK8uFZduoep3hwnbohWe+KIBWZNof8Wom8BzY7QTIv9pdjFYH
- d+Jt1H7phVuaEU3K9hmvfX7Jyl/bEDCkc1KozOLpKNHVCADItzhsWJSL4
- pjLvZdIJTQ+jQSLB7zbEOmth/oM7YWNJQhlKMW0Bt66pUlFpmlKZRlNBc
- fvoLXoe7Id+qZVb2WYn10oR6MZN5owx7d/fNMWXHy9TxQ4fW8L/B7WrLp g==;
-X-CSE-ConnectionGUID: SwroJbXXSDC/DX+6sxqwzA==
-X-CSE-MsgGUID: YnBCcCxZT/O3APakyxRPCQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11503"; a="55758308"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; d="scan'208";a="55758308"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
- by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 Jul 2025 08:22:45 -0700
-X-CSE-ConnectionGUID: tsR/nqQcRsmZxI2UC3T5XQ==
-X-CSE-MsgGUID: lpuppMNOToqczIns9ltc3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; d="scan'208";a="160961249"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 Jul 2025 08:22:44 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Fri, 25 Jul 2025 08:22:43 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Fri, 25 Jul 2025 08:22:43 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.59)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Fri, 25 Jul 2025 08:22:43 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uGAx8t//qnz1ijtf2KA8/+eY+TMNxTMVvec8iiCqzxklJiK4red9vVk40olc8+7wB96fAkIZbY7HrG/pDr3UyhwXoeQOZyzvZ127l0KgMHsuktNBybY6ItQYFlFkCq/OdfAbbgkhm00DePmMcWRt9pNlhw4DZ6TnyTTOMenL40RTMzu3tcE5PCa7lHRF1pAtVn8JR8ARVVwmZHlDNXQS7pa0jKgn2uEHYk5WHulc1M7YYY3m4yTG3GWh3WOmutc3W+pO1UmTVXimBsH/ImnVT2/d1BCvqBjwFegg5hvLfkEO1Ux+ObYqMLS8EXRvmH32tRdxjGS5IYCFXf30hVuRIA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hBDuMQ1A8kDBE9Tnx9D+n0VxRsDSrJ7RYb/mKbLh5D0=;
- b=GlB0nDp/gm5fxmNuhMIrXxjJS/0FSSI32IjbA0ge8CFy12B/9bVmHADWONhRoAnhfz2x8YoPyVe0C82hWIAxE00H5idrLFN+o+nFtqHQUULcLQfkU0Phe6FiLRCYMElW7e9HK4Z4Qe9y4kEmpqjgCm5XWfecQnYt/pJ9iSoHvKwTAOhFapnw564zKqLpBvmkYkjERXV0rAIkL50FSN+yDRCtyCIKqautvmLfjxw+1FCTAUN5hJJ4FjWbrsrtMlWfC3UWZlKvo935/Sa6FhRfIkFqG0ZKLBHwqK9RaLhxlcAP7kRY2wi8J+nsLP4Pc2ohmMuY1ysi+upZ6Oz1Mqjs8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CY8PR11MB7290.namprd11.prod.outlook.com (2603:10b6:930:9a::6)
- by PH7PR11MB8273.namprd11.prod.outlook.com (2603:10b6:510:1ac::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.24; Fri, 25 Jul
- 2025 15:22:40 +0000
-Received: from CY8PR11MB7290.namprd11.prod.outlook.com
- ([fe80::2fa:a105:f81e:5971]) by CY8PR11MB7290.namprd11.prod.outlook.com
- ([fe80::2fa:a105:f81e:5971%5]) with mapi id 15.20.8964.021; Fri, 25 Jul 2025
- 15:22:40 +0000
-Date: Fri, 25 Jul 2025 16:22:35 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Ciara Loftus <ciara.loftus@intel.com>
-CC: <dev@dpdk.org>
-Subject: Re: [RFC PATCH 11/14] net/ice: remove unsupported Rx offload
-Message-ID: <aIOhOwC0jDtM-XBD@bricha3-mobl1.ger.corp.intel.com>
-References: <20250725124919.3564890-1-ciara.loftus@intel.com>
- <20250725124919.3564890-12-ciara.loftus@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250725124919.3564890-12-ciara.loftus@intel.com>
-X-ClientProxiedBy: DU2PR04CA0013.eurprd04.prod.outlook.com
- (2603:10a6:10:3b::18) To CY8PR11MB7290.namprd11.prod.outlook.com
- (2603:10b6:930:9a::6)
+	by mails.dpdk.org (Postfix) with ESMTP id 4EDA7402A8;
+	Fri, 25 Jul 2025 17:26:43 +0200 (CEST)
+Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
+ by mails.dpdk.org (Postfix) with ESMTP id 84B4540144
+ for <dev@dpdk.org>; Fri, 25 Jul 2025 17:26:41 +0200 (CEST)
+Received: from debian (unknown [78.109.66.179])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by agw.arknetworks.am (Postfix) with ESMTPSA id 1E8B4E03AE;
+ Fri, 25 Jul 2025 19:26:40 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 1E8B4E03AE
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
+ s=default; t=1753457200;
+ bh=LTjb0l3/yrk6o3HA7Dmqcs3uWITcRLkJvFik7tufJyQ=;
+ h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+ b=7g5jEt+MZIDWwKwzWzTtnG+wdm+oLvssMH/erdRQTiM1gElxvEFBm7KMcl5i6oAM5
+ ZS5h3SSvL26drDRxwSPXg3BjSGiv8EbZTjufd1MobDo6e60z8EH1rqs9pH+4uhqOaE
+ d4oitIyOt/pfrJb2mXQCD3tEK7MKigUCSQdJU6XXFny91DOnzybRJ838NnKKFMShL0
+ kxih05cyw/zirlGSJ5vPByiNWaZVT8CMcMOd7JS71GYy9cWo54Tvy8lqu7Qrfyrikr
+ cIyTBLGuEF/ZJser9HacFVaK1wDaxprc1IZlMwTgPUz2LMxlkBjvoB4wuzMG0ON/hA
+ aPZe1elag3uKw==
+Date: Fri, 25 Jul 2025 19:26:31 +0400 (+04)
+From: Ivan Malov <ivan.malov@arknetworks.am>
+To: Jie Liu <liujie5@linkdatatechnology.com>
+cc: stephen@networkplumber.org, dev@dpdk.org
+Subject: Re: [PATCH v11 07/13] net/sxe: support rss offload
+In-Reply-To: <20250725104855.73326-7-liujie5@linkdatatechnology.com>
+Message-ID: <f6ac4e9d-617f-8968-6332-52f435bdc2ea@arknetworks.am>
+References: <20250719090537.699357-14-liujie5@linkdatatechnology.com>
+ <20250725104855.73326-1-liujie5@linkdatatechnology.com>
+ <20250725104855.73326-7-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR11MB7290:EE_|PH7PR11MB8273:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1f710b9d-ada2-40ef-5a1c-08ddcb8f186d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?7Gb1nnsUn1C33BSDUQXAuCr4OZmLbZxfdFOD4Ho1Hlz036u/0OtaK9LozDml?=
- =?us-ascii?Q?C/0NA5Z2FNwnkyYF3svlMkKcu6S0sTfxuKjSutoZq1ZMgkXFvLn8vpbH/P1b?=
- =?us-ascii?Q?8I2s7qGZi5AsaKBNhsNI0OSiT/n1mrx/Oa3mo06BLaWlokyrXBqVdUJjSXMZ?=
- =?us-ascii?Q?SAvGWGEw7cvB5I5T7OJnZLmKXJQBubZIeGMHpCHxUiAdXEsb8lYgflvwUNZM?=
- =?us-ascii?Q?hxI/vj01haJJDeb6V49vd+UCVJUcb5nx5SWKRHyjdNr13fnTjI8WYwUmn1sj?=
- =?us-ascii?Q?X9SmAQOdFewZ1sJYTTUYvwerJeONKhKBfzkkJ5BykqhK4OQfrUI1o3RzEKOs?=
- =?us-ascii?Q?ASrBk65ua6TBCIAapWPfXkx01rvKoqy7erw2fFyHJoHaz+usB8RV9wS8Kn08?=
- =?us-ascii?Q?rtPJruUq4eY2MPOm/f6n3PAjrNjr3RWWroIMnQW9wBX0LlBoJjBhPPfZg9NP?=
- =?us-ascii?Q?yDQXBNTJw9U+Jc2tzvLVDtSa4kis/2TsLg4xVe6Mu1OfauLwNcqM+7smRm1j?=
- =?us-ascii?Q?8Usw1N5du4Ti+9FIRqyLNhmmXsconYO3igGc6KMotEexL63hf/4y0GC+piqS?=
- =?us-ascii?Q?J9ka/6EAimcEAoVZi0rMXYTbrn90EESvRWl8YBN/FS29+wQwhGiYWIDBAbdG?=
- =?us-ascii?Q?6rkgDsESZCtv1/4UGla+1dxNw/Unm5pl0WCni+PDdZhkp0MX/BWGik1fzm4G?=
- =?us-ascii?Q?ONvafskan5ze4nSH2L1ONIsLls5zGqFw6TXEkQ8ghVyF8Y99GXCEg0RyZCm8?=
- =?us-ascii?Q?Yd0z+0Odp5whEapMmDJolmlfO68UEhDEdMBVNzR03CahOmYnH/PlgNjF+CtS?=
- =?us-ascii?Q?P6BeYkWwQTFYhEog4ouGEpBjDotbTDs+7yC4Zl710kji5RhtwtJEyoiAiLeD?=
- =?us-ascii?Q?Ewao7S61P4b0mC6EzfgLuuJ1tygOcqm2qlnMWmnMMgqtQfoqK2zTQGvhcgy+?=
- =?us-ascii?Q?HweNMMF0vOZqTqbyKmEcz9k48pVuDuhSAwEn5uuPIiNhSmbOE0p5dsmKWVnO?=
- =?us-ascii?Q?gUgExzLlFr3ZClmj0ai3OS8e0NjgCcr1TfQ+TMQUisDMJ9oLDjBkmM5yu2YU?=
- =?us-ascii?Q?w80tD9ueBHgSHveLlvfc42bdKgvx6gN6wTO3+NKjM8m2MpmauBZpWH+U47OL?=
- =?us-ascii?Q?poR5sCaNRUwPnJJ8YZd+S02CBQheUwYNTaylBhFjndY9EdDFXxzCi4+UzwCP?=
- =?us-ascii?Q?sornUPGpyZCD8v0vXmJttxVzluLP/zO2RFZAGwRTbgpr6RSCa1u6roD3KkJn?=
- =?us-ascii?Q?PbgBAzlr2+o0PGda4itbnEx87I06uff6EdXXwwDmT0LAdF6uhMCN/TiT7nSB?=
- =?us-ascii?Q?NK43lCKpG/CopNQemK86CxrK1Abvs6HXlQg9yLA2nt/HkRjV6W3ARyibfvd1?=
- =?us-ascii?Q?lABLt45z8XYByst8FX8FZ3lvr5iuyUEbKjOMFLDykwqVcU91Iw=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CY8PR11MB7290.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?BF08dXNga/BagUnZZvVBkUag0IYCASf5JOk3WJAB3WEPKC6R5p/3XzT6XPgB?=
- =?us-ascii?Q?FHRwpaezUgytNzrWiEONVNzdIC7jFeqPBNqRs/fV4NMszbLH5VXS+vJ0waVA?=
- =?us-ascii?Q?DA0tlTnV2qsuiyj7+VvFth+Tx2Qa5Nbk1Z2tspsFGWBYP2mBVNRCQrIpU5fO?=
- =?us-ascii?Q?kg15sxuW8+tYXD8iPVBsq47VOSwdPfwhHo39Ud00gtuxKIRdcR7cShLvsm3q?=
- =?us-ascii?Q?xoWT1fB2zu1jDjFFTY0wJHD/20xQw9iIlqm55kGx89fBZAQbGGgplFefua9S?=
- =?us-ascii?Q?C0h6MibB+KDEzOQxuAyVptFkgSRnDsGEUYn099XUUZFRe5r0KKc69VcL9/G/?=
- =?us-ascii?Q?HywXKTbQKDbHIXVVAvfAiVaBXPErVStLuNOpJx3Ud9ilJbCCqIpucRSZw28o?=
- =?us-ascii?Q?/0EU0tDl9F2HkL1YbkFch1e+xd/O2O74+mgIKEVMNaE+g79cj3PaED7LpGj0?=
- =?us-ascii?Q?jrbaVe+xAFWhq4cqMU/EV5dW1kmLGJJ86YkGMxiFhmLbX6gpsXYmvj97CQ5X?=
- =?us-ascii?Q?tiilrL0S1ik66oe5+smL/D4GKxHnEUnzHYn9KQyJslu1vIEwmnz8g8Wao1+q?=
- =?us-ascii?Q?r4DEUa9sne2SNfBdyAQWfhcWL+KL0usV02ntrcTmghR5ZSOdMmwFhooJxnpp?=
- =?us-ascii?Q?RndeFZ4BvO+bAgyg2Pyd2GcIP4HlgejXG+Toeoq6VRXNvwrVHDo/n6w12U4h?=
- =?us-ascii?Q?85UD8QPaKfrfyzlsvKzQ6rfonBiFT6LpIWkft05JpoP/Lfmdr//+2idDeQxO?=
- =?us-ascii?Q?SHOf4X4MG6YL360xi9xm2RJ3bRRvMN/Mb/MxivmoD14qdzEAYNZn67unFLVQ?=
- =?us-ascii?Q?EoNRPetad91naXyd+4Kf5NApa9CBY8TrTiLqaCxo0H+F6GovcGkB3UGYodgy?=
- =?us-ascii?Q?VGVpT6KaWkGjs8Nsqv/xKUrkXEHZW6I+fRNsMF68gdKhAgBRufIDpN1RRRxn?=
- =?us-ascii?Q?eo/5sfeies8+nYCVGGteaxah3+fQ+yka1w6JHMHMaBLbXg6yuufnoBc/loIl?=
- =?us-ascii?Q?qhITf62K8IkQpybGSrE99LaFd1yZcFjOqLosfN+uvxVIYQrWB2AjwF2qgaIi?=
- =?us-ascii?Q?WbRM5+pcDJLKs0fVaInsvugAxtyB/KauGZbQz+DtZat9Z6b1t/DyYazkfhBf?=
- =?us-ascii?Q?rnT1WvSsEwq3qBaj2aujWYQv0twplDIraammrzvuSUVhk2A0KdBcDghxFzge?=
- =?us-ascii?Q?0jWajqFm7Ny7qakqtLaQ8IOJZFygqozgNVUzAtyj+ju1V66h/4pRyP5nuNV/?=
- =?us-ascii?Q?go2EQb74X/mnEfmfIVtJZOkaf2eSKHqYsJbVRqkLkFz5SiL6gFiTnHS4zkrU?=
- =?us-ascii?Q?1bzayll1w1WT0nLoprkUvAZo2Kp+RNMwo1egusBLDwa8VQUSR4OcuQqHO2Ji?=
- =?us-ascii?Q?BS+to3NnTTR2VtIfuatSfS+elHN4usnbSVrj9WC9CZnAPA4o1kdPth2Sdjzr?=
- =?us-ascii?Q?Y4DQQqAbX8AtpAXl8bi53SKk8e5fxKAD3kIUTCbXqhTFC8yORnSu8/aaw4FM?=
- =?us-ascii?Q?aumA+Yu4CVFCxxD2v+W4nk+w0pom65oq2LhmDYOhy02tqSe+/hn3O8ClG4o+?=
- =?us-ascii?Q?yFDIj6aCZKBnTS03Z54LBcM782XvUDz1T4E/1NUQ+GYhmmNddG9Mh0QBzNDf?=
- =?us-ascii?Q?Mg=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1f710b9d-ada2-40ef-5a1c-08ddcb8f186d
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7290.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 15:22:40.8139 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TNLlCKtdxMpUhbJS0Bbs5JijGEo/VeEa0qDqa7J5QeCbCIRrSJfRy6/XbM/N2v4XE7KrV/YnVTmsRTA+982aXCGlOKneugew8vL3zin0FCY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB8273
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -169,10 +52,452 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Jul 25, 2025 at 12:49:16PM +0000, Ciara Loftus wrote:
-> The offload RTE_ETH_RX_OFFLOAD_SCTP_CKSUM is not supported in the ice
-> driver so remove the one erronous use of it.
-> 
-> Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+Hi,
+
+(please see below)
+
+On Fri, 25 Jul 2025, Jie Liu wrote:
+
+> Support rss offload.
+>
+> Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 > ---
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+> drivers/net/sxe/base/sxe_offload_common.c |  11 +-
+> drivers/net/sxe/pf/sxe_offload.c          | 299 ++++++++++++++++++++++
+> drivers/net/sxe/pf/sxe_offload.h          |  33 +++
+> 3 files changed, 338 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/net/sxe/base/sxe_offload_common.c b/drivers/net/sxe/base/sxe_offload_common.c
+> index 9c4ffd3b86..780681a994 100644
+> --- a/drivers/net/sxe/base/sxe_offload_common.c
+> +++ b/drivers/net/sxe/base/sxe_offload_common.c
+> @@ -22,15 +22,16 @@ u64 __sxe_rx_port_offload_capa_get(struct rte_eth_dev *dev)
+> 	u64 rx_offload_capa;
+>
+> 	rx_offload_capa = RTE_ETH_RX_OFFLOAD_IPV4_CKSUM  |
+> -		   RTE_ETH_RX_OFFLOAD_UDP_CKSUM   |
+> -		   RTE_ETH_RX_OFFLOAD_TCP_CKSUM   |
+> -		   RTE_ETH_RX_OFFLOAD_KEEP_CRC	|
+
+Why not fix the indentation in one of the original/previous patch, to avoid
+these changes?
+
+> +			RTE_ETH_RX_OFFLOAD_UDP_CKSUM   |
+> +			RTE_ETH_RX_OFFLOAD_TCP_CKSUM   |
+> +			RTE_ETH_RX_OFFLOAD_KEEP_CRC	|
+> #ifdef DEV_RX_JUMBO_FRAME
+> -		   DEV_RX_OFFLOAD_JUMBO_FRAME |
+> +			DEV_RX_OFFLOAD_JUMBO_FRAME |
+> #endif
+> 			RTE_ETH_RX_OFFLOAD_VLAN_FILTER |
+> 			RTE_ETH_RX_OFFLOAD_VLAN_EXTEND |
+> -		   RTE_ETH_RX_OFFLOAD_SCATTER;
+> +			RTE_ETH_RX_OFFLOAD_SCATTER |
+> +			RTE_ETH_RX_OFFLOAD_RSS_HASH;
+>
+> 	if (!RTE_ETH_DEV_SRIOV(dev).active)
+> 		rx_offload_capa |= RTE_ETH_RX_OFFLOAD_TCP_LRO;
+> diff --git a/drivers/net/sxe/pf/sxe_offload.c b/drivers/net/sxe/pf/sxe_offload.c
+> index 0fa3f4822a..d34cf7ecc8 100644
+> --- a/drivers/net/sxe/pf/sxe_offload.c
+> +++ b/drivers/net/sxe/pf/sxe_offload.c
+> @@ -9,11 +9,26 @@
+> #include "sxe_queue_common.h"
+> #include "sxe_offload_common.h"
+>
+> +static u8 rss_sxe_key[40] = {
+
+Const?
+
+> +	0x6D, 0x5A, 0x56, 0xDA, 0x25, 0x5B, 0x0E, 0xC2,
+> +	0x41, 0x67, 0x25, 0x3D, 0x43, 0xA3, 0x8F, 0xB0,
+> +	0xD0, 0xCA, 0x2B, 0xCB, 0xAE, 0x7B, 0x30, 0xB4,
+> +	0x77, 0xCB, 0x2D, 0xA3, 0x80, 0x30, 0xF2, 0x0C,
+> +	0x6A, 0x42, 0xB7, 0x3B, 0xBE, 0xAC, 0x01, 0xFA,
+> +};
+> +
+> #define SXE_4_BIT_WIDTH  (CHAR_BIT / 2)
+> #define SXE_4_BIT_MASK   RTE_LEN2MASK(SXE_4_BIT_WIDTH, u8)
+> #define SXE_8_BIT_WIDTH  CHAR_BIT
+> #define SXE_8_BIT_MASK   UINT8_MAX
+>
+> +#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_FILTER_CTRL
+> +u8 *sxe_rss_hash_key_get(void)
+
+Is this unused in the driver?
+
+> +{
+> +	return rss_sxe_key;
+> +}
+> +#endif
+> +
+> u64 sxe_rx_queue_offload_capa_get(struct rte_eth_dev *dev)
+> {
+> 	return __sxe_rx_queue_offload_capa_get(dev);
+> @@ -35,3 +50,287 @@ u64 sxe_tx_port_offload_capa_get(struct rte_eth_dev *dev)
+> {
+> 	return __sxe_tx_port_offload_capa_get(dev);
+> }
+> +
+> +void sxe_rss_disable(struct rte_eth_dev *dev)
+> +{
+> +	struct sxe_adapter *adapter = dev->data->dev_private;
+> +	struct sxe_hw *hw = &adapter->hw;
+> +
+> +	PMD_INIT_FUNC_TRACE();
+> +
+> +	sxe_hw_rss_cap_switch(hw, false);
+> +}
+> +
+> +void sxe_rss_hash_set(struct sxe_hw *hw,
+> +				struct rte_eth_rss_conf *rss_conf)
+> +{
+> +	u8  *hash_key;
+> +	u32 rss_key[SXE_MAX_RSS_KEY_ENTRIES];
+> +	u16 i;
+> +	u64 rss_hf;
+> +	u32 rss_field = 0;
+> +
+> +	PMD_INIT_FUNC_TRACE();
+> +
+> +	hash_key = rss_conf->rss_key;
+> +	if (hash_key != NULL) {
+> +		for (i = 0; i < SXE_MAX_RSS_KEY_ENTRIES; i++) {
+> +			rss_key[i]  = hash_key[(i * 4)];
+> +			rss_key[i] |= hash_key[(i * 4) + 1] << 8;
+> +			rss_key[i] |= hash_key[(i * 4) + 2] << 16;
+> +			rss_key[i] |= hash_key[(i * 4) + 3] << 24;
+
+The code does not seem to check 'rss_conf->rss_key_len' to guarantee it is at
+least 'SXE_MAX_RSS_KEY_ENTRIES * 4', to avoid reading past the buffer.
+
+> +		}
+> +		sxe_hw_rss_key_set_all(hw, rss_key);
+> +	}
+> +
+> +	rss_hf = rss_conf->rss_hf;
+> +	if (rss_hf & RTE_ETH_RSS_IPV4)
+> +		rss_field |= SXE_MRQC_RSS_FIELD_IPV4;
+> +
+> +	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV4_TCP)
+> +		rss_field |= SXE_MRQC_RSS_FIELD_IPV4_TCP;
+> +
+> +	if (rss_hf & RTE_ETH_RSS_IPV6)
+> +		rss_field |= SXE_MRQC_RSS_FIELD_IPV6;
+> +
+> +	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_TCP)
+> +		rss_field |= SXE_MRQC_RSS_FIELD_IPV6_TCP;
+> +
+> +	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV4_UDP)
+> +		rss_field |= SXE_MRQC_RSS_FIELD_IPV4_UDP;
+> +
+> +	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_UDP)
+> +		rss_field |= SXE_MRQC_RSS_FIELD_IPV6_UDP;
+> +
+> +	sxe_hw_rss_field_set(hw, rss_field);
+> +
+> +	sxe_hw_rss_cap_switch(hw, true);
+> +}
+> +
+> +void sxe_rss_configure(struct rte_eth_dev *dev)
+> +{
+> +	struct rte_eth_rss_conf *rss_conf;
+> +	struct sxe_adapter *adapter = dev->data->dev_private;
+> +	struct sxe_hw *hw = &adapter->hw;
+> +	u16 i;
+> +	u16 j;
+> +	u8  rss_indir_tbl[SXE_MAX_RETA_ENTRIES];
+> +
+> +	PMD_INIT_FUNC_TRACE();
+> +
+> +	if (!adapter->rss_reta_updated) {
+> +		for (i = 0, j = 0; i < SXE_MAX_RETA_ENTRIES; i++, j++) {
+> +			if (j == dev->data->nb_rx_queues)
+> +				j = 0;
+> +
+> +			rss_indir_tbl[i] = j;
+> +		}
+
+Why not just
+     for (i = 0; i < SXE_MAX_RETA_ENTRIES; ++i)
+         rss_indir_tbl[i] = i % dev->data->nb_rx_queues;
+
+> +
+> +		sxe_hw_rss_redir_tbl_set_all(hw, rss_indir_tbl);
+> +	}
+> +
+> +	rss_conf = &dev->data->dev_conf.rx_adv_conf.rss_conf;
+> +	if ((rss_conf->rss_hf & SXE_RSS_OFFLOAD_ALL) == 0) {
+> +		PMD_LOG_INFO(INIT, "user rss config match hw supports is 0");
+
+The info message is a little confusing.
+
+> +		sxe_rss_disable(dev);
+> +		return;
+> +	}
+> +
+> +	if (rss_conf->rss_key == NULL)
+> +		rss_conf->rss_key = rss_sxe_key;
+
+Perhaps also set 'rss_conf->rss_key_len'?
+
+> +
+> +	sxe_rss_hash_set(hw, rss_conf);
+> +}
+> +
+> +s32 sxe_rss_reta_update(struct rte_eth_dev *dev,
+> +			struct rte_eth_rss_reta_entry64 *reta_conf,
+> +			u16 reta_size)
+> +{
+> +	u16 i;
+> +	u8 j, mask;
+> +	u32 reta, r;
+> +	u16 idx, shift;
+> +	struct sxe_adapter *adapter = dev->data->dev_private;
+> +	struct rte_eth_dev_data *dev_data = dev->data;
+> +	struct sxe_hw *hw = &adapter->hw;
+> +	s32 ret = 0;
+> +
+> +	PMD_INIT_FUNC_TRACE();
+> +
+> +	if (!dev_data->dev_started) {
+> +		PMD_LOG_ERR(DRV,
+> +			"port %d must be started before rss reta update",
+> +			 dev_data->port_id);
+
+Why not memorise the table to be applied later on port start? Why deny it?
+
+> +		ret = -EIO;
+> +		goto l_end;
+> +	}
+> +
+> +	if (reta_size != RTE_ETH_RSS_RETA_SIZE_128) {
+> +		PMD_LOG_ERR(DRV, "The size of hash lookup table configured "
+> +			"(%d) doesn't match the number hardware can supported "
+> +			"(%d)", reta_size, RTE_ETH_RSS_RETA_SIZE_128);
+> +		ret = -EINVAL;
+> +		goto l_end;
+> +	}
+> +
+> +	for (i = 0; i < reta_size; i += SXE_4_BIT_WIDTH) {
+> +		idx = i / RTE_ETH_RETA_GROUP_SIZE;
+> +		shift = i % RTE_ETH_RETA_GROUP_SIZE;
+> +		mask = (u8)((reta_conf[idx].mask >> shift) &
+> +						SXE_4_BIT_MASK);
+> +		if (!mask)
+> +			continue;
+> +
+> +		if (mask == SXE_4_BIT_MASK)
+> +			r = 0;
+> +		else
+> +			r = sxe_hw_rss_redir_tbl_get_by_idx(hw, i);
+> +
+> +		for (j = 0, reta = 0; j < SXE_4_BIT_WIDTH; j++) {
+> +			if (mask & (0x1 << j)) {
+> +				reta |= reta_conf[idx].reta[shift + j] <<
+> +						(CHAR_BIT * j);
+> +			} else {
+> +				reta |= r & (SXE_8_BIT_MASK <<
+> +					(CHAR_BIT * j));
+> +			}
+> +		}
+> +
+> +		sxe_hw_rss_redir_tbl_set_by_idx(hw, i, reta);
+> +	}
+> +	adapter->rss_reta_updated = true;
+> +
+> +l_end:
+> +	return ret;
+> +}
+> +
+> +s32 sxe_rss_reta_query(struct rte_eth_dev *dev,
+> +			 struct rte_eth_rss_reta_entry64 *reta_conf,
+> +			 u16 reta_size)
+> +{
+> +	u16 i;
+> +	u8 j, mask;
+> +	u32 reta;
+> +	u16 idx, shift;
+> +	struct sxe_adapter *adapter = dev->data->dev_private;
+> +	struct sxe_hw *hw = &adapter->hw;
+> +	s32 ret = 0;
+> +
+> +	PMD_INIT_FUNC_TRACE();
+> +	if (reta_size != RTE_ETH_RSS_RETA_SIZE_128) {
+> +		PMD_LOG_ERR(DRV, "the size of hash lookup table configured "
+> +			"(%d) doesn't match the number hardware can supported "
+> +			"(%d)", reta_size, RTE_ETH_RSS_RETA_SIZE_128);
+> +		ret = -EINVAL;
+> +		goto l_end;
+> +	}
+> +
+> +	for (i = 0; i < reta_size; i += SXE_4_BIT_WIDTH) {
+> +		idx = i / RTE_ETH_RETA_GROUP_SIZE;
+> +		shift = i % RTE_ETH_RETA_GROUP_SIZE;
+> +		mask = (u8)((reta_conf[idx].mask >> shift) &
+> +						SXE_4_BIT_MASK);
+> +		if (!mask)
+> +			continue;
+> +
+> +		reta = sxe_hw_rss_redir_tbl_get_by_idx(hw, i);
+> +		for (j = 0; j < SXE_4_BIT_WIDTH; j++) {
+> +			if (mask & (0x1 << j)) {
+> +				reta_conf[idx].reta[shift + j] =
+> +					((reta >> (CHAR_BIT * j)) &
+> +						SXE_8_BIT_MASK);
+> +			}
+> +		}
+> +	}
+> +
+> +l_end:
+> +	return ret;
+> +}
+> +
+> +s32 sxe_rss_hash_update(struct rte_eth_dev *dev,
+> +			struct rte_eth_rss_conf *rss_conf)
+> +{
+> +	struct sxe_adapter *adapter = dev->data->dev_private;
+> +	struct sxe_hw *hw = &adapter->hw;
+> +	u64 rss_hf;
+> +	s32 ret = 0;
+> +
+> +	rss_hf = (rss_conf->rss_hf & SXE_RSS_OFFLOAD_ALL);
+
+Shan't one throw an error on '(rss_conf->rss_hf & ~SXE_RSS_OFFLOAD_ALL) != 0'?
+
+> +
+> +	if (!sxe_hw_is_rss_enabled(hw)) {
+> +		if (rss_hf != 0) {
+> +			PMD_LOG_ERR(DRV, "rss not init but want set");
+> +			ret = -EINVAL;
+> +			goto l_end;
+> +		}
+> +
+> +		goto l_end;
+> +	}
+> +
+> +	if (rss_hf == 0) {
+> +		PMD_LOG_ERR(DRV, "rss init but want disable it");
+> +		ret = -EINVAL;
+> +		goto l_end;
+> +	}
+> +
+> +	sxe_rss_hash_set(hw, rss_conf);
+> +
+> +l_end:
+> +	return ret;
+> +}
+> +
+> +s32 sxe_rss_hash_conf_get(struct rte_eth_dev *dev,
+> +				struct rte_eth_rss_conf *rss_conf)
+> +{
+> +	struct sxe_adapter *adapter = dev->data->dev_private;
+> +	struct sxe_hw *hw = &adapter->hw;
+> +	u8 *hash_key;
+> +	u32 rss_field;
+> +	u32 rss_key;
+> +	u64 rss_hf;
+> +	u16 i;
+> +
+> +	hash_key = rss_conf->rss_key;
+
+No check of 'rss_conf->rss_key_len'?
+
+Thank you.
+
+> +	if (hash_key != NULL) {
+> +		for (i = 0; i < SXE_MAX_RSS_KEY_ENTRIES; i++) {
+> +			rss_key = sxe_hw_rss_key_get_by_idx(hw, i);
+> +			hash_key[(i * 4)] = rss_key & 0x000000FF;
+> +			hash_key[(i * 4) + 1] = (rss_key >> 8) & 0x000000FF;
+> +			hash_key[(i * 4) + 2] = (rss_key >> 16) & 0x000000FF;
+> +			hash_key[(i * 4) + 3] = (rss_key >> 24) & 0x000000FF;
+> +		}
+> +	}
+> +
+> +
+> +	if (!sxe_hw_is_rss_enabled(hw)) {
+> +		rss_conf->rss_hf = 0;
+> +		PMD_LOG_INFO(DRV, "rss not enabled, return 0");
+> +		goto l_end;
+> +	}
+> +
+> +	rss_hf = 0;
+> +	rss_field = sxe_hw_rss_field_get(hw);
+> +	if (rss_field & SXE_MRQC_RSS_FIELD_IPV4)
+> +		rss_hf |= RTE_ETH_RSS_IPV4;
+> +
+> +	if (rss_field & SXE_MRQC_RSS_FIELD_IPV4_TCP)
+> +		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV4_TCP;
+> +
+> +	if (rss_field & SXE_MRQC_RSS_FIELD_IPV4_UDP)
+> +		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV4_UDP;
+> +
+> +	if (rss_field & SXE_MRQC_RSS_FIELD_IPV6)
+> +		rss_hf |= RTE_ETH_RSS_IPV6;
+> +
+> +	if (rss_field & SXE_MRQC_RSS_FIELD_IPV6_TCP)
+> +		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV6_TCP;
+> +
+> +	if (rss_field & SXE_MRQC_RSS_FIELD_IPV6_UDP)
+> +		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV6_UDP;
+> +
+> +	PMD_LOG_DEBUG(DRV, "got rss hash func=0x%" SXE_PRIX64, rss_hf);
+> +	rss_conf->rss_hf = rss_hf;
+> +
+> +l_end:
+> +	return 0;
+> +}
+> diff --git a/drivers/net/sxe/pf/sxe_offload.h b/drivers/net/sxe/pf/sxe_offload.h
+> index a70d6bf94b..458b6464c5 100644
+> --- a/drivers/net/sxe/pf/sxe_offload.h
+> +++ b/drivers/net/sxe/pf/sxe_offload.h
+> @@ -7,6 +7,21 @@
+>
+> #include "sxe_hw.h"
+>
+> +#define SXE_RSS_OFFLOAD_ALL ( \
+> +		RTE_ETH_RSS_IPV4 | \
+> +		RTE_ETH_RSS_NONFRAG_IPV4_TCP | \
+> +		RTE_ETH_RSS_NONFRAG_IPV4_UDP | \
+> +		RTE_ETH_RSS_IPV6 | \
+> +		RTE_ETH_RSS_NONFRAG_IPV6_TCP | \
+> +		RTE_ETH_RSS_NONFRAG_IPV6_UDP)
+> +
+> +#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_FILTER_CTRL
+> +u8 *sxe_rss_hash_key_get(void);
+> +#endif
+> +
+> +void sxe_rss_hash_set(struct sxe_hw *hw,
+> +				struct rte_eth_rss_conf *rss_conf);
+> +
+> u64 sxe_rx_queue_offload_capa_get(struct rte_eth_dev *dev);
+>
+> u64 sxe_rx_port_offload_capa_get(struct rte_eth_dev *dev);
+> @@ -15,4 +30,22 @@ u64 sxe_tx_queue_offload_capa_get(struct rte_eth_dev *dev);
+>
+> u64 sxe_tx_port_offload_capa_get(struct rte_eth_dev *dev);
+>
+> +void sxe_rss_disable(struct rte_eth_dev *dev);
+> +
+> +void sxe_rss_configure(struct rte_eth_dev *dev);
+> +
+> +s32 sxe_rss_reta_update(struct rte_eth_dev *dev,
+> +			struct rte_eth_rss_reta_entry64 *reta_conf,
+> +			u16 reta_size);
+> +
+> +s32 sxe_rss_reta_query(struct rte_eth_dev *dev,
+> +			 struct rte_eth_rss_reta_entry64 *reta_conf,
+> +			 u16 reta_size);
+> +
+> +s32 sxe_rss_hash_update(struct rte_eth_dev *dev,
+> +			struct rte_eth_rss_conf *rss_conf);
+> +
+> +s32 sxe_rss_hash_conf_get(struct rte_eth_dev *dev,
+> +				struct rte_eth_rss_conf *rss_conf);
+> +
+> #endif
+> -- 
+> 2.18.2
+>
+>
