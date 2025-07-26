@@ -2,53 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2712FC87FCA
-	for <dpdk-dev@archiver.kernel.org>; Sat, 26 Jul 2025 00:55:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97468C87FCF
+	for <dpdk-dev@archiver.kernel.org>; Sat, 26 Jul 2025 04:34:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D92C340144;
-	Sat, 26 Jul 2025 02:55:23 +0200 (CEST)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
- by mails.dpdk.org (Postfix) with ESMTP id AEC27400D5
- for <dev@dpdk.org>; Sat, 26 Jul 2025 02:55:21 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.163.48])
- by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bpmRR2nNqz13Mhr;
- Sat, 26 Jul 2025 08:52:19 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id C1575180064;
- Sat, 26 Jul 2025 08:55:19 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 26 Jul 2025 08:55:19 +0800
-Message-ID: <315e032d-c022-4ea2-b734-3d3a07f5ebc2@huawei.com>
-Date: Sat, 26 Jul 2025 08:55:18 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id 71A4E40144;
+	Sat, 26 Jul 2025 06:34:49 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id E6834400D5
+ for <dev@dpdk.org>; Sat, 26 Jul 2025 06:34:47 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id BDD2D20446;
+ Sat, 26 Jul 2025 06:34:46 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [EXTERNAL] [PATCH] doc: announce DMA configuration structure
- changes
-To: Pavan Nikhilesh Bhagavatula <pbhagavatula@marvell.com>, Thomas Monjalon
- <thomas@monjalon.net>, Amit Prakash Shukla <amitprakashs@marvell.com>
-CC: Jerin Jacob <jerinj@marvell.com>, "dev@dpdk.org" <dev@dpdk.org>, Vamsi
- Krishna Attunuru <vattunuru@marvell.com>, "g.singh@nxp.com"
- <g.singh@nxp.com>, "sachin.saxena@nxp.com" <sachin.saxena@nxp.com>,
- "hemant.agrawal@nxp.com" <hemant.agrawal@nxp.com>,
- "bruce.richardson@intel.com" <bruce.richardson@intel.com>,
- "kevin.laatz@intel.com" <kevin.laatz@intel.com>, "conor.walsh@intel.com"
- <conor.walsh@intel.com>, Gowrishankar Muthukrishnan
- <gmuthukrishn@marvell.com>, Vidya Sagar Velumuri <vvelumuri@marvell.com>,
- "anatoly.burakov@intel.com" <anatoly.burakov@intel.com>
-References: <20250416110541.10358-1-pbhagavatula@marvell.com>
- <SJ4PPF0C545507BB640772878BB9BAC8D6EC878A@SJ4PPF0C545507B.namprd18.prod.outlook.com>
- <3307880.vfdyTQepKt@thomas>
- <PH0PR18MB40865EFFF34A38C49079F979DE59A@PH0PR18MB4086.namprd18.prod.outlook.com>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <PH0PR18MB40865EFFF34A38C49079F979DE59A@PH0PR18MB4086.namprd18.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH] net/null: Add fast mbuf release TX offload
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Sat, 26 Jul 2025 06:34:44 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FDC7@smartserver.smartshare.dk>
+In-Reply-To: <PH7PR12MB8596D3BC8FA4C87CCA08FFE08245A@PH7PR12MB8596.namprd12.prod.outlook.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH] net/null: Add fast mbuf release TX offload
+Thread-Index: AQHb5TPW2mAQt//tPke2C+LG9hhrtLQVfHiAgAAbZoCAAU7z8IAtGdkw
+References: <20250624181416.167181-1-mb@smartsharesystems.com>
+ <20250626070557.33058157@hermes.local>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FD49@smartserver.smartshare.dk>
+ <PH7PR12MB8596D3BC8FA4C87CCA08FFE08245A@PH7PR12MB8596.namprd12.prod.outlook.com>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Varghese, Vipin" <Vipin.Varghese@amd.com>,
+ "Stephen Hemminger" <stephen@networkplumber.org>
+Cc: "Tetsuya Mukawa" <mtetsuyah@gmail.com>,
+	<dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -62,36 +51,82 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Acked-by: Chengwen Feng <fengchengwen@huawei.com>
-
-On 2025/7/25 14:04, Pavan Nikhilesh Bhagavatula wrote:
->>> Deprecate rte_dma_conf structure to allow for a more flexible
->>> configuration of DMA devices.
->>> The new structure will have a flags field instead of multiple
->>> boolean fields for each feature.
->>>
->>> Signed-off-by: Pavan Nikhilesh <mailto:pbhagavatula@marvell.com>
->>> ---
->>> +* dmadev: The ``rte_dma_conf`` structure is updated to include a new field
->>> +  ``rte_dma_conf::flags`` that should be used to configure dmadev features.
->>> +  The existing field ``rte_dma_conf::enable_silent`` is removed and replaced
->>> +  with the new flag ``RTE_DMA_CFG_FLAG_SILENT``, to configure silent mode
->>> +  the flag should be set in ``rte_dma_conf::flags`` during device configuration.
->>>
->>> Acked-by: Amit Prakash Shukla <amitprakashs@marvell.com>
->>
->> There is only 1 ack.
->> Per our policy, it will miss the release 25.07.
->>
->> You can probably do this change anyway,
->> and keep ABI compatibility by versioning the function.
-> 
-> Hi Fengchengwen,
-> 
-> Are you ok with this change? If so please ack it so that I can work on getting
-> an exception from techboard to merge this without deprecation notice in 25.11.
-> 
-> Thanks,
-> Pavan.
-> 
-
+PiBGcm9tOiBWYXJnaGVzZSwgVmlwaW4gW21haWx0bzpWaXBpbi5WYXJnaGVzZUBhbWQuY29tXQ0K
+PiBTZW50OiBGcmlkYXksIDI3IEp1bmUgMjAyNSAxNC4wNw0KPiANCj4gW1B1YmxpY10NCj4gDQo+
+IEhpIE1vcnRlbiwNCj4gDQo+IFdlIGhhdmUgdGVzdGVkIHRoZSBlZmZlY3Qgb2YgdGhlIHBhdGNo
+IHVzaW5nIGZ1bmMtbGF0ZW5jeSBhbmQgUFBzIHZpYQ0KPiB0ZXN0cG1kLg0KPiBQbGVhc2UgZmlu
+ZCBvdXIgb2JzZXJ2YXRpb25zIGJlbG93DQo+IA0KPiAgLSBEUERLIHRhZzogMjUuMDctcmMxDQo+
+ICAtIGNvbXBpbGVyOiBnY2MgMTQuMg0KPiAgLSBwbGF0Zm9ybTogQU1EIEVQWUMgODUzNFAgNjRj
+b3JlIDIuM0dIeg0KPiAgLSBhcHAgY21kOg0KPiAgLS0gT25lIHBvcnQ6IGAgc3VkbyBidWlsZC9h
+cHAvZHBkay10ZXN0cG1kIC1sIDE1LDE2ICAtLXZkZXY9bmV0X251bGwxIC0NCj4gLW5vLXBjaSAg
+LS0gLS1uYi1jb3Jlcz0xIC0tbmItcG9ydHM9MSAtLXR4cT0xIC0tcnhxPTEgLS10eGQ9MjA0OCAt
+LQ0KPiByeGQ9MjA0OCAgLWEgLS1mb3J3YXJkLW1vZGU9aW8gLS1zdGF0cy1wZXJpb2Q9MWANCj4g
+IC0tIFR3byBwb3J0OiBgIHN1ZG8gYnVpbGQvYXBwL2RwZGstdGVzdHBtZCAtbCAxNSwxNiwxNyAg
+LS0NCj4gdmRldj1uZXRfbnVsbDEgLS12ZGV2PW5ldF9udWxsMiAtLW5vLXBjaSAgLS0gLS1uYi1j
+b3Jlcz0yIC0tbmItcG9ydHM9MiAtDQo+IC10eHE9MSAtLXJ4cT0xIC0tdHhkPTIwNDggLS1yeGQ9
+MjA0OCAgLWEgLS1mb3J3YXJkLW1vZGU9aW8gLS1zdGF0cy0NCj4gcGVyaW9kPTFgDQo+IA0KPiBS
+ZXN1bHQgMSBwb3J0Og0KPiAgLSBCZWZvcmUgcGF0Y2g6IFRYIE1QUHMgMTE3LjYxLCBSWC1QUHMg
+MTE3LjY3LCBGdW5jLWxhdGVuY3kgVFg6IDE5MThucywNCj4gRnVuYy1sYXRlbmN5IGZyZWUtYnVs
+azogMjY2N25zDQo+ICAtIEFmdGVyIHBhdGNoOiBUWCBNUFBzIDExNy41NSwgUlgtUFBzIDExNy41
+NCwgRnVuYy1sYXRlbmN5IFRYOiAxOTIxbnMsDQo+IEZ1bmMtbGF0ZW5jeSBmcmVlLWJ1bGs6IDI2
+NjBucw0KPiANCj4gUmVzdWx0IDIgcG9ydDoNCj4gIC0gQmVmb3JlIHBhdGNoOiBUWCBNUFBzIDEx
+Ny42MSwgUlgtUFBzIDExNy42NywgRnVuYy1sYXRlbmN5IFRYOiAxOTQybnMsDQo+IEZ1bmMtbGF0
+ZW5jeSBmcmVlLWJ1bGs6IDI1NTducw0KPiAgLSBBZnRlciBwYXRjaDogVFggTVBQcyAxMTcuNTQs
+IFJYLVBQcyAxMTcuNTQsIEZ1bmMtbGF0ZW5jeSBUWDogMTk0Nm5zLA0KPiBGdW5jLWxhdGVuY3kg
+ZnJlZS1idWxrOiAyNzQwbnMNCj4gDQo+IFBlcmYgVG9wOiBkaWZmIGJlZm9yZSB2cyBhZnRlciBz
+aG93cyAxMy44NCUgdnMgMTMuNzklDQo+IA0KPiBSZXZpZXdlZC1ieTogVGhpeWFnYXJqYW4gUCA8
+VGhpeWFnYXJhamFuLlBAYW1kLmNvbT4NCj4gVGVzdGVkLWJ5OiBWaXBpbiBWYXJnaGVzZSA8Vmlw
+aW4uVmFyZ2hlc2VAYW1kLmNvbT4NCg0KVGhhbmsgeW91IGZvciByZXZpZXdpbmcgYW5kIHRlc3Rp
+bmcuDQoNCj4gDQo+IENsYXJpZmljYXRpb24gcmVxdWVzdDogYHdpdGggZmFzdC1tYnVmLWZyZWUg
+b24gc2luZ2xlIHBvcnQgd2Ugc2VlIGZyZWUtDQo+IGJ1bGsgcmVkdWN0aW9uIGJ5IC03bnMuIEJ1
+dCBudWxsX3R4IGluY3JlYXNlIGJ5ICszbnMuIFRYIFBQcyByZWR1Y3Rpb24NCj4gYnkgMC4wNyBN
+cHBzLiBJcyB0aGlzIGFub21hbHkgb2YgbnVsbF9uZXQgUE1EP2ANCg0KSSBoYXZlIGZpbmFsbHkg
+Zm91bmQgdGhlIGJ1ZyBpbiBteSBwYXRjaDoNCkl0IGFubm91bmNlcyBkZXZpY2UtbGV2ZWwgY2Fw
+YWJpbGl0eSBmb3IgRkFTVF9GUkVFLCBidXQgaWdub3JlcyBkZXZpY2UtbGV2ZWwgRkFTVF9GUkVF
+IGNvbmZpZ3VyYXRpb24sIGFuZCB1c2VzIHF1ZXVlLWxldmVsIEZBU1RfRlJFRSBjb25maWd1cmF0
+aW9uIGluc3RlYWQuDQoNCkR1ZSB0byB0aGlzIGJ1ZywgeW91ciB0ZXN0aW5nIHByb2JhYmx5IHNo
+b3dzIHRoZSBwZXJmb3JtYW5jZSBvZiB0aGUgbm9uLUZBU1RfRlJFRSBjb2RlIHBhdGguDQpUaGUg
+YWRkZWQgY29tcGFyaXNvbiBmb3IgRkFTVF9GUkVFIChjb2RlIHBhdGggbm90IHRha2VuKSBtaWdo
+dCBleHBsYWluIHRoZSBudWxsX3R4ICszbnMgaW5jcmVhc2UuDQoNCkkgd2lsbCBzZW5kIGEgdjIg
+cGF0Y2guDQoNCj4gDQo+ID4gPg0KPiA+ID4gT24gVHVlLCAyNCBKdW4gMjAyNSAxODoxNDoxNiAr
+MDAwMA0KPiA+ID4gTW9ydGVuIEJyw7hydXAgPG1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNvbT4gd3Jv
+dGU6DQo+ID4gPg0KPiA+ID4gPiBBZGRlZCBmYXN0IG1idWYgcmVsZWFzZSwgcmUtdXNpbmcgdGhl
+IGV4aXN0aW5nIG1idWYgcG9vbCBwb2ludGVyDQo+IGluDQo+ID4gPiA+IHRoZSBxdWV1ZSBzdHJ1
+Y3R1cmUuDQo+ID4gPiA+DQo+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IE1vcnRlbiBCcsO4cnVwIDxt
+YkBzbWFydHNoYXJlc3lzdGVtcy5jb20+DQo+ID4gPg0KPiA+ID4gTWFrZXMgc2Vuc2UuDQo+ID4g
+Pg0KPiA+ID4gPiAtLS0NCj4gPiA+ID4gIGRyaXZlcnMvbmV0L251bGwvcnRlX2V0aF9udWxsLmMg
+fCAzMCArKysrKysrKysrKysrKysrKysrKysrKysrKystDQo+IC0tDQo+ID4gPiA+ICAxIGZpbGUg
+Y2hhbmdlZCwgMjcgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCj4gPiA+ID4NCj4gPiA+
+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L251bGwvcnRlX2V0aF9udWxsLmMNCj4gPiA+IGIv
+ZHJpdmVycy9uZXQvbnVsbC9ydGVfZXRoX251bGwuYw0KPiA+ID4gPiBpbmRleCA4YTliNzRhMDNi
+Li4xMmMwZDhkMWZmIDEwMDY0NA0KPiA+ID4gPiAtLS0gYS9kcml2ZXJzL25ldC9udWxsL3J0ZV9l
+dGhfbnVsbC5jDQo+ID4gPiA+ICsrKyBiL2RyaXZlcnMvbmV0L251bGwvcnRlX2V0aF9udWxsLmMN
+Cj4gPiA+ID4gQEAgLTM0LDYgKzM0LDE3IEBAIHN0cnVjdCBwbWRfaW50ZXJuYWxzOyAgc3RydWN0
+IG51bGxfcXVldWUgew0KPiA+ID4gPiAgICAgc3RydWN0IHBtZF9pbnRlcm5hbHMgKmludGVybmFs
+czsNCj4gPiA+ID4NCj4gPiA+ID4gKyAgIC8qKg0KPiA+ID4gPiArICAgICogRm9yIFJYIHF1ZXVl
+Og0KPiA+ID4gPiArICAgICogIE1lbXBvb2wgdG8gYWxsb2NhdGUgbWJ1ZnMgZnJvbS4NCj4gPiA+
+ID4gKyAgICAqDQo+ID4gPiA+ICsgICAgKiBGb3IgVFggcXVldWU6DQo+ID4gPiA+ICsgICAgKiAg
+TWVtcG9vbCB0byBmcmVlIG1idWZzIHRvLCBpZiBmYXN0IHJlbGVhc2Ugb2YgbWJ1ZnMgaXMNCj4g
+ZW5hYmxlZC4NCj4gPiA+ID4gKyAgICAqICBVSU5UUFRSX01BWCBpZiB0aGUgbWVtcG9vbCBmb3Ig
+ZmFzdCByZWxlYXNlIG9mIG1idWZzIGhhcw0KPiBub3QNCj4gPiA+IHlldCBiZWVuIGRldGVjdGVk
+Lg0KPiA+ID4gPiArICAgICogIE5VTEwgaWYgZmFzdCByZWxlYXNlIG9mIG1idWZzIGlzIG5vdCBl
+bmFibGVkLg0KPiA+ID4gPiArICAgICoNCj4gPiA+ID4gKyAgICAqICBAc2VlIFJURV9FVEhfVFhf
+T0ZGTE9BRF9NQlVGX0ZBU1RfRlJFRQ0KPiA+ID4gPiArICAgICovDQo+ID4gPiA+ICAgICBzdHJ1
+Y3QgcnRlX21lbXBvb2wgKm1iX3Bvb2w7DQo+ID4gPg0KPiA+ID4gRG8gYWxsIGRyaXZlcnMgdG8g
+aXQgdGhpcyB3YXk/DQo+ID4NCj4gPiBObywgSSB0aGluayBtb3N0IGRyaXZlcnMgaGF2ZSBzZXBh
+cmF0ZSBzdHJ1Y3R1cmVzIGZvciByeCBhbmQgdHgNCj4gcXVldWVzLiBUaGlzIGRyaXZlcg0KPiA+
+IGRvZXNuJ3Qgc28gSSdtIHJldXNpbmcgdGhlIGV4aXN0aW5nIG1lbXBvb2wgcG9pbnRlci4NCj4g
+PiBBbHNvLCB0aGV5IGRvbid0IGNhY2hlIHRoZSBtZW1wb29sIHBvaW50ZXIsIGJ1dCBsb29rIGF0
+IG1idWZbMF0ucG9vbA0KPiBhdCBldmVyeSBidXJzdDsNCj4gPiBzbyB0aGVpciB0eCBxdWV1ZSBz
+dHJ1Y3R1cmUgZG9lc24ndCBoYXZlIGEgbWVtcG9vbCBwb2ludGVyIGZpZWxkLg0KPiA+IEFuZCB0
+aGV5IGNoZWNrIGFuIG9mZmxvYWQgZmxhZyAoZWl0aGVyIHRoZSBiaXQgaW4gdGhlIHJhdyBvZmZs
+b2FkDQo+IGZpZWxkLCBvciBhIHNoYWRvdw0KPiA+IHZhcmlhYmxlIGZvciB0aGUgcmVsZXZhbnQg
+b2ZmbG9hZCBmbGFnKSwgaW5zdGVhZCBvZiBjaGVja2luZyB0aGUNCj4gbWVtcG9vbCBwb2ludGVy
+Lg0KPiA+DQo+ID4gT3RoZXIgZHJpdmVycyBjYW4gYmUgaW1wcm92ZWQsIGFuZCBJIGhhdmUgc3Vi
+bWl0dGVkIGFuIG9wdGltaXphdGlvbg0KPiBwYXRjaCBmb3IgdGhlDQo+ID4gaTQwZSBkcml2ZXIg
+d2l0aCBzb21lIG9mIHRoZSB0aGluZ3MgSSBkbyBpbiB0aGlzIHBhdGNoOg0KPiA+IGh0dHBzOi8v
+aW5ib3guZHBkay5vcmcvZGV2LzIwMjUwNjI0MDYxMjM4Ljg5MjU5LTEtDQo+ID4gbWJAc21hcnRz
+aGFyZXN5c3RlbXMuY29tLw0KPiA+DQo+ID4gPiBJcyBpdCBkb2N1bWVudGVkIGluIGV0aGRldj8N
+Cj4gPg0KPiA+IFRoZSBSVEVfRVRIX1RYX09GRkxPQURfTUJVRl9GQVNUX0ZSRUUgZmxhZyBpcyBk
+b2N1bWVudGVkLg0KPiA+IEhvdyB0byBpbXBsZW1lbnQgaXQgaW4gdGhlIGRyaXZlcnMgaXMgbm90
+Lg0KPiA+DQo+ID4gLU1vcnRlbg0KDQo=
