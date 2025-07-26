@@ -2,42 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97468C87FCF
-	for <dpdk-dev@archiver.kernel.org>; Sat, 26 Jul 2025 04:34:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4AD3C83F17
+	for <dpdk-dev@archiver.kernel.org>; Sat, 26 Jul 2025 04:48:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 71A4E40144;
-	Sat, 26 Jul 2025 06:34:49 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id AA10440144;
+	Sat, 26 Jul 2025 06:48:32 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id E6834400D5
- for <dev@dpdk.org>; Sat, 26 Jul 2025 06:34:47 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id D4E03400D5
+ for <dev@dpdk.org>; Sat, 26 Jul 2025 06:48:30 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id BDD2D20446;
- Sat, 26 Jul 2025 06:34:46 +0200 (CEST)
-Content-class: urn:content-classes:message
-MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH] net/null: Add fast mbuf release TX offload
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Sat, 26 Jul 2025 06:34:44 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FDC7@smartserver.smartshare.dk>
-In-Reply-To: <PH7PR12MB8596D3BC8FA4C87CCA08FFE08245A@PH7PR12MB8596.namprd12.prod.outlook.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH] net/null: Add fast mbuf release TX offload
-Thread-Index: AQHb5TPW2mAQt//tPke2C+LG9hhrtLQVfHiAgAAbZoCAAU7z8IAtGdkw
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 8C44520446;
+ Sat, 26 Jul 2025 06:48:30 +0200 (CEST)
+Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
+ smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
+ Sat, 26 Jul 2025 06:48:29 +0200
+From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+To: dev@dpdk.org, Tetsuya Mukawa <mtetsuyah@gmail.com>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Vipin Varghese <Vipin.Varghese@amd.com>,
+ Thiyagarjan P <Thiyagarajan.P@amd.com>
+Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+Subject: [PATCH v2] net/null: Add fast mbuf release TX offload
+Date: Sat, 26 Jul 2025 04:48:27 +0000
+Message-ID: <20250726044827.569456-1-mb@smartsharesystems.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250624181416.167181-1-mb@smartsharesystems.com>
 References: <20250624181416.167181-1-mb@smartsharesystems.com>
- <20250626070557.33058157@hermes.local>
- <98CBD80474FA8B44BF855DF32C47DC35E9FD49@smartserver.smartshare.dk>
- <PH7PR12MB8596D3BC8FA4C87CCA08FFE08245A@PH7PR12MB8596.namprd12.prod.outlook.com>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Varghese, Vipin" <Vipin.Varghese@amd.com>,
- "Stephen Hemminger" <stephen@networkplumber.org>
-Cc: "Tetsuya Mukawa" <mtetsuyah@gmail.com>,
-	<dev@dpdk.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 26 Jul 2025 04:48:29.0945 (UTC)
+ FILETIME=[885ABE90:01DBFDE8]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,82 +48,91 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBWYXJnaGVzZSwgVmlwaW4gW21haWx0bzpWaXBpbi5WYXJnaGVzZUBhbWQuY29tXQ0K
-PiBTZW50OiBGcmlkYXksIDI3IEp1bmUgMjAyNSAxNC4wNw0KPiANCj4gW1B1YmxpY10NCj4gDQo+
-IEhpIE1vcnRlbiwNCj4gDQo+IFdlIGhhdmUgdGVzdGVkIHRoZSBlZmZlY3Qgb2YgdGhlIHBhdGNo
-IHVzaW5nIGZ1bmMtbGF0ZW5jeSBhbmQgUFBzIHZpYQ0KPiB0ZXN0cG1kLg0KPiBQbGVhc2UgZmlu
-ZCBvdXIgb2JzZXJ2YXRpb25zIGJlbG93DQo+IA0KPiAgLSBEUERLIHRhZzogMjUuMDctcmMxDQo+
-ICAtIGNvbXBpbGVyOiBnY2MgMTQuMg0KPiAgLSBwbGF0Zm9ybTogQU1EIEVQWUMgODUzNFAgNjRj
-b3JlIDIuM0dIeg0KPiAgLSBhcHAgY21kOg0KPiAgLS0gT25lIHBvcnQ6IGAgc3VkbyBidWlsZC9h
-cHAvZHBkay10ZXN0cG1kIC1sIDE1LDE2ICAtLXZkZXY9bmV0X251bGwxIC0NCj4gLW5vLXBjaSAg
-LS0gLS1uYi1jb3Jlcz0xIC0tbmItcG9ydHM9MSAtLXR4cT0xIC0tcnhxPTEgLS10eGQ9MjA0OCAt
-LQ0KPiByeGQ9MjA0OCAgLWEgLS1mb3J3YXJkLW1vZGU9aW8gLS1zdGF0cy1wZXJpb2Q9MWANCj4g
-IC0tIFR3byBwb3J0OiBgIHN1ZG8gYnVpbGQvYXBwL2RwZGstdGVzdHBtZCAtbCAxNSwxNiwxNyAg
-LS0NCj4gdmRldj1uZXRfbnVsbDEgLS12ZGV2PW5ldF9udWxsMiAtLW5vLXBjaSAgLS0gLS1uYi1j
-b3Jlcz0yIC0tbmItcG9ydHM9MiAtDQo+IC10eHE9MSAtLXJ4cT0xIC0tdHhkPTIwNDggLS1yeGQ9
-MjA0OCAgLWEgLS1mb3J3YXJkLW1vZGU9aW8gLS1zdGF0cy0NCj4gcGVyaW9kPTFgDQo+IA0KPiBS
-ZXN1bHQgMSBwb3J0Og0KPiAgLSBCZWZvcmUgcGF0Y2g6IFRYIE1QUHMgMTE3LjYxLCBSWC1QUHMg
-MTE3LjY3LCBGdW5jLWxhdGVuY3kgVFg6IDE5MThucywNCj4gRnVuYy1sYXRlbmN5IGZyZWUtYnVs
-azogMjY2N25zDQo+ICAtIEFmdGVyIHBhdGNoOiBUWCBNUFBzIDExNy41NSwgUlgtUFBzIDExNy41
-NCwgRnVuYy1sYXRlbmN5IFRYOiAxOTIxbnMsDQo+IEZ1bmMtbGF0ZW5jeSBmcmVlLWJ1bGs6IDI2
-NjBucw0KPiANCj4gUmVzdWx0IDIgcG9ydDoNCj4gIC0gQmVmb3JlIHBhdGNoOiBUWCBNUFBzIDEx
-Ny42MSwgUlgtUFBzIDExNy42NywgRnVuYy1sYXRlbmN5IFRYOiAxOTQybnMsDQo+IEZ1bmMtbGF0
-ZW5jeSBmcmVlLWJ1bGs6IDI1NTducw0KPiAgLSBBZnRlciBwYXRjaDogVFggTVBQcyAxMTcuNTQs
-IFJYLVBQcyAxMTcuNTQsIEZ1bmMtbGF0ZW5jeSBUWDogMTk0Nm5zLA0KPiBGdW5jLWxhdGVuY3kg
-ZnJlZS1idWxrOiAyNzQwbnMNCj4gDQo+IFBlcmYgVG9wOiBkaWZmIGJlZm9yZSB2cyBhZnRlciBz
-aG93cyAxMy44NCUgdnMgMTMuNzklDQo+IA0KPiBSZXZpZXdlZC1ieTogVGhpeWFnYXJqYW4gUCA8
-VGhpeWFnYXJhamFuLlBAYW1kLmNvbT4NCj4gVGVzdGVkLWJ5OiBWaXBpbiBWYXJnaGVzZSA8Vmlw
-aW4uVmFyZ2hlc2VAYW1kLmNvbT4NCg0KVGhhbmsgeW91IGZvciByZXZpZXdpbmcgYW5kIHRlc3Rp
-bmcuDQoNCj4gDQo+IENsYXJpZmljYXRpb24gcmVxdWVzdDogYHdpdGggZmFzdC1tYnVmLWZyZWUg
-b24gc2luZ2xlIHBvcnQgd2Ugc2VlIGZyZWUtDQo+IGJ1bGsgcmVkdWN0aW9uIGJ5IC03bnMuIEJ1
-dCBudWxsX3R4IGluY3JlYXNlIGJ5ICszbnMuIFRYIFBQcyByZWR1Y3Rpb24NCj4gYnkgMC4wNyBN
-cHBzLiBJcyB0aGlzIGFub21hbHkgb2YgbnVsbF9uZXQgUE1EP2ANCg0KSSBoYXZlIGZpbmFsbHkg
-Zm91bmQgdGhlIGJ1ZyBpbiBteSBwYXRjaDoNCkl0IGFubm91bmNlcyBkZXZpY2UtbGV2ZWwgY2Fw
-YWJpbGl0eSBmb3IgRkFTVF9GUkVFLCBidXQgaWdub3JlcyBkZXZpY2UtbGV2ZWwgRkFTVF9GUkVF
-IGNvbmZpZ3VyYXRpb24sIGFuZCB1c2VzIHF1ZXVlLWxldmVsIEZBU1RfRlJFRSBjb25maWd1cmF0
-aW9uIGluc3RlYWQuDQoNCkR1ZSB0byB0aGlzIGJ1ZywgeW91ciB0ZXN0aW5nIHByb2JhYmx5IHNo
-b3dzIHRoZSBwZXJmb3JtYW5jZSBvZiB0aGUgbm9uLUZBU1RfRlJFRSBjb2RlIHBhdGguDQpUaGUg
-YWRkZWQgY29tcGFyaXNvbiBmb3IgRkFTVF9GUkVFIChjb2RlIHBhdGggbm90IHRha2VuKSBtaWdo
-dCBleHBsYWluIHRoZSBudWxsX3R4ICszbnMgaW5jcmVhc2UuDQoNCkkgd2lsbCBzZW5kIGEgdjIg
-cGF0Y2guDQoNCj4gDQo+ID4gPg0KPiA+ID4gT24gVHVlLCAyNCBKdW4gMjAyNSAxODoxNDoxNiAr
-MDAwMA0KPiA+ID4gTW9ydGVuIEJyw7hydXAgPG1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNvbT4gd3Jv
-dGU6DQo+ID4gPg0KPiA+ID4gPiBBZGRlZCBmYXN0IG1idWYgcmVsZWFzZSwgcmUtdXNpbmcgdGhl
-IGV4aXN0aW5nIG1idWYgcG9vbCBwb2ludGVyDQo+IGluDQo+ID4gPiA+IHRoZSBxdWV1ZSBzdHJ1
-Y3R1cmUuDQo+ID4gPiA+DQo+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IE1vcnRlbiBCcsO4cnVwIDxt
-YkBzbWFydHNoYXJlc3lzdGVtcy5jb20+DQo+ID4gPg0KPiA+ID4gTWFrZXMgc2Vuc2UuDQo+ID4g
-Pg0KPiA+ID4gPiAtLS0NCj4gPiA+ID4gIGRyaXZlcnMvbmV0L251bGwvcnRlX2V0aF9udWxsLmMg
-fCAzMCArKysrKysrKysrKysrKysrKysrKysrKysrKystDQo+IC0tDQo+ID4gPiA+ICAxIGZpbGUg
-Y2hhbmdlZCwgMjcgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCj4gPiA+ID4NCj4gPiA+
-ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L251bGwvcnRlX2V0aF9udWxsLmMNCj4gPiA+IGIv
-ZHJpdmVycy9uZXQvbnVsbC9ydGVfZXRoX251bGwuYw0KPiA+ID4gPiBpbmRleCA4YTliNzRhMDNi
-Li4xMmMwZDhkMWZmIDEwMDY0NA0KPiA+ID4gPiAtLS0gYS9kcml2ZXJzL25ldC9udWxsL3J0ZV9l
-dGhfbnVsbC5jDQo+ID4gPiA+ICsrKyBiL2RyaXZlcnMvbmV0L251bGwvcnRlX2V0aF9udWxsLmMN
-Cj4gPiA+ID4gQEAgLTM0LDYgKzM0LDE3IEBAIHN0cnVjdCBwbWRfaW50ZXJuYWxzOyAgc3RydWN0
-IG51bGxfcXVldWUgew0KPiA+ID4gPiAgICAgc3RydWN0IHBtZF9pbnRlcm5hbHMgKmludGVybmFs
-czsNCj4gPiA+ID4NCj4gPiA+ID4gKyAgIC8qKg0KPiA+ID4gPiArICAgICogRm9yIFJYIHF1ZXVl
-Og0KPiA+ID4gPiArICAgICogIE1lbXBvb2wgdG8gYWxsb2NhdGUgbWJ1ZnMgZnJvbS4NCj4gPiA+
-ID4gKyAgICAqDQo+ID4gPiA+ICsgICAgKiBGb3IgVFggcXVldWU6DQo+ID4gPiA+ICsgICAgKiAg
-TWVtcG9vbCB0byBmcmVlIG1idWZzIHRvLCBpZiBmYXN0IHJlbGVhc2Ugb2YgbWJ1ZnMgaXMNCj4g
-ZW5hYmxlZC4NCj4gPiA+ID4gKyAgICAqICBVSU5UUFRSX01BWCBpZiB0aGUgbWVtcG9vbCBmb3Ig
-ZmFzdCByZWxlYXNlIG9mIG1idWZzIGhhcw0KPiBub3QNCj4gPiA+IHlldCBiZWVuIGRldGVjdGVk
-Lg0KPiA+ID4gPiArICAgICogIE5VTEwgaWYgZmFzdCByZWxlYXNlIG9mIG1idWZzIGlzIG5vdCBl
-bmFibGVkLg0KPiA+ID4gPiArICAgICoNCj4gPiA+ID4gKyAgICAqICBAc2VlIFJURV9FVEhfVFhf
-T0ZGTE9BRF9NQlVGX0ZBU1RfRlJFRQ0KPiA+ID4gPiArICAgICovDQo+ID4gPiA+ICAgICBzdHJ1
-Y3QgcnRlX21lbXBvb2wgKm1iX3Bvb2w7DQo+ID4gPg0KPiA+ID4gRG8gYWxsIGRyaXZlcnMgdG8g
-aXQgdGhpcyB3YXk/DQo+ID4NCj4gPiBObywgSSB0aGluayBtb3N0IGRyaXZlcnMgaGF2ZSBzZXBh
-cmF0ZSBzdHJ1Y3R1cmVzIGZvciByeCBhbmQgdHgNCj4gcXVldWVzLiBUaGlzIGRyaXZlcg0KPiA+
-IGRvZXNuJ3Qgc28gSSdtIHJldXNpbmcgdGhlIGV4aXN0aW5nIG1lbXBvb2wgcG9pbnRlci4NCj4g
-PiBBbHNvLCB0aGV5IGRvbid0IGNhY2hlIHRoZSBtZW1wb29sIHBvaW50ZXIsIGJ1dCBsb29rIGF0
-IG1idWZbMF0ucG9vbA0KPiBhdCBldmVyeSBidXJzdDsNCj4gPiBzbyB0aGVpciB0eCBxdWV1ZSBz
-dHJ1Y3R1cmUgZG9lc24ndCBoYXZlIGEgbWVtcG9vbCBwb2ludGVyIGZpZWxkLg0KPiA+IEFuZCB0
-aGV5IGNoZWNrIGFuIG9mZmxvYWQgZmxhZyAoZWl0aGVyIHRoZSBiaXQgaW4gdGhlIHJhdyBvZmZs
-b2FkDQo+IGZpZWxkLCBvciBhIHNoYWRvdw0KPiA+IHZhcmlhYmxlIGZvciB0aGUgcmVsZXZhbnQg
-b2ZmbG9hZCBmbGFnKSwgaW5zdGVhZCBvZiBjaGVja2luZyB0aGUNCj4gbWVtcG9vbCBwb2ludGVy
-Lg0KPiA+DQo+ID4gT3RoZXIgZHJpdmVycyBjYW4gYmUgaW1wcm92ZWQsIGFuZCBJIGhhdmUgc3Vi
-bWl0dGVkIGFuIG9wdGltaXphdGlvbg0KPiBwYXRjaCBmb3IgdGhlDQo+ID4gaTQwZSBkcml2ZXIg
-d2l0aCBzb21lIG9mIHRoZSB0aGluZ3MgSSBkbyBpbiB0aGlzIHBhdGNoOg0KPiA+IGh0dHBzOi8v
-aW5ib3guZHBkay5vcmcvZGV2LzIwMjUwNjI0MDYxMjM4Ljg5MjU5LTEtDQo+ID4gbWJAc21hcnRz
-aGFyZXN5c3RlbXMuY29tLw0KPiA+DQo+ID4gPiBJcyBpdCBkb2N1bWVudGVkIGluIGV0aGRldj8N
-Cj4gPg0KPiA+IFRoZSBSVEVfRVRIX1RYX09GRkxPQURfTUJVRl9GQVNUX0ZSRUUgZmxhZyBpcyBk
-b2N1bWVudGVkLg0KPiA+IEhvdyB0byBpbXBsZW1lbnQgaXQgaW4gdGhlIGRyaXZlcnMgaXMgbm90
-Lg0KPiA+DQo+ID4gLU1vcnRlbg0KDQo=
+Added fast mbuf release, re-using the existing mbuf pool pointer
+in the queue structure.
+
+Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
+---
+v2:
+* Also announce the offload as a per-queue capability.
+* Added missing test of per-device offload configuration when configuring
+  the queue.
+---
+ drivers/net/null/rte_eth_null.c | 33 ++++++++++++++++++++++++++++++---
+ 1 file changed, 30 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/null/rte_eth_null.c b/drivers/net/null/rte_eth_null.c
+index 8a9b74a03b..09cfc74494 100644
+--- a/drivers/net/null/rte_eth_null.c
++++ b/drivers/net/null/rte_eth_null.c
+@@ -34,6 +34,17 @@ struct pmd_internals;
+ struct null_queue {
+ 	struct pmd_internals *internals;
+ 
++	/**
++	 * For RX queue:
++	 *  Mempool to allocate mbufs from.
++	 *
++	 * For TX queue:
++	 *  Mempool to free mbufs to, if fast release of mbufs is enabled.
++	 *  UINTPTR_MAX if the mempool for fast release of mbufs has not yet been detected.
++	 *  NULL if fast release of mbufs is not enabled.
++	 *
++	 *  @see RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE
++	 */
+ 	struct rte_mempool *mb_pool;
+ 	void *dummy_packet;
+ 
+@@ -151,7 +162,16 @@ eth_null_tx(void *q, struct rte_mbuf **bufs, uint16_t nb_bufs)
+ 	for (i = 0; i < nb_bufs; i++)
+ 		bytes += rte_pktmbuf_pkt_len(bufs[i]);
+ 
+-	rte_pktmbuf_free_bulk(bufs, nb_bufs);
++	if (h->mb_pool != NULL) { /* RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE */
++		if (unlikely(h->mb_pool == (void *)UINTPTR_MAX)) {
++			if (unlikely(nb_bufs == 0))
++				return 0; /* Do not dereference uninitialized bufs[0]. */
++			h->mb_pool = bufs[0]->pool;
++		}
++		rte_mbuf_raw_free_bulk(h->mb_pool, bufs, nb_bufs);
++	} else {
++		rte_pktmbuf_free_bulk(bufs, nb_bufs);
++	}
+ 	rte_atomic_fetch_add_explicit(&h->tx_pkts, nb_bufs, rte_memory_order_relaxed);
+ 	rte_atomic_fetch_add_explicit(&h->tx_bytes, bytes, rte_memory_order_relaxed);
+ 
+@@ -259,7 +279,7 @@ static int
+ eth_tx_queue_setup(struct rte_eth_dev *dev, uint16_t tx_queue_id,
+ 		uint16_t nb_tx_desc __rte_unused,
+ 		unsigned int socket_id __rte_unused,
+-		const struct rte_eth_txconf *tx_conf __rte_unused)
++		const struct rte_eth_txconf *tx_conf)
+ {
+ 	struct rte_mbuf *dummy_packet;
+ 	struct pmd_internals *internals;
+@@ -284,6 +304,10 @@ eth_tx_queue_setup(struct rte_eth_dev *dev, uint16_t tx_queue_id,
+ 
+ 	internals->tx_null_queues[tx_queue_id].internals = internals;
+ 	internals->tx_null_queues[tx_queue_id].dummy_packet = dummy_packet;
++	internals->tx_null_queues[tx_queue_id].mb_pool =
++			(dev->data->dev_conf.txmode.offloads | tx_conf->offloads) &
++			RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE ?
++			(void *)UINTPTR_MAX : NULL;
+ 
+ 	return 0;
+ }
+@@ -309,7 +333,10 @@ eth_dev_info(struct rte_eth_dev *dev,
+ 	dev_info->max_rx_queues = RTE_DIM(internals->rx_null_queues);
+ 	dev_info->max_tx_queues = RTE_DIM(internals->tx_null_queues);
+ 	dev_info->min_rx_bufsize = 0;
+-	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS | RTE_ETH_TX_OFFLOAD_MT_LOCKFREE;
++	dev_info->tx_queue_offload_capa = RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE;
++	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS |
++			RTE_ETH_TX_OFFLOAD_MT_LOCKFREE |
++			dev_info->tx_queue_offload_capa;
+ 
+ 	dev_info->reta_size = internals->reta_size;
+ 	dev_info->flow_type_rss_offloads = internals->flow_type_rss_offloads;
+-- 
+2.43.0
+
