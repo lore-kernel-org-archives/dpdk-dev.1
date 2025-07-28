@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 123B6C83F17
-	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Jul 2025 15:19:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3FF8C87FC9
+	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Jul 2025 15:19:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8111A40616;
-	Mon, 28 Jul 2025 17:19:23 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C2BC94067B;
+	Mon, 28 Jul 2025 17:19:24 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id E819940609
- for <dev@dpdk.org>; Mon, 28 Jul 2025 17:19:20 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 16CE34065E
+ for <dev@dpdk.org>; Mon, 28 Jul 2025 17:19:21 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1753715961; x=1785251961;
+ t=1753715962; x=1785251962;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=TkymB2nN/nmaTXyEGw3cRGSeSiXc2tgul/N2Rmr/4AM=;
- b=Pq0Dd5DKa15rIWAzeqRqas2McdBR5Gk0xQlPkF3IfUh0Duc9gN2HPeQY
- b4ftN0V1qKiWit49JZESOVYTQsvL00mJ4a4TLqRr1qYD7pZ3tpC1XkQva
- dNGWgVlGGvtR9Yvfv7B6+790RlvgqUeY7CoIgx//f9WkId6y20O046gQa
- 7nAyLHXg+NWz8fWLL/vf81PYPzKwqulvy7Ts7Q8RbMxRMz2XbDSa4RilP
- 5dpafHnrwxMaLeTUukKSf2hE6kPBLED3DOVH6smlp5EKPBdtuALHAR6eH
- 65QG5sF+bmuipa/BLxDNA6jIhuiVaPiSX8Wg3MgcFIC8XSvDZrQmycwlo g==;
-X-CSE-ConnectionGUID: +iFFmWORSs2B2qW8mA/5CA==
-X-CSE-MsgGUID: wUfkdfphTZmn0P7ue42xJQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11505"; a="67404238"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; d="scan'208";a="67404238"
+ bh=4+05KhDEhJQhYDM4qfzqt7KHgsWPR8nEID+pKVKxdfQ=;
+ b=Qq03Gs2g8CMbFbeC/Ph7C1JTpbdrHyqAkAWjcIu4DVnzDeL7ihWlJTQz
+ NeAQji+rXBjEZIhiBUm2aQd1MzC3UaNsYS9VuQBS2CldV8zKQTogcoTlS
+ D3ivkoHOAUkP18w7dWqqNKppqmBO4I2SphIWsas3xX55mbKDL5MZenKzs
+ 5e+ZaOcghQMw/0dwU9xjBQMBAP4iJOK6s/wUgmAbh9qpKRJy6tYL9hFs8
+ gwvdyxR1c/boXLxcvholApP9HS7pjczon4Pj45bblZMXCusFKBFai+t7/
+ Co6rtGbxYZu3My+JZ+ua/Pk3HQ6LUW+OvlUE542N+t700J8eTmFKbVMLr Q==;
+X-CSE-ConnectionGUID: VOK7gUtoSNWEbrqAfmfCkw==
+X-CSE-MsgGUID: 6FjF8ISgTD6v50ePq9+qlw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11505"; a="67404242"
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; d="scan'208";a="67404242"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 28 Jul 2025 08:19:20 -0700
-X-CSE-ConnectionGUID: qBhV+yPLSSeO/elJyPuBsw==
-X-CSE-MsgGUID: ZrrpZTASSKmZ49Z7+TUy6A==
+ 28 Jul 2025 08:19:21 -0700
+X-CSE-ConnectionGUID: DXfebi3mTy+qhs+Vc/XOAQ==
+X-CSE-MsgGUID: tO5ScVtwTa+LsBRjuCcvDg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; d="scan'208";a="199586036"
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; d="scan'208";a="199586042"
 Received: from silpixa00401385.ir.intel.com ([10.237.214.33])
- by orviesa001.jf.intel.com with ESMTP; 28 Jul 2025 08:19:20 -0700
+ by orviesa001.jf.intel.com with ESMTP; 28 Jul 2025 08:19:21 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>,
  Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v2 2/3] vhost: : remove fallbacks for old Linux versions
-Date: Mon, 28 Jul 2025 16:19:07 +0100
-Message-ID: <20250728151908.338534-3-bruce.richardson@intel.com>
+Subject: [PATCH v2 3/3] memif: : remove fallbacks for old Linux versions
+Date: Mon, 28 Jul 2025 16:19:08 +0100
+Message-ID: <20250728151908.338534-4-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250728151908.338534-1-bruce.richardson@intel.com>
 References: <20250630132904.1704901-1-bruce.richardson@intel.com>
@@ -68,36 +68,66 @@ support systems which do not support those features.
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 Acked-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/vhost/vhost_user.c | 7 -------
- 1 file changed, 7 deletions(-)
+ drivers/net/memif/rte_eth_memif.h | 41 -------------------------------
+ 1 file changed, 41 deletions(-)
 
-diff --git a/lib/vhost/vhost_user.c b/lib/vhost/vhost_user.c
-index b73dec6a22..4bfb13fb98 100644
---- a/lib/vhost/vhost_user.c
-+++ b/lib/vhost/vhost_user.c
-@@ -36,10 +36,7 @@
- #ifdef RTE_LIBRTE_VHOST_POSTCOPY
- #include <linux/userfaultfd.h>
- #endif
--#ifdef F_ADD_SEALS /* if file sealing is supported, so is memfd */
- #include <linux/memfd.h>
--#define MEMFD_SUPPORTED
--#endif
+diff --git a/drivers/net/memif/rte_eth_memif.h b/drivers/net/memif/rte_eth_memif.h
+index 8e45a3ab78..d4e625ab51 100644
+--- a/drivers/net/memif/rte_eth_memif.h
++++ b/drivers/net/memif/rte_eth_memif.h
+@@ -169,37 +169,6 @@ int memif_init_regions_and_queues(struct rte_eth_dev *dev);
+  */
+ const char *memif_version(void);
  
- #include <eal_export.h>
- #include <rte_common.h>
-@@ -1627,11 +1624,7 @@ inflight_mem_alloc(struct virtio_net *dev, const char *name, size_t size, int *f
- 	char fname[20] = "/tmp/memfd-XXXXXX";
- 
- 	*fd = -1;
--#ifdef MEMFD_SUPPORTED
- 	mfd = memfd_create(name, MFD_CLOEXEC);
+-#ifndef MFD_HUGETLB
+-#ifndef __NR_memfd_create
+-
+-#if defined __x86_64__
+-#define __NR_memfd_create 319
+-#elif defined __x86_32__
+-#define __NR_memfd_create 1073742143
+-#elif defined __arm__
+-#define __NR_memfd_create 385
+-#elif defined __aarch64__
+-#define __NR_memfd_create 279
+-#elif defined __powerpc__
+-#define __NR_memfd_create 360
+-#elif defined __i386__
+-#define __NR_memfd_create 356
+-#elif defined __riscv
+-#define __NR_memfd_create 279
+-#elif defined __loongarch__
+-#define __NR_memfd_create 279
 -#else
--	RTE_SET_USED(name);
+-#error "__NR_memfd_create unknown for this architecture"
 -#endif
- 	if (mfd == -1) {
- 		mfd = mkstemp(fname);
- 		if (mfd == -1) {
+-
+-#endif				/* __NR_memfd_create */
+-
+-static inline int memfd_create(const char *name, unsigned int flags)
+-{
+-	return syscall(__NR_memfd_create, name, flags);
+-}
+-#endif				/* MFD_HUGETLB */
+-
+ #ifndef F_LINUX_SPECIFIC_BASE
+ #define F_LINUX_SPECIFIC_BASE 1024
+ #endif
+@@ -208,14 +177,4 @@ static inline int memfd_create(const char *name, unsigned int flags)
+ #define MFD_ALLOW_SEALING       0x0002U
+ #endif
+ 
+-#ifndef F_ADD_SEALS
+-#define F_ADD_SEALS (F_LINUX_SPECIFIC_BASE + 9)
+-#define F_GET_SEALS (F_LINUX_SPECIFIC_BASE + 10)
+-
+-#define F_SEAL_SEAL     0x0001	/* prevent further seals from being set */
+-#define F_SEAL_SHRINK   0x0002	/* prevent file from shrinking */
+-#define F_SEAL_GROW     0x0004	/* prevent file from growing */
+-#define F_SEAL_WRITE    0x0008	/* prevent writes */
+-#endif
+-
+ #endif				/* RTE_ETH_MEMIF_H */
 -- 
 2.48.1
 
