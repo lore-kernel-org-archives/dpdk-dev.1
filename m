@@ -2,46 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CBACC87FCA
-	for <dpdk-dev@archiver.kernel.org>; Sat, 26 Jul 2025 12:28:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A94CEC83F17
+	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Jul 2025 03:53:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4BA9E40611;
-	Sat, 26 Jul 2025 14:28:28 +0200 (CEST)
-Received: from shelob.oktetlabs.ru (shelob.oktetlabs.ru [91.220.146.113])
- by mails.dpdk.org (Postfix) with ESMTP id 445074060B
- for <dev@dpdk.org>; Sat, 26 Jul 2025 14:28:26 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 shelob.oktetlabs.ru B684350
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=oktetlabs.ru;
- s=default; t=1753532905;
- bh=ga2QpX22HHzAzwmuAfbYm0gXzfusyEApm/HwopNKTkI=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=D8QpApg2MLPouWhghOwKFghyySnyCU80H92qm84aJv4JvQgDluktHu72Ea6sADyan
- ci293ICJJQlqcYxPH78O4lezfdKrq0i1Gd3yUX3e4exLGwlFyUKy7T3HfvjyXpkYl2
- 5JEGNb/NFYSyAJY62lnZx9KwWOHO6hpu+JMdWGRw=
-Received: from [192.168.1.39] (unknown [188.170.87.221])
- (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by shelob.oktetlabs.ru (Postfix) with ESMTPSA id B684350;
- Sat, 26 Jul 2025 15:28:24 +0300 (MSK)
-Message-ID: <fd5f0f6a-cc34-4177-80b4-bccacf5e075c@oktetlabs.ru>
-Date: Sat, 26 Jul 2025 15:28:23 +0300
+	by mails.dpdk.org (Postfix) with ESMTP id 615194025A;
+	Mon, 28 Jul 2025 05:53:35 +0200 (CEST)
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+ by mails.dpdk.org (Postfix) with ESMTP id 9D931400D5
+ for <dev@dpdk.org>; Mon, 28 Jul 2025 05:53:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+ s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version:
+ Content-Type; bh=SPCbUffYlVpYE0aYkOtUvaJNB+GGAmnPgkIRFk/pbbo=;
+ b=n4LnjkwBxdyXzBbQHeCEb9sbn2uHDnnDd4XUjnkcXMNExrIaDmiFqHMl2bj7GN
+ 9dwiIBa4PQgeg/lwmqeloG5c9G7gegMXPpyxaPcD70MhFo3Zb9ybFTeZqcInMkKo
+ Aq/EGNWA1RwIAjIUmkfwiGWnVvnjsJ8OwG3jyt717wpLA=
+Received: from localhost.localdomain.localdomain (unknown [])
+ by gzsmtp3 (Coremail) with SMTP id PigvCgBnIGs39IZo5PwoCQ--.59896S2;
+ Mon, 28 Jul 2025 11:53:29 +0800 (CST)
+From: Huichao Cai <chcchc88@163.com>
+To: konstantin.v.ananyev@yandex.ru
+Cc: dev@dpdk.org
+Subject: [PATCH] acl: fix the value of the trans table
+Date: Mon, 28 Jul 2025 11:53:24 +0800
+Message-Id: <20250728035324.3136-1-chcchc88@163.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20250725102151.6677-1-chcchc88@163.com>
+References: <20250725102151.6677-1-chcchc88@163.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] app/testpmd: cross NUMA support
-To: Maayan Kashani <mkashani@nvidia.com>, dev@dpdk.org
-Cc: dsosnowski@nvidia.com, rasland@nvidia.com,
- Aman Singh <aman.deep.singh@intel.com>, Thomas Monjalon
- <thomas@monjalon.net>, Ferruh Yigit <ferruh.yigit@amd.com>,
- Reshma Pattan <reshma.pattan@intel.com>,
- Stephen Hemminger <stephen@networkplumber.org>
-References: <20250617155351.190622-1-mkashani@nvidia.com>
- <20250626175856.1579-1-mkashani@nvidia.com>
-Content-Language: en-US
-From: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-In-Reply-To: <20250626175856.1579-1-mkashani@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: PigvCgBnIGs39IZo5PwoCQ--.59896S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7CF17ArWkZrWxuw18XrW5ZFb_yoW8Ww1kpF
+ WagF15Ka1kJFW3ZFWFkr18JF15XrW8Ar1DJF42yrW7Aas3Xa48KFW8tr18Cry2y3ykZayq
+ v3W0q34xtr1DZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UvD7-UUUUU=
+X-Originating-IP: [124.127.58.137]
+X-CM-SenderInfo: pfkfuxrfyyqiywtou0bp/1tbiUgWYF2iG71OhrwAAsE
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,101 +51,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 6/26/25 20:58, Maayan Kashani wrote:
-> Cross NUMA support means that
-> if the current NUMA is out of memory,
-> use another available NUMA memory.
-> 
-> This patch is meant to support cross NUMA in testpmd,
-> when disabling gro, gro fix for cross NUMA will come later.
-> 
-> Replace pdump, metrics and dev shared data
-> memory allocations to any socket
-> instead of port socket id.
-> 
-> Replace mbuf pools allocations to any socket
-> when --no-numa flag is set.
+Hi, Konstantin
 
-I think that the patch should be split into few patches.
-First of all it would allow to explain in the description
-why SOCKET_ID_ANY is the right choice here since it is not
-always the right choice. So, explanations are required case by case.
-Second, it would allow to use correct prefix in the summary.
+To illustrate this issue, I made the following modifications to the test cases:
+Modify the “test_data” content of the function "test_acl.c: test_build_ports_range":
+delete the second test data, and leave only one test message data. This way, when
+the function "acl_run_scalar.c: rte_acl_classify_scalar" processes the second message
+data, it will use the idle data. Then modify the idle data in the function "acl_run.h:
+acl_start_next_trie" to (to modify the idle, the const attribute was removed):
+parms[n].data = (uint8_t *)idle;
+parms[n].data[0] = 0x04;
+parms[n].data[4] = 0x01;
+When the function "acl_run_scalar.c: scalar_transition" processing this idle message,
+because the ranges are 0 and the message data is not 0(0x01), the message data will
+exceed all ranges. The calculated result x is 4, while the correct result should be 0. The
+following is a comparison of the settlement results of x before and after modification
+(I have printed each line of the calculation results of the function "acl_run_stcalar. c: scalar_translation"):
 
-Summary should hint which problem is solved, what is the goal of
-the patch, since "cross NUMA support" is not the goal.
+==before==:
+Line 87: transition: 0x20000100
+Line 88: ranges: 0x0
+Line 89: index: 0x20000000
+Line 90: addr: 0x100
+Line 91: input: 0x0
+Line 96: c: 0x0
+Line 99: a: 0x80808080
+Line 102: a: 0x80808080
+Line 105: b: 0x0
+Line 108: a: 0x80808080
+Line 111: a: 0x80808080
+Line 114: x: 0x0
+Line 125: addr: 0x100
 
-As I understand the main idea behind that in general
-rte_socket_id() should not be used if we don't want to strictly
-bind memory allocation to the current socket. SOCKET_ID_ANY
-does the same as a priority (as far as I can see), but allows
-to fallback to memory which belongs to other NUMA nodes.
-
-> 
-> Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
-> ---
->   app/test-pmd/testpmd.c      | 8 ++++----
->   lib/ethdev/ethdev_private.c | 2 +-
->   lib/pdump/rte_pdump.c       | 2 +-
->   3 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
-> index 344c256c050..92a5d581bb9 100644
-> --- a/app/test-pmd/testpmd.c
-> +++ b/app/test-pmd/testpmd.c
-> @@ -1729,8 +1729,7 @@ init_config(void)
->   			mempools[i] = mbuf_pool_create
->   					(mbuf_data_size[i],
->   					 nb_mbuf_per_pool,
-> -					 socket_num == UMA_NO_CONFIG ?
-> -					 0 : socket_num, i);
-> +					 SOCKET_ID_ANY, i);
->   	}
->   
->   	init_port_config();
-> @@ -3057,7 +3056,8 @@ start_port(portid_t pid)
->   				} else {
->   					struct rte_mempool *mp =
->   						mbuf_pool_find
-> -							(port->socket_id, 0);
-> +							((numa_support ? port->socket_id :
-> +							(unsigned int)SOCKET_ID_ANY), 0);
->   					if (mp == NULL) {
->   						fprintf(stderr,
->   							"Failed to setup RX queue: No mempool allocation on the socket %d\n",
-> @@ -4476,7 +4476,7 @@ main(int argc, char** argv)
->   
->   #ifdef RTE_LIB_METRICS
->   	/* Init metrics library */
-> -	rte_metrics_init(rte_socket_id());
-> +	rte_metrics_init(SOCKET_ID_ANY);
->   #endif
->   
->   #ifdef RTE_LIB_LATENCYSTATS
-> diff --git a/lib/ethdev/ethdev_private.c b/lib/ethdev/ethdev_private.c
-> index b96d992ea12..285d377d91f 100644
-> --- a/lib/ethdev/ethdev_private.c
-> +++ b/lib/ethdev/ethdev_private.c
-> @@ -343,7 +343,7 @@ eth_dev_shared_data_prepare(void)
->   		/* Allocate port data and ownership shared memory. */
->   		mz = rte_memzone_reserve(MZ_RTE_ETH_DEV_DATA,
->   				sizeof(*eth_dev_shared_data),
-> -				rte_socket_id(), flags);
-> +				SOCKET_ID_ANY, flags);
->   		if (mz == NULL) {
->   			RTE_ETHDEV_LOG_LINE(ERR, "Cannot allocate ethdev shared data");
->   			goto out;
-> diff --git a/lib/pdump/rte_pdump.c b/lib/pdump/rte_pdump.c
-> index 79b20ce59b2..ba75b828f2e 100644
-> --- a/lib/pdump/rte_pdump.c
-> +++ b/lib/pdump/rte_pdump.c
-> @@ -426,7 +426,7 @@ rte_pdump_init(void)
->   	int ret;
->   
->   	mz = rte_memzone_reserve(MZ_RTE_PDUMP_STATS, sizeof(*pdump_stats),
-> -				 rte_socket_id(), 0);
-> +				 SOCKET_ID_ANY, 0);
->   	if (mz == NULL) {
->   		PDUMP_LOG_LINE(ERR, "cannot allocate pdump statistics");
->   		rte_errno = ENOMEM;
+==after==:
+Line 87: transition: 0x20000100
+Line 88: ranges: 0x0
+Line 89: index: 0x20000000
+Line 90: addr: 0x100
+Line 91: input: 0x1
+Line 96: c: 0x1010101
+Line 99: a: 0x80808080
+Line 102: a: 0x7f7f7f7f
+Line 105: b: 0x0
+Line 108: a: 0x0
+Line 111: a: 0x0
+Line 114: x: 0x4
+Line 125: addr: 0x104
 
