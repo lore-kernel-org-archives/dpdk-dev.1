@@ -2,32 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E55C87FCE
-	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Jul 2025 09:06:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9895CC87FCE
+	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Jul 2025 09:06:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5C98E4065E;
-	Mon, 28 Jul 2025 11:05:40 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6128140665;
+	Mon, 28 Jul 2025 11:05:41 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 415F540615
- for <dev@dpdk.org>; Mon, 28 Jul 2025 11:05:32 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 0794740657
+ for <dev@dpdk.org>; Mon, 28 Jul 2025 11:05:33 +0200 (CEST)
 Received: from mail.cstnet.cn (unknown [60.29.3.194])
- by APP-03 (Coremail) with SMTP id rQCowAA3zH1QPYdoa6KiBw--.41112S7;
- Mon, 28 Jul 2025 17:05:30 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowAA3zH1QPYdoa6KiBw--.41112S8;
+ Mon, 28 Jul 2025 17:05:31 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v12 06/13] net/sxe: add filter function
-Date: Mon, 28 Jul 2025 17:05:10 +0800
-Message-Id: <20250728090517.1811244-6-liujie5@linkdatatechnology.com>
+Subject: [PATCH v12 07/13] net/sxe: support rss offload
+Date: Mon, 28 Jul 2025 17:05:11 +0800
+Message-Id: <20250728090517.1811244-7-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.18.2
 In-Reply-To: <20250728090517.1811244-1-liujie5@linkdatatechnology.com>
 References: <20250725104855.73326-13-liujie5@linkdatatechnology.com>
  <20250728090517.1811244-1-liujie5@linkdatatechnology.com>
-X-CM-TRANSID: rQCowAA3zH1QPYdoa6KiBw--.41112S7
-X-Coremail-Antispam: 1UD129KBjvJXoWxtr1DKr4kCw17ArW3Wr43GFg_yoW3Cr18pF
- W8ua4qkFy3XFnrXanrtr409F13C3ZYg34jgry3Cay29aySqr45XrykJFyUAayvk3s8Wr43
- XF4v93ZrGr1Fk3DanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: rQCowAA3zH1QPYdoa6KiBw--.41112S8
+X-Coremail-Antispam: 1UD129KBjvJXoW3Cr4Dtr1ktr43Wr1kKrW8Crg_yoWkJF13pF
+ Z5G3W8trWftFySgw15Aa1UuF13Wr1vka1UKa93J3yfAa1UJF4xJryYya47Kw1rt3sxXr1k
+ JFZYqa45GF1kuF7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUPq14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
  rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
  kIc2x26xkF7I0E14v26r4j6ryUM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -59,283 +59,409 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Add filter function.
+Support rss offload.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe/pf/sxe_filter.c | 191 ++++++++++++++++++++++++++++++++
- drivers/net/sxe/pf/sxe_filter.h |  29 +++++
- drivers/net/sxe/pf/sxe_main.c   |   1 +
- 3 files changed, 221 insertions(+)
+ drivers/net/sxe/base/sxe_offload_common.c |  11 +-
+ drivers/net/sxe/pf/sxe_offload.c          | 299 ++++++++++++++++++++++
+ drivers/net/sxe/pf/sxe_offload.h          |  33 +++
+ 3 files changed, 338 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/sxe/pf/sxe_filter.c b/drivers/net/sxe/pf/sxe_filter.c
-index 8e3f6b6b29..df583c960a 100644
---- a/drivers/net/sxe/pf/sxe_filter.c
-+++ b/drivers/net/sxe/pf/sxe_filter.c
-@@ -82,6 +82,47 @@ static void sxe_default_mac_addr_get(struct sxe_adapter *adapter)
- 	rte_ether_addr_copy(&mac_addr, &adapter->mac_filter_ctxt.fc_mac_addr);
- }
+diff --git a/drivers/net/sxe/base/sxe_offload_common.c b/drivers/net/sxe/base/sxe_offload_common.c
+index 9c4ffd3b86..780681a994 100644
+--- a/drivers/net/sxe/base/sxe_offload_common.c
++++ b/drivers/net/sxe/base/sxe_offload_common.c
+@@ -22,15 +22,16 @@ u64 __sxe_rx_port_offload_capa_get(struct rte_eth_dev *dev)
+ 	u64 rx_offload_capa;
  
-+static u8 sxe_sw_uc_entry_add(struct rte_eth_dev *eth_dev, u8 index,
-+	u8 *mac_addr)
+ 	rx_offload_capa = RTE_ETH_RX_OFFLOAD_IPV4_CKSUM  |
+-		   RTE_ETH_RX_OFFLOAD_UDP_CKSUM   |
+-		   RTE_ETH_RX_OFFLOAD_TCP_CKSUM   |
+-		   RTE_ETH_RX_OFFLOAD_KEEP_CRC	|
++			RTE_ETH_RX_OFFLOAD_UDP_CKSUM   |
++			RTE_ETH_RX_OFFLOAD_TCP_CKSUM   |
++			RTE_ETH_RX_OFFLOAD_KEEP_CRC	|
+ #ifdef DEV_RX_JUMBO_FRAME
+-		   DEV_RX_OFFLOAD_JUMBO_FRAME |
++			DEV_RX_OFFLOAD_JUMBO_FRAME |
+ #endif
+ 			RTE_ETH_RX_OFFLOAD_VLAN_FILTER |
+ 			RTE_ETH_RX_OFFLOAD_VLAN_EXTEND |
+-		   RTE_ETH_RX_OFFLOAD_SCATTER;
++			RTE_ETH_RX_OFFLOAD_SCATTER |
++			RTE_ETH_RX_OFFLOAD_RSS_HASH;
+ 
+ 	if (!RTE_ETH_DEV_SRIOV(dev).active)
+ 		rx_offload_capa |= RTE_ETH_RX_OFFLOAD_TCP_LRO;
+diff --git a/drivers/net/sxe/pf/sxe_offload.c b/drivers/net/sxe/pf/sxe_offload.c
+index 0fa3f4822a..d34cf7ecc8 100644
+--- a/drivers/net/sxe/pf/sxe_offload.c
++++ b/drivers/net/sxe/pf/sxe_offload.c
+@@ -9,11 +9,26 @@
+ #include "sxe_queue_common.h"
+ #include "sxe_offload_common.h"
+ 
++static u8 rss_sxe_key[40] = {
++	0x6D, 0x5A, 0x56, 0xDA, 0x25, 0x5B, 0x0E, 0xC2,
++	0x41, 0x67, 0x25, 0x3D, 0x43, 0xA3, 0x8F, 0xB0,
++	0xD0, 0xCA, 0x2B, 0xCB, 0xAE, 0x7B, 0x30, 0xB4,
++	0x77, 0xCB, 0x2D, 0xA3, 0x80, 0x30, 0xF2, 0x0C,
++	0x6A, 0x42, 0xB7, 0x3B, 0xBE, 0xAC, 0x01, 0xFA,
++};
++
+ #define SXE_4_BIT_WIDTH  (CHAR_BIT / 2)
+ #define SXE_4_BIT_MASK   RTE_LEN2MASK(SXE_4_BIT_WIDTH, u8)
+ #define SXE_8_BIT_WIDTH  CHAR_BIT
+ #define SXE_8_BIT_MASK   UINT8_MAX
+ 
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_FILTER_CTRL
++u8 *sxe_rss_hash_key_get(void)
 +{
-+	u8 i, pool;
-+	struct sxe_adapter *adapter = eth_dev->data->dev_private;
-+	struct sxe_uc_addr_table *uc_table = adapter->mac_filter_ctxt.uc_addr_table;
++	return rss_sxe_key;
++}
++#endif
 +
-+	pool = sxe_vf_num_get(eth_dev);
-+	for (i = 0; i < SXE_UC_ENTRY_NUM_MAX; i++) {
-+		if (!uc_table[i].used) {
-+			uc_table[i].pool_idx = pool;
-+			uc_table[i].used = true;
-+			uc_table[i].rar_idx = i;
-+			uc_table[i].original_index = index;
-+			uc_table[i].type = SXE_PF;
-+			rte_memcpy(uc_table[i].addr, mac_addr, SXE_MAC_ADDR_LEN);
-+			break;
-+		}
-+	}
+ u64 sxe_rx_queue_offload_capa_get(struct rte_eth_dev *dev)
+ {
+ 	return __sxe_rx_queue_offload_capa_get(dev);
+@@ -35,3 +50,287 @@ u64 sxe_tx_port_offload_capa_get(struct rte_eth_dev *dev)
+ {
+ 	return __sxe_tx_port_offload_capa_get(dev);
+ }
 +
-+	return i;
++void sxe_rss_disable(struct rte_eth_dev *dev)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++
++	PMD_INIT_FUNC_TRACE();
++
++	sxe_hw_rss_cap_switch(hw, false);
 +}
 +
-+static u8 sxe_sw_uc_entry_del(struct sxe_adapter *adapter, u8 index)
++void sxe_rss_hash_set(struct sxe_hw *hw,
++				struct rte_eth_rss_conf *rss_conf)
 +{
-+	u8 i;
-+	struct sxe_uc_addr_table *uc_table = adapter->mac_filter_ctxt.uc_addr_table;
++	u8  *hash_key;
++	u32 rss_key[SXE_MAX_RSS_KEY_ENTRIES];
++	u16 i;
++	u64 rss_hf;
++	u32 rss_field = 0;
 +
-+	for (i = 0; i < SXE_UC_ENTRY_NUM_MAX; i++) {
-+		if (!uc_table[i].used || uc_table[i].type != SXE_PF)
++	PMD_INIT_FUNC_TRACE();
++
++	hash_key = rss_conf->rss_key;
++	if (hash_key != NULL) {
++		for (i = 0; i < SXE_MAX_RSS_KEY_ENTRIES; i++) {
++			rss_key[i]  = hash_key[(i * 4)];
++			rss_key[i] |= hash_key[(i * 4) + 1] << 8;
++			rss_key[i] |= hash_key[(i * 4) + 2] << 16;
++			rss_key[i] |= hash_key[(i * 4) + 3] << 24;
++		}
++		sxe_hw_rss_key_set_all(hw, rss_key);
++	}
++
++	rss_hf = rss_conf->rss_hf;
++	if (rss_hf & RTE_ETH_RSS_IPV4)
++		rss_field |= SXE_MRQC_RSS_FIELD_IPV4;
++
++	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV4_TCP)
++		rss_field |= SXE_MRQC_RSS_FIELD_IPV4_TCP;
++
++	if (rss_hf & RTE_ETH_RSS_IPV6)
++		rss_field |= SXE_MRQC_RSS_FIELD_IPV6;
++
++	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_TCP)
++		rss_field |= SXE_MRQC_RSS_FIELD_IPV6_TCP;
++
++	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV4_UDP)
++		rss_field |= SXE_MRQC_RSS_FIELD_IPV4_UDP;
++
++	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_UDP)
++		rss_field |= SXE_MRQC_RSS_FIELD_IPV6_UDP;
++
++	sxe_hw_rss_field_set(hw, rss_field);
++
++	sxe_hw_rss_cap_switch(hw, true);
++}
++
++void sxe_rss_configure(struct rte_eth_dev *dev)
++{
++	struct rte_eth_rss_conf *rss_conf;
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u16 i;
++	u16 j;
++	u8  rss_indir_tbl[SXE_MAX_RETA_ENTRIES];
++
++	PMD_INIT_FUNC_TRACE();
++
++	if (!adapter->rss_reta_updated) {
++		for (i = 0, j = 0; i < SXE_MAX_RETA_ENTRIES; i++, j++) {
++			if (j == dev->data->nb_rx_queues)
++				j = 0;
++
++			rss_indir_tbl[i] = j;
++		}
++
++		sxe_hw_rss_redir_tbl_set_all(hw, rss_indir_tbl);
++	}
++
++	rss_conf = &dev->data->dev_conf.rx_adv_conf.rss_conf;
++	if ((rss_conf->rss_hf & SXE_RSS_OFFLOAD_ALL) == 0) {
++		PMD_LOG_INFO(INIT, "user rss config match hw supports is 0");
++		sxe_rss_disable(dev);
++		return;
++	}
++
++	if (rss_conf->rss_key == NULL)
++		rss_conf->rss_key = rss_sxe_key;
++
++	sxe_rss_hash_set(hw, rss_conf);
++}
++
++s32 sxe_rss_reta_update(struct rte_eth_dev *dev,
++			struct rte_eth_rss_reta_entry64 *reta_conf,
++			u16 reta_size)
++{
++	u16 i;
++	u8 j, mask;
++	u32 reta, r;
++	u16 idx, shift;
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct rte_eth_dev_data *dev_data = dev->data;
++	struct sxe_hw *hw = &adapter->hw;
++	s32 ret = 0;
++
++	PMD_INIT_FUNC_TRACE();
++
++	if (!dev_data->dev_started) {
++		PMD_LOG_ERR(DRV,
++			"port %d must be started before rss reta update",
++			 dev_data->port_id);
++		ret = -EIO;
++		goto l_end;
++	}
++
++	if (reta_size != RTE_ETH_RSS_RETA_SIZE_128) {
++		PMD_LOG_ERR(DRV, "The size of hash lookup table configured "
++			"(%d) doesn't match the number hardware can supported "
++			"(%d)", reta_size, RTE_ETH_RSS_RETA_SIZE_128);
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	for (i = 0; i < reta_size; i += SXE_4_BIT_WIDTH) {
++		idx = i / RTE_ETH_RETA_GROUP_SIZE;
++		shift = i % RTE_ETH_RETA_GROUP_SIZE;
++		mask = (u8)((reta_conf[idx].mask >> shift) &
++						SXE_4_BIT_MASK);
++		if (!mask)
 +			continue;
 +
-+		if (uc_table[i].original_index == index) {
-+			uc_table[i].used = false;
-+			break;
++		if (mask == SXE_4_BIT_MASK)
++			r = 0;
++		else
++			r = sxe_hw_rss_redir_tbl_get_by_idx(hw, i);
++
++		for (j = 0, reta = 0; j < SXE_4_BIT_WIDTH; j++) {
++			if (mask & (0x1 << j)) {
++				reta |= reta_conf[idx].reta[shift + j] <<
++						(CHAR_BIT * j);
++			} else {
++				reta |= r & (SXE_8_BIT_MASK <<
++					(CHAR_BIT * j));
++			}
++		}
++
++		sxe_hw_rss_redir_tbl_set_by_idx(hw, i, reta);
++	}
++	adapter->rss_reta_updated = true;
++
++l_end:
++	return ret;
++}
++
++s32 sxe_rss_reta_query(struct rte_eth_dev *dev,
++			 struct rte_eth_rss_reta_entry64 *reta_conf,
++			 u16 reta_size)
++{
++	u16 i;
++	u8 j, mask;
++	u32 reta;
++	u16 idx, shift;
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	s32 ret = 0;
++
++	PMD_INIT_FUNC_TRACE();
++	if (reta_size != RTE_ETH_RSS_RETA_SIZE_128) {
++		PMD_LOG_ERR(DRV, "the size of hash lookup table configured "
++			"(%d) doesn't match the number hardware can supported "
++			"(%d)", reta_size, RTE_ETH_RSS_RETA_SIZE_128);
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	for (i = 0; i < reta_size; i += SXE_4_BIT_WIDTH) {
++		idx = i / RTE_ETH_RETA_GROUP_SIZE;
++		shift = i % RTE_ETH_RETA_GROUP_SIZE;
++		mask = (u8)((reta_conf[idx].mask >> shift) &
++						SXE_4_BIT_MASK);
++		if (!mask)
++			continue;
++
++		reta = sxe_hw_rss_redir_tbl_get_by_idx(hw, i);
++		for (j = 0; j < SXE_4_BIT_WIDTH; j++) {
++			if (mask & (0x1 << j)) {
++				reta_conf[idx].reta[shift + j] =
++					((reta >> (CHAR_BIT * j)) &
++						SXE_8_BIT_MASK);
++			}
 +		}
 +	}
 +
-+	return i;
++l_end:
++	return ret;
 +}
 +
- s32 sxe_mac_addr_init(struct rte_eth_dev *eth_dev)
- {
- 	struct sxe_adapter *adapter = eth_dev->data->dev_private;
-@@ -149,6 +190,156 @@ s32 sxe_mac_addr_init(struct rte_eth_dev *eth_dev)
- 	goto l_out;
- }
- 
-+static void sxe_pf_promisc_mac_update(struct rte_eth_dev *dev, bool enable)
++s32 sxe_rss_hash_update(struct rte_eth_dev *dev,
++			struct rte_eth_rss_conf *rss_conf)
 +{
 +	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_uc_addr_table *uc_table = adapter->mac_filter_ctxt.uc_addr_table;
-+	u16 pf_pool = sxe_vf_num_get(dev);
-+	s32 i;
++	struct sxe_hw *hw = &adapter->hw;
++	u64 rss_hf;
++	s32 ret = 0;
 +
-+	for (i = 0; i < SXE_UC_ENTRY_NUM_MAX; i++) {
-+		if (uc_table[i].used && uc_table[i].type != SXE_PF) {
-+			if (enable)
-+				sxe_hw_uc_addr_pool_enable(&adapter->hw,
-+					uc_table[i].rar_idx, pf_pool);
-+			else
-+				sxe_hw_uc_addr_pool_del(&adapter->hw,
-+					uc_table[i].rar_idx, pf_pool);
++	rss_hf = (rss_conf->rss_hf & SXE_RSS_OFFLOAD_ALL);
++
++	if (!sxe_hw_is_rss_enabled(hw)) {
++		if (rss_hf != 0) {
++			PMD_LOG_ERR(DRV, "rss not init but want set");
++			ret = -EINVAL;
++			goto l_end;
++		}
++
++		goto l_end;
++	}
++
++	if (rss_hf == 0) {
++		PMD_LOG_ERR(DRV, "rss init but want disable it");
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	sxe_rss_hash_set(hw, rss_conf);
++
++l_end:
++	return ret;
++}
++
++s32 sxe_rss_hash_conf_get(struct rte_eth_dev *dev,
++				struct rte_eth_rss_conf *rss_conf)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u8 *hash_key;
++	u32 rss_field;
++	u32 rss_key;
++	u64 rss_hf;
++	u16 i;
++
++	hash_key = rss_conf->rss_key;
++	if (hash_key != NULL) {
++		for (i = 0; i < SXE_MAX_RSS_KEY_ENTRIES; i++) {
++			rss_key = sxe_hw_rss_key_get_by_idx(hw, i);
++			hash_key[(i * 4)] = rss_key & 0x000000FF;
++			hash_key[(i * 4) + 1] = (rss_key >> 8) & 0x000000FF;
++			hash_key[(i * 4) + 2] = (rss_key >> 16) & 0x000000FF;
++			hash_key[(i * 4) + 3] = (rss_key >> 24) & 0x000000FF;
 +		}
 +	}
-+}
 +
-+s32 sxe_promiscuous_enable(struct rte_eth_dev *dev)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+	u32 flt_ctrl;
-+	u32 vm_l2_ctrl = 0;
-+	u16 vf_num;
 +
-+	flt_ctrl = sxe_hw_rx_mode_get(hw);
-+	PMD_LOG_DEBUG(DRV, "read flt_ctrl=0x%x", flt_ctrl);
-+
-+	flt_ctrl |= (SXE_FCTRL_UPE | SXE_FCTRL_MPE);
-+
-+	vf_num = sxe_vf_num_get(dev);
-+	if (vf_num != 0) {
-+		vm_l2_ctrl = sxe_hw_pool_rx_mode_get(hw, vf_num) |
-+				SXE_VMOLR_ROMPE | SXE_VMOLR_MPE;
-+		sxe_hw_pool_rx_mode_set(hw, vm_l2_ctrl, vf_num);
-+
-+		sxe_pf_promisc_mac_update(dev, true);
++	if (!sxe_hw_is_rss_enabled(hw)) {
++		rss_conf->rss_hf = 0;
++		PMD_LOG_INFO(DRV, "rss not enabled, return 0");
++		goto l_end;
 +	}
 +
-+	PMD_LOG_DEBUG(DRV, "write flt_ctrl=0x%x vmolr=0x%x", flt_ctrl, vm_l2_ctrl);
-+	sxe_hw_rx_mode_set(hw, flt_ctrl);
-+	adapter->mac_filter_ctxt.promiscuous_mode = true;
++	rss_hf = 0;
++	rss_field = sxe_hw_rss_field_get(hw);
++	if (rss_field & SXE_MRQC_RSS_FIELD_IPV4)
++		rss_hf |= RTE_ETH_RSS_IPV4;
 +
++	if (rss_field & SXE_MRQC_RSS_FIELD_IPV4_TCP)
++		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV4_TCP;
++
++	if (rss_field & SXE_MRQC_RSS_FIELD_IPV4_UDP)
++		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV4_UDP;
++
++	if (rss_field & SXE_MRQC_RSS_FIELD_IPV6)
++		rss_hf |= RTE_ETH_RSS_IPV6;
++
++	if (rss_field & SXE_MRQC_RSS_FIELD_IPV6_TCP)
++		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV6_TCP;
++
++	if (rss_field & SXE_MRQC_RSS_FIELD_IPV6_UDP)
++		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV6_UDP;
++
++	PMD_LOG_DEBUG(DRV, "got rss hash func=0x%" SXE_PRIX64, rss_hf);
++	rss_conf->rss_hf = rss_hf;
++
++l_end:
 +	return 0;
 +}
-+
-+s32 sxe_promiscuous_disable(struct rte_eth_dev *dev)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+	u32 flt_ctrl;
-+	u32 vm_l2_ctrl = 0;
-+	u16 vf_num;
-+
-+	flt_ctrl = sxe_hw_rx_mode_get(hw);
-+	PMD_LOG_DEBUG(DRV, "read flt_ctrl=0x%x", flt_ctrl);
-+
-+	flt_ctrl &= (~SXE_FCTRL_UPE);
-+	if (dev->data->all_multicast == 1)
-+		flt_ctrl |= SXE_FCTRL_MPE;
-+	else
-+		flt_ctrl &= (~SXE_FCTRL_MPE);
-+
-+	vf_num = sxe_vf_num_get(dev);
-+	if (vf_num != 0) {
-+		vm_l2_ctrl = sxe_hw_pool_rx_mode_get(hw, vf_num);
-+		if (dev->data->all_multicast == 0) {
-+			vm_l2_ctrl &= ~SXE_VMOLR_MPE;
-+			if ((sxe_hw_mc_filter_get(hw) & SXE_MCSTCTRL_MFE) == 0)
-+				vm_l2_ctrl &= ~SXE_VMOLR_ROMPE;
-+		}
-+		sxe_hw_pool_rx_mode_set(hw, vm_l2_ctrl, vf_num);
-+		sxe_pf_promisc_mac_update(dev, false);
-+	}
-+
-+	PMD_LOG_DEBUG(DRV, "write flt_ctrl=0x%x vmolr=0x%x", flt_ctrl, vm_l2_ctrl);
-+	sxe_hw_rx_mode_set(hw, flt_ctrl);
-+	adapter->mac_filter_ctxt.promiscuous_mode = false;
-+
-+	return 0;
-+}
-+
-+s32 sxe_allmulticast_enable(struct rte_eth_dev *dev)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+	u32 flt_ctrl;
-+	u32 vm_l2_ctrl = 0;
-+	u16 vf_num;
-+
-+	flt_ctrl = sxe_hw_rx_mode_get(hw);
-+	PMD_LOG_DEBUG(DRV, "read flt_ctrl=0x%x", flt_ctrl);
-+
-+	flt_ctrl |= SXE_FCTRL_MPE;
-+
-+	PMD_LOG_DEBUG(DRV, "write flt_ctrl=0x%x", flt_ctrl);
-+	sxe_hw_rx_mode_set(hw, flt_ctrl);
-+
-+	vf_num = sxe_vf_num_get(dev);
-+	if (vf_num != 0) {
-+		vm_l2_ctrl = sxe_hw_pool_rx_mode_get(hw, vf_num) |
-+				SXE_VMOLR_MPE | SXE_VMOLR_ROMPE;
-+		sxe_hw_pool_rx_mode_set(hw, vm_l2_ctrl, vf_num);
-+	}
-+
-+	PMD_LOG_DEBUG(DRV, "write flt_ctrl=0x%x vmolr=0x%x",
-+			flt_ctrl, vm_l2_ctrl);
-+
-+	return 0;
-+}
-+
-+s32 sxe_allmulticast_disable(struct rte_eth_dev *dev)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+	u32 flt_ctrl;
-+	u32 vm_l2_ctrl = 0;
-+	u16 vf_num;
-+
-+	if (dev->data->promiscuous == 1) {
-+		PMD_LOG_DEBUG(DRV, "promiscuous is enable, allmulticast must be enabled.");
-+		goto l_out;
-+	}
-+
-+	flt_ctrl = sxe_hw_rx_mode_get(hw);
-+	PMD_LOG_DEBUG(DRV, "read flt_ctrl=0x%x", flt_ctrl);
-+
-+	flt_ctrl &= (~SXE_FCTRL_MPE);
-+
-+	vf_num = sxe_vf_num_get(dev);
-+	if (vf_num != 0) {
-+		vm_l2_ctrl = sxe_hw_pool_rx_mode_get(hw, vf_num) &
-+					(~SXE_VMOLR_MPE);
-+		if ((sxe_hw_mc_filter_get(hw) & SXE_MCSTCTRL_MFE) == 0)
-+			vm_l2_ctrl &= ~SXE_VMOLR_ROMPE;
-+
-+		sxe_hw_pool_rx_mode_set(hw, vm_l2_ctrl, vf_num);
-+	} else {
-+		sxe_hw_rx_mode_set(hw, flt_ctrl);
-+	}
-+
-+	PMD_LOG_DEBUG(DRV, "write flt_ctrl=0x%x vmolr=0x%x",
-+			flt_ctrl, vm_l2_ctrl);
-+
-+l_out:
-+	return 0;
-+}
-+
- s32 sxe_mac_addr_add(struct rte_eth_dev *dev,
- 				 struct rte_ether_addr *mac_addr,
- 				 u32 index, u32 pool)
-diff --git a/drivers/net/sxe/pf/sxe_filter.h b/drivers/net/sxe/pf/sxe_filter.h
-index 51df05ac8e..2b7c91a9bd 100644
---- a/drivers/net/sxe/pf/sxe_filter.h
-+++ b/drivers/net/sxe/pf/sxe_filter.h
-@@ -18,6 +18,27 @@ struct sxe_adapter;
- 		RTE_ALIGN((SXE_HW_TXRX_RING_NUM_MAX / (sizeof(u32) * BYTE_BIT_NUM)), \
- 		sizeof(u32))
+diff --git a/drivers/net/sxe/pf/sxe_offload.h b/drivers/net/sxe/pf/sxe_offload.h
+index a70d6bf94b..458b6464c5 100644
+--- a/drivers/net/sxe/pf/sxe_offload.h
++++ b/drivers/net/sxe/pf/sxe_offload.h
+@@ -7,6 +7,21 @@
  
-+struct sxe_vlan_context {
-+	u32 vlan_hash_table[SXE_VFT_TBL_SIZE];
-+	u32 strip_bitmap[SXE_VLAN_STRIP_BITMAP_SIZE];
-+	u32  vlan_table_size;
-+};
-+
-+enum sxe_uc_addr_src_type {
-+	SXE_PF = 0,
-+	SXE_VF,
-+	SXE_VF_MACVLAN
-+};
-+
-+struct sxe_uc_addr_table {
-+	u8 rar_idx;
-+	u8 pool_idx;
-+	u8 type;
-+	u8 original_index;
-+	bool used;
-+	u8 addr[SXE_MAC_ADDR_LEN];
-+};
-+
- struct sxe_mac_filter_context {
- 	struct rte_ether_addr def_mac_addr;
- 	struct rte_ether_addr cur_mac_addr;
-@@ -34,6 +55,14 @@ struct sxe_mac_filter_context {
+ #include "sxe_hw.h"
  
- s32 sxe_mac_addr_init(struct rte_eth_dev *eth_dev);
++#define SXE_RSS_OFFLOAD_ALL ( \
++		RTE_ETH_RSS_IPV4 | \
++		RTE_ETH_RSS_NONFRAG_IPV4_TCP | \
++		RTE_ETH_RSS_NONFRAG_IPV4_UDP | \
++		RTE_ETH_RSS_IPV6 | \
++		RTE_ETH_RSS_NONFRAG_IPV6_TCP | \
++		RTE_ETH_RSS_NONFRAG_IPV6_UDP)
++
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_FILTER_CTRL
++u8 *sxe_rss_hash_key_get(void);
++#endif
++
++void sxe_rss_hash_set(struct sxe_hw *hw,
++				struct rte_eth_rss_conf *rss_conf);
++
+ u64 sxe_rx_queue_offload_capa_get(struct rte_eth_dev *dev);
  
-+s32 sxe_promiscuous_enable(struct rte_eth_dev *dev);
-+
-+s32 sxe_promiscuous_disable(struct rte_eth_dev *dev);
-+
-+s32 sxe_allmulticast_enable(struct rte_eth_dev *dev);
-+
-+s32 sxe_allmulticast_disable(struct rte_eth_dev *dev);
-+
- s32 sxe_mac_addr_add(struct rte_eth_dev *dev,
- 				 struct rte_ether_addr *mac_addr,
- 				 u32 rar_idx, u32 pool);
-diff --git a/drivers/net/sxe/pf/sxe_main.c b/drivers/net/sxe/pf/sxe_main.c
-index 2b4101c6d7..5be284fd24 100644
---- a/drivers/net/sxe/pf/sxe_main.c
-+++ b/drivers/net/sxe/pf/sxe_main.c
-@@ -194,6 +194,7 @@ s32 sxe_hw_reset(struct sxe_hw *hw)
- 		goto l_end;
- 	}
+ u64 sxe_rx_port_offload_capa_get(struct rte_eth_dev *dev);
+@@ -15,4 +30,22 @@ u64 sxe_tx_queue_offload_capa_get(struct rte_eth_dev *dev);
  
-+	sxe_hw_uc_addr_clear(hw);
- l_end:
- 	return ret;
- }
+ u64 sxe_tx_port_offload_capa_get(struct rte_eth_dev *dev);
+ 
++void sxe_rss_disable(struct rte_eth_dev *dev);
++
++void sxe_rss_configure(struct rte_eth_dev *dev);
++
++s32 sxe_rss_reta_update(struct rte_eth_dev *dev,
++			struct rte_eth_rss_reta_entry64 *reta_conf,
++			u16 reta_size);
++
++s32 sxe_rss_reta_query(struct rte_eth_dev *dev,
++			 struct rte_eth_rss_reta_entry64 *reta_conf,
++			 u16 reta_size);
++
++s32 sxe_rss_hash_update(struct rte_eth_dev *dev,
++			struct rte_eth_rss_conf *rss_conf);
++
++s32 sxe_rss_hash_conf_get(struct rte_eth_dev *dev,
++				struct rte_eth_rss_conf *rss_conf);
++
+ #endif
 -- 
 2.18.2
 
