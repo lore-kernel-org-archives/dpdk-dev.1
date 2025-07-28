@@ -2,42 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B89C83F17
-	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Jul 2025 13:27:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F412C83F17
+	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Jul 2025 13:28:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C93F74029A;
-	Mon, 28 Jul 2025 15:27:11 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id C4D9540297
- for <dev@dpdk.org>; Mon, 28 Jul 2025 15:27:10 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 6D87A2221E;
- Mon, 28 Jul 2025 15:27:10 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 117DD4029A;
+	Mon, 28 Jul 2025 15:28:51 +0200 (CEST)
+Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
+ by mails.dpdk.org (Postfix) with ESMTP id B45D040297;
+ Mon, 28 Jul 2025 15:28:49 +0200 (CEST)
+Received: from debian (unknown [78.109.65.78])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by agw.arknetworks.am (Postfix) with ESMTPSA id D4877E0BEC;
+ Mon, 28 Jul 2025 17:28:48 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am D4877E0BEC
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
+ s=default; t=1753709329;
+ bh=V1mvY7K4VOVki9vhALqmbFaAhIwLKEx5OBeaijfrGjg=;
+ h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+ b=RhZcLzSnisEXCNqaxjxh2GHHX8XISjU3PgU0/+x9AfgEbczG/vScMkFlrkRkHcf1C
+ NAFtp7KDQwYVzb1aP5kBGL54Suxwu6G6ete3HZSB5xcCre6ZVJuDk6v493Tc+5xurm
+ SWT5larUAFT7eb+aqXvtam1qHHb76Yo/JPiDlmL+bn7o0sEmaTUfKa7nLQlD638El6
+ eP8p1oPYgqgkRstzi0J/388m9b5cdGJwpK51Rs5zkJvGLK4RSwIo3qMv7x38mCKCtd
+ k3QFg73CPNUjjKxPdR36IfOCwrMMEhxBV1PNQWPkZI+fgcJVLFnCjI8JizWkT7klip
+ 06w2TduP0Hq3A==
+Date: Mon, 28 Jul 2025 17:28:47 +0400 (+04)
+From: Ivan Malov <ivan.malov@arknetworks.am>
+To: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+cc: dev@dpdk.org, jasvinder.singh@intel.com, bruce.richardson@intel.com, 
+ thomas@monjalon.net, andrew.rybchenko@oktetlabs.ru, stable@dpdk.org
+Subject: Re: [PATCH] net/rte_net: fix inner L2 length for tunneled Ethernet
+ packets
+In-Reply-To: <20250728131222.50441-1-14pwcse1224@uetpeshawar.edu.pk>
+Message-ID: <e7c3c2b2-5f7a-eec4-cbd8-cd17ecec4c46@arknetworks.am>
+References: <20250728131222.50441-1-14pwcse1224@uetpeshawar.edu.pk>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v2] net/null: Add fast mbuf release TX offload
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Mon, 28 Jul 2025 15:27:09 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FDCC@smartserver.smartshare.dk>
-In-Reply-To: <b0cd9f5d-91d2-62e5-6a14-f567395c21b5@arknetworks.am>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v2] net/null: Add fast mbuf release TX offload
-Thread-Index: Adv99KoxUt06N1+WQMaQiOCToGCnGwAHGMsg
-References: <20250624181416.167181-1-mb@smartsharesystems.com>
- <20250726044827.569456-1-mb@smartsharesystems.com>
- <b0cd9f5d-91d2-62e5-6a14-f567395c21b5@arknetworks.am>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Ivan Malov" <ivan.malov@arknetworks.am>
-Cc: <dev@dpdk.org>, "Tetsuya Mukawa" <mtetsuyah@gmail.com>,
- "Stephen Hemminger" <stephen@networkplumber.org>,
- "Vipin Varghese" <Vipin.Varghese@amd.com>,
- "Thiyagarjan P" <Thiyagarajan.P@amd.com>
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,105 +52,113 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBJdmFuIE1hbG92IFttYWlsdG86aXZhbi5tYWxvdkBhcmtuZXR3b3Jrcy5hbV0NCj4g
-U2VudDogU2F0dXJkYXksIDI2IEp1bHkgMjAyNSAwOC4xNQ0KPiANCj4gSGkgTW9ydGVuLA0KPiAN
-Cj4gR29vZCBwYXRjaC4gUGxlYXNlIHNlZSBiZWxvdy4NCj4gDQo+IE9uIFNhdCwgMjYgSnVsIDIw
-MjUsIE1vcnRlbiBCcsO4cnVwIHdyb3RlOg0KPiANCj4gPiBBZGRlZCBmYXN0IG1idWYgcmVsZWFz
-ZSwgcmUtdXNpbmcgdGhlIGV4aXN0aW5nIG1idWYgcG9vbCBwb2ludGVyDQo+ID4gaW4gdGhlIHF1
-ZXVlIHN0cnVjdHVyZS4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IE1vcnRlbiBCcsO4cnVwIDxt
-YkBzbWFydHNoYXJlc3lzdGVtcy5jb20+DQo+ID4gLS0tDQo+ID4gdjI6DQo+ID4gKiBBbHNvIGFu
-bm91bmNlIHRoZSBvZmZsb2FkIGFzIGEgcGVyLXF1ZXVlIGNhcGFiaWxpdHkuDQo+ID4gKiBBZGRl
-ZCBtaXNzaW5nIHRlc3Qgb2YgcGVyLWRldmljZSBvZmZsb2FkIGNvbmZpZ3VyYXRpb24gd2hlbg0K
-PiBjb25maWd1cmluZw0KPiA+ICB0aGUgcXVldWUuDQo+ID4gLS0tDQo+ID4gZHJpdmVycy9uZXQv
-bnVsbC9ydGVfZXRoX251bGwuYyB8IDMzICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0t
-LQ0KPiA+IDEgZmlsZSBjaGFuZ2VkLCAzMCBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQ0K
-PiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L251bGwvcnRlX2V0aF9udWxsLmMNCj4g
-Yi9kcml2ZXJzL25ldC9udWxsL3J0ZV9ldGhfbnVsbC5jDQo+ID4gaW5kZXggOGE5Yjc0YTAzYi4u
-MDljZmM3NDQ5NCAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL25ldC9udWxsL3J0ZV9ldGhfbnVs
-bC5jDQo+ID4gKysrIGIvZHJpdmVycy9uZXQvbnVsbC9ydGVfZXRoX251bGwuYw0KPiA+IEBAIC0z
-NCw2ICszNCwxNyBAQCBzdHJ1Y3QgcG1kX2ludGVybmFsczsNCj4gPiBzdHJ1Y3QgbnVsbF9xdWV1
-ZSB7DQo+ID4gCXN0cnVjdCBwbWRfaW50ZXJuYWxzICppbnRlcm5hbHM7DQo+ID4NCj4gPiArCS8q
-Kg0KPiA+ICsJICogRm9yIFJYIHF1ZXVlOg0KPiA+ICsJICogIE1lbXBvb2wgdG8gYWxsb2NhdGUg
-bWJ1ZnMgZnJvbS4NCj4gPiArCSAqDQo+ID4gKwkgKiBGb3IgVFggcXVldWU6DQo+IA0KPiBQZXJo
-YXBzIHNwZWxsIGl0ICdSeCcsICdUeCcsIGJ1dCB0aGlzIGlzIHVwIHRvIHlvdS4NCg0KSSBqdXN0
-IGNoZWNrZWQsIGFuZCBpdCBzZWVtcyBhbGwgdGhyZWUgc3BlbGxpbmdzICJyeCIsICJSeCIgYW5k
-ICJSWCIgYXJlIGJlaW5nIHVzZWQgaW4gRFBESy4NCkkgcGVyc29uYWxseSBwcmVmZXIgUlgsIHNv
-IEknbGwga2VlcCB0aGF0Lg0KDQo+IA0KPiA+ICsJICogIE1lbXBvb2wgdG8gZnJlZSBtYnVmcyB0
-bywgaWYgZmFzdCByZWxlYXNlIG9mIG1idWZzIGlzIGVuYWJsZWQuDQo+ID4gKwkgKiAgVUlOVFBU
-Ul9NQVggaWYgdGhlIG1lbXBvb2wgZm9yIGZhc3QgcmVsZWFzZSBvZiBtYnVmcyBoYXMgbm90DQo+
-IHlldCBiZWVuIGRldGVjdGVkLg0KPiA+ICsJICogIE5VTEwgaWYgZmFzdCByZWxlYXNlIG9mIG1i
-dWZzIGlzIG5vdCBlbmFibGVkLg0KPiA+ICsJICoNCj4gPiArCSAqICBAc2VlIFJURV9FVEhfVFhf
-T0ZGTE9BRF9NQlVGX0ZBU1RfRlJFRQ0KPiA+ICsJICovDQo+IA0KPiBNYXkgYmUgaXQgd291bGQg
-YmUgYmV0dGVyIHRvIGhhdmUgYSBzZXBhcmF0ZSAndHhfcGt0X2J1cnN0JyBjYWxsYmFjaywgdG8N
-Cj4gYXZvaWQNCj4gY29uZGl0aW9uYWwgY2hlY2tzIGJlbG93LiBUaG91Z2gsIEkgdW5kZXJzdGFu
-ZCB0aGlzIHdpbGwgZG93bmdyYWRlIHRoZQ0KPiBwZXItcXVldWUNCj4gY2FwYWJpbGl0eSB0byB0
-aGUgcGVyLXBvcnQgb25seSwgc28gZmVlbCBmcmVlIHRvIGRpc3JlZ2FyZCB0aGlzIHBvaW50Lg0K
-DQpJIGNvbnNpZGVyZWQgdGhpcywgYW5kIEkgY2FuIGltYWdpbmUgYW4gYXBwbGljYXRpb24gdXNp
-bmcgRkFTVF9GUkVFIGZvciBpdHMgcHJpbWFyeSBxdWV1ZXMsIGFuZCBub3JtYWwgZnJlZSBmb3Ig
-c29tZSBzZWNvbmRhcnkgcXVldWVzLg0KTG9va2luZyBhdCBvdGhlciBkcml2ZXJzIC0gd2hpY2gg
-aGF2ZSBpbXBsZW1lbnRlZCBhIHJ1bnRpbWUgY2hlY2ssIG5vdCBzZXBhcmF0ZSBjYWxsYmFja3Mg
-Zm9yIEZBU1RfRlJFRSAtIEkgZ3Vlc3MgdGhleSBjYW1lIHRvIHRoZSBzYW1lIGNvbmNsdXNpb24u
-DQoNCj4gDQo+ID4gCXN0cnVjdCBydGVfbWVtcG9vbCAqbWJfcG9vbDsNCj4gPiAJdm9pZCAqZHVt
-bXlfcGFja2V0Ow0KPiA+DQo+ID4gQEAgLTE1MSw3ICsxNjIsMTYgQEAgZXRoX251bGxfdHgodm9p
-ZCAqcSwgc3RydWN0IHJ0ZV9tYnVmICoqYnVmcywNCj4gdWludDE2X3QgbmJfYnVmcykNCj4gPiAJ
-Zm9yIChpID0gMDsgaSA8IG5iX2J1ZnM7IGkrKykNCj4gPiAJCWJ5dGVzICs9IHJ0ZV9wa3RtYnVm
-X3BrdF9sZW4oYnVmc1tpXSk7DQo+ID4NCj4gPiAtCXJ0ZV9wa3RtYnVmX2ZyZWVfYnVsayhidWZz
-LCBuYl9idWZzKTsNCj4gPiArCWlmIChoLT5tYl9wb29sICE9IE5VTEwpIHsgLyogUlRFX0VUSF9U
-WF9PRkZMT0FEX01CVUZfRkFTVF9GUkVFICovDQo+ID4gKwkJaWYgKHVubGlrZWx5KGgtPm1iX3Bv
-b2wgPT0gKHZvaWQgKilVSU5UUFRSX01BWCkpIHsNCj4gPiArCQkJaWYgKHVubGlrZWx5KG5iX2J1
-ZnMgPT0gMCkpDQo+ID4gKwkJCQlyZXR1cm4gMDsgLyogRG8gbm90IGRlcmVmZXJlbmNlIHVuaW5p
-dGlhbGl6ZWQNCj4gYnVmc1swXS4gKi8NCj4gPiArCQkJaC0+bWJfcG9vbCA9IGJ1ZnNbMF0tPnBv
-b2w7DQo+ID4gKwkJfQ0KPiA+ICsJCXJ0ZV9tYnVmX3Jhd19mcmVlX2J1bGsoaC0+bWJfcG9vbCwg
-YnVmcywgbmJfYnVmcyk7DQo+ID4gKwl9IGVsc2Ugew0KPiA+ICsJCXJ0ZV9wa3RtYnVmX2ZyZWVf
-YnVsayhidWZzLCBuYl9idWZzKTsNCj4gPiArCX0NCj4gPiAJcnRlX2F0b21pY19mZXRjaF9hZGRf
-ZXhwbGljaXQoJmgtPnR4X3BrdHMsIG5iX2J1ZnMsDQo+IHJ0ZV9tZW1vcnlfb3JkZXJfcmVsYXhl
-ZCk7DQo+ID4gCXJ0ZV9hdG9taWNfZmV0Y2hfYWRkX2V4cGxpY2l0KCZoLT50eF9ieXRlcywgYnl0
-ZXMsDQo+IHJ0ZV9tZW1vcnlfb3JkZXJfcmVsYXhlZCk7DQo+ID4NCj4gPiBAQCAtMjU5LDcgKzI3
-OSw3IEBAIHN0YXRpYyBpbnQNCj4gPiBldGhfdHhfcXVldWVfc2V0dXAoc3RydWN0IHJ0ZV9ldGhf
-ZGV2ICpkZXYsIHVpbnQxNl90IHR4X3F1ZXVlX2lkLA0KPiA+IAkJdWludDE2X3QgbmJfdHhfZGVz
-YyBfX3J0ZV91bnVzZWQsDQo+ID4gCQl1bnNpZ25lZCBpbnQgc29ja2V0X2lkIF9fcnRlX3VudXNl
-ZCwNCj4gPiAtCQljb25zdCBzdHJ1Y3QgcnRlX2V0aF90eGNvbmYgKnR4X2NvbmYgX19ydGVfdW51
-c2VkKQ0KPiA+ICsJCWNvbnN0IHN0cnVjdCBydGVfZXRoX3R4Y29uZiAqdHhfY29uZikNCj4gPiB7
-DQo+ID4gCXN0cnVjdCBydGVfbWJ1ZiAqZHVtbXlfcGFja2V0Ow0KPiA+IAlzdHJ1Y3QgcG1kX2lu
-dGVybmFscyAqaW50ZXJuYWxzOw0KPiA+IEBAIC0yODQsNiArMzA0LDEwIEBAIGV0aF90eF9xdWV1
-ZV9zZXR1cChzdHJ1Y3QgcnRlX2V0aF9kZXYgKmRldiwNCj4gdWludDE2X3QgdHhfcXVldWVfaWQs
-DQo+ID4NCj4gPiAJaW50ZXJuYWxzLT50eF9udWxsX3F1ZXVlc1t0eF9xdWV1ZV9pZF0uaW50ZXJu
-YWxzID0gaW50ZXJuYWxzOw0KPiA+IAlpbnRlcm5hbHMtPnR4X251bGxfcXVldWVzW3R4X3F1ZXVl
-X2lkXS5kdW1teV9wYWNrZXQgPQ0KPiBkdW1teV9wYWNrZXQ7DQo+ID4gKwlpbnRlcm5hbHMtPnR4
-X251bGxfcXVldWVzW3R4X3F1ZXVlX2lkXS5tYl9wb29sID0NCj4gPiArCQkJKGRldi0+ZGF0YS0+
-ZGV2X2NvbmYudHhtb2RlLm9mZmxvYWRzIHwgdHhfY29uZi0NCj4gPm9mZmxvYWRzKSAmDQo+ID4g
-KwkJCVJURV9FVEhfVFhfT0ZGTE9BRF9NQlVGX0ZBU1RfRlJFRSA/DQo+ID4gKwkJCSh2b2lkICop
-VUlOVFBUUl9NQVggOiBOVUxMOw0KPiANCj4gR2l2ZW4gdGhlIGZhY3QgdGhhdCBGQVNUX0ZSRUUg
-YW5kIE1VTFRJX1NFR1MgYXJlIGVmZmVjdGl2ZWx5DQo+IGNvbmZsaWN0aW5nLA0KPiB3b3VsZG4n
-dCBpdCBiZSBiZXR0ZXIgdG8gaGF2ZSBhIGNoZWNrIGZvciB0aGUgcHJlc2VuY2Ugb2YgYm90aCBm
-bGFncw0KPiBoZXJlPyBJJ20NCj4gbm90IHN1cmUgd2hldGhlciB0aGlzIGlzIGFscmVhZHkgY2hl
-Y2tlZCBhdCB0aGUgZ2VuZXJpYyBsYXllciBhYm92ZSB0aGUNCj4gUE1ELg0KDQpJbnRlcmVzdGlu
-ZyB0aG91Z2h0IC0gZ290IG1lIGxvb2tpbmcgZGVlcGVyIGludG8gdGhpcy4NCg0KSXQgc2VlbXMg
-TVVMVElfU0VHUyBpcyBwcmltYXJpbHkgYSBjYXBhYmlsaXR5IGZsYWcuDQpUaGUgZGVzY3JpcHRp
-b24gb2YgdGhlIE1VTFRJX1NFR1MgZmxhZyBbMV0gY291bGQgYmUgaW50ZXJwcmV0ZWQgdGhhdCB3
-YXkgdG9vOg0KLyoqIERldmljZSBzdXBwb3J0cyBtdWx0aSBzZWdtZW50IHNlbmQuICovDQoNClsx
-XTogaHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20vZHBkay92MjUuMDcvc291cmNlL2xpYi9ldGhk
-ZXYvcnRlX2V0aGRldi5oI0wxNjE0DQoNCkUuZy4gdGhlIGk0MGUgZHJpdmVyIG9mZmVycyBNVUxU
-SV9TRUdTIGNhcGFiaWxpdHkgcGVyLWRldmljZSwgYnV0IG5vdCBwZXItcXVldWUuIEFuZCBpdCBk
-b2Vzbid0IHVzZSB0aGUgTVVMVElfU0VHUyBmbGFnIGZvciBhbnkgcHVycG9zZSAoYmV5b25kIGNh
-cGFiaWxpdHkgcmVwb3J0aW5nKS4NCg0KRnVydGhlcm1vcmUsIGVuYWJsaW5nIE1VTFRJX1NFR1Mg
-b24gVFggKHBlciBkZXZpY2Ugb3IgcGVyIHF1ZXVlKSB3b3VsZG4ndCBtZWFuIHRoYXQgYWxsIHRy
-YW5zbWl0dGVkIHBhY2tldHMgYXJlIHNlZ21lbnRlZDsgaXQgb25seSBtZWFucyB0aGF0IHRoZSBk
-cml2ZXIgbXVzdCBiZSBhYmxlIHRvIGhhbmRsZSBzZWdtZW50ZWQgcGFja2V0cy4NCkkuZS4gTVVM
-VElfU0VHUyBjb3VsZCBiZSBlbmFibGVkIG9uIGEgZGV2aWNlLCBhbmQgeWV0IGl0IHdvdWxkIGJl
-IGFjY2VwdGFibGUgdG8gZW5hYmxlIEZBU1RfRlJFRSBvbiBhIHF1ZXVlIG9uIHRoYXQgZGV2aWNl
-Lg0KDQo+IA0KPiBUaGFuayB5b3UuDQoNClRoYW5rIHlvdSBmb3IgcmV2aWV3aW5nLg0KDQo+IA0K
-PiA+DQo+ID4gCXJldHVybiAwOw0KPiA+IH0NCj4gPiBAQCAtMzA5LDcgKzMzMywxMCBAQCBldGhf
-ZGV2X2luZm8oc3RydWN0IHJ0ZV9ldGhfZGV2ICpkZXYsDQo+ID4gCWRldl9pbmZvLT5tYXhfcnhf
-cXVldWVzID0gUlRFX0RJTShpbnRlcm5hbHMtPnJ4X251bGxfcXVldWVzKTsNCj4gPiAJZGV2X2lu
-Zm8tPm1heF90eF9xdWV1ZXMgPSBSVEVfRElNKGludGVybmFscy0+dHhfbnVsbF9xdWV1ZXMpOw0K
-PiA+IAlkZXZfaW5mby0+bWluX3J4X2J1ZnNpemUgPSAwOw0KPiA+IC0JZGV2X2luZm8tPnR4X29m
-ZmxvYWRfY2FwYSA9IFJURV9FVEhfVFhfT0ZGTE9BRF9NVUxUSV9TRUdTIHwNCj4gUlRFX0VUSF9U
-WF9PRkZMT0FEX01UX0xPQ0tGUkVFOw0KPiA+ICsJZGV2X2luZm8tPnR4X3F1ZXVlX29mZmxvYWRf
-Y2FwYSA9DQo+IFJURV9FVEhfVFhfT0ZGTE9BRF9NQlVGX0ZBU1RfRlJFRTsNCj4gPiArCWRldl9p
-bmZvLT50eF9vZmZsb2FkX2NhcGEgPSBSVEVfRVRIX1RYX09GRkxPQURfTVVMVElfU0VHUyB8DQo+
-ID4gKwkJCVJURV9FVEhfVFhfT0ZGTE9BRF9NVF9MT0NLRlJFRSB8DQo+ID4gKwkJCWRldl9pbmZv
-LT50eF9xdWV1ZV9vZmZsb2FkX2NhcGE7DQo+ID4NCj4gPiAJZGV2X2luZm8tPnJldGFfc2l6ZSA9
-IGludGVybmFscy0+cmV0YV9zaXplOw0KPiA+IAlkZXZfaW5mby0+Zmxvd190eXBlX3Jzc19vZmZs
-b2FkcyA9IGludGVybmFscy0NCj4gPmZsb3dfdHlwZV9yc3Nfb2ZmbG9hZHM7DQo+ID4gLS0NCj4g
-PiAyLjQzLjANCj4gPg0KPiA+DQo=
+Hi,
+
+On Mon, 28 Jul 2025, Khadem Ullah wrote:
+
+> Fix incorrect inner_l2_len values for VXLAN, VXLAN-GPE, GTPU, and Geneve.
+> These protocols carry full Ethernet frames, so inner_l2_len should be
+> set to the size of an Ethernet header (14 bytes), not include tunnel or
+> UDP headers.
+
+Does the bug break 'testpmd' (see 'inner_l2_len' over there) or what? How can
+this be reproduced?
+
+Also, how well does the patch agree with what is currently said in 'rte_net.h'?
+
+>	/* Outer_L4_len + ... + inner L2_len for tunneling pkt. */
+>	uint8_t inner_l2_len;
+
+Is the comment also wrong or do we have a fundamental confusion in DPDK?
+
+I know, for example, that in mbufs, in the case of a tunneled (VXLAN) packet,
+fields 'outer_l2_len' and 'outer_l3_len' are Ethernet and IP sizes respectively,
+whilst 'l2_len' is a sum of the UDP size, VXLAN size and inner Ethernet header.
+But that's in mbuf, which does not have a separate 'tunnel_len' field.
+
+So either there's some confusion, or the patch also needs to fix other places,
+such as the header file mentioned ('rte_net.h').
+
+Thank you.
+
+
+>
+> Fixes: 64ed7f854c ('net: add tunnel packet type parsing')
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+> ---
+> lib/net/rte_net.c | 14 +++++++-------
+> 1 file changed, 7 insertions(+), 7 deletions(-)
+>
+> diff --git a/lib/net/rte_net.c b/lib/net/rte_net.c
+> index 44fb6c0f51..adcddeb670 100644
+> --- a/lib/net/rte_net.c
+> +++ b/lib/net/rte_net.c
+> @@ -198,7 +198,7 @@ ptype_tunnel_with_udp(uint16_t *proto, const struct rte_mbuf *m,
+> 	case RTE_VXLAN_DEFAULT_PORT: {
+> 		*off += sizeof(struct rte_vxlan_hdr);
+> 		hdr_lens->tunnel_len = sizeof(struct rte_vxlan_hdr);
+> -		hdr_lens->inner_l2_len = RTE_ETHER_VXLAN_HLEN;
+> +		hdr_lens->inner_l2_len = sizeof(struct rte_ether_hdr);
+> 		*proto = RTE_VXLAN_GPE_TYPE_ETH; /* just for eth header parse. */
+> 		return RTE_PTYPE_TUNNEL_VXLAN;
+> 	}
+> @@ -210,7 +210,7 @@ ptype_tunnel_with_udp(uint16_t *proto, const struct rte_mbuf *m,
+> 			return 0;
+> 		*off += sizeof(struct rte_vxlan_gpe_hdr);
+> 		hdr_lens->tunnel_len = sizeof(struct rte_vxlan_gpe_hdr);
+> -		hdr_lens->inner_l2_len = RTE_ETHER_VXLAN_GPE_HLEN;
+> +		hdr_lens->inner_l2_len = sizeof(struct rte_ether_hdr);
+> 		*proto = vgh->proto;
+>
+> 		return RTE_PTYPE_TUNNEL_VXLAN_GPE;
+> @@ -244,7 +244,7 @@ ptype_tunnel_with_udp(uint16_t *proto, const struct rte_mbuf *m,
+> 			*proto = 0;
+> 		}
+> 		*off += gtp_len;
+> -		hdr_lens->inner_l2_len = gtp_len + sizeof(struct rte_udp_hdr);
+> +		hdr_lens->inner_l2_len = sizeof(struct rte_ether_hdr);
+> 		hdr_lens->tunnel_len = gtp_len;
+> 		if (port_no == RTE_GTPC_UDP_PORT)
+> 			return RTE_PTYPE_TUNNEL_GTPC;
+> @@ -262,7 +262,7 @@ ptype_tunnel_with_udp(uint16_t *proto, const struct rte_mbuf *m,
+> 		geneve_len = sizeof(*gnh) + gnh->opt_len * 4;
+> 		*off += geneve_len;
+> 		hdr_lens->tunnel_len = geneve_len;
+> -		hdr_lens->inner_l2_len = sizeof(struct rte_udp_hdr) + geneve_len;
+> +		hdr_lens->inner_l2_len = sizeof(struct rte_ether_hdr);
+> 		*proto = gnh->proto;
+> 		if (gnh->proto == 0)
+> 			*proto = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
+> @@ -498,7 +498,7 @@ uint32_t rte_net_get_ptype(const struct rte_mbuf *m,
+> 		pkt_type |= RTE_PTYPE_INNER_L2_ETHER;
+> 		proto = eh->ether_type;
+> 		off += sizeof(*eh);
+> -		hdr_lens->inner_l2_len += sizeof(*eh);
+> +		hdr_lens->inner_l2_len = sizeof(struct rte_ether_hdr);
+> 	}
+>
+> 	if (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN)) {
+> @@ -511,7 +511,7 @@ uint32_t rte_net_get_ptype(const struct rte_mbuf *m,
+> 		if (unlikely(vh == NULL))
+> 			return pkt_type;
+> 		off += sizeof(*vh);
+> -		hdr_lens->inner_l2_len += sizeof(*vh);
+> +		hdr_lens->inner_l2_len += sizeof(struct rte_vlan_hdr);
+> 		proto = vh->eth_proto;
+> 	} else if (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_QINQ)) {
+> 		const struct rte_vlan_hdr *vh;
+> @@ -524,7 +524,7 @@ uint32_t rte_net_get_ptype(const struct rte_mbuf *m,
+> 		if (unlikely(vh == NULL))
+> 			return pkt_type;
+> 		off += 2 * sizeof(*vh);
+> -		hdr_lens->inner_l2_len += 2 * sizeof(*vh);
+> +		hdr_lens->inner_l2_len += 2 * sizeof(struct rte_vlan_hdr);
+> 		proto = vh->eth_proto;
+> 	}
+>
+> -- 
+> 2.47.3
+>
+>
