@@ -2,63 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC44C83F17
-	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Jul 2025 14:25:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C92C83F17
+	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Jul 2025 14:51:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5A7B140291;
-	Mon, 28 Jul 2025 16:25:26 +0200 (CEST)
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com
- [209.85.216.53]) by mails.dpdk.org (Postfix) with ESMTP id E3B2A4025A
- for <dev@dpdk.org>; Mon, 28 Jul 2025 16:25:24 +0200 (CEST)
-Received: by mail-pj1-f53.google.com with SMTP id
- 98e67ed59e1d1-31efefd2655so665606a91.0
- for <dev@dpdk.org>; Mon, 28 Jul 2025 07:25:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1753712724; x=1754317524; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=t7S50wzJSJTcNpgxaVz2n0yGvSxNzlQqAceSIQyJrQE=;
- b=VRB6L7REweGazVCfVImvPGNLEmahZxyxgecFferKJ8FIlJ2WQfDKGiwABp89clscAJ
- 7m4hanM4X138xYBj3bsZk0QqAaCtu/KKC9va+QwoPmxvY/xBntifzAbk5xQldmbgMhRJ
- yHHeP6ZFEJ7SDZ/yL8hz8GHvHqKEkXjXrDniU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753712724; x=1754317524;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=t7S50wzJSJTcNpgxaVz2n0yGvSxNzlQqAceSIQyJrQE=;
- b=YnORsaq669EZHWYFdrW1KiadmcI51VZKmSohTU624MmAtPUIruNwcrKW8wD7+u8u2l
- 9fTSghAPsrYfPtGTH2rz2B4Q+qjtTgzjZ9tzdUfiUB3xFaKRzeGKRCyerupu8nmcR8gW
- RXG6AjMDd8AhZ3beLzQ2041jlegpmkzGhSvBnsnLgG5WVIewlyHGDennwEGq8YGwvKyn
- ZoY8JA9d8WCDs/+G30qJUfX7+TOTs7tECrqPYpc1vPpylyTWJbtotmncCeSIVOvdDvpq
- Vr4Azet2m4FNKUFM3YJXzgiGYFMIHme9gr6i7CheRVV56P9hYn5mgoaGs+NejJE7JhwX
- p3qw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUFuvAH85xKPiIm5+zvAVCcgGN30fBWs6tU/+GqUnH9ZX3mxzYfnbp86fmzaMx0h3kps5k=@dpdk.org
-X-Gm-Message-State: AOJu0YxrFhZ/IbEKJyYkMiCj7r2YLe0jt4wB9obXa4DB1Wix+CtYHMEP
- KJUy3M3ZDN0Qp51gmOhKqVDMn+Yzlnu47gjE8QgmoVKrZRr3XXQ/wGr8HDErB5JtRqPaE+9aBGu
- 35lOi+goUnn/owEHr5xCsp/VtWzYJ9ZO8tQuCi7ubnw==
-X-Gm-Gg: ASbGncvJ+u683Mrpg/q46CcmTJM8RVd7eca0FN/vUkpYA/TM19jzR4Hrry8Ze972kxE
- KHeN5h3PxPNQT7KMx45Iulie/rUbamCdg8k3l2UkXL17Br4sHW9QuWevknW5BrAZmbL7E74XcFK
- SYdtvXqYOyA/DKFNu2ILe/76Mtdokh8L2CphEzEYDFx7XfH24v6bsRYw06hc3Iqmc4DjJmroVTD
- OXaW51yShRui3r3H+Edv7HreJzdgHZS
-X-Google-Smtp-Source: AGHT+IEqCTMsg4pj+bXMCg8pdNttPGWmoMEdIY67WA9BvYWBFPxwW5fgX3FYxdfDAFqDlelg4/SH4mShX8dbiYhUMYM=
-X-Received: by 2002:a17:90b:53c8:b0:315:9624:37db with SMTP id
- 98e67ed59e1d1-31e765aac96mr15755751a91.3.1753712723950; Mon, 28 Jul 2025
- 07:25:23 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E274240291;
+	Mon, 28 Jul 2025 16:51:33 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 8EDB54025A;
+ Mon, 28 Jul 2025 16:51:32 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 5D0B02221E;
+ Mon, 28 Jul 2025 16:51:31 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-References: <20250725200553.1262542-1-probb@iol.unh.edu>
- <b46a313b-048f-4a16-a274-3db9342d48fb@arm.com>
-In-Reply-To: <b46a313b-048f-4a16-a274-3db9342d48fb@arm.com>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Mon, 28 Jul 2025 10:19:18 -0400
-X-Gm-Features: Ac12FXxqiHb5tu-MfcyszOwXzhHxNberJ0EkuhFhprZcWd4ua-q5H_CRzQ0y1r0
-Message-ID: <CAJvnSUBmpgOXD=5Z-8OCFfzrDJrRDnNrLWoJZ7Pb6hHve3q3zQ@mail.gmail.com>
-Subject: Re: [PATCH] dts: call hugepages configure at testrun setup
-To: Luca Vizzarro <Luca.Vizzarro@arm.com>
-Cc: dmarx@iol.unh.edu, Paul.Szczepanek@arm.com, abailey@iol.unh.edu, 
- mmahajan@iol.unh.edu, thomas.wilks@arm.com, dev@dpdk.org
-Content-Type: multipart/alternative; boundary="000000000000f317ae063afe0f31"
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [RFC PATCH] doc: clarify VLAN and QinQ stripping behaviour
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Mon, 28 Jul 2025 16:51:30 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FDCD@smartserver.smartshare.dk>
+In-Reply-To: <CABD7UXOqkROef0_BreD1GHC_R+7EwxRTL8LF-fXQJBECp7J9SA@mail.gmail.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [RFC PATCH] doc: clarify VLAN and QinQ stripping behaviour
+Thread-Index: Adv35niI9T2FPUzRQp+kfTJXL1mX8wH52otQ
+References: <20250714133014.44597-1-bruce.richardson@intel.com>
+ <CABD7UXPVg56UwvmtOsssBwV2HzmgV4ZJZCb=FrnVQKkggtD2+Q@mail.gmail.com>
+ <aHd6x3kT053EvX2g@bricha3-mobl1.ger.corp.intel.com>
+ <CABD7UXPtChUUOdz3gfiyKqY4Rn2_0F8Ck4O6ypq9woATD7hfCw@mail.gmail.com>
+ <aHgBs5DGU48mTnwz@bricha3-mobl1.ger.corp.intel.com>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FDB8@smartserver.smartshare.dk>
+ <CABD7UXPccao=o1O=SessoAdEKUyA-dXP6HG5mnkpFSVNL_3dxw@mail.gmail.com>
+ <aHoEUmesrg9Y8qtM@bricha3-mobl1.ger.corp.intel.com>
+ <CABD7UXOqkROef0_BreD1GHC_R+7EwxRTL8LF-fXQJBECp7J9SA@mail.gmail.com>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>
+Cc: <dev@dpdk.org>, "Dengdui Huang" <huangdengdui@huawei.com>,
+ "Vladimir Medvedkin" <medvedkinv@gmail.com>, <techboard@dpdk.org>,
+ "Patrick Robb" <probb@iol.unh.edu>,
+ "fengchengwen" <fengchengwen@huawei.com>, <stephen@networkplumber.org>,
+ <jasvinder.singh@intel.com>, <thomas@monjalon.net>,
+ <aman.deep.singh@intel.com>, <lihuisong@huawei.com>,
+ <liuyonglong@huawei.com>, "Dean Marx" <dmarx@iol.unh.edu>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -72,49 +60,59 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000f317ae063afe0f31
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Jul 28, 2025 at 7:31=E2=80=AFAM Luca Vizzarro <Luca.Vizzarro@arm.co=
-m> wrote:
-
-> Really good catch Patrick! Thank you for this!
->
-> Would it make more sense to place setup_hugepages under Node.setup()?
-> In that case the method can also remain private, involving a single line
-> change.
->
-
-Yes, that makes more sense. I'll send a new version, thanks.
-
-
->
-> Reviewed-by: Luca Vizzarro <luca.vizzarro@arm.com>
->
-
---000000000000f317ae063afe0f31
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
-mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Mon, Jul 28,=
- 2025 at 7:31=E2=80=AFAM Luca Vizzarro &lt;<a href=3D"mailto:Luca.Vizzarro@=
-arm.com">Luca.Vizzarro@arm.com</a>&gt; wrote:<br></div><blockquote class=3D=
-"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(2=
-04,204,204);padding-left:1ex">Really good catch Patrick! Thank you for this=
-!<br>
-<br>
-Would it make more sense to place setup_hugepages under Node.setup()?<br>
-In that case the method can also remain private, involving a single line <b=
-r>
-change.<br></blockquote><div><br></div><div>Yes, that makes more sense. I&#=
-39;ll send a new version, thanks.</div><div>=C2=A0</div><blockquote class=
-=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rg=
-b(204,204,204);padding-left:1ex">
-<br>
-Reviewed-by: Luca Vizzarro &lt;<a href=3D"mailto:luca.vizzarro@arm.com" tar=
-get=3D"_blank">luca.vizzarro@arm.com</a>&gt;<br>
-</blockquote></div></div>
-
---000000000000f317ae063afe0f31--
+PiBGcm9tOiBEZWFuIE1hcnggW21haWx0bzpkbWFyeEBpb2wudW5oLmVkdV0NCj4gU2VudDogRnJp
+ZGF5LCAxOCBKdWx5IDIwMjUgMTUuMTgNCj4gDQo+IE9uIEZyaSwgSnVsIDE4LCAyMDI1IGF0IDQ6
+MjPigK9BTSBCcnVjZSBSaWNoYXJkc29uDQo+IDxicnVjZS5yaWNoYXJkc29uQGludGVsLmNvbT4g
+d3JvdGU6DQo+ID4NCj4gPiBPbiBUaHUsIEp1bCAxNywgMjAyNSBhdCAwNTowMzoxM1BNIC0wNDAw
+LCBEZWFuIE1hcnggd3JvdGU6DQo+ID4gPiBJJ3ZlIGNyZWF0ZWQgYSB2MSBvZiBhIFFpblEgdGVz
+dCBzdWl0ZSBhcm91bmQgdGhlIHNldCBvZiB0ZXN0IGNhc2VzDQo+ID4gPiBkaXNjdXNzZWQgZWFy
+bGllciAod2hpY2ggaXMgbm90IHNldCBpbiBzdG9uZSwgYW5kIEkgZXhwZWN0IGl0IHRvDQo+ID4g
+PiBjaGFuZ2Ugc2lnbmlmaWNhbnRseSBhY3Jvc3MgbWFueSBmdXR1cmUgdmVyc2lvbnMuKSBUaGUg
+UEFTUy9GQUlMDQo+ID4gPiB2YWx1ZXMgY2FuIGJlIG1vc3RseSBkaXNyZWdhcmRlZCBpbiB0aGUg
+Y29udGV4dCBvZiB0aGlzIGNvbnZlcnNhdGlvbiwNCj4gPiA+IGJ1dCBJJ3ZlIGFkZGVkIGxvZ2dp
+bmcgdG8gZXhwbGFpbiB3aGljaCBwYWNrZXRzIGFyZSBzZW50LCBhbmQgd2hhdA0KPiA+ID4gaGFw
+cGVuZWQgdXBvbiByZWNlcHRpb24sIHdoaWNoIEkgaG9wZSB3aWxsIGJlIG1vcmUgaW5mb3JtYXRp
+dmUuIEFmdGVyDQo+ID4gPiBydW5uaW5nIG9uIG1seDUvaTQwZSBkcml2ZXJzLCBJIGdvdCB0aGUg
+Zm9sbG93aW5nIHJlc3VsdHM6DQo+ID4gPg0KPiA+ID4gdGVzdF92bGFuX3N0cmlwOiBRaW5RIHN0
+cmlwIE9GRiBhbmQgVkxBTiBzdHJpcCBPTg0KPiA+ID4gdGVzdF9xaW5xX3N0cmlwOiBRaW5RIHN0
+cmlwIE9OIGFuZCBWTEFOIHN0cmlwIE9ODQo+ID4gPg0KPiA+ID4gaTQwZToNCj4gPiA+ICAgICB0
+ZXN0X3FpbnFfc3RyaXAgKHNlbnQgcGFja2V0OiBTaW5nbGUgVkxBTik6IEZBSUwNCj4gPiA+ICAg
+ICAgIHJlYXNvbjogVkxBTiB0YWdzIGZvdW5kIGluIHBhY2tldCB3aGVuIHNob3VsZCBoYXZlIGJl
+ZW4NCj4gPiA+IHN0cmlwcGVkOiBFdGhlciAvIERvdDFRIC8gODAyLjFxICgweDFjKSB2bGFuIDEy
+ODAgLyBMTEMgLyBSYXcgLw0KPiA+ID4gUGFkZGluZw0KPiA+ID4gICAgIHRlc3RfcWlucV9zdHJp
+cCAoc2VudCBwYWNrZXQ6IFN0YWNrZWQgVkxBTik6IEZBSUwNCj4gPiA+ICAgICAgIHJlYXNvbjog
+RXhwZWN0ZWQgb25lIFZMQU4gdGFnIGJ1dCBmb3VuZCAyOiBFdGhlciAvIERvdDFRIC8gRG90MVEN
+Cj4gPiA+IC8gODAyLjFxICgweDFjKSB2bGFuIDEyODAgLyBMTEMgLyBSYXcgLyBQYWRkaW5nDQo+
+ID4gPiAgICAgdGVzdF9xaW5xX3N0cmlwIChzZW50IHBhY2tldDogU2luZ2xlIFMtVkxBTik6IEZB
+SUwNCj4gPiA+ICAgICAgIHJlYXNvbjogVkxBTiB0YWdzIGZvdW5kIGluIHBhY2tldCB3aGVuIHNo
+b3VsZCBoYXZlIGJlZW4NCj4gPiA+IHN0cmlwcGVkOiBFdGhlciAvIERvdDFRIC8gODAyLjFxICg/
+PykgdmxhbiA/PyAvIExMQyAvIFJhdyAvIFBhZGRpbmcNCj4gPiA+ICAgICB0ZXN0X3FpbnFfc3Ry
+aXAgKHNlbnQgcGFja2V0OiBRaW5RKTogRkFJTA0KPiA+ID4gICAgICAgcmVhc29uOiBWTEFOIHRh
+Z3MgZm91bmQgaW4gcGFja2V0IHdoZW4gc2hvdWxkIGhhdmUgYmVlbg0KPiA+ID4gc3RyaXBwZWQ6
+IEV0aGVyIC8gRG90MVEgLyBEb3QxQUQgLyA4MDIuMXEgKDB4MWMpIHZsYW4gMTI4MCAvIExMQyAv
+IFJhdw0KPiA+ID4gLyBQYWRkaW5nDQo+ID4gPiAgICAgdGVzdF92bGFuX3N0cmlwIChzZW50IHBh
+Y2tldDogU2luZ2xlIFZMQU4pOiBQQVNTDQo+ID4gPiAgICAgICByZWFzb246IFZMQU4gdGFnIHN0
+cmlwcGVkIGZyb20gcGFja2V0DQo+ID4gPiAgICAgdGVzdF92bGFuX3N0cmlwIChzZW50IHBhY2tl
+dDogU3RhY2tlZCBWTEFOKTogUEFTUw0KPiA+ID4gICAgICAgcmVhc29uOiBSZWNlaXZlZCBwYWNr
+ZXQgaGFkIG91dGVyIFZMQU4gc3RyaXBwZWQsIHdpdGggaW5uZXIgVkxBTg0KPiBpbnRhY3QNCj4g
+PiA+ICAgICB0ZXN0X3ZsYW5fc3RyaXAgKHNlbnQgcGFja2V0OiBTaW5nbGUgUy1WTEFOKTogUEFT
+Uw0KPiA+ID4gICAgICAgcmVhc29uOiBTLVZMQU4gdGFnIHN0cmlwcGVkIGZyb20gcGFja2V0DQo+
+ID4gPiAgICAgdGVzdF92bGFuX3N0cmlwIChzZW50IHBhY2tldDogUWluUSk6IEZBSUwNCj4gPiA+
+ICAgICAgIHJlYXNvbjogTmVpdGhlciB0YWcgc3RyaXBwZWQNCj4gPiA+DQo+ID4NCj4gPiBDYW4g
+eW91IGNvbmZpcm0gZXhhY3RseSB3aGF0IGlzIGJlaW5nIHNlbnQgaW4gZWFjaCBjYXNlIGZvciB0
+aGUgZXRoZXJ0eXBlDQo+ID4gb2YgdGhlIFZMQU4gdGFnPyBXaGVuIHlvdSBzYXkgc2luZ2xlIGFu
+ZCBzdGFja2VkIFZMQU5zLCB0aGF0IGlzIFZMQU5zIHdpdGgNCj4gPiAweDgxMDAgdHlwZSwgY29y
+cmVjdD8gSXMgc2luZ2xlIFMtVkxBTiBhIHRhZyB3aXRoIGV0aGVydHlwZSAweDg4YTgsIGFuZA0K
+PiA+IFFpblEgcGFja2V0IGEgcGFja2V0IHdpdGggb25lIDB4ODhhOCBhbmQgb25lIDB4ODEwMD8g
+Tm8gb3RoZXIgdHlwZSBvcHRpb25zLA0KPiA+IGUuZy4gMHg5MTAwIHdlcmUgY2hlY2tlZCwgcmln
+aHQ/DQo+ID4NCj4gPiAvQnJ1Y2UNCj4gDQo+IFRoYXQncyBjb3JyZWN0LCBzaW5nbGUgVkxBTiBp
+cyBvbmUgMHg4MTAwIHRhZywgc3RhY2tlZCBpcyB0d28sIHNpbmdsZQ0KPiBTLVZMQU4gaXMgb25l
+IDB4ODhhOCwgYW5kIFFpblEgaXMgMHg4OGE4IGFuZCAweDgxMDAuIE5vIG90aGVyIHR5cGVzDQo+
+IHdlcmUgdGVzdGVkIGluIHRoZSBzdHJpcHBpbmcgY2FzZQ0KDQoNCkJydWNlLA0KDQpJdCBzZWVt
+cyB0aGUgZHJpdmVycyBoYXZlIHRoZSBhYmlsaXR5IHRvIHNldCB0aGUgRXRoZXJUeXBlIG9mIHRo
+ZSBPdXRlciAoYW5kIHNvbWV0aW1lcyBJbm5lcikgdGFnOg0KaHR0cHM6Ly9lbGl4aXIuYm9vdGxp
+bi5jb20vZHBkay92MjUuMDcvc291cmNlL2xpYi9ldGhkZXYvcnRlX2V0aGRldi5oI0wzNzUyDQpo
+dHRwczovL2VsaXhpci5ib290bGluLmNvbS9kcGRrL3YyNS4wNy9zb3VyY2UvZHJpdmVycy9uZXQv
+aW50ZWwvZTEwMDAvaWdiX2V0aGRldi5jI0wyNzM5DQpodHRwczovL2VsaXhpci5ib290bGluLmNv
+bS9kcGRrL3YyNS4wNy9zb3VyY2UvZHJpdmVycy9uZXQvaW50ZWwvaTQwZS9pNDBlX2V0aGRldi5j
+I0w0MDM4DQoNCi1Nb3J0ZW4NCg0K
