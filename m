@@ -2,61 +2,62 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7CB3C83F17
-	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Jul 2025 12:21:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E4FBC83F17
+	for <dpdk-dev@archiver.kernel.org>; Mon, 28 Jul 2025 12:31:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A2C2B4066D;
-	Mon, 28 Jul 2025 14:21:25 +0200 (CEST)
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com
- [209.85.216.51]) by mails.dpdk.org (Postfix) with ESMTP id C871240666
- for <dev@dpdk.org>; Mon, 28 Jul 2025 14:21:23 +0200 (CEST)
-Received: by mail-pj1-f51.google.com with SMTP id
- 98e67ed59e1d1-31ecd1f0e71so1260097a91.3
- for <dev@dpdk.org>; Mon, 28 Jul 2025 05:21:23 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 85ED440671;
+	Mon, 28 Jul 2025 14:31:14 +0200 (CEST)
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
+ [209.85.214.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 3245740668
+ for <dev@dpdk.org>; Mon, 28 Jul 2025 14:31:13 +0200 (CEST)
+Received: by mail-pl1-f169.google.com with SMTP id
+ d9443c01a7336-236377f00a1so37583665ad.3
+ for <dev@dpdk.org>; Mon, 28 Jul 2025 05:31:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1753705283;
- x=1754310083; darn=dpdk.org; 
+ d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1753705872;
+ x=1754310672; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=Sm2mYWL1vz3iqtI/92wk4MpBE4vfaMEIrlR4W9vMKXw=;
- b=AWXl86NcmcKDL4DLLc7oE5TT2NqdAWQ1MwWZ4CNQP8zl2fgd1Wvj/CymBWfqsLQ9of
- /VEULKDANxY+1yq5zNlwDR/86fZrGJocjtD5/VlLWRYjDaVbjuWerqHKUVIibMg0AX0Y
- frOSa1k1mCw1k10ebjdUxkCQrpX/bYn0GWMzP0eCUvDw09jU0w/TGVg5LVwVpDaUKInM
- ON7X7JPDe8q6u5PZ8su9wjJm+qhOpR7A+5bwplj3R0rlMFqihGyQUC0dkIY3Q5TZDFpg
- 3pjqQ81wXfnWpeA/7utrpDa3dPtTKSeexNAOjnQV+HJRNJRJb76KNzzx9lHuyI85qipH
- z6aQ==
+ bh=Gh+cxwv0s71NdM+qqlCBYVldE2yaVcjTByaveepAR8o=;
+ b=VMx5+8OnTQ+xtT60HXGfOEj/l9mFoIdxIg7Vp6UIJcsysHAt+e2d4hGk2DF6svs7rq
+ LjP2gHdknZHAkgXEvPp0E/MdQCP1/JUXBfYaOTLW9I2fV01dJfkTZQB7hoRCI2FKTZyJ
+ RwheteYya7hDXAEisNdzgXSVGSvExs//2UfGFqmRfPKFzsD2WR89cdMv8+z05PZocohI
+ 0MiVVnbB3obsBoZOfBOfAqK1vLXuLs9FfMfMvFdx8ZREkEkolV7soCWQMjuPr0+Gc3fq
+ qEGmRQN72fhnND2lj8VFu4r5SvtOsiVNDAWYircZ/YgQiZ2IL1iky6hRG0qCpojWZJx0
+ qT6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753705283; x=1754310083;
+ d=1e100.net; s=20230601; t=1753705872; x=1754310672;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=Sm2mYWL1vz3iqtI/92wk4MpBE4vfaMEIrlR4W9vMKXw=;
- b=EyMhBom+JxWxYUq0e3cIopwYtuHltWxVXgHna8N572TX2MZMjrMSo0+ULAZXtoTc7S
- WQ5hkl9LRiVPBEVsBhlqqLCXmliNBdkT066iX8igY2fTdIvPh+jxX5KqERsqg4QMlq0T
- P6g3iDbCLXgFnLyvPvTSTvLc2BqzhJHoJjj2IluRtjh859mw7Up3Cm/sjcIX67zOr1pX
- MtS0rAip4ks+ZxKJktLvcJ5qAoIF+qmMJPbWClky5xcT6kcTvnyoEHwW8qmaYZB1jF+k
- 3Un7UzwNFpmd7TL4S05LoQO4SxIcbUhcv4N0jjemnttyQVXNEyIM3xBGWRvj3KByENXw
- 5eIw==
-X-Gm-Message-State: AOJu0Yx7XwkYjcf9/phn6xfxBUCG5AZU1ZwW2B5B1GbYQScbMeznZ/TD
- nnBFCy8wrT4X2l4CfCBGzHAGFPvFf48qmUcoTBPkrBIgmCF4wGSeNGqCc877LBlFL24LRF4+Kf2
- ZYHW9YDlIKbQq
-X-Gm-Gg: ASbGncvGdEmKQpAe9jQ9dhSiBBNaSOh2hfHfozu3KXJ1XAwj0CJppi6025WEnVXb3Xs
- SubsEp5B9tiSiEKeR+ashPaK3AyQcbjYBcHuWc68DYBhb5IDnpOqR+ewGw7wk5bBV9QA+t8gJJ4
- umm5/l8Z60LRYIL9ayhMdANGa92Mbjofhn/TCrmeJnkZesvOxP3L+lFceNWIyiuVfjZ44Nu/wZs
- DU3gv6o+9BR6ZuHXYG1MM9yt8jEcx9Y0pJgvfN1AKdCWSNeVVyYmUizlX5HAczjS72EvnZaY+oM
- villdxr7yJ1hVqJPh3q0NT26g1WDaHIrkp6UrN9KqBFJ9/O1wH6kXcALYrUHpfaBC4Lt4xtl8fd
- EJpC20Gwy58k9/iRbwFag8vPn517N+qqEsBdc/gEniywmg6NXhBVi85sIy9SlbzgZC3qr96RS2m
- Ac1pOM5jJWEK0Gx7zIFaGP6BBt
-X-Google-Smtp-Source: AGHT+IE6YsQnknQ32Smkk+RadCkO5dRl+6hGmaNlWj5H/ykF0oaXSwaX96s3e9cM06cpiqaEZunUlg==
-X-Received: by 2002:a17:90b:53cb:b0:312:1ac5:c7c7 with SMTP id
- 98e67ed59e1d1-31e77a0a59bmr17171462a91.2.1753705282575; 
- Mon, 28 Jul 2025 05:21:22 -0700 (PDT)
+ bh=Gh+cxwv0s71NdM+qqlCBYVldE2yaVcjTByaveepAR8o=;
+ b=fJzPITXPz0uNZK+g+GEEkPyLRwFhCGzcl59iN3Tm0KhWMjNjkvOQjIPlFZ+30iL3ga
+ xgiRhzHIhshEE/4wgoYQYGtGsX2jVchFASA8Oq2yjGpN2fGm0CM6KIVoiiyAYf1Vrrc0
+ NqYeHTNN84HMxXqcRt/1/xIIIGUrTS1jcoc8HXXJqYjVVXTrQq70uopWs/iiKlBuQDH2
+ hsQEdREGqCZEs47sdQ+4/lCh/Igud6Aei/GiSV/YUc3dTaNReHib60yjrJaU/v3qG4uW
+ HLBhfM3/fLjWU8DvBdc37r6I7L0QLIJxcu73g4eZlWsrUN+IQpFXZEpolZjzEb3BflnS
+ PVBw==
+X-Gm-Message-State: AOJu0YxROMqJDKConTuDX0p5mzvo8+M18IzBHZzhXRTFb3Z5d7GgM2hb
+ 14/IT8G3SZGphknkffFJXHhRwY8Ou4eWZn2bVLfC1o3t+EddsHvFbRXuI3FJG3mOWb2bTGjcmAS
+ Z0MD/X6uQ06FS
+X-Gm-Gg: ASbGnctw83E2Fv/eWat7EVlyMKgGtI3i+wxZtApghPAOewVh9Ft6gknc5WJIeZeI9Bg
+ j/fCiPPsbPoQ9W0KK2txuWs2nGscI4X7ApynEg/bDhdCLLd4rTljrUNyZpj5jYK419jxbgP5ekU
+ ee6tHzjiQjHezfV9i5F5FhRQ02qY+fbhOJSJwL2tozVoHCwg2wJBRrS3yp/oHIOw/JtOg5PHTQw
+ 4LQiLAvE4dDpXd1mJeQu6+h1Aipf635bTOA87gENot1kFGc2D9kmpCe++deHOcf/e+uFmRf7vCp
+ Td7YSy+Yqfx68k101Bi+0NNQzL/cQOmuAfLiWtkIihowmbZWyiZqG6zhE1EThXujYYHhu1I+4sF
+ HqvE8vL8wQIUpPIf38r3jGmQIXDPiPTvRtba0OWtIQY0gumykwW4+l+zYtEjuhTkR6nbm8WJn3c
+ fGeb5lHulCvnODCK2EjE/nIm2I
+X-Google-Smtp-Source: AGHT+IGVVSfGuYteSNcCsYpJB68QMK8CT0lgvaj3S09y8SA7QY9LMWTeaHaauScgpEdykZCkNsEDdg==
+X-Received: by 2002:a17:902:e292:b0:23f:cd4d:a91a with SMTP id
+ d9443c01a7336-23fcd4dab54mr71430375ad.30.1753705872035; 
+ Mon, 28 Jul 2025 05:31:12 -0700 (PDT)
 Received: from localhost.localdomain
  (108-92-19-205.lightspeed.sntcca.sbcglobal.net. [108.92.19.205])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-31ebeae44e2sm3713521a91.3.2025.07.28.05.21.21
+ d9443c01a7336-23fbe327443sm53542905ad.44.2025.07.28.05.31.10
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 28 Jul 2025 05:21:22 -0700 (PDT)
+ Mon, 28 Jul 2025 05:31:11 -0700 (PDT)
 From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
 To: dev@dpdk.org,
 	jasvinder.singh@intel.com,
@@ -64,8 +65,8 @@ To: dev@dpdk.org,
 Cc: thomas@monjalon.net, andrew.rybchenko@oktetlabs.ru, stable@dpdk.org,
  Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
 Subject: [PATCH] net/rte_net: fix inner L2 length for tunneled Ethernet packets
-Date: Mon, 28 Jul 2025 08:21:10 -0400
-Message-ID: <20250728122110.48653-1-14pwcse1224@uetpeshawar.edu.pk>
+Date: Mon, 28 Jul 2025 08:30:48 -0400
+Message-ID: <20250728123048.49029-1-14pwcse1224@uetpeshawar.edu.pk>
 X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -87,7 +88,7 @@ These protocols carry full Ethernet frames, so inner_l2_len should be
 set to the size of an Ethernet header (14 bytes), not include tunnel or
 UDP headers.
 
-Fixes: 44fb6c0f51 ('net: initial tunnel type parser')
+Fixes: 64ed7f854c ('net: add tunnel packet type parsing')
 Cc: stable@dpdk.org
 
 Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
@@ -136,5 +137,5 @@ index 44fb6c0f51..ca9260a67b 100644
  		if (gnh->proto == 0)
  			*proto = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
 -- 
-2.47.1
+2.47.3
 
