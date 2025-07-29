@@ -2,75 +2,62 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FBA5C87FC9
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Jul 2025 06:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F2AC87FC9
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Jul 2025 08:25:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BB8D940E03;
-	Tue, 29 Jul 2025 08:40:04 +0200 (CEST)
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com
- [209.85.215.180])
- by mails.dpdk.org (Postfix) with ESMTP id C3F8A40668
- for <dev@dpdk.org>; Tue, 29 Jul 2025 08:40:03 +0200 (CEST)
-Received: by mail-pg1-f180.google.com with SMTP id
- 41be03b00d2f7-b321bd36a41so4431966a12.2
- for <dev@dpdk.org>; Mon, 28 Jul 2025 23:40:03 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4521F40668;
+	Tue, 29 Jul 2025 10:25:02 +0200 (CEST)
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com
+ [209.85.210.201])
+ by mails.dpdk.org (Postfix) with ESMTP id B28EE40647
+ for <dev@dpdk.org>; Tue, 29 Jul 2025 10:25:00 +0200 (CEST)
+Received: by mail-pf1-f201.google.com with SMTP id
+ d2e1a72fcca58-74b537e8d05so5379884b3a.3
+ for <dev@dpdk.org>; Tue, 29 Jul 2025 01:25:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1753771203;
- x=1754376003; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=srihcXYhJz2GOLDs1Net4X9VmFNIhWy+k2KGA8Fe/CM=;
- b=xHhS3zrQN6y3MHNEvGP5UK+n1x+W4xD57Lwa9CUIfUJsrgAmUA178tQBfsoLRtDJS/
- C+pjvrXA1P3oq/cGE/hdSRtt+aw6KNhj51NLdNDbwlrISGqJ3JncKoCxGtdQbwH0igLO
- YzYsrSfc6OLSstbC2wom3T4FqmHA+ARsBuN5hDvVkoK3PxUY++CLwZE/iEVwzG/TB/SU
- nQ5NrrWXwHelv+MmMFHf1SGNg4Pj9SrVl7/6RLNJHETIVmyrpEuNSaaEY1QKqwelQ+a5
- 8lcAnraAYybaPDRsySkCY7FJyJTLRY7lqMyT/xVlWQz0stA7WOJ9wi36k6czH8CkBRlh
- hdOQ==
+ d=google.com; s=20230601; t=1753777500; x=1754382300; darn=dpdk.org;
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:from:to:cc:subject:date:message-id:reply-to;
+ bh=iLydthejrQqqSr/prHpTw7XDQhtiVwnq9hE49GrM2Q8=;
+ b=A+pRVhDUI3EBU6FFMq3EH33eKG+NjU//p1ndqiFIaD/oL3OsBfUJoC64SKTKWt6CSm
+ OjiBLi+1KC1FqNjlVyz3A3SDN+L533ZuvXp5kqHfJLgIUYclEpVWKCGI/TEB5kZYIPOH
+ dGd+RyY9U0G/2aSXAnlAWQdwwRMce7tCRmNcORbM2Tz/PawHlE0aBuRSiedPW0Z2QjNv
+ RGx9WhljBqoXY78y1XYY7BDf7u+vT9oei1n5d6ejcM2eNOJijZ3LCHRqFf6yYTAA6Jla
+ 7KDgQkrxsS7lwjUmrWbwUZ8Mm9wfY95NBciySD4YfMci/T9st+bUnHae1P2tahCNJhNL
+ 8jUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753771203; x=1754376003;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=srihcXYhJz2GOLDs1Net4X9VmFNIhWy+k2KGA8Fe/CM=;
- b=fwkF0Kv5UcOwkn+XQwTmw+EYphrOhStgiPqwr2OZW/0V94qJtSj9KxhBtiyMs7QOyP
- A0KlMl1hXRs7Zc8nUAFuBM2jEhHU+uGXUinEN68ROPLPbx4ukPcR1uOKxZz3/a21e/aJ
- DdIE5zNR2jxa7cPNuuiJJ7z4tKqarIOJc98odus3IkLg8OX4t3rVSwBdehoxccV/rj0Z
- lwPSo/iVY0J651WRVdn7gHUGhxVjDVQCLM6IuNFefynBnZU/VgZUFg8fTWYjsf1o5sIm
- /t53rYFAc9mMtoWFPc4rhBBuxgfufQUyDNwt26fReEECy7qQQvzKoZyAesz/X6VAJtIt
- 4+PA==
-X-Gm-Message-State: AOJu0YxP7W6ObCaYiadFFP/cgEkXt8NAHGUJiad9/REfg0wvu3N5Bn4V
- jram28QN8i64DWpUg8/yVnkxvNarYg3UN3mOyxM3H31nzf3AwyvM0jRa/Eq6e6geYos=
-X-Gm-Gg: ASbGnctKPZEQqGoPxcZzzN0yu6v8tUmd61gz7vaWsWpdUqDVpLuo3tnloR32mrt40OD
- YFW2HRf/gVyKbMyx8tD/cIF/Wzkm52U8qdX0z8+1IrHcd78D5d/NOoR3irCnOxYqJkj/ON/fmhX
- ZoHVOW8PxAwTlxqutPTCHpImP3u+b0A+NYCrJvKPY6K5K3e2G8QbpRAEe9BEn+3ql5KjjEGEbDZ
- SkrsWVMX8ZxGWHWmLKLjxA4YARb020Q6WIFX1E3S5kCa+pSWoW67GBoeX+7oz2KuFr7XffwRuzQ
- vFRAn94302dxypbrRtFVGZKPdaNuIVjagtTDm1s3qj1UooPHx2T151R2WS3EOtMeVJmAqcfpgtC
- aNLwGtOToMs1sS6CrhjI9h3AqhGHmoFZMYOczH5yVuCFZ9z3Z
-X-Google-Smtp-Source: AGHT+IFiGlDnG00ViszKgy2y13Dvzw893KYaCLUemkkj4Z0Bz1Ead/dOQtF3kuH5/q/tOrDVucxBJQ==
-X-Received: by 2002:a05:6a20:9147:b0:234:216b:cf98 with SMTP id
- adf61e73a8af0-23d7021bb59mr25542290637.35.1753771202810; 
- Mon, 28 Jul 2025 23:40:02 -0700 (PDT)
-Received: from localhost.localdomain ([64.62.143.197])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7640b8b2868sm6640791b3a.128.2025.07.28.23.40.01
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 28 Jul 2025 23:40:02 -0700 (PDT)
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-To: stephen@networkplumber.org, thomas@monjalon.net, ferruh.yigit@amd.com,
- andrew.rybchenko@oktetlabs.ru
-Cc: dev@dpdk.org, stable@dpdk.org,
- Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Subject: [PATCH] [PATCH v5] app/testpmd: fix segfault in secondary process by
- monitoring primary
-Date: Tue, 29 Jul 2025 02:39:19 -0400
-Message-ID: <20250729063919.3554143-3-14pwcse1224@uetpeshawar.edu.pk>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250729063919.3554143-1-14pwcse1224@uetpeshawar.edu.pk>
-References: <20250725125526.2340233-1-14pwcse1224@uetpeshawar.edu.pk>
- <20250729063919.3554143-1-14pwcse1224@uetpeshawar.edu.pk>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+ d=1e100.net; s=20230601; t=1753777500; x=1754382300;
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=iLydthejrQqqSr/prHpTw7XDQhtiVwnq9hE49GrM2Q8=;
+ b=EqOkRH57cOu5/c0NSpVrufOCjL3UYqYmVIhlNN7neoPpqNkiNmKpOYpKG6QFJGGG/o
+ B+UkXmDslUD36ZiLj9Ki7ujPj0EOA7fQoveoCljGJklqw9dJ0k1CCjjbVv+IA5w6oebI
+ Y3OY6UwxTNlstTVzOiACR2v4Y1iF4PtEQTQngGK4AL0UfSromH5dnXJXqXmiylUFfIcM
+ uRWOLzBq0QSAhI7s0INbve/agTEy47rjpND9X8/p8glGWzO5x2WtY4VXWHtt/MYHih+P
+ tGi2g7WUa+k0qbUnGlEWcAi7vGLnL85hw7tc6y9YRND4rYhtXClFR9PUWU68w89+H/i8
+ jEbw==
+X-Gm-Message-State: AOJu0Yx0UcLx8ul0xP2nsYwjfl0fuRE4eAIKiPPYDYkDh78LESKfz6YX
+ j5l5DLl6onQaMHKmnzlXrwPfDiZlKN9Xi9ezDZCOC/v+nlI1962z3DBgObcujcAj1b0vjfG5VVh
+ khqCi+D/Mb97dwgpFsrf6il40dA==
+X-Google-Smtp-Source: AGHT+IF2M098eNOIsx6lIriiI8Hh262I+5dfpM1nEHK8PA/NBHUuz9BMShJ+dckp1QpRm9rD+W/hxMzUYvZcaqe89g==
+X-Received: from pfbml8.prod.google.com ([2002:a05:6a00:3d88:b0:748:e22c:600c])
+ (user=shivajikant job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a20:7d9c:b0:21f:751a:dd41 with SMTP id
+ adf61e73a8af0-23d70217da1mr24586247637.40.1753777499718; 
+ Tue, 29 Jul 2025 01:24:59 -0700 (PDT)
+Date: Tue, 29 Jul 2025 08:24:56 +0000
+In-Reply-To: <20250723074249.3264675-1-shivajikant@google.com>
+Mime-Version: 1.0
+References: <20250723074249.3264675-1-shivajikant@google.com>
+X-Mailer: git-send-email 2.50.1.487.gc89ff58d15-goog
+Message-ID: <20250729082456.796921-1-shivajikant@google.com>
+Subject: [PATCH v2] net/af_xdp: enable AF_XDP program attachment mode
+From: Shivaji Kant <shivajikant@google.com>
+To: Stephen Hemminger <stephen@networkplumber.org>,
+ Ivan Malov <ivan.malov@arknetworks.am>
+Cc: dev@dpdk.org, Shivaji Kant <shivajikant@google.com>, 
+ Ciara Loftus <ciara.loftus@intel.com>, Maryam Tahhan <mtahhan@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,149 +71,251 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In secondary processes, directly accessing 'dev->data->dev_private' can
-cause a segmentation fault if the primary process has exited or if the
-shared memory is no longer accessible. If a secondary process attempts
-to query device information (e.g., via testpmd), a NULL dereference
-may occur due to missing shared data.
+Currently, the AF_XDP PMD attaches its XDP program using a fixed
+set of flags, defaulting to `XDP_FLAGS_UPDATE_IF_NOEXIST`. This lacks
+flexibility for users who might need to explicitly control the XDP
+mode based on their specific hardware capabilities or performance
+requirements.
 
-The secondary process not only crashes on device close but also segfaults
-when executing commands like "show device info all" after the primary has
-exited.
+This patch introduces a new vdev argument, `mode`, for the `net_af_xdp`
+PMD. This argument allows users to explicitly specify the desired
+XDP program attachment mode:
+`drv` (XDP_FLAGS_DRV_MODE),
+`skb` (XDP_FLAGS_SKB_MODE),
+`hw` (XDP_FLAGS_HW_MODE).
+(If needed more can be added)
 
-This patch adds a mechanism in testpmd to monitor the primary process from the
-secondary using `rte_eal_primary_proc_alive()`, and exits secondary process
-when primary has exited.
+This change provides greater control and flexibility for users to
+fine-tune AF_XDP behavior, enabling them to leverage native driver
+or hardware offload capabilities when available, or fall back to
+generic SKB mode for broader compatibility.
 
-Fixes: af75078fece3 ("first public release")
-Cc: stable@dpdk.org
-
-Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+Signed-off-by: Shivaji Kant <shivajikant@google.com>
 ---
- app/test-pmd/testpmd.c  | 49 +++++++++++++++++++++++++++++++++++++----
- lib/ethdev/rte_ethdev.c |  8 ++++++-
- 2 files changed, 52 insertions(+), 5 deletions(-)
+ drivers/net/af_xdp/rte_eth_af_xdp.c | 75 ++++++++++++++++++++++++-----
+ 1 file changed, 62 insertions(+), 13 deletions(-)
 
-diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
-index bb88555328..ad780ba754 100644
---- a/app/test-pmd/testpmd.c
-+++ b/app/test-pmd/testpmd.c
-@@ -101,13 +101,15 @@
- uint16_t verbose_level = 0; /**< Silent by default. */
- int testpmd_logtype; /**< Log type for testpmd logs */
+diff --git a/drivers/net/af_xdp/rte_eth_af_xdp.c b/drivers/net/af_xdp/rte_eth_af_xdp.c
+index 5f65850a27..cf0077c62a 100644
+--- a/drivers/net/af_xdp/rte_eth_af_xdp.c
++++ b/drivers/net/af_xdp/rte_eth_af_xdp.c
+@@ -104,6 +104,7 @@ RTE_LOG_REGISTER_DEFAULT(af_xdp_logtype, NOTICE);
  
-+/* Maximum delay for exiting after primary process. */
-+#define MONITOR_INTERVAL (500 * 1000)
+ static int afxdp_dev_count;
+ 
 +
- /* use main core for command line ? */
- uint8_t interactive = 0;
- uint8_t auto_start = 0;
- uint8_t tx_first;
- char cmdline_filename[PATH_MAX] = {0};
- bool echo_cmdline_file;
--
- /*
-  * NUMA support configuration.
-  * When set, the NUMA support attempts to dispatch the allocation of the
-@@ -2281,7 +2283,7 @@ run_pkt_fwd_on_lcore(struct fwd_lcore *fc, packet_fwd_t pkt_fwd)
- 			fc->total_cycles += tsc - prev_tsc;
- 			prev_tsc = tsc;
- 		}
--	} while (! fc->stopped);
-+	} while (!fc->stopped && !f_quit);
+ /* Message header to synchronize fds via IPC */
+ struct ipc_hdr {
+ 	char port_name[RTE_DEV_NAME_MAX_LEN];
+@@ -169,6 +170,7 @@ struct pmd_internals {
+ 	int queue_cnt;
+ 	int max_queue_cnt;
+ 	int configured_queue_cnt;
++	uint mode_flag;
+ 	bool shared_umem;
+ 	char prog_path[PATH_MAX];
+ 	bool custom_prog_configured;
+@@ -198,6 +200,26 @@ struct pmd_process_private {
+ #define ETH_AF_XDP_USE_CNI_ARG			"use_cni"
+ #define ETH_AF_XDP_USE_PINNED_MAP_ARG	"use_pinned_map"
+ #define ETH_AF_XDP_DP_PATH_ARG			"dp_path"
++#define ETH_AF_XDP_MODE_ARG				"mode"
++
++/* Define different modes for af_xdp prog to attach */
++#define ETH_AF_XDP_DRV_MODE_ARG			"drv"
++#define ETH_AF_XDP_SKB_MODE_ARG			"skb"
++#define ETH_AF_XDP_HW_MODE_ARG			"hw"
++#define ETH_AF_XDP_NUM_MODE_ARG			3
++
++static const char * const mode_arguments[] = {
++	ETH_AF_XDP_DRV_MODE_ARG,
++	ETH_AF_XDP_SKB_MODE_ARG,
++	ETH_AF_XDP_HW_MODE_ARG,
++	NULL
++};
++
++static const unsigned int mode_flags[] = {
++	XDP_FLAGS_DRV_MODE,
++	XDP_FLAGS_SKB_MODE,
++	XDP_FLAGS_HW_MODE
++};
+ 
+ static const char * const valid_arguments[] = {
+ 	ETH_AF_XDP_IFACE_ARG,
+@@ -210,6 +232,7 @@ static const char * const valid_arguments[] = {
+ 	ETH_AF_XDP_USE_CNI_ARG,
+ 	ETH_AF_XDP_USE_PINNED_MAP_ARG,
+ 	ETH_AF_XDP_DP_PATH_ARG,
++	ETH_AF_XDP_MODE_ARG,
+ 	NULL
+ };
+ 
+@@ -950,14 +973,14 @@ remove_xdp_program(struct pmd_internals *internals)
+ 	uint32_t curr_prog_id = 0;
+ 	int ret;
+ 
+-	ret = bpf_xdp_query_id(internals->if_index, XDP_FLAGS_UPDATE_IF_NOEXIST,
++	ret = bpf_xdp_query_id(internals->if_index, internals->mode_flag,
+ 			       &curr_prog_id);
+ 	if (ret != 0) {
+ 		AF_XDP_LOG_LINE(ERR, "bpf_xdp_query_id failed");
+ 		return ret;
+ 	}
+ 
+-	ret = bpf_xdp_detach(internals->if_index, XDP_FLAGS_UPDATE_IF_NOEXIST,
++	ret = bpf_xdp_detach(internals->if_index, internals->mode_flag,
+ 			     NULL);
+ 	if (ret != 0)
+ 		AF_XDP_LOG_LINE(ERR, "bpf_xdp_detach failed");
+@@ -978,14 +1001,14 @@ remove_xdp_program(struct pmd_internals *internals)
+ 	int ret;
+ 
+ 	ret = bpf_get_link_xdp_id(internals->if_index, &curr_prog_id,
+-				  XDP_FLAGS_UPDATE_IF_NOEXIST);
++				  mode_flag);
+ 	if (ret != 0) {
+ 		AF_XDP_LOG_LINE(ERR, "bpf_get_link_xdp_id failed");
+ 		return ret;
+ 	}
+ 
+ 	ret = bpf_set_link_xdp_fd(internals->if_index, -1,
+-				  XDP_FLAGS_UPDATE_IF_NOEXIST);
++				  mode_flag);
+ 	if (ret != 0)
+ 		AF_XDP_LOG_LINE(ERR, "bpf_set_link_xdp_fd failed");
+ 	return ret;
+@@ -1305,7 +1328,7 @@ get_pinned_map(const char *dp_path, int *map_fd)
  }
  
  static int
-@@ -4332,6 +4334,43 @@ signal_handler(int signum __rte_unused)
- 	prompt_exit();
+-load_custom_xdp_prog(const char *prog_path, int if_index, struct bpf_map **map)
++load_custom_xdp_prog(const char *prog_path, int if_index, struct bpf_map **map, uint mode_flag)
+ {
+ 	int ret, prog_fd;
+ 	struct bpf_object *obj;
+@@ -1328,7 +1351,7 @@ load_custom_xdp_prog(const char *prog_path, int if_index, struct bpf_map **map)
+ 
+ 	/* Link the program with the given network device */
+ 	ret = link_xdp_prog_with_dev(if_index, prog_fd,
+-					XDP_FLAGS_UPDATE_IF_NOEXIST);
++					mode_flag);
+ 	if (ret) {
+ 		AF_XDP_LOG_LINE(ERR, "Failed to set prog fd %d on interface",
+ 				prog_fd);
+@@ -1679,7 +1702,7 @@ xsk_configure(struct pmd_internals *internals, struct pkt_rx_queue *rxq,
+ 	cfg.rx_size = ring_size;
+ 	cfg.tx_size = ring_size;
+ 	cfg.libbpf_flags = 0;
+-	cfg.xdp_flags = XDP_FLAGS_UPDATE_IF_NOEXIST;
++	cfg.xdp_flags = internals->mode_flag;
+ 	cfg.bind_flags = 0;
+ 
+ 	/* Force AF_XDP socket into copy mode when users want it */
+@@ -1698,7 +1721,7 @@ xsk_configure(struct pmd_internals *internals, struct pkt_rx_queue *rxq,
+ 		if (!internals->custom_prog_configured) {
+ 			ret = load_custom_xdp_prog(internals->prog_path,
+ 							internals->if_index,
+-							&internals->map);
++							&internals->map, internals->mode_flag);
+ 			if (ret) {
+ 				AF_XDP_LOG_LINE(ERR, "Failed to load custom XDP program %s",
+ 						internals->prog_path);
+@@ -2017,6 +2040,25 @@ parse_name_arg(const char *key __rte_unused,
+ 	return 0;
  }
  
-+
-+/* Alarm signal handler, used to check that primary process */
-+static void
-+monitor_primary(void *arg __rte_unused)
++/** parse name argument */
++static int
++parse_mode_arg(const char *key __rte_unused,
++	       const char *value, void *extra_args)
 +{
-+	if (rte_eal_primary_proc_alive(NULL)) {
-+		rte_eal_alarm_set(MONITOR_INTERVAL, monitor_primary, NULL);
-+	} else {
-+		fprintf(stderr,
-+			"Primary process is no longer active, exiting...\n");
-+		f_quit = 1;
-+		prompt_exit();
++	unsigned int *mode = extra_args;
++	unsigned int i;
++
++	for (i = 0; i < ETH_AF_XDP_NUM_MODE_ARG; i++) {
++		if (strcmp(value, mode_arguments[i]) == 0) {
++			*mode |= mode_flags[i];
++			return 0;
++		}
 +	}
++
++	AF_XDP_LOG_LINE(ERR, "Invalid af_xdp mode, choose correct mode to attach af_xdp program.");
++	return -EINVAL;
 +}
 +
-+/* Setup handler to check when primary exits. */
-+static void
-+enable_primary_monitor(void)
-+{
-+	int ret;
-+
-+	/* Once primary exits, so will pdump. */
-+	ret = rte_eal_alarm_set(MONITOR_INTERVAL, monitor_primary, NULL);
-+	if (ret < 0)
-+		fprintf(stderr, "Fail to enable monitor:%d\n", ret);
-+}
-+
-+static void
-+disable_primary_monitor(void)
-+{
-+	int ret;
-+
-+	ret = rte_eal_alarm_cancel(monitor_primary, NULL);
-+	if (ret < 0)
-+		fprintf(stderr, "Fail to disable monitor:%d\n", ret);
-+}
-+
- int
- main(int argc, char** argv)
+ /** parse xdp prog argument */
+ static int
+ parse_prog_arg(const char *key __rte_unused,
+@@ -2094,7 +2136,7 @@ static int
+ parse_parameters(struct rte_kvargs *kvlist, char *if_name, int *start_queue,
+ 		 int *queue_cnt, int *shared_umem, char *prog_path,
+ 		 int *busy_budget, int *force_copy, int *use_cni,
+-		 int *use_pinned_map, char *dp_path)
++		 int *use_pinned_map, char *dp_path, uint *xdp_mode)
  {
-@@ -4362,7 +4401,8 @@ main(int argc, char** argv)
- 	if (diag < 0)
- 		rte_exit(EXIT_FAILURE, "Cannot init EAL: %s\n",
- 			 rte_strerror(rte_errno));
--
-+	if (rte_eal_process_type() == RTE_PROC_SECONDARY)
-+		enable_primary_monitor();
- 	/* allocate port structures, and init them */
- 	init_port();
+ 	int ret;
  
-@@ -4571,7 +4611,8 @@ main(int argc, char** argv)
- 	if (ret != 0)
- 		rte_exit(EXIT_FAILURE, "Cannot unregister for ethdev events");
+@@ -2147,6 +2189,10 @@ parse_parameters(struct rte_kvargs *kvlist, char *if_name, int *start_queue,
  
--
-+	if (rte_eal_process_type() == RTE_PROC_SECONDARY)
-+		disable_primary_monitor();
- 	ret = rte_eal_cleanup();
- 	if (ret != 0)
- 		rte_exit(EXIT_FAILURE,
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index dd7c00bc94..5c73397164 100644
---- a/lib/ethdev/rte_ethdev.c
-+++ b/lib/ethdev/rte_ethdev.c
-@@ -4079,6 +4079,13 @@ rte_eth_dev_info_get(uint16_t port_id, struct rte_eth_dev_info *dev_info)
+ 	ret = rte_kvargs_process(kvlist, ETH_AF_XDP_DP_PATH_ARG,
+ 				 &parse_prog_arg, dp_path);
++
++	ret = rte_kvargs_process(kvlist, ETH_AF_XDP_MODE_ARG,
++				 &parse_mode_arg, xdp_mode);
++
+ 	if (ret < 0)
+ 		goto free_kvlist;
  
- 	if (dev->dev_ops->dev_infos_get == NULL)
- 		return -ENOTSUP;
-+	if (rte_eal_process_type() == RTE_PROC_SECONDARY &&
-+		unlikely(rte_mem_virt2phy(dev->data->dev_private) == RTE_BAD_PHYS_ADDR)) {
-+			RTE_ETHDEV_LOG_LINE(ERR,
-+			"Secondary: dev_private not accessible (primary exited?)");
-+			rte_errno = ENODEV;
-+			return -rte_errno;
-+	}
- 	diag = dev->dev_ops->dev_infos_get(dev, dev_info);
- 	if (diag != 0) {
- 		/* Cleanup already filled in device information */
-@@ -4307,7 +4314,6 @@ rte_eth_macaddr_get(uint16_t port_id, struct rte_ether_addr *mac_addr)
- 			port_id);
+@@ -2189,7 +2235,7 @@ static struct rte_eth_dev *
+ init_internals(struct rte_vdev_device *dev, const char *if_name,
+ 	       int start_queue_idx, int queue_cnt, int shared_umem,
+ 	       const char *prog_path, int busy_budget, int force_copy,
+-	       int use_cni, int use_pinned_map, const char *dp_path)
++	       int use_cni, int use_pinned_map, const char *dp_path, uint xdp_mode)
+ {
+ 	const char *name = rte_vdev_device_name(dev);
+ 	const unsigned int numa_node = dev->device.numa_node;
+@@ -2220,6 +2266,7 @@ init_internals(struct rte_vdev_device *dev, const char *if_name,
+ 	internals->force_copy = force_copy;
+ 	internals->use_cni = use_cni;
+ 	internals->use_pinned_map = use_pinned_map;
++	internals->mode_flag = XDP_FLAGS_UPDATE_IF_NOEXIST | xdp_mode;
+ 	strlcpy(internals->dp_path, dp_path, PATH_MAX);
+ 
+ 	if (xdp_get_channels_info(if_name, &internals->max_queue_cnt,
+@@ -2412,6 +2459,7 @@ rte_pmd_af_xdp_probe(struct rte_vdev_device *dev)
+ 	int force_copy = 0;
+ 	int use_cni = 0;
+ 	int use_pinned_map = 0;
++	uint xdp_mode = 0;
+ 	char dp_path[PATH_MAX] = {'\0'};
+ 	struct rte_eth_dev *eth_dev = NULL;
+ 	const char *name = rte_vdev_device_name(dev);
+@@ -2456,7 +2504,7 @@ rte_pmd_af_xdp_probe(struct rte_vdev_device *dev)
+ 	if (parse_parameters(kvlist, if_name, &xsk_start_queue_idx,
+ 			     &xsk_queue_cnt, &shared_umem, prog_path,
+ 			     &busy_budget, &force_copy, &use_cni, &use_pinned_map,
+-			     dp_path) < 0) {
++			     dp_path, &xdp_mode) < 0) {
+ 		AF_XDP_LOG_LINE(ERR, "Invalid kvargs value");
  		return -EINVAL;
  	}
--
- 	rte_ether_addr_copy(&dev->data->mac_addrs[0], mac_addr);
- 
- 	rte_eth_trace_macaddr_get(port_id, mac_addr);
+@@ -2524,7 +2572,7 @@ rte_pmd_af_xdp_probe(struct rte_vdev_device *dev)
+ 	eth_dev = init_internals(dev, if_name, xsk_start_queue_idx,
+ 				 xsk_queue_cnt, shared_umem, prog_path,
+ 				 busy_budget, force_copy, use_cni, use_pinned_map,
+-				 dp_path);
++				 dp_path, xdp_mode);
+ 	if (eth_dev == NULL) {
+ 		AF_XDP_LOG_LINE(ERR, "Failed to init internals");
+ 		return -1;
+@@ -2587,4 +2635,5 @@ RTE_PMD_REGISTER_PARAM_STRING(net_af_xdp,
+ 			      "force_copy=<int> "
+ 			      "use_cni=<int> "
+ 			      "use_pinned_map=<int> "
+-			      "dp_path=<string> ");
++			      "dp_path=<string> "
++			      "mode=<string> ");
 -- 
-2.43.0
+2.50.1.470.g6ba607880d-goog
 
