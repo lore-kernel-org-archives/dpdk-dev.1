@@ -2,62 +2,159 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F2AC87FC9
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Jul 2025 08:25:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A762C87FC9
+	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Jul 2025 08:29:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4521F40668;
-	Tue, 29 Jul 2025 10:25:02 +0200 (CEST)
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com
- [209.85.210.201])
- by mails.dpdk.org (Postfix) with ESMTP id B28EE40647
- for <dev@dpdk.org>; Tue, 29 Jul 2025 10:25:00 +0200 (CEST)
-Received: by mail-pf1-f201.google.com with SMTP id
- d2e1a72fcca58-74b537e8d05so5379884b3a.3
- for <dev@dpdk.org>; Tue, 29 Jul 2025 01:25:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20230601; t=1753777500; x=1754382300; darn=dpdk.org;
- h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
- :date:from:to:cc:subject:date:message-id:reply-to;
- bh=iLydthejrQqqSr/prHpTw7XDQhtiVwnq9hE49GrM2Q8=;
- b=A+pRVhDUI3EBU6FFMq3EH33eKG+NjU//p1ndqiFIaD/oL3OsBfUJoC64SKTKWt6CSm
- OjiBLi+1KC1FqNjlVyz3A3SDN+L533ZuvXp5kqHfJLgIUYclEpVWKCGI/TEB5kZYIPOH
- dGd+RyY9U0G/2aSXAnlAWQdwwRMce7tCRmNcORbM2Tz/PawHlE0aBuRSiedPW0Z2QjNv
- RGx9WhljBqoXY78y1XYY7BDf7u+vT9oei1n5d6ejcM2eNOJijZ3LCHRqFf6yYTAA6Jla
- 7KDgQkrxsS7lwjUmrWbwUZ8Mm9wfY95NBciySD4YfMci/T9st+bUnHae1P2tahCNJhNL
- 8jUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753777500; x=1754382300;
- h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
- :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=iLydthejrQqqSr/prHpTw7XDQhtiVwnq9hE49GrM2Q8=;
- b=EqOkRH57cOu5/c0NSpVrufOCjL3UYqYmVIhlNN7neoPpqNkiNmKpOYpKG6QFJGGG/o
- B+UkXmDslUD36ZiLj9Ki7ujPj0EOA7fQoveoCljGJklqw9dJ0k1CCjjbVv+IA5w6oebI
- Y3OY6UwxTNlstTVzOiACR2v4Y1iF4PtEQTQngGK4AL0UfSromH5dnXJXqXmiylUFfIcM
- uRWOLzBq0QSAhI7s0INbve/agTEy47rjpND9X8/p8glGWzO5x2WtY4VXWHtt/MYHih+P
- tGi2g7WUa+k0qbUnGlEWcAi7vGLnL85hw7tc6y9YRND4rYhtXClFR9PUWU68w89+H/i8
- jEbw==
-X-Gm-Message-State: AOJu0Yx0UcLx8ul0xP2nsYwjfl0fuRE4eAIKiPPYDYkDh78LESKfz6YX
- j5l5DLl6onQaMHKmnzlXrwPfDiZlKN9Xi9ezDZCOC/v+nlI1962z3DBgObcujcAj1b0vjfG5VVh
- khqCi+D/Mb97dwgpFsrf6il40dA==
-X-Google-Smtp-Source: AGHT+IF2M098eNOIsx6lIriiI8Hh262I+5dfpM1nEHK8PA/NBHUuz9BMShJ+dckp1QpRm9rD+W/hxMzUYvZcaqe89g==
-X-Received: from pfbml8.prod.google.com ([2002:a05:6a00:3d88:b0:748:e22c:600c])
- (user=shivajikant job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:7d9c:b0:21f:751a:dd41 with SMTP id
- adf61e73a8af0-23d70217da1mr24586247637.40.1753777499718; 
- Tue, 29 Jul 2025 01:24:59 -0700 (PDT)
-Date: Tue, 29 Jul 2025 08:24:56 +0000
-In-Reply-To: <20250723074249.3264675-1-shivajikant@google.com>
-Mime-Version: 1.0
-References: <20250723074249.3264675-1-shivajikant@google.com>
-X-Mailer: git-send-email 2.50.1.487.gc89ff58d15-goog
-Message-ID: <20250729082456.796921-1-shivajikant@google.com>
-Subject: [PATCH v2] net/af_xdp: enable AF_XDP program attachment mode
-From: Shivaji Kant <shivajikant@google.com>
-To: Stephen Hemminger <stephen@networkplumber.org>,
- Ivan Malov <ivan.malov@arknetworks.am>
-Cc: dev@dpdk.org, Shivaji Kant <shivajikant@google.com>, 
- Ciara Loftus <ciara.loftus@intel.com>, Maryam Tahhan <mtahhan@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+	by mails.dpdk.org (Postfix) with ESMTP id 3A9AE40668;
+	Tue, 29 Jul 2025 10:29:08 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 6988C40647
+ for <dev@dpdk.org>; Tue, 29 Jul 2025 10:29:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1753777747; x=1785313747;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=NkpDHDwgWjyLqgNsiZX7dfFQjnpuzeSg6LZsXD+nCj4=;
+ b=eRca9bxubxU779XVNXQMwdwbK7+VZHrUq6U0rfmoneZ1Jbjl+4r4i7l4
+ usPrth81zwdkYlCLhjaMnIR5XHWYVuoGMuFCqonjRUqWBfzCIUsI4T5BJ
+ BDrXC9s+zHir0hKRvdhyPe4UvVpXSEfypF9D6AWMeEPwjxzR6LYYsFGqz
+ hZT48sh0/8NRtORXW+UDDde/iZmMpoAQuy8mhO7y5Uyv6QuoXzlGm7M8B
+ 0QB5r9Av26zzdmNdNViIsPYJ90qDwKC+O3mC+R+NANxgzioAgVH2g3l9s
+ WaCTdi8MkIncR/Se07VCebK3qvUQbGaKIlx7YHavG8YM8jO/F7NhQ74Tu g==;
+X-CSE-ConnectionGUID: VxE3h3aNRwqQQDjhRJsYYQ==
+X-CSE-MsgGUID: Kg0sJJGHQgKVdYMCXTHltg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11505"; a="67123150"
+X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; d="scan'208";a="67123150"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+ by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 29 Jul 2025 01:29:01 -0700
+X-CSE-ConnectionGUID: 3Awqe0niQaO24wwnhK+9fA==
+X-CSE-MsgGUID: PJZW7jK2T6e5ub+lk/25fw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; d="scan'208";a="163420779"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 29 Jul 2025 01:29:00 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Tue, 29 Jul 2025 01:28:59 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Tue, 29 Jul 2025 01:28:59 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.63)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Tue, 29 Jul 2025 01:28:59 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Y38nuopieiXaJWV9pBAhZ6W8/YsRdJ9vfwM81sabWh/Ry5bzS6RqcgBBQVZrqjb9Q4RVYzQIV5aFj5ooegrmUrvqv1q2vj+GvyNY4s82wxsBmg+29hnxSIRPwyomWjRe9vyKQIdJwsOY4zT+i8P0Bx6CFrfY9Eo9w7trzFfW95IbS+sa128wvKiWp7vHFR6sqs2lFqXl6ssRaiYqZcZdYjSWxmV5vDkHeHhyhgFgjieKGJ6QxH3HfQOecnZKute+kOB2KS7Yep0jjF52sPayMOO29ddG2sjPm9g/PmhAytU43etGwUqi+IRsykmQ6RuHkjPwicMm6ImVQDE/VNYE+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SwIUJER58439R2QAFnYTD5t76PI9HeM9iAnUSq46/HE=;
+ b=UZXgimIrx9ugKxgh2dgEPszgMTKH1ZzNit7GoAxurDM3YB2Gp9TrP7l2u1fh0Xi2RrKI8NZ4KUqJJLO4zd34E2cVSiJg+ue6yjxvBYG4bnT6cY3/jTktl6J5U667q/Pd1RA90+2v0cfTk0jjOHTnfTa6Mopk7yp1VoOehgs+KO2GFn18a9QsBonQSf52iQN1mSaSCawB98ZLTudbu/tv810IVBPjP/BG645/frYJi2WZno6c8owRw9Q/3Y7k6KjQ870cRFu7ULip9DCyzU2vtah3Kk+HvfkXThwWWsnIFjhHakZZUhK+y0tXvCp9F4c1+AZrw9JkgCQXwx/4ThZ4Dw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by SJ0PR11MB5072.namprd11.prod.outlook.com (2603:10b6:a03:2db::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.26; Tue, 29 Jul
+ 2025 08:28:43 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%5]) with mapi id 15.20.8964.025; Tue, 29 Jul 2025
+ 08:28:43 +0000
+Date: Tue, 29 Jul 2025 09:28:39 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: <dev@dpdk.org>
+Subject: Re: [PATCH] app/testpmd: add flag to enable RSS for single-queue
+Message-ID: <aIiGN_gi97Q9MGkB@bricha3-mobl1.ger.corp.intel.com>
+References: <20250715125330.2127309-1-bruce.richardson@intel.com>
+ <20250728211919.75320c85@hermes.local>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250728211919.75320c85@hermes.local>
+X-ClientProxiedBy: DB3PR08CA0001.eurprd08.prod.outlook.com (2603:10a6:8::14)
+ To DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SJ0PR11MB5072:EE_
+X-MS-Office365-Filtering-Correlation-Id: c6fe209f-406b-48bd-7236-08ddce79ede7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?p9RfqxddJYQPY7Fs0/NuCl8nTeB3hUGVRECqtMWvC3yuqbLJUBKLJgILAdUI?=
+ =?us-ascii?Q?AkW/jRL/qihwJ9jD0pIdl/INVmc4EGk3FYJDJaHt27ZzeLMZT6PsGIHgEXX1?=
+ =?us-ascii?Q?cjcoa6hdchaIW0mW1NE/ygP4iMTavQSd9Yic2Lo7rRupti4ytvdAH60bR+sR?=
+ =?us-ascii?Q?jZTLoRP6lo6ZnPtXb2SriIOjE4AocqQyuKc3CmhBXpvwlxRGx/OrPtW4ob07?=
+ =?us-ascii?Q?BEQXlebczYMjJE9rKGU0pPBfc6pIp5WfVvqCleqWr9m82RhBYj83LMgxi5B6?=
+ =?us-ascii?Q?yCjIpr6BnMzOhv9p2aDfU09vCmCF2mZJSiQJAepC57R/Dmxtky8Z1zX4VhdR?=
+ =?us-ascii?Q?IpPdmcPMDEsVSLGSna+j/2WlHtxMxyr7HT5Z72Nyl5pMSHY46FeXjwF+KKtg?=
+ =?us-ascii?Q?t9w5C//okOsL0y5LRwxmRoPgbBFZrBypGjZN0ThyDTQTTcz/SjpysFmEdMD1?=
+ =?us-ascii?Q?i1Tvjpp8jAllCDmyGIAvlhmwQ6fDYn8tF4bciVNjUHT7iMZBf5XV+rstG6Xv?=
+ =?us-ascii?Q?qTnArFietRCZvrKZlmnormn+1qjm7xu+m6lHNv/JQc0gqyjC3yFt3QcIrwOt?=
+ =?us-ascii?Q?ibluvcNHi05uEdF+r832aVmSP2pcpwrwt1P9rOhv/QzJsWwuxFiduHrXGDI6?=
+ =?us-ascii?Q?1jOeNjfBFlDRZ/GJhLWp33VfVwIGSfQRBePYyezkqfRaRU4xtnYsRmWwBUWX?=
+ =?us-ascii?Q?Ye+hgFgFvmdHqKJUIe0MZ8Ww6Mnv+ODUYCYG95e6VKaLfe0vE+MlX4UmqvBh?=
+ =?us-ascii?Q?VJ0j6s3xyT2VIUJweg2C2yCSM1noK/a55TY4nyxoq+Q4LMLzfOD7j1thbKAx?=
+ =?us-ascii?Q?0mg7gEgjdNH+BErC/3xcrELO7Ya+dScPs1mQrJeR7ASYbJLfxgr5LuDEybg5?=
+ =?us-ascii?Q?WmVh7ZHJ5K68BWpcFWDm8hzrSo6KyWU3ucgydm7/HEcc40lXCF/NDwptxn3z?=
+ =?us-ascii?Q?ogHZNEGrRa//ZN+P+tCFFTz/xvAxYoYZvns4zVb4bnHdwHwmdr1r8WL6RmMX?=
+ =?us-ascii?Q?OO5n4n/jFh+DUAyyPhCQHZpIqhBuAM0iYW9I3uQYslgxkjjw578ITAdbWUaC?=
+ =?us-ascii?Q?0mZuiLI1x8QwmRanGbLc0Owl3xtCPfb537KfCmDfxzQEj1BEcdZmRIQF0L7E?=
+ =?us-ascii?Q?m4JmQGc8NHynHdcfmwgOd1GZyNQA+id/RZScWCkMh30LyEyNl57iuaL0fa4B?=
+ =?us-ascii?Q?vSqk91HgfH7dyn5AmJov5Ya+SMdEB/oNzDtMVMNI1osWSlNVLzBMuEfiBryT?=
+ =?us-ascii?Q?KzAFiS0ZRl5WhImWmf5e5d3JBZx2/inF7afcNNtEpNq2OO/kJIjJ5MYBP6Nd?=
+ =?us-ascii?Q?rGYeeaKXQRgzwHFATBppO12ISKkWoPUmusBEepC5PawZy9xBNc5U9J7yQH7s?=
+ =?us-ascii?Q?1jSgZJAA8ub7WTi4AiVwqV9Ed7FOqQpg7r//XQmR65sUfdrkKA=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?+f5vDZHwa6cfN9dB2H71dnIiUeT2028PLFxZ63Ba5Cmf880ayCtJC2TO7R2/?=
+ =?us-ascii?Q?8aWkn/k34r+grCr2PYim6XF5Yg6TEPkbxGhOv5zBBAh9YOx2M78U76dkRciJ?=
+ =?us-ascii?Q?13Td6kGbYg2rrkGjB8enue2FULX9J+KFmEg2m8Dut6TrQWKz3AwcW+kFl16V?=
+ =?us-ascii?Q?HnE9pdA1mwQViiV/RyJlFbgXCE36lBABOvyJ084pXyAbWFvuEU5IvrImZbWZ?=
+ =?us-ascii?Q?QBOcld1RS5k0uAbP9tFi9LnM42wf3ZA3nz3xQvoQGC1XupZRgk9o+ZB1DMS/?=
+ =?us-ascii?Q?hk127V3opbz3sRl10LDM5Mw0jB2pzWqnNJ0rt2yrf+ZuMYzxm0Qc/ad9vKJ0?=
+ =?us-ascii?Q?E/QM2k0NRvxrrMQvuY0W/zzmasQgrGgBb1Cetrk8PHK6jJ5dtOTsxWyIjpgN?=
+ =?us-ascii?Q?mEsFr4AKF3BsVxzOhrphmEhgrzEJO9DK0HziBpFakIk4lU7fkh/Bjf2sM6rv?=
+ =?us-ascii?Q?oKhrWpFUk794k8mgeHe4tKJmDV4q5U0Iy7F2/BjS19TRMRH+kjutsmTajvBz?=
+ =?us-ascii?Q?B39uvuy5kqDBPvtFcVHbDCoDtkaoSO9dsYeZ6t1Y8MOuwyM1+WWak3Vx0Zvo?=
+ =?us-ascii?Q?xpOvRFW4esi8zWbNHfz2BuSWkdtzmz+plpcigfruEvTvB/Tba5zzZCG3FAVQ?=
+ =?us-ascii?Q?4bNENw1wO5wlnEksHWQ+TkZZtYvDv/IvMhAeypiywbaxKCvRlcijKQzTYXXD?=
+ =?us-ascii?Q?EQSecPK4SCddY/pm6MnXXn8bsvgbKv0tE3uij4T30Q/RDfWyYhqsJJh4tAUq?=
+ =?us-ascii?Q?KonHE4fQMKzW0Vy8ifvaEOAMVVwVcQcwEwpEzcHT2Nq+nlYDI803ETGhmn5X?=
+ =?us-ascii?Q?jagqZjVhIz0k5hGY5Vb1JYSYy/Ep2e2PrRvcZzOwyifzdzcmrOetqSkAimNX?=
+ =?us-ascii?Q?wq/bWGVBajnbIWMgCeWKb6KgEl6gGo1tIWzhEDSHwHzyoygdQaJZqxY9VhFv?=
+ =?us-ascii?Q?nec+zr05iQMR/UP//0O0Mq4PhFa74uuQahk02gEWMyk2OI7/F2iU2I5HsGvi?=
+ =?us-ascii?Q?7nsbsEcdCsRnf8fiREmoRUliz15C7FFteU78+XXK9hJlc4zM4BHPkHLexzjm?=
+ =?us-ascii?Q?HRd3wJnq/ZZUYImdCGJAAiRUrR+hBevx01Trxt7FOMYBF6fiEd2Jh6hKeR7d?=
+ =?us-ascii?Q?ATnUXhA5PoQoAtcKskPJz10UJuE7L5C3fJ6qVc8jYCvbSDWop7RdBJfO6eOw?=
+ =?us-ascii?Q?gRUNNm+RRVQXY8iwM2RAj50EKnrIcZdcf2JZ4dsEOkIjg/9I5M4lZE8lNSfs?=
+ =?us-ascii?Q?SHyTvk2mmz9CgtQQnYQe7upXOdv+r9gTma8x3FJv2ZaSRS1Vo/VcU2ll1BUo?=
+ =?us-ascii?Q?8JTd0KR+cDcpSDEAq97eghc1pNNYZleb0fvX+tT0vxAx99xU0q2Qi7Kob7g0?=
+ =?us-ascii?Q?u9Kx7M+s+dpX6MX6Tz8Jo+BQaRbvZv3h60RN/wAqRvamjbTSF16fGZDqRnN7?=
+ =?us-ascii?Q?yF0VNQlgAIXiz+37lkvQdKrGgRysNuDlghjnfNF/VyHI9y/PeeEQuhQ5zboX?=
+ =?us-ascii?Q?BjK6G5AzB8YJtUoN3aWUgE3AzWCeyc0MD74Fu4ekIoXrpjfPMng8Swa56MSo?=
+ =?us-ascii?Q?1UpGXt1l2CGFCcpx1HHxVmx1IFAGdFB/BZyvdinQqIVudsxhprW5UZyE3ryl?=
+ =?us-ascii?Q?jg=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6fe209f-406b-48bd-7236-08ddce79ede7
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2025 08:28:43.5349 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bWN2wgNniuisicq7pv4qCb7JdFvOQ8wvzOZRbh5O/iLlgFRkKJt/xZWFMBxXAFL6x/Br032EQbzsfkMT3oaUBul2uQYIUv8hk4AWFp/H1B4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5072
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -71,251 +168,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, the AF_XDP PMD attaches its XDP program using a fixed
-set of flags, defaulting to `XDP_FLAGS_UPDATE_IF_NOEXIST`. This lacks
-flexibility for users who might need to explicitly control the XDP
-mode based on their specific hardware capabilities or performance
-requirements.
+On Mon, Jul 28, 2025 at 09:19:19PM -0700, Stephen Hemminger wrote:
+> On Tue, 15 Jul 2025 12:53:30 +0000
+> Bruce Richardson <bruce.richardson@intel.com> wrote:
+> 
+> > For testing purposes it can be desirable to enable RSS even when only a
+> > single queue per port is in use. Add an "enable-rss" flag to testpmd to
+> > match the existing "disable-rss" flag.
+> > 
+> > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> > ---
+> 
+> Applied to next-net.
+> Does it need release note? or other documentation changes?
 
-This patch introduces a new vdev argument, `mode`, for the `net_af_xdp`
-PMD. This argument allows users to explicitly specify the desired
-XDP program attachment mode:
-`drv` (XDP_FLAGS_DRV_MODE),
-`skb` (XDP_FLAGS_SKB_MODE),
-`hw` (XDP_FLAGS_HW_MODE).
-(If needed more can be added)
-
-This change provides greater control and flexibility for users to
-fine-tune AF_XDP behavior, enabling them to leverage native driver
-or hardware offload capabilities when available, or fall back to
-generic SKB mode for broader compatibility.
-
-Signed-off-by: Shivaji Kant <shivajikant@google.com>
----
- drivers/net/af_xdp/rte_eth_af_xdp.c | 75 ++++++++++++++++++++++++-----
- 1 file changed, 62 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/net/af_xdp/rte_eth_af_xdp.c b/drivers/net/af_xdp/rte_eth_af_xdp.c
-index 5f65850a27..cf0077c62a 100644
---- a/drivers/net/af_xdp/rte_eth_af_xdp.c
-+++ b/drivers/net/af_xdp/rte_eth_af_xdp.c
-@@ -104,6 +104,7 @@ RTE_LOG_REGISTER_DEFAULT(af_xdp_logtype, NOTICE);
- 
- static int afxdp_dev_count;
- 
-+
- /* Message header to synchronize fds via IPC */
- struct ipc_hdr {
- 	char port_name[RTE_DEV_NAME_MAX_LEN];
-@@ -169,6 +170,7 @@ struct pmd_internals {
- 	int queue_cnt;
- 	int max_queue_cnt;
- 	int configured_queue_cnt;
-+	uint mode_flag;
- 	bool shared_umem;
- 	char prog_path[PATH_MAX];
- 	bool custom_prog_configured;
-@@ -198,6 +200,26 @@ struct pmd_process_private {
- #define ETH_AF_XDP_USE_CNI_ARG			"use_cni"
- #define ETH_AF_XDP_USE_PINNED_MAP_ARG	"use_pinned_map"
- #define ETH_AF_XDP_DP_PATH_ARG			"dp_path"
-+#define ETH_AF_XDP_MODE_ARG				"mode"
-+
-+/* Define different modes for af_xdp prog to attach */
-+#define ETH_AF_XDP_DRV_MODE_ARG			"drv"
-+#define ETH_AF_XDP_SKB_MODE_ARG			"skb"
-+#define ETH_AF_XDP_HW_MODE_ARG			"hw"
-+#define ETH_AF_XDP_NUM_MODE_ARG			3
-+
-+static const char * const mode_arguments[] = {
-+	ETH_AF_XDP_DRV_MODE_ARG,
-+	ETH_AF_XDP_SKB_MODE_ARG,
-+	ETH_AF_XDP_HW_MODE_ARG,
-+	NULL
-+};
-+
-+static const unsigned int mode_flags[] = {
-+	XDP_FLAGS_DRV_MODE,
-+	XDP_FLAGS_SKB_MODE,
-+	XDP_FLAGS_HW_MODE
-+};
- 
- static const char * const valid_arguments[] = {
- 	ETH_AF_XDP_IFACE_ARG,
-@@ -210,6 +232,7 @@ static const char * const valid_arguments[] = {
- 	ETH_AF_XDP_USE_CNI_ARG,
- 	ETH_AF_XDP_USE_PINNED_MAP_ARG,
- 	ETH_AF_XDP_DP_PATH_ARG,
-+	ETH_AF_XDP_MODE_ARG,
- 	NULL
- };
- 
-@@ -950,14 +973,14 @@ remove_xdp_program(struct pmd_internals *internals)
- 	uint32_t curr_prog_id = 0;
- 	int ret;
- 
--	ret = bpf_xdp_query_id(internals->if_index, XDP_FLAGS_UPDATE_IF_NOEXIST,
-+	ret = bpf_xdp_query_id(internals->if_index, internals->mode_flag,
- 			       &curr_prog_id);
- 	if (ret != 0) {
- 		AF_XDP_LOG_LINE(ERR, "bpf_xdp_query_id failed");
- 		return ret;
- 	}
- 
--	ret = bpf_xdp_detach(internals->if_index, XDP_FLAGS_UPDATE_IF_NOEXIST,
-+	ret = bpf_xdp_detach(internals->if_index, internals->mode_flag,
- 			     NULL);
- 	if (ret != 0)
- 		AF_XDP_LOG_LINE(ERR, "bpf_xdp_detach failed");
-@@ -978,14 +1001,14 @@ remove_xdp_program(struct pmd_internals *internals)
- 	int ret;
- 
- 	ret = bpf_get_link_xdp_id(internals->if_index, &curr_prog_id,
--				  XDP_FLAGS_UPDATE_IF_NOEXIST);
-+				  mode_flag);
- 	if (ret != 0) {
- 		AF_XDP_LOG_LINE(ERR, "bpf_get_link_xdp_id failed");
- 		return ret;
- 	}
- 
- 	ret = bpf_set_link_xdp_fd(internals->if_index, -1,
--				  XDP_FLAGS_UPDATE_IF_NOEXIST);
-+				  mode_flag);
- 	if (ret != 0)
- 		AF_XDP_LOG_LINE(ERR, "bpf_set_link_xdp_fd failed");
- 	return ret;
-@@ -1305,7 +1328,7 @@ get_pinned_map(const char *dp_path, int *map_fd)
- }
- 
- static int
--load_custom_xdp_prog(const char *prog_path, int if_index, struct bpf_map **map)
-+load_custom_xdp_prog(const char *prog_path, int if_index, struct bpf_map **map, uint mode_flag)
- {
- 	int ret, prog_fd;
- 	struct bpf_object *obj;
-@@ -1328,7 +1351,7 @@ load_custom_xdp_prog(const char *prog_path, int if_index, struct bpf_map **map)
- 
- 	/* Link the program with the given network device */
- 	ret = link_xdp_prog_with_dev(if_index, prog_fd,
--					XDP_FLAGS_UPDATE_IF_NOEXIST);
-+					mode_flag);
- 	if (ret) {
- 		AF_XDP_LOG_LINE(ERR, "Failed to set prog fd %d on interface",
- 				prog_fd);
-@@ -1679,7 +1702,7 @@ xsk_configure(struct pmd_internals *internals, struct pkt_rx_queue *rxq,
- 	cfg.rx_size = ring_size;
- 	cfg.tx_size = ring_size;
- 	cfg.libbpf_flags = 0;
--	cfg.xdp_flags = XDP_FLAGS_UPDATE_IF_NOEXIST;
-+	cfg.xdp_flags = internals->mode_flag;
- 	cfg.bind_flags = 0;
- 
- 	/* Force AF_XDP socket into copy mode when users want it */
-@@ -1698,7 +1721,7 @@ xsk_configure(struct pmd_internals *internals, struct pkt_rx_queue *rxq,
- 		if (!internals->custom_prog_configured) {
- 			ret = load_custom_xdp_prog(internals->prog_path,
- 							internals->if_index,
--							&internals->map);
-+							&internals->map, internals->mode_flag);
- 			if (ret) {
- 				AF_XDP_LOG_LINE(ERR, "Failed to load custom XDP program %s",
- 						internals->prog_path);
-@@ -2017,6 +2040,25 @@ parse_name_arg(const char *key __rte_unused,
- 	return 0;
- }
- 
-+/** parse name argument */
-+static int
-+parse_mode_arg(const char *key __rte_unused,
-+	       const char *value, void *extra_args)
-+{
-+	unsigned int *mode = extra_args;
-+	unsigned int i;
-+
-+	for (i = 0; i < ETH_AF_XDP_NUM_MODE_ARG; i++) {
-+		if (strcmp(value, mode_arguments[i]) == 0) {
-+			*mode |= mode_flags[i];
-+			return 0;
-+		}
-+	}
-+
-+	AF_XDP_LOG_LINE(ERR, "Invalid af_xdp mode, choose correct mode to attach af_xdp program.");
-+	return -EINVAL;
-+}
-+
- /** parse xdp prog argument */
- static int
- parse_prog_arg(const char *key __rte_unused,
-@@ -2094,7 +2136,7 @@ static int
- parse_parameters(struct rte_kvargs *kvlist, char *if_name, int *start_queue,
- 		 int *queue_cnt, int *shared_umem, char *prog_path,
- 		 int *busy_budget, int *force_copy, int *use_cni,
--		 int *use_pinned_map, char *dp_path)
-+		 int *use_pinned_map, char *dp_path, uint *xdp_mode)
- {
- 	int ret;
- 
-@@ -2147,6 +2189,10 @@ parse_parameters(struct rte_kvargs *kvlist, char *if_name, int *start_queue,
- 
- 	ret = rte_kvargs_process(kvlist, ETH_AF_XDP_DP_PATH_ARG,
- 				 &parse_prog_arg, dp_path);
-+
-+	ret = rte_kvargs_process(kvlist, ETH_AF_XDP_MODE_ARG,
-+				 &parse_mode_arg, xdp_mode);
-+
- 	if (ret < 0)
- 		goto free_kvlist;
- 
-@@ -2189,7 +2235,7 @@ static struct rte_eth_dev *
- init_internals(struct rte_vdev_device *dev, const char *if_name,
- 	       int start_queue_idx, int queue_cnt, int shared_umem,
- 	       const char *prog_path, int busy_budget, int force_copy,
--	       int use_cni, int use_pinned_map, const char *dp_path)
-+	       int use_cni, int use_pinned_map, const char *dp_path, uint xdp_mode)
- {
- 	const char *name = rte_vdev_device_name(dev);
- 	const unsigned int numa_node = dev->device.numa_node;
-@@ -2220,6 +2266,7 @@ init_internals(struct rte_vdev_device *dev, const char *if_name,
- 	internals->force_copy = force_copy;
- 	internals->use_cni = use_cni;
- 	internals->use_pinned_map = use_pinned_map;
-+	internals->mode_flag = XDP_FLAGS_UPDATE_IF_NOEXIST | xdp_mode;
- 	strlcpy(internals->dp_path, dp_path, PATH_MAX);
- 
- 	if (xdp_get_channels_info(if_name, &internals->max_queue_cnt,
-@@ -2412,6 +2459,7 @@ rte_pmd_af_xdp_probe(struct rte_vdev_device *dev)
- 	int force_copy = 0;
- 	int use_cni = 0;
- 	int use_pinned_map = 0;
-+	uint xdp_mode = 0;
- 	char dp_path[PATH_MAX] = {'\0'};
- 	struct rte_eth_dev *eth_dev = NULL;
- 	const char *name = rte_vdev_device_name(dev);
-@@ -2456,7 +2504,7 @@ rte_pmd_af_xdp_probe(struct rte_vdev_device *dev)
- 	if (parse_parameters(kvlist, if_name, &xsk_start_queue_idx,
- 			     &xsk_queue_cnt, &shared_umem, prog_path,
- 			     &busy_budget, &force_copy, &use_cni, &use_pinned_map,
--			     dp_path) < 0) {
-+			     dp_path, &xdp_mode) < 0) {
- 		AF_XDP_LOG_LINE(ERR, "Invalid kvargs value");
- 		return -EINVAL;
- 	}
-@@ -2524,7 +2572,7 @@ rte_pmd_af_xdp_probe(struct rte_vdev_device *dev)
- 	eth_dev = init_internals(dev, if_name, xsk_start_queue_idx,
- 				 xsk_queue_cnt, shared_umem, prog_path,
- 				 busy_budget, force_copy, use_cni, use_pinned_map,
--				 dp_path);
-+				 dp_path, xdp_mode);
- 	if (eth_dev == NULL) {
- 		AF_XDP_LOG_LINE(ERR, "Failed to init internals");
- 		return -1;
-@@ -2587,4 +2635,5 @@ RTE_PMD_REGISTER_PARAM_STRING(net_af_xdp,
- 			      "force_copy=<int> "
- 			      "use_cni=<int> "
- 			      "use_pinned_map=<int> "
--			      "dp_path=<string> ");
-+			      "dp_path=<string> "
-+			      "mode=<string> ");
--- 
-2.50.1.470.g6ba607880d-goog
-
+I don't consider it a big enough change to need release note. Just the
+testpmd doc command-line guide is enough - a patch which I will now do up
+and send because I see I forgot that in this patch. :-(
