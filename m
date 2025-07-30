@@ -2,74 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C11E7C87FC9
-	for <dpdk-dev@archiver.kernel.org>; Tue, 29 Jul 2025 22:12:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81CB0C87FCA
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Jul 2025 00:09:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D4F44402BD;
-	Wed, 30 Jul 2025 00:12:55 +0200 (CEST)
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com
- [209.85.221.53]) by mails.dpdk.org (Postfix) with ESMTP id 0837D402A7
- for <dev@dpdk.org>; Wed, 30 Jul 2025 00:12:55 +0200 (CEST)
-Received: by mail-wr1-f53.google.com with SMTP id
- ffacd0b85a97d-3b7862bd22bso157806f8f.1
- for <dev@dpdk.org>; Tue, 29 Jul 2025 15:12:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1753827174;
- x=1754431974; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=NVukZ7wxKD9P9aMxJ7N8ll4r7VLBAhalrFVmn0KGEU4=;
- b=aXVfUrfh9EzuzjeDDCShMsVovj+QcRGvFQAAMyjMfh5vTN2Nf1lVKoyuzkWbDTAQ5S
- 0YtIpIwaqfuAbdO++kXpcHhtTk1ag8+YOG5w6cCe2tWk66La7EZp0v88NldgPlsAil1w
- y0JGYXkiFsGGBK8N7pgZO+LEZdsCb5JeynkflxZ043LX4gIb1kemzHpGR/pCUIQBpAFu
- 5idnS4UyykYgbRadg8+toIfhbFlrfPhJVIjR0dapU+omqILDCV4hAMhlc1LlACKluoYD
- xYF8a4u8YaLvDJaukbBqqxMShpP1qfOTBABRFz83te+J3sZSMG/cSHGDCRvy2LAnngMQ
- RK8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753827174; x=1754431974;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=NVukZ7wxKD9P9aMxJ7N8ll4r7VLBAhalrFVmn0KGEU4=;
- b=R+ZIlJxECaENxH5T667VtP8ewNBokVj+HXX5eUGmVOm3imvdq1UT/MlJuHV3ZYDxj/
- +Hh43K/yT8CoeOTy02b5v2uVKti+giE2hyOseUr9ALJlYmk71QJj/8+Rvbe28RFFTeLz
- Y0u5FEpzeXwGFyNXYIb8gW1YAYRFgArXk7OYjgOuXWQwc/7PkJzOBRckavd8aLXLImRY
- THnoXQTxHsL+04SqORziuJIA+GyRoWqsD/JKWrrKyn/yxninFt3ItVkrSBDe9XH2mIpw
- jmXMUCkzyKMKCzpV922xlhQEJWdi06XmdJDvvYZ9OXSo0GGk4ZkarJXlZLI5Lwq8TUZ7
- iqng==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVLKT7gwUb/16aWb8HKHw5DX08vcSEgulDj5AclFi3CbVQ2O4wYNimNb/0vKFeseO7BwII=@dpdk.org
-X-Gm-Message-State: AOJu0YzOpaTt590fPDTQjMSUcpLzK6Ptmr26hvS7UOunxt63gPxsVowz
- CQCSYfd92AYQMnVPt3CcBqbiRQM8Z6AqvKEkLyE9c86OkoL9s5zFtzXIHPcwWWuI7xc=
-X-Gm-Gg: ASbGncvn0BxPb8qagZIFJngB22ZxuCo7PHxeYv8LH0iHrIXEFWDqfq+WegzqZdU1lDc
- yn1VzMg2WN7kXMcXHOBzFR4gQfiTz89VjQWrkE25cUkfzDKyZFqaIYaWqbo19ZhE69k8w+/JX5I
- gUmINviW3Sp0/Eloixmvqb8g+E+29ne3F2OVHGWDlErn7P7nzNp1eEx4+1SydleF//D0Yrh1GXj
- UBIHIO23BVNBakan0d43ZZpPCJhUm8bvKFBY8xiSL3y0KYblPwHJcaJZTnOHOUHC19TfaWgPDGh
- YRJy/auszCWuNnTqL5Wb/0bDbDqyJFDU9liJY9M/HiF3RP5RNmfh1hvtne/QhPBpOVnEnrYEd13
- 2xs59wZcSuHJGCndQZvgPnMEeaGS6MepmdaxZCrWO1EGKGHNETsGm9r5+Mayb+sbWIDGsibtNRJ
- EFB+Df+dY/5w==
-X-Google-Smtp-Source: AGHT+IHRmCqI8JzSanT/i9btRIHVhjf8IE0mxdNOnbdvGKbp4CFGpwfELG3p2EAnJZJAGfpvzVOMtg==
-X-Received: by 2002:a05:6000:25ca:b0:3a5:8991:64b7 with SMTP id
- ffacd0b85a97d-3b78e726421mr3990139f8f.26.1753827174619; 
- Tue, 29 Jul 2025 15:12:54 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3b792ce46fbsm2834082f8f.0.2025.07.29.15.12.53
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 29 Jul 2025 15:12:54 -0700 (PDT)
-Date: Tue, 29 Jul 2025 15:12:50 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Ashok Kaladi <ashok.k.kaladi@intel.com>
-Cc: 20250723125702.3787183-1-ashok.k.kaladi@intel.com, dev@dpdk.org
-Subject: Re: [PATCH v2] net/tap: fix BPF build failure in cross-compilation
- environment
-Message-ID: <20250729151250.050b43cc@hermes.local>
-In-Reply-To: <20250725054258.48135-1-ashok.k.kaladi@intel.com>
-References: <20250725054258.48135-1-ashok.k.kaladi@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+	by mails.dpdk.org (Postfix) with ESMTP id 75D4B40668;
+	Wed, 30 Jul 2025 02:09:48 +0200 (CEST)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 01C8F4025E
+ for <dev@dpdk.org>; Wed, 30 Jul 2025 02:09:46 +0200 (CEST)
+Received: by linux.microsoft.com (Postfix, from userid 1202)
+ id 3084C211766F; Tue, 29 Jul 2025 17:09:46 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3084C211766F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
+ s=default; t=1753834186;
+ bh=qzuT2vwXwbFmBhri/z9FwlC963AqC+/rYiQHwIwaCrU=;
+ h=From:To:Cc:Subject:Date:Reply-To:From;
+ b=PEFyLirtfPk3+QFLJW5jtFD2gQKpxZ6Sn3fEFnk/VE3kfTgyL/nU9WQp97fd4fk7o
+ w3HW6LySvXPq9RCRi7mBJ0TJAQojk8ako+T4KpPrEKTvT4uXtigfZWuyGUZwSixwKX
+ GOhm2P9QqJ7yKlg7K5DLdusC86mKw+6dznxSQc9Y=
+From: longli@linuxonhyperv.com
+To: Stephen Hemminger <stephen@networkplumber.org>, Wei Hu <weh@microsoft.com>
+Cc: dev@dpdk.org,
+	Long Li <longli@microsoft.com>
+Subject: [Patch v7 0/4] Support VMBUS channels without monitoring enabled
+Date: Tue, 29 Jul 2025 17:09:39 -0700
+Message-Id: <1753834183-22244-1-git-send-email-longli@linuxonhyperv.com>
+X-Mailer: git-send-email 1.8.3.1
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,22 +39,46 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
+Reply-To: longli@microsoft.com
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 25 Jul 2025 00:42:58 -0500
-Ashok Kaladi <ashok.k.kaladi@intel.com> wrote:
+From: Long Li <longli@microsoft.com>
 
-> During cross-compilation, BPF build incorrectly includes header files
-> from the host system instead of the target sysroot. This leads to
-> build failures due to incompatible headers or unavailability of header
-> files in the host.
-> 
-> Fix by using the Meson sysroot property to correctly locate and include
-> BPF-related headers from the cross-compilation environment.
-> 
-> Fixes: d8d065045c4a ("net/tap: rewrite RSS BPF program")
-> 
-> Signed-off-by: Ashok Kaladi <ashok.k.kaladi@intel.com>
-> ---
+Hyperv may expose VMBUS channels without monitoring enabled. In this case,
+it programs almost all the data traffic to VF.
 
-Queued to next-net
+This patchset enabled vmbus/netvsc to use channels without monitoring
+enabled.
+
+This needs to change the APIs exposed by drivers/bus/vmbus. Because those
+APIs are used only by NetVSC PMD and not feasible for use by a DPDK
+application, all VMBUS APIs are set to deprecate in upcoming 25.11 release.
+
+The notice for deprecation is accepted in the following patch:
+https://patchwork.dpdk.org/project/dpdk/patch/1742242184-19600-1-git-send-email-longli@linuxonhyperv.com/
+
+Change log:
+v3: Add in the comment on the VMBUS API deprecation notice
+v7: Dropped the first two patches in the seires as they have already been applied to net-next
+
+Long Li (4):
+  bus/vmbus: store UIO fd for secondary process
+  bus/vmbus: support channels without monitoring enabled
+  bus/vmbus: add rte_vmbus_device to all functions accessing vmbus
+  bus/vmbus: set event for channel without monitoring support
+
+ drivers/bus/vmbus/linux/vmbus_bus.c  |  9 +++--
+ drivers/bus/vmbus/linux/vmbus_uio.c  |  6 ++--
+ drivers/bus/vmbus/private.h          |  2 +-
+ drivers/bus/vmbus/rte_bus_vmbus.h    | 16 ++++++---
+ drivers/bus/vmbus/vmbus_channel.c    | 53 ++++++++++++++++++++--------
+ drivers/bus/vmbus/vmbus_common_uio.c |  9 +++--
+ drivers/net/netvsc/hn_nvs.c          | 18 +++++-----
+ drivers/net/netvsc/hn_nvs.h          | 15 ++++----
+ drivers/net/netvsc/hn_rndis.c        | 11 +++---
+ drivers/net/netvsc/hn_rxtx.c         | 16 ++++-----
+ 10 files changed, 97 insertions(+), 58 deletions(-)
+
+-- 
+2.25.1
+
