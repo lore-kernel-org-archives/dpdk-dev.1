@@ -2,73 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1562AC87FC9
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Jul 2025 05:07:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAEFBC87FCB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Jul 2025 05:24:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D11F240668;
-	Wed, 30 Jul 2025 07:07:18 +0200 (CEST)
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com
- [209.85.210.181])
- by mails.dpdk.org (Postfix) with ESMTP id 1B08A4025E
- for <dev@dpdk.org>; Wed, 30 Jul 2025 07:07:17 +0200 (CEST)
-Received: by mail-pf1-f181.google.com with SMTP id
- d2e1a72fcca58-747e41d5469so6858249b3a.3
- for <dev@dpdk.org>; Tue, 29 Jul 2025 22:07:17 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7D3A240DD5;
+	Wed, 30 Jul 2025 07:24:39 +0200 (CEST)
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
+ [209.85.214.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 3F6A840668
+ for <dev@dpdk.org>; Wed, 30 Jul 2025 07:24:38 +0200 (CEST)
+Received: by mail-pl1-f182.google.com with SMTP id
+ d9443c01a7336-2402bbb4bf3so37212965ad.2
+ for <dev@dpdk.org>; Tue, 29 Jul 2025 22:24:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1753852036;
- x=1754456836; darn=dpdk.org; 
+ d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1753853077;
+ x=1754457877; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=OOVLq4LIkeQwRFOTJyk5/7dxT4AVmK7qMvefoffPBFs=;
- b=CyCotyqfPqiKJ7RgjktOtrfGlso7wVGUN67I+d2SuW9Br6dJq3dHpcmmAOijhZUco2
- zAC/BeZd27pN7BxkEpDyoeHlcXPB7A/A213GsxQBt9S50j6eniQy/83eWY6GrWlFpgZ6
- 1RhOOXwn0ixAihUjmCWIqBfTS0SZhvOVcc7jwmjjDyE2IlxYkIGhBUPl7Zc6duHZqIme
- gYNJRIbI7YZlEnX17jBIAG6HbDrB4rWt0B6cmh4yzSKESNDAnMnnqDM6bgIzqS4esukG
- SEokusb6IMo3EozjOVX25cHAu0mCZW66uvXTnYEFUS5sck678addgW4yIMPhz/V+7827
- ovIw==
+ bh=JaRrxp4EYql7Vow9Lkreot2G7kYJ0c0AoQ/z6kFwn4g=;
+ b=LeBiO3GkNG5R0GFSc16WxAIVg8RmrKto8Qv7EqC2jN1YtFICxUxemaJKY0Nar7jN0/
+ Am71q4oj8maVwu36FILbxBf9wxBnTBKrvBChJwuB8oiDgTUaMjSehJyYjHJN632mV6am
+ gAbLul3SGVQXv33mu7hYMGKOeUWOYzjtluPYfRQNP8MusM57px44niQLqyT5lSONcdUZ
+ ru8iSHDB889083AsqGy96cBNf6jNsMA4/T5UGAr/ZOzVr0ltvOpzirh4RvCOY44fR/WQ
+ Xl+UQx8BgEXGxHX3xfeVeM+kYBmBP6ToRevqhWvPl1TNaUHNlLiAxPqEf3yXNgdYf+Xm
+ f56Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753852036; x=1754456836;
+ d=1e100.net; s=20230601; t=1753853077; x=1754457877;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=OOVLq4LIkeQwRFOTJyk5/7dxT4AVmK7qMvefoffPBFs=;
- b=ZNn4+JsMnUykBUbeyMWNnYHqZMk4hS5XGmPyj4D1sAIkpq+jiQ0aXHk/HcY9lKlchc
- CVLdoOfmUy83XuZXC9FCvv+HqRsUQ4JDfI4oJKqkyMMEZFDrfRZmqcz+vMlou570H/1v
- t9BGk5Yds9batrGkMpBPxyOkyqAuIKSNB16gtCPghAOtdCatgYGXj2SLwGpf6zOtdR03
- 1HjRIL4wKFOX2FBahiMQwfzD1ayAmJKbajZGZRChJsz3UlOuaNmighknMOht4lqKw6CG
- T/sJXPsqIXM6s5ZVzYVFnLu2L6OALV8fxPw7/jf5XLM/oxdWIW+JX6YKw9d72bXSE1Bb
- XCQw==
-X-Gm-Message-State: AOJu0Yzsf8eukDuc1lsPS5U3m9m+gC8IZNe/4IhAkXJYtV0guAyglNwU
- UpZelNFaaFKzLe55wr3VfsRJg0HLeataXOcfiS7eQwBjND4dHDIg/4vuHB0QOfwuZQ4=
-X-Gm-Gg: ASbGncuMp5MDO6LrqVTSQuhGjOKp3+NnQKtLneKnpQ1o+0Rzua8qrQlds9AuBRMPPhS
- DuFm9t9Zdd9bQAtL6iignmZo+qqUG5b5aQdwE2+SagX97FSCxTHbpEHj6oHgvHem/XyQGnID3Rn
- ycfd3IZ9bTH22oF8D1gBLbXSAy2Ttk7PcI+n8l9lQZonMidLyim89ZcfULR0oeXxQ67aA+NKfkX
- /UMknH892WQpSFmtQ/VqKv7eG8sd0nMvCEQYsTjc3kWbGC7a8XkwIlHn+aNkZhZ1SgF0p9074TN
- 6Gw0ouOLAk4dL9BN4e+8rVHNiWV1PIp8KmkPbumHZezZO3lvlrFlF7IHI3yhvwJCyE0ATrtGW6J
- LpUpU74rSu0ENde+JAJHcI7RvREz7qimKag25QcopB2rpuk/S
-X-Google-Smtp-Source: AGHT+IGr9xs4kNDiUXJYLSFSKi2aZzD5C0l2ANoUZNrqajOWC1HHeLtgu+4NfX2i28c+Mk8pqmgYiw==
-X-Received: by 2002:a05:6a00:844:b0:75f:7a4d:ea11 with SMTP id
- d2e1a72fcca58-76ab2946b13mr2680323b3a.11.1753852036076; 
- Tue, 29 Jul 2025 22:07:16 -0700 (PDT)
+ bh=JaRrxp4EYql7Vow9Lkreot2G7kYJ0c0AoQ/z6kFwn4g=;
+ b=nkiVhLFefDIbAFAlFTQ9/mZ/CRoVS3SI2EFvFlBxCEh89WsoBdkY3/5KWQBCvnWAs7
+ AcELUSs2v9KOBq5rgW3++LdYYyS/MAR+8qwD0eu/xHYvl7ofz3sQ/S1iVSYmN/4+sFx0
+ KTGZfK4mrg6gai1U7sPiCPX40ebcQ3T64C4rN/n+KV2xZZuB06Mr2DxGg43pgjH1hoHa
+ dj2eput3YOFU3GFLW6yuLOTcdGOHlO4Ax5sCAXuFjXI+s2StWb7nOIHpo51yU3WCwLwL
+ jekUVSWzkwVWOo7mfL3ucQ05H2/NWnpmPHlsDD16LjsoJ8KjdeAVfn/utlwB+vab+V+p
+ bFXg==
+X-Gm-Message-State: AOJu0Yx2iz8jy4XmPR5ez25WhtBDnyBmBwBMB76a3hcuFi3dIJvXuAdz
+ wf7lHU2tsgx/f/SoMIVSYH9cOt6QSywwTM3E55JqwueJ9SfV1pmV8dMZAKj4IhbbNJY=
+X-Gm-Gg: ASbGnctoZguRtZHMcTZPuYShc0eVbzy1UoDQSSPZoA9SvHMnYMso5mBK1aQlpzTj+tH
+ n709Md+NKmcJOOFaMDG7I/WbO39E4EbQighieTBG+gIxPDf+s5UJS53y9aPSPSjXtONlKFC3Wp1
+ whW6Pp5aSgaXfjOEoyIE6QkHGCKU2A1oGVXtW1uP51q/oXTuZg6qKnSaP3lxnepYe6Kkovyr6Rp
+ oZFtGTSVZA9q9ZWqLGJ99BJcP4qSn3tRr84JdWG3ssQqFTOOrEkCy10gZ1dFXrL5pSmVricJixO
+ jawzIJIU9Rm4j48CUenSkZxmuMUKOJqcLKsvcnMJLFNF85ClENtXcSuKZ3hadLXqoQeT3uMnl+L
+ hk+qKbYhxADDbdtsAO3GhtKwUxId44uJVPDEzy2gd+gc+NDrM
+X-Google-Smtp-Source: AGHT+IEbBRq23+I882FDXdL/Cj0uVFraITLzln+rptxkIillake1Z7dcwxQkD5fwYLhbTXjWlOxicw==
+X-Received: by 2002:a17:903:fa5:b0:240:2eb6:d5cc with SMTP id
+ d9443c01a7336-24096abfad2mr34273555ad.17.1753853077227; 
+ Tue, 29 Jul 2025 22:24:37 -0700 (PDT)
 Received: from localhost.localdomain ([64.62.143.197])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7640b3d3d3csm9515124b3a.111.2025.07.29.22.07.15
+ d9443c01a7336-24014fb8236sm65600385ad.17.2025.07.29.22.24.36
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 29 Jul 2025 22:07:15 -0700 (PDT)
+ Tue, 29 Jul 2025 22:24:36 -0700 (PDT)
 From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
 To: stephen@networkplumber.org, thomas@monjalon.net, ferruh.yigit@amd.com,
  andrew.rybchenko@oktetlabs.ru
 Cc: dev@dpdk.org,
 	stable@dpdk.org
-Subject: Re: [PATCH] [PATCH v4] lib/ethdev: fix segfault in secondary process
- by validating dev_private pointer
-Date: Wed, 30 Jul 2025 01:07:02 -0400
-Message-ID: <20250730050702.74381-1-14pwcse1224@uetpeshawar.edu.pk>
+Subject: Re: [PATCH] [PATCH v5] app/testpmd: fix segfault in secondary process
+ by monitoring primary
+Date: Wed, 30 Jul 2025 01:24:07 -0400
+Message-ID: <20250730052412.78178-1-14pwcse1224@uetpeshawar.edu.pk>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250729143420.0fd7b627@hermes.local>
-References: <20250729143420.0fd7b627@hermes.local>
+In-Reply-To: <20250729144850.2392840f@hermes.local>
+References: <20250729144850.2392840f@hermes.local>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=y
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -85,10 +86,12 @@ Errors-To: dev-bounces@dpdk.org
 
 Hi Stephen,
 
-Many thanks for diving deeper into the issue and sharing the insights.
+Many thanks for the fix and for the suggestion that the secondary should exit 
+immediately without attempting any cleanups once it detects the primary has exited.
 
-I agree. given that the primary tears down all the devices on exit, the secondary is left with dangling pointers and inconsistent state. Without a mechanism to notify or synchronize that teardown, I think it is the only option for the secondary to exit immediately, without attempting any cleanups, once it detects the primary has exited.
-
+I completely agree. I’ll supersede this patch with a new version that incorporates 
+both of our changes.
 
 Best regards,
 Khadem
+
