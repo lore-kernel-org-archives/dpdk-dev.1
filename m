@@ -2,35 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11B73C87FCB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Jul 2025 12:59:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B49C83F26
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Jul 2025 13:19:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D5D7D40E5A;
-	Wed, 30 Jul 2025 14:59:25 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1CA9F40E41;
+	Wed, 30 Jul 2025 15:19:16 +0200 (CEST)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 666D9402A7
- for <dev@dpdk.org>; Wed, 30 Jul 2025 14:59:23 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 85C31402C3
+ for <dev@dpdk.org>; Wed, 30 Jul 2025 15:19:14 +0200 (CEST)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D580A2573;
- Wed, 30 Jul 2025 05:59:14 -0700 (PDT)
-Received: from e132991.cambridge.arm.com (unknown [10.1.195.61])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E00983F66E;
- Wed, 30 Jul 2025 05:59:21 -0700 (PDT)
-From: Thomas Wilks <thomas.wilks@arm.com>
-To: dev@dpdk.org
-Cc: Paul Szczepanek <paul.szczepanek@arm.com>,
- Luca Vizzarro <luca.vizzarro@arm.com>, Patrick Robb <probb@iol.unh.edu>,
- Ivan Malov <ivan.malov@arknetworks.am>, Dean Marx <dmarx@iol.unh.edu>,
- Thomas Wilks <thomas.wilks@arm.com>
-Subject: [PATCH v4 2/2] dts: add PMD RSS testsuite
-Date: Wed, 30 Jul 2025 13:58:59 +0100
-Message-ID: <20250730125859.159185-3-thomas.wilks@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250730125859.159185-1-thomas.wilks@arm.com>
-References: <20250718150404.200096-1-thomas.wilks@arm.com>
- <20250730125859.159185-1-thomas.wilks@arm.com>
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A4D9F1E5E;
+ Wed, 30 Jul 2025 06:19:05 -0700 (PDT)
+Received: from [192.168.50.107] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id
+ 899E83F66E; Wed, 30 Jul 2025 06:19:12 -0700 (PDT)
+Message-ID: <938781a3-b6b1-484d-ab8a-18a048870938@arm.com>
+Date: Wed, 30 Jul 2025 14:19:11 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] dts: add qinq test suite
+Content-Language: en-GB
+To: Dean Marx <dmarx@iol.unh.edu>, probb@iol.unh.edu,
+ yoan.picchi@foss.arm.com, Honnappa.Nagarahalli@arm.com,
+ paul.szczepanek@arm.com
+Cc: dev@dpdk.org
+References: <20250605184143.498892-2-dmarx@iol.unh.edu>
+ <20250717205718.108826-1-dmarx@iol.unh.edu>
+ <20250717205718.108826-2-dmarx@iol.unh.edu>
+From: Luca Vizzarro <Luca.Vizzarro@arm.com>
+In-Reply-To: <20250717205718.108826-2-dmarx@iol.unh.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -44,421 +46,386 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Port over the rss_key_update, pmd_rss_reta and pmd_rss_hash
-test suites from old DTS into one file including all of the
-helper functions that are required by all of the test suites
-to work.
+Hi Dean,
 
-The rss_key_update test cases verify that setting a new hash
-key when Receive Side Scaling (RSS) will result in a change
-in the packets destination queue. These test cases also
-verifies that the reported key size of the NIC is correct.
+thank you so much for your patch. Looks mostly correct, just lots of 
+polishing suggestions for a more readable code.
 
-The pmd_rss_reta test cases verify that Redirection Tables (RETAs)
-of different sizes function correctly in RSS. These test cases
-also verify that the reported reta size of the NIC is correct.
+On 17/07/2025 21:57, Dean Marx wrote:
+> +"""QinQ (802.1ad) Test Suite.
+> +
+> +This test suite verifies the correctness and capability of DPDK Poll Mode Drivers (PMDs)
+> +in handling QinQ-tagged Ethernet frames, which contain a pair of stacked VLAN headers
+> +(outer S-VLAN and inner C-VLAN). These tests ensure that both software and hardware offloads
+> +related to QinQ behave as expected across different NIC vendors and PMD implementations.
+> +
+extra new line not needed.
+> +"""
 
-The pmd_rss_hash test case verifies that the 4 supported types of
-hashing algorithm used in RSS function correctly and that the nic
-supports them. The four hashing algorithms being DEFAULT, TOEPLITZ,
-SYMMETRIC_TOEPLITZ and SIMPLE_XOR. These test cases also verify
-that the supported hashing algorithms reported by the NIC are correct.
+> +class TestQinq(TestSuite):
+> <snip>
+> +    def send_packet_and_verify(
+> +        self, packet: Packet, testpmd: TestPmdShell, should_receive: bool
+> +    ) -> None:
+> <snip>
+> +        if should_receive:
+> +            self.verify(received != [], "Packet was dropped when it should have been received.")
+> +        else:
+> +            self.verify(received == [], "Packet was received when it should have been dropped.")
+Quite an unusual way to check if a list is (not) empty. I'd just exploit 
+the boolean check on lists in this case. Also send_packet_and_capture 
+returns a list of packets, received is a misleading name as it indicates 
+it returns a boolean instead. For clarity, you could do:
 
-Signed-off-by: Thomas Wilks <thomas.wilks@arm.com>
----
- dts/tests/TestSuite_pmd_rss.py | 383 +++++++++++++++++++++++++++++++++
- 1 file changed, 383 insertions(+)
- create mode 100644 dts/tests/TestSuite_pmd_rss.py
+   packets = send_packet_and_capture(..)
+   not_received = not packets
 
-diff --git a/dts/tests/TestSuite_pmd_rss.py b/dts/tests/TestSuite_pmd_rss.py
-new file mode 100644
-index 0000000000..4c1b026307
---- /dev/null
-+++ b/dts/tests/TestSuite_pmd_rss.py
-@@ -0,0 +1,383 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2025 Arm Limited
-+
-+"""RSS testing suite.
-+
-+Tests different hashing algorithms by checking if packets are routed to correct queues.
-+Tests updating the RETA (Redirection Table) key to verify it takes effect and follows
-+set size constraints.
-+Tests RETA behavior under changing number of queues.
-+"""
-+
-+import random
-+
-+from scapy.layers.inet import IP, UDP
-+from scapy.layers.l2 import Ether
-+
-+from framework.exception import InteractiveCommandExecutionError
-+from framework.params.testpmd import SimpleForwardingModes
-+from framework.remote_session.testpmd_shell import (
-+    FlowRule,
-+    RSSOffloadTypesFlag,
-+    TestPmdShell,
-+    TestPmdVerbosePacket,
-+)
-+from framework.test_suite import BaseConfig, TestSuite, func_test
-+from framework.testbed_model.capability import requires
-+from framework.testbed_model.topology import TopologyType
-+from framework.utils import StrEnum
-+
-+
-+class Config(BaseConfig):
-+    """Default configuration for Per Test Suite config."""
-+
-+    NUM_QUEUES: int = 4
-+
-+    ACTUAL_KEY_SIZE: int = 52
-+
-+    ACTUAL_RETA_SIZE: int = 512
-+
-+
-+class HashAlgorithm(StrEnum):
-+    """Enum of hashing algorithms."""
-+
-+    DEFAULT = "default"
-+    SIMPLE_XOR = "simple_xor"
-+    TOEPLITZ = "toeplitz"
-+    SYMMETRIC_TOEPLITZ = "symmetric_toeplitz"
-+
-+
-+@requires(topology_type=TopologyType.one_link)
-+class TestPmdRss(TestSuite):
-+    """PMD RSS test suite."""
-+
-+    config: Config
-+
-+    def verify_hash_queue(
-+        self,
-+        reta: list[int],
-+        received_packets: list[TestPmdVerbosePacket],
-+        verify_packet_pairs: bool,
-+    ) -> None:
-+        """Verifies the packet hash corresponds to the packet queue.
-+
-+        Given the received packets in the verbose output, iterate through each packet.
-+        Use the hash to index into RETA and get its intended queue.
-+        Verify the intended queue is the same as the actual queue the packet was received in.
-+        If the hash algorithm is symmetric, verify that pairs of packets have the same hash,
-+        as the pairs of packets sent have "mirrored" L4 ports.
-+        e.g. received_packets[0, 1, 2, 3, ...] hash(0) = hash(1), hash(2) = hash(3), ...
-+
-+        Args:
-+            reta: Used to get predicted queue based on hash.
-+            received_packets: Packets received in the verbose output of testpmd.
-+            verify_packet_pairs: Verify pairs of packets have the same hash.
-+
-+        Raises:
-+            InteractiveCommandExecutionError: If packet_hash is None.
-+        """
-+        # List of packet hashes, used for symmetric algorithms
-+        hash_list = []
-+        for packet in received_packets:
-+            # Ignore stray packets
-+            if packet.port_id != 0 or packet.src_mac != "02:00:00:00:00:00":
-+                continue
-+            # Get packet hash
-+            packet_hash = packet.rss_hash
-+            if packet_hash is None:
-+                raise InteractiveCommandExecutionError(
-+                    "Packet sent by the Traffic Generator has no RSS hash attribute."
-+                )
-+
-+            packet_queue = packet.rss_queue
-+
-+            # Calculate the predicted packet queue
-+            predicted_queue = reta[packet_hash % len(reta)]
-+            self.verify(
-+                predicted_queue == packet_queue,
-+                "Packet sent by the Traffic Generator assigned to incorrect queue by the RSS.",
-+            )
-+
-+            if verify_packet_pairs:
-+                hash_list.append(packet_hash)
-+
-+        if verify_packet_pairs:
-+            # Go through pairs of hashes in list and verify they are the same
-+            for odd_hash, even_hash in zip(hash_list[0::2], hash_list[1::2]):
-+                self.verify(
-+                    odd_hash == even_hash,
-+                    "Packet pair do not have same hash. Hash algorithm is not symmetric.",
-+                )
-+
-+    def send_test_packets(
-+        self,
-+        testpmd: TestPmdShell,
-+        send_additional_mirrored_packet: bool = False,
-+    ) -> list[TestPmdVerbosePacket]:
-+        """Sends test packets.
-+
-+        Send 10 packets from the TG to SUT, parsing the verbose output and returning it.
-+        If the algorithm chosen is symmetric, send an additional packet for each initial
-+        packet sent, which has the L4 src and dst swapped.
-+
-+        Args:
-+            testpmd: Used to send packets and send commands to testpmd.
-+            send_additional_mirrored_packet: Send an additional mirrored packet for each packet
-+            sent.
-+
-+        Returns:
-+            TestPmdVerbosePacket: List of packets.
-+        """
-+        # Create test packets
-+        packets = []
-+        for i in range(10):
-+            packets.append(
-+                Ether(src="02:00:00:00:00:00", dst="11:00:00:00:00:00")
-+                / IP()
-+                / UDP(sport=i, dport=i + 1),
-+            )
-+            if send_additional_mirrored_packet:  # If symmetric, send the inverse packets
-+                packets.append(
-+                    Ether(src="02:00:00:00:00:00", dst="11:00:00:00:00:00")
-+                    / IP()
-+                    / UDP(sport=i + 1, dport=i),
-+                )
-+
-+        # Set verbose packet information and start packet capture
-+        testpmd.set_verbose(level=3)
-+        testpmd.start()
-+        testpmd.start_all_ports()
-+        self.send_packets_and_capture(packets)
-+
-+        # Stop packet capture and revert verbose packet information
-+        testpmd_shell_out = testpmd.stop()
-+        testpmd.set_verbose(level=0)
-+        # Parse the packets and return them
-+        return testpmd.extract_verbose_output(testpmd_shell_out)
-+
-+    def setup_rss_environment(
-+        self,
-+        testpmd: TestPmdShell,
-+    ) -> None:
-+        """Sets up the testpmd environment for RSS test suites.
-+
-+        Sets the testpmd forward mode to rx_only and RSS on the NIC to UDP.
-+
-+        Args:
-+            testpmd: Where the environment will be set.
-+        """
-+        # Set forward mode to receive only, to remove forwarded packets from verbose output
-+        testpmd.set_forward_mode(SimpleForwardingModes.rxonly)
-+
-+        # Reset RSS settings and only RSS udp packets
-+        testpmd.port_config_all_rss_offload_type(RSSOffloadTypesFlag.udp)
-+
-+    def configure_random_reta(self, testpmd: TestPmdShell, queue_number: int) -> list[int]:
-+        """Configure RETA to have random order of queues.
-+
-+        Args:
-+            testpmd: The testpmd instance that will be used to set the rss environment.
-+            queue_number: Number of queues that will be randomly inserted into the RETA.
-+
-+        Returns:
-+            List of ids matching the configured RETA table
-+
-+        Raises:
-+            InteractiveCommandExecutionError: If size of RETA table for driver is None.
-+        """
-+        reta_size = testpmd.show_port_info(port_id=0).redirection_table_size
-+        if reta_size is None:
-+            raise InteractiveCommandExecutionError("Size of RETA table for driver is None.")
-+        reta_table: list[int] = []
-+
-+        for i in range(reta_size):
-+            random_id = random.randint(0, queue_number - 1)
-+            reta_table.insert(i, random_id)
-+            testpmd.port_config_rss_reta(port_id=0, hash_index=i, queue_id=random_id)
-+        return reta_table
-+
-+    def verify_rss_hash_function(
-+        self,
-+        testpmd: TestPmdShell,
-+        hash_algorithm: HashAlgorithm,
-+        flow_rule: FlowRule,
-+        reta: list[int],
-+    ) -> None:
-+        """Verifies hash function are working by sending test packets and checking the packet queue.
-+
-+        Args:
-+            testpmd: The testpmd instance that will be used to set the rss environment.
-+            hash_algorithm: The hash algorithm to be tested.
-+            flow_rule: The flow rule that is to be validated and then created.
-+            reta: Will be used to calculate the predicted packet queues.
-+        """
-+        is_symmetric = hash_algorithm == HashAlgorithm.SYMMETRIC_TOEPLITZ
-+        self.setup_rss_environment(testpmd)
-+        testpmd.flow_create(flow_rule, port_id=0)
-+        # Send udp packets and ensure hash corresponds with queue
-+        parsed_output = self.send_test_packets(
-+            testpmd, send_additional_mirrored_packet=is_symmetric
-+        )
-+        self.verify_hash_queue(reta, parsed_output, is_symmetric)
-+
-+    @func_test
-+    def test_key_hash_algorithm(self) -> None:
-+        """Hashing algorithm test.
-+
-+        Steps:
-+            Setup RSS environment using the chosen algorithm.
-+            Send test packets for each flow rule.
-+
-+        Verify:
-+            Packet hash corresponds to the packet queue.
-+
-+        Raises:
-+            InteractiveCommandExecutionError: If size of RETA table for driver is None.
-+            InteractiveCommandExecutionError: If there are no valid flow rules that can be created.
-+        """
-+        failed_attempts: int = 0
-+        for algorithm in HashAlgorithm:
-+            flow_rule = FlowRule(
-+                group_id=0,
-+                direction="ingress",
-+                pattern=["eth / ipv4 / udp"],
-+                actions=[f"rss types ipv4-udp end queues end func {algorithm.name.lower()}"],
-+            )
-+            with TestPmdShell(
-+                rx_queues=self.config.NUM_QUEUES,
-+                tx_queues=self.config.NUM_QUEUES,
-+            ) as testpmd:
-+                reta_table = self.configure_random_reta(testpmd, self.config.NUM_QUEUES)
-+
-+                if not testpmd.flow_validate(flow_rule, port_id=0):
-+                    # Queues need to be specified in the flow rule on some NICs
-+                    queue_ids = " ".join([str(x) for x in reta_table])
-+                    flow_rule.actions = [
-+                        f"rss types ipv4-udp end queues {queue_ids} end func "
-+                        + algorithm.name.lower()
-+                    ]
-+
-+                    if not testpmd.flow_validate(flow_rule, port_id=0):
-+                        failed_attempts += 1
-+                        if failed_attempts == len(HashAlgorithm):
-+                            raise InteractiveCommandExecutionError(
-+                                "No Valid flow rule could be created."
-+                            )
-+                        # if neither rule format is valid then the algorithm is not supported,
-+                        # move to next one
-+                        continue
-+                self.verify_rss_hash_function(testpmd, algorithm, flow_rule, reta_table)
-+
-+    @func_test
-+    def test_update_key_set_hash_key_short_long(self) -> None:
-+        """Set hash key short long test.
-+
-+        Steps:
-+            Fetch the hash key size.
-+            Create two random hash keys one key too short and one too long.
-+
-+        Verify:
-+            Verify that it is not possible to set the shorter hash key.
-+            Verify that it is not possible to set the longer hash key.
-+
-+        Raises:
-+            InteractiveCommandExecutionError: If port info dose not contain hash key size.
-+        """
-+        with TestPmdShell(
-+            memory_channels=4,
-+            rx_queues=self.config.NUM_QUEUES,
-+            tx_queues=self.config.NUM_QUEUES,
-+        ) as testpmd:
-+            # Get RETA and key size
-+            port_info = testpmd.show_port_info(port_id=0)
-+
-+            # Get hash key size
-+            key_size = port_info.hash_key_size
-+            if key_size is None:
-+                raise InteractiveCommandExecutionError("Port info does not contain hash key size.")
-+
-+            # Create 2 hash keys based on the NIC capabilities
-+            short_key = "".join(
-+                [random.choice("0123456789ABCDEF") for n in range(key_size * 2 - 2)]
-+            )
-+            long_key = "".join([random.choice("0123456789ABCDEF") for n in range(key_size * 2 + 2)])
-+
-+            # Verify a short key cannot be set
-+            short_key_out = testpmd.port_config_rss_hash_key(
-+                0, RSSOffloadTypesFlag.ipv4_udp, short_key, False
-+            )
-+            self.verify(
-+                "invalid" in short_key_out,
-+                "Able to set hash key shorter than specified.",
-+            )
-+
-+            # Verify a long key cannot be set
-+            long_key_out = testpmd.port_config_rss_hash_key(
-+                0, RSSOffloadTypesFlag.ipv4_udp, long_key, False
-+            )
-+            self.verify("invalid" in long_key_out, "Able to set hash key longer than specified.")
-+
-+    @func_test
-+    def test_update_key_reported_key_size(self) -> None:
-+        """Verify reported hash key size is the same as the NIC capabilities.
-+
-+        Steps:
-+            Fetch the hash key size and compare to the actual key size.
-+
-+        Verify:
-+            Reported key size is the same as the actual key size.
-+        """
-+        with TestPmdShell() as testpmd:
-+            reported_key_size = testpmd.show_port_info(port_id=0).hash_key_size
-+            self.verify(
-+                reported_key_size == self.config.ACTUAL_KEY_SIZE,
-+                "Reported key size is not the same as the config file.",
-+            )
-+
-+    @func_test
-+    def test_reta_key_reta_queues(self) -> None:
-+        """RETA rx/tx queues test.
-+
-+        Steps:
-+            For each queue size setup RSS environment and send Test packets.
-+
-+        Verify:
-+            Packet hash corresponds to hash queue.
-+
-+        Raises:
-+            InteractiveCommandExecutionError: If size of RETA table for driver is None.
-+        """
-+        queues_numbers = [2, 9, 16]
-+        for queue_number in queues_numbers:
-+            with TestPmdShell(
-+                rx_queues=queue_number,
-+                tx_queues=queue_number,
-+            ) as testpmd:
-+                # Configure the RETA with random queues
-+                reta = self.configure_random_reta(testpmd, queue_number)
-+
-+                self.setup_rss_environment(testpmd)
-+
-+                # Send UDP packets and ensure hash corresponds with queue
-+                parsed_output = self.send_test_packets(testpmd)
-+                self.verify_hash_queue(reta, parsed_output, False)
-+
-+    @func_test
-+    def test_reta_key_reported_reta_size(self) -> None:
-+        """Reported RETA size test.
-+
-+        Steps:
-+            Fetch reported reta size.
-+
-+        Verify:
-+            Reported RETA size is equal to the actual RETA size.
-+        """
-+        with TestPmdShell(
-+            rx_queues=self.config.NUM_QUEUES,
-+            tx_queues=self.config.NUM_QUEUES,
-+        ) as testpmd:
-+            reported_reta_size = testpmd.show_port_info(port_id=0).redirection_table_size
-+            self.verify(
-+                reported_reta_size == self.config.ACTUAL_RETA_SIZE,
-+                "Reported RETA size is not the same as the config file.",
-+            )
--- 
-2.43.0
+> +    @requires(NicCapability.RX_OFFLOAD_VLAN_EXTEND)
+> +    @func_test
+> +    def test_qinq_filter(self) -> None:
+> <snip>
+> +        with TestPmdShell() as testpmd:
+> +            testpmd.stop_all_ports()
+> +            testpmd.set_vlan_filter(0, True)
+> +            testpmd.set_vlan_extend(0, True)
+> +            testpmd.start_all_ports()
+> +            testpmd.rx_vlan(100, 0, True)
+> +            self.send_packet_and_verify(packets[0], testpmd, should_receive=True)
+> +            self.send_packet_and_verify(packets[1], testpmd, should_receive=False)
+
+Help me understand what's happening here. set_vlan_filter and 
+set_vlan_extend are decorated with @requires_stopped_ports. That means 
+that stop_all_ports will be called automatically, so that removes the 
+need for it.
+
+What confuses me is that rx_vlan is also decorated with 
+@requires_stopped_ports, which makes the preceding start_all_ports a 
+redundant action.
+
+The underlying testpmd.start() in send_packet_and_verify is decorated 
+with @requires_started_ports, so it'd also make calling start_all_ports 
+redundant even if it were placed in the correct order.
+
+My current understanding is that both stop_all_ports and start_all_ports 
+are redundant, and the latter is a potential bug (due to its bad 
+placement) and the test case only works thanks to the decorators. If 
+this is the case then both stop_all_ports and start_all_ports should go.
+
+> +
+> +    @func_test
+> +    def test_qinq_forwarding(self) -> None:
+> +        """QinQ Rx filter test case.
+> +
+> +        Steps:
+> +            Launch testpmd with mac forwarding mode.
+> +            Disable VLAN filter mode on port 0.
+> +            Send test packet and capture verbose output.
+> +
+> +        Verify:
+> +            Check that the received packet has two separate VLAN layers in proper QinQ fashion.
+> +            Check that the received packet outer and inner VLAN layer has the appropriate ID.
+> +        """
+> +        test_packet = (
+> +            Ether(dst="ff:ff:ff:ff:ff:ff")
+> +            / Dot1AD(vlan=100)
+> +            / Dot1Q(vlan=200)
+> +            / IP(dst="1.2.3.4")
+> +            / UDP(dport=1234, sport=4321)
+> +        )
+> +        with TestPmdShell() as testpmd:
+> +            testpmd.stop_all_ports()
+not needed
+> +            testpmd.set_vlan_filter(0, False)
+> +            testpmd.start_all_ports()
+not needed
+> +            testpmd.start()
+> +            received_packet = self.send_packet_and_capture(test_packet)
+received_packets
+> +
+> +            self.verify(
+> +                received_packet != [], "Packet was dropped when it should have been received."
+> +            )
+not received_packets
+> +
+> +            for packet in received_packet:
+> +                vlan_tags = packet.getlayer(Dot1AD), packet.getlayer(Dot1Q)
+> +                self.verify(len(vlan_tags) == 2, f"Expected 2 VLAN tags, found {len(vlan_tags)}")
+I am expecting this will always be True. You are creating a fixed-size 
+tuple[Dot1AD | None, Dot1Q | None]. So even if both are None vlan_tags 
+will still be (None, None) which is 2 None items. Since you don't 
+actually use vlan_tags, it may easier to verify the presence of the 
+layer of directly, but for Dot1Q it already happens herebelow. So I'd 
+just check Dot1AD:
+
+   self.verify(packet.haslayer(Dot1AD), ...)
+
+> +
+> +                if packet.haslayer(Dot1Q):
+> +                    outer_vlan_id = packet[Dot1Q].vlan
+It may be more readable to take advantage of getlayer in the if:
+
+   if outer_vlan := packet.getlayer(Dot1Q):
+       outer_vlan_id = outer_vlan.vlan
+> +                    self.verify(
+> +                        outer_vlan_id == 100,
+> +                        f"Outer VLAN ID was {outer_vlan_id} when it should have been 100.",
+> +                    )
+> +                else:
+> +                    self.verify(False, "VLAN layer not found in received packet.")
+> +
+> +                if packet[Dot1Q].haslayer(Dot1Q):
+> +                    inner_vlan_id = packet[Dot1Q].payload[Dot1Q].vlan
+the above approach helps to avoid this chain:
+
+     if inner_vlan := outer_vlan.getlayer(Dot1Q):
+         inner_vlan_id = inner_vlan.vlan
+> +                    self.verify(
+> +                        inner_vlan_id == 200,
+> +                        f"Inner VLAN ID was {inner_vlan_id} when it should have been 200",
+> +                    )
+> +
+> +    @func_test
+> +    def test_mismatched_tpid(self) -> None:
+> +        """Test behavior when outer VLAN tag has a non-standard TPID (not 0x8100 or 0x88a8).
+> +
+> +        Steps:
+> +            Launch testpmd in mac forward mode.
+> +            Set verbose level to 1.
+> +            Disable VLAN filtering on port 0.
+> +            Send and capture test packet.
+> +
+> +        Verify:
+> +            Only 1 VLAN tag is in received packet.
+> +            Inner VLAN ID matches the original packet.
+> +        """
+> +        with TestPmdShell() as testpmd:
+> +            testpmd.set_verbose(level=1)
+> +            testpmd.stop_all_ports()
+not needed
+> +            testpmd.set_vlan_filter(0, False)
+> +            testpmd.start_all_ports()
+not needed
+> +            testpmd.start()
+> +
+> +            mismatched_packet = (
+> +                Ether(dst="ff:ff:ff:ff:ff:ff")
+> +                / Dot1Q(vlan=100, type=0x1234)
+> +                / Dot1Q(vlan=200)
+> +                / IP(dst="1.2.3.4")
+> +                / UDP(dport=1234, sport=4321)
+> +            )
+> +
+> +            received_packet = self.send_packet_and_capture(mismatched_packet)
+reiceved_packets
+> +
+> +            self.verify(
+> +                received_packet != [], "Packet was dropped when it should have been received."
+> +            )
+not received_packets
+> +
+> +            for packet in received_packet:
+> +                vlan_tags = [layer for layer in packet.layers() if layer == Dot1Q]
+> +                self.verify(
+> +                    len(vlan_tags) == 1,
+> +                    f"Expected 1 VLAN tag due to mismatched TPID, found {len(vlan_tags)}",
+> +                )
+> +
+> +                vlan_id = packet[Dot1Q].vlan
+you already collected the layer in vlan_tags, and the above verify 
+guarantees we have one tag. This should just be:
+   vlan_tags[0].vlan
+
+> +                self.verify(vlan_id == 200, f"Expected inner VLAN ID 200, got {vlan_id}")
+> +
+> +    def strip_verify(
+> +        self, packet: Packet, expected_num_tags: int, context: str, check_id: bool = False
+since expected_num_tags can be only 0 or 1, I'd make this a bool, since 
+this function doesn't handle any other number (and could become a problem).
+> +    ) -> None:
+> +        """Helper method for verifying packet stripping functionality."""
+> +        if expected_num_tags == 0:
+> +            has_vlan = bool(packet.haslayer(Dot1Q))
+> +            if not has_vlan:
+> +                self.verify(True, "Packet contained VLAN layer")
+this verify will never trigger, meant to be False? Although I think this 
+whole block is redundant.
+> +            else:
+> +                vlan_layer = packet.getlayer(Dot1Q)
+> +                self.verify(
+> +                    vlan_layer is not None
+all of the above could be greatly simplified with the approach suggested 
+so far:
+
+     if vlan_layer := packet.getlayer(Dot1Q):
+         self.verify(vlan_layer.type != ...)
+         ...
+
+No `else` needed.
+> +                    and vlan_layer.type != 0x8100
+> +                    and vlan_layer.type != 0x88A8,
+> +                    f"""VLAN tags found in packet when should have been stripped: {packet.summary()}
+> +                    sent packet: {context}""",
+> +                )
+> +        if expected_num_tags == 1:
+> +
+> +            def count_vlan_tags(packet: Packet) -> int:
+> +                """Method for counting the number of VLAN layers in a packet."""
+> +                count = 0
+> +                layer = packet.getlayer(Dot1Q)
+> +                while layer:
+> +                    if layer.type == 0x8100:
+> +                        count += 1
+> +                    layer = layer.payload.getlayer(Dot1Q)
+> +                return count
+Unless I am misunderstanding this could be greater simplified with:
+
+     tag_count = [
+         type(layer) is Dot1Q and layer.type == 0x8100
+         for layer in packet.layers()
+     ].count(True)
+
+> +
+> +            tag_count = count_vlan_tags(packet)
+You are calling this only once as far as I can see. So why make it a 
+local function (not a method)?
+> +            self.verify(
+> +                tag_count == 1,
+> +                f"""Expected one 0x8100 VLAN tag but found {tag_count}: {packet.summary()}
+> +                sent packet: {context}""",
+please no triple quotes
+> +            )
+> +            first_dot1q = packet.getlayer(Dot1Q)
+since you actually want the first layer, I'd then change the list 
+comprehension above so that you can avoid checking for None again:
+
+    dot1q_layers = [
+        layer
+        for layer in packet.layers()
+        if type(layer) is Dot1Q and layer.type == 0x8100
+    ]
+
+    self.verify(len(dot1q_layers) == 1, ...)
+
+    ...
+
+    first_dot1q = dot1q_layers[0]
+> +            self.verify(
+> +                first_dot1q is not None and first_dot1q.type == 0x8100,
+> +                f"""VLAN tag 0x8100 not found in packet: {packet.summary()}
+> +                sent packet: {context}""",
+no triple quotes
+> +            )
+> +            if check_id:
+> +                self.verify(
+> +                    packet[Dot1Q].vlan == 200,
+is this just meant to be first_dot1q?
+> +                    f"""VLAN ID 200 not found in received packet: {packet.summary()}
+> +                    sent packet: {context}""",
+no triple quotes
+> +                )
+> +
+> +    @requires(NicCapability.RX_OFFLOAD_VLAN_STRIP)
+> +    @func_test
+> +    def test_vlan_strip(self) -> None:
+> +        """Test combinations of VLAN/QinQ strip settings with various QinQ packets.
+> +
+> +        Steps:
+> +            Launch testpmd with VLAN strip enabled.
+> +            Send four VLAN/QinQ related test packets.
+> +
+> +        Verify:
+> +            Check received packets have the expected VLAN/QinQ layers/tags.
+> +        """
+> +        test_packets = [
+> +            Ether() / Dot1Q(type=0x8100) / IP() / UDP(dport=1234, sport=4321),
+> +            Ether()
+> +            / Dot1Q(vlan=100, type=0x8100)
+> +            / Dot1Q(vlan=200, type=0x8100)
+> +            / IP()
+> +            / UDP(dport=1234, sport=4321),
+> +            Ether() / Dot1Q(type=0x88A8) / IP() / UDP(dport=1234, sport=4321),
+> +            Ether() / Dot1Q(type=0x88A8) / Dot1Q(type=0x8100) / IP() / UDP(dport=1234, sport=4321),
+> +        ]
+> +        with TestPmdShell() as testpmd:
+> +            testpmd.stop_all_ports()
+not needed
+> +            testpmd.set_vlan_strip(0, True)
+> +            testpmd.start_all_ports()
+not needed
+> +            testpmd.start()
+> +
+> +            rec1 = self.send_packet_and_capture(test_packets[0])
+> +            rec2 = self.send_packet_and_capture(test_packets[1])
+> +            rec3 = self.send_packet_and_capture(test_packets[2])
+> +            rec4 = self.send_packet_and_capture(test_packets[3])
+> +
+> +            testpmd.stop()
+> +
+> +            try:
+> +                context = "Single VLAN"
+> +                self.strip_verify(rec1[0], 0, context)
+> +                context = "Stacked VLAN"
+> +                self.strip_verify(rec2[0], 1, context, check_id=True)
+> +                context = "Single S-VLAN"
+> +                self.strip_verify(rec3[0], 0, context)
+> +                context = "QinQ"
+> +                self.strip_verify(rec4[0], 1, context)
+> +            except IndexError:
+> +                self.verify(
+> +                    False, f"{context} packet was dropped when it should have been received."
+> +                )
+what guarantees us that the packet we sent is the first one to be received?
+> +
+> +    @requires(NicCapability.RX_OFFLOAD_QINQ_STRIP)
+> +    @func_test
+> +    def test_qinq_strip(self) -> None:
+> +        """Test combinations of VLAN/QinQ strip settings with various QinQ packets.
+> +
+> +        Steps:
+> +            Launch testpmd with QinQ and VLAN strip enabled.
+> +            Send four VLAN/QinQ related test packets.
+> +
+> +        Verify:
+> +            Check received packets have the expected VLAN/QinQ layers/tags.
+> +        """
+> +        test_packets = [
+> +            Ether() / Dot1Q(type=0x8100) / IP() / UDP(dport=1234, sport=4321),
+> +            Ether()
+> +            / Dot1Q(vlan=100, type=0x8100)
+> +            / Dot1Q(vlan=200, type=0x8100)
+> +            / IP()
+> +            / UDP(dport=1234, sport=4321),
+> +            Ether() / Dot1Q(type=0x88A8) / IP() / UDP(dport=1234, sport=4321),
+> +            Ether() / Dot1Q(type=0x88A8) / Dot1Q(type=0x8100) / IP() / UDP(dport=1234, sport=4321),
+> +        ]
+> +        with TestPmdShell() as testpmd:
+> +            testpmd.stop_all_ports()
+not needed
+> +            testpmd.set_qinq_strip(0, True)
+> +            testpmd.start_all_ports()
+not needed
+> +            testpmd.start()
+> +
+> +            rec1 = self.send_packet_and_capture(test_packets[0])
+> +            rec2 = self.send_packet_and_capture(test_packets[1])
+> +            rec3 = self.send_packet_and_capture(test_packets[2])
+> +            rec4 = self.send_packet_and_capture(test_packets[3])
+> +
+> +            testpmd.stop()
+> +
+> +            try:
+> +                context = "Single VLAN"
+> +                self.strip_verify(rec1[0], 0, context)
+> +                context = "Stacked VLAN"
+> +                self.strip_verify(rec2[0], 1, context, check_id=True)
+> +                context = "Single S-VLAN"
+> +                self.strip_verify(rec3[0], 0, context)
+> +                context = "QinQ"
+> +                self.strip_verify(rec4[0], 0, context)
+> +            except IndexError:
+> +                self.log(f"{context} packet was dropped when it should have been received.")
+this is actually virtually identical (with only one line of difference) 
+to test_vlan_strip. Could we remove this duplication?
+
+Luca
 
