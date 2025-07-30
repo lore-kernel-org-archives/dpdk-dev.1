@@ -2,70 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE4EAC87FC9
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Jul 2025 05:57:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C2A7C87FC9
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Jul 2025 06:08:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 460B240DD5;
-	Wed, 30 Jul 2025 07:56:59 +0200 (CEST)
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com
- [209.85.215.171])
- by mails.dpdk.org (Postfix) with ESMTP id F1C2940668
- for <dev@dpdk.org>; Wed, 30 Jul 2025 07:56:57 +0200 (CEST)
-Received: by mail-pg1-f171.google.com with SMTP id
- 41be03b00d2f7-b390d09e957so6809097a12.1
- for <dev@dpdk.org>; Tue, 29 Jul 2025 22:56:57 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 78CDE40668;
+	Wed, 30 Jul 2025 08:08:34 +0200 (CEST)
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com
+ [209.85.216.42]) by mails.dpdk.org (Postfix) with ESMTP id A22934025E
+ for <dev@dpdk.org>; Wed, 30 Jul 2025 08:08:33 +0200 (CEST)
+Received: by mail-pj1-f42.google.com with SMTP id
+ 98e67ed59e1d1-313bb9b2f5bso6157934a91.3
+ for <dev@dpdk.org>; Tue, 29 Jul 2025 23:08:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1753855017;
- x=1754459817; darn=dpdk.org; 
+ d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1753855712;
+ x=1754460512; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
  bh=YBNj2bNPMJgIgM9w/R4GiFPk1jCz/10zA/Og6gIlmxw=;
- b=gBNu9VorPdBcGoQr2GIGsxgbsCzajP8Ye52nFzYeubw0+iHPBHR/roe1YR6B6q1/It
- Bs078DkcG8yFef7MaW8g7WC1M1NAWfUXhAnLmRywIO+WCjg8AJH4s4zy9dHHi51Ll9JQ
- yrwYEn8MKODkRLhOzvA7vF4PaZ7SvEbqg51lno/YXw1w8xiMdaqAHevRWnJ3cD+Tjgzl
- SzYr8sbVrSNqgXNpAo9o8XEvaqBGT2fSPhOOB3zqokkFCtgO9iL9o5gjAIJ1VdfWSXeg
- p786WHlY75uwQ3HDqF6ubqFcC63Z4EVcTmUXMzykVrwFJMIx1oYFFLuRdqCJ8S4et7rB
- E0ow==
+ b=YWJv6+tyGEh5wl+ntitFuSgflK1RhCBJZHy6V9vDqDpexZBG5FxY5lh5GGTvN3lbNl
+ ldfiewzjJIBkkuO2Bt6jNhMpcKcBO/Y4tXcKWAzI+3qaeyrwXnjGsePrLtH4EBPCo2kx
+ 0k9DQxHhtYTL6WPYB23TYXvdqFydwgp7zJjnl3NdakkIFjgXcTyrtWp12jM393mC0cax
+ gJbGvvlJJDo6Uav39KvaXZMeV4Xb6Py1XRUFuj8PLBNDTjpJsrs6zAkPg1SqnR2Kc9AE
+ CEVtSAzv4Ju/tW2CfANMpNkctXnXlbfeDE9RAEYhb8hoMop2UbwKs3WRvobbrrrt+HB5
+ 7AYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753855017; x=1754459817;
+ d=1e100.net; s=20230601; t=1753855712; x=1754460512;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
  bh=YBNj2bNPMJgIgM9w/R4GiFPk1jCz/10zA/Og6gIlmxw=;
- b=CoHWoFqdB+NyEqS6y1AUOUeDEKhmzgcj6Lbg12AUgUX8zCXoeTT4KgWTrKhr1fHcCG
- 0hds+9OXdC/Wl1pSvR3eiZszjZAGJkcgEtm1q+98jIoYWnSP0Djen80NJ76vX7eTJzHz
- dDTG2jjxg222pOYfFWYfeTfQ3CTGs6peWxcGydCGJGNBd5dovsjmCOjzm6/lIo5l87PM
- z0xkxRVMx0/0KmsZFgCgM6sioVd0SIDSQHSIL4gPjQybDFR9hflTTcLyBrNNijn4FGjM
- WHVUT0WhPCwT3TOuSoPGrFa0Af6pQpNAZ4m/4UeGJYrIkI3zsqC0Ul5NA5eIXEzfdZ8R
- 5a/g==
-X-Gm-Message-State: AOJu0YxDOnJSeBkR077GZ5ToRwZc1Suxp6kp1lgsXWCWzwWCsctrtDjl
- aUqDBD9aNBnQX5nqPWU9jshPIeblbLDowtiLL0er0zklNaGaqmp+1pJaQSCBALMxy1u1YMwfupU
- 5LHaEGlqrug==
-X-Gm-Gg: ASbGnctgrNNHWuZLi2h0Mc4sf1SOlgHJ4l0bUrosw9JWFMONrnp9OK21jrDdL/Fjbj8
- u058RIE6nwAy305J9v51TCO2ceFpObc9Ie9Nys1W9yLjBpdmnrC8zmgMsHtxRbqIuT6Hs77nkv7
- UlICCj4gXtXMeLOtAY6XejyPu1qxCZQhxNH3VpbIjlX+pY5W3B2OPBqZ38bhnjRODBo9KPPkJjC
- 4W3ywnLbn3NKF/+eov/WmJznS1vEywd/IdzTTC7ssHyXkRZHsDA/OGA3XpxFKvVme8ksSzRZ0dv
- JzXe/17LHuSAj0kDB3T4dbPO4q39hHOvyzEI4Ku+rhRaIdUj8yFQPoF//U6XJnBf+08r91JFhKa
- SMrnoS4gF4QSgri6WZltDbMNoXsK3HYZCxhHkAiVBhAMtsABC
-X-Google-Smtp-Source: AGHT+IH1OL7quBAlnQjEDl75e6O/HTULh/gmsFZHQ0nicbjjM8tcmxvU4G3kHhgUKQn7HysBdSONSg==
-X-Received: by 2002:a17:90b:5623:b0:31c:23f2:d2ae with SMTP id
- 98e67ed59e1d1-31f5de41b29mr3556369a91.15.1753855016852; 
- Tue, 29 Jul 2025 22:56:56 -0700 (PDT)
+ b=uehIKJl/K96huqs9kstle54AzxK7Vy0qG5ep08kh6ihbcMG6M+/NPx8jGacAfq+27H
+ +nEIy8VzO0HLMacqkYSLcIyVYTizE3p4117/bBIVl6sf+HvxRCQolWZHU/7dLcTMxApw
+ QezRx3WazAYKVmnzW0KqAOHZCHyZrsawndIXpELOzLr3qaFjuKvJbjRCNyv9MoLEagZO
+ DVf8EGRY7GN+gUiMgsqJPexs68S3gep7SFHKgkhQkxwRecDPdQLnWy2uivkV6qvrEqqY
+ y11psI4illFOedK/G/KKxUiKrl6pxuPjxsuoR9zUf1yNEdMrO0Wq8kWNl94HEeOe1Wnu
+ CTjw==
+X-Gm-Message-State: AOJu0YxIvSVfEuizRYUsqGE9gE4IIj2f4oekqMLATa+3Zqio1xRDTkgM
+ mxbkFrmyOdVW2NPy3AMrJKUQNnjdAcJLS9FCdN5/RcEG+ras1qn2MmRgB7FV07WVgmI=
+X-Gm-Gg: ASbGncsDljFfT0iVmvihkEcm9gpjPG5hpP0TpuZo2oK2N/WsZK95/NDQeT0i0gbOEv9
+ xMflSx725ddHbOmopkfWKMNIjtjuVb7RFAhNc6MJgSb4eOmlCOjrp7JaoYZ//7nrh4SIhYzjvUH
+ 0dykPKpAeZPoEr1EFh15JaOmzEy4JvaSYS8ipzrcI3IQ6hcRq7vV0I07oQZnYq/yz/TccW9RxSM
+ 1JGe4KFNJyRn/4YRoPYI49vehkSWb0AEhL5XBGjOMevvaI6yBmD9SblBkcj6Z7P4LZXNb5Yc5cl
+ unRKsUc2RfFMq49ViIipd8gvxIf4eEsR998BlZx3ISOKH/jxBYFshfiKQSq7hps3apu+c9P20ZI
+ SsrMe7xTM6jHEjQloE9bj/FF/opoGZixBvw3V7hRAV4aKJT6x
+X-Google-Smtp-Source: AGHT+IGvQte6WYctPSQdOhgCIuYziLVPVnW6T4dqNf1BLvNRBNVtzi+J94BhGzJSIW5WNYxNWNk28Q==
+X-Received: by 2002:a17:90b:1e0c:b0:311:abba:53d2 with SMTP id
+ 98e67ed59e1d1-31f5de42527mr3212244a91.17.1753855712431; 
+ Tue, 29 Jul 2025 23:08:32 -0700 (PDT)
 Received: from localhost.localdomain ([64.62.143.197])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-31f63da8208sm929946a91.2.2025.07.29.22.56.56
+ 41be03b00d2f7-b3f7f568eabsm8537314a12.9.2025.07.29.23.08.31
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 29 Jul 2025 22:56:56 -0700 (PDT)
+ Tue, 29 Jul 2025 23:08:32 -0700 (PDT)
 From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
 To: stephen@networkplumber.org, thomas@monjalon.net, ferruh.yigit@amd.com,
  andrew.rybchenko@oktetlabs.ru
 Cc: dev@dpdk.org, stable@dpdk.org,
  Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Subject: [PATCH] app/testpmd: monitor state of primary process when using
+Subject: [PATCH v6] app/testpmd: monitor state of primary process when using
  secondary
-Date: Wed, 30 Jul 2025 01:56:41 -0400
-Message-ID: <20250730055641.138187-1-14pwcse1224@uetpeshawar.edu.pk>
+Date: Wed, 30 Jul 2025 02:08:18 -0400
+Message-ID: <20250730060818.141022-1-14pwcse1224@uetpeshawar.edu.pk>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250729063919.3554143-3-14pwcse1224@uetpeshawar.edu.pk>
 References: <20250729063919.3554143-3-14pwcse1224@uetpeshawar.edu.pk>
