@@ -2,41 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C589C87FCB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Jul 2025 14:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 369E4C83F26
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Jul 2025 15:18:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 381EC40E41;
-	Wed, 30 Jul 2025 16:04:56 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 9268C402C3
- for <dev@dpdk.org>; Wed, 30 Jul 2025 16:04:54 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 6DC94209B9;
- Wed, 30 Jul 2025 16:04:53 +0200 (CEST)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Wed, 30 Jul 2025 16:04:53 +0200
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: dev@dpdk.org, Tetsuya Mukawa <mtetsuyah@gmail.com>,
- Stephen Hemminger <stephen@networkplumber.org>,
- Vipin Varghese <Vipin.Varghese@amd.com>,
- Thiyagarjan P <Thiyagarajan.P@amd.com>,
- Ivan Malov <ivan.malov@arknetworks.am>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH v4] net/null: Add fast mbuf release TX offload
-Date: Wed, 30 Jul 2025 14:04:51 +0000
-Message-ID: <20250730140451.622906-1-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250624181416.167181-1-mb@smartsharesystems.com>
-References: <20250624181416.167181-1-mb@smartsharesystems.com>
+	by mails.dpdk.org (Postfix) with ESMTP id E1D16402E6;
+	Wed, 30 Jul 2025 17:18:25 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id BFC13402C3
+ for <dev@dpdk.org>; Wed, 30 Jul 2025 17:18:24 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id A4DFA46C55; Wed, 30 Jul 2025 17:18:24 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/core Bug 1761] rte_raw_cksum_mbuf obtain incorrect cksum when
+ a packet in mbuf split mode.
+Date: Wed, 30 Jul 2025 15:18:23 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: core
+X-Bugzilla-Version: unspecified
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: critical
+X-Bugzilla-Who: yanglanping@bytedance.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1761-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17538887040.0CCA229.508620
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 30 Jul 2025 14:04:53.0307 (UTC)
- FILETIME=[EC0A88B0:01DC015A]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,260 +55,188 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Added fast mbuf release, re-using the existing mbuf pool pointer
-in the queue structure.
 
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
----
-v4:
-* Force the generic function called by the separate tx_pkt_burst callbacks
-  to be inlined.
-v3:
-* Use separate tx_pkt_burst callbacks depending on per-device TX offload
-  configuration. (Ivan Malov, Konstantin Ananyev)
-* Check TX offload configuration for mutually exclusive MBUF_FAST_FREE and
-  MULTI_SEGS flags. (Ivan Malov, Konstantin Ananyev)
-* Also announce MULTI_SEGS TX offload as a per-queue capability.
-v2:
-* Also announce the MBUF_FAST_FREE TX offload as a per-queue capability.
-* Added missing test of per-device MBUF_FAST_FREE TX offload configuration
-  when configuring the queue.
----
- drivers/net/null/rte_eth_null.c | 143 +++++++++++++++++++++++++-------
- 1 file changed, 115 insertions(+), 28 deletions(-)
+--17538887040.0CCA229.508620
+Date: Wed, 30 Jul 2025 17:18:24 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-diff --git a/drivers/net/null/rte_eth_null.c b/drivers/net/null/rte_eth_null.c
-index 8a9b74a03b..4f273319f2 100644
---- a/drivers/net/null/rte_eth_null.c
-+++ b/drivers/net/null/rte_eth_null.c
-@@ -34,6 +34,17 @@ struct pmd_internals;
- struct null_queue {
- 	struct pmd_internals *internals;
- 
-+	/**
-+	 * For RX queue:
-+	 *  Mempool to allocate mbufs from.
-+	 *
-+	 * For TX queue:
-+	 *  Mempool to free mbufs to, if fast release of mbufs is enabled.
-+	 *  UINTPTR_MAX if the mempool for fast release of mbufs has not yet been detected.
-+	 *  NULL if fast release of mbufs is not enabled.
-+	 *
-+	 *  @see RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE
-+	 */
- 	struct rte_mempool *mb_pool;
- 	void *dummy_packet;
- 
-@@ -141,8 +152,15 @@ eth_null_no_rx(void *q __rte_unused, struct rte_mbuf **bufs __rte_unused,
- 	return 0;
- }
- 
--static uint16_t
--eth_null_tx(void *q, struct rte_mbuf **bufs, uint16_t nb_bufs)
-+enum eth_tx_free_mode {
-+	ETH_TX_FREE_MODE_NO_MBUF_FAST_FREE, /* MBUF_FAST_FREE not possible. */
-+	ETH_TX_FREE_MODE_MBUF_FAST_FREE,    /* MBUF_FAST_FREE enabled for the device. */
-+	ETH_TX_FREE_MODE_PER_QUEUE,         /* Varies per TX queue. */
-+};
-+
-+static __rte_always_inline uint16_t
-+eth_null_tx_common(void *q, struct rte_mbuf **bufs, uint16_t nb_bufs,
-+		enum eth_tx_free_mode mode)
- {
- 	struct null_queue *h = q;
- 	unsigned int i;
-@@ -151,13 +169,42 @@ eth_null_tx(void *q, struct rte_mbuf **bufs, uint16_t nb_bufs)
- 	for (i = 0; i < nb_bufs; i++)
- 		bytes += rte_pktmbuf_pkt_len(bufs[i]);
- 
--	rte_pktmbuf_free_bulk(bufs, nb_bufs);
-+	if (mode == ETH_TX_FREE_MODE_MBUF_FAST_FREE ||
-+			(mode == ETH_TX_FREE_MODE_PER_QUEUE && h->mb_pool != NULL)) {
-+		/* RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE */
-+		if (unlikely(h->mb_pool == (void *)UINTPTR_MAX)) {
-+			if (unlikely(nb_bufs == 0))
-+				return 0; /* Do not dereference uninitialized bufs[0]. */
-+			h->mb_pool = bufs[0]->pool;
-+		}
-+		rte_mbuf_raw_free_bulk(h->mb_pool, bufs, nb_bufs);
-+	} else {
-+		rte_pktmbuf_free_bulk(bufs, nb_bufs);
-+	}
- 	rte_atomic_fetch_add_explicit(&h->tx_pkts, nb_bufs, rte_memory_order_relaxed);
- 	rte_atomic_fetch_add_explicit(&h->tx_bytes, bytes, rte_memory_order_relaxed);
- 
- 	return nb_bufs;
- }
- 
-+static uint16_t
-+eth_null_tx(void *q, struct rte_mbuf **bufs, uint16_t nb_bufs)
-+{
-+	return eth_null_tx_common(q, bufs, nb_bufs, ETH_TX_FREE_MODE_PER_QUEUE);
-+}
-+
-+static uint16_t
-+eth_null_tx_no_mbuf_fast_free(void *q, struct rte_mbuf **bufs, uint16_t nb_bufs)
-+{
-+	return eth_null_tx_common(q, bufs, nb_bufs, ETH_TX_FREE_MODE_NO_MBUF_FAST_FREE);
-+}
-+
-+static uint16_t
-+eth_null_tx_mbuf_fast_free(void *q, struct rte_mbuf **bufs, uint16_t nb_bufs)
-+{
-+	return eth_null_tx_common(q, bufs, nb_bufs, ETH_TX_FREE_MODE_MBUF_FAST_FREE);
-+}
-+
- static uint16_t
- eth_null_copy_tx(void *q, struct rte_mbuf **bufs, uint16_t nb_bufs)
- {
-@@ -178,9 +225,48 @@ eth_null_copy_tx(void *q, struct rte_mbuf **bufs, uint16_t nb_bufs)
- 	return nb_bufs;
- }
- 
-+static void
-+eth_dev_assign_rxtx_ops(struct rte_eth_dev *dev)
-+{
-+	struct pmd_internals *internals = dev->data->dev_private;
-+
-+	if (internals->packet_copy) {
-+		dev->rx_pkt_burst = eth_null_copy_rx;
-+		dev->tx_pkt_burst = eth_null_copy_tx;
-+	} else {
-+		if (internals->no_rx)
-+			dev->rx_pkt_burst = eth_null_no_rx;
-+		else
-+			dev->rx_pkt_burst = eth_null_rx;
-+
-+		dev->tx_pkt_burst = eth_null_tx;
-+		if (dev->data->dev_conf.txmode.offloads & RTE_ETH_TX_OFFLOAD_MULTI_SEGS)
-+			dev->tx_pkt_burst = eth_null_tx_no_mbuf_fast_free;
-+		if (dev->data->dev_conf.txmode.offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE)
-+			dev->tx_pkt_burst = eth_null_tx_mbuf_fast_free;
-+	}
-+}
-+
- static int
--eth_dev_configure(struct rte_eth_dev *dev __rte_unused)
-+eth_dev_configure(struct rte_eth_dev *dev)
- {
-+	struct pmd_internals *internals = dev->data->dev_private;
-+
-+	if ((dev->data->dev_conf.txmode.offloads &
-+			(RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE | RTE_ETH_TX_OFFLOAD_MULTI_SEGS)) ==
-+			(RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE | RTE_ETH_TX_OFFLOAD_MULTI_SEGS)) {
-+		PMD_LOG(ERR,
-+			"TX offloads MBUF_FAST_FREE and MULTI_SEGS are mutually exclusive");
-+		return -EINVAL;
-+	}
-+	if (dev->data->dev_conf.txmode.offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE &&
-+			internals->packet_copy) {
-+		PMD_LOG(INFO,
-+			"TX offload MBUF_FAST_FREE is ignored with %s argument",
-+			ETH_NULL_PACKET_COPY_ARG);
-+	}
-+	/* Assign RX/TX ops depending on device TX offloads. */
-+	eth_dev_assign_rxtx_ops(dev);
- 	return 0;
- }
- 
-@@ -259,7 +345,7 @@ static int
- eth_tx_queue_setup(struct rte_eth_dev *dev, uint16_t tx_queue_id,
- 		uint16_t nb_tx_desc __rte_unused,
- 		unsigned int socket_id __rte_unused,
--		const struct rte_eth_txconf *tx_conf __rte_unused)
-+		const struct rte_eth_txconf *tx_conf)
- {
- 	struct rte_mbuf *dummy_packet;
- 	struct pmd_internals *internals;
-@@ -273,6 +359,20 @@ eth_tx_queue_setup(struct rte_eth_dev *dev, uint16_t tx_queue_id,
- 	if (tx_queue_id >= dev->data->nb_tx_queues)
- 		return -ENODEV;
- 
-+	if (((dev->data->dev_conf.txmode.offloads | tx_conf->offloads) &
-+			(RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE | RTE_ETH_TX_OFFLOAD_MULTI_SEGS)) ==
-+			(RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE | RTE_ETH_TX_OFFLOAD_MULTI_SEGS)) {
-+		PMD_LOG(ERR,
-+			"TX offloads MBUF_FAST_FREE and MULTI_SEGS are mutually exclusive");
-+		return -EINVAL;
-+	}
-+	if (tx_conf->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE &&
-+			internals->packet_copy) {
-+		PMD_LOG(INFO,
-+			"TX offload MBUF_FAST_FREE is ignored with %s argument",
-+			ETH_NULL_PACKET_COPY_ARG);
-+	}
-+
- 	packet_size = internals->packet_size;
- 
- 	dev->data->tx_queues[tx_queue_id] =
-@@ -284,6 +384,10 @@ eth_tx_queue_setup(struct rte_eth_dev *dev, uint16_t tx_queue_id,
- 
- 	internals->tx_null_queues[tx_queue_id].internals = internals;
- 	internals->tx_null_queues[tx_queue_id].dummy_packet = dummy_packet;
-+	internals->tx_null_queues[tx_queue_id].mb_pool =
-+			(dev->data->dev_conf.txmode.offloads | tx_conf->offloads) &
-+			RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE ?
-+			(void *)UINTPTR_MAX : NULL;
- 
- 	return 0;
- }
-@@ -309,7 +413,10 @@ eth_dev_info(struct rte_eth_dev *dev,
- 	dev_info->max_rx_queues = RTE_DIM(internals->rx_null_queues);
- 	dev_info->max_tx_queues = RTE_DIM(internals->tx_null_queues);
- 	dev_info->min_rx_bufsize = 0;
--	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS | RTE_ETH_TX_OFFLOAD_MT_LOCKFREE;
-+	dev_info->tx_queue_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS |
-+			RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE;
-+	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MT_LOCKFREE |
-+			dev_info->tx_queue_offload_capa;
- 
- 	dev_info->reta_size = internals->reta_size;
- 	dev_info->flow_type_rss_offloads = internals->flow_type_rss_offloads;
-@@ -590,16 +697,7 @@ eth_dev_null_create(struct rte_vdev_device *dev, struct pmd_options *args)
- 	eth_dev->dev_ops = &ops;
- 
- 	/* finally assign rx and tx ops */
--	if (internals->packet_copy) {
--		eth_dev->rx_pkt_burst = eth_null_copy_rx;
--		eth_dev->tx_pkt_burst = eth_null_copy_tx;
--	} else if (internals->no_rx) {
--		eth_dev->rx_pkt_burst = eth_null_no_rx;
--		eth_dev->tx_pkt_burst = eth_null_tx;
--	} else {
--		eth_dev->rx_pkt_burst = eth_null_rx;
--		eth_dev->tx_pkt_burst = eth_null_tx;
--	}
-+	eth_dev_assign_rxtx_ops(eth_dev);
- 
- 	rte_eth_dev_probing_finish(eth_dev);
- 	return 0;
-@@ -678,7 +776,6 @@ rte_pmd_null_probe(struct rte_vdev_device *dev)
- 	PMD_LOG(INFO, "Initializing pmd_null for %s", name);
- 
- 	if (rte_eal_process_type() == RTE_PROC_SECONDARY) {
--		struct pmd_internals *internals;
- 		eth_dev = rte_eth_dev_attach_secondary(name);
- 		if (!eth_dev) {
- 			PMD_LOG(ERR, "Failed to probe %s", name);
-@@ -687,17 +784,7 @@ rte_pmd_null_probe(struct rte_vdev_device *dev)
- 		/* TODO: request info from primary to set up Rx and Tx */
- 		eth_dev->dev_ops = &ops;
- 		eth_dev->device = &dev->device;
--		internals = eth_dev->data->dev_private;
--		if (internals->packet_copy) {
--			eth_dev->rx_pkt_burst = eth_null_copy_rx;
--			eth_dev->tx_pkt_burst = eth_null_copy_tx;
--		} else if (internals->no_rx) {
--			eth_dev->rx_pkt_burst = eth_null_no_rx;
--			eth_dev->tx_pkt_burst = eth_null_tx;
--		} else {
--			eth_dev->rx_pkt_burst = eth_null_rx;
--			eth_dev->tx_pkt_burst = eth_null_tx;
--		}
-+		eth_dev_assign_rxtx_ops(eth_dev);
- 		rte_eth_dev_probing_finish(eth_dev);
- 		return 0;
- 	}
--- 
-2.43.0
+https://bugs.dpdk.org/show_bug.cgi?id=3D1761
 
+            Bug ID: 1761
+           Summary: rte_raw_cksum_mbuf obtain incorrect cksum when a
+                    packet in mbuf split mode.
+           Product: DPDK
+           Version: unspecified
+          Hardware: All
+                OS: Linux
+            Status: UNCONFIRMED
+          Severity: critical
+          Priority: Normal
+         Component: core
+          Assignee: dev@dpdk.org
+          Reporter: yanglanping@bytedance.com
+  Target Milestone: ---
+
+Hi.
+
+This issue is about calc cksum, in rte_raw_cksum_mbuf function, when the pa=
+cket
+data is stored in multiple mbufs, below code easy overflow.
+
+File rte_cksum.h
+    line 159: if (done & 1)
+    line 160:     tmp =3D rte_bswap16((uint16_t)tmp);=20
+    line 161: sum +=3D tmp;
+
+The tmp(uint32_t) variable can easily be greater than 0xFFFF, so (uint16_t)=
+tmp
+will discard the high 16bit, cause incorrect result.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17538887040.0CCA229.508620
+Date: Wed, 30 Jul 2025 17:18:24 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - rte_raw_cksum_mbuf obtain incorrect cksum when a =
+packet in mbuf split mode."
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1761">1761</a>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Summary</th>
+          <td>rte_raw_cksum_mbuf obtain incorrect cksum when a packet in mb=
+uf split mode.
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>unspecified
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>Linux
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>critical
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>core
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>yanglanping&#64;bytedance.com
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">Hi.
+
+This issue is about calc cksum, in rte_raw_cksum_mbuf function, when the pa=
+cket
+data is stored in multiple mbufs, below code easy overflow.
+
+File rte_cksum.h
+    line 159: if (done &amp; 1)
+    line 160:     tmp =3D rte_bswap16((uint16_t)tmp);=20
+    line 161: sum +=3D tmp;
+
+The tmp(uint32_t) variable can easily be greater than 0xFFFF, so (uint16_t)=
+tmp
+will discard the high 16bit, cause incorrect result.
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1761">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17538887040.0CCA229.508620--
