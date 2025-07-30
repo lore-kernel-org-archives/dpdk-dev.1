@@ -2,126 +2,61 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0F54C87FC9
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Jul 2025 11:35:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14EBBC87FC9
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Jul 2025 11:41:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9E7A040E39;
-	Wed, 30 Jul 2025 13:35:47 +0200 (CEST)
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com
- (mail-mw2nam10on2076.outbound.protection.outlook.com [40.107.94.76])
- by mails.dpdk.org (Postfix) with ESMTP id B6369402A7;
- Wed, 30 Jul 2025 13:35:45 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ltW8If+EXZcTcqDQuTholeohisSx3moM5HkzUz4A0cDK69RgH8Hs9DNtOGPjon8rZPZc0ZmWtzgKcdQdLTbZsxSJ6dxavDtcw5VStoN7+POUOvQ9Ylba91XFKg/n/pCW3oCXmodyqL99j0sfXqh8m/Yo3EMUr2AHvreg+Xq3rBkYE8rzRYmGnkxzXZZdxaqlYN9HlXvLQLUEXXB9nvnGKBeFqIun5kMHRC7Wd9JCdewS49Wv68hNk5YS4kQ6PVqQYol2A4CjnauelZnsZqxL74NCDHfG3lF49fKVVyPXVF7kPgzNCVR2JiBM8Oaah6jPpCkcUrq3dPz2FUre+pYqmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vH1ZqZArLuWvE837iPZK28Lxe06stgkSx0Jq1zF5zdE=;
- b=JsSUvHyxR1deEhg9UmjTTfG3L+r6vF+DYOk9FNz3JUpgWYr+rcEtKZPjmNgncjhQdSRnRFM6eRHjUkodu3yaaYCkt10uQG163FxNd5SQ0MX7ENEmsAo2OHWU1I1k6yrpJTfxAEqc9jgKpVKyjZpd2gUjRolK8UZHthQaJUagpabULqFuxONFOOxly9rS5cYoec/hHgmJtIsX8pwPfnhcukeKEKaCQDpEdxWCKc2FqVg9QyIOgusk0GpmlAaEQs7RNEXpQCZqM7PfNlyfgSgCU8tEt6nXaTzqPafI/KXZIZRi6skqZAmTkyXPWIqzijIVp3mfzYUfUjY2rRV4UtYsiA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vH1ZqZArLuWvE837iPZK28Lxe06stgkSx0Jq1zF5zdE=;
- b=c5yArl33CzTvu6gaWSrcv75/s+UXSY9+PPpx8HJLxXq5/0Ln9lQVViBtS6OqrPn7oL++KolYjB/lv7nF5qAc5mBC7voOwlDSkxxhWVt4ljHrM8FJkjT+qKFXeCoDKy5uWITNA5lBVepN2DKhXeqQLRLzQVG5feEzx7eXrcWhZLvJFSy/0qBpVSgSG76/jMTOiI9R9HqTDGzGaNovOvVTSA+kO2+oLn/+OQ7S1kIvlYMIGUPkGwu0phvjTwi9qzG8XsaR3F7CukWNf+q1qvigUmGGbhxA/hjFp1rfVw8rbYyDtV7zfapBJLMkHnt/Yu6aBBrLRV3mFS104CPS0DzZUQ==
-Received: from DS7PR03CA0012.namprd03.prod.outlook.com (2603:10b6:5:3b8::17)
- by SA3PR12MB9225.namprd12.prod.outlook.com (2603:10b6:806:39e::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.26; Wed, 30 Jul
- 2025 11:35:43 +0000
-Received: from DS1PEPF00017097.namprd05.prod.outlook.com
- (2603:10b6:5:3b8:cafe::f1) by DS7PR03CA0012.outlook.office365.com
- (2603:10b6:5:3b8::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.12 via Frontend Transport; Wed,
- 30 Jul 2025 11:35:42 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DS1PEPF00017097.mail.protection.outlook.com (10.167.18.101) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8989.10 via Frontend Transport; Wed, 30 Jul 2025 11:35:42 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 30 Jul
- 2025 04:35:23 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 30 Jul
- 2025 04:35:18 -0700
-Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.129.68.10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Wed, 30 Jul 2025 04:35:16 -0700
-From: Maayan Kashani <mkashani@nvidia.com>
-To: <dev@dpdk.org>
-CC: <mkashani@nvidia.com>, <rasland@nvidia.com>, <stable@dpdk.org>, Bing Zhao
- <bingz@nvidia.com>, Dariusz Sosnowski <dsosnowski@nvidia.com>, "Viacheslav
- Ovsiienko" <viacheslavo@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
-Subject: [PATCH] net/mlx5: fix failure on device start for default rules
-Date: Wed, 30 Jul 2025 14:35:12 +0300
-Message-ID: <20250730113512.197555-1-mkashani@nvidia.com>
-X-Mailer: git-send-email 2.21.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF00017097:EE_|SA3PR12MB9225:EE_
-X-MS-Office365-Filtering-Correlation-Id: 05fe49a2-cf40-4138-c4a4-08ddcf5d378c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|36860700013|1800799024|376014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?B5+6z3xXwCQg3+6kL9GiSk0X+v0GfF9YpFbvLxM7HxGjqYZutiwXWWi5wlWZ?=
- =?us-ascii?Q?9RMgQz5OAxkPhopRXl/ozjRbN+Bb/eKyh66GgKJACIaz/x+0aCHE1damIW/B?=
- =?us-ascii?Q?gDc9/Ok7p2CO4mGB7sdVjBKc7boyGCJm4iNp6r6J8e2l70JHh6YhtCE/FbbZ?=
- =?us-ascii?Q?Oh2GOduC2bCtHcdrvoc2a3H2zc2So3dBA2/hVWLxhJA5j380JlRaMD9c5UTA?=
- =?us-ascii?Q?0B8f0VvWkhbPrXBqtY9+8+lZ/OXj7EE2S6kMvbs+l4AlWFF5O4yFbfEYKYar?=
- =?us-ascii?Q?XWU2iqGtQhYO4/eCB1YaELvcHRUkBWdeeuDdeS/Cbjt9nAGRjS15R7Cvy1tS?=
- =?us-ascii?Q?SyVBNQzOO4+RilZXwkzO6N8XEkzbNeAdk6S75kmZSKdMLMtp1Tticidz04No?=
- =?us-ascii?Q?z5U+qOkUfNhVGXJUsnTNCp1C5KgHaiJNuKOTJzZOv9Y93bBVXX4Wx0Nd80x3?=
- =?us-ascii?Q?4ucoATL4ytVqaER8KW7kfgzMkNdr8nDLhV6uYEXhVGzC53i74cZ40Dh1p9tp?=
- =?us-ascii?Q?tSUxXpkAZlhJbD4KHP7tGl8HrT9nQ8TbtGGRaec+VAnxGzbmS9IN6Q2j2RLT?=
- =?us-ascii?Q?+JeQUprZys7L6dfiVazZxnEX8GuDkhTfCkeAQh6jZ5agzPCEO7I5jRfAALXE?=
- =?us-ascii?Q?ZN65IvfQXw57vkezh7Bb9mxachni8zl8evnTR5eC/MehJPG2xJMXM4D7ocZC?=
- =?us-ascii?Q?iH4jil4JlTxzB9vU+F6nQHrD7L3mZtJcdrhFUpfVFqgd+5YXVWBzBs7D+hrk?=
- =?us-ascii?Q?p+lmYOI3JqW2mLCT2Tr9fkYmkL2Lr3BQvMTuEe6gDH51B425o1pjfloKkmUY?=
- =?us-ascii?Q?Tviz2o0ChVIDe3xTVFdtIrLye5E05MjVAiQZQndTr1xS+lt0Hs+3gW1QBNH6?=
- =?us-ascii?Q?Zpn9nN1RE5+xiW50p4HOTCCXvS3SHLj5RX4vL+8R2om004xSqfoOY/oeTzCA?=
- =?us-ascii?Q?jQfzMawRbAY6DxqoeQiWmzCQJTJRB3FR1burRm4lEY16/lfGUktecxVWhJ9r?=
- =?us-ascii?Q?sIOwRiVtBsUvxp9ZjAxlYohSf8Hcl5h59yOPeTgjI/ZrHd0Ja0bloghTuXuC?=
- =?us-ascii?Q?SEs/l3PMeVKot3GBmkxUV/cFZ/pXkeJ/gYHTMx3zGkXUoIN/rDwTwSwX1mTC?=
- =?us-ascii?Q?iLqtOsn7oMdh+UdyoLdfrDDaIxllPd4mly4sIeXX5gNYCU9e99hBRvt4ua2P?=
- =?us-ascii?Q?IKts/+GKB0Hh4YSRG6nU+1LBHHgzZ3hI/hR9IV75ZBBd9BRtc3syHZJRLh1Q?=
- =?us-ascii?Q?FaiRwC3potKXgZ1HK7eySKVmB8fMJk1XjSHZplLLU9KY8VHBQJWkj3eAryns?=
- =?us-ascii?Q?uNgA8HrSDKyGv9yQ0Pxur5ZIVt31MfPSG4VqTH1/C9PQa2f9MXBzR2WV9Seo?=
- =?us-ascii?Q?EsgUUZErA5QjRieY7obYX6g7GySBq0dMgHjwv3+OUfnSW+ssREjXrci6CXfa?=
- =?us-ascii?Q?ai6Agnj/2SAwu7M5N/8YGATaNLIrpLYqPk86csNPy2Ns0gqNI9UHM28o5yjf?=
- =?us-ascii?Q?yOawCeLao/zUJ4tnfsNTMSBsGuHRfzkvgENB?=
-X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014); DIR:OUT;
- SFP:1101; 
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2025 11:35:42.5951 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 05fe49a2-cf40-4138-c4a4-08ddcf5d378c
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DS1PEPF00017097.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9225
+	by mails.dpdk.org (Postfix) with ESMTP id 539F7402C3;
+	Wed, 30 Jul 2025 13:41:30 +0200 (CEST)
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com
+ [209.85.215.201])
+ by mails.dpdk.org (Postfix) with ESMTP id D2891402A7
+ for <dev@dpdk.org>; Wed, 30 Jul 2025 13:41:28 +0200 (CEST)
+Received: by mail-pg1-f201.google.com with SMTP id
+ 41be03b00d2f7-b4225b9c0d8so34779a12.2
+ for <dev@dpdk.org>; Wed, 30 Jul 2025 04:41:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=google.com; s=20230601; t=1753875688; x=1754480488; darn=dpdk.org;
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:from:to:cc:subject:date:message-id:reply-to;
+ bh=V8n7kKGWLpuNfQ1z5ZjRv3vbaXIOTvegDvvERE/+qTo=;
+ b=sx/5htm+0Yi0cosBs3mCRYzoDJo/FfJ67FOPTRIaSuHch/Y/tqP79/8O5IHyP86Ptm
+ mZc3T2KnAm9IJDP8Xdc6wccvOF1geK9mc1rKBNbdpGOHhG6xy8r4K442c57zNWdEBA9f
+ oF5ddfDhSADj1nJ8qQKb2jtgJvPYdOnZEqeEw1MtNwOphUNWLLFS3KUo+XRakdRCEjGO
+ w8tzxsk358XoGWgSJGEdXagnqyXfDQBzLxKQ+hhYap6JltC7Pk9DpxYWmQf0Tv6M6Abt
+ BT1IdnHeIFX/bcP+2yCj6DB9/UYBdQeYgympJeqTSk5hiv6kLY39elp1i7kAjIKGCTXB
+ X7mQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1753875688; x=1754480488;
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=V8n7kKGWLpuNfQ1z5ZjRv3vbaXIOTvegDvvERE/+qTo=;
+ b=OaOceLPqNxuYk9jW3S1epsQQVUDXZ7PVXl793y1M0gbDevclJTRjjLJv9wiXX/AoUP
+ UA+MaggvS7T0S34deHCNweHQh+Pgz2G6PsRzbSfXNzQUwQIuAB+l7POsh4JePyrzn4I4
+ o/kMhFX4YMWMGoN9UiGdTbrAgXf64mMjJGSP9+VJI1qtq82ur0ZkqyjlgbzqXkKzt5Vn
+ 17Dfc+bcavcahZ2KiWf39FM3xS9uP9ou2/qwtKlXZCNkbW5W3OEGzt5xFztshzQg70rI
+ M008kThLR99dzBgigmO1FMWmEdamkVtXDBM/wIdp8ADrDZZmSQmScKcJvju/ovoaRqQ4
+ 9Vow==
+X-Gm-Message-State: AOJu0YxwuKlqRQ4LMA6HasZok3wTxlhlY8lmh1b34+WBQ8EFf61AKqWE
+ ELkpmfZ2mDnynTi3VylrZ+c0xzaQHWYPo78GFbDJIMEWdnSzCFEh5LOLpfHCdOYvxw/ta6mz4P3
+ L0EcmpV6HIYCweMs0G9DRmtuPaw==
+X-Google-Smtp-Source: AGHT+IFXvS+Er9SV0L/epExIyGagGkFu3+im6phW4P0sIbJ8dbJrB3ble4fHobkUdWyBbWi3SCKMZEpsD0bJtJiAbA==
+X-Received: from pgbfq2.prod.google.com ([2002:a05:6a02:2982:b0:b42:12a8:b979])
+ (user=shivajikant job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a21:6da3:b0:21f:5aa1:3124 with SMTP id
+ adf61e73a8af0-23dc0d4549emr5842039637.13.1753875687914; 
+ Wed, 30 Jul 2025 04:41:27 -0700 (PDT)
+Date: Wed, 30 Jul 2025 11:41:21 +0000
+In-Reply-To: <20250729161747.894377-1-shivajikant@google.com>
+Mime-Version: 1.0
+References: <20250729161747.894377-1-shivajikant@google.com>
+X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
+Message-ID: <20250730114122.1200641-1-shivajikant@google.com>
+Subject: [PATCH v5] net/af_xdp: enable AF_XDP program attachment mode
+From: Shivaji Kant <shivajikant@google.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, Shivaji Kant <shivajikant@google.com>, 
+ Ciara Loftus <ciara.loftus@intel.com>, Maryam Tahhan <mtahhan@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -135,50 +70,260 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-As part of non-template implementation,
-new default rule was added in HWS mode (dv_flow_en=2)
-in case dv_xmeta_en=4 (32bits extended META for HWS mode).
-In case the proxy port did not start, and it was not configured,
-it failed to create this rule and failed to start port representors.
+Currently, the AF_XDP PMD attaches its XDP program using a fixed
+set of flags, defaulting to `XDP_FLAGS_UPDATE_IF_NOEXIST`. This lacks
+flexibility for users who might need to explicitly control the XDP
+mode based on their specific hardware capabilities or performance
+requirements.
 
-Added ignore for this failure to align to other default rules
-creation failure behaviour, and to enable testing port representors
- w/o starting the proxy port.
+This patch introduces a new vdev argument, `mode`, for the `net_af_xdp`
+PMD. This argument allows users to explicitly specify the desired
+XDP program attachment mode:
+`drv` (XDP_FLAGS_DRV_MODE),
+`skb` (XDP_FLAGS_SKB_MODE),
+`hw` (XDP_FLAGS_HW_MODE).
+(If needed more can be added)
 
-Fixes: 821a6a5cc495 ("net/mlx5: add metadata split for compatibility")
-Cc: stable@dpdk.org
+This change provides greater control and flexibility for users to
+fine-tune AF_XDP behavior, enabling them to leverage native driver
+or hardware offload capabilities when available, or fall back to
+generic SKB mode for broader compatibility.
 
-Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
-Acked-by: Bing Zhao <bingz@nvidia.com>
+Signed-off-by: Shivaji Kant <shivajikant@google.com>
+
 ---
- drivers/net/mlx5/mlx5_flow.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+Changes in v2:
+The attach mode flag was intended to be per device flag. So making
+it part of the pmd_internals struct.
+---
+Changes in v3
+Fix the build error for cases without RTE_NET_AF_XDP_LIBBPF_XDP_ATTACH
+---
+Changes in v4
+Add check for invalid path argument return.
+---
+Changes in v5
+Using uint32_t type for the mode flag.
+---
+ drivers/net/af_xdp/rte_eth_af_xdp.c | 77 ++++++++++++++++++++++++-----
+ 1 file changed, 64 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/net/mlx5/mlx5_flow.c b/drivers/net/mlx5/mlx5_flow.c
-index 8db372123c7..7c6811b5233 100644
---- a/drivers/net/mlx5/mlx5_flow.c
-+++ b/drivers/net/mlx5/mlx5_flow.c
-@@ -8217,8 +8217,18 @@ mlx5_flow_start_default(struct rte_eth_dev *dev)
- #ifdef HAVE_MLX5_HWS_SUPPORT
- 	struct mlx5_priv *priv = dev->data->dev_private;
+diff --git a/drivers/net/af_xdp/rte_eth_af_xdp.c b/drivers/net/af_xdp/rte_eth_af_xdp.c
+index 5f65850a27..f68895c93c 100644
+--- a/drivers/net/af_xdp/rte_eth_af_xdp.c
++++ b/drivers/net/af_xdp/rte_eth_af_xdp.c
+@@ -169,6 +169,7 @@ struct pmd_internals {
+ 	int queue_cnt;
+ 	int max_queue_cnt;
+ 	int configured_queue_cnt;
++	uint32_t mode_flag;
+ 	bool shared_umem;
+ 	char prog_path[PATH_MAX];
+ 	bool custom_prog_configured;
+@@ -198,6 +199,26 @@ struct pmd_process_private {
+ #define ETH_AF_XDP_USE_CNI_ARG			"use_cni"
+ #define ETH_AF_XDP_USE_PINNED_MAP_ARG	"use_pinned_map"
+ #define ETH_AF_XDP_DP_PATH_ARG			"dp_path"
++#define ETH_AF_XDP_MODE_ARG				"mode"
++
++/* Define different modes for af_xdp prog to attach */
++#define ETH_AF_XDP_DRV_MODE_ARG			"drv"
++#define ETH_AF_XDP_SKB_MODE_ARG			"skb"
++#define ETH_AF_XDP_HW_MODE_ARG			"hw"
++#define ETH_AF_XDP_NUM_MODE_ARG			3
++
++static const char * const mode_arguments[] = {
++	ETH_AF_XDP_DRV_MODE_ARG,
++	ETH_AF_XDP_SKB_MODE_ARG,
++	ETH_AF_XDP_HW_MODE_ARG,
++	NULL
++};
++
++static const unsigned int mode_flags[] = {
++	XDP_FLAGS_DRV_MODE,
++	XDP_FLAGS_SKB_MODE,
++	XDP_FLAGS_HW_MODE
++};
  
--	if (priv->sh->config.dv_flow_en == 2)
--		return mlx5_flow_nta_add_default_copy_action(dev, &error);
-+	if (priv->sh->config.dv_flow_en == 2) {
-+		/*
-+		 * Ignore this failure, if the proxy port is not started, other
-+		 * default jump actions are not created and this rule will not
-+		 * be hit.
-+		 */
-+		if (mlx5_flow_nta_add_default_copy_action(dev, &error)) {
-+			DRV_LOG(DEBUG, "port %u failed to start default copy action: %s",
-+				dev->data->port_id, strerror(rte_errno));
+ static const char * const valid_arguments[] = {
+ 	ETH_AF_XDP_IFACE_ARG,
+@@ -210,6 +231,7 @@ static const char * const valid_arguments[] = {
+ 	ETH_AF_XDP_USE_CNI_ARG,
+ 	ETH_AF_XDP_USE_PINNED_MAP_ARG,
+ 	ETH_AF_XDP_DP_PATH_ARG,
++	ETH_AF_XDP_MODE_ARG,
+ 	NULL
+ };
+ 
+@@ -950,14 +972,14 @@ remove_xdp_program(struct pmd_internals *internals)
+ 	uint32_t curr_prog_id = 0;
+ 	int ret;
+ 
+-	ret = bpf_xdp_query_id(internals->if_index, XDP_FLAGS_UPDATE_IF_NOEXIST,
++	ret = bpf_xdp_query_id(internals->if_index, internals->mode_flag,
+ 			       &curr_prog_id);
+ 	if (ret != 0) {
+ 		AF_XDP_LOG_LINE(ERR, "bpf_xdp_query_id failed");
+ 		return ret;
+ 	}
+ 
+-	ret = bpf_xdp_detach(internals->if_index, XDP_FLAGS_UPDATE_IF_NOEXIST,
++	ret = bpf_xdp_detach(internals->if_index, internals->mode_flag,
+ 			     NULL);
+ 	if (ret != 0)
+ 		AF_XDP_LOG_LINE(ERR, "bpf_xdp_detach failed");
+@@ -978,14 +1000,14 @@ remove_xdp_program(struct pmd_internals *internals)
+ 	int ret;
+ 
+ 	ret = bpf_get_link_xdp_id(internals->if_index, &curr_prog_id,
+-				  XDP_FLAGS_UPDATE_IF_NOEXIST);
++				  internals->mode_flag);
+ 	if (ret != 0) {
+ 		AF_XDP_LOG_LINE(ERR, "bpf_get_link_xdp_id failed");
+ 		return ret;
+ 	}
+ 
+ 	ret = bpf_set_link_xdp_fd(internals->if_index, -1,
+-				  XDP_FLAGS_UPDATE_IF_NOEXIST);
++				  internals->mode_flag);
+ 	if (ret != 0)
+ 		AF_XDP_LOG_LINE(ERR, "bpf_set_link_xdp_fd failed");
+ 	return ret;
+@@ -1305,7 +1327,7 @@ get_pinned_map(const char *dp_path, int *map_fd)
+ }
+ 
+ static int
+-load_custom_xdp_prog(const char *prog_path, int if_index, struct bpf_map **map)
++load_custom_xdp_prog(const char *prog_path, int if_index, struct bpf_map **map, uint32_t mode_flag)
+ {
+ 	int ret, prog_fd;
+ 	struct bpf_object *obj;
+@@ -1328,7 +1350,7 @@ load_custom_xdp_prog(const char *prog_path, int if_index, struct bpf_map **map)
+ 
+ 	/* Link the program with the given network device */
+ 	ret = link_xdp_prog_with_dev(if_index, prog_fd,
+-					XDP_FLAGS_UPDATE_IF_NOEXIST);
++					mode_flag);
+ 	if (ret) {
+ 		AF_XDP_LOG_LINE(ERR, "Failed to set prog fd %d on interface",
+ 				prog_fd);
+@@ -1679,7 +1701,7 @@ xsk_configure(struct pmd_internals *internals, struct pkt_rx_queue *rxq,
+ 	cfg.rx_size = ring_size;
+ 	cfg.tx_size = ring_size;
+ 	cfg.libbpf_flags = 0;
+-	cfg.xdp_flags = XDP_FLAGS_UPDATE_IF_NOEXIST;
++	cfg.xdp_flags = internals->mode_flag;
+ 	cfg.bind_flags = 0;
+ 
+ 	/* Force AF_XDP socket into copy mode when users want it */
+@@ -1698,7 +1720,7 @@ xsk_configure(struct pmd_internals *internals, struct pkt_rx_queue *rxq,
+ 		if (!internals->custom_prog_configured) {
+ 			ret = load_custom_xdp_prog(internals->prog_path,
+ 							internals->if_index,
+-							&internals->map);
++							&internals->map, internals->mode_flag);
+ 			if (ret) {
+ 				AF_XDP_LOG_LINE(ERR, "Failed to load custom XDP program %s",
+ 						internals->prog_path);
+@@ -2017,6 +2039,25 @@ parse_name_arg(const char *key __rte_unused,
+ 	return 0;
+ }
+ 
++/** parse name argument */
++static int
++parse_mode_arg(const char *key __rte_unused,
++	       const char *value, void *extra_args)
++{
++	unsigned int *mode = extra_args;
++	unsigned int i;
++
++	for (i = 0; i < ETH_AF_XDP_NUM_MODE_ARG; i++) {
++		if (strcmp(value, mode_arguments[i]) == 0) {
++			*mode |= mode_flags[i];
 +			return 0;
 +		}
 +	}
- #endif
- 	/* Make sure default copy action (reg_c[0] -> reg_b) is created. */
- 	return flow_mreg_add_default_copy_action(dev, &error);
++
++	AF_XDP_LOG_LINE(ERR, "Invalid af_xdp mode, choose correct mode to attach af_xdp program.");
++	return -EINVAL;
++}
++
+ /** parse xdp prog argument */
+ static int
+ parse_prog_arg(const char *key __rte_unused,
+@@ -2094,7 +2135,7 @@ static int
+ parse_parameters(struct rte_kvargs *kvlist, char *if_name, int *start_queue,
+ 		 int *queue_cnt, int *shared_umem, char *prog_path,
+ 		 int *busy_budget, int *force_copy, int *use_cni,
+-		 int *use_pinned_map, char *dp_path)
++		 int *use_pinned_map, char *dp_path, uint32_t *xdp_mode)
+ {
+ 	int ret;
+ 
+@@ -2147,6 +2188,13 @@ parse_parameters(struct rte_kvargs *kvlist, char *if_name, int *start_queue,
+ 
+ 	ret = rte_kvargs_process(kvlist, ETH_AF_XDP_DP_PATH_ARG,
+ 				 &parse_prog_arg, dp_path);
++
++	if (ret < 0)
++		goto free_kvlist;
++
++	ret = rte_kvargs_process(kvlist, ETH_AF_XDP_MODE_ARG,
++				 &parse_mode_arg, xdp_mode);
++
+ 	if (ret < 0)
+ 		goto free_kvlist;
+ 
+@@ -2189,7 +2237,7 @@ static struct rte_eth_dev *
+ init_internals(struct rte_vdev_device *dev, const char *if_name,
+ 	       int start_queue_idx, int queue_cnt, int shared_umem,
+ 	       const char *prog_path, int busy_budget, int force_copy,
+-	       int use_cni, int use_pinned_map, const char *dp_path)
++	       int use_cni, int use_pinned_map, const char *dp_path, uint32_t xdp_mode)
+ {
+ 	const char *name = rte_vdev_device_name(dev);
+ 	const unsigned int numa_node = dev->device.numa_node;
+@@ -2220,6 +2268,7 @@ init_internals(struct rte_vdev_device *dev, const char *if_name,
+ 	internals->force_copy = force_copy;
+ 	internals->use_cni = use_cni;
+ 	internals->use_pinned_map = use_pinned_map;
++	internals->mode_flag = XDP_FLAGS_UPDATE_IF_NOEXIST | xdp_mode;
+ 	strlcpy(internals->dp_path, dp_path, PATH_MAX);
+ 
+ 	if (xdp_get_channels_info(if_name, &internals->max_queue_cnt,
+@@ -2412,6 +2461,7 @@ rte_pmd_af_xdp_probe(struct rte_vdev_device *dev)
+ 	int force_copy = 0;
+ 	int use_cni = 0;
+ 	int use_pinned_map = 0;
++	uint32_t xdp_mode = 0;
+ 	char dp_path[PATH_MAX] = {'\0'};
+ 	struct rte_eth_dev *eth_dev = NULL;
+ 	const char *name = rte_vdev_device_name(dev);
+@@ -2456,7 +2506,7 @@ rte_pmd_af_xdp_probe(struct rte_vdev_device *dev)
+ 	if (parse_parameters(kvlist, if_name, &xsk_start_queue_idx,
+ 			     &xsk_queue_cnt, &shared_umem, prog_path,
+ 			     &busy_budget, &force_copy, &use_cni, &use_pinned_map,
+-			     dp_path) < 0) {
++			     dp_path, &xdp_mode) < 0) {
+ 		AF_XDP_LOG_LINE(ERR, "Invalid kvargs value");
+ 		return -EINVAL;
+ 	}
+@@ -2524,7 +2574,7 @@ rte_pmd_af_xdp_probe(struct rte_vdev_device *dev)
+ 	eth_dev = init_internals(dev, if_name, xsk_start_queue_idx,
+ 				 xsk_queue_cnt, shared_umem, prog_path,
+ 				 busy_budget, force_copy, use_cni, use_pinned_map,
+-				 dp_path);
++				 dp_path, xdp_mode);
+ 	if (eth_dev == NULL) {
+ 		AF_XDP_LOG_LINE(ERR, "Failed to init internals");
+ 		return -1;
+@@ -2587,4 +2637,5 @@ RTE_PMD_REGISTER_PARAM_STRING(net_af_xdp,
+ 			      "force_copy=<int> "
+ 			      "use_cni=<int> "
+ 			      "use_pinned_map=<int> "
+-			      "dp_path=<string> ");
++			      "dp_path=<string> "
++			      "mode=<string> ");
 -- 
-2.21.0
+2.50.1.552.g942d659e1b-goog
 
