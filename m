@@ -2,46 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 369E4C83F26
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Jul 2025 15:18:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13A3BC87FCB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Jul 2025 15:19:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E1D16402E6;
-	Wed, 30 Jul 2025 17:18:25 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id BFC13402C3
- for <dev@dpdk.org>; Wed, 30 Jul 2025 17:18:24 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id A4DFA46C55; Wed, 30 Jul 2025 17:18:24 +0200 (CEST)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/core Bug 1761] rte_raw_cksum_mbuf obtain incorrect cksum when
- a packet in mbuf split mode.
-Date: Wed, 30 Jul 2025 15:18:23 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: core
-X-Bugzilla-Version: unspecified
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: critical
-X-Bugzilla-Who: yanglanping@bytedance.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1761-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17538887040.0CCA229.508620
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id 13463402E6;
+	Wed, 30 Jul 2025 17:19:47 +0200 (CEST)
+Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
+ by mails.dpdk.org (Postfix) with ESMTP id 80A15402C3
+ for <dev@dpdk.org>; Wed, 30 Jul 2025 17:19:45 +0200 (CEST)
+Received: from debian (unknown [78.109.77.252])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by agw.arknetworks.am (Postfix) with ESMTPSA id D0D90E0036;
+ Wed, 30 Jul 2025 19:19:43 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am D0D90E0036
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
+ s=default; t=1753888784;
+ bh=td6GvlS1sqMB0GyQ+urkHgbBYLuX5PaOMtKc7eIXMa8=;
+ h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+ b=9WxSuwFJH8ktcdtbtGOj23g/fL07TQHhVISSpaQ/DN7dC6SF5XKfsk+AWxqcn07Q4
+ fS4JFj4tkkKHXFCvzmURDCv8368Hy4abfjShgFXKecDtTGpoNsxTdHkobSWBA0syRW
+ VTrxi4p57d7IDAP+rPzRxCiXSAPomwct58osaKh2vTnLiXwmAF7lLxmRuXgohpF+M0
+ /0y0z8Td3EpeiO2KePe0ujbRTFAXpKQcwXIbXJ5bJGmr+QrGA5mfFmrz54pARDW0eu
+ PJEJUBn/Rvzr+730L3wPJm8V5fg1vSRf3tIVsutGHYxlf3egbzbU5udr7resEGEUru
+ UgX91U+I/DuJw==
+Date: Wed, 30 Jul 2025 19:19:35 +0400 (+04)
+From: Ivan Malov <ivan.malov@arknetworks.am>
+To: Thomas Wilks <thomas.wilks@arm.com>
+cc: dev@dpdk.org, Paul Szczepanek <paul.szczepanek@arm.com>, 
+ Luca Vizzarro <luca.vizzarro@arm.com>, Patrick Robb <probb@iol.unh.edu>, 
+ Dean Marx <dmarx@iol.unh.edu>
+Subject: Re: [PATCH v4 2/2] dts: add PMD RSS testsuite
+In-Reply-To: <20250730125859.159185-3-thomas.wilks@arm.com>
+Message-ID: <ca9ebc2b-13b0-e955-b802-fc2f9f24b186@arknetworks.am>
+References: <20250718150404.200096-1-thomas.wilks@arm.com>
+ <20250730125859.159185-1-thomas.wilks@arm.com>
+ <20250730125859.159185-3-thomas.wilks@arm.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,188 +54,440 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+Hi Thomas,
 
---17538887040.0CCA229.508620
-Date: Wed, 30 Jul 2025 17:18:24 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+On Wed, 30 Jul 2025, Thomas Wilks wrote:
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1761
+> Port over the rss_key_update, pmd_rss_reta and pmd_rss_hash
+> test suites from old DTS into one file including all of the
+> helper functions that are required by all of the test suites
+> to work.
+>
+> The rss_key_update test cases verify that setting a new hash
+> key when Receive Side Scaling (RSS) will result in a change
+> in the packets destination queue. These test cases also
+> verifies that the reported key size of the NIC is correct.
+>
+> The pmd_rss_reta test cases verify that Redirection Tables (RETAs)
+> of different sizes function correctly in RSS. These test cases
+> also verify that the reported reta size of the NIC is correct.
+>
+> The pmd_rss_hash test case verifies that the 4 supported types of
+> hashing algorithm used in RSS function correctly and that the nic
+> supports them. The four hashing algorithms being DEFAULT, TOEPLITZ,
+> SYMMETRIC_TOEPLITZ and SIMPLE_XOR. These test cases also verify
+> that the supported hashing algorithms reported by the NIC are correct.
 
-            Bug ID: 1761
-           Summary: rte_raw_cksum_mbuf obtain incorrect cksum when a
-                    packet in mbuf split mode.
-           Product: DPDK
-           Version: unspecified
-          Hardware: All
-                OS: Linux
-            Status: UNCONFIRMED
-          Severity: critical
-          Priority: Normal
-         Component: core
-          Assignee: dev@dpdk.org
-          Reporter: yanglanping@bytedance.com
-  Target Milestone: ---
+This is a huge improvement, and the patch is quite neat.
 
-Hi.
+Apparently, the code does not consider cases where 'l3-dst-only, 'l4-dst-only'
+and similar flags get requested along with 'ipv4-udp'. Is it worth considering?
 
-This issue is about calc cksum, in rte_raw_cksum_mbuf function, when the pa=
-cket
-data is stored in multiple mbufs, below code easy overflow.
+Also, the test doesn't seem to validate the literal value of the 32-bit hash to
+make sure the predicted value matches the one in the packet's metadata. Though,
+I admit adding such coverage on the hoof might not be good and I don't insist.
 
-File rte_cksum.h
-    line 159: if (done & 1)
-    line 160:     tmp =3D rte_bswap16((uint16_t)tmp);=20
-    line 161: sum +=3D tmp;
+The patch is probably good as it is.
 
-The tmp(uint32_t) variable can easily be greater than 0xFFFF, so (uint16_t)=
-tmp
-will discard the high 16bit, cause incorrect result.
+Thank you.
 
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
-
---17538887040.0CCA229.508620
-Date: Wed, 30 Jul 2025 17:18:24 +0200
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-<html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
-bz_new_table">
-        <tr>
-          <th>Bug ID</th>
-          <td><a class=3D"bz_bug_link=20
-          bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - rte_raw_cksum_mbuf obtain incorrect cksum when a =
-packet in mbuf split mode."
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1761">1761</a>
-          </td>
-        </tr>
-
-        <tr>
-          <th>Summary</th>
-          <td>rte_raw_cksum_mbuf obtain incorrect cksum when a packet in mb=
-uf split mode.
-          </td>
-        </tr>
-
-        <tr>
-          <th>Product</th>
-          <td>DPDK
-          </td>
-        </tr>
-
-        <tr>
-          <th>Version</th>
-          <td>unspecified
-          </td>
-        </tr>
-
-        <tr>
-          <th>Hardware</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>OS</th>
-          <td>Linux
-          </td>
-        </tr>
-
-        <tr>
-          <th>Status</th>
-          <td>UNCONFIRMED
-          </td>
-        </tr>
-
-        <tr>
-          <th>Severity</th>
-          <td>critical
-          </td>
-        </tr>
-
-        <tr>
-          <th>Priority</th>
-          <td>Normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Component</th>
-          <td>core
-          </td>
-        </tr>
-
-        <tr>
-          <th>Assignee</th>
-          <td>dev&#64;dpdk.org
-          </td>
-        </tr>
-
-        <tr>
-          <th>Reporter</th>
-          <td>yanglanping&#64;bytedance.com
-          </td>
-        </tr>
-
-        <tr>
-          <th>Target Milestone</th>
-          <td>---
-          </td>
-        </tr></table>
-      <p>
-        <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">Hi.
-
-This issue is about calc cksum, in rte_raw_cksum_mbuf function, when the pa=
-cket
-data is stored in multiple mbufs, below code easy overflow.
-
-File rte_cksum.h
-    line 159: if (done &amp; 1)
-    line 160:     tmp =3D rte_bswap16((uint16_t)tmp);=20
-    line 161: sum +=3D tmp;
-
-The tmp(uint32_t) variable can easily be greater than 0xFFFF, so (uint16_t)=
-tmp
-will discard the high 16bit, cause incorrect result.
-          </pre>
-        </div>
-      </p>
-
-
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1761">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17538887040.0CCA229.508620--
+>
+> Signed-off-by: Thomas Wilks <thomas.wilks@arm.com>
+> ---
+> dts/tests/TestSuite_pmd_rss.py | 383 +++++++++++++++++++++++++++++++++
+> 1 file changed, 383 insertions(+)
+> create mode 100644 dts/tests/TestSuite_pmd_rss.py
+>
+> diff --git a/dts/tests/TestSuite_pmd_rss.py b/dts/tests/TestSuite_pmd_rss.py
+> new file mode 100644
+> index 0000000000..4c1b026307
+> --- /dev/null
+> +++ b/dts/tests/TestSuite_pmd_rss.py
+> @@ -0,0 +1,383 @@
+> +# SPDX-License-Identifier: BSD-3-Clause
+> +# Copyright(c) 2025 Arm Limited
+> +
+> +"""RSS testing suite.
+> +
+> +Tests different hashing algorithms by checking if packets are routed to correct queues.
+> +Tests updating the RETA (Redirection Table) key to verify it takes effect and follows
+> +set size constraints.
+> +Tests RETA behavior under changing number of queues.
+> +"""
+> +
+> +import random
+> +
+> +from scapy.layers.inet import IP, UDP
+> +from scapy.layers.l2 import Ether
+> +
+> +from framework.exception import InteractiveCommandExecutionError
+> +from framework.params.testpmd import SimpleForwardingModes
+> +from framework.remote_session.testpmd_shell import (
+> +    FlowRule,
+> +    RSSOffloadTypesFlag,
+> +    TestPmdShell,
+> +    TestPmdVerbosePacket,
+> +)
+> +from framework.test_suite import BaseConfig, TestSuite, func_test
+> +from framework.testbed_model.capability import requires
+> +from framework.testbed_model.topology import TopologyType
+> +from framework.utils import StrEnum
+> +
+> +
+> +class Config(BaseConfig):
+> +    """Default configuration for Per Test Suite config."""
+> +
+> +    NUM_QUEUES: int = 4
+> +
+> +    ACTUAL_KEY_SIZE: int = 52
+> +
+> +    ACTUAL_RETA_SIZE: int = 512
+> +
+> +
+> +class HashAlgorithm(StrEnum):
+> +    """Enum of hashing algorithms."""
+> +
+> +    DEFAULT = "default"
+> +    SIMPLE_XOR = "simple_xor"
+> +    TOEPLITZ = "toeplitz"
+> +    SYMMETRIC_TOEPLITZ = "symmetric_toeplitz"
+> +
+> +
+> +@requires(topology_type=TopologyType.one_link)
+> +class TestPmdRss(TestSuite):
+> +    """PMD RSS test suite."""
+> +
+> +    config: Config
+> +
+> +    def verify_hash_queue(
+> +        self,
+> +        reta: list[int],
+> +        received_packets: list[TestPmdVerbosePacket],
+> +        verify_packet_pairs: bool,
+> +    ) -> None:
+> +        """Verifies the packet hash corresponds to the packet queue.
+> +
+> +        Given the received packets in the verbose output, iterate through each packet.
+> +        Use the hash to index into RETA and get its intended queue.
+> +        Verify the intended queue is the same as the actual queue the packet was received in.
+> +        If the hash algorithm is symmetric, verify that pairs of packets have the same hash,
+> +        as the pairs of packets sent have "mirrored" L4 ports.
+> +        e.g. received_packets[0, 1, 2, 3, ...] hash(0) = hash(1), hash(2) = hash(3), ...
+> +
+> +        Args:
+> +            reta: Used to get predicted queue based on hash.
+> +            received_packets: Packets received in the verbose output of testpmd.
+> +            verify_packet_pairs: Verify pairs of packets have the same hash.
+> +
+> +        Raises:
+> +            InteractiveCommandExecutionError: If packet_hash is None.
+> +        """
+> +        # List of packet hashes, used for symmetric algorithms
+> +        hash_list = []
+> +        for packet in received_packets:
+> +            # Ignore stray packets
+> +            if packet.port_id != 0 or packet.src_mac != "02:00:00:00:00:00":
+> +                continue
+> +            # Get packet hash
+> +            packet_hash = packet.rss_hash
+> +            if packet_hash is None:
+> +                raise InteractiveCommandExecutionError(
+> +                    "Packet sent by the Traffic Generator has no RSS hash attribute."
+> +                )
+> +
+> +            packet_queue = packet.rss_queue
+> +
+> +            # Calculate the predicted packet queue
+> +            predicted_queue = reta[packet_hash % len(reta)]
+> +            self.verify(
+> +                predicted_queue == packet_queue,
+> +                "Packet sent by the Traffic Generator assigned to incorrect queue by the RSS.",
+> +            )
+> +
+> +            if verify_packet_pairs:
+> +                hash_list.append(packet_hash)
+> +
+> +        if verify_packet_pairs:
+> +            # Go through pairs of hashes in list and verify they are the same
+> +            for odd_hash, even_hash in zip(hash_list[0::2], hash_list[1::2]):
+> +                self.verify(
+> +                    odd_hash == even_hash,
+> +                    "Packet pair do not have same hash. Hash algorithm is not symmetric.",
+> +                )
+> +
+> +    def send_test_packets(
+> +        self,
+> +        testpmd: TestPmdShell,
+> +        send_additional_mirrored_packet: bool = False,
+> +    ) -> list[TestPmdVerbosePacket]:
+> +        """Sends test packets.
+> +
+> +        Send 10 packets from the TG to SUT, parsing the verbose output and returning it.
+> +        If the algorithm chosen is symmetric, send an additional packet for each initial
+> +        packet sent, which has the L4 src and dst swapped.
+> +
+> +        Args:
+> +            testpmd: Used to send packets and send commands to testpmd.
+> +            send_additional_mirrored_packet: Send an additional mirrored packet for each packet
+> +            sent.
+> +
+> +        Returns:
+> +            TestPmdVerbosePacket: List of packets.
+> +        """
+> +        # Create test packets
+> +        packets = []
+> +        for i in range(10):
+> +            packets.append(
+> +                Ether(src="02:00:00:00:00:00", dst="11:00:00:00:00:00")
+> +                / IP()
+> +                / UDP(sport=i, dport=i + 1),
+> +            )
+> +            if send_additional_mirrored_packet:  # If symmetric, send the inverse packets
+> +                packets.append(
+> +                    Ether(src="02:00:00:00:00:00", dst="11:00:00:00:00:00")
+> +                    / IP()
+> +                    / UDP(sport=i + 1, dport=i),
+> +                )
+> +
+> +        # Set verbose packet information and start packet capture
+> +        testpmd.set_verbose(level=3)
+> +        testpmd.start()
+> +        testpmd.start_all_ports()
+> +        self.send_packets_and_capture(packets)
+> +
+> +        # Stop packet capture and revert verbose packet information
+> +        testpmd_shell_out = testpmd.stop()
+> +        testpmd.set_verbose(level=0)
+> +        # Parse the packets and return them
+> +        return testpmd.extract_verbose_output(testpmd_shell_out)
+> +
+> +    def setup_rss_environment(
+> +        self,
+> +        testpmd: TestPmdShell,
+> +    ) -> None:
+> +        """Sets up the testpmd environment for RSS test suites.
+> +
+> +        Sets the testpmd forward mode to rx_only and RSS on the NIC to UDP.
+> +
+> +        Args:
+> +            testpmd: Where the environment will be set.
+> +        """
+> +        # Set forward mode to receive only, to remove forwarded packets from verbose output
+> +        testpmd.set_forward_mode(SimpleForwardingModes.rxonly)
+> +
+> +        # Reset RSS settings and only RSS udp packets
+> +        testpmd.port_config_all_rss_offload_type(RSSOffloadTypesFlag.udp)
+> +
+> +    def configure_random_reta(self, testpmd: TestPmdShell, queue_number: int) -> list[int]:
+> +        """Configure RETA to have random order of queues.
+> +
+> +        Args:
+> +            testpmd: The testpmd instance that will be used to set the rss environment.
+> +            queue_number: Number of queues that will be randomly inserted into the RETA.
+> +
+> +        Returns:
+> +            List of ids matching the configured RETA table
+> +
+> +        Raises:
+> +            InteractiveCommandExecutionError: If size of RETA table for driver is None.
+> +        """
+> +        reta_size = testpmd.show_port_info(port_id=0).redirection_table_size
+> +        if reta_size is None:
+> +            raise InteractiveCommandExecutionError("Size of RETA table for driver is None.")
+> +        reta_table: list[int] = []
+> +
+> +        for i in range(reta_size):
+> +            random_id = random.randint(0, queue_number - 1)
+> +            reta_table.insert(i, random_id)
+> +            testpmd.port_config_rss_reta(port_id=0, hash_index=i, queue_id=random_id)
+> +        return reta_table
+> +
+> +    def verify_rss_hash_function(
+> +        self,
+> +        testpmd: TestPmdShell,
+> +        hash_algorithm: HashAlgorithm,
+> +        flow_rule: FlowRule,
+> +        reta: list[int],
+> +    ) -> None:
+> +        """Verifies hash function are working by sending test packets and checking the packet queue.
+> +
+> +        Args:
+> +            testpmd: The testpmd instance that will be used to set the rss environment.
+> +            hash_algorithm: The hash algorithm to be tested.
+> +            flow_rule: The flow rule that is to be validated and then created.
+> +            reta: Will be used to calculate the predicted packet queues.
+> +        """
+> +        is_symmetric = hash_algorithm == HashAlgorithm.SYMMETRIC_TOEPLITZ
+> +        self.setup_rss_environment(testpmd)
+> +        testpmd.flow_create(flow_rule, port_id=0)
+> +        # Send udp packets and ensure hash corresponds with queue
+> +        parsed_output = self.send_test_packets(
+> +            testpmd, send_additional_mirrored_packet=is_symmetric
+> +        )
+> +        self.verify_hash_queue(reta, parsed_output, is_symmetric)
+> +
+> +    @func_test
+> +    def test_key_hash_algorithm(self) -> None:
+> +        """Hashing algorithm test.
+> +
+> +        Steps:
+> +            Setup RSS environment using the chosen algorithm.
+> +            Send test packets for each flow rule.
+> +
+> +        Verify:
+> +            Packet hash corresponds to the packet queue.
+> +
+> +        Raises:
+> +            InteractiveCommandExecutionError: If size of RETA table for driver is None.
+> +            InteractiveCommandExecutionError: If there are no valid flow rules that can be created.
+> +        """
+> +        failed_attempts: int = 0
+> +        for algorithm in HashAlgorithm:
+> +            flow_rule = FlowRule(
+> +                group_id=0,
+> +                direction="ingress",
+> +                pattern=["eth / ipv4 / udp"],
+> +                actions=[f"rss types ipv4-udp end queues end func {algorithm.name.lower()}"],
+> +            )
+> +            with TestPmdShell(
+> +                rx_queues=self.config.NUM_QUEUES,
+> +                tx_queues=self.config.NUM_QUEUES,
+> +            ) as testpmd:
+> +                reta_table = self.configure_random_reta(testpmd, self.config.NUM_QUEUES)
+> +
+> +                if not testpmd.flow_validate(flow_rule, port_id=0):
+> +                    # Queues need to be specified in the flow rule on some NICs
+> +                    queue_ids = " ".join([str(x) for x in reta_table])
+> +                    flow_rule.actions = [
+> +                        f"rss types ipv4-udp end queues {queue_ids} end func "
+> +                        + algorithm.name.lower()
+> +                    ]
+> +
+> +                    if not testpmd.flow_validate(flow_rule, port_id=0):
+> +                        failed_attempts += 1
+> +                        if failed_attempts == len(HashAlgorithm):
+> +                            raise InteractiveCommandExecutionError(
+> +                                "No Valid flow rule could be created."
+> +                            )
+> +                        # if neither rule format is valid then the algorithm is not supported,
+> +                        # move to next one
+> +                        continue
+> +                self.verify_rss_hash_function(testpmd, algorithm, flow_rule, reta_table)
+> +
+> +    @func_test
+> +    def test_update_key_set_hash_key_short_long(self) -> None:
+> +        """Set hash key short long test.
+> +
+> +        Steps:
+> +            Fetch the hash key size.
+> +            Create two random hash keys one key too short and one too long.
+> +
+> +        Verify:
+> +            Verify that it is not possible to set the shorter hash key.
+> +            Verify that it is not possible to set the longer hash key.
+> +
+> +        Raises:
+> +            InteractiveCommandExecutionError: If port info dose not contain hash key size.
+> +        """
+> +        with TestPmdShell(
+> +            memory_channels=4,
+> +            rx_queues=self.config.NUM_QUEUES,
+> +            tx_queues=self.config.NUM_QUEUES,
+> +        ) as testpmd:
+> +            # Get RETA and key size
+> +            port_info = testpmd.show_port_info(port_id=0)
+> +
+> +            # Get hash key size
+> +            key_size = port_info.hash_key_size
+> +            if key_size is None:
+> +                raise InteractiveCommandExecutionError("Port info does not contain hash key size.")
+> +
+> +            # Create 2 hash keys based on the NIC capabilities
+> +            short_key = "".join(
+> +                [random.choice("0123456789ABCDEF") for n in range(key_size * 2 - 2)]
+> +            )
+> +            long_key = "".join([random.choice("0123456789ABCDEF") for n in range(key_size * 2 + 2)])
+> +
+> +            # Verify a short key cannot be set
+> +            short_key_out = testpmd.port_config_rss_hash_key(
+> +                0, RSSOffloadTypesFlag.ipv4_udp, short_key, False
+> +            )
+> +            self.verify(
+> +                "invalid" in short_key_out,
+> +                "Able to set hash key shorter than specified.",
+> +            )
+> +
+> +            # Verify a long key cannot be set
+> +            long_key_out = testpmd.port_config_rss_hash_key(
+> +                0, RSSOffloadTypesFlag.ipv4_udp, long_key, False
+> +            )
+> +            self.verify("invalid" in long_key_out, "Able to set hash key longer than specified.")
+> +
+> +    @func_test
+> +    def test_update_key_reported_key_size(self) -> None:
+> +        """Verify reported hash key size is the same as the NIC capabilities.
+> +
+> +        Steps:
+> +            Fetch the hash key size and compare to the actual key size.
+> +
+> +        Verify:
+> +            Reported key size is the same as the actual key size.
+> +        """
+> +        with TestPmdShell() as testpmd:
+> +            reported_key_size = testpmd.show_port_info(port_id=0).hash_key_size
+> +            self.verify(
+> +                reported_key_size == self.config.ACTUAL_KEY_SIZE,
+> +                "Reported key size is not the same as the config file.",
+> +            )
+> +
+> +    @func_test
+> +    def test_reta_key_reta_queues(self) -> None:
+> +        """RETA rx/tx queues test.
+> +
+> +        Steps:
+> +            For each queue size setup RSS environment and send Test packets.
+> +
+> +        Verify:
+> +            Packet hash corresponds to hash queue.
+> +
+> +        Raises:
+> +            InteractiveCommandExecutionError: If size of RETA table for driver is None.
+> +        """
+> +        queues_numbers = [2, 9, 16]
+> +        for queue_number in queues_numbers:
+> +            with TestPmdShell(
+> +                rx_queues=queue_number,
+> +                tx_queues=queue_number,
+> +            ) as testpmd:
+> +                # Configure the RETA with random queues
+> +                reta = self.configure_random_reta(testpmd, queue_number)
+> +
+> +                self.setup_rss_environment(testpmd)
+> +
+> +                # Send UDP packets and ensure hash corresponds with queue
+> +                parsed_output = self.send_test_packets(testpmd)
+> +                self.verify_hash_queue(reta, parsed_output, False)
+> +
+> +    @func_test
+> +    def test_reta_key_reported_reta_size(self) -> None:
+> +        """Reported RETA size test.
+> +
+> +        Steps:
+> +            Fetch reported reta size.
+> +
+> +        Verify:
+> +            Reported RETA size is equal to the actual RETA size.
+> +        """
+> +        with TestPmdShell(
+> +            rx_queues=self.config.NUM_QUEUES,
+> +            tx_queues=self.config.NUM_QUEUES,
+> +        ) as testpmd:
+> +            reported_reta_size = testpmd.show_port_info(port_id=0).redirection_table_size
+> +            self.verify(
+> +                reported_reta_size == self.config.ACTUAL_RETA_SIZE,
+> +                "Reported RETA size is not the same as the config file.",
+> +            )
+> -- 
+> 2.43.0
+>
+>
