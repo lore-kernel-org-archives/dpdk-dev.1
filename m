@@ -2,46 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A82E5C83F26
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Jul 2025 19:18:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8116FC83F26
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Jul 2025 20:10:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7A1B04026A;
-	Wed, 30 Jul 2025 21:18:27 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 8C6484025A
- for <dev@dpdk.org>; Wed, 30 Jul 2025 21:18:26 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 658B146C57; Wed, 30 Jul 2025 21:18:26 +0200 (CEST)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1762] Unable to use TB-mode when code blocks have
- different length (ACC100 / VRB drivers)
-Date: Wed, 30 Jul 2025 19:18:26 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
-X-Bugzilla-Version: unspecified
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: faust1002@gmail.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone attachments.created
-Message-ID: <bug-1762-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17539031060.7F67C7.649321
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id 3E82A402CB;
+	Wed, 30 Jul 2025 22:10:46 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 4BE844025A;
+ Wed, 30 Jul 2025 22:10:44 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 03995209B9;
+ Wed, 30 Jul 2025 22:10:44 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [RFC PATCH] doc: clarify VLAN and QinQ stripping behaviour
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Wed, 30 Jul 2025 22:10:42 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FDD6@smartserver.smartshare.dk>
+In-Reply-To: <aIpWP6FCcMXktUvq@bricha3-mobl1.ger.corp.intel.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [RFC PATCH] doc: clarify VLAN and QinQ stripping behaviour
+Thread-Index: AdwBd2oF0VYoWv6FRWueFkNyMm9mfAADFBFg
+References: <aHd6x3kT053EvX2g@bricha3-mobl1.ger.corp.intel.com>
+ <CABD7UXPtChUUOdz3gfiyKqY4Rn2_0F8Ck4O6ypq9woATD7hfCw@mail.gmail.com>
+ <aHgBs5DGU48mTnwz@bricha3-mobl1.ger.corp.intel.com>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FDB8@smartserver.smartshare.dk>
+ <CABD7UXPccao=o1O=SessoAdEKUyA-dXP6HG5mnkpFSVNL_3dxw@mail.gmail.com>
+ <aHoEUmesrg9Y8qtM@bricha3-mobl1.ger.corp.intel.com>
+ <CABD7UXOqkROef0_BreD1GHC_R+7EwxRTL8LF-fXQJBECp7J9SA@mail.gmail.com>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FDCD@smartserver.smartshare.dk>
+ <aIeTCX3KbnxIvDJP@bricha3-mobl1.ger.corp.intel.com>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FDCF@smartserver.smartshare.dk>
+ <aIpWP6FCcMXktUvq@bricha3-mobl1.ger.corp.intel.com>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>
+Cc: <dev@dpdk.org>, "Dengdui Huang" <huangdengdui@huawei.com>,
+ "Vladimir Medvedkin" <medvedkinv@gmail.com>, <techboard@dpdk.org>,
+ "Patrick Robb" <probb@iol.unh.edu>,
+ "fengchengwen" <fengchengwen@huawei.com>, <stephen@networkplumber.org>,
+ <jasvinder.singh@intel.com>, <thomas@monjalon.net>,
+ <aman.deep.singh@intel.com>, <lihuisong@huawei.com>,
+ <liuyonglong@huawei.com>, "Dean Marx" <dmarx@iol.unh.edu>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,278 +62,223 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-
---17539031060.7F67C7.649321
-Date: Wed, 30 Jul 2025 21:18:26 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-https://bugs.dpdk.org/show_bug.cgi?id=3D1762
-
-            Bug ID: 1762
-           Summary: Unable to use TB-mode when code blocks have different
-                    length (ACC100 / VRB drivers)
-           Product: DPDK
-           Version: unspecified
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: ethdev
-          Assignee: dev@dpdk.org
-          Reporter: faust1002@gmail.com
-  Target Milestone: ---
-
-Created attachment 324
-  --> https://bugs.dpdk.org/attachment.cgi?id=3D324&action=3Dedit
-Problem with AC100 / VRB1 drivers when using TB mode
-
-Hello,
-First of all, I hope I selected the problematic component correctly. I deci=
-ded
-to choose ethdev, because I found a different bug in the same piece of code
-reported under the same category.
-
-Going back to the problem - based on my understanding of bbdev documentation
-(https://doc.dpdk.org/guides/prog_guide/bbdev.html), it is possible to
-configure two different code block lengths (denoted as tb_params.ea and
-tb_params.eb) in TB mode within one OP. In other words, to decode an entire=
- TB,
-instead of doing TB segmentation in SW and then allocating one OP per CB, I=
- can
-offload everything to HW by using only one OP per TB. So, for example, I can
-configure OP as follows
-code_block_mode =3D 0
-tb_params.ea =3D 9056
-tb_params.eb =3D 9088
-tb_params.c =3D 23
-tb_params.r =3D 0
-tb_params.cab =3D 4
-In other words, the first four CBs will be 9056 bits longs and the remainin=
-g 29
-CBs will be 9088 bits long. Decoding will start with CB#0.
-
-However, looking at the attached piece of code, it seems like fcw->rm_e is
-configured only onces. Then the calculated value is used for all CBs,
-regardless of their size provided as part of tb_params. As a result, decodi=
-ng
-fails. The entire code flow is as follows: vrb_enqueue_ldpc_dec (num set to=
- 1
-as we use only one OP per TB) -> vrb_enqueue_ldpc_dec_tb ->
-vrb_enqueue_ldpc_dec_one_op_tb -> vrb_fcw_ld_fill (where fcw->rm_e is set) =
-and
-then for each end every CB vrb_dma_desc_ld_fill (where possibly incorrect
-fcw->rm_e is used). I hope the problem description is clear. Please do not
-hesitate to contact me if you have any further questions.
-
-It seems like both LDPC encoding and decoding are impacted by this problem.
-Furthermore, drivers for ACC100 and VRB1 are almost identical.
-
-Not sure if the described problem is an actual bug or an undocumented featu=
-re.
-I would not be surprised if ACC100 / VRB1 didn't support different CB lengt=
-hs
-in TB mode. However, this should have been clearly documented. Furthermore,
-there are no examples of how to use TB mode, only examples for CB mode are
-available. This needs to be addressed as well in my humble opinion.
-
-The original implementation was done by Nicolas Chautru from Intel. So I
-believe he should be the first point of contact here.=20
-Kind regards
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
-
---17539031060.7F67C7.649321
-Date: Wed, 30 Jul 2025 21:18:26 +0200
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-<html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
-bz_new_table">
-        <tr>
-          <th>Bug ID</th>
-          <td><a class=3D"bz_bug_link=20
-          bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - Unable to use TB-mode when code blocks have diffe=
-rent length (ACC100 / VRB drivers)"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1762">1762</a>
-          </td>
-        </tr>
-
-        <tr>
-          <th>Summary</th>
-          <td>Unable to use TB-mode when code blocks have different length =
-(ACC100 / VRB drivers)
-          </td>
-        </tr>
-
-        <tr>
-          <th>Product</th>
-          <td>DPDK
-          </td>
-        </tr>
-
-        <tr>
-          <th>Version</th>
-          <td>unspecified
-          </td>
-        </tr>
-
-        <tr>
-          <th>Hardware</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>OS</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>Status</th>
-          <td>UNCONFIRMED
-          </td>
-        </tr>
-
-        <tr>
-          <th>Severity</th>
-          <td>normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Priority</th>
-          <td>Normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Component</th>
-          <td>ethdev
-          </td>
-        </tr>
-
-        <tr>
-          <th>Assignee</th>
-          <td>dev&#64;dpdk.org
-          </td>
-        </tr>
-
-        <tr>
-          <th>Reporter</th>
-          <td>faust1002&#64;gmail.com
-          </td>
-        </tr>
-
-        <tr>
-          <th>Target Milestone</th>
-          <td>---
-          </td>
-        </tr></table>
-      <p>
-        <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">Created <span class=3D""><a href=
-=3D"attachment.cgi?id=3D324" name=3D"attach_324" title=3D"Problem with AC10=
-0 / VRB1 drivers when using TB mode">attachment 324</a> <a href=3D"attachme=
-nt.cgi?id=3D324&amp;action=3Dedit" title=3D"Problem with AC100 / VRB1 drive=
-rs when using TB mode">[details]</a></span>
-Problem with AC100 / VRB1 drivers when using TB mode
-
-Hello,
-First of all, I hope I selected the problematic component correctly. I deci=
-ded
-to choose ethdev, because I found a different bug in the same piece of code
-reported under the same category.
-
-Going back to the problem - based on my understanding of bbdev documentation
-(<a href=3D"https://doc.dpdk.org/guides/prog_guide/bbdev.html">https://doc.=
-dpdk.org/guides/prog_guide/bbdev.html</a>), it is possible to
-configure two different code block lengths (denoted as tb_params.ea and
-tb_params.eb) in TB mode within one OP. In other words, to decode an entire=
- TB,
-instead of doing TB segmentation in SW and then allocating one OP per CB, I=
- can
-offload everything to HW by using only one OP per TB. So, for example, I can
-configure OP as follows
-code_block_mode =3D 0
-tb_params.ea =3D 9056
-tb_params.eb =3D 9088
-tb_params.c =3D 23
-tb_params.r =3D 0
-tb_params.cab =3D 4
-In other words, the first four CBs will be 9056 bits longs and the remainin=
-g 29
-CBs will be 9088 bits long. Decoding will start with CB#0.
-
-However, looking at the attached piece of code, it seems like fcw-&gt;rm_e =
-is
-configured only onces. Then the calculated value is used for all CBs,
-regardless of their size provided as part of tb_params. As a result, decodi=
-ng
-fails. The entire code flow is as follows: vrb_enqueue_ldpc_dec (num set to=
- 1
-as we use only one OP per TB) -&gt; vrb_enqueue_ldpc_dec_tb -&gt;
-vrb_enqueue_ldpc_dec_one_op_tb -&gt; vrb_fcw_ld_fill (where fcw-&gt;rm_e is=
- set) and
-then for each end every CB vrb_dma_desc_ld_fill (where possibly incorrect
-fcw-&gt;rm_e is used). I hope the problem description is clear. Please do n=
-ot
-hesitate to contact me if you have any further questions.
-
-It seems like both LDPC encoding and decoding are impacted by this problem.
-Furthermore, drivers for ACC100 and VRB1 are almost identical.
-
-Not sure if the described problem is an actual bug or an undocumented featu=
-re.
-I would not be surprised if ACC100 / VRB1 didn't support different CB lengt=
-hs
-in TB mode. However, this should have been clearly documented. Furthermore,
-there are no examples of how to use TB mode, only examples for CB mode are
-available. This needs to be addressed as well in my humble opinion.
-
-The original implementation was done by Nicolas Chautru from Intel. So I
-believe he should be the first point of contact here.=20
-Kind regards
-          </pre>
-        </div>
-      </p>
-
-
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1762">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17539031060.7F67C7.649321--
+PiBGcm9tOiBCcnVjZSBSaWNoYXJkc29uIFttYWlsdG86YnJ1Y2UucmljaGFyZHNvbkBpbnRlbC5j
+b21dDQo+IFNlbnQ6IFdlZG5lc2RheSwgMzAgSnVseSAyMDI1IDE5LjI5DQo+IA0KPiBPbiBNb24s
+IEp1bCAyOCwgMjAyNSBhdCAwNzo0ODo1M1BNICswMjAwLCBNb3J0ZW4gQnLDuHJ1cCB3cm90ZToN
+Cj4gPiA+IEZyb206IEJydWNlIFJpY2hhcmRzb24gW21haWx0bzpicnVjZS5yaWNoYXJkc29uQGlu
+dGVsLmNvbV0NCj4gPiA+IFNlbnQ6IE1vbmRheSwgMjggSnVseSAyMDI1IDE3LjExDQo+ID4gPg0K
+PiA+ID4gT24gTW9uLCBKdWwgMjgsIDIwMjUgYXQgMDQ6NTE6MzBQTSArMDIwMCwgTW9ydGVuIEJy
+w7hydXAgd3JvdGU6DQo+ID4gPiA+ID4gRnJvbTogRGVhbiBNYXJ4IFttYWlsdG86ZG1hcnhAaW9s
+LnVuaC5lZHVdDQo+ID4gPiA+ID4gU2VudDogRnJpZGF5LCAxOCBKdWx5IDIwMjUgMTUuMTgNCj4g
+PiA+ID4gPg0KPiA+ID4gPiA+IE9uIEZyaSwgSnVsIDE4LCAyMDI1IGF0IDQ6MjPigK9BTSBCcnVj
+ZSBSaWNoYXJkc29uDQo+ID4gPiA+ID4gPGJydWNlLnJpY2hhcmRzb25AaW50ZWwuY29tPiB3cm90
+ZToNCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiBPbiBUaHUsIEp1bCAxNywgMjAyNSBhdCAwNTow
+MzoxM1BNIC0wNDAwLCBEZWFuIE1hcnggd3JvdGU6DQo+ID4gPiA+ID4gPiA+IEkndmUgY3JlYXRl
+ZCBhIHYxIG9mIGEgUWluUSB0ZXN0IHN1aXRlIGFyb3VuZCB0aGUgc2V0IG9mDQo+IHRlc3QgY2Fz
+ZXMNCj4gPiA+ID4gPiA+ID4gZGlzY3Vzc2VkIGVhcmxpZXIgKHdoaWNoIGlzIG5vdCBzZXQgaW4g
+c3RvbmUsIGFuZCBJIGV4cGVjdA0KPiBpdCB0bw0KPiA+ID4gPiA+ID4gPiBjaGFuZ2Ugc2lnbmlm
+aWNhbnRseSBhY3Jvc3MgbWFueSBmdXR1cmUgdmVyc2lvbnMuKSBUaGUNCj4gUEFTUy9GQUlMDQo+
+ID4gPiA+ID4gPiA+IHZhbHVlcyBjYW4gYmUgbW9zdGx5IGRpc3JlZ2FyZGVkIGluIHRoZSBjb250
+ZXh0IG9mIHRoaXMNCj4gY29udmVyc2F0aW9uLA0KPiA+ID4gPiA+ID4gPiBidXQgSSd2ZSBhZGRl
+ZCBsb2dnaW5nIHRvIGV4cGxhaW4gd2hpY2ggcGFja2V0cyBhcmUgc2VudCwNCj4gYW5kIHdoYXQN
+Cj4gPiA+ID4gPiA+ID4gaGFwcGVuZWQgdXBvbiByZWNlcHRpb24sIHdoaWNoIEkgaG9wZSB3aWxs
+IGJlIG1vcmUNCj4gaW5mb3JtYXRpdmUuIEFmdGVyDQo+ID4gPiA+ID4gPiA+IHJ1bm5pbmcgb24g
+bWx4NS9pNDBlIGRyaXZlcnMsIEkgZ290IHRoZSBmb2xsb3dpbmcgcmVzdWx0czoNCj4gPiA+ID4g
+PiA+ID4NCj4gPiA+ID4gPiA+ID4gdGVzdF92bGFuX3N0cmlwOiBRaW5RIHN0cmlwIE9GRiBhbmQg
+VkxBTiBzdHJpcCBPTg0KPiA+ID4gPiA+ID4gPiB0ZXN0X3FpbnFfc3RyaXA6IFFpblEgc3RyaXAg
+T04gYW5kIFZMQU4gc3RyaXAgT04NCj4gPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4gaTQwZToN
+Cj4gPiA+ID4gPiA+ID4gICAgIHRlc3RfcWlucV9zdHJpcCAoc2VudCBwYWNrZXQ6IFNpbmdsZSBW
+TEFOKTogRkFJTA0KPiA+ID4gPiA+ID4gPiAgICAgICByZWFzb246IFZMQU4gdGFncyBmb3VuZCBp
+biBwYWNrZXQgd2hlbiBzaG91bGQgaGF2ZQ0KPiBiZWVuDQo+ID4gPiA+ID4gPiA+IHN0cmlwcGVk
+OiBFdGhlciAvIERvdDFRIC8gODAyLjFxICgweDFjKSB2bGFuIDEyODAgLyBMTEMgLw0KPiBSYXcg
+Lw0KPiA+ID4gPiA+ID4gPiBQYWRkaW5nDQo+ID4gPiA+ID4gPiA+ICAgICB0ZXN0X3FpbnFfc3Ry
+aXAgKHNlbnQgcGFja2V0OiBTdGFja2VkIFZMQU4pOiBGQUlMDQo+ID4gPiA+ID4gPiA+ICAgICAg
+IHJlYXNvbjogRXhwZWN0ZWQgb25lIFZMQU4gdGFnIGJ1dCBmb3VuZCAyOiBFdGhlciAvDQo+IERv
+dDFRIC8gRG90MVENCj4gPiA+ID4gPiA+ID4gLyA4MDIuMXEgKDB4MWMpIHZsYW4gMTI4MCAvIExM
+QyAvIFJhdyAvIFBhZGRpbmcNCj4gPiA+ID4gPiA+ID4gICAgIHRlc3RfcWlucV9zdHJpcCAoc2Vu
+dCBwYWNrZXQ6IFNpbmdsZSBTLVZMQU4pOiBGQUlMDQo+ID4gPiA+ID4gPiA+ICAgICAgIHJlYXNv
+bjogVkxBTiB0YWdzIGZvdW5kIGluIHBhY2tldCB3aGVuIHNob3VsZCBoYXZlDQo+IGJlZW4NCj4g
+PiA+ID4gPiA+ID4gc3RyaXBwZWQ6IEV0aGVyIC8gRG90MVEgLyA4MDIuMXEgKD8/KSB2bGFuID8/
+IC8gTExDIC8gUmF3IC8NCj4gUGFkZGluZw0KPiA+ID4gPiA+ID4gPiAgICAgdGVzdF9xaW5xX3N0
+cmlwIChzZW50IHBhY2tldDogUWluUSk6IEZBSUwNCj4gPiA+ID4gPiA+ID4gICAgICAgcmVhc29u
+OiBWTEFOIHRhZ3MgZm91bmQgaW4gcGFja2V0IHdoZW4gc2hvdWxkIGhhdmUNCj4gYmVlbg0KPiA+
+ID4gPiA+ID4gPiBzdHJpcHBlZDogRXRoZXIgLyBEb3QxUSAvIERvdDFBRCAvIDgwMi4xcSAoMHgx
+YykgdmxhbiAxMjgwIC8NCj4gTExDIC8gUmF3DQo+ID4gPiA+ID4gPiA+IC8gUGFkZGluZw0KPiA+
+ID4gPiA+ID4gPiAgICAgdGVzdF92bGFuX3N0cmlwIChzZW50IHBhY2tldDogU2luZ2xlIFZMQU4p
+OiBQQVNTDQo+ID4gPiA+ID4gPiA+ICAgICAgIHJlYXNvbjogVkxBTiB0YWcgc3RyaXBwZWQgZnJv
+bSBwYWNrZXQNCj4gPiA+ID4gPiA+ID4gICAgIHRlc3Rfdmxhbl9zdHJpcCAoc2VudCBwYWNrZXQ6
+IFN0YWNrZWQgVkxBTik6IFBBU1MNCj4gPiA+ID4gPiA+ID4gICAgICAgcmVhc29uOiBSZWNlaXZl
+ZCBwYWNrZXQgaGFkIG91dGVyIFZMQU4gc3RyaXBwZWQsIHdpdGgNCj4gaW5uZXIgVkxBTg0KPiA+
+ID4gPiA+IGludGFjdA0KPiA+ID4gPiA+ID4gPiAgICAgdGVzdF92bGFuX3N0cmlwIChzZW50IHBh
+Y2tldDogU2luZ2xlIFMtVkxBTik6IFBBU1MNCj4gPiA+ID4gPiA+ID4gICAgICAgcmVhc29uOiBT
+LVZMQU4gdGFnIHN0cmlwcGVkIGZyb20gcGFja2V0DQo+ID4gPiA+ID4gPiA+ICAgICB0ZXN0X3Zs
+YW5fc3RyaXAgKHNlbnQgcGFja2V0OiBRaW5RKTogRkFJTA0KPiA+ID4gPiA+ID4gPiAgICAgICBy
+ZWFzb246IE5laXRoZXIgdGFnIHN0cmlwcGVkDQo+ID4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPg0K
+PiA+ID4gPiA+ID4gQ2FuIHlvdSBjb25maXJtIGV4YWN0bHkgd2hhdCBpcyBiZWluZyBzZW50IGlu
+IGVhY2ggY2FzZSBmb3INCj4gdGhlDQo+ID4gPiBldGhlcnR5cGUNCj4gPiA+ID4gPiA+IG9mIHRo
+ZSBWTEFOIHRhZz8gV2hlbiB5b3Ugc2F5IHNpbmdsZSBhbmQgc3RhY2tlZCBWTEFOcywgdGhhdA0K
+PiBpcyBWTEFOcw0KPiA+ID4gd2l0aA0KPiA+ID4gPiA+ID4gMHg4MTAwIHR5cGUsIGNvcnJlY3Q/
+IElzIHNpbmdsZSBTLVZMQU4gYSB0YWcgd2l0aCBldGhlcnR5cGUNCj4gMHg4OGE4LCBhbmQNCj4g
+PiA+ID4gPiA+IFFpblEgcGFja2V0IGEgcGFja2V0IHdpdGggb25lIDB4ODhhOCBhbmQgb25lIDB4
+ODEwMD8gTm8gb3RoZXINCj4gdHlwZQ0KPiA+ID4gb3B0aW9ucywNCj4gPiA+ID4gPiA+IGUuZy4g
+MHg5MTAwIHdlcmUgY2hlY2tlZCwgcmlnaHQ/DQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gL0Jy
+dWNlDQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBUaGF0J3MgY29ycmVjdCwgc2luZ2xlIFZMQU4gaXMg
+b25lIDB4ODEwMCB0YWcsIHN0YWNrZWQgaXMgdHdvLA0KPiBzaW5nbGUNCj4gPiA+ID4gPiBTLVZM
+QU4gaXMgb25lIDB4ODhhOCwgYW5kIFFpblEgaXMgMHg4OGE4IGFuZCAweDgxMDAuIE5vIG90aGVy
+DQo+IHR5cGVzDQo+ID4gPiA+ID4gd2VyZSB0ZXN0ZWQgaW4gdGhlIHN0cmlwcGluZyBjYXNlDQo+
+ID4gPiA+DQo+ID4gPiA+DQo+ID4gPiA+IEJydWNlLA0KPiA+ID4gPg0KPiA+ID4gPiBJdCBzZWVt
+cyB0aGUgZHJpdmVycyBoYXZlIHRoZSBhYmlsaXR5IHRvIHNldCB0aGUgRXRoZXJUeXBlIG9mIHRo
+ZQ0KPiBPdXRlciAoYW5kDQo+ID4gPiBzb21ldGltZXMgSW5uZXIpIHRhZzoNCj4gPiA+ID4NCj4g
+aHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20vZHBkay92MjUuMDcvc291cmNlL2xpYi9ldGhkZXYv
+cnRlX2V0aGRldi5oI0wzDQo+IDc1Mg0KPiA+ID4gPg0KPiA+ID4NCj4gaHR0cHM6Ly9lbGl4aXIu
+Ym9vdGxpbi5jb20vZHBkay92MjUuMDcvc291cmNlL2RyaXZlcnMvbmV0L2ludGVsL2UxMDAwL2ln
+DQo+IGJfZXRoZA0KPiA+ID4gZXYuYyNMMjczOQ0KPiA+ID4gPg0KPiA+ID4NCj4gaHR0cHM6Ly9l
+bGl4aXIuYm9vdGxpbi5jb20vZHBkay92MjUuMDcvc291cmNlL2RyaXZlcnMvbmV0L2ludGVsL2k0
+MGUvaTQwDQo+IGVfZXRoZA0KPiA+ID4gZXYuYyNMNDAzOA0KPiA+ID4gPg0KPiA+ID4gPiAtTW9y
+dGVuDQo+ID4gPiA+DQo+ID4gPiBUaGFua3MuIFF1ZXN0aW9uIGlzLCBkb2VzIHRoaXMgaGVscCB1
+cyB0byBjbGFyaWZ5IHRoZSBiZWhhdmlvdXIgZm9yDQo+IHRoZXNlDQo+ID4gPiB0YWdzPyBCYXNl
+ZCBvbiB0aGUgZmFjdCB0aGF0IHRoZSBjb21tZW50IGZvciB0aGUgdGFnX3R5cGUgc2F5cyB0aGF0
+DQo+IHRoZQ0KPiA+ID4gb3V0ZXIgaXMgdGhlIHNhbWUgYXMgc2luZ2xlIGZvciB2bGFuIHR5cGVz
+LCB0aGVuIHNob3VsZCB0aGUNCj4gYmVoYXZpb3VyIGJlOg0KPiA+ID4NCj4gPiA+ICogVkxBTiBz
+dHJpcCAtIHN0cmlwIGF0IG1vc3Qgb25lIHRhZyBhcyBkZWZpbmVkIGJ5IHRoZQ0KPiAib3V0ZXIv
+c2luZ2xlIiBWTEFODQo+ID4gPiAgIHR5cGUuDQo+ID4gPiAqIFFpblEgc3RyaXA6DQo+ID4gPiAg
+IC0gaWYgb3V0ZXIvc2luZ2xlIFZMQU4gdGFnIG1hdGNoZXMgdGhlIG91dGVyIHRhZyB0eXBlLCBz
+dHJpcCBpdA0KPiA+ID4gICAtIGlmIG91dGVyIHRhZyBoYXMgYmVlbiBzdHJpcHBlZCwgYW5kIGlu
+bmVyIHRhZyBtYXRjaGVzIHRoZSB0YWcNCj4gdHlwZSwNCj4gPiA+ICAgICBzdHJpcCB0aGF0IGFs
+c28uDQo+ID4gPiAgIC0gaWYgYSBzaW5nbGUgVkxBTiB0YWcgaXMgcHJlc2VudCwgaXQgZ2V0cyBz
+dHJpcHBlZCBvbmx5IGlmIGl0J3MNCj4gdGFnIHR5cGUNCj4gPiA+ICAgICBtYXRjaGVzIG91dGVy
+IHR5cGUgLSBpdCBpcyBsZWZ0IGFsb25lIGlmIGl0IG1hdGNoZXMgdGhlIGlubmVyDQo+IHR5cGUN
+Cj4gPiA+ICAgLSBpZiB0d28gVkxBTiB0YWdzIGFyZSBwcmVzZW50LCBhbmQgdGhlIGlubmVyIHRh
+ZyBtYXRjaGVzLCBpdCBpcw0KPiBub3QNCj4gPiA+ICAgICBzdHJpcHBlZCBpZiB0aGUgb3V0ZXIg
+dGFnIGRvZXMgbm90IG1hdGNoL2hhcyBub3QgYmVlbiBzdHJpcHBlZC4NCj4gPiA+DQo+ID4gPiBB
+bHNvLCBzaG91bGQgd2Ugc3BlY2lmeSBmb3IgRFBESyB3aGF0IHRoZSBkZWZhdWx0IHRhZ3Mgc2hv
+dWxkIGJlIGZvcg0KPiB0aGUNCj4gPiA+IHR3byBjYXNlcy4gSXQgc2VlbXMgZm9yIHRoZSBJbnRl
+bCBOSUNzIHRoYXQgSSB0cmllZCwgdGhhdCBib3RoIGlubmVyDQo+IGFuZA0KPiA+ID4gb3V0ZXIg
+dGFncyBhbHdheXMgc3RhcnQgd2l0aCAweDgxMDAuIFRoYXQncyBwcm9iYWJseSBhIGdvb2QgZGVm
+YXVsdA0KPiBmb3INCj4gPiA+IFZMQU4gc3RyaXAsIGJ1dCBmb3IgUWluUSBzdHJpcCwgd2UgcHJv
+YmFibHkgd2FudCBoYXJkd2FyZSB0byBkZWZhdWx0DQo+IHRvDQo+ID4gPiAweDg4YTggYW5kIDB4
+ODEwMC4gQWx0ZXJuYXRpdmVseSwgd2UgY291bGQvc2hvdWxkIG1hbmRhdGUgdGhhdA0KPiBkcml2
+ZXJzDQo+ID4gPiBleHBsaWNpdGx5IHNldCB0aGUgcmVxdWlyZWQgdGFncyBiZWZvcmUgc3RhcnRp
+bmcgdGhlIHBvcnQuDQo+ID4gPg0KPiA+ID4gL0JydWNlDQo+ID4NCj4gPiBNeSB0cmFpbiBvZiB0
+aG91Z2h0IGlzOg0KPiA+DQo+ID4gMS4gV2hlbiBub3QgY29uZmlndXJlZCBmb3IgUWluUSwgbWF4
+aW11bSBvbmUgdGFnIGlzIGNvbnNpZGVyZWQuIEkNCj4gdGhpbmsgd2UgYWxsIGFncmVlIG9uIHRo
+aXMuDQo+ID4gVkxBTiBpcyBFdGhlclR5cGUgMHg4MTAwLCBhbmQgKGlmIHByZXNlbnQpIGlzIGFz
+c29jaWF0ZWQgd2l0aCB0aGUNCj4gZmlyc3QgKG91dGVybW9zdCkgdGFnIGluIHRoZSBwYWNrZXQs
+IGFuZCBrZXB0IGluIG1idWYtPnZsYW5fdGNpLA0KPiByZWdhcmRsZXNzIGlmIGFueSBtb3JlIChp
+bm5lcikgdGFncyBhcmUgcHJlc2VudCBvciBub3QuDQo+ID4gVGhpcyBkZWZpbmVzIHBsYWNlbWVu
+dCBvZiB0aGUgVkxBTiB0YWcgSUQgaW4gdGhlIG1idWYgYW5kIHRoZSBkZWZhdWx0DQo+IEV0aGVy
+VHlwZSB1c2VkIGluIHRoZSBwYWNrZXQgaGVhZGVycyB3aGVuIHBhcnNpbmcvc3RyaXBwaW5nL2lu
+c2VydGluZw0KPiB0aGUgdGFnLg0KPiA+IEl0IGFsc28gZGVmaW5lcyB0aGUgcHVycG9zZSBvZiBW
+TEFOIGNhcGFiaWxpdHkvcHJlc2VudC9zdHJpcC9pbnNlcnQNCj4gZmxhZ3MgaW4gdGhlIGV0aGRl
+diBhbmQgbWJ1ZiBvZmZsb2FkIGZsYWdzLg0KPiA+IEZlYXR1cmUgY3JlZXA6IFRoZSBFdGhlclR5
+cGUgb2YgdGhpcyAob3V0ZXJtb3N0KSB0YWcgbWlnaHQgYmUNCj4gY29uZmlndXJhYmxlLCBpZiB0
+aGUgaGFyZHdhcmUgYW5kIGRyaXZlciBzdXBwb3J0cyBpdC4gSSB3b3VsZCBjb25zaWRlcg0KPiBz
+dWNoIGEgZmVhdHVyZSB2ZXJ5IGV4b3RpYy4NCj4gDQo+IEFuZCBqdXN0IHRvIGJlIGV4cGxpY2l0
+LCAiYXNzb2NpYXRlZCB3aXRoIHRoZSBmaXJzdCB0YWciIG1lYW5zIHRoYXQgd2UNCj4gbmV2ZXIg
+aGF2ZSBhIHNpdHVhdGlvbiB3aXRoIFZMQU4gc3RyaXAgb3IgUWluUSBzdHJpcCBzZXR0aW5nIHdo
+ZXJlIHdlDQo+IHdvdWxkDQo+IHN0cmlwIGEgbm9uLWZpcnN0IHRhZywgYnV0IGxlYXZlIHRoZSBm
+aXJzdCB0YWcgaW4gcGxhY2UuIFRhZ3MgYXJlIGFsd2F5cw0KPiBzdHJpcHBlZCBmcm9tIHRoZSBv
+dXRlciB0YWcgaW53YXJkcywgYW5kIHRhZyBzdHJpcHBpbmcgc3RvcHMgYXMgc29vbiBhcw0KPiB0
+aGUNCj4gZmlyc3Qgbm9uLXN0cmlwcGFibGUgdGFnIGlzIGVuY291bnRlcmVkLg0KDQpZZXMuDQpB
+bHNvLCB0aGUgRXRoZXJUeXBlIChvZiB0aGlzIGZpcnN0IHRhZykgbXVzdCBiZSAweDgxMDAgKG9y
+IG9wdGlvbmFsbHkgYSBjb25maWd1cmFibGUgdmFsdWUpIHRvIGJlIGNvbnNpZGVyZWQgYSBtYXRj
+aC4NCg0KPHRob3VnaHQgZXhwZXJpbWVudD4NCldlIGNvdWxkIGV4cGFuZCBpdCB0byBhbGxvdyBz
+dHJpcHBpbmcgYW4gaW5uZXIgVkxBTiB0YWcgKEV0aGVyVHlwZSAweDgxMDApIGlmIGFuIG91dGVy
+IFFpblEgdGFnIChFdGhlclR5cGUgMHg4OGE4KSB3YXMgcGFyc2VkLg0KSXQgbWlnaHQgZXZlbiBi
+ZSBwb3NzaWJsZSBmb3IgdGhlIEhXIHRvIHN1cHBvcnQgdGhhdCBvbiBSWC4NCkJ1dCBpdCB3b3Vs
+ZG4ndCBiZSBwb3NzaWJsZSB0byBzdXBwb3J0IG9uIFRYLCBhcyBpdCB3b3VsZCByZXF1aXJlIHRo
+ZSBIVyB0byBkZXRlY3QgaWYgYSBRaW5RIHRhZyBpcyBwcmVzZW50IGluIHRoZSBwYWNrZXQgZGF0
+YSBiZWluZyB0cmFuc21pdHRlZCwgYW5kIHRoZW4gaW5zZXJ0IHRoZSAoaW5uZXIpIFZMQU4gdGFn
+IGFmdGVyIHRoYXQgb3V0ZXIgUWluUSB0YWcgZHVyaW5nIHRyYW5zbWl0Lg0KU28sIHdpdGhvdXQg
+ZmVhdHVyZSBzeW1tZXRyeSBiZXR3ZWVuIFJYIGFuZCBUWCwgSSBkb24ndCB0aGluayBpdCBpcyBy
+ZWxldmFudC4NCjwvdGhvdWdodCBleHBlcmltZW50Pg0KDQo+IA0KPiA+DQo+ID4gMi4gRm9yIG1v
+cmUgdGFncywgc3RhcnQgYnkgc3RyaWN0bHkgY29uZm9ybWluZyB0byB0aGUgSUVFRSA4MDIuMw0K
+PiBzdGFuZGFyZC4NCj4gPiBRaW5RIGlzIEV0aGVyVHlwZSAweDg4YTggYW5kIGlzIGFzc29jaWF0
+ZWQgd2l0aCB0aGUgb3V0ZXIgdGFnIChTLVRBRyksDQo+IG1idWYtPnZsYW5fdGNpX291dGVyLCBy
+ZWdhcmRsZXNzIGlmIGFuIGlubmVyIHRhZyAoQy1UQUcpIGlzIHByZXNlbnQgb3INCj4gbm90Lg0K
+PiA+IFZMQU4gaXMgRXRoZXJUeXBlIDB4ODEwMCBhbmQgaXMgYXNzb2NpYXRlZCB3aXRoIHRoZSBp
+bm5lciB0YWcgKEMtVEFHKQ0KPiBvciBzaW1wbGUgdGFnIChWTEFOIHRhZyksIG1idWYtPnZsYW5f
+dGNpLCByZWdhcmRsZXNzIGlmIGFuIG91dGVyIHRhZyBpcw0KPiBwcmVzZW50IG9yIG5vdC4gKE5v
+dGU6IFdoZW4gZGlzcmVnYXJkaW5nIHRoZSBvdXRlciB0YWcgaGVyZSwgdGhpcyBpcw0KPiBleGFj
+dGx5IHRoZSBzYW1lIGJlaGF2aW9yIGFzIGZvciBWTEFOIGluIGJ1bGxldCAxIGFib3ZlLikNCj4g
+PiBUaGlzIGRlZmluZXMgcGxhY2VtZW50cyBvZiB0aGUgdGFnIElEcyBpbiB0aGUgbWJ1ZiBhbmQg
+dGhlIGRlZmF1bHQNCj4gRXRoZXJUeXBlcyB1c2VkIGluIHRoZSBwYWNrZXQgaGVhZGVycyB3aGVu
+IHBhcnNpbmcvc3RyaXBwaW5nL2luc2VydGluZw0KPiB0YWdzLg0KPiA+IEl0IGFsc28gZGVmaW5l
+cyB0aGUgcHVycG9zZSBvZiBWTEFOIGFuZCBRSU5RDQo+IGNhcGFiaWxpdHkvcHJlc2VudC9zdHJp
+cC9pbnNlcnQgZmxhZ3MgaW4gdGhlIGV0aGRldiBhbmQgbWJ1ZiBvZmZsb2FkDQo+IGZsYWdzLg0K
+PiA+DQo+IA0KPiBTbyBiYXNlZCBvbiB3aGF0IHlvdSBzYXkgYWJvdmUsIGhhdmluZyBhIFZMQU4g
+c3RyaXAgc2V0dGluZyBzZXBhcmF0ZQ0KPiBmcm9tDQo+IHRoZSBRaW5RIHN0cmlwIGVuYWJsZWQg
+c2V0dGluZyBkb2Vzbid0IG1ha2UgYW55IHNlbnNlLCByaWdodD8gU28gd2UNCj4gc2hvdWxkDQo+
+IGRlY2lkZSBhbmQgZG9jdW1lbnQgdGhhdCB3aGVuIFFpblEgc3RyaXAgaXMgZW5hYmxlZCwgVkxB
+TiBzdHJpcCBtdXN0IGJlOg0KPiANCj4gYSkgYWx3YXlzIG9uIC0gd2hpY2ggbWFrZXMgc2Vuc2Ug
+aWYgc2luZ2xlIHRhZ2dlZCAweDgxMDAgcGFja2V0cyBhcmUNCj4gc3RpbGwNCj4gICAgICAgICAg
+ICAgICAgc3RyaXBwZWQgYXMgeW91IGRlc2NyaWJlIGFib3ZlDQo+IGIpIGFsd2F5cyBvZmYgLSB3
+aGljaCBtYWtlcyBzZW5zZSBpbiB0aGUgY2FzZSBiZWxvdyB3aGVyZSBzaW5nbHkgdGFnZ2VkDQo+
+ICAgICAgICAgICAgICAgICBwYWNrZXRzIGFyZSB0cmVhdGVkIGFzIG91dGVyIHRhZ3MNCj4gYykg
+aWdub3JlZCAtIHdoaWNoIGlzIGEgYml0IG9mIGEgY29wLW91dCwgYnV0IGF2b2lkcyBhbnkgaXNz
+dWVzIHdpdGgNCj4gYmFja3dhcmQNCj4gICAgICAgICAgICAgIGNvbXBhdGliaWxpdHkgZm9yIGFw
+cHMuDQoNCk5vLiBJJ20gc2F5aW5nIHNvbWV0aGluZyBlbHNlOg0KV2l0aCBRaW5RIHN0cmlwcGlu
+Zy9pbnNlcnRpb24gZW5hYmxlZCwgdGhlIFZMQU4gc3RyaXBwaW5nL2luc2VydGlvbiBmbGFnIGNv
+bnRyb2xzIHdoYXQgdG8gZG8gd2l0aCB0aGUgaW5uZXIgVkxBTiB0YWcgKGlmIHByZXNlbnQpOg0K
+RW5hYmxlZDogSWYgaW5uZXIgVkxBTiB0YWcgaXMgcHJlc2VudCAoYW5kIG91dGVyIFFpblEgdGFn
+IHdhcyBzdHJpcHBlZCksIHN0cmlwIGl0Lg0KRGlzYWJsZWQ6IElmIGlubmVyIFZMQU4gdGFnIGlz
+IHByZXNlbnQgKGFuZCBvdXRlciBRaW5RIHRhZyB3YXMgc3RyaXBwZWQpLCBkb24ndCBzdHJpcCBp
+dC4NCg0KVGhpbmsgb2YgYSBjb25jZXB0dWFsIHBpcGVsaW5lOg0KRmlyc3Qgc3RhZ2Ugb24gUlgg
+KGlmIFFpblEgc3RyaXBwaW5nIGlzIGVuYWJsZWQpLCB0aGUgb3V0ZXJtb3N0IFFpblEgdGFnIGlz
+IHN0cmlwcGVkLCBpZiBwcmVzZW50LiBBZnRlciB0aGlzLCB0aGUgcGFja2V0IGhhcyBubyBvdXRl
+ciB0YWcgYW55bW9yZTsgdGhlIG91dGVybW9zdCB0YWcgaGFzIGJlZW4gcmVtb3ZlZCwgc28gd2hh
+dCB3YXMgdGhlIGlubmVyIHRhZyBiZWZvcmUgaGFzIG5vdyBiZWNvbWUgdGhlIG91dGVybW9zdCB0
+YWcuDQpTZWNvbmQgc3RhZ2Ugb24gUlggKGlmIFZMQU4gc3RyaXBwaW5nIGlzIGVuYWJsZWQpLCB0
+aGUgb3V0ZXJtb3N0IFZMQU4gdGFnIGlzIHN0cmlwcGVkLCBpZiBwcmVzZW50LiBBZnRlciB0aGlz
+LCB0aGUgcGFja2V0IGhhcyBubyBpbm5lciB0YWcgYW55bW9yZS4NCg0KV2hlbiBRaW5RIHN0cmlw
+cGluZyBpcyBkaXNhYmxlZCwgb3IgSFcgZG9lc24ndCBzdXBwb3J0IGl0LCB0aGVyZSBpcyBvbmx5
+IHRoZSAiU2Vjb25kIHN0YWdlIi4NClRoaXMgaXMgd2hhdCBJIHdhcyB0cnlpbmcgdG8gcmVmZXIg
+dG8gaW4gbXkgYnVsbGV0IDIgIk5vdGU6IFdoZW4gZGlzcmVnYXJkaW5nIHRoZSBvdXRlciB0YWcg
+aGVyZSwgdGhpcyBpcyBleGFjdGx5IHRoZSBzYW1lIGJlaGF2aW9yIGFzIGZvciBWTEFOIGluIGJ1
+bGxldCAxIGFib3ZlLiINCkluIG90aGVyIHdvcmRzOiBUaGUgVkxBTiBzdHJpcHBpbmcgZW5naW5l
+IG9ubHkgY29uc2lkZXJzIHRoZSBvdXRlcm1vc3QgdGFnIChwb3NzaWJseSBhZnRlciBRaW5RIHN0
+cmlwcGluZyBoYXMgbWFkZSB0aGUgaW5uZXJtb3N0IHRhZyBiZWNvbWUgdGhlIG91dGVybW9zdCku
+DQoNCkFuZCB0aGVyZSBpcyBzeW1tZXRyeSBmb3IgVFgsIGV4Y2VwdCB0aGUgdHdvIGNvbmNlcHR1
+YWwgcGlwZWxpbmUgc3RhZ2VzIGFyZSBzd2FwcGVkLg0KDQo+IA0KPiA+IDMuIFRoZW4gYWRkIHN1
+cHBvcnQgZm9yIFZMQU4gU3RhY2tpbmcsIGkuZS4gdXNpbmcgRXRoZXJUeXBlIDB4ODEwMCBmb3IN
+Cj4gdGhlIG91dGVyIHRhZy4NCj4gPiBUaGlzIG1vZGUgb2Ygb3BlcmF0aW9uIGlzIG9ubHkgcmVs
+ZXZhbnQgd2hlbiBjb25maWd1cmVkIGZvciBRaW5RLiBJdA0KPiBkb2VzIG5vdCBzdXBwb3J0ICJz
+dXBlciBoeWJyaWQgbGlua3MiIChtaXhpbmcgUWluUSB0YWdnZWQgcGFja2V0cyB3aXRoDQo+IHNp
+bXBsZSBWTEFOIHRhZ2dlZCBwYWNrZXRzKSwgYmVjYXVzZSBhIHBhY2tldCB3aXRoIG9uZSBWTEFO
+IHRhZyBpcw0KPiBjb25zaWRlcmVkIGFuIFMtdGFnZ2VkIHBhY2tldCB3aXRoIG5vIEMtVEFHLCBh
+bmQgc3VjaCBhIHBhY2tldCB3b3VsZA0KPiBub3JtYWxseSBiZSBjb25zaWRlcmVkIGEgc2ltcGxl
+IFZMQU4gdGFnZ2VkIHBhY2tldC4NCj4gPiBOb3csIFFpblEgbWVhbnMgRXRoZXJUeXBlIDB4ODEw
+MC4gSXQgcmVxdWlyZXMgdGhhdCB0aGUgaGFyZHdhcmUgYW5kDQo+IGRyaXZlciBzdXBwb3J0cyBj
+aGFuZ2luZyB0aGUgRXRoZXJUeXBlIG9mIHRoZSBvdXRlciB0YWcuDQo+ID4gUWluUSBpcyBFdGhl
+clR5cGUgMHg4MTAwIGFuZCBpcyBhc3NvY2lhdGVkIHdpdGggdGhlIG91dGVyIHRhZyAoUy1UQUcp
+LA0KPiBtYnVmLT52bGFuX3RjaV9vdXRlciwgcmVnYXJkbGVzcyBpZiBhbiBpbm5lciB0YWcgKEMt
+VEFHKSBpcyBwcmVzZW50IG9yDQo+IG5vdC4NCj4gPiBWTEFOIGlzIEV0aGVyVHlwZSAweDgxMDAg
+YW5kIGlzIGFzc29jaWF0ZWQgd2l0aCB0aGUgaW5uZXIgdGFnIChDLVRBRyksDQo+IG1idWYtPnZs
+YW5fdGNpLCBhbmQgY2FuIG9ubHkgZXhpc3Qgd2hlbiBhbiBvdXRlciB0YWcgaXMgcHJlc2VudC4N
+Cj4gPiBOb3RlOiBydGVfbmV0X2dldF9wdHlwZSgpIGNhbm5vdCBzdXBwb3J0IHRoaXMgbW9kZSBv
+ZiBvcGVyYXRpb24NCj4gd2l0aG91dCBhZGRpbmcgYSBwYXJhbWV0ZXIgY29udGFpbmluZyBpbmZv
+cm1hdGlvbiBhYm91dCB0aGUgRXRoZXJUeXBlIG9mDQo+IHRoZSBvdXRlciB0YWchDQo+ID4NCj4g
+PiBUaGlzIGRlc2NyaWJlcyB0aGUgYmVoYXZpb3IgSSBoYXZlIG5vdyBjb21lIHRvIGV4cGVjdCwg
+YWZ0ZXIgZ2V0dGluZw0KPiB3aXNlciB0aHJvdWdoIHRoaXMgZGlzY3Vzc2lvbi4NCj4gPiBEcml2
+ZXJzIG1pZ2h0IGRvIHNvbWV0aGluZyBlbHNlLCBhbmQgYXBwbGljYXRpb25zIG1pZ2h0IGhhdmUg
+YWRvcHRlZA0KPiB3aGF0IGRyaXZlcnMgYWN0dWFsbHkgZG8uDQo+ID4NCj4gDQo+IE9uZSBmb2xs
+b3d1cCBxdWVzdGlvbi90aG91Z2h0IHRoZW46IHRoZQ0KPiBydGVfZXRoX2Rldl9zZXRfdmxhbl9l
+dGhlcl90eXBlKCkNCj4gZnVuY3Rpb24gb25seSBhcHBsaWVzIGZvciBRaW5RIHRyYWZmaWMsIHNp
+bmNlIGl0IHNwZWNpZmllcyBpbm5lci9vdXRlcj8NCg0KTm8sIGl0IHN1cHBvcnRzIGFsbCB0YWcg
+dHlwZXMgdGhyb3VnaCB0aGUgZW51bSBydGVfdmxhbl90eXBlIFsxXSBwYXNzZWQgdG8gcnRlX2V0
+aF9kZXZfc2V0X3ZsYW5fZXRoZXJfdHlwZSgpOiBRaW5RIE91dGVyLCBRaW5RIElubmVyLCBTaW5n
+bGUgVkxBTi4NCg0KQnV0IEkgdGhpbmsgdGhlIGRvY3VtZW50YXRpb24gb2YgdGhlIGVudW0gcnRl
+X3ZsYW5fdHlwZSBuZWVkcyB0byBiZSBjb3JyZWN0ZWQgdG9vLi4uDQoNCkkgYWdyZWUgd2l0aCBp
+dHMgZGVzY3JpcHRpb24gc2F5aW5nOiAiTm90ZSB0aGF0IHNpbmdsZSBWTEFOIGlzIHRyZWF0ZWQg
+dGhlIHNhbWUgYXMgaW5uZXIgVkxBTi4iDQpCdXQgdGhlICJTaW5nbGUgVkxBTiIgY29tbWVudCBp
+cyBhdCB0aGUgd3JvbmcgZW51bSB2YWx1ZS4NCkkgdGhpbmsgaXQgc2hvdWxkIGJlOg0KDQovKioN
+CiAqIFZMQU4gdHlwZXMgdG8gaW5kaWNhdGUgaWYgaXQgaXMgZm9yIHNpbmdsZSBWTEFOLCBpbm5l
+ciBWTEFOIG9yIG91dGVyIFZMQU4uDQogKiBOb3RlIHRoYXQgc2luZ2xlIFZMQU4gaXMgdHJlYXRl
+ZCB0aGUgc2FtZSBhcyBpbm5lciBWTEFOLg0KICovDQplbnVtIHJ0ZV92bGFuX3R5cGUgew0KCVJU
+RV9FVEhfVkxBTl9UWVBFX1VOS05PV04gPSAwLA0KLQlSVEVfRVRIX1ZMQU5fVFlQRV9JTk5FUiwg
+LyoqPCBJbm5lciBWTEFOLiAqLw0KLQlSVEVfRVRIX1ZMQU5fVFlQRV9PVVRFUiwgLyoqPCBTaW5n
+bGUgVkxBTiwgb3Igb3V0ZXIgVkxBTi4gKi8NCisJUlRFX0VUSF9WTEFOX1RZUEVfSU5ORVIsIC8q
+KjwgSW5uZXIgVkxBTiwgb3Igc2luZ2xlIFZMQU4uICovDQorCVJURV9FVEhfVkxBTl9UWVBFX09V
+VEVSLCAvKio8IE91dGVyIFZMQU4uICovDQoJUlRFX0VUSF9WTEFOX1RZUEVfTUFYLA0KfTsNCg0K
+WzFdOiBodHRwczovL2VsaXhpci5ib290bGluLmNvbS9kcGRrL3YyNS4wNy9zb3VyY2UvbGliL2V0
+aGRldi9ydGVfZXRoZGV2LmgjTDQ0NA0KDQo+IA0KPiAvQnJ1Y2UNCg==
