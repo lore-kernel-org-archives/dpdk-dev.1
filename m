@@ -2,22 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9956C87FCB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Jul 2025 13:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C589C87FCB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Jul 2025 14:04:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CE15640E41;
-	Wed, 30 Jul 2025 15:50:53 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 381EC40E41;
+	Wed, 30 Jul 2025 16:04:56 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id B7695402C3
- for <dev@dpdk.org>; Wed, 30 Jul 2025 15:50:52 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 9268C402C3
+ for <dev@dpdk.org>; Wed, 30 Jul 2025 16:04:54 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 67303209B9;
- Wed, 30 Jul 2025 15:50:52 +0200 (CEST)
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 6DC94209B9;
+ Wed, 30 Jul 2025 16:04:53 +0200 (CEST)
 Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
  smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Wed, 30 Jul 2025 15:50:52 +0200
+ Wed, 30 Jul 2025 16:04:53 +0200
 From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
 To: dev@dpdk.org, Tetsuya Mukawa <mtetsuyah@gmail.com>,
  Stephen Hemminger <stephen@networkplumber.org>,
@@ -26,17 +26,17 @@ To: dev@dpdk.org, Tetsuya Mukawa <mtetsuyah@gmail.com>,
  Ivan Malov <ivan.malov@arknetworks.am>,
  Konstantin Ananyev <konstantin.ananyev@huawei.com>
 Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH v3] net/null: Add fast mbuf release TX offload
-Date: Wed, 30 Jul 2025 13:50:45 +0000
-Message-ID: <20250730135045.622551-1-mb@smartsharesystems.com>
+Subject: [PATCH v4] net/null: Add fast mbuf release TX offload
+Date: Wed, 30 Jul 2025 14:04:51 +0000
+Message-ID: <20250730140451.622906-1-mb@smartsharesystems.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250624181416.167181-1-mb@smartsharesystems.com>
 References: <20250624181416.167181-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 30 Jul 2025 13:50:52.0141 (UTC)
- FILETIME=[F6AAC9D0:01DC0158]
+X-OriginalArrivalTime: 30 Jul 2025 14:04:53.0307 (UTC)
+ FILETIME=[EC0A88B0:01DC015A]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,6 +55,9 @@ in the queue structure.
 
 Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
 ---
+v4:
+* Force the generic function called by the separate tx_pkt_burst callbacks
+  to be inlined.
 v3:
 * Use separate tx_pkt_burst callbacks depending on per-device TX offload
   configuration. (Ivan Malov, Konstantin Ananyev)
@@ -66,11 +69,11 @@ v2:
 * Added missing test of per-device MBUF_FAST_FREE TX offload configuration
   when configuring the queue.
 ---
- drivers/net/null/rte_eth_null.c | 141 ++++++++++++++++++++++++++------
- 1 file changed, 114 insertions(+), 27 deletions(-)
+ drivers/net/null/rte_eth_null.c | 143 +++++++++++++++++++++++++-------
+ 1 file changed, 115 insertions(+), 28 deletions(-)
 
 diff --git a/drivers/net/null/rte_eth_null.c b/drivers/net/null/rte_eth_null.c
-index 8a9b74a03b..3509b0b298 100644
+index 8a9b74a03b..4f273319f2 100644
 --- a/drivers/net/null/rte_eth_null.c
 +++ b/drivers/net/null/rte_eth_null.c
 @@ -34,6 +34,17 @@ struct pmd_internals;
@@ -95,14 +98,15 @@ index 8a9b74a03b..3509b0b298 100644
  	return 0;
  }
  
+-static uint16_t
+-eth_null_tx(void *q, struct rte_mbuf **bufs, uint16_t nb_bufs)
 +enum eth_tx_free_mode {
 +	ETH_TX_FREE_MODE_NO_MBUF_FAST_FREE, /* MBUF_FAST_FREE not possible. */
 +	ETH_TX_FREE_MODE_MBUF_FAST_FREE,    /* MBUF_FAST_FREE enabled for the device. */
 +	ETH_TX_FREE_MODE_PER_QUEUE,         /* Varies per TX queue. */
 +};
 +
- static uint16_t
--eth_null_tx(void *q, struct rte_mbuf **bufs, uint16_t nb_bufs)
++static __rte_always_inline uint16_t
 +eth_null_tx_common(void *q, struct rte_mbuf **bufs, uint16_t nb_bufs,
 +		enum eth_tx_free_mode mode)
  {
