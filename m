@@ -2,61 +2,60 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C303C87FC9
-	for <dpdk-dev@archiver.kernel.org>; Thu, 31 Jul 2025 00:11:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DD0EC87FCB
+	for <dpdk-dev@archiver.kernel.org>; Thu, 31 Jul 2025 00:14:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2BD014026A;
-	Thu, 31 Jul 2025 02:11:47 +0200 (CEST)
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com
- [209.85.216.49]) by mails.dpdk.org (Postfix) with ESMTP id E03544025A
- for <dev@dpdk.org>; Thu, 31 Jul 2025 02:11:45 +0200 (CEST)
-Received: by mail-pj1-f49.google.com with SMTP id
- 98e67ed59e1d1-31ee880f7d2so423116a91.0
- for <dev@dpdk.org>; Wed, 30 Jul 2025 17:11:45 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1E68F402DB;
+	Thu, 31 Jul 2025 02:14:01 +0200 (CEST)
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com
+ [209.85.215.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 1EE094026A
+ for <dev@dpdk.org>; Thu, 31 Jul 2025 02:14:00 +0200 (CEST)
+Received: by mail-pg1-f170.google.com with SMTP id
+ 41be03b00d2f7-af51596da56so230579a12.0
+ for <dev@dpdk.org>; Wed, 30 Jul 2025 17:14:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1753920705; x=1754525505; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1753920839; x=1754525639; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
  :date:message-id:reply-to;
- bh=xHQyCtJnkorCnw4veDIWHVhZv/gTxCiLggFDMM/jyEM=;
- b=Tl8SEsJ1yRAxVTZBjzE4Hrr1J8miq70C9K0lL+EELEm/J7rB7jDuHxzby/PIR57aSs
- 3qP4f5vCsgA3agrofU927sAZWldGbMiSDYdxNnkEXt4wliKPUCa3GDEUEABW7a+ZeWZX
- 24LZdT5ZjnqHwW7ZgX1ljysPq1uFEvYLyOiMM=
+ bh=Wn2YqrtF1TgImGGDgS3vs7dIhmA8UsNvEg/9zR73N5M=;
+ b=jatv5AoNMEGXPpJgtg4ZwJIhc0AXJyVVr8J93KwQ3nQx2QkcZJriGBDyNyWP11Lz0N
+ ykFFSonNjqhxNxsU5dvxj0iJ4XDCZ1njMIZU97qhrvveCohwJ/phMSUpXOwXBSJ48NOD
+ HWScBBzLtD+jZNKpCSS36GForLlO2Qs0J061c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753920705; x=1754525505;
+ d=1e100.net; s=20230601; t=1753920839; x=1754525639;
  h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
  :from:to:cc:subject:date:message-id:reply-to;
- bh=xHQyCtJnkorCnw4veDIWHVhZv/gTxCiLggFDMM/jyEM=;
- b=ujD71kge1q7HUxuqSCi3lVF945UmdW21zkvb2nVo6eAio6jGS4tOwTtcQomtq8aDUJ
- iN6X2zfb2Bkb8GFN9R3x3/EpN1Q2x0B8e2k4O8l7MKRfwb1m5ckaiL62NsvCpdbmLgzY
- 3zl8+bZbsmuQXxInl69ZqeG4RV2EOcT8mbf9NgrZmPJzNNjGmxVeuFntYw8VJO2Ug4cl
- HackbZgiEE5etKlNIDVaNk59T3He1I1tbKdp5KzRtUib6MnyDgTHt+6wU5FXgIo6HFch
- amc9vCBFnS7F+ZlIci2FtnZuTkvevWw9bnMPp5V3MdWMskgaf1KHT+2ficd7MDA+iXNZ
- gTXg==
-X-Gm-Message-State: AOJu0Yz5qu0UPBJt9BFzbk/vvcjkKAANh7LU5CAS/CfTwW7GmoLaMVUQ
- VGhJkiidwLj3fEhhI+hcpWalSFto2R4D+xc03PIj+eBOqV/TLnyPDTam63+IQWshcXompPKuY9g
- 9YM4FGHmw31ux072zu1W+V+rVdViFSEN6iK2+36LViQ==
-X-Gm-Gg: ASbGnctV+0UUsmnaz+T1c7FBI+tMOtJu0ObnSSbKFHGzdKtkd5EWZt9Fv+MkJW2/ejZ
- QZJkyLBCjSCTezXC7nCz0Gm/rUfocVjvpsk6Ho2Q/BfjeL5pq9gUDJCF6CaQcOP0AXpbKW+2W/S
- 7N/MtUV6UVatIYPhmSkTDLVyV1dg5pyCZGgtoSENwN2NTIzGa8UUXU8RcWrmhmElgrddb/GHo22
- VVHZLRel8DUGelFNyvp6w==
-X-Google-Smtp-Source: AGHT+IGtf2+OPPloGHX62KeEuxASBnQk7P9NQ1kygPuvpYKUp84W5m/kAcS5kqkmjhhP0oESx037yAD1p9JLBiw03Jk=
-X-Received: by 2002:a17:90b:3c8c:b0:313:db0b:75db with SMTP id
- 98e67ed59e1d1-31f5de7ba65mr7605452a91.33.1753920704798; Wed, 30 Jul 2025
- 17:11:44 -0700 (PDT)
+ bh=Wn2YqrtF1TgImGGDgS3vs7dIhmA8UsNvEg/9zR73N5M=;
+ b=JWVIVlYxYRoW0/slfIlZveo7GNQ1+XBQGCaiOsXTqNlZV5ViCNDYhaaG0m0mPAzi6h
+ uOa1pRIszaVp/BNRy+Iy5D7Fw9RdOCzvVsE2cmH2nTeASpsvvZH5eZtWuZ5g4FGsC8c4
+ C5135Dgkr1M0vxaOP59JzKeDafs6oDi1wUNCQoowfRfxWkiHmE9NqnMpbfz/MJ+Cw9CY
+ QULhfv1U8wBJGZl+WLChLLbO0Ogf4r7Jr+gqz3TNCmwstM6YCS+QN1I6CeFvUMnO/78K
+ /K/9hjfkuw8QEVLTQA+UQahaxQa+OAPOkcMtwvWy+i6PkIERdNvPPK/Yhzw9JBCs4VW3
+ IYdA==
+X-Gm-Message-State: AOJu0YzD6aT+5ARzg4aWLcDzMXi+FLqEZ11uKke3LyfXBXpgq6fpk6nK
+ Efdgynl4Y8koayJ/WLgsHjrgnln5Pv1lSQ7XHd7GvvAcQdxG8VTVOCbZRo0t08VsugoW1RsYBIn
+ nH5c7iLbAn32BsZ4YE6lMSp2sAO5OLNau3jsB7nWoTnBywpjblXgkmMQ=
+X-Gm-Gg: ASbGncuLgLiSQl9qJcXq7c8M1orQnaAHmx0r9Pu6ZrBxiJP47fdxVqtFn2IvHQgSWqZ
+ fe1rnKVA7nmRIBWDJlQkUvenNN1HisWkyyq7cJqfo49TeqT2lzW/jmXr6oBY/Z2eWhD+3d2Ypmw
+ jXZmnCQZ4ODmPND4oPWuaG8wtMGCKq9lU3j2qdJbTlOfHm36hVmDuIUdR9LjZqDsdutYQuI7onA
+ bt8rg2Qoq21SlaK1IOTtA==
+X-Google-Smtp-Source: AGHT+IG7KHcincp6v8qZikSNEhooI7/1rmXhxXbOUC0UTvKpDvMkCEWTrRAAyFAbql07Qq3C8hzlUi0wkSyRw626BcI=
+X-Received: by 2002:a17:90b:3c4f:b0:31f:e6e:7313 with SMTP id
+ 98e67ed59e1d1-31f5dd6fd4cmr7199992a91.3.1753920839026; Wed, 30 Jul 2025
+ 17:13:59 -0700 (PDT)
 MIME-Version: 1.0
 From: Patrick Robb <probb@iol.unh.edu>
-Date: Wed, 30 Jul 2025 20:05:37 -0400
-X-Gm-Features: Ac12FXxZYYdm4KPFhc7H05T4OW2XcoJ4aYZ1cgOFGkYD7W4vCTLiKfhw9wp1Vck
-Message-ID: <CAJvnSUDUq3OqfgL=Sam_iCRX7OBqU1H+u6czSO=UgK2TFyhmGQ@mail.gmail.com>
-Subject: Community CI Meeting Minutes - July 24, 2025
-To: ci@dpdk.org
-Cc: dev <dev@dpdk.org>, Paul Szczepanek <Paul.Szczepanek@arm.com>, 
- Luca Vizzarro <Luca.Vizzarro@arm.com>, Dean Marx <dmarx@iol.unh.edu>, 
- Aaron Conole <aconole@redhat.com>, Manit Mahajan <mmahajan@iol.unh.edu>, 
- "Brandes, Shai" <shaibran@amazon.com>, 
- "Puttaswamy, Rajesh T" <rajesh.t.puttaswamy@intel.com>,
- zhoumin <zhoumin@loongson.cn>, ivan.malov@arknetworks.am
-Content-Type: multipart/alternative; boundary="00000000000092f548063b2e7c9c"
+Date: Wed, 30 Jul 2025 20:07:51 -0400
+X-Gm-Features: Ac12FXwlGmzJ1KK6vBbIIHJxR8fLGEt1jGaoOSFt0dTRkVy2jIfNokIorhQk_Y8
+Message-ID: <CAJvnSUB2scYCkV4BKFyxHVpPLFmhLYVb20tV0LFDeUHLWfVW+Q@mail.gmail.com>
+Subject: DTS 25.11 Roadmap
+To: dev <dev@dpdk.org>
+Cc: ci@dpdk.org, Luca Vizzarro <Luca.Vizzarro@arm.com>, 
+ Paul Szczepanek <Paul.Szczepanek@arm.com>, Dean Marx <dmarx@iol.unh.edu>, 
+ Manit Mahajan <mmahajan@iol.unh.edu>, Andrew Bailey <abailey@iol.unh.edu>, 
+ Bruce Richardson <bruce.richardson@intel.com>
+Content-Type: multipart/alternative; boundary="00000000000093270e063b2e8483"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -70,224 +69,69 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---00000000000092f548063b2e7c9c
+--00000000000093270e063b2e8483
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-#####################################################################
-July 24, 2025
-Attendees
-1. Patrick Robb
-2. Luca Vizzarro
-3. Dean Marx
-4. Adam Hassick
-5. Paul Szczepanek
+Hello,
 
-#####################################################################
-Minutes
+The DTS group has met and agreed on the top level goals for 25.11 DTS
+development.
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-General Announcements
-* DPDK 25.07 is released.
-* DPDK Santa Clara is cancelled
-* Aaron will be visiting the UNH Lab next week, and will collaborate with
-the UNH group on dpdk-ci scripting and CI testing goals.
-   * Adam Hassickplease be sure to review the draft polling script that
-Manit has shared
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-CI Status
-
----------------------------------------------------------------------
-AWS Lab
-* Seems to be running fine
-* UNH team wants to work with Shai during this release on getting some
-partial support from DTS for the AWS environment working. To that end, is
-it possible for the UNH DTS developers to get some SSH access to some
-Amazon EC2 instances to try to run the DTS framework? Patrick to ask Shai
-this.
-UNH-IOL Community Lab
-* Opensuse Leap 15 is shipping with a version of GCC which is now below the
-DPDK Minimum (GCC 8). From some research it seems typical for SUSE distros
-to include a relatively old system gcc, and users will install newer
-toolchain GCC versions. It appears that the zypper repos distribute gcc 14,
-so we will upgrade the container template engine to use this version.
-   * Also, we are adding a blurb to the lab.dpdk.org about page explaining
-the categories of distros we try to test, and how we determine what =E2=80=
-=9Cbase=E2=80=9D
-build utilities are included in the test environment.
-* Windows:
-   * Andre has sent new instructions for finding the devx library during
-the meson compile, and the UNH team is updating their build pipelines to
-include this:
-https://patchwork.dpdk.org/project/dpdk/patch/1752588889-27133-1-git-send-e=
-mail-andremue@linux.microsoft.com/
-* QinQ: Dean is still working with Bruce and Morten on evaluating the QinQ
-behavior on UNH Lab devices. He has published a latest version of the QinQ
-testsuite which Morten thumbed up, and he shared the QinQ behavior for
-Intel i40e and cx5 on the mailing list.
-   * Broadcom NICs are supposed to support VLAN stripping but in the lab
-are reporting that they don=E2=80=99t support vlan strip. Ajit Khapardeis l=
-ooking.
-* Lab downtime
-   * UNH team needs to move the Jenkins instance to a new machine, which
-will require some lab downtime. Patrick will take the lab offline on Friday
-afternoon, and turn it back on on Saturday or Sunday.
-
----------------------------------------------------------------------
-Intel Lab
-* None
-
----------------------------------------------------------------------
-Github Actions Robot
-* None
-
----------------------------------------------------------------------
-Loongson Lab
-* Min Zhou did reply back saying that they=E2=80=99re supporting the rebase=
- flag
-now on test recheck requests.
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-DTS Improvements & Test Development
-* RSS Testsuite:
-   * Ivan Malov has noted that the flow rules are overriding the global
-RETA table
-   * Thomas is reworking the testsuite to validate through the global RETA
-table behavior
-* DTS Roadmap:
-   * VM tests: Framework update: Use QEMU to spin up a virtual machine on
-the SUT, pass the VFs to it, run either some existing DTS testsuite across
-it, and/or add some VM functional validation testsuites
-   * VHost tests: General idea is to run some DPDK packet switching
-application on the baremetal and pass traffic to virtio. Patrick needs to
-assess if this is a valuable enough item to include in the roadmap.
+DTS Roadmap:
    * DTS API
-      * Single point of entry into the framework for all test suites,
-allowing stable usage across releases and user friendly discoverability of
-dts functionality
-      * Where there is overlap between the DTS API and the existing =E2=80=
-=9CAPI=E2=80=9D
-methods available in the Testsuite class, remove the Testsuite class method=
-s
-   * Packet Forwarding Performance tests
-   * Cryptodev support: Just adding support for the dpdk-crypto-perf
-application, may require another DPDK Shell implementation
-   * Cryptodev tests: Either as a func or perf test (compare against a
-baseline), run some encrypt/decrypt workloads with the various supported
-algorithms on DPDK nics.
+      * Provide a single point of entry into the framework for all test
+suites, allowing stable usage across releases and user friendly
+discoverability of dts functionality
+   * Packet Forwarding Performance Tests
+   * Cryptodev testing
+      * (framework): Adding a shell class for the dpdk-crypto-perf
+application
+      * (testsuites) : Encrypt/decrypt workloads with the various supported
+algorithms on DPDK NICs.
+         * Can be implemented as a set of functional tests or (pending
+community discussion) can support crypto performance baselines
    * Testing with single NIC with the 2 interfaces connected in a loopback
-      * This appears to be working, but need to be documented
+      * This appears to be working currently, but need to be documented
+better for users
+   * Virtio testing support:
+      * Add support for DTS spinning up a QEMU VM with a virtio device
+      * Implement various testing scenarios for virtio interfaces on a VM
    * Additional functional ethdev testsuites:
       * Ethertype Testsuite
       * QinQ Testsuite
       * RSS Testsuite
       * Rx/Tx Offload
+      * And additional suites as detailed on Bugzilla where possible
    * File manager:
       * Add a dedicated file manager to handle passing files and artifacts
-between the test engine and nodes in a path agnostic manner.
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Any other business
-* Patrick Robb submit the website update with the latest recheck coverage.
-* Next Meeting August 7th at the same time
-
---00000000000092f548063b2e7c9c
+--00000000000093270e063b2e8483
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"ltr"><br>######################################################=
-###############<br>July 24, 2025<br>Attendees<br>1. Patrick Robb<br>2. Luca=
- Vizzarro<br>3. Dean Marx<br>4. Adam Hassick<br>5. Paul Szczepanek<br><br>#=
-####################################################################<br>Min=
-utes<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>Ge=
-neral Announcements<br>* DPDK 25.07 is released.<br>* DPDK Santa Clara is c=
-ancelled<br>* Aaron will be visiting the UNH Lab next week, and will collab=
-orate with the UNH group on dpdk-ci scripting and CI testing goals.<br>=C2=
-=A0 =C2=A0* Adam Hassickplease be sure to review the draft polling script t=
-hat Manit has shared<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D<br>CI Status<br><br>------------------------------------------=
----------------------------<br>AWS Lab<br>* Seems to be running fine<br>* U=
-NH team wants to work with Shai during this release on getting some partial=
- support from DTS for the AWS environment working. To that end, is it possi=
-ble for the UNH DTS developers to get some SSH access to some Amazon EC2 in=
-stances to try to run the DTS framework? Patrick to ask Shai this.<br>UNH-I=
-OL Community Lab<br>* Opensuse Leap 15 is shipping with a version of GCC wh=
-ich is now below the DPDK Minimum (GCC 8). From some research it seems typi=
-cal for SUSE distros to include a relatively old system gcc, and users will=
- install newer toolchain GCC versions. It appears that the zypper repos dis=
-tribute gcc 14, so we will upgrade the container template engine to use thi=
-s version.<br>=C2=A0 =C2=A0* Also, we are adding a blurb to the <a href=3D"=
-http://lab.dpdk.org">lab.dpdk.org</a> about page explaining the categories =
-of distros we try to test, and how we determine what =E2=80=9Cbase=E2=80=9D=
- build utilities are included in the test environment.<br>* Windows:<br>=C2=
-=A0 =C2=A0* Andre has sent new instructions for finding the devx library du=
-ring the meson compile, and the UNH team is updating their build pipelines =
-to include this: <a href=3D"https://patchwork.dpdk.org/project/dpdk/patch/1=
-752588889-27133-1-git-send-email-andremue@linux.microsoft.com/">https://pat=
-chwork.dpdk.org/project/dpdk/patch/1752588889-27133-1-git-send-email-andrem=
-ue@linux.microsoft.com/</a><br>* QinQ: Dean is still working with Bruce and=
- Morten on evaluating the QinQ behavior on UNH Lab devices. He has publishe=
-d a latest version of the QinQ testsuite which Morten thumbed up, and he sh=
-ared the QinQ behavior for Intel i40e and cx5 on the mailing list.<br>=C2=
-=A0 =C2=A0* Broadcom NICs are supposed to support VLAN stripping but in the=
- lab are reporting that they don=E2=80=99t support vlan strip. Ajit Khapard=
-eis looking.<br>* Lab downtime<br>=C2=A0 =C2=A0* UNH team needs to move the=
- Jenkins instance to a new machine, which will require some lab downtime. P=
-atrick will take the lab offline on Friday afternoon, and turn it back on o=
-n Saturday or Sunday.<br><br>----------------------------------------------=
------------------------<br>Intel Lab<br>* None<br><br>---------------------=
-------------------------------------------------<br>Github Actions Robot<br=
->* None<br><br>------------------------------------------------------------=
----------<br>Loongson Lab<br>* Min Zhou did reply back saying that they=E2=
-=80=99re supporting the rebase flag now on test recheck requests. <br><br>=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>DTS Improvemen=
-ts &amp; Test Development<br>* RSS Testsuite:<br>=C2=A0 =C2=A0* Ivan Malov =
-has noted that the flow rules are overriding the global RETA table<br>=C2=
-=A0 =C2=A0* Thomas is reworking the testsuite to validate through the globa=
-l RETA table behavior<br>* DTS Roadmap:<br>=C2=A0 =C2=A0* VM tests: Framewo=
-rk update: Use QEMU to spin up a virtual machine on the SUT, pass the VFs t=
-o it, run either some existing DTS testsuite across it, and/or add some VM =
-functional validation testsuites<br>=C2=A0 =C2=A0* VHost tests: General ide=
-a is to run some DPDK packet switching application on the baremetal and pas=
-s traffic to virtio. Patrick needs to assess if this is a valuable enough i=
-tem to include in the roadmap.<br>=C2=A0 =C2=A0* DTS API<br>=C2=A0 =C2=A0 =
-=C2=A0 * Single point of entry into the framework for all test suites, allo=
-wing stable usage across releases and user friendly discoverability of dts =
-functionality<br>=C2=A0 =C2=A0 =C2=A0 * Where there is overlap between the =
-DTS API and the existing =E2=80=9CAPI=E2=80=9D methods available in the Tes=
-tsuite class, remove the Testsuite class methods<br>=C2=A0 =C2=A0* Packet F=
-orwarding Performance tests<br>=C2=A0 =C2=A0* Cryptodev support: Just addin=
-g support for the dpdk-crypto-perf application, may require another DPDK Sh=
-ell implementation<br>=C2=A0 =C2=A0* Cryptodev tests: Either as a func or p=
-erf test (compare against a baseline), run some encrypt/decrypt workloads w=
-ith the various supported algorithms on DPDK nics.<br>=C2=A0 =C2=A0* Testin=
-g with single NIC with the 2 interfaces connected in a loopback<br>=C2=A0 =
-=C2=A0 =C2=A0 * This appears to be working, but need to be documented<br>=
-=C2=A0 =C2=A0* Additional functional ethdev testsuites:<br>=C2=A0 =C2=A0 =
-=C2=A0 * Ethertype Testsuite<br>=C2=A0 =C2=A0 =C2=A0 * QinQ Testsuite<br>=
-=C2=A0 =C2=A0 =C2=A0 * RSS Testsuite<br>=C2=A0 =C2=A0 =C2=A0 * Rx/Tx Offloa=
-d<br>=C2=A0 =C2=A0* File manager:<br>=C2=A0 =C2=A0 =C2=A0 * Add a dedicated=
- file manager to handle passing files and artifacts<br>between the test eng=
-ine and nodes in a path agnostic manner.<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>Any other business<br>* Patrick Robb subm=
-it the website update with the latest recheck coverage.<br>* Next Meeting A=
-ugust 7th at the same time<br></div>
+<div dir=3D"ltr"><div>Hello,</div><div><br></div><div>The DTS group has met=
+ and agreed on the top level goals for 25.11 DTS development.</div><div><br=
+></div><div>DTS Roadmap:</div><div>=C2=A0 =C2=A0* DTS API<br>=C2=A0 =C2=A0 =
+=C2=A0 * Provide a single point of entry into the framework for all test su=
+ites, allowing stable usage across releases and user friendly discoverabili=
+ty of dts functionality<br>=C2=A0 =C2=A0* Packet Forwarding Performance Tes=
+ts<br>=C2=A0 =C2=A0* Cryptodev testing <br>=C2=A0 =C2=A0 =C2=A0 * (framewor=
+k): Adding a shell class for the dpdk-crypto-perf application<br>=C2=A0 =C2=
+=A0 =C2=A0 * (testsuites) : Encrypt/decrypt workloads with the various supp=
+orted algorithms on DPDK NICs.<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* Can b=
+e implemented as a set of functional tests or (pending community discussion=
+) can support crypto performance baselines<br>=C2=A0 =C2=A0* Testing with s=
+ingle NIC with the 2 interfaces connected in a loopback<br>=C2=A0 =C2=A0 =
+=C2=A0 * This appears to be working currently, but need to be documented be=
+tter for users<br>=C2=A0 =C2=A0* Virtio testing support:<br>=C2=A0 =C2=A0 =
+=C2=A0 * Add support for DTS spinning up a QEMU VM with a virtio device<br>=
+=C2=A0 =C2=A0 =C2=A0 * Implement various testing scenarios for virtio inter=
+faces on a VM<br>=C2=A0 =C2=A0* Additional functional ethdev testsuites:<br=
+>=C2=A0 =C2=A0 =C2=A0 * Ethertype Testsuite<br>=C2=A0 =C2=A0 =C2=A0 * QinQ =
+Testsuite<br>=C2=A0 =C2=A0 =C2=A0 * RSS Testsuite<br>=C2=A0 =C2=A0 =C2=A0 *=
+ Rx/Tx Offload<br>=C2=A0 =C2=A0 =C2=A0 * And additional suites as detailed =
+on Bugzilla where possible<br>=C2=A0 =C2=A0* File manager:<br>=C2=A0 =C2=A0=
+ =C2=A0 * Add a dedicated file manager to handle passing files and artifact=
+s</div></div>
 
---00000000000092f548063b2e7c9c--
+--00000000000093270e063b2e8483--
