@@ -2,45 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8148C83F17
-	for <dpdk-dev@archiver.kernel.org>; Thu, 31 Jul 2025 10:08:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 011E4C87FCC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 31 Jul 2025 10:21:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 805154026A;
-	Thu, 31 Jul 2025 12:07:59 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id BF054402E6;
+	Thu, 31 Jul 2025 12:21:23 +0200 (CEST)
 Received: from shelob.oktetlabs.ru (shelob.oktetlabs.ru [91.220.146.113])
- by mails.dpdk.org (Postfix) with ESMTP id E06A44025A
- for <dev@dpdk.org>; Thu, 31 Jul 2025 12:07:58 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 shelob.oktetlabs.ru BD3F738
+ by mails.dpdk.org (Postfix) with ESMTP id 3FD024025A;
+ Thu, 31 Jul 2025 12:21:22 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 shelob.oktetlabs.ru 40D8438
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=oktetlabs.ru;
- s=default; t=1753956478;
- bh=0eoAOdOfpy3CghePcVyIxhr6J03PYJ3OOd5l6VOoKDk=;
+ s=default; t=1753957281;
+ bh=Uu1gugnFZZidzrPoYXfXTT2kBZlclzhEA/nhIbHsZGA=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=vdUzK4/bqGdaHI+cS5hEj0E2+d/fE/Sy+80YbMRoQji8ShTJKxfJitiFpj1mspttx
- r4hiRFAIgbRt4QlNGdJdJlQduJa0GdT1pGy0cSpxKTgNYnyQfazvvUkN6C2pEqTXoO
- KGAURIwA3EgVDiSAtNzf7tw0WsGszwuCGhwK824g=
+ b=ch4Q19W5F48X8ORvsN5QUY3Id6qTZfwL9zw0uDpFh7l0c9fvhgJK+PVuxmr9K2Epa
+ M5n56zc/Lnu2/UDXL7uSX/i/7OMJ6bFTUXwQITwRMMvJTt4w87a2/K1KiYpTDGHAGy
+ fKml2q80fyeAMb2RB54V6c0sqk0AF9HlmIdh1erE=
 Received: from [192.168.1.39] (unknown [188.170.87.221])
  (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by shelob.oktetlabs.ru (Postfix) with ESMTPSA id BD3F738;
- Thu, 31 Jul 2025 13:07:57 +0300 (MSK)
-Message-ID: <e18b32c7-2aef-47ce-b9d4-e971d61b03bf@oktetlabs.ru>
-Date: Thu, 31 Jul 2025 13:07:56 +0300
+ by shelob.oktetlabs.ru (Postfix) with ESMTPSA id 40D8438;
+ Thu, 31 Jul 2025 13:21:21 +0300 (MSK)
+Message-ID: <22332c8e-2fde-408e-ab26-5330d4bca544@oktetlabs.ru>
+Date: Thu, 31 Jul 2025 13:21:20 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ethdev: Reject conflicting TX offloads configuration
-To: Bruce Richardson <bruce.richardson@intel.com>,
- =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
-Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
- Ivan Malov <ivan.malov@arknetworks.am>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-References: <20250731090731.671589-1-mb@smartsharesystems.com>
- <aIs2O169emw39bQZ@bricha3-mobl1.ger.corp.intel.com>
+Subject: Re: [PATCH] net/rte_net: fix inner L2 length for tunneled Ethernet
+ packets
+To: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>, dev@dpdk.org,
+ jasvinder.singh@intel.com, bruce.richardson@intel.com
+Cc: thomas@monjalon.net, stable@dpdk.org
+References: <20250728131222.50441-1-14pwcse1224@uetpeshawar.edu.pk>
 Content-Language: en-US
 From: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-In-Reply-To: <aIs2O169emw39bQZ@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <20250728131222.50441-1-14pwcse1224@uetpeshawar.edu.pk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,29 +52,91 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 7/31/25 12:24, Bruce Richardson wrote:
-> On Thu, Jul 31, 2025 at 09:07:31AM +0000, Morten Brørup wrote:
->> When an ethdev port is configured for fast mbuf release, the driver can
->> use a TX burst function relying on the fast mbuf release preconditions.
->> Thus, also configuring this port or a queue on the port for transmitting
->> segmented packets is prohibited.
->> Checks for these conflicting configurations have been added to the ethdev
->> library, so the drivers don't have to implement them.
->>
->> Also, the descriptions of the RX and TX offloads have been improved, to
->> reflect that they are not only for device capability reporting, but also
->> for device and queue configuration purposes.
->>
->> Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
->> ---
+On 7/28/25 16:12, Khadem Ullah wrote:
+> Fix incorrect inner_l2_len values for VXLAN, VXLAN-GPE, GTPU, and Geneve.
+> These protocols carry full Ethernet frames, so inner_l2_len should be
+> set to the size of an Ethernet header (14 bytes), not include tunnel or
+> UDP headers.
+
+
+Please, take a look at the definition of the inner_l2_len in rte_net.h.
+
+NACK
+
 > 
-> Maybe split into two patches, so the offload descriptions are separate from
-> the conflict checks.
-
-+1
-
-> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
-
-Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-
+> Fixes: 64ed7f854c ('net: add tunnel packet type parsing')
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+> ---
+>   lib/net/rte_net.c | 14 +++++++-------
+>   1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/lib/net/rte_net.c b/lib/net/rte_net.c
+> index 44fb6c0f51..adcddeb670 100644
+> --- a/lib/net/rte_net.c
+> +++ b/lib/net/rte_net.c
+> @@ -198,7 +198,7 @@ ptype_tunnel_with_udp(uint16_t *proto, const struct rte_mbuf *m,
+>   	case RTE_VXLAN_DEFAULT_PORT: {
+>   		*off += sizeof(struct rte_vxlan_hdr);
+>   		hdr_lens->tunnel_len = sizeof(struct rte_vxlan_hdr);
+> -		hdr_lens->inner_l2_len = RTE_ETHER_VXLAN_HLEN;
+> +		hdr_lens->inner_l2_len = sizeof(struct rte_ether_hdr);
+>   		*proto = RTE_VXLAN_GPE_TYPE_ETH; /* just for eth header parse. */
+>   		return RTE_PTYPE_TUNNEL_VXLAN;
+>   	}
+> @@ -210,7 +210,7 @@ ptype_tunnel_with_udp(uint16_t *proto, const struct rte_mbuf *m,
+>   			return 0;
+>   		*off += sizeof(struct rte_vxlan_gpe_hdr);
+>   		hdr_lens->tunnel_len = sizeof(struct rte_vxlan_gpe_hdr);
+> -		hdr_lens->inner_l2_len = RTE_ETHER_VXLAN_GPE_HLEN;
+> +		hdr_lens->inner_l2_len = sizeof(struct rte_ether_hdr);
+>   		*proto = vgh->proto;
+>   
+>   		return RTE_PTYPE_TUNNEL_VXLAN_GPE;
+> @@ -244,7 +244,7 @@ ptype_tunnel_with_udp(uint16_t *proto, const struct rte_mbuf *m,
+>   			*proto = 0;
+>   		}
+>   		*off += gtp_len;
+> -		hdr_lens->inner_l2_len = gtp_len + sizeof(struct rte_udp_hdr);
+> +		hdr_lens->inner_l2_len = sizeof(struct rte_ether_hdr);
+>   		hdr_lens->tunnel_len = gtp_len;
+>   		if (port_no == RTE_GTPC_UDP_PORT)
+>   			return RTE_PTYPE_TUNNEL_GTPC;
+> @@ -262,7 +262,7 @@ ptype_tunnel_with_udp(uint16_t *proto, const struct rte_mbuf *m,
+>   		geneve_len = sizeof(*gnh) + gnh->opt_len * 4;
+>   		*off += geneve_len;
+>   		hdr_lens->tunnel_len = geneve_len;
+> -		hdr_lens->inner_l2_len = sizeof(struct rte_udp_hdr) + geneve_len;
+> +		hdr_lens->inner_l2_len = sizeof(struct rte_ether_hdr);
+>   		*proto = gnh->proto;
+>   		if (gnh->proto == 0)
+>   			*proto = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
+> @@ -498,7 +498,7 @@ uint32_t rte_net_get_ptype(const struct rte_mbuf *m,
+>   		pkt_type |= RTE_PTYPE_INNER_L2_ETHER;
+>   		proto = eh->ether_type;
+>   		off += sizeof(*eh);
+> -		hdr_lens->inner_l2_len += sizeof(*eh);
+> +		hdr_lens->inner_l2_len = sizeof(struct rte_ether_hdr);
+>   	}
+>   
+>   	if (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN)) {
+> @@ -511,7 +511,7 @@ uint32_t rte_net_get_ptype(const struct rte_mbuf *m,
+>   		if (unlikely(vh == NULL))
+>   			return pkt_type;
+>   		off += sizeof(*vh);
+> -		hdr_lens->inner_l2_len += sizeof(*vh);
+> +		hdr_lens->inner_l2_len += sizeof(struct rte_vlan_hdr);
+>   		proto = vh->eth_proto;
+>   	} else if (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_QINQ)) {
+>   		const struct rte_vlan_hdr *vh;
+> @@ -524,7 +524,7 @@ uint32_t rte_net_get_ptype(const struct rte_mbuf *m,
+>   		if (unlikely(vh == NULL))
+>   			return pkt_type;
+>   		off += 2 * sizeof(*vh);
+> -		hdr_lens->inner_l2_len += 2 * sizeof(*vh);
+> +		hdr_lens->inner_l2_len += 2 * sizeof(struct rte_vlan_hdr);
+>   		proto = vh->eth_proto;
+>   	}
+>   
 
