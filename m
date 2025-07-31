@@ -2,53 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9000CC87FCC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 31 Jul 2025 16:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7969C87FCC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 31 Jul 2025 16:15:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 71BA040657;
-	Thu, 31 Jul 2025 18:01:35 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
- by mails.dpdk.org (Postfix) with ESMTP id 8E6824064C
- for <dev@dpdk.org>; Thu, 31 Jul 2025 18:01:30 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id CE841402E2;
+	Thu, 31 Jul 2025 18:15:18 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+ by mails.dpdk.org (Postfix) with ESMTP id 6DCC8402CC
+ for <dev@dpdk.org>; Thu, 31 Jul 2025 18:15:17 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1753977690; x=1785513690;
+ t=1753978517; x=1785514517;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=YXIzLyfaIVu28Kik1gbWCJSFyaJcylcS0UjylD7E4P8=;
- b=PF6VdALqqSh0xpFDqDBlgI+V6Br5T/NkMkQHGJ44kQf7h0Vu31dh8lqo
- fXV+1y2HIjLNP+wyWk1j0SaereDFwxuxiqOORWERdBzN48Ye/WMW49xng
- zyXsRniIJGmdcF71b5qyIbM7Uljo8/xxdTTezov4Oui9ObqExpIDb+PNF
- Q1K5FHmfC8xEPtEt7LQp3GCdhi2MXeYeqJ3ObKgZCf9yjmmkQFr3lzYPI
- bJTWNcMcnRfT+Yg40MKXtd0caeohPE/EvzzSkhl7fVToXnmuqQN8832NJ
- /qvdnUJaF+zKxGPKVq87pvQaKnu+6m1MMrIMFoeEi/nmQck2/gRXtoTnS Q==;
-X-CSE-ConnectionGUID: JEryDcMFSCKyzEqpv7ElkQ==
-X-CSE-MsgGUID: eZcif8zYTWKH+RwLBwFdqg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="78858046"
-X-IronPort-AV: E=Sophos;i="6.17,254,1747724400"; d="scan'208";a="78858046"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
- by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 31 Jul 2025 09:01:09 -0700
-X-CSE-ConnectionGUID: eH1s68thRIymt2YFIk7tGw==
-X-CSE-MsgGUID: xZCyt1jLTye9ne5U55X8Bw==
+ bh=abFwou7Cb1/HjBJzaAworplcl9dGWC+/loBqS/aGUUA=;
+ b=WDAN2R2n2wKQu1u2FX81i+SqOnN4djB4lf4v1qHnDzcinN7Nn1mtlIKk
+ i4ey8NdlqFb3SCY7RvBcUqpaHYJJnmDZiPq3ed5dUk4j13ZVwZQHn8yYB
+ +UTvRfcI61O3Kbz8EjQ+9BWwU8A5hEMpbs5vJF4batPUu4jl4D+TK4tax
+ CfMMR2Emp/r1rHrRlFoc042ZDzu10TyTzftpJhvqFVzRRORWQYC+cMQB7
+ euouurMwVXn3r8lIbk7m+LQBSxrC2KbQJe7W/ZdhMekP53s+ShA7R5YCu
+ 4zXLrV3qPPOZTPakYQX5ApUWtO57yhlcJyKyAQ7ElYnl/cBu2QxqoZ0AV A==;
+X-CSE-ConnectionGUID: rY1xbXRtRRKgoMZ1ztkmjg==
+X-CSE-MsgGUID: dIJEhdU8RdOvJOW5co/PjQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="56240170"
+X-IronPort-AV: E=Sophos;i="6.17,254,1747724400"; d="scan'208";a="56240170"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+ by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 31 Jul 2025 09:15:16 -0700
+X-CSE-ConnectionGUID: L5NF0eE9QVeGW9e9sJK5Yg==
+X-CSE-MsgGUID: GzMZitL9TaaRcuOCis3QAg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,254,1747724400"; d="scan'208";a="167543449"
+X-IronPort-AV: E=Sophos;i="6.17,254,1747724400"; d="scan'208";a="162884116"
 Received: from silpixa00401874.ir.intel.com (HELO
  silpixa00401874.ger.corp.intel.com) ([10.55.129.54])
- by fmviesa005.fm.intel.com with ESMTP; 31 Jul 2025 09:01:08 -0700
+ by fmviesa007.fm.intel.com with ESMTP; 31 Jul 2025 09:15:16 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: stephen@networkplumber.org, andremue@linux.microsoft.com,
- Bruce Richardson <bruce.richardson@intel.com>,
- Aman Singh <aman.deep.singh@intel.com>
-Subject: [PATCH v4 4/4] app/testpmd: improve output when processing cmdline
- files
-Date: Thu, 31 Jul 2025 16:00:41 +0000
-Message-ID: <20250731160041.914837-5-bruce.richardson@intel.com>
+Cc: stephen@networkplumber.org, Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH] doc/testpmd: add missing entry for enable-rss flag
+Date: Thu, 31 Jul 2025 16:15:10 +0000
+Message-ID: <20250731161510.923049-1-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250731160041.914837-1-bruce.richardson@intel.com>
-References: <20250704140551.4151993-1-bruce.richardson@intel.com>
- <20250731160041.914837-1-bruce.richardson@intel.com>
+In-Reply-To: <20250728211919.75320c85@hermes.local>
+References: <20250728211919.75320c85@hermes.local>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -64,90 +60,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Two small improvements for the cmdline file processing in testpmd.
-
-* Now that we support multiple files, change the prompt to indicate what
-  file is currently being processed, and just print an EOF message when
-  done.
-* When not echoing, the "Read" verb in the message "Read CLI commands..."
-  is a little ambiguous, as it could mean "I have read", or "Go and read",
-  i.e. job done or job about to start. Tweak the text to "Finished reading"
-  which is unambiguous.
+Add a one-line description about the new flag.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- app/test-pmd/cmdline.c                      | 18 +++++++++++++++---
- doc/guides/testpmd_app_ug/testpmd_funcs.rst |  4 ++--
- 2 files changed, 17 insertions(+), 5 deletions(-)
+FYI: fix should be merged into commit f5da751 on next-net tree.
+---
+ doc/guides/testpmd_app_ug/run_app.rst | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index 5433678b5e..c436a2fa21 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -14203,6 +14203,12 @@ cmdline_read_from_file(const char *filename, bool echo)
- 	if (!echo) {
- 		cl = cmdline_file_new(main_ctx, "testpmd> ", filename);
- 	} else {
-+		/* use basename(filename) as prompt */
-+		char prompt[32] = "[] ";
+diff --git a/doc/guides/testpmd_app_ug/run_app.rst b/doc/guides/testpmd_app_ug/run_app.rst
+index 82f61b133c..35a0c5528c 100644
+--- a/doc/guides/testpmd_app_ug/run_app.rst
++++ b/doc/guides/testpmd_app_ug/run_app.rst
+@@ -206,6 +206,10 @@ The command line options are:
+ 
+     Enable per-queue packet drop for packets with no descriptors.
+ 
++*   ``--enable-rss``
 +
-+		rte_basename(filename, &prompt[1], sizeof(prompt) - strlen(prompt));
-+		strlcat(prompt, "] ", sizeof(prompt));
++    Enable RSS (Receive Side Scaling) even in case of a single-queue configuration.
 +
- 		fd = open(filename, O_RDONLY);
- 		if (fd < 0) {
- 			fprintf(stderr, "Failed to open file %s: %s\n",
-@@ -14210,7 +14216,7 @@ cmdline_read_from_file(const char *filename, bool echo)
- 			return -1;
- 		}
+ *   ``--disable-rss``
  
--		cl = cmdline_new(main_ctx, "testpmd> ", fd, STDOUT_FILENO);
-+		cl = cmdline_new(main_ctx, prompt, fd, STDOUT_FILENO);
- 	}
- 	if (cl == NULL) {
- 		fprintf(stderr,
-@@ -14221,11 +14227,17 @@ cmdline_read_from_file(const char *filename, bool echo)
- 	}
- 
- 	cmdline_interact(cl);
--	cmdline_quit(cl);
-+	/* when done, if we have echo, we only need to print end of file,
-+	 * but if no echo, we need to use printf and include the filename.
-+	 */
-+	if (echo)
-+		cmdline_printf(cl, "<End-Of-File>\n");
-+	else
-+		printf("Finished reading CLI commands from %s\n", filename);
- 
-+	cmdline_quit(cl);
- 	cmdline_free(cl);
- 
--	printf("Read CLI commands from %s\n", filename);
- 
- end:
- 	if (fd >= 0)
-diff --git a/doc/guides/testpmd_app_ug/testpmd_funcs.rst b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-index b8a401fa6f..2b0c4897ba 100644
---- a/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-+++ b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-@@ -90,7 +90,7 @@ practical or possible testpmd supports alternative methods for executing command
-    ...
-    Flow rule #498 created
-    Flow rule #499 created
--   Read all CLI commands from /home/ubuntu/flow-create-commands.txt
-+   Finished reading all CLI commands from /home/ubuntu/flow-create-commands.txt
-    testpmd>
- 
- 
-@@ -106,7 +106,7 @@ practical or possible testpmd supports alternative methods for executing command
-    ...
-    Flow rule #498 created
-    Flow rule #499 created
--   Read all CLI commands from /home/ubuntu/flow-create-commands.txt
-+   Finished reading all CLI commands from /home/ubuntu/flow-create-commands.txt
-    testpmd>
- 
- 
+     Disable RSS (Receive Side Scaling).
 -- 
 2.48.1
 
