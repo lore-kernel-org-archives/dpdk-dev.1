@@ -2,42 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13BF3C87FCA
-	for <dpdk-dev@archiver.kernel.org>; Thu, 31 Jul 2025 03:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C46F2C87FCA
+	for <dpdk-dev@archiver.kernel.org>; Thu, 31 Jul 2025 04:42:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 035674026A;
-	Thu, 31 Jul 2025 05:19:16 +0200 (CEST)
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
- by mails.dpdk.org (Postfix) with ESMTP id A93D84025A
- for <dev@dpdk.org>; Thu, 31 Jul 2025 05:19:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
- s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=HQ
- nGwjIeobqpKOTR5yzVlfWoi0/CdHbQdEd5LCMgbVE=; b=eGkvF3t42Ec7ZQSMu4
- yOMfeqWmKv2CGYDFzKgw1ef39QDEWKCI37/Iyuc7Aj1ZVuHhNax2zMEl50pdYaDK
- zKItGRnal59uxzBR1I3E48/fAGNGCqEn9pdaEGp0OfNK4NKbBxS4Z12OMXxwZ+S4
- x+wtmi5vwxevxe25xcoTWZ0zE=
-Received: from localhost.localdomain.localdomain (unknown [])
- by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id
- _____wCn53mr4IpodpUuIg--.62683S2; 
- Thu, 31 Jul 2025 11:19:08 +0800 (CST)
-From: Huichao Cai <chcchc88@163.com>
-To: konstantin.v.ananyev@yandex.ru
-Cc: dev@dpdk.org
-Subject: [PATCH] acl: fix the value of the trans table
-Date: Thu, 31 Jul 2025 11:19:05 +0800
-Message-Id: <20250731031905.4430-1-chcchc88@163.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20250725102151.6677-1-chcchc88@163.com>
-References: <20250725102151.6677-1-chcchc88@163.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 8A86E4026A;
+	Thu, 31 Jul 2025 06:42:17 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+ by mails.dpdk.org (Postfix) with ESMTP id 97C104025A
+ for <dev@dpdk.org>; Thu, 31 Jul 2025 06:42:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1753936935; x=1785472935;
+ h=from:to:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=D2kHzF5Ci5AyK3ls2VYuCgm/T30QzOdgmkmG8J5swPw=;
+ b=cu7qtx2J0lLR+PiIhjwK56wPLvitP3u06u201U9/yOdhMMuPOKZA4Kxq
+ Vb3nEvtYTQdo4GOXF1ecAWx8gTilCMOkiQjd1OYus2LlrzeGmxr50hDPj
+ gYWL+ZBbzVn9M8TJ5fVzwpaL0We6ZzAVW7YMcdCssqEfk/C0wPPM+EiDB
+ xgt3w5F8/QcFc8KZEQ84YQEJLyLUUYpb2/0Z7nFOS7gf51OQrsPLxdU7V
+ q7o4n7utYPXhsJoqwXqnv8XC0GODGjjkSkNn1F60CwH4iy+RfECs/fWfi
+ JEbrv2Lr/q0S+EgofQjbbA/fQeL2a7F+up/pI4g3gArZPxAXIIJKSqFyy Q==;
+X-CSE-ConnectionGUID: qT9+26v2SkCp3NOwkQ09TQ==
+X-CSE-MsgGUID: j3EdubW6RJa1Kyk0Ut0log==
+X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="81702731"
+X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; d="scan'208";a="81702731"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 30 Jul 2025 21:42:14 -0700
+X-CSE-ConnectionGUID: +2QJNbDsShqB+ZXOS6vSTw==
+X-CSE-MsgGUID: RsUo1Wd8T/2gCMnY+1T2Xg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; d="scan'208";a="163614035"
+Received: from unknown (HELO srv24..) ([10.138.182.231])
+ by fmviesa008.fm.intel.com with ESMTP; 30 Jul 2025 21:42:13 -0700
+From: Shaiq Wani <shaiq.wani@intel.com>
+To: dev@dpdk.org,
+	bruce.richardson@intel.com,
+	aman.deep.singh@intel.com
+Subject: [PATCH 0/2] net/ice: fix drop rule handling and stats
+Date: Thu, 31 Jul 2025 10:11:30 +0530
+Message-Id: <20250731044132.110174-1-shaiq.wani@intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: _____wCn53mr4IpodpUuIg--.62683S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZrWDGrWfZw1fWw1kKrW8Crg_yoW3tFX_XF
- 1kuF4DtryUXr1xJws7WF17JrZFqw40gFyav3yxK3ZF9398JrsrGFWktr95ZFnrCayavr9F
- qFWDKF4FgF4IvjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
- 9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbsjjPUUUUU==
-X-Originating-IP: [124.127.58.137]
-X-CM-SenderInfo: pfkfuxrfyyqiywtou0bp/1tbiUg6bF2iK3lVODgAAs5
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,19 +58,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Maybe that's not a problem, because ACL can handle idle
-packets normally, so I can't reproduce this issue with
-external test cases at the moment, but I'm just describing
-what idle nomatch node has to do if it wants to implement
-an effect pointing to itself:
+Patch 1.Tx packets were dropped when a drop-any rule was applied
+        only on ingress. A direction lookup flag is added to resolve this.
+Patch 2.Added accounting for Rx drop packets in ipackets and ibytes.
 
-The reason why RTE_ACL_NODE_SINGLE node can point to itself
-(regardless of the value of the packet data) is that it relies
-on the node_index high 32-bit assignment to the maximum boundary
-value (RTE_ACL_QUAD_SINGLE), and the idle nomatch node has the
-same properties, so it should also be like RTE_ACL_NODE_SINGLE
-node_ index instead of the current boundary value of 0, the reason
-why the current idle nomatch node can point to itself is because
-the idle data is 0, which has nothing to do with the node pointing
-to its own attributes, it is just a coincidence of the data.
+Shaiq Wani (2):
+  net/ice: add flag for direction lookup to occur
+  net/ice: count drop- all filter stats in Rx stats
+
+ drivers/net/intel/ice/base/ice_switch.c   | 8 ++++----
+ drivers/net/intel/ice/ice_ethdev.c        | 3 ++-
+ drivers/net/intel/ice/ice_switch_filter.c | 2 ++
+ 3 files changed, 8 insertions(+), 5 deletions(-)
+
+-- 
+2.34.1
 
