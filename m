@@ -2,50 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57A08C87FCC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 31 Jul 2025 12:22:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 805EEC87FCA
+	for <dpdk-dev@archiver.kernel.org>; Thu, 31 Jul 2025 12:56:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 895C1402C3;
-	Thu, 31 Jul 2025 14:22:26 +0200 (CEST)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
- by mails.dpdk.org (Postfix) with ESMTP id F2663402AB
- for <dev@dpdk.org>; Thu, 31 Jul 2025 14:22:23 +0200 (CEST)
-Received: from loongson.cn (unknown [10.2.10.34])
- by gateway (Coremail) with SMTP id _____8AxaeH8X4toOvc1AQ--.64259S3;
- Thu, 31 Jul 2025 20:22:21 +0800 (CST)
-Received: from [10.2.10.34] (unknown [10.2.10.34])
- by front1 (Coremail) with SMTP id qMiowJDxQ+T7X4toT3UvAA--.40652S3;
- Thu, 31 Jul 2025 20:22:20 +0800 (CST)
-Subject: Re: [PATCH] net/cksum: compute raw cksum for several segments
-To: dev@dpdk.org
-References: <CABsP7wOFAsE2-BmnHZW1c3rOkkrUWfox7qrbim6zmP6gbmJqzg@mail.gmail.com>
-From: zhoumin <zhoumin@loongson.cn>
-Message-ID: <e67c4dd4-1f19-aecc-fd72-a6daead37341@loongson.cn>
-Date: Thu, 31 Jul 2025 20:22:19 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	by mails.dpdk.org (Postfix) with ESMTP id 4A233402C3;
+	Thu, 31 Jul 2025 14:56:12 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id C4D9E402AB
+ for <dev@dpdk.org>; Thu, 31 Jul 2025 14:56:10 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 85FEB209B9;
+ Thu, 31 Jul 2025 14:56:10 +0200 (CEST)
+Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
+ smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
+ Thu, 31 Jul 2025 14:56:10 +0200
+From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+To: dev@dpdk.org, Aman Singh <aman.deep.singh@intel.com>,
+ Thomas Monjalon <thomas@monjalon.net>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Cc: Ivan Malov <ivan.malov@arknetworks.am>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+Subject: [PATCH v2 1/3] testpmd: Do not enable mbuf fast release TX offload by
+ default
+Date: Thu, 31 Jul 2025 12:56:01 +0000
+Message-ID: <20250731125603.672860-1-mb@smartsharesystems.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250731090731.671589-1-mb@smartsharesystems.com>
+References: <20250731090731.671589-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
-In-Reply-To: <CABsP7wOFAsE2-BmnHZW1c3rOkkrUWfox7qrbim6zmP6gbmJqzg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-CM-TRANSID: qMiowJDxQ+T7X4toT3UvAA--.40652S3
-X-CM-SenderInfo: 52kr3ztlq6z05rqj20fqof0/1tbiAgEAAWiLBYYIhAAAsu
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
- ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
- BjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
- xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
- j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxV
- AFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E
- 14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI
- 0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280
- aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2
- xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
- x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1j6r
- 15MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF
- 7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxV
- WUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UE
- -erUUUUU=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 31 Jul 2025 12:56:10.0184 (UTC)
+ FILETIME=[7CE1A480:01DC021A]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,5 +50,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Recheck-request: loongarch-unit-testing
+Enabling some offload by default may conflict with a manually configured
+offload.
+Specifically, the mbuf fast release TX offload, which conflicts with multi
+segment packet TX offload, was enabled by default.
+Therefore, mbuf fast release TX offload (the only TX offload which was
+enabled by default) is not enabled by default anymore.
+
+Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
+---
+ app/test-pmd/testpmd.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
+
+diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
+index bb88555328..f00eae3992 100644
+--- a/app/test-pmd/testpmd.c
++++ b/app/test-pmd/testpmd.c
+@@ -490,9 +490,7 @@ lcoreid_t latencystats_lcore_id = -1;
+  */
+ struct rte_eth_rxmode rx_mode;
+ 
+-struct rte_eth_txmode tx_mode = {
+-	.offloads = RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE,
+-};
++struct rte_eth_txmode tx_mode;
+ 
+ volatile int test_done = 1; /* stop packet forwarding when set to 1. */
+ 
+@@ -1592,10 +1590,6 @@ init_config_port_offloads(portid_t pid, uint32_t socket_id)
+ 	if (ret != 0)
+ 		rte_exit(EXIT_FAILURE, "rte_eth_dev_info_get() failed\n");
+ 
+-	if (!(port->dev_info.tx_offload_capa & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE))
+-		port->dev_conf.txmode.offloads &=
+-			~RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE;
+-
+ 	/* Apply Rx offloads configuration */
+ 	for (i = 0; i < port->dev_info.max_rx_queues; i++)
+ 		port->rxq[i].conf.offloads = port->dev_conf.rxmode.offloads;
+@@ -2857,9 +2851,6 @@ update_bonding_port_dev_conf(portid_t bond_pid)
+ 		return;
+ 	}
+ 
+-	if (port->dev_info.tx_offload_capa & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE)
+-		port->dev_conf.txmode.offloads |=
+-				RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE;
+ 	/* Apply Tx offloads configuration */
+ 	for (i = 0; i < port->dev_info.max_tx_queues; i++)
+ 		port->txq[i].conf.offloads = port->dev_conf.txmode.offloads;
+-- 
+2.43.0
 
