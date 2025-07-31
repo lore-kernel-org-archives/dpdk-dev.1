@@ -2,53 +2,61 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8116FC83F26
-	for <dpdk-dev@archiver.kernel.org>; Wed, 30 Jul 2025 20:10:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C303C87FC9
+	for <dpdk-dev@archiver.kernel.org>; Thu, 31 Jul 2025 00:11:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3E82A402CB;
-	Wed, 30 Jul 2025 22:10:46 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 4BE844025A;
- Wed, 30 Jul 2025 22:10:44 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 03995209B9;
- Wed, 30 Jul 2025 22:10:44 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 2BD014026A;
+	Thu, 31 Jul 2025 02:11:47 +0200 (CEST)
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com
+ [209.85.216.49]) by mails.dpdk.org (Postfix) with ESMTP id E03544025A
+ for <dev@dpdk.org>; Thu, 31 Jul 2025 02:11:45 +0200 (CEST)
+Received: by mail-pj1-f49.google.com with SMTP id
+ 98e67ed59e1d1-31ee880f7d2so423116a91.0
+ for <dev@dpdk.org>; Wed, 30 Jul 2025 17:11:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1753920705; x=1754525505; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+ :date:message-id:reply-to;
+ bh=xHQyCtJnkorCnw4veDIWHVhZv/gTxCiLggFDMM/jyEM=;
+ b=Tl8SEsJ1yRAxVTZBjzE4Hrr1J8miq70C9K0lL+EELEm/J7rB7jDuHxzby/PIR57aSs
+ 3qP4f5vCsgA3agrofU927sAZWldGbMiSDYdxNnkEXt4wliKPUCa3GDEUEABW7a+ZeWZX
+ 24LZdT5ZjnqHwW7ZgX1ljysPq1uFEvYLyOiMM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1753920705; x=1754525505;
+ h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=xHQyCtJnkorCnw4veDIWHVhZv/gTxCiLggFDMM/jyEM=;
+ b=ujD71kge1q7HUxuqSCi3lVF945UmdW21zkvb2nVo6eAio6jGS4tOwTtcQomtq8aDUJ
+ iN6X2zfb2Bkb8GFN9R3x3/EpN1Q2x0B8e2k4O8l7MKRfwb1m5ckaiL62NsvCpdbmLgzY
+ 3zl8+bZbsmuQXxInl69ZqeG4RV2EOcT8mbf9NgrZmPJzNNjGmxVeuFntYw8VJO2Ug4cl
+ HackbZgiEE5etKlNIDVaNk59T3He1I1tbKdp5KzRtUib6MnyDgTHt+6wU5FXgIo6HFch
+ amc9vCBFnS7F+ZlIci2FtnZuTkvevWw9bnMPp5V3MdWMskgaf1KHT+2ficd7MDA+iXNZ
+ gTXg==
+X-Gm-Message-State: AOJu0Yz5qu0UPBJt9BFzbk/vvcjkKAANh7LU5CAS/CfTwW7GmoLaMVUQ
+ VGhJkiidwLj3fEhhI+hcpWalSFto2R4D+xc03PIj+eBOqV/TLnyPDTam63+IQWshcXompPKuY9g
+ 9YM4FGHmw31ux072zu1W+V+rVdViFSEN6iK2+36LViQ==
+X-Gm-Gg: ASbGnctV+0UUsmnaz+T1c7FBI+tMOtJu0ObnSSbKFHGzdKtkd5EWZt9Fv+MkJW2/ejZ
+ QZJkyLBCjSCTezXC7nCz0Gm/rUfocVjvpsk6Ho2Q/BfjeL5pq9gUDJCF6CaQcOP0AXpbKW+2W/S
+ 7N/MtUV6UVatIYPhmSkTDLVyV1dg5pyCZGgtoSENwN2NTIzGa8UUXU8RcWrmhmElgrddb/GHo22
+ VVHZLRel8DUGelFNyvp6w==
+X-Google-Smtp-Source: AGHT+IGtf2+OPPloGHX62KeEuxASBnQk7P9NQ1kygPuvpYKUp84W5m/kAcS5kqkmjhhP0oESx037yAD1p9JLBiw03Jk=
+X-Received: by 2002:a17:90b:3c8c:b0:313:db0b:75db with SMTP id
+ 98e67ed59e1d1-31f5de7ba65mr7605452a91.33.1753920704798; Wed, 30 Jul 2025
+ 17:11:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [RFC PATCH] doc: clarify VLAN and QinQ stripping behaviour
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Wed, 30 Jul 2025 22:10:42 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FDD6@smartserver.smartshare.dk>
-In-Reply-To: <aIpWP6FCcMXktUvq@bricha3-mobl1.ger.corp.intel.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [RFC PATCH] doc: clarify VLAN and QinQ stripping behaviour
-Thread-Index: AdwBd2oF0VYoWv6FRWueFkNyMm9mfAADFBFg
-References: <aHd6x3kT053EvX2g@bricha3-mobl1.ger.corp.intel.com>
- <CABD7UXPtChUUOdz3gfiyKqY4Rn2_0F8Ck4O6ypq9woATD7hfCw@mail.gmail.com>
- <aHgBs5DGU48mTnwz@bricha3-mobl1.ger.corp.intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FDB8@smartserver.smartshare.dk>
- <CABD7UXPccao=o1O=SessoAdEKUyA-dXP6HG5mnkpFSVNL_3dxw@mail.gmail.com>
- <aHoEUmesrg9Y8qtM@bricha3-mobl1.ger.corp.intel.com>
- <CABD7UXOqkROef0_BreD1GHC_R+7EwxRTL8LF-fXQJBECp7J9SA@mail.gmail.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FDCD@smartserver.smartshare.dk>
- <aIeTCX3KbnxIvDJP@bricha3-mobl1.ger.corp.intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FDCF@smartserver.smartshare.dk>
- <aIpWP6FCcMXktUvq@bricha3-mobl1.ger.corp.intel.com>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Bruce Richardson" <bruce.richardson@intel.com>
-Cc: <dev@dpdk.org>, "Dengdui Huang" <huangdengdui@huawei.com>,
- "Vladimir Medvedkin" <medvedkinv@gmail.com>, <techboard@dpdk.org>,
- "Patrick Robb" <probb@iol.unh.edu>,
- "fengchengwen" <fengchengwen@huawei.com>, <stephen@networkplumber.org>,
- <jasvinder.singh@intel.com>, <thomas@monjalon.net>,
- <aman.deep.singh@intel.com>, <lihuisong@huawei.com>,
- <liuyonglong@huawei.com>, "Dean Marx" <dmarx@iol.unh.edu>
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Wed, 30 Jul 2025 20:05:37 -0400
+X-Gm-Features: Ac12FXxZYYdm4KPFhc7H05T4OW2XcoJ4aYZ1cgOFGkYD7W4vCTLiKfhw9wp1Vck
+Message-ID: <CAJvnSUDUq3OqfgL=Sam_iCRX7OBqU1H+u6czSO=UgK2TFyhmGQ@mail.gmail.com>
+Subject: Community CI Meeting Minutes - July 24, 2025
+To: ci@dpdk.org
+Cc: dev <dev@dpdk.org>, Paul Szczepanek <Paul.Szczepanek@arm.com>, 
+ Luca Vizzarro <Luca.Vizzarro@arm.com>, Dean Marx <dmarx@iol.unh.edu>, 
+ Aaron Conole <aconole@redhat.com>, Manit Mahajan <mmahajan@iol.unh.edu>, 
+ "Brandes, Shai" <shaibran@amazon.com>, 
+ "Puttaswamy, Rajesh T" <rajesh.t.puttaswamy@intel.com>,
+ zhoumin <zhoumin@loongson.cn>, ivan.malov@arknetworks.am
+Content-Type: multipart/alternative; boundary="00000000000092f548063b2e7c9c"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -62,223 +70,224 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBCcnVjZSBSaWNoYXJkc29uIFttYWlsdG86YnJ1Y2UucmljaGFyZHNvbkBpbnRlbC5j
-b21dDQo+IFNlbnQ6IFdlZG5lc2RheSwgMzAgSnVseSAyMDI1IDE5LjI5DQo+IA0KPiBPbiBNb24s
-IEp1bCAyOCwgMjAyNSBhdCAwNzo0ODo1M1BNICswMjAwLCBNb3J0ZW4gQnLDuHJ1cCB3cm90ZToN
-Cj4gPiA+IEZyb206IEJydWNlIFJpY2hhcmRzb24gW21haWx0bzpicnVjZS5yaWNoYXJkc29uQGlu
-dGVsLmNvbV0NCj4gPiA+IFNlbnQ6IE1vbmRheSwgMjggSnVseSAyMDI1IDE3LjExDQo+ID4gPg0K
-PiA+ID4gT24gTW9uLCBKdWwgMjgsIDIwMjUgYXQgMDQ6NTE6MzBQTSArMDIwMCwgTW9ydGVuIEJy
-w7hydXAgd3JvdGU6DQo+ID4gPiA+ID4gRnJvbTogRGVhbiBNYXJ4IFttYWlsdG86ZG1hcnhAaW9s
-LnVuaC5lZHVdDQo+ID4gPiA+ID4gU2VudDogRnJpZGF5LCAxOCBKdWx5IDIwMjUgMTUuMTgNCj4g
-PiA+ID4gPg0KPiA+ID4gPiA+IE9uIEZyaSwgSnVsIDE4LCAyMDI1IGF0IDQ6MjPigK9BTSBCcnVj
-ZSBSaWNoYXJkc29uDQo+ID4gPiA+ID4gPGJydWNlLnJpY2hhcmRzb25AaW50ZWwuY29tPiB3cm90
-ZToNCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiBPbiBUaHUsIEp1bCAxNywgMjAyNSBhdCAwNTow
-MzoxM1BNIC0wNDAwLCBEZWFuIE1hcnggd3JvdGU6DQo+ID4gPiA+ID4gPiA+IEkndmUgY3JlYXRl
-ZCBhIHYxIG9mIGEgUWluUSB0ZXN0IHN1aXRlIGFyb3VuZCB0aGUgc2V0IG9mDQo+IHRlc3QgY2Fz
-ZXMNCj4gPiA+ID4gPiA+ID4gZGlzY3Vzc2VkIGVhcmxpZXIgKHdoaWNoIGlzIG5vdCBzZXQgaW4g
-c3RvbmUsIGFuZCBJIGV4cGVjdA0KPiBpdCB0bw0KPiA+ID4gPiA+ID4gPiBjaGFuZ2Ugc2lnbmlm
-aWNhbnRseSBhY3Jvc3MgbWFueSBmdXR1cmUgdmVyc2lvbnMuKSBUaGUNCj4gUEFTUy9GQUlMDQo+
-ID4gPiA+ID4gPiA+IHZhbHVlcyBjYW4gYmUgbW9zdGx5IGRpc3JlZ2FyZGVkIGluIHRoZSBjb250
-ZXh0IG9mIHRoaXMNCj4gY29udmVyc2F0aW9uLA0KPiA+ID4gPiA+ID4gPiBidXQgSSd2ZSBhZGRl
-ZCBsb2dnaW5nIHRvIGV4cGxhaW4gd2hpY2ggcGFja2V0cyBhcmUgc2VudCwNCj4gYW5kIHdoYXQN
-Cj4gPiA+ID4gPiA+ID4gaGFwcGVuZWQgdXBvbiByZWNlcHRpb24sIHdoaWNoIEkgaG9wZSB3aWxs
-IGJlIG1vcmUNCj4gaW5mb3JtYXRpdmUuIEFmdGVyDQo+ID4gPiA+ID4gPiA+IHJ1bm5pbmcgb24g
-bWx4NS9pNDBlIGRyaXZlcnMsIEkgZ290IHRoZSBmb2xsb3dpbmcgcmVzdWx0czoNCj4gPiA+ID4g
-PiA+ID4NCj4gPiA+ID4gPiA+ID4gdGVzdF92bGFuX3N0cmlwOiBRaW5RIHN0cmlwIE9GRiBhbmQg
-VkxBTiBzdHJpcCBPTg0KPiA+ID4gPiA+ID4gPiB0ZXN0X3FpbnFfc3RyaXA6IFFpblEgc3RyaXAg
-T04gYW5kIFZMQU4gc3RyaXAgT04NCj4gPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4gaTQwZToN
-Cj4gPiA+ID4gPiA+ID4gICAgIHRlc3RfcWlucV9zdHJpcCAoc2VudCBwYWNrZXQ6IFNpbmdsZSBW
-TEFOKTogRkFJTA0KPiA+ID4gPiA+ID4gPiAgICAgICByZWFzb246IFZMQU4gdGFncyBmb3VuZCBp
-biBwYWNrZXQgd2hlbiBzaG91bGQgaGF2ZQ0KPiBiZWVuDQo+ID4gPiA+ID4gPiA+IHN0cmlwcGVk
-OiBFdGhlciAvIERvdDFRIC8gODAyLjFxICgweDFjKSB2bGFuIDEyODAgLyBMTEMgLw0KPiBSYXcg
-Lw0KPiA+ID4gPiA+ID4gPiBQYWRkaW5nDQo+ID4gPiA+ID4gPiA+ICAgICB0ZXN0X3FpbnFfc3Ry
-aXAgKHNlbnQgcGFja2V0OiBTdGFja2VkIFZMQU4pOiBGQUlMDQo+ID4gPiA+ID4gPiA+ICAgICAg
-IHJlYXNvbjogRXhwZWN0ZWQgb25lIFZMQU4gdGFnIGJ1dCBmb3VuZCAyOiBFdGhlciAvDQo+IERv
-dDFRIC8gRG90MVENCj4gPiA+ID4gPiA+ID4gLyA4MDIuMXEgKDB4MWMpIHZsYW4gMTI4MCAvIExM
-QyAvIFJhdyAvIFBhZGRpbmcNCj4gPiA+ID4gPiA+ID4gICAgIHRlc3RfcWlucV9zdHJpcCAoc2Vu
-dCBwYWNrZXQ6IFNpbmdsZSBTLVZMQU4pOiBGQUlMDQo+ID4gPiA+ID4gPiA+ICAgICAgIHJlYXNv
-bjogVkxBTiB0YWdzIGZvdW5kIGluIHBhY2tldCB3aGVuIHNob3VsZCBoYXZlDQo+IGJlZW4NCj4g
-PiA+ID4gPiA+ID4gc3RyaXBwZWQ6IEV0aGVyIC8gRG90MVEgLyA4MDIuMXEgKD8/KSB2bGFuID8/
-IC8gTExDIC8gUmF3IC8NCj4gUGFkZGluZw0KPiA+ID4gPiA+ID4gPiAgICAgdGVzdF9xaW5xX3N0
-cmlwIChzZW50IHBhY2tldDogUWluUSk6IEZBSUwNCj4gPiA+ID4gPiA+ID4gICAgICAgcmVhc29u
-OiBWTEFOIHRhZ3MgZm91bmQgaW4gcGFja2V0IHdoZW4gc2hvdWxkIGhhdmUNCj4gYmVlbg0KPiA+
-ID4gPiA+ID4gPiBzdHJpcHBlZDogRXRoZXIgLyBEb3QxUSAvIERvdDFBRCAvIDgwMi4xcSAoMHgx
-YykgdmxhbiAxMjgwIC8NCj4gTExDIC8gUmF3DQo+ID4gPiA+ID4gPiA+IC8gUGFkZGluZw0KPiA+
-ID4gPiA+ID4gPiAgICAgdGVzdF92bGFuX3N0cmlwIChzZW50IHBhY2tldDogU2luZ2xlIFZMQU4p
-OiBQQVNTDQo+ID4gPiA+ID4gPiA+ICAgICAgIHJlYXNvbjogVkxBTiB0YWcgc3RyaXBwZWQgZnJv
-bSBwYWNrZXQNCj4gPiA+ID4gPiA+ID4gICAgIHRlc3Rfdmxhbl9zdHJpcCAoc2VudCBwYWNrZXQ6
-IFN0YWNrZWQgVkxBTik6IFBBU1MNCj4gPiA+ID4gPiA+ID4gICAgICAgcmVhc29uOiBSZWNlaXZl
-ZCBwYWNrZXQgaGFkIG91dGVyIFZMQU4gc3RyaXBwZWQsIHdpdGgNCj4gaW5uZXIgVkxBTg0KPiA+
-ID4gPiA+IGludGFjdA0KPiA+ID4gPiA+ID4gPiAgICAgdGVzdF92bGFuX3N0cmlwIChzZW50IHBh
-Y2tldDogU2luZ2xlIFMtVkxBTik6IFBBU1MNCj4gPiA+ID4gPiA+ID4gICAgICAgcmVhc29uOiBT
-LVZMQU4gdGFnIHN0cmlwcGVkIGZyb20gcGFja2V0DQo+ID4gPiA+ID4gPiA+ICAgICB0ZXN0X3Zs
-YW5fc3RyaXAgKHNlbnQgcGFja2V0OiBRaW5RKTogRkFJTA0KPiA+ID4gPiA+ID4gPiAgICAgICBy
-ZWFzb246IE5laXRoZXIgdGFnIHN0cmlwcGVkDQo+ID4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPg0K
-PiA+ID4gPiA+ID4gQ2FuIHlvdSBjb25maXJtIGV4YWN0bHkgd2hhdCBpcyBiZWluZyBzZW50IGlu
-IGVhY2ggY2FzZSBmb3INCj4gdGhlDQo+ID4gPiBldGhlcnR5cGUNCj4gPiA+ID4gPiA+IG9mIHRo
-ZSBWTEFOIHRhZz8gV2hlbiB5b3Ugc2F5IHNpbmdsZSBhbmQgc3RhY2tlZCBWTEFOcywgdGhhdA0K
-PiBpcyBWTEFOcw0KPiA+ID4gd2l0aA0KPiA+ID4gPiA+ID4gMHg4MTAwIHR5cGUsIGNvcnJlY3Q/
-IElzIHNpbmdsZSBTLVZMQU4gYSB0YWcgd2l0aCBldGhlcnR5cGUNCj4gMHg4OGE4LCBhbmQNCj4g
-PiA+ID4gPiA+IFFpblEgcGFja2V0IGEgcGFja2V0IHdpdGggb25lIDB4ODhhOCBhbmQgb25lIDB4
-ODEwMD8gTm8gb3RoZXINCj4gdHlwZQ0KPiA+ID4gb3B0aW9ucywNCj4gPiA+ID4gPiA+IGUuZy4g
-MHg5MTAwIHdlcmUgY2hlY2tlZCwgcmlnaHQ/DQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gL0Jy
-dWNlDQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBUaGF0J3MgY29ycmVjdCwgc2luZ2xlIFZMQU4gaXMg
-b25lIDB4ODEwMCB0YWcsIHN0YWNrZWQgaXMgdHdvLA0KPiBzaW5nbGUNCj4gPiA+ID4gPiBTLVZM
-QU4gaXMgb25lIDB4ODhhOCwgYW5kIFFpblEgaXMgMHg4OGE4IGFuZCAweDgxMDAuIE5vIG90aGVy
-DQo+IHR5cGVzDQo+ID4gPiA+ID4gd2VyZSB0ZXN0ZWQgaW4gdGhlIHN0cmlwcGluZyBjYXNlDQo+
-ID4gPiA+DQo+ID4gPiA+DQo+ID4gPiA+IEJydWNlLA0KPiA+ID4gPg0KPiA+ID4gPiBJdCBzZWVt
-cyB0aGUgZHJpdmVycyBoYXZlIHRoZSBhYmlsaXR5IHRvIHNldCB0aGUgRXRoZXJUeXBlIG9mIHRo
-ZQ0KPiBPdXRlciAoYW5kDQo+ID4gPiBzb21ldGltZXMgSW5uZXIpIHRhZzoNCj4gPiA+ID4NCj4g
-aHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20vZHBkay92MjUuMDcvc291cmNlL2xpYi9ldGhkZXYv
-cnRlX2V0aGRldi5oI0wzDQo+IDc1Mg0KPiA+ID4gPg0KPiA+ID4NCj4gaHR0cHM6Ly9lbGl4aXIu
-Ym9vdGxpbi5jb20vZHBkay92MjUuMDcvc291cmNlL2RyaXZlcnMvbmV0L2ludGVsL2UxMDAwL2ln
-DQo+IGJfZXRoZA0KPiA+ID4gZXYuYyNMMjczOQ0KPiA+ID4gPg0KPiA+ID4NCj4gaHR0cHM6Ly9l
-bGl4aXIuYm9vdGxpbi5jb20vZHBkay92MjUuMDcvc291cmNlL2RyaXZlcnMvbmV0L2ludGVsL2k0
-MGUvaTQwDQo+IGVfZXRoZA0KPiA+ID4gZXYuYyNMNDAzOA0KPiA+ID4gPg0KPiA+ID4gPiAtTW9y
-dGVuDQo+ID4gPiA+DQo+ID4gPiBUaGFua3MuIFF1ZXN0aW9uIGlzLCBkb2VzIHRoaXMgaGVscCB1
-cyB0byBjbGFyaWZ5IHRoZSBiZWhhdmlvdXIgZm9yDQo+IHRoZXNlDQo+ID4gPiB0YWdzPyBCYXNl
-ZCBvbiB0aGUgZmFjdCB0aGF0IHRoZSBjb21tZW50IGZvciB0aGUgdGFnX3R5cGUgc2F5cyB0aGF0
-DQo+IHRoZQ0KPiA+ID4gb3V0ZXIgaXMgdGhlIHNhbWUgYXMgc2luZ2xlIGZvciB2bGFuIHR5cGVz
-LCB0aGVuIHNob3VsZCB0aGUNCj4gYmVoYXZpb3VyIGJlOg0KPiA+ID4NCj4gPiA+ICogVkxBTiBz
-dHJpcCAtIHN0cmlwIGF0IG1vc3Qgb25lIHRhZyBhcyBkZWZpbmVkIGJ5IHRoZQ0KPiAib3V0ZXIv
-c2luZ2xlIiBWTEFODQo+ID4gPiAgIHR5cGUuDQo+ID4gPiAqIFFpblEgc3RyaXA6DQo+ID4gPiAg
-IC0gaWYgb3V0ZXIvc2luZ2xlIFZMQU4gdGFnIG1hdGNoZXMgdGhlIG91dGVyIHRhZyB0eXBlLCBz
-dHJpcCBpdA0KPiA+ID4gICAtIGlmIG91dGVyIHRhZyBoYXMgYmVlbiBzdHJpcHBlZCwgYW5kIGlu
-bmVyIHRhZyBtYXRjaGVzIHRoZSB0YWcNCj4gdHlwZSwNCj4gPiA+ICAgICBzdHJpcCB0aGF0IGFs
-c28uDQo+ID4gPiAgIC0gaWYgYSBzaW5nbGUgVkxBTiB0YWcgaXMgcHJlc2VudCwgaXQgZ2V0cyBz
-dHJpcHBlZCBvbmx5IGlmIGl0J3MNCj4gdGFnIHR5cGUNCj4gPiA+ICAgICBtYXRjaGVzIG91dGVy
-IHR5cGUgLSBpdCBpcyBsZWZ0IGFsb25lIGlmIGl0IG1hdGNoZXMgdGhlIGlubmVyDQo+IHR5cGUN
-Cj4gPiA+ICAgLSBpZiB0d28gVkxBTiB0YWdzIGFyZSBwcmVzZW50LCBhbmQgdGhlIGlubmVyIHRh
-ZyBtYXRjaGVzLCBpdCBpcw0KPiBub3QNCj4gPiA+ICAgICBzdHJpcHBlZCBpZiB0aGUgb3V0ZXIg
-dGFnIGRvZXMgbm90IG1hdGNoL2hhcyBub3QgYmVlbiBzdHJpcHBlZC4NCj4gPiA+DQo+ID4gPiBB
-bHNvLCBzaG91bGQgd2Ugc3BlY2lmeSBmb3IgRFBESyB3aGF0IHRoZSBkZWZhdWx0IHRhZ3Mgc2hv
-dWxkIGJlIGZvcg0KPiB0aGUNCj4gPiA+IHR3byBjYXNlcy4gSXQgc2VlbXMgZm9yIHRoZSBJbnRl
-bCBOSUNzIHRoYXQgSSB0cmllZCwgdGhhdCBib3RoIGlubmVyDQo+IGFuZA0KPiA+ID4gb3V0ZXIg
-dGFncyBhbHdheXMgc3RhcnQgd2l0aCAweDgxMDAuIFRoYXQncyBwcm9iYWJseSBhIGdvb2QgZGVm
-YXVsdA0KPiBmb3INCj4gPiA+IFZMQU4gc3RyaXAsIGJ1dCBmb3IgUWluUSBzdHJpcCwgd2UgcHJv
-YmFibHkgd2FudCBoYXJkd2FyZSB0byBkZWZhdWx0DQo+IHRvDQo+ID4gPiAweDg4YTggYW5kIDB4
-ODEwMC4gQWx0ZXJuYXRpdmVseSwgd2UgY291bGQvc2hvdWxkIG1hbmRhdGUgdGhhdA0KPiBkcml2
-ZXJzDQo+ID4gPiBleHBsaWNpdGx5IHNldCB0aGUgcmVxdWlyZWQgdGFncyBiZWZvcmUgc3RhcnRp
-bmcgdGhlIHBvcnQuDQo+ID4gPg0KPiA+ID4gL0JydWNlDQo+ID4NCj4gPiBNeSB0cmFpbiBvZiB0
-aG91Z2h0IGlzOg0KPiA+DQo+ID4gMS4gV2hlbiBub3QgY29uZmlndXJlZCBmb3IgUWluUSwgbWF4
-aW11bSBvbmUgdGFnIGlzIGNvbnNpZGVyZWQuIEkNCj4gdGhpbmsgd2UgYWxsIGFncmVlIG9uIHRo
-aXMuDQo+ID4gVkxBTiBpcyBFdGhlclR5cGUgMHg4MTAwLCBhbmQgKGlmIHByZXNlbnQpIGlzIGFz
-c29jaWF0ZWQgd2l0aCB0aGUNCj4gZmlyc3QgKG91dGVybW9zdCkgdGFnIGluIHRoZSBwYWNrZXQs
-IGFuZCBrZXB0IGluIG1idWYtPnZsYW5fdGNpLA0KPiByZWdhcmRsZXNzIGlmIGFueSBtb3JlIChp
-bm5lcikgdGFncyBhcmUgcHJlc2VudCBvciBub3QuDQo+ID4gVGhpcyBkZWZpbmVzIHBsYWNlbWVu
-dCBvZiB0aGUgVkxBTiB0YWcgSUQgaW4gdGhlIG1idWYgYW5kIHRoZSBkZWZhdWx0DQo+IEV0aGVy
-VHlwZSB1c2VkIGluIHRoZSBwYWNrZXQgaGVhZGVycyB3aGVuIHBhcnNpbmcvc3RyaXBwaW5nL2lu
-c2VydGluZw0KPiB0aGUgdGFnLg0KPiA+IEl0IGFsc28gZGVmaW5lcyB0aGUgcHVycG9zZSBvZiBW
-TEFOIGNhcGFiaWxpdHkvcHJlc2VudC9zdHJpcC9pbnNlcnQNCj4gZmxhZ3MgaW4gdGhlIGV0aGRl
-diBhbmQgbWJ1ZiBvZmZsb2FkIGZsYWdzLg0KPiA+IEZlYXR1cmUgY3JlZXA6IFRoZSBFdGhlclR5
-cGUgb2YgdGhpcyAob3V0ZXJtb3N0KSB0YWcgbWlnaHQgYmUNCj4gY29uZmlndXJhYmxlLCBpZiB0
-aGUgaGFyZHdhcmUgYW5kIGRyaXZlciBzdXBwb3J0cyBpdC4gSSB3b3VsZCBjb25zaWRlcg0KPiBz
-dWNoIGEgZmVhdHVyZSB2ZXJ5IGV4b3RpYy4NCj4gDQo+IEFuZCBqdXN0IHRvIGJlIGV4cGxpY2l0
-LCAiYXNzb2NpYXRlZCB3aXRoIHRoZSBmaXJzdCB0YWciIG1lYW5zIHRoYXQgd2UNCj4gbmV2ZXIg
-aGF2ZSBhIHNpdHVhdGlvbiB3aXRoIFZMQU4gc3RyaXAgb3IgUWluUSBzdHJpcCBzZXR0aW5nIHdo
-ZXJlIHdlDQo+IHdvdWxkDQo+IHN0cmlwIGEgbm9uLWZpcnN0IHRhZywgYnV0IGxlYXZlIHRoZSBm
-aXJzdCB0YWcgaW4gcGxhY2UuIFRhZ3MgYXJlIGFsd2F5cw0KPiBzdHJpcHBlZCBmcm9tIHRoZSBv
-dXRlciB0YWcgaW53YXJkcywgYW5kIHRhZyBzdHJpcHBpbmcgc3RvcHMgYXMgc29vbiBhcw0KPiB0
-aGUNCj4gZmlyc3Qgbm9uLXN0cmlwcGFibGUgdGFnIGlzIGVuY291bnRlcmVkLg0KDQpZZXMuDQpB
-bHNvLCB0aGUgRXRoZXJUeXBlIChvZiB0aGlzIGZpcnN0IHRhZykgbXVzdCBiZSAweDgxMDAgKG9y
-IG9wdGlvbmFsbHkgYSBjb25maWd1cmFibGUgdmFsdWUpIHRvIGJlIGNvbnNpZGVyZWQgYSBtYXRj
-aC4NCg0KPHRob3VnaHQgZXhwZXJpbWVudD4NCldlIGNvdWxkIGV4cGFuZCBpdCB0byBhbGxvdyBz
-dHJpcHBpbmcgYW4gaW5uZXIgVkxBTiB0YWcgKEV0aGVyVHlwZSAweDgxMDApIGlmIGFuIG91dGVy
-IFFpblEgdGFnIChFdGhlclR5cGUgMHg4OGE4KSB3YXMgcGFyc2VkLg0KSXQgbWlnaHQgZXZlbiBi
-ZSBwb3NzaWJsZSBmb3IgdGhlIEhXIHRvIHN1cHBvcnQgdGhhdCBvbiBSWC4NCkJ1dCBpdCB3b3Vs
-ZG4ndCBiZSBwb3NzaWJsZSB0byBzdXBwb3J0IG9uIFRYLCBhcyBpdCB3b3VsZCByZXF1aXJlIHRo
-ZSBIVyB0byBkZXRlY3QgaWYgYSBRaW5RIHRhZyBpcyBwcmVzZW50IGluIHRoZSBwYWNrZXQgZGF0
-YSBiZWluZyB0cmFuc21pdHRlZCwgYW5kIHRoZW4gaW5zZXJ0IHRoZSAoaW5uZXIpIFZMQU4gdGFn
-IGFmdGVyIHRoYXQgb3V0ZXIgUWluUSB0YWcgZHVyaW5nIHRyYW5zbWl0Lg0KU28sIHdpdGhvdXQg
-ZmVhdHVyZSBzeW1tZXRyeSBiZXR3ZWVuIFJYIGFuZCBUWCwgSSBkb24ndCB0aGluayBpdCBpcyBy
-ZWxldmFudC4NCjwvdGhvdWdodCBleHBlcmltZW50Pg0KDQo+IA0KPiA+DQo+ID4gMi4gRm9yIG1v
-cmUgdGFncywgc3RhcnQgYnkgc3RyaWN0bHkgY29uZm9ybWluZyB0byB0aGUgSUVFRSA4MDIuMw0K
-PiBzdGFuZGFyZC4NCj4gPiBRaW5RIGlzIEV0aGVyVHlwZSAweDg4YTggYW5kIGlzIGFzc29jaWF0
-ZWQgd2l0aCB0aGUgb3V0ZXIgdGFnIChTLVRBRyksDQo+IG1idWYtPnZsYW5fdGNpX291dGVyLCBy
-ZWdhcmRsZXNzIGlmIGFuIGlubmVyIHRhZyAoQy1UQUcpIGlzIHByZXNlbnQgb3INCj4gbm90Lg0K
-PiA+IFZMQU4gaXMgRXRoZXJUeXBlIDB4ODEwMCBhbmQgaXMgYXNzb2NpYXRlZCB3aXRoIHRoZSBp
-bm5lciB0YWcgKEMtVEFHKQ0KPiBvciBzaW1wbGUgdGFnIChWTEFOIHRhZyksIG1idWYtPnZsYW5f
-dGNpLCByZWdhcmRsZXNzIGlmIGFuIG91dGVyIHRhZyBpcw0KPiBwcmVzZW50IG9yIG5vdC4gKE5v
-dGU6IFdoZW4gZGlzcmVnYXJkaW5nIHRoZSBvdXRlciB0YWcgaGVyZSwgdGhpcyBpcw0KPiBleGFj
-dGx5IHRoZSBzYW1lIGJlaGF2aW9yIGFzIGZvciBWTEFOIGluIGJ1bGxldCAxIGFib3ZlLikNCj4g
-PiBUaGlzIGRlZmluZXMgcGxhY2VtZW50cyBvZiB0aGUgdGFnIElEcyBpbiB0aGUgbWJ1ZiBhbmQg
-dGhlIGRlZmF1bHQNCj4gRXRoZXJUeXBlcyB1c2VkIGluIHRoZSBwYWNrZXQgaGVhZGVycyB3aGVu
-IHBhcnNpbmcvc3RyaXBwaW5nL2luc2VydGluZw0KPiB0YWdzLg0KPiA+IEl0IGFsc28gZGVmaW5l
-cyB0aGUgcHVycG9zZSBvZiBWTEFOIGFuZCBRSU5RDQo+IGNhcGFiaWxpdHkvcHJlc2VudC9zdHJp
-cC9pbnNlcnQgZmxhZ3MgaW4gdGhlIGV0aGRldiBhbmQgbWJ1ZiBvZmZsb2FkDQo+IGZsYWdzLg0K
-PiA+DQo+IA0KPiBTbyBiYXNlZCBvbiB3aGF0IHlvdSBzYXkgYWJvdmUsIGhhdmluZyBhIFZMQU4g
-c3RyaXAgc2V0dGluZyBzZXBhcmF0ZQ0KPiBmcm9tDQo+IHRoZSBRaW5RIHN0cmlwIGVuYWJsZWQg
-c2V0dGluZyBkb2Vzbid0IG1ha2UgYW55IHNlbnNlLCByaWdodD8gU28gd2UNCj4gc2hvdWxkDQo+
-IGRlY2lkZSBhbmQgZG9jdW1lbnQgdGhhdCB3aGVuIFFpblEgc3RyaXAgaXMgZW5hYmxlZCwgVkxB
-TiBzdHJpcCBtdXN0IGJlOg0KPiANCj4gYSkgYWx3YXlzIG9uIC0gd2hpY2ggbWFrZXMgc2Vuc2Ug
-aWYgc2luZ2xlIHRhZ2dlZCAweDgxMDAgcGFja2V0cyBhcmUNCj4gc3RpbGwNCj4gICAgICAgICAg
-ICAgICAgc3RyaXBwZWQgYXMgeW91IGRlc2NyaWJlIGFib3ZlDQo+IGIpIGFsd2F5cyBvZmYgLSB3
-aGljaCBtYWtlcyBzZW5zZSBpbiB0aGUgY2FzZSBiZWxvdyB3aGVyZSBzaW5nbHkgdGFnZ2VkDQo+
-ICAgICAgICAgICAgICAgICBwYWNrZXRzIGFyZSB0cmVhdGVkIGFzIG91dGVyIHRhZ3MNCj4gYykg
-aWdub3JlZCAtIHdoaWNoIGlzIGEgYml0IG9mIGEgY29wLW91dCwgYnV0IGF2b2lkcyBhbnkgaXNz
-dWVzIHdpdGgNCj4gYmFja3dhcmQNCj4gICAgICAgICAgICAgIGNvbXBhdGliaWxpdHkgZm9yIGFw
-cHMuDQoNCk5vLiBJJ20gc2F5aW5nIHNvbWV0aGluZyBlbHNlOg0KV2l0aCBRaW5RIHN0cmlwcGlu
-Zy9pbnNlcnRpb24gZW5hYmxlZCwgdGhlIFZMQU4gc3RyaXBwaW5nL2luc2VydGlvbiBmbGFnIGNv
-bnRyb2xzIHdoYXQgdG8gZG8gd2l0aCB0aGUgaW5uZXIgVkxBTiB0YWcgKGlmIHByZXNlbnQpOg0K
-RW5hYmxlZDogSWYgaW5uZXIgVkxBTiB0YWcgaXMgcHJlc2VudCAoYW5kIG91dGVyIFFpblEgdGFn
-IHdhcyBzdHJpcHBlZCksIHN0cmlwIGl0Lg0KRGlzYWJsZWQ6IElmIGlubmVyIFZMQU4gdGFnIGlz
-IHByZXNlbnQgKGFuZCBvdXRlciBRaW5RIHRhZyB3YXMgc3RyaXBwZWQpLCBkb24ndCBzdHJpcCBp
-dC4NCg0KVGhpbmsgb2YgYSBjb25jZXB0dWFsIHBpcGVsaW5lOg0KRmlyc3Qgc3RhZ2Ugb24gUlgg
-KGlmIFFpblEgc3RyaXBwaW5nIGlzIGVuYWJsZWQpLCB0aGUgb3V0ZXJtb3N0IFFpblEgdGFnIGlz
-IHN0cmlwcGVkLCBpZiBwcmVzZW50LiBBZnRlciB0aGlzLCB0aGUgcGFja2V0IGhhcyBubyBvdXRl
-ciB0YWcgYW55bW9yZTsgdGhlIG91dGVybW9zdCB0YWcgaGFzIGJlZW4gcmVtb3ZlZCwgc28gd2hh
-dCB3YXMgdGhlIGlubmVyIHRhZyBiZWZvcmUgaGFzIG5vdyBiZWNvbWUgdGhlIG91dGVybW9zdCB0
-YWcuDQpTZWNvbmQgc3RhZ2Ugb24gUlggKGlmIFZMQU4gc3RyaXBwaW5nIGlzIGVuYWJsZWQpLCB0
-aGUgb3V0ZXJtb3N0IFZMQU4gdGFnIGlzIHN0cmlwcGVkLCBpZiBwcmVzZW50LiBBZnRlciB0aGlz
-LCB0aGUgcGFja2V0IGhhcyBubyBpbm5lciB0YWcgYW55bW9yZS4NCg0KV2hlbiBRaW5RIHN0cmlw
-cGluZyBpcyBkaXNhYmxlZCwgb3IgSFcgZG9lc24ndCBzdXBwb3J0IGl0LCB0aGVyZSBpcyBvbmx5
-IHRoZSAiU2Vjb25kIHN0YWdlIi4NClRoaXMgaXMgd2hhdCBJIHdhcyB0cnlpbmcgdG8gcmVmZXIg
-dG8gaW4gbXkgYnVsbGV0IDIgIk5vdGU6IFdoZW4gZGlzcmVnYXJkaW5nIHRoZSBvdXRlciB0YWcg
-aGVyZSwgdGhpcyBpcyBleGFjdGx5IHRoZSBzYW1lIGJlaGF2aW9yIGFzIGZvciBWTEFOIGluIGJ1
-bGxldCAxIGFib3ZlLiINCkluIG90aGVyIHdvcmRzOiBUaGUgVkxBTiBzdHJpcHBpbmcgZW5naW5l
-IG9ubHkgY29uc2lkZXJzIHRoZSBvdXRlcm1vc3QgdGFnIChwb3NzaWJseSBhZnRlciBRaW5RIHN0
-cmlwcGluZyBoYXMgbWFkZSB0aGUgaW5uZXJtb3N0IHRhZyBiZWNvbWUgdGhlIG91dGVybW9zdCku
-DQoNCkFuZCB0aGVyZSBpcyBzeW1tZXRyeSBmb3IgVFgsIGV4Y2VwdCB0aGUgdHdvIGNvbmNlcHR1
-YWwgcGlwZWxpbmUgc3RhZ2VzIGFyZSBzd2FwcGVkLg0KDQo+IA0KPiA+IDMuIFRoZW4gYWRkIHN1
-cHBvcnQgZm9yIFZMQU4gU3RhY2tpbmcsIGkuZS4gdXNpbmcgRXRoZXJUeXBlIDB4ODEwMCBmb3IN
-Cj4gdGhlIG91dGVyIHRhZy4NCj4gPiBUaGlzIG1vZGUgb2Ygb3BlcmF0aW9uIGlzIG9ubHkgcmVs
-ZXZhbnQgd2hlbiBjb25maWd1cmVkIGZvciBRaW5RLiBJdA0KPiBkb2VzIG5vdCBzdXBwb3J0ICJz
-dXBlciBoeWJyaWQgbGlua3MiIChtaXhpbmcgUWluUSB0YWdnZWQgcGFja2V0cyB3aXRoDQo+IHNp
-bXBsZSBWTEFOIHRhZ2dlZCBwYWNrZXRzKSwgYmVjYXVzZSBhIHBhY2tldCB3aXRoIG9uZSBWTEFO
-IHRhZyBpcw0KPiBjb25zaWRlcmVkIGFuIFMtdGFnZ2VkIHBhY2tldCB3aXRoIG5vIEMtVEFHLCBh
-bmQgc3VjaCBhIHBhY2tldCB3b3VsZA0KPiBub3JtYWxseSBiZSBjb25zaWRlcmVkIGEgc2ltcGxl
-IFZMQU4gdGFnZ2VkIHBhY2tldC4NCj4gPiBOb3csIFFpblEgbWVhbnMgRXRoZXJUeXBlIDB4ODEw
-MC4gSXQgcmVxdWlyZXMgdGhhdCB0aGUgaGFyZHdhcmUgYW5kDQo+IGRyaXZlciBzdXBwb3J0cyBj
-aGFuZ2luZyB0aGUgRXRoZXJUeXBlIG9mIHRoZSBvdXRlciB0YWcuDQo+ID4gUWluUSBpcyBFdGhl
-clR5cGUgMHg4MTAwIGFuZCBpcyBhc3NvY2lhdGVkIHdpdGggdGhlIG91dGVyIHRhZyAoUy1UQUcp
-LA0KPiBtYnVmLT52bGFuX3RjaV9vdXRlciwgcmVnYXJkbGVzcyBpZiBhbiBpbm5lciB0YWcgKEMt
-VEFHKSBpcyBwcmVzZW50IG9yDQo+IG5vdC4NCj4gPiBWTEFOIGlzIEV0aGVyVHlwZSAweDgxMDAg
-YW5kIGlzIGFzc29jaWF0ZWQgd2l0aCB0aGUgaW5uZXIgdGFnIChDLVRBRyksDQo+IG1idWYtPnZs
-YW5fdGNpLCBhbmQgY2FuIG9ubHkgZXhpc3Qgd2hlbiBhbiBvdXRlciB0YWcgaXMgcHJlc2VudC4N
-Cj4gPiBOb3RlOiBydGVfbmV0X2dldF9wdHlwZSgpIGNhbm5vdCBzdXBwb3J0IHRoaXMgbW9kZSBv
-ZiBvcGVyYXRpb24NCj4gd2l0aG91dCBhZGRpbmcgYSBwYXJhbWV0ZXIgY29udGFpbmluZyBpbmZv
-cm1hdGlvbiBhYm91dCB0aGUgRXRoZXJUeXBlIG9mDQo+IHRoZSBvdXRlciB0YWchDQo+ID4NCj4g
-PiBUaGlzIGRlc2NyaWJlcyB0aGUgYmVoYXZpb3IgSSBoYXZlIG5vdyBjb21lIHRvIGV4cGVjdCwg
-YWZ0ZXIgZ2V0dGluZw0KPiB3aXNlciB0aHJvdWdoIHRoaXMgZGlzY3Vzc2lvbi4NCj4gPiBEcml2
-ZXJzIG1pZ2h0IGRvIHNvbWV0aGluZyBlbHNlLCBhbmQgYXBwbGljYXRpb25zIG1pZ2h0IGhhdmUg
-YWRvcHRlZA0KPiB3aGF0IGRyaXZlcnMgYWN0dWFsbHkgZG8uDQo+ID4NCj4gDQo+IE9uZSBmb2xs
-b3d1cCBxdWVzdGlvbi90aG91Z2h0IHRoZW46IHRoZQ0KPiBydGVfZXRoX2Rldl9zZXRfdmxhbl9l
-dGhlcl90eXBlKCkNCj4gZnVuY3Rpb24gb25seSBhcHBsaWVzIGZvciBRaW5RIHRyYWZmaWMsIHNp
-bmNlIGl0IHNwZWNpZmllcyBpbm5lci9vdXRlcj8NCg0KTm8sIGl0IHN1cHBvcnRzIGFsbCB0YWcg
-dHlwZXMgdGhyb3VnaCB0aGUgZW51bSBydGVfdmxhbl90eXBlIFsxXSBwYXNzZWQgdG8gcnRlX2V0
-aF9kZXZfc2V0X3ZsYW5fZXRoZXJfdHlwZSgpOiBRaW5RIE91dGVyLCBRaW5RIElubmVyLCBTaW5n
-bGUgVkxBTi4NCg0KQnV0IEkgdGhpbmsgdGhlIGRvY3VtZW50YXRpb24gb2YgdGhlIGVudW0gcnRl
-X3ZsYW5fdHlwZSBuZWVkcyB0byBiZSBjb3JyZWN0ZWQgdG9vLi4uDQoNCkkgYWdyZWUgd2l0aCBp
-dHMgZGVzY3JpcHRpb24gc2F5aW5nOiAiTm90ZSB0aGF0IHNpbmdsZSBWTEFOIGlzIHRyZWF0ZWQg
-dGhlIHNhbWUgYXMgaW5uZXIgVkxBTi4iDQpCdXQgdGhlICJTaW5nbGUgVkxBTiIgY29tbWVudCBp
-cyBhdCB0aGUgd3JvbmcgZW51bSB2YWx1ZS4NCkkgdGhpbmsgaXQgc2hvdWxkIGJlOg0KDQovKioN
-CiAqIFZMQU4gdHlwZXMgdG8gaW5kaWNhdGUgaWYgaXQgaXMgZm9yIHNpbmdsZSBWTEFOLCBpbm5l
-ciBWTEFOIG9yIG91dGVyIFZMQU4uDQogKiBOb3RlIHRoYXQgc2luZ2xlIFZMQU4gaXMgdHJlYXRl
-ZCB0aGUgc2FtZSBhcyBpbm5lciBWTEFOLg0KICovDQplbnVtIHJ0ZV92bGFuX3R5cGUgew0KCVJU
-RV9FVEhfVkxBTl9UWVBFX1VOS05PV04gPSAwLA0KLQlSVEVfRVRIX1ZMQU5fVFlQRV9JTk5FUiwg
-LyoqPCBJbm5lciBWTEFOLiAqLw0KLQlSVEVfRVRIX1ZMQU5fVFlQRV9PVVRFUiwgLyoqPCBTaW5n
-bGUgVkxBTiwgb3Igb3V0ZXIgVkxBTi4gKi8NCisJUlRFX0VUSF9WTEFOX1RZUEVfSU5ORVIsIC8q
-KjwgSW5uZXIgVkxBTiwgb3Igc2luZ2xlIFZMQU4uICovDQorCVJURV9FVEhfVkxBTl9UWVBFX09V
-VEVSLCAvKio8IE91dGVyIFZMQU4uICovDQoJUlRFX0VUSF9WTEFOX1RZUEVfTUFYLA0KfTsNCg0K
-WzFdOiBodHRwczovL2VsaXhpci5ib290bGluLmNvbS9kcGRrL3YyNS4wNy9zb3VyY2UvbGliL2V0
-aGRldi9ydGVfZXRoZGV2LmgjTDQ0NA0KDQo+IA0KPiAvQnJ1Y2UNCg==
+--00000000000092f548063b2e7c9c
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+#####################################################################
+July 24, 2025
+Attendees
+1. Patrick Robb
+2. Luca Vizzarro
+3. Dean Marx
+4. Adam Hassick
+5. Paul Szczepanek
+
+#####################################################################
+Minutes
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+General Announcements
+* DPDK 25.07 is released.
+* DPDK Santa Clara is cancelled
+* Aaron will be visiting the UNH Lab next week, and will collaborate with
+the UNH group on dpdk-ci scripting and CI testing goals.
+   * Adam Hassickplease be sure to review the draft polling script that
+Manit has shared
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+CI Status
+
+---------------------------------------------------------------------
+AWS Lab
+* Seems to be running fine
+* UNH team wants to work with Shai during this release on getting some
+partial support from DTS for the AWS environment working. To that end, is
+it possible for the UNH DTS developers to get some SSH access to some
+Amazon EC2 instances to try to run the DTS framework? Patrick to ask Shai
+this.
+UNH-IOL Community Lab
+* Opensuse Leap 15 is shipping with a version of GCC which is now below the
+DPDK Minimum (GCC 8). From some research it seems typical for SUSE distros
+to include a relatively old system gcc, and users will install newer
+toolchain GCC versions. It appears that the zypper repos distribute gcc 14,
+so we will upgrade the container template engine to use this version.
+   * Also, we are adding a blurb to the lab.dpdk.org about page explaining
+the categories of distros we try to test, and how we determine what =E2=80=
+=9Cbase=E2=80=9D
+build utilities are included in the test environment.
+* Windows:
+   * Andre has sent new instructions for finding the devx library during
+the meson compile, and the UNH team is updating their build pipelines to
+include this:
+https://patchwork.dpdk.org/project/dpdk/patch/1752588889-27133-1-git-send-e=
+mail-andremue@linux.microsoft.com/
+* QinQ: Dean is still working with Bruce and Morten on evaluating the QinQ
+behavior on UNH Lab devices. He has published a latest version of the QinQ
+testsuite which Morten thumbed up, and he shared the QinQ behavior for
+Intel i40e and cx5 on the mailing list.
+   * Broadcom NICs are supposed to support VLAN stripping but in the lab
+are reporting that they don=E2=80=99t support vlan strip. Ajit Khapardeis l=
+ooking.
+* Lab downtime
+   * UNH team needs to move the Jenkins instance to a new machine, which
+will require some lab downtime. Patrick will take the lab offline on Friday
+afternoon, and turn it back on on Saturday or Sunday.
+
+---------------------------------------------------------------------
+Intel Lab
+* None
+
+---------------------------------------------------------------------
+Github Actions Robot
+* None
+
+---------------------------------------------------------------------
+Loongson Lab
+* Min Zhou did reply back saying that they=E2=80=99re supporting the rebase=
+ flag
+now on test recheck requests.
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+DTS Improvements & Test Development
+* RSS Testsuite:
+   * Ivan Malov has noted that the flow rules are overriding the global
+RETA table
+   * Thomas is reworking the testsuite to validate through the global RETA
+table behavior
+* DTS Roadmap:
+   * VM tests: Framework update: Use QEMU to spin up a virtual machine on
+the SUT, pass the VFs to it, run either some existing DTS testsuite across
+it, and/or add some VM functional validation testsuites
+   * VHost tests: General idea is to run some DPDK packet switching
+application on the baremetal and pass traffic to virtio. Patrick needs to
+assess if this is a valuable enough item to include in the roadmap.
+   * DTS API
+      * Single point of entry into the framework for all test suites,
+allowing stable usage across releases and user friendly discoverability of
+dts functionality
+      * Where there is overlap between the DTS API and the existing =E2=80=
+=9CAPI=E2=80=9D
+methods available in the Testsuite class, remove the Testsuite class method=
+s
+   * Packet Forwarding Performance tests
+   * Cryptodev support: Just adding support for the dpdk-crypto-perf
+application, may require another DPDK Shell implementation
+   * Cryptodev tests: Either as a func or perf test (compare against a
+baseline), run some encrypt/decrypt workloads with the various supported
+algorithms on DPDK nics.
+   * Testing with single NIC with the 2 interfaces connected in a loopback
+      * This appears to be working, but need to be documented
+   * Additional functional ethdev testsuites:
+      * Ethertype Testsuite
+      * QinQ Testsuite
+      * RSS Testsuite
+      * Rx/Tx Offload
+   * File manager:
+      * Add a dedicated file manager to handle passing files and artifacts
+between the test engine and nodes in a path agnostic manner.
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Any other business
+* Patrick Robb submit the website update with the latest recheck coverage.
+* Next Meeting August 7th at the same time
+
+--00000000000092f548063b2e7c9c
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><br>######################################################=
+###############<br>July 24, 2025<br>Attendees<br>1. Patrick Robb<br>2. Luca=
+ Vizzarro<br>3. Dean Marx<br>4. Adam Hassick<br>5. Paul Szczepanek<br><br>#=
+####################################################################<br>Min=
+utes<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>Ge=
+neral Announcements<br>* DPDK 25.07 is released.<br>* DPDK Santa Clara is c=
+ancelled<br>* Aaron will be visiting the UNH Lab next week, and will collab=
+orate with the UNH group on dpdk-ci scripting and CI testing goals.<br>=C2=
+=A0 =C2=A0* Adam Hassickplease be sure to review the draft polling script t=
+hat Manit has shared<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D<br>CI Status<br><br>------------------------------------------=
+---------------------------<br>AWS Lab<br>* Seems to be running fine<br>* U=
+NH team wants to work with Shai during this release on getting some partial=
+ support from DTS for the AWS environment working. To that end, is it possi=
+ble for the UNH DTS developers to get some SSH access to some Amazon EC2 in=
+stances to try to run the DTS framework? Patrick to ask Shai this.<br>UNH-I=
+OL Community Lab<br>* Opensuse Leap 15 is shipping with a version of GCC wh=
+ich is now below the DPDK Minimum (GCC 8). From some research it seems typi=
+cal for SUSE distros to include a relatively old system gcc, and users will=
+ install newer toolchain GCC versions. It appears that the zypper repos dis=
+tribute gcc 14, so we will upgrade the container template engine to use thi=
+s version.<br>=C2=A0 =C2=A0* Also, we are adding a blurb to the <a href=3D"=
+http://lab.dpdk.org">lab.dpdk.org</a> about page explaining the categories =
+of distros we try to test, and how we determine what =E2=80=9Cbase=E2=80=9D=
+ build utilities are included in the test environment.<br>* Windows:<br>=C2=
+=A0 =C2=A0* Andre has sent new instructions for finding the devx library du=
+ring the meson compile, and the UNH team is updating their build pipelines =
+to include this: <a href=3D"https://patchwork.dpdk.org/project/dpdk/patch/1=
+752588889-27133-1-git-send-email-andremue@linux.microsoft.com/">https://pat=
+chwork.dpdk.org/project/dpdk/patch/1752588889-27133-1-git-send-email-andrem=
+ue@linux.microsoft.com/</a><br>* QinQ: Dean is still working with Bruce and=
+ Morten on evaluating the QinQ behavior on UNH Lab devices. He has publishe=
+d a latest version of the QinQ testsuite which Morten thumbed up, and he sh=
+ared the QinQ behavior for Intel i40e and cx5 on the mailing list.<br>=C2=
+=A0 =C2=A0* Broadcom NICs are supposed to support VLAN stripping but in the=
+ lab are reporting that they don=E2=80=99t support vlan strip. Ajit Khapard=
+eis looking.<br>* Lab downtime<br>=C2=A0 =C2=A0* UNH team needs to move the=
+ Jenkins instance to a new machine, which will require some lab downtime. P=
+atrick will take the lab offline on Friday afternoon, and turn it back on o=
+n Saturday or Sunday.<br><br>----------------------------------------------=
+-----------------------<br>Intel Lab<br>* None<br><br>---------------------=
+------------------------------------------------<br>Github Actions Robot<br=
+>* None<br><br>------------------------------------------------------------=
+---------<br>Loongson Lab<br>* Min Zhou did reply back saying that they=E2=
+=80=99re supporting the rebase flag now on test recheck requests. <br><br>=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>DTS Improvemen=
+ts &amp; Test Development<br>* RSS Testsuite:<br>=C2=A0 =C2=A0* Ivan Malov =
+has noted that the flow rules are overriding the global RETA table<br>=C2=
+=A0 =C2=A0* Thomas is reworking the testsuite to validate through the globa=
+l RETA table behavior<br>* DTS Roadmap:<br>=C2=A0 =C2=A0* VM tests: Framewo=
+rk update: Use QEMU to spin up a virtual machine on the SUT, pass the VFs t=
+o it, run either some existing DTS testsuite across it, and/or add some VM =
+functional validation testsuites<br>=C2=A0 =C2=A0* VHost tests: General ide=
+a is to run some DPDK packet switching application on the baremetal and pas=
+s traffic to virtio. Patrick needs to assess if this is a valuable enough i=
+tem to include in the roadmap.<br>=C2=A0 =C2=A0* DTS API<br>=C2=A0 =C2=A0 =
+=C2=A0 * Single point of entry into the framework for all test suites, allo=
+wing stable usage across releases and user friendly discoverability of dts =
+functionality<br>=C2=A0 =C2=A0 =C2=A0 * Where there is overlap between the =
+DTS API and the existing =E2=80=9CAPI=E2=80=9D methods available in the Tes=
+tsuite class, remove the Testsuite class methods<br>=C2=A0 =C2=A0* Packet F=
+orwarding Performance tests<br>=C2=A0 =C2=A0* Cryptodev support: Just addin=
+g support for the dpdk-crypto-perf application, may require another DPDK Sh=
+ell implementation<br>=C2=A0 =C2=A0* Cryptodev tests: Either as a func or p=
+erf test (compare against a baseline), run some encrypt/decrypt workloads w=
+ith the various supported algorithms on DPDK nics.<br>=C2=A0 =C2=A0* Testin=
+g with single NIC with the 2 interfaces connected in a loopback<br>=C2=A0 =
+=C2=A0 =C2=A0 * This appears to be working, but need to be documented<br>=
+=C2=A0 =C2=A0* Additional functional ethdev testsuites:<br>=C2=A0 =C2=A0 =
+=C2=A0 * Ethertype Testsuite<br>=C2=A0 =C2=A0 =C2=A0 * QinQ Testsuite<br>=
+=C2=A0 =C2=A0 =C2=A0 * RSS Testsuite<br>=C2=A0 =C2=A0 =C2=A0 * Rx/Tx Offloa=
+d<br>=C2=A0 =C2=A0* File manager:<br>=C2=A0 =C2=A0 =C2=A0 * Add a dedicated=
+ file manager to handle passing files and artifacts<br>between the test eng=
+ine and nodes in a path agnostic manner.<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>Any other business<br>* Patrick Robb subm=
+it the website update with the latest recheck coverage.<br>* Next Meeting A=
+ugust 7th at the same time<br></div>
+
+--00000000000092f548063b2e7c9c--
