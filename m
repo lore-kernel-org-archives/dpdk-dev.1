@@ -2,69 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34A40C83F17
-	for <dpdk-dev@archiver.kernel.org>; Thu, 31 Jul 2025 11:31:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27702C87FCC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 31 Jul 2025 11:32:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0F5A9402E6;
-	Thu, 31 Jul 2025 13:31:42 +0200 (CEST)
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com
- [209.85.216.41]) by mails.dpdk.org (Postfix) with ESMTP id 2FD39402AB
- for <dev@dpdk.org>; Thu, 31 Jul 2025 13:31:40 +0200 (CEST)
-Received: by mail-pj1-f41.google.com with SMTP id
- 98e67ed59e1d1-31ef50d8d57so612892a91.0
- for <dev@dpdk.org>; Thu, 31 Jul 2025 04:31:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=bytedance.com; s=google; t=1753961499; x=1754566299; darn=dpdk.org;
- h=cc:to:subject:message-id:date:references:in-reply-to:mime-version
- :from:from:to:cc:subject:date:message-id:reply-to;
- bh=fVR37GBOhhSd83j6V14EKFdEetw4YPyUfcZYUVVou5M=;
- b=AXqFbWODndXuiNS1fwOTz0tkbgmN6i9LZNxgzWoO84cqpfOqI4/om5x6f0FggaDcwq
- IXhg9Mv/hIk73Nn6lweJwvpx6UaDRngPhct2Y9hg5HwmsQ5GSmDEjZ+c1DdKt7vmoEL/
- gisSANLyyJ/PU+SGq8BNWC/nvuSnN+mM1ZixG8Cel7YOPWOBD/uPmdfrAIOJi3XPyZWL
- OXyUvMC49VhVOgyzcWaHdYDZo3Kmrk2O108QYTyaTms5i0pEs3aENkYmi/qGAZnvRsMQ
- QnMe+yHXspbBk9cQUdZjHy/IlaXbLMbW16TNhnFPuQ5mpCQ+LeKAffvEOs72rfTzJvpR
- PuRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753961499; x=1754566299;
- h=cc:to:subject:message-id:date:references:in-reply-to:mime-version
- :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=fVR37GBOhhSd83j6V14EKFdEetw4YPyUfcZYUVVou5M=;
- b=ewj02bXhnNmUrgbL+veWrVX7UEpuZxLE9+5YP8512baYUf8iPJsZkKqgKXr3pQlob9
- tY5FXwg25RawD7sH672beBLghGltqKcxPr1XFjK51EZMWySsxhWsz1m2a06EsAPGkdhe
- Qy8vt/i2nW/Ae5lH1/1dZLygPcFLLET8SX8EDGJfMbIpZt9QGKebPSEByG3F4rI1v14j
- uBZvKdGArGsRXEmcB+qi/rSCONR0pOhq6DIdT05p7FEPyzvxAdNGu6Bzf5u5JsJQGcnC
- WP+0BBiWfXuzDUPApTzhVhHinEd6e6DInRFk3GnUwRmYXKiTqPLkahMe2lGVVjBH2YOz
- IgCQ==
-X-Gm-Message-State: AOJu0Ywpj+rBTWRrEqrOsZd1U5KX8W/g8TlYn78RpBbVmCYZnE5ofedh
- CZwTixNWDTSmST8ii203uBuFxww+rHBpDqEA7NibiWsGe9GTI9d9gjOEUkWMjwe98/o81aWMaej
- 9TqwfLcTeI8FQhSk70ijVjeqvithL+fxqIqLDViyDAQ==
-X-Gm-Gg: ASbGncsqlQB4zvtab2A071nqiJt5ruUgM/VDGRsiFEK2DVM0dPUNLewriBg20DKn9rz
- khXrelRx+67MQFIptzbKYNcSZBTnEdATwqLK1sPHLvyWgnMeSWS1W4bzdcru3psbtrSGCsyWrhV
- 0IVYYgePkJHkIAYF/86JPOyv8/7WDH5WSiVQIGd3tHQOuu+W+bqCS1X2aHspk4ecZn7gxpBKh9d
- OTbJS4qxuzHi+tvUgwQ
-X-Google-Smtp-Source: AGHT+IEThAmo4RWBqtzY7eNj9OxrBpke/hyEaZhTWv7xyVfpiCFCir+ZNVLkf06zzyzWgFcKvZF8ijuS3Iq7EkbDaJE=
-X-Received: by 2002:a17:90b:55c8:b0:311:f05b:869b with SMTP id
- 98e67ed59e1d1-31f5de58622mr9377645a91.30.1753961499142; Thu, 31 Jul 2025
- 04:31:39 -0700 (PDT)
-Received: from 44278815321 named unknown by gmailapi.google.com with HTTPREST; 
- Thu, 31 Jul 2025 04:31:38 -0700
-Received: from 44278815321 named unknown by gmailapi.google.com with HTTPREST; 
- Thu, 31 Jul 2025 04:31:38 -0700
-From: Su Sai <susai.ss@bytedance.com>
-Mime-Version: 1.0
-In-Reply-To: <18bc89bd254340f0b15653be473b0979@huawei.com>
-References: <CABsP7wOFAsE2-BmnHZW1c3rOkkrUWfox7qrbim6zmP6gbmJqzg@mail.gmail.com>
- <2b98417ad1da4df2ac4e577b9c3938ae@huawei.com>
- <18bc89bd254340f0b15653be473b0979@huawei.com>
-Date: Thu, 31 Jul 2025 04:31:38 -0700
-X-Gm-Features: Ac12FXzKjyOqqBpU6nmuYmLiS7lUg4vawhT0mzzbOQS_ZCrk999-NLmXIQ5mYfM
-Message-ID: <CABsP7wPvp1VFJ2+5VVp5o+Ne38CGbTX6-ftFWJG1N6kH0-sr3w@mail.gmail.com>
-Subject: Re: [External] RE: [PATCH] net/cksum: compute raw cksum for several
- segments
-To: Marat Khalili <marat.khalili@huawei.com>, 
- "jasvinder.singh@intel.com" <jasvinder.singh@intel.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>
-Content-Type: multipart/alternative; boundary="0000000000001b5118063b37fcb4"
+	by mails.dpdk.org (Postfix) with ESMTP id 54843402C3;
+	Thu, 31 Jul 2025 13:32:27 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id D3187402AB
+ for <dev@dpdk.org>; Thu, 31 Jul 2025 13:32:25 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bt6Jm6VVtz6HJgx;
+ Thu, 31 Jul 2025 19:28:08 +0800 (CST)
+Received: from frapeml100006.china.huawei.com (unknown [7.182.85.201])
+ by mail.maildlp.com (Postfix) with ESMTPS id 77D8D1404A6;
+ Thu, 31 Jul 2025 19:32:24 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ frapeml100006.china.huawei.com (7.182.85.201) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 31 Jul 2025 13:32:24 +0200
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Thu, 31 Jul 2025 13:32:24 +0200
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>,
+ "dev@dpdk.org" <dev@dpdk.org>, Thomas Monjalon <thomas@monjalon.net>, "Andrew
+ Rybchenko" <andrew.rybchenko@oktetlabs.ru>
+CC: Ivan Malov <ivan.malov@arknetworks.am>
+Subject: RE: [PATCH] ethdev: Reject conflicting TX offloads configuration
+Thread-Topic: [PATCH] ethdev: Reject conflicting TX offloads configuration
+Thread-Index: AQHcAfqW3fsKqmjgsEaO5B19d3wvdbRMGYcg
+Date: Thu, 31 Jul 2025 11:32:24 +0000
+Message-ID: <4c0df856671f4cba95a140f9c8fbec8a@huawei.com>
+References: <20250731090731.671589-1-mb@smartsharesystems.com>
+In-Reply-To: <20250731090731.671589-1-mb@smartsharesystems.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.138.73]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -78,273 +56,120 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000001b5118063b37fcb4
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi Marat Khalili,
-
-Thanks for your comments.
-
-We found small TCP checksum errors pkts online, then were traced to issues
-within the rte_raw_cksum_mbuf function.
-
-This error can be reproduced as follows:
-1. In the client ECS with an MTU of 1500, initiate traffic using the
-command "iperf3 -c {dst ip} -b 1m -M 125 -t 8000".
-2. In the destination ECS, the InCsumErrors statistic can be viewed using
-the command "netstat -st | grep -i csum". The erroneous packets can also be
-confirmed via the tcpdump command.
-
-The following is a detailed description of a captured erroneous packet. The
-hex stream of the packet is as follows:
-00163e0b6bd2eeffffffffff0800450000a50d7a40004006b94bc0a8f91dc0a8f91ed5d2145=
-146f9d990e10d6a2d8010020040a200000101080a95ac86ba091145d3ffffffffffffffffff=
-fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff=
-fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff=
-ffffffffffffffffffffffffffffffffffffffffffffffffff
-
-This is a packet in the format of eth + ipv4 + tcp + payload.
-
-The process leading to the error is as follows:
-1. Due to the small MSS, TSO fragmentation was triggered, generating 3
-mbufs.
-2. The data_len of the first mbuf is 66 bytes, containing the Ethernet
-header, IPv4 header, and TCP header.
-3. The data_len of the second mbuf is 61 bytes.
-4. The data_len of the third mbuf is 52 bytes.
-5. When calculating the checksum of the TCP header for such an mbuf chain
-using the rte_raw_cksum_mbuf function, the tmp value obtained during the
-calculation of the third mbuf is 0x19FFE6.
-6. After applying rte_bswap16, tmp becomes 0xE6FF, with 0x19 discarded.
-This results in an incorrect final checksum.
-
-Meanwhile, we have also found that when enable jumbo frame, the payload
-becomes longer. In the process of rte_raw_cksum_mbuf handling an mbuf
-chain=EF=BC=8Cdue to the relatively large value of tmp, overflow will occur=
- in the
-accumulated sum.
-
-From: "Marat Khalili"<marat.khalili@huawei.com>
-Date: Thu, Jul 31, 2025, 19:04
-Subject: [External] RE: [PATCH] net/cksum: compute raw cksum for several
-segments
-To: "=E8=8B=8F=E8=B5=9B"<susai.ss@bytedance.com>, "jasvinder.singh@intel.co=
-m"<
-jasvinder.singh@intel.com>
-Cc: "dev@dpdk.org"<dev@dpdk.org>
-
-Sorry, sent the previous email too quickly.
-
-
-
-> -----Original Message-----
-
-> From: Marat Khalili
-
-> Sent: Thursday 31 July 2025 11:52
-
-> To: '=E8=8B=8F=E8=B5=9B' <susai.ss@bytedance.com>; jasvinder.singh@intel.=
-com
-
-> Cc: dev@dpdk.org
-
-> Subject: RE: [PATCH] net/cksum: compute raw cksum for several segments
-
-
-
-> > +static inline uint16_t
-
-> > +__rte_raw_cksum_reduce_u64(uint64_t sum)
-
-> > +{
-
-> > +        uint32_t tmp;
-
-> > +
-
-> > +        tmp =3D __rte_raw_cksum_reduce((uint32_t)sum);
-
-> > +        tmp +=3D __rte_raw_cksum_reduce((uint32_t)(sum >> 32));
-
->
-
-> What if this addition overflows?
-
-
-
-Realized it cannot actually overflow, my bad (maybe still needs a comment).
-Now this function looks good to me as well.
-
-
-
-> > +        return __rte_raw_cksum_reduce(tmp);
-
-> > +}
-
---0000000000001b5118063b37fcb4
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<html><head></head><body><div id=3D"editor_version_7.48.0_nDeKuLrb" style=
-=3D"word-break:break-word"><div style=3D"margin-top:4px;margin-bottom:4px;l=
-ine-height:1.6"><div dir=3D"auto" style=3D"font-size:14px">Hi Marat Khalili=
-,</div></div><div style=3D"margin-top:4px;margin-bottom:4px;line-height:1.6=
-"><div dir=3D"auto" style=3D"font-size:14px"><br></div></div><div style=3D"=
-margin-top:4px;margin-bottom:4px;line-height:1.6"><div dir=3D"auto" style=
-=3D"font-size:14px">Thanks for your comments.</div></div><div style=3D"marg=
-in-top:4px;margin-bottom:4px;line-height:1.6"><div dir=3D"auto" style=3D"fo=
-nt-size:14px"><br></div></div><div style=3D"margin-top:4px;margin-bottom:4p=
-x;line-height:1.6"><div dir=3D"auto" style=3D"font-size:14px">We found smal=
-l TCP checksum errors pkts online, then were traced to issues within the rt=
-e_raw_cksum_mbuf function.</div></div><div style=3D"margin-top:4px;margin-b=
-ottom:4px;line-height:1.6"><div dir=3D"auto" style=3D"font-size:14px"><br><=
-/div></div><div style=3D"margin-top:4px;margin-bottom:4px;line-height:1.6">=
-<div dir=3D"auto" style=3D"font-size:14px">This error can be reproduced as =
-follows:</div></div><div style=3D"margin-top:4px;margin-bottom:4px;line-hei=
-ght:1.6"><div dir=3D"auto" style=3D"font-size:14px">1. In the client ECS wi=
-th an MTU of 1500, initiate traffic using the command &quot;iperf3 -c {dst =
-ip} -b 1m -M 125 -t 8000&quot;.=C2=A0</div></div><div style=3D"margin-top:4=
-px;margin-bottom:4px;line-height:1.6"><div dir=3D"auto" style=3D"font-size:=
-14px">2. In the destination ECS, the InCsumErrors statistic can be viewed u=
-sing the command &quot;netstat -st | grep -i csum&quot;. The erroneous pack=
-ets can also be confirmed via the tcpdump=C2=A0command.</div></div><div sty=
-le=3D"margin-top:4px;margin-bottom:4px;line-height:1.6"><div dir=3D"auto" s=
-tyle=3D"font-size:14px"><br></div></div><div style=3D"margin-top:4px;margin=
--bottom:4px;line-height:1.6"><div dir=3D"auto" style=3D"font-size:14px">The=
- following is a detailed description of a captured erroneous packet. The he=
-x stream of the packet is as follows:</div></div><div style=3D"margin-top:4=
-px;margin-bottom:4px;line-height:1.6"><div dir=3D"auto" style=3D"font-size:=
-14px">00163e0b6bd2eeffffffffff0800450000a50d7a40004006b94bc0a8f91dc0a8f91ed=
-5d2145146f9d990e10d6a2d8010020040a200000101080a95ac86ba091145d3ffffffffffff=
-fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff=
-fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff=
-ffffffffffffffffffffffffffffffffffffffffffffffffffffffff</div></div><div st=
-yle=3D"margin-top:4px;margin-bottom:4px;line-height:1.6"><div dir=3D"auto" =
-style=3D"font-size:14px"><br></div></div><div style=3D"margin-top:4px;margi=
-n-bottom:4px;line-height:1.6"><div dir=3D"auto" style=3D"font-size:14px">Th=
-is is a packet in the format of eth + ipv4 + tcp=C2=A0+ payload.</div></div=
-><div style=3D"margin-top:4px;margin-bottom:4px;line-height:1.6"><div dir=
-=3D"auto" style=3D"font-size:14px"><br></div></div><div style=3D"margin-top=
-:4px;margin-bottom:4px;line-height:1.6"><div dir=3D"auto" style=3D"font-siz=
-e:14px">The process leading to the error is as follows:</div></div><div sty=
-le=3D"margin-top:4px;margin-bottom:4px;line-height:1.6"><div dir=3D"auto" s=
-tyle=3D"font-size:14px">1. Due to the small MSS, TSO fragmentation was trig=
-gered, generating 3 mbufs.</div></div><div style=3D"margin-top:4px;margin-b=
-ottom:4px;line-height:1.6"><div dir=3D"auto" style=3D"font-size:14px">2. Th=
-e data_len of the first mbuf is 66 bytes, containing the Ethernet header, I=
-Pv4 header, and TCP header.</div></div><div style=3D"margin-top:4px;margin-=
-bottom:4px;line-height:1.6"><div dir=3D"auto" style=3D"font-size:14px">3. T=
-he data_len of the second mbuf is 61 bytes.</div></div><div style=3D"margin=
--top:4px;margin-bottom:4px;line-height:1.6"><div dir=3D"auto" style=3D"font=
--size:14px">4. The data_len of the third mbuf is 52 bytes.</div></div><div =
-style=3D"margin-top:4px;margin-bottom:4px;line-height:1.6"><div dir=3D"auto=
-" style=3D"font-size:14px">5. When calculating the checksum of the TCP head=
-er for such an mbuf chain using the rte_raw_cksum_mbuf function, the tmp va=
-lue obtained during the calculation of the third mbuf is 0x19FFE6.</div></d=
-iv><div style=3D"margin-top:4px;margin-bottom:4px;line-height:1.6"><div dir=
-=3D"auto" style=3D"font-size:14px">6. After applying rte_bswap16, tmp becom=
-es 0xE6FF, with 0x19 discarded. This results in an incorrect final checksum=
-.</div></div><div style=3D"margin-top:4px;margin-bottom:4px;line-height:1.6=
-"><div dir=3D"auto" style=3D"font-size:14px"><br></div></div><div style=3D"=
-margin-top:4px;margin-bottom:4px;line-height:1.6"><div dir=3D"auto" style=
-=3D"font-size:14px">Meanwhile, we have also found that when=C2=A0enable=C2=
-=A0jumbo frame, the payload becomes longer. In the process of rte_raw_cksum=
-_mbuf handling an mbuf chain=EF=BC=8Cdue to the relatively large value of t=
-mp, overflow will occur in the accumulated sum.</div></div><div style=3D"ma=
-rgin-top:4px;margin-bottom:4px;line-height:1.6"><div dir=3D"auto" style=3D"=
-font-size:14px"><br></div></div></div><div class=3D"history-quote-wrapper" =
-id=3D"lark-mail-quote-175396149"><div><div id=3D"lark-mail-quote-175396132"=
- class=3D"history-quote-wrapper"><div class=3D"adit-html-block adit-html-bl=
-ock--collapsed" style=3D"border-left:none;padding-left:0px"><div><div style=
-=3D"padding:12px;background:rgb(245,246,247);color:rgb(31,35,41);border-rad=
-ius:4px;margin-top:24px;margin-bottom:12px" id=3D"lark-mail-meta-sxFgpl8f3"=
- class=3D"adit-html-block__attr history-quote-meta-wrapper history-quote-ga=
-p-tag"><div id=3D"lark-mail-quote-c30bb8b0ac376c844ff90352a50e58a0"><div st=
-yle=3D"word-break:break-word"><div class=3D"lme-line-signal" style=3D""><sp=
-an>From: </span> <span>&quot;Marat Khalili&quot;&lt;<a href=3D"mailto:marat=
-.khalili@huawei.com" style=3D"white-space:pre-wrap;word-break:break-word;te=
-xt-decoration:none;color:inherit" class=3D"quote-head-meta-mailto">marat.kh=
-alili@huawei.com</a>&gt;</span></div><div class=3D"lme-line-signal" style=
-=3D""><span>Date: </span> Thu, Jul 31, 2025, 19:04</div><div class=3D"lme-l=
-ine-signal" style=3D""><span>Subject: </span> [External] RE: [PATCH] net/ck=
-sum: compute raw cksum for several segments</div><div class=3D"lme-line-sig=
-nal" style=3D""><span>To: </span> <span>&quot;=E8=8B=8F=E8=B5=9B&quot;&lt;<=
-a href=3D"mailto:susai.ss@bytedance.com" style=3D"white-space:pre-wrap;word=
--break:break-word;text-decoration:none;color:inherit" class=3D"quote-head-m=
-eta-mailto">susai.ss@bytedance.com</a>&gt;</span>, <span><span>&quot;<a hre=
-f=3D"mailto:jasvinder.singh@intel.com" target=3D"_blank">jasvinder.singh@in=
-tel.com</a>&quot;&lt;</span><a href=3D"mailto:jasvinder.singh@intel.com" st=
-yle=3D"white-space:pre-wrap;word-break:break-word;text-decoration:none;colo=
-r:inherit" class=3D"quote-head-meta-mailto">jasvinder.singh@intel.com</a>&g=
-t;</span></div><div class=3D"lme-line-signal" style=3D""><span>Cc: </span> =
-<span><span>&quot;<a href=3D"mailto:dev@dpdk.org" target=3D"_blank">dev@dpd=
-k.org</a>&quot;&lt;</span><a href=3D"mailto:dev@dpdk.org" style=3D"white-sp=
-ace:pre-wrap;word-break:break-word;text-decoration:none;color:inherit" clas=
-s=3D"quote-head-meta-mailto">dev@dpdk.org</a>&gt;</span></div></div></div><=
-/div><div><div class=3D"msg-t6C4UMzUURoWpfR lme-line-signal">
-
-
-<style>.msg-t6C4UMzUURoWpfR p.MsoNormal,.msg-t6C4UMzUURoWpfR li.MsoNormal,.=
-msg-t6C4UMzUURoWpfR div.MsoNormal{margin:0cm;font-size:11.0pt;font-family:"=
-Calibri",sans-serif}.msg-t6C4UMzUURoWpfR p.MsoPlainText,.msg-t6C4UMzUURoWpf=
-R li.MsoPlainText,.msg-t6C4UMzUURoWpfR div.MsoPlainText{margin:0cm;font-siz=
-e:11.0pt;font-family:"Calibri",sans-serif}.msg-t6C4UMzUURoWpfR span.PlainTe=
-xtChar{font-family:"Calibri",sans-serif}.msg-t6C4UMzUURoWpfR span.EmailStyl=
-e21{font-family:"Calibri",sans-serif;color:windowtext}.msg-t6C4UMzUURoWpfR =
-.MsoChpDefault{font-size:10.0pt}.msg-t6C4UMzUURoWpfR div.WordSection1{}</st=
-yle>
-
-<div class=3D"lme-line-signal" lang=3D"EN-US" style=3D"word-wrap:break-word=
-">
-<div class=3D"WordSection1 lme-line-signal">
-<p class=3D"MsoPlainText lme-line-signal">Sorry, sent the previous email to=
-o quickly.</p>
-<p class=3D"MsoPlainText lme-line-signal">=C2=A0</p>
-<p class=3D"MsoPlainText lme-line-signal">&gt; -----Original Message-----</=
-p>
-<div class=3D"lme-line-signal" id=3D"lark-mail-quote-b4c4f28bc71eb618fde98c=
-2e56287d02"><p class=3D"MsoNormal lme-line-signal">&gt; From: Marat Khalili=
- </p>
-<p class=3D"MsoNormal lme-line-signal">&gt; Sent: Thursday 31 July 2025 11:=
-52</p>
-<p class=3D"MsoNormal lme-line-signal">&gt; To: &#39;<span lang=3D"ZH-CN" s=
-tyle=3D"font-family:DengXian">=E8=8B=8F=E8=B5=9B</span><span>&#39; &lt;<a h=
-ref=3D"mailto:susai.ss@bytedance.com" rel=3D"nofollow noopener noreferrer">=
-susai.ss@bytedance.com</a>&gt;; <a href=3D"mailto:jasvinder.singh@intel.com=
-" rel=3D"nofollow noopener noreferrer">jasvinder.singh@intel.com</a></span>=
-</p>
-<p class=3D"MsoNormal lme-line-signal"><span>&gt; Cc: <a href=3D"mailto:dev=
-@dpdk.org" rel=3D"nofollow noopener noreferrer">dev@dpdk.org</a></span></p>
-<p class=3D"MsoNormal lme-line-signal">&gt; Subject: RE: [PATCH] net/cksum:=
- compute raw cksum for several segments</p>
-<p class=3D"MsoNormal lme-line-signal">=C2=A0</p>
-<p class=3D"MsoNormal lme-line-signal">&gt; &gt; +static inline uint16_t</p=
->
-<p class=3D"MsoNormal lme-line-signal">&gt; &gt; +__rte_raw_cksum_reduce_u6=
-4(uint64_t sum)</p>
-<p class=3D"MsoNormal lme-line-signal">&gt; &gt; +{</p>
-<p class=3D"MsoNormal lme-line-signal">&gt; &gt; +=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 uint32_t tmp;</p>
-<p class=3D"MsoNormal lme-line-signal">&gt; &gt; +</p>
-<p class=3D"MsoNormal lme-line-signal">&gt; &gt; +=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 tmp =3D __rte_raw_cksum_reduce((uint32_t)sum);</p>
-<p class=3D"MsoNormal lme-line-signal">&gt; &gt; +=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 tmp +=3D __rte_raw_cksum_reduce((uint32_t)(sum &gt;&gt; =
-32));</p>
-<p class=3D"MsoNormal lme-line-signal">&gt; </p>
-<p class=3D"MsoNormal lme-line-signal">&gt; What if this addition overflows=
-?</p>
-<p class=3D"MsoNormal lme-line-signal">=C2=A0</p>
-<p class=3D"MsoNormal lme-line-signal">Realized it cannot actually overflow=
-, my bad (maybe still needs a comment). Now this function looks good to me =
-as well.</p>
-<p class=3D"MsoNormal lme-line-signal">=C2=A0</p>
-<p class=3D"MsoNormal lme-line-signal">&gt; &gt; +=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 return __rte_raw_cksum_reduce(tmp);</p>
-<p class=3D"MsoNormal lme-line-signal">&gt; &gt; +}</p>
-</div></div>
-
-</div></div></div></div></div></div></div></div></body></html>
-
---0000000000001b5118063b37fcb4--
+DQoNCj4gV2hlbiBhbiBldGhkZXYgcG9ydCBpcyBjb25maWd1cmVkIGZvciBmYXN0IG1idWYgcmVs
+ZWFzZSwgdGhlIGRyaXZlciBjYW4NCj4gdXNlIGEgVFggYnVyc3QgZnVuY3Rpb24gcmVseWluZyBv
+biB0aGUgZmFzdCBtYnVmIHJlbGVhc2UgcHJlY29uZGl0aW9ucy4NCj4gVGh1cywgYWxzbyBjb25m
+aWd1cmluZyB0aGlzIHBvcnQgb3IgYSBxdWV1ZSBvbiB0aGUgcG9ydCBmb3IgdHJhbnNtaXR0aW5n
+DQo+IHNlZ21lbnRlZCBwYWNrZXRzIGlzIHByb2hpYml0ZWQuDQo+IENoZWNrcyBmb3IgdGhlc2Ug
+Y29uZmxpY3RpbmcgY29uZmlndXJhdGlvbnMgaGF2ZSBiZWVuIGFkZGVkIHRvIHRoZSBldGhkZXYN
+Cj4gbGlicmFyeSwgc28gdGhlIGRyaXZlcnMgZG9uJ3QgaGF2ZSB0byBpbXBsZW1lbnQgdGhlbS4N
+Cj4gDQo+IEFsc28sIHRoZSBkZXNjcmlwdGlvbnMgb2YgdGhlIFJYIGFuZCBUWCBvZmZsb2FkcyBo
+YXZlIGJlZW4gaW1wcm92ZWQsIHRvDQo+IHJlZmxlY3QgdGhhdCB0aGV5IGFyZSBub3Qgb25seSBm
+b3IgZGV2aWNlIGNhcGFiaWxpdHkgcmVwb3J0aW5nLCBidXQgYWxzbw0KPiBmb3IgZGV2aWNlIGFu
+ZCBxdWV1ZSBjb25maWd1cmF0aW9uIHB1cnBvc2VzLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogTW9y
+dGVuIEJyw7hydXAgPG1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNvbT4NCj4gLS0tDQo+ICBsaWIvZXRo
+ZGV2L3J0ZV9ldGhkZXYuYyB8IDM4ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrDQo+ICBsaWIvZXRoZGV2L3J0ZV9ldGhkZXYuaCB8IDIwICsrKysrKysrKystLS0tLS0tLS0t
+DQo+ICAyIGZpbGVzIGNoYW5nZWQsIDQ4IGluc2VydGlvbnMoKyksIDEwIGRlbGV0aW9ucygtKQ0K
+PiANCj4gZGlmZiAtLWdpdCBhL2xpYi9ldGhkZXYvcnRlX2V0aGRldi5jIGIvbGliL2V0aGRldi9y
+dGVfZXRoZGV2LmMNCj4gaW5kZXggZGQ3YzAwYmM5NC4uNjU3MDUxNzcxMSAxMDA2NDQNCj4gLS0t
+IGEvbGliL2V0aGRldi9ydGVfZXRoZGV2LmMNCj4gKysrIGIvbGliL2V0aGRldi9ydGVfZXRoZGV2
+LmMNCj4gQEAgLTE1MzEsNiArMTUzMSwxOCBAQCBydGVfZXRoX2Rldl9jb25maWd1cmUodWludDE2
+X3QgcG9ydF9pZCwgdWludDE2X3QgbmJfcnhfcSwgdWludDE2X3QgbmJfdHhfcSwNCj4gIAkJZ290
+byByb2xsYmFjazsNCj4gIAl9DQo+IA0KPiArCS8qIE1CVUZfRkFTVF9GUkVFIHByZWNvbmRpdGlv
+bnMgY29uZmxpY3Qgd2l0aCBNVUxUSV9TRUdTIHN1cHBvcnQuICovDQo+ICsJaWYgKChkZXZfY29u
+Zi0+dHhtb2RlLm9mZmxvYWRzICYgUlRFX0VUSF9UWF9PRkZMT0FEX01CVUZfRkFTVF9GUkVFKSAm
+Jg0KPiArCSAgICAoZGV2X2NvbmYtPnR4bW9kZS5vZmZsb2FkcyAmIFJURV9FVEhfVFhfT0ZGTE9B
+RF9NVUxUSV9TRUdTKSkgew0KPiArCQlSVEVfRVRIREVWX0xPR19MSU5FKEVSUiwNCj4gKwkJCSJF
+dGhkZXYgcG9ydF9pZD0lZCBUeCBvZmZsb2FkICVzIGNvbmZsaWN0cyB3aXRoIFR4IG9mZmxvYWQg
+JXMiLA0KPiArCQkJcG9ydF9pZCwNCj4gKwkJCXJ0ZV9ldGhfZGV2X3R4X29mZmxvYWRfbmFtZShS
+VEVfRVRIX1RYX09GRkxPQURfTVVMVElfU0VHUyksDQo+ICsJCQlydGVfZXRoX2Rldl90eF9vZmZs
+b2FkX25hbWUoUlRFX0VUSF9UWF9PRkZMT0FEX01CVUZfRkFTVF9GUkVFKSk7DQo+ICsJCXJldCA9
+IC1FSU5WQUw7DQo+ICsJCWdvdG8gcm9sbGJhY2s7DQo+ICsJfQ0KPiArDQo+ICAJZGV2LT5kYXRh
+LT5kZXZfY29uZi5yeF9hZHZfY29uZi5yc3NfY29uZi5yc3NfaGYgPQ0KPiAgCQlydGVfZXRoX3Jz
+c19oZl9yZWZpbmUoZGV2X2NvbmYtPnJ4X2Fkdl9jb25mLnJzc19jb25mLnJzc19oZik7DQo+IA0K
+PiBAQCAtMjcwOSw2ICsyNzIxLDMyIEBAIHJ0ZV9ldGhfdHhfcXVldWVfc2V0dXAodWludDE2X3Qg
+cG9ydF9pZCwgdWludDE2X3QgdHhfcXVldWVfaWQsDQo+ICAJCXJldHVybiAtRUlOVkFMOw0KPiAg
+CX0NCj4gDQo+ICsJLyoNCj4gKwkgKiBJZiB0aGUgZHJpdmVyIHVzZXMgYSBUeCBmdW5jdGlvbiB3
+aXRoIE1CVUZfRkFTVF9GUkVFIHByZWNvbmRpdGlvbnMsDQo+ICsJICogcGVyLXF1ZXVlIE1VTFRJ
+X1NFR1Mgc3VwcG9ydCBpcyBub3QgcG9zc2libGUuDQo+ICsJICovDQo+ICsJaWYgKChkZXYtPmRh
+dGEtPmRldl9jb25mLnR4bW9kZS5vZmZsb2FkcyAmIFJURV9FVEhfVFhfT0ZGTE9BRF9NQlVGX0ZB
+U1RfRlJFRSkgJiYNCj4gKwkJCShsb2NhbF9jb25mLm9mZmxvYWRzICYgUlRFX0VUSF9UWF9PRkZM
+T0FEX01VTFRJX1NFR1MpKSB7DQo+ICsJCVJURV9FVEhERVZfTE9HX0xJTkUoRVJSLA0KPiArCQkJ
+IkV0aGRldiBwb3J0X2lkPSVkIHR4X3F1ZXVlX2lkPSVkLCBUeCBvZmZsb2FkICVzIGNvbmZsaWN0
+cyB3aXRoIHBlci1wb3J0IFR4IG9mZmxvYWQgJXMiLA0KPiArCQkJcG9ydF9pZCwgdHhfcXVldWVf
+aWQsDQo+ICsJCQlydGVfZXRoX2Rldl90eF9vZmZsb2FkX25hbWUoUlRFX0VUSF9UWF9PRkZMT0FE
+X01VTFRJX1NFR1MpLA0KPiArCQkJcnRlX2V0aF9kZXZfdHhfb2ZmbG9hZF9uYW1lKFJURV9FVEhf
+VFhfT0ZGTE9BRF9NQlVGX0ZBU1RfRlJFRSkpOw0KPiArCQlyZXR1cm4gLUVJTlZBTDsNCj4gKwl9
+DQo+ICsJLyoNCj4gKwkgKiBJZiB0aGUgZHJpdmVyIHVzZXMgYSBUeCBmdW5jdGlvbiB3aXRoIE1V
+TFRJX1NFR1Mgc3VwcG9ydCwNCj4gKwkgKiBydW50aW1lIHN1cHBvcnQgZm9yIHBlci1xdWV1ZSBN
+QlVGX0ZBU1RfRlJFRSBvcHRpbWl6YXRpb24gZGVwZW5kcyBvbiB0aGUgZHJpdmVyLg0KPiArCSAq
+Lw0KPiArCWlmICgoZGV2LT5kYXRhLT5kZXZfY29uZi50eG1vZGUub2ZmbG9hZHMgJiBSVEVfRVRI
+X1RYX09GRkxPQURfTVVMVElfU0VHUykgJiYNCj4gKwkJCShsb2NhbF9jb25mLm9mZmxvYWRzICYg
+UlRFX0VUSF9UWF9PRkZMT0FEX01CVUZfRkFTVF9GUkVFKSkNCj4gKwkJUlRFX0VUSERFVl9MT0df
+TElORShERUJVRywNCj4gKwkJCSJFdGhkZXYgcG9ydF9pZD0lZCB0eF9xdWV1ZV9pZD0lZCwgVHgg
+b2ZmbG9hZCAlcyBwb3RlbnRpYWwgY29uZmxpY3Qgd2l0aCBwZXItcG9ydCBUeCBvZmZsb2FkICVz
+LCAiDQo+ICsJCQkicnVudGltZSBzdXBwb3J0IGRlcGVuZHMgb24gdGhlIGRyaXZlciIsDQo+ICsJ
+CQlwb3J0X2lkLCB0eF9xdWV1ZV9pZCwNCj4gKwkJCXJ0ZV9ldGhfZGV2X3R4X29mZmxvYWRfbmFt
+ZShSVEVfRVRIX1RYX09GRkxPQURfTUJVRl9GQVNUX0ZSRUUpLA0KPiArCQkJcnRlX2V0aF9kZXZf
+dHhfb2ZmbG9hZF9uYW1lKFJURV9FVEhfVFhfT0ZGTE9BRF9NVUxUSV9TRUdTKSk7DQo+ICsNCj4g
+IAlydGVfZXRoZGV2X3RyYWNlX3R4cV9zZXR1cChwb3J0X2lkLCB0eF9xdWV1ZV9pZCwgbmJfdHhf
+ZGVzYywgdHhfY29uZik7DQo+ICAJcmV0dXJuIGV0aF9lcnIocG9ydF9pZCwgZGV2LT5kZXZfb3Bz
+LT50eF9xdWV1ZV9zZXR1cChkZXYsDQo+ICAJCSAgICAgICB0eF9xdWV1ZV9pZCwgbmJfdHhfZGVz
+Yywgc29ja2V0X2lkLCAmbG9jYWxfY29uZikpOw0KPiBkaWZmIC0tZ2l0IGEvbGliL2V0aGRldi9y
+dGVfZXRoZGV2LmggYi9saWIvZXRoZGV2L3J0ZV9ldGhkZXYuaA0KPiBpbmRleCBmOWZiNmFlNTQ5
+Li43NjBhMWQyNjc1IDEwMDY0NA0KPiAtLS0gYS9saWIvZXRoZGV2L3J0ZV9ldGhkZXYuaA0KPiAr
+KysgYi9saWIvZXRoZGV2L3J0ZV9ldGhkZXYuaA0KPiBAQCAtMTU1MCw3ICsxNTUwLDcgQEAgc3Ry
+dWN0IHJ0ZV9ldGhfY29uZiB7DQo+ICB9Ow0KPiANCj4gIC8qKg0KPiAtICogUnggb2ZmbG9hZCBj
+YXBhYmlsaXRpZXMgb2YgYSBkZXZpY2UuDQo+ICsgKiBSeCBvZmZsb2FkIGNhcGFiaWxpdGllcy9j
+b25maWd1cmF0aW9uIG9mIGEgZGV2aWNlIG9yIHF1ZXVlLg0KPiAgICovDQo+ICAjZGVmaW5lIFJU
+RV9FVEhfUlhfT0ZGTE9BRF9WTEFOX1NUUklQICAgICAgIFJURV9CSVQ2NCgwKQ0KPiAgI2RlZmlu
+ZSBSVEVfRVRIX1JYX09GRkxPQURfSVBWNF9DS1NVTSAgICAgICBSVEVfQklUNjQoMSkNCj4gQEAg
+LTE1ODUsMTIgKzE1ODUsMTIgQEAgc3RydWN0IHJ0ZV9ldGhfY29uZiB7DQo+ICAJCQkgICAgIFJU
+RV9FVEhfUlhfT0ZGTE9BRF9RSU5RX1NUUklQKQ0KPiANCj4gIC8qDQo+IC0gKiBJZiBuZXcgUngg
+b2ZmbG9hZCBjYXBhYmlsaXRpZXMgYXJlIGRlZmluZWQsIHRoZXkgYWxzbyBtdXN0IGJlDQo+ICsg
+KiBJZiBuZXcgUnggb2ZmbG9hZHMgYXJlIGRlZmluZWQsIHRoZXkgYWxzbyBtdXN0IGJlDQo+ICAg
+KiBtZW50aW9uZWQgaW4gcnRlX3J4X29mZmxvYWRfbmFtZXMgaW4gcnRlX2V0aGRldi5jIGZpbGUu
+DQo+ICAgKi8NCj4gDQo+ICAvKioNCj4gLSAqIFR4IG9mZmxvYWQgY2FwYWJpbGl0aWVzIG9mIGEg
+ZGV2aWNlLg0KPiArICogVHggb2ZmbG9hZCBjYXBhYmlsaXRpZXMvY29uZmlndXJhdGlvbiBvZiBh
+IGRldmljZSBvciBxdWV1ZS4NCj4gICAqLw0KPiAgI2RlZmluZSBSVEVfRVRIX1RYX09GRkxPQURf
+VkxBTl9JTlNFUlQgICAgICBSVEVfQklUNjQoMCkNCj4gICNkZWZpbmUgUlRFX0VUSF9UWF9PRkZM
+T0FEX0lQVjRfQ0tTVU0gICAgICAgUlRFX0JJVDY0KDEpDQo+IEBAIC0xNjExLDEwICsxNjExLDEw
+IEBAIHN0cnVjdCBydGVfZXRoX2NvbmYgew0KPiAgICogVHggcXVldWUgd2l0aG91dCBTVyBsb2Nr
+Lg0KPiAgICovDQo+ICAjZGVmaW5lIFJURV9FVEhfVFhfT0ZGTE9BRF9NVF9MT0NLRlJFRSAgICAg
+IFJURV9CSVQ2NCgxNCkNCj4gLS8qKiBEZXZpY2Ugc3VwcG9ydHMgbXVsdGkgc2VnbWVudCBzZW5k
+LiAqLw0KPiArLyoqIE11bHRpIHNlZ21lbnQgc2VuZC4gKi8NCj4gICNkZWZpbmUgUlRFX0VUSF9U
+WF9PRkZMT0FEX01VTFRJX1NFR1MgICAgICAgUlRFX0JJVDY0KDE1KQ0KPiAgLyoqDQo+IC0gKiBE
+ZXZpY2Ugc3VwcG9ydHMgb3B0aW1pemF0aW9uIGZvciBmYXN0IHJlbGVhc2Ugb2YgbWJ1ZnMuDQo+
+ICsgKiBPcHRpbWl6YXRpb24gZm9yIGZhc3QgcmVsZWFzZSBvZiBtYnVmcy4NCj4gICAqIFdoZW4g
+c2V0IGFwcGxpY2F0aW9uIG11c3QgZ3VhcmFudGVlIHRoYXQgcGVyLXF1ZXVlIGFsbCBtYnVmcyBj
+b21lIGZyb20gdGhlIHNhbWUgbWVtcG9vbCwNCj4gICAqIGFyZSBkaXJlY3QsIGhhdmUgcmVmY250
+PTEsIG5leHQ9TlVMTCBhbmQgbmJfc2Vncz0xLCBhcyBkb25lIGJ5IHJ0ZV9wa3RtYnVmX3ByZWZy
+ZWVfc2VnKCkuDQo+ICAgKg0KPiBAQCAtMTYyMywyNyArMTYyMywyNyBAQCBzdHJ1Y3QgcnRlX2V0
+aF9jb25mIHsNCj4gICNkZWZpbmUgUlRFX0VUSF9UWF9PRkZMT0FEX01CVUZfRkFTVF9GUkVFICAg
+UlRFX0JJVDY0KDE2KQ0KPiAgI2RlZmluZSBSVEVfRVRIX1RYX09GRkxPQURfU0VDVVJJVFkgICAg
+ICAgICBSVEVfQklUNjQoMTcpDQo+ICAvKioNCj4gLSAqIERldmljZSBzdXBwb3J0cyBnZW5lcmlj
+IFVEUCB0dW5uZWxlZCBwYWNrZXQgVFNPLg0KPiArICogR2VuZXJpYyBVRFAgdHVubmVsZWQgcGFj
+a2V0IFRTTy4NCj4gICAqIEFwcGxpY2F0aW9uIG11c3Qgc2V0IFJURV9NQlVGX0ZfVFhfVFVOTkVM
+X1VEUCBhbmQgb3RoZXIgbWJ1ZiBmaWVsZHMgcmVxdWlyZWQNCj4gICAqIGZvciB0dW5uZWwgVFNP
+Lg0KPiAgICovDQo+ICAjZGVmaW5lIFJURV9FVEhfVFhfT0ZGTE9BRF9VRFBfVE5MX1RTTyAgICAg
+IFJURV9CSVQ2NCgxOCkNCj4gIC8qKg0KPiAtICogRGV2aWNlIHN1cHBvcnRzIGdlbmVyaWMgSVAg
+dHVubmVsZWQgcGFja2V0IFRTTy4NCj4gKyAqIEdlbmVyaWMgSVAgdHVubmVsZWQgcGFja2V0IFRT
+Ty4NCj4gICAqIEFwcGxpY2F0aW9uIG11c3Qgc2V0IFJURV9NQlVGX0ZfVFhfVFVOTkVMX0lQIGFu
+ZCBvdGhlciBtYnVmIGZpZWxkcyByZXF1aXJlZA0KPiAgICogZm9yIHR1bm5lbCBUU08uDQo+ICAg
+Ki8NCj4gICNkZWZpbmUgUlRFX0VUSF9UWF9PRkZMT0FEX0lQX1ROTF9UU08gICAgICAgUlRFX0JJ
+VDY0KDE5KQ0KPiAtLyoqIERldmljZSBzdXBwb3J0cyBvdXRlciBVRFAgY2hlY2tzdW0gKi8NCj4g
+Ky8qKiBPdXRlciBVRFAgY2hlY2tzdW0uIFVzZWQgZm9yIHR1bm5lbGluZyBwYWNrZXQuICovDQo+
+ICAjZGVmaW5lIFJURV9FVEhfVFhfT0ZGTE9BRF9PVVRFUl9VRFBfQ0tTVU0gIFJURV9CSVQ2NCgy
+MCkNCj4gIC8qKg0KPiAtICogRGV2aWNlIHNlbmRzIG9uIHRpbWUgcmVhZCBmcm9tIFJURV9NQlVG
+X0RZTkZJRUxEX1RJTUVTVEFNUF9OQU1FDQo+ICsgKiBTZW5kIG9uIHRpbWUgcmVhZCBmcm9tIFJU
+RV9NQlVGX0RZTkZJRUxEX1RJTUVTVEFNUF9OQU1FDQo+ICAgKiBpZiBSVEVfTUJVRl9EWU5GTEFH
+X1RYX1RJTUVTVEFNUF9OQU1FIGlzIHNldCBpbiBvbF9mbGFncy4NCj4gICAqIFRoZSBtYnVmIGZp
+ZWxkIGFuZCBmbGFnIGFyZSByZWdpc3RlcmVkIHdoZW4gdGhlIG9mZmxvYWQgaXMgY29uZmlndXJl
+ZC4NCj4gICAqLw0KPiAgI2RlZmluZSBSVEVfRVRIX1RYX09GRkxPQURfU0VORF9PTl9USU1FU1RB
+TVAgUlRFX0JJVDY0KDIxKQ0KPiAgLyoNCj4gLSAqIElmIG5ldyBUeCBvZmZsb2FkIGNhcGFiaWxp
+dGllcyBhcmUgZGVmaW5lZCwgdGhleSBhbHNvIG11c3QgYmUNCj4gKyAqIElmIG5ldyBUeCBvZmZs
+b2FkcyBhcmUgZGVmaW5lZCwgdGhleSBhbHNvIG11c3QgYmUNCj4gICAqIG1lbnRpb25lZCBpbiBy
+dGVfdHhfb2ZmbG9hZF9uYW1lcyBpbiBydGVfZXRoZGV2LmMgZmlsZS4NCj4gICAqLw0KDQpBY2tl
+ZC1ieTogS29uc3RhbnRpbiBBbmFueWV2IDxrb25zdGFudGluLmFuYW55ZXZAaHVhd2VpLmNvbT4g
+DQoNCj4gLS0NCj4gMi40My4wDQo+IA0KDQo=
