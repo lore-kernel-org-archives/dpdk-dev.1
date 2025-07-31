@@ -2,18 +2,18 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 805EEC87FCA
-	for <dpdk-dev@archiver.kernel.org>; Thu, 31 Jul 2025 12:56:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E39DFC87FCC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 31 Jul 2025 12:56:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4A233402C3;
-	Thu, 31 Jul 2025 14:56:12 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 44811402E6;
+	Thu, 31 Jul 2025 14:56:13 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id C4D9E402AB
+ by mails.dpdk.org (Postfix) with ESMTP id E271B402C3
  for <dev@dpdk.org>; Thu, 31 Jul 2025 14:56:10 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 85FEB209B9;
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id A6D1920BE0;
  Thu, 31 Jul 2025 14:56:10 +0200 (CEST)
 Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
  smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
@@ -24,19 +24,20 @@ To: dev@dpdk.org, Aman Singh <aman.deep.singh@intel.com>,
  Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
 Cc: Ivan Malov <ivan.malov@arknetworks.am>,
  Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH v2 1/3] testpmd: Do not enable mbuf fast release TX offload by
- default
-Date: Thu, 31 Jul 2025 12:56:01 +0000
-Message-ID: <20250731125603.672860-1-mb@smartsharesystems.com>
+ =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v2 2/3] ethdev: Improve descriptions of RX and TX offloads
+Date: Thu, 31 Jul 2025 12:56:02 +0000
+Message-ID: <20250731125603.672860-2-mb@smartsharesystems.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250731090731.671589-1-mb@smartsharesystems.com>
+In-Reply-To: <20250731125603.672860-1-mb@smartsharesystems.com>
 References: <20250731090731.671589-1-mb@smartsharesystems.com>
+ <20250731125603.672860-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 31 Jul 2025 12:56:10.0184 (UTC)
- FILETIME=[7CE1A480:01DC021A]
+X-OriginalArrivalTime: 31 Jul 2025 12:56:10.0450 (UTC)
+ FILETIME=[7D0A3B20:01DC021A]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,54 +51,92 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Enabling some offload by default may conflict with a manually configured
-offload.
-Specifically, the mbuf fast release TX offload, which conflicts with multi
-segment packet TX offload, was enabled by default.
-Therefore, mbuf fast release TX offload (the only TX offload which was
-enabled by default) is not enabled by default anymore.
+The descriptions of the RX and TX offloads have been improved, to
+reflect that they are not only for device capability reporting, but
+also for device and queue configuration purposes.
 
 Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 ---
- app/test-pmd/testpmd.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+ lib/ethdev/rte_ethdev.h | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
-index bb88555328..f00eae3992 100644
---- a/app/test-pmd/testpmd.c
-+++ b/app/test-pmd/testpmd.c
-@@ -490,9 +490,7 @@ lcoreid_t latencystats_lcore_id = -1;
+diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
+index f9fb6ae549..760a1d2675 100644
+--- a/lib/ethdev/rte_ethdev.h
++++ b/lib/ethdev/rte_ethdev.h
+@@ -1550,7 +1550,7 @@ struct rte_eth_conf {
+ };
+ 
+ /**
+- * Rx offload capabilities of a device.
++ * Rx offload capabilities/configuration of a device or queue.
   */
- struct rte_eth_rxmode rx_mode;
+ #define RTE_ETH_RX_OFFLOAD_VLAN_STRIP       RTE_BIT64(0)
+ #define RTE_ETH_RX_OFFLOAD_IPV4_CKSUM       RTE_BIT64(1)
+@@ -1585,12 +1585,12 @@ struct rte_eth_conf {
+ 			     RTE_ETH_RX_OFFLOAD_QINQ_STRIP)
  
--struct rte_eth_txmode tx_mode = {
--	.offloads = RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE,
--};
-+struct rte_eth_txmode tx_mode;
+ /*
+- * If new Rx offload capabilities are defined, they also must be
++ * If new Rx offloads are defined, they also must be
+  * mentioned in rte_rx_offload_names in rte_ethdev.c file.
+  */
  
- volatile int test_done = 1; /* stop packet forwarding when set to 1. */
+ /**
+- * Tx offload capabilities of a device.
++ * Tx offload capabilities/configuration of a device or queue.
+  */
+ #define RTE_ETH_TX_OFFLOAD_VLAN_INSERT      RTE_BIT64(0)
+ #define RTE_ETH_TX_OFFLOAD_IPV4_CKSUM       RTE_BIT64(1)
+@@ -1611,10 +1611,10 @@ struct rte_eth_conf {
+  * Tx queue without SW lock.
+  */
+ #define RTE_ETH_TX_OFFLOAD_MT_LOCKFREE      RTE_BIT64(14)
+-/** Device supports multi segment send. */
++/** Multi segment send. */
+ #define RTE_ETH_TX_OFFLOAD_MULTI_SEGS       RTE_BIT64(15)
+ /**
+- * Device supports optimization for fast release of mbufs.
++ * Optimization for fast release of mbufs.
+  * When set application must guarantee that per-queue all mbufs come from the same mempool,
+  * are direct, have refcnt=1, next=NULL and nb_segs=1, as done by rte_pktmbuf_prefree_seg().
+  *
+@@ -1623,27 +1623,27 @@ struct rte_eth_conf {
+ #define RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE   RTE_BIT64(16)
+ #define RTE_ETH_TX_OFFLOAD_SECURITY         RTE_BIT64(17)
+ /**
+- * Device supports generic UDP tunneled packet TSO.
++ * Generic UDP tunneled packet TSO.
+  * Application must set RTE_MBUF_F_TX_TUNNEL_UDP and other mbuf fields required
+  * for tunnel TSO.
+  */
+ #define RTE_ETH_TX_OFFLOAD_UDP_TNL_TSO      RTE_BIT64(18)
+ /**
+- * Device supports generic IP tunneled packet TSO.
++ * Generic IP tunneled packet TSO.
+  * Application must set RTE_MBUF_F_TX_TUNNEL_IP and other mbuf fields required
+  * for tunnel TSO.
+  */
+ #define RTE_ETH_TX_OFFLOAD_IP_TNL_TSO       RTE_BIT64(19)
+-/** Device supports outer UDP checksum */
++/** Outer UDP checksum. Used for tunneling packet. */
+ #define RTE_ETH_TX_OFFLOAD_OUTER_UDP_CKSUM  RTE_BIT64(20)
+ /**
+- * Device sends on time read from RTE_MBUF_DYNFIELD_TIMESTAMP_NAME
++ * Send on time read from RTE_MBUF_DYNFIELD_TIMESTAMP_NAME
+  * if RTE_MBUF_DYNFLAG_TX_TIMESTAMP_NAME is set in ol_flags.
+  * The mbuf field and flag are registered when the offload is configured.
+  */
+ #define RTE_ETH_TX_OFFLOAD_SEND_ON_TIMESTAMP RTE_BIT64(21)
+ /*
+- * If new Tx offload capabilities are defined, they also must be
++ * If new Tx offloads are defined, they also must be
+  * mentioned in rte_tx_offload_names in rte_ethdev.c file.
+  */
  
-@@ -1592,10 +1590,6 @@ init_config_port_offloads(portid_t pid, uint32_t socket_id)
- 	if (ret != 0)
- 		rte_exit(EXIT_FAILURE, "rte_eth_dev_info_get() failed\n");
- 
--	if (!(port->dev_info.tx_offload_capa & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE))
--		port->dev_conf.txmode.offloads &=
--			~RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE;
--
- 	/* Apply Rx offloads configuration */
- 	for (i = 0; i < port->dev_info.max_rx_queues; i++)
- 		port->rxq[i].conf.offloads = port->dev_conf.rxmode.offloads;
-@@ -2857,9 +2851,6 @@ update_bonding_port_dev_conf(portid_t bond_pid)
- 		return;
- 	}
- 
--	if (port->dev_info.tx_offload_capa & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE)
--		port->dev_conf.txmode.offloads |=
--				RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE;
- 	/* Apply Tx offloads configuration */
- 	for (i = 0; i < port->dev_info.max_tx_queues; i++)
- 		port->txq[i].conf.offloads = port->dev_conf.txmode.offloads;
 -- 
 2.43.0
 
