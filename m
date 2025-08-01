@@ -2,75 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 004E1C87FCA
-	for <dpdk-dev@archiver.kernel.org>; Fri,  1 Aug 2025 21:57:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16BDAC87FCA
+	for <dpdk-dev@archiver.kernel.org>; Fri,  1 Aug 2025 21:57:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4C77D402EF;
-	Fri,  1 Aug 2025 23:57:42 +0200 (CEST)
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com
- [209.85.219.170])
- by mails.dpdk.org (Postfix) with ESMTP id 527FF4028F
- for <dev@dpdk.org>; Fri,  1 Aug 2025 23:57:41 +0200 (CEST)
-Received: by mail-yb1-f170.google.com with SMTP id
- 3f1490d57ef6-e8e1ae319c6so1248562276.0
- for <dev@dpdk.org>; Fri, 01 Aug 2025 14:57:41 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7208A406BC;
+	Fri,  1 Aug 2025 23:57:51 +0200 (CEST)
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com
+ [209.85.128.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 75E6A40A4B
+ for <dev@dpdk.org>; Fri,  1 Aug 2025 23:57:50 +0200 (CEST)
+Received: by mail-yw1-f172.google.com with SMTP id
+ 00721157ae682-71b6703ba32so17290897b3.3
+ for <dev@dpdk.org>; Fri, 01 Aug 2025 14:57:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1754085460;
- x=1754690260; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1754085470;
+ x=1754690270; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=YJ9myo0l6YJEo80DGkvX5IySr06Up75M2moF3NVoc8g=;
- b=aGURxjSINLl6uReyj7bCnwKbBx9uXqqjePhFgHEoLUALgI+Bn7+OGH4elWWHM+/KtL
- jfQqHEolT6qlK9Sq48IrdgUBAbSuV4YY57+ZJZ7nRMEdNauryxhe2cwEGfbb2Ue9fsUm
- JjQ2yfM/Ch6ZDPwVrwl1fIkKfDeMyfDYkJ2vq5wq0J8d/YuXjAm3N7uNOC1WPqAKc5rd
- 7pR4LYUCyezQv3aUFYBnVjSz5sr1+OrYiky6S8lyehIgpldacgrSTY+RGm5S3XBsVGy/
- Vq9CmL3AZI5GV/rKMfAY/E58g/aXQELZqZYR0xaBerliyt7ER9FXAVWxKrVqM0fxdRAB
- 9mWQ==
+ bh=GCP1NzDBOMQBThf4wSdkODcvAlttppPk0LEl909lP3c=;
+ b=xRn2VA9BzypnGx4NJt4IzH6ck0jAKi58e/iy9tG93OJfzsuoQ+Z5GWdYXapn2lo0B7
+ FY6NDLkB2S3bsJZ+d5EdgO5xXGvbAxGivw/oRNj/WJOUJdCLFQnJBXfnMkxltdbLoCD8
+ Lthj4l02ksNFzA/I1askCyieXqOgDRBpwNeP5DXpQdbzPrxtYrTPA5iMiLJqGUU4SwWO
+ TGOjBwsWuWrXpnoZv7KrDitfUwcTyTUibjlf/ao/Wyt3oARFGHM16zIZhGagaEvb4MiH
+ klRu42D/7Ad8MxPly1jZPIZxbYIuqxPic44fN//BvghqHqEzGE+s08w7KkRPDae1TSXW
+ FsTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1754085460; x=1754690260;
+ d=1e100.net; s=20230601; t=1754085470; x=1754690270;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=YJ9myo0l6YJEo80DGkvX5IySr06Up75M2moF3NVoc8g=;
- b=px6l37geCUTN/chQ0xqyKJrTaAIi4y5tzVTHqgzE2/n3T1CbCZRVEQlXXW0ZDsgRs6
- jegKwx+n4Fkcs+aWLxmuGjphJ4TTOs7rpZuCx/yDGRiYDqApJ2bORr1/7Hc2pq2sPR6p
- gZXRwOQrXXhTlPOG4I2MmfyHxjk0x9wRNON/mSwhO/k/UU2WVk0kDf4GVW3gig1R4A3u
- LOH7v/yzLyfIube//O6rMcrkqpT6sOWY5SCeLobIJW/9j0ckS+zWaZfKslDJHXTvIjbK
- qMpsCztOGMiRY++24X9TxJuxXpnIkzXORo/8yMjpKBTR5KcNV0F7c0w4E0b32Eok/CEo
- eaMg==
+ bh=GCP1NzDBOMQBThf4wSdkODcvAlttppPk0LEl909lP3c=;
+ b=GPNgR58sUp2ZJnzjA4zaa4aG9FUTgPAleQf2l8Nh2VusmaFdLVXkbZbNvas7yT23HQ
+ 75hg9yGd/eV0qiysVrp8v/LXjC41NvitvCCLGRJgIUx84CFDGU5NoLIhr1l+ZEBNNEqI
+ Syc3e+gSEyvlmh3PHwRDv+lwddtF9/aE5BFwnWkPBArC/OfncESKblEWQb0crea5y7fi
+ I4PZdm3yFAPsKFZIuOWCbUBF9S/016RDLDY8fgfVxEtRe9d4zdqlXJVnYqC3XSJQywuC
+ SJdZ75soFuWxrxjihAF0INlCQ3/d/w6D392JNDRO4JZD7I7ld6O9sJIU2frvoqSt4tyf
+ a4gQ==
 X-Forwarded-Encrypted: i=1;
- AJvYcCV/Xzh/E8cV6CYPblOGbukzmOUQrCtgVmi/e0EnIfaiJpoDwXB6QWKuR/uD6gMlRMLlRlg=@dpdk.org
-X-Gm-Message-State: AOJu0Yy3yWRfLoLsyjE0z2S2mDnxmarnpc5oZsOIe3FDHLUmLf59QzbH
- 8U6yQ85bfJnYcimO9AFh6WopA7iBXjssqPUYeaPqNG4xljJ1I22xRtVyoRE//hIzIb4=
-X-Gm-Gg: ASbGncvnNuxHPhTPbY5/fwUmT5OncqBCmLwn+QnyO8HEliY6OILD/Eh1vMix6BHnsB4
- GtxqN5SpLUnWa8tDUnxh+ilZOzALNMnuOGRVcxvAkJD3JqdVhp9/oQu3PL367KeTKJWXVtmHDSL
- ZNifEnum17Ygy8ctEXH3GIP0f0OjuQxZI/hy1xR8KPsyTKtRXlYt5N+ivE2e67S2HG6jBoA652M
- KfQT0POicAdrYbuxz6+83vl2TV5P1mA2cFCUdhqkXsdikd9Un7ZKytrSaKmM/qKTpYnDJU4NiES
- SOw/Y5vDx5QyztsBf1PZjkzGLIc4wg2VCtIzJ5LULiaTArnEw86oTFQ7X5eIofiABWqOhxMR3qP
- GiygM7bU7/5mPwpmkPCnqDDNsU1gppNOmG0L6aYJzEtxFDPOOesBY/P3T/8tL0mmKWlJsGz/tku
- s=
-X-Google-Smtp-Source: AGHT+IGiC6cRwJPAvx9hreBiuco3l1bwQyB5oLvxAi8dxMRXfV1rfO0B9wScu7LNhxzGYxE3ED3kyg==
-X-Received: by 2002:a05:6902:3486:b0:e8e:77f:ba31 with SMTP id
- 3f1490d57ef6-e8fee1b517fmr1424318276.27.1754085460617; 
- Fri, 01 Aug 2025 14:57:40 -0700 (PDT)
+ AJvYcCW81EeOxKGs25fCrE6VFiDKv2gm3WvYQziHoVhA6NwZT41Yop6r2BVEA2023NA8WtgW5D8=@dpdk.org
+X-Gm-Message-State: AOJu0YzBeLIQFMWHPtoWHvyl4GeWeO9ySMT5RUvmGX7z2bhrIEQoXa8i
+ t6APozEAiRJKx3uBbJ+lShcww/ohvp7K6f/wPsFTzmdvwY+H3l4ShVIk9cQc9SozjkY=
+X-Gm-Gg: ASbGncsbmXmFxBLQ6KHCzCwz8M7fYV3IqWONiyJyrDCFgPXh2jLDWIVMPocTZ6a3JG/
+ 1H1KsRWhBXZWcOmdXzYBcoiq6N3BbtJwtILUhpEfqhbV0AISMgQ4YLQCKIdicuPfFgp2khxQgAc
+ Uw3wPIMM8ipmJFtE0ZzspB9s9ajF+gVYLUjG8U6AxEBBOhF/ApZqwUNPQcnKSICZUNvCbqTHRlW
+ 3IqPsJiA+cMTZtglz98hKUSL10RY5kDP3iVTsjQE8kVIpfoS3EfqPcgerBBxczkX3TIXKiDz8I8
+ MeKtytbA1/JcLO1Cwvc361GTxG6vtAf8BsUybMxV1VngIydYVYKzpPOcCuP3TQNlAhtbuN8kyAd
+ yF/7uoGKlRMjn0LOejNPsq0rd63RXYJwQgQvCx2HYdida8/u5Lle4nN1JNPLXSqKD0soxN2dI88
+ I=
+X-Google-Smtp-Source: AGHT+IFTyYa0O2gMY/7Z9nsBHqJmm1pW5J5svXlv7UNKIJQtjdN2kfTC05H3PbyFTZ7ptq85Z74njg==
+X-Received: by 2002:a05:690c:f15:b0:71b:69fd:2571 with SMTP id
+ 00721157ae682-71b7f5bc079mr19454767b3.32.1754085469774; 
+ Fri, 01 Aug 2025 14:57:49 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 3f1490d57ef6-e8fd375128fsm1832252276.16.2025.08.01.14.57.39
+ 00721157ae682-71b5a5f71e4sm12999057b3.81.2025.08.01.14.57.48
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 01 Aug 2025 14:57:40 -0700 (PDT)
-Date: Fri, 1 Aug 2025 14:57:36 -0700
+ Fri, 01 Aug 2025 14:57:49 -0700 (PDT)
+Date: Fri, 1 Aug 2025 14:49:51 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Tomasz Duszynski <tduszynski@marvell.com>
-Cc: <bruce.richardson@intel.com>, <david.marchand@redhat.com>,
- <dev@dpdk.org>, <jerinj@marvell.com>, <mb@smartsharesystems.com>,
- <thomas@monjalon.net>
-Subject: Re: [PATCH v9 1/8] lib/pmu: quiesce rte_pmu_read deprecation
- warning in chkincs
-Message-ID: <20250801145736.6ad29b64@hermes.local>
-In-Reply-To: <20250801093706.3394974-1-tduszynski@marvell.com>
-References: <20250723072752.7f6812e3@hermes.local>
- <20250801093706.3394974-1-tduszynski@marvell.com>
+Cc: Wathsala Vithanage <wathsala.vithanage@arm.com>,
+ <bruce.richardson@intel.com>, <david.marchand@redhat.com>, <dev@dpdk.org>,
+ <jerinj@marvell.com>, <mb@smartsharesystems.com>, <thomas@monjalon.net>
+Subject: Re: [PATCH v10 06/10] lib/pmu: do not try enabling perf counter
+ access on arm64
+Message-ID: <20250801144926.07a4d97d@hermes.local>
+In-Reply-To: <20250801102109.3544901-7-tduszynski@marvell.com>
+References: <20250723044118.2962318-1-tduszynski@marvell.com>
+ <20250801102109.3544901-1-tduszynski@marvell.com>
+ <20250801102109.3544901-7-tduszynski@marvell.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -87,44 +88,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 1 Aug 2025 11:37:06 +0200
+On Fri, 1 Aug 2025 12:21:05 +0200
 Tomasz Duszynski <tduszynski@marvell.com> wrote:
 
-> > > Add a dummy rte_pmu_read() definition for chkincs when
-> > > ALLOW_EXPERIMENTAL_API is not defined to suppress warnings from
-> > > use of experimental APIs in tracepoints.
-> > >
-> > > Fixes: 960c43184c4d ("pmu: introduce library for reading PMU events")
-> > >
-> > > Signed-off-by: Tomasz Duszynski <tduszynski@marvell.com>
-> > > ---
-> > >  lib/pmu/rte_pmu.h | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > >
-> > > diff --git a/lib/pmu/rte_pmu.h b/lib/pmu/rte_pmu.h
-> > > index 57b634ecd8..84a5d522d1 100644
-> > > --- a/lib/pmu/rte_pmu.h
-> > > +++ b/lib/pmu/rte_pmu.h
-> > > @@ -232,6 +232,10 @@ rte_pmu_read(unsigned int index)
-> > >
-> > >  	return __rte_pmu_read_userpage(group->mmap_pages[index]);
-> > >  }
-> > > +/* quiesce warnings produced by chkincs */
-> > > +#ifndef ALLOW_EXPERIMENTAL_API
-> > > +#define rte_pmu_read(pc) ({ RTE_SET_USED(pc); 0; })
-> > > +#endif
-> > >  
-> >
-> > Seems like a problem that could be fixed cleaner in chkincs?  
+> /proc/sys/kernel/perf_user_access attribute allow user process to access
+> perf counters. Though in order to change it binary requires elevated
+> capabilities or must be run as root. If that's not the case counter
+> access remains disabled. Hence to avoid confusion log message that
+> that warns user about that.
 > 
-> I don't think there is good solution to this problem. From one angle chinkcs should detect
-> violations to experimental api calling conventions and it does that. This library is injected
-> into eal tracing so calling experimental api happens hence warnings are showing up.
-> 
-> On the other hand adding some exception list (or whatever) to chkincs could encourage similar
-> cases by making it a) easy b) looking clean. What I have now is at least not very appealing.
-> 
-> It looks like this library is the only one non-compliant to experimental api calling rules so I'd
-> leave that workaround as is hoping that it won't be experimental for too long.
+> Signed-off-by: Tomasz Duszynski <tduszynski@marvell.com>
+> ---
 
-I would rather just make some of the function non-experimental or internal.
+What do Linux perf tools do in this case?
