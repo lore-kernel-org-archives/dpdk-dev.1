@@ -2,73 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D143C87FCB
-	for <dpdk-dev@archiver.kernel.org>; Fri,  1 Aug 2025 22:51:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0526C87FCA
+	for <dpdk-dev@archiver.kernel.org>; Fri,  1 Aug 2025 22:55:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8F9D440298;
-	Sat,  2 Aug 2025 00:51:06 +0200 (CEST)
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com
- [209.85.221.51]) by mails.dpdk.org (Postfix) with ESMTP id 862704028F
- for <dev@dpdk.org>; Sat,  2 Aug 2025 00:51:05 +0200 (CEST)
-Received: by mail-wr1-f51.google.com with SMTP id
- ffacd0b85a97d-3b78d13bf10so2160145f8f.1
- for <dev@dpdk.org>; Fri, 01 Aug 2025 15:51:05 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B0C9D40A6E;
+	Sat,  2 Aug 2025 00:55:56 +0200 (CEST)
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com
+ [209.85.219.182])
+ by mails.dpdk.org (Postfix) with ESMTP id C1C7E4028F
+ for <dev@dpdk.org>; Sat,  2 Aug 2025 00:55:54 +0200 (CEST)
+Received: by mail-yb1-f182.google.com with SMTP id
+ 3f1490d57ef6-e8e19112e8fso873417276.1
+ for <dev@dpdk.org>; Fri, 01 Aug 2025 15:55:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1754088665;
- x=1754693465; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1754088954;
+ x=1754693754; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=6oTSuP+vZ4aKcO813gvrF7uytVx0xR35S2BwoVJsDTY=;
- b=spBmsu4B/piKfaQQ89qDJDFZKkcIDveGxIeHHZFz8U+ISwFTURRs8hk9fOEL6gRqxW
- oP2E5ZeY02xU1aWyo7wJ4MAX1RyVRPSB1OFuNqBtyQr0qxjAFEo1CN39lRX816WgkfJL
- gvULEyeJgMuc6pgpMQLYbT2udD/UBYegdwHEQGZUYBo1pnZej1Xz5D7dt4TEZz0Ny44+
- 41l1O8YHLn+OJNeI5lUoCEHhfrRtSWPPf7kVD9ii+m2rkhCuKE2qiGH3isXFTh44m6dJ
- QlJw3xHrIOGHUohydYfV/nrRQEOVdQXrh4n7OTvjspecaxfcpmhDj47zxZViPbD0X6C+
- rL9Q==
+ bh=V1+cvAz+BUAoVHy4NWc1s/YyDI+i5+RKkHsYxjgrwRI=;
+ b=bMEjvgEmtWu9B6q10H7UYrCvVpw9gLNF5HL9unktFUQd1nOzS3JX+t9QlVjG6naadQ
+ 0m27/UkemaqGFAcNQBoa9mvvfr+/bNYKr5RSgu/IIeaxoxf/Pl6rA5s26pvx6+uUeTk+
+ sVIbRujrU96Cy6E0F/N+47sNJqlFMepIJfFI/Pw/4QZF7fCHbCs9N2TK3Thf86Xwr986
+ bis1Sv2xZLGdRBMKqZh7yqZyFJK/Z9U8mL5c3HnpljvCpXtmAE94ZFXwSNy+x6r/OlHa
+ pVPNsZFYs8dUbOaE5z21wbD1vBOyAWT1/ohFZuG4TUm9nJYXJIqlVFArwVLqc28Fdsii
+ v42A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1754088665; x=1754693465;
+ d=1e100.net; s=20230601; t=1754088954; x=1754693754;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=6oTSuP+vZ4aKcO813gvrF7uytVx0xR35S2BwoVJsDTY=;
- b=EPWRfCAAyJxBRSic0dxNv0r+RkqvsWSsBx/RIiaQlAFKVkrYmt26Klv1ncJpSniTh+
- 4QSC3AnoMMtgcvog2lOUBSTyqyqFJoNjm0dutW15RmDWpmOrwJce37i1Med+OjzLmGKM
- bkrKbBssugJa3NDKLCN5oQpTxfhcRuece4PTt0v0fs68unlHPOvEKoCZrkCM9lD0JDuD
- p1T1rmFDXujFp0tWl6uQMZ/fi9DFuZixJXiuqH0ZF/vV8ZHvGZ5uHDrtjhuViMqkVvhp
- wGyO0aWp9tnKL+NsRXn3P6tQ1uwWfwIBWsx9zraEcdjyaX8vYTgXJQjJwrM3zXWQ4BDl
- 3vBg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUOOfhmbd3SrYUUmrITpbgvPsi45Rrc3P5+QjKjpoRHH7vBDq/w2cfSf8gALHzxcFGoxgs=@dpdk.org
-X-Gm-Message-State: AOJu0YwL7dosF3XGk71KnpxUftngY8BDgVTTRsCNX5AupstvAQGGJ1/L
- ogIXi5S3aVKUzCKWe2vmr6j6DuxGwfKZobU4IPoHym6mFBbDbkqLOhC+xUPmhe4UhmA=
-X-Gm-Gg: ASbGnct/gBj3zE1++6Q5pNPx88HdNoPp9E1Toi/MVlNL3QSMmg0ShZFUhVtscybV3AQ
- osJLiZDU2JHPlFKAgcwOxC0F3gwhkh6p/1PszNE88b8yhnd7Vr63f0JFPKer3OxpPervFXCeHM3
- 4Q5iYgCLxPjoujj8xXv5XK6CBmQgZH7KO6S/KqmDsqneowD7TE6aRxzBK6HUd6hgHWu4cmHsFy0
- 8rk1AxZHR3K0090oxuhn5Sd7cqJzLZVSHxDYo6Vmuxc5G7Q4bdm1qBwkRtPF00bZxVVtYgzYsv4
- c8daCmJogg4CHblc4xFyWiDgEAdah9EvK9RvH5/ihYFEYT8vRuaITMGytae7Wo/Kcq+c0lVVqnm
- FdPgaO0djmZLDLx6RS+z2pdJ2FXW8S3XioVbkFsb3017DXXR5i01EMBbjwJwGAui+rjZPsNxI+v
- g=
-X-Google-Smtp-Source: AGHT+IG11ABjQkDZW089HW4WTCZYha0qgiRZtwvWan80AEXG5xzb68KSMiVaaayGOBMP57OV2IgR5g==
-X-Received: by 2002:a5d:5d0c:0:b0:3b7:6828:5f78 with SMTP id
- ffacd0b85a97d-3b8d946ad7amr1130349f8f.4.1754088665044; 
- Fri, 01 Aug 2025 15:51:05 -0700 (PDT)
+ bh=V1+cvAz+BUAoVHy4NWc1s/YyDI+i5+RKkHsYxjgrwRI=;
+ b=tgnQZjemhssO6E3breGWh58J4xR6xxa1ES/t5cvyTIZuSGkxzxVbGt6J2XyptK3v/6
+ A6E16tXPlGmsahIj0sawwqZam2hEbiFZEsJSgnmQvBiSefVI3aGiU6vTMq7oy6A1Go7F
+ Cu2RKMbHlamiEglDhkupsD+SO4YdB5vfflukCfLHcu7JIccses8AidkIOdar74q43GXc
+ PpyI/79H1luX7Uosbhxjx09ivGHpFbsfiiPOoVTufxOQ5mrFUG03UTiEtJ/q9bkOjwbp
+ J0nij3LpFG0ZmIbiT8YDUyx8jeDnp9+x/innUGeGVn8ZF4f3VYzmoe3L3IuEAznnuMeB
+ WPfg==
+X-Gm-Message-State: AOJu0Yypdaobwy8BtROw31vgHeNGc+QSmKRN8tVJx7h7Bb9Zb9KjybtU
+ MAfL/Kjy2rXam5x359UYsR6zaymUjNyYWAaUl3NRsQJZRV7gU24R838gYk2R58dzDa4=
+X-Gm-Gg: ASbGnctluKcTY4Yt7L5fEhUcuIdes+Eox+tA2w6SvP0e2lJGutWp1bPZTXDymBeA0RL
+ 015djcr8ZQdGl3oGQXr+muoqAOm5tdPc/Ihm2SGXRH6rlS8WvMmaHsZhVq98apfk7NLq6xS7Mjh
+ kWzmCoGvf5E1xakpYavOL/hkMnWIMfGNM6SQWHbpvI3eyaLWEQjrn3pwmPoHp3L2UsRkl5eV55u
+ npMaWOqPfClKoQiZDDkg/MgvsgFnmBFnYSkXEkXSaZ5iuSijIEWGQX3dXWKT6lky87ribdJNhns
+ dpANXRAMxmRI2fXGrn7L2VMwO/U6k4rixQTYCzCd14oZ1D0FChynYYCiLFUDXtNDxo14qJMd9Ah
+ V9wVdwFLv1QTU58WFJWpNa+nZpsHbjMaVWBbcEPC5H7Iq+DMNjNk7Ks2UUIrwd6ANIDgBrDaZtG
+ I=
+X-Google-Smtp-Source: AGHT+IHfBy5bB0GWaxGY+0JUm31gpBcIulzS8uKz10lYpw3cwJqZ4SLtvO9gvDXV3PiBMEAFmXAvjA==
+X-Received: by 2002:a05:6902:4106:b0:e8d:b3b5:cb83 with SMTP id
+ 3f1490d57ef6-e8fee1b5174mr1708213276.29.1754088954028; 
+ Fri, 01 Aug 2025 15:55:54 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3b79c4530b3sm7540184f8f.34.2025.08.01.15.51.02
+ 3f1490d57ef6-e8fd38c3ccdsm1829907276.45.2025.08.01.15.55.52
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 01 Aug 2025 15:51:04 -0700 (PDT)
-Date: Fri, 1 Aug 2025 15:50:57 -0700
+ Fri, 01 Aug 2025 15:55:53 -0700 (PDT)
+Date: Fri, 1 Aug 2025 15:55:50 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Cc: thomas@monjalon.net, ferruh.yigit@amd.com,
- andrew.rybchenko@oktetlabs.ru, dev@dpdk.org, stable@dpdk.org
-Subject: Re: [PATCH v6] app/testpmd: monitor state of primary process when
- using  secondary
-Message-ID: <20250801155057.0a7aee2a@hermes.local>
-In-Reply-To: <20250730060818.141022-1-14pwcse1224@uetpeshawar.edu.pk>
-References: <20250729063919.3554143-3-14pwcse1224@uetpeshawar.edu.pk>
- <20250730060818.141022-1-14pwcse1224@uetpeshawar.edu.pk>
+To: Maayan Kashani <mkashani@nvidia.com>
+Cc: <dev@dpdk.org>, <rasland@nvidia.com>, <stable@dpdk.org>, "Dariusz
+ Sosnowski" <dsosnowski@nvidia.com>, Ori Kam <orika@nvidia.com>, Aman Singh
+ <aman.deep.singh@intel.com>, Gregory Etelson <getelson@nvidia.com>
+Subject: Re: [PATCH] app/testpmd: fix mask in random flow item definition
+Message-ID: <20250801155550.41558656@hermes.local>
+In-Reply-To: <20250730113243.197386-1-mkashani@nvidia.com>
+References: <20250730113243.197386-1-mkashani@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -85,25 +83,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 30 Jul 2025 02:08:18 -0400
-Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk> wrote:
+On Wed, 30 Jul 2025 14:32:43 +0300
+Maayan Kashani <mkashani@nvidia.com> wrote:
 
-> In secondary processes, accessing device after primary has exited
-> will cause crash.
+> A previous patch addressing an ASAN global-buffer-overflow issue
+> inadvertently degraded the random mask value translation.
+> Specifically, changing the mask from 0xffff to 0x0000ffff caused
+> the value to be shifted left by 16 bits, since Testpmd
+> defines arg::mask as a byte array.
 > 
-> This patch adds a mechanism in testpmd to monitor the primary process
-> from the secondary process.
-> When primary process exits it forces secondary to exit avoiding
-> issues from cleanup logic.
+> Independent of the ASAN fix, the random item mask specification
+> was invalid at the API level: random items require a 32-bit mask,
+> but only a 16-bit mask was being used.
 > 
-> Fixes: a550baf24af9 ('app/testpmd: support multi-process')
+> The correct mask for this use case is 0xffffffff.
+> This fix restores the correct random value translation
+> by applying the proper 32-bit mask and
+> addresses the original ASAN issue.
+> 
+> Fixes: 9a18070e3fe4 ("app/testpmd: fix flow random item token")
 > Cc: stable@dpdk.org
 > 
-> Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
+> Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+> ---
+>  app/test-pmd/cmdline_flow.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/app/test-pmd/cmdline_flow.c b/app/test-pmd/cmdline_flow.c
+> index 83d398f8eea..38e751f3f3c 100644
+> --- a/app/test-pmd/cmdline_flow.c
+> +++ b/app/test-pmd/cmdline_flow.c
+> @@ -5591,7 +5591,7 @@ static const struct token token_list[] = {
+>  		.next = NEXT(item_random, NEXT_ENTRY(COMMON_UNSIGNED),
+>  			     item_param),
+>  		.args = ARGS(ARGS_ENTRY_MASK(struct rte_flow_item_random,
+> -					     value, "\x00\x00\xff\xff")),
+> +					     value, "\xff\xff\xff\xff")),
+>  	},
+>  	[ITEM_GRE_KEY] = {
+>  		.name = "gre_key",
 
-The problem with this patch, is the build now fails on Windows
-where there is no primary/secondary process support.
+Applied to next-net
 
-Either add stubs for Windows or #ifdef the code in test-pmd
-as necessary.
+
+Using initialized strings as proxy for a byte array has lead to overflow
+bugs and warnings on some compilers. Perhaps this might cause problems later.
