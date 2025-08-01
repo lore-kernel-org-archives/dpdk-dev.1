@@ -2,73 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F31EC87FCB
-	for <dpdk-dev@archiver.kernel.org>; Fri,  1 Aug 2025 21:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 004E1C87FCA
+	for <dpdk-dev@archiver.kernel.org>; Fri,  1 Aug 2025 21:57:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 23F89402EF;
-	Fri,  1 Aug 2025 23:56:17 +0200 (CEST)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com
- [209.85.219.177])
- by mails.dpdk.org (Postfix) with ESMTP id D06CE4028F
- for <dev@dpdk.org>; Fri,  1 Aug 2025 23:56:15 +0200 (CEST)
-Received: by mail-yb1-f177.google.com with SMTP id
- 3f1490d57ef6-e8da1fd7b6bso1969708276.2
- for <dev@dpdk.org>; Fri, 01 Aug 2025 14:56:15 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4C77D402EF;
+	Fri,  1 Aug 2025 23:57:42 +0200 (CEST)
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com
+ [209.85.219.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 527FF4028F
+ for <dev@dpdk.org>; Fri,  1 Aug 2025 23:57:41 +0200 (CEST)
+Received: by mail-yb1-f170.google.com with SMTP id
+ 3f1490d57ef6-e8e1ae319c6so1248562276.0
+ for <dev@dpdk.org>; Fri, 01 Aug 2025 14:57:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1754085375;
- x=1754690175; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1754085460;
+ x=1754690260; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=qiJ4vpuEkPcvZQGChGjf5PDC4Ecq9Pc4bVExSguDmss=;
- b=Ao6YTlKbaNswtBNF4BdaR8XfD6LjpG+n53TRbTsTMvfENmdKjteF01XKcfsKwK8G++
- hQGHWh4wv++i4r0GINMSBvEf5g8dzgiGia/a+7p56yUcf0s9aHdAGJl5RtAYr2SQ8PCr
- /WDUpPClFb7DVb0apaBSkAU/3z0IT7Fu9kVhOkwzdSp875gUsTfMWCsG3qLgKIhiUN8B
- vSunemYPqAeN5liHx1NTiKtECAvPpjXH7MLrqPWMWlmlU7y/EUJ0YV56JupPcvitJU5F
- 5szREo0Oba8qLDpPjeVmu8HGy1Q7xWikWhxlWBgq0uFc7VOsQZie4TBOVuZBpELR8ion
- +p2w==
+ bh=YJ9myo0l6YJEo80DGkvX5IySr06Up75M2moF3NVoc8g=;
+ b=aGURxjSINLl6uReyj7bCnwKbBx9uXqqjePhFgHEoLUALgI+Bn7+OGH4elWWHM+/KtL
+ jfQqHEolT6qlK9Sq48IrdgUBAbSuV4YY57+ZJZ7nRMEdNauryxhe2cwEGfbb2Ue9fsUm
+ JjQ2yfM/Ch6ZDPwVrwl1fIkKfDeMyfDYkJ2vq5wq0J8d/YuXjAm3N7uNOC1WPqAKc5rd
+ 7pR4LYUCyezQv3aUFYBnVjSz5sr1+OrYiky6S8lyehIgpldacgrSTY+RGm5S3XBsVGy/
+ Vq9CmL3AZI5GV/rKMfAY/E58g/aXQELZqZYR0xaBerliyt7ER9FXAVWxKrVqM0fxdRAB
+ 9mWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1754085375; x=1754690175;
+ d=1e100.net; s=20230601; t=1754085460; x=1754690260;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=qiJ4vpuEkPcvZQGChGjf5PDC4Ecq9Pc4bVExSguDmss=;
- b=DJHLWkM3crlt4Gntzy2ms18yj4/4RobPmnTYX6jrGMSSOmfy0+vUgzLZV7HbCSSIOF
- Z3mSbgOs232S/q0ROezYZp5jrl3QdxmL9UdZSKzoSqdQsdneS4TEP+pikkwffARPaXpt
- ZnXTbLlWhPcytb1e23eA29LMgcaXsLHapowiVwMyuSmH7GLuAuovzINok7EampPQzijU
- 5JU/eLWRgsPEpJZkQuh3bpRrs5EkLS4NCgpekm+Y7xti6USGoUXrdRE7azG2v+6PfeXN
- 39oZEdDUqViscX8NG+5jug27Y0BKxd482nLhyih2UKW3TXjcRD1XOy4X8UcSPv55nifO
- a/TQ==
-X-Gm-Message-State: AOJu0YysxC3ai5AU2vuPVGpccwxBIFJaTXuCwAGYR6z7gHBcHeiJ0CS5
- Wn1k5yNM8oRI6bDD33fBb3md9Xj9dzysb+CdItxUonaHz7135aBleGWnfgKh+OtWzm8=
-X-Gm-Gg: ASbGncu1WczqUzS9ekaNnfvdADj7dncgMYqjimjjUo43134DHPLaUGAWUv3t00Nkfdd
- OlSXNY5R43tAeu93vYmIDqQbwtGg2+rEzETxPZe6xJUIwfS7y5DiASei5fNefU66XsEWrUlg6VV
- /+MTC8RYvsUWTls5vMWnO/VnHDw8HgKZH5mtW1bkkt3gl9xbnc08Xgn1aA/xVvN+FM4QS0MWyqH
- Mp6g0MJhYKbltmRqqHd6s7L4UWclGuJlAPEra7tdNEsk93ho31uKOMPxESXROaUlWu6eisWlmOO
- iTt4XeEvEjwF3Ksa9D165j9ZWj1Lh5dOdLLYbbNPS5FBWuF41VPB6t0e46iwCAPIjVZ+d323FPe
- l0j1W4+6RoPtP+h46F9i0uLM20U4wwoKX9qdagEdTWccO1NkbMdlKqMJ0QeZlsH4v1mfyYZCd3K
- RMQ7BdAfMQew==
-X-Google-Smtp-Source: AGHT+IER7cjmuNhVM6hawNV1CQBJK6ni/Rvg5Qn/J6GpZhW+wvTdC8XNHjHAqniZusJ7bcIdD2q24A==
-X-Received: by 2002:a05:6902:108f:b0:e8d:717f:a50c with SMTP id
- 3f1490d57ef6-e8fee0e1db4mr1442316276.14.1754085374962; 
- Fri, 01 Aug 2025 14:56:14 -0700 (PDT)
+ bh=YJ9myo0l6YJEo80DGkvX5IySr06Up75M2moF3NVoc8g=;
+ b=px6l37geCUTN/chQ0xqyKJrTaAIi4y5tzVTHqgzE2/n3T1CbCZRVEQlXXW0ZDsgRs6
+ jegKwx+n4Fkcs+aWLxmuGjphJ4TTOs7rpZuCx/yDGRiYDqApJ2bORr1/7Hc2pq2sPR6p
+ gZXRwOQrXXhTlPOG4I2MmfyHxjk0x9wRNON/mSwhO/k/UU2WVk0kDf4GVW3gig1R4A3u
+ LOH7v/yzLyfIube//O6rMcrkqpT6sOWY5SCeLobIJW/9j0ckS+zWaZfKslDJHXTvIjbK
+ qMpsCztOGMiRY++24X9TxJuxXpnIkzXORo/8yMjpKBTR5KcNV0F7c0w4E0b32Eok/CEo
+ eaMg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCV/Xzh/E8cV6CYPblOGbukzmOUQrCtgVmi/e0EnIfaiJpoDwXB6QWKuR/uD6gMlRMLlRlg=@dpdk.org
+X-Gm-Message-State: AOJu0Yy3yWRfLoLsyjE0z2S2mDnxmarnpc5oZsOIe3FDHLUmLf59QzbH
+ 8U6yQ85bfJnYcimO9AFh6WopA7iBXjssqPUYeaPqNG4xljJ1I22xRtVyoRE//hIzIb4=
+X-Gm-Gg: ASbGncvnNuxHPhTPbY5/fwUmT5OncqBCmLwn+QnyO8HEliY6OILD/Eh1vMix6BHnsB4
+ GtxqN5SpLUnWa8tDUnxh+ilZOzALNMnuOGRVcxvAkJD3JqdVhp9/oQu3PL367KeTKJWXVtmHDSL
+ ZNifEnum17Ygy8ctEXH3GIP0f0OjuQxZI/hy1xR8KPsyTKtRXlYt5N+ivE2e67S2HG6jBoA652M
+ KfQT0POicAdrYbuxz6+83vl2TV5P1mA2cFCUdhqkXsdikd9Un7ZKytrSaKmM/qKTpYnDJU4NiES
+ SOw/Y5vDx5QyztsBf1PZjkzGLIc4wg2VCtIzJ5LULiaTArnEw86oTFQ7X5eIofiABWqOhxMR3qP
+ GiygM7bU7/5mPwpmkPCnqDDNsU1gppNOmG0L6aYJzEtxFDPOOesBY/P3T/8tL0mmKWlJsGz/tku
+ s=
+X-Google-Smtp-Source: AGHT+IGiC6cRwJPAvx9hreBiuco3l1bwQyB5oLvxAi8dxMRXfV1rfO0B9wScu7LNhxzGYxE3ED3kyg==
+X-Received: by 2002:a05:6902:3486:b0:e8e:77f:ba31 with SMTP id
+ 3f1490d57ef6-e8fee1b517fmr1424318276.27.1754085460617; 
+ Fri, 01 Aug 2025 14:57:40 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 3f1490d57ef6-e8fd38aa805sm1808236276.39.2025.08.01.14.56.14
+ 3f1490d57ef6-e8fd375128fsm1832252276.16.2025.08.01.14.57.39
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 01 Aug 2025 14:56:14 -0700 (PDT)
-Date: Fri, 1 Aug 2025 14:56:11 -0700
+ Fri, 01 Aug 2025 14:57:40 -0700 (PDT)
+Date: Fri, 1 Aug 2025 14:57:36 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, andremue@linux.microsoft.com, Tyler Retzlaff
- <roretzla@linux.microsoft.com>, Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
-Subject: Re: [PATCH v4 1/4] eal: add basename function for common path
- manipulation
-Message-ID: <20250801145611.7a2ef22f@hermes.local>
-In-Reply-To: <20250731160041.914837-2-bruce.richardson@intel.com>
-References: <20250704140551.4151993-1-bruce.richardson@intel.com>
- <20250731160041.914837-1-bruce.richardson@intel.com>
- <20250731160041.914837-2-bruce.richardson@intel.com>
+To: Tomasz Duszynski <tduszynski@marvell.com>
+Cc: <bruce.richardson@intel.com>, <david.marchand@redhat.com>,
+ <dev@dpdk.org>, <jerinj@marvell.com>, <mb@smartsharesystems.com>,
+ <thomas@monjalon.net>
+Subject: Re: [PATCH v9 1/8] lib/pmu: quiesce rte_pmu_read deprecation
+ warning in chkincs
+Message-ID: <20250801145736.6ad29b64@hermes.local>
+In-Reply-To: <20250801093706.3394974-1-tduszynski@marvell.com>
+References: <20250723072752.7f6812e3@hermes.local>
+ <20250801093706.3394974-1-tduszynski@marvell.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -85,47 +87,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 31 Jul 2025 16:00:38 +0000
-Bruce Richardson <bruce.richardson@intel.com> wrote:
+On Fri, 1 Aug 2025 11:37:06 +0200
+Tomasz Duszynski <tduszynski@marvell.com> wrote:
 
-> There is no standard, cross-platform function to get the basename of a
-> file path across all the supported DPDK platforms, Linux, BSD and
-> Windows. Both Linux and BSD have a "basename" function in standard
-> library, except:
-> * Linux has two different basename functions, a POSIX version (which may
->   or may not modify args), and a GNU one which is guaranteed *not* to
->   modify the input arg and returns pointer to internal storage.
-> * FreeBSD has just the one basename function, but, to be different, it is
->   guaranteed *always* to modify the argument and re-use it for output.
-> * Windows just doesn't have a basename function, but provides _split_path
->   as a similar function, but with many differences over basename, e.g.
->   splitting off extension, returning empty basename if path ends in "/"
->   etc. etc.
+> > > Add a dummy rte_pmu_read() definition for chkincs when
+> > > ALLOW_EXPERIMENTAL_API is not defined to suppress warnings from
+> > > use of experimental APIs in tracepoints.
+> > >
+> > > Fixes: 960c43184c4d ("pmu: introduce library for reading PMU events")
+> > >
+> > > Signed-off-by: Tomasz Duszynski <tduszynski@marvell.com>
+> > > ---
+> > >  lib/pmu/rte_pmu.h | 4 ++++
+> > >  1 file changed, 4 insertions(+)
+> > >
+> > > diff --git a/lib/pmu/rte_pmu.h b/lib/pmu/rte_pmu.h
+> > > index 57b634ecd8..84a5d522d1 100644
+> > > --- a/lib/pmu/rte_pmu.h
+> > > +++ b/lib/pmu/rte_pmu.h
+> > > @@ -232,6 +232,10 @@ rte_pmu_read(unsigned int index)
+> > >
+> > >  	return __rte_pmu_read_userpage(group->mmap_pages[index]);
+> > >  }
+> > > +/* quiesce warnings produced by chkincs */
+> > > +#ifndef ALLOW_EXPERIMENTAL_API
+> > > +#define rte_pmu_read(pc) ({ RTE_SET_USED(pc); 0; })
+> > > +#endif
+> > >  
+> >
+> > Seems like a problem that could be fixed cleaner in chkincs?  
 > 
-> Therefore, rather than just trying to implement basename for windows,
-> which opens the question as to whether to emulate GNU and *never* modify
-> arg, or emulate BSD and *always* modify arg, this patchset introduces
-> "rte_basename" which should have defined behaviour on all platforms. The
-> patch also introduces a set of test cases to confirm consistent behaviour
-> on all platforms too.
+> I don't think there is good solution to this problem. From one angle chinkcs should detect
+> violations to experimental api calling conventions and it does that. This library is injected
+> into eal tracing so calling experimental api happens hence warnings are showing up.
 > 
-> The behaviour is as in doxygen docs. Essentially:
-> - does not modify input path buffer
-> - returns output in a separate output buffer
-> - uses snprintf and strlcpy style return value to indicate truncation
+> On the other hand adding some exception list (or whatever) to chkincs could encourage similar
+> cases by making it a) easy b) looking clean. What I have now is at least not very appealing.
 > 
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> It looks like this library is the only one non-compliant to experimental api calling rules so I'd
+> leave that workaround as is hoping that it won't be experimental for too long.
 
-What about existing uses of basename()
-
-0 main.c                  main                       553 char *token = strtok(basename(rst_path),
-                                                         ".");
-1 process.h               get_current_prefix         220 snprintf(prefix, size, "%s",
-                                                         basename(dirname(buf)));
-2 mlx5_common_auxiliary.c mlx5_auxiliary_get_pci_str  85 base = basename(sysfs_pci);
-3 idxd_bus.c              is_for_this_process_use    271 prefix = basename(runtime_dir);
-4 bnxt_tf_pmd_shim.c      ulp_pmd_get_mac_by_pci     156 intf_name = basename(gres.gl_pathv[0]);
-5 eal_common_proc.c       rte_mp_channel_init        628 strlcpy(mp_filter, basename(path),
-                                                         sizeof(mp_filter));
-
-
+I would rather just make some of the function non-experimental or internal.
