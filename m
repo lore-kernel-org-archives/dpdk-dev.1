@@ -2,51 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA4FC87FCB
-	for <dpdk-dev@archiver.kernel.org>; Fri,  1 Aug 2025 10:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5779CC87FCA
+	for <dpdk-dev@archiver.kernel.org>; Fri,  1 Aug 2025 10:21:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6216A40662;
-	Fri,  1 Aug 2025 12:21:23 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 63BEA40662
- for <dev@dpdk.org>; Fri,  1 Aug 2025 12:21:21 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5719eKek000730;
- Fri, 1 Aug 2025 03:21:20 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 9B1E94066C;
+	Fri,  1 Aug 2025 12:21:26 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id F151A40667
+ for <dev@dpdk.org>; Fri,  1 Aug 2025 12:21:24 +0200 (CEST)
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5716VP0K004156;
+ Fri, 1 Aug 2025 03:21:23 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=5
- 0brCj+l/gjNzeC15cZNjAOM6wTNM8pGoalrVuInMe8=; b=Z4uYSpczaerf5myPt
- os7KpbLPtePd6OLdHdp1vjcn4ugA/IomVR375dN3HqjRT0qtxTpy3CrnW4Wh9uP6
- hRKvS1a4y9jJ6gXgArsTNyB/Hxk1o8LW369bYVfmET9El1Er8MdSh8lahk/TFXzB
- VPigQTA3zRZQcIWJB+jLH0lSUyXm+4vWB7TrTtwzZJPiTIQXsAZriiL+MQADZlvC
- zF95OCOW3b0r4bbO00xOjMn1s+E64HBm05wzuog6wtRsvv7YqVNoqskyDrtcKvXy
- CiaaufXuB0cWDvhq7bRYacwzGxYgcVV1ENI/JZoa7uuScZhCLfvSZghw3473wsIG
- ZLkPw==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 488gsuh85y-1
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=q
+ v6s0Sk83VymjqtOEHDotYL3FO+Z/g/fe2Qbar5L+Mg=; b=f94xJeIdu9d94fFif
+ HmKy762uxajonLpeIrBhSS+1u/heU/jl3reM4/2nXomdK3vjl1EHuSoVBZFwguaO
+ vmLCRB/d+C6iblqc699JvbuLQobjDi+ao6ruzudMq3vZNshkS5vXO9bgoqg4J9PU
+ i3BE+7hUVeZP8PT7KGdg0gZimo6eyDv4vb6/GuyqGFMTjGQEq3hYbVfXoMwKETiu
+ 5HaO4wgsiDQSqjA0woaMz+xMvWeoVUtaYBLXXM8E7RbtfPl4o+AM+BFxiv17vIhl
+ HNofV/oexsmbxIV7MRho5VHuOdlDuwAavPhngyz8xbNxGSM2kyZLPStDXN350UKl
+ jRX8A==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 488rcngcjb-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Fri, 01 Aug 2025 03:21:20 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ Fri, 01 Aug 2025 03:21:23 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 1 Aug 2025 03:21:21 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 1 Aug 2025 03:21:21 -0700
+ 15.2.1544.4; Fri, 1 Aug 2025 03:21:24 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 1 Aug 2025 03:21:24 -0700
 Received: from cavium-optiplex-3070-BM15.. (unknown [10.28.34.39])
- by maili.marvell.com (Postfix) with ESMTP id 20F1D3F7099;
- Fri,  1 Aug 2025 03:21:15 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id C596F3F7079;
+ Fri,  1 Aug 2025 03:21:19 -0700 (PDT)
 From: Tomasz Duszynski <tduszynski@marvell.com>
-To: <tduszynski@marvell.com>, Jerin Jacob <jerinj@marvell.com>, "Sunil Kumar
- Kori" <skori@marvell.com>, Tyler Retzlaff <roretzla@linux.microsoft.com>
+To: <tduszynski@marvell.com>
 CC: <bruce.richardson@intel.com>, <david.marchand@redhat.com>, <dev@dpdk.org>, 
- <mb@smartsharesystems.com>, <thomas@monjalon.net>,
- <stephen@networkplumber.org>
-Subject: [PATCH v10 01/10] trace: change scope of conditional block
-Date: Fri, 1 Aug 2025 12:21:00 +0200
-Message-ID: <20250801102109.3544901-2-tduszynski@marvell.com>
+ <jerinj@marvell.com>, <mb@smartsharesystems.com>,
+ <thomas@monjalon.net>, <stephen@networkplumber.org>
+Subject: [PATCH v10 02/10] lib/pmu: fix build error if ALLOW_EXPERIMENAL_API
+ is undefined
+Date: Fri, 1 Aug 2025 12:21:01 +0200
+Message-ID: <20250801102109.3544901-3-tduszynski@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250801102109.3544901-1-tduszynski@marvell.com>
 References: <20250723044118.2962318-1-tduszynski@marvell.com>
@@ -54,19 +54,19 @@ References: <20250723044118.2962318-1-tduszynski@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: rNg08hOrc-Kq1ZC310aWbGq6nbCZXrjK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDA3NiBTYWx0ZWRfX+dyQJdUOCiRx
- LBV40UPJQfTl5zjPDSxfi6lTBv1N8VbfxA+QrYENMIkD7ppCiQ24GC+hwgiNYCO+I/2hexUppuH
- pfD9KIIxsDH2RAg8tgqZORgwflipppqnorYA2Y+5yY2cHdHubqUxls+Lptp759A+uLDRv9YJz/D
- 8C7NFFlUBGMA68owzosopj2PgqNuM1E+mwN2WQKbfQ1vX8JAYack7muhsaE/ZV82YyYovsOg5hX
- GD89A1Y9Ehmk/79BgDX4DcNClLJ+FcdBDuaivF7WiaWaBekRKIpvxtqxSDqZnQkQnno95JvA7Ep
- 2dLSo8zx0vtXj5YEBYb0BQkjp0XbSC2Wp9TdKB1ipaHkDQALB50CnNKDcyYIGwg6yyUJqZ96kB7
- zmwwn9OpFY6DqGo30VqPuVAdMUVS/ar75MtYLK8ZUDfYaSxNks/cTo8vsB7CZtzq464fNxnj
-X-Authority-Analysis: v=2.4 cv=EbHIQOmC c=1 sm=1 tr=0 ts=688c9520 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=2OwXVqhp2XgA:10 a=M5GUcnROAAAA:8 a=mkB43dQOfHrW3UneyFcA:9 a=zZCYzV9kfG8A:10
+X-Proofpoint-GUID: L2Dgr7yvEqsk6_Pc0dGlVokyo4JjNwdR
+X-Proofpoint-ORIG-GUID: L2Dgr7yvEqsk6_Pc0dGlVokyo4JjNwdR
+X-Authority-Analysis: v=2.4 cv=WosrMcfv c=1 sm=1 tr=0 ts=688c9523 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=2OwXVqhp2XgA:10 a=M5GUcnROAAAA:8 a=32mFfTR9fnK7rSb5dfEA:9 a=0lgtpPvCYYIA:10
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: rNg08hOrc-Kq1ZC310aWbGq6nbCZXrjK
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDA3NiBTYWx0ZWRfX2zsRIZP949sh
+ SkhuEZTT1V4rg8biMkG5x8+F20RkpA+iURRXGTy3CxFpto81O5Z4GBWcPATlmrtSff/ou4XhpVG
+ tqa73ZsdkMgNUGsZML74KtLCSjFqDKodiuimM5sBh6y71kXfCGDUQ0xbQD9Ul+4INxQ32xYamHW
+ hrZalWsv5MgO0SRkMiOENlEQt4R/dsJ1SAmA+j9mdyNGa9eZh1ML8bCe5v73FgLyHgIOtManVv8
+ IKwICrvXqrG6eqD4vJd6pJ3y2iFriri5bQceaG0V943u2mlhb6hEw7clgWzkdDra6BRxhXypOTv
+ aaMK4Zcuy6akwFVhZqGDiaoh8CCwlSVF9tk6iGTmMZGAI2MpMhWmekAQof6D7Qnq+14P4yJwDAb
+ qSTzRkc2YXILrJl+o+4Ky/fSMHoa8Cxf0+anweNXlNkTVmpzxWVK4c2DRyioA5v3aY1k8cP4
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-01_03,2025-07-31_03,2025-03-28_01
@@ -83,37 +83,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-If ALLOW_EXPERIMENTAL_API isn't defined warnings should show up but
-build itself should not fail (unless -Dwerror=true).
+Workaround that quiesces chincs check should be "turned-ff" not to cause
+build failures in scenarios where experimental apis are disallowed.
 
-In order to avoid build failures change the scope of conditional block.
+Fixes: 960c43184c4d ("pmu: introduce library for reading PMU events")
 
 Signed-off-by: Tomasz Duszynski <tduszynski@marvell.com>
 ---
- lib/eal/include/rte_trace_point.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ lib/pmu/pmu.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/lib/eal/include/rte_trace_point.h b/lib/eal/include/rte_trace_point.h
-index c0ebf1ce13..394b2619c5 100644
---- a/lib/eal/include/rte_trace_point.h
-+++ b/lib/eal/include/rte_trace_point.h
-@@ -289,7 +289,6 @@ int __rte_trace_point_register(rte_trace_point_t *trace, const char *name,
- #ifndef __DOXYGEN__
+diff --git a/lib/pmu/pmu.c b/lib/pmu/pmu.c
+index 4c7271522a..d9bc775bf9 100644
+--- a/lib/pmu/pmu.c
++++ b/lib/pmu/pmu.c
+@@ -291,6 +291,10 @@ cleanup_events(struct rte_pmu_event_group *group)
+ 	group->enabled = false;
+ }
  
- #ifndef _RTE_TRACE_POINT_REGISTER_H_
--#ifdef ALLOW_EXPERIMENTAL_API
- 
- #define __RTE_TRACE_EVENT_HEADER_ID_SHIFT (48)
- 
-@@ -314,6 +313,8 @@ struct __rte_trace_header {
- 	uint8_t mem[];
- };
- 
-+#ifdef ALLOW_EXPERIMENTAL_API
-+
- RTE_DECLARE_PER_LCORE(void *, trace_mem);
- 
- static __rte_always_inline void *
++/* stop propagating chkincs quiescing to prevent unintended effects */
++#ifdef __rte_pmu_enable_group
++#undef __rte_pmu_enable_group
++#endif
+ RTE_EXPORT_EXPERIMENTAL_SYMBOL(__rte_pmu_enable_group, 25.07)
+ int
+ __rte_pmu_enable_group(struct rte_pmu_event_group *group)
 -- 
 2.34.1
 
