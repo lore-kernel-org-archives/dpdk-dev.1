@@ -2,80 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09EB9C87FCB
-	for <dpdk-dev@archiver.kernel.org>; Sun,  3 Aug 2025 15:56:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B69DC87FCA
+	for <dpdk-dev@archiver.kernel.org>; Sun,  3 Aug 2025 16:08:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ECAF04026C;
-	Sun,  3 Aug 2025 17:56:14 +0200 (CEST)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com
- [209.85.128.41]) by mails.dpdk.org (Postfix) with ESMTP id 01A5D400D5
- for <dev@dpdk.org>; Sun,  3 Aug 2025 17:56:13 +0200 (CEST)
-Received: by mail-wm1-f41.google.com with SMTP id
- 5b1f17b1804b1-456108bf94bso14575985e9.0
- for <dev@dpdk.org>; Sun, 03 Aug 2025 08:56:13 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1BB414026C;
+	Sun,  3 Aug 2025 18:08:46 +0200 (CEST)
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com
+ [209.85.221.50]) by mails.dpdk.org (Postfix) with ESMTP id 8F308400D5
+ for <dev@dpdk.org>; Sun,  3 Aug 2025 18:08:43 +0200 (CEST)
+Received: by mail-wr1-f50.google.com with SMTP id
+ ffacd0b85a97d-3b8de6f7556so436057f8f.1
+ for <dev@dpdk.org>; Sun, 03 Aug 2025 09:08:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1754236573;
- x=1754841373; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1754237323;
+ x=1754842123; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Btoux/psIIQ2DJ8iwIBZB50jZ69lEdnJglR53dD21Ok=;
- b=fMaeOACFSQSN4yhVDcqhi6XEz+HrvXXPHmLlNLk/veRC7/VVr3sfyenEJi8LgTCeqN
- JRgthwQkl+blHw3L3z9ZKuheEnD1mmnWuOLpJ2Z91oZuFhTf7Cp+o7k93jBwD0kleUPr
- FNusRrvSvMQ2NET7RZkeknQfMNFHFcrI61Oz2567iwaNBsH7SOupQvxY4yzcum8AllM3
- m45dIJZMFSXGHAFCxBsCoKZhpkw40ymHZJzEOxElSl/U+Q5UzAehMjv00inbswNFbU2m
- kfs6KwYvg/YBh0OT782P3X2BHYP5lGPbKhfprKb9LHbTki/knOWKnUyDuQwNdWnrjRkQ
- UaIQ==
+ bh=HtX+4kGMslHpF74LqiEbwGdjjmDSaspJpfnbdhn0hxU=;
+ b=qX0o/Ih2TsV5TxknW8UzV1spV9rdT7s9opOzoWGIhvihwZb2W9ViTGDg5gtdTEaOnl
+ gE92FRo8A/so82jW2f8/7c0RxFDf0IWBfFqLlWrJxERYhZUkj+PJggnkF/tff6EUVGbT
+ OBd/agH4WkWzDWvaR7pcVQOSnwmDMWklflpujx/RZx54UY7sF3pwsML+bxmV7Qm7m6/r
+ 6ztfQXCRcObd/e8/6S3Uox2n5UVxX5Hv/izi3jU8KJYRR+cyXjB4/bm6jgDarygQiAmG
+ tMQOmEhQ5b8r3od69Lg3KJsaX0mXCX9yxz4WMmkV/xzNfT7LNoJLYoj/VUa9pZMooEiq
+ voGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1754236573; x=1754841373;
+ d=1e100.net; s=20230601; t=1754237323; x=1754842123;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=Btoux/psIIQ2DJ8iwIBZB50jZ69lEdnJglR53dD21Ok=;
- b=QTvB5gm/qb6VR0dcIpa+UcO7Xm37U5j89JqSPnnQUbxP4nvFpcX1JxhKJfcmbjml6r
- JJjkTqg2zmMo2qMJGLNFgQNzodUbkfAUO/zVGCd+SBzZu1O6xIyU5T4z6W4Xn4AizLeX
- 9EYTfzm0BgGvXoInWZolBhgYyMmKtOSLwN3ZnIwzJPLrOCwtGILvJD78pILf2HyyfnRx
- W9xVVbMATcB99NBWcFlsQoFzRoiMbxn0DonCdgwf1XWPY9scqS5DyAz4nc1jPF7LuxsO
- IhQsSBawZxDteISGUw3rETvQ+OReefZ8L9O8gm/VzBuH4bkGh8s8QWXaPRkKhTSXY6lx
- s+JQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXF2IqDUjNWbmPDhYeSA0kStptKc8xCN4wV32xEh13tEEuZpEsSZxQ92pd2vo/W6XvZf9Q=@dpdk.org
-X-Gm-Message-State: AOJu0Ywsuvi/Djy2EsKSIRA8IwZinYaT/ue3VrNg6Cw7HKXHH8UJb89Y
- yvTSmhwyduc5qkgPbbH8F2t9Ahzq2RWnsaYjV2Qrq7/PuyGKn35RxzpDFszy+IOVxy+sjAO5o48
- LwSTi
-X-Gm-Gg: ASbGncvrKTbOqrzMF0wzGL+fAL1YgiMFJvNNZU4uvgO+0LGTzVWQEW7qlwpLuOU2x6p
- sFbcyhBIQdoqaWNnrbsVOZNYacCwCxpCf56zM5ecNb2vfPm4vxpkvQroEBbrVLXudnqjQzvK/3V
- RU8tC9VpbbZZmbcRCDfyOQq0zvuNSEb/Wn3MMMAu03oO46sF2QwOHkDoP+QRc5p9sdEDMU6kReB
- ZMVnjEm7wSuGPo/x74jhXbUK2+BT3EDqgyZcPQfmEpqOx0SZRwNssklkGVQA/UYJFaimrlFvZb5
- u3nwg8CpWKTkRuCFUhpMhZOrTKf8Ud6wCMbBGHejwiv++THg8K7KpJpWw45F7ec9cVFBq48SIUs
- UzcWgGDQJ16lTUWpjSo6vGS5vpy6TIymFyeAtpThMKf4Y1Aj6TJ2bVUaBSEBisbsO/fLR7NEPwl
- yqpBHUr/vXX1YAAfwdz2Fq
-X-Google-Smtp-Source: AGHT+IERjQntqmEAcqMTAvMyj/UHI6NOif8zLVRNMS55Y6TKZhA53EldhQ4gFpGONPLyAqN6txvPHQ==
-X-Received: by 2002:a05:600c:16c4:b0:456:1a87:a6cb with SMTP id
- 5b1f17b1804b1-458b71aa7e2mr33503115e9.19.1754236573270; 
- Sun, 03 Aug 2025 08:56:13 -0700 (PDT)
+ bh=HtX+4kGMslHpF74LqiEbwGdjjmDSaspJpfnbdhn0hxU=;
+ b=SVa+CQaemT9PWcYhJseL6l46qEGEJCXArnnHIKUODFnamQP++Tzrl2XCTOB+6wIjIU
+ IuWCMh0KMo/NTiztxhnMY7IU6HGVtU8Jo1y3TTd8ae/P/nnGgO/zpdmnNkjVKOByPVfJ
+ qsUtsWTl/zzbYvC27BXda2SCDCKsb5u8XowOMa6e8oJOIvOyGnr33LGUln0ugDpEiCin
+ AbdGwSYdavAQBe47wwiu9R4/TDpqP+CTjsQddpREVv7v77SKOGKdMy/BUK2CWaFcNgmS
+ IJUzYP+hyqHYFVBj8fAs6y0X3p35RQp+hEb2d5RWg7ed2r37WvZNvZT3lrC9MCLVcZ+a
+ r4Hw==
+X-Gm-Message-State: AOJu0YzieQflrY9bbNXobL5Mg0IjlHN08HXdIyxvK4QxIUmxNVrf7oqR
+ loUgmhzo1Zz6XOcc/tT7oP9Ec2pKXAztL0nspeksp53/xaRLS5LNcvJtAulqUiwUkgA=
+X-Gm-Gg: ASbGncsMZUUifOZUpMrOc39bSGGHf7YlFTXukTWN17teZYgoVdnw0j9VAKBLwotVk5S
+ oibXvfdTdjcWRxiQdsG6nURF7StD6kLVE5JCzcAAJm9si54nV/3pOLk/Z4ChUaPTIIz7n12CmuW
+ 3P3RC46PN/D6MJVYZfj4gaTOQ7MEHJsfpvM8Zoil77ay7GHFbBfK5w/DByXV/aaKEWRlSRPOfgY
+ ogABs0a7oRcJSFEQl9CweOo5tksp+/lpanDrTc6J0w+zhll+BzbMUlJGTn2gdxh+2L3jFqkwKzO
+ OcpjyvTFKp4tUac+Solr9i9l3uI7jYhxByFn+2wWF5A2uqH83zsyA+JLa1QQ41y1Bw67deXBFCq
+ +ic1ncboSPvxt79oEbFQ18zpe3Uw+Ekmd3bDpWtmIT7UPrCi1/EMkFQG4ZTupfIgx1namvuV+et
+ U=
+X-Google-Smtp-Source: AGHT+IGTzVLep8FHFs6s7Svt8n3u13egJ74nyaWvsFkcnA2Ue9Vil8wk44trDzJYonaq4r+RTJN3Zw==
+X-Received: by 2002:a5d:5d10:0:b0:3a4:fbaf:749e with SMTP id
+ ffacd0b85a97d-3b8d94c2141mr4577247f8f.49.1754237322748; 
+ Sun, 03 Aug 2025 09:08:42 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3b79c4818c1sm12447132f8f.65.2025.08.03.08.56.11
+ ffacd0b85a97d-3b79c3bf970sm12572553f8f.25.2025.08.03.09.08.41
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 03 Aug 2025 08:56:12 -0700 (PDT)
-Date: Sun, 3 Aug 2025 08:56:07 -0700
+ Sun, 03 Aug 2025 09:08:42 -0700 (PDT)
+Date: Sun, 3 Aug 2025 09:08:37 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: "Ivan Malov" <ivan.malov@arknetworks.am>, <dev@dpdk.org>, "Thomas
- Monjalon" <thomas@monjalon.net>, "Andrew Rybchenko"
- <andrew.rybchenko@oktetlabs.ru>, "Konstantin Ananyev"
- <konstantin.ananyev@huawei.com>
-Subject: Re: [PATCH] ethdev: Reject conflicting TX offloads configuration
-Message-ID: <20250803085607.11cf44b7@hermes.local>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FDE2@smartserver.smartshare.dk>
-References: <20250731090731.671589-1-mb@smartsharesystems.com>
- <20250802135354.158d8561@hermes.local>
- <66e365f2-8398-43b2-58a6-cda29bae08e1@arknetworks.am>
- <98CBD80474FA8B44BF855DF32C47DC35E9FDE2@smartserver.smartshare.dk>
+To: Su Sai <susai.ss@bytedance.com>
+Cc: dev@dpdk.org
+Subject: Re: [v3] net/cksum: compute raw cksum for several segments
+Message-ID: <20250803090837.15589edd@hermes.local>
+In-Reply-To: <CABsP7wOxyD2zEnZ2Yc0BrSDg3aMAVxcNqrHR=mWygUZTShRfDA@mail.gmail.com>
+References: <CABsP7wMLpN-mggd7dY42YEbq_YH5nz=BQSQHV43yZWhpbDNy=Q@mail.gmail.com>
+ <CABsP7wOxyD2zEnZ2Yc0BrSDg3aMAVxcNqrHR=mWygUZTShRfDA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,66 +81,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sun, 3 Aug 2025 12:51:59 +0200
-Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+On Sat, 2 Aug 2025 04:08:16 -0700
+Su Sai <susai.ss@bytedance.com> wrote:
 
-> > From: Ivan Malov [mailto:ivan.malov@arknetworks.am]
-> > Sent: Saturday, 2 August 2025 23.34
-> >=20
-> > Hi,
-> >=20
-> > On Sat, 2 Aug 2025, Stephen Hemminger wrote:
-> >  =20
-> > > On Thu, 31 Jul 2025 09:07:31 +0000
-> > > Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
-> > > =20
-> > >> +		RTE_ETHDEV_LOG_LINE(DEBUG,
-> > >> +			"Ethdev port_id=3D%d tx_queue_id=3D%d, Tx offload %s =20
-> > potential conflict with per-port Tx offload %s, " =20
-> > >> +			"runtime support depends on the driver", =20
-> > >
-> > > Shorten the message, and get it on one line.
-> > > When a message is so long it won't fit on one line, it is too verbose=
-. =20
-> >=20
-> > I am not an expert in naming, but on the premise that 'ethdev' is
-> > already
-> > printed by 'RTE_ETHDEV_LOG_LINE', perhaps consider this variant:
-> >=20
-> > "id=3D%d txq=3D%d offload clash %s vs dev %s: PMD to decide"
-> >=20
-> > Thank you. =20
->=20
-> Ivan's suggestion is good, but this file has plenty of long (and even mul=
-ti-line) log messages, e.g. [1]:
->=20
-> 	if ((local_conf.offloads & dev_info.tx_queue_offload_capa) !=3D
-> 	     local_conf.offloads) {
-> 		RTE_ETHDEV_LOG_LINE(ERR,
-> 			"Ethdev port_id=3D%d tx_queue_id=3D%d, new added offloads 0x%"PRIx64" =
-must be "
-> 			"within per-queue offload capabilities 0x%"PRIx64" in %s()",
-> 			port_id, tx_queue_id, local_conf.offloads,
-> 			dev_info.tx_queue_offload_capa,
-> 			__func__);
-> 		return -EINVAL;
-> 	}
->=20
-> [1]: https://elixir.bootlin.com/dpdk/v25.07/source/lib/ethdev/rte_ethdev.=
-c#L2703
->=20
-> Which do you prefer:
-> a) Follow the local coding style for log messages, or
-> b) Follow our general coding style, and log as Ivan suggested?
->=20
->=20
+> The rte_raw_cksum_mbuf function is used to compute
+> the raw checksum of a packet.
+> If the packet payload stored in multi mbuf, the function
+> will goto the hard case. In hard case,
+> the variable 'tmp' is a type of uint32_t,
+> so rte_bswap16 will drop high 16 bit.
+> Meanwhile, the variable 'sum' is a type of uint32_t,
+> so 'sum += tmp' will drop the carry when overflow.
+> Both drop will make cksum incorrect.
+> This commit fixes the above bug.
+> 
+> Signed-off-by: Su Sai <susai.ss@bytedance.com>
+> ---
 
-I have distaste from long error messages after seeing what VMS and Windows =
-NT did.
-The purpose of error message is to say "something is wrong" not to describe=
- to the
-user in detail how to fix it.
+The patch is getting corrupted by your mail system and
+does not apply cleanly. Fix and resubmit.
 
-Keep longer description for documentation or comments.
-The real problem is missing description in documentation and longer messages
-don't help.
+One option is to use an attachment
