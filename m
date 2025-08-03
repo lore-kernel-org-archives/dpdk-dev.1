@@ -2,45 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13D55C87FD2
-	for <dpdk-dev@archiver.kernel.org>; Sat,  2 Aug 2025 21:33:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 802F3C87FCB
+	for <dpdk-dev@archiver.kernel.org>; Sun,  3 Aug 2025 10:52:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 419AF4026A;
-	Sat,  2 Aug 2025 23:33:54 +0200 (CEST)
-Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id 8DC7040156
- for <dev@dpdk.org>; Sat,  2 Aug 2025 23:33:52 +0200 (CEST)
-Received: from debian (unknown [78.109.75.197])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id AA383E0155;
- Sun,  3 Aug 2025 01:33:51 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am AA383E0155
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1754170432;
- bh=Q4hGnMQL5ISqPrfY2lPeFgplnnIEBW7Nqd7wXAF3lIY=;
- h=Date:From:To:cc:Subject:In-Reply-To:References:From;
- b=peddgq09xX7L7eoCA2UCSwEDn1kIWnsSfQeHWQdPmUSyjVLz/m/d799tngxfjqynk
- W3KSAgyBh68t2vRY4n8ZuqqVEGUnlZQP8GjQopm7a9kgyGKY05qTlVxTPK8Ydto7Ku
- 9RO/sG1lVquCBLR25HEwgz3D0YV7y/yNtQPWR64bMYmMK8GjClwfWICii3uyN8JU9e
- 586f3CiRq3ogKwdEYlo2wx1YL8U6orWjaNkMVWMBM3JOHX12MRWLJ0SVtgf8Khw56z
- Ox04B4QH4RCPKPLy0K4Ga8Ecwkij17yDhPlKUehp3/ed2sMlUTNcZqr0Yyc5uoGup2
- oJs53OeX1XTJQ==
-Date: Sun, 3 Aug 2025 01:33:43 +0400 (+04)
-From: Ivan Malov <ivan.malov@arknetworks.am>
-To: Stephen Hemminger <stephen@networkplumber.org>
-cc: =?ISO-8859-15?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>, dev@dpdk.org,
- Thomas Monjalon <thomas@monjalon.net>, 
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, 
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Subject: Re: [PATCH] ethdev: Reject conflicting TX offloads configuration
-In-Reply-To: <20250802135354.158d8561@hermes.local>
-Message-ID: <66e365f2-8398-43b2-58a6-cda29bae08e1@arknetworks.am>
+	by mails.dpdk.org (Postfix) with ESMTP id 50A4240291;
+	Sun,  3 Aug 2025 12:52:04 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id B987240270
+ for <dev@dpdk.org>; Sun,  3 Aug 2025 12:52:00 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 9EDF220446;
+ Sun,  3 Aug 2025 12:51:59 +0200 (CEST)
+Content-class: urn:content-classes:message
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH] ethdev: Reject conflicting TX offloads configuration
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Sun, 3 Aug 2025 12:51:59 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FDE2@smartserver.smartshare.dk>
+In-Reply-To: <66e365f2-8398-43b2-58a6-cda29bae08e1@arknetworks.am>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH] ethdev: Reject conflicting TX offloads configuration
+Thread-Index: AdwD9SVsl3FH41HoQ0mgIPjselFYVwAbUYBg
 References: <20250731090731.671589-1-mb@smartsharesystems.com>
  <20250802135354.158d8561@hermes.local>
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1420803534-1754170432=:6753"
+ <66e365f2-8398-43b2-58a6-cda29bae08e1@arknetworks.am>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Ivan Malov" <ivan.malov@arknetworks.am>,
+ "Stephen Hemminger" <stephen@networkplumber.org>
+Cc: <dev@dpdk.org>, "Thomas Monjalon" <thomas@monjalon.net>,
+ "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
+ "Konstantin Ananyev" <konstantin.ananyev@huawei.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,33 +51,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323328-1420803534-1754170432=:6753
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-
-Hi,
-
-On Sat, 2 Aug 2025, Stephen Hemminger wrote:
-
-> On Thu, 31 Jul 2025 09:07:31 +0000
-> Morten Brørup <mb@smartsharesystems.com> wrote:
->
->> +		RTE_ETHDEV_LOG_LINE(DEBUG,
->> +			"Ethdev port_id=%d tx_queue_id=%d, Tx offload %s potential conflict with per-port Tx offload %s, "
->> +			"runtime support depends on the driver",
->
-> Shorten the message, and get it on one line.
-> When a message is so long it won't fit on one line, it is too verbose.
-
-I am not an expert in naming, but on the premise that 'ethdev' is already
-printed by 'RTE_ETHDEV_LOG_LINE', perhaps consider this variant:
-
-"id=%d txq=%d offload clash %s vs dev %s: PMD to decide"
-
-Thank you.
-
->
---8323328-1420803534-1754170432=:6753--
+PiBGcm9tOiBJdmFuIE1hbG92IFttYWlsdG86aXZhbi5tYWxvdkBhcmtuZXR3b3Jrcy5hbV0NCj4g
+U2VudDogU2F0dXJkYXksIDIgQXVndXN0IDIwMjUgMjMuMzQNCj4gDQo+IEhpLA0KPiANCj4gT24g
+U2F0LCAyIEF1ZyAyMDI1LCBTdGVwaGVuIEhlbW1pbmdlciB3cm90ZToNCj4gDQo+ID4gT24gVGh1
+LCAzMSBKdWwgMjAyNSAwOTowNzozMSArMDAwMA0KPiA+IE1vcnRlbiBCcsO4cnVwIDxtYkBzbWFy
+dHNoYXJlc3lzdGVtcy5jb20+IHdyb3RlOg0KPiA+DQo+ID4+ICsJCVJURV9FVEhERVZfTE9HX0xJ
+TkUoREVCVUcsDQo+ID4+ICsJCQkiRXRoZGV2IHBvcnRfaWQ9JWQgdHhfcXVldWVfaWQ9JWQsIFR4
+IG9mZmxvYWQgJXMNCj4gcG90ZW50aWFsIGNvbmZsaWN0IHdpdGggcGVyLXBvcnQgVHggb2ZmbG9h
+ZCAlcywgIg0KPiA+PiArCQkJInJ1bnRpbWUgc3VwcG9ydCBkZXBlbmRzIG9uIHRoZSBkcml2ZXIi
+LA0KPiA+DQo+ID4gU2hvcnRlbiB0aGUgbWVzc2FnZSwgYW5kIGdldCBpdCBvbiBvbmUgbGluZS4N
+Cj4gPiBXaGVuIGEgbWVzc2FnZSBpcyBzbyBsb25nIGl0IHdvbid0IGZpdCBvbiBvbmUgbGluZSwg
+aXQgaXMgdG9vIHZlcmJvc2UuDQo+IA0KPiBJIGFtIG5vdCBhbiBleHBlcnQgaW4gbmFtaW5nLCBi
+dXQgb24gdGhlIHByZW1pc2UgdGhhdCAnZXRoZGV2JyBpcw0KPiBhbHJlYWR5DQo+IHByaW50ZWQg
+YnkgJ1JURV9FVEhERVZfTE9HX0xJTkUnLCBwZXJoYXBzIGNvbnNpZGVyIHRoaXMgdmFyaWFudDoN
+Cj4gDQo+ICJpZD0lZCB0eHE9JWQgb2ZmbG9hZCBjbGFzaCAlcyB2cyBkZXYgJXM6IFBNRCB0byBk
+ZWNpZGUiDQo+IA0KPiBUaGFuayB5b3UuDQoNCkl2YW4ncyBzdWdnZXN0aW9uIGlzIGdvb2QsIGJ1
+dCB0aGlzIGZpbGUgaGFzIHBsZW50eSBvZiBsb25nIChhbmQgZXZlbiBtdWx0aS1saW5lKSBsb2cg
+bWVzc2FnZXMsIGUuZy4gWzFdOg0KDQoJaWYgKChsb2NhbF9jb25mLm9mZmxvYWRzICYgZGV2X2lu
+Zm8udHhfcXVldWVfb2ZmbG9hZF9jYXBhKSAhPQ0KCSAgICAgbG9jYWxfY29uZi5vZmZsb2Fkcykg
+ew0KCQlSVEVfRVRIREVWX0xPR19MSU5FKEVSUiwNCgkJCSJFdGhkZXYgcG9ydF9pZD0lZCB0eF9x
+dWV1ZV9pZD0lZCwgbmV3IGFkZGVkIG9mZmxvYWRzIDB4JSJQUkl4NjQiIG11c3QgYmUgIg0KCQkJ
+IndpdGhpbiBwZXItcXVldWUgb2ZmbG9hZCBjYXBhYmlsaXRpZXMgMHglIlBSSXg2NCIgaW4gJXMo
+KSIsDQoJCQlwb3J0X2lkLCB0eF9xdWV1ZV9pZCwgbG9jYWxfY29uZi5vZmZsb2FkcywNCgkJCWRl
+dl9pbmZvLnR4X3F1ZXVlX29mZmxvYWRfY2FwYSwNCgkJCV9fZnVuY19fKTsNCgkJcmV0dXJuIC1F
+SU5WQUw7DQoJfQ0KDQpbMV06IGh0dHBzOi8vZWxpeGlyLmJvb3RsaW4uY29tL2RwZGsvdjI1LjA3
+L3NvdXJjZS9saWIvZXRoZGV2L3J0ZV9ldGhkZXYuYyNMMjcwMw0KDQpXaGljaCBkbyB5b3UgcHJl
+ZmVyOg0KYSkgRm9sbG93IHRoZSBsb2NhbCBjb2Rpbmcgc3R5bGUgZm9yIGxvZyBtZXNzYWdlcywg
+b3INCmIpIEZvbGxvdyBvdXIgZ2VuZXJhbCBjb2Rpbmcgc3R5bGUsIGFuZCBsb2cgYXMgSXZhbiBz
+dWdnZXN0ZWQ/DQoNCg0K
