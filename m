@@ -2,56 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E77C87FDA
-	for <dpdk-dev@archiver.kernel.org>; Mon,  4 Aug 2025 06:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8A3C87FDA
+	for <dpdk-dev@archiver.kernel.org>; Mon,  4 Aug 2025 06:51:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 35A684025D;
-	Mon,  4 Aug 2025 08:35:06 +0200 (CEST)
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
- by mails.dpdk.org (Postfix) with ESMTP id CD366400D5
- for <dev@dpdk.org>; Mon,  4 Aug 2025 08:35:03 +0200 (CEST)
-X-QQ-mid: Yeas6t1754289298t087t38540
+	by mails.dpdk.org (Postfix) with ESMTP id 228864025D;
+	Mon,  4 Aug 2025 08:51:31 +0200 (CEST)
+Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+ by mails.dpdk.org (Postfix) with ESMTP id C5C03400D5
+ for <dev@dpdk.org>; Mon,  4 Aug 2025 08:51:28 +0200 (CEST)
+X-QQ-mid: Yeas2t1754290278t505t22059
 Received: from 3DB253DBDE8942B29385B9DFB0B7E889 (jiawenwu@trustnetic.com
  [60.177.96.13])
 X-QQ-SSF: 0000000000000000000000000000000
 From: =?utf-8?b?Smlhd2VuIFd1?= <jiawenwu@trustnetic.com>
-X-BIZMAIL-ID: 5054904436230728590
+X-BIZMAIL-ID: 8988537795061575520
 To: "'Zaiyu Wang'" <zaiyuwang@trustnetic.com>,
 	<dev@dpdk.org>
 References: <20250418094131.24136-1-zaiyuwang@trustnetic.com>
  <20250625125047.18072-1-zaiyuwang@trustnetic.com>
- <20250625125047.18072-5-zaiyuwang@trustnetic.com>
-In-Reply-To: <20250625125047.18072-5-zaiyuwang@trustnetic.com>
-Subject: RE: [PATCH v2 04/15] net/txgbe: add basic link configuration for
- Amber-Lite NICs
-Date: Mon, 4 Aug 2025 14:34:57 +0800
-Message-ID: <073401dc0509$e53d0be0$afb723a0$@trustnetic.com>
+ <20250625125047.18072-6-zaiyuwang@trustnetic.com>
+In-Reply-To: <20250625125047.18072-6-zaiyuwang@trustnetic.com>
+Subject: RE: [PATCH v2 05/15] net/txgbe: add support for PHY configuration via
+ SW-FW mailbox
+Date: Mon, 4 Aug 2025 14:51:17 +0800
+Message-ID: <073501dc050c$2da55a70$88f00f50$@trustnetic.com>
 MIME-Version: 1.0
 Content-Type: text/plain;
-	charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
+	charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 X-Mailer: Microsoft Outlook 16.0
 Content-Language: zh-cn
-Thread-Index: AQKiC98C7jrCga9wsmi8xZSIVafTeAFw0qYVApkmLlKypadMkA==
+Thread-Index: AQKiC98C7jrCga9wsmi8xZSIVafTeAFw0qYVANyi+YOys5GXsA==
 X-QQ-SENDSIZE: 520
 Feedback-ID: Yeas:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz6b-0
-X-QQ-XMAILINFO: NRkWGnbnkwTm4o7m5ZwESgANXu3NNNpSwzRXiiH1itQ9ucT3rzle8xt6
- MVPIFK5bdLufapLl0T7ZEgMoVppM/6ZdJujRRQVeyFHbTsg2nVulFSQzq2mmKGCAH6Sk5/X
- w7j8QTNo7R5uLn/d5GHSuzlAWBPWbsCdMRUlUraWwbEEC9OSD8RFLtnlT6I9TZamW4cS6jp
- 8FqWNUeJlfiDuLZ08Xpse4ghQaBuYX7Q7Ciop+HJpURiiGjbQRft4vy6fdBFA9SPDZMKEYp
- q1CoY8UGR73bXH/b6Ws1w1N22bX05xVPOAGMcrhsTfJ01NdUGlgiSerFmo9poGx2aQgvFIh
- qIzh1JuSCEpKBMqypz27iX+ly+zE1Y+FRgNtmiOerPYr9J+fnpCcvxhov8vwfi4FYgh7ljz
- j+/yyQAfUyIRX90x0ZLrxfv628C+204B1P3G0bI34wXGb9ok3vO8nvl6aZsd89JOfO1JYvK
- Stcmk4Xl7hJk3xjQw7pSvOtBthbUU7aoGjfAVfGEVbo0EnAxHlYVivt7tYY2HqnJNVZ7+tD
- Z1HzWfuxydCnoZBYTXtGZtVKYQuLWAFs+VzQdZ3lx5K6woPzMPzj9tyri7XMNWxZIu/b3/O
- CTIIVgWoD4cF+KpsC9d/xlo/boYJl5EVGikd8kbqnRZNSwZFFSDULgaE5a0k32/tLWJ4Rt2
- KNnZInXmRdTj5rk9tbzzTX1RRqk+zgDwE702CnvvgeupabGB744U9guG9XQvQS9Wo1Fb9n1
- 6pIDh92A4wfhdDdTDeVWAUVYw3maS5FlF1gPL+WRmUvlDPinVIK41Yw/NJgaGMGyViDD/Rt
- NmkXh00LuQEC0p5dYIWgP6ouKZxnXZ30GpzzaZBif8OI+9nETNLnolZKZindQ7tRjvKAakY
- nEz9n6ywo81+epZcD05mgskK2B2G0VZhJQfjkiIgg8Leb8B5QhQAI0qd1dLAdtcOx57zSWB
- UTRoPK1RZyAxwnVsaTY7m6vOXkYltowYf3FqJ9+paT0onUW84F9bOtPMoHdh8o9is39V3eZ
- vQSGTeercdTGWgv9XmySiMT1xfMIg=
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-XMAILINFO: MqjGdKQeE31Xc0RUNeCiaKXisbItzVSu409OX32Gs4Ib/qsesMyfNxkA
+ ToEeKuoU2R+OnMTETtSiuZM1sTIPRbR/pLPVtuzVGovRo23NBz3MBlbHUZMTCoHCPsbTypq
+ MZUUeaTGy/kEGJooeWt1j+wPmYftrCS8Ucr9VgdO31BKTQRr9nCBUunXmhzxLQOH+tW02qP
+ 2u16aqCIjk2Pvz4bA9Sk/mVaKJlrMeDuk+hCZoBY2SAhgViOUnuf4I2VbnrZdoCkO7qSXfF
+ 7anUI+7nZDTiv7K56w8hlOJFOsIZf2IUZxZX30kciLJfaudXgC+zbPySNy3prmYoQ6pfmgi
+ kYACAMQA+I6Xhd3HaNKLzEDFhqEMXdPkJ0/dn9byZpiqCIgsPSZln20MUHbAOaQi44i3CK+
+ /SManBl1QajGIbuKLtTHv9y7W1Lk2PFi4GZynAFbch7tb8sP+uUfBOyQfjGo/TbML3rlkE/
+ nfgLhjuGo0HDgsZlfLQwUrMCtWhiPwSFGBTpbDbWJQhS7tiChlHeBZCl6pUT94tQwK/pCgt
+ b+WMuI6MxtWJPXUqNj34994yxKn7ayWfmGpC8XLdwcBkueI4dyuI9F3CWBcRT2Kq6xpKh31
+ MbFpdV8w/9impgMxt9K5iklD8x6OlgRSioPgdNcuNole8c08jlfTEkoFj5toPlmNE0L/P2S
+ OJiq8RrW4cUBQ3thMMn7MmWX7HESTecDGSjKFINqhL/7V+vJZ97miOTD5CgGy0rJSh5Jp6l
+ l2E9IMhIdl5uQZQrXYY9eFlzA3rdtpQUPy0tzZ6h/YhZeIGrMDHuTYlwg4NIOgp+1TNAPgx
+ 0rP+SRqpAWxI9tu0dGSMNLf/jcZENipelFmFWG7FpHp+SnYLJ5h1yTyrk5ErpEeyreZ9wI6
+ y5NYBJmUD0JLhJUvvzzAs28omPAb5R0aboHulK1+5G/fW+gt9x5IT0ScEOSRNTWR45BQai+
+ E+hdEcfNP0WpgK0nf7rLq42HcxV3XP5mAUscRWwmW0DUTP5hAN8OOQq9lg5r9xSGIl4PhS9
+ pR3pXDROuGrFpDBSZe
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -66,414 +66,175 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> +s32 txgbe_setup_mac_link_aml(struct txgbe_hw *hw,
-> +			       u32 speed,
-> +			       bool autoneg_wait_to_complete)
+> Subject: [PATCH v2 05/15] net/txgbe: add support for PHY configuration =
+via SW-FW mailbox
+>=20
+> Migrate Amber-Lite PHY configuration to firmware due to complexity.
+> Driver now sends mailbox commands for link state changes, handled
+> by firmware=E2=80=99s intricate PHY setup process
+
+This patch removes what was added by the previous patch.
+I don't understand why. Why not simply merge these into the
+previous patch. Or just configure nothing there.
+
+And...
+
+>=20
+> Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
+> ---
+>  drivers/net/txgbe/base/txgbe_aml.c   | 52 =
+++++++++++++++++------------
+>  drivers/net/txgbe/base/txgbe_aml40.c | 37 +++++++++++++++++++-
+>  drivers/net/txgbe/base/txgbe_hw.c    |  1 +
+>  drivers/net/txgbe/base/txgbe_mng.c   | 36 +++++++++++++++++++
+>  drivers/net/txgbe/base/txgbe_mng.h   | 17 +++++++++
+>  drivers/net/txgbe/base/txgbe_type.h  |  7 ++++
+>  6 files changed, 126 insertions(+), 24 deletions(-)
+>=20
+> diff --git a/drivers/net/txgbe/base/txgbe_aml.c =
+b/drivers/net/txgbe/base/txgbe_aml.c
+> index 1b5a3783a9..510a539d38 100644
+> --- a/drivers/net/txgbe/base/txgbe_aml.c
+> +++ b/drivers/net/txgbe/base/txgbe_aml.c
+> @@ -131,21 +131,37 @@ u32 txgbe_get_media_type_aml(struct txgbe_hw =
+*hw)
+>  	return media_type;
+>  }
+>=20
+> +static void txgbe_wait_for_link_up_aml(struct txgbe_hw *hw, u32 =
+speed)
 > +{
-> +	bool autoneg = false;
-> +	s32 status = 0;
-> +	s32 ret_status = 0;
-> +	u32 link_speed = TXGBE_LINK_SPEED_UNKNOWN;
-> +	bool link_up = false;
+> +	u32 link_speed =3D TXGBE_LINK_SPEED_UNKNOWN;
+> +	bool link_up =3D false;
+> +	int cnt =3D 0;
 > +	int i;
-> +	u32 link_capabilities = TXGBE_LINK_SPEED_UNKNOWN;
-> +	u32 value = 0;
 > +
-> +	UNREFERENCED_PARAMETER(autoneg_wait_to_complete);
+> +	if (speed =3D=3D TXGBE_LINK_SPEED_25GB_FULL)
+> +		cnt =3D 4;
+> +	else
+> +		cnt =3D 1;
 > +
-> +	if (hw->phy.sfp_type == txgbe_sfp_type_not_present) {
+> +	for (i =3D 0; i < (4 * cnt); i++) {
+> +		hw->mac.check_link(hw, &link_speed, &link_up, false);
+> +		if (link_up)
+> +			break;
+> +		msleep(250);
+> +	}
+> +}
+> +
+>  s32 txgbe_setup_mac_link_aml(struct txgbe_hw *hw,
+>  			       u32 speed,
+>  			       bool autoneg_wait_to_complete)
+>  {
+>  	bool autoneg =3D false;
+>  	s32 status =3D 0;
+> -	s32 ret_status =3D 0;
+>  	u32 link_speed =3D TXGBE_LINK_SPEED_UNKNOWN;
+>  	bool link_up =3D false;
+> -	int i;
+>  	u32 link_capabilities =3D TXGBE_LINK_SPEED_UNKNOWN;
+>  	u32 value =3D 0;
+>=20
+> -	UNREFERENCED_PARAMETER(autoneg_wait_to_complete);
+> -
+>  	if (hw->phy.sfp_type =3D=3D txgbe_sfp_type_not_present) {
+>  		DEBUGOUT("SFP not detected, skip setup mac link");
+>  		return 0;
+> @@ -165,30 +181,20 @@ s32 txgbe_setup_mac_link_aml(struct txgbe_hw =
+*hw,
+>  	if (value & (TXGBE_SFP1_MOD_ABS_LS | TXGBE_SFP1_RX_LOS_LS))
+>  		return status;
+>=20
+> -	for (i =3D 0; i < 4; i++) {
+> -		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
+> -		if (link_up)
+> -			break;
+> -		msleep(250);
+> -	}
+
+txgbe_e56_check_phy_link() is deleted here, but still be invoked in
+txgbe_setup_mac_link_multispeed_fiber_aml() ?
+
+> +	status =3D hw->mac.check_link(hw, &link_speed, &link_up,
+> +				    autoneg_wait_to_complete);
+>=20
+> -	if (link_speed =3D=3D speed && link_up &&
+> -	   !(speed =3D=3D TXGBE_LINK_SPEED_25GB_FULL))
+> +	if (link_speed =3D=3D speed && link_up)
+>  		return status;
+>=20
+> -	rte_spinlock_lock(&hw->phy_lock);
+> -	ret_status =3D 0;
+> -	rte_spinlock_unlock(&hw->phy_lock);
+> +	if (speed & TXGBE_LINK_SPEED_25GB_FULL)
+> +		speed =3D 0x10;
+> +	else if (speed & TXGBE_LINK_SPEED_10GB_FULL)
+> +		speed =3D 0x08;
+>=20
+> -	if (ret_status =3D=3D TXGBE_ERR_PHY_INIT_NOT_DONE)
+> -		return status;
+> +	status =3D hw->phy.set_link_hostif(hw, (u8)speed, autoneg, true);
+>=20
+> -	for (i =3D 0; i < 4; i++) {
+> -		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
+> -		if (link_up)
+> -			return status;
+> -		msleep(250);
+> -		}
+> +	txgbe_wait_for_link_up_aml(hw, speed);
+>=20
+>  	return status;
+>  }
+> diff --git a/drivers/net/txgbe/base/txgbe_aml40.c =
+b/drivers/net/txgbe/base/txgbe_aml40.c
+> index 2bad990aa8..88408550d2 100644
+> --- a/drivers/net/txgbe/base/txgbe_aml40.c
+> +++ b/drivers/net/txgbe/base/txgbe_aml40.c
+> @@ -106,7 +106,42 @@ s32 txgbe_setup_mac_link_aml40(struct txgbe_hw =
+*hw,
+>  			       u32 speed,
+>  			       bool autoneg_wait_to_complete)
+>  {
+> -	return 0;
+> +	bool autoneg =3D false;
+> +	s32 status =3D 0;
+> +	u32 link_speed =3D TXGBE_LINK_SPEED_UNKNOWN;
+> +	bool link_up =3D false;
+> +	u32 link_capabilities =3D TXGBE_LINK_SPEED_UNKNOWN;
+> +	u32 value =3D 0;
+> +
+> +	if (hw->phy.sfp_type =3D=3D txgbe_sfp_type_not_present) {
 > +		DEBUGOUT("SFP not detected, skip setup mac link");
 > +		return 0;
 > +	}
 > +
 > +	/* Check to see if speed passed in is supported. */
-> +	status = hw->mac.get_link_capabilities(hw,
+> +	status =3D hw->mac.get_link_capabilities(hw,
 > +			&link_capabilities, &autoneg);
 > +	if (status)
 > +		return status;
 > +
-> +	speed &= link_capabilities;
-> +	if (speed == TXGBE_LINK_SPEED_UNKNOWN)
+> +	speed &=3D link_capabilities;
+> +	if (speed =3D=3D TXGBE_LINK_SPEED_UNKNOWN)
 > +		return TXGBE_ERR_LINK_SETUP;
 > +
-> +	value = rd32(hw, TXGBE_GPIOEXT);
-> +	if (value & (TXGBE_SFP1_MOD_ABS_LS | TXGBE_SFP1_RX_LOS_LS))
+> +	status =3D hw->mac.check_link(hw, &link_speed, &link_up,
+> +				    autoneg_wait_to_complete);
+> +
+> +	if (link_speed =3D=3D speed && link_up)
 > +		return status;
 > +
-> +	for (i = 0; i < 4; i++) {
-> +		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
-> +		if (link_up)
-> +			break;
-> +		msleep(250);
-> +	}
+> +	if (speed & TXGBE_LINK_SPEED_40GB_FULL)
+> +		speed =3D 0x20;
 > +
-> +	if (link_speed == speed && link_up &&
-> +	   !(speed == TXGBE_LINK_SPEED_25GB_FULL))
-> +		return status;
-
-speed != TXGBE_LINK_SPEED_25GB_FULL
-
+> +	status =3D hw->phy.set_link_hostif(hw, (u8)speed, autoneg, true);
 > +
-> +	rte_spinlock_lock(&hw->phy_lock);
-> +	ret_status = 0;
-> +	rte_spinlock_unlock(&hw->phy_lock);
-> +
-> +	if (ret_status == TXGBE_ERR_PHY_INIT_NOT_DONE)
-> +		return status;
-> +
-> +	for (i = 0; i < 4; i++) {
-> +		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
-> +		if (link_up)
-> +			return status;
-> +		msleep(250);
-> +		}
-
-Double tab.
-
+> +	txgbe_wait_for_link_up_aml(hw, speed);
 > +
 > +	return status;
-> +}
-> +
-> +/**
-> + *  txgbe_setup_mac_link_multispeed_fiber_aml - Set MAC link speed
-> + *  @hw: pointer to hardware structure
-> + *  @speed: new link speed
-> + *  @autoneg_wait_to_complete: true when waiting for completion is needed
-> + *
-> + *  Set the link speed in the MAC and/or PHY register and restarts link.
-> + **/
-> +static s32 txgbe_setup_mac_link_multispeed_fiber_aml(struct txgbe_hw *hw,
-> +					  u32 speed,
-> +					  bool autoneg_wait_to_complete)
-> +{
-> +	u32 link_speed = TXGBE_LINK_SPEED_UNKNOWN;
-> +	u32 highest_link_speed = TXGBE_LINK_SPEED_UNKNOWN;
-> +	s32 status = 0;
-> +	u32 speedcnt = 0;
-> +	bool autoneg, link_up = false;
-> +
-> +	/* Mask off requested but non-supported speeds */
-> +	status = hw->mac.get_link_capabilities(hw, &link_speed, &autoneg);
-> +	if (status != 0)
-> +		return status;
-> +
-> +	speed &= link_speed;
-> +
-> +	/* Try each speed one by one, highest priority first.  We do this in
-> +	 * software because 10Gb fiber doesn't support speed autonegotiation.
-> +	 */
-
-Neither 25Gb fiber.
-
-> +	if (speed & TXGBE_LINK_SPEED_25GB_FULL) {
-> +		speedcnt++;
-> +		highest_link_speed = TXGBE_LINK_SPEED_25GB_FULL;
-> +
-> +		/* If we already have link at this speed, just jump out */
-> +		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
-> +
-> +		if ((link_speed == TXGBE_LINK_SPEED_25GB_FULL) && link_up)
-> +			goto out;
-> +
-> +		/* Allow module to change analog characteristics (1G->10G) */
-
-10G -> 25G
-
-> +		msec_delay(40);
-> +
-> +		status = hw->mac.setup_mac_link(hw,
-> +				TXGBE_LINK_SPEED_25GB_FULL,
-> +				autoneg_wait_to_complete);
-> +		if (status != 0)
-> +			return status;
-> +
-> +		/*aml wait link in setup,no need to repeatly wait*/
-> +		/* If we have link, just jump out */
-> +		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
-> +
-> +		if (link_up)
-> +			goto out;
-> +
-> +	}
-> +
-> +	if (speed & TXGBE_LINK_SPEED_10GB_FULL) {
-> +		speedcnt++;
-> +		if (highest_link_speed == TXGBE_LINK_SPEED_UNKNOWN)
-> +			highest_link_speed = TXGBE_LINK_SPEED_10GB_FULL;
-> +
-> +		/* If we already have link at this speed, just jump out */
-> +		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
-> +
-> +		if ((link_speed == TXGBE_LINK_SPEED_10GB_FULL) && link_up)
-> +			goto out;
-> +
-> +		/* Allow module to change analog characteristics (25G->10G) */
-> +		msec_delay(40);
-> +
-> +		status = hw->mac.setup_mac_link(hw, TXGBE_LINK_SPEED_10GB_FULL,
-> +				autoneg_wait_to_complete);
-> +		if (status != 0)
-> +			return status;
-> +
-> +		/*aml wait link in setup,no need to repeatly wait*/
-> +		/* If we have link, just jump out */
-> +		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
-> +
-> +		if (link_up)
-> +			goto out;
-> +	}
-> +
-> +	/* We didn't get link.  Configure back to the highest speed we tried,
-> +	 * (if there was more than one).  We call ourselves back with just the
-> +	 * single highest speed that the user requested.
-> +	 */
-> +	if (speedcnt > 1)
-> +		status = txgbe_setup_mac_link_multispeed_fiber_aml(hw,
-> +						      highest_link_speed,
-> +						      autoneg_wait_to_complete);
-> +
-> +out:
-> +	/* Set autoneg_advertised value based on input link speed */
-> +	hw->phy.autoneg_advertised = 0;
-> +
-> +	if (speed & TXGBE_LINK_SPEED_25GB_FULL)
-> +		hw->phy.autoneg_advertised |= TXGBE_LINK_SPEED_25GB_FULL;
-> +
-> +	if (speed & TXGBE_LINK_SPEED_10GB_FULL)
-> +		hw->phy.autoneg_advertised |= TXGBE_LINK_SPEED_10GB_FULL;
-> +
-> +	return status;
-> +}
-> +
-
-
-> diff --git a/drivers/net/txgbe/base/txgbe_hw.c b/drivers/net/txgbe/base/txgbe_hw.c
-> index 85dbbc5eff..b14ab90466 100644
-> --- a/drivers/net/txgbe/base/txgbe_hw.c
-> +++ b/drivers/net/txgbe/base/txgbe_hw.c
-> @@ -11,6 +11,8 @@
->  #include "txgbe_eeprom.h"
->  #include "txgbe_mng.h"
->  #include "txgbe_hw.h"
-> +#include "txgbe_aml.h"
-> +#include "txgbe_aml40.h"
-> 
->  #define TXGBE_RAPTOR_MAX_TX_QUEUES 128
->  #define TXGBE_RAPTOR_MAX_RX_QUEUES 128
-> @@ -1906,7 +1908,7 @@ static bool txgbe_need_crosstalk_fix(struct txgbe_hw *hw)
->   *
->   *  Reads the links register to determine if link is up and the current speed
->   **/
-> -s32 txgbe_check_mac_link(struct txgbe_hw *hw, u32 *speed,
-> +s32 txgbe_check_mac_link_sp(struct txgbe_hw *hw, u32 *speed,
->  				 bool *link_up, bool link_up_wait_to_complete)
->  {
->  	u32 links_reg, links_orig;
-> @@ -2459,7 +2461,7 @@ s32 txgbe_setup_mac_link_multispeed_fiber(struct txgbe_hw *hw,
->   **/
->  s32 txgbe_init_shared_code(struct txgbe_hw *hw)
->  {
-> -	s32 status;
-> +	s32 status = 0;
-> 
->  	/*
->  	 * Set the mac type
-> @@ -2469,11 +2471,16 @@ s32 txgbe_init_shared_code(struct txgbe_hw *hw)
->  	txgbe_init_ops_dummy(hw);
->  	switch (hw->mac.type) {
->  	case txgbe_mac_raptor:
-> +		txgbe_init_ops_sp(hw);
-> +		break;
->  	case txgbe_mac_aml:
-> +		txgbe_init_ops_aml(hw);
-> +		break;
->  	case txgbe_mac_aml40:
-> -		status = txgbe_init_ops_pf(hw);
-> +		txgbe_init_ops_aml40(hw);
->  		break;
->  	case txgbe_mac_raptor_vf:
-> +	case txgbe_mac_aml_vf:
->  		status = txgbe_init_ops_vf(hw);
->  		break;
->  	default:
-> @@ -2539,7 +2546,7 @@ s32 txgbe_set_mac_type(struct txgbe_hw *hw)
->  	return err;
 >  }
-> 
-> -void txgbe_init_mac_link_ops(struct txgbe_hw *hw)
-> +void txgbe_init_mac_link_ops_sp(struct txgbe_hw *hw)
->  {
->  	struct txgbe_mac_info *mac = &hw->mac;
-> 
-> @@ -2599,7 +2606,7 @@ s32 txgbe_init_phy_raptor(struct txgbe_hw *hw)
->  		goto init_phy_ops_out;
-> 
->  	/* Setup function pointers based on detected SFP module and speeds */
-> -	txgbe_init_mac_link_ops(hw);
-> +	hw->mac.init_mac_link_ops(hw);
-> 
->  	/* If copper media, overwrite with copper function pointers */
->  	if (phy->media_type == txgbe_media_type_copper) {
-> @@ -2634,7 +2641,7 @@ s32 txgbe_setup_sfp_modules(struct txgbe_hw *hw)
->  	if (hw->phy.sfp_type == txgbe_sfp_type_unknown)
->  		return 0;
-> 
-> -	txgbe_init_mac_link_ops(hw);
-> +	hw->mac.init_mac_link_ops(hw);
-> 
->  	/* PHY config will finish before releasing the semaphore */
->  	err = hw->mac.acquire_swfw_sync(hw, TXGBE_MNGSEM_SWPHY);
-> @@ -2781,7 +2788,7 @@ s32 txgbe_flash_read_dword(struct txgbe_hw *hw, u32 addr, u32 *data)
->   *  Initialize the function pointers and assign the MAC type.
->   *  Does not touch the hardware.
->   **/
-> -s32 txgbe_init_ops_pf(struct txgbe_hw *hw)
-> +s32 txgbe_init_ops_generic(struct txgbe_hw *hw)
->  {
->  	struct txgbe_bus_info *bus = &hw->bus;
->  	struct txgbe_mac_info *mac = &hw->mac;
-> @@ -2793,7 +2800,6 @@ s32 txgbe_init_ops_pf(struct txgbe_hw *hw)
->  	bus->set_lan_id = txgbe_set_lan_id_multi_port;
-> 
->  	/* PHY */
-> -	phy->get_media_type = txgbe_get_media_type_raptor;
->  	phy->identify = txgbe_identify_phy;
->  	phy->init = txgbe_init_phy_raptor;
->  	phy->read_reg = txgbe_read_phy_reg;
-> @@ -2861,8 +2867,6 @@ s32 txgbe_init_ops_pf(struct txgbe_hw *hw)
->  	mac->fc_autoneg = txgbe_fc_autoneg;
-> 
->  	/* Link */
-> -	mac->get_link_capabilities = txgbe_get_link_capabilities_raptor;
-> -	mac->check_link = txgbe_check_mac_link;
->  	mac->setup_pba = txgbe_set_pba;
-> 
->  	/* Manageability interface */
-> @@ -2901,6 +2905,22 @@ s32 txgbe_init_ops_pf(struct txgbe_hw *hw)
->  	return 0;
->  }
-> 
-> +void txgbe_init_ops_sp(struct txgbe_hw *hw)
-> +{
-> +	struct txgbe_mac_info *mac = &hw->mac;
-> +	struct txgbe_phy_info *phy = &hw->phy;
-> +
-> +	txgbe_init_ops_generic(hw);
-> +
-> +	/* PHY */
-> +	phy->get_media_type = txgbe_get_media_type_sp;
-> +
-> +	/* LINK */
-> +	mac->init_mac_link_ops = txgbe_init_mac_link_ops_sp;
-> +	mac->get_link_capabilities = txgbe_get_link_capabilities_sp;
-> +	mac->check_link = txgbe_check_mac_link_sp;
-> +}
-> +
->  /**
->   *  txgbe_get_link_capabilities_raptor - Determines link capabilities
->   *  @hw: pointer to hardware structure
-> @@ -2909,7 +2929,7 @@ s32 txgbe_init_ops_pf(struct txgbe_hw *hw)
->   *
->   *  Determines the link capabilities by reading the AUTOC register.
->   **/
-> -s32 txgbe_get_link_capabilities_raptor(struct txgbe_hw *hw,
-> +s32 txgbe_get_link_capabilities_sp(struct txgbe_hw *hw,
->  				      u32 *speed,
->  				      bool *autoneg)
->  {
-> @@ -3015,7 +3035,7 @@ s32 txgbe_get_link_capabilities_raptor(struct txgbe_hw *hw,
->   *
->   *  Returns the media type (fiber, copper, backplane)
->   **/
-> -u32 txgbe_get_media_type_raptor(struct txgbe_hw *hw)
-> +u32 txgbe_get_media_type_sp(struct txgbe_hw *hw)
 
-I think it should be a separate patch to cleanup codes: *_raptor -> *_sp
-
->  {
->  	u32 media_type;
-> 
-> @@ -3849,3 +3869,37 @@ s32 txgbe_reset_pipeline_raptor(struct txgbe_hw *hw)
->  	return err;
->  }
-> 
-> +s32 txgbe_e56_check_phy_link(struct txgbe_hw *hw, u32 *speed,
-> +				bool *link_up)
-> +{
-> +	u32 rdata = 0;
-> +	u32 links_reg = 0;
-> +
-> +	/* must read it twice because the state may
-> +	 * not be correct the first time you read it
-> +	 */
-> +	rdata = rd32_epcs(hw, 0x30001);
-> +	rdata = rd32_epcs(hw, 0x30001);
-> +
-> +	if (rdata & TXGBE_AML_PHY_LINK_UP)
-> +		*link_up = true;
-> +	else
-> +		*link_up = false;
-> +
-> +	links_reg = rd32(hw, TXGBE_PORTSTAT);
-> +	if (*link_up) {
-> +		if ((links_reg & TXGBE_CFG_PORT_ST_AML_LINK_40G) ==
-> +				TXGBE_CFG_PORT_ST_AML_LINK_40G)
-> +			*speed = TXGBE_LINK_SPEED_40GB_FULL;
-> +		else if ((links_reg & TXGBE_CFG_PORT_ST_AML_LINK_25G) ==
-> +				TXGBE_CFG_PORT_ST_AML_LINK_25G)
-> +			*speed = TXGBE_LINK_SPEED_25GB_FULL;
-> +		else if ((links_reg & TXGBE_CFG_PORT_ST_AML_LINK_10G) ==
-> +				TXGBE_CFG_PORT_ST_AML_LINK_10G)
-> +			*speed = TXGBE_LINK_SPEED_10GB_FULL;
-> +	} else {
-> +		*speed = TXGBE_LINK_SPEED_UNKNOWN;
-> +	}
-> +
-> +	return 0;
-> +}
-> diff --git a/drivers/net/txgbe/base/txgbe_hw.h b/drivers/net/txgbe/base/txgbe_hw.h
-> index 1ed2892f61..476a9688bd 100644
-> --- a/drivers/net/txgbe/base/txgbe_hw.h
-> +++ b/drivers/net/txgbe/base/txgbe_hw.h
-> @@ -56,7 +56,7 @@ s32 txgbe_set_vlvf(struct txgbe_hw *hw, u32 vlan, u32 vind,
->  s32 txgbe_clear_vfta(struct txgbe_hw *hw);
->  s32 txgbe_find_vlvf_slot(struct txgbe_hw *hw, u32 vlan, bool vlvf_bypass);
-> 
-> -s32 txgbe_check_mac_link(struct txgbe_hw *hw,
-> +s32 txgbe_check_mac_link_sp(struct txgbe_hw *hw,
->  			       u32 *speed,
->  			       bool *link_up, bool link_up_wait_to_complete);
-> 
-> @@ -86,10 +86,11 @@ s32 txgbe_negotiate_fc(struct txgbe_hw *hw, u32 adv_reg, u32 lp_reg,
->  			u32 adv_sym, u32 adv_asm, u32 lp_sym, u32 lp_asm);
->  s32 txgbe_init_shared_code(struct txgbe_hw *hw);
->  s32 txgbe_set_mac_type(struct txgbe_hw *hw);
-> -s32 txgbe_init_ops_pf(struct txgbe_hw *hw);
-> -s32 txgbe_get_link_capabilities_raptor(struct txgbe_hw *hw,
-> +s32 txgbe_init_ops_generic(struct txgbe_hw *hw);
-> +void txgbe_init_ops_sp(struct txgbe_hw *hw);
-> +s32 txgbe_get_link_capabilities_sp(struct txgbe_hw *hw,
->  				      u32 *speed, bool *autoneg);
-> -u32 txgbe_get_media_type_raptor(struct txgbe_hw *hw);
-> +u32 txgbe_get_media_type_sp(struct txgbe_hw *hw);
->  void txgbe_disable_tx_laser_multispeed_fiber(struct txgbe_hw *hw);
->  void txgbe_enable_tx_laser_multispeed_fiber(struct txgbe_hw *hw);
->  void txgbe_flap_tx_laser_multispeed_fiber(struct txgbe_hw *hw);
-> @@ -103,7 +104,7 @@ s32 txgbe_start_mac_link_raptor(struct txgbe_hw *hw,
->  s32 txgbe_setup_mac_link(struct txgbe_hw *hw, u32 speed,
->  			       bool autoneg_wait_to_complete);
->  s32 txgbe_setup_sfp_modules(struct txgbe_hw *hw);
-> -void txgbe_init_mac_link_ops(struct txgbe_hw *hw);
-> +void txgbe_init_mac_link_ops_sp(struct txgbe_hw *hw);
->  s32 txgbe_reset_hw(struct txgbe_hw *hw);
->  s32 txgbe_start_hw_raptor(struct txgbe_hw *hw);
->  s32 txgbe_init_phy_raptor(struct txgbe_hw *hw);
-> @@ -114,4 +115,6 @@ s32 txgbe_reinit_fdir_tables(struct txgbe_hw *hw);
->  bool txgbe_verify_lesm_fw_enabled_raptor(struct txgbe_hw *hw);
->  s32 txgbe_fmgr_cmd_op(struct txgbe_hw *hw, u32 cmd, u32 cmd_addr);
->  s32 txgbe_flash_read_dword(struct txgbe_hw *hw, u32 addr, u32 *data);
-> +s32 txgbe_e56_check_phy_link(struct txgbe_hw *hw, u32 *speed,
-> +				bool *link_up);
->  #endif /* _TXGBE_HW_H_ */
- 
+The commit log does not explain why aml40 should be configured in this =
+patch.
+=20
 
