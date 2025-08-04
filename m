@@ -2,73 +2,189 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CAB7C87FCB
-	for <dpdk-dev@archiver.kernel.org>; Mon,  4 Aug 2025 16:32:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0972C87FCF
+	for <dpdk-dev@archiver.kernel.org>; Mon,  4 Aug 2025 17:13:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2739F406BB;
-	Mon,  4 Aug 2025 18:31:15 +0200 (CEST)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com
- [209.85.128.54]) by mails.dpdk.org (Postfix) with ESMTP id 1606040DD6
- for <dev@dpdk.org>; Mon,  4 Aug 2025 18:31:13 +0200 (CEST)
-Received: by mail-wm1-f54.google.com with SMTP id
- 5b1f17b1804b1-458a84e2917so39242905e9.1
- for <dev@dpdk.org>; Mon, 04 Aug 2025 09:31:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1754325073;
- x=1754929873; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=IuMogVAugOtl6x5SjXdNXYlZQxGFSZI9r/00QGfOBWk=;
- b=PKjEcOy1qrYUgyiKj4OiNS0WNZ4kWob/cuXGgi1hd396z6ADvynkwr0MEhC2Hnt1C8
- t6BnRm44Z+jrccNb2mzjpfMTzK1hJgVS6SgZLIVS0llTPL/ZeaF++q/imqbpetNxFhJq
- tfaof9Dwj36DJu56/M5ovKJKyK8ZlbiwRryMhKwwLqh4tef0EqDHEe0BAEHXna/Si0vX
- aoy2BlOChjpdh9F4h32Z/dCVo4yggXg3tBrM5zIfL28+eNw8EAqlFmH/zHd3i305BPdx
- /p0t3XTbs1FgpiWgv3vsdDTdJLpopIDe/cmBE/Y6QcIIrbdHPO1K/ti/cKMwzQcGszcg
- UR1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1754325073; x=1754929873;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=IuMogVAugOtl6x5SjXdNXYlZQxGFSZI9r/00QGfOBWk=;
- b=eWr6VjkxzGPTaKG+Ko7dVMw6wndYa4cn82TOqCgSCfxlgufiARh/Ka8UpiWi1p5sI0
- cKLZ4Bqu4pbQCMcvp/qhuAl64/MOpVj6cTW2QpncyGBT+yxIrxtU2x98iplHm2i9egMS
- E0aWjW0B1+kAGGUkFHeFjDPXLGiXfNkSjnInz/u0mIWP3ble1wvFL7o8311ClPltADrz
- m+MGCUy341h5oa5xJQLtY7pj5/62jGdFTqjjvuvVar3qzZcJYb8wYM88DoKIOv8a3T8d
- YudB4GUUuQuzPF0d7UuyyPWaBH0nvdgq5KqI52xijLqxFJrk7yussVNckB8Bvqof1kY9
- 3lOQ==
-X-Gm-Message-State: AOJu0Yx2o1kniH0ug4GPWeVTLALJQy9MhHEFffrYO4nlHERo/vnaLItI
- OIb7R76VmBtPmGW1zoJZVtL0yFqeNET8of2wGwGsqb2npv3jSfbm1t4yZGd6hpwEs8W+Rx9cCCH
- w7cv+
-X-Gm-Gg: ASbGncv6HbYBabDxuBYG0sRXo1zl4hTQruQ3EH0TDF07sj6b25st/dnFrnU1AubJz+k
- t34UCwkfRcyV8fi2sQjD5IZqcLDYy9o6ARJUwwgCqfpdzqQkZOnCYFuFy5TFNLuBOIGaKa1z3TH
- zjcl1mEnkloPGSNLZZGHugs6QXcqQHZ+xE0JHMmqaUdT38P7rc4B1M9+nuojrPY3NZNBhPqn2HR
- Pc1ubZU7RLXF+iwUOUqtoK/5xmc8bbqejs3NRpfK2hzqI2CCqVeuY338KJaDxluoGD6gnEmQy9H
- iVbitOL4MyGOI0eP2ZHhpsdKg0h8EdJEQfreGYD5a4tzeQqbWnwG7T/8kWv1TjsxT7dRW6y2o+5
- HIUE25roeG+sLMK7jSAgcUVLycNv+FUAGdBwHqo0MklTeLb9HWClVgN5fA6JgCOEo3vawSGHO
-X-Google-Smtp-Source: AGHT+IEdyrWJsnsU0q66aMGB/MRVkm3+Sl57aPqZBV1aj4kg5J5t1ZWksr0OYo0AVeaTHrgBqB13CQ==
-X-Received: by 2002:a05:600c:3581:b0:459:dd16:ddde with SMTP id
- 5b1f17b1804b1-459dd16e237mr27247835e9.23.1754325072492; 
- Mon, 04 Aug 2025 09:31:12 -0700 (PDT)
-Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-458b5fc556bsm105891405e9.31.2025.08.04.09.31.10
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 04 Aug 2025 09:31:11 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Reshma Pattan <reshma.pattan@intel.com>
-Subject: [PATCH v8 13/13] app/dumpcap: use port mirror instead of pdump
-Date: Mon,  4 Aug 2025 09:27:44 -0700
-Message-ID: <20250804163039.138959-14-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250804163039.138959-1-stephen@networkplumber.org>
-References: <20250411234927.114568-1-stephen@networkplumber.org>
- <20250804163039.138959-1-stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 87CBA40653;
+	Mon,  4 Aug 2025 19:13:30 +0200 (CEST)
+Received: from AM0PR83CU005.outbound.protection.outlook.com
+ (mail-westeuropeazon11010045.outbound.protection.outlook.com [52.101.69.45])
+ by mails.dpdk.org (Postfix) with ESMTP id 258244028C
+ for <dev@dpdk.org>; Mon,  4 Aug 2025 19:13:29 +0200 (CEST)
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=et/owVcD2DLgoeG9QZse7UDxEFHvkJhJc1deJNbH3/Y118i1Sr//A5LOQSqV+1MaEW15de4p3k9rxD4sQ6fEOR6Jr1pKqa5dnul++dY1vWpfYunvLEwMyyahXo+npePwrBKQ8OfPfOQr/FSMC5sQttY3wrIl/x3wLv8GYKZXDEip1zih3I2QkPbAPDvaZcPD6qSz7aX103eWmD0Mev9KWugAakdykwrYSuxmibR+X5Cw2hOSR3sway92eiRaLk95X3AqTXga69HfZgfxyu2Dv+MUyOghzkvfOzADRdpwl4STNy6Mwf5vR7ZJR/gDtt2S26KrMITDBhzs/IpQjdi9Pw==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BdN9axQ434030MjFF76mbU2f52q9moGzqb/oyeNrnsA=;
+ b=kCsapd4XcqyLsDZbgMg9Ry9Isw3oE9a/OQy90HDFV1btInFzkUZJzCLN41JZqtYz5AAdW5jA8sFNM3F8FLbD9Yh4/hqO/+lUlg7LRUMUOTJRbxnmhMxkU0+IjDKAa/h/WC4v+JfAk5hWdKsPLleBV2Gbbmws4jS9Mr6lpcdxxuO8harD+0p3l8wD52lr8uVTuT0KtKJKodxWfUfdR6vyasi09JOgpjuhyaKKWtI9Fd+ubC0Ociq/05lBUAZQcKTlxSMs+rOwuL/EAUCRtksKlq4L1xs28yURa3syZ52dt9ayS/t5BovilrZYH2GeZvFZldwtpCyHwtlPLbQxQcvhMw==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=marvell.com smtp.mailfrom=arm.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
+ (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BdN9axQ434030MjFF76mbU2f52q9moGzqb/oyeNrnsA=;
+ b=L3qw434X7m7KYB8FbvxLTBXoErV48Kt/A606jcuXtWKw5O31s+ICr/ItRKYgzIind3N5a7iSYQoY/KfI0Iqxk1hDX04ftjXE3aR8V0eHw7zzy6GvfTmZ/bmsg6pmTCtcHJrliOH8rgjPd/ukVfbszKoCOVDE5npYN2ppP0H2jWA=
+Received: from DU2P251CA0008.EURP251.PROD.OUTLOOK.COM (2603:10a6:10:230::10)
+ by VI1PR08MB5486.eurprd08.prod.outlook.com (2603:10a6:803:13b::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Mon, 4 Aug
+ 2025 17:13:24 +0000
+Received: from DB1PEPF000509F0.eurprd03.prod.outlook.com
+ (2603:10a6:10:230:cafe::e2) by DU2P251CA0008.outlook.office365.com
+ (2603:10a6:10:230::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.20 via Frontend Transport; Mon,
+ 4 Aug 2025 17:13:24 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ DB1PEPF000509F0.mail.protection.outlook.com (10.167.242.74) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.8
+ via Frontend Transport; Mon, 4 Aug 2025 17:13:23 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aZC70mDauUw2CnBbpwC2kFLDfyLqYIK68UWoNQeKJluxjLKeqOgUl/FiQi4TYfUjaPzla4pu6mIfX4S19D1hl5az5aYH8csI2prSI6P6YOkj0eq6faQr7YK3IfWgRh7Z6Ic+5EW28NJUcFlQrvaKEGJiufM58xNIpLSZDiPs++jSXuNTrYdmNDmBeIm4TAqPkvUHegWM7mseQp3uW9UGhUctShlgk9HKjFHloBtG8BW0ILNuYrOSMXigaLBV6EH1IdqQ6ZJUCh8pk1lURaIkYgfPzx7SqrIeyNiaLJD/6WlQ1mfAXcNII1UK4WDQEeL0ABwxzA41+caZim6EnsWfOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BdN9axQ434030MjFF76mbU2f52q9moGzqb/oyeNrnsA=;
+ b=FB55SP9aW8bBkcX5mhcdtoBmfApT9LQbDIIL27+MF/19+mQm0g5kz+iztxBvl4XH9o3FoO/ehV1h3KQNnmyuEX6SlK7kLDa2XSRdr23KvzjhWpp5kSbJoRqEIlaK1WnGHIn60207z2+dcgDpmQY0vtLSGAq5HgqsEuEuUYE5ZnJD13+lZULiMdJwAZHs66PYIK2cefsJRGRHTvfcVUTrLI+A3y1y8H5swoCrAesdIQL7IF3uBxwE3OxhqUWCznqP+sWp2frKhKz4xi9Lq82fkS0yOR/nW9ZYYmRXq3xGuHP5tBCLcdae7oaFBgCcpNZUonmmPxaEYBBxqmfbYyF1LA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BdN9axQ434030MjFF76mbU2f52q9moGzqb/oyeNrnsA=;
+ b=L3qw434X7m7KYB8FbvxLTBXoErV48Kt/A606jcuXtWKw5O31s+ICr/ItRKYgzIind3N5a7iSYQoY/KfI0Iqxk1hDX04ftjXE3aR8V0eHw7zzy6GvfTmZ/bmsg6pmTCtcHJrliOH8rgjPd/ukVfbszKoCOVDE5npYN2ppP0H2jWA=
+Received: from PAWPR08MB8909.eurprd08.prod.outlook.com (2603:10a6:102:33a::19)
+ by AS8PR08MB8224.eurprd08.prod.outlook.com (2603:10a6:20b:52b::14)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.19; Mon, 4 Aug
+ 2025 17:12:50 +0000
+Received: from PAWPR08MB8909.eurprd08.prod.outlook.com
+ ([fe80::613d:8d51:60e5:d294]) by PAWPR08MB8909.eurprd08.prod.outlook.com
+ ([fe80::613d:8d51:60e5:d294%6]) with mapi id 15.20.8989.018; Mon, 4 Aug 2025
+ 17:12:50 +0000
+From: Wathsala Vithanage <wathsala.vithanage@arm.com>
+To: Tomasz Duszynski <tduszynski@marvell.com>
+CC: "bruce.richardson@intel.com" <bruce.richardson@intel.com>,
+ "david.marchand@redhat.com" <david.marchand@redhat.com>, "dev@dpdk.org"
+ <dev@dpdk.org>, "jerinj@marvell.com" <jerinj@marvell.com>,
+ "mb@smartsharesystems.com" <mb@smartsharesystems.com>, "thomas@monjalon.net"
+ <thomas@monjalon.net>, "stephen@networkplumber.org"
+ <stephen@networkplumber.org>, nd <nd@arm.com>
+Subject: RE: [PATCH v10 06/10] lib/pmu: do not try enabling perf counter
+ access on arm64
+Thread-Topic: [PATCH v10 06/10] lib/pmu: do not try enabling perf counter
+ access on arm64
+Thread-Index: AQHcAs4S25otN9HmFkquuN4foS9LR7RSvqWg
+Date: Mon, 4 Aug 2025 17:12:50 +0000
+Message-ID: <PAWPR08MB8909ED3F729BD92BD2904F2D9F23A@PAWPR08MB8909.eurprd08.prod.outlook.com>
+References: <20250723044118.2962318-1-tduszynski@marvell.com>
+ <20250801102109.3544901-1-tduszynski@marvell.com>
+ <20250801102109.3544901-7-tduszynski@marvell.com>
+In-Reply-To: <20250801102109.3544901-7-tduszynski@marvell.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+x-ms-traffictypediagnostic: PAWPR08MB8909:EE_|AS8PR08MB8224:EE_|DB1PEPF000509F0:EE_|VI1PR08MB5486:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3db3ac25-dc47-412a-7f6b-08ddd37a3815
+X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr,ExtAddr
+x-checkrecipientrouted: true
+nodisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted: BCL:0;
+ ARA:13230040|366016|1800799024|376014|38070700018; 
+X-Microsoft-Antispam-Message-Info-Original: =?us-ascii?Q?yVe8fqVZsrwtoCRf+CKE0r/rc3Qjz1WGEp+r5R6JsmJc3+puBYy66lVEvqCH?=
+ =?us-ascii?Q?2ivmwoO68oRMk4Z0QvB35rFsaGOQ4XDkJ1aR7h3PmPRr16j+fn4CAEUJG+1t?=
+ =?us-ascii?Q?FIPqsSKddQMNtAxyxVgDLlLLHwepNn14lX9Pul5dVNyhDEfqV3YkcvBxPxPh?=
+ =?us-ascii?Q?owUnawgevnkN2bbjNZs4mY3OkStf0L6/L9ajng9xSPsF1d8GkqQ5sh6ngA72?=
+ =?us-ascii?Q?GwoE4TqOClMiPoJMaMtYdVOlhfM1PfR5wNmqnzv4F7s0IWe4hfBnZTBfT+Q/?=
+ =?us-ascii?Q?DIF+sqPeJln8lWxv+tzdiKgm1AGRDMTPKXbLLQcXU/2ZffGkf/hffC7xPhL4?=
+ =?us-ascii?Q?hIFDKBVC2ipHQKSpYZiZ7TozFRJMgjULUkz0u2FYL7CRXQAbF8wQghghmOkn?=
+ =?us-ascii?Q?C0bwUvjklFDnKPBReCR0PIzkdqXnYzwflMpZk+QY0OuefUT+YySjyoTJA2oZ?=
+ =?us-ascii?Q?s+NaMth+qbRItAaPI/zqMBoR9bxLxp00xjexZVKYsi4SPLdyKh6Ka21W2O1h?=
+ =?us-ascii?Q?K+7fV71oVV85KF/KL8fAzVwCclQnI9LIa0R6dgZBIb7XoIyE3m14K5oaUeq4?=
+ =?us-ascii?Q?qpSGEbncF9U8KQdxviNSaYtAvx4rsEHRoryVQo2CTAfmJ7/D1+tpAtX2VOLg?=
+ =?us-ascii?Q?ZVVUWLqYaXY+8IHBKpe7dzRCUSIYicpZbQXaMBb/BMfPWhYzZ0+cl9FzqmPs?=
+ =?us-ascii?Q?DDCLbq7LoekS9TV8xuH78emWQ/4q8PkXXRrAzkbJHalSHIf5As/2kKt/PvWd?=
+ =?us-ascii?Q?xEJwXjeUeQwwDeOacPRVqzTdabH+grTMlK26vd9nbPqSzg8jMKwnnBYwa2lT?=
+ =?us-ascii?Q?oX78D7vMLolyLOxNfNjMn4VCJMLeQ25zyxCErt9lKphjPeU5XAkUR9wFvA9j?=
+ =?us-ascii?Q?zKXKufIrH4lzDLsEliHQvYYtczVtClFJo7ByiB9CFu7c+BW7iU52OtRBJhVw?=
+ =?us-ascii?Q?6/FKISytxr59/U0jQvIX1fytvjw9EAR7nnSGEaHTm16pq0nVflHlfY0+3T2O?=
+ =?us-ascii?Q?w+6s3wQRYUqgm03jdX4GP66UvPsW8U2e3GNGjGWH/zfuNwHt0AidEM5K4b2T?=
+ =?us-ascii?Q?4tUrS5YAmYS409u5Td/Gyq3zKys+Sp4yN9KQva70YZrflkBquhVTxBReqmWA?=
+ =?us-ascii?Q?9f86IZbW8vassGc7EsHFCSUxmgr4gUFEK4/iJTUxrG5ya34aHMVy3eS7xWKK?=
+ =?us-ascii?Q?D5uFsCm2x7yL5qsBmZtB4Sl9miAb0ECBe/owO4RBq5Jel5jx6cor4V5wCpRH?=
+ =?us-ascii?Q?hIhig9fgfl/E4ObBgZBOXpWloVM1GpbyYB/GLRIgMUfBSJtzRYSfgMVP3OLP?=
+ =?us-ascii?Q?He7Vt7y2jOICZhQOyg1W8MEp2WKM8zInE1pEXy4XllPPWg4tw0HfXQTpepu7?=
+ =?us-ascii?Q?4A3ip5J8AM3YUitAblcYDpXqmdUU5xek9wVj9th+yIhTEkzTAN9YBGmwbcKl?=
+ =?us-ascii?Q?Ca/YHXsn5C/x3RgmMQ2XR1Eq4RKfiJJM8Nb5FPIrGt0/boxV2CnG7Q=3D=3D?=
+X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255; CTRY:; LANG:en;
+ SCL:1; SRV:; IPV:NLI; SFV:NSPM; H:PAWPR08MB8909.eurprd08.prod.outlook.com;
+ PTR:; CAT:NONE; SFS:(13230040)(366016)(1800799024)(376014)(38070700018);
+ DIR:OUT; SFP:1101; 
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB8224
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: DB1PEPF000509F0.eurprd03.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs: 7389b057-d514-46ab-b42e-08ddd37a2442
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|82310400026|35042699022|14060799003|1800799024|36860700013|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?UUI2tBDxhovvdbc+EyFxPMarI50nnpVb/w6WCMUKXtwGojGvMJJ9RfstW5BS?=
+ =?us-ascii?Q?/XRPA1tQVblx/hDmXUUuLOZMoK1uATeY1kp/4l4eTwtfW+9vLQ1d4UbWAV3Q?=
+ =?us-ascii?Q?GsBMh1FVfC3S22OrPuya7V4xpbQoOzOwhsq9wh2WTGL0Mh7yKN7UlqWdt+lP?=
+ =?us-ascii?Q?7iINVQPA+oLvZNy3qBr8FM/lkroXZE177sSDYzUL6W0WujlJjg942xqS9WVc?=
+ =?us-ascii?Q?oVGcI3tgsT1Jl5bnAYenRUcpebXZpQUDpOOjJiUSUc7P/zcvIfszwDUHt+Nf?=
+ =?us-ascii?Q?nb7bIDhiq05wH8uSB7/BYDZruBXKBLR4ILHkhdk98/lfINPV+eJ2BMQFgAWX?=
+ =?us-ascii?Q?YNyZRq7P4sUQG4h+bKcmZxMCBazzWf+GaRSJOmF8Jj/K8hUgFIZYpxbhfDpU?=
+ =?us-ascii?Q?y1QzGsY7WlodrGQn/m51aZa1y0sMFpnHULHN+MbJ8OFCVLwV8hAFnmcHZmm8?=
+ =?us-ascii?Q?z2aF/S5EP5Pah2v3sH87Wutf/59KZ6PrzTcnsS3HMUT4WAOJ0QuPk1m6S0KA?=
+ =?us-ascii?Q?ci/wv6IwBcmOorr1Re1qdIycVcktgBuvl1Bf71a50hQZ0BKDTtHRxtZYMPQF?=
+ =?us-ascii?Q?4mZ9E6Tjlros9TA/AqKxRyBOYU+eoyp6GH/maoHuEVbR6sluoZ3zzCaevPya?=
+ =?us-ascii?Q?oJRMFU67hHBI7FyPx3TQhdzGqG/DBEmaHEnxRxSomPMKu73IqStPV1AVm7x/?=
+ =?us-ascii?Q?fA5JKRqDDHA9qleHO4fzXGTtZpQ+MHFITVFmfs9VTqneHiUn18EiHfyvRWCU?=
+ =?us-ascii?Q?a+BKUVajg8YwcYkRU2KZHogN1HriI3p/yZ47oOJr5yyVrpAyAOBdDhTRWKAX?=
+ =?us-ascii?Q?rFS9+rwzhvzu/hzyLAIi3I5Kzs6xFi0XdhsbYcPcSuNwWSINt+s2znjVQaLq?=
+ =?us-ascii?Q?nYyAT0dL7C9Vl1imMNJRGCK1+OKWf4toPLeWoTfNHlnkTm8qbmaxPr4OClIN?=
+ =?us-ascii?Q?D+b31o8CG6cxsk9fzj+7DNtvGBm0a+ugL+Bl1NniHMTkPXFBTHbVLHPTn5II?=
+ =?us-ascii?Q?3nMN7wDiFOT0nRjtfm6PRpt+CSi/RVcfvAnomti864Het+XSZuk25P0hXu3U?=
+ =?us-ascii?Q?DeyKw9ufpbbhuplwMRnIAaytCrCmP9WFplhMnKo3c83FZapFpQM5+DPJEiqA?=
+ =?us-ascii?Q?QZVF8NbT7geL7pMOEdY1pEVr9IyXzLBv/uzqPdF25NfD2hrVG912SiKZGGmZ?=
+ =?us-ascii?Q?htVy7vYlsxNO4hLlawlR+foP6aRMyULqSBoED4lnQ19ISX5RnEOmOEBs0zsp?=
+ =?us-ascii?Q?1BF4hXnQ/1IZGnZ6RTYOUHYpu1Zj5UUqvVBLIyBdEgHXHTw9J5LRQcYMJFaj?=
+ =?us-ascii?Q?jnxEmR62fTSWjSgcqVvFXQ9bGGV9B/2MSQCC3JOz1X49p2C2Re8BPIKXJH4Q?=
+ =?us-ascii?Q?0JYqA0wDdcneHiKQfRYnBuLGAIITeJv155pRk7TyFGZx451tuRDdTHSJgYzM?=
+ =?us-ascii?Q?8Md3RjpUx5fo4kLL64anATCYz2LWTR6/sKcIRJeX9wQwjd//7bIn64sLpVQz?=
+ =?us-ascii?Q?3niEVwHippJ8GCRxhvyAX87ayMvAZrW2TLBb?=
+X-Forefront-Antispam-Report: CIP:4.158.2.129; CTRY:GB; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:outbound-uk1.az.dlp.m.darktrace.com;
+ PTR:InfoDomainNonexistent; CAT:NONE;
+ SFS:(13230040)(82310400026)(35042699022)(14060799003)(1800799024)(36860700013)(376014)(7053199007);
+ DIR:OUT; SFP:1101; 
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 17:13:23.5879 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3db3ac25-dc47-412a-7f6b-08ddd37a3815
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d; Ip=[4.158.2.129];
+ Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource: DB1PEPF000509F0.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB5486
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,645 +198,130 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use the new port mirror API instead of pdump.
+> Subject: [PATCH v10 06/10] lib/pmu: do not try enabling perf counter acce=
+ss on
+> arm64
+>=20
+> /proc/sys/kernel/perf_user_access attribute allow user process to access =
+perf
+> counters. Though in order to change it binary requires elevated capabilit=
+ies or
+> must be run as root. If that's not the case counter access remains disabl=
+ed. Hence
+> to avoid confusion log message that that warns user about that.
+>=20
+> Signed-off-by: Tomasz Duszynski <tduszynski@marvell.com>
 
-Since filtering is now done in dumpcap process (not primary).
-For portability use PCAP to do packet filtering.
-This removes dependency on DPDK implementation of BPF.
-Filtering will be slower (no JIT) but is portable to Windows.
-Can revisit later when BPF support is updated.
+Acked-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- app/dumpcap/main.c      | 389 ++++++++++++++++++++++++++++++++--------
- app/dumpcap/meson.build |   3 +-
- 2 files changed, 317 insertions(+), 75 deletions(-)
-
-diff --git a/app/dumpcap/main.c b/app/dumpcap/main.c
-index 3d3c0dbc66..51497e8cea 100644
---- a/app/dumpcap/main.c
-+++ b/app/dumpcap/main.c
-@@ -36,8 +36,6 @@
- #include <rte_mbuf.h>
- #include <rte_mempool.h>
- #include <rte_pcapng.h>
--#include <rte_pdump.h>
--#include <rte_ring.h>
- #include <rte_string_fns.h>
- #include <rte_thread.h>
- #include <rte_time.h>
-@@ -95,13 +93,23 @@ struct interface {
- 	struct capture_options opts;
- 	struct rte_bpf_prm *bpf_prm;
- 	char name[RTE_ETH_NAME_MAX_LEN];
-+	struct bpf_insn *bpf;
- 
-+	struct rte_eth_stats start_stats;
- 	const char *ifname;
- 	const char *ifdescr;
- };
- 
-+static int timestamp_dynfield = -1;
-+static uint64_t timestamp_dynflag;
-+static int mirror_origin_dynfield = -1;
-+static uint64_t mirror_origin_dynflag;
-+static uint64_t mirror_ingress_dynflag;
-+static uint64_t mirror_egress_dynflag;
-+
- TAILQ_HEAD(interface_list, interface);
- static struct interface_list interfaces = TAILQ_HEAD_INITIALIZER(interfaces);
-+static struct interface *port2intf[RTE_MAX_ETHPORTS];
- 
- /* Can do either pcap or pcapng format output */
- typedef union {
-@@ -239,14 +247,16 @@ static void find_interfaces(void)
- 
- 	TAILQ_FOREACH(intf, &interfaces, next) {
- 		/* if name is valid then just record port */
--		if (rte_eth_dev_get_port_by_name(intf->name, &intf->port) == 0)
--			continue;
-+		if (rte_eth_dev_get_port_by_name(intf->name, &intf->port) != 0) {
-+			/* maybe got passed port number string as name */
-+			intf->port = get_uint(intf->name, "port_number", UINT16_MAX);
-+			if (rte_eth_dev_get_name_by_port(intf->port, intf->name) < 0)
-+				rte_exit(EXIT_FAILURE, "Invalid port number %u\n",
-+					 intf->port);
-+		}
- 
--		/* maybe got passed port number string as name */
--		intf->port = get_uint(intf->name, "port_number", UINT16_MAX);
--		if (rte_eth_dev_get_name_by_port(intf->port, intf->name) < 0)
--			rte_exit(EXIT_FAILURE, "Invalid port number %u\n",
--				 intf->port);
-+		if (rte_eth_stats_get(intf->port, &intf->start_stats) < 0)
-+			rte_exit(EXIT_FAILURE, "Could not read stats for port %u\n", intf->port);
- 	}
- }
- 
-@@ -266,6 +276,10 @@ static void set_default_interface(void)
- 
- 		intf = add_interface(name);
- 		intf->port = p;
-+
-+		if (rte_eth_stats_get(intf->port, &intf->start_stats) < 0)
-+			rte_exit(EXIT_FAILURE,
-+				 "Could not read stats for port %u\n", intf->port);
- 		return;
- 	}
- 	rte_exit(EXIT_FAILURE, "No usable interfaces found\n");
-@@ -295,17 +309,23 @@ static void compile_filters(void)
- 		struct bpf_program bf;
- 		pcap_t *pcap;
- 
-+		/* cache for filter packets */
-+		port2intf[intf->port] = intf;
-+
-+		if (intf->opts.filter == NULL) {
-+			intf->bpf = NULL;
-+			continue;
-+		}
-+
- 		pcap = pcap_open_dead(DLT_EN10MB, intf->opts.snap_len);
- 		if (!pcap)
- 			rte_exit(EXIT_FAILURE, "can not open pcap\n");
- 
--		if (pcap_compile(pcap, &bf, intf->opts.filter,
--				 1, PCAP_NETMASK_UNKNOWN) != 0) {
-+		if (pcap_compile(pcap, &bf, intf->opts.filter, 1, PCAP_NETMASK_UNKNOWN) != 0) {
- 			fprintf(stderr,
- 				"Invalid capture filter \"%s\": for interface '%s'\n",
- 				intf->opts.filter, intf->name);
--			rte_exit(EXIT_FAILURE, "\n%s\n",
--				 pcap_geterr(pcap));
-+			rte_exit(EXIT_FAILURE, "\n%s\n", pcap_geterr(pcap));
- 		}
- 
- 		bpf_prm = rte_bpf_convert(&bf);
-@@ -518,13 +538,12 @@ static void statistics_loop(void)
- }
- 
- static void
--cleanup_pdump_resources(void)
-+disable_mirror_ports(uint16_t mirror_port)
- {
- 	struct interface *intf;
- 
- 	TAILQ_FOREACH(intf, &interfaces, next) {
--		rte_pdump_disable(intf->port,
--				  RTE_PDUMP_ALL_QUEUES, RTE_PDUMP_FLAG_RXTX);
-+		rte_eth_remove_mirror(intf->port, mirror_port);
- 		if (intf->opts.promisc_mode)
- 			rte_eth_promiscuous_disable(intf->port);
- 	}
-@@ -541,7 +560,7 @@ monitor_primary(void *arg __rte_unused)
- 		rte_eal_alarm_set(MONITOR_INTERVAL, monitor_primary, NULL);
- 	} else {
- 		fprintf(stderr,
--			"Primary process is no longer active, exiting...\n");
-+			"\nPrimary process is no longer active, exiting...\n");
- 		rte_atomic_store_explicit(&quit_signal, true, rte_memory_order_relaxed);
- 	}
- }
-@@ -552,7 +571,6 @@ enable_primary_monitor(void)
- {
- 	int ret;
- 
--	/* Once primary exits, so will pdump. */
- 	ret = rte_eal_alarm_set(MONITOR_INTERVAL, monitor_primary, NULL);
- 	if (ret < 0)
- 		fprintf(stderr, "Fail to enable monitor:%d\n", ret);
-@@ -571,23 +589,24 @@ disable_primary_monitor(void)
- static void
- report_packet_stats(dumpcap_out_t out)
- {
--	struct rte_pdump_stats pdump_stats;
- 	struct interface *intf;
--	uint64_t ifrecv, ifdrop;
--	double percent;
- 
- 	fputc('\n', stderr);
-+
- 	TAILQ_FOREACH(intf, &interfaces, next) {
--		if (rte_pdump_stats(intf->port, &pdump_stats) < 0)
-+		uint64_t ifrecv, ifdrop;
-+		struct rte_eth_stats stats;
-+		double percent;
-+
-+		if (rte_eth_stats_get(intf->port, &stats) < 0)
- 			continue;
- 
--		/* do what Wiretap does */
--		ifrecv = pdump_stats.accepted + pdump_stats.filtered;
--		ifdrop = pdump_stats.nombuf + pdump_stats.ringfull;
-+		ifrecv = stats.ipackets - intf->start_stats.ipackets;
-+		ifdrop = (stats.rx_nombuf - intf->start_stats.rx_nombuf)
-+			+ (stats.imissed - intf->start_stats.imissed);
- 
- 		if (use_pcapng)
--			rte_pcapng_write_stats(out.pcapng, intf->port,
--					       ifrecv, ifdrop, NULL);
-+			rte_pcapng_write_stats(out.pcapng, intf->port, ifrecv, ifdrop, NULL);
- 
- 		if (ifrecv == 0)
- 			percent = 0;
-@@ -668,12 +687,22 @@ static void dpdk_init(void)
- 		rte_exit(EXIT_FAILURE, "Can not restore original CPU affinity\n");
- }
- 
--/* Create packet ring shared between callbacks and process */
--static struct rte_ring *create_ring(void)
-+/*
-+ * Create ring port to redirect packet to.
-+ * This could be much simpler if the ring PMD API (rte_eth_from_rings)
-+ * worked from a secondary process, but it doesn't.
-+ */
-+static struct rte_ring *
-+create_ring_dev(char *vdev_name, uint16_t *mirror_port)
- {
--	struct rte_ring *ring;
-+	struct rte_eth_dev_owner owner = { 0 };
-+	struct rte_eth_conf dev_conf = { 0 };
-+	struct rte_ring *ring = NULL;
- 	char ring_name[RTE_RING_NAMESIZE];
-+	char vdev_args[128];
- 	size_t size, log2;
-+	uint16_t port;
-+	int ret;
- 
- 	/* Find next power of 2 >= size. */
- 	size = ring_size;
-@@ -686,17 +715,61 @@ static struct rte_ring *create_ring(void)
- 		ring_size = size;
- 	}
- 
--	/* Want one ring per invocation of program */
--	snprintf(ring_name, sizeof(ring_name),
--		 "dumpcap-%d", getpid());
-+	/* Use owner as unique ID for ring and to isolate instances of dumpcap */
-+	ret = rte_eth_dev_owner_new(&owner.id);
-+	if (ret < 0)
-+		rte_exit(EXIT_FAILURE, "rte_eth_dev_owner_new failed: %s\n",
-+			 strerror(-ret));
- 
--	ring = rte_ring_create(ring_name, ring_size,
--			       rte_socket_id(), 0);
-+	/* Give the vdev a unique name */
-+	snprintf(ring_name, sizeof(ring_name), "dumpcap%"PRIu64, owner.id);
-+	ring = rte_ring_create(ring_name, ring_size, rte_socket_id(),
-+			       RING_F_MP_RTS_ENQ | RING_F_SC_DEQ);
- 	if (ring == NULL)
- 		rte_exit(EXIT_FAILURE, "Could not create ring :%s\n",
- 			 rte_strerror(rte_errno));
- 
-+	strlcpy(owner.name, ring_name, sizeof(owner.name));
-+
-+	snprintf(vdev_name, RTE_DEV_NAME_MAX_LEN, "net_ring-dumpcap%"PRIu64, owner.id);
-+	snprintf(vdev_args, sizeof(vdev_args), "ring=%s", ring_name);
-+
-+	if (rte_eal_hotplug_add("vdev", vdev_name, vdev_args) < 0) {
-+		fprintf(stderr, "rte_eal_hotplug_add of %s failed:%s\n",
-+			 vdev_name, rte_strerror(rte_errno));
-+		goto ringfree;
-+	}
-+
-+	ret = rte_eth_dev_get_port_by_name(vdev_name, &port);
-+	if (ret != 0) {
-+		fprintf(stderr, "Could not find port for %s: %s\n",
-+			vdev_name, strerror(-ret));
-+		goto unplug;
-+	}
-+
-+	ret = rte_eth_dev_owner_set(port, &owner);
-+	if (ret != 0) {
-+		fprintf(stderr, "Could not set owner for port %u: %s\n",
-+			port, strerror(-ret));
-+		goto unplug;
-+	}
-+
-+	ret = rte_eth_dev_configure(port, 1, 1, &dev_conf);
-+	if (ret < 0) {
-+		fprintf(stderr, "Could not configure port %u: %s\n",
-+			port, strerror(-ret));
-+		goto unplug;
-+	}
-+
-+	*mirror_port = port;
- 	return ring;
-+
-+unplug:
-+	rte_eal_hotplug_remove("vdev", vdev_name);
-+ringfree:
-+	rte_ring_free(ring);
-+	rte_eal_cleanup();
-+	exit(EXIT_FAILURE);
- }
- 
- static struct rte_mempool *create_mempool(void)
-@@ -796,7 +869,7 @@ static dumpcap_out_t create_output(void)
- 					   version(), capture_comment);
- 		if (ret.pcapng == NULL)
- 			rte_exit(EXIT_FAILURE, "pcapng_fdopen failed: %s\n",
--				 strerror(rte_errno));
-+				 rte_strerror(rte_errno));
- 		free(os);
- 
- 		TAILQ_FOREACH(intf, &interfaces, next) {
-@@ -823,37 +896,34 @@ static dumpcap_out_t create_output(void)
- 	return ret;
- }
- 
--static void enable_pdump(struct rte_ring *r, struct rte_mempool *mp)
-+static int enable_mirror(uint16_t mirror_port, struct rte_mempool *mpool)
- {
- 	struct interface *intf;
- 	unsigned int count = 0;
--	uint32_t flags;
- 	int ret;
- 
--	flags = RTE_PDUMP_FLAG_RXTX;
--	if (use_pcapng)
--		flags |= RTE_PDUMP_FLAG_PCAPNG;
-+	ret = rte_eth_dev_start(mirror_port);
-+	if (ret < 0)
-+		rte_exit(EXIT_FAILURE, "Could not start mirror port %u: %s\n",
-+			 mirror_port, strerror(-ret));
- 
- 	TAILQ_FOREACH(intf, &interfaces, next) {
--		ret = rte_pdump_enable_bpf(intf->port, RTE_PDUMP_ALL_QUEUES,
--					   flags, intf->opts.snap_len,
--					   r, mp, intf->bpf_prm);
-+		struct rte_eth_mirror_conf conf = {
-+			.mp = mpool,
-+			.target = mirror_port,
-+			.snaplen = intf->opts.snap_len,
-+			.flags = RTE_ETH_MIRROR_ORIGIN_FLAG |
-+				RTE_ETH_MIRROR_TIMESTAMP_FLAG |
-+				RTE_ETH_MIRROR_DIRECTION_INGRESS |
-+				RTE_ETH_MIRROR_DIRECTION_EGRESS,
-+			.filter = intf->bpf_prm,
-+		};
-+
-+		ret = rte_eth_add_mirror(intf->port, &conf);
- 		if (ret < 0) {
--			const struct interface *intf2;
--
--			/* unwind any previous enables */
--			TAILQ_FOREACH(intf2, &interfaces, next) {
--				if (intf == intf2)
--					break;
--				rte_pdump_disable(intf2->port,
--						  RTE_PDUMP_ALL_QUEUES, RTE_PDUMP_FLAG_RXTX);
--				if (intf2->opts.promisc_mode)
--					rte_eth_promiscuous_disable(intf2->port);
--			}
--			rte_exit(EXIT_FAILURE,
--				"Packet dump enable on %u:%s failed %s\n",
--				intf->port, intf->name,
--				rte_strerror(rte_errno));
-+			fprintf(stderr, "Port mirror on %u:%s failed %s\n",
-+				intf->port, intf->name, strerror(-ret));
-+			return -1;
- 		}
- 
- 		if (intf->opts.promisc_mode) {
-@@ -868,6 +938,60 @@ static void enable_pdump(struct rte_ring *r, struct rte_mempool *mp)
- 		}
- 		++count;
- 	}
-+	return count;
-+}
-+
-+static int setup_mbuf(void)
-+{
-+	int offset;
-+
-+	offset = rte_mbuf_dynfield_lookup(RTE_MBUF_DYNFIELD_TIMESTAMP_NAME, NULL);
-+	if (offset < 0) {
-+		fprintf(stderr, "Could not find timestamp dynamic field\n");
-+		return -1;
-+	}
-+	timestamp_dynfield = offset;
-+
-+	offset = rte_mbuf_dynflag_lookup(RTE_MBUF_DYNFLAG_TX_TIMESTAMP_NAME, NULL);
-+	if (offset < 0) {
-+		fprintf(stderr, "Could not find timestamp flag\n");
-+		return -1;
-+	}
-+	timestamp_dynflag = RTE_BIT64(offset);
-+
-+	offset = rte_mbuf_dynfield_lookup(RTE_MBUF_DYNFIELD_MIRROR_ORIGIN, NULL);
-+	if (offset < 0) {
-+		fprintf(stderr, "Could not find mirror origin dynamic field\n");
-+		return -1;
-+	}
-+	mirror_origin_dynfield = offset;
-+
-+	offset = rte_mbuf_dynflag_lookup(RTE_MBUF_DYNFLAG_MIRROR_ORIGIN, NULL);
-+	if (offset < 0) {
-+		fprintf(stderr, "Could not find mirror origin dynamic flag\n");
-+		return -1;
-+	}
-+	mirror_origin_dynflag = RTE_BIT64(offset);
-+
-+	offset = rte_mbuf_dynflag_lookup(RTE_MBUF_DYNFLAG_MIRROR_INGRESS, NULL);
-+	if (offset < 0) {
-+		fprintf(stderr, "Could not find mirror ingress flag\n");
-+		return -1;
-+	}
-+	mirror_ingress_dynflag = RTE_BIT64(offset);
-+
-+	offset = rte_mbuf_dynflag_lookup(RTE_MBUF_DYNFLAG_MIRROR_EGRESS, NULL);
-+	if (offset < 0) {
-+		fprintf(stderr, "Could not find mirror egress flag\n");
-+		return -1;
-+	}
-+	mirror_egress_dynflag = RTE_BIT64(offset);
-+	return 0;
-+}
-+
-+static void show_capturing(unsigned int count)
-+{
-+	struct interface *intf;
- 
- 	fputs("Capturing on ", stdout);
- 	TAILQ_FOREACH(intf, &interfaces, next) {
-@@ -898,6 +1022,47 @@ static void show_count(uint64_t count)
- 	bt = fprintf(stderr, "%"PRIu64" ", count);
- }
- 
-+static ssize_t
-+pcapng_write_packets(rte_pcapng_t *pcapng, struct rte_mbuf *pkts[], uint16_t n)
-+{
-+	struct rte_mbuf *towrite[BURST_SIZE];
-+	unsigned int count = 0;
-+
-+	for (unsigned int i = 0; i < n; i++) {
-+		struct rte_mbuf *m = pkts[i];
-+		enum rte_pcapng_direction direction = RTE_PCAPNG_DIRECTION_UNKNOWN;
-+
-+		/* If no origin flag then why did we get this? */
-+		if (unlikely(!(m->ol_flags & mirror_origin_dynflag))) {
-+			fprintf(stderr, "Missing origin info in packet\n");
-+			return -1;
-+		}
-+
-+		const struct rte_mbuf_origin *origin
-+			= RTE_MBUF_DYNFIELD(m, mirror_origin_dynfield, rte_mbuf_origin_t *);
-+
-+		if (m->ol_flags & mirror_ingress_dynflag)
-+			direction = RTE_PCAPNG_DIRECTION_IN;
-+		else if (m->ol_flags & mirror_egress_dynflag)
-+			direction = RTE_PCAPNG_DIRECTION_OUT;
-+
-+		uint64_t timestamp;
-+		if (m->ol_flags & timestamp_dynflag)
-+			timestamp = *RTE_MBUF_DYNFIELD(m, timestamp_dynfield,
-+						       rte_mbuf_timestamp_t *);
-+		else
-+			timestamp = rte_get_tsc_cycles();
-+
-+		if (rte_pcapng_insert(m, origin->queue_id, direction, origin->original_len,
-+				      timestamp, NULL) < 0)
-+			continue;  /* skip no headroom? */
-+
-+		towrite[count++] = m;
-+	}
-+
-+	return rte_pcapng_write_packets(pcapng, towrite, count);
-+}
-+
- /* Write multiple packets in older pcap format */
- static ssize_t
- pcap_write_packets(pcap_dumper_t *dumper,
-@@ -930,16 +1095,75 @@ pcap_write_packets(pcap_dumper_t *dumper,
- 	return total;
- }
- 
-+/* Make sure configuration of mbuf pool has enough headroom for both VLAN's */
-+static_assert(RTE_PKTMBUF_HEADROOM > 2 * sizeof(struct rte_vlan_hdr),
-+	"not enough mbuf headroom for VLAN insertion");
-+
-+/*
-+ * More general version of rte_vlan_insert()
-+ * Note: mbufs are allocated by rte_eth_mirror_burst() from the
-+ * pool that was passed when setting up mirror.
-+ */
-+static void
-+vlan_insert(struct rte_mbuf *m, uint16_t ether_type, uint16_t tci)
-+{
-+	struct rte_ether_hdr *nh, tmph;
-+	const struct rte_ether_hdr *oh;
-+	struct rte_vlan_hdr *vh;
-+
-+	RTE_ASSERT(!RTE_MBUF_DIRECT(m));
-+	RTE_ASSERT(rte_mbuf_refcnt_read(m) == 1);
-+
-+	oh = rte_pktmbuf_read(m, 0, sizeof(*oh), &tmph);
-+	RTE_ASSERT(oh != NULL);
-+
-+	/* overlay new header */
-+	nh = (struct rte_ether_hdr *)
-+		rte_pktmbuf_prepend(m, sizeof(struct rte_vlan_hdr));
-+
-+	RTE_ASSERT(nh != NULL);
-+
-+	memmove(nh, oh, 2 * RTE_ETHER_ADDR_LEN);
-+	nh->ether_type = rte_cpu_to_be_16(ether_type);
-+
-+	vh = (struct rte_vlan_hdr *) (nh + 1);
-+	vh->vlan_tci = rte_cpu_to_be_16(tci);
-+}
-+
-+/* Filtering and pcap file format require that VLAN not be offloaded */
-+static void
-+remove_vlan_offload(struct rte_mbuf *pkts[], unsigned int n)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < n; i++) {
-+		struct rte_mbuf *m = pkts[i];
-+
-+		if (m->ol_flags & mirror_ingress_dynflag) {
-+			if (m->ol_flags & RTE_MBUF_F_RX_VLAN_STRIPPED)
-+				vlan_insert(m, RTE_ETHER_TYPE_VLAN, m->vlan_tci);
-+			if (m->ol_flags & RTE_MBUF_F_RX_QINQ_STRIPPED)
-+				vlan_insert(m, RTE_ETHER_TYPE_QINQ, m->vlan_tci_outer);
-+		}
-+		if (m->ol_flags & mirror_egress_dynflag) {
-+			if (m->ol_flags & RTE_MBUF_F_TX_VLAN)
-+				vlan_insert(m, RTE_ETHER_TYPE_VLAN, m->vlan_tci);
-+			if (m->ol_flags & RTE_MBUF_F_TX_QINQ)
-+				vlan_insert(m, RTE_ETHER_TYPE_QINQ, m->vlan_tci_outer);
-+
-+		}
-+	}
-+}
-+
- /* Process all packets in ring and dump to capture file */
--static int process_ring(dumpcap_out_t out, struct rte_ring *r)
-+static int process_ring(dumpcap_out_t out, struct rte_ring *ring)
- {
- 	struct rte_mbuf *pkts[BURST_SIZE];
--	unsigned int avail, n;
-+	unsigned int n, avail;
- 	static unsigned int empty_count;
- 	ssize_t written;
- 
--	n = rte_ring_sc_dequeue_burst(r, (void **) pkts, BURST_SIZE,
--				      &avail);
-+	n = rte_ring_sc_dequeue_burst(ring, (void **)pkts, BURST_SIZE, &avail);
- 	if (n == 0) {
- 		/* don't consume endless amounts of cpu if idle */
- 		if (empty_count < SLEEP_THRESHOLD)
-@@ -948,11 +1172,12 @@ static int process_ring(dumpcap_out_t out, struct rte_ring *r)
- 			usleep(10);
- 		return 0;
- 	}
--
- 	empty_count = (avail == 0);
- 
-+	remove_vlan_offload(pkts, n);
-+
- 	if (use_pcapng)
--		written = rte_pcapng_write_packets(out.pcapng, pkts, n);
-+		written = pcapng_write_packets(out.pcapng, pkts, n);
- 	else
- 		written = pcap_write_packets(out.dumper, pkts, n);
- 
-@@ -971,15 +1196,18 @@ static int process_ring(dumpcap_out_t out, struct rte_ring *r)
- 
- int main(int argc, char **argv)
- {
--	struct rte_ring *r;
- 	struct rte_mempool *mp;
- 	struct sigaction action = {
- 		.sa_flags = SA_RESTART,
- 		.sa_handler = signal_handler,
- 	};
- 	struct sigaction origaction;
-+	struct rte_ring *ring = NULL;
-+	char vdev_name[RTE_DEV_NAME_MAX_LEN];
-+	uint16_t mirror_port = UINT16_MAX;
- 	dumpcap_out_t out;
- 	char *p;
-+	int ret;
- 
- 	p = strrchr(argv[0], '/');
- 	if (p == NULL)
-@@ -1018,12 +1246,21 @@ int main(int argc, char **argv)
- 		exit(0);
- 	}
- 
--	r = create_ring();
- 	mp = create_mempool();
-+	ring = create_ring_dev(vdev_name, &mirror_port);
- 	out = create_output();
- 
-+	ret = enable_mirror(mirror_port, mp);
-+	if (ret < 0)
-+		goto cleanup;
-+
-+	ret = setup_mbuf();
-+	if (ret < 0)
-+		goto cleanup;
-+
-+	show_capturing(ret);
-+
- 	start_time = time(NULL);
--	enable_pdump(r, mp);
- 
- 	if (!quiet) {
- 		fprintf(stderr, "Packets captured: ");
-@@ -1031,7 +1268,7 @@ int main(int argc, char **argv)
- 	}
- 
- 	while (!rte_atomic_load_explicit(&quit_signal, rte_memory_order_relaxed)) {
--		if (process_ring(out, r) < 0) {
-+		if (process_ring(out, ring) < 0) {
- 			fprintf(stderr, "pcapng file write failed; %s\n",
- 				strerror(errno));
- 			break;
-@@ -1048,20 +1285,24 @@ int main(int argc, char **argv)
- 			break;
- 	}
- 
--	disable_primary_monitor();
--
- 	if (rte_eal_primary_proc_alive(NULL))
- 		report_packet_stats(out);
- 
-+cleanup:
-+	disable_primary_monitor();
-+
- 	if (use_pcapng)
- 		rte_pcapng_close(out.pcapng);
- 	else
- 		pcap_dump_close(out.dumper);
- 
--	cleanup_pdump_resources();
-+	if (rte_eal_primary_proc_alive(NULL)) {
-+		disable_mirror_ports(mirror_port);
- 
--	rte_ring_free(r);
--	rte_mempool_free(mp);
-+		rte_eal_hotplug_remove("vdev", vdev_name);
-+		rte_ring_free(ring);
-+		rte_mempool_free(mp);
-+	}
- 
- 	return rte_eal_cleanup() ? EXIT_FAILURE : 0;
- }
-diff --git a/app/dumpcap/meson.build b/app/dumpcap/meson.build
-index 69c016c780..82c0407450 100644
---- a/app/dumpcap/meson.build
-+++ b/app/dumpcap/meson.build
-@@ -14,4 +14,5 @@ endif
- 
- ext_deps += pcap_dep
- sources = files('main.c')
--deps += ['ethdev', 'pdump', 'pcapng', 'bpf']
-+
-+deps += ['net_ring', 'ethdev', 'pcapng', 'bpf' ]
--- 
-2.47.2
+> ---
+>  lib/pmu/pmu.c         |  4 ----
+>  lib/pmu/pmu_arm64.c   | 39 +++++++--------------------------------
+>  lib/pmu/pmu_private.h |  8 ++++++++
+>  3 files changed, 15 insertions(+), 36 deletions(-)
+>=20
+> diff --git a/lib/pmu/pmu.c b/lib/pmu/pmu.c index 8cf2e89c69..97bab80368
+> 100644
+> --- a/lib/pmu/pmu.c
+> +++ b/lib/pmu/pmu.c
+> @@ -25,10 +25,6 @@
+>  #define FIELD_PREP(m, v) (((uint64_t)(v) << (rte_ffs64(m) - 1)) & (m))
+>=20
+>  RTE_LOG_REGISTER_DEFAULT(rte_pmu_logtype, INFO) -#define
+> RTE_LOGTYPE_PMU rte_pmu_logtype
+> -
+> -#define PMU_LOG(level, ...) \
+> -	RTE_LOG_LINE(level, PMU, ## __VA_ARGS__)
+>=20
+>  /* A structure describing an event */
+>  struct rte_pmu_event {
+> diff --git a/lib/pmu/pmu_arm64.c b/lib/pmu/pmu_arm64.c index
+> 3f4f5fa297..2c40b5f702 100644
+> --- a/lib/pmu/pmu_arm64.c
+> +++ b/lib/pmu/pmu_arm64.c
+> @@ -14,8 +14,6 @@
+>=20
+>  #define PERF_USER_ACCESS_PATH "/proc/sys/kernel/perf_user_access"
+>=20
+> -static int restore_uaccess;
+> -
+>  static int
+>  read_attr_int(const char *path, int *val)  { @@ -39,49 +37,26 @@
+> read_attr_int(const char *path, int *val)
+>  	return 0;
+>  }
+>=20
+> -static int
+> -write_attr_int(const char *path, int val) -{
+> -	char buf[BUFSIZ];
+> -	int num, ret, fd;
+> -
+> -	fd =3D open(path, O_WRONLY);
+> -	if (fd =3D=3D -1)
+> -		return -errno;
+> -
+> -	num =3D snprintf(buf, sizeof(buf), "%d", val);
+> -	ret =3D write(fd, buf, num);
+> -	if (ret =3D=3D -1) {
+> -		close(fd);
+> -
+> -		return -errno;
+> -	}
+> -
+> -	close(fd);
+> -
+> -	return 0;
+> -}
+> -
+>  static int
+>  pmu_arm64_init(void)
+>  {
+> -	int ret;
+> +	int uaccess, ret;
+>=20
+> -	ret =3D read_attr_int(PERF_USER_ACCESS_PATH, &restore_uaccess);
+> +	ret =3D read_attr_int(PERF_USER_ACCESS_PATH, &uaccess);
+>  	if (ret)
+>  		return ret;
+>=20
+> -	/* user access already enabled */
+> -	if (restore_uaccess =3D=3D 1)
+> -		return 0;
+> +	if (uaccess !=3D 1)
+> +		PMU_LOG(WARNING, "access to perf counters disabled, "
+> +			"run 'echo 1 > %s' to enable",
+> +			PERF_USER_ACCESS_PATH);
+>=20
+> -	return write_attr_int(PERF_USER_ACCESS_PATH, 1);
+> +	return ret;
+>  }
+>=20
+>  static void
+>  pmu_arm64_fini(void)
+>  {
+> -	write_attr_int(PERF_USER_ACCESS_PATH, restore_uaccess);
+>  }
+>=20
+>  static void
+> diff --git a/lib/pmu/pmu_private.h b/lib/pmu/pmu_private.h index
+> d74f7f4092..82118df8b3 100644
+> --- a/lib/pmu/pmu_private.h
+> +++ b/lib/pmu/pmu_private.h
+> @@ -5,6 +5,14 @@
+>  #ifndef PMU_PRIVATE_H
+>  #define PMU_PRIVATE_H
+>=20
+> +#include <rte_log.h>
+> +
+> +extern int rte_pmu_logtype;
+> +#define RTE_LOGTYPE_PMU rte_pmu_logtype
+> +
+> +#define PMU_LOG(level, ...) \
+> +	RTE_LOG_LINE(level, PMU, ## __VA_ARGS__)
+> +
+>  /**
+>   * Structure describing architecture specific PMU operations.
+>   */
+> --
+> 2.34.1
 
