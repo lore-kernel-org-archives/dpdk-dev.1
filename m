@@ -2,76 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31A28C87FCB
-	for <dpdk-dev@archiver.kernel.org>; Tue,  5 Aug 2025 13:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FA16C87FCB
+	for <dpdk-dev@archiver.kernel.org>; Tue,  5 Aug 2025 13:11:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E28F840BA4;
-	Tue,  5 Aug 2025 15:10:34 +0200 (CEST)
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com
- [209.85.210.170])
- by mails.dpdk.org (Postfix) with ESMTP id 9EB1F40A4B
- for <dev@dpdk.org>; Tue,  5 Aug 2025 15:10:33 +0200 (CEST)
-Received: by mail-pf1-f170.google.com with SMTP id
- d2e1a72fcca58-76bf3dafaa5so2349771b3a.0
- for <dev@dpdk.org>; Tue, 05 Aug 2025 06:10:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1754399433;
- x=1755004233; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=WGQNzgO9rAaQInAm/9SRboaH1POH7Pt7HHllnYmow6M=;
- b=Iywq7jDj9zjLZ9WINH6r9W3wMpjNOslgOXtgLjnKCRCnM6/dRjUIkqQ9ypGr4S6hzO
- 9S9fG517vsNR6K6P+mK9j1/+C5yZ5jsOUEFeJbY96ur0dBzXQ68PWrcNThrO6qQ0D8ys
- eVlcfcOnehPU7Sm6/INsZ6t1A21OQkfm3zAeaQ1QGP4+VNzcqrcJ8t34r4C49g2LNtOA
- h51u3BieQef/+8balpQO2L+e17lqj/pncaBjlrrgv98P3kn2WJOTeNp9rQsZEjvZILoX
- 4gCIYNku/jeTn7j+PXA74UZlkOkbcqFqWp49fEYXLEj3mzWXl3COT7KmUYDigmtUrg44
- mdxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1754399433; x=1755004233;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=WGQNzgO9rAaQInAm/9SRboaH1POH7Pt7HHllnYmow6M=;
- b=hsA+Y7kc9tqJ7oXe0+e/0nJXxlio0+QGfBpGuT2+8K2wpmw1lFeMvxig+stJUqvb7g
- NE9TjXlF+RzSrF6uJG+d0C9047GHK0s4BKmGLS3PlsapZ2325TEvQHdCbSPZwLY1RYru
- iGFwKQ/bI/INdMWDCSqTlW32pxoi0M8aea9WT2qeZ/034itlElKKLKsPG1o65aA+Ddcd
- ZMMRLCTUuyzZ2++maU9spPjmfs05Dls1uD4sE+b3X88NqysKJqyctbPhv3ASEKCHTRYI
- ZLM8sUXujW8PMo1atUwpkvhIn+OVIxQwAJfJsfDICKLhnYWXkfHvxEBTNWAc04p3hsl2
- 6DWA==
-X-Gm-Message-State: AOJu0YzyDI5AEZ6hx7/OpHW+GbEMJsOoSgKjW3RUR9C2ss7U2b0fUmKK
- wQ4pJfcoZIe6NgsoZkTFIySE9KySjtZeSQ5xr2fDPuIVPQ+u24Zw9PuEUZn4htVaBd0=
-X-Gm-Gg: ASbGncum9mMnT4wmYmfsjkESw/0zngEt+PRpot/gJlxBtWfl9TBVb0kMQqO2ELLHcWB
- J6/4YxIRaDE59NOgQLB4GUtmmHzYIOdnW5mAMzTunKdCTgUyGVUpDcvKdwFlpcKgc9a0g3vyKb6
- JoAJQSZGLuxUCZmKRRzHRVO3tb/05SySm1VCvdDoVvFDNu8kYyrRqAtppbeFNuz1RXuSfsqyGS4
- 7zgkE9NnRVo9djQMoktAu7pRiLx/jWrXo8fPJBZFgcIfZB/1J8RJfDbOymiFjnhX4+zoqCISvVm
- adBvzYYhRi7i9UFHXvqO682Cqd+V9FNTN0tPwkcvgYCmUzkEIbtcUWxiJ5nWsPKpc62gk+caWny
- mtJg62Z1BiwxCC3h1D/R8DBdsOm1PKJRcBMwgAvm/7B+t1HMn
-X-Google-Smtp-Source: AGHT+IFQFlu25QloRC4xxlHp2gITT4EXwPXMpQVeXdVq08LQW6T3RBtpkW2bFexlC+GRyDbNyeJ4JQ==
-X-Received: by 2002:a05:6a20:3d1c:b0:23d:e6ec:5410 with SMTP id
- adf61e73a8af0-2401ea7be84mr4610660637.17.1754399432614; 
- Tue, 05 Aug 2025 06:10:32 -0700 (PDT)
-Received: from localhost.localdomain ([64.62.143.197])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-76bd9795200sm11371054b3a.114.2025.08.05.06.10.31
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 05 Aug 2025 06:10:32 -0700 (PDT)
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-To: Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
-Cc: dev@dpdk.org, stable@dpdk.org,
- Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Subject: [PATCH] This patch validate a connection tracking state when matching
- 'conntrack is' in rte_flow rules. The conntract possible CT states are
- SYN_RECV, ESTABLISHED, FIN_WAIT, CLOSE_WAIT,
- LAST_ACK and TIME_WAIT. Therefore the maximum possible value to match on in
- rte_flow is TIME_WAIT but mlx5 allowed matching on any values.
-Date: Tue,  5 Aug 2025 09:10:13 -0400
-Message-ID: <20250805131013.476318-1-14pwcse1224@uetpeshawar.edu.pk>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id 7B78F40BA4;
+	Tue,  5 Aug 2025 15:11:03 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 3C2D740A4B
+ for <dev@dpdk.org>; Tue,  5 Aug 2025 15:11:02 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 06D2420446;
+ Tue,  5 Aug 2025 15:11:02 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH v3 3/3] ethdev: Reject conflicting TX offloads
+ configuration
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Tue, 5 Aug 2025 15:11:01 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FE08@smartserver.smartshare.dk>
+In-Reply-To: <b3da43b5-dbf1-428d-ad13-0c787d322654@huawei.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v3 3/3] ethdev: Reject conflicting TX offloads
+ configuration
+Thread-Index: AdwFrhgm8ae20bW7SfqdDqVA/AHlmgAVfflQ
+References: <20250731090731.671589-1-mb@smartsharesystems.com>
+ <20250803194218.683318-1-mb@smartsharesystems.com>
+ <20250803194218.683318-3-mb@smartsharesystems.com>
+ <b3da43b5-dbf1-428d-ad13-0c787d322654@huawei.com>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "fengchengwen" <fengchengwen@huawei.com>, <dev@dpdk.org>,
+ "Aman Singh" <aman.deep.singh@intel.com>,
+ "Thomas Monjalon" <thomas@monjalon.net>,
+ "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
+ "Ivan Malov" <ivan.malov@arknetworks.am>,
+ "Stephen Hemminger" <stephen@networkplumber.org>
+Cc: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
+ "Bruce Richardson" <bruce.richardson@intel.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,31 +57,101 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch validate the CT state item.
-Fixes: aca19061e4b9 ('net/mlx5: validate connection tracking item')
-Cc: stable@dpdk.org
-
-Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
----
- drivers/net/mlx5/mlx5_flow_dv.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/net/mlx5/mlx5_flow_dv.c b/drivers/net/mlx5/mlx5_flow_dv.c
-index 7b9e5018b8..750385cd42 100644
---- a/drivers/net/mlx5/mlx5_flow_dv.c
-+++ b/drivers/net/mlx5/mlx5_flow_dv.c
-@@ -3290,6 +3290,11 @@ mlx5_flow_dv_validate_item_aso_ct(struct rte_eth_dev *dev,
- 						  NULL,
- 						  "Conflict status bits");
- 	}
-+	if (spec->flags > RTE_FLOW_CONNTRACK_STATE_TIME_WAIT)
-+		return rte_flow_error_set(error, EINVAL,
-+					RTE_FLOW_ERROR_TYPE_ITEM,
-+					NULL,
-+					"Invalid CT state matching \n");
- 	/* State change also needs to be considered. */
- 	*item_flags |= MLX5_FLOW_LAYER_ASO_CT;
- 	return 0;
--- 
-2.43.0
-
+PiBGcm9tOiBmZW5nY2hlbmd3ZW4gW21haWx0bzpmZW5nY2hlbmd3ZW5AaHVhd2VpLmNvbV0NCj4g
+U2VudDogVHVlc2RheSwgNSBBdWd1c3QgMjAyNSAwNC4xMA0KPiANCj4gT24gOC80LzIwMjUgMzo0
+MiBBTSwgTW9ydGVuIEJyw7hydXAgd3JvdGU6DQo+ID4gV2hlbiBhbiBldGhkZXYgcG9ydCBpcyBj
+b25maWd1cmVkIGZvciBmYXN0IG1idWYgcmVsZWFzZSwgdGhlIGRyaXZlciBjYW4NCj4gPiB1c2Ug
+YSBUWCBidXJzdCBmdW5jdGlvbiByZWx5aW5nIG9uIHRoZSBmYXN0IG1idWYgcmVsZWFzZSBwcmVj
+b25kaXRpb25zLg0KPiA+IFRodXMsIGFsc28gY29uZmlndXJpbmcgdGhpcyBwb3J0IG9yIGEgcXVl
+dWUgb24gdGhlIHBvcnQgZm9yIHRyYW5zbWl0dGluZw0KPiA+IHNlZ21lbnRlZCBwYWNrZXRzIGlz
+IHByb2hpYml0ZWQuDQo+ID4gQ2hlY2tzIGZvciB0aGVzZSBjb25mbGljdGluZyBjb25maWd1cmF0
+aW9ucyBoYXZlIGJlZW4gYWRkZWQgdG8gdGhlIGV0aGRldg0KPiA+IGxpYnJhcnksIHNvIHRoZSBk
+cml2ZXJzIGRvbid0IGhhdmUgdG8gaW1wbGVtZW50IHRoZW0uDQo+IA0KPiBJIHRoaW5rIHRoZSBu
+ZXcgY29tbWVudCBwYXJ0IG9mIG9tYnVmLWZhc3QtZnJlZSBhbmQgbXVsdGktc2VnIGluICdbUEFU
+Q0ggdjMNCj4gMi8zXSBldGhkZXY6IEltcHJvdmUgZGVzY3JpcHRpb25zIG9mIFJYIGFuZCBUWCBv
+ZmZsb2FkcycNCj4gY291bGQgZHJvcCBvciB3aXRoaW4gdGhpcyBjb21taXQuDQoNCkFsdGhvdWdo
+IHRoZSBjb21tZW50cyBhcmUgbmV3LCBJIHRoaW5rIHRoZSBiZWhhdmlvciBkZXNjcmliZWQgYnkg
+dGhlIG5ldyBjb21tZW50cyBpcyBub3QgcmVhbGx5IG5ldywgaXQgd2FzIGp1c3QgdW5kb2N1bWVu
+dGVkLg0KU28sIHBhdGNoIDIvMyBwcm9wZXJseSBkb2N1bWVudHMgaXQsIGFuZCBwYXRjaCAzLzMg
+ZW5mb3JjZXMgaXQgaW4gdGhlIGV0aGRldiBsYXllciwgc28gZHJpdmVycyBkb24ndCBoYXZlIHRv
+Lg0KDQo+IA0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogTW9ydGVuIEJyw7hydXAgPG1iQHNtYXJ0
+c2hhcmVzeXN0ZW1zLmNvbT4NCj4gPiBBY2tlZC1ieTogQnJ1Y2UgUmljaGFyZHNvbiA8YnJ1Y2Uu
+cmljaGFyZHNvbkBpbnRlbC5jb20+DQo+ID4gQWNrZWQtYnk6IEFuZHJldyBSeWJjaGVua28gPGFu
+ZHJldy5yeWJjaGVua29Ab2t0ZXRsYWJzLnJ1Pg0KPiA+IEFja2VkLWJ5OiBLb25zdGFudGluIEFu
+YW55ZXYgPGtvbnN0YW50aW4uYW5hbnlldkBodWF3ZWkuY29tPg0KPiA+IC0tLQ0KPiA+IHYzOg0K
+PiA+ICogU2hvcnRlbiB0aGUgYWRkZWQgbG9nIG1lc3NhZ2VzLiAoU3RlcGhlbiBIZW1taW5nZXIs
+IEl2YW4gTWFsb3YpDQo+ID4gLS0tDQo+ID4gIGxpYi9ldGhkZXYvcnRlX2V0aGRldi5jIHwgMzcg
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+ICAxIGZpbGUgY2hhbmdl
+ZCwgMzcgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2xpYi9ldGhkZXYvcnRl
+X2V0aGRldi5jIGIvbGliL2V0aGRldi9ydGVfZXRoZGV2LmMNCj4gPiBpbmRleCBkZDdjMDBiYzk0
+Li4wMGFmZGE4NzNmIDEwMDY0NA0KPiA+IC0tLSBhL2xpYi9ldGhkZXYvcnRlX2V0aGRldi5jDQo+
+ID4gKysrIGIvbGliL2V0aGRldi9ydGVfZXRoZGV2LmMNCj4gPiBAQCAtMTUzMSw2ICsxNTMxLDE4
+IEBAIHJ0ZV9ldGhfZGV2X2NvbmZpZ3VyZSh1aW50MTZfdCBwb3J0X2lkLCB1aW50MTZfdA0KPiBu
+Yl9yeF9xLCB1aW50MTZfdCBuYl90eF9xLA0KPiA+ICAJCWdvdG8gcm9sbGJhY2s7DQo+ID4gIAl9
+DQo+ID4NCj4gPiArCS8qIE1CVUZfRkFTVF9GUkVFIHByZWNvbmRpdGlvbnMgY29uZmxpY3Qgd2l0
+aCBNVUxUSV9TRUdTIHN1cHBvcnQuICovDQo+ID4gKwlpZiAoKGRldl9jb25mLT50eG1vZGUub2Zm
+bG9hZHMgJiBSVEVfRVRIX1RYX09GRkxPQURfTUJVRl9GQVNUX0ZSRUUpICYmDQo+ID4gKwkgICAg
+KGRldl9jb25mLT50eG1vZGUub2ZmbG9hZHMgJiBSVEVfRVRIX1RYX09GRkxPQURfTVVMVElfU0VH
+UykpIHsNCj4gPiArCQlSVEVfRVRIREVWX0xPR19MSU5FKEVSUiwNCj4gPiArCQkJImlkPSVkIG9m
+ZmxvYWQgY2xhc2gsICVzIHZzICVzIiwNCj4gDQo+IFN1Z2dlc3Qga2VlcCB0aGUgc2FtZSB0cmFj
+ZSBmbXQuIGUuZy46IEV0aGRldiBwb3J0X2lkPSV1DQo+IFRoZSBzYW1lIGJlbG93DQoNCkluaXRp
+YWwgdmVyc2lvbnMgb2YgdGhlIHNlcmllcyBkaWQgdGhhdCwgYnV0IG90aGVyIHJldmlld2VycyBy
+ZXF1ZXN0ZWQgYSBzaG9ydGVyIGxvZyBmb3JtYXQuDQoNCj4gDQo+ID4gKwkJCXBvcnRfaWQsDQo+
+ID4gKw0KPiAJcnRlX2V0aF9kZXZfdHhfb2ZmbG9hZF9uYW1lKFJURV9FVEhfVFhfT0ZGTE9BRF9N
+VUxUSV9TRUdTKSwNCj4gPiArDQo+IAlydGVfZXRoX2Rldl90eF9vZmZsb2FkX25hbWUoUlRFX0VU
+SF9UWF9PRkZMT0FEX01CVUZfRkFTVF9GUkVFKSk7DQo+ID4gKwkJcmV0ID0gLUVJTlZBTDsNCj4g
+PiArCQlnb3RvIHJvbGxiYWNrOw0KPiA+ICsJfQ0KPiA+ICsNCj4gPiAgCWRldi0+ZGF0YS0+ZGV2
+X2NvbmYucnhfYWR2X2NvbmYucnNzX2NvbmYucnNzX2hmID0NCj4gPiAgCQlydGVfZXRoX3Jzc19o
+Zl9yZWZpbmUoZGV2X2NvbmYtPnJ4X2Fkdl9jb25mLnJzc19jb25mLnJzc19oZik7DQo+ID4NCj4g
+PiBAQCAtMjcwOSw2ICsyNzIxLDMxIEBAIHJ0ZV9ldGhfdHhfcXVldWVfc2V0dXAodWludDE2X3Qg
+cG9ydF9pZCwgdWludDE2X3QNCj4gdHhfcXVldWVfaWQsDQo+ID4gIAkJcmV0dXJuIC1FSU5WQUw7
+DQo+ID4gIAl9DQo+ID4NCj4gPiArCS8qDQo+ID4gKwkgKiBJZiB0aGUgZHJpdmVyIHVzZXMgYSBU
+eCBmdW5jdGlvbiB3aXRoIE1CVUZfRkFTVF9GUkVFIHByZWNvbmRpdGlvbnMsDQo+ID4gKwkgKiBw
+ZXItcXVldWUgTVVMVElfU0VHUyBzdXBwb3J0IGlzIG5vdCBwb3NzaWJsZS4NCj4gPiArCSAqLw0K
+PiA+ICsJaWYgKChkZXYtPmRhdGEtPmRldl9jb25mLnR4bW9kZS5vZmZsb2FkcyAmDQo+IFJURV9F
+VEhfVFhfT0ZGTE9BRF9NQlVGX0ZBU1RfRlJFRSkgJiYNCj4gPiArCQkJKGxvY2FsX2NvbmYub2Zm
+bG9hZHMgJiBSVEVfRVRIX1RYX09GRkxPQURfTVVMVElfU0VHUykpIHsNCj4gPiArCQlSVEVfRVRI
+REVWX0xPR19MSU5FKEVSUiwNCj4gPiArCQkJImlkPSVkIHR4cT0lZCBvZmZsb2FkIGNsYXNoLCBw
+ZXItcXVldWUgJXMgdnMgcGVyLXBvcnQgJXMiLA0KPiA+ICsJCQlwb3J0X2lkLCB0eF9xdWV1ZV9p
+ZCwNCj4gPiArDQo+IAlydGVfZXRoX2Rldl90eF9vZmZsb2FkX25hbWUoUlRFX0VUSF9UWF9PRkZM
+T0FEX01VTFRJX1NFR1MpLA0KPiA+ICsNCj4gCXJ0ZV9ldGhfZGV2X3R4X29mZmxvYWRfbmFtZShS
+VEVfRVRIX1RYX09GRkxPQURfTUJVRl9GQVNUX0ZSRUUpKTsNCj4gPiArCQlyZXR1cm4gLUVJTlZB
+TDsNCj4gPiArCX0NCj4gPiArCS8qDQo+ID4gKwkgKiBJZiB0aGUgZHJpdmVyIHVzZXMgYSBUeCBm
+dW5jdGlvbiB3aXRoIE1VTFRJX1NFR1Mgc3VwcG9ydCwNCj4gPiArCSAqIHJ1bnRpbWUgc3VwcG9y
+dCBmb3IgcGVyLXF1ZXVlIE1CVUZfRkFTVF9GUkVFIG9wdGltaXphdGlvbiBkZXBlbmRzIG9uDQo+
+IHRoZSBkcml2ZXIuDQo+ID4gKwkgKi8NCj4gPiArCWlmICgoZGV2LT5kYXRhLT5kZXZfY29uZi50
+eG1vZGUub2ZmbG9hZHMgJg0KPiBSVEVfRVRIX1RYX09GRkxPQURfTVVMVElfU0VHUykgJiYNCj4g
+PiArCQkJKGxvY2FsX2NvbmYub2ZmbG9hZHMgJiBSVEVfRVRIX1RYX09GRkxPQURfTUJVRl9GQVNU
+X0ZSRUUpKQ0KPiA+ICsJCVJURV9FVEhERVZfTE9HX0xJTkUoREVCVUcsDQo+ID4gKwkJCSJpZD0l
+ZCB0eHE9JWQgcG90ZW50aWFsIG9mZmxvYWQgY2xhc2gsIHBlci1xdWV1ZSAlcyB2cw0KPiBwZXIt
+cG9ydCAlczogUE1EIHRvIGRlY2lkZSIsDQo+ID4gKwkJCXBvcnRfaWQsIHR4X3F1ZXVlX2lkLA0K
+PiA+ICsNCj4gCXJ0ZV9ldGhfZGV2X3R4X29mZmxvYWRfbmFtZShSVEVfRVRIX1RYX09GRkxPQURf
+TUJVRl9GQVNUX0ZSRUUpLA0KPiA+ICsNCj4gCXJ0ZV9ldGhfZGV2X3R4X29mZmxvYWRfbmFtZShS
+VEVfRVRIX1RYX09GRkxPQURfTVVMVElfU0VHUykpOw0KPiANCj4gMVwgVGhlIGdsb2JhbCBwb3J0
+IGNvbmZpZ3VyYXRpb24gd2lsbCB0YWtlIGVmZmVjdCBvbiBhbGwgcXVldWVzLg0KPiAgICBJZiBp
+dCBkb24ndCBzdXBwb3J0IGJvdGggTUJVRl9GQVNUX0ZSRUUgYW5kIE1VTFRJX1NFRywgd2h5IGRv
+bid0IGJhbiBpdA0KPiBoZXJlPw0KDQpUaGVyZSBpcyBhIHNsaWdodCBkaWZmZXJlbmNlLi4uDQpJ
+ZiBhIHBvcnQgaXMgY29uZmlndXJlZCBmb3IgTUJVRl9GQVNUX0ZSRUUsIGl0IG1heSBpbnN0YWxs
+IGEgVFggZnVuY3Rpb24gKHBvcnQtd2lkZSwgaS5lLiBvbiBhbGwgcXVldWVzKSByZWx5aW5nIG9u
+IHRoZSBtYnVmLWZhc3QtZnJlZSByZXF1aXJlbWVudHMsIHdoaWNoIHByb2hpYml0IHNlZ21lbnRl
+ZCBwYWNrZXRzLiBTbyBjb21iaW5pbmcgcGVyLXBvcnQgTUJVRl9GQVNUX0ZSRUUgd2l0aCBwZXIt
+cG9ydCBvciBwZXItcXVldWUgTVVMVElfU0VHUyBpcyBpbXBvc3NpYmxlLg0KSG93ZXZlciwgaWYg
+YSBwb3J0IGlzIGNvbmZpZ3VyZWQgZm9yIE1VTFRJX1NFR1MsIGl0IG1heSBpbnN0YWxsIGEgVFgg
+ZnVuY3Rpb24gKHBvcnQtd2lkZSkgd2l0aCBzdXBwb3J0IGZvciBwZXItcXVldWUgTUJVRl9GQVNU
+X0ZSRUUsIGJ5IGNoZWNraW5nIHRoZSBxdWV1ZSBzdHJ1Y3R1cmUgYXQgcnVudGltZS4NCg0KPiAy
+XCBEZWJ1ZyBsZXZlbCBpcyBlYXN5IHRvIGlnbm9yZSwgaG93IGFib3V0IHdhcm5pbmc/DQoNCklm
+IGEgZHJpdmVyJ3MgaW5zdGFsbGVkIE1VTFRJX1NFR1MgVFggZnVuY3Rpb24gc3VwcG9ydHMgcnVu
+dGltZSBjaGVja2luZyB0aGUgcXVldWUgZm9yIE1CVUZfRkFTVF9GUkVFLCB0aGVuIHRoZXJlIHNo
+b3VsZCBiZSBubyB3YXJuaW5nL25vdGljZSBsZXZlbCBsb2cgbWVzc2FnZSwgYXMgaXQgaXMgY29u
+c2lkZXJlZCAibm9ybWFsIiBiZWhhdmlvci4NCkhvd2V2ZXIsIGlmIGEgZHJpdmVyIGRvZXNuJ3Qg
+c3VwcG9ydCBpdCwgdGhlIGRyaXZlciBtdXN0IHJldHVybiAtRUlOVkFMIGZvciBzdWNoIGEgcXVl
+dWUgY29uZmlndXJhdGlvbiByZXF1ZXN0LiBBbmQgaWYgdGhlIGRyaXZlciBkb2Vzbid0IGxvZyBh
+bnkgbWVzc2FnZSB3aXRoIHRoYXQsIHRoZW4gdGhpcyBkZWJ1ZyBsZXZlbCBsb2cgbWVzc2FnZSBj
+b3VsZCBoZWxwIHRoZSB1c2VyIGRlYnVnIHRoZSBpc3N1ZS4NCg0KSSB3YXMgaW4gZG91YnQgaWYg
+SSBzaG91bGQgYWRkIHRoaXMgZGVidWcgY2hlY2sgb3Igbm90LCBidXQgSSBkZWNpZGVkIHRoYXQg
+aXQgbWlnaHQgYmUgdXNlZnVsIGZvciBkZWJ1Z2dpbmcgZHJpdmVyIGlzc3VlcyByZWxhdGVkIHRv
+IHN1Y2ggYSBjb25maWd1cmF0aW9uLg0KDQo+IA0KPiA+ICsNCj4gPiAgCXJ0ZV9ldGhkZXZfdHJh
+Y2VfdHhxX3NldHVwKHBvcnRfaWQsIHR4X3F1ZXVlX2lkLCBuYl90eF9kZXNjLCB0eF9jb25mKTsN
+Cj4gPiAgCXJldHVybiBldGhfZXJyKHBvcnRfaWQsIGRldi0+ZGV2X29wcy0+dHhfcXVldWVfc2V0
+dXAoZGV2LA0KPiA+ICAJCSAgICAgICB0eF9xdWV1ZV9pZCwgbmJfdHhfZGVzYywgc29ja2V0X2lk
+LCAmbG9jYWxfY29uZikpOw0KDQo=
