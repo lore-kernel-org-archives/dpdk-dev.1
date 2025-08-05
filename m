@@ -2,56 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4026BC87FD1
-	for <dpdk-dev@archiver.kernel.org>; Tue,  5 Aug 2025 08:37:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF083C87FD1
+	for <dpdk-dev@archiver.kernel.org>; Tue,  5 Aug 2025 08:55:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 32AC140DD1;
-	Tue,  5 Aug 2025 10:37:12 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 2502640DD1
- for <dev@dpdk.org>; Tue,  5 Aug 2025 10:37:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1754383030;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=12HWIUGwO+1kWiNasqzqlFmLLzWXLTBSoHOE/o1GfNE=;
- b=KJ/GZXPK7SDWIhx5T4Vv8OeLf/TW2OpcoKjesMGKXFsJr2zNyluWByd64E3p5DqSbJKM7Y
- b51cTTR07Ip/lGVGQmAvtnYXfZOvDSqfhyvSTzkMpPc2kuzyDRgku3sP+yx5II0avtQ9+7
- xW3Ivqkv7Lt1TEYYTna46IMf5vqzoO4=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-116-ZHpjQglKMkaU-4lvvoYMSw-1; Tue,
- 05 Aug 2025 04:37:07 -0400
-X-MC-Unique: ZHpjQglKMkaU-4lvvoYMSw-1
-X-Mimecast-MFC-AGG-ID: ZHpjQglKMkaU-4lvvoYMSw_1754383026
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 6716B19560B4; Tue,  5 Aug 2025 08:37:06 +0000 (UTC)
-Received: from max-p1.redhat.com (unknown [10.44.22.6])
- by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 90EC31800B65; Tue,  5 Aug 2025 08:37:02 +0000 (UTC)
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-To: dev@dpdk.org, amorenoz@redhat.com, chenbox@nvidia.com,
- david.marchand@redhat.com
-Cc: schalla@marvell.com, Maxime Coquelin <maxime.coquelin@redhat.com>,
- stable@dpdk.org
-Subject: [PATCH] net/virtio-user: fix used ring address calculation
-Date: Tue,  5 Aug 2025 10:36:57 +0200
-Message-ID: <20250805083657.1227817-1-maxime.coquelin@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 1840840BA4;
+	Tue,  5 Aug 2025 10:55:31 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 4C36F40A4B
+ for <dev@dpdk.org>; Tue,  5 Aug 2025 10:55:29 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bx6dh1FvNz6L5KH;
+ Tue,  5 Aug 2025 16:53:12 +0800 (CST)
+Received: from frapeml500003.china.huawei.com (unknown [7.182.85.28])
+ by mail.maildlp.com (Postfix) with ESMTPS id EEB881402F0;
+ Tue,  5 Aug 2025 16:55:26 +0800 (CST)
+Received: from frapeml500002.china.huawei.com (7.182.85.205) by
+ frapeml500003.china.huawei.com (7.182.85.28) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 5 Aug 2025 10:55:26 +0200
+Received: from frapeml500002.china.huawei.com ([7.182.85.205]) by
+ frapeml500002.china.huawei.com ([7.182.85.205]) with mapi id 15.01.2507.039;
+ Tue, 5 Aug 2025 10:55:26 +0200
+From: Marat Khalili <marat.khalili@huawei.com>
+To: Su Sai <spiderdetective.ss@gmail.com>, "stephen@networkplumber.org"
+ <stephen@networkplumber.org>
+CC: "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: [v3] net/cksum: compute raw cksum for several segments
+Thread-Topic: [v3] net/cksum: compute raw cksum for several segments
+Thread-Index: AQHcA53XV6oX7VAYW0CVHDbi9bVUZrRQ+PqAgADFOQCAAgdooA==
+Date: Tue, 5 Aug 2025 08:55:26 +0000
+Message-ID: <7c1a559c1d4d4e9bb58c318a95399138@huawei.com>
+References: <20250803090837.15589edd@hermes.local>
+ <20250804035430.4058391-1-spiderdetective.ss@gmail.com>
+In-Reply-To: <20250804035430.4058391-1-spiderdetective.ss@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.137.70]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: CNxTNyDaI60-QS2IcnrrkIZAbNg6Y749PyAICGkSrcs_1754383026
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -65,33 +56,244 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch fixes the used ring address calculation, to
-avoid Vhost-vDPA backends (such as VDUSE) to fail while
-trying to translate it.
+> -----Original Message-----
+> From: Su Sai <spiderdetective.ss@gmail.com>
+> Sent: Monday 4 August 2025 04:55
+> To: stephen@networkplumber.org
+> Cc: dev@dpdk.org; Su Sai <spiderdetective.ss@gmail.com>
+> Subject: [v3] net/cksum: compute raw cksum for several segments
+>=20
+> The rte_raw_cksum_mbuf function is used to compute
+> the raw checksum of a packet.
+> If the packet payload stored in multi mbuf, the function
+> will goto the hard case. In hard case,
+> the variable 'tmp' is a type of uint32_t,
+> so rte_bswap16 will drop high 16 bit.
+> Meanwhile, the variable 'sum' is a type of uint32_t,
+> so 'sum +=3D tmp' will drop the carry when overflow.
+> Both drop will make cksum incorrect.
+> This commit fixes the above bug.
+>=20
+> Signed-off-by: Su Sai <spiderdetective.ss@gmail.com>
+> ---
+>  .mailmap              |   1 +
+>  app/test/test_cksum.c | 106 ++++++++++++++++++++++++++++++++++++++++++
+>  lib/net/rte_cksum.h   |  27 +++++++++--
+>  3 files changed, 130 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/.mailmap b/.mailmap
+> index 34a99f93a1..1da1d9f8e1 100644
+> --- a/.mailmap
+> +++ b/.mailmap
+> @@ -1552,6 +1552,7 @@ Sunil Kumar Kori <skori@marvell.com> <sunil.kori@nx=
+p.com>
+>  Sunil Pai G <sunil.pai.g@intel.com>
+>  Sunil Uttarwar <sunilprakashrao.uttarwar@amd.com>
+>  Sun Jiajia <sunx.jiajia@intel.com>
+> +Su Sai <spiderdetective.ss@gmail.com> <susai.ss@bytedance.com>
+>  Sunyang Wu <sunyang.wu@jaguarmicro.com>
+>  Surabhi Boob <surabhi.boob@intel.com>
+>  Suyang Ju <sju@paloaltonetworks.com>
+> diff --git a/app/test/test_cksum.c b/app/test/test_cksum.c
+> index f2ab5af5a7..fb2e3cf9e6 100644
+> --- a/app/test/test_cksum.c
+> +++ b/app/test/test_cksum.c
+> @@ -85,6 +85,42 @@ static const char test_cksum_ipv4_opts_udp[] =3D {
+>  	0x00, 0x35, 0x00, 0x09, 0x89, 0x6f, 0x78,
+>  };
+>=20
+> +/*
+> + * generated in scapy with
+> + * Ether()/IP()/TCP(options=3D[NOP,NOP,Timestamps])/os.urandom(113))
+> + */
+> +static const char test_cksum_ipv4_tcp_multi_segs[] =3D {
+> +	0x00, 0x16, 0x3e, 0x0b, 0x6b, 0xd2, 0xee, 0xff,
+> +	0xff, 0xff, 0xff, 0xff, 0x08, 0x00, 0x45, 0x00,
+> +	0x00, 0xa5, 0x46, 0x10, 0x40, 0x00, 0x40, 0x06,
+> +	0x80, 0xb5, 0xc0, 0xa8, 0xf9, 0x1d, 0xc0, 0xa8,
+> +	0xf9, 0x1e, 0xdc, 0xa2, 0x14, 0x51, 0xbb, 0x8f,
+> +	0xa0, 0x00, 0xe4, 0x7c, 0xe4, 0xb8, 0x80, 0x10,
+> +	0x02, 0x00, 0x4b, 0xc1, 0x00, 0x00, 0x01, 0x01,
+> +	0x08, 0x0a, 0x90, 0x60, 0xf4, 0xff, 0x03, 0xc5,
+> +	0xb4, 0x19, 0x77, 0x34, 0xd4, 0xdc, 0x84, 0x86,
+> +	0xff, 0x44, 0x09, 0x63, 0x36, 0x2e, 0x26, 0x9b,
+> +	0x90, 0x70, 0xf2, 0xed, 0xc8, 0x5b, 0x87, 0xaa,
+> +	0xb4, 0x67, 0x6b, 0x32, 0x3d, 0xc4, 0xbf, 0x15,
+> +	0xa9, 0x16, 0x6c, 0x2a, 0x9d, 0xb2, 0xb7, 0x6b,
+> +	0x58, 0x44, 0x58, 0x12, 0x4b, 0x8f, 0xe5, 0x12,
+> +	0x11, 0x90, 0x94, 0x68, 0x37, 0xad, 0x0a, 0x9b,
+> +	0xd6, 0x79, 0xf2, 0xb7, 0x31, 0xcf, 0x44, 0x22,
+> +	0xc8, 0x99, 0x3f, 0xe5, 0xe7, 0xac, 0xc7, 0x0b,
+> +	0x86, 0xdf, 0xda, 0xed, 0x0a, 0x0f, 0x86, 0xd7,
+> +	0x48, 0xe2, 0xf1, 0xc2, 0x43, 0xed, 0x47, 0x3a,
+> +	0xea, 0x25, 0x2d, 0xd6, 0x60, 0x38, 0x30, 0x07,
+> +	0x28, 0xdd, 0x1f, 0x0c, 0xdd, 0x7b, 0x7c, 0xd9,
+> +	0x35, 0x9d, 0x14, 0xaa, 0xc6, 0x35, 0xd1, 0x03,
+> +	0x38, 0xb1, 0xf5,
+> +};
+> +
+> +static const uint8_t test_cksum_ipv4_tcp_multi_segs_len[] =3D {
+> +	66,  /* the first seg contains all headers, including L2 to L4 */
+> +	61,  /* the second seg length is odd, test byte order independent */
+> +	52,  /* three segs are sufficient to test the most complex scenarios */
+> +};
+> +
+>  /* test l3/l4 checksum api */
+>  static int
+>  test_l4_cksum(struct rte_mempool *pktmbuf_pool, const char *pktdata, siz=
+e_t len)
+> @@ -223,6 +259,70 @@ test_l4_cksum(struct rte_mempool *pktmbuf_pool, cons=
+t char *pktdata, size_t len)
+>  	return -1;
+>  }
+>=20
+> +/* test l4 checksum api for a packet with multiple mbufs */
+> +static int
+> +test_l4_cksum_multi_mbufs(struct rte_mempool *pktmbuf_pool, const char *=
+pktdata, size_t len,
+> +			     const uint8_t *segs, size_t segs_len)
+> +{
+> +	struct rte_mbuf *m[NB_MBUF] =3D {0};
+> +	struct rte_mbuf *m_hdr =3D NULL;
+> +	struct rte_net_hdr_lens hdr_lens;
+> +	size_t i, off =3D 0;
+> +	uint32_t packet_type, l3;
+> +	void *l3_hdr;
+> +	char *data;
+> +
+> +	for (i =3D 0; i < segs_len; i++) {
+> +		m[i] =3D rte_pktmbuf_alloc(pktmbuf_pool);
+> +		if (m[i] =3D=3D NULL)
+> +			GOTO_FAIL("Cannot allocate mbuf");
+> +
+> +		data =3D rte_pktmbuf_append(m[i], segs[i]);
+> +		if (data =3D=3D NULL)
+> +			GOTO_FAIL("Cannot append data");
+> +
+> +		rte_memcpy(data, pktdata + off, segs[i]);
+> +		off +=3D segs[i];
+> +
+> +		if (m_hdr) {
+> +			if (rte_pktmbuf_chain(m_hdr, m[i]))
+> +				GOTO_FAIL("Cannot chain mbuf");
+> +		} else {
+> +			m_hdr =3D m[i];
+> +		}
+> +	}
+> +
+> +	if (off !=3D len)
+> +		GOTO_FAIL("Invalid segs");
+> +
+> +	packet_type =3D rte_net_get_ptype(m_hdr, &hdr_lens, RTE_PTYPE_ALL_MASK)=
+;
+> +	l3 =3D packet_type & RTE_PTYPE_L3_MASK;
+> +
+> +	l3_hdr =3D rte_pktmbuf_mtod_offset(m_hdr, void *, hdr_lens.l2_len);
+> +	off =3D hdr_lens.l2_len + hdr_lens.l3_len;
+> +
+> +	if (l3 =3D=3D RTE_PTYPE_L3_IPV4 || l3 =3D=3D RTE_PTYPE_L3_IPV4_EXT) {
+> +		if (rte_ipv4_udptcp_cksum_mbuf_verify(m_hdr, l3_hdr, off) !=3D 0)
+> +			GOTO_FAIL("Invalid L4 checksum verification for multiple mbufs");
+> +	} else if (l3 =3D=3D RTE_PTYPE_L3_IPV6 || l3 =3D=3D RTE_PTYPE_L3_IPV6_E=
+XT) {
+> +		if (rte_ipv6_udptcp_cksum_mbuf_verify(m_hdr, l3_hdr, off) !=3D 0)
+> +			GOTO_FAIL("Invalid L4 checksum verification for multiple mbufs");
+> +	}
+> +
+> +	for (i =3D 0; i < segs_len; i++)
+> +		rte_pktmbuf_free(m[i]);
+> +
+> +	return 0;
+> +
+> +fail:
+> +	for (i =3D 0; i < segs_len; i++) {
+> +		if (m[i])
+> +			rte_pktmbuf_free(m[i]);
+> +	}
+> +
+> +	return -1;
+> +}
+> +
+>  static int
+>  test_cksum(void)
+>  {
+> @@ -256,6 +356,12 @@ test_cksum(void)
+>  			  sizeof(test_cksum_ipv4_opts_udp)) < 0)
+>  		GOTO_FAIL("checksum error on ipv4_opts_udp");
+>=20
+> +	if (test_l4_cksum_multi_mbufs(pktmbuf_pool, test_cksum_ipv4_tcp_multi_s=
+egs,
+> +			  sizeof(test_cksum_ipv4_tcp_multi_segs),
+> +			  test_cksum_ipv4_tcp_multi_segs_len,
+> +			  sizeof(test_cksum_ipv4_tcp_multi_segs_len)) < 0)
+> +		GOTO_FAIL("checksum error on multi mbufs check");
+> +
+>  	rte_mempool_free(pktmbuf_pool);
+>=20
+>  	return 0;
+> diff --git a/lib/net/rte_cksum.h b/lib/net/rte_cksum.h
+> index a8e8927952..679ba82eb6 100644
+> --- a/lib/net/rte_cksum.h
+> +++ b/lib/net/rte_cksum.h
+> @@ -80,6 +80,25 @@ __rte_raw_cksum_reduce(uint32_t sum)
+>  	return (uint16_t)sum;
+>  }
+>=20
+> +/**
+> + * @internal Reduce a sum to the non-complemented checksum.
+> + * Helper routine for the rte_raw_cksum_mbuf().
+> + *
+> + * @param sum
+> + *   Value of the sum.
+> + * @return
+> + *   The non-complemented checksum.
+> + */
+> +static inline uint16_t
+> +__rte_raw_cksum_reduce_u64(uint64_t sum)
+> +{
+> +	uint32_t tmp;
+> +
+> +	tmp =3D __rte_raw_cksum_reduce((uint32_t)sum);
+> +	tmp +=3D __rte_raw_cksum_reduce((uint32_t)(sum >> 32));
+> +	return __rte_raw_cksum_reduce(tmp);
+> +}
+> +
+>  /**
+>   * Process the non-complemented checksum of a buffer.
+>   *
+> @@ -119,8 +138,8 @@ rte_raw_cksum_mbuf(const struct rte_mbuf *m, uint32_t=
+ off, uint32_t len,
+>  {
+>  	const struct rte_mbuf *seg;
+>  	const char *buf;
+> -	uint32_t sum, tmp;
+> -	uint32_t seglen, done;
+> +	uint32_t seglen, done, tmp;
+> +	uint64_t sum;
+>=20
+>  	/* easy case: all data in the first segment */
+>  	if (off + len <=3D rte_pktmbuf_data_len(m)) {
+> @@ -157,7 +176,7 @@ rte_raw_cksum_mbuf(const struct rte_mbuf *m, uint32_t=
+ off, uint32_t len,
+>  	for (;;) {
+>  		tmp =3D __rte_raw_cksum(buf, seglen, 0);
+>  		if (done & 1)
+> -			tmp =3D rte_bswap16((uint16_t)tmp);
+> +			tmp =3D rte_bswap32(tmp);
+>  		sum +=3D tmp;
+>  		done +=3D seglen;
+>  		if (done =3D=3D len)
+> @@ -169,7 +188,7 @@ rte_raw_cksum_mbuf(const struct rte_mbuf *m, uint32_t=
+ off, uint32_t len,
+>  			seglen =3D len - done;
+>  	}
+>=20
+> -	*cksum =3D __rte_raw_cksum_reduce(sum);
+> +	*cksum =3D __rte_raw_cksum_reduce_u64(sum);
+>  	return 0;
+>  }
+>=20
+> --
+> 2.20.1
 
-Fixes: 666ef294ddf7 ("net/virtio-user: share descriptor IOVA to backend")
-Cc: stable@dpdk.org
-
-Reported-by: Adrian Moreno <amorenoz@redhat.com>
-Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
----
- drivers/net/virtio/virtio_user/virtio_user_dev.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/virtio/virtio_user/virtio_user_dev.c b/drivers/net/virtio/virtio_user/virtio_user_dev.c
-index 187f81b066..7789f337f6 100644
---- a/drivers/net/virtio/virtio_user/virtio_user_dev.c
-+++ b/drivers/net/virtio/virtio_user/virtio_user_dev.c
-@@ -149,7 +149,8 @@ virtio_user_kick_queue(struct virtio_user_dev *dev, uint32_t queue_sel)
- 	} else {
- 		desc_addr = vring->desc_iova;
- 		avail_addr = desc_addr + vring->num * sizeof(struct vring_desc);
--		used_addr = RTE_ALIGN_CEIL((uintptr_t)(&vring->avail->ring[vring->num]),
-+		used_addr = RTE_ALIGN_CEIL(avail_addr + offsetof(struct vring_avail,
-+						ring[vring->num]),
- 					   VIRTIO_VRING_ALIGN);
- 
- 		addr.desc_user_addr = desc_addr;
--- 
-2.50.1
-
+Reviewed-by: Marat Khalili <marat.khalili@huawei.com>
