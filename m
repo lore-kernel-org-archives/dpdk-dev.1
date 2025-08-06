@@ -2,67 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BCD1C87FCB
-	for <dpdk-dev@archiver.kernel.org>; Wed,  6 Aug 2025 21:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8737EC87FCB
+	for <dpdk-dev@archiver.kernel.org>; Wed,  6 Aug 2025 21:43:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 44C2B4064A;
-	Wed,  6 Aug 2025 23:42:29 +0200 (CEST)
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com
- [209.85.221.44]) by mails.dpdk.org (Postfix) with ESMTP id A1B3D40615
- for <dev@dpdk.org>; Wed,  6 Aug 2025 23:42:27 +0200 (CEST)
-Received: by mail-wr1-f44.google.com with SMTP id
- ffacd0b85a97d-3b7886bee77so209365f8f.0
- for <dev@dpdk.org>; Wed, 06 Aug 2025 14:42:27 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C1CE64065C;
+	Wed,  6 Aug 2025 23:42:30 +0200 (CEST)
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com
+ [209.85.221.49]) by mails.dpdk.org (Postfix) with ESMTP id 649104064F
+ for <dev@dpdk.org>; Wed,  6 Aug 2025 23:42:29 +0200 (CEST)
+Received: by mail-wr1-f49.google.com with SMTP id
+ ffacd0b85a97d-3b780bdda21so186544f8f.3
+ for <dev@dpdk.org>; Wed, 06 Aug 2025 14:42:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1754516547;
- x=1755121347; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1754516549;
+ x=1755121349; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=8JBnpPYalxjvG7xml7r8CXLliDz8gCzqjgPTUVLzfGo=;
- b=uPfH/wNlinhFZOMcHAj7enm/U5UkMxUADacZ43ljYwUGDA18lU/RZmfWeVvxTUk1im
- U10sq0oVXXGG0ezsvjwDtjJ+5QzKmnhI5cf+UfMG32pk09Oxjvje6xhI6u5UzizfKgqK
- WnehxXstGpkweIgVI8rOxk1anxXhW0KyhJ8IBstGufjJlR74BKSSQYEN294G6DUN53j6
- A96wvcE6BkDFaDVbeqJ3q/AbxnjFs/YQznBSVYUjDePpxmU07Ylsja33b8c/pecXdO7A
- znEYcpiPkiCfb9X7a5hw+4nwR5uZW16CUo68hQX8Sq9QgKOwaEamblpovM7x+Px8YyQH
- MPuQ==
+ bh=ThypW9o/Vk2sZlBhCf0ZAIhlCSmqP+2nUgz9n52a95k=;
+ b=iBnFt9ksqvG2lD1vYWEOrx6A4vLOmf8SEoGKe38VIzeMRrLvJ+HzCebc71JVl7xWxK
+ 9P1VFhZ3rCQ46eQvVsFSKiWTCLZFi/fK1YS86AlBFQ3c2SCFxlcDWyie/VkIW+zxhntl
+ 8npyFj9FRKSSNmhOmcOjMMHHNEqsESQ4jT/PL+XLNJ62H/VFnQKo2HIsFcipPhUzjLtB
+ +GLQTJW4Y10UKhu1sK60vlnUAgnOkMmqHUzPWZkz6AQDoBdr6YRyFFPrt2240xcMSa+d
+ djZQHIPk0iaaaRlqkKtn712Zq1xQPyrbHWKKONhSyZ2qv1hKD1eg5ztPBcQclMxoGS3L
+ BZBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1754516547; x=1755121347;
+ d=1e100.net; s=20230601; t=1754516549; x=1755121349;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=8JBnpPYalxjvG7xml7r8CXLliDz8gCzqjgPTUVLzfGo=;
- b=UanrUxoUpalCfEo8FEuVVLNpDuIJo7CZRN+eIaju1RgrWbb2qLLDilrlBnylTvEnln
- 99U0oQUom/roZOfAiIedsESRbC7BVyS0nBpJuRTZDdockO6SrZXjwIFw6FkkCeE47eqM
- P00zL9wz4dY5UNc2mPpHm8BWKxPXVRt6qntAFR69WyBwlPYbgIPfWiLA7VLfLA/vO6ZP
- 2d6iGhOBH93Qw5iF9a9uDMZa2A83Ylj2umbHYPtWFbK/GSR4RqJSBq7BPvaI4N74Ac5o
- bmgOFFASxs8JmUOMMiJZcXldjDg2KHNCwFxmtMPlePpNJ5CaEHayQTn5o+4HLBVoa5RT
- R8RQ==
-X-Gm-Message-State: AOJu0Yz3GLGcEesz28K7+FORUohZyxANdG5ELrGhRdDQ+zvCfmcl1GA5
- liZORvXj1WokfvFqLsGxZ2k8hxkvHr7f3rY/VskBCPOVZBmcy0EfMe4QcnwVeLmwdX1H2R6W4gP
- z67/S
-X-Gm-Gg: ASbGnctgd5M7tt/ReoT+U4rghHvSLHnji0N0qasifXq5B+zs9XFKsTUosTssxQeUOuU
- k23VRK/nDS07GUQ4PK66tpweuqtlO5z7vr/XNLcw9RuP6CreBnApc/oBZHCG7II7AU2HB55IK3G
- ko6jMyicQxBm+cV02u4aJ1jR/aU0HjEpXoSZPuJ+3WnTtcPBNBgbSJ91RBa58u6m8xzOLkGWX5b
- TnR1IEcA7Q3/ohnskv99w56MzjDcvXn6BbhM2h6LMWJ2/dIBaJg8s2LuunVExj7fUrKep1kTmwU
- Be+GmL6QD8XNEW9ibTyF/5quYEQxuqI5fZv+JEOCOQU7Ll2cYigN7aNyyB694WYKcq8H5KYzyCT
- EJYogsjNMApvE26nFRRPwhjnTdJKsDunv4l+uZfiBNjbV+VdqzLIg+iwr9IbGMlWuApATWi/T
-X-Google-Smtp-Source: AGHT+IG7w0mLEDsbelyeq/y8Pus+gw0LrzFuumeQHWMt0v/Lj8umckddjKaLL9cKUfBltDS0wrzJyA==
-X-Received: by 2002:a05:6000:4285:b0:3b7:88f5:f0ad with SMTP id
- ffacd0b85a97d-3b8f4167071mr3480114f8f.16.1754516547132; 
- Wed, 06 Aug 2025 14:42:27 -0700 (PDT)
+ bh=ThypW9o/Vk2sZlBhCf0ZAIhlCSmqP+2nUgz9n52a95k=;
+ b=UzakpeGV8p7I0r9iYKney2ZYAbPcUs5kcXqB5oF/l1b0OCPel3kz7mozPNI0+JSAC7
+ qO8+/7Rm9FcU/nTNYzHXUA7GKGQJfty9DV3fZP64sMkyJO3lc2TnYjr11OfOqr335ndg
+ DDnMWsZgNnS/uaHbzIV/OPexl1AmaNdhwegLyxlzxXjAE/s5IG7R7+wadvmcffZf6hHr
+ 8kJntfDOdx7t6loHnYnTxrlG+oeU1UnCL9QB2QaRDmJJR5CPG58KNlUSJzIOY5Lvs+g1
+ J/teIr6k8j+UZVongXzHIiAOfbxcLIJV4OfQoA+19Jw4oTXk6m8svqBkL08RHL/BwmEn
+ 4eVg==
+X-Gm-Message-State: AOJu0Yxywj/GLNaChE+NCYyC12Xz7k8Mknro1rz7SAxkZsURTrv6TQFk
+ Sq+E3oj00BH9ABcYnNyq3Q7pHo5Bcii+xx8KHr8qrZas7fjkN6Vdk80fy8sRAN2fulX8LczLyc5
+ x/FfR
+X-Gm-Gg: ASbGnct49ATsq+FW/djbbu8whyoYh7XKEfGMiV57vGR+0kDe2W2FhIiHG5THg9rK2ud
+ /ORtRr7U/f8ysd4WDCCEOq/f+X+5uJBEGZtVf/C8qfw3NzVgPeLwqEw3CV1Fz81APDEoL1Z62Zo
+ tM0rUGJj6+4ZbAaIC4kG1w41GGcbJ1eBQgrhnmSaeV1Jyp/64Ch0jMwL83S25gWoZf/wmHtOCiC
+ 7iB8uCUPxt1oA5ZwEVyNYsisgCx+qMLPAtWzgDi32SYwTz633K6CyPM/Bdn++BGGhkQiZiK1j9Q
+ Ufp09W9trewc+JU+TrMyvxbHYCbVFyq/DGVp/0fJUlbnQ7ij8yCwKvwrYstKT5hkbnsHqe4QNnC
+ +D/4ZAXz1BuCy4RfnVdFA8A/X4lm6lpyz/hkXPEXFLMCHAfQfFuYuZnrtd+UOgBVApqjU+Lp7
+X-Google-Smtp-Source: AGHT+IFPV82nLzVY9rBC/m0D6btrU/lHDTICjwa6gRLTW/jkcFX+8Q8CKRwvROr7put2FHO7YxdPPg==
+X-Received: by 2002:a5d:5f56:0:b0:3b7:7563:9d59 with SMTP id
+ ffacd0b85a97d-3b8f49447f9mr3082501f8f.57.1754516548931; 
+ Wed, 06 Aug 2025 14:42:28 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3b79c3b9160sm24436913f8f.21.2025.08.06.14.42.25
+ ffacd0b85a97d-3b79c3b9160sm24436913f8f.21.2025.08.06.14.42.27
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 06 Aug 2025 14:42:26 -0700 (PDT)
+ Wed, 06 Aug 2025 14:42:28 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v9 06/13] net/ring: allow lockfree transmit if ring supports it
-Date: Wed,  6 Aug 2025 14:40:35 -0700
-Message-ID: <20250806214200.193029-7-stephen@networkplumber.org>
+Subject: [PATCH v9 07/13] net/ring: add new devarg to create vdev from
+ existing ring
+Date: Wed,  6 Aug 2025 14:40:36 -0700
+Message-ID: <20250806214200.193029-8-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250806214200.193029-1-stephen@networkplumber.org>
 References: <20250411234927.114568-1-stephen@networkplumber.org>
@@ -82,49 +83,84 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Need to be able have multiple threads all using same
-transmit queue when using SPAN.
+Need ability to allow process like dumpcap to make a ring ethdev
+with a pre-existing ring. Do this via devargs so it can work
+with hotplug.
+
+It looked like the API rte_eth_from_ring() would work for this,
+but it doesn't do the right thing. That API makes new vdev but
+names the ring based on the parameter.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/ring/rte_eth_ring.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/net/ring/rte_eth_ring.c | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
 diff --git a/drivers/net/ring/rte_eth_ring.c b/drivers/net/ring/rte_eth_ring.c
-index b1085bf390..966c64d9a5 100644
+index 966c64d9a5..a43ff20ecc 100644
 --- a/drivers/net/ring/rte_eth_ring.c
 +++ b/drivers/net/ring/rte_eth_ring.c
-@@ -177,6 +177,19 @@ eth_tx_queue_setup(struct rte_eth_dev *dev, uint16_t tx_queue_id,
+@@ -23,9 +23,12 @@
+ #define ETH_RING_INTERNAL_ARG		"internal"
+ #define ETH_RING_INTERNAL_ARG_MAX_LEN	19 /* "0x..16chars..\0" */
+ 
++#define ETH_RING_RING_ARG		"ring"
++
+ static const char *valid_arguments[] = {
+ 	ETH_RING_NUMA_NODE_ACTION_ARG,
+ 	ETH_RING_INTERNAL_ARG,
++	ETH_RING_RING_ARG,
+ 	NULL
+ };
+ 
+@@ -693,6 +696,20 @@ parse_internal_args(const char *key __rte_unused, const char *value,
  	return 0;
  }
  
-+static bool
-+eth_tx_queue_lockfree(const struct pmd_internals *internals)
++static int
++parse_ring_arg(const char *key __rte_unused, const char *value, void *data)
 +{
-+	unsigned int i;
++	struct rte_ring **rp = data;
 +
-+	for (i = 0; i < internals->max_tx_queues; i++) {
-+		const struct ring_queue *r = &internals->tx_ring_queues[i];
-+
-+		if (r->rng->flags & RING_F_SP_ENQ)
-+			return false;
++	*rp = rte_ring_lookup(value);
++	if (*rp == NULL) {
++		PMD_LOG(ERR, "ring '%s' not found", value);
++		return -1;
 +	}
-+	return true;
++
++	return 0;
 +}
- 
++
  static int
- eth_dev_info(struct rte_eth_dev *dev,
-@@ -189,6 +202,10 @@ eth_dev_info(struct rte_eth_dev *dev,
- 	dev_info->max_rx_queues = (uint16_t)internals->max_rx_queues;
- 	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_SCATTER;
- 	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS;
+ rte_pmd_ring_probe(struct rte_vdev_device *dev)
+ {
+@@ -770,6 +787,20 @@ rte_pmd_ring_probe(struct rte_vdev_device *dev)
+ 				&eth_dev);
+ 			if (ret >= 0)
+ 				ret = 0;
++		} else if (rte_kvargs_count(kvlist, ETH_RING_RING_ARG) == 1) {
++			struct rte_ring *rxtx[1] = { };
 +
-+	if (eth_tx_queue_lockfree(internals))
-+		dev_info->tx_offload_capa |= RTE_ETH_TX_OFFLOAD_MT_LOCKFREE;
++			ret = rte_kvargs_process(kvlist, ETH_RING_RING_ARG, parse_ring_arg, rxtx);
++			if (ret < 0)
++				goto out_free;
 +
- 	dev_info->max_tx_queues = (uint16_t)internals->max_tx_queues;
- 	dev_info->min_rx_bufsize = 0;
- 
++			/* Note: rte_eth_from_ring() does not do what is expected here! */
++			ret = do_eth_dev_ring_create(name, dev, rxtx, 1, rxtx, 1,
++						     rte_socket_id(), DEV_ATTACH, &eth_dev);
++			if (ret < 0)
++				goto out_free;
++
++			ret = 0;
+ 		} else {
+ 			ret = rte_kvargs_count(kvlist, ETH_RING_NUMA_NODE_ACTION_ARG);
+ 			info = rte_zmalloc("struct node_action_list",
+@@ -843,4 +874,5 @@ static struct rte_vdev_driver pmd_ring_drv = {
+ RTE_PMD_REGISTER_VDEV(net_ring, pmd_ring_drv);
+ RTE_PMD_REGISTER_ALIAS(net_ring, eth_ring);
+ RTE_PMD_REGISTER_PARAM_STRING(net_ring,
++	ETH_RING_RING_ARG "=<string> "
+ 	ETH_RING_NUMA_NODE_ACTION_ARG "=name:node:action(ATTACH|CREATE)");
 -- 
 2.47.2
 
