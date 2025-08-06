@@ -2,32 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 353E9C87FCB
-	for <dpdk-dev@archiver.kernel.org>; Tue,  5 Aug 2025 20:00:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E7DBC87FCB
+	for <dpdk-dev@archiver.kernel.org>; Wed,  6 Aug 2025 07:56:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 215D940E27;
-	Tue,  5 Aug 2025 22:00:05 +0200 (CEST)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 4797A4042C
- for <dev@dpdk.org>; Tue,  5 Aug 2025 22:00:04 +0200 (CEST)
-Received: by linux.microsoft.com (Postfix, from userid 1213)
- id 7C0EA2112215; Tue,  5 Aug 2025 13:00:03 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7C0EA2112215
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1754424003;
- bh=3xOFnbFVIFq2RGwhsoFXTKc8u6LWzeQMqEMt1Naz93A=;
- h=From:To:Cc:Subject:Date:From;
- b=kB3pYV3y2YCWveJSfwEecydq6NfD2+YrFIkT/JkTLCJqLnhBxR8X1uWlegaxYvD0+
- 26UWlQYGSwpgMxfU0F1DX0j2El1wmqLwSxS9XseZDlVqtjqYmTo9uHO4dLtGZb6h1H
- PHB6rjQYoUyvU45XZI7pk/3rvaBW2FLX4zDlnPI0=
-From: Andre Muezerie <andremue@linux.microsoft.com>
-To: Wisam Jaddo <wisamm@nvidia.com>
-Cc: dev@dpdk.org,
-	Andre Muezerie <andremue@linux.microsoft.com>
-Subject: [PATCH] test-flow-perf: Enable to build on Windows
-Date: Tue,  5 Aug 2025 12:59:52 -0700
-Message-Id: <1754423992-24652-1-git-send-email-andremue@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	by mails.dpdk.org (Postfix) with ESMTP id 3B40840264;
+	Wed,  6 Aug 2025 09:56:44 +0200 (CEST)
+Received: from ns2.wilbury.net (wsk-files-n1.wilbury.net [95.216.42.37])
+ by mails.dpdk.org (Postfix) with ESMTP id E4BC140263
+ for <dev@dpdk.org>; Wed,  6 Aug 2025 09:56:42 +0200 (CEST)
+Received: from webmail.wilbury.net (localhost [IPv6:::1])
+ (Authenticated sender: priikone@silc.fi)
+ by svc.wilbury.net (Postfix) with ESMTPA id 7C6CF4BD06;
+ Wed, 06 Aug 2025 09:56:41 +0200 (CEST)
+MIME-Version: 1.0
+Date: Wed, 06 Aug 2025 10:56:41 +0300
+From: Pekka Riikonen <priikone@iki.fi>
+To: dev@dpdk.org
+Cc: Maxime Coquelin <maxime.coquelin@redhat.com>, Chenbo Xia
+ <chenbox@nvidia.com>
+Subject: virtio_user exception path with external memory
+User-Agent: Roundcube Webmail/1.6.11
+Message-ID: <0e15cd8e9def8c16b15c028206a6d308@silc.fi>
+X-Sender: priikone@iki.fi
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -41,177 +40,68 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch fixes some issues which were preventing this test to be
-built on Windows:
 
-- Remove VLAs (not supported by msvc).
-- Replace strsep() (which is not natively available on Windows)
-  with strtok_r().
-- Remove the "thousands" separator from printf() calls as it is
-  not available on Windows.
-- Include the test in the Windows build.
+It seems that currently it's not possible to use packet pools allocated 
+with external memory with the virtio_user exception path use case, 
+because it ignores extmem in virtio_user_mem_event_cb() (and also in the 
+kernel backend in add_memseg_list()).  This is easy to test with testpmd 
+with the --mp-alloc=xmemhuge or --mp-alloc=anon option 
+(https://doc.dpdk.org/guides/howto/virtio_user_as_exception_path.html).
 
-Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+The original commit that added the check (5282bb1c3 mem: allow memseg 
+lists to be marked as external) talks about needing file descriptors in 
+virtio that aren't available with extmem, but at least the kernel 
+backend doesn't seem to need any.  The patch below fixes the issue for 
+me with with the exception path.
+
+So I'm wondering whether ignoring the extmem is actually needed, in this 
+use case?
+
 ---
- app/test-flow-perf/actions_gen.c | 17 +++++++++++++++--
- app/test-flow-perf/main.c        | 23 ++++++++++++-----------
- app/test-flow-perf/meson.build   |  6 ------
- 3 files changed, 27 insertions(+), 19 deletions(-)
+diff --git a/drivers/net/virtio/virtio_user/vhost_kernel.c 
+b/drivers/net/virtio/virtio_user/vhost_kernel.c
+index e42bb35935..cd5b975675 100644
+--- a/drivers/net/virtio/virtio_user/vhost_kernel.c
++++ b/drivers/net/virtio/virtio_user/vhost_kernel.c
+@@ -189,9 +189,6 @@ add_memseg_list(const struct rte_memseg_list *msl, 
+void *arg)
+  	void *start_addr;
+  	uint64_t len;
 
-diff --git a/app/test-flow-perf/actions_gen.c b/app/test-flow-perf/actions_gen.c
-index 54fcbacb98..9d102e3af4 100644
---- a/app/test-flow-perf/actions_gen.c
-+++ b/app/test-flow-perf/actions_gen.c
-@@ -15,6 +15,7 @@
- #include <rte_gtp.h>
- #include <rte_gre.h>
- #include <rte_geneve.h>
-+#include <rte_os_shim.h>
- 
- #include "actions_gen.h"
- #include "flow_gen.h"
-@@ -921,10 +922,19 @@ fill_actions(struct rte_flow_action *actions, uint64_t *flow_actions,
- {
- 	struct additional_para additional_para_data;
- 	uint8_t actions_counter = 0;
--	uint16_t hairpin_queues[hairpinq];
--	uint16_t queues[rx_queues_count];
-+	uint16_t *hairpin_queues;
-+	uint16_t *queues;
- 	uint16_t i, j;
- 
-+	hairpin_queues = calloc(hairpinq, sizeof(uint16_t));
-+	if (hairpin_queues == NULL)
-+		rte_exit(EXIT_FAILURE, "No Memory available!");
-+	queues = calloc(rx_queues_count, sizeof(uint16_t));
-+	if (queues == NULL) {
-+		free(hairpin_queues);
-+		rte_exit(EXIT_FAILURE, "No Memory available!");
-+	}
-+
- 	for (i = 0; i < rx_queues_count; i++)
- 		queues[i] = i;
- 
-@@ -1151,4 +1161,7 @@ fill_actions(struct rte_flow_action *actions, uint64_t *flow_actions,
- 		}
- 	}
- 	actions[actions_counter].type = RTE_FLOW_ACTION_TYPE_END;
-+
-+	free(queues);
-+	free(hairpin_queues);
- }
-diff --git a/app/test-flow-perf/main.c b/app/test-flow-perf/main.c
-index 07ddfe0e46..226501caf9 100644
---- a/app/test-flow-perf/main.c
-+++ b/app/test-flow-perf/main.c
-@@ -26,7 +26,6 @@
- #include <errno.h>
- #include <getopt.h>
- #include <stdbool.h>
--#include <sys/time.h>
- #include <signal.h>
- #include <unistd.h>
- 
-@@ -36,6 +35,7 @@
- #include <rte_ethdev.h>
- #include <rte_flow.h>
- #include <rte_mtr.h>
-+#include <rte_os_shim.h>
- 
- #include "config.h"
- #include "actions_gen.h"
-@@ -601,15 +601,16 @@ static void
- read_meter_policy(char *prog, char *arg)
- {
- 	char *token;
-+	char *saveptr = NULL;
- 	size_t i, j, k;
- 
- 	j = 0;
- 	k = 0;
- 	policy_mtr = true;
--	token = strsep(&arg, ":\0");
-+	token = arg ? strtok_r(arg, ":", &saveptr) : NULL;
- 	while (token != NULL && j < RTE_COLORS) {
- 		actions_str[j++] = token;
--		token = strsep(&arg, ":\0");
-+		token = strtok_r(NULL, ":", &saveptr);
- 	}
- 	j = 0;
- 	token = strtok(actions_str[0], ",\0");
-@@ -733,7 +734,7 @@ args_parse(int argc, char **argv)
- 	};
- 
- 	RTE_ETH_FOREACH_DEV(i)
--		ports_mask |= 1 << i;
-+		ports_mask |= RTE_BIT64(i);
- 
- 	for (i = 0; i < RTE_MAX_ETHPORTS; i++)
- 		dst_ports[i] = PORT_ID_DST;
-@@ -961,15 +962,15 @@ args_parse(int argc, char **argv)
- 			}
- 			if (strcmp(lgopts[opt_idx].name, "policy-mtr") == 0)
- 				read_meter_policy(argv[0], optarg);
--			if (strcmp(lgopts[opt_idx].name,
--						"meter-profile") == 0) {
-+			if (strcmp(lgopts[opt_idx].name, "meter-profile") == 0) {
- 				i = 0;
--				token = strsep(&optarg, ",\0");
-+				char *saveptr = NULL;
-+				token = strtok_r(optarg, ",", &saveptr);
- 				while (token != NULL && i < sizeof(
- 						meter_profile_values) /
- 						sizeof(uint64_t)) {
- 					meter_profile_values[i++] = atol(token);
--					token = strsep(&optarg, ",\0");
-+					token = strtok_r(NULL, ",", &saveptr);
- 				}
- 			}
- 			if (strcmp(lgopts[opt_idx].name, "packet-mode") == 0)
-@@ -1759,7 +1760,7 @@ packet_per_second_stats(void)
- 		uint64_t tx_delta, rx_delta, drops_delta;
- 		int nr_valid_core = 0;
- 
--		sleep(1);
-+		rte_delay_us_sleep(US_PER_S);
- 
- 		if (nr_lines) {
- 			char go_up_nr_lines[16];
-@@ -1781,7 +1782,7 @@ packet_per_second_stats(void)
- 			tx_delta    = li->tx_pkts  - oli->tx_pkts;
- 			rx_delta    = li->rx_pkts  - oli->rx_pkts;
- 			drops_delta = li->tx_drops - oli->tx_drops;
--			printf("%6d %'16"PRId64" %'16"PRId64" %'16"PRId64"\n",
-+			printf("%6d %16" PRId64 " %16" PRId64 " %16" PRId64 "\n",
- 				i, tx_delta, drops_delta, rx_delta);
- 
- 			total_tx_pkts  += tx_delta;
-@@ -1793,7 +1794,7 @@ packet_per_second_stats(void)
- 		}
- 
- 		if (nr_valid_core > 1) {
--			printf("%6s %'16"PRId64" %'16"PRId64" %'16"PRId64"\n",
-+			printf("%6s %16" PRId64 " %16" PRId64 " %16" PRId64 "\n",
- 				"total", total_tx_pkts, total_tx_drops,
- 				total_rx_pkts);
- 			nr_lines += 1;
-diff --git a/app/test-flow-perf/meson.build b/app/test-flow-perf/meson.build
-index 5758f8d9c6..e101449e32 100644
---- a/app/test-flow-perf/meson.build
-+++ b/app/test-flow-perf/meson.build
-@@ -1,12 +1,6 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright(c) 2020 Mellanox Technologies, Ltd
- 
--if is_windows
--    build = false
--    reason = 'not supported on Windows'
--    subdir_done()
--endif
+-	if (msl->external)
+-		return 0;
 -
- sources = files(
-         'actions_gen.c',
-         'flow_gen.c',
--- 
-2.50.1.vfs.0.0
+  	if (vm->nregions >= max_regions)
+  		return -1;
 
+diff --git a/drivers/net/virtio/virtio_user/virtio_user_dev.c 
+b/drivers/net/virtio/virtio_user/virtio_user_dev.c
+index 187f81b066..d5204a64a7 100644
+--- a/drivers/net/virtio/virtio_user/virtio_user_dev.c
++++ b/drivers/net/virtio/virtio_user/virtio_user_dev.c
+@@ -539,20 +539,14 @@ virtio_user_fill_intr_handle(struct 
+virtio_user_dev *dev)
+
+  static void
+  virtio_user_mem_event_cb(enum rte_mem_event type __rte_unused,
+-			 const void *addr,
++			 const void *addr __rte_unused,
+  			 size_t len __rte_unused,
+  			 void *arg)
+  {
+  	struct virtio_user_dev *dev = arg;
+-	struct rte_memseg_list *msl;
+  	uint16_t i;
+  	int ret = 0;
+
+-	/* ignore externally allocated memory */
+-	msl = rte_mem_virt2memseg_list(addr);
+-	if (msl->external)
+-		return;
+-
+  	pthread_mutex_lock(&dev->mutex);
+
+  	if (dev->started == false)
+---
+
+Pekka
