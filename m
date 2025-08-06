@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04018C87FD3
-	for <dpdk-dev@archiver.kernel.org>; Wed,  6 Aug 2025 21:43:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 733CDC87FD3
+	for <dpdk-dev@archiver.kernel.org>; Wed,  6 Aug 2025 21:43:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7E5684066D;
-	Wed,  6 Aug 2025 23:42:37 +0200 (CEST)
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com
- [209.85.128.49]) by mails.dpdk.org (Postfix) with ESMTP id 904B04026C
- for <dev@dpdk.org>; Wed,  6 Aug 2025 23:42:35 +0200 (CEST)
-Received: by mail-wm1-f49.google.com with SMTP id
- 5b1f17b1804b1-459e72abdd2so2116385e9.2
- for <dev@dpdk.org>; Wed, 06 Aug 2025 14:42:35 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9F1BB40668;
+	Wed,  6 Aug 2025 23:42:38 +0200 (CEST)
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com
+ [209.85.128.54]) by mails.dpdk.org (Postfix) with ESMTP id 735DD4066A
+ for <dev@dpdk.org>; Wed,  6 Aug 2025 23:42:37 +0200 (CEST)
+Received: by mail-wm1-f54.google.com with SMTP id
+ 5b1f17b1804b1-459e72abdd2so2116515e9.2
+ for <dev@dpdk.org>; Wed, 06 Aug 2025 14:42:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1754516555;
- x=1755121355; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1754516557;
+ x=1755121357; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=EZnfE3o0WVfvLfQCwYsuMofxzyHDIWBoPNfdhsdRpE0=;
- b=zngaADGIbZhUyMLdlArPih/5gjVRTzucecaqQeHc740pBfNAsQ7iEfyDVH4I4yU+yV
- BzKOwRke2MXRKwNL+9kvm7DBF/Zv2rY/mSXP/Z4RTGW/t7u7dSP4rsL2VLdDoE8pZjNH
- PyZ2dVBOibA0S8Ki92GUdJ+JdO+YwXujlng/jURNjbmLETAl5U6bZtJ4AbBYCEyuFWES
- YtdbiAwPT/5buGYQxYQq8DC7UhYBbTN0WFDZFLvlsY6fB3+IKIX9OzuAMKe6YGGqV5k+
- 1qMr2y64j1x9sYZ8wy+LNz7ByH8622N1JbD2BvArPcPviTnxfntwW7rHBX2igF7Z8hSd
- 85+Q==
+ bh=CEuPJly845h3GwOzkyx/hdtbI77aynIptOJU4pCB4vs=;
+ b=iHoxHJD4PtKI4qyEMWiF9y2dUy1JhHQwU4SS3mzAnBUpnZSa/gnVJhejvGyFp4QzG4
+ R3KHyNAvQLTeCEPb+etA4C16Q7RsebX85YWnEJYemGC4MdKKkZ4hq9wwkr9vr5hP3Mlz
+ cDOuufjxZf0Bw5zthVkXqOSHv8+wZ59Ab9w3Dh8YruUUzC+wZPzib93Jfw/GanKIqnCj
+ hw8WFGXjVn0MDht2moeV6AMF3kloePgEhYMlt+IWJE07QFTRgAdPITD1e7gbcO7cftOw
+ In/LEtGAOg1h9MbttnfqNBS1A8D8+ABfYI7Gzq81bDqHM/FX2nSnyaIb5xIPJ7/lpowC
+ w4sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1754516555; x=1755121355;
+ d=1e100.net; s=20230601; t=1754516557; x=1755121357;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=EZnfE3o0WVfvLfQCwYsuMofxzyHDIWBoPNfdhsdRpE0=;
- b=g9Sdn4ooMvGL8FxLK0VABEdmfG9ulttShd06/1ZLKQsUyscZ7nEVtd6REf/z7833Id
- YXFsTMCBMZP0wqJOVnzl8eAcNlQZeLZE48UpuPMN4Jx3BQXQKCe33UgVGSN1vrNg0Ccf
- 8rcL8NVlpM3aGITzHXRhGaSzNGcRGxhXvfj/FT9fiiJ76kjogTBAWa4qX7Mh+i3rV2GE
- 6Dk/GvtyZk40kD4xPOQ6UI3nM1BDofOCbvIEckuPIQPjMbaX3T0X8feKejb7Hl7g9sYI
- kc2RBCyBo1JI/Ju89tz+TtqWXAokuUzkTb5EkUtT5kSLch1ewvZeSTAgMwDj2I6XLhqi
- OJLg==
-X-Gm-Message-State: AOJu0YwcaOHgqkWk9+8kPB79Fn2U7Lw3nGSYxqSzp9HvuLvmE7Zcgcqa
- rPGNkP/M8aiQJBscS8jh2duG3ps32NMV6D8aOSxvP5sJ9Jnyj7EZvhk5DRZ5Cjx1txCXIyTQBhM
- n3+Fm
-X-Gm-Gg: ASbGnctIhTrU4aus8M58ce7hVBqro9umO6EtpZXRJZBr2jUp+XyfqDvKVWM/VWLXb/4
- 1tsXATdybu2HagZqSJKiVt9KKluxxsUaBsEaQgRaNXMoNrR0lGDvmj84jHCaJDW0T/chA6lX1P1
- 5ObixRAwVjiOQD/wTAHTrmJXD4Iy0fUdRONK4pC6/0LiqVQWYGYuxgTfyk/G9UFLyxbBe1056cz
- soowZZajcMILwSJ8+Z3FdUYKqCbpLOarhXZZHuxuArtdBEh1nUHI5uTMvLNFX++W7n1NR8IsxXE
- EQKiuVpdlrPgf5YxVF//vR/jmFbv/mKbx//lPHSUHhkBcWPvCxksq4LLH4RdPgu96QL3oMLwA8J
- 4Bb3XnP6hVMY/pcckJxh6KgAumxCkXZowy91vYhmPmJRWm4dkPKZ65iwHH1YUzG4gRaVqi1zw
-X-Google-Smtp-Source: AGHT+IHP0CHZ7vsrYdSfQ8t9FrVKYEkr42CIUUsUZ2F7UvXzZq7Z9UAR68ZYfjlqXxvcDpTrtVJJBg==
-X-Received: by 2002:a05:600c:4705:b0:459:d6a6:792 with SMTP id
- 5b1f17b1804b1-459ee88642amr3707865e9.29.1754516555143; 
- Wed, 06 Aug 2025 14:42:35 -0700 (PDT)
+ bh=CEuPJly845h3GwOzkyx/hdtbI77aynIptOJU4pCB4vs=;
+ b=PB7BucIFKnIY9d6s093sec0r0oYquvNxnPkgCBajCD32tcM4n3gtrYromvdNBR/TD9
+ yCSc3Ztgpjj9ktQxft2QglDWXmajOr5vTipxJEq7EEJIvMmcTqldqhryrJtTzn3B7O/h
+ Bez9RB4Bbl4PFF8tdNcaihy4AfE2vNfgE+QzQbrIygFNblYIOWjNXPc1d41LvqyR8jHh
+ 1DAa+uNo2Fupyb8478ZhBfNjOb2UeuN7QuQXSwet3cHlUUyAOOdDJDWxwcLeXIP7m98l
+ 0ykb3qz93+nvBSKIYsoTnODRQrjXiU0/x1g6hHZDsHdS77fb3KUR/4ggTq6hiGT2i15x
+ 9LRQ==
+X-Gm-Message-State: AOJu0YwlYCYeeCLM5tnsFdhltAvxptQkLvn4lXLOwunh0/IstTGR5vnL
+ gs6YutkDx1YbHhfPy16uKHe0507omQNUWoUU3jgNkxH2LG56rvFKa1msM0TF0f8kT3od/n8Ilbc
+ YPyfa
+X-Gm-Gg: ASbGncs1e7Xml9JqTIcaZWlyUra+zXSvTus6ybyVXWeYMHpHMcFbCxbjNg9DgaVo/Ro
+ 9HA9K7xo1hDYwqajoYrqjA50XT2pkJrujp7HjU/kRaLOA1PzLOkpD0hl0vf0LM9VFHXb0ItwCi0
+ nNTVjrzSg36UUVBUqbcbrics/k/R7ah1BGwdVMVChTOODF42UOJ0mfGBy8ZRqPwpNhWRLkAF0VG
+ +4GRo1OcyEZBLJlQ2SXHrHwDDJz3fS9ZKiPRfoJSpmOzJZoW/r9Kh2pUUSpxR/aQ+UjIt231y4e
+ c5U4LsAJHAAU0T6KCcSTZbN8/Iky4guKhZOCmq3XEcdLHYeQWyuE/BffFj5HVIFwbqEXBargVIW
+ fBkw2yYP/mAU0upTqINpwl2Vx+mHwStx4X8Q6ZwXuaV4mJl1l0OQkIGuzV2SoK46g4d85KIZl
+X-Google-Smtp-Source: AGHT+IEDZT1AWqRyppuNmxza9bDrYCzw/0fXjFOE3/fcgeDEqz3pGRdy/3O310t4KThjI81j5sA0Fg==
+X-Received: by 2002:a05:600c:4f45:b0:456:1a69:94fa with SMTP id
+ 5b1f17b1804b1-459ee8174fcmr3826655e9.13.1754516556971; 
+ Wed, 06 Aug 2025 14:42:36 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3b79c3b9160sm24436913f8f.21.2025.08.06.14.42.33
+ ffacd0b85a97d-3b79c3b9160sm24436913f8f.21.2025.08.06.14.42.35
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 06 Aug 2025 14:42:34 -0700 (PDT)
+ Wed, 06 Aug 2025 14:42:36 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Aman Singh <aman.deep.singh@intel.com>
-Subject: [PATCH v9 10/13] app/testpmd: support for port mirroring
-Date: Wed,  6 Aug 2025 14:40:39 -0700
-Message-ID: <20250806214200.193029-11-stephen@networkplumber.org>
+ Reshma Pattan <reshma.pattan@intel.com>
+Subject: [PATCH v9 11/13] pcapng: split packet copy from header insertion
+Date: Wed,  6 Aug 2025 14:40:40 -0700
+Message-ID: <20250806214200.193029-12-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250806214200.193029-1-stephen@networkplumber.org>
 References: <20250411234927.114568-1-stephen@networkplumber.org>
@@ -82,321 +82,317 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add new commands to enable testing of port mirror functionality.
+In new model, the packet was already copied, only need
+to wrap it in pcapng format.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/test-pmd/cmdline.c                      |  13 ++
- app/test-pmd/cmdline_mirror.c               | 194 ++++++++++++++++++++
- app/test-pmd/cmdline_mirror.h               |  13 ++
- app/test-pmd/meson.build                    |   1 +
- doc/guides/testpmd_app_ug/testpmd_funcs.rst |  15 ++
- 5 files changed, 236 insertions(+)
- create mode 100644 app/test-pmd/cmdline_mirror.c
- create mode 100644 app/test-pmd/cmdline_mirror.h
+ lib/pcapng/rte_pcapng.c | 178 +++++++++++++++++++++-------------------
+ lib/pcapng/rte_pcapng.h |  27 +++++-
+ 2 files changed, 120 insertions(+), 85 deletions(-)
 
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index 7b4e27eddf..1d94e29ea7 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -66,6 +66,7 @@
- #include "testpmd.h"
- #include "cmdline_cman.h"
- #include "cmdline_mtr.h"
-+#include "cmdline_mirror.h"
- #include "cmdline_tm.h"
- #include "bpf_cmd.h"
+diff --git a/lib/pcapng/rte_pcapng.c b/lib/pcapng/rte_pcapng.c
+index 2a07b4c1f5..6db5d4da50 100644
+--- a/lib/pcapng/rte_pcapng.c
++++ b/lib/pcapng/rte_pcapng.c
+@@ -1,3 +1,4 @@
++
+ /* SPDX-License-Identifier: BSD-3-Clause
+  * Copyright(c) 2019 Microsoft Corporation
+  */
+@@ -432,8 +433,24 @@ pcapng_vlan_insert(struct rte_mbuf *m, uint16_t ether_type, uint16_t tci)
+ 	return 0;
+ }
  
-@@ -212,6 +213,9 @@ static void cmd_help_long_parsed(void *parsed_result,
- 			"show port meter stats (port_id) (meter_id) (clear)\n"
- 			"    Get meter stats on a port\n\n"
- 
-+			"show port mirror stats (port_id) (target_id)\n"
-+			"    Get port mirror stats.\n\n"
-+
- 			"show fwd stats all\n"
- 			"    Display statistics for all fwd engines.\n\n"
- 
-@@ -661,6 +665,12 @@ static void cmd_help_long_parsed(void *parsed_result,
- 			"set port meter stats mask (port_id) (mtr_id) (stats_mask)\n"
- 			"    meter update stats\n\n"
- 
-+			"create port mirror (port_id) (target_id)\n"
-+			"    create mirror from port_id to target_id\n\n"
-+
-+			"delete port mirror (port_id) (target_id)\n"
-+			"    delete mirror from port_id to target_id\n\n"
-+
- 			"set port (port_id) fec_mode auto|off|rs|baser\n"
- 			"    set fec mode for a specific port\n\n"
- 
-@@ -14011,6 +14021,9 @@ static cmdline_parse_ctx_t builtin_ctx[] = {
- 	&cmd_get_port_meter_in_proto_prio,
- 	&cmd_set_port_meter_stats_mask,
- 	&cmd_show_port_meter_stats,
-+	&cmd_create_port_mirror,
-+	&cmd_delete_port_mirror,
-+	&cmd_show_port_mirror_stats,
- 	&cmd_mcast_addr,
- 	&cmd_mcast_addr_flush,
- 	&cmd_set_vf_vlan_anti_spoof,
-diff --git a/app/test-pmd/cmdline_mirror.c b/app/test-pmd/cmdline_mirror.c
-new file mode 100644
-index 0000000000..6357791842
---- /dev/null
-+++ b/app/test-pmd/cmdline_mirror.c
-@@ -0,0 +1,194 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2025 Stephen Hemminger <stephen@networkplumber.org>
-+ */
-+
-+#include <stdlib.h>
-+
-+#include <cmdline_parse.h>
-+#include <cmdline_parse_num.h>
-+#include <cmdline_parse_string.h>
-+
-+#include <rte_ethdev.h>
-+
-+#include "testpmd.h"
-+#include "cmdline_mirror.h"
-+
-+/* *** Create MIRROR port Object *** */
-+struct cmd_create_port_mirror_result {
-+	cmdline_fixed_string_t create;
-+	cmdline_fixed_string_t port;
-+	cmdline_fixed_string_t mirror;
-+	uint16_t port_id;
-+	uint16_t target_id;
-+};
-+
-+static cmdline_parse_token_string_t cmd_create_port_mirror_create =
-+	TOKEN_STRING_INITIALIZER(struct cmd_create_port_mirror_result, create, "create");
-+static cmdline_parse_token_string_t cmd_create_port_mirror_port =
-+	TOKEN_STRING_INITIALIZER(struct cmd_create_port_mirror_result, port, "port");
-+static cmdline_parse_token_string_t cmd_create_port_mirror_mirror =
-+	TOKEN_STRING_INITIALIZER(struct cmd_create_port_mirror_result, mirror, "mirror");
-+static cmdline_parse_token_num_t cmd_create_port_mirror_port_id =
-+	TOKEN_NUM_INITIALIZER(struct cmd_create_port_mirror_result, port_id, RTE_UINT16);
-+static cmdline_parse_token_num_t cmd_create_port_mirror_target_id =
-+	TOKEN_NUM_INITIALIZER(struct cmd_create_port_mirror_result, target_id, RTE_UINT16);
-+
-+static void cmd_create_port_mirror_parsed(void *parsed_result,
-+	__rte_unused struct cmdline *cl,
-+	__rte_unused void *data)
++/* pad the packet to 32 bit boundary */
++static inline int
++pcapng_mbuf_pad32(struct rte_mbuf *m)
 +{
-+	const struct cmd_create_port_mirror_result *res = parsed_result;
-+	/* TODO these should be set by command */
-+	struct rte_eth_mirror_conf mirror_conf = {
-+		.flags = RTE_ETH_MIRROR_DIRECTION_INGRESS | RTE_ETH_MIRROR_DIRECTION_EGRESS
-+	};
-+	int ret;
++	uint32_t pkt_len = rte_pktmbuf_pkt_len(m);
++	uint32_t padding = RTE_ALIGN(pkt_len, sizeof(uint32_t)) - pkt_len;
 +
-+	if (port_id_is_invalid(res->port_id, ENABLED_WARN))
-+		return;
-+
-+	if (port_id_is_invalid(res->target_id, ENABLED_WARN))
-+		return;
-+
-+	mirror_conf.target = res->target_id;
-+
-+	ret = rte_eth_add_mirror(res->port_id,  &mirror_conf);
-+	if (ret != 0)
-+		fprintf(stderr, "%s\n", rte_strerror(-ret));
++	if (padding > 0) {
++		void *tail = rte_pktmbuf_append(m, padding);
++		if (tail == NULL)
++			return -1;
++		memset(tail, 0, padding);
++	}
++	return 0;
 +}
 +
-+cmdline_parse_inst_t cmd_create_port_mirror = {
-+	.f = cmd_create_port_mirror_parsed,
-+	.data = NULL,
-+	.help_str = "create port mirror <port_id> <target_id>",
-+	.tokens = {
-+		(void *)&cmd_create_port_mirror_create,
-+		(void *)&cmd_create_port_mirror_port,
-+		(void *)&cmd_create_port_mirror_mirror,
-+		(void *)&cmd_create_port_mirror_port_id,
-+		(void *)&cmd_create_port_mirror_target_id,
-+		NULL
-+	},
-+};
-+
-+/* *** Delete Port Mirror Object *** */
-+struct cmd_delete_port_mirror_result {
-+	cmdline_fixed_string_t delete;
-+	cmdline_fixed_string_t port;
-+	cmdline_fixed_string_t mirror;
-+	uint16_t port_id;
-+	uint16_t target_id;
-+};
-+
-+static void cmd_delete_port_mirror_parsed(void *parsed_result,
-+	__rte_unused struct cmdline *cl,
-+	__rte_unused void *data)
-+{
-+	const struct cmd_delete_port_mirror_result *res = parsed_result;
-+	int ret;
-+
-+	if (port_id_is_invalid(res->port_id, ENABLED_WARN))
-+		return;
-+
-+	ret = rte_eth_remove_mirror(res->port_id, res->target_id);
-+	if (ret != 0)
-+		fprintf(stderr, "%s\n", rte_strerror(-ret));
+ /*
+- *   The mbufs created use the Pcapng standard enhanced packet  block.
++ *  The mbufs created use the Pcapng standard enhanced packet block.
+  *
+  *                         1                   2                   3
+  *     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+@@ -468,71 +485,28 @@ pcapng_vlan_insert(struct rte_mbuf *m, uint16_t ether_type, uint16_t tci)
+  *    |                      Block Total Length                       |
+  *    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  */
+-
+-/* Make a copy of original mbuf with pcapng header and options */
+-RTE_EXPORT_SYMBOL(rte_pcapng_copy)
+-struct rte_mbuf *
+-rte_pcapng_copy(uint16_t port_id, uint32_t queue,
+-		const struct rte_mbuf *md,
+-		struct rte_mempool *mp,
+-		uint32_t length,
+-		enum rte_pcapng_direction direction,
+-		const char *comment)
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pcapng_insert, 25.07)
++int
++rte_pcapng_insert(struct rte_mbuf *m, uint32_t queue,
++		  enum rte_pcapng_direction direction, uint32_t orig_len,
++		  uint64_t timestamp, const char *comment)
+ {
+ 	struct pcapng_enhance_packet_block *epb;
+-	uint32_t orig_len, pkt_len, padding, flags;
+-	struct pcapng_option *opt;
+-	uint64_t timestamp;
+-	uint16_t optlen;
+-	struct rte_mbuf *mc;
+-	bool rss_hash;
+-
+-#ifdef RTE_LIBRTE_ETHDEV_DEBUG
+-	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, NULL);
+-#endif
+-	orig_len = rte_pktmbuf_pkt_len(md);
++	uint32_t pkt_len = rte_pktmbuf_pkt_len(m);
++	uint32_t flags;
+ 
+-	/* Take snapshot of the data */
+-	mc = rte_pktmbuf_copy(md, mp, 0, length);
+-	if (unlikely(mc == NULL))
+-		return NULL;
+-
+-	/* Expand any offloaded VLAN information */
+-	if ((direction == RTE_PCAPNG_DIRECTION_IN &&
+-	     (md->ol_flags & RTE_MBUF_F_RX_VLAN_STRIPPED)) ||
+-	    (direction == RTE_PCAPNG_DIRECTION_OUT &&
+-	     (md->ol_flags & RTE_MBUF_F_TX_VLAN))) {
+-		if (pcapng_vlan_insert(mc, RTE_ETHER_TYPE_VLAN,
+-				       md->vlan_tci) != 0)
+-			goto fail;
+-	}
++	if (unlikely(pcapng_mbuf_pad32(m) < 0))
++		return -1;
+ 
+-	if ((direction == RTE_PCAPNG_DIRECTION_IN &&
+-	     (md->ol_flags & RTE_MBUF_F_RX_QINQ_STRIPPED)) ||
+-	    (direction == RTE_PCAPNG_DIRECTION_OUT &&
+-	     (md->ol_flags & RTE_MBUF_F_TX_QINQ))) {
+-		if (pcapng_vlan_insert(mc, RTE_ETHER_TYPE_QINQ,
+-				       md->vlan_tci_outer) != 0)
+-			goto fail;
+-	}
++	uint16_t optlen = pcapng_optlen(sizeof(flags));
+ 
+-	/* record HASH on incoming packets */
+-	rss_hash = (direction == RTE_PCAPNG_DIRECTION_IN &&
+-		    (md->ol_flags & RTE_MBUF_F_RX_RSS_HASH));
++	/* make queue optional? */
++	optlen += pcapng_optlen(sizeof(queue));
+ 
+-	/* pad the packet to 32 bit boundary */
+-	pkt_len = rte_pktmbuf_pkt_len(mc);
+-	padding = RTE_ALIGN(pkt_len, sizeof(uint32_t)) - pkt_len;
+-	if (padding > 0) {
+-		void *tail = rte_pktmbuf_append(mc, padding);
++	/* does packet have valid RSS hash to include */
++	bool rss_hash = (direction == RTE_PCAPNG_DIRECTION_IN &&
++			 (m->ol_flags & RTE_MBUF_F_RX_RSS_HASH));
+ 
+-		if (tail == NULL)
+-			goto fail;
+-		memset(tail, 0, padding);
+-	}
+-
+-	optlen = pcapng_optlen(sizeof(flags));
+-	optlen += pcapng_optlen(sizeof(queue));
+ 	if (rss_hash)
+ 		optlen += pcapng_optlen(sizeof(uint8_t) + sizeof(uint32_t));
+ 
+@@ -540,10 +514,10 @@ rte_pcapng_copy(uint16_t port_id, uint32_t queue,
+ 		optlen += pcapng_optlen(strlen(comment));
+ 
+ 	/* reserve trailing options and block length */
+-	opt = (struct pcapng_option *)
+-		rte_pktmbuf_append(mc, optlen + sizeof(uint32_t));
++	struct pcapng_option *opt = (struct pcapng_option *)
++		rte_pktmbuf_append(m, optlen + sizeof(uint32_t));
+ 	if (unlikely(opt == NULL))
+-		goto fail;
++		return -1;
+ 
+ 	switch (direction) {
+ 	case RTE_PCAPNG_DIRECTION_IN:
+@@ -556,24 +530,20 @@ rte_pcapng_copy(uint16_t port_id, uint32_t queue,
+ 		flags = 0;
+ 	}
+ 
+-	opt = pcapng_add_option(opt, PCAPNG_EPB_FLAGS,
+-				&flags, sizeof(flags));
+-
+-	opt = pcapng_add_option(opt, PCAPNG_EPB_QUEUE,
+-				&queue, sizeof(queue));
++	opt = pcapng_add_option(opt, PCAPNG_EPB_FLAGS, &flags, sizeof(flags));
++	opt = pcapng_add_option(opt, PCAPNG_EPB_QUEUE, &queue, sizeof(queue));
+ 
+ 	if (rss_hash) {
+ 		uint8_t hash_opt[5];
+ 
+-		/* The algorithm could be something else if
+-		 * using rte_flow_action_rss; but the current API does not
+-		 * have a way for ethdev to report  this on a per-packet basis.
++		/* The algorithm could be something else but the current API does not
++		 * have a way for to record this on a per-packet basis
++		 * and the PCAPNG hash types don't match the DPDK types.
+ 		 */
+ 		hash_opt[0] = PCAPNG_HASH_TOEPLITZ;
+ 
+-		memcpy(&hash_opt[1], &md->hash.rss, sizeof(uint32_t));
+-		opt = pcapng_add_option(opt, PCAPNG_EPB_HASH,
+-					&hash_opt, sizeof(hash_opt));
++		memcpy(&hash_opt[1], &m->hash.rss, sizeof(uint32_t));
++		opt = pcapng_add_option(opt, PCAPNG_EPB_HASH, &hash_opt, sizeof(hash_opt));
+ 	}
+ 
+ 	if (comment)
+@@ -583,19 +553,14 @@ rte_pcapng_copy(uint16_t port_id, uint32_t queue,
+ 	/* Note: END_OPT necessary here. Wireshark doesn't do it. */
+ 
+ 	/* Add PCAPNG packet header */
+-	epb = (struct pcapng_enhance_packet_block *)
+-		rte_pktmbuf_prepend(mc, sizeof(*epb));
++	epb = (struct pcapng_enhance_packet_block *) rte_pktmbuf_prepend(m, sizeof(*epb));
+ 	if (unlikely(epb == NULL))
+-		goto fail;
++		return -1;
+ 
+ 	epb->block_type = PCAPNG_ENHANCED_PACKET_BLOCK;
+-	epb->block_length = rte_pktmbuf_pkt_len(mc);
+-
+-	/* Interface index is filled in later during write */
+-	mc->port = port_id;
++	epb->block_length = rte_pktmbuf_pkt_len(m);
+ 
+-	/* Put timestamp in cycles here - adjust in packet write */
+-	timestamp = rte_get_tsc_cycles();
++	/* Put timestamp in cycles here - adjusted in packet write */
+ 	epb->timestamp_hi = timestamp >> 32;
+ 	epb->timestamp_lo = (uint32_t)timestamp;
+ 	epb->capture_length = pkt_len;
+@@ -603,9 +568,56 @@ rte_pcapng_copy(uint16_t port_id, uint32_t queue,
+ 
+ 	/* set trailer of block length */
+ 	*(uint32_t *)opt = epb->block_length;
++	return 0;
 +}
 +
-+static cmdline_parse_token_string_t cmd_delete_port_mirror_delete =
-+	TOKEN_STRING_INITIALIZER(struct cmd_delete_port_mirror_result, delete, "delete");
-+static cmdline_parse_token_string_t cmd_delete_port_mirror_port =
-+	TOKEN_STRING_INITIALIZER(struct cmd_delete_port_mirror_result, port, "port");
-+static cmdline_parse_token_string_t cmd_delete_port_mirror_mirror =
-+	TOKEN_STRING_INITIALIZER(struct cmd_delete_port_mirror_result, mirror, "mirror");
-+static cmdline_parse_token_num_t cmd_delete_port_mirror_port_id =
-+	TOKEN_NUM_INITIALIZER(struct cmd_delete_port_mirror_result, port_id, RTE_UINT16);
-+static cmdline_parse_token_num_t cmd_delete_port_mirror_target_id =
-+	TOKEN_NUM_INITIALIZER(struct cmd_delete_port_mirror_result, target_id, RTE_UINT16);
-+
-+cmdline_parse_inst_t cmd_delete_port_mirror = {
-+	.f = cmd_delete_port_mirror_parsed,
-+	.data = NULL,
-+	.help_str = "delete port mirror <port_id> <target_id>",
-+	.tokens = {
-+		(void *)&cmd_delete_port_mirror_delete,
-+		(void *)&cmd_delete_port_mirror_port,
-+		(void *)&cmd_delete_port_mirror_mirror,
-+		(void *)&cmd_delete_port_mirror_port_id,
-+		(void *)&cmd_delete_port_mirror_target_id,
-+		NULL
-+	},
-+};
-+
-+/* *** Show Port Mirror Stats *** */
-+struct cmd_show_port_mirror_stats_result {
-+	cmdline_fixed_string_t show;
-+	cmdline_fixed_string_t port;
-+	cmdline_fixed_string_t mirror;
-+	cmdline_fixed_string_t stats;
-+	uint16_t port_id;
-+	uint32_t target_id;
-+};
-+
-+static cmdline_parse_token_string_t cmd_show_port_mirror_stats_show =
-+	TOKEN_STRING_INITIALIZER(
-+		struct cmd_show_port_mirror_stats_result, show, "show");
-+static cmdline_parse_token_string_t cmd_show_port_mirror_stats_port =
-+	TOKEN_STRING_INITIALIZER(
-+		struct cmd_show_port_mirror_stats_result, port, "port");
-+static cmdline_parse_token_string_t cmd_show_port_mirror_stats_mirror =
-+	TOKEN_STRING_INITIALIZER(
-+		struct cmd_show_port_mirror_stats_result, mirror, "mirror");
-+static cmdline_parse_token_string_t cmd_show_port_mirror_stats_stats =
-+	TOKEN_STRING_INITIALIZER(
-+		struct cmd_show_port_mirror_stats_result, stats, "stats");
-+static cmdline_parse_token_num_t cmd_show_port_mirror_stats_port_id =
-+	TOKEN_NUM_INITIALIZER(
-+		struct cmd_show_port_mirror_stats_result, port_id, RTE_UINT16);
-+static cmdline_parse_token_num_t cmd_show_port_mirror_stats_target_id =
-+	TOKEN_NUM_INITIALIZER(
-+		struct cmd_show_port_mirror_stats_result, target_id, RTE_UINT32);
-+
-+static void cmd_show_port_mirror_stats_parsed(void *parsed_result,
-+	__rte_unused struct cmdline *cl,
-+	__rte_unused void *data)
++/* Make a copy of original mbuf with pcapng header and options */
++RTE_EXPORT_SYMBOL(rte_pcapng_copy)
++struct rte_mbuf *
++rte_pcapng_copy(uint16_t port_id, uint32_t queue,
++		const struct rte_mbuf *md,
++		struct rte_mempool *mp,
++		uint32_t length,
++		enum rte_pcapng_direction direction,
++		const char *comment)
 +{
-+	struct cmd_show_port_mirror_stats_result *res = parsed_result;
-+	struct rte_eth_mirror_stats stats;
-+	uint32_t target_id = res->target_id;
-+	uint16_t port_id = res->port_id;
-+	int ret;
++	uint32_t orig_len = rte_pktmbuf_pkt_len(md);
++	struct rte_mbuf *mc;
+ 
+-	return mc;
++#ifdef RTE_LIBRTE_ETHDEV_DEBUG
++	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, NULL);
++#endif
 +
-+	if (port_id_is_invalid(port_id, ENABLED_WARN))
-+		return;
++	/* Take snapshot of the data */
++	mc = rte_pktmbuf_copy(md, mp, 0, length);
++	if (unlikely(mc == NULL))
++		return NULL;
 +
-+	if (port_id_is_invalid(target_id, ENABLED_WARN))
-+		return;
-+
-+	ret = rte_eth_mirror_stats_get(port_id, target_id, &stats);
-+	if (ret != 0) {
-+		fprintf(stderr,
-+			"%s: Error failed to get stats for mirror from %u to %u: %d\n",
-+			__func__, port_id, target_id, ret);
-+		return;
++	/* Expand any offloaded VLAN information */
++	if ((direction == RTE_PCAPNG_DIRECTION_IN &&
++	     (md->ol_flags & RTE_MBUF_F_RX_VLAN_STRIPPED)) ||
++	    (direction == RTE_PCAPNG_DIRECTION_OUT &&
++	     (md->ol_flags & RTE_MBUF_F_TX_VLAN))) {
++		if (pcapng_vlan_insert(mc, RTE_ETHER_TYPE_VLAN,
++				       md->vlan_tci) != 0)
++			goto fail;
 +	}
 +
-+	printf("Packets: %" PRIu64 "\n", stats.packets);
-+	printf("No mbuf: %" PRIu64 "\n", stats.nombuf);
-+	printf("Tx Full: %" PRIu64 "\n", stats.full);
-+}
++	if ((direction == RTE_PCAPNG_DIRECTION_IN &&
++	     (md->ol_flags & RTE_MBUF_F_RX_QINQ_STRIPPED)) ||
++	    (direction == RTE_PCAPNG_DIRECTION_OUT &&
++	     (md->ol_flags & RTE_MBUF_F_TX_QINQ))) {
++		if (pcapng_vlan_insert(mc, RTE_ETHER_TYPE_QINQ,
++				       md->vlan_tci_outer) != 0)
++			goto fail;
++	}
 +
-+cmdline_parse_inst_t cmd_show_port_mirror_stats = {
-+	.f = cmd_show_port_mirror_stats_parsed,
-+	.data = NULL,
-+	.help_str = "show port mirror stats <port_id> <target_id>",
-+	.tokens = {
-+		(void *)&cmd_show_port_mirror_stats_show,
-+		(void *)&cmd_show_port_mirror_stats_port,
-+		(void *)&cmd_show_port_mirror_stats_mirror,
-+		(void *)&cmd_show_port_mirror_stats_stats,
-+		(void *)&cmd_show_port_mirror_stats_port_id,
-+		(void *)&cmd_show_port_mirror_stats_target_id,
-+		NULL
-+	},
-+};
-diff --git a/app/test-pmd/cmdline_mirror.h b/app/test-pmd/cmdline_mirror.h
-new file mode 100644
-index 0000000000..b7143a9c3f
---- /dev/null
-+++ b/app/test-pmd/cmdline_mirror.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2025 Stephen Hemminger <stephen@networkplumber.org>
++	/* Interface index is filled in later during write */
++	mc->port = port_id;
+ 
++	if (likely(rte_pcapng_insert(mc, queue, direction, orig_len,
++				     rte_get_tsc_cycles(), comment) == 0))
++		return mc;
+ fail:
+ 	rte_pktmbuf_free(mc);
+ 	return NULL;
+diff --git a/lib/pcapng/rte_pcapng.h b/lib/pcapng/rte_pcapng.h
+index 48f2b57564..4914ac9622 100644
+--- a/lib/pcapng/rte_pcapng.h
++++ b/lib/pcapng/rte_pcapng.h
+@@ -99,7 +99,7 @@ enum rte_pcapng_direction {
+ };
+ 
+ /**
+- * Format an mbuf for writing to file.
++ * Make a copy of mbuf for writing to file.
+  *
+  * @param port_id
+  *   The Ethernet port on which packet was received
+@@ -117,7 +117,7 @@ enum rte_pcapng_direction {
+  * @param direction
+  *   The direction of the packer: receive, transmit or unknown.
+  * @param comment
+- *   Packet comment.
++ *   Packet comment (optional).
+  *
+  * @return
+  *   - The pointer to the new mbuf formatted for pcapng_write
+@@ -129,6 +129,29 @@ rte_pcapng_copy(uint16_t port_id, uint32_t queue,
+ 		uint32_t length,
+ 		enum rte_pcapng_direction direction, const char *comment);
+ 
++/**
++ * Format an mbuf for writing to file.
++ *
++ * @param m
++ *   The mbuf to modify.
++ * @param queue
++ *   The queue on the Ethernet port where packet was received
++ *   or is going to be transmitted.
++ * @param direction
++ *   The direction of the packer: receive, transmit or unknown.
++ * @param orig_len
++ *   The length of the original packet which maybe less than actual
++ *   packet if only a snapshot was captured.
++ * @param timestamp
++ *   The timestamp for packet in TSC cycles.
++ * @param comment
++ *   Packet comment (optional).
 + */
-+
-+#ifndef _CMDLINE_MIRROR_H_
-+#define _CMDLINE_MIRROR_H_
-+
-+/* Port MIRROR commands */
-+extern cmdline_parse_inst_t cmd_create_port_mirror;
-+extern cmdline_parse_inst_t cmd_delete_port_mirror;
-+extern cmdline_parse_inst_t cmd_show_port_mirror_stats;
-+
-+#endif /* _CMDLINE_MIRROR_H_ */
-diff --git a/app/test-pmd/meson.build b/app/test-pmd/meson.build
-index 000548c261..e67665028f 100644
---- a/app/test-pmd/meson.build
-+++ b/app/test-pmd/meson.build
-@@ -8,6 +8,7 @@ sources = files(
-         'cmdline.c',
-         'cmdline_cman.c',
-         'cmdline_flow.c',
-+        'cmdline_mirror.c',
-         'cmdline_mtr.c',
-         'cmdline_tm.c',
-         'cmd_flex_item.c',
-diff --git a/doc/guides/testpmd_app_ug/testpmd_funcs.rst b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-index 6ad83ae50d..603468a70d 100644
---- a/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-+++ b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-@@ -2570,6 +2570,21 @@ where:
- * ``clear``: Flag that indicates whether the statistics counters should
-   be cleared (i.e. set to zero) immediately after they have been read or not.
++__rte_experimental
++int
++rte_pcapng_insert(struct rte_mbuf *m, uint32_t queue,
++		  enum rte_pcapng_direction direction, uint32_t orig_len,
++		  uint64_t timestamp, const char *comment);
  
-+create mirror
-+-------------
-+
-+Create a new MIRROR port for an ethernet device::
-+
-+   testpmd> create port mirror (port_id) destination (port_id)
-+
-+delete mirror
-+-------------
-+
-+Delete an existing MIRROR port on ethernet device::
-+
-+   testpmd> delete port mirror (port_id)
-+
-+
- Traffic Management
- ------------------
- 
+ /**
+  * Determine optimum mbuf data size.
 -- 
 2.47.2
 
