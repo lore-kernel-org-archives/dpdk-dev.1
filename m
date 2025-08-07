@@ -2,52 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 956E4C87FCA
-	for <dpdk-dev@archiver.kernel.org>; Thu,  7 Aug 2025 12:23:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0756C87FCA
+	for <dpdk-dev@archiver.kernel.org>; Thu,  7 Aug 2025 12:33:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 62DD540669;
-	Thu,  7 Aug 2025 14:22:53 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id C981040652
- for <dev@dpdk.org>; Thu,  7 Aug 2025 14:22:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1754569370; x=1786105370;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=o+NE3dLLM570idv5IU8m9CYGxo7jmNrTxDXAcBGaDzk=;
- b=XZeAY7k8mav3XIYh82j4HyJ7U17i4+mTr1/naPBvtbkuU1i6ntvIA+dn
- jgkWScCyAMzdECwYv7BHG2n+iXuxJjFLhNjXsdD/drr3drONCRDZXZfAo
- RQ8ZpFHdcHaBoNGhCt1HUP9U1HciuwcgVMQ/LYKjbr5ICuhA/B3SgrTBv
- gVnsEGZHikGsAc5gJ00Up6hb/ALIhFowDBPxYCPblxJAmIC643OBvZJDL
- tSE34OWPwKNoOkaQ/kx0uhT4WytWM9CguysstXUwpjyPXcf7C4SNHjBt2
- bSzLH0dJxy4BKUlaNwZWFsA/5a5NrOv25YccUeG7ml13WD6ZFEvWUVGrd g==;
-X-CSE-ConnectionGUID: bQ91eiR1RnSlt1qbZp7ETg==
-X-CSE-MsgGUID: 2Kd7gi9XQvGkb0AXqfRTAg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="59517173"
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; d="scan'208";a="59517173"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
- by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Aug 2025 05:22:50 -0700
-X-CSE-ConnectionGUID: +IS+0AUKS/6jitIrqdcgvw==
-X-CSE-MsgGUID: acR+OupcQESQ6sjjYHncaQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; d="scan'208";a="169171656"
-Received: from silpixa00401176.ir.intel.com (HELO
- silpixa00401176.ger.corp.intel.com) ([10.237.222.172])
- by fmviesa003.fm.intel.com with ESMTP; 07 Aug 2025 05:22:48 -0700
-From: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com,
-	anatoly.burakov@intel.com
-Subject: [PATCH 6/6] net/ice: add PFC statistics
-Date: Thu,  7 Aug 2025 12:22:37 +0000
-Message-ID: <20250807122238.334177-7-vladimir.medvedkin@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250807122238.334177-1-vladimir.medvedkin@intel.com>
-References: <20250807122238.334177-1-vladimir.medvedkin@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 23706402D0;
+	Thu,  7 Aug 2025 14:33:26 +0200 (CEST)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+ by mails.dpdk.org (Postfix) with ESMTP id 32F0E4027C
+ for <dev@dpdk.org>; Thu,  7 Aug 2025 14:33:24 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+ by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4byRM10KpGz13N5K;
+ Thu,  7 Aug 2025 20:30:05 +0800 (CST)
+Received: from kwepemo500011.china.huawei.com (unknown [7.202.195.194])
+ by mail.maildlp.com (Postfix) with ESMTPS id 9BE0E1400DC;
+ Thu,  7 Aug 2025 20:33:21 +0800 (CST)
+Received: from [10.67.121.193] (10.67.121.193) by
+ kwepemo500011.china.huawei.com (7.202.195.194) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 7 Aug 2025 20:33:21 +0800
+Message-ID: <605ede7c-2842-4c36-bcb4-f9a0e9c1ac1c@huawei.com>
+Date: Thu, 7 Aug 2025 20:33:20 +0800
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net/rte_net: fix inner L2 length for tunneled Ethernet
+ packets
+To: Ivan Malov <ivan.malov@arknetworks.am>, Khadem Ullah
+ <14pwcse1224@uetpeshawar.edu.pk>
+CC: <dev@dpdk.org>, <andrew.rybchenko@oktetlabs.ru>,
+ <jasvinder.singh@intel.com>, <bruce.richardson@intel.com>,
+ <thomas@monjalon.net>, Stephen Hemminger <stephen@networkplumber.org>,
+ =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
+References: <5a75dd27-a19b-4dad-b3bd-cc7f31e4619d@oktetlabs.ru>
+ <20250801112834.60310-1-14pwcse1224@uetpeshawar.edu.pk>
+ <812ed3d3-d52a-405d-45bf-244de8eafca4@arknetworks.am>
+Content-Language: en-US
+From: huangdengdui <huangdengdui@huawei.com>
+In-Reply-To: <812ed3d3-d52a-405d-45bf-244de8eafca4@arknetworks.am>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.121.193]
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemo500011.china.huawei.com (7.202.195.194)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,94 +56,88 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Expose PFC statistics in xstats.
 
-Signed-off-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
----
- drivers/net/intel/ice/ice_ethdev.c | 63 ++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+On 2025/8/1 21:23, Ivan Malov wrote:
+> Hi,
+> 
+> On Fri, 1 Aug 2025, Khadem Ullah wrote:
+> 
+>> Hi Andrew,
+>>
+>> Thanks for your feedback.
+>>
+>> Please check mbuf packet types and the following test case:
+>> https://doc.dpdk.org/dts-20.02/test_plans/uni_pkt_test_plan.html#test-case-vxlan-tunnel-packet-type-detect
+>> sendp([Ether()/IP()/UDP()/Vxlan()/Ether()/IP(frag=5)/Raw('\0'*40)],
+>> iface=txItf)
+>>
+>> (outer) L2 type: ETHER
+>> (outer) L3 type: IPV4_EXT_UNKNOWN
+>> (outer) L4 type: Unknown
+>> Tunnel type: GRENAT
+>> Inner L2 type: ETHER
+>> Inner L3 type: IPV4_EXT_UNKNOWN
+>> Inner L4 type: L4_FRAG
+>>
+>>
+>> union {
+>>        uint32_t packet_type; /**< L2/L3/L4 and tunnel information. */
+>>        __extension__
+>>        struct {
+>>          uint8_t l2_type:4;   /**< (Outer) L2 type. */
+>>          uint8_t l3_type:4;   /**< (Outer) L3 type. */
+>>          uint8_t l4_type:4;   /**< (Outer) L4 type. */
+>>          uint8_t tun_type:4;  /**< Tunnel type. */
+>>          union {
+>>            uint8_t inner_esp_next_proto;
+>>            /**< ESP next protocol type, valid if
+>>             * RTE_PTYPE_TUNNEL_ESP tunnel type is set
+>>             * on both Tx and Rx.
+>>             */
+>>            __extension__
+>>            struct {
+>>              uint8_t inner_l2_type:4;
+>>              /**< Inner L2 type. */
+>>              uint8_t inner_l3_type:4;
+>>              /**< Inner L3 type. */
+>>            };
+>>          };
+>>          uint8_t inner_l4_type:4; /**< Inner L4 type. */
+>>        };
+>>      };
+>>
+>>
+>> Based on the above, it seems that inner_l2_len have to the length of Ether.
+>> Ther might need to be some correspondent between both fields to potray the same information.
+>> Or, the inner_l2_type and inner_l2_len are completly different ?
+> 
+> On the one hand, there is mbuf structure, which has got no 'tunnel_len' field.
+> It has 'l2_len' field [1] with a comment saying that for a tunnel packet, it
+> includes some extra terms apart from just 'inner L2 header size'. This use of
+> the 'l2_len' mbuf field is absolutely legitimate, and PMDs confirm this stance.
+> 
+> On the other hand, there is 'rte_net_hdr_lens' structure [2], which does have a
+> separate 'tunnel_len' field and, in general, has got slightly different naming.
+> And the 'inner_l2_len' field has a comment that looks almost like a copy-paste
+> from the mbuf structure. So does 'inner_l2_len' really need to include extra
+> terms, given the presence of a dedicated 'tunnel_len' field? Is it at all
+> correct or could it have been overlooked? One should take a closer look.
 
-diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
-index b3be2e7c7e..7ac1c0872a 100644
---- a/drivers/net/intel/ice/ice_ethdev.c
-+++ b/drivers/net/intel/ice/ice_ethdev.c
-@@ -380,6 +380,46 @@ static const struct ice_xstats_name_off ice_hw_port_strings[] = {
- 	{"rx_xon_packets", offsetof(struct ice_hw_port_stats, link_xon_rx)},
- 	{"tx_xoff_packets", offsetof(struct ice_hw_port_stats, link_xoff_tx)},
- 	{"rx_xoff_packets", offsetof(struct ice_hw_port_stats, link_xoff_rx)},
-+	{"priority_xon_rx_tc0", offsetof(struct ice_hw_port_stats, priority_xon_rx[0])},
-+	{"priority_xon_rx_tc1", offsetof(struct ice_hw_port_stats, priority_xon_rx[1])},
-+	{"priority_xon_rx_tc2", offsetof(struct ice_hw_port_stats, priority_xon_rx[2])},
-+	{"priority_xon_rx_tc3", offsetof(struct ice_hw_port_stats, priority_xon_rx[3])},
-+	{"priority_xon_rx_tc4", offsetof(struct ice_hw_port_stats, priority_xon_rx[4])},
-+	{"priority_xon_rx_tc5", offsetof(struct ice_hw_port_stats, priority_xon_rx[5])},
-+	{"priority_xon_rx_tc6", offsetof(struct ice_hw_port_stats, priority_xon_rx[6])},
-+	{"priority_xon_rx_tc7", offsetof(struct ice_hw_port_stats, priority_xon_rx[7])},
-+	{"priority_xoff_rx_tc0", offsetof(struct ice_hw_port_stats, priority_xoff_rx[0])},
-+	{"priority_xoff_rx_tc1", offsetof(struct ice_hw_port_stats, priority_xoff_rx[1])},
-+	{"priority_xoff_rx_tc2", offsetof(struct ice_hw_port_stats, priority_xoff_rx[2])},
-+	{"priority_xoff_rx_tc3", offsetof(struct ice_hw_port_stats, priority_xoff_rx[3])},
-+	{"priority_xoff_rx_tc4", offsetof(struct ice_hw_port_stats, priority_xoff_rx[4])},
-+	{"priority_xoff_rx_tc5", offsetof(struct ice_hw_port_stats, priority_xoff_rx[5])},
-+	{"priority_xoff_rx_tc6", offsetof(struct ice_hw_port_stats, priority_xoff_rx[6])},
-+	{"priority_xoff_rx_tc7", offsetof(struct ice_hw_port_stats, priority_xoff_rx[7])},
-+	{"priority_xon_tx_tc0", offsetof(struct ice_hw_port_stats, priority_xon_tx[0])},
-+	{"priority_xon_tx_tc1", offsetof(struct ice_hw_port_stats, priority_xon_tx[1])},
-+	{"priority_xon_tx_tc2", offsetof(struct ice_hw_port_stats, priority_xon_tx[2])},
-+	{"priority_xon_tx_tc3", offsetof(struct ice_hw_port_stats, priority_xon_tx[3])},
-+	{"priority_xon_tx_tc4", offsetof(struct ice_hw_port_stats, priority_xon_tx[4])},
-+	{"priority_xon_tx_tc5", offsetof(struct ice_hw_port_stats, priority_xon_tx[5])},
-+	{"priority_xon_tx_tc6", offsetof(struct ice_hw_port_stats, priority_xon_tx[6])},
-+	{"priority_xon_tx_tc7", offsetof(struct ice_hw_port_stats, priority_xon_tx[7])},
-+	{"priority_xoff_tx_tc0", offsetof(struct ice_hw_port_stats, priority_xoff_tx[0])},
-+	{"priority_xoff_tx_tc1", offsetof(struct ice_hw_port_stats, priority_xoff_tx[1])},
-+	{"priority_xoff_tx_tc2", offsetof(struct ice_hw_port_stats, priority_xoff_tx[2])},
-+	{"priority_xoff_tx_tc3", offsetof(struct ice_hw_port_stats, priority_xoff_tx[3])},
-+	{"priority_xoff_tx_tc4", offsetof(struct ice_hw_port_stats, priority_xoff_tx[4])},
-+	{"priority_xoff_tx_tc5", offsetof(struct ice_hw_port_stats, priority_xoff_tx[5])},
-+	{"priority_xoff_tx_tc6", offsetof(struct ice_hw_port_stats, priority_xoff_tx[6])},
-+	{"priority_xoff_tx_tc7", offsetof(struct ice_hw_port_stats, priority_xoff_tx[7])},
-+	{"priority_xon_2_xoff_tc0", offsetof(struct ice_hw_port_stats, priority_xon_2_xoff[0])},
-+	{"priority_xon_2_xoff_tc1", offsetof(struct ice_hw_port_stats, priority_xon_2_xoff[0])},
-+	{"priority_xon_2_xoff_tc2", offsetof(struct ice_hw_port_stats, priority_xon_2_xoff[0])},
-+	{"priority_xon_2_xoff_tc3", offsetof(struct ice_hw_port_stats, priority_xon_2_xoff[0])},
-+	{"priority_xon_2_xoff_tc4", offsetof(struct ice_hw_port_stats, priority_xon_2_xoff[0])},
-+	{"priority_xon_2_xoff_tc5", offsetof(struct ice_hw_port_stats, priority_xon_2_xoff[0])},
-+	{"priority_xon_2_xoff_tc6", offsetof(struct ice_hw_port_stats, priority_xon_2_xoff[0])},
-+	{"priority_xon_2_xoff_tc7", offsetof(struct ice_hw_port_stats, priority_xon_2_xoff[0])},
- 	{"rx_size_64_packets", offsetof(struct ice_hw_port_stats, rx_size_64)},
- 	{"rx_size_65_to_127_packets", offsetof(struct ice_hw_port_stats,
- 		rx_size_127)},
-@@ -6669,6 +6709,29 @@ ice_read_stats_registers(struct ice_pf *pf, struct ice_hw *hw)
- 	/* GLPRT_MSPDC not supported */
- 	/* GLPRT_XEC not supported */
- 
-+	for (int i = 0; i < ICE_MAX_TRAFFIC_CLASS; i++) {
-+		ice_stat_update_40(hw, GLPRT_PXONRXC_H(hw->port_info->lport, i),
-+			   GLPRT_PXONRXC(hw->port_info->lport, i),
-+			   pf->offset_loaded, &os->priority_xon_rx[i],
-+			   &ns->priority_xon_rx[i]);
-+		ice_stat_update_40(hw, GLPRT_PXONTXC_H(hw->port_info->lport, i),
-+			   GLPRT_PXONTXC(hw->port_info->lport, i),
-+			   pf->offset_loaded, &os->priority_xon_tx[i],
-+			   &ns->priority_xon_tx[i]);
-+		ice_stat_update_40(hw, GLPRT_PXOFFRXC_H(hw->port_info->lport, i),
-+			   GLPRT_PXOFFRXC(hw->port_info->lport, i),
-+			   pf->offset_loaded, &os->priority_xoff_rx[i],
-+			   &ns->priority_xoff_rx[i]);
-+		ice_stat_update_40(hw, GLPRT_PXOFFTXC_H(hw->port_info->lport, i),
-+			   GLPRT_PXOFFTXC(hw->port_info->lport, i),
-+			   pf->offset_loaded, &os->priority_xoff_tx[i],
-+			   &ns->priority_xoff_tx[i]);
-+		ice_stat_update_40(hw, GLPRT_RXON2OFFCNT_H(hw->port_info->lport, i),
-+			   GLPRT_RXON2OFFCNT(hw->port_info->lport, i),
-+			   pf->offset_loaded, &os->priority_xon_2_xoff[i],
-+			   &ns->priority_xon_2_xoff[i]);
-+	}
-+
- 	pf->offset_loaded = true;
- 
- 	if (pf->main_vsi)
--- 
-2.43.0
+When processing a tunnel packet, it is preferable for the inner_l2_len in rte_net_hdr_lens and the l2_len in the mbuf to have consistent meanings, as these two fields are typically used together.
 
+Additionally, I think it would be better to add the tunnel_len field to tx_offload in the mbuf[1].
+Moreover, inner_l2_len should only include the length of the Ethernet header.
+
+[1] https://elixir.bootlin.com/dpdk/v25.07/source/lib/mbuf/rte_mbuf_core.h#L656
+
+
+> 
+> [1] https://github.com/DPDK/dpdk/blob/b222395561638f89562e4ef42e1eabf2d6db43dd/lib/mbuf/rte_mbuf_core.h#L628
+> [2] https://github.com/DPDK/dpdk/blob/b222395561638f89562e4ef42e1eabf2d6db43dd/lib/net/rte_net.h#L22
+> 
+> Thank you.
+> 
+>>
+>> Best Regards,
+>> Khadem
+>>
