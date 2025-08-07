@@ -2,65 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABAD2C87FCF
-	for <dpdk-dev@archiver.kernel.org>; Thu,  7 Aug 2025 15:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8892C87FCF
+	for <dpdk-dev@archiver.kernel.org>; Thu,  7 Aug 2025 15:57:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0BF944042C;
-	Thu,  7 Aug 2025 17:41:37 +0200 (CEST)
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com
- [209.85.215.172])
- by mails.dpdk.org (Postfix) with ESMTP id 4946940270
- for <dev@dpdk.org>; Thu,  7 Aug 2025 17:41:35 +0200 (CEST)
-Received: by mail-pg1-f172.google.com with SMTP id
- 41be03b00d2f7-b34a8f69862so885032a12.2
- for <dev@dpdk.org>; Thu, 07 Aug 2025 08:41:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1754581294; x=1755186094; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=OvfX5WM1mCy58vU4VcJt0OyeXncLVUNG5nZLQITUczQ=;
- b=glky+44ozG4mOHdkTfx6+PfipjRnkMNEM2kt4fQ66Bh2xR9VoQU3HBqWdzgyoVZsSf
- 32NtWNnhDK4qga0Tu+t9t/1oLUz4Xnc8YOPdUeJ/8+Nwkx+D5aEKO2GrxuVOMRfRoy+C
- VwENid5ALxdj0V6/GTCfc94t4XDj243r8G6+g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1754581294; x=1755186094;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=OvfX5WM1mCy58vU4VcJt0OyeXncLVUNG5nZLQITUczQ=;
- b=ECBdBZbAxg9GZCqP5AdPiewMlGubaXHOq2LLnsAc7UXLiobBg+eZB5I4pxcpo83zjy
- TvcVkLxSireh7wFCUGGzT4Fs5wqiN8AyOE740ovxX02WTXeckzF0biI7WLwSiQ403sba
- UWfG9w371+MwwNz0BvBW3LV2eFlKSZoLJpPCofE+EWY62J5zg8Ifpl5y1TCg9miuE4Bi
- lI+rgNqvnlVE80FWr9KdAiE9UeZL1ZqK4Ruokpg4vQYKST1FVDaWFfMnk/Vi2UA03okn
- 3xEuwyrWq8rS9denpeSo5iwlzbymdyK/sYq1az6fXoq/NXvIMuAFpjH8s+X6ktI6FVOj
- UDAA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUzyzlJYNT1cVAp5mqhdNJjz3upa9lBHvnBoaALwQCXTcodShga/o/p1SfGtpQicyzCQZU=@dpdk.org
-X-Gm-Message-State: AOJu0YzqwdeoRkIB4CAicpbiwEe1vJw7C2nr11r4DQaKHA5z7F5vo8w2
- z3pPR1uCuipeQIEbMx4pqAvXNC8ZwqsdSEAh/6lRyW66TxSIXvaaFtqcMrBMPDV6TWixw49yJtY
- NBbrf1Xq0EduYFLx/PL546X7PIiL9OxH3UANbqsmFBg==
-X-Gm-Gg: ASbGncvNOK3lMtSmXK9FQq1SEX26W//ymzX9nKYs/SNWAzyz+29+GKpWbkdFNz3BFgi
- 9oSXJ+qK5bzVW7Ts7QMY7WudcKUEBu0d2lh+5J2S6vyuHmxWeDQduO3v1ASV/ikJE/aWErplPwE
- t+lAeIPiAgBl70eV+CjB42H9kpj99+y1Q0o0tyW8nwRKvR3M5xcrdTSYo8RMFPdj2hA46xoINUV
- uVXOsG9nvF1djV3PQPQw+FeSMON2iX/yoXlzHBC
-X-Google-Smtp-Source: AGHT+IEpEScSkvOgnmtvuXskWgXCGiajndzQVrPgZJlygqSoRlavIS3eWE+FcRPmbUbeRF5pUxRSNNYgd6c/Yw6Zmow=
-X-Received: by 2002:a17:903:11c6:b0:23f:d903:d867 with SMTP id
- d9443c01a7336-242a0b874aamr99717435ad.35.1754581294451; Thu, 07 Aug 2025
- 08:41:34 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 8CA914027C;
+	Thu,  7 Aug 2025 17:57:12 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id ABFB540270
+ for <dev@dpdk.org>; Thu,  7 Aug 2025 17:57:10 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 95FF946CE9; Thu,  7 Aug 2025 17:57:10 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/DTS Bug 1765] Add vlan_tci/vlan_tci_outer tracking to
+ testpmd/DTS
+Date: Thu, 07 Aug 2025 15:57:10 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: DTS
+X-Bugzilla-Version: unspecified
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: dmarx@iol.unh.edu
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter cc
+ target_milestone
+Message-ID: <bug-1765-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17545822300.e052.15396
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-References: <20250722172214.202308-1-dmarx@iol.unh.edu>
- <20250807153358.304262-1-dmarx@iol.unh.edu>
- <20250807153358.304262-2-dmarx@iol.unh.edu>
-In-Reply-To: <20250807153358.304262-2-dmarx@iol.unh.edu>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Thu, 7 Aug 2025 11:35:19 -0400
-X-Gm-Features: Ac12FXwg2F7CpP0LOVxbjxDxqqfbra10sHgCNwygphB83byltEpCNx1xmGN6F58
-Message-ID: <CAJvnSUAOeqJRJBpJ=xMCYB3Q4YX7cnrfOGMV38NaGMGT9tEytA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] dts: add reception check to checksum offload suite
-To: Dean Marx <dmarx@iol.unh.edu>
-Cc: luca.vizzarro@arm.com, yoan.picchi@foss.arm.com, 
- Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com, dev@dpdk.org
-Content-Type: multipart/alternative; boundary="000000000000c92c5a063bc84a7b"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -74,16 +55,178 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000c92c5a063bc84a7b
-Content-Type: text/plain; charset="UTF-8"
 
-Looks good to me.
+--17545822300.e052.15396
+Date: Thu, 7 Aug 2025 17:57:10 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-Reviewed-by: Patrick Robb <probb@iol.unh.edu>
+https://bugs.dpdk.org/show_bug.cgi?id=3D1765
 
---000000000000c92c5a063bc84a7b
-Content-Type: text/html; charset="UTF-8"
+            Bug ID: 1765
+           Summary: Add vlan_tci/vlan_tci_outer tracking to testpmd/DTS
+           Product: DPDK
+           Version: unspecified
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: DTS
+          Assignee: dev@dpdk.org
+          Reporter: dmarx@iol.unh.edu
+                CC: juraj.linkes@pantheon.tech, probb@iol.unh.edu
+  Target Milestone: ---
 
-<div dir="ltr"><div>Looks good to me.</div><div><br></div>Reviewed-by: Patrick Robb &lt;<a href="mailto:probb@iol.unh.edu">probb@iol.unh.edu</a>&gt;</div>
+In order to fully test QinQ functionality, DTS needs to be able to check the
+vlan_tci and vlan_tci_outer packet fields to verify stripping behavior.
+However, these fields are not currently reported by verbose output within
+testpmd. So, in order to extend QinQ testing, these fields need to be added=
+ to
+testpmd, then integrated in the QinQ suite.
 
---000000000000c92c5a063bc84a7b--
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17545822300.e052.15396
+Date: Thu, 7 Aug 2025 17:57:10 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - Add vlan_tci/vlan_tci_outer tracking to testpmd/D=
+TS"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1765">1765</a>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Summary</th>
+          <td>Add vlan_tci/vlan_tci_outer tracking to testpmd/DTS
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>unspecified
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>DTS
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>dmarx&#64;iol.unh.edu
+          </td>
+        </tr>
+
+        <tr>
+          <th>CC</th>
+          <td>juraj.linkes&#64;pantheon.tech, probb&#64;iol.unh.edu
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">In order to fully test QinQ functi=
+onality, DTS needs to be able to check the
+vlan_tci and vlan_tci_outer packet fields to verify stripping behavior.
+However, these fields are not currently reported by verbose output within
+testpmd. So, in order to extend QinQ testing, these fields need to be added=
+ to
+testpmd, then integrated in the QinQ suite.
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1765">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17545822300.e052.15396--
