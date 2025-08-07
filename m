@@ -2,47 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0756C87FCA
-	for <dpdk-dev@archiver.kernel.org>; Thu,  7 Aug 2025 12:33:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11090C87FCA
+	for <dpdk-dev@archiver.kernel.org>; Thu,  7 Aug 2025 12:39:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 23706402D0;
-	Thu,  7 Aug 2025 14:33:26 +0200 (CEST)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
- by mails.dpdk.org (Postfix) with ESMTP id 32F0E4027C
- for <dev@dpdk.org>; Thu,  7 Aug 2025 14:33:24 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.88.105])
- by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4byRM10KpGz13N5K;
- Thu,  7 Aug 2025 20:30:05 +0800 (CST)
-Received: from kwepemo500011.china.huawei.com (unknown [7.202.195.194])
- by mail.maildlp.com (Postfix) with ESMTPS id 9BE0E1400DC;
- Thu,  7 Aug 2025 20:33:21 +0800 (CST)
-Received: from [10.67.121.193] (10.67.121.193) by
- kwepemo500011.china.huawei.com (7.202.195.194) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 7 Aug 2025 20:33:21 +0800
-Message-ID: <605ede7c-2842-4c36-bcb4-f9a0e9c1ac1c@huawei.com>
-Date: Thu, 7 Aug 2025 20:33:20 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id 5A91E402D0;
+	Thu,  7 Aug 2025 14:39:56 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+ by mails.dpdk.org (Postfix) with ESMTP id E17654027C
+ for <dev@dpdk.org>; Thu,  7 Aug 2025 14:39:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1754570395; x=1786106395;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=Efh1cI8OvVUwwBrdRjk+phhRdjgH+je3UX4NJfA9Fo8=;
+ b=bO5aXP4BgqPkNmCTtnDc0u6D7N45dUk20iuVjAvjco0Dgs0732zBG0EJ
+ 2IOP4wjB11vE2K+K7iQu3rL9rXdjxc5DH3nIt8rFKM4LZuk8TpgJ+SMwo
+ gHdvLe2X0Q73kanHPPoPyPQF1Qu0e4TNw0E6CMXRl2oMjsU0TBSgJuXds
+ jnN4w9KOc33VnfHqvpRHfJXQpEfLJxil5bsqHNVct34aK9T3LGWUWSa/a
+ NSkURHTRdazCMl3znT9hqRJRbbiLAEyfRIyHJLXDkmKq1nwv6laMKTVVI
+ cwiTkxjk+TJ3DUafvrk6vYSFXN+d5jKiXbfp7gIQjPs1MDPH0VFuU2oP2 w==;
+X-CSE-ConnectionGUID: dPPzOsF8S72TdbIr1iaMcQ==
+X-CSE-MsgGUID: BqnLzUQzS8mm/w/YURq+mg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="56981109"
+X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; d="scan'208";a="56981109"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+ by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Aug 2025 05:39:53 -0700
+X-CSE-ConnectionGUID: i0DOtjjnSvamwPvqRuON1g==
+X-CSE-MsgGUID: z1zMJagQQZqKxwMOc7iAXg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; d="scan'208";a="195886694"
+Received: from silpixa00401177.ir.intel.com ([10.237.213.77])
+ by fmviesa001.fm.intel.com with ESMTP; 07 Aug 2025 05:39:53 -0700
+From: Ciara Loftus <ciara.loftus@intel.com>
+To: dev@dpdk.org
+Cc: bruce.richardson@intel.com,
+	Ciara Loftus <ciara.loftus@intel.com>
+Subject: [PATCH v2 00/15] net/intel: rx path selection simplification
+Date: Thu,  7 Aug 2025 12:39:34 +0000
+Message-Id: <20250807123949.4063416-1-ciara.loftus@intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250725124919.3564890-1-ciara.loftus@intel.com>
+References: <20250725124919.3564890-1-ciara.loftus@intel.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/rte_net: fix inner L2 length for tunneled Ethernet
- packets
-To: Ivan Malov <ivan.malov@arknetworks.am>, Khadem Ullah
- <14pwcse1224@uetpeshawar.edu.pk>
-CC: <dev@dpdk.org>, <andrew.rybchenko@oktetlabs.ru>,
- <jasvinder.singh@intel.com>, <bruce.richardson@intel.com>,
- <thomas@monjalon.net>, Stephen Hemminger <stephen@networkplumber.org>,
- =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
-References: <5a75dd27-a19b-4dad-b3bd-cc7f31e4619d@oktetlabs.ru>
- <20250801112834.60310-1-14pwcse1224@uetpeshawar.edu.pk>
- <812ed3d3-d52a-405d-45bf-244de8eafca4@arknetworks.am>
-Content-Language: en-US
-From: huangdengdui <huangdengdui@huawei.com>
-In-Reply-To: <812ed3d3-d52a-405d-45bf-244de8eafca4@arknetworks.am>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.121.193]
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemo500011.china.huawei.com (7.202.195.194)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,88 +60,70 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+This series aims to simplify the process of selecting an Rx burst
+function for the i40e, iavf and ice drivers. Three main simplifications
+are made:
+1. enforcing the same rx burst function for both primary and secondary
+processes.
+2. using a common function for determining the maximum SIMD width based
+on compiler flags, CPU flags and user-defined limits.
+3. using a common function for selecting the rx burst function based on
+maximum SIMD width, function features (flex desc, scattered, bulk alloc)
+and requested rx offloads.
 
-On 2025/8/1 21:23, Ivan Malov wrote:
-> Hi,
-> 
-> On Fri, 1 Aug 2025, Khadem Ullah wrote:
-> 
->> Hi Andrew,
->>
->> Thanks for your feedback.
->>
->> Please check mbuf packet types and the following test case:
->> https://doc.dpdk.org/dts-20.02/test_plans/uni_pkt_test_plan.html#test-case-vxlan-tunnel-packet-type-detect
->> sendp([Ether()/IP()/UDP()/Vxlan()/Ether()/IP(frag=5)/Raw('\0'*40)],
->> iface=txItf)
->>
->> (outer) L2 type: ETHER
->> (outer) L3 type: IPV4_EXT_UNKNOWN
->> (outer) L4 type: Unknown
->> Tunnel type: GRENAT
->> Inner L2 type: ETHER
->> Inner L3 type: IPV4_EXT_UNKNOWN
->> Inner L4 type: L4_FRAG
->>
->>
->> union {
->>        uint32_t packet_type; /**< L2/L3/L4 and tunnel information. */
->>        __extension__
->>        struct {
->>          uint8_t l2_type:4;   /**< (Outer) L2 type. */
->>          uint8_t l3_type:4;   /**< (Outer) L3 type. */
->>          uint8_t l4_type:4;   /**< (Outer) L4 type. */
->>          uint8_t tun_type:4;  /**< Tunnel type. */
->>          union {
->>            uint8_t inner_esp_next_proto;
->>            /**< ESP next protocol type, valid if
->>             * RTE_PTYPE_TUNNEL_ESP tunnel type is set
->>             * on both Tx and Rx.
->>             */
->>            __extension__
->>            struct {
->>              uint8_t inner_l2_type:4;
->>              /**< Inner L2 type. */
->>              uint8_t inner_l3_type:4;
->>              /**< Inner L3 type. */
->>            };
->>          };
->>          uint8_t inner_l4_type:4; /**< Inner L4 type. */
->>        };
->>      };
->>
->>
->> Based on the above, it seems that inner_l2_len have to the length of Ether.
->> Ther might need to be some correspondent between both fields to potray the same information.
->> Or, the inner_l2_type and inner_l2_len are completly different ?
-> 
-> On the one hand, there is mbuf structure, which has got no 'tunnel_len' field.
-> It has 'l2_len' field [1] with a comment saying that for a tunnel packet, it
-> includes some extra terms apart from just 'inner L2 header size'. This use of
-> the 'l2_len' mbuf field is absolutely legitimate, and PMDs confirm this stance.
-> 
-> On the other hand, there is 'rte_net_hdr_lens' structure [2], which does have a
-> separate 'tunnel_len' field and, in general, has got slightly different naming.
-> And the 'inner_l2_len' field has a comment that looks almost like a copy-paste
-> from the mbuf structure. So does 'inner_l2_len' really need to include extra
-> terms, given the presence of a dedicated 'tunnel_len' field? Is it at all
-> correct or could it have been overlooked? One should take a closer look.
+v2:
+* use booleans instead of a mask to represent path features
+* updated ci_rx_path_select() to improve readability
+* removed check for RTE_CPUFLAG_AVX512F in AVX2 support check
+* reordered enum i40e_rx_func_type and i40e_rx_path_infos array
+* renamed "burst" to "path" in various places
+* reordered iavf_rx_func_type and iavf_rx_path_infos array
+* reordered ice_rx_func_type and ice_rx_path_infos array
+* fixed secondary process path selection for ice
 
-When processing a tunnel packet, it is preferable for the inner_l2_len in rte_net_hdr_lens and the l2_len in the mbuf to have consistent meanings, as these two fields are typically used together.
+Bruce Richardson (1):
+  net/intel: introduce common vector capability function
 
-Additionally, I think it would be better to add the tunnel_len field to tx_offload in the mbuf[1].
-Moreover, inner_l2_len should only include the length of the Ethernet header.
+Ciara Loftus (14):
+  net/ice: use the same Rx path across process types
+  net/iavf: rename Rx/Tx function type variables
+  net/iavf: use the same Rx path across process types
+  net/i40e: use the same Rx path across process types
+  net/ice: use the new common vector capability function
+  net/iavf: use the new common vector capability function
+  net/i40e: use the new common vector capability function
+  net/iavf: remove redundant field from iavf adapter struct
+  net/ice: remove unsupported Rx offload
+  net/iavf: reorder enum of Rx function types
+  net/intel: introduce infrastructure for Rx path selection
+  net/ice: use the common Rx path selection infrastructure
+  net/iavf: use the common Rx path selection infrastructure
+  net/i40e: use the common Rx path selection infrastructure
 
-[1] https://elixir.bootlin.com/dpdk/v25.07/source/lib/mbuf/rte_mbuf_core.h#L656
+ drivers/net/intel/common/rx.h                 | 103 ++++
+ drivers/net/intel/common/rx_vec_x86.h         |  22 +
+ drivers/net/intel/i40e/i40e_ethdev.h          |  25 +-
+ drivers/net/intel/i40e/i40e_rxtx.c            | 251 ++++------
+ drivers/net/intel/i40e/i40e_rxtx.h            |  16 +
+ .../net/intel/i40e/i40e_rxtx_vec_altivec.c    |   6 +
+ drivers/net/intel/i40e/i40e_rxtx_vec_common.h |   9 +-
+ drivers/net/intel/i40e/i40e_rxtx_vec_neon.c   |   6 +
+ drivers/net/intel/i40e/i40e_rxtx_vec_sse.c    |   6 +
+ drivers/net/intel/iavf/iavf.h                 |  31 +-
+ drivers/net/intel/iavf/iavf_ethdev.c          |   1 -
+ drivers/net/intel/iavf/iavf_rxtx.c            | 444 ++++++------------
+ drivers/net/intel/iavf/iavf_rxtx.h            |  51 +-
+ drivers/net/intel/iavf/iavf_rxtx_vec_common.h |  14 +-
+ drivers/net/intel/iavf/iavf_rxtx_vec_neon.c   |   6 +
+ drivers/net/intel/iavf/iavf_rxtx_vec_sse.c    |   6 +
+ drivers/net/intel/ice/ice_ethdev.c            |   2 +
+ drivers/net/intel/ice/ice_ethdev.h            |  25 +-
+ drivers/net/intel/ice/ice_rxtx.c              | 274 ++++-------
+ drivers/net/intel/ice/ice_rxtx.h              |  29 ++
+ drivers/net/intel/ice/ice_rxtx_vec_common.h   |  18 +-
+ drivers/net/intel/ice/ice_rxtx_vec_sse.c      |   6 +
+ 22 files changed, 644 insertions(+), 707 deletions(-)
 
+-- 
+2.34.1
 
-> 
-> [1] https://github.com/DPDK/dpdk/blob/b222395561638f89562e4ef42e1eabf2d6db43dd/lib/mbuf/rte_mbuf_core.h#L628
-> [2] https://github.com/DPDK/dpdk/blob/b222395561638f89562e4ef42e1eabf2d6db43dd/lib/net/rte_net.h#L22
-> 
-> Thank you.
-> 
->>
->> Best Regards,
->> Khadem
->>
