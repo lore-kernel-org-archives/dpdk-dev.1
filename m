@@ -2,70 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E24A1C87FCF
-	for <dpdk-dev@archiver.kernel.org>; Thu,  7 Aug 2025 11:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11AD8C87FCA
+	for <dpdk-dev@archiver.kernel.org>; Thu,  7 Aug 2025 11:08:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5A47C402E8;
-	Thu,  7 Aug 2025 13:06:56 +0200 (CEST)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
- [209.85.214.182])
- by mails.dpdk.org (Postfix) with ESMTP id DA4D6402E0
- for <dev@dpdk.org>; Thu,  7 Aug 2025 13:06:54 +0200 (CEST)
-Received: by mail-pl1-f182.google.com with SMTP id
- d9443c01a7336-2401b855635so5927885ad.2
- for <dev@dpdk.org>; Thu, 07 Aug 2025 04:06:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1754564814;
- x=1755169614; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=mZdYIBd5XkZ6XJiTMyLbJtsRL2ZRhP332XVR+wbiPrY=;
- b=NHLah3OtVbEvuE3MR0lne53BLXF5I0ZCcXH8ZQ+JorH3iqsOeoc7nJ3KGW3WJ1vAfk
- kDZ9oHacyEl6GQ4ja3F/tMd9JEDxGgdm22FNiidfIUzbwnaOSutH5p1v7KqXQB3l7Pwa
- a7dmKYhTLXtrwqvCA+kfB8/ryakqIGAW83H1ghvzO+J5X7RumOhqOojsUF94gXhCi0/7
- nId/QxyVoA3rP4BzgDgNkVunx0NpdfXbvPobPUt4UyZmdfHJYvrnS9qrH8Me4jiKLQyk
- b1ISjWe7bn+BSbNz5GyqA/PmLl7sXUbXIiZKOlN+zSUojzD5C6IS37tueMf3KDrVivRO
- aQLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1754564814; x=1755169614;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=mZdYIBd5XkZ6XJiTMyLbJtsRL2ZRhP332XVR+wbiPrY=;
- b=DwbHr/Nt2hJe8HMQviozcsRzh4RS5U64cTomQuuCKSnjnRHYbBSQWwHPs020VAjwm5
- nT5j2CjtIIMSKdCQ3LEoCgDSdmND5wP1GO7fIJt0WheXgOUBuefK+rSUO3P+p69ZtCPQ
- l0FklH6xTzAjjgbsfhbs2stzFgspxDP/xBasSPko8Plxass1FZW0nzuQD362GBG6ZxQv
- 6egeqCNu1V4JGAy5U/98t/p7uQPpYB22iGzmdbUI/EB6ds+WCzitbKM+mXLWJBiKzxIV
- EEIRUiXcL/ZhXWKWt2RzojaYiZFCZnyK4nHDJxP09Q9EAxmu07SA/ouA79IxC1RUV4d3
- 0CcQ==
-X-Gm-Message-State: AOJu0YxxtDi1nEtUobhYpEDwgctN2TfL2I2guleX8D5zzsqdY55L/oi+
- okBda4DtBduq2nilOhen+MQ/xqdYMpfVDArqCbDs6y/HNEPQ4EXfwkTqvhgpcBNRmVg=
-X-Gm-Gg: ASbGncug7+b9/uwTL5H8ORkILRNl04RyeGT8RmffcS+5lU4BXwLOr+kEyF+P+SYh/iE
- bcZGSgbt0VcNwt1jOVu+g4koEPdyTffd95TxT0mETUFcl4BvSP8zDQ8Aw8c+rFb+OJjCctoIkga
- vCK9XHkvpj6LUZwfn4QFuUlG2JNyLhH1zyDqCBddSGvujt2RkBpr7gaAGCcROjAjtBtkJTZUglI
- MCfBGOgb74iF+diq9kY7GVsoXOjKcVHAIAT8bOh9uZTMy3THgw8vQxH8My9uhOrTTvhhL0cpNOR
- XGRLi1ecaPozRJdMbnl3b9ihu3h9B7YEUsxC+Lx/sUfP2ag96Vgg0XsOhuQw9obdYxhImGsqvVC
- zkHccZRErE9aWqpg5cRfsBsBeUNzbNcyWw0kCdEdgtsdCOMhF
-X-Google-Smtp-Source: AGHT+IEya7BRxTJhrIaBCm4Q6ScnxnFNHHQOQkdAf3Wy6TYMz4v+wMrhXpayhwszCr1z45gKLL3grQ==
-X-Received: by 2002:a17:902:e783:b0:240:49e8:1d3c with SMTP id
- d9443c01a7336-2429f51cd7emr91577575ad.35.1754564813864; 
- Thu, 07 Aug 2025 04:06:53 -0700 (PDT)
-Received: from localhost.localdomain ([64.62.143.197])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-241d1ef674bsm181668055ad.17.2025.08.07.04.06.52
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 07 Aug 2025 04:06:53 -0700 (PDT)
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-To: Sunil Kumar Kori <skori@marvell.com>,
- Rakesh Kudurumalla <rkudurumalla@marvell.com>,
- Jerin Jacob <jerinj@marvell.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>
-Cc: dev@dpdk.org, stable@dpdk.org,
- Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Subject: [PATCH] app/graph: fix overrun error (destination buffer too small)
-Date: Thu,  7 Aug 2025 07:06:40 -0400
-Message-ID: <20250807110640.1094029-1-14pwcse1224@uetpeshawar.edu.pk>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id E140D402E8;
+	Thu,  7 Aug 2025 13:08:50 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+ by mails.dpdk.org (Postfix) with ESMTP id 86FC0402DB;
+ Thu,  7 Aug 2025 13:08:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1754564929; x=1786100929;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=yn9UdFUgjzKG4ogn1wazVRymNaPWZmSH6v6X46Zweas=;
+ b=PO0MCYtx5HuhJQgCQnLe8EC+oDEf9OjF7fFI09pWlN0wqAXeZsQ+SIwm
+ 3hzmH+n+JgdjMgsc38ylhvfq1HhDD7DX29kCJAH4FD6Jzxvd24VYSgk3e
+ rLjroPKg1Uijf01+8Xsx4IITPEFl4GGRz3URVLYvgRhTvxXzJQ+UrTpTe
+ DXJUtkedHclw+S1nTyhw50kjyoZ0RevE84QCWFjEeexgjqSCmsX9Mzn1W
+ fIoEgX7NsFtyeQnkFrX4+hLZMQXuobjTlcnSIRwkMHMU8Nkhciiza74Pt
+ +kDR7CmZLGiqYTjQRijNmQLGuewFRDApCZ53Cm+EZ30mQYNGdenRaybG+ A==;
+X-CSE-ConnectionGUID: gdFLKGixS7SMrWImkr4YNA==
+X-CSE-MsgGUID: rkHm4PcqSEKPGQIUgyk0SQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="56605684"
+X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; d="scan'208";a="56605684"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+ by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Aug 2025 04:08:46 -0700
+X-CSE-ConnectionGUID: /J3lHWawTIyvT8dDy8NftQ==
+X-CSE-MsgGUID: CrqWA2HIQ/u5OLiWAB2r/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; d="scan'208";a="170404260"
+Received: from silpixa00401385.ir.intel.com ([10.237.214.33])
+ by orviesa005.jf.intel.com with ESMTP; 07 Aug 2025 04:08:46 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+	stable@dpdk.org
+Subject: [PATCH] net/ice: fix Rx vector offload flags
+Date: Thu,  7 Aug 2025 12:08:43 +0100
+Message-ID: <20250807110843.54385-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.48.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -81,39 +58,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Some memory locations will be written with incorrect values,
-possibly corrupting data structures or data integrity.
-Size of destination buffer is smaller than the size
-argument specified.
+The vector PMD datapaths for ice do not support QinQ, so we need to
+update the vector offload flags to not use the general RX_OFFLOAD_VLAN
+flag (which sets all vlan-related options) and replace it with the
+individually supported VLAN options.
 
-Coverity issue: 415430
-Fixes: 3850cb06ab9c ('app/graph: add ethdev commands')
+Fixes: 808a17b3c1e6 ("net/ice: add Rx AVX512 offload path")
 Cc: stable@dpdk.org
 
-Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- app/graph/ethdev.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/intel/ice/ice_rxtx_vec_common.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/app/graph/ethdev.c b/app/graph/ethdev.c
-index 2f4cf65c96..f6d4bce9ab 100644
---- a/app/graph/ethdev.c
-+++ b/app/graph/ethdev.c
-@@ -663,11 +663,12 @@ cmd_ethdev_parsed(void *parsed_result, __rte_unused struct cmdline *cl, void *da
- 	struct cmd_ethdev_result *res = parsed_result;
- 	struct ethdev_config config;
- 	int rc;
--
-+	size_t len;
- 	memset(&config, 0, sizeof(struct ethdev_config));
- 	config.rx.n_queues = res->nb_rxq;
- 	config.rx.queue_size = ETHDEV_RX_DESC_DEFAULT;
--	memcpy(config.rx.mempool_name, res->mempool, strlen(res->mempool));
-+	len = strnlen(res->mempool, sizeof(config.rx.mempool_name));
-+	memcpy(config.rx.mempool_name, res->mempool, len);
+diff --git a/drivers/net/intel/ice/ice_rxtx_vec_common.h b/drivers/net/intel/ice/ice_rxtx_vec_common.h
+index 9430a99ba5..e41fd8fc7c 100644
+--- a/drivers/net/intel/ice/ice_rxtx_vec_common.h
++++ b/drivers/net/intel/ice/ice_rxtx_vec_common.h
+@@ -72,7 +72,8 @@ _ice_rx_queue_release_mbufs_vec(struct ci_rx_queue *rxq)
+ #define ICE_RX_VECTOR_OFFLOAD (				\
+ 		RTE_ETH_RX_OFFLOAD_CHECKSUM |		\
+ 		RTE_ETH_RX_OFFLOAD_SCTP_CKSUM |		\
+-		RTE_ETH_RX_OFFLOAD_VLAN |			\
++		RTE_ETH_RX_OFFLOAD_VLAN_STRIP |		\
++		RTE_ETH_RX_OFFLOAD_VLAN_FILTER |	\
+ 		RTE_ETH_RX_OFFLOAD_RSS_HASH)
  
- 	config.tx.n_queues = res->nb_txq;
- 	config.tx.queue_size = ETHDEV_TX_DESC_DEFAULT;
+ #define ICE_VECTOR_PATH		0
 -- 
-2.43.0
+2.48.1
 
