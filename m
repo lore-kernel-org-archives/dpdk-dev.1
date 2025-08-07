@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1C6FC87FCA
-	for <dpdk-dev@archiver.kernel.org>; Thu,  7 Aug 2025 17:35:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC69C87FCF
+	for <dpdk-dev@archiver.kernel.org>; Thu,  7 Aug 2025 17:35:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 171F94066C;
-	Thu,  7 Aug 2025 19:34:57 +0200 (CEST)
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com
- [209.85.221.46]) by mails.dpdk.org (Postfix) with ESMTP id C7CD540655
- for <dev@dpdk.org>; Thu,  7 Aug 2025 19:34:55 +0200 (CEST)
-Received: by mail-wr1-f46.google.com with SMTP id
- ffacd0b85a97d-3b7862bd22bso1196258f8f.1
- for <dev@dpdk.org>; Thu, 07 Aug 2025 10:34:55 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C64A34067B;
+	Thu,  7 Aug 2025 19:34:59 +0200 (CEST)
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com
+ [209.85.221.41]) by mails.dpdk.org (Postfix) with ESMTP id AEF914066F
+ for <dev@dpdk.org>; Thu,  7 Aug 2025 19:34:57 +0200 (CEST)
+Received: by mail-wr1-f41.google.com with SMTP id
+ ffacd0b85a97d-3b7886bee77so1004124f8f.0
+ for <dev@dpdk.org>; Thu, 07 Aug 2025 10:34:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1754588095;
- x=1755192895; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1754588097;
+ x=1755192897; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=BjbT46ktC2sBhSt6rXB5h+uP7Z5W1b7KjqGBtHox2T8=;
- b=SIB8hzTSbsgAVBu1zO/O/PPpQ9qL9dLx/Y1JsUm97qkin/ACjgz+JhvXjaQmFdMz+0
- 2q0dNl1P26XZLKuLLpFFVCBYYgoYpNN3l1cQYWSWpOeOn0PNxpHiZEEj7qiiob41V7DP
- 7wFMrRs7ET1fL4pO3TgyJQNXfayiB2U4PQ7ddthTxbgTB+YrG9yDn/05h94sQ6oypH5L
- Uo52DCDZVam407w7+7qOzcqrAtsS9nusPdc9VJqfj+3oXEnZ57pJNpu+D1+2GxNz1rYN
- MUebgHIrWafk4yzWjUnATxVAGNn1LbBstysedb9spUDGLjt8D3kZFi7wUEPMnBvNWeeD
- DAJg==
+ bh=f6ZiznBmpT4+gnwSQarDW8ybOYEBWIwlssAkQUjVRBA=;
+ b=CXlimaF5TroTHRGElt8l+opq6Kk/GmZk2FBD1eh2z13VxiXUpNVR8Z+i/BKjsUMHUo
+ cQRPSo7lizsgmIgIpXRtBrpQ56jQC/29q3lhW7uBGL1eR17iqxg+0b/tEGSTxEZUcSJz
+ TvxdISNNhDEHI5fRrNxW1HYQ6Dv0ZkZIvRCbk/94H0hZQkhBDJ+4Z29SUF97Ryz4yWU8
+ t28fGi4ND4Q+Rzay26Nkj3Tar8Cw6lu+N6jTooyyU/i7vddJ27ERWL1PGlPJs08Ll53E
+ si+AxCnQKITVBdC3RuvdreQkVItiC4veCUf9lpS/v3WLajHVDV50apXTBIEIYF3S5/Wj
+ Z+yQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1754588095; x=1755192895;
+ d=1e100.net; s=20230601; t=1754588097; x=1755192897;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=BjbT46ktC2sBhSt6rXB5h+uP7Z5W1b7KjqGBtHox2T8=;
- b=ovqC65nT4xnplesjzY/+ruA2OW/MH+lXHWT4SuxRn30s0z8WAFYY1fIrPm9hiPFglS
- 60qxXBdcnvkY9lmXyRX8SmAcTfElNMYIap/w56BwVU+xGmcQpLnejtKBWjJZR718XWuq
- P6PhmXcr2BmTHcXIgWrIygzYMxFROfH2obwUgdk/gnisKIsJ+kmSTGpj4KgBGtVnYfwJ
- +EnBcr61jXSOUYIc7KAIimtNcmyPRHqbtJM7pNud4a/jiwdJFD8KWsNXF4q0iUscI+KY
- Fonfg+QYiPAmG5VnJQPX4jmMsARb49YrDigblg2hfsLskmdtAcpJEKcdqYBfFW4NK2Sz
- Vbzg==
-X-Gm-Message-State: AOJu0YwO2MAfAMVI4RG5IrWxuBl3++1o0crREIcBVZ1fm6/8x3clySck
- fu5PYF+2gb0F5kJx8ZPdSPvF64AoajrpmwT0e8b2GnlJaijppCYt1pF6TML4/KI8zDsouztzore
- Xx1nc
-X-Gm-Gg: ASbGncuXmjFXU9wDRyuSDnRgcvYsOkyhls4IARdDdr2NU75GRls/nSUWTqWWTl/w4Si
- oGIPF0PJBLb/YXaPXiLIZ4dQ2CtVJMLtlRkfUjxCOH4enkEhidmLm+02aE5c4CEHgQWkq22iyRy
- VCVp0BkXD+vrQ8qLmHJdOfYXDWm31RfBXiP6Pqj9LVvcp2KLbcYTKH/ZPT1Pwxx3y6ciHtZBZUG
- axKyKeE9fOk17VSmGMsMk67kEEoXT8C6BCCopFfVByU1Axq8Lt6oK36xdlEyQJuEN3RAR8V27qF
- zRL5NJMpwJ7rSqJFLhgdPcjyg9YYCImEaFuttXhMJP4ouY61TwerNXh1bVaUNnguDY4EhBEGT0B
- qf0+iOuTJFT6ySlA5lH688SmF7n4R0ruNb8HehoW+PMmDqtnnonEVtPfNkgr3A1GmpRY/l+Dh0N
- NFxlefQMY=
-X-Google-Smtp-Source: AGHT+IFVwnB7h1zkRbJYewgj1suTxMac7cbNMXLO1suXoN8Ma4LZ1sEvh5rfxRJtkdXo9s78DMhpDg==
-X-Received: by 2002:a05:6000:40e1:b0:3b7:8842:89f5 with SMTP id
- ffacd0b85a97d-3b8f97bbfa9mr4002889f8f.1.1754588095201; 
- Thu, 07 Aug 2025 10:34:55 -0700 (PDT)
+ bh=f6ZiznBmpT4+gnwSQarDW8ybOYEBWIwlssAkQUjVRBA=;
+ b=U28Mv26UY6um3TE0k/mvkLQ6a5uW5ZtoWDsxG75Tj9sufOiSbb6aEZ1BuYxiCCyAsd
+ mgFz86l9khzYfHa4TCHHalsHl8gUs53KsXx0ce7emuqM4Zt0lpcnIm8Jp1+9yD5UsL68
+ aeEJwNBDmqSYnsdHH0MUBtWw1gCzLSPhlxnPLaqY1sr9w87GBw6s4VCxs8FoFwGih0VW
+ nzcC5k+HGwPxaBowDC8zdF4JF7hqmYQAT9v2/jL14OvTfMqTyQdj+kptctU13nCf3X97
+ fZ2KqgtDdouod7/U21kZvMT5D0VTJ7Fcq6TjjF/yD80ESqls8c+GBp4VtMW0fpjzKSok
+ rpIg==
+X-Gm-Message-State: AOJu0YzDFXdRoGPynUuHrlNyJfh5SiaqJ9OYFQe8OcLEkZ4fU8pe/+mj
+ ONGdf33MhcswM8yX6jM8ObzoVFN/zlNCKl7bCBhkEXjK9cM5TbRk3lKdLAX84Wn16nPtbMgEdrs
+ w3UF8
+X-Gm-Gg: ASbGncsIOceQtqoYtvZa2pDU26dCbqM2gVgtiiDQxyjwXGdNqjaYNr6xufRJglEQ7pz
+ mVgNZOsuOpTqazxcU8sGMeC3Jo/CGsdTs0nQVW7rnbx/3l+dws8e+4hVs5RM7FD5Uuhcwqv/ye+
+ KXSU3F1sUvnI7xdiheam/icJbjxuTyySiY0SZl+t6qp77SMe6VFqYiUOZTL2aXQ3VKGHFj9gzE6
+ KuUYhp5HcIIDyNBy0obJerGo+HyHE/d1KUncwvzo4HBEd8DW/3Gr6tY4BTs5mMLqCBi+31mZ5X+
+ WiBYuSNTq3foH8EAI9TA0JjGiAyKYr9xc4GW4Iuh0UrLE8JN9ZVsGYKWw9V+89+F3oePp45SDXW
+ uV1/ERikz2fRSBKS/Lw8cEl+hVQ9lSep4Keb5BDQUuw+1++Uz82pFPl62AlAkRsLM9pG/qGG9
+X-Google-Smtp-Source: AGHT+IEuwfdJavf8/rM5oeB0Jx/WMUhGyUo3MscnJ+lxtxLDlQWSTjhNaAVO/LSMKw5Ckp5K+8JY8g==
+X-Received: by 2002:a5d:5885:0:b0:3b8:893f:a184 with SMTP id
+ ffacd0b85a97d-3b900b8bcbamr40721f8f.52.1754588097218; 
+ Thu, 07 Aug 2025 10:34:57 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3b8e9464f46sm13242838f8f.19.2025.08.07.10.34.53
+ ffacd0b85a97d-3b8e9464f46sm13242838f8f.19.2025.08.07.10.34.55
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 07 Aug 2025 10:34:54 -0700 (PDT)
+ Thu, 07 Aug 2025 10:34:56 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Subject: [PATCH v10 04/14] bpf: add ability to load bpf into a buffer
-Date: Thu,  7 Aug 2025 10:33:18 -0700
-Message-ID: <20250807173437.11442-5-stephen@networkplumber.org>
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH v10 05/14] test: add test for hotplug and secondary process
+ operations
+Date: Thu,  7 Aug 2025 10:33:19 -0700
+Message-ID: <20250807173437.11442-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250807173437.11442-1-stephen@networkplumber.org>
 References: <20250411234927.114568-1-stephen@networkplumber.org>
@@ -83,260 +83,108 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When using BPF in cases like port mirroring, need to be
-able to put BPF code into a buffer shared between primary
-and secondary process. Separate the allocation of the
-buffer from the export step.
-
-Minor code refactoring to breakup the steps for how load
-happens.
-
-Add test for the new function.
+Use null device to exercise ethdev start/stop in secondary process.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/test/test_bpf.c |  28 +++++++++++
- lib/bpf/bpf_load.c  | 111 ++++++++++++++++++++++++++++++++++++++------
- lib/bpf/rte_bpf.h   |  38 +++++++++++++++
- 3 files changed, 163 insertions(+), 14 deletions(-)
+ app/test/meson.build         |  2 +-
+ app/test/test_mp_secondary.c | 50 +++++++++++++++++++++++++++++++++---
+ 2 files changed, 48 insertions(+), 4 deletions(-)
 
-diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
-index 90e10d7d2c..3aefc684eb 100644
---- a/app/test/test_bpf.c
-+++ b/app/test/test_bpf.c
-@@ -3235,6 +3235,7 @@ run_test(const struct bpf_test *tst)
- 	if (ret != 0) {
- 		printf("%s@%d: check_result(%s) failed, error: %d(%s);\n",
- 			__func__, __LINE__, tst->name, ret, strerror(ret));
-+		return -1;
- 	}
+diff --git a/app/test/meson.build b/app/test/meson.build
+index ae947c4cbd..f3ea3e2b74 100644
+--- a/app/test/meson.build
++++ b/app/test/meson.build
+@@ -132,7 +132,7 @@ source_file_deps = {
+     'test_memzone.c': [],
+     'test_meter.c': ['meter'],
+     'test_metrics.c': ['metrics'],
+-    'test_mp_secondary.c': ['hash'],
++    'test_mp_secondary.c': ['ethdev','hash'],
+     'test_net_ether.c': ['net'],
+     'test_net_ip6.c': ['net'],
+     'test_pcapng.c': ['ethdev', 'net', 'pcapng', 'bus_vdev'],
+diff --git a/app/test/test_mp_secondary.c b/app/test/test_mp_secondary.c
+index f3694530a8..d6604b326d 100644
+--- a/app/test/test_mp_secondary.c
++++ b/app/test/test_mp_secondary.c
+@@ -42,6 +42,8 @@ test_mp_secondary(void)
+ #include <rte_debug.h>
+ #include <rte_log.h>
+ #include <rte_mempool.h>
++#include <rte_ethdev.h>
++#include <rte_bus_vdev.h>
  
- 	/* repeat the same test with jit, when possible */
-@@ -3250,10 +3251,37 @@ run_test(const struct bpf_test *tst)
- 				"error: %d(%s);\n",
- 				__func__, __LINE__, tst->name,
- 				rv, strerror(rv));
-+			return -1;
- 		}
- 	}
- 
- 	rte_bpf_destroy(bpf);
-+
-+	/* repeat the same test with bpf in hugepages */
-+	size_t len = rte_bpf_buf_size(&tst->prm);
-+	void *buf = malloc(len);
-+	if (buf == NULL) {
-+		printf("%s@%d: allocation of %zu failed\n",
-+		       __func__, __LINE__, len);
-+		return -1;
-+	}
-+
-+	bpf = rte_bpf_buf_load(&tst->prm, buf, len);
-+	if (bpf == NULL) {
-+		printf("%s@%d: failed to load bpf into buf, error=%d(%s);\n",
-+			__func__, __LINE__, rte_errno, strerror(rte_errno));
-+		return -1;
-+	}
-+
-+	tst->prepare(tbuf);
-+	rc = rte_bpf_exec(bpf, tbuf);
-+	ret = tst->check_result(rc, tbuf);
-+	if (ret != 0) {
-+		printf("%s@%d: check_result(%s) failed, error: %d(%s);\n",
-+			__func__, __LINE__, tst->name, ret, strerror(ret));
-+	}
-+	free(bpf);
-+
- 	return ret;
- 
+ #ifdef RTE_LIB_HASH
+ #include <rte_hash.h>
+@@ -204,6 +206,44 @@ run_object_creation_tests(void)
+ 	return 0;
  }
-diff --git a/lib/bpf/bpf_load.c b/lib/bpf/bpf_load.c
-index 556e613762..7b526346ea 100644
---- a/lib/bpf/bpf_load.c
-+++ b/lib/bpf/bpf_load.c
-@@ -14,25 +14,16 @@
- #include "bpf_impl.h"
  
- static struct rte_bpf *
--bpf_load(const struct rte_bpf_prm *prm)
-+bpf_copy(const struct rte_bpf_prm *prm, uint8_t *buf)
++static int
++run_ethdev_tests(void)
++{
++	static const char vdev_name[] = "net_null";
++	struct rte_eth_conf dev_conf = { 0 };
++	uint16_t port;
++	int ret;
++
++	printf("### Testing hotplug and ethdev start/stop\n");
++
++	/* use hotplug to make a null vdev */
++	ret = rte_eal_hotplug_add("vdev", vdev_name, "");
++	TEST_ASSERT(ret == 0, "Hotplug add of '%s' failed", vdev_name);
++
++	printf("# Checked hotplug_add OK\n");
++
++	ret = rte_eth_dev_get_port_by_name(vdev_name, &port);
++	TEST_ASSERT(ret == 0, "Lookup vdev '%s' failed", vdev_name);
++
++	ret = rte_eth_dev_configure(port, 1, 1, &dev_conf);
++	TEST_ASSERT(ret == 0, "Configure port %u failed", port);
++
++	ret = rte_eth_dev_start(port);
++	TEST_ASSERT(ret == 0, "Start port %u failed", port);
++
++	printf("# Checked rte_eth_dev_start\n");
++
++	ret = rte_eth_dev_stop(port);
++	TEST_ASSERT(ret == 0, "Stop port %u failed", port);
++
++	printf("# Checked rte_eth_dev_stop\n");
++
++	rte_eal_hotplug_remove("vdev", vdev_name);
++
++	printf("# Checked hotplug_remove OK\n");
++	return 0;
++}
++
+ /* if called in a primary process, just spawns off a secondary process to
+  * run validation tests - which brings us right back here again...
+  * if called in a secondary process, this runs a series of API tests to check
+@@ -212,15 +252,19 @@ run_object_creation_tests(void)
+ int
+ test_mp_secondary(void)
  {
--	uint8_t *buf;
- 	struct rte_bpf *bpf;
--	size_t sz, bsz, insz, xsz;
--
--	xsz =  prm->nb_xsym * sizeof(prm->xsym[0]);
--	insz = prm->nb_ins * sizeof(prm->ins[0]);
--	bsz = sizeof(bpf[0]);
--	sz = insz + xsz + bsz;
--
--	buf = mmap(NULL, sz, PROT_READ | PROT_WRITE,
--		MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
--	if (buf == MAP_FAILED)
--		return NULL;
-+	size_t xsz =  prm->nb_xsym * sizeof(prm->xsym[0]);
-+	size_t insz = prm->nb_ins * sizeof(prm->ins[0]);
-+	size_t bsz = sizeof(bpf[0]);
-+	size_t sz = insz + xsz + bsz;
+-	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
++	int ret;
++
++	if (rte_eal_process_type() == RTE_PROC_PRIMARY)
+ 		return run_secondary_instances();
+-	}
  
- 	bpf = (void *)buf;
- 	bpf->sz = sz;
--
- 	memcpy(&bpf->prm, prm, sizeof(bpf->prm));
+ 	printf("IN SECONDARY PROCESS\n");
++	ret = run_ethdev_tests();
++	if (ret != 0)
++		return ret;
  
- 	if (xsz > 0)
-@@ -45,6 +36,30 @@ bpf_load(const struct rte_bpf_prm *prm)
- 	return bpf;
+ 	return run_object_creation_tests();
  }
  
-+static size_t
-+bpf_buf_size(const struct rte_bpf_prm *prm)
-+{
-+	size_t xsz =  prm->nb_xsym * sizeof(prm->xsym[0]);
-+	size_t insz = prm->nb_ins * sizeof(prm->ins[0]);
-+	size_t bsz = sizeof(struct rte_bpf);
-+
-+	return insz + xsz + bsz;
-+}
-+
-+static struct rte_bpf *
-+bpf_load(const struct rte_bpf_prm *prm)
-+{
-+	void *buf;
-+	size_t len = bpf_buf_size(prm);
-+
-+	buf = mmap(NULL, len, PROT_READ | PROT_WRITE,
-+		MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-+	if (buf == MAP_FAILED)
-+		return NULL;
-+
-+	return bpf_copy(prm, buf);
-+}
-+
- /*
-  * Check that user provided external symbol.
-  */
-@@ -125,3 +140,71 @@ rte_bpf_load(const struct rte_bpf_prm *prm)
+ #endif /* !RTE_EXEC_ENV_WINDOWS */
  
- 	return bpf;
- }
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_bpf_buf_size, 25.11)
-+ssize_t
-+rte_bpf_buf_size(const struct rte_bpf_prm *prm)
-+{
-+	int rc = 0;
-+	uint32_t i;
-+
-+	if (prm == NULL || prm->ins == NULL ||
-+	    (prm->nb_xsym != 0 && prm->xsym == NULL)) {
-+		rte_errno = EINVAL;
-+		return -1;
-+	}
-+
-+	for (i = 0; i != prm->nb_xsym && rc == 0; i++)
-+		rc = bpf_check_xsym(prm->xsym + i);
-+
-+	if (rc != 0) {
-+		rte_errno = -rc;
-+		RTE_BPF_LOG_LINE(ERR, "%s: %d-th xsym is invalid", __func__, i);
-+		return -1;
-+	}
-+
-+	return bpf_buf_size(prm);
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_bpf_buf_load, 25.11)
-+struct rte_bpf *
-+rte_bpf_buf_load(const struct rte_bpf_prm *prm, void *buf, size_t len)
-+{
-+	struct rte_bpf *bpf;
-+	int32_t rc;
-+	uint32_t i;
-+
-+	if (prm == NULL || prm->ins == NULL ||
-+	    (prm->nb_xsym != 0 && prm->xsym == NULL)) {
-+		rte_errno = EINVAL;
-+		return NULL;
-+	}
-+
-+	rc = 0;
-+	for (i = 0; i != prm->nb_xsym && rc == 0; i++)
-+		rc = bpf_check_xsym(prm->xsym + i);
-+
-+	if (rc != 0) {
-+		rte_errno = -rc;
-+		RTE_BPF_LOG_LINE(ERR, "%s: %d-th xsym is invalid", __func__, i);
-+		return NULL;
-+	}
-+
-+	size_t sz = bpf_buf_size(prm);
-+	if (len < sz) {
-+		rte_errno = -EINVAL;
-+		RTE_BPF_LOG_LINE(ERR, "%s: len %zu < required %zu",
-+				 __func__, len, sz);
-+		return NULL;
-+	}
-+
-+	bpf = bpf_copy(prm, buf);
-+	rc = __rte_bpf_validate(bpf);
-+	if (rc != 0) {
-+		rte_errno = -rc;
-+		return NULL;
-+	}
-+
-+	/* This bpf code is in non protected memory it can not use JIT  */
-+	return bpf;
-+}
-diff --git a/lib/bpf/rte_bpf.h b/lib/bpf/rte_bpf.h
-index 80ebb0210f..0972422a30 100644
---- a/lib/bpf/rte_bpf.h
-+++ b/lib/bpf/rte_bpf.h
-@@ -153,6 +153,44 @@ rte_bpf_load(const struct rte_bpf_prm *prm);
- struct rte_bpf *
- rte_bpf_elf_load(const struct rte_bpf_prm *prm, const char *fname,
- 		const char *sname);
-+
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * Determine size of required memory area.
-+ *
-+ * @param prm
-+ *  Parameters used to create and initialise the BPF execution context.
-+ * @return
-+ *   Number of bytes required or negative on error,
-+ *   with error code set in rte_errno.
-+ */
-+__rte_experimental
-+ssize_t
-+rte_bpf_buf_size(const struct rte_bpf_prm *prm);
-+
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * Create a new eBPF execution context into provided memory area
-+ * and load given BPF code into it.
-+ *
-+ * @param prm
-+ *  Parameters used to create and initialise the BPF execution context.
-+ * @param buf
-+ *  Memory area to place BPF code into.
-+ * @param len
-+ *  Size of the buf area.
-+ * @return
-+ *   BPF handle that is used in future BPF operations,
-+ *   or NULL on error, with error code set in rte_errno.
-+ */
-+__rte_experimental
-+struct rte_bpf *
-+rte_bpf_buf_load(const struct rte_bpf_prm *prm, void *buf, size_t len);
-+
- /**
-  * Execute given BPF bytecode.
-  *
+-REGISTER_FAST_TEST(multiprocess_autotest, false, false, test_mp_secondary);
++REGISTER_FAST_TEST(multiprocess_autotest, true, true, test_mp_secondary);
 -- 
 2.47.2
 
