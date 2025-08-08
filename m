@@ -2,69 +2,61 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00E07C87FCB
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 Aug 2025 17:01:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 452DEC87FCB
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 Aug 2025 18:16:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4D11F40685;
-	Fri,  8 Aug 2025 19:01:41 +0200 (CEST)
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com
- [209.85.219.54]) by mails.dpdk.org (Postfix) with ESMTP id 5D90140685
- for <dev@dpdk.org>; Fri,  8 Aug 2025 19:01:39 +0200 (CEST)
-Received: by mail-qv1-f54.google.com with SMTP id
- 6a1803df08f44-7072ed7094aso22565266d6.1
- for <dev@dpdk.org>; Fri, 08 Aug 2025 10:01:39 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 109BD40611;
+	Fri,  8 Aug 2025 20:16:27 +0200 (CEST)
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
+ [209.85.214.169])
+ by mails.dpdk.org (Postfix) with ESMTP id A25F340270
+ for <dev@dpdk.org>; Fri,  8 Aug 2025 20:16:25 +0200 (CEST)
+Received: by mail-pl1-f169.google.com with SMTP id
+ d9443c01a7336-23fe9a5e5e8so17385795ad.0
+ for <dev@dpdk.org>; Fri, 08 Aug 2025 11:16:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1754672499;
- x=1755277299; darn=dpdk.org; 
+ d=iol.unh.edu; s=unh-iol; t=1754676985; x=1755281785; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=R6olcOJ+ZsYRp894+JR0YIOiPF+TidFPKz9IiZjt+D0=;
- b=yH+TDjmHRBk2lEua8+HPaLDXVSaJg5IhbC1EnzRqqicsKv/z3ZvWr7F0Uaw0vONwg+
- xl7F0qu8TN/Wjk/z0AoMSm0Bfj/VzAyXv5b71QmGYGPl7XHgr0EjfdtR5rje5vRCbD7i
- xeLgl8JDaI5diAqG9wqnoUDcah0U8xRgJzZnhHvdY+ToiO/YFUBnfCJMhCqNrgxud8on
- XtqENnyOW1d1ZxOuoHAMUC8B4BEltiuQzuaH27jehr3nHNpR1hQX4TEiX+grHTH/W1qF
- 91QEpkLcqztySYaz1VAbO/ENiSVDcfJ2BOIHHX15PIxm2yMvpHcDLLGZL1C7oWnXc75D
- GJnw==
+ bh=mtJfEfjg7F6y29wH1winudHcZRXBfzoqNzx3wJGgkSU=;
+ b=AjVC9p5kAslXMeunLeu7G+xZpBoIPMep0MCxrcEbNdjE+4J+Om3POqWD0hL/8X0UVN
+ BZhMoOfcMLJzIwJVtGSO5fTw0P3d5Gk02NsysG3aS2zOsIFDXjaVWreW2Vuzg5/10+SJ
+ ZNfTuPQM7z0rJ8qjk3TNjdGBjYTLKcVW7oi1M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1754672499; x=1755277299;
+ d=1e100.net; s=20230601; t=1754676985; x=1755281785;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=R6olcOJ+ZsYRp894+JR0YIOiPF+TidFPKz9IiZjt+D0=;
- b=ot5jS85XQHSxterZ98Q+NaDQSVtjsWmQa427wuvC+VHekjN1MUfgeAKtpSusHwhHQ7
- JzS+z1pOt1b7FatJ40LkbJcM78B6we6H3iQcdEwyxUMpHNsTg7izD4h5LRSiLQEi/cwx
- QDbBq09BhkKrqIbsOsGBs/LPqMQKocJwWEwTvJ+ZCAh/DgD7mTIp7WMW/O3PUb7DUFhv
- D3AbbMkiMxHsRRoJmRg/RCkULG+KGg8ZZQV+d9XbLKgzo86FzBR3hady4MPToqmHW1fn
- JHegHTLdn5kT6s8tmwn0dP85Snw1KcgxWSITdRx6B6ttrQOF6ObmoFD/oJsZAIjuYwfq
- yE/g==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVKbEBQEhVDqGNyYhX+KfWDbV4XiKvxyyMbr3P5zU9x4DKwRd2k9DUD1GO/xCCIXUpyMmU=@dpdk.org
-X-Gm-Message-State: AOJu0YxluyHABqC3zbJ2fgFe110gxCo0QwOzzuqf1uU5Gu4FmJBABJDp
- mkgeu+s3dCrTLgdT8TqPLiLqKH4trLNvkWDRiHY2QZ4rr98APk11iyLxTmT9xbukoLVdnE60M3q
- DJBptSDTlcBq1Ngb1va3Hsppu0FGnXbh94Z8ap5/7cDNJUPEcZRzPCWR8Vw==
-X-Gm-Gg: ASbGnctHmk4APUo0/6WjxgZcteooeCOy9Ew0ZQtNyFBqiF3pZ7UMkl3Kz+NNS7qFdxe
- zIZTJjV+B2y50xxkKW2r3FEb8D+JPUPBl9nIRLF4074c1EKv1zXbKfHURP7rkgbBYZQkncJqts6
- ZAXStl7TzmQKWisuQ1oGtl0ZWlPLEPj7CDnzDuTNA2cq8C6KH3i0OSaCGwKsYCH+AMlT8UeP4HB
- QqrtVG0
-X-Google-Smtp-Source: AGHT+IECqEHS+EANpmgbqyeMcul4G4jG8woLZXuZiEeysKlmLg3ngOdLza+MokIHa1lSZg/PaztS3LZ6bgrNi2EpzkU=
-X-Received: by 2002:ad4:574b:0:b0:707:7b4f:6e35 with SMTP id
- 6a1803df08f44-7099a37255amr47679326d6.34.1754672498516; Fri, 08 Aug 2025
- 10:01:38 -0700 (PDT)
+ bh=mtJfEfjg7F6y29wH1winudHcZRXBfzoqNzx3wJGgkSU=;
+ b=P7SVSXSvHkYVND7NueH5ZD4t6C6O0KythgnqzLjqglxYzLTfhutxL3msq3EaNec5WA
+ GKK+E9c9R1PSaJcxIG89TmE7cWuNRlacpCsgNrcRgHgS0ES8DlMbkNp8AjMHbMyot4P/
+ KJLsT37b3V3bVcZyCEY21DRq5pOAQN23ntUTRu8HbfyloxTl88svduYh8X+zT5+Mdv4E
+ Pm6dcYo8zkw0dcAFs7ZMjuORh1ntsqlYPKBOJKB+TmPLoOeNa4bcAhSIkSyudjQdzYFW
+ cy7hKkZs7qWuBR2Fwj3vsPeIuGztsuIWkZAp34hEas9voqHO29l4uJ8tN4pn0PnyVcuQ
+ CWEg==
+X-Gm-Message-State: AOJu0YwPyVDubL5MTRHCv40FHGMctL3ngggPACWcQ2T08xnI43vZdkCN
+ DHyuK2yeeLkwXkI67zO//EC3jj1aAxbSJyxrON11+x8E3gpBsI7XIVYZICPaGRMmgRNIjI5wght
+ DlXS7Pd21LjfBmqn4ALUMfBE+0uglEolP9uZ8lK4akg==
+X-Gm-Gg: ASbGncuBcLawuKjba+8Mg1o3BJ/SZW20bQA04YWmx33+apUaZz7/Ukbkyfxuzyh5CkN
+ xECauDm4V7LrNz1dubTZhbLmoLY5oZS1nUp6LJnvUYq8GCUg5f0nOppVuD0RFbbYhgHfNIUBauH
+ RXJufT/QlneLozjxThd9n8dld5d1TmU0LjFYQ96jQphSWmj6v+iX+2ikliQWCVYxBCJiT3IonZK
+ XlRZyNyv10We0ekSSNUyg==
+X-Google-Smtp-Source: AGHT+IEwQkbQl4tEyoEEd9DPVjmHNtFPy9WBNcJ8sLE0HI3xsJ4fTuIOn88ct8qmhYwrVFm5/r4GhkHwdq8nKnhrJDY=
+X-Received: by 2002:a17:902:d4cd:b0:234:9cdd:ffd5 with SMTP id
+ d9443c01a7336-242c206d388mr51549475ad.25.1754676984701; Fri, 08 Aug 2025
+ 11:16:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <PH7PR12MB85968E4B05D92C12C963F1E2822FA@PH7PR12MB8596.namprd12.prod.outlook.com>
- <20250808114909.1606758-1-14pwcse1224@uetpeshawar.edu.pk>
- <20250808094900.5027f034@hermes.local>
-In-Reply-To: <20250808094900.5027f034@hermes.local>
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Date: Fri, 8 Aug 2025 22:01:26 +0500
-X-Gm-Features: Ac12FXxLtbw6d9vKWc7M889PHZ4eRVd0wvQ-r0fwCkRNA6LE2V6FIO8wcV7J7jc
-Message-ID: <CA++2-x4bVDQnChAR9M_ravC9zFno=DhZfutCqc3aua9rXuhmjQ@mail.gmail.com>
-Subject: Re: [PATCH v7] app/testpmd: monitor state of primary process when
- using secondary
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: Vipin.Varghese@amd.com, thomas@monjalon.net, Ferruh.Yigit@amd.com, 
- andrew.rybchenko@oktetlabs.ru, dev@dpdk.org
-Content-Type: multipart/alternative; boundary="000000000000f8b7f2063bdd86f1"
+References: <20250725151503.87374-1-luca.vizzarro@arm.com>
+ <20250725151503.87374-3-luca.vizzarro@arm.com>
+In-Reply-To: <20250725151503.87374-3-luca.vizzarro@arm.com>
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Fri, 8 Aug 2025 14:10:07 -0400
+X-Gm-Features: Ac12FXxvunEyVmrXbzDcSh8Z7azVj65DIe8zmVb_lvfslIWpFttEOF64Cr-YGSg
+Message-ID: <CAJvnSUDFxMWFja4DWeeWzta1r6R6m-i5z1R6EXFQ7L8fmkGHmg@mail.gmail.com>
+Subject: Re: [PATCH 2/6] dts: add node retriever by identifier
+To: Luca Vizzarro <luca.vizzarro@arm.com>
+Cc: dev@dpdk.org, Paul Szczepanek <paul.szczepanek@arm.com>
+Content-Type: multipart/alternative; boundary="0000000000005e81e8063bde923c"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -78,20 +70,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000f8b7f2063bdd86f1
+--0000000000005e81e8063bde923c
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now, it is much clearer from the diagram that we do not need any cleanup
- in the secondary process if the primary has already been done!
-Thanks again for the help!
+On Fri, Jul 25, 2025 at 11:15=E2=80=AFAM Luca Vizzarro <luca.vizzarro@arm.c=
+om>
+wrote:
 
---000000000000f8b7f2063bdd86f1
+> Refactor the logic to identify nodes. Add facility to retrieve current
+> nodes from context.
+>
+> Signed-off-by: Luca Vizzarro <luca.vizzarro@arm.com>
+> Reviewed-by: Paul Szczepanek <paul.szczepanek@arm.com>
+> ---
+>
+>
+Reviewed-by: Patrick Robb <probb@iol.unh.edu>
+
+--0000000000005e81e8063bde923c
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"ltr"><div dir=3D"ltr">Now, it is much clearer from the diagram =
-that we do not need any cleanup</div><div dir=3D"ltr">=C2=A0in the secondar=
-y process if the primary has already been done!</div>Thanks again for the h=
-elp!<br><br></div>
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Fri, Jul 25,=
+ 2025 at 11:15=E2=80=AFAM Luca Vizzarro &lt;<a href=3D"mailto:luca.vizzarro=
+@arm.com">luca.vizzarro@arm.com</a>&gt; wrote:<br></div><blockquote class=
+=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rg=
+b(204,204,204);padding-left:1ex">Refactor the logic to identify nodes. Add =
+facility to retrieve current<br>
+nodes from context.<br>
+<br>
+Signed-off-by: Luca Vizzarro &lt;<a href=3D"mailto:luca.vizzarro@arm.com" t=
+arget=3D"_blank">luca.vizzarro@arm.com</a>&gt;<br>
+Reviewed-by: Paul Szczepanek &lt;<a href=3D"mailto:paul.szczepanek@arm.com"=
+ target=3D"_blank">paul.szczepanek@arm.com</a>&gt;<br>
+---<br><br></blockquote><div><br></div><div>Reviewed-by: Patrick Robb &lt;<=
+a href=3D"mailto:probb@iol.unh.edu">probb@iol.unh.edu</a>&gt;=C2=A0</div></=
+div></div>
 
---000000000000f8b7f2063bdd86f1--
+--0000000000005e81e8063bde923c--
