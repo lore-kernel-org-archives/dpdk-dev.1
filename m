@@ -2,51 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37544C87FDA
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 Aug 2025 16:15:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D39E6C87FCB
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 Aug 2025 16:17:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4F83D402AB;
-	Fri,  8 Aug 2025 18:15:54 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
- by mails.dpdk.org (Postfix) with ESMTP id 9842F4028B;
- Fri,  8 Aug 2025 18:15:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1754669752; x=1786205752;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=uBUzc/Pffl5sbdhpqNYeUKvuTZN034d2Vg4zdceS8sk=;
- b=Q2vzGp+inVF/TQh3XIjiQKnhwvH0a77NRKLAkzEmE/nOSIxXi/0SlaV4
- o/6cSw4zLsdpHtCJ9Jtk4hCKv3oBC5OYSVHRgNTsaCxJ9yYyH8sTSDoUa
- 9sKkj4k040cruXOFx0muBCPFdsoD7tGD9MQIGiw6V+yp2CuwPpvJXsOgH
- NoMSOKKLdgQNF/f8ooaWP6itMYODGfxbaL6u21bSVHwLJXYLgIQOKvEk6
- XqOTL6kBVAq6LuHSDoyIlFd/xuSO0bpsZvoYhiAFDBYCkJYgQpLRACVU0
- XopiKJ4iTqyWJPV9CcvQjWeiGs5cHYUOR3z68pBXKaGTOEyNcrqtTT1YF g==;
-X-CSE-ConnectionGUID: fdvwLFjNQmeZFfnB4H18Aw==
-X-CSE-MsgGUID: cLzYvpIdQPObAn3v/p/70g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="67610377"
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; d="scan'208";a="67610377"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
- by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Aug 2025 09:15:51 -0700
-X-CSE-ConnectionGUID: 0b90T+QcS5e3DIk5iw7A1A==
-X-CSE-MsgGUID: kqXEzhjaQge5R8DwWQ2JWA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; d="scan'208";a="170615597"
-Received: from silpixa00401385.ir.intel.com ([10.237.214.33])
- by fmviesa004.fm.intel.com with ESMTP; 08 Aug 2025 09:15:49 -0700
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: techboard@dpdk.org,
-	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v2] doc: clarify VLAN and QinQ stripping behaviour
-Date: Fri,  8 Aug 2025 17:15:19 +0100
-Message-ID: <20250808161539.485512-1-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250714133014.44597-1-bruce.richardson@intel.com>
-References: <20250714133014.44597-1-bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 16E0A402AB;
+	Fri,  8 Aug 2025 18:17:43 +0200 (CEST)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com
+ [209.85.128.42]) by mails.dpdk.org (Postfix) with ESMTP id 975AE4028B
+ for <dev@dpdk.org>; Fri,  8 Aug 2025 18:17:41 +0200 (CEST)
+Received: by mail-wm1-f42.google.com with SMTP id
+ 5b1f17b1804b1-459e794b331so14822545e9.3
+ for <dev@dpdk.org>; Fri, 08 Aug 2025 09:17:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1754669861;
+ x=1755274661; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=4AggQjGn6RbPsBpCgHvZ1ORbX9g44hgITpPwTANAAdk=;
+ b=iHqU3D1WG1krqUCGjbpLbcdeWbp1jfpdivVE6O1zILReUFkSYw8BX3+TWEjVPKwZPb
+ AFieX3HlHr3vqblWnJQ7e0rL3sAhk7fvKtqb9CcHJTxH63oUmxeJ9hyp0fXnckUukSfk
+ Qgz1c3qnuh5+plzgZAED9vdsOwjTsRHSJdXUVoeVFe+n+0TsGg1QQj+PVTVu91Vb1tCl
+ pFiiRNMvAq6ywmiLvzeCKoefS7srgHXvJ9gutfZypHUr8dbUbpC4ad4FkH6hVXyQN2V+
+ QMwHebwnWNkZM/EnRYq+76N0U0gZkPamfdINu34SH6u8CpkYh/MMOSHAV0dgzfG23fEE
+ eA4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1754669861; x=1755274661;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=4AggQjGn6RbPsBpCgHvZ1ORbX9g44hgITpPwTANAAdk=;
+ b=BR+Os7HwbwtL86mo1fUnQlyv/yuzYSmQAFVQUQdeFkOW0IytDeXBcyvoJeAMLBwMxn
+ wMXSREiZxOPeaS1zBTwbMNPqhsi+MOC9r/tOxcKXFta0fDHhHTJJu502kCMpSqnNxQhU
+ Da6e96EjsrfTXbbQz2+GovZvZSPNdpanDASf4wQvRdwjpYfW65nu3QkQUZ1z/VP/n9ls
+ OvXYwSk3HPscg6VzSi5dqwDHl2/i52DyODi8G6Mhpslne+e1XuAKtI/xy2sz5RHoI6FJ
+ AmDtBqsQ5KkfUiIqdnfy5yx8Sg1ko9AYFCQBZtJ0xVYBpyj1jayWhjmBw3yMig/tlvFa
+ vtGg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCV5y6MI9hnBn+HALCnUedL22eiPw5vo85OX7gLS3O7CKgf0xkX9XHGzyg3ABspueYvz3LE=@dpdk.org
+X-Gm-Message-State: AOJu0YxKAlg80Laxb2Tu700lb1LdvFErumON4sXtXhQQ/lSJ59ZIP4/J
+ b+nXpA1FYF98nXKTPXwQ/QFP9m6wjIoCtMajK5vxur1r307kg+nPpnEAKjl+oB38jfc=
+X-Gm-Gg: ASbGncscwad6AUMJzeZFVF18AmNqNtI8L7W9No5CXvtPC3KzY+h2bh1K3udSlE3Zp5x
+ CVH6xRf+Ddwv2Vs9bZgILE9Ue6XSCLlJHccfvBf+ms6TaAH8Z79coBc9gDZM7PxKnADD6j+466r
+ 922DGVK6MAkCOZ/wLPLTdTk/YlGC//4i8YVjDmvd5JuSa9oHknftIpUZ5NalylE9b3rtmO0jSgW
+ MB6rWV6DHFvGoz3y/KpC+ubYtd+xChDUAPEvtqIDrtxEWBil+8FEQiggmUJ9/3iJ8xIps8JQhAo
+ Y9rZ5ySir+60pVQg/3ijCDzUgBBB00O1YJ6w67F55uHK9cx/WbjloKhTeAFlI8Luy8+geb/v4yn
+ TlvPqB+n+yLQ+x+S3acRqk/Gpm7x8aVVoVJMN11fzj8WFfRrQwdKhn5FsOlToNBcPrWeVo6Sog9
+ Y=
+X-Google-Smtp-Source: AGHT+IFaDnz4/rWbvbKLmO+59BbCfOCeqMFa1atuzHOtizmwIiZFVwZ+d5BU3a4zHEc44F++JbStqg==
+X-Received: by 2002:a05:6000:40ce:b0:3b7:c703:ce4 with SMTP id
+ ffacd0b85a97d-3b900b6aad8mr2778504f8f.59.1754669861127; 
+ Fri, 08 Aug 2025 09:17:41 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-458af917d20sm175601055e9.2.2025.08.08.09.17.39
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 08 Aug 2025 09:17:40 -0700 (PDT)
+Date: Fri, 8 Aug 2025 09:17:35 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: "Varghese, Vipin" <Vipin.Varghese@amd.com>
+Cc: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>, "thomas@monjalon.net"
+ <thomas@monjalon.net>, "Yigit, Ferruh" <Ferruh.Yigit@amd.com>,
+ "andrew.rybchenko@oktetlabs.ru" <andrew.rybchenko@oktetlabs.ru>,
+ "dev@dpdk.org" <dev@dpdk.org>, "stable@dpdk.org" <stable@dpdk.org>
+Subject: Re: [PATCH] [PATCH v5] app/testpmd: fix segfault in secondary
+ process by monitoring primary
+Message-ID: <20250808091735.561e6cbb@hermes.local>
+In-Reply-To: <PH7PR12MB8596F632CAD6508EA7EAB843822FA@PH7PR12MB8596.namprd12.prod.outlook.com>
+References: <20250729144850.2392840f@hermes.local>
+ <20250730052412.78178-1-14pwcse1224@uetpeshawar.edu.pk>
+ <PH7PR12MB8596F632CAD6508EA7EAB843822FA@PH7PR12MB8596.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,204 +88,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The behaviour of VLAN tag stripping Rx offloads is unclear in DPDK, and
-not very well documented. Even the documentation that does exist appears
-contradictory.
+On Fri, 8 Aug 2025 03:44:40 +0000
+"Varghese, Vipin" <Vipin.Varghese@amd.com> wrote:
 
-For example, the doxygen docs for the mbuf flag
-RTE_MBUF_F_RX_QINQ_STRIPPED says:
+> [AMD Official Use Only - AMD Internal Distribution Only]
+> 
+> Hi Khadem,
+> 
+> Snipped
+> 
+> >
+> >
+> > Hi Stephen,
+> >
+> > Many thanks for the fix and for the suggestion that the secondary should exit
+> > immediately without attempting any cleanups once it detects the primary has exited.  
+> 
+> Can you please explain why cleanup of secondary resources are not to be done, If there is specific memory like external hugepage backed mempool none of the callback will be called. Also releasing internal stack memory and heap of secondary is not cleaned.
+> 
+> Is there specific reason why you do not want to clean? If yes, can you please point to the right direction what is breaking?
 
-  "If RTE_MBUF_F_RX_QINQ_STRIPPED is set and RTE_MBUF_F_RX_VLAN_STRIPPED
-  is unset, only the outer VLAN is removed from packet data,..."
+What happens is that both primary and secondary process have a list head
+that lists devices (like ethdev).  The ethdev's shared part lives in huge pages.
+When primary exits, it calls the cleanup which frees the list (local part) and
+the shared part.  When secondary calls cleanup, its local part now points to
+freed data in shared huge pages. That leads to all sorts of issues.
 
-but the docs for RTE_MBUF_F_RX_QINQ says:
 
-  "If the flag RTE_MBUF_F_RX_QINQ_STRIPPED is also present, both VLANs
-  headers have been stripped from mbuf data, ..."
+There is no need for secondary to do any cleanup, all the local memory disappears when
+process exits.
 
-Without a good definition of what the correct behaviour is, it's not
-possible to assess and ensure conformance across drivers. Update the
-documentation for NIC features, ethdev and mbuf library to all report
-the same information.
-
-- VLAN strip implies stripping a single/outer tag of type 0x8100
-- QinQ strip implies stripping a single/outer tag of type 0x88a8, which
-  may be followed by a tag of 0x8100. That inner tag is stripped
-  if-and-only-if VLAN stripping is enabled too.
-
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
-V2: updated and reworded following discussion on RFC patch
----
- doc/guides/nics/features.rst | 31 +++++++++++++++++++++++++++++++
- lib/ethdev/rte_ethdev.h      | 28 ++++++++++++++++++++++++++++
- lib/mbuf/rte_mbuf_core.h     | 32 ++++++++++++++++++--------------
- 3 files changed, 77 insertions(+), 14 deletions(-)
-
-diff --git a/doc/guides/nics/features.rst b/doc/guides/nics/features.rst
-index a075c057ec..df0b7edee7 100644
---- a/doc/guides/nics/features.rst
-+++ b/doc/guides/nics/features.rst
-@@ -483,6 +483,11 @@ VLAN offload
- ------------
-
- Supports VLAN offload to hardware.
-+This includes both VLAN stripping on Rx and VLAN insertion on Tx.
-+
-+On Rx, VLAN strip removes one VLAN tag (default ethertype=0x8100) if present.
-+If multiple VLAN tags are present, it strips the outer tag only.
-+The stripped VLAN TCI is saved in mbuf->vlan_tci.
-
- * **[uses]       rte_eth_rxconf,rte_eth_rxmode**: ``offloads:RTE_ETH_RX_OFFLOAD_VLAN_STRIP,RTE_ETH_RX_OFFLOAD_VLAN_FILTER,RTE_ETH_RX_OFFLOAD_VLAN_EXTEND``.
- * **[uses]       rte_eth_txconf,rte_eth_txmode**: ``offloads:RTE_ETH_TX_OFFLOAD_VLAN_INSERT``.
-@@ -501,6 +506,32 @@ QinQ offload
- ------------
-
- Supports QinQ (queue in queue) offload.
-+This includes both QinQ stripping on Rx and QinQ insertion on Tx.
-+
-+On Rx, QinQ strip removes the outer QinQ tag (default ethertype=0x88a8) if present.
-+If multiple QinQ tags are present it only strips the outer tag.
-+The tag stripped is saved in mbuf->vlan_tci_outer.
-+
-+If an outer QinQ tag is stripped and if VLAN stripping is also enabled,
-+any inner VLAN tag (default ethertype=0x8100) is also stripped.
-+That tag is stored in mbuf->vlan_tci.
-+
-+Summary of VLAN and QinQ stripping behavior for some possible input traffic options:
-+
-++----------------------+-----------------------+------------------------------+------------------------------+
-+| Input Traffic        | VLAN-strip on         | QinQ strip on                | Both on                      |
-++======================+=======================+==============================+==============================+
-+| Single Tag 0x8100    | Tag in vlan_tci       |                              | Tag in vlan_tci              |
-++----------------------+-----------------------+------------------------------+------------------------------+
-+| Single Tag 0x88a8    |                       | Tag in vlan_tci_outer        | Tag in vlan_tci_outer        |
-++----------------------+-----------------------+------------------------------+------------------------------+
-+| Tag 88a8 + Tag 8100  |                       | Outer tag in vlan_tci_outer  | Outer tag in vlan_tci_outer  |
-+|                      |                       |                              |                              |
-+|                      |                       |                              | Inner tag in vlan_tci        |
-++----------------------+-----------------------+------------------------------+------------------------------+
-+| Double Tag 0x8100    | Outer tag in vlan_tci |                              | Outer tag in vlan_tci        |
-++----------------------+-----------------------+------------------------------+------------------------------+
-+
-
- * **[uses]     rte_eth_rxconf,rte_eth_rxmode**: ``offloads:RTE_ETH_RX_OFFLOAD_QINQ_STRIP``.
- * **[uses]     rte_eth_txconf,rte_eth_txmode**: ``offloads:RTE_ETH_TX_OFFLOAD_QINQ_INSERT``.
-diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
-index f9fb6ae549..5e226ff1c9 100644
---- a/lib/ethdev/rte_ethdev.h
-+++ b/lib/ethdev/rte_ethdev.h
-@@ -1552,11 +1552,39 @@ struct rte_eth_conf {
- /**
-  * Rx offload capabilities of a device.
-  */
-+/**
-+ * VLAN strip offload.
-+ *
-+ * When enabled, strips one VLAN tag (ethtype=0x8100) if available.
-+ * If multiple VLAN tags are present, it strips the outer tag.
-+ * The stripped VLAN TCI is saved in mbuf->vlan_tci
-+ * and @ref RTE_MBUF_F_RX_VLAN_STRIPPED flag is set.
-+ *
-+ * Note: if @ref RTE_ETH_RX_OFFLOAD_QINQ_STRIP is also enabled,
-+ * the stripped tag may be an inner tag present after a QinQ tag (ethtype=0x88a8).
-+ * In this case, both @ref RTE_MBUF_F_RX_QINQ_STRIPPED and
-+ * @ref RTE_MBUF_F_RX_VLAN_STRIPPED flags will be set in the received mbuf.
-+ */
- #define RTE_ETH_RX_OFFLOAD_VLAN_STRIP       RTE_BIT64(0)
- #define RTE_ETH_RX_OFFLOAD_IPV4_CKSUM       RTE_BIT64(1)
- #define RTE_ETH_RX_OFFLOAD_UDP_CKSUM        RTE_BIT64(2)
- #define RTE_ETH_RX_OFFLOAD_TCP_CKSUM        RTE_BIT64(3)
- #define RTE_ETH_RX_OFFLOAD_TCP_LRO          RTE_BIT64(4)
-+/**
-+ * QinQ strip offload.
-+ *
-+ * When enabled, strips outer QinQ tag (ethtype=0x88a8) if present.
-+ * The stripped QinQ tag is saved in mbuf field vlan_tci_outer
-+ * and @ref RTE_MBUF_F_RX_QINQ_STRIPPED flag is set.
-+ *
-+ * If a QinQ tag is stripped and VLAN stripping is also enabled,
-+ * any inner VLAN tag (ethtype=0x8100) is also stripped and
-+ * stored in mbuf field vlan_tci, with the flag @ref RTE_MBUF_F_RX_VLAN_STRIPPED
-+ * being set.
-+ *
-+ * @see RTE_ETH_RX_OFFLOAD_VLAN_STRIP, @see RTE_MBUF_F_RX_QINQ_STRIPPED,
-+ * @see RTE_MBUF_F_RX_VLAN_STRIPPED
-+ */
- #define RTE_ETH_RX_OFFLOAD_QINQ_STRIP       RTE_BIT64(5)
- #define RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM RTE_BIT64(6)
- #define RTE_ETH_RX_OFFLOAD_MACSEC_STRIP     RTE_BIT64(7)
-diff --git a/lib/mbuf/rte_mbuf_core.h b/lib/mbuf/rte_mbuf_core.h
-index a0df265b5d..824f11d438 100644
---- a/lib/mbuf/rte_mbuf_core.h
-+++ b/lib/mbuf/rte_mbuf_core.h
-@@ -44,7 +44,7 @@ extern "C" {
- /**
-  * The RX packet is a 802.1q VLAN packet, and the tci has been
-  * saved in mbuf->vlan_tci.
-- * If the flag RTE_MBUF_F_RX_VLAN_STRIPPED is also present, the VLAN
-+ * If the flag @ref RTE_MBUF_F_RX_VLAN_STRIPPED is also present, the VLAN
-  * header has been stripped from mbuf data, else it is still
-  * present.
-  */
-@@ -66,7 +66,11 @@ extern "C" {
-  * A vlan has been stripped by the hardware and its tci is saved in
-  * mbuf->vlan_tci. This can only happen if vlan stripping is enabled
-  * in the RX configuration of the PMD.
-- * When RTE_MBUF_F_RX_VLAN_STRIPPED is set, RTE_MBUF_F_RX_VLAN must also be set.
-+ * When RTE_MBUF_F_RX_VLAN_STRIPPED is set, @ref RTE_MBUF_F_RX_VLAN must also be set.
-+ *
-+ * Note: When @ref RTE_MBUF_F_RX_QINQ_STRIPPED is also set,
-+ * the stripped tag is an inner tag, rather than a single or outer tag.
-+ * @see RTE_MBUF_F_RX_QINQ_STRIPPED for more information.
-  */
- #define RTE_MBUF_F_RX_VLAN_STRIPPED (1ULL << 6)
-
-@@ -113,19 +117,19 @@ extern "C" {
- #define RTE_MBUF_F_RX_FDIR_FLX      (1ULL << 14)
-
- /**
-- * The outer VLAN has been stripped by the hardware and its TCI is
-+ * The outer QinQ Tag (ethtype=0x88a8) has been stripped by the hardware and its TCI is
-  * saved in mbuf->vlan_tci_outer.
-- * This can only happen if VLAN stripping is enabled in the Rx
-+ * This can only happen if QinQ stripping is enabled in the Rx
-  * configuration of the PMD.
-- * When RTE_MBUF_F_RX_QINQ_STRIPPED is set, the flags RTE_MBUF_F_RX_VLAN
-- * and RTE_MBUF_F_RX_QINQ must also be set.
-+ * When RTE_MBUF_F_RX_QINQ_STRIPPED is set, the flag RTE_MBUF_F_RX_QINQ must also be set.
-  *
-  * - If both RTE_MBUF_F_RX_QINQ_STRIPPED and RTE_MBUF_F_RX_VLAN_STRIPPED are
-  *   set, the 2 VLANs have been stripped by the hardware and their TCIs are
-  *   saved in mbuf->vlan_tci (inner) and mbuf->vlan_tci_outer (outer).
-  * - If RTE_MBUF_F_RX_QINQ_STRIPPED is set and RTE_MBUF_F_RX_VLAN_STRIPPED
-- *   is unset, only the outer VLAN is removed from packet data, but both tci
-- *   are saved in mbuf->vlan_tci (inner) and mbuf->vlan_tci_outer (outer).
-+ *   is unset, only the outer VLAN is removed from packet data and
-+ *   stored in mbuf->vlan_tci_outer.
-+ *   The contents of mbuf->vlan_tci are undefined in this case.
-  */
- #define RTE_MBUF_F_RX_QINQ_STRIPPED (1ULL << 15)
-
-@@ -149,12 +153,12 @@ extern "C" {
- #define RTE_MBUF_F_RX_SEC_OFFLOAD_FAILED	(1ULL << 19)
-
- /**
-- * The RX packet is a double VLAN, and the outer tci has been
-- * saved in mbuf->vlan_tci_outer. If this flag is set, RTE_MBUF_F_RX_VLAN
-- * must also be set and the inner tci is saved in mbuf->vlan_tci.
-- * If the flag RTE_MBUF_F_RX_QINQ_STRIPPED is also present, both VLANs
-- * headers have been stripped from mbuf data, else they are still
-- * present.
-+ * The RX packet is a QinQ packet, and the outer tci has been
-+ * saved in mbuf->vlan_tci_outer.
-+ * If the flag @ref RTE_MBUF_F_RX_QINQ_STRIPPED is also present,
-+ * the QinQ tag has been stripped from mbuf data.
-+ *
-+ * @see RTE_MBUF_F_RX_QINQ_STRIPPED, @see RTE_MBUF_F_RX_VLAN, @see RTE_MBUF_F_RX_VLAN_STRIPPED
-  */
- #define RTE_MBUF_F_RX_QINQ          (1ULL << 20)
-
---
-2.48.1
-
+Also, there is no locking between primary and secondary process.
