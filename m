@@ -2,73 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 866FDC87FD3
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 Aug 2025 15:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6670DC87FD3
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 Aug 2025 15:32:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 51054402AB;
-	Fri,  8 Aug 2025 17:28:43 +0200 (CEST)
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com
- [209.85.221.43]) by mails.dpdk.org (Postfix) with ESMTP id 95AAA4028B
- for <dev@dpdk.org>; Fri,  8 Aug 2025 17:28:41 +0200 (CEST)
-Received: by mail-wr1-f43.google.com with SMTP id
- ffacd0b85a97d-3b78310b296so1147318f8f.2
- for <dev@dpdk.org>; Fri, 08 Aug 2025 08:28:41 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C3FEA4065E;
+	Fri,  8 Aug 2025 17:32:11 +0200 (CEST)
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com
+ [209.85.128.51]) by mails.dpdk.org (Postfix) with ESMTP id 3E2AB402AB
+ for <dev@dpdk.org>; Fri,  8 Aug 2025 17:32:10 +0200 (CEST)
+Received: by mail-wm1-f51.google.com with SMTP id
+ 5b1f17b1804b1-459e3926cbbso11416365e9.1
+ for <dev@dpdk.org>; Fri, 08 Aug 2025 08:32:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1754666921;
- x=1755271721; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1754667130;
+ x=1755271930; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=7srCiLeWKaGxicQsXLnx55ZQCQn4W1QXFIZ7v50RdBk=;
- b=dOpPPe2DNB6/2YP2oNVs2dgAnuempCMsIYqZLfz9SuYhNcnO0jKzoo4VDr/zZX2IgN
- 4EurJ8OtR2Iluj9eTUB0Nvf8mhqjb7R3cZdRpsQ+ZhBkm+uoqJGhumRYPYpjbCAPKMF9
- mNRz8hEn3/MGkjloSOXKNuK6L2nZUr7vePZNKnJzZMaf61Ei2b/SnI6jCmoJkCRmQWbf
- nu9UYoTomyZtN4Dh2i9eoOXk2j1vVO/V4vYtf6SwZ1IVvSamTPYZ+Bd8K4EL56KFTVSA
- UYAHZZQTyDhUxpXJDhZ33tSOOFfD1caq4kDZLflK0jeIbbh2ucN7anQ4ghSPYR97+Y8g
- +pBg==
+ bh=jNdUi8wT8m2f3iq6zFeD5X8EcIAM/gXI/BQirdIXUsE=;
+ b=nz9jh+7AsFCKNJQThhdnwhjXfGZjUSLRi+UxFHxG7AwEtiFMg34/aljc3tbGs6bzmK
+ JP6VkMJsSt5bmr1Tq33wpFUXl3sdKMRCYiqS0Y1EFObfXTqDK7ruGZYM0T5/xgGzu0U4
+ PyEryVv9tXVl2flHFRMzxlGHphG8eQn9MwO++qAbIxVL9SiPT0j3gs0RmkFIpdzHZUOA
+ ux5K6HONReqtEJiD/GggtQmBevrtsyJdl/K3jZd+XU6M/DwdH+eZEo2PBkMimdW+GsEX
+ F2RblDRfY5fO3QlXydoZNiGdsRvI1TDsq3jdtmFajg3LEHk26pnXZBkWf5i7zvl5Dlsr
+ IrHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1754666921; x=1755271721;
+ d=1e100.net; s=20230601; t=1754667130; x=1755271930;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=7srCiLeWKaGxicQsXLnx55ZQCQn4W1QXFIZ7v50RdBk=;
- b=Gmbl8qfgkEZhUHCCQwXOAxB6+ZDHMFFyAloCxEKQECb5GnkF/3FRLoHUo32uv+sWEu
- cYkW9hwFuhYgHg0PQKeFJinwqS0lVwmltWiIj4vbP3cdRyX+8VkZpPGnxBVh0CC3UYLz
- blhiocYEbBywcqsxEdB+LnQPCHc197NMi8z3+KXf29KWKHxpuJfBaTrvRyF8zU5pPpB3
- OvlsPv18HEaXxXmcJKB4AXw6P/jYP9kXZKjw2CAZr6jSfEvJmEQVoUmEd/8XgE+6d5dd
- 7KX9hfCT0nIoJjuAG2gu1RqqvSoNBfPb2kDcPXb9yxhfiMlW943OXKjreTmN9XdHdIdD
- 2Z2A==
+ bh=jNdUi8wT8m2f3iq6zFeD5X8EcIAM/gXI/BQirdIXUsE=;
+ b=D/SuqdBXrgAg9Kx1sKJyapvrZHBQSKMTze183GjLgwkH9IS5VY/MoLOPsK9gnX8Jdt
+ 1fVk03OhB5hT9HgJ8ifhsEmFgrKE1nwQervZZVAN8EOzXLkugwr2jOECpkZBFlQz4lJ8
+ AOE3dmRGFeiH6eLQe21voTjTER5DPSwU815cCPVD0l2RdB47jXRmmSr2E8rMYOxgaMEa
+ gReLsSd3fXap3n8dridsUZvjUJz062c7dAnHVGH5DIv5795oGBVB1jP90OqbJbcXzUDO
+ vcV4zBZuJdOcPqr9HvpD39sCLNtj088aoPJYWDVPp2jMK+bZa0uG5xjhsMLdoakhyU4w
+ TXWw==
 X-Forwarded-Encrypted: i=1;
- AJvYcCX+FGHLa1KlZCGHAtFYbJDf4POgmGEbi6fLDw4eepDeFUcZt4I1o7GuN6UYfQjSedAYXXk=@dpdk.org
-X-Gm-Message-State: AOJu0Yxeg0OpnjDGYarY4NFOS+xKb7FjcPRs2f4aJkdMlKX4Qax6dzdv
- f5gerM71ydnr/YX+8CuowkBUm+JBeYyuUjyhWTh6jjzRRV1b1sbfTc5b7ekAy7WcnNw=
-X-Gm-Gg: ASbGncsUi4S/D8645kkBzeT3z54I5ME/e+/WwnDmDR4YtRY3UqdkUg1Pu7xeZHX7QH7
- TkxhIWk7wYDdGK7c9F2u91nTaDFeMnnLAbZY0GvnU8UjpIGG5WtslFppWcQhy0hXz6nD5BGNsme
- V1yIyNm0OsynQevGYPUZfS04akRo3M1/u6hCjo68ryqFBNEwFAlell7WCY/PH/F33x7yg5K5uD/
- 98O2I8PV6SlUutadmkbnR90k8HWLcAnjkUA5K77zH7uPh/+lmgtE16vqieDofvMrBA/KY2dChaP
- N6c182AE5/xMICDc7wf+Jhujx/HL5yLRxCo9Cv+zuDL1iACW1tIKPWWjamUIu0Sj3C4mWcMKnMU
- hdcqYDlGOs08orNsfsbP2bdwXa88P7ZvE7jUX/oez5noKAKZ0q6dxscISirG3zOuYzHC9iTsmY4
- rjyWEoZhuMaQ==
-X-Google-Smtp-Source: AGHT+IGb1QwUbjGTZyubgE+R0705eJImEAu10uKrGi2E39aaF+FlNfua/FeOnGkq/60RrMLRzS9agA==
-X-Received: by 2002:a5d:5d0c:0:b0:3b8:b33c:b8b0 with SMTP id
- ffacd0b85a97d-3b90092c9d2mr2802486f8f.7.1754666920857; 
- Fri, 08 Aug 2025 08:28:40 -0700 (PDT)
+ AJvYcCUe+Q5keRS3Qa3z4q/OC5IN/GNjV0dt61lTSCIr6lbf9/FPJiK+d6LWbmQPgQAAgQFLSYQ=@dpdk.org
+X-Gm-Message-State: AOJu0Yy4A2ZOmSM5MkY71FqlQMor4GsK7TDSFd4JN3tXpBoqzTEtU2q3
+ 5JVzrc+HJ9A9vRQcAotyEQaOhdfoTKJnAszESNY3SYeTCzAlzF+2ayjEirhrGrV0TXI=
+X-Gm-Gg: ASbGnctG/2Emz/BEGybgAo54uShSxUS4TReR0JjA33+1nJopt/dTIqKA6vApa1P3HK0
+ KBXyaASbzjh3vRQQyKD+Wsk7ClFC9/dONWrzjJ+6CUmIcsWbyCqdg2KVWwnA8yGjn6lx64tBoXA
+ +VVdCP9RGnO/BtePuDEE2BWqGtp3yESHH5z60GsGJrzYNpbV9iIgeNRksQA+EATdUOFVWFuQU2G
+ WnDfMLabhN3UaMKn5tsJ3vJMlourQHwQZorovO+7Xq7YPjCJ5ZqCSyTpDUPy0l3O32c67aYZSfm
+ guY0daw+lx/iMp2jutsEtI2lVaQWy+TAkEEy7jHhsXO1YMPwuc/WNPWSHMhaVcAGoOAfvQaoOdb
+ al0YdcpYQQC/Oyqb2+UV5or6MJ0CqBm2secyWE09Hk/uvYazs96Gsb0GgCR2TzTaP3t3sfFHTHh
+ yF3XNaCdTpwQ==
+X-Google-Smtp-Source: AGHT+IHO2V1bsaTMTAIzevoARrUfFyOd79E9ptlBERqbRbCdB46AjpbkeBFIMBwtQnU1lNqAxCE1Og==
+X-Received: by 2002:a05:600c:4712:b0:456:fd4:5322 with SMTP id
+ 5b1f17b1804b1-459f4f524c2mr29174145e9.11.1754667129515; 
+ Fri, 08 Aug 2025 08:32:09 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3b79c47ae8esm30686191f8f.61.2025.08.08.08.28.38
+ 5b1f17b1804b1-459e78a35cdsm61373235e9.3.2025.08.08.08.32.07
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 08 Aug 2025 08:28:40 -0700 (PDT)
-Date: Fri, 8 Aug 2025 08:28:35 -0700
+ Fri, 08 Aug 2025 08:32:09 -0700 (PDT)
+Date: Fri, 8 Aug 2025 08:32:04 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Cc: Vipin.Varghese@amd.com, thomas@monjalon.net, Ferruh.Yigit@amd.com,
- andrew.rybchenko@oktetlabs.ru, dev@dpdk.org
-Subject: Re: [PATCH v7] app/testpmd: monitor state of primary process when
- using secondary
-Message-ID: <20250808082835.796b3be1@hermes.local>
-In-Reply-To: <20250808054452.1350869-1-14pwcse1224@uetpeshawar.edu.pk>
-References: <PH7PR12MB8596A4A5CCC22A6B1584AE14822FA@PH7PR12MB8596.namprd12.prod.outlook.com>
- <20250808054452.1350869-1-14pwcse1224@uetpeshawar.edu.pk>
+To: "Varghese, Vipin" <Vipin.Varghese@amd.com>
+Cc: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>, "thomas@monjalon.net"
+ <thomas@monjalon.net>, "Yigit, Ferruh" <Ferruh.Yigit@amd.com>,
+ "andrew.rybchenko@oktetlabs.ru" <andrew.rybchenko@oktetlabs.ru>,
+ "dev@dpdk.org" <dev@dpdk.org>, "stable@dpdk.org" <stable@dpdk.org>
+Subject: Re: [PATCH] [PATCH v4] lib/ethdev: fix segfault in secondary
+ process by validating dev_private pointer
+Message-ID: <20250808083204.0174ac6b@hermes.local>
+In-Reply-To: <PH7PR12MB8596FA05DD99084208A31E50822FA@PH7PR12MB8596.namprd12.prod.outlook.com>
+References: <20250729143420.0fd7b627@hermes.local>
+ <20250730050702.74381-1-14pwcse1224@uetpeshawar.edu.pk>
+ <PH7PR12MB8596FA05DD99084208A31E50822FA@PH7PR12MB8596.namprd12.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -85,18 +88,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri,  8 Aug 2025 01:44:52 -0400
-Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk> wrote:
+On Fri, 8 Aug 2025 03:49:01 +0000
+"Varghese, Vipin" <Vipin.Varghese@amd.com> wrote:
 
->                  * run into use after free.
->                  */
-> +               int ret;
->                 fprintf(stderr, "\nPrimary process is no longer active, exiting...\n");
-> +               ret = rte_eal_cleanup();
-> +               if (ret != 0)
-> +               rte_exit(EXIT_FAILURE,
-> +                        "EAL cleanup failed: %s\n", strerror(-ret));
->                 exit(EXIT_FAILURE);
+> [Public]
+> 
+> Since somehow the email are split it is difficult to see the indexing
+> 
+> >
+> > Caution: This message originated from an External Source. Use proper caution
+> > when opening attachments, clicking links, or responding.
+> >
+> >
+> > Hi Stephen,
+> >
+> > Many thanks for diving deeper into the issue and sharing the insights.
+> >
+> > I agree. given that the primary tears down all the devices on exit, the secondary is
+> > left with dangling pointers and inconsistent state.  
+> 
+> Secondary if PMD should not be attempting to cleanup (especially for ethdev_ptr shared from primary) I agree to that.
+> But should not be covered in library or PMD. While cleanup for other needs to be done properly
+> 
+>  Without a mechanism to notify or synchronize that teardown,
+> 
+> You already have health check added in the code for identify if primay is still alive or not..
+> There used to be MP thread spawned which actually piggy back the communication. Is this broken? Can you please point to git
 
-No, that eal_cleanup references freed data when run in secondary.
-That is the problem this is trying to solve.
+There is no easy way to handle the case where primary crashes; leaving secondary process with
+pointers to dead data.
