@@ -2,113 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50AEDC87FCB
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 Aug 2025 04:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F710C87FD3
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 Aug 2025 05:45:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BA78C4065E;
-	Fri,  8 Aug 2025 06:30:27 +0200 (CEST)
-Received: from mx0a-00154904.pphosted.com (mx0a-00154904.pphosted.com
- [148.163.133.20])
- by mails.dpdk.org (Postfix) with ESMTP id 7EE4D40653
- for <dev@dpdk.org>; Fri,  8 Aug 2025 06:30:26 +0200 (CEST)
-Received: from pps.filterd (m0170389.ppops.net [127.0.0.1])
- by mx0a-00154904.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 577JdIks003905
- for <dev@dpdk.org>; Fri, 8 Aug 2025 00:30:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=cc
- :content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=smtpout1; bh=b
- hodw3bw4UBqwFQ3VtO7r4hhc9i/RHbOgtOSDXv58DU=; b=DKDWBHACPJjYW6c6P
- eWnOkOxcLzY3b3elBXZVwJv1vB7YZMANyqNhFYJ1tLksHINdviK6J/stTwUDs84a
- HqqeptnkYUVaDA6LM9QBmz3quTQr/af4Z0SXH0xEWXJNU63nL0k1S9S0LjCmJVpS
- CZPa8B6DDf5kE/muHsq9nh9DS/eaw28JgppWaQgq/cpd1zNay1mdnTzeTMya4qja
- +R6cZiYdO2i+sFhs7NmjWvQJNfYlLW4X72HAz1R7LSTsr7mMqdYKKA0VHsssHicm
- dhDun6vMU3LCNEnK6yH6pxPUQvoF/KUxKTrx5ibhGc6XxASUuGa1g48D0H0meHr7
- s3t1w==
-Received: from mx0a-00154901.pphosted.com (mx0a-00154901.pphosted.com
- [67.231.149.39])
- by mx0a-00154904.pphosted.com (PPS) with ESMTPS id 48bpx1wg03-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Fri, 08 Aug 2025 00:30:25 -0400 (EDT)
-Received: from pps.filterd (m0090351.ppops.net [127.0.0.1])
- by mx0b-00154901.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5780NDPA004623
- for <dev@dpdk.org>; Fri, 8 Aug 2025 00:30:25 -0400
-Received: from esapsmtpat01.us.dell.com (esapsmtpat01.us.dell.com
- [143.166.211.146])
- by mx0b-00154901.pphosted.com (PPS) with ESMTPS id 48d34kckt1-2
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
- for <dev@dpdk.org>; Fri, 08 Aug 2025 00:30:24 -0400 (EDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4C0E640270;
+	Fri,  8 Aug 2025 07:45:20 +0200 (CEST)
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com
+ [209.85.215.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 6C67040150
+ for <dev@dpdk.org>; Fri,  8 Aug 2025 07:45:18 +0200 (CEST)
+Received: by mail-pg1-f181.google.com with SMTP id
+ 41be03b00d2f7-b4239091facso1282586a12.0
+ for <dev@dpdk.org>; Thu, 07 Aug 2025 22:45:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=dell.com; i=@dell.com; q=dns/txt; s=smtpdev1;
- t=1754627424; x=1786163424;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=bhodw3bw4UBqwFQ3VtO7r4hhc9i/RHbOgtOSDXv58DU=;
- b=U94+D0fHG/FfWCQUHQ1JC3qlgm94WWl+6xH3jdGavnka3qddMmhxjhn4
- yGdJR8FznKIDg32mi3cBcLh4uxD680ojQvd+6LsFTIMZG9QqaxvSdnhcH
- 6rGot8fU4UoJCLT5Wv52FWXDtwcng5N+UPt+QtDXiDrrKUKVODksn6K4P
- fcTRXhU6rW0lQGfcG+L+2WjUfX8H+Otunk5ggKD+VBJkqtaV0aRlka6qk
- dqiy84VUdANFMWbN5KgKtw1DIHJSKKvVEmL52TfM1NX1h9wGh+r2o8/rg
- CTbb6jOgpNyCUTxzHkVOKAnlbH7tA5UmPopBACfhO+hC/m1R/VUbxggSd Q==;
-X-CSE-ConnectionGUID: HSZhgamHSSyIy2lsf+l62A==
-X-CSE-MsgGUID: gaYfLPV4RQunk6+bcHbu5A==
-X-LoopCount0: from 10.215.64.31
-X-MS-Exchange-CrossPremises-AuthAs: Internal
-Received: from mx2-adc.dell.com (HELO ieorr5-pvwed002.delllabs.net)
- ([10.215.64.31])
- by esapsmtpat01.us.dell.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Aug 2025 04:30:24 +0000
-Received: from ieorr5-ppwem001.delllabs.net (100.64.0.132) by
- ieorr5-pvwed002.delllabs.net (10.215.64.31) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Thu, 7 Aug 2025 23:31:15 -0500
-Received: from ieorr5-pvwer001.delllabs.net (100.64.0.134) by
- ieorr5-ppwem001.delllabs.net (100.64.0.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Thu, 7 Aug 2025 23:30:21 -0500
-Received: from localhost (10.240.17.25) by smtprelay.delllabs.net
- (100.64.0.134) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Thu, 7 Aug 2025 23:30:21 -0500
-From: Pravin M Bathija <pravin.bathija@dell.com>
-To: <dev@dpdk.org>
-CC: <pravin.bathija@dell.com>, <pravin.m.bathija.dev@gmail.com>,
- <boris.glimcher@dell.com>
-Subject: [PATCH 3/3] vhost_user: support for memory regions
-Date: Fri, 8 Aug 2025 04:29:55 +0000
-Message-ID: <20250808042955.2386083-4-pravin.bathija@dell.com>
+ d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1754631918;
+ x=1755236718; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=IZk/Jv9pI9fHqa1GZORnozKTfXUWkl8jhVPB+zYKWoc=;
+ b=UDQt4WjfhMBsj1d/zQp1GPVdXHvkPp3eCBYNTbk1JSqvMt1u481ZDf7G7NVPtWN2qH
+ 76uRhbkE/DQISyBmN3oCcMx2zOZcfqVn02sBMlL5HBdPqJ/h14lpwX0CEx9oJPL9YSGI
+ z5JNZp9+qF/CG/0+6gHtczRrgWpREVL/+vUbdfNZkvs7XV2UBq2wFuqYcykD3wMBYy7M
+ IE2G5ltmHKLA3eO8hHTaiG7lvw611mwgU/fdlI62FDDwMVqX+H/j7tpQgM6ysRwUonZA
+ qWvDlXingXP4y4Pwqwlin9GMvGEgxfjws2OY2DR5ZQqEMsapqz8mSANinFkV4mHs/xio
+ Olzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1754631918; x=1755236718;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=IZk/Jv9pI9fHqa1GZORnozKTfXUWkl8jhVPB+zYKWoc=;
+ b=Fd1SyTh48hpiYbbs8Buxx4TppGzWd2ATPAvPP4/IgAuGYuQ2CoH7emOO09+D/6zuA0
+ OuEXAdzdPe7epkATnw1hWcS/SxP9PEAOssNbbWLQag+Sud0BMg+aQO2ZL2455HZLaQXP
+ FqQ6xdmcK8Nk5Q5oPEBFibjVspX94q2zoomQMz977cCAq3tYmAutEW8Jj0JS7r1bR2hC
+ l+1SNXzgWiFz8k15LgFOICc+86eRO8tuMAt+ahz19DH2++Zlo6B5sN1yWOxGB3CzK/g6
+ Xm74LZAELu5W4xyRAa1LPI3rFJMqzbfq9dFcaaOzG10ujkYk7bF3acq6jsJO3ijQRy9V
+ 3iLA==
+X-Gm-Message-State: AOJu0Yxctb9G3SI9IMxvLOvyexv/WCvJeFQsJw8yU1+k7QyXjLhAcupX
+ C5DoJ8xbWathL0ESQ8o0R5fTETjOqEaMjOfR3y0uzU1TMlLfcARa3z4prwakbt93y68=
+X-Gm-Gg: ASbGncvCQRY82uQUboj6sB2ViJDdPj7imCXLmPMqNUknX7kvhUf0ZdsipD/qqxGl3PA
+ SOp33uUibzK96xrvOLLOyZ06QGc305mT01w4U+9/gJqGrzy+iv7DBrUOwHxuxFEYBnQa94Sy6AF
+ kSnDSbsMKZOWS7Y3Rs3Qhq+OLjEq6nNSdsQ6Idmngvg0qPqrRggPYA92KEL/gabTDBGA5fjXi9m
+ 51VuDxpjvMUNo33M2SBo9rKo3SfI80KoHO00yFdoebZQ8Eb+4hs/mIbw0uSJtZDkKA4b/HnSGRr
+ pi8Rb1D9sWmjODrFpd2De58KWRP1Td0DRjxwqwSdeICoa186Xkdj55S1W72Nhn9ajsuYlYaiEd4
+ q3GC+6dvrZZvkRO1TnnIkZrRuBlDDvlVgzmqXdWQHGqdcmII/
+X-Google-Smtp-Source: AGHT+IG59bxTWzVvUGYtPB6ryeapLSEtxXd9zKgyyaYOZ4XyqVW+P7uSc+Fc2oP6b5WjofDJJu7sog==
+X-Received: by 2002:a17:902:da91:b0:234:d292:be7a with SMTP id
+ d9443c01a7336-242c1fdca31mr28329915ad.1.1754631917818; 
+ Thu, 07 Aug 2025 22:45:17 -0700 (PDT)
+Received: from localhost.localdomain ([64.62.143.197])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-241d1f13a31sm198164405ad.64.2025.08.07.22.45.16
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 07 Aug 2025 22:45:17 -0700 (PDT)
+From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+To: Vipin.Varghese@amd.com, stephen@networkplumber.org, thomas@monjalon.net,
+ Ferruh.Yigit@amd.com, andrew.rybchenko@oktetlabs.ru
+Cc: dev@dpdk.org
+Subject: RE: [PATCH v7] app/testpmd: monitor state of primary process when
+ using secondary
+Date: Fri,  8 Aug 2025 01:44:52 -0400
+Message-ID: <20250808054452.1350869-1-14pwcse1224@uetpeshawar.edu.pk>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250808042955.2386083-1-pravin.bathija@dell.com>
-References: <20250808042955.2386083-1-pravin.bathija@dell.com>
+In-Reply-To: <PH7PR12MB8596A4A5CCC22A6B1584AE14822FA@PH7PR12MB8596.namprd12.prod.outlook.com>
+References: <PH7PR12MB8596A4A5CCC22A6B1584AE14822FA@PH7PR12MB8596.namprd12.prod.outlook.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-08_01,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 suspectscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0
- mlxlogscore=999 phishscore=0 clxscore=1015 impostorscore=0 adultscore=0
- spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2507300000
- definitions=main-2508080034
-X-Authority-Analysis: v=2.4 cv=ZNrXmW7b c=1 sm=1 tr=0 ts=68957d61 cx=c_pps
- a=j0++y401J6f/BxNAf5EDow==:117 a=MDsIxxkBee3CUfGUG3hQZw==:17
- a=2OwXVqhp2XgA:10 a=ke5jqHz-1hQA:10 a=pGLkceISAAAA:8 a=iLNU1ar6AAAA:8
- a=f_rmseOU4X3KHqvFkaAA:9 a=gbU3OgOOxF9bX48Letew:22
-X-Proofpoint-GUID: 8k5PyHVJWZchC91gwtuP9RnfzgPDKBHf
-X-Proofpoint-ORIG-GUID: 8k5PyHVJWZchC91gwtuP9RnfzgPDKBHf
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA4MDAzNSBTYWx0ZWRfX6abWB6f5FexQ
- L7drdBrq2uGHL6FQ9MUvAZHBqL8ocMucLIxoPyRJ57aG7qFVxl13GARI0A4G/GziSEYB617m8sL
- /Y+5jxI0uZbMS4kdJNHINoepGhl3+K2BZr3EdZPexn9DoJbAT6zyp4pimIp3sGBgj+vhzhy5nDM
- v/E6+iINXpIdWBX9nRY40NRXgZRTEeBvdB85Evmbw0Z8PdOwSFC965MkotqyN4yQzyYUCM+2UIS
- t3JsDEwyXdTkusXcEpSk+Th/zhHVdi0lKjLjlidszfQHZ4bM/T7pnT1A/ThZdJ8uE9c4lboPsoK
- DdnQIpKShCVZ4rKa5YUWy0rvR0wNkqsoS/T7krfcyUH61BT9VR17mHYNt94PgIBGs1F1cZcAnAh
- B0PMXJuaAYqc4HJKoSHAvn7AE/THl7g/ERAAjAvD2t63JarIePK20BXYN5/veMTc3eDB+vAw
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0
- priorityscore=1501 clxscore=1015 malwarescore=0 lowpriorityscore=0
- adultscore=0 bulkscore=0 spamscore=0 impostorscore=0 mlxscore=0
- mlxlogscore=999 suspectscore=0 phishscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508080035
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -122,497 +82,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Pravin M Bathija <pravin.m.bathija.dev@gmail.com>
+Hi Vipin Varghese, 
+Thank you for your feedback! 
 
-- modify data structures and add functions to support
-  add and remove memory regions/slots
-- define VHOST_MEMORY_MAX_NREGIONS & modify function
-  vhost_user_set_mem_table accordingly
-- dynamically add new memory slots via vhost_user_add_mem_reg
-- remove unused memory slots via vhost_user_rem_mem_reg
-- define data structure VhostUserSingleMemReg for single
-  memory region
-- modify data structures VhostUserRequest & VhostUserMsg
+Yes we need graceful exit, directly calling eal_cleanup from secondary was not 
+working, we can do the following workaround to use `eal_cleanup`.
 
-Signed-off-by: Pravin M Bathija <pravin.bathija@dell.com>
----
- lib/vhost/vhost_user.c | 325 +++++++++++++++++++++++++++++++++++------
- lib/vhost/vhost_user.h |  10 ++
- 2 files changed, 291 insertions(+), 44 deletions(-)
+diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
+index b7affa6da9..5ef6008a3c 100644
+--- a/app/test-pmd/testpmd.c
++++ b/app/test-pmd/testpmd.c
+@@ -4347,7 +4347,12 @@ monitor_primary(void *arg __rte_unused)
+                 * is no longer valid. Calling any cleanup code is going to
+                 * run into use after free.
+                 */
++               int ret;
+                fprintf(stderr, "\nPrimary process is no longer active, exiting...\n");
++               ret = rte_eal_cleanup();
++               if (ret != 0)
++               rte_exit(EXIT_FAILURE,
++                        "EAL cleanup failed: %s\n", strerror(-ret));
+                exit(EXIT_FAILURE);
+        }
+ }
+diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
+index 52efb8626b..087a4b1137 100644
+--- a/lib/eal/linux/eal.c
++++ b/lib/eal/linux/eal.c
+@@ -1333,9 +1333,12 @@ rte_eal_cleanup(void)
+ #ifdef VFIO_PRESENT
+        vfio_mp_sync_cleanup();
+ #endif
+-       rte_mp_channel_cleanup();
++       if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
++               rte_mp_channel_cleanup();
++               rte_eal_alarm_cleanup();
++       }
++
+        eal_bus_cleanup();
+-       rte_eal_alarm_cleanup();
+        rte_trace_save();
+        eal_trace_fini();
+        eal_mp_dev_hotplug_cleanup();
 
-diff --git a/lib/vhost/vhost_user.c b/lib/vhost/vhost_user.c
-index b73dec6a22..dc72007584 100644
---- a/lib/vhost/vhost_user.c
-+++ b/lib/vhost/vhost_user.c
-@@ -74,6 +74,9 @@ VHOST_MESSAGE_HANDLER(VHOST_USER_SET_FEATURES, vhost_user_set_features, false, t
- VHOST_MESSAGE_HANDLER(VHOST_USER_SET_OWNER, vhost_user_set_owner, false, true) \
- VHOST_MESSAGE_HANDLER(VHOST_USER_RESET_OWNER, vhost_user_reset_owner, false, false) \
- VHOST_MESSAGE_HANDLER(VHOST_USER_SET_MEM_TABLE, vhost_user_set_mem_table, true, true) \
-+VHOST_MESSAGE_HANDLER(VHOST_USER_GET_MAX_MEM_SLOTS, vhost_user_get_max_mem_slots, false, false) \
-+VHOST_MESSAGE_HANDLER(VHOST_USER_ADD_MEM_REG, vhost_user_add_mem_reg, true, true) \
-+VHOST_MESSAGE_HANDLER(VHOST_USER_REM_MEM_REG, vhost_user_rem_mem_reg, true, true) \
- VHOST_MESSAGE_HANDLER(VHOST_USER_SET_LOG_BASE, vhost_user_set_log_base, true, true) \
- VHOST_MESSAGE_HANDLER(VHOST_USER_SET_LOG_FD, vhost_user_set_log_fd, true, true) \
- VHOST_MESSAGE_HANDLER(VHOST_USER_SET_VRING_NUM, vhost_user_set_vring_num, false, true) \
-@@ -228,7 +231,17 @@ async_dma_map(struct virtio_net *dev, bool do_map)
- }
- 
- static void
--free_mem_region(struct virtio_net *dev)
-+free_mem_region(struct rte_vhost_mem_region *reg)
-+{
-+	if (reg != NULL && reg->host_user_addr) {
-+		munmap(reg->mmap_addr, reg->mmap_size);
-+		close(reg->fd);
-+		memset(reg, 0, sizeof(struct rte_vhost_mem_region));
-+	}
-+}
-+
-+static void
-+free_all_mem_regions(struct virtio_net *dev)
- {
- 	uint32_t i;
- 	struct rte_vhost_mem_region *reg;
-@@ -239,12 +252,10 @@ free_mem_region(struct virtio_net *dev)
- 	if (dev->async_copy && rte_vfio_is_enabled("vfio"))
- 		async_dma_map(dev, false);
- 
--	for (i = 0; i < dev->mem->nregions; i++) {
-+	for (i = 0; i < VHOST_MEMORY_MAX_NREGIONS; i++) {
- 		reg = &dev->mem->regions[i];
--		if (reg->host_user_addr) {
--			munmap(reg->mmap_addr, reg->mmap_size);
--			close(reg->fd);
--		}
-+		if (reg->mmap_addr)
-+			free_mem_region(reg);
- 	}
- }
- 
-@@ -258,7 +269,7 @@ vhost_backend_cleanup(struct virtio_net *dev)
- 		vdpa_dev->ops->dev_cleanup(dev->vid);
- 
- 	if (dev->mem) {
--		free_mem_region(dev);
-+		free_all_mem_regions(dev);
- 		rte_free(dev->mem);
- 		dev->mem = NULL;
- 	}
-@@ -707,7 +718,7 @@ numa_realloc(struct virtio_net **pdev, struct vhost_virtqueue **pvq)
- 	vhost_devices[dev->vid] = dev;
- 
- 	mem_size = sizeof(struct rte_vhost_memory) +
--		sizeof(struct rte_vhost_mem_region) * dev->mem->nregions;
-+		sizeof(struct rte_vhost_mem_region) * VHOST_MEMORY_MAX_NREGIONS;
- 	mem = rte_realloc_socket(dev->mem, mem_size, 0, node);
- 	if (!mem) {
- 		VHOST_CONFIG_LOG(dev->ifname, ERR,
-@@ -811,8 +822,10 @@ hua_to_alignment(struct rte_vhost_memory *mem, void *ptr)
- 	uint32_t i;
- 	uintptr_t hua = (uintptr_t)ptr;
- 
--	for (i = 0; i < mem->nregions; i++) {
-+	for (i = 0; i < VHOST_MEMORY_MAX_NREGIONS; i++) {
- 		r = &mem->regions[i];
-+		if (r->host_user_addr == 0)
-+			continue;
- 		if (hua >= r->host_user_addr &&
- 			hua < r->host_user_addr + r->size) {
- 			return get_blk_size(r->fd);
-@@ -1250,9 +1263,13 @@ vhost_user_postcopy_register(struct virtio_net *dev, int main_fd,
- 	 * retrieve the region offset when handling userfaults.
- 	 */
- 	memory = &ctx->msg.payload.memory;
--	for (i = 0; i < memory->nregions; i++) {
-+	for (i = 0; i < VHOST_MEMORY_MAX_NREGIONS; i++) {
-+		int reg_msg_index = 0;
- 		reg = &dev->mem->regions[i];
--		memory->regions[i].userspace_addr = reg->host_user_addr;
-+		if (reg->host_user_addr == 0)
-+			continue;
-+		memory->regions[reg_msg_index].userspace_addr = reg->host_user_addr;
-+		reg_msg_index++;
- 	}
- 
- 	/* Send the addresses back to qemu */
-@@ -1279,8 +1296,10 @@ vhost_user_postcopy_register(struct virtio_net *dev, int main_fd,
- 	}
- 
- 	/* Now userfault register and we can use the memory */
--	for (i = 0; i < memory->nregions; i++) {
-+	for (i = 0; i < VHOST_MEMORY_MAX_NREGIONS; i++) {
- 		reg = &dev->mem->regions[i];
-+		if (reg->host_user_addr == 0)
-+			continue;
- 		if (vhost_user_postcopy_region_register(dev, reg) < 0)
- 			return -1;
- 	}
-@@ -1385,6 +1404,46 @@ vhost_user_mmap_region(struct virtio_net *dev,
- 	return 0;
- }
- 
-+static int
-+vhost_user_initialize_memory(struct virtio_net **pdev)
-+{
-+	struct virtio_net *dev = *pdev;
-+	int numa_node = SOCKET_ID_ANY;
-+
-+	/*
-+	 * If VQ 0 has already been allocated, try to allocate on the same
-+	 * NUMA node. It can be reallocated later in numa_realloc().
-+	 */
-+	if (dev->nr_vring > 0)
-+		numa_node = dev->virtqueue[0]->numa_node;
-+
-+	dev->nr_guest_pages = 0;
-+	if (dev->guest_pages == NULL) {
-+		dev->max_guest_pages = 8;
-+		dev->guest_pages = rte_zmalloc_socket(NULL,
-+					dev->max_guest_pages *
-+					sizeof(struct guest_page),
-+					RTE_CACHE_LINE_SIZE,
-+					numa_node);
-+		if (dev->guest_pages == NULL) {
-+			VHOST_CONFIG_LOG(dev->ifname, ERR,
-+				"failed to allocate memory for dev->guest_pages");
-+			return -1;
-+		}
-+	}
-+
-+	dev->mem = rte_zmalloc_socket("vhost-mem-table", sizeof(struct rte_vhost_memory) +
-+		sizeof(struct rte_vhost_mem_region) * VHOST_MEMORY_MAX_NREGIONS, 0, numa_node);
-+	if (dev->mem == NULL) {
-+		VHOST_CONFIG_LOG(dev->ifname, ERR, "failed to allocate memory for dev->mem");
-+		rte_free(dev->guest_pages);
-+		dev->guest_pages = NULL;
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
- static int
- vhost_user_set_mem_table(struct virtio_net **pdev,
- 			struct vhu_msg_context *ctx,
-@@ -1393,7 +1452,6 @@ vhost_user_set_mem_table(struct virtio_net **pdev,
- 	struct virtio_net *dev = *pdev;
- 	struct VhostUserMemory *memory = &ctx->msg.payload.memory;
- 	struct rte_vhost_mem_region *reg;
--	int numa_node = SOCKET_ID_ANY;
- 	uint64_t mmap_offset;
- 	uint32_t i;
- 	bool async_notify = false;
-@@ -1438,39 +1496,13 @@ vhost_user_set_mem_table(struct virtio_net **pdev,
- 		if (dev->features & (1ULL << VIRTIO_F_IOMMU_PLATFORM))
- 			vhost_user_iotlb_flush_all(dev);
- 
--		free_mem_region(dev);
-+		free_all_mem_regions(dev);
- 		rte_free(dev->mem);
- 		dev->mem = NULL;
- 	}
- 
--	/*
--	 * If VQ 0 has already been allocated, try to allocate on the same
--	 * NUMA node. It can be reallocated later in numa_realloc().
--	 */
--	if (dev->nr_vring > 0)
--		numa_node = dev->virtqueue[0]->numa_node;
--
--	dev->nr_guest_pages = 0;
--	if (dev->guest_pages == NULL) {
--		dev->max_guest_pages = 8;
--		dev->guest_pages = rte_zmalloc_socket(NULL,
--					dev->max_guest_pages *
--					sizeof(struct guest_page),
--					RTE_CACHE_LINE_SIZE,
--					numa_node);
--		if (dev->guest_pages == NULL) {
--			VHOST_CONFIG_LOG(dev->ifname, ERR,
--				"failed to allocate memory for dev->guest_pages");
--			goto close_msg_fds;
--		}
--	}
--
--	dev->mem = rte_zmalloc_socket("vhost-mem-table", sizeof(struct rte_vhost_memory) +
--		sizeof(struct rte_vhost_mem_region) * memory->nregions, 0, numa_node);
--	if (dev->mem == NULL) {
--		VHOST_CONFIG_LOG(dev->ifname, ERR, "failed to allocate memory for dev->mem");
--		goto free_guest_pages;
--	}
-+	if (vhost_user_initialize_memory(pdev) < 0)
-+		goto close_msg_fds;
- 
- 	for (i = 0; i < memory->nregions; i++) {
- 		reg = &dev->mem->regions[i];
-@@ -1534,11 +1566,182 @@ vhost_user_set_mem_table(struct virtio_net **pdev,
- 	return RTE_VHOST_MSG_RESULT_OK;
- 
- free_mem_table:
--	free_mem_region(dev);
-+	free_all_mem_regions(dev);
- 	rte_free(dev->mem);
- 	dev->mem = NULL;
-+	rte_free(dev->guest_pages);
-+	dev->guest_pages = NULL;
-+close_msg_fds:
-+	close_msg_fds(ctx);
-+	return RTE_VHOST_MSG_RESULT_ERR;
-+}
-+
-+
-+static int
-+vhost_user_get_max_mem_slots(struct virtio_net **pdev __rte_unused,
-+			struct vhu_msg_context *ctx,
-+			int main_fd __rte_unused)
-+{
-+	uint32_t max_mem_slots = VHOST_MEMORY_MAX_NREGIONS;
-+
-+	ctx->msg.payload.u64 = (uint64_t)max_mem_slots;
-+	ctx->msg.size = sizeof(ctx->msg.payload.u64);
-+	ctx->fd_num = 0;
- 
--free_guest_pages:
-+	return RTE_VHOST_MSG_RESULT_REPLY;
-+}
-+
-+static int
-+vhost_user_add_mem_reg(struct virtio_net **pdev,
-+			struct vhu_msg_context *ctx,
-+			int main_fd __rte_unused)
-+{
-+	struct virtio_net *dev = *pdev;
-+	struct VhostUserMemoryRegion *region = &ctx->msg.payload.memory_single.region;
-+	uint32_t i;
-+
-+	/* make sure new region will fit */
-+	if (dev->mem != NULL && dev->mem->nregions >= VHOST_MEMORY_MAX_NREGIONS) {
-+		VHOST_CONFIG_LOG(dev->ifname, ERR,
-+			"too many memory regions already (%u)",
-+			dev->mem->nregions);
-+		goto close_msg_fds;
-+	}
-+
-+	/* make sure supplied memory fd present */
-+	if (ctx->fd_num != 1) {
-+		VHOST_CONFIG_LOG(dev->ifname, ERR,
-+			"fd count makes no sense (%u)",
-+			ctx->fd_num);
-+		goto close_msg_fds;
-+	}
-+
-+	/* Make sure no overlap in guest virtual address space */
-+	if (dev->mem != NULL && dev->mem->nregions > 0)	{
-+		for (uint32_t i = 0; i < VHOST_MEMORY_MAX_NREGIONS; i++) {
-+			struct rte_vhost_mem_region *current_region = &dev->mem->regions[i];
-+
-+			if (current_region->mmap_size == 0)
-+				continue;
-+
-+			uint64_t current_region_guest_start = current_region->guest_user_addr;
-+			uint64_t current_region_guest_end = current_region_guest_start
-+								+ current_region->mmap_size - 1;
-+			uint64_t proposed_region_guest_start = region->userspace_addr;
-+			uint64_t proposed_region_guest_end = proposed_region_guest_start
-+								+ region->memory_size - 1;
-+			bool overlap = false;
-+
-+			bool curent_region_guest_start_overlap =
-+				current_region_guest_start >= proposed_region_guest_start
-+				&& current_region_guest_start <= proposed_region_guest_end;
-+			bool curent_region_guest_end_overlap =
-+				current_region_guest_end >= proposed_region_guest_start
-+				&& current_region_guest_end <= proposed_region_guest_end;
-+			bool proposed_region_guest_start_overlap =
-+				proposed_region_guest_start >= current_region_guest_start
-+				&& proposed_region_guest_start <= current_region_guest_end;
-+			bool proposed_region_guest_end_overlap =
-+				proposed_region_guest_end >= current_region_guest_start
-+				&& proposed_region_guest_end <= current_region_guest_end;
-+
-+			overlap = curent_region_guest_start_overlap
-+				|| curent_region_guest_end_overlap
-+				|| proposed_region_guest_start_overlap
-+				|| proposed_region_guest_end_overlap;
-+
-+			if (overlap) {
-+				VHOST_CONFIG_LOG(dev->ifname, ERR,
-+					"requested memory region overlaps with another region");
-+				VHOST_CONFIG_LOG(dev->ifname, ERR,
-+					"\tRequested region address:0x%" PRIx64,
-+					region->userspace_addr);
-+				VHOST_CONFIG_LOG(dev->ifname, ERR,
-+					"\tRequested region size:0x%" PRIx64,
-+					region->memory_size);
-+				VHOST_CONFIG_LOG(dev->ifname, ERR,
-+					"\tOverlapping region address:0x%" PRIx64,
-+					current_region->guest_user_addr);
-+				VHOST_CONFIG_LOG(dev->ifname, ERR,
-+					"\tOverlapping region size:0x%" PRIx64,
-+					current_region->mmap_size);
-+				goto close_msg_fds;
-+			}
-+
-+		}
-+	}
-+
-+	/* convert first region add to normal memory table set */
-+	if (dev->mem == NULL) {
-+		if (vhost_user_initialize_memory(pdev) < 0)
-+			goto close_msg_fds;
-+	}
-+
-+	/* find a new region and set it like memory table set does */
-+	struct rte_vhost_mem_region *reg = NULL;
-+	uint64_t mmap_offset;
-+
-+	for (uint32_t i = 0; i < VHOST_MEMORY_MAX_NREGIONS; i++) {
-+		if (dev->mem->regions[i].guest_user_addr == 0) {
-+			reg = &dev->mem->regions[i];
-+			break;
-+		}
-+	}
-+	if (reg == NULL) {
-+		VHOST_CONFIG_LOG(dev->ifname, ERR, "no free memory region");
-+		goto close_msg_fds;
-+	}
-+
-+	reg->guest_phys_addr = region->guest_phys_addr;
-+	reg->guest_user_addr = region->userspace_addr;
-+	reg->size            = region->memory_size;
-+	reg->fd              = ctx->fds[0];
-+
-+	mmap_offset = region->mmap_offset;
-+
-+	if (vhost_user_mmap_region(dev, reg, mmap_offset) < 0) {
-+		VHOST_CONFIG_LOG(dev->ifname, ERR, "failed to mmap region");
-+		goto close_msg_fds;
-+	}
-+
-+	dev->mem->nregions++;
-+
-+	if (dev->async_copy && rte_vfio_is_enabled("vfio"))
-+		async_dma_map(dev, true);
-+
-+	if (vhost_user_postcopy_register(dev, main_fd, ctx) < 0)
-+		goto free_mem_table;
-+
-+	for (i = 0; i < dev->nr_vring; i++) {
-+		struct vhost_virtqueue *vq = dev->virtqueue[i];
-+
-+		if (!vq)
-+			continue;
-+
-+		if (vq->desc || vq->avail || vq->used) {
-+			/* vhost_user_lock_all_queue_pairs locked all qps */
-+			VHOST_USER_ASSERT_LOCK(dev, vq, VHOST_USER_SET_MEM_TABLE);
-+
-+			/*
-+			 * If the memory table got updated, the ring addresses
-+			 * need to be translated again as virtual addresses have
-+			 * changed.
-+			 */
-+			vring_invalidate(dev, vq);
-+
-+			translate_ring_addresses(&dev, &vq);
-+			*pdev = dev;
-+		}
-+	}
-+
-+	dump_guest_pages(dev);
-+
-+	return RTE_VHOST_MSG_RESULT_OK;
-+
-+free_mem_table:
-+	free_all_mem_regions(dev);
-+	rte_free(dev->mem);
-+	dev->mem = NULL;
- 	rte_free(dev->guest_pages);
- 	dev->guest_pages = NULL;
- close_msg_fds:
-@@ -1546,6 +1749,40 @@ vhost_user_set_mem_table(struct virtio_net **pdev,
- 	return RTE_VHOST_MSG_RESULT_ERR;
- }
- 
-+static int
-+vhost_user_rem_mem_reg(struct virtio_net **pdev __rte_unused,
-+			struct vhu_msg_context *ctx __rte_unused,
-+			int main_fd __rte_unused)
-+{
-+	struct virtio_net *dev = *pdev;
-+	struct VhostUserMemoryRegion *region = &ctx->msg.payload.memory_single.region;
-+
-+	if (dev->mem != NULL && dev->mem->nregions > 0) {
-+		for (uint32_t i = 0; i < VHOST_MEMORY_MAX_NREGIONS; i++) {
-+			struct rte_vhost_mem_region *current_region = &dev->mem->regions[i];
-+
-+			if (current_region->guest_user_addr == 0)
-+				continue;
-+
-+			/*
-+			 * According to the vhost-user specification:
-+			 * The memory region to be removed is identified by its guest address,
-+			 * user address and size. The mmap offset is ignored.
-+			 */
-+			if (region->userspace_addr == current_region->guest_user_addr
-+				&& region->guest_phys_addr == current_region->guest_phys_addr
-+				&& region->memory_size == current_region->size) {
-+				free_mem_region(current_region);
-+				dev->mem->nregions--;
-+				return RTE_VHOST_MSG_RESULT_OK;
-+			}
-+		}
-+	}
-+
-+	VHOST_CONFIG_LOG(dev->ifname, ERR, "failed to find region");
-+	return RTE_VHOST_MSG_RESULT_ERR;
-+}
-+
- static bool
- vq_is_ready(struct virtio_net *dev, struct vhost_virtqueue *vq)
- {
-diff --git a/lib/vhost/vhost_user.h b/lib/vhost/vhost_user.h
-index ef486545ba..5a0e747b58 100644
---- a/lib/vhost/vhost_user.h
-+++ b/lib/vhost/vhost_user.h
-@@ -32,6 +32,7 @@
- 					 (1ULL << VHOST_USER_PROTOCOL_F_BACKEND_SEND_FD) | \
- 					 (1ULL << VHOST_USER_PROTOCOL_F_HOST_NOTIFIER) | \
- 					 (1ULL << VHOST_USER_PROTOCOL_F_PAGEFAULT) | \
-+					 (1ULL << VHOST_USER_PROTOCOL_F_CONFIGURE_MEM_SLOTS) | \
- 					 (1ULL << VHOST_USER_PROTOCOL_F_STATUS))
- 
- typedef enum VhostUserRequest {
-@@ -67,6 +68,9 @@ typedef enum VhostUserRequest {
- 	VHOST_USER_POSTCOPY_END = 30,
- 	VHOST_USER_GET_INFLIGHT_FD = 31,
- 	VHOST_USER_SET_INFLIGHT_FD = 32,
-+	VHOST_USER_GET_MAX_MEM_SLOTS = 36,
-+	VHOST_USER_ADD_MEM_REG = 37,
-+	VHOST_USER_REM_MEM_REG = 38,
- 	VHOST_USER_SET_STATUS = 39,
- 	VHOST_USER_GET_STATUS = 40,
- } VhostUserRequest;
-@@ -91,6 +95,11 @@ typedef struct VhostUserMemory {
- 	VhostUserMemoryRegion regions[VHOST_MEMORY_MAX_NREGIONS];
- } VhostUserMemory;
- 
-+typedef struct VhostUserSingleMemReg {
-+	uint64_t padding;
-+	VhostUserMemoryRegion region;
-+} VhostUserSingleMemReg;
-+
- typedef struct VhostUserLog {
- 	uint64_t mmap_size;
- 	uint64_t mmap_offset;
-@@ -186,6 +195,7 @@ typedef struct __rte_packed_begin VhostUserMsg {
- 		struct vhost_vring_state state;
- 		struct vhost_vring_addr addr;
- 		VhostUserMemory memory;
-+		VhostUserSingleMemReg memory_single;
- 		VhostUserLog    log;
- 		struct vhost_iotlb_msg iotlb;
- 		VhostUserCryptoSessionParam crypto_session;
--- 
-2.43.0
+If Stephen and others are agree, I can supersede this patch with 
+the newer ones containing cleanup changes.
 
+Thank you, 
+Best Regards,
+Khadem 
