@@ -2,34 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CA2C87FDA
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 Aug 2025 18:21:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6FB3C87FDA
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 Aug 2025 18:22:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 056A340611;
-	Fri,  8 Aug 2025 20:21:17 +0200 (CEST)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id E315640270
- for <dev@dpdk.org>; Fri,  8 Aug 2025 20:21:15 +0200 (CEST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1373B16F8;
- Fri,  8 Aug 2025 11:21:07 -0700 (PDT)
-Received: from [10.57.1.36] (unknown [10.57.1.36])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 376A93F738;
- Fri,  8 Aug 2025 11:21:14 -0700 (PDT)
-Message-ID: <9e6a703e-7662-401a-a318-235bdc0bd937@arm.com>
-Date: Fri, 8 Aug 2025 19:21:12 +0100
+	by mails.dpdk.org (Postfix) with ESMTP id 43FAB40611;
+	Fri,  8 Aug 2025 20:22:15 +0200 (CEST)
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com
+ [209.85.222.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 7820C40270
+ for <dev@dpdk.org>; Fri,  8 Aug 2025 20:22:13 +0200 (CEST)
+Received: by mail-qk1-f169.google.com with SMTP id
+ af79cd13be357-7e814f6fc57so324296885a.1
+ for <dev@dpdk.org>; Fri, 08 Aug 2025 11:22:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1754677333; x=1755282133; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=4sEHRTPyfJ2T2bopvd6AQEY+a1UaBMnsWYDBEV1TzP0=;
+ b=SFsxGrsd2A1CCykii1PwMRTP/p13Fk/UdaYHLaEejja5n9Ogq0AgZfhREVfNgNlvFr
+ L7EfVIsmphQSZZwEP5MojpkfrsnAJVXQ3LE+GNKpoVt9+C4GeKa1/+fFQ4q2pb2zWpfw
+ BfGiziRfjSy1Ek2t41iyEQ1TCiO+oagvgmL/0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1754677333; x=1755282133;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=4sEHRTPyfJ2T2bopvd6AQEY+a1UaBMnsWYDBEV1TzP0=;
+ b=RnFGCWzaKk4nz31bBRPXQlxRm2ZVH2NaeB03vf2+wc0Z60jDO0vAXUFU8KX8XBXqWb
+ +hbXcwM5+jPNdpU4C/w3dLy5XmKxJ3IL/6prHBC7UPl/hF6zmUsoTA1vj7W3gU7twI+F
+ jgc9enoEjVT5kGkNhANeRX7BCEy5A/nUpK67sr8BytkxkNTT3BdvVz/M6jMY1ESjWPbN
+ rhTwD0lMw5+spAeDKFtjLRuMF3+DXUEdHgwc5u6MsWi/4zsSxrkKIofx4MQyK/hzWeFv
+ VAZRhcFPSbUQXucvAw9j6x++ZHXeSQWWwe/Pd0FnIyxIHoJ3zeJWvjUAdUM+mmhC+SDR
+ maMA==
+X-Gm-Message-State: AOJu0YzmS2LTxSg6rQHo8xjJwrns5urX+PDZ+XmMt8t0LumYnotVKQBh
+ PLB40w4wjWEhhF4ZctQQWKDEHWCUvdYEYI/ExaASth8b5uBf5uzrsqOrs5/jjTPP4BjP1CYsgFt
+ itz3+
+X-Gm-Gg: ASbGncsRiW1GAmOT/SPeMA/1bAC+pIPZR2BlCAOx84oOfJtmGU75q7yGP5ySF3lCzLb
+ gP4/inDY43ElA4OLm5E9vwmAcYRHe2SG9waTS9UYDCitk38vd7aWUF+LP7AGhQFoiwWIghU3hWw
+ XHeJDZXo8Jyyj1apcygLEAB6RLefcr1Y4IOpezep8A7zU7xpssCnXO/AA6Zax8PMebIGlUxbp4L
+ eD04OO7gYJITgZGMP7vhtAxT5X4ixLWsCP0XycOEsw3i7pg7hAG2Vi9NLRX8GW2ZjOE2+teMmRz
+ VCRjZUSQEd/7FyFcZzwqUEdnfHMKmeHDUX08Kqm5iT4fYpeeMeWGT5Fb41/7oLmo4i0DGwGvGG/
+ XDlVUJpe1nJZ21ag1+T4OBKEMToqgE4j6yA==
+X-Google-Smtp-Source: AGHT+IECBeWOD+OsUi/EFGnk9EkksHWlRn1Nhr9BCAUA0gtVkd64v+1brO4yC0BW5x64TKckAbZLug==
+X-Received: by 2002:a05:620a:6288:b0:7e8:454:ab63 with SMTP id
+ af79cd13be357-7e82d47eff5mr542498085a.17.1754677332484; 
+ Fri, 08 Aug 2025 11:22:12 -0700 (PDT)
+Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:a136:b4d:e75:44c4])
+ by smtp.gmail.com with ESMTPSA id
+ af79cd13be357-7e812e90ee6sm500685185a.49.2025.08.08.11.22.11
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 08 Aug 2025 11:22:11 -0700 (PDT)
+From: Andrew Bailey <abailey@iol.unh.edu>
+To: luca.vizzarro@arm.com
+Cc: dev@dpdk.org, dmarx@iol.unh.edu, probb@iol.unh.edu,
+ Andrew Bailey <abailey@iol.unh.edu>
+Subject: [PATCH 1/2] dts: introduce abstract class for TG and SUT DPDK runtime
+ environments
+Date: Fri,  8 Aug 2025 14:21:08 -0400
+Message-ID: <20250808182152.356879-1-abailey@iol.unh.edu>
+X-Mailer: git-send-email 2.50.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dts: type hints updated for method arguments and
- return types
-Content-Language: en-GB
-To: Andrew Bailey <abailey@iol.unh.edu>
-Cc: dev@dpdk.org, dmarx@iol.unh.edu, probb@iol.unh.edu
-References: <20250806162900.273571-1-abailey@iol.unh.edu>
-From: Luca Vizzarro <Luca.Vizzarro@arm.com>
-In-Reply-To: <20250806162900.273571-1-abailey@iol.unh.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -43,407 +76,282 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Andrew,
+DPDK runtime environment has logic in methods for two modes of use, one
+for TG environments and one for SUT environments. TG nodes utilizing
+these methods only require a single class attribute that DPDK runtime
+environment holds. TG nodes using these methods do not require the
+overhead of a new DPDK runtime evironment.
 
-thank you for your v2! Based on the contributing guidelines [1], any 
-further version should be posted in reply to the original cover letter 
-if sent, otherwise the very first patch. Please review these before you 
-send the next patches.
+Lift shared methods into a new abstract class and split the existing
+runtime class into SUT and TG specific runtime classes.
 
-A cover letter email is useful when there is more than one patch, but 
-this is not the case. You can add a cover letter (if needed) below the 
-commit description, the contributing guidelines describe this in chapter 
-9.8. The most important purpose of the cover letter is to describe the 
-changes you made since the last version you sent.
+Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+---
+ dts/framework/context.py             |   4 +-
+ dts/framework/remote_session/dpdk.py | 151 ++++++++++++++++++---------
+ dts/framework/test_run.py            |   9 +-
+ 3 files changed, 110 insertions(+), 54 deletions(-)
 
-Still, based on the contributing guidelines the commit subject is to be 
-in imperative form and concise. The original commit subject was fine, 
-you had to change it to include the arguments. To keep it imperative and 
-concise consider:
+diff --git a/dts/framework/context.py b/dts/framework/context.py
+index 4360bc8699..086f07e0e9 100644
+--- a/dts/framework/context.py
++++ b/dts/framework/context.py
+@@ -15,7 +15,7 @@
+ from framework.testbed_model.topology import Topology
+ 
+ if TYPE_CHECKING:
+-    from framework.remote_session.dpdk import DPDKBuildEnvironment, DPDKRuntimeEnvironment
++    from framework.remote_session.dpdk import DPDKBuildEnvironment, DPDKSUTRuntimeEnvironment
+     from framework.testbed_model.traffic_generator.traffic_generator import TrafficGenerator
+ 
+ P = ParamSpec("P")
+@@ -68,7 +68,7 @@ class Context:
+     tg_node: Node
+     topology: Topology
+     dpdk_build: "DPDKBuildEnvironment"
+-    dpdk: "DPDKRuntimeEnvironment"
++    dpdk: "DPDKSUTRuntimeEnvironment"
+     tg: "TrafficGenerator"
+     local: LocalContext = field(default_factory=LocalContext)
+     shell_pool: ShellPool = field(default_factory=ShellPool)
+diff --git a/dts/framework/remote_session/dpdk.py b/dts/framework/remote_session/dpdk.py
+index 606d6e22fe..8e45da4bd5 100644
+--- a/dts/framework/remote_session/dpdk.py
++++ b/dts/framework/remote_session/dpdk.py
+@@ -7,6 +7,7 @@
+ 
+ import os
+ import time
++from abc import ABC, abstractmethod
+ from collections.abc import Iterable
+ from dataclasses import dataclass
+ from functools import cached_property
+@@ -302,14 +303,83 @@ def get_dpdk_build_info(self) -> DPDKBuildInfo:
+         return DPDKBuildInfo(dpdk_version=self.dpdk_version, compiler_version=self.compiler_version)
+ 
+ 
+-class DPDKRuntimeEnvironment:
+-    """Class handling a DPDK runtime environment."""
++class DPDKRuntimeEnvironment(ABC):
++    """Shared methods between TG and SUT runtimes."""
+ 
+-    config: Final[DPDKRuntimeConfiguration]
+-    build: Final[DPDKBuildEnvironment | None]
+     _node: Final[Node]
++
++    def __init__(self, node: Node):
++        """DPDK runtime environment constructor.
++
++        Args:
++            node: The target node to manage a DPDK environment.
++        """
++        self._node = node
++
++    @abstractmethod
++    def _prepare_devbind_script(self):
++        """Prepare the devbind script.
++
++        This script is only available for Linux, if the detected session is not Linux then do
++        nothing.
++
++        Raises:
++            InternalError: If dpdk-devbind.py could not be found.
++        """
++
++    @abstractmethod
++    def setup(self) -> None:
++        """Set up the DPDK runtime on the target node."""
++
++
++class DPDKTGRuntimeEnvironment(DPDKRuntimeEnvironment):
++    """Class handling a DPDK runtime environment for a TG."""
++
++    def __init__(self, node: Node):
++        """DPDK TG environment constructor.
++
++        Args:
++            node: The target node to manage a DPDK environment.
++        """
++        super().__init__(node)
++
++    def setup(self) -> None:
++        """Set up the DPDK runtime on the target node."""
++        self._prepare_devbind_script()
++
++    def _prepare_devbind_script(self) -> None:
++        """Prepare the devbind script.
++
++        Copy the script build from the local repository.
++
++        This script is only available for Linux, if the detected session is not Linux then do
++        nothing.
++
++        Raises:
++            InternalError: If dpdk-devbind.py could not be found.
++        """
++        if not isinstance(self._node.main_session, LinuxSession):
++            return
++
++        local_script_path = Path("..", "usertools", "dpdk-devbind.py").resolve()
++        if not local_script_path.exists():
++            raise InternalError("Could not find dpdk-devbind.py locally.")
++
++        devbind_script_path = self._node.main_session.join_remote_path(
++            self._node.tmp_dir, local_script_path.name
++        )
++
++        self._node.main_session.copy_to(local_script_path, devbind_script_path)
++        self._node.main_session.devbind_script_path = devbind_script_path
++
++
++class DPDKSUTRuntimeEnvironment(DPDKRuntimeEnvironment):
++    """Class handling a DPDK runtime environment for a SUT."""
++
++    config: Final[DPDKRuntimeConfiguration]
+     _logger: Final[DTSLogger]
+ 
++    build: Final[DPDKBuildEnvironment]
+     timestamp: Final[str]
+     _virtual_devices: list[VirtualDevice]
+     _lcores: list[LogicalCore]
+@@ -322,18 +392,18 @@ def __init__(
+         self,
+         config: DPDKRuntimeConfiguration,
+         node: Node,
+-        build_env: DPDKBuildEnvironment | None = None,
++        build_env: DPDKBuildEnvironment,
+     ):
+-        """DPDK environment constructor.
++        """DPDK SUT environment constructor.
+ 
+         Args:
+             config: The configuration of DPDK.
+             node: The target node to manage a DPDK environment.
+-            build_env: The DPDK build environment, if any.
++            build_env: The DPDK build environment.
+         """
+-        self.config = config
++        super().__init__(node)
+         self.build = build_env
+-        self._node = node
++        self.config = config
+         self._logger = get_dts_logger()
+ 
+         self.timestamp = f"{str(os.getpid())}_{time.strftime('%Y%m%d%H%M%S', time.localtime())}"
+@@ -354,17 +424,11 @@ def __init__(
+         self._ports_bound_to_dpdk = False
+         self._kill_session = None
+ 
+-    def setup(self):
++    def setup(self) -> None:
+         """Set up the DPDK runtime on the target node."""
+-        if self.build:
+-            self.build.setup()
++        self.build.setup()
+         self._prepare_devbind_script()
+ 
+-    def teardown(self) -> None:
+-        """Reset DPDK variables and bind port driver to the OS driver."""
+-        if self.build:
+-            self.build.teardown()
+-
+     def run_dpdk_app(
+         self, app_path: PurePath, eal_params: EalParams, timeout: float = 30
+     ) -> CommandResult:
+@@ -385,38 +449,6 @@ def run_dpdk_app(
+             f"{app_path} {eal_params}", timeout, privileged=True, verify=True
+         )
+ 
+-    def _prepare_devbind_script(self) -> None:
+-        """Prepare the devbind script.
+-
+-        If the environment has a build associated with it, then use the script within that build's
+-        tree. Otherwise, copy the script from the local repository.
+-
+-        This script is only available for Linux, if the detected session is not Linux then do
+-        nothing.
+-
+-        Raises:
+-            InternalError: If dpdk-devbind.py could not be found.
+-        """
+-        if not isinstance(self._node.main_session, LinuxSession):
+-            return
+-
+-        if self.build:
+-            devbind_script_path = self._node.main_session.join_remote_path(
+-                self.build.remote_dpdk_tree_path, "usertools", "dpdk-devbind.py"
+-            )
+-        else:
+-            local_script_path = Path("..", "usertools", "dpdk-devbind.py").resolve()
+-            if not local_script_path.exists():
+-                raise InternalError("Could not find dpdk-devbind.py locally.")
+-
+-            devbind_script_path = self._node.main_session.join_remote_path(
+-                self._node.tmp_dir, local_script_path.name
+-            )
+-
+-            self._node.main_session.copy_to(local_script_path, devbind_script_path)
+-
+-        self._node.main_session.devbind_script_path = devbind_script_path
+-
+     def filter_lcores(
+         self,
+         filter_specifier: LogicalCoreCount | LogicalCoreList,
+@@ -459,3 +491,24 @@ def kill_cleanup_dpdk_apps(self) -> None:
+     def get_virtual_devices(self) -> Iterable[VirtualDevice]:
+         """The available DPDK virtual devices."""
+         return (v for v in self._virtual_devices)
++
++    def _prepare_devbind_script(self) -> None:
++        """Prepare the devbind script.
++
++        Use the script within the associated build's tree.
++
++        This script is only available for Linux, if the detected session is not Linux then do
++        nothing.
++        """
++        if not isinstance(self._node.main_session, LinuxSession):
++            return
++
++        devbind_script_path = self._node.main_session.join_remote_path(
++            self.build.remote_dpdk_tree_path, "usertools", "dpdk-devbind.py"
++        )
++
++        self._node.main_session.devbind_script_path = devbind_script_path
++
++    def teardown(self) -> None:
++        """Reset DPDK variables and bind port driver to the OS driver."""
++        self.build.teardown()
+diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
+index 4355aeeb4b..274dceebfd 100644
+--- a/dts/framework/test_run.py
++++ b/dts/framework/test_run.py
+@@ -111,7 +111,10 @@
+ from framework.context import Context, init_ctx
+ from framework.exception import InternalError, SkippedTestException, TestCaseVerifyError
+ from framework.logger import DTSLogger, get_dts_logger
+-from framework.remote_session.dpdk import DPDKBuildEnvironment, DPDKRuntimeEnvironment
++from framework.remote_session.dpdk import (
++    DPDKBuildEnvironment,
++    DPDKSUTRuntimeEnvironment,
++)
+ from framework.settings import SETTINGS
+ from framework.test_result import Result, ResultNode, TestRunResult
+ from framework.test_suite import BaseConfig, TestCase, TestSuite
+@@ -199,11 +202,11 @@ def __init__(
+         )
+ 
+         dpdk_build_env = DPDKBuildEnvironment(config.dpdk.build, sut_node)
+-        dpdk_runtime_env = DPDKRuntimeEnvironment(config.dpdk, sut_node, dpdk_build_env)
++        dpdk_sut_runtime_env = DPDKSUTRuntimeEnvironment(config.dpdk, sut_node, dpdk_build_env)
+         traffic_generator = create_traffic_generator(config.traffic_generator, tg_node)
+ 
+         self.ctx = Context(
+-            sut_node, tg_node, topology, dpdk_build_env, dpdk_runtime_env, traffic_generator
++            sut_node, tg_node, topology, dpdk_build_env, dpdk_sut_runtime_env, traffic_generator
+         )
+         self.result = result
+         self.selected_tests = list(self.config.filter_tests(tests_config))
+-- 
+2.50.1
 
-   dts: add missing type hints to method signatures
-
-I notice the relevant change to .mailmap is still missing. This is 
-required in order to accept any contributions.
-
-On 06/08/2025 17:29, Andrew Bailey wrote:
-> diff --git a/dts/framework/context.py b/dts/framework/context.py
-> index 4360bc8699..ba2fdf55b3 100644
-> --- a/dts/framework/context.py
-> +++ b/dts/framework/context.py
-> @@ -4,12 +4,14 @@
->   """Runtime contexts."""
->   
->   import functools
-> +from collections.abc import Callable
->   from dataclasses import MISSING, dataclass, field, fields
-> -from typing import TYPE_CHECKING, ParamSpec
-> +from typing import TYPE_CHECKING, ParamSpec, Type
-
-I am wondering if you are using a wrong version of Python? In Python 
-3.12, which is the version we are supporting, `type` (lowercase t) is a 
-built-in keyword, and doesn't require being imported.
-
->   
->   from framework.exception import InternalError
->   from framework.remote_session.shell_pool import ShellPool
->   from framework.settings import SETTINGS
-> +from framework.testbed_model.capability import TestProtocol
->   from framework.testbed_model.cpu import LogicalCoreCount, LogicalCoreList
->   from framework.testbed_model.node import Node
->   from framework.testbed_model.topology import Topology
-> @@ -97,12 +99,12 @@ def init_ctx(ctx: Context) -> None:
->   
->   def filter_cores(
->       specifier: LogicalCoreCount | LogicalCoreList, ascending_cores: bool | None = None
-> -):
-> +) -> Callable[[Callable], Callable[[], Type[TestProtocol]]]:
->       """Decorates functions that require a temporary update to the lcore specifier."""
->   
-> -    def decorator(func):
-> +    def decorator(func: Callable) -> Callable[[], Type[TestProtocol]]:
->           @functools.wraps(func)
-> -        def wrapper(*args: P.args, **kwargs: P.kwargs):
-> +        def wrapper(*args: P.args, **kwargs: P.kwargs) -> Type[TestProtocol]:
-
-This is not returning TestProtocol. Here func is type[TestProtocol], so 
-the return type here is whatetever `type[TestProtocol]` returns when 
-called. I took some time to look into this one and unfortunately it's 
-not as straightforward as I hoped. I think as a compromised you could 
-use Any in the end. The signatures should look like:
-
-   filter_cores(...) -> Callable[[type[TestProtocol]], Callable]
-   decorator(func: type[TestProtocol]) -> Callable:
-   wrapper(...) -> Any
-
-Doing it this way we can enforce through mypy that the decorator is only 
-used with test suites and cases.
-
->               local_ctx = get_ctx().local
->   
->               old_specifier = local_ctx.lcore_filter_specifier
-> diff --git a/dts/framework/logger.py b/dts/framework/logger.py
-> index f43b442bc9..fe5737f285 100644
-> --- a/dts/framework/logger.py
-> +++ b/dts/framework/logger.py
-> @@ -15,7 +15,7 @@
->   import logging
->   from logging import FileHandler, StreamHandler
->   from pathlib import Path
-> -from typing import ClassVar
-> +from typing import Any, ClassVar
->   
->   date_fmt = "%Y/%m/%d %H:%M:%S"
->   stream_fmt = "%(asctime)s - %(stage)s - %(name)s - %(levelname)s - %(message)s"
-> @@ -36,12 +36,12 @@ class DTSLogger(logging.Logger):
->       _stage: ClassVar[str] = "pre_run"
->       _extra_file_handlers: list[FileHandler] = []
->   
-> -    def __init__(self, *args, **kwargs):
-> +    def __init__(self, *args: str, **kwargs: str) -> None:
-we don't know they are str, should be Any.>           """Extend the 
-constructor with extra file handlers."""
->           self._extra_file_handlers = []
->           super().__init__(*args, **kwargs)
->   
-> -    def makeRecord(self, *args, **kwargs) -> logging.LogRecord:
-> +    def makeRecord(self, *args: Any, **kwargs: Any) -> logging.LogRecord:
->           """Generates a record with additional stage information.
->   
->           This is the default method for the :class:`~logging.Logger` class. We extend it
-> diff --git a/dts/framework/params/__init__.py b/dts/framework/params/__init__.py
-> index 1ae227d7b4..03476681ee 100644
-> --- a/dts/framework/params/__init__.py
-> +++ b/dts/framework/params/__init__.py
-> @@ -44,7 +44,7 @@ def _reduce_functions(funcs: Iterable[FnPtr]) -> FnPtr:
->           FnPtr: A function that calls the given functions from left to right.
->       """
->   
-> -    def reduced_fn(value):
-> +    def reduced_fn(value: Any) -> Any:
-looks like FnPtr should be using the generic T, in which case this can 
-be reduced_fn(value: T) -> T. And FnPtr = Callable[[T], T]
-
-And this made me realise you missed _class_decorator under modify_str
-
->           for fn in funcs:
->               value = fn(value)
->           return value
-> diff --git a/dts/framework/remote_session/dpdk.py b/dts/framework/remote_session/dpdk.py
-> index 606d6e22fe..6a0a8911c9 100644
-> --- a/dts/framework/remote_session/dpdk.py
-> +++ b/dts/framework/remote_session/dpdk.py
-> @@ -62,7 +62,7 @@ class DPDKBuildEnvironment:
-> @@ -155,7 +155,7 @@ def _copy_dpdk_tree(self, dpdk_tree_path: Path) -> None:
->               dpdk_tree_path,
->               self.remote_dpdk_tree_path,
->               exclude=[".git", "*.o"],
-> -            compress_format=TarCompressionFormat.gzip,
-> +            compress_format=TarCompressionFormat.gz,
-This is out of the scope of this patch. Shouldn't be changed.>           )
->   
->       def _validate_remote_dpdk_tarball(self, dpdk_tarball: PurePath) -> None:
-> diff --git a/dts/framework/remote_session/testpmd_shell.py b/dts/framework/remote_session/testpmd_shell.py
-> index ad8cb273dc..c80de55d34 100644
-> --- a/dts/framework/remote_session/testpmd_shell.py
-> +++ b/dts/framework/remote_session/testpmd_shell.py
-> @@ -90,7 +99,7 @@ class VLANOffloadFlag(Flag):
->       QINQ_STRIP = auto()
->   
->       @classmethod
-> -    def from_str_dict(cls, d):
-> +    def from_str_dict(cls, d: dict) -> Self:
-we expect it to be dict[str, str] like the docstring suggests.> 
-  """Makes an instance from a dict containing the flag member names with 
-an "on" value.
->   
->           Args:
-> @@ -1449,7 +1458,7 @@ def requires_stopped_ports(func: TestPmdShellMethod) -> TestPmdShellMethod:
->       """
->   
->       @functools.wraps(func)
-> -    def _wrapper(self: "TestPmdShell", *args: P.args, **kwargs: P.kwargs):
-> +    def _wrapper(self: "TestPmdShell", *args: P.args, **kwargs: P.kwargs) -> TestPmdShellMethod:
-This does not return a method, it returns whatever the method returns 
-when it's called. Like I suggested in v1, you should be able to 
-replicate this with a generic R variable (like for @only_active). I 
-recognise now that I have been experimenting that this is really flaky 
-and mypy is not interacting well with this. Please just use Any.> 
-    if self.ports_started:
->               self._logger.debug("Ports need to be stopped to continue.")
->               self.stop_all_ports()
-> @@ -1470,7 +1479,7 @@ def requires_started_ports(func: TestPmdShellMethod) -> TestPmdShellMethod:
->       """
->   
->       @functools.wraps(func)
-> -    def _wrapper(self: "TestPmdShell", *args: P.args, **kwargs: P.kwargs):
-> +    def _wrapper(self: "TestPmdShell", *args: P.args, **kwargs: P.kwargs) -> TestPmdShellMethod:
-as above>           if not self.ports_started:
->               self._logger.debug("Ports need to be started to continue.")
->               self.start_all_ports()
-> @@ -1492,7 +1501,7 @@ def add_remove_mtu(mtu: int = 1500) -> Callable[[TestPmdShellMethod], TestPmdShe
->   
->       def decorator(func: TestPmdShellMethod) -> TestPmdShellMethod:
->           @functools.wraps(func)
-> -        def wrapper(self: "TestPmdShell", *args: P.args, **kwargs: P.kwargs):
-> +        def wrapper(self: "TestPmdShell", *args: P.args, **kwargs: P.kwargs) -> TestPmdShellMethod:
-as above>               original_mtu = self.ports[0].mtu
->               self.set_port_mtu_all(mtu=mtu, verify=False)
->               retval = func(self, *args, **kwargs)
-> diff --git a/dts/framework/testbed_model/capability.py b/dts/framework/testbed_model/capability.py
-> index f895b22bb3..db5753405b 100644
-> --- a/dts/framework/testbed_model/capability.py
-> +++ b/dts/framework/testbed_model/capability.py
-> @@ -385,7 +385,7 @@ def __eq__(self, other) -> bool:
->           """
->           return self.topology_type == other.topology_type
->   
-> -    def __lt__(self, other) -> bool:
-> +    def __lt__(self, other: Self) -> bool:
-Unfortunately, we cannot use Self here because realistically other can 
-be Any.>           """Compare the 
-:attr:`~TopologyCapability.topology_type`s.
->   
->           Args:
-> @@ -396,7 +396,7 @@ def __lt__(self, other) -> bool:
->           """
->           return self.topology_type < other.topology_type
->   
-> -    def __gt__(self, other) -> bool:
-> +    def __gt__(self, other: Self) -> bool:
-as above>           """Compare the 
-:attr:`~TopologyCapability.topology_type`s.
->   
->           Args:
-> @@ -407,7 +407,7 @@ def __gt__(self, other) -> bool:
->           """
->           return other < self
->   
-> -    def __le__(self, other) -> bool:
-> +    def __le__(self, other: Self) -> bool:
-as above>           """Compare the 
-:attr:`~TopologyCapability.topology_type`s.
->   
->           Args:
-> diff --git a/dts/framework/testbed_model/os_session.py b/dts/framework/testbed_model/os_session.py
-> index b6e03aa83d..de507ffe6a 100644
-> --- a/dts/framework/testbed_model/os_session.py
-> +++ b/dts/framework/testbed_model/os_session.py
-> @@ -115,7 +115,7 @@ def __init__(
->           node_config: NodeConfiguration,
->           name: str,
->           logger: DTSLogger,
-> -    ):
-> +    ) -> None:
->           """Initialize the OS-aware session.
->   
->           Connect to the node right away and also create an interactive remote session.
-> @@ -266,7 +266,7 @@ def copy_dir_from(
->           self,
->           source_dir: str | PurePath,
->           destination_dir: str | Path,
-> -        compress_format: TarCompressionFormat = TarCompressionFormat.none,
-> +        compress_format: TarCompressionFormat = TarCompressionFormat.tar,
-out of scope change>           exclude: str | list[str] | None = None,
->       ) -> None:
->           """Copy a directory from the remote node to the local filesystem.
-> @@ -306,7 +306,7 @@ def copy_dir_to(
->           self,
->           source_dir: str | Path,
->           destination_dir: str | PurePath,
-> -        compress_format: TarCompressionFormat = TarCompressionFormat.none,
-> +        compress_format: TarCompressionFormat = TarCompressionFormat.tar,
-out of scope change>           exclude: str | list[str] | None = None,
->       ) -> None:
->           """Copy a directory from the local filesystem to the remote node.
-> @@ -375,7 +375,7 @@ def remove_remote_dir(
->       def create_remote_tarball(
->           self,
->           remote_dir_path: str | PurePath,
-> -        compress_format: TarCompressionFormat = TarCompressionFormat.none,
-> +        compress_format: TarCompressionFormat = TarCompressionFormat.tar,
-out of scope change>           exclude: str | list[str] | None = None,
->       ) -> PurePosixPath:
->           """Create a tarball from the contents of the specified remote directory.
-> diff --git a/dts/framework/testbed_model/posix_session.py b/dts/framework/testbed_model/posix_session.py
-> index c71bc93f0b..992017f113 100644
-> --- a/dts/framework/testbed_model/posix_session.py
-> +++ b/dts/framework/testbed_model/posix_session.py
-> @@ -15,6 +15,7 @@
->   import re
->   from collections.abc import Iterable
->   from pathlib import Path, PurePath, PurePosixPath
-> +from typing import Any
->   
->   from framework.exception import DPDKBuildError, RemoteCommandExecutionError
->   from framework.settings import SETTINGS
-> @@ -116,7 +117,7 @@ def copy_dir_from(
->           self,
->           source_dir: str | PurePath,
->           destination_dir: str | Path,
-> -        compress_format: TarCompressionFormat = TarCompressionFormat.none,
-> +        compress_format: TarCompressionFormat = TarCompressionFormat.tar,
-out of scope change>           exclude: str | list[str] | None = None,
->       ) -> None:
->           """Overrides :meth:`~.os_session.OSSession.copy_dir_from`."""
-> @@ -135,7 +136,7 @@ def copy_dir_to(
->           self,
->           source_dir: str | Path,
->           destination_dir: str | PurePath,
-> -        compress_format: TarCompressionFormat = TarCompressionFormat.none,
-> +        compress_format: TarCompressionFormat = TarCompressionFormat.tar,
-out of scope change>           exclude: str | list[str] | None = None,
->       ) -> None:
->           """Overrides :meth:`~.os_session.OSSession.copy_dir_to`."""
-> @@ -178,12 +179,12 @@ def remove_remote_dir(
->       def create_remote_tarball(
->           self,
->           remote_dir_path: str | PurePath,
-> -        compress_format: TarCompressionFormat = TarCompressionFormat.none,
-> +        compress_format: TarCompressionFormat = TarCompressionFormat.tar,
-out of scope change>           exclude: str | list[str] | None = None,
->       ) -> PurePosixPath:
->           """Overrides :meth:`~.os_session.OSSession.create_remote_tarball`."""
->   
-> -        def generate_tar_exclude_args(exclude_patterns) -> str:
-> +        def generate_tar_exclude_args(exclude_patterns: Any) -> str:
-based on context this should be the same exact type signature as the 
-`exclude` argument in the outer function.>               """Generate 
-args to exclude patterns when creating a tarball.
->   
->               Args:
-> diff --git a/dts/framework/testbed_model/traffic_generator/scapy.py b/dts/framework/testbed_model/traffic_generator/scapy.py
-> index e21ba4ed96..40030abe7b 100644
-> --- a/dts/framework/testbed_model/traffic_generator/scapy.py
-> +++ b/dts/framework/testbed_model/traffic_generator/scapy.py
-> @@ -296,7 +296,7 @@ class also extends :class:`.capturing_traffic_generator.CapturingTrafficGenerato
->       #: Padding to add to the start of a line for python syntax compliance.
->       _python_indentation: ClassVar[str] = " " * 4
->   
-> -    def __init__(self, tg_node: Node, config: ScapyTrafficGeneratorConfig, **kwargs):
-> +    def __init__(self, tg_node: Node, config: ScapyTrafficGeneratorConfig, **kwargs) -> None:
-missed kwargs, Any can go here>           """Extend the constructor with 
-Scapy TG specifics.
->   
->           Initializes both the traffic generator and the interactive shell used to handle Scapy
-> diff --git a/dts/framework/testbed_model/traffic_generator/traffic_generator.py b/dts/framework/testbed_model/traffic_generator/traffic_generator.py
-> index 8f53b07daf..8b5fa98b89 100644
-> --- a/dts/framework/testbed_model/traffic_generator/traffic_generator.py
-> +++ b/dts/framework/testbed_model/traffic_generator/traffic_generator.py
-> @@ -34,7 +34,9 @@ class TrafficGenerator(ABC):
->       _tg_node: Node
->       _logger: DTSLogger
->   
-> -    def __init__(self, tg_node: Node, config: TrafficGeneratorConfig, **kwargs):
-> +    def __init__(
-> +        self, tg_node: Node, config: TrafficGeneratorConfig, **kwargs: Node | TrafficGeneratorConfig
-kwargs is actually unused here, so it can be removed. Otherwise we 
-cannot make assumption on what it is, so it should be Any> +    ) -> None:
->           """Initialize the traffic generator.
->   
->           Additional keyword arguments can be passed through `kwargs` if needed for fulfilling other
-> diff --git a/dts/framework/utils.py b/dts/framework/utils.py
-> index 0c81ab1b95..51f9a3c541 100644
-> --- a/dts/framework/utils.py
-> +++ b/dts/framework/utils.py
-> @@ -19,7 +19,7 @@
->   import os
->   import random
->   import tarfile
-> -from enum import Enum, Flag
-> +from enum import Enum, Flag, auto
-not needed as out of scope>   from pathlib import Path
->   from typing import Any, Callable
->   
-> @@ -136,15 +136,15 @@ class TarCompressionFormat(StrEnum):
->       Its value is set to 'tar' to indicate that the file is an uncompressed tar archive.
->       """
->   
-> -    none = "tar"
-> -    gzip = "gz"
-> -    compress = "Z"
-> -    bzip2 = "bz2"
-> -    lzip = "lz"
-> -    lzma = "lzma"
-> -    lzop = "lzo"
-> -    xz = "xz"
-> -    zstd = "zst"
-> +    tar = auto()
-> +    gz = auto()
-> +    Z = auto()
-> +    bz2 = auto()
-> +    lz = auto()
-> +    lzma = auto()
-> +    lzo = auto()
-> +    xz = auto()
-> +    zst = auto()
-
-I am really confused why you made this change, given it's not connected 
-in any way to this commit. That point aside, this is a counterintuitive 
-change. The original approach mapped common compression algorithm names 
-to their corresponding file extensions. When we talk about compression 
-algorithms we don't talk about them based on their extension.
-
->   
->       @property
->       def extension(self):
-> @@ -154,7 +154,7 @@ def extension(self):
->           For other compression formats, the extension will be in the format
->           'tar.{compression format}'.
->           """
-> -        return f"{self.value}" if self == self.none else f"{self.none.value}.{self.value}"
-> +        return f"{self.value}" if self == self.tar else f"{self.tar.value}.{self.value}"
-out of scope>
->   
->   def convert_to_list_of_string(value: Any | list[Any]) -> list[str]:
-> @@ -164,7 +164,7 @@ def convert_to_list_of_string(value: Any | list[Any]) -> list[str]:
->   
->   def create_tarball(
->       dir_path: Path,
-> -    compress_format: TarCompressionFormat = TarCompressionFormat.none,
-> +    compress_format: TarCompressionFormat = TarCompressionFormat.tar,
-out of scope>       exclude: Any | list[Any] | None = None,
->   ) -> Path:
->       """Create a tarball from the contents of the specified directory.
-
-[1] https://doc.dpdk.org/guides/contributing/patches.html
