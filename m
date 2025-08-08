@@ -2,79 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6670DC87FD3
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 Aug 2025 15:32:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D8FC87FD3
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 Aug 2025 15:51:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C3FEA4065E;
-	Fri,  8 Aug 2025 17:32:11 +0200 (CEST)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com
- [209.85.128.51]) by mails.dpdk.org (Postfix) with ESMTP id 3E2AB402AB
- for <dev@dpdk.org>; Fri,  8 Aug 2025 17:32:10 +0200 (CEST)
-Received: by mail-wm1-f51.google.com with SMTP id
- 5b1f17b1804b1-459e3926cbbso11416365e9.1
- for <dev@dpdk.org>; Fri, 08 Aug 2025 08:32:10 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 99031402AB;
+	Fri,  8 Aug 2025 17:51:02 +0200 (CEST)
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com
+ [209.85.219.48]) by mails.dpdk.org (Postfix) with ESMTP id 736A64028B
+ for <dev@dpdk.org>; Fri,  8 Aug 2025 17:51:01 +0200 (CEST)
+Received: by mail-qv1-f48.google.com with SMTP id
+ 6a1803df08f44-707365f4d47so23324436d6.1
+ for <dev@dpdk.org>; Fri, 08 Aug 2025 08:51:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1754667130;
- x=1755271930; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=jNdUi8wT8m2f3iq6zFeD5X8EcIAM/gXI/BQirdIXUsE=;
- b=nz9jh+7AsFCKNJQThhdnwhjXfGZjUSLRi+UxFHxG7AwEtiFMg34/aljc3tbGs6bzmK
- JP6VkMJsSt5bmr1Tq33wpFUXl3sdKMRCYiqS0Y1EFObfXTqDK7ruGZYM0T5/xgGzu0U4
- PyEryVv9tXVl2flHFRMzxlGHphG8eQn9MwO++qAbIxVL9SiPT0j3gs0RmkFIpdzHZUOA
- ux5K6HONReqtEJiD/GggtQmBevrtsyJdl/K3jZd+XU6M/DwdH+eZEo2PBkMimdW+GsEX
- F2RblDRfY5fO3QlXydoZNiGdsRvI1TDsq3jdtmFajg3LEHk26pnXZBkWf5i7zvl5Dlsr
- IrHg==
+ d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1754668261;
+ x=1755273061; darn=dpdk.org; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=7ASjS0kK+5V35btbJ4hV6MHk9cs5yfBnUx9l6T2JIyM=;
+ b=kqMNdpmbP9ZeoBHm/2nFQ/10psctHyizbJZKRL3CU56p9xz/B9SRe0h2blEuIVxS/d
+ rqjLxjZkHZUxKpNj+YaBvj4EGfM9nC/FJBgnakkWLUNGkeLRCMWzUA9ksAkqmQhU8Bpj
+ LkWOTQy1eCWRBiXQc10SOXXIedK8NvxZQcGY1kKCkfPRpwL7wCCzBfbrPyNah4rXo2h+
+ +NhSMaZXgr2JQqI+/6AXhPIyenBgRyv0rb3eKnJkJG/8TdpLVAd04WqsEHF3HHtRG9kk
+ YaiV2vKGcDSyghAVbw5xomUOJ39+a7SGxhLmFiJgONm2IqC6PmgBsIGBT/T05Y4KT3Fh
+ qvHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1754667130; x=1755271930;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=jNdUi8wT8m2f3iq6zFeD5X8EcIAM/gXI/BQirdIXUsE=;
- b=D/SuqdBXrgAg9Kx1sKJyapvrZHBQSKMTze183GjLgwkH9IS5VY/MoLOPsK9gnX8Jdt
- 1fVk03OhB5hT9HgJ8ifhsEmFgrKE1nwQervZZVAN8EOzXLkugwr2jOECpkZBFlQz4lJ8
- AOE3dmRGFeiH6eLQe21voTjTER5DPSwU815cCPVD0l2RdB47jXRmmSr2E8rMYOxgaMEa
- gReLsSd3fXap3n8dridsUZvjUJz062c7dAnHVGH5DIv5795oGBVB1jP90OqbJbcXzUDO
- vcV4zBZuJdOcPqr9HvpD39sCLNtj088aoPJYWDVPp2jMK+bZa0uG5xjhsMLdoakhyU4w
- TXWw==
+ d=1e100.net; s=20230601; t=1754668261; x=1755273061;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=7ASjS0kK+5V35btbJ4hV6MHk9cs5yfBnUx9l6T2JIyM=;
+ b=WD9kz8jNN7iACU/GuW/0kK3MBDMsG5oVg104wDBc2Q020GnKX5vZHlwPveikU1BkFs
+ K1IBrstabwkkbsGKKIssA5MsgdiG4giBo5lL7H1Z/0FYVG4t/LK1F8do0dxdN+E1M02Q
+ nbFQg7mHhc6uMIG1mqd3pcYE93tzohkFFHw/sCjPFwVnSunak3mTwWuBJbDflNYzGab8
+ V2PR0+odYMPmNAK4aFhnxJCvJUlluq3E0x/RZlw5puoCycTZ8ukMToCGpc6WnjHnnzZR
+ H4nVQ2rJCDtE8gWhTrfhorERA68/5Tdm4cSsOQZ3CMArz+hD3d94J1waLY9Tbh7l+dML
+ I9/A==
 X-Forwarded-Encrypted: i=1;
- AJvYcCUe+Q5keRS3Qa3z4q/OC5IN/GNjV0dt61lTSCIr6lbf9/FPJiK+d6LWbmQPgQAAgQFLSYQ=@dpdk.org
-X-Gm-Message-State: AOJu0Yy4A2ZOmSM5MkY71FqlQMor4GsK7TDSFd4JN3tXpBoqzTEtU2q3
- 5JVzrc+HJ9A9vRQcAotyEQaOhdfoTKJnAszESNY3SYeTCzAlzF+2ayjEirhrGrV0TXI=
-X-Gm-Gg: ASbGnctG/2Emz/BEGybgAo54uShSxUS4TReR0JjA33+1nJopt/dTIqKA6vApa1P3HK0
- KBXyaASbzjh3vRQQyKD+Wsk7ClFC9/dONWrzjJ+6CUmIcsWbyCqdg2KVWwnA8yGjn6lx64tBoXA
- +VVdCP9RGnO/BtePuDEE2BWqGtp3yESHH5z60GsGJrzYNpbV9iIgeNRksQA+EATdUOFVWFuQU2G
- WnDfMLabhN3UaMKn5tsJ3vJMlourQHwQZorovO+7Xq7YPjCJ5ZqCSyTpDUPy0l3O32c67aYZSfm
- guY0daw+lx/iMp2jutsEtI2lVaQWy+TAkEEy7jHhsXO1YMPwuc/WNPWSHMhaVcAGoOAfvQaoOdb
- al0YdcpYQQC/Oyqb2+UV5or6MJ0CqBm2secyWE09Hk/uvYazs96Gsb0GgCR2TzTaP3t3sfFHTHh
- yF3XNaCdTpwQ==
-X-Google-Smtp-Source: AGHT+IHO2V1bsaTMTAIzevoARrUfFyOd79E9ptlBERqbRbCdB46AjpbkeBFIMBwtQnU1lNqAxCE1Og==
-X-Received: by 2002:a05:600c:4712:b0:456:fd4:5322 with SMTP id
- 5b1f17b1804b1-459f4f524c2mr29174145e9.11.1754667129515; 
- Fri, 08 Aug 2025 08:32:09 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-459e78a35cdsm61373235e9.3.2025.08.08.08.32.07
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 08 Aug 2025 08:32:09 -0700 (PDT)
-Date: Fri, 8 Aug 2025 08:32:04 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: "Varghese, Vipin" <Vipin.Varghese@amd.com>
-Cc: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>, "thomas@monjalon.net"
- <thomas@monjalon.net>, "Yigit, Ferruh" <Ferruh.Yigit@amd.com>,
- "andrew.rybchenko@oktetlabs.ru" <andrew.rybchenko@oktetlabs.ru>,
- "dev@dpdk.org" <dev@dpdk.org>, "stable@dpdk.org" <stable@dpdk.org>
-Subject: Re: [PATCH] [PATCH v4] lib/ethdev: fix segfault in secondary
- process by validating dev_private pointer
-Message-ID: <20250808083204.0174ac6b@hermes.local>
-In-Reply-To: <PH7PR12MB8596FA05DD99084208A31E50822FA@PH7PR12MB8596.namprd12.prod.outlook.com>
-References: <20250729143420.0fd7b627@hermes.local>
- <20250730050702.74381-1-14pwcse1224@uetpeshawar.edu.pk>
- <PH7PR12MB8596FA05DD99084208A31E50822FA@PH7PR12MB8596.namprd12.prod.outlook.com>
+ AJvYcCV/9nMr/2bhApR7w7cXqUtGtlGFHfglP3vQkisix9C2l1IscIsyOQRMFl7eFI9frK3VbGw=@dpdk.org
+X-Gm-Message-State: AOJu0Yxdjv/DElJMr5qgvJ6WRNn+Nh8wEjAoupEN3Ou83jkqofiMgc2m
+ JYRwFCHDqoD+LIFbbRoKrsjMW/VgTnxiEYwKDJjgwRZi9PelacEfv/pLeqpDalCcCQJkMhLitYd
+ N9PZn+UomLfs9xscco4v42ZvPtFgNO9aN8LEDPFhmj+IToGoTIbJqTLe8oQ==
+X-Gm-Gg: ASbGnct8OIl+pSo78xsKr/AAPb9WMwsBwXVUskVcaeDPlNDJLEx2B3wnXU1F9CIjga4
+ si/Mc4aVUJ+ebHp0T08B0WNmbVfg4ah+u0A3dVGY5Vp7ojonRxzuUgKV78erm4NIdGD+iob7j6l
+ HcqSVq/E6O8hbKan5DURgFWJSI8O6Ike8t3TCzlKrhykQGWeEZsvHs7RVMbQy3hvPO+mYBnxIv0
+ wn1G6rP
+X-Google-Smtp-Source: AGHT+IEMs8t3K8LJAo+hghs6zNxWcixnbfe7/K1sEj+p4OKtc5OyZS0zelvHjh+QFsPfKHXRISalR7Aftok2Xf7Tg64=
+X-Received: by 2002:a05:6214:ca4:b0:704:d268:4978 with SMTP id
+ 6a1803df08f44-7099bac1fecmr48096946d6.15.1754668260720; Fri, 08 Aug 2025
+ 08:51:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <PH7PR12MB8596A4A5CCC22A6B1584AE14822FA@PH7PR12MB8596.namprd12.prod.outlook.com>
+ <20250808054452.1350869-1-14pwcse1224@uetpeshawar.edu.pk>
+ <20250808082835.796b3be1@hermes.local>
+In-Reply-To: <20250808082835.796b3be1@hermes.local>
+From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+Date: Fri, 8 Aug 2025 20:50:49 +0500
+X-Gm-Features: Ac12FXz8-kGekjmGk9HgXnrPVI5Z5d-m6Zj8vDqEl3Cb5GxyDcIMHuv-wS3meuI
+Message-ID: <CA++2-x5yju6ZTz5uBcQFhLNrT2pkV9yOkuEjpD6awxFEc=rLqA@mail.gmail.com>
+Subject: Re: [PATCH v7] app/testpmd: monitor state of primary process when
+ using secondary
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: Vipin.Varghese@amd.com, thomas@monjalon.net, Ferruh.Yigit@amd.com, 
+ andrew.rybchenko@oktetlabs.ru, dev@dpdk.org
+Content-Type: multipart/alternative; boundary="0000000000006123b0063bdc8a44"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,32 +78,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 8 Aug 2025 03:49:01 +0000
-"Varghese, Vipin" <Vipin.Varghese@amd.com> wrote:
+--0000000000006123b0063bdc8a44
+Content-Type: text/plain; charset="UTF-8"
 
-> [Public]
-> 
-> Since somehow the email are split it is difficult to see the indexing
-> 
-> >
-> > Caution: This message originated from an External Source. Use proper caution
-> > when opening attachments, clicking links, or responding.
-> >
-> >
-> > Hi Stephen,
-> >
-> > Many thanks for diving deeper into the issue and sharing the insights.
-> >
-> > I agree. given that the primary tears down all the devices on exit, the secondary is
-> > left with dangling pointers and inconsistent state.  
-> 
-> Secondary if PMD should not be attempting to cleanup (especially for ethdev_ptr shared from primary) I agree to that.
-> But should not be covered in library or PMD. While cleanup for other needs to be done properly
-> 
->  Without a mechanism to notify or synchronize that teardown,
-> 
-> You already have health check added in the code for identify if primay is still alive or not..
-> There used to be MP thread spawned which actually piggy back the communication. Is this broken? Can you please point to git
+Hi Stephen,
+Thanks for the feedback.
+So, it means the patch is perfect in the current state (i.e., v7)?
 
-There is no easy way to handle the case where primary crashes; leaving secondary process with
-pointers to dead data.
+Best Regards,
+Khadem
+
+--0000000000006123b0063bdc8a44
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div>Hi Stephen,=C2=A0</div><div>Thanks for the feedback.=
+=C2=A0</div><div>So, it means the patch is perfect in the current state (i.=
+e., v7)?=C2=A0</div><div><br></div><div>Best Regards,=C2=A0</div><div>Khade=
+m</div><div><br></div><div><br></div></div>
+
+--0000000000006123b0063bdc8a44--
