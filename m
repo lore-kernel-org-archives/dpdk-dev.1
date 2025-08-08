@@ -2,21 +2,21 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 688E6C87FD3
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 Aug 2025 11:34:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C172EC87FD2
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 Aug 2025 11:36:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 89189402AB;
-	Fri,  8 Aug 2025 13:34:32 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B7720402AB;
+	Fri,  8 Aug 2025 13:36:07 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id D51364028B
- for <dev@dpdk.org>; Fri,  8 Aug 2025 13:34:30 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id EC5664028B
+ for <dev@dpdk.org>; Fri,  8 Aug 2025 13:36:05 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id BF65A46CD6; Fri,  8 Aug 2025 13:34:30 +0200 (CEST)
+ id DB7F746CD6; Fri,  8 Aug 2025 13:36:05 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/netuio Bug 1766] Bug in resource allocation in 
+Subject: [DPDK/netuio Bug 1767] Bug in resource allocation in 
  netuio_map_hw_resources
-Date: Fri, 08 Aug 2025 11:34:30 +0000
+Date: Fri, 08 Aug 2025 11:36:05 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -34,9 +34,9 @@ X-Bugzilla-Target-Milestone: ---
 X-Bugzilla-Flags: 
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone attachments.created
-Message-ID: <bug-1766-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17546528700.Be3d2Caf5.640831
+ target_milestone
+Message-ID: <bug-1767-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17546529650.daF6F68.641551
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: https://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -56,8 +56,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17546528700.Be3d2Caf5.640831
-Date: Fri, 8 Aug 2025 13:34:30 +0200
+--17546529650.daF6F68.641551
+Date: Fri, 8 Aug 2025 13:36:05 +0200
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -65,9 +65,9 @@ X-Bugzilla-URL: https://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1766
+https://bugs.dpdk.org/show_bug.cgi?id=3D1767
 
-            Bug ID: 1766
+            Bug ID: 1767
            Summary: Bug in resource allocation in  netuio_map_hw_resources
            Product: DPDK
            Version: unspecified
@@ -80,10 +80,6 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D1766
           Assignee: dev@dpdk.org
           Reporter: repin.dmitry7@gmail.com
   Target Milestone: ---
-
-Created attachment 327
-  --> https://bugs.dpdk.org/attachment.cgi?id=3D327&action=3Dedit
-corrections
 
 We are using DPDK to work with Intel X520-DA2 under Windows with netuio. Af=
 ter
@@ -147,8 +143,8 @@ vior. we see
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17546528700.Be3d2Caf5.640831
-Date: Fri, 8 Aug 2025 13:34:30 +0200
+--17546529650.daF6F68.641551
+Date: Fri, 8 Aug 2025 13:36:05 +0200
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -168,7 +164,7 @@ bz_new_table">
           bz_status_UNCONFIRMED "
    title=3D"UNCONFIRMED - Bug in resource allocation in netuio_map_hw_resou=
 rces"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1766">1766</a>
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1767">1767</a>
           </td>
         </tr>
 
@@ -245,14 +241,8 @@ rces"
         </tr></table>
       <p>
         <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">Created <span class=3D""><a href=
-=3D"attachment.cgi?id=3D327" name=3D"attach_327" title=3D"corrections">atta=
-chment 327</a> <a href=3D"attachment.cgi?id=3D327&amp;action=3Dedit" title=
-=3D"corrections">[details]</a></span>
-corrections
-
-We are using DPDK to work with Intel X520-DA2 under Windows with netuio. Af=
-ter
+          <pre class=3D"bz_comment_text">We are using DPDK to work with Int=
+el X520-DA2 under Windows with netuio. After
 adding its description to the INF file, we found that the driver fails to l=
 oad:
 netuio_map_hw_resources returns STATUS_DEVICE_CONFIGURATION_ERROR.
@@ -324,7 +314,7 @@ vior. we see
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1766">
+?id=3D1767">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -333,4 +323,4 @@ ication">
     </body>
 </html>=
 
---17546528700.Be3d2Caf5.640831--
+--17546529650.daF6F68.641551--
