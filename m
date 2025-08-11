@@ -2,149 +2,125 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B0EC87FDB
-	for <dpdk-dev@archiver.kernel.org>; Mon, 11 Aug 2025 14:44:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A47C87FDB
+	for <dpdk-dev@archiver.kernel.org>; Mon, 11 Aug 2025 15:17:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 13EE940DDB;
-	Mon, 11 Aug 2025 16:44:55 +0200 (CEST)
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com
- (mail-dm6nam12on2047.outbound.protection.outlook.com [40.107.243.47])
- by mails.dpdk.org (Postfix) with ESMTP id B77CF402AC
- for <dev@dpdk.org>; Mon, 11 Aug 2025 16:44:53 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3E1CD402AC;
+	Mon, 11 Aug 2025 17:17:18 +0200 (CEST)
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com
+ (mail-co1nam11on2076.outbound.protection.outlook.com [40.107.220.76])
+ by mails.dpdk.org (Postfix) with ESMTP id B601D400D7;
+ Mon, 11 Aug 2025 17:17:16 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oeSO/leEn3sYJqNLmWsHA2oeS4rWSXs5HG+pErxd/CMe9CBm+bb21UbNc0gM1/4paGG0vtkOfgWTV11xpA/Famtb5yuEE19uVRUWSZSSJTeuabVYmwcQjIdEfif8DwRLV1uAck38MUl0f6dOsKTCs9flnBBnTk31jz8TwaCx0z2S4hSs49NjvuLQFqilHmftu9sR8zhlQERS68exyYoYfBsfOVlWVWdDYlYbgLjscBPdFHBIMDaX1hOR2kmti62o5etp7rCEJdNf1JygNIhpe4hqj4+Rf9bLsEYgZ2HZuhjtsWLThN3zPQi1OVhmuKUJYDFIUxuMgSqfOeEN4yYirA==
+ b=EcJdbiaogKBvAcrFYCl+aMsHZ8WtYfd0nRS82Qn5Ggi9Dknvk3BbTCBX/FSrPU5pb7+/a/txu32wPaDwVCq4emS6Fsrn0h03Gg/rcjoL+p2o1v3GRbFC44p3wxdvXCgK4Nicy+ug+QYLbmyavr+8FI/B6/8o4CpSFves6ozXgTWapmygoPl3V+zqmPsHvproT+rhpqWGo58iNu6rHMMYtQwNwaPP+NjklYWcnIPkHkym/uzmp+1NOxD1jzCCTFawCMpOunNPdRZt53QJGV75fwTp8apzdvmENDTNrM/Golm/iMpA/guPGeQfGAmo6j37obyMQ6Y2/5omH/BXrDIweg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6nXde1tqFK51whl7ol7FYnFBG/9K0Zlw+y/mDLIJXVQ=;
- b=Ng3CRypb4sGMJ0fNKC4KdLzygOIiYf496zFBFkYBAtPHKzAPe+WxiWigdS8hguBzhdw2t2aR7tRFDCKjc1U1LkosYIhZFe8DMuE1QttYE+PL3UuXkj8nqvuz5cBK+G1VxEDUc7+jOjDiVOKAQDuAF2D6T2jxoLEERr4qcXt2Zx2YhHPuWt2MErPAIzS4JpNs7Wrezc8+XSq/QTJk6K0QA3yjHMK2eonS2XQ1be7jw7GG3j+nUrWRhlXBVho5ZBkT4hy4iYwukcocG+xnff0W2mY6TCGAl09cjjyOrPkn/br7yXYf7Sv2o2Q8E1Ov9YhT4/SM7g+kuAjgCHnD5KzTkQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
+ bh=Wi75UPXaAroKSxthDesLmSWKofSnlnI+CsbW6CA931Y=;
+ b=Qjmf29nDCMFgHO7AsG8+SBKXNsZad2tjecVgZJZGNAuvMxGAOqQkX2o5pK20cUszcZ1BZn7Jsx631DU6AyvMjXWWJnJzTZY9wNjVFamqNDX/ZMKD/VtTpeFx93RMPuKuRynkXK9aDpTUEXBO6Mll2n36v2BcygXAn/GWJ1EEq86u2giymgKRWwqiVPdbrH57h18mDRGF94DrgBG14YXuehh5Ki/vAtd4lMgEadTUL6Qekd1kETWCY+UXXnebxDbZqlBKIk/3wRbbjPSVxj8blCdcknlCi4+EN7Dl5wInfD0WEJrTNpBchzsyjR8nlyJqYcTdmEtn1J20VW5p3b3WEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=uetpeshawar.edu.pk
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6nXde1tqFK51whl7ol7FYnFBG/9K0Zlw+y/mDLIJXVQ=;
- b=um5pvzYaJC2vO7zVR72ERrw/rrdPoiKZSEdQvENv4dXoVO/iUJ9Zv4fsIEHx9CNUyclWwDRx4nOsWL0CPSxb+JlCF5lPdxtDtaI3Gzd8AdUhN9V1e8G2AOf6f4rrYR1AHID0pLEMYEjLlf2B9r+QtEKe7pnfMb5/d8XZm4e/9TA=
-Received: from PH7PR12MB8596.namprd12.prod.outlook.com (2603:10b6:510:1b7::6)
- by BN5PR12MB9462.namprd12.prod.outlook.com (2603:10b6:408:2ac::14)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.15; Mon, 11 Aug
- 2025 14:44:51 +0000
-Received: from PH7PR12MB8596.namprd12.prod.outlook.com
- ([fe80::a011:943d:7291:8069]) by PH7PR12MB8596.namprd12.prod.outlook.com
- ([fe80::a011:943d:7291:8069%2]) with mapi id 15.20.9009.013; Mon, 11 Aug 2025
- 14:44:50 +0000
-From: "Varghese, Vipin" <Vipin.Varghese@amd.com>
+ bh=Wi75UPXaAroKSxthDesLmSWKofSnlnI+CsbW6CA931Y=;
+ b=iiwTXijuze+BOzwJ4tRy2F+lthmDF45/2GDMTFZfKOihSGCjB8e8mEnbIbLUWyP6n3d7RTZoIx3m3WQnkeeo2eBZ9Ly9oCsrBUcv7sllAb5rvTX7S6q2RDs8EfaWzg8Lyoz4ASUzCPy4U+k+DvwJcQS9QpLfuiiiMi5htxx9XljanPeUmoHAw+vRFlkHauba0LPZ7sMBUa9H5t31d31g1twUil2wjER9LCnpNZ1OsXaiMka8g3ohdWOIwVJBYfUovHrUTuodJvhp9OPzxUvzlofgo0ag/X8jBRojlZhyXKmGoe1FSoU96/age/78spcCAXvYWO2RuziOmnlVu30FPA==
+Received: from MN2PR16CA0030.namprd16.prod.outlook.com (2603:10b6:208:134::43)
+ by DM4PR12MB7549.namprd12.prod.outlook.com (2603:10b6:8:10f::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Mon, 11 Aug
+ 2025 15:17:11 +0000
+Received: from BL6PEPF0001AB4C.namprd04.prod.outlook.com
+ (2603:10b6:208:134:cafe::40) by MN2PR16CA0030.outlook.office365.com
+ (2603:10b6:208:134::43) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.22 via Frontend Transport; Mon,
+ 11 Aug 2025 15:17:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BL6PEPF0001AB4C.mail.protection.outlook.com (10.167.242.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9031.11 via Frontend Transport; Mon, 11 Aug 2025 15:17:09 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 11 Aug
+ 2025 08:16:45 -0700
+Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 11 Aug
+ 2025 08:16:44 -0700
+Date: Mon, 11 Aug 2025 17:15:20 +0200
+From: Dariusz Sosnowski <dsosnowski@nvidia.com>
 To: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-CC: Stephen Hemminger <stephen@networkplumber.org>, "thomas@monjalon.net"
- <thomas@monjalon.net>, "Yigit, Ferruh" <Ferruh.Yigit@amd.com>,
- "andrew.rybchenko@oktetlabs.ru" <andrew.rybchenko@oktetlabs.ru>,
- "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH v7] app/testpmd: monitor state of primary process when
- using secondary
-Thread-Topic: [PATCH v7] app/testpmd: monitor state of primary process when
- using secondary
-Thread-Index: AQHcBTOmTMs4cZesWkSBbj/ohPqRp7RYGXxwgAArOwCAAFY/MIAAD4mAgABTxwCABE1voIAADCgAgAABZ3CAAAoKgIAALdJA
-Date: Mon, 11 Aug 2025 14:44:50 +0000
-Message-ID: <PH7PR12MB8596AF79DA967DCA9B68FF498228A@PH7PR12MB8596.namprd12.prod.outlook.com>
-References: <PH7PR12MB85968E4B05D92C12C963F1E2822FA@PH7PR12MB8596.namprd12.prod.outlook.com>
- <20250808114909.1606758-1-14pwcse1224@uetpeshawar.edu.pk>
- <20250808094900.5027f034@hermes.local>
- <PH7PR12MB8596C293ACF92D446DBD10508228A@PH7PR12MB8596.namprd12.prod.outlook.com>
- <CA++2-x4i2OegW0u2a6AJepCFgqjLbwzqdw+es3BqrABgqM7FZg@mail.gmail.com>
- <PH7PR12MB85965BF756C6D234FB8714068228A@PH7PR12MB8596.namprd12.prod.outlook.com>
- <CA++2-x5FZSB56rrVLU96hSosLGHybQWPFPo3VPe=y8YHZBhfqA@mail.gmail.com>
-In-Reply-To: <CA++2-x5FZSB56rrVLU96hSosLGHybQWPFPo3VPe=y8YHZBhfqA@mail.gmail.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Enabled=True;
- MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
- MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_SetDate=2025-08-11T14:41:16.0000000Z;
- MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Name=Open
- Source; MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_ContentBits=3;
- MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Method=Privileged
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH7PR12MB8596:EE_|BN5PR12MB9462:EE_
-x-ms-office365-filtering-correlation-id: a83455c3-a9c1-429d-3e2e-08ddd8e5a085
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|366016|1800799024|376014|8096899003|38070700018; 
-x-microsoft-antispam-message-info: =?us-ascii?Q?V4jIP/CfXYuZTa6CxJnujZQfC6XHagaZS4ElhMAGSMcO9AooJHpBmuP6MPKE?=
- =?us-ascii?Q?hZ2LhMcU34nCXxDf37FuvncMWh1yiiQ6zsYDAzD6uKa+E4te0CioNq5LQJ/E?=
- =?us-ascii?Q?vtiRV5NkI69u7zV5gJL7Gj/gRsH8g+sKLJIpkc1NuaBInbo8GEFrdwxXHlru?=
- =?us-ascii?Q?tCjBo4aYpE0Mdie2b2YBLW1CYhrjs4CoZaNF+qQPeXLDOXh5V7c4liv3jqLh?=
- =?us-ascii?Q?IsmY1cNJqf+S1TO1f9lRVZb/e1XoSxw55fbKx2zDApdVoGwhxcLUh3NfYKa7?=
- =?us-ascii?Q?hK7fFUCcDVb0kS4ANtk7yCObJejLs4MvQgq83UCb8Ad9cstUnF5ZqDrBkkWI?=
- =?us-ascii?Q?K8Fkp4FCTMfzndDl2yTljQw8mmk1idSqnPV1BHnhK3Ke6rYP0lnu315UR5o1?=
- =?us-ascii?Q?NqLgYI099upU5Azdjd0e+53qk1IhurB4bGsGOjM0rOMaLjxBafKyNAQZD9mK?=
- =?us-ascii?Q?FA4E3mkc1KyJ/4z0LS5JvolSbj9KhxsPfHWCeKrt2MRORU7bh3HJw5z6lo2u?=
- =?us-ascii?Q?sy0IqVKP9keZKbYBXjxYCNCftqR3nbDcug2rNSUzOdqU8LNgXEVhffFyJx2o?=
- =?us-ascii?Q?oSUISK35qc4GVZsR4aUVuk7GhfXO61Ee2lkOrKviB/ccZDDFYy1MRkhB9jjK?=
- =?us-ascii?Q?cu7sjQwwSeJZD9qEnkWw1SP8q4YuET0+t3sA/oNb654tOflQmvy+BzCo3ng7?=
- =?us-ascii?Q?aaTz6j6OS4JdlfqEaokFrD+npHpmN3AYSksASdpUTLr0JxTyTctZPBpFtMay?=
- =?us-ascii?Q?77J9WbLlAoO/hpWWOJI7XuFUU56oexcdDXe2Hs4yK/RukRDsxFJRtGlP7CGZ?=
- =?us-ascii?Q?J7hR58aGyz8SxT6gMia4p8R8rzj9I5ADYMtkxQFp1uNROOWn/XZwQ9nlWvGn?=
- =?us-ascii?Q?izGEwJwzMsdImJBTodvzCGRC0x+AwG5+XVnsnK4gRIpI6PIoEhP78LpcP/5a?=
- =?us-ascii?Q?K4t3eC/FikOfOSE7Q7WYXCNKukSbJnPpZfFRRRwBjwxjGjZzcaqZPxdWgfAJ?=
- =?us-ascii?Q?3sJD7hB9+meiaOG8ObWlJbkPutw7NC/NdrCqJBzgRE+6T82Tnm+ABwqy7HJy?=
- =?us-ascii?Q?lI+j4/mhkNnscvpEdmCZGYbIY00ApeHw12PhjrfZ4hKdZoOtTkdYxh5s5U7J?=
- =?us-ascii?Q?P4vE7p1pqh6AQXMWVELTVEKsvsxeihjyykcv1OJJcKWbmitcAeBpaIzYBOtd?=
- =?us-ascii?Q?iOEbq5KBwncQ2YaNOTxpDFKVJHbIvoLEcb5qez8O7w/0A7S7Hn85/lyhsAsk?=
- =?us-ascii?Q?ympVALKCvTSmNRb17qum7G10jl/0kxZVrw/0//Zh1EVIbbLwtEtqj7wyxXoe?=
- =?us-ascii?Q?hdCgf3T0V63P3tHdLtYEWHH+ZHLmc1uhTuxPH+xr2FXMxpRdbTiAH4kDOxLF?=
- =?us-ascii?Q?cCgNhxCVrDn37GuuE7JY82EF8aBu6opcbIw5aoSpynj7hsQyARCCzZA1lRN3?=
- =?us-ascii?Q?RmrAGH3q3/0oUVGgzJoEwHjPc2Gj8lyVsbcZRW/ExYYAy+sLqSURc9miZM+U?=
- =?us-ascii?Q?0yRmc+Xh/8S3t6I=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:PH7PR12MB8596.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(8096899003)(38070700018); DIR:OUT;
- SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?cYIZuOkvXYBIBg3jT1i7zkMRc0zXM2kFJ7V7DZY+cwUMIKYsw0gwDwC4Mnj4?=
- =?us-ascii?Q?Wc1BFVy9rXwNOWH2/E1AxKC3BKAKdgXA7sI3h7NDicUBLpeuozxkXdOqLJdD?=
- =?us-ascii?Q?w+g0mjOpco6kJD86lNu4ysfwRcl3DAF7yXuEE8B9CojSWvr+ti+S7xCwyBOO?=
- =?us-ascii?Q?yoIcicbhjSe/OpGa16MjYxxd+HVrk0A58j4sOfNLVa5v+KGi4Tv32MH8+x65?=
- =?us-ascii?Q?yI9GEFhigX/7xui1GRT0MxpTuMTx5XmwyhkLCApxwJZ6kIOeUgyOemJqTmTi?=
- =?us-ascii?Q?sz/PYY8eFPUvj+CpuZC+eyOSjT0bD4rb3dUg2YpgJLsJyfJdCGiLUTdZjHHt?=
- =?us-ascii?Q?1X2TLnblEU3LiUyGfX47jn3oXoIVykhFd86BOKEFcV6UlUzxnIrymjyNYyb7?=
- =?us-ascii?Q?lpbtUxMJR3T4TILCHl4jHKLRzdQjfyOFE2+3EKh2gMmxv0BTozVp7L9Drr9f?=
- =?us-ascii?Q?7uG5SFXYXZqtnwWPf678lIv8ep9KRNbdYseuRBucP9IsnoBs69RPzrirV8bG?=
- =?us-ascii?Q?QiGLf5a/cjkwjFOYx7ZEZXkJYlgkv35teuvqeHurjqChqH4CSaIy1HYqZJBF?=
- =?us-ascii?Q?doCSSKCpEkDFocSj0JE/tYYXhHeApX4p805fDoMV9h5N6K7DFpcDh490s/xF?=
- =?us-ascii?Q?F+2pRPbCQu5VAhhORk61fkcVpKcUSLl8FcXLsB7nLOGIeiQqaU4Cw2uJob7k?=
- =?us-ascii?Q?3qMzKfV3HWHk0G02pI1eGlLGHLJKBG6Q1pSUor3cPjfPACfJ0AjHH96k/+dP?=
- =?us-ascii?Q?/2bRgYD6sBx6FfYxQGsVxIjkmU8ehzPyLvJ9/sP2xXCDiJrkuXJ0OQOTbXp1?=
- =?us-ascii?Q?/9Q5eqtujaZpCt0xTBwA59jNZNC5RLEttvG6ziMXwFsFugtEONy425YtlkYw?=
- =?us-ascii?Q?EX4FWTLjxl3kIe3JC/ETD3/zrSAUELMzJ9w91/26WZqrTFLof2rLfGNWWI+h?=
- =?us-ascii?Q?wnhS42HuDsI7qdu4Dvr7HtMqel56HSTCAMt2x8seoTwxPN+y9L/VFrKE/fmo?=
- =?us-ascii?Q?u1Nkhw72+1WzVf4ShaNcuEC8VgCI7qMpNGz4Ke9joPSoGXQQ/e91mnSHVaHy?=
- =?us-ascii?Q?rpLBYxns6/GZEGwYHDoJ9E13w4615IGDPzVfMcewPueC7hI9yq26ZBzNxYQ+?=
- =?us-ascii?Q?cOZYevk9xUmPDwQXyWnZTX6hs+h9uFFehb/BmdV7CG1Z4HjdggVTachr9w6k?=
- =?us-ascii?Q?TwiVwWKoa5kb0H2naQda/SJduWVFW1QyuAAGkz++sw/Ka0sp5LW6WQs7tYvR?=
- =?us-ascii?Q?DdlEYFE+B3UbWkT+W0/M0bZZqqdLeRyX1CoH1zWIfRiEIRdRqz+bLN7Kp/os?=
- =?us-ascii?Q?8pRRD72n+7r/ybXhDn3R9T6qBRm8/UQdlmd3gT/Yxrh6Z8otrEww4cLcosvW?=
- =?us-ascii?Q?EAXnLO4LCYhcwCEbJiEDXPKmFjStSTBWPDwcMm5WicUfaHm7wJlP1+laHl9e?=
- =?us-ascii?Q?l5lmoLiinmLJ3dAOB+7fhKq9/L0bo2+4m9Ipwe4JQJpvCk09CLlD/VAeww0O?=
- =?us-ascii?Q?Mfqn53HsXVdJhcrxhn4+trehXGdJy7YsqixuxDY4jkRbSvWhOKRdg/WRz5jn?=
- =?us-ascii?Q?041n9wwAB7mbaSZsXgWDZ7fVFhJlG/Akp4ZoWtP3?=
-Content-Type: multipart/alternative;
- boundary="_000_PH7PR12MB8596AF79DA967DCA9B68FF498228APH7PR12MB8596namp_"
+CC: <ivan.malov@arknetworks.am>, <viacheslavo@nvidia.com>, <bingz@nvidia.com>, 
+ <orika@nvidia.com>, <suanmingm@nvidia.com>, <matan@nvidia.com>,
+ <dev@dpdk.org>, <stable@dpdk.org>
+Subject: Re: [PATCH] net/mlx5: fix connection tracking state item validation
+Message-ID: <20250811151520.bonpjpefwuzuap65@ds-vm-debian.local>
+References: <20250808074738.2nqgorlqzzyf2jid@ds-vm-debian.local>
+ <20250811062149.2489151-1-14pwcse1224@uetpeshawar.edu.pk>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB8596.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a83455c3-a9c1-429d-3e2e-08ddd8e5a085
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Aug 2025 14:44:50.8301 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yNw3gppTSFHmzjIDLYpcibJ9tg+qFvH+N+ZsP8QK2XlR0fK5m/Ucv/95JxajCtzUAVHrvEIoRyYPbMbBi/KEIA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN5PR12MB9462
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250811062149.2489151-1-14pwcse1224@uetpeshawar.edu.pk>
+X-Originating-IP: [10.126.231.35]
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB4C:EE_|DM4PR12MB7549:EE_
+X-MS-Office365-Filtering-Correlation-Id: 71602d4f-104d-48de-7e9f-08ddd8ea2422
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|82310400026|36860700013|376014|1800799024; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?mqLGP9ETnvWVhFgXLOtX8ILNsCKu/0exgNjdMPVI1fR65DfAbSi3qw+VIeYR?=
+ =?us-ascii?Q?Z19QqMk01DcB8SZkfzv+CU8XFJV5TwbR/PRkknxiA38LtBBA2TSWcAZ6T7rI?=
+ =?us-ascii?Q?zAAZI+FMf3iTj/YPACCvIYink+y2vcWXfw3K1LMgufa0fDObqnoNrU51OEBS?=
+ =?us-ascii?Q?kJoSns/sbXN8hPcW1DP2DoRSliyvD2GMrB1w3uXaToZ32/SN6fOVPrO2aCwi?=
+ =?us-ascii?Q?+5gYU3fejUekcWyuXVvdrYGPdKmZOKAj87UQb+6A2up/7iZady1pQ9xNfDMx?=
+ =?us-ascii?Q?RONqrGE8HP7TBbTv8b1/TBTsWdrzNaEgJJ/4me0aXO2iZa8kWc7yRHEkQTNz?=
+ =?us-ascii?Q?i9A21qwrl7gyucH/ZMdgGlhlHSsEU5DmGoIlLaaWVvgC5/LHKfre3aCPxsD9?=
+ =?us-ascii?Q?GyGKCLc6KjdvG7C0IP/oipWNq0PXNdxwjQF0kslFGPpnTDKC4b7LQqdIL5A2?=
+ =?us-ascii?Q?6qG/AwGpfEfkNSyAqDKfmSsnfixzXwEOskmk1PcvWK2vS3lzZiyxZ4nGk2Wb?=
+ =?us-ascii?Q?SZyXLHG47Vzymp4Bm7sUqcTFHAOg+yll6hWk5ueSBwLkAfISenGSqLtKs8KL?=
+ =?us-ascii?Q?GKzBY/DLuEGxk5TLAC+Dfk5jBJTpzYMkDJxwoAHeBWu0gdNsbyb8LQ4843gf?=
+ =?us-ascii?Q?JzSHExWv4Ka4uAjihT97UMnoSlND1TERVnpscRbob7qKHTn+XztFjkU9ZMO2?=
+ =?us-ascii?Q?/GgE6ZYQHqUnfo44N0By2XM3OxOpvK65a8lG4JbauUKs+CcMWGjXAm2ughAf?=
+ =?us-ascii?Q?YmJksoO2YXQEllQfmvGIj8UONAEjk7gC95e/PhZi/0hu8kzo/WhkFn5cE2rz?=
+ =?us-ascii?Q?PXuElLJqTyOFgPKixFhr0I8lGbopVF+ayum5drZcq42FOAdUBpA8Qib6xg95?=
+ =?us-ascii?Q?q0+d9J3Zz1Om6069NZH7ZNiLZjIPO0R8c4IwIc5FX7Y/Bj2HhI+MXTrouOxf?=
+ =?us-ascii?Q?ytMBERcv0zWP9BVRqGfr/RksfYtgy32vXSTFYgB9zfpZ6umNop2CU6onQiTA?=
+ =?us-ascii?Q?aYfhQuQXIKQJH/mCDVjrfPETw4/bbNRHEX9vS/lWjTCPk1dt53mhfgDixniE?=
+ =?us-ascii?Q?CjVP3Jhv35CgkvcbiCVSzyUOE8pMTBGJfFpcQAGiGsyagmGStvMH1pa3xe2P?=
+ =?us-ascii?Q?RSPovG7pjvlrWHzltH/lwuzPKozDfoLCk7j5pZCJBwpsYo7X5gGk9luPI5+o?=
+ =?us-ascii?Q?+XhkbIMUF1NvXo4iYniNoUjLFTU5MU0wIsB8Ej7qVzRJH8W5dASpTDsxb68V?=
+ =?us-ascii?Q?Vv9ENKKzsm+eRI/wmZYhpgw/Ufs25hBZFugL+yOPMJTh6S27HKZV4Vs+8ayB?=
+ =?us-ascii?Q?QmSnLg27q+fjv0R9AXz0Sgbr/D30dQLDAmvB1SOCYVi1VUTBynK60xjiK5G9?=
+ =?us-ascii?Q?HYCRTITu84SOkyxTgjuesAhh87oT12+EVsXeX2hm6d0HSL/+UTuljMSWCnQ0?=
+ =?us-ascii?Q?fWNfuNhaaoPjCDaqttsl105ztXZ5FcWzlgvcXcFeAILd/shdEC8pAXQOv4qm?=
+ =?us-ascii?Q?OfZCDhJtAcczeP8dr/uVcHPYTDldXeNJ9XXy?=
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 15:17:09.4887 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 71602d4f-104d-48de-7e9f-08ddd8ea2422
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BL6PEPF0001AB4C.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7549
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -158,194 +134,209 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_PH7PR12MB8596AF79DA967DCA9B68FF498228APH7PR12MB8596namp_
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+On Mon, Aug 11, 2025 at 02:21:49AM -0400, Khadem Ullah wrote:
+> Hi Dariusz Sosnowski, 
+> 
+> According to documentation, conntrack item matches a conntrack 
+> state after conntrack action. Your statement is also correct 
+> "match valid TCP packets which change TCP connection state", 
+> it means in this case also we are matching TCP connection state. 
+> 
+> Please check CONNTRACK item in Generic flow API (rte_flow)
+> 16.2.6.47. Item: CONNTRACK
+> 
+> Matches a conntrack state after conntrack action.
+> 
+>     flags: conntrack packet state flags.
+>     Default mask matches all state bits.
+> 
+> https://doc.dpdk.org/guides-24.07/prog_guide/rte_flow.html
 
-[Public]
+As mentioned in the quoted docs - flags in conntrack item match
+"conntrack packet state flags", not "connection state".
+Packet state refers to one or more RTE_FLOW_CONNTRACK_PKT_STATE_* flags.
+(Documented specifically in API docs).
 
-Hi Khadem,
+I am focusing on highlighting the difference between "packet state"
+and "connection state", since this distinction is important, because:
 
-Please do not use `sorry for any confusion`. Very clearly, I shared what wo=
-rks and why your case is different.
-Snipped
+- flow item deals with "packet state"
+- flow action deals with "connection state"
 
-Hi Vipin,
-sorry for any confusion. I am only trying to explain that these patches are=
- in its final state (waiting to upstream).
+One of the flags for "packet state" is RTE_FLOW_CONNTRACK_PKT_STATE_CHANGED,
+which indicates that this packet has changed TCP connection state.
+But without analyzing the packet and inspecting TCP connection state
+(by querying the conntrack flow action),
+user does not know the specific state transition i.e.,
+whether transition was SYN_RECV -> ESTABLISHED, or ESTABLISHED -> FIN_WAIT for example.
+So user can match packets which changed the connection state,
+but not the specific state transition.
 
-[VV] it is not about the state, but of the quality and state.
+Perhaps the docs (both programming guide and API docs) could be improved
+in that regard to highlight the difference more clearly.
 
-You have provided your valuable insights and
-I am very thankful for that. There was much discussion about these patches =
-from start to finish.
+> 
+> E.g. I have performed the following experiemtns on connect-x6-Dx for clarification
+> (provding only the relevent information).
+> 
+> conntract state can be verified for liberal mode.
+> In liberal mode, the Seq/ACK/Win check will be ignored (forget about act/seq)
+> and only the state change will be tracked.
 
-Already mentioned that with Stephen and other community members, the discus=
-sion was started earlier and I have provided all the information
-to you in a singla email.
- "First we tried
-to prevent the crashes at PMD level, but it was not possible to
-add checks in each PMD. Then we tried to add safety checks
-in the ethdev layer, and it was not suitable as with primary closing
-all reference to device information (pointers) would lead to crashes."
-[VV] I did also share I checked these eemails, none of them discussed use f=
-or multi process communication as a trigger or why it is not useful.
-@Stephen Hemminger<mailto:stephen@networkplumber.org>  agreed to add a prim=
-ary-secondary monitoring mechanism.
+Correct, but even with liberal mode (so no TCP window check)
+"packet state" after conntrack execution is still at least
+RTE_FLOW_CONNTRACK_PKT_STATE_VALID.
+This is the area of the docs which should be improved, since it is not
+stated.
 
-I am always open to healthy conversation!
+This makes the following example matches correct
+(take note that flow item takes a bitmap of RTE_FLOW_CONNTRACK_PKT_STATE_*):
 
-I will rest it here, I clearly understand your previous content ` The commu=
-nity agrees with the current solution. `
+- conntrack is 1 => RTE_FLOW_CONNTRACK_PKT_STATE_VALID
 
---_000_PH7PR12MB8596AF79DA967DCA9B68FF498228APH7PR12MB8596namp_
-Content-Type: text/html; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+- conntrack is 2 => RTE_FLOW_CONNTRACK_PKT_STATE_CHANGED
 
-<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
-osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
-xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
-//www.w3.org/TR/REC-html40">
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
->
-<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
-<style><!--
-/* Font Definitions */
-@font-face
-	{font-family:"Cambria Math";
-	panose-1:2 4 5 3 5 4 6 3 2 4;}
-@font-face
-	{font-family:Calibri;
-	panose-1:2 15 5 2 2 2 4 3 2 4;}
-@font-face
-	{font-family:Aptos;}
-/* Style Definitions */
-p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{margin:0in;
-	font-size:12.0pt;
-	font-family:"Aptos",sans-serif;}
-a:link, span.MsoHyperlink
-	{mso-style-priority:99;
-	color:blue;
-	text-decoration:underline;}
-span.EmailStyle18
-	{mso-style-type:personal-reply;
-	font-family:"Arial",sans-serif;
-	color:windowtext;}
-.MsoChpDefault
-	{mso-style-type:export-only;
-	font-size:10.0pt;
-	mso-ligatures:none;}
-@page WordSection1
-	{size:8.5in 11.0in;
-	margin:1.0in 1.0in 1.0in 1.0in;}
-div.WordSection1
-	{page:WordSection1;}
---></style><!--[if gte mso 9]><xml>
-<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
-</xml><![endif]--><!--[if gte mso 9]><xml>
-<o:shapelayout v:ext=3D"edit">
-<o:idmap v:ext=3D"edit" data=3D"1" />
-</o:shapelayout></xml><![endif]-->
-</head>
-<body lang=3D"EN-US" link=3D"blue" vlink=3D"purple" style=3D"word-wrap:brea=
-k-word">
-<p style=3D"font-family:Calibri;font-size:10pt;color:#008000;margin:5pt;fon=
-t-style:normal;font-weight:normal;text-decoration:none;" align=3D"Left">
-[Public]<br>
-</p>
-<br>
-<div>
-<div class=3D"WordSection1">
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ar=
-ial&quot;,sans-serif">Hi Khadem,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ar=
-ial&quot;,sans-serif"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ar=
-ial&quot;,sans-serif">Please do not use `sorry for any confusion`. Very cle=
-arly, I shared what works and why your case is different.
-<o:p></o:p></span></p>
-<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0in 0in 0in =
-4.0pt">
-<p class=3D"MsoNormal"><b><span style=3D"font-size:11.0pt;font-family:&quot=
-;Calibri&quot;,sans-serif">Snipped<o:p></o:p></span></b></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ar=
-ial&quot;,sans-serif"><o:p>&nbsp;</o:p></span></p>
-<div>
-<div>
-<div>
-<div>
-<p class=3D"MsoNormal">Hi Vipin,&nbsp;<o:p></o:p></p>
-</div>
-<div>
-<p class=3D"MsoNormal">sorry for any confusion. I am only trying to explain=
-&nbsp;that these patches are in its final&nbsp;state (waiting to upstream).=
-<o:p></o:p></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ar=
-ial&quot;,sans-serif"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ar=
-ial&quot;,sans-serif">[VV] it is not about the state, but of the quality an=
-d state.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ar=
-ial&quot;,sans-serif"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal">You have provided your valuable insights and&nbsp;<o=
-:p></o:p></p>
-</div>
-<div>
-<p class=3D"MsoNormal">I am very thankful for that. There was much discussi=
-on about these patches from start to finish.&nbsp;&nbsp;<o:p></o:p></p>
-</div>
-<div>
-<p class=3D"MsoNormal">&nbsp;&nbsp;<o:p></o:p></p>
-</div>
-<div>
-<p class=3D"MsoNormal">Already mentioned that with Stephen and other commun=
-ity members, the discussion was started earlier and I have provided all the=
- information&nbsp;
-<o:p></o:p></p>
-</div>
-<div>
-<p class=3D"MsoNormal">to you in a singla email.&nbsp;<o:p></o:p></p>
-</div>
-<div>
-<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt">&nbsp;&quot;First we =
-tried <br>
-to prevent the crashes at PMD level, but it was not possible to <br>
-add checks in each PMD. Then we tried to add safety checks <br>
-in the ethdev layer, and it was not suitable as with primary closing<br>
-all reference to device information (pointers) would lead to crashes.&quot;=
-&nbsp;<o:p></o:p></p>
-<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt"><span style=3D"font-s=
-ize:11.0pt;font-family:&quot;Arial&quot;,sans-serif">[VV] I did also share =
-I checked these eemails, none of them discussed use for multi process commu=
-nication as a trigger or why it is not useful.<o:p></o:p></span></p>
-</div>
-<div>
-<p class=3D"MsoNormal"><a href=3D"mailto:stephen@networkplumber.org">@Steph=
-en Hemminger</a>&nbsp; agreed&nbsp;to add a primary-secondary&nbsp;monitori=
-ng mechanism.&nbsp;<o:p></o:p></p>
-</div>
-<div>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-</div>
-</div>
-<div>
-<p class=3D"MsoNormal">I am always open to healthy conversation!<o:p></o:p>=
-</p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ar=
-ial&quot;,sans-serif"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt"><span style=3D"font-s=
-ize:11.0pt;font-family:&quot;Arial&quot;,sans-serif">I will rest it here, I=
- clearly understand your previous content `</span> The community agrees wit=
-h the current solution.&nbsp;`<o:p></o:p></p>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</body>
-</html>
+- conntrack is 3 => RTE_FLOW_CONNTRACK_PKT_STATE_VALID **and**
+                    RTE_FLOW_CONNTRACK_PKT_STATE_CHANGED
 
---_000_PH7PR12MB8596AF79DA967DCA9B68FF498228APH7PR12MB8596namp_--
+> 
+> Test 1 : Starting state machine from State 0  
+> 
+> flow indirect_action 0 create ingress action conntrack / end
+> flow create 0 ingress pattern eth / ipv4 / tcp / end actions jump group 3 / end
+> flow create 0 group 3 ingress pattern eth / ipv4 / tcp / end actions indirect 0 / jump group 5 / end
+> flow create 0 group 5 ingress pattern eth / ipv4 / tcp / conntrack is 1 / end actions queue index 1 / end
+> flow create 0 group 5 ingress pattern eth / ipv4 / tcp / conntrack is 2 / end actions queue index 2 / end
+> set fwd rxonly 
+> start 
+> set verbose 3 
+> 
+> The following packets will be forwared to queue 1, it means the state machine is now in established state (state 1). 
+> sendp(Ether()/IP()/TCP(ack=265,seq=265,dport=5555,flags=0x10), iface="",count=1)  
+> sendp(Ether(dst="bb:cc:dd:ee:ff:22",src="aa:bb:cc:dd:ee:ff")/IP(src="150.1.10.10")/TCP(ack=265,seq=265,dport=5555,flags=0x18), iface="",count=1)
+> 
+> FIN packet Terminate the connection; the following packets will be forwarded to queue 2:
+> pkt=Ether()/IP()/TCP(ack=265,seq=265,dport=5555,flags=0x01)
+> pkt=Ether()/IP()/TCP(ack=265,seq=265,dport=5555,flags=0x10)
+> pkt=Ether()/IP()/TCP(ack=265,seq=265,dport=5555,flags=0x01)
+> pkt=Ether()/IP()/TCP(ack=265,seq=265,dport=5555,flags=0x10)
+> 
+> This will be again forwarded it to queue 1: 
+> pkt=Ether()/IP()/TCP(ack=265,seq=265,dport=5555,flags=0x10)
+
+I'm not sure how this result was reached, because when using these commands
+and sending these packets, I do not receive any.
+I only receive the packets if and only if the rule with conntrack item
+matches on RTE_FLOW_CONNTRACK_PKT_STATE_DISABLED:
+
+	flow create 0 group 5 ingress pattern eth / ipv4 / tcp / conntrack is 8 / end actions queue index 0 / end
+
+Which is expected with the given configuration.
+
+Are these the only testpmd commands you execute?
+
+If yes, then there are a few things missing for functional conntrack offload.
+Let me explain:
+
+1. There is no conntrack action configuration.
+
+   testpmd has a few commands which allow users to provide initial
+   conntrack action state. Please see https://doc.dpdk.org/guides/testpmd_app_ug/testpmd_funcs.html#sample-conntrack-rules
+
+   Without running these commands, initial conntrack state is zeroed.
+   As a result, `enable` field in `rte_flow_action_conntrack` is zero
+   and TCP state machine in HW is not updated for each passing packet,
+   and each packet is marked with RTE_FLOW_CONNTRACK_PKT_STATE_DISABLED.
+
+2. There is only one rule with conntrack action.
+
+   Rules with conntrack action need to know which TCP connection direction
+   would pass through that rule. This is needed because, conntrack
+   offload does not track IP addresses and TCP ports.
+   Inside the state machine, there are 2 separate sets of seq/ack
+   numbers tracked for each direction.
+
+   Users must ensure that there will be 2 rules (1 for each TCP
+   direction) with conntrack actions.
+
+3. conntrack item deals with RTE_FLOW_CONNTRACK_PKT_STATE_* bitmap
+
+   In your example, "conntrack is 1" specification sets flags to 1.
+   This means, "match packets with RTE_FLOW_CONNTRACK_PKT_STATE_VALID"
+   and not "connection in RTE_FLOW_CONNTRACK_STATE_ESTABLISHED".
+
+   The same goes for "conntrack is 2". It specifies match on
+   RTE_FLOW_CONNTRACK_PKT_STATE_CHANGED, not on
+   RTE_FLOW_CONNTRACK_STATE_FIN_WAIT or any other state.
+
+   Because it is a bitmap, conntrack item can specify a combination of
+   PKT_STATE flags. For example, "conntrack is 3" would mean matching
+   a packet with RTE_FLOW_CONNTRACK_PKT_STATE_VALID and
+   RTE_FLOW_CONNTRACK_PKT_STATE_CHANGED flags set.
+
+Please see [1] for a full example. Let us know if you have any questions
+about the example and if it works for you.
+
+> 
+> So, according to my understanding(from rte_flow and various experiments), 
+> conntrack item ('conntract is') matches the state of the connection tracking 
+> state machine in hardware 
+> and forward it to the relevent queue. 
+> 
+> In any case, I think only a range of values for "conntract is" to be allowed. 
+> 
+> Best Regards, 
+> Khadem
+
+[1]: Full conntrack example, testpmd commands:
+
+# Initial conntrack action configuration: original direction, state SYN_RECV, liberal mode and enabled
+set conntrack com peer 0 is_orig 1 enable 1 live 0 sack 0 cack 0 last_dir 0 liberal 1 state 0 max_ack_win 0 r_lim 5 last_win 510 last_seq 2000 last_ack 101 last_end 101 last_index 0x2
+set conntrack orig scale 0xf fin 0 acked 1 unack_data 0 sent_end 101 reply_end 65535 max_win 0 max_ack 0
+set conntrack rply scale 0xf fin 0 acked 1 unack_data 0 sent_end 2001 reply_end 65535 max_win 0 max_ack 101
+flow indirect_action 0 create ingress action conntrack / end
+
+# Create a rule for original direction
+flow create 0 group 3 ingress pattern eth / ipv4 src is 1.2.3.4 dst is 5.6.7.8 / tcp src is 40000 dst is 50000 / end actions indirect 0 / jump group 5 / end
+
+# Update conntrack action - now rule will created for reply direction
+set conntrack com peer 0 is_orig 0 enable 1 live 0 sack 0 cack 0 last_dir 0 liberal 1 state 0 max_ack_win 0 r_lim 5 last_win 510 last_seq 2000 last_ack 101 last_end 101 last_index 0x2
+flow indirect_action 0 update 0 action conntrack_update dir / end
+
+# Create a rule for reply direction
+flow create 0 group 3 ingress pattern eth / ipv4 src is 5.6.7.8 dst is 1.2.3.4 / tcp src is 50000 dst is 40000 / end actions indirect 0 / jump group 5 / end
+
+# Create group 0 rule for TCP traffic
+flow create 0 ingress pattern eth / ipv4 / tcp / end actions jump group 3 / end
+
+# Match valid packets, mark and send to queue 0
+flow create 0 group 5 ingress pattern eth / ipv4 / tcp / conntrack is 1 / end actions mark id 0x111 / queue index 0 / end
+# Match valid packets which change connection state
+flow create 0 group 5 ingress pattern eth / ipv4 / tcp / conntrack is 3 / end actions mark id 0x333 / queue index 0 / end
+
+set verbose 1
+set fwd rxonly
+start
+
+Example packets to send after all flow rules are created:
+
+# ACK in handshake: transition SYN_RECV->ESTABLISHED; logged as "FDIR matched ID=0x333"
+pkt = (Ether() / IP(src='1.2.3.4', dst='5.6.7.8') / TCP(sport=40000, dport=50000, flags='A', seq=101, ack=2001))
+
+# some data from original direction; logged as "FDIR matched ID=0x111"
+pkt = (Ether() / IP(src='1.2.3.4', dst='5.6.7.8') / TCP(sport=40000, dport=50000, flags='A', seq=101, ack=2001) / Raw(load=b'a' * 100))
+
+# ack from reply direction; logged as "FDIR matched ID=0x111"
+pkt = (Ether() / IP(src='5.6.7.8', dst='1.2.3.4') / TCP(sport=50000, dport=40000, flags='A', seq=2001, ack=201))
+
+# fin from original direction; logged as "FDIR matched ID=0x333"
+pkt = (Ether() / IP(src='1.2.3.4', dst='5.6.7.8') / TCP(sport=40000, dport=50000, flags='F', seq=201, ack=2001))
+
+# ack from reply direction; logged as "FDIR matched ID=0x333"
+pkt = (Ether() / IP(src='5.6.7.8', dst='1.2.3.4') / TCP(sport=50000, dport=40000, flags='A', seq=2001, ack=202))
+
+# fin from reply direction; logged as "FDIR matched ID=0x333"
+pkt = (Ether() / IP(src='5.6.7.8', dst='1.2.3.4') / TCP(sport=50000, dport=40000, flags='F', seq=2001, ack=202))
+
+# ack from original direction; logged as "FDIR matched ID=0x333"
+pkt = (Ether() / IP(src='1.2.3.4', dst='5.6.7.8') / TCP(sport=40000, dport=50000, flags='A', seq=201, ack=2002))
