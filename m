@@ -2,74 +2,144 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D46C87FDB
-	for <dpdk-dev@archiver.kernel.org>; Mon, 11 Aug 2025 10:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D15EC87FD2
+	for <dpdk-dev@archiver.kernel.org>; Mon, 11 Aug 2025 10:30:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3BD2240649;
-	Mon, 11 Aug 2025 12:28:21 +0200 (CEST)
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com
- [209.85.219.50]) by mails.dpdk.org (Postfix) with ESMTP id 7A3E4400D5
- for <dev@dpdk.org>; Mon, 11 Aug 2025 12:28:20 +0200 (CEST)
-Received: by mail-qv1-f50.google.com with SMTP id
- 6a1803df08f44-7074bad055eso25519676d6.3
- for <dev@dpdk.org>; Mon, 11 Aug 2025 03:28:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1754908100;
- x=1755512900; darn=dpdk.org; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=eRF0kx238HGt5UKacgLXfIHVYBgq5kjbsSTzEECXPok=;
- b=2FyiUNoQi71VWO+tFhcquh6pKL/p7yMxNWMcbwcrc5/9e0X87NgtEnqTZwcAckXH95
- EU4MbRElU8T3wDagAXN+ndwNiuNIScUTcRn9q15rBPU8l0Gza0rKhMgAbFWeEWxnzURR
- 8fDFOTz/uy2HJDvA9UbcCb0yMhfJ/Nvk+P3lCnsxgh5G0UOxfZsYRiJAsJnBrYPf5VQv
- +5utMO9KfVzOePDlO7A+GRwxmOxr6HFg1Wq+lOJnUoKsU0uLH0AjFSRnKqwYFttxcHmA
- N+3wIR/bKnolN7x2kDYCzYG9P3fW21QIKqLhLGdLBP2MEHsEYJD9PrIO8KoGAoCdX+b6
- aBPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1754908100; x=1755512900;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=eRF0kx238HGt5UKacgLXfIHVYBgq5kjbsSTzEECXPok=;
- b=QpnzudV0WxkC8yUx+x8Sr0ayRUzzyLbnExdlO/E1WvTyJ1JQZyEe/SnORHmnen7c3m
- VvYleeON2JGbQxMG22smd5oxUuWT7LNye1ueuDDXibscOTrO65aKiUFokN2IhgA2xbQ4
- uFkf1Klzfex4o0zN3Mx8odRn6eRzN1lhPYbVljS4tLQK7bmbQVyH69K2Zcm4yUT3D+id
- IrPSs2cQhn8+iMmqWcTORnBWMO5EUDSVNxkeT+uNidizAKyWOzxpPX4Vvw5BT8xVpRra
- wWdCdEHWQeYZFBMuTgcwRDZFPckxdDZLops/rLJqj6Z9W1BhGue7CLyjXhuSMnGQs/zi
- Wycw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCW20AifNJYqkj3NyogAjVooCgsIH8fWBrD7fqZziq17Gz9HBVLeaAGw453UfztB8pByn9U=@dpdk.org
-X-Gm-Message-State: AOJu0Yy53uPpCW2AtxfUu1Nze6nHPWSSHELA8/vSMwdTgLm9ZzVZnj6g
- WOEqVxE8tAPalUsu8M1Fk+6lHeL7GTCEPdSLH49PSMXn/uOtnnHuech/0PN9InzPXefpp0AiP8d
- /6Aru3ODDzJ5Q89hsFgTtRHsE9X3IsLo7AMxqOmpUVg==
-X-Gm-Gg: ASbGncs0frQ4cSYUJFlSJnVKpi5oZ9VYK9537wkj03h4FSSHrz1YXIyBU7ddj1BoW9h
- t9jlbJxmhxzwM28/Z9d1Q8gv8un9eBQn5R84/GmSUadHjrr3t6KQTcJyfzZOsXgrgj/lgnrLuYP
- qga7QnhBroKYsiEbl9IIuAPNUBk/6WdvF/x78FxR5w5nvhU9vmKs4VhNwkYc5BR+XBr9ASXo0Fq
- Lobf5PKus+TueQ=
-X-Google-Smtp-Source: AGHT+IEbGk3cHHvGXNBdFezU09dj2wsp3G9qnNi0XRHWHe+bbD26x1ckiDX/+djnc81Z5AgX9z6TT28gaPv6tC3tqfo=
-X-Received: by 2002:a05:6214:2466:b0:6fb:1c3:f527 with SMTP id
- 6a1803df08f44-7099a4833a2mr194562116d6.39.1754908099748; Mon, 11 Aug 2025
- 03:28:19 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 8DFF140649;
+	Mon, 11 Aug 2025 12:30:31 +0200 (CEST)
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com
+ (mail-mw2nam12on2043.outbound.protection.outlook.com [40.107.244.43])
+ by mails.dpdk.org (Postfix) with ESMTP id 9FA60400D5
+ for <dev@dpdk.org>; Mon, 11 Aug 2025 12:30:30 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OSaZ3SgDXo9M4NM5IDI7m5C+tyrdAONJjqfEisxrDJYfrtuqHBd4oK2DJ49X8OSHHAYHJXLsnd4Xf2F46nL7oaMgEd0jC30VxZX1+6qGzkrAI0/YwTPPN6nsjDooiborJrpy9iQYdplIKf7dA0XqzLK5m/0rMrkl1kSpkiawOndVspe2PJOHMbaCxBoaDojb6p81N/+HvXZxJU+0UA9Yv8PYsqzKznr+IhlPyIwjhP37ct/LAcNL88mFNTmherGSB6chLeya2ByC9+mwFi8mETpuiLbnJRxg1TVFUUnc4DrnXP1QnZIcD5QJ3Yx2LPv9dqmwGM//lSvh8wnmRPNTfw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mEMKp8exgX2mP/GMmgmRbJ6N5u3qA49zRjzQIQrNab0=;
+ b=PSWIHX+IpyG07XKg+fpCEo2EA2mv8vunkSW3FezIymElF8O+9KfKtLcHoNzJbxUdFPbIk5M5mlSnybeZRW4Mp0nvOgZdgn7Q2ove93iLlUuLjdwrl9x1Jt6Iha23p4J9nNKqdGiWZ+YNvzciXhTKUOygcTZxYznEqGSYcY1o2hRKKe1tCTaL+LeDTyfCDSEz5buSdxrNdrdOXxn5kZG97jCzsS+BZO7DQl+jlG+3HMzWebxidGa2Pse+y8F8oA/lBck86E5lJjYek2G9eO6APF1aRL1HfyQhAyewsKxQHyckP/K3C6GnwKNkkTaB8f32lCIvuN6HuKGjMupvpoK0ng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mEMKp8exgX2mP/GMmgmRbJ6N5u3qA49zRjzQIQrNab0=;
+ b=mdV9G5mMmfHnextXnIQT56untMHHCAKGbTICBPLZiRmzGDyuyMyYOyjKbs0CWq+zpFt3APGP5DurND1ciHPpridEjwbtUAVstIWRb7ajwNEanFgXL6dXAgFjkk46h/f7SkB/t6dAF166GYiEXk2fkJv0W4jMLy63Z2lulh5kCVg=
+Received: from PH7PR12MB8596.namprd12.prod.outlook.com (2603:10b6:510:1b7::6)
+ by IA0PR12MB7529.namprd12.prod.outlook.com (2603:10b6:208:431::18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Mon, 11 Aug
+ 2025 10:30:26 +0000
+Received: from PH7PR12MB8596.namprd12.prod.outlook.com
+ ([fe80::a011:943d:7291:8069]) by PH7PR12MB8596.namprd12.prod.outlook.com
+ ([fe80::a011:943d:7291:8069%2]) with mapi id 15.20.9009.013; Mon, 11 Aug 2025
+ 10:30:26 +0000
+From: "Varghese, Vipin" <Vipin.Varghese@amd.com>
+To: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>,
+ "stephen@networkplumber.org" <stephen@networkplumber.org>,
+ "thomas@monjalon.net" <thomas@monjalon.net>, "Yigit, Ferruh"
+ <Ferruh.Yigit@amd.com>, "andrew.rybchenko@oktetlabs.ru"
+ <andrew.rybchenko@oktetlabs.ru>
+CC: "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: [PATCH v7] app/testpmd: monitor state of primary process when
+ using secondary
+Thread-Topic: [PATCH v7] app/testpmd: monitor state of primary process when
+ using secondary
+Thread-Index: AQHcBTOmTMs4cZesWkSBbj/ohPqRp7RYGXxwgAArOwCAAFY/MIAAD4mAgASfR7A=
+Date: Mon, 11 Aug 2025 10:30:26 +0000
+Message-ID: <PH7PR12MB8596259B1F736357A7E9A3EB8228A@PH7PR12MB8596.namprd12.prod.outlook.com>
+References: <PH7PR12MB85968E4B05D92C12C963F1E2822FA@PH7PR12MB8596.namprd12.prod.outlook.com>
+ <20250808114909.1606758-1-14pwcse1224@uetpeshawar.edu.pk>
+In-Reply-To: <20250808114909.1606758-1-14pwcse1224@uetpeshawar.edu.pk>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-08-11T10:24:15.0000000Z;
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
+ Internal Distribution
+ Only; MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=3;
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH7PR12MB8596:EE_|IA0PR12MB7529:EE_
+x-ms-office365-filtering-correlation-id: cb43a2bc-dbc4-4cb9-537b-08ddd8c21626
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?Zxbz/ceJhE2AWLhBatWXUUJoq/Bo+Ov87QVmzTdsBABCuktoj9/YerV9qdnJ?=
+ =?us-ascii?Q?F5cH7F6Axwp4peiUexX80RPfgQsxzWzf/mqZ6RjnC9D+PP11PpKfYDM2ozY+?=
+ =?us-ascii?Q?MesUCnTFQsSV4tpgKg//sg6WU5IZ0Q2NqW5LQknV4RIUrvv3H+xF5B1C8uoQ?=
+ =?us-ascii?Q?mqAbF0220T8XGEVwjkCA9KkL7Gm6rkXlmbhHp18RZ8zK5IWQT1lysDTp870v?=
+ =?us-ascii?Q?6TsceLOdXex1UPT9F+bp+l/N14e9U2/r+/0OHmoWGqpNG6O4KPF6g68HJPHp?=
+ =?us-ascii?Q?OAEuAeN1o2kEtvpp9m2i2vsJjNmEq+y2StLLfoeugst/RmyeByEP6zz7LsHu?=
+ =?us-ascii?Q?V6vLlXvAEMZyr/GkiDRbZhYFMTL2bkc7xvEcQBMxjA3lXMS1ikW6UM329nsO?=
+ =?us-ascii?Q?idnVEZxrdr+eGdOkiCf0bBEr8kJBrvDKN0Ta4wGnpHOeRYmubTmx4Arxvwfi?=
+ =?us-ascii?Q?rD8PhlZFvrZdx+LQ+vZdQb5IFiCCPC1NDEwSbM4LuloPsvVKNg/lgEYHx2U+?=
+ =?us-ascii?Q?5D6TtUXBjD/fZC5yv4JOC/FNxAW4SNgKmyR9X/15dm6GtStRv5ZyOHGLlktD?=
+ =?us-ascii?Q?kuj17LgXBZEgBy3zFvHD69GTVRUCOObclRgcuGyWB4NLyxGMAVmRJ4dzR2Pi?=
+ =?us-ascii?Q?BZjURhEJiQr0s60QsM4BR7NDoxpzlM4TG+Ap80Evzce1x3tzkRDhdj/zgKFG?=
+ =?us-ascii?Q?BCncTVheOep7E8LWEU/ovTbAFBVVUL4plksSSXFKz39RGmDjzTZbU0upzLRz?=
+ =?us-ascii?Q?rRtWj2lE8M5wKgZm5Lp0RULn7iOhrkY9gvq2DnWqpYjLE+F/cPIAegvosGTv?=
+ =?us-ascii?Q?1CyPW1RGy0CJVbg/kTWkj9SeUlrDpCAiXUxaZ549rMMFKPXrkZDLGi2eu9GK?=
+ =?us-ascii?Q?0mgC5uyHXanldv/eoEvzEM2a2/iR4Q+gq9M8ka4/RjuG8mUVZcD1aPpk+vUp?=
+ =?us-ascii?Q?s5jZ+EdkjSzFNZt3ncIu04HQYzAkRhgJSHrwfw9G+vKfO+f/UW91LDdZjMba?=
+ =?us-ascii?Q?8UXGYUNnxXw9oHmdJMYbFnyr6AB495BKxSiKTONeYEb4jve4R6QgFnR1bILw?=
+ =?us-ascii?Q?W4auCUZxucrOn+Mff7Og79cg1qprhJ/ATNfzHcVdPFO66B+hhil9626fW8Fu?=
+ =?us-ascii?Q?GKJzhZgkDZNwqBi93HSnYquQSacW7+GNH1LZXLcZIzrvvWZ2Ul7n/tJaJLBk?=
+ =?us-ascii?Q?w1HB805qZ4W1IDw1fMlYS5MQFsm27ItHR2TAoK8wlJtLeV/CdyAHIOhO9gCu?=
+ =?us-ascii?Q?irlvVKQiUoJ9XvvJOfw4USNnquQHoO6XksAdTcLu4IcgYjHolj2NmUNh96n8?=
+ =?us-ascii?Q?ftVmk4jB5ukd3waMkL/dJmWGfS7lGfihNVFsdBc4xRBWxwEoTlh7kh2a6xXq?=
+ =?us-ascii?Q?aIdUB48VH9jviLNjuJCxx38EH0BJFSp2Nb6GW59xMuJwHbR3SsmnC94zjME+?=
+ =?us-ascii?Q?XMlTjApW0tKg8YsiesS+nQNopqd78SeRFmc7j6bi6P6aVHZWZcxz3h8VJsL0?=
+ =?us-ascii?Q?WEYauBgQjL8Vo1U=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:PH7PR12MB8596.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014)(38070700018); DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?7k8BnqOM25U0pbAmS/8pI07nTHZXEk+SOTEga8esqq+GtN/Lqx8o4SYmD52/?=
+ =?us-ascii?Q?FVW7TInV+4j3yDHqZhhUDkqmC9dIlDo1i+64p3htf2oGM5TdOtfCKSeHiuoV?=
+ =?us-ascii?Q?zFOvyl4JGEinMWYQx2gARabHBkQhKsGiO3DfYnFZdXDQvNfBROhYP63fK28X?=
+ =?us-ascii?Q?R3R87n426yj4DxEYpsJK8trZrE4j9+WbAr2go4X3r/plEZdwzhkoa0eyFD3z?=
+ =?us-ascii?Q?dZE2eukyDjcJPPcRHbDMg4pGZ0vQwRH/1jzwtlAvTq+76lh3jkfOijG/wPoF?=
+ =?us-ascii?Q?n+cOhCKmPScXoCQKCdBL40QBSbdNOctCrWniXxd8WhLxV84tgrY1K+GTmQDL?=
+ =?us-ascii?Q?uz+9PUNQQNT8egXLhiQeQ3c8ZJJsdq/LG/FW/H6/2ix0ioV2Ma0nW5E6NwDQ?=
+ =?us-ascii?Q?I2z7SNYv75NZFnJoiIFhqgfuW93UhWmuD/LiQkiN03oS/ALvr2wLw1wOch8M?=
+ =?us-ascii?Q?L6VNVri2FvcDkNgoTGIPaymFNq7ZC3PpvT9LFRRP6SfxWr3GKRZYpnApHpvn?=
+ =?us-ascii?Q?QOnN4aWoA3278SPoUcBHhvWX1FFGMq1Fp3h4ni5x6qG5z10CCSGk7UsG3TW9?=
+ =?us-ascii?Q?cw8TBb+DN56qV18pnmamPuytxY1L+uaUuFDJOR7vJLVRm6ia+7mPr7uN8B4I?=
+ =?us-ascii?Q?B0VXTD47qVeE1Q9bPXsF0HJzgDm0Aqcakr9TZFAonImdyz907r4O05KJSq77?=
+ =?us-ascii?Q?WTJHyVgXocZ2KEhu1VhuHTEdwbMbtZKZGLw8Ilgg2tzA9MDfCI4nVh62GZ/G?=
+ =?us-ascii?Q?PvkdkuYj2gT53Rw8Mh3hiK+71mWxkplcS4uBX1DuwJJUAvhtDR5P7Tc21ywl?=
+ =?us-ascii?Q?yrKooTAoOXn+mwACzYMbVE4e9y+u3ylNQamkt91L+sPtGiK5AtC5inx2x2Dl?=
+ =?us-ascii?Q?vNKLpBKtQ4fUwj+1cczStieHLxwPOaqXkQ0SdHYKyzOg9+A5hBUP3XLF+rZG?=
+ =?us-ascii?Q?37JwSxyG736jcc+lao+d2f8DbZDz6aDlzbf2zc7lYw4Abfbwzke+urWVrtAa?=
+ =?us-ascii?Q?2+RXj0Q5EqECU/1vrmqsjMEy6AxlvX/p6JrCjw72AwMLD3GfsXaYaEhi8xYA?=
+ =?us-ascii?Q?2qWl58Uzcw+gV9c37OFAwiI+wgIBVb3egtlSUW9lwsU5npMZzVPxMlsteSQc?=
+ =?us-ascii?Q?KyQ9rCsHtmU0TeSZXyLcw+nYa4bdM2EyeRynTFDWbnCDBGnr+pcRdjCKnajg?=
+ =?us-ascii?Q?P5JwHM4NjVkGTfnF3Epf/x8xA+dTvA5w0LOL+UYtluVdatZWQxBxDLJUTr2R?=
+ =?us-ascii?Q?u75PLRDE94o62IpmN4/of1EIeEa1x7NcWgSd0w6DUGcwxLiSKbq7OPO7yFuN?=
+ =?us-ascii?Q?w40EwtbvrtNGqO7h9OMdOV/ErxvgbnIInqRI/OcRvhcxmosXC/TyPbDlbsSQ?=
+ =?us-ascii?Q?BhPhIefI+hhKIUWqRcV8JF4BSyBOIj0AtIxgeqAPgKI+OQWifSFT3yZ2h0p/?=
+ =?us-ascii?Q?P3RZnMcL+oWw0VBnQ6jJWRrk0gxss0yG8dVSDdLGZU+8ZIxjHBSBEIGnnRIW?=
+ =?us-ascii?Q?v4orXCyFE7mlYS+XZf6J2by+2fjpPJxTP3ZmMktxAkkdadGBzs70cBNtVtFN?=
+ =?us-ascii?Q?5aFMUQ/r4ZSXhHKFb3E=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20250729143420.0fd7b627@hermes.local>
- <20250730050702.74381-1-14pwcse1224@uetpeshawar.edu.pk>
- <PH7PR12MB8596FA05DD99084208A31E50822FA@PH7PR12MB8596.namprd12.prod.outlook.com>
- <20250808083204.0174ac6b@hermes.local>
- <PH7PR12MB8596785BCD76C0436A1F34898228A@PH7PR12MB8596.namprd12.prod.outlook.com>
-In-Reply-To: <PH7PR12MB8596785BCD76C0436A1F34898228A@PH7PR12MB8596.namprd12.prod.outlook.com>
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Date: Mon, 11 Aug 2025 15:28:08 +0500
-X-Gm-Features: Ac12FXwknR6bIxOADWq7aLltFvoQWOmkRbPhjs956Qk44-eWvNyqKLc-uENO2rg
-Message-ID: <CA++2-x75WVrD+x8wZeH7XNsemOZYcKMUBYB9GM-v--6AxVetmQ@mail.gmail.com>
-Subject: Re: [PATCH] [PATCH v4] lib/ethdev: fix segfault in secondary process
- by validating dev_private pointer
-To: "Varghese, Vipin" <Vipin.Varghese@amd.com>
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- "thomas@monjalon.net" <thomas@monjalon.net>, 
- "Yigit, Ferruh" <Ferruh.Yigit@amd.com>, 
- "andrew.rybchenko@oktetlabs.ru" <andrew.rybchenko@oktetlabs.ru>,
- "dev@dpdk.org" <dev@dpdk.org>, "stable@dpdk.org" <stable@dpdk.org>
-Content-Type: multipart/alternative; boundary="000000000000e63bc0063c146182"
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB8596.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cb43a2bc-dbc4-4cb9-537b-08ddd8c21626
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Aug 2025 10:30:26.3314 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 3AwT/pb+wup26t+Tpobyfdo5/LIbh720XqPfTB6JlfNMUOSvnfxYiU6Vi4iTZnOfPjR9Nst794dE7Y9tyOSKlQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7529
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,164 +153,62 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000e63bc0063c146182
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+[AMD Official Use Only - AMD Internal Distribution Only]
 
-Hi Vipin,
+Thank you for sharing the details in this thread,
 
-These crashes are specific to the testpmd primary and testpmd
-secondary application.
-Please check
-https://patches.dpdk.org/project/dpdk/patch/20250804113322.53650-1-14pwcse1=
-224@uetpeshawar.edu.pk/
-The details are provided over there.
 
-Regards,
-Khadem
-
-On Mon, Aug 11, 2025 at 3:19=E2=80=AFPM Varghese, Vipin <Vipin.Varghese@amd=
-.com>
-wrote:
-
-> [Public]
+Snipped
 >
-> Snipped
 >
-> > > Since somehow the email are split it is difficult to see the indexing
-> > >
-> > > >
-> > > > Caution: This message originated from an External Source. Use prope=
-r
-> > > > caution when opening attachments, clicking links, or responding.
-> > > >
-> > > >
-> > > > Hi Stephen,
-> > > >
-> > > > Many thanks for diving deeper into the issue and sharing the
-> insights.
-> > > >
-> > > > I agree. given that the primary tears down all the devices on exit,
-> > > > the secondary is left with dangling pointers and inconsistent state=
+> The crashes are on 22.11, 23.03, 24.11, it is on all dpdk stable versions=
+ and 25.07
+> as well.
+> Please first close primary testpmd before secondary testpmd application a=
+nd try to
+> close secondary or execute any of the following commands,
+
+Here is my problem, these were working at start of 2023. So something has d=
+efinitely changed.
+
+>
+> "show device info all
+> show port stats all
+> show port xstats all
+> set fwd rxonly
+> set fwd txonly
+> start
+> etc"
+
+Have you started the rx-tx of the device in primary or secondary applicatio=
+ns?
+
+>
+> We are all agree that these crashes exists. First we were tried to preven=
+t the
+> crashes at PMD level, but it was not possible to add checks in each PMD. =
+Then we
+> tried to add safety checks in ethdev layer, and it was not suitable as wi=
+th primary
+> closing all reference to device information (pointers) would lead crashes=
 .
-> > >
-> > > Secondary if PMD should not be attempting to cleanup (especially for
-> ethdev_ptr
-> > shared from primary) I agree to that.
-> > > But should not be covered in library or PMD. While cleanup for other
-> > > needs to be done properly
-> > >
-> > >  Without a mechanism to notify or synchronize that teardown,
-> > >
-> > > You already have health check added in the code for identify if prima=
-y
-> is still alive
-> > or not..
-> > > There used to be MP thread spawned which actually piggy back the
-> > > communication. Is this broken? Can you please point to git
-> >
-> > There is no easy way to handle the case where primary crashes; leaving
-> > secondary process with pointers to dead data.
 >
-> Thank you for sharing, but as shared the other threads (this topic has 3)=
-,
-> the reason for the patch is because once the primary is dead it causes
-> secondary to crash (segment fault).
+> Then we agreed on secondary process monitoring for primary process exitin=
+g.
+> and it is now resolved on application level, i.e. on testpmd.
+
+This is where I am not clear. You have attempted the fix in `testpmd`.
+Please help in understanding the cause and impact
+
+1. is it only occurring in testpmd?
+2. does other applications (Example) also faces this issue?
+
+I still remember, where solutions were designed for network customers where=
+ primary allocates and manages memory.
+While secondary does rx and tx burst. We ended up in creating service threa=
+d in secondary to check aliveness of primary.
+
 >
-> As shared in earlier email at least till 22.11 LTS and 23.03 (as it was m=
-y
-> last testing with multi-process) I did not encounter these.
->
-> @Khadem Ullah can you please share which version of DPDK you are noticing
-> this failure?
->
+> Now, this solution is working perfectly. We can add eal_cleanup for grace=
+full exit.
 
-
---=20
-Engr. Khadem Ullah,
-Software Engineer,
-Dreambig Semiconductor Inc
-https://dreambigsemi.com/
-
---000000000000e63bc0063c146182
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">Hi Vipin,=C2=A0<br><br><div>These crashes are specific to =
-the testpmd primary and testpmd secondary=C2=A0application.=C2=A0</div><div=
->Please check <a href=3D"https://patches.dpdk.org/project/dpdk/patch/202508=
-04113322.53650-1-14pwcse1224@uetpeshawar.edu.pk/">https://patches.dpdk.org/=
-project/dpdk/patch/20250804113322.53650-1-14pwcse1224@uetpeshawar.edu.pk/</=
-a></div><div dir=3D"ltr"><div>The details are provided over there.=C2=A0<br=
-><br></div><div>Regards,=C2=A0</div><div>Khadem</div></div></div><br><div c=
-lass=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail_attr">On Mon, Aug 11, =
-2025 at 3:19=E2=80=AFPM Varghese, Vipin &lt;<a href=3D"mailto:Vipin.Varghes=
-e@amd.com" target=3D"_blank">Vipin.Varghese@amd.com</a>&gt; wrote:<br></div=
-><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border=
--left:1px solid rgb(204,204,204);padding-left:1ex">[Public]<br>
-<br>
-Snipped<br>
-<br>
-&gt; &gt; Since somehow the email are split it is difficult to see the inde=
-xing<br>
-&gt; &gt;<br>
-&gt; &gt; &gt;<br>
-&gt; &gt; &gt; Caution: This message originated from an External Source. Us=
-e proper<br>
-&gt; &gt; &gt; caution when opening attachments, clicking links, or respond=
-ing.<br>
-&gt; &gt; &gt;<br>
-&gt; &gt; &gt;<br>
-&gt; &gt; &gt; Hi Stephen,<br>
-&gt; &gt; &gt;<br>
-&gt; &gt; &gt; Many thanks for diving deeper into the issue and sharing the=
- insights.<br>
-&gt; &gt; &gt;<br>
-&gt; &gt; &gt; I agree. given that the primary tears down all the devices o=
-n exit,<br>
-&gt; &gt; &gt; the secondary is left with dangling pointers and inconsisten=
-t state.<br>
-&gt; &gt;<br>
-&gt; &gt; Secondary if PMD should not be attempting to cleanup (especially =
-for ethdev_ptr<br>
-&gt; shared from primary) I agree to that.<br>
-&gt; &gt; But should not be covered in library or PMD. While cleanup for ot=
-her<br>
-&gt; &gt; needs to be done properly<br>
-&gt; &gt;<br>
-&gt; &gt;=C2=A0 Without a mechanism to notify or synchronize that teardown,=
-<br>
-&gt; &gt;<br>
-&gt; &gt; You already have health check added in the code for identify if p=
-rimay is still alive<br>
-&gt; or not..<br>
-&gt; &gt; There used to be MP thread spawned which actually piggy back the<=
-br>
-&gt; &gt; communication. Is this broken? Can you please point to git<br>
-&gt;<br>
-&gt; There is no easy way to handle the case where primary crashes; leaving=
-<br>
-&gt; secondary process with pointers to dead data.<br>
-<br>
-Thank you for sharing, but as shared the other threads (this topic has 3), =
-the reason for the patch is because once the primary is dead it causes seco=
-ndary to crash (segment fault).<br>
-<br>
-As shared in earlier email at least till 22.11 LTS and 23.03 (as it was my =
-last testing with multi-process) I did not encounter these.<br>
-<br>
-@Khadem Ullah can you please share which version of DPDK you are noticing t=
-his failure?<br>
-</blockquote></div><div><br clear=3D"all"></div><br><span class=3D"gmail_si=
-gnature_prefix">-- </span><br><div dir=3D"ltr" class=3D"gmail_signature"><d=
-iv dir=3D"ltr"><div><div dir=3D"ltr"><div style=3D"font-family:Calibri,Aria=
-l,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)"><span style=3D"colo=
-r:rgb(12,100,192)">Engr. Khadem Ullah, </span><br></div><div style=3D"font-=
-family:Calibri,Arial,Helvetica,sans-serif;font-size:12pt;color:rgb(0,0,0)">=
-<span style=3D"color:rgb(12,100,192)">Software Engineer, </span><br></div><=
-span style=3D"color:rgb(12,100,192)">Dreambig Semiconductor Inc <br></span>=
-</div><div dir=3D"ltr"><span style=3D"color:rgb(12,100,192)"><a href=3D"htt=
-ps://dreambigsemi.com/" target=3D"_blank">https://dreambigsemi.com/</a><br>=
-</span></div></div></div></div>
-
---000000000000e63bc0063c146182--
