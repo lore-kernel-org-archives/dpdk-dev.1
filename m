@@ -2,167 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23300C87FD2
-	for <dpdk-dev@archiver.kernel.org>; Mon, 11 Aug 2025 09:41:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CC7ACA0EC0
+	for <dpdk-dev@archiver.kernel.org>; Mon, 11 Aug 2025 09:55:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6404D4025D;
-	Mon, 11 Aug 2025 11:41:00 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id 40B14400D5;
- Mon, 11 Aug 2025 11:40:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1754905258; x=1786441258;
- h=from:to:cc:subject:date:message-id:references:
- in-reply-to:mime-version;
- bh=NtPV9iMzaNwAr6tG8ULCEn9TaGKeLoNDXxp7q00pzGk=;
- b=b+Ck3XXXPcG86n+DalNrfKcw157RfKDhOhCMm9qfAVFY2hCRHVocO/zR
- Y58lsreZT+JqYvx86sxusBRClI1BDbGENtYsIdZ01cDHWrw046SCVo+WQ
- 9l60B7LFxlRK0M8DX29sZM+84mXmi7Zeof+Ki0xCHzlEqAXMX+xwrDnnT
- PGbu/8A28LFAnu63D2ju/ziQtjvNjzUZRX7IwgukjSSI5bujkIWWh9yus
- lyfT0wS2t2AZPa2Xje7BbbnozbmFtIO74t4+ipbQ4f6FLDo7lJMp5oMpi
- yvzqwfGFfLHMo+oaU0ffTSrPl8PmQbGrxCPucgagfKFh4yKWx6AtRH2Qr w==;
-X-CSE-ConnectionGUID: hhIKd3asSumYMxdVgMiHSA==
-X-CSE-MsgGUID: 6oOsuC7NQUGqNpH8MbQ78w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="59765544"
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; d="scan'208,217";a="59765544"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
- by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Aug 2025 02:40:57 -0700
-X-CSE-ConnectionGUID: sDblHeI0Swu6N9YCGAizTA==
-X-CSE-MsgGUID: ElxdjYbQRi6me7edqFgxLw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
- d="scan'208,217";a="166278371"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
- by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Aug 2025 02:40:57 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Mon, 11 Aug 2025 02:40:57 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Mon, 11 Aug 2025 02:40:57 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.40)
- by edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Mon, 11 Aug 2025 02:40:56 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=J3zK0N6BMTgWvUg/+ojArXGWyngfTG+k+lc0r7mT0ZmGOWAYU+7cbG990fBNsa8JkcB0jcBTe663cndSlX3yfQ7mK+KxZKMLgPTm2PcKf1wiEMBiA/8PGXEO64uY+Oe0oDlfljUsqP9d59GV9XiiNE/Gf+mrqVgix17RWT1AyijlgkFJxk0GEH1qDNU1kpxJ/mgEUXN27wWBFXW9SXYqpHsHjnFbLWkwXumnspRX57oxVyJV/2YI4RGhF1tstf6rNFK/KupbJrOBgCEdEEh+dMy+7hyK0Blj6OOOQirILoyg6sZvDjeaxxMNrLk3bSGiUd2r3pKUtW9JibfCFCRhAA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1FMsbxqwVOU6V4BgZ2bcUznOX5fWjU8HW6oCCLTund0=;
- b=ttygYo2H2a0Q8/G/rufa1ETs0rSjwo3VSbAf+N+mpOP/c3RFXNpywynznFpIzM5fllOBA92rCtATYzFswcpk1TU0DAJ3ztpiwp9B71pMH5b3VQOPSzTW4Ijeys1guOJYfbfm7NG+5G5DsaGmE0oWLrubRr19120l8Muhq6t1SWMTDfLXF95DHUXuNeJLf4HtowYXG9ek44DzAWB+NVtdYfdyO0ZI+T6DdjxJzfXEWM2cRlCorewv7DGgTNL2UlR2Qv3rqLwKmlulOzBO6QHZCqsnOG+QBiKKmy0ewOjAmkN1Szo5LZdU73XtACPxc/vudgUSdBwsZU93tbuT1lhjiQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DS0PR11MB7458.namprd11.prod.outlook.com (2603:10b6:8:145::13)
- by MW4PR11MB6838.namprd11.prod.outlook.com (2603:10b6:303:213::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Mon, 11 Aug
- 2025 09:40:54 +0000
-Received: from DS0PR11MB7458.namprd11.prod.outlook.com
- ([fe80::6d78:37d8:c835:540]) by DS0PR11MB7458.namprd11.prod.outlook.com
- ([fe80::6d78:37d8:c835:540%5]) with mapi id 15.20.9009.018; Mon, 11 Aug 2025
- 09:40:53 +0000
-From: "Ji, Kai" <kai.ji@intel.com>
-To: "Nicolau, Radu" <radu.nicolau@intel.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: "stable@dpdk.org" <stable@dpdk.org>, Fan Zhang <fanzhang.oss@gmail.com>
-Subject: Re: [PATCH] crypto/qat: fix source buffer alignment
-Thread-Topic: [PATCH] crypto/qat: fix source buffer alignment
-Thread-Index: AQHcBuE2pHxapGhrUECng1RDkL1vMrRdOi7j
-Date: Mon, 11 Aug 2025 09:40:53 +0000
-Message-ID: <DS0PR11MB745868D172453A9F1AA4DE0B8128A@DS0PR11MB7458.namprd11.prod.outlook.com>
-References: <20250806144832.3507786-1-radu.nicolau@intel.com>
-In-Reply-To: <20250806144832.3507786-1-radu.nicolau@intel.com>
-Accept-Language: en-GB, en-US, en-IE
-Content-Language: en-GB
+	by mails.dpdk.org (Postfix) with ESMTP id 8B60A4025D;
+	Mon, 11 Aug 2025 11:55:36 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 27A09400D5
+ for <dev@dpdk.org>; Mon, 11 Aug 2025 11:55:35 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id CC2E320752;
+ Mon, 11 Aug 2025 11:55:34 +0200 (CEST)
+Content-class: urn:content-classes:message
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH v12 01/10] mbuf: replace term sanity check
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Mon, 11 Aug 2025 11:55:31 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FE20@smartserver.smartshare.dk>
+In-Reply-To: <20250402232441.440346-2-stephen@networkplumber.org>
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-msip_labels: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DS0PR11MB7458:EE_|MW4PR11MB6838:EE_
-x-ms-office365-filtering-correlation-id: 712cde7e-698b-44de-39c5-08ddd8bb2a68
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|1800799024|376014|366016|10070799003|42112799006|8096899003|7053199007|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?5R2wA+ZyW3k7VbSHMcHtwZVCBJ8vMhiJaPsVZMlxNoVwGyCgkbsd3WTV8E5j?=
- =?us-ascii?Q?mc/XvWKGItk5AIzbSqHhxDCwchWPm6g9fd2aJBzHhQROdmyO1tPtB4Y8J8Cu?=
- =?us-ascii?Q?9m+TX99ukvcYW61Qjk4NNU1vLWjRIR5hBQp4dSuDUEWAgxcRlybHAuVYMe0E?=
- =?us-ascii?Q?PBIsoHpcZF0/T0mqAOTNZDqjaNzPzNH3wFTirjiHX/FRa+tZesQULtB0mqso?=
- =?us-ascii?Q?59toYO1zqc4obWy4EeWIa6KRIrVyHqYuTHEMJZ4yGMPaIFJ1/rDxnoxE1Crn?=
- =?us-ascii?Q?aecJv2pcJ+UZ611lATFxqW+hCBAyzexNR65VCjgaUhgGqAzWnnhGKOPVPtNU?=
- =?us-ascii?Q?KU6LKTWZV3B7ZQCUKH7CfaPw35Fk47DR9KgYdHai6h2JyPiy+v3k9VaFaMJ0?=
- =?us-ascii?Q?53hyy/s2nhyOBKQ5rf0gYeVQ8RTayWwI5R5g87BsqDdpEe4k010AVlr4Ea9K?=
- =?us-ascii?Q?3QFovTvBAQy5uqnTu3Oe5j8eS8fNgfaVGJ7I/2hwBOBVqB8WRtQHMH+nKdlV?=
- =?us-ascii?Q?JVHuMGrn7Gb7paB/1bFgwQz9fRJrHVDFMfBLdJFJ+jW8VZvAu14+10EnpPO9?=
- =?us-ascii?Q?lXAowMF8jsnxD+TlZAj42kc1UVgknUe9J29qbUYArmjooakrrQ+wVd6/W4LN?=
- =?us-ascii?Q?Q384PS7oAet/9gfr2UKgHTZtxq1hfL+DXegKwI95TlVOrHtCNQE+8h6qtJ7a?=
- =?us-ascii?Q?cKbI1AwGGwgj5oowGDbnxzvbGTgwIkOzAlCxyu9SZlPKQdPxEOaWcfWu67wh?=
- =?us-ascii?Q?SJAU6IuO/Y49DkbjdjE/DD6jZ2CC6QshFiXmC2/SKrEr8FxH8m+qWMMYbT2a?=
- =?us-ascii?Q?1CEQXU/sZsbuDVRJxtG/1Wz/TIYcUqXi5GEfE+qBIVaBxfk2nmNQ5MJypHq8?=
- =?us-ascii?Q?+PcKEYnXdmS5wWcwzm43JiUgiA4CEV08ZUp0Pd2idgRRw6/c2ivsKOAQOeRD?=
- =?us-ascii?Q?EP6DgyCOLgNV9o4fXT83ylzMHZ+QSOnYcO6ZBlqZP1TX6xf1UZTVmmpbPJ2O?=
- =?us-ascii?Q?et9OB3BZp/r3+u0MQLHtySdVuJyYvryWvD6ZMZ9QS6ZW2nSJNcvr2bkJE9nM?=
- =?us-ascii?Q?4ZEiLZTnPDE1fj4xM+e3pFleKVq9THq1c3iKP+V2ywJX8BW4yOiRYBkEmOAu?=
- =?us-ascii?Q?Srw54RzO0zhUt5JEGQfdfPNSXClL4PInkDIFf9VnD5x+VO5Uict7E60NxQS1?=
- =?us-ascii?Q?cCQrb6pPpKvBXhHqSxlgwqSqLzrI5sTGif7DoWY64Vtqt9BWHamBD1XtCuop?=
- =?us-ascii?Q?cJbU3/oSPhWWD9qb2LLkR2YaBFGCjH3gjPx9O8+7lxFIr7xAzLNcWIPaOQxh?=
- =?us-ascii?Q?FLn+XMJCXiw0jpbgJUZ2Lj7Jpx7PF5TrC5bVV1YzgRaAGRiisRC/8fr3sKGX?=
- =?us-ascii?Q?vMzh/+W2PivvRXdLexewCtn/g8zjwks7C0JKtRoDB4KqqMiuK4uJSfNSAqF0?=
- =?us-ascii?Q?4lktAPb5uC1xNcrEdG0q7ciWLoakmFu9BYqslXeFfQI9KBmYM0LlJw=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7458.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(376014)(366016)(10070799003)(42112799006)(8096899003)(7053199007)(38070700018);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?ies5N9lUE0WkpW87FApuxS27ypm3tXjnLwP7v3dWjYnvZj4Q7SoSmSItgMt3?=
- =?us-ascii?Q?9vwy+BjCyFhAUFfQ1tqU6XUqEwNu9zHbmLIAFkp03yqWgBVmIMdLVQW+pbkg?=
- =?us-ascii?Q?hukcVfNdINESl89W/omqkI/6Y6Sjwx1GNM6aeIa8BsyeEjzwUoF7h5QrlgzJ?=
- =?us-ascii?Q?WP3FKIlk7mKad4goZZEOhccyzvX3NHw3q+Typ3KV82yVzfd4ZRJLSQR5SPcO?=
- =?us-ascii?Q?Khrf9bADZ9cQv4oY8Hjul4gJmCbrHjESevA+UKyo33u0GXKG4lCeZ86B116I?=
- =?us-ascii?Q?bcC1d4pT5nDZGbDMXdMkoiV0HfypWW63/CsxTE5hip3W11VA7QHyeBmQWvz3?=
- =?us-ascii?Q?ARZRCZnjEvktAKFn/Ows7uhP5iHALZ0xl6xiSgoxCoJXwEV9lnQRya7q10SA?=
- =?us-ascii?Q?fzA2kFDEQnRKZQZFXrbYyeNGiVDfqb6Q7ofIie95pwGF2o+36XNte2hfXpR6?=
- =?us-ascii?Q?iMZz8Y6XYdA8nf7HCYG0zJot61Cr9i4bBjlsRoDvOfM8OYeZizVVCBSoXaW9?=
- =?us-ascii?Q?Xv0JNZfT4iDnrvxuka25NooIliciYVMfgXJ4FW7yiwkaod4Oy4qetEuwOuBL?=
- =?us-ascii?Q?Jz7pYTffpG02uefOuxAwvtD1Fle8k5Pl35mPyZj89HRNwwgb9/A/BKNiIJAy?=
- =?us-ascii?Q?KShXHoly7GEhRBeTv4iJu8dv2UxoXSm858lEDJSSMSAo3JqDgotX9idhPkgb?=
- =?us-ascii?Q?MFvpzCVVecXtsA3fypLvUjTuAqUu02nnx3+QozG5/vJ5LcWegR/itd2rXZVP?=
- =?us-ascii?Q?bly80iq4f0AIGqSJKsUtvSPFZbUPKX4OZ8Cp3fxCKjeHbYSn4lrUTmMOnMro?=
- =?us-ascii?Q?jiL99e7D5FZXNFPSlPOWHScjMQ4EWB+RYz4nvVciRUpellD2kmbM5XNKwCxq?=
- =?us-ascii?Q?vd7KLnkA67wxIRRGxUXhIXpPKEKBu5/v7sDKySROW4pjvIm685JQ92w9ZQdh?=
- =?us-ascii?Q?W8dAgSpyZZ+ADJXC80idlTma13sTBRpfbTCTGRZEazrLWL391CH/wwJYZ08y?=
- =?us-ascii?Q?aRzyuxI/cMcwDZuKxrphYxyb/doP5vyBUO/SSQcKl9XZdnGm5tMox1nCdLqL?=
- =?us-ascii?Q?hQDwq7aKu7Q5d85WkjftDI9/fa0lQdx+Z19j/iiMOTI4GZWZnLP+E3Jrucss?=
- =?us-ascii?Q?cIzxSLHOWHE9rQVklwOlo3bzyKhe4rZOA5R9EgSP1ah91W6LA3CJjwYdhZNB?=
- =?us-ascii?Q?Gh8sURQkY9M7pfkEJ2qlXAZM5NzvET1uE5+sam5tfSU5LvWGe3DUQweHG959?=
- =?us-ascii?Q?hZX0Oc1e4mOJML4KXMDjY3FAo/BxotYUA0KrzEuiPMjw4azCHGoh1Lj1l0UN?=
- =?us-ascii?Q?KU5rDrXlPHWjRjKXUHuRTk67Ehu3Q3i+hNLUa59CiPK5EhKZWpmZE+oeGNnL?=
- =?us-ascii?Q?1B0sxzxSranCoMesCFtCK6bVLeP7NSqJlsN8prFFDeCPx6v93kSeXTWdwZ71?=
- =?us-ascii?Q?DytM+XrnjT2A73L/v8Qcd/TCTwHIFvG+OZpIUnltrOV61xprE/XEWJRVsx5T?=
- =?us-ascii?Q?Q1xt1yEWXcFD1sUrQc2+4Bp+0Yv00FrhL0zDK/Czno5+dsjhHMmQ2ibAvQN9?=
- =?us-ascii?Q?8/XZf2tqaoCYWU2BAl+eJH7924y6Du570avlDJq0qDpFTtlSD5pvSVR+Eirv?=
- =?us-ascii?Q?rqd+MqGXXftWZT2uQ0kuEsQ=3D?=
-Content-Type: multipart/alternative;
- boundary="_000_DS0PR11MB745868D172453A9F1AA4DE0B8128ADS0PR11MB7458namp_"
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7458.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 712cde7e-698b-44de-39c5-08ddd8bb2a68
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Aug 2025 09:40:53.8200 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 380/03AIexL+zbQQclSIMDth96Un4g7mhXN2JpZJyjhBIzVQq7lGOs6BUhmADnWo89Wc8FOi1xw02k8rpGvRaA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB6838
-X-OriginatorOrg: intel.com
+Thread-Topic: [PATCH v12 01/10] mbuf: replace term sanity check
+Thread-Index: AdukJm+NZJfk0TILRxmYLA8YGipJEBme/cNQ
+References: <20240529233811.663211-1-stephen@networkplumber.org>
+ <20250402232441.440346-1-stephen@networkplumber.org>
+ <20250402232441.440346-2-stephen@networkplumber.org>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>,
+	<dev@dpdk.org>
+Cc: "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
+ "Akhil Goyal" <gakhil@marvell.com>, "Fan Zhang" <fanzhang.oss@gmail.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -176,920 +50,365 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_DS0PR11MB745868D172453A9F1AA4DE0B8128ADS0PR11MB7458namp_
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-
-Acked-by: Kai Ji <kai.ji@intel.com>
-
-________________________________
-From: Nicolau, Radu <radu.nicolau@intel.com>
-Sent: 06 August 2025 15:48
-To: dev@dpdk.org <dev@dpdk.org>
-Cc: Nicolau, Radu <radu.nicolau@intel.com>; stable@dpdk.org <stable@dpdk.or=
-g>; Ji, Kai <kai.ji@intel.com>; Fan Zhang <fanzhang.oss@gmail.com>
-Subject: [PATCH] crypto/qat: fix source buffer alignment
-
-Fix performance regression resulting from using non cache-aligned
-source buffers when using cryptodev API.
-
-Fixes: fb3b9f492205 ("crypto/qat: rework burst data path")
-Cc: stable@dpdk.org
-
-Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
----
- drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c | 14 ++++++------
- drivers/crypto/qat/dev/qat_crypto_pmd_gen4.c |  6 ++---
- drivers/crypto/qat/dev/qat_crypto_pmd_gens.h | 21 ++++++++++++++++-
- drivers/crypto/qat/dev/qat_sym_pmd_gen1.c    | 24 ++++++++++----------
- 4 files changed, 42 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c b/drivers/crypto/=
-qat/dev/qat_crypto_pmd_gen3.c
-index 0dcb5a7cb4..c196cf3cdb 100644
---- a/drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c
-+++ b/drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c
-@@ -422,7 +422,7 @@ qat_sym_build_op_aead_gen3(void *in_op, struct qat_sym_=
-session *ctx,
-         }
-
-         total_len =3D qat_sym_build_req_set_data(req, in_op, cookie,
--                       in_sgl.vec, in_sgl.num, out_sgl.vec, out_sgl.num);
-+                       in_sgl.vec, in_sgl.num, out_sgl.vec, out_sgl.num, &=
-ofs, op);
-         if (unlikely(total_len < 0)) {
-                 op->status =3D RTE_CRYPTO_OP_STATUS_INVALID_ARGS;
-                 return -EINVAL;
-@@ -466,7 +466,7 @@ qat_sym_build_op_auth_gen3(void *in_op, struct qat_sym_=
-session *ctx,
-         }
-
-         total_len =3D qat_sym_build_req_set_data(req, in_op, cookie,
--                       in_sgl.vec, in_sgl.num, out_sgl.vec, out_sgl.num);
-+                       in_sgl.vec, in_sgl.num, out_sgl.vec, out_sgl.num, &=
-ofs, op);
-         if (unlikely(total_len < 0)) {
-                 op->status =3D RTE_CRYPTO_OP_STATUS_INVALID_ARGS;
-                 return -EINVAL;
-@@ -564,7 +564,7 @@ qat_sym_dp_enqueue_single_aead_gen3(void *qp_data, uint=
-8_t *drv_ctx,
-         rte_mov128((uint8_t *)req, (const uint8_t *)&(ctx->fw_req));
-         rte_prefetch0((uint8_t *)tx_queue->base_addr + tail);
-         data_len =3D qat_sym_build_req_set_data(req, user_data, cookie,
--                       data, n_data_vecs, NULL, 0);
-+                       data, n_data_vecs, NULL, 0, NULL, NULL);
-         if (unlikely(data_len < 0))
-                 return -1;
-
-@@ -623,7 +623,7 @@ qat_sym_dp_enqueue_aead_jobs_gen3(void *qp_data, uint8_=
-t *drv_ctx,
-                         data_len =3D qat_sym_build_req_set_data(req,
-                                 user_data[i], cookie,
-                                 vec->src_sgl[i].vec,
--                               vec->src_sgl[i].num, NULL, 0);
-+                               vec->src_sgl[i].num, NULL, 0, NULL, NULL);
-                 }
-
-                 if (unlikely(data_len < 0) || error)
-@@ -677,7 +677,7 @@ qat_sym_dp_enqueue_single_auth_gen3(void *qp_data, uint=
-8_t *drv_ctx,
-         rte_mov128((uint8_t *)req, (const uint8_t *)&(ctx->fw_req));
-         rte_prefetch0((uint8_t *)tx_queue->base_addr + tail);
-         data_len =3D qat_sym_build_req_set_data(req, user_data, cookie,
--                       data, n_data_vecs, NULL, 0);
-+                       data, n_data_vecs, NULL, 0, NULL, NULL);
-         if (unlikely(data_len < 0))
-                 return -1;
-
-@@ -732,12 +732,12 @@ qat_sym_dp_enqueue_auth_jobs_gen3(void *qp_data, uint=
-8_t *drv_ctx,
-                         data_len =3D qat_sym_build_req_set_data(req,
-                                 user_data[i], cookie,
-                                 vec->src_sgl[i].vec, vec->src_sgl[i].num,
--                               vec->dest_sgl[i].vec, vec->dest_sgl[i].num)=
-;
-+                               vec->dest_sgl[i].vec, vec->dest_sgl[i].num,=
- NULL, NULL);
-                 } else {
-                         data_len =3D qat_sym_build_req_set_data(req,
-                                 user_data[i], cookie,
-                                 vec->src_sgl[i].vec,
--                               vec->src_sgl[i].num, NULL, 0);
-+                               vec->src_sgl[i].num, NULL, 0, NULL, NULL);
-                 }
-
-                 if (unlikely(data_len < 0))
-diff --git a/drivers/crypto/qat/dev/qat_crypto_pmd_gen4.c b/drivers/crypto/=
-qat/dev/qat_crypto_pmd_gen4.c
-index 638da1a173..f42ce7c178 100644
---- a/drivers/crypto/qat/dev/qat_crypto_pmd_gen4.c
-+++ b/drivers/crypto/qat/dev/qat_crypto_pmd_gen4.c
-@@ -219,7 +219,7 @@ qat_sym_build_op_aead_gen4(void *in_op, struct qat_sym_=
-session *ctx,
-         }
-
-         total_len =3D qat_sym_build_req_set_data(qat_req, in_op, cookie,
--                       in_sgl.vec, in_sgl.num, out_sgl.vec, out_sgl.num);
-+                       in_sgl.vec, in_sgl.num, out_sgl.vec, out_sgl.num, &=
-ofs, op);
-         if (unlikely(total_len < 0)) {
-                 op->status =3D RTE_CRYPTO_OP_STATUS_INVALID_ARGS;
-                 return -EINVAL;
-@@ -376,7 +376,7 @@ qat_sym_dp_enqueue_single_aead_gen4(void *qp_data, uint=
-8_t *drv_ctx,
-         rte_mov128((uint8_t *)req, (const uint8_t *)&(ctx->fw_req));
-         rte_prefetch0((uint8_t *)tx_queue->base_addr + tail);
-         data_len =3D qat_sym_build_req_set_data(req, user_data, cookie,
--                       data, n_data_vecs, NULL, 0);
-+                       data, n_data_vecs, NULL, 0, NULL, NULL);
-         if (unlikely(data_len < 0))
-                 return -1;
-
-@@ -435,7 +435,7 @@ qat_sym_dp_enqueue_aead_jobs_gen4(void *qp_data, uint8_=
-t *drv_ctx,
-                         data_len =3D qat_sym_build_req_set_data(req,
-                                 user_data[i], cookie,
-                                 vec->src_sgl[i].vec,
--                               vec->src_sgl[i].num, NULL, 0);
-+                               vec->src_sgl[i].num, NULL, 0, NULL, NULL);
-                 }
-
-                 if (unlikely(data_len < 0) || error)
-diff --git a/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h b/drivers/crypto/=
-qat/dev/qat_crypto_pmd_gens.h
-index 1f19c69f88..67dc889b50 100644
---- a/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h
-+++ b/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h
-@@ -430,7 +430,8 @@ static __rte_always_inline int32_t
- qat_sym_build_req_set_data(struct icp_qat_fw_la_bulk_req *req,
-                 void *opaque, struct qat_sym_op_cookie *cookie,
-                 struct rte_crypto_vec *src_vec, uint16_t n_src,
--               struct rte_crypto_vec *dst_vec, uint16_t n_dst)
-+               struct rte_crypto_vec *dst_vec, uint16_t n_dst,
-+               union rte_crypto_sym_ofs *ofs, struct rte_crypto_op *op)
- {
-         struct qat_sgl *list;
-         uint32_t i;
-@@ -502,6 +503,24 @@ qat_sym_build_req_set_data(struct icp_qat_fw_la_bulk_r=
-eq *req,
-                         dst_data_start =3D src_data_start;
-         }
-
-+       /* For crypto API only try to align the in-place buffers*/
-+       if (op !=3D NULL && likely(n_dst =3D=3D 0)) {
-+               uint16_t offset =3D src_data_start & RTE_CACHE_LINE_MASK;
-+               if (offset) {
-+                       rte_iova_t buff_addr =3D rte_mbuf_iova_get(op->sym-=
->m_src);
-+                       /* make sure src_data_start is still within the buf=
-fer */
-+                       if (src_data_start - offset >=3D buff_addr) {
-+                               src_data_start -=3D offset;
-+                               dst_data_start =3D src_data_start;
-+                               ofs->ofs.auth.head +=3D offset;
-+                               ofs->ofs.cipher.head +=3D offset;
-+                               tl_src +=3D offset;
-+                               total_len_src =3D tl_src;
-+                               total_len_dst =3D tl_src;
-+                       }
-+               }
-+       }
-+
-         req->comn_mid.src_data_addr =3D src_data_start;
-         req->comn_mid.dest_data_addr =3D dst_data_start;
-         req->comn_mid.src_length =3D total_len_src;
-diff --git a/drivers/crypto/qat/dev/qat_sym_pmd_gen1.c b/drivers/crypto/qat=
-/dev/qat_sym_pmd_gen1.c
-index 8cb85fd8df..6da0f6c645 100644
---- a/drivers/crypto/qat/dev/qat_sym_pmd_gen1.c
-+++ b/drivers/crypto/qat/dev/qat_sym_pmd_gen1.c
-@@ -242,7 +242,7 @@ qat_sym_build_op_cipher_gen1(void *in_op, struct qat_sy=
-m_session *ctx,
-         }
-
-         total_len =3D qat_sym_build_req_set_data(req, in_op, cookie,
--                       in_sgl.vec, in_sgl.num, out_sgl.vec, out_sgl.num);
-+                       in_sgl.vec, in_sgl.num, out_sgl.vec, out_sgl.num, &=
-ofs, op);
-         if (unlikely(total_len < 0)) {
-                 op->status =3D RTE_CRYPTO_OP_STATUS_INVALID_ARGS;
-                 return -EINVAL;
-@@ -294,7 +294,7 @@ qat_sym_build_op_auth_gen1(void *in_op, struct qat_sym_=
-session *ctx,
-                                 req->comn_hdr.serv_specif_flags, 0);
-
-         total_len =3D qat_sym_build_req_set_data(req, in_op, cookie,
--                       in_sgl.vec, in_sgl.num, out_sgl.vec, out_sgl.num);
-+                       in_sgl.vec, in_sgl.num, out_sgl.vec, out_sgl.num, &=
-ofs, op);
-         if (unlikely(total_len < 0)) {
-                 op->status =3D RTE_CRYPTO_OP_STATUS_INVALID_ARGS;
-                 return -EINVAL;
-@@ -339,7 +339,7 @@ qat_sym_build_op_aead_gen1(void *in_op, struct qat_sym_=
-session *ctx,
-         }
-
-         total_len =3D qat_sym_build_req_set_data(req, in_op, cookie,
--                       in_sgl.vec, in_sgl.num, out_sgl.vec, out_sgl.num);
-+                       in_sgl.vec, in_sgl.num, out_sgl.vec, out_sgl.num, &=
-ofs, op);
-         if (unlikely(total_len < 0)) {
-                 op->status =3D RTE_CRYPTO_OP_STATUS_INVALID_ARGS;
-                 return -EINVAL;
-@@ -384,7 +384,7 @@ qat_sym_build_op_chain_gen1(void *in_op, struct qat_sym=
-_session *ctx,
-         }
-
-         total_len =3D qat_sym_build_req_set_data(req, in_op, cookie,
--                       in_sgl.vec, in_sgl.num, out_sgl.vec, out_sgl.num);
-+                       in_sgl.vec, in_sgl.num, out_sgl.vec, out_sgl.num, &=
-ofs, op);
-         if (unlikely(total_len < 0)) {
-                 op->status =3D RTE_CRYPTO_OP_STATUS_INVALID_ARGS;
-                 return -EINVAL;
-@@ -512,7 +512,7 @@ qat_sym_dp_enqueue_single_cipher_gen1(void *qp_data, ui=
-nt8_t *drv_ctx,
-         rte_prefetch0((uint8_t *)tx_queue->base_addr + tail);
-
-         data_len =3D qat_sym_build_req_set_data(req, user_data, cookie,
--                       data, n_data_vecs, NULL, 0);
-+                       data, n_data_vecs, NULL, 0, NULL, NULL);
-         if (unlikely(data_len < 0))
-                 return -1;
-
-@@ -571,7 +571,7 @@ qat_sym_dp_enqueue_cipher_jobs_gen1(void *qp_data, uint=
-8_t *drv_ctx,
-                         data_len =3D qat_sym_build_req_set_data(req,
-                                 user_data[i], cookie,
-                                 vec->src_sgl[i].vec,
--                               vec->src_sgl[i].num, NULL, 0);
-+                               vec->src_sgl[i].num, NULL, 0, NULL, NULL);
-                 }
-
-                 if (unlikely(data_len < 0 || error))
-@@ -623,7 +623,7 @@ qat_sym_dp_enqueue_single_auth_gen1(void *qp_data, uint=
-8_t *drv_ctx,
-         rte_mov128((uint8_t *)req, (const uint8_t *)&(ctx->fw_req));
-         rte_prefetch0((uint8_t *)tx_queue->base_addr + tail);
-         data_len =3D qat_sym_build_req_set_data(req, user_data, cookie,
--                       data, n_data_vecs, NULL, 0);
-+                       data, n_data_vecs, NULL, 0, NULL, NULL);
-         if (unlikely(data_len < 0))
-                 return -1;
-
-@@ -690,7 +690,7 @@ qat_sym_dp_enqueue_auth_jobs_gen1(void *qp_data, uint8_=
-t *drv_ctx,
-                         data_len =3D qat_sym_build_req_set_data(req,
-                                 user_data[i], cookie,
-                                 vec->src_sgl[i].vec,
--                               vec->src_sgl[i].num, NULL, 0);
-+                               vec->src_sgl[i].num, NULL, 0, NULL, NULL);
-                 }
-
-                 if (unlikely(data_len < 0 || error))
-@@ -747,7 +747,7 @@ qat_sym_dp_enqueue_single_chain_gen1(void *qp_data, uin=
-t8_t *drv_ctx,
-         rte_mov128((uint8_t *)req, (const uint8_t *)&(ctx->fw_req));
-         rte_prefetch0((uint8_t *)tx_queue->base_addr + tail);
-         data_len =3D qat_sym_build_req_set_data(req, user_data, cookie,
--                       data, n_data_vecs, NULL, 0);
-+                       data, n_data_vecs, NULL, 0, NULL, NULL);
-         if (unlikely(data_len < 0))
-                 return -1;
-
-@@ -815,7 +815,7 @@ qat_sym_dp_enqueue_chain_jobs_gen1(void *qp_data, uint8=
-_t *drv_ctx,
-                         data_len =3D qat_sym_build_req_set_data(req,
-                                 user_data[i], cookie,
-                                 vec->src_sgl[i].vec,
--                               vec->src_sgl[i].num, NULL, 0);
-+                               vec->src_sgl[i].num, NULL, 0, NULL, NULL);
-                 }
-
-                 if (unlikely(data_len < 0 || error))
-@@ -877,7 +877,7 @@ qat_sym_dp_enqueue_single_aead_gen1(void *qp_data, uint=
-8_t *drv_ctx,
-         rte_mov128((uint8_t *)req, (const uint8_t *)&(ctx->fw_req));
-         rte_prefetch0((uint8_t *)tx_queue->base_addr + tail);
-         data_len =3D qat_sym_build_req_set_data(req, user_data, cookie,
--                       data, n_data_vecs, NULL, 0);
-+                       data, n_data_vecs, NULL, 0, NULL, NULL);
-         if (unlikely(data_len < 0))
-                 return -1;
-
-@@ -936,7 +936,7 @@ qat_sym_dp_enqueue_aead_jobs_gen1(void *qp_data, uint8_=
-t *drv_ctx,
-                         data_len =3D qat_sym_build_req_set_data(req,
-                                 user_data[i], cookie,
-                                 vec->src_sgl[i].vec,
--                               vec->src_sgl[i].num, NULL, 0);
-+                               vec->src_sgl[i].num, NULL, 0, NULL, NULL);
-                 }
-
-                 if (unlikely(data_len < 0) || error)
---
-2.50.1
-
-
---_000_DS0PR11MB745868D172453A9F1AA4DE0B8128ADS0PR11MB7458namp_
-Content-Type: text/html; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
->
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
-</head>
-<body dir=3D"ltr">
-<div style=3D"font-family: &quot;IntelOne Text&quot;; font-size: 10pt; colo=
-r: rgb(0, 0, 0);" class=3D"elementToProof">
-Acked-by: Kai Ji &lt;kai.ji@intel.com&gt;</div>
-<div style=3D"font-family: &quot;IntelOne Text&quot;; font-size: 10pt; colo=
-r: rgb(0, 0, 0);" class=3D"elementToProof">
-<br>
-</div>
-<div id=3D"appendonsend"></div>
-<hr style=3D"display:inline-block;width:98%" tabindex=3D"-1">
-<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" st=
-yle=3D"font-size:11pt" color=3D"#000000"><b>From:</b> Nicolau, Radu &lt;rad=
-u.nicolau@intel.com&gt;<br>
-<b>Sent:</b> 06 August 2025 15:48<br>
-<b>To:</b> dev@dpdk.org &lt;dev@dpdk.org&gt;<br>
-<b>Cc:</b> Nicolau, Radu &lt;radu.nicolau@intel.com&gt;; stable@dpdk.org &l=
-t;stable@dpdk.org&gt;; Ji, Kai &lt;kai.ji@intel.com&gt;; Fan Zhang &lt;fanz=
-hang.oss@gmail.com&gt;<br>
-<b>Subject:</b> [PATCH] crypto/qat: fix source buffer alignment</font>
-<div>&nbsp;</div>
-</div>
-<div class=3D"BodyFragment"><font size=3D"2"><span style=3D"font-size:11pt;=
-">
-<div class=3D"PlainText">Fix performance regression resulting from using no=
-n cache-aligned<br>
-source buffers when using cryptodev API.<br>
-<br>
-Fixes: fb3b9f492205 (&quot;crypto/qat: rework burst data path&quot;)<br>
-Cc: stable@dpdk.org<br>
-<br>
-Signed-off-by: Radu Nicolau &lt;radu.nicolau@intel.com&gt;<br>
----<br>
-&nbsp;drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c | 14 ++++++------<br>
-&nbsp;drivers/crypto/qat/dev/qat_crypto_pmd_gen4.c |&nbsp; 6 ++---<br>
-&nbsp;drivers/crypto/qat/dev/qat_crypto_pmd_gens.h | 21 ++++++++++++++++-<b=
-r>
-&nbsp;drivers/crypto/qat/dev/qat_sym_pmd_gen1.c&nbsp;&nbsp;&nbsp; | 24 ++++=
-++++++----------<br>
-&nbsp;4 files changed, 42 insertions(+), 23 deletions(-)<br>
-<br>
-diff --git a/drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c b/drivers/crypto/=
-qat/dev/qat_crypto_pmd_gen3.c<br>
-index 0dcb5a7cb4..c196cf3cdb 100644<br>
---- a/drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c<br>
-+++ b/drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c<br>
-@@ -422,7 +422,7 @@ qat_sym_build_op_aead_gen3(void *in_op, struct qat_sym_=
-session *ctx,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; total_len =3D qat_sym_buil=
-d_req_set_data(req, in_op, cookie,<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in_sgl.vec, in_s=
-gl.num, out_sgl.vec, out_sgl.num);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in_sgl.vec, in_s=
-gl.num, out_sgl.vec, out_sgl.num, &amp;ofs, op);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (unlikely(total_len &lt=
-; 0)) {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; op-&gt;status =3D RTE_CRYPTO_OP_STATUS_INVALID_ARGS;<=
-br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; return -EINVAL;<br>
-@@ -466,7 +466,7 @@ qat_sym_build_op_auth_gen3(void *in_op, struct qat_sym_=
-session *ctx,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; total_len =3D qat_sym_buil=
-d_req_set_data(req, in_op, cookie,<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in_sgl.vec, in_s=
-gl.num, out_sgl.vec, out_sgl.num);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in_sgl.vec, in_s=
-gl.num, out_sgl.vec, out_sgl.num, &amp;ofs, op);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (unlikely(total_len &lt=
-; 0)) {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; op-&gt;status =3D RTE_CRYPTO_OP_STATUS_INVALID_ARGS;<=
-br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; return -EINVAL;<br>
-@@ -564,7 +564,7 @@ qat_sym_dp_enqueue_single_aead_gen3(void *qp_data, uint=
-8_t *drv_ctx,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rte_mov128((uint8_t *)req,=
- (const uint8_t *)&amp;(ctx-&gt;fw_req));<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rte_prefetch0((uint8_t *)t=
-x_queue-&gt;base_addr + tail);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data_len =3D qat_sym_build=
-_req_set_data(req, user_data, cookie,<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data, n_data_vec=
-s, NULL, 0);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data, n_data_vec=
-s, NULL, 0, NULL, NULL);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (unlikely(data_len &lt;=
- 0))<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; return -1;<br>
-&nbsp;<br>
-@@ -623,7 +623,7 @@ qat_sym_dp_enqueue_aead_jobs_gen3(void *qp_data, uint8_=
-t *drv_ctx,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data_=
-len =3D qat_sym_build_req_set_data(req,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; user_data[i], cookie,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vec-&gt;src_sgl[i].vec,<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vec-&gt;src_sgl[i].num, NULL, 0);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vec-&gt;src_sgl[i].num, NULL, 0, NULL, NULL=
-);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; }<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; if (unlikely(data_len &lt; 0) || error)<br>
-@@ -677,7 +677,7 @@ qat_sym_dp_enqueue_single_auth_gen3(void *qp_data, uint=
-8_t *drv_ctx,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rte_mov128((uint8_t *)req,=
- (const uint8_t *)&amp;(ctx-&gt;fw_req));<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rte_prefetch0((uint8_t *)t=
-x_queue-&gt;base_addr + tail);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data_len =3D qat_sym_build=
-_req_set_data(req, user_data, cookie,<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data, n_data_vec=
-s, NULL, 0);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data, n_data_vec=
-s, NULL, 0, NULL, NULL);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (unlikely(data_len &lt;=
- 0))<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; return -1;<br>
-&nbsp;<br>
-@@ -732,12 +732,12 @@ qat_sym_dp_enqueue_auth_jobs_gen3(void *qp_data, uint=
-8_t *drv_ctx,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data_=
-len =3D qat_sym_build_req_set_data(req,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; user_data[i], cookie,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vec-&gt;src_sgl[i].vec, vec-&gt;=
-src_sgl[i].num,<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vec-&gt;dest_sgl[i].vec, vec-&gt;dest_sgl[i=
-].num);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vec-&gt;dest_sgl[i].vec, vec-&gt;dest_sgl[i=
-].num, NULL, NULL);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; } else {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data_=
-len =3D qat_sym_build_req_set_data(req,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; user_data[i], cookie,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vec-&gt;src_sgl[i].vec,<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vec-&gt;src_sgl[i].num, NULL, 0);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vec-&gt;src_sgl[i].num, NULL, 0, NULL, NULL=
-);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; }<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; if (unlikely(data_len &lt; 0))<br>
-diff --git a/drivers/crypto/qat/dev/qat_crypto_pmd_gen4.c b/drivers/crypto/=
-qat/dev/qat_crypto_pmd_gen4.c<br>
-index 638da1a173..f42ce7c178 100644<br>
---- a/drivers/crypto/qat/dev/qat_crypto_pmd_gen4.c<br>
-+++ b/drivers/crypto/qat/dev/qat_crypto_pmd_gen4.c<br>
-@@ -219,7 +219,7 @@ qat_sym_build_op_aead_gen4(void *in_op, struct qat_sym_=
-session *ctx,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; total_len =3D qat_sym_buil=
-d_req_set_data(qat_req, in_op, cookie,<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in_sgl.vec, in_s=
-gl.num, out_sgl.vec, out_sgl.num);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in_sgl.vec, in_s=
-gl.num, out_sgl.vec, out_sgl.num, &amp;ofs, op);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (unlikely(total_len &lt=
-; 0)) {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; op-&gt;status =3D RTE_CRYPTO_OP_STATUS_INVALID_ARGS;<=
-br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; return -EINVAL;<br>
-@@ -376,7 +376,7 @@ qat_sym_dp_enqueue_single_aead_gen4(void *qp_data, uint=
-8_t *drv_ctx,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rte_mov128((uint8_t *)req,=
- (const uint8_t *)&amp;(ctx-&gt;fw_req));<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rte_prefetch0((uint8_t *)t=
-x_queue-&gt;base_addr + tail);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data_len =3D qat_sym_build=
-_req_set_data(req, user_data, cookie,<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data, n_data_vec=
-s, NULL, 0);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data, n_data_vec=
-s, NULL, 0, NULL, NULL);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (unlikely(data_len &lt;=
- 0))<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; return -1;<br>
-&nbsp;<br>
-@@ -435,7 +435,7 @@ qat_sym_dp_enqueue_aead_jobs_gen4(void *qp_data, uint8_=
-t *drv_ctx,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data_=
-len =3D qat_sym_build_req_set_data(req,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; user_data[i], cookie,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vec-&gt;src_sgl[i].vec,<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vec-&gt;src_sgl[i].num, NULL, 0);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vec-&gt;src_sgl[i].num, NULL, 0, NULL, NULL=
-);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; }<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; if (unlikely(data_len &lt; 0) || error)<br>
-diff --git a/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h b/drivers/crypto/=
-qat/dev/qat_crypto_pmd_gens.h<br>
-index 1f19c69f88..67dc889b50 100644<br>
---- a/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h<br>
-+++ b/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h<br>
-@@ -430,7 +430,8 @@ static __rte_always_inline int32_t<br>
-&nbsp;qat_sym_build_req_set_data(struct icp_qat_fw_la_bulk_req *req,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; void *opaque, struct qat_sym_op_cookie *cookie,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; struct rte_crypto_vec *src_vec, uint16_t n_src,<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; struct rte_crypto_vec *dst_vec, uint16_t n_dst)<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; struct rte_crypto_vec *dst_vec, uint16_t n_dst,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; union rte_crypto_sym_ofs *ofs, struct rte_crypto_op *op)<br>
-&nbsp;{<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; struct qat_sgl *list;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; uint32_t i;<br>
-@@ -502,6 +503,24 @@ qat_sym_build_req_set_data(struct icp_qat_fw_la_bulk_r=
-eq *req,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dst_d=
-ata_start =3D src_data_start;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-&nbsp;<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* For crypto API only try to align t=
-he in-place buffers*/<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (op !=3D NULL &amp;&amp; likely(n_=
-dst =3D=3D 0)) {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; uint16_t offset =3D src_data_start &amp; RTE_CACHE_LINE_MASK;<br=
->
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; if (offset) {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rte_iova_t buff_=
-addr =3D rte_mbuf_iova_get(op-&gt;sym-&gt;m_src);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* make sure src=
-_data_start is still within the buffer */<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (src_data_sta=
-rt - offset &gt;=3D buff_addr) {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; src_data_start -=3D offset;<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dst_data_start =3D src_data_start;<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ofs-&gt;ofs.auth.head +=3D offset;<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ofs-&gt;ofs.cipher.head +=3D offset;<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tl_src +=3D offset;<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; total_len_src =3D tl_src;<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; total_len_dst =3D tl_src;<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; }<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-+<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; req-&gt;comn_mid.src_data_=
-addr =3D src_data_start;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; req-&gt;comn_mid.dest_data=
-_addr =3D dst_data_start;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; req-&gt;comn_mid.src_lengt=
-h =3D total_len_src;<br>
-diff --git a/drivers/crypto/qat/dev/qat_sym_pmd_gen1.c b/drivers/crypto/qat=
-/dev/qat_sym_pmd_gen1.c<br>
-index 8cb85fd8df..6da0f6c645 100644<br>
---- a/drivers/crypto/qat/dev/qat_sym_pmd_gen1.c<br>
-+++ b/drivers/crypto/qat/dev/qat_sym_pmd_gen1.c<br>
-@@ -242,7 +242,7 @@ qat_sym_build_op_cipher_gen1(void *in_op, struct qat_sy=
-m_session *ctx,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; total_len =3D qat_sym_buil=
-d_req_set_data(req, in_op, cookie,<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in_sgl.vec, in_s=
-gl.num, out_sgl.vec, out_sgl.num);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in_sgl.vec, in_s=
-gl.num, out_sgl.vec, out_sgl.num, &amp;ofs, op);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (unlikely(total_len &lt=
-; 0)) {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; op-&gt;status =3D RTE_CRYPTO_OP_STATUS_INVALID_ARGS;<=
-br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; return -EINVAL;<br>
-@@ -294,7 +294,7 @@ qat_sym_build_op_auth_gen1(void *in_op, struct qat_sym_=
-session *ctx,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; req-&gt;comn_hdr.serv_specif_fla=
-gs, 0);<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; total_len =3D qat_sym_buil=
-d_req_set_data(req, in_op, cookie,<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in_sgl.vec, in_s=
-gl.num, out_sgl.vec, out_sgl.num);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in_sgl.vec, in_s=
-gl.num, out_sgl.vec, out_sgl.num, &amp;ofs, op);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (unlikely(total_len &lt=
-; 0)) {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; op-&gt;status =3D RTE_CRYPTO_OP_STATUS_INVALID_ARGS;<=
-br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; return -EINVAL;<br>
-@@ -339,7 +339,7 @@ qat_sym_build_op_aead_gen1(void *in_op, struct qat_sym_=
-session *ctx,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; total_len =3D qat_sym_buil=
-d_req_set_data(req, in_op, cookie,<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in_sgl.vec, in_s=
-gl.num, out_sgl.vec, out_sgl.num);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in_sgl.vec, in_s=
-gl.num, out_sgl.vec, out_sgl.num, &amp;ofs, op);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (unlikely(total_len &lt=
-; 0)) {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; op-&gt;status =3D RTE_CRYPTO_OP_STATUS_INVALID_ARGS;<=
-br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; return -EINVAL;<br>
-@@ -384,7 +384,7 @@ qat_sym_build_op_chain_gen1(void *in_op, struct qat_sym=
-_session *ctx,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; total_len =3D qat_sym_buil=
-d_req_set_data(req, in_op, cookie,<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in_sgl.vec, in_s=
-gl.num, out_sgl.vec, out_sgl.num);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in_sgl.vec, in_s=
-gl.num, out_sgl.vec, out_sgl.num, &amp;ofs, op);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (unlikely(total_len &lt=
-; 0)) {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; op-&gt;status =3D RTE_CRYPTO_OP_STATUS_INVALID_ARGS;<=
-br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; return -EINVAL;<br>
-@@ -512,7 +512,7 @@ qat_sym_dp_enqueue_single_cipher_gen1(void *qp_data, ui=
-nt8_t *drv_ctx,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rte_prefetch0((uint8_t *)t=
-x_queue-&gt;base_addr + tail);<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data_len =3D qat_sym_build=
-_req_set_data(req, user_data, cookie,<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data, n_data_vec=
-s, NULL, 0);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data, n_data_vec=
-s, NULL, 0, NULL, NULL);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (unlikely(data_len &lt;=
- 0))<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; return -1;<br>
-&nbsp;<br>
-@@ -571,7 +571,7 @@ qat_sym_dp_enqueue_cipher_jobs_gen1(void *qp_data, uint=
-8_t *drv_ctx,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data_=
-len =3D qat_sym_build_req_set_data(req,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; user_data[i], cookie,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vec-&gt;src_sgl[i].vec,<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vec-&gt;src_sgl[i].num, NULL, 0);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vec-&gt;src_sgl[i].num, NULL, 0, NULL, NULL=
-);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; }<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; if (unlikely(data_len &lt; 0 || error))<br>
-@@ -623,7 +623,7 @@ qat_sym_dp_enqueue_single_auth_gen1(void *qp_data, uint=
-8_t *drv_ctx,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rte_mov128((uint8_t *)req,=
- (const uint8_t *)&amp;(ctx-&gt;fw_req));<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rte_prefetch0((uint8_t *)t=
-x_queue-&gt;base_addr + tail);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data_len =3D qat_sym_build=
-_req_set_data(req, user_data, cookie,<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data, n_data_vec=
-s, NULL, 0);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data, n_data_vec=
-s, NULL, 0, NULL, NULL);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (unlikely(data_len &lt;=
- 0))<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; return -1;<br>
-&nbsp;<br>
-@@ -690,7 +690,7 @@ qat_sym_dp_enqueue_auth_jobs_gen1(void *qp_data, uint8_=
-t *drv_ctx,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data_=
-len =3D qat_sym_build_req_set_data(req,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; user_data[i], cookie,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vec-&gt;src_sgl[i].vec,<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vec-&gt;src_sgl[i].num, NULL, 0);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vec-&gt;src_sgl[i].num, NULL, 0, NULL, NULL=
-);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; }<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; if (unlikely(data_len &lt; 0 || error))<br>
-@@ -747,7 +747,7 @@ qat_sym_dp_enqueue_single_chain_gen1(void *qp_data, uin=
-t8_t *drv_ctx,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rte_mov128((uint8_t *)req,=
- (const uint8_t *)&amp;(ctx-&gt;fw_req));<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rte_prefetch0((uint8_t *)t=
-x_queue-&gt;base_addr + tail);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data_len =3D qat_sym_build=
-_req_set_data(req, user_data, cookie,<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data, n_data_vec=
-s, NULL, 0);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data, n_data_vec=
-s, NULL, 0, NULL, NULL);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (unlikely(data_len &lt;=
- 0))<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; return -1;<br>
-&nbsp;<br>
-@@ -815,7 +815,7 @@ qat_sym_dp_enqueue_chain_jobs_gen1(void *qp_data, uint8=
-_t *drv_ctx,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data_=
-len =3D qat_sym_build_req_set_data(req,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; user_data[i], cookie,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vec-&gt;src_sgl[i].vec,<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vec-&gt;src_sgl[i].num, NULL, 0);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vec-&gt;src_sgl[i].num, NULL, 0, NULL, NULL=
-);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; }<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; if (unlikely(data_len &lt; 0 || error))<br>
-@@ -877,7 +877,7 @@ qat_sym_dp_enqueue_single_aead_gen1(void *qp_data, uint=
-8_t *drv_ctx,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rte_mov128((uint8_t *)req,=
- (const uint8_t *)&amp;(ctx-&gt;fw_req));<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rte_prefetch0((uint8_t *)t=
-x_queue-&gt;base_addr + tail);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data_len =3D qat_sym_build=
-_req_set_data(req, user_data, cookie,<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data, n_data_vec=
-s, NULL, 0);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data, n_data_vec=
-s, NULL, 0, NULL, NULL);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (unlikely(data_len &lt;=
- 0))<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; return -1;<br>
-&nbsp;<br>
-@@ -936,7 +936,7 @@ qat_sym_dp_enqueue_aead_jobs_gen1(void *qp_data, uint8_=
-t *drv_ctx,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data_=
-len =3D qat_sym_build_req_set_data(req,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; user_data[i], cookie,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vec-&gt;src_sgl[i].vec,<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vec-&gt;src_sgl[i].num, NULL, 0);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vec-&gt;src_sgl[i].num, NULL, 0, NULL, NULL=
-);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; }<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; if (unlikely(data_len &lt; 0) || error)<br>
--- <br>
-2.50.1<br>
-<br>
-</div>
-</span></font></div>
-</body>
-</html>
-
---_000_DS0PR11MB745868D172453A9F1AA4DE0B8128ADS0PR11MB7458namp_--
+PiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIu
+b3JnXQ0KPiBTZW50OiBUaHVyc2RheSwgMyBBcHJpbCAyMDI1IDAxLjIzDQo+IA0KPiBSZXBsYWNl
+IHJ0ZV9tYnVmX3Nhbml0eV9jaGVjaygpIHdpdGggcnRlX21idWZfdmVyaWZ5KCkNCj4gdG8gbWF0
+Y2ggdGhlIHNpbWlsYXIgbWFjcm8gUlRFX1ZFUklGWSgpIGluIHJ0ZV9kZWJ1Zy5oDQo+IA0KPiBU
+aGUgdGVybSBzYW5pdHkgY2hlY2sgaXMgb24gdGhlIFRpZXIgMiBsaXN0IG9mIHdvcmRzDQo+IHRo
+YXQgc2hvdWxkIGJlIHJlcGxhY2VkLg0KPiANCj4gRm9yIHRoaXMgcmVsZWFzZSBrZWVwIG9sZCBB
+UEkgZnVuY3Rpb25zIGJ1dCBtYXJrIHRoZW0NCj4gYXMgZGVwcmVjYXRlZC4NCj4gDQo+IFNpZ25l
+ZC1vZmYtYnk6IFN0ZXBoZW4gSGVtbWluZ2VyIDxzdGVwaGVuQG5ldHdvcmtwbHVtYmVyLm9yZz4N
+Cj4gQWNrZWQtYnk6IEFuZHJldyBSeWJjaGVua28gPGFuZHJldy5yeWJjaGVua29Ab2t0ZXRsYWJz
+LnJ1Pg0KPiBBY2tlZC1ieTogTW9ydGVuIEJyw7hydXAgPG1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNv
+bT4NCj4gLS0tDQo+ICBhcHAvdGVzdC90ZXN0X2NyeXB0b2Rldi5jICAgICAgICAgICAgfCAgMiAr
+LQ0KPiAgYXBwL3Rlc3QvdGVzdF9tYnVmLmMgICAgICAgICAgICAgICAgIHwgMjggKysrKystLS0t
+LQ0KPiAgZG9jL2d1aWRlcy9wcm9nX2d1aWRlL21idWZfbGliLnJzdCAgIHwgIDQgKy0NCj4gIGRv
+Yy9ndWlkZXMvcmVsX25vdGVzL2RlcHJlY2F0aW9uLnJzdCB8ICAzICsrDQo+ICBsaWIvbWJ1Zi9y
+dGVfbWJ1Zi5jICAgICAgICAgICAgICAgICAgfCAyMyArKysrKy0tLQ0KPiAgbGliL21idWYvcnRl
+X21idWYuaCAgICAgICAgICAgICAgICAgIHwgNzkgKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0t
+LQ0KPiAgbGliL21idWYvdmVyc2lvbi5tYXAgICAgICAgICAgICAgICAgIHwgIDEgKw0KPiAgNyBm
+aWxlcyBjaGFuZ2VkLCA3OSBpbnNlcnRpb25zKCspLCA2MSBkZWxldGlvbnMoLSkNCj4gDQo+IGRp
+ZmYgLS1naXQgYS9hcHAvdGVzdC90ZXN0X2NyeXB0b2Rldi5jIGIvYXBwL3Rlc3QvdGVzdF9jcnlw
+dG9kZXYuYw0KPiBpbmRleCAzMWE0OTA1YTk3Li5kNWYzODQzZGFmIDEwMDY0NA0KPiAtLS0gYS9h
+cHAvdGVzdC90ZXN0X2NyeXB0b2Rldi5jDQo+ICsrKyBiL2FwcC90ZXN0L3Rlc3RfY3J5cHRvZGV2
+LmMNCj4gQEAgLTI2NCw3ICsyNjQsNyBAQCBjcmVhdGVfbWJ1Zl9mcm9tX2hlYXAoaW50IHBrdF9s
+ZW4sIHVpbnQ4X3QgcGF0dGVybikNCj4gIAltLT5wb3J0ID0gUlRFX01CVUZfUE9SVF9JTlZBTElE
+Ow0KPiAgCW0tPmJ1Zl9sZW4gPSBNQlVGX1NJWkUgLSBzaXplb2Yoc3RydWN0IHJ0ZV9tYnVmKSAt
+IFJURV9QS1RNQlVGX0hFQURST09NOw0KPiAgCXJ0ZV9wa3RtYnVmX3Jlc2V0X2hlYWRyb29tKG0p
+Ow0KPiAtCV9fcnRlX21idWZfc2FuaXR5X2NoZWNrKG0sIDEpOw0KPiArCV9fcnRlX21idWZfdmVy
+aWZ5KG0sIDEpOw0KPiANCj4gIAltLT5idWZfYWRkciA9IChjaGFyICopbSArIHNpemVvZihzdHJ1
+Y3QgcnRlX21idWYpICsNCj4gUlRFX1BLVE1CVUZfSEVBRFJPT007DQo+IA0KPiBkaWZmIC0tZ2l0
+IGEvYXBwL3Rlc3QvdGVzdF9tYnVmLmMgYi9hcHAvdGVzdC90ZXN0X21idWYuYw0KPiBpbmRleCAx
+N2JlOTc3ZjMxLi4zZmJiNWRlYThiIDEwMDY0NA0KPiAtLS0gYS9hcHAvdGVzdC90ZXN0X21idWYu
+Yw0KPiArKysgYi9hcHAvdGVzdC90ZXN0X21idWYuYw0KPiBAQCAtMjYyLDggKzI2Miw4IEBAIHRl
+c3Rfb25lX3BrdG1idWYoc3RydWN0IHJ0ZV9tZW1wb29sICpwa3RtYnVmX3Bvb2wpDQo+ICAJCUdP
+VE9fRkFJTCgiQnVmZmVyIHNob3VsZCBiZSBjb250aW51b3VzIik7DQo+ICAJbWVtc2V0KGhkciwg
+MHg1NSwgTUJVRl9URVNUX0hEUjJfTEVOKTsNCj4gDQo+IC0JcnRlX21idWZfc2FuaXR5X2NoZWNr
+KG0sIDEpOw0KPiAtCXJ0ZV9tYnVmX3Nhbml0eV9jaGVjayhtLCAwKTsNCj4gKwlydGVfbWJ1Zl92
+ZXJpZnkobSwgMSk7DQo+ICsJcnRlX21idWZfdmVyaWZ5KG0sIDApOw0KPiAgCXJ0ZV9wa3RtYnVm
+X2R1bXAoc3Rkb3V0LCBtLCAwKTsNCj4gDQo+ICAJLyogdGhpcyBwcmVwZW5kIHNob3VsZCBmYWls
+ICovDQo+IEBAIC0xMTYyLDcgKzExNjIsNyBAQCB0ZXN0X3JlZmNudF9tYnVmKHZvaWQpDQo+IA0K
+PiAgI2lmZGVmIFJURV9FWEVDX0VOVl9XSU5ET1dTDQo+ICBzdGF0aWMgaW50DQo+IC10ZXN0X2Zh
+aWxpbmdfbWJ1Zl9zYW5pdHlfY2hlY2soc3RydWN0IHJ0ZV9tZW1wb29sICpwa3RtYnVmX3Bvb2wp
+DQo+ICt0ZXN0X2ZhaWxpbmdfbWJ1Zl92ZXJpZnkoc3RydWN0IHJ0ZV9tZW1wb29sICpwa3RtYnVm
+X3Bvb2wpDQo+ICB7DQo+ICAJUlRFX1NFVF9VU0VEKHBrdG1idWZfcG9vbCk7DQo+ICAJcmV0dXJu
+IFRFU1RfU0tJUFBFRDsNCj4gQEAgLTExODEsMTIgKzExODEsMTIgQEAgbWJ1Zl9jaGVja19wYXNz
+KHN0cnVjdCBydGVfbWJ1ZiAqYnVmKQ0KPiAgfQ0KPiANCj4gIHN0YXRpYyBpbnQNCj4gLXRlc3Rf
+ZmFpbGluZ19tYnVmX3Nhbml0eV9jaGVjayhzdHJ1Y3QgcnRlX21lbXBvb2wgKnBrdG1idWZfcG9v
+bCkNCj4gK3Rlc3RfZmFpbGluZ19tYnVmX3ZlcmlmeShzdHJ1Y3QgcnRlX21lbXBvb2wgKnBrdG1i
+dWZfcG9vbCkNCj4gIHsNCj4gIAlzdHJ1Y3QgcnRlX21idWYgKmJ1ZjsNCj4gIAlzdHJ1Y3QgcnRl
+X21idWYgYmFkYnVmOw0KPiANCj4gLQlwcmludGYoIkNoZWNraW5nIHJ0ZV9tYnVmX3Nhbml0eV9j
+aGVjayBmb3IgZmFpbHVyZSBjb25kaXRpb25zXG4iKTsNCj4gKwlwcmludGYoIkNoZWNraW5nIHJ0
+ZV9tYnVmX3ZlcmlmeSBmb3IgZmFpbHVyZSBjb25kaXRpb25zXG4iKTsNCj4gDQo+ICAJLyogZ2V0
+IGEgZ29vZCBtYnVmIHRvIHVzZSB0byBtYWtlIGNvcGllcyAqLw0KPiAgCWJ1ZiA9IHJ0ZV9wa3Rt
+YnVmX2FsbG9jKHBrdG1idWZfcG9vbCk7DQo+IEBAIC0xNzA4LDcgKzE3MDgsNyBAQCB0ZXN0X21i
+dWZfdmFsaWRhdGVfdHhfb2ZmbG9hZChjb25zdCBjaGFyICp0ZXN0X25hbWUsDQo+ICAJCUdPVE9f
+RkFJTCgiJXM6IG1idWYgYWxsb2NhdGlvbiBmYWlsZWQhXG4iLCBfX2Z1bmNfXyk7DQo+ICAJaWYg
+KHJ0ZV9wa3RtYnVmX3BrdF9sZW4obSkgIT0gMCkNCj4gIAkJR09UT19GQUlMKCIlczogQmFkIHBh
+Y2tldCBsZW5ndGhcbiIsIF9fZnVuY19fKTsNCj4gLQlydGVfbWJ1Zl9zYW5pdHlfY2hlY2sobSwg
+MCk7DQo+ICsJcnRlX21idWZfdmVyaWZ5KG0sIDApOw0KPiAgCW0tPm9sX2ZsYWdzID0gb2xfZmxh
+Z3M7DQo+ICAJbS0+dHNvX3NlZ3N6ID0gc2Vnc2l6ZTsNCj4gIAlyZXQgPSBydGVfdmFsaWRhdGVf
+dHhfb2ZmbG9hZChtKTsNCj4gQEAgLTE5MTUsNyArMTkxNSw3IEBAIHRlc3RfcGt0bWJ1Zl9yZWFk
+KHN0cnVjdCBydGVfbWVtcG9vbCAqcGt0bWJ1Zl9wb29sKQ0KPiAgCQlHT1RPX0ZBSUwoIiVzOiBt
+YnVmIGFsbG9jYXRpb24gZmFpbGVkIVxuIiwgX19mdW5jX18pOw0KPiAgCWlmIChydGVfcGt0bWJ1
+Zl9wa3RfbGVuKG0pICE9IDApDQo+ICAJCUdPVE9fRkFJTCgiJXM6IEJhZCBwYWNrZXQgbGVuZ3Ro
+XG4iLCBfX2Z1bmNfXyk7DQo+IC0JcnRlX21idWZfc2FuaXR5X2NoZWNrKG0sIDApOw0KPiArCXJ0
+ZV9tYnVmX3ZlcmlmeShtLCAwKTsNCj4gDQo+ICAJZGF0YSA9IHJ0ZV9wa3RtYnVmX2FwcGVuZCht
+LCBNQlVGX1RFU1RfREFUQV9MRU4yKTsNCj4gIAlpZiAoZGF0YSA9PSBOVUxMKQ0KPiBAQCAtMTk2
+NCw3ICsxOTY0LDcgQEAgdGVzdF9wa3RtYnVmX3JlYWRfZnJvbV9vZmZzZXQoc3RydWN0IHJ0ZV9t
+ZW1wb29sDQo+ICpwa3RtYnVmX3Bvb2wpDQo+IA0KPiAgCWlmIChydGVfcGt0bWJ1Zl9wa3RfbGVu
+KG0pICE9IDApDQo+ICAJCUdPVE9fRkFJTCgiJXM6IEJhZCBwYWNrZXQgbGVuZ3RoXG4iLCBfX2Z1
+bmNfXyk7DQo+IC0JcnRlX21idWZfc2FuaXR5X2NoZWNrKG0sIDApOw0KPiArCXJ0ZV9tYnVmX3Zl
+cmlmeShtLCAwKTsNCj4gDQo+ICAJLyogcHJlcGVuZCBhbiBldGhlcm5ldCBoZWFkZXIgKi8NCj4g
+IAloZHIgPSAoc3RydWN0IGV0aGVyX2hkciAqKXJ0ZV9wa3RtYnVmX3ByZXBlbmQobSwgaGRyX2xl
+bik7DQo+IEBAIC0yMTA5LDcgKzIxMDksNyBAQCBjcmVhdGVfcGFja2V0KHN0cnVjdCBydGVfbWVt
+cG9vbCAqcGt0bWJ1Zl9wb29sLA0KPiAgCQkJR09UT19GQUlMKCIlczogbWJ1ZiBhbGxvY2F0aW9u
+IGZhaWxlZCFcbiIsIF9fZnVuY19fKTsNCj4gIAkJaWYgKHJ0ZV9wa3RtYnVmX3BrdF9sZW4ocGt0
+X3NlZykgIT0gMCkNCj4gIAkJCUdPVE9fRkFJTCgiJXM6IEJhZCBwYWNrZXQgbGVuZ3RoXG4iLCBf
+X2Z1bmNfXyk7DQo+IC0JCXJ0ZV9tYnVmX3Nhbml0eV9jaGVjayhwa3Rfc2VnLCAwKTsNCj4gKwkJ
+cnRlX21idWZfdmVyaWZ5KHBrdF9zZWcsIDApOw0KPiAgCQkvKiBBZGQgaGVhZGVyIG9ubHkgZm9y
+IHRoZSBmaXJzdCBzZWdtZW50ICovDQo+ICAJCWlmICh0ZXN0X2RhdGEtPmZsYWdzID09IE1CVUZf
+SEVBREVSICYmIHNlZyA9PSAwKSB7DQo+ICAJCQloZHJfbGVuID0gc2l6ZW9mKHN0cnVjdCBydGVf
+ZXRoZXJfaGRyKTsNCj4gQEAgLTIzMjEsNyArMjMyMSw3IEBAIHRlc3RfcGt0bWJ1Zl9leHRfc2hp
+bmZvX2luaXRfaGVscGVyKHN0cnVjdCBydGVfbWVtcG9vbA0KPiAqcGt0bWJ1Zl9wb29sKQ0KPiAg
+CQlHT1RPX0ZBSUwoIiVzOiBtYnVmIGFsbG9jYXRpb24gZmFpbGVkIVxuIiwgX19mdW5jX18pOw0K
+PiAgCWlmIChydGVfcGt0bWJ1Zl9wa3RfbGVuKG0pICE9IDApDQo+ICAJCUdPVE9fRkFJTCgiJXM6
+IEJhZCBwYWNrZXQgbGVuZ3RoXG4iLCBfX2Z1bmNfXyk7DQo+IC0JcnRlX21idWZfc2FuaXR5X2No
+ZWNrKG0sIDApOw0KPiArCXJ0ZV9tYnVmX3ZlcmlmeShtLCAwKTsNCj4gDQo+ICAJZXh0X2J1Zl9h
+ZGRyID0gcnRlX21hbGxvYygiRXh0ZXJuYWwgYnVmZmVyIiwgYnVmX2xlbiwNCj4gIAkJCVJURV9D
+QUNIRV9MSU5FX1NJWkUpOw0KPiBAQCAtMjQ4Miw4ICsyNDgyLDggQEAgdGVzdF9wa3RtYnVmX2V4
+dF9waW5uZWRfYnVmZmVyKHN0cnVjdCBydGVfbWVtcG9vbA0KPiAqc3RkX3Bvb2wpDQo+ICAJCUdP
+VE9fRkFJTCgiJXM6IHRlc3RfcGt0bWJ1Zl9jb3B5KHBpbm5lZCkgZmFpbGVkXG4iLA0KPiAgCQkJ
+ICBfX2Z1bmNfXyk7DQo+IA0KPiAtCWlmICh0ZXN0X2ZhaWxpbmdfbWJ1Zl9zYW5pdHlfY2hlY2so
+cGlubmVkX3Bvb2wpIDwgMCkNCj4gLQkJR09UT19GQUlMKCIlczogdGVzdF9mYWlsaW5nX21idWZf
+c2FuaXR5X2NoZWNrKHBpbm5lZCkiDQo+ICsJaWYgKHRlc3RfZmFpbGluZ19tYnVmX3ZlcmlmeShw
+aW5uZWRfcG9vbCkgPCAwKQ0KPiArCQlHT1RPX0ZBSUwoIiVzOiB0ZXN0X2ZhaWxpbmdfbWJ1Zl92
+ZXJpZnkocGlubmVkKSINCj4gIAkJCSAgIiBmYWlsZWRcbiIsIF9fZnVuY19fKTsNCj4gDQo+ICAJ
+aWYgKHRlc3RfbWJ1Zl9saW5lYXJpemVfY2hlY2socGlubmVkX3Bvb2wpIDwgMCkNCj4gQEAgLTI4
+NTcsOCArMjg1Nyw4IEBAIHRlc3RfbWJ1Zih2b2lkKQ0KPiAgCQlnb3RvIGVycjsNCj4gIAl9DQo+
+IA0KPiAtCWlmICh0ZXN0X2ZhaWxpbmdfbWJ1Zl9zYW5pdHlfY2hlY2socGt0bWJ1Zl9wb29sKSA8
+IDApIHsNCj4gLQkJcHJpbnRmKCJ0ZXN0X2ZhaWxpbmdfbWJ1Zl9zYW5pdHlfY2hlY2soKSBmYWls
+ZWRcbiIpOw0KPiArCWlmICh0ZXN0X2ZhaWxpbmdfbWJ1Zl92ZXJpZnkocGt0bWJ1Zl9wb29sKSA8
+IDApIHsNCj4gKwkJcHJpbnRmKCJ0ZXN0X2ZhaWxpbmdfbWJ1Zl92ZXJpZnkoKSBmYWlsZWRcbiIp
+Ow0KPiAgCQlnb3RvIGVycjsNCj4gIAl9DQo+IA0KPiBkaWZmIC0tZ2l0IGEvZG9jL2d1aWRlcy9w
+cm9nX2d1aWRlL21idWZfbGliLnJzdA0KPiBiL2RvYy9ndWlkZXMvcHJvZ19ndWlkZS9tYnVmX2xp
+Yi5yc3QNCj4gaW5kZXggNGFkMmEyMWYzZi4uNmM5NjkzMWY4YyAxMDA2NDQNCj4gLS0tIGEvZG9j
+L2d1aWRlcy9wcm9nX2d1aWRlL21idWZfbGliLnJzdA0KPiArKysgYi9kb2MvZ3VpZGVzL3Byb2df
+Z3VpZGUvbWJ1Zl9saWIucnN0DQo+IEBAIC0yNjYsOCArMjY2LDggQEAgY2FuIGJlIGZvdW5kIGlu
+IHNldmVyYWwgb2YgdGhlIHNhbXBsZSBhcHBsaWNhdGlvbnMsIGZvcg0KPiBleGFtcGxlLCB0aGUg
+SVB2NCBNdWx0aWMNCj4gIERlYnVnDQo+ICAtLS0tLQ0KPiANCj4gLUluIGRlYnVnIG1vZGUsIHRo
+ZSBmdW5jdGlvbnMgb2YgdGhlIG1idWYgbGlicmFyeSBwZXJmb3JtIHNhbml0eSBjaGVja3MgYmVm
+b3JlDQo+IGFueSBvcGVyYXRpb24gKHN1Y2ggYXMsIGJ1ZmZlciBjb3JydXB0aW9uLA0KPiAtYmFk
+IHR5cGUsIGFuZCBzbyBvbikuDQo+ICtJbiBkZWJ1ZyBtb2RlLCB0aGUgZnVuY3Rpb25zIG9mIHRo
+ZSBtYnVmIGxpYnJhcnkgcGVyZm9ybSBjb25zaXN0ZW5jeSBjaGVja3MNCj4gK2JlZm9yZSBhbnkg
+b3BlcmF0aW9uIChzdWNoIGFzLCBidWZmZXIgY29ycnVwdGlvbiwgYmFkIHR5cGUsIGFuZCBzbyBv
+bikuDQo+IA0KPiAgVXNlIENhc2VzDQo+ICAtLS0tLS0tLS0NCj4gZGlmZiAtLWdpdCBhL2RvYy9n
+dWlkZXMvcmVsX25vdGVzL2RlcHJlY2F0aW9uLnJzdA0KPiBiL2RvYy9ndWlkZXMvcmVsX25vdGVz
+L2RlcHJlY2F0aW9uLnJzdA0KPiBpbmRleCAzNjQ4OWY2ZTY4Li4xMGJiMDhhNjM0IDEwMDY0NA0K
+PiAtLS0gYS9kb2MvZ3VpZGVzL3JlbF9ub3Rlcy9kZXByZWNhdGlvbi5yc3QNCj4gKysrIGIvZG9j
+L2d1aWRlcy9yZWxfbm90ZXMvZGVwcmVjYXRpb24ucnN0DQo+IEBAIC0xNDIsMyArMTQyLDYgQEAg
+RGVwcmVjYXRpb24gTm90aWNlcw0KPiAgKiBidXMvdm1idXM6IFN0YXJ0aW5nIERQREsgMjUuMTEs
+IGFsbCB0aGUgdm1idXMgQVBJIGRlZmluZWQgaW4NCj4gICAgYGBkcml2ZXJzL2J1cy92bWJ1cy9y
+dGVfYnVzX3ZtYnVzLmhgYCB3aWxsIGJlY29tZSBpbnRlcm5hbCB0byBEUERLLg0KPiAgICBUaG9z
+ZSBBUEkgZnVuY3Rpb25zIGFyZSB1c2VkIGludGVybmFsbHkgYnkgRFBESyBjb3JlIGFuZCBuZXR2
+c2MgUE1ELg0KPiArDQo+ICsqIG1idWY6IFRoZSBmdW5jdGlvbiBgYHJ0ZV9tYnVmX3Nhbml0eV9j
+aGVja2BgIGlzIGRlcHJlY2F0ZWQuDQo+ICsgIFVzZSB0aGUgbmV3IGZ1bmN0aW9uIGBgcnRlX21i
+dWZfdmVyaWZ5YGAgaW5zdGVhZC4NCj4gZGlmZiAtLWdpdCBhL2xpYi9tYnVmL3J0ZV9tYnVmLmMg
+Yi9saWIvbWJ1Zi9ydGVfbWJ1Zi5jDQo+IGluZGV4IDU1OWQ1YWQ4YTcuLmZjNWQ0YmEyOWQgMTAw
+NjQ0DQo+IC0tLSBhL2xpYi9tYnVmL3J0ZV9tYnVmLmMNCj4gKysrIGIvbGliL21idWYvcnRlX21i
+dWYuYw0KPiBAQCAtMzY3LDkgKzM2Nyw5IEBAIHJ0ZV9wa3RtYnVmX3Bvb2xfY3JlYXRlX2V4dGJ1
+Zihjb25zdCBjaGFyICpuYW1lLCB1bnNpZ25lZA0KPiBpbnQgbiwNCj4gIAlyZXR1cm4gbXA7DQo+
+ICB9DQo+IA0KPiAtLyogZG8gc29tZSBzYW5pdHkgY2hlY2tzIG9uIGEgbWJ1ZjogcGFuaWMgaWYg
+aXQgZmFpbHMgKi8NCj4gKy8qIGRvIHNvbWUgY2hlY2tzIG9uIGEgbWJ1ZjogcGFuaWMgaWYgaXQg
+ZmFpbHMgKi8NCj4gIHZvaWQNCj4gLXJ0ZV9tYnVmX3Nhbml0eV9jaGVjayhjb25zdCBzdHJ1Y3Qg
+cnRlX21idWYgKm0sIGludCBpc19oZWFkZXIpDQo+ICtydGVfbWJ1Zl92ZXJpZnkoY29uc3Qgc3Ry
+dWN0IHJ0ZV9tYnVmICptLCBpbnQgaXNfaGVhZGVyKQ0KPiAgew0KPiAgCWNvbnN0IGNoYXIgKnJl
+YXNvbjsNCj4gDQo+IEBAIC0zNzcsNiArMzc3LDEzIEBAIHJ0ZV9tYnVmX3Nhbml0eV9jaGVjayhj
+b25zdCBzdHJ1Y3QgcnRlX21idWYgKm0sIGludA0KPiBpc19oZWFkZXIpDQo+ICAJCXJ0ZV9wYW5p
+YygiJXNcbiIsIHJlYXNvbik7DQo+ICB9DQo+IA0KPiArLyogRm9yIEFCSSBjb21wYXRpYmlsaXR5
+LCB0byBiZSByZW1vdmVkIGluIG5leHQgcmVsZWFzZSAqLw0KPiArdm9pZA0KPiArcnRlX21idWZf
+c2FuaXR5X2NoZWNrKGNvbnN0IHN0cnVjdCBydGVfbWJ1ZiAqbSwgaW50IGlzX2hlYWRlcikNCj4g
+K3sNCj4gKwlydGVfbWJ1Zl92ZXJpZnkobSwgaXNfaGVhZGVyKTsNCj4gK30NCj4gKw0KPiAgaW50
+IHJ0ZV9tYnVmX2NoZWNrKGNvbnN0IHN0cnVjdCBydGVfbWJ1ZiAqbSwgaW50IGlzX2hlYWRlciwN
+Cj4gIAkJICAgY29uc3QgY2hhciAqKnJlYXNvbikNCj4gIHsNCj4gQEAgLTQ5Niw3ICs1MDMsNyBA
+QCB2b2lkIHJ0ZV9wa3RtYnVmX2ZyZWVfYnVsayhzdHJ1Y3QgcnRlX21idWYgKiptYnVmcywNCj4g
+dW5zaWduZWQgaW50IGNvdW50KQ0KPiAgCQlpZiAodW5saWtlbHkobSA9PSBOVUxMKSkNCj4gIAkJ
+CWNvbnRpbnVlOw0KPiANCj4gLQkJX19ydGVfbWJ1Zl9zYW5pdHlfY2hlY2sobSwgMSk7DQo+ICsJ
+CV9fcnRlX21idWZfdmVyaWZ5KG0sIDEpOw0KPiANCj4gIAkJZG8gew0KPiAgCQkJbV9uZXh0ID0g
+bS0+bmV4dDsNCj4gQEAgLTU0Niw3ICs1NTMsNyBAQCBydGVfcGt0bWJ1Zl9jbG9uZShzdHJ1Y3Qg
+cnRlX21idWYgKm1kLCBzdHJ1Y3QgcnRlX21lbXBvb2wNCj4gKm1wKQ0KPiAgCQlyZXR1cm4gTlVM
+TDsNCj4gIAl9DQo+IA0KPiAtCV9fcnRlX21idWZfc2FuaXR5X2NoZWNrKG1jLCAxKTsNCj4gKwlf
+X3J0ZV9tYnVmX3ZlcmlmeShtYywgMSk7DQo+ICAJcmV0dXJuIG1jOw0KPiAgfQ0KPiANCj4gQEAg
+LTU5Niw3ICs2MDMsNyBAQCBydGVfcGt0bWJ1Zl9jb3B5KGNvbnN0IHN0cnVjdCBydGVfbWJ1ZiAq
+bSwgc3RydWN0DQo+IHJ0ZV9tZW1wb29sICptcCwNCj4gIAlzdHJ1Y3QgcnRlX21idWYgKm1jLCAq
+bV9sYXN0LCAqKnByZXY7DQo+IA0KPiAgCS8qIGdhcmJhZ2UgaW4gY2hlY2sgKi8NCj4gLQlfX3J0
+ZV9tYnVmX3Nhbml0eV9jaGVjayhtLCAxKTsNCj4gKwlfX3J0ZV9tYnVmX3ZlcmlmeShtLCAxKTsN
+Cj4gDQo+ICAJLyogY2hlY2sgZm9yIHJlcXVlc3QgdG8gY29weSBhdCBvZmZzZXQgcGFzdCBlbmQg
+b2YgbWJ1ZiAqLw0KPiAgCWlmICh1bmxpa2VseShvZmYgPj0gbS0+cGt0X2xlbikpDQo+IEBAIC02
+NjAsNyArNjY3LDcgQEAgcnRlX3BrdG1idWZfY29weShjb25zdCBzdHJ1Y3QgcnRlX21idWYgKm0s
+IHN0cnVjdA0KPiBydGVfbWVtcG9vbCAqbXAsDQo+ICAJfQ0KPiANCj4gIAkvKiBnYXJiYWdlIG91
+dCBjaGVjayAqLw0KPiAtCV9fcnRlX21idWZfc2FuaXR5X2NoZWNrKG1jLCAxKTsNCj4gKwlfX3J0
+ZV9tYnVmX3ZlcmlmeShtYywgMSk7DQo+ICAJcmV0dXJuIG1jOw0KPiAgfQ0KPiANCj4gQEAgLTY3
+MSw3ICs2NzgsNyBAQCBydGVfcGt0bWJ1Zl9kdW1wKEZJTEUgKmYsIGNvbnN0IHN0cnVjdCBydGVf
+bWJ1ZiAqbSwNCj4gdW5zaWduZWQgZHVtcF9sZW4pDQo+ICAJdW5zaWduZWQgaW50IGxlbjsNCj4g
+IAl1bnNpZ25lZCBpbnQgbmJfc2VnczsNCj4gDQo+IC0JX19ydGVfbWJ1Zl9zYW5pdHlfY2hlY2so
+bSwgMSk7DQo+ICsJX19ydGVfbWJ1Zl92ZXJpZnkobSwgMSk7DQo+IA0KPiAgCWZwcmludGYoZiwg
+ImR1bXAgbWJ1ZiBhdCAlcCwgaW92YT0lIyIgUFJJeDY0ICIsIGJ1Zl9sZW49JXVcbiIsIG0sDQo+
+IHJ0ZV9tYnVmX2lvdmFfZ2V0KG0pLA0KPiAgCQltLT5idWZfbGVuKTsNCj4gQEAgLTY4OSw3ICs2
+OTYsNyBAQCBydGVfcGt0bWJ1Zl9kdW1wKEZJTEUgKmYsIGNvbnN0IHN0cnVjdCBydGVfbWJ1ZiAq
+bSwNCj4gdW5zaWduZWQgZHVtcF9sZW4pDQo+ICAJbmJfc2VncyA9IG0tPm5iX3NlZ3M7DQo+IA0K
+PiAgCXdoaWxlIChtICYmIG5iX3NlZ3MgIT0gMCkgew0KPiAtCQlfX3J0ZV9tYnVmX3Nhbml0eV9j
+aGVjayhtLCAwKTsNCj4gKwkJX19ydGVfbWJ1Zl92ZXJpZnkobSwgMCk7DQo+IA0KPiAgCQlmcHJp
+bnRmKGYsICIgIHNlZ21lbnQgYXQgJXAsIGRhdGE9JXAsIGxlbj0ldSwgb2ZmPSV1LA0KPiByZWZj
+bnQ9JXVcbiIsDQo+ICAJCQltLCBydGVfcGt0bWJ1Zl9tdG9kKG0sIHZvaWQgKiksDQo+IGRpZmYg
+LS1naXQgYS9saWIvbWJ1Zi9ydGVfbWJ1Zi5oIGIvbGliL21idWYvcnRlX21idWYuaA0KPiBpbmRl
+eCAwNmFiNzUwMmE1Li41M2E4MzdlNGQ1IDEwMDY0NA0KPiAtLS0gYS9saWIvbWJ1Zi9ydGVfbWJ1
+Zi5oDQo+ICsrKyBiL2xpYi9tYnVmL3J0ZV9tYnVmLmgNCj4gQEAgLTMzOSwxNiArMzM5LDIwIEBA
+IHJ0ZV9wa3RtYnVmX3ByaXZfZmxhZ3Moc3RydWN0IHJ0ZV9tZW1wb29sICptcCkNCj4gDQo+ICAj
+aWZkZWYgUlRFX0xJQlJURV9NQlVGX0RFQlVHDQo+IA0KPiAtLyoqICBjaGVjayBtYnVmIHR5cGUg
+aW4gZGVidWcgbW9kZSAqLw0KPiAtI2RlZmluZSBfX3J0ZV9tYnVmX3Nhbml0eV9jaGVjayhtLCBp
+c19oKSBydGVfbWJ1Zl9zYW5pdHlfY2hlY2sobSwgaXNfaCkNCj4gKy8qKiAgZG8gbWJ1ZiB0eXBl
+IGluIGRlYnVnIG1vZGUgKi8NCj4gKyNkZWZpbmUgX19ydGVfbWJ1Zl92ZXJpZnkobSwgaXNfaCkg
+cnRlX21idWZfdmVyaWZ5KG0sIGlzX2gpDQo+IA0KPiAgI2Vsc2UgLyogIFJURV9MSUJSVEVfTUJV
+Rl9ERUJVRyAqLw0KPiANCj4gLS8qKiAgY2hlY2sgbWJ1ZiB0eXBlIGluIGRlYnVnIG1vZGUgKi8N
+Cj4gLSNkZWZpbmUgX19ydGVfbWJ1Zl9zYW5pdHlfY2hlY2sobSwgaXNfaCkgZG8geyB9IHdoaWxl
+ICgwKQ0KPiArLyoqICBpZ25vcmUgbWJ1ZiBjaGVja3MgaWYgbm90IGluIGRlYnVnIG1vZGUgKi8N
+Cj4gKyNkZWZpbmUgX19ydGVfbWJ1Zl92ZXJpZnkobSwgaXNfaCkgZG8geyB9IHdoaWxlICgwKQ0K
+PiANCj4gICNlbmRpZiAvKiAgUlRFX0xJQlJURV9NQlVGX0RFQlVHICovDQo+IA0KPiArLyogZGVw
+cmVjYXRlZCB2ZXJzaW9uIG9mIHRoZSBtYWNybyAqLw0KPiArI2RlZmluZSBfX3J0ZV9tYnVmX3Nh
+bml0eV9jaGVjayhtLCBpc19oKQ0KPiBSVEVfREVQUkVDQVRFRChfX3J0ZV9tYnVmX3Nhbml0eV9j
+aGVjaykgXA0KPiArCQlfX3J0ZV9tYnVmX3ZlcmlmeShtLCBpc19oKQ0KPiArDQo+ICAjaWZkZWYg
+UlRFX01CVUZfUkVGQ05UX0FUT01JQw0KPiANCj4gIC8qKg0KPiBAQCAtNTE0LDEwICs1MTgsOSBA
+QCBydGVfbWJ1Zl9leHRfcmVmY250X3VwZGF0ZShzdHJ1Y3QNCj4gcnRlX21idWZfZXh0X3NoYXJl
+ZF9pbmZvICpzaGluZm8sDQo+IA0KPiANCj4gIC8qKg0KPiAtICogU2FuaXR5IGNoZWNrcyBvbiBh
+biBtYnVmLg0KPiArICogQ2hlY2sgdGhhdCB0aGUgbWJ1ZiBpcyB2YWxpZCBhbmQgcGFuaWMgaWYg
+Y29ycnVwdGVkLg0KPiAgICoNCj4gLSAqIENoZWNrIHRoZSBjb25zaXN0ZW5jeSBvZiB0aGUgZ2l2
+ZW4gbWJ1Zi4gVGhlIGZ1bmN0aW9uIHdpbGwgY2F1c2UgYQ0KPiAtICogcGFuaWMgaWYgY29ycnVw
+dGlvbiBpcyBkZXRlY3RlZC4NCj4gKyAqIEFjdHMgYXNzZXJ0aW9uIHRoYXQgbWJ1ZiBpcyBjb25z
+aXN0ZW50LiBJZiBub3QgaXQgY2FsbHMgcnRlX3BhbmljKCkuDQo+ICAgKg0KPiAgICogQHBhcmFt
+IG0NCj4gICAqICAgVGhlIG1idWYgdG8gYmUgY2hlY2tlZC4NCj4gQEAgLTUyNiwxMyArNTI5LDE3
+IEBAIHJ0ZV9tYnVmX2V4dF9yZWZjbnRfdXBkYXRlKHN0cnVjdA0KPiBydGVfbWJ1Zl9leHRfc2hh
+cmVkX2luZm8gKnNoaW5mbywNCj4gICAqICAgb2YgYSBwYWNrZXQgKGluIHRoaXMgY2FzZSwgc29t
+ZSBmaWVsZHMgbGlrZSBuYl9zZWdzIGFyZSBub3QgY2hlY2tlZCkNCj4gICAqLw0KPiAgdm9pZA0K
+PiArcnRlX21idWZfdmVyaWZ5KGNvbnN0IHN0cnVjdCBydGVfbWJ1ZiAqbSwgaW50IGlzX2hlYWRl
+cik7DQo+ICsNCj4gK19fcnRlX2RlcHJlY2F0ZWQNCj4gK3ZvaWQNCj4gIHJ0ZV9tYnVmX3Nhbml0
+eV9jaGVjayhjb25zdCBzdHJ1Y3QgcnRlX21idWYgKm0sIGludCBpc19oZWFkZXIpOw0KPiANCj4g
+IC8qKg0KPiAtICogU2FuaXR5IGNoZWNrcyBvbiBhIG1idWYuDQo+ICsgKiBEbyBjb25zaXN0ZW5j
+eSBjaGVja3Mgb24gYSBtYnVmLg0KPiAgICoNCj4gLSAqIEFsbW9zdCBsaWtlIHJ0ZV9tYnVmX3Nh
+bml0eV9jaGVjaygpLCBidXQgdGhpcyBmdW5jdGlvbiBnaXZlcyB0aGUgcmVhc29uDQo+IC0gKiBp
+ZiBjb3JydXB0aW9uIGlzIGRldGVjdGVkIHJhdGhlciB0aGFuIHBhbmljLg0KPiArICogQ2hlY2sg
+dGhlIGNvbnNpc3RlbmN5IG9mIHRoZSBnaXZlbiBtYnVmIGFuZCBpZiBub3QgdmFsaWQNCj4gKyAq
+IHJldHVybiB0aGUgcmVhc29uLg0KPiAgICoNCj4gICAqIEBwYXJhbSBtDQo+ICAgKiAgIFRoZSBt
+YnVmIHRvIGJlIGNoZWNrZWQuDQo+IEBAIC01NTEsNyArNTU4LDcgQEAgaW50IHJ0ZV9tYnVmX2No
+ZWNrKGNvbnN0IHN0cnVjdCBydGVfbWJ1ZiAqbSwgaW50DQo+IGlzX2hlYWRlciwNCj4gIAkJICAg
+Y29uc3QgY2hhciAqKnJlYXNvbik7DQo+IA0KPiAgLyoqDQo+IC0gKiBTYW5pdHkgY2hlY2tzIG9u
+IGEgcmVpbml0aWFsaXplZCBtYnVmIGluIGRlYnVnIG1vZGUuDQo+ICsgKiBEbyBjaGVja3Mgb24g
+YSByZWluaXRpYWxpemVkIG1idWYgaW4gZGVidWcgbW9kZS4NCj4gICAqDQo+ICAgKiBDaGVjayB0
+aGUgY29uc2lzdGVuY3kgb2YgdGhlIGdpdmVuIHJlaW5pdGlhbGl6ZWQgbWJ1Zi4NCj4gICAqIFRo
+ZSBmdW5jdGlvbiB3aWxsIGNhdXNlIGEgcGFuaWMgaWYgY29ycnVwdGlvbiBpcyBkZXRlY3RlZC4N
+Cj4gQEAgLTU2Myw3ICs1NzAsNyBAQCBpbnQgcnRlX21idWZfY2hlY2soY29uc3Qgc3RydWN0IHJ0
+ZV9tYnVmICptLCBpbnQNCj4gaXNfaGVhZGVyLA0KPiAgICogICBUaGUgbWJ1ZiB0byBiZSBjaGVj
+a2VkLg0KPiAgICovDQo+ICBzdGF0aWMgX19ydGVfYWx3YXlzX2lubGluZSB2b2lkDQo+IC1fX3J0
+ZV9tYnVmX3Jhd19zYW5pdHlfY2hlY2soX19ydGVfdW51c2VkIGNvbnN0IHN0cnVjdCBydGVfbWJ1
+ZiAqbSkNCj4gK19fcnRlX21idWZfcmF3X3ZlcmlmeShfX3J0ZV91bnVzZWQgY29uc3Qgc3RydWN0
+IHJ0ZV9tYnVmICptKQ0KPiAgew0KPiAgCVJURV9BU1NFUlQocnRlX21idWZfcmVmY250X3JlYWQo
+bSkgPT0gMSk7DQo+ICAJUlRFX0FTU0VSVChtLT5uZXh0ID09IE5VTEwpOw0KPiBAQCAtNTcyLDEx
+ICs1NzksMTEgQEAgX19ydGVfbWJ1Zl9yYXdfc2FuaXR5X2NoZWNrKF9fcnRlX3VudXNlZCBjb25z
+dCBzdHJ1Y3QNCj4gcnRlX21idWYgKm0pDQo+ICAJUlRFX0FTU0VSVCghUlRFX01CVUZfSEFTX0VY
+VEJVRihtKSB8fA0KPiAgCQkJKFJURV9NQlVGX0hBU19QSU5ORURfRVhUQlVGKG0pICYmDQo+ICAJ
+CQlydGVfbWJ1Zl9leHRfcmVmY250X3JlYWQobS0+c2hpbmZvKSA9PSAxKSk7DQo+IC0JX19ydGVf
+bWJ1Zl9zYW5pdHlfY2hlY2sobSwgMCk7DQo+ICsJX19ydGVfbWJ1Zl92ZXJpZnkobSwgMCk7DQo+
+ICB9DQo+IA0KPiAgLyoqIEZvciBiYWNrd2FyZHMgY29tcGF0aWJpbGl0eS4gKi8NCj4gLSNkZWZp
+bmUgTUJVRl9SQVdfQUxMT0NfQ0hFQ0sobSkgX19ydGVfbWJ1Zl9yYXdfc2FuaXR5X2NoZWNrKG0p
+DQo+ICsjZGVmaW5lIE1CVUZfUkFXX0FMTE9DX0NIRUNLKG0pIF9fcnRlX21idWZfcmF3X3Zlcmlm
+eShtKQ0KPiANCj4gIC8qKg0KPiAgICogQWxsb2NhdGUgYW4gdW5pbml0aWFsaXplZCBtYnVmIGZy
+b20gbWVtcG9vbCAqbXAqLg0KPiBAQCAtNjA2LDcgKzYxMyw3IEBAIHN0YXRpYyBpbmxpbmUgc3Ry
+dWN0IHJ0ZV9tYnVmICpydGVfbWJ1Zl9yYXdfYWxsb2Moc3RydWN0DQo+IHJ0ZV9tZW1wb29sICpt
+cCkNCj4gDQo+ICAJaWYgKHJ0ZV9tZW1wb29sX2dldChtcCwgJnJldC5wdHIpIDwgMCkNCj4gIAkJ
+cmV0dXJuIE5VTEw7DQo+IC0JX19ydGVfbWJ1Zl9yYXdfc2FuaXR5X2NoZWNrKHJldC5tKTsNCj4g
+KwlfX3J0ZV9tYnVmX3Jhd192ZXJpZnkocmV0Lm0pOw0KPiAgCXJldHVybiByZXQubTsNCj4gIH0N
+Cj4gDQo+IEBAIC02NDQsNyArNjUxLDcgQEAgcnRlX21idWZfcmF3X2FsbG9jX2J1bGsoc3RydWN0
+IHJ0ZV9tZW1wb29sICptcCwgc3RydWN0DQo+IHJ0ZV9tYnVmICoqbWJ1ZnMsIHVuc2lnbmUNCj4g
+IAlpbnQgcmMgPSBydGVfbWVtcG9vbF9nZXRfYnVsayhtcCwgKHZvaWQgKiopbWJ1ZnMsIGNvdW50
+KTsNCj4gIAlpZiAobGlrZWx5KHJjID09IDApKQ0KPiAgCQlmb3IgKHVuc2lnbmVkIGludCBpZHgg
+PSAwOyBpZHggPCBjb3VudDsgaWR4KyspDQo+IC0JCQlfX3J0ZV9tYnVmX3Jhd19zYW5pdHlfY2hl
+Y2sobWJ1ZnNbaWR4XSk7DQo+ICsJCQlfX3J0ZV9tYnVmX3Jhd192ZXJpZnkobWJ1ZnNbaWR4XSk7
+DQo+ICAJcmV0dXJuIHJjOw0KPiAgfQ0KPiANCj4gQEAgLTY2NSw3ICs2NzIsNyBAQCBydGVfbWJ1
+Zl9yYXdfYWxsb2NfYnVsayhzdHJ1Y3QgcnRlX21lbXBvb2wgKm1wLCBzdHJ1Y3QNCj4gcnRlX21i
+dWYgKiptYnVmcywgdW5zaWduZQ0KPiAgc3RhdGljIF9fcnRlX2Fsd2F5c19pbmxpbmUgdm9pZA0K
+PiAgcnRlX21idWZfcmF3X2ZyZWUoc3RydWN0IHJ0ZV9tYnVmICptKQ0KPiAgew0KPiAtCV9fcnRl
+X21idWZfcmF3X3Nhbml0eV9jaGVjayhtKTsNCj4gKwlfX3J0ZV9tYnVmX3Jhd192ZXJpZnkobSk7
+DQo+ICAJcnRlX21lbXBvb2xfcHV0KG0tPnBvb2wsIG0pOw0KPiAgfQ0KPiANCj4gQEAgLTcwMCw3
+ICs3MDcsNyBAQCBydGVfbWJ1Zl9yYXdfZnJlZV9idWxrKHN0cnVjdCBydGVfbWVtcG9vbCAqbXAs
+IHN0cnVjdA0KPiBydGVfbWJ1ZiAqKm1idWZzLCB1bnNpZ25lZA0KPiAgCQljb25zdCBzdHJ1Y3Qg
+cnRlX21idWYgKm0gPSBtYnVmc1tpZHhdOw0KPiAgCQlSVEVfQVNTRVJUKG0gIT0gTlVMTCk7DQo+
+ICAJCVJURV9BU1NFUlQobS0+cG9vbCA9PSBtcCk7DQo+IC0JCV9fcnRlX21idWZfcmF3X3Nhbml0
+eV9jaGVjayhtKTsNCj4gKwkJX19ydGVfbWJ1Zl9yYXdfdmVyaWZ5KG0pOw0KPiAgCX0NCj4gDQo+
+ICAJcnRlX21lbXBvb2xfcHV0X2J1bGsobXAsICh2b2lkICoqKW1idWZzLCBjb3VudCk7DQo+IEBA
+IC05NjUsNyArOTcyLDcgQEAgc3RhdGljIGlubGluZSB2b2lkIHJ0ZV9wa3RtYnVmX3Jlc2V0KHN0
+cnVjdCBydGVfbWJ1ZiAqbSkNCj4gIAlydGVfcGt0bWJ1Zl9yZXNldF9oZWFkcm9vbShtKTsNCj4g
+DQo+ICAJbS0+ZGF0YV9sZW4gPSAwOw0KPiAtCV9fcnRlX21idWZfc2FuaXR5X2NoZWNrKG0sIDEp
+Ow0KPiArCV9fcnRlX21idWZfdmVyaWZ5KG0sIDEpOw0KPiAgfQ0KPiANCj4gIC8qKg0KPiBAQCAt
+MTAyMSwyMiArMTAyOCwyMiBAQCBzdGF0aWMgaW5saW5lIGludCBydGVfcGt0bWJ1Zl9hbGxvY19i
+dWxrKHN0cnVjdA0KPiBydGVfbWVtcG9vbCAqcG9vbCwNCj4gIAlzd2l0Y2ggKGNvdW50ICUgNCkg
+ew0KPiAgCWNhc2UgMDoNCj4gIAkJd2hpbGUgKGlkeCAhPSBjb3VudCkgew0KPiAtCQkJX19ydGVf
+bWJ1Zl9yYXdfc2FuaXR5X2NoZWNrKG1idWZzW2lkeF0pOw0KPiArCQkJX19ydGVfbWJ1Zl9yYXdf
+dmVyaWZ5KG1idWZzW2lkeF0pOw0KPiAgCQkJcnRlX3BrdG1idWZfcmVzZXQobWJ1ZnNbaWR4XSk7
+DQo+ICAJCQlpZHgrKzsNCj4gIAkJCS8qIGZhbGwtdGhyb3VnaCAqLw0KPiAgCWNhc2UgMzoNCj4g
+LQkJCV9fcnRlX21idWZfcmF3X3Nhbml0eV9jaGVjayhtYnVmc1tpZHhdKTsNCj4gKwkJCV9fcnRl
+X21idWZfcmF3X3ZlcmlmeShtYnVmc1tpZHhdKTsNCj4gIAkJCXJ0ZV9wa3RtYnVmX3Jlc2V0KG1i
+dWZzW2lkeF0pOw0KPiAgCQkJaWR4Kys7DQo+ICAJCQkvKiBmYWxsLXRocm91Z2ggKi8NCj4gIAlj
+YXNlIDI6DQo+IC0JCQlfX3J0ZV9tYnVmX3Jhd19zYW5pdHlfY2hlY2sobWJ1ZnNbaWR4XSk7DQo+
+ICsJCQlfX3J0ZV9tYnVmX3Jhd192ZXJpZnkobWJ1ZnNbaWR4XSk7DQo+ICAJCQlydGVfcGt0bWJ1
+Zl9yZXNldChtYnVmc1tpZHhdKTsNCj4gIAkJCWlkeCsrOw0KPiAgCQkJLyogZmFsbC10aHJvdWdo
+ICovDQo+ICAJY2FzZSAxOg0KPiAtCQkJX19ydGVfbWJ1Zl9yYXdfc2FuaXR5X2NoZWNrKG1idWZz
+W2lkeF0pOw0KPiArCQkJX19ydGVfbWJ1Zl9yYXdfdmVyaWZ5KG1idWZzW2lkeF0pOw0KPiAgCQkJ
+cnRlX3BrdG1idWZfcmVzZXQobWJ1ZnNbaWR4XSk7DQo+ICAJCQlpZHgrKzsNCj4gIAkJCS8qIGZh
+bGwtdGhyb3VnaCAqLw0KPiBAQCAtMTI2Nyw4ICsxMjc0LDggQEAgc3RhdGljIGlubGluZSB2b2lk
+IHJ0ZV9wa3RtYnVmX2F0dGFjaChzdHJ1Y3QgcnRlX21idWYNCj4gKm1pLCBzdHJ1Y3QgcnRlX21i
+dWYgKm0pDQo+ICAJbWktPnBrdF9sZW4gPSBtaS0+ZGF0YV9sZW47DQo+ICAJbWktPm5iX3NlZ3Mg
+PSAxOw0KPiANCj4gLQlfX3J0ZV9tYnVmX3Nhbml0eV9jaGVjayhtaSwgMSk7DQo+IC0JX19ydGVf
+bWJ1Zl9zYW5pdHlfY2hlY2sobSwgMCk7DQo+ICsJX19ydGVfbWJ1Zl92ZXJpZnkobWksIDEpOw0K
+PiArCV9fcnRlX21idWZfdmVyaWZ5KG0sIDApOw0KPiAgfQ0KPiANCj4gIC8qKg0KPiBAQCAtMTQy
+Myw3ICsxNDMwLDcgQEAgc3RhdGljIGlubGluZSBpbnQNCj4gX19ydGVfcGt0bWJ1Zl9waW5uZWRf
+ZXh0YnVmX2RlY3JlZihzdHJ1Y3QgcnRlX21idWYgKm0pDQo+ICBzdGF0aWMgX19ydGVfYWx3YXlz
+X2lubGluZSBzdHJ1Y3QgcnRlX21idWYgKg0KPiAgcnRlX3BrdG1idWZfcHJlZnJlZV9zZWcoc3Ry
+dWN0IHJ0ZV9tYnVmICptKQ0KPiAgew0KPiAtCV9fcnRlX21idWZfc2FuaXR5X2NoZWNrKG0sIDAp
+Ow0KPiArCV9fcnRlX21idWZfdmVyaWZ5KG0sIDApOw0KPiANCj4gIAlpZiAobGlrZWx5KHJ0ZV9t
+YnVmX3JlZmNudF9yZWFkKG0pID09IDEpKSB7DQo+IA0KPiBAQCAtMTQ5NCw3ICsxNTAxLDcgQEAg
+c3RhdGljIGlubGluZSB2b2lkIHJ0ZV9wa3RtYnVmX2ZyZWUoc3RydWN0IHJ0ZV9tYnVmICptKQ0K
+PiAgCXN0cnVjdCBydGVfbWJ1ZiAqbV9uZXh0Ow0KPiANCj4gIAlpZiAobSAhPSBOVUxMKQ0KPiAt
+CQlfX3J0ZV9tYnVmX3Nhbml0eV9jaGVjayhtLCAxKTsNCj4gKwkJX19ydGVfbWJ1Zl92ZXJpZnko
+bSwgMSk7DQo+IA0KPiAgCXdoaWxlIChtICE9IE5VTEwpIHsNCj4gIAkJbV9uZXh0ID0gbS0+bmV4
+dDsNCj4gQEAgLTE1NzUsNyArMTU4Miw3IEBAIHJ0ZV9wa3RtYnVmX2NvcHkoY29uc3Qgc3RydWN0
+IHJ0ZV9tYnVmICptLCBzdHJ1Y3QNCj4gcnRlX21lbXBvb2wgKm1wLA0KPiAgICovDQo+ICBzdGF0
+aWMgaW5saW5lIHZvaWQgcnRlX3BrdG1idWZfcmVmY250X3VwZGF0ZShzdHJ1Y3QgcnRlX21idWYg
+Km0sIGludDE2X3QgdikNCj4gIHsNCj4gLQlfX3J0ZV9tYnVmX3Nhbml0eV9jaGVjayhtLCAxKTsN
+Cj4gKwlfX3J0ZV9tYnVmX3ZlcmlmeShtLCAxKTsNCj4gDQo+ICAJZG8gew0KPiAgCQlydGVfbWJ1
+Zl9yZWZjbnRfdXBkYXRlKG0sIHYpOw0KPiBAQCAtMTU5Miw3ICsxNTk5LDcgQEAgc3RhdGljIGlu
+bGluZSB2b2lkIHJ0ZV9wa3RtYnVmX3JlZmNudF91cGRhdGUoc3RydWN0DQo+IHJ0ZV9tYnVmICpt
+LCBpbnQxNl90IHYpDQo+ICAgKi8NCj4gIHN0YXRpYyBpbmxpbmUgdWludDE2X3QgcnRlX3BrdG1i
+dWZfaGVhZHJvb20oY29uc3Qgc3RydWN0IHJ0ZV9tYnVmICptKQ0KPiAgew0KPiAtCV9fcnRlX21i
+dWZfc2FuaXR5X2NoZWNrKG0sIDApOw0KPiArCV9fcnRlX21idWZfdmVyaWZ5KG0sIDApOw0KPiAg
+CXJldHVybiBtLT5kYXRhX29mZjsNCj4gIH0NCj4gDQo+IEBAIC0xNjA2LDcgKzE2MTMsNyBAQCBz
+dGF0aWMgaW5saW5lIHVpbnQxNl90IHJ0ZV9wa3RtYnVmX2hlYWRyb29tKGNvbnN0IHN0cnVjdA0K
+PiBydGVfbWJ1ZiAqbSkNCj4gICAqLw0KPiAgc3RhdGljIGlubGluZSB1aW50MTZfdCBydGVfcGt0
+bWJ1Zl90YWlscm9vbShjb25zdCBzdHJ1Y3QgcnRlX21idWYgKm0pDQo+ICB7DQo+IC0JX19ydGVf
+bWJ1Zl9zYW5pdHlfY2hlY2sobSwgMCk7DQo+ICsJX19ydGVfbWJ1Zl92ZXJpZnkobSwgMCk7DQo+
+ICAJcmV0dXJuICh1aW50MTZfdCkobS0+YnVmX2xlbiAtIHJ0ZV9wa3RtYnVmX2hlYWRyb29tKG0p
+IC0NCj4gIAkJCSAgbS0+ZGF0YV9sZW4pOw0KPiAgfQ0KPiBAQCAtMTYyMSw3ICsxNjI4LDcgQEAg
+c3RhdGljIGlubGluZSB1aW50MTZfdCBydGVfcGt0bWJ1Zl90YWlscm9vbShjb25zdCBzdHJ1Y3QN
+Cj4gcnRlX21idWYgKm0pDQo+ICAgKi8NCj4gIHN0YXRpYyBpbmxpbmUgc3RydWN0IHJ0ZV9tYnVm
+ICpydGVfcGt0bWJ1Zl9sYXN0c2VnKHN0cnVjdCBydGVfbWJ1ZiAqbSkNCj4gIHsNCj4gLQlfX3J0
+ZV9tYnVmX3Nhbml0eV9jaGVjayhtLCAxKTsNCj4gKwlfX3J0ZV9tYnVmX3ZlcmlmeShtLCAxKTsN
+Cj4gIAl3aGlsZSAobS0+bmV4dCAhPSBOVUxMKQ0KPiAgCQltID0gbS0+bmV4dDsNCj4gIAlyZXR1
+cm4gbTsNCj4gQEAgLTE2NjUsNyArMTY3Miw3IEBAIHN0YXRpYyBpbmxpbmUgc3RydWN0IHJ0ZV9t
+YnVmDQo+ICpydGVfcGt0bWJ1Zl9sYXN0c2VnKHN0cnVjdCBydGVfbWJ1ZiAqbSkNCj4gIHN0YXRp
+YyBpbmxpbmUgY2hhciAqcnRlX3BrdG1idWZfcHJlcGVuZChzdHJ1Y3QgcnRlX21idWYgKm0sDQo+
+ICAJCQkJCXVpbnQxNl90IGxlbikNCj4gIHsNCj4gLQlfX3J0ZV9tYnVmX3Nhbml0eV9jaGVjayht
+LCAxKTsNCj4gKwlfX3J0ZV9tYnVmX3ZlcmlmeShtLCAxKTsNCj4gDQo+ICAJaWYgKHVubGlrZWx5
+KGxlbiA+IHJ0ZV9wa3RtYnVmX2hlYWRyb29tKG0pKSkNCj4gIAkJcmV0dXJuIE5VTEw7DQo+IEBA
+IC0xNzAwLDcgKzE3MDcsNyBAQCBzdGF0aWMgaW5saW5lIGNoYXIgKnJ0ZV9wa3RtYnVmX2FwcGVu
+ZChzdHJ1Y3QgcnRlX21idWYNCj4gKm0sIHVpbnQxNl90IGxlbikNCj4gIAl2b2lkICp0YWlsOw0K
+PiAgCXN0cnVjdCBydGVfbWJ1ZiAqbV9sYXN0Ow0KPiANCj4gLQlfX3J0ZV9tYnVmX3Nhbml0eV9j
+aGVjayhtLCAxKTsNCj4gKwlfX3J0ZV9tYnVmX3ZlcmlmeShtLCAxKTsNCj4gDQo+ICAJbV9sYXN0
+ID0gcnRlX3BrdG1idWZfbGFzdHNlZyhtKTsNCj4gIAlpZiAodW5saWtlbHkobGVuID4gcnRlX3Br
+dG1idWZfdGFpbHJvb20obV9sYXN0KSkpDQo+IEBAIC0xNzI4LDcgKzE3MzUsNyBAQCBzdGF0aWMg
+aW5saW5lIGNoYXIgKnJ0ZV9wa3RtYnVmX2FwcGVuZChzdHJ1Y3QgcnRlX21idWYNCj4gKm0sIHVp
+bnQxNl90IGxlbikNCj4gICAqLw0KPiAgc3RhdGljIGlubGluZSBjaGFyICpydGVfcGt0bWJ1Zl9h
+ZGooc3RydWN0IHJ0ZV9tYnVmICptLCB1aW50MTZfdCBsZW4pDQo+ICB7DQo+IC0JX19ydGVfbWJ1
+Zl9zYW5pdHlfY2hlY2sobSwgMSk7DQo+ICsJX19ydGVfbWJ1Zl92ZXJpZnkobSwgMSk7DQo+IA0K
+PiAgCWlmICh1bmxpa2VseShsZW4gPiBtLT5kYXRhX2xlbikpDQo+ICAJCXJldHVybiBOVUxMOw0K
+PiBAQCAtMTc2MCw3ICsxNzY3LDcgQEAgc3RhdGljIGlubGluZSBpbnQgcnRlX3BrdG1idWZfdHJp
+bShzdHJ1Y3QgcnRlX21idWYgKm0sDQo+IHVpbnQxNl90IGxlbikNCj4gIHsNCj4gIAlzdHJ1Y3Qg
+cnRlX21idWYgKm1fbGFzdDsNCj4gDQo+IC0JX19ydGVfbWJ1Zl9zYW5pdHlfY2hlY2sobSwgMSk7
+DQo+ICsJX19ydGVfbWJ1Zl92ZXJpZnkobSwgMSk7DQo+IA0KPiAgCW1fbGFzdCA9IHJ0ZV9wa3Rt
+YnVmX2xhc3RzZWcobSk7DQo+ICAJaWYgKHVubGlrZWx5KGxlbiA+IG1fbGFzdC0+ZGF0YV9sZW4p
+KQ0KPiBAQCAtMTc4Miw3ICsxNzg5LDcgQEAgc3RhdGljIGlubGluZSBpbnQgcnRlX3BrdG1idWZf
+dHJpbShzdHJ1Y3QgcnRlX21idWYgKm0sDQo+IHVpbnQxNl90IGxlbikNCj4gICAqLw0KPiAgc3Rh
+dGljIGlubGluZSBpbnQgcnRlX3BrdG1idWZfaXNfY29udGlndW91cyhjb25zdCBzdHJ1Y3QgcnRl
+X21idWYgKm0pDQo+ICB7DQo+IC0JX19ydGVfbWJ1Zl9zYW5pdHlfY2hlY2sobSwgMSk7DQo+ICsJ
+X19ydGVfbWJ1Zl92ZXJpZnkobSwgMSk7DQo+ICAJcmV0dXJuIG0tPm5iX3NlZ3MgPT0gMTsNCj4g
+IH0NCj4gDQo+IGRpZmYgLS1naXQgYS9saWIvbWJ1Zi92ZXJzaW9uLm1hcCBiL2xpYi9tYnVmL3Zl
+cnNpb24ubWFwDQo+IGluZGV4IDc2ZjE4MzI5MjQuLjI5NTBmMjRjYWEgMTAwNjQ0DQo+IC0tLSBh
+L2xpYi9tYnVmL3ZlcnNpb24ubWFwDQo+ICsrKyBiL2xpYi9tYnVmL3ZlcnNpb24ubWFwDQo+IEBA
+IC0zMSw2ICszMSw3IEBAIERQREtfMjUgew0KPiAgCXJ0ZV9tYnVmX3NldF9wbGF0Zm9ybV9tZW1w
+b29sX29wczsNCj4gIAlydGVfbWJ1Zl9zZXRfdXNlcl9tZW1wb29sX29wczsNCj4gIAlydGVfbWJ1
+Zl91c2VyX21lbXBvb2xfb3BzOw0KPiArCXJ0ZV9tYnVmX3ZlcmlmeTsNCj4gIAlydGVfcGt0bWJ1
+Zl9jbG9uZTsNCj4gIAlydGVfcGt0bWJ1Zl9jb3B5Ow0KPiAgCXJ0ZV9wa3RtYnVmX2R1bXA7DQo+
+IC0tDQo+IDIuNDcuMg0KDQpTdGVwaGVuLA0KDQpJIGhhdmUgc3VibWl0dGVkIGFub3RoZXIgcGF0
+Y2ggWzFdLCB3aGVyZSBfX3J0ZV9tYnVmX3Jhd19zYW5pdHlfY2hlY2soKSdzIHN1Y2Nlc3NvciB0
+YWtlcyBvbmUgbW9yZSBwYXJhbWV0ZXIsIHNvIEkgaGFkIHRvIGdpdmUgaXQgYSBuZXcgbmFtZSBf
+X3J0ZV9tYnVmX3Jhd19zYW5pdHlfY2hlY2tfbXAoKSBmb3IgQVBJIGNvbXBhdGliaWxpdHkuIEFu
+ZCB0aGVuIEkgYWRkZWQ6DQorLyoqIEZvciBiYWNrd2FyZHMgY29tcGF0aWJpbGl0eS4gKi8NCisj
+ZGVmaW5lIF9fcnRlX21idWZfcmF3X3Nhbml0eV9jaGVjayhtKSBfX3J0ZV9tYnVmX3Jhd19zYW5p
+dHlfY2hlY2tfbXAobSwgTlVMTCkNCg0KSWYgeW91IHByb2NlZWQgd2l0aCB5b3VyIHBhdGNoLCBf
+X3J0ZV9tYnVmX3Jhd19zYW5pdHlfY2hlY2soKSB3aWxsIGJlIHJlbmFtZWQgdG8gX19ydGVfbWJ1
+Zl9yYXdfdmVyaWZ5KCksIGFuZCBfX3J0ZV9tYnVmX3Jhd19zYW5pdHlfY2hlY2soKSBkaXNhcHBl
+YXJzLg0KV291bGQgaXQgbWFrZSBzZW5zZSB0byBjaGFuZ2UgeW91ciBwYXRjaCwgc28gX19ydGVf
+bWJ1Zl9yYXdfdmVyaWZ5KCkgcmVwbGFjZXMgX19ydGVfbWJ1Zl9yYXdfc2FuaXR5X2NoZWNrX21w
+KCkgaW5zdGVhZCBvZiBfX3J0ZV9tYnVmX3Jhd19zYW5pdHlfY2hlY2soKT8gSWYgeW91ciBwYXRj
+aCBjaGFuZ2VzIHRoZSBBUEkgYW55d2F5LCBhZGRpbmcgYW4gZXh0cmEgcGFyYW1ldGVyIHRvIHRo
+ZSBmdW5jdGlvbiBzaG91bGQgYmUgYWNjZXB0YWJsZS4NCg0KWzFdOiBodHRwczovL3BhdGNod29y
+ay5kcGRrLm9yZy9wcm9qZWN0L2RwZGsvcGF0Y2gvMjAyNTA3MjIwOTM0MzEuNTU1MjE0LTEtbWJA
+c21hcnRzaGFyZXN5c3RlbXMuY29tLw0K
