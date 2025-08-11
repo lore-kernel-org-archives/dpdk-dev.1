@@ -2,48 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFB96CA0EC0
-	for <dpdk-dev@archiver.kernel.org>; Mon, 11 Aug 2025 09:26:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C2EC87FD2
+	for <dpdk-dev@archiver.kernel.org>; Mon, 11 Aug 2025 09:40:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1DF3040668;
-	Mon, 11 Aug 2025 11:26:07 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 24D5A4025D;
+	Mon, 11 Aug 2025 11:40:00 +0200 (CEST)
 Received: from shelob.oktetlabs.ru (shelob.oktetlabs.ru [91.220.146.113])
- by mails.dpdk.org (Postfix) with ESMTP id 3FA3F400D5
- for <dev@dpdk.org>; Mon, 11 Aug 2025 11:26:06 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 shelob.oktetlabs.ru E024075
+ by mails.dpdk.org (Postfix) with ESMTP id A97EE400D5;
+ Mon, 11 Aug 2025 11:39:58 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 shelob.oktetlabs.ru BDB9075
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=oktetlabs.ru;
- s=default; t=1754904365;
- bh=O51iFAZ8spUpThEz7RKAetmJdNQfgNqStnQxNcotAj0=;
+ s=default; t=1754905198;
+ bh=8q+/rq9lDa6XFx80erITKVxI0GEcNEzZ20ZWa9W3WzI=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=sn15mVq2nHYj0pLBOVjVyQ9Z0uVThUiXdC9yuXAIcsTYVpQtnfRP+UCNcB/jY1jiw
- LVMT8lwntacuuoMftN/cC/L+rhGS6lmFGgDhi0u1UxCzmHbJMCeFGTrDdGZ38puskF
- KEVjNanI1gJATdDSzyHI6e3VXjN2mOEqiIboEilU=
+ b=kyednv5f/kkkhIX2qeadZQcwxEA7+rJRL/qJ+dp5y8xpenGpQGws2QY0d9vaVJsZB
+ SyurEClvVWTPGJUCfopJVu6QHjz+IJ01IZ2zQhYct+hHhC6y2Bo4fSjcogxKWJ4drK
+ SVBIjc+c6qDEubp70u/LnTNrgNL6GON6obbTTG7g=
 Received: from [192.168.1.41] (unknown [188.170.86.252])
  (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by shelob.oktetlabs.ru (Postfix) with ESMTPSA id E024075;
- Mon, 11 Aug 2025 12:26:04 +0300 (MSK)
-Message-ID: <49b0646e-6ee4-448c-ab03-8dd749cfc5b2@oktetlabs.ru>
-Date: Mon, 11 Aug 2025 12:26:03 +0300
+ by shelob.oktetlabs.ru (Postfix) with ESMTPSA id BDB9075;
+ Mon, 11 Aug 2025 12:39:57 +0300 (MSK)
+Message-ID: <7416c5c9-7485-4de1-8006-78a6df128080@oktetlabs.ru>
+Date: Mon, 11 Aug 2025 12:39:56 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] testpmd: Do not enable mbuf fast release TX
- offload by default
-To: Ivan Malov <ivan.malov@arknetworks.am>,
- =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
-Cc: dev@dpdk.org, Aman Singh <aman.deep.singh@intel.com>,
- Thomas Monjalon <thomas@monjalon.net>,
- Stephen Hemminger <stephen@networkplumber.org>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-References: <20250731090731.671589-1-mb@smartsharesystems.com>
- <20250803194218.683318-1-mb@smartsharesystems.com>
- <95547628-7d62-56c4-c775-4d554250b9a2@arknetworks.am>
+Subject: Re: [PATCH] net/rte_net: fix inner L2 length for tunneled Ethernet
+ packets
+To: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>, dev@dpdk.org,
+ jasvinder.singh@intel.com, bruce.richardson@intel.com
+Cc: thomas@monjalon.net, ivan.malov@arknetworks.am, stable@dpdk.org
+References: <5a75dd27-a19b-4dad-b3bd-cc7f31e4619d@oktetlabs.ru>
+ <20250801112834.60310-1-14pwcse1224@uetpeshawar.edu.pk>
 Content-Language: en-US
 From: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-In-Reply-To: <95547628-7d62-56c4-c775-4d554250b9a2@arknetworks.am>
+In-Reply-To: <20250801112834.60310-1-14pwcse1224@uetpeshawar.edu.pk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,20 +53,63 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 8/11/25 11:41, Ivan Malov wrote:
-> On Sun, 3 Aug 2025, Morten Brørup wrote:
+On 8/1/25 14:28, Khadem Ullah wrote:
+> Hi Andrew,
 > 
->> Enabling some offload by default may conflict with a manually configured
->> offload.
->> Specifically, the mbuf fast release TX offload, which conflicts with 
->> multi
->> segment packet TX offload, was enabled by default.
->> Therefore, mbuf fast release TX offload (the only TX offload which was
->> enabled by default) is not enabled by default anymore.
->>
->> Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
+> Thanks for your feedback.
 > 
-> Acked-by: Ivan Malov <ivan.malov@arknetworks.am>
+> Please check mbuf packet types and the following test case:
+> https://doc.dpdk.org/dts-20.02/test_plans/uni_pkt_test_plan.html#test-case-vxlan-tunnel-packet-type-detect
+> sendp([Ether()/IP()/UDP()/Vxlan()/Ether()/IP(frag=5)/Raw('\0'*40)],
+> iface=txItf)
+> 
+> (outer) L2 type: ETHER
+> (outer) L3 type: IPV4_EXT_UNKNOWN
+> (outer) L4 type: Unknown
+> Tunnel type: GRENAT
+> Inner L2 type: ETHER
+> Inner L3 type: IPV4_EXT_UNKNOWN
+> Inner L4 type: L4_FRAG
+> 
+> 
+> union {
+>          uint32_t packet_type; /**< L2/L3/L4 and tunnel information. */
+>          __extension__
+>          struct {
+>            uint8_t l2_type:4;   /**< (Outer) L2 type. */
+>            uint8_t l3_type:4;   /**< (Outer) L3 type. */
+>            uint8_t l4_type:4;   /**< (Outer) L4 type. */
+>            uint8_t tun_type:4;  /**< Tunnel type. */
+>            union {
+>              uint8_t inner_esp_next_proto;
+>              /**< ESP next protocol type, valid if
+>               * RTE_PTYPE_TUNNEL_ESP tunnel type is set
+>               * on both Tx and Rx.
+>               */
+>              __extension__
+>              struct {
+>                uint8_t inner_l2_type:4;
+>                /**< Inner L2 type. */
+>                uint8_t inner_l3_type:4;
+>                /**< Inner L3 type. */
+>              };
+>            };
+>            uint8_t inner_l4_type:4; /**< Inner L4 type. */
+>          };
+>        };
+> 
+> 
+> Based on the above, it seems that inner_l2_len have to the length of Ether.
 
-Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+
+Why?
+
+> Ther might need to be some correspondent between both fields to potray the same information.
+> Or, the inner_l2_type and inner_l2_len are completly different ?
+
+Definition says that it is different.
+
+> 
+> Best Regards,
+> Khadem
 
