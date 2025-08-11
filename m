@@ -2,81 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EBBAC87FD2
-	for <dpdk-dev@archiver.kernel.org>; Mon, 11 Aug 2025 13:21:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04125C87FDB
+	for <dpdk-dev@archiver.kernel.org>; Mon, 11 Aug 2025 13:43:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E64D840693;
-	Mon, 11 Aug 2025 15:21:49 +0200 (CEST)
-Received: from fhigh-a3-smtp.messagingengine.com
- (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
- by mails.dpdk.org (Postfix) with ESMTP id 62186402AC;
- Mon, 11 Aug 2025 15:21:48 +0200 (CEST)
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
- by mailfhigh.phl.internal (Postfix) with ESMTP id D30B21400097;
- Mon, 11 Aug 2025 09:21:47 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-09.internal (MEProxy); Mon, 11 Aug 2025 09:21:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1754918507;
- x=1755004907; bh=OvPS88J7eOE1jXthcH4fFzssTdArhxg0+JRlNwyCQ3Y=; b=
- qVq8vZpfpzQt/ZUisbhXnthZEu2U0N21KLC3R1+eiLCMbQuviZvIC/ZnBenAgFGT
- 1yxTygNK94tY46nO/gwtO6yAjZb9Sz7kFu6SdOyU1ZASdqbDYKy91HkeuUJm05K6
- E+Z4VZAbWwEEa41tKUY8Nkf77bXTq7B2kTUT5OIg13cYnm9DnjBjWECjojovm3V3
- O+yUjwNtcpfEuEHFkMHGQyPqK1lv4QW5Z+AldY4XspgSVFQnRJRClfYfPaZvKxh0
- yJfEBzxw0i5YidjADnZmUd+UjSMKRT7G0cdXAzBh8QkvlNDNESeJcBnzyM+cO9aW
- +e+4kx88bqeWg0taSHrdcw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1754918507; x=
- 1755004907; bh=OvPS88J7eOE1jXthcH4fFzssTdArhxg0+JRlNwyCQ3Y=; b=k
- KqTtEIsDRMY9MwbL9fIM0rbdsvjI9dZsrykHQwvOvtFPp7a9A130J9blL/8r7ZvF
- Mj+elUkzEppfkGwLmOOITOM/FWzsQpRj2MjglQ6AGkbYA+OFEeU0YLF+fbSFl9IJ
- bQUK208DY0SFnemJOxYKDUNhM5HDE4FSA8b5f7jXmC9ZomKsH3b0DXn5ZVj3MmEZ
- Ygj0kkKRjq8bNze6/Rwrj9ZxBPePpm3HVHw75KB33PbDsZmaY8wcaOTUC7dnCQ6C
- rA+592+VIC7pBbuN+EYPkiZD1zYoSsq/X/PF+hzWr5IDpgPLCCrxRZAe88sNkpaQ
- 2F+gu6KfCOHCHSkar+OPQ==
-X-ME-Sender: <xms:a-6ZaIhcT5hKUgGxE9Fgp1sO3q8HbBDaz_DzMk9IqkFoG5SLOOiDBw>
- <xme:a-6ZaGapN-zyk-RMeaVrBALSQMmo1QjpjUmqq7V0UL39VYWVzNGmiqagCxYfNhzcM
- mnUDZTfBkLJEMbzIA>
-X-ME-Received: <xmr:a-6ZaASrGU_PV9ApxyCFNe2-Tj4rS4ToczSKSxQE2aQLFD7yuQ7YtCEpx1ndtt_2imo0CmKZ9L7quBCqp_11cZFjUQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufedvheeiucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeekfeehfedtgedtjeehueeutdfgleefieevkeeikeelkefflefgtdev
- ieehheffudenucffohhmrghinhepughpughkrdhorhhgnecuvehluhhsthgvrhfuihiivg
- eptdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdr
- nhgvthdpnhgspghrtghpthhtohephedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
- epphhrrghvihhnrdgsrghthhhijhgrseguvghllhdrtghomhdprhgtphhtthhopehprhgr
- vhhinhdrmhdrsggrthhhihhjrgdruggvvhesghhmrghilhdrtghomhdprhgtphhtthhope
- gsohhrihhsrdhglhhimhgthhgvrhesuggvlhhlrdgtohhmpdhrtghpthhtohepshhtrggs
- lhgvseguphgukhdrohhrghdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
-X-ME-Proxy: <xmx:a-6ZaJT7VYDi1mLctltsG8MDXePHmgKVIWIKaXzRiX_HRLSTi3kA5g>
- <xmx:a-6ZaERAtK4HixiK-xgKU4uoW_Wx5eCpTNBLOFYXfK5DyYoL6rhmAA>
- <xmx:a-6ZaO4xQsBwalvcXWer0b096ujWdA49iTQtNnFR5ydGcYXPDRenvg>
- <xmx:a-6ZaA1wb8QnpyuwAg7Uxb2GbvZ0vlOnf34JqFDinuh2q8vwcPaN-A>
- <xmx:a-6ZaOTo2kI5A-4j9g3myaMJbcixxuGkbT0jaSucb6e2uy9Ip3n8Vl-n>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 11 Aug 2025 09:21:46 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Pravin M Bathija <pravin.bathija@dell.com>
-Cc: pravin.m.bathija.dev@gmail.com, boris.glimcher@dell.com, stable@dpdk.org, 
- dev@dpdk.org
-Subject: Re: [PATCH 0/3] PATCH 25.03.0: vhost_user: configure memory slots
-Date: Mon, 11 Aug 2025 15:21:45 +0200
-Message-ID: <2263105.NgBsaNRSFp@thomas>
-In-Reply-To: <20250808051305.2386231-1-pravin.bathija@dell.com>
-References: <20250808051305.2386231-1-pravin.bathija@dell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 425B840693;
+	Mon, 11 Aug 2025 15:43:07 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+ by mails.dpdk.org (Postfix) with ESMTP id E4514402AC
+ for <dev@dpdk.org>; Mon, 11 Aug 2025 15:43:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1754919787; x=1786455787;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=uARCxGFMmewwqkXRZVbUO51Q229M6ht/RH289bYs+gA=;
+ b=aLE4ZYlEn1geau3z7tF8oDGLomlIxdyPUkbk+aQG5nELb/yDJuUX5ZcR
+ e0lwlmqcvrCtaBO+Z882PyMUpyUijEgmmLoITdZ3ZE0UHnAS8FnSN/rGS
+ 87GujWPoR3olnkSPL3O7ABys6pPpQvqfT7LhQdZc57gKUaUzXyWILTjfQ
+ VEPYzkmpEYiSCrc66R331Mn8AZko6WRWdZzjf+AdCgiQABWNQC/zf0dtb
+ RuLtrYxGf62yy+u4vI//SAjLcWSFN6UALeYX0wWocBiZNK1fns3DkewAl
+ bTW1yDDkC/nhFT2HxaMD2xN6JGF22Bw0lkdnpExXPTm+ZXoXTUXYdXZne A==;
+X-CSE-ConnectionGUID: 2nZxARuqRzaKEyY2iBfDqg==
+X-CSE-MsgGUID: xOKF76EwTgiVfg12CH+9gg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57041878"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; d="scan'208";a="57041878"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+ by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Aug 2025 06:43:05 -0700
+X-CSE-ConnectionGUID: z+ElvKDpTq6UZM0twj+GcQ==
+X-CSE-MsgGUID: 3X0Zh4cSQXqhQdR2yndncA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; d="scan'208";a="171169004"
+Received: from silpixa00401176.ir.intel.com (HELO
+ silpixa00401176.ger.corp.intel.com) ([10.237.222.172])
+ by fmviesa004.fm.intel.com with ESMTP; 11 Aug 2025 06:43:04 -0700
+From: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+To: dev@dpdk.org
+Cc: bruce.richardson@intel.com,
+	anatoly.burakov@intel.com
+Subject: [PATCH v2 0/6] Enable DCB/PFC support for ICE PMD
+Date: Mon, 11 Aug 2025 13:42:55 +0000
+Message-ID: <20250811134301.459523-1-vladimir.medvedkin@intel.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250807122238.334177-1-vladimir.medvedkin@intel.com>
+References: <20250807122238.334177-1-vladimir.medvedkin@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -90,40 +61,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Welcome in DPDK community,
+This series introduces an initial implementation of DCB and PFC to the ICE PMD.
+This includes adding support for TCs in ice_aq_set_mac_cfg() and asymmetric DCB/PFC configuration in base code.
 
-Thank you for contributing.
-Please check this quick guide about our tools and process:
-	https://core.dpdk.org/contribute/
+Current implementation relies on current API and has a number of limitation and assumptions such as:
 
-There is a link to register to the dev mailing list
-so your future patches and replies won't be moderated.
-Note that you can disable receiving all list mails after registration
-if it is too much for your box.
+- Symmetric DCB configuration with respect to RX/TX, only dcb_rx_conf is used
+- All TCs are configured equally with respect to BW they share
+- No support for Low Latency TCs
+- All existing queues are split evenly across TCs. Number of queues must be power of 2 and be no less than configured nb_tcs
+- TX queues assigned to TCs the same way as RX queues
 
-More comments below.
+v2:
+ - fix spelling
+ - replace rte_memcpy with memcpy()
+ - fix endianness in several places
 
-08/08/2025 07:13, Pravin M Bathija:
-> add protocol feature support add and removal of memory
-> regions/slots dynamically.
-> this patch set has been tested with multiple instances of fio
-> connected via libblkio to spdk target backed unix domain socket.
-> please apply this this patch-set to dpdk mainline as well as
-> version 25.03.0.
+Vladimir Medvedkin (6):
+  net/ice/base: add utility functions
+  net/ice/base: make set MAC config TC aware
+  net/ice/base: add support for asymmetric PFC
+  net/ice: enable DCB support
+  net/ice: enable PFC support
+  net/ice: add PFC statistics
 
-We didn't plan to maintain a branch for 25.03.
-Do you think we should?
-The next LTS branch will be 25.11.
+ drivers/net/intel/ice/base/ice_common.c | 178 +++++++++---
+ drivers/net/intel/ice/base/ice_common.h |  12 +-
+ drivers/net/intel/ice/base/ice_dcb.c    |  96 +++++-
+ drivers/net/intel/ice/base/ice_dcb.h    |  16 +-
+ drivers/net/intel/ice/base/ice_type.h   |   2 +
+ drivers/net/intel/ice/ice_ethdev.c      | 370 +++++++++++++++++++++++-
+ drivers/net/intel/ice/ice_rxtx.c        |  21 ++
+ 7 files changed, 634 insertions(+), 61 deletions(-)
 
-
-> Pravin M Bathija (3):
->   mailmap: add user
-
-This patch can be squashed with the next one,
-but it is a detail which can be handled by the maintainer.
-
->   vhost_user: configure memory slots
->   vhost_user: support for memory regions
-
-
+-- 
+2.43.0
 
