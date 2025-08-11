@@ -2,38 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F066C87FDB
-	for <dpdk-dev@archiver.kernel.org>; Mon, 11 Aug 2025 10:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA99FC87FD2
+	for <dpdk-dev@archiver.kernel.org>; Mon, 11 Aug 2025 10:55:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2A42040DF6;
-	Mon, 11 Aug 2025 12:54:46 +0200 (CEST)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
- by mails.dpdk.org (Postfix) with ESMTP id 694FB40B8F
- for <dev@dpdk.org>; Mon, 11 Aug 2025 12:54:35 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.162.254])
- by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4c0rxC5fg1z14MQc;
- Mon, 11 Aug 2025 18:49:35 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 4E62018048D;
- Mon, 11 Aug 2025 18:54:34 +0800 (CST)
-Received: from localhost.localdomain (10.50.165.33) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 11 Aug 2025 18:54:33 +0800
-From: Chengwen Feng <fengchengwen@huawei.com>
-To: <thomas@monjalon.net>
-CC: <dev@dpdk.org>, <liuyonglong@huawei.com>
-Subject: [PATCH 9/9] app/dma-perf: refactor benchmark function
-Date: Mon, 11 Aug 2025 18:54:30 +0800
-Message-ID: <20250811105430.55791-10-fengchengwen@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250811105430.55791-1-fengchengwen@huawei.com>
-References: <20250811105430.55791-1-fengchengwen@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 6E54640B9D;
+	Mon, 11 Aug 2025 12:55:22 +0200 (CEST)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mails.dpdk.org (Postfix) with ESMTP id E430E40A80
+ for <dev@dpdk.org>; Mon, 11 Aug 2025 12:55:20 +0200 (CEST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3FACD2641;
+ Mon, 11 Aug 2025 03:55:12 -0700 (PDT)
+Received: from [192.168.50.107] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id
+ 6AFA93F63F; Mon, 11 Aug 2025 03:55:19 -0700 (PDT)
+Message-ID: <8e8bdfd7-f598-4174-8b97-efa03b1bcd24@arm.com>
+Date: Mon, 11 Aug 2025 11:55:18 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.50.165.33]
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dts: fix docstring typo in checksum suite
+Content-Language: en-GB
+To: Dean Marx <dmarx@iol.unh.edu>, probb@iol.unh.edu,
+ yoan.picchi@foss.arm.com, Honnappa.Nagarahalli@arm.com,
+ paul.szczepanek@arm.com
+Cc: dev@dpdk.org
+References: <20250722172214.202308-1-dmarx@iol.unh.edu>
+ <20250807153358.304262-1-dmarx@iol.unh.edu>
+From: Luca Vizzarro <Luca.Vizzarro@arm.com>
+In-Reply-To: <20250807153358.304262-1-dmarx@iol.unh.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -47,198 +45,6 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This commit refactor mem_copy_benchmark() function by splitting the
-data verification part into an independent function.
+It seems that you forgot to add the Reviewed-by tags.
 
-Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
----
- app/test-dma-perf/benchmark.c | 153 +++++++++++++++++++---------------
- 1 file changed, 84 insertions(+), 69 deletions(-)
-
-diff --git a/app/test-dma-perf/benchmark.c b/app/test-dma-perf/benchmark.c
-index 663f81ef5c..1145493152 100644
---- a/app/test-dma-perf/benchmark.c
-+++ b/app/test-dma-perf/benchmark.c
-@@ -669,27 +669,100 @@ attach_ext_buffer(struct vchan_dev_config *vchan_dev, struct lcore_params *lcore
- 	return 0;
- }
- 
-+static int
-+verify_data(struct test_configure *cfg, struct rte_mbuf **srcs, struct rte_mbuf **dsts,
-+	    uint32_t nr_buf)
-+{
-+	struct rte_mbuf **src_buf = NULL, **dst_buf = NULL;
-+	uint32_t nr_buf_pt = nr_buf / cfg->num_worker;
-+	struct vchan_dev_config *vchan_dev = NULL;
-+	unsigned int buf_size = cfg->buf_size.cur;
-+	uint32_t offset, work_idx, i, j;
-+
-+	for (work_idx = 0; work_idx < cfg->num_worker; work_idx++)  {
-+		vchan_dev = &cfg->dma_config[work_idx].vchan_dev;
-+		offset = nr_buf / cfg->num_worker * work_idx;
-+		src_buf = srcs + offset;
-+		dst_buf = dsts + offset;
-+
-+		if (vchan_dev->tdir == RTE_DMA_DIR_MEM_TO_MEM && !cfg->is_sg) {
-+			for (i = 0; i < nr_buf_pt; i++) {
-+				if (memcmp(rte_pktmbuf_mtod(src_buf[i], void *),
-+							    rte_pktmbuf_mtod(dst_buf[i], void *),
-+							    cfg->buf_size.cur) != 0) {
-+					printf("Copy validation fails for buffer number %d\n", i);
-+					return -1;
-+				}
-+			}
-+			continue;
-+		}
-+
-+		if (vchan_dev->tdir == RTE_DMA_DIR_MEM_TO_MEM && cfg->is_sg) {
-+			size_t src_remsz = buf_size % cfg->nb_src_sges;
-+			size_t dst_remsz = buf_size % cfg->nb_dst_sges;
-+			size_t src_sz = buf_size / cfg->nb_src_sges;
-+			size_t dst_sz = buf_size / cfg->nb_dst_sges;
-+			uint8_t src[buf_size], dst[buf_size];
-+			uint8_t *sbuf, *dbuf, *ptr;
-+
-+			for (i = 0; i < (nr_buf_pt / RTE_MAX(cfg->nb_src_sges, cfg->nb_dst_sges));
-+				i++) {
-+				sbuf = src;
-+				dbuf = dst;
-+				ptr = NULL;
-+
-+				for (j = 0; j < cfg->nb_src_sges; j++) {
-+					ptr = rte_pktmbuf_mtod(src_buf[i * cfg->nb_src_sges + j],
-+						uint8_t *);
-+					memcpy(sbuf, ptr, src_sz);
-+					sbuf += src_sz;
-+				}
-+				if (src_remsz)
-+					memcpy(sbuf, ptr + src_sz, src_remsz);
-+
-+				for (j = 0; j < cfg->nb_dst_sges; j++) {
-+					ptr = rte_pktmbuf_mtod(dst_buf[i * cfg->nb_dst_sges + j],
-+						uint8_t *);
-+					memcpy(dbuf, ptr, dst_sz);
-+					dbuf += dst_sz;
-+				}
-+				if (dst_remsz)
-+					memcpy(dbuf, ptr + dst_sz, dst_remsz);
-+
-+				if (memcmp(src, dst, buf_size) != 0) {
-+					printf("SG Copy validation fails for buffer number %d\n",
-+						i * cfg->nb_src_sges);
-+					return -1;
-+				}
-+			}
-+			continue;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- int
- mem_copy_benchmark(struct test_configure *cfg)
- {
--	uint32_t i, j, k;
--	uint32_t offset;
--	unsigned int lcore_id = 0;
- 	struct rte_mbuf **srcs = NULL, **dsts = NULL, **m = NULL;
- 	struct rte_dma_sge *src_sges = NULL, *dst_sges = NULL;
- 	struct vchan_dev_config *vchan_dev = NULL;
- 	struct lcore_dma_map_t *lcore_dma_map = NULL;
- 	unsigned int buf_size = cfg->buf_size.cur;
- 	uint16_t kick_batch = cfg->kick_batch.cur;
--	uint16_t nb_workers = cfg->num_worker;
- 	uint16_t test_secs = global_cfg.test_secs;
--	float memory = 0;
--	uint32_t avg_cycles = 0;
-+	uint16_t nb_workers = cfg->num_worker;
-+	uint32_t nr_sgsrc = 0, nr_sgdst = 0;
-+	float bandwidth, bandwidth_total;
-+	unsigned int lcore_id = 0;
- 	uint32_t avg_cycles_total;
-+	uint32_t avg_cycles = 0;
- 	float mops, mops_total;
--	float bandwidth, bandwidth_total;
--	uint32_t nr_sgsrc = 0, nr_sgdst = 0;
-+	float memory = 0;
- 	uint32_t nr_buf;
-+	uint32_t offset;
-+	uint32_t i, k;
- 	int ret = 0;
- 
- 	nr_buf = align_buffer_count(cfg, &nr_sgsrc, &nr_sgdst);
-@@ -781,67 +854,9 @@ mem_copy_benchmark(struct test_configure *cfg)
- 
- 	rte_eal_mp_wait_lcore();
- 
--	for (k = 0; k < nb_workers; k++) {
--		struct rte_mbuf **src_buf = NULL, **dst_buf = NULL;
--		uint32_t nr_buf_pt = nr_buf / nb_workers;
--		vchan_dev = &cfg->dma_config[k].vchan_dev;
--		offset = nr_buf / nb_workers * k;
--		src_buf = srcs + offset;
--		dst_buf = dsts + offset;
--
--		if (vchan_dev->tdir == RTE_DMA_DIR_MEM_TO_MEM && !cfg->is_sg) {
--			for (i = 0; i < nr_buf_pt; i++) {
--				if (memcmp(rte_pktmbuf_mtod(src_buf[i], void *),
--							    rte_pktmbuf_mtod(dst_buf[i], void *),
--							    cfg->buf_size.cur) != 0) {
--					printf("Copy validation fails for buffer number %d\n", i);
--					ret = -1;
--					goto out;
--				}
--			}
--		} else if (vchan_dev->tdir == RTE_DMA_DIR_MEM_TO_MEM && cfg->is_sg) {
--			size_t src_remsz = buf_size % cfg->nb_src_sges;
--			size_t dst_remsz = buf_size % cfg->nb_dst_sges;
--			size_t src_sz = buf_size / cfg->nb_src_sges;
--			size_t dst_sz = buf_size / cfg->nb_dst_sges;
--			uint8_t src[buf_size], dst[buf_size];
--			uint8_t *sbuf, *dbuf, *ptr;
--
--			for (i = 0; i < (nr_buf_pt / RTE_MAX(cfg->nb_src_sges, cfg->nb_dst_sges));
--			     i++) {
--				sbuf = src;
--				dbuf = dst;
--				ptr = NULL;
--
--				for (j = 0; j < cfg->nb_src_sges; j++) {
--					ptr = rte_pktmbuf_mtod(src_buf[i * cfg->nb_src_sges + j],
--							       uint8_t *);
--					memcpy(sbuf, ptr, src_sz);
--					sbuf += src_sz;
--				}
--
--				if (src_remsz)
--					memcpy(sbuf, ptr + src_sz, src_remsz);
--
--				for (j = 0; j < cfg->nb_dst_sges; j++) {
--					ptr = rte_pktmbuf_mtod(dst_buf[i * cfg->nb_dst_sges + j],
--							       uint8_t *);
--					memcpy(dbuf, ptr, dst_sz);
--					dbuf += dst_sz;
--				}
--
--				if (dst_remsz)
--					memcpy(dbuf, ptr + dst_sz, dst_remsz);
--
--				if (memcmp(src, dst, buf_size) != 0) {
--					printf("SG Copy validation fails for buffer number %d\n",
--							i * cfg->nb_src_sges);
--					ret = -1;
--					goto out;
--				}
--			}
--		}
--	}
-+	ret = verify_data(cfg, srcs, dsts, nr_buf);
-+	if (ret != 0)
-+		goto out;
- 
- 	mops_total = 0;
- 	bandwidth_total = 0;
--- 
-2.17.1
-
+Reviewed-by: Luca Vizzarro <luca.vizzarro@arm.com>
