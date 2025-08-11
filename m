@@ -2,72 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D89C87FD2
-	for <dpdk-dev@archiver.kernel.org>; Mon, 11 Aug 2025 12:56:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B58C87FD2
+	for <dpdk-dev@archiver.kernel.org>; Mon, 11 Aug 2025 13:01:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CEE3940DCA;
-	Mon, 11 Aug 2025 14:56:21 +0200 (CEST)
-Received: from fhigh-a2-smtp.messagingengine.com
- (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
- by mails.dpdk.org (Postfix) with ESMTP id C418C40DCA
- for <dev@dpdk.org>; Mon, 11 Aug 2025 14:56:19 +0200 (CEST)
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 3FF841400076;
- Mon, 11 Aug 2025 08:56:19 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-06.internal (MEProxy); Mon, 11 Aug 2025 08:56:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:content-transfer-encoding:content-type:content-type:date:date
- :from:from:in-reply-to:message-id:mime-version:reply-to:subject
- :subject:to:to; s=fm3; t=1754916979; x=1755003379; bh=FpoypPJu+a
- T+105yGnFI0e5QWI/7kRp4hOLPI85DTKA=; b=ZuIF7egmv5IGci9AaE9dU7SJYE
- YskVpv8xnsQBhWwnpKCO3B6AYd2TcL3sTo454tB8qLQU+BHDW9dzfmBQYH3BeEzW
- yxHrOWjKRJIujMn2y1ByUr7yDrWId7VXFnH0uottFcFNlalCUpYTTp8ZsfhWu6Kp
- Wluo9VDptCvnskGxwqmHYmfsOfdtUln98knbrc6P0fSRWeBhxX23/Ne88qTFzn3N
- WxbD4bQsQbLooovMbE7+PQZpFmu3EM+WbKvI+ZPeLYLBJ+pvzDTAky83XJ8nFcId
- UhIWtjs0SWrRkbWzUVq8knS3PJOWvN72AAszQs9bUPZYuyedJ+kQ5y3oVAog==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:content-transfer-encoding:content-type
- :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
- 1754916979; x=1755003379; bh=FpoypPJu+aT+105yGnFI0e5QWI/7kRp4hOL
- PI85DTKA=; b=EyMQnknuhL/dQIhCmXHiQRTXG8dc/WJzGICPH4DMrA+SVI4+Q+j
- 37Uae3oEMg0J+2gzmyik8g2RmRxj8VnkKAScyz9A/XFUgDUq0Gy020qxXIPdQGdc
- Iz2sX5aUvKVBvHUGPQrni41Y591AMq28vsX3eDbkUAgav790M/WNcCOo+H6KDjlH
- 4QzyFnczCLf8gZtA+MRdFte00PphdHrb5gaUh5QB+4iPaBgBSbdc3iGziorRp86Z
- Ghi4M858kwOjDIUTzv7c66Ui3CA3bK4wo2VxBqkQpzZRycgyDx7+UuuHKaCMaNVz
- Wb8Sr5P6TkMOGSkco5yRNxyuNX1zi8a9YsA==
-X-ME-Sender: <xms:c-iZaFFK4PL618bBg_xE5OMI7AVeDQhLSm9XQKlgT6_0eufkNSXv-Q>
- <xme:c-iZaFk3obV64jbL-DMugQzhkxe5ynLE6Ldedyh20zpp0OewvLi_2SgP7LLTamLe0
- 5uLHYIcAI0-gscCmg>
-X-ME-Received: <xmr:c-iZaHybCggve2PD4P1SXgihMcC7TEQxPmTTkrtJfftC4K67gScz7n0VArmBuueCq_yMumXq55jCt6iPvx5Gw9Xr0Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufedvheduucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucenucfjughrpefhvffufffkggfgtgesthfuredttddtje
- enucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhj
- rghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeehgedttefhtdetlefgvddvffefge
- ehhfefhfduffehleduudekkeeitdfhfeevgfenucffohhmrghinheplhhinhhugihfohhu
- nhgurghtihhonhdrohhrghdpughpughkrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
- enucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgv
- thdpnhgspghrtghpthhtohepuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepug
- gvvhesughpughkrdhorhhg
-X-ME-Proxy: <xmx:c-iZaBQHqE4A1gumkAtwinWC9-MfFpbZ9apujCFFGHi_67TtXsr-4g>
- <xmx:c-iZaKt8zLrRwGejJlfUIvFL0UwvtGKjXdZsUrH4OmfaOdFtPwWwwg>
- <xmx:c-iZaDus2xmsdvOhpoSPs_W_pucQAlOkcAGDNXStQlqwhGRBgGZUmw>
- <xmx:c-iZaAxEVBH8Hh_39haVio__j-OST_k56UwAnyuVkbd_92NA5DMLqg>
- <xmx:c-iZaFkbHq_eXrfnO97H2QV6cewEA7hh5Y8zNuJp49dY3VhBTsD9DnvP>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA for <dev@dpdk.org>; 
- Mon, 11 Aug 2025 08:56:18 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: dev@dpdk.org
-Subject: Minutes of DPDK Technical Board Meeting, 2025-07-23
-Date: Mon, 11 Aug 2025 14:56:17 +0200
-Message-ID: <2515820.jE0xQCEvom@thomas>
+	by mails.dpdk.org (Postfix) with ESMTP id D52FA40DCB;
+	Mon, 11 Aug 2025 15:01:51 +0200 (CEST)
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com
+ [209.85.221.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 65D154042E
+ for <dev@dpdk.org>; Mon, 11 Aug 2025 15:01:50 +0200 (CEST)
+Received: by mail-vk1-f169.google.com with SMTP id
+ 71dfb90a1353d-53987d78f0bso1025852e0c.2
+ for <dev@dpdk.org>; Mon, 11 Aug 2025 06:01:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1754917309;
+ x=1755522109; darn=dpdk.org; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=sBI/Cp8AuehsVB2bXamIwWB7XTEvmU0EoQZ+TCVJ+f4=;
+ b=bncQS8H4GCmtRzBhwzEBJWYtippbdOSGxL0a0awdyMf8sNNFG2spHaeaFk2Z3g6Rg7
+ Ww68jCav/UA5DCNRhvx/rV/JBAPHX24X2Y2kM8JGZLzLmSjdxKpo7u03b7cT7c32bDhD
+ CLfvjCoFXyg0hm9gY+TGQSUINvDKHeyorG/Zi79w9U9w2aGWAK4nETWFSDC0gxfFdUwu
+ hl03Hl2u0ve68BlGM0LKKa1H+bhxzMNyFyUTRFrokC86zwJOIBzgQwP7oSx0e4/Ei5ud
+ 6TN1q1Hx6YJV4P/q35dKhOPM6vc7RL7+i1DdIpJV3OcABASzW/kvvmaWyo13pIcSli68
+ 9wzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1754917309; x=1755522109;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=sBI/Cp8AuehsVB2bXamIwWB7XTEvmU0EoQZ+TCVJ+f4=;
+ b=Q9z6BHM4qPI+mH0Qnuk1Hpye34m9bqq1HHtBBVQbUDfzuookfbp2kM82FcCFDs2E/l
+ mMF5cuh0JSxg0KeBKOymWte+Eda96OauyZSA0/0XirMdtrVAtXkR9DPLBCJvb5+7/QDT
+ /PqxyFccxdFuEUmA5svtVBAVPgDMs8oKFRUxQQav4tSuVFyYJUpc+oAla+zcvP3H/N8d
+ 6pwdkYo4gVL1fuMQIB1ElxSgukFPglNENoik6yjmREGoeF6+7J/Cwq8+A7UEDZZWNgBM
+ tHO1RREgXaA2tuU0M+SgMPeiyaJN1KCLpIxiWMminDj71yokzd7A5LZChp449yEXCHcN
+ Mg1Q==
+X-Gm-Message-State: AOJu0Yw4V7LUQh2yQ9sN4Nh06l66ZsD2maq1GWzFEVgu7EhhgVK+4spp
+ A6rz4ON8waPcCzlH6x+5hTwJNA8qoWpFMwiIKFJ7K7MfA+7ww85pkOtiJ2LYMtx9DKr/lgCSAV7
+ m46iFC6Whhvd6ETx4WnpE20kVhKfPYplZ6grGuSxpRg==
+X-Gm-Gg: ASbGnctpj5p67kBMfjWzUi39DmavdjtcpX6O5cX8HwOtdBz9uIS/UfeAJPCvuMJT84t
+ gny7xGCH65ARClr67mMCDuW/EXQxDsfIUoTj56b/Yjx7oH9l5nKraeYxR2Q4QfWObd9SEEz9XIc
+ ICpRS6aMWpC4sV9OXDLZR1LR6ZuIUOuStYQK9oHeTgjDqTV9E44kB1N2Si2YdxuZImh1JTAMZ1r
+ uon
+X-Google-Smtp-Source: AGHT+IHCzxNIIbyAObf76fKyQhJ9xXZEl3dd+geWk9J7MRHr23FJy3X7IVvJDghtmcL+NbaUB3nQy6eL8tmM8y4GXOo=
+X-Received: by 2002:a05:6122:8297:b0:539:1154:d12d with SMTP id
+ 71dfb90a1353d-53a52eb0287mr4119149e0c.8.1754917297800; Mon, 11 Aug 2025
+ 06:01:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+References: <20250721105522.1019515-1-14pwcse1224@uetpeshawar.edu.pk>
+ <aJnoXIl_2iNqStfC@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <aJnoXIl_2iNqStfC@bricha3-mobl1.ger.corp.intel.com>
+From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+Date: Mon, 11 Aug 2025 18:01:26 +0500
+X-Gm-Features: Ac12FXw-VpT-KfB851m0Jh_ahr1NzTeuXSNfXfWMsUVkoS2G_A3_lzxlSRD8epI
+Message-ID: <CA++2-x4wS_A5Y1FhNUz1Ms6jArZb14Lh1hr614AmT8CDGQFwag@mail.gmail.com>
+Subject: Re: [PATCH] net/ice: fix segfault in secondary process by validating
+ dev_private pointer
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, anatoly.burakov@intel.com, stable@dpdk.org
+Content-Type: multipart/alternative; boundary="000000000000256864063c168627"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,51 +75,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Members Attending: 5/11
-	- Aaron Conole
-	- Bruce Richardson
-	- Jerin Jacob
-	- Stephen Hemminger
-	- Thomas Monjalon (Chair)
+--000000000000256864063c168627
+Content-Type: text/plain; charset="UTF-8"
 
-NOTE: The Technical Board meetings take place every second Wednesday at 3 pm UTC
-on https://zoom-lfx.platform.linuxfoundation.org/meeting/96459488340?password=d808f1f6-0a28-4165-929e-5a5bcae7efeb
-Meetings are public, and DPDK community members are welcome to attend.
-Agenda and minutes can be found at http://core.dpdk.org/techboard/minutes
-The next meeting will happen on September 3.
+Hi Bruce,
+Thank you for the feedback. We will later see if anything can be done
+at this point.
+
+I think that this can be solved by the following patch, please check.
+https://patches.dpdk.org/project/dpdk/patch/20250804113322.53650-1-14pwcse1224@uetpeshawar.edu.pk/
 
 
-1/ Socket and NUMA node IDs
+Thanks & Regards,
+Khadem
 
-Sometimes it is defined as a signed type, sometimes as an unsigned type.
-The value -1 (SOCKET_ID_ANY) means any socket/node.
-We could use a typedef to ensure consistency.
-If an unsigned type is defined, we need to explicitly cast -1 value.
+--000000000000256864063c168627
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Defining a type would be an API breaking change but not too big,
-so it could be acceptable in 25.11.
+<div dir=3D"ltr"><div dir=3D"ltr"><div>Hi Bruce,=C2=A0</div><div>Thank you =
+for the feedback. We will later see if anything can=C2=A0be done at=C2=A0th=
+is point.=C2=A0</div><div><br></div><div>I think that this can be solved by=
+ the following patch, please check.=C2=A0 =C2=A0</div><div><a href=3D"https=
+://patches.dpdk.org/project/dpdk/patch/20250804113322.53650-1-14pwcse1224@u=
+etpeshawar.edu.pk/">https://patches.dpdk.org/project/dpdk/patch/20250804113=
+322.53650-1-14pwcse1224@uetpeshawar.edu.pk/</a></div></div><br><div><br></d=
+iv><div>Thanks &amp; Regards,=C2=A0</div><div>Khadem=C2=A0</div></div>
 
-
-2/ DTS maintainers
-
-Paul Szczepanek (Arm) is replaced by Luca Vizzarro (Arm)
-
-
-3/ DPDK Summit
-
-Cancellation of September Summit (California) has been announced.
-https://mails.dpdk.org/archives/announce/2025-July/000536.html
-
-
-4/ AI review bots
-
-Grout repository on GitHub is already testing 2 bots (CodeRabbit and Sourcery).
-
-For the DPDK repository, we must open a GitHub pull request for each patch series received on the mailing list.
-The the review link would be published in patchwork as a test result.
-
-We must guess the branch to use, by using the same script as for patchwork delegation.
-We must check that the free versions of the AI bots accept using multiple branches.
-We must decide whether to use the OVS robot account or the main DPDK account.
-
-
+--000000000000256864063c168627--
