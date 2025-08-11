@@ -2,66 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B58C87FD2
-	for <dpdk-dev@archiver.kernel.org>; Mon, 11 Aug 2025 13:01:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D99A7C87FDB
+	for <dpdk-dev@archiver.kernel.org>; Mon, 11 Aug 2025 13:05:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D52FA40DCB;
-	Mon, 11 Aug 2025 15:01:51 +0200 (CEST)
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com
- [209.85.221.169])
- by mails.dpdk.org (Postfix) with ESMTP id 65D154042E
- for <dev@dpdk.org>; Mon, 11 Aug 2025 15:01:50 +0200 (CEST)
-Received: by mail-vk1-f169.google.com with SMTP id
- 71dfb90a1353d-53987d78f0bso1025852e0c.2
- for <dev@dpdk.org>; Mon, 11 Aug 2025 06:01:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1754917309;
- x=1755522109; darn=dpdk.org; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=sBI/Cp8AuehsVB2bXamIwWB7XTEvmU0EoQZ+TCVJ+f4=;
- b=bncQS8H4GCmtRzBhwzEBJWYtippbdOSGxL0a0awdyMf8sNNFG2spHaeaFk2Z3g6Rg7
- Ww68jCav/UA5DCNRhvx/rV/JBAPHX24X2Y2kM8JGZLzLmSjdxKpo7u03b7cT7c32bDhD
- CLfvjCoFXyg0hm9gY+TGQSUINvDKHeyorG/Zi79w9U9w2aGWAK4nETWFSDC0gxfFdUwu
- hl03Hl2u0ve68BlGM0LKKa1H+bhxzMNyFyUTRFrokC86zwJOIBzgQwP7oSx0e4/Ei5ud
- 6TN1q1Hx6YJV4P/q35dKhOPM6vc7RL7+i1DdIpJV3OcABASzW/kvvmaWyo13pIcSli68
- 9wzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1754917309; x=1755522109;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=sBI/Cp8AuehsVB2bXamIwWB7XTEvmU0EoQZ+TCVJ+f4=;
- b=Q9z6BHM4qPI+mH0Qnuk1Hpye34m9bqq1HHtBBVQbUDfzuookfbp2kM82FcCFDs2E/l
- mMF5cuh0JSxg0KeBKOymWte+Eda96OauyZSA0/0XirMdtrVAtXkR9DPLBCJvb5+7/QDT
- /PqxyFccxdFuEUmA5svtVBAVPgDMs8oKFRUxQQav4tSuVFyYJUpc+oAla+zcvP3H/N8d
- 6pwdkYo4gVL1fuMQIB1ElxSgukFPglNENoik6yjmREGoeF6+7J/Cwq8+A7UEDZZWNgBM
- tHO1RREgXaA2tuU0M+SgMPeiyaJN1KCLpIxiWMminDj71yokzd7A5LZChp449yEXCHcN
- Mg1Q==
-X-Gm-Message-State: AOJu0Yw4V7LUQh2yQ9sN4Nh06l66ZsD2maq1GWzFEVgu7EhhgVK+4spp
- A6rz4ON8waPcCzlH6x+5hTwJNA8qoWpFMwiIKFJ7K7MfA+7ww85pkOtiJ2LYMtx9DKr/lgCSAV7
- m46iFC6Whhvd6ETx4WnpE20kVhKfPYplZ6grGuSxpRg==
-X-Gm-Gg: ASbGnctpj5p67kBMfjWzUi39DmavdjtcpX6O5cX8HwOtdBz9uIS/UfeAJPCvuMJT84t
- gny7xGCH65ARClr67mMCDuW/EXQxDsfIUoTj56b/Yjx7oH9l5nKraeYxR2Q4QfWObd9SEEz9XIc
- ICpRS6aMWpC4sV9OXDLZR1LR6ZuIUOuStYQK9oHeTgjDqTV9E44kB1N2Si2YdxuZImh1JTAMZ1r
- uon
-X-Google-Smtp-Source: AGHT+IHCzxNIIbyAObf76fKyQhJ9xXZEl3dd+geWk9J7MRHr23FJy3X7IVvJDghtmcL+NbaUB3nQy6eL8tmM8y4GXOo=
-X-Received: by 2002:a05:6122:8297:b0:539:1154:d12d with SMTP id
- 71dfb90a1353d-53a52eb0287mr4119149e0c.8.1754917297800; Mon, 11 Aug 2025
- 06:01:37 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 26EBF402AC;
+	Mon, 11 Aug 2025 15:05:24 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 8722D40C35
+ for <dev@dpdk.org>; Mon, 11 Aug 2025 15:05:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1754917522;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=CZLV7Jg0zqZbONlqQbPhw7bHpyB6UH6NESTL++c+zos=;
+ b=L2Cf2gZ9Iiu/9ywf2pvdfpxNiE7b59jpJl4dJUCvu5nlkdgFz7ZVLdN93vt3Zj4Rv412Rk
+ IBl9okeVg8G/kZFlKFT3WKFw2Joig3O5McWDbWpYPbICGzT0P11ibP/uBgFrQoqiv3Junw
+ h0x9Qrl7k3x7QGdwxRTwq2LhqY3j3Tk=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-584-LAGiK0WRPkarYIjDQ-pDXA-1; Mon,
+ 11 Aug 2025 09:05:19 -0400
+X-MC-Unique: LAGiK0WRPkarYIjDQ-pDXA-1
+X-Mimecast-MFC-AGG-ID: LAGiK0WRPkarYIjDQ-pDXA_1754917518
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id F10A818002D6; Mon, 11 Aug 2025 13:05:17 +0000 (UTC)
+Received: from RHTRH0061144 (unknown [10.22.81.155])
+ by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 3157519560AD; Mon, 11 Aug 2025 13:05:16 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: dev@dpdk.org, techboard@dpdk.org
+Subject: Meeting Minutes - Mar. 19, 2025
+User-Agent: Gnus/5.13 (Gnus v5.13)
+Date: Mon, 11 Aug 2025 09:05:15 -0400
+Message-ID: <f7t4iueuhys.fsf@redhat.com>
 MIME-Version: 1.0
-References: <20250721105522.1019515-1-14pwcse1224@uetpeshawar.edu.pk>
- <aJnoXIl_2iNqStfC@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <aJnoXIl_2iNqStfC@bricha3-mobl1.ger.corp.intel.com>
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Date: Mon, 11 Aug 2025 18:01:26 +0500
-X-Gm-Features: Ac12FXw-VpT-KfB851m0Jh_ahr1NzTeuXSNfXfWMsUVkoS2G_A3_lzxlSRD8epI
-Message-ID: <CA++2-x4wS_A5Y1FhNUz1Ms6jArZb14Lh1hr614AmT8CDGQFwag@mail.gmail.com>
-Subject: Re: [PATCH] net/ice: fix segfault in secondary process by validating
- dev_private pointer
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, anatoly.burakov@intel.com, stable@dpdk.org
-Content-Type: multipart/alternative; boundary="000000000000256864063c168627"
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 8sP3BLOEG6w-Yd1RGZCCKt0g1DAKxuw3zTMRxUxb2HI_1754917518
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -75,31 +63,66 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000256864063c168627
-Content-Type: text/plain; charset="UTF-8"
 
-Hi Bruce,
-Thank you for the feedback. We will later see if anything can be done
-at this point.
+Attendees:
+- Aaron Conole
+- Bruce Richardson
+- Honnappa Nagarahalli
+- Maxime Coquelin
+- Morten Br=C3=B8rup
+- Thomas Monjalon
 
-I think that this can be solved by the following patch, please check.
-https://patches.dpdk.org/project/dpdk/patch/20250804113322.53650-1-14pwcse1224@uetpeshawar.edu.pk/
+1. Board initiatives follow up
+ - Cloud, AI, security initiatives
+ - No discussion on this topic.
 
+2. Gov board
+ - any proposals for following up (meeting on Mar. 20, Q1 sync)
+ - Requested an update on DTS developer progress (Morten provided)
+ - Maxime still has outstanding request to Gov Board about linux header
+   file inclusion for UAPI (Nathan to share with Maxime)
+ - Anyone else reach out to Nathan if there are initiatives
 
-Thanks & Regards,
-Khadem
+3. Code challenge
+ - Thomas created a google sheet as a starting point for discussions,
+   tech board
+ - Approval from Gov Board / Mkt for $$ to be associated with this as
+   some kind of prize/reward/incentive?
+   - Prizes of some kind are needed to generate interest
+   - How to determine prize?  Dates?  Can travel be part of it?
+ - Tech board to vote on preferences for projects
+ - Tech board then will need to pick / propose / prioritize topics based
+   on the preferences
+ - Reach out to universities about topics
+ - Mentorship sign up for topics and for general mentorship
+ - Format is fine, but concern is about mentorship and who will be able
+   to volunteer
+ - Bring up to Governing board
+   1. Explain the current status
+   2. Explain the topics and what we are proposing
+   3. Ask for assistance with getting mentors
 
---000000000000256864063c168627
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+4. Contribution policy
+ - Feedback
+   - Mailing list being write-only may not change even with this
+     proposal
+   - Patch mailing list is really just a CI mailing list at this point
+ - Waiting before re-posting as PATCH
+ - Concern about how the CI usage will be affected, may not accomplish
+   goals (circular feedback loop)
+ - Maybe need to post with ominous name
 
-<div dir=3D"ltr"><div dir=3D"ltr"><div>Hi Bruce,=C2=A0</div><div>Thank you =
-for the feedback. We will later see if anything can=C2=A0be done at=C2=A0th=
-is point.=C2=A0</div><div><br></div><div>I think that this can be solved by=
- the following patch, please check.=C2=A0 =C2=A0</div><div><a href=3D"https=
-://patches.dpdk.org/project/dpdk/patch/20250804113322.53650-1-14pwcse1224@u=
-etpeshawar.edu.pk/">https://patches.dpdk.org/project/dpdk/patch/20250804113=
-322.53650-1-14pwcse1224@uetpeshawar.edu.pk/</a></div></div><br><div><br></d=
-iv><div>Thanks &amp; Regards,=C2=A0</div><div>Khadem=C2=A0</div></div>
+5. Grout testing at UNH
+ - Ask Patrick to discuss in email on tech board on the current status
+   - Aaron to send
+ - To be discussed next meeting
 
---000000000000256864063c168627--
+6. Prague Update
+ - Swag, restaurant arrangements for joint sessions
+ - Tech board to send in reimbursement requests now
+ - Schedule being online?  DPDK events page and prague pages are giving
+   Error 404
+
+Next meeting: 02 April, 2025
+Chair: Bruce Richardson
+
