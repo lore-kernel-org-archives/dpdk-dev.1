@@ -2,139 +2,162 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C2ABC87FD2
-	for <dpdk-dev@archiver.kernel.org>; Mon, 11 Aug 2025 13:44:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C666AC87FDB
+	for <dpdk-dev@archiver.kernel.org>; Mon, 11 Aug 2025 14:02:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6326E40DDC;
-	Mon, 11 Aug 2025 15:44:06 +0200 (CEST)
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com
- (mail-mw2nam10on2054.outbound.protection.outlook.com [40.107.94.54])
- by mails.dpdk.org (Postfix) with ESMTP id 71E94402AC;
- Mon, 11 Aug 2025 15:44:04 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B43E0402AC;
+	Mon, 11 Aug 2025 16:02:17 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+ by mails.dpdk.org (Postfix) with ESMTP id A31BD402AC
+ for <dev@dpdk.org>; Mon, 11 Aug 2025 16:02:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1754920936; x=1786456936;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=dQLFuIgskPtp6a7G0L/ltJOeA/ck3E37TRyo8wBZ7qA=;
+ b=AhNvsVVuL9qPGO63i4mKflk/j8choACm5qR8qh2U+IMONXYe16lzxRXq
+ tQV+TcsmCcqbrkqCKi0f+HSBmO4DLu/X7EftcQJKhmRlZDvaWLQrWGVlF
+ XOjazBPoNgRi5TuH4kU4hAArp8zhGxx7QMxM3FJgqZdNXg9ayHIveJ/pK
+ /81DkgCrbGlZHNIHLochIGqD8Ez/H6JvHw7MmFSuTZoZPN8AcUmHXRgGx
+ 3rbPwOsZ75pJl5QxpbKZym1GeNzkVycJAU/mlBUlZJb/l2nfN6wOAveLn
+ T4E7UINIreBPqv4HHP6JTPwPRJz2Byo1v/OTQRZ/Zk6W+UMw9uHbALi4a g==;
+X-CSE-ConnectionGUID: YTPiNRPoSZyQvjHrZk9RMQ==
+X-CSE-MsgGUID: aFnqToVEQW6gMmwwfAMgJg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57078912"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; d="scan'208";a="57078912"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+ by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Aug 2025 07:02:14 -0700
+X-CSE-ConnectionGUID: KP1Np9dXTQ+tRT2rAMDcNg==
+X-CSE-MsgGUID: P4c4qdEhS0+QVpEBhCHO/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; d="scan'208";a="165822549"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+ by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Aug 2025 07:02:14 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Mon, 11 Aug 2025 07:02:14 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Mon, 11 Aug 2025 07:02:14 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.66)
+ by edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Mon, 11 Aug 2025 07:02:13 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AA574Yn0b6u/0yUBM/mcGEA67ypeg2TmzxP1BBMCep8jMkLN/c0CUAE2NJdSvSkZKwsyIc1VF4Qfiq1h7PZOFtOu71bA5jbv/7tl+0m/05u3GdBSu0gV0ElmGW0K5J995isyX4+JcuxAEZ/DmvDYNEMIoSgMOr4H9HfCIV7h+T7v2X9Ybo3vuAHam9/O/2MiqrAJNSJHWMCQ2YGTu2yWnHLQgBAHYFo5Vl93FPvFhiimELUeCreW+jzwHXXrwxJpgNbAX1HttNQnf+XJfv660JbGScNmhTYPkYZkGYMx4SJwuB3CIq1OAI2a2/y4AUTX8vhx/LuZs4Lr4xH5ge3C6Q==
+ b=U3rFkZhdRe1gL6nCHvxy4EjYL7b6rAGF8+8wpj2YDJfzfww2m8A+5SB3lFOSB6feld9HmuhKH31qG/teOQ1VFC3FFka13AgKN/6ReOuEA8b6+XBrPZHf2QbC/EyeqEX4pNjheKWoRqLGFKOV3oHtZHG/KVZBs+e90aJMAUK8+mK7ZJEYlj+A+wlQaLdfxb3K01gURM/hS8oGzygxUceU+0PN0Azw0keRmtr0vBj5ZmZchZxQtGMN0Xly3xkC+aOX74vMkIoZhWV/LqvL+Bp2o4HSUZhLMKF78sW5SrdtKPdkJKQv8ek+hnYhB8F+G1mGsM5hm2lbGnMY1GeyyzHGCw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kftsUck3qFAw+TjO49/urx2A21mCocGvnlx+XEuGbaY=;
- b=vGnI4CizmZ+nMwIGHpnflQm02p5Yc/bfQus4eDW/SQVLM52NbtAr29ZXVtYR3p8+PWIrtQsFs6eXebbsd/9LfcP8AP9abbolVH+Gzq/HfXBjIr67FCsUaq5hc6x25eRJcljGQKlVmc+R7rx3/4RIrGUKk8CWhcieBWxLz6CbhPmKOkReobtECuWE4Gc1jcF2hpY1RWeC88wLNxi3RcKWo/A1R1Jbrp+VZkMUe88ctZ6ykUBrvsb7Jra4IIjbViSWdHRV/XHNqrVW0A5W2Nh32hDg2N/P3rYyEv4CyP36F6x9k9Nw3oax0Cw1YRtuFl3M7aJQFVP5SnVO1QBBqvmWRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kftsUck3qFAw+TjO49/urx2A21mCocGvnlx+XEuGbaY=;
- b=Xzu6HPd1QrM5ZzigBZNuj8MjCGu4uJlK30w3UzAt+jmh8EWpSMWyGQNu6Bq3LXY36oqToyFoIiPQ8KmN2I4Kn9nrN029V5JyV4jqEx6+ZQ42h9mXDTDY130xnCrDWVuUlmlQhJcR0Xd356lM49zX7skUCXD490MDlWqkw91Meq1atzxAjZiw6nTO1lxfuEqtlWmqN3Hu06F4uGGYJMbjr8jozjSza0ICFnJXiWA9fMD2lx7nyh+35vPC8brl8zgLW2bCI4qYoV6RFNs5ntjuVuHSnhuociEjozqOEfXt0rYUjK7sHWPzI/dj8RHyQlmozFo0tqYF0pAdWCMj/yrsEw==
-Received: from CH3P221CA0001.NAMP221.PROD.OUTLOOK.COM (2603:10b6:610:1e7::11)
- by CY5PR12MB6600.namprd12.prod.outlook.com (2603:10b6:930:40::13)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.16; Mon, 11 Aug
- 2025 13:44:00 +0000
-Received: from CH1PEPF0000A345.namprd04.prod.outlook.com
- (2603:10b6:610:1e7:cafe::40) by CH3P221CA0001.outlook.office365.com
- (2603:10b6:610:1e7::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.21 via Frontend Transport; Mon,
- 11 Aug 2025 13:44:00 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CH1PEPF0000A345.mail.protection.outlook.com (10.167.244.8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9031.11 via Frontend Transport; Mon, 11 Aug 2025 13:43:59 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 11 Aug
- 2025 06:43:41 -0700
-Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 11 Aug
- 2025 06:43:35 -0700
-From: Xueming Li <xuemingl@nvidia.com>
-To: <stable@dpdk.org>
-CC: <dev@dpdk.org>, Abhishek Marathe <Abhishek.Marathe@microsoft.com>, "Ali
- Alnubani" <alialnu@nvidia.com>, David Christensen <drc@linux.vnet.ibm.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>, Ian Stokes <ian.stokes@intel.com>,
- Jerin Jacob <jerinj@marvell.com>, John McNamara <john.mcnamara@intel.com>,
- Ju-Hyoung Lee <juhlee@microsoft.com>, Kevin Traynor <ktraynor@redhat.com>,
- Luca Boccassi <bluca@debian.org>, Pei Zhang <pezhang@redhat.com>, "Raslan
- Darawsheh" <rasland@nvidia.com>, Thomas Monjalon <thomas@monjalon.net>,
- Yanghang Liu <yanghliu@redhat.com>, <benjamin.walker@intel.com>,
- <qian.q.xu@intel.com>, <yuan.peng@intel.com>, <zhaoyan.chen@intel.com>
-Subject: 23.11.5 patches review and test
-Date: Mon, 11 Aug 2025 21:42:19 +0800
-Message-ID: <20250811134220.45579-1-xuemingl@nvidia.com>
-X-Mailer: git-send-email 2.34.1
+ bh=MRdOHFkebpQXqfwGYSJ9mmHgrgrrLsw/jKKs0a6hLYw=;
+ b=Hw6C6257z1jtBznsdsJPoZZC6qQ96MjYKcuWOhcVhLXFUtTgJm+vLKRmgohrBVsLXrtrlMv5Lr8YjcD5odyB9I2GrCRw8AFMcqQDISCd+KBVtD/YSsL7iCA4biLGyOBVsFiyvWDyb96UTNDkONLKBUlrqk8SYSPL+1mrapmYnSAy3bS1LThxSLD76FCKe3Edh7J4b5GVqDWglPmnFQkp9y2fv8CtmyMX4nFpOjEBpTkduQuQXRxpKQOkdBqssYxwe+E/OOuXrVb5TzbQVO8pj9N1lkpBh21u9V0YefkeFMPqOJk2u4ZZ961uB8deQVq/PVzvWsEvFWiAw02/hjSeZw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by PH8PR11MB7069.namprd11.prod.outlook.com (2603:10b6:510:217::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Mon, 11 Aug
+ 2025 14:02:11 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9009.018; Mon, 11 Aug 2025
+ 14:02:11 +0000
+Date: Mon, 11 Aug 2025 15:02:06 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+CC: <dev@dpdk.org>, <anatoly.burakov@intel.com>
+Subject: Re: [PATCH v2 1/6] net/ice/base: add utility functions
+Message-ID: <aJn33kGcl2dfTMDe@bricha3-mobl1.ger.corp.intel.com>
+References: <20250807122238.334177-1-vladimir.medvedkin@intel.com>
+ <20250811134301.459523-1-vladimir.medvedkin@intel.com>
+ <20250811134301.459523-2-vladimir.medvedkin@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250811134301.459523-2-vladimir.medvedkin@intel.com>
+X-ClientProxiedBy: DB9PR05CA0004.eurprd05.prod.outlook.com
+ (2603:10a6:10:1da::9) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.126.231.35]
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000A345:EE_|CY5PR12MB6600:EE_
-X-MS-Office365-Filtering-Correlation-Id: 49ad3c0f-b06c-4ba9-aaf3-08ddd8dd2081
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|PH8PR11MB7069:EE_
+X-MS-Office365-Filtering-Correlation-Id: 43754ebe-0901-4bd0-b080-08ddd8dfaa92
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700013|376014|7416014|82310400026|1800799024; 
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?Q1VGa2FBVytUeFdyMGdub2M1MmR3VjVkbS9ZOVc2bkdzTkVRUXVEVGtvWHh3?=
- =?utf-8?B?ZTVXVG1QRGt2TEduREh4eHVvQ2lSaHFyT2NER2RvaENGY2VuMDZ1eHduQUkr?=
- =?utf-8?B?VCtZM0RvdFVtOU4yREZzRU1tUWpmRUpaTURvVDhMVC8wZkYrcnhnUlZtT1ll?=
- =?utf-8?B?K3UxKzB1MTB3R3JWRzV6aUtBV1BCZFdjdlJCQkw0UUlIcGdZM0d6MlpaNTJC?=
- =?utf-8?B?Yno0Y3hHL05Zd3hqZHhnaFlKQWI4Q2tZdHptd1hGaHducndmb0kzeVhweWNW?=
- =?utf-8?B?RE15ck5PckZHSWZsZlI1U0pXL21wMHNNazdQZTY2MHQza1p4V096TG5ESEVr?=
- =?utf-8?B?MzQ5NEZVanpjNlArd2hXUFoxM2xKaEpqQnM0Zmg5OWw4T2lENU8vaWZVdFpB?=
- =?utf-8?B?M1ZydlYwUERIM25xb2ZKVFpnMGVWQnJTKzQwbWRickUwdXEvZHJBVHZqYVlE?=
- =?utf-8?B?SjVxdEYrYlBJQnhqTXN1alFpRUdmc0s1MHI0WGhpcnZtZTd1ZnBvT1NlUGRD?=
- =?utf-8?B?TGxBbjYvRlRHSVVtVi9iWWhZaXFKMHlmWi9TR0p1YlhTT0U5Q2psYkdnT01H?=
- =?utf-8?B?cjBrN2duMjBabVlEZnNWakFjTEdhRHk2WHlWTUVmQkN3OFd0eVJBNUJKZGgx?=
- =?utf-8?B?MjNqYS9JZUh3Vi84bGRYVElTTWs1YXN2cUw3OUJxOENreVVCZzFORmNHM2V1?=
- =?utf-8?B?WVhFcHo4L1hBUXhMV3BOb3R5Z08ybW5rUUVScHk2bUNzZDRwQ09rNDJERnV0?=
- =?utf-8?B?NE82Z3RVN3ROMytvVHFXOURTVkNWT2FpOGZVQ2J1VndFTlNhaGJoUXBTUFZE?=
- =?utf-8?B?MVZPUURTUlVuVHlvZFA1cGI3czZjMkc3N3BvN1VzOWxGS3BQTHpGSG9EQ0pz?=
- =?utf-8?B?b2V0MHdSakQycXRQVi9Xd2pZOHF2Z255WldOL0pSSjNLSDY0Y09KODRUbGwy?=
- =?utf-8?B?MWliL0NWeHZTWUhJTjVXZGxkcnRBUjVUYk5XMzd0M25zMDdDWHpKa1F6azlj?=
- =?utf-8?B?ZUZyaHF2aTRMc2R5TGI1Vm5SQXJyL3d5eWg0d2RDL3RVYWVpVHcrNzFmT0d4?=
- =?utf-8?B?S2xqL2hnZ0Y1bGFjQnBESXR4eTBjOVJMWnBhOElBZytaUWpkRzIxaDFxYm1h?=
- =?utf-8?B?WWZOVEY2bGozdmtUUmhOcmh0WnZrQVdWa1lJL1kvVEFxUlp1bEtqcnRHV0pM?=
- =?utf-8?B?REN0cDBDYnV6V0hUN3N0NEFvVnQ2Zm1zbHNKekxPMngrUjFBQmhLNU4zWFIx?=
- =?utf-8?B?Q3dvTTI3ZmVPS2Rod01PNC9vZlFlNURreVVhdXhLaGJyZnNGTU5pMHhTcER0?=
- =?utf-8?B?QVdpQk4rTmhmTjdQVHZYdUdWaUZPMzByTW95UHNVNkdVS0QvMlNWbjZNM1M1?=
- =?utf-8?B?cHEyMEQwcnZVUUZQbVJpZ3dnTTFJZC96ZEUybjErQW9mZWtDTGpQUHhnYXFl?=
- =?utf-8?B?MkdSWGlyY05XUS9FeDEydWcrS3pYZkdmaUI1T0ZzY0p6VWxZT1VNeVN2djkz?=
- =?utf-8?B?WUtxVVpDSmR6L2tyZVRnTTBrZUpOTFRjV2dpV2p3Q3JZMDB2TnF3ZTFUVG1P?=
- =?utf-8?B?UW9KM2Z1UlFBMVp6KzlqQVJwWDJaM0VUZUNZaHRWdnYrbVdBYkplUEcvYlpW?=
- =?utf-8?B?ZWcvMGxvaldDazdydlUwNGdmN0x4WVdETXB3M0ROazc0T1RhbCtGSDdlQ1lp?=
- =?utf-8?B?K1RNRFFZUmlQSHc1c3cyeWhVbU5Da3c5QVB6Sk03NUF5TmppbHdTeHkxbzM4?=
- =?utf-8?B?aHZGNHM4Mkt3VFdRdUtJVWVFUUJlMUlKT3hDajZsdk1rM0ZDL2tSU0tBaVVL?=
- =?utf-8?B?K1VrdHFUcWpsUEd6WXRwa3VrRzA0eTJVMWhiUFBiZlJ5MUlWSWFYbFBKL3l0?=
- =?utf-8?B?cUh5NVIzZlE3T2NmUzBueDdGRkc3SCtUNVZoWTRxcjAyNlhybVhYdEYrQ3VR?=
- =?utf-8?B?RTlPaEtpN0ZKSGlmKy80VXU3WTZaOFNKRExuTi9pSVk5NHdDQjhuNzl3Q01y?=
- =?utf-8?B?czM0VUpPZXk5TmpFcGlXZ0ttTndiQWlxaHRpVFV0aFR1T2J6czZSVXZ3RjZQ?=
- =?utf-8?Q?zvL/a+?=
-X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(36860700013)(376014)(7416014)(82310400026)(1800799024); DIR:OUT;
- SFP:1101; 
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 13:43:59.9556 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 49ad3c0f-b06c-4ba9-aaf3-08ddd8dd2081
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CH1PEPF0000A345.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6600
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?lEUyEQe6VfneXeFF1+QqmaC8w7YWWa0Oglr36oo5KO7c/WVxI+ERscPHP4sb?=
+ =?us-ascii?Q?lCgpgXG/0Qt9zKmjaQT8Rmc9ddlRw+hqGs//CYsGtYgqegfeVRYJPfcYHjxe?=
+ =?us-ascii?Q?QXoYMLqNoawhUwp5zIt+idGjgR5VSsbI8uLJ5YIBLJgNWM4bOyP8oX3/JAr5?=
+ =?us-ascii?Q?Kq1w8JK7YPX54dmFESb49QGkOtB3+RJw/HYKB+iLukI2wHoSwrwBrn/iLy9k?=
+ =?us-ascii?Q?6YA12ufDQQhNN9zSCvQMrnSeYgOXr40EMouSe0Iegt/pPFRv4gBeLSmaKIwN?=
+ =?us-ascii?Q?WIb7HXLrGm0vxZg6EMgEMr59qmDrx8j3+MRprqPVfxGhB5uWryfysiSw54K5?=
+ =?us-ascii?Q?Wp4NsPhMfn5FKjJERupthmo6kZC+ih01sytTrxO+ZbBBkxJS1W4Fotp20tlL?=
+ =?us-ascii?Q?AEBaPzA+96LA2K4HOhTqPpJvvBBQlMKYSVudZrd16bgAipo3ZdD0trnYFfHL?=
+ =?us-ascii?Q?+epZjpBN6YpkNCttdyFJrClShXgGF8IAX3oGBnjqu5seex0jDvPK6MHBHcTZ?=
+ =?us-ascii?Q?TpyHOtGWCwSdrzllt2BRk/Uh0P22jM6sOoomsBlzAkuvW51fjrzs4CvmgTAo?=
+ =?us-ascii?Q?26JDgiIlF96hd8YPOBdO+4SWhihewJbWFamWgUuk5jfIV5qhK0HbPmkQxgy4?=
+ =?us-ascii?Q?u/kTgasf71NN/DtNoIu3lt19PV/Y4j2gM8dcmBbh+oriuZ4uhiQ7n4WVuLtd?=
+ =?us-ascii?Q?DZsqrgfakOrs+7azUR2ytmgDeItxo3un+uwrFUlWXt4lex1AxJHrLB4RAMRe?=
+ =?us-ascii?Q?xL17WQSwS3SaXhdLffXN9ZK+dK+oQLKX/3pGfE95L6579PQU0a1Sot4AvrwU?=
+ =?us-ascii?Q?lZc53MK04vMNDROz3RwQO8bsXgxFIlGFzuZmpnB/YEQiaNnsfeUDSMFVnUtP?=
+ =?us-ascii?Q?3Ghuc1tWGDGeZOxbLAnH7qSTgckR/B+omCg9hawpPGwTzlit5hDcUfsK9zAf?=
+ =?us-ascii?Q?oBkwd8AMGe3XDWrT99IFtB22OssO1sCiYoXmsJOcXULD5+aUEyW5RFcpRE9g?=
+ =?us-ascii?Q?G4Wi7s3U/Z75d94JyxKJkLjA3P91laAOsKpRDZT978z/aErVITYlAMWKfd4u?=
+ =?us-ascii?Q?OaMixPdNs0tEo0FZ2O/R2Le1h7QL8xaGi7txIlks9/ONq6zonJ5npTmtbofb?=
+ =?us-ascii?Q?SZZRUmxpTox3NahDBHdaejHNeFY1QBZHPV2MsKevpFYPBWrsFHdQtvtZcUrJ?=
+ =?us-ascii?Q?n7H52tlVQdSaLJCTD5+OQiAzyhEqRVc/BcnSaWgL9lX/uheqJjI5zrQDnlF+?=
+ =?us-ascii?Q?XOBmx2W8T3Yos43OVIo+uFoJUaDYSV325BcJFmYCD8Ru3lHejofm7c+82BhQ?=
+ =?us-ascii?Q?98WKWfmQW7m9QKjXzuvl85wBkrJcLpFZb7FOboelQN+ZBIUWcyE1LpjTupxJ?=
+ =?us-ascii?Q?P5KGpFJi9W6fqZkDA4ROZb04MACRgUpq5Va0jThYg+taduWODWDA2VIgEIdI?=
+ =?us-ascii?Q?Ijq5ZDqWhTY=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?cZ742HoGK19fATho8xE3OZy8RqDlPLSkcrhaWHOrmAaDlXnwMCAsuTzYk+Qe?=
+ =?us-ascii?Q?IWpoZfQf2FuULlNUh67ht3i5d35gCs9Xj7OVAoucmPg31mZmVUXl8feGdP20?=
+ =?us-ascii?Q?/PZviufBKm4G1ECZm94f2llQoKAh/Og50rBFHn/h8zJmheIIBXAc2qsC+ztE?=
+ =?us-ascii?Q?7PfHtyBQoYncU3Jyu+hCAXYK+fVcX64wyVj7fJtk7kcn4VPaZOKRKDQWsvQ8?=
+ =?us-ascii?Q?KZlDWzaACqDglrouymLbq7TrVKzWdKPkcgzatZrQnmUWO9arJ/LiaIV9GqsD?=
+ =?us-ascii?Q?SHC0HZhuRFONrYJCgdpSWsX+5fhe+3pCXO5NGA48p+KEHAiLd9jgcIWit0NZ?=
+ =?us-ascii?Q?U+caUNILZ9lvdMGmGmzq9uBsiQ0HvVsE2rgLgyI7GaPcTQrPXecLxduXAUv1?=
+ =?us-ascii?Q?qUDWapBPo9wgXn3UbagEOL/xWBPZYb1FEbmLaCDR/V/nW96QPDLa/Tk0IWpk?=
+ =?us-ascii?Q?aUFJKmI7/C5g3TJ1EfsC+DOZ96bgbX4Ht6wBO9AUIMpGmJYKeVI770OaMfss?=
+ =?us-ascii?Q?PU456qaKy1LSTzB7+4W4MqRQDBf6W8zU/dCKm8I3e7heEs0x1T4hPBmJcJ8y?=
+ =?us-ascii?Q?4MnwI4nuuD7SSY4g3EmR0FGT8JOa0ZY0YqUOfohBhP1h7GwQuMG6UYgOVYLM?=
+ =?us-ascii?Q?wPK4qh9YLCYGlIIIxzikRkNiMuxsmGNdlYyFz4lBHgNnNEBRZ28fXpcm0QRD?=
+ =?us-ascii?Q?uN4hKsPcpiAlmxEha38GxtQjzeej97ABQPk0rdh3yNLsgJGzex2ZM4c/EDzZ?=
+ =?us-ascii?Q?DzOO6JJ8X7AuFkS17CN63F1LBmkYCspx6cIp5jYb5NTQp/ZuQmUQpKkXNljb?=
+ =?us-ascii?Q?/5GVHlCkuWokbh9nre3k8tTyeewzbWFXnThRabUo5zZdQ/OkBmuN7R/mYg4O?=
+ =?us-ascii?Q?dq+0yVXPFIebrFZReuoiJ5HlhWvfZmnBDfEKj+8B0bFXve9goxJgmE6BIS3j?=
+ =?us-ascii?Q?9ML9YdfSkuG5ulLNpeYJGTM/mxKhQ8o5ZlTdx8gdJ2N7gh+m4QhlyXiJURhx?=
+ =?us-ascii?Q?2HH9gZADSRLg2P6dS4amixAvTlc9N3R0NynZ9JbZw15Z2Yz66x14lSfZd/rV?=
+ =?us-ascii?Q?fKk9kJaq1whEPvLpNx6t0cpor7e4clgxNag1phyN8iq8n7IZGUlEnfV7tYpT?=
+ =?us-ascii?Q?mk7wcDQmnKwUuzvookgwKAEU4BKsGSYGIrca23Y5XhTApBu/QRpSbed8Pzxu?=
+ =?us-ascii?Q?h00yDtRBgt4tZ8/VZcGtWP6W6fHw4X7dhIcla1iv/jcGAls+6lpVO/9lUizW?=
+ =?us-ascii?Q?RQvvjzzBxPs22Xu5X/OlQ9DF+zd0/+EgbjtzYt44qByYMuFIRf43Gck6LKsZ?=
+ =?us-ascii?Q?YGQJk9Ir36TeA7CAxg3qJzceKPUfxmjuTpKtWNsq90MUD6EQ6C8krxxq31FA?=
+ =?us-ascii?Q?4lz7ttmYU/mR3qyVOESluF5bb6bQbCWNPyuSXgrvVu6LvIOh8o+H4sNr2RAi?=
+ =?us-ascii?Q?UecLfB+XYeK6LqqIkDVIbcReWdHaXlgMMDVQ7uKjcesaDqkqdEHPEEWastJA?=
+ =?us-ascii?Q?FO7NNOPnwauvMqL0UhA7Tx4p50BbYCninPSft/zUJBgFY9m4z8tqsrr2ad69?=
+ =?us-ascii?Q?T784/5wZQ6xm/pSqyq9/Vpfcc0kZEPzQ6mU4Sk0B5MAxywvQ0TaVv+2wNzPl?=
+ =?us-ascii?Q?Xw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 43754ebe-0901-4bd0-b080-08ddd8dfaa92
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 14:02:10.9885 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LQM1vXdqTTL2+92Q7jIvs9rzC/5y3jdgNaQ+cAS04n1hvpL7ff9kCD9NlpLCR1ZVjt1rwxpkkegWOQditQOG2AT9PLgJc9YMyfXA1IzFV/Y=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB7069
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -148,286 +171,92 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi all,
-
-Here is a list of patches targeted for stable release 23.11.5.
-
-The planned date for the final release is 15th August.
-
-Please help with testing and validation of your use cases and report
-any issues/results with reply-all to this mail. For the final release
-the fixes and reported validations will be added to the release notes.
-
-A release candidate tarball can be found at:
-
-    https://dpdk.org/browse/dpdk-stable/tag/?id=v23.11.5-rc1
-
-These patches are located at branch 23.11 of dpdk-stable repo:
-    https://dpdk.org/browse/dpdk-stable/
-
-Thanks.
-
-Xueming Li <xuemingl@nvidia.com>
-
----
-Amiya Ranjan Mohakud (1):
-      net/iavf: fix VLAN strip setting after enabling filter
-
-Anatoly Burakov (1):
-      net/ixgbe: fix indentation
-
-Ariel Otilibili (1):
-      net/af_xdp: fix use after free in zero-copy Tx
-
-Arkadiusz Kusztal (2):
-      crypto/qat: fix out-of-place header bytes in AEAD raw API
-      crypto/qat: fix out-of-place chain/cipher/auth headers
-
-Bing Zhao (2):
-      net/mlx5: fix WQE size calculation for Tx queue
-      examples/ntb: check more heap allocations
-
-Bruce Richardson (8):
-      net/fm10k/base: fix compilation warnings
-      net/ixgbe/base: correct definition of endianness macro
-      net/ixgbe/base: fix compilation warnings
-      net/i40e/base: fix unused value warnings
-      net/i40e/base: fix compiler warnings
-      test/malloc: improve resiliency
-      power/intel_uncore: fix crash closing uninitialized driver
-      net/ice: fix inconsistency in Rx queue VLAN tag placement
-
-Chaoyong He (5):
-      net/nfp: fix crash with null RSS hash key
-      net/nfp: fix hash key length logic
-      app/testpmd: fix RSS hash key update
-      net/nfp: standardize NFD3 Tx descriptor endianness
-      net/nfp: standardize NFDk Tx descriptor endianness
-
-Chengwen Feng (3):
-      app/testpmd: relax number of TCs in DCB command
-      bus: cleanup device lists
-      net/hns3: fix queue TC configuration on VF
-
-Clemens Famulla-Conrad (1):
-      dts: fix deterministic doc
-
-Dariusz Sosnowski (5):
-      net/mlx5: fix header modify action on group 0
-      net/mlx5: validate GTP PSC QFI width
-      net/mlx5: fix counter service cleanup on init failure
-      net/mlx5: fix VLAN stripping on hairpin queue
-      net/mlx5: fix masked indirect age action validation
-
-David Marchand (7):
-      acl: fix build with GCC 15 on aarch64
-      vhost: fix wrapping on control virtqueue rings
-      eal: warn if no lcore is available
-      test/lcore: fix race in per-lcore test
-      doc: remove reference to deprecated --use-device option
-      eal: add description of service corelist in usage
-      net/virtio: revert Tx free threshold fix
-
-Dengdui Huang (13):
-      net/hns3: fix integer overflow in interrupt unmap
-      net/hns3: fix memory leak on failure
-      net/hns3: fix extra wait for link up
-      net/hns3: fix memory leak for indirect flow action
-      net/hns3: fix interrupt rollback
-      net/hns3: fix divide by zero
-      net/hns3: fix resources release on reset
-      net/hns3: fix CRC data segment
-      mem: fix lockup on address space shortage
-      net/hns3: check requirement for hardware GRO
-      net/hns3: allow Tx vector when fast free not enabled
-      net/hns3: allow Rx vector mode with VLAN filter
-      net/hns3: fix Rx packet without CRC data
-
-Dhanya Pillai (2):
-      net/ice: fix flow creation failure
-      net/i40e: fix RSS on plain IPv4
-
-Eugenio Pérez (2):
-      vhost: fix net control virtqueue used length
-      vhost: search virtqueues driver data in read-only area
-
-Ferruh Yigit (1):
-      ethdev: convert string initialization
-
-Gagandeep Singh (2):
-      common/dpaax: fix PDCP key command race condition
-      common/dpaax: fix PDCP AES only 12-bit SN
-
-Gavin Li (1):
-      net/mlx5: align PF and VF/SF MAC address handling
-
-Gowrishankar Muthukrishnan (2):
-      crypto/openssl: include private exponent in RSA session
-      test/crypto: fix RSA decrypt validation
-
-Gregory Etelson (4):
-      net/mlx5: remove unsupported flow meter action in HWS
-      net/mlx5: fix mark action with shared Rx queue
-      common/mlx5: fix extraction of auxiliary device name
-      bus/auxiliary: fix crash in cleanup
-
-Hengqi Chen (1):
-      net/virtio: fix check of threshold for Tx freeing
-
-Ivan Malov (1):
-      net/sfc: fix action order on start failure
-
-Jake Freeland (1):
-      bus/pci/bsd: fix device existence check
-
-Jaromír Smrček (1):
-      doc: add kernel options required for mlx5
-
-Jiawen Wu (11):
-      net/txgbe: fix ntuple filter parsing
-      net/txgbe: fix raw pattern match for FDIR rule
-      net/txgbe: fix MAC control frame forwarding
-      net/ngbe: fix MAC control frame forwarding
-      net/txgbe: fix device statistics
-      net/ngbe: fix device statistics
-      net/txgbe: restrict VLAN strip configuration on VF
-      net/txgbe: fix packet type for FDIR filter
-      net/txgbe: fix to create FDIR filter for SCTP packet
-      net/txgbe: fix reserved extra FDIR headroom
-      net/txgbe: add LRO flag in mbuf when enabled
-
-Kaiwen Deng (3):
-      net/e1000: fix xstats name
-      net/ixgbe: enable ethertype filter for E610
-      net/e1000: fix igb Tx queue offloads capability
-
-Khadem Ullah (1):
-      net/mlx5: fix crash on age query with indirect conntrack
-
-Long Li (5):
-      bus/vmbus: align ring buffer data to page boundary
-      bus/vmbus: use Hyper-V page size
-      net/netvsc: use Hyper-V page size
-      net/netvsc: add stats counters from VF
-      net/mana: check vendor ID when probing RDMA device
-
-Lukasz Krakowiak (2):
-      net/ice/base: fix integer overflow
-      net/ice/base: fix typo in device ID description
-
-Maayan Kashani (4):
-      net/mlx5/hws: fix send queue drain on FW WQE destroy
-      ethdev: fix error struct in flow configure
-      examples/multi_process: fix ports cleanup on exit
-      net/mlx5: fix crash in HWS counter pool destroy
-
-Madhuker Mythri (1):
-      net/bonding: avoid RSS RETA update in flow isolation mode
-
-Marat Khalili (1):
-      buildtools/test: scan muti-line registrations
-
-Maxime Coquelin (1):
-      net/mlx5: avoid setting kernel MTU if not needed
-
-Mingjin Ye (2):
-      net/ice: fix handling empty DCF RSS hash
-      net/ice: fix querying RSS hash for DCF
-
-Mohamed Feroz Abdul Majeeth (1):
-      net/octeon_ep: increase mailbox timeout
-
-Morten Brørup (1):
-      eal/unix: fix log message for madvise failure
-
-Nithin Dabilpuram (1):
-      common/cnxk: fix CQ tail drop
-
-Nithinsen Kaithakadan (3):
-      test/crypto: fix auth and cipher case IV length
-      test/crypto: set to null after freeing operation
-      common/cnxk: fix qsize in CPT iq enable
-
-Oleksandr Nahnybida (1):
-      trace: fix overflow in per-lcore trace buffer
-
-Pavan Nikhilesh (1):
-      eal: fix return value of lcore role
-
-Pravin Pathak (6):
-      event/dlb2: fix validaton of LDB port COS ID arguments
-      event/dlb2: fix num single link ports for DLB2.5
-      event/dlb2: fix QID depth xstat
-      event/dlb2: fix public symbol namespace
-      app/eventdev: fix number of releases sent during cleanup
-      event/dlb2: fix dequeue with CQ depth <= 16
-
-Radu Nicolau (2):
-      crypto/virtio: add request check on request side
-      crypto/virtio: fix driver cleanup
-
-Rahul Bhansali (2):
-      net/cnxk: fix descriptor count update on reconfig
-      common/cnxk: fix null pointer checks
-
-Rajesh Mudimadugula (3):
-      vhost/crypto: fix cipher data length
-      crypto/virtio: fix cipher data source length
-      crypto/virtio: fix driver ID
-
-Rakesh Kudurumalla (2):
-      examples/ipsec-secgw: fix crash with IPv6
-      examples/ipsec-secgw: fix crash in event vector mode
-
-Rui Ferreira (2):
-      eal/linux: unregister alarm callback before free
-      eal/freebsd: unregister alarm callback before free
-
-Satheesh Paul (1):
-      common/cnxk: fix E-tag pattern parsing
-
-Shani Peretz (1):
-      app/crypto-perf: fix AAD offset alignment
-
-Stephen Hemminger (5):
-      net/qede: fix use after free
-      bus/fslmc: fix use after free
-      net/null: fix packet copy
-      crypto/qat: fix size calculation for memset
-      latencystats: fix receive sample race
-
-Sunyang Wu (1):
-      ethdev: keep promiscuous/allmulti value before disabling
-
-Tanzeel Ahmed (1):
-      examples/flow_filtering: fix make clean
-
-Thomas Monjalon (1):
-      examples/multi_process: revert ports cleanup on exit
-
-Tirthendu Sarkar (1):
-      event/dlb2: fix default credits based on HW version
-
-Vanshika Shukla (1):
-      crypto/dpaa2_sec: fix uninitialized variable
-
-Viacheslav Ovsiienko (3):
-      net/mlx5: fix maximal queue size query
-      net/mlx5: fix hypervisor detection in VLAN workaround
-      net/mlx5: fix out-of-order completions in ordinary Rx burst
-
-Volodymyr Fialko (1):
-      examples/ipsec-secgw: fix number of queue pairs
-
-Xueming Li (1):
-      Revert "net/ice: fix inconsistency in Rx queue VLAN tag placement"
-
-Yan Lu (1):
-      net/tap: fix qdisc add failure handling
-
-Yang Ming (1):
-      eal/linux: improve ASLR check
-
-Yuan Wang (2):
-      net/e1000: fix EEPROM dump
-      net/ixgbe: fix port mask default value in filter
+On Mon, Aug 11, 2025 at 01:42:56PM +0000, Vladimir Medvedkin wrote:
+> Add the following function related to DCB:
+> 
+> * Get number of Congestion Domains per port
+> * Resolve Traffic Class(TC) by 802.1p VLAN User Priority(UP)
+> * Get absolute index of the Congestion Domain by the TC
+> 
+> Signed-off-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+> ---
+>  drivers/net/intel/ice/base/ice_common.c | 28 +++++++++++++++++++++++++
+>  drivers/net/intel/ice/base/ice_common.h |  8 +++++++
+>  2 files changed, 36 insertions(+)
+> 
+> diff --git a/drivers/net/intel/ice/base/ice_common.c b/drivers/net/intel/ice/base/ice_common.c
+> index dfc2fd69e7..8bca256b34 100644
+> --- a/drivers/net/intel/ice/base/ice_common.c
+> +++ b/drivers/net/intel/ice/base/ice_common.c
+> @@ -6579,3 +6579,31 @@ bool ice_is_fw_auto_drop_supported(struct ice_hw *hw)
+>  		return true;
+>  	return false;
+>  }
+> +
+> +enum ice_cgd_per_port
+> +ice_get_port_max_cgd(struct ice_hw *hw)
+> +{
+> +#define ICE_8_PORTS_LINK_TOPO	0x2
+> +	u32 link_topo = LE32_TO_CPU(rd32(hw, GLGEN_MAC_LINK_TOPO)) &
+> +		GLGEN_MAC_LINK_TOPO_LINK_TOPO_M;
+> +
+> +	return (link_topo == ICE_8_PORTS_LINK_TOPO) ? ICE_4_CGD_PER_PORT : ICE_8_CGD_PER_PORT;
+> +}
+
+The term "cgd" is not very clear (at least to me) on reading this. I think
+a comment at the start of the function to say what it does would be
+helpful, e.g. "/* get the number of congestion domains (cgds) for a port */
+
+> +
+> +u8
+> +ice_get_tc_by_up(struct ice_hw *hw, u8 up)
+> +{
+> +	struct ice_port_info *port_info = hw->port_info;
+> +	struct ice_qos_cfg *qos_cfg = &port_info->qos_cfg;
+> +	struct ice_dcbx_cfg *local_dcb_conf = &qos_cfg->local_dcbx_cfg;
+> +
+> +	up &= (ICE_MAX_TRAFFIC_CLASS - 1);
+> +
+> +	return local_dcb_conf->etscfg.prio_table[up];
+> +}
+
+Rather than "up" (which I assume is "user priority"), I think
+"tc_by_priority" would be a better title. Again, a one-line comment at top
+of the function can clarify that it's the user-priority field being
+referred to.
+
+> +
+> +int
+> +ice_get_cgd_idx(struct ice_hw *hw, u8 tc)
+> +{
+> +	return hw->port_info->lport * ice_get_port_max_cgd(hw) + tc;
+> +}
+Add comment here too - e.g. /* get congestion domain for traffic class */
+
+> diff --git a/drivers/net/intel/ice/base/ice_common.h b/drivers/net/intel/ice/base/ice_common.h
+> index f7e7ff5aaf..2d4f4871e6 100644
+> --- a/drivers/net/intel/ice/base/ice_common.h
+> +++ b/drivers/net/intel/ice/base/ice_common.h
+> @@ -25,6 +25,11 @@ enum ice_fw_modes {
+>  	ICE_FW_MODE_ROLLBACK
+>  };
+>  
+> +enum ice_cgd_per_port {
+> +	ICE_4_CGD_PER_PORT = 4,
+> +	ICE_8_CGD_PER_PORT = 8
+> +};
+> +
+>  int ice_init_fltr_mgmt_struct(struct ice_hw *hw);
+>  void ice_cleanup_fltr_mgmt_struct(struct ice_hw *hw);
+>  void ice_set_umac_shared(struct ice_hw *hw);
+> @@ -335,4 +340,7 @@ ice_aq_write_i2c(struct ice_hw *hw, struct ice_aqc_link_topo_addr topo_addr,
+>  bool ice_fw_supports_report_dflt_cfg(struct ice_hw *hw);
+>  /* AQ API version for FW auto drop reports */
+>  bool ice_is_fw_auto_drop_supported(struct ice_hw *hw);
+> +enum ice_cgd_per_port ice_get_port_max_cgd(struct ice_hw *hw);
+> +u8 ice_get_tc_by_up(struct ice_hw *hw, u8 up);
+> +int ice_get_cgd_idx(struct ice_hw *hw, u8 tc);
+>  #endif /* _ICE_COMMON_H_ */
+> -- 
+> 2.43.0
+> 
