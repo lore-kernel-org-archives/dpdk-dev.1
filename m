@@ -2,46 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A262DCA0EC4
-	for <dpdk-dev@archiver.kernel.org>; Mon, 11 Aug 2025 21:30:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 701A8CA0EC4
+	for <dpdk-dev@archiver.kernel.org>; Mon, 11 Aug 2025 21:36:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 883CF4013F;
-	Mon, 11 Aug 2025 23:30:06 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 12EDF400D7
- for <dev@dpdk.org>; Mon, 11 Aug 2025 23:30:05 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 0720746D02; Mon, 11 Aug 2025 23:30:05 +0200 (CEST)
-From: bugzilla@dpdk.org
+	by mails.dpdk.org (Postfix) with ESMTP id 593994029C;
+	Mon, 11 Aug 2025 23:36:40 +0200 (CEST)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
+ [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id E3EC0400D7
+ for <dev@dpdk.org>; Mon, 11 Aug 2025 23:36:38 +0200 (CEST)
+Received: by mail-wm1-f44.google.com with SMTP id
+ 5b1f17b1804b1-45994a72356so38481985e9.0
+ for <dev@dpdk.org>; Mon, 11 Aug 2025 14:36:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1754948198;
+ x=1755552998; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=qu3/QhFTrU55oTjX8EhZQCdGMCtZBXebv7eon7sKqqA=;
+ b=cUAQVMb+NL3EY/WBjg9gO9HYcXqLjuBsMTJHXtmYeIzvAPj6Z0ZxvqyO3Cp9Zta23E
+ aqTjMmkb4PK3p7N5AkZ57rWxyojyAA6Q8NcBr+ap8hbfwBt4oLAXZOB957DnUot7P2iM
+ FtpMlYb1EQoVe3nhoKGw1bI4NVZAAXOuei5DcfEYB37KnJHRHydXUBQ9rTNsiBAmjsHp
+ /jv5tvpYLM/DwslyU/iH8sK7026Yb0YuLA7YcTvKNKrNRLeZHL0D5XNdVbT55sywm7rF
+ af18OQ6RuwKZ6efchutskMyJU/R9z+orkhJpLqXjB1kvWBpOAYsZ7jFY13lC5qa10XDX
+ QbmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1754948198; x=1755552998;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=qu3/QhFTrU55oTjX8EhZQCdGMCtZBXebv7eon7sKqqA=;
+ b=VixhOZPpTlkIabSJ3Am3ulWu+l5aAscMzofynofZlLGPnFL2FjNLLIzc5RJ9FKWnXr
+ lhrhfCDGAL1Tq9h2wgEmQOsHuxLShv/V6sk77V8o8/UscR5MsB4daC7Yx7vhmnxE8Qxg
+ NQWUZCl+978MjSizl8+OxDLMg+VUormYqwXr1An/kYmQ5oaAKdMpA4U1HUNaqZxMj3mm
+ L7D9841coDhQR38jnhye98+3t9iez27wN15lFdU2X6quPM7yRn+sCu0GJSt7LJm9atfZ
+ v0ZtMCUbOAFUCV66TROEdkwLP20DT6VtDrhZWu4Jb6aFGfQ0U+9ZdMABOq95RdWRrJJ6
+ 2grA==
+X-Gm-Message-State: AOJu0YxSVJstOtbrZ0LrYOj5IhjqRBB0VVFUs86EM8JzyD4GFmsUAZRh
+ 4y/Vlnmy0UQFmKGiEff07ojoLWLGvQCpoVFtWnBGpcGu5+qY1Rpuo38376WORJuB8/Uj8jh8wXu
+ +5ze1
+X-Gm-Gg: ASbGnctku7nf9WyBZTFyuQyzzFEo+iQYIoApbRME68NEiOr4Gg9Xe6ONGauGJjLI0Rr
+ IUrtZwL4Xgeh6ij8q38ljvr3GWrunXqO326ErIjCWOaz+dHIRp6eDXl50Wu3A9K42KPXwriErzL
+ C+5Xc+IpJ3mZ2a+uZYhSGI6Bpox9xxFRqcV5CfyhtMowFb5M43eNQHB4jEiIbIoTWnFumWCfmXC
+ F91J4v2wlh4PzkVvtSE7xkIFKwJ7LnSkwN5CsUZIFcviesP4raXb0Yh/iwnRXGiKD6OpPK1JAA0
+ 0M5ZWtAlXq12tRZnvWcKxnMwDRrkz/tveXSLjG2jsyK0oE6n+knh4AsxxKgu+8ryhROFI28RJpz
+ +SfnMta5yYF/sJPWzzNwNQAliuQ8pEsX4JoCULmEBTE1IHvnYf6lvtgMfOazPHB8PWgCdG2dx
+X-Google-Smtp-Source: AGHT+IERv5LMHULiqDZGAt7uEh9ECXoRdUynGR/MoOAcKl3ODiYO8WhU01Z7ojJiidDXH+YSfFwqHQ==
+X-Received: by 2002:a05:600c:c492:b0:456:1281:f8dd with SMTP id
+ 5b1f17b1804b1-45a10d97209mr9366845e9.12.1754948197977; 
+ Mon, 11 Aug 2025 14:36:37 -0700 (PDT)
+Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-45a053a9019sm84661445e9.21.2025.08.11.14.36.36
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 11 Aug 2025 14:36:37 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1768] net/mlx5: get_mtu returns 1500 on startup
- instead of kernel driver MTU
-Date: Mon, 11 Aug 2025 21:30:05 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
-X-Bugzilla-Version: 24.11
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: brian90013@gmail.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1768-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17549478040.db3DB2cC.3272312
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [RFC 0/6] Packet capture fixes
+Date: Mon, 11 Aug 2025 14:34:58 -0700
+Message-ID: <20250811213632.16023-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.47.2
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,257 +77,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+This patch series addresses the problem of packet capture when
+the secondary process is sending/receiving by using the same
+mechanism as hot plug.  It also fixes some bugs on shutdown
+of dumpcap (and pdump).
 
---17549478040.db3DB2cC.3272312
-Date: Mon, 11 Aug 2025 23:30:04 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+In draft form at this point, works but needs more testing.
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1768
+Stephen Hemminger (6):
+  dumpcap: handle primary process exit
+  pdump: handle primary process exit
+  pdump: fix races in callbacks
+  dumpcap: handle pdump requests from primary
+  pdump: handle pdump requests from primary
+  pdump: forward callback enable to secondary
 
-            Bug ID: 1768
-           Summary: net/mlx5: get_mtu returns 1500 on startup instead of
-                    kernel driver MTU
-           Product: DPDK
-           Version: 24.11
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: ethdev
-          Assignee: dev@dpdk.org
-          Reporter: brian90013@gmail.com
-  Target Milestone: ---
+ app/dumpcap/main.c    |  14 +++
+ app/pdump/main.c      |  16 ++-
+ lib/pdump/rte_pdump.c | 261 +++++++++++++++++++++++++++++++++++++-----
+ 3 files changed, 256 insertions(+), 35 deletions(-)
 
-Hello,
+-- 
+2.47.2
 
-I observe this issue with both DPDK 24.11 and 25.07 on Debian 12 with DOCA
-3.0.0 and a ConnectX-5 NIC. My code calls rte_eth_dev_get_mtu() to determine
-the existing MTU value of the kernel driver before initializing DPDK. Then =
-it
-sets rte_eth_conf.rxmode.mtu equal to the returned value and calls
-rte_eth_dev_configure(). This way DPDK uses the same MTU as the kernel driv=
-er.
-
-However, when running this code I observe the initial rte_eth_dev_get_mtu()
-call always returns 1500B. I have tried setting kernel MTUs of 800, 3000, 4=
-000,
-and 9000B. I added tracing to lib/ethdev and drivers/net/mlx5 and believe t=
-he
-issue is because while mlx5 determines and stores the current MTU, that val=
-ue
-is not propagated back to the ethdev structure.
-
-
-My attempt at a timeline:
-* mlx5_dev_spawn() sets priv->mtu =3D RTE_ETHER_MTU (1500)
-* mlx5_dev_spawn() sets eth_dev =3D rte_eth_dev_allocate()
-* rte_eth_dev_allocate() sets eth_dev->data->mtu =3D RTE_ETHER_MTU (1500)
-* mlx5_dev_spawn() gets actual MTU calling mlx5_get_mtu(&priv->mtu)
-#### eth_dev->data->mtu doesn't get updated ####
-* I call rte_eth_dev_get_mtu() which returns 1500
-
-
-For testing, I tried this patch to set the rte_eth_dev_data.mtu field equal=
- to
-the value returned from mlx5_get_mtu(). With this change, my code works as
-expected. I hope something like this can be merged to allow cooperation bet=
-ween
-the kernel and DPDK drivers. Thank you for your time and your work on mlx5!
-
-
---- a/drivers/net/mlx5/linux/mlx5_os.c
-+++ b/drivers/net/mlx5/linux/mlx5_os.c
-@@ -1594,6 +1594,7 @@ mlx5_dev_spawn(struct rte_device *dpdk_dev,
-        }
-        DRV_LOG(DEBUG, "port %u MTU is %u", eth_dev->data->port_id,
-                priv->mtu);
-+       ethdev->data->mtu =3D priv->mtu;
-        /* Initialize burst functions to prevent crashes before link-up. */
-        eth_dev->rx_pkt_burst =3D rte_eth_pkt_burst_dummy;
-        eth_dev->tx_pkt_burst =3D rte_eth_pkt_burst_dummy;
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
-
---17549478040.db3DB2cC.3272312
-Date: Mon, 11 Aug 2025 23:30:04 +0200
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-<html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
-bz_new_table">
-        <tr>
-          <th>Bug ID</th>
-          <td><a class=3D"bz_bug_link=20
-          bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - net/mlx5: get_mtu returns 1500 on startup instead=
- of kernel driver MTU"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1768">1768</a>
-          </td>
-        </tr>
-
-        <tr>
-          <th>Summary</th>
-          <td>net/mlx5: get_mtu returns 1500 on startup instead of kernel d=
-river MTU
-          </td>
-        </tr>
-
-        <tr>
-          <th>Product</th>
-          <td>DPDK
-          </td>
-        </tr>
-
-        <tr>
-          <th>Version</th>
-          <td>24.11
-          </td>
-        </tr>
-
-        <tr>
-          <th>Hardware</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>OS</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>Status</th>
-          <td>UNCONFIRMED
-          </td>
-        </tr>
-
-        <tr>
-          <th>Severity</th>
-          <td>normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Priority</th>
-          <td>Normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Component</th>
-          <td>ethdev
-          </td>
-        </tr>
-
-        <tr>
-          <th>Assignee</th>
-          <td>dev&#64;dpdk.org
-          </td>
-        </tr>
-
-        <tr>
-          <th>Reporter</th>
-          <td>brian90013&#64;gmail.com
-          </td>
-        </tr>
-
-        <tr>
-          <th>Target Milestone</th>
-          <td>---
-          </td>
-        </tr></table>
-      <p>
-        <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">Hello,
-
-I observe this issue with both DPDK 24.11 and 25.07 on Debian 12 with DOCA
-3.0.0 and a ConnectX-5 NIC. My code calls rte_eth_dev_get_mtu() to determine
-the existing MTU value of the kernel driver before initializing DPDK. Then =
-it
-sets rte_eth_conf.rxmode.mtu equal to the returned value and calls
-rte_eth_dev_configure(). This way DPDK uses the same MTU as the kernel driv=
-er.
-
-However, when running this code I observe the initial rte_eth_dev_get_mtu()
-call always returns 1500B. I have tried setting kernel MTUs of 800, 3000, 4=
-000,
-and 9000B. I added tracing to lib/ethdev and drivers/net/mlx5 and believe t=
-he
-issue is because while mlx5 determines and stores the current MTU, that val=
-ue
-is not propagated back to the ethdev structure.
-
-
-My attempt at a timeline:
-* mlx5_dev_spawn() sets priv-&gt;mtu =3D RTE_ETHER_MTU (1500)
-* mlx5_dev_spawn() sets eth_dev =3D rte_eth_dev_allocate()
-* rte_eth_dev_allocate() sets eth_dev-&gt;data-&gt;mtu =3D RTE_ETHER_MTU (1=
-500)
-* mlx5_dev_spawn() gets actual MTU calling mlx5_get_mtu(&amp;priv-&gt;mtu)
-#### eth_dev-&gt;data-&gt;mtu doesn't get updated ####
-* I call rte_eth_dev_get_mtu() which returns 1500
-
-
-For testing, I tried this patch to set the rte_eth_dev_data.mtu field equal=
- to
-the value returned from mlx5_get_mtu(). With this change, my code works as
-expected. I hope something like this can be merged to allow cooperation bet=
-ween
-the kernel and DPDK drivers. Thank you for your time and your work on mlx5!
-
-
---- a/drivers/net/mlx5/linux/mlx5_os.c
-+++ b/drivers/net/mlx5/linux/mlx5_os.c
-&#64;&#64; -1594,6 +1594,7 &#64;&#64; mlx5_dev_spawn(struct rte_device *dpd=
-k_dev,
-        }
-        DRV_LOG(DEBUG, &quot;port %u MTU is %u&quot;, eth_dev-&gt;data-&gt;=
-port_id,
-                priv-&gt;mtu);
-+       ethdev-&gt;data-&gt;mtu =3D priv-&gt;mtu;
-        /* Initialize burst functions to prevent crashes before link-up. */
-        eth_dev-&gt;rx_pkt_burst =3D rte_eth_pkt_burst_dummy;
-        eth_dev-&gt;tx_pkt_burst =3D rte_eth_pkt_burst_dummy;
-          </pre>
-        </div>
-      </p>
-
-
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1768">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17549478040.db3DB2cC.3272312--
