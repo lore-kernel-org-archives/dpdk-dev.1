@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C7ACA0ED1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 02:07:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92CAACA0ED1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 02:07:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 22D0F4066A;
-	Tue, 12 Aug 2025 04:07:20 +0200 (CEST)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
- by mails.dpdk.org (Postfix) with ESMTP id 165C94026C
- for <dev@dpdk.org>; Tue, 12 Aug 2025 04:07:12 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.88.234])
- by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4c1FDw3GJxz2TT7s;
- Tue, 12 Aug 2025 10:04:32 +0800 (CST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2871940671;
+	Tue, 12 Aug 2025 04:07:21 +0200 (CEST)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+ by mails.dpdk.org (Postfix) with ESMTP id 18F32402EF
+ for <dev@dpdk.org>; Tue, 12 Aug 2025 04:07:13 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+ by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4c1FBF0bFDz14MRZ;
+ Tue, 12 Aug 2025 10:02:13 +0800 (CST)
 Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id EBD7E140259;
- Tue, 12 Aug 2025 10:07:10 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id DAC1E140259;
+ Tue, 12 Aug 2025 10:07:11 +0800 (CST)
 Received: from localhost.localdomain (10.50.165.33) by
  kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 12 Aug 2025 10:07:10 +0800
+ 15.2.1544.11; Tue, 12 Aug 2025 10:07:11 +0800
 From: Chengwen Feng <fengchengwen@huawei.com>
 To: <thomas@monjalon.net>, <honest.jiang@foxmail.com>
 CC: <dev@dpdk.org>, <liuyonglong@huawei.com>
-Subject: [PATCH 06/10] app/dma-perf: add more global config
-Date: Tue, 12 Aug 2025 10:07:04 +0800
-Message-ID: <20250812020708.16186-7-fengchengwen@huawei.com>
+Subject: [PATCH 09/10] app/dma-perf: refactor benchmark function
+Date: Tue, 12 Aug 2025 10:07:07 +0800
+Message-ID: <20250812020708.16186-10-fengchengwen@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20250812020708.16186-1-fengchengwen@huawei.com>
 References: <20250811105430.55791-1-fengchengwen@huawei.com>
@@ -48,254 +48,198 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This commit add 'cache_flush' and 'test_seconds' to the global
-configuration.
+This commit refactor mem_copy_benchmark() function by splitting the
+data verification part into an independent function.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- app/test-dma-perf/benchmark.c |  4 ++--
- app/test-dma-perf/config.ini  | 22 +++++++---------------
- app/test-dma-perf/main.c      | 21 +++++++++++++++------
- app/test-dma-perf/main.h      |  6 ++++--
- doc/guides/tools/dmaperf.rst  | 22 +++++++++-------------
- 5 files changed, 37 insertions(+), 38 deletions(-)
+ app/test-dma-perf/benchmark.c | 153 +++++++++++++++++++---------------
+ 1 file changed, 84 insertions(+), 69 deletions(-)
 
 diff --git a/app/test-dma-perf/benchmark.c b/app/test-dma-perf/benchmark.c
-index b798199dc1..d7c8d4c1b0 100644
+index 663f81ef5c..1145493152 100644
 --- a/app/test-dma-perf/benchmark.c
 +++ b/app/test-dma-perf/benchmark.c
-@@ -683,7 +683,7 @@ mem_copy_benchmark(struct test_configure *cfg)
- 	unsigned int buf_size = cfg->buf_size.cur;
- 	uint16_t kick_batch = cfg->kick_batch.cur;
- 	uint16_t nb_workers = cfg->num_worker;
--	uint16_t test_secs = cfg->test_secs;
-+	uint16_t test_secs = global_cfg.test_secs;
- 	float memory = 0;
- 	uint32_t avg_cycles = 0;
- 	uint32_t avg_cycles_total;
-@@ -703,7 +703,7 @@ mem_copy_benchmark(struct test_configure *cfg)
- 		if (config_dmadevs(cfg) < 0)
- 			goto out;
- 
--	if (cfg->cache_flush == 1) {
-+	if (global_cfg.cache_flush > 0) {
- 		cache_flush_buf(srcs, buf_size, nr_buf);
- 		cache_flush_buf(dsts, buf_size, nr_buf);
- 		rte_mb();
-diff --git a/app/test-dma-perf/config.ini b/app/test-dma-perf/config.ini
-index 63a30dc56b..f74d9b6617 100644
---- a/app/test-dma-perf/config.ini
-+++ b/app/test-dma-perf/config.ini
-@@ -7,8 +7,11 @@
- ; There are two types of configuration sections: global configuration section and testcase
- ; configuration sections.
- 
--; The global configuration section contains the "eal_args" entry which specifies the EAL arguments
--; for all testcases.
-+; The global configuration section contains the following parameters:
-+; "eal_args" entry which specifies the EAL arguments for all testcases.
-+; "cache_flush" is used to determine whether or not the cache should be flushed, with 1 indicating
-+; to flush and 0 indicating to not flush.
-+; "test_seconds" controls the test time of each case.
- 
- ; The testcase configuration sections contain the following parameters:
- ; "mem_size" denotes the size of the memory footprint in megabytes (MB) for source and destination.
-@@ -22,11 +25,6 @@
- ; src_numa_node is used to control the numa node where the source memory is allocated.
- ; dst_numa_node is used to control the numa node where the destination memory is allocated.
- 
--; cache_flush is used to determine whether or not the cache should be flushed, with 1 indicating to
--; flush and 0 indicating to not flush.
--
--; test_seconds controls the test time of the whole case.
--
- ; To use DMA for a test, please specify the "lcore_dma" parameter.
- ; If you have already set the "-l" and "-a" parameters using EAL,
- ; make sure that the value of "lcore_dma" falls within their range of the values.
-@@ -67,6 +65,8 @@
- 
- [GLOBAL]
- eal_args=--in-memory --file-prefix=test -l 9-12
-+cache_flush=0
-+test_seconds=2
- 
- [case1]
- type=DMA_MEM_COPY
-@@ -76,8 +76,6 @@ dma_ring_size=1024
- kick_batch=32
- src_numa_node=0
- dst_numa_node=0
--cache_flush=0
--test_seconds=2
- lcore_dma0=lcore=10,dev=0000:00:04.1,dir=mem2mem
- lcore_dma1=lcore=11,dev=0000:00:04.2,dir=mem2mem
- 
-@@ -91,8 +89,6 @@ dma_dst_sge=1
- kick_batch=32
- src_numa_node=0
- dst_numa_node=0
--cache_flush=0
--test_seconds=2
- lcore_dma0=lcore=10,dev=0000:00:04.1,dir=mem2mem
- lcore_dma1=lcore=11,dev=0000:00:04.2,dir=mem2mem
- 
-@@ -105,8 +101,6 @@ dma_ring_size=1024
- kick_batch=32
- src_numa_node=0
- dst_numa_node=0
--cache_flush=0
--test_seconds=2
- lcore_dma0=lcore=10,dev=0000:00:04.1,dir=mem2mem
- lcore_dma1=lcore=11,dev=0000:00:04.2,dir=dev2mem,raddr=0x200000000,coreid=1,pfid=2,vfid=3
- lcore_dma2=lcore=12,dev=0000:00:04.3,dir=mem2dev,raddr=0x300000000,coreid=3,pfid=2,vfid=1
-@@ -117,6 +111,4 @@ mem_size=10
- buf_size=64,8192,2,MUL
- src_numa_node=0
- dst_numa_node=1
--cache_flush=0
--test_seconds=2
- lcore = 10, 11
-diff --git a/app/test-dma-perf/main.c b/app/test-dma-perf/main.c
-index da9ae0a1bb..097f36b21c 100644
---- a/app/test-dma-perf/main.c
-+++ b/app/test-dma-perf/main.c
-@@ -39,7 +39,7 @@ enum {
- static struct test_configure test_cases[MAX_TEST_CASES];
- 
- #define GLOBAL_SECTION_NAME	"GLOBAL"
--static struct global_configure global_cfg;
-+struct global_configure global_cfg;
- 
- static char *config_path;
- static char *result_path;
-@@ -305,6 +305,20 @@ parse_global_config(struct rte_cfgfile *cfgfile)
- 		global_cfg.eal_argv[i] = tokens[i];
- 	global_cfg.eal_argc = i;
- 
-+	entry = rte_cfgfile_get_entry(cfgfile, GLOBAL_SECTION_NAME, "cache_flush");
-+	if (entry == NULL) {
-+		printf("Error: GLOBAL section don't has 'cache_flush' entry!\n");
-+		return -1;
-+	}
-+	global_cfg.cache_flush = (uint8_t)atoi(entry);
-+
-+	entry = rte_cfgfile_get_entry(cfgfile, GLOBAL_SECTION_NAME, "test_seconds");
-+	if (entry == NULL) {
-+		printf("Error: GLOBAL section don't has 'test_seconds' entry!\n");
-+		return -1;
-+	}
-+	global_cfg.test_secs = (uint16_t)atoi(entry);
-+
+@@ -669,27 +669,100 @@ attach_ext_buffer(struct vchan_dev_config *vchan_dev, struct lcore_params *lcore
  	return 0;
  }
  
-@@ -497,11 +511,6 @@ load_configs(const char *path)
- 			continue;
- 		}
- 
--		test_case->cache_flush =
--			(uint8_t)atoi(rte_cfgfile_get_entry(cfgfile, section_name, "cache_flush"));
--		test_case->test_secs = (uint16_t)atoi(rte_cfgfile_get_entry(cfgfile,
--					section_name, "test_seconds"));
--
- 		test_case->is_valid = true;
- 	}
- 
-diff --git a/app/test-dma-perf/main.h b/app/test-dma-perf/main.h
-index 54dc1c4c2a..97c81eb2eb 100644
---- a/app/test-dma-perf/main.h
-+++ b/app/test-dma-perf/main.h
-@@ -63,9 +63,7 @@ struct test_configure {
- 	uint16_t num_worker;
- 	uint8_t nb_src_sges;
- 	uint8_t nb_dst_sges;
--	uint8_t cache_flush;
++static int
++verify_data(struct test_configure *cfg, struct rte_mbuf **srcs, struct rte_mbuf **dsts,
++	    uint32_t nr_buf)
++{
++	struct rte_mbuf **src_buf = NULL, **dst_buf = NULL;
++	uint32_t nr_buf_pt = nr_buf / cfg->num_worker;
++	struct vchan_dev_config *vchan_dev = NULL;
++	unsigned int buf_size = cfg->buf_size.cur;
++	uint32_t offset, work_idx, i, j;
++
++	for (work_idx = 0; work_idx < cfg->num_worker; work_idx++)  {
++		vchan_dev = &cfg->dma_config[work_idx].vchan_dev;
++		offset = nr_buf / cfg->num_worker * work_idx;
++		src_buf = srcs + offset;
++		dst_buf = dsts + offset;
++
++		if (vchan_dev->tdir == RTE_DMA_DIR_MEM_TO_MEM && !cfg->is_sg) {
++			for (i = 0; i < nr_buf_pt; i++) {
++				if (memcmp(rte_pktmbuf_mtod(src_buf[i], void *),
++							    rte_pktmbuf_mtod(dst_buf[i], void *),
++							    cfg->buf_size.cur) != 0) {
++					printf("Copy validation fails for buffer number %d\n", i);
++					return -1;
++				}
++			}
++			continue;
++		}
++
++		if (vchan_dev->tdir == RTE_DMA_DIR_MEM_TO_MEM && cfg->is_sg) {
++			size_t src_remsz = buf_size % cfg->nb_src_sges;
++			size_t dst_remsz = buf_size % cfg->nb_dst_sges;
++			size_t src_sz = buf_size / cfg->nb_src_sges;
++			size_t dst_sz = buf_size / cfg->nb_dst_sges;
++			uint8_t src[buf_size], dst[buf_size];
++			uint8_t *sbuf, *dbuf, *ptr;
++
++			for (i = 0; i < (nr_buf_pt / RTE_MAX(cfg->nb_src_sges, cfg->nb_dst_sges));
++				i++) {
++				sbuf = src;
++				dbuf = dst;
++				ptr = NULL;
++
++				for (j = 0; j < cfg->nb_src_sges; j++) {
++					ptr = rte_pktmbuf_mtod(src_buf[i * cfg->nb_src_sges + j],
++						uint8_t *);
++					memcpy(sbuf, ptr, src_sz);
++					sbuf += src_sz;
++				}
++				if (src_remsz)
++					memcpy(sbuf, ptr + src_sz, src_remsz);
++
++				for (j = 0; j < cfg->nb_dst_sges; j++) {
++					ptr = rte_pktmbuf_mtod(dst_buf[i * cfg->nb_dst_sges + j],
++						uint8_t *);
++					memcpy(dbuf, ptr, dst_sz);
++					dbuf += dst_sz;
++				}
++				if (dst_remsz)
++					memcpy(dbuf, ptr + dst_sz, dst_remsz);
++
++				if (memcmp(src, dst, buf_size) != 0) {
++					printf("SG Copy validation fails for buffer number %d\n",
++						i * cfg->nb_src_sges);
++					return -1;
++				}
++			}
++			continue;
++		}
++	}
++
++	return 0;
++}
++
+ int
+ mem_copy_benchmark(struct test_configure *cfg)
+ {
+-	uint32_t i, j, k;
+-	uint32_t offset;
+-	unsigned int lcore_id = 0;
+ 	struct rte_mbuf **srcs = NULL, **dsts = NULL, **m = NULL;
+ 	struct rte_dma_sge *src_sges = NULL, *dst_sges = NULL;
+ 	struct vchan_dev_config *vchan_dev = NULL;
+ 	struct lcore_dma_map_t *lcore_dma_map = NULL;
+ 	unsigned int buf_size = cfg->buf_size.cur;
+ 	uint16_t kick_batch = cfg->kick_batch.cur;
+-	uint16_t nb_workers = cfg->num_worker;
+ 	uint16_t test_secs = global_cfg.test_secs;
+-	float memory = 0;
+-	uint32_t avg_cycles = 0;
++	uint16_t nb_workers = cfg->num_worker;
++	uint32_t nr_sgsrc = 0, nr_sgdst = 0;
++	float bandwidth, bandwidth_total;
++	unsigned int lcore_id = 0;
+ 	uint32_t avg_cycles_total;
++	uint32_t avg_cycles = 0;
+ 	float mops, mops_total;
+-	float bandwidth, bandwidth_total;
+-	uint32_t nr_sgsrc = 0, nr_sgdst = 0;
++	float memory = 0;
  	uint32_t nr_buf;
--	uint16_t test_secs;
- 	uint8_t scenario_id;
- };
++	uint32_t offset;
++	uint32_t i, k;
+ 	int ret = 0;
  
-@@ -74,8 +72,12 @@ struct test_configure {
- struct global_configure {
- 	char *eal_argv[MAX_EAL_ARGV_NB];
- 	int   eal_argc;
-+	uint8_t cache_flush;
-+	uint16_t test_secs;
- };
+ 	nr_buf = align_buffer_count(cfg, &nr_sgsrc, &nr_sgdst);
+@@ -781,67 +854,9 @@ mem_copy_benchmark(struct test_configure *cfg)
  
-+extern struct global_configure global_cfg;
-+
- void output_csv(const char *fmt, ...);
- int mem_copy_benchmark(struct test_configure *cfg);
+ 	rte_eal_mp_wait_lcore();
  
-diff --git a/doc/guides/tools/dmaperf.rst b/doc/guides/tools/dmaperf.rst
-index fc37eb6b98..7c6906a494 100644
---- a/doc/guides/tools/dmaperf.rst
-+++ b/doc/guides/tools/dmaperf.rst
-@@ -29,6 +29,8 @@ along with the application to demonstrate all the parameters.
- 
-    [GLOBAL]
-    eal_args=--in-memory --file-prefix=test -l 9-12
-+   cache_flush=0
-+   test_seconds=2
- 
-    [case1]
-    type=DMA_MEM_COPY
-@@ -38,8 +40,6 @@ along with the application to demonstrate all the parameters.
-    kick_batch=32
-    src_numa_node=0
-    dst_numa_node=0
--   cache_flush=0
--   test_seconds=2
-    lcore_dma0=lcore=10,dev=0000:00:04.2,dir=mem2mem
-    lcore_dma0=lcore=11,dev=0000:00:04.3,dir=mem2mem
- 
-@@ -49,8 +49,6 @@ along with the application to demonstrate all the parameters.
-    buf_size=64,8192,2,MUL
-    src_numa_node=0
-    dst_numa_node=1
--   cache_flush=0
--   test_seconds=2
-    lcore = 10, 11
- 
-    [case3]
-@@ -64,8 +62,6 @@ along with the application to demonstrate all the parameters.
-    kick_batch=32
-    src_numa_node=0
-    dst_numa_node=0
--   cache_flush=0
--   test_seconds=2
-    lcore_dma0=lcore=10,dev=0000:00:04.1,dir=mem2mem
-    lcore_dma1=lcore=11,dev=0000:00:04.2,dir=dev2mem,raddr=0x200000000,coreid=1,pfid=2,vfid=3
-    lcore_dma2=lcore=12,dev=0000:00:04.3,dir=mem2dev,raddr=0x200000000,coreid=1,pfid=2,vfid=3
-@@ -96,6 +92,13 @@ Global Configuration Parameters
- ``eal_args``
-   Specifies the EAL arguments for all testcases.
- 
-+``cache_flush``
-+  Determines whether the cache should be flushed.
-+  ``1`` indicates to flush and ``0`` to not flush.
-+
-+``test_seconds``
-+  Controls the test time for each scenario.
-+
- 
- Testcase Configuration Parameters
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@@ -131,13 +134,6 @@ Testcase Configuration Parameters
- ``dst_numa_node``
-   Controls the NUMA node where the destination memory is allocated.
- 
--``cache_flush``
--  Determines whether the cache should be flushed.
--  ``1`` indicates to flush and ``0`` to not flush.
+-	for (k = 0; k < nb_workers; k++) {
+-		struct rte_mbuf **src_buf = NULL, **dst_buf = NULL;
+-		uint32_t nr_buf_pt = nr_buf / nb_workers;
+-		vchan_dev = &cfg->dma_config[k].vchan_dev;
+-		offset = nr_buf / nb_workers * k;
+-		src_buf = srcs + offset;
+-		dst_buf = dsts + offset;
 -
--``test_seconds``
--  Controls the test time for each scenario.
+-		if (vchan_dev->tdir == RTE_DMA_DIR_MEM_TO_MEM && !cfg->is_sg) {
+-			for (i = 0; i < nr_buf_pt; i++) {
+-				if (memcmp(rte_pktmbuf_mtod(src_buf[i], void *),
+-							    rte_pktmbuf_mtod(dst_buf[i], void *),
+-							    cfg->buf_size.cur) != 0) {
+-					printf("Copy validation fails for buffer number %d\n", i);
+-					ret = -1;
+-					goto out;
+-				}
+-			}
+-		} else if (vchan_dev->tdir == RTE_DMA_DIR_MEM_TO_MEM && cfg->is_sg) {
+-			size_t src_remsz = buf_size % cfg->nb_src_sges;
+-			size_t dst_remsz = buf_size % cfg->nb_dst_sges;
+-			size_t src_sz = buf_size / cfg->nb_src_sges;
+-			size_t dst_sz = buf_size / cfg->nb_dst_sges;
+-			uint8_t src[buf_size], dst[buf_size];
+-			uint8_t *sbuf, *dbuf, *ptr;
 -
- ``lcore_dma``
-   Specifies the lcore/DMA mapping and per device specific config.
+-			for (i = 0; i < (nr_buf_pt / RTE_MAX(cfg->nb_src_sges, cfg->nb_dst_sges));
+-			     i++) {
+-				sbuf = src;
+-				dbuf = dst;
+-				ptr = NULL;
+-
+-				for (j = 0; j < cfg->nb_src_sges; j++) {
+-					ptr = rte_pktmbuf_mtod(src_buf[i * cfg->nb_src_sges + j],
+-							       uint8_t *);
+-					memcpy(sbuf, ptr, src_sz);
+-					sbuf += src_sz;
+-				}
+-
+-				if (src_remsz)
+-					memcpy(sbuf, ptr + src_sz, src_remsz);
+-
+-				for (j = 0; j < cfg->nb_dst_sges; j++) {
+-					ptr = rte_pktmbuf_mtod(dst_buf[i * cfg->nb_dst_sges + j],
+-							       uint8_t *);
+-					memcpy(dbuf, ptr, dst_sz);
+-					dbuf += dst_sz;
+-				}
+-
+-				if (dst_remsz)
+-					memcpy(dbuf, ptr + dst_sz, dst_remsz);
+-
+-				if (memcmp(src, dst, buf_size) != 0) {
+-					printf("SG Copy validation fails for buffer number %d\n",
+-							i * cfg->nb_src_sges);
+-					ret = -1;
+-					goto out;
+-				}
+-			}
+-		}
+-	}
++	ret = verify_data(cfg, srcs, dsts, nr_buf);
++	if (ret != 0)
++		goto out;
  
+ 	mops_total = 0;
+ 	bandwidth_total = 0;
 -- 
 2.17.1
 
