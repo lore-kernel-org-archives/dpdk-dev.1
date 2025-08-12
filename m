@@ -2,73 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D59AC87FCB
-	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 15:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66EB3CA0EC4
+	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 16:01:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1CD1440270;
-	Tue, 12 Aug 2025 17:34:40 +0200 (CEST)
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
- [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id B399D400EF
- for <dev@dpdk.org>; Tue, 12 Aug 2025 17:34:38 +0200 (CEST)
-Received: by mail-wm1-f45.google.com with SMTP id
- 5b1f17b1804b1-459d4d7c745so51166835e9.1
- for <dev@dpdk.org>; Tue, 12 Aug 2025 08:34:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755012878;
- x=1755617678; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=CSXvfa4k1gwJK+a3IlQYP84DHK5k/9V6op3rEUd2xA4=;
- b=jAcJjoeBAoPrUHHOb21gO7IQvXojKMy2l+hNVYt44f2+3MVBANKGPTew/Av+pXBXbR
- HYiSQGbCFDKMQp4R8Cu0Hq02YGdXHGVKDAIHKexaWbbTfiVSRfBOHfpvVca1wQxHvKu8
- 5U8jYnciAuM+0zsHo+rET8iSpbiFC2QVuGjA/wJpRNY6sI3tnD+Tfd5iRUQQ1MHIrtWb
- K+bho89t7Nv3pq/R20ahb5ybUc2vtEBsoTMzgWl66LgFDv3TopfCGggpHS4oinipqofK
- VvYVrZlpDQzuGyQT+4gplMGMphjL7NTN8znm5TPeIofMoBPUgjlo2F74aYfOrbTd8Aic
- jNhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755012878; x=1755617678;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=CSXvfa4k1gwJK+a3IlQYP84DHK5k/9V6op3rEUd2xA4=;
- b=xDMnD/ey8TYpt5b+3kHXdCUfyDndPqFIs+7asnET8V9nznVRlJRF++cuFXYWruoQOl
- dVn+ii5iyBHVnmRBFdsUN4yjpWeTm8rWKAz/YAfGkQGSVi3WZAVlSi+2s7XwqY7H9/u8
- 1Lo0dH3ZuVm7/KPCVk4ds0TskpcWKME/2ULEepP+RFk6DVzcBldJD9a/zrwC/gcZauzj
- QKdCZ6ZkvJRYzfLPHJc/Ks/ZO/k6cee9ubCuaEn73HmzZW9mPk89glXiqBSKjeXt9TgW
- MMBtgEzFf/vTs0AomeaupDBKVvvVPLFflD1XKM+20gyt3JyvajBkeJr96vrRKUMfT2U3
- UaCQ==
-X-Gm-Message-State: AOJu0Yx6Ridcoq5TIK/MuldG72nDEfmgXtG7SwH9HPgdqW4OEExNWpma
- oO5ZtDSM4z9d6drLJTK6i5+FKhszU8gVAtMKW2sAATqotY6svToaIBcST/Gn50dp4/Y=
-X-Gm-Gg: ASbGnct9bwYChuCR9wJm3cOgWo4HZDAgAQD3q2CJbQieZSEmi9IAC7Uxg2LOeCDYTEN
- W+PIlT08uqMCWOuMB5wpDDfOIv7I38+5zb0fdUOUbSkHs29foo03Sj/O4l4ziF5DPRAT77lnIJK
- dbmLbtfwzrgyEoJ6nYYy6SjUIEPZfCN7nsDgN05Un8IIK4kPQrjJU/OVT7yBEj3WrrEwvVJIUPN
- FCEUOv8eekOgwGm9NNtsvNGMdpOY0Pb/wG6NFkin8JVTknZxYGagoosHCbHOggaPTC7cbrzRavO
- kMFY2Ip+a67pd36pcKayHXtqjO2pGXfvVYCm7/TxOodzSWJHXgGqm/qCJG178nvHq04Y5Rnmto9
- T1jaYdHHoAYJwhrIAzgc8GHvQYZFTnpZnn8mDWuvE24ifxQ/n9OG5dwjzsb6RRInhF92zF5sJiC
- 8=
-X-Google-Smtp-Source: AGHT+IEhW4E7H1YYubjfy5+axMI/yGR0ANe2pIw3qCfDbD+DzoSgD4VGuJZsPfrZfRKp8h+EbQGIew==
-X-Received: by 2002:a05:600c:c176:b0:453:6ca:16b1 with SMTP id
- 5b1f17b1804b1-45a15b4fa4fmr2144255e9.26.1755012877969; 
- Tue, 12 Aug 2025 08:34:37 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3b9132f00ecsm2368401f8f.24.2025.08.12.08.34.36
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 12 Aug 2025 08:34:37 -0700 (PDT)
-Date: Tue, 12 Aug 2025 08:34:31 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Thomas Monjalon <thomas@monjalon.net>
-Cc: dev@dpdk.org, Aman Singh <aman.deep.singh@intel.com>, Andrew Rybchenko
- <andrew.rybchenko@oktetlabs.ru>, Maxime Coquelin
- <maxime.coquelin@redhat.com>, Chenbo Xia <chenbox@nvidia.com>
-Subject: Re: [PATCH 1/1] ethdev: add link speed 800G
-Message-ID: <20250812083431.6502e587@hermes.local>
-In-Reply-To: <20250812144249.316120-1-thomas@monjalon.net>
-References: <20250812144249.316120-1-thomas@monjalon.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+	by mails.dpdk.org (Postfix) with ESMTP id 2AD5D40270;
+	Tue, 12 Aug 2025 18:01:14 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 74107400EF
+ for <dev@dpdk.org>; Tue, 12 Aug 2025 18:01:13 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 66F8746D0C; Tue, 12 Aug 2025 18:01:13 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/DTS Bug 1770] remove old testcase naming convention
+ "test_{name}"
+Date: Tue, 12 Aug 2025 16:01:13 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: DTS
+X-Bugzilla-Version: 25.07
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: minor
+X-Bugzilla-Who: probb@iol.unh.edu
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter cc
+ target_milestone
+Message-ID: <bug-1770-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17550144730.514C47c.3816169
 Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,20 +55,172 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 12 Aug 2025 16:42:48 +0200
-Thomas Monjalon <thomas@monjalon.net> wrote:
 
-> diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
-> index 5d7fc5ee9d..d23c143eed 100644
-> --- a/lib/ethdev/rte_ethdev.h
-> +++ b/lib/ethdev/rte_ethdev.h
-> @@ -306,6 +306,7 @@ struct rte_eth_stats {
->  #define RTE_ETH_LINK_SPEED_100G    RTE_BIT32(14) /**< 100 Gbps */
->  #define RTE_ETH_LINK_SPEED_200G    RTE_BIT32(15) /**< 200 Gbps */
->  #define RTE_ETH_LINK_SPEED_400G    RTE_BIT32(16) /**< 400 Gbps */
-> +#define RTE_ETH_LINK_SPEED_800G    RTE_BIT32(17) /**< 800 Gbps */
+--17550144730.514C47c.3816169
+Date: Tue, 12 Aug 2025 18:01:13 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-Do you want to go further, looking around I see roadmaps for.
-1.6Tbs, 3.2 Tbs, 6.4 Tbs (2028) and beyond.
+https://bugs.dpdk.org/show_bug.cgi?id=3D1770
 
-Looks like will run out of bits in 2040...
+            Bug ID: 1770
+           Summary: remove old testcase naming convention "test_{name}"
+           Product: DPDK
+           Version: 25.07
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: minor
+          Priority: Normal
+         Component: DTS
+          Assignee: dev@dpdk.org
+          Reporter: probb@iol.unh.edu
+                CC: juraj.linkes@pantheon.tech, probb@iol.unh.edu
+  Target Milestone: ---
+
+Some testsuites still have the old testcase naming convention of prefixing =
+the
+testcase with "test_". We can send a patch which removes these prefixes.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17550144730.514C47c.3816169
+Date: Tue, 12 Aug 2025 18:01:13 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - remove old testcase naming convention &quot;test_=
+{name}&quot;"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1770">1770</a>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Summary</th>
+          <td>remove old testcase naming convention &quot;test_{name}&quot;
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>25.07
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>minor
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>DTS
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>probb&#64;iol.unh.edu
+          </td>
+        </tr>
+
+        <tr>
+          <th>CC</th>
+          <td>juraj.linkes&#64;pantheon.tech, probb&#64;iol.unh.edu
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">Some testsuites still have the old=
+ testcase naming convention of prefixing the
+testcase with &quot;test_&quot;. We can send a patch which removes these pr=
+efixes.
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1770">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17550144730.514C47c.3816169--
