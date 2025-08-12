@@ -2,50 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AF22CA0EC4
-	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 07:29:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50321C87FCB
+	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 07:36:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D3C314026A;
-	Tue, 12 Aug 2025 09:29:32 +0200 (CEST)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
- by mails.dpdk.org (Postfix) with ESMTP id C696340264
- for <dev@dpdk.org>; Tue, 12 Aug 2025 09:29:30 +0200 (CEST)
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	by mails.dpdk.org (Postfix) with ESMTP id 7B4B24026A;
+	Tue, 12 Aug 2025 09:36:12 +0200 (CEST)
+Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
+ by mails.dpdk.org (Postfix) with ESMTP id 0AF4340264
+ for <dev@dpdk.org>; Tue, 12 Aug 2025 09:36:10 +0200 (CEST)
+Received: from debian (unknown [78.109.69.111])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mxhk.zte.com.cn (FangMail) with ESMTPS id 4c1NRp2dxgz8Xs70;
- Tue, 12 Aug 2025 15:29:26 +0800 (CST)
-Received: from szxlzmapp04.zte.com.cn ([10.5.231.166])
- by mse-fl2.zte.com.cn with SMTP id 57C7T3fE036870;
- Tue, 12 Aug 2025 15:29:03 +0800 (+08)
- (envelope-from wang.junlong1@zte.com.cn)
-Received: from localhost.localdomain (unknown [192.168.6.15])
- by smtp (Zmail) with SMTP; Tue, 12 Aug 2025 15:29:05 +0800
-X-Zmail-TransId: 3e81689aed3c001-b1061
-X-Zmail-LocalSMTP: 1
-X-Zmail-RealSender: wang.junlong1@zte.com.cn
-From: Junlong Wang <wang.junlong1@zte.com.cn>
-To: ivan.malov@arknetworks.am, stephen@networkplumber.org
-Cc: chen.bingbin@zte.com.cn, dev@dpdk.org
-Subject: [v4,2/2] net/zxdh: add support flow director ops
-Date: Tue, 12 Aug 2025 15:19:04 +0800
-Message-ID: <20250812071904.2104777-1-wang.junlong1@zte.com.cn>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250808071048.1906724-3-wang.junlong1@zte.com.cn>
+ by agw.arknetworks.am (Postfix) with ESMTPSA id 60905E097E;
+ Tue, 12 Aug 2025 11:36:09 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 60905E097E
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
+ s=default; t=1754984169;
+ bh=fcM0V3rxzrd0cAP/Z3y7hSyRQaQpXqUwRAs5eMxm1c0=;
+ h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+ b=IshggyGgrzCGuFrvSHNmbplTwEt3imTdDOfPI2TRgWbflxB5LFG2j8spDKkZllF3k
+ hwa6FhJ6jnKhn9CLG5o/qTy9C2rYB4wUFzv5KaK65NiVryaqfckCnSgyMHid3FI4e8
+ 3lK6DQrlQ7TbVmFl9SjJs2YTmMHx+FyIiorHrUwxSM3U0/o9u5KpLsptS7fsH4ERWi
+ LV5maDXwEOerhXMX8UZFxKzXmbg5kWGO9d65Ia/8uCJpd3z/gTmGm+hdQMXrb5swGQ
+ T2VV9P9Bqh36SMksctJyAXtM5HspTZpNeeubGiKPLBfGlcp98UKLwr+6pmpGllY3NX
+ jfY2Ugddh7eNQ==
+Date: Tue, 12 Aug 2025 11:36:07 +0400 (+04)
+From: Ivan Malov <ivan.malov@arknetworks.am>
+To: Junlong Wang <wang.junlong1@zte.com.cn>
+cc: stephen@networkplumber.org, chen.bingbin@zte.com.cn, dev@dpdk.org
+Subject: Re: [v4,2/2] net/zxdh: add support flow director ops
+In-Reply-To: <20250812071904.2104777-1-wang.junlong1@zte.com.cn>
+Message-ID: <5f681ac0-24d2-ea14-93a2-f78f22c494ac@arknetworks.am>
 References: <20250808071048.1906724-3-wang.junlong1@zte.com.cn>
+ <20250812071904.2104777-1-wang.junlong1@zte.com.cn>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: multipart/mixed;
-	boundary="=====_001_next====="
-X-MAIL: mse-fl2.zte.com.cn 57C7T3fE036870
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: wang.junlong1@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Tue, 12 Aug 2025 15:29:26 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 689AED56.000/4c1NRp2dxgz8Xs70
+Content-Type: multipart/mixed; boundary="8323328-815484647-1754984169=:9407"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,129 +51,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
+--8323328-815484647-1754984169=:9407
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8BIT
 
---=====_001_next=====
-Content-Type: multipart/related;
-	boundary="=====_002_next====="
+Hi,
 
+On Tue, 12 Aug 2025, Junlong Wang wrote:
 
---=====_002_next=====
-Content-Type: multipart/alternative;
-	boundary="=====_003_next====="
+> 
+> > > 1) If both 'spec' and 'mask' are 'NULL', shouldn't the code set some broader
+> > > match on the sole presence of a Ethernet header?
+> > > 2) If 'mask' is 'NULL' and 'spec' is not (or vice versa), isn't this an error?
+> 
+> > >> +            break;
+> > >> +        case RTE_FLOW_ITEM_TYPE_VLAN:
+> > >> +            vlan_spec = item->spec;
+> > >> +            vlan_mask = item->mask;
+> > >> +            if (vlan_spec && vlan_mask) {
+> > >> +                key->vlan_tci  = vlan_spec->tci;
+> > >> +                key_mask->vlan_tci = vlan_mask->tci;
+> > >> +            }
+> > > 
+> > >  In my opinion, The values of 'spec' and 'mask' will not be null.
+> > >  If the user does not set 'spec' and 'mask', the passed-in values will be set to 00 and ff by default,
+> > >  which is ensured by the upper-layer interface of dpdk.
+> 
+> > Wait a minute.. does this mean that if the user passes, say, ETH / IPV4 / UDP
+> > pattern and the 'spec' and 'mask' of ETH are both 'null', the actual key/mask
+> > values in the HW rule will be, say, for the EtherType, '0000' and 'ffff'?
+> > Is this correct? And which part of DPDK interface envisages that?
+> 
+> > Again, may be it's just my misunderstanding.
+> 
+>  Sorry, I misunderstood and caused you inconvenience.
+>  If the user does not set 'spec' and 'mask', we will set 'spec' '0000' and mask 'ffff' write fd table to HW,
+>  not set by DPDK interface.
+>  If the user set one of 'spec' and 'mask', we will also set 'spec' '0000' and mask 'ffff' write fd table to HW.
+>  This is how we handle it.
 
+Understood. But is this the best course of action? Say, what happens if the user
+passes ETH / IPV4 / UDP pattern items, where 'spec' and 'mask' are 'null' in all
+the items? Theoretically, the driver could translate this to set the key to have
+EtherType 0x0800/0xffff and IP protocol to be 0x11/0xff . Or am I wrong?
 
---=====_003_next=====
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-PiA+IDEpIElmIGJvdGggJ3NwZWMnIGFuZCAnbWFzaycgYXJlICdOVUxMJywgc2hvdWxkbid0IHRo
-ZSBjb2RlIHNldCBzb21lIGJyb2FkZXINCj4gPiBtYXRjaCBvbiB0aGUgc29sZSBwcmVzZW5jZSBv
-ZiBhIEV0aGVybmV0IGhlYWRlcj8NCj4gPiAyKSBJZiAnbWFzaycgaXMgJ05VTEwnIGFuZCAnc3Bl
-YycgaXMgbm90IChvciB2aWNlIHZlcnNhKSwgaXNuJ3QgdGhpcyBhbiBlcnJvcj8NCg0KPiA+PiAr
-ICAgICAgICAgICAgYnJlYWs7DQo+ID4+ICsgICAgICAgIGNhc2UgUlRFX0ZMT1dfSVRFTV9UWVBF
-X1ZMQU46DQo+ID4+ICsgICAgICAgICAgICB2bGFuX3NwZWMgPSBpdGVtLT5zcGVjOw0KPiA+PiAr
-ICAgICAgICAgICAgdmxhbl9tYXNrID0gaXRlbS0+bWFzazsNCj4gPj4gKyAgICAgICAgICAgIGlm
-ICh2bGFuX3NwZWMgJiYgdmxhbl9tYXNrKSB7DQo+ID4+ICsgICAgICAgICAgICAgICAga2V5LT52
-bGFuX3RjaSAgPSB2bGFuX3NwZWMtPnRjaTsNCj4gPj4gKyAgICAgICAgICAgICAgICBrZXlfbWFz
-ay0+dmxhbl90Y2kgPSB2bGFuX21hc2stPnRjaTsNCj4gPj4gKyAgICAgICAgICAgIH0NCj4gPiAN
-Cj4gPiAgSW4gbXkgb3BpbmlvbiwgVGhlIHZhbHVlcyBvZiAnc3BlYycgYW5kICdtYXNrJyB3aWxs
-IG5vdCBiZSBudWxsLg0KPiA+ICBJZiB0aGUgdXNlciBkb2VzIG5vdCBzZXQgJ3NwZWMnIGFuZCAn
-bWFzaycsIHRoZSBwYXNzZWQtaW4gdmFsdWVzIHdpbGwgYmUgc2V0IHRvIDAwIGFuZCBmZiBieSBk
-ZWZhdWx0LA0KPiA+ICB3aGljaCBpcyBlbnN1cmVkIGJ5IHRoZSB1cHBlci1sYXllciBpbnRlcmZh
-Y2Ugb2YgZHBkay4NCg0KPiBXYWl0IGEgbWludXRlLi4gZG9lcyB0aGlzIG1lYW4gdGhhdCBpZiB0
-aGUgdXNlciBwYXNzZXMsIHNheSwgRVRIIC8gSVBWNCAvIFVEUA0KPiBwYXR0ZXJuIGFuZCB0aGUg
-J3NwZWMnIGFuZCAnbWFzaycgb2YgRVRIIGFyZSBib3RoICdudWxsJywgdGhlIGFjdHVhbCBrZXkv
-bWFzaw0KPiB2YWx1ZXMgaW4gdGhlIEhXIHJ1bGUgd2lsbCBiZSwgc2F5LCBmb3IgdGhlIEV0aGVy
-VHlwZSwgJzAwMDAnIGFuZCAnZmZmZic/DQo+IElzIHRoaXMgY29ycmVjdD8gQW5kIHdoaWNoIHBh
-cnQgb2YgRFBESyBpbnRlcmZhY2UgZW52aXNhZ2VzIHRoYXQ/DQoNCj4gQWdhaW4sIG1heSBiZSBp
-dCdzIGp1c3QgbXkgbWlzdW5kZXJzdGFuZGluZy4NCg0KIFNvcnJ5LCBJIG1pc3VuZGVyc3Rvb2Qg
-YW5kIGNhdXNlZCB5b3UgaW5jb252ZW5pZW5jZS4NCiBJZiB0aGUgdXNlciBkb2VzIG5vdCBzZXQg
-J3NwZWMnIGFuZCAnbWFzaycsIHdlIHdpbGwgc2V0ICdzcGVjJyAnMDAwMCcgYW5kIG1hc2sgJ2Zm
-ZmYnIHdyaXRlIGZkIHRhYmxlIHRvIEhXLA0KIG5vdCBzZXQgYnkgRFBESyBpbnRlcmZhY2UuDQog
-SWYgdGhlIHVzZXIgc2V0IG9uZSBvZiAnc3BlYycgYW5kICdtYXNrJywgd2Ugd2lsbCBhbHNvIHNl
-dCAnc3BlYycgJzAwMDAnIGFuZCBtYXNrICdmZmZmJyB3cml0ZSBmZCB0YWJsZSB0byBIVy4NCiBU
-aGlzIGlzIGhvdyB3ZSBoYW5kbGUgaXQu
-
-
---=====_003_next=====
-Content-Type: text/html ;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-PGJyIC8+Jmd0OyZuYnNwOyZndDsmbmJzcDsxKSZuYnNwO0lmJm5ic3A7Ym90aCZuYnNwOyZhcG9z
-O3NwZWMmYXBvczsmbmJzcDthbmQmbmJzcDsmYXBvczttYXNrJmFwb3M7Jm5ic3A7YXJlJm5ic3A7
-JmFwb3M7TlVMTCZhcG9zOywmbmJzcDtzaG91bGRuJmFwb3M7dCZuYnNwO3RoZSZuYnNwO2NvZGUm
-bmJzcDtzZXQmbmJzcDtzb21lJm5ic3A7YnJvYWRlcjxiciAvPiZndDsmbmJzcDsmZ3Q7Jm5ic3A7
-bWF0Y2gmbmJzcDtvbiZuYnNwO3RoZSZuYnNwO3NvbGUmbmJzcDtwcmVzZW5jZSZuYnNwO29mJm5i
-c3A7YSZuYnNwO0V0aGVybmV0Jm5ic3A7aGVhZGVyPzxiciAvPiZndDsmbmJzcDsmZ3Q7Jm5ic3A7
-MikmbmJzcDtJZiZuYnNwOyZhcG9zO21hc2smYXBvczsmbmJzcDtpcyZuYnNwOyZhcG9zO05VTEwm
-YXBvczsmbmJzcDthbmQmbmJzcDsmYXBvcztzcGVjJmFwb3M7Jm5ic3A7aXMmbmJzcDtub3QmbmJz
-cDsob3ImbmJzcDt2aWNlJm5ic3A7dmVyc2EpLCZuYnNwO2lzbiZhcG9zO3QmbmJzcDt0aGlzJm5i
-c3A7YW4mbmJzcDtlcnJvcj88YnIgLz4NPGJyIC8+Jmd0OyZuYnNwOyZndDsmZ3Q7Jm5ic3A7KyZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwO2JyZWFrOzxiciAvPiZndDsmbmJzcDsmZ3Q7Jmd0OyZuYnNwOysmbmJzcDsm
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDtjYXNlJm5ic3A7UlRFX0ZM
-T1dfSVRFTV9UWVBFX1ZMQU46PGJyIC8+Jmd0OyZuYnNwOyZndDsmZ3Q7Jm5ic3A7KyZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwO3ZsYW5fc3BlYyZuYnNwOz0mbmJzcDtpdGVtLSZndDtzcGVjOzxiciAvPiZndDsmbmJz
-cDsmZ3Q7Jmd0OyZuYnNwOysmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt2bGFuX21hc2smbmJzcDs9Jm5ic3A7aXRl
-bS0mZ3Q7bWFzazs8YnIgLz4mZ3Q7Jm5ic3A7Jmd0OyZndDsmbmJzcDsrJm5ic3A7Jm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-aWYmbmJzcDsodmxhbl9zcGVjJm5ic3A7JmFtcDsmYW1wOyZuYnNwO3ZsYW5fbWFzaykmbmJzcDt7
-PGJyIC8+Jmd0OyZuYnNwOyZndDsmZ3Q7Jm5ic3A7KyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwO2tleS0mZ3Q7dmxhbl90Y2kmbmJzcDsmbmJzcDs9Jm5ic3A7dmxhbl9zcGVj
-LSZndDt0Y2k7PGJyIC8+Jmd0OyZuYnNwOyZndDsmZ3Q7Jm5ic3A7KyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwO2tleV9tYXNrLSZndDt2bGFuX3RjaSZuYnNwOz0mbmJzcDt2
-bGFuX21hc2stJmd0O3RjaTs8YnIgLz4mZ3Q7Jm5ic3A7Jmd0OyZndDsmbmJzcDsrJm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7fTxiciAvPiZndDsmbmJzcDsmZ3Q7Jm5ic3A7DTxiciAvPiZndDsmbmJzcDsmZ3Q7Jm5i
-c3A7Jm5ic3A7SW4mbmJzcDtteSZuYnNwO29waW5pb24sJm5ic3A7VGhlJm5ic3A7dmFsdWVzJm5i
-c3A7b2YmbmJzcDsmYXBvcztzcGVjJmFwb3M7Jm5ic3A7YW5kJm5ic3A7JmFwb3M7bWFzayZhcG9z
-OyZuYnNwO3dpbGwmbmJzcDtub3QmbmJzcDtiZSZuYnNwO251bGwuPGJyIC8+Jmd0OyZuYnNwOyZn
-dDsmbmJzcDsmbmJzcDtJZiZuYnNwO3RoZSZuYnNwO3VzZXImbmJzcDtkb2VzJm5ic3A7bm90Jm5i
-c3A7c2V0Jm5ic3A7JmFwb3M7c3BlYyZhcG9zOyZuYnNwO2FuZCZuYnNwOyZhcG9zO21hc2smYXBv
-czssJm5ic3A7dGhlJm5ic3A7cGFzc2VkLWluJm5ic3A7dmFsdWVzJm5ic3A7d2lsbCZuYnNwO2Jl
-Jm5ic3A7c2V0Jm5ic3A7dG8mbmJzcDswMCZuYnNwO2FuZCZuYnNwO2ZmJm5ic3A7YnkmbmJzcDtk
-ZWZhdWx0LDxiciAvPiZndDsmbmJzcDsmZ3Q7Jm5ic3A7Jm5ic3A7d2hpY2gmbmJzcDtpcyZuYnNw
-O2Vuc3VyZWQmbmJzcDtieSZuYnNwO3RoZSZuYnNwO3VwcGVyLWxheWVyJm5ic3A7aW50ZXJmYWNl
-Jm5ic3A7b2YmbmJzcDtkcGRrLjxiciAvPg08YnIgLz4mZ3Q7Jm5ic3A7V2FpdCZuYnNwO2EmbmJz
-cDttaW51dGUuLiZuYnNwO2RvZXMmbmJzcDt0aGlzJm5ic3A7bWVhbiZuYnNwO3RoYXQmbmJzcDtp
-ZiZuYnNwO3RoZSZuYnNwO3VzZXImbmJzcDtwYXNzZXMsJm5ic3A7c2F5LCZuYnNwO0VUSCZuYnNw
-Oy8mbmJzcDtJUFY0Jm5ic3A7LyZuYnNwO1VEUDxiciAvPiZndDsmbmJzcDtwYXR0ZXJuJm5ic3A7
-YW5kJm5ic3A7dGhlJm5ic3A7JmFwb3M7c3BlYyZhcG9zOyZuYnNwO2FuZCZuYnNwOyZhcG9zO21h
-c2smYXBvczsmbmJzcDtvZiZuYnNwO0VUSCZuYnNwO2FyZSZuYnNwO2JvdGgmbmJzcDsmYXBvcztu
-dWxsJmFwb3M7LCZuYnNwO3RoZSZuYnNwO2FjdHVhbCZuYnNwO2tleS9tYXNrPGJyIC8+Jmd0OyZu
-YnNwO3ZhbHVlcyZuYnNwO2luJm5ic3A7dGhlJm5ic3A7SFcmbmJzcDtydWxlJm5ic3A7d2lsbCZu
-YnNwO2JlLCZuYnNwO3NheSwmbmJzcDtmb3ImbmJzcDt0aGUmbmJzcDtFdGhlclR5cGUsJm5ic3A7
-JmFwb3M7MDAwMCZhcG9zOyZuYnNwO2FuZCZuYnNwOyZhcG9zO2ZmZmYmYXBvczs/PGJyIC8+Jmd0
-OyZuYnNwO0lzJm5ic3A7dGhpcyZuYnNwO2NvcnJlY3Q/Jm5ic3A7QW5kJm5ic3A7d2hpY2gmbmJz
-cDtwYXJ0Jm5ic3A7b2YmbmJzcDtEUERLJm5ic3A7aW50ZXJmYWNlJm5ic3A7ZW52aXNhZ2VzJm5i
-c3A7dGhhdD88YnIgLz4NPGJyIC8+Jmd0OyZuYnNwO0FnYWluLCZuYnNwO21heSZuYnNwO2JlJm5i
-c3A7aXQmYXBvcztzJm5ic3A7anVzdCZuYnNwO215Jm5ic3A7bWlzdW5kZXJzdGFuZGluZy48YnIg
-Lz4NPGJyIC8+Jm5ic3A7U29ycnksJm5ic3A7SSZuYnNwO21pc3VuZGVyc3Rvb2QmbmJzcDthbmQm
-bmJzcDtjYXVzZWQmbmJzcDt5b3UmbmJzcDtpbmNvbnZlbmllbmNlLjxiciAvPiZuYnNwO0lmJm5i
-c3A7dGhlJm5ic3A7dXNlciZuYnNwO2RvZXMmbmJzcDtub3QmbmJzcDtzZXQmbmJzcDsmYXBvcztz
-cGVjJmFwb3M7Jm5ic3A7YW5kJm5ic3A7JmFwb3M7bWFzayZhcG9zOywmbmJzcDt3ZSZuYnNwO3dp
-bGwmbmJzcDtzZXQmbmJzcDsmYXBvcztzcGVjJmFwb3M7Jm5ic3A7JmFwb3M7MDAwMCZhcG9zOyZu
-YnNwO2FuZCZuYnNwO21hc2smbmJzcDsmYXBvcztmZmZmJmFwb3M7Jm5ic3A7d3JpdGUmbmJzcDtm
-ZCZuYnNwO3RhYmxlJm5ic3A7dG8mbmJzcDtIVyw8YnIgLz4mbmJzcDtub3QmbmJzcDtzZXQmbmJz
-cDtieSZuYnNwO0RQREsmbmJzcDtpbnRlcmZhY2UuPGJyIC8+Jm5ic3A7SWYmbmJzcDt0aGUmbmJz
-cDt1c2VyJm5ic3A7c2V0Jm5ic3A7b25lJm5ic3A7b2YmbmJzcDsmYXBvcztzcGVjJmFwb3M7Jm5i
-c3A7YW5kJm5ic3A7JmFwb3M7bWFzayZhcG9zOywmbmJzcDt3ZSZuYnNwO3dpbGwmbmJzcDthbHNv
-Jm5ic3A7c2V0Jm5ic3A7JmFwb3M7c3BlYyZhcG9zOyZuYnNwOyZhcG9zOzAwMDAmYXBvczsmbmJz
-cDthbmQmbmJzcDttYXNrJm5ic3A7JmFwb3M7ZmZmZiZhcG9zOyZuYnNwO3dyaXRlJm5ic3A7ZmQm
-bmJzcDt0YWJsZSZuYnNwO3RvJm5ic3A7SFcuPGJyIC8+Jm5ic3A7VGhpcyZuYnNwO2lzJm5ic3A7
-aG93Jm5ic3A7d2UmbmJzcDtoYW5kbGUmbmJzcDtpdC48YnIgLz4NPGJyIC8+
-
-
---=====_003_next=====--
-
---=====_002_next=====--
-
---=====_001_next=====--
-
+Thank you.
+> 
+> 
+>
+--8323328-815484647-1754984169=:9407--
