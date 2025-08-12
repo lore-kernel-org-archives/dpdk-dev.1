@@ -2,42 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50321C87FCB
-	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 07:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 077A3C87FCB
+	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 07:56:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7B4B24026A;
-	Tue, 12 Aug 2025 09:36:12 +0200 (CEST)
-Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id 0AF4340264
- for <dev@dpdk.org>; Tue, 12 Aug 2025 09:36:10 +0200 (CEST)
-Received: from debian (unknown [78.109.69.111])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id 60905E097E;
- Tue, 12 Aug 2025 11:36:09 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 60905E097E
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1754984169;
- bh=fcM0V3rxzrd0cAP/Z3y7hSyRQaQpXqUwRAs5eMxm1c0=;
- h=Date:From:To:cc:Subject:In-Reply-To:References:From;
- b=IshggyGgrzCGuFrvSHNmbplTwEt3imTdDOfPI2TRgWbflxB5LFG2j8spDKkZllF3k
- hwa6FhJ6jnKhn9CLG5o/qTy9C2rYB4wUFzv5KaK65NiVryaqfckCnSgyMHid3FI4e8
- 3lK6DQrlQ7TbVmFl9SjJs2YTmMHx+FyIiorHrUwxSM3U0/o9u5KpLsptS7fsH4ERWi
- LV5maDXwEOerhXMX8UZFxKzXmbg5kWGO9d65Ia/8uCJpd3z/gTmGm+hdQMXrb5swGQ
- T2VV9P9Bqh36SMksctJyAXtM5HspTZpNeeubGiKPLBfGlcp98UKLwr+6pmpGllY3NX
- jfY2Ugddh7eNQ==
-Date: Tue, 12 Aug 2025 11:36:07 +0400 (+04)
-From: Ivan Malov <ivan.malov@arknetworks.am>
-To: Junlong Wang <wang.junlong1@zte.com.cn>
-cc: stephen@networkplumber.org, chen.bingbin@zte.com.cn, dev@dpdk.org
-Subject: Re: [v4,2/2] net/zxdh: add support flow director ops
-In-Reply-To: <20250812071904.2104777-1-wang.junlong1@zte.com.cn>
-Message-ID: <5f681ac0-24d2-ea14-93a2-f78f22c494ac@arknetworks.am>
-References: <20250808071048.1906724-3-wang.junlong1@zte.com.cn>
- <20250812071904.2104777-1-wang.junlong1@zte.com.cn>
+	by mails.dpdk.org (Postfix) with ESMTP id 2237B4026A;
+	Tue, 12 Aug 2025 09:56:16 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 36AB740264
+ for <dev@dpdk.org>; Tue, 12 Aug 2025 09:56:14 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id F3BE92051E;
+ Tue, 12 Aug 2025 09:56:13 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-815484647-1754984169=:9407"
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: CI failures
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Tue, 12 Aug 2025 09:56:09 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FE2D@smartserver.smartshare.dk>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: CI failures
+Thread-Index: AdwLXpCepZ7ACmmFSt+vDNRiQZw2Rw==
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: <dev@dpdk.org>,
+	<thomas@monjalon.net>,
+	<stephen@networkplumber.org>
+Cc: "Patrick Robb" <probb@iol.unh.edu>, <bruce.richardson@intel.com>,
+ "Aaron Conole" <aconole@redhat.com>, "Gao, DaxueX" <daxuex.gao@intel.com>,
+ "Puttaswamy, Rajesh T" <rajesh.t.puttaswamy@intel.com>,
+ "David Marchand" <david.marchand@redhat.com>,
+ "Xu, HailinX" <hailinx.xu@intel.com>,
+ "Cui, KaixinX" <kaixinx.cui@intel.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,55 +51,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi all,
 
---8323328-815484647-1754984169=:9407
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8BIT
+The merged patch "[v3,3/3] ethdev: Reject conflicting TX offloads =
+configuration" [1] is causing CI failures.
+Specifically, the test_txoffload_queue test case in the =
+rxtx_offload_test_plan test plan fails.
 
-Hi,
+The patch depends on "[v3,1/3] testpmd: Do not enable mbuf fast release =
+TX offload by default" [2], which has not yet been merged, and a =
+modification of the test plan related to this patch 1/3.
+I'm working with Patrick and others to fix the test plan accordingly.
 
-On Tue, 12 Aug 2025, Junlong Wang wrote:
+[1]: =
+https://patchwork.dpdk.org/project/dpdk/patch/20250803194218.683318-3-mb@=
+smartsharesystems.com/
+[2]: =
+https://patchwork.dpdk.org/project/dpdk/patch/20250803194218.683318-1-mb@=
+smartsharesystems.com/
 
-> 
-> > > 1) If both 'spec' and 'mask' are 'NULL', shouldn't the code set some broader
-> > > match on the sole presence of a Ethernet header?
-> > > 2) If 'mask' is 'NULL' and 'spec' is not (or vice versa), isn't this an error?
-> 
-> > >> +            break;
-> > >> +        case RTE_FLOW_ITEM_TYPE_VLAN:
-> > >> +            vlan_spec = item->spec;
-> > >> +            vlan_mask = item->mask;
-> > >> +            if (vlan_spec && vlan_mask) {
-> > >> +                key->vlan_tci  = vlan_spec->tci;
-> > >> +                key_mask->vlan_tci = vlan_mask->tci;
-> > >> +            }
-> > > 
-> > >  In my opinion, The values of 'spec' and 'mask' will not be null.
-> > >  If the user does not set 'spec' and 'mask', the passed-in values will be set to 00 and ff by default,
-> > >  which is ensured by the upper-layer interface of dpdk.
-> 
-> > Wait a minute.. does this mean that if the user passes, say, ETH / IPV4 / UDP
-> > pattern and the 'spec' and 'mask' of ETH are both 'null', the actual key/mask
-> > values in the HW rule will be, say, for the EtherType, '0000' and 'ffff'?
-> > Is this correct? And which part of DPDK interface envisages that?
-> 
-> > Again, may be it's just my misunderstanding.
-> 
->  Sorry, I misunderstood and caused you inconvenience.
->  If the user does not set 'spec' and 'mask', we will set 'spec' '0000' and mask 'ffff' write fd table to HW,
->  not set by DPDK interface.
->  If the user set one of 'spec' and 'mask', we will also set 'spec' '0000' and mask 'ffff' write fd table to HW.
->  This is how we handle it.
 
-Understood. But is this the best course of action? Say, what happens if the user
-passes ETH / IPV4 / UDP pattern items, where 'spec' and 'mask' are 'null' in all
-the items? Theoretically, the driver could translate this to set the key to have
-EtherType 0x0800/0xffff and IP protocol to be 0x11/0xff . Or am I wrong?
+Med venlig hilsen / Kind regards,
+-Morten Br=F8rup
 
-Thank you.
-> 
-> 
->
---8323328-815484647-1754984169=:9407--
