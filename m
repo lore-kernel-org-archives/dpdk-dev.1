@@ -2,75 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A982CA0EC4
-	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 12:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0853CA0EC4
+	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 12:50:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A4169402A7;
-	Tue, 12 Aug 2025 14:46:51 +0200 (CEST)
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com
- [209.85.210.178])
- by mails.dpdk.org (Postfix) with ESMTP id ED44740270
- for <dev@dpdk.org>; Tue, 12 Aug 2025 14:46:49 +0200 (CEST)
-Received: by mail-pf1-f178.google.com with SMTP id
- d2e1a72fcca58-73c17c770a7so6752520b3a.2
- for <dev@dpdk.org>; Tue, 12 Aug 2025 05:46:49 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7111C402EF;
+	Tue, 12 Aug 2025 14:50:28 +0200 (CEST)
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com
+ [209.85.219.50]) by mails.dpdk.org (Postfix) with ESMTP id C3A85402A7
+ for <dev@dpdk.org>; Tue, 12 Aug 2025 14:50:27 +0200 (CEST)
+Received: by mail-qv1-f50.google.com with SMTP id
+ 6a1803df08f44-7074bad03ceso65100736d6.0
+ for <dev@dpdk.org>; Tue, 12 Aug 2025 05:50:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1755002809;
- x=1755607609; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=/32VpI40R9aC3UE3nsnUHTCkVozldm0aG1t5RnfzV1I=;
- b=lpzeywfXQ1MZmz5W9i/wT4nAdqxh+j0ro/2DyIUCiOTxP1Cy/DWG1QOzU3uyMESK6N
- lH98bLcTfJDFo0EcCeVh6XtWEFN16iLov82rRh0gU7w2ZjezmeVyWqAFdWYJ55qjt6WZ
- LCrfj9+TO9/KzrTdQT1ISKrJXMeqAL3y9tFoLMqNZnH597yAZo6s3llWK4ZSdqKLetUe
- te1xSYoInUBJlrOf2mTsyA4qpsgA6oqD2j/AGZm5RJV7qteZyotcKT7Sf+2jBOX5YeQr
- UYaFcmc7kOpTH1itr4Au5DjhDtuxXLyMLc44voWiFw+wEoQA1OoCzj9KYYIq72MtmYsY
- 7iMA==
+ d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1755003027;
+ x=1755607827; darn=dpdk.org; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=l9lOkPpXqjfIOHK5RIXvACDoT9f633BhVt8HqmCkdbo=;
+ b=AzWNgKF+UAlZneTcrFbW30gJYOYumEm6da5uAZ8VKm/5O4hSfakMK0tWs4KaD3W5GN
+ 3nt08pJuBwpngkJCZokbVRmMSGaXsOvlfxXhYykWkJUxv+2wZs9P/K9xcXLigrnv108i
+ B9732cvqutXyG1KwsExNBqeBAcYXDxQa/lN0e4nJssTfwQ6UeGFz/Hx3TmN7R8LFM+Om
+ UbRsrcw4eTGWQNR1R9+xQ1pv/EmT2YKadjzO5WNJQllBCFGs6qn01wK6WCUc4LdLLFuv
+ L0ZqE8eBfKyKi7B2ITvXQl6Z0NlIdNRfqAHjFysBB9sZUAbZ9ANXra9FZW7c/WFLNZm+
+ JLXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755002809; x=1755607609;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=/32VpI40R9aC3UE3nsnUHTCkVozldm0aG1t5RnfzV1I=;
- b=tl4jPvCw9Dz50KBS9VzBI+Z6PDO0L6Q/A+oLCK2LNGQbC5xmBQibAGd3Oh/0JRgZUR
- qxcrfy3zkV/d5mJ5wO0f0bvOT0ZMr0qdiir872jkFNJ8Koe89N2giBBNTMS5OYhk9wb1
- p37PLIHYCR9jrNinhzCYs+m1eBZxR++mUunQxH85HlAcvOnqrxeZ9bOFEWz9flMGiVee
- iFfNwiFE/DhJ5loLLoBKm0gkbAKWXobYfO9kj1hPC9srB33bIm55ClxXxTB7wUyTfCr5
- M0bFP13/Lz2Mn9Bt2apSITsyofa/SiS5L3RmOR9QHVZ6wJcwSjY4kaztfI2UnYOk5BNt
- kqDQ==
-X-Gm-Message-State: AOJu0YxMLTX6p6aaHcCvG8H5ScHdtZq+T1ebxU8mhcnwfdHa/I2JT9JS
- w7O4I2OGa/l6Lb0uk2sVQOKBB0/qNVvvO7ndCCaAg0ohKuOroxAIqm+xEFtlcoMuTDM=
-X-Gm-Gg: ASbGncvZq08s8FJgy4VJTVuwrO+07dxY4/WK/9uaugud2akIR9ZMRgqV2+zVGxCQIzh
- PeQ0qyjVDZunyyaSdL5krZ2G35ZvRQJ8SDjNG4m0j8AYxx+cRf863zs4XAiMqg+TqAaa6ChBfvO
- bynHO5c1i7waUD8xUzLGa3YxkYoNcGbd7M19iyf1KF3KBdnImfdhleefL8pu0wwThJ/V4j3h9e/
- +1JoiI86iNJ8wgSSetA2bqMMxhukwf6dNUn1K9HexLcUrkk+m0qJLB+nOHxSCKK/uOGADB0rAD1
- xTZPFxfEY4H9vH6mnZECGcNaoZRBLJmADnEy4Jm5xiEpE1L/X7pQW285SiP2WDssdDu69FgmmyB
- kDNWis1PRybtOAG0qH2qGszK+0UfuIm4j8rGRQJzOsmD5cuUy
-X-Google-Smtp-Source: AGHT+IHNheQGXlIO9vXIpQ+hZm8P+i3qORZjeNvVKentxXHZ1DWB0PRbNB3bXT5+iloAo2hxwOLsEQ==
-X-Received: by 2002:a05:6a00:14cc:b0:748:f750:14c6 with SMTP id
- d2e1a72fcca58-76c4615bd8cmr24057238b3a.14.1755002808947; 
- Tue, 12 Aug 2025 05:46:48 -0700 (PDT)
-Received: from localhost.localdomain ([64.62.143.197])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-76bd6aacc4fsm28221285b3a.118.2025.08.12.05.46.48
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 12 Aug 2025 05:46:48 -0700 (PDT)
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-To: Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
-Cc: dev@dpdk.org, stable@dpdk.org,
- Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Subject: [PATCH v2] net/mlx5: fix connection tracking state item validation
-Date: Tue, 12 Aug 2025 08:46:30 -0400
-Message-ID: <20250812124630.2916225-1-14pwcse1224@uetpeshawar.edu.pk>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250805132318.480413-1-14pwcse1224@uetpeshawar.edu.pk>
-References: <20250805132318.480413-1-14pwcse1224@uetpeshawar.edu.pk>
+ d=1e100.net; s=20230601; t=1755003027; x=1755607827;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=l9lOkPpXqjfIOHK5RIXvACDoT9f633BhVt8HqmCkdbo=;
+ b=HuAqZ2pzDi+Nq/5jvo0kVJqGP39KPLHyT/zHG85nvIX2g59OKAcLpxedK0UTJjUPHM
+ rgpV4x91XXG4i0ly4m8u4OG78BvtKgHPCvwPE/Zuzsjih+v66oeSiUwUOGqXC2qFJKRU
+ UQNJsIxHo7Ha3Scbhx9aoXNaPD41PPPXApzTCZMSbaGHP3NDQMSQyAtk/71kOETBOLIA
+ sHOI3NAcawnuHIqVKRO9mht7TtwdE74JVenwI+nD0+2Vg8wg1wrg0mFjt5i1xPkkayh/
+ 3y2dox/zbjWtC62fcnzeIaech0PX7/OVJJo6QCjkMN2G//ZKASBSG36IRisK3jhO710u
+ kAtw==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXd5L25/lRZfIYxZW+9iEPkUm49YpJVO1X4kc19/O2yhHq89Z431dGnVwPGWva1Xil/yQQ=@dpdk.org
+X-Gm-Message-State: AOJu0YxZYlrPsfd0+d7Ne2lGeWrf6kO8jBRJ6h9bZCOkF/1IQsyV7Yaa
+ pbDtDmOybySIKeLZ00smypw+kb2ViySW7Daav7WHcPB/sF7WmRbdp19/ETjLxdCGBhJertlyTlg
+ 8koRAN5e/wA+5TH3E8n2K+Ln72L1ukfpui58T+693eA==
+X-Gm-Gg: ASbGncurO7ZgCjtauv56O6Bt0wrsAZPPPRgwGEK87UiQh0P4ZdIdtMhSgw+APcqcUpJ
+ icibIRnCJbx8AZAQvDpEX8P/N92oCMxviJ1XgBBRbvvfFQmAYHUV4ttnN2fd4BnpC+03WrNgjsJ
+ BSuyxw4kpbqD3NRH5dGwT2u3jBrvMULRHxF8QNIIafy4uGzc3AEdycEHs/XDj+5bYIG9bcXKLKq
+ k91
+X-Google-Smtp-Source: AGHT+IHTwwy1SjVsgfDeaWVkUOWS8HZueOd31VNraxUGRiv9x6+ICXzZehzTA0hrVTYqi4rn0Hena4RFsKeUZSPvJzM=
+X-Received: by 2002:ad4:5fce:0:b0:6fa:ab49:4482 with SMTP id
+ 6a1803df08f44-709d5e05126mr45045966d6.35.1755003027016; Tue, 12 Aug 2025
+ 05:50:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250808074738.2nqgorlqzzyf2jid@ds-vm-debian.local>
+ <20250811062149.2489151-1-14pwcse1224@uetpeshawar.edu.pk>
+ <20250811151520.bonpjpefwuzuap65@ds-vm-debian.local>
+ <CA++2-x5voCjMDXcO_jJw6vrmvtDzfPaAArABeAT9TGcVzXtoZA@mail.gmail.com>
+ <20250811171834.fcyhsgkssyai5uho@ds-vm-debian.local>
+ <20250812095145.qw3kl4vl3adc3esh@ds-vm-debian.local>
+In-Reply-To: <20250812095145.qw3kl4vl3adc3esh@ds-vm-debian.local>
+From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+Date: Tue, 12 Aug 2025 17:50:15 +0500
+X-Gm-Features: Ac12FXwZ4hOE-fMFf6XM5WtIAUnER2qArBazFZlmVeaeCkvLWCI_2QmSTj_gkDw
+Message-ID: <CA++2-x7M2JzG7F2MLWNVBSzOk7CAuuON08GyB14BASXGk1UmrA@mail.gmail.com>
+Subject: Re: [PATCH] net/mlx5: fix connection tracking state item validation
+To: Dariusz Sosnowski <dsosnowski@nvidia.com>
+Cc: ivan.malov@arknetworks.am, viacheslavo@nvidia.com, bingz@nvidia.com, 
+ orika@nvidia.com, suanmingm@nvidia.com, matan@nvidia.com, dev@dpdk.org, 
+ stable@dpdk.org
+Content-Type: multipart/alternative; boundary="000000000000016843063c2a7c07"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,94 +81,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch validate a connection tracking state when matching
-'conntrack is' in rte_flow rules. Since conntrack item flags
-is a bitmap, then any combination of RTE_FLOW_CONNTRACK_PKT_STATE_*
-flags is a valid value to match on.
+--000000000000016843063c2a7c07
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch validate the CT state item.
-Fixes: aca19061e4b9 ('net/mlx5: validate connection tracking item')
-Cc: stable@dpdk.org
+Hi Dariusz,
+Thank you for the update. I have added a newer version of this patch,
+please check it.
+https://patches.dpdk.org/project/dpdk/patch/20250812124630.2916225-1-14pwcs=
+e1224@uetpeshawar.edu.pk/
 
-Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
----
- drivers/net/mlx5/mlx5_flow_dv.c | 12 +++++++++++-
- drivers/net/mlx5/mlx5_flow_hw.c | 17 ++++++++++++++++-
- 2 files changed, 27 insertions(+), 2 deletions(-)
+On Tue, Aug 12, 2025 at 2:53=E2=80=AFPM Dariusz Sosnowski <dsosnowski@nvidi=
+a.com>
+wrote:
 
-diff --git a/drivers/net/mlx5/mlx5_flow_dv.c b/drivers/net/mlx5/mlx5_flow_dv.c
-index 7b9e5018b8..19475b931f 100644
---- a/drivers/net/mlx5/mlx5_flow_dv.c
-+++ b/drivers/net/mlx5/mlx5_flow_dv.c
-@@ -3271,7 +3271,7 @@ mlx5_flow_dv_validate_item_aso_ct(struct rte_eth_dev *dev,
- {
- 	const struct rte_flow_item_conntrack *spec = item->spec;
- 	const struct rte_flow_item_conntrack *mask = item->mask;
--	uint32_t flags;
-+	uint32_t flags, flags_all;
- 
- 	if (*item_flags & MLX5_FLOW_LAYER_ASO_CT)
- 		return rte_flow_error_set(error, EINVAL,
-@@ -3289,6 +3289,16 @@ mlx5_flow_dv_validate_item_aso_ct(struct rte_eth_dev *dev,
- 						  RTE_FLOW_ERROR_TYPE_ITEM,
- 						  NULL,
- 						  "Conflict status bits");
-+		flags_all = (RTE_FLOW_CONNTRACK_PKT_STATE_VALID |
-+				RTE_FLOW_CONNTRACK_PKT_STATE_CHANGED |
-+				RTE_FLOW_CONNTRACK_PKT_STATE_INVALID |
-+				RTE_FLOW_CONNTRACK_PKT_STATE_DISABLED |
-+				RTE_FLOW_CONNTRACK_PKT_STATE_BAD);
-+		if (spec->flags & ~flags_all)
-+			return rte_flow_error_set(error, EINVAL,
-+					RTE_FLOW_ERROR_TYPE_ITEM,
-+					NULL,
-+					"Invalid CT item matching \n");
- 	}
- 	/* State change also needs to be considered. */
- 	*item_flags |= MLX5_FLOW_LAYER_ASO_CT;
-diff --git a/drivers/net/mlx5/mlx5_flow_hw.c b/drivers/net/mlx5/mlx5_flow_hw.c
-index 6dc16f80d3..6dbbc44819 100644
---- a/drivers/net/mlx5/mlx5_flow_hw.c
-+++ b/drivers/net/mlx5/mlx5_flow_hw.c
-@@ -16957,7 +16957,6 @@ flow_hw_validate_rule_pattern(struct rte_eth_dev *dev,
- {
- 	const struct rte_flow_pattern_template *pt;
- 	const struct rte_flow_item *pt_item;
--
- 	if (pattern_template_idx >= table->nb_item_templates)
- 		return rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
- 					  "Pattern template index out of range");
-@@ -16996,7 +16995,9 @@ flow_hw_validate_rule_pattern(struct rte_eth_dev *dev,
- 		switch (items->type) {
- 		const struct rte_flow_item_ethdev *ethdev;
- 		const struct rte_flow_item_tx_queue *tx_queue;
-+		const struct rte_flow_item_conntrack *spec;
- 		struct mlx5_txq_ctrl *txq;
-+		uint32_t flags_all;
- 
- 		case RTE_FLOW_ITEM_TYPE_REPRESENTED_PORT:
- 			ethdev = items->spec;
-@@ -17016,6 +17017,20 @@ flow_hw_validate_rule_pattern(struct rte_eth_dev *dev,
- 							  RTE_FLOW_ERROR_TYPE_ITEM_SPEC, items,
- 							  "Invalid Tx queue");
- 			mlx5_txq_release(dev, tx_queue->tx_queue);
-+			break;
-+		case RTE_FLOW_ITEM_TYPE_CONNTRACK:
-+			spec = items->spec;
-+			flags_all = (RTE_FLOW_CONNTRACK_PKT_STATE_VALID |
-+					RTE_FLOW_CONNTRACK_PKT_STATE_CHANGED |
-+					RTE_FLOW_CONNTRACK_PKT_STATE_INVALID |
-+					RTE_FLOW_CONNTRACK_PKT_STATE_DISABLED |
-+					RTE_FLOW_CONNTRACK_PKT_STATE_BAD);
-+			if (spec->flags & ~flags_all)
-+				return rte_flow_error_set(error, EINVAL,
-+						RTE_FLOW_ERROR_TYPE_ITEM,
-+						NULL,
-+						"Invalid CT item matching \n");
-+			break;
- 		default:
- 			break;
- 		}
--- 
-2.43.0
+>
+> Khadem, please note this patch:
+> https://patches.dpdk.org/project/dpdk/patch/20250812094323.712559-1-dsosn=
+owski@nvidia.com/
+>
+> This would allow you to inspect the conntrack action state
+> through the following testpmd command:
+>
+>         flow indirect_action 0 query <action ID>
+>
 
+Thanks & Best Regards,
+Khadem
+
+--000000000000016843063c2a7c07
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div>Hi Dariusz,=C2=A0</div><div>Thank you for the update.=
+ I have added a newer version of this patch, please check it.=C2=A0</div><a=
+ href=3D"https://patches.dpdk.org/project/dpdk/patch/20250812124630.2916225=
+-1-14pwcse1224@uetpeshawar.edu.pk/">https://patches.dpdk.org/project/dpdk/p=
+atch/20250812124630.2916225-1-14pwcse1224@uetpeshawar.edu.pk/</a><br><br><d=
+iv class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=3D"gm=
+ail_attr">On Tue, Aug 12, 2025 at 2:53=E2=80=AFPM Dariusz Sosnowski &lt;<a =
+href=3D"mailto:dsosnowski@nvidia.com">dsosnowski@nvidia.com</a>&gt; wrote:<=
+br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8e=
+x;border-left:1px solid rgb(204,204,204);padding-left:1ex"><br>
+Khadem, please note this patch: <a href=3D"https://patches.dpdk.org/project=
+/dpdk/patch/20250812094323.712559-1-dsosnowski@nvidia.com/" rel=3D"noreferr=
+er" target=3D"_blank">https://patches.dpdk.org/project/dpdk/patch/202508120=
+94323.712559-1-dsosnowski@nvidia.com/</a><br>
+<br>
+This would allow you to inspect the conntrack action state<br>
+through the following testpmd command:<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 flow indirect_action 0 query &lt;action ID&gt;<=
+br></blockquote><div><br></div><div>Thanks &amp; Best Regards,</div><div>Kh=
+adem=C2=A0</div></div></div>
+
+--000000000000016843063c2a7c07--
