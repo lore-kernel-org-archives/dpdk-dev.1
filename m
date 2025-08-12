@@ -2,98 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8290FC87FCB
-	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 10:59:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB743C87FCB
+	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 12:42:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6E2C0402AA;
-	Tue, 12 Aug 2025 12:59:55 +0200 (CEST)
-Received: from fhigh-b6-smtp.messagingengine.com
- (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
- by mails.dpdk.org (Postfix) with ESMTP id 22CCB4026A;
- Tue, 12 Aug 2025 12:59:54 +0200 (CEST)
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
- by mailfhigh.stl.internal (Postfix) with ESMTP id E6C407A0054;
- Tue, 12 Aug 2025 06:59:52 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-07.internal (MEProxy); Tue, 12 Aug 2025 06:59:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1754996392;
- x=1755082792; bh=cINe6mFzjPtpmW3rRC2d7KSFcKIb/ywJwa6U42H8wrY=; b=
- Sw2BzpxRO4rG5QutbMGcWh+kVgvgTljuOmrUq1+aMr6h6ugNea1tiRXkvisVJeDR
- oUuCDHgj8rIDksUbZoVbS9iJU+mdq5krP/4BgFX/6AdvVwA/ALpZU+26mxFV+PVd
- rTsstrzdtHWmMwql6w68kuzPIBA9pblLydE5o38ugqAsgdFQVAw6dsfQvPK+qYKd
- aOSFhIjMulAtnc0rAMACR5rNi333XE6uE30THyU2qTW3qy262bUdMzCESKUTKT1J
- kCaK+SjEhSft/X9gv4FS8zsjbcFfvbZpTCAN5ZU6SB8acZGekq/SBABr6rUmwfYc
- wTfR3uGY8H7wh8MpPXd7mw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1754996392; x=
- 1755082792; bh=cINe6mFzjPtpmW3rRC2d7KSFcKIb/ywJwa6U42H8wrY=; b=m
- ZBsjk3b25F0KRRy3IWB2Rz6SkvtLCBf1bUmsvIOWnIh9EPv3j8K7f51lpEWxS7kb
- WfPkHg1XfSIFCBYVMuvsRLHXVXeRqqUz8IPWYihLhx0wq/x/CBFcrg4RSEob2Xvq
- BudZbTQC0N1IlwI6zSddOztUmNdf3I5FPYzvm8Qjs9zEjm35TkaAmCsl/tDtWSYa
- iZL9i6qc4jlXxc29UOWsSShQ8gmjZQwiKflXLvYkAIrJLGVO/stsauOIEX+uyG23
- BsgcIjwsy4GbZZ1S0CGS7vwPN6vQLFxmf1goatkP7xMpQBhSUl19djwXyWrDCdaO
- VXWoRD1WqHn3bFhIH6azA==
-X-ME-Sender: <xms:px6baNa5b1_gKi8K_GPEIol6Rc_klOAmtPwgzfRUAs88PlV0anPI5Q>
- <xme:px6baDVp-3x_A-rO3Ei_x6ETlYwFuf37ZEFF8yYGgb2SGikQbKHf8Z-0WKyEXUeBn
- cXQomqPGqEWDJLhuw>
-X-ME-Received: <xmr:px6baMDcFz5rkubzZ_r-7ZEbvBGgfhZy8Z6MsatpC6pSnD5ceVesxjmMcxRQLvawWmFzvEI9_XHa6JMbxOW6M2XHlw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeehudehucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeduiedp
- mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepphgshhgrghgrvhgrthhulhgrsehmrg
- hrvhgvlhhlrdgtohhmpdhrtghpthhtohepfhgvnhhgtghhvghnghifvghnsehhuhgrfigv
- ihdrtghomhdprhgtphhtthhopehtvggthhgsohgrrhguseguphgukhdrohhrghdprhgtph
- htthhopegrmhhithhprhgrkhgrshhhshesmhgrrhhvvghllhdrtghomhdprhgtphhtthho
- peguvghvseguphgukhdrohhrghdprhgtphhtthhopehjvghrihhnjhesmhgrrhhvvghllh
- drtghomhdprhgtphhtthhopehvrghtthhunhhurhhusehmrghrvhgvlhhlrdgtohhmpdhr
- tghpthhtohepghdrshhinhhghhesnhigphdrtghomhdprhgtphhtthhopehsrggthhhinh
- drshgrgigvnhgrsehngihprdgtohhm
-X-ME-Proxy: <xmx:qB6baPLtYEKxTE4OEBq2ry3MvT_jxwCBQv7FallnqTQ_-qSBQt9jdQ>
- <xmx:qB6baKuLtuZ3e-gwaHrzzV8bQOGK0RZqSACPznGERF14TLQONUvlOA>
- <xmx:qB6baHUkhGMsIXrCZIAM5AoJL6HUZ3C5BkxUJVT9lLgyecDnd97Crg>
- <xmx:qB6baFIDlN3GffR46miwHgdmaToxxNbgNd6UKY1Udx7rCtJMiJ-ohg>
- <xmx:qB6baEoMKeh-Q-1hY6242px-Ain8iHDRZAvlEfFLXnrm7aq9qcyonlNe>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 12 Aug 2025 06:59:49 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Pavan Nikhilesh Bhagavatula <pbhagavatula@marvell.com>
-Cc: fengchengwen <fengchengwen@huawei.com>, techboard@dpdk.org,
- Amit Prakash Shukla <amitprakashs@marvell.com>, dev@dpdk.org,
- Jerin Jacob <jerinj@marvell.com>,
- Vamsi Krishna Attunuru <vattunuru@marvell.com>,
- "g.singh@nxp.com" <g.singh@nxp.com>,
- "sachin.saxena@nxp.com" <sachin.saxena@nxp.com>,
- "hemant.agrawal@nxp.com" <hemant.agrawal@nxp.com>,
- "bruce.richardson@intel.com" <bruce.richardson@intel.com>,
- "kevin.laatz@intel.com" <kevin.laatz@intel.com>,
- "conor.walsh@intel.com" <conor.walsh@intel.com>,
- Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>,
- Vidya Sagar Velumuri <vvelumuri@marvell.com>,
- "anatoly.burakov@intel.com" <anatoly.burakov@intel.com>
-Subject: Re: [EXTERNAL] [PATCH] doc: announce DMA configuration structure
- changes
-Date: Tue, 12 Aug 2025 12:59:48 +0200
-Message-ID: <17207459.geO5KgaWL5@thomas>
-In-Reply-To: <PH0PR18MB4086088F7E9E8A4D257B658BDE5AA@PH0PR18MB4086.namprd18.prod.outlook.com>
-References: <20250416110541.10358-1-pbhagavatula@marvell.com>
- <315e032d-c022-4ea2-b734-3d3a07f5ebc2@huawei.com>
- <PH0PR18MB4086088F7E9E8A4D257B658BDE5AA@PH0PR18MB4086.namprd18.prod.outlook.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 384F6402CC;
+	Tue, 12 Aug 2025 14:42:09 +0200 (CEST)
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com
+ [209.85.210.169])
+ by mails.dpdk.org (Postfix) with ESMTP id DE6AE402A7
+ for <dev@dpdk.org>; Tue, 12 Aug 2025 14:42:07 +0200 (CEST)
+Received: by mail-pf1-f169.google.com with SMTP id
+ d2e1a72fcca58-76bed310fa1so4571184b3a.2
+ for <dev@dpdk.org>; Tue, 12 Aug 2025 05:42:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1755002527;
+ x=1755607327; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=/32VpI40R9aC3UE3nsnUHTCkVozldm0aG1t5RnfzV1I=;
+ b=vJPIcIi2znaBP/n/LSs7s6QaBIUvvDvyqFkS77KKjggN3WQgdGnDL7prtip2ANkJBr
+ nGBc2JJoI6snZCQux8i5SBDwXKR1wHfsb8aJ7m8jZkrTJWCeeELezbnDTJor7Bf+GJvc
+ cnvy+M+mtYq5ojQlAdmktzp7e90s5l6zafF+j62kCmyqkkz84Os+PHbpsMX69nUJHgAY
+ gDcKpO0o87RViUNkGL/IOCJTXnBjyoJR2udtJRGPXv21jicVyssjRBrOeH8on8sU2EX7
+ Q7l69HK4UXv7BVafYJgLwyUZAzRGQ9Xr9CBykF9JZbajEv9x5y1ZAkOfnlpwn/A99dLq
+ D1IA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1755002527; x=1755607327;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=/32VpI40R9aC3UE3nsnUHTCkVozldm0aG1t5RnfzV1I=;
+ b=n6Qn/KA4pS0bPLusg2cB4iiFdyk84HX7P7fxhevMnO1W/7ho/c3rme4Gu5kLMxgPFE
+ x2gQAn28TCmJHjYBIsLNX5rZLIf6ztCN/1MFUWSTGzuCEySSpJCVib9BfxKoZjnLunU2
+ SFyopBrn1jpVqZchAXVDOqKkivWs69y3LztZJs8xbKJ+5whgFGbqWsArVtR+z9tABJk7
+ SPvb9HcBbsFveo06g/zc3zX3ZgyWZgmFoeC35Nq05/krR0m/f8HaTHwVPsAqxDshBdu8
+ k+c6A1xA0wvDwEB0p6/wxwbq59Xcno461r77VcK8EPYE+dVci7TqZjxZTj3XbD15BX9r
+ EopA==
+X-Gm-Message-State: AOJu0Ywr6PYxp/8htGGZcc80frhqLZiaPezmapFbwhEWTCfLWlnBrIVG
+ Br26GvSxqbu9s2Me9ShmQ5mnimodBdhx+zaeLQuDAxnF6BkM0VjegafWQMN10WXuF0o=
+X-Gm-Gg: ASbGncs3JzkGu8GCK5ajxvMgwn0uIg9BGNMluEUEZB/vd7rpm265/292nKbzGdbuyGF
+ OrSchOC5NBJwNHFfLKR8ljdupVjSctgRCQvwuSgXQmUaERl3UjiEJVX1+Tc+Pt1Cym16F8yPkU8
+ EUCl2St5v0cfQfxYuzbJWSjOBiLpW4uxYzrwwcjgieGvk7YQU45nKamqzqxxAg7qQG9FQRAM0MK
+ ASJjP56ZlgbThXr+mpvXoG2tfmrwBZLHQ3ZlY1zRmGp8LVRyHMaM7Qk2IM5wKoGLSO9FZQ+OBXu
+ icI2oIgOw71gEWZILO0j2oFXfIN14er7obnSqHuLGKy2uETSV33o7e+FiiFVnhfyf7H2GupnUB1
+ hBv7hn54pOjL8idphcbJzudub1I9FPTPMOHW1mu0xWXdaqLYA
+X-Google-Smtp-Source: AGHT+IEpSdy/eQyX0lRVbNQyFbqrHzKl3khwl/AkaZsqtVkVo2qP5c9POMX32N4UUk3ixDKnWVl7rw==
+X-Received: by 2002:a05:6a00:1894:b0:76b:f1c0:224b with SMTP id
+ d2e1a72fcca58-76c461f593fmr23059960b3a.23.1755002526841; 
+ Tue, 12 Aug 2025 05:42:06 -0700 (PDT)
+Received: from localhost.localdomain ([64.62.143.197])
+ by smtp.gmail.com with ESMTPSA id
+ d2e1a72fcca58-76bccfbcbf0sm29442892b3a.69.2025.08.12.05.42.05
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 12 Aug 2025 05:42:06 -0700 (PDT)
+From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+To: Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
+Cc: dev@dpdk.org, stable@dpdk.org,
+ Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+Subject: [PATCH v2] net/mlx5: fix connection tracking state item validation
+Date: Tue, 12 Aug 2025 08:41:50 -0400
+Message-ID: <20250812124150.2915138-1-14pwcse1224@uetpeshawar.edu.pk>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -107,51 +81,94 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-28/07/2025 07:11, Pavan Nikhilesh Bhagavatula:
-> >Acked-by: Chengwen Feng <fengchengwen@huawei.com>
-> >
-> 
-> Thomas,
-> 
-> Now that Feng Chengwen is ok with this change, can this be merged
-> along with the ABI breaking changes in 25.11?
-> Given that techboard approves the change.
-> This change helps reduce ABI breakage when a new feature is added.
+This patch validate a connection tracking state when matching
+'conntrack is' in rte_flow rules. Since conntrack item flags
+is a bitmap, then any combination of RTE_FLOW_CONNTRACK_PKT_STATE_*
+flags is a valid value to match on.
 
-I would be in favor of this change.
-Let's request a vote in the next techboard meeting.
-(Cc techboard@dpdk.org and added in the meeting agenda)
+This patch validate the CT state item.
+Fixes: aca19061e4b9 ('net/mlx5: validate connection tracking item')
+Cc: stable@dpdk.org
 
+Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+---
+ drivers/net/mlx5/mlx5_flow_dv.c | 12 +++++++++++-
+ drivers/net/mlx5/mlx5_flow_hw.c | 17 ++++++++++++++++-
+ 2 files changed, 27 insertions(+), 2 deletions(-)
 
-> >On 2025/7/25 14:04, Pavan Nikhilesh Bhagavatula wrote:
-> >>>> Deprecate rte_dma_conf structure to allow for a more flexible
-> >>>> configuration of DMA devices.
-> >>>> The new structure will have a flags field instead of multiple
-> >>>> boolean fields for each feature.
-> >>>>
-> >>>> Signed-off-by: Pavan Nikhilesh <mailto:pbhagavatula@marvell.com>
-> >>>> ---
-> >>>> +* dmadev: The ``rte_dma_conf`` structure is updated to include a new field
-> >>>> +  ``rte_dma_conf::flags`` that should be used to configure dmadev features.
-> >>>> +  The existing field ``rte_dma_conf::enable_silent`` is removed and replaced
-> >>>> +  with the new flag ``RTE_DMA_CFG_FLAG_SILENT``, to configure silent mode
-> >>>> +  the flag should be set in ``rte_dma_conf::flags`` during device configuration.
-> >>>>
-> >>>> Acked-by: Amit Prakash Shukla <amitprakashs@marvell.com>
-> >>>
-> >>> There is only 1 ack.
-> >>> Per our policy, it will miss the release 25.07.
-> >>>
-> >>> You can probably do this change anyway,
-> >>> and keep ABI compatibility by versioning the function.
-> >>
-> >> Hi Fengchengwen,
-> >>
-> >> Are you ok with this change? If so please ack it so that I can work on getting
-> >> an exception from techboard to merge this without deprecation notice in 25.11.
-> >>
-> >> Thanks,
-> >> Pavan.
-
-
+diff --git a/drivers/net/mlx5/mlx5_flow_dv.c b/drivers/net/mlx5/mlx5_flow_dv.c
+index 7b9e5018b8..19475b931f 100644
+--- a/drivers/net/mlx5/mlx5_flow_dv.c
++++ b/drivers/net/mlx5/mlx5_flow_dv.c
+@@ -3271,7 +3271,7 @@ mlx5_flow_dv_validate_item_aso_ct(struct rte_eth_dev *dev,
+ {
+ 	const struct rte_flow_item_conntrack *spec = item->spec;
+ 	const struct rte_flow_item_conntrack *mask = item->mask;
+-	uint32_t flags;
++	uint32_t flags, flags_all;
+ 
+ 	if (*item_flags & MLX5_FLOW_LAYER_ASO_CT)
+ 		return rte_flow_error_set(error, EINVAL,
+@@ -3289,6 +3289,16 @@ mlx5_flow_dv_validate_item_aso_ct(struct rte_eth_dev *dev,
+ 						  RTE_FLOW_ERROR_TYPE_ITEM,
+ 						  NULL,
+ 						  "Conflict status bits");
++		flags_all = (RTE_FLOW_CONNTRACK_PKT_STATE_VALID |
++				RTE_FLOW_CONNTRACK_PKT_STATE_CHANGED |
++				RTE_FLOW_CONNTRACK_PKT_STATE_INVALID |
++				RTE_FLOW_CONNTRACK_PKT_STATE_DISABLED |
++				RTE_FLOW_CONNTRACK_PKT_STATE_BAD);
++		if (spec->flags & ~flags_all)
++			return rte_flow_error_set(error, EINVAL,
++					RTE_FLOW_ERROR_TYPE_ITEM,
++					NULL,
++					"Invalid CT item matching \n");
+ 	}
+ 	/* State change also needs to be considered. */
+ 	*item_flags |= MLX5_FLOW_LAYER_ASO_CT;
+diff --git a/drivers/net/mlx5/mlx5_flow_hw.c b/drivers/net/mlx5/mlx5_flow_hw.c
+index 6dc16f80d3..6dbbc44819 100644
+--- a/drivers/net/mlx5/mlx5_flow_hw.c
++++ b/drivers/net/mlx5/mlx5_flow_hw.c
+@@ -16957,7 +16957,6 @@ flow_hw_validate_rule_pattern(struct rte_eth_dev *dev,
+ {
+ 	const struct rte_flow_pattern_template *pt;
+ 	const struct rte_flow_item *pt_item;
+-
+ 	if (pattern_template_idx >= table->nb_item_templates)
+ 		return rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
+ 					  "Pattern template index out of range");
+@@ -16996,7 +16995,9 @@ flow_hw_validate_rule_pattern(struct rte_eth_dev *dev,
+ 		switch (items->type) {
+ 		const struct rte_flow_item_ethdev *ethdev;
+ 		const struct rte_flow_item_tx_queue *tx_queue;
++		const struct rte_flow_item_conntrack *spec;
+ 		struct mlx5_txq_ctrl *txq;
++		uint32_t flags_all;
+ 
+ 		case RTE_FLOW_ITEM_TYPE_REPRESENTED_PORT:
+ 			ethdev = items->spec;
+@@ -17016,6 +17017,20 @@ flow_hw_validate_rule_pattern(struct rte_eth_dev *dev,
+ 							  RTE_FLOW_ERROR_TYPE_ITEM_SPEC, items,
+ 							  "Invalid Tx queue");
+ 			mlx5_txq_release(dev, tx_queue->tx_queue);
++			break;
++		case RTE_FLOW_ITEM_TYPE_CONNTRACK:
++			spec = items->spec;
++			flags_all = (RTE_FLOW_CONNTRACK_PKT_STATE_VALID |
++					RTE_FLOW_CONNTRACK_PKT_STATE_CHANGED |
++					RTE_FLOW_CONNTRACK_PKT_STATE_INVALID |
++					RTE_FLOW_CONNTRACK_PKT_STATE_DISABLED |
++					RTE_FLOW_CONNTRACK_PKT_STATE_BAD);
++			if (spec->flags & ~flags_all)
++				return rte_flow_error_set(error, EINVAL,
++						RTE_FLOW_ERROR_TYPE_ITEM,
++						NULL,
++						"Invalid CT item matching \n");
++			break;
+ 		default:
+ 			break;
+ 		}
+-- 
+2.43.0
 
