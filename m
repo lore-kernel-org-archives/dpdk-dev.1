@@ -2,67 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDC38CA0EC4
-	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 09:21:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8433CA0EC4
+	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 09:22:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AFF4F4026A;
-	Tue, 12 Aug 2025 11:21:44 +0200 (CEST)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com
- [209.85.208.179])
- by mails.dpdk.org (Postfix) with ESMTP id 8CFD140264
- for <dev@dpdk.org>; Tue, 12 Aug 2025 11:21:42 +0200 (CEST)
-Received: by mail-lj1-f179.google.com with SMTP id
- 38308e7fff4ca-333dde3fa8dso2140401fa.2
- for <dev@dpdk.org>; Tue, 12 Aug 2025 02:21:42 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E0BE04026A;
+	Tue, 12 Aug 2025 11:22:04 +0200 (CEST)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com
+ [209.85.208.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 33DAB40264
+ for <dev@dpdk.org>; Tue, 12 Aug 2025 11:22:03 +0200 (CEST)
+Received: by mail-lj1-f174.google.com with SMTP id
+ 38308e7fff4ca-3322d10e29dso42566731fa.0
+ for <dev@dpdk.org>; Tue, 12 Aug 2025 02:22:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1754990502; x=1755595302; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1754990523; x=1755595323; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=58BXkX/xGlCNPn6EQHngac3G4+JbveIM2qFz45Eg9Nw=;
- b=PxMZr+pKITMH1GLtXkMUxc1Sk8V1O70Ggj5XX8MgJHYWT//ozG5RcKenK+cOBSVKG1
- YqEsF9qODNknIB4uWvBcl/kc6BDfCyz77ic3rdoLryz738bRydmDQCw0x0E6pcJfZlps
- JGu9A7LfC/P+PpcwoMfj1eYW4fc9AkRCcx1WR21dMX44qK5xVodFQvzZiepXk+uWqvK+
- GZM3dv28PO8AySFd1ZOcJ4Ac1mvKxQRZBk/7FYZmpM/5FZfjnyYaVg9DPfmvmlWP5Uwn
- Q0lEpM80ZS2P8s7oyTUn3tMXnEbIkZ61aJURt++so/V2fkLnSLyvXIx/PEtamDSU85Ye
- oH9g==
+ bh=XJC6iIjMm7K1cZ/Nkwq272KHJF0hZ8jGZ8QKUwyjLTQ=;
+ b=GXHliRhDGNNuHlTBoYchVhO9IcGfeBQ6dVLs9wB/5zZ2a/ZIWRwIRpgPTrl41w5jYE
+ 8mDHOCn8HQnlmZQJwncY6RgoUkpWS8uG2xHJoT5LjdZ7UBxVHDZvHZv+14zvyafS8VN2
+ f9dVNLyvs5nbp4J72imCF1xItO5UjklmLugUuANwFV8sqNUu6HJ9HBc5fLxIHcWZ+g6N
+ 8ldMoQdmNjddkd0iijqCYpJ4EDXlF8R5Ivu1Xk156GU146expaaSTYnOkCGOe/1ovaAW
+ eikUbW96wAsGys7qpHNeBuWEc/Bz4TNBbdKWr4r8uf6VTzGGLKcvn75/ZFdPSKH65Rz2
+ Truw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1754990502; x=1755595302;
+ d=1e100.net; s=20230601; t=1754990523; x=1755595323;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=58BXkX/xGlCNPn6EQHngac3G4+JbveIM2qFz45Eg9Nw=;
- b=BDrVf94pM9wCQW16VJaWGLkWPxy81WdsHX5XYe9Oc0gfp+OIVIubbaC2AShPOZfF8w
- eYs2AWCuxfUMq0mVJM4fwck/iM/CULXKGgA5shCcXIuagV4JOiFs3Rjm9mPh770ABJYv
- 19KC+kLUKbzgD9zn1cz5htx85eotLsA6yZaWJ83Wf6I/D5C5jCOqV8Cknxt3sjLr9XFO
- GUb5sWZn+RyZPio21Vf5QeBZuZnPzIrvc2lTO38RPJUr6uIfaZiolKEXU57vAEd1XeaS
- +C5Si6SOaZQYBwAsYdYAnVFTIUzKeidMCaP9qOqzT8hoX8g1B+0pojv6K5NpSmT1OFXp
- OZvw==
-X-Gm-Message-State: AOJu0YwUa38bcT4avEeL4HGJO2nCq2Y+jZvvFOtDsaVc/wpgvBVaPU7K
- HPCpD+A092ti3OXA9bWuFqe4oT9vn+Q7EViGaQ8sYnqYH1Jxen5u39VIxve+6v7OG8+HvBEJh+l
- I4jRYGZaqSWPtdCJQwkTYo83EdHxzOlc=
-X-Gm-Gg: ASbGncsh5eiUI0vv/V9rn2nRrsKUfSXXatSxfFN7NjvJ4+B0VJE0zkbQRG1LGIakxDQ
- FS/yaVuglNSm/bxkLm2HSxDjYV9Pr9OtuT330hQvO7atQx+TVpIfFRhiA4LIHPwgUh1w1quuUp6
- V6yT/2XCvIGEihd33AfJgyaN83qE+7oe7DyQqKYB5b1B3MurH/5+ns9aZa6sJFrUA/xfiPAqQvL
- ZYFpK4=
-X-Google-Smtp-Source: AGHT+IEB+WWtGO9P/TNzindo33FUyJqEV8xW7YHLgsIJYGdWm+E8YSX2GeAm/lBwfohtNkQaL+UcdWqa35consRoQPQ=
-X-Received: by 2002:a2e:ae11:0:b0:333:bab4:aa73 with SMTP id
- 38308e7fff4ca-333d7d070eamr6964051fa.37.1754990501628; Tue, 12 Aug 2025
- 02:21:41 -0700 (PDT)
+ bh=XJC6iIjMm7K1cZ/Nkwq272KHJF0hZ8jGZ8QKUwyjLTQ=;
+ b=E97c9F9O/eqJ5df9aoucYgKpCOHj5nakUfzB8xxsjeJubi6gCoWL2qvIBX8cq9vD3r
+ YvlXSHjT1YQxLsJnl5tNIzsW4c3wx2boiyImkrhw8ePA9EGOTzgKSVG+eLiXfs0Z0aFQ
+ GjaqCMyFyeiHU9U83EoicWkvbFlRcUYb9/THNQ1Dbwf2MVoW4oix+Zt522WszoioD63c
+ K8TFn5s+ZQ5MyAmcudIKPQ/Zu3Hl4oJ5HePfEB3ruYTm7pKkHl1vSkuK0/kv54Oz83K4
+ FIBim+gtvziYxvBu2lMiciUo/8Ad7yMveDkRC9UQMBxzt5QncA54qjVmIbzrbnKioXZR
+ SteQ==
+X-Gm-Message-State: AOJu0YxQjeFKa5HewPGGLTJV0ABH/mae4lu6odKlsFAJC3wqSNVQu3rM
+ TD/ZB10CIlZIKcbV7MsFKhfoofeCZUc5B9MPG3Yswq5sO3k6wn/zBtx36gMy1yOAuMpr9virQ6G
+ PTl32rRK2R5sb3M0UU7YQ/Ru6dqSbj4Q=
+X-Gm-Gg: ASbGncuXZr/+QJa12u65OV3daR0zpaFxjTKDmgPEHx20j7pRJbnrcyfKBldIt3eVjza
+ GzxQlJ1ySVHkZ5lUg/9RiTcVqm1u5/0/nCg/y++Ryw7NPMbKe0o5ZYVKT10QvNuasMMLoARk66D
+ crCplbJuyQdASXi9UEC8ujfajTaqKN2AJ5d0JYDBcLgdu3i2CmhjC1zfm7oNHm96UQ7IBb3IDDg
+ fFWZqQ=
+X-Google-Smtp-Source: AGHT+IGUcMzsNoFN3dgDHedn/K7GdTMuYl+K06Nhi/UR/5gEObHiExOScZ6PK/c4dR+O0jyfr/XnqMfSIRFU8izRxzE=
+X-Received: by 2002:a05:651c:4197:b0:32b:2f4a:35e4 with SMTP id
+ 38308e7fff4ca-333d7bf2424mr7009271fa.34.1754990522422; Tue, 12 Aug 2025
+ 02:22:02 -0700 (PDT)
 MIME-Version: 1.0
 References: <20250701182033.642384-1-uk7b@foxmail.com>
- <tencent_78E26E08AE98768E000B338C8B474EB5C005@qq.com>
-In-Reply-To: <tencent_78E26E08AE98768E000B338C8B474EB5C005@qq.com>
+ <tencent_512AC2D478AA548B2D4487968A1FE662B109@qq.com>
+In-Reply-To: <tencent_512AC2D478AA548B2D4487968A1FE662B109@qq.com>
 From: =?UTF-8?Q?Stanis=C5=82aw_Kardach?= <stanislaw.kardach@gmail.com>
-Date: Tue, 12 Aug 2025 11:21:32 +0200
-X-Gm-Features: Ac12FXw38QLOt4-rpo4ZWb4MCsXfXDco3LilKNwsj-3EHGgOC-cE2KtUwrrLQz8
-Message-ID: <CAJcPQBojPCmyDHS0_rmK-kiiUtGJDTjA53FkQV=+yDayzb2wJw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] lib/lpm: R-V V rte_lpm_lookupx4
+Date: Tue, 12 Aug 2025 11:21:53 +0200
+X-Gm-Features: Ac12FXxAo5Zv6hbgbPOZasqqXcAMuZmw-xeBG2lEaevWh4Qep3IJYa_MBnrGXmk
+Message-ID: <CAJcPQBoWE2quf_xWMcmRVazRrj9okV_BJsM4pFt30EP9FbyFsA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] config/riscv: detect V extension
 To: uk7b@foxmail.com
 Cc: dev@dpdk.org, Sun Yuechi <sunyuechi@iscas.ac.cn>, 
  Thomas Monjalon <thomas@monjalon.net>,
- Bruce Richardson <bruce.richardson@intel.com>, 
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Content-Type: multipart/alternative; boundary="0000000000006f0f92063c27917f"
+ Bruce Richardson <bruce.richardson@intel.com>
+Content-Type: multipart/alternative; boundary="000000000000ac5c45063c2792d4"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -76,163 +75,136 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000006f0f92063c27917f
+--000000000000ac5c45063c2792d4
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 1 Jul 2025, 20:20 , <uk7b@foxmail.com> wrote:
+On Tue, 1 Jul 2025, 20:21 , <uk7b@foxmail.com> wrote:
 
 > From: Sun Yuechi <sunyuechi@iscas.ac.cn>
 >
-> Implement LPM lookupx4 function for RISC-V architecture using RISC-V
-> Vector Extension instruction set
+> This patch is derived from "config/riscv: detect presence of Zbc
+> extension with modifications".
+>
+> The RISC-V C api defines architecture extension test macros
+> These let us detect whether the V extension is supported on the
+> compiler and -march we're building with. The C api also defines V
+> intrinsics we can use rather than inline assembly on newer versions of
+> GCC (14.1.0+) and Clang (18.1.0+).
+>
+> If the V extension and intrinsics are both present and we can detect
+> the V extension at runtime, we define a flag, RTE_RISCV_FEATURE_V.
 >
 > Signed-off-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
 >
 Reviewed-by: Stanis=C5=82aw Kardach <stanislaw.kardach@gmail.com>
 
 > ---
->  MAINTAINERS           |  2 ++
->  lib/lpm/meson.build   |  1 +
->  lib/lpm/rte_lpm.h     |  2 ++
->  lib/lpm/rte_lpm_rvv.h | 59 +++++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 64 insertions(+)
->  create mode 100644 lib/lpm/rte_lpm_rvv.h
+>  .mailmap                         |  1 +
+>  config/riscv/meson.build         | 25 +++++++++++++++++++++++++
+>  lib/eal/riscv/include/rte_vect.h |  4 ++++
+>  3 files changed, 30 insertions(+)
 >
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 0e9357f3a3..9bd97879b6 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -341,6 +341,8 @@ M: Stanislaw Kardach <stanislaw.kardach@gmail.com>
->  F: config/riscv/
->  F: doc/guides/linux_gsg/cross_build_dpdk_for_riscv.rst
->  F: lib/eal/riscv/
-> +M: sunyuechi <sunyuechi@iscas.ac.cn>
-> +F: lib/**/*rvv*
+> diff --git a/.mailmap b/.mailmap
+> index 8483d96ec5..21f5d7fb5e 100644
+> --- a/.mailmap
+> +++ b/.mailmap
+> @@ -1513,6 +1513,7 @@ Sunil Kumar Kori <skori@marvell.com> <
+> skori@mavell.com> <sunil.kori@nxp.com>
+>  Sunil Pai G <sunil.pai.g@intel.com>
+>  Sunil Uttarwar <sunilprakashrao.uttarwar@amd.com>
+>  Sun Jiajia <sunx.jiajia@intel.com>
+> +Sun Yuechi <sunyuechi@iscas.ac.cn> <uk7b@foxmail.com>
+>  Sunyang Wu <sunyang.wu@jaguarmicro.com>
+>  Surabhi Boob <surabhi.boob@intel.com>
+>  Suyang Ju <sju@paloaltonetworks.com>
+> diff --git a/config/riscv/meson.build b/config/riscv/meson.build
+> index 7562c6cb99..e3694cf2e6 100644
+> --- a/config/riscv/meson.build
+> +++ b/config/riscv/meson.build
+> @@ -119,6 +119,31 @@ foreach flag: arch_config['machine_args']
+>      endif
+>  endforeach
 >
->  Intel x86
->  M: Bruce Richardson <bruce.richardson@intel.com>
-> diff --git a/lib/lpm/meson.build b/lib/lpm/meson.build
-> index cff8fed473..c4522eaf0c 100644
-> --- a/lib/lpm/meson.build
-> +++ b/lib/lpm/meson.build
-> @@ -11,6 +11,7 @@ indirect_headers +=3D files(
->          'rte_lpm_scalar.h',
->          'rte_lpm_sse.h',
->          'rte_lpm_sve.h',
-> +        'rte_lpm_rvv.h',
->  )
->  deps +=3D ['hash']
->  deps +=3D ['rcu']
-> diff --git a/lib/lpm/rte_lpm.h b/lib/lpm/rte_lpm.h
-> index 6bf8d9d883..edfe77b458 100644
-> --- a/lib/lpm/rte_lpm.h
-> +++ b/lib/lpm/rte_lpm.h
-> @@ -420,6 +420,8 @@ rte_lpm_lookupx4(const struct rte_lpm *lpm, xmm_t ip,
-> uint32_t hop[4],
->  #include "rte_lpm_altivec.h"
->  #elif defined(RTE_ARCH_X86)
->  #include "rte_lpm_sse.h"
-> +#elif defined(RTE_ARCH_RISCV) && defined(RTE_RISCV_FEATURE_V)
-> +#include "rte_lpm_rvv.h"
->  #else
->  #include "rte_lpm_scalar.h"
+> +# check if we can do buildtime detection of extensions supported by the
+> target
+> +riscv_extension_macros =3D false
+> +if (cc.get_define('__riscv_arch_test', args: machine_args) =3D=3D '1')
+> +  message('Detected architecture extension test macros')
+> +  riscv_extension_macros =3D true
+> +else
+> +  warning('RISC-V architecture extension test macros not available.
+> Build-time detection of extensions not possible')
+> +endif
+> +
+> +# detect extensions
+> +# Requires intrinsics available in GCC 14.1.0+ and Clang 18.1.0+
+> +if (riscv_extension_macros and
+> +    (cc.get_define('__riscv_vector', args: machine_args) !=3D ''))
+> +  if ((cc.get_id() =3D=3D 'gcc' and cc.version().version_compare('>=3D14=
+.1.0'))
+> +      or (cc.get_id() =3D=3D 'clang' and
+> cc.version().version_compare('>=3D18.1.0')))
+> +    if (cc.compiles('''#include <riscv_vector.h>
+> +        int main(void) { size_t vl =3D __riscv_vsetvl_e32m1(1); }''', ar=
+gs:
+> machine_args))
+> +      message('Compiling with the V extension')
+> +      machine_args +=3D ['-DRTE_RISCV_FEATURE_V']
+> +    endif
+> +  else
+> +    warning('Detected V extension but cannot use because intrinsics are
+> not available (present in GCC 14.1.0+ and Clang 18.1.0+)')
+> +  endif
+> +endif
+> +
+>  # apply flags
+>  foreach flag: dpdk_flags
+>      if flag.length() > 0
+> diff --git a/lib/eal/riscv/include/rte_vect.h
+> b/lib/eal/riscv/include/rte_vect.h
+> index 6df10fa8ee..a4357e266a 100644
+> --- a/lib/eal/riscv/include/rte_vect.h
+> +++ b/lib/eal/riscv/include/rte_vect.h
+> @@ -11,6 +11,10 @@
+>  #include "generic/rte_vect.h"
+>  #include "rte_common.h"
+>
+> +#ifdef RTE_RISCV_FEATURE_V
+> +#include <riscv_vector.h>
+> +#endif
+> +
+>  #ifdef __cplusplus
+>  extern "C" {
 >  #endif
-> diff --git a/lib/lpm/rte_lpm_rvv.h b/lib/lpm/rte_lpm_rvv.h
-> new file mode 100644
-> index 0000000000..0d3dc91055
-> --- /dev/null
-> +++ b/lib/lpm/rte_lpm_rvv.h
-> @@ -0,0 +1,59 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright (c) 2025 Institute of Software Chinese Academy of Sciences
-> (ISCAS).
-> + */
-> +
-> +#ifndef _RTE_LPM_RVV_H_
-> +#define _RTE_LPM_RVV_H_
-> +
-> +#include <rte_vect.h>
-> +
-> +#ifdef __cplusplus
-> +extern "C" {
-> +#endif
-> +
-> +#define RTE_LPM_LOOKUP_SUCCESS 0x01000000
-> +#define RTE_LPM_VALID_EXT_ENTRY_BITMASK 0x03000000
-> +
-> +static inline void rte_lpm_lookupx4(
-> +       const struct rte_lpm *lpm, xmm_t ip, uint32_t hop[4], uint32_t
-> defv)
-> +{
-> +       size_t vl =3D 4;
-> +
-> +       const uint32_t *tbl24_p =3D (const uint32_t *)lpm->tbl24;
-> +       uint32_t tbl_entries[4] =3D {
-> +               tbl24_p[((uint32_t)ip[0]) >> 8],
-> +               tbl24_p[((uint32_t)ip[1]) >> 8],
-> +               tbl24_p[((uint32_t)ip[2]) >> 8],
-> +               tbl24_p[((uint32_t)ip[3]) >> 8],
-> +       };
-> +       vuint32m1_t vtbl_entry =3D __riscv_vle32_v_u32m1(tbl_entries, vl)=
-;
-> +
-> +       vbool32_t mask =3D __riscv_vmseq_vx_u32m1_b32(
-> +           __riscv_vand_vx_u32m1(vtbl_entry,
-> RTE_LPM_VALID_EXT_ENTRY_BITMASK, vl),
-> +           RTE_LPM_VALID_EXT_ENTRY_BITMASK, vl);
-> +
-> +       vuint32m1_t vtbl8_index =3D __riscv_vsll_vx_u32m1(
-> +           __riscv_vadd_vv_u32m1(
-> +               __riscv_vsll_vx_u32m1(__riscv_vand_vx_u32m1(vtbl_entry,
-> 0x00FFFFFF, vl), 8, vl),
-> +               __riscv_vand_vx_u32m1(
-> +                   __riscv_vle32_v_u32m1((const uint32_t *)&ip, vl),
-> 0x000000FF, vl),
-> +               vl),
-> +           2, vl);
-> +
-> +       vtbl_entry =3D __riscv_vluxei32_v_u32m1_mu(
-> +           mask, vtbl_entry, (const uint32_t *)(lpm->tbl8), vtbl8_index,
-> vl);
-> +
-> +       vuint32m1_t vnext_hop =3D __riscv_vand_vx_u32m1(vtbl_entry,
-> 0x00FFFFFF, vl);
-> +       mask =3D __riscv_vmseq_vx_u32m1_b32(
-> +           __riscv_vand_vx_u32m1(vtbl_entry, RTE_LPM_LOOKUP_SUCCESS, vl)=
-,
-> 0, vl);
-> +
-> +       vnext_hop =3D __riscv_vmerge_vxm_u32m1(vnext_hop, defv, mask, vl)=
-;
-> +
-> +       __riscv_vse32_v_u32m1(hop, vnext_hop, vl);
-> +}
-> +
-> +#ifdef __cplusplus
-> +}
-> +#endif
-> +
-> +#endif /* _RTE_LPM_RVV_H_ */
 > --
 > 2.50.0
 >
 >
 
---0000000000006f0f92063c27917f
+--000000000000ac5c45063c2792d4
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 <div dir=3D"auto"><div><br><br><div class=3D"gmail_quote gmail_quote_contai=
-ner"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, 1 Jul 2025, 20:20 , &lt;=
+ner"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, 1 Jul 2025, 20:21 , &lt;=
 <a href=3D"mailto:uk7b@foxmail.com">uk7b@foxmail.com</a>&gt; wrote:<br></di=
 v><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;borde=
 r-left:1px solid rgb(204,204,204);padding-left:1ex">From: Sun Yuechi &lt;<a=
  href=3D"mailto:sunyuechi@iscas.ac.cn" target=3D"_blank" rel=3D"noreferrer"=
 >sunyuechi@iscas.ac.cn</a>&gt;<br>
 <br>
-Implement LPM lookupx4 function for RISC-V architecture using RISC-V<br>
-Vector Extension instruction set<br>
+This patch is derived from &quot;config/riscv: detect presence of Zbc<br>
+extension with modifications&quot;.<br>
+<br>
+The RISC-V C api defines architecture extension test macros<br>
+These let us detect whether the V extension is supported on the<br>
+compiler and -march we&#39;re building with. The C api also defines V<br>
+intrinsics we can use rather than inline assembly on newer versions of<br>
+GCC (14.1.0+) and Clang (18.1.0+).<br>
+<br>
+If the V extension and intrinsics are both present and we can detect<br>
+the V extension at runtime, we define a flag, RTE_RISCV_FEATURE_V.<br>
 <br>
 Signed-off-by: Sun Yuechi &lt;<a href=3D"mailto:sunyuechi@iscas.ac.cn" targ=
 et=3D"_blank" rel=3D"noreferrer">sunyuechi@iscas.ac.cn</a>&gt;<br></blockqu=
@@ -242,145 +214,105 @@ a>&gt;</div><div dir=3D"auto"><div class=3D"gmail_quote gmail_quote_contain=
 er"><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;bor=
 der-left:1px solid rgb(204,204,204);padding-left:1ex">
 ---<br>
-=C2=A0MAINTAINERS=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0|=C2=A0 2 ++<br>
-=C2=A0lib/lpm/meson.build=C2=A0 =C2=A0|=C2=A0 1 +<br>
-=C2=A0lib/lpm/rte_lpm.h=C2=A0 =C2=A0 =C2=A0|=C2=A0 2 ++<br>
-=C2=A0lib/lpm/rte_lpm_rvv.h | 59 ++++++++++++++++++++++++++++++++++++++++++=
-+<br>
-=C2=A04 files changed, 64 insertions(+)<br>
-=C2=A0create mode 100644 lib/lpm/rte_lpm_rvv.h<br>
+=C2=A0.mailmap=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0|=C2=A0 1 +<br>
+=C2=A0config/riscv/meson.build=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0| 25 ++++++=
++++++++++++++++++++<br>
+=C2=A0lib/eal/riscv/include/rte_vect.h |=C2=A0 4 ++++<br>
+=C2=A03 files changed, 30 insertions(+)<br>
 <br>
-diff --git a/MAINTAINERS b/MAINTAINERS<br>
-index 0e9357f3a3..9bd97879b6 100644<br>
---- a/MAINTAINERS<br>
-+++ b/MAINTAINERS<br>
-@@ -341,6 +341,8 @@ M: Stanislaw Kardach &lt;<a href=3D"mailto:stanislaw.ka=
-rdach@gmail.com" target=3D"_blank" rel=3D"noreferrer">stanislaw.kardach@gma=
-il.com</a>&gt;<br>
-=C2=A0F: config/riscv/<br>
-=C2=A0F: doc/guides/linux_gsg/cross_build_dpdk_for_riscv.rst<br>
-=C2=A0F: lib/eal/riscv/<br>
-+M: sunyuechi &lt;<a href=3D"mailto:sunyuechi@iscas.ac.cn" target=3D"_blank=
-" rel=3D"noreferrer">sunyuechi@iscas.ac.cn</a>&gt;<br>
-+F: lib/**/*rvv*<br>
+diff --git a/.mailmap b/.mailmap<br>
+index 8483d96ec5..21f5d7fb5e 100644<br>
+--- a/.mailmap<br>
++++ b/.mailmap<br>
+@@ -1513,6 +1513,7 @@ Sunil Kumar Kori &lt;<a href=3D"mailto:skori@marvell.=
+com" target=3D"_blank" rel=3D"noreferrer">skori@marvell.com</a>&gt; &lt;<a =
+href=3D"mailto:skori@mavell.com" target=3D"_blank" rel=3D"noreferrer">skori=
+@mavell.com</a>&gt; &lt;<a href=3D"mailto:sunil.kori@nxp.com" target=3D"_bl=
+ank" rel=3D"noreferrer">sunil.kori@nxp.com</a>&gt;<br>
+=C2=A0Sunil Pai G &lt;<a href=3D"mailto:sunil.pai.g@intel.com" target=3D"_b=
+lank" rel=3D"noreferrer">sunil.pai.g@intel.com</a>&gt;<br>
+=C2=A0Sunil Uttarwar &lt;<a href=3D"mailto:sunilprakashrao.uttarwar@amd.com=
+" target=3D"_blank" rel=3D"noreferrer">sunilprakashrao.uttarwar@amd.com</a>=
+&gt;<br>
+=C2=A0Sun Jiajia &lt;<a href=3D"mailto:sunx.jiajia@intel.com" target=3D"_bl=
+ank" rel=3D"noreferrer">sunx.jiajia@intel.com</a>&gt;<br>
++Sun Yuechi &lt;<a href=3D"mailto:sunyuechi@iscas.ac.cn" target=3D"_blank" =
+rel=3D"noreferrer">sunyuechi@iscas.ac.cn</a>&gt; &lt;<a href=3D"mailto:uk7b=
+@foxmail.com" target=3D"_blank" rel=3D"noreferrer">uk7b@foxmail.com</a>&gt;=
 <br>
-=C2=A0Intel x86<br>
-=C2=A0M: Bruce Richardson &lt;<a href=3D"mailto:bruce.richardson@intel.com"=
- target=3D"_blank" rel=3D"noreferrer">bruce.richardson@intel.com</a>&gt;<br=
->
-diff --git a/lib/lpm/meson.build b/lib/lpm/meson.build<br>
-index cff8fed473..c4522eaf0c 100644<br>
---- a/lib/lpm/meson.build<br>
-+++ b/lib/lpm/meson.build<br>
-@@ -11,6 +11,7 @@ indirect_headers +=3D files(<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&#39;rte_lpm_scalar.h&#39;,<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&#39;rte_lpm_sse.h&#39;,<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&#39;rte_lpm_sve.h&#39;,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;rte_lpm_rvv.h&#39;,<br>
-=C2=A0)<br>
-=C2=A0deps +=3D [&#39;hash&#39;]<br>
-=C2=A0deps +=3D [&#39;rcu&#39;]<br>
-diff --git a/lib/lpm/rte_lpm.h b/lib/lpm/rte_lpm.h<br>
-index 6bf8d9d883..edfe77b458 100644<br>
---- a/lib/lpm/rte_lpm.h<br>
-+++ b/lib/lpm/rte_lpm.h<br>
-@@ -420,6 +420,8 @@ rte_lpm_lookupx4(const struct rte_lpm *lpm, xmm_t ip, u=
-int32_t hop[4],<br>
-=C2=A0#include &quot;rte_lpm_altivec.h&quot;<br>
-=C2=A0#elif defined(RTE_ARCH_X86)<br>
-=C2=A0#include &quot;rte_lpm_sse.h&quot;<br>
-+#elif defined(RTE_ARCH_RISCV) &amp;&amp; defined(RTE_RISCV_FEATURE_V)<br>
-+#include &quot;rte_lpm_rvv.h&quot;<br>
-=C2=A0#else<br>
-=C2=A0#include &quot;rte_lpm_scalar.h&quot;<br>
-=C2=A0#endif<br>
-diff --git a/lib/lpm/rte_lpm_rvv.h b/lib/lpm/rte_lpm_rvv.h<br>
-new file mode 100644<br>
-index 0000000000..0d3dc91055<br>
---- /dev/null<br>
-+++ b/lib/lpm/rte_lpm_rvv.h<br>
-@@ -0,0 +1,59 @@<br>
-+/* SPDX-License-Identifier: BSD-3-Clause<br>
-+ * Copyright (c) 2025 Institute of Software Chinese Academy of Sciences (I=
-SCAS).<br>
-+ */<br>
+=C2=A0Sunyang Wu &lt;<a href=3D"mailto:sunyang.wu@jaguarmicro.com" target=
+=3D"_blank" rel=3D"noreferrer">sunyang.wu@jaguarmicro.com</a>&gt;<br>
+=C2=A0Surabhi Boob &lt;<a href=3D"mailto:surabhi.boob@intel.com" target=3D"=
+_blank" rel=3D"noreferrer">surabhi.boob@intel.com</a>&gt;<br>
+=C2=A0Suyang Ju &lt;<a href=3D"mailto:sju@paloaltonetworks.com" target=3D"_=
+blank" rel=3D"noreferrer">sju@paloaltonetworks.com</a>&gt;<br>
+diff --git a/config/riscv/meson.build b/config/riscv/meson.build<br>
+index 7562c6cb99..e3694cf2e6 100644<br>
+--- a/config/riscv/meson.build<br>
++++ b/config/riscv/meson.build<br>
+@@ -119,6 +119,31 @@ foreach flag: arch_config[&#39;machine_args&#39;]<br>
+=C2=A0 =C2=A0 =C2=A0endif<br>
+=C2=A0endforeach<br>
+<br>
++# check if we can do buildtime detection of extensions supported by the ta=
+rget<br>
++riscv_extension_macros =3D false<br>
++if (cc.get_define(&#39;__riscv_arch_test&#39;, args: machine_args) =3D=3D =
+&#39;1&#39;)<br>
++=C2=A0 message(&#39;Detected architecture extension test macros&#39;)<br>
++=C2=A0 riscv_extension_macros =3D true<br>
++else<br>
++=C2=A0 warning(&#39;RISC-V architecture extension test macros not availabl=
+e. Build-time detection of extensions not possible&#39;)<br>
++endif<br>
 +<br>
-+#ifndef _RTE_LPM_RVV_H_<br>
-+#define _RTE_LPM_RVV_H_<br>
-+<br>
-+#include &lt;rte_vect.h&gt;<br>
-+<br>
-+#ifdef __cplusplus<br>
-+extern &quot;C&quot; {<br>
-+#endif<br>
-+<br>
-+#define RTE_LPM_LOOKUP_SUCCESS 0x01000000<br>
-+#define RTE_LPM_VALID_EXT_ENTRY_BITMASK 0x03000000<br>
-+<br>
-+static inline void rte_lpm_lookupx4(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0const struct rte_lpm *lpm, xmm_t ip, uint32_t h=
-op[4], uint32_t defv)<br>
-+{<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0size_t vl =3D 4;<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0const uint32_t *tbl24_p =3D (const uint32_t *)l=
-pm-&gt;tbl24;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0uint32_t tbl_entries[4] =3D {<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0tbl24_p[((uint32_t)=
-ip[0]) &gt;&gt; 8],<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0tbl24_p[((uint32_t)=
-ip[1]) &gt;&gt; 8],<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0tbl24_p[((uint32_t)=
-ip[2]) &gt;&gt; 8],<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0tbl24_p[((uint32_t)=
-ip[3]) &gt;&gt; 8],<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0};<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0vuint32m1_t vtbl_entry =3D __riscv_vle32_v_u32m=
-1(tbl_entries, vl);<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0vbool32_t mask =3D __riscv_vmseq_vx_u32m1_b32(<=
++# detect extensions<br>
++# Requires intrinsics available in GCC 14.1.0+ and Clang 18.1.0+<br>
++if (riscv_extension_macros and<br>
++=C2=A0 =C2=A0 (cc.get_define(&#39;__riscv_vector&#39;, args: machine_args)=
+ !=3D &#39;&#39;))<br>
++=C2=A0 if ((cc.get_id() =3D=3D &#39;gcc&#39; and cc.version().version_comp=
+are(&#39;&gt;=3D14.1.0&#39;))<br>
++=C2=A0 =C2=A0 =C2=A0 or (cc.get_id() =3D=3D &#39;clang&#39; and cc.version=
+().version_compare(&#39;&gt;=3D18.1.0&#39;)))<br>
++=C2=A0 =C2=A0 if (cc.compiles(&#39;&#39;&#39;#include &lt;riscv_vector.h&g=
+t;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 int main(void) { size_t vl =3D __riscv_vsetvl_=
+e32m1(1); }&#39;&#39;&#39;, args: machine_args))<br>
++=C2=A0 =C2=A0 =C2=A0 message(&#39;Compiling with the V extension&#39;)<br>
++=C2=A0 =C2=A0 =C2=A0 machine_args +=3D [&#39;-DRTE_RISCV_FEATURE_V&#39;]<b=
+r>
++=C2=A0 =C2=A0 endif<br>
++=C2=A0 else<br>
++=C2=A0 =C2=A0 warning(&#39;Detected V extension but cannot use because int=
+rinsics are not available (present in GCC 14.1.0+ and Clang 18.1.0+)&#39;)<=
 br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0__riscv_vand_vx_u32m1(vtbl_entry,=
- RTE_LPM_VALID_EXT_ENTRY_BITMASK, vl),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0RTE_LPM_VALID_EXT_ENTRY_BITMASK, =
-vl);<br>
++=C2=A0 endif<br>
++endif<br>
 +<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0vuint32m1_t vtbl8_index =3D __riscv_vsll_vx_u32=
-m1(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0__riscv_vadd_vv_u32m1(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0__riscv_vsll_vx_u32=
-m1(__riscv_vand_vx_u32m1(vtbl_entry, 0x00FFFFFF, vl), 8, vl),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0__riscv_vand_vx_u32=
-m1(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0__ris=
-cv_vle32_v_u32m1((const uint32_t *)&amp;ip, vl), 0x000000FF, vl),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0vl),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A02, vl);<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0vtbl_entry =3D __riscv_vluxei32_v_u32m1_mu(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0mask, vtbl_entry, (const uint32_t=
- *)(lpm-&gt;tbl8), vtbl8_index, vl);<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0vuint32m1_t vnext_hop =3D __riscv_vand_vx_u32m1=
-(vtbl_entry, 0x00FFFFFF, vl);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0mask =3D __riscv_vmseq_vx_u32m1_b32(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0__riscv_vand_vx_u32m1(vtbl_entry,=
- RTE_LPM_LOOKUP_SUCCESS, vl), 0, vl);<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0vnext_hop =3D __riscv_vmerge_vxm_u32m1(vnext_ho=
-p, defv, mask, vl);<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0__riscv_vse32_v_u32m1(hop, vnext_hop, vl);<br>
-+}<br>
-+<br>
-+#ifdef __cplusplus<br>
-+}<br>
+=C2=A0# apply flags<br>
+=C2=A0foreach flag: dpdk_flags<br>
+=C2=A0 =C2=A0 =C2=A0if flag.length() &gt; 0<br>
+diff --git a/lib/eal/riscv/include/rte_vect.h b/lib/eal/riscv/include/rte_v=
+ect.h<br>
+index 6df10fa8ee..a4357e266a 100644<br>
+--- a/lib/eal/riscv/include/rte_vect.h<br>
++++ b/lib/eal/riscv/include/rte_vect.h<br>
+@@ -11,6 +11,10 @@<br>
+=C2=A0#include &quot;generic/rte_vect.h&quot;<br>
+=C2=A0#include &quot;rte_common.h&quot;<br>
+<br>
++#ifdef RTE_RISCV_FEATURE_V<br>
++#include &lt;riscv_vector.h&gt;<br>
 +#endif<br>
 +<br>
-+#endif /* _RTE_LPM_RVV_H_ */<br>
+=C2=A0#ifdef __cplusplus<br>
+=C2=A0extern &quot;C&quot; {<br>
+=C2=A0#endif<br>
 -- <br>
 2.50.0<br>
 <br>
 </blockquote></div></div></div>
 
---0000000000006f0f92063c27917f--
+--000000000000ac5c45063c2792d4--
