@@ -2,63 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89080C87FCB
-	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 09:20:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDC38CA0EC4
+	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 09:21:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9C5534026A;
-	Tue, 12 Aug 2025 11:20:31 +0200 (CEST)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com
- [209.85.167.48]) by mails.dpdk.org (Postfix) with ESMTP id B9C4840264
- for <dev@dpdk.org>; Tue, 12 Aug 2025 11:20:29 +0200 (CEST)
-Received: by mail-lf1-f48.google.com with SMTP id
- 2adb3069b0e04-55b93104888so6717575e87.1
- for <dev@dpdk.org>; Tue, 12 Aug 2025 02:20:29 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id AFF4F4026A;
+	Tue, 12 Aug 2025 11:21:44 +0200 (CEST)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com
+ [209.85.208.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 8CFD140264
+ for <dev@dpdk.org>; Tue, 12 Aug 2025 11:21:42 +0200 (CEST)
+Received: by mail-lj1-f179.google.com with SMTP id
+ 38308e7fff4ca-333dde3fa8dso2140401fa.2
+ for <dev@dpdk.org>; Tue, 12 Aug 2025 02:21:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1754990429; x=1755595229; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1754990502; x=1755595302; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=w/x/LOUtWCPNTvKaZTrCNdxRxxZbAHQtu98sgCz7brE=;
- b=hRCDAB3H45MU43b6nHL1tDV0ivE/ztyCCKDce73zk+MrUoIzK2nFtlCTfwuRj5qpCA
- RKIJ8OVnCKpme7blrX0jG23gOB6rYkyHN/w5upBMNrpkns+InKx4Th7El14T0BZL3RTE
- j9+d1dgDqE0xpZ1EtVf2z4qtK4OM1cClFyLcyPe7cMhGyaVIXdoTzf4S/ziglx3+nkAb
- bpDXEa1K1qezRwaxGvJnrugVOV08KpLdpKIOPisab0bq0HAzradruhizR19c7kcwfxfm
- d4aN/2yZUmLi0Q2I3aKY4Pim4HsJwMSD+z8U9o32lM6+WEQaNvhl73iEeFcM1vUZ8+ud
- /u4w==
+ bh=58BXkX/xGlCNPn6EQHngac3G4+JbveIM2qFz45Eg9Nw=;
+ b=PxMZr+pKITMH1GLtXkMUxc1Sk8V1O70Ggj5XX8MgJHYWT//ozG5RcKenK+cOBSVKG1
+ YqEsF9qODNknIB4uWvBcl/kc6BDfCyz77ic3rdoLryz738bRydmDQCw0x0E6pcJfZlps
+ JGu9A7LfC/P+PpcwoMfj1eYW4fc9AkRCcx1WR21dMX44qK5xVodFQvzZiepXk+uWqvK+
+ GZM3dv28PO8AySFd1ZOcJ4Ac1mvKxQRZBk/7FYZmpM/5FZfjnyYaVg9DPfmvmlWP5Uwn
+ Q0lEpM80ZS2P8s7oyTUn3tMXnEbIkZ61aJURt++so/V2fkLnSLyvXIx/PEtamDSU85Ye
+ oH9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1754990429; x=1755595229;
+ d=1e100.net; s=20230601; t=1754990502; x=1755595302;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=w/x/LOUtWCPNTvKaZTrCNdxRxxZbAHQtu98sgCz7brE=;
- b=cifiMPi7dbDrgp6av69WhwK0u/UksUShHuoLNJV8Mw7kZC0TQ56VcyZA9BZ+WAMTLA
- nFecw51wklYM/AMsX+WNVUAcN7G0UtTG1Op/LA8bL31hKj9osCs5ihgitSs2VnscZXdm
- tVuqBD2O9PP7+4eXmnS1h6cylGDSZRn3k0TWOCRv6UsJq7gzfbntCXLlrEtPHF3neHxP
- eL0/eS7+PVFvUn546Gwcndy9qkfjr/ueXNBHemUEutw+U8BePSUfBZE6rAwCsCijegps
- 6XgF0mOwCUXjOxUr3NnPjeNsBJ7zShR3g5u4yMtsoowmgAC/MLFLNLsaK9D1IABvjZng
- nv7Q==
-X-Gm-Message-State: AOJu0YxGmWtk2qXOWbtdjfbptipNDfuD1ety/35fBBiZ4z9EKg2f8fvI
- qZb7WEO3EY8YYKnIdXOfhwMbfyEi5E5hu7ncTb0rCvgExDGqpUk6YaAaYw7WijbiFIgnCx4XVN3
- rO8bIs9r9mra30LQq1ONnU2pWTDMGyM0=
-X-Gm-Gg: ASbGncts/2kRywhlbaik1//GIbgpyURctuYVVatKImuRslxUfzlrr45iAFXx7wja/af
- c1J3jGYflhju5TN9uQ3TyrKt/ukMDH18AjvSt/PzxMJrQkkveSY5uESSSkF+RrwD7YyBA4h3UYc
- wdrlTqAU9xTdqg9dxdBPelrNTCPld/nLyr3HXuci/zFOt59sH3itZ0ggs+DrfzsR3DFwtNG1vrK
- 2L9O/Y=
-X-Google-Smtp-Source: AGHT+IE6aToIZ/DCmBZWYoYRQ6Wrr5FcDTFD4jsH0el3kTdf1BROYEuXlHHM+Jem4SfdJ32PCKcpwzS+XCAU0RNCY54=
-X-Received: by 2002:a05:6512:1310:b0:55b:5b29:61ef with SMTP id
- 2adb3069b0e04-55cd765dc9dmr852057e87.56.1754990428752; Tue, 12 Aug 2025
- 02:20:28 -0700 (PDT)
+ bh=58BXkX/xGlCNPn6EQHngac3G4+JbveIM2qFz45Eg9Nw=;
+ b=BDrVf94pM9wCQW16VJaWGLkWPxy81WdsHX5XYe9Oc0gfp+OIVIubbaC2AShPOZfF8w
+ eYs2AWCuxfUMq0mVJM4fwck/iM/CULXKGgA5shCcXIuagV4JOiFs3Rjm9mPh770ABJYv
+ 19KC+kLUKbzgD9zn1cz5htx85eotLsA6yZaWJ83Wf6I/D5C5jCOqV8Cknxt3sjLr9XFO
+ GUb5sWZn+RyZPio21Vf5QeBZuZnPzIrvc2lTO38RPJUr6uIfaZiolKEXU57vAEd1XeaS
+ +C5Si6SOaZQYBwAsYdYAnVFTIUzKeidMCaP9qOqzT8hoX8g1B+0pojv6K5NpSmT1OFXp
+ OZvw==
+X-Gm-Message-State: AOJu0YwUa38bcT4avEeL4HGJO2nCq2Y+jZvvFOtDsaVc/wpgvBVaPU7K
+ HPCpD+A092ti3OXA9bWuFqe4oT9vn+Q7EViGaQ8sYnqYH1Jxen5u39VIxve+6v7OG8+HvBEJh+l
+ I4jRYGZaqSWPtdCJQwkTYo83EdHxzOlc=
+X-Gm-Gg: ASbGncsh5eiUI0vv/V9rn2nRrsKUfSXXatSxfFN7NjvJ4+B0VJE0zkbQRG1LGIakxDQ
+ FS/yaVuglNSm/bxkLm2HSxDjYV9Pr9OtuT330hQvO7atQx+TVpIfFRhiA4LIHPwgUh1w1quuUp6
+ V6yT/2XCvIGEihd33AfJgyaN83qE+7oe7DyQqKYB5b1B3MurH/5+ns9aZa6sJFrUA/xfiPAqQvL
+ ZYFpK4=
+X-Google-Smtp-Source: AGHT+IEB+WWtGO9P/TNzindo33FUyJqEV8xW7YHLgsIJYGdWm+E8YSX2GeAm/lBwfohtNkQaL+UcdWqa35consRoQPQ=
+X-Received: by 2002:a2e:ae11:0:b0:333:bab4:aa73 with SMTP id
+ 38308e7fff4ca-333d7d070eamr6964051fa.37.1754990501628; Tue, 12 Aug 2025
+ 02:21:41 -0700 (PDT)
 MIME-Version: 1.0
 References: <20250701182033.642384-1-uk7b@foxmail.com>
- <tencent_EFCE09AB3F6C9C0743F5C9226108A2D86D05@qq.com>
-In-Reply-To: <tencent_EFCE09AB3F6C9C0743F5C9226108A2D86D05@qq.com>
+ <tencent_78E26E08AE98768E000B338C8B474EB5C005@qq.com>
+In-Reply-To: <tencent_78E26E08AE98768E000B338C8B474EB5C005@qq.com>
 From: =?UTF-8?Q?Stanis=C5=82aw_Kardach?= <stanislaw.kardach@gmail.com>
-Date: Tue, 12 Aug 2025 11:20:19 +0200
-X-Gm-Features: Ac12FXxx9MnCtSmL87aWD15tSBIhrH0Ei9Vol0-QRSBM1LcDkW_cf-fyF8Y2syw
-Message-ID: <CAJcPQBquqVhnPPkBvgp1ouC7ptNg7p_GZDx1VredPd2DULiKMA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] eal/riscv/spinlock: add rte_cpuflag.h
+Date: Tue, 12 Aug 2025 11:21:32 +0200
+X-Gm-Features: Ac12FXw38QLOt4-rpo4ZWb4MCsXfXDco3LilKNwsj-3EHGgOC-cE2KtUwrrLQz8
+Message-ID: <CAJcPQBojPCmyDHS0_rmK-kiiUtGJDTjA53FkQV=+yDayzb2wJw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] lib/lpm: R-V V rte_lpm_lookupx4
 To: uk7b@foxmail.com
-Cc: dev@dpdk.org, Sun Yuechi <sunyuechi@iscas.ac.cn>
-Content-Type: multipart/alternative; boundary="0000000000001712c7063c278d24"
+Cc: dev@dpdk.org, Sun Yuechi <sunyuechi@iscas.ac.cn>, 
+ Thomas Monjalon <thomas@monjalon.net>,
+ Bruce Richardson <bruce.richardson@intel.com>, 
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Content-Type: multipart/alternative; boundary="0000000000006f0f92063c27917f"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -72,7 +76,7 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000001712c7063c278d24
+--0000000000006f0f92063c27917f
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -80,36 +84,142 @@ On Tue, 1 Jul 2025, 20:20 , <uk7b@foxmail.com> wrote:
 
 > From: Sun Yuechi <sunyuechi@iscas.ac.cn>
 >
-> Same as the x86 style, include "rte_cpuflags.h" in rte_spinlock.h
-> so that files like lib/fib/dir24_8.c don=E2=80=99t need to include it.
+> Implement LPM lookupx4 function for RISC-V architecture using RISC-V
+> Vector Extension instruction set
 >
 > Signed-off-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
 >
 Reviewed-by: Stanis=C5=82aw Kardach <stanislaw.kardach@gmail.com>
 
 > ---
->  lib/eal/riscv/include/rte_spinlock.h | 1 +
->  1 file changed, 1 insertion(+)
+>  MAINTAINERS           |  2 ++
+>  lib/lpm/meson.build   |  1 +
+>  lib/lpm/rte_lpm.h     |  2 ++
+>  lib/lpm/rte_lpm_rvv.h | 59 +++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 64 insertions(+)
+>  create mode 100644 lib/lpm/rte_lpm_rvv.h
 >
-> diff --git a/lib/eal/riscv/include/rte_spinlock.h
-> b/lib/eal/riscv/include/rte_spinlock.h
-> index 5fe4980e44..afbe83a061 100644
-> --- a/lib/eal/riscv/include/rte_spinlock.h
-> +++ b/lib/eal/riscv/include/rte_spinlock.h
-> @@ -14,6 +14,7 @@
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 0e9357f3a3..9bd97879b6 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -341,6 +341,8 @@ M: Stanislaw Kardach <stanislaw.kardach@gmail.com>
+>  F: config/riscv/
+>  F: doc/guides/linux_gsg/cross_build_dpdk_for_riscv.rst
+>  F: lib/eal/riscv/
+> +M: sunyuechi <sunyuechi@iscas.ac.cn>
+> +F: lib/**/*rvv*
 >
->  #include <rte_common.h>
->  #include "generic/rte_spinlock.h"
-> +#include "rte_cpuflags.h"
->
->  #ifdef __cplusplus
->  extern "C" {
+>  Intel x86
+>  M: Bruce Richardson <bruce.richardson@intel.com>
+> diff --git a/lib/lpm/meson.build b/lib/lpm/meson.build
+> index cff8fed473..c4522eaf0c 100644
+> --- a/lib/lpm/meson.build
+> +++ b/lib/lpm/meson.build
+> @@ -11,6 +11,7 @@ indirect_headers +=3D files(
+>          'rte_lpm_scalar.h',
+>          'rte_lpm_sse.h',
+>          'rte_lpm_sve.h',
+> +        'rte_lpm_rvv.h',
+>  )
+>  deps +=3D ['hash']
+>  deps +=3D ['rcu']
+> diff --git a/lib/lpm/rte_lpm.h b/lib/lpm/rte_lpm.h
+> index 6bf8d9d883..edfe77b458 100644
+> --- a/lib/lpm/rte_lpm.h
+> +++ b/lib/lpm/rte_lpm.h
+> @@ -420,6 +420,8 @@ rte_lpm_lookupx4(const struct rte_lpm *lpm, xmm_t ip,
+> uint32_t hop[4],
+>  #include "rte_lpm_altivec.h"
+>  #elif defined(RTE_ARCH_X86)
+>  #include "rte_lpm_sse.h"
+> +#elif defined(RTE_ARCH_RISCV) && defined(RTE_RISCV_FEATURE_V)
+> +#include "rte_lpm_rvv.h"
+>  #else
+>  #include "rte_lpm_scalar.h"
+>  #endif
+> diff --git a/lib/lpm/rte_lpm_rvv.h b/lib/lpm/rte_lpm_rvv.h
+> new file mode 100644
+> index 0000000000..0d3dc91055
+> --- /dev/null
+> +++ b/lib/lpm/rte_lpm_rvv.h
+> @@ -0,0 +1,59 @@
+> +/* SPDX-License-Identifier: BSD-3-Clause
+> + * Copyright (c) 2025 Institute of Software Chinese Academy of Sciences
+> (ISCAS).
+> + */
+> +
+> +#ifndef _RTE_LPM_RVV_H_
+> +#define _RTE_LPM_RVV_H_
+> +
+> +#include <rte_vect.h>
+> +
+> +#ifdef __cplusplus
+> +extern "C" {
+> +#endif
+> +
+> +#define RTE_LPM_LOOKUP_SUCCESS 0x01000000
+> +#define RTE_LPM_VALID_EXT_ENTRY_BITMASK 0x03000000
+> +
+> +static inline void rte_lpm_lookupx4(
+> +       const struct rte_lpm *lpm, xmm_t ip, uint32_t hop[4], uint32_t
+> defv)
+> +{
+> +       size_t vl =3D 4;
+> +
+> +       const uint32_t *tbl24_p =3D (const uint32_t *)lpm->tbl24;
+> +       uint32_t tbl_entries[4] =3D {
+> +               tbl24_p[((uint32_t)ip[0]) >> 8],
+> +               tbl24_p[((uint32_t)ip[1]) >> 8],
+> +               tbl24_p[((uint32_t)ip[2]) >> 8],
+> +               tbl24_p[((uint32_t)ip[3]) >> 8],
+> +       };
+> +       vuint32m1_t vtbl_entry =3D __riscv_vle32_v_u32m1(tbl_entries, vl)=
+;
+> +
+> +       vbool32_t mask =3D __riscv_vmseq_vx_u32m1_b32(
+> +           __riscv_vand_vx_u32m1(vtbl_entry,
+> RTE_LPM_VALID_EXT_ENTRY_BITMASK, vl),
+> +           RTE_LPM_VALID_EXT_ENTRY_BITMASK, vl);
+> +
+> +       vuint32m1_t vtbl8_index =3D __riscv_vsll_vx_u32m1(
+> +           __riscv_vadd_vv_u32m1(
+> +               __riscv_vsll_vx_u32m1(__riscv_vand_vx_u32m1(vtbl_entry,
+> 0x00FFFFFF, vl), 8, vl),
+> +               __riscv_vand_vx_u32m1(
+> +                   __riscv_vle32_v_u32m1((const uint32_t *)&ip, vl),
+> 0x000000FF, vl),
+> +               vl),
+> +           2, vl);
+> +
+> +       vtbl_entry =3D __riscv_vluxei32_v_u32m1_mu(
+> +           mask, vtbl_entry, (const uint32_t *)(lpm->tbl8), vtbl8_index,
+> vl);
+> +
+> +       vuint32m1_t vnext_hop =3D __riscv_vand_vx_u32m1(vtbl_entry,
+> 0x00FFFFFF, vl);
+> +       mask =3D __riscv_vmseq_vx_u32m1_b32(
+> +           __riscv_vand_vx_u32m1(vtbl_entry, RTE_LPM_LOOKUP_SUCCESS, vl)=
+,
+> 0, vl);
+> +
+> +       vnext_hop =3D __riscv_vmerge_vxm_u32m1(vnext_hop, defv, mask, vl)=
+;
+> +
+> +       __riscv_vse32_v_u32m1(hop, vnext_hop, vl);
+> +}
+> +
+> +#ifdef __cplusplus
+> +}
+> +#endif
+> +
+> +#endif /* _RTE_LPM_RVV_H_ */
 > --
 > 2.50.0
 >
 >
 
---0000000000001712c7063c278d24
+--0000000000006f0f92063c27917f
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -121,9 +231,8 @@ r-left:1px solid rgb(204,204,204);padding-left:1ex">From: Sun Yuechi &lt;<a=
  href=3D"mailto:sunyuechi@iscas.ac.cn" target=3D"_blank" rel=3D"noreferrer"=
 >sunyuechi@iscas.ac.cn</a>&gt;<br>
 <br>
-Same as the x86 style, include &quot;rte_cpuflags.h&quot; in rte_spinlock.h=
-<br>
-so that files like lib/fib/dir24_8.c don=E2=80=99t need to include it.<br>
+Implement LPM lookupx4 function for RISC-V architecture using RISC-V<br>
+Vector Extension instruction set<br>
 <br>
 Signed-off-by: Sun Yuechi &lt;<a href=3D"mailto:sunyuechi@iscas.ac.cn" targ=
 et=3D"_blank" rel=3D"noreferrer">sunyuechi@iscas.ac.cn</a>&gt;<br></blockqu=
@@ -133,25 +242,145 @@ a>&gt;</div><div dir=3D"auto"><div class=3D"gmail_quote gmail_quote_contain=
 er"><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;bor=
 der-left:1px solid rgb(204,204,204);padding-left:1ex">
 ---<br>
-=C2=A0lib/eal/riscv/include/rte_spinlock.h | 1 +<br>
-=C2=A01 file changed, 1 insertion(+)<br>
+=C2=A0MAINTAINERS=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0|=C2=A0 2 ++<br>
+=C2=A0lib/lpm/meson.build=C2=A0 =C2=A0|=C2=A0 1 +<br>
+=C2=A0lib/lpm/rte_lpm.h=C2=A0 =C2=A0 =C2=A0|=C2=A0 2 ++<br>
+=C2=A0lib/lpm/rte_lpm_rvv.h | 59 ++++++++++++++++++++++++++++++++++++++++++=
++<br>
+=C2=A04 files changed, 64 insertions(+)<br>
+=C2=A0create mode 100644 lib/lpm/rte_lpm_rvv.h<br>
 <br>
-diff --git a/lib/eal/riscv/include/rte_spinlock.h b/lib/eal/riscv/include/r=
-te_spinlock.h<br>
-index 5fe4980e44..afbe83a061 100644<br>
---- a/lib/eal/riscv/include/rte_spinlock.h<br>
-+++ b/lib/eal/riscv/include/rte_spinlock.h<br>
-@@ -14,6 +14,7 @@<br>
+diff --git a/MAINTAINERS b/MAINTAINERS<br>
+index 0e9357f3a3..9bd97879b6 100644<br>
+--- a/MAINTAINERS<br>
++++ b/MAINTAINERS<br>
+@@ -341,6 +341,8 @@ M: Stanislaw Kardach &lt;<a href=3D"mailto:stanislaw.ka=
+rdach@gmail.com" target=3D"_blank" rel=3D"noreferrer">stanislaw.kardach@gma=
+il.com</a>&gt;<br>
+=C2=A0F: config/riscv/<br>
+=C2=A0F: doc/guides/linux_gsg/cross_build_dpdk_for_riscv.rst<br>
+=C2=A0F: lib/eal/riscv/<br>
++M: sunyuechi &lt;<a href=3D"mailto:sunyuechi@iscas.ac.cn" target=3D"_blank=
+" rel=3D"noreferrer">sunyuechi@iscas.ac.cn</a>&gt;<br>
++F: lib/**/*rvv*<br>
 <br>
-=C2=A0#include &lt;rte_common.h&gt;<br>
-=C2=A0#include &quot;generic/rte_spinlock.h&quot;<br>
-+#include &quot;rte_cpuflags.h&quot;<br>
-<br>
-=C2=A0#ifdef __cplusplus<br>
-=C2=A0extern &quot;C&quot; {<br>
+=C2=A0Intel x86<br>
+=C2=A0M: Bruce Richardson &lt;<a href=3D"mailto:bruce.richardson@intel.com"=
+ target=3D"_blank" rel=3D"noreferrer">bruce.richardson@intel.com</a>&gt;<br=
+>
+diff --git a/lib/lpm/meson.build b/lib/lpm/meson.build<br>
+index cff8fed473..c4522eaf0c 100644<br>
+--- a/lib/lpm/meson.build<br>
++++ b/lib/lpm/meson.build<br>
+@@ -11,6 +11,7 @@ indirect_headers +=3D files(<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&#39;rte_lpm_scalar.h&#39;,<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&#39;rte_lpm_sse.h&#39;,<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&#39;rte_lpm_sve.h&#39;,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &#39;rte_lpm_rvv.h&#39;,<br>
+=C2=A0)<br>
+=C2=A0deps +=3D [&#39;hash&#39;]<br>
+=C2=A0deps +=3D [&#39;rcu&#39;]<br>
+diff --git a/lib/lpm/rte_lpm.h b/lib/lpm/rte_lpm.h<br>
+index 6bf8d9d883..edfe77b458 100644<br>
+--- a/lib/lpm/rte_lpm.h<br>
++++ b/lib/lpm/rte_lpm.h<br>
+@@ -420,6 +420,8 @@ rte_lpm_lookupx4(const struct rte_lpm *lpm, xmm_t ip, u=
+int32_t hop[4],<br>
+=C2=A0#include &quot;rte_lpm_altivec.h&quot;<br>
+=C2=A0#elif defined(RTE_ARCH_X86)<br>
+=C2=A0#include &quot;rte_lpm_sse.h&quot;<br>
++#elif defined(RTE_ARCH_RISCV) &amp;&amp; defined(RTE_RISCV_FEATURE_V)<br>
++#include &quot;rte_lpm_rvv.h&quot;<br>
+=C2=A0#else<br>
+=C2=A0#include &quot;rte_lpm_scalar.h&quot;<br>
+=C2=A0#endif<br>
+diff --git a/lib/lpm/rte_lpm_rvv.h b/lib/lpm/rte_lpm_rvv.h<br>
+new file mode 100644<br>
+index 0000000000..0d3dc91055<br>
+--- /dev/null<br>
++++ b/lib/lpm/rte_lpm_rvv.h<br>
+@@ -0,0 +1,59 @@<br>
++/* SPDX-License-Identifier: BSD-3-Clause<br>
++ * Copyright (c) 2025 Institute of Software Chinese Academy of Sciences (I=
+SCAS).<br>
++ */<br>
++<br>
++#ifndef _RTE_LPM_RVV_H_<br>
++#define _RTE_LPM_RVV_H_<br>
++<br>
++#include &lt;rte_vect.h&gt;<br>
++<br>
++#ifdef __cplusplus<br>
++extern &quot;C&quot; {<br>
++#endif<br>
++<br>
++#define RTE_LPM_LOOKUP_SUCCESS 0x01000000<br>
++#define RTE_LPM_VALID_EXT_ENTRY_BITMASK 0x03000000<br>
++<br>
++static inline void rte_lpm_lookupx4(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0const struct rte_lpm *lpm, xmm_t ip, uint32_t h=
+op[4], uint32_t defv)<br>
++{<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0size_t vl =3D 4;<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0const uint32_t *tbl24_p =3D (const uint32_t *)l=
+pm-&gt;tbl24;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0uint32_t tbl_entries[4] =3D {<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0tbl24_p[((uint32_t)=
+ip[0]) &gt;&gt; 8],<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0tbl24_p[((uint32_t)=
+ip[1]) &gt;&gt; 8],<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0tbl24_p[((uint32_t)=
+ip[2]) &gt;&gt; 8],<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0tbl24_p[((uint32_t)=
+ip[3]) &gt;&gt; 8],<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0};<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0vuint32m1_t vtbl_entry =3D __riscv_vle32_v_u32m=
+1(tbl_entries, vl);<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0vbool32_t mask =3D __riscv_vmseq_vx_u32m1_b32(<=
+br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0__riscv_vand_vx_u32m1(vtbl_entry,=
+ RTE_LPM_VALID_EXT_ENTRY_BITMASK, vl),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0RTE_LPM_VALID_EXT_ENTRY_BITMASK, =
+vl);<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0vuint32m1_t vtbl8_index =3D __riscv_vsll_vx_u32=
+m1(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0__riscv_vadd_vv_u32m1(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0__riscv_vsll_vx_u32=
+m1(__riscv_vand_vx_u32m1(vtbl_entry, 0x00FFFFFF, vl), 8, vl),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0__riscv_vand_vx_u32=
+m1(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0__ris=
+cv_vle32_v_u32m1((const uint32_t *)&amp;ip, vl), 0x000000FF, vl),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0vl),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A02, vl);<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0vtbl_entry =3D __riscv_vluxei32_v_u32m1_mu(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0mask, vtbl_entry, (const uint32_t=
+ *)(lpm-&gt;tbl8), vtbl8_index, vl);<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0vuint32m1_t vnext_hop =3D __riscv_vand_vx_u32m1=
+(vtbl_entry, 0x00FFFFFF, vl);<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0mask =3D __riscv_vmseq_vx_u32m1_b32(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0__riscv_vand_vx_u32m1(vtbl_entry,=
+ RTE_LPM_LOOKUP_SUCCESS, vl), 0, vl);<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0vnext_hop =3D __riscv_vmerge_vxm_u32m1(vnext_ho=
+p, defv, mask, vl);<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0__riscv_vse32_v_u32m1(hop, vnext_hop, vl);<br>
++}<br>
++<br>
++#ifdef __cplusplus<br>
++}<br>
++#endif<br>
++<br>
++#endif /* _RTE_LPM_RVV_H_ */<br>
 -- <br>
 2.50.0<br>
 <br>
 </blockquote></div></div></div>
 
---0000000000001712c7063c278d24--
+--0000000000006f0f92063c27917f--
