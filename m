@@ -2,39 +2,109 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32582CA0ED1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 02:08:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE99CA0EC4
+	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 02:34:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 202AE4067D;
-	Tue, 12 Aug 2025 04:07:25 +0200 (CEST)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
- by mails.dpdk.org (Postfix) with ESMTP id 0499740611
- for <dev@dpdk.org>; Tue, 12 Aug 2025 04:07:14 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.88.214])
- by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4c1FDj6bC5z1R8w9;
- Tue, 12 Aug 2025 10:04:21 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 45C281A016C;
- Tue, 12 Aug 2025 10:07:11 +0800 (CST)
-Received: from localhost.localdomain (10.50.165.33) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id B645E40270;
+	Tue, 12 Aug 2025 04:34:28 +0200 (CEST)
+Received: from mx0b-00154904.pphosted.com (mx0b-00154904.pphosted.com
+ [148.163.137.20])
+ by mails.dpdk.org (Postfix) with ESMTP id 1293E4026C
+ for <dev@dpdk.org>; Tue, 12 Aug 2025 04:34:26 +0200 (CEST)
+Received: from pps.filterd (m0170394.ppops.net [127.0.0.1])
+ by mx0b-00154904.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57BLs1Fv014195
+ for <dev@dpdk.org>; Mon, 11 Aug 2025 22:34:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=cc
+ :content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=smtpout1; bh=xEaxK6KT2aMFeyqq72K0YLz
+ Yrx48u+7HJC6dDaiunyo=; b=LqcSifOiaMGVh+te2aJGowHOeNISx04oUytaZwy
+ T95nH+tD04dg1H4AziJAdAwxMHyUz4xRl6XWxqPF0pCoSE6+Ibt6lGehsHhH0fz9
+ pPQNecjb+FaiWF3cCtlXPg6qllTNQwTh0G4n0uson70mUltL5E0BG4d3GOFXpN5J
+ Jx4m3bBfNQmR0lPcqsblyhay3iXTmYsRxB3i0Wb0Stmaxyvk+YaK7l79MkcgCgKp
+ J46Zb9X3m98hHFM/ngMqu+3tzdacD+dAHvFoGFeZEzZ2H2/utK2NPXDBvKlYOe21
+ R6Gme5VxbdbIkbVMH9zvmnAS/gTOwGGa3w+Wede2ktVjpvg==
+Received: from mx0b-00154901.pphosted.com (mx0b-00154901.pphosted.com
+ [67.231.157.37])
+ by mx0b-00154904.pphosted.com (PPS) with ESMTPS id 48e0w8ak28-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Mon, 11 Aug 2025 22:34:26 -0400 (EDT)
+Received: from pps.filterd (m0144102.ppops.net [127.0.0.1])
+ by mx0b-00154901.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57C0F5pK037453
+ for <dev@dpdk.org>; Mon, 11 Aug 2025 22:34:25 -0400
+Received: from esapsmtpat09.us.dell.com (esapsmtpat09.us.dell.com
+ [143.166.211.151])
+ by mx0b-00154901.pphosted.com (PPS) with ESMTPS id 48femykvtg-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+ for <dev@dpdk.org>; Mon, 11 Aug 2025 22:34:25 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=dell.com; i=@dell.com; q=dns/txt; s=smtpdev1;
+ t=1754966065; x=1786502065;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=xEaxK6KT2aMFeyqq72K0YLzYrx48u+7HJC6dDaiunyo=;
+ b=VK1tG2HUsPgyxUCIP48Op2JbnyWQOa1kdq1rMvDbpkNaY6lxw+x7N3Vz
+ FH4V08vbjrvZkH1TtK29+0wSXor8USX3ehPfIyFcS3tbYCxcvVacLSSDl
+ XqBPhmEyEuLDB4qOHYX9XPikp7s2zt9UcToqRzFqehoZEWH0uEhOs8Why
+ j/d85OpyWawGZyhTwM5hbB5x0hXwQD+E/TM17sqksWWjrovmiJaupVmYz
+ L5JpkhTHKBuN1ruvmVWGpOUisxtt1MJ5ZsteMqIi8Na+fnm1TwHfe8/pF
+ HnTPjXtFJ+Nzk+OZEe9ySh0oZqCdJmmuG43XcoKs2vJNdfMt/XPFdT8w7 Q==;
+X-CSE-ConnectionGUID: Upxu6e3fRY+yFtoVPOVgNA==
+X-CSE-MsgGUID: zYQYSE0XRoG9v+Om22Xi2w==
+X-LoopCount0: from 10.215.64.30
+X-MS-Exchange-CrossPremises-AuthAs: Internal
+Received: from mx1-adc.dell.com (HELO ieorr5-pvwed001.delllabs.net)
+ ([10.215.64.30])
+ by esapsmtpat09.us.dell.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 12 Aug 2025 02:34:25 +0000
+Received: from ieorr5-pvwer002.delllabs.net (100.64.0.135) by
+ ieorr5-pvwed001.delllabs.net (10.215.64.30) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 12 Aug 2025 10:07:10 +0800
-From: Chengwen Feng <fengchengwen@huawei.com>
-To: <thomas@monjalon.net>, <honest.jiang@foxmail.com>
-CC: <dev@dpdk.org>, <liuyonglong@huawei.com>
-Subject: [PATCH 07/10] app/dma-perf: remove invalid or redundant field
-Date: Tue, 12 Aug 2025 10:07:05 +0800
-Message-ID: <20250812020708.16186-8-fengchengwen@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250812020708.16186-1-fengchengwen@huawei.com>
-References: <20250811105430.55791-1-fengchengwen@huawei.com>
- <20250812020708.16186-1-fengchengwen@huawei.com>
+ 15.2.1544.27; Mon, 11 Aug 2025 21:35:29 -0500
+Received: from ieorr5-pvwer002.delllabs.net (100.64.0.135) by
+ ieorr5-pvwer002.delllabs.net (100.64.0.135) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 11 Aug 2025 21:34:24 -0500
+Received: from localhost (10.240.17.25) by smtprelay.delllabs.net
+ (100.64.0.135) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Mon, 11 Aug 2025 21:34:23 -0500
+From: Pravin M Bathija <pravin.bathija@dell.com>
+To: <dev@dpdk.org>
+CC: <pravin.bathija@dell.com>, <pravin.m.bathija.dev@gmail.com>
+Subject: [PATCH 0/3] vhost_user: configure memory slots
+Date: Tue, 12 Aug 2025 02:33:55 +0000
+Message-ID: <20250812023358.2400020-1-pravin.bathija@dell.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Originating-IP: [10.50.165.33]
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_01,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 phishscore=0 mlxscore=0 suspectscore=0 mlxlogscore=587
+ spamscore=0 clxscore=1015 lowpriorityscore=0 bulkscore=0 priorityscore=1501
+ adultscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2507300000
+ definitions=main-2508120022
+X-Proofpoint-ORIG-GUID: IkCbaEvbzHjIyLS7hfFW_PTVLSx9CHDj
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDAyMyBTYWx0ZWRfX5n3+uZMoVaXT
+ f+KaYR7pXU6f4WgBfloq5UUMoWWz5TYkw3W3nQHVpJFHxPzFH9jo06E8FKfG+V8h0FQi3aC4AJj
+ +0PZNLZ3uIrMb/nuAKUeTvAhxRVvtAHpK/pMWfJjVQv4P0ep3keKrNlhYXkCGSIzb1oVnptaIlK
+ uZcNi52yYMfrGeX+rcORzpr3Tdm3zJ8FmimbEb06h39rGZQ14f5ZFBwPYqEcJi4+nO+DiBQWQ7D
+ oihj9l2EKrgsSmWPhROWc0AmpVg+e1sufrXvr53Tei27+4ndfRkos1o2uujsGhXNbZFVb5dq4wB
+ OL/VaqQj553kEIlmpnqOiFN2dDARmFPFUedqVVxeLV6n4HjYkW7Pt5WPR16d50m6aJPTNqhcyBV
+ jNOHv1Za7H4oBNT7Aoi3cCtJ5+xpBj05DxwZNvDmbw+w1ZG7/HzABnaU+Vxy1ykEeaxlvczl
+X-Proofpoint-GUID: IkCbaEvbzHjIyLS7hfFW_PTVLSx9CHDj
+X-Authority-Analysis: v=2.4 cv=U5qSDfru c=1 sm=1 tr=0 ts=689aa832 cx=c_pps
+ a=Z2e5DKjA+8LiMDv5v6mwwA==:117 a=Vd41IKOgs+CGE2+bDnhSdQ==:17
+ a=2OwXVqhp2XgA:10 a=ke5jqHz-1hQA:10 a=4gVp8_51gQM-wQZJVKIA:9
+ a=hlJyneSgMmFPbskH-t2w:22
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0
+ priorityscore=1501 spamscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015
+ mlxlogscore=630 mlxscore=0 adultscore=0 malwarescore=0 suspectscore=0
+ impostorscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2507300000
+ definitions=main-2508120023
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,210 +118,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove invalid or redundant fields to make code more clean.
+- add protocol feature support add and removal of memory
+regions/slots dynamically.
+- this patch set has been tested with multiple instances of fio
+connected via libblkio to spdk target backed unix domain socket.
+- please apply this this patch-set to dpdk mainline as well as
+version 25.03.0.
 
-Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
----
- app/test-dma-perf/benchmark.c | 20 +++++++++-----------
- app/test-dma-perf/main.c      | 19 ++++---------------
- app/test-dma-perf/main.h      | 12 ++++++------
- 3 files changed, 19 insertions(+), 32 deletions(-)
+v2:
+- fixed warnings with e-mail address
+- fixed warnings with typos
+- there is a warning about __rte_packed_begin not being in
+pair with __rte_packed_end which on reading the code turns 
+out to be false. It is an anomaly of how git-format 
+generates the patch and how check-patch checks it.
 
-diff --git a/app/test-dma-perf/benchmark.c b/app/test-dma-perf/benchmark.c
-index d7c8d4c1b0..663f81ef5c 100644
---- a/app/test-dma-perf/benchmark.c
-+++ b/app/test-dma-perf/benchmark.c
-@@ -103,7 +103,7 @@ output_result(struct test_configure *cfg, struct lcore_params *para,
- 	uint32_t lcore_id = para->lcore_id;
- 	char *dma_name = para->dma_name;
- 
--	if (cfg->is_dma) {
-+	if (cfg->test_type == TEST_TYPE_DMA_MEM_COPY) {
- 		printf("lcore %u, DMA %s, DMA Ring Size: %u, Kick Batch Size: %u", lcore_id,
- 		       dma_name, ring_size, kick_batch);
- 		if (cfg->is_sg)
-@@ -118,7 +118,7 @@ output_result(struct test_configure *cfg, struct lcore_params *para,
- 			ave_cycle, buf_size, nr_buf, memory, rte_get_timer_hz()/1000000000.0);
- 	printf("Average Bandwidth: %.3lf Gbps, MOps: %.3lf\n", bandwidth, mops);
- 
--	if (cfg->is_dma)
-+	if (cfg->test_type == TEST_TYPE_DMA_MEM_COPY)
- 		output_csv(CSV_LINE_DMA_FMT,
- 			scenario_id, lcore_id, dma_name, ring_size, kick_batch, buf_size,
- 			nr_buf, memory, ave_cycle, bandwidth, mops);
-@@ -436,16 +436,15 @@ dummy_free_ext_buf(void *addr, void *opaque)
- }
- 
- static int
--setup_memory_env(struct test_configure *cfg,
-+setup_memory_env(struct test_configure *cfg, uint32_t nr_buf,
- 			 struct rte_mbuf ***srcs, struct rte_mbuf ***dsts,
- 			 struct rte_dma_sge **src_sges, struct rte_dma_sge **dst_sges)
- {
- 	unsigned int cur_buf_size = cfg->buf_size.cur;
- 	unsigned int buf_size = cur_buf_size + RTE_PKTMBUF_HEADROOM;
-+	bool is_src_numa_incorrect, is_dst_numa_incorrect;
- 	unsigned int nr_sockets;
--	uint32_t nr_buf = cfg->nr_buf;
- 	uint32_t i;
--	bool is_src_numa_incorrect, is_dst_numa_incorrect;
- 
- 	nr_sockets = rte_socket_count();
- 	is_src_numa_incorrect = (cfg->src_numa_node >= nr_sockets);
-@@ -579,7 +578,7 @@ get_work_function(struct test_configure *cfg)
- {
- 	lcore_function_t *fn;
- 
--	if (cfg->is_dma) {
-+	if (cfg->test_type == TEST_TYPE_DMA_MEM_COPY) {
- 		if (!cfg->is_sg)
- 			fn = do_dma_plain_mem_copy;
- 		else
-@@ -694,12 +693,11 @@ mem_copy_benchmark(struct test_configure *cfg)
- 	int ret = 0;
- 
- 	nr_buf = align_buffer_count(cfg, &nr_sgsrc, &nr_sgdst);
--	cfg->nr_buf = nr_buf;
- 
--	if (setup_memory_env(cfg, &srcs, &dsts, &src_sges, &dst_sges) < 0)
-+	if (setup_memory_env(cfg, nr_buf, &srcs, &dsts, &src_sges, &dst_sges) < 0)
- 		goto out;
- 
--	if (cfg->is_dma)
-+	if (cfg->test_type == TEST_TYPE_DMA_MEM_COPY)
- 		if (config_dmadevs(cfg) < 0)
- 			goto out;
- 
-@@ -722,7 +720,7 @@ mem_copy_benchmark(struct test_configure *cfg)
- 			printf("lcore parameters malloc failure for lcore %d\n", lcore_id);
- 			break;
- 		}
--		if (cfg->is_dma) {
-+		if (cfg->test_type == TEST_TYPE_DMA_MEM_COPY) {
- 			lcores[i]->dma_name = lcore_dma_map->dma_names;
- 			lcores[i]->dev_id = lcore_dma_map->dma_id;
- 			lcores[i]->kick_batch = kick_batch;
-@@ -921,7 +919,7 @@ mem_copy_benchmark(struct test_configure *cfg)
- 		lcores[i] = NULL;
- 	}
- 
--	if (cfg->is_dma) {
-+	if (cfg->test_type == TEST_TYPE_DMA_MEM_COPY) {
- 		for (i = 0; i < nb_workers; i++) {
- 			lcore_dma_map = &cfg->dma_config[i].lcore_dma_map;
- 			printf("Stopping dmadev %d\n", lcore_dma_map->dma_id);
-diff --git a/app/test-dma-perf/main.c b/app/test-dma-perf/main.c
-index 097f36b21c..e630d2980a 100644
---- a/app/test-dma-perf/main.c
-+++ b/app/test-dma-perf/main.c
-@@ -29,12 +29,6 @@
- 
- #define MAX_PARAMS_PER_ENTRY 4
- 
--enum {
--	TEST_TYPE_NONE = 0,
--	TEST_TYPE_DMA_MEM_COPY,
--	TEST_TYPE_CPU_MEM_COPY
--};
--
- #define MAX_TEST_CASES 16
- static struct test_configure test_cases[MAX_TEST_CASES];
- 
-@@ -90,7 +84,8 @@ output_env_info(void)
- static void
- output_header(uint32_t case_id, struct test_configure *case_cfg)
- {
--	output_csv(CSV_HDR_FMT, case_id, case_cfg->test_type_str);
-+	static const char * const type_str[] = { "NONE", DMA_MEM_COPY, CPU_MEM_COPY };
-+	output_csv(CSV_HDR_FMT, case_id, type_str[case_cfg->test_type]);
- }
- 
- static int
-@@ -104,7 +99,7 @@ run_test_case(struct test_configure *case_cfg)
- 		ret = mem_copy_benchmark(case_cfg);
- 		break;
- 	default:
--		printf("Unknown test type. %s\n", case_cfg->test_type_str);
-+		printf("Unknown test type\n");
- 		break;
- 	}
- 
-@@ -336,7 +331,6 @@ load_configs(const char *path)
- 	const char *skip;
- 	struct rte_kvargs *kvlist;
- 	int args_nr, nb_vp;
--	bool is_dma;
- 
- 	printf("config file parsing...\n");
- 	cfgfile = rte_cfgfile_load(path, 0);
-@@ -374,19 +368,14 @@ load_configs(const char *path)
- 
- 		if (strcmp(case_type, DMA_MEM_COPY) == 0) {
- 			test_case->test_type = TEST_TYPE_DMA_MEM_COPY;
--			test_case->test_type_str = DMA_MEM_COPY;
--			is_dma = true;
- 		} else if (strcmp(case_type, CPU_MEM_COPY) == 0) {
- 			test_case->test_type = TEST_TYPE_CPU_MEM_COPY;
--			test_case->test_type_str = CPU_MEM_COPY;
--			is_dma = false;
- 		} else {
- 			printf("Error: Wrong test case type %s in case%d.\n", case_type, i + 1);
- 			test_case->is_valid = false;
- 			continue;
- 		}
- 
--		test_case->is_dma = is_dma;
- 		test_case->src_numa_node = (int)atoi(rte_cfgfile_get_entry(cfgfile,
- 								section_name, "src_numa_node"));
- 		test_case->dst_numa_node = (int)atoi(rte_cfgfile_get_entry(cfgfile,
-@@ -410,7 +399,7 @@ load_configs(const char *path)
- 		} else if (args_nr == 4)
- 			nb_vp++;
- 
--		if (is_dma) {
-+		if (test_case->test_type == TEST_TYPE_DMA_MEM_COPY) {
- 			ring_size_str = rte_cfgfile_get_entry(cfgfile, section_name,
- 								"dma_ring_size");
- 			args_nr = parse_entry(ring_size_str, &test_case->ring_size);
-diff --git a/app/test-dma-perf/main.h b/app/test-dma-perf/main.h
-index 97c81eb2eb..c565dad9a7 100644
---- a/app/test-dma-perf/main.h
-+++ b/app/test-dma-perf/main.h
-@@ -12,7 +12,11 @@
- 
- #define MAX_WORKER_NB 128
- 
--#define MAX_DMA_NB 128
-+enum {
-+	TEST_TYPE_NONE = 0,
-+	TEST_TYPE_DMA_MEM_COPY,
-+	TEST_TYPE_CPU_MEM_COPY
-+};
- 
- typedef enum {
- 	OP_NONE = 0,
-@@ -49,12 +53,8 @@ struct test_configure {
- 	bool is_valid;
- 	bool is_skip;
- 	uint8_t test_type;
--	const char *test_type_str;
- 	uint16_t src_numa_node;
- 	uint16_t dst_numa_node;
--	uint16_t opcode;
--	bool is_dma;
--	bool is_sg;
- 	struct lcore_dma_config dma_config[MAX_WORKER_NB];
- 	struct test_configure_entry mem_size;
- 	struct test_configure_entry buf_size;
-@@ -63,7 +63,7 @@ struct test_configure {
- 	uint16_t num_worker;
- 	uint8_t nb_src_sges;
- 	uint8_t nb_dst_sges;
--	uint32_t nr_buf;
-+	bool is_sg;
- 	uint8_t scenario_id;
- };
- 
+
+Pravin M Bathija (3):
+  mailmap: add user
+  vhost_user: configure memory slots
+  vhost_user: support for memory regions
+
+ .mailmap               |   1 +
+ lib/vhost/rte_vhost.h  |   4 +
+ lib/vhost/vhost_user.c | 325 +++++++++++++++++++++++++++++++++++------
+ lib/vhost/vhost_user.h |  10 ++
+ 4 files changed, 296 insertions(+), 44 deletions(-)
+
 -- 
-2.17.1
+2.43.0
 
