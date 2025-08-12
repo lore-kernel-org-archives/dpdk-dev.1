@@ -2,19 +2,19 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50414CA0ED1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 02:07:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C7ACA0ED1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 02:07:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6185B4065C;
-	Tue, 12 Aug 2025 04:07:18 +0200 (CEST)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
- by mails.dpdk.org (Postfix) with ESMTP id 215A1402AC
+	by mails.dpdk.org (Postfix) with ESMTP id 22D0F4066A;
+	Tue, 12 Aug 2025 04:07:20 +0200 (CEST)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+ by mails.dpdk.org (Postfix) with ESMTP id 165C94026C
  for <dev@dpdk.org>; Tue, 12 Aug 2025 04:07:12 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.163.17])
- by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4c1FKB3XQnz3TqYn;
- Tue, 12 Aug 2025 10:08:14 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+ by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4c1FDw3GJxz2TT7s;
+ Tue, 12 Aug 2025 10:04:32 +0800 (CST)
 Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id A4CEF1A0188;
+ by mail.maildlp.com (Postfix) with ESMTPS id EBD7E140259;
  Tue, 12 Aug 2025 10:07:10 +0800 (CST)
 Received: from localhost.localdomain (10.50.165.33) by
  kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
@@ -23,9 +23,9 @@ Received: from localhost.localdomain (10.50.165.33) by
 From: Chengwen Feng <fengchengwen@huawei.com>
 To: <thomas@monjalon.net>, <honest.jiang@foxmail.com>
 CC: <dev@dpdk.org>, <liuyonglong@huawei.com>
-Subject: [PATCH 05/10] app/dma-perf: support list DMA devices
-Date: Tue, 12 Aug 2025 10:07:03 +0800
-Message-ID: <20250812020708.16186-6-fengchengwen@huawei.com>
+Subject: [PATCH 06/10] app/dma-perf: add more global config
+Date: Tue, 12 Aug 2025 10:07:04 +0800
+Message-ID: <20250812020708.16186-7-fengchengwen@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20250812020708.16186-1-fengchengwen@huawei.com>
 References: <20250811105430.55791-1-fengchengwen@huawei.com>
@@ -48,106 +48,254 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Because the names of dmadevs are different, this commit support list
-DMA devices, so that user could quickly know how to set the lcore_dma
-parameters.
-
-The command: dpdk-test-dma-perf --config ./config.ini --list-dma
-The output like:
-	DMA device: 0000:7b:00.0-ch0
-	    transfer-capa: mem2mem
-	    max-segs: 0 numa-node: 0
-
-	DMA device: 0000:7b:00.0-ch1
-	    transfer-capa: mem2mem
-	    max-segs: 0 numa-node: 0
+This commit add 'cache_flush' and 'test_seconds' to the global
+configuration.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- app/test-dma-perf/main.c | 49 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
+ app/test-dma-perf/benchmark.c |  4 ++--
+ app/test-dma-perf/config.ini  | 22 +++++++---------------
+ app/test-dma-perf/main.c      | 21 +++++++++++++++------
+ app/test-dma-perf/main.h      |  6 ++++--
+ doc/guides/tools/dmaperf.rst  | 22 +++++++++-------------
+ 5 files changed, 37 insertions(+), 38 deletions(-)
 
+diff --git a/app/test-dma-perf/benchmark.c b/app/test-dma-perf/benchmark.c
+index b798199dc1..d7c8d4c1b0 100644
+--- a/app/test-dma-perf/benchmark.c
++++ b/app/test-dma-perf/benchmark.c
+@@ -683,7 +683,7 @@ mem_copy_benchmark(struct test_configure *cfg)
+ 	unsigned int buf_size = cfg->buf_size.cur;
+ 	uint16_t kick_batch = cfg->kick_batch.cur;
+ 	uint16_t nb_workers = cfg->num_worker;
+-	uint16_t test_secs = cfg->test_secs;
++	uint16_t test_secs = global_cfg.test_secs;
+ 	float memory = 0;
+ 	uint32_t avg_cycles = 0;
+ 	uint32_t avg_cycles_total;
+@@ -703,7 +703,7 @@ mem_copy_benchmark(struct test_configure *cfg)
+ 		if (config_dmadevs(cfg) < 0)
+ 			goto out;
+ 
+-	if (cfg->cache_flush == 1) {
++	if (global_cfg.cache_flush > 0) {
+ 		cache_flush_buf(srcs, buf_size, nr_buf);
+ 		cache_flush_buf(dsts, buf_size, nr_buf);
+ 		rte_mb();
+diff --git a/app/test-dma-perf/config.ini b/app/test-dma-perf/config.ini
+index 63a30dc56b..f74d9b6617 100644
+--- a/app/test-dma-perf/config.ini
++++ b/app/test-dma-perf/config.ini
+@@ -7,8 +7,11 @@
+ ; There are two types of configuration sections: global configuration section and testcase
+ ; configuration sections.
+ 
+-; The global configuration section contains the "eal_args" entry which specifies the EAL arguments
+-; for all testcases.
++; The global configuration section contains the following parameters:
++; "eal_args" entry which specifies the EAL arguments for all testcases.
++; "cache_flush" is used to determine whether or not the cache should be flushed, with 1 indicating
++; to flush and 0 indicating to not flush.
++; "test_seconds" controls the test time of each case.
+ 
+ ; The testcase configuration sections contain the following parameters:
+ ; "mem_size" denotes the size of the memory footprint in megabytes (MB) for source and destination.
+@@ -22,11 +25,6 @@
+ ; src_numa_node is used to control the numa node where the source memory is allocated.
+ ; dst_numa_node is used to control the numa node where the destination memory is allocated.
+ 
+-; cache_flush is used to determine whether or not the cache should be flushed, with 1 indicating to
+-; flush and 0 indicating to not flush.
+-
+-; test_seconds controls the test time of the whole case.
+-
+ ; To use DMA for a test, please specify the "lcore_dma" parameter.
+ ; If you have already set the "-l" and "-a" parameters using EAL,
+ ; make sure that the value of "lcore_dma" falls within their range of the values.
+@@ -67,6 +65,8 @@
+ 
+ [GLOBAL]
+ eal_args=--in-memory --file-prefix=test -l 9-12
++cache_flush=0
++test_seconds=2
+ 
+ [case1]
+ type=DMA_MEM_COPY
+@@ -76,8 +76,6 @@ dma_ring_size=1024
+ kick_batch=32
+ src_numa_node=0
+ dst_numa_node=0
+-cache_flush=0
+-test_seconds=2
+ lcore_dma0=lcore=10,dev=0000:00:04.1,dir=mem2mem
+ lcore_dma1=lcore=11,dev=0000:00:04.2,dir=mem2mem
+ 
+@@ -91,8 +89,6 @@ dma_dst_sge=1
+ kick_batch=32
+ src_numa_node=0
+ dst_numa_node=0
+-cache_flush=0
+-test_seconds=2
+ lcore_dma0=lcore=10,dev=0000:00:04.1,dir=mem2mem
+ lcore_dma1=lcore=11,dev=0000:00:04.2,dir=mem2mem
+ 
+@@ -105,8 +101,6 @@ dma_ring_size=1024
+ kick_batch=32
+ src_numa_node=0
+ dst_numa_node=0
+-cache_flush=0
+-test_seconds=2
+ lcore_dma0=lcore=10,dev=0000:00:04.1,dir=mem2mem
+ lcore_dma1=lcore=11,dev=0000:00:04.2,dir=dev2mem,raddr=0x200000000,coreid=1,pfid=2,vfid=3
+ lcore_dma2=lcore=12,dev=0000:00:04.3,dir=mem2dev,raddr=0x300000000,coreid=3,pfid=2,vfid=1
+@@ -117,6 +111,4 @@ mem_size=10
+ buf_size=64,8192,2,MUL
+ src_numa_node=0
+ dst_numa_node=1
+-cache_flush=0
+-test_seconds=2
+ lcore = 10, 11
 diff --git a/app/test-dma-perf/main.c b/app/test-dma-perf/main.c
-index 7c121208dd..da9ae0a1bb 100644
+index da9ae0a1bb..097f36b21c 100644
 --- a/app/test-dma-perf/main.c
 +++ b/app/test-dma-perf/main.c
-@@ -43,6 +43,7 @@ static struct global_configure global_cfg;
+@@ -39,7 +39,7 @@ enum {
+ static struct test_configure test_cases[MAX_TEST_CASES];
+ 
+ #define GLOBAL_SECTION_NAME	"GLOBAL"
+-static struct global_configure global_cfg;
++struct global_configure global_cfg;
  
  static char *config_path;
  static char *result_path;
-+static bool  list_dma;
+@@ -305,6 +305,20 @@ parse_global_config(struct rte_cfgfile *cfgfile)
+ 		global_cfg.eal_argv[i] = tokens[i];
+ 	global_cfg.eal_argc = i;
  
- __rte_format_printf(1, 2)
- void
-@@ -527,6 +528,10 @@ parse_args(int argc, char **argv)
- 			  (void *)&result_path, NULL,
- 			  RTE_ARGPARSE_VALUE_REQUIRED, RTE_ARGPARSE_VALUE_TYPE_STR,
- 			},
-+			{ "--list-dma", NULL, "Optional, list dma devices and exit",
-+			  (void *)&list_dma, (void *)true,
-+			  RTE_ARGPARSE_VALUE_NONE, RTE_ARGPARSE_VALUE_TYPE_BOOL,
-+			},
- 			ARGPARSE_ARG_END(),
- 		},
- 	};
-@@ -567,6 +572,45 @@ parse_args(int argc, char **argv)
++	entry = rte_cfgfile_get_entry(cfgfile, GLOBAL_SECTION_NAME, "cache_flush");
++	if (entry == NULL) {
++		printf("Error: GLOBAL section don't has 'cache_flush' entry!\n");
++		return -1;
++	}
++	global_cfg.cache_flush = (uint8_t)atoi(entry);
++
++	entry = rte_cfgfile_get_entry(cfgfile, GLOBAL_SECTION_NAME, "test_seconds");
++	if (entry == NULL) {
++		printf("Error: GLOBAL section don't has 'test_seconds' entry!\n");
++		return -1;
++	}
++	global_cfg.test_secs = (uint16_t)atoi(entry);
++
  	return 0;
  }
  
-+static void
-+list_dma_dev(void)
-+{
-+	static const struct {
-+		uint64_t capability;
-+		const char *name;
-+	} capa_names[] = {
-+		{ RTE_DMA_CAPA_MEM_TO_MEM,  "mem2mem" },
-+		{ RTE_DMA_CAPA_MEM_TO_DEV,  "mem2dev" },
-+		{ RTE_DMA_CAPA_DEV_TO_MEM,  "dev2mem" },
-+		{ RTE_DMA_CAPA_DEV_TO_DEV,  "dev2dev" },
-+	};
-+	struct rte_dma_info info;
-+	int idx = 0;
-+	uint32_t i;
-+	int ret;
-+
-+	ret = rte_eal_init(global_cfg.eal_argc, global_cfg.eal_argv);
-+	if (ret < 0)
-+		rte_exit(EXIT_FAILURE, "Invalid EAL arguments\n");
-+
-+	RTE_DMA_FOREACH_DEV(idx) {
-+		ret = rte_dma_info_get(idx, &info);
-+		if (ret != 0)
-+			continue;
-+
-+		printf("\nDMA device name: %s\n", info.dev_name);
-+		printf("    transfer-capa:");
-+		for (i = 0; i < RTE_DIM(capa_names); i++) {
-+			if (capa_names[i].capability & info.dev_capa)
-+				printf(" %s", capa_names[i].name);
-+		}
-+		printf("\n");
-+		printf("    max-segs: %u numa-node: %d\n", info.max_sges, info.numa_node);
-+	}
-+
-+	rte_eal_cleanup();
-+}
-+
- int
- main(int argc, char *argv[])
- {
-@@ -580,6 +624,11 @@ main(int argc, char *argv[])
+@@ -497,11 +511,6 @@ load_configs(const char *path)
+ 			continue;
+ 		}
  
- 	case_nb = load_configs(config_path);
+-		test_case->cache_flush =
+-			(uint8_t)atoi(rte_cfgfile_get_entry(cfgfile, section_name, "cache_flush"));
+-		test_case->test_secs = (uint16_t)atoi(rte_cfgfile_get_entry(cfgfile,
+-					section_name, "test_seconds"));
+-
+ 		test_case->is_valid = true;
+ 	}
  
-+	if (list_dma) {
-+		list_dma_dev();
-+		return 0;
-+	}
+diff --git a/app/test-dma-perf/main.h b/app/test-dma-perf/main.h
+index 54dc1c4c2a..97c81eb2eb 100644
+--- a/app/test-dma-perf/main.h
++++ b/app/test-dma-perf/main.h
+@@ -63,9 +63,7 @@ struct test_configure {
+ 	uint16_t num_worker;
+ 	uint8_t nb_src_sges;
+ 	uint8_t nb_dst_sges;
+-	uint8_t cache_flush;
+ 	uint32_t nr_buf;
+-	uint16_t test_secs;
+ 	uint8_t scenario_id;
+ };
+ 
+@@ -74,8 +72,12 @@ struct test_configure {
+ struct global_configure {
+ 	char *eal_argv[MAX_EAL_ARGV_NB];
+ 	int   eal_argc;
++	uint8_t cache_flush;
++	uint16_t test_secs;
+ };
+ 
++extern struct global_configure global_cfg;
 +
- 	printf("Running cases...\n");
- 	for (i = 0; i < case_nb; i++) {
- 		if (test_cases[i].is_skip) {
+ void output_csv(const char *fmt, ...);
+ int mem_copy_benchmark(struct test_configure *cfg);
+ 
+diff --git a/doc/guides/tools/dmaperf.rst b/doc/guides/tools/dmaperf.rst
+index fc37eb6b98..7c6906a494 100644
+--- a/doc/guides/tools/dmaperf.rst
++++ b/doc/guides/tools/dmaperf.rst
+@@ -29,6 +29,8 @@ along with the application to demonstrate all the parameters.
+ 
+    [GLOBAL]
+    eal_args=--in-memory --file-prefix=test -l 9-12
++   cache_flush=0
++   test_seconds=2
+ 
+    [case1]
+    type=DMA_MEM_COPY
+@@ -38,8 +40,6 @@ along with the application to demonstrate all the parameters.
+    kick_batch=32
+    src_numa_node=0
+    dst_numa_node=0
+-   cache_flush=0
+-   test_seconds=2
+    lcore_dma0=lcore=10,dev=0000:00:04.2,dir=mem2mem
+    lcore_dma0=lcore=11,dev=0000:00:04.3,dir=mem2mem
+ 
+@@ -49,8 +49,6 @@ along with the application to demonstrate all the parameters.
+    buf_size=64,8192,2,MUL
+    src_numa_node=0
+    dst_numa_node=1
+-   cache_flush=0
+-   test_seconds=2
+    lcore = 10, 11
+ 
+    [case3]
+@@ -64,8 +62,6 @@ along with the application to demonstrate all the parameters.
+    kick_batch=32
+    src_numa_node=0
+    dst_numa_node=0
+-   cache_flush=0
+-   test_seconds=2
+    lcore_dma0=lcore=10,dev=0000:00:04.1,dir=mem2mem
+    lcore_dma1=lcore=11,dev=0000:00:04.2,dir=dev2mem,raddr=0x200000000,coreid=1,pfid=2,vfid=3
+    lcore_dma2=lcore=12,dev=0000:00:04.3,dir=mem2dev,raddr=0x200000000,coreid=1,pfid=2,vfid=3
+@@ -96,6 +92,13 @@ Global Configuration Parameters
+ ``eal_args``
+   Specifies the EAL arguments for all testcases.
+ 
++``cache_flush``
++  Determines whether the cache should be flushed.
++  ``1`` indicates to flush and ``0`` to not flush.
++
++``test_seconds``
++  Controls the test time for each scenario.
++
+ 
+ Testcase Configuration Parameters
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@@ -131,13 +134,6 @@ Testcase Configuration Parameters
+ ``dst_numa_node``
+   Controls the NUMA node where the destination memory is allocated.
+ 
+-``cache_flush``
+-  Determines whether the cache should be flushed.
+-  ``1`` indicates to flush and ``0`` to not flush.
+-
+-``test_seconds``
+-  Controls the test time for each scenario.
+-
+ ``lcore_dma``
+   Specifies the lcore/DMA mapping and per device specific config.
+ 
 -- 
 2.17.1
 
