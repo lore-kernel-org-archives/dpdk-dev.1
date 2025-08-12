@@ -2,42 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 077A3C87FCB
-	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 07:56:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62979CA0EC4
+	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 08:21:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2237B4026A;
-	Tue, 12 Aug 2025 09:56:16 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 36AB740264
- for <dev@dpdk.org>; Tue, 12 Aug 2025 09:56:14 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id F3BE92051E;
- Tue, 12 Aug 2025 09:56:13 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 6D7294026A;
+	Tue, 12 Aug 2025 10:21:10 +0200 (CEST)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mails.dpdk.org (Postfix) with ESMTP id E882740264
+ for <dev@dpdk.org>; Tue, 12 Aug 2025 10:21:08 +0200 (CEST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DDFB42934;
+ Tue, 12 Aug 2025 01:20:59 -0700 (PDT)
+Received: from [10.57.2.91] (unknown [10.57.2.91])
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7904F3F5A1;
+ Tue, 12 Aug 2025 01:21:07 -0700 (PDT)
+Message-ID: <5da4fdc1-a9ba-4180-b8c6-dbb20bd90607@arm.com>
+Date: Tue, 12 Aug 2025 09:21:05 +0100
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: CI failures
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Tue, 12 Aug 2025 09:56:09 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FE2D@smartserver.smartshare.dk>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: CI failures
-Thread-Index: AdwLXpCepZ7ACmmFSt+vDNRiQZw2Rw==
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: <dev@dpdk.org>,
-	<thomas@monjalon.net>,
-	<stephen@networkplumber.org>
-Cc: "Patrick Robb" <probb@iol.unh.edu>, <bruce.richardson@intel.com>,
- "Aaron Conole" <aconole@redhat.com>, "Gao, DaxueX" <daxuex.gao@intel.com>,
- "Puttaswamy, Rajesh T" <rajesh.t.puttaswamy@intel.com>,
- "David Marchand" <david.marchand@redhat.com>,
- "Xu, HailinX" <hailinx.xu@intel.com>,
- "Cui, KaixinX" <kaixinx.cui@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/6] dts: add artifact module
+To: Patrick Robb <probb@iol.unh.edu>
+Cc: dev@dpdk.org, Paul Szczepanek <paul.szczepanek@arm.com>
+References: <20250725151503.87374-1-luca.vizzarro@arm.com>
+ <20250725151503.87374-5-luca.vizzarro@arm.com>
+ <CAJvnSUCHuZWuGbDokC8=qfQj=OXhPcA+36LMv5zVbVN-nTr6Ug@mail.gmail.com>
+Content-Language: en-GB
+From: Luca Vizzarro <Luca.Vizzarro@arm.com>
+In-Reply-To: <CAJvnSUCHuZWuGbDokC8=qfQj=OXhPcA+36LMv5zVbVN-nTr6Ug@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,26 +44,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi all,
+On 12/08/2025 04:26, Patrick Robb wrote:
+> Oh yeah - is there a reason why we don't call touch in the init 
+> function? running touch should be idempotent so we aren't worried about 
+> it being called too many times. I was reminded when I saw in the softnic 
+> testsuite that it is being called in the testsuite setup. Maybe this is 
+> extra work on the testsuite side for no reason.
 
-The merged patch "[v3,3/3] ethdev: Reject conflicting TX offloads =
-configuration" [1] is causing CI failures.
-Specifically, the test_txoffload_queue test case in the =
-rxtx_offload_test_plan test plan fails.
-
-The patch depends on "[v3,1/3] testpmd: Do not enable mbuf fast release =
-TX offload by default" [2], which has not yet been merged, and a =
-modification of the test plan related to this patch 1/3.
-I'm working with Patrick and others to fix the test plan accordingly.
-
-[1]: =
-https://patchwork.dpdk.org/project/dpdk/patch/20250803194218.683318-3-mb@=
-smartsharesystems.com/
-[2]: =
-https://patchwork.dpdk.org/project/dpdk/patch/20250803194218.683318-1-mb@=
-smartsharesystems.com/
-
-
-Med venlig hilsen / Kind regards,
--Morten Br=F8rup
-
+The idea is that an artifact is just a definition of a file. We use the 
+constructor to define one, and we use the methods to actually operatore 
+on it. I originally implemented this behaviour, but there was a case – 
+which I can't remember right now – where this wasn't wanted. Overall, it 
+should be clearer to the test writer to calls operational methods 
+explicitly.
