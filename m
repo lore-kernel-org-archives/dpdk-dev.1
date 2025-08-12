@@ -2,42 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB88CA0EC4
-	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 01:53:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 529CDCA0ED1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 02:07:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4FB5F40270;
-	Tue, 12 Aug 2025 03:53:14 +0200 (CEST)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
- by mails.dpdk.org (Postfix) with ESMTP id 3BDE44026C
- for <dev@dpdk.org>; Tue, 12 Aug 2025 03:53:11 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9360E402EB;
+	Tue, 12 Aug 2025 04:07:12 +0200 (CEST)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+ by mails.dpdk.org (Postfix) with ESMTP id 7F5ED4026C
+ for <dev@dpdk.org>; Tue, 12 Aug 2025 04:07:11 +0200 (CEST)
 Received: from mail.maildlp.com (unknown [172.19.163.252])
- by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4c1Dtp3SjKzdcCx;
- Tue, 12 Aug 2025 09:48:50 +0800 (CST)
+ by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4c1FBB2RG2z14LpW;
+ Tue, 12 Aug 2025 10:02:10 +0800 (CST)
 Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id B5724180B54;
- Tue, 12 Aug 2025 09:53:09 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
+ by mail.maildlp.com (Postfix) with ESMTPS id 26CAF180B66;
+ Tue, 12 Aug 2025 10:07:09 +0800 (CST)
+Received: from localhost.localdomain (10.50.165.33) by
  kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 12 Aug 2025 09:53:09 +0800
-Message-ID: <316af4d4-2016-4236-a349-e70ed1501476@huawei.com>
-Date: Tue, 12 Aug 2025 09:53:08 +0800
+ 15.2.1544.11; Tue, 12 Aug 2025 10:07:08 +0800
+From: Chengwen Feng <fengchengwen@huawei.com>
+To: <thomas@monjalon.net>, <honest.jiang@foxmail.com>
+CC: <dev@dpdk.org>, <liuyonglong@huawei.com>
+Subject: [PATCH 00/10] bugfix and refactor of dma-perf
+Date: Tue, 12 Aug 2025 10:06:58 +0800
+Message-ID: <20250812020708.16186-1-fengchengwen@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20250811105430.55791-1-fengchengwen@huawei.com>
+References: <20250811105430.55791-1-fengchengwen@huawei.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 20/22] cfgfile: fix section count with no name
-To: David Marchand <david.marchand@redhat.com>, <dev@dpdk.org>
-CC: Cristian Dumitrescu <cristian.dumitrescu@intel.com>, Allain Legacy
- <allain.legacy@windriver.com>
-References: <20250619071037.37325-1-david.marchand@redhat.com>
- <20250723133157.159825-1-david.marchand@redhat.com>
- <20250723133157.159825-21-david.marchand@redhat.com>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20250723133157.159825-21-david.marchand@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+Content-Type: text/plain
+X-Originating-IP: [10.50.165.33]
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
  kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -52,21 +47,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+This patchset contain one bugfix and eight refactor commit for
+test-dma-perf application.
 
-On 7/23/2025 9:31 PM, David Marchand wrote:
-> Passing a NULL to strncmp is incorrect.
-> 
->  + ------------------------------------------------------- +
->  + Test Suite : Test Cfgfile Unit Test Suite
->  + ------------------------------------------------------- +
-> ../lib/cfgfile/rte_cfgfile.c:475:7: runtime error: null pointer passed as
-> 	argument 2, which is declared to never be null
-> 
-> On the other hand, it seems the intent was to count all sections, so
-> skip the whole loop and section name comparisons.
-> 
-> Fixes: c54e7234bc9e ("test/cfgfile: add basic unit tests")
-> 
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
+Chengwen Feng (10):
+  app/dma-perf: fix use-after-free
+  app/dma-perf: add global section for config file
+  app/dma-perf: use argparse lib to parse argument
+  app/dma-perf: refactor output csv
+  app/dma-perf: support list DMA devices
+  app/dma-perf: add more global config
+  app/dma-perf: remove invalid or redundant field
+  app/dma-perf: refactor load config function
+  app/dma-perf: refactor benchmark function
+  app/dma-perf: support specific error info
+
+---
+v2: fix CI error: format string is not a string literal
+    add one extra commit: support specific error info
+
+ app/test-dma-perf/benchmark.c | 182 ++++++-----
+ app/test-dma-perf/config.ini  |  35 +--
+ app/test-dma-perf/main.c      | 573 ++++++++++++++++++----------------
+ app/test-dma-perf/main.h      |  28 +-
+ app/test-dma-perf/meson.build |   2 +-
+ doc/guides/tools/dmaperf.rst  |  50 +--
+ 6 files changed, 462 insertions(+), 408 deletions(-)
+
+-- 
+2.17.1
 
