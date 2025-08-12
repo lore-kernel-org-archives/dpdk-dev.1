@@ -2,41 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B4F0CA0EC4
-	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 09:53:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62949CA0EC4
+	for <dpdk-dev@archiver.kernel.org>; Tue, 12 Aug 2025 10:09:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 766A54014F;
-	Tue, 12 Aug 2025 11:53:34 +0200 (CEST)
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com
- (mail-dm6nam10on2086.outbound.protection.outlook.com [40.107.93.86])
- by mails.dpdk.org (Postfix) with ESMTP id 454524013F;
- Tue, 12 Aug 2025 11:53:32 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 81EAE4014F;
+	Tue, 12 Aug 2025 12:09:04 +0200 (CEST)
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com
+ (mail-co1nam11on2087.outbound.protection.outlook.com [40.107.220.87])
+ by mails.dpdk.org (Postfix) with ESMTP id 779AA4013F;
+ Tue, 12 Aug 2025 12:09:03 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vhpZDri3FHmvrZ1YR+JKe1g/0I+pw/kMrPFtw/CJJjuFFqSFzSAgzOkRjrTQ107fhIPD1XzARHauecOZ8/5yLuDMHiN4szFE0EGeGtmhqetBbCSDxmOkkFip9XGL4zoKam2m8UNwEAZWyMU5FF0uC1L6g3hA6hdGRFt1p8LHF/BDzMRv3makzJVnQIqIkZt9mf+Zfq43mX0sqe+s2CAn3+YFIfzYJJJ16reWpTmXVzZbIU/wKPytIT49noh6MzBihD4Ac8O/zp5BrnKh2+ZG6LcoVhhwJwx+V2vONDNfjKspP4fz0Hvs78zJFCQ+qoo982Mzv6/cFLnpUKY3HUeI9w==
+ b=KADazRJWwtWlR8qv7SKlEZJwXS+KEvSLF9rmKI7vNYlik1w/jJ70+Z1+mm91GukvrDNVHjUthWpg5Qj6Fk2B52ppis5uB9ySDjUpR4QgEBFLmEEIOTkzfhwjULwBW//l3y+ofEfdkwQ186h0VI8qiLIcru2xSipOYeyLiWhv9rkwLqfpnYZK3xQ3rR3GqHtJLzahKUHIDPwxF9bhPtoqyi2lV4VxkfeL24ccwZFlYAtjD3GUnbM8bxJuOMjOqTJF1jyrx8ugommU4RqoEX31X0Z1+L8oXCSk97waQG/8LURxb2dKiwCytc94k7p4gg0PSB7CFdsac+fMfOyq3FfENQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XymB76Qbzjtn1vgjZVjCsPIdZAOWT88amJalm25ExVA=;
- b=mzv03ZEQNglsHFiQUechZYVPiFY1InyxYkNNgyEgl9bMjiw0h+NYaYpdXJ5mzw7Wm6EpWFfrsS8f6uzYFP6Fmo6wGOhwjzpG4TMkzvRN2UpG4YploY0FUPQYUuI3Ex1cT07rVZNepiSZmUut5V3X6ThbF4NQNFHDn4H09CAOYH2s4u65wuDPzvTFeqywSxsjhel1NMDAx5NhGpbu7FYdmz3JX2bPeHIk2EjawgXfXJPNw9XDdArLNgR76ArpjacW1+A46BlzuX6mlc5k6w0rkCK8jroLVBhoap2H95YDK/BUwyTrKDHWz4KpfB6MaO17BXajDPrshMziheBakVsMJQ==
+ bh=I3y1sBBGgh9kCYbABEegdmdM50rxtkBIdI6HME+k5kc=;
+ b=kOIQJ6R3J78+HY15p+Jl7HJ153C3mlWZ46JGcO6p0XiW8KKT3eAAV59RRVP/TdgXxBPvBADXmJMLAVe36BTo19XBbwoBpZYy+l2u8jwmSWYZVKS6SAiAlWRkdmthfEhQxqknDy23cgml8cyoD8BeSbV2suIeyu8ZCVv7SQFi2jaR2T9F41nJtPYKUiYq0JUeE9dxhgaP2/DQIMHsTNq0670YBuQnb+1PJjHn6p/YONqchBn28rg268BrbrCwvPFRzIF1L4hgqnZLt8fawts6WpUkbFq+mH7ynXTFOJrrLRngzrD2MltE/xcS347MXJyuNdlUuTH5wyRnx/rO3tz2mQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=uetpeshawar.edu.pk
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+ 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XymB76Qbzjtn1vgjZVjCsPIdZAOWT88amJalm25ExVA=;
- b=fDq1EpCv3WKvNUKmxmoy6+mL5S5uNmR89WlER9FoVUnE7I6gLYRvg1J+LdV+XW/9CaVeDFHJzRlGHRcF1ub1nXgW6ynlUzAmJ8I/cjwMdiP+MAkYn9o72HuC1SYWYRuKlfBRMK9sCd2fBR/E1NH5OEp4B/APpRnDMuigf7XQry+wLN7D0KSIvqkx+KVaOR7AlsFZIRd41uuPWQLdMO1egxWjNirJGXZHfj0x3/jLJzyKM6ZlH3nCMeVjvyTyu2YnCySNowg6vAcSGPuBL3q43rqlaqzBFmZC6rIDapqnHhOcEUgwa2qkO2Ry41iJ791/YGAgAQVklhrCe2NOhY9oQQ==
-Received: from MN0P221CA0024.NAMP221.PROD.OUTLOOK.COM (2603:10b6:208:52a::24)
- by SJ1PR12MB6100.namprd12.prod.outlook.com (2603:10b6:a03:45d::20)
+ bh=I3y1sBBGgh9kCYbABEegdmdM50rxtkBIdI6HME+k5kc=;
+ b=iRkz6gf1q+h4RKDKp/yZNzp1UkpkSk2XlfFwDTlh0D9P84hhtFdTAO1aUW8gJWyRbfFKyED44lt/UWQ5rHRdJDkZhoAcHAqindcKaLv+OulkEK3PwZ5nBQdnYtcrd2SfkD/xoZ2xYgZ0FucxBMGv8AfMEiwmxV7a2+ixH8UfLqZagmDX6oLEyPnsR2KpFEto092IeE4rOaiWMosLHSMyH9oVgU3S8KP2NCMrUyIrCs1TuvA1jUM+chGnItvabQEKeuLKTYf0QzllFYaS7IWCrsf2J9KGsa7s/b2nMpYaBMISHJOPqDAIuQZPNW4oFJ2HLZ7zvSw2b6178J2h0J+mug==
+Received: from CH5PR02CA0005.namprd02.prod.outlook.com (2603:10b6:610:1ed::7)
+ by MW6PR12MB8733.namprd12.prod.outlook.com (2603:10b6:303:24c::8)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.22; Tue, 12 Aug
- 2025 09:53:27 +0000
-Received: from BL02EPF00021F6E.namprd02.prod.outlook.com
- (2603:10b6:208:52a:cafe::e) by MN0P221CA0024.outlook.office365.com
- (2603:10b6:208:52a::24) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.13 via Frontend Transport; Tue,
- 12 Aug 2025 09:53:26 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Tue, 12 Aug
+ 2025 10:09:00 +0000
+Received: from DS3PEPF000099D8.namprd04.prod.outlook.com
+ (2603:10b6:610:1ed:cafe::7a) by CH5PR02CA0005.outlook.office365.com
+ (2603:10b6:610:1ed::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.14 via Frontend Transport; Tue,
+ 12 Aug 2025 10:08:59 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com;
  dkim=none (message not signed)
@@ -45,95 +45,82 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.161 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.161) by
- BL02EPF00021F6E.mail.protection.outlook.com (10.167.249.10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9031.11 via Frontend Transport; Tue, 12 Aug 2025 09:53:25 +0000
+ DS3PEPF000099D8.mail.protection.outlook.com (10.167.17.9) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9031.11 via Frontend Transport; Tue, 12 Aug 2025 10:08:59 +0000
 Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
  (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 12 Aug
- 2025 02:53:13 -0700
-Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
+ 2025 03:08:41 -0700
+Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
  (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 12 Aug
- 2025 02:53:12 -0700
-Date: Tue, 12 Aug 2025 11:51:45 +0200
-From: Dariusz Sosnowski <dsosnowski@nvidia.com>
-To: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-CC: <ivan.malov@arknetworks.am>, <viacheslavo@nvidia.com>, <bingz@nvidia.com>, 
- <orika@nvidia.com>, <suanmingm@nvidia.com>, <matan@nvidia.com>,
- <dev@dpdk.org>, <stable@dpdk.org>
-Subject: Re: [PATCH] net/mlx5: fix connection tracking state item validation
-Message-ID: <20250812095145.qw3kl4vl3adc3esh@ds-vm-debian.local>
-References: <20250808074738.2nqgorlqzzyf2jid@ds-vm-debian.local>
- <20250811062149.2489151-1-14pwcse1224@uetpeshawar.edu.pk>
- <20250811151520.bonpjpefwuzuap65@ds-vm-debian.local>
- <CA++2-x5voCjMDXcO_jJw6vrmvtDzfPaAArABeAT9TGcVzXtoZA@mail.gmail.com>
- <20250811171834.fcyhsgkssyai5uho@ds-vm-debian.local>
+ 2025 03:08:37 -0700
+From: Gregory Etelson <getelson@nvidia.com>
+To: <dev@dpdk.org>
+CC: <getelson@nvidia.com>, =?UTF-8?q?=C2=A0?= <mkashani@nvidia.com>,
+ <rasland@nvidia.com>, <stable@dpdk.org>, Dariusz Sosnowski
+ <dsosnowski@nvidia.com>, Viacheslav Ovsiienko <viacheslavo@nvidia.com>, "Bing
+ Zhao" <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
+ <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
+Subject: [PATCH] net/mlx5: fix non-template RSS expansion
+Date: Tue, 12 Aug 2025 13:07:16 +0300
+Message-ID: <20250812100717.134263-1-getelson@nvidia.com>
+X-Mailer: git-send-email 2.48.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250811171834.fcyhsgkssyai5uho@ds-vm-debian.local>
-X-Originating-IP: [10.126.230.35]
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+Content-Type: text/plain
+X-Originating-IP: [10.126.231.35]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
  rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF00021F6E:EE_|SJ1PR12MB6100:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1e062803-0b2e-40ee-22c8-08ddd9861520
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099D8:EE_|MW6PR12MB8733:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2edfa672-07ad-41ab-668f-08ddd9884185
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|82310400026|36860700013|376014; 
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?WHZ2WnkzT3NSMTEyZHU3Rk1nZWl1Z1I1eGdobSt2MVp0cWZuS29LeXgyc1pr?=
- =?utf-8?B?NWs0TXFpNVlPdjBOYXF4NG9PRWVabjUvTDg3VzhBZjlJbVJveUxhUmsyYlo2?=
- =?utf-8?B?Vy9mM3RzRFRIOGQrbHBydDh5M2RrbzJXbDV4SjlReWtvVGlwcG5kWTF1YUI4?=
- =?utf-8?B?ZEs2QitaTHR4d0hqQjlzdjcyMWZucTg0NTRLZjdlbHgxOXV2dHNSVkQyY2dl?=
- =?utf-8?B?aXpBeHk0SGJ5bHlpa1RKbVVGdWpOWktQYkdmdStJZlZpTFpHS3NKRHZ1VDZj?=
- =?utf-8?B?bVdweWlFWjR6WkFlYXp3a3VtTnljMUhtRW52UHlVVzFXRUhKWWQ3Z3lCQ2Fi?=
- =?utf-8?B?Mzk1N0tVeDhGeXIxcTFSVXBQcDAwYVlyb1Vab0RZZWFZUyt2WTNFMVFka1B5?=
- =?utf-8?B?MFFMSjhDVDRRNWRZK0l4MDAzb09OS3dCZVdTcFF4TUhwNTU0ckxtRHJGTUNC?=
- =?utf-8?B?bjVucWVGRjNQUUdONWJEMTBwNmVQdVEzaWE0dVlvVlFHUjRTUXVyd2FQTVYy?=
- =?utf-8?B?V1lWZURSQU8wSzFlUTI1ZkcyeENvSDI2bHJZL1cwOEltbUdhZ0xRMFI3UE9Q?=
- =?utf-8?B?TUtORnBVV3dydnFKditzclo4U0Y4UWlZOG81azBtekdvNHZkaU9NZUNsVjNs?=
- =?utf-8?B?SU9iQzJablhBZTVVZkFQUmk4WTZvTmRJVVk2dC9rekZ3TTB6TnlWcTVpS3Zw?=
- =?utf-8?B?dUlPVzdJMnl6c3loU3pHbmtEOEVuYkkrbms3TlBUUHJPWXlPN2M5RUh6UUNJ?=
- =?utf-8?B?MTR4elhxQUVFTmg2ckNiU0Z1S1ZXbW1wcG1ILytDZFkvRzUrZWRHdmRJUVpq?=
- =?utf-8?B?RU93bUxHMDQyVFQvSm5hWTEya1ZvSmE2MlIxNVYwdXVDQzBCZnlmSEpTRmpC?=
- =?utf-8?B?c1JpL0hxS0dxVUpsNk9rMFBxYk50TVlFR05DbFVyYi8yYVYrbnRYQjJYNEFK?=
- =?utf-8?B?eWg5dWxrTlVFRXZwbTlzYlJlRDRCTk8yRjVuY254c1h4YUcvamo3bGtHNk9R?=
- =?utf-8?B?UkNTdUpzbU9odytqNU5uT3pjWUhXVjFURFZzbVdrczIrdEdkbE0zSzY3dmkx?=
- =?utf-8?B?UllkNnhGNXB6SFNLNzZQRHlsSFkxaCt6RkNUNEc5dHJXT2pDQk4yelp4OS9E?=
- =?utf-8?B?dTlUdnVxR3Nxcit4ZS8vWUpOUERRdXNIdVNuRXNhVUtlamFIOVY2WTZLanNK?=
- =?utf-8?B?RGNmbVcxY0t5bE42bHJuNWhjZkYraHRqMDBJRlNJNHZ1M1ZMUXROZHVGQVRY?=
- =?utf-8?B?NDNFL09xdzdVZ2RFV2w2dTN0NzJmUmNFNVMzRlVLb29aNzBmd2ZzcVVmRzV4?=
- =?utf-8?B?VWYvV3hDQTR2dHM1K0JYdzdHVHFkSmhHbVMwckxQaHgyUmNuUWNsUWhJSlVJ?=
- =?utf-8?B?MVJnM2I1bjUrSHJ5U0lPcXN2TGpUS3M4MUtXdm5XNldWR2F6YjFxQkM4dEdL?=
- =?utf-8?B?aDBDZDZhY2tKbjBJcWpXSkFnZ1ZPUzNQU2szU056UGdpM3FjNXAvelVtODlk?=
- =?utf-8?B?V1JKNWJ6eUU3UlgvNUFkd0FBeC9VNWoxcHQ0SDUvdDliUU5qZ2NiWEZDVys3?=
- =?utf-8?B?Z0RTTkh5UTVueDhhR25IVXFDeHNRVnI1WTVvVXN6c0pZMzVkWS9mdU5FY2E4?=
- =?utf-8?B?VzBJKzBWQ3Z1cWwzZDlmRU5DYS9qWUFueHdIbGdEZk1OVGFEWWJjWUhMbnZK?=
- =?utf-8?B?aXNROE9Ga2RkVGVKWE1GWmYzUW5WOW5WeElSOWgxWXVyanAvZFhueDBWNUh4?=
- =?utf-8?B?eXBRWVhhMEVxMFNwMU51c0JVV2ZYaGs0ZEVKUkFWL2ZnV1kvUE5LRW1wcVk2?=
- =?utf-8?B?d2VrTTVpSllaKzhaZHBEeGorTFlVbzlBZ0VlTTcyL3U5bVdMdEFNWWNvNmNP?=
- =?utf-8?B?UUI1czZNM0hJb28vWXFFaE0xbURwMFN5OWlaWVVWOE1FR2x3RVQzcGw3eFBC?=
- =?utf-8?B?RkVLU0FNZjNVeWtqOHM2Rmt0UXNHcnYvYlJDeUM5MUtzZFhCODFIVDg1cGVy?=
- =?utf-8?B?WEFqek9YMWVvUHRML3hpaGFjb3hvZ21hYlduaHBMM3AxNFNxNFREMWdkU0hs?=
- =?utf-8?Q?JCMRhX?=
+ ARA:13230040|82310400026|1800799024|36860700013|376014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?2aiGXrahHLIt5HgAkyaGVjPIR2sNwN7m6kdCd9UTkl7Id3av16WlEhO/3xh8?=
+ =?us-ascii?Q?K4AWgTzFvYLCG9cRMp9Y2TVqlZ0XDleFPDY1Hfny/bU/BUkfZJ7iCA6QMBAC?=
+ =?us-ascii?Q?y/NsLVg4/BQK8iRW4CNPv6wQ96vGpiCNowyE5o/TJnP26HVhDiNRQAfAoH36?=
+ =?us-ascii?Q?VI4yjiMdYFpgW8v/nrNC+LTAU61rGU4hM03yPusPTTGJwHxgPoxD013R+1Rs?=
+ =?us-ascii?Q?oFHkA93h8yyf/2u6A72at87XyVsvKtOakSmjCt33PM8XqR5MMLn46GCvkD7n?=
+ =?us-ascii?Q?8MnhVBelaFec98zfvM4rO+rG1R7GYAjhMRAdUHRxSPJkREXTB253KDyKJdHv?=
+ =?us-ascii?Q?4Q4zY7Q8K4vXx2LRX22Mm00vxmdF9GpHs2cJJ6+9po5FOesC5i+HlRwFON1t?=
+ =?us-ascii?Q?/8AquQIEWB35M4xg201iISG/O0qKEE4Ogq2PU4/d/pu2uRBTiqV4Z0w5JCQB?=
+ =?us-ascii?Q?uv8neeB01774MtxpJT4wNRTX5pxTWWLFOM41OqbR5F4HWpETJLKqCkdGAm2T?=
+ =?us-ascii?Q?vcrj4X50BrDDGdyF4meUVIJTHR24hPmka30aFib6yzLkU0md3Qsrn0KSV2DW?=
+ =?us-ascii?Q?NxK1zLYqcFS5pu4qNeg3dmTHiNZmK3+c1r3SDCwZAM5qBYJQytkMZULS7wrS?=
+ =?us-ascii?Q?hJDjn4ZpEuk/MmF6VSXH14MbZIPDAAWqb8iZzLwgOCBnhVpOaVf/Ph2HqThj?=
+ =?us-ascii?Q?TzbMuHVi29oiFt1KOhJHk1Dgwn3ZYli/Gpbtt+7WGlJD2Ov/ofVofjOPqM7q?=
+ =?us-ascii?Q?W6YI3Q53edQQAjwvgH1BCz62ppeEIR5SyPjRoVXxGwOme/sAYxCjAkkFC0iA?=
+ =?us-ascii?Q?n8QA35/Qqnm47uLzmiFF2deEdzhZHaZ3uDS+c3JIxlPFAL578jhltntTZLmJ?=
+ =?us-ascii?Q?wP0WETqV0wmrHfx/ubZl1eqH/w1CZzTmsvGYxGCM8fMV3va69bM/hf1DeLC7?=
+ =?us-ascii?Q?4EFFIeURWaX7pNurhe28XnpcbRo3gdt00AItAa8W8Yw3ADp4NUFtzh4GoXx3?=
+ =?us-ascii?Q?yGhvzrgGWep0h8dupuFfT2xa/IbSUVOlhnHNIr3UazWx1YpWj3bYBNDQZiSu?=
+ =?us-ascii?Q?jPZlXl1BJzkT4+YdRFQQOXwpesAHtsqTTwrC/Dehju4qKqaYGlaaLuJtVZo0?=
+ =?us-ascii?Q?cg/kfG5G6OE6aVCYF0RDTDz7WAXh3/Lxog7slDIaKpzdHp2HC+CIxCUrt/nM?=
+ =?us-ascii?Q?PvhQUBwTdHNdOLKhK8NOQZq9Dfb/Z0fsxeKZwiKVMDFKkPPFck/2hvupOR2B?=
+ =?us-ascii?Q?m11mK2jghU8QU5mgpTrkhskwLTZjbhzTb/l2kXU8aR4LShbhUas5EfHV5aiK?=
+ =?us-ascii?Q?rjwChv9GYtKGeWs1rO/YibodwQp2x1BxbMwSnZlglOVHz59pzmyRdQosKM6Z?=
+ =?us-ascii?Q?4hpIOKtit0xfrxrZALy7mS8rEK0y6YsxaLyivyXRTfixMpOzw7Ke3qfRblPi?=
+ =?us-ascii?Q?9jEsMrH4FQ5TZdYvir5qUD7k9sEiYI3dPxRLKJyH1yTWCxnmRSWf+gJZFvvJ?=
+ =?us-ascii?Q?aj1GftT3I5Xy3v2SxNRdutTLqtDx9Zwtgbgm?=
 X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014); DIR:OUT;
+ SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014); DIR:OUT;
  SFP:1101; 
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 09:53:25.7903 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e062803-0b2e-40ee-22c8-08ddd9861520
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2025 10:08:59.2044 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2edfa672-07ad-41ab-668f-08ddd9884185
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
  Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BL02EPF00021F6E.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: DS3PEPF000099D8.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6100
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8733
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -147,82 +134,103 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, Aug 11, 2025 at 07:18:34PM +0200, Dariusz Sosnowski wrote:
-> On Mon, Aug 11, 2025 at 09:27:06PM +0500, Khadem Ullah wrote:
-> > Thank you for providing these details. Sure, I will go through it (will
-> > performed the experiment) and come back to you.
-> > I totally agree that the documentation about connection tracking should be
-> > improved.
-> > 
-> > 
-> > On Mon, Aug 11, 2025 at 8:17 PM Dariusz Sosnowski <dsosnowski@nvidia.com>
-> > wrote:
-> > 
-> > >
-> > > > Are these the only testpmd commands you execute?
-> > >
-> > > No, as I mentioned earlier, I have provided only relevant information. I
-> > had added something similar commands as yours,
-> > the following was missing from my configurations.
-> > 
-> > set conntrack com peer 1 is_orig 1 enable 1 live 1 sack 1 cack 0 last_dir 0
-> > liberal 1 state 0 max_ack_win 7
-> > r_lim 3 last_win 510 last_seq 65535 last_ack 65537 last_end 65545
-> > last_index 0x8
-> > 
-> > set conntrack orig scale 7 fin 1 acked 1 unack_data 0 sent_end 65545
-> > reply_end 65535 max_win 28960 max_ack 2632987379
-> > set conntrack rply scale 7 fin 0 acked 1 unack_data 0 sent_end 65545
-> > reply_end 65535 max_win 65280 max_ack 2532480967
-> > 
-> > . > 3 conntrack item deals with RTE_FLOW_CONNTRACK_PKT_STATE_* bitmap
-> > 
-> >   > In your example, "conntrack is 1" specification sets flags to 1.
-> >    > This means, "match packets with RTE_FLOW_CONNTRACK_PKT_STATE_VALID"
-> >    >and not "connection in RTE_FLOW_CONNTRACK_STATE_ESTABLISHED".
-> > 
-> >    > The same goes for "conntrack is 2". It specifies match on
-> >    > RTE_FLOW_CONNTRACK_PKT_STATE_CHANGED, not on
-> >    >R TE_FLOW_CONNTRACK_STATE_FIN_WAIT or any other state.
-> > >
-> >   > Because it is a bitmap, conntrack item can specify a combination of
-> >    >P KT_STATE flags. For example, "conntrack is 3" would mean matching
-> >    >a packet with RTE_FLOW_CONNTRACK_PKT_STATE_VALID and
-> >    >RTE_FLOW_CONNTRACK_PKT_STATE_CHANGED flags set.
-> > 
-> > Can this RTE_FLOW_CONNTRACK_PKT_STATE_* bitmap be represented with a
-> > specific valid range ?
-> > for example, we can say, 'conntrack is' valid for 1 to 8, or any other
-> > range. As, currently user can specify
-> > any value e.g., 1000 and it allows it.
-> 
-> Since conntrack item flags is a bitmap, then any combination of RTE_FLOW_CONNTRACK_PKT_STATE_*
-> flags is a valid value to match on.
-> 
-> The validation could be done as follows:
-> 
-> 	flags_all = (RTE_FLOW_CONNTRACK_PKT_STATE_VALID |
-> 	             RTE_FLOW_CONNTRACK_PKT_STATE_CHANGED |
-> 	             RTE_FLOW_CONNTRACK_PKT_STATE_INVALID |
-> 	             RTE_FLOW_CONNTRACK_PKT_STATE_DISABLED |
-> 	             RTE_FLOW_CONNTRACK_PKT_STATE_BAD)
-> 
-> 	if spec->flags & ~flags_all:
-> 	    reject
-> 
-> Regarding validation itself, if this is added, please make sure of the following:
-> 
-> - In mlx5_flow_dv_validate_item_aso_ct() - check for spec->flags should be
->   inside if clause for `!mlx5_hws_active()`. This is to make sure that
->   validation is done only in synchronous flow API.
-> - Asynchronous flow API has a separate validation, which can be enabled
->   at build time.
->   This can be added to a switch case in flow_hw_validate_rule_pattern().
-> 
+The PMD checked flow pointer for NULL value after a call to
+flow_hw_create_flow(). The function API does not define flow pointer
+value if the function call has failed.
 
-Khadem, please note this patch: https://patches.dpdk.org/project/dpdk/patch/20250812094323.712559-1-dsosnowski@nvidia.com/
+The patch fixes error verification after flow_hw_create_flow()
+returned - a calling function must check flow_hw_create_flow() return
+value.
 
-This would allow you to inspect the conntrack action state
-through the following testpmd command:
+Fixes: f74914c9956e ("net/mlx5: fix non-template IPv6 flow RSS hash")
+Cc: stable@dpdk.org
 
-	flow indirect_action 0 query <action ID>
+Signed-off-by: Gregory Etelson <getelson@nvidia.com>
+Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+---
+ drivers/net/mlx5/mlx5_nta_rss.c | 27 ++++++++++++++-------------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/net/mlx5/mlx5_nta_rss.c b/drivers/net/mlx5/mlx5_nta_rss.c
+index 8f00510445..b7738f910d 100644
+--- a/drivers/net/mlx5/mlx5_nta_rss.c
++++ b/drivers/net/mlx5/mlx5_nta_rss.c
+@@ -67,7 +67,7 @@ mlx5_nta_ptype_rss_flow_create(struct mlx5_nta_rss_ctx *ctx,
+ 				  ctx->pattern, ctx->actions,
+ 				  MLX5_FLOW_ITEM_PTYPE, MLX5_FLOW_ACTION_RSS,
+ 				  ctx->external, &flow, ctx->error);
+-	if (flow) {
++	if (ret == 0) {
+ 		SLIST_INSERT_HEAD(ctx->head, flow, nt2hws->next);
+ 		if (dbg_log) {
+ 			DRV_LOG(NOTICE,
+@@ -276,6 +276,7 @@ mlx5_hw_rss_ptype_create_miss_flow(struct rte_eth_dev *dev,
+ 				   uint32_t ptype_group, bool external,
+ 				   struct rte_flow_error *error)
+ {
++	int ret;
+ 	struct rte_flow_hw *flow = NULL;
+ 	const struct rte_flow_attr miss_attr = {
+ 		.ingress = 1,
+@@ -300,10 +301,10 @@ mlx5_hw_rss_ptype_create_miss_flow(struct rte_eth_dev *dev,
+ 		[MLX5_RSS_PTYPE_ACTION_INDEX + 1] = { .type = RTE_FLOW_ACTION_TYPE_END }
+ 	};
+ 
+-	flow_hw_create_flow(dev, MLX5_FLOW_TYPE_GEN, &miss_attr,
+-			    miss_pattern, miss_actions, 0, MLX5_FLOW_ACTION_RSS,
+-			    external, &flow, error);
+-	return flow;
++	ret = flow_hw_create_flow(dev, MLX5_FLOW_TYPE_GEN, &miss_attr,
++				  miss_pattern, miss_actions, 0,
++				  MLX5_FLOW_ACTION_RSS, external, &flow, error);
++	return ret == 0 ? flow : NULL;
+ }
+ 
+ static struct rte_flow_hw *
+@@ -316,7 +317,7 @@ mlx5_hw_rss_ptype_create_base_flow(struct rte_eth_dev *dev,
+ 				   enum mlx5_flow_type flow_type,
+ 				   struct rte_flow_error *error)
+ {
+-	int i = 0;
++	int ret, i = 0;
+ 	struct rte_flow_hw *flow = NULL;
+ 	struct rte_flow_action actions[MLX5_HW_MAX_ACTS];
+ 	enum mlx5_indirect_type indirect_type;
+@@ -345,9 +346,9 @@ mlx5_hw_rss_ptype_create_base_flow(struct rte_eth_dev *dev,
+ 	} while (actions[i++].type != RTE_FLOW_ACTION_TYPE_END);
+ 	action_flags &= ~MLX5_FLOW_ACTION_RSS;
+ 	action_flags |= MLX5_FLOW_ACTION_JUMP;
+-	flow_hw_create_flow(dev, flow_type, attr, pattern, actions,
+-			    item_flags, action_flags, external, &flow, error);
+-	return flow;
++	ret = flow_hw_create_flow(dev, flow_type, attr, pattern, actions,
++				  item_flags, action_flags, external, &flow, error);
++	return ret == 0 ? flow : NULL;
+ }
+ 
+ const struct rte_flow_action_rss *
+@@ -425,6 +426,7 @@ flow_nta_create_single(struct rte_eth_dev *dev,
+ 		       enum mlx5_flow_type flow_type,
+ 		       struct rte_flow_error *error)
+ {
++	int ret;
+ 	struct rte_flow_hw *flow = NULL;
+ 	struct rte_flow_action copy[MLX5_HW_MAX_ACTS];
+ 	const struct rte_flow_action *_actions;
+@@ -456,10 +458,9 @@ flow_nta_create_single(struct rte_eth_dev *dev,
+ 		_actions = actions;
+ 	}
+ end:
+-	flow_hw_create_flow(dev, flow_type, attr, items,
+-			    _actions, item_flags, action_flags,
+-			    external, &flow, error);
+-	return flow;
++	ret = flow_hw_create_flow(dev, flow_type, attr, items, _actions,
++				  item_flags, action_flags, external, &flow, error);
++	return ret == 0 ? flow : NULL;
+ }
+ 
+ /*
+-- 
+2.48.1
+
