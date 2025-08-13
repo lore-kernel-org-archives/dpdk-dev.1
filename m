@@ -2,45 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3839C87FCF
-	for <dpdk-dev@archiver.kernel.org>; Wed, 13 Aug 2025 09:30:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3BB2CA0EE0
+	for <dpdk-dev@archiver.kernel.org>; Wed, 13 Aug 2025 09:31:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0AA054021F;
-	Wed, 13 Aug 2025 11:30:15 +0200 (CEST)
-Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id E1859400EF
- for <dev@dpdk.org>; Wed, 13 Aug 2025 11:30:12 +0200 (CEST)
-Received: from debian (unknown [78.109.79.124])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id 25BBEE097E;
- Wed, 13 Aug 2025 13:30:12 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 25BBEE097E
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1755077412;
- bh=mfuyn1DDMy6u+VW3LVCxi2SeRo2Neq56QNACiYuNMZo=;
- h=Date:From:To:cc:Subject:In-Reply-To:References:From;
- b=cYkrNL3gS65uEt2jqrQlg60HP+DggY5hXWQXRjUQC+bGSCrAASOriSNx++mMy4UPi
- DRMCLqfTOUftyJpND5ARO/2aIieV4vXTT2OEHNyCvbaeyGP+3X1TEkLFwzjxczl8ce
- p1uPC8QPbpVa2GcgbCFlTuQ1dxvbRAm2JDVQ6vUlkIo5nho0qWWdbvgmtlraGNu8S5
- QyGomTrKP5kblKnc4282PXwq4xLfS0CFSaacin5TvjymyZIkjrhGMCPNOyT8UskShY
- 9V9feujEM+OjXxBxEPN0SQ8831X1SlyF44vhhr6R0l58MgFEFFlVyewJHmidyj5cKM
- EefJt5RL/UINA==
-Date: Wed, 13 Aug 2025 13:30:03 +0400 (+04)
-From: Ivan Malov <ivan.malov@arknetworks.am>
-To: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-cc: dev@dpdk.org, Kyo Liu <kyo.liu@nebula-matrix.com>, 
- Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
-Subject: Re: [PATCH v4 03/16] net/nbl: add PHY layer definitions and
- implementation
-In-Reply-To: <20250813064410.3894506-4-dimon.zhao@nebula-matrix.com>
-Message-ID: <7e666b72-f278-dc26-c24e-a48562a6fa67@arknetworks.am>
-References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
- <20250813064410.3894506-1-dimon.zhao@nebula-matrix.com>
- <20250813064410.3894506-4-dimon.zhao@nebula-matrix.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 4EAA84021F;
+	Wed, 13 Aug 2025 11:31:10 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id E8905400EF
+ for <dev@dpdk.org>; Wed, 13 Aug 2025 11:31:08 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57CNSme3030172
+ for <dev@dpdk.org>; Wed, 13 Aug 2025 02:31:08 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=9
+ tbbL4Rdxn4BkdC2C+lqbLfhfuMlyQ+t/NaGMXutlqo=; b=RBIYYUwAOvsjQAzD7
+ RW7xNrCe6TYNCS9vBnxsbV44GZeC7IWrRz8MJ5NrY7cYonSXNozuNyhPiJxt41o6
+ L0Pt2RIGfs3Os2JvkelE+ZUX9hgyE6IAFUtOlECS4erslGZSznC12VWqbbTwva3i
+ Ga5lWBxo7cjGE3JC8AQjNOtL4sjt/Gu2SyOY+RHCE2R752Zz9Q8IQfB/iJ3mC8ny
+ lYTpbVqj/f7AbKF62fiGehgysdIBEOwl9kPF+OBU8xElcWXbwnCNUU9x+wCibygi
+ H+jl7/G/gDuQfEH5v9w4iKWE/PP6bd45CRKCnWzTO7CMHCB3VIu+jHAhPgv+xYcY
+ c/S4Q==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 48gfan8yw2-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Wed, 13 Aug 2025 02:31:07 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 13 Aug 2025 02:31:10 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 13 Aug 2025 02:31:10 -0700
+Received: from cavium-3070-BM23.. (unknown [10.28.34.25])
+ by maili.marvell.com (Postfix) with ESMTP id AC4315B6924;
+ Wed, 13 Aug 2025 02:31:04 -0700 (PDT)
+From: <skori@marvell.com>
+To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
+ <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
+ <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
+CC: <dev@dpdk.org>
+Subject: [PATCH v2 1/6] common/cnxk: support link mode configuration
+Date: Wed, 13 Aug 2025 15:00:52 +0530
+Message-ID: <20250813093101.1492434-1-skori@marvell.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250605114231.3036050-6-skori@marvell.com>
+References: <20250605114231.3036050-6-skori@marvell.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEzMDA5MiBTYWx0ZWRfX9J/elKxTe3dw
+ lEdNv+1RDDfKsFdUu8Uz9mvtrmMQT1b0K+zbaQL8VuYSlJoG1UG8K41YoO8sA2ojrkg/3X0S6rr
+ +loRGHEsI7H2KNPj2V3OxP+cq3g9WwSk3EevNGefoJ8sjt4UOxxBa7QRiBmpYmI9LpMsh7dbUVi
+ pykHzMxAGio9cJ4P2AK4KIyzA/YzLsQr0BmKrlIQm5Cwz34R5ALjApXWmWseqGRNR7G+urrL+EJ
+ +jDi7aoaamn2C7pkDHD3O7IEotHFbobuPeURveWbkcZdWMteiDqTHAbf55zODTy+0uF2L00LRp8
+ VyjNIkjgWDvYnDLXNSYcSQA93laNzk29VmuBUug0XF89fP1i8iHwev1ARE+FoCNAaefT7ccCfPF
+ DgnMHgXQjEu2zVGZ37+xld4tR1PARtTCHOy0JBHOfbrwVV2A1cvwzswjfJpLBAQMk1Jq04Mx
+X-Proofpoint-ORIG-GUID: cGG2usUvMoQ7x38ZyCuJksPgXBsPR2qH
+X-Authority-Analysis: v=2.4 cv=bNMWIO+Z c=1 sm=1 tr=0 ts=689c5b5b cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=2OwXVqhp2XgA:10 a=M5GUcnROAAAA:8 a=I4B3QrvN1LbncYpy22gA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: cGG2usUvMoQ7x38ZyCuJksPgXBsPR2qH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_08,2025-08-11_01,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,538 +81,370 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Dimon,
+From: Sunil Kumar Kori <skori@marvell.com>
 
-The fact that this driver calls 'phy' something that other drivers call 'dmaq'
-doesn't sit right with me, but perhaps this is just my misunderstanding.
+CGX MAC can be configured into different modes and speeds
+as mentioned below:
 
-On Tue, 12 Aug 2025, Dimon Zhao wrote:
+ - fixed/autoneg
+ - half/full duplex
+ - 10M/100M/1G/10G etc speeds.
 
-> add PHY layer related definitions and product ops
->
-> Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-> ---
-> drivers/net/nbl/meson.build                   |  2 +
-> drivers/net/nbl/nbl_core.c                    | 54 ++++++++--
-> drivers/net/nbl/nbl_core.h                    | 30 +++++-
-> drivers/net/nbl/nbl_ethdev.c                  |  4 +-
-> .../nbl_hw_leonis/nbl_phy_leonis_snic.c       | 99 +++++++++++++++++++
-> .../nbl_hw_leonis/nbl_phy_leonis_snic.h       | 10 ++
-> drivers/net/nbl/nbl_hw/nbl_phy.h              | 28 ++++++
-> drivers/net/nbl/nbl_include/nbl_def_phy.h     | 35 +++++++
-> drivers/net/nbl/nbl_include/nbl_include.h     | 15 +++
-> .../net/nbl/nbl_include/nbl_product_base.h    | 37 +++++++
-> 10 files changed, 300 insertions(+), 14 deletions(-)
-> create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.c
-> create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.h
-> create mode 100644 drivers/net/nbl/nbl_hw/nbl_phy.h
-> create mode 100644 drivers/net/nbl/nbl_include/nbl_def_phy.h
-> create mode 100644 drivers/net/nbl/nbl_include/nbl_product_base.h
->
-> diff --git a/drivers/net/nbl/meson.build b/drivers/net/nbl/meson.build
-> index 778c495c68..934a9b637a 100644
-> --- a/drivers/net/nbl/meson.build
-> +++ b/drivers/net/nbl/meson.build
-> @@ -7,8 +7,10 @@ if not is_linux or not dpdk_conf.get('RTE_ARCH_64')
-> endif
->
-> includes += include_directories('nbl_include')
-> +includes += include_directories('nbl_hw')
->
-> sources = files(
->         'nbl_ethdev.c',
->         'nbl_core.c',
-> +        'nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.c',
-> )
-> diff --git a/drivers/net/nbl/nbl_core.c b/drivers/net/nbl/nbl_core.c
-> index 63b707f0ba..fc7222d526 100644
-> --- a/drivers/net/nbl/nbl_core.c
-> +++ b/drivers/net/nbl/nbl_core.c
-> @@ -4,27 +4,67 @@
->
-> #include "nbl_core.h"
->
-> -int nbl_core_init(const struct nbl_adapter *adapter, const struct rte_eth_dev *eth_dev)
-> +static struct nbl_product_core_ops nbl_product_core_ops[NBL_PRODUCT_MAX] = {
+Sync mailbox and implement that to configure above mentioned
+settings.
 
-Const?
+Signed-off-by: Sunil Kumar Kori <skori@marvell.com>
+Signed-off-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
+---
+ drivers/common/cnxk/hw/nix.h                  | 70 ++++++++++++++
+ drivers/common/cnxk/roc_mbox.h                | 15 ++-
+ drivers/common/cnxk/roc_nix.h                 | 95 ++++++++++++++++++-
+ drivers/common/cnxk/roc_nix_mac.c             | 38 +++++++-
+ drivers/common/cnxk/roc_nix_priv.h            |  2 +
+ .../common/cnxk/roc_platform_base_symbols.c   |  1 +
+ 6 files changed, 211 insertions(+), 10 deletions(-)
 
-> +	{
+diff --git a/drivers/common/cnxk/hw/nix.h b/drivers/common/cnxk/hw/nix.h
+index d16fa3b3ec..f344d4de99 100644
+--- a/drivers/common/cnxk/hw/nix.h
++++ b/drivers/common/cnxk/hw/nix.h
+@@ -2681,4 +2681,74 @@ struct nix_lso_format {
+  */
+ #define NIX_CHAN_CPT_X2P_MASK (0x7ffull)
+ 
++/* CGX lmac types defined by firmware */
++enum cgx_lmac_type {
++	CGX_LMAC_TYPE_SGMII = 0,
++	CGX_LMAC_TYPE_XAUI = 1,
++	CGX_LMAC_TYPE_RXAUI = 2,
++	CGX_LMAC_TYPE_10G_R = 3,
++	CGX_LMAC_TYPE_40G_R = 4,
++	CGX_LMAC_TYPE_QSGMII = 6,
++	CGX_LMAC_TYPE_25G_R = 7,
++	CGX_LMAC_TYPE_50G_R = 8,
++	CGX_LMAC_TYPE_100G_R = 9,
++	CGX_LMAC_TYPE_USXGMII = 10,
++	CGX_LMAC_TYPE_USGMII = 11,
++	CGX_LMAC_TYPE_MAX,
++};
++
++/* CGX modes defined by firmware */
++enum cgx_mode {
++	CGX_MODE_SGMII,
++	CGX_MODE_1000_BASEX,
++	CGX_MODE_QSGMII,
++	CGX_MODE_10G_C2C,
++	CGX_MODE_10G_C2M,
++	CGX_MODE_10G_KR,
++	CGX_MODE_20G_C2C,
++	CGX_MODE_25G_C2C,
++	CGX_MODE_25G_C2M,
++	CGX_MODE_25G_2_C2C,
++	CGX_MODE_25G_CR,
++	CGX_MODE_25G_KR,
++	CGX_MODE_40G_C2C,
++	CGX_MODE_40G_C2M,
++	CGX_MODE_40G_CR4,
++	CGX_MODE_40G_KR4,
++	CGX_MODE_40GAUI_C2C,
++	CGX_MODE_50G_C2C,
++	CGX_MODE_50G_C2M,
++	CGX_MODE_50G_4_C2C,
++	CGX_MODE_50G_CR,
++	CGX_MODE_50G_KR,
++	CGX_MODE_80GAUI_C2C,
++	CGX_MODE_100G_C2C,
++	CGX_MODE_100G_C2M,
++	CGX_MODE_100G_CR4,
++	CGX_MODE_100G_KR4,
++	CGX_MODE_LAUI_2_C2C_BIT,
++	CGX_MODE_LAUI_2_C2M_BIT,
++	CGX_MODE_50GBASE_CR2_C_BIT,
++	CGX_MODE_50GBASE_KR2_C_BIT, /* = 30 */
++	CGX_MODE_100GAUI_2_C2C_BIT,
++	CGX_MODE_100GAUI_2_C2M_BIT,
++	CGX_MODE_100GBASE_CR2_BIT,
++	CGX_MODE_100GBASE_KR2_BIT,
++	CGX_MODE_SFI_1G_BIT,
++	CGX_MODE_25GBASE_CR_C_BIT,
++	CGX_MODE_25GBASE_KR_C_BIT,
++	ETH_MODE_SGMII_10M_BIT,
++	ETH_MODE_SGMII_100M_BIT,      /* = 39 */
++	ETH_MODE_2500_BASEX_BIT = 42, /* Mode group 1 */
++	ETH_MODE_5000_BASEX_BIT,
++	ETH_MODE_O_USGMII_BIT,
++	ETH_MODE_Q_USGMII_BIT,
++	ETH_MODE_2_5G_USXGMII_BIT,
++	ETH_MODE_5G_USXGMII_BIT,
++	ETH_MODE_10G_SXGMII_BIT,
++	ETH_MODE_10G_DXGMII_BIT,
++	ETH_MODE_10G_QXGMII_BIT,
++	CGX_MODE_MAX /* = 51 */
++};
++
+ #endif /* __NIX_HW_H__ */
+diff --git a/drivers/common/cnxk/roc_mbox.h b/drivers/common/cnxk/roc_mbox.h
+index cbafa9555d..7fec23772f 100644
+--- a/drivers/common/cnxk/roc_mbox.h
++++ b/drivers/common/cnxk/roc_mbox.h
+@@ -764,13 +764,18 @@ struct cgx_lmac_fwdata_s {
+ 	uint64_t __io supported_fec;
+ 	uint64_t __io supported_an;
+ 	uint64_t __io supported_link_modes;
+-	/* Only applicable if AN is supported */
++	/* only applicable if AN is supported */
+ 	uint64_t __io advertised_fec;
+-	uint64_t __io advertised_link_modes;
++	uint64_t __io advertised_link_modes_own : 1; /* CGX_CMD_OWN */
++	uint64_t __io advertised_link_modes : 63;
+ 	/* Only applicable if SFP/QSFP slot is present */
+ 	struct sfp_eeprom_s sfp_eeprom;
+ 	struct phy_s phy;
+-#define LMAC_FWDATA_RESERVED_MEM 1023
++	uint32_t __io lmac_type;
++	uint32_t __io portm_idx;
++	uint64_t __io mgmt_port : 1;
++	uint64_t __io port;
++#define LMAC_FWDATA_RESERVED_MEM 1018
+ 	uint64_t __io reserved[LMAC_FWDATA_RESERVED_MEM];
+ };
+ 
+@@ -798,8 +803,10 @@ struct cgx_set_link_mode_args {
+ 	uint32_t __io speed;
+ 	uint8_t __io duplex;
+ 	uint8_t __io an;
+-	uint8_t __io ports;
++	uint8_t __io mode_baseidx;
++	uint8_t __io multimode;
+ 	uint64_t __io mode;
++	uint64_t __io advertising;
+ };
+ 
+ struct cgx_set_link_mode_req {
+diff --git a/drivers/common/cnxk/roc_nix.h b/drivers/common/cnxk/roc_nix.h
+index a9cdc42617..41334327bb 100644
+--- a/drivers/common/cnxk/roc_nix.h
++++ b/drivers/common/cnxk/roc_nix.h
+@@ -16,6 +16,7 @@
+ #define ROC_NIX_SQB_THRESH	      30U
+ #define ROC_NIX_SQB_SLACK	      12U
+ #define ROC_NIX_AURA_THRESH	      95U
++#define ROC_NIX_LINK_SPEED_ALL	      0xFFFFF
+ 
+ /* Reserved interface types for BPID allocation */
+ #define ROC_NIX_INTF_TYPE_CGX  0
+@@ -109,6 +110,89 @@ enum roc_nix_bpf_stats {
+ 	ROC_NIX_BPF_RED_OCTS_F_DROP = BIT_ULL(11),
+ };
+ 
++enum roc_nix_link_duplex {
++	ROC_NIX_LINK_DUPLEX_FULL = 0,
++	ROC_NIX_LINK_DUPLEX_HALF = 1
++};
++
++enum roc_nix_link_speed_bits {
++	ROC_NIX_LINK_SPEED_NONE_BIT = BIT_ULL(0),
++	ROC_NIX_LINK_SPEED_10M_HD_BIT = BIT_ULL(1),
++	ROC_NIX_LINK_SPEED_10M_BIT = BIT_ULL(2),
++	ROC_NIX_LINK_SPEED_100M_HD_BIT = BIT_ULL(3),
++	ROC_NIX_LINK_SPEED_100M_BIT = BIT_ULL(4),
++	ROC_NIX_LINK_SPEED_1G_BIT = BIT_ULL(5),
++	ROC_NIX_LINK_SPEED_2_5G_BIT = BIT_ULL(6),
++	ROC_NIX_LINK_SPEED_5G_BIT = BIT_ULL(7),
++	ROC_NIX_LINK_SPEED_10G_BIT = BIT_ULL(8),
++	ROC_NIX_LINK_SPEED_20G_BIT = BIT_ULL(9),
++	ROC_NIX_LINK_SPEED_25G_BIT = BIT_ULL(10),
++	ROC_NIX_LINK_SPEED_40G_BIT = BIT_ULL(11),
++	ROC_NIX_LINK_SPEED_50G_BIT = BIT_ULL(12),
++	ROC_NIX_LINK_SPEED_56G_BIT = BIT_ULL(13),
++	ROC_NIX_LINK_SPEED_100G_BIT = BIT_ULL(14),
++	ROC_NIX_LINK_SPEED_200G_BIT = BIT_ULL(15),
++	ROC_NIX_LINK_SPEED_400G_BIT = BIT_ULL(16),
++	ROC_NIX_LINK_SPEED_MAX = 17
++};
++
++enum roc_nix_link_mode {
++	ROC_NIX_LINK_MODE_10BASET_HD = BIT_ULL(0),
++	ROC_NIX_LINK_MODE_10BASET_FD = BIT_ULL(1),
++	ROC_NIX_LINK_MODE_100BASET_HD = BIT_ULL(2),
++	ROC_NIX_LINK_MODE_100BASET_FD = BIT_ULL(3),
++	ROC_NIX_LINK_MODE_1000BASET_HD = BIT_ULL(4),
++	ROC_NIX_LINK_MODE_1000BASET_FD = BIT_ULL(5),
++	ROC_NIX_LINK_MODE_AUTONEG = BIT_ULL(6),
++	ROC_NIX_LINK_MODE_10000BASET_FD = BIT_ULL(12),
++	ROC_NIX_LINK_MODE_2500BASEX_FD = BIT_ULL(15),
++	ROC_NIX_LINK_MODE_1000BASEKX_FD = BIT_ULL(17),
++	ROC_NIX_LINK_MODE_10000BASEKX4_FD = BIT_ULL(18),
++	ROC_NIX_LINK_MODE_10000BASEKR_FD = BIT_ULL(19),
++	ROC_NIX_LINK_MODE_10000BASER_FEC = BIT_ULL(20),
++	ROC_NIX_LINK_MODE_20000BASEMLD2_FD = BIT_ULL(21),
++	ROC_NIX_LINK_MODE_20000BASEKR2_FD = BIT_ULL(22),
++	ROC_NIX_LINK_MODE_40000BASEKR4_FD = BIT_ULL(23),
++	ROC_NIX_LINK_MODE_40000BASECR4_FD = BIT_ULL(24),
++	ROC_NIX_LINK_MODE_40000BASESR4_FD = BIT_ULL(25),
++	ROC_NIX_LINK_MODE_40000BASELR4_FD = BIT_ULL(26),
++	ROC_NIX_LINK_MODE_56000BASEKR4_FD = BIT_ULL(27),
++	ROC_NIX_LINK_MODE_56000BASECR4_FD = BIT_ULL(28),
++	ROC_NIX_LINK_MODE_56000BASESR4_FD = BIT_ULL(29),
++	ROC_NIX_LINK_MODE_56000BASELR4_FD = BIT_ULL(30),
++	ROC_NIX_LINK_MODE_25000BASECR_FD = BIT_ULL(31),
++	ROC_NIX_LINK_MODE_25000BASEKR_FD = BIT_ULL(32),
++	ROC_NIX_LINK_MODE_25000BASESR_FD = BIT_ULL(33),
++	ROC_NIX_LINK_MODE_50000BASECR2_FD = BIT_ULL(34),
++	ROC_NIX_LINK_MODE_50000BASEKR2_FD = BIT_ULL(35),
++	ROC_NIX_LINK_MODE_100000BASEKR4_FD = BIT_ULL(36),
++	ROC_NIX_LINK_MODE_100000BASESR4_FD = BIT_ULL(37),
++	ROC_NIX_LINK_MODE_100000BASECR4_FD = BIT_ULL(38),
++	ROC_NIX_LINK_MODE_100000BASELR4_ER4_FD = BIT_ULL(39),
++	ROC_NIX_LINK_MODE_50000BASESR2_FD = BIT_ULL(40),
++	ROC_NIX_LINK_MODE_1000BASEX_FD = BIT_ULL(41),
++	ROC_NIX_LINK_MODE_10000BASECR_FD = BIT_ULL(42),
++	ROC_NIX_LINK_MODE_10000BASESR_FD = BIT_ULL(43),
++	ROC_NIX_LINK_MODE_10000BASELR_FD = BIT_ULL(44),
++	ROC_NIX_LINK_MODE_10000BASELRM_FD = BIT_ULL(45),
++	ROC_NIX_LINK_MODE_10000BASEER_FD = BIT_ULL(46),
++	ROC_NIX_LINK_MODE_2500BASET_FD = BIT_ULL(47),
++	ROC_NIX_LINK_MODE_5000BASET_FD = BIT_ULL(48),
++	ROC_NIX_LINK_MODE_FEC_NONE = BIT_ULL(49),
++	ROC_NIX_LINK_MODE_FEC_RS = BIT_ULL(50),
++	ROC_NIX_LINK_MODE_FEC_BASER = BIT_ULL(51),
++	ROC_NIX_LINK_MODE_50000BASEKR_FD = BIT_ULL(52),
++	ROC_NIX_LINK_MODE_50000BASESR_FD = BIT_ULL(53),
++	ROC_NIX_LINK_MODE_50000BASECR_FD = BIT_ULL(54),
++	ROC_NIX_LINK_MODE_50000BASELR_ER_FR_FD = BIT_ULL(55),
++	ROC_NIX_LINK_MODE_50000BASEDR_FD = BIT_ULL(56),
++	ROC_NIX_LINK_MODE_100000BASEKR2_FD = BIT_ULL(57),
++	ROC_NIX_LINK_MODE_100000BASESR2_FD = BIT_ULL(58),
++	ROC_NIX_LINK_MODE_100000BASECR2_FD = BIT_ULL(59),
++	ROC_NIX_LINK_MODE_100000BASELR2_ER2_FR2_FD = BIT_ULL(60),
++	ROC_NIX_LINK_MODE_100000BASEDR2_FD = BIT_ULL(61),
++};
++
+ struct roc_nix_bpf_cfg {
+ 	enum roc_nix_bpf_algo alg;
+ 	enum roc_nix_bpf_lmode lmode;
+@@ -413,9 +497,17 @@ struct roc_nix_link_info {
+ 	uint64_t full_duplex : 1;
+ 	uint64_t lmac_type_id : 4;
+ 	uint64_t speed : 20;
++	uint64_t speed_bitmask : 16;
+ 	uint64_t autoneg : 1;
+ 	uint64_t fec : 2;
+ 	uint64_t port : 8;
++	uint64_t advertising;
++};
++
++struct roc_nix_mac_fwdata {
++	uint64_t advertised_link_modes;
++	uint64_t supported_link_modes;
++	uint64_t supported_an;
+ };
+ 
+ /** Maximum name length for extended statistics counters */
+@@ -502,7 +594,7 @@ struct roc_nix {
+ 	bool reass_ena;
+ 	TAILQ_ENTRY(roc_nix) next;
+ 
+-#define ROC_NIX_MEM_SZ (6 * 1112)
++#define ROC_NIX_MEM_SZ (6 * 1131)
+ 	uint8_t reserved[ROC_NIX_MEM_SZ] __plt_cache_aligned;
+ } __plt_cache_aligned;
+ 
+@@ -865,6 +957,7 @@ void __roc_api roc_nix_mac_link_info_get_cb_unregister(struct roc_nix *roc_nix);
+ int __roc_api roc_nix_q_err_cb_register(struct roc_nix *roc_nix, q_err_get_t sq_err_handle);
+ void __roc_api roc_nix_q_err_cb_unregister(struct roc_nix *roc_nix);
+ int __roc_api roc_nix_mac_stats_reset(struct roc_nix *roc_nix);
++int __roc_api roc_nix_mac_fwdata_get(struct roc_nix *roc_nix, struct roc_nix_mac_fwdata *fwdata);
+ 
+ /* Ops */
+ int __roc_api roc_nix_switch_hdr_set(struct roc_nix *roc_nix,
+diff --git a/drivers/common/cnxk/roc_nix_mac.c b/drivers/common/cnxk/roc_nix_mac.c
+index 54db1adf17..08b4f30810 100644
+--- a/drivers/common/cnxk/roc_nix_mac.c
++++ b/drivers/common/cnxk/roc_nix_mac.c
+@@ -267,20 +267,19 @@ roc_nix_mac_link_info_set(struct roc_nix *roc_nix,
+ 	struct cgx_set_link_mode_req *req;
+ 	int rc;
+ 
+-	rc = roc_nix_mac_link_state_set(roc_nix, link_info->status);
+-	if (rc)
+-		goto exit;
+-
+ 	req = mbox_alloc_msg_cgx_set_link_mode(mbox);
+ 	if (req == NULL) {
+ 		rc =  -ENOSPC;
+ 		goto exit;
+ 	}
++
++	req->args.advertising = link_info->advertising;
+ 	req->args.speed = link_info->speed;
+ 	req->args.duplex = link_info->full_duplex;
+ 	req->args.an = link_info->autoneg;
+ 
+-	rc = mbox_process(mbox);
++	/* Link mode changes takes more time. */
++	rc = mbox_process_tmo(mbox, mbox->rsp_tmo * 4);
+ exit:
+ 	mbox_put(mbox);
+ 	return rc;
+@@ -412,3 +411,32 @@ roc_nix_mac_link_info_get_cb_unregister(struct roc_nix *roc_nix)
+ 
+ 	dev->ops->link_status_get = NULL;
+ }
++
++int
++roc_nix_mac_fwdata_get(struct roc_nix *roc_nix, struct roc_nix_mac_fwdata *data)
++{
++	struct nix *nix = roc_nix_to_nix_priv(roc_nix);
++	struct cgx_fw_data *fw_data;
++	struct dev *dev = &nix->dev;
++	struct mbox *mbox;
++	int rc;
++
++	if (roc_nix_is_sdp(roc_nix))
++		return 0;
++
++	mbox = mbox_get(dev->mbox);
++
++	mbox_alloc_msg_cgx_get_aux_link_info(mbox);
++	rc = mbox_process_msg(mbox, (void *)&fw_data);
++	if (rc)
++		goto exit;
++
++	nix->supported_link_modes = fw_data->fwdata.supported_link_modes;
++	nix->advertised_link_modes = fw_data->fwdata.advertised_link_modes;
++	data->supported_link_modes = nix->supported_link_modes;
++	data->advertised_link_modes = nix->advertised_link_modes;
++	data->supported_an = fw_data->fwdata.supported_an;
++exit:
++	mbox_put(mbox);
++	return rc;
++}
+diff --git a/drivers/common/cnxk/roc_nix_priv.h b/drivers/common/cnxk/roc_nix_priv.h
+index dc3450a3d4..c949621196 100644
+--- a/drivers/common/cnxk/roc_nix_priv.h
++++ b/drivers/common/cnxk/roc_nix_priv.h
+@@ -138,6 +138,8 @@ struct nix {
+ 	uint16_t bpid[NIX_MAX_CHAN];
+ 	struct nix_qint *qints_mem;
+ 	struct nix_qint *cints_mem;
++	uint64_t supported_link_modes;
++	uint64_t advertised_link_modes;
+ 	uint8_t configured_qints;
+ 	uint8_t configured_cints;
+ 	uint8_t exact_match_ena;
+diff --git a/drivers/common/cnxk/roc_platform_base_symbols.c b/drivers/common/cnxk/roc_platform_base_symbols.c
+index 7f0fe601ad..152798e360 100644
+--- a/drivers/common/cnxk/roc_platform_base_symbols.c
++++ b/drivers/common/cnxk/roc_platform_base_symbols.c
+@@ -307,6 +307,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_mac_link_info_set)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_mac_mtu_set)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_mac_max_rx_len_set)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_mac_stats_reset)
++RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_mac_fwdata_get)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_mac_link_cb_register)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_mac_link_cb_unregister)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_mac_link_info_get_cb_register)
+-- 
+2.43.0
 
-Shouldn't this rather be [NBL_LEONIS_TYPE] = {} ?
-
-> +		.phy_init	= nbl_phy_init_leonis_snic,
-> +		.phy_remove	= nbl_phy_remove_leonis_snic,
-> +		.res_init	= NULL,
-> +		.res_remove	= NULL,
-> +		.chan_init	= NULL,
-> +		.chan_remove	= NULL,
-> +	},
-> +};
-> +
-> +static struct nbl_product_core_ops *nbl_core_get_product_ops(enum nbl_product_type product_type)
-> {
-> -	RTE_SET_USED(adapter);
-> -	RTE_SET_USED(eth_dev);
-
-Is check for 'product_type >= NBL_PRODUCT_MAX' needed? Debug-only assert may be?
-
-> +	return &nbl_product_core_ops[product_type];
-
-Return value -- const?
-
-> +}
-> +
-> +static void nbl_init_func_caps(struct rte_pci_device *pci_dev, struct nbl_func_caps *caps)
-
-pci_dev -- const?
-
-> +{
-> +	if (pci_dev->id.device_id >= NBL_DEVICE_ID_M18110 &&
-> +	    pci_dev->id.device_id <= NBL_DEVICE_ID_M18100_VF)
-> +		caps->product_type = NBL_LEONIS_TYPE;
-
-If 'NBL_LEONIS_TYPE' automatic enum is 0, then when this 'if' block doesn't run,
-the product type remains 0. May be mark it somehow then, to distinguish from a
-legitimate type?
-
-> +}
-> +
-> +int nbl_core_init(struct nbl_adapter *adapter, struct rte_eth_dev *eth_dev)
-> +{
-> +	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
-
-Const?
-
-> +	struct nbl_product_core_ops *product_base_ops = NULL;
-
-Const?
-
-> +	int ret = 0;
-> +
-> +	nbl_init_func_caps(pci_dev, &adapter->caps);
-> +
-> +	product_base_ops = nbl_core_get_product_ops(adapter->caps.product_type);
-> +
-> +	/* every product's phy/chan/res layer has a great difference, so call their own init ops */
-> +	ret = product_base_ops->phy_init(adapter);
-> +	if (ret)
-> +		goto phy_init_fail;
->
-> 	return 0;
-> +
-> +phy_init_fail:
-> +	return -EINVAL;
-> }
->
-> -void nbl_core_remove(const struct nbl_adapter *adapter)
-> +void nbl_core_remove(struct nbl_adapter *adapter)
-> {
-> -	RTE_SET_USED(adapter);
-> +	struct nbl_product_core_ops *product_base_ops = NULL;
-
-Const?
-
-> +
-> +	product_base_ops = nbl_core_get_product_ops(adapter->caps.product_type);
-> +
-> +	product_base_ops->phy_remove(adapter);
-> }
->
-> -int nbl_core_start(const struct nbl_adapter *adapter)
-> +int nbl_core_start(struct nbl_adapter *adapter)
-> {
-> 	RTE_SET_USED(adapter);
->
-> 	return 0;
-> }
->
-> -void nbl_core_stop(const struct nbl_adapter *adapter)
-> +void nbl_core_stop(struct nbl_adapter *adapter)
-> {
-> 	RTE_SET_USED(adapter);
-> }
-> diff --git a/drivers/net/nbl/nbl_core.h b/drivers/net/nbl/nbl_core.h
-> index 4ba13e5bd7..2d0e39afa2 100644
-> --- a/drivers/net/nbl/nbl_core.h
-> +++ b/drivers/net/nbl/nbl_core.h
-> @@ -5,7 +5,8 @@
-> #ifndef _NBL_CORE_H_
-> #define _NBL_CORE_H_
->
-> -#include "nbl_include.h"
-> +#include "nbl_product_base.h"
-> +#include "nbl_def_phy.h"
->
-> #define NBL_VENDOR_ID				(0x1F0F)
-> #define NBL_DEVICE_ID_M18110			(0x3403)
-> @@ -27,14 +28,33 @@
-> #define NBL_DEVICE_ID_M18100_VF			(0x3413)
->
-> #define NBL_MAX_INSTANCE_CNT 516
-> +
-> +#define NBL_ADAPTER_TO_PHY_MGT(adapter)		((adapter)->core.phy_mgt)
-> +#define NBL_ADAPTER_TO_PHY_OPS_TBL(adapter)	((adapter)->intf.phy_ops_tbl)
-> +
-> +struct nbl_core {
-> +	void *phy_mgt;
-> +	void *res_mgt;
-> +	void *disp_mgt;
-> +	void *chan_mgt;
-> +	void *dev_mgt;
-> +};
-> +
-> +struct nbl_interface {
-> +	struct nbl_phy_ops_tbl *phy_ops_tbl;
-> +};
-> +
-> struct nbl_adapter {
-> 	TAILQ_ENTRY(nbl_adapter) next;
-> 	struct rte_pci_device *pci_dev;
-> +	struct nbl_core core;
-> +	struct nbl_interface intf;
-> +	struct nbl_func_caps caps;
-> };
->
-> -int nbl_core_init(const struct nbl_adapter *adapter, const struct rte_eth_dev *eth_dev);
-> -void nbl_core_remove(const struct nbl_adapter *adapter);
-> -int nbl_core_start(const struct nbl_adapter *adapter);
-> -void nbl_core_stop(const struct nbl_adapter *adapter);
-> +int nbl_core_init(struct nbl_adapter *adapter, struct rte_eth_dev *eth_dev);
-> +void nbl_core_remove(struct nbl_adapter *adapter);
-> +int nbl_core_start(struct nbl_adapter *adapter);
-> +void nbl_core_stop(struct nbl_adapter *adapter);
-
-This is odd. Why add 'const' in [02/16] then? Only to remove it here.
-
->
-> #endif
-> diff --git a/drivers/net/nbl/nbl_ethdev.c b/drivers/net/nbl/nbl_ethdev.c
-> index 32897e7496..55b4c21e54 100644
-> --- a/drivers/net/nbl/nbl_ethdev.c
-> +++ b/drivers/net/nbl/nbl_ethdev.c
-> @@ -9,7 +9,7 @@ RTE_LOG_REGISTER_SUFFIX(nbl_logtype_driver, driver, INFO);
->
-> static int nbl_dev_release_pf(struct rte_eth_dev *eth_dev)
-> {
-> -	const struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
-> +	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
-
-This is also odd. Consider to fix this in [02/16].
-
->
-> 	if (!adapter)
-> 		return -EINVAL;
-> @@ -33,7 +33,7 @@ struct eth_dev_ops nbl_eth_dev_ops = {
->
-> static int nbl_eth_dev_init(struct rte_eth_dev *eth_dev)
-> {
-> -	const struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
-> +	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
-
-Same here.
-
-> 	int ret;
->
-> 	PMD_INIT_FUNC_TRACE();
-> diff --git a/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.c b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.c
-> new file mode 100644
-> index 0000000000..febee34edd
-> --- /dev/null
-> +++ b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.c
-> @@ -0,0 +1,99 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright 2025 Nebulamatrix Technology Co., Ltd.
-> + */
-> +
-> +#include "nbl_phy_leonis_snic.h"
-> +
-> +static inline void nbl_wr32(void *priv, u64 reg, u32 value)
-> +{
-> +	struct nbl_phy_mgt *phy_mgt = (struct nbl_phy_mgt *)priv;
-> +
-> +	rte_write32(rte_cpu_to_le_32(value), ((phy_mgt)->hw_addr + (reg)));
-> +}
-> +
-> +static void nbl_phy_update_tail_ptr(void *priv, u16 notify_qid, u16 tail_ptr)
-> +{
-> +	nbl_wr32(priv, NBL_NOTIFY_ADDR, ((u32)tail_ptr << NBL_TAIL_PTR_OFT | (u32)notify_qid));
-> +}
-> +
-> +static u8 *nbl_phy_get_tail_ptr(void *priv)
-> +{
-> +	struct nbl_phy_mgt *phy_mgt = (struct nbl_phy_mgt *)priv;
-> +
-> +	return phy_mgt->hw_addr;
-> +}
-> +
-> +static struct nbl_phy_ops phy_ops = {
-> +	.update_tail_ptr		= nbl_phy_update_tail_ptr,
-> +	.get_tail_ptr			= nbl_phy_get_tail_ptr,
-> +};
-> +
-> +static int nbl_phy_setup_ops(struct nbl_phy_ops_tbl **phy_ops_tbl,
-> +			     struct nbl_phy_mgt_leonis_snic *phy_mgt_leonis_snic)
-> +{
-> +	*phy_ops_tbl = rte_zmalloc("nbl_phy_ops", sizeof(struct nbl_phy_ops_tbl), 0);
-
-This line exceeds 80-column limit. Consider: sizeof(**phy_ops_tbl) .
-
-> +	if (!*phy_ops_tbl)
-> +		return -ENOMEM;
-> +
-> +	NBL_PHY_OPS_TBL_TO_OPS(*phy_ops_tbl) = &phy_ops;
-> +	NBL_PHY_OPS_TBL_TO_PRIV(*phy_ops_tbl) = phy_mgt_leonis_snic;
-> +
-> +	return 0;
-> +}
-> +
-> +static void nbl_phy_remove_ops(struct nbl_phy_ops_tbl **phy_ops_tbl)
-> +{
-> +	rte_free(*phy_ops_tbl);
-> +	*phy_ops_tbl = NULL;
-> +}
-> +
-> +int nbl_phy_init_leonis_snic(void *p)
-> +{
-> +	struct nbl_phy_mgt_leonis_snic **phy_mgt_leonis_snic;
-> +	struct nbl_phy_mgt *phy_mgt;
-> +	struct nbl_phy_ops_tbl **phy_ops_tbl;
-> +	struct nbl_adapter *adapter = (struct nbl_adapter *)p;
-> +	struct rte_pci_device *pci_dev = adapter->pci_dev;
-> +	int ret = 0;
-> +
-> +	phy_mgt_leonis_snic = (struct nbl_phy_mgt_leonis_snic **)&NBL_ADAPTER_TO_PHY_MGT(adapter);
-
-Also long line. Consider to split into two lines.
-
-> +	phy_ops_tbl = &NBL_ADAPTER_TO_PHY_OPS_TBL(adapter);
-> +
-> +	*phy_mgt_leonis_snic = rte_zmalloc("nbl_phy_mgt",
-> +					   sizeof(struct nbl_phy_mgt_leonis_snic), 0);
-
-Consider: sizeof(**phy_mgt_leonis_snic) .
-
-> +	if (!*phy_mgt_leonis_snic) {
-> +		ret = -ENOMEM;
-> +		goto alloc_phy_mgt_failed;
-> +	}
-> +
-> +	phy_mgt = &(*phy_mgt_leonis_snic)->phy_mgt;
-> +
-> +	phy_mgt->hw_addr = (u8 *)pci_dev->mem_resource[0].addr;
-> +	phy_mgt->memory_bar_pa = pci_dev->mem_resource[0].phys_addr;
-> +	phy_mgt->mailbox_bar_hw_addr = (u8 *)pci_dev->mem_resource[2].addr;
-> +
-> +	ret = nbl_phy_setup_ops(phy_ops_tbl, *phy_mgt_leonis_snic);
-> +	if (ret)
-> +		goto setup_ops_failed;
-> +
-> +	return ret;
-> +
-> +setup_ops_failed:
-> +	rte_free(*phy_mgt_leonis_snic);
-> +alloc_phy_mgt_failed:
-> +	return ret;
-> +}
-> +
-> +void nbl_phy_remove_leonis_snic(void *p)
-> +{
-> +	struct nbl_phy_mgt_leonis_snic **phy_mgt_leonis_snic;
-> +	struct nbl_phy_ops_tbl **phy_ops_tbl;
-> +	struct nbl_adapter *adapter = (struct nbl_adapter *)p;
-> +
-> +	phy_mgt_leonis_snic = (struct nbl_phy_mgt_leonis_snic **)&adapter->core.phy_mgt;
-
-Also exceeds 80-column limit. Please consider to check the patch series with
-./devtools/checkpatches.sh -n 16
-
-> +	phy_ops_tbl = &NBL_ADAPTER_TO_PHY_OPS_TBL(adapter);
-> +
-> +	rte_free(*phy_mgt_leonis_snic);
-> +
-> +	nbl_phy_remove_ops(phy_ops_tbl);
-> +}
-> diff --git a/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.h b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.h
-> new file mode 100644
-> index 0000000000..5440cf41be
-> --- /dev/null
-> +++ b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.h
-> @@ -0,0 +1,10 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright 2025 Nebulamatrix Technology Co., Ltd.
-> + */
-> +
-> +#ifndef _NBL_PHY_LEONIS_SNIC_H_
-> +#define _NBL_PHY_LEONIS_SNIC_H_
-> +
-> +#include "../nbl_phy.h"
-> +
-> +#endif
-> diff --git a/drivers/net/nbl/nbl_hw/nbl_phy.h b/drivers/net/nbl/nbl_hw/nbl_phy.h
-> new file mode 100644
-> index 0000000000..38b7fc2ec5
-> --- /dev/null
-> +++ b/drivers/net/nbl/nbl_hw/nbl_phy.h
-> @@ -0,0 +1,28 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright 2025 Nebulamatrix Technology Co., Ltd.
-> + */
-> +
-> +#ifndef _NBL_PHY_H_
-> +#define _NBL_PHY_H_
-> +
-> +#include "nbl_ethdev.h"
-> +
-> +#define NBL_NOTIFY_ADDR			(0x00000000)
-> +#define NBL_BYTES_IN_REG		(4)
-> +#define NBL_TAIL_PTR_OFT		(16)
-> +#define NBL_LO_DWORD(x)			((u32)((x) & 0xFFFFFFFF))
-> +#define NBL_HI_DWORD(x)			((u32)(((x) >> 32) & 0xFFFFFFFF))
-> +
-> +struct nbl_phy_mgt {
-> +	u8 *hw_addr;
-> +	u64 memory_bar_pa;
-> +	u8 *mailbox_bar_hw_addr;
-> +	u64 notify_addr;
-> +	u32 version;
-> +};
-> +
-> +struct nbl_phy_mgt_leonis_snic {
-> +	struct nbl_phy_mgt phy_mgt;
-> +};
-> +
-> +#endif
-> diff --git a/drivers/net/nbl/nbl_include/nbl_def_phy.h b/drivers/net/nbl/nbl_include/nbl_def_phy.h
-> new file mode 100644
-> index 0000000000..09a3e125a9
-> --- /dev/null
-> +++ b/drivers/net/nbl/nbl_include/nbl_def_phy.h
-> @@ -0,0 +1,35 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright 2025 Nebulamatrix Technology Co., Ltd.
-> + */
-> +
-> +#ifndef _NBL_DEF_PHY_H_
-> +#define _NBL_DEF_PHY_H_
-> +
-> +#include "nbl_include.h"
-> +
-> +#define NBL_PHY_OPS_TBL_TO_OPS(phy_ops_tbl)	((phy_ops_tbl)->ops)
-> +#define NBL_PHY_OPS_TBL_TO_PRIV(phy_ops_tbl)	((phy_ops_tbl)->priv)
-> +
-> +struct nbl_phy_ops {
-> +	/* queue */
-> +	void (*update_tail_ptr)(void *priv, u16 notify_qid, u16 tail_ptr);
-> +	u8 *(*get_tail_ptr)(void *priv);
-> +
-> +	/* mailbox */
-> +	void (*config_mailbox_rxq)(void *priv, uint64_t dma_addr, int size_bwid);
-> +	void (*config_mailbox_txq)(void *priv, uint64_t dma_addr, int size_bwid);
-> +	void (*stop_mailbox_rxq)(void *priv);
-> +	void (*stop_mailbox_txq)(void *priv);
-> +	uint16_t (*get_mailbox_rx_tail_ptr)(void *priv);
-> +	void (*update_mailbox_queue_tail_ptr)(void *priv, uint16_t tail_ptr, uint8_t txrx);
-> +};
-> +
-> +struct nbl_phy_ops_tbl {
-> +	struct nbl_phy_ops *ops;
-> +	void *priv;
-> +};
-> +
-> +int nbl_phy_init_leonis_snic(void *adapter);
-> +void nbl_phy_remove_leonis_snic(void *adapter);
-> +
-> +#endif
-> diff --git a/drivers/net/nbl/nbl_include/nbl_include.h b/drivers/net/nbl/nbl_include/nbl_include.h
-> index 3c7573f3bf..554bb95f16 100644
-> --- a/drivers/net/nbl/nbl_include/nbl_include.h
-> +++ b/drivers/net/nbl/nbl_include/nbl_include.h
-> @@ -28,6 +28,7 @@
-> #include <ethdev_driver.h>
-> #include <ethdev_pci.h>
-> #include <bus_pci_driver.h>
-> +#include <rte_io.h>
->
-> #include "nbl_logs.h"
->
-> @@ -40,4 +41,18 @@ typedef int32_t s32;
-> typedef int16_t s16;
-> typedef int8_t s8;
->
-> +enum nbl_product_type {
-> +	NBL_LEONIS_TYPE,
-
-This is used. OK.
-
-> +	NBL_DRACO_TYPE,
-
-Unused?
-
-> +	NBL_BOOTIS_TYPE,
-
-Unused?
-
-> +	NBL_PRODUCT_MAX,
-> +};
-> +
-> +struct nbl_func_caps {
-> +	enum nbl_product_type product_type;
-> +	u32 is_vf:1;
-> +	u32 is_user:1;
-
-A small comment would be helpful to clarify the meaning of 'is_user'.
-
-Thank you.
-
-> +	u32 rsv:30;
-> +};
-> +
-> #endif
-> diff --git a/drivers/net/nbl/nbl_include/nbl_product_base.h b/drivers/net/nbl/nbl_include/nbl_product_base.h
-> new file mode 100644
-> index 0000000000..7b9c2ccf72
-> --- /dev/null
-> +++ b/drivers/net/nbl/nbl_include/nbl_product_base.h
-> @@ -0,0 +1,37 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright 2025 Nebulamatrix Technology Co., Ltd.
-> + */
-> +
-> +#ifndef _NBL_DEF_PRODUCT_BASE_H_
-> +#define _NBL_DEF_PRODUCT_BASE_H_
-> +
-> +#include "nbl_include.h"
-> +
-> +struct nbl_product_core_ops {
-> +	int (*phy_init)(void *p);
-> +	void (*phy_remove)(void *p);
-> +	int (*res_init)(void *p, struct rte_eth_dev *eth_dev);
-> +	void (*res_remove)(void *p);
-> +	int (*chan_init)(void *p);
-> +	void (*chan_remove)(void *p);
-> +};
-> +
-> +struct nbl_product_dev_ops {
-> +	int (*dev_init)(void *adapter);
-> +	void (*dev_uninit)(void *adapter);
-> +	int (*dev_start)(void *adapter);
-> +	void (*dev_stop)(void *adapter);
-> +};
-> +
-> +struct nbl_product_dispatch_ops {
-> +	int (*dispatch_init)(void *mgt);
-> +	int (*dispatch_uninit)(void *mgt);
-> +};
-> +
-> +struct nbl_product_dev_external_ops {
-> +	int (*external_pf_ops_get)(struct rte_eth_dev *dev, void *arg);
-> +	int (*external_rep_ops_get)(struct rte_eth_dev *dev, void *arg);
-> +	int (*external_bond_ops_get)(struct rte_eth_dev *dev, void *arg);
-> +};
-> +
-> +#endif
-> -- 
-> 2.34.1
->
->
