@@ -2,34 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D31FCA0EC4
-	for <dpdk-dev@archiver.kernel.org>; Wed, 13 Aug 2025 07:33:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8912CCA0EC4
+	for <dpdk-dev@archiver.kernel.org>; Wed, 13 Aug 2025 07:33:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5B3974021F;
-	Wed, 13 Aug 2025 09:33:22 +0200 (CEST)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
- by mails.dpdk.org (Postfix) with ESMTP id A5C2B400EF
+	by mails.dpdk.org (Postfix) with ESMTP id 5E8CA406BA;
+	Wed, 13 Aug 2025 09:33:23 +0200 (CEST)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+ by mails.dpdk.org (Postfix) with ESMTP id AEB77402AC
  for <dev@dpdk.org>; Wed, 13 Aug 2025 09:33:20 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.162.112])
- by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4c20Nq5VdFz2CfyV;
- Wed, 13 Aug 2025 15:28:59 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+ by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4c20N26bk0z14MVj;
+ Wed, 13 Aug 2025 15:28:18 +0800 (CST)
 Received: from kwepemo500011.china.huawei.com (unknown [7.202.195.194])
- by mail.maildlp.com (Postfix) with ESMTPS id 544C6140159;
- Wed, 13 Aug 2025 15:33:19 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 46C71180B54;
+ Wed, 13 Aug 2025 15:33:18 +0800 (CST)
 Received: from localhost.localdomain (10.50.165.33) by
  kwepemo500011.china.huawei.com (7.202.195.194) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 13 Aug 2025 15:33:18 +0800
+ 15.2.1544.11; Wed, 13 Aug 2025 15:33:17 +0800
 From: Dengdui Huang <huangdengdui@huawei.com>
 To: <dev@dpdk.org>
 CC: <stephen@networkplumber.org>, <lihuisong@huawei.com>,
  <fengchengwen@huawei.com>, <liuyonglong@huawei.com>
-Subject: [PATCH 3/3] net/hns3: fix overwrite mbuf in vector path
-Date: Wed, 13 Aug 2025 15:33:17 +0800
-Message-ID: <20250813073317.1352274-4-huangdengdui@huawei.com>
+Subject: [PATCH 0/3] net/hns3: bugfix for hns3
+Date: Wed, 13 Aug 2025 15:33:14 +0800
+Message-ID: <20250813073317.1352274-1-huangdengdui@huawei.com>
 X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250813073317.1352274-1-huangdengdui@huawei.com>
-References: <20250813073317.1352274-1-huangdengdui@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -49,43 +47,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Chengwen Feng <fengchengwen@huawei.com>
+This patchset fixes some bugs.
 
-The vector path processes multiple descriptors at a time and modifies
-the corresponding mbufs accordingly. When the mbufs cannot be applied
-for, the previous patch [1] only clears the first descriptor's valid
-bit, which is not enough. In this patch, the mbufs points to the
-fake_mbuf to prevent overwrite.
+Chengwen Feng (1):
+  net/hns3: fix overwrite mbuf in vector path
 
-[1] 'commit 01843ab2f2fc ("net/hns3: fix crash for NEON and SVE")'
+Dengdui Huang (2):
+  net/hns3: fix inconsistent lock
+  net/hns3: fix unrelease VLAN resource when init fail
 
-Fixes: a3d4f4d291d7 ("net/hns3: support NEON Rx")
-Fixes: 01843ab2f2fc ("net/hns3: fix crash for NEON and SVE")
-Cc: stable@dpdk.org
+ drivers/net/hns3/hns3_ethdev.c   | 31 +++++++++++------
+ drivers/net/hns3/hns3_ethdev.h   |  1 -
+ drivers/net/hns3/hns3_fdir.c     | 13 --------
+ drivers/net/hns3/hns3_flow.c     | 57 ++++++++++++--------------------
+ drivers/net/hns3/hns3_rxtx_vec.h |  4 +++
+ 5 files changed, 46 insertions(+), 60 deletions(-)
 
-Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
-Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
----
- drivers/net/hns3/hns3_rxtx_vec.h | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/net/hns3/hns3_rxtx_vec.h b/drivers/net/hns3/hns3_rxtx_vec.h
-index 9018e79c2f..6afa2fb814 100644
---- a/drivers/net/hns3/hns3_rxtx_vec.h
-+++ b/drivers/net/hns3/hns3_rxtx_vec.h
-@@ -109,8 +109,12 @@ hns3_rxq_rearm_mbuf(struct hns3_rx_queue *rxq)
- 		/*
- 		 * Clear VLD bit for the first descriptor rearmed in case
- 		 * of going to receive packets later.
-+		 * And also point mbufs to fake_mbuf to prevent modification
-+		 * of the mbuf field during vector packet receiving.
- 		 */
- 		rxdp[0].rx.bd_base_info = 0;
-+		for (i = 0; i < HNS3_VECTOR_RX_OFFSET_TABLE_LEN; i++)
-+			rxep[i].mbuf = &rxq->fake_mbuf;
- 		rte_eth_devices[rxq->port_id].data->rx_mbuf_alloc_failed++;
- 		return;
- 	}
 -- 
 2.33.0
 
