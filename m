@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF8B5C87FCF
-	for <dpdk-dev@archiver.kernel.org>; Wed, 13 Aug 2025 14:22:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60D22CA0EE0
+	for <dpdk-dev@archiver.kernel.org>; Wed, 13 Aug 2025 14:25:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 16CBF40657;
-	Wed, 13 Aug 2025 16:22:37 +0200 (CEST)
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com
- [209.85.221.47]) by mails.dpdk.org (Postfix) with ESMTP id 126FB40265
- for <dev@dpdk.org>; Wed, 13 Aug 2025 16:22:36 +0200 (CEST)
-Received: by mail-wr1-f47.google.com with SMTP id
- ffacd0b85a97d-3b8d0f1fb49so3914211f8f.2
- for <dev@dpdk.org>; Wed, 13 Aug 2025 07:22:36 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7018840657;
+	Wed, 13 Aug 2025 16:25:38 +0200 (CEST)
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com
+ [209.85.221.50]) by mails.dpdk.org (Postfix) with ESMTP id 080E740265
+ for <dev@dpdk.org>; Wed, 13 Aug 2025 16:25:37 +0200 (CEST)
+Received: by mail-wr1-f50.google.com with SMTP id
+ ffacd0b85a97d-3b913a76ba9so1724720f8f.3
+ for <dev@dpdk.org>; Wed, 13 Aug 2025 07:25:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755094956;
- x=1755699756; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755095136;
+ x=1755699936; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=dkt9GU1AamqGN16svn9IOnAMvzgDlD4Eg45dJCnQA5E=;
- b=RXtarr44jSrTb5A+NatUUdp+icCPnwrh417ZwtbOEQ3Snof+f2JFEvEohIt0hK338z
- n6EfLvj3EVq3Bipl2J+VXvU9POXFohgBBapKDsjGbnFcmOTHfMxnsYPvs4QPZd3OWQYW
- yBDH64wUB8xdpdtrddCtLP77ssnocVng61gDjmfzXluR8psDHVC90nKf9lOstTYmBXBz
- MPtfpy5rTpnajuJGTggKmo11d9gLYtBldUwgilCn6PU1tBkG52lCDFEdLjrjJRbNJbyu
- DB3qbXsc6ntKdhNecQQYXd4BbCjYdkt3TfRod2GAHin+DjEg21JLOc/PStdsvDz3tDmJ
- p+fg==
+ bh=XOn40hJGHfxKauEFZLHE4IYsXkK5oiaZxKtC1OphwWw=;
+ b=reBK3w/bnGsgNkP2gYS37KSLLC9s/osUSs0KPokXDaQlGXVlO0Clzfapwps/GHrCV/
+ sU/nHuMR+tWHuu9hCzqEl28g3k7nDRd1FiqiKBobA5a3FwIT+zR3ivpZ2eS5sZ0ltT4H
+ fuk7mDp5XG5z+59f1g0gmGWWRYAQKciqyIJEbXzkgGh2fqQAuAW5AhZlYtkUAhAxBLyb
+ LsPbj9rvonVzQmd9x/re9C2kuERJCkgTurpKphVzaRTGtDpIkiLixeX1WMVcQXeTrufT
+ da+7Fj7j7r93A0iDR3HB0Edp7RWK9rrcTTEZH2is5uFD1hu2wgFu5BNK8FkZFoQBvXu/
+ zN2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755094956; x=1755699756;
+ d=1e100.net; s=20230601; t=1755095136; x=1755699936;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=dkt9GU1AamqGN16svn9IOnAMvzgDlD4Eg45dJCnQA5E=;
- b=klyyW/AOIKsvvbOvXYFxaB1jAqNKx9tTltXUc10PEpiQFLef19OPvu/2DBa/eZsUwa
- lg3RLlsVd++3bmGughaoM3DscpmR9xkJU+mOyme15koXr7b5Bu1oHGBIjgk8ajHEZAHQ
- /CO2jfSLBe/zXb/3hbX3xK2v7QBjNOX6u8Le5Y0mcVGJoFDGtUDxWVczn3PcobbD5gf4
- 00+bEmIU3Ly3l5U0XMJdtvXQBIm+WSdsEkKCFabuHmoELz8W7jgiw1CSBNe7I2LugTGo
- pvP375TwxbJHRkPIdamrJ3smC2Y0MdRNbnU5RMeFhgJjLbrKaChGR2rX8CNnF6f6pntw
- LEYg==
-X-Gm-Message-State: AOJu0YxJfx3vHFALGT9pQOP343c4GGSxC0AsGCNghXl1mSXuJrNBYRL6
- ozb55klisMkClh/59Aa9mGHkCCKfK3xXjYJB2I2LDGJTSi8KiusCPHGejhFF7RVt9/8fc3kgkuc
- O5qkY
-X-Gm-Gg: ASbGncsaYJSAkjq1oWdd9hvjjWEo8Nqq6J9OHHRr3F6xOZTrYyZr0GVL13peNiQZGtM
- ggdgGiiDVkBp1dFPz3gq22n+xB0Z351NWMenjPegiX/LVQ8vtoU8fwV5Gc3IGxMkgQz1co+oScv
- tqZQTvNb4CBpEiQ0ln6p/FNfjobqiwrIRBFfyAdye5IELqNv380IjNrX+7UuIyRvimgEuwYnQ7S
- zonlqY5DuwVF9iQswPAIR8qmXrj9LdQy5fM2bjJjDh5E6uhreg9UON8oOFPCwWbURSid1VPrt4g
- ftnSMNwM/K8rtY0OxQvL67spYfytElEUOxFF0Ari6ymRiGz/xdeUpy1DopjFamo9lENc1oG8UkN
- Ce8f9cPERTXmYSsLXNIouNyqEg4qvJtruQLu748JUQpbKRumxFfYCQoqJqoPn7QYs6XOsw/v/wh
- 4=
-X-Google-Smtp-Source: AGHT+IEA4CRRCS3aPkkVuYYN0yiQyMkQKZ6Q7iPOJtQFgdWSce+1t7Hhh+XtRWpvHjKKIPGiPSdIDw==
-X-Received: by 2002:a05:6000:2304:b0:3b7:6d94:a032 with SMTP id
- ffacd0b85a97d-3b917d2d474mr2538048f8f.3.1755094955625; 
- Wed, 13 Aug 2025 07:22:35 -0700 (PDT)
+ bh=XOn40hJGHfxKauEFZLHE4IYsXkK5oiaZxKtC1OphwWw=;
+ b=i3DFXZMVyA4bb3TzzsBkDUQdaBhM15y4INjg14QRcxQc8wDs2Qah4qbxI5pkv6Y/Lw
+ CZWN0Im+FeKUMUn8ciNd0IKkLVIuVPG+QYh9p1VFFu2PhcAi5ljAG1sVaHnNtZuWgsxQ
+ BPDd6plAukaA/A6nWCK4PpAB6Ltv60/8evpWNJFGh3SF0hktffHS86WSAsfvritQvxbI
+ uOBc47iisqEKdo/MDaceTkBlH+MCMa80CWl1H2g/k/Dbk4N9MXb9+r7nRHJ/TC2yMqUz
+ GiQOvbJbyPwrtMtYxoAkYtGmq4Sfj6BpFWIlCOmdNVY5C4xZA+LG4p5s5cJ122bfw885
+ EE9g==
+X-Gm-Message-State: AOJu0YxxEuWzdidD0CpstfjZ4wWBeQi8jxVwDjJAVZoZtn6DUSKkUYxL
+ J1B1A6Y+bJMuBkSVXTvhRTUMhvbrWIOMGVVSWPz0iLUmcYXrDQ7V0ukh2f6N0sS7FyA=
+X-Gm-Gg: ASbGncuctMdvGon66ku2Kz8dJ/YzK/JjDRjukwcoVhaPel9tV1axUNMa4QP6F/ra+oc
+ rdeontilLltrxIYfAgiPq+rPV/5N3+gb0G7XTNZ3u1UN9jD2db+FYAyGkJC3PtQbWtOw/FWOvpM
+ rcLGZG/nZp3zNwvQo4nH1Ki9cOIh977za5L6FhGiX3I87z+D6iN9kA549vy4AcMGPR4oaXzdVNb
+ W/64PYpKO/cg3GzQJhvZg51iTohEssvyjpakY9U1CKJk1h3w0WHIaG5WTsjE3WzLM6nQrwt7U/R
+ AC6jahqi8vzpwJxIO5GxBU5yKfizcrOLPmtNGoT1gBqB1fyQruzIjES6gD3vhI5ZKvGNPLc10a5
+ LH6dUuOH5BvDUnGHf2YLEoS1FH8KGOElGNdT03aij/srdhPeVB3wlVpqOkpaV8GwANr/6SNzcDv
+ s=
+X-Google-Smtp-Source: AGHT+IFUdYjVbOhP+Q6H3gOqlqAdxdqk/XL3wCbm+laRQf/bZYowvwJPk+x2+E1/swQ6mwMv8pnsQw==
+X-Received: by 2002:adf:a456:0:b0:3b9:1dac:70e with SMTP id
+ ffacd0b85a97d-3b91dac076dmr531995f8f.55.1755095136514; 
+ Wed, 13 Aug 2025 07:25:36 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3b79c4a2848sm47076585f8f.71.2025.08.13.07.22.34
+ ffacd0b85a97d-3b8ff860acbsm21563770f8f.51.2025.08.13.07.25.34
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 13 Aug 2025 07:22:35 -0700 (PDT)
-Date: Wed, 13 Aug 2025 07:22:31 -0700
+ Wed, 13 Aug 2025 07:25:36 -0700 (PDT)
+Date: Wed, 13 Aug 2025 07:25:32 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 Cc: dev@dpdk.org, Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu
  <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
 Subject: Re: [PATCH v4 04/16] net/nbl: add Channel layer definitions and
  implementation
-Message-ID: <20250813072231.087b2e9b@hermes.local>
+Message-ID: <20250813072532.553f76db@hermes.local>
 In-Reply-To: <20250813064410.3894506-5-dimon.zhao@nebula-matrix.com>
 References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
  <20250813064410.3894506-1-dimon.zhao@nebula-matrix.com>
@@ -88,24 +87,37 @@ Errors-To: dev-bounces@dpdk.org
 On Tue, 12 Aug 2025 23:43:58 -0700
 Dimon Zhao <dimon.zhao@nebula-matrix.com> wrote:
 
-> +/**
-> + * @brief: used to alloc continuous dma memory region for cmd buffer
-> + * @mem: output, the memory object containing va, pa and size of memory
-> + * @size: input, memory size in bytes
-> + * @return: memory virtual address for cpu usage
-> + */
-> +void *nbl_alloc_dma_mem(struct nbl_dma_mem *mem, uint32_t size)
+> +static uint32_t nbl_thread_polling_task(__rte_unused void *param)
 > +{
-> +	const struct rte_memzone *mz = NULL;
-> +	char z_name[RTE_MEMZONE_NAMESIZE];
+> +	struct timespec time;
+> +	struct nbl_work *work;
+> +	struct nbl_work *work_tmp;
+> +	int i = 0;
 > +
-> +	if (!mem)
-> +		return NULL;
+> +	time.tv_sec = 0;
+> +	time.tv_nsec = 100000;
 > +
-> +	snprintf(z_name, sizeof(z_name), "nbl_dma_%u",
-> +		rte_atomic_fetch_add_explicit(&nbl_dma_memzone_id, 1, rte_memory_order_relaxed));
-> +	mz = rte_memzone_reserve_bounded(z_name, size, SOCKET_ID_ANY, 0,
-> +					 0, RTE_PGSIZE_2M);
+> +	while (true) {
+> +		i++;
+> +		rte_spinlock_lock(&nbl_work_list_lock);
+> +		RTE_TAILQ_FOREACH_SAFE(work, &nbl_work_list, next, work_tmp) {
+> +			if (work->no_run)
+> +				continue;
+> +
+> +			if (work->run_once) {
+> +				work->handler(work->params);
+> +				TAILQ_REMOVE(&nbl_work_list, work, next);
+> +			} else {
+> +				if (i % work->tick == work->random)
+> +					work->handler(work->params);
+> +			}
+> +		}
+> +
+> +		rte_spinlock_unlock(&nbl_work_list_lock);
+> +		nanosleep(&time, 0);
+> +	}
+> +
+> +	return 0;
 
-Since this is setup during probe, and probe process is single threaded.
-Using atomic here is overkill.
+Adding another polling loop to applications is bad idea.
+Please use some form of blocking operation to wake up the work handler.
