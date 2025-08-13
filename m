@@ -2,72 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6561ECA0EE0
-	for <dpdk-dev@archiver.kernel.org>; Wed, 13 Aug 2025 08:45:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3839C87FCF
+	for <dpdk-dev@archiver.kernel.org>; Wed, 13 Aug 2025 09:30:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6FBA54021F;
-	Wed, 13 Aug 2025 10:45:16 +0200 (CEST)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 4AD10400EF
- for <dev@dpdk.org>; Wed, 13 Aug 2025 10:45:15 +0200 (CEST)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57CNSqSF030202;
- Wed, 13 Aug 2025 01:45:14 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=f
- Q+eYZMrKZSEr6p5Rrsykr0iNBaWWJWaf6uvk3e8ok4=; b=HkVmBmc2qAuj9+XkT
- OrpqfljaLVjJKtLE0TtRQzffRLL5EAzm6oH01fYQnm2SSFrcdfXDgf0L01FRMWKD
- k4iyWNwn4FBTm4wBLnhSaqHJLq/ISKClZXs2rbXxCWPOkMTfdCKymVfU6tTIPv3i
- eZv7YNo99WAxYqRJ3Jiu3l3zZNbDqVI6gMjG41w2J1LEvrg97FssunRPQRJebee+
- E45EHyOzwyv8d0yqeEa8k3UCr8Kp0V1y3aBKhb6NRyUZza4knKwn+KxZWHRB05WO
- hM21fsGJT1p/Pjqm+20HqpRxPjGOsvrd+k42ga+LRl4UKHqDRvVNSH0wlAmsvokt
- DEXag==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 48gfan8vxy-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Wed, 13 Aug 2025 01:45:13 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 13 Aug 2025 01:45:16 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 13 Aug 2025 01:45:16 -0700
-Received: from cavium-3070-BM23.. (unknown [10.28.34.25])
- by maili.marvell.com (Postfix) with ESMTP id 6E8BC5B6922;
- Wed, 13 Aug 2025 01:45:11 -0700 (PDT)
-From: <skori@marvell.com>
-To: Thomas Monjalon <thomas@monjalon.net>, Andrew Rybchenko
- <andrew.rybchenko@oktetlabs.ru>
-CC: <dev@dpdk.org>, Sunil Kumar Kori <skori@marvell.com>, Nithin Dabilpuram
- <ndabilpuram@marvell.com>
-Subject: [PATCH v3 1/1] ethdev: add support to provide link type
-Date: Wed, 13 Aug 2025 14:13:56 +0530
-Message-ID: <20250813084508.1446318-1-skori@marvell.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250606092904.3145608-1-skori@marvell.com>
-References: <20250606092904.3145608-1-skori@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0AA054021F;
+	Wed, 13 Aug 2025 11:30:15 +0200 (CEST)
+Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
+ by mails.dpdk.org (Postfix) with ESMTP id E1859400EF
+ for <dev@dpdk.org>; Wed, 13 Aug 2025 11:30:12 +0200 (CEST)
+Received: from debian (unknown [78.109.79.124])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by agw.arknetworks.am (Postfix) with ESMTPSA id 25BBEE097E;
+ Wed, 13 Aug 2025 13:30:12 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 25BBEE097E
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
+ s=default; t=1755077412;
+ bh=mfuyn1DDMy6u+VW3LVCxi2SeRo2Neq56QNACiYuNMZo=;
+ h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+ b=cYkrNL3gS65uEt2jqrQlg60HP+DggY5hXWQXRjUQC+bGSCrAASOriSNx++mMy4UPi
+ DRMCLqfTOUftyJpND5ARO/2aIieV4vXTT2OEHNyCvbaeyGP+3X1TEkLFwzjxczl8ce
+ p1uPC8QPbpVa2GcgbCFlTuQ1dxvbRAm2JDVQ6vUlkIo5nho0qWWdbvgmtlraGNu8S5
+ QyGomTrKP5kblKnc4282PXwq4xLfS0CFSaacin5TvjymyZIkjrhGMCPNOyT8UskShY
+ 9V9feujEM+OjXxBxEPN0SQ8831X1SlyF44vhhr6R0l58MgFEFFlVyewJHmidyj5cKM
+ EefJt5RL/UINA==
+Date: Wed, 13 Aug 2025 13:30:03 +0400 (+04)
+From: Ivan Malov <ivan.malov@arknetworks.am>
+To: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+cc: dev@dpdk.org, Kyo Liu <kyo.liu@nebula-matrix.com>, 
+ Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
+Subject: Re: [PATCH v4 03/16] net/nbl: add PHY layer definitions and
+ implementation
+In-Reply-To: <20250813064410.3894506-4-dimon.zhao@nebula-matrix.com>
+Message-ID: <7e666b72-f278-dc26-c24e-a48562a6fa67@arknetworks.am>
+References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
+ <20250813064410.3894506-1-dimon.zhao@nebula-matrix.com>
+ <20250813064410.3894506-4-dimon.zhao@nebula-matrix.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEzMDA4NCBTYWx0ZWRfXzut7m2QYVaob
- /1Pj3G7MfGuFkzmbRqhXTsc387LdFxfZX9Cg8WIGipei8sZkqKxZQiPXLBefGFzBHCgcZJ7dzn9
- S4qoolx2iO+r5BBZiJLB3umywerSfc7UZUoKPab8P2eGcudWyooaNKDs8BmI0o3A8q2e1Y9C4GB
- WJ7DQBATEFB4R19O2UhFw2eVfyp968ODwnA1TYX5969e20mkSqYEFwCP/xLhlsi0ktKZp2l9xky
- 644SGY9mAwg7HIAaMwjadE6YQ21yOfI+AIw2CtoaTKptodZy0aalGlUWmPRsQDwemLhERftd4g6
- Q7Okof02SYBnQdZT19UqNYJ6PMkI6Ownj4/E9l/KQPgKHGaveAKz4sJrV+4Qpa0ADNbuOha1FlX
- tHTgQna0IJxjtbXySEuzGszW+s+Ab0TuRrCkl4ESjcLq1D4xTTMDmRJ6zMKuwTazTTNddF/h
-X-Proofpoint-ORIG-GUID: GsSOYtzyvnP3H2kctN1H4ORAEDGfapNz
-X-Authority-Analysis: v=2.4 cv=bNMWIO+Z c=1 sm=1 tr=0 ts=689c5099 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=2OwXVqhp2XgA:10 a=M5GUcnROAAAA:8 a=iVWQqrl_jNQ_lGDvCO0A:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: GsSOYtzyvnP3H2kctN1H4ORAEDGfapNz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_08,2025-08-11_01,2025-03-28_01
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,198 +54,538 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Sunil Kumar Kori <skori@marvell.com>
+Hi Dimon,
 
-Adding link type parameter to provide the type
-of port like twisted pair, fibre etc.
+The fact that this driver calls 'phy' something that other drivers call 'dmaq'
+doesn't sit right with me, but perhaps this is just my misunderstanding.
 
-Also added an API to convert the RTE_ETH_LINK_TYPE_XXX
-to a readable string.
+On Tue, 12 Aug 2025, Dimon Zhao wrote:
 
-Signed-off-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
-Signed-off-by: Sunil Kumar Kori <skori@marvell.com>
----
-v2..v3
- - Extend link type list as per suggestion
+> add PHY layer related definitions and product ops
+>
+> Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+> ---
+> drivers/net/nbl/meson.build                   |  2 +
+> drivers/net/nbl/nbl_core.c                    | 54 ++++++++--
+> drivers/net/nbl/nbl_core.h                    | 30 +++++-
+> drivers/net/nbl/nbl_ethdev.c                  |  4 +-
+> .../nbl_hw_leonis/nbl_phy_leonis_snic.c       | 99 +++++++++++++++++++
+> .../nbl_hw_leonis/nbl_phy_leonis_snic.h       | 10 ++
+> drivers/net/nbl/nbl_hw/nbl_phy.h              | 28 ++++++
+> drivers/net/nbl/nbl_include/nbl_def_phy.h     | 35 +++++++
+> drivers/net/nbl/nbl_include/nbl_include.h     | 15 +++
+> .../net/nbl/nbl_include/nbl_product_base.h    | 37 +++++++
+> 10 files changed, 300 insertions(+), 14 deletions(-)
+> create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.c
+> create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.h
+> create mode 100644 drivers/net/nbl/nbl_hw/nbl_phy.h
+> create mode 100644 drivers/net/nbl/nbl_include/nbl_def_phy.h
+> create mode 100644 drivers/net/nbl/nbl_include/nbl_product_base.h
+>
+> diff --git a/drivers/net/nbl/meson.build b/drivers/net/nbl/meson.build
+> index 778c495c68..934a9b637a 100644
+> --- a/drivers/net/nbl/meson.build
+> +++ b/drivers/net/nbl/meson.build
+> @@ -7,8 +7,10 @@ if not is_linux or not dpdk_conf.get('RTE_ARCH_64')
+> endif
+>
+> includes += include_directories('nbl_include')
+> +includes += include_directories('nbl_hw')
+>
+> sources = files(
+>         'nbl_ethdev.c',
+>         'nbl_core.c',
+> +        'nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.c',
+> )
+> diff --git a/drivers/net/nbl/nbl_core.c b/drivers/net/nbl/nbl_core.c
+> index 63b707f0ba..fc7222d526 100644
+> --- a/drivers/net/nbl/nbl_core.c
+> +++ b/drivers/net/nbl/nbl_core.c
+> @@ -4,27 +4,67 @@
+>
+> #include "nbl_core.h"
+>
+> -int nbl_core_init(const struct nbl_adapter *adapter, const struct rte_eth_dev *eth_dev)
+> +static struct nbl_product_core_ops nbl_product_core_ops[NBL_PRODUCT_MAX] = {
 
- lib/ethdev/ethdev_trace.h        |  7 +++++
- lib/ethdev/ethdev_trace_points.c |  3 ++
- lib/ethdev/rte_ethdev.c          | 47 ++++++++++++++++++++++++++++++--
- lib/ethdev/rte_ethdev.h          | 47 ++++++++++++++++++++++++++++++++
- 4 files changed, 102 insertions(+), 2 deletions(-)
+Const?
 
-diff --git a/lib/ethdev/ethdev_trace.h b/lib/ethdev/ethdev_trace.h
-index 482befc209..c5cba0edba 100644
---- a/lib/ethdev/ethdev_trace.h
-+++ b/lib/ethdev/ethdev_trace.h
-@@ -2110,6 +2110,13 @@ RTE_TRACE_POINT_FP(
- 	rte_trace_point_emit_string(ret);
- )
- 
-+RTE_TRACE_POINT_FP(
-+	rte_eth_trace_link_type_to_str,
-+	RTE_TRACE_POINT_ARGS(uint8_t link_type, const char *ret),
-+	rte_trace_point_emit_u8(link_type);
-+	rte_trace_point_emit_string(ret);
-+);
-+
- /* Called in loop in examples/bond and examples/ethtool */
- RTE_TRACE_POINT_FP(
- 	rte_eth_trace_macaddr_get,
-diff --git a/lib/ethdev/ethdev_trace_points.c b/lib/ethdev/ethdev_trace_points.c
-index 071c508327..706acdf356 100644
---- a/lib/ethdev/ethdev_trace_points.c
-+++ b/lib/ethdev/ethdev_trace_points.c
-@@ -206,6 +206,9 @@ RTE_TRACE_POINT_REGISTER(rte_eth_trace_link_speed_to_str,
- RTE_TRACE_POINT_REGISTER(rte_eth_trace_link_to_str,
- 	lib.ethdev.link_to_str)
- 
-+RTE_TRACE_POINT_REGISTER(rte_eth_trace_link_type_to_str,
-+	lib.ethdev.link_type_to_str)
-+
- RTE_TRACE_POINT_REGISTER(rte_eth_trace_stats_get,
- 	lib.ethdev.stats_get)
- 
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index dd7c00bc94..0cf4a805b7 100644
---- a/lib/ethdev/rte_ethdev.c
-+++ b/lib/ethdev/rte_ethdev.c
-@@ -3285,18 +3285,61 @@ rte_eth_link_to_str(char *str, size_t len, const struct rte_eth_link *eth_link)
- 	if (eth_link->link_status == RTE_ETH_LINK_DOWN)
- 		ret = snprintf(str, len, "Link down");
- 	else
--		ret = snprintf(str, len, "Link up at %s %s %s",
-+		ret = snprintf(str, len, "Link up at %s %s %s %s",
- 			rte_eth_link_speed_to_str(eth_link->link_speed),
- 			(eth_link->link_duplex == RTE_ETH_LINK_FULL_DUPLEX) ?
- 			"FDX" : "HDX",
- 			(eth_link->link_autoneg == RTE_ETH_LINK_AUTONEG) ?
--			"Autoneg" : "Fixed");
-+			"Autoneg" : "Fixed",
-+			rte_eth_link_type_to_str(eth_link->link_type));
- 
- 	rte_eth_trace_link_to_str(len, eth_link, str, ret);
- 
- 	return ret;
- }
- 
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_link_type_to_str, 25.11)
-+const char *
-+rte_eth_link_type_to_str(uint8_t link_type)
-+{
-+	static const char * const link_type_str[] = {
-+		[RTE_ETH_LINK_TYPE_NONE] = "None",
-+		[RTE_ETH_LINK_TYPE_TP] = "Twisted Pair",
-+		[RTE_ETH_LINK_TYPE_AUI] = "Attachment Unit Interface",
-+		[RTE_ETH_LINK_TYPE_MII] = "Media Independent Interface",
-+		[RTE_ETH_LINK_TYPE_FIBRE] = "Fibre",
-+		[RTE_ETH_LINK_TYPE_BNC] = "BNC",
-+		[RTE_ETH_LINK_TYPE_DA] = "Direct Attach Copper",
-+		[RTE_ETH_LINK_TYPE_SGMII] = "SGMII",
-+		[RTE_ETH_LINK_TYPE_QSGMII] = "QSGMII",
-+		[RTE_ETH_LINK_TYPE_XFI] = "XFI",
-+		[RTE_ETH_LINK_TYPE_SFI] = "SFI",
-+		[RTE_ETH_LINK_TYPE_XLAUI] = "XLAUI",
-+		[RTE_ETH_LINK_TYPE_GAUI] = "GAUI",
-+		[RTE_ETH_LINK_TYPE_XAUI] = "XAUI",
-+		[RTE_ETH_LINK_TYPE_GBASE] = "GBASE",
-+		[RTE_ETH_LINK_TYPE_CAUI] = "CAUI",
-+		[RTE_ETH_LINK_TYPE_LAUI] = "LAUI",
-+		[RTE_ETH_LINK_TYPE_SFP] = "SFP",
-+		[RTE_ETH_LINK_TYPE_SFP_DD] = "SFP_DD",
-+		[RTE_ETH_LINK_TYPE_SFP_PLUS] = "SFP_PLUS",
-+		[RTE_ETH_LINK_TYPE_SFP28] = "SFP28",
-+		[RTE_ETH_LINK_TYPE_QSFP] = "QSFP",
-+		[RTE_ETH_LINK_TYPE_QSFP_PLUS] = "QSFP_PLUS",
-+		[RTE_ETH_LINK_TYPE_QSFP28] = "QSFP28",
-+		[RTE_ETH_LINK_TYPE_QSFP56] = "QSFP56",
-+		[RTE_ETH_LINK_TYPE_QSFP_DD] = "QSFP_DD",
-+		[RTE_ETH_LINK_TYPE_OTHER] = "Unknown"
-+	};
-+	const char *str = NULL;
-+
-+	if ((link_type < RTE_DIM(link_type_str)) && link_type_str[link_type])
-+		str = link_type_str[link_type];
-+
-+	rte_eth_trace_link_type_to_str(link_type, str);
-+	return str;
-+}
-+
- RTE_EXPORT_SYMBOL(rte_eth_stats_get)
- int
- rte_eth_stats_get(uint16_t port_id, struct rte_eth_stats *stats)
-diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
-index f9fb6ae549..e82e50017f 100644
---- a/lib/ethdev/rte_ethdev.h
-+++ b/lib/ethdev/rte_ethdev.h
-@@ -329,6 +329,38 @@ struct rte_eth_stats {
- #define RTE_ETH_SPEED_NUM_UNKNOWN UINT32_MAX /**< Unknown */
- /**@}*/
- 
-+/**@{@name PORT type
-+ * Ethernet port type
-+ */
-+#define RTE_ETH_LINK_TYPE_NONE     0  /**< Not defined */
-+#define RTE_ETH_LINK_TYPE_TP       1  /**< Twisted Pair */
-+#define RTE_ETH_LINK_TYPE_AUI      2  /**< Attachment Unit Interface */
-+#define RTE_ETH_LINK_TYPE_MII      3  /**< Media Independent Interface */
-+#define RTE_ETH_LINK_TYPE_FIBRE    4  /**< Fibre */
-+#define RTE_ETH_LINK_TYPE_BNC      5  /**< BNC */
-+#define RTE_ETH_LINK_TYPE_DA       6  /**< Direct Attach copper */
-+#define RTE_ETH_LINK_TYPE_SGMII    7  /**< SGMII */
-+#define RTE_ETH_LINK_TYPE_QSGMII   8  /**< QSGMII */
-+#define RTE_ETH_LINK_TYPE_XFI      9  /**< XFI */
-+#define RTE_ETH_LINK_TYPE_SFI     10  /**< SFI */
-+#define RTE_ETH_LINK_TYPE_XLAUI   11  /**< XLAUI */
-+#define RTE_ETH_LINK_TYPE_GAUI    12  /**< GAUI */
-+#define RTE_ETH_LINK_TYPE_XAUI    13  /**< XAUI */
-+#define RTE_ETH_LINK_TYPE_GBASE   14  /**< GBASE */
-+#define RTE_ETH_LINK_TYPE_CAUI    15  /**< CAUI */
-+#define RTE_ETH_LINK_TYPE_LAUI    16  /**< LAUI */
-+#define RTE_ETH_LINK_TYPE_SFP     17  /**< SFP */
-+#define RTE_ETH_LINK_TYPE_SFP_DD  18  /**< SFP_DD */
-+#define RTE_ETH_LINK_TYPE_SFP_PLUS 19  /**< SFP_PLUS */
-+#define RTE_ETH_LINK_TYPE_SFP28   20  /**< SFP28 */
-+#define RTE_ETH_LINK_TYPE_QSFP    21  /**< QSFP */
-+#define RTE_ETH_LINK_TYPE_QSFP_PLUS 22  /**< QSFP_PLUS */
-+#define RTE_ETH_LINK_TYPE_QSFP28  23  /**< QSFP28 */
-+#define RTE_ETH_LINK_TYPE_QSFP56  24  /**< QSFP56 */
-+#define RTE_ETH_LINK_TYPE_QSFP_DD 25  /**< QSFP_DD */
-+#define RTE_ETH_LINK_TYPE_OTHER  0x1F /**< Other type */
-+/**@}*/
-+
- /**
-  * A structure used to retrieve link-level information of an Ethernet port.
-  */
-@@ -341,6 +373,7 @@ struct rte_eth_link {
- 			uint16_t link_duplex  : 1;  /**< RTE_ETH_LINK_[HALF/FULL]_DUPLEX */
- 			uint16_t link_autoneg : 1;  /**< RTE_ETH_LINK_[AUTONEG/FIXED] */
- 			uint16_t link_status  : 1;  /**< RTE_ETH_LINK_[DOWN/UP] */
-+			uint16_t link_type    : 5;  /**< RTE_ETH_LINK_TYPE_XXX */
- 		};
- 	};
- };
-@@ -3116,6 +3149,20 @@ int rte_eth_link_get_nowait(uint16_t port_id, struct rte_eth_link *link)
- __rte_experimental
- const char *rte_eth_link_speed_to_str(uint32_t link_speed);
- 
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * This function converts an Ethernet link type to a string.
-+ *
-+ * @param link_type
-+ *   The link type to convert.
-+ * @return
-+ *   The string representation of the link type.
-+ */
-+__rte_experimental
-+const char *rte_eth_link_type_to_str(uint8_t link_type);
-+
- /**
-  * @warning
-  * @b EXPERIMENTAL: this API may change without prior notice.
--- 
-2.43.0
+> +	{
 
+Shouldn't this rather be [NBL_LEONIS_TYPE] = {} ?
+
+> +		.phy_init	= nbl_phy_init_leonis_snic,
+> +		.phy_remove	= nbl_phy_remove_leonis_snic,
+> +		.res_init	= NULL,
+> +		.res_remove	= NULL,
+> +		.chan_init	= NULL,
+> +		.chan_remove	= NULL,
+> +	},
+> +};
+> +
+> +static struct nbl_product_core_ops *nbl_core_get_product_ops(enum nbl_product_type product_type)
+> {
+> -	RTE_SET_USED(adapter);
+> -	RTE_SET_USED(eth_dev);
+
+Is check for 'product_type >= NBL_PRODUCT_MAX' needed? Debug-only assert may be?
+
+> +	return &nbl_product_core_ops[product_type];
+
+Return value -- const?
+
+> +}
+> +
+> +static void nbl_init_func_caps(struct rte_pci_device *pci_dev, struct nbl_func_caps *caps)
+
+pci_dev -- const?
+
+> +{
+> +	if (pci_dev->id.device_id >= NBL_DEVICE_ID_M18110 &&
+> +	    pci_dev->id.device_id <= NBL_DEVICE_ID_M18100_VF)
+> +		caps->product_type = NBL_LEONIS_TYPE;
+
+If 'NBL_LEONIS_TYPE' automatic enum is 0, then when this 'if' block doesn't run,
+the product type remains 0. May be mark it somehow then, to distinguish from a
+legitimate type?
+
+> +}
+> +
+> +int nbl_core_init(struct nbl_adapter *adapter, struct rte_eth_dev *eth_dev)
+> +{
+> +	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
+
+Const?
+
+> +	struct nbl_product_core_ops *product_base_ops = NULL;
+
+Const?
+
+> +	int ret = 0;
+> +
+> +	nbl_init_func_caps(pci_dev, &adapter->caps);
+> +
+> +	product_base_ops = nbl_core_get_product_ops(adapter->caps.product_type);
+> +
+> +	/* every product's phy/chan/res layer has a great difference, so call their own init ops */
+> +	ret = product_base_ops->phy_init(adapter);
+> +	if (ret)
+> +		goto phy_init_fail;
+>
+> 	return 0;
+> +
+> +phy_init_fail:
+> +	return -EINVAL;
+> }
+>
+> -void nbl_core_remove(const struct nbl_adapter *adapter)
+> +void nbl_core_remove(struct nbl_adapter *adapter)
+> {
+> -	RTE_SET_USED(adapter);
+> +	struct nbl_product_core_ops *product_base_ops = NULL;
+
+Const?
+
+> +
+> +	product_base_ops = nbl_core_get_product_ops(adapter->caps.product_type);
+> +
+> +	product_base_ops->phy_remove(adapter);
+> }
+>
+> -int nbl_core_start(const struct nbl_adapter *adapter)
+> +int nbl_core_start(struct nbl_adapter *adapter)
+> {
+> 	RTE_SET_USED(adapter);
+>
+> 	return 0;
+> }
+>
+> -void nbl_core_stop(const struct nbl_adapter *adapter)
+> +void nbl_core_stop(struct nbl_adapter *adapter)
+> {
+> 	RTE_SET_USED(adapter);
+> }
+> diff --git a/drivers/net/nbl/nbl_core.h b/drivers/net/nbl/nbl_core.h
+> index 4ba13e5bd7..2d0e39afa2 100644
+> --- a/drivers/net/nbl/nbl_core.h
+> +++ b/drivers/net/nbl/nbl_core.h
+> @@ -5,7 +5,8 @@
+> #ifndef _NBL_CORE_H_
+> #define _NBL_CORE_H_
+>
+> -#include "nbl_include.h"
+> +#include "nbl_product_base.h"
+> +#include "nbl_def_phy.h"
+>
+> #define NBL_VENDOR_ID				(0x1F0F)
+> #define NBL_DEVICE_ID_M18110			(0x3403)
+> @@ -27,14 +28,33 @@
+> #define NBL_DEVICE_ID_M18100_VF			(0x3413)
+>
+> #define NBL_MAX_INSTANCE_CNT 516
+> +
+> +#define NBL_ADAPTER_TO_PHY_MGT(adapter)		((adapter)->core.phy_mgt)
+> +#define NBL_ADAPTER_TO_PHY_OPS_TBL(adapter)	((adapter)->intf.phy_ops_tbl)
+> +
+> +struct nbl_core {
+> +	void *phy_mgt;
+> +	void *res_mgt;
+> +	void *disp_mgt;
+> +	void *chan_mgt;
+> +	void *dev_mgt;
+> +};
+> +
+> +struct nbl_interface {
+> +	struct nbl_phy_ops_tbl *phy_ops_tbl;
+> +};
+> +
+> struct nbl_adapter {
+> 	TAILQ_ENTRY(nbl_adapter) next;
+> 	struct rte_pci_device *pci_dev;
+> +	struct nbl_core core;
+> +	struct nbl_interface intf;
+> +	struct nbl_func_caps caps;
+> };
+>
+> -int nbl_core_init(const struct nbl_adapter *adapter, const struct rte_eth_dev *eth_dev);
+> -void nbl_core_remove(const struct nbl_adapter *adapter);
+> -int nbl_core_start(const struct nbl_adapter *adapter);
+> -void nbl_core_stop(const struct nbl_adapter *adapter);
+> +int nbl_core_init(struct nbl_adapter *adapter, struct rte_eth_dev *eth_dev);
+> +void nbl_core_remove(struct nbl_adapter *adapter);
+> +int nbl_core_start(struct nbl_adapter *adapter);
+> +void nbl_core_stop(struct nbl_adapter *adapter);
+
+This is odd. Why add 'const' in [02/16] then? Only to remove it here.
+
+>
+> #endif
+> diff --git a/drivers/net/nbl/nbl_ethdev.c b/drivers/net/nbl/nbl_ethdev.c
+> index 32897e7496..55b4c21e54 100644
+> --- a/drivers/net/nbl/nbl_ethdev.c
+> +++ b/drivers/net/nbl/nbl_ethdev.c
+> @@ -9,7 +9,7 @@ RTE_LOG_REGISTER_SUFFIX(nbl_logtype_driver, driver, INFO);
+>
+> static int nbl_dev_release_pf(struct rte_eth_dev *eth_dev)
+> {
+> -	const struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
+> +	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
+
+This is also odd. Consider to fix this in [02/16].
+
+>
+> 	if (!adapter)
+> 		return -EINVAL;
+> @@ -33,7 +33,7 @@ struct eth_dev_ops nbl_eth_dev_ops = {
+>
+> static int nbl_eth_dev_init(struct rte_eth_dev *eth_dev)
+> {
+> -	const struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
+> +	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
+
+Same here.
+
+> 	int ret;
+>
+> 	PMD_INIT_FUNC_TRACE();
+> diff --git a/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.c b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.c
+> new file mode 100644
+> index 0000000000..febee34edd
+> --- /dev/null
+> +++ b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.c
+> @@ -0,0 +1,99 @@
+> +/* SPDX-License-Identifier: BSD-3-Clause
+> + * Copyright 2025 Nebulamatrix Technology Co., Ltd.
+> + */
+> +
+> +#include "nbl_phy_leonis_snic.h"
+> +
+> +static inline void nbl_wr32(void *priv, u64 reg, u32 value)
+> +{
+> +	struct nbl_phy_mgt *phy_mgt = (struct nbl_phy_mgt *)priv;
+> +
+> +	rte_write32(rte_cpu_to_le_32(value), ((phy_mgt)->hw_addr + (reg)));
+> +}
+> +
+> +static void nbl_phy_update_tail_ptr(void *priv, u16 notify_qid, u16 tail_ptr)
+> +{
+> +	nbl_wr32(priv, NBL_NOTIFY_ADDR, ((u32)tail_ptr << NBL_TAIL_PTR_OFT | (u32)notify_qid));
+> +}
+> +
+> +static u8 *nbl_phy_get_tail_ptr(void *priv)
+> +{
+> +	struct nbl_phy_mgt *phy_mgt = (struct nbl_phy_mgt *)priv;
+> +
+> +	return phy_mgt->hw_addr;
+> +}
+> +
+> +static struct nbl_phy_ops phy_ops = {
+> +	.update_tail_ptr		= nbl_phy_update_tail_ptr,
+> +	.get_tail_ptr			= nbl_phy_get_tail_ptr,
+> +};
+> +
+> +static int nbl_phy_setup_ops(struct nbl_phy_ops_tbl **phy_ops_tbl,
+> +			     struct nbl_phy_mgt_leonis_snic *phy_mgt_leonis_snic)
+> +{
+> +	*phy_ops_tbl = rte_zmalloc("nbl_phy_ops", sizeof(struct nbl_phy_ops_tbl), 0);
+
+This line exceeds 80-column limit. Consider: sizeof(**phy_ops_tbl) .
+
+> +	if (!*phy_ops_tbl)
+> +		return -ENOMEM;
+> +
+> +	NBL_PHY_OPS_TBL_TO_OPS(*phy_ops_tbl) = &phy_ops;
+> +	NBL_PHY_OPS_TBL_TO_PRIV(*phy_ops_tbl) = phy_mgt_leonis_snic;
+> +
+> +	return 0;
+> +}
+> +
+> +static void nbl_phy_remove_ops(struct nbl_phy_ops_tbl **phy_ops_tbl)
+> +{
+> +	rte_free(*phy_ops_tbl);
+> +	*phy_ops_tbl = NULL;
+> +}
+> +
+> +int nbl_phy_init_leonis_snic(void *p)
+> +{
+> +	struct nbl_phy_mgt_leonis_snic **phy_mgt_leonis_snic;
+> +	struct nbl_phy_mgt *phy_mgt;
+> +	struct nbl_phy_ops_tbl **phy_ops_tbl;
+> +	struct nbl_adapter *adapter = (struct nbl_adapter *)p;
+> +	struct rte_pci_device *pci_dev = adapter->pci_dev;
+> +	int ret = 0;
+> +
+> +	phy_mgt_leonis_snic = (struct nbl_phy_mgt_leonis_snic **)&NBL_ADAPTER_TO_PHY_MGT(adapter);
+
+Also long line. Consider to split into two lines.
+
+> +	phy_ops_tbl = &NBL_ADAPTER_TO_PHY_OPS_TBL(adapter);
+> +
+> +	*phy_mgt_leonis_snic = rte_zmalloc("nbl_phy_mgt",
+> +					   sizeof(struct nbl_phy_mgt_leonis_snic), 0);
+
+Consider: sizeof(**phy_mgt_leonis_snic) .
+
+> +	if (!*phy_mgt_leonis_snic) {
+> +		ret = -ENOMEM;
+> +		goto alloc_phy_mgt_failed;
+> +	}
+> +
+> +	phy_mgt = &(*phy_mgt_leonis_snic)->phy_mgt;
+> +
+> +	phy_mgt->hw_addr = (u8 *)pci_dev->mem_resource[0].addr;
+> +	phy_mgt->memory_bar_pa = pci_dev->mem_resource[0].phys_addr;
+> +	phy_mgt->mailbox_bar_hw_addr = (u8 *)pci_dev->mem_resource[2].addr;
+> +
+> +	ret = nbl_phy_setup_ops(phy_ops_tbl, *phy_mgt_leonis_snic);
+> +	if (ret)
+> +		goto setup_ops_failed;
+> +
+> +	return ret;
+> +
+> +setup_ops_failed:
+> +	rte_free(*phy_mgt_leonis_snic);
+> +alloc_phy_mgt_failed:
+> +	return ret;
+> +}
+> +
+> +void nbl_phy_remove_leonis_snic(void *p)
+> +{
+> +	struct nbl_phy_mgt_leonis_snic **phy_mgt_leonis_snic;
+> +	struct nbl_phy_ops_tbl **phy_ops_tbl;
+> +	struct nbl_adapter *adapter = (struct nbl_adapter *)p;
+> +
+> +	phy_mgt_leonis_snic = (struct nbl_phy_mgt_leonis_snic **)&adapter->core.phy_mgt;
+
+Also exceeds 80-column limit. Please consider to check the patch series with
+./devtools/checkpatches.sh -n 16
+
+> +	phy_ops_tbl = &NBL_ADAPTER_TO_PHY_OPS_TBL(adapter);
+> +
+> +	rte_free(*phy_mgt_leonis_snic);
+> +
+> +	nbl_phy_remove_ops(phy_ops_tbl);
+> +}
+> diff --git a/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.h b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.h
+> new file mode 100644
+> index 0000000000..5440cf41be
+> --- /dev/null
+> +++ b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_phy_leonis_snic.h
+> @@ -0,0 +1,10 @@
+> +/* SPDX-License-Identifier: BSD-3-Clause
+> + * Copyright 2025 Nebulamatrix Technology Co., Ltd.
+> + */
+> +
+> +#ifndef _NBL_PHY_LEONIS_SNIC_H_
+> +#define _NBL_PHY_LEONIS_SNIC_H_
+> +
+> +#include "../nbl_phy.h"
+> +
+> +#endif
+> diff --git a/drivers/net/nbl/nbl_hw/nbl_phy.h b/drivers/net/nbl/nbl_hw/nbl_phy.h
+> new file mode 100644
+> index 0000000000..38b7fc2ec5
+> --- /dev/null
+> +++ b/drivers/net/nbl/nbl_hw/nbl_phy.h
+> @@ -0,0 +1,28 @@
+> +/* SPDX-License-Identifier: BSD-3-Clause
+> + * Copyright 2025 Nebulamatrix Technology Co., Ltd.
+> + */
+> +
+> +#ifndef _NBL_PHY_H_
+> +#define _NBL_PHY_H_
+> +
+> +#include "nbl_ethdev.h"
+> +
+> +#define NBL_NOTIFY_ADDR			(0x00000000)
+> +#define NBL_BYTES_IN_REG		(4)
+> +#define NBL_TAIL_PTR_OFT		(16)
+> +#define NBL_LO_DWORD(x)			((u32)((x) & 0xFFFFFFFF))
+> +#define NBL_HI_DWORD(x)			((u32)(((x) >> 32) & 0xFFFFFFFF))
+> +
+> +struct nbl_phy_mgt {
+> +	u8 *hw_addr;
+> +	u64 memory_bar_pa;
+> +	u8 *mailbox_bar_hw_addr;
+> +	u64 notify_addr;
+> +	u32 version;
+> +};
+> +
+> +struct nbl_phy_mgt_leonis_snic {
+> +	struct nbl_phy_mgt phy_mgt;
+> +};
+> +
+> +#endif
+> diff --git a/drivers/net/nbl/nbl_include/nbl_def_phy.h b/drivers/net/nbl/nbl_include/nbl_def_phy.h
+> new file mode 100644
+> index 0000000000..09a3e125a9
+> --- /dev/null
+> +++ b/drivers/net/nbl/nbl_include/nbl_def_phy.h
+> @@ -0,0 +1,35 @@
+> +/* SPDX-License-Identifier: BSD-3-Clause
+> + * Copyright 2025 Nebulamatrix Technology Co., Ltd.
+> + */
+> +
+> +#ifndef _NBL_DEF_PHY_H_
+> +#define _NBL_DEF_PHY_H_
+> +
+> +#include "nbl_include.h"
+> +
+> +#define NBL_PHY_OPS_TBL_TO_OPS(phy_ops_tbl)	((phy_ops_tbl)->ops)
+> +#define NBL_PHY_OPS_TBL_TO_PRIV(phy_ops_tbl)	((phy_ops_tbl)->priv)
+> +
+> +struct nbl_phy_ops {
+> +	/* queue */
+> +	void (*update_tail_ptr)(void *priv, u16 notify_qid, u16 tail_ptr);
+> +	u8 *(*get_tail_ptr)(void *priv);
+> +
+> +	/* mailbox */
+> +	void (*config_mailbox_rxq)(void *priv, uint64_t dma_addr, int size_bwid);
+> +	void (*config_mailbox_txq)(void *priv, uint64_t dma_addr, int size_bwid);
+> +	void (*stop_mailbox_rxq)(void *priv);
+> +	void (*stop_mailbox_txq)(void *priv);
+> +	uint16_t (*get_mailbox_rx_tail_ptr)(void *priv);
+> +	void (*update_mailbox_queue_tail_ptr)(void *priv, uint16_t tail_ptr, uint8_t txrx);
+> +};
+> +
+> +struct nbl_phy_ops_tbl {
+> +	struct nbl_phy_ops *ops;
+> +	void *priv;
+> +};
+> +
+> +int nbl_phy_init_leonis_snic(void *adapter);
+> +void nbl_phy_remove_leonis_snic(void *adapter);
+> +
+> +#endif
+> diff --git a/drivers/net/nbl/nbl_include/nbl_include.h b/drivers/net/nbl/nbl_include/nbl_include.h
+> index 3c7573f3bf..554bb95f16 100644
+> --- a/drivers/net/nbl/nbl_include/nbl_include.h
+> +++ b/drivers/net/nbl/nbl_include/nbl_include.h
+> @@ -28,6 +28,7 @@
+> #include <ethdev_driver.h>
+> #include <ethdev_pci.h>
+> #include <bus_pci_driver.h>
+> +#include <rte_io.h>
+>
+> #include "nbl_logs.h"
+>
+> @@ -40,4 +41,18 @@ typedef int32_t s32;
+> typedef int16_t s16;
+> typedef int8_t s8;
+>
+> +enum nbl_product_type {
+> +	NBL_LEONIS_TYPE,
+
+This is used. OK.
+
+> +	NBL_DRACO_TYPE,
+
+Unused?
+
+> +	NBL_BOOTIS_TYPE,
+
+Unused?
+
+> +	NBL_PRODUCT_MAX,
+> +};
+> +
+> +struct nbl_func_caps {
+> +	enum nbl_product_type product_type;
+> +	u32 is_vf:1;
+> +	u32 is_user:1;
+
+A small comment would be helpful to clarify the meaning of 'is_user'.
+
+Thank you.
+
+> +	u32 rsv:30;
+> +};
+> +
+> #endif
+> diff --git a/drivers/net/nbl/nbl_include/nbl_product_base.h b/drivers/net/nbl/nbl_include/nbl_product_base.h
+> new file mode 100644
+> index 0000000000..7b9c2ccf72
+> --- /dev/null
+> +++ b/drivers/net/nbl/nbl_include/nbl_product_base.h
+> @@ -0,0 +1,37 @@
+> +/* SPDX-License-Identifier: BSD-3-Clause
+> + * Copyright 2025 Nebulamatrix Technology Co., Ltd.
+> + */
+> +
+> +#ifndef _NBL_DEF_PRODUCT_BASE_H_
+> +#define _NBL_DEF_PRODUCT_BASE_H_
+> +
+> +#include "nbl_include.h"
+> +
+> +struct nbl_product_core_ops {
+> +	int (*phy_init)(void *p);
+> +	void (*phy_remove)(void *p);
+> +	int (*res_init)(void *p, struct rte_eth_dev *eth_dev);
+> +	void (*res_remove)(void *p);
+> +	int (*chan_init)(void *p);
+> +	void (*chan_remove)(void *p);
+> +};
+> +
+> +struct nbl_product_dev_ops {
+> +	int (*dev_init)(void *adapter);
+> +	void (*dev_uninit)(void *adapter);
+> +	int (*dev_start)(void *adapter);
+> +	void (*dev_stop)(void *adapter);
+> +};
+> +
+> +struct nbl_product_dispatch_ops {
+> +	int (*dispatch_init)(void *mgt);
+> +	int (*dispatch_uninit)(void *mgt);
+> +};
+> +
+> +struct nbl_product_dev_external_ops {
+> +	int (*external_pf_ops_get)(struct rte_eth_dev *dev, void *arg);
+> +	int (*external_rep_ops_get)(struct rte_eth_dev *dev, void *arg);
+> +	int (*external_bond_ops_get)(struct rte_eth_dev *dev, void *arg);
+> +};
+> +
+> +#endif
+> -- 
+> 2.34.1
+>
+>
