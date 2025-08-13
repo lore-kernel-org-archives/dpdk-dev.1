@@ -2,46 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1BA9CA0EE0
-	for <dpdk-dev@archiver.kernel.org>; Wed, 13 Aug 2025 15:36:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6471C87FCF
+	for <dpdk-dev@archiver.kernel.org>; Wed, 13 Aug 2025 15:37:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D5F8740ED4;
-	Wed, 13 Aug 2025 17:36:17 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 82DCF40657
- for <dev@dpdk.org>; Wed, 13 Aug 2025 17:36:16 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 7120046D1A; Wed, 13 Aug 2025 17:36:16 +0200 (CEST)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/core Bug 1771] [dpdk 23.11.5-rc1] drivers/net/cxgbe meson
- build failed on Fedora42 with gcc15.0.1
-Date: Wed, 13 Aug 2025 15:36:16 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: changed
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: core
-X-Bugzilla-Version: 23.11
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: stephen@networkplumber.org
-X-Bugzilla-Status: RESOLVED
-X-Bugzilla-Resolution: WONTFIX
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: resolution bug_status cc
-Message-ID: <bug-1771-3-duX3DtRZ5v@https.bugs.dpdk.org/>
-In-Reply-To: <bug-1771-3@https.bugs.dpdk.org/>
-References: <bug-1771-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17550993761.0D7E.267106
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id 2EA2640ED4;
+	Wed, 13 Aug 2025 17:37:41 +0200 (CEST)
+Received: from fhigh-a1-smtp.messagingengine.com
+ (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+ by mails.dpdk.org (Postfix) with ESMTP id 4902740657
+ for <dev@dpdk.org>; Wed, 13 Aug 2025 17:37:40 +0200 (CEST)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id E0F4314000F1;
+ Wed, 13 Aug 2025 11:37:39 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-02.internal (MEProxy); Wed, 13 Aug 2025 11:37:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1755099459;
+ x=1755185859; bh=YSZC+DsIpOOER1ZJlaYA/5sxWQUZtCwov1enX7/HrGU=; b=
+ N459I+E7UFBjTlmjsdIWWs835XLxik4ILxaeKPRDse82gqvcD6qP5yzFY0HIYj88
+ xAnz4rSz7Xa+HEJtLkalcCMht9o/4gmKJPxe3/F38GLgsrqPJgnxWnW/sZTp9Cv7
+ 0NX4Osbyum/f6o5NJ2khfRRCUWBFw5P28+kB9/XALTefT6GiwdSbK4TCXy07FNRN
+ VwvUuphLEmpln7qZLllSw/QsyfMdTWO0g7M8LPU1xXIBYyorxiNoMOER8YXpyt3O
+ wJ2bSywqAdx0p1y12wspbPR4IARxq/8L6jULU8XNNIoW4qGovX+3FJ2japvDRTWv
+ xd/PJOzIHN5MOMWeWe/jBw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755099459; x=
+ 1755185859; bh=YSZC+DsIpOOER1ZJlaYA/5sxWQUZtCwov1enX7/HrGU=; b=A
+ 5+bV9pWdAx+taYd+k1M9zm4YC6AjHSM5GR79991hRePF9YjyDek5Ga33okUQHNr/
+ YDGMAbteGV4guVwrasavwRmU/1jljjXsKSQSkyUzHYXt28lGVkC5UWPCCjFWKbdY
+ tLS96ouzVivh3OxKbM9Wa1fays5Q38ZLVBIpcFBRlZumFT9uxqY0jEJQsh1WPLN2
+ 0Z4RFScaPGO7yRjUJreRTvF2vD0WJOujpemj0oCm7AtHX2pfthEiIltY1XDCQvyU
+ SfvOfaIubpwTzhtgOljSI6qWBOy2tx0Nt65Qh+BVfVUKF7b0+mU47C8+3uMHw6qz
+ YR/+L2Sp05T/UeLznu1SA==
+X-ME-Sender: <xms:Q7GcaF7bXoxhYfm6y0B8-TkVU-9qa8ZapZx2IFyaXZ-xJZBoEraXLA>
+ <xme:Q7GcaA0jWxKGdBHqIcuzyUNL44l7p3Q2uSH9Ybijya0o7zWRKjZPzHyfOYpwP9FOp
+ bD50PYP2EEZUWo7Xg>
+X-ME-Received: <xmr:Q7GcaOzbuD9J3J2iwNsYr2g4McwdfULghZXAfQMZm9ZISqPlwPM5aSxrdDkswMgPOBxRH-BP3xV_nHLGuvust5NH8A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeekheelucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkph
+ hluhhmsggvrhdrohhrghdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphht
+ thhopegrmhgrnhdruggvvghprdhsihhnghhhsehinhhtvghlrdgtohhmpdhrtghpthhtoh
+ eprghnughrvgifrdhrhigstghhvghnkhhosehokhhtvghtlhgrsghsrdhruhdprhgtphht
+ thhopehmrgigihhmvgdrtghoqhhuvghlihhnsehrvgguhhgrthdrtghomhdprhgtphhtth
+ hopegthhgvnhgsohigsehnvhhiughirgdrtghomh
+X-ME-Proxy: <xmx:Q7GcaCsGn-XZaJV2qWszZu8Ci2E_Yj9zZQD2znrTwxdYIqLu9XUdpA>
+ <xmx:Q7GcaAyy0YFrUToLx3oV34QNhGItlv28a89K_IlY_E8kM7lqzGDjHA>
+ <xmx:Q7GcaFBmxZ3I0ohvgDMm-_ftzLal6l56D_TXT5afpF0ZqutUc8qugg>
+ <xmx:Q7GcaOeO6McmT3XGtELpKe_NcTl3WbId3jEndHPPGtkmnrR3hhCPWQ>
+ <xmx:Q7GcaPSE-A6WU31jGuVEqGkOnkezx1nT3-E7TJawDobPcsGLFHBe9sGz>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 13 Aug 2025 11:37:38 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, Aman Singh <aman.deep.singh@intel.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ Maxime Coquelin <maxime.coquelin@redhat.com>, Chenbo Xia <chenbox@nvidia.com>
+Subject: Re: [PATCH 1/1] ethdev: add link speed 800G
+Date: Wed, 13 Aug 2025 17:37:37 +0200
+Message-ID: <2269183.1BCLMh4Saa@thomas>
+In-Reply-To: <20250813071823.54b6a6ab@hermes.local>
+References: <20250812144249.316120-1-thomas@monjalon.net>
+ <3325626.aV6nBDHxoP@thomas> <20250813071823.54b6a6ab@hermes.local>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,268 +93,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+13/08/2025 16:18, Stephen Hemminger:
+> On Wed, 13 Aug 2025 12:01:53 +0200
+> Thomas Monjalon <thomas@monjalon.net> wrote:
+> 
+> > > Looks like will run out of bits in 2040...  
+> > 
+> > I observe the max speed doubling every 3 years.
+> > So I imagine we will run out of bits in 2070,
+> > or earlier if we have new intermediate speeds.
+> > But in any case we have at least 20 years before it happens,
+> > so it looks safe to me.
+> 
+> That was just my lame attempt a joke.
 
---17550993761.0D7E.267106
-Date: Wed, 13 Aug 2025 17:36:16 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-https://bugs.dpdk.org/show_bug.cgi?id=3D1771
-
-Stephen Hemminger (stephen@networkplumber.org) changed:
-
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-         Resolution|---                         |WONTFIX
-             Status|UNCONFIRMED                 |RESOLVED
-                 CC|                            |stephen@networkplumber.org
-
---- Comment #1 from Stephen Hemminger (stephen@networkplumber.org) ---
-That is an old release. GCC 15 support was addressed in commit in main
-which was not backported. Since version 23.11 pre-dates the release of that=
- OS
-release, it is unreasonable to expect backport.
-
-Use a later DPDK release please.
-
-commit e0d947a1e6c2f80aa039a4f7082a8aa16797d8b9
-Author: Ferruh Yigit <ferruh.yigit@amd.com>
-Date:   Thu Oct 3 21:13:34 2024 -0700
-
-    ethdev: convert string initialization
-
-    gcc 15 experimental [1], with -Wextra flag, gives warning in variable
-    initialization as string [2].
-
-    The warning has a point when initialized variable is intended to use as
-    string, since assignment is missing the required null terminator for
-    this case. But warning is useless for our usecase.
-
-    In this patch only updated a few instance to show the issue, there are
-    many instances to fix, if we prefer to go this way.
-    Other option is to disable warning but it can be useful for actual
-    string usecases, so I prefer to keep it.
-
-    Converted string initialization to array initialization.
-
-    [1]
-    gcc (GCC) 15.0.0 20241003 (experimental)
-
-    [2]
-    ../lib/ethdev/rte_flow.h:906:36:
-      error: initializer-string for array of =E2=80=98unsigned char=E2=80=
-=99 is too long
-            [-Werror=3Dunterminated-string-initialization]
-    906 |         .hdr.dst_addr.addr_bytes =3D "\xff\xff\xff\xff\xff\xff",
-        |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    ../lib/ethdev/rte_flow.h:907:36:
-      error: initializer-string for array of =E2=80=98unsigned char=E2=80=
-=99 is too long
-             [-Werror=3Dunterminated-string-initialization]
-    907 |         .hdr.src_addr.addr_bytes =3D "\xff\xff\xff\xff\xff\xff",
-        |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    ../lib/ethdev/rte_flow.h:1009:25:
-      error: initializer-string for array of =E2=80=98unsigned char=E2=80=
-=99 is too long
-             [-Werror=3Dunterminated-string-initialization]
-    1009 |                         "\xff\xff\xff\xff\xff\xff\xff\xff"
-         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    ../lib/ethdev/rte_flow.h:1012:25:
-      error: initializer-string for array of =E2=80=98unsigned char=E2=80=
-=99 is too long
-             [-Werror=3Dunterminated-string-initialization]
-    1012 |                         "\xff\xff\xff\xff\xff\xff\xff\xff"
-         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    ../lib/ethdev/rte_flow.h:1135:20:
-      error: initializer-string for array of =E2=80=98unsigned char=E2=80=
-=99 is too long
-             [-Werror=3Dunterminated-string-initialization]
-    1135 |         .hdr.vni =3D "\xff\xff\xff",
-         |                    ^~~~~~~~~~~~~~
-
-    Signed-off-by: Ferruh Yigit <ferruh.yigit@amd.com>
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
-
---17550993761.0D7E.267106
-Date: Wed, 13 Aug 2025 17:36:16 +0200
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-<html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><span class=3D"vcard"><a class=3D"email" href=3D"mailto:stephen&#=
-64;networkplumber.org" title=3D"Stephen Hemminger (stephen&#64;networkplumb=
-er.org)"> <span class=3D"fn">Stephen Hemminger</span></a>
-</span> changed
-          <a class=3D"bz_bug_link=20
-          bz_status_RESOLVED  bz_closed"
-   title=3D"RESOLVED WONTFIX - [dpdk 23.11.5-rc1] drivers/net/cxgbe meson b=
-uild failed on Fedora42 with gcc15.0.1"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1771">bug 1771</a>
-          <br>
-             <table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=
-=3D"bz_diff_table">
-          <tr>
-            <th>What</th>
-            <th>Removed</th>
-            <th>Added</th>
-          </tr>
-
-         <tr>
-           <td style=3D"text-align:right;">Resolution</td>
-           <td>---
-           </td>
-           <td>WONTFIX
-           </td>
-         </tr>
-
-         <tr>
-           <td style=3D"text-align:right;">Status</td>
-           <td>UNCONFIRMED
-           </td>
-           <td>RESOLVED
-           </td>
-         </tr>
-
-         <tr>
-           <td style=3D"text-align:right;">CC</td>
-           <td>
-               &nbsp;
-           </td>
-           <td>stephen&#64;networkplumber.org
-           </td>
-         </tr></table>
-      <p>
-        <div class=3D"bz_comment_block">
-            <b class=3D"bz_comment_head"><a class=3D"bz_bug_link=20
-          bz_status_RESOLVED  bz_closed"
-   title=3D"RESOLVED WONTFIX - [dpdk 23.11.5-rc1] drivers/net/cxgbe meson b=
-uild failed on Fedora42 with gcc15.0.1"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1771#c1">Comment # 1</a>
-              on <a class=3D"bz_bug_link=20
-          bz_status_RESOLVED  bz_closed"
-   title=3D"RESOLVED WONTFIX - [dpdk 23.11.5-rc1] drivers/net/cxgbe meson b=
-uild failed on Fedora42 with gcc15.0.1"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1771">bug 1771</a>
-              from <span class=3D"vcard"><a class=3D"email" href=3D"mailto:=
-stephen&#64;networkplumber.org" title=3D"Stephen Hemminger (stephen&#64;net=
-workplumber.org)"> <span class=3D"fn">Stephen Hemminger</span></a>
-</span>
-            </b>
-          <pre class=3D"bz_comment_text">That is an old release. GCC 15 sup=
-port was addressed in commit in main
-which was not backported. Since version 23.11 pre-dates the release of that=
- OS
-release, it is unreasonable to expect backport.
-
-Use a later DPDK release please.
-
-commit e0d947a1e6c2f80aa039a4f7082a8aa16797d8b9
-Author: Ferruh Yigit &lt;<a href=3D"mailto:ferruh.yigit&#64;amd.com">ferruh=
-.yigit&#64;amd.com</a>&gt;
-Date:   Thu Oct 3 21:13:34 2024 -0700
-
-    ethdev: convert string initialization
-
-    gcc 15 experimental [1], with -Wextra flag, gives warning in variable
-    initialization as string [2].
-
-    The warning has a point when initialized variable is intended to use as
-    string, since assignment is missing the required null terminator for
-    this case. But warning is useless for our usecase.
-
-    In this patch only updated a few instance to show the issue, there are
-    many instances to fix, if we prefer to go this way.
-    Other option is to disable warning but it can be useful for actual
-    string usecases, so I prefer to keep it.
-
-    Converted string initialization to array initialization.
-
-    [1]
-    gcc (GCC) 15.0.0 20241003 (experimental)
-
-    [2]
-    ../lib/ethdev/rte_flow.h:906:36:
-      error: initializer-string for array of =E2=80=98unsigned char=E2=80=
-=99 is too long
-            [-Werror=3Dunterminated-string-initialization]
-    906 |         .hdr.dst_addr.addr_bytes =3D &quot;\xff\xff\xff\xff\xff\x=
-ff&quot;,
-        |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    ../lib/ethdev/rte_flow.h:907:36:
-      error: initializer-string for array of =E2=80=98unsigned char=E2=80=
-=99 is too long
-             [-Werror=3Dunterminated-string-initialization]
-    907 |         .hdr.src_addr.addr_bytes =3D &quot;\xff\xff\xff\xff\xff\x=
-ff&quot;,
-        |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    ../lib/ethdev/rte_flow.h:1009:25:
-      error: initializer-string for array of =E2=80=98unsigned char=E2=80=
-=99 is too long
-             [-Werror=3Dunterminated-string-initialization]
-    1009 |                         &quot;\xff\xff\xff\xff\xff\xff\xff\xff&q=
-uot;
-         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    ../lib/ethdev/rte_flow.h:1012:25:
-      error: initializer-string for array of =E2=80=98unsigned char=E2=80=
-=99 is too long
-             [-Werror=3Dunterminated-string-initialization]
-    1012 |                         &quot;\xff\xff\xff\xff\xff\xff\xff\xff&q=
-uot;
-         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    ../lib/ethdev/rte_flow.h:1135:20:
-      error: initializer-string for array of =E2=80=98unsigned char=E2=80=
-=99 is too long
-             [-Werror=3Dunterminated-string-initialization]
-    1135 |         .hdr.vni =3D &quot;\xff\xff\xff&quot;,
-         |                    ^~~~~~~~~~~~~~
-
-    Signed-off-by: Ferruh Yigit &lt;<a href=3D"mailto:ferruh.yigit&#64;amd.=
-com">ferruh.yigit&#64;amd.com</a>&gt;
-          </pre>
-        </div>
-      </p>
+Sorry for not spotting the joke :)
 
 
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1771#c1">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17550993761.0D7E.267106--
