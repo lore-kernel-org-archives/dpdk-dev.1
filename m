@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A3E6C87FCF
-	for <dpdk-dev@archiver.kernel.org>; Wed, 13 Aug 2025 14:21:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF8B5C87FCF
+	for <dpdk-dev@archiver.kernel.org>; Wed, 13 Aug 2025 14:22:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D336F40657;
-	Wed, 13 Aug 2025 16:21:40 +0200 (CEST)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com
- [209.85.128.43]) by mails.dpdk.org (Postfix) with ESMTP id AE13D40265
- for <dev@dpdk.org>; Wed, 13 Aug 2025 16:21:39 +0200 (CEST)
-Received: by mail-wm1-f43.google.com with SMTP id
- 5b1f17b1804b1-459ddf83023so41153825e9.0
- for <dev@dpdk.org>; Wed, 13 Aug 2025 07:21:39 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 16CBF40657;
+	Wed, 13 Aug 2025 16:22:37 +0200 (CEST)
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com
+ [209.85.221.47]) by mails.dpdk.org (Postfix) with ESMTP id 126FB40265
+ for <dev@dpdk.org>; Wed, 13 Aug 2025 16:22:36 +0200 (CEST)
+Received: by mail-wr1-f47.google.com with SMTP id
+ ffacd0b85a97d-3b8d0f1fb49so3914211f8f.2
+ for <dev@dpdk.org>; Wed, 13 Aug 2025 07:22:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755094899;
- x=1755699699; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755094956;
+ x=1755699756; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=zRAiXv5ifk2o2P6yIzDiW8jHD+ga9WOSeKA5mnT22jg=;
- b=m3l1QZ5PrXTtRkUMItVk0YMBPBPCk9B6qkH/6vFu/VEvQhcthQKrO+FHvcOB2wkahD
- a+zIpZchDgwc0HXoCOzquA69lMXqrjRt8HhXISm0dTEH2jbYOCbGaWedaD7NhmoPgvcl
- hqvxROShUpatf5tV9I5k9eLjsIJ5MMg7uG832G8dSDXpmDhLyG6yrbFjBfQicW0I22ej
- fWmm4ISMrPDkfD1NpDV2EElTm841akHtt79ZjgXYbJwK0yGTbUGvNTOaeA6tidMTN/Wj
- Q2Or6cdcoDlD2qlS4N3pGlLoxa7WhzWsSBOryBg/LhvCUv11lCgjsc/lLq6estJbnMLP
- rjSw==
+ bh=dkt9GU1AamqGN16svn9IOnAMvzgDlD4Eg45dJCnQA5E=;
+ b=RXtarr44jSrTb5A+NatUUdp+icCPnwrh417ZwtbOEQ3Snof+f2JFEvEohIt0hK338z
+ n6EfLvj3EVq3Bipl2J+VXvU9POXFohgBBapKDsjGbnFcmOTHfMxnsYPvs4QPZd3OWQYW
+ yBDH64wUB8xdpdtrddCtLP77ssnocVng61gDjmfzXluR8psDHVC90nKf9lOstTYmBXBz
+ MPtfpy5rTpnajuJGTggKmo11d9gLYtBldUwgilCn6PU1tBkG52lCDFEdLjrjJRbNJbyu
+ DB3qbXsc6ntKdhNecQQYXd4BbCjYdkt3TfRod2GAHin+DjEg21JLOc/PStdsvDz3tDmJ
+ p+fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755094899; x=1755699699;
+ d=1e100.net; s=20230601; t=1755094956; x=1755699756;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=zRAiXv5ifk2o2P6yIzDiW8jHD+ga9WOSeKA5mnT22jg=;
- b=NdiRdbn68KzAEOvy00t4+j5/C/Q3bRrLvUdMSLRZIuPB/rtFNhL9OnftCNN7vbsfNt
- XealWbM2Kh438jPqVQjHNps4dQpx6MCHy37hATg3GiCzRk7mqNGpvy7OdnmJGvK8hZ3x
- DwfDUxtDbWGvDW4pq/XiOBK5QuFTgmi0NO0Pz7YUAwd1qeplJNVRGwFbugXvsVtc8bSo
- SoERaAbYXE+yfYS6sQkVx43DUTKPWWix2p4Y6TxVuulR+LPTGwPgGfXTD+88YqCXGd37
- KhsiGZSuT8nM+eUph4qhborLEe4K15AZT3BUcnDN0KgiGUAREZhP600GzFHUlpFik70P
- 4WuA==
-X-Gm-Message-State: AOJu0YzUxPL9NOd+5H9PrAD7aEiADaMQbpuBOliPhmIGOmlDLYY3j/Mo
- VORipL6xbNNd2NgrM8hoHAzHNktpsgf7rtg3CRkCsJiJ5REzfBKGFSR9ex60IdkbivA=
-X-Gm-Gg: ASbGnctfma88izltT6lj/loJiz+G1SLa6CpIuenEu9eAhc7Hf185cUA8vDYOg0kIVKh
- RDGqkWKr0vo5ludeMKCmmTmApan6Aa6wxR+LVOH5qs8jWvTYQ9ZnNb6lpLgp27DOpWnQ7H3S6Aq
- uuvJPRRRl8pGwO5YaIvmEnq1Cv+Wad+cag1INpfdfVVRCVXB+piX4sJMBzVXKvcFuQhRNZwHAwY
- fbUs6NyJmi6V2zjCqUS9liytJp5BEMgP58ZdCWbS7kWTFwMxlvNffLY6cfZCU6SJR/pQkxDE4y+
- 7JEJgIo2KL3VyVKk1YVQzRmJ6QEWM2bq8KVY/WikMBW088f/0pqqTjgTLk+NFzZ4WG89hq45GZN
- B7IcWzEdfgXJYhkbzeUig9bg3MzBiQf78MSP6mPy2zC2L6VNAY3lM6wMVjki2lAe90ksiFegjpV
- 0=
-X-Google-Smtp-Source: AGHT+IFhnOAYKiAUesR/BCOI/nsrJCChYnIjKanv3DNtm4MBm4TopwWtUYVzeeNyVc0r4gZ4vpcXBQ==
-X-Received: by 2002:a05:600c:3507:b0:458:affe:a5c1 with SMTP id
- 5b1f17b1804b1-45a165a2d68mr30402295e9.5.1755094899222; 
- Wed, 13 Aug 2025 07:21:39 -0700 (PDT)
+ bh=dkt9GU1AamqGN16svn9IOnAMvzgDlD4Eg45dJCnQA5E=;
+ b=klyyW/AOIKsvvbOvXYFxaB1jAqNKx9tTltXUc10PEpiQFLef19OPvu/2DBa/eZsUwa
+ lg3RLlsVd++3bmGughaoM3DscpmR9xkJU+mOyme15koXr7b5Bu1oHGBIjgk8ajHEZAHQ
+ /CO2jfSLBe/zXb/3hbX3xK2v7QBjNOX6u8Le5Y0mcVGJoFDGtUDxWVczn3PcobbD5gf4
+ 00+bEmIU3Ly3l5U0XMJdtvXQBIm+WSdsEkKCFabuHmoELz8W7jgiw1CSBNe7I2LugTGo
+ pvP375TwxbJHRkPIdamrJ3smC2Y0MdRNbnU5RMeFhgJjLbrKaChGR2rX8CNnF6f6pntw
+ LEYg==
+X-Gm-Message-State: AOJu0YxJfx3vHFALGT9pQOP343c4GGSxC0AsGCNghXl1mSXuJrNBYRL6
+ ozb55klisMkClh/59Aa9mGHkCCKfK3xXjYJB2I2LDGJTSi8KiusCPHGejhFF7RVt9/8fc3kgkuc
+ O5qkY
+X-Gm-Gg: ASbGncsaYJSAkjq1oWdd9hvjjWEo8Nqq6J9OHHRr3F6xOZTrYyZr0GVL13peNiQZGtM
+ ggdgGiiDVkBp1dFPz3gq22n+xB0Z351NWMenjPegiX/LVQ8vtoU8fwV5Gc3IGxMkgQz1co+oScv
+ tqZQTvNb4CBpEiQ0ln6p/FNfjobqiwrIRBFfyAdye5IELqNv380IjNrX+7UuIyRvimgEuwYnQ7S
+ zonlqY5DuwVF9iQswPAIR8qmXrj9LdQy5fM2bjJjDh5E6uhreg9UON8oOFPCwWbURSid1VPrt4g
+ ftnSMNwM/K8rtY0OxQvL67spYfytElEUOxFF0Ari6ymRiGz/xdeUpy1DopjFamo9lENc1oG8UkN
+ Ce8f9cPERTXmYSsLXNIouNyqEg4qvJtruQLu748JUQpbKRumxFfYCQoqJqoPn7QYs6XOsw/v/wh
+ 4=
+X-Google-Smtp-Source: AGHT+IEA4CRRCS3aPkkVuYYN0yiQyMkQKZ6Q7iPOJtQFgdWSce+1t7Hhh+XtRWpvHjKKIPGiPSdIDw==
+X-Received: by 2002:a05:6000:2304:b0:3b7:6d94:a032 with SMTP id
+ ffacd0b85a97d-3b917d2d474mr2538048f8f.3.1755094955625; 
+ Wed, 13 Aug 2025 07:22:35 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-45a1a519159sm4664305e9.12.2025.08.13.07.21.37
+ ffacd0b85a97d-3b79c4a2848sm47076585f8f.71.2025.08.13.07.22.34
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 13 Aug 2025 07:21:39 -0700 (PDT)
-Date: Wed, 13 Aug 2025 07:21:34 -0700
+ Wed, 13 Aug 2025 07:22:35 -0700 (PDT)
+Date: Wed, 13 Aug 2025 07:22:31 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 Cc: dev@dpdk.org, Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu
  <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
 Subject: Re: [PATCH v4 04/16] net/nbl: add Channel layer definitions and
  implementation
-Message-ID: <20250813072134.694f9321@hermes.local>
+Message-ID: <20250813072231.087b2e9b@hermes.local>
 In-Reply-To: <20250813064410.3894506-5-dimon.zhao@nebula-matrix.com>
 References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
  <20250813064410.3894506-1-dimon.zhao@nebula-matrix.com>
@@ -87,18 +88,24 @@ Errors-To: dev-bounces@dpdk.org
 On Tue, 12 Aug 2025 23:43:58 -0700
 Dimon Zhao <dimon.zhao@nebula-matrix.com> wrote:
 
-> diff --git a/drivers/net/nbl/nbl_common/nbl_common.c b/drivers/net/nbl/nbl_common/nbl_common.c
-> new file mode 100644
-> index 0000000000..06dfbe7cc6
-> --- /dev/null
-> +++ b/drivers/net/nbl/nbl_common/nbl_common.c
-> @@ -0,0 +1,48 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright 2025 Nebulamatrix Technology Co., Ltd.
+> +/**
+> + * @brief: used to alloc continuous dma memory region for cmd buffer
+> + * @mem: output, the memory object containing va, pa and size of memory
+> + * @size: input, memory size in bytes
+> + * @return: memory virtual address for cpu usage
 > + */
+> +void *nbl_alloc_dma_mem(struct nbl_dma_mem *mem, uint32_t size)
+> +{
+> +	const struct rte_memzone *mz = NULL;
+> +	char z_name[RTE_MEMZONE_NAMESIZE];
 > +
-> +#include "nbl_common.h"
+> +	if (!mem)
+> +		return NULL;
 > +
-> +uint32_t __rte_atomic nbl_dma_memzone_id;
+> +	snprintf(z_name, sizeof(z_name), "nbl_dma_%u",
+> +		rte_atomic_fetch_add_explicit(&nbl_dma_memzone_id, 1, rte_memory_order_relaxed));
+> +	mz = rte_memzone_reserve_bounded(z_name, size, SOCKET_ID_ANY, 0,
+> +					 0, RTE_PGSIZE_2M);
 
-__rte_atomic is old way. Newer code should be use stdatomic ie. RTE_ATOMIC().
+Since this is setup during probe, and probe process is single threaded.
+Using atomic here is overkill.
