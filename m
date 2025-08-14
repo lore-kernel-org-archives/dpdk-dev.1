@@ -2,77 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F451CA0EE4
-	for <dpdk-dev@archiver.kernel.org>; Thu, 14 Aug 2025 16:16:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80156CA0EDC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 14 Aug 2025 16:53:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CA309410E4;
-	Thu, 14 Aug 2025 18:16:03 +0200 (CEST)
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com
- [209.85.128.42]) by mails.dpdk.org (Postfix) with ESMTP id BA191402CA
- for <dev@dpdk.org>; Thu, 14 Aug 2025 18:16:02 +0200 (CEST)
-Received: by mail-wm1-f42.google.com with SMTP id
- 5b1f17b1804b1-45a1b004954so8000985e9.0
- for <dev@dpdk.org>; Thu, 14 Aug 2025 09:16:02 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2E6E2410E4;
+	Thu, 14 Aug 2025 18:53:16 +0200 (CEST)
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com
+ [209.85.221.42]) by mails.dpdk.org (Postfix) with ESMTP id 0A23A402CA
+ for <dev@dpdk.org>; Thu, 14 Aug 2025 18:53:13 +0200 (CEST)
+Received: by mail-wr1-f42.google.com with SMTP id
+ ffacd0b85a97d-3b9edf504e6so592982f8f.3
+ for <dev@dpdk.org>; Thu, 14 Aug 2025 09:53:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755188162;
- x=1755792962; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755190393;
+ x=1755795193; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=gXyV3MgGeUIw98wKDu6QHVqt+g3PIhYa9sTcHJySViw=;
- b=Iq2BBN1c8065L5STLLbl8VL3fQIYMWY/JefWaM2xoPQk7ZSeM4Ul5EoFTgzoCq++be
- ONPWf8rkVddRbqAvWcnBVZW0LhjIE+0GHPAYttRZKccEFPYKjsu+tCHMiQo6iOoEhbDb
- +jP0QbA9fZPscfIzRNfU786uolaD11N5g5Jkgg6WzwwsbtqjCN0p6UNEQfSTNzEIH8oe
- jodihuRkKvVKWVJnwn1mq0spZVwvd+I00VF7UoCGqxUttXN3cf/cz7bEc7m757lKbCxO
- 2mkurZqWolZ4JBd0/6VCTX/q87z1qJXgPxH/YBNusYBnIp1/KT4FWAdsD9M5gbh5kU2H
- CfSw==
+ bh=zqsng7OnpcEpxHSmmZ4V6IpZeThsOPmDIwEVFi5GhsQ=;
+ b=WcLPPdEfTb716vRYlffME3EsNSvZo3BsK3NGNUPH6RtId+H3svj4Ygz9Mzi1tdmpxR
+ OfIb/0xCeBhKA3fJYhZo1znaWc/0UB2+7hJyX3g2ztuHWclpcm+UFsSmU5s6bfIu1hRS
+ x2rdf/hbbVGnyISxHzZD3a3AbHg6NOm1cfRy02qcadbSLyxx9Jw3lvs66ugqMeXgo0qY
+ PtA1V2TaoiMVHLET9TzvknhoTP2q5Xm4w6zSYSdVwoGOCZExdkyp/rWPbNnhgNpj0KaZ
+ BM1ljqtKfEJ2TZ7hjhqN9q4Kd4BRhEp0x6thD/FWboGn79qdxs5iqzLQFOulrflg/lDB
+ 2dyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755188162; x=1755792962;
+ d=1e100.net; s=20230601; t=1755190393; x=1755795193;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=gXyV3MgGeUIw98wKDu6QHVqt+g3PIhYa9sTcHJySViw=;
- b=pqEpQoTFBRpnup4ex0JfzLPLrKPM8BS10v5up6+8JuZK8RpNTqSdgLkBHPSldQAVta
- 4jeydUsXUMRZ51LmoIodWgQULSroY+yIoZmsxkQKg9g+48Ik0yajk+BJmbUR6ElaNHBK
- H6/0o3BStZdNsuLJ7C4wF4a14rJx8m/gviqcJf8g/+X2pKoz2X0MR4nuHiKvHpWDMvaP
- 8AKhfKLv/E1hOFZ6Z8ytNgzsQCYJceiErhdEjM4X10z287ohdJ8c/XeyvxMp3OmNlbaS
- TO9ZipXC0rOhR5IAUVyyqyveU99mKAabpBEf9OQjWhgH0BvRmh9aFsSgjvPeAEy6RU6+
- ZsIw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWIiV2Dyeoe+eEMDPGjrmTO2K+SMnCnkx2M/wGkyh1VJKys5dv33Gp3hb9pairnxhsXv1M=@dpdk.org
-X-Gm-Message-State: AOJu0Yxxt4JpqsHMatU97z9yntv6Z7sco4TotZw/xm3jWIoWoeji8xd/
- 7jl18TZneWW6gBlLlHFsnz+X3gWmgRRdR8g54ks5sULHD3rI/X5Vo3syNll2rQW4wvU=
-X-Gm-Gg: ASbGncsgD62wSaMy4iXw85uvT7jckhC1IUuJpgStYWZjZ1VojzOdJGlPCsatB08L9vb
- B2cINjE+RlaEeE+ERsiJ53/RUMPAOyo2X2FBm4fMC+UVOh3g0ysOhAby7CkPH/8t/x4Gv4AZgYc
- /4NOFD9DNzHEqSjjCgJCwu75w62c3XWccyF4KgChDL4HySSLEgR4qsIbu2A7sBRxtlnSm9UFm3o
- 9L0lgv1NKnaO1y4ATvk7pH3uiBEDlIh91Oi5b+Rs/gRRZt7k+cYX8MpzO+6KHaMuv/IuY4dCDMV
- tQMb6lUTqYZJgiNFeGPHSCgJgMBh70482sPsJTngnLS0r9tMR/Xi6mFLr7awrh5m1unrMoIJ3FC
- IIOozL7Dp2wr/j5BLX38P39lX4rWaB6K30suyPhGFDfk0Je8vG2TAEmFMnF+xkoF61Z+WP9UMvh
- 0KutkRXIvsTA==
-X-Google-Smtp-Source: AGHT+IFtYviG45ewyW24DI3If9QzE7arRaYYl9Xo28l2bbtVaGHXDluR58Rg27nDar7NvRMnXbPHOA==
-X-Received: by 2002:a05:600c:4ecf:b0:458:6733:fb43 with SMTP id
- 5b1f17b1804b1-45a1beab483mr26008305e9.19.1755188162137; 
- Thu, 14 Aug 2025 09:16:02 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=zqsng7OnpcEpxHSmmZ4V6IpZeThsOPmDIwEVFi5GhsQ=;
+ b=uJGcksvlf6UTnuyJGiDZnAsPYZEMYhh0jEwRjkjuAnRWNcCRJKMYRcaU6g07xmmzRb
+ aFUcey4SuehOYTNASQyzczyN5R56uEUxmp1ewbBWdl1yyaJq2A7FjFa/KjpI5yTRSx7M
+ nLSaGKFLjEf/x5pUJcK8w7DkIoxSbLwNgyOiRPDZKPy9yTsdh/NtZ35UwwEwQRPalT4S
+ oBwjWuA8LRhxHg+2Ett6FP6GTPuKacymgjlIieGOGasBTgHewkd4b4gRhCkmR+4xmb6R
+ KosV/n8EYTugWybtn3IJe8+LAxRpw872duDPqetLcklRD2wdLmKkO5HRRbPss4G1ga47
+ ZBFQ==
+X-Gm-Message-State: AOJu0YyJj6itAKZVPGcAusyMhH7e91fCqtBMCo2MsmcK5SGW2qQ3JAHv
+ HsZqVV1SjMiK5dTMuomU+5sedsqE6JcHRgjJ2GpUKswO7gSVg8cX2tUtu0qH8NZTnWk4bxJRNi/
+ 7bkPr
+X-Gm-Gg: ASbGncu5WA1aTk+Lj4DAR1p6Z+0m0OLQthOgxL/KbAcvFsd0BUA8f27D32z6OzDdbg+
+ hR2fz4Pd6wZ1Sf7t1IPfHxkpavItzBkyzVc5twTFd3jDfcYyLNvS/q2on3siLFDNh4wSQqn3XRk
+ 4XqFQRf1sZVHLudAE2qfRKCPRNgpXN1IJSGGBSUcg3b9YifXn1+PX6yq4GYWKZ0lN8o1epb80W1
+ vQpQC/EJ2uTe7IWFpXifDqkvntP76Nv669v9zM7xBEGdgdHgS6nBkO2vZSEIt0RLtu8+/Q3j/FO
+ PLYTrRhJpnrQ7pDQc4bDXaViL3cYrj1FyMPBp2FfdzLT3eKXnilqHvrzH3PoI81wMggts0pBrrf
+ oo93/miW/phonA7gEpWhg3NHS7XrwuQ2AdNOrAtj2avjjI7sitY9/Pk2WzCB70T6GiOWhstz2
+X-Google-Smtp-Source: AGHT+IG8kGi9aPta15FaDB6UZsXamdYwH6tjKa9UOj7dwvxld33tk2SFFtdiT9KbXjdPoLETqvhTGg==
+X-Received: by 2002:a5d:64e8:0:b0:3b9:16a3:cf9b with SMTP id
+ ffacd0b85a97d-3b9e415873cmr3297943f8f.5.1755190392879; 
+ Thu, 14 Aug 2025 09:53:12 -0700 (PDT)
+Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-45a1c6bc93fsm26524915e9.2.2025.08.14.09.16.00
+ ffacd0b85a97d-3ba54f87e17sm1748197f8f.23.2025.08.14.09.53.11
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 14 Aug 2025 09:16:01 -0700 (PDT)
-Date: Thu, 14 Aug 2025 09:15:56 -0700
+ Thu, 14 Aug 2025 09:53:12 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: <skori@marvell.com>, "Thomas Monjalon" <thomas@monjalon.net>, "Andrew
- Rybchenko" <andrew.rybchenko@oktetlabs.ru>, <dev@dpdk.org>, "Nithin
- Dabilpuram" <ndabilpuram@marvell.com>
-Subject: Re: [PATCH v4 1/1] ethdev: add support to provide link type
-Message-ID: <20250814091556.6db159d0@hermes.local>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FE35@smartserver.smartshare.dk>
-References: <20250813084508.1446318-1-skori@marvell.com>
- <20250814081215.1904078-1-skori@marvell.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FE35@smartserver.smartshare.dk>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v2 0/8] Packet capture cleanup
+Date: Thu, 14 Aug 2025 09:52:56 -0700
+Message-ID: <20250814165307.12786-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250811213632.16023-1-stephen@networkplumber.org>
+References: <20250811213632.16023-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,80 +80,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 14 Aug 2025 11:04:18 +0200
-Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+This patch series addresses the problem of packet capture when
+the secondary process is sending/receiving by using the same
+mechanism as hot plug.  It also fixes some bugs on shutdown
+of dumpcap (and pdump).
 
-> > From: skori@marvell.com [mailto:skori@marvell.com]
-> > Sent: Thursday, 14 August 2025 10.10
-> >=20
-> > Adding link type parameter to provide the type
-> > of port like twisted pair, fibre etc.
-> >=20
-> > Also added an API to convert the RTE_ETH_LINK_TYPE_XXX
-> > to a readable string. =20
->=20
-> Please consider if "connector" is a better name than "link type", if this=
- is related to physical interfaces only.
-> E.g. is there an "LACP" link type for link aggregates (bonded links)?
->=20
-> Also, should a "virtual" link type (or connector) be added for TAP/Virtio=
-/VMXNET3/ring and similar non-physical interfaces?
->=20
-> More comments inline below.
+The documentation has been updated and improved as well.
 
-My preference is that a new feature like this follow what other commands an=
-d standards do.
-There is Linux ethtool as the most common example.
-Also, there is probably something IEEE standard but that is behind stupid p=
-aywall.
+v2 - add documentation
 
-Ethtool on real NIC.
-# ethtool enp87s0
-Settings for enp87s0:
-	Supported ports: [ TP ]
-	Supported link modes:   10baseT/Half 10baseT/Full
-	                        100baseT/Half 100baseT/Full
-	                        1000baseT/Full
-	                        2500baseT/Full
-	Supported pause frame use: Symmetric
-	Supports auto-negotiation: Yes
-	Supported FEC modes: Not reported
-	Advertised link modes:  10baseT/Half 10baseT/Full
-	                        100baseT/Half 100baseT/Full
-	                        1000baseT/Full
-	                        2500baseT/Full
-	Advertised pause frame use: Symmetric
-	Advertised auto-negotiation: Yes
-	Advertised FEC modes: Not reported
-	Speed: 2500Mb/s
-	Duplex: Full
-	Auto-negotiation: on
-	Port: Twisted Pair
-	PHYAD: 0
-	Transceiver: internal
-	MDI-X: off (auto)
-	Supports Wake-on: pumbg
-	Wake-on: g
-        Current message level: 0x00000007 (7)
-                               drv probe link
-	Link detected: yes
+Stephen Hemminger (8):
+  dumpcap: handle primary process exit
+  pdump: handle primary process exit
+  pdump: fix races in callbacks
+  dumpcap: handle pdump requests from primary
+  pdump: handle pdump requests from primary
+  pdump: forward callback enable to secondary
+  pdump: remove use of VLA
+  doc: update documentation on pdump library
 
-And on virtio
-# ethtool enp1s0
-Settings for enp1s0:
-	Supported ports: [  ]
-	Supported link modes:   Not reported
-	Supported pause frame use: No
-	Supports auto-negotiation: No
-	Supported FEC modes: Not reported
-	Advertised link modes:  Not reported
-	Advertised pause frame use: No
-	Advertised auto-negotiation: No
-	Advertised FEC modes: Not reported
-	Speed: Unknown!
-	Duplex: Unknown! (255)
-	Auto-negotiation: off
-	Port: Other
-	PHYAD: 0
-	Transceiver: internal
-	Link detected: yes
+ app/dumpcap/main.c                           |  14 +
+ app/pdump/main.c                             |  16 +-
+ doc/guides/prog_guide/img/pdump_overview.svg | 135 +++++++++
+ doc/guides/prog_guide/pdump_lib.rst          | 183 ++++++++-----
+ lib/pdump/meson.build                        |   2 -
+ lib/pdump/rte_pdump.c                        | 273 ++++++++++++++++---
+ 6 files changed, 514 insertions(+), 109 deletions(-)
+ create mode 100644 doc/guides/prog_guide/img/pdump_overview.svg
+
+--
+2.47.2
